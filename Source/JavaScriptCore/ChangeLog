@@ -1,3 +1,97 @@
+2017-03-26  Filip Pizlo  <fpizlo@apple.com>
+
+        Air should use RegisterSet for RegLiveness
+        https://bugs.webkit.org/show_bug.cgi?id=170108
+
+        Reviewed by Yusuke Suzuki.
+        
+        The biggest change here is the introduction of the new RegLiveness class. This is a
+        drop-in replacement for the old RegLiveness, which was a specialization of
+        AbstractLiveness<>, but it's about 30% faster. It gets its speed boost from just using
+        sets everywhere, which is efficient for registers since RegisterSet is just two (on
+        x86-64) or three 32-bit (on ARM64) statically allocated words. This looks like a 1%
+        compile time progression on WasmBench.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * b3/B3TimingScope.cpp: Records phase timing totals.
+        (JSC::B3::TimingScope::TimingScope):
+        (JSC::B3::TimingScope::~TimingScope):
+        * b3/B3TimingScope.h:
+        * b3/air/AirAllocateRegistersByGraphColoring.cpp:
+        (JSC::B3::Air::allocateRegistersByGraphColoring):
+        * b3/air/AirLiveness.h: Move code around and rename a bit to make it more like RegLiveness; in particular we want the `iterator` to be called `iterator` not `Iterator`, and we want it to be internal to its iterable. Also rename this template to Liveness, to match the header filename.
+        (JSC::B3::Air::Liveness::Liveness):
+        (JSC::B3::Air::Liveness::LocalCalc::LocalCalc):
+        (JSC::B3::Air::Liveness::LocalCalc::Iterable::Iterable):
+        (JSC::B3::Air::Liveness::LocalCalc::Iterable::iterator::iterator):
+        (JSC::B3::Air::Liveness::LocalCalc::Iterable::iterator::operator++):
+        (JSC::B3::Air::Liveness::LocalCalc::Iterable::iterator::operator*):
+        (JSC::B3::Air::Liveness::LocalCalc::Iterable::iterator::operator==):
+        (JSC::B3::Air::Liveness::LocalCalc::Iterable::iterator::operator!=):
+        (JSC::B3::Air::Liveness::LocalCalc::Iterable::begin):
+        (JSC::B3::Air::Liveness::LocalCalc::Iterable::end):
+        (JSC::B3::Air::Liveness::Iterable::Iterable):
+        (JSC::B3::Air::Liveness::Iterable::iterator::iterator):
+        (JSC::B3::Air::RegLivenessAdapter::RegLivenessAdapter): Deleted.
+        (JSC::B3::Air::RegLivenessAdapter::numIndices): Deleted.
+        (JSC::B3::Air::RegLivenessAdapter::acceptsBank): Deleted.
+        (JSC::B3::Air::RegLivenessAdapter::acceptsRole): Deleted.
+        (JSC::B3::Air::RegLivenessAdapter::valueToIndex): Deleted.
+        (JSC::B3::Air::RegLivenessAdapter::indexToValue): Deleted.
+        (JSC::B3::Air::AbstractLiveness::AbstractLiveness): Deleted.
+        (JSC::B3::Air::AbstractLiveness::LocalCalc::LocalCalc): Deleted.
+        (JSC::B3::Air::AbstractLiveness::LocalCalc::Iterator::Iterator): Deleted.
+        (JSC::B3::Air::AbstractLiveness::LocalCalc::Iterator::operator++): Deleted.
+        (JSC::B3::Air::AbstractLiveness::LocalCalc::Iterator::operator*): Deleted.
+        (JSC::B3::Air::AbstractLiveness::LocalCalc::Iterator::operator==): Deleted.
+        (JSC::B3::Air::AbstractLiveness::LocalCalc::Iterator::operator!=): Deleted.
+        (JSC::B3::Air::AbstractLiveness::LocalCalc::Iterable::Iterable): Deleted.
+        (JSC::B3::Air::AbstractLiveness::LocalCalc::Iterable::begin): Deleted.
+        (JSC::B3::Air::AbstractLiveness::LocalCalc::Iterable::end): Deleted.
+        (JSC::B3::Air::AbstractLiveness::LocalCalc::Iterable::contains): Deleted.
+        (JSC::B3::Air::AbstractLiveness::LocalCalc::live): Deleted.
+        (JSC::B3::Air::AbstractLiveness::LocalCalc::isLive): Deleted.
+        (JSC::B3::Air::AbstractLiveness::LocalCalc::execute): Deleted.
+        (JSC::B3::Air::AbstractLiveness::rawLiveAtHead): Deleted.
+        (JSC::B3::Air::AbstractLiveness::Iterable::Iterable): Deleted.
+        (JSC::B3::Air::AbstractLiveness::Iterable::iterator::iterator): Deleted.
+        (JSC::B3::Air::AbstractLiveness::Iterable::iterator::operator*): Deleted.
+        (JSC::B3::Air::AbstractLiveness::Iterable::iterator::operator++): Deleted.
+        (JSC::B3::Air::AbstractLiveness::Iterable::iterator::operator==): Deleted.
+        (JSC::B3::Air::AbstractLiveness::Iterable::iterator::operator!=): Deleted.
+        (JSC::B3::Air::AbstractLiveness::Iterable::begin): Deleted.
+        (JSC::B3::Air::AbstractLiveness::Iterable::end): Deleted.
+        (JSC::B3::Air::AbstractLiveness::Iterable::contains): Deleted.
+        (JSC::B3::Air::AbstractLiveness::liveAtHead): Deleted.
+        (JSC::B3::Air::AbstractLiveness::liveAtTail): Deleted.
+        (JSC::B3::Air::AbstractLiveness::workset): Deleted.
+        * b3/air/AirLogRegisterPressure.cpp:
+        * b3/air/AirLowerAfterRegAlloc.cpp:
+        * b3/air/AirRegLiveness.cpp: Added.
+        (JSC::B3::Air::RegLiveness::RegLiveness):
+        (JSC::B3::Air::RegLiveness::~RegLiveness):
+        (JSC::B3::Air::RegLiveness::LocalCalc::execute):
+        * b3/air/AirRegLiveness.h: Added.
+        (JSC::B3::Air::RegLiveness::LocalCalc::LocalCalc):
+        (JSC::B3::Air::RegLiveness::LocalCalc::live):
+        (JSC::B3::Air::RegLiveness::LocalCalc::isLive):
+        (JSC::B3::Air::RegLiveness::liveAtHead):
+        (JSC::B3::Air::RegLiveness::liveAtTail):
+        * b3/air/AirReportUsedRegisters.cpp:
+        * jit/RegisterSet.h:
+        (JSC::RegisterSet::add):
+        (JSC::RegisterSet::remove):
+        (JSC::RegisterSet::contains):
+        (JSC::RegisterSet::subsumes):
+        (JSC::RegisterSet::iterator::iterator):
+        (JSC::RegisterSet::iterator::operator*):
+        (JSC::RegisterSet::iterator::operator++):
+        (JSC::RegisterSet::iterator::operator==):
+        (JSC::RegisterSet::iterator::operator!=):
+        (JSC::RegisterSet::begin):
+        (JSC::RegisterSet::end):
+
 2017-03-25  Filip Pizlo  <fpizlo@apple.com>
 
         Fix wasm by returning after we do TLS.

@@ -2257,7 +2257,7 @@ private:
 
 void allocateRegistersByGraphColoring(Code& code)
 {
-    PhaseScope phaseScope(code, "Air::allocateRegistersByGraphColoring");
+    PhaseScope phaseScope(code, "allocateRegistersByGraphColoring");
     
     if (false)
         dataLog("Code before graph coloring:\n", code);

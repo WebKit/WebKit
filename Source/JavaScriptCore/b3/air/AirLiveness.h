@@ -79,30 +79,14 @@ private:
     Code& m_code;
 };
 
-struct RegLivenessAdapter {
-    typedef Reg Thing;
-    typedef BitVector IndexSet;
-
-    RegLivenessAdapter(Code&) { }
-
-    static unsigned numIndices(Code&)
-    {
-        return Reg::maxIndex() + 1;
-    }
-
-    static bool acceptsBank(Bank) { return true; }
-    static bool acceptsRole(Arg::Role) { return true; }
-    static unsigned valueToIndex(Reg reg) { return reg.index(); }
-    Reg indexToValue(unsigned index) { return Reg::fromIndex(index); }
-};
-
+// HEADS UP: The algorithm here is duplicated in AirRegLiveness.h.
 template<typename Adapter>
-class AbstractLiveness : public Adapter {
+class Liveness : public Adapter {
     struct Workset;
 public:
     typedef typename Adapter::Thing Thing;
     
-    AbstractLiveness(Code& code)
+    Liveness(Code& code)
         : Adapter(code)
         , m_workset(Adapter::numIndices(code))
         , m_liveAtHead(code.size())
@@ -131,7 +115,7 @@ public:
             changed = false;
 
             for (size_t blockIndex = code.size(); blockIndex--;) {
-                BasicBlock* block = code.at(blockIndex);
+                BasicBlock* block = code[blockIndex];
                 if (!block)
                     continue;
 
@@ -187,7 +171,7 @@ public:
     // This calculator has to be run in reverse.
     class LocalCalc {
     public:
-        LocalCalc(AbstractLiveness& liveness, BasicBlock* block)
+        LocalCalc(Liveness& liveness, BasicBlock* block)
             : m_liveness(liveness)
             , m_block(block)
         {
@@ -198,40 +182,42 @@ public:
                 workset.add(index);
         }
 
-        struct Iterator {
-            Iterator(Adapter& adapter, IndexSparseSet<UnsafeVectorOverflow>::const_iterator sparceSetIterator)
-                : m_adapter(adapter)
-                , m_sparceSetIterator(sparceSetIterator)
-            {
-            }
-
-            Iterator& operator++()
-            {
-                ++m_sparceSetIterator;
-                return *this;
-            }
-
-            typename Adapter::Thing operator*() const
-            {
-                return m_adapter.indexToValue(*m_sparceSetIterator);
-            }
-
-            bool operator==(const Iterator& other) { return m_sparceSetIterator == other.m_sparceSetIterator; }
-            bool operator!=(const Iterator& other) { return m_sparceSetIterator != other.m_sparceSetIterator; }
-
-        private:
-            Adapter& m_adapter;
-            IndexSparseSet<UnsafeVectorOverflow>::const_iterator m_sparceSetIterator;
-        };
-
-        struct Iterable {
-            Iterable(AbstractLiveness& liveness)
+        class Iterable {
+        public:
+            Iterable(Liveness& liveness)
                 : m_liveness(liveness)
             {
             }
 
-            Iterator begin() const { return Iterator(m_liveness, m_liveness.m_workset.begin()); }
-            Iterator end() const { return Iterator(m_liveness, m_liveness.m_workset.end()); }
+            class iterator {
+            public:
+                iterator(Adapter& adapter, IndexSparseSet<UnsafeVectorOverflow>::const_iterator sparceSetIterator)
+                    : m_adapter(adapter)
+                    , m_sparceSetIterator(sparceSetIterator)
+                {
+                }
+
+                iterator& operator++()
+                {
+                    ++m_sparceSetIterator;
+                    return *this;
+                }
+
+                typename Adapter::Thing operator*() const
+                {
+                    return m_adapter.indexToValue(*m_sparceSetIterator);
+                }
+
+                bool operator==(const iterator& other) { return m_sparceSetIterator == other.m_sparceSetIterator; }
+                bool operator!=(const iterator& other) { return m_sparceSetIterator != other.m_sparceSetIterator; }
+
+            private:
+                Adapter& m_adapter;
+                IndexSparseSet<UnsafeVectorOverflow>::const_iterator m_sparceSetIterator;
+            };
+
+            iterator begin() const { return iterator(m_liveness, m_liveness.m_workset.begin()); }
+            iterator end() const { return iterator(m_liveness, m_liveness.m_workset.end()); }
             
             bool contains(const typename Adapter::Thing& thing) const
             {
@@ -239,7 +225,7 @@ public:
             }
 
         private:
-            AbstractLiveness& m_liveness;
+            Liveness& m_liveness;
         };
 
         Iterable live() const
@@ -301,7 +287,7 @@ public:
         }
         
     private:
-        AbstractLiveness& m_liveness;
+        Liveness& m_liveness;
         BasicBlock* m_block;
     };
 
@@ -313,7 +299,7 @@ public:
     template<typename UnderlyingIterable>
     class Iterable {
     public:
-        Iterable(AbstractLiveness& liveness, const UnderlyingIterable& iterable)
+        Iterable(Liveness& liveness, const UnderlyingIterable& iterable)
             : m_liveness(liveness)
             , m_iterable(iterable)
         {
@@ -327,7 +313,7 @@ public:
             {
             }
             
-            iterator(AbstractLiveness& liveness, typename UnderlyingIterable::const_iterator iter)
+            iterator(Liveness& liveness, typename UnderlyingIterable::const_iterator iter)
                 : m_liveness(&liveness)
                 , m_iter(iter)
             {
@@ -356,7 +342,7 @@ public:
             }
 
         private:
-            AbstractLiveness* m_liveness;
+            Liveness* m_liveness;
             typename UnderlyingIterable::const_iterator m_iter;
         };
 
@@ -369,7 +355,7 @@ public:
         }
 
     private:
-        AbstractLiveness& m_liveness;
+        Liveness& m_liveness;
         const UnderlyingIterable& m_iterable;
     };
 
@@ -387,7 +373,7 @@ public:
 
 private:
     friend class LocalCalc;
-    friend struct LocalCalc::Iterable;
+    friend class LocalCalc::Iterable;
 
     IndexSparseSet<UnsafeVectorOverflow> m_workset;
     IndexMap<BasicBlock, Vector<unsigned>> m_liveAtHead;
@@ -395,12 +381,11 @@ private:
 };
 
 template<Bank bank, Arg::Temperature minimumTemperature = Arg::Cold>
-using TmpLiveness = AbstractLiveness<TmpLivenessAdapter<bank, minimumTemperature>>;
+using TmpLiveness = Liveness<TmpLivenessAdapter<bank, minimumTemperature>>;
 
-typedef AbstractLiveness<TmpLivenessAdapter<GP>> GPLiveness;
-typedef AbstractLiveness<TmpLivenessAdapter<FP>> FPLiveness;
-typedef AbstractLiveness<StackSlotLivenessAdapter> StackSlotLiveness;
-typedef AbstractLiveness<RegLivenessAdapter> RegLiveness;
+typedef Liveness<TmpLivenessAdapter<GP>> GPLiveness;
+typedef Liveness<TmpLivenessAdapter<FP>> FPLiveness;
+typedef Liveness<StackSlotLivenessAdapter> StackSlotLiveness;
 
 } } } // namespace JSC::B3::Air
 

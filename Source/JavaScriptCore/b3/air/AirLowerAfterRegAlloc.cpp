@@ -34,7 +34,7 @@
 #include "AirEmitShuffle.h"
 #include "AirInsertionSet.h"
 #include "AirInstInlines.h"
-#include "AirLiveness.h"
+#include "AirRegLiveness.h"
 #include "AirPhaseScope.h"
 #include "B3CCallValue.h"
 #include "B3ValueInlines.h"

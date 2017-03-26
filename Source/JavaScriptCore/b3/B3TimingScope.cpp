@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,23 +29,53 @@
 #if ENABLE(B3_JIT)
 
 #include "B3Common.h"
-#include <wtf/CurrentTime.h>
 #include <wtf/DataLog.h>
+#include <wtf/HashMap.h>
+#include <wtf/Lock.h>
 
 namespace JSC { namespace B3 {
+
+namespace {
+
+class State {
+    WTF_MAKE_NONCOPYABLE(State);
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    State() { }
+    
+    Seconds addToTotal(const char* name, Seconds duration)
+    {
+        auto locker = holdLock(lock);
+        return totals.add(name, Seconds(0)).iterator->value += duration;
+    }
+    
+private:
+    HashMap<const char*, Seconds> totals;
+    Lock lock;
+};
+
+State& state()
+{
+    static Atomic<State*> s_state;
+    return ensurePointer(s_state, [] { return new State(); });
+}
+
+} // anonymous namespace
 
 TimingScope::TimingScope(const char* name)
     : m_name(name)
 {
     if (shouldMeasurePhaseTiming())
-        m_before = monotonicallyIncreasingTimeMS();
+        m_before = MonotonicTime::now();
 }
 
 TimingScope::~TimingScope()
 {
     if (shouldMeasurePhaseTiming()) {
-        double after = monotonicallyIncreasingTimeMS();
-        dataLog("[B3] ", m_name, " took: ", after - m_before, " ms.\n");
+        Seconds duration = MonotonicTime::now() - m_before;
+        dataLog(
+            "[B3] ", m_name, " took: ", duration.milliseconds(), " ms ",
+            "(total: ", state().addToTotal(m_name, duration).milliseconds(), " ms).\n");
     }
 }
 

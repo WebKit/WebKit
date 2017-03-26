@@ -31,7 +31,7 @@
 #include "AirArgInlines.h"
 #include "AirCode.h"
 #include "AirInstInlines.h"
-#include "AirLiveness.h"
+#include "AirRegLiveness.h"
 #include "AirPhaseScope.h"
 
 namespace JSC { namespace B3 { namespace Air {

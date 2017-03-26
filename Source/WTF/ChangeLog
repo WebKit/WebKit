@@ -1,3 +1,23 @@
+2017-03-26  Filip Pizlo  <fpizlo@apple.com>
+
+        Air should use RegisterSet for RegLiveness
+        https://bugs.webkit.org/show_bug.cgi?id=170108
+
+        Reviewed by Yusuke Suzuki.
+
+        * wtf/Atomics.h:
+        (WTF::ensurePointer): This is a useful replacement for std::once, which requires less fencing.
+        * wtf/Bitmap.h: Add more utilities.
+        (WTF::Bitmap::iterator::iterator): An iterator for set bits.
+        (WTF::Bitmap::iterator::operator*):
+        (WTF::Bitmap::iterator::operator++):
+        (WTF::Bitmap::iterator::operator==):
+        (WTF::Bitmap::iterator::operator!=):
+        (WTF::Bitmap::begin):
+        (WTF::Bitmap::end):
+        (WTF::WordType>::subsumes): a.subsumes(b) if all of b's set bits are set in a.
+        (WTF::WordType>::findBit): find next set or clear bit.
+
 2017-03-24  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly: store state in TLS instead of on VM

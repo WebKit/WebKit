@@ -519,6 +519,23 @@ inline T* consume(T* pointer, Dependency dependency)
 #endif
 }
 
+template<typename T, typename Func>
+ALWAYS_INLINE T& ensurePointer(Atomic<T*>& pointer, const Func& func)
+{
+    for (;;) {
+        T* oldValue = pointer.load(std::memory_order_relaxed);
+        if (oldValue) {
+            // On all sensible CPUs, we get an implicit dependency-based load-load barrier when
+            // loading this.
+            return *oldValue;
+        }
+        T* newValue = func();
+        if (pointer.compareExchangeWeak(oldValue, newValue))
+            return *newValue;
+        delete newValue;
+    }
+}
+
 } // namespace WTF
 
 using WTF::Atomic;
@@ -528,6 +545,7 @@ using WTF::TransactionAbortLikelihood;
 using WTF::consume;
 using WTF::dependency;
 using WTF::dependencyWith;
+using WTF::ensurePointer;
 using WTF::nullDependency;
 
 #endif // Atomics_h

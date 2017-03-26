@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,6 +35,8 @@
 #include <wtf/Bitmap.h>
 
 namespace JSC {
+
+typedef Bitmap<MacroAssembler::numGPRs + MacroAssembler::numFPRs + 1> RegisterBitmap;
 
 class RegisterSet {
 public:
@@ -99,9 +101,16 @@ public:
             set(reg);
     }
     
+    // Also allow add/remove/contains terminology, which means the same thing as set/clear/get.
+    void add(Reg reg) { set(reg); }
+    void remove(Reg reg) { clear(reg); }
+    bool contains(Reg reg) const { return get(reg); }
+    
     void merge(const RegisterSet& other) { m_bits.merge(other.m_bits); }
     void filter(const RegisterSet& other) { m_bits.filter(other.m_bits); }
     void exclude(const RegisterSet& other) { m_bits.exclude(other.m_bits); }
+    
+    bool subsumes(const RegisterSet& other) const { return m_bits.subsumes(other.m_bits); }
     
     size_t numberOfSetGPRs() const;
     size_t numberOfSetFPRs() const;
@@ -149,6 +158,42 @@ public:
             });
     }
     
+    class iterator {
+    public:
+        iterator()
+        {
+        }
+        
+        iterator(const RegisterBitmap::iterator& iter)
+            : m_iter(iter)
+        {
+        }
+        
+        Reg operator*() const { return Reg::fromIndex(*m_iter); }
+        
+        iterator& operator++()
+        {
+            ++m_iter;
+            return *this;
+        }
+        
+        bool operator==(const iterator& other)
+        {
+            return m_iter == other.m_iter;
+        }
+        
+        bool operator!=(const iterator& other)
+        {
+            return !(*this == other);
+        }
+        
+    private:
+        RegisterBitmap::iterator m_iter;
+    };
+    
+    iterator begin() const { return iterator(m_bits.begin()); }
+    iterator end() const { return iterator(m_bits.end()); }
+    
 private:
     void setAny(Reg reg) { set(reg); }
     void setAny(const RegisterSet& set) { merge(set); }
@@ -166,7 +211,7 @@ private:
     static const unsigned hashSpecialBitIndex = fprOffset + MacroAssembler::numFPRs;
     static const unsigned deletedBitIndex = 0;
     
-    Bitmap<MacroAssembler::numGPRs + MacroAssembler::numFPRs + 1> m_bits;
+    RegisterBitmap m_bits;
 };
 
 struct RegisterSetHash {

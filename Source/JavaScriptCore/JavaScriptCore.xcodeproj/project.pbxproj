@@ -1005,6 +1005,8 @@
 		0FF4275715914A20004CB9FF /* LinkBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FF4275615914A20004CB9FF /* LinkBuffer.cpp */; };
 		0FF427641591A1CC004CB9FF /* DFGDisassembler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FF427611591A1C9004CB9FF /* DFGDisassembler.cpp */; };
 		0FF427651591A1CE004CB9FF /* DFGDisassembler.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF427621591A1C9004CB9FF /* DFGDisassembler.h */; };
+		0FF4B4BC1E88449700DBBE86 /* AirRegLiveness.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FF4B4BA1E88449500DBBE86 /* AirRegLiveness.cpp */; };
+		0FF4B4BD1E88449A00DBBE86 /* AirRegLiveness.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF4B4BB1E88449500DBBE86 /* AirRegLiveness.h */; };
 		0FF60AC216740F8300029779 /* ReduceWhitespace.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF60AC016740F8100029779 /* ReduceWhitespace.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FF60AC316740F8800029779 /* ReduceWhitespace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FF60ABF16740F8100029779 /* ReduceWhitespace.cpp */; };
 		0FF7168C15A3B235008F5DAA /* PropertyOffset.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF7168A15A3B231008F5DAA /* PropertyOffset.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3520,6 +3522,8 @@
 		0FF4275615914A20004CB9FF /* LinkBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LinkBuffer.cpp; sourceTree = "<group>"; };
 		0FF427611591A1C9004CB9FF /* DFGDisassembler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGDisassembler.cpp; path = dfg/DFGDisassembler.cpp; sourceTree = "<group>"; };
 		0FF427621591A1C9004CB9FF /* DFGDisassembler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGDisassembler.h; path = dfg/DFGDisassembler.h; sourceTree = "<group>"; };
+		0FF4B4BA1E88449500DBBE86 /* AirRegLiveness.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AirRegLiveness.cpp; path = b3/air/AirRegLiveness.cpp; sourceTree = "<group>"; };
+		0FF4B4BB1E88449500DBBE86 /* AirRegLiveness.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirRegLiveness.h; path = b3/air/AirRegLiveness.h; sourceTree = "<group>"; };
 		0FF60ABF16740F8100029779 /* ReduceWhitespace.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ReduceWhitespace.cpp; sourceTree = "<group>"; };
 		0FF60AC016740F8100029779 /* ReduceWhitespace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReduceWhitespace.h; sourceTree = "<group>"; };
 		0FF7168A15A3B231008F5DAA /* PropertyOffset.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PropertyOffset.h; sourceTree = "<group>"; };
@@ -5578,6 +5582,8 @@
 				0F9CABC71DB54A760008E83B /* AirPadInterference.h */,
 				0FEC855E1BDACDC70080FF74 /* AirPhaseScope.cpp */,
 				0FEC855F1BDACDC70080FF74 /* AirPhaseScope.h */,
+				0FF4B4BA1E88449500DBBE86 /* AirRegLiveness.cpp */,
+				0FF4B4BB1E88449500DBBE86 /* AirRegLiveness.h */,
 				0F45703A1BE45F0A0062A629 /* AirReportUsedRegisters.cpp */,
 				0F45703B1BE45F0A0062A629 /* AirReportUsedRegisters.h */,
 				0F338DFB1BED51270013C88F /* AirSimplifyCFG.cpp */,
@@ -8236,6 +8242,7 @@
 				0F64B27A1A7957B2006E4E66 /* CallEdge.h in Headers */,
 				1429D8DE0ED2205B00B89619 /* CallFrame.h in Headers */,
 				62EC9BB71B7EB07C00303AD1 /* CallFrameShuffleData.h in Headers */,
+				0FF4B4BD1E88449A00DBBE86 /* AirRegLiveness.h in Headers */,
 				62D755D71B84FB4A001801FA /* CallFrameShuffler.h in Headers */,
 				0F0B83B114BCF71800885B4F /* CallLinkInfo.h in Headers */,
 				0F93329E14CA7DC50085F3C6 /* CallLinkStatus.h in Headers */,
@@ -10625,6 +10632,7 @@
 				A7FB60A4103F7DC20017A286 /* PropertyDescriptor.cpp in Sources */,
 				14469DE8107EC7E700650446 /* PropertySlot.cpp in Sources */,
 				ADE39FFF16DD144B0003CD4A /* PropertyTable.cpp in Sources */,
+				0FF4B4BC1E88449700DBBE86 /* AirRegLiveness.cpp in Sources */,
 				65FB5117184EEE7000C12B70 /* ProtoCallFrame.cpp in Sources */,
 				1474C33C16AA2D9B0062F01D /* PrototypeMap.cpp in Sources */,
 				79B00CBC1C6AB07E0088C65D /* ProxyConstructor.cpp in Sources */,
