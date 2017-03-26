@@ -32,8 +32,8 @@
 #include "AirInstInlines.h"
 #include "AirStackSlot.h"
 #include "AirTmpInlines.h"
+#include "B3TimingScope.h"
 #include <wtf/IndexMap.h>
-#include <wtf/IndexSet.h>
 #include <wtf/IndexSparseSet.h>
 #include <wtf/ListDump.h>
 
@@ -41,8 +41,8 @@ namespace JSC { namespace B3 { namespace Air {
 
 template<Bank adapterBank, Arg::Temperature minimumTemperature = Arg::Cold>
 struct TmpLivenessAdapter {
+    static constexpr const char* name = "TmpLiveness";
     typedef Tmp Thing;
-    typedef HashSet<unsigned> IndexSet;
 
     TmpLivenessAdapter(Code&) { }
 
@@ -58,8 +58,8 @@ struct TmpLivenessAdapter {
 };
 
 struct StackSlotLivenessAdapter {
+    static constexpr const char* name = "StackSlotLiveness";
     typedef StackSlot* Thing;
-    typedef HashSet<unsigned, DefaultHash<unsigned>::Hash, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> IndexSet;
 
     StackSlotLivenessAdapter(Code& code)
         : m_code(code)
@@ -85,6 +85,7 @@ class Liveness : public Adapter {
     struct Workset;
 public:
     typedef typename Adapter::Thing Thing;
+    typedef Vector<unsigned, 4, UnsafeVectorOverflow> IndexVector;
     
     Liveness(Code& code)
         : Adapter(code)
@@ -92,24 +93,31 @@ public:
         , m_liveAtHead(code.size())
         , m_liveAtTail(code.size())
     {
+        TimingScope timingScope(Adapter::name);
+        
         // The liveAtTail of each block automatically contains the LateUse's of the terminal.
         for (BasicBlock* block : code) {
-            typename Adapter::IndexSet& liveAtTail = m_liveAtTail[block];
+            IndexVector& liveAtTail = m_liveAtTail[block];
 
             block->last().forEach<typename Adapter::Thing>(
                 [&] (typename Adapter::Thing& thing, Arg::Role role, Bank bank, Width) {
                     if (Arg::isLateUse(role)
                         && Adapter::acceptsBank(bank)
                         && Adapter::acceptsRole(role))
-                        liveAtTail.add(Adapter::valueToIndex(thing));
+                        liveAtTail.append(Adapter::valueToIndex(thing));
                 });
+            
+            std::sort(liveAtTail.begin(), liveAtTail.end());
+            removeRepeatedElements(liveAtTail);
         }
 
         // Blocks with new live values at tail.
         BitVector dirtyBlocks;
-        for (size_t blockIndex = 0; blockIndex < code.size(); ++blockIndex)
+        for (size_t blockIndex = code.size(); blockIndex--;)
             dirtyBlocks.set(blockIndex);
-
+        
+        IndexVector mergeBuffer;
+        
         bool changed;
         do {
             changed = false;
@@ -135,7 +143,7 @@ public:
                             m_workset.remove(Adapter::valueToIndex(thing));
                     });
 
-                Vector<unsigned>& liveAtHead = m_liveAtHead[block];
+                IndexVector& liveAtHead = m_liveAtHead[block];
 
                 // We only care about Tmps that were discovered in this iteration. It is impossible
                 // to remove a live value from the head.
@@ -154,15 +162,32 @@ public:
                 liveAtHead.reserveCapacity(liveAtHead.size() + m_workset.size());
                 for (unsigned newValue : m_workset)
                     liveAtHead.uncheckedAppend(newValue);
-
+                
+                m_workset.sort();
+                
                 for (BasicBlock* predecessor : block->predecessors()) {
-                    typename Adapter::IndexSet& liveAtTail = m_liveAtTail[predecessor];
-                    for (unsigned newValue : m_workset) {
-                        if (liveAtTail.add(newValue)) {
-                            if (!dirtyBlocks.quickSet(predecessor->index()))
-                                changed = true;
-                        }
+                    IndexVector& liveAtTail = m_liveAtTail[predecessor];
+                    
+                    if (liveAtTail.isEmpty())
+                        liveAtTail = m_workset.values();
+                    else {
+                        mergeBuffer.resize(0);
+                        mergeBuffer.reserveCapacity(liveAtTail.size() + m_workset.size());
+                        auto iter = mergeDeduplicatedSorted(
+                            liveAtTail.begin(), liveAtTail.end(),
+                            m_workset.begin(), m_workset.end(),
+                            mergeBuffer.begin());
+                        mergeBuffer.resize(iter - mergeBuffer.begin());
+                        
+                        if (mergeBuffer.size() == liveAtTail.size())
+                            continue;
+                    
+                        RELEASE_ASSERT(mergeBuffer.size() > liveAtTail.size());
+                        liveAtTail = mergeBuffer;
                     }
+                    
+                    dirtyBlocks.quickSet(predecessor->index());
+                    changed = true;
                 }
             }
         } while (changed);
@@ -177,7 +202,7 @@ public:
         {
             auto& workset = liveness.m_workset;
             workset.clear();
-            typename Adapter::IndexSet& liveAtTail = liveness.m_liveAtTail[block];
+            IndexVector& liveAtTail = liveness.m_liveAtTail[block];
             for (unsigned index : liveAtTail)
                 workset.add(index);
         }
@@ -291,7 +316,7 @@ public:
         BasicBlock* m_block;
     };
 
-    const Vector<unsigned>& rawLiveAtHead(BasicBlock* block)
+    const IndexVector& rawLiveAtHead(BasicBlock* block)
     {
         return m_liveAtHead[block];
     }
@@ -359,14 +384,14 @@ public:
         const UnderlyingIterable& m_iterable;
     };
 
-    Iterable<Vector<unsigned>> liveAtHead(BasicBlock* block)
+    Iterable<IndexVector> liveAtHead(BasicBlock* block)
     {
-        return Iterable<Vector<unsigned>>(*this, m_liveAtHead[block]);
+        return Iterable<IndexVector>(*this, m_liveAtHead[block]);
     }
 
-    Iterable<typename Adapter::IndexSet> liveAtTail(BasicBlock* block)
+    Iterable<IndexVector> liveAtTail(BasicBlock* block)
     {
-        return Iterable<typename Adapter::IndexSet>(*this, m_liveAtTail[block]);
+        return Iterable<IndexVector>(*this, m_liveAtTail[block]);
     }
 
     IndexSparseSet<UnsafeVectorOverflow>& workset() { return m_workset; }
@@ -376,8 +401,8 @@ private:
     friend class LocalCalc::Iterable;
 
     IndexSparseSet<UnsafeVectorOverflow> m_workset;
-    IndexMap<BasicBlock, Vector<unsigned>> m_liveAtHead;
-    IndexMap<BasicBlock, typename Adapter::IndexSet> m_liveAtTail;
+    IndexMap<BasicBlock, IndexVector> m_liveAtHead;
+    IndexMap<BasicBlock, IndexVector> m_liveAtTail;
 };
 
 template<Bank bank, Arg::Temperature minimumTemperature = Arg::Cold>

@@ -58,6 +58,10 @@ public:
     typedef typename ValueList::const_iterator const_iterator;
     const_iterator begin() const;
     const_iterator end() const;
+    
+    void sort();
+    
+    const ValueList& values() const { return m_values; }
 
 private:
     Vector<unsigned, 0, OverflowHandler, 1> m_map;
@@ -126,6 +130,12 @@ bool IndexSparseSet<OverflowHandler>::contains(unsigned value) const
         return false;
 
     return m_values[position] == value;
+}
+
+template<typename OverflowHandler>
+void IndexSparseSet<OverflowHandler>::sort()
+{
+    std::sort(m_values.begin(), m_values.end());
 }
 
 template<typename OverflowHandler>

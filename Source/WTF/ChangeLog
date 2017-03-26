@@ -1,3 +1,19 @@
+2017-03-25  Filip Pizlo  <fpizlo@apple.com>
+
+        Air::Liveness shouldn't need HashSets
+        https://bugs.webkit.org/show_bug.cgi?id=170102
+
+        Reviewed by Yusuke Suzuki.
+
+        * wtf/IndexSparseSet.h: Add some helpers for a HashSet-free liveness analysis.
+        (WTF::IndexSparseSet::values):
+        (WTF::IndexSparseSet<OverflowHandler>::sort):
+        * wtf/StdLibExtras.h:
+        (WTF::mergeDeduplicatedSorted): Rapidly merge two sorted lists that don't have duplicates to produce a new sorted list that doesn't have duplicates.
+        * wtf/Vector.h:
+        (WTF::minCapacity>::uncheckedAppend): Inline this!
+        (WTF::removeRepeatedElements): This is a version of std::unique() that works naturally for Vectors.
+
 2017-03-26  Filip Pizlo  <fpizlo@apple.com>
 
         Air should use RegisterSet for RegLiveness

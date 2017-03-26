@@ -1290,7 +1290,7 @@ bool Vector<T, inlineCapacity, OverflowHandler, minCapacity>::tryConstructAndApp
 // vector's capacity is large enough for the append to succeed.
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity> template<typename U>
-inline void Vector<T, inlineCapacity, OverflowHandler, minCapacity>::uncheckedAppend(U&& value)
+ALWAYS_INLINE void Vector<T, inlineCapacity, OverflowHandler, minCapacity>::uncheckedAppend(U&& value)
 {
     ASSERT(size() < capacity());
 
@@ -1501,10 +1501,26 @@ template<typename T> struct ValueCheck<Vector<T>> {
 };
 #endif
 
+template<typename VectorType, typename Func>
+size_t removeRepeatedElements(VectorType& vector, const Func& func)
+{
+    auto end = std::unique(vector.begin(), vector.end(), func);
+    size_t newSize = end - vector.begin();
+    vector.resize(newSize);
+    return newSize;
+}
+
+template<typename VectorType>
+size_t removeRepeatedElements(VectorType& vector)
+{
+    return removeRepeatedElements(vector, [] (auto& a, auto& b) { return a == b; });
+}
+
 } // namespace WTF
 
 using WTF::Vector;
 using WTF::UnsafeVectorOverflow;
 using WTF::notFound;
+using WTF::removeRepeatedElements;
 
 #endif // WTF_Vector_h

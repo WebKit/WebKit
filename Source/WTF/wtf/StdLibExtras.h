@@ -408,6 +408,45 @@ struct RemoveCVAndReference  {
     typedef typename std::remove_cv<typename std::remove_reference<T>::type>::type type;
 };
 
+template<typename IteratorTypeLeft, typename IteratorTypeRight, typename IteratorTypeDst>
+IteratorTypeDst mergeDeduplicatedSorted(IteratorTypeLeft leftBegin, IteratorTypeLeft leftEnd, IteratorTypeRight rightBegin, IteratorTypeRight rightEnd, IteratorTypeDst dstBegin)
+{
+    IteratorTypeLeft leftIter = leftBegin;
+    IteratorTypeRight rightIter = rightBegin;
+    IteratorTypeDst dstIter = dstBegin;
+    
+    if (leftIter < leftEnd && rightIter < rightEnd) {
+        for (;;) {
+            auto left = *leftIter;
+            auto right = *rightIter;
+            if (left < right) {
+                *dstIter++ = left;
+                leftIter++;
+                if (leftIter >= leftEnd)
+                    break;
+            } else if (left == right) {
+                *dstIter++ = left;
+                leftIter++;
+                rightIter++;
+                if (leftIter >= leftEnd || rightIter >= rightEnd)
+                    break;
+            } else {
+                *dstIter++ = right;
+                rightIter++;
+                if (rightIter >= rightEnd)
+                    break;
+            }
+        }
+    }
+    
+    while (leftIter < leftEnd)
+        *dstIter++ = *leftIter++;
+    while (rightIter < rightEnd)
+        *dstIter++ = *rightIter++;
+    
+    return dstIter;
+}
+
 } // namespace WTF
 
 // This version of placement new omits a 0 check.
@@ -489,6 +528,7 @@ using WTF::isCompilationThread;
 using WTF::isPointerAligned;
 using WTF::isStatelessLambda;
 using WTF::is8ByteAligned;
+using WTF::mergeDeduplicatedSorted;
 using WTF::roundUpToMultipleOf;
 using WTF::safeCast;
 using WTF::tryBinarySearch;

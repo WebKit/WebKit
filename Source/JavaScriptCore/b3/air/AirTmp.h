@@ -27,6 +27,7 @@
 
 #if ENABLE(B3_JIT)
 
+#include "B3Bank.h"
 #include "FPRInfo.h"
 #include "GPRInfo.h"
 #include "Reg.h"
@@ -75,7 +76,7 @@ public:
     }
 
     explicit operator bool() const { return !!m_value; }
-
+    
     bool isGP() const
     {
         return isEncodedGP(m_value);
@@ -84,6 +85,12 @@ public:
     bool isFP() const
     {
         return isEncodedFP(m_value);
+    }
+
+    // For null tmps, returns GP.
+    Bank bank() const
+    {
+        return isFP() ? FP : GP;
     }
 
     bool isGPR() const
@@ -131,6 +138,14 @@ public:
     unsigned fpTmpIndex() const
     {
         return decodeFPTmp(m_value);
+    }
+    
+    unsigned tmpIndex(Bank bank) const
+    {
+        if (bank == GP)
+            return gpTmpIndex();
+        ASSERT(bank == FP);
+        return fpTmpIndex();
     }
 
     unsigned tmpIndex() const

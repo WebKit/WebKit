@@ -612,6 +612,7 @@ private:
 
 bool lowerMacros(Procedure& proc)
 {
+    PhaseScope phaseScope(proc, "B3::lowerMacros");
     LowerMacros lowerMacros(proc);
     return lowerMacros.run();
 }
