@@ -561,7 +561,8 @@ void MediaPlayerPrivateAVFoundation::updateStates()
             newReadyState = MediaPlayer::HaveCurrentData;
         m_haveReportedFirstVideoFrame = true;
         m_player->firstVideoFrameAvailable();
-    }
+    } else if (!hasAvailableVideoFrame())
+        m_haveReportedFirstVideoFrame = false;
 
 #if !LOG_DISABLED
     if (m_networkState != newNetworkState || m_readyState != newReadyState) {

@@ -1,3 +1,26 @@
+2017-03-25  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION(r214195): zillow.com header video doesn't resume when switching to another tab and back
+        https://bugs.webkit.org/show_bug.cgi?id=170080
+        <rdar://problem/31252522>
+
+        Reviewed by Eric Carlson.
+
+        The video header on zillow.com would pause when switching to another tab after r214195. On
+        switching back to the zillow.com tab, we would resume the video but fail to take the poster
+        away, making it look like the video is still paused.
+
+        We normally take the poster away when HTMLMediaElement::mediaPlayerFirstVideoFrameAvailable()
+        is called. However, mediaPlayerFirstVideoFrameAvailable() was only ever called once because of
+        the m_haveReportedFirstVideoFrame flag in MediaPlayerPrivateAVFoundation::updateStates().
+        We now reset m_haveReportedFirstVideoFrame to false in updateStates() if hasAvailableVideoFrame()
+        return false, so that we call mediaPlayerFirstVideoFrameAvailable() again when the return
+        value of asAvailableVideoFrame() becomes true again (e.g. after the media session interruption
+        has ended).
+
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::updateStates):
+
 2017-03-24  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [WK2] Add a UI delegate SPI hook to enable or disable navigation on drop
