@@ -1945,42 +1945,30 @@ PassRefPtr<WebImage> WebPage::scaledSnapshotWithOptions(const IntRect& rect, dou
     return snapshotAtSize(rect, bitmapSize, options);
 }
 
-PassRefPtr<WebImage> WebPage::snapshotAtSize(const IntRect& rect, const IntSize& bitmapSize, SnapshotOptions options)
+static void paintSnapshotAtSize(const IntRect& rect, const IntSize& bitmapSize, SnapshotOptions options, Frame& frame, FrameView& frameView, GraphicsContext& graphicsContext)
 {
-    Frame* coreFrame = m_mainFrame->coreFrame();
-    if (!coreFrame)
-        return nullptr;
-
-    FrameView* frameView = coreFrame->view();
-    if (!frameView)
-        return nullptr;
-
     IntRect snapshotRect = rect;
     float horizontalScaleFactor = static_cast<float>(bitmapSize.width()) / rect.width();
     float verticalScaleFactor = static_cast<float>(bitmapSize.height()) / rect.height();
     float scaleFactor = std::max(horizontalScaleFactor, verticalScaleFactor);
 
-    auto snapshot = WebImage::create(bitmapSize, snapshotOptionsToImageOptions(options));
-
-    auto graphicsContext = snapshot->bitmap().createGraphicsContext();
-
     if (options & SnapshotOptionsPrinting) {
-        PrintContext::spoolAllPagesWithBoundaries(*coreFrame, *graphicsContext, snapshotRect.size());
-        return snapshot;
+        PrintContext::spoolAllPagesWithBoundaries(frame, graphicsContext, snapshotRect.size());
+        return;
     }
 
-    Color documentBackgroundColor = frameView->documentBackgroundColor();
-    Color backgroundColor = (coreFrame->settings().backgroundShouldExtendBeyondPage() && documentBackgroundColor.isValid()) ? documentBackgroundColor : frameView->baseBackgroundColor();
-    graphicsContext->fillRect(IntRect(IntPoint(), bitmapSize), backgroundColor);
+    Color documentBackgroundColor = frameView.documentBackgroundColor();
+    Color backgroundColor = (frame.settings().backgroundShouldExtendBeyondPage() && documentBackgroundColor.isValid()) ? documentBackgroundColor : frameView.baseBackgroundColor();
+    graphicsContext.fillRect(IntRect(IntPoint(), bitmapSize), backgroundColor);
 
     if (!(options & SnapshotOptionsExcludeDeviceScaleFactor)) {
-        double deviceScaleFactor = corePage()->deviceScaleFactor();
-        graphicsContext->applyDeviceScaleFactor(deviceScaleFactor);
+        double deviceScaleFactor = frame.page()->deviceScaleFactor();
+        graphicsContext.applyDeviceScaleFactor(deviceScaleFactor);
         scaleFactor /= deviceScaleFactor;
     }
 
-    graphicsContext->scale(scaleFactor);
-    graphicsContext->translate(-snapshotRect.x(), -snapshotRect.y());
+    graphicsContext.scale(scaleFactor);
+    graphicsContext.translate(-snapshotRect.x(), -snapshotRect.y());
 
     FrameView::SelectionInSnapshot shouldPaintSelection = FrameView::IncludeSelection;
     if (options & SnapshotOptionsExcludeSelectionHighlighting)
@@ -1990,18 +1978,67 @@ PassRefPtr<WebImage> WebPage::snapshotAtSize(const IntRect& rect, const IntSize&
     if (options & SnapshotOptionsInViewCoordinates)
         coordinateSpace = FrameView::ViewCoordinates;
 
-    frameView->paintContentsForSnapshot(*graphicsContext, snapshotRect, shouldPaintSelection, coordinateSpace);
+    frameView.paintContentsForSnapshot(graphicsContext, snapshotRect, shouldPaintSelection, coordinateSpace);
 
     if (options & SnapshotOptionsPaintSelectionRectangle) {
-        FloatRect selectionRectangle = m_mainFrame->coreFrame()->selection().selectionBounds();
-        graphicsContext->setStrokeColor(Color(0xFF, 0, 0));
-        graphicsContext->strokeRect(selectionRectangle, 1);
+        FloatRect selectionRectangle = frame.selection().selectionBounds();
+        graphicsContext.setStrokeColor(Color(0xFF, 0, 0));
+        graphicsContext.strokeRect(selectionRectangle, 1);
     }
-    
+}
+
+RefPtr<WebImage> WebPage::snapshotAtSize(const IntRect& rect, const IntSize& bitmapSize, SnapshotOptions options)
+{
+    Frame* coreFrame = m_mainFrame->coreFrame();
+    if (!coreFrame)
+        return nullptr;
+
+    FrameView* frameView = coreFrame->view();
+    if (!frameView)
+        return nullptr;
+
+    auto snapshot = WebImage::create(bitmapSize, snapshotOptionsToImageOptions(options));
+    auto graphicsContext = snapshot->bitmap().createGraphicsContext();
+
+    paintSnapshotAtSize(rect, bitmapSize, options, *coreFrame, *frameView, *graphicsContext);
+
     return snapshot;
 }
 
-PassRefPtr<WebImage> WebPage::snapshotNode(WebCore::Node& node, SnapshotOptions options, unsigned maximumPixelCount)
+#if USE(CF)
+RetainPtr<CFDataRef> WebPage::pdfSnapshotAtSize(const IntRect& rect, const IntSize& bitmapSize, SnapshotOptions options)
+{
+    Frame* coreFrame = m_mainFrame->coreFrame();
+    if (!coreFrame)
+        return nullptr;
+
+    FrameView* frameView = coreFrame->view();
+    if (!frameView)
+        return nullptr;
+
+    auto data = adoptCF(CFDataCreateMutable(kCFAllocatorDefault, 0));
+
+#if USE(CG)
+    auto dataConsumer = adoptCF(CGDataConsumerCreateWithCFData(data.get()));
+    auto mediaBox = CGRectMake(0, 0, bitmapSize.width(), bitmapSize.height());
+    auto pdfContext = adoptCF(CGPDFContextCreate(dataConsumer.get(), &mediaBox, nullptr));
+
+    CGPDFContextBeginPage(pdfContext.get(), nullptr);
+
+    GraphicsContext graphicsContext { pdfContext.get() };
+    graphicsContext.scale({ 1, -1 });
+    graphicsContext.translate(0, -bitmapSize.height());
+    paintSnapshotAtSize(rect, bitmapSize, options, *coreFrame, *frameView, graphicsContext);
+
+    CGPDFContextEndPage(pdfContext.get());
+    CGPDFContextClose(pdfContext.get());
+#endif
+
+    return WTFMove(data);
+}
+#endif
+
+RefPtr<WebImage> WebPage::snapshotNode(WebCore::Node& node, SnapshotOptions options, unsigned maximumPixelCount)
 {
     Frame* coreFrame = m_mainFrame->coreFrame();
     if (!coreFrame)

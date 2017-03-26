@@ -1,3 +1,23 @@
+2017-03-25  Andy Estes  <aestes@apple.com>
+
+        [iOS] Use snapshotting instead of printing to draw single-page PDFs
+        https://bugs.webkit.org/show_bug.cgi?id=170103
+        <rdar://problem/30542960>
+
+        Reviewed by Tim Horton.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::paintSnapshotAtSize): Moved the painting logic from WebPage::snapshotAtSize() to here.
+        (WebKit::WebPage::snapshotAtSize): Changed to call paintSnapshotAtSize() with the
+        WebImage's graphics context.
+        (WebKit::WebPage::pdfSnapshotAtSize): Created a CGPDFGraphicsContext, passed it to
+        paintSnapshotAtSize(), and returned the context's data.
+        * WebProcess/WebPage/WebPage.h: Made snapshotAtSize() and snapshotNode() private, changed
+        their return values from PassRefPtr to RefPtr, and declared pdfSnapshotAtSize().
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::computePagesForPrintingAndDrawToPDF): If snapshotting the first page,
+        returned a page count of 1 and created a PDF using pdfSnapshotAtSize().
+
 2017-03-25  John Wilander  <wilander@apple.com>
 
         Re-enable the web process' keychain access to fix client certificate authentication
