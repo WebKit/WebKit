@@ -1,3 +1,14 @@
+2017-03-27  Anders Carlsson  <andersca@apple.com>
+
+        Propagate shipping contact update errors
+        https://bugs.webkit.org/show_bug.cgi?id=170141
+        rdar://problem/31276576
+
+        Reviewed by Tim Horton.
+
+        * Modules/applepay/ApplePaySession.cpp:
+        (WebCore::convertAndValidate):
+
 2017-03-27  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r214411.

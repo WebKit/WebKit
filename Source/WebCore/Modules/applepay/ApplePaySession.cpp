@@ -476,6 +476,7 @@ static ExceptionOr<ShippingContactUpdate> convertAndValidate(ApplePayShippingCon
     if (!authorizationStatus)
         return Exception { INVALID_ACCESS_ERR };
     convertedUpdate.status = *authorizationStatus;
+    convertedUpdate.errors = convert(update.errors);
 
     auto convertedNewShippingMethods = convertAndValidate(WTFMove(update.newShippingMethods));
     if (convertedNewShippingMethods.hasException())
