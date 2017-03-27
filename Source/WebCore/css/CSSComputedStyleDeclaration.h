@@ -66,8 +66,11 @@ public:
 
     static Ref<CSSValue> valueForFilter(const RenderStyle&, const FilterOperations&, AdjustPixelValuesForComputedStyle = AdjustPixelValues);
 
+    static Ref<CSSPrimitiveValue> fontNonKeywordWeightFromStyleValue(FontSelectionValue);
     static Ref<CSSPrimitiveValue> fontWeightFromStyleValue(FontSelectionValue);
+    static Ref<CSSPrimitiveValue> fontNonKeywordStretchFromStyleValue(FontSelectionValue);
     static Ref<CSSPrimitiveValue> fontStretchFromStyleValue(FontSelectionValue);
+    static Ref<CSSFontStyleValue> fontNonKeywordStyleFromStyleValue(FontSelectionValue);
     static Ref<CSSFontStyleValue> fontStyleFromStyleValue(FontSelectionValue);
 
 private:

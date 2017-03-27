@@ -1917,11 +1917,16 @@ static Ref<CSSPrimitiveValue> fontSizeFromStyle(const RenderStyle& style)
     return zoomAdjustedPixelValue(style.fontDescription().computedSize(), style);
 }
 
+Ref<CSSPrimitiveValue> ComputedStyleExtractor::fontNonKeywordWeightFromStyleValue(FontSelectionValue weight)
+{
+    return CSSValuePool::singleton().createValue(static_cast<float>(weight), CSSPrimitiveValue::CSS_NUMBER);
+}
+
 Ref<CSSPrimitiveValue> ComputedStyleExtractor::fontWeightFromStyleValue(FontSelectionValue weight)
 {
     if (auto value = fontWeightKeyword(weight))
         return CSSValuePool::singleton().createIdentifierValue(value.value());
-    return CSSValuePool::singleton().createValue(static_cast<float>(weight), CSSPrimitiveValue::CSS_NUMBER);
+    return fontNonKeywordWeightFromStyleValue(weight);
 }
 
 static Ref<CSSPrimitiveValue> fontWeightFromStyle(const RenderStyle& style)
@@ -1929,11 +1934,16 @@ static Ref<CSSPrimitiveValue> fontWeightFromStyle(const RenderStyle& style)
     return ComputedStyleExtractor::fontWeightFromStyleValue(style.fontDescription().weight());
 }
 
+Ref<CSSPrimitiveValue> ComputedStyleExtractor::fontNonKeywordStretchFromStyleValue(FontSelectionValue stretch)
+{
+    return CSSValuePool::singleton().createValue(static_cast<float>(stretch), CSSPrimitiveValue::CSS_PERCENTAGE);
+}
+
 Ref<CSSPrimitiveValue> ComputedStyleExtractor::fontStretchFromStyleValue(FontSelectionValue stretch)
 {
     if (auto keyword = fontStretchKeyword(stretch))
         return CSSValuePool::singleton().createIdentifierValue(keyword.value());
-    return CSSValuePool::singleton().createValue(static_cast<float>(stretch), CSSPrimitiveValue::CSS_PERCENTAGE);
+    return fontNonKeywordStretchFromStyleValue(stretch);
 }
 
 static Ref<CSSPrimitiveValue> fontStretchFromStyle(const RenderStyle& style)
@@ -1941,11 +1951,16 @@ static Ref<CSSPrimitiveValue> fontStretchFromStyle(const RenderStyle& style)
     return ComputedStyleExtractor::fontStretchFromStyleValue(style.fontDescription().stretch());
 }
 
+Ref<CSSFontStyleValue> ComputedStyleExtractor::fontNonKeywordStyleFromStyleValue(FontSelectionValue italic)
+{
+    return CSSFontStyleValue::create(CSSValuePool::singleton().createIdentifierValue(CSSValueOblique), CSSValuePool::singleton().createValue(static_cast<float>(italic), CSSPrimitiveValue::CSS_DEG));
+}
+
 Ref<CSSFontStyleValue> ComputedStyleExtractor::fontStyleFromStyleValue(FontSelectionValue italic)
 {
     if (auto keyword = fontStyleKeyword(italic))
         return CSSFontStyleValue::create(CSSValuePool::singleton().createIdentifierValue(keyword.value()));
-    return CSSFontStyleValue::create(CSSValuePool::singleton().createIdentifierValue(CSSValueOblique), CSSValuePool::singleton().createValue(static_cast<float>(italic), CSSPrimitiveValue::CSS_DEG));
+    return fontNonKeywordStyleFromStyleValue(italic);
 }
 
 static Ref<CSSFontStyleValue> fontStyleFromStyle(const RenderStyle& style)

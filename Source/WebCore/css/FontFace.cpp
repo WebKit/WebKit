@@ -294,17 +294,21 @@ String FontFace::style() const
     if (minimum.get().equals(maximum.get()))
         return minimum->cssText();
 
-    ASSERT(minimum->fontStyleValue->valueID() == CSSValueOblique);
-    ASSERT(maximum->fontStyleValue->valueID() == CSSValueOblique);
+    auto minimumNonKeyword = ComputedStyleExtractor::fontNonKeywordStyleFromStyleValue(style.minimum);
+    auto maximumNonKeyword = ComputedStyleExtractor::fontNonKeywordStyleFromStyleValue(style.maximum);
+
+    ASSERT(minimumNonKeyword->fontStyleValue->valueID() == CSSValueOblique);
+    ASSERT(maximumNonKeyword->fontStyleValue->valueID() == CSSValueOblique);
 
     StringBuilder builder;
-    builder.append(minimum->fontStyleValue->cssText());
+    builder.append(minimumNonKeyword->fontStyleValue->cssText());
     builder.append(' ');
     if (minimum->obliqueValue.get() == maximum->obliqueValue.get())
-        builder.append(minimum->obliqueValue->cssText());
+        builder.append(minimumNonKeyword->obliqueValue->cssText());
     else {
-        builder.append(minimum->obliqueValue->cssText());
-        builder.append(maximum->obliqueValue->cssText());
+        builder.append(minimumNonKeyword->obliqueValue->cssText());
+        builder.append(' ');
+        builder.append(maximumNonKeyword->obliqueValue->cssText());
     }
     return builder.toString();
 }
@@ -320,10 +324,13 @@ String FontFace::weight() const
     if (minimum.get().equals(maximum.get()))
         return minimum->cssText();
 
+    auto minimumNonKeyword = ComputedStyleExtractor::fontNonKeywordWeightFromStyleValue(weight.minimum);
+    auto maximumNonKeyword = ComputedStyleExtractor::fontNonKeywordWeightFromStyleValue(weight.maximum);
+
     StringBuilder builder;
-    builder.append(minimum->cssText());
+    builder.append(minimumNonKeyword->cssText());
     builder.append(' ');
-    builder.append(maximum->cssText());
+    builder.append(maximumNonKeyword->cssText());
     return builder.toString();
 }
 
@@ -338,10 +345,13 @@ String FontFace::stretch() const
     if (minimum.get().equals(maximum.get()))
         return minimum->cssText();
 
+    auto minimumNonKeyword = ComputedStyleExtractor::fontNonKeywordStretchFromStyleValue(stretch.minimum);
+    auto maximumNonKeyword = ComputedStyleExtractor::fontNonKeywordStretchFromStyleValue(stretch.maximum);
+
     StringBuilder builder;
-    builder.append(minimum->cssText());
+    builder.append(minimumNonKeyword->cssText());
     builder.append(' ');
-    builder.append(maximum->cssText());
+    builder.append(maximumNonKeyword->cssText());
     return builder.toString();
 }
 
