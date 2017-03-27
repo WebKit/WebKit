@@ -1,3 +1,17 @@
+2017-03-27  Alex Christensen  <achristensen@webkit.org>
+
+        Build libwebrtc with even more warnings
+        https://bugs.webkit.org/show_bug.cgi?id=169997
+
+        Reviewed by Tim Horton.
+
+        There are still OSAtomic* functions I don't want to worry about right now,
+        so I'm keeping a few -Wno-deprecated-declarations, but everything else can go.
+
+        * Configurations/libsrtp.xcconfig:
+        * Configurations/libwebrtc.xcconfig:
+        * Configurations/libwebrtcpcrtc.xcconfig:
+
 2017-03-27  Youenn Fablet  <youenn@apple.com>
 
         Add support for RTCRtpReceiver/RTCRtpSender getParameters
