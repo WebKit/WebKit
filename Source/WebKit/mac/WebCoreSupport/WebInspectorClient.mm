@@ -329,7 +329,12 @@ void WebInspectorFrontendClient::save(const String& suggestedURL, const String& 
 
     NSSavePanel *panel = [NSSavePanel savePanel];
     panel.nameFieldStringValue = platformURL.lastPathComponent;
-    panel.directoryURL = [platformURL URLByDeletingLastPathComponent];
+
+    // If we have a file URL we've already saved this file to a path and
+    // can provide a good directory to show. Otherwise, use the system's
+    // default behavior for the initial directory to show in the dialog.
+    if (platformURL.isFileURL)
+        panel.directoryURL = [platformURL URLByDeletingLastPathComponent];
 
     auto completionHandler = ^(NSInteger result) {
         if (result == NSModalResponseCancel)

@@ -1,3 +1,17 @@
+2017-03-27  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Saving files should not suggest the top level directory
+        https://bugs.webkit.org/show_bug.cgi?id=170085
+        <rdar://problem/30197794>
+
+        Reviewed by Matt Baker.
+
+        * UIProcess/mac/RemoteWebInspectorProxyMac.mm:
+        (WebKit::RemoteWebInspectorProxy::platformSave):
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::platformSave):
+        Don't set panel.directoryURL unless we have a good suggestion.
+
 2017-03-27  Yongjun Zhang  <yongjun_zhang@apple.com>
 
         Add delegate method to let an WebKit client provide a custom image preview controller.
