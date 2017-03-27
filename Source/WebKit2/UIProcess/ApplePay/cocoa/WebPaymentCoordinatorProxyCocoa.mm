@@ -308,12 +308,27 @@ void WebPaymentCoordinatorProxy::platformOpenPaymentSetup(const String& merchant
     }];
 }
 
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
+static RetainPtr<NSSet> toPKContactFields(const WebCore::PaymentRequest::ContactFields& contactFields)
+{
+    Vector<NSString *> result;
+
+    if (contactFields.postalAddress)
+        result.append(getPKContactFieldPostalAddress());
+    if (contactFields.phone)
+        result.append(getPKContactFieldPhoneNumber());
+    if (contactFields.email)
+        result.append(getPKContactFieldEmailAddress());
+    if (contactFields.name)
+        result.append(getPKContactFieldName());
+
+    return adoptNS([[NSSet alloc] initWithObjects:result.data() count:result.size()]);
+}
+#else
 static PKAddressField toPKAddressField(const WebCore::PaymentRequest::ContactFields& contactFields)
 {
     PKAddressField result = 0;
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     if (contactFields.postalAddress)
         result |= PKAddressFieldPostalAddress;
     if (contactFields.phone)
@@ -322,10 +337,10 @@ static PKAddressField toPKAddressField(const WebCore::PaymentRequest::ContactFie
         result |= PKAddressFieldEmail;
     if (contactFields.name)
         result |= PKAddressFieldName;
-#pragma clang diagnostic pop
 
     return result;
 }
+#endif
 
 static PKPaymentSummaryItemType toPKPaymentSummaryItemType(WebCore::PaymentRequest::LineItem::Type type)
 {
@@ -488,11 +503,13 @@ RetainPtr<PKPaymentRequest> toPKPaymentRequest(WebPageProxy& webPageProxy, const
     [result setCurrencyCode:paymentRequest.currencyCode()];
     [result setBillingContact:paymentRequest.billingContact().pkContact()];
     [result setShippingContact:paymentRequest.shippingContact().pkContact()];
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
+    [result setRequiredBillingContactFields:toPKContactFields(paymentRequest.requiredBillingContactFields()).get()];
+    [result setRequiredShippingContactFields:toPKContactFields(paymentRequest.requiredShippingContactFields()).get()];
+#else
     [result setRequiredBillingAddressFields:toPKAddressField(paymentRequest.requiredBillingContactFields())];
     [result setRequiredShippingAddressFields:toPKAddressField(paymentRequest.requiredShippingContactFields())];
-#pragma clang diagnostic pop
+#endif
 
     [result setSupportedNetworks:toSupportedNetworks(paymentRequest.supportedNetworks()).get()];
     [result setMerchantCapabilities:toPKMerchantCapabilities(paymentRequest.merchantCapabilities())];
@@ -603,7 +620,8 @@ static RetainPtr<NSError> toNSError(const WebCore::PaymentError& error)
         }
 
         [userInfo setObject:pkContactField forKey:getPKPaymentErrorContactFieldUserInfoKey()];
-        [userInfo setObject:postalAddressKey forKey:getPKPaymentErrorPostalAddressUserInfoKey()];
+        if (postalAddressKey)
+            [userInfo setObject:postalAddressKey forKey:getPKPaymentErrorPostalAddressUserInfoKey()];
     }
 
     return adoptNS([[NSError alloc] initWithDomain:getPKPaymentErrorDomain() code:toPKPaymentErrorCode(error.code) userInfo:userInfo.get()]);
