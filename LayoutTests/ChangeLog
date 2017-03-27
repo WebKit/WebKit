@@ -1,3 +1,12 @@
+2017-03-27  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline svg/css/getComputedStyle-basic.xhtml for macOS.
+
+        Unreviewed test gardening.
+
+        * platform/mac-elcapitan/svg/css/getComputedStyle-basic-expected.txt: Added.
+        * platform/mac/svg/css/getComputedStyle-basic-expected.txt: Added.
+
 2017-03-27  Antti Koivisto  <antti@apple.com>
 
         Loading in-body stylesheets should not block rendering of elements before them
