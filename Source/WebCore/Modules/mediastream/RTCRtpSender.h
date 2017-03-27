@@ -37,17 +37,17 @@
 
 namespace WebCore {
 
-class RTCRtpSenderClient {
-public:
-    virtual void replaceTrack(RTCRtpSender&, RefPtr<MediaStreamTrack>&&, DOMPromise<void>&&) = 0;
-
-    virtual ~RTCRtpSenderClient() { }
-};
-
 class RTCRtpSender : public RTCRtpSenderReceiverBase {
 public:
-    static Ref<RTCRtpSender> create(Ref<MediaStreamTrack>&&, Vector<String>&& mediaStreamIds, RTCRtpSenderClient&);
-    static Ref<RTCRtpSender> create(String&& trackKind, Vector<String>&& mediaStreamIds, RTCRtpSenderClient&);
+    class Backend {
+    public:
+        virtual void replaceTrack(RTCRtpSender&, RefPtr<MediaStreamTrack>&&, DOMPromise<void>&&) = 0;
+        virtual RTCRtpParameters getParameters(RTCRtpSender&) const = 0;
+        virtual ~Backend() { }
+    };
+
+    static Ref<RTCRtpSender> create(Ref<MediaStreamTrack>&&, Vector<String>&& mediaStreamIds, Backend&);
+    static Ref<RTCRtpSender> create(String&& trackKind, Vector<String>&& mediaStreamIds, Backend&);
 
     const String& trackId() const { return m_trackId; }
     const String& trackKind() const { return m_trackKind; }
@@ -55,20 +55,22 @@ public:
     const Vector<String>& mediaStreamIds() const { return m_mediaStreamIds; }
     void setMediaStreamIds(Vector<String>&& mediaStreamIds) { m_mediaStreamIds = WTFMove(mediaStreamIds); }
 
-    bool isStopped() const { return !m_client; }
-    void stop() { m_client = nullptr; }
+    bool isStopped() const { return !m_backend; }
+    void stop() { m_backend = nullptr; }
     void setTrack(Ref<MediaStreamTrack>&&);
     void setTrackToNull();
 
     void replaceTrack(RefPtr<MediaStreamTrack>&&, DOMPromise<void>&&);
 
+    RTCRtpParameters getParameters();
+
 private:
-    RTCRtpSender(String&& trackKind, Vector<String>&& mediaStreamIds, RTCRtpSenderClient&);
+    RTCRtpSender(String&& trackKind, Vector<String>&& mediaStreamIds, Backend&);
 
     String m_trackId;
     String m_trackKind;
     Vector<String> m_mediaStreamIds;
-    RTCRtpSenderClient* m_client;
+    Backend* m_backend;
 };
 
 } // namespace WebCore

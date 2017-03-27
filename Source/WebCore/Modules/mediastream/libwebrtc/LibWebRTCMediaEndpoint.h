@@ -28,6 +28,7 @@
 
 #include "LibWebRTCProvider.h"
 #include "PeerConnectionBackend.h"
+#include "RTCRtpReceiver.h"
 #include "RealtimeOutgoingAudioSource.h"
 #include "RealtimeOutgoingVideoSource.h"
 
@@ -79,7 +80,8 @@ public:
     RefPtr<RTCSessionDescription> pendingLocalDescription() const;
     RefPtr<RTCSessionDescription> pendingRemoteDescription() const;
 
-    void addTrack(MediaStreamTrack&, const Vector<String>&);
+    void addTrack(RTCRtpSender&, MediaStreamTrack&, const Vector<String>&);
+    RTCRtpParameters getRTCRtpSenderParameters(RTCRtpSender&);
 
 private:
     LibWebRTCMediaEndpoint(LibWebRTCPeerConnectionBackend&, LibWebRTCProvider&);
@@ -103,7 +105,7 @@ private:
     void setRemoteSessionDescriptionSucceeded();
     void setRemoteSessionDescriptionFailed(const std::string&);
     void addRemoteStream(webrtc::MediaStreamInterface&);
-    void addRemoteTrack(const webrtc::RtpReceiverInterface&, const std::vector<rtc::scoped_refptr<webrtc::MediaStreamInterface>>&);
+    void addRemoteTrack(rtc::scoped_refptr<webrtc::RtpReceiverInterface>&&, const std::vector<rtc::scoped_refptr<webrtc::MediaStreamInterface>>&);
     void removeRemoteStream(webrtc::MediaStreamInterface&);
     void addDataChannel(rtc::scoped_refptr<webrtc::DataChannelInterface>&&);
 
@@ -175,6 +177,7 @@ private:
     SetLocalSessionDescriptionObserver m_setLocalSessionDescriptionObserver;
     SetRemoteSessionDescriptionObserver m_setRemoteSessionDescriptionObserver;
     HashMap<webrtc::MediaStreamInterface*, MediaStream*> m_streams;
+    HashMap<RTCRtpSender*, rtc::scoped_refptr<webrtc::RtpSenderInterface>> m_senders;
 
     bool m_isInitiator { false };
 };

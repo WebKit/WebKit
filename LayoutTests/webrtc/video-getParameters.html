@@ -1,0 +1,56 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Testing getParameters on a basic video exchange</title>
+        <script src="../resources/testharness.js"></script>
+        <script src="../resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <script src ="routines.js"></script>
+        <script>
+var firstConnection, secondConnection;
+promise_test((test) => {
+    if (window.testRunner)
+        testRunner.setUserMediaPermission(true);
+
+    var sender, receiver;
+    var localStream, remoteStream;
+    return navigator.mediaDevices.getUserMedia({ video: true}).then((stream) => {
+        localStream = stream;
+        return new Promise((resolve, reject) => {
+            if (window.internals)
+                internals.useMockRTCPeerConnectionFactory("TwoRealPeerConnections");
+
+            createConnections((connection) => {
+                firstConnection = connection;
+                sender = firstConnection.addTrack(stream.getVideoTracks()[0], stream);
+            }, (connection) => {
+                secondConnection = connection;
+                receiver = secondConnection.addTransceiver("video").receiver;
+                secondConnection.ontrack = (trackEvent) => {
+                    remoteStream = trackEvent.streams[0];
+                    resolve();
+                };
+            });
+            setTimeout(() => reject("Test timed out"), 5000);
+        });
+    }).then(() => {
+        assert_true(!!sender, "sender should not be undefined");
+        assert_true(!!receiver, "receiver should not be undefined");
+        var senderParameters = sender.getParameters();
+        var receiverParameters = receiver.getParameters();
+        assert_true(!!senderParameters, "sender parameters should not be undefined or null");
+        assert_true(!!receiverParameters, "receiver parameters should not be undefined or null");
+
+        assert_equals(JSON.stringify(senderParameters), JSON.stringify(receiverParameters), "testing sender vs. receiver parameters");
+
+        senderParameters.encodings[0].fec.ssrc = 1;
+        senderParameters.encodings[0].rtx.ssrc = 1;
+        senderParameters.encodings[0].ssrc = 1;
+        assert_equals(JSON.stringify(senderParameters), '{"codecs":[],"degradationPreference":"balanced","encodings":[{"active":true,"dtx":"disabled","fec":{"ssrc":1},"maxBitrate":0,"maxFramerate":0,"priority":"medium","rid":"","rtx":{"ssrc":1},"scaleResolutionDownBy":1,"ssrc":1}],"headerExtensions":[],"transactionId":""}', "Testing sanitized parameters");
+    });
+}, "Basic video stats");
+        </script>
+    </body>
+</html>

@@ -2710,6 +2710,8 @@
 		5E2C43711BCF0D750001E2BD /* JSRTCRtpTransceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5E2C436D1BCF0D690001E2BD /* JSRTCRtpTransceiver.cpp */; };
 		5E2C43721BCF0D750001E2BC /* JSRTCRtpReceiver.h in Headers */ = {isa = PBXBuildFile; fileRef = 5E2C436E1BCF0D690001E2BC /* JSRTCRtpReceiver.h */; };
 		5E2C43721BCF0D750001E2BD /* JSRTCRtpTransceiver.h in Headers */ = {isa = PBXBuildFile; fileRef = 5E2C436E1BCF0D690001E2BD /* JSRTCRtpTransceiver.h */; };
+		5E2C43731BCF0D750001E2BE /* JSRTCRtpParameters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5E2C436F1BCF0D690001E2BE /* JSRTCRtpParameters.cpp */; };
+		5E2C43741BCF0D750001E2BE /* JSRTCRtpParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 5E2C43701BCF0D690001E2BE /* JSRTCRtpParameters.h */; };
 		5E2C43731BCF0D750001E2BC /* JSRTCRtpSender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5E2C436F1BCF0D690001E2BC /* JSRTCRtpSender.cpp */; };
 		5E2C43741BCF0D750001E2BC /* JSRTCRtpSender.h in Headers */ = {isa = PBXBuildFile; fileRef = 5E2C43701BCF0D690001E2BC /* JSRTCRtpSender.h */; };
 		5E2C437B1BCF9A570001E2BC /* RTCPeerConnectionBuiltins.h in Headers */ = {isa = PBXBuildFile; fileRef = 5E2C43761BCF9A0B0001E2BC /* RTCPeerConnectionBuiltins.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9332,6 +9334,8 @@
 		41A3D58D101C152D00316D07 /* DedicatedWorkerThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DedicatedWorkerThread.h; sourceTree = "<group>"; };
 		41A48A9C1E83129100D2AC2D /* RTCPeerConnectionState.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RTCPeerConnectionState.idl; sourceTree = "<group>"; };
 		41A48A9D1E8312EB00D2AC2D /* RTCPeerConnectionState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCPeerConnectionState.h; sourceTree = "<group>"; };
+		41A48AA71E84AEEC00D2AC2D /* RTCRtpParameters.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RTCRtpParameters.idl; sourceTree = "<group>"; };
+		41A48AA81E84AF1D00D2AC2D /* RTCRtpParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCRtpParameters.h; sourceTree = "<group>"; };
 		41ABE6791D0580D5006D862D /* CrossOriginPreflightChecker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CrossOriginPreflightChecker.cpp; sourceTree = "<group>"; };
 		41ABE67A1D0580D5006D862D /* CrossOriginPreflightChecker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CrossOriginPreflightChecker.h; sourceTree = "<group>"; };
 		41AD75391CEF6BCE00A31486 /* FetchOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FetchOptions.h; sourceTree = "<group>"; };
@@ -10422,6 +10426,8 @@
 		5E2C436E1BCF0D690001E2BD /* JSRTCRtpTransceiver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSRTCRtpTransceiver.h; sourceTree = "<group>"; };
 		5E2C436F1BCF0D690001E2BC /* JSRTCRtpSender.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSRTCRtpSender.cpp; sourceTree = "<group>"; };
 		5E2C43701BCF0D690001E2BC /* JSRTCRtpSender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSRTCRtpSender.h; sourceTree = "<group>"; };
+		5E2C436F1BCF0D690001E2BE /* JSRTCRtpParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSRTCRtpParameters.cpp; sourceTree = "<group>"; };
+		5E2C43701BCF0D690001E2BE /* JSRTCRtpParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSRTCRtpParameters.h; sourceTree = "<group>"; };
 		5E2C43751BCF9A0B0001E2BC /* RTCPeerConnectionBuiltins.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RTCPeerConnectionBuiltins.cpp; sourceTree = "<group>"; };
 		5E2C43761BCF9A0B0001E2BC /* RTCPeerConnectionBuiltins.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCPeerConnectionBuiltins.h; sourceTree = "<group>"; };
 		5E2C43781BCF9A0B0001E2BC /* RTCPeerConnectionInternalsBuiltins.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RTCPeerConnectionInternalsBuiltins.cpp; sourceTree = "<group>"; };
@@ -15958,6 +15964,8 @@
 				07221B7917CEC32700848E51 /* RTCPeerConnection.idl */,
 				5E2C43541BCEE30D0001E2BC /* RTCPeerConnection.js */,
 				5E2C43551BCEE30D0001E2BC /* RTCPeerConnectionInternals.js */,
+				41A48AA71E84AEEC00D2AC2D /* RTCRtpParameters.idl */,
+				41A48AA81E84AF1D00D2AC2D /* RTCRtpParameters.h */,
 				5E2C43561BCEE30D0001E2BC /* RTCRtpReceiver.cpp */,
 				5E2C43571BCEE30D0001E2BC /* RTCRtpReceiver.h */,
 				5E2C43581BCEE30D0001E2BC /* RTCRtpReceiver.idl */,
@@ -16196,6 +16204,8 @@
 				07969DA017D14151007FF842 /* JSRTCPeerConnection.h */,
 				5E2C436D1BCF0D690001E2BC /* JSRTCRtpReceiver.cpp */,
 				5E2C436E1BCF0D690001E2BC /* JSRTCRtpReceiver.h */,
+				5E2C436F1BCF0D690001E2BE /* JSRTCRtpParameters.cpp */,
+				5E2C43701BCF0D690001E2BE /* JSRTCRtpParameters.h */,
 				5E2C436F1BCF0D690001E2BC /* JSRTCRtpSender.cpp */,
 				5E2C43701BCF0D690001E2BC /* JSRTCRtpSender.h */,
 				5E2C436D1BCF0D690001E2BD /* JSRTCRtpTransceiver.cpp */,
@@ -27856,6 +27866,7 @@
 				07969DBA17D14151007FF842 /* JSRTCPeerConnection.h in Headers */,
 				5E2C43721BCF0D750001E2BC /* JSRTCRtpReceiver.h in Headers */,
 				5E2C43741BCF0D750001E2BC /* JSRTCRtpSender.h in Headers */,
+				5E2C43741BCF0D750001E2BE /* JSRTCRtpParameters.h in Headers */,
 				5E2C43721BCF0D750001E2BD /* JSRTCRtpTransceiver.h in Headers */,
 				07969DBC17D14151007FF842 /* JSRTCSessionDescription.h in Headers */,
 				07969DC217D14151007FF842 /* JSRTCStatsReport.h in Headers */,
@@ -31822,6 +31833,7 @@
 				07969DB917D14151007FF842 /* JSRTCPeerConnection.cpp in Sources */,
 				5E2C43711BCF0D750001E2BC /* JSRTCRtpReceiver.cpp in Sources */,
 				5E2C43731BCF0D750001E2BC /* JSRTCRtpSender.cpp in Sources */,
+				5E2C43731BCF0D750001E2BE /* JSRTCRtpParameters.cpp in Sources */,
 				5E2C43711BCF0D750001E2BD /* JSRTCRtpTransceiver.cpp in Sources */,
 				07969DBB17D14151007FF842 /* JSRTCSessionDescription.cpp in Sources */,
 				07969DC117D14151007FF842 /* JSRTCStatsReport.cpp in Sources */,

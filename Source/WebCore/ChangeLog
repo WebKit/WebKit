@@ -1,3 +1,72 @@
+2017-03-27  Youenn Fablet  <youenn@apple.com>
+
+        Add support for RTCRtpReceiver/RTCRtpSender getParameters
+        https://bugs.webkit.org/show_bug.cgi?id=170057
+
+        Reviewed by Alex Christensen.
+
+        Test: webrtc/video-getParameters.html
+
+        getParameters returns a dictionary of values taken from libwebrtc RtpReceiverInterface/RtpSenderInrterface objects.
+        Added a direct link between WebCore RTCRtpReceiver and libwebrtc RtpReceiverInterface object.
+        Making the link between WebCore RTCRtpSender and libwebrtc RtpSenderInrterface object through
+        PeerConnectionBackend to keep the current architecture shared with OpenWebRTC.
+        In the future, we should try to make the link more direct.
+
+        Added routines to support the conversion from libwebrtc to WebCore.
+        Ensured that RTCRtpReceiver is cleaning its backend when being stopped.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * Modules/mediastream/MediaEndpointPeerConnection.cpp:
+        (WebCore::MediaEndpointPeerConnection::setRemoteDescriptionTask):
+        * Modules/mediastream/PeerConnectionBackend.h:
+        (WebCore::PeerConnectionBackend::getParameters):
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::doClose):
+        (WebCore::RTCPeerConnection::getParameters):
+        * Modules/mediastream/RTCPeerConnection.h:
+        * Modules/mediastream/RTCRtpParameters.h: Added.
+        * Modules/mediastream/RTCRtpParameters.idl: Added.
+        * Modules/mediastream/RTCRtpReceiver.cpp:
+        (WebCore::RTCRtpReceiver::RTCRtpReceiver):
+        * Modules/mediastream/RTCRtpReceiver.h:
+        (WebCore::RTCRtpReceiver::Backend::~Backend):
+        (WebCore::RTCRtpReceiver::Backend::getParameters):
+        (WebCore::RTCRtpReceiver::create):
+        (WebCore::RTCRtpReceiver::stop):
+        (WebCore::RTCRtpReceiver::setBackend):
+        (WebCore::RTCRtpReceiver::getParameters):
+        * Modules/mediastream/RTCRtpReceiver.idl:
+        * Modules/mediastream/RTCRtpSender.cpp:
+        (WebCore::RTCRtpSender::create):
+        (WebCore::RTCRtpSender::RTCRtpSender):
+        (WebCore::RTCRtpSender::replaceTrack):
+        (WebCore::RTCRtpSender::getParameters):
+        * Modules/mediastream/RTCRtpSender.h:
+        (WebCore::RTCRtpSender::Backend::~Backend):
+        (WebCore::RTCRtpSender::isStopped):
+        (WebCore::RTCRtpSender::stop):
+        * Modules/mediastream/RTCRtpSender.idl:
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        (WebCore::LibWebRTCMediaEndpoint::addTrack):
+        (WebCore::LibWebRTCMediaEndpoint::addRemoteTrack):
+        (WebCore::LibWebRTCMediaEndpoint::OnAddTrack):
+        (WebCore::LibWebRTCMediaEndpoint::stop):
+        (WebCore::fillEncodingParameters):
+        (WebCore::fillHeaderExtensionParameters):
+        (WebCore::fillCodecParameters):
+        (WebCore::fillRtpParameters):
+        (WebCore::RTCRtpReceiverBackend::getParameters):
+        (WebCore::LibWebRTCMediaEndpoint::getRTCRtpSenderParameters):
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.cpp:
+        (WebCore::LibWebRTCPeerConnectionBackend::notifyAddedTrack):
+        (WebCore::LibWebRTCPeerConnectionBackend::getParameters):
+        * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.h:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/mediastream/mac/RealtimeOutgoingAudioSource.h:
+
 2017-03-27  Myles C. Maxfield  <mmaxfield@apple.com>
 
         font variation properties don't need to accept numbers

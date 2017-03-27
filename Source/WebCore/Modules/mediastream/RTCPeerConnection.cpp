@@ -348,10 +348,13 @@ bool RTCPeerConnection::doClose()
     m_iceConnectionState = RTCIceConnectionState::Closed;
     m_signalingState = RTCSignalingState::Closed;
 
-    m_backend->stop();
+    for (RTCRtpReceiver& receiver : m_transceiverSet->receivers())
+        receiver.stop();
 
     for (RTCRtpSender& sender : m_transceiverSet->senders())
         sender.stop();
+
+    m_backend->stop();
 
     return true;
 }
@@ -520,6 +523,11 @@ void RTCPeerConnection::replaceTrack(RTCRtpSender& sender, RefPtr<MediaStreamTra
     }
 
     m_backend->replaceTrack(sender, withTrack.releaseNonNull(), WTFMove(promise));
+}
+
+RTCRtpParameters RTCPeerConnection::getParameters(RTCRtpSender& sender) const
+{
+    return m_backend->getParameters(sender);
 }
 
 } // namespace WebCore

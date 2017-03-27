@@ -11,6 +11,8 @@
 #ifndef WEBRTC_API_MEDIATYPES_H_
 #define WEBRTC_API_MEDIATYPES_H_
 
+#include "webrtc/base/export.h"
+
 #include <string>
 
 namespace cricket {
@@ -21,7 +23,7 @@ enum MediaType {
   MEDIA_TYPE_DATA
 };
 
-std::string MediaTypeToString(MediaType type);
+WEBRTC_DYLIB_EXPORT std::string MediaTypeToString(MediaType type);
 // Aborts on invalid string. Only expected to be used on strings that are
 // guaranteed to be valid, such as MediaStreamTrackInterface::kind().
 MediaType MediaTypeFromString(const std::string& type_str);

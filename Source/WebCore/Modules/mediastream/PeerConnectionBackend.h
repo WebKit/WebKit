@@ -34,6 +34,7 @@
 #if ENABLE(WEB_RTC)
 
 #include "JSDOMPromise.h"
+#include "RTCRtpParameters.h"
 #include "RTCSignalingState.h"
 
 namespace WebCore {
@@ -96,6 +97,8 @@ public:
     virtual Ref<RTCRtpReceiver> createReceiver(const String& transceiverMid, const String& trackKind, const String& trackId) = 0;
     virtual void replaceTrack(RTCRtpSender&, Ref<MediaStreamTrack>&&, DOMPromise<void>&&) = 0;
     virtual void notifyAddedTrack(RTCRtpSender&) { }
+
+    virtual RTCRtpParameters getParameters(RTCRtpSender&) const { return { }; }
 
     void markAsNeedingNegotiation();
     bool isNegotiationNeeded() const { return m_negotiationNeeded; };

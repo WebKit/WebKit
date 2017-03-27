@@ -58,11 +58,12 @@ class RTCStatsCallback;
 
 struct RTCAnswerOptions;
 struct RTCOfferOptions;
+struct RTCRtpParameters;
 struct RTCRtpTransceiverInit {
     RTCRtpTransceiverDirection direction;
 };
 
-class RTCPeerConnection final : public RefCounted<RTCPeerConnection>, public RTCRtpSenderClient, public EventTargetWithInlineData, public ActiveDOMObject {
+class RTCPeerConnection final : public RefCounted<RTCPeerConnection>, public RTCRtpSender::Backend, public EventTargetWithInlineData, public ActiveDOMObject {
 public:
     static Ref<RTCPeerConnection> create(ScriptExecutionContext&);
     virtual ~RTCPeerConnection();
@@ -134,7 +135,7 @@ public:
 
     void scheduleNegotiationNeededEvent();
 
-    RTCRtpSenderClient& senderClient() { return *this; }
+    RTCRtpSender::Backend& senderBackend() { return *this; }
     void fireEvent(Event&);
 
     void disableICECandidateFiltering() { m_backend->disableICECandidateFiltering(); }
@@ -160,8 +161,10 @@ private:
     const char* activeDOMObjectName() const final;
     bool canSuspendForDocumentSuspension() const final;
 
-    // RTCRtpSenderClient
+    // FIXME: We might want PeerConnectionBackend to be the Backend
+    // RTCRtpSender::Backend
     void replaceTrack(RTCRtpSender&, RefPtr<MediaStreamTrack>&&, DOMPromise<void>&&) final;
+    RTCRtpParameters getParameters(RTCRtpSender&) const final;
 
     void updateConnectionState();
     bool doClose();

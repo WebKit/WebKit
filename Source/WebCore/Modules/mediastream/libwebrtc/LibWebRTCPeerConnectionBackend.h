@@ -70,6 +70,7 @@ private:
     RefPtr<RTCSessionDescription> pendingRemoteDescription() const final;
 
     void replaceTrack(RTCRtpSender&, Ref<MediaStreamTrack>&&, DOMPromise<void>&&) final;
+    RTCRtpParameters getParameters(RTCRtpSender&) const final;
 
     void emulatePlatformEvent(const String&) final { }
 

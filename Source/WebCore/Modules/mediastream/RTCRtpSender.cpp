@@ -37,23 +37,23 @@
 
 namespace WebCore {
 
-Ref<RTCRtpSender> RTCRtpSender::create(Ref<MediaStreamTrack>&& track, Vector<String>&& mediaStreamIds, RTCRtpSenderClient& client)
+Ref<RTCRtpSender> RTCRtpSender::create(Ref<MediaStreamTrack>&& track, Vector<String>&& mediaStreamIds, Backend& backend)
 {
-    auto sender = adoptRef(*new RTCRtpSender(String(track->kind()), WTFMove(mediaStreamIds), client));
+    auto sender = adoptRef(*new RTCRtpSender(String(track->kind()), WTFMove(mediaStreamIds), backend));
     sender->setTrack(WTFMove(track));
     return sender;
 }
 
-Ref<RTCRtpSender> RTCRtpSender::create(String&& trackKind, Vector<String>&& mediaStreamIds, RTCRtpSenderClient& client)
+Ref<RTCRtpSender> RTCRtpSender::create(String&& trackKind, Vector<String>&& mediaStreamIds, Backend& backend)
 {
-    return adoptRef(*new RTCRtpSender(WTFMove(trackKind), WTFMove(mediaStreamIds), client));
+    return adoptRef(*new RTCRtpSender(WTFMove(trackKind), WTFMove(mediaStreamIds), backend));
 }
 
-RTCRtpSender::RTCRtpSender(String&& trackKind, Vector<String>&& mediaStreamIds, RTCRtpSenderClient& client)
+RTCRtpSender::RTCRtpSender(String&& trackKind, Vector<String>&& mediaStreamIds, Backend& backend)
     : RTCRtpSenderReceiverBase()
     , m_trackKind(WTFMove(trackKind))
     , m_mediaStreamIds(WTFMove(mediaStreamIds))
-    , m_client(&client)
+    , m_backend(&backend)
 {
 }
 
@@ -87,7 +87,14 @@ void RTCRtpSender::replaceTrack(RefPtr<MediaStreamTrack>&& withTrack, DOMPromise
     if (!withTrack && m_track)
         m_track->stopProducingData();
 
-    m_client->replaceTrack(*this, WTFMove(withTrack), WTFMove(promise));
+    m_backend->replaceTrack(*this, WTFMove(withTrack), WTFMove(promise));
+}
+
+RTCRtpParameters RTCRtpSender::getParameters()
+{
+    if (isStopped())
+        return { };
+    return m_backend->getParameters(*this);
 }
 
 } // namespace WebCore

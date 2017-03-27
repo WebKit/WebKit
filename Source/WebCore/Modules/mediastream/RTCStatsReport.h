@@ -124,7 +124,7 @@ public:
         bool ended { false };
         bool detached { false };
         unsigned long frameWidth { 0 };
-        unsigned long frameHeight { 0};
+        unsigned long frameHeight { 0 };
         double framesPerSecond { 0 };
         unsigned long framesSent { 0 };
         unsigned long framesReceived { 0 };

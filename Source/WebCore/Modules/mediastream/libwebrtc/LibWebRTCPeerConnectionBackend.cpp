@@ -307,7 +307,7 @@ RefPtr<RTCSessionDescription> LibWebRTCPeerConnectionBackend::remoteDescription(
 void LibWebRTCPeerConnectionBackend::notifyAddedTrack(RTCRtpSender& sender)
 {
     ASSERT(sender.track());
-    m_endpoint->addTrack(*sender.track(), sender.mediaStreamIds());
+    m_endpoint->addTrack(sender, *sender.track(), sender.mediaStreamIds());
 }
 
 void LibWebRTCPeerConnectionBackend::removeRemoteStream(MediaStream* mediaStream)
@@ -362,6 +362,11 @@ void LibWebRTCPeerConnectionBackend::replaceTrack(RTCRtpSender& sender, Ref<Medi
         break;
     }
     }
+}
+
+RTCRtpParameters LibWebRTCPeerConnectionBackend::getParameters(RTCRtpSender& sender) const
+{
+    return m_endpoint->getRTCRtpSenderParameters(sender);
 }
 
 } // namespace WebCore

@@ -1,3 +1,13 @@
+2017-03-27  Youenn Fablet  <youenn@apple.com>
+
+        Add support for RTCRtpReceiver/RTCRtpSender getParameters
+        https://bugs.webkit.org/show_bug.cgi?id=170057
+
+        Reviewed by Alex Christensen.
+
+        * webrtc/video-getParameters-expected.txt: Added.
+        * webrtc/video-getParameters.html: Added.
+
 2017-03-27  Myles C. Maxfield  <mmaxfield@apple.com>
 
         font variation properties don't need to accept numbers
