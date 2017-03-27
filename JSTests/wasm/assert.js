@@ -111,9 +111,6 @@ export const le = (lhs, rhs, msg) => {
         _fail(`Expected: "${lhs}" > "${rhs}"`, msg);
 };
 
-// Ignore source information at the end of the error message if the expected message didn't specify that information. Sometimes it changes, or it's tricky to get just right.
-const _sourceRe = new RegExp(/( \(evaluating '.*'\))|( \(In .*\))/);
-
 const _throws = (func, type, message, ...args) => {
     try {
         func(...args);
@@ -121,9 +118,16 @@ const _throws = (func, type, message, ...args) => {
         if (e instanceof type) {
             if (e.message === message)
                 return e;
-            const cleanMessage = e.message.replace(_sourceRe, '');
-            if (cleanMessage === message)
-                return e;
+            // Ignore source information at the end of the error message if the
+            // expected message didn't specify that information. Sometimes it
+            // changes, or it's tricky to get just right.
+            const evaluatingIndex = e.message.indexOf(" (evaluating '");
+            if (evaluatingIndex !== -1) {
+                const cleanMessage = e.message.substring(0, evaluatingIndex);
+                if (cleanMessage === message)
+                    return e;
+            }
+            return e;
         }
         _fail(`Expected to throw a ${type.name} with message "${message}", got ${e.name} with message "${e.message}"`);
     }

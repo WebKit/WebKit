@@ -168,16 +168,16 @@ JSWebAssemblyInstance* WebAssemblyInstanceConstructor::createInstance(ExecState*
             if (!table)
                 return exception(createJSWebAssemblyLinkError(exec, vm, ASCIILiteral("Table import is not an instance of WebAssembly.Table")));
 
-            uint32_t expectedInitial = moduleInformation.tableInformation.initial();
-            uint32_t actualInitial = table->size();
-            if (actualInitial < expectedInitial)
+            uint32_t declaredInitial = moduleInformation.tableInformation.initial();
+            uint32_t importedInitial = table->size();
+            if (importedInitial < declaredInitial)
                 return exception(createJSWebAssemblyLinkError(exec, vm, ASCIILiteral("Table import provided an 'initial' that is too small")));
 
-            if (std::optional<uint32_t> expectedMaximum = moduleInformation.tableInformation.maximum()) {
-                std::optional<uint32_t> actualMaximum = table->maximum();
-                if (!actualMaximum)
+            if (std::optional<uint32_t> declaredMaximum = moduleInformation.tableInformation.maximum()) {
+                std::optional<uint32_t> importedMaximum = table->maximum();
+                if (!importedMaximum)
                     return exception(createJSWebAssemblyLinkError(exec, vm, ASCIILiteral("Table import does not have a 'maximum' but the module requires that it does")));
-                if (*actualMaximum > *expectedMaximum)
+                if (*importedMaximum > *declaredMaximum)
                     return exception(createJSWebAssemblyLinkError(exec, vm, ASCIILiteral("Imported Table's 'maximum' is larger than the module's expected 'maximum'")));
             }
 
@@ -196,18 +196,18 @@ JSWebAssemblyInstance* WebAssemblyInstanceConstructor::createInstance(ExecState*
             if (!memory)
                 return exception(createJSWebAssemblyLinkError(exec, vm, ASCIILiteral("Memory import is not an instance of WebAssembly.Memory")));
 
-            Wasm::PageCount expectedInitial = moduleInformation.memory.initial();
-            Wasm::PageCount actualInitial = memory->memory().initial();
-            if (actualInitial < expectedInitial)
-                return exception(createJSWebAssemblyLinkError(exec, vm, ASCIILiteral("Memory import provided an 'initial' that is too small")));
+            Wasm::PageCount declaredInitial = moduleInformation.memory.initial();
+            Wasm::PageCount importedInitial = memory->memory().initial();
+            if (importedInitial < declaredInitial)
+                return exception(createJSWebAssemblyLinkError(exec, vm, ASCIILiteral("Memory import provided an 'initial' that is smaller than the module's declared 'initial' import memory size")));
 
-            if (Wasm::PageCount expectedMaximum = moduleInformation.memory.maximum()) {
-                Wasm::PageCount actualMaximum = memory->memory().maximum();
-                if (!actualMaximum)
+            if (Wasm::PageCount declaredMaximum = moduleInformation.memory.maximum()) {
+                Wasm::PageCount importedMaximum = memory->memory().maximum();
+                if (!importedMaximum)
                     return exception(createJSWebAssemblyLinkError(exec, vm, ASCIILiteral("Memory import did not have a 'maximum' but the module requires that it does")));
 
-                if (actualMaximum > expectedMaximum)
-                    return exception(createJSWebAssemblyLinkError(exec, vm, ASCIILiteral("Memory imports 'maximum' is larger than the module's expected 'maximum'")));
+                if (importedMaximum > declaredMaximum)
+                    return exception(createJSWebAssemblyLinkError(exec, vm, ASCIILiteral("Memory import provided a 'maximum' that is larger than the module's declared 'maximum' import memory size")));
             }
 
             // ii. Append v to memories.

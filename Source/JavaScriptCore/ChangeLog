@@ -1,3 +1,13 @@
+2017-03-27  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly: misc memory testing
+        https://bugs.webkit.org/show_bug.cgi?id=170137
+
+        Reviewed by Keith Miller.
+
+        * wasm/js/WebAssemblyInstanceConstructor.cpp:
+        (JSC::WebAssemblyInstanceConstructor::createInstance): improve error messages
+
 2017-03-27  Michael Saboff  <msaboff@apple.com>
 
         Add ARM64 system instructions to disassembler

@@ -1,3 +1,17 @@
+2017-03-27  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly: misc memory testing
+        https://bugs.webkit.org/show_bug.cgi?id=170137
+
+        Reviewed by Keith Miller.
+
+        * wasm/assert.js: handle newlines in code we print out, avoid regex
+        * wasm/function-tests/memory-import-and-grow.js: Added.
+        (const.instantiate):
+        (const.test):
+        * wasm/function-tests/memory-section-and-import.js: Added.
+        (const.instantiate):
+
 2017-03-23  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Use jsNontrivialString agressively for ToString(Int52)
