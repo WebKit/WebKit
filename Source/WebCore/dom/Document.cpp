@@ -1725,7 +1725,8 @@ void Document::resolveStyle(ResolveStyleType type)
 
         if (type == ResolveStyleType::Rebuild) {
             // This may get set again during style resolve.
-            m_hasNodesWithPlaceholderStyle = false;
+            m_hasNodesWithNonFinalStyle = false;
+            m_hasNodesWithMissingStyle = false;
 
             auto documentStyle = Style::resolveForDocument(*this);
 
@@ -1761,6 +1762,9 @@ void Document::resolveStyle(ResolveStyleType type)
         }
 
         updatedCompositingLayers = frameView.updateCompositingLayersAfterStyleChange();
+
+        if (m_renderView->needsLayout())
+            frameView.scheduleRelayout();
     }
 
     // If we wanted to call implicitClose() during recalcStyle, do so now that we're finished.
@@ -1854,34 +1858,15 @@ void Document::updateLayout()
         frameView->layout();
 }
 
-// FIXME: This is a bad idea and needs to be removed eventually.
-// Other browsers load stylesheets before they continue parsing the web page.
-// Since we don't, we can run JavaScript code that needs answers before the
-// stylesheets are loaded. Doing a layout ignoring the pending stylesheets
-// lets us get reasonable answers. The long term solution to this problem is
-// to instead suspend JavaScript execution.
 void Document::updateLayoutIgnorePendingStylesheets(Document::RunPostLayoutTasks runPostLayoutTasks)
 {
     bool oldIgnore = m_ignorePendingStylesheets;
 
     if (!haveStylesheetsLoaded()) {
         m_ignorePendingStylesheets = true;
-        // FIXME: We are willing to attempt to suppress painting with outdated style info only once.  Our assumption is that it would be
-        // dangerous to try to stop it a second time, after page content has already been loaded and displayed
-        // with accurate style information.  (Our suppression involves blanking the whole page at the
-        // moment.  If it were more refined, we might be able to do something better.)
-        // It's worth noting though that this entire method is a hack, since what we really want to do is
-        // suspend JS instead of doing a layout with inaccurate information.
-        HTMLElement* bodyElement = bodyOrFrameset();
-        if (bodyElement && !bodyElement->renderer() && m_pendingSheetLayout == NoLayoutWithPendingSheets) {
-            m_pendingSheetLayout = DidLayoutWithPendingSheets;
-            styleScope().didChangeActiveStyleSheetCandidates();
-            resolveStyle(ResolveStyleType::Rebuild);
-        } else if (m_hasNodesWithPlaceholderStyle)
-            // If new nodes have been added or style recalc has been done with style sheets still pending, some nodes 
-            // may not have had their real style calculated yet. Normally this gets cleaned when style sheets arrive 
-            // but here we need up-to-date style immediately.
-            resolveStyle(ResolveStyleType::Rebuild);
+        // FIXME: This should just invalidate elements with missing styles.
+        if (m_hasNodesWithMissingStyle)
+            scheduleForcedStyleRecalc();
     }
 
     updateLayout();
@@ -2723,14 +2708,16 @@ void Document::setParsing(bool b)
 
 bool Document::shouldScheduleLayout()
 {
-    // This function will only be called when FrameView thinks a layout is needed.
-    // This enforces a couple extra rules.
-    //
-    //    (a) Only schedule a layout once the stylesheets are loaded.
-    //    (b) Only schedule layout once we have a body element.
+    if (!documentElement())
+        return false;
+    if (!is<HTMLHtmlElement>(*documentElement()))
+        return true;
+    if (!bodyOrFrameset())
+        return false;
+    if (styleScope().hasPendingSheetsBeforeBody())
+        return false;
 
-    return (haveStylesheetsLoaded() && bodyOrFrameset())
-        || (documentElement() && !is<HTMLHtmlElement>(*documentElement()));
+    return true;
 }
     
 bool Document::isLayoutTimerActive()
@@ -3034,15 +3021,6 @@ Frame* Document::findUnsafeParentScrollPropagationBoundary()
 
 void Document::didRemoveAllPendingStylesheet()
 {
-    if (m_pendingSheetLayout == DidLayoutWithPendingSheets) {
-        // Painting is disabled when doing layouts with pending sheets to avoid FOUC.
-        // We need to force paint when coming out from this state.
-        // FIXME: This is not very elegant.
-        m_pendingSheetLayout = IgnoreLayoutWithPendingSheets;
-        if (renderView())
-            renderView()->repaintViewAndCompositedLayers();
-    }
-
     if (auto* parser = scriptableDocumentParser())
         parser->executeScriptsWaitingForStylesheetsSoon();
 }

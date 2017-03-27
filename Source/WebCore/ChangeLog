@@ -1,3 +1,96 @@
+2017-03-27  Antti Koivisto  <antti@apple.com>
+
+        Allow the page to render before <link> stylesheet tags in body
+        https://bugs.webkit.org/show_bug.cgi?id=149157
+        <rdar://problem/24658830>
+
+        Reviewed by Simon Fraser.
+
+        Currently we block style and renderer building completely if document has any loading
+        stylesheets. In case a script queries something layout dependent we construct the render
+        tree with whatever style we have but block painting in it.
+
+        This patch changes behavior so that a loading stylesheet in body only blocks rendering for elements
+        that are after it. The expectation is that such stylesheets rarely affect elements before them
+        and the elements can be rendered without causing ugly visible styling changes.
+
+        The patch replaces the old flash-of-unstyled-content (FOUC) preventation mechanism with a more
+        fine-grained one. Paint blocking is now done on per-renderer basis with based on isNonFinal flag in
+        RenderStyle.
+
+        For stylesheets in head the behavior should be largely unchanged.
+
+        Test: http/tests/incremental/stylesheet-body-incremental-rendering.html
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::pseudoStyleRulesForElement):
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::resolveStyle):
+        (WebCore::Document::updateLayoutIgnorePendingStylesheets):
+
+            Remove the old FOUC preventation state tracking.
+
+        (WebCore::Document::shouldScheduleLayout):
+        (WebCore::Document::didRemoveAllPendingStylesheet):
+
+            Repaints will now get triggered by the normal style mechanism.
+
+        * dom/Document.h:
+        (WebCore::Document::hasNodesWithNonFinalStyle):
+        (WebCore::Document::setHasNodesWithNonFinalStyle):
+
+            Track if we need to recompute the style later because non-final or unstyled elements.
+
+        (WebCore::Document::didLayoutWithPendingStylesheets): Deleted.
+        (WebCore::Document::hasNodesWithPlaceholderStyle): Deleted.
+        (WebCore::Document::setHasNodesWithPlaceholderStyle): Deleted.
+        * html/HTMLFrameSetElement.cpp:
+        (WebCore::HTMLFrameSetElement::rendererIsNeeded):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::qualifiesAsVisuallyNonEmpty):
+
+            Don't qualify as visually non-empty if we have loading stylesheets in head (even if there is
+            a fouc-prevented render tree).
+
+        (WebCore::FrameView::fireLayoutRelatedMilestonesIfNeeded):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintContents):
+
+            Instead of a global test, block painting if isNonFinal is set in the renderer's style.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::shouldSuppressPaintingLayer):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::changeRequiresRepaint):
+
+            The isNonFinal flag prevents painting so we need to trigger repaint when it gets cleared.
+
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::isNotFinal):
+        (WebCore::RenderStyle::setIsNotFinal):
+        (WebCore::RenderStyle::isPlaceholderStyle): Deleted.
+        (WebCore::RenderStyle::setIsPlaceholderStyle): Deleted.
+
+            There is no need for placeholder styles anymore. Reuse the bit for isNotFinal.
+
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator==):
+        * rendering/style/StyleRareNonInheritedData.h:
+        * style/StyleScope.cpp:
+        (WebCore::Style::Scope::analyzeStyleSheetChange):
+        (WebCore::Style::Scope::updateActiveStyleSheets):
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::TreeResolver::styleForElement):
+        (WebCore::Style::TreeResolver::resolveElement):
+
+            If we have seens a loading stylesheet and don't have a renderer yet don't style the element.
+            In case there is a renderer or we are ignoring pending sheets, resolve the style normally
+            but mark it as non-final.
+
+        (WebCore::Style::makePlaceholderStyle): Deleted.
+
 2017-03-27  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Test variation font ranges in the CSS Font Loading API
