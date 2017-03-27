@@ -28,7 +28,6 @@ import subprocess
 import time
 
 from webkitpy.common.memoized import memoized
-from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 from webkitpy.port import image_diff
 from webkitpy.port.device import Device
 from webkitpy.port.ios import IOSPort
@@ -172,21 +171,6 @@ class IOSSimulatorPort(IOSPort):
         archs = ['ARCHS=i386'] if self.architecture() == 'x86' else []
         sdk = ['--sdk', 'iphonesimulator']
         return archs + sdk
-
-    def _generate_all_test_configurations(self):
-        configurations = []
-        for build_type in self.ALL_BUILD_TYPES:
-            for architecture in self.ARCHITECTURES:
-                configurations.append(TestConfiguration(version=self._version, architecture=architecture, build_type=build_type))
-        return configurations
-
-    def default_baseline_search_path(self):
-        if self.get_option('webkit_test_runner'):
-            fallback_names = [self._wk2_port_name()] + [self.port_name] + ['wk2']
-        else:
-            fallback_names = [self.port_name + '-wk1'] + [self.port_name]
-
-        return map(self._webkit_baseline_path, fallback_names)
 
     def _set_device_class(self, device_class):
         self._device_class = device_class if device_class else self.DEFAULT_DEVICE_CLASS

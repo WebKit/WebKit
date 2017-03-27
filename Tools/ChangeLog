@@ -1,5 +1,24 @@
 2017-03-27  Jonathan Bedard  <jbedard@apple.com>
 
+        webkitpy: Look for 'ios' test expectations for IOSPorts
+        https://bugs.webkit.org/show_bug.cgi?id=169413
+
+        Reviewed by Alexey Proskuryakov.
+
+        Test expectations for iOS tests should include the 'ios' folder.  Modify
+        default_baseline_search_path to include 'ios' folder and derivatives for
+        IOSPort.
+
+        * Scripts/webkitpy/port/ios.py:
+        (IOSPort._generate_all_test_configurations): Moved from IOSSimulatorPort.
+        (IOSPort.default_baseline_search_path): Add ios expectations along with port specific expectations.
+        (IOSPort.test_expectations_file_position): Added for testing.
+        * Scripts/webkitpy/port/ios_simulator.py:
+        (IOSSimulatorPort._generate_all_test_configurations): Moved to IOSPort.
+        (IOSSimulatorPort.default_baseline_search_path): Moved to IOSPort.
+
+2017-03-27  Jonathan Bedard  <jbedard@apple.com>
+
         REGRESSION: Reseting _device_map on each child process
         <rdar://problem/31274476>
 
