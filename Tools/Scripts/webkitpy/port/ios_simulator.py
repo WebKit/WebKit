@@ -242,8 +242,8 @@ class IOSSimulatorPort(IOSPort):
             Simulator.wait_until_device_is_booted(Simulator.managed_devices[i].udid)
 
         self._device_map = {}
-        for id, platform_device in Simulator.managed_devices:
-            self._device_map[id] = Device(platform_device)
+        for i in xrange(self.child_processes()):
+            self._device_map[i] = Device(Simulator.managed_devices[i])
 
     def _quit_ios_simulator(self):
         self._device_map = {}

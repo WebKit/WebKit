@@ -1,3 +1,13 @@
+2017-03-27  Jonathan Bedard  <jbedard@apple.com>
+
+        REGRESSION: Failing to iterate over Simulator.managed_devices map
+        <rdar://problem/31274476>
+
+        Unreviewed infrastructure fix.
+
+        * Scripts/webkitpy/port/ios_simulator.py:
+        (IOSSimulatorPort._create_devices): Iterate through managed_devices by worker number.
+
 2017-03-27  Alex Christensen  <achristensen@webkit.org>
 
         Make WebSockets work in network process
