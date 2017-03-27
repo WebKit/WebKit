@@ -1,3 +1,22 @@
+2017-03-27  Jason Marcell  <jmarcell@apple.com>
+
+        Bots should run the dashboard tests
+        https://bugs.webkit.org/show_bug.cgi?id=168994
+
+        Reviewed by Daniel Bates and David Kilzer.
+
+        We pull the `--results-directory` argument value out so that `RunDashboardTests` can override it so that we can separately run the dashboard layout tests.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (RunWebKitTests): Define a class variable called resultDirectory for the `--results-directory` argument so that subclasses can override this if needed.
+        (RunWebKitTests.start): Set the `--results-directory` argument value to the value of self.resultDirectory.
+        (RunDashboardTests): Subclass of RunWebKitTests in which we run the layout tests for the Bot Watcher's Dashboard.
+        (RunDashboardTests.start): Override the `--layout-tests-directory` to point to the dashboard layout tests.
+        (ExtractTestResults.addCustomURLs): Update the current results URL label to indicate that it links to layout tests results and add a new link to link to dashboard layout test results.
+        (TestFactory.__init__): Update unit tests to account for new RunDashboardTests step.
+        * BuildSlaveSupport/build.webkit.org-config/mastercfg_unittest.py:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotIteration.js:
+
 2017-03-27  Jonathan Bedard  <jbedard@apple.com>
 
         webkitpy: Look for 'ios' test expectations for IOSPorts
