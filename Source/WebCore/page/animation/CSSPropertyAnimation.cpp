@@ -42,6 +42,7 @@
 #include "CalculationValue.h"
 #include "ClipPathOperation.h"
 #include "FloatConversion.h"
+#include "FontSelectionAlgorithm.h"
 #include "FontTaggedSettings.h"
 #include "IdentityTransformOperation.h"
 #include "Logging.h"
@@ -391,6 +392,11 @@ static inline FontVariationSettings blendFunc(const AnimationBase* anim, const F
 }
 
 #endif
+
+static inline FontSelectionValue blendFunc(const AnimationBase* anim, FontSelectionValue from, FontSelectionValue to, double progress)
+{
+    return FontSelectionValue(blendFunc(anim, static_cast<float>(from), static_cast<float>(to), progress));
+}
 
 class AnimationPropertyWrapperBase {
     WTF_MAKE_NONCOPYABLE(AnimationPropertyWrapperBase);
@@ -1600,6 +1606,9 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
 #if ENABLE(VARIATION_FONTS)
         new PropertyWrapperFontVariationSettings(CSSPropertyFontVariationSettings, &RenderStyle::fontVariationSettings, &RenderStyle::setFontVariationSettings),
 #endif
+        new PropertyWrapper<FontSelectionValue>(CSSPropertyFontWeight, &RenderStyle::fontWeight, &RenderStyle::setFontWeight),
+        new PropertyWrapper<FontSelectionValue>(CSSPropertyFontStretch, &RenderStyle::fontStretch, &RenderStyle::setFontStretch),
+        new PropertyWrapper<FontSelectionValue>(CSSPropertyFontStyle, &RenderStyle::fontItalic, &RenderStyle::setFontItalic),
     };
     const unsigned animatableLonghandPropertiesCount = WTF_ARRAY_LENGTH(animatableLonghandPropertyWrappers);
 

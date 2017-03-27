@@ -353,6 +353,9 @@ public:
 #if ENABLE(VARIATION_FONTS)
     FontVariationSettings fontVariationSettings() const { return fontDescription().variationSettings(); }
 #endif
+    FontSelectionValue fontWeight() const { return fontDescription().weight(); }
+    FontSelectionValue fontStretch() const { return fontDescription().stretch(); }
+    FontSelectionValue fontItalic() const { return fontDescription().italic(); }
 
     const Length& textIndent() const { return m_rareInheritedData->indent; }
     ETextAlign textAlign() const { return static_cast<ETextAlign>(m_inheritedFlags.textAlign); }
@@ -900,6 +903,9 @@ public:
 #if ENABLE(VARIATION_FONTS)
     void setFontVariationSettings(FontVariationSettings);
 #endif
+    void setFontWeight(FontSelectionValue);
+    void setFontStretch(FontSelectionValue);
+    void setFontItalic(FontSelectionValue);
 
     void setColor(const Color&);
     void setTextIndent(Length&& length) { SET_VAR(m_rareInheritedData, indent, WTFMove(length)); }

@@ -1,3 +1,28 @@
+2017-03-27  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Make sure animation works for font-weight, font-stretch, and font-style
+        https://bugs.webkit.org/show_bug.cgi?id=169683
+
+        Reviewed by Simon Fraser.
+
+        Hook up animation code for FontSelectionValues.
+
+        Tests: animations/font-variations/font-stretch.html
+               animations/font-variations/font-style.html
+               animations/font-variations/font-weight.html
+
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::blendFunc):
+        (WebCore::CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::setFontWeight):
+        (WebCore::RenderStyle::setFontStretch):
+        (WebCore::RenderStyle::setFontItalic):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::fontWeight):
+        (WebCore::RenderStyle::fontStretch):
+        (WebCore::RenderStyle::fontItalic):
+
 2017-03-27  Alex Christensen  <achristensen@webkit.org>
 
         Make WebSockets work in network process

@@ -1,0 +1,5 @@
+Hello
+PASS - "font-stretch" property for "box" element at 0.5s saw something close to: 159
+PASS - "font-stretch" property for "box" element at 1s saw something close to: 167
+PASS - "font-stretch" property for "box" element at 2s saw something close to: 183
+

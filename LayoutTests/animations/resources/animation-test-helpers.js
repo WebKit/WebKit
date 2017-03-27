@@ -283,6 +283,15 @@ function compareFontVariationSettings(computedValue, expectedValue, tolerance)
     return true;
 }
 
+function compareFontStyle(computedValue, expectedValue, tolerance)
+{
+	var computed = computedValue.split(" ");
+	var expected = expectedValue.split(" ");
+	var computedAngle = computed[1].split("deg");
+	var expectedAngle = expected[1].split("deg");
+	return computed[0] == expected[0] && Math.abs(computedAngle[0] - expectedAngle[0]) <= tolerance;
+}
+
 // Called by CSS Image function filter() as well as filter property.
 function compareFilterFunctions(computedValue, expectedValue, tolerance)
 {
@@ -427,9 +436,13 @@ function getPropertyValue(property, elementId, iframeId)
                || property == "webkitShapeInside"
                || property == "webkitShapeOutside"
                || property == "font-variation-settings"
+               || property == "font-style"
                || !property.indexOf("webkitTransform")
                || !property.indexOf("transform")) {
         computedValue = window.getComputedStyle(element)[property.split(".")[0]];
+    } else if (property == "font-stretch") {
+        var computedStyle = window.getComputedStyle(element).getPropertyCSSValue(property);
+        computedValue = computedStyle.getFloatValue(CSSPrimitiveValue.CSS_PERCENTAGE);
     } else {
         var computedStyle = window.getComputedStyle(element).getPropertyCSSValue(property);
         computedValue = computedStyle.getFloatValue(CSSPrimitiveValue.CSS_NUMBER);
@@ -474,6 +487,8 @@ function comparePropertyValue(property, computedValue, expectedValue, tolerance)
         result = compareCSSImages(computedValue, expectedValue, tolerance);
     else if (property == "font-variation-settings")
         result = compareFontVariationSettings(computedValue, expectedValue, tolerance);
+    else if (property == "font-style")
+        result = compareFontStyle(computedValue, expectedValue, tolerance);
     else
         result = isCloseEnough(computedValue, expectedValue, tolerance);
     return result;

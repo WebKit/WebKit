@@ -1607,6 +1607,36 @@ void RenderStyle::setFontVariationSettings(FontVariationSettings settings)
 }
 #endif
 
+void RenderStyle::setFontWeight(FontSelectionValue value)
+{
+    FontSelector* currentFontSelector = fontCascade().fontSelector();
+    auto description = fontDescription();
+    description.setWeight(value);
+
+    setFontDescription(description);
+    fontCascade().update(currentFontSelector);
+}
+
+void RenderStyle::setFontStretch(FontSelectionValue value)
+{
+    FontSelector* currentFontSelector = fontCascade().fontSelector();
+    auto description = fontDescription();
+    description.setStretch(value);
+
+    setFontDescription(description);
+    fontCascade().update(currentFontSelector);
+}
+
+void RenderStyle::setFontItalic(FontSelectionValue value)
+{
+    FontSelector* currentFontSelector = fontCascade().fontSelector();
+    auto description = fontDescription();
+    description.setItalic(value);
+
+    setFontDescription(description);
+    fontCascade().update(currentFontSelector);
+}
+
 void RenderStyle::getShadowExtent(const ShadowData* shadow, LayoutUnit& top, LayoutUnit& right, LayoutUnit& bottom, LayoutUnit& left) const
 {
     top = 0;
