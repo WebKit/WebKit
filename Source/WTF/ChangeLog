@@ -1,3 +1,56 @@
+2017-03-26  Filip Pizlo  <fpizlo@apple.com>
+
+        B3::fixSSA should do liveness pruning
+        https://bugs.webkit.org/show_bug.cgi?id=170111
+
+        Reviewed by Saam Barati.
+        
+        Move Air::Liveness<> to WTF::Liveness<>. This is pretty easy since Air::Liveness<> was
+        already fairly generic. It leverages the CFG concept so that it can understand many
+        different kinds of basic blocks. It doesn't try to understand the contents of basic
+        blocks; it just asks the adaptor for the block size and asks for the early/late
+        uses/defs of each thing in the block.
+        
+        This makes it easy to create a B3::VariableLiveness, which fixSSA then uses for
+        pruning. One of the new features is the Liveness::LiveAtHead nested class, which you
+        instantiate if you want to perform liveAtHead queries, which SSA construction wants to
+        do.
+        
+        This also fixes https://bugs.webkit.org/show_bug.cgi?id=170102#c12
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/Liveness.h: Added.
+        (WTF::Liveness::Liveness):
+        (WTF::Liveness::LocalCalc::LocalCalc):
+        (WTF::Liveness::LocalCalc::Iterable::Iterable):
+        (WTF::Liveness::LocalCalc::Iterable::iterator::iterator):
+        (WTF::Liveness::LocalCalc::Iterable::iterator::operator++):
+        (WTF::Liveness::LocalCalc::Iterable::iterator::operator*):
+        (WTF::Liveness::LocalCalc::Iterable::iterator::operator==):
+        (WTF::Liveness::LocalCalc::Iterable::iterator::operator!=):
+        (WTF::Liveness::LocalCalc::Iterable::begin):
+        (WTF::Liveness::LocalCalc::Iterable::end):
+        (WTF::Liveness::LocalCalc::Iterable::contains):
+        (WTF::Liveness::LocalCalc::live):
+        (WTF::Liveness::LocalCalc::isLive):
+        (WTF::Liveness::LocalCalc::execute):
+        (WTF::Liveness::rawLiveAtHead):
+        (WTF::Liveness::Iterable::Iterable):
+        (WTF::Liveness::Iterable::iterator::iterator):
+        (WTF::Liveness::Iterable::iterator::operator*):
+        (WTF::Liveness::Iterable::iterator::operator++):
+        (WTF::Liveness::Iterable::iterator::operator==):
+        (WTF::Liveness::Iterable::iterator::operator!=):
+        (WTF::Liveness::Iterable::begin):
+        (WTF::Liveness::Iterable::end):
+        (WTF::Liveness::Iterable::contains):
+        (WTF::Liveness::liveAtHead):
+        (WTF::Liveness::liveAtTail):
+        (WTF::Liveness::workset):
+        (WTF::Liveness::LiveAtHead::LiveAtHead):
+        (WTF::Liveness::LiveAtHead::isLiveAtHead):
+
 2017-03-25  Filip Pizlo  <fpizlo@apple.com>
 
         Air::Liveness shouldn't need HashSets

@@ -64,6 +64,13 @@ public:
     size_t size() const { return m_values.size(); }
     Value* at(size_t index) const { return m_values[index]; }
     Value*& at(size_t index) { return m_values[index]; }
+    
+    Value* get(size_t index) const
+    {
+        if (index >= size())
+            return nullptr;
+        return at(index);
+    }
 
     Value* last() const { return m_values.last(); }
     Value*& last() { return m_values.last(); }

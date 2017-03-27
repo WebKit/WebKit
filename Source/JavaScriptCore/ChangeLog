@@ -1,3 +1,90 @@
+2017-03-26  Filip Pizlo  <fpizlo@apple.com>
+
+        B3::fixSSA should do liveness pruning
+        https://bugs.webkit.org/show_bug.cgi?id=170111
+
+        Reviewed by Saam Barati.
+        
+        This moves all of the logic of Air::Liveness<> to WTF::Liveness<> and then uses that to
+        create B3::VariableLiveness. Then this uses VariableLiveness::LiveAtHead to prune Phi
+        construction.
+        
+        This makes B3::fixSSA run twice as fast. This is a 13% progression on WasmBench compile
+        times.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * b3/B3BasicBlock.h:
+        (JSC::B3::BasicBlock::get):
+        * b3/B3FixSSA.cpp:
+        (JSC::B3::fixSSA):
+        * b3/B3VariableLiveness.cpp: Added.
+        (JSC::B3::VariableLiveness::VariableLiveness):
+        (JSC::B3::VariableLiveness::~VariableLiveness):
+        * b3/B3VariableLiveness.h: Added.
+        (JSC::B3::VariableLivenessAdapter::VariableLivenessAdapter):
+        (JSC::B3::VariableLivenessAdapter::numIndices):
+        (JSC::B3::VariableLivenessAdapter::valueToIndex):
+        (JSC::B3::VariableLivenessAdapter::indexToValue):
+        (JSC::B3::VariableLivenessAdapter::blockSize):
+        (JSC::B3::VariableLivenessAdapter::forEachEarlyUse):
+        (JSC::B3::VariableLivenessAdapter::forEachLateUse):
+        (JSC::B3::VariableLivenessAdapter::forEachEarlyDef):
+        (JSC::B3::VariableLivenessAdapter::forEachLateDef):
+        * b3/air/AirCFG.h: Added.
+        (JSC::B3::Air::CFG::CFG):
+        (JSC::B3::Air::CFG::root):
+        (JSC::B3::Air::CFG::newMap):
+        (JSC::B3::Air::CFG::successors):
+        (JSC::B3::Air::CFG::predecessors):
+        (JSC::B3::Air::CFG::index):
+        (JSC::B3::Air::CFG::node):
+        (JSC::B3::Air::CFG::numNodes):
+        (JSC::B3::Air::CFG::dump):
+        * b3/air/AirCode.cpp:
+        (JSC::B3::Air::Code::Code):
+        * b3/air/AirCode.h:
+        (JSC::B3::Air::Code::cfg):
+        * b3/air/AirLiveness.h:
+        (JSC::B3::Air::LivenessAdapter::LivenessAdapter):
+        (JSC::B3::Air::LivenessAdapter::blockSize):
+        (JSC::B3::Air::LivenessAdapter::forEachEarlyUse):
+        (JSC::B3::Air::LivenessAdapter::forEachLateUse):
+        (JSC::B3::Air::LivenessAdapter::forEachEarlyDef):
+        (JSC::B3::Air::LivenessAdapter::forEachLateDef):
+        (JSC::B3::Air::TmpLivenessAdapter::TmpLivenessAdapter):
+        (JSC::B3::Air::TmpLivenessAdapter::numIndices):
+        (JSC::B3::Air::StackSlotLivenessAdapter::StackSlotLivenessAdapter):
+        (JSC::B3::Air::StackSlotLivenessAdapter::numIndices):
+        (JSC::B3::Air::StackSlotLivenessAdapter::indexToValue):
+        (JSC::B3::Air::Liveness::Liveness):
+        (JSC::B3::Air::Liveness::LocalCalc::LocalCalc): Deleted.
+        (JSC::B3::Air::Liveness::LocalCalc::Iterable::Iterable): Deleted.
+        (JSC::B3::Air::Liveness::LocalCalc::Iterable::iterator::iterator): Deleted.
+        (JSC::B3::Air::Liveness::LocalCalc::Iterable::iterator::operator++): Deleted.
+        (JSC::B3::Air::Liveness::LocalCalc::Iterable::iterator::operator*): Deleted.
+        (JSC::B3::Air::Liveness::LocalCalc::Iterable::iterator::operator==): Deleted.
+        (JSC::B3::Air::Liveness::LocalCalc::Iterable::iterator::operator!=): Deleted.
+        (JSC::B3::Air::Liveness::LocalCalc::Iterable::begin): Deleted.
+        (JSC::B3::Air::Liveness::LocalCalc::Iterable::end): Deleted.
+        (JSC::B3::Air::Liveness::LocalCalc::Iterable::contains): Deleted.
+        (JSC::B3::Air::Liveness::LocalCalc::live): Deleted.
+        (JSC::B3::Air::Liveness::LocalCalc::isLive): Deleted.
+        (JSC::B3::Air::Liveness::LocalCalc::execute): Deleted.
+        (JSC::B3::Air::Liveness::rawLiveAtHead): Deleted.
+        (JSC::B3::Air::Liveness::Iterable::Iterable): Deleted.
+        (JSC::B3::Air::Liveness::Iterable::iterator::iterator): Deleted.
+        (JSC::B3::Air::Liveness::Iterable::iterator::operator*): Deleted.
+        (JSC::B3::Air::Liveness::Iterable::iterator::operator++): Deleted.
+        (JSC::B3::Air::Liveness::Iterable::iterator::operator==): Deleted.
+        (JSC::B3::Air::Liveness::Iterable::iterator::operator!=): Deleted.
+        (JSC::B3::Air::Liveness::Iterable::begin): Deleted.
+        (JSC::B3::Air::Liveness::Iterable::end): Deleted.
+        (JSC::B3::Air::Liveness::Iterable::contains): Deleted.
+        (JSC::B3::Air::Liveness::liveAtHead): Deleted.
+        (JSC::B3::Air::Liveness::liveAtTail): Deleted.
+        (JSC::B3::Air::Liveness::workset): Deleted.
+
 2017-03-25  Filip Pizlo  <fpizlo@apple.com>
 
         Air::Liveness shouldn't need HashSets

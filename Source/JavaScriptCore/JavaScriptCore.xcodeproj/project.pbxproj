@@ -1007,6 +1007,9 @@
 		0FF427651591A1CE004CB9FF /* DFGDisassembler.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF427621591A1C9004CB9FF /* DFGDisassembler.h */; };
 		0FF4B4BC1E88449700DBBE86 /* AirRegLiveness.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FF4B4BA1E88449500DBBE86 /* AirRegLiveness.cpp */; };
 		0FF4B4BD1E88449A00DBBE86 /* AirRegLiveness.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF4B4BB1E88449500DBBE86 /* AirRegLiveness.h */; };
+		0FF4B4C71E8893C500DBBE86 /* AirCFG.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF4B4C61E8893BF00DBBE86 /* AirCFG.h */; };
+		0FF4B4CA1E889D7B00DBBE86 /* B3VariableLiveness.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FF4B4C81E889D7800DBBE86 /* B3VariableLiveness.cpp */; };
+		0FF4B4CB1E889D7E00DBBE86 /* B3VariableLiveness.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF4B4C91E889D7800DBBE86 /* B3VariableLiveness.h */; };
 		0FF60AC216740F8300029779 /* ReduceWhitespace.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF60AC016740F8100029779 /* ReduceWhitespace.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FF60AC316740F8800029779 /* ReduceWhitespace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FF60ABF16740F8100029779 /* ReduceWhitespace.cpp */; };
 		0FF7168C15A3B235008F5DAA /* PropertyOffset.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF7168A15A3B231008F5DAA /* PropertyOffset.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3524,6 +3527,9 @@
 		0FF427621591A1C9004CB9FF /* DFGDisassembler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGDisassembler.h; path = dfg/DFGDisassembler.h; sourceTree = "<group>"; };
 		0FF4B4BA1E88449500DBBE86 /* AirRegLiveness.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AirRegLiveness.cpp; path = b3/air/AirRegLiveness.cpp; sourceTree = "<group>"; };
 		0FF4B4BB1E88449500DBBE86 /* AirRegLiveness.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirRegLiveness.h; path = b3/air/AirRegLiveness.h; sourceTree = "<group>"; };
+		0FF4B4C61E8893BF00DBBE86 /* AirCFG.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirCFG.h; path = b3/air/AirCFG.h; sourceTree = "<group>"; };
+		0FF4B4C81E889D7800DBBE86 /* B3VariableLiveness.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3VariableLiveness.cpp; path = b3/B3VariableLiveness.cpp; sourceTree = "<group>"; };
+		0FF4B4C91E889D7800DBBE86 /* B3VariableLiveness.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3VariableLiveness.h; path = b3/B3VariableLiveness.h; sourceTree = "<group>"; };
 		0FF60ABF16740F8100029779 /* ReduceWhitespace.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ReduceWhitespace.cpp; sourceTree = "<group>"; };
 		0FF60AC016740F8100029779 /* ReduceWhitespace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReduceWhitespace.h; sourceTree = "<group>"; };
 		0FF7168A15A3B231008F5DAA /* PropertyOffset.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PropertyOffset.h; sourceTree = "<group>"; };
@@ -5504,6 +5510,8 @@
 				0FEC84FD1BDACDAC0080FF74 /* B3ValueRep.h */,
 				0F2BBD921C5FF3F50023EF23 /* B3Variable.cpp */,
 				0F2BBD931C5FF3F50023EF23 /* B3Variable.h */,
+				0FF4B4C81E889D7800DBBE86 /* B3VariableLiveness.cpp */,
+				0FF4B4C91E889D7800DBBE86 /* B3VariableLiveness.h */,
 				0F2BBD941C5FF3F50023EF23 /* B3VariableValue.cpp */,
 				0F2BBD951C5FF3F50023EF23 /* B3VariableValue.h */,
 				53D444DD1DAF09A000B92784 /* B3WasmAddressValue.cpp */,
@@ -5538,6 +5546,7 @@
 				0F6183211C45BF070072450B /* AirCCallingConvention.h */,
 				0FEC854E1BDACDC70080FF74 /* AirCCallSpecial.cpp */,
 				0FEC854F1BDACDC70080FF74 /* AirCCallSpecial.h */,
+				0FF4B4C61E8893BF00DBBE86 /* AirCFG.h */,
 				0FEC85501BDACDC70080FF74 /* AirCode.cpp */,
 				0FEC85511BDACDC70080FF74 /* AirCode.h */,
 				0F6183221C45BF070072450B /* AirCustom.cpp */,
@@ -8547,6 +8556,7 @@
 				BC02E90F0E1839DB000F9297 /* ErrorPrototype.h in Headers */,
 				996B731B1BDA08D100331B84 /* ErrorPrototype.lut.h in Headers */,
 				14AD910C1DCA92940014F9FE /* EvalCodeBlock.h in Headers */,
+				0FF4B4CB1E889D7E00DBBE86 /* B3VariableLiveness.h in Headers */,
 				147341D21DC02E2E00AA29BA /* EvalExecutable.h in Headers */,
 				A54982041891D0B00081E5B8 /* EventLoop.h in Headers */,
 				FE1C0FFD1B193E9800B53FCA /* Exception.h in Headers */,
@@ -8840,6 +8850,7 @@
 				BC18C41E0E16F5CD00B34460 /* JSContextRef.h in Headers */,
 				A5EA70EE19F5B5C40098F5EC /* JSContextRefInspectorSupport.h in Headers */,
 				A5D2E665195E174000A518E7 /* JSContextRefInternal.h in Headers */,
+				0FF4B4C71E8893C500DBBE86 /* AirCFG.h in Headers */,
 				148CD1D8108CF902008163C6 /* JSContextRefPrivate.h in Headers */,
 				A72028B81797601E0098028C /* JSCTestRunnerUtils.h in Headers */,
 				72AAF7CE1D0D31B3005E60BE /* JSCustomGetterSetterFunction.h in Headers */,
@@ -9964,6 +9975,7 @@
 				795F099D1E03600500BBE37F /* B3Compile.cpp in Sources */,
 				0FEC850D1BDACDAC0080FF74 /* B3Const32Value.cpp in Sources */,
 				0FEC850F1BDACDAC0080FF74 /* B3Const64Value.cpp in Sources */,
+				0FF4B4CA1E889D7B00DBBE86 /* B3VariableLiveness.cpp in Sources */,
 				0FEC85111BDACDAC0080FF74 /* B3ConstDoubleValue.cpp in Sources */,
 				43422A621C158E6A00E2EB98 /* B3ConstFloatValue.cpp in Sources */,
 				0F338DF51BE93D550013C88F /* B3ConstrainedValue.cpp in Sources */,

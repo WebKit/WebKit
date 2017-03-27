@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,6 +38,7 @@
 #include "B3UpsilonValue.h"
 #include "B3ValueInlines.h"
 #include "B3Variable.h"
+#include "B3VariableLiveness.h"
 #include "B3VariableValue.h"
 #include <wtf/CommaPrinter.h>
 #include <wtf/IndexSet.h>
@@ -136,7 +137,10 @@ bool fixSSA(Procedure& proc)
 
     // We know that we have variables to optimize, so do that now.
     breakCriticalEdges(proc);
-
+    
+    VariableLiveness liveness(proc);
+    VariableLiveness::LiveAtHead liveAtHead = liveness.liveAtHead();
+    
     SSACalculator ssa(proc);
 
     // Create a SSACalculator::Variable ("calcVar") for every variable.
@@ -167,6 +171,9 @@ bool fixSSA(Procedure& proc)
     ssa.computePhis(
         [&] (SSACalculator::Variable* calcVar, BasicBlock* block) -> Value* {
             Variable* variable = calcVarToVariable[calcVar->index()];
+            if (!liveAtHead.isLiveAtHead(block, variable))
+                return nullptr;
+            
             Value* phi = proc.add<Value>(Phi, variable->type(), block->at(0)->origin());
             if (verbose) {
                 dataLog(
@@ -182,10 +189,8 @@ bool fixSSA(Procedure& proc)
     for (BasicBlock* block : proc.blocksInPreOrder()) {
         mapping.clear();
 
-        for (unsigned index = calcVarToVariable.size(); index--;) {
-            Variable* variable = calcVarToVariable[index];
-            SSACalculator::Variable* calcVar = ssa.variable(index);
-
+        for (Variable* variable : liveness.liveAtHead(block)) {
+            SSACalculator::Variable* calcVar = variableToCalcVar[variable];
             SSACalculator::Def* def = ssa.reachingDefAtHead(block, calcVar);
             if (def)
                 mapping[variable] = def->value();

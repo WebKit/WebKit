@@ -52,6 +52,7 @@ namespace Air {
 
 class BlockInsertionSet;
 class CCallSpecial;
+class CFG;
 class Disassembler;
 
 typedef void WasmBoundsCheckGeneratorFunction(CCallHelpers&, GPRReg, unsigned);
@@ -176,7 +177,7 @@ public:
 
     // Recomputes predecessors and deletes unreachable blocks.
     void resetReachability();
-
+    
     JS_EXPORT_PRIVATE void dump(PrintStream&) const;
 
     unsigned size() const { return m_blocks.size(); }
@@ -256,6 +257,8 @@ public:
     void addFastTmp(Tmp);
     bool isFastTmp(Tmp tmp) const { return m_fastTmps.contains(tmp); }
     
+    CFG& cfg() const { return *m_cfg; }
+    
     void* addDataSection(size_t);
     
     // The name has to be a string literal, since we don't do any memory management for the string.
@@ -304,6 +307,7 @@ private:
     SparseCollection<StackSlot> m_stackSlots;
     Vector<std::unique_ptr<BasicBlock>> m_blocks;
     SparseCollection<Special> m_specials;
+    std::unique_ptr<CFG> m_cfg;
     HashSet<Tmp> m_fastTmps;
     CCallSpecial* m_cCallSpecial { nullptr };
     unsigned m_numGPTmps { 0 };

@@ -180,6 +180,7 @@ set(JavaScriptCore_SOURCES
     b3/B3ValueKey.cpp
     b3/B3ValueRep.cpp
     b3/B3Variable.cpp
+    b3/B3VariableLiveness.cpp
     b3/B3VariableValue.cpp
     b3/B3WasmAddressValue.cpp
     b3/B3WasmBoundsCheckValue.cpp

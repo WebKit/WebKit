@@ -57,6 +57,7 @@ set(WTF_HEADERS
     IteratorAdaptors.h
     IteratorRange.h
     ListHashSet.h
+    Liveness.h
     Lock.h
     LockAlgorithm.h
     LockedPrintStream.h

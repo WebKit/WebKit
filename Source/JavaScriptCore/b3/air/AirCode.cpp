@@ -29,6 +29,7 @@
 #if ENABLE(B3_JIT)
 
 #include "AirCCallSpecial.h"
+#include "AirCFG.h"
 #include "B3BasicBlockUtils.h"
 #include "B3Procedure.h"
 #include "B3StackSlot.h"
@@ -38,6 +39,7 @@ namespace JSC { namespace B3 { namespace Air {
 
 Code::Code(Procedure& proc)
     : m_proc(proc)
+    , m_cfg(new CFG(*this))
     , m_lastPhaseName("initial")
 {
     // Come up with initial orderings of registers. The user may replace this with something else.
