@@ -1,3 +1,17 @@
+2017-03-27  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r214411.
+
+        Two of the LayoutTests for this change time out on ios-
+        simulator.
+
+        Reverted changeset:
+
+        "[Modern Media Controls] Improve media documents across macOS,
+        iPhone and iPad"
+        https://bugs.webkit.org/show_bug.cgi?id=169145
+        http://trac.webkit.org/changeset/214411
+
 2017-03-27  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Clicking on the tracks button when the tracks panel is up in a media document pauses the video
