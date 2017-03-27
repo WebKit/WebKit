@@ -1917,30 +1917,40 @@ static Ref<CSSPrimitiveValue> fontSizeFromStyle(const RenderStyle& style)
     return zoomAdjustedPixelValue(style.fontDescription().computedSize(), style);
 }
 
-static Ref<CSSPrimitiveValue> fontWeightFromStyle(const RenderStyle& style)
+Ref<CSSPrimitiveValue> ComputedStyleExtractor::fontWeightFromStyleValue(FontSelectionValue weight)
 {
-    auto weight = style.fontDescription().weight();
     if (auto value = fontWeightKeyword(weight))
         return CSSValuePool::singleton().createIdentifierValue(value.value());
     return CSSValuePool::singleton().createValue(static_cast<float>(weight), CSSPrimitiveValue::CSS_NUMBER);
 }
 
-static Ref<CSSPrimitiveValue> fontStretchFromStyle(const RenderStyle& style)
+static Ref<CSSPrimitiveValue> fontWeightFromStyle(const RenderStyle& style)
 {
-    auto stretch = style.fontDescription().stretch();
+    return ComputedStyleExtractor::fontWeightFromStyleValue(style.fontDescription().weight());
+}
+
+Ref<CSSPrimitiveValue> ComputedStyleExtractor::fontStretchFromStyleValue(FontSelectionValue stretch)
+{
     if (auto keyword = fontStretchKeyword(stretch))
         return CSSValuePool::singleton().createIdentifierValue(keyword.value());
     return CSSValuePool::singleton().createValue(static_cast<float>(stretch), CSSPrimitiveValue::CSS_PERCENTAGE);
 }
 
+static Ref<CSSPrimitiveValue> fontStretchFromStyle(const RenderStyle& style)
+{
+    return ComputedStyleExtractor::fontStretchFromStyleValue(style.fontDescription().stretch());
+}
+
+Ref<CSSFontStyleValue> ComputedStyleExtractor::fontStyleFromStyleValue(FontSelectionValue italic)
+{
+    if (auto keyword = fontStyleKeyword(italic))
+        return CSSFontStyleValue::create(CSSValuePool::singleton().createIdentifierValue(keyword.value()));
+    return CSSFontStyleValue::create(CSSValuePool::singleton().createIdentifierValue(CSSValueOblique), CSSValuePool::singleton().createValue(static_cast<float>(italic), CSSPrimitiveValue::CSS_DEG));
+}
+
 static Ref<CSSFontStyleValue> fontStyleFromStyle(const RenderStyle& style)
 {
-    FontSelectionValue italic = style.fontDescription().italic();
-    if (italic == normalItalicValue())
-        return CSSFontStyleValue::create(CSSValuePool::singleton().createIdentifierValue(CSSValueNormal));
-    if (italic == italicValue())
-        return CSSFontStyleValue::create(CSSValuePool::singleton().createIdentifierValue(CSSValueItalic));
-    return CSSFontStyleValue::create(CSSValuePool::singleton().createIdentifierValue(CSSValueOblique), CSSValuePool::singleton().createValue(static_cast<float>(italic), CSSPrimitiveValue::CSS_DEG));
+    return ComputedStyleExtractor::fontStyleFromStyleValue(style.fontDescription().italic());
 }
 
 static Ref<CSSValue> fontVariantFromStyle(const RenderStyle& style)

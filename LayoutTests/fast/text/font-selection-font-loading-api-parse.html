@@ -40,7 +40,7 @@ shouldBeEqualToString("setFontFaceWeight(fontFace, 'calc(100 + 200)')", "300");
 shouldBeEqualToString("setFontFaceWeight(fontFace, 'calc(150 + 50)')", "200");
 
 shouldBeEqualToString("setFontFaceStretch(fontFace, '1%')", "1%");
-shouldBeEqualToString("setFontFaceStretch(fontFace, '2')", "2%");
+shouldThrow("setFontFaceStretch(fontFace, '2')");
 shouldBeEqualToString("setFontFaceStretch(fontFace, 'ultra-condensed')", "ultra-condensed");
 shouldBeEqualToString("setFontFaceStretch(fontFace, 'extra-condensed')", "extra-condensed");
 shouldBeEqualToString("setFontFaceStretch(fontFace, 'condensed')", "condensed");
@@ -52,20 +52,21 @@ shouldBeEqualToString("setFontFaceStretch(fontFace, 'extra-expanded')", "extra-e
 shouldBeEqualToString("setFontFaceStretch(fontFace, 'ultra-expanded')", "ultra-expanded");
 shouldThrow("setFontFaceStretch(fontFace, 'garbage')");
 shouldThrow("setFontFaceStretch(fontFace, 'initial')");
-shouldBeEqualToString("setFontFaceStretch(fontFace, 'calc(3 + 4)')", "7%");
+shouldThrow("setFontFaceStretch(fontFace, 'calc(3 + 4)')");
+shouldBeEqualToString("setFontFaceStretch(fontFace, 'calc(3% + 4%)')", "7%");
 
 shouldBeEqualToString("setFontFaceStyle(fontFace, 'oblique 1deg')", "oblique 1deg");
 shouldBeEqualToString("setFontFaceStyle(fontFace, 'oblique 200grad')", "oblique 180deg");
-shouldBeEqualToString("setFontFaceStyle(fontFace, 'oblique 6.28318rad')", "oblique 359.750000deg");
+shouldBeEqualToString("setFontFaceStyle(fontFace, 'oblique 6.28318rad')", "oblique 359.75deg");
 shouldBeEqualToString("setFontFaceStyle(fontFace, 'oblique 4turn')", "oblique 1440deg");
-shouldBeEqualToString("setFontFaceStyle(fontFace, 'oblique 5')", "oblique 5deg");
-shouldBeEqualToString("setFontFaceStyle(fontFace, 'oblique 20')", "italic");
+shouldThrow("setFontFaceStyle(fontFace, 'oblique 5')");
+shouldThrow("setFontFaceStyle(fontFace, 'oblique 20')");
 shouldBeEqualToString("setFontFaceStyle(fontFace, 'italic')", "italic");
 shouldBeEqualToString("setFontFaceStyle(fontFace, 'oblique')", "italic");
 shouldBeEqualToString("setFontFaceStyle(fontFace, 'normal')", "normal");
 shouldThrow("setFontFaceStyle(fontFace, 'garbage')");
 shouldThrow("setFontFaceStyle(fontFace, 'initial')");
-shouldBeEqualToString("setFontFaceStyle(fontFace, 'oblique calc(3 + 4)')", "oblique 7deg");
+shouldThrow("setFontFaceStyle(fontFace, 'oblique calc(3 + 4)')");
 shouldBeEqualToString("setFontFaceStyle(fontFace, 'oblique calc(4turn + 1deg)')", "oblique 1441deg");
 </script>
 <script src="../../resources/js-test-post.js"></script>

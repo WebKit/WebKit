@@ -1193,7 +1193,7 @@ inline FontSelectionValue StyleBuilderConverter::convertFontStretchFromValue(con
     ASSERT(is<CSSPrimitiveValue>(value));
     const auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
 
-    if (primitiveValue.isPercentage() || primitiveValue.isNumber())
+    if (primitiveValue.isPercentage())
         return FontSelectionValue::clampFloat(primitiveValue.floatValue());
 
     ASSERT(primitiveValue.isValueID());

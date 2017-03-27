@@ -1,3 +1,43 @@
+2017-03-27  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        font variation properties don't need to accept numbers
+        https://bugs.webkit.org/show_bug.cgi?id=169357
+
+        Reviewed by Antti Koivisto.
+
+        The CSS Fonts level 4 spec stabilized the grammar accepted by font-weight,
+        font-style, and font-stretch. The changes are that font-style and
+        font-stretch no longer accept raw numbers, and the @font-face descriptor
+        ranges are now separated by spaces instead of slashes.
+
+        Tests: fast/text/font-selection-font-face-parse.html
+               fast/text/font-selection-font-loading-api-parse.html
+               fast/text/font-stretch-parse.html
+               fast/text/font-style-parse.html
+               fast/text/variations/font-selection-properties.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::fontWeightFromStyleValue):
+        (WebCore::fontWeightFromStyle):
+        (WebCore::ComputedStyleExtractor::fontStretchFromStyleValue):
+        (WebCore::fontStretchFromStyle):
+        (WebCore::ComputedStyleExtractor::fontStyleFromStyleValue):
+        (WebCore::fontStyleFromStyle):
+        * css/CSSComputedStyleDeclaration.h:
+        * css/FontFace.cpp:
+        (WebCore::FontFace::style):
+        (WebCore::FontFace::weight):
+        (WebCore::FontFace::stretch):
+        (WebCore::rangeIsSingleValue): Deleted.
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertFontStretchFromValue):
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeFontWeightRange):
+        (WebCore::consumeFontStretch):
+        (WebCore::consumeFontStretchRange):
+        (WebCore::consumeFontStyle):
+        (WebCore::consumeFontStyleRange):
+
 2017-03-27  Youenn Fablet  <youenn@apple.com>
 
         Further optimize checkWebRTCAvailability

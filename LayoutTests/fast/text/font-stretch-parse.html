@@ -25,11 +25,12 @@
 <div id="test18" style="font: 100 48px/49px 'Helvetica Neue';"></div>
 <div style="font-stretch: extra-expanded;"><div id="test19" style="font: 100 48px/49px 'Helvetica Neue';"></div></div>
 <div id="test20" style="font: italic small-caps 100 extra-expanded 48px/49px 'Helvetica Neue';"></div>
+<div id="test21" style="font-stretch: calc(3% + 4%);"></div>
 </div>
 <script>
 shouldBeEqualToString("window.getComputedStyle(document.getElementById('test1')).fontStretch", "normal");
 shouldBeEqualToString("window.getComputedStyle(document.getElementById('test2')).fontStretch", "1%");
-shouldBeEqualToString("window.getComputedStyle(document.getElementById('test3')).fontStretch", "2%");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('test3')).fontStretch", "normal");
 shouldBeEqualToString("window.getComputedStyle(document.getElementById('test4')).fontStretch", "ultra-condensed");
 shouldBeEqualToString("window.getComputedStyle(document.getElementById('test5')).fontStretch", "extra-condensed");
 shouldBeEqualToString("window.getComputedStyle(document.getElementById('test6')).fontStretch", "condensed");
@@ -41,16 +42,17 @@ shouldBeEqualToString("window.getComputedStyle(document.getElementById('test11')
 shouldBeEqualToString("window.getComputedStyle(document.getElementById('test12')).fontStretch", "ultra-expanded");
 shouldBeEqualToString("window.getComputedStyle(document.getElementById('test13')).fontStretch", "normal");
 shouldBeEqualToString("window.getComputedStyle(document.getElementById('test14')).fontStretch", "normal");
-shouldBeEqualToString("window.getComputedStyle(document.getElementById('test15')).fontStretch", "7%");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('test15')).fontStretch", "normal");
 shouldBeEqualToString("window.getComputedStyle(document.getElementById('test16')).fontStretch", "extra-condensed");
 shouldBeEqualToString("window.getComputedStyle(document.getElementById('test17')).fontStretch", "extra-condensed");
 shouldBeEqualToString("window.getComputedStyle(document.getElementById('test18')).fontStretch", "normal");
 shouldBeEqualToString("window.getComputedStyle(document.getElementById('test19')).fontStretch", "normal");
 shouldBeEqualToString("window.getComputedStyle(document.getElementById('test20')).fontStretch", "extra-expanded");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('test21')).fontStretch", "7%");
 
 shouldBeEqualToString("window.getComputedStyle(document.getElementById('test1')).font", "normal normal normal normal 16px/18px Times");
 shouldBeEqualToString("window.getComputedStyle(document.getElementById('test2')).font", "16px/18px Times");
-shouldBeEqualToString("window.getComputedStyle(document.getElementById('test3')).font", "16px/18px Times");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('test3')).font", "normal normal normal normal 16px/18px Times");
 shouldBeEqualToString("window.getComputedStyle(document.getElementById('test4')).font", "normal normal normal ultra-condensed 16px/18px Times");
 shouldBeEqualToString("window.getComputedStyle(document.getElementById('test5')).font", "normal normal normal extra-condensed 16px/18px Times");
 shouldBeEqualToString("window.getComputedStyle(document.getElementById('test6')).font", "normal normal normal condensed 16px/18px Times");
@@ -62,12 +64,13 @@ shouldBeEqualToString("window.getComputedStyle(document.getElementById('test11')
 shouldBeEqualToString("window.getComputedStyle(document.getElementById('test12')).font", "normal normal normal ultra-expanded 16px/18px Times");
 shouldBeEqualToString("window.getComputedStyle(document.getElementById('test13')).font", "normal normal normal normal 16px/18px Times");
 shouldBeEqualToString("window.getComputedStyle(document.getElementById('test14')).font", "normal normal normal normal 16px/18px Times");
-shouldBeEqualToString("window.getComputedStyle(document.getElementById('test15')).font", "16px/18px Times");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('test15')).font", "normal normal normal normal 16px/18px Times");
 shouldBeEqualToString("window.getComputedStyle(document.getElementById('test16')).font", "normal normal 100 extra-condensed 48px/49px 'Helvetica Neue'");
 shouldBeEqualToString("window.getComputedStyle(document.getElementById('test17')).font", "normal normal 100 extra-condensed 48px/49px 'Helvetica Neue'");
 shouldBeEqualToString("window.getComputedStyle(document.getElementById('test18')).font", "normal normal 100 normal 48px/49px 'Helvetica Neue'");
 shouldBeEqualToString("window.getComputedStyle(document.getElementById('test19')).font", "normal normal 100 normal 48px/49px 'Helvetica Neue'");
 shouldBeEqualToString("window.getComputedStyle(document.getElementById('test20')).font", "italic small-caps 100 extra-expanded 48px/49px 'Helvetica Neue'");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('test21')).font", "16px/18px Times");
 
 shouldBeEqualToString("document.getElementById('test1').style.font", "");
 shouldBeEqualToString("document.getElementById('test16').style.font", "100 extra-condensed 48px/49px 'Helvetica Neue'");

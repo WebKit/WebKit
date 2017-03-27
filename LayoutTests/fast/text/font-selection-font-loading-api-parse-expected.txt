@@ -16,7 +16,7 @@ PASS setFontFaceWeight(fontFace, 'calc(3 + 4)') is "7"
 PASS setFontFaceWeight(fontFace, 'calc(100 + 200)') is "300"
 PASS setFontFaceWeight(fontFace, 'calc(150 + 50)') is "200"
 PASS setFontFaceStretch(fontFace, '1%') is "1%"
-PASS setFontFaceStretch(fontFace, '2') is "2%"
+PASS setFontFaceStretch(fontFace, '2') threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS setFontFaceStretch(fontFace, 'ultra-condensed') is "ultra-condensed"
 PASS setFontFaceStretch(fontFace, 'extra-condensed') is "extra-condensed"
 PASS setFontFaceStretch(fontFace, 'condensed') is "condensed"
@@ -28,19 +28,20 @@ PASS setFontFaceStretch(fontFace, 'extra-expanded') is "extra-expanded"
 PASS setFontFaceStretch(fontFace, 'ultra-expanded') is "ultra-expanded"
 PASS setFontFaceStretch(fontFace, 'garbage') threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS setFontFaceStretch(fontFace, 'initial') threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
-PASS setFontFaceStretch(fontFace, 'calc(3 + 4)') is "7%"
+PASS setFontFaceStretch(fontFace, 'calc(3 + 4)') threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS setFontFaceStretch(fontFace, 'calc(3% + 4%)') is "7%"
 PASS setFontFaceStyle(fontFace, 'oblique 1deg') is "oblique 1deg"
 PASS setFontFaceStyle(fontFace, 'oblique 200grad') is "oblique 180deg"
-PASS setFontFaceStyle(fontFace, 'oblique 6.28318rad') is "oblique 359.750000deg"
+PASS setFontFaceStyle(fontFace, 'oblique 6.28318rad') is "oblique 359.75deg"
 PASS setFontFaceStyle(fontFace, 'oblique 4turn') is "oblique 1440deg"
-PASS setFontFaceStyle(fontFace, 'oblique 5') is "oblique 5deg"
-PASS setFontFaceStyle(fontFace, 'oblique 20') is "italic"
+PASS setFontFaceStyle(fontFace, 'oblique 5') threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS setFontFaceStyle(fontFace, 'oblique 20') threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS setFontFaceStyle(fontFace, 'italic') is "italic"
 PASS setFontFaceStyle(fontFace, 'oblique') is "italic"
 PASS setFontFaceStyle(fontFace, 'normal') is "normal"
 PASS setFontFaceStyle(fontFace, 'garbage') threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS setFontFaceStyle(fontFace, 'initial') threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
-PASS setFontFaceStyle(fontFace, 'oblique calc(3 + 4)') is "oblique 7deg"
+PASS setFontFaceStyle(fontFace, 'oblique calc(3 + 4)') threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS setFontFaceStyle(fontFace, 'oblique calc(4turn + 1deg)') is "oblique 1441deg"
 PASS successfullyParsed is true
 

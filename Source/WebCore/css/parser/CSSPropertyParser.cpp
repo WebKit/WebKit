@@ -888,14 +888,12 @@ static RefPtr<CSSValue> consumeFontWeightRange(CSSParserTokenRange& range)
         return nullptr;
     if (range.atEnd())
         return firstNumber;
-    if (!consumeSlashIncludingWhitespace(range))
-        return nullptr;
     auto secondNumber = consumeNumber(range, ValueRangeAll);
     if (!secondNumber)
         return nullptr;
     if (firstNumber->floatValue() > secondNumber->floatValue())
         return nullptr;
-    auto result = CSSValueList::createSlashSeparated();
+    auto result = CSSValueList::createSpaceSeparated();
     result->append(firstNumber.releaseNonNull());
     result->append(secondNumber.releaseNonNull());
     return RefPtr<CSSValue>(WTFMove(result));
@@ -911,9 +909,7 @@ static RefPtr<CSSPrimitiveValue> consumeFontStretch(CSSParserTokenRange& range)
 {
     if (auto result = consumeFontStretchKeywordValue(range))
         return result;
-    if (auto percent = consumePercent(range, ValueRangeAll))
-        return percent;
-    return consumeNumber(range, ValueRangeAll);
+    return consumePercent(range, ValueRangeAll);
 }
 
 #if ENABLE(VARIATION_FONTS)
@@ -921,39 +917,20 @@ static RefPtr<CSSValue> consumeFontStretchRange(CSSParserTokenRange& range)
 {
     if (auto result = consumeFontStretchKeywordValue(range))
         return result;
-    if (auto firstPercent = consumePercent(range, ValueRangeAll)) {
-        if (range.atEnd())
-            return firstPercent;
-        if (!consumeSlashIncludingWhitespace(range))
-            return nullptr;
-        auto secondPercent = consumePercent(range, ValueRangeAll);
-        if (!secondPercent)
-            return nullptr;
-        if (firstPercent->floatValue() > secondPercent->floatValue())
-            return nullptr;
-        auto result = CSSValueList::createSlashSeparated();
-        result->append(firstPercent.releaseNonNull());
-        result->append(secondPercent.releaseNonNull());
-        return RefPtr<CSSValue>(WTFMove(result));
-    }
-
-    if (auto firstNumber = consumeNumber(range, ValueRangeAll)) {
-        if (range.atEnd())
-            return firstNumber;
-        if (!consumeSlashIncludingWhitespace(range))
-            return nullptr;
-        auto secondNumber = consumeNumber(range, ValueRangeAll);
-        if (!secondNumber)
-            return nullptr;
-        if (firstNumber->floatValue() > secondNumber->floatValue())
-            return nullptr;
-        auto result = CSSValueList::createSlashSeparated();
-        result->append(firstNumber.releaseNonNull());
-        result->append(secondNumber.releaseNonNull());
-        return RefPtr<CSSValue>(WTFMove(result));
-    }
-
-    return nullptr;
+    auto firstPercent = consumePercent(range, ValueRangeAll);
+    if (!firstPercent)
+        return nullptr;
+    if (range.atEnd())
+        return firstPercent;
+    auto secondPercent = consumePercent(range, ValueRangeAll);
+    if (!secondPercent)
+        return nullptr;
+    if (firstPercent->floatValue() > secondPercent->floatValue())
+        return nullptr;
+    auto result = CSSValueList::createSpaceSeparated();
+    result->append(firstPercent.releaseNonNull());
+    result->append(secondPercent.releaseNonNull());
+    return RefPtr<CSSValue>(WTFMove(result));
 }
 #endif
 
@@ -977,8 +954,6 @@ static RefPtr<CSSFontStyleValue> consumeFontStyle(CSSParserTokenRange& range, CS
         return CSSFontStyleValue::create(CSSValuePool::singleton().createIdentifierValue(CSSValueOblique));
     if (auto angle = consumeAngle(range, cssParserMode))
         return CSSFontStyleValue::create(CSSValuePool::singleton().createIdentifierValue(CSSValueOblique), WTFMove(angle));
-    if (auto number = consumeNumber(range, ValueRangeAll))
-        return CSSFontStyleValue::create(CSSValuePool::singleton().createIdentifierValue(CSSValueOblique), CSSValuePool::singleton().createValue(number->value<double>(), CSSPrimitiveValue::CSS_DEG));
     return CSSFontStyleValue::create(CSSValuePool::singleton().createIdentifierValue(CSSValueOblique));
 }
 
@@ -1006,23 +981,6 @@ static RefPtr<CSSFontStyleRangeValue> consumeFontStyleRange(CSSParserTokenRange&
         auto result = CSSValueList::createSpaceSeparated();
         result->append(firstAngle.releaseNonNull());
         result->append(secondAngle.releaseNonNull());
-        return CSSFontStyleRangeValue::create(keyword.releaseNonNull(), WTFMove(result));
-    }
-
-    if (auto firstNumber = consumeNumber(range, ValueRangeAll)) {
-        if (range.atEnd()) {
-            auto result = CSSValueList::createSpaceSeparated();
-            result->append(firstNumber.releaseNonNull());
-            return CSSFontStyleRangeValue::create(keyword.releaseNonNull(), WTFMove(result));
-        }
-        auto secondNumber = consumeNumber(range, ValueRangeAll);
-        if (!secondNumber)
-            return nullptr;
-        if (firstNumber->floatValue() > secondNumber->floatValue())
-            return nullptr;
-        auto result = CSSValueList::createSpaceSeparated();
-        result->append(CSSValuePool::singleton().createValue(firstNumber->value<double>(), CSSPrimitiveValue::CSS_DEG));
-        result->append(CSSValuePool::singleton().createValue(secondNumber->value<double>(), CSSPrimitiveValue::CSS_DEG));
         return CSSFontStyleRangeValue::create(keyword.releaseNonNull(), WTFMove(result));
     }
 
