@@ -170,19 +170,25 @@ rtc::scoped_refptr<webrtc::PeerConnectionInterface> LibWebRTCProvider::createPee
 
     return createActualPeerConnection(observer, WTFMove(portAllocator));
 }
+
+static inline bool isNullFunctionPointer(void* functionPointer)
+{
+    void* result;
+    asm(
+        "mov %1, %0"
+        : "=r" (result)
+        : "r" (functionPointer)
+    );
+    return !result;
+}
+
 #endif // USE(LIBWEBRTC)
 
 bool LibWebRTCProvider::webRTCAvailable()
 {
 #if USE(LIBWEBRTC)
     static bool available = [] {
-        void* libwebrtcLibrary = dlopen("libwebrtc.dylib", RTLD_LAZY);
-        if (!libwebrtcLibrary) {
-            RELEASE_LOG(WebRTC, "Attempted to load libwebrtc without success: %s", dlerror());
-            return false;
-        }
-        dlclose(libwebrtcLibrary);
-        return true;
+        return !isNullFunctionPointer(reinterpret_cast<void*>(rtc::LogMessage::LogToDebug));
     }();
     return available;
 #else

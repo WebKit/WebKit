@@ -1,3 +1,18 @@
+2017-03-27  Youenn Fablet  <youenn@apple.com>
+
+        Further optimize checkWebRTCAvailability
+        https://bugs.webkit.org/show_bug.cgi?id=169147
+
+        Reviewed by Alex Christensen.
+
+        Tested locally by removing libwebrtc.dylib.
+        Replacing dlopen check by checking an exported symbol, rtc::LogMessage::LogToDebug.
+        This check is more efficient and accurate. It should work in more configurations than the previous one.
+
+        * platform/mediastream/libwebrtc/LibWebRTCProvider.cpp:
+        (WebCore::isNullFunctionPointer):
+        (WebCore::LibWebRTCProvider::webRTCAvailable):
+
 2017-03-27  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Implement format specifier for variation fonts
