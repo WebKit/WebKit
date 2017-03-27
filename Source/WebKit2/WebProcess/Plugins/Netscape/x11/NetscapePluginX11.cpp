@@ -175,7 +175,6 @@ NetscapePluginX11::NetscapePluginX11(NetscapePlugin& plugin, Display* display)
 NetscapePluginX11::NetscapePluginX11(NetscapePlugin& plugin, Display* display, uint64_t windowID)
     : m_plugin(plugin)
     , m_pluginDisplay(display)
-    , m_windowID(windowID)
 {
     // It seems flash needs the socket to be in the same process,
     // I guess it uses gdk_window_lookup(), so we create a new socket here

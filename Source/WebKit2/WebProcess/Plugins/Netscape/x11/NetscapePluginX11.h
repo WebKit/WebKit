@@ -64,7 +64,6 @@ private:
     WebCore::XUniquePixmap m_drawable;
     NPSetWindowCallbackStruct m_setWindowCallbackStruct;
 #if PLATFORM(GTK)
-    uint64_t m_windowID { 0 };
     unsigned long m_npWindowID { 0 };
     GtkWidget* m_platformPluginWidget { nullptr };
 #endif
