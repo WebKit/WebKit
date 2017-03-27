@@ -536,7 +536,40 @@ public:
     unsigned opNum() { return (m_opcode >> 16) & 0x1f; }
 };
 
-class A64DOpcodeHint : public A64DOpcode {
+class A64DOpcodeSystem : public A64DOpcode {
+public:
+    unsigned lBit() { return (m_opcode >> 21) & 0x1; }
+    unsigned op0() { return (m_opcode >> 19) & 0x3; }
+    unsigned op1() { return (m_opcode >> 16) & 0x7; }
+    unsigned crN() { return (m_opcode >> 12) & 0xf; }
+    unsigned crM() { return (m_opcode >> 8) & 0xf; }
+    unsigned op2() { return (m_opcode >> 5) & 0x7; }
+};
+
+class A64DOpcodeMSRImmediate : public A64DOpcodeSystem {
+public:
+    static const uint32_t mask = 0xfff8f01f;
+    static const uint32_t pattern = 0xd500401f;
+
+    DEFINE_STATIC_FORMAT(A64DOpcodeMSRImmediate, thisObj);
+
+    const char* format();
+};
+
+class A64DOpcodeMSROrMRSRegister : public A64DOpcodeSystem {
+public:
+    static const uint32_t mask = 0xffd00000;
+    static const uint32_t pattern = 0xd5100000;
+
+    DEFINE_STATIC_FORMAT(A64DOpcodeMSROrMRSRegister, thisObj);
+
+    const char* format();
+
+    const char* opName() { return lBit() ? "mrs" : "msr"; }
+    unsigned systemRegister() { return ((op0() << 14) | (op1() << 11) | (crN() << 7) | (crM() << 3) | op2()); }
+};
+
+class A64DOpcodeHint : public A64DOpcodeSystem {
 private:
     static const char* const s_opNames[6];
 
@@ -552,20 +585,20 @@ public:
     unsigned immediate7() { return (m_opcode >> 5) & 0x7f; }
 };
 
-class A64DOpcodeDmb : public A64DOpcode {
+class A64DOpcodeSystemSync : public A64DOpcodeSystem {
+    static const char* const s_opNames[8];
     static const char* const s_optionNames[16];
 
 public:
-    static const uint32_t mask = 0xfffff0ff;
-    static const uint32_t pattern = 0xd50330bf;
+    static const uint32_t mask = 0xfffff01f;
+    static const uint32_t pattern = 0xd503301f;
 
-    DEFINE_STATIC_FORMAT(A64DOpcodeDmb, thisObj);
+    DEFINE_STATIC_FORMAT(A64DOpcodeSystemSync, thisObj);
 
     const char* format();
 
-    const char* opName() { return "dmb"; }
+    const char* opName() { return s_opNames[op2()]; }
     const char* option() { return s_optionNames[crM()]; }
-    unsigned crM() { return (m_opcode >> 8) & 0xf; }
 };
 
 class A64DOpcodeLoadStore : public A64DOpcode {

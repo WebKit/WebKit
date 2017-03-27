@@ -1,3 +1,33 @@
+2017-03-27  Michael Saboff  <msaboff@apple.com>
+
+        Add ARM64 system instructions to disassembler
+        https://bugs.webkit.org/show_bug.cgi?id=170084
+
+        Reviewed by Saam Barati.
+
+        This changes adds support for MRS and MSR instructions, and refactors the DMB
+        disassembly to handle all of the barrier instructions.
+
+        * disassembler/ARM64/A64DOpcode.cpp:
+        (JSC::ARM64Disassembler::A64DOpcodeMSRImmediate::format):
+        (JSC::ARM64Disassembler::A64DOpcodeMSROrMRSRegister::format):
+        (JSC::ARM64Disassembler::A64DOpcodeSystemSync::format):
+        (JSC::ARM64Disassembler::A64DOpcodeDmb::format): Deleted.
+        * disassembler/ARM64/A64DOpcode.h:
+        (JSC::ARM64Disassembler::A64DOpcodeSystem::lBit):
+        (JSC::ARM64Disassembler::A64DOpcodeSystem::op0):
+        (JSC::ARM64Disassembler::A64DOpcodeSystem::op1):
+        (JSC::ARM64Disassembler::A64DOpcodeSystem::crN):
+        (JSC::ARM64Disassembler::A64DOpcodeSystem::crM):
+        (JSC::ARM64Disassembler::A64DOpcodeSystem::op2):
+        (JSC::ARM64Disassembler::A64DOpcodeMSROrMRSRegister::opName):
+        (JSC::ARM64Disassembler::A64DOpcodeMSROrMRSRegister::systemRegister):
+        (JSC::ARM64Disassembler::A64DOpcodeSystemSync::opName):
+        (JSC::ARM64Disassembler::A64DOpcodeSystemSync::option):
+        (JSC::ARM64Disassembler::A64DOpcodeDmb::opName): Deleted.
+        (JSC::ARM64Disassembler::A64DOpcodeDmb::option): Deleted.
+        (JSC::ARM64Disassembler::A64DOpcodeDmb::crM): Deleted.
+
 2017-03-26  Filip Pizlo  <fpizlo@apple.com>
 
         B3::fixSSA should do liveness pruning

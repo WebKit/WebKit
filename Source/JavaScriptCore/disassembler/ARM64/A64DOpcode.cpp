@@ -84,7 +84,9 @@ static OpcodeGroupInitializer opcodeGroupList[] = {
     OPCODE_GROUP_ENTRY(0x15, A64DOpcodeConditionalBranchImmediate),
     OPCODE_GROUP_ENTRY(0x15, A64DOpcodeCompareAndBranchImmediate),
     OPCODE_GROUP_ENTRY(0x15, A64DOpcodeHint),
-    OPCODE_GROUP_ENTRY(0x15, A64DOpcodeDmb),
+    OPCODE_GROUP_ENTRY(0x15, A64DOpcodeSystemSync),
+    OPCODE_GROUP_ENTRY(0x15, A64DOpcodeMSRImmediate),
+    OPCODE_GROUP_ENTRY(0x15, A64DOpcodeMSROrMRSRegister),
     OPCODE_GROUP_ENTRY(0x16, A64DOpcodeUnconditionalBranchImmediate),
     OPCODE_GROUP_ENTRY(0x16, A64DOpcodeUnconditionalBranchRegister),
     OPCODE_GROUP_ENTRY(0x16, A64DOpcodeTestAndBranchImmediate),
@@ -880,6 +882,82 @@ const char* A64DOpcodeFloatingPointIntegerConversions::format()
     return m_formatBuffer;
 }
 
+const char* A64DOpcodeMSRImmediate::format()
+{
+    const char* pstateField = nullptr;
+
+    if (!op1() && (op2() == 0x5))
+        pstateField = "spsel";
+
+    if ((op1() == 0x3) && (op2() == 0x6))
+        pstateField = "daifset";
+
+    if ((op1() == 0x3) && (op2() == 0x7))
+        pstateField = "daifclr";
+
+    if (!!op1() && !(op2() & 0x4))
+        return A64DOpcode::format();
+
+    if (!pstateField)
+        return A64DOpcode::format();
+
+    appendInstructionName("msr");
+    appendString(pstateField);
+    appendSeparator();
+    appendUnsignedImmediate(crM());
+
+    return m_formatBuffer;
+}
+
+const char* A64DOpcodeMSROrMRSRegister::format()
+{
+    appendInstructionName(opName());
+
+    if (lBit()) {
+        appendZROrRegisterName(rt());
+        appendSeparator();
+    }
+
+    bufferPrintf("S%u_%u_C%u_C%u_%u", op0(), op1(), crN(), crM(), op2());
+
+    if (!lBit()) {
+        appendSeparator();
+        appendZROrRegisterName(rt());
+    }
+
+    const char* systemRegisterName = nullptr;
+
+    switch (systemRegister()) {
+    case 0b1101100000000001:
+        systemRegisterName = "ctr_el0";
+        break;
+    case 0b1101101000010000:
+        systemRegisterName = "nzcv";
+        break;
+    case 0b1101101000010001:
+        systemRegisterName = "daif";
+        break;
+    case 0b1101101000100000:
+        systemRegisterName = "fpcr";
+        break;
+    case 0b1101101000100001:
+        systemRegisterName = "fpsr";
+        break;
+    case 0b1101111010000010:
+        systemRegisterName = "tpidr_el0";
+        break;
+    case 0b1101111010000011:
+        systemRegisterName = "tpidrr0_el0";
+        break;
+    }
+
+    if (systemRegisterName) {
+        appendString("  ; ");
+        appendString(systemRegisterName);
+    }
+    return m_formatBuffer;
+}
+
 const char* const A64DOpcodeHint::s_opNames[6] = {
     "nop", "yield", "wfe", "wfi", "sev", "sevl"
 };
@@ -894,19 +972,36 @@ const char* A64DOpcodeHint::format()
     return m_formatBuffer;
 }
 
-const char* const A64DOpcodeDmb::s_optionNames[16] = {
+const char* const A64DOpcodeSystemSync::s_opNames[8] = {
+    0, 0, "clrex", 0, "dsb", "dmb", "isb", 0
+};
+
+const char* const A64DOpcodeSystemSync::s_optionNames[16] = {
     0, "oshld", "oshst", "osh", 0, "nshld", "nshst", "nsh",
     0, "ishld", "ishst", "ish", 0, "ld", "st", "sy"
 };
 
-const char* A64DOpcodeDmb::format()
+const char* A64DOpcodeSystemSync::format()
 {
-    appendInstructionName(opName());
-    const char* thisOption = option();
-    if (thisOption)
-        appendString(thisOption);
-    else
-        appendUnsignedImmediate(crM());
+    const char* thisOpName = opName();
+
+    if (!thisOpName)
+        return A64DOpcode::format();
+
+    appendInstructionName(thisOpName);
+
+    if (op2() & 0x2) {
+        if (crM() != 0xf) {
+            appendCharacter('#');
+            appendUnsignedImmediate(crM());
+        }
+    } else {
+        const char* thisOption = option();
+        if (thisOption)
+            appendString(thisOption);
+        else
+            appendUnsignedImmediate(crM());
+    }
 
     return m_formatBuffer;
 }
