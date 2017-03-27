@@ -694,7 +694,7 @@ WebInspector.Resource = class Resource extends WebInspector.SourceCode
 
         // See if we've already computed and cached the image size,
         // in which case we can provide them directly.
-        if (this._imageSize) {
+        if (this._imageSize !== undefined) {
             callback(this._imageSize);
             return;
         }
@@ -702,8 +702,7 @@ WebInspector.Resource = class Resource extends WebInspector.SourceCode
         var objectURL = null;
 
         // Event handler for the image "load" event.
-        function imageDidLoad()
-        {
+        function imageDidLoad() {
             URL.revokeObjectURL(objectURL);
 
             // Cache the image metrics.
@@ -715,6 +714,11 @@ WebInspector.Resource = class Resource extends WebInspector.SourceCode
             callback(this._imageSize);
         }
 
+        function requestContentFailure() {
+            this._imageSize = null;
+            callback(this._imageSize);
+        }
+
         // Create an <img> element that we'll use to load the image resource
         // so that we can query its intrinsic size.
         var image = new Image;
@@ -723,7 +727,7 @@ WebInspector.Resource = class Resource extends WebInspector.SourceCode
         // Set the image source using an object URL once we've obtained its data.
         this.requestContent().then(function(content) {
             objectURL = image.src = content.sourceCode.createObjectURL();
-        });
+        }, requestContentFailure.bind(this));
     }
 
     requestContent()

@@ -434,11 +434,15 @@ WebInspector.ResourceDetailsSidebarPanel = class ResourceDetailsSidebarPanel ext
         if (!resource)
             return;
 
-        // Hide the section if we're not dealing with an image or if the load failed.
-        if (resource.type !== WebInspector.Resource.Type.Image || resource.failed) {
-            var imageSectionElement = this._imageSizeSection.element;
+        function hideImageSection() {
+            let imageSectionElement = this._imageSizeSection.element;
             if (imageSectionElement.parentNode)
                 this.contentView.element.removeChild(imageSectionElement);
+        }
+
+        // Hide the section if we're not dealing with an image or if the load failed.
+        if (resource.type !== WebInspector.Resource.Type.Image || resource.failed) {
+            hideImageSection.call(this);
             return;
         }
 
@@ -447,8 +451,11 @@ WebInspector.ResourceDetailsSidebarPanel = class ResourceDetailsSidebarPanel ext
 
         // Get the metrics for this resource and fill in the metrics rows with that information.
         resource.getImageSize((size) => {
-            this._imageWidthRow.value = WebInspector.UIString("%dpx").format(size.width);
-            this._imageHeightRow.value = WebInspector.UIString("%dpx").format(size.height);
+            if (size) {
+                this._imageWidthRow.value = WebInspector.UIString("%dpx").format(size.width);
+                this._imageHeightRow.value = WebInspector.UIString("%dpx").format(size.height);
+            } else
+                hideImageSection.call(this);
         });
     }
 

@@ -1,3 +1,22 @@
+2017-03-27  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Resource Details Sidebar displays previous image metrics when viewing resource where content load failed
+        https://bugs.webkit.org/show_bug.cgi?id=170065
+        <rdar://problem/27081591>
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Models/Resource.js:
+        (WebInspector.Resource.prototype.getImageSize.imageDidLoad):
+        (WebInspector.Resource.prototype.getImageSize.requestContentFailure):
+        (WebInspector.Resource.prototype.getImageSize):
+        If the requestContent failed, return a null image size.
+
+        * UserInterface/Views/ResourceDetailsSidebarPanel.js:
+        (WebInspector.ResourceDetailsSidebarPanel.prototype._refreshImageSizeSection.hideImageSection):
+        (WebInspector.ResourceDetailsSidebarPanel.prototype._refreshImageSizeSection):
+        If the callback is called with a null size, hide the image size section.
+
 2017-03-24  Brian Burg  <bburg@apple.com>
 
         Web Inspector: RTL: number scripts are used inconsistently throughout the UI
