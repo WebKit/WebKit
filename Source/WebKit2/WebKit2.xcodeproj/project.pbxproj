@@ -1129,6 +1129,10 @@
 		53BA47D11DC2EF5E004DF4AD /* NetworkDataTaskBlob.h in Headers */ = {isa = PBXBuildFile; fileRef = 539EB5471DC2EE40009D48CF /* NetworkDataTaskBlob.h */; };
 		53DEA3661DDE423100E82648 /* json.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 53DEA3651DDE422E00E82648 /* json.hpp */; };
 		5C052F261C6D3BD30076E919 /* AuthenticationManagerCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C052F241C6D3AB60076E919 /* AuthenticationManagerCocoa.mm */; };
+		5C0B17781E7C880E00E9123C /* NetworkSocketStreamMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C0B17741E7C879C00E9123C /* NetworkSocketStreamMessageReceiver.cpp */; };
+		5C0B17791E7C882100E9123C /* WebSocketStreamMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C0B17761E7C879C00E9123C /* WebSocketStreamMessageReceiver.cpp */; };
+		5C0B177C1E7C885400E9123C /* WebSocketStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C0B177A1E7C884F00E9123C /* WebSocketStream.cpp */; };
+		5C0B17811E7C8C2600E9123C /* NetworkSocketStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C0B177D1E7C886700E9123C /* NetworkSocketStream.cpp */; };
 		5C1426EC1C23F80900D41183 /* NetworkProcessCreationParameters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C1426E21C23F80500D41183 /* NetworkProcessCreationParameters.cpp */; };
 		5C1426ED1C23F80900D41183 /* NetworkProcessCreationParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1426E31C23F80500D41183 /* NetworkProcessCreationParameters.h */; };
 		5C1426EE1C23F80900D41183 /* NetworkProcessSupplement.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1426E41C23F80500D41183 /* NetworkProcessSupplement.h */; };
@@ -3373,6 +3377,16 @@
 		53DEA3651DDE422E00E82648 /* json.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = json.hpp; path = NetworkProcess/capture/json.hpp; sourceTree = "<group>"; };
 		579D18B71CCFE34B00B1974C /* PhotosSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PhotosSPI.h; sourceTree = "<group>"; };
 		5C052F241C6D3AB60076E919 /* AuthenticationManagerCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AuthenticationManagerCocoa.mm; path = Authentication/cocoa/AuthenticationManagerCocoa.mm; sourceTree = "<group>"; };
+		5C0B17741E7C879C00E9123C /* NetworkSocketStreamMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkSocketStreamMessageReceiver.cpp; sourceTree = "<group>"; };
+		5C0B17751E7C879C00E9123C /* NetworkSocketStreamMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkSocketStreamMessages.h; sourceTree = "<group>"; };
+		5C0B17761E7C879C00E9123C /* WebSocketStreamMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebSocketStreamMessageReceiver.cpp; sourceTree = "<group>"; };
+		5C0B17771E7C879C00E9123C /* WebSocketStreamMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSocketStreamMessages.h; sourceTree = "<group>"; };
+		5C0B177A1E7C884F00E9123C /* WebSocketStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebSocketStream.cpp; path = Network/WebSocketStream.cpp; sourceTree = "<group>"; };
+		5C0B177B1E7C884F00E9123C /* WebSocketStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebSocketStream.h; path = Network/WebSocketStream.h; sourceTree = "<group>"; };
+		5C0B177D1E7C886700E9123C /* NetworkSocketStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NetworkSocketStream.cpp; path = NetworkProcess/NetworkSocketStream.cpp; sourceTree = "<group>"; };
+		5C0B177E1E7C886700E9123C /* NetworkSocketStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkSocketStream.h; path = NetworkProcess/NetworkSocketStream.h; sourceTree = "<group>"; };
+		5C0B177F1E7C886700E9123C /* NetworkSocketStream.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = NetworkSocketStream.messages.in; path = NetworkProcess/NetworkSocketStream.messages.in; sourceTree = "<group>"; };
+		5C0B17801E7C888000E9123C /* WebSocketStream.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = WebSocketStream.messages.in; path = Network/WebSocketStream.messages.in; sourceTree = "<group>"; };
 		5C1426E21C23F80500D41183 /* NetworkProcessCreationParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NetworkProcessCreationParameters.cpp; path = NetworkProcess/NetworkProcessCreationParameters.cpp; sourceTree = "<group>"; };
 		5C1426E31C23F80500D41183 /* NetworkProcessCreationParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkProcessCreationParameters.h; path = NetworkProcess/NetworkProcessCreationParameters.h; sourceTree = "<group>"; };
 		5C1426E41C23F80500D41183 /* NetworkProcessSupplement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkProcessSupplement.h; path = NetworkProcess/NetworkProcessSupplement.h; sourceTree = "<group>"; };
@@ -5822,6 +5836,9 @@
 		5105B0D2162F7A5E00E27709 /* Network */ = {
 			isa = PBXGroup;
 			children = (
+				5C0B17801E7C888000E9123C /* WebSocketStream.messages.in */,
+				5C0B177A1E7C884F00E9123C /* WebSocketStream.cpp */,
+				5C0B177B1E7C884F00E9123C /* WebSocketStream.h */,
 				4130759E1DE85E650039EC69 /* webrtc */,
 				5105B0D4162F7A7A00E27709 /* NetworkProcessConnection.cpp */,
 				5105B0D5162F7A7A00E27709 /* NetworkProcessConnection.h */,
@@ -5840,6 +5857,9 @@
 		510CC7DA16138E0100D03ED3 /* NetworkProcess */ = {
 			isa = PBXGroup;
 			children = (
+				5C0B177D1E7C886700E9123C /* NetworkSocketStream.cpp */,
+				5C0B177E1E7C886700E9123C /* NetworkSocketStream.h */,
+				5C0B177F1E7C886700E9123C /* NetworkSocketStream.messages.in */,
 				E489D2821A0A2BE80078C06A /* cache */,
 				539BD5B21DADB0BA00F2E4E1 /* capture */,
 				7EC4F0F818E4A922008056AF /* cocoa */,
@@ -7651,6 +7671,10 @@
 		C0CE729D1247E71D00BC0EC4 /* Derived Sources */ = {
 			isa = PBXGroup;
 			children = (
+				5C0B17741E7C879C00E9123C /* NetworkSocketStreamMessageReceiver.cpp */,
+				5C0B17751E7C879C00E9123C /* NetworkSocketStreamMessages.h */,
+				5C0B17761E7C879C00E9123C /* WebSocketStreamMessageReceiver.cpp */,
+				5C0B17771E7C879C00E9123C /* WebSocketStreamMessages.h */,
 				512F58A012A883AD00629530 /* AuthenticationManagerMessageReceiver.cpp */,
 				512F58A112A883AD00629530 /* AuthenticationManagerMessages.h */,
 				9955A6F01C79866400EB6A93 /* AutomationBackendDispatchers.cpp */,
@@ -10292,6 +10316,7 @@
 				5C7706741D1138380012700F /* WebSocketProvider.cpp in Sources */,
 				8360349F1ACB34D600626549 /* WebSQLiteDatabaseTracker.cpp in Sources */,
 				1A52C0F71A38CDC70016160A /* WebStorageNamespaceProvider.cpp in Sources */,
+				5C0B177C1E7C885400E9123C /* WebSocketStream.cpp in Sources */,
 				BCC5715C115ADAEF001CCAF9 /* WebSystemInterface.mm in Sources */,
 				51032F18180F73BB00961BB7 /* WebToDatabaseProcessConnection.cpp in Sources */,
 				C0337DD8127A51B6008FF4F4 /* WebTouchEvent.cpp in Sources */,
@@ -10306,6 +10331,7 @@
 				7C065F2B1C8CD95F00C2D950 /* WebUserContentControllerDataTypes.cpp in Sources */,
 				1AAF08B719269E6D00B6390C /* WebUserContentControllerMessageReceiver.cpp in Sources */,
 				1AAF08A1192681D100B6390C /* WebUserContentControllerProxy.cpp in Sources */,
+				5C0B17811E7C8C2600E9123C /* NetworkSocketStream.cpp in Sources */,
 				7C361D78192803BD0036A59D /* WebUserContentControllerProxyMessageReceiver.cpp in Sources */,
 				15739BBE1B42046600D258C1 /* WebUserMediaClient.cpp in Sources */,
 				83EE575B1DB7D61100C74C50 /* WebValidationMessageClient.cpp in Sources */,
@@ -10442,6 +10468,7 @@
 				7CD5EBB81746A15B000C1C45 /* WKObjCTypeWrapperRef.mm in Sources */,
 				374436881820E7240049579F /* WKObject.mm in Sources */,
 				1ACC50F11CBC381D003C7D03 /* WKOpenPanelParameters.mm in Sources */,
+				5C0B17791E7C882100E9123C /* WebSocketStreamMessageReceiver.cpp in Sources */,
 				BC85806312B8505700EDEB2E /* WKOpenPanelParametersRef.cpp in Sources */,
 				BC85806212B8505700EDEB2E /* WKOpenPanelResultListener.cpp in Sources */,
 				BCD597D6112B56DC00EC8C23 /* WKPage.cpp in Sources */,
@@ -10498,6 +10525,7 @@
 				F6113E28126CE19B0057D0A7 /* WKUserContentURLPattern.cpp in Sources */,
 				07297FA21C186ADB003F0735 /* WKUserMediaPermissionCheck.cpp in Sources */,
 				4A3CC18E19B07B8500D14AEF /* WKUserMediaPermissionRequest.cpp in Sources */,
+				5C0B17781E7C880E00E9123C /* NetworkSocketStreamMessageReceiver.cpp in Sources */,
 				1AAF089A19267EE500B6390C /* WKUserScript.mm in Sources */,
 				7C89D2A31A678875003A5FDE /* WKUserScriptRef.cpp in Sources */,
 				BC8699B6116AADAA002A925B /* WKView.mm in Sources */,

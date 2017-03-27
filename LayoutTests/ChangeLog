@@ -1,3 +1,19 @@
+2017-03-27  Alex Christensen  <achristensen@webkit.org>
+
+        Make WebSockets work in network process
+        https://bugs.webkit.org/show_bug.cgi?id=169930
+
+        Reviewed by Youenn Fablet.
+
+        * http/tests/websocket/tests/hybi/network-process-crash-error-expected.txt: Added.
+        * http/tests/websocket/tests/hybi/network-process-crash-error.html: Added.
+        * http/tests/websocket/tests/hybi/slow-reply_wsh.py: Added.
+        (web_socket_do_extra_handshake):
+        (web_socket_transfer_data):
+        * platform/ios-simulator-wk1/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+        * platform/win/TestExpectations:
+
 2017-03-27  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Improve media documents across macOS, iPhone and iPad

@@ -40,6 +40,8 @@
 #include "NetworkResourceLoadParameters.h"
 #include "NetworkResourceLoader.h"
 #include "NetworkResourceLoaderMessages.h"
+#include "NetworkSocketStream.h"
+#include "NetworkSocketStreamMessages.h"
 #include "RemoteNetworkingContext.h"
 #include "SessionTracker.h"
 #include "WebCoreArgumentCoders.h"
@@ -95,6 +97,16 @@ void NetworkConnectionToWebProcess::didReceiveMessage(IPC::Connection& connectio
         auto loaderIterator = m_networkResourceLoaders.find(decoder.destinationID());
         if (loaderIterator != m_networkResourceLoaders.end())
             loaderIterator->value->didReceiveNetworkResourceLoaderMessage(connection, decoder);
+        return;
+    }
+
+    if (decoder.messageReceiverName() == Messages::NetworkSocketStream::messageReceiverName()) {
+        auto socketIterator = m_networkSocketStreams.find(decoder.destinationID());
+        if (socketIterator != m_networkSocketStreams.end()) {
+            socketIterator->value->didReceiveMessage(connection, decoder);
+            if (decoder.messageName() == Messages::NetworkSocketStream::Close::name())
+                m_networkSocketStreams.remove(socketIterator);
+        }
         return;
     }
 
@@ -158,6 +170,18 @@ void NetworkConnectionToWebProcess::didClose(IPC::Connection&)
 
 void NetworkConnectionToWebProcess::didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference, IPC::StringReference)
 {
+}
+
+void NetworkConnectionToWebProcess::createSocketStream(URL&& url, SessionID sessionID, String cachePartition, uint64_t identifier)
+{
+    ASSERT(!m_networkSocketStreams.contains(identifier));
+    m_networkSocketStreams.set(identifier, NetworkSocketStream::create(WTFMove(url), sessionID, cachePartition, identifier, m_connection));
+}
+
+void NetworkConnectionToWebProcess::destroySocketStream(uint64_t identifier)
+{
+    ASSERT(m_networkSocketStreams.get(identifier));
+    m_networkSocketStreams.remove(identifier);
 }
 
 void NetworkConnectionToWebProcess::scheduleResourceLoad(const NetworkResourceLoadParameters& loadParameters)

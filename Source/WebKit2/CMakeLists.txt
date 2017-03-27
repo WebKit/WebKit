@@ -119,6 +119,7 @@ set(WebKit2_SOURCES
     NetworkProcess/NetworkResourceLoadParameters.cpp
     NetworkProcess/NetworkResourceLoader.cpp
     NetworkProcess/NetworkSession.cpp
+    NetworkProcess/NetworkSocketStream.cpp
 
     NetworkProcess/cache/NetworkCache.cpp
     NetworkProcess/cache/NetworkCacheBlobStorage.cpp
@@ -513,6 +514,7 @@ set(WebKit2_SOURCES
     WebProcess/Network/WebLoaderStrategy.cpp
     WebProcess/Network/WebResourceLoader.cpp
     WebProcess/Network/WebSocketProvider.cpp
+    WebProcess/Network/WebSocketStream.cpp
 
     WebProcess/Notifications/NotificationPermissionRequestManager.cpp
     WebProcess/Notifications/WebNotificationManager.cpp
@@ -596,6 +598,7 @@ set(WebKit2_MESSAGES_IN_FILES
     NetworkProcess/NetworkConnectionToWebProcess.messages.in
     NetworkProcess/NetworkProcess.messages.in
     NetworkProcess/NetworkResourceLoader.messages.in
+    NetworkProcess/NetworkSocketStream.messages.in
 
     NetworkProcess/webrtc/NetworkRTCMonitor.messages.in
     NetworkProcess/webrtc/NetworkRTCProvider.messages.in
@@ -663,6 +666,7 @@ set(WebKit2_MESSAGES_IN_FILES
 
     WebProcess/Network/NetworkProcessConnection.messages.in
     WebProcess/Network/WebResourceLoader.messages.in
+    WebProcess/Network/WebSocketStream.messages.in
 
     WebProcess/Notifications/WebNotificationManager.messages.in
 

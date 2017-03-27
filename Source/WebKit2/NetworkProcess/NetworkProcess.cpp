@@ -61,6 +61,7 @@
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/SecurityOriginHash.h>
 #include <WebCore/SessionID.h>
+#include <WebCore/Settings.h>
 #include <WebCore/URLParser.h>
 #include <wtf/OptionSet.h>
 #include <wtf/RunLoop.h>
@@ -579,6 +580,11 @@ void NetworkProcess::getNetworkProcessStatistics(uint64_t callbackID)
     data.statisticsNumbers.set("OutstandingAuthenticationChallengesCount", networkProcess.authenticationManager().outstandingAuthenticationChallengeCount());
 
     parentProcessConnection()->send(Messages::WebProcessPool::DidGetStatistics(data, callbackID), 0);
+}
+
+void NetworkProcess::setAllowsAnySSLCertificateForWebSocket(bool allows)
+{
+    Settings::setAllowsAnySSLCertificate(allows);
 }
 
 void NetworkProcess::logDiagnosticMessage(uint64_t webPageID, const String& message, const String& description, ShouldSample shouldSample)

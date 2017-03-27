@@ -62,6 +62,7 @@ messages -> NetworkProcess LegacyReceiver {
     SetQOS(int latencyQOS, int throughputQOS)
     SetCookieStoragePartitioningEnabled(bool enabled)
 #endif
+    SetAllowsAnySSLCertificateForWebSocket(bool enabled) -> ()
 
     AllowSpecificHTTPSCertificateForHost(WebCore::CertificateInfo certificate, String host)
     SetCanHandleHTTPSServerTrustEvaluation(bool value)

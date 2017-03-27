@@ -74,6 +74,15 @@ void initializeWebViewConfiguration(const char* libraryPath, WKStringRef injecte
 #endif
 }
 
+WKContextRef TestController::platformContext()
+{
+#if WK_API_ENABLED
+    return (WKContextRef)globalWebViewConfiguration.processPool;
+#else
+    return nullptr;
+#endif
+}
+
 WKPreferencesRef TestController::platformPreferences()
 {
 #if WK_API_ENABLED

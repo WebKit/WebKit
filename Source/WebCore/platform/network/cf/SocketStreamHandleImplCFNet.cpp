@@ -655,6 +655,9 @@ SocketStreamHandleImpl::~SocketStreamHandleImpl()
 
 std::optional<size_t> SocketStreamHandleImpl::platformSendInternal(const char* data, size_t length)
 {
+    if (!m_writeStream)
+        return std::nullopt;
+
     if (!CFWriteStreamCanAcceptBytes(m_writeStream.get()))
         return std::nullopt;
 

@@ -133,9 +133,14 @@ void TestController::runModal(PlatformWebView*)
     // FIXME: Need to implement this to test showModalDialog.
 }
 
+WKContextRef TestController::platformContext()
+{
+    return nullptr;
+}
+
 const char* TestController::platformLibraryPathForTesting()
 {
-    return 0;
+    return nullptr;
 }
 
 void TestController::platformConfigureViewForTest(const TestInvocation&)

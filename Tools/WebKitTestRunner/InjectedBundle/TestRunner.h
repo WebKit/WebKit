@@ -371,6 +371,8 @@ public:
     // Open panel
     void setOpenPanelFiles(JSValueRef);
 
+    void terminateNetworkProcess();
+
 private:
     TestRunner();
 

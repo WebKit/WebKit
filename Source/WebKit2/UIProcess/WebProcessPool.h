@@ -161,6 +161,7 @@ public:
 
     // Sends the message to WebProcess or NetworkProcess as approporiate for current process model.
     template<typename T> void sendToNetworkingProcess(T&& message);
+    template<typename T, typename U> void sendSyncToNetworkingProcess(T&& message, U&& reply);
     template<typename T> void sendToNetworkingProcessRelaunchingIfNecessary(T&& message);
 
     // Sends the message to WebProcess or DatabaseProcess as approporiate for current process model.
@@ -254,8 +255,11 @@ public:
     void useTestingNetworkSession();
     bool isUsingTestingNetworkSession() const { return m_shouldUseTestingNetworkSession; }
 
+    void setAllowsAnySSLCertificateForWebSocket(bool);
+
     void clearCachedCredentials();
     void terminateDatabaseProcess();
+    void terminateNetworkProcess();
 
     void reportWebContentCPUTime(int64_t cpuTime, uint64_t activityState);
 

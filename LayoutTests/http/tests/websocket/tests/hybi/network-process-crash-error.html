@@ -1,0 +1,34 @@
+<script>
+function endTest() {
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+var ws = new WebSocket("ws://127.0.0.1:8880/websocket/tests/hybi/slow-reply");
+alert("Created a socket to '" + ws.URL + "'; readyState " + ws.readyState + ".");
+
+ws.onopen = function()
+{
+    if (window.testRunner && window.testRunner.terminateNetworkProcess) {
+        alert("Terminating network process.");
+        testRunner.terminateNetworkProcess();
+    }
+};
+
+ws.onerror = function(e)
+{
+    alert("Received error:" + e);
+    endTest();
+};
+
+ws.onclose = function(e)
+{
+    alert("Closed; readyState " + ws.readyState + "." + e);
+    endTest();
+};
+</script>

@@ -432,7 +432,12 @@ void TestRunner::setEncryptedMediaAPIEnabled(bool enabled)
 
 void TestRunner::setAllowsAnySSLCertificate(bool enabled)
 {
-    InjectedBundle::singleton().setAllowsAnySSLCertificate(enabled);
+    auto& injectedBundle = InjectedBundle::singleton();
+    injectedBundle.setAllowsAnySSLCertificate(enabled);
+
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("SetAllowsAnySSLCertificate"));
+    WKRetainPtr<WKBooleanRef> messageBody(AdoptWK, WKBooleanCreate(enabled));
+    WKBundlePagePostSynchronousMessageForTesting(injectedBundle.page()->page(), messageName.get(), messageBody.get(), nullptr);
 }
 
 void TestRunner::setAllowUniversalAccessFromFileURLs(bool enabled)
@@ -1099,6 +1104,12 @@ void TestRunner::setShouldDownloadUndisplayableMIMETypes(bool value)
     WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("SetShouldDownloadUndisplayableMIMETypes"));
     WKRetainPtr<WKBooleanRef> messageBody(AdoptWK, WKBooleanCreate(value));
     WKBundlePagePostMessage(InjectedBundle::singleton().page()->page(), messageName.get(), messageBody.get());
+}
+
+void TestRunner::terminateNetworkProcess()
+{
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("TerminateNetworkProcess"));
+    WKBundlePagePostMessage(InjectedBundle::singleton().page()->page(), messageName.get(), nullptr);
 }
 
 static unsigned nextUIScriptCallbackID()

@@ -1226,6 +1226,18 @@ void WebProcessPool::useTestingNetworkSession()
     m_shouldUseTestingNetworkSession = true;
 }
 
+template<typename T, typename U>
+void WebProcessPool::sendSyncToNetworkingProcess(T&& message, U&& reply)
+{
+    if (m_networkProcess && m_networkProcess->canSendMessage())
+        m_networkProcess->sendSync(std::forward<T>(message), std::forward<U>(reply), 0);
+}
+
+void WebProcessPool::setAllowsAnySSLCertificateForWebSocket(bool allows)
+{
+    sendSyncToNetworkingProcess(Messages::NetworkProcess::SetAllowsAnySSLCertificateForWebSocket(allows), Messages::NetworkProcess::SetAllowsAnySSLCertificateForWebSocket::Reply());
+}
+
 void WebProcessPool::clearCachedCredentials()
 {
     sendToAllProcesses(Messages::WebProcess::ClearCachedCredentials());
@@ -1242,6 +1254,15 @@ void WebProcessPool::terminateDatabaseProcess()
     m_databaseProcess->terminate();
     m_databaseProcess = nullptr;
 #endif
+}
+
+void WebProcessPool::terminateNetworkProcess()
+{
+    if (!m_networkProcess)
+        return;
+    
+    m_networkProcess->terminate();
+    m_networkProcess = nullptr;
 }
 
 void WebProcessPool::allowSpecificHTTPSCertificateForHost(const WebCertificateInfo* certificate, const String& host)

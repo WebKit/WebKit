@@ -719,6 +719,12 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         return;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "TerminateNetworkProcess")) {
+        ASSERT(!messageBody);
+        TestController::singleton().terminateNetworkProcess();
+        return;
+    }
+
     if (WKStringIsEqualToUTF8CString(messageName, "RunUIProcessScript")) {
         WKDictionaryRef messageBodyDictionary = static_cast<WKDictionaryRef>(messageBody);
         WKRetainPtr<WKStringRef> scriptKey(AdoptWK, WKStringCreateWithUTF8CString("Script"));
@@ -798,7 +804,12 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         WKCookieManagerSetCookieStoragePartitioningEnabled(WKContextGetCookieManager(TestController::singleton().context()), WKBooleanGetValue(accept));
         return nullptr;
     }
-    
+
+    if (WKStringIsEqualToUTF8CString(messageName, "SetAllowsAnySSLCertificate")) {
+        TestController::singleton().setAllowsAnySSLCertificate(WKBooleanGetValue(static_cast<WKBooleanRef>(messageBody)));
+        return nullptr;
+    }
+
     if (WKStringIsEqualToUTF8CString(messageName, "ImageCountInGeneralPasteboard")) {
         unsigned count = TestController::singleton().imageCountInGeneralPasteboard();
         WKRetainPtr<WKUInt64Ref> result(AdoptWK, WKUInt64Create(count));

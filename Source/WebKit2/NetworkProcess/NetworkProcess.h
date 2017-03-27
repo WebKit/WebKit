@@ -189,6 +189,7 @@ private:
     void setCanHandleHTTPSServerTrustEvaluation(bool);
     void getNetworkProcessStatistics(uint64_t callbackID);
     void clearCacheForAllOrigins(uint32_t cachesToClear);
+    void setAllowsAnySSLCertificateForWebSocket(bool);
 
     void didGrantSandboxExtensionsToDatabaseProcessForBlobs(uint64_t requestID);
 

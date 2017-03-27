@@ -166,7 +166,7 @@ storage/indexeddb/modern/exceed-open-file-limit.html
 ### END OF (2) Failures without bug reports
 ########################################
 
-# This test is WebKit2-only
+# These tests are WebKit2-only
 http/tests/contentfiltering/load-substitute-data-from-appcache.html
 fast/dom/Window/child-window-focus.html
 
@@ -334,3 +334,6 @@ webkit.org/b/167589 media/modern-media-controls/macos-fullscreen-media-controls/
 webkit.org/b/169117 media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-audio-background.html [ Pass Timeout ]
 webkit.org/b/167752 media/modern-media-controls/icon-button/icon-button-active-state.html [ Pass Timeout ]
 webkit.org/b/167477 [ Debug ] media/modern-media-controls/play-pause-button/play-pause-button.html [ Pass Timeout ]
+
+# There is not NetworkProcess in WK1, so it can't crash.
+http/tests/websocket/tests/hybi/network-process-crash-error.html [ Skip ]

@@ -108,6 +108,7 @@ MESSAGE_RECEIVERS = \
     NetworkRTCProvider \
     NetworkRTCSocket \
     NetworkResourceLoader \
+    NetworkSocketStream \
     PluginControllerProxy \
     PluginProcess \
     PluginProcessConnection \
@@ -164,6 +165,7 @@ MESSAGE_RECEIVERS = \
     WebRTCSocket \
     WebResourceLoader \
     WebResourceLoadStatisticsStore \
+    WebSocketStream \
     WebUserContentController \
     WebUserContentControllerProxy \
     WebVideoFullscreenManager \

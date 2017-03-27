@@ -270,4 +270,6 @@ interface TestRunner {
     void setOpenPanelFiles(object filesArray);
 
     void setWebRTCLegacyAPIEnabled(boolean value);
+
+    void terminateNetworkProcess();
 };

@@ -63,6 +63,7 @@
 #include "WebProcessPoolMessages.h"
 #include "WebProcessProxyMessages.h"
 #include "WebResourceLoadStatisticsStoreMessages.h"
+#include "WebSocketStream.h"
 #include "WebsiteData.h"
 #include "WebsiteDataType.h"
 #include <JavaScriptCore/JSLock.h>
@@ -1125,6 +1126,7 @@ void WebProcess::networkProcessConnectionClosed(NetworkProcessConnection* connec
     logDiagnosticMessageForNetworkProcessCrash();
 
     m_webLoaderStrategy.networkProcessCrashed();
+    WebSocketStream::networkProcessCrashed();
 }
 
 WebLoaderStrategy& WebProcess::webLoaderStrategy()

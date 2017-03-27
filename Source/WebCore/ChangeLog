@@ -1,3 +1,25 @@
+2017-03-27  Alex Christensen  <achristensen@webkit.org>
+
+        Make WebSockets work in network process
+        https://bugs.webkit.org/show_bug.cgi?id=169930
+
+        Reviewed by Youenn Fablet.
+
+        Covered by 136 existing tests in http/tests/websocket/tests/hybi
+        This also does fine with the 544 websocket tests in the web-platform-tests which we have not yet imported.
+        Also added http/tests/websocket/tests/hybi/network-process-crash-error.html
+        to test a new condition that couldn't happen before this move: the NetworkProcess crashing.
+
+        * Modules/websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::fail):
+        We were asserting that didCloseSocketStream was called.  It is still called,
+        but not synchronously like it used to.  This assertion is now invalid, but tests
+        that would hit it still pass.
+        * platform/network/cf/SocketStreamHandleImplCFNet.cpp:
+        (WebCore::SocketStreamHandleImpl::platformSendInternal):
+        CFWriteStreamCanAcceptBytes crashes if you give it a null parameter, and that can happen now.
+        If we have no write stream, then we cannot write.  Tests that hit this pass still.
+
 2017-03-27  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Improve media documents across macOS, iPhone and iPad

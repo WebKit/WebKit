@@ -888,6 +888,11 @@ const char* TestController::databaseProcessName()
 #endif
 }
 
+void TestController::setAllowsAnySSLCertificate(bool allows)
+{
+    WKContextSetAllowsAnySSLCertificateForWebSocketTesting(platformContext(), allows);
+}
+
 static std::string testPath(WKURLRef url)
 {
     auto scheme = adoptWK(WKURLCopyScheme(url));
@@ -2302,7 +2307,12 @@ void TestController::statisticsResetToConsistentState()
 {
     WKResourceLoadStatisticsManagerResetToConsistentState();
 }
-    
+
+void TestController::terminateNetworkProcess()
+{
+    WKContextTerminateNetworkProcess(platformContext());
+}
+
 #if !PLATFORM(COCOA)
 void TestController::platformWillRunTest(const TestInvocation&)
 {
