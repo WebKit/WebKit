@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2017 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,54 +23,43 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class FullscreenSupport extends MediaControllerSupport
-{
+:host(.media-document) {
+    visibility: hidden !important;
+    max-width: 100% !important;
+    min-height: 50px !important;
+}
 
-    constructor(mediaController)
-    {
-        super(mediaController);
+:host(.media-document.ready) {
+    visibility: visible !important;
+}
 
-        if (mediaController.controls instanceof IOSInlineMediaControls)
-            mediaController.controls.delegate = this;
-    }
+/* Audio */
 
-    // Protected
+:host(.media-document.audio.mac) {
+    width: 650px !important;
+    min-height: 25px !important;
+}
 
-    get control()
-    {
-        return this.mediaController.controls.fullscreenButton;
-    }
+:host(.media-document.audio.ipad) {
+    width: 650px !important;
+}
 
-    get mediaEvents()
-    {
-        return ["loadedmetadata", "error"];
-    }
+:host(.media-document.audio.iphone) {
+    padding: 0 10px;
+    width: 100% !important;
+    box-sizing: border-box;
+}
 
-    get tracksToMonitor()
-    {
-        return [this.mediaController.media.videoTracks];
-    }
+/* Video */
 
-    buttonWasPressed(control)
-    {
-        const media = this.mediaController.media;
-        if (media.webkitDisplayingFullscreen)
-            media.webkitExitFullscreen();
-        else
-            media.webkitEnterFullscreen();
-    }
+:host(.media-document.video.mac) {
+    min-width: 700px !important;
+}
 
-    iOSInlineMediaControlsRecognizedPinchInGesture()
-    {
-        this.mediaController.media.webkitEnterFullscreen();
-    }
+:host(.media-document.video.ipad) {
+    min-width: 700px !important;
+}
 
-    syncControl()
-    {
-        const control = this.control;
-        const media = this.mediaController.media;
-        control.enabled = !this.mediaController.isAudio && media.webkitSupportsFullscreen;
-        control.isFullScreen = media.webkitDisplayingFullscreen;
-    }
-
+:host(.media-document.video.iphone) {
+    width: 100% !important;
 }

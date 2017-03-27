@@ -1,0 +1,12 @@
+Testing the size of the media element in an audio media document on iOS.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS getComputedStyle(media).width became "650px"
+PASS getComputedStyle(media).height is "50px"
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
