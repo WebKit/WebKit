@@ -1,5 +1,20 @@
 2017-03-27  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        Implement format specifier for variation fonts
+        https://bugs.webkit.org/show_bug.cgi?id=169327
+
+        Reviewed by Simon Fraser.
+
+        Variation fonts require the format("woff-variations"), format("truetype-variations"),
+        and format("opentype-variations") format specifies in @font-face rules.
+
+        Test: fast/text/variations/font-face-format.html
+
+        * platform/graphics/mac/FontCustomPlatformData.cpp:
+        (WebCore::FontCustomPlatformData::supportsFormat):
+
+2017-03-27  Myles C. Maxfield  <mmaxfield@apple.com>
+
         Make sure animation works for font-weight, font-stretch, and font-style
         https://bugs.webkit.org/show_bug.cgi?id=169683
 

@@ -63,6 +63,11 @@ bool FontCustomPlatformData::supportsFormat(const String& format)
 #if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200)
         || equalLettersIgnoringASCIICase(format, "woff2")
 #endif
+#if ENABLE(VARIATION_FONTS)
+        || equalLettersIgnoringASCIICase(format, "woff-variations")
+        || equalLettersIgnoringASCIICase(format, "truetype-variations")
+        || equalLettersIgnoringASCIICase(format, "opentype-variations")
+#endif
         || equalLettersIgnoringASCIICase(format, "woff");
 }
 
