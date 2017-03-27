@@ -1,3 +1,23 @@
+2017-03-27  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Clicking on the tracks button when the tracks panel is up in a media document pauses the video
+        https://bugs.webkit.org/show_bug.cgi?id=168517
+        <rdar://problem/30577636>
+
+        Reviewed by Dean Jackson.
+
+        We completely turn off default event handling in MediaDocument.cpp since we're implementing the
+        behavior we expect to pause and resume the video in the modern-media-controls module already. This
+        gets rid of this odd case where the content would not see the "click" event while the C++ side would
+        handle it and pause the video.
+
+        * Modules/modern-media-controls/media/media-controller.js:
+        (MediaController):
+        (MediaController.prototype.handleEvent):
+        (MediaController.prototype._containerWasClicked): Deleted.
+        * html/MediaDocument.cpp:
+        (WebCore::MediaDocument::defaultEventHandler):
+
 2017-03-27  Youenn Fablet  <youenn@apple.com>
 
         Tighten RTCDatachannel creation and parameter getters

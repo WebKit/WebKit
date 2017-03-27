@@ -36,7 +36,6 @@ class MediaController
 
         this.container = shadowRoot.appendChild(document.createElement("div"));
         this.container.className = "media-controls-container";
-        this.container.addEventListener("click", this, true);
 
         if (host) {
             host.controlsDependOnPageScaleFactor = this.layoutTraits & LayoutTraits.iOS;
@@ -133,9 +132,7 @@ class MediaController
             this._updateControlsIfNeeded();
             // We must immediately perform layouts so that we don't lag behind the media layout size.
             scheduler.flushScheduledLayoutCallbacks();
-        } else if (event.type === "click" && event.currentTarget === this.container)
-            this._containerWasClicked(event);
-        else if (event.currentTarget === this.media) {
+        } else if (event.currentTarget === this.media) {
             this._updateControlsIfNeeded();
             if (event.type === "webkitpresentationmodechanged")
                 this._returnMediaLayerToInlineIfNeeded();
@@ -143,13 +140,6 @@ class MediaController
     }
 
     // Private
-
-    _containerWasClicked(event)
-    {
-        // We need to call preventDefault() here since, in the case of Media Documents,
-        // playback may be toggled when clicking on the video.
-        event.preventDefault();
-    }
 
     _updateControlsIfNeeded()
     {

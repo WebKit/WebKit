@@ -1,3 +1,13 @@
+2017-03-27  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Clicking on the tracks button when the tracks panel is up in a media document pauses the video
+        https://bugs.webkit.org/show_bug.cgi?id=168517
+        <rdar://problem/30577636>
+
+        Reviewed by Dean Jackson.
+
+        * media/video-click-dblckick-standalone.html: We disable modern-media-controls here since we know that this test won't pass with them on.
+
 2017-03-27  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark media/modern-media-controls/time-label/time-label-white-space-nowrap.html as flaky.

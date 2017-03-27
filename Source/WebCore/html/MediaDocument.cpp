@@ -181,7 +181,12 @@ static inline HTMLVideoElement* ancestorVideoElement(Node* node)
 
 void MediaDocument::defaultEventHandler(Event& event)
 {
-    // Match the default Quicktime plugin behavior to allow 
+    // Modern media controls have their own event handling to determine when to
+    // pause or resume playback.
+    if (RuntimeEnabledFeatures::sharedFeatures().modernMediaControlsEnabled())
+        return;
+    
+    // Match the default Quicktime plugin behavior to allow
     // clicking and double-clicking to pause and play the media.
     Node* targetNode = event.target()->toNode();
     if (!targetNode)
