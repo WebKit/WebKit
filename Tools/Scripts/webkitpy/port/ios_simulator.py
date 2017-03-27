@@ -67,6 +67,8 @@ class IOSSimulatorPort(IOSPort):
         },
     }
 
+    _DEVICE_MAP = {}
+
     def __init__(self, host, port_name, **kwargs):
         super(IOSSimulatorPort, self).__init__(host, port_name, **kwargs)
 
@@ -74,7 +76,6 @@ class IOSSimulatorPort(IOSPort):
         self._device_class = optional_device_class if optional_device_class else self.DEFAULT_DEVICE_CLASS
         _log.debug('IOSSimulatorPort _device_class is %s', self._device_class)
 
-        self._device_map = {}
         self._current_device = Device(Simulator(host).current_device())
         if not self._current_device:
             self.set_option('dedicated_simulators', True)
@@ -84,7 +85,7 @@ class IOSSimulatorPort(IOSPort):
             self.set_option('child_processes', 1)
 
     def _device_for_worker_number_map(self):
-        return self._device_map
+        return IOSSimulatorPort._DEVICE_MAP
 
     @property
     @memoized
@@ -241,12 +242,11 @@ class IOSSimulatorPort(IOSPort):
         for i in xrange(self.child_processes()):
             Simulator.wait_until_device_is_booted(Simulator.managed_devices[i].udid)
 
-        self._device_map = {}
+        IOSSimulatorPort._DEVICE_MAP = {}
         for i in xrange(self.child_processes()):
-            self._device_map[i] = Device(Simulator.managed_devices[i])
+            IOSSimulatorPort._DEVICE_MAP[i] = Device(Simulator.managed_devices[i])
 
     def _quit_ios_simulator(self):
-        self._device_map = {}
         if not self._using_dedicated_simulators():
             return
         _log.debug("_quit_ios_simulator killing all Simulator processes")
@@ -291,6 +291,7 @@ class IOSSimulatorPort(IOSPort):
 
             except:
                 _log.warning('Unable to remove Simulator' + str(i))
+        IOSSimulatorPort._DEVICE_MAP = {}
 
     def setup_environ_for_server(self, server_name=None):
         _log.debug("setup_environ_for_server")

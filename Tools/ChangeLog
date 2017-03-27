@@ -1,5 +1,20 @@
 2017-03-27  Jonathan Bedard  <jbedard@apple.com>
 
+        REGRESSION: Reseting _device_map on each child process
+        <rdar://problem/31274476>
+
+        Unreviewed infrastructure fix.
+
+        * Scripts/webkitpy/port/ios_simulator.py:
+        (IOSSimulatorPort): Add _DEVICE_MAP class variable.
+        (IOSSimulatorPort.__init__): Use shared class variable
+        (IOSSimulatorPort._device_for_worker_number_map): Use _DEVICE_MAP class variable
+        (IOSSimulatorPort._create_devices): Ditto.
+        (IOSSimulatorPort._quit_ios_simulator): Ditto.
+        (IOSSimulatorPort.clean_up_test_run): Ditto.
+
+2017-03-27  Jonathan Bedard  <jbedard@apple.com>
+
         REGRESSION: Failing to iterate over Simulator.managed_devices map
         <rdar://problem/31274476>
 
