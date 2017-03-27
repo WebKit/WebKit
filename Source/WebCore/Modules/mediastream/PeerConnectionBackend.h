@@ -62,7 +62,6 @@ using StatsPromise = DOMPromise<IDLInterface<RTCStatsReport>>;
 
 using CreatePeerConnectionBackend = std::unique_ptr<PeerConnectionBackend> (*)(RTCPeerConnection&);
 
-// FIXME: What is the value of this abstract class? There is only one concrete class derived from it.
 class PeerConnectionBackend {
 public:
     WEBCORE_EXPORT static CreatePeerConnectionBackend create;
@@ -74,7 +73,7 @@ public:
     void createAnswer(RTCAnswerOptions&&, PeerConnection::SessionDescriptionPromise&&);
     void setLocalDescription(RTCSessionDescription&, DOMPromise<void>&&);
     void setRemoteDescription(RTCSessionDescription&, DOMPromise<void>&&);
-    void addIceCandidate(RTCIceCandidate&, DOMPromise<void>&&);
+    void addIceCandidate(RTCIceCandidate*, DOMPromise<void>&&);
 
     virtual std::unique_ptr<RTCDataChannelHandler> createDataChannelHandler(const String&, const RTCDataChannelInit&) = 0;
 
@@ -137,6 +136,7 @@ private:
     virtual void doSetLocalDescription(RTCSessionDescription&) = 0;
     virtual void doSetRemoteDescription(RTCSessionDescription&) = 0;
     virtual void doAddIceCandidate(RTCIceCandidate&) = 0;
+    virtual void endOfIceCandidates(DOMPromise<void>&& promise) { promise.resolve(); }
     virtual void doStop() = 0;
 
 protected:

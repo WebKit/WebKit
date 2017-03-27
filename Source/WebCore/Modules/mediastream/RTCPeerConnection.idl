@@ -110,7 +110,7 @@ typedef RTCRtpTransceiverDirection RtpTransceiverDirection;
     [PrivateIdentifier] Promise<RTCSessionDescriptionInit> queuedCreateAnswer(optional RTCAnswerOptions answerOptions);
     [PrivateIdentifier] Promise<void> queuedSetLocalDescription(RTCSessionDescription description);
     [PrivateIdentifier] Promise<void> queuedSetRemoteDescription(RTCSessionDescription description);
-    [PrivateIdentifier] Promise<void> queuedAddIceCandidate(RTCIceCandidate candidate);
+    [PrivateIdentifier] Promise<void> queuedAddIceCandidate(RTCIceCandidate? candidate);
 
 
     // 4.11 Certificate management

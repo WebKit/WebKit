@@ -1,3 +1,25 @@
+2017-03-27  Youenn Fablet  <youenn@apple.com>
+
+        addIceCandidate should not throw if passed null or undefined
+        https://bugs.webkit.org/show_bug.cgi?id=170118
+
+        Reviewed by Eric Carlson.
+
+        Covered by updated test.
+
+        A null/undefined candidate passed to addIceCandidate means end of Ice candidate..
+
+        * Modules/mediastream/PeerConnectionBackend.cpp:
+        (WebCore::PeerConnectionBackend::addIceCandidate):
+        * Modules/mediastream/PeerConnectionBackend.h:
+        (WebCore::PeerConnectionBackend::endOfIceCandidates):
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::queuedAddIceCandidate):
+        * Modules/mediastream/RTCPeerConnection.h:
+        * Modules/mediastream/RTCPeerConnection.idl:
+        * Modules/mediastream/RTCPeerConnection.js:
+        (addIceCandidate):
+
 2017-03-27  Antti Koivisto  <antti@apple.com>
 
         Allow the page to render before <link> stylesheet tags in body

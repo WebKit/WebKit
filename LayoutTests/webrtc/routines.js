@@ -42,9 +42,6 @@ function gotDescription2(desc)
 
 function iceCallback1(event, filterOutICECandidate)
 {
-    if (!event.candidate)
-        return;
-
     if (filterOutICECandidate && filterOutICECandidate(event.candidate))
         return;
 
@@ -53,14 +50,10 @@ function iceCallback1(event, filterOutICECandidate)
 
 function iceCallback2(event, filterOutICECandidate)
 {
-    if (!event.candidate)
-        return;
-
     if (filterOutICECandidate && filterOutICECandidate(event.candidate))
         return;
 
-    if (event.candidate)
-        localConnection.addIceCandidate(event.candidate).then(onAddIceCandidateSuccess, onAddIceCandidateError);
+    localConnection.addIceCandidate(event.candidate).then(onAddIceCandidateSuccess, onAddIceCandidateError);
 }
 
 function onAddIceCandidateSuccess()
@@ -69,6 +62,7 @@ function onAddIceCandidateSuccess()
 
 function onAddIceCandidateError(error)
 {
+    console.log("addIceCandidate error: " + error)
     assert_unreached();
 }
 

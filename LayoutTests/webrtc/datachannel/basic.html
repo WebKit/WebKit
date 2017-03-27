@@ -95,7 +95,7 @@ promise_test((test) => {
                 remoteChannel = event.channel;
                 remoteChannel.onmessage = receiveMessages;
             };
-        }, (candidate) => { return candidate.candidate.toLowerCase().indexOf("udp") == -1; });
+        }, (candidate) => { return candidate && candidate.candidate.toLowerCase().indexOf("udp") == -1; });
     });
 }, "Basic data channel exchange from offerer to receiver using UDP only");
 
@@ -114,7 +114,7 @@ promise_test((test) => {
                 remoteChannel = event.channel;
                 remoteChannel.onmessage = receiveMessages;
             };
-        }, (candidate) => { return candidate.candidate.toLowerCase().indexOf("tcp") == -1; });
+        }, (candidate) => { return candidate && candidate.candidate.toLowerCase().indexOf("tcp") == -1; });
     });
 }, "Basic data channel exchange from offerer to receiver using TCP only");
 

@@ -86,7 +86,7 @@ public:
     RefPtr<RTCSessionDescription> currentRemoteDescription() const;
     RefPtr<RTCSessionDescription> pendingRemoteDescription() const;
 
-    void queuedAddIceCandidate(RTCIceCandidate&, DOMPromise<void>&&);
+    void queuedAddIceCandidate(RTCIceCandidate*, DOMPromise<void>&&);
 
     RTCSignalingState signalingState() const { return m_signalingState; }
     RTCIceGatheringState iceGatheringState() const { return m_iceGatheringState; }

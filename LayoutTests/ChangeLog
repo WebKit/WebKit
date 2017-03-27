@@ -1,3 +1,18 @@
+2017-03-27  Youenn Fablet  <youenn@apple.com>
+
+        addIceCandidate should not throw if passed null or undefined
+        https://bugs.webkit.org/show_bug.cgi?id=170118
+
+        Reviewed by Eric Carlson.
+
+        Updating test to log addIceCandidate rejection.
+
+        * webrtc/datachannel/basic.html:
+        * webrtc/routines.js:
+        (iceCallback1):
+        (iceCallback2):
+        (onAddIceCandidateError):
+
 2017-03-27  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaseline svg/css/getComputedStyle-basic.xhtml for macOS.

@@ -250,7 +250,8 @@ function addIceCandidate()
         "constructor": @RTCIceCandidate,
         "argName": "candidate",
         "argType": "RTCIceCandidate",
-        "maybeDictionary": "true"
+        "maybeDictionary": "true",
+        "defaultsToNull" : "true"
     };
     return @objectAndCallbacksOverload(arguments, "addIceCandidate", objectInfo, function (candidate) {
         // Promise mode
