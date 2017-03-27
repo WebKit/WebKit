@@ -78,6 +78,14 @@ WebInspector.LayerTreeDetailsSidebarPanel = class LayerTreeDetailsSidebarPanel e
         });
     }
 
+    sizeDidChange()
+    {
+        super.sizeDidChange();
+
+        // FIXME: <https://webkit.org/b/152269> Web Inspector: Convert DetailsSection classes to use View
+        this._childLayersRow.sizeDidChange();
+    }
+
     // Private
 
     _layerTreeDidChange(event)

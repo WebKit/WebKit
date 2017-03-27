@@ -83,6 +83,14 @@ WebInspector.ProbeSetDetailsSection = class ProbeSetDetailsSection extends WebIn
         this.element.remove();
     }
 
+    // Protected
+
+    sizeDidChange()
+    {
+        // FIXME: <https://webkit.org/b/152269> Web Inspector: Convert DetailsSection classes to use View
+        this._dataGrid.sizeDidChange();
+    }
+
     // Private
 
     _updateLinkElement()

@@ -378,12 +378,12 @@ WebInspector.TimelineRuler = class TimelineRuler extends WebInspector.View
         return this._markerElementMap.get(marker) || null;
     }
 
-    updateLayoutIfNeeded()
+    updateLayoutIfNeeded(layoutReason)
     {
         // If a layout is pending we can let the base class handle it and return, since that will update
         // markers and the selection at the same time.
         if (this.layoutPending) {
-            super.updateLayoutIfNeeded();
+            super.updateLayoutIfNeeded(layoutReason);
             return;
         }
 

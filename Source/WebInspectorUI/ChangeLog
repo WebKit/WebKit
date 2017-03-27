@@ -1,3 +1,44 @@
+2017-03-27  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: The inspector sidebar has weird sub-column sizing issues
+        https://bugs.webkit.org/show_bug.cgi?id=161966
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/Sidebar.js:
+        (WebInspector.Sidebar.prototype.resizerDragEnded):
+        (WebInspector.Sidebar.prototype._recalculateWidth):
+        Ensure that the selected sidebar panel is notified of the size change (sizeDidChange) when
+        the resizer drag ends.
+
+        * UserInterface/Views/DetailsSectionDataGridRow.js:
+        (WebInspector.DetailsSectionDataGridRow.prototype.sizeDidChange):
+        * UserInterface/Views/ProbeSetDetailsSection.js:
+        (WebInspector.ProbeSetDetailsSection.prototype.sizeDidChange):
+        Add/update the sizeDidChange protected function.
+
+        * UserInterface/Views/ComputedStyleDetailsPanel.js:
+        (WebInspector.ComputedStyleDetailsPanel.prototype.initialLayout):
+        (WebInspector.ComputedStyleDetailsPanel.prototype.sizeDidChange):
+        * UserInterface/Views/DOMNodeDetailsSidebarPanel.js:
+        (WebInspector.DOMNodeDetailsSidebarPanel.prototype.sizeDidChange):
+        * UserInterface/Views/LayerTreeDetailsSidebarPanel.js:
+        (WebInspector.LayerTreeDetailsSidebarPanel.prototype.sizeDidChange):
+        * UserInterface/Views/ResourceDetailsSidebarPanel.js:
+        (WebInspector.ResourceDetailsSidebarPanel.prototype.sizeDidChange):
+        * UserInterface/Views/ProbeDetailsSidebarPanel.js:
+        (WebInspector.ProbeDetailsSidebarPanel.prototype.sizeDidChange):
+        Update the contained DataGrid elements whenever the sidebar size changes so that the resizer
+        elements are positioned correctly.
+
+        * UserInterface/Views/View.js:
+        (WebInspector.View.prototype.updateLayoutIfNeeded):
+        * UserInterface/Views/TimelineOverview.js:
+        (WebInspector.TimelineOverview.prototype.updateLayoutIfNeeded):
+        * UserInterface/Views/TimelineRuler.js:
+        (WebInspector.TimelineRuler.prototype.updateLayoutIfNeeded):
+        Ensure the layoutReason is also propagated.
+
 2017-03-27  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Resource Details Sidebar displays previous image metrics when viewing resource where content load failed

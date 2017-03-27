@@ -147,12 +147,12 @@ WebInspector.View = class View extends WebInspector.Object
         this._layoutSubtree();
     }
 
-    updateLayoutIfNeeded()
+    updateLayoutIfNeeded(layoutReason)
     {
         if (!this._dirty && this._didInitialLayout)
             return;
 
-        this.updateLayout();
+        this.updateLayout(layoutReason);
     }
 
     needsLayout(layoutReason)

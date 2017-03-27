@@ -135,6 +135,14 @@ WebInspector.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel exten
         this._refreshAccessibility();
     }
 
+    sizeDidChange()
+    {
+        super.sizeDidChange();
+
+        // FIXME: <https://webkit.org/b/152269> Web Inspector: Convert DetailsSection classes to use View
+        this._attributesDataGridRow.sizeDidChange();
+    }
+
     // Private
 
     _accessibilitySupported()

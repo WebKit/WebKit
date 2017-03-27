@@ -91,6 +91,17 @@ WebInspector.ProbeDetailsSidebarPanel = class ProbeDetailsSidebarPanel extends W
         return !!this._inspectedProbeSets.length;
     }
 
+    // Protected
+
+    sizeDidChange()
+    {
+        super.sizeDidChange();
+
+        // FIXME: <https://webkit.org/b/152269> Web Inspector: Convert DetailsSection classes to use View
+        for (let detailsSection of this._probeSetSections.values())
+            detailsSection.sizeDidChange();
+    }
+
     // Private
 
     _probeSetAdded(probeSetOrEvent)

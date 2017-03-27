@@ -205,6 +205,16 @@ WebInspector.ResourceDetailsSidebarPanel = class ResourceDetailsSidebarPanel ext
         this._refreshRelatedResourcesSection();
     }
 
+    sizeDidChange()
+    {
+        super.sizeDidChange();
+
+        // FIXME: <https://webkit.org/b/152269> Web Inspector: Convert DetailsSection classes to use View
+        this._queryParametersRow.sizeDidChange();
+        this._requestHeadersRow.sizeDidChange();
+        this._responseHeadersRow.sizeDidChange();
+    }
+
     // Private
 
     _refreshURL()

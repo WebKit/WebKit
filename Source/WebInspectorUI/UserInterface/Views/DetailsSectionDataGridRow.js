@@ -59,4 +59,11 @@ WebInspector.DetailsSectionDataGridRow = class DetailsSectionDataGridRow extends
         } else
             this.showEmptyMessage();
     }
+
+    sizeDidChange()
+    {
+        // FIXME: <https://webkit.org/b/152269> Web Inspector: Convert DetailsSection classes to use View
+        if (this._dataGrid)
+            this._dataGrid.sizeDidChange();
+    }
 };

@@ -262,6 +262,18 @@ WebInspector.Sidebar = class Sidebar extends WebInspector.View
         this.collapsed = (newWidth < (this.minimumWidth / 2));
     }
 
+    resizerDragEnded(resizer)
+    {
+        if (this._widthBeforeResize === this.width)
+            return;
+
+        if (!this.collapsed && this._navigationBar)
+            this._navigationBar.sizeDidChange();
+
+        if (!this.collapsed && this._selectedSidebarPanel)
+            this._selectedSidebarPanel.sizeDidChange();
+    }
+
     // Private
 
     _recalculateWidth(newWidth = this.width)
@@ -271,7 +283,7 @@ WebInspector.Sidebar = class Sidebar extends WebInspector.View
         this.element.style.width = `${newWidth}px`;
 
         if (!this.collapsed && this._navigationBar)
-            this._navigationBar.needsLayout();
+            this._navigationBar.updateLayoutIfNeeded(WebInspector.View.LayoutReason.Resize);
 
         if (!this.collapsed && this._selectedSidebarPanel)
             this._selectedSidebarPanel.updateLayoutIfNeeded(WebInspector.View.LayoutReason.Resize);

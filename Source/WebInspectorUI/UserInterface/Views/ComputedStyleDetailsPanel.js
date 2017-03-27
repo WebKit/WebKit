@@ -201,8 +201,8 @@ WebInspector.ComputedStyleDetailsPanel = class ComputedStyleDetailsPanel extends
         this._containerRegionsDataGrid = new WebInspector.DOMTreeDataGrid;
         this._containerRegionsDataGrid.headerVisible = false;
 
-        let containerRegionsRow = new WebInspector.DetailsSectionDataGridRow(this._containerRegionsDataGrid);
-        let containerRegionsGroup = new WebInspector.DetailsSectionGroup([containerRegionsRow]);
+        this._containerRegionsRow = new WebInspector.DetailsSectionDataGridRow(this._containerRegionsDataGrid);
+        let containerRegionsGroup = new WebInspector.DetailsSectionGroup([this._containerRegionsRow]);
         this._containerRegionsFlowSection = new WebInspector.DetailsSection("container-regions", WebInspector.UIString("Container Regions"), [containerRegionsGroup]);
 
         this.element.appendChild(propertiesSection.element);
@@ -218,6 +218,14 @@ WebInspector.ComputedStyleDetailsPanel = class ComputedStyleDetailsPanel extends
         let boxModelSection = new WebInspector.DetailsSection("style-box-model", WebInspector.UIString("Box Model"), [boxModelGroup]);
 
         this.element.appendChild(boxModelSection.element);
+    }
+
+    sizeDidChange()
+    {
+        super.sizeDidChange();
+
+        // FIXME: <https://webkit.org/b/152269> Web Inspector: Convert DetailsSection classes to use View
+        this._containerRegionsRow.sizeDidChange();
     }
 
     // Private
