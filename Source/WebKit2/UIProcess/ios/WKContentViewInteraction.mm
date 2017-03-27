@@ -4356,8 +4356,11 @@ static NSString *previewIdentifierForElementAction(_WKElementAction *action)
             [uiDelegate _webView:_webView willPreviewImageWithURL:targetURL];
 
         auto defaultActions = [_actionSheetAssistant defaultActionsForImageSheet:elementInfo.get()];
-        if (imageInfo && [uiDelegate respondsToSelector:@selector(_webView:actionsForElement:defaultActions:)])
-            defaultActions = [uiDelegate _webView:_webView actionsForElement:elementInfo.get() defaultActions:defaultActions.get()];
+        if (imageInfo && [uiDelegate respondsToSelector:@selector(_webView:previewViewControllerForImage:alternateURL:defaultActions:elementInfo:)]) {
+            UIViewController *previewViewController = [uiDelegate _webView:_webView previewViewControllerForImage:uiImage.get() alternateURL:alternateURL.get() defaultActions:defaultActions.get() elementInfo:elementInfo.get()];
+            if (previewViewController)
+                return previewViewController;
+        }
 
         return [[[WKImagePreviewViewController alloc] initWithCGImage:cgImage defaultActions:defaultActions elementInfo:elementInfo] autorelease];
     }

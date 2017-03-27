@@ -89,6 +89,7 @@ struct UIEdgeInsets;
 - (UIViewController *)_presentingViewControllerForWebView:(WKWebView *)webView WK_API_AVAILABLE(ios(10.0));
 - (void)_webView:(WKWebView *)webView getAlternateURLFromImage:(UIImage *)image completionHandler:(void (^)(NSURL *alternateURL, NSDictionary *userInfo))completionHandler WK_API_AVAILABLE(ios(WK_IOS_TBA));
 - (NSURL *)_webView:(WKWebView *)webView alternateURLFromImage:(UIImage *)image userInfo:(NSDictionary **)userInfo WK_API_AVAILABLE(ios(WK_IOS_TBA));
+- (UIViewController *)_webView:(WKWebView *)webView previewViewControllerForImage:(UIImage *)image alternateURL:(NSURL *)url defaultActions:(NSArray<_WKElementAction *> *)actions elementInfo:(_WKActivatedElementInfo *)elementInfo WK_API_AVAILABLE(ios(WK_IOS_TBA));
 - (NSArray<UIItemProvider *> *)_webView:(WKWebView *)webView adjustedDataInteractionItemProviders:(NSArray<UIItemProvider *> *)originalItemProviders WK_API_AVAILABLE(ios(WK_IOS_TBA));
 - (BOOL)_webView:(WKWebView *)webView performDataInteractionOperationWithItemProviders:(NSArray<UIItemProvider *> *)itemProviders WK_API_AVAILABLE(ios(WK_IOS_TBA));
 - (void)_webView:(WKWebView *)webView dataInteraction:(id)interaction sessionWillBegin:(id)session WK_API_AVAILABLE(ios(WK_IOS_TBA));

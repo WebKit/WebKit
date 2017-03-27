@@ -1,3 +1,20 @@
+2017-03-27  Yongjun Zhang  <yongjun_zhang@apple.com>
+
+        Add delegate method to let an WebKit client provide a custom image preview controller.
+        https://bugs.webkit.org/show_bug.cgi?id=170076
+        rdar://problem/31153051
+
+        Add a new delegate method (_webView:previewViewControllerForImage:alternateURL:defaultActions:elementInfo:) to
+        WKUIDelegatePrivate, an client can use this method to provide a custom image preview view controller if the image
+        has alternated URL or custom image info.
+
+        Reviewed by Beth Dakin.
+
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h: Add delegate method _webView:previewViewControllerForImage:alternateURL:defaultActions:elementInfo:.
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _presentedViewControllerForPreviewItemController:]): If the image has alternated URL or custom info, try to use the client-provided
+            preview view controller. Otherwise, use the default WKImagePreviewViewController.
+
 2017-03-27  Anders Carlsson  <andersca@apple.com>
 
         Fix uses of deprecated API
