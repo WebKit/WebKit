@@ -2926,3 +2926,6 @@ fast/css-generated-content/initial-letter-pagination-raised.html [ Skip ]
 fast/css-generated-content/initial-letter-pagination-sunken.html [ Skip ]
 fast/css-generated-content/initial-letter-pagination-raised-rl.html [ Skip ]
 fast/css-generated-content/initial-letter-pagination-sunken-rl.html [ Skip ]
+
+webkit.org/b/170123 media/modern-media-controls/media-documents/ipad/media-document-audio-ios-sizing.html [ Timeout ]
+webkit.org/b/170123 media/modern-media-controls/media-documents/ipad/media-document-video-ios-sizing.html [ Timeout ]
