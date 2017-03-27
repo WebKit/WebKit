@@ -562,12 +562,17 @@ void LibWebRTCMediaEndpoint::OnAddTrack(rtc::scoped_refptr<webrtc::RtpReceiverIn
 std::unique_ptr<RTCDataChannelHandler> LibWebRTCMediaEndpoint::createDataChannel(const String& label, const RTCDataChannelInit& options)
 {
     webrtc::DataChannelInit init;
-    init.ordered = options.ordered;
-    init.maxRetransmitTime = options.maxRetransmitTime;
-    init.maxRetransmits = options.maxRetransmits;
+    if (options.ordered)
+        init.ordered = *options.ordered;
+    if (options.maxPacketLifeTime)
+        init.maxRetransmitTime = *options.maxPacketLifeTime;
+    if (options.maxRetransmits)
+        init.maxRetransmits = *options.maxRetransmits;
     init.protocol = options.protocol.utf8().data();
-    init.negotiated = options.negotiated;
-    init.id = options.id;
+    if (options.negotiated)
+        init.negotiated = *options.negotiated;
+    if (options.id)
+        init.id = *options.id;
 
     return std::make_unique<LibWebRTCDataChannelHandler>(m_backend->CreateDataChannel(label.utf8().data(), &init));
 }
@@ -579,7 +584,7 @@ void LibWebRTCMediaEndpoint::addDataChannel(rtc::scoped_refptr<webrtc::DataChann
 
     RTCDataChannelInit init;
     init.ordered = dataChannel->ordered();
-    init.maxRetransmitTime = dataChannel->maxRetransmitTime();
+    init.maxPacketLifeTime = dataChannel->maxRetransmitTime();
     init.maxRetransmits = dataChannel->maxRetransmits();
     init.protocol = String(protocol.data(), protocol.size());
     init.negotiated = dataChannel->negotiated();

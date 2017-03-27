@@ -332,7 +332,15 @@ ExceptionOr<Ref<RTCDataChannel>> RTCPeerConnection::createDataChannel(ScriptExec
     if (m_signalingState == RTCSignalingState::Closed)
         return Exception { INVALID_STATE_ERR };
 
-    // FIXME: Check options
+    if (options.negotiated && !options.negotiated.value() && (label.length() > 65535 || options.protocol.length() > 65535))
+        return Exception { TypeError };
+
+    if (options.maxPacketLifeTime && options.maxRetransmits)
+        return Exception { TypeError };
+
+    if (options.id && options.id.value() > 65534)
+        return Exception { TypeError };
+    
     auto channelHandler = m_backend->createDataChannelHandler(label, options);
     if (!channelHandler)
         return Exception { NOT_SUPPORTED_ERR };

@@ -26,17 +26,18 @@
 
 #if ENABLE(WEB_RTC)
 
+#include <wtf/Optional.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 struct RTCDataChannelInit {
-    bool ordered { true };
-    int maxRetransmitTime { -1 };
-    int maxRetransmits { -1 };
+    std::optional<bool> ordered;
+    std::optional<unsigned short> maxPacketLifeTime;
+    std::optional<unsigned short> maxRetransmits;
     String protocol;
-    bool negotiated { false };
-    int id { -1 };
+    std::optional<bool> negotiated;
+    std::optional<unsigned short> id;
 };
 
 class RTCDataChannelHandlerClient;

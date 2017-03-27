@@ -48,12 +48,12 @@ class RTCDataChannel final : public RTCDataChannelHandlerClient, public EventTar
 public:
     static Ref<RTCDataChannel> create(ScriptExecutionContext&, std::unique_ptr<RTCDataChannelHandler>&&, String&&, RTCDataChannelInit&&);
 
-    bool ordered() const { return m_options.ordered; }
-    unsigned short maxRetransmitTime() const { return m_options.maxRetransmitTime; }
-    unsigned short maxRetransmits() const { return m_options.maxRetransmits; }
+    bool ordered() const { return *m_options.ordered; }
+    std::optional<unsigned short> maxPacketLifeTime() const { return m_options.maxPacketLifeTime; }
+    std::optional<unsigned short> maxRetransmits() const { return m_options.maxRetransmits; }
     String protocol() const { return m_options.protocol; }
-    bool negotiated() const { return m_options.negotiated; };
-    unsigned short id() const { return m_options.id; };
+    bool negotiated() const { return *m_options.negotiated; };
+    std::optional<unsigned short> id() const { return m_options.id; };
 
     String label() const { return m_label; }
     const AtomicString& readyState() const;

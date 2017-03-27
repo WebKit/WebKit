@@ -38,8 +38,7 @@ typedef RTCRtpTransceiverDirection RtpTransceiverDirection;
     EnabledAtRuntime=PeerConnection
 ] dictionary RTCDataChannelInit {
     boolean ordered = true;
-    // FIXME 169644: rename to maxPacketLifeTime;
-    unsigned short maxRetransmitTime;
+    unsigned short maxPacketLifeTime;
     unsigned short maxRetransmits;
     USVString protocol = "";
     boolean negotiated = false;

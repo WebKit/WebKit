@@ -28,11 +28,11 @@
 ] interface RTCDataChannel : EventTarget {
     readonly attribute DOMString label;
     readonly attribute boolean ordered;
-    readonly attribute unsigned short maxRetransmitTime;
-    readonly attribute unsigned short maxRetransmits;
+    readonly attribute unsigned short? maxPacketLifeTime;
+    readonly attribute unsigned short? maxRetransmits;
     readonly attribute DOMString protocol;
     readonly attribute boolean negotiated;
-    readonly attribute unsigned short id;
+    readonly attribute unsigned short? id;
     readonly attribute DOMString readyState;
     readonly attribute unsigned long bufferedAmount;
 
