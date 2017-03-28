@@ -23,7 +23,7 @@ FAIL RTCPeerConnection interface: operation setRemoteDescription(RTCSessionDescr
 PASS RTCPeerConnection interface: attribute remoteDescription 
 PASS RTCPeerConnection interface: attribute currentRemoteDescription 
 PASS RTCPeerConnection interface: attribute pendingRemoteDescription 
-FAIL RTCPeerConnection interface: operation addIceCandidate([object Object],[object Object]) assert_equals: property has wrong .length expected 1 but got 0
+PASS RTCPeerConnection interface: operation addIceCandidate([object Object],[object Object]) 
 PASS RTCPeerConnection interface: attribute signalingState 
 PASS RTCPeerConnection interface: attribute iceGatheringState 
 PASS RTCPeerConnection interface: attribute iceConnectionState 
@@ -44,7 +44,9 @@ FAIL RTCPeerConnection interface: operation createAnswer(RTCSessionDescriptionCa
             fn.apply(obj, args);
         }" did not throw
 FAIL RTCPeerConnection interface: operation setRemoteDescription(RTCSessionDescription,VoidFunction,RTCPeerConnectionErrorCallback) assert_equals: property has wrong .length expected 1 but got 0
-FAIL RTCPeerConnection interface: operation addIceCandidate(RTCIceCandidate,VoidFunction,RTCPeerConnectionErrorCallback) assert_equals: property has wrong .length expected 1 but got 0
+FAIL RTCPeerConnection interface: operation addIceCandidate(RTCIceCandidate,VoidFunction,RTCPeerConnectionErrorCallback) assert_throws: calling operation with this = null didn't throw TypeError function "function () {
+            fn.apply(obj, args);
+        }" did not throw
 FAIL RTCPeerConnection interface: operation getStats(MediaStreamTrack,RTCStatsCallback,RTCPeerConnectionErrorCallback) assert_throws: calling operation with this = null didn't throw TypeError function "function () {
             fn.apply(obj, args);
         }" did not throw
@@ -79,7 +81,7 @@ PASS RTCPeerConnection interface: pc must inherit property "remoteDescription" w
 PASS RTCPeerConnection interface: pc must inherit property "currentRemoteDescription" with the proper type (8) 
 PASS RTCPeerConnection interface: pc must inherit property "pendingRemoteDescription" with the proper type (9) 
 PASS RTCPeerConnection interface: pc must inherit property "addIceCandidate" with the proper type (10) 
-FAIL RTCPeerConnection interface: calling addIceCandidate([object Object],[object Object]) on pc with too few arguments must throw TypeError assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS RTCPeerConnection interface: calling addIceCandidate([object Object],[object Object]) on pc with too few arguments must throw TypeError 
 FAIL RTCPeerConnection interface: pc must inherit property "signalingState" with the proper type (11) Unrecognized type RTCSignalingState
 FAIL RTCPeerConnection interface: pc must inherit property "iceGatheringState" with the proper type (12) Unrecognized type RTCIceGatheringState
 FAIL RTCPeerConnection interface: pc must inherit property "iceConnectionState" with the proper type (13) Unrecognized type RTCIceConnectionState

@@ -1,5 +1,17 @@
 2017-03-28  Youenn Fablet  <youenn@apple.com>
 
+        Fix addIceCandidate after r214441
+        https://bugs.webkit.org/show_bug.cgi?id=170146
+
+        Reviewed by Chris Dumez.
+
+        Covered by rebased test.
+
+        * Modules/mediastream/RTCPeerConnection.js:
+        (addIceCandidate): Setting function length to 1 and throwing if no parameter is passed.
+
+2017-03-28  Youenn Fablet  <youenn@apple.com>
+
         Stop RTCDataChannel when closing page
         https://bugs.webkit.org/show_bug.cgi?id=170166
 
