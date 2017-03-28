@@ -1,3 +1,14 @@
+2017-03-28  Andy Estes  <aestes@apple.com>
+
+        [iOS] Crash in -[WebPreviewLoader failed] when running http/tests/multipart/policy-ignore-crash.php
+        https://bugs.webkit.org/show_bug.cgi?id=170197
+        <rdar://problem/30314067>
+
+        Reviewed by Brady Eidson.
+
+        * platform/ios/TestExpectations: Unskipped http/tests/multipart/policy-ignore-crash.php.
+        * platform/ios/http/tests/multipart/policy-ignore-crash-expected.txt: Added an iOS-specific result.
+
 2017-03-28  Chris Dumez  <cdumez@apple.com>
 
         Animated SVG images are not paused when outside viewport

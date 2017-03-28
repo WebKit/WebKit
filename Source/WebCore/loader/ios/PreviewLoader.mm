@@ -233,6 +233,10 @@ bool PreviewLoader::didFinishLoading()
 
 void PreviewLoader::didFail()
 {
+    if (m_finishedLoadingDataIntoConverter)
+        return;
+
+    m_finishedLoadingDataIntoConverter = true;
     [m_previewLoader failed];
     m_previewLoader = nullptr;
 }
