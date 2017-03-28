@@ -169,7 +169,7 @@ list(APPEND WebKit_SOURCES
     mac/DefaultDelegates/WebDefaultContextMenuDelegate.mm
     mac/DefaultDelegates/WebDefaultEditingDelegate.m
     mac/DefaultDelegates/WebDefaultPolicyDelegate.m
-    mac/DefaultDelegates/WebDefaultUIDelegate.m
+    mac/DefaultDelegates/WebDefaultUIDelegate.mm
 
     mac/History/BackForwardList.mm
     mac/History/BinaryPropertyList.cpp

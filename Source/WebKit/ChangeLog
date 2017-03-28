@@ -1,3 +1,12 @@
+2017-03-27  JF Bastien  <jfbastien@apple.com>
+
+        make build fix for WebDefaultUIDelegate.m
+        https://bugs.webkit.org/show_bug.cgi?id=170163
+
+        Unreviewed build fix.
+
+        * PlatformMac.cmake: WebDefaultUIDelegate.m was renamed
+
 2017-03-24  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [WK2] Add a UI delegate SPI hook to enable or disable navigation on drop
