@@ -1395,14 +1395,16 @@ void RenderView::updateVisibleViewportRect(const IntRect& visibleRect)
     }
 }
 
-void RenderView::addRendererWithPausedImageAnimations(RenderElement& renderer)
+void RenderView::addRendererWithPausedImageAnimations(RenderElement& renderer, CachedImage& image)
 {
-    if (renderer.hasPausedImageAnimations()) {
-        ASSERT(m_renderersWithPausedImageAnimation.contains(&renderer));
-        return;
-    }
+    ASSERT(!renderer.hasPausedImageAnimations() || m_renderersWithPausedImageAnimation.contains(&renderer));
+
     renderer.setHasPausedImageAnimations(true);
-    m_renderersWithPausedImageAnimation.add(&renderer);
+    auto& images = m_renderersWithPausedImageAnimation.ensure(&renderer, [] {
+        return Vector<CachedImage*>();
+    }).iterator->value;
+    if (!images.contains(&image))
+        images.append(&image);
 }
 
 void RenderView::removeRendererWithPausedImageAnimations(RenderElement& renderer)
@@ -1414,15 +1416,35 @@ void RenderView::removeRendererWithPausedImageAnimations(RenderElement& renderer
     m_renderersWithPausedImageAnimation.remove(&renderer);
 }
 
+void RenderView::removeRendererWithPausedImageAnimations(RenderElement& renderer, CachedImage& image)
+{
+    ASSERT(renderer.hasPausedImageAnimations());
+
+    auto it = m_renderersWithPausedImageAnimation.find(&renderer);
+    ASSERT(it != m_renderersWithPausedImageAnimation.end());
+
+    auto& images = it->value;
+    if (!images.contains(&image))
+        return;
+
+    if (images.size() == 1)
+        removeRendererWithPausedImageAnimations(renderer);
+    else
+        images.removeFirst(&image);
+}
+
 void RenderView::resumePausedImageAnimationsIfNeeded(IntRect visibleRect)
 {
-    Vector<RenderElement*, 10> toRemove;
-    for (auto* renderer : m_renderersWithPausedImageAnimation) {
-        if (renderer->repaintForPausedImageAnimationsIfNeeded(visibleRect))
-            toRemove.append(renderer);
+    Vector<std::pair<RenderElement*, CachedImage*>, 10> toRemove;
+    for (auto& it : m_renderersWithPausedImageAnimation) {
+        auto* renderer = it.key;
+        for (auto* image : it.value) {
+            if (renderer->repaintForPausedImageAnimationsIfNeeded(visibleRect, *image))
+                toRemove.append(std::make_pair(renderer, image));
+        }
     }
-    for (auto& renderer : toRemove)
-        removeRendererWithPausedImageAnimations(*renderer);
+    for (auto& pair : toRemove)
+        removeRendererWithPausedImageAnimations(*pair.first, *pair.second);
 }
 
 RenderView::RepaintRegionAccumulator::RepaintRegionAccumulator(RenderView* view)

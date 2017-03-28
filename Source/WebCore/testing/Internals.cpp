@@ -744,6 +744,19 @@ void Internals::resetImageAnimation(HTMLImageElement& element)
     image->resetAnimation();
 }
 
+bool Internals::isImageAnimating(HTMLImageElement& element)
+{
+    auto* cachedImage = element.cachedImage();
+    if (!cachedImage)
+        return false;
+
+    auto* image = cachedImage->image();
+    if (!image)
+        return false;
+
+    return image->isAnimating();
+}
+
 void Internals::setClearDecoderAfterAsyncFrameRequestForTesting(HTMLImageElement& element, bool value)
 {
     auto* cachedImage = element.cachedImage();

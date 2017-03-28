@@ -115,6 +115,7 @@ public:
     unsigned imageFrameIndex(HTMLImageElement&);
     void setImageFrameDecodingDuration(HTMLImageElement&, float duration);
     void resetImageAnimation(HTMLImageElement&);
+    bool isImageAnimating(HTMLImageElement&);
     void setClearDecoderAfterAsyncFrameRequestForTesting(HTMLImageElement&, bool);
 
     void clearPageCache();

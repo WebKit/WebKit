@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<img id="a" src="resources/smilAnimation.svg">
+<img id="b" src="resources/smilAnimation.svg">
+<script>
+description("Tests that animated SVG images are paused when removed from the document.");
+jsTestIsAsync = true;
+
+// Both images will use the same underlying SVGImage.
+const imageA = document.getElementById("a");
+const imageB = document.getElementById("b");
+
+onload = function() {
+    shouldBeTrue("internals.isImageAnimating(imageA)");
+    shouldBeTrue("internals.isImageAnimating(imageB)");
+
+    setTimeout(function() {
+        evalAndLog("imageA.remove()");
+        shouldBeTrue("internals.isImageAnimating(imageB)");
+
+        setTimeout(function() {
+            shouldBeTrue("internals.isImageAnimating(imageB)");
+            evalAndLog("imageB.remove()");
+            setTimeout(function() {
+                shouldBeFalse("internals.isImageAnimating(imageA)");
+                shouldBeFalse("internals.isImageAnimating(imageB)");
+
+                evalAndLog("document.body.appendChild(imageA)");
+                document.body.offsetWidth; // Force layout.
+                shouldBeTrue("internals.isImageAnimating(imageA)");
+                evalAndLog("document.body.appendChild(imageB)");
+                document.body.offsetWidth; // Force layout.
+                shouldBeTrue("internals.isImageAnimating(imageB)");
+
+                finishJSTest();
+            }, 30);
+        }, 30);
+    }, 30);
+}
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

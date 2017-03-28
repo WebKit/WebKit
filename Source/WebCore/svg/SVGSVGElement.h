@@ -85,6 +85,7 @@ public: // DOM
     void pauseAnimations();
     void unpauseAnimations();
     bool animationsPaused() const;
+    bool hasActiveAnimation() const;
 
     float getCurrentTime() const;
     void setCurrentTime(float);

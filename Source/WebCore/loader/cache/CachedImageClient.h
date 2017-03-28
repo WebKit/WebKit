@@ -40,7 +40,7 @@ public:
     virtual void imageChanged(CachedImage*, const IntRect* = nullptr) { }
 
     // Called when GIF animation progresses.
-    virtual void newImageAnimationFrameAvailable(CachedImage& image) { imageChanged(&image); }
+    virtual void newImageAnimationFrameAvailable(CachedImage& image, bool& canPause) { imageChanged(&image); canPause = true; }
 };
 
 } // namespace WebCore

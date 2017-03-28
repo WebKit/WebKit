@@ -229,8 +229,9 @@ public:
     void registerForVisibleInViewportCallback(RenderElement&);
     void unregisterForVisibleInViewportCallback(RenderElement&);
     void resumePausedImageAnimationsIfNeeded(IntRect visibleRect);
-    void addRendererWithPausedImageAnimations(RenderElement&);
+    void addRendererWithPausedImageAnimations(RenderElement&, CachedImage&);
     void removeRendererWithPausedImageAnimations(RenderElement&);
+    void removeRendererWithPausedImageAnimations(RenderElement&, CachedImage&);
 
     class RepaintRegionAccumulator {
         WTF_MAKE_NONCOPYABLE(RepaintRegionAccumulator);
@@ -389,7 +390,7 @@ private:
     bool m_inHitTesting { false };
 #endif
 
-    HashSet<RenderElement*> m_renderersWithPausedImageAnimation;
+    HashMap<RenderElement*, Vector<CachedImage*>> m_renderersWithPausedImageAnimation;
     HashSet<RenderElement*> m_visibleInViewportRenderers;
     Vector<RefPtr<RenderWidget>> m_protectedRenderWidgets;
 

@@ -1,3 +1,93 @@
+2017-03-28  Chris Dumez  <cdumez@apple.com>
+
+        Animated SVG images are not paused when outside viewport
+        https://bugs.webkit.org/show_bug.cgi?id=170155
+        <rdar://problem/31288893>
+
+        Reviewed by Antti Koivisto.
+
+        Make sure animated SVG images get paused when outside the viewport,
+        similarly to what was already done for animated GIF images. Also
+        make sure they are paused when they no longer have any renderers
+        using them.
+
+        Tests: svg/animations/animated-svg-image-outside-viewport-paused.html
+               svg/animations/animated-svg-image-removed-from-document-paused.html
+
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::didAddClient):
+        Restart the animation whenever a new CachedImage client is added. This
+        will cause us the re-evaluate if the animation should run. The animation
+        will pause again if the new renderer is not inside the viewport.
+
+        (WebCore::CachedImage::animationAdvanced):
+        Add a flag to newImageAnimationFrameAvailable() so that the renderers can
+        let us know if we can pause the animation. Pause the animation if all no
+        renderer requires it (i.e. they are all outside the viewport, or there
+        are no renderers).
+
+        * loader/cache/CachedImageClient.h:
+        (WebCore::CachedImageClient::newImageAnimationFrameAvailable):
+        By default, the CachedImageClients allow pausing. Only renderer will
+        potentially prevent pausing if they are inside the viewport.
+
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::isAnimating):
+        * platform/graphics/BitmapImage.h:
+        * platform/graphics/Image.h:
+        (WebCore::Image::isAnimating):
+        Add isAnimating() flag on Image for layout testing purposes.
+
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::newImageAnimationFrameAvailable):
+        Set canPause flag to true if the renderer is not inside the viewport.
+
+        (WebCore::RenderElement::repaintForPausedImageAnimationsIfNeeded):
+        Call startAnimation() if the renderer is now visible to resume SVG
+        animations. Repainting is enough for GIF animations but not for SVG
+        animations, we have to explicitly resume them.
+
+        * rendering/RenderElement.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::addRendererWithPausedImageAnimations):
+        (WebCore::RenderView::removeRendererWithPausedImageAnimations):
+        (WebCore::RenderView::resumePausedImageAnimationsIfNeeded):
+        * rendering/RenderView.h:
+        Store CachedImages with the renderers that have paused animations.
+        This is required for SVG where we need to explicitly resume the
+        animation on the CachedImage when the renderer becomes visible
+        again. Having access to the Image will also allow us to do smarter
+        visibility checks in RenderElement's shouldRepaintForImageAnimation(),
+        in the future.
+
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::hasActiveAnimation):
+        * svg/SVGSVGElement.h:
+        Add hasActiveAnimation() method.
+
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::startAnimation):
+        Check that animations are paused before starting them. This avoid
+        jumping due to unnecessary calls to rootElement->setCurrentTime(0).
+
+        (WebCore::SVGImage::isAnimating):
+        Add isAnimating() method for layout tests purposes.
+
+        * svg/graphics/SVGImage.h:
+        * svg/graphics/SVGImageClients.h:
+        Call animationAdvanced() on the observer instead of the generic
+        changedInRect() when the SVGImage is animating. This way, we go
+        through the same code path as GIF animations and we end up calling
+        CachedImage::animationAdvanced() which calls newImageAnimationFrameAvailable()
+        on RenderElement, which determines if the animation should keep
+        running or not.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::isImageAnimating):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+        Add layout testing infrastructure.
+
 2017-03-28  Antti Koivisto  <antti@apple.com>
 
         Missing render tree position invalidation when tearing down renderers for display:contents subtree

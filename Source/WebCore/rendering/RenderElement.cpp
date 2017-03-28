@@ -1494,27 +1494,28 @@ void RenderElement::visibleInViewportStateChanged()
     ASSERT_NOT_REACHED();
 }
 
-void RenderElement::newImageAnimationFrameAvailable(CachedImage& image)
+void RenderElement::newImageAnimationFrameAvailable(CachedImage& image, bool& canPause)
 {
     auto& frameView = view().frameView();
     auto visibleRect = frameView.windowToContents(frameView.windowClipRect());
     if (!shouldRepaintForImageAnimation(*this, visibleRect)) {
-        // FIXME: It would be better to pass the image along with the renderer
-        // so that we can be smarter about detecting if the image is inside the
-        // viewport in repaintForPausedImageAnimationsIfNeeded().
-        view().addRendererWithPausedImageAnimations(*this);
+        view().addRendererWithPausedImageAnimations(*this, image);
+        canPause = true;
         return;
     }
     imageChanged(&image);
 }
 
-bool RenderElement::repaintForPausedImageAnimationsIfNeeded(const IntRect& visibleRect)
+bool RenderElement::repaintForPausedImageAnimationsIfNeeded(const IntRect& visibleRect, CachedImage& cachedImage)
 {
     ASSERT(m_hasPausedImageAnimations);
     if (!shouldRepaintForImageAnimation(*this, visibleRect))
         return false;
 
     repaint();
+
+    if (auto* image = cachedImage.image())
+        image->startAnimation();
 
     // For directly-composited animated GIFs it does not suffice to call repaint() to resume animation. We need to mark the image as changed.
     if (is<RenderBoxModelObject>(*this))

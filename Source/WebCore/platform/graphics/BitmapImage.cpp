@@ -406,6 +406,11 @@ void BitmapImage::internalAdvanceAnimation()
     LOG(Images, "BitmapImage::%s - %p - url: %s [m_currentFrame = %ld]", __FUNCTION__, this, sourceURL().utf8().data(), m_currentFrame);
 }
 
+bool BitmapImage::isAnimating() const
+{
+    return !!m_frameTimer;
+}
+
 void BitmapImage::stopAnimation()
 {
     // This timer is used to animate all occurrences of this image. Don't invalidate

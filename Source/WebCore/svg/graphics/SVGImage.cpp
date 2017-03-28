@@ -374,7 +374,7 @@ void SVGImage::computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrin
 void SVGImage::startAnimation()
 {
     SVGSVGElement* rootElement = this->rootElement();
-    if (!rootElement)
+    if (!rootElement || !rootElement->animationsPaused())
         return;
     rootElement->unpauseAnimations();
     rootElement->setCurrentTime(0);
@@ -391,6 +391,14 @@ void SVGImage::stopAnimation()
 void SVGImage::resetAnimation()
 {
     stopAnimation();
+}
+
+bool SVGImage::isAnimating() const
+{
+    SVGSVGElement* rootElement = this->rootElement();
+    if (!rootElement)
+        return false;
+    return rootElement->hasActiveAnimation();
 }
 
 void SVGImage::reportApproximateMemoryCost() const

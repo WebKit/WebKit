@@ -29,6 +29,7 @@
 #include "CSSImageValue.h"
 #include "CachedImage.h"
 #include "RenderElement.h"
+#include "RenderView.h"
 
 namespace WebCore {
 
@@ -186,6 +187,10 @@ void StyleCachedImage::removeClient(RenderElement* renderer)
     if (!m_cachedImage)
         return;
     ASSERT(renderer);
+
+    if (renderer->hasPausedImageAnimations())
+        renderer->view().removeRendererWithPausedImageAnimations(*renderer, *m_cachedImage);
+
     m_cachedImage->removeClient(*renderer);
 }
 

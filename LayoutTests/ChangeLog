@@ -1,3 +1,20 @@
+2017-03-28  Chris Dumez  <cdumez@apple.com>
+
+        Animated SVG images are not paused when outside viewport
+        https://bugs.webkit.org/show_bug.cgi?id=170155
+        <rdar://problem/31288893>
+
+        Reviewed by Antti Koivisto.
+
+        Add layout test coverage.
+
+        * platform/mac-wk1/TestExpectations:
+        * svg/animations/animated-svg-image-outside-viewport-paused-expected.txt: Added.
+        * svg/animations/animated-svg-image-outside-viewport-paused.html: Added.
+        * svg/animations/animated-svg-image-removed-from-document-paused-expected.txt: Added.
+        * svg/animations/animated-svg-image-removed-from-document-paused.html: Added.
+        * svg/animations/resources/smilAnimation.svg: Added.
+
 2017-03-28  Antti Koivisto  <antti@apple.com>
 
         Missing render tree position invalidation when tearing down renderers for display:contents subtree

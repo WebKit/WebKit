@@ -117,6 +117,9 @@ void CachedImage::didAddClient(CachedResourceClient& client)
     if (m_image && !m_image->isNull())
         static_cast<CachedImageClient&>(client).imageChanged(this);
 
+    if (m_image)
+        m_image->startAnimation();
+
     CachedResource::didAddClient(client);
 }
 
@@ -514,9 +517,19 @@ void CachedImage::animationAdvanced(const Image* image)
 {
     if (!image || image != m_image)
         return;
+
+    bool shouldPauseAnimation = true;
+
     CachedResourceClientWalker<CachedImageClient> clientWalker(m_clients);
-    while (CachedImageClient* client = clientWalker.next())
-        client->newImageAnimationFrameAvailable(*this);
+    while (CachedImageClient* client = clientWalker.next()) {
+        bool canPause = false;
+        client->newImageAnimationFrameAvailable(*this, canPause);
+        if (!canPause)
+            shouldPauseAnimation = false;
+    }
+
+    if (shouldPauseAnimation)
+        m_image->stopAnimation();
 }
 
 void CachedImage::changedInRect(const Image* image, const IntRect* rect)

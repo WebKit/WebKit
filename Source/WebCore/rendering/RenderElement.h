@@ -195,7 +195,7 @@ public:
     void setVisibleInViewportState(VisibleInViewportState);
     virtual void visibleInViewportStateChanged();
 
-    bool repaintForPausedImageAnimationsIfNeeded(const IntRect& visibleRect);
+    bool repaintForPausedImageAnimationsIfNeeded(const IntRect& visibleRect, CachedImage&);
     bool hasPausedImageAnimations() const { return m_hasPausedImageAnimations; }
     void setHasPausedImageAnimations(bool b) { m_hasPausedImageAnimations = b; }
 
@@ -317,7 +317,7 @@ private:
     std::unique_ptr<RenderStyle> computeFirstLineStyle() const;
     void invalidateCachedFirstLineStyle();
 
-    void newImageAnimationFrameAvailable(CachedImage&) final;
+    void newImageAnimationFrameAvailable(CachedImage&, bool& canPause) final;
 
     bool getLeadingCorner(FloatPoint& output, bool& insideFixed) const;
     bool getTrailingCorner(FloatPoint& output, bool& insideFixed) const;

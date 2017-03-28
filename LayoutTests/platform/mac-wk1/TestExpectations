@@ -123,6 +123,8 @@ http/tests/navigation/page-cache-iframe-no-current-historyItem.html
 fast/images/animated-gif-body-outside-viewport.html [ Skip ]
 fast/images/animated-gif-window-resizing.html [ Skip ]
 fast/images/animated-gif-zooming.html [ Skip ]
+svg/animations/animated-svg-image-outside-viewport-paused.html [ Skip ]
+svg/animations/animated-svg-image-removed-from-document-paused.html [ Skip ]
 
 # WK1 uses the native scrollview for scrolling by page.
 scrollbars/scrolling-backward-by-page-accounting-bottom-fixed-elements-on-keyboard-spacebar.html

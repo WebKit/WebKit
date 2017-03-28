@@ -63,6 +63,7 @@ public:
     void startAnimation() final;
     void stopAnimation() final;
     void resetAnimation() final;
+    bool isAnimating() const final;
 
 #if USE(CAIRO)
     NativeImagePtr nativeImageForCurrentFrame(const GraphicsContext* = nullptr) final;
