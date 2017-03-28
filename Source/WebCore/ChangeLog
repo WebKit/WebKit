@@ -1,5 +1,36 @@
 2017-03-28  Chris Dumez  <cdumez@apple.com>
 
+        Audio indicator is visible on uni-watch.com but there is no audible audio
+        https://bugs.webkit.org/show_bug.cgi?id=170200
+        <rdar://problem/31289132>
+
+        Reviewed by Eric Carlson.
+
+        Cherry-pick the following patch from Blink by <rtoy@chromium.org>:
+        - https://chromium.googlesource.com/chromium/src.git/+/439de5bb2a31384666db1a0e2dadb2b97d2f3ce4
+
+        When the gain of a GainNode is 0 or 1, the operation of the node can
+        be optimized.  When gain = 1, just copy the input to the output.  When
+        gain = 0; just zero out the output.  Currently, the input is
+        multiplied by the gain to produce the output.  This just optimizes the
+        multiplication away for the two special cases.
+
+        Also, have the GainNode set the silence hint if the gain is 0.
+
+        And fix a bug in processIfNecessary when unsilenceOutputs was causing the
+        silence hint to be cleared after the node's process method was finished
+        and may have set the silence hint.  The processing should come after
+        unsilenceOutputs to preserve any hints from processing the node.
+
+        * Modules/webaudio/AudioNode.cpp:
+        (WebCore::AudioNode::processIfNecessary):
+        * Modules/webaudio/GainNode.cpp:
+        (WebCore::GainNode::process):
+        * platform/audio/AudioBus.cpp:
+        (WebCore::AudioBus::copyWithGainFrom):
+
+2017-03-28  Chris Dumez  <cdumez@apple.com>
+
         Animated SVG images are not paused when outside viewport
         https://bugs.webkit.org/show_bug.cgi?id=170155
         <rdar://problem/31288893>

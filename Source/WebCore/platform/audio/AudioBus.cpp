@@ -511,8 +511,17 @@ void AudioBus::copyWithGainFrom(const AudioBus &sourceBus, float* lastMixGain, f
 
     // Apply constant gain after de-zippering has converged on target gain.
     if (framesToDezipper < framesToProcess) {
-        for (unsigned channelIndex = 0; channelIndex < numberOfChannels; ++channelIndex)
-            vsmul(sources[channelIndex], 1, &gain, destinations[channelIndex], 1, framesToProcess - framesToDezipper);
+        // Handle gains of 0 and 1 (exactly) specially.
+        if (gain == 1) {
+            for (unsigned channelIndex = 0; channelIndex < numberOfChannels; ++channelIndex)
+                memcpy(destinations[channelIndex], sources[channelIndex], (framesToProcess - framesToDezipper) * sizeof(*destinations[channelIndex]));
+        } else if (!gain) {
+            for (unsigned channelIndex = 0; channelIndex < numberOfChannels; ++channelIndex)
+                memset(destinations[channelIndex], 0, (framesToProcess - framesToDezipper) * sizeof(*destinations[channelIndex]));
+        } else {
+            for (unsigned channelIndex = 0; channelIndex < numberOfChannels; ++channelIndex)
+                vsmul(sources[channelIndex], 1, &gain, destinations[channelIndex], 1, framesToProcess - framesToDezipper);
+        }
     }
 
     // Save the target gain as the starting point for next time around.
