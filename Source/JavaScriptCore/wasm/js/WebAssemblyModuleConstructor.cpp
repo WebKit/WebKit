@@ -75,13 +75,13 @@ JSValue WebAssemblyModuleConstructor::createModule(ExecState* exec, JSValue buff
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    size_t byteOffset;
-    size_t byteSize;
-    uint8_t* base = getWasmBufferFromValue(exec, buffer, byteOffset, byteSize);
+    RefPtr<ArrayBuffer> source = createSourceBufferFromValue(vm, exec, buffer);
     RETURN_IF_EXCEPTION(scope, { });
 
-    scope.release();
-    return JSWebAssemblyModule::create(vm, exec, structure, base + byteOffset, byteSize);
+    RefPtr<Wasm::Plan> plan = adoptRef(new Wasm::Plan(vm, *source, Wasm::Plan::Validation, Wasm::Plan::dontFinalize));
+    if (!plan->parseAndValidateModule())
+        return throwException(exec, scope, JSWebAssemblyCompileError::create(exec, vm, exec->lexicalGlobalObject()->WebAssemblyCompileErrorStructure(), plan->errorMessage()));
+    return JSWebAssemblyModule::createStub(vm, exec, structure, WTFMove(source), WTFMove(plan));
 }
 
 WebAssemblyModuleConstructor* WebAssemblyModuleConstructor::create(VM& vm, Structure* structure, WebAssemblyModulePrototype* thisPrototype)

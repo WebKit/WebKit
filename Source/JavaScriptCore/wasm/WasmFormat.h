@@ -102,14 +102,14 @@ static inline const char* makeString(ExternalKind kind)
 }
 
 struct Import {
-    Identifier module;
-    Identifier field;
+    String module;
+    String field;
     ExternalKind kind;
     unsigned kindIndex; // Index in the vector of the corresponding kind.
 };
 
 struct Export {
-    Identifier field;
+    String field;
     ExternalKind kind;
     unsigned kindIndex; // Index in the vector of the corresponding kind.
 };
@@ -260,6 +260,7 @@ struct ModuleInformation {
     }
 
     uint32_t importFunctionCount() const { return importFunctionSignatureIndices.size(); }
+    uint32_t internalFunctionCount() const { return internalFunctionSignatureIndices.size(); }
 
     ~ModuleInformation();
 };

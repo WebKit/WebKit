@@ -85,6 +85,7 @@
 #include "Parser.h"
 #include "ProfilerDatabase.h"
 #include "ProgramCodeBlock.h"
+#include "PromiseDeferredTimer.h"
 #include "PropertyMapHashTable.h"
 #include "RegExpCache.h"
 #include "RegExpObject.h"
@@ -103,6 +104,7 @@
 #include "UnlinkedCodeBlock.h"
 #include "VMEntryScope.h"
 #include "VMInspector.h"
+#include "WasmWorklist.h"
 #include "Watchdog.h"
 #include "WeakGCMapInlines.h"
 #include "WeakMapData.h"
@@ -177,6 +179,7 @@ VM::VM(VMType vmType, HeapType heapType)
     , clientData(0)
     , topVMEntryFrame(nullptr)
     , topCallFrame(CallFrame::noCaller())
+    , promiseDeferredTimer(std::make_unique<PromiseDeferredTimer>(*this))
     , m_atomicStringTable(vmType == Default ? wtfThreadData().atomicStringTable() : new AtomicStringTable)
     , propertyNames(nullptr)
     , emptyList(new ArgList)
@@ -355,6 +358,11 @@ VM::VM(VMType vmType, HeapType heapType)
 
 VM::~VM()
 {
+    promiseDeferredTimer->stopRunningTasks();
+#if ENABLE(WEBASSEMBLY)
+    if (Wasm::existingWorklistOrNull())
+        Wasm::ensureWorklist().stopAllPlansForVM(*this);
+#endif
     if (UNLIKELY(m_watchdog))
         m_watchdog->willDestroyVM(this);
     m_traps.willDestroyVM();

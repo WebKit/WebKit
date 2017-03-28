@@ -41,11 +41,11 @@ static const double sweepTimeMultiplier = 1.0 / sweepTimeTotal;
 
 void IncrementalSweeper::scheduleTimer()
 {
-    HeapTimer::scheduleTimer(sweepTimeSlice * sweepTimeMultiplier);
+    Base::scheduleTimer(sweepTimeSlice * sweepTimeMultiplier);
 }
 
 IncrementalSweeper::IncrementalSweeper(Heap* heap)
-    : HeapTimer(heap->vm())
+    : Base(heap->vm())
     , m_currentAllocator(nullptr)
 {
 }

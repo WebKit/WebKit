@@ -252,6 +252,7 @@ typedef const char* optionString;
     v(unsigned, numberOfFTLCompilerThreads, computeNumberOfWorkerThreads(8, 2) - 1, Normal, nullptr) \
     v(int32, priorityDeltaOfDFGCompilerThreads, computePriorityDeltaOfWorkerThreads(-1, 0), Normal, nullptr) \
     v(int32, priorityDeltaOfFTLCompilerThreads, computePriorityDeltaOfWorkerThreads(-2, 0), Normal, nullptr) \
+    v(int32, priorityDeltaOfWasmCompilerThreads, computePriorityDeltaOfWorkerThreads(-1, 0), Normal, nullptr) \
     \
     v(bool, useProfiler, false, Normal, nullptr) \
     v(bool, disassembleBaselineForProfiler, true, Normal, nullptr) \
@@ -428,6 +429,9 @@ typedef const char* optionString;
     v(bool, useCodeCache, true, Normal, "If false, the unlinked byte code cache will not be used.") \
     \
     v(bool, useWebAssembly, true, Normal, "Expose the WebAssembly global object.") \
+    \
+    v(bool, failToCompileWebAssemblyCode, false, Normal, "If true, no Wasm::Plan will sucessfully compile a function.") \
+    \
     v(bool, simulateWebAssemblyLowMemory, false, Normal, "If true, the Memory object won't mmap the full 'maximum' range and instead will allocate the minimum required amount.") \
     v(bool, useWebAssemblyFastMemory, true, Normal, "If true, we will try to use a 32-bit address space with a signal handler to bounds check wasm memory.") \
     v(bool, useWebAssemblyFastTLS, true, Normal, "If true, we will try to use fast thread-local storage if available on the current platform.")

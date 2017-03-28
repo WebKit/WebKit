@@ -115,7 +115,7 @@ auto FunctionParser<Context>::parse() -> Result
         WASM_PARSER_FAIL_IF(!parseVarUInt32(numberOfLocals), "can't get Function's number of locals in group ", i);
         WASM_PARSER_FAIL_IF(numberOfLocals == std::numeric_limits<uint32_t>::max(), "Function section's ", i, "th local group count is too big ", numberOfLocals);
         WASM_PARSER_FAIL_IF(!parseValueType(typeOfLocal), "can't get Function local's type in group ", i);
-        WASM_PARSER_FAIL_IF(!m_context.addLocal(typeOfLocal, numberOfLocals), "can't add ", numberOfLocals, " Function locals from group ", i);
+        WASM_TRY_ADD_TO_CONTEXT(addLocal(typeOfLocal, numberOfLocals));
     }
 
     WASM_FAIL_IF_HELPER_FAILS(parseBody());
@@ -267,7 +267,7 @@ auto FunctionParser<Context>::parseExpression(OpType op) -> PartialResult
         uint32_t index;
         ExpressionType result;
         WASM_PARSER_FAIL_IF(!parseVarUInt32(index), "can't get index for get_local");
-        WASM_PARSER_FAIL_IF(!m_context.getLocal(index, result), "can't get_local at index", index);
+        WASM_TRY_ADD_TO_CONTEXT(getLocal(index, result));
         m_expressionStack.append(result);
         return { };
     }
@@ -304,7 +304,7 @@ auto FunctionParser<Context>::parseExpression(OpType op) -> PartialResult
         WASM_PARSER_FAIL_IF(!parseVarUInt32(index), "can't get set_global's index");
         WASM_TRY_POP_EXPRESSION_STACK_INTO(value, "set_global value");
         WASM_TRY_ADD_TO_CONTEXT(setGlobal(index, value));
-        return m_context.setGlobal(index, value);
+        return { };
     }
 
     case Call: {

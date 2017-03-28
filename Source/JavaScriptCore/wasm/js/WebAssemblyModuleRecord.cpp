@@ -73,8 +73,10 @@ void WebAssemblyModuleRecord::finishCreation(ExecState* exec, VM& vm, const Wasm
 {
     Base::finishCreation(exec, vm);
     ASSERT(inherits(vm, info()));
-    for (const auto& exp : moduleInformation.exports)
-        addExportEntry(ExportEntry::createLocal(exp.field, exp.field));
+    for (const auto& exp : moduleInformation.exports) {
+        Identifier field = Identifier::fromString(&vm, exp.field);
+        addExportEntry(ExportEntry::createLocal(field, field));
+    }
 }
 
 void WebAssemblyModuleRecord::visitChildren(JSCell* cell, SlotVisitor& visitor)
@@ -85,14 +87,13 @@ void WebAssemblyModuleRecord::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(thisObject->m_startFunction);
 }
 
-void WebAssemblyModuleRecord::link(ExecState* exec, JSWebAssemblyInstance* instance)
+void WebAssemblyModuleRecord::link(ExecState* exec, JSWebAssemblyModule* module, JSWebAssemblyInstance* instance)
 {
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(scope);
     auto* globalObject = exec->lexicalGlobalObject();
 
-    JSWebAssemblyModule* module = instance->module();
     JSWebAssemblyCodeBlock* codeBlock = instance->codeBlock();
     const Wasm::ModuleInformation& moduleInformation = module->moduleInformation();
 
@@ -112,7 +113,7 @@ void WebAssemblyModuleRecord::link(ExecState* exec, JSWebAssemblyInstance* insta
             //   ii. (Note: At most one wrapper is created for any closure, so func is unique, even if there are multiple occurrances in the list. Moreover, if the item was an import that is already an Exported Function Exotic Object, then the original function object will be found. For imports that are regular JS functions, a new wrapper will be created.)
             if (exp.kindIndex < functionImportCount) {
                 unsigned functionIndex = exp.kindIndex;
-                JSObject* functionImport = instance->importFunction(functionIndex)->get();
+                JSObject* functionImport = instance->importFunction(functionIndex);
                 if (isWebAssemblyHostFunction(vm, functionImport))
                     exportedValue = functionImport;
                 else {
@@ -128,7 +129,7 @@ void WebAssemblyModuleRecord::link(ExecState* exec, JSWebAssemblyInstance* insta
                 JSWebAssemblyCallee* wasmEntrypointCallee = codeBlock->wasmEntrypointCalleeFromFunctionIndexSpace(exp.kindIndex);
                 Wasm::SignatureIndex signatureIndex = module->signatureIndexFromFunctionIndexSpace(exp.kindIndex);
                 const Wasm::Signature* signature = Wasm::SignatureInformation::get(&vm, signatureIndex);
-                WebAssemblyFunction* function = WebAssemblyFunction::create(vm, globalObject, signature->argumentCount(), exp.field.string(), instance, jsEntrypointCallee, wasmEntrypointCallee, signatureIndex);
+                WebAssemblyFunction* function = WebAssemblyFunction::create(vm, globalObject, signature->argumentCount(), exp.field, instance, jsEntrypointCallee, wasmEntrypointCallee, signatureIndex);
                 exportedValue = function;
             }
             break;
@@ -179,7 +180,7 @@ void WebAssemblyModuleRecord::link(ExecState* exec, JSWebAssemblyInstance* insta
         bool shouldThrowReadOnlyError = false;
         bool ignoreReadOnlyErrors = true;
         bool putResult = false;
-        symbolTablePutTouchWatchpointSet(moduleEnvironment, exec, exp.field, exportedValue, shouldThrowReadOnlyError, ignoreReadOnlyErrors, putResult);
+        symbolTablePutTouchWatchpointSet(moduleEnvironment, exec, Identifier::fromString(&vm, exp.field), exportedValue, shouldThrowReadOnlyError, ignoreReadOnlyErrors, putResult);
         RELEASE_ASSERT(putResult);
     }
 
@@ -192,7 +193,7 @@ void WebAssemblyModuleRecord::link(ExecState* exec, JSWebAssemblyInstance* insta
         ASSERT(!signature->argumentCount());
         ASSERT(signature->returnType() == Wasm::Void);
         if (startFunctionIndexSpace < codeBlock->functionImportCount()) {
-            JSObject* startFunction = instance->importFunction(startFunctionIndexSpace)->get();
+            JSObject* startFunction = instance->importFunction(startFunctionIndexSpace);
             m_startFunction.set(vm, this, startFunction);
         } else {
             JSWebAssemblyCallee* jsEntrypointCallee = codeBlock->jsEntrypointCalleeFromFunctionIndexSpace(startFunctionIndexSpace);
@@ -251,7 +252,7 @@ JSValue WebAssemblyModuleRecord::evaluate(ExecState* exec)
                 uint32_t functionIndex = element.functionIndices[i];
                 Wasm::SignatureIndex signatureIndex = module->signatureIndexFromFunctionIndexSpace(functionIndex);
                 if (functionIndex < codeBlock->functionImportCount()) {
-                    JSObject* functionImport = jsCast<JSObject*>(m_instance->importFunction(functionIndex)->get());
+                    JSObject* functionImport = jsCast<JSObject*>(m_instance->importFunction(functionIndex));
                     if (isWebAssemblyHostFunction(vm, functionImport)) {
                         WebAssemblyFunction* wasmFunction = jsDynamicCast<WebAssemblyFunction*>(vm, functionImport);
                         // If we ever import a WebAssemblyWrapperFunction, we set the import as the unwrapped value.

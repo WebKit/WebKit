@@ -25,14 +25,15 @@
 
 #pragma once
 
-#include "HeapTimer.h"
+#include "JSRunLoopTimer.h"
 
 namespace JSC {
 
 class Heap;
 
-class StopIfNecessaryTimer : public HeapTimer {
+class StopIfNecessaryTimer : public JSRunLoopTimer {
 public:
+    using Base = JSRunLoopTimer;
     explicit StopIfNecessaryTimer(VM*);
     
     void doWork() override;

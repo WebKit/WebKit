@@ -162,11 +162,11 @@ auto ModuleParser::parseImport() -> PartialResult
 
         WASM_PARSER_FAIL_IF(!parseVarUInt32(moduleLen), "can't get ", importNumber, "th Import's module name length");
         WASM_PARSER_FAIL_IF(!consumeUTF8String(moduleString, moduleLen), "can't get ", importNumber, "th Import's module name of length ", moduleLen);
-        imp.module = Identifier::fromString(m_vm, moduleString);
+        imp.module = moduleString;
 
         WASM_PARSER_FAIL_IF(!parseVarUInt32(fieldLen), "can't get ", importNumber, "th Import's field name length in module '", moduleString, "'");
         WASM_PARSER_FAIL_IF(!consumeUTF8String(fieldString, fieldLen), "can't get ", importNumber, "th Import's field name of length ", moduleLen, " in module '", moduleString, "'");
-        imp.field = Identifier::fromString(m_vm, fieldString);
+        imp.field = fieldString;
 
         WASM_PARSER_FAIL_IF(!parseExternalKind(imp.kind), "can't get ", importNumber, "th Import's kind in module '", moduleString, "' field '", fieldString, "'");
         switch (imp.kind) {
@@ -316,7 +316,7 @@ auto ModuleParser::parseMemoryHelper(bool isImport) -> PartialResult
     ASSERT(initialPageCount);
     ASSERT(!maximumPageCount || maximumPageCount >= initialPageCount);
 
-    m_result.module->memory = MemoryInformation(*m_vm, initialPageCount, maximumPageCount, m_mode, isImport);
+    m_result.module->memory = MemoryInformation(initialPageCount, maximumPageCount, isImport);
     return { };
 }
 
@@ -376,7 +376,7 @@ auto ModuleParser::parseExport() -> PartialResult
         WASM_PARSER_FAIL_IF(!consumeUTF8String(fieldString, fieldLen), "can't get ", exportNumber, "th Export's field name of length ", fieldLen);
         WASM_PARSER_FAIL_IF(exportNames.contains(fieldString), "duplicate export: '", fieldString, "'");
         exportNames.add(fieldString);
-        exp.field = Identifier::fromString(m_vm, fieldString);
+        exp.field = fieldString;
 
         WASM_PARSER_FAIL_IF(!parseExternalKind(exp.kind), "can't get ", exportNumber, "th Export's kind, named '", fieldString, "'");
         WASM_PARSER_FAIL_IF(!parseVarUInt32(exp.kindIndex), "can't get ", exportNumber, "th Export's kind index, named '", fieldString, "'");

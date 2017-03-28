@@ -88,7 +88,7 @@ PinnedRegisterInfo::PinnedRegisterInfo(Vector<PinnedSizeRegisterInfo>&& sizeRegi
 {
 }
 
-MemoryInformation::MemoryInformation(VM& vm, PageCount initial, PageCount maximum, std::optional<MemoryMode> recompileMode, bool isImport)
+MemoryInformation::MemoryInformation(PageCount initial, PageCount maximum, bool isImport)
     : m_initial(initial)
     , m_maximum(maximum)
     , m_isImport(isImport)
@@ -96,28 +96,6 @@ MemoryInformation::MemoryInformation(VM& vm, PageCount initial, PageCount maximu
     RELEASE_ASSERT(!!m_initial);
     RELEASE_ASSERT(!m_maximum || m_maximum >= m_initial);
     ASSERT(!!*this);
-
-    if (!recompileMode) {
-        if (!isImport) {
-            if (maximum && maximum.bytes() == 0) {
-                m_reservedMemory = Memory::create(vm, initial, maximum, MemoryMode::BoundsChecking);
-                RELEASE_ASSERT(m_reservedMemory);
-                RELEASE_ASSERT(m_reservedMemory->maximum());
-                RELEASE_ASSERT(m_reservedMemory->maximum().bytes() == 0);
-                m_mode = m_reservedMemory->mode();
-                return;
-            }
-
-            m_reservedMemory = Memory::create(vm, initial, maximum, MemoryMode::Signaling);
-            if (m_reservedMemory) {
-                ASSERT(!!*m_reservedMemory);
-                m_mode = m_reservedMemory->mode();
-                return;
-            }
-        }
-        m_mode = Memory::lastAllocatedMode();
-    } else
-        m_mode = *recompileMode;
 }
 
 } } // namespace JSC::Wasm

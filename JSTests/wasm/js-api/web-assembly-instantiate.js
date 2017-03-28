@@ -19,18 +19,14 @@ assert.eq(WebAssembly.instantiate.length, 1);
 
     const bin = builder.WebAssembly().get();
 
-    let done = false;
     async function test() {
         let {module, instance} = await WebAssembly.instantiate(bin);
         assert.truthy(module instanceof WebAssembly.Module);
         assert.truthy(instance instanceof WebAssembly.Instance);
         assert.eq(instance.exports.foo(20), 1);
-        done = true;
     }
 
-    test();
-    drainMicrotasks();
-    assert.truthy(done);
+    assert.asyncTest(test());
 }
 
 {
@@ -48,19 +44,15 @@ assert.eq(WebAssembly.instantiate.length, 1);
 
     const bin = builder.WebAssembly().get();
 
-    let done = false;
     async function test() {
         try {
             let {module, instance} = await WebAssembly.instantiate(bin, null);
         } catch(e) {
             assert.eq(e.message, "second argument to WebAssembly.instantiate must be undefined or an Object (evaluating 'WebAssembly.instantiate(bin, null)')");
         }
-        done = true;
     }
 
-    test();
-    drainMicrotasks();
-    assert.truthy(done);
+    assert.asyncTest(test());
 }
 
 {
@@ -78,20 +70,16 @@ assert.eq(WebAssembly.instantiate.length, 1);
 
     const bin = builder.WebAssembly().get();
 
-    let done = false;
     async function test() {
         try {
             let {module, instance} = await WebAssembly.instantiate(bin);
         } catch(e) {
             assert.truthy(e instanceof WebAssembly.CompileError);
-            assert.eq(e.message, "WebAssembly.Module doesn't validate: control flow returns with unexpected type, in function at index 0 (evaluating 'WebAssembly.instantiate(bin)')");
+            assert.eq(e.message, "WebAssembly.Module doesn't validate: control flow returns with unexpected type, in function at index 0");
         }
-        done = true;
     }
 
-    test();
-    drainMicrotasks();
-    assert.truthy(done);
+    assert.asyncTest(test());
 }
 
 {
@@ -110,19 +98,15 @@ assert.eq(WebAssembly.instantiate.length, 1);
 
     const bin = builder.WebAssembly().get();
 
-    let done = false;
     async function test() {
         try {
             let {module, instance} = await WebAssembly.instantiate(bin, {imp: {memory: 20}});
         } catch(e) {
-            assert.eq(e.message, "Memory import is not an instance of WebAssembly.Memory (evaluating 'WebAssembly.instantiate(bin, {imp: {memory: 20}})')");
+            assert.eq(e.message, "Memory import is not an instance of WebAssembly.Memory");
         }
-        done = true;
     }
 
-    test();
-    drainMicrotasks();
-    assert.truthy(done);
+    assert.asyncTest(test());
 }
 
 {
@@ -141,20 +125,16 @@ assert.eq(WebAssembly.instantiate.length, 1);
 
     const bin = builder.WebAssembly().get();
 
-    let done = false;
     async function test() {
         try {
             const module = new WebAssembly.Module(bin);
             let instance = await WebAssembly.instantiate(bin, {imp: {memory: 20}});
         } catch(e) {
-            assert.eq(e.message, "Memory import is not an instance of WebAssembly.Memory (evaluating 'WebAssembly.instantiate(bin, {imp: {memory: 20}})')");
+            assert.eq(e.message, "Memory import is not an instance of WebAssembly.Memory");
         }
-        done = true;
     }
 
-    test();
-    drainMicrotasks();
-    assert.truthy(done);
+    assert.asyncTest(test());
 }
 
 {
@@ -172,18 +152,14 @@ assert.eq(WebAssembly.instantiate.length, 1);
 
     const bin = builder.WebAssembly().get();
 
-    let done = false;
     async function test() {
         let module = new WebAssembly.Module(bin);
         let instance = await WebAssembly.instantiate(module);
         assert.truthy(instance instanceof WebAssembly.Instance);
         assert.eq(instance.exports.foo(20), 1);
-        done = true;
     }
 
-    test();
-    drainMicrotasks();
-    assert.truthy(done);
+    assert.asyncTest(test());
 }
 
 {
@@ -202,7 +178,6 @@ assert.eq(WebAssembly.instantiate.length, 1);
 
     const bin = builder.WebAssembly().get();
 
-    let done = false;
     async function test() {
         try {
             await WebAssembly.instantiate(25);
@@ -210,10 +185,7 @@ assert.eq(WebAssembly.instantiate.length, 1);
             // FIXME: Better error message here.
             assert.eq(e.message, "first argument must be an ArrayBufferView or an ArrayBuffer (evaluating 'WebAssembly.instantiate(25)')");
         }
-        done = true;
     }
 
-    test();
-    drainMicrotasks();
-    assert.truthy(done);
+    assert.asyncTest(test());
 }

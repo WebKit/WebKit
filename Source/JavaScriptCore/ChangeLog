@@ -1,3 +1,230 @@
+2017-03-28  Keith Miller  <keith_miller@apple.com>
+
+        WebAssembly: Make WebAssembly.instantiate/compile truly asynchronous
+        https://bugs.webkit.org/show_bug.cgi?id=169187
+
+        Reviewed by Saam Barati.
+
+        This patch allows WebAssembly compilations to happen asynchronously.
+        To do so, it refactors how much of the compilation happens and adds
+        new infrastructure for async promises.
+
+        First, there is a new class, PromiseDeferredTimer that lives on
+        the VM.  PromiseDeferredTimer will manage the life-cycle of async
+        pending promises and any dependencies that promise
+        needs. PromiseDeferredTimer automagically releases the pending
+        promise and dependencies once the JSPromiseDeferred is resolved or
+        rejected. Additionally, PromiseDeferredTimer provides a mechanism
+        to poll the run-loop whenever the async task needs to synchronize
+        with the JS thread. Normally, that will be whenever the async task
+        finishes. In the case of Web Assembly we also use this feature for
+        the compile + instantiate case, where we might have more work
+        after the first async task completes (more on that later).
+
+        The next class is Wasm::Worklist, which is used to manage Wasm
+        compilation tasks. The worklist class works similarly to the
+        DFG/FTL Worklists. It has a pool of threads that it manages. One
+        interesting aspect of Wasm Worklist is that it can synchronously
+        compile a plan that is already potentially running
+        asynchronously. This can occur if a user calls
+        WebAssembly.instantiate() then new WebAssembly.instantiate() on
+        the same module. In that case the Wasm Worklist will bump the
+        priority of the running pending Plan and block the JS thread.
+
+        This patch also makes some of the Wasm Plan code cleaner. Since we
+        now defer all compilation to instantiation time, we no longer need
+        to guess at which memory we are going to get. Also, Wasm Plans now
+        track the work they have done with a state enum.
+
+        Finally, this patch makes renamed HeapTimer to JSRunLoopTimer. It
+        also adds changes test262AsyncTest to a more generic testing
+        infrastructure. Now, in addition to the old functionality, you can
+        call asyncTest() with the number of tests you expect. When the jsc
+        CLI exits, it will guarantee that asyncTestPassed() is called that
+        many times.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * heap/GCActivityCallback.h:
+        * heap/IncrementalSweeper.cpp:
+        (JSC::IncrementalSweeper::scheduleTimer):
+        (JSC::IncrementalSweeper::IncrementalSweeper):
+        * heap/IncrementalSweeper.h:
+        * heap/StopIfNecessaryTimer.cpp:
+        (JSC::StopIfNecessaryTimer::StopIfNecessaryTimer):
+        * heap/StopIfNecessaryTimer.h:
+        * heap/StrongInlines.h:
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+        (printInternal):
+        (functionAsyncTestStart):
+        (functionAsyncTestPassed):
+        (functionTestWasmModuleFunctions):
+        (CommandLine::parseArguments):
+        (runJSC):
+        * runtime/JSPromiseDeferred.cpp:
+        (JSC::JSPromiseDeferred::resolve):
+        (JSC::JSPromiseDeferred::reject):
+        * runtime/JSPromiseDeferred.h:
+        (JSC::JSPromiseDeferred::promiseAsyncPending):
+        * runtime/JSRunLoopTimer.cpp: Renamed from Source/JavaScriptCore/heap/HeapTimer.cpp.
+        (JSC::JSRunLoopTimer::JSRunLoopTimer):
+        (JSC::JSRunLoopTimer::setRunLoop):
+        (JSC::JSRunLoopTimer::~JSRunLoopTimer):
+        (JSC::JSRunLoopTimer::timerDidFire):
+        (JSC::JSRunLoopTimer::scheduleTimer):
+        (JSC::JSRunLoopTimer::cancelTimer):
+        (JSC::JSRunLoopTimer::invalidate):
+        * runtime/JSRunLoopTimer.h: Copied from Source/JavaScriptCore/heap/HeapTimer.h.
+        * runtime/Options.h:
+        * runtime/PromiseDeferredTimer.cpp: Added.
+        (JSC::PromiseDeferredTimer::PromiseDeferredTimer):
+        (JSC::PromiseDeferredTimer::doWork):
+        (JSC::PromiseDeferredTimer::runRunLoop):
+        (JSC::PromiseDeferredTimer::addPendingPromise):
+        (JSC::PromiseDeferredTimer::cancelPendingPromise):
+        (JSC::PromiseDeferredTimer::scheduleWorkSoon):
+        (JSC::PromiseDeferredTimer::scheduleBlockedTask):
+        * runtime/PromiseDeferredTimer.h: Renamed from Source/JavaScriptCore/heap/HeapTimer.h.
+        (JSC::PromiseDeferredTimer::stopRunningTasks):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        (JSC::VM::~VM):
+        * runtime/VM.h:
+        * wasm/JSWebAssembly.cpp:
+        (JSC::reject):
+        (JSC::webAssemblyCompileFunc):
+        (JSC::resolve):
+        (JSC::instantiate):
+        (JSC::compileAndInstantiate):
+        (JSC::webAssemblyInstantiateFunc):
+        (JSC::webAssemblyValidateFunc):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::B3IRGenerator):
+        (JSC::Wasm::B3IRGenerator::emitCheckAndPreparePointer):
+        (JSC::Wasm::B3IRGenerator::memoryKind):
+        (JSC::Wasm::parseAndCompile):
+        * wasm/WasmB3IRGenerator.h:
+        * wasm/WasmFormat.h:
+        (JSC::Wasm::ModuleInformation::internalFunctionCount):
+        * wasm/WasmFunctionParser.h:
+        * wasm/WasmMemory.h:
+        * wasm/WasmMemoryInformation.cpp:
+        (JSC::Wasm::MemoryInformation::MemoryInformation):
+        * wasm/WasmMemoryInformation.h:
+        (JSC::Wasm::MemoryInformation::maximum):
+        (JSC::Wasm::MemoryInformation::hasReservedMemory): Deleted.
+        (JSC::Wasm::MemoryInformation::takeReservedMemory): Deleted.
+        (JSC::Wasm::MemoryInformation::mode): Deleted.
+        * wasm/WasmModuleParser.cpp:
+        * wasm/WasmModuleParser.h:
+        (JSC::Wasm::ModuleParser::ModuleParser):
+        * wasm/WasmPlan.cpp:
+        (JSC::Wasm::Plan::Plan):
+        (JSC::Wasm::Plan::stateString):
+        (JSC::Wasm::Plan::moveToState):
+        (JSC::Wasm::Plan::fail):
+        (JSC::Wasm::Plan::parseAndValidateModule):
+        (JSC::Wasm::Plan::prepare):
+        (JSC::Wasm::Plan::ThreadCountHolder::ThreadCountHolder):
+        (JSC::Wasm::Plan::ThreadCountHolder::~ThreadCountHolder):
+        (JSC::Wasm::Plan::compileFunctions):
+        (JSC::Wasm::Plan::complete):
+        (JSC::Wasm::Plan::waitForCompletion):
+        (JSC::Wasm::Plan::cancel):
+        (JSC::Wasm::Plan::run): Deleted.
+        (JSC::Wasm::Plan::initializeCallees): Deleted.
+        * wasm/WasmPlan.h:
+        (JSC::Wasm::Plan::dontFinalize):
+        (JSC::Wasm::Plan::exports):
+        (JSC::Wasm::Plan::internalFunctionCount):
+        (JSC::Wasm::Plan::takeModuleInformation):
+        (JSC::Wasm::Plan::takeCallLinkInfos):
+        (JSC::Wasm::Plan::takeWasmExitStubs):
+        (JSC::Wasm::Plan::setModeAndPromise):
+        (JSC::Wasm::Plan::mode):
+        (JSC::Wasm::Plan::pendingPromise):
+        (JSC::Wasm::Plan::vm):
+        (JSC::Wasm::Plan::errorMessage):
+        (JSC::Wasm::Plan::failed):
+        (JSC::Wasm::Plan::hasWork):
+        (JSC::Wasm::Plan::hasBeenPrepared):
+        * wasm/WasmPlanInlines.h: Copied from Source/JavaScriptCore/wasm/WasmB3IRGenerator.h.
+        (JSC::Wasm::Plan::initializeCallees):
+        * wasm/WasmValidate.cpp:
+        * wasm/WasmWorklist.cpp: Added.
+        (JSC::Wasm::Worklist::priorityString):
+        (JSC::Wasm::Worklist::QueueElement::setToNextPriority):
+        (JSC::Wasm::Worklist::iterate):
+        (JSC::Wasm::Worklist::enqueue):
+        (JSC::Wasm::Worklist::completePlanSynchronously):
+        (JSC::Wasm::Worklist::stopAllPlansForVM):
+        (JSC::Wasm::Worklist::Worklist):
+        (JSC::Wasm::Worklist::~Worklist):
+        (JSC::Wasm::existingWorklistOrNull):
+        (JSC::Wasm::ensureWorklist):
+        * wasm/WasmWorklist.h: Added.
+        (JSC::Wasm::Worklist::nextTicket):
+        (JSC::Wasm::Worklist::Comparator::operator()):
+        * wasm/js/JSWebAssemblyCallee.h:
+        * wasm/js/JSWebAssemblyCodeBlock.cpp:
+        (JSC::JSWebAssemblyCodeBlock::JSWebAssemblyCodeBlock):
+        (JSC::JSWebAssemblyCodeBlock::initialize):
+        (JSC::JSWebAssemblyCodeBlock::isSafeToRun):
+        * wasm/js/JSWebAssemblyCodeBlock.h:
+        (JSC::JSWebAssemblyCodeBlock::create):
+        (JSC::JSWebAssemblyCodeBlock::initialized):
+        (JSC::JSWebAssemblyCodeBlock::plan):
+        (JSC::JSWebAssemblyCodeBlock::runnable):
+        (JSC::JSWebAssemblyCodeBlock::errorMessage):
+        (JSC::JSWebAssemblyCodeBlock::callees):
+        * wasm/js/JSWebAssemblyHelpers.h:
+        (JSC::createSourceBufferFromValue):
+        * wasm/js/JSWebAssemblyInstance.cpp:
+        (JSC::JSWebAssemblyInstance::finishCreation):
+        (JSC::JSWebAssemblyInstance::visitChildren):
+        (JSC::JSWebAssemblyInstance::addUnitializedCodeBlock):
+        (JSC::JSWebAssemblyInstance::finalizeCreation):
+        (JSC::JSWebAssemblyInstance::create):
+        (JSC::JSWebAssemblyInstance::setMemory): Deleted.
+        * wasm/js/JSWebAssemblyInstance.h:
+        (JSC::JSWebAssemblyInstance::codeBlock):
+        (JSC::JSWebAssemblyInstance::initialized):
+        (JSC::JSWebAssemblyInstance::module):
+        (JSC::JSWebAssemblyInstance::importFunction):
+        (JSC::JSWebAssemblyInstance::setMemory):
+        (JSC::JSWebAssemblyInstance::table):
+        (JSC::JSWebAssemblyInstance::importFunctions):
+        (JSC::JSWebAssemblyInstance::setImportFunction): Deleted.
+        (JSC::JSWebAssemblyInstance::setTable): Deleted.
+        * wasm/js/JSWebAssemblyModule.cpp:
+        (JSC::JSWebAssemblyModule::createStub):
+        (JSC::JSWebAssemblyModule::JSWebAssemblyModule):
+        (JSC::JSWebAssemblyModule::finishCreation):
+        (JSC::JSWebAssemblyModule::setCodeBlock):
+        (JSC::JSWebAssemblyModule::buildCodeBlock): Deleted.
+        (JSC::JSWebAssemblyModule::create): Deleted.
+        (JSC::JSWebAssemblyModule::codeBlock): Deleted.
+        * wasm/js/JSWebAssemblyModule.h:
+        (JSC::JSWebAssemblyModule::moduleInformation):
+        (JSC::JSWebAssemblyModule::codeBlock):
+        (JSC::JSWebAssemblyModule::source):
+        (JSC::JSWebAssemblyModule::takeReservedMemory): Deleted.
+        (JSC::JSWebAssemblyModule::codeBlockFor): Deleted.
+        * wasm/js/WebAssemblyInstanceConstructor.cpp:
+        (JSC::constructJSWebAssemblyInstance):
+        (JSC::WebAssemblyInstanceConstructor::createInstance): Deleted.
+        * wasm/js/WebAssemblyModuleConstructor.cpp:
+        (JSC::WebAssemblyModuleConstructor::createModule):
+        * wasm/js/WebAssemblyModulePrototype.cpp:
+        (JSC::webAssemblyModuleProtoImports):
+        (JSC::webAssemblyModuleProtoExports):
+        * wasm/js/WebAssemblyModuleRecord.cpp:
+        (JSC::WebAssemblyModuleRecord::finishCreation):
+        (JSC::WebAssemblyModuleRecord::link):
+        (JSC::WebAssemblyModuleRecord::evaluate):
+        * wasm/js/WebAssemblyModuleRecord.h:
+
 2017-03-28  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         WebAssembly: add fallback to use pinned register to load/store state

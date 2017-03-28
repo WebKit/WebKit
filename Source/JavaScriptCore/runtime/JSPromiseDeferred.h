@@ -56,6 +56,10 @@ public:
     JS_EXPORT_PRIVATE void reject(ExecState*, JSValue);
     JS_EXPORT_PRIVATE void reject(ExecState*, Exception*);
 
+#ifndef NDEBUG
+    void promiseAsyncPending() { m_promiseIsAsyncPending = true; }
+#endif
+
 protected:
     JSPromiseDeferred(VM&, Structure*);
     void finishCreation(VM&, JSObject*, JSValue, JSValue);
@@ -63,6 +67,10 @@ protected:
 
 private:
     JSPromiseDeferred(VM&);
+
+#ifndef NDEBUG
+    bool m_promiseIsAsyncPending { false };
+#endif
 
     WriteBarrier<JSObject> m_promise;
     WriteBarrier<Unknown> m_resolve;

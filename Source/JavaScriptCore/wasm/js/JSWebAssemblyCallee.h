@@ -60,8 +60,8 @@ public:
     RegisterAtOffsetList* calleeSaveRegisters() { return &m_entrypoint.calleeSaveRegisters; }
 
 private:
-    void finishCreation(VM&, Wasm::Entrypoint&&);
-    JSWebAssemblyCallee(VM&);
+    JS_EXPORT_PRIVATE void finishCreation(VM&, Wasm::Entrypoint&&);
+    JS_EXPORT_PRIVATE JSWebAssemblyCallee(VM&);
 
     Wasm::Entrypoint m_entrypoint;
 };

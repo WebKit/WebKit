@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #pragma once
@@ -44,14 +44,14 @@ namespace JSC {
 class JSLock;
 class VM;
 
-class HeapTimer : public ThreadSafeRefCounted<HeapTimer> {
+class JSRunLoopTimer : public ThreadSafeRefCounted<JSRunLoopTimer> {
 public:
-    HeapTimer(VM*);
+    JSRunLoopTimer(VM*);
 #if USE(CF)
     static void timerDidFire(CFRunLoopTimerRef, void*);
 #endif
-    
-    JS_EXPORT_PRIVATE virtual ~HeapTimer();
+
+    JS_EXPORT_PRIVATE virtual ~JSRunLoopTimer();
     virtual void doWork() = 0;
 
     void scheduleTimer(double intervalInSeconds);
@@ -61,7 +61,7 @@ public:
 #if USE(CF)
     JS_EXPORT_PRIVATE void setRunLoop(CFRunLoopRef);
 #endif // USE(CF)
-    
+
 protected:
     VM* m_vm;
 
@@ -72,7 +72,7 @@ protected:
 
     RetainPtr<CFRunLoopTimerRef> m_timer;
     RetainPtr<CFRunLoopRef> m_runLoop;
-    
+
     CFRunLoopTimerContext m_context;
 
     Lock m_shutdownMutex;
@@ -85,5 +85,5 @@ protected:
 private:
     void invalidate();
 };
-
+    
 } // namespace JSC

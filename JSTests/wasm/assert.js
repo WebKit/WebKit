@@ -144,3 +144,24 @@ export {
     _throws as throws,
     _instanceof as instanceof,
 };
+
+const asyncTestImpl = (promise, thenFunc, catchFunc) => {
+    asyncTestStart(1);
+    promise.then(thenFunc).catch(catchFunc);
+};
+
+const printExn = (e) => {
+    print("Failed: ", e);
+    print(e.stack);
+};
+
+export const asyncTest = (promise) => asyncTestImpl(promise, asyncTestPassed, printExn);
+export const asyncTestEq = (promise, expected) => {
+    const thenCheck = (value) => {
+        if (value === expected)
+            return asyncTestPassed();
+        print("Failed: got ", value, " but expected ", expected);
+
+    }
+    asyncTestImpl(promise, thenCheck, printExn);
+};

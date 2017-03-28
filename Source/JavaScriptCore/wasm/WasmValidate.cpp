@@ -271,7 +271,7 @@ auto Validate::checkBranchTarget(ControlType& target, const ExpressionList& expr
         if (target.signature() == Void)
             return { };
 
-        WASM_VALIDATOR_FAIL_IF(expressionStack.isEmpty(), "branch to block on empty expression stack");
+        WASM_VALIDATOR_FAIL_IF(expressionStack.isEmpty(), target.type() == BlockType::TopLevel ? "branch out of function" : "branch to block", " on empty expression stack, but expected ", target.signature());
         WASM_VALIDATOR_FAIL_IF(target.signature() != expressionStack.last(), "branch's stack type doesn't match block's type");
 
         return { };

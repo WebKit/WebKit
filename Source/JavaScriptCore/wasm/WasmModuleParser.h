@@ -44,9 +44,9 @@ struct ModuleParserResult {
 class ModuleParser : public Parser<ModuleParserResult> {
 public:
 
-    ModuleParser(VM* vm, const uint8_t* sourceBuffer, size_t sourceLength, std::optional<MemoryMode> mode)
+
+    ModuleParser(VM* vm, const uint8_t* sourceBuffer, size_t sourceLength)
         : Parser(vm, sourceBuffer, sourceLength)
-        , m_mode(mode)
     {
     }
 
@@ -66,7 +66,6 @@ private:
     PartialResult WARN_UNUSED_RETURN parseInitExpr(uint8_t&, uint64_t&, Type& initExprType);
 
     ModuleParserResult m_result;
-    std::optional<MemoryMode> m_mode { std::nullopt };
     bool m_hasTable { false };
 };
 

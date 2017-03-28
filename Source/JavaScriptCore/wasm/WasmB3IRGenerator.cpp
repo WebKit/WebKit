@@ -157,7 +157,7 @@ public:
             return fail(__VA_ARGS__);             \
     } while (0)
 
-    B3IRGenerator(VM&, const ModuleInformation&, Procedure&, WasmInternalFunction*, Vector<UnlinkedWasmToWasmCall>&);
+    B3IRGenerator(VM&, const ModuleInformation&, Procedure&, WasmInternalFunction*, Vector<UnlinkedWasmToWasmCall>&, MemoryMode);
 
     PartialResult WARN_UNUSED_RETURN addArguments(const Signature*);
     PartialResult WARN_UNUSED_RETURN addLocal(Type, uint32_t);
@@ -225,6 +225,7 @@ private:
 
     VM& m_vm;
     const ModuleInformation& m_info;
+    MemoryMode m_mode;
     Procedure& m_proc;
     BasicBlock* m_currentBlock;
     Vector<Variable*> m_locals;
@@ -290,9 +291,10 @@ void B3IRGenerator::restoreWasmContext(Procedure& proc, BasicBlock* block, Value
     });
 }
 
-B3IRGenerator::B3IRGenerator(VM& vm, const ModuleInformation& info, Procedure& procedure, WasmInternalFunction* compilation, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls)
+B3IRGenerator::B3IRGenerator(VM& vm, const ModuleInformation& info, Procedure& procedure, WasmInternalFunction* compilation, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, MemoryMode mode)
     : m_vm(vm)
     , m_info(info)
+    , m_mode(mode)
     , m_proc(procedure)
     , m_unlinkedWasmToWasmCalls(unlinkedWasmToWasmCalls)
 {
@@ -520,7 +522,7 @@ auto B3IRGenerator::setGlobal(uint32_t index, ExpressionType value) -> PartialRe
 inline Value* B3IRGenerator::emitCheckAndPreparePointer(ExpressionType pointer, uint32_t offset, uint32_t sizeOfOperation)
 {
     ASSERT(m_memoryBaseGPR);
-    if (m_info.memory.mode() == MemoryMode::BoundsChecking) {
+    if (m_mode == MemoryMode::BoundsChecking) {
         ASSERT(m_memorySizeGPR);
         ASSERT(sizeOfOperation + offset > offset);
         m_currentBlock->appendNew<WasmBoundsCheckValue>(m_proc, Origin(), pointer, m_memorySizeGPR, sizeOfOperation + offset - 1);
@@ -556,7 +558,7 @@ inline uint32_t sizeOfLoadOp(LoadOpType op)
 
 inline B3::Kind B3IRGenerator::memoryKind(B3::Opcode memoryOp)
 {
-    if (m_info.memory.mode() == MemoryMode::Signaling)
+    if (m_mode == MemoryMode::Signaling)
         return trapping(memoryOp);
     return memoryOp;
 }
@@ -1277,7 +1279,7 @@ static void createJSToWasmWrapper(CompilationContext& compilationContext, WasmIn
     jit.ret();
 }
 
-Expected<std::unique_ptr<WasmInternalFunction>, String> parseAndCompile(VM& vm, CompilationContext& compilationContext, const uint8_t* functionStart, size_t functionLength, const Signature* signature, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, const ModuleInformation& info, const Vector<SignatureIndex>& moduleSignatureIndicesToUniquedSignatureIndices, unsigned optLevel)
+Expected<std::unique_ptr<WasmInternalFunction>, String> parseAndCompile(VM& vm, CompilationContext& compilationContext, const uint8_t* functionStart, size_t functionLength, const Signature* signature, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, const ModuleInformation& info, const Vector<SignatureIndex>& moduleSignatureIndicesToUniquedSignatureIndices, MemoryMode mode, unsigned optLevel)
 {
     auto result = std::make_unique<WasmInternalFunction>();
 
@@ -1285,7 +1287,7 @@ Expected<std::unique_ptr<WasmInternalFunction>, String> parseAndCompile(VM& vm, 
     compilationContext.wasmEntrypointJIT = std::make_unique<CCallHelpers>(&vm);
 
     Procedure procedure;
-    B3IRGenerator context(vm, info, procedure, result.get(), unlinkedWasmToWasmCalls);
+    B3IRGenerator context(vm, info, procedure, result.get(), unlinkedWasmToWasmCalls, mode);
     FunctionParser<B3IRGenerator> parser(&vm, context, functionStart, functionLength, signature, info, moduleSignatureIndicesToUniquedSignatureIndices);
     WASM_FAIL_IF_HELPER_FAILS(parser.parse());
 

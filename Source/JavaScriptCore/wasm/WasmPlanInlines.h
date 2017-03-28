@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,42 +27,28 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "AbstractModuleRecord.h"
-#include "WasmFormat.h"
+#include "JSWebAssemblyCallee.h"
+#include "WasmPlan.h"
 
-namespace JSC {
+namespace JSC { namespace Wasm {
 
-class JSWebAssemblyInstance;
-class JSWebAssemblyModule;
-class WebAssemblyFunction;
+template<typename Functor>
+void Plan::initializeCallees(const Functor& callback)
+{
+    ASSERT(!failed());
+    for (unsigned internalFunctionIndex = 0; internalFunctionIndex < m_wasmInternalFunctions.size(); ++internalFunctionIndex) {
+        WasmInternalFunction* function = m_wasmInternalFunctions[internalFunctionIndex].get();
 
-// Based on the WebAssembly.Instance specification
-// https://github.com/WebAssembly/design/blob/master/JS.md#webassemblyinstance-constructor
-class WebAssemblyModuleRecord : public AbstractModuleRecord {
-    friend class LLIntOffsetsExtractor;
-public:
-    typedef AbstractModuleRecord Base;
+        JSWebAssemblyCallee* jsEntrypointCallee = JSWebAssemblyCallee::create(m_vm, WTFMove(function->jsToWasmEntrypoint));
+        MacroAssembler::repatchPointer(function->jsToWasmCalleeMoveLocation, jsEntrypointCallee);
 
-    DECLARE_EXPORT_INFO;
+        JSWebAssemblyCallee* wasmEntrypointCallee = JSWebAssemblyCallee::create(m_vm, WTFMove(function->wasmEntrypoint));
+        MacroAssembler::repatchPointer(function->wasmCalleeMoveLocation, wasmEntrypointCallee);
 
-    static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
-    static WebAssemblyModuleRecord* create(ExecState*, VM&, Structure*, const Identifier&, const Wasm::ModuleInformation&);
+        callback(internalFunctionIndex, jsEntrypointCallee, wasmEntrypointCallee);
+    }
+}
 
-    void link(ExecState*, JSWebAssemblyModule*, JSWebAssemblyInstance*);
-    JS_EXPORT_PRIVATE JSValue evaluate(ExecState*);
-
-private:
-    WebAssemblyModuleRecord(VM&, Structure*, const Identifier&);
-
-    void finishCreation(ExecState*, VM&, const Wasm::ModuleInformation&);
-    static void destroy(JSCell*);
-
-    static void visitChildren(JSCell*, SlotVisitor&);
-
-    WriteBarrier<JSWebAssemblyInstance> m_instance;
-    WriteBarrier<JSObject> m_startFunction;
-};
-
-} // namespace JSC
+} } // namespace JSC::Wasm
 
 #endif // ENABLE(WEBASSEMBLY)

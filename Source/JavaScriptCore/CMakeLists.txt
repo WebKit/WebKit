@@ -503,7 +503,6 @@ set(JavaScriptCore_SOURCES
     heap/HeapProfiler.cpp
     heap/HeapSnapshot.cpp
     heap/HeapSnapshotBuilder.cpp
-    heap/HeapTimer.cpp
     heap/IncrementalSweeper.cpp
     heap/JITStubRoutineSet.cpp
     heap/LargeAllocation.cpp
@@ -802,6 +801,7 @@ set(JavaScriptCore_SOURCES
     runtime/JSPropertyNameEnumerator.cpp
     runtime/JSPropertyNameIterator.cpp
     runtime/JSProxy.cpp
+    runtime/JSRunLoopTimer.cpp
     runtime/JSScope.cpp
     runtime/JSScriptFetcher.cpp
     runtime/JSSegmentedVariableObject.cpp
@@ -851,6 +851,7 @@ set(JavaScriptCore_SOURCES
     runtime/Operations.cpp
     runtime/Options.cpp
     runtime/ProgramExecutable.cpp
+    runtime/PromiseDeferredTimer.cpp
     runtime/PropertyDescriptor.cpp
     runtime/PropertySlot.cpp
     runtime/PropertyTable.cpp
@@ -944,6 +945,7 @@ set(JavaScriptCore_SOURCES
     wasm/WasmPlan.cpp
     wasm/WasmSignature.cpp
     wasm/WasmValidate.cpp
+    wasm/WasmWorklist.cpp
 
     wasm/js/JSWebAssemblyCallee.cpp
     wasm/js/JSWebAssemblyCodeBlock.cpp

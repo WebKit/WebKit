@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,61 +40,96 @@ namespace JSC {
 class CallLinkInfo;
 class JSGlobalObject;
 class JSWebAssemblyCallee;
+class JSPromiseDeferred;
 
 namespace Wasm {
 
-class Plan {
+class Plan : public ThreadSafeRefCounted<Plan> {
 public:
-    JS_EXPORT_PRIVATE Plan(VM*, Vector<uint8_t>);
-    JS_EXPORT_PRIVATE Plan(VM*, const uint8_t*, size_t);
+    static void dontFinalize(Plan&) { }
+    typedef std::function<void(Plan&)> CompletionTask;
+    enum AsyncWork : uint8_t { FullCompile, Validation };
+    // Note: CompletionTask should not hold a reference to the Plan otherwise there will be a reference cycle.
+    Plan(VM&, ArrayBuffer&, AsyncWork, CompletionTask&&);
+    JS_EXPORT_PRIVATE Plan(VM&, Vector<uint8_t>&, AsyncWork, CompletionTask&&);
+    JS_EXPORT_PRIVATE Plan(VM&, const uint8_t*, size_t, AsyncWork, CompletionTask&&);
     JS_EXPORT_PRIVATE ~Plan();
 
-    bool parseAndValidateModule(std::optional<MemoryMode> = std::nullopt);
+    bool parseAndValidateModule();
 
-    JS_EXPORT_PRIVATE void run(std::optional<MemoryMode> = std::nullopt);
+    JS_EXPORT_PRIVATE void prepare();
+    void compileFunctions();
 
-    JS_EXPORT_PRIVATE void initializeCallees(JSGlobalObject*, std::function<void(unsigned, JSWebAssemblyCallee*, JSWebAssemblyCallee*)>);
-
-    bool WARN_UNUSED_RETURN failed() const { return m_failed; }
-    const String& errorMessage() const
-    {
-        RELEASE_ASSERT(failed());
-        return m_errorMessage;
-    }
+    template<typename Functor>
+    void initializeCallees(const Functor&);
 
     Vector<Export>& exports() const
     {
-        RELEASE_ASSERT(!failed());
+        RELEASE_ASSERT(!failed() && !hasWork());
         return m_moduleInformation->exports;
     }
 
     size_t internalFunctionCount() const
     {
-        RELEASE_ASSERT(!failed());
-        return m_wasmInternalFunctions.size();
+        RELEASE_ASSERT(!failed() && !hasWork());
+        return m_functionLocationInBinary.size();
     }
 
     std::unique_ptr<ModuleInformation>&& takeModuleInformation()
     {
-        RELEASE_ASSERT(!failed());
+        RELEASE_ASSERT(!failed() && !hasWork());
         return WTFMove(m_moduleInformation);
     }
 
     Bag<CallLinkInfo>&& takeCallLinkInfos()
     {
-        RELEASE_ASSERT(!failed());
+        RELEASE_ASSERT(!failed() && !hasWork());
         return WTFMove(m_callLinkInfos);
     }
 
     Vector<WasmExitStubs>&& takeWasmExitStubs()
     {
-        RELEASE_ASSERT(!failed());
+        RELEASE_ASSERT(!failed() && !hasWork());
         return WTFMove(m_wasmExitStubs);
     }
 
-    MemoryMode mode() const { return m_moduleInformation->memory.mode(); }
+    void setModeAndPromise(MemoryMode mode, JSPromiseDeferred* promise)
+    {
+        m_mode = mode;
+        m_pendingPromise = promise;
+    }
+    MemoryMode mode() const { return m_mode; }
+    JSPromiseDeferred* pendingPromise() { return m_pendingPromise; }
+    VM& vm() const { return m_vm; }
+
+    enum class State : uint8_t {
+        Initial,
+        Validated,
+        Prepared,
+        Compiled,
+        Completed // We should only move to Completed if we are holding the lock.
+    };
+
+    const String& errorMessage() const { return m_errorMessage; }
+
+    bool WARN_UNUSED_RETURN failed() const { return !errorMessage().isNull(); }
+    bool hasWork() const { return m_state < State::Compiled; }
+    bool hasBeenPrepared() const { return m_state >= State::Prepared; }
+
+    void waitForCompletion();
+    void cancel();
 
 private:
+    class ThreadCountHolder;
+    friend class ThreadCountHolder;
+
+    void complete(const AbstractLocker&);
+
+    void moveToState(State);
+    void fail(const AbstractLocker&, String&& errorMessage);
+
+    const char* stateString(State);
+
     std::unique_ptr<ModuleInformation> m_moduleInformation;
     Vector<FunctionLocationInBinary> m_functionLocationInBinary;
     Vector<SignatureIndex> m_moduleSignatureIndicesToUniquedSignatureIndices;
@@ -103,15 +138,23 @@ private:
     Vector<std::unique_ptr<WasmInternalFunction>> m_wasmInternalFunctions;
     Vector<CompilationContext> m_compilationContexts;
 
-    VM* m_vm;
+    VM& m_vm;
+    JSPromiseDeferred* m_pendingPromise { nullptr };
+    CompletionTask m_completionTask;
+
     Vector<Vector<UnlinkedWasmToWasmCall>> m_unlinkedWasmToWasmCalls;
     const uint8_t* m_source;
     const size_t m_sourceLength;
-    bool m_failed { true };
     String m_errorMessage;
-    uint32_t m_currentIndex;
+    MemoryMode m_mode { MemoryMode::BoundsChecking };
     Lock m_lock;
+    Condition m_completed;
+    State m_state { State::Initial };
+    const AsyncWork m_asyncWork;
+    uint8_t m_numberOfActiveThreads { 0 };
+    uint32_t m_currentIndex { 0 };
 };
+
 
 } } // namespace JSC::Wasm
 

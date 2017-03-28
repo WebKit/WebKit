@@ -28,7 +28,7 @@
 
 #pragma once
 
-#include "HeapTimer.h"
+#include "JSRunLoopTimer.h"
 #include <wtf/RefPtr.h>
 
 #if USE(CF)
@@ -40,8 +40,9 @@ namespace JSC {
 class FullGCActivityCallback;
 class Heap;
 
-class JS_EXPORT_PRIVATE GCActivityCallback : public HeapTimer {
+class JS_EXPORT_PRIVATE GCActivityCallback : public JSRunLoopTimer {
 public:
+    using Base = JSRunLoopTimer;
     static RefPtr<FullGCActivityCallback> createFullTimer(Heap*);
     static RefPtr<GCActivityCallback> createEdenTimer(Heap*);
 
@@ -70,21 +71,21 @@ protected:
 
 #if USE(CF)
     GCActivityCallback(VM* vm)
-        : HeapTimer(vm)
+        : Base(vm)
         , m_enabled(true)
         , m_delay(s_decade)
     {
     }
 #elif USE(GLIB)
     GCActivityCallback(VM* vm)
-        : HeapTimer(vm)
+        : Base(vm)
         , m_enabled(true)
         , m_delay(s_decade)
     {
     }
 #else
     GCActivityCallback(VM* vm)
-        : HeapTimer(vm)
+        : Base(vm)
         , m_enabled(true)
     {
     }

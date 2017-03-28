@@ -29,6 +29,7 @@
 
 #include "JSCell.h"
 #include "JSWebAssemblyCallee.h"
+#include "PromiseDeferredTimer.h"
 #include "UnconditionalFinalizer.h"
 #include "WasmFormat.h"
 #include <wtf/Bag.h>
@@ -39,14 +40,18 @@ namespace JSC {
 class JSWebAssemblyModule;
 class JSWebAssemblyMemory;
 
+namespace Wasm {
+class Plan;
+}
+
 class JSWebAssemblyCodeBlock : public JSCell {
 public:
     typedef JSCell Base;
     static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
 
-    static JSWebAssemblyCodeBlock* create(VM& vm, JSWebAssemblyModule* owner, Bag<CallLinkInfo>&& callLinkInfos, Vector<Wasm::WasmExitStubs>&& exitStubs, Wasm::MemoryMode mode, unsigned calleeCount)
+    static JSWebAssemblyCodeBlock* create(VM& vm, JSWebAssemblyModule* owner, Wasm::MemoryMode mode, Ref<Wasm::Plan>&& plan, unsigned calleeCount)
     {
-        auto* result = new (NotNull, allocateCell<JSWebAssemblyCodeBlock>(vm.heap, allocationSize(calleeCount))) JSWebAssemblyCodeBlock(vm, owner, std::forward<Bag<CallLinkInfo>>(callLinkInfos), std::forward<Vector<Wasm::WasmExitStubs>>(exitStubs), mode, calleeCount);
+        auto* result = new (NotNull, allocateCell<JSWebAssemblyCodeBlock>(vm.heap, allocationSize(calleeCount))) JSWebAssemblyCodeBlock(vm, owner, mode, WTFMove(plan), calleeCount);
         result->finishCreation(vm);
         return result;
     }
@@ -59,7 +64,16 @@ public:
     unsigned functionImportCount() const { return m_wasmExitStubs.size(); }
     Wasm::MemoryMode mode() const { return m_mode; }
     JSWebAssemblyModule* module() const { return m_module.get(); }
-    bool isSafeToRun(JSWebAssemblyMemory*);
+
+    // Don't call intialize directly, this should be called for you, as needed, by JSWebAssemblyInstance::finalizeCreation.
+    void initialize();
+    bool initialized() const { return !m_plan; }
+
+    Wasm::Plan& plan() const { ASSERT(!initialized()); return *m_plan; }
+
+    bool runnable() const { return initialized() && !m_errorMessage; }
+    String& errorMessage() { ASSERT(!runnable()); return m_errorMessage; }
+    bool isSafeToRun(JSWebAssemblyMemory*) const;
 
     JSWebAssemblyCallee* jsEntrypointCalleeFromFunctionIndexSpace(unsigned functionIndexSpace)
     {
@@ -89,10 +103,7 @@ public:
         callees()[calleeIndex + m_calleeCount].set(vm, this, callee);
     }
 
-    WriteBarrier<JSWebAssemblyCallee>* callees()
-    {
-        return bitwise_cast<WriteBarrier<JSWebAssemblyCallee>*>(bitwise_cast<char*>(this) + offsetOfCallees());
-    }
+    WriteBarrier<JSWebAssemblyCallee>* callees() { return bitwise_cast<WriteBarrier<JSWebAssemblyCallee>*>(bitwise_cast<char*>(this) + offsetOfCallees()); }
 
     void* wasmToJsCallStubForImport(unsigned importIndex)
     {
@@ -101,7 +112,7 @@ public:
     }
 
 private:
-    JSWebAssemblyCodeBlock(VM&, JSWebAssemblyModule*, Bag<CallLinkInfo>&&, Vector<Wasm::WasmExitStubs>&&, Wasm::MemoryMode, unsigned calleeCount);
+    JSWebAssemblyCodeBlock(VM&, JSWebAssemblyModule*, Wasm::MemoryMode, Ref<Wasm::Plan>&&, unsigned calleeCount);
     DECLARE_EXPORT_INFO;
     static const bool needsDestruction = true;
     static void destroy(JSCell*);
@@ -125,6 +136,9 @@ private:
     UnconditionalFinalizer m_unconditionalFinalizer;
     Bag<CallLinkInfo> m_callLinkInfos;
     Vector<Wasm::WasmExitStubs> m_wasmExitStubs;
+    // The plan that is compiling this code block.
+    RefPtr<Wasm::Plan> m_plan;
+    String m_errorMessage;
     Wasm::MemoryMode m_mode;
     unsigned m_calleeCount;
 };

@@ -31,7 +31,7 @@
 namespace JSC {
 
 StopIfNecessaryTimer::StopIfNecessaryTimer(VM* vm)
-    : HeapTimer(vm)
+    : Base(vm)
 {
 }
 

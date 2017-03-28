@@ -20,17 +20,18 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
-#include "HeapTimer.h"
+#include "JSRunLoopTimer.h"
 
 #include "GCActivityCallback.h"
 #include "IncrementalSweeper.h"
+#include "JSCInlines.h"
 #include "JSObject.h"
 #include "JSString.h"
-#include "JSCInlines.h"
+
 #include <wtf/MainThread.h>
 #include <wtf/Threading.h>
 
@@ -41,17 +42,17 @@
 namespace JSC {
 
 #if USE(CF)
-    
-const CFTimeInterval HeapTimer::s_decade = 60 * 60 * 24 * 365 * 10;
 
-HeapTimer::HeapTimer(VM* vm)
+const CFTimeInterval JSRunLoopTimer::s_decade = 60 * 60 * 24 * 365 * 10;
+
+JSRunLoopTimer::JSRunLoopTimer(VM* vm)
     : m_vm(vm)
     , m_apiLock(&vm->apiLock())
 {
     setRunLoop(vm->heap.runLoop());
 }
 
-void HeapTimer::setRunLoop(CFRunLoopRef runLoop)
+void JSRunLoopTimer::setRunLoop(CFRunLoopRef runLoop)
 {
     if (m_runLoop) {
         CFRunLoopRemoveTimer(m_runLoop.get(), m_timer.get(), kCFRunLoopCommonModes);
@@ -59,24 +60,24 @@ void HeapTimer::setRunLoop(CFRunLoopRef runLoop)
         m_runLoop.clear();
         m_timer.clear();
     }
-    
+
     if (runLoop) {
         m_runLoop = runLoop;
         memset(&m_context, 0, sizeof(CFRunLoopTimerContext));
         m_context.info = this;
-        m_timer = adoptCF(CFRunLoopTimerCreate(kCFAllocatorDefault, s_decade, s_decade, 0, 0, HeapTimer::timerDidFire, &m_context));
+        m_timer = adoptCF(CFRunLoopTimerCreate(kCFAllocatorDefault, CFAbsoluteTimeGetCurrent() + s_decade, s_decade, 0, 0, JSRunLoopTimer::timerDidFire, &m_context));
         CFRunLoopAddTimer(m_runLoop.get(), m_timer.get(), kCFRunLoopCommonModes);
     }
 }
 
-HeapTimer::~HeapTimer()
+JSRunLoopTimer::~JSRunLoopTimer()
 {
     setRunLoop(0);
 }
 
-void HeapTimer::timerDidFire(CFRunLoopTimerRef, void* contextPtr)
+void JSRunLoopTimer::timerDidFire(CFRunLoopTimerRef, void* contextPtr)
 {
-    HeapTimer* timer = static_cast<HeapTimer*>(contextPtr);
+    JSRunLoopTimer* timer = static_cast<JSRunLoopTimer*>(contextPtr);
     timer->m_apiLock->lock();
 
     RefPtr<VM> vm = timer->m_apiLock->vm();
@@ -94,13 +95,13 @@ void HeapTimer::timerDidFire(CFRunLoopTimerRef, void* contextPtr)
     timer->m_apiLock->unlock();
 }
 
-void HeapTimer::scheduleTimer(double intervalInSeconds)
+void JSRunLoopTimer::scheduleTimer(double intervalInSeconds)
 {
     CFRunLoopTimerSetNextFireDate(m_timer.get(), CFAbsoluteTimeGetCurrent() + intervalInSeconds);
     m_isScheduled = true;
 }
 
-void HeapTimer::cancelTimer()
+void JSRunLoopTimer::cancelTimer()
 {
     CFRunLoopTimerSetNextFireDate(m_timer.get(), CFAbsoluteTimeGetCurrent() + s_decade);
     m_isScheduled = false;
@@ -108,9 +109,9 @@ void HeapTimer::cancelTimer()
 
 #elif USE(GLIB)
 
-const long HeapTimer::s_decade = 60 * 60 * 24 * 365 * 10;
+const long JSRunLoopTimer::s_decade = 60 * 60 * 24 * 365 * 10;
 
-static GSourceFuncs heapTimerSourceFunctions = {
+static GSourceFuncs JSRunLoopTimerSourceFunctions = {
     nullptr, // prepare
     nullptr, // check
     // dispatch
@@ -123,27 +124,27 @@ static GSourceFuncs heapTimerSourceFunctions = {
     nullptr, // closure_marshall
 };
 
-HeapTimer::HeapTimer(VM* vm)
+JSRunLoopTimer::JSRunLoopTimer(VM* vm)
     : m_vm(vm)
     , m_apiLock(&vm->apiLock())
-    , m_timer(adoptGRef(g_source_new(&heapTimerSourceFunctions, sizeof(GSource))))
+    , m_timer(adoptGRef(g_source_new(&JSRunLoopTimerSourceFunctions, sizeof(GSource))))
 {
-    g_source_set_name(m_timer.get(), "[JavaScriptCore] HeapTimer");
+    g_source_set_name(m_timer.get(), "[JavaScriptCore] JSRunLoopTimer");
     g_source_set_callback(m_timer.get(), [](gpointer userData) -> gboolean {
-        auto& heapTimer = *static_cast<HeapTimer*>(userData);
-        g_source_set_ready_time(heapTimer.m_timer.get(), g_get_monotonic_time() + HeapTimer::s_decade * G_USEC_PER_SEC);
-        heapTimer.timerDidFire();
+        auto& runLoopTimer = *static_cast<JSRunLoopTimer*>(userData);
+        g_source_set_ready_time(runLoopTimer.m_timer.get(), g_get_monotonic_time() + JSRunLoopTimer::s_decade * G_USEC_PER_SEC);
+        runLoopTimer.timerDidFire();
         return G_SOURCE_CONTINUE;
     }, this, nullptr);
     g_source_attach(m_timer.get(), g_main_context_get_thread_default());
 }
 
-HeapTimer::~HeapTimer()
+JSRunLoopTimer::~JSRunLoopTimer()
 {
     g_source_destroy(m_timer.get());
 }
 
-void HeapTimer::timerDidFire()
+void JSRunLoopTimer::timerDidFire()
 {
     m_apiLock->lock();
 
@@ -161,39 +162,38 @@ void HeapTimer::timerDidFire()
     m_apiLock->unlock();
 }
 
-void HeapTimer::scheduleTimer(double intervalInSeconds)
+void JSRunLoopTimer::scheduleTimer(double intervalInSeconds)
 {
     g_source_set_ready_time(m_timer.get(), g_get_monotonic_time() + intervalInSeconds * G_USEC_PER_SEC);
     m_isScheduled = true;
 }
 
-void HeapTimer::cancelTimer()
+void JSRunLoopTimer::cancelTimer()
 {
     g_source_set_ready_time(m_timer.get(), g_get_monotonic_time() + s_decade * G_USEC_PER_SEC);
     m_isScheduled = false;
 }
 #else
-HeapTimer::HeapTimer(VM* vm)
+JSRunLoopTimer::JSRunLoopTimer(VM* vm)
     : m_vm(vm)
 {
 }
 
-HeapTimer::~HeapTimer()
+JSRunLoopTimer::~JSRunLoopTimer()
 {
 }
 
-void HeapTimer::invalidate()
+void JSRunLoopTimer::invalidate()
 {
 }
 
-void HeapTimer::scheduleTimer(double)
+void JSRunLoopTimer::scheduleTimer(double)
 {
 }
 
-void HeapTimer::cancelTimer()
+void JSRunLoopTimer::cancelTimer()
 {
 }
 #endif
     
-
 } // namespace JSC

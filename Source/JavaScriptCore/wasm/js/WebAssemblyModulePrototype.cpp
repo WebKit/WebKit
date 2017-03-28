@@ -110,8 +110,8 @@ EncodedJSValue JSC_HOST_CALL webAssemblyModuleProtoImports(ExecState* exec)
         for (const Wasm::Import& imp : imports) {
             JSObject* obj = constructEmptyObject(exec);
             RETURN_IF_EXCEPTION(throwScope, { });
-            obj->putDirect(vm, module, jsString(exec, imp.module.string()));
-            obj->putDirect(vm, name, jsString(exec, imp.field.string()));
+            obj->putDirect(vm, module, jsString(exec, imp.module));
+            obj->putDirect(vm, name, jsString(exec, imp.field));
             obj->putDirect(vm, kind, jsString(exec, String(makeString(imp.kind))));
             result->push(exec, obj);
             RETURN_IF_EXCEPTION(throwScope, { });
@@ -141,7 +141,7 @@ EncodedJSValue JSC_HOST_CALL webAssemblyModuleProtoExports(ExecState* exec)
         for (const Wasm::Export& exp : exports) {
             JSObject* obj = constructEmptyObject(exec);
             RETURN_IF_EXCEPTION(throwScope, { });
-            obj->putDirect(vm, name, jsString(exec, exp.field.string()));
+            obj->putDirect(vm, name, jsString(exec, exp.field));
             obj->putDirect(vm, kind, jsString(exec, String(makeString(exp.kind))));
             result->push(exec, obj);
             RETURN_IF_EXCEPTION(throwScope, { });

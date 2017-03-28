@@ -49,13 +49,12 @@ class JSWebAssemblyModule : public JSDestructibleObject {
 public:
     typedef JSDestructibleObject Base;
 
-    static JSWebAssemblyModule* create(VM&, ExecState*, Structure*, uint8_t* source, size_t byteSize);
+    static JSWebAssemblyModule* createStub(VM&, ExecState*, Structure*, RefPtr<ArrayBuffer>&& source, RefPtr<Wasm::Plan>&&);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     DECLARE_INFO;
 
     const Wasm::ModuleInformation& moduleInformation() const { return *m_moduleInformation.get(); }
-    RefPtr<Wasm::Memory> takeReservedMemory() { return m_moduleInformation->memory.takeReservedMemory(); }
     SymbolTable* exportSymbolTable() const { return m_exportSymbolTable.get(); }
     Wasm::SignatureIndex signatureIndexFromFunctionIndexSpace(unsigned functionIndexSpace) const
     {
@@ -63,22 +62,22 @@ public:
     }
     WebAssemblyToJSCallee* callee() const { return m_callee.get(); }
 
-    // Returns the code block that this module was originally compiled expecting to use. This won't need to recompile.
-    JSWebAssemblyCodeBlock* codeBlock() { return codeBlockFor(m_moduleInformation->memory.mode()).get(); }
-    // Returns the appropriate code block for the given memory, possibly triggering a recompile.
-    JSWebAssemblyCodeBlock* codeBlock(VM&, ExecState*, JSWebAssemblyMemory*);
+    JSWebAssemblyCodeBlock* codeBlock(Wasm::MemoryMode mode) { return m_codeBlocks[static_cast<size_t>(mode)].get(); }
+
+    ArrayBuffer& source() const { return m_sourceBuffer.get(); }
 
 private:
-    WriteBarrier<JSWebAssemblyCodeBlock>& codeBlockFor(Wasm::MemoryMode mode) { return m_codeBlocks[static_cast<size_t>(mode)]; }
-    JSWebAssemblyCodeBlock* buildCodeBlock(VM&, ExecState*, Wasm::Plan&, std::optional<Wasm::MemoryMode> mode = std::nullopt);
+    friend class JSWebAssemblyCodeBlock;
 
-    JSWebAssemblyModule(VM&, Structure*);
-    void finishCreation(VM&, ExecState*, uint8_t* source, size_t byteSize);
+    void setCodeBlock(VM&, Wasm::MemoryMode, JSWebAssemblyCodeBlock*);
+
+    JSWebAssemblyModule(VM&, Structure*, RefPtr<ArrayBuffer>&&);
+    void finishCreation(VM&, RefPtr<Wasm::Plan>&&);
     static void destroy(JSCell*);
     static void visitChildren(JSCell*, SlotVisitor&);
 
-    RefPtr<ArrayBuffer> m_sourceBuffer;
-    std::unique_ptr<Wasm::ModuleInformation> m_moduleInformation;
+    Ref<ArrayBuffer> m_sourceBuffer;
+    std::unique_ptr<const Wasm::ModuleInformation> m_moduleInformation;
     WriteBarrier<SymbolTable> m_exportSymbolTable;
     WriteBarrier<JSWebAssemblyCodeBlock> m_codeBlocks[Wasm::NumberOfMemoryModes];
     WriteBarrier<WebAssemblyToJSCallee> m_callee;

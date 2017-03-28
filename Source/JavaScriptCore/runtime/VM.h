@@ -106,6 +106,7 @@ class JSObject;
 class JSWebAssemblyInstance;
 class LLIntOffsetsExtractor;
 class NativeExecutable;
+class PromiseDeferredTimer;
 class RegExpCache;
 class Register;
 class RegisterAtOffsetList;
@@ -379,6 +380,7 @@ public:
     std::once_flag m_wasmSignatureInformationOnceFlag;
     std::unique_ptr<Wasm::SignatureInformation> m_wasmSignatureInformation;
 #endif
+    std::unique_ptr<PromiseDeferredTimer> promiseDeferredTimer;
     
     JSCell* currentlyDestructingCallbackObject;
     const ClassInfo* currentlyDestructingCallbackObjectClassInfo;

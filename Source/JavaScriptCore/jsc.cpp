@@ -62,6 +62,7 @@
 #include "ObjectConstructor.h"
 #include "ParserError.h"
 #include "ProfilerDatabase.h"
+#include "PromiseDeferredTimer.h"
 #include "ProtoCallFrame.h"
 #include "ReleaseHeapAccessScope.h"
 #include "SamplingProfiler.h"
@@ -73,8 +74,9 @@
 #include "TestRunnerUtils.h"
 #include "TypeProfilerLog.h"
 #include "WasmFaultSignalHandler.h"
-#include "WasmPlan.h"
 #include "WasmMemory.h"
+#include "WasmPlanInlines.h"
+#include "WasmWorklist.h"
 #include <locale.h>
 #include <math.h>
 #include <stdio.h>
@@ -907,8 +909,8 @@ const ClassInfo DOMJITGetterComplex::s_info = { "DOMJITGetterComplex", &Base::s_
 const ClassInfo DOMJITFunctionObject::s_info = { "DOMJITFunctionObject", &Base::s_info, nullptr, CREATE_METHOD_TABLE(DOMJITFunctionObject) };
 const ClassInfo RuntimeArray::s_info = { "RuntimeArray", &Base::s_info, nullptr, CREATE_METHOD_TABLE(RuntimeArray) };
 const ClassInfo SimpleObject::s_info = { "SimpleObject", &Base::s_info, nullptr, CREATE_METHOD_TABLE(SimpleObject) };
-static bool test262AsyncPassed { false };
-static bool test262AsyncTest { false };
+static unsigned asyncTestPasses { 0 };
+static unsigned asyncTestExpectedPasses { 0 };
 
 ElementHandleOwner* Element::handleOwner()
 {
@@ -1077,6 +1079,8 @@ static EncodedJSValue JSC_HOST_CALL functionSamplingProfilerStackTraces(ExecStat
 #endif
 
 static EncodedJSValue JSC_HOST_CALL functionMaxArguments(ExecState*);
+static EncodedJSValue JSC_HOST_CALL functionAsyncTestStart(ExecState*);
+static EncodedJSValue JSC_HOST_CALL functionAsyncTestPassed(ExecState*);
 
 #if ENABLE(WEBASSEMBLY)
 static EncodedJSValue JSC_HOST_CALL functionTestWasmModuleFunctions(ExecState*);
@@ -1348,6 +1352,9 @@ protected:
 #endif
 
         addFunction(vm, "maxArguments", functionMaxArguments, 0);
+
+        addFunction(vm, "asyncTestStart", functionAsyncTestStart, 1);
+        addFunction(vm, "asyncTestPassed", functionAsyncTestPassed, 1);
 
 #if ENABLE(WEBASSEMBLY)
         addFunction(vm, "testWasmModuleFunctions", functionTestWasmModuleFunctions, 0);
@@ -1732,11 +1739,12 @@ static EncodedJSValue printInternal(ExecState* exec, FILE* out)
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (test262AsyncTest) {
+    if (asyncTestExpectedPasses) {
         JSValue value = exec->argument(0);
-        if (value.isString() && WTF::equal(asString(value)->value(exec).impl(), "Test262:AsyncTestComplete"))
-            test262AsyncPassed = true;
-        return JSValue::encode(jsUndefined());
+        if (value.isString() && WTF::equal(asString(value)->value(exec).impl(), "Test262:AsyncTestComplete")) {
+            asyncTestPasses++;
+            return JSValue::encode(jsUndefined());
+        }
     }
 
     for (unsigned i = 0; i < exec->argumentCount(); ++i) {
@@ -3049,6 +3057,25 @@ EncodedJSValue JSC_HOST_CALL functionMaxArguments(ExecState*)
     return JSValue::encode(jsNumber(JSC::maxArguments));
 }
 
+EncodedJSValue JSC_HOST_CALL functionAsyncTestStart(ExecState* exec)
+{
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue numberOfAsyncPasses = exec->argument(0);
+    if (!numberOfAsyncPasses.isUInt32())
+        return throwVMError(exec, scope, ASCIILiteral("Expected first argument to a uint32"));
+
+    asyncTestExpectedPasses += numberOfAsyncPasses.asUInt32();
+    return encodedJSUndefined();
+}
+
+EncodedJSValue JSC_HOST_CALL functionAsyncTestPassed(ExecState*)
+{
+    asyncTestPasses++;
+    return encodedJSUndefined();
+}
+
 #if ENABLE(WEBASSEMBLY)
 
 static CString valueWithTypeOfWasmValue(ExecState* exec, VM& vm, JSValue value, JSValue wasmValue)
@@ -3159,21 +3186,22 @@ static EncodedJSValue JSC_HOST_CALL functionTestWasmModuleFunctions(ExecState* e
     if (exec->argumentCount() != functionCount + 2)
         CRASH();
 
-    Wasm::Plan plan(&vm, static_cast<uint8_t*>(source->vector()), source->length());
-    plan.run();
-    if (plan.failed()) {
-        dataLogLn("failed to parse module: ", plan.errorMessage());
+    Ref<Wasm::Plan> plan = adoptRef(*new Wasm::Plan(vm, static_cast<uint8_t*>(source->vector()), source->length(), Wasm::Plan::FullCompile, Wasm::Plan::dontFinalize));
+    Wasm::ensureWorklist().enqueue(plan.copyRef());
+    Wasm::ensureWorklist().completePlanSynchronously(plan.get());
+    if (plan->failed()) {
+        dataLogLn("failed to parse module: ", plan->errorMessage());
         CRASH();
     }
 
-    if (plan.internalFunctionCount() != functionCount)
+    if (plan->internalFunctionCount() != functionCount)
         CRASH();
 
     MarkedArgumentBuffer callees;
     MarkedArgumentBuffer keepAlive;
     {
         unsigned lastIndex = UINT_MAX;
-        plan.initializeCallees(exec->lexicalGlobalObject(),
+        plan->initializeCallees(
             [&] (unsigned calleeIndex, JSWebAssemblyCallee* jsEntrypointCallee, JSWebAssemblyCallee* wasmEntrypointCallee) {
                 RELEASE_ASSERT(!calleeIndex || (calleeIndex - 1 == lastIndex));
                 callees.append(jsEntrypointCallee);
@@ -3181,7 +3209,7 @@ static EncodedJSValue JSC_HOST_CALL functionTestWasmModuleFunctions(ExecState* e
                 lastIndex = calleeIndex;
             });
     }
-    std::unique_ptr<Wasm::ModuleInformation> moduleInformation = plan.takeModuleInformation();
+    std::unique_ptr<Wasm::ModuleInformation> moduleInformation = plan->takeModuleInformation();
     RELEASE_ASSERT(!moduleInformation->memory);
 
     for (uint32_t i = 0; i < functionCount; ++i) {
@@ -3666,7 +3694,7 @@ void CommandLine::parseArguments(int argc, char** argv)
         }
 
         if (!strcmp(arg, "--test262-async")) {
-            test262AsyncTest = true;
+            asyncTestExpectedPasses++;
             continue;
         }
 
@@ -3738,48 +3766,64 @@ int runJSC(CommandLine options, const Func& func)
     Worker worker(Workers::singleton());
     
     VM& vm = VM::create(LargeHeap).leakRef();
-    JSLockHolder locker(&vm);
-
     int result;
-    if (options.m_profile && !vm.m_perBytecodeProfiler)
-        vm.m_perBytecodeProfiler = std::make_unique<Profiler::Database>(vm);
+    bool success;
+    {
+        JSLockHolder locker(vm);
 
-    GlobalObject* globalObject = GlobalObject::create(vm, GlobalObject::createStructure(vm, jsNull()), options.m_arguments);
-    globalObject->setRemoteDebuggingEnabled(options.m_enableRemoteDebugging);
-    bool success = func(vm, globalObject);
-    if (options.m_interactive && success)
-        runInteractive(globalObject);
+        if (options.m_profile && !vm.m_perBytecodeProfiler)
+            vm.m_perBytecodeProfiler = std::make_unique<Profiler::Database>(vm);
 
-    vm.drainMicrotasks();
-    result = success && (test262AsyncTest == test262AsyncPassed) ? 0 : 3;
+        GlobalObject* globalObject = GlobalObject::create(vm, GlobalObject::createStructure(vm, jsNull()), options.m_arguments);
+        globalObject->setRemoteDebuggingEnabled(options.m_enableRemoteDebugging);
+        success = func(vm, globalObject);
+        if (options.m_interactive && success)
+            runInteractive(globalObject);
 
-    if (options.m_exitCode)
-        printf("jsc exiting %d\n", result);
+        vm.drainMicrotasks();
+    }
+#if USE(CF)
+    vm.promiseDeferredTimer->runRunLoop();
+#endif
+
+    result = success && (asyncTestExpectedPasses == asyncTestPasses) ? 0 : 3;
+
+    if (options.m_exitCode) {
+        printf("jsc exiting %d", result);
+        if (asyncTestExpectedPasses != asyncTestPasses)
+            printf(" because expected: %d async test passes but got: %d async test passes", asyncTestExpectedPasses, asyncTestPasses);
+        printf("\n");
+    }
 
     if (options.m_profile) {
+        JSLockHolder locker(vm);
         if (!vm.m_perBytecodeProfiler->save(options.m_profilerOutput.utf8().data()))
             fprintf(stderr, "could not save profiler output.\n");
     }
 
 #if ENABLE(JIT)
-    if (Options::useExceptionFuzz())
-        printf("JSC EXCEPTION FUZZ: encountered %u checks.\n", numberOfExceptionFuzzChecks());
-    bool fireAtEnabled =
-    Options::fireExecutableAllocationFuzzAt() || Options::fireExecutableAllocationFuzzAtOrAfter();
-    if (Options::useExecutableAllocationFuzz() && (!fireAtEnabled || Options::verboseExecutableAllocationFuzz()))
-        printf("JSC EXECUTABLE ALLOCATION FUZZ: encountered %u checks.\n", numberOfExecutableAllocationFuzzChecks());
-    if (Options::useOSRExitFuzz()) {
-        printf("JSC OSR EXIT FUZZ: encountered %u static checks.\n", numberOfStaticOSRExitFuzzChecks());
-        printf("JSC OSR EXIT FUZZ: encountered %u dynamic checks.\n", numberOfOSRExitFuzzChecks());
-    }
+    {
+        JSLockHolder locker(vm);
+        if (Options::useExceptionFuzz())
+            printf("JSC EXCEPTION FUZZ: encountered %u checks.\n", numberOfExceptionFuzzChecks());
+        bool fireAtEnabled =
+        Options::fireExecutableAllocationFuzzAt() || Options::fireExecutableAllocationFuzzAtOrAfter();
+        if (Options::useExecutableAllocationFuzz() && (!fireAtEnabled || Options::verboseExecutableAllocationFuzz()))
+            printf("JSC EXECUTABLE ALLOCATION FUZZ: encountered %u checks.\n", numberOfExecutableAllocationFuzzChecks());
+        if (Options::useOSRExitFuzz()) {
+            printf("JSC OSR EXIT FUZZ: encountered %u static checks.\n", numberOfStaticOSRExitFuzzChecks());
+            printf("JSC OSR EXIT FUZZ: encountered %u dynamic checks.\n", numberOfOSRExitFuzzChecks());
+        }
 
-    auto compileTimeStats = JIT::compileTimeStats();
-    Vector<CString> compileTimeKeys;
-    for (auto& entry : compileTimeStats)
-        compileTimeKeys.append(entry.key);
-    std::sort(compileTimeKeys.begin(), compileTimeKeys.end());
-    for (CString key : compileTimeKeys)
-        printf("%40s: %.3lf ms\n", key.data(), compileTimeStats.get(key));
+        
+        auto compileTimeStats = JIT::compileTimeStats();
+        Vector<CString> compileTimeKeys;
+        for (auto& entry : compileTimeStats)
+            compileTimeKeys.append(entry.key);
+        std::sort(compileTimeKeys.begin(), compileTimeKeys.end());
+        for (CString key : compileTimeKeys)
+            printf("%40s: %.3lf ms\n", key.data(), compileTimeStats.get(key));
+    }
 #endif
 
     if (Options::gcAtEnd()) {
