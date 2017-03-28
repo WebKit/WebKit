@@ -324,7 +324,7 @@ test("_presentPopoverForJavaScriptCoreTestRegressions including loading", functi
     iteration.javaScriptCoreTestResults = new MockBuildbotTestResults();
 
     var view = new BuildbotQueueView();
-    view._presentPopoverForJavaScriptCoreTestRegressions(element, popover, iteration, "jscore-test");
+    view._presentPopoverForJavaScriptCoreTestRegressions("jscore-test", element, popover, iteration);
 
     JSON.load("resources/test-jsc-results.json", function(data)
     {
@@ -368,7 +368,7 @@ test("_presentPopoverForJavaScriptCoreTestRegressions already loaded", function(
     iteration.javaScriptCoreTestResults = {"regressions": ["uno", "dos", "tres"]};
 
     var view = new BuildbotQueueView();
-    view._presentPopoverForJavaScriptCoreTestRegressions(element, popover, iteration, "jscore-test");
+    view._presentPopoverForJavaScriptCoreTestRegressions("jscore-test", element, popover, iteration);
 
     var numChildrenInEmptyPopoverContent = 2;
     strictEqual(popover._content.childNodes.length - numChildrenInEmptyPopoverContent,
