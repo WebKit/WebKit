@@ -1,3 +1,13 @@
+2017-03-28  Youenn Fablet  <youenn@apple.com>
+
+        Update LayoutTests/fast/mediastream/RTCPeerConnection-addIceCandidate.html to get more coverage
+        https://bugs.webkit.org/show_bug.cgi?id=170194
+
+        Reviewed by Chris Dumez.
+
+        * fast/mediastream/RTCPeerConnection-addIceCandidate-expected.txt:
+        * fast/mediastream/RTCPeerConnection-addIceCandidate.html: Making test more robust to failures to get more coverage.
+
 2017-03-28  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Inspecting a Main Resource that is JS/JSON does not format / syntax highlight it properly

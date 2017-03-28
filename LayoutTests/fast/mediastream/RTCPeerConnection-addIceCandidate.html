@@ -50,7 +50,7 @@
                 badSdpMLineIndex = sdpMLineIndex + pc.getTransceivers().length + 10;
                 shouldNotBe("sdpMLineIndex", "badSdpMLineIndex");
 
-                sdpMid = pc.getTransceivers()[0].mid;
+                sdpMid = pc.getTransceivers()[0] ? pc.getTransceivers()[0].mid : null;
                 shouldNotBe("sdpMid", "null");
                 badSdpMid = sdpMid + "_foo";
                 shouldNotBe("sdpMid", "badSdpMid");
