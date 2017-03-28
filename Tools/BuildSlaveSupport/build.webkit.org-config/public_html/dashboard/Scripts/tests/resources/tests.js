@@ -167,13 +167,20 @@ module("BuildBotQueueView", {
         };
         this.queue.branches = [this.trunkBranch];
         this.view = new MockBuildbotQueueView([this.queue]);
+        this.view._latestProductiveIteration = function(queue)
+        {
+            var iteration = {
+                revision: { "openSource": "33021" },
+            };
+            return iteration;
+        }
     }
 });
 
 var settings = new Settings;
 test("_appendPendingRevisionCount", function()
 {
-    this.view._appendPendingRevisionCount(this.queue);
+    this.view._appendPendingRevisionCount(this.queue, this.view._latestProductiveIteration);
     var revisionsBehind = this.view.element.getElementsByClassName("message")[0].innerHTML.match(/.*(\d+) revision(|s) behind/)[1];
     strictEqual(revisionsBehind, "1", "assert revisions behind");
 });
@@ -188,7 +195,7 @@ test("_presentPopoverForPendingCommits", function()
 {
     var element = document.createElement("div");
     var popover = new Dashboard.Popover();
-    this.view._presentPopoverForPendingCommits(element, popover, this.queue);
+    this.view._presentPopoverForPendingCommits(this.view._latestProductiveIteration, element, popover, this.queue);
     var nodeList = popover._element.getElementsByClassName("pending-commit");
     strictEqual(nodeList.length, 1, "has 1 pending commit");
 });
@@ -204,16 +211,9 @@ test("_presentPopoverForPendingCommits no pending commits", function()
         }
     };
     this.queue.branches = [this.someOtherBranch];
-    this.view._latestProductiveIteration = function(queue)
-    {
-        var iteration = {
-            revision: { "openSource": "33021" },
-        };
-        return iteration;
-    };
     var element = document.createElement("div");
     var popover = new Dashboard.Popover();
-    this.view._presentPopoverForPendingCommits(element, popover, this.queue);
+    this.view._presentPopoverForPendingCommits(this.view._latestProductiveIteration, element, popover, this.queue);
     var nodeList = popover._element.getElementsByClassName("pending-commit");
     strictEqual(nodeList.length, 0, "has 0 pending commits");
 });
