@@ -1559,3 +1559,5 @@ webkit.org/b/169637 imported/w3c/web-platform-tests/XMLHttpRequest/timeout-multi
 
 # <rdar://problem/19759913>
 http/tests/media/video-served-as-text-with-type.html [ Skip ]
+
+webkit.org/b/168132 http/tests/xmlhttprequest/simple-cross-origin-progress-events.html [ Pass Timeout ]
