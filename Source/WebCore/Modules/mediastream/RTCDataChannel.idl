@@ -23,7 +23,6 @@
  */
 
 [
-    ActiveDOMObject,
     Conditional=WEB_RTC,
     NoInterfaceObject,
 ] interface RTCDataChannel : EventTarget {

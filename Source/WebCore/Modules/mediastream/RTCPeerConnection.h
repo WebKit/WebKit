@@ -178,6 +178,8 @@ private:
 
     std::unique_ptr<RtpTransceiverSet> m_transceiverSet { std::unique_ptr<RtpTransceiverSet>(new RtpTransceiverSet()) };
 
+    Vector<RefPtr<RTCDataChannel>> m_dataChannels;
+
     std::unique_ptr<PeerConnectionBackend> m_backend;
 
     RTCConfiguration m_configuration;

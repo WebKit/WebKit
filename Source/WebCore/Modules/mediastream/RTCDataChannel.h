@@ -26,7 +26,6 @@
 
 #if ENABLE(WEB_RTC)
 
-#include "ActiveDOMObject.h"
 #include "Event.h"
 #include "EventTarget.h"
 #include "ExceptionOr.h"
@@ -45,7 +44,7 @@ namespace WebCore {
 class Blob;
 class RTCPeerConnectionHandler;
 
-class RTCDataChannel final : public ActiveDOMObject, public RTCDataChannelHandlerClient, public EventTargetWithInlineData {
+class RTCDataChannel final : public RTCDataChannelHandlerClient, public EventTargetWithInlineData {
 public:
     static Ref<RTCDataChannel> create(ScriptExecutionContext&, std::unique_ptr<RTCDataChannelHandler>&&, String&&, RTCDataChannelInit&&);
 
@@ -72,6 +71,8 @@ public:
 
     void close();
 
+    void stop();
+
     using RTCDataChannelHandlerClient::ref;
     using RTCDataChannelHandlerClient::deref;
 
@@ -87,10 +88,7 @@ private:
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 
-    // ActiveDOMObject API
-    void stop() final;
-    const char* activeDOMObjectName() const final { return "RTCDataChannel"; }
-    bool canSuspendForDocumentSuspension() const final { return m_readyState == ReadyStateClosed; }
+    ScriptExecutionContext* m_scriptExecutionContext;
 
     // RTCDataChannelHandlerClient API
     void didChangeReadyState(ReadyState) final;
