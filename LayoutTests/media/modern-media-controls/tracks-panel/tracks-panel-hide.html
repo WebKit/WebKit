@@ -23,7 +23,7 @@ scheduler.frameDidFire = function()
     debug("tracksPanel.hide()");
     window.requestAnimationFrame(() => {
         tracksPanel.hide();
-        shouldBeTrue("tracksPanel.presented");
+        shouldBeFalse("tracksPanel.presented");
         tracksPanel.element.addEventListener("transitionend", (event) => {
             debug("");
             debug("Transition ended");

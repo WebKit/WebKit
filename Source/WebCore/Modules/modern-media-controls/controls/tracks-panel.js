@@ -9,6 +9,7 @@ class TracksPanel extends LayoutNode
         this._scrollableContainer = new LayoutNode(`<div class="scrollable-container"></div>`);
         this._rightX = 0;
         this._bottomY = 0;
+        this._presented = false;
         
         this.children = [this._backgroundTint, this._scrollableContainer];
     }
@@ -17,13 +18,15 @@ class TracksPanel extends LayoutNode
 
     get presented()
     {
-        return !!this.parent;
+        return this._presented;
     }
 
     presentInParent(node)
     {
-        if (this.parent === node)
+        if (this._presented && this.parent === node)
             return;
+
+        this._presented = true;
 
         this._scrollableContainer.children = this._childrenFromDataSource();
 
@@ -40,8 +43,10 @@ class TracksPanel extends LayoutNode
 
     hide()
     {
-        if (!this.presented)
+        if (!this._presented)
             return;
+
+        this._presented = false;
 
         this._mousedownTarget().removeEventListener("mousedown", this, true);
         window.removeEventListener("keydown", this, true);

@@ -7,7 +7,7 @@ tracksPanel.presentInParent(container)
 PASS tracksPanel.presented is true
 
 tracksPanel.hide()
-PASS tracksPanel.presented is true
+PASS tracksPanel.presented is false
 
 Transition ended
 PASS tracksPanel.presented is false

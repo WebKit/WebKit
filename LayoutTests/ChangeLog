@@ -1,3 +1,19 @@
+2017-03-28  Antoine Quint  <graouts@apple.com>
+
+        REGRESSION: Double-clicking the captions button while the captions popover is open prevents the popover from being opened again
+        https://bugs.webkit.org/show_bug.cgi?id=170171
+        <rdar://problem/31095500>
+
+        Reviewed by Dean Jackson.
+
+        Adding a new test that runs the steps to reproduce the issue, and rebaselining an existing one now that
+        the "presented" property returns false immediately after calling hide() on the panel.
+
+        * media/modern-media-controls/tracks-panel/tracks-panel-hide-expected.txt:
+        * media/modern-media-controls/tracks-panel/tracks-panel-hide.html:
+        * media/modern-media-controls/tracks-support/tracks-support-show-panel-then-double-click-on-tracks-button-expected.txt: Added.
+        * media/modern-media-controls/tracks-support/tracks-support-show-panel-then-double-click-on-tracks-button.html: Added.
+
 2017-03-28  Aaron Chu  <aaron_chu@apple.com>
 
         AX: Media controls should be able to be re-activated after faded away
