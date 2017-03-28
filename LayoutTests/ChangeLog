@@ -1,3 +1,13 @@
+2017-03-28  Youenn Fablet  <youenn@apple.com>
+
+        Stop RTCDataChannel when closing page
+        https://bugs.webkit.org/show_bug.cgi?id=170166
+
+        Reviewed by Eric Carlson.
+
+        * webrtc/datachannel/datachannel-gc-expected.txt: Added.
+        * webrtc/datachannel/datachannel-gc.html: Added.
+
 2017-03-28  Antoine Quint  <graouts@apple.com>
 
         REGRESSION (r214386): [ios-simulator] LayoutTest media/modern-media-controls/media-controller/media-controller-scale-factor-audio.html is failing
