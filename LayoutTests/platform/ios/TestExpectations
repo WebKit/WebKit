@@ -2871,8 +2871,6 @@ media/modern-media-controls/macos-inline-media-controls/macos-inline-media-contr
 media/modern-media-controls/media-controller/media-controller-compact.html [ Skip ]
 media/modern-media-controls/media-controller/media-controller-tight-padding.html [ Skip ]
 
-webkit.org/b/170180 media/modern-media-controls/media-controller/media-controller-scale-factor-audio.html [ Failure ]
-
 # Form validation popover does not obey minimum font size setting on iOS but Dynamic Type instead.
 fast/forms/validation-message-minimum-font-size.html [ Skip ]
 

@@ -1,3 +1,11 @@
+2017-03-28  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Remove failure expectation for media/modern-media-controls/media-controller/media-controller-scale-factor-audio.html.
+
+        Unreviewed test gardening.
+
+        * platform/ios/TestExpectations:
+
 2017-03-28  Youenn Fablet  <youenn@apple.com>
 
         Stop RTCDataChannel when closing page
