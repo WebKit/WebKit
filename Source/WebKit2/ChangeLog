@@ -1,3 +1,21 @@
+2017-03-27  Keith Rollin  <krollin@apple.com>
+
+        Update NetworkResourceLoader logging statement
+        https://bugs.webkit.org/show_bug.cgi?id=170126
+
+        Reviewed by Alex Christensen.
+
+        NetworkResourceLoader contains a logging statement that prints, in
+        part: "start: Retrieving resource from cache". This is misleading,
+        since it's not necessarily the case that the resource will be loaded
+        from the cache. What is actually happening at the point where that is
+        logged is that the cache is being checked for the resource. It still
+        remains to be seen if the resource will be found in it. To address
+        this, change the logging to say "start: Checking cache for resource".
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::start):
+
 2017-03-27  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Saving files should not suggest the top level directory
