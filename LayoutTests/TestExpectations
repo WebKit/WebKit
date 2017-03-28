@@ -706,6 +706,7 @@ webkit.org/b/146182 editing/selection/leak-document-with-selection-inside.html [
 # Media Sessions is not yet enabled by default: ENABLE(MEDIA_SESSION)
 media/session [ Skip ]
 
+webrtc/video-getParameters.html [ Failure ]
 webrtc/peer-connection-audio-mute2.html [ Pass Failure ]
 webrtc/peer-connection-remote-audio-mute2.html [ Pass Failure ]
 webrtc/peer-connection-remote-audio-mute.html [ Pass Failure ]
