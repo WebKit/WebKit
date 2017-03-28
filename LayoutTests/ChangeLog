@@ -1,3 +1,24 @@
+2017-03-28  Yoav Weiss  <yoav@yoav.ws>
+
+        Add a warning for unused link preloads.
+        https://bugs.webkit.org/show_bug.cgi?id=165670
+
+        Reviewed by Youenn Fablet.
+
+        * TestExpectations: Added a "Failure Pass" for the flaky charset header test.
+        * http/tests/preload/download_resources-expected.txt:
+        * http/tests/preload/download_resources.html: Added references to preloaded resources.
+        * http/tests/preload/onerror_event-expected.txt:
+        * http/tests/preload/onerror_event.html: Added references to preloaded resources.
+        * http/tests/preload/onload_event-expected.txt:
+        * http/tests/preload/onload_event.html: Added references to preloaded resources.
+        * http/tests/preload/single_download_preload.html: Deflaked.
+        * http/tests/preload/single_download_preload_headers.php: Removed the charset to avoid double download bug.
+        * http/tests/preload/single_download_preload_headers_charset-expected.txt: Added.
+        * http/tests/preload/single_download_preload_headers_charset.php: Flaky test showing the double download bug when charset is declared.
+        * http/tests/preload/unused_preload_warning-expected.txt: Added.
+        * http/tests/preload/unused_preload_warning.html: Added.
+
 2017-03-28  Antoine Quint  <graouts@apple.com>
 
         REGRESSION: Double-clicking the captions button while the captions popover is open prevents the popover from being opened again

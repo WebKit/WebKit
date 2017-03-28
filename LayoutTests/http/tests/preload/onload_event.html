@@ -29,7 +29,7 @@
 <link rel=preload href="../resources/square100.png" as=image onload="count(); imageLoaded = true;" onerror="count()">
 <link rel=preload href="../resources/Ahem.woff" as=font crossorigin onload="count(); fontLoaded = true;" onerror="count()">
 <link rel=preload href="../resources/test.ogv" as=media onload="count(); mediaLoaded = true;" onerror="count()">
-<link rel=preload href="../security/resources/captions.vtt" as=track onload="count(); trackLoaded = true;" onerror="count()">
+<link rel=preload href="../security/resources/captions.vtt" as=track onload="count(); trackLoaded = true;" onerror="count();">
 <link rel=preload href="../resources/dummy.xml" as=foobarxmlthing onload="count(); gibberishLoaded = true;" onerror="count(); gibberishErrored = true;">
 <link rel=preload href="../resources/dummy.xslt" as=xslt onload="count(); xsltLoaded = true;" onerror="count(); xsltErrored = true;">
 <link rel=preload href="../resources/dummy.xml" onload="count(); noTypeLoaded = true;" onerror="count()">
@@ -51,7 +51,24 @@
         if (window.testRunner)
             testRunner.notifyDone();
     }
-     addEventListener("load", function(){
+    document.write('<script src="../resources/dummy.js"></scr' + 'ipt>' +
+                   '<link rel=stylesheet href="../resources/dummy.css">' +
+                   '<img src="../resources/square.png">' +
+                   '<video><source src="test.mp4">' +
+                   '<track kind=subtitles src="../../security/resources/captions.vtt" srclang=en>' +
+                   '</video>' +
+                   '<style>' +
+                   '    @font-face { font-family:ahem; src: url(../../w3c/webperf/resources/Ahem.ttf); }' +
+                   '    span { font-family: ahem, Arial; }' +
+                   '</style>' +
+                   '<span>This test makes sure that link preload events are fired</span>');
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "../resources/dummy.xml");
+    xhr.send();
+    var xhr2 = new XMLHttpRequest();
+    xhr2.open("GET", "../resources/dummy.xml?badvalue");
+    xhr2.send();
+    addEventListener("load", function(){
         setInterval(function() {
             if (window.counter >= 10)
                 test();

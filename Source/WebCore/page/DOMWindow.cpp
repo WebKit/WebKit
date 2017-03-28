@@ -515,6 +515,9 @@ void DOMWindow::willDetachDocumentFromFrame()
     copyToVector(m_properties, properties);
     for (auto& property : properties)
         property->willDetachGlobalObjectFromFrame();
+
+    if (m_performance)
+        m_performance->clearResourceTimings();
 }
 
 #if ENABLE(GAMEPAD)

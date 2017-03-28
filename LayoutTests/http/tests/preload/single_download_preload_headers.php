@@ -11,7 +11,6 @@ header("Link: <http://127.0.0.1:8000/resources/dummy.xml?foobar>; rel=preload; a
 header("Link: <http://127.0.0.1:8000/resources/dummy.xml>; crossorigin; rel=preload", false);
 ?>
 <!DOCTYPE html>
-<meta charset="utf-8">
 <script src="/js-test-resources/testharness.js"></script>
 <script src="/js-test-resources/testharnessreport.js"></script>
 <script>

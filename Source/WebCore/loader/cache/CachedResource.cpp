@@ -465,7 +465,7 @@ void CachedResource::didAddClient(CachedResourceClient& client)
 
 bool CachedResource::addClientToSet(CachedResourceClient& client)
 {
-    if (m_preloadResult == PreloadNotReferenced) {
+    if (m_preloadResult == PreloadNotReferenced && client.shouldMarkAsReferenced()) {
         if (isLoaded())
             m_preloadResult = PreloadReferencedWhileComplete;
         else if (m_requestedFromNetworkingLayer)

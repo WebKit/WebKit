@@ -1,19 +1,22 @@
+<?php
+header("Link: <http://127.0.0.1:8000/resources/dummy.js>; rel=preload; as=script", false);
+header("LiNk:<http://127.0.0.1:8000/resources/dummy.css>; rel=preload; as=style", false);
+header("Link: <http://127.0.0.1:8000/resources/square100.png>;rel=preload;as=image", false);
+header("Link: <http://127.0.0.1:8000/resources/square100.png?background>;rel=preload;as=image", false);
+header("Link: <http://127.0.0.1:8000/resources/Ahem.woff>; rel=preload; as=font; crossorigin", false);
+header("Link: <http://127.0.0.1:8000/resources/test.mp4>; rel=preload; as=media", false);
+header("Link: <http://127.0.0.1:8000/resources/test.oga>; rel=preload; as=media", false);
+header("link: <http://127.0.0.1:8000/security/resources/captions.vtt>; rel=preload; as=track", false);
+header("Link: <http://127.0.0.1:8000/resources/dummy.xml?foobar>; rel=preload; as=foobar", false);
+header("Link: <http://127.0.0.1:8000/resources/dummy.xml>; crossorigin; rel=preload", false);
+?>
 <!DOCTYPE html>
+<meta charset="utf-8">
 <script src="/js-test-resources/testharness.js"></script>
 <script src="/js-test-resources/testharnessreport.js"></script>
 <script>
     var t = async_test('Makes sure that preloaded resources are not downloaded again when used');
 </script>
-<link rel=preload href="http://127.0.0.1:8000/resources/dummy.js" as=script>
-<link rel=preload href="http://127.0.0.1:8000/resources/dummy.css" as=style>
-<link rel=preload href="http://127.0.0.1:8000/resources/square100.png" as=image>
-<link rel=preload href="http://127.0.0.1:8000/resources/square100.png?background" as=image>
-<link rel=preload href="http://127.0.0.1:8000/resources/Ahem.woff" as=font crossorigin>
-<link rel=preload href="http://127.0.0.1:8000/resources/test.mp4" as=media>
-<link rel=preload href="http://127.0.0.1:8000/resources/test.oga" as=media>
-<link rel=preload href="http://127.0.0.1:8000/security/resources/captions.vtt" as=track>
-<link rel=preload href="http://127.0.0.1:8000/resources/dummy.xml?foobar" as=foobarxmlthing>
-<link rel=preload href="http://127.0.0.1:8000/resources/dummy.xml" crossorigin>
 <script src="http://127.0.0.1:8000/resources/slow-script.pl?delay=200"></script>
 <style>
     #background {
@@ -55,12 +58,6 @@
             // FIXME: XHR should trigger a single download, but it downloads 2 resources instead.
             verifyDownloadNumber("http://127.0.0.1:8000/resources/dummy.xml", 2);
             // FIXME: We should verify for video and audio as well, but they seem to (flakily?) trigger multiple partial requests.
-            var xhr = new XMLHttpRequest();
-            xhr.open("GET", "../resources/dummy.xml");
-            xhr.send();
-            var xhr2 = new XMLHttpRequest();
-            xhr2.open("GET", "../resources/dummy.xml?badvalue");
-            xhr2.send();
             t.done();
             }), 100);
     }));

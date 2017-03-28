@@ -2265,6 +2265,8 @@ void Document::prepareForDestruction()
     }
 #endif
 
+    m_cachedResourceLoader->stopUnusedPreloadsTimer();
+
     detachFromFrame();
 
     m_hasPreparedForDestruction = true;

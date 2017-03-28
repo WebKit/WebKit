@@ -1,3 +1,30 @@
+2017-03-28  Yoav Weiss  <yoav@yoav.ws>
+
+        Add a warning for unused link preloads.
+        https://bugs.webkit.org/show_bug.cgi?id=165670
+
+        Reviewed by Youenn Fablet.
+
+        Tests: http/tests/preload/single_download_preload_headers_charset.php
+               http/tests/preload/unused_preload_warning.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::prepareForDestruction): Stop the timer once the document is destructed.
+        * loader/LinkPreloadResourceClients.h: Add shouldMarkAsReferenced overides for the LinkPreloadResourceClient classes.
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::addClientToSet): Make sure LinkPreloadResourceClients don't set resource to be referenced.
+        * loader/cache/CachedResourceClient.h:
+        (WebCore::CachedResourceClient::shouldMarkAsReferenced): Make sure that ResourceClients mark preloads as referenced by default.
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::CachedResourceLoader): Initialize timer.
+        (WebCore::CachedResourceLoader::~CachedResourceLoader): Stop timer.
+        (WebCore::CachedResourceLoader::documentDidFinishLoadEvent): Trigger a timer if preloads weren't cleared at load time.
+        (WebCore::CachedResourceLoader::stopUnusedPreloadsTimer): Stop the timer.
+        (WebCore::CachedResourceLoader::warnUnusedPreloads): Iterate over m_preloads and issue a warning for non-referenced preloads.
+        * loader/cache/CachedResourceLoader.h:
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::willDetachDocumentFromFrame): Clear Resource Timing buffer when document detaches, to avoid test flakiness.
+
 2017-03-28  Antoine Quint  <graouts@apple.com>
 
         REGRESSION: Double-clicking the captions button while the captions popover is open prevents the popover from being opened again
