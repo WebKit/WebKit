@@ -1,0 +1,12 @@
+Testing the size of the media element in a video media document on macOS.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS getComputedStyle(media).width became "700px"
+PASS getComputedStyle(media).height is "525px"
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

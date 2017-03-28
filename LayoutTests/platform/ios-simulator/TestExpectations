@@ -2840,6 +2840,8 @@ media/modern-media-controls/pip-support/pip-support-enabled.html [ Skip ]
 media/modern-media-controls/placard-support/placard-support-pip.html [ Skip ]
 media/modern-media-controls/scrubber-support/scrubber-support-drag.html [ Skip ]
 media/modern-media-controls/scrubber-support/ipad/scrubber-support-drag.html [ Skip ]
+media/modern-media-controls/media-documents/media-document-audio-mac-sizing.html [ Skip ]
+media/modern-media-controls/media-documents/media-document-video-mac-sizing.html [ Skip ]
 
 # These tests use uiController and need to be skipped in open-source
 media/modern-media-controls/placard-support/ipad/placard-support-pip.html [ Skip ]
@@ -2850,6 +2852,10 @@ media/modern-media-controls/fullscreen-support/ipad/fullscreen-support-tap.html 
 media/modern-media-controls/start-support/start-support-click-to-start.html [ Skip ]
 media/modern-media-controls/start-support/start-support-lowPowerMode.html [ Skip ]
 media/modern-media-controls/button/button.html [ Skip ]
+
+# iPad-specific tests that need to be skipped in open-source
+media/modern-media-controls/media-documents/ipad/media-document-audio-ios-sizing.html [ Skip ]
+media/modern-media-controls/media-documents/ipad/media-document-video-ios-sizing.html [ Skip ]
 
 # AirPlay cannot be tested on iOS
 webkit.org/b/166062 media/modern-media-controls/airplay-placard/airplay-placard-text-section.html [ Skip ]
@@ -2924,6 +2930,3 @@ fast/css-generated-content/initial-letter-pagination-raised.html [ Skip ]
 fast/css-generated-content/initial-letter-pagination-sunken.html [ Skip ]
 fast/css-generated-content/initial-letter-pagination-raised-rl.html [ Skip ]
 fast/css-generated-content/initial-letter-pagination-sunken-rl.html [ Skip ]
-
-webkit.org/b/170123 media/modern-media-controls/media-documents/ipad/media-document-audio-ios-sizing.html [ Timeout ]
-webkit.org/b/170123 media/modern-media-controls/media-documents/ipad/media-document-video-ios-sizing.html [ Timeout ]

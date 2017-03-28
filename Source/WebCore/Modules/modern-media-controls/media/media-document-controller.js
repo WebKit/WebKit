@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2017 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,54 +23,53 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class FullscreenSupport extends MediaControllerSupport
+class MediaDocumentController
 {
 
     constructor(mediaController)
     {
-        super(mediaController);
+        this.mediaController = mediaController;
 
-        if (mediaController.controls instanceof IOSInlineMediaControls)
-            mediaController.controls.delegate = this;
+        const media = mediaController.media;
+        media.classList.add("media-document");
+
+        if (media.readyState >= HTMLMediaElement.HAVE_METADATA)
+            this._mediaDocumentHasMetadata();
+        else
+            media.addEventListener("loadedmetadata", this);
     }
 
     // Protected
 
-    get control()
+    handleEvent(event)
     {
-        return this.mediaController.controls.fullscreenButton;
+        event.currentTarget.removeEventListener(event.type, this);
+
+        if (event.type === "loadedmetadata")
+            this._mediaDocumentHasMetadata();
+        else if (event.type === "resize")
+            this._mediaDocumentHasSize();
     }
 
-    get mediaEvents()
+    // Private
+
+    _mediaDocumentHasMetadata()
     {
-        return ["loadedmetadata", "error"];
+        window.requestAnimationFrame(() => {
+            const media = this.mediaController.media;
+            media.classList.add(this.mediaController.isAudio ? "audio" : "video");
+            media.classList.add(window.navigator.platform === "MacIntel" ? "mac" : window.navigator.platform);
+
+            if (this.mediaController.isAudio)
+                this._mediaDocumentHasSize();
+            else
+                this.mediaController.shadowRoot.addEventListener("resize", this);
+        });
     }
 
-    get tracksToMonitor()
+    _mediaDocumentHasSize()
     {
-        return [this.mediaController.media.videoTracks];
-    }
-
-    buttonWasPressed(control)
-    {
-        const media = this.mediaController.media;
-        if (media.webkitDisplayingFullscreen)
-            media.webkitExitFullscreen();
-        else
-            media.webkitEnterFullscreen();
-    }
-
-    iOSInlineMediaControlsRecognizedPinchInGesture()
-    {
-        this.mediaController.media.webkitEnterFullscreen();
-    }
-
-    syncControl()
-    {
-        const control = this.control;
-        const media = this.mediaController.media;
-        control.enabled = !this.mediaController.isAudio && media.webkitSupportsFullscreen;
-        control.isFullScreen = media.webkitDisplayingFullscreen;
+        window.requestAnimationFrame(() => this.mediaController.media.classList.add("ready"));
     }
 
 }

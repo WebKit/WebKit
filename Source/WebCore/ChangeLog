@@ -1,3 +1,80 @@
+2017-03-28  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Improve media documents across macOS, iPhone and iPad
+        https://bugs.webkit.org/show_bug.cgi?id=169145
+        <rdar://problem/17048858>
+
+        Reviewed by Dean Jackson.
+
+        There were a variety of issues with media documents, some longstanding, and some specifically
+        about modern media controls.
+
+        One issue was that fullscreen and picture-in-picture buttons would show for audio media documents,
+        due to using a <video> element to load the audio file. We now have additional logic in MediaController
+        to identify if the loaded media is really an audio file, and using this information to hide the
+        fullscreen and picture-in-picture buttons.
+
+        Another issue was that we would inject style in MediaDocument.cpp that was specific to modern media
+        controls when we could have the modern-media-controls module injected CSS handle this styling. We now
+        use the injected style in the shadow root to size media documents based on the device characteristics
+        and ensuring that page styles are overridden.
+
+        We also simplify how MediaDocument.cpp sets the source of the media element to simply use the "src"
+        attribute and not a <source> element.
+
+        Finally, we introduce a MediaDocumentController class that is instantiated when we're dealing with
+        a media document to hide the controls while we determine the type of media we're loading (audio vs.
+        video) in order to apply the appropriate styling without flashes.
+
+        As a result of the new styles applied by the modern-media-controls module, media documents have a
+        similar behavior on macOS and iPad, where we only enforce a min-width for video allowing them
+        to play at their natural size otherwise, and enforcing a fixed width for audio. On iPhone however,
+        we want to always play the media at full width, with some padding in the case of audio.
+
+        Tests: media/modern-media-controls/fullscreen-support/fullscreen-support-disabled-video-with-audio-tracks-only.html
+               media/modern-media-controls/media-documents/ipad/media-document-audio-ios-sizing.html
+               media/modern-media-controls/media-documents/ipad/media-document-video-ios-sizing.html
+               media/modern-media-controls/media-documents/media-document-audio-ios-sizing.html
+               media/modern-media-controls/media-documents/media-document-audio-mac-sizing.html
+               media/modern-media-controls/media-documents/media-document-video-ios-sizing.html
+               media/modern-media-controls/media-documents/media-document-video-mac-sizing.html
+               media/modern-media-controls/pip-support/pip-support-disabled-video-with-audio-tracks-only.html
+
+        * Modules/modern-media-controls/controls/ios-inline-media-controls.css:
+        (:host(audio) .media-controls.ios.inline > .controls-bar:before,):
+        (:host(audio) .media-controls.ios.inline > .controls-bar:before): Deleted.
+        * Modules/modern-media-controls/controls/macos-media-controls.css:
+        (:host(audio) .media-controls.mac.inline > .controls-bar,):
+        (:host(audio) .media-controls.mac.inline > .controls-bar > .background-tint,):
+        (:host(audio) .media-controls.mac.inline > .controls-bar): Deleted.
+        (:host(audio) .media-controls.mac.inline > .controls-bar > .background-tint): Deleted.
+        * Modules/modern-media-controls/controls/media-document.css: Copied from Source/WebCore/Modules/modern-media-controls/controls/macos-media-controls.css.
+        (:host(.media-document)):
+        (:host(.media-document.ready)):
+        (:host(.media-document.audio.mac)):
+        (:host(.media-document.audio.ipad)):
+        (:host(.media-document.audio.iphone)):
+        (:host(.media-document.video.mac)):
+        (:host(.media-document.video.ipad)):
+        (:host(.media-document.video.iphone)):
+        * Modules/modern-media-controls/js-files:
+        * Modules/modern-media-controls/media/fullscreen-support.js:
+        (FullscreenSupport.prototype.syncControl):
+        (FullscreenSupport):
+        * Modules/modern-media-controls/media/media-controller.js:
+        (MediaController):
+        (MediaController.prototype.get isAudio):
+        * Modules/modern-media-controls/media/media-document-controller.js: Copied from Source/WebCore/Modules/modern-media-controls/media/fullscreen-support.js.
+        (MediaDocumentController):
+        (MediaDocumentController.prototype.handleEvent):
+        (MediaDocumentController.prototype._mediaDocumentHasMetadata):
+        (MediaDocumentController.prototype._mediaDocumentHasSize):
+        * Modules/modern-media-controls/media/pip-support.js:
+        (PiPSupport.prototype.syncControl):
+        (PiPSupport):
+        * html/MediaDocument.cpp:
+        (WebCore::MediaDocumentParser::createDocumentStructure):
+
 2017-03-28  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Follow-up patch after r214364.
