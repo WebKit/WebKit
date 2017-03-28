@@ -270,8 +270,6 @@ WebInspector.Resource = class Resource extends WebInspector.SourceCode
         // Return the default MIME-types for the Resource.Type, since the current MIME-type
         // does not match what is expected for the Resource.Type.
         switch (this._type) {
-        case WebInspector.Resource.Type.Document:
-            return "text/html";
         case WebInspector.Resource.Type.Stylesheet:
             return "text/css";
         case WebInspector.Resource.Type.Script:

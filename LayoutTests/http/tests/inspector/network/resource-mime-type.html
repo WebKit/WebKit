@@ -1,0 +1,304 @@
+<!-- No DOCTYPE to avoid Flakey Strict Mode Console Warning -->
+<html>
+<head>
+<script src="../resources/inspector-test.js"></script>
+<script>
+function loadDocumentWithURL(url) {
+    let iframe = document.createElement("iframe");
+    iframe.src = url;
+    document.body.appendChild(iframe);
+}
+
+function loadScriptWithURL(url) {
+    let script = document.createElement("script");
+    script.src = url;
+    document.body.appendChild(script);
+}
+
+function loadStyleSheetWithURL(url) {
+    let link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = url;
+    document.head.appendChild(link);
+}
+
+function loadImageWithURL(url) {
+    let img = document.createElement("img");
+    img.src = url;
+    document.body.appendChild(img);
+}
+
+function loadXHRWithURL(url) {
+    let xhr = new XMLHttpRequest;
+    xhr.open("GET", url, true);
+    xhr.send();
+}
+
+function loadFetchWithURL(url) {
+    fetch(url);
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Resource.MIMEType");
+
+    function addTestCase({name, description, expression, type, mimeType, synthetic}) {
+        suite.addTestCase({
+            name, description,
+            test(resolve, reject) {
+                InspectorTest.evaluateInPage(expression);
+                WebInspector.Frame.singleFireEventListener(WebInspector.Frame.Event.ResourceWasAdded, (event) => {
+                    let resource = event.data.resource;
+                    InspectorTest.expectThat(resource instanceof WebInspector.Resource, "Resource should be created.");
+                    resource.singleFireEventListener(WebInspector.Resource.Event.ResponseReceived, (event) => {
+                        InspectorTest.expectEqual(resource.type, type, `Resource Type should be '${type}'.`);
+                        InspectorTest.expectEqual(resource.mimeType, mimeType, `Resource mimeType should be '${mimeType}'.`);
+                        InspectorTest.expectEqual(resource.syntheticMIMEType, synthetic, `Resource syntheticMIMEType should be '${synthetic}'.`);
+                        resolve();
+                    });
+                });
+            }
+        });
+    }
+
+    function addDocumentResourceTestCase({name, description, expression, type, mimeType, synthetic}) {
+        suite.addTestCase({
+            name, description,
+            test(resolve, reject) {
+                InspectorTest.evaluateInPage(expression);
+                WebInspector.Frame.singleFireEventListener(WebInspector.Frame.Event.ChildFrameWasAdded, (event) => {
+                    // At this point the frame's resource has loaded.
+                    let resource = event.data.childFrame.mainResource;
+                    InspectorTest.expectThat(resource instanceof WebInspector.Resource, "Frame MainResource should be created.");
+                    InspectorTest.expectEqual(resource.type, type, `Resource Type should be '${type}'.`);
+                    InspectorTest.expectEqual(resource.mimeType, mimeType, `Resource mimeType should be '${mimeType}'.`);
+                    InspectorTest.expectEqual(resource.syntheticMIMEType, synthetic, `Resource syntheticMIMEType should be '${synthetic}'.`);
+                    resolve();
+                });
+            }
+        });
+    }
+
+    // These are the Apache MIME types returned for file extensions.
+    let mimeTypeForExtension = {
+        js: "application/x-javascript",
+        json: "application/json",
+        css: "text/css",
+        txt: "text/plain",
+        html: "text/html",
+        png: "image/png",
+        jpg: "image/jpeg",
+    };
+
+    // Scripts.
+
+    addTestCase({
+        name: "Resource.MIMEType.Script.js",
+        expression: `loadScriptWithURL("resources/script.js")`,
+        type: WebInspector.Resource.Type.Script,
+        mimeType: mimeTypeForExtension.js,
+        synthetic: mimeTypeForExtension.js,
+    });
+
+    addTestCase({
+        name: "Resource.MIMEType.Script.txt",
+        expression: `loadScriptWithURL("resources/script.txt")`,
+        type: WebInspector.Resource.Type.Script,
+        mimeType: mimeTypeForExtension.txt,
+        synthetic: "text/javascript",
+    });
+
+    // Stylesheets.
+
+    addTestCase({
+        name: "Resource.MIMEType.Stylesheet.css",
+        expression: `loadStyleSheetWithURL("resources/stylesheet.css")`,
+        type: WebInspector.Resource.Type.Stylesheet,
+        mimeType: mimeTypeForExtension.css,
+        synthetic: mimeTypeForExtension.css,
+    });
+
+    addTestCase({
+        name: "Resource.MIMEType.Stylesheet.txt",
+        expression: `loadStyleSheetWithURL("resources/stylesheet.txt")`,
+        type: WebInspector.Resource.Type.Stylesheet,
+        mimeType: mimeTypeForExtension.txt,
+        synthetic: "text/css",
+    });
+
+    // Images.
+
+    addTestCase({
+        name: "Resource.MIMEType.Image.png",
+        expression: `loadImageWithURL("/resources/square100.png")`,
+        type: WebInspector.Resource.Type.Image,
+        mimeType: mimeTypeForExtension.png,
+        synthetic: mimeTypeForExtension.png,
+    });
+
+    addTestCase({
+        name: "Resource.MIMEType.Image.jpg",
+        expression: `loadImageWithURL("/resources/square20.jpg")`,
+        type: WebInspector.Resource.Type.Image,
+        mimeType: mimeTypeForExtension.jpg,
+        synthetic: mimeTypeForExtension.jpg,
+    });
+
+    // XHRs.
+
+    addTestCase({
+        name: "Resource.MIMEType.XHR.js",
+        expression: `loadXHRWithURL("resources/script.js")`,
+        type: WebInspector.Resource.Type.XHR,
+        mimeType: mimeTypeForExtension.js,
+        synthetic: mimeTypeForExtension.js,
+    });
+
+    addTestCase({
+        name: "Resource.MIMEType.XHR.css",
+        expression: `loadXHRWithURL("resources/stylesheet.css")`,
+        type: WebInspector.Resource.Type.XHR,
+        mimeType: mimeTypeForExtension.css,
+        synthetic: mimeTypeForExtension.css,
+    });
+
+    addTestCase({
+        name: "Resource.MIMEType.XHR.png",
+        expression: `loadXHRWithURL("/resources/square100.png")`,
+        type: WebInspector.Resource.Type.XHR,
+        mimeType: mimeTypeForExtension.png,
+        synthetic: mimeTypeForExtension.png,
+    });
+
+    addTestCase({
+        name: "Resource.MIMEType.XHR.txt",
+        expression: `loadXHRWithURL("/resources/square20.jpg")`,
+        type: WebInspector.Resource.Type.XHR,
+        mimeType: mimeTypeForExtension.jpg,
+        synthetic: mimeTypeForExtension.jpg,
+    });
+
+    addTestCase({
+        name: "Resource.MIMEType.XHR.json",
+        expression: `loadXHRWithURL("resources/json.php")`,
+        type: WebInspector.Resource.Type.XHR,
+        mimeType: mimeTypeForExtension.json,
+        synthetic: mimeTypeForExtension.json,
+    });
+
+    addTestCase({
+        name: "Resource.MIMEType.XHR.html",
+        expression: `loadXHRWithURL("resources/data.html")`,
+        type: WebInspector.Resource.Type.XHR,
+        mimeType: mimeTypeForExtension.html,
+        synthetic: mimeTypeForExtension.html,
+    });
+
+    // Fetch.
+
+    addTestCase({
+        name: "Resource.MIMEType.Fetch.js",
+        expression: `loadFetchWithURL("resources/script.js")`,
+        type: WebInspector.Resource.Type.Fetch,
+        mimeType: mimeTypeForExtension.js,
+        synthetic: mimeTypeForExtension.js,
+    });
+
+    addTestCase({
+        name: "Resource.MIMEType.Fetch.css",
+        expression: `loadFetchWithURL("resources/stylesheet.css")`,
+        type: WebInspector.Resource.Type.Fetch,
+        mimeType: mimeTypeForExtension.css,
+        synthetic: mimeTypeForExtension.css,
+    });
+
+    addTestCase({
+        name: "Resource.MIMEType.Fetch.png",
+        expression: `loadFetchWithURL("/resources/square100.png")`,
+        type: WebInspector.Resource.Type.Fetch,
+        mimeType: mimeTypeForExtension.png,
+        synthetic: mimeTypeForExtension.png,
+    });
+
+    addTestCase({
+        name: "Resource.MIMEType.Fetch.txt",
+        expression: `loadFetchWithURL("/resources/square20.jpg")`,
+        type: WebInspector.Resource.Type.Fetch,
+        mimeType: mimeTypeForExtension.jpg,
+        synthetic: mimeTypeForExtension.jpg,
+    });
+
+    addTestCase({
+        name: "Resource.MIMEType.Fetch.json",
+        expression: `loadFetchWithURL("resources/json.php")`,
+        type: WebInspector.Resource.Type.Fetch,
+        mimeType: mimeTypeForExtension.json,
+        synthetic: mimeTypeForExtension.json,
+    });
+
+    addTestCase({
+        name: "Resource.MIMEType.Fetch.html",
+        expression: `loadFetchWithURL("resources/data.html")`,
+        type: WebInspector.Resource.Type.Fetch,
+        mimeType: mimeTypeForExtension.html,
+        synthetic: mimeTypeForExtension.html,
+    });
+
+    // Documents.
+
+    addDocumentResourceTestCase({
+        name: "Resource.MIMEType.Document.js",
+        expression: `loadDocumentWithURL("resources/script.js")`,
+        type: WebInspector.Resource.Type.Document,
+        mimeType: mimeTypeForExtension.js,
+        synthetic: mimeTypeForExtension.js,
+    });
+
+    addDocumentResourceTestCase({
+        name: "Resource.MIMEType.Document.css",
+        expression: `loadDocumentWithURL("resources/stylesheet.css")`,
+        type: WebInspector.Resource.Type.Document,
+        mimeType: mimeTypeForExtension.css,
+        synthetic: mimeTypeForExtension.css,
+    });
+
+    addDocumentResourceTestCase({
+        name: "Resource.MIMEType.Document.png",
+        expression: `loadDocumentWithURL("/resources/square100.png")`,
+        type: WebInspector.Resource.Type.Document,
+        mimeType: mimeTypeForExtension.png,
+        synthetic: mimeTypeForExtension.png,
+    });
+
+    addDocumentResourceTestCase({
+        name: "Resource.MIMEType.Document.txt",
+        expression: `loadDocumentWithURL("/resources/square20.jpg")`,
+        type: WebInspector.Resource.Type.Document,
+        mimeType: mimeTypeForExtension.jpg,
+        synthetic: mimeTypeForExtension.jpg,
+    });
+
+    addDocumentResourceTestCase({
+        name: "Resource.MIMEType.Document.json",
+        expression: `loadDocumentWithURL("resources/json.php")`,
+        type: WebInspector.Resource.Type.Document,
+        mimeType: mimeTypeForExtension.json,
+        synthetic: mimeTypeForExtension.json,
+    });
+
+    addDocumentResourceTestCase({
+        name: "Resource.MIMEType.Document.html",
+        expression: `loadDocumentWithURL("resources/data.html")`,
+        type: WebInspector.Resource.Type.Document,
+        mimeType: mimeTypeForExtension.html,
+        synthetic: mimeTypeForExtension.html,
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests for the `mimeType` and `syntheticMIMEType` properties of different Resource Types.</p>
+</body>
+</html>

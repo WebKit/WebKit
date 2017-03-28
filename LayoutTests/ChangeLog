@@ -1,3 +1,23 @@
+2017-03-28  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Inspecting a Main Resource that is JS/JSON does not format / syntax highlight it properly
+        https://bugs.webkit.org/show_bug.cgi?id=166862
+        <rdar://problem/29835977>
+
+        Reviewed by Brian Burg.
+
+        * http/tests/inspector/network/resource-mime-type-expected.txt: Added.
+        * http/tests/inspector/network/resource-mime-type.html: Added.
+        Test resource mime types for different resources.
+
+        * http/tests/inspector/network/resources/json.php: Added.
+        * http/tests/inspector/network/resources/script.js: Added.
+        * http/tests/inspector/network/resources/script.txt: Added.
+        * http/tests/inspector/network/resources/stylesheet.css: Added.
+        * http/tests/inspector/network/resources/stylesheet.txt: Added.
+        * http/tests/resources/square20.jpg: Added.
+        Resources for various requests and different mime types.
+
 2017-03-28  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark http/tests/xmlhttprequest/simple-cross-origin-progress-events.html as flaky.

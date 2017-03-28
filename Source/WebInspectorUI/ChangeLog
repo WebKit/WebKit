@@ -1,5 +1,18 @@
 2017-03-28  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Inspecting a Main Resource that is JS/JSON does not format / syntax highlight it properly
+        https://bugs.webkit.org/show_bug.cgi?id=166862
+        <rdar://problem/29835977>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Models/Resource.js:
+        (WebInspector.Resource.prototype.get syntheticMIMEType):
+        Don't override the mime type for Document resources. They should always
+        have a mime type and we should use whatever it is.
+
+2017-03-28  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Unable to Format JSON Request Data
         https://bugs.webkit.org/show_bug.cgi?id=170189
 

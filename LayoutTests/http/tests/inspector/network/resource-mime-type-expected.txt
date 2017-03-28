@@ -1,0 +1,148 @@
+Tests for the `mimeType` and `syntheticMIMEType` properties of different Resource Types.
+
+
+== Running test suite: Resource.MIMEType
+-- Running test case: Resource.MIMEType.Script.js
+PASS: Resource should be created.
+PASS: Resource Type should be 'resource-type-script'.
+PASS: Resource mimeType should be 'application/x-javascript'.
+PASS: Resource syntheticMIMEType should be 'application/x-javascript'.
+
+-- Running test case: Resource.MIMEType.Script.txt
+PASS: Resource should be created.
+PASS: Resource Type should be 'resource-type-script'.
+PASS: Resource mimeType should be 'text/plain'.
+PASS: Resource syntheticMIMEType should be 'text/javascript'.
+
+-- Running test case: Resource.MIMEType.Stylesheet.css
+PASS: Resource should be created.
+PASS: Resource Type should be 'resource-type-stylesheet'.
+PASS: Resource mimeType should be 'text/css'.
+PASS: Resource syntheticMIMEType should be 'text/css'.
+
+-- Running test case: Resource.MIMEType.Stylesheet.txt
+PASS: Resource should be created.
+PASS: Resource Type should be 'resource-type-stylesheet'.
+PASS: Resource mimeType should be 'text/plain'.
+PASS: Resource syntheticMIMEType should be 'text/css'.
+
+-- Running test case: Resource.MIMEType.Image.png
+PASS: Resource should be created.
+PASS: Resource Type should be 'resource-type-image'.
+PASS: Resource mimeType should be 'image/png'.
+PASS: Resource syntheticMIMEType should be 'image/png'.
+
+-- Running test case: Resource.MIMEType.Image.jpg
+PASS: Resource should be created.
+PASS: Resource Type should be 'resource-type-image'.
+PASS: Resource mimeType should be 'image/jpeg'.
+PASS: Resource syntheticMIMEType should be 'image/jpeg'.
+
+-- Running test case: Resource.MIMEType.XHR.js
+PASS: Resource should be created.
+PASS: Resource Type should be 'resource-type-xhr'.
+PASS: Resource mimeType should be 'application/x-javascript'.
+PASS: Resource syntheticMIMEType should be 'application/x-javascript'.
+
+-- Running test case: Resource.MIMEType.XHR.css
+PASS: Resource should be created.
+PASS: Resource Type should be 'resource-type-xhr'.
+PASS: Resource mimeType should be 'text/css'.
+PASS: Resource syntheticMIMEType should be 'text/css'.
+
+-- Running test case: Resource.MIMEType.XHR.png
+PASS: Resource should be created.
+PASS: Resource Type should be 'resource-type-xhr'.
+PASS: Resource mimeType should be 'image/png'.
+PASS: Resource syntheticMIMEType should be 'image/png'.
+
+-- Running test case: Resource.MIMEType.XHR.txt
+PASS: Resource should be created.
+PASS: Resource Type should be 'resource-type-xhr'.
+PASS: Resource mimeType should be 'image/jpeg'.
+PASS: Resource syntheticMIMEType should be 'image/jpeg'.
+
+-- Running test case: Resource.MIMEType.XHR.json
+PASS: Resource should be created.
+PASS: Resource Type should be 'resource-type-xhr'.
+PASS: Resource mimeType should be 'application/json'.
+PASS: Resource syntheticMIMEType should be 'application/json'.
+
+-- Running test case: Resource.MIMEType.XHR.html
+PASS: Resource should be created.
+PASS: Resource Type should be 'resource-type-xhr'.
+PASS: Resource mimeType should be 'text/html'.
+PASS: Resource syntheticMIMEType should be 'text/html'.
+
+-- Running test case: Resource.MIMEType.Fetch.js
+PASS: Resource should be created.
+PASS: Resource Type should be 'resource-type-fetch'.
+PASS: Resource mimeType should be 'application/x-javascript'.
+PASS: Resource syntheticMIMEType should be 'application/x-javascript'.
+
+-- Running test case: Resource.MIMEType.Fetch.css
+PASS: Resource should be created.
+PASS: Resource Type should be 'resource-type-fetch'.
+PASS: Resource mimeType should be 'text/css'.
+PASS: Resource syntheticMIMEType should be 'text/css'.
+
+-- Running test case: Resource.MIMEType.Fetch.png
+PASS: Resource should be created.
+PASS: Resource Type should be 'resource-type-fetch'.
+PASS: Resource mimeType should be 'image/png'.
+PASS: Resource syntheticMIMEType should be 'image/png'.
+
+-- Running test case: Resource.MIMEType.Fetch.txt
+PASS: Resource should be created.
+PASS: Resource Type should be 'resource-type-fetch'.
+PASS: Resource mimeType should be 'image/jpeg'.
+PASS: Resource syntheticMIMEType should be 'image/jpeg'.
+
+-- Running test case: Resource.MIMEType.Fetch.json
+PASS: Resource should be created.
+PASS: Resource Type should be 'resource-type-fetch'.
+PASS: Resource mimeType should be 'application/json'.
+PASS: Resource syntheticMIMEType should be 'application/json'.
+
+-- Running test case: Resource.MIMEType.Fetch.html
+PASS: Resource should be created.
+PASS: Resource Type should be 'resource-type-fetch'.
+PASS: Resource mimeType should be 'text/html'.
+PASS: Resource syntheticMIMEType should be 'text/html'.
+
+-- Running test case: Resource.MIMEType.Document.js
+PASS: Frame MainResource should be created.
+PASS: Resource Type should be 'resource-type-document'.
+PASS: Resource mimeType should be 'application/x-javascript'.
+PASS: Resource syntheticMIMEType should be 'application/x-javascript'.
+
+-- Running test case: Resource.MIMEType.Document.css
+PASS: Frame MainResource should be created.
+PASS: Resource Type should be 'resource-type-document'.
+PASS: Resource mimeType should be 'text/css'.
+PASS: Resource syntheticMIMEType should be 'text/css'.
+
+-- Running test case: Resource.MIMEType.Document.png
+PASS: Frame MainResource should be created.
+PASS: Resource Type should be 'resource-type-document'.
+PASS: Resource mimeType should be 'image/png'.
+PASS: Resource syntheticMIMEType should be 'image/png'.
+
+-- Running test case: Resource.MIMEType.Document.txt
+PASS: Frame MainResource should be created.
+PASS: Resource Type should be 'resource-type-document'.
+PASS: Resource mimeType should be 'image/jpeg'.
+PASS: Resource syntheticMIMEType should be 'image/jpeg'.
+
+-- Running test case: Resource.MIMEType.Document.json
+PASS: Frame MainResource should be created.
+PASS: Resource Type should be 'resource-type-document'.
+PASS: Resource mimeType should be 'application/json'.
+PASS: Resource syntheticMIMEType should be 'application/json'.
+
+-- Running test case: Resource.MIMEType.Document.html
+PASS: Frame MainResource should be created.
+PASS: Resource Type should be 'resource-type-document'.
+PASS: Resource mimeType should be 'text/html'.
+PASS: Resource syntheticMIMEType should be 'text/html'.
+
