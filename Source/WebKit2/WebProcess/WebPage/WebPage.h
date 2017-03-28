@@ -1553,10 +1553,6 @@ private:
     std::chrono::system_clock::time_point m_loadCommitTime;
 #endif
 
-#if ENABLE(WEB_RTC)
-    bool m_shouldDoICECandidateFiltering { true };
-#endif
-
     WebCore::UserInterfaceLayoutDirection m_userInterfaceLayoutDirection { WebCore::UserInterfaceLayoutDirection::LTR };
 
     const String m_overrideContentSecurityPolicy;
