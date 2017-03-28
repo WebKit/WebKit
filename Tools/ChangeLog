@@ -1,5 +1,9 @@
 2017-03-27  Lucas Forschler  <lforschler@apple.com>
 
+        Test commit to verify post-commit hook.
+
+2017-03-27  Lucas Forschler  <lforschler@apple.com>
+
         Test commit against new svn server.
 
 2017-03-27  Lucas Forschler  <lforschler@apple.com>
