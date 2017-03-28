@@ -116,9 +116,9 @@ const CriticalSection& g_log_crit()
 // Note: we explicitly do not clean this up, because of the uncertain ordering
 // of destructors at program exit.  Let the person who sets the stream trigger
 // cleanup by setting to null, or let it leak (safe at program exit).
-LogMessage::StreamList& LogMessage::streams()
+LogMessage::StreamList& LogMessage::streams() EXCLUSIVE_LOCKS_REQUIRED(g_log_crit())
 {
-    static webrtc::NeverDestroyed<LogMessage::StreamList> streams GUARDED_BY(g_log_crit);
+    static webrtc::NeverDestroyed<LogMessage::StreamList> streams GUARDED_BY(g_log_crit());
     return streams;
 }
 
@@ -342,7 +342,7 @@ void LogMessage::ConfigureLogging(const char* params) {
   LogToDebug(debug_level);
 }
 
-void LogMessage::UpdateMinLogSeverity() EXCLUSIVE_LOCKS_REQUIRED(g_log_crit) {
+void LogMessage::UpdateMinLogSeverity() EXCLUSIVE_LOCKS_REQUIRED(g_log_crit()) {
   LoggingSeverity min_sev = dbg_sev_;
   for (auto& kv : streams()) {
     min_sev = std::min(dbg_sev_, kv.second);

@@ -1,3 +1,13 @@
+2017-03-27  Alejandro G. Castro  <alex@igalia.com>
+
+        Fixes for libwebrtc logging after r214288
+        https://bugs.webkit.org/show_bug.cgi?id=170116
+
+        Reviewed by Youenn Fablet.
+
+        * Source/webrtc/base/logging.cc: Added the critical section
+        requirement and the call to the new getter for g_log_crit.
+
 2017-03-27  Alex Christensen  <achristensen@webkit.org>
 
         Build libwebrtc with even more warnings
