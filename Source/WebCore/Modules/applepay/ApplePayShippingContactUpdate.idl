@@ -26,7 +26,6 @@
 [
     Conditional=APPLE_PAY_DELEGATE,
 ] dictionary ApplePayShippingContactUpdate {
-    required unsigned short status;
     sequence<ApplePayError> errors;
 
     sequence<ApplePayShippingMethod> newShippingMethods;

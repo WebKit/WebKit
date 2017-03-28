@@ -472,11 +472,21 @@ static ExceptionOr<ShippingContactUpdate> convertAndValidate(ApplePayShippingCon
 {
     ShippingContactUpdate convertedUpdate;
 
-    auto authorizationStatus = toPaymentAuthorizationStatus(update.status);
-    if (!authorizationStatus)
-        return Exception { INVALID_ACCESS_ERR };
-    convertedUpdate.status = *authorizationStatus;
-    convertedUpdate.errors = convert(update.errors);
+    if (!update.status) {
+        convertedUpdate.errors = convert(update.errors);
+        if (convertedUpdate.errors.isEmpty())
+            convertedUpdate.status = PaymentAuthorizationStatus::Success;
+        else
+            convertedUpdate.status = PaymentAuthorizationStatus::Failure;
+    } else {
+        ASSERT(update.errors.isEmpty());
+
+        auto authorizationStatus = toPaymentAuthorizationStatus(*update.status);
+        if (!authorizationStatus)
+            return Exception { INVALID_ACCESS_ERR };
+
+        convertedUpdate.status = *authorizationStatus;
+    }
 
     auto convertedNewShippingMethods = convertAndValidate(WTFMove(update.newShippingMethods));
     if (convertedNewShippingMethods.hasException())
