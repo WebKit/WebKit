@@ -1,3 +1,13 @@
+2017-03-28  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Follow-up patch after r214364.
+        https://bugs.webkit.org/show_bug.cgi?id=168895
+
+        Unreviewed.
+
+        * platform/graphics/FontDescription.cpp:
+        (WebCore::FontDescription::FontDescription):
+
 2017-03-27  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         REGRESSION(213764): Large images should not be decoded asynchronously when they are drawn on a canvas
