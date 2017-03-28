@@ -1985,18 +1985,6 @@ void RenderObject::setHasOutlineAutoAncestor(bool hasOutlineAutoAncestor)
         ensureRareData().setHasOutlineAutoAncestor(hasOutlineAutoAncestor);
 }
 
-void RenderObject::setIsRegisteredForVisibleInViewportCallback(bool registered)
-{
-    if (registered || hasRareData())
-        ensureRareData().setIsRegisteredForVisibleInViewportCallback(registered);
-}
-
-void RenderObject::setVisibleInViewportState(VisibleInViewportState visible)
-{
-    if (visible != VisibilityUnknown || hasRareData())
-        ensureRareData().setVisibleInViewportState(visible);
-}
-
 RenderObject::RareDataMap& RenderObject::rareDataMap()
 {
     static NeverDestroyed<RareDataMap> map;

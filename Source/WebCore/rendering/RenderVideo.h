@@ -71,6 +71,8 @@ private:
 
     void layout() final;
 
+    void visibleInViewportStateChanged() final;
+
     LayoutUnit computeReplacedLogicalWidth(ShouldComputePreferred  = ComputeActual) const final;
     LayoutUnit minimumReplacedHeight() const final;
 

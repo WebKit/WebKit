@@ -446,18 +446,10 @@ public:
     bool hasReflection() const { return m_bitfields.hasRareData() && rareData().hasReflection(); }
     bool isRenderFlowThread() const { return m_bitfields.hasRareData() && rareData().isRenderFlowThread(); }
     bool hasOutlineAutoAncestor() const { return m_bitfields.hasRareData() && rareData().hasOutlineAutoAncestor(); }
-    bool isRegisteredForVisibleInViewportCallback() { return m_bitfields.hasRareData() && rareData().isRegisteredForVisibleInViewportCallback(); }
 
     bool isExcludedFromNormalLayout() const { return m_bitfields.isExcludedFromNormalLayout(); }
     void setIsExcludedFromNormalLayout(bool excluded) { m_bitfields.setIsExcludedFromNormalLayout(excluded); }
     bool isExcludedAndPlacedInBorder() const { return isExcludedFromNormalLayout() && isLegend(); }
-
-    enum VisibleInViewportState {
-        VisibilityUnknown,
-        VisibleInViewport,
-        NotVisibleInViewport,
-    };
-    VisibleInViewportState visibleInViewportState() { return m_bitfields.hasRareData() ? rareData().visibleInViewportState() : VisibilityUnknown; }
 
     bool hasLayer() const { return m_bitfields.hasLayer(); }
 
@@ -567,8 +559,6 @@ public:
     void setHasReflection(bool = true);
     void setIsRenderFlowThread(bool = true);
     void setHasOutlineAutoAncestor(bool = true);
-    void setIsRegisteredForVisibleInViewportCallback(bool);
-    void setVisibleInViewportState(VisibleInViewportState);
 
     // Hook so that RenderTextControl can return the line height of its inner renderer.
     // For other renderers, the value is the same as lineHeight(false).
@@ -982,8 +972,6 @@ private:
             , m_hasReflection(false)
             , m_isRenderFlowThread(false)
             , m_hasOutlineAutoAncestor(false)
-            , m_isRegisteredForVisibleInViewportCallback(false)
-            , m_visibleInViewportState(VisibilityUnknown)
         {
         }
         ADD_BOOLEAN_BITFIELD(isDragging, IsDragging);
@@ -992,8 +980,6 @@ private:
         ADD_BOOLEAN_BITFIELD(hasOutlineAutoAncestor, HasOutlineAutoAncestor);
 
         // From RenderElement
-        ADD_BOOLEAN_BITFIELD(isRegisteredForVisibleInViewportCallback, IsRegisteredForVisibleInViewportCallback);
-        ADD_ENUM_BITFIELD(visibleInViewportState, VisibleInViewportState, VisibleInViewportState, 2);
         std::unique_ptr<RenderStyle> cachedFirstLineStyle;
     };
     

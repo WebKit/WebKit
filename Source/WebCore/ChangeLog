@@ -1,3 +1,41 @@
+2017-03-27  Antti Koivisto  <antti@apple.com>
+
+        Move visibleInViewportStateChanged callback from Element to render tree
+        https://bugs.webkit.org/show_bug.cgi?id=170039
+
+        Reviewed by Zalan Bujtas.
+
+        Make it easier to use from the render tree.
+
+        Also for simplicity move the bits from RenderObject rare data to RenderElement.
+        There is plenty of space there.
+
+        * dom/Element.h:
+        (WebCore::Element::isVisibleInViewportChanged): Deleted.
+        * html/HTMLMediaElement.h:
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::RenderElement):
+        (WebCore::RenderElement::willBeDestroyed):
+        (WebCore::RenderElement::registerForVisibleInViewportCallback):
+        (WebCore::RenderElement::unregisterForVisibleInViewportCallback):
+        (WebCore::RenderElement::setVisibleInViewportState):
+        (WebCore::RenderElement::visibleInViewportStateChanged):
+        * rendering/RenderElement.h:
+        (WebCore::RenderElement::visibleInViewportState):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::setIsRegisteredForVisibleInViewportCallback): Deleted.
+        (WebCore::RenderObject::setVisibleInViewportState): Deleted.
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::hasOutlineAutoAncestor):
+        (WebCore::RenderObject::RenderObjectRareData::RenderObjectRareData):
+        (WebCore::RenderObject::isRegisteredForVisibleInViewportCallback): Deleted.
+        (WebCore::RenderObject::visibleInViewportState): Deleted.
+        * rendering/RenderVideo.cpp:
+        (WebCore::RenderVideo::visibleInViewportStateChanged):
+        * rendering/RenderVideo.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::updateVisibleViewportRect):
+
 2017-03-27  Youenn Fablet  <youenn@apple.com>
 
         addIceCandidate should not throw if passed null or undefined

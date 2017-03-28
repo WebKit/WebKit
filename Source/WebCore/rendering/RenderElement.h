@@ -185,7 +185,15 @@ public:
 
     void registerForVisibleInViewportCallback();
     void unregisterForVisibleInViewportCallback();
-    void visibleInViewportStateChanged(VisibleInViewportState);
+
+    enum VisibleInViewportState {
+        VisibilityUnknown,
+        VisibleInViewport,
+        NotVisibleInViewport,
+    };
+    VisibleInViewportState visibleInViewportState() const { return static_cast<VisibleInViewportState>(m_visibleInViewportState); }
+    void setVisibleInViewportState(VisibleInViewportState);
+    virtual void visibleInViewportStateChanged();
 
     bool repaintForPausedImageAnimationsIfNeeded(const IntRect& visibleRect);
     bool hasPausedImageAnimations() const { return m_hasPausedImageAnimations; }
@@ -336,6 +344,9 @@ private:
     unsigned m_renderBlockShouldForceRelayoutChildren : 1;
     unsigned m_renderBlockFlowHasMarkupTruncation : 1;
     unsigned m_renderBlockFlowLineLayoutPath : 2;
+
+    unsigned m_isRegisteredForVisibleInViewportCallback : 1;
+    unsigned m_visibleInViewportState : 2;
 
     RenderObject* m_firstChild;
     RenderObject* m_lastChild;

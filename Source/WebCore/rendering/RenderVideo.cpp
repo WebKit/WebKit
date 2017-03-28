@@ -67,6 +67,11 @@ void RenderVideo::willBeDestroyed()
     RenderMedia::willBeDestroyed();
 }
 
+void RenderVideo::visibleInViewportStateChanged()
+{
+    videoElement().isVisibleInViewportChanged();
+}
+
 IntSize RenderVideo::defaultSize()
 {
     // These values are specified in the spec.

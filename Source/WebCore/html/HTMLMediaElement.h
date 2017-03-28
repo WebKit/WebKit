@@ -497,6 +497,8 @@ public:
 
     bool isTemporarilyAllowingInlinePlaybackAfterFullscreen() const {return m_temporarilyAllowingInlinePlaybackAfterFullscreen; }
 
+    void isVisibleInViewportChanged();
+
 protected:
     HTMLMediaElement(const QualifiedName&, Document&, bool createdByParser);
     virtual ~HTMLMediaElement();
@@ -813,7 +815,6 @@ private:
 #endif
 
     bool isVideoTooSmallForInlinePlayback();
-    void isVisibleInViewportChanged() final;
     void updateShouldAutoplay();
 
     void pauseAfterDetachedTask();

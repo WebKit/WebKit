@@ -550,8 +550,6 @@ public:
     bool hasDisplayContents() const;
     void setHasDisplayContents(bool);
 
-    virtual void isVisibleInViewportChanged() { }
-
     using ContainerNode::setAttributeEventListener;
     void setAttributeEventListener(const AtomicString& eventType, const QualifiedName& attributeName, const AtomicString& value);
 
