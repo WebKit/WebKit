@@ -1,3 +1,26 @@
+2017-03-28  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Ranges for variation font properties are not enforced
+        https://bugs.webkit.org/show_bug.cgi?id=169979
+
+        Reviewed by David Hyatt.
+
+        The spec specifies that:
+        - Font weights less than or equal to 0, or greater than or equal to 1000 are parse errors
+        - Font stretch values less than or equal to 0% are parse errors
+        - Font style values less than or equal to -90deg or greater than or equal to 90deg are parse errors
+
+        Test: fast/text/variations/out-of-bounds-selection-properties.html
+
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeFontWeightRange):
+        (WebCore::fontStretchIsWithinRange):
+        (WebCore::consumeFontStretch):
+        (WebCore::consumeFontStretchRange):
+        (WebCore::fontStyleIsWithinRange):
+        (WebCore::consumeFontStyle):
+        (WebCore::consumeFontStyleRange):
+
 2017-03-28  Andy Estes  <aestes@apple.com>
 
         [iOS] Crash in -[WebPreviewLoader failed] when running http/tests/multipart/policy-ignore-crash.php

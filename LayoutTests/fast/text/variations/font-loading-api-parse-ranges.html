@@ -14,11 +14,11 @@ shouldThrow("(new FontFace('asdf', 'url(notreal)', { weight: '100 a200' })).weig
 shouldThrow("(new FontFace('asdf', 'url(notreal)', { weight: '100 200a' })).weight");
 shouldBeEqualToString("(new FontFace('asdf', 'url(notreal)', { weight: '50 150' })).weight", "50 150");
 shouldBeEqualToString("(new FontFace('asdf', 'url(notreal)', { weight: '2 3' })).weight", "2 3");
-shouldBeEqualToString("(new FontFace('asdf', 'url(notreal)', { weight: '-3 -2' })).weight", "-3 -2");
+shouldThrow("(new FontFace('asdf', 'url(notreal)', { weight: '-3 -2' })).weight");
 shouldThrow("(new FontFace('asdf', 'url(notreal)', { weight: '5 4' })).weight");
 shouldThrow("(new FontFace('asdf', 'url(notreal)', { weight: '100 200 3' })).weight");
 shouldThrow("(new FontFace('asdf', 'url(notreal)', { weight: '100 200 a' })).weight");
-shouldBeEqualToString("(new FontFace('asdf', 'url(notreal)', { weight: '-3' })).weight", "-3");
+shouldThrow("(new FontFace('asdf', 'url(notreal)', { weight: '-3' })).weight");
 
 shouldThrow("(new FontFace('asdf', 'url(notreal)', { stretch: 'semi-expanded expanded' })).stretch");
 shouldBeEqualToString("(new FontFace('asdf', 'url(notreal)', { stretch: '100% 200%' })).stretch", "100% 200%");
@@ -30,11 +30,11 @@ shouldThrow("(new FontFace('asdf', 'url(notreal)', { stretch: '100% a200%' })).s
 shouldThrow("(new FontFace('asdf', 'url(notreal)', { stretch: '100% 200%a' })).stretch");
 shouldBeEqualToString("(new FontFace('asdf', 'url(notreal)', { stretch: '50% 60%' })).stretch", "50% 60%");
 shouldBeEqualToString("(new FontFace('asdf', 'url(notreal)', { stretch: '2% 3%' })).stretch", "2% 3%");
-shouldBeEqualToString("(new FontFace('asdf', 'url(notreal)', { stretch: '-3% -2%' })).stretch", "-3% -2%");
+shouldThrow("(new FontFace('asdf', 'url(notreal)', { stretch: '-3% -2%' })).stretch");
 shouldThrow("(new FontFace('asdf', 'url(notreal)', { stretch: '5% 4%' })).stretch");
 shouldThrow("(new FontFace('asdf', 'url(notreal)', { stretch: '100% 200% 3%' })).stretch");
 shouldThrow("(new FontFace('asdf', 'url(notreal)', { stretch: '100% 200% a' })).stretch");
-shouldBeEqualToString("(new FontFace('asdf', 'url(notreal)', { stretch: '-3%' })).stretch", "-3%");
+shouldThrow("(new FontFace('asdf', 'url(notreal)', { stretch: '-3%' })).stretch");
 
 shouldBeEqualToString("(new FontFace('asdf', 'url(notreal)', { style: 'oblique 10deg 20deg' })).style", "oblique 10deg 20deg");
 shouldThrow("(new FontFace('asdf', 'url(notreal)', { style: 'oblique a10deg 20deg' })).style");

@@ -7,9 +7,9 @@
 <div style="font: 16px/18px 'Times';">
 <div id="test1"></div>
 <div id="test2" style="font-style: oblique 1deg;"></div>
-<div id="test3" style="font-style: oblique 200grad;"></div>
-<div id="test4" style="font-style: oblique 6.28318rad;"></div>
-<div id="test5" style="font-style: oblique 4turn;"></div>
+<div id="test3" style="font-style: oblique 20grad;"></div>
+<div id="test4" style="font-style: oblique 0.28318rad;"></div>
+<div id="test5" style="font-style: oblique 0.04turn;"></div>
 <div id="test6" style="font-style: oblique 5;"></div>
 <div id="test7" style="font-style: oblique 20;"></div>
 <div id="test8" style="font-style: italic;"></div>
@@ -18,7 +18,7 @@
 <div id="test11" style="font-style: garbage;"></div>
 <div id="test12" style="font-style: initial;"></div>
 <div id="test13" style="font-style: oblique calc(3 + 4);"></div>
-<div id="test14" style="font-style: oblique calc(4turn + 1deg);"></div>
+<div id="test14" style="font-style: oblique calc(0.04turn + 1deg);"></div>
 <div id="test15" style="font: 100 italic 48px/49px 'Helvetica Neue';"></div>
 <div id="test16" style="font: italic 100 48px/49px 'Helvetica Neue';"></div>
 <div id="test17" style="font: 100 48px/49px 'Helvetica Neue';"></div>
@@ -30,9 +30,9 @@
 <script>
 shouldBeEqualToString("window.getComputedStyle(document.getElementById('test1')).fontStyle", "normal");
 shouldBeEqualToString("window.getComputedStyle(document.getElementById('test2')).fontStyle", "oblique 1deg");
-shouldBeEqualToString("window.getComputedStyle(document.getElementById('test3')).fontStyle", "oblique 180deg");
-shouldBeEqualToString("window.getComputedStyle(document.getElementById('test4')).fontStyle", "oblique 359.75deg");
-shouldBeEqualToString("window.getComputedStyle(document.getElementById('test5')).fontStyle", "oblique 1440deg");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('test3')).fontStyle", "oblique 18deg");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('test4')).fontStyle", "oblique 16deg");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('test5')).fontStyle", "oblique 14.25deg");
 shouldBeEqualToString("window.getComputedStyle(document.getElementById('test6')).fontStyle", "normal");
 shouldBeEqualToString("window.getComputedStyle(document.getElementById('test7')).fontStyle", "normal");
 shouldBeEqualToString("window.getComputedStyle(document.getElementById('test8')).fontStyle", "italic");
@@ -41,7 +41,7 @@ shouldBeEqualToString("window.getComputedStyle(document.getElementById('test10')
 shouldBeEqualToString("window.getComputedStyle(document.getElementById('test11')).fontStyle", "normal");
 shouldBeEqualToString("window.getComputedStyle(document.getElementById('test12')).fontStyle", "normal");
 shouldBeEqualToString("window.getComputedStyle(document.getElementById('test13')).fontStyle", "normal");
-shouldBeEqualToString("window.getComputedStyle(document.getElementById('test14')).fontStyle", "oblique 1441deg");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('test14')).fontStyle", "oblique 15.25deg");
 shouldBeEqualToString("window.getComputedStyle(document.getElementById('test15')).fontStyle", "italic");
 shouldBeEqualToString("window.getComputedStyle(document.getElementById('test16')).fontStyle", "italic");
 shouldBeEqualToString("window.getComputedStyle(document.getElementById('test17')).fontStyle", "normal");

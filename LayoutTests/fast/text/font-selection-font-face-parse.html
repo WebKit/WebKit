@@ -231,13 +231,13 @@
     font-style: oblique 1deg;
 }
 @font-face {
-    font-style: oblique 200grad;
+    font-style: oblique 20grad;
 }
 @font-face {
-    font-style: oblique 6.28318rad;
+    font-style: oblique 0.28318rad;
 }
 @font-face {
-    font-style: oblique 4turn;
+    font-style: oblique 0.04turn;
 }
 @font-face {
     font-style: oblique 5;
@@ -264,31 +264,31 @@
     font-style: oblique calc(3 + 4);
 }
 @font-face {
-    font-style: oblique calc(4turn + 1deg);
+    font-style: oblique calc(0.04turn + 1deg);
 }
 @font-face {
-    font-style: oblique 100 200;
+    font-style: oblique 10 20;
 }
 @font-face {
-    font-style: oblique 100  200;
+    font-style: oblique 10  20;
 }
 @font-face {
-    font-style: oblique a 100 200;
+    font-style: oblique a 10 20;
 }
 @font-face {
-    font-style: oblique 100 200 a;
+    font-style: oblique 10 20 a;
 }
 @font-face {
-    font-style: oblique 100 a 200;
+    font-style: oblique 10 a 20;
 }
 @font-face {
-    font-style: oblique 100 a200;
+    font-style: oblique 10 a20;
 }
 @font-face {
-    font-style: oblique 100a 200;
+    font-style: oblique 10a 20;
 }
 @font-face {
-    font-style: oblique 100  a200;
+    font-style: oblique 10  a20;
 }
 @font-face {
     font-style: oblique 1 2;
@@ -300,28 +300,28 @@
     font-style: oblique 2 1;
 }
 @font-face {
-    font-style: oblique 100deg 200deg;
+    font-style: oblique 10deg 20deg;
 }
 @font-face {
-    font-style: oblique 100deg   200deg;
+    font-style: oblique 10deg   20deg;
 }
 @font-face {
-    font-style: oblique a 100deg 200deg;
+    font-style: oblique a 10deg 20deg;
 }
 @font-face {
-    font-style: oblique 100deg 200deg a;
+    font-style: oblique 10deg 20deg a;
 }
 @font-face {
-    font-style: oblique 100deg a 200deg;
+    font-style: oblique 10deg a 20deg;
 }
 @font-face {
-    font-style: oblique 100deg a200deg;
+    font-style: oblique 10deg a20deg;
 }
 @font-face {
-    font-style: oblique 100dega 200deg;
+    font-style: oblique 10dega 20deg;
 }
 @font-face {
-    font-style: oblique 100deg  a200deg;
+    font-style: oblique 10deg  a20deg;
 }
 @font-face {
     font-style: oblique 1deg 2deg;
@@ -339,7 +339,7 @@
     font-style: oblique 1deg 2;
 }
 @font-face {
-    font-style: oblique 2deg 1turn;
+    font-style: oblique 2deg 4grad;
 }
 @font-face {
     font-style: oblique calc(3 + 4) 8;
@@ -385,7 +385,7 @@ shouldBeEqualToString("weightTestSheet.cssRules[23].style.fontWeight", "");
 shouldBeEqualToString("weightTestSheet.cssRules[24].style.fontWeight", "");
 shouldBeEqualToString("weightTestSheet.cssRules[25].style.fontWeight", "");
 shouldBeEqualToString("weightTestSheet.cssRules[26].style.fontWeight", "1 2");
-shouldBeEqualToString("weightTestSheet.cssRules[27].style.fontWeight", "-2 -1");
+shouldBeEqualToString("weightTestSheet.cssRules[27].style.fontWeight", "");
 shouldBeEqualToString("weightTestSheet.cssRules[28].style.fontWeight", "");
 shouldBeEqualToString("weightTestSheet.cssRules[29].style.fontWeight", "7 8");
 shouldBeEqualToString("weightTestSheet.cssRules[30].style.fontWeight", "2 7");
@@ -425,7 +425,7 @@ shouldBeEqualToString("stretchTestSheet.cssRules[30].style.fontStretch", "");
 shouldBeEqualToString("stretchTestSheet.cssRules[31].style.fontStretch", "");
 shouldBeEqualToString("stretchTestSheet.cssRules[32].style.fontStretch", "");
 shouldBeEqualToString("stretchTestSheet.cssRules[33].style.fontStretch", "1% 2%");
-shouldBeEqualToString("stretchTestSheet.cssRules[34].style.fontStretch", "-2% -1%");
+shouldBeEqualToString("stretchTestSheet.cssRules[34].style.fontStretch", "");
 shouldBeEqualToString("stretchTestSheet.cssRules[35].style.fontStretch", "");
 shouldBeEqualToString("stretchTestSheet.cssRules[36].style.fontStretch", "");
 shouldBeEqualToString("stretchTestSheet.cssRules[37].style.fontStretch", "");
@@ -436,9 +436,9 @@ shouldBeEqualToString("stretchTestSheet.cssRules[41].style.fontStretch", "2% cal
 
 var styleTestSheet = document.getElementById("styleTest").sheet;
 shouldBeEqualToString("styleTestSheet.cssRules[0].style.fontStyle", "oblique 1deg");
-shouldBeEqualToString("styleTestSheet.cssRules[1].style.fontStyle", "oblique 200grad");
-shouldBeEqualToString("styleTestSheet.cssRules[2].style.fontStyle", "oblique 6.28318rad");
-shouldBeEqualToString("styleTestSheet.cssRules[3].style.fontStyle", "oblique 4turn");
+shouldBeEqualToString("styleTestSheet.cssRules[1].style.fontStyle", "oblique 20grad");
+shouldBeEqualToString("styleTestSheet.cssRules[2].style.fontStyle", "oblique 0.28318rad");
+shouldBeEqualToString("styleTestSheet.cssRules[3].style.fontStyle", "oblique 0.04turn");
 shouldBeEqualToString("styleTestSheet.cssRules[4].style.fontStyle", "");
 shouldBeEqualToString("styleTestSheet.cssRules[5].style.fontStyle", "");
 shouldBeEqualToString("styleTestSheet.cssRules[6].style.fontStyle", "italic");
@@ -447,7 +447,7 @@ shouldBeEqualToString("styleTestSheet.cssRules[8].style.fontStyle", "normal");
 shouldBeEqualToString("styleTestSheet.cssRules[9].style.fontStyle", "");
 shouldBeEqualToString("styleTestSheet.cssRules[10].style.fontStyle", "");
 shouldBeEqualToString("styleTestSheet.cssRules[11].style.fontStyle", "");
-shouldBeEqualToString("styleTestSheet.cssRules[12].style.fontStyle", "oblique calc(1441deg)");
+shouldBeEqualToString("styleTestSheet.cssRules[12].style.fontStyle", "oblique calc(15.4deg)");
 
 shouldBeEqualToString("styleTestSheet.cssRules[13].style.fontStyle", "");
 shouldBeEqualToString("styleTestSheet.cssRules[14].style.fontStyle", "");
@@ -460,8 +460,8 @@ shouldBeEqualToString("styleTestSheet.cssRules[20].style.fontStyle", "");
 shouldBeEqualToString("styleTestSheet.cssRules[21].style.fontStyle", "");
 shouldBeEqualToString("styleTestSheet.cssRules[22].style.fontStyle", "");
 shouldBeEqualToString("styleTestSheet.cssRules[23].style.fontStyle", "");
-shouldBeEqualToString("styleTestSheet.cssRules[24].style.fontStyle", "oblique 100deg 200deg");
-shouldBeEqualToString("styleTestSheet.cssRules[25].style.fontStyle", "oblique 100deg 200deg");
+shouldBeEqualToString("styleTestSheet.cssRules[24].style.fontStyle", "oblique 10deg 20deg");
+shouldBeEqualToString("styleTestSheet.cssRules[25].style.fontStyle", "oblique 10deg 20deg");
 shouldBeEqualToString("styleTestSheet.cssRules[26].style.fontStyle", "");
 shouldBeEqualToString("styleTestSheet.cssRules[27].style.fontStyle", "");
 shouldBeEqualToString("styleTestSheet.cssRules[28].style.fontStyle", "");
@@ -473,7 +473,7 @@ shouldBeEqualToString("styleTestSheet.cssRules[33].style.fontStyle", "oblique -2
 shouldBeEqualToString("styleTestSheet.cssRules[34].style.fontStyle", "");
 shouldBeEqualToString("styleTestSheet.cssRules[35].style.fontStyle", "");
 shouldBeEqualToString("styleTestSheet.cssRules[36].style.fontStyle", "");
-shouldBeEqualToString("styleTestSheet.cssRules[37].style.fontStyle", "oblique 2deg 1turn");
+shouldBeEqualToString("styleTestSheet.cssRules[37].style.fontStyle", "oblique 2deg 4grad");
 shouldBeEqualToString("styleTestSheet.cssRules[38].style.fontStyle", "");
 shouldBeEqualToString("styleTestSheet.cssRules[39].style.fontStyle", "");
 shouldBeEqualToString("styleTestSheet.cssRules[40].style.fontStyle", "oblique calc(7deg) 8deg");
