@@ -79,6 +79,10 @@ void initializeCurrentThreadInternal(const char* threadName);
 
 const char* normalizeThreadName(const char* threadName);
 
+#if USE(PTHREADS)
+bool signalThread(ThreadIdentifier, int signalNumber);
+#endif
+
 #if HAVE(QOS_CLASSES)
 WTF_EXPORT_PRIVATE void setGlobalMaxQOSClass(qos_class_t);
 WTF_EXPORT_PRIVATE qos_class_t adjustedQOSClass(qos_class_t);
@@ -92,6 +96,10 @@ using WTF::currentThread;
 using WTF::changeThreadPriority;
 using WTF::detachThread;
 using WTF::waitForThreadCompletion;
+
+#if USE(PTHREADS)
+using WTF::signalThread;
+#endif
 
 #if HAVE(QOS_CLASSES)
 using WTF::setGlobalMaxQOSClass;

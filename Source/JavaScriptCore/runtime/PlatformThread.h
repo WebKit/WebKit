@@ -60,19 +60,4 @@ inline PlatformThread currentPlatformThread()
 #endif
 }
 
-#if OS(DARWIN)
-inline bool platformThreadSignal(PlatformThread platformThread, int signalNumber)
-{
-    pthread_t pthreadID = pthread_from_mach_thread_np(platformThread);
-    int errNo = pthread_kill(pthreadID, signalNumber);
-    return !errNo; // A 0 errNo means success.
-}
-#elif USE(PTHREADS)
-inline bool platformThreadSignal(PlatformThread pthreadID, int signalNumber)
-{
-    int errNo = pthread_kill(pthreadID, signalNumber);
-    return !errNo; // A 0 errNo means success.
-}
-#endif
-
 } // namespace JSC

@@ -673,7 +673,7 @@ public:
     template<typename Func>
     void logEvent(CodeBlock*, const char* summary, const Func& func);
 
-    std::optional<PlatformThread> ownerThread() const { return m_apiLock->ownerThread(); }
+    std::optional<ThreadIdentifier> ownerThread() const { return m_apiLock->ownerThread(); }
 
     VMTraps& traps() { return m_traps; }
 

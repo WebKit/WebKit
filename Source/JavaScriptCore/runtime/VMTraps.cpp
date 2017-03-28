@@ -455,7 +455,7 @@ void VMTraps::SignalSender::send()
             VM& vm = *m_vm;
             auto optionalOwnerThread = vm.ownerThread();
             if (optionalOwnerThread) {
-                platformThreadSignal(optionalOwnerThread.value(), SIGUSR1);
+                signalThread(optionalOwnerThread.value(), SIGUSR1);
                 break;
             }
 

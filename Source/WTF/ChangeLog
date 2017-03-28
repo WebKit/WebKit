@@ -1,3 +1,14 @@
+2017-03-25  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Move platformThreadSignal to WTF
+        https://bugs.webkit.org/show_bug.cgi?id=170097
+
+        Reviewed by Mark Lam.
+
+        * wtf/Threading.h:
+        * wtf/ThreadingPthreads.cpp:
+        (WTF::signalThread):
+
 2017-03-26  Filip Pizlo  <fpizlo@apple.com>
 
         B3::fixSSA should do liveness pruning

@@ -20,7 +20,6 @@
 
 #pragma once
 
-#include "PlatformThread.h"
 #include <mutex>
 #include <wtf/Assertions.h>
 #include <wtf/Lock.h>
@@ -93,13 +92,13 @@ public:
 
     VM* vm() { return m_vm; }
 
-    std::optional<PlatformThread> ownerThread() const
+    std::optional<ThreadIdentifier> ownerThread() const
     {
         if (m_hasOwnerThread)
             return m_ownerThread;
-        return { };
+        return std::nullopt;
     }
-    bool currentThreadIsHoldingLock() { return m_hasOwnerThread && m_ownerThread == currentPlatformThread(); }
+    bool currentThreadIsHoldingLock() { return m_hasOwnerThread && m_ownerThread == currentThread(); }
 
     void willDestroyVM(VM*);
 
@@ -136,7 +135,7 @@ private:
     // different thread, and an optional is vulnerable to races.
     // See https://bugs.webkit.org/show_bug.cgi?id=169042#c6
     bool m_hasOwnerThread { false };
-    PlatformThread m_ownerThread;
+    ThreadIdentifier m_ownerThread;
     intptr_t m_lockCount;
     unsigned m_lockDropDepth;
     bool m_shouldReleaseHeapAccess;

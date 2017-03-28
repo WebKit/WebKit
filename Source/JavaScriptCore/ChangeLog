@@ -1,3 +1,26 @@
+2017-03-25  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Move platformThreadSignal to WTF
+        https://bugs.webkit.org/show_bug.cgi?id=170097
+
+        Reviewed by Mark Lam.
+
+        It is a small clean up towards https://bugs.webkit.org/show_bug.cgi?id=170027.
+        platformThreadSignal uses PlatformThread in JSC, but it can be implemented in
+        WTF ThreadIdentifier.
+
+        * runtime/JSLock.cpp:
+        (JSC::JSLock::lock):
+        * runtime/JSLock.h:
+        (JSC::JSLock::ownerThread):
+        (JSC::JSLock::currentThreadIsHoldingLock):
+        * runtime/PlatformThread.h:
+        (JSC::platformThreadSignal): Deleted.
+        * runtime/VM.h:
+        (JSC::VM::ownerThread):
+        * runtime/VMTraps.cpp:
+        (JSC::VMTraps::SignalSender::send):
+
 2017-03-28  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly: implement Module imports/exports

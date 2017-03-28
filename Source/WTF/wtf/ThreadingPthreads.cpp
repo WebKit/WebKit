@@ -59,6 +59,10 @@
 #include <sys/prctl.h>
 #endif
 
+#if !OS(DARWIN)
+#include <signal.h>
+#endif
+
 namespace WTF {
 
 class PthreadState {
@@ -305,6 +309,19 @@ ThreadIdentifier currentThread()
     id = establishIdentifierForPthreadHandle(pthread_self());
     ThreadIdentifierData::initialize(id);
     return id;
+}
+
+bool signalThread(ThreadIdentifier threadID, int signalNumber)
+{
+    pthread_t pthreadHandle;
+    ASSERT(threadID);
+    {
+        MutexLocker locker(threadMapMutex());
+        pthreadHandle = pthreadHandleForIdentifierWithLockAlreadyHeld(threadID);
+        ASSERT(pthreadHandle);
+    }
+    int errNo = pthread_kill(pthreadHandle, signalNumber);
+    return !errNo; // A 0 errNo means success.
 }
 
 Mutex::Mutex()
