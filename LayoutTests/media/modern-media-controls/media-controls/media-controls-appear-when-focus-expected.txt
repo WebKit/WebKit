@@ -1,0 +1,13 @@
+Testing the visibility of MediaControls when one of its buttons fires a focus event.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS mediaControls.controlsBar.faded is false
+PASS mediaControls.controlsBar.faded is true
+PASS mediaControls.controlsBar.faded is false
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

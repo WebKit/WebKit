@@ -1,0 +1,21 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<body>
+<script type="text/javascript">
+
+description("Testing the visibility of <code>MediaControls</code> when one of its buttons fires a focus event.");
+
+const mediaControls = new MediaControls({ layoutTraits: LayoutTraits.macOS });
+
+shouldBeFalse("mediaControls.controlsBar.faded");
+mediaControls.controlsBar.faded = true;
+shouldBeTrue("mediaControls.controlsBar.faded");
+let focusin = new Event("focusin");
+mediaControls.controlsBar.element.dispatchEvent(focusin);
+shouldBeFalse("mediaControls.controlsBar.faded");
+
+debug("");
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

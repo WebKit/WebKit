@@ -1,3 +1,19 @@
+2017-03-28  Aaron Chu  <aaron_chu@apple.com>
+
+        AX: Media controls should be able to be re-activated after faded away
+        https://bugs.webkit.org/show_bug.cgi?id=170048
+        <rdar://problem/30157179>
+
+        Reviewed by Antoine Quint.
+
+        Added a "foucsin" listener for the controls bar so that when an element
+        within fires a "focusin" event, the controls bar reappears if it is faded.
+
+        Test: media/modern-media-controls/media-controls/media-controls-appear-when-focus.html
+
+        * Modules/modern-media-controls/controls/controls-bar.js:
+        (ControlsBar.prototype.handleEvent):
+
 2017-03-28  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Improve media documents across macOS, iPhone and iPad
