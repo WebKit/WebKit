@@ -1,3 +1,197 @@
+2017-03-27  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        REGRESSION(213764): Large images should not be decoded asynchronously when they are drawn on a canvas
+        https://bugs.webkit.org/show_bug.cgi?id=169771
+
+        Reviewed by Simon Fraser.
+
+        Sometimes we have to draw the image immediately like when a canvas calls  
+        drawImage. In this case we have to decode the image synchronously to guarantee
+        the drawing. Other times we need to decode with the native size of the image.
+        The animated images have to be decoded with native size always. Otherwise
+        the frame cache will be messed up if the same image is animated with different
+        sizes. Currently we always decode asynchronously with sizeForDrawing. We need
+        to decouple the decoding mode from the sizeForDrawing.
+
+        This patch introduce the DecodingOptions class which can store and compare the
+        following four cases:
+            -- Synchronous: The frame has be decoded with native size only.
+            -- Asynchronous + anySize: This is passed from the Image::draw() callers.
+            -- Asynchronous + fullSize: The image has to be decoded with its full size.
+            -- Asynchronous + sizeForDrawing: The image can be decoded with sizeForDrawing unless
+            it was decoded with either a full size or sizeForDrawing which is larger than the
+            requested sizeForDrawing.
+            
+        A new argument of type DecodingMode will be added to Image::draw() function.
+        Only when the drawing comes from the render tree, it will be Asynchronous.
+        Otherwise it will be Synchronous.
+
+        Tests: fast/images/animated-image-different-dest-size.html
+               fast/images/async-image-background-image.html
+               fast/images/async-image-canvas-draw-image.html
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::frameImageAtIndexCacheIfNeeded): Gets the frame image, cache it synchronously if
+        the current one is invalid. frameImageAtIndex() returns whatever stored in the cache.
+        (WebCore::BitmapImage::nativeImage): Call frameImageAtIndexCacheIfNeeded() instead of frameImageAtIndex().
+        (WebCore::BitmapImage::nativeImageForCurrentFrame): Ditto.
+        (WebCore::BitmapImage::nativeImageOfSize): Ditto.
+        (WebCore::BitmapImage::framesNativeImages): Ditto.
+        (WebCore::BitmapImage::draw): Change the logic to do the following:
+        -- The animated image has to be decoded with its full size.
+        -- The animated image expects the current frame to be ready for drawing.
+        -- The large image decoding does not need to call internalStartAnimation().
+        -- The large image has to request async image decoding but draw the current one if it exists.
+        (WebCore::BitmapImage::drawPattern): Draw the pattern synchronously.
+        (WebCore::BitmapImage::shouldUseAsyncDecodingForLargeImages): Delete the call to shouldUseAsyncDecodingForTesting()
+        since it is only applied for animated images.
+        (WebCore::BitmapImage::shouldUseAsyncDecodingForAnimatedImages): Call shouldUseAsyncDecodingForAnimatedImageForTesting().
+        (WebCore::BitmapImage::internalStartAnimation): Request decoding with the full size.
+        (WebCore::BitmapImage::advanceAnimation): Call shouldUseAsyncDecodingForAnimatedImageForTesting().
+        (WebCore::BitmapImage::internalAdvanceAnimation): Assert the current frame is not being decoding asynchronously for any size.
+        (WebCore::BitmapImage::frameImageAtIndex): Deleted. Moved to the header file but with a new purpose: return
+        the current frame from the frame cache as is; do not cache a new one.
+        (WebCore::BitmapImage::shouldUseAsyncDecodingForLargeImage): Deleted. Function was renamed to shouldUseAsyncDecodingForLargeImages.
+        (WebCore::BitmapImage::shouldUseAsyncDecodingForAnimatedImage): Deleted. Function was renamed to shouldUseAsyncDecodingForAnimatedImages.
+        * platform/graphics/BitmapImage.h:
+        * platform/graphics/CrossfadeGeneratedImage.cpp:
+        (WebCore::CrossfadeGeneratedImage::draw): Add a new argument of type DecodingMode.
+        * platform/graphics/CrossfadeGeneratedImage.h:
+        * platform/graphics/DecodingOptions.h: Added.
+        (WebCore::DecodingOptions::DecodingOptions): Default constructor: Synchronous mode.
+        (WebCore::DecodingOptions::operator==): Compares two DecodingOptions for equality.
+        (WebCore::DecodingOptions::isSynchronous): Is the frame decoded synchronously?
+        (WebCore::DecodingOptions::isAsynchronous): Is the frame decoded asynchronously?
+        (WebCore::DecodingOptions::isAsynchronousCompatibleWith): Is this DecodingOptions compatible with another one?
+        (WebCore::DecodingOptions::hasFullSize): Is the decoding mode asynchronous but for the image full size?
+        (WebCore::DecodingOptions::hasSizeForDrawing): Is this decoding mode asynchronous but for a sizeForDrawing?
+        (WebCore::DecodingOptions::sizeForDrawing): Returns the sizeForDrawing. m_decodingModeOrSize has to hold an IntSize.
+        (WebCore::DecodingOptions::maxDimension): Moved form ImageFrame.cpp.
+        (WebCore::DecodingOptions::has): A helper function.
+        (WebCore::DecodingOptions::hasDecodingMode): Does m_decodingModeOrSize a DecodingMode?
+        (WebCore::DecodingOptions::hasSize): Does m_decodingModeOrSize an IntSize?
+        * platform/graphics/GeneratedImage.h: Add a new argument of type DecodingMode.
+        * platform/graphics/GradientImage.cpp:
+        (WebCore::GradientImage::draw): Ditto.
+        * platform/graphics/GradientImage.h: Ditto.
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::drawImage): Pass the ImagePaintingOptions::m_DecodingMode to Image::draw().
+        * platform/graphics/GraphicsContext.h:
+        (WebCore::ImagePaintingOptions::ImagePaintingOptions): Add a new member of type DecodingMode to ImagePaintingOptions.
+        * platform/graphics/Image.cpp:
+        (WebCore::Image::drawTiled): Pass DecodingMode::Synchronous to Image::draw().
+        * platform/graphics/Image.h: Add a new argument of type DecodingMode to Image::draw().
+        * platform/graphics/ImageFrame.cpp:
+        (WebCore::ImageFrame::operator=): Replace m_sizeForDrawing by m_decodingOptions.
+        (WebCore::ImageFrame::hasNativeImage): Check if m_nativeImage is valid and the subsamplingLevels match.
+        (WebCore::ImageFrame::hasFullSizeNativeImage): Checks hasNativeImage() and whether the image frame was
+        decoded for the image full size.
+        (WebCore::ImageFrame::hasDecodedNativeImageCompatibleWithOptions): Checks hasNativeImage() and the DecodingOptions match.
+        (WebCore::maxDimension): Deleted. Moved to DecodingOptions.h.
+        (WebCore::ImageFrame::isBeingDecoded): Deleted. The check for having an ImageFrame being decoded is
+        moved to ImageFrameCache.
+        (WebCore::ImageFrame::hasValidNativeImage): Deleted. No need to this function.
+        * platform/graphics/ImageFrame.h:
+        (WebCore::ImageFrame::hasNativeImage): Add an std::optional<SubsamplingLevel> argument.
+        (WebCore::ImageFrame::hasFullSizeNativeImage): Checks whether the ImageFrame was decoded for the image full size.
+        (WebCore::ImageFrame::enqueueSizeForDecoding): Deleted.
+        (WebCore::ImageFrame::dequeueSizeForDecoding): Deleted.
+        (WebCore::ImageFrame::clearSizeForDecoding): Deleted.
+        (WebCore::ImageFrame::isBeingDecoded): Deleted.
+        (WebCore::ImageFrame::sizeForDrawing): Deleted.
+        (WebCore::ImageFrame::hasDecodedNativeImage): Deleted.
+        The logic of knowing whether an ImageFrame is being decoded is moved to ImageFrameCache.
+        * platform/graphics/ImageFrameCache.cpp:
+        (WebCore::ImageFrameCache::cacheFrameMetadataAtIndex): Caches the metadata of an ImageFrame. If the NativeImage
+        was decoded for a sizeForDrawing, the size of the ImageFrame will be the nativeImageSize(). Otherwise, the
+        frameSizeAtIndex() will be called.
+        (WebCore::ImageFrameCache::cacheFrameNativeImageAtIndex): Cache a new NativeImage which involves caching new
+        metadata and updating the memory cache. No need to check if the existing native image is valid or not for the
+        DecodingOptions. Actually it would be a bug if it happens. This is why cacheNativeImageForFrameRequest() asserts
+        !frame.hasAsyncNativeImage() before calling cacheFrameNativeImageAtIndex().
+        (WebCore::ImageFrameCache::cacheAsyncFrameNativeImageAtIndex): Cache new NativeImage which was decoded asynchronously.
+        (WebCore::ImageFrameCache::startAsyncDecodingQueue): Call cacheAsyncFrameNativeImageAtIndex() instead of
+        cacheNativeImageForFrameRequest() for clarity.
+        (WebCore::ImageFrameCache::requestFrameAsyncDecodingAtIndex): Call hasAsyncNativeImage() instead of hasValidNativeImage()
+        Call frameIsDecodingCompatibleWithOptionsAtIndex() instead of frame.isBeingDecoded(). Replace the call to enqueueSizeForDecoding()
+        by appending the same ImageFrameRequest to m_frameCommitQueue.
+        (WebCore::ImageFrameCache::isAsyncDecodingQueueIdle): Use m_frameCommitQueue to answer the question whether the decodingQueue is idle.
+        (WebCore::ImageFrameCache::stopAsyncDecodingQueue): Use m_frameCommitQueue to loop through all the ImageFrames which are currently being decoded.
+        (WebCore::ImageFrameCache::frameAtIndexCacheIfNeeded): For getting the metadata, this function needs a valid frame. If it is requested
+        to decode the nativeImage, it has to do it synchronously.
+        (WebCore::ImageFrameCache::singlePixelSolidColor): Don't cache the frame if it is an animated image or the size is not a single pixel.
+        (WebCore::ImageFrameCache::frameIsBeingDecodedAndIsCompatibleWithOptionsAtIndex): Use m_frameCommitQueue to answer the question whether an ImageFrame
+        is being decoded and is compatible with DecodingOptions.
+        (WebCore::ImageFrameCache::frameHasFullSizeNativeImageAtIndex): Calls ImageFrame::hasFullNativeImage() for a frame. 
+        (WebCore::ImageFrameCache::frameHasDecodedNativeImageCompatibleWithOptionsAtIndex): Calls ImageFrame::hasDecodedNativeImageCompatibleWithOptions() for a frame.
+        (WebCore::ImageFrameCache::frameImageAtIndex): Returns the current NativeImage without caching.
+        (WebCore::ImageFrameCache::frameImageAtIndexCacheIfNeeded): Returns the current NativeImage but cache it synchronously if needed.
+        (WebCore::ImageFrameCache::setFrameNativeImageAtIndex): Deleted.
+        (WebCore::ImageFrameCache::setFrameMetadataAtIndex): Deleted.
+        (WebCore::ImageFrameCache::replaceFrameNativeImageAtIndex): Deleted.
+        (WebCore::ImageFrameCache::frameIsBeingDecodedAtIndex): Deleted.
+        (WebCore::ImageFrameCache::frameHasImageAtIndex): Deleted.
+        (WebCore::ImageFrameCache::frameHasValidNativeImageAtIndex): Deleted.
+        (WebCore::ImageFrameCache::frameHasDecodedNativeImage): Deleted.
+        * platform/graphics/ImageFrameCache.h: Two ImageFrameRequest queues will be used.
+        -- The existing one m_frameRequestQueue which is shared between the main thread and decoding thread. The requests will be
+        dequeued from it before starting the decoding. The decoded NativeImage will be cached only on the main thread. The decoding
+        thread is not blocked by the callOnMainThread(). This means there might be multiple ImageFrameRequests which were dequeued
+        while their NativeImages have not been cached yet.
+        -- A new one m_frameCommitQueue which is track all the ImageFrameRequests whose NativeImages have not been cached yet.
+        (WebCore::ImageFrameCache::frameAtIndexCacheIfNeeded): Be explicit about caching the image frame. frameImageAtIndex()
+        returns the current image frame without caching. frameAtIndexCacheIfNeeded(). returns the current image frame but cache
+        it if needed.
+        (WebCore::ImageFrameCache::ImageFrameRequest::operator==): Compares two ImageFrameRequests for equality.
+        * platform/graphics/ImageSource.cpp:
+        (WebCore::ImageSource::frameImageAtIndexCacheIfNeeded): 
+        (WebCore::ImageSource::frameImageAtIndex): Deleted.
+        * platform/graphics/ImageSource.h:
+        (WebCore::ImageSource::requestFrameAsyncDecodingAtIndex): Change the type of the argument from IntSize to be const std::optional<IntSize>.
+        (WebCore::ImageSource::frameIsBeingDecodedAndIsCompatibleWithOptionsAtIndex): Rename of frameIsBeingDecodedAtIndex(). Replace the argument of type
+        std::optional<IntSize> by an argument of type DecodingOptions.
+        (WebCore::ImageSource::frameHasFullSizeNativeImageAtIndex): A wrapper around the ImageFrameCache function.
+        (WebCore::ImageSource::frameHasDecodedNativeImageCompatibleWithOptionsAtIndex): Ditto.
+        (WebCore::ImageSource::frameImageAtIndex): Ditto.
+        (WebCore::ImageSource::frameIsBeingDecodedAtIndex): Deleted.
+        (WebCore::ImageSource::frameHasValidNativeImageAtIndex): Deleted.
+        (WebCore::ImageSource::frameHasDecodedNativeImage): Deleted.
+        * platform/graphics/NamedImageGeneratedImage.cpp:
+        (WebCore::NamedImageGeneratedImage::draw): Add a new argument of type DecodingMode.
+        * platform/graphics/NamedImageGeneratedImage.h: Ditto.
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        (WebCore::ImageBuffer::draw): Add a new argument of type DecodingMode.
+        * platform/graphics/cg/ImageDecoderCG.cpp:
+        (WebCore::ImageDecoder::createFrameImageAtIndex): Replace the sizeForDrawing argument by a DecodingMode argument. Add a new handling
+        for decoding asynchronously for the image full size.
+        * platform/graphics/cg/ImageDecoderCG.h: Change the prototype of the function.
+        * platform/graphics/cg/PDFDocumentImage.cpp:
+        (WebCore::PDFDocumentImage::draw): Add a new argument of type DecodingMode.
+        * platform/graphics/cg/PDFDocumentImage.h:
+        * platform/graphics/win/ImageCGWin.cpp:
+        (WebCore::BitmapImage::getHBITMAPOfSize): Pass DecodingMode::Synchronous to Image::draw().
+        (WebCore::BitmapImage::drawFrameMatchingSourceSize): Ditto.
+        * platform/graphics/win/ImageDecoderDirect2D.cpp:
+        (WebCore::ImageDecoder::createFrameImageAtIndex): Replace the sizeForDrawing argument by a DecodingMode argument.
+        * platform/graphics/win/ImageDecoderDirect2D.h: Change the prototype of the function.
+        * platform/image-decoders/ImageDecoder.cpp: 
+        (WebCore::ImageDecoder::createFrameImageAtIndex): Replace the sizeForDrawing argument by a DecodingMode argument.
+        * platform/image-decoders/ImageDecoder.h: Change the prototype of the function.
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended): Draw the background image asynchronously if the image size is large.
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paintIntoRect): Draw the background image element asynchronously if the image size is large.
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::drawForContainer): Pass DecodingMode::Synchronous to draw().
+        (WebCore::SVGImage::nativeImageForCurrentFrame): Ditto.
+        (WebCore::SVGImage::nativeImage): Ditto.
+        (WebCore::SVGImage::draw): Add a new argument of type DecodingMode.
+        * svg/graphics/SVGImage.h: Change the prototype of the function.
+        * svg/graphics/SVGImageForContainer.cpp:
+        (WebCore::SVGImageForContainer::draw): Add a new argument of type DecodingMode.
+        * svg/graphics/SVGImageForContainer.h: Change the prototype of the function.
+
 2017-03-27  Youenn Fablet  <youenn@apple.com>
 
         Activate release libwebrtc logging when WebRTC log channel is on

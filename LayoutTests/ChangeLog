@@ -1,3 +1,35 @@
+2017-03-27  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        REGRESSION(213764): Large images should not be decoded asynchronously when they are drawn on a canvas
+        https://bugs.webkit.org/show_bug.cgi?id=169771
+
+        Reviewed by Simon Fraser.
+
+        * fast/images/animated-image-different-dest-size-expected.html: Added.
+        * fast/images/animated-image-different-dest-size.html: Added.
+        This test crashes without this patch.
+
+        * fast/images/animated-image-loop-count.html:
+        Clear the memory cache so the test can be not flaky. Running it with -repeat-each was failing.
+
+        * fast/images/async-image-background-image-expected.html: Added.
+        * fast/images/async-image-background-image.html: Added.
+        Ensures the background image can be drawn asynchronously if it is large.
+
+        * fast/images/async-image-canvas-draw-image-expected.html: Added.
+        * fast/images/async-image-canvas-draw-image.html: Added.
+        Ensures the image is drawn synchronously on the canvas regardless of its size.
+
+        * fast/images/ordered-animated-image-frames.html:
+        Clear the memory cache so the test can be not flaky. Running it with -repeat-each was failing.
+
+        * fast/images/reset-image-animation-expected.txt:
+        * fast/images/reset-image-animation.html:
+        Change how the steps of the test are ordered so the test can be not flaky.
+        Running it with -repeat-each was failing.
+
+        * fast/images/resources/red-green-blue-900-300.png: Added.
+
 2017-03-27  Youenn Fablet  <youenn@apple.com>
 
         addIceCandidate should not throw if passed null or undefined

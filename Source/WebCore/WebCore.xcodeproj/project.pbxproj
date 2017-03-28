@@ -2489,6 +2489,7 @@
 		53EF766C16531994004CBE49 /* SettingsMacros.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 53EF766A16530A61004CBE49 /* SettingsMacros.h */; };
 		550A0BC9085F6039007353D6 /* QualifiedName.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 550A0BC7085F6039007353D6 /* QualifiedName.cpp */; };
 		550A0BCA085F6039007353D6 /* QualifiedName.h in Headers */ = {isa = PBXBuildFile; fileRef = 550A0BC8085F6039007353D6 /* QualifiedName.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		555130011E7CCCCB00A69E38 /* DecodingOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 555130001E7CCCCA00A69E38 /* DecodingOptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		555B87EC1CAAF0AB00349425 /* ImageDecoderCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 555B87EA1CAAF0AB00349425 /* ImageDecoderCG.cpp */; };
 		555B87ED1CAAF0AB00349425 /* ImageDecoderCG.h in Headers */ = {isa = PBXBuildFile; fileRef = 555B87EB1CAAF0AB00349425 /* ImageDecoderCG.h */; };
 		5576A5641D88A70800CCC04C /* ImageFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5576A5621D88A70800CCC04C /* ImageFrame.cpp */; };
@@ -10161,6 +10162,7 @@
 		53EF766A16530A61004CBE49 /* SettingsMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsMacros.h; sourceTree = "<group>"; };
 		550A0BC7085F6039007353D6 /* QualifiedName.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QualifiedName.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		550A0BC8085F6039007353D6 /* QualifiedName.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = QualifiedName.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		555130001E7CCCCA00A69E38 /* DecodingOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DecodingOptions.h; sourceTree = "<group>"; };
 		555B87EA1CAAF0AB00349425 /* ImageDecoderCG.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImageDecoderCG.cpp; sourceTree = "<group>"; };
 		555B87EB1CAAF0AB00349425 /* ImageDecoderCG.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageDecoderCG.h; sourceTree = "<group>"; };
 		5576A5621D88A70800CCC04C /* ImageFrame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImageFrame.cpp; sourceTree = "<group>"; };
@@ -22874,6 +22876,7 @@
 				2D2FC0541460CD6F00263633 /* CrossfadeGeneratedImage.cpp */,
 				2D2FC0551460CD6F00263633 /* CrossfadeGeneratedImage.h */,
 				A8CB41020E85B8A50032C4F0 /* DashArray.h */,
+				555130001E7CCCCA00A69E38 /* DecodingOptions.h */,
 				49FC7A4F1444AF5F00A5D864 /* DisplayRefreshMonitor.cpp */,
 				49AF2D6814435D050016A784 /* DisplayRefreshMonitor.h */,
 				2D29ECC1192ECC8300984B78 /* DisplayRefreshMonitorClient.cpp */,
@@ -28173,6 +28176,7 @@
 				A12538D413F9B60A00024754 /* LayoutRepainter.h in Headers */,
 				141DC054164834B900371E5A /* LayoutSize.h in Headers */,
 				2D9066070BE141D400956998 /* LayoutState.h in Headers */,
+				555130011E7CCCCB00A69E38 /* DecodingOptions.h in Headers */,
 				141DC0481648348F00371E5A /* LayoutUnit.h in Headers */,
 				CDE8B5ED1A69777300B4B66A /* LegacyCDMPrivateClearKey.h in Headers */,
 				CDF4B7121E0087AE00E235A2 /* LegacyCDMSession.h in Headers */,

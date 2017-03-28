@@ -207,7 +207,7 @@ float ImageDecoder::frameDurationAtIndex(size_t index)
     return duration;
 }
 
-NativeImagePtr ImageDecoder::createFrameImageAtIndex(size_t index, SubsamplingLevel, const std::optional<IntSize>&)
+NativeImagePtr ImageDecoder::createFrameImageAtIndex(size_t index, SubsamplingLevel, const DecodingOptions&)
 {
     // Zero-height images can cause problems for some ports. If we have an empty image dimension, just bail.
     if (size().isEmpty())

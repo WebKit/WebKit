@@ -35,7 +35,7 @@ FloatSize SVGImageForContainer::size() const
 }
 
 void SVGImageForContainer::draw(GraphicsContext& context, const FloatRect& dstRect,
-    const FloatRect& srcRect, CompositeOperator compositeOp, BlendMode blendMode, ImageOrientationDescription)
+    const FloatRect& srcRect, CompositeOperator compositeOp, BlendMode blendMode, DecodingMode, ImageOrientationDescription)
 {
     m_image->drawForContainer(context, m_containerSize, m_zoom, dstRect, srcRect, compositeOp, blendMode);
 }

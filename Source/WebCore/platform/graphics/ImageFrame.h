@@ -26,6 +26,7 @@
 #pragma once
 
 #include "Color.h"
+#include "DecodingOptions.h"
 #include "ImageBackingStore.h"
 #include "ImageOrientation.h"
 #include "IntSize.h"
@@ -98,12 +99,8 @@ public:
 
     void setDecoding(Decoding decoding) { m_decoding = decoding; }
     Decoding decoding() const { return m_decoding; }
-    void enqueueSizeForDecoding(const IntSize& sizeForDecoding) { m_sizeForDecoding.append(sizeForDecoding); }
-    void dequeueSizeForDecoding() { m_sizeForDecoding.removeFirst(); }
-    void clearSizeForDecoding() { m_sizeForDecoding.clear(); }
 
     bool isEmpty() const { return m_decoding == Decoding::None; }
-    bool isBeingDecoded(const std::optional<IntSize>& sizeForDrawing = { }) const;
     bool isPartial() const { return m_decoding == Decoding::Partial; }
     bool isComplete() const { return m_decoding == Decoding::Complete; }
 
@@ -111,7 +108,6 @@ public:
     IntSize sizeRespectingOrientation() const { return !m_orientation.usesWidthAsHeight() ? size() : size().transposedSize(); }
     unsigned frameBytes() const { return hasNativeImage() ? (size().area() * sizeof(RGBA32)).unsafeGet() : 0; }
     SubsamplingLevel subsamplingLevel() const { return m_subsamplingLevel; }
-    std::optional<IntSize> sizeForDrawing() const { return m_sizeForDrawing; }
 
 #if !USE(CG)
     enum class DisposalMethod { Unspecified, DoNotDispose, RestoreToBackground, RestoreToPrevious };
@@ -130,9 +126,9 @@ public:
     void setHasAlpha(bool hasAlpha) { m_hasAlpha = hasAlpha; }
     bool hasAlpha() const { return !hasMetadata() || m_hasAlpha; }
 
-    bool hasNativeImage() const { return m_nativeImage; }
-    bool hasValidNativeImage(const std::optional<SubsamplingLevel>&, const std::optional<IntSize>& sizeForDrawing) const;
-    bool hasDecodedNativeImage() const { return hasNativeImage() && sizeForDrawing(); }
+    bool hasNativeImage(const std::optional<SubsamplingLevel>& = { }) const;
+    bool hasFullSizeNativeImage(const std::optional<SubsamplingLevel>& = { }) const;
+    bool hasDecodedNativeImageCompatibleWithOptions(const std::optional<SubsamplingLevel>&, const DecodingOptions&) const;
     bool hasMetadata() const { return !size().isEmpty(); }
 
 #if !USE(CG)
@@ -153,8 +149,7 @@ private:
 
     NativeImagePtr m_nativeImage;
     SubsamplingLevel m_subsamplingLevel { SubsamplingLevel::Default };
-    std::optional<IntSize> m_sizeForDrawing;
-    Deque<IntSize, 4> m_sizeForDecoding;
+    DecodingOptions m_decodingOptions;
 
     ImageOrientation m_orientation { DefaultImageOrientation };
     float m_duration { 0 };

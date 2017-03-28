@@ -188,25 +188,28 @@ struct GraphicsContextState {
 };
 
 struct ImagePaintingOptions {
-    ImagePaintingOptions(CompositeOperator compositeOperator = CompositeSourceOver, BlendMode blendMode = BlendModeNormal, ImageOrientationDescription orientationDescription = ImageOrientationDescription(), InterpolationQuality interpolationQuality = InterpolationDefault)
+    ImagePaintingOptions(CompositeOperator compositeOperator = CompositeSourceOver, BlendMode blendMode = BlendModeNormal, DecodingMode decodingMode = DecodingMode::Synchronous, ImageOrientationDescription orientationDescription = ImageOrientationDescription(), InterpolationQuality interpolationQuality = InterpolationDefault)
         : m_compositeOperator(compositeOperator)
         , m_blendMode(blendMode)
+        , m_decodingMode(decodingMode)
         , m_orientationDescription(orientationDescription)
         , m_interpolationQuality(interpolationQuality)
     {
     }
 
-    ImagePaintingOptions(ImageOrientationDescription orientationDescription, InterpolationQuality interpolationQuality = InterpolationDefault, CompositeOperator compositeOperator = CompositeSourceOver, BlendMode blendMode = BlendModeNormal)
+    ImagePaintingOptions(ImageOrientationDescription orientationDescription, InterpolationQuality interpolationQuality = InterpolationDefault, CompositeOperator compositeOperator = CompositeSourceOver, BlendMode blendMode = BlendModeNormal, DecodingMode decodingMode = DecodingMode::Synchronous)
         : m_compositeOperator(compositeOperator)
         , m_blendMode(blendMode)
+        , m_decodingMode(decodingMode)
         , m_orientationDescription(orientationDescription)
         , m_interpolationQuality(interpolationQuality)
     {
     }
 
-    ImagePaintingOptions(InterpolationQuality interpolationQuality, ImageOrientationDescription orientationDescription = ImageOrientationDescription(), CompositeOperator compositeOperator = CompositeSourceOver, BlendMode blendMode = BlendModeNormal)
+    ImagePaintingOptions(InterpolationQuality interpolationQuality, ImageOrientationDescription orientationDescription = ImageOrientationDescription(), CompositeOperator compositeOperator = CompositeSourceOver, BlendMode blendMode = BlendModeNormal, DecodingMode decodingMode = DecodingMode::Synchronous)
         : m_compositeOperator(compositeOperator)
         , m_blendMode(blendMode)
+        , m_decodingMode(decodingMode)
         , m_orientationDescription(orientationDescription)
         , m_interpolationQuality(interpolationQuality)
     {
@@ -216,6 +219,7 @@ struct ImagePaintingOptions {
 
     CompositeOperator m_compositeOperator;
     BlendMode m_blendMode;
+    DecodingMode m_decodingMode;
     ImageOrientationDescription m_orientationDescription;
     InterpolationQuality m_interpolationQuality;
 };

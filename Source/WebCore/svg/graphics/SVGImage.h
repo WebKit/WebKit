@@ -96,7 +96,7 @@ private:
     void dump(TextStream&) const final;
 
     SVGImage(ImageObserver&, const URL&);
-    void draw(GraphicsContext&, const FloatRect& fromRect, const FloatRect& toRect, CompositeOperator, BlendMode, ImageOrientationDescription) final;
+    void draw(GraphicsContext&, const FloatRect& fromRect, const FloatRect& toRect, CompositeOperator, BlendMode, DecodingMode, ImageOrientationDescription) final;
     void drawForContainer(GraphicsContext&, const FloatSize, float, const FloatRect&, const FloatRect&, CompositeOperator, BlendMode);
     void drawPatternForContainer(GraphicsContext&, const FloatSize& containerSize, float zoom, const FloatRect& srcRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing,
         CompositeOperator, const FloatRect&, BlendMode);

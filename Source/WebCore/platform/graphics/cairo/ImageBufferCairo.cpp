@@ -283,7 +283,7 @@ void ImageBuffer::draw(GraphicsContext& destinationContext, const FloatRect& des
 {
     BackingStoreCopy copyMode = &destinationContext == &context() ? CopyBackingStore : DontCopyBackingStore;
     RefPtr<Image> image = copyImage(copyMode);
-    destinationContext.drawImage(*image, destRect, srcRect, ImagePaintingOptions(op, blendMode, ImageOrientationDescription()));
+    destinationContext.drawImage(*image, destRect, srcRect, ImagePaintingOptions(op, blendMode, DecodingMode::Synchronous, ImageOrientationDescription()));
 }
 
 void ImageBuffer::drawPattern(GraphicsContext& context, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform& patternTransform,

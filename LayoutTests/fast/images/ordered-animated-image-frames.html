@@ -9,6 +9,9 @@
 <body>
     <canvas id="canvas"></canvas>
     <script>
+        if (window.internals)
+            internals.clearMemoryCache();
+
         if (window.testRunner)
             testRunner.waitUntilDone();
 

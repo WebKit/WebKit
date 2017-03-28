@@ -878,7 +878,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
             context.setDrawLuminanceMask(bgLayer.maskSourceType() == MaskLuminance);
 
             auto interpolation = chooseInterpolationQuality(context, *image, &bgLayer, geometry.tileSize());
-            context.drawTiledImage(*image, geometry.destRect(), toLayoutPoint(geometry.relativePhase()), geometry.tileSize(), geometry.spaceSize(), ImagePaintingOptions(compositeOp, bgLayer.blendMode(), ImageOrientationDescription(), interpolation));
+            context.drawTiledImage(*image, geometry.destRect(), toLayoutPoint(geometry.relativePhase()), geometry.tileSize(), geometry.spaceSize(), ImagePaintingOptions(compositeOp, bgLayer.blendMode(), DecodingMode::Asynchronous, ImageOrientationDescription(), interpolation));
         }
     }
 

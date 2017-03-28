@@ -191,10 +191,10 @@ NativeImagePtr ImageSource::createFrameImageAtIndex(size_t index, SubsamplingLev
     return isDecoderAvailable() ? m_decoder->createFrameImageAtIndex(index, subsamplingLevel) : nullptr;
 }
 
-NativeImagePtr ImageSource::frameImageAtIndex(size_t index, const std::optional<SubsamplingLevel>& subsamplingLevel, const std::optional<IntSize>& sizeForDrawing, const GraphicsContext* targetContext)
+NativeImagePtr ImageSource::frameImageAtIndexCacheIfNeeded(size_t index, SubsamplingLevel subsamplingLevel, const GraphicsContext* targetContext)
 {
     setDecoderTargetContext(targetContext);
-    return m_frameCache->frameImageAtIndex(index, subsamplingLevel, sizeForDrawing);
+    return m_frameCache->frameImageAtIndexCacheIfNeeded(index, subsamplingLevel);
 }
 
 void ImageSource::dump(TextStream& ts)

@@ -126,7 +126,7 @@ void Image::drawTiled(GraphicsContext& ctxt, const FloatRect& destRect, const Fl
         visibleSrcRect.setY((destRect.y() - oneTileRect.y()) / scale.height());
         visibleSrcRect.setWidth(destRect.width() / scale.width());
         visibleSrcRect.setHeight(destRect.height() / scale.height());
-        draw(ctxt, destRect, visibleSrcRect, op, blendMode, ImageOrientationDescription());
+        draw(ctxt, destRect, visibleSrcRect, op, blendMode, DecodingMode::Synchronous, ImageOrientationDescription());
         return;
     }
 
@@ -139,7 +139,7 @@ void Image::drawTiled(GraphicsContext& ctxt, const FloatRect& destRect, const Fl
             visibleSrcRect.setY((destRect.y() - oneTileRect.y()) / scale.height());
             visibleSrcRect.setWidth(1);
             visibleSrcRect.setHeight(destRect.height() / scale.height());
-            draw(ctxt, destRect, visibleSrcRect, op, BlendModeNormal, ImageOrientationDescription());
+            draw(ctxt, destRect, visibleSrcRect, op, BlendModeNormal, DecodingMode::Synchronous, ImageOrientationDescription());
             return;
         }
         if (size().height() == 1 && intersection(oneTileRect, destRect).width() == destRect.width()) {
@@ -148,7 +148,7 @@ void Image::drawTiled(GraphicsContext& ctxt, const FloatRect& destRect, const Fl
             visibleSrcRect.setY(0);
             visibleSrcRect.setWidth(destRect.width() / scale.width());
             visibleSrcRect.setHeight(1);
-            draw(ctxt, destRect, visibleSrcRect, op, BlendModeNormal, ImageOrientationDescription());
+            draw(ctxt, destRect, visibleSrcRect, op, BlendModeNormal, DecodingMode::Synchronous, ImageOrientationDescription());
             return;
         }
     }
@@ -180,7 +180,7 @@ void Image::drawTiled(GraphicsContext& ctxt, const FloatRect& destRect, const Fl
                 FloatRect fromRect(toFloatPoint(currentTileRect.location() - oneTileRect.location()), currentTileRect.size());
                 fromRect.scale(1 / scale.width(), 1 / scale.height());
 
-                draw(ctxt, toRect, fromRect, op, BlendModeNormal, ImageOrientationDescription());
+                draw(ctxt, toRect, fromRect, op, BlendModeNormal, DecodingMode::Synchronous, ImageOrientationDescription());
                 toX += currentTileRect.width();
                 currentTileRect.shiftXEdgeTo(oneTileRect.x());
             }

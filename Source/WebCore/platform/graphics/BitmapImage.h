@@ -81,12 +81,13 @@ public:
     FloatSize size() const override { return m_source.size(); }
     IntSize sizeRespectingOrientation() const { return m_source.sizeRespectingOrientation(); }
     Color singlePixelSolidColor() const override { return m_source.singlePixelSolidColor(); }
-
-    bool frameIsBeingDecodedAtIndex(size_t index, const std::optional<IntSize>& sizeForDrawing) const { return m_source.frameIsBeingDecodedAtIndex(index, sizeForDrawing); }
-    bool frameHasDecodedNativeImage(size_t index) const { return m_source.frameHasDecodedNativeImage(index); }
+    bool frameIsBeingDecodedAndIsCompatibleWithOptionsAtIndex(size_t index, const DecodingOptions& decodingOptions) const { return m_source.frameIsBeingDecodedAndIsCompatibleWithOptionsAtIndex(index, decodingOptions); }
     bool frameIsCompleteAtIndex(size_t index) const { return m_source.frameIsCompleteAtIndex(index); }
     bool frameHasAlphaAtIndex(size_t index) const { return m_source.frameHasAlphaAtIndex(index); }
-    bool frameHasValidNativeImageAtIndex(size_t index, const std::optional<SubsamplingLevel>& subsamplingLevel, const std::optional<IntSize>& sizeForDrawing) const { return m_source.frameHasValidNativeImageAtIndex(index, subsamplingLevel, sizeForDrawing); }
+
+    bool frameHasFullSizeNativeImageAtIndex(size_t index, SubsamplingLevel subsamplingLevel) { return m_source.frameHasFullSizeNativeImageAtIndex(index, subsamplingLevel); }
+    bool frameHasDecodedNativeImageCompatibleWithOptionsAtIndex(size_t index, const std::optional<SubsamplingLevel>& subsamplingLevel, const DecodingOptions& decodingOptions) { return m_source.frameHasDecodedNativeImageCompatibleWithOptionsAtIndex(index, subsamplingLevel, decodingOptions); }
+
     SubsamplingLevel frameSubsamplingLevelAtIndex(size_t index) const { return m_source.frameSubsamplingLevelAtIndex(index); }
 
     float frameDurationAtIndex(size_t index) const { return m_source.frameDurationAtIndex(index); }
@@ -96,10 +97,10 @@ public:
     bool currentFrameKnownToBeOpaque() const override { return !frameHasAlphaAtIndex(currentFrame()); }
     ImageOrientation orientationForCurrentFrame() const override { return frameOrientationAtIndex(currentFrame()); }
 
-    bool shouldUseAsyncDecodingForTesting() const { return m_frameDecodingDurationForTesting > 0; }
+    bool shouldUseAsyncDecodingForAnimatedImagesForTesting() const { return m_frameDecodingDurationForTesting > 0; }
     void setFrameDecodingDurationForTesting(float duration) { m_frameDecodingDurationForTesting = duration; }
-    bool shouldUseAsyncDecodingForLargeImage();
-    bool shouldUseAsyncDecodingForAnimatedImage();
+    bool shouldUseAsyncDecodingForLargeImages();
+    bool shouldUseAsyncDecodingForAnimatedImages();
     void setClearDecoderAfterAsyncFrameRequestForTesting(bool value) { m_clearDecoderAfterAsyncFrameRequestForTesting = value; }
 
     // Accessors for native image formats.
@@ -132,7 +133,8 @@ protected:
     WEBCORE_EXPORT BitmapImage(NativeImagePtr&&, ImageObserver* = nullptr);
     WEBCORE_EXPORT BitmapImage(ImageObserver* = nullptr);
 
-    NativeImagePtr frameImageAtIndex(size_t, const std::optional<SubsamplingLevel>& = { }, const std::optional<IntSize>& sizeForDrawing = { }, const GraphicsContext* = nullptr);
+    NativeImagePtr frameImageAtIndex(size_t index) { return m_source.frameImageAtIndex(index); }
+    NativeImagePtr frameImageAtIndexCacheIfNeeded(size_t, SubsamplingLevel = SubsamplingLevel::Default, const GraphicsContext* = nullptr);
 
     String sourceURL() const { return imageObserver() ? imageObserver()->sourceUrl().string() : emptyString(); }
     bool allowSubsampling() const { return imageObserver() && imageObserver()->allowSubsampling(); }
@@ -152,19 +154,19 @@ protected:
     // |destroyAll| along.
     void destroyDecodedDataIfNecessary(bool destroyAll = true);
 
-    void draw(GraphicsContext&, const FloatRect& dstRect, const FloatRect& srcRect, CompositeOperator, BlendMode, ImageOrientationDescription) override;
+    void draw(GraphicsContext&, const FloatRect& dstRect, const FloatRect& srcRect, CompositeOperator, BlendMode, DecodingMode, ImageOrientationDescription) override;
     void drawPattern(GraphicsContext&, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, CompositeOperator, BlendMode = BlendModeNormal) override;
 #if PLATFORM(WIN)
     void drawFrameMatchingSourceSize(GraphicsContext&, const FloatRect& dstRect, const IntSize& srcSize, CompositeOperator) override;
 #endif
 
     // Animation.
-    enum class StartAnimationResult { CannotStart, IncompleteData, TimerActive, DecodingActive, Started };
+    enum class StartAnimationStatus { CannotStart, IncompleteData, TimerActive, DecodingActive, Started };
     bool isAnimated() const override { return m_source.frameCount() > 1; }
     bool shouldAnimate();
     bool canAnimate();
     void startAnimation() override { internalStartAnimation(); }
-    StartAnimationResult internalStartAnimation();
+    StartAnimationStatus internalStartAnimation();
     void advanceAnimation();
     void internalAdvanceAnimation();
 
@@ -203,7 +205,6 @@ private:
 
     size_t m_currentFrame { 0 }; // The index of the current frame of animation.
     SubsamplingLevel m_currentSubsamplingLevel { SubsamplingLevel::Default };
-    IntSize m_sizeForDrawing;
     std::unique_ptr<Timer> m_frameTimer;
     RepetitionCount m_repetitionsComplete { RepetitionCountNone }; // How many repetitions we've finished.
     double m_desiredFrameStartTime { 0 }; // The system time at which we hope to see the next call to startAnimation().

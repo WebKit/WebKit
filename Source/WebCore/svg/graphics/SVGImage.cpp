@@ -188,7 +188,7 @@ void SVGImage::drawForContainer(GraphicsContext& context, const FloatSize contai
     adjustedSrcSize.scale(roundedContainerSize.width() / containerSize.width(), roundedContainerSize.height() / containerSize.height());
     scaledSrc.setSize(adjustedSrcSize);
 
-    draw(context, dstRect, scaledSrc, compositeOp, blendMode, ImageOrientationDescription());
+    draw(context, dstRect, scaledSrc, compositeOp, blendMode, DecodingMode::Synchronous, ImageOrientationDescription());
 
     setImageObserver(observer);
 }
@@ -206,7 +206,7 @@ NativeImagePtr SVGImage::nativeImageForCurrentFrame(const GraphicsContext*)
     if (!buffer) // failed to allocate image
         return nullptr;
 
-    draw(buffer->context(), rect(), rect(), CompositeSourceOver, BlendModeNormal, ImageOrientationDescription());
+    draw(buffer->context(), rect(), rect(), CompositeSourceOver, BlendModeNormal, DecodingMode::Synchronous, ImageOrientationDescription());
 
     // FIXME: WK(Bug 113657): We should use DontCopyBackingStore here.
     return buffer->copyImage(CopyBackingStore)->nativeImageForCurrentFrame();
@@ -230,7 +230,7 @@ NativeImagePtr SVGImage::nativeImage(const GraphicsContext* targetContext)
 
     GraphicsContext localContext(nativeImageTarget.get());
 
-    draw(localContext, rect(), rect(), CompositeSourceOver, BlendModeNormal, ImageOrientationDescription());
+    draw(localContext, rect(), rect(), CompositeSourceOver, BlendModeNormal, DecodingMode::Synchronous, ImageOrientationDescription());
 
     COMPtr<ID2D1Bitmap> nativeImage;
     hr = nativeImageTarget->GetBitmap(&nativeImage);
@@ -276,7 +276,7 @@ void SVGImage::drawPatternForContainer(GraphicsContext& context, const FloatSize
     image->drawPattern(context, dstRect, scaledSrcRect, unscaledPatternTransform, phase, spacing, compositeOp, blendMode);
 }
 
-void SVGImage::draw(GraphicsContext& context, const FloatRect& dstRect, const FloatRect& srcRect, CompositeOperator compositeOp, BlendMode blendMode, ImageOrientationDescription)
+void SVGImage::draw(GraphicsContext& context, const FloatRect& dstRect, const FloatRect& srcRect, CompositeOperator compositeOp, BlendMode blendMode, DecodingMode, ImageOrientationDescription)
 {
     if (!m_page)
         return;

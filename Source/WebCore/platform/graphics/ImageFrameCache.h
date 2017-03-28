@@ -69,7 +69,7 @@ public:
     
     // Asynchronous image decoding
     void startAsyncDecodingQueue();
-    bool requestFrameAsyncDecodingAtIndex(size_t, SubsamplingLevel, const IntSize&);
+    bool requestFrameAsyncDecodingAtIndex(size_t, SubsamplingLevel, const std::optional<IntSize>&);
     void stopAsyncDecodingQueue();
     bool hasAsyncDecodingQueue() const { return m_decodingQueue; }
     bool isAsyncDecodingQueueIdle() const;
@@ -89,12 +89,12 @@ public:
     Color singlePixelSolidColor();
 
     // ImageFrame metadata which does not require caching the ImageFrame.
-    bool frameIsBeingDecodedAtIndex(size_t, const std::optional<IntSize>& sizeForDrawing);
+    bool frameIsBeingDecodedAndIsCompatibleWithOptionsAtIndex(size_t, const DecodingOptions&);
     bool frameIsCompleteAtIndex(size_t);
     bool frameHasAlphaAtIndex(size_t);
     bool frameHasImageAtIndex(size_t);
-    bool frameHasValidNativeImageAtIndex(size_t, const std::optional<SubsamplingLevel>&, const std::optional<IntSize>& sizeForDrawing);
-    bool frameHasDecodedNativeImage(size_t);
+    bool frameHasFullSizeNativeImageAtIndex(size_t, const std::optional<SubsamplingLevel>&);
+    bool frameHasDecodedNativeImageCompatibleWithOptionsAtIndex(size_t, const std::optional<SubsamplingLevel>&, const DecodingOptions&);
     SubsamplingLevel frameSubsamplingLevelAtIndex(size_t);
     
     // ImageFrame metadata which forces caching or re-caching the ImageFrame.
@@ -102,7 +102,9 @@ public:
     unsigned frameBytesAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default);
     float frameDurationAtIndex(size_t);
     ImageOrientation frameOrientationAtIndex(size_t);
-    NativeImagePtr frameImageAtIndex(size_t, const std::optional<SubsamplingLevel>&, const std::optional<IntSize>& sizeForDrawing);
+
+    NativeImagePtr frameImageAtIndex(size_t);
+    NativeImagePtr frameImageAtIndexCacheIfNeeded(size_t, SubsamplingLevel);
 
 private:
     ImageFrameCache(Image*);
@@ -126,14 +128,13 @@ private:
     void decodedSizeReset(unsigned decodedSize);
 
     void setNativeImage(NativeImagePtr&&);
-    void setFrameNativeImageAtIndex(NativeImagePtr&&, size_t, SubsamplingLevel, const std::optional<IntSize>& sizeForDrawing);
-    void setFrameMetadataAtIndex(size_t, SubsamplingLevel, const std::optional<IntSize>& sizeForDrawing);
-    void replaceFrameNativeImageAtIndex(NativeImagePtr&&, size_t, SubsamplingLevel, const std::optional<IntSize>& sizeForDrawing);
-    void cacheFrameNativeImageAtIndex(NativeImagePtr&&, size_t, SubsamplingLevel, const IntSize& sizeForDrawing);
+    void cacheFrameMetadataAtIndex(size_t, SubsamplingLevel);
+    void cacheFrameNativeImageAtIndex(NativeImagePtr&&, size_t, SubsamplingLevel, const DecodingOptions&);
+    void cacheAsyncFrameNativeImageAtIndex(NativeImagePtr&&, size_t, SubsamplingLevel, const DecodingOptions&);
 
     Ref<WorkQueue> decodingQueue();
 
-    const ImageFrame& frameAtIndexCacheIfNeeded(size_t, ImageFrame::Caching, const std::optional<SubsamplingLevel>& = { }, const std::optional<IntSize>& sizeForDrawing = { });
+    const ImageFrame& frameAtIndexCacheIfNeeded(size_t, ImageFrame::Caching, const std::optional<SubsamplingLevel>& = { });
 
     Image* m_image { nullptr };
     RefPtr<ImageDecoder> m_decoder;
@@ -146,11 +147,17 @@ private:
     struct ImageFrameRequest {
         size_t index;
         SubsamplingLevel subsamplingLevel;
-        IntSize sizeForDrawing;
+        DecodingOptions decodingOptions;
+        bool operator==(const ImageFrameRequest& other) const
+        {
+            return index == other.index && subsamplingLevel == other.subsamplingLevel && decodingOptions == other.decodingOptions;
+        }
     };
     static const int BufferSize = 8;
     using FrameRequestQueue = SynchronizedFixedQueue<ImageFrameRequest, BufferSize>;
+    using FrameCommitQueue = Deque<ImageFrameRequest, BufferSize>;
     FrameRequestQueue m_frameRequestQueue;
+    FrameCommitQueue m_frameCommitQueue;
     RefPtr<WorkQueue> m_decodingQueue;
 
     // Image metadata.
