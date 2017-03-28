@@ -88,7 +88,11 @@ void LibWebRTCProvider::callOnWebRTCSignalingThread(Function<void()>&& callback)
 static void initializePeerConnectionFactoryAndThreads()
 {
 #if defined(NDEBUG)
+#if !LOG_DISABLED || !RELEASE_LOG_DISABLED
+    rtc::LogMessage::LogToDebug(LogWebRTC.state != WTFLogChannelOn ? rtc::LS_NONE : rtc::LS_INFO);
+#else
     rtc::LogMessage::LogToDebug(rtc::LS_NONE);
+#endif
 #else
     if (LogWebRTC.state != WTFLogChannelOn)
         rtc::LogMessage::LogToDebug(rtc::LS_WARNING);
