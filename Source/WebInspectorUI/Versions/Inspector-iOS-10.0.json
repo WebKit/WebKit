@@ -2364,13 +2364,6 @@
             ]
         },
         {
-            "name": "setCacheDisabled",
-            "parameters": [
-                { "name": "cacheDisabled", "type": "boolean", "description": "Cache disabled state." }
-            ],
-            "description": "Toggles ignoring cache for each request. If <code>true</code>, cache will not be used."
-        },
-        {
             "name": "loadResource",
             "async": true,
             "parameters": [

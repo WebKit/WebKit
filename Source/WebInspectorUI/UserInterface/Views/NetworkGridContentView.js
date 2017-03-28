@@ -128,6 +128,17 @@ WebInspector.NetworkGridContentView = class NetworkGridContentView extends WebIn
         networkTimeline.addEventListener(WebInspector.Timeline.Event.RecordAdded, this._networkTimelineRecordAdded, this);
         networkTimeline.addEventListener(WebInspector.Timeline.Event.Reset, this._networkTimelineReset, this);
 
+        // COMPATIBILITY (iOS 10.3): Network.setDisableResourceCaching did not exist.
+        if (window.NetworkAgent && NetworkAgent.setResourceCachingDisabled) {
+            let toolTipForDisableResourceCache = WebInspector.UIString("Ignore the resource cache when loading resources");
+            let activatedToolTipForDisableResourceCache = WebInspector.UIString("Use the resource cache when loading resources");
+            this._disableResourceCacheNavigationItem = new WebInspector.ActivateButtonNavigationItem("disable-resource-cache", toolTipForDisableResourceCache, activatedToolTipForDisableResourceCache, "Images/StepOver.svg", 16, 16);
+            this._disableResourceCacheNavigationItem.activated = WebInspector.resourceCachingDisabledSetting.value;
+
+            this._disableResourceCacheNavigationItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._toggleDisableResourceCache, this);
+            WebInspector.resourceCachingDisabledSetting.addEventListener(WebInspector.Setting.Event.Changed, this._resourceCachingDisabledSettingChanged, this);
+        }
+
         let clearImageDimensions = WebInspector.Platform.name === "mac" ? 16 : 15;
         this._clearNetworkItemsNavigationItem = new WebInspector.ButtonNavigationItem("clear-network-items", WebInspector.UIString("Clear Network Items (%s)").format(WebInspector.clearKeyboardShortcut.displayName), "Images/NavigationItemClear.svg", clearImageDimensions, clearImageDimensions);
         this._clearNetworkItemsNavigationItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, () => this.reset());
@@ -161,7 +172,13 @@ WebInspector.NetworkGridContentView = class NetworkGridContentView extends WebIn
 
     get navigationItems()
     {
-        return [this._clearNetworkItemsNavigationItem];
+        let items = [];
+
+        if (this._disableResourceCacheNavigationItem)
+            items.push(this._disableResourceCacheNavigationItem);
+        items.push(this._clearNetworkItemsNavigationItem);
+
+        return items;
     }
 
     shown()
@@ -260,6 +277,16 @@ WebInspector.NetworkGridContentView = class NetworkGridContentView extends WebIn
     }
 
     // Private
+
+    _resourceCachingDisabledSettingChanged()
+    {
+        this._disableResourceCacheNavigationItem.activated = WebInspector.resourceCachingDisabledSetting.value;
+    }
+
+    _toggleDisableResourceCache()
+    {
+        WebInspector.resourceCachingDisabledSetting.value = !WebInspector.resourceCachingDisabledSetting.value;
+    }
 
     _processPendingRecords()
     {

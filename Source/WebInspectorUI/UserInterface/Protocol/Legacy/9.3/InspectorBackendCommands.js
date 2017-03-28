@@ -257,7 +257,6 @@ InspectorBackend.registerCommand("Network.canClearBrowserCache", [], ["result"])
 InspectorBackend.registerCommand("Network.clearBrowserCache", [], []);
 InspectorBackend.registerCommand("Network.canClearBrowserCookies", [], ["result"]);
 InspectorBackend.registerCommand("Network.clearBrowserCookies", [], []);
-InspectorBackend.registerCommand("Network.setCacheDisabled", [{"name": "cacheDisabled", "type": "boolean", "optional": false}], []);
 InspectorBackend.registerCommand("Network.loadResource", [{"name": "frameId", "type": "string", "optional": false}, {"name": "url", "type": "string", "optional": false}], ["content", "mimeType", "status"]);
 InspectorBackend.activateDomain("Network", "web");
 

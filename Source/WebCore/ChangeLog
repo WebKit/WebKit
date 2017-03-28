@@ -1,3 +1,37 @@
+2017-03-28  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: Add "Disable Caches" option that only applies to the inspected page while Web Inspector is open
+        https://bugs.webkit.org/show_bug.cgi?id=169865
+        <rdar://problem/31250573>
+
+        Reviewed by Joseph Pecoraro.
+
+        Rewrite the network agent's command for disabling resource caching to use Page::setResourceCachingEnabled.
+        The old implementation was doing weird stuff like setting no-cache headers and evicting the
+        contents of the memory cache, neither of which is correct. The new approach has no side effects
+        on the network, disk, or memory cache so it can be turned on temporarily without causing problems.
+
+        New tests:
+        - http/tests/inspector/network/set-resource-caching-disabled-disk-cache.html
+        - http/tests/inspector/network/set-resource-caching-disabled-memory-cache.html
+
+        * inspector/InspectorNetworkAgent.h:
+        * inspector/InspectorNetworkAgent.cpp:
+        (WebCore::InspectorNetworkAgent::setCacheDisabled): Deleted.
+        (WebCore::InspectorNetworkAgent::setResourceCachingDisabled): Added.
+        Implement new command.
+
+        (WebCore::InspectorNetworkAgent::willSendRequest):
+        (WebCore::InspectorNetworkAgent::mainFrameNavigated):
+        Remove crufty attempts to break caches. I believe these are intended to defeat caching
+        proxies and similar middlemen, but this is just as likely to cause unusual loading behavior.
+
+        * page/Page.h:
+        (WebCore::Page::isResourceCachingDisabled):
+        (WebCore::Page::setResourceCachingDisabledOverride):
+        Add an override setting so that Web Inspector's override does not mess up the value
+        of isResourceCachingDisabled that may have been set by a WebKit API client.
+
 2017-03-28  Youenn Fablet  <youenn@apple.com>
 
         Fix addIceCandidate after r214441

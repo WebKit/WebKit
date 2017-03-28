@@ -192,6 +192,13 @@ WebInspector.loaded = function()
     if (this.showPrintStylesSetting.value && window.PageAgent)
         PageAgent.setEmulatedMedia("print");
 
+    // COMPATIBILITY (iOS 10.3): Network.setDisableResourceCaching did not exist.
+    this.resourceCachingDisabledSetting = new WebInspector.Setting("disable-resource-caching", false);
+    if (window.NetworkAgent && NetworkAgent.setResourceCachingDisabled && this.resourceCachingDisabledSetting.value) {
+        NetworkAgent.setResourceCachingDisabled(true);
+        this.resourceCachingDisabledSetting.addEventListener(WebInspector.Setting.Event.Changed, this._resourceCachingDisabledSettingChanged, this);
+    }
+
     this.setZoomFactor(WebInspector.settings.zoomFactor.value);
 
     this.mouseCoords = {
@@ -2230,6 +2237,11 @@ WebInspector._enableControlFlowProfilerSettingChanged = function(event)
             target.RuntimeAgent.disableControlFlowProfiler();
     }
 };
+
+WebInspector._resourceCachingDisabledSettingChanged = function(event)
+{
+    NetworkAgent.setResourceCachingDisabled(this.resourceCachingDisabledSetting.value);
+}
 
 WebInspector.elementDragStart = function(element, dividerDrag, elementDragEnd, event, cursor, eventTarget)
 {

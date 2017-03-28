@@ -342,12 +342,6 @@ void InspectorNetworkAgent::willSendRequest(unsigned long identifier, DocumentLo
     for (auto& entry : m_extraRequestHeaders)
         request.setHTTPHeaderField(entry.key, entry.value);
 
-    if (m_cacheDisabled) {
-        request.setHTTPHeaderField(HTTPHeaderName::Pragma, "no-cache");
-        request.setCachePolicy(ReloadIgnoringCacheData);
-        request.setHTTPHeaderField(HTTPHeaderName::CacheControl, "no-cache");
-    }
-
     Inspector::Protocol::Page::ResourceType resourceType = InspectorPageAgent::resourceTypeJson(type);
 
     RefPtr<Inspector::Protocol::Network::Initiator> initiatorObject = buildInitiatorObject(loader.frame() ? loader.frame()->document() : nullptr);
@@ -654,6 +648,8 @@ void InspectorNetworkAgent::disable(ErrorString&)
     m_instrumentingAgents.setInspectorNetworkAgent(nullptr);
     m_resourcesData->clear();
     m_extraRequestHeaders.clear();
+
+    m_pageAgent->page().setResourceCachingDisabledOverride(false);
 }
 
 void InspectorNetworkAgent::setExtraHTTPHeaders(ErrorString&, const InspectorObject& headers)
@@ -698,11 +694,9 @@ void InspectorNetworkAgent::getResponseBody(ErrorString& errorString, const Stri
     errorString = ASCIILiteral("No data found for resource with given identifier");
 }
 
-void InspectorNetworkAgent::setCacheDisabled(ErrorString&, bool cacheDisabled)
+void InspectorNetworkAgent::setResourceCachingDisabled(ErrorString&, bool disabled)
 {
-    m_cacheDisabled = cacheDisabled;
-    if (cacheDisabled)
-        MemoryCache::singleton().evictResources();
+    m_pageAgent->page().setResourceCachingDisabledOverride(disabled);
 }
 
 void InspectorNetworkAgent::loadResource(ErrorString& errorString, const String& frameId, const String& urlString, Ref<LoadResourceCallback>&& callback)
@@ -783,9 +777,6 @@ void InspectorNetworkAgent::searchInRequest(ErrorString& errorString, const Stri
 
 void InspectorNetworkAgent::mainFrameNavigated(DocumentLoader& loader)
 {
-    if (m_cacheDisabled)
-        MemoryCache::singleton().evictResources();
-
     m_resourcesData->clear(m_pageAgent->loaderId(&loader));
 }
 

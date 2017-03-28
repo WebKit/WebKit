@@ -167,11 +167,11 @@
             ]
         },
         {
-            "name": "setCacheDisabled",
+            "name": "setResourceCachingDisabled",
             "parameters": [
-                { "name": "cacheDisabled", "type": "boolean", "description": "Cache disabled state." }
+                { "name": "disabled", "type": "boolean", "description": "Whether to prevent usage of the resource cache." }
             ],
-            "description": "Toggles ignoring cache for each request. If <code>true</code>, cache will not be used."
+            "description": "Toggles whether the resource cache may be used when loading resources in the inspected page. If <code>true</code>, the resource cache will not be used when loading resources."
         },
         {
             "name": "loadResource",

@@ -1,3 +1,43 @@
+2017-03-28  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: Add "Disable Caches" option that only applies to the inspected page while Web Inspector is open
+        https://bugs.webkit.org/show_bug.cgi?id=169865
+        <rdar://problem/31250573>
+
+        Reviewed by Joseph Pecoraro.
+
+        Hook up a button in the Network tab to WebCore::Page's resourceCachingDisabled flag.
+        If it is active, resource loads are subject to a cache policy that never uses a cached response.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        Add localized strings.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.loaded):
+        Add a setting for whether to disable resource caching and inform the backend
+        of our preference. If someone changes the setting, tell the backend again.
+
+        * UserInterface/Views/NetworkGridContentView.js:
+        (WebInspector.NetworkGridContentView):
+        (WebInspector.NetworkGridContentView.prototype.get navigationItems):
+        (WebInspector.NetworkGridContentView.prototype._resourceCachingDisabledSettingChanged):
+        (WebInspector.NetworkGridContentView.prototype._toggleDisableResourceCache):
+        Add a new activatable navigation item that toggles disableResourceCaching for the inspected page.
+
+        * UserInterface/Protocol/Legacy/10.0/InspectorBackendCommands.js:
+        * UserInterface/Protocol/Legacy/10.3/InspectorBackendCommands.js:
+        * UserInterface/Protocol/Legacy/7.0/InspectorBackendCommands.js:
+        * UserInterface/Protocol/Legacy/8.0/InspectorBackendCommands.js:
+        * UserInterface/Protocol/Legacy/9.0/InspectorBackendCommands.js:
+        * UserInterface/Protocol/Legacy/9.3/InspectorBackendCommands.js:
+        * Versions/Inspector-iOS-10.0.json:
+        * Versions/Inspector-iOS-10.3.json:
+        * Versions/Inspector-iOS-7.0.json:
+        * Versions/Inspector-iOS-8.0.json:
+        * Versions/Inspector-iOS-9.0.json:
+        * Versions/Inspector-iOS-9.3.json:
+        Update legacy backend commands to remove the old/broken Network.setCacheDisabled command.
+
 2017-03-28  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Inspecting a Main Resource that is JS/JSON does not format / syntax highlight it properly

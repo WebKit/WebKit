@@ -1,0 +1,10 @@
+Test for `Network.setResourceCachingDisabled` for memory cache loads.
+
+
+== Running test suite: Network.SetResourceCachingDisabled.MemoryCache
+-- Running test setup.
+-- Running test case: Network.SetResourceCachingDisabled.MemoryCache
+PASS: Resource should be exist.
+PASS: statusCode should be 200
+PASS: responseSource should be Symbol(network)
+

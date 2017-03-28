@@ -794,13 +794,6 @@
                     { "name": "body", "type": "string", "description": "Response body." },
                     { "name": "base64Encoded", "type": "boolean", "description": "True, if content was sent as base64." }
                 ]
-            },
-            {
-                "name": "setCacheDisabled",
-                "parameters": [
-                    { "name": "cacheDisabled", "type": "boolean", "description": "Cache disabled state." }
-                ],
-                "description": "Toggles ignoring cache for each request. If <code>true</code>, cache will not be used."
             }
         ],
         "events": [

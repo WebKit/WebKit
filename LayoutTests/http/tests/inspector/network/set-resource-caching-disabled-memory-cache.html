@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="resources/cached-script.js"></script>
+<script src="../resources/inspector-test.js"></script>
+<script>
+// NOTE: this test is based on resource-response-source-memory-cache.html.
+
+TestPage.dispatchEventToFrontend("LoadComplete");
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Network.SetResourceCachingDisabled.MemoryCache");
+
+    function addReloadTestCase({name, description, setup, expression, pattern, ignoreCache, statusCode, responseSource}) {
+        suite.addTestCase({
+            name, description, setup,
+            test(resolve, reject) {
+                NetworkAgent.setResourceCachingDisabled(true);
+                InspectorTest.reloadPage(ignoreCache);
+                InspectorTest.awaitEvent("LoadComplete").then((event) => {
+                    let resource = null;
+                    for (let item of WebInspector.frameResourceManager.mainFrame.resourceCollection.items) {
+                        if (pattern.test(item.url)) {
+                            resource = item;
+                            break;
+                        }
+                    }
+                    if (!resource) {
+                        InspectorTest.fail("Failed to find specific resource.");
+                        reject();
+                        return;
+                    }
+                    InspectorTest.expectThat(resource instanceof WebInspector.Resource, "Resource should be exist.");
+                    InspectorTest.expectEqual(resource.statusCode, statusCode, `statusCode should be ${statusCode}`);
+                    InspectorTest.expectEqual(resource.responseSource, responseSource, `responseSource should be ${String(responseSource)}`);
+                }).then(resolve, reject);
+            }
+        });
+    }
+
+    addReloadTestCase({
+        name: "Network.SetResourceCachingDisabled.MemoryCache",
+        description: "Fail to load a resource from the memory cache by reloading this page when resource caching is disabled.",
+        pattern: /cached-script\.js$/,
+        setup(resolve) { NetworkAgent.setResourceCachingDisabled(true); resolve(); },
+        ignoreCache: false,
+        responseSource: WebInspector.Resource.ResponseSource.Network,
+        statusCode: 200,
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test for `Network.setResourceCachingDisabled` for memory cache loads.</p>
+</body>
+</html>

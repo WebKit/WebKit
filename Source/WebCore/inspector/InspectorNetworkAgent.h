@@ -110,7 +110,7 @@ public:
     void disable(ErrorString&) override;
     void setExtraHTTPHeaders(ErrorString&, const Inspector::InspectorObject& headers) override;
     void getResponseBody(ErrorString&, const String& requestId, String* content, bool* base64Encoded) override;
-    void setCacheDisabled(ErrorString&, bool cacheDisabled) override;
+    void setResourceCachingDisabled(ErrorString&, bool disabled) override;
     void loadResource(ErrorString&, const String& frameId, const String& url, Ref<LoadResourceCallback>&&) override;
 
 private:
@@ -133,7 +133,6 @@ private:
 
     std::unique_ptr<NetworkResourcesData> m_resourcesData;
     bool m_enabled { false };
-    bool m_cacheDisabled { false };
     bool m_loadingXHRSynchronously { false };
     HashMap<String, String> m_extraRequestHeaders;
     HashSet<unsigned long> m_hiddenRequestIdentifiers;
