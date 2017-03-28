@@ -839,7 +839,7 @@ WebInspector.TextEditor = class TextEditor extends WebInspector.View
         let indentString = WebInspector.indentString();
         const includeSourceMapData = true;
 
-        let sourceType = this._delegate.textEditorScriptSourceType(this);
+        let sourceType = this._delegate ? this._delegate.textEditorScriptSourceType(this) : WebInspector.Script.SourceType.Program;
         const isModule = sourceType === WebInspector.Script.SourceType.Module;
 
         let workerProxy = WebInspector.FormatterWorkerProxy.singleton();

@@ -1,3 +1,17 @@
+2017-03-28  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Unable to Format JSON Request Data
+        https://bugs.webkit.org/show_bug.cgi?id=170189
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/TextEditor.js:
+        (WebInspector.TextEditor.prototype._startWorkerPrettyPrint):
+        When we are viewing request data we are looking at a TextResourceContentView
+        which has a TextEditor without a delegate. In these cases we can just assume
+        a JavaScript Program. In the majority of cases this will typically be JSON
+        data, and either Program or Module will highlight and format as expected.
+
 2017-03-27  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: Option-clicking the close tab button should close all other tabs
