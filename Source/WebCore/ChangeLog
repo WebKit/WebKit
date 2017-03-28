@@ -1,5 +1,26 @@
 2017-03-27  Simon Fraser  <simon.fraser@apple.com>
 
+        Enhance the touch region debug overlay to show regions for the different events
+        https://bugs.webkit.org/show_bug.cgi?id=170162
+
+        Reviewed by Tim Horton.
+
+        Have NonFastScrollableRegionOverlay use a different color for each region in EventTrackingRegions,
+        and to draw a legend showing what the colors mean.
+        
+        On Mac, this overlay displays the non-fast scrollable region (which we don't keep separate from the wheel event
+        region).
+
+        * page/DebugPageOverlays.cpp:
+        (WebCore::NonFastScrollableRegionOverlay::updateRegion):
+        (WebCore::touchEventRegionColors):
+        (WebCore::drawRightAlignedText):
+        (WebCore::NonFastScrollableRegionOverlay::drawRect):
+        (WebCore::RegionOverlay::drawRect):
+        (WebCore::RegionOverlay::drawRegion):
+
+2017-03-27  Simon Fraser  <simon.fraser@apple.com>
+
         Make sure the non-fast scrolling debug overlay is correctly updated
         https://bugs.webkit.org/show_bug.cgi?id=170142
 
