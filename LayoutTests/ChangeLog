@@ -1,3 +1,23 @@
+2017-03-28  Jonathan Bedard  <jbedard@apple.com>
+
+        Moved gardened ios-simulator tests to ios folders
+        <rdar://problem/30948691>
+
+        Unreviewed test re-organization.
+
+        Moving ios-simulator test expectations to share as many expectations
+        as possible with on-device testing.
+
+        * platform/ios: Moved from platform/ios-simulator.
+        * platform/ios-device: Added.
+        * platform/ios-device-wk1: Added.
+        * platform/ios-device-wk2: Added.
+        * platform/ios-simulator: Moved to platform/ios.
+        * platform/ios-simulator-wk1: Moved to platform/ios-wk1.
+        * platform/ios-simulator-wk2: Moved to platform/ios-wk2.
+        * platform/ios-wk1: Moved from platform/ios-simulator-wk1.
+        * platform/ios-wk2: Moved from platform/ios-simulator-wk2.
+
 2017-03-28  Yoav Weiss  <yoav@yoav.ws>
 
         Add a warning for unused link preloads.
