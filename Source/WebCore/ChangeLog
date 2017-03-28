@@ -1,3 +1,18 @@
+2017-03-27  Simon Fraser  <simon.fraser@apple.com>
+
+        Make sure the non-fast scrolling debug overlay is correctly updated
+        https://bugs.webkit.org/show_bug.cgi?id=170142
+
+        Reviewed by Tim Horton.
+
+        AsyncScrollingCoordinator::frameViewEventTrackingRegionsChanged() is called on a timer
+        from Document code, so the existing DebugPageOverlays::didLayout() call at the end
+        of FrameView::layout() wasn't sufficient to keep the non-fast scrollable region up-to-date
+        on iOS.
+
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::frameViewEventTrackingRegionsChanged):
+
 2017-03-28  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] AirPlay placard text looks bad on 1x displays
