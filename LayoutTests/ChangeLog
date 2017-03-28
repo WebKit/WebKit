@@ -1,3 +1,14 @@
+2017-03-28  Antti Koivisto  <antti@apple.com>
+
+        Missing render tree position invalidation when tearing down renderers for display:contents subtree
+        https://bugs.webkit.org/show_bug.cgi?id=170199
+        <rdar://problem/31260856>
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/shadow-dom/slot-renderer-teardown-expected.txt: Added.
+        * fast/shadow-dom/slot-renderer-teardown.html: Added.
+
 2017-03-28  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r214485.
