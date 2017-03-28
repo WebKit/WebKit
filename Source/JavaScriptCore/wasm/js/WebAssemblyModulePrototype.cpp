@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,9 +33,12 @@
 #include "JSArrayBuffer.h"
 #include "JSCInlines.h"
 #include "JSWebAssemblyModule.h"
+#include "ObjectConstructor.h"
 
 namespace JSC {
 static EncodedJSValue JSC_HOST_CALL webAssemblyModuleProtoCustomSections(ExecState*);
+static EncodedJSValue JSC_HOST_CALL webAssemblyModuleProtoImports(ExecState*);
+static EncodedJSValue JSC_HOST_CALL webAssemblyModuleProtoExports(ExecState*);
 }
 
 #include "WebAssemblyModulePrototype.lut.h"
@@ -47,6 +50,8 @@ const ClassInfo WebAssemblyModulePrototype::s_info = { "WebAssembly.Module.proto
 /* Source for WebAssemblyModulePrototype.lut.h
  @begin prototypeTableWebAssemblyModule
  customSections webAssemblyModuleProtoCustomSections DontEnum|Function 1
+ imports        webAssemblyModuleProtoImports        DontEnum|Accessor 0
+ exports        webAssemblyModuleProtoExports        DontEnum|Accessor 0
  @end
  */
 
@@ -58,8 +63,7 @@ EncodedJSValue JSC_HOST_CALL webAssemblyModuleProtoCustomSections(ExecState* exe
 
     JSWebAssemblyModule* module = jsDynamicCast<JSWebAssemblyModule*>(vm, exec->thisValue());
     if (!module)
-        throwException(exec, throwScope, createTypeError(exec, ASCIILiteral("WebAssembly.Module.prototype.customSections called with non WebAssembly.Module |this| value")));
-    RETURN_IF_EXCEPTION(throwScope, { });
+        return JSValue::encode(throwException(exec, throwScope, createTypeError(exec, ASCIILiteral("WebAssembly.Module.prototype.customSections called with non WebAssembly.Module |this| value"))));
 
     const String sectionNameString = exec->argument(0).getString(exec);
     RETURN_IF_EXCEPTION(throwScope, { });
@@ -72,12 +76,74 @@ EncodedJSValue JSC_HOST_CALL webAssemblyModuleProtoCustomSections(ExecState* exe
         if (section.name == sectionNameString) {
             auto buffer = ArrayBuffer::tryCreate(section.payload.data(), section.payload.size());
             if (!buffer)
-                throwException(exec, throwScope, createOutOfMemoryError(exec));
+                return JSValue::encode(throwException(exec, throwScope, createOutOfMemoryError(exec)));
 
             Structure* arrayBufferStructure = InternalFunction::createSubclassStructure(exec, JSValue(), globalObject->arrayBufferStructure(ArrayBufferSharingMode::Default));
             RETURN_IF_EXCEPTION(throwScope, { });
 
             result->push(exec, JSArrayBuffer::create(vm, arrayBufferStructure, WTFMove(buffer)));
+            RETURN_IF_EXCEPTION(throwScope, { });
+        }
+    }
+
+    return JSValue::encode(result);
+}
+
+EncodedJSValue JSC_HOST_CALL webAssemblyModuleProtoImports(ExecState* exec)
+{
+    VM& vm = exec->vm();
+    auto* globalObject = exec->lexicalGlobalObject();
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+
+    JSWebAssemblyModule* module = jsDynamicCast<JSWebAssemblyModule*>(vm, exec->thisValue());
+    if (!module)
+        return JSValue::encode(throwException(exec, throwScope, createTypeError(exec, ASCIILiteral("WebAssembly.Module.prototype.imports called with non WebAssembly.Module |this| value"))));
+
+    JSArray* result = constructEmptyArray(exec, nullptr, globalObject);
+    RETURN_IF_EXCEPTION(throwScope, { });
+
+    const auto& imports = module->moduleInformation().imports;
+    if (imports.size()) {
+        Identifier module = Identifier::fromString(exec, "module");
+        Identifier name = Identifier::fromString(exec, "name");
+        Identifier kind = Identifier::fromString(exec, "kind");
+        for (const Wasm::Import& imp : imports) {
+            JSObject* obj = constructEmptyObject(exec);
+            RETURN_IF_EXCEPTION(throwScope, { });
+            obj->putDirect(vm, module, jsString(exec, imp.module.string()));
+            obj->putDirect(vm, name, jsString(exec, imp.field.string()));
+            obj->putDirect(vm, kind, jsString(exec, String(makeString(imp.kind))));
+            result->push(exec, obj);
+            RETURN_IF_EXCEPTION(throwScope, { });
+        }
+    }
+
+    return JSValue::encode(result);
+}
+
+EncodedJSValue JSC_HOST_CALL webAssemblyModuleProtoExports(ExecState* exec)
+{
+    VM& vm = exec->vm();
+    auto* globalObject = exec->lexicalGlobalObject();
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+
+    JSWebAssemblyModule* module = jsDynamicCast<JSWebAssemblyModule*>(vm, exec->thisValue());
+    if (!module)
+        return JSValue::encode(throwException(exec, throwScope, createTypeError(exec, ASCIILiteral("WebAssembly.Module.prototype.exports called with non WebAssembly.Module |this| value"))));
+
+    JSArray* result = constructEmptyArray(exec, nullptr, globalObject);
+    RETURN_IF_EXCEPTION(throwScope, { });
+
+    const auto& exports = module->moduleInformation().exports;
+    if (exports.size()) {
+        Identifier name = Identifier::fromString(exec, "name");
+        Identifier kind = Identifier::fromString(exec, "kind");
+        for (const Wasm::Export& exp : exports) {
+            JSObject* obj = constructEmptyObject(exec);
+            RETURN_IF_EXCEPTION(throwScope, { });
+            obj->putDirect(vm, name, jsString(exec, exp.field.string()));
+            obj->putDirect(vm, kind, jsString(exec, String(makeString(exp.kind))));
+            result->push(exec, obj);
             RETURN_IF_EXCEPTION(throwScope, { });
         }
     }

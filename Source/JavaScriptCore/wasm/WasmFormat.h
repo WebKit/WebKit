@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -92,10 +92,10 @@ static_assert(static_cast<int>(ExternalKind::Global)   == 3, "Wasm needs Global 
 static inline const char* makeString(ExternalKind kind)
 {
     switch (kind) {
-    case ExternalKind::Function: return "Function";
-    case ExternalKind::Table: return "Table";
-    case ExternalKind::Memory: return "Memory";
-    case ExternalKind::Global: return "Global";
+    case ExternalKind::Function: return "function";
+    case ExternalKind::Table: return "table";
+    case ExternalKind::Memory: return "memory";
+    case ExternalKind::Global: return "global";
     }
     RELEASE_ASSERT_NOT_REACHED();
     return "?";
