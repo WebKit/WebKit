@@ -298,7 +298,7 @@ JSValue JSCell::getPrototype(JSObject*, ExecState*)
 bool JSCell::isAnyWasmCallee(VM& vm) const
 {
 #if ENABLE(WEBASSEMBLY)
-    return inherits(vm, JSWebAssemblyCallee::info()) || inherits(vm, WebAssemblyToJSCallee::info());
+    return inherits(vm, JSWebAssemblyCallee::info()) || isWebAssemblyToJSCallee(this);
 #else
     UNUSED_PARAM(vm);
     return false;

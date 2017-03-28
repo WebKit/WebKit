@@ -59,7 +59,6 @@
 #include "StructureStubClearingWatchpoint.h"
 #include "StructureStubInfo.h"
 #include "ThunkGenerators.h"
-#include "WasmContext.h"
 #include <wtf/CommaPrinter.h>
 #include <wtf/ListDump.h>
 #include <wtf/StringPrintStream.h>
@@ -577,25 +576,13 @@ static void linkSlowFor(VM* vm, CallLinkInfo& callLinkInfo)
     callLinkInfo.setSlowStub(createJITStubRoutine(virtualThunk, *vm, nullptr, true));
 }
 
-static bool isWebAssemblyToJSCallee(VM& vm, JSCell* callee)
-{
-#if ENABLE(WEBASSEMBLY)
-    // The WebAssembly -> JS stub sets it caller frame's callee to a singleton which lives on the VM.
-    return callee == vm.webAssemblyToJSCallee.get();
-#else
-    UNUSED_PARAM(vm);
-    UNUSED_PARAM(callee);
-    return false;
-#endif // ENABLE(WEBASSEMBLY)
-}
-
-static JSCell* webAssemblyOwner(VM& vm)
+static JSCell* webAssemblyOwner(JSCell* callee)
 {
 #if ENABLE(WEBASSEMBLY)
     // Each WebAssembly.Instance shares the stubs from their WebAssembly.Module, which are therefore the appropriate owner.
-    return loadWasmContext(vm)->module();
+    return jsCast<WebAssemblyToJSCallee*>(callee)->module();
 #else
-    UNUSED_PARAM(vm);
+    UNUSED_PARAM(callee);
     RELEASE_ASSERT_NOT_REACHED();
     return nullptr;
 #endif // ENABLE(WEBASSEMBLY)
@@ -612,7 +599,7 @@ void linkFor(
     CodeBlock* callerCodeBlock = callerFrame->codeBlock();
 
     // WebAssembly -> JS stubs don't have a valid CodeBlock.
-    JSCell* owner = isWebAssemblyToJSCallee(vm, callerFrame->callee()) ? webAssemblyOwner(vm) : callerCodeBlock;
+    JSCell* owner = isWebAssemblyToJSCallee(callerFrame->callee()) ? webAssemblyOwner(callerFrame->callee()) : callerCodeBlock;
     ASSERT(owner);
 
     ASSERT(!callLinkInfo.isLinked());
@@ -732,10 +719,10 @@ void linkPolymorphicCall(
     CallFrame* callerFrame = exec->callerFrame();
     VM& vm = callerFrame->vm();
     CodeBlock* callerCodeBlock = callerFrame->codeBlock();
-    bool isWebAssembly = isWebAssemblyToJSCallee(vm, callerFrame->callee());
+    bool isWebAssembly = isWebAssemblyToJSCallee(callerFrame->callee());
 
     // WebAssembly -> JS stubs don't have a valid CodeBlock.
-    JSCell* owner = isWebAssembly ? webAssemblyOwner(vm) : callerCodeBlock;
+    JSCell* owner = isWebAssembly ? webAssemblyOwner(callerFrame->callee()) : callerCodeBlock;
     ASSERT(owner);
 
     CallVariantList list;

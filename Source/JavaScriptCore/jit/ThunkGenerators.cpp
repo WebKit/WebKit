@@ -38,7 +38,6 @@
 #include "MathCommon.h"
 #include "MaxFrameExtentForSlowPathCall.h"
 #include "SpecializedThunkJIT.h"
-#include "WasmContext.h"
 #include "WasmExceptionType.h"
 #include <wtf/InlineASM.h>
 #include <wtf/StringPrintStream.h>
@@ -1148,16 +1147,17 @@ MacroAssemblerCodeRef throwExceptionFromWasmThunkGenerator(VM* vm)
     }
 
     jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
+    jit.loadWasmContext(GPRInfo::argumentGPR2);
     CCallHelpers::Call call = jit.call();
     jit.jumpToExceptionHandler();
 
-    void (*throwWasmException)(ExecState*, Wasm::ExceptionType) = [] (ExecState* exec, Wasm::ExceptionType type) {
+    void (*throwWasmException)(ExecState*, Wasm::ExceptionType, JSWebAssemblyInstance*) = [] (ExecState* exec, Wasm::ExceptionType type, JSWebAssemblyInstance* wasmContext) {
         VM* vm = &exec->vm();
         NativeCallFrameTracer tracer(vm, exec);
 
         {
             auto throwScope = DECLARE_THROW_SCOPE(*vm);
-            JSGlobalObject* globalObject = loadWasmContext(*vm)->globalObject();
+            JSGlobalObject* globalObject = wasmContext->globalObject();
 
             JSWebAssemblyRuntimeError* error = JSWebAssemblyRuntimeError::create(exec, *vm, globalObject->WebAssemblyRuntimeErrorStructure(), Wasm::errorMessageForExceptionType(type));
             throwException(exec, throwScope, error);

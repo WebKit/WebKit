@@ -29,21 +29,22 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "JSCInlines.h"
+#include "JSWebAssemblyModule.h"
 
 namespace JSC {
 
 const ClassInfo WebAssemblyToJSCallee::s_info = { "WebAssemblyToJSCallee", nullptr, 0, CREATE_METHOD_TABLE(WebAssemblyToJSCallee) };
 
-WebAssemblyToJSCallee* WebAssemblyToJSCallee::create(VM& vm, Structure* structure)
+WebAssemblyToJSCallee* WebAssemblyToJSCallee::create(VM& vm, Structure* structure, JSWebAssemblyModule* module)
 {
     WebAssemblyToJSCallee* callee = new (NotNull, allocateCell<WebAssemblyToJSCallee>(vm.heap)) WebAssemblyToJSCallee(vm, structure);
-    callee->finishCreation(vm);
+    callee->finishCreation(vm, module);
     return callee;
 }
 
 Structure* WebAssemblyToJSCallee::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
 {
-    return Structure::create(vm, globalObject, prototype, TypeInfo(CellType, StructureFlags), info());
+    return Structure::create(vm, globalObject, prototype, TypeInfo(WebAssemblyToJSCalleeType, StructureFlags), info());
 }
 
 WebAssemblyToJSCallee::WebAssemblyToJSCallee(VM& vm, Structure* structure)
@@ -51,15 +52,19 @@ WebAssemblyToJSCallee::WebAssemblyToJSCallee(VM& vm, Structure* structure)
 {
 }
 
-void WebAssemblyToJSCallee::finishCreation(VM& vm)
+void WebAssemblyToJSCallee::finishCreation(VM& vm, JSWebAssemblyModule* module)
 {
     Base::finishCreation(vm);
+    m_module.set(vm, this, module);
 }
 
-void WebAssemblyToJSCallee::destroy(JSCell* cell)
+void WebAssemblyToJSCallee::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
-    WebAssemblyToJSCallee* thisObject = static_cast<WebAssemblyToJSCallee*>(cell);
-    thisObject->WebAssemblyToJSCallee::~WebAssemblyToJSCallee();
+    auto* thisObject = jsCast<WebAssemblyToJSCallee*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
+
+    Base::visitChildren(thisObject, visitor);
+    visitor.append(thisObject->m_module);
 }
 
 } // namespace JSC

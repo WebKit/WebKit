@@ -34,17 +34,17 @@
 
 namespace JSC {
 
-JSWebAssemblyInstance* loadWasmContext(VM& vm)
+WasmContext* loadWasmContext(VM& vm)
 {
 #if ENABLE(FAST_TLS_JIT)
     if (Options::useWebAssemblyFastTLS())
-        return bitwise_cast<JSWebAssemblyInstance*>(_pthread_getspecific_direct(WTF_WASM_CONTEXT_KEY));
+        return bitwise_cast<WasmContext*>(_pthread_getspecific_direct(WTF_WASM_CONTEXT_KEY));
 #endif
     // FIXME: Save this state elsewhere to allow PIC. https://bugs.webkit.org/show_bug.cgi?id=169773
     return vm.wasmContext;
 }
 
-void storeWasmContext(VM& vm, JSWebAssemblyInstance* instance)
+void storeWasmContext(VM& vm, WasmContext* instance)
 {
 #if ENABLE(FAST_TLS_JIT)
     if (Options::useWebAssemblyFastTLS())

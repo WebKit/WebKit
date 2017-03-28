@@ -36,6 +36,7 @@
 #include "WasmFormat.h"
 #include "WasmMemory.h"
 #include "WasmPlan.h"
+#include "WebAssemblyToJSCallee.h"
 #include <wtf/StdLibExtras.h>
 
 namespace JSC {
@@ -132,6 +133,7 @@ void JSWebAssemblyModule::finishCreation(VM& vm, ExecState* exec, uint8_t* sourc
     m_sourceBuffer = ArrayBuffer::create(source, byteSize);
     m_moduleInformation = plan.takeModuleInformation();
     m_exportSymbolTable.set(vm, this, exportSymbolTable);
+    m_callee.set(vm, this, WebAssemblyToJSCallee::create(vm, vm.webAssemblyToJSCalleeStructure.get(), this));
     codeBlockFor(codeBlock->mode()).set(vm, this, codeBlock);
 }
 
@@ -147,6 +149,7 @@ void JSWebAssemblyModule::visitChildren(JSCell* cell, SlotVisitor& visitor)
 
     Base::visitChildren(thisObject, visitor);
     visitor.append(thisObject->m_exportSymbolTable);
+    visitor.append(thisObject->m_callee);
     for (unsigned i = 0; i < Wasm::NumberOfMemoryModes; ++i)
         visitor.append(thisObject->m_codeBlocks[i]);
 }

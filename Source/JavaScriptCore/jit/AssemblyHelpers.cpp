@@ -32,6 +32,10 @@
 #include "JSCInlines.h"
 #include "LinkBuffer.h"
 
+#if ENABLE(WEBASSEMBLY)
+#include "WasmMemoryInformation.h"
+#endif
+
 namespace JSC {
 
 ExecutableBase* AssemblyHelpers::executableFor(const CodeOrigin& codeOrigin)
@@ -765,6 +769,49 @@ void AssemblyHelpers::emitConvertValueToBoolean(JSValueRegs value, GPRReg result
 
     done.link(this);
 }
+
+#if ENABLE(WEBASSEMBLY)
+void AssemblyHelpers::loadWasmContext(GPRReg dst)
+{
+#if ENABLE(FAST_TLS_JIT)
+    if (Wasm::useFastTLSForWasmContext()) {
+        loadFromTLSPtr(fastTLSOffsetForKey(WTF_WASM_CONTEXT_KEY), dst);
+        return;
+    }
+#endif
+    move(Wasm::PinnedRegisterInfo::get().wasmContextPointer, dst);
+}
+
+void AssemblyHelpers::storeWasmContext(GPRReg src)
+{
+#if ENABLE(FAST_TLS_JIT)
+    if (Wasm::useFastTLSForWasmContext()) {
+        storeToTLSPtr(src, fastTLSOffsetForKey(WTF_WASM_CONTEXT_KEY));
+        return;
+    }
+#endif
+    move(src, Wasm::PinnedRegisterInfo::get().wasmContextPointer);
+}
+
+bool AssemblyHelpers::loadWasmContextNeedsMacroScratchRegister()
+{
+#if ENABLE(FAST_TLS_JIT)
+    if (Wasm::useFastTLSForWasmContext())
+        return loadFromTLSPtrNeedsMacroScratchRegister();
+#endif
+    return false;
+}
+
+bool AssemblyHelpers::storeWasmContextNeedsMacroScratchRegister()
+{
+#if ENABLE(FAST_TLS_JIT)
+    if (Wasm::useFastTLSForWasmContext())
+        return storeToTLSPtrNeedsMacroScratchRegister();
+#endif
+    return false;
+}
+
+#endif
 
 } // namespace JSC
 

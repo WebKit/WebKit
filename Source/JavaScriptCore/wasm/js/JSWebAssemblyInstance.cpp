@@ -34,6 +34,7 @@
 #include "JSModuleNamespaceObject.h"
 #include "JSWebAssemblyMemory.h"
 #include "JSWebAssemblyModule.h"
+#include "WebAssemblyToJSCallee.h"
 #include <wtf/StdLibExtras.h>
 
 namespace JSC {
@@ -81,6 +82,7 @@ void JSWebAssemblyInstance::finishCreation(VM& vm, JSWebAssemblyModule* module, 
 
     m_codeBlock.set(vm, this, module->codeBlock());
     m_moduleNamespaceObject.set(vm, this, moduleNamespaceObject);
+    m_callee.set(vm, this, module->callee());
     putDirect(vm, Identifier::fromString(&vm, "exports"), moduleNamespaceObject, None);
 }
 
@@ -99,6 +101,7 @@ void JSWebAssemblyInstance::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(thisObject->m_moduleNamespaceObject);
     visitor.append(thisObject->m_memory);
     visitor.append(thisObject->m_table);
+    visitor.append(thisObject->m_callee);
     visitor.reportExtraMemoryVisited(thisObject->module()->moduleInformation().globals.size());
     for (unsigned i = 0; i < thisObject->m_numImportFunctions; ++i)
         visitor.append(*thisObject->importFunction(i));

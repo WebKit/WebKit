@@ -72,10 +72,10 @@ String StackFrame::functionName(VM& vm) const
     }
     String name;
     if (m_callee) {
+        if (m_callee->isAnyWasmCallee(*m_callee->vm()))
+            return ASCIILiteral("<wasm>");
         if (m_callee->isObject())
             name = getCalculatedDisplayName(vm, jsCast<JSObject*>(m_callee.get())).impl();
-        else if (m_callee->isAnyWasmCallee(*m_callee->vm()))
-            return ASCIILiteral("<wasm>");
     }
     return name.isNull() ? emptyString() : name;
 }

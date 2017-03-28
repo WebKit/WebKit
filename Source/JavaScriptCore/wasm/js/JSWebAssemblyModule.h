@@ -43,6 +43,7 @@ class Plan;
 
 class SymbolTable;
 class JSWebAssemblyMemory;
+class WebAssemblyToJSCallee;
 
 class JSWebAssemblyModule : public JSDestructibleObject {
 public:
@@ -60,6 +61,7 @@ public:
     {
         return m_moduleInformation->signatureIndexFromFunctionIndexSpace(functionIndexSpace);
     }
+    WebAssemblyToJSCallee* callee() const { return m_callee.get(); }
 
     // Returns the code block that this module was originally compiled expecting to use. This won't need to recompile.
     JSWebAssemblyCodeBlock* codeBlock() { return codeBlockFor(m_moduleInformation->memory.mode()).get(); }
@@ -79,6 +81,7 @@ private:
     std::unique_ptr<Wasm::ModuleInformation> m_moduleInformation;
     WriteBarrier<SymbolTable> m_exportSymbolTable;
     WriteBarrier<JSWebAssemblyCodeBlock> m_codeBlocks[Wasm::NumberOfMemoryModes];
+    WriteBarrier<WebAssemblyToJSCallee> m_callee;
 };
 
 } // namespace JSC

@@ -28,6 +28,7 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "GPRInfo.h"
+#include "RegisterSet.h"
 #include "WasmMemory.h"
 #include "WasmPageCount.h"
 #include <wtf/Ref.h>
@@ -43,8 +44,20 @@ struct PinnedSizeRegisterInfo {
 struct PinnedRegisterInfo {
     Vector<PinnedSizeRegisterInfo> sizeRegisters;
     GPRReg baseMemoryPointer;
+    GPRReg wasmContextPointer;
     static const PinnedRegisterInfo& get();
-    PinnedRegisterInfo(Vector<PinnedSizeRegisterInfo>&&, GPRReg);
+    PinnedRegisterInfo(Vector<PinnedSizeRegisterInfo>&&, GPRReg, GPRReg);
+
+    RegisterSet toSave() const
+    {
+        RegisterSet result;
+        result.set(baseMemoryPointer);
+        if (wasmContextPointer != InvalidGPRReg)
+            result.set(wasmContextPointer);
+        for (const auto& info : sizeRegisters)
+            result.set(info.sizeRegister);
+        return result;
+    }
 };
 
 class MemoryInformation {
@@ -72,6 +85,20 @@ private:
     MemoryMode m_mode { MemoryMode::BoundsChecking };
     bool m_isImport { false };
 };
+
+inline bool useFastTLS()
+{
+#if ENABLE(FAST_TLS_JIT)
+    return Options::useWebAssemblyFastTLS();
+#else
+    return false;
+#endif
+}
+
+inline bool useFastTLSForWasmContext()
+{
+    return useFastTLS();
+}
 
 } } // namespace JSC::Wasm
 

@@ -336,7 +336,6 @@ public:
     Strong<Structure> webAssemblyCalleeStructure;
     Strong<Structure> webAssemblyToJSCalleeStructure;
     Strong<Structure> webAssemblyCodeBlockStructure;
-    Strong<JSCell> webAssemblyToJSCallee;
 #endif
     Strong<Structure> moduleProgramExecutableStructure;
     Strong<Structure> regExpStructure;
@@ -488,6 +487,11 @@ public:
     static ptrdiff_t targetMachinePCForThrowOffset()
     {
         return OBJECT_OFFSETOF(VM, targetMachinePCForThrow);
+    }
+
+    static ptrdiff_t wasmContextOffset()
+    {
+        return OBJECT_OFFSETOF(VM, wasmContext);
     }
 
     void restorePreviousException(Exception* exception) { setException(exception); }

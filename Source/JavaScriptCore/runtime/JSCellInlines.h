@@ -346,4 +346,9 @@ inline JSObject* JSCell::toObject(ExecState* exec, JSGlobalObject* globalObject)
     return toObjectSlow(exec, globalObject);
 }
 
+inline bool isWebAssemblyToJSCallee(const JSCell* cell)
+{
+    return cell->type() == WebAssemblyToJSCalleeType;
+}
+
 } // namespace JSC

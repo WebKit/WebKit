@@ -36,7 +36,6 @@
 #include "LinkBuffer.h"
 #include "NativeErrorConstructor.h"
 #include "WasmCallingConvention.h"
-#include "WasmContext.h"
 #include "WasmExceptionType.h"
 
 namespace JSC { namespace Wasm {
@@ -66,8 +65,6 @@ static MacroAssemblerCodeRef wasmToJs(VM* vm, Bag<CallLinkInfo>& callLinkInfos, 
 
     jit.emitFunctionPrologue();
     jit.store64(JIT::TrustedImm32(0), JIT::Address(GPRInfo::callFrameRegister, CallFrameSlot::codeBlock * static_cast<int>(sizeof(Register)))); // FIXME Stop using 0 as codeBlocks. https://bugs.webkit.org/show_bug.cgi?id=165321
-    jit.storePtr(JIT::TrustedImmPtr(vm->webAssemblyToJSCallee.get()), JIT::Address(GPRInfo::callFrameRegister, CallFrameSlot::callee * static_cast<int>(sizeof(Register))));
-
 
     {
         bool hasBadI64Use = false;
@@ -93,16 +90,22 @@ static MacroAssemblerCodeRef wasmToJs(VM* vm, Bag<CallLinkInfo>& callLinkInfos, 
         if (hasBadI64Use) {
             jit.copyCalleeSavesToVMEntryFrameCalleeSavesBuffer();
             jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
+            jit.loadWasmContext(GPRInfo::argumentGPR1);
+
+            // Store Callee.
+            jit.loadPtr(CCallHelpers::Address(GPRInfo::argumentGPR1, JSWebAssemblyInstance::offsetOfCallee()), GPRInfo::argumentGPR2);
+            jit.storePtr(GPRInfo::argumentGPR2, JIT::Address(GPRInfo::callFrameRegister, CallFrameSlot::callee * static_cast<int>(sizeof(Register))));
+
             auto call = jit.call();
             jit.jumpToExceptionHandler();
 
-            void (*throwBadI64)(ExecState*) = [] (ExecState* exec) -> void {
+            void (*throwBadI64)(ExecState*, JSWebAssemblyInstance*) = [] (ExecState* exec, JSWebAssemblyInstance* wasmContext) -> void {
                 VM* vm = &exec->vm();
                 NativeCallFrameTracer tracer(vm, exec);
 
                 {
                     auto throwScope = DECLARE_THROW_SCOPE(*vm);
-                    JSGlobalObject* globalObject = loadWasmContext(*vm)->globalObject();
+                    JSGlobalObject* globalObject = wasmContext->globalObject();
                     auto* error = ErrorInstance::create(exec, *vm, globalObject->typeErrorConstructor()->errorStructure(), ASCIILiteral("i64 not allowed as return type or argument to an imported function"));
                     throwException(exec, throwScope, error);
                 }
@@ -251,6 +254,10 @@ static MacroAssemblerCodeRef wasmToJs(VM* vm, Bag<CallLinkInfo>& callLinkInfos, 
             }
         }
     }
+
+    jit.loadWasmContext(GPRInfo::argumentGPR0);
+    jit.loadPtr(CCallHelpers::Address(GPRInfo::argumentGPR0, JSWebAssemblyInstance::offsetOfCallee()), GPRInfo::argumentGPR0);
+    jit.storePtr(GPRInfo::argumentGPR0, JIT::Address(GPRInfo::callFrameRegister, CallFrameSlot::callee * static_cast<int>(sizeof(Register))));
 
     GPRReg importJSCellGPRReg = GPRInfo::regT0; // Callee needs to be in regT0 for slow path below.
     ASSERT(!wasmCC.m_calleeSaveRegisters.get(importJSCellGPRReg));

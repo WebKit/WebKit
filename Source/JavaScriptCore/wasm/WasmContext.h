@@ -32,8 +32,10 @@ namespace JSC {
 class JSWebAssemblyInstance;
 class VM;
 
-JSWebAssemblyInstance* loadWasmContext(VM&);
-void storeWasmContext(VM&, JSWebAssemblyInstance*);
+using WasmContext = JSWebAssemblyInstance;
+
+WasmContext* loadWasmContext(VM&);
+void storeWasmContext(VM&, WasmContext*);
 
 } // namespace JSC
 

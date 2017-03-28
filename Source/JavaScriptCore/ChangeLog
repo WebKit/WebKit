@@ -1,3 +1,102 @@
+2017-03-28  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        WebAssembly: add fallback to use pinned register to load/store state
+        https://bugs.webkit.org/show_bug.cgi?id=169773
+
+        Reviewed by Saam Barati.
+
+        This patch adds a new pinned register to hold JSWebAssemblyInstance,
+        which is used to represent the context of running Wasm code.
+        While we use fast TLS to hold the context in macOS, we do not have
+        any system reserved fast TLS slot in the other systems. This pinned
+        register approach is used in these systems. These changes decouple
+        VM from Wasm module to make Wasm module position independent code.
+
+        While using fast TLS could be beneficial in x64 systems which number of
+        registers is relatively small, pinned register approach could be
+        beneficial in ARM64 which has plenty of registers. In macOS, we can
+        switch the implementation with the runtime flag. Thus macOS port can
+        compare the performance and decide which implementation is used after
+        landing this patch.
+
+        * heap/MarkedBlock.h:
+        (JSC::MarkedBlock::offsetOfVM):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::loadWasmContext):
+        (JSC::AssemblyHelpers::storeWasmContext):
+        (JSC::AssemblyHelpers::loadWasmContextNeedsMacroScratchRegister):
+        (JSC::AssemblyHelpers::storeWasmContextNeedsMacroScratchRegister):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::loadWasmContext): Deleted.
+        (JSC::AssemblyHelpers::storeWasmContext): Deleted.
+        (JSC::AssemblyHelpers::loadWasmContextNeedsMacroScratchRegister): Deleted.
+        (JSC::AssemblyHelpers::storeWasmContextNeedsMacroScratchRegister): Deleted.
+        * jit/Repatch.cpp:
+        (JSC::webAssemblyOwner):
+        (JSC::linkFor):
+        (JSC::linkPolymorphicCall):
+        (JSC::isWebAssemblyToJSCallee): Deleted.
+        * jit/ThunkGenerators.cpp:
+        (JSC::throwExceptionFromWasmThunkGenerator):
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::Data::performAssertions):
+        * llint/LowLevelInterpreter.asm:
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::isAnyWasmCallee):
+        * runtime/JSCellInlines.h:
+        (JSC::isWebAssemblyToJSCallee):
+        * runtime/JSType.h:
+        * runtime/StackFrame.cpp:
+        (JSC::StackFrame::functionName):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+        (JSC::VM::wasmContextOffset):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::materializeWasmContext):
+        (JSC::Wasm::B3IRGenerator::restoreWasmContext):
+        (JSC::Wasm::B3IRGenerator::B3IRGenerator):
+        (JSC::Wasm::getMemoryBaseAndSize):
+        (JSC::Wasm::B3IRGenerator::restoreWebAssemblyGlobalState):
+        (JSC::Wasm::createJSToWasmWrapper):
+        (JSC::Wasm::loadWasmContext): Deleted.
+        (JSC::Wasm::storeWasmContext): Deleted.
+        (JSC::Wasm::restoreWebAssemblyGlobalState): Deleted.
+        * wasm/WasmBinding.cpp:
+        (JSC::Wasm::wasmToJs):
+        * wasm/WasmContext.cpp:
+        (JSC::loadWasmContext):
+        (JSC::storeWasmContext):
+        * wasm/WasmContext.h:
+        * wasm/WasmMemoryInformation.cpp:
+        (JSC::Wasm::getPinnedRegisters):
+        (JSC::Wasm::PinnedRegisterInfo::get):
+        (JSC::Wasm::PinnedRegisterInfo::PinnedRegisterInfo):
+        * wasm/WasmMemoryInformation.h:
+        (JSC::Wasm::PinnedRegisterInfo::toSave):
+        (JSC::Wasm::useFastTLS):
+        (JSC::Wasm::useFastTLSForWasmContext):
+        * wasm/js/JSWebAssemblyInstance.cpp:
+        (JSC::JSWebAssemblyInstance::finishCreation):
+        (JSC::JSWebAssemblyInstance::visitChildren):
+        * wasm/js/JSWebAssemblyInstance.h:
+        (JSC::JSWebAssemblyInstance::offsetOfCallee):
+        * wasm/js/JSWebAssemblyModule.cpp:
+        (JSC::JSWebAssemblyModule::finishCreation):
+        (JSC::JSWebAssemblyModule::visitChildren):
+        * wasm/js/JSWebAssemblyModule.h:
+        (JSC::JSWebAssemblyModule::callee):
+        * wasm/js/WebAssemblyFunction.cpp:
+        (JSC::callWebAssemblyFunction):
+        (JSC::WebAssemblyFunction::create):
+        * wasm/js/WebAssemblyToJSCallee.cpp:
+        (JSC::WebAssemblyToJSCallee::create):
+        (JSC::WebAssemblyToJSCallee::createStructure):
+        (JSC::WebAssemblyToJSCallee::finishCreation):
+        (JSC::WebAssemblyToJSCallee::visitChildren):
+        (JSC::WebAssemblyToJSCallee::destroy): Deleted.
+        * wasm/js/WebAssemblyToJSCallee.h:
+
 2017-03-28  Brian Burg  <bburg@apple.com>
 
         Web Inspector: Add "Disable Caches" option that only applies to the inspected page while Web Inspector is open
