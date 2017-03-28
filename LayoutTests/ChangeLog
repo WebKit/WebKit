@@ -1,3 +1,13 @@
+2017-03-28  Antoine Quint  <graouts@apple.com>
+
+        REGRESSION (r214386): [ios-simulator] LayoutTest media/modern-media-controls/media-controller/media-controller-scale-factor-audio.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=170180
+
+        Unreviewed. Restore a value that was mistakenly changed in the fix for webkit.org/b/169962.
+
+        * media/modern-media-controls/media-controller/media-controller-scale-factor-audio-expected.txt:
+        * media/modern-media-controls/media-controller/media-controller-scale-factor-audio.html:
+
 2017-03-28  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark fast/history/ios/history-scroll-restoration.html as flaky.
