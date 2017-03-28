@@ -1,5 +1,18 @@
 2017-03-28  Antoine Quint  <graouts@apple.com>
 
+        [Modern Media Controls] AirPlay placard text looks bad on 1x displays
+        https://bugs.webkit.org/show_bug.cgi?id=170183
+        <rdar://problem/30663416>
+
+        Reviewed by Dean Jackson.
+
+        Use subpixel antialiasing for all text in modern media controls.
+
+        * Modules/modern-media-controls/controls/media-controls.css:
+        (.media-controls-container,):
+
+2017-03-28  Antoine Quint  <graouts@apple.com>
+
         [Modern Media Controls] Improve appearance of tracks panel on macOS
         https://bugs.webkit.org/show_bug.cgi?id=168929
         <rdar://problem/30741589>

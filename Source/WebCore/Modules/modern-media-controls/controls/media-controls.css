@@ -58,6 +58,7 @@
 .media-controls-container * {
     -webkit-text-zoom: reset;
     -webkit-text-size-adjust: auto;
+    -webkit-font-smoothing: subpixel-antialiased;
 }
 
 .media-controls-container > * {
