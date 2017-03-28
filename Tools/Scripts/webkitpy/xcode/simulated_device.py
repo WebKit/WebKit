@@ -20,8 +20,6 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import errno
-import os
 import logging
 import re
 import signal
@@ -56,6 +54,12 @@ class SimulatedDevice(object):
         self._host = host
         self.name = name
         self.udid = udid
+
+        self.executive = host.executive
+        self.filesystem = host.filesystem
+        self.user = None
+        self.platform = host.platform
+        self.workspace = host.workspace
 
     @property
     def state(self):
@@ -180,7 +184,7 @@ class SimulatedDevice(object):
             )
             match = re.match(r'(?P<bundle>[^:]+): (?P<pid>\d+)\n', output)
             # FIXME: We shouldn't need to check the PID <rdar://problem/31154075>.
-            if match and self.poll(int(match.group('pid'))) is None:
+            if match and self.executive.check_running_pid(int(match.group('pid'))):
                 break
 
         signal.alarm(0)  # Cancel alarm
@@ -188,14 +192,6 @@ class SimulatedDevice(object):
         if match.group('bundle') != bundle_id:
             raise RuntimeError('Failed to find process id for {}: {}'.format(bundle_id, output))
         return int(match.group('pid'))
-
-    def poll(self, pid):
-        try:
-            os.kill(pid, 0)
-        except OSError as err:
-            assert err.errno == errno.ESRCH
-            return 1
-        return None
 
     def __eq__(self, other):
         return self.udid == other.udid

@@ -1,3 +1,32 @@
+2017-03-28  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Use host pattern for devices
+        https://bugs.webkit.org/show_bug.cgi?id=170121
+
+        Reviewed by Daniel Bates.
+
+        Devices should be treated like hosts throughout webkitpy
+        so that more code can be re-used.  Add the needed properties
+        and use executive over custom implemented polling/killing
+        functions.
+
+        * Scripts/webkitpy/port/device.py:
+        (Device):
+        (Device.executive): Add optional executive property.
+        (Device.filesystem): Add optional filesystem property.
+        (Device.user): Add optional user property.
+        (Device.platform): Add optional platform property.
+        (Device.workspace): Add optional workspace property.
+        (Device.poll): Deleted.
+        * Scripts/webkitpy/port/simulator_process.py:
+        (SimulatorProcess.Popen.poll): Use the devices executive.
+        (SimulatorProcess.stop): Ditto.
+        (SimulatorProcess._kill): Ditto.
+        * Scripts/webkitpy/xcode/simulated_device.py:
+        (SimulatedDevice.__init__): Add executive, filesystem, user, platform
+        and workspace to the platform device.
+        (SimulatedDevice.poll): Deleted.
+
 2017-03-28  Aakash Jain  <aakash_jain@apple.com>
 
         Dashboard test fails with error: latestIterationGetter is not a function

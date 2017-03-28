@@ -31,9 +31,25 @@ class Device(object):
     def launch_app(self, bundle_id, args, env=None):
         return self.platform_device.launch_app(bundle_id, args, env)
 
-    # FIXME: This should be implemented through an executive
-    def poll(self, pid):
-        return self.platform_device.poll(pid)
+    @property
+    def executive(self):
+        return self.platform_device.executive
+
+    @property
+    def filesystem(self):
+        return self.platform_device.filesystem
+
+    @property
+    def user(self):
+        return self.platform_device.user
+
+    @property
+    def platform(self):
+        return self.platform_device.platform
+
+    @property
+    def workspace(self):
+        return self.platform_device.workspace
 
     @property
     def udid(self):

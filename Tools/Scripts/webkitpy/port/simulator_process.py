@@ -21,13 +21,11 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-import errno
 import os
 import signal
 import time
 
 from webkitpy.port.server_process import ServerProcess
-from webkitpy.xcode.simulator import Simulator
 
 
 class SimulatorProcess(ServerProcess):
@@ -45,7 +43,10 @@ class SimulatorProcess(ServerProcess):
         def poll(self):
             if self.returncode:
                 return self.returncode
-            self.returncode = self._device.poll(self.pid)
+            if self._device.executive.check_running_pid(self.pid):
+                self.returncode = None
+            else:
+                self.returncode = 1
             return self.returncode
 
         def wait(self):
@@ -125,9 +126,11 @@ class SimulatorProcess(ServerProcess):
         self._proc = SimulatorProcess.Popen(self._pid, stdin, stdout, stderr, self._device)
 
     def stop(self, timeout_secs=3.0):
-        try:
-            os.kill(self._pid, signal.SIGTERM)
-        except OSError as err:
-            assert err.errno == errno.ESRCH
-            pass
+        if self._proc:
+            self._device.executive.kill_process(self._proc.pid)
         return super(SimulatorProcess, self).stop(timeout_secs)
+
+    def _kill(self):
+        self._device.executive.kill_process(self._proc.pid)
+        if self._proc.poll() is not None:
+            self._proc.wait()
