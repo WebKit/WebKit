@@ -1,3 +1,19 @@
+2017-03-28  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Improve appearance of tracks panel on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=168929
+        <rdar://problem/30741589>
+
+        Reviewed by Eric Carlson.
+
+        We use a solid color for the focus state that matches the style used on macOS
+        and blend the titles the same way we blend other non-solid labels in the controls bar.
+
+        * Modules/modern-media-controls/controls/tracks-panel.css:
+        (.tracks-panel section):
+        (.tracks-panel section > h3):
+        (.tracks-panel section > ul > li:focus):
+
 2017-03-28  Yoav Weiss  <yoav@yoav.ws>
 
         Add a warning for unused link preloads.

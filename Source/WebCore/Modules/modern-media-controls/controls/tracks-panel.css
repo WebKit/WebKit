@@ -50,7 +50,7 @@
 }
 
 .tracks-panel section {
-    border-top: 2px solid rgb(104, 104, 104);
+    border-top: 2px solid rgba(255, 255, 255, 0.45);
     will-change: transform;
 }
 
@@ -59,7 +59,8 @@
 }
 
 .tracks-panel section > h3 {
-    color: rgb(150, 150, 150);
+    color: rgba(255, 255, 255, 0.6);
+    mix-blend-mode: plus-lighter;
     padding: 5px 20px 1px 21px;
     margin: 0;
 }
@@ -77,8 +78,7 @@
 }
 
 .tracks-panel section > ul > li:focus {
-    background-color: rgba(26, 68, 243, 0.6);
-    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    background-color: rgb(20, 105, 209);
     outline: none;
 }
 
