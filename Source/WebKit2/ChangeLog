@@ -1,3 +1,18 @@
+2017-03-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [WK2] UIKit assertion when rotating device after dismissing popover
+        https://bugs.webkit.org/show_bug.cgi?id=170159
+        <rdar://problem/31283829>
+
+        Reviewed by Tim Horton.
+
+        Ensure that when we are finished presenting a WKActionSheet, we unregister with the shared notifications center.
+
+        * UIProcess/ios/WKActionSheet.mm:
+        (-[WKActionSheet dealloc]):
+        (-[WKActionSheet _cleanup]):
+        (-[WKActionSheet doneWithSheet:]):
+
 2017-03-27  Andy Estes  <aestes@apple.com>
 
         [iOS] Suppress page count recalc when setting a snapshot paper rect

@@ -63,10 +63,14 @@
 
 - (void)dealloc
 {
+    [self _cleanup];
+    [super dealloc];
+}
+
+- (void)_cleanup
+{
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
-
-    [super dealloc];
 }
 
 #pragma mark - Sheet presentation code
@@ -129,7 +133,7 @@
     _popoverPresentationControllerDelegateWhileRotating = nil;
     _currentPresentationStyle = WKActionSheetPresentAtTouchLocation;
 
-    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(_didRotateAndLayout) object:nil];
+    [self _cleanup];
 }
 
 #pragma mark - Rotation handling code
