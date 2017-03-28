@@ -1,3 +1,16 @@
+2017-03-28  Timothy Horton  <timothy_horton@apple.com>
+
+        Safari crashes when attempting to close tab that is displaying PDF
+        https://bugs.webkit.org/show_bug.cgi?id=170201
+        <rdar://problem/31242019>
+
+        Reviewed by Wenson Hsieh.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/DoAfterNextPresentationUpdateAfterCrash.mm:
+        (TEST):
+        Add a test for doAfterNextStablePresentationUpdate just like the existing
+        non-stable one.
+
 2017-03-28  Jonathan Bedard  <jbedard@apple.com>
 
         webkitpy: Use host pattern for devices
