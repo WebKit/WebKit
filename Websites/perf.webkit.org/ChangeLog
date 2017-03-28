@@ -1,3 +1,237 @@
+2017-03-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Modernize AnalysisTaskPage
+        https://bugs.webkit.org/show_bug.cgi?id=170165
+
+        Reviewed by Antti Koivisto.
+
+        Modernized AnalysisTaskPage and related components. The main refactoring happened in AnalysisTaskPage
+        from which AnalysisTaskResultsPane and AnalysisTaskTestGroupPane have been extracted.
+
+        Decoupled BuildRequest from its results. AnalysisResultsViewer and TestGroupResultsTable now stores
+        a reference to AnalysisResultsView and Metric to find the results for each build request.
+        This refactoring is necessary in order to view results of an arbitrary metric in the future.
+
+        Also refactored ResultsTable and its subclasses extensively. Instead of making its render() to invoke
+        subclass' methods such as buildRowGroups, heading, and additionalHeading, rely on each subclass call
+        to invoke renderTable(), renamed from render(), with callbacks to add extra headers and columns.
+
+        This patch also fixes a number of usability issues found by the user such as changing the test name
+        resets the customized revisions by the virtue of the modern code being naturally more correct.
+
+        * public/v3/components/analysis-results-viewer.js:
+        (AnalysisResultsViewer):
+        (AnalysisResultsViewer.prototype.setTestGroupCallback): Deleted. Replaced by "testGroupClick" action.
+        (AnalysisResultsViewer.prototype.setRangeSelectorLabels): Moved here from ResultsTable since it's
+        never used in ResultsTable or TestGroupResultsTable.
+        (AnalysisResultsViewer.prototype.selectedRange): Ditto.
+        (AnalysisResultsViewer.prototype.setPoints): Now takes metric as the third argument.
+        (AnalysisResultsViewer.prototype.setTestGroups): Now takes the current test group.
+        (AnalysisResultsViewer.prototype.didUpdateResults): Deleted.
+        (AnalysisResultsViewer.prototype.setAnalysisResultsView): Added.
+        (AnalysisResultsViewer.prototype.render): Invoke _renderTestGroups lazily. Also simplified the logic
+        to find the selected list item. Since we always use a shadow DOM now, we can simply look for an element
+        with ".seleted" instead of crafting a unique class name.
+        (AnalysisResultsViewer.prototype.renderTestGroups): Renamed from buildRowGroups. Specify callbacks to
+        insert headers for A/B radio buttons, which has been moved from ResultsTable.prototype.render, and the
+        stacked blocks of testing results.
+        (AnalysisResultsViewer.prototype._classForTestGroup): Deleted.
+        (AnalysisResultsViewer.prototype._openStackingBlock): Deleted.
+        (AnalysisResultsViewer.prototype._expandBetween): Create a new set for expandedPoints to make
+        _renderTestGroupsLazily.evaluate do the work.
+        (AnalysisResultsViewer._layoutBlocks): Moved from TestGroupStackingGrid.layout.
+        (AnalysisResultsViewer._sortBlocksByRow): Moved from AnalysisResultsViewer.TestGroupStackingGrid.
+        (AnalysisResultsViewer._insertAfterBlockWithSameRange): Ditto.
+        (AnalysisResultsViewer._insertBlockInFirstAvailableColumn): Ditto.
+        (AnalysisResultsViewer._createCellsForRow): Ditto.
+
+        (AnalysisResultsViewer.TestGroupStackingBlock):
+        (AnalysisResultsViewer.TestGroupStackingBlock.prototype.addRowIndex):
+        (AnalysisResultsViewer.TestGroupStackingBlock.prototype.createStackingCell): No longer creates a unique
+        class name here. See the inline comment for AnalysisResultsViewer.prototype.render.
+        (AnalysisResultsViewer.TestGroupStackingBlock.prototype.isThin): Deleted. We used to collapse "failed"
+        test groups as a thin vertical line, and we wanted to show them next to each other in _layoutBlock but
+        we don't do that anymore.
+        (AnalysisResultsViewer.TestGroupStackingBlock.prototype._valuesForCommitSet): Added. Uses
+        this._analysisResultsView to extract the results for the current metrics.
+        (AnalysisResultsViewer.TestGroupStackingBlock.prototype._computeTestGroupStatus):
+
+        * public/v3/components/analysis-task-bug-list.js: Added.
+        (AnalysisTaskBugList): Added. Extracted from AnalysisTaskChartPane.
+        (AnalysisTaskBugList.prototype.setTask): Added.
+        (AnalysisTaskBugList.prototype.didConstructShadowTree): Added.
+        (AnalysisTaskBugList.prototype.render): Added.
+        (AnalysisTaskBugList.prototype._associateBug): Added.
+        (AnalysisTaskBugList.prototype._dissociateBug): Added.
+        (AnalysisTaskBugList.htmlTemplate): Added.
+
+        * public/v3/components/chart-pane-base.js:
+        (ChartPaneBase.htmlTemplate): Added a hook to insert more content at the end in AnalysisTaskChartPane.
+        (ChartPaneBase.paneFooterTemplate): Added.
+
+        * public/v3/components/customizable-test-group-form.js:
+        (CustomizableTestGroupForm):
+        (CustomizableTestGroupForm.prototype.setCommitSetMap):
+        (CustomizableTestGroupForm.prototype.startTesting): Renamed from _submitted. Now dispatches an action
+        by the name of "startTesting" instead of calling this._startCallback.
+        (CustomizableTestGroupForm.prototype.didConstructShadowTree): Added. Moved the logic to attach event
+        handlers here to avoid eagerly creating the shadow tree in the constructor.
+        (CustomizableTestGroupForm.prototype._computeCommitSetMap): Use the newly added this._revisionEditorMap
+        to find the relevant input element instead of running a querySelector.
+        (CustomizableTestGroupForm.prototype.render): Lazily invoke _renderCustomRevisionTable. This avoids
+        overriding the customized revisions when the user finally types in the test group name.
+        (CustomizableTestGroupForm.prototype._renderCustomRevisionTable): Extracted from render.
+        (CustomizableTestGroupForm.prototype._constructRevisionRadioButtons): Made this a non-static method
+        since it needs to update this._revisionEditorMap now. Merged _constructRevisionRadioButtons.
+        (CustomizableTestGroupForm.prototype._createRadioButton): Deleted. See above.
+        (CustomizableTestGroupForm.cssTemplate):
+        (CustomizableTestGroupForm.formContent): Use IDs instead of classes to make this.content(ID) work.
+
+        * public/v3/components/mutable-list-view.js:
+        (MutableListView.prototype.setList):
+        (MutableListView.prototype.setKindList):
+        (MutableListView.prototype.setAddCallback): Deleted. Replaced by "addItem" action.
+        (MutableListView.prototype.render):
+        (MutableListItem.prototype.content):
+
+        * public/v3/components/results-table.js:
+        (ResultsTable): Removed this._rangeSelectorLabels, this._rangeSelectorCallback, and this._selectedRange
+        as they are only used by AnalysisResultsViewer. Also replaced this._valueFormatter by
+        this._analysisResultsView which knows a metric.
+        (ResultsTable.prototype.setValueFormatter): Deleted.
+        (ResultsTable.prototype.setRangeSelectorLabels): Deleted.
+        (ResultsTable.prototype.setRangeSelectorCallback): Deleted.
+        (ResultsTable.prototype.selectedRange): Deleted.
+        (ResultsTable.prototype._rangeSelectorClicked): Deleted.
+        (ResultsTable.prototype.setAnalysisResultsView): Added.
+        (ResultsTable.prototype.renderTable): Added. Removed the logic to add _rangeSelectorLabels since it has
+        been moved to AnalysisResultsViewer.prototype.render inside buildColumns, which also inserts additional
+        columns which used to be stored on each ResultsTableRow. Use the same technique to insert additional
+        headers. Also take the name (thead tr th) of row header (tbody tr td) as an argument and automatically
+        create a table cell of an appropriate colspan.
+        (ResultsTable.prototype._createRevisionListCells):
+        (ResultsTable.prototype.heading): Deleted. Superseded by buildHeaders callback.
+        (ResultsTable.prototype.additionalHeading): Ditto.
+        (ResultsTable.prototype.buildRowGroups): Deleted. It is now the responsibility of each subclass to call
+        ResultsTable's renderTable() in the subclass' render() function.
+        (ResultsTable.prototype._computeRepositoryList): No longer takes extraRepositories as an argument.
+        Instead, this function now returns a pair of the repository list and the list of constant commits.
+        (ResultsTable.htmlTemplate):
+        (ResultsTable.cssTemplate):
+
+        * public/v3/components/test-group-form.js:
+        (TestGroupForm): Avoid eagerly creating the shadow tree. Also removed the removed the dead code.
+        (TestGroupForm.prototype.setRepetitionCount): Simply override the value of the select element.
+        (TestGroupForm.prototype.didConstructShadowTree): Added. Attach event handlers here to avoid eagerly
+        creating the shadow tree in the constructor.
+        (TestGroupForm.prototype.startTesting): Renamed from _submitted. Dispatch "startTesting" action instead
+        of invoking _startCallback which has been removed.
+        (TestGroupForm.htmlTemplate):
+        (TestGroupForm.formContent):
+
+        * public/v3/components/test-group-results-table.js:
+        (TestGroupResultsTable):
+        (TestGroupResultsTable.prototype.didUpdateResults): Deleted. No longer neeed per setAnalysisResultsView
+        in ResultsTable.
+        (TestGroupResultsTable.prototype.setTestGroup):
+        (TestGroupResultsTable.prototype.heading): Deleted.
+        (TestGroupResultsTable.prototype.render):
+        (TestGroupResultsTable.prototype._renderTestGroup): Extracted from render.
+        (TestGroupResultsTable.prototype._buildRowGroups): Renamed from buildRowGroups.
+        (TestGroupResultsTable.prototype._buildRowGroupForCommitSet): Extracted from buildRowGroups.
+        (TestGroupResultsTable.prototype._buildComparisonRow): Extracted from buildRowGroups.buildRowGroups
+
+        * public/v3/index.html: Include analysis-task-bug-list.js.
+
+        * public/v3/models/analysis-results.js:
+        (AnalysisResults): Inverted the map so that we can easily create a view based on metric.
+        (AnalysisResults.prototype.find): Ditto.
+        (AnalysisResults.prototype.add): Ditto.
+        (AnalysisResults.prototype.viewForMetric): Added.
+        (AnalysisResults.fetch):
+        (AnalysisResultsView): Added.
+        (AnalysisResultsView.prototype.metric): Added.
+        (AnalysisResultsView.prototype.resultForBuildId): Added.
+
+        * public/v3/models/build-request.js:
+        (BuildRequest.result): Deleted.
+        (BuildRequest.setResult): Deleted.
+
+        * public/v3/models/test-group.js:
+        (TestGroup): Removed this._allCommitSets since it was never used.
+        (TestGroup.prototype.didSetResult): Deleted since it was never used.
+        (TestGroup.prototype.compareTestResults): Now takes an array of measurement set values.
+        (TestGroup.prototype._valuesForCommitSet): Deleted.
+
+        * public/v3/pages/analysis-task-page.js:
+        (AnalysisTaskChartPane): This class now includes the form to cutomize the revisions.
+        (AnalysisTaskChartPane.prototype.setShowForm): Added.
+        (AnalysisTaskChartPane.prototype._mainSelectionDidChange):
+        (AnalysisTaskChartPane.prototype.didConstructShadowTree): Added. Dispatches "newTestGroup" action when
+        the user presses the button to start a new A/B testing from the chart.
+        (AnalysisTaskChartPane.prototype.render): Added.
+        (AnalysisTaskChartPane.prototype.paneFooterTemplate): Added.
+        (AnalysisTaskChartPane.cssTemplate):
+
+        (AnalysisTaskResultsPane): Added. Encapsulates AnalysisResultsViewer and CustomizableTestGroupForm.
+        (AnalysisTaskResultsPane.prototype.setPoints): Added.
+        (AnalysisTaskResultsPane.prototype.setTestGroups): Added.
+        (AnalysisTaskResultsPane.prototype.setAnalysisResultsView): Added.
+        (AnalysisTaskResultsPane.prototype.setShowForm): Added.
+        (AnalysisTaskResultsPane.prototype.didConstructShadowTree): Added. Dispatches "newTestGroup" action
+        when the user presses the button to start a new A/B testing from the chart.
+        (AnalysisTaskResultsPane.prototype.render): Added.
+        (AnalysisTaskResultsPane.htmlTemplate): Added.
+        (AnalysisTaskResultsPane.cssTemplate): Added.
+
+        (AnalysisTaskTestGroupPane): Added. Encapsulates TestGroupResultsTable and CustomizableTestGroupForm.
+        (AnalysisTaskTestGroupPane.prototype.didConstructShadowTree): Added.
+        (AnalysisTaskTestGroupPane.prototype.setTestGroups): Added.
+        (AnalysisTaskTestGroupPane.prototype.setAnalysisResultsView): Added.
+        (AnalysisTaskTestGroupPane.prototype.render): Added.
+        (AnalysisTaskTestGroupPane.prototype._renderTestGroups): Added. Updates the list of test groups. Hide
+        the hidden groups unless showHiddenGroups is set. Updates this._testGroupMap so that the visibility of
+        groups and their names can be updated without having to re-render the entire list.
+        (AnalysisTaskTestGroupPane.prototype._renderTestGroupVisibility): Added.
+        (AnalysisTaskTestGroupPane.prototype._renderTestGroupNames): Added.
+        (AnalysisTaskTestGroupPane.prototype._renderCurrentTestGroup): Added. Update TestGroupResultsTable with
+        the selected test group. Also highlight the list view, and update the hide-unhide toggle button's label
+        as needed.
+        (AnalysisTaskTestGroupPane.htmlTemplate): Added.
+        (AnalysisTaskTestGroupPane.cssTemplate): Added.
+
+        (AnalysisTaskPage): Deleted a massive number of instance variables. They are now manged by newly added
+        AnalysisTaskChartPane, AnalysisTaskResultsPane, and AnalysisTaskTestGroupPane
+        (AnalysisTaskPage.prototype.didConstructShadowTree): Added. Attach various event handlers here to avoid
+        eagerly creating the shadow tree in the constructor.
+        (AnalysisTaskPage.prototype._fetchRelatedInfoForTaskId):
+        (AnalysisTaskPage.prototype._didFetchTask): No longer sets the value formatter to the results viewer
+        and the results table as they now recieve AnalysisResultsView later in _assignTestResultsIfPossible.
+        (AnalysisTaskPage.prototype._didFetchMeasurement): Set the metric to the results viewer.
+        (AnalysisTaskPage.prototype._didUpdateTestGroupHiddenState):
+        (AnalysisTaskPage.prototype._assignTestResultsIfPossible): Create AnalysisResultsView from the newly
+        retrieved AnalysisResults and pass it to AnalysisTaskResultsPane and AnalysisTaskTestGroupPane.
+        (AnalysisTaskPage.prototype.render): Dramatically simplified.
+        (AnalysisTaskPage.prototype._renderTaskNameAndStatus): Extracted from render.
+        (AnalysisTaskPage.prototype._renderRelatedTasks): Ditto.
+        (AnalysisTaskPage.prototype._renderCauseAndFixes): Ditto.
+        (AnalysisTaskPage.prototype._showTestGroup):
+        (AnalysisTaskPage.prototype._updateTaskName): Now takes the new name as an argument.
+        (AnalysisTaskPage.prototype._updateTestGroupName): Now takes the new name as the second argument.
+        (AnalysisTaskPage.prototype._hideCurrentTestGroup): Now takes the test group to hide.
+        (AnalysisTaskPage.prototype._associateCommit): Moved to AnalysisTaskBugList.
+        (AnalysisTaskPage.prototype._dissociateCommit): Ditto.
+        (AnalysisTaskPage.prototype._retryCurrentTestGroup): Now takes the test group as the first argument.
+        (AnalysisTaskPage.prototype._chartSelectionDidChange): Deleted.
+        (AnalysisTaskPage.prototype._createNewTestGroupFromChart): Deleted.
+        (AnalysisTaskPage.prototype._selectedRowInAnalysisResultsViewer): Deleted.
+        (AnalysisTaskPage.prototype._createNewTestGroupFromViewer): Deleted.
+        (AnalysisTaskPage.htmlTemplate):
+        (AnalysisTaskPage.cssTemplate):
+
+        * unit-tests/test-groups-tests.js: Updated a test case which was expecting BuildReqeust's result, which
+        has been removed, to exist.
+
 2017-03-23  Ryosuke Niwa  <rniwa@webkit.org>
 
         Share more code between ManifestGenerator and /api/triggerables

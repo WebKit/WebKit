@@ -1,5 +1,4 @@
 
-
 class MutableListView extends ComponentBase {
 
     constructor()
@@ -7,14 +6,21 @@ class MutableListView extends ComponentBase {
         super('mutable-list-view');
         this._list = [];
         this._kindList = [];
-        this._addCallback = null;
         this._kindMap = new Map;
         this.content().querySelector('form').onsubmit = this._submitted.bind(this);
     }
 
-    setList(list) { this._list = list; }
-    setKindList(list) { this._kindList = list; }
-    setAddCallback(callback) { this._addCallback = callback; }
+    setList(list)
+    {
+        this._list = list;
+        this.enqueueToRender();
+    }
+
+    setKindList(list)
+    {
+        this._kindList = list;
+        this.enqueueToRender();
+    }
 
     render()
     {
@@ -37,8 +43,9 @@ class MutableListView extends ComponentBase {
     _submitted(event)
     {
         event.preventDefault();
-        if (this._addCallback)
-            this._addCallback(this._kindMap.get(this.content().querySelector('.kind').value), this.content().querySelector('.value').value);
+        const kind = this._kindMap.get(this.content().querySelector('.kind').value);
+        const item = this.content().querySelector('.value').value;
+        this.dispatchAction('addItem', kind, item);
     }
 
     static cssTemplate()
@@ -91,13 +98,15 @@ class MutableListItem {
 
     content()
     {
-        var link = ComponentBase.createLink;
+        const link = ComponentBase.createLink;
+        const closeButton = new CloseButton;
+        closeButton.listenToAction('activate', this._removalLink);
         return ComponentBase.createElement('li', [
             this._kind.label(),
             ' ',
             link(this._value, this._valueTitle, this._valueLink),
             ' ',
-            link(new CloseButton, this._removalTitle, this._removalLink)]);
+            link(closeButton, this._removalTitle, this._removalLink)]);
     }
 }
 

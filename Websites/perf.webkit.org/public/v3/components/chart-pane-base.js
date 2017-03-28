@@ -314,10 +314,12 @@ class ChartPaneBase extends ComponentBase {
                     </div>
                 </div>
             </section>
+            ${this.paneFooterTemplate()}
         `;
     }
 
     static paneHeaderTemplate() { return ''; }
+    static paneFooterTemplate() { return ''; }
 
     static cssTemplate()
     {

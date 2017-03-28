@@ -2,25 +2,32 @@
 class AnalysisResults {
     constructor()
     {
-        this._buildToMetricsMap = {};
+        this._metricToBuildMap = {};
     }
 
-    find(buildId, metric)
+    find(buildId, metricId)
     {
-        var map = this._buildToMetricsMap[buildId];
+        const map = this._metricToBuildMap[metricId];
         if (!map)
             return null;
-        return map[metric.id()];
+        return map[buildId];
     }
 
     add(measurement)
     {
         console.assert(measurement.configType == 'current');
-        if (!this._buildToMetricsMap[measurement.buildId])
-            this._buildToMetricsMap[measurement.buildId] = {};
-        var map = this._buildToMetricsMap[measurement.buildId];
-        console.assert(!map[measurement.metricId]);
-        map[measurement.metricId] = measurement;
+        const metricId = measurement.metricId;
+        if (!(metricId in this._metricToBuildMap))
+            this._metricToBuildMap[metricId] = {};
+        var map = this._metricToBuildMap[metricId];
+        console.assert(!map[measurement.buildId]);
+        map[measurement.buildId] = measurement;
+    }
+
+    viewForMetric(metric)
+    {
+        console.assert(metric instanceof Metric);
+        return new AnalysisResultsView(this, metric);
     }
 
     static fetch(taskId)
@@ -30,14 +37,31 @@ class AnalysisResults {
 
             Instrumentation.startMeasuringTime('AnalysisResults', 'fetch');
 
-            var adaptor = new MeasurementAdaptor(response['formatMap']);
-            var results = new AnalysisResults;
-            for (var rawMeasurement of response['measurements'])
+            const adaptor = new MeasurementAdaptor(response['formatMap']);
+            const results = new AnalysisResults;
+            for (const rawMeasurement of response['measurements'])
                 results.add(adaptor.applyToAnalysisResults(rawMeasurement));
 
             Instrumentation.endMeasuringTime('AnalysisResults', 'fetch');
 
             return results;
         });
+    }
+}
+
+class AnalysisResultsView {
+    constructor(analysisResults, metric)
+    {
+        console.assert(analysisResults instanceof AnalysisResults);
+        console.assert(metric instanceof Metric);
+        this._results = analysisResults;
+        this._metric = metric;
+    }
+
+    metric() { return this._metric; }
+
+    resultForBuildId(buildId)
+    {
+        return this._results.find(buildId, this._metric.id());
     }
 }

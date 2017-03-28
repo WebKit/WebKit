@@ -108,13 +108,6 @@ class BuildRequest extends DataModelObject {
         return label;
     }
 
-    result() { return this._result; }
-    setResult(result)
-    {
-        this._result = result;
-        this._testGroup.didSetResult(this);
-    }
-
     static fetchForTriggerable(triggerable)
     {
         return RemoteAPI.getJSONWithStatus('/api/build-requests/' + triggerable).then(function (data) {

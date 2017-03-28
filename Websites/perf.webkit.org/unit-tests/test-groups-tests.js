@@ -142,7 +142,6 @@ describe('TestGroup', function () {
             assert.ok(buildRequests[0].isPending());
             assert.equal(buildRequests[0].statusLabel(), 'Waiting');
             assert.equal(buildRequests[0].buildId(), null);
-            assert.equal(buildRequests[0].result(), null);
 
             assert.equal(buildRequests[1].id(), 16986);
             assert.equal(buildRequests[1].order(), 1);
@@ -151,7 +150,6 @@ describe('TestGroup', function () {
             assert.ok(buildRequests[1].isPending());
             assert.equal(buildRequests[1].statusLabel(), 'Waiting');
             assert.equal(buildRequests[1].buildId(), null);
-            assert.equal(buildRequests[1].result(), null);
         });
 
         it('should create root sets for each group', function () {
