@@ -1,5 +1,15 @@
 2017-03-27  Devin Rousso  <webkit@devinrousso.com>
 
+        Web Inspector: Option-clicking the close tab button should close all other tabs
+        https://bugs.webkit.org/show_bug.cgi?id=169046
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/TabBar.js:
+        (WebInspector.TabBar.prototype._handleClick):
+
+2017-03-27  Devin Rousso  <webkit@devinrousso.com>
+
         Web Inspector: The inspector sidebar has weird sub-column sizing issues
         https://bugs.webkit.org/show_bug.cgi?id=161966
 

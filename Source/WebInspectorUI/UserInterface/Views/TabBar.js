@@ -614,7 +614,17 @@ WebInspector.TabBar = class TabBar extends WebInspector.View
             if (tabBarItem.isDefaultTab && this.element.classList.contains("single-tab"))
                 return;
 
-            this.removeTabBarItem(tabBarItem, false, true);
+            if (!event.altKey) {
+                this.removeTabBarItem(tabBarItem, false, true);
+                return;
+            }
+
+            for (let i = this._tabBarItems.length - 1; i >= 0; --i) {
+                let item = this._tabBarItems[i];
+                if (item === tabBarItem || item instanceof WebInspector.PinnedTabBarItem)
+                    continue;
+                this.removeTabBarItem(item);
+            }
         }
     }
 
