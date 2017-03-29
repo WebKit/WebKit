@@ -1,3 +1,32 @@
+2017-03-29  Javier Fernandez  <jfernandez@igalia.com>
+
+        [css-align] Adapt self-alignment properties to the new baseline syntax
+        https://bugs.webkit.org/show_bug.cgi?id=170235
+
+        Reviewed by David Hyatt.
+
+        Added new cases to the alignment properties parsing tests so that we can verify the new
+        baseline-alignment syntax is parsed as expected.
+        Additionally, I modified the tests so that they use the testharness format.
+
+        * css3/parse-align-items-expected.txt:
+        * css3/parse-align-items.html:
+        * css3/parse-align-self-expected.txt:
+        * css3/parse-align-self.html:
+        * css3/resources/alignment-parsing-utils-th.js:
+        (checkValues):
+        * fast/css/parse-justify-items-expected.txt:
+        * fast/css/parse-justify-items.html:
+        * fast/css/parse-justify-self-expected.txt:
+        * fast/css/parse-justify-self.html:
+        * fast/css/resources/alignment-parsing-utils-th.js: Copied from LayoutTests/css3/resources/alignment-parsing-utils-th.js.
+        (checkValues):
+        (checkBadValues):
+        (checkInitialValues):
+        (checkInheritValues):
+        (checkLegacyValues):
+        (checkSupportedValues):
+
 2017-03-29  Chris Dumez  <cdumez@apple.com>
 
         Animated SVG images are not paused in pages loaded in the background

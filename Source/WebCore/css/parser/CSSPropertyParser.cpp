@@ -3017,10 +3017,26 @@ static RefPtr<CSSPrimitiveValue> consumeSelfPositionKeyword(CSSParserTokenRange&
     return nullptr;
 }
 
+static RefPtr<CSSValue> consumeBaselineKeyword(CSSParserTokenRange& range)
+{
+    CSSValueID id = range.peek().id();
+    if (identMatches<CSSValueBaseline>(id))
+        return consumeIdent(range);
+
+    if (RefPtr<CSSPrimitiveValue> preference = consumeIdent<CSSValueFirst, CSSValueLast>(range)) {
+        if (range.peek().id() == CSSValueBaseline)
+            return createPrimitiveValuePair(preference.releaseNonNull(), consumeIdent(range), Pair::IdenticalValueEncoding::Coalesce);
+    }
+    return nullptr;
+}
+
 static RefPtr<CSSValue> consumeSelfPositionOverflowPosition(CSSParserTokenRange& range)
 {
-    if (identMatches<CSSValueAuto, CSSValueNormal, CSSValueStretch, CSSValueBaseline, CSSValueLastBaseline>(range.peek().id()))
+    if (identMatches<CSSValueAuto, CSSValueNormal, CSSValueStretch>(range.peek().id()))
         return consumeIdent(range);
+
+    if (identMatches<CSSValueFirst, CSSValueLast, CSSValueBaseline>(range.peek().id()))
+        return consumeBaselineKeyword(range);
 
     RefPtr<CSSPrimitiveValue> overflowPosition = consumeIdent<CSSValueUnsafe, CSSValueSafe>(range);
     RefPtr<CSSPrimitiveValue> selfPosition = consumeSelfPositionKeyword(range);

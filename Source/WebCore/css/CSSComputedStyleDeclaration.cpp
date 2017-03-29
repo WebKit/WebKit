@@ -2462,7 +2462,13 @@ static Ref<CSSValueList> valueForItemPositionWithOverflowAlignment(const StyleSe
     auto result = CSSValueList::createSpaceSeparated();
     if (data.positionType() == LegacyPosition)
         result->append(cssValuePool.createIdentifierValue(CSSValueLegacy));
-    result->append(cssValuePool.createValue(data.position()));
+    if (data.position() == ItemPositionBaseline)
+        result->append(cssValuePool.createIdentifierValue(CSSValueBaseline));
+    else if (data.position() == ItemPositionLastBaseline) {
+        result->append(cssValuePool.createIdentifierValue(CSSValueLast));
+        result->append(cssValuePool.createIdentifierValue(CSSValueBaseline));
+    } else
+        result->append(cssValuePool.createValue(data.position()));
     if (data.position() >= ItemPositionCenter && data.overflow() != OverflowAlignmentDefault)
         result->append(cssValuePool.createValue(data.overflow()));
     ASSERT(result->length() <= 2);

@@ -1,3 +1,35 @@
+2017-03-29  Javier Fernandez  <jfernandez@igalia.com>
+
+        [css-align] Adapt self-alignment properties to the new baseline syntax
+        https://bugs.webkit.org/show_bug.cgi?id=170235
+
+        Reviewed by David Hyatt.
+
+        The baseline-position syntax has changed recently, so we need to update
+        the CSS properties using the old syntax. This patch address only the
+        self-alignment (align-self and justify-self) and default-alignment
+        (align-items and justify-items).
+
+        The content-distribution properties (align-content and justify-content)
+        will be updated in a follow up patch.
+
+        The new baseline syntax is "[first | last ]? baseline" which implies
+        modifying the parsing and computed value logic.
+
+        There are several layout tests affected by this change, so I'll update
+        them accordingly.
+
+        No new tests, just added/modified some cases to the tests we already have using the new baseline values.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::valueForItemPositionWithOverflowAlignment):
+        * css/CSSValueKeywords.in:
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertSelfOrDefaultAlignmentData):
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeBaselineKeyword):
+        (WebCore::consumeSelfPositionOverflowPosition):
+
 2017-03-29  Chris Dumez  <cdumez@apple.com>
 
         Animated SVG images are not paused in pages loaded in the background
