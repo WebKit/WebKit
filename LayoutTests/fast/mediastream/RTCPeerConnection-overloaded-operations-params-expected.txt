@@ -50,7 +50,7 @@ PASS promise pc.createAnswer(emptyFunc, emptyFunc, 1) rejected with TypeError: A
 PASS promise pc.setLocalDescription(desc) did not reject with TypeError.
 PASS promise pc.setLocalDescription(desc, emptyFunc, emptyFunc) did not reject with TypeError.
 *** desc is not optional
-PASS promise pc.setLocalDescription() rejected with TypeError: Not enough arguments
+FAIL promise pc.setLocalDescription() rejected with TypeError: Argument 1 ('description') to RTCPeerConnection.setLocalDescription must be an instance of RTCSessionDescription; expected reason TypeError: Not enough arguments
 *** desc is not nullable
 PASS promise pc.setLocalDescription(null) rejected with TypeError: Argument 1 ('description') to RTCPeerConnection.setLocalDescription must be an instance of RTCSessionDescription
 PASS promise pc.setLocalDescription(null, emptyFunc, emptyFunc) rejected with TypeError: Argument 1 ('description') to RTCPeerConnection.setLocalDescription must be an instance of RTCSessionDescription
@@ -65,7 +65,7 @@ PASS promise pc.setLocalDescription(1, emptyFunc, emptyFunc) rejected with TypeE
 PASS promise pc.setRemoteDescription(desc) did not reject with TypeError.
 PASS promise pc.setRemoteDescription(desc, emptyFunc, emptyFunc) did not reject with TypeError.
 *** desc is not optional
-PASS promise pc.setRemoteDescription() rejected with TypeError: Not enough arguments
+FAIL promise pc.setRemoteDescription() rejected with TypeError: Argument 1 ('description') to RTCPeerConnection.setRemoteDescription must be an instance of RTCSessionDescription; expected reason TypeError: Not enough arguments
 *** desc is not nullable
 PASS promise pc.setRemoteDescription(null) rejected with TypeError: Argument 1 ('description') to RTCPeerConnection.setRemoteDescription must be an instance of RTCSessionDescription
 PASS promise pc.setRemoteDescription(null, emptyFunc, emptyFunc) rejected with TypeError: Argument 1 ('description') to RTCPeerConnection.setRemoteDescription must be an instance of RTCSessionDescription
@@ -79,11 +79,10 @@ PASS promise pc.setRemoteDescription(1, emptyFunc, emptyFunc) rejected with Type
 *** Test addIceCandidate
 PASS promise pc.addIceCandidate(candidate) did not reject with TypeError.
 PASS promise pc.addIceCandidate(candidate, emptyFunc, emptyFunc) did not reject with TypeError.
+PASS promise pc.addIceCandidate(null) did not reject with TypeError.
+PASS promise pc.addIceCandidate(null, emptyFunc, emptyFunc) did not reject with TypeError.
 *** candidate is not optional
 PASS promise pc.addIceCandidate() rejected with TypeError: Not enough arguments
-*** candidate is not nullable
-PASS promise pc.addIceCandidate(null) rejected with TypeError: Argument 1 ('candidate') to RTCPeerConnection.addIceCandidate must be an instance of RTCIceCandidate
-PASS promise pc.addIceCandidate(null, emptyFunc, emptyFunc) rejected with TypeError: Argument 1 ('candidate') to RTCPeerConnection.addIceCandidate must be an instance of RTCIceCandidate
 PASS promise pc.addIceCandidate(1) rejected with TypeError: Argument 1 ('candidate') to RTCPeerConnection.addIceCandidate must be an instance of RTCIceCandidate
 *** Bad input as candidate
 PASS promise pc.addIceCandidate('foo') rejected with TypeError: Argument 1 ('candidate') to RTCPeerConnection.addIceCandidate must be an instance of RTCIceCandidate

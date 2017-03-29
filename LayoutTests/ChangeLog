@@ -1,3 +1,16 @@
+2017-03-28  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [WebRTC] Update test RTCPeerConnection-overloaded-operations-params.html after r214441
+        https://bugs.webkit.org/show_bug.cgi?id=170223
+
+        Reviewed by Youenn Fablet.
+
+        After r214441 the arguments of addIceCandidate() are nullable.
+
+        * fast/mediastream/RTCPeerConnection-overloaded-operations-params-expected.txt:
+        * fast/mediastream/RTCPeerConnection-overloaded-operations-params.html:
+        * platform/gtk/fast/mediastream/RTCPeerConnection-overloaded-operations-params-expected.txt: Removed. The expected result was the same than the general one.
+
 2017-03-29  Antoine Quint  <graouts@apple.com>
 
         [mac-wk1] LayoutTest media/modern-media-controls/airplay-button/airplay-button.html is a flaky timeout

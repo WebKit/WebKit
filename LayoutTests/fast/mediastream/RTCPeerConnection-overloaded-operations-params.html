@@ -117,7 +117,7 @@
                 });
             }
 
-            // badInputFull eventually runs badInput
+            // badInputFull checks for void, null, and badInput()
             function badInputFull(functionName, firstArg, detailedErrorsArg) {
                 detailedErrors = detailedErrorsArg;
 
@@ -131,6 +131,26 @@
                     .then(function () {
                         return promiseShouldReject(`pc.${functionName}(null, emptyFunc, emptyFunc)`, "detailedErrors.arg1");
                     })
+                    .then(function () {
+                        return badInput(functionName, firstArg, detailedErrorsArg);
+                    })
+                    .then(function () {
+                        resolve();
+                    })
+                    .catch(function (error) {
+                        testFailed(`Unexpected error in promise chain: ${error}`);
+                        resolve();
+                    });
+                });
+            }
+
+            // badInputVoid checks for void, and badInput()
+            function badInputVoid(functionName, firstArg, detailedErrorsArg) {
+            detailedErrors = detailedErrorsArg;
+
+                return new Promise(function (resolve) {
+                    debug(`*** ${firstArg} is not optional`);
+                    promiseShouldReject(`pc.${functionName}()`, "'TypeError: Not enough arguments'")
                     .then(function () {
                         return badInput(functionName, firstArg, detailedErrorsArg);
                     })
@@ -177,7 +197,13 @@
                         return promiseShouldNotRejectWithTypeError("pc.addIceCandidate(candidate, emptyFunc, emptyFunc)");
                     })
                     .then(function () {
-                        return badInputFull("addIceCandidate", "candidate", {
+                        return promiseShouldNotRejectWithTypeError("pc.addIceCandidate(null)");
+                    })
+                    .then(function () {
+                        return promiseShouldNotRejectWithTypeError("pc.addIceCandidate(null, emptyFunc, emptyFunc)");
+                    })
+                    .then(function () {
+                        return badInputVoid("addIceCandidate", "candidate", {
                             "arg1": "TypeError: Argument 1 ('candidate') to RTCPeerConnection.addIceCandidate must be an instance of RTCIceCandidate",
                             "arg2": "TypeError: Argument 2 ('successCallback') to RTCPeerConnection.addIceCandidate must be a function",
                             "arg3": "TypeError: Argument 3 ('errorCallback') to RTCPeerConnection.addIceCandidate must be a function"
