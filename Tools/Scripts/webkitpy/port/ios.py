@@ -21,6 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import logging
+import traceback
 
 from webkitpy.common.memoized import memoized
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
@@ -124,5 +125,26 @@ class IOSPort(DarwinPort):
     def clean_up_test_run(self):
         super(IOSPort, self).clean_up_test_run()
 
+        # Best effort to let every device teardown before throwing any exceptions here.
+        # Failure to teardown devices can leave things in a bad state.
+        exception_list = []
         for i in xrange(self.child_processes()):
-            self.device_for_worker_number(i).finished_testing()
+            device = self.device_for_worker_number(i)
+            try:
+                self.device_for_worker_number(i).finished_testing()
+            except BaseException as e:
+                trace = traceback.format_exc()
+                if isinstance(e, Exception):
+                    exception_list.append([e, trace])
+                else:
+                    exception_list.append([Exception('Exception tearing down {}'.format(device)), trace])
+        if len(exception_list) == 1:
+            raise
+        elif len(exception_list) > 1:
+            print '\n'
+            for exception in exception_list:
+                _log.error('{} raised: {}'.format(exception[0].__class__.__name__, exception[0]))
+                _log.error(exception[1])
+                _log.error('--------------------------------------------------')
+
+            raise RuntimeError('Multiple failures when teardown devices')
