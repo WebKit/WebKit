@@ -1429,7 +1429,7 @@ webkit.org/b/127116 [ Debug ] svg/custom/animate-initial-pause-unpause.html [ Pa
 
 # Variation fonts are not implemented earlier than Sierra.
 [ ElCapitan Yosemite ] fast/text/variations [ Pass Failure ImageOnlyFailure ]
-[ ElCapitan Yosemite ] animations/font-variations [ Pass Failure ImageOnlyFailure ]
+[ ElCapitan Yosemite ] animations/font-variations [ Pass Failure ImageOnlyFailure Timeout ]
 
 # This test makes sure that variation fonts are disabled on OSes which don't support them. So,
 # the test should be skipped on OSes which do support them. As soon as all OSes support them,

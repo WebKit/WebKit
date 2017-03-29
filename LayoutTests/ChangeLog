@@ -8,6 +8,16 @@
         * platform/mac-elcapitan/fast/text/font-selection-font-loading-api-parse-expected.txt:
         * platform/mac-elcapitan/fast/text/font-style-parse-expected.txt:
 
+2017-03-29  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Post-commit test gardening after r214546
+        https://bugs.webkit.org/show_bug.cgi?id=169518
+
+        Unreviewed.
+
+        * platform/mac-elcapitan/fast/text/font-selection-font-loading-api-parse-expected.txt:
+        * platform/mac-elcapitan/fast/text/font-style-parse-expected.txt:
+
 2017-03-29  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark fast/events/before-unload-adopt-subframe-to-outside.html as flaky.
