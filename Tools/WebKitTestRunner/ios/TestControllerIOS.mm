@@ -27,6 +27,7 @@
 #import "TestController.h"
 
 #import "HIDEventGenerator.h"
+#import "IOSLayoutTestCommunication.h"
 #import "PlatformWebView.h"
 #import "TestInvocation.h"
 #import "TestRunnerWKWebView.h"
@@ -49,21 +50,12 @@ void TestController::notifyDone()
 
 void TestController::platformInitialize()
 {
-    const char* identifier = getenv("IPC_IDENTIFIER");
-    const char *stdinPath = [[NSString stringWithFormat:@"/tmp/%s_IN", identifier] UTF8String];
-    const char *stdoutPath = [[NSString stringWithFormat:@"/tmp/%s_OUT", identifier] UTF8String];
-    const char *stderrPath = [[NSString stringWithFormat:@"/tmp/%s_ERROR", identifier] UTF8String];
-
-    int infd = open(stdinPath, O_RDWR);
-    dup2(infd, STDIN_FILENO);
-    int outfd = open(stdoutPath, O_RDWR);
-    dup2(outfd, STDOUT_FILENO);
-    int errfd = open(stderrPath, O_RDWR | O_NONBLOCK);
-    dup2(errfd, STDERR_FILENO);
+    setUpIOSLayoutTestCommunication();
 }
 
 void TestController::platformDestroy()
 {
+    tearDownIOSLayoutTestCommunication();
 }
 
 void TestController::initializeInjectedBundlePath()

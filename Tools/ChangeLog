@@ -1,5 +1,57 @@
 2017-03-29  Jonathan Bedard  <jbedard@apple.com>
 
+        Use TCP instead of FIFOs for Simulator/Device communication
+        https://bugs.webkit.org/show_bug.cgi?id=169419
+        <rdar://problem/30949615>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Using TCP instead of FIFOs when communicating with devices allows the device being tested
+        to be on a different machine then the one handling the management of the test run.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (dumpRenderTree): Call setUp/tearDownIOSLayoutTestCommunication() instead of using FIFOs.
+        * Scripts/webkitpy/port/device.py:
+        (Device.__init__): Initialize the listening_socket.
+        (Device.listening_port): Return port of listening socket.
+        (Device.prepare_for_testing): Open listening socket on an open port, prepare platform device
+        fro testing.
+        (Device.finished_testing): Close listening socket associated with this device, call the
+        platform device's finished_testing function if it exists.
+        * Scripts/webkitpy/port/ios.py:
+        (IOSPort.setup_test_run): Prepare each device for testing.
+        (IOSPort.clean_up_test_run): Notify each device that testing has completed.
+        * Scripts/webkitpy/port/ios_simulator.py:
+        (IOSSimulatorPort): Work around device persistence bug.
+        (IOSSimulatorPort.__init__): Ditto.
+        * Scripts/webkitpy/port/simulator_process.py:
+        (SimulatorProcess):
+        (SimulatorProcess.NonBlockingFileFromSocket): Add to work around shortcomings in
+        Python 2’s makefile.
+        (SimulatorProcess.NonBlockingFileFromSocket.__init__): Initialize file with socket.
+        (SimulatorProcess.ReadFileSocket.close): Close file and then socket;
+        (SimulatorProcess.__init__): Pass TCP port over environment, remove FIFO names.
+        (SimulatorProcess.__getattr__): Expose all file attributes.
+        (SimulatorProcess._accept_connection_create_file): Wait for connection from server and
+        create and return a file-like object from the incoming connection.
+        (SimulatorProcess._start): Use TCP connections instead of FIFOs.
+        (SimulatorProcess._start.handler): Output server port in timeout exception.
+        (SimulatorProcess._reset): Deleted.
+        * TestRunnerShared/IOSLayoutTestCommunication.cpp: Added.
+        (connectToServer): Return socket connected to the provided server address.
+        (setupiOSLayoutTestCommunication): Connect stdin, stdout and stderr as socket to a
+        TCP server running on localhost.
+        (tearDownIOSLayoutTestCommunication): Close stdin, stdout and stderr TCP sockets.
+        * TestRunnerShared/IOSLayoutTestCommunication.h: Added.
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        (WTR::TestController::platformInitialize): Call setUpIOSLayoutTestCommunication()
+        instead of using FIFOs.
+        (WTR::TestController::platformDestroy): Call tearDownIOSLayoutTestCommunication().
+
+2017-03-29  Jonathan Bedard  <jbedard@apple.com>
+
         webkitpy: Add IOSDevicePort and IOSPort tests
         https://bugs.webkit.org/show_bug.cgi?id=170206
         <rdar://problem/31308364>

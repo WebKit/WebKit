@@ -66,7 +66,10 @@ class IOSSimulatorPort(IOSPort):
         },
     }
 
+    #FIXME: Ports are recreated in each process. This is a problem for IOSSimulatorPort, it means devices are not
+    # persistent and devices hold a listening socket expected to be persistent across processes.
     _DEVICE_MAP = {}
+    _CURRENT_DEVICE = None
 
     def __init__(self, host, port_name, **kwargs):
         super(IOSSimulatorPort, self).__init__(host, port_name, **kwargs)
@@ -75,7 +78,9 @@ class IOSSimulatorPort(IOSPort):
         self._device_class = optional_device_class if optional_device_class else self.DEFAULT_DEVICE_CLASS
         _log.debug('IOSSimulatorPort _device_class is %s', self._device_class)
 
-        self._current_device = Device(Simulator(host).current_device())
+        if not IOSSimulatorPort._CURRENT_DEVICE:
+            IOSSimulatorPort._CURRENT_DEVICE = Device(Simulator(host).current_device())
+        self._current_device = IOSSimulatorPort._CURRENT_DEVICE
         if not self._current_device:
             self.set_option('dedicated_simulators', True)
         if not self.get_option('dedicated_simulators'):

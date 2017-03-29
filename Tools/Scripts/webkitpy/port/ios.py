@@ -117,3 +117,12 @@ class IOSPort(DarwinPort):
             # crash, but this crash will occur post-launch, after install_app has already killed the process.
             if not device.install_app(self._path_to_driver(), {'DYLD_LIBRARY_PATH': self._build_path()}):
                 raise RuntimeError('Failed to install app {} on device {}'.format(self._path_to_driver(), device.udid))
+
+        for i in xrange(self.child_processes()):
+            self.device_for_worker_number(i).prepare_for_testing()
+
+    def clean_up_test_run(self):
+        super(IOSPort, self).clean_up_test_run()
+
+        for i in xrange(self.child_processes()):
+            self.device_for_worker_number(i).finished_testing()

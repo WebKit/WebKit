@@ -20,16 +20,38 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import socket
 
 class Device(object):
     def __init__(self, platform_device):
         self.platform_device = platform_device
+        self.listening_socket = None
+
+    def listening_port(self):
+        if not self.listening_socket:
+            return None
+        return self.listening_socket.getsockname()[1]
 
     def install_app(self, app_path, env=None):
         return self.platform_device.install_app(app_path, env)
 
     def launch_app(self, bundle_id, args, env=None):
         return self.platform_device.launch_app(bundle_id, args, env)
+
+    def prepare_for_testing(self):
+        if not self.listening_socket:
+            self.listening_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            self.listening_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            self.listening_socket.bind(('127.0.0.1', 0))
+
+        if hasattr(self.platform_device, 'prepare_for_testing'):
+            self.platform_device.prepare_for_testing()
+
+    def finished_testing(self):
+        if hasattr(self.platform_device, 'teardown'):
+            self.platform_device.finished_testing()
+
+        self.listening_socket = None
 
     @property
     def executive(self):
