@@ -1,5 +1,22 @@
 2017-03-28  Jason Marcell  <jmarcell@apple.com>
 
+        Merge r214237. rdar://problem/31178134
+
+    2017-03-21  Brady Eidson  <beidson@apple.com>
+
+            Disable all virtual tables.
+            <rdar://problem/31081972> and https://bugs.webkit.org/show_bug.cgi?id=169928
+
+            Reviewed by Jer Noble.
+
+            No new tests (Covered by changes to existing test).
+
+            * Modules/webdatabase/DatabaseAuthorizer.cpp:
+            (WebCore::DatabaseAuthorizer::createVTable):
+            (WebCore::DatabaseAuthorizer::dropVTable):
+
+2017-03-28  Jason Marcell  <jmarcell@apple.com>
+
         Merge r214232. rdar://problem/30922105
 
     2017-03-21  Zalan Bujtas  <zalan@apple.com>

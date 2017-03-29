@@ -58,6 +58,7 @@ function createStatementsCallback(tx)
     executeStatement(tx, "CREATE TRIGGER TestTrigger INSERT ON Test BEGIN SELECT COUNT(*) FROM Test; END;", "SQLITE_CREATE_TRIGGER");
     executeStatement(tx, "CREATE VIEW TestView AS SELECT COUNT(*) FROM Test;", "SQLITE_CREATE_VIEW");
     executeStatement(tx, "CREATE VIRTUAL TABLE TestVirtualTable USING MissingModule;", "SQLITE_CREATE_VTABLE");
+    executeStatement(tx, "CREATE VIRTUAL TABLE TestVirtualTableFTS USING fts3;", "SQLITE_CREATE_VTABLE (FTS3)");
 }
 
 function otherStatementsCallback(tx)
