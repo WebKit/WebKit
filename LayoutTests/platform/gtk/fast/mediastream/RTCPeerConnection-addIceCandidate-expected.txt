@@ -21,9 +21,14 @@ PASS promise pc.addIceCandidate(new RTCIceCandidate({candidate: validCandidate, 
 PASS promise pc.addIceCandidate(new RTCIceCandidate({candidate: 'bad content', sdpMid: sdpMid})) rejected with OperationError (DOM Exception 34): Invalid candidate content
 *** Test bad candidate content with valid sdpMLineIndex
 PASS promise pc.addIceCandidate(new RTCIceCandidate({candidate: 'bad content', sdpMLineIndex: sdpMLineIndex})) rejected with OperationError (DOM Exception 34): Invalid candidate content
+*** Test valid candidate with no mid and mlineindex
+PASS promise pc.addIceCandidate({candidate: validCandidate}) rejected with TypeError: Argument 1 ('candidate') to RTCPeerConnection.addIceCandidate must be an instance of RTCIceCandidate
 
 *** Test some OK input
 PASS promise pc.addIceCandidate({candidate: validCandidate, sdpMid: sdpMid}) fulfilled with undefined
+PASS promise pc.addIceCandidate({candidate: validCandidate, sdpMLineIndex: sdpMLineIndex}) fulfilled with undefined
+PASS promise pc.addIceCandidate(undefined) fulfilled with undefined
+PASS promise pc.addIceCandidate(null) fulfilled with undefined
 PASS promise pc.addIceCandidate(new RTCIceCandidate({candidate: validCandidate, sdpMLineIndex: sdpMLineIndex})) fulfilled with undefined
 *** A valid sdpMid takes precedesce over a bad sdpMLineIndex
 PASS promise pc.addIceCandidate(new RTCIceCandidate({candidate: validCandidate, sdpMid: sdpMid, sdpMLineIndex: badSdpMLineIndex})) fulfilled with undefined
