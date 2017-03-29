@@ -1030,6 +1030,15 @@ void BytecodeGenerator::initializeDefaultParameterValuesAndSetupFunctionScopeSta
     }
 }
 
+bool BytecodeGenerator::needsDerivedConstructorInArrowFunctionLexicalEnvironment()
+{
+    if ((isConstructor() && constructorKind() == ConstructorKind::Extends) || m_codeBlock->isClassContext()) {
+        if (isSuperUsedInInnerArrowFunction())
+            return true;
+    }
+    return false;
+}
+
 void BytecodeGenerator::initializeArrowFunctionContextScopeIfNeeded(SymbolTable* functionSymbolTable, bool canReuseLexicalEnvironment)
 {
     ASSERT(!m_arrowFunctionContextLexicalEnvironmentRegister);
@@ -1052,7 +1061,7 @@ void BytecodeGenerator::initializeArrowFunctionContextScopeIfNeeded(SymbolTable*
             functionSymbolTable->set(NoLockingNecessary, propertyNames().builtinNames().newTargetLocalPrivateName().impl(), SymbolTableEntry(VarOffset(offset)));
         }
         
-        if (isConstructor() && constructorKind() == ConstructorKind::Extends && isSuperUsedInInnerArrowFunction()) {
+        if (needsDerivedConstructorInArrowFunctionLexicalEnvironment()) {
             offset = functionSymbolTable->takeNextScopeOffset(NoLockingNecessary);
             functionSymbolTable->set(NoLockingNecessary, propertyNames().builtinNames().derivedConstructorPrivateName().impl(), SymbolTableEntry(VarOffset(offset)));
         }
@@ -1074,7 +1083,7 @@ void BytecodeGenerator::initializeArrowFunctionContextScopeIfNeeded(SymbolTable*
         addTarget.iterator->value.setIsLet();
     }
 
-    if (isConstructor() && constructorKind() == ConstructorKind::Extends && isSuperUsedInInnerArrowFunction()) {
+    if (needsDerivedConstructorInArrowFunctionLexicalEnvironment()) {
         auto derivedConstructor = environment.add(propertyNames().builtinNames().derivedConstructorPrivateName());
         derivedConstructor.iterator->value.setIsCaptured();
         derivedConstructor.iterator->value.setIsLet();
@@ -4662,13 +4671,11 @@ void BytecodeGenerator::emitPutNewTargetToArrowFunctionContextScope()
     
 void BytecodeGenerator::emitPutDerivedConstructorToArrowFunctionContextScope()
 {
-    if ((isConstructor() && constructorKind() == ConstructorKind::Extends) || m_codeBlock->isClassContext()) {
-        if (isSuperUsedInInnerArrowFunction()) {
-            ASSERT(m_arrowFunctionContextLexicalEnvironmentRegister);
-            
-            Variable protoScope = variable(propertyNames().builtinNames().derivedConstructorPrivateName());
-            emitPutToScope(m_arrowFunctionContextLexicalEnvironmentRegister, protoScope, &m_calleeRegister, DoNotThrowIfNotFound, InitializationMode::Initialization);
-        }
+    if (needsDerivedConstructorInArrowFunctionLexicalEnvironment()) {
+        ASSERT(m_arrowFunctionContextLexicalEnvironmentRegister);
+
+        Variable protoScope = variable(propertyNames().builtinNames().derivedConstructorPrivateName());
+        emitPutToScope(m_arrowFunctionContextLexicalEnvironmentRegister, protoScope, &m_calleeRegister, DoNotThrowIfNotFound, InitializationMode::Initialization);
     }
 }
 
