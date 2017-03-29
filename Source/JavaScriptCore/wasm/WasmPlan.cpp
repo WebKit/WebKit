@@ -215,6 +215,7 @@ void Plan::compileFunctions()
 
     if (m_state >= State::Compiled)
         return;
+
     ThreadCountHolder holder(*this);
     while (true) {
         uint32_t functionIndex;

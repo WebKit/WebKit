@@ -149,6 +149,7 @@ public:
     }
 
     void dump(const Vector<ControlEntry>&, const ExpressionList*);
+    void setParser(FunctionParser<Validate>*) { }
 
 private:
     Result WARN_UNUSED_RETURN unify(const ExpressionList&, const ControlData&);

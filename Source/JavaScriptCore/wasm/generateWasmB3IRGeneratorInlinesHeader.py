@@ -159,7 +159,7 @@ class CodeGenerator:
     def generate(self, wasmOp):
         if len(self.tokens) == 1:
             params = ["arg" + str(param) for param in range(len(wasmOp["parameter"]))]
-            return "    result = m_currentBlock->appendNew<Value>(m_proc, B3::" + self.token() + ", Origin(), " + ", ".join(params) + ")"
+            return "    result = m_currentBlock->appendNew<Value>(m_proc, B3::" + self.token() + ", origin(), " + ", ".join(params) + ")"
         result = self.generateOpcode()
         self.code.append("result = " + result)
         return "    " + "    \n".join(self.code)
@@ -170,11 +170,11 @@ def temp(index):
 
 
 def generateB3OpCode(index, op, params):
-    return "Value* " + temp(index) + " = m_currentBlock->appendNew<Value>(m_proc, B3::" + op + ", Origin(), " + ", ".join(params) + ");"
+    return "Value* " + temp(index) + " = m_currentBlock->appendNew<Value>(m_proc, B3::" + op + ", origin(), " + ", ".join(params) + ");"
 
 
 def generateConstCode(index, value, type):
-    return "Value* " + temp(index) + " = m_currentBlock->appendIntConstant(m_proc, Origin(), B3::" + type + ", " + value + ");"
+    return "Value* " + temp(index) + " = m_currentBlock->appendIntConstant(m_proc, origin(), B3::" + type + ", " + value + ");"
 
 
 def generateB3Code(wasmOp, source):

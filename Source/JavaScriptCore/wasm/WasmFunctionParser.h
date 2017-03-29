@@ -55,12 +55,15 @@ public:
         ControlType controlData;
     };
 
+    OpType currentOpcode() const { return m_currentOpcode; }
+    size_t currentOpcodeStartingOffset() const { return m_currentOpcodeStartingOffset; }
+
 private:
     static const bool verbose = false;
 
     PartialResult WARN_UNUSED_RETURN parseBody();
-    PartialResult WARN_UNUSED_RETURN parseExpression(OpType);
-    PartialResult WARN_UNUSED_RETURN parseUnreachableExpression(OpType);
+    PartialResult WARN_UNUSED_RETURN parseExpression();
+    PartialResult WARN_UNUSED_RETURN parseUnreachableExpression();
     PartialResult WARN_UNUSED_RETURN unifyControl(Vector<ExpressionType>&, unsigned level);
 
 #define WASM_TRY_POP_EXPRESSION_STACK_INTO(result, what) do {                               \
@@ -84,6 +87,10 @@ private:
     const Signature* m_signature;
     const ModuleInformation& m_info;
     const Vector<SignatureIndex>& m_moduleSignatureIndicesToUniquedSignatureIndices;
+
+    OpType m_currentOpcode;
+    size_t m_currentOpcodeStartingOffset { 0 };
+
     unsigned m_unreachableBlocks { 0 };
 };
 
@@ -97,6 +104,7 @@ FunctionParser<Context>::FunctionParser(VM* vm, Context& context, const uint8_t*
 {
     if (verbose)
         dataLogLn("Parsing function starting at: ", (uintptr_t)functionStart, " of length: ", functionLength);
+    m_context.setParser(this);
 }
 
 template<typename Context>
@@ -129,8 +137,11 @@ auto FunctionParser<Context>::parseBody() -> PartialResult
     m_controlStack.append({ ExpressionList(), m_context.addTopLevel(m_signature->returnType()) });
     uint8_t op;
     while (m_controlStack.size()) {
+        m_currentOpcodeStartingOffset = m_offset;
         WASM_PARSER_FAIL_IF(!parseUInt8(op), "can't decode opcode");
         WASM_PARSER_FAIL_IF(!isValidOpType(op), "invalid opcode ", op);
+
+        m_currentOpcode = static_cast<OpType>(op);
 
         if (verbose) {
             dataLogLn("processing op (", m_unreachableBlocks, "): ",  RawPointer(reinterpret_cast<void*>(op)), ", ", makeString(static_cast<OpType>(op)), " at offset: ", RawPointer(reinterpret_cast<void*>(m_offset)));
@@ -138,9 +149,9 @@ auto FunctionParser<Context>::parseBody() -> PartialResult
         }
 
         if (m_unreachableBlocks)
-            WASM_FAIL_IF_HELPER_FAILS(parseUnreachableExpression(static_cast<OpType>(op)));
+            WASM_FAIL_IF_HELPER_FAILS(parseUnreachableExpression());
         else
-            WASM_FAIL_IF_HELPER_FAILS(parseExpression(static_cast<OpType>(op)));
+            WASM_FAIL_IF_HELPER_FAILS(parseExpression());
     }
 
     ASSERT(op == OpType::End);
@@ -178,9 +189,9 @@ auto FunctionParser<Context>::unaryCase() -> PartialResult
 }
 
 template<typename Context>
-auto FunctionParser<Context>::parseExpression(OpType op) -> PartialResult
+auto FunctionParser<Context>::parseExpression() -> PartialResult
 {
-    switch (op) {
+    switch (m_currentOpcode) {
 #define CREATE_CASE(name, id, b3op, inc) case OpType::name: return binaryCase<OpType::name>();
     FOR_EACH_WASM_BINARY_OP(CREATE_CASE)
 #undef CREATE_CASE
@@ -215,7 +226,7 @@ auto FunctionParser<Context>::parseExpression(OpType op) -> PartialResult
         // FIXME validate alignment. https://bugs.webkit.org/show_bug.cgi?id=168836
         WASM_PARSER_FAIL_IF(!parseVarUInt32(offset), "can't get load offset");
         WASM_TRY_POP_EXPRESSION_STACK_INTO(pointer, "load pointer");
-        WASM_TRY_ADD_TO_CONTEXT(load(static_cast<LoadOpType>(op), pointer, result, offset));
+        WASM_TRY_ADD_TO_CONTEXT(load(static_cast<LoadOpType>(m_currentOpcode), pointer, result, offset));
         m_expressionStack.append(result);
         return { };
     }
@@ -230,7 +241,7 @@ auto FunctionParser<Context>::parseExpression(OpType op) -> PartialResult
         WASM_PARSER_FAIL_IF(!parseVarUInt32(offset), "can't get store offset");
         WASM_TRY_POP_EXPRESSION_STACK_INTO(value, "store value");
         WASM_TRY_POP_EXPRESSION_STACK_INTO(pointer, "store pointer");
-        WASM_TRY_ADD_TO_CONTEXT(store(static_cast<StoreOpType>(op), pointer, value, offset));
+        WASM_TRY_ADD_TO_CONTEXT(store(static_cast<StoreOpType>(m_currentOpcode), pointer, value, offset));
         return { };
     }
 #undef CREATE_CASE
@@ -403,7 +414,7 @@ auto FunctionParser<Context>::parseExpression(OpType op) -> PartialResult
         ExpressionType condition = Context::emptyExpression;
         WASM_PARSER_FAIL_IF(!parseVarUInt32(target), "can't get br / br_if's target");
         WASM_PARSER_FAIL_IF(target >= m_controlStack.size(), "br / br_if's target ", target, " exceeds control stack size ", m_controlStack.size());
-        if (op == BrIf)
+        if (m_currentOpcode == BrIf)
             WASM_TRY_POP_EXPRESSION_STACK_INTO(condition, "br / br_if condition");
         else
             m_unreachableBlocks = 1;
@@ -518,11 +529,11 @@ auto FunctionParser<Context>::parseExpression(OpType op) -> PartialResult
 
 // FIXME: We should try to use the same decoder function for both unreachable and reachable code. https://bugs.webkit.org/show_bug.cgi?id=165965
 template<typename Context>
-auto FunctionParser<Context>::parseUnreachableExpression(OpType op) -> PartialResult
+auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
 {
     ASSERT(m_unreachableBlocks);
 #define CREATE_CASE(name, id, b3op, inc) case OpType::name:
-    switch (op) {
+    switch (m_currentOpcode) {
     case Else: {
         if (m_unreachableBlocks > 1)
             return { };
@@ -549,7 +560,7 @@ auto FunctionParser<Context>::parseUnreachableExpression(OpType op) -> PartialRe
     case Block: {
         m_unreachableBlocks++;
         Type unused;
-        WASM_PARSER_FAIL_IF(!parseResultType(unused), "can't get inline type for ", op, " in unreachable context");
+        WASM_PARSER_FAIL_IF(!parseResultType(unused), "can't get inline type for ", m_currentOpcode, " in unreachable context");
         return { };
     }
 
@@ -590,8 +601,8 @@ auto FunctionParser<Context>::parseUnreachableExpression(OpType op) -> PartialRe
     FOR_EACH_WASM_MEMORY_LOAD_OP(CREATE_CASE)
     FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE) {
         uint32_t unused;
-        WASM_PARSER_FAIL_IF(!parseVarUInt32(unused), "can't get first immediate for ", op, " in unreachable context");
-        WASM_PARSER_FAIL_IF(!parseVarUInt32(unused), "can't get second immediate for ", op, " in unreachable context");
+        WASM_PARSER_FAIL_IF(!parseVarUInt32(unused), "can't get first immediate for ", m_currentOpcode, " in unreachable context");
+        WASM_PARSER_FAIL_IF(!parseVarUInt32(unused), "can't get second immediate for ", m_currentOpcode, " in unreachable context");
         return { };
     }
 
@@ -607,7 +618,7 @@ auto FunctionParser<Context>::parseUnreachableExpression(OpType op) -> PartialRe
     case BrIf:
     case Call: {
         uint32_t unused;
-        WASM_PARSER_FAIL_IF(!parseVarUInt32(unused), "can't get immediate for ", op, " in unreachable context");
+        WASM_PARSER_FAIL_IF(!parseVarUInt32(unused), "can't get immediate for ", m_currentOpcode, " in unreachable context");
         return { };
     }
 

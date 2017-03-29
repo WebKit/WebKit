@@ -1355,6 +1355,8 @@
 		53B0BE341E561AC900A8FC29 /* GetterSetterAccessCase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53B0BE331E561AC900A8FC29 /* GetterSetterAccessCase.cpp */; };
 		53B0BE361E561B0900A8FC29 /* ProxyableAccessCase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53B0BE351E561B0900A8FC29 /* ProxyableAccessCase.cpp */; };
 		53B0BE381E561B2400A8FC29 /* IntrinsicGetterAccessCase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53B0BE371E561B2400A8FC29 /* IntrinsicGetterAccessCase.cpp */; };
+		53C6FEEF1E8ADFA900B18425 /* WasmOpcodeOrigin.h in Headers */ = {isa = PBXBuildFile; fileRef = 53C6FEEE1E8ADFA900B18425 /* WasmOpcodeOrigin.h */; };
+		53C6FEF11E8AFE0C00B18425 /* WasmOpcodeOrigin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53C6FEF01E8AFE0C00B18425 /* WasmOpcodeOrigin.cpp */; };
 		53D444DC1DAF08AB00B92784 /* B3WasmAddressValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 53D444DB1DAF08AB00B92784 /* B3WasmAddressValue.h */; };
 		53D444DE1DAF09A000B92784 /* B3WasmAddressValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53D444DD1DAF09A000B92784 /* B3WasmAddressValue.cpp */; };
 		53F40E851D58F9770099A1B6 /* WasmSections.h in Headers */ = {isa = PBXBuildFile; fileRef = 53F40E841D58F9770099A1B6 /* WasmSections.h */; };
@@ -3854,6 +3856,8 @@
 		53B0BE331E561AC900A8FC29 /* GetterSetterAccessCase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetterSetterAccessCase.cpp; sourceTree = "<group>"; };
 		53B0BE351E561B0900A8FC29 /* ProxyableAccessCase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProxyableAccessCase.cpp; sourceTree = "<group>"; };
 		53B0BE371E561B2400A8FC29 /* IntrinsicGetterAccessCase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IntrinsicGetterAccessCase.cpp; sourceTree = "<group>"; };
+		53C6FEEE1E8ADFA900B18425 /* WasmOpcodeOrigin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmOpcodeOrigin.h; sourceTree = "<group>"; };
+		53C6FEF01E8AFE0C00B18425 /* WasmOpcodeOrigin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WasmOpcodeOrigin.cpp; sourceTree = "<group>"; };
 		53D444DB1DAF08AB00B92784 /* B3WasmAddressValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3WasmAddressValue.h; path = b3/B3WasmAddressValue.h; sourceTree = "<group>"; };
 		53D444DD1DAF09A000B92784 /* B3WasmAddressValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3WasmAddressValue.cpp; path = b3/B3WasmAddressValue.cpp; sourceTree = "<group>"; };
 		53F256E11B87E28000B4B768 /* JSTypedArrayViewPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSTypedArrayViewPrototype.cpp; sourceTree = "<group>"; };
@@ -6292,6 +6296,8 @@
 				ADB6F67C1E15D7500082F384 /* WasmPageCount.cpp */,
 				5381B9361E60E9660090F794 /* WasmFaultSignalHandler.cpp */,
 				5381B9381E60E97D0090F794 /* WasmFaultSignalHandler.h */,
+				53C6FEF01E8AFE0C00B18425 /* WasmOpcodeOrigin.cpp */,
+				53C6FEEE1E8ADFA900B18425 /* WasmOpcodeOrigin.h */,
 				79B759731DFA4C600052174C /* WasmPageCount.h */,
 				53F40E8C1D5901F20099A1B6 /* WasmParser.h */,
 				531374BE1D5CE95000AF7A0B /* WasmPlan.cpp */,
@@ -8643,6 +8649,7 @@
 				0FDB2CCA173DA523007B3C1B /* FTLValueFromBlock.h in Headers */,
 				0F5A6284188C98D40072C9DF /* FTLValueRange.h in Headers */,
 				0F0332C618B53FA9005F979A /* FTLWeight.h in Headers */,
+				53C6FEEF1E8ADFA900B18425 /* WasmOpcodeOrigin.h in Headers */,
 				0F0332C818B546EC005F979A /* FTLWeightedTarget.h in Headers */,
 				0F666EC1183566F900D017F1 /* FullBytecodeLiveness.h in Headers */,
 				2A83638A18D7D0FE0000EBCC /* FullGCActivityCallback.h in Headers */,
@@ -9931,6 +9938,7 @@
 				0FEC85751BDACDC70080FF74 /* AirCode.cpp in Sources */,
 				0F61832B1C45BF070072450B /* AirCustom.cpp in Sources */,
 				0F4570381BE44C910062A629 /* AirEliminateDeadCode.cpp in Sources */,
+				53C6FEF11E8AFE0C00B18425 /* WasmOpcodeOrigin.cpp in Sources */,
 				0F61832C1C45BF070072450B /* AirEmitShuffle.cpp in Sources */,
 				0F4DE1CE1C4C1B54004D6C11 /* AirFixObviousSpills.cpp in Sources */,
 				262D85B61C0D650F006ACB61 /* AirFixPartialRegisterStalls.cpp in Sources */,

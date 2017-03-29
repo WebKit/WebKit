@@ -1,3 +1,58 @@
+2017-03-28  Keith Miller  <keith_miller@apple.com>
+
+        WebAssembly: We should have Origins
+        https://bugs.webkit.org/show_bug.cgi?id=170217
+
+        Reviewed by Mark Lam.
+
+        This patch adds wasm origins for B3::Values, called OpcodeOrigin. Currently,
+        OpcodeOrigin just tracks the original opcode and the location of that opcode.
+
+        Here's a sample:
+
+        BB#0: ; frequency = 1.000000
+            Int64 @4 = Patchpoint(generator = 0x10f487fa8, earlyClobbered = [], lateClobbered = [], usedRegisters = [], resultConstraint = SomeRegister)
+            Int64 @5 = FramePointer()
+            Void @8 = Store(@4, @5, offset = 24, ControlDependent|Writes:Top)
+            Int64 @10 = Const64(0)
+            Void @12 = Store($0(@10), @5, offset = 16, ControlDependent|Writes:Top)
+            Int64 @13 = Patchpoint(generator = 0x10f4be7f0, earlyClobbered = [], lateClobbered = [], usedRegisters = [], resultConstraint = SomeRegister, ExitsSideways|ControlDependent|WritesPinned|ReadsPinned|Fence|Writes:Top|Reads:Top)
+            Int64 @16 = ArgumentReg(%rdi)
+            Int64 @18 = ArgumentReg(%rsi)
+            Int32 @22 = Trunc(@18, Wasm: {opcode: I64Rotl, location: 5})
+            Int64 @23 = RotL(@16, @22, Wasm: {opcode: I64Rotl, location: 5})
+            Void @27 = Return(@23, Terminal, Wasm: {opcode: End, location: 6})
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * b3/B3Value.cpp:
+        (JSC::B3::Value::deepDump):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::setParser):
+        (JSC::Wasm::B3IRGenerator::restoreWebAssemblyGlobalState):
+        (JSC::Wasm::B3IRGenerator::emitCheckAndPreparePointer):
+        (JSC::Wasm::B3IRGenerator::emitLoadOp):
+        (JSC::Wasm::B3IRGenerator::emitStoreOp):
+        (JSC::Wasm::B3IRGenerator::addConstant):
+        (JSC::Wasm::B3IRGenerator::addLoop):
+        (JSC::Wasm::B3IRGenerator::unify):
+        (JSC::Wasm::parseAndCompile):
+        (JSC::Wasm::B3IRGenerator::emitChecksForModOrDiv):
+        (JSC::Wasm::getMemoryBaseAndSize): Deleted.
+        * wasm/WasmFunctionParser.h:
+        (JSC::Wasm::FunctionParser::currentOpcode):
+        (JSC::Wasm::FunctionParser::currentOpcodeStartingOffset):
+        (JSC::Wasm::FunctionParser<Context>::FunctionParser):
+        * wasm/WasmOpcodeOrigin.cpp: Added.
+        (JSC::Wasm::OpcodeOrigin::dump):
+        * wasm/WasmOpcodeOrigin.h: Added.
+        (JSC::Wasm::OpcodeOrigin::OpcodeOrigin):
+        * wasm/WasmValidate.cpp:
+        (JSC::Wasm::Validate::setParser):
+        * wasm/generateWasmB3IRGeneratorInlinesHeader.py:
+        (CodeGenerator.generate):
+        (generateB3OpCode):
+        (generateConstCode):
+
 2017-03-28  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly: option to crash if no fast memory is available

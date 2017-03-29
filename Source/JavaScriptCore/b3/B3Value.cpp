@@ -222,9 +222,6 @@ void Value::deepDump(const Procedure* proc, PrintStream& out) const
     CommaPrinter comma;
     dumpChildren(comma, out);
 
-    if (m_origin)
-        out.print(comma, OriginDump(proc, m_origin));
-
     dumpMeta(comma, out);
 
     {
@@ -232,6 +229,9 @@ void Value::deepDump(const Procedure* proc, PrintStream& out) const
         if (string.length())
             out.print(comma, string);
     }
+
+    if (m_origin)
+        out.print(comma, OriginDump(proc, m_origin));
 
     out.print(")");
 }
