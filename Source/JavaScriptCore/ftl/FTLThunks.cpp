@@ -49,7 +49,7 @@ enum class FrameAndStackAdjustmentRequirement {
 static MacroAssemblerCodeRef genericGenerationThunkGenerator(
     VM* vm, FunctionPtr generationFunction, const char* name, unsigned extraPopsToRestore, FrameAndStackAdjustmentRequirement frameAndStackAdjustmentRequirement)
 {
-    AssemblyHelpers jit(vm, 0);
+    AssemblyHelpers jit(nullptr);
 
     if (frameAndStackAdjustmentRequirement == FrameAndStackAdjustmentRequirement::Needed) {
         // This needs to happen before we use the scratch buffer because this function also uses the scratch buffer.
@@ -166,7 +166,7 @@ static void registerClobberCheck(AssemblyHelpers& jit, RegisterSet dontClobber)
 
 MacroAssemblerCodeRef slowPathCallThunkGenerator(VM& vm, const SlowPathCallKey& key)
 {
-    AssemblyHelpers jit(&vm, 0);
+    AssemblyHelpers jit(nullptr);
     
     // We want to save the given registers at the given offset, then we want to save the
     // old return address somewhere past that offset, and then finally we want to make the

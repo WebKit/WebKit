@@ -200,9 +200,11 @@ public:
         // that would cause it to always get collected.
         m_out.storePtr(m_out.constIntPtr(bitwise_cast<intptr_t>(codeBlock())), addressFor(CallFrameSlot::codeBlock));
 
+        VM* vm = &this->vm();
+
         // Stack Overflow Check.
         unsigned exitFrameSize = m_graph.requiredRegisterCountForExit() * sizeof(Register);
-        MacroAssembler::AbsoluteAddress addressOfStackLimit(vm().addressOfSoftStackLimit());
+        MacroAssembler::AbsoluteAddress addressOfStackLimit(vm->addressOfSoftStackLimit());
         PatchpointValue* stackOverflowHandler = m_out.patchpoint(Void);
         CallSiteIndex callSiteIndex = callSiteIndexForCodeOrigin(m_ftlState, CodeOrigin(0));
         stackOverflowHandler->appendSomeRegister(m_callFrame);
@@ -226,16 +228,16 @@ public:
                     jit.store32(
                         MacroAssembler::TrustedImm32(callSiteIndex.bits()),
                         CCallHelpers::tagFor(VirtualRegister(CallFrameSlot::argumentCount)));
-                    jit.copyCalleeSavesToVMEntryFrameCalleeSavesBuffer();
+                    jit.copyCalleeSavesToVMEntryFrameCalleeSavesBuffer(*vm);
 
                     jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
                     jit.move(CCallHelpers::TrustedImmPtr(jit.codeBlock()), GPRInfo::argumentGPR1);
                     CCallHelpers::Call throwCall = jit.call();
 
-                    jit.move(CCallHelpers::TrustedImmPtr(jit.vm()), GPRInfo::argumentGPR0);
+                    jit.move(CCallHelpers::TrustedImmPtr(vm), GPRInfo::argumentGPR0);
                     jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR1);
                     CCallHelpers::Call lookupExceptionHandlerCall = jit.call();
-                    jit.jumpToExceptionHandler();
+                    jit.jumpToExceptionHandler(*vm);
 
                     jit.addLinkTask(
                         [=] (LinkBuffer& linkBuffer) {
@@ -4072,9 +4074,10 @@ private:
         m_out.jump(continuation);
         
         m_out.appendTo(slowPath, continuation);
+        VM& vm = this->vm();
         LValue callResult = lazySlowPath(
-            [=] (const Vector<Location>& locations) -> RefPtr<LazySlowPath::Generator> {
-                return createLazyCallGenerator(
+            [=, &vm] (const Vector<Location>& locations) -> RefPtr<LazySlowPath::Generator> {
+                return createLazyCallGenerator(vm,
                     operationCreateActivationDirect, locations[0].directGPR(),
                     CCallHelpers::TrustedImmPtr(structure.get()), locations[1].directGPR(),
                     CCallHelpers::TrustedImmPtr(table),
@@ -4136,21 +4139,22 @@ private:
 
         Vector<LValue> slowPathArguments;
         slowPathArguments.append(scope);
+        VM& vm = this->vm();
         LValue callResult = lazySlowPath(
-            [=] (const Vector<Location>& locations) -> RefPtr<LazySlowPath::Generator> {
+            [=, &vm] (const Vector<Location>& locations) -> RefPtr<LazySlowPath::Generator> {
                 if (isGeneratorFunction) {
-                    return createLazyCallGenerator(
+                    return createLazyCallGenerator(vm,
                         operationNewGeneratorFunctionWithInvalidatedReallocationWatchpoint,
                         locations[0].directGPR(), locations[1].directGPR(),
                         CCallHelpers::TrustedImmPtr(executable));
                 }
                 if (isAsyncFunction) {
-                    return createLazyCallGenerator(
+                    return createLazyCallGenerator(vm,
                         operationNewAsyncFunctionWithInvalidatedReallocationWatchpoint,
                         locations[0].directGPR(), locations[1].directGPR(),
                         CCallHelpers::TrustedImmPtr(executable));
                 }
-                return createLazyCallGenerator(
+                return createLazyCallGenerator(vm,
                     operationNewFunctionWithInvalidatedReallocationWatchpoint,
                     locations[0].directGPR(), locations[1].directGPR(),
                     CCallHelpers::TrustedImmPtr(executable));
@@ -4208,9 +4212,10 @@ private:
         m_out.jump(continuation);
         
         m_out.appendTo(slowPath, continuation);
+        VM& vm = this->vm();
         LValue callResult = lazySlowPath(
-            [=] (const Vector<Location>& locations) -> RefPtr<LazySlowPath::Generator> {
-                return createLazyCallGenerator(
+            [=, &vm] (const Vector<Location>& locations) -> RefPtr<LazySlowPath::Generator> {
+                return createLazyCallGenerator(vm,
                     operationCreateDirectArguments, locations[0].directGPR(),
                     CCallHelpers::TrustedImmPtr(structure.get()), locations[1].directGPR(),
                     CCallHelpers::TrustedImm32(minCapacity));
@@ -4820,9 +4825,10 @@ private:
             m_out.appendTo(slowCase, continuation);
             LValue storageValue = m_out.phi(pointerType(), noStorage, haveStorage);
 
+            VM& vm = this->vm();
             LValue slowResultValue = lazySlowPath(
-                [=] (const Vector<Location>& locations) -> RefPtr<LazySlowPath::Generator> {
-                    return createLazyCallGenerator(
+                [=, &vm] (const Vector<Location>& locations) -> RefPtr<LazySlowPath::Generator> {
+                    return createLazyCallGenerator(vm,
                         operationNewTypedArrayWithSizeForType(type), locations[0].directGPR(),
                         CCallHelpers::TrustedImmPtr(structure.get()), locations[1].directGPR(),
                         locations[2].directGPR());
@@ -5083,19 +5089,20 @@ private:
         
         m_out.appendTo(slowPath, continuation);
         LValue slowResultValue;
+        VM& vm = this->vm();
         switch (numKids) {
         case 2:
             slowResultValue = lazySlowPath(
-                [=] (const Vector<Location>& locations) -> RefPtr<LazySlowPath::Generator> {
-                    return createLazyCallGenerator(
+                [=, &vm] (const Vector<Location>& locations) -> RefPtr<LazySlowPath::Generator> {
+                    return createLazyCallGenerator(vm,
                         operationMakeRope2, locations[0].directGPR(), locations[1].directGPR(),
                         locations[2].directGPR());
                 }, kids[0], kids[1]);
             break;
         case 3:
             slowResultValue = lazySlowPath(
-                [=] (const Vector<Location>& locations) -> RefPtr<LazySlowPath::Generator> {
-                    return createLazyCallGenerator(
+                [=, &vm] (const Vector<Location>& locations) -> RefPtr<LazySlowPath::Generator> {
+                    return createLazyCallGenerator(vm,
                         operationMakeRope3, locations[0].directGPR(), locations[1].directGPR(),
                         locations[2].directGPR(), locations[3].directGPR());
                 }, kids[0], kids[1], kids[2]);
@@ -5512,9 +5519,10 @@ private:
         
         LBasicBlock lastNext = m_out.appendTo(isNotInvalidated, continuation);
 
+        VM& vm = this->vm();
         lazySlowPath(
-            [=] (const Vector<Location>&) -> RefPtr<LazySlowPath::Generator> {
-                return createLazyCallGenerator(
+            [=, &vm] (const Vector<Location>&) -> RefPtr<LazySlowPath::Generator> {
+                return createLazyCallGenerator(vm,
                     operationNotifyWrite, InvalidGPRReg, CCallHelpers::TrustedImmPtr(set));
             });
         m_out.jump(continuation);
@@ -6448,7 +6456,7 @@ private:
                 auto callWithExceptionCheck = [&] (void* callee) {
                     jit.move(CCallHelpers::TrustedImmPtr(callee), GPRInfo::nonPreservedNonArgumentGPR);
                     jit.call(GPRInfo::nonPreservedNonArgumentGPR);
-                    exceptions->append(jit.emitExceptionCheck(AssemblyHelpers::NormalExceptionCheck, AssemblyHelpers::FarJumpWidth));
+                    exceptions->append(jit.emitExceptionCheck(state->vm(), AssemblyHelpers::NormalExceptionCheck, AssemblyHelpers::FarJumpWidth));
                 };
 
                 CCallHelpers::JumpList slowCase;
@@ -6755,7 +6763,7 @@ private:
                 auto callWithExceptionCheck = [&] (void* callee) {
                     jit.move(CCallHelpers::TrustedImmPtr(callee), GPRInfo::nonPreservedNonArgumentGPR);
                     jit.call(GPRInfo::nonPreservedNonArgumentGPR);
-                    exceptions->append(jit.emitExceptionCheck(AssemblyHelpers::NormalExceptionCheck, AssemblyHelpers::FarJumpWidth));
+                    exceptions->append(jit.emitExceptionCheck(state->vm(), AssemblyHelpers::NormalExceptionCheck, AssemblyHelpers::FarJumpWidth));
                 };
 
                 unsigned originalStackHeight = params.proc().frameSize();
@@ -6771,7 +6779,7 @@ private:
                         inlineCallFrame = node->origin.semantic.inlineCallFrame;
 
                     // emitSetupVarargsFrameFastCase modifies the stack pointer if it succeeds.
-                    emitSetupVarargsFrameFastCase(jit, scratchGPR2, scratchGPR1, scratchGPR2, scratchGPR3, inlineCallFrame, data->firstVarArgOffset, slowCase);
+                    emitSetupVarargsFrameFastCase(state->vm(), jit, scratchGPR2, scratchGPR1, scratchGPR2, scratchGPR3, inlineCallFrame, data->firstVarArgOffset, slowCase);
 
                     CCallHelpers::Jump done = jit.jump();
                     slowCase.link(&jit);
@@ -6942,7 +6950,7 @@ private:
                 jit.setupArgumentsWithExecState(GPRInfo::regT1);
                 jit.move(CCallHelpers::TrustedImmPtr(bitwise_cast<void*>(operationCallEval)), GPRInfo::nonPreservedNonArgumentGPR);
                 jit.call(GPRInfo::nonPreservedNonArgumentGPR);
-                exceptions->append(jit.emitExceptionCheck(AssemblyHelpers::NormalExceptionCheck, AssemblyHelpers::FarJumpWidth));
+                exceptions->append(jit.emitExceptionCheck(state->vm(), AssemblyHelpers::NormalExceptionCheck, AssemblyHelpers::FarJumpWidth));
                 
                 CCallHelpers::Jump done = jit.branchTest64(CCallHelpers::NonZero, GPRInfo::returnValueGPR);
                 
@@ -7985,9 +7993,10 @@ private:
             rarely(slowPath), usually(continuation));
         
         m_out.appendTo(slowPath, notCellCase);
+        VM& vm = this->vm();
         LValue slowResultValue = lazySlowPath(
-            [=] (const Vector<Location>& locations) -> RefPtr<LazySlowPath::Generator> {
-                return createLazyCallGenerator(
+            [=, &vm] (const Vector<Location>& locations) -> RefPtr<LazySlowPath::Generator> {
+                return createLazyCallGenerator(vm,
                     operationObjectIsObject, locations[0].directGPR(),
                     CCallHelpers::TrustedImmPtr(globalObject), locations[1].directGPR());
             }, value);
@@ -8035,9 +8044,10 @@ private:
             rarely(slowPath), usually(continuation));
         
         m_out.appendTo(slowPath, continuation);
+        VM& vm = this->vm();
         LValue slowResultValue = lazySlowPath(
-            [=] (const Vector<Location>& locations) -> RefPtr<LazySlowPath::Generator> {
-                return createLazyCallGenerator(
+            [=, &vm] (const Vector<Location>& locations) -> RefPtr<LazySlowPath::Generator> {
+                return createLazyCallGenerator(vm,
                     operationObjectIsFunction, locations[0].directGPR(),
                     CCallHelpers::TrustedImmPtr(globalObject), locations[1].directGPR());
             }, value);
@@ -8779,11 +8789,12 @@ private:
                 
                 LValue butterflyValue = m_out.phi(pointerType(), noButterfly, haveButterfly);
 
+                VM& vm = this->vm();
                 LValue slowObjectValue;
                 if (hasIndexingHeader) {
                     slowObjectValue = lazySlowPath(
-                        [=] (const Vector<Location>& locations) -> RefPtr<LazySlowPath::Generator> {
-                            return createLazyCallGenerator(
+                        [=, &vm] (const Vector<Location>& locations) -> RefPtr<LazySlowPath::Generator> {
+                            return createLazyCallGenerator(vm,
                                 operationNewObjectWithButterflyWithIndexingHeaderAndVectorLength,
                                 locations[0].directGPR(), CCallHelpers::TrustedImmPtr(structure.get()),
                                 locations[1].directGPR(), locations[2].directGPR());
@@ -8791,8 +8802,8 @@ private:
                         vectorLength, butterflyValue);
                 } else {
                     slowObjectValue = lazySlowPath(
-                        [=] (const Vector<Location>& locations) -> RefPtr<LazySlowPath::Generator> {
-                            return createLazyCallGenerator(
+                        [=, &vm] (const Vector<Location>& locations) -> RefPtr<LazySlowPath::Generator> {
+                            return createLazyCallGenerator(vm,
                                 operationNewObjectWithButterfly, locations[0].directGPR(),
                                 CCallHelpers::TrustedImmPtr(structure.get()), locations[1].directGPR());
                         },
@@ -8990,9 +9001,10 @@ private:
         // because all fields will be overwritten.
         // FIXME: It may be worth creating an operation that calls a constructor on JSLexicalEnvironment that 
         // doesn't initialize every slot because we are guaranteed to do that here.
+        VM& vm = this->vm();
         LValue callResult = lazySlowPath(
-            [=] (const Vector<Location>& locations) -> RefPtr<LazySlowPath::Generator> {
-                return createLazyCallGenerator(
+            [=, &vm] (const Vector<Location>& locations) -> RefPtr<LazySlowPath::Generator> {
+                return createLazyCallGenerator(vm,
                     operationCreateActivationDirect, locations[0].directGPR(),
                     CCallHelpers::TrustedImmPtr(structure.get()), locations[1].directGPR(),
                     CCallHelpers::TrustedImmPtr(table),
@@ -9045,9 +9057,10 @@ private:
 
         LBasicBlock lastNext = m_out.appendTo(needTrapHandling, continuation);
 
+        VM& vm = this->vm();
         lazySlowPath(
-            [=] (const Vector<Location>&) -> RefPtr<LazySlowPath::Generator> {
-                return createLazyCallGenerator(operationHandleTraps, InvalidGPRReg);
+            [=, &vm] (const Vector<Location>&) -> RefPtr<LazySlowPath::Generator> {
+                return createLazyCallGenerator(vm, operationHandleTraps, InvalidGPRReg);
             });
         m_out.jump(continuation);
         
@@ -9712,17 +9725,18 @@ private:
         m_out.appendTo(slowPath, continuation);
         
         LValue slowButterflyValue;
+        VM& vm = this->vm();
         if (sizeInValues == initialOutOfLineCapacity) {
             slowButterflyValue = lazySlowPath(
-                [=] (const Vector<Location>& locations) -> RefPtr<LazySlowPath::Generator> {
-                    return createLazyCallGenerator(
+                [=, &vm] (const Vector<Location>& locations) -> RefPtr<LazySlowPath::Generator> {
+                    return createLazyCallGenerator(vm,
                         operationAllocateSimplePropertyStorageWithInitialCapacity,
                         locations[0].directGPR());
                 });
         } else {
             slowButterflyValue = lazySlowPath(
-                [=] (const Vector<Location>& locations) -> RefPtr<LazySlowPath::Generator> {
-                    return createLazyCallGenerator(
+                [=, &vm] (const Vector<Location>& locations) -> RefPtr<LazySlowPath::Generator> {
+                    return createLazyCallGenerator(vm,
                         operationAllocateSimplePropertyStorage, locations[0].directGPR(),
                         CCallHelpers::TrustedImmPtr(sizeInValues));
                 });
@@ -10801,9 +10815,10 @@ private:
         
         m_out.appendTo(slowPath, continuation);
 
+        VM& vm = this->vm();
         LValue slowResultValue = lazySlowPath(
-            [=] (const Vector<Location>& locations) -> RefPtr<LazySlowPath::Generator> {
-                return createLazyCallGenerator(
+            [=, &vm] (const Vector<Location>& locations) -> RefPtr<LazySlowPath::Generator> {
+                return createLazyCallGenerator(vm,
                     operationNewObject, locations[0].directGPR(),
                     CCallHelpers::TrustedImmPtr(structure.get()));
             });
@@ -10919,9 +10934,10 @@ private:
         LValue structureValue = m_out.phi(pointerType(), largeStructure, failStructure);
         LValue butterflyValue = m_out.phi(pointerType(), noButterfly, haveButterfly);
 
+        VM& vm = this->vm();
         LValue slowResultValue = lazySlowPath(
-            [=] (const Vector<Location>& locations) -> RefPtr<LazySlowPath::Generator> {
-                return createLazyCallGenerator(
+            [=, &vm] (const Vector<Location>& locations) -> RefPtr<LazySlowPath::Generator> {
+                return createLazyCallGenerator(vm,
                     operationNewArrayWithSize, locations[0].directGPR(),
                     locations[1].directGPR(), locations[2].directGPR(), locations[3].directGPR());
             },
@@ -11667,9 +11683,10 @@ private:
         functor(TypeofType::Object);
         
         m_out.appendTo(slowPath, unreachable);
+        VM& vm = this->vm();
         LValue result = lazySlowPath(
-            [=] (const Vector<Location>& locations) -> RefPtr<LazySlowPath::Generator> {
-                return createLazyCallGenerator(
+            [=, &vm] (const Vector<Location>& locations) -> RefPtr<LazySlowPath::Generator> {
+                return createLazyCallGenerator(vm,
                     operationTypeOfObjectAsTypeofType, locations[0].directGPR(),
                     CCallHelpers::TrustedImmPtr(globalObject), locations[1].directGPR());
             }, value);

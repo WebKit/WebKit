@@ -57,7 +57,7 @@ void LazySlowPath::generate(CodeBlock* codeBlock)
 
     VM& vm = *codeBlock->vm();
 
-    CCallHelpers jit(&vm, codeBlock);
+    CCallHelpers jit(codeBlock);
     GenerationParams params;
     CCallHelpers::JumpList exceptionJumps;
     params.exceptionJumps = m_exceptionTarget ? &exceptionJumps : nullptr;

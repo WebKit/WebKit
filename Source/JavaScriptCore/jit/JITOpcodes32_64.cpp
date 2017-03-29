@@ -55,7 +55,7 @@ JIT::CodeRef JIT::privateCompileCTINativeCall(VM* vm, NativeFunction func)
 
     emitFunctionPrologue();
     emitPutToCallFrameHeader(0, CallFrameSlot::codeBlock);
-    storePtr(callFrameRegister, &m_vm->topCallFrame);
+    storePtr(callFrameRegister, &vm->topCallFrame);
 
 #if CPU(X86)
     // Calling convention:      f(ecx, edx, ...);
@@ -107,7 +107,7 @@ JIT::CodeRef JIT::privateCompileCTINativeCall(VM* vm, NativeFunction func)
     // Handle an exception
     sawException.link(this);
 
-    storePtr(callFrameRegister, &m_vm->topCallFrame);
+    storePtr(callFrameRegister, &vm->topCallFrame);
 
 #if CPU(X86)
     addPtr(TrustedImm32(-4), stackPointerRegister);
@@ -123,10 +123,10 @@ JIT::CodeRef JIT::privateCompileCTINativeCall(VM* vm, NativeFunction func)
     addPtr(TrustedImm32(8), stackPointerRegister);
 #endif
 
-    jumpToExceptionHandler();
+    jumpToExceptionHandler(*vm);
 
     // All trampolines constructed! copy the code, link up calls, and set the pointers on the Machine object.
-    LinkBuffer patchBuffer(*m_vm, *this, GLOBAL_THUNK_ID);
+    LinkBuffer patchBuffer(*vm, *this, GLOBAL_THUNK_ID);
 
     patchBuffer.link(nativeCall, FunctionPtr(func));
     return FINALIZE_CODE(patchBuffer, ("JIT CTI native call"));
@@ -463,7 +463,7 @@ void JIT::emit_op_jfalse(Instruction* currentInstruction)
     GPRReg scratch = regT2;
     GPRReg result = regT3;
     bool shouldCheckMasqueradesAsUndefined = true;
-    emitConvertValueToBoolean(value, result, scratch, fpRegT0, fpRegT1, shouldCheckMasqueradesAsUndefined, m_codeBlock->globalObject());
+    emitConvertValueToBoolean(*vm(), value, result, scratch, fpRegT0, fpRegT1, shouldCheckMasqueradesAsUndefined, m_codeBlock->globalObject());
 
     addJump(branchTest32(Zero, result), target);
 }
@@ -478,7 +478,7 @@ void JIT::emit_op_jtrue(Instruction* currentInstruction)
     JSValueRegs value(regT1, regT0);
     GPRReg scratch = regT2;
     GPRReg result = regT3;
-    emitConvertValueToBoolean(value, result, scratch, fpRegT0, fpRegT1, shouldCheckMasqueradesAsUndefined, m_codeBlock->globalObject());
+    emitConvertValueToBoolean(*vm(), value, result, scratch, fpRegT0, fpRegT1, shouldCheckMasqueradesAsUndefined, m_codeBlock->globalObject());
 
     addJump(branchTest32(NonZero, result), target);
 }
@@ -760,10 +760,10 @@ void JIT::emit_op_neq_null(Instruction* currentInstruction)
 void JIT::emit_op_throw(Instruction* currentInstruction)
 {
     ASSERT(regT0 == returnValueGPR);
-    copyCalleeSavesToVMEntryFrameCalleeSavesBuffer();
+    copyCalleeSavesToVMEntryFrameCalleeSavesBuffer(*vm());
     emitLoad(currentInstruction[1].u.operand, regT1, regT0);
     callOperationNoExceptionCheck(operationThrow, regT1, regT0);
-    jumpToExceptionHandler();
+    jumpToExceptionHandler(*vm());
 }
 
 void JIT::emit_op_push_with_scope(Instruction* currentInstruction)
@@ -821,7 +821,7 @@ void JIT::emitSlow_op_to_string(Instruction* currentInstruction, Vector<SlowCase
 
 void JIT::emit_op_catch(Instruction* currentInstruction)
 {
-    restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer();
+    restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer(*vm());
 
     move(TrustedImmPtr(m_vm), regT3);
     // operationThrow returns the callFrame for the handler.
@@ -832,7 +832,7 @@ void JIT::emit_op_catch(Instruction* currentInstruction)
 
     callOperationNoExceptionCheck(operationCheckIfExceptionIsUncatchableAndNotifyProfiler);
     Jump isCatchableException = branchTest32(Zero, returnValueGPR);
-    jumpToExceptionHandler();
+    jumpToExceptionHandler(*vm());
     isCatchableException.link(this);
 
     move(TrustedImmPtr(m_vm), regT3);
@@ -1314,7 +1314,7 @@ void JIT::emit_op_log_shadow_chicken_prologue(Instruction* currentInstruction)
     GPRReg shadowPacketReg = regT0;
     GPRReg scratch1Reg = nonArgGPR0; // This must be a non-argument register.
     GPRReg scratch2Reg = regT2;
-    ensureShadowChickenPacket(shadowPacketReg, scratch1Reg, scratch2Reg);
+    ensureShadowChickenPacket(*vm(), shadowPacketReg, scratch1Reg, scratch2Reg);
 
     scratch1Reg = regT4;
     emitLoadPayload(currentInstruction[1].u.operand, regT3);
@@ -1328,7 +1328,7 @@ void JIT::emit_op_log_shadow_chicken_tail(Instruction* currentInstruction)
     GPRReg shadowPacketReg = regT0;
     GPRReg scratch1Reg = nonArgGPR0; // This must be a non-argument register.
     GPRReg scratch2Reg = regT2;
-    ensureShadowChickenPacket(shadowPacketReg, scratch1Reg, scratch2Reg);
+    ensureShadowChickenPacket(*vm(), shadowPacketReg, scratch1Reg, scratch2Reg);
 
     emitLoadPayload(currentInstruction[1].u.operand, regT2);
     emitLoadTag(currentInstruction[1].u.operand, regT1);

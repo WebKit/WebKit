@@ -177,7 +177,7 @@ static InlineCacheAction tryCacheGetByID(ExecState* exec, JSValue baseValue, con
                 && slot.slotBase() == baseValue
                 && InlineAccess::isCacheableArrayLength(stubInfo, jsCast<JSArray*>(baseValue))) {
 
-                bool generatedCodeInline = InlineAccess::generateArrayLength(*codeBlock->vm(), stubInfo, jsCast<JSArray*>(baseValue));
+                bool generatedCodeInline = InlineAccess::generateArrayLength(stubInfo, jsCast<JSArray*>(baseValue));
                 if (generatedCodeInline) {
                     ftlThunkAwareRepatchCall(codeBlock, stubInfo.slowPathCallLocation(), appropriateOptimizingGetByIdFunction(kind));
                     stubInfo.initArrayLength();
@@ -233,7 +233,7 @@ static InlineCacheAction tryCacheGetByID(ExecState* exec, JSValue baseValue, con
             && !structure->needImpurePropertyWatchpoint()
             && !loadTargetFromProxy) {
 
-            bool generatedCodeInline = InlineAccess::generateSelfPropertyAccess(*codeBlock->vm(), stubInfo, structure, slot.cachedOffset());
+            bool generatedCodeInline = InlineAccess::generateSelfPropertyAccess(stubInfo, structure, slot.cachedOffset());
             if (generatedCodeInline) {
                 LOG_IC((ICEvent::GetByIdSelfPatch, structure->classInfo(), propertyName));
                 structure->startWatchingPropertyForReplacements(vm, slot.cachedOffset());
@@ -329,7 +329,7 @@ static InlineCacheAction tryCacheGetByID(ExecState* exec, JSValue baseValue, con
         LOG_IC((ICEvent::GetByIdReplaceWithJump, baseValue.classInfoOrNull(vm), propertyName));
         
         RELEASE_ASSERT(result.code());
-        InlineAccess::rewireStubAsJump(exec->vm(), stubInfo, CodeLocationLabel(result.code()));
+        InlineAccess::rewireStubAsJump(stubInfo, CodeLocationLabel(result.code()));
     }
     
     return result.shouldGiveUpNow() ? GiveUpOnCache : RetryCacheLater;
@@ -396,7 +396,7 @@ static InlineCacheAction tryCachePutByID(ExecState* exec, JSValue baseValue, Str
                 && !structure->needImpurePropertyWatchpoint()
                 && !structure->inferredTypeFor(ident.impl())) {
                 
-                bool generatedCodeInline = InlineAccess::generateSelfPropertyReplace(vm, stubInfo, structure, slot.cachedOffset());
+                bool generatedCodeInline = InlineAccess::generateSelfPropertyReplace(stubInfo, structure, slot.cachedOffset());
                 if (generatedCodeInline) {
                     LOG_IC((ICEvent::PutByIdSelfPatch, structure->classInfo(), ident));
                     ftlThunkAwareRepatchCall(codeBlock, stubInfo.slowPathCallLocation(), appropriateOptimizingPutByIdFunction(slot, putKind));
@@ -483,7 +483,7 @@ static InlineCacheAction tryCachePutByID(ExecState* exec, JSValue baseValue, Str
         
         RELEASE_ASSERT(result.code());
 
-        InlineAccess::rewireStubAsJump(vm, stubInfo, CodeLocationLabel(result.code()));
+        InlineAccess::rewireStubAsJump(stubInfo, CodeLocationLabel(result.code()));
     }
     
     return result.shouldGiveUpNow() ? GiveUpOnCache : RetryCacheLater;
@@ -785,7 +785,7 @@ void linkPolymorphicCall(
     
     GPRReg calleeGPR = static_cast<GPRReg>(callLinkInfo.calleeGPR());
     
-    CCallHelpers stubJit(&vm, callerCodeBlock);
+    CCallHelpers stubJit(callerCodeBlock);
     
     CCallHelpers::JumpList slowPath;
     
@@ -981,7 +981,7 @@ void linkPolymorphicCall(
 void resetGetByID(CodeBlock* codeBlock, StructureStubInfo& stubInfo, GetByIDKind kind)
 {
     ftlThunkAwareRepatchCall(codeBlock, stubInfo.slowPathCallLocation(), appropriateOptimizingGetByIdFunction(kind));
-    InlineAccess::rewireStubAsJump(*codeBlock->vm(), stubInfo, stubInfo.slowPathStartLocation());
+    InlineAccess::rewireStubAsJump(stubInfo, stubInfo.slowPathStartLocation());
 }
 
 void resetPutByID(CodeBlock* codeBlock, StructureStubInfo& stubInfo)
@@ -1000,7 +1000,7 @@ void resetPutByID(CodeBlock* codeBlock, StructureStubInfo& stubInfo)
     }
 
     ftlThunkAwareRepatchCall(codeBlock, stubInfo.slowPathCallLocation(), optimizedFunction);
-    InlineAccess::rewireStubAsJump(*codeBlock->vm(), stubInfo, stubInfo.slowPathStartLocation());
+    InlineAccess::rewireStubAsJump(stubInfo, stubInfo.slowPathStartLocation());
 }
 
 void resetIn(CodeBlock*, StructureStubInfo& stubInfo)

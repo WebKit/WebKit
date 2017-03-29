@@ -267,7 +267,7 @@ static void osrWriteBarrier(CCallHelpers& jit, GPRReg owner, GPRReg scratch)
     ownerIsRememberedOrInEden.link(&jit);
 }
 
-void adjustAndJumpToTarget(CCallHelpers& jit, const OSRExitBase& exit)
+void adjustAndJumpToTarget(VM& vm, CCallHelpers& jit, const OSRExitBase& exit)
 {
     jit.memoryFence();
     
@@ -309,7 +309,7 @@ void adjustAndJumpToTarget(CCallHelpers& jit, const OSRExitBase& exit)
     jit.addPtr(AssemblyHelpers::TrustedImm32(JIT::stackPointerOffsetFor(codeBlockForExit) * sizeof(Register)), GPRInfo::callFrameRegister, AssemblyHelpers::stackPointerRegister);
     if (exit.isExceptionHandler()) {
         // Since we're jumping to op_catch, we need to set callFrameForCatch.
-        jit.storePtr(GPRInfo::callFrameRegister, jit.vm()->addressOfCallFrameForCatch());
+        jit.storePtr(GPRInfo::callFrameRegister, vm.addressOfCallFrameForCatch());
     }
     
     jit.move(AssemblyHelpers::TrustedImmPtr(jumpTarget), GPRInfo::regT2);

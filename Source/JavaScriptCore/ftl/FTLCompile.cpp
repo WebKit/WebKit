@@ -126,16 +126,16 @@ void compile(State& state, Safepoint::Result& safepointResult)
     // We will add exception handlers while generating.
     codeBlock->clearExceptionHandlers();
 
-    CCallHelpers jit(&vm, codeBlock);
+    CCallHelpers jit(codeBlock);
     B3::generate(*state.proc, jit);
 
     // Emit the exception handler.
     *state.exceptionHandler = jit.label();
-    jit.copyCalleeSavesToVMEntryFrameCalleeSavesBuffer();
-    jit.move(MacroAssembler::TrustedImmPtr(jit.vm()), GPRInfo::argumentGPR0);
+    jit.copyCalleeSavesToVMEntryFrameCalleeSavesBuffer(vm);
+    jit.move(MacroAssembler::TrustedImmPtr(&vm), GPRInfo::argumentGPR0);
     jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR1);
     CCallHelpers::Call call = jit.call();
-    jit.jumpToExceptionHandler();
+    jit.jumpToExceptionHandler(vm);
     jit.addLinkTask(
         [=] (LinkBuffer& linkBuffer) {
             linkBuffer.link(call, FunctionPtr(lookupExceptionHandler));

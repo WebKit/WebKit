@@ -294,12 +294,12 @@ namespace JSC {
 
         void exceptionCheck()
         {
-            m_exceptionChecks.append(emitExceptionCheck());
+            m_exceptionChecks.append(emitExceptionCheck(*vm()));
         }
 
         void exceptionCheckWithCallFrameRollback()
         {
-            m_exceptionChecksWithCallFrameRollback.append(emitExceptionCheck());
+            m_exceptionChecksWithCallFrameRollback.append(emitExceptionCheck(*vm()));
         }
 
         void privateCompileExceptionHandlers();

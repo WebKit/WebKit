@@ -131,7 +131,7 @@ public:
     void generateOutOfLine(VM& vm, CodeBlock* codeBlock, FunctionPtr callReplacement)
     {
         auto linkJumpToOutOfLineSnippet = [&] () {
-            CCallHelpers jit(&vm, codeBlock);
+            CCallHelpers jit(codeBlock);
             auto jump = jit.jump();
             // We don't need a nop sled here because nobody should be jumping into the middle of an IC.
             bool needsBranchCompaction = false;
@@ -150,7 +150,7 @@ public:
 
         if (m_generateFastPathOnRepatch) {
 
-            CCallHelpers jit(&vm, codeBlock);
+            CCallHelpers jit(codeBlock);
             MathICGenerationState generationState;
             bool generatedInline = generateInline(jit, generationState, shouldEmitProfiling);
 
@@ -190,7 +190,7 @@ public:
         replaceCall();
 
         {
-            CCallHelpers jit(&vm, codeBlock);
+            CCallHelpers jit(codeBlock);
 
             MacroAssembler::JumpList endJumpList; 
             MacroAssembler::JumpList slowPathJumpList; 

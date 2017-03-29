@@ -1282,8 +1282,8 @@ Expected<std::unique_ptr<WasmInternalFunction>, String> parseAndCompile(VM& vm, 
 {
     auto result = std::make_unique<WasmInternalFunction>();
 
-    compilationContext.jsEntrypointJIT = std::make_unique<CCallHelpers>(&vm);
-    compilationContext.wasmEntrypointJIT = std::make_unique<CCallHelpers>(&vm);
+    compilationContext.jsEntrypointJIT = std::make_unique<CCallHelpers>();
+    compilationContext.wasmEntrypointJIT = std::make_unique<CCallHelpers>();
 
     Procedure procedure;
 

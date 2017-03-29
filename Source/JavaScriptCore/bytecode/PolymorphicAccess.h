@@ -177,12 +177,14 @@ private:
 };
 
 struct AccessGenerationState {
-    AccessGenerationState()
-        : m_calculatedRegistersForCallAndExceptionHandling(false)
+    AccessGenerationState(VM& vm)
+        : m_vm(vm) 
+        , m_calculatedRegistersForCallAndExceptionHandling(false)
         , m_needsToRestoreRegistersIfException(false)
         , m_calculatedCallSiteIndex(false)
     {
     }
+    VM& m_vm;
     CCallHelpers* jit { nullptr };
     ScratchRegisterAllocator* allocator;
     ScratchRegisterAllocator::PreservedState preservedReusedRegisterState;

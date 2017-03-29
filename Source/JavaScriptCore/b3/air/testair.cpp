@@ -85,7 +85,7 @@ VM* vm;
 std::unique_ptr<B3::Compilation> compile(B3::Procedure& proc)
 {
     prepareForGeneration(proc.code());
-    CCallHelpers jit(vm);
+    CCallHelpers jit;
     generate(proc.code(), jit);
     LinkBuffer linkBuffer(*vm, jit, nullptr);
 

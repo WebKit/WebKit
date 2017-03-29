@@ -76,7 +76,7 @@ namespace JSC {
         void loadArgumentWithSpecificClass(const ClassInfo* classInfo, int argument, RegisterID dst, RegisterID scratch)
         {
             loadCellArgument(argument, dst);
-            emitLoadStructure(dst, scratch, dst);
+            emitLoadStructure(*vm(), dst, scratch, dst);
             appendFailure(branchPtr(NotEqual, Address(scratch, Structure::classInfoOffset()), TrustedImmPtr(classInfo)));
             // We have to reload the argument since emitLoadStructure clobbered it.
             loadCellArgument(argument, dst);

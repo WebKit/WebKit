@@ -45,7 +45,7 @@ public:
     {
     }
     
-    void compileExit(const OSRExit&, const Operands<ValueRecovery>&, SpeculationRecovery*);
+    void compileExit(VM&, const OSRExit&, const Operands<ValueRecovery>&, SpeculationRecovery*);
 
 private:
     void emitRestoreArguments(const Operands<ValueRecovery>&);

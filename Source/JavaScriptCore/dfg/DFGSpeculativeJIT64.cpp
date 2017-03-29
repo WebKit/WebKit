@@ -279,7 +279,7 @@ void SpeculativeJIT::nonSpeculativeNonPeepholeCompareNullOrUndefined(Edge operan
         GPRReg localGlobalObjectGPR = localGlobalObject.gpr();
         GPRReg remoteGlobalObjectGPR = remoteGlobalObject.gpr();
         m_jit.move(TrustedImmPtr::weakPointer(m_jit.graph(), m_jit.graph().globalObjectFor(m_currentNode->origin.semantic)), localGlobalObjectGPR);
-        m_jit.emitLoadStructure(argGPR, resultGPR, scratch.gpr());
+        m_jit.emitLoadStructure(*m_jit.vm(), argGPR, resultGPR, scratch.gpr());
         m_jit.loadPtr(JITCompiler::Address(resultGPR, Structure::globalObjectOffset()), remoteGlobalObjectGPR);
         m_jit.comparePtr(JITCompiler::Equal, localGlobalObjectGPR, remoteGlobalObjectGPR, resultGPR);
         done.append(m_jit.jump());
@@ -334,7 +334,7 @@ void SpeculativeJIT::nonSpeculativePeepholeBranchNullOrUndefined(Edge operand, N
         GPRReg localGlobalObjectGPR = localGlobalObject.gpr();
         GPRReg remoteGlobalObjectGPR = remoteGlobalObject.gpr();
         m_jit.move(TrustedImmPtr::weakPointer(m_jit.graph(), m_jit.graph().globalObjectFor(m_currentNode->origin.semantic)), localGlobalObjectGPR);
-        m_jit.emitLoadStructure(argGPR, resultGPR, scratch.gpr());
+        m_jit.emitLoadStructure(*m_jit.vm(), argGPR, resultGPR, scratch.gpr());
         m_jit.loadPtr(JITCompiler::Address(resultGPR, Structure::globalObjectOffset()), remoteGlobalObjectGPR);
         branchPtr(JITCompiler::Equal, localGlobalObjectGPR, remoteGlobalObjectGPR, taken);
 
@@ -781,7 +781,7 @@ void SpeculativeJIT::emitCall(Node* node)
             else
                 inlineCallFrame = node->origin.semantic.inlineCallFrame;
             // emitSetupVarargsFrameFastCase modifies the stack pointer if it succeeds.
-            emitSetupVarargsFrameFastCase(m_jit, scratchGPR2, scratchGPR1, scratchGPR2, scratchGPR3, inlineCallFrame, data->firstVarArgOffset, slowCase);
+            emitSetupVarargsFrameFastCase(*m_jit.vm(), m_jit, scratchGPR2, scratchGPR1, scratchGPR2, scratchGPR3, inlineCallFrame, data->firstVarArgOffset, slowCase);
             JITCompiler::Jump done = m_jit.jump();
             slowCase.link(&m_jit);
             callOperation(operationThrowStackOverflowForVarargs);
@@ -1876,7 +1876,7 @@ void SpeculativeJIT::compileObjectOrOtherLogicalNot(Edge nodeUse)
                 MacroAssembler::Address(valueGPR, JSCell::typeInfoFlagsOffset()), 
                 MacroAssembler::TrustedImm32(MasqueradesAsUndefined));
 
-        m_jit.emitLoadStructure(valueGPR, structureGPR, scratchGPR);
+        m_jit.emitLoadStructure(*m_jit.vm(), valueGPR, structureGPR, scratchGPR);
         speculationCheck(BadType, JSValueRegs(valueGPR), nodeUse, 
             m_jit.branchPtr(
                 MacroAssembler::Equal, 
@@ -1982,7 +1982,7 @@ void SpeculativeJIT::compileLogicalNot(Node* node)
             scratchGPR = scratch->gpr();
         }
         bool negateResult = true;
-        m_jit.emitConvertValueToBoolean(JSValueRegs(arg1GPR), resultGPR, scratchGPR, valueFPR.fpr(), tempFPR.fpr(), shouldCheckMasqueradesAsUndefined, globalObject, negateResult);
+        m_jit.emitConvertValueToBoolean(*m_jit.vm(), JSValueRegs(arg1GPR), resultGPR, scratchGPR, valueFPR.fpr(), tempFPR.fpr(), shouldCheckMasqueradesAsUndefined, globalObject, negateResult);
         m_jit.or32(TrustedImm32(ValueFalse), resultGPR);
         jsValueResult(resultGPR, node, DataFormatJSBoolean);
         return;
@@ -2027,7 +2027,7 @@ void SpeculativeJIT::emitObjectOrOtherBranch(Edge nodeUse, BasicBlock* taken, Ba
             MacroAssembler::Address(valueGPR, JSCell::typeInfoFlagsOffset()), 
             TrustedImm32(MasqueradesAsUndefined));
 
-        m_jit.emitLoadStructure(valueGPR, structureGPR, scratchGPR);
+        m_jit.emitLoadStructure(*m_jit.vm(), valueGPR, structureGPR, scratchGPR);
         speculationCheck(BadType, JSValueRegs(valueGPR), nodeUse,
             m_jit.branchPtr(
                 MacroAssembler::Equal, 
@@ -2155,7 +2155,7 @@ void SpeculativeJIT::emitBranch(Node* node)
             value.use();
 
             JSGlobalObject* globalObject = m_jit.graph().globalObjectFor(node->origin.semantic);
-            m_jit.emitConvertValueToBoolean(JSValueRegs(valueGPR), resultGPR, scratchGPR, valueFPR, tempFPR, shouldCheckMasqueradesAsUndefined, globalObject);
+            m_jit.emitConvertValueToBoolean(*m_jit.vm(), JSValueRegs(valueGPR), resultGPR, scratchGPR, valueFPR, tempFPR, shouldCheckMasqueradesAsUndefined, globalObject);
     
             branchTest32(MacroAssembler::NonZero, resultGPR, taken);
             jump(notTaken);
@@ -4118,7 +4118,7 @@ void SpeculativeJIT::compile(Node* node)
         m_jit.loadPtr(JITCompiler::Address(calleeGPR, JSFunction::offsetOfRareData()), rareDataGPR);
         m_jit.load32(JITCompiler::Address(rareDataGPR, FunctionRareData::offsetOfObjectAllocationProfile() + ObjectAllocationProfile::offsetOfInlineCapacity()), inlineCapacityGPR);
         m_jit.emitInitializeInlineStorage(resultGPR, inlineCapacityGPR);
-        m_jit.mutatorFence();
+        m_jit.mutatorFence(*m_jit.vm());
 
         addSlowPathGenerator(slowPathCall(slowPath, this, operationCreateThis, resultGPR, calleeGPR, node->inlineCapacity()));
         
@@ -4144,7 +4144,7 @@ void SpeculativeJIT::compile(Node* node)
         m_jit.move(TrustedImmPtr(allocatorPtr), allocatorGPR);
         emitAllocateJSObject(resultGPR, allocatorPtr, allocatorGPR, TrustedImmPtr(structure), TrustedImmPtr(0), scratchGPR, slowPath);
         m_jit.emitInitializeInlineStorage(resultGPR, structure->inlineCapacity());
-        m_jit.mutatorFence();
+        m_jit.mutatorFence(*m_jit.vm());
 
         addSlowPathGenerator(slowPathCall(slowPath, this, operationNewObject, resultGPR, structure));
         
@@ -4741,7 +4741,7 @@ void SpeculativeJIT::compile(Node* node)
             GPRReg localGlobalObjectGPR = localGlobalObject.gpr();
             GPRReg remoteGlobalObjectGPR = remoteGlobalObject.gpr();
             m_jit.move(TrustedImmPtr::weakPointer(m_jit.graph(), m_jit.globalObjectFor(node->origin.semantic)), localGlobalObjectGPR);
-            m_jit.emitLoadStructure(value.gpr(), result.gpr(), scratch.gpr());
+            m_jit.emitLoadStructure(*m_jit.vm(), value.gpr(), result.gpr(), scratch.gpr());
             m_jit.loadPtr(JITCompiler::Address(result.gpr(), Structure::globalObjectOffset()), remoteGlobalObjectGPR); 
             m_jit.comparePtr(JITCompiler::Equal, localGlobalObjectGPR, remoteGlobalObjectGPR, result.gpr());
         }
@@ -5702,7 +5702,7 @@ void SpeculativeJIT::compile(Node* node)
         GPRTemporary shadowPacket(this);
         GPRReg shadowPacketReg = shadowPacket.gpr();
 
-        m_jit.ensureShadowChickenPacket(shadowPacketReg, scratch1Reg, scratch2Reg);
+        m_jit.ensureShadowChickenPacket(*m_jit.vm(), shadowPacketReg, scratch1Reg, scratch2Reg);
 
         SpeculateCellOperand scope(this, node->child1());
         GPRReg scopeReg = scope.gpr();
@@ -5724,7 +5724,7 @@ void SpeculativeJIT::compile(Node* node)
         GPRTemporary shadowPacket(this);
         GPRReg shadowPacketReg = shadowPacket.gpr();
 
-        m_jit.ensureShadowChickenPacket(shadowPacketReg, scratch1Reg, scratch2Reg);
+        m_jit.ensureShadowChickenPacket(*m_jit.vm(), shadowPacketReg, scratch1Reg, scratch2Reg);
 
         JSValueOperand thisValue(this, node->child1());
         JSValueRegs thisRegs = JSValueRegs(thisValue.gpr());
@@ -6007,7 +6007,7 @@ void SpeculativeJIT::compileAllocateNewArrayWithSize(JSGlobalObject* globalObjec
     
     emitAllocateJSObject<JSArray>(resultGPR, TrustedImmPtr(structure), storageGPR, scratchGPR, scratch2GPR, slowCases);
     
-    m_jit.mutatorFence();
+    m_jit.mutatorFence(*m_jit.vm());
     
     addSlowPathGenerator(std::make_unique<CallArrayAllocatorWithVariableSizeSlowPathGenerator>(
         slowCases, this, operationNewArrayWithSize, resultGPR,

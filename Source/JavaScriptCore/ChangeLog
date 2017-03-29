@@ -1,3 +1,232 @@
+2017-03-28  Saam Barati  <sbarati@apple.com>
+
+        AssemblyHelpers should not have a VM field
+        https://bugs.webkit.org/show_bug.cgi?id=170207
+
+        Reviewed by Yusuke Suzuki.
+
+        APIs that need VM should take one as a parameter. When doing position
+        independent code for Wasm, we can't tie code generation to a VM.
+
+        * b3/B3Compile.cpp:
+        (JSC::B3::compile):
+        * b3/air/testair.cpp:
+        * b3/testb3.cpp:
+        (JSC::B3::testEntrySwitchSimple):
+        (JSC::B3::testEntrySwitchNoEntrySwitch):
+        (JSC::B3::testEntrySwitchWithCommonPaths):
+        (JSC::B3::testEntrySwitchWithCommonPathsAndNonTrivialEntrypoint):
+        (JSC::B3::testEntrySwitchLoop):
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::generateWithGuard):
+        (JSC::AccessCase::generateImpl):
+        * bytecode/DOMJITAccessCasePatchpointParams.cpp:
+        (JSC::SlowPathCallGeneratorWithArguments::generateImpl):
+        * bytecode/InlineAccess.cpp:
+        (JSC::InlineAccess::dumpCacheSizesAndCrash):
+        (JSC::InlineAccess::generateSelfPropertyAccess):
+        (JSC::InlineAccess::generateSelfPropertyReplace):
+        (JSC::InlineAccess::generateArrayLength):
+        (JSC::InlineAccess::rewireStubAsJump):
+        * bytecode/InlineAccess.h:
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::AccessGenerationState::emitExplicitExceptionHandler):
+        (JSC::PolymorphicAccess::regenerate):
+        * bytecode/PolymorphicAccess.h:
+        (JSC::AccessGenerationState::AccessGenerationState):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::JITCompiler):
+        (JSC::DFG::JITCompiler::compileExceptionHandlers):
+        (JSC::DFG::JITCompiler::link):
+        (JSC::DFG::JITCompiler::compile):
+        (JSC::DFG::JITCompiler::compileFunction):
+        (JSC::DFG::JITCompiler::exceptionCheck):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::exceptionCheckWithCallFrameRollback):
+        (JSC::DFG::JITCompiler::fastExceptionCheck):
+        (JSC::DFG::JITCompiler::vm):
+        * dfg/DFGOSRExitCompiler.cpp:
+        * dfg/DFGOSRExitCompiler.h:
+        * dfg/DFGOSRExitCompiler32_64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGOSRExitCompiler64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        (JSC::DFG::adjustAndJumpToTarget):
+        * dfg/DFGOSRExitCompilerCommon.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::emitAllocateRawObject):
+        (JSC::DFG::SpeculativeJIT::checkArray):
+        (JSC::DFG::SpeculativeJIT::compileCurrentBlock):
+        (JSC::DFG::SpeculativeJIT::compileInstanceOfForObject):
+        (JSC::DFG::SpeculativeJIT::compileMakeRope):
+        (JSC::DFG::SpeculativeJIT::compileGetGlobalObject):
+        (JSC::DFG::SpeculativeJIT::compileNewFunctionCommon):
+        (JSC::DFG::SpeculativeJIT::compileCreateActivation):
+        (JSC::DFG::SpeculativeJIT::compileCreateDirectArguments):
+        (JSC::DFG::SpeculativeJIT::compileSpread):
+        (JSC::DFG::SpeculativeJIT::compileArraySlice):
+        (JSC::DFG::SpeculativeJIT::compileNukeStructureAndSetButterfly):
+        (JSC::DFG::SpeculativeJIT::compileNewStringObject):
+        (JSC::DFG::SpeculativeJIT::compileNewTypedArray):
+        (JSC::DFG::SpeculativeJIT::compileStoreBarrier):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::emitAllocateJSObjectWithKnownSize):
+        (JSC::DFG::SpeculativeJIT::emitAllocateJSObject):
+        (JSC::DFG::SpeculativeJIT::emitAllocateVariableSizedJSObject):
+        (JSC::DFG::SpeculativeJIT::emitAllocateDestructibleObject):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        (JSC::DFG::SpeculativeJIT::compileLogicalNot):
+        (JSC::DFG::SpeculativeJIT::emitBranch):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeNonPeepholeCompareNullOrUndefined):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeBranchNullOrUndefined):
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        (JSC::DFG::SpeculativeJIT::compileObjectOrOtherLogicalNot):
+        (JSC::DFG::SpeculativeJIT::compileLogicalNot):
+        (JSC::DFG::SpeculativeJIT::emitObjectOrOtherBranch):
+        (JSC::DFG::SpeculativeJIT::emitBranch):
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::compileAllocateNewArrayWithSize):
+        * dfg/DFGThunks.cpp:
+        (JSC::DFG::osrEntryThunkGenerator):
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::compile):
+        * ftl/FTLJITFinalizer.h:
+        * ftl/FTLLazySlowPath.cpp:
+        (JSC::FTL::LazySlowPath::generate):
+        * ftl/FTLLazySlowPathCall.h:
+        (JSC::FTL::createLazyCallGenerator):
+        * ftl/FTLLink.cpp:
+        (JSC::FTL::link):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::lower):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCreateActivation):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewFunction):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCreateDirectArguments):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewTypedArray):
+        (JSC::FTL::DFG::LowerDFGToB3::compileMakeRope):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNotifyWrite):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstructVarargsSpread):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstructVarargs):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallEval):
+        (JSC::FTL::DFG::LowerDFGToB3::compileIsObjectOrNull):
+        (JSC::FTL::DFG::LowerDFGToB3::compileIsFunction):
+        (JSC::FTL::DFG::LowerDFGToB3::compileMaterializeNewObject):
+        (JSC::FTL::DFG::LowerDFGToB3::compileMaterializeCreateActivation):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCheckTraps):
+        (JSC::FTL::DFG::LowerDFGToB3::allocatePropertyStorageWithSizeImpl):
+        (JSC::FTL::DFG::LowerDFGToB3::allocateObject):
+        (JSC::FTL::DFG::LowerDFGToB3::allocateJSArray):
+        (JSC::FTL::DFG::LowerDFGToB3::buildTypeOf):
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileStub):
+        * ftl/FTLSlowPathCall.h:
+        (JSC::FTL::callOperation):
+        * ftl/FTLState.h:
+        (JSC::FTL::State::vm):
+        * ftl/FTLThunks.cpp:
+        (JSC::FTL::genericGenerationThunkGenerator):
+        (JSC::FTL::slowPathCallThunkGenerator):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::jitReleaseAssertNoException):
+        (JSC::AssemblyHelpers::callExceptionFuzz):
+        (JSC::AssemblyHelpers::emitJumpIfException):
+        (JSC::AssemblyHelpers::emitExceptionCheck):
+        (JSC::AssemblyHelpers::emitNonPatchableExceptionCheck):
+        (JSC::AssemblyHelpers::emitLoadStructure):
+        (JSC::AssemblyHelpers::emitRandomThunk):
+        (JSC::AssemblyHelpers::restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer):
+        (JSC::AssemblyHelpers::emitConvertValueToBoolean):
+        (JSC::AssemblyHelpers::debugCall):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::AssemblyHelpers):
+        (JSC::AssemblyHelpers::codeBlock):
+        (JSC::AssemblyHelpers::copyCalleeSavesToVMEntryFrameCalleeSavesBuffer):
+        (JSC::AssemblyHelpers::copyCalleeSavesFromFrameOrRegisterToVMEntryFrameCalleeSavesBuffer):
+        (JSC::AssemblyHelpers::barrierBranch):
+        (JSC::AssemblyHelpers::barrierStoreLoadFence):
+        (JSC::AssemblyHelpers::mutatorFence):
+        (JSC::AssemblyHelpers::storeButterfly):
+        (JSC::AssemblyHelpers::nukeStructureAndStoreButterfly):
+        (JSC::AssemblyHelpers::jumpIfMutatorFenceNotNeeded):
+        (JSC::AssemblyHelpers::emitAllocateJSObjectWithKnownSize):
+        (JSC::AssemblyHelpers::emitAllocateJSObject):
+        (JSC::AssemblyHelpers::emitAllocateVariableSizedCell):
+        (JSC::AssemblyHelpers::emitAllocateVariableSizedJSObject):
+        (JSC::AssemblyHelpers::emitAllocateDestructibleObject):
+        (JSC::AssemblyHelpers::vm): Deleted.
+        (JSC::AssemblyHelpers::debugCall): Deleted.
+        * jit/CCallHelpers.cpp:
+        (JSC::CCallHelpers::ensureShadowChickenPacket):
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::CCallHelpers):
+        (JSC::CCallHelpers::jumpToExceptionHandler):
+        * jit/JIT.cpp:
+        (JSC::JIT::emitEnterOptimizationCheck):
+        (JSC::JIT::privateCompileExceptionHandlers):
+        * jit/JIT.h:
+        (JSC::JIT::exceptionCheck):
+        (JSC::JIT::exceptionCheckWithCallFrameRollback):
+        * jit/JITMathIC.h:
+        (JSC::JITMathIC::generateOutOfLine):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_instanceof):
+        (JSC::JIT::emit_op_is_undefined):
+        (JSC::JIT::emit_op_jfalse):
+        (JSC::JIT::emit_op_jeq_null):
+        (JSC::JIT::emit_op_jneq_null):
+        (JSC::JIT::emit_op_jtrue):
+        (JSC::JIT::emit_op_throw):
+        (JSC::JIT::emit_op_catch):
+        (JSC::JIT::emit_op_eq_null):
+        (JSC::JIT::emit_op_neq_null):
+        (JSC::JIT::emitSlow_op_loop_hint):
+        (JSC::JIT::emit_op_log_shadow_chicken_prologue):
+        (JSC::JIT::emit_op_log_shadow_chicken_tail):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::privateCompileCTINativeCall):
+        (JSC::JIT::emit_op_new_object):
+        (JSC::JIT::emit_op_jfalse):
+        (JSC::JIT::emit_op_jtrue):
+        (JSC::JIT::emit_op_throw):
+        (JSC::JIT::emit_op_catch):
+        (JSC::JIT::emit_op_create_this):
+        (JSC::JIT::emit_op_log_shadow_chicken_prologue):
+        (JSC::JIT::emit_op_log_shadow_chicken_tail):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitWriteBarrier):
+        * jit/JSInterfaceJIT.h:
+        (JSC::JSInterfaceJIT::JSInterfaceJIT):
+        (JSC::JSInterfaceJIT::vm):
+        * jit/Repatch.cpp:
+        (JSC::tryCacheGetByID):
+        (JSC::tryCachePutByID):
+        (JSC::linkPolymorphicCall):
+        (JSC::resetGetByID):
+        (JSC::resetPutByID):
+        * jit/SetupVarargsFrame.cpp:
+        (JSC::emitSetupVarargsFrameFastCase):
+        * jit/SetupVarargsFrame.h:
+        * jit/SpecializedThunkJIT.h:
+        (JSC::SpecializedThunkJIT::loadArgumentWithSpecificClass):
+        * jit/ThunkGenerators.cpp:
+        (JSC::throwExceptionFromCallSlowPathGenerator):
+        (JSC::linkCallThunkGenerator):
+        (JSC::linkPolymorphicCallThunkGenerator):
+        (JSC::virtualThunkFor):
+        (JSC::nativeForGenerator):
+        (JSC::randomThunkGenerator):
+        (JSC::boundThisNoArgsFunctionCallGenerator):
+        (JSC::throwExceptionFromWasmThunkGenerator):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::parseAndCompile):
+        * wasm/WasmBinding.cpp:
+        (JSC::Wasm::wasmToJs):
+        (JSC::Wasm::wasmToWasm):
+
 2017-03-28  Keith Miller  <keith_miller@apple.com>
 
         WebAssembly: We should have Origins

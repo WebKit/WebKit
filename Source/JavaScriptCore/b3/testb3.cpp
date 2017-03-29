@@ -13134,7 +13134,7 @@ void testEntrySwitchSimple()
     
     prepareForGeneration(proc);
     
-    CCallHelpers jit(vm);
+    CCallHelpers jit;
     generate(proc, jit);
     LinkBuffer linkBuffer(*vm, jit, nullptr);
     CodeLocationLabel labelOne = linkBuffer.locationOf(proc.entrypointLabel(0));
@@ -13167,7 +13167,7 @@ void testEntrySwitchNoEntrySwitch()
     
     prepareForGeneration(proc);
     
-    CCallHelpers jit(vm);
+    CCallHelpers jit;
     generate(proc, jit);
     LinkBuffer linkBuffer(*vm, jit, nullptr);
     CodeLocationLabel labelOne = linkBuffer.locationOf(proc.entrypointLabel(0));
@@ -13254,7 +13254,7 @@ void testEntrySwitchWithCommonPaths()
     
     prepareForGeneration(proc);
     
-    CCallHelpers jit(vm);
+    CCallHelpers jit;
     generate(proc, jit);
     LinkBuffer linkBuffer(*vm, jit, nullptr);
     CodeLocationLabel labelOne = linkBuffer.locationOf(proc.entrypointLabel(0));
@@ -13371,7 +13371,7 @@ void testEntrySwitchWithCommonPathsAndNonTrivialEntrypoint()
     
     prepareForGeneration(proc);
     
-    CCallHelpers jit(vm);
+    CCallHelpers jit;
     generate(proc, jit);
     LinkBuffer linkBuffer(*vm, jit, nullptr);
     CodeLocationLabel labelOne = linkBuffer.locationOf(proc.entrypointLabel(0));
@@ -13449,7 +13449,7 @@ void testEntrySwitchLoop()
     
     prepareForGeneration(proc);
     
-    CCallHelpers jit(vm);
+    CCallHelpers jit;
     generate(proc, jit);
     LinkBuffer linkBuffer(*vm, jit, nullptr);
     CodeLocationLabel labelOne = linkBuffer.locationOf(proc.entrypointLabel(0));

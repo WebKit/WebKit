@@ -36,7 +36,7 @@
 
 namespace JSC { namespace DFG {
 
-void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecovery>& operands, SpeculationRecovery* recovery)
+void OSRExitCompiler::compileExit(VM& vm, const OSRExit& exit, const Operands<ValueRecovery>& operands, SpeculationRecovery* recovery)
 {
     // Pro-forma stuff.
     if (Options::printEachOSRExit()) {
@@ -45,9 +45,9 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
         debugInfo->kind = exit.m_kind;
         debugInfo->bytecodeOffset = exit.m_codeOrigin.bytecodeIndex;
         
-        m_jit.debugCall(debugOperationPrintSpeculationFailure, debugInfo);
+        m_jit.debugCall(vm, debugOperationPrintSpeculationFailure, debugInfo);
     }
-    
+
     // Perform speculation recovery. This only comes into play when an operation
     // starts mutating state before verifying the speculation it has already made.
     
@@ -160,7 +160,7 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
 
     // Save all state from GPRs into the scratch buffer.
     
-    ScratchBuffer* scratchBuffer = m_jit.vm()->scratchBufferForSize(sizeof(EncodedJSValue) * operands.size());
+    ScratchBuffer* scratchBuffer = vm.scratchBufferForSize(sizeof(EncodedJSValue) * operands.size());
     EncodedJSValue* scratch = scratchBuffer ? static_cast<EncodedJSValue*>(scratchBuffer->dataBuffer()) : 0;
     
     for (size_t index = 0; index < operands.size(); ++index) {
@@ -255,7 +255,7 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
     m_jit.emitSaveCalleeSavesFor(m_jit.baselineCodeBlock());
 
     if (exit.isExceptionHandler())
-        m_jit.copyCalleeSavesToVMEntryFrameCalleeSavesBuffer();
+        m_jit.copyCalleeSavesToVMEntryFrameCalleeSavesBuffer(vm);
 
     // Do all data format conversions and store the results into the stack.
     
@@ -403,7 +403,7 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
     reifyInlinedCallFrames(m_jit, exit);
     
     // And finish.
-    adjustAndJumpToTarget(m_jit, exit);
+    adjustAndJumpToTarget(vm, m_jit, exit);
 }
 
 } } // namespace JSC::DFG

@@ -73,7 +73,7 @@ public:
         jit.setupResults(m_result);
         jit.reclaimSpaceOnStackForCCall();
 
-        CCallHelpers::Jump noException = jit.emitExceptionCheck(CCallHelpers::InvertedExceptionCheck);
+        CCallHelpers::Jump noException = jit.emitExceptionCheck(state.m_vm, CCallHelpers::InvertedExceptionCheck);
 
         state.restoreLiveRegistersFromStackForCallWithThrownException(spillState);
         exceptions.append(jit.jump());

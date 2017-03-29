@@ -60,7 +60,7 @@ void link(State& state)
 
     // Create the entrypoint. Note that we use this entrypoint totally differently
     // depending on whether we're doing OSR entry or not.
-    CCallHelpers jit(&vm, codeBlock);
+    CCallHelpers jit(codeBlock);
     
     std::unique_ptr<LinkBuffer> linkBuffer;
 
@@ -142,11 +142,11 @@ void link(State& state)
             CCallHelpers::Call callArityCheck = jit.call();
 
             auto noException = jit.branch32(CCallHelpers::GreaterThanOrEqual, GPRInfo::returnValueGPR, CCallHelpers::TrustedImm32(0));
-            jit.copyCalleeSavesToVMEntryFrameCalleeSavesBuffer();
-            jit.move(CCallHelpers::TrustedImmPtr(jit.vm()), GPRInfo::argumentGPR0);
+            jit.copyCalleeSavesToVMEntryFrameCalleeSavesBuffer(vm);
+            jit.move(CCallHelpers::TrustedImmPtr(&vm), GPRInfo::argumentGPR0);
             jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR1);
             CCallHelpers::Call callLookupExceptionHandlerFromCallerFrame = jit.call();
-            jit.jumpToExceptionHandler();
+            jit.jumpToExceptionHandler(vm);
             noException.link(&jit);
 
             if (!ASSERT_DISABLED) {

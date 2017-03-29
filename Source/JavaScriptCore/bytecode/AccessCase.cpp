@@ -292,7 +292,7 @@ void AccessCase::generateWithGuard(
     m_state = Generated;
 
     CCallHelpers& jit = *state.jit;
-    VM& vm = *jit.vm();
+    VM& vm = state.m_vm;
     JSValueRegs valueRegs = state.valueRegs;
     GPRReg baseGPR = state.baseGPR;
     GPRReg scratchGPR = state.scratchGPR;
@@ -412,7 +412,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
     ASSERT(m_state == Generated); // We rely on the callers setting this for us.
 
     CCallHelpers& jit = *state.jit;
-    VM& vm = *jit.vm();
+    VM& vm = state.m_vm;
     CodeBlock* codeBlock = jit.codeBlock();
     StructureStubInfo& stubInfo = *state.stubInfo;
     const Identifier& ident = *state.ident;
@@ -767,7 +767,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
             jit.reclaimSpaceOnStackForCCall();
 
             CCallHelpers::Jump noException =
-            jit.emitExceptionCheck(CCallHelpers::InvertedExceptionCheck);
+            jit.emitExceptionCheck(vm, CCallHelpers::InvertedExceptionCheck);
 
             state.restoreLiveRegistersFromStackForCallWithThrownException(spillState);
             state.emitExplicitExceptionHandler();
@@ -930,7 +930,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
                 jit.reclaimSpaceOnStackForCCall();
                 jit.move(GPRInfo::returnValueGPR, scratchGPR);
                 
-                CCallHelpers::Jump noException = jit.emitExceptionCheck(CCallHelpers::InvertedExceptionCheck);
+                CCallHelpers::Jump noException = jit.emitExceptionCheck(vm, CCallHelpers::InvertedExceptionCheck);
                 
                 state.restoreLiveRegistersFromStackForCallWithThrownException(spillState);
                 state.emitExplicitExceptionHandler();
@@ -959,7 +959,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
             // We set the new butterfly and the structure last. Doing it this way ensures that
             // whatever we had done up to this point is forgotten if we choose to branch to slow
             // path.
-            jit.nukeStructureAndStoreButterfly(scratchGPR, baseGPR);
+            jit.nukeStructureAndStoreButterfly(vm, scratchGPR, baseGPR);
         }
         
         uint32_t structureBits = bitwise_cast<uint32_t>(newStructure()->id());

@@ -110,18 +110,18 @@ public:
         return std::max(size, sizeForPropertyAccess());
     }
 
-    static bool generateSelfPropertyAccess(VM&, StructureStubInfo&, Structure*, PropertyOffset);
+    static bool generateSelfPropertyAccess(StructureStubInfo&, Structure*, PropertyOffset);
     static bool canGenerateSelfPropertyReplace(StructureStubInfo&, PropertyOffset);
-    static bool generateSelfPropertyReplace(VM&, StructureStubInfo&, Structure*, PropertyOffset);
+    static bool generateSelfPropertyReplace(StructureStubInfo&, Structure*, PropertyOffset);
     static bool isCacheableArrayLength(StructureStubInfo&, JSArray*);
-    static bool generateArrayLength(VM&, StructureStubInfo&, JSArray*);
-    static void rewireStubAsJump(VM&, StructureStubInfo&, CodeLocationLabel);
+    static bool generateArrayLength(StructureStubInfo&, JSArray*);
+    static void rewireStubAsJump(StructureStubInfo&, CodeLocationLabel);
 
     // This is helpful when determining the size of an IC on
     // various platforms. When adding a new type of IC, implement
     // its placeholder code here, and log the size. That way we
     // can intelligently choose sizes on various platforms.
-    NO_RETURN_DUE_TO_CRASH static void dumpCacheSizesAndCrash(VM&);
+    NO_RETURN_DUE_TO_CRASH static void dumpCacheSizesAndCrash();
 };
 
 } // namespace JSC

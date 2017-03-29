@@ -1217,7 +1217,7 @@ void JIT::emitWriteBarrier(unsigned owner, unsigned value, WriteBarrierMode mode
     if (mode == ShouldFilterBaseAndValue || mode == ShouldFilterBase)
         ownerNotCell = branchTest64(NonZero, regT0, tagMaskRegister);
 
-    Jump ownerIsRememberedOrInEden = barrierBranch(regT0, regT1);
+    Jump ownerIsRememberedOrInEden = barrierBranch(*vm(), regT0, regT1);
     callOperation(operationWriteBarrierSlowPath, regT0);
     ownerIsRememberedOrInEden.link(this);
 
@@ -1255,7 +1255,7 @@ void JIT::emitWriteBarrier(unsigned owner, unsigned value, WriteBarrierMode mode
     if (mode == ShouldFilterBase || mode == ShouldFilterBaseAndValue)
         ownerNotCell = branch32(NotEqual, regT0, TrustedImm32(JSValue::CellTag));
 
-    Jump ownerIsRememberedOrInEden = barrierBranch(regT1, regT2);
+    Jump ownerIsRememberedOrInEden = barrierBranch(*vm(), regT1, regT2);
     callOperation(operationWriteBarrierSlowPath, regT1);
     ownerIsRememberedOrInEden.link(this);
 
@@ -1283,7 +1283,7 @@ void JIT::emitWriteBarrier(JSCell* owner, unsigned value, WriteBarrierMode mode)
 
 void JIT::emitWriteBarrier(JSCell* owner)
 {
-    Jump ownerIsRememberedOrInEden = barrierBranch(owner, regT0);
+    Jump ownerIsRememberedOrInEden = barrierBranch(*vm(), owner, regT0);
     callOperation(operationWriteBarrierSlowPath, owner);
     ownerIsRememberedOrInEden.link(this);
 }

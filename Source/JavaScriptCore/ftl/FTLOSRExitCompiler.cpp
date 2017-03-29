@@ -181,12 +181,12 @@ static void compileStub(
     // This code requires framePointerRegister is the same as callFrameRegister
     static_assert(MacroAssembler::framePointerRegister == GPRInfo::callFrameRegister, "MacroAssembler::framePointerRegister and GPRInfo::callFrameRegister must be the same");
 
-    CCallHelpers jit(vm, codeBlock);
+    CCallHelpers jit(codeBlock);
 
     // The first thing we need to do is restablish our frame in the case of an exception.
     if (exit.isGenericUnwindHandler()) {
         RELEASE_ASSERT(vm->callFrameForCatch); // The first time we hit this exit, like at all other times, this field should be non-null.
-        jit.restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer();
+        jit.restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer(*vm);
         jit.loadPtr(vm->addressOfCallFrameForCatch(), MacroAssembler::framePointerRegister);
         jit.addPtr(CCallHelpers::TrustedImm32(codeBlock->stackPointerOffset() * sizeof(Register)),
             MacroAssembler::framePointerRegister, CCallHelpers::stackPointerRegister);
@@ -489,7 +489,7 @@ static void compileStub(
     
     handleExitCounts(jit, exit);
     reifyInlinedCallFrames(jit, exit);
-    adjustAndJumpToTarget(jit, exit);
+    adjustAndJumpToTarget(*vm, jit, exit);
     
     LinkBuffer patchBuffer(*vm, jit, codeBlock);
     exit.m_code = FINALIZE_CODE_IF(

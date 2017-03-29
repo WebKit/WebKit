@@ -64,6 +64,8 @@ class State {
 public:
     State(DFG::Graph& graph);
     ~State();
+
+    VM& vm() { return graph.m_vm; }
     
     // None of these things is owned by State. It is the responsibility of
     // FTL phases to properly manage the lifecycle of the module and function.

@@ -110,7 +110,7 @@ void JIT::emitEnterOptimizationCheck()
     skipOptimize.append(branchAdd32(Signed, TrustedImm32(Options::executionCounterIncrementForEntry()), AbsoluteAddress(m_codeBlock->addressOfJITExecuteCounter())));
     ASSERT(!m_bytecodeOffset);
 
-    copyCalleeSavesFromFrameOrRegisterToVMEntryFrameCalleeSavesBuffer();
+    copyCalleeSavesFromFrameOrRegisterToVMEntryFrameCalleeSavesBuffer(*vm());
 
     callOperation(operationOptimize, m_bytecodeOffset);
     skipOptimize.append(branchTestPtr(Zero, returnValueGPR));
@@ -872,7 +872,7 @@ void JIT::privateCompileExceptionHandlers()
     if (!m_exceptionChecksWithCallFrameRollback.empty()) {
         m_exceptionChecksWithCallFrameRollback.link(this);
 
-        copyCalleeSavesToVMEntryFrameCalleeSavesBuffer();
+        copyCalleeSavesToVMEntryFrameCalleeSavesBuffer(*vm());
 
         // lookupExceptionHandlerFromCallerFrame is passed two arguments, the VM and the exec (the CallFrame*).
 
@@ -885,14 +885,14 @@ void JIT::privateCompileExceptionHandlers()
         poke(GPRInfo::argumentGPR1, 1);
 #endif
         m_calls.append(CallRecord(call(), std::numeric_limits<unsigned>::max(), FunctionPtr(lookupExceptionHandlerFromCallerFrame).value()));
-        jumpToExceptionHandler();
+        jumpToExceptionHandler(*vm());
     }
 
     if (!m_exceptionChecks.empty() || m_byValCompilationInfo.size()) {
         m_exceptionHandler = label();
         m_exceptionChecks.link(this);
 
-        copyCalleeSavesToVMEntryFrameCalleeSavesBuffer();
+        copyCalleeSavesToVMEntryFrameCalleeSavesBuffer(*vm());
 
         // lookupExceptionHandler is passed two arguments, the VM and the exec (the CallFrame*).
         move(TrustedImmPtr(vm()), GPRInfo::argumentGPR0);
@@ -904,7 +904,7 @@ void JIT::privateCompileExceptionHandlers()
         poke(GPRInfo::argumentGPR1, 1);
 #endif
         m_calls.append(CallRecord(call(), std::numeric_limits<unsigned>::max(), FunctionPtr(lookupExceptionHandler).value()));
-        jumpToExceptionHandler();
+        jumpToExceptionHandler(*vm());
     }
 }
 

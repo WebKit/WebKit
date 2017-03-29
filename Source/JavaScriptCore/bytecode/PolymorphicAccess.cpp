@@ -176,14 +176,14 @@ CallSiteIndex AccessGenerationState::originalCallSiteIndex() const { return stub
 void AccessGenerationState::emitExplicitExceptionHandler()
 {
     restoreScratch();
-    jit->copyCalleeSavesToVMEntryFrameCalleeSavesBuffer();
+    jit->copyCalleeSavesToVMEntryFrameCalleeSavesBuffer(m_vm);
     if (needsToRestoreRegistersIfException()) {
         // To the JIT that produces the original exception handling
         // call site, they will expect the OSR exit to be arrived
         // at from genericUnwind. Therefore we must model what genericUnwind
         // does here. I.e, set callFrameForCatch and copy callee saves.
 
-        jit->storePtr(GPRInfo::callFrameRegister, jit->vm()->addressOfCallFrameForCatch());
+        jit->storePtr(GPRInfo::callFrameRegister, m_vm.addressOfCallFrameForCatch());
         CCallHelpers::Jump jumpToOSRExitExceptionHandler = jit->jump();
 
         // We don't need to insert a new exception handler in the table
@@ -195,13 +195,13 @@ void AccessGenerationState::emitExplicitExceptionHandler()
                 linkBuffer.link(jumpToOSRExitExceptionHandler, originalHandler.nativeCode);
             });
     } else {
-        jit->setupArguments(CCallHelpers::TrustedImmPtr(jit->vm()), GPRInfo::callFrameRegister);
+        jit->setupArguments(CCallHelpers::TrustedImmPtr(&m_vm), GPRInfo::callFrameRegister);
         CCallHelpers::Call lookupExceptionHandlerCall = jit->call();
         jit->addLinkTask(
             [=] (LinkBuffer& linkBuffer) {
                 linkBuffer.link(lookupExceptionHandlerCall, lookupExceptionHandler);
             });
-        jit->jumpToExceptionHandler();
+        jit->jumpToExceptionHandler(m_vm);
     }
 }
 
@@ -336,7 +336,7 @@ AccessGenerationResult PolymorphicAccess::regenerate(
     if (verbose)
         dataLog("Regenerate with m_list: ", listDump(m_list), "\n");
     
-    AccessGenerationState state;
+    AccessGenerationState state(vm);
 
     state.access = this;
     state.stubInfo = &stubInfo;
@@ -358,7 +358,7 @@ AccessGenerationResult PolymorphicAccess::regenerate(
 
     state.scratchGPR = allocator.allocateScratchGPR();
     
-    CCallHelpers jit(&vm, codeBlock);
+    CCallHelpers jit(codeBlock);
     state.jit = &jit;
 
     state.preservedReusedRegisterState =

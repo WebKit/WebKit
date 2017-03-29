@@ -44,7 +44,7 @@ Compilation compile(VM& vm, Procedure& proc, unsigned optLevel)
     
     prepareForGeneration(proc, optLevel);
     
-    CCallHelpers jit(&vm);
+    CCallHelpers jit;
     generate(proc, jit);
     LinkBuffer linkBuffer(vm, jit, nullptr);
 

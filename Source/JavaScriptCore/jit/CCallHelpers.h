@@ -50,8 +50,8 @@ namespace JSC {
 
 class CCallHelpers : public AssemblyHelpers {
 public:
-    CCallHelpers(VM* vm, CodeBlock* codeBlock = 0)
-        : AssemblyHelpers(vm, codeBlock)
+    CCallHelpers(CodeBlock* codeBlock = 0)
+        : AssemblyHelpers(codeBlock)
     {
     }
     
@@ -2440,11 +2440,11 @@ public:
 #endif
     }
     
-    void jumpToExceptionHandler()
+    void jumpToExceptionHandler(VM& vm)
     {
         // genericUnwind() leaves the handler CallFrame* in vm->callFrameForCatch,
         // and the address of the handler in vm->targetMachinePCForThrow.
-        loadPtr(&vm()->targetMachinePCForThrow, GPRInfo::regT1);
+        loadPtr(&vm.targetMachinePCForThrow, GPRInfo::regT1);
         jump(GPRInfo::regT1);
     }
 
@@ -2640,7 +2640,7 @@ public:
     void logShadowChickenProloguePacket(GPRReg shadowPacket, GPRReg scratch1, GPRReg scope);
     void logShadowChickenTailPacket(GPRReg shadowPacket, JSValueRegs thisRegs, GPRReg scope, CodeBlock*, CallSiteIndex);
     // Leaves behind a pointer to the Packet we should write to in shadowPacket.
-    void ensureShadowChickenPacket(GPRReg shadowPacket, GPRReg scratch1NonArgGPR, GPRReg scratch2);
+    void ensureShadowChickenPacket(VM&, GPRReg shadowPacket, GPRReg scratch1NonArgGPR, GPRReg scratch2);
 };
 
 } // namespace JSC

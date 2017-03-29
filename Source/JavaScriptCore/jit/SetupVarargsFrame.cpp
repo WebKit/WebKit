@@ -60,7 +60,7 @@ void emitSetVarargsFrame(CCallHelpers& jit, GPRReg lengthGPR, bool lengthInclude
     jit.addPtr(GPRInfo::callFrameRegister, resultGPR);
 }
 
-static void emitSetupVarargsFrameFastCase(CCallHelpers& jit, GPRReg numUsedSlotsGPR, GPRReg scratchGPR1, GPRReg scratchGPR2, GPRReg scratchGPR3, ValueRecovery argCountRecovery, VirtualRegister firstArgumentReg, unsigned firstVarArgOffset, CCallHelpers::JumpList& slowCase)
+static void emitSetupVarargsFrameFastCase(VM& vm, CCallHelpers& jit, GPRReg numUsedSlotsGPR, GPRReg scratchGPR1, GPRReg scratchGPR2, GPRReg scratchGPR3, ValueRecovery argCountRecovery, VirtualRegister firstArgumentReg, unsigned firstVarArgOffset, CCallHelpers::JumpList& slowCase)
 {
     CCallHelpers::JumpList end;
     
@@ -82,7 +82,7 @@ static void emitSetupVarargsFrameFastCase(CCallHelpers& jit, GPRReg numUsedSlots
     
     emitSetVarargsFrame(jit, scratchGPR1, true, numUsedSlotsGPR, scratchGPR2);
 
-    slowCase.append(jit.branchPtr(CCallHelpers::Above, CCallHelpers::AbsoluteAddress(jit.vm()->addressOfSoftStackLimit()), scratchGPR2));
+    slowCase.append(jit.branchPtr(CCallHelpers::Above, CCallHelpers::AbsoluteAddress(vm.addressOfSoftStackLimit()), scratchGPR2));
 
     // Before touching stack values, we should update the stack pointer to protect them from signal stack.
     jit.addPtr(CCallHelpers::TrustedImm32(sizeof(CallerFrameAndPC)), scratchGPR2, CCallHelpers::stackPointerRegister);
@@ -111,7 +111,7 @@ static void emitSetupVarargsFrameFastCase(CCallHelpers& jit, GPRReg numUsedSlots
     done.link(&jit);
 }
 
-void emitSetupVarargsFrameFastCase(CCallHelpers& jit, GPRReg numUsedSlotsGPR, GPRReg scratchGPR1, GPRReg scratchGPR2, GPRReg scratchGPR3, InlineCallFrame* inlineCallFrame, unsigned firstVarArgOffset, CCallHelpers::JumpList& slowCase)
+void emitSetupVarargsFrameFastCase(VM& vm, CCallHelpers& jit, GPRReg numUsedSlotsGPR, GPRReg scratchGPR1, GPRReg scratchGPR2, GPRReg scratchGPR3, InlineCallFrame* inlineCallFrame, unsigned firstVarArgOffset, CCallHelpers::JumpList& slowCase)
 {
     ValueRecovery argumentCountRecovery;
     VirtualRegister firstArgumentReg;
@@ -132,7 +132,7 @@ void emitSetupVarargsFrameFastCase(CCallHelpers& jit, GPRReg numUsedSlotsGPR, GP
             VirtualRegister(CallFrameSlot::argumentCount), DataFormatInt32);
         firstArgumentReg = VirtualRegister(CallFrame::argumentOffset(0));
     }
-    emitSetupVarargsFrameFastCase(jit, numUsedSlotsGPR, scratchGPR1, scratchGPR2, scratchGPR3, argumentCountRecovery, firstArgumentReg, firstVarArgOffset, slowCase);
+    emitSetupVarargsFrameFastCase(vm, jit, numUsedSlotsGPR, scratchGPR1, scratchGPR2, scratchGPR3, argumentCountRecovery, firstArgumentReg, firstVarArgOffset, slowCase);
 }
 
 } // namespace JSC

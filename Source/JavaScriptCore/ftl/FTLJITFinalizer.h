@@ -30,7 +30,6 @@
 #include "DFGFinalizer.h"
 #include "FTLGeneratedFunction.h"
 #include "FTLJITCode.h"
-#include "FTLSlowPathCall.h"
 #include "LinkBuffer.h"
 #include "MacroAssembler.h"
 

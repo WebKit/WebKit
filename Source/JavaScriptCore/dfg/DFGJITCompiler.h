@@ -170,13 +170,13 @@ public:
 
     void exceptionCheckWithCallFrameRollback()
     {
-        m_exceptionChecksWithCallFrameRollback.append(emitExceptionCheck());
+        m_exceptionChecksWithCallFrameRollback.append(emitExceptionCheck(*vm()));
     }
 
     // Add a call out from JIT code, with a fast exception check that tests if the return value is zero.
     void fastExceptionCheck()
     {
-        callExceptionFuzz();
+        callExceptionFuzz(*vm());
         m_exceptionChecks.append(branchTestPtr(Zero, GPRInfo::returnValueGPR));
     }
     
@@ -268,6 +268,8 @@ public:
 
     PCToCodeOriginMapBuilder& pcToCodeOriginMapBuilder() { return m_pcToCodeOriginMapBuilder; }
 
+    VM* vm() { return &m_graph.m_vm; }
+
 private:
     friend class OSRExitJumpPlaceholder;
     
@@ -299,6 +301,7 @@ private:
     JumpList m_exceptionChecksWithCallFrameRollback;
     
     Vector<Label> m_blockHeads;
+
 
     struct JSCallRecord {
         JSCallRecord(Call fastCall, Call slowCall, DataLabelPtr targetToCheck, CallLinkInfo* info)
@@ -342,6 +345,7 @@ private:
         Label slowPath;
         CallLinkInfo* info;
     };
+
     
     Vector<InlineCacheWrapper<JITGetByIdGenerator>, 4> m_getByIds;
     Vector<InlineCacheWrapper<JITGetByIdWithThisGenerator>, 4> m_getByIdsWithThis;
