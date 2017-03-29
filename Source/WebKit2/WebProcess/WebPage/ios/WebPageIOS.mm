@@ -3252,12 +3252,21 @@ void WebPage::dispatchAsynchronousTouchEvents(const Vector<WebTouchEvent, 1>& qu
 
 void WebPage::computePagesForPrintingAndDrawToPDF(uint64_t frameID, const PrintInfo& printInfo, uint64_t callbackID, PassRefPtr<Messages::WebPage::ComputePagesForPrintingAndDrawToPDF::DelayedReply> reply)
 {
+    if (printInfo.snapshotFirstPage) {
+        reply->send(1);
+        IntSize snapshotSize { FloatSize { printInfo.availablePaperWidth, printInfo.availablePaperHeight } };
+        IntRect snapshotRect { {0, 0}, snapshotSize };
+        auto pdfData = pdfSnapshotAtSize(snapshotRect, snapshotSize, 0);
+        send(Messages::WebPageProxy::DrawToPDFCallback(IPC::DataReference(CFDataGetBytePtr(pdfData.get()), CFDataGetLength(pdfData.get())), callbackID));
+        return;
+    }
+
     Vector<WebCore::IntRect> pageRects;
     double totalScaleFactor;
     computePagesForPrintingImpl(frameID, printInfo, pageRects, totalScaleFactor);
 
     ASSERT(pageRects.size() >= 1);
-    std::size_t pageCount = printInfo.snapshotFirstPage ? 1 : pageRects.size();
+    std::size_t pageCount = pageRects.size();
     ASSERT(pageCount <= std::numeric_limits<uint32_t>::max());
     reply->send(pageCount);
 
