@@ -1,3 +1,63 @@
+2017-03-29  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Try to normalize variation ranges
+        https://bugs.webkit.org/show_bug.cgi?id=170119
+
+        Reviewed by Simon Fraser.
+
+        TrueType GX-style variation fonts use one particular scale for values on their
+        weight/width/slope axes - usually the values lie between -1 and 1 on that scale.
+        However, OpenType 1.8-style fonts use the CSS scale for values on these axes.
+        For the purposes of font selection, these values need to lie on the same scale.
+        However, when font selection is completed and the variation values are actually
+        being applied to the fonts, values which lie on the font's actual scale need to
+        be applied. This patch adds normalize*() and denormalize*() functions to perform
+        both of these operations. 
+
+        The conversion itself between the two scales isn't an exact mapping. Mapping
+        slope is just a linear relationship with 0deg <=> 0 and 20deg <=> 1 (as per the
+        CSS Fonts spec). Mapping widths is similar, it uses a 2-component piecewise
+        linear relationship which includes the values given in the Microsoft OpenType
+        spec for the OS/2 table's usWidthClass field. Weights are more difficult, so I
+        plotted the CSS weights and the GX-style weights for every style of San
+        Francisco, saw that the relationship appears to be linear, and ran a linear
+        regression to compute the line equation.
+
+        As for the actual discrimination of determining whether a font is a GX-style
+        font or not, we can use the presence of the 'STAT' table. This table didn't
+        exist when GX fonts were being created, and OpenType 1.8 variable fonts are
+        required to have this table.
+
+        Facebook uses the string ".SFNSText" in their @font-face blocks. This font is
+        a variation font, but uses the GX-style values. Facebook asks us to create
+        this font with a weight of 700, and because the values in the font are around
+        1.0, we were erroneously thinking that the font wasn't bold, so we were then
+        applying synthetic bold. This was causing text on facebook to look fuzzy and
+        ugly.
+
+        Test: fast/text/variations/font-selection-properties-expected.html
+
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::isGXVariableFont):
+        (WebCore::normalizeWeight):
+        (WebCore::normalizeSlope):
+        (WebCore::denormalizeWeight):
+        (WebCore::denormalizeWidth):
+        (WebCore::denormalizeSlope):
+        (WebCore::normalizeWidth):
+        (WebCore::preparePlatformFont): Instead of using FontSelectionValues for the
+        intermediate values, we should use floats instead. This is because
+        FontSelectionValues are fixed-point numbers with the denominator having 2 bits.
+        When using this data type to represent values on the GX scale, which are usually
+        between 0 and 1, you lose a lot of fidelity. Instead, our intermediate
+        calculations should be done with floats, and converted to FontSelectionValues at
+        the end when they are representative of values on the CSS scale.
+        (WebCore::stretchFromCoreTextTraits):
+        (WebCore::fontWeightFromCoreText):
+        (WebCore::extractVariationBounds):
+        (WebCore::variationCapabilitiesForFontDescriptor):
+        (WebCore::capabilitiesForFontDescriptor):
+
 2017-03-29  Saam Barati  <sbarati@apple.com>
 
         LinkBuffer and ExecutableAllocator shouldn't have anything to do with VM
