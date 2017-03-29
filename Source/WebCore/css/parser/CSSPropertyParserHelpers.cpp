@@ -197,17 +197,32 @@ RefPtr<CSSPrimitiveValue> consumeNumber(CSSParserTokenRange& range, ValueRange v
     return nullptr;
 }
 
+#if !ENABLE(VARIATION_FONTS)
+static inline bool divisibleBy100(double value)
+{
+    return static_cast<int>(value / 100) * 100 == value;
+}
+#endif
+
 RefPtr<CSSPrimitiveValue> consumeFontWeightNumber(CSSParserTokenRange& range)
 {
     // Values less than or equal to 0 or greater than or equal to 1000 are parse errors.
     auto& token = range.peek();
-    if (token.type() == NumberToken && token.numericValue() > 0 && token.numericValue() < 1000)
+    if (token.type() == NumberToken && token.numericValue() > 0 && token.numericValue() < 1000
+#if !ENABLE(VARIATION_FONTS)
+        && token.numericValueType() == IntegerValueType && divisibleBy100(token.numericValue())
+#endif
+    )
         return consumeNumber(range, ValueRangeAll);
 
     // "[For calc()], the used value resulting from an expression must be clamped to the range allowed in the target context."
     CalcParser calcParser(range, ValueRangeAll);
     double result;
-    if (calcParser.consumeNumberRaw(result)) {
+    if (calcParser.consumeNumberRaw(result)
+#if !ENABLE(VARIATION_FONTS)
+        && result > 0 && result < 1000 && divisibleBy100(result)
+#endif
+    ) {
         result = std::min(std::max(result, std::nextafter(0., 1.)), std::nextafter(1000., 0.));
         return CSSValuePool::singleton().createValue(result, CSSPrimitiveValue::UnitType::CSS_NUMBER);
     }

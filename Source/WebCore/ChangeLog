@@ -1,3 +1,22 @@
+2017-03-29  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Variation fonts: Make sure that feature detection and preprocessor macros are right
+        https://bugs.webkit.org/show_bug.cgi?id=169518
+
+        Reviewed by Simon Fraser.
+
+        When I added variable fonts support, I made all OSes parse the newly accepted values,
+        instead of just the OSes which support variable fonts.
+
+        Test: fast/text/font-variations-feature-detection.html
+
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeFontStretch):
+        (WebCore::consumeFontStyle):
+        * css/parser/CSSPropertyParserHelpers.cpp:
+        (WebCore::CSSPropertyParserHelpers::divisibleBy100):
+        (WebCore::CSSPropertyParserHelpers::consumeFontWeightNumber):
+
 2017-03-29  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Controls bar may disappear while captions menu is visible (redux)

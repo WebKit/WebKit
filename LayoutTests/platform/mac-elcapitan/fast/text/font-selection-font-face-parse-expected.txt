@@ -1,4 +1,4 @@
-PASS weightTestSheet.cssRules[0].style.fontWeight is "1"
+FAIL weightTestSheet.cssRules[0].style.fontWeight should be 1. Was .
 PASS weightTestSheet.cssRules[1].style.fontWeight is "100"
 PASS weightTestSheet.cssRules[2].style.fontWeight is "200"
 PASS weightTestSheet.cssRules[3].style.fontWeight is "300"
@@ -13,7 +13,7 @@ PASS weightTestSheet.cssRules[11].style.fontWeight is "900"
 PASS weightTestSheet.cssRules[12].style.fontWeight is ""
 PASS weightTestSheet.cssRules[13].style.fontWeight is ""
 PASS weightTestSheet.cssRules[14].style.fontWeight is ""
-PASS weightTestSheet.cssRules[15].style.fontWeight is "7"
+FAIL weightTestSheet.cssRules[15].style.fontWeight should be 7. Was .
 PASS weightTestSheet.cssRules[16].style.fontWeight is "300"
 PASS weightTestSheet.cssRules[17].style.fontWeight is "200"
 FAIL weightTestSheet.cssRules[18].style.fontWeight should be 100 200. Was .
@@ -29,7 +29,7 @@ PASS weightTestSheet.cssRules[27].style.fontWeight is ""
 PASS weightTestSheet.cssRules[28].style.fontWeight is ""
 FAIL weightTestSheet.cssRules[29].style.fontWeight should be 7 8. Was .
 FAIL weightTestSheet.cssRules[30].style.fontWeight should be 2 7. Was .
-PASS stretchTestSheet.cssRules[0].style.fontStretch is "1%"
+FAIL stretchTestSheet.cssRules[0].style.fontStretch should be 1%. Was .
 PASS stretchTestSheet.cssRules[1].style.fontStretch is ""
 PASS stretchTestSheet.cssRules[2].style.fontStretch is "ultra-condensed"
 PASS stretchTestSheet.cssRules[3].style.fontStretch is "extra-condensed"
@@ -71,10 +71,10 @@ PASS stretchTestSheet.cssRules[38].style.fontStretch is ""
 PASS stretchTestSheet.cssRules[39].style.fontStretch is ""
 FAIL stretchTestSheet.cssRules[40].style.fontStretch should be calc(7%) 8%. Was .
 FAIL stretchTestSheet.cssRules[41].style.fontStretch should be 2% calc(7%). Was .
-PASS styleTestSheet.cssRules[0].style.fontStyle is "oblique 1deg"
-PASS styleTestSheet.cssRules[1].style.fontStyle is "oblique 20grad"
-PASS styleTestSheet.cssRules[2].style.fontStyle is "oblique 0.28318rad"
-PASS styleTestSheet.cssRules[3].style.fontStyle is "oblique 0.04turn"
+FAIL styleTestSheet.cssRules[0].style.fontStyle should be oblique 1deg. Was .
+FAIL styleTestSheet.cssRules[1].style.fontStyle should be oblique 20grad. Was .
+FAIL styleTestSheet.cssRules[2].style.fontStyle should be oblique 0.28318rad. Was .
+FAIL styleTestSheet.cssRules[3].style.fontStyle should be oblique 0.04turn. Was .
 PASS styleTestSheet.cssRules[4].style.fontStyle is ""
 PASS styleTestSheet.cssRules[5].style.fontStyle is ""
 PASS styleTestSheet.cssRules[6].style.fontStyle is "italic"
@@ -83,7 +83,7 @@ PASS styleTestSheet.cssRules[8].style.fontStyle is "normal"
 PASS styleTestSheet.cssRules[9].style.fontStyle is ""
 PASS styleTestSheet.cssRules[10].style.fontStyle is ""
 PASS styleTestSheet.cssRules[11].style.fontStyle is ""
-PASS styleTestSheet.cssRules[12].style.fontStyle is "oblique calc(15.4deg)"
+FAIL styleTestSheet.cssRules[12].style.fontStyle should be oblique calc(15.4deg). Was .
 PASS styleTestSheet.cssRules[13].style.fontStyle is ""
 PASS styleTestSheet.cssRules[14].style.fontStyle is ""
 PASS styleTestSheet.cssRules[15].style.fontStyle is ""

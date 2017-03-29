@@ -903,17 +903,21 @@ static RefPtr<CSSPrimitiveValue> consumeFontStretchKeywordValue(CSSParserTokenRa
     return consumeIdent<CSSValueUltraCondensed, CSSValueExtraCondensed, CSSValueCondensed, CSSValueSemiCondensed, CSSValueNormal, CSSValueSemiExpanded, CSSValueExpanded, CSSValueExtraExpanded, CSSValueUltraExpanded>(range);
 }
 
+#if ENABLE(VARIATION_FONTS)
 static bool fontStretchIsWithinRange(float stretch)
 {
     return stretch > 0;
 }
+#endif
 
 static RefPtr<CSSPrimitiveValue> consumeFontStretch(CSSParserTokenRange& range)
 {
     if (auto result = consumeFontStretchKeywordValue(range))
         return result;
+#if ENABLE(VARIATION_FONTS)
     if (auto percent = consumePercent(range, ValueRangeNonNegative))
         return fontStretchIsWithinRange(percent->value<float>()) ? percent : nullptr;
+#endif
     return nullptr;
 }
 
@@ -942,10 +946,12 @@ static RefPtr<CSSPrimitiveValue> consumeFontStyleKeywordValue(CSSParserTokenRang
     return consumeIdent<CSSValueNormal, CSSValueItalic, CSSValueOblique>(range);
 }
 
+#if ENABLE(VARIATION_FONTS)
 static bool fontStyleIsWithinRange(float oblique)
 {
     return oblique > -90 && oblique < 90;
 }
+#endif
 
 static RefPtr<CSSFontStyleValue> consumeFontStyle(CSSParserTokenRange& range, CSSParserMode cssParserMode)
 {
@@ -953,18 +959,21 @@ static RefPtr<CSSFontStyleValue> consumeFontStyle(CSSParserTokenRange& range, CS
     if (!result)
         return nullptr;
 
-    if (result->valueID() == CSSValueNormal)
-        return CSSFontStyleValue::create(CSSValuePool::singleton().createIdentifierValue(CSSValueNormal));
-    if (result->valueID() == CSSValueItalic)
-        return CSSFontStyleValue::create(CSSValuePool::singleton().createIdentifierValue(CSSValueItalic));
+    auto valueID = result->valueID();
+    if (valueID == CSSValueNormal || valueID == CSSValueItalic)
+        return CSSFontStyleValue::create(CSSValuePool::singleton().createIdentifierValue(valueID));
     ASSERT(result->valueID() == CSSValueOblique);
-    if (range.atEnd())
-        return CSSFontStyleValue::create(CSSValuePool::singleton().createIdentifierValue(CSSValueOblique));
-    if (auto angle = consumeAngle(range, cssParserMode)) {
-        if (fontStyleIsWithinRange(angle->value<float>(CSSPrimitiveValue::CSS_DEG)))
-            return CSSFontStyleValue::create(CSSValuePool::singleton().createIdentifierValue(CSSValueOblique), WTFMove(angle));
-        return nullptr;
+#if ENABLE(VARIATION_FONTS)
+    if (!range.atEnd()) {
+        if (auto angle = consumeAngle(range, cssParserMode)) {
+            if (fontStyleIsWithinRange(angle->value<float>(CSSPrimitiveValue::CSS_DEG)))
+                return CSSFontStyleValue::create(CSSValuePool::singleton().createIdentifierValue(CSSValueOblique), WTFMove(angle));
+            return nullptr;
+        }
     }
+#else
+    UNUSED_PARAM(cssParserMode);
+#endif
     return CSSFontStyleValue::create(CSSValuePool::singleton().createIdentifierValue(CSSValueOblique));
 }
 
