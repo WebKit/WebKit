@@ -1,24 +1,28 @@
 2017-03-29  Jason Marcell  <jmarcell@apple.com>
 
-        Cherry-pick r214509. rdar://problem/30755345
+        Cherry-pick r214511. rdar://problem/31260325
 
-    2017-03-28  Mark Lam  <mark.lam@apple.com>
+    2017-03-29  Jason Marcell  <jmarcell@apple.com>
 
-            The Mutator should not be able to steal the conn if the Collector hasn't reached the NotRunning phase yet.
-            https://bugs.webkit.org/show_bug.cgi?id=170213
-            <rdar://problem/30755345>
+            Cherry-pick r214509. rdar://problem/30755345
 
-            Reviewed by Filip Pizlo.
+        2017-03-28  Mark Lam  <mark.lam@apple.com>
 
-            The current condition for stealing the conn isn't tight enough.  Restricting the
-            stealing to when m_currentPhase == NotRunning ensures that the Collector is
-            really done running.
+                The Mutator should not be able to steal the conn if the Collector hasn't reached the NotRunning phase yet.
+                https://bugs.webkit.org/show_bug.cgi?id=170213
+                <rdar://problem/30755345>
 
-            No test because this issue only manifests with a race condition that is difficult
-            to reproduce on demand.
+                Reviewed by Filip Pizlo.
 
-            * heap/Heap.cpp:
-            (JSC::Heap::requestCollection):
+                The current condition for stealing the conn isn't tight enough.  Restricting the
+                stealing to when m_currentPhase == NotRunning ensures that the Collector is
+                really done running.
+
+                No test because this issue only manifests with a race condition that is difficult
+                to reproduce on demand.
+
+                * heap/Heap.cpp:
+                (JSC::Heap::requestCollection):
 
 2017-03-29  Jason Marcell  <jmarcell@apple.com>
 
