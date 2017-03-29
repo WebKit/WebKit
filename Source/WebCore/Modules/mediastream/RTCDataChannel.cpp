@@ -56,12 +56,14 @@ Ref<RTCDataChannel> RTCDataChannel::create(ScriptExecutionContext& context, std:
 {
     ASSERT(handler);
     auto channel = adoptRef(*new RTCDataChannel(context, WTFMove(handler), WTFMove(label), WTFMove(options)));
-    channel->m_handler->setClient(&channel.get());
+    channel->suspendIfNeeded();
+    channel->m_handler->setClient(channel.ptr());
+    channel->setPendingActivity(channel.ptr());
     return channel;
 }
 
 RTCDataChannel::RTCDataChannel(ScriptExecutionContext& context, std::unique_ptr<RTCDataChannelHandler>&& handler, String&& label, RTCDataChannelInit&& options)
-    : m_scriptExecutionContext(&context)
+    : ActiveDOMObject(&context)
     , m_handler(WTFMove(handler))
     , m_scheduledEventTimer(*this, &RTCDataChannel::scheduledEventTimerFired)
     , m_label(WTFMove(label))
@@ -168,7 +170,13 @@ void RTCDataChannel::close()
     if (m_stopped)
         return;
 
+    m_stopped = true;
+    m_readyState = ReadyStateClosed;
+
     m_handler->close();
+    m_handler->setClient(nullptr);
+    m_handler = nullptr;
+    unsetPendingActivity(this);
 }
 
 void RTCDataChannel::didChangeReadyState(ReadyState newState)
@@ -234,10 +242,7 @@ void RTCDataChannel::bufferedAmountIsDecreasing()
 
 void RTCDataChannel::stop()
 {
-    m_stopped = true;
-    m_readyState = ReadyStateClosed;
-    m_handler->setClient(nullptr);
-    m_scriptExecutionContext = nullptr;
+    close();
 }
 
 void RTCDataChannel::scheduleDispatchEvent(Ref<Event>&& event)

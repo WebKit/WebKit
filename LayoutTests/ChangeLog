@@ -1,3 +1,13 @@
+2017-03-28  Youenn Fablet  <youenn@apple.com>
+
+        Stop RTCDataChannel when closing page
+        https://bugs.webkit.org/show_bug.cgi?id=170166
+
+        Reviewed by Eric Carlson.
+
+        * webrtc/datachannel/datachannel-gc-expected.txt: Added.
+        * webrtc/datachannel/datachannel-gc.html: Added.
+
 2017-03-28  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Ranges for variation font properties are not enforced
