@@ -431,6 +431,7 @@ typedef const char* optionString;
     v(bool, useWebAssembly, true, Normal, "Expose the WebAssembly global object.") \
     \
     v(bool, failToCompileWebAssemblyCode, false, Normal, "If true, no Wasm::Plan will sucessfully compile a function.") \
+    v(size, webAssemblyPartialCompileLimit, 5000, Normal, "Limit on the number of bytes a Wasm::Plan::compile should attempt before checking for other work.") \
     \
     v(bool, simulateWebAssemblyLowMemory, false, Normal, "If true, the Memory object won't mmap the full 'maximum' range and instead will allocate the minimum required amount.") \
     v(bool, useWebAssemblyFastMemory, true, Normal, "If true, we will try to use a 32-bit address space with a signal handler to bounds check wasm memory.") \
@@ -494,6 +495,7 @@ public:
     // This typedef is to allow us to eliminate the '_' in the field name in
     // union inside Entry. This is needed to keep the style checker happy.
     typedef int32_t int32;
+    typedef size_t size;
 
     // Declare the option IDs:
     enum ID {
@@ -509,6 +511,7 @@ public:
         unsignedType,
         doubleType,
         int32Type,
+        sizeType,
         optionRangeType,
         optionStringType,
         gcLogLevelType,
@@ -548,6 +551,7 @@ private:
         unsigned unsignedVal;
         double doubleVal;
         int32 int32Val;
+        size sizeVal;
         OptionRange optionRangeVal;
         const char* optionStringVal;
         GCLogging::Level gcLogLevelVal;

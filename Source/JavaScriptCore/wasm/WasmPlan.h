@@ -58,7 +58,8 @@ public:
     bool parseAndValidateModule();
 
     JS_EXPORT_PRIVATE void prepare();
-    void compileFunctions();
+    enum CompilationEffort { All, Partial };
+    void compileFunctions(CompilationEffort = All);
 
     template<typename Functor>
     void initializeCallees(const Functor&);

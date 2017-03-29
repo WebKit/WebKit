@@ -1,3 +1,29 @@
+2017-03-29  Keith Miller  <keith_miller@apple.com>
+
+        WebAssembly: Worklist should periodically check in to see if there are higher priority jobs to do.
+        https://bugs.webkit.org/show_bug.cgi?id=170204
+
+        Reviewed by Saam Barati.
+
+        This patch makes it so that Wasm::Plan's compileFunctions method can return periodically
+        to its caller. The main use for this is if a user asynchronously compiles a wasm module
+        then later synchronously compiles another module. In this case we want to be able to pause
+        compilation of other worklists.
+
+        This patch also adds support for size_t Options.
+
+        * runtime/Options.cpp:
+        (JSC::parse):
+        (JSC::Option::dump):
+        (JSC::Option::operator==):
+        * runtime/Options.h:
+        * wasm/WasmPlan.cpp:
+        (JSC::Wasm::Plan::moveToState):
+        (JSC::Wasm::Plan::ThreadCountHolder::~ThreadCountHolder):
+        (JSC::Wasm::Plan::compileFunctions):
+        * wasm/WasmPlan.h:
+        * wasm/WasmWorklist.cpp:
+
 2017-03-29  Mark Lam  <mark.lam@apple.com>
 
         Remove obsolete references to HeapTimer in JavaScriptCore.order.

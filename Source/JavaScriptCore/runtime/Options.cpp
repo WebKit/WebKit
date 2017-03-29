@@ -89,6 +89,11 @@ static bool parse(const char* string, unsigned& value)
     return sscanf(string, "%u", &value) == 1;
 }
 
+static bool parse(const char* string, size_t& value)
+{
+    return sscanf(string, "%zu", &value);
+}
+
 static bool parse(const char* string, double& value)
 {
     return sscanf(string, "%lf", &value) == 1;
@@ -814,6 +819,9 @@ void Option::dump(StringBuilder& builder) const
     case Options::Type::unsignedType:
         builder.appendNumber(m_entry.unsignedVal);
         break;
+    case Options::Type::sizeType:
+        builder.appendNumber(m_entry.sizeVal);
+        break;
     case Options::Type::doubleType:
         builder.appendNumber(m_entry.doubleVal);
         break;
@@ -846,6 +854,8 @@ bool Option::operator==(const Option& other) const
         return m_entry.boolVal == other.m_entry.boolVal;
     case Options::Type::unsignedType:
         return m_entry.unsignedVal == other.m_entry.unsignedVal;
+    case Options::Type::sizeType:
+        return m_entry.sizeVal == other.m_entry.sizeVal;
     case Options::Type::doubleType:
         return (m_entry.doubleVal == other.m_entry.doubleVal) || (std::isnan(m_entry.doubleVal) && std::isnan(other.m_entry.doubleVal));
     case Options::Type::int32Type:

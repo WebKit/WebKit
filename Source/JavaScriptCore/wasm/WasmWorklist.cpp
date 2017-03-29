@@ -114,7 +114,7 @@ protected:
 
         // FIXME: this should check in occasionally to see if there are new, higher priority e.g. synchronous, plans that need to be run.
         // https://bugs.webkit.org/show_bug.cgi?id=170204
-        plan->compileFunctions();
+        plan->compileFunctions(Plan::Partial);
         ASSERT(!plan->hasWork());
 
         {

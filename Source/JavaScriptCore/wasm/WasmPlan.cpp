@@ -83,8 +83,8 @@ const char* Plan::stateString(State state)
 
 void Plan::moveToState(State state)
 {
-    ASSERT(state > m_state);
-    dataLogLnIf(verbose, "moving to state: ", stateString(state), " from state: ", stateString(m_state));
+    ASSERT(state >= m_state);
+    dataLogLnIf(verbose && state != m_state, "moving to state: ", stateString(state), " from state: ", stateString(m_state));
     m_state = state;
 }
 
@@ -201,32 +201,38 @@ public:
         LockHolder locker(m_plan.m_lock);
         m_plan.m_numberOfActiveThreads--;
 
-        if (!m_plan.m_numberOfActiveThreads)
+        if (!m_plan.m_numberOfActiveThreads && !m_plan.hasWork())
             m_plan.complete(locker);
     }
 
     Plan& m_plan;
 };
 
-void Plan::compileFunctions()
+void Plan::compileFunctions(CompilationEffort effort)
 {
     ASSERT(m_state >= State::Prepared);
     dataLogLnIf(verbose, "Starting compilation");
 
-    if (m_state >= State::Compiled)
+    if (!hasWork())
         return;
 
     ThreadCountHolder holder(*this);
+
+    size_t bytesCompiled = 0;
     while (true) {
+        if (effort == Partial && bytesCompiled >= Options::webAssemblyPartialCompileLimit())
+            return;
+
         uint32_t functionIndex;
         {
             auto locker = holdLock(m_lock);
-            if (m_currentIndex >= m_functionLocationInBinary.size())
+            if (m_currentIndex >= m_functionLocationInBinary.size()) {
+                if (hasWork())
+                    moveToState(State::Compiled);
                 return;
+            }
             functionIndex = m_currentIndex;
             ++m_currentIndex;
-            if (m_currentIndex == m_functionLocationInBinary.size())
-                moveToState(State::Compiled);
         }
 
         const uint8_t* functionStart = m_source + m_functionLocationInBinary[functionIndex].start;
@@ -252,6 +258,7 @@ void Plan::compileFunctions()
         }
 
         m_wasmInternalFunctions[functionIndex] = WTFMove(*parseAndCompileResult);
+        bytesCompiled += functionLength;
     }
 }
 
