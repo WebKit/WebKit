@@ -1019,21 +1019,6 @@ void Heap::addToRememberedSet(const JSCell* constCell)
     m_mutatorMarkStack->append(cell);
 }
 
-void Heap::sweepSynchronously()
-{
-    double before = 0;
-    if (Options::logGC()) {
-        dataLog("[Full sweep: ", capacity() / 1024, "kb ");
-        before = currentTimeMS();
-    }
-    m_objectSpace.sweep();
-    m_objectSpace.shrink();
-    if (Options::logGC()) {
-        double after = currentTimeMS();
-        dataLog("=> ", capacity() / 1024, "kb, ", after - before, "ms] ");
-    }
-}
-
 void Heap::collectAllGarbage()
 {
     if (!m_isSafeToCollect)
@@ -1044,12 +1029,18 @@ void Heap::collectAllGarbage()
     DeferGCForAWhile deferGC(*this);
     if (UNLIKELY(Options::useImmortalObjects()))
         sweeper()->willFinishSweeping();
-
-    bool alreadySweptInCollectSync = Options::sweepSynchronously();
-    if (!alreadySweptInCollectSync) {
-        sweepSynchronously();
-        if (Options::logGC())
-            dataLog("\n");
+    else {
+        double before = 0;
+        if (Options::logGC()) {
+            dataLog("[Full sweep: ", capacity() / 1024, "kb ");
+            before = currentTimeMS();
+        }
+        m_objectSpace.sweep();
+        m_objectSpace.shrink();
+        if (Options::logGC()) {
+            double after = currentTimeMS();
+            dataLog("=> ", capacity() / 1024, "kb, ", after - before, "ms]\n");
+        }
     }
     m_objectSpace.assertNoUnswept();
 
@@ -1588,9 +1579,6 @@ void Heap::finalize()
     
     if (HasOwnPropertyCache* cache = vm()->hasOwnPropertyCache())
         cache->clear();
-
-    if (Options::sweepSynchronously())
-        sweepSynchronously();
 }
 
 Heap::Ticket Heap::requestCollection(std::optional<CollectionScope> scope)
@@ -1819,6 +1807,9 @@ void Heap::didFinishCollection(double gcStartTime)
     if (Options::recordGCPauseTimes())
         HeapStatistics::recordGCPauseTime(gcStartTime, gcEndTime);
 
+    if (Options::useZombieMode())
+        zombifyDeadObjects();
+
     if (Options::dumpObjectStatistics())
         HeapStatistics::dumpObjectStatistics(this);
 
@@ -1917,6 +1908,36 @@ void Heap::collectAllGarbageIfNotDoneRecently()
 
     m_fullActivityCallback->setDidSyncGCRecently();
     collectAllGarbage();
+}
+
+class Zombify : public MarkedBlock::VoidFunctor {
+public:
+    inline void visit(HeapCell* cell) const
+    {
+        void** current = reinterpret_cast_ptr<void**>(cell);
+
+        // We want to maintain zapped-ness because that's how we know if we've called 
+        // the destructor.
+        if (cell->isZapped())
+            current++;
+
+        void* limit = static_cast<void*>(reinterpret_cast<char*>(cell) + cell->cellSize());
+        for (; current < limit; current++)
+            *current = zombifiedBits;
+    }
+    IterationStatus operator()(HeapCell* cell, HeapCell::Kind) const
+    {
+        visit(cell);
+        return IterationStatus::Continue;
+    }
+};
+
+void Heap::zombifyDeadObjects()
+{
+    // Sweep now because destructors will crash once we're zombified.
+    m_objectSpace.sweep();
+    HeapIterationScope iterationScope(*this);
+    m_objectSpace.forEachDeadCell(iterationScope, Zombify());
 }
 
 bool Heap::shouldDoFullCollection(std::optional<CollectionScope> scope) const

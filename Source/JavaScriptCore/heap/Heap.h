@@ -85,6 +85,8 @@ class SpeculativeJIT;
 class Worklist;
 }
 
+static void* const zombifiedBits = reinterpret_cast<void*>(static_cast<uintptr_t>(0xdeadbeef));
+
 typedef HashCountedSet<JSCell*> ProtectCountSet;
 typedef HashCountedSet<const char*> TypeCountSet;
 
@@ -165,7 +167,6 @@ public:
 
     JS_EXPORT_PRIVATE void collectAllGarbageIfNotDoneRecently();
     JS_EXPORT_PRIVATE void collectAllGarbage();
-    JS_EXPORT_PRIVATE void sweepSynchronously();
 
     bool shouldCollectHeuristic();
     
@@ -257,6 +258,8 @@ public:
 #if USE(FOUNDATION)
     template<typename T> void releaseSoon(RetainPtr<T>&&);
 #endif
+
+    static bool isZombified(JSCell* cell) { return *(void**)cell == zombifiedBits; }
 
     JS_EXPORT_PRIVATE void registerWeakGCMap(void* weakGCMap, std::function<void()> pruningCallback);
     JS_EXPORT_PRIVATE void unregisterWeakGCMap(void* weakGCMap);
@@ -445,6 +448,7 @@ private:
     void updateAllocationLimits();
     void didFinishCollection(double gcStartTime);
     void resumeCompilerThreads();
+    void zombifyDeadObjects();
     void gatherExtraHeapSnapshotData(HeapProfiler&);
     void removeDeadHeapSnapshotNodes(HeapProfiler&);
     void finalize();

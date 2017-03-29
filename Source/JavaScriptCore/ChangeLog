@@ -1,3 +1,7 @@
+2017-03-29  Jason Marcell  <jmarcell@apple.com>
+
+        Rollout r214519. rdar://problem/30922106
+
 2017-03-28  Jason Marcell  <jmarcell@apple.com>
 
         Merge r214240. rdar://problem/31178794
