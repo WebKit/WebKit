@@ -274,6 +274,8 @@ visualViewportEnabled initial=false, setNeedsStyleRecalcInAllFrames=1
 
 inputEventsEnabled initial=true
 
+shouldDispatchRequestAnimationFrameEvents initial=false
+
 quickTimePluginReplacementEnabled initial=defaultQuickTimePluginReplacementEnabled
 youTubeFlashPluginReplacementEnabled initial=defaultYouTubeFlashPluginReplacementEnabled
 

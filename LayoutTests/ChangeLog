@@ -1,3 +1,16 @@
+2017-03-29  Antoine Quint  <graouts@apple.com>
+
+        [mac-wk1] LayoutTest media/modern-media-controls/airplay-button/airplay-button.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=168409
+        <rdar://problem/30799198>
+
+        Reviewed by Dean Jackson.
+
+        Opt into ScriptedAnimationController logging.
+
+        * media/modern-media-controls/airplay-button/airplay-button-expected.txt:
+        * media/modern-media-controls/airplay-button/airplay-button.html:
+
 2017-03-28  Youenn Fablet  <youenn@apple.com>
 
         [WebRTC] After r214441 addIceCandidate no longer accepts an RTCIceCandidateInit dictionary

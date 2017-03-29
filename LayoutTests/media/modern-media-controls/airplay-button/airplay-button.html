@@ -5,10 +5,33 @@
 <body>
 <script type="text/javascript">
 
+let reachedEndOfTest = false;
+let receivedRAFDidFireEvent = false;
+
 window.jsTestIsAsync = true;
 scheduler.debug = debug;
 
 description("Testing the <code>AirplayButton</code> class.");
+
+if (window.internals) {
+    ["raf-suspend", "raf-resume", "raf-add-throttling-reason", "raf-remove-throttling-reason", "raf-register-callback", "raf-cancel-callback", "raf-did-cancel-callback", "raf-service-scripted-animations", "raf-will-fire", "raf-did-fire", "raf-schedule-animation", "raf-schedule-animation-display-refresh-monitor", "raf-schedule-animation-timer", "raf-schedule-animation-frame-view"].forEach(eventType => document.addEventListener(eventType, handleRAFEvent));
+    window.internals.settings.setShouldDispatchRequestAnimationFrameEvents(true);
+}
+
+function handleRAFEvent(event)
+{
+    debug(`[ScriptedAnimationController] ${event.type}`);
+    if (event.type === "raf-did-fire") {
+        receivedRAFDidFireEvent = true;
+        considerFinishingTest();
+    }
+}
+
+function considerFinishingTest()
+{
+    if (reachedEndOfTest && receivedRAFDidFireEvent)
+        finishJSTest();
+}
 
 const airplayButton = new AirplayButton({ layoutTraits: LayoutTraits.macOS });
 
@@ -44,7 +67,10 @@ airplayButton._image.addEventListener("load", event => {
         shouldBeFalse("airplayButton.needsLayout");
         shouldBeEqualToString("airplayButton.element.getAttribute('aria-label')", "AirPlay");
     }
-    shouldBecomeEqual('airplayButton.element.style.webkitMaskImage.includes("macOS/airplay@")', "true", finishJSTest);
+    shouldBecomeEqual('airplayButton.element.style.webkitMaskImage.includes("macOS/airplay@")', "true", () => {
+        reachedEndOfTest = true;
+        considerFinishingTest();
+    });
     // shouldBecomeEqual('airplayButton.element.style.webkitMaskImage.includes("macOS/airplay@")', "true", () => {
     //     shouldBecomeEqual('macOSFullscreenAirplayButton.element.style.webkitMaskImage.includes("macOS/airplay-fullscreen@")', "true", () => {
     //         shouldBecomeEqual('iOSAirplayButton.element.style.webkitMaskImage.includes("iOS/airplay@")', "true", finishJSTest);

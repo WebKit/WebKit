@@ -1,3 +1,34 @@
+2017-03-29  Antoine Quint  <graouts@apple.com>
+
+        [mac-wk1] LayoutTest media/modern-media-controls/airplay-button/airplay-button.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=168409
+        <rdar://problem/30799198>
+
+        Reviewed by Dean Jackson.
+
+        Add a new internals setting to opt into ScriptedAnimationController logging through DOM events dispatched
+        through the document. This should allow this flaky test to get information as to why the frame isn't
+        firing when it times out.
+
+        * dom/ScriptedAnimationController.cpp:
+        (WebCore::ScriptedAnimationController::suspend):
+        (WebCore::ScriptedAnimationController::resume):
+        (WebCore::ScriptedAnimationController::addThrottlingReason):
+        (WebCore::ScriptedAnimationController::removeThrottlingReason):
+        (WebCore::ScriptedAnimationController::registerCallback):
+        (WebCore::ScriptedAnimationController::cancelCallback):
+        (WebCore::ScriptedAnimationController::serviceScriptedAnimations):
+        (WebCore::ScriptedAnimationController::scheduleAnimation):
+        (WebCore::ScriptedAnimationController::dispatchLoggingEventIfRequired):
+        * dom/ScriptedAnimationController.h:
+        * page/Settings.in:
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::resetToConsistentState):
+        (WebCore::InternalSettings::shouldDispatchRequestAnimationFrameEvents):
+        (WebCore::InternalSettings::setShouldDispatchRequestAnimationFrameEvents):
+        * testing/InternalSettings.h:
+        * testing/InternalSettings.idl:
+
 2017-03-28  Youenn Fablet  <youenn@apple.com>
 
         [WebRTC] After r214441 addIceCandidate no longer accepts an RTCIceCandidateInit dictionary

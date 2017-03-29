@@ -31,6 +31,7 @@
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
+#include <wtf/text/AtomicString.h>
 
 #if USE(REQUEST_ANIMATION_FRAME_TIMER)
 #include "Timer.h"
@@ -96,6 +97,7 @@ private:
     int m_suspendCount { 0 };
 
     void scheduleAnimation();
+    void dispatchLoggingEventIfRequired(const AtomicString&);
 
 #if USE(REQUEST_ANIMATION_FRAME_TIMER)
     void animationTimerFired();
