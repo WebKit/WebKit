@@ -51,7 +51,7 @@ enum class MemoryMode : uint8_t {
     NumberOfMemoryModes
 };
 static constexpr size_t NumberOfMemoryModes = static_cast<size_t>(MemoryMode::NumberOfMemoryModes);
-const char* makeString(MemoryMode);
+JS_EXPORT_PRIVATE const char* makeString(MemoryMode);
 
 class Memory : public RefCounted<Memory> {
     WTF_MAKE_NONCOPYABLE(Memory);

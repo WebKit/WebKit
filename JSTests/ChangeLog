@@ -1,3 +1,28 @@
+2017-03-29  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly: add shell-only Memory mode helper
+        https://bugs.webkit.org/show_bug.cgi?id=170227
+
+        Reviewed by Mark Lam.
+
+        * wasm/assert.js: fix a prior debug thing I forgot to remove
+        * wasm/function-tests/memory-section-and-import.js: the assert
+        issue was hiding a failure in error message here
+        * wasm/js-api/element.js: the assert issue was hiding a failure in
+        error message here
+        (badInstantiation.test):
+        (badInstantiation):
+        * wasm/js-api/extension-MemoryMode.js: Added.
+        (const.validateMode.what.switch):
+        (testMemoryNoMax):
+        (testMemory):
+        (testInstanceNoMemory):
+        (testInstanceNoMax):
+        (testInstance):
+        * wasm/js-api/test_memory.js: the assert issue was hiding a
+        failure in error message here
+        (test):
+
 2017-03-28  Keith Miller  <keith_miller@apple.com>
 
         WebAssembly: Make WebAssembly.instantiate/compile truly asynchronous

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,6 +45,8 @@ export const notString = (v, msg) => isNotA(v, "string", msg);
 export const isString = (v, msg) => isA(v, "string", msg);
 export const notNumber = (v, msg) => isNotA(v, "number", msg);
 export const isNumber = (v, msg) => isA(v, "number", msg);
+export const notFunction = (v, msg) => isNotA(v, "function", msg);
+export const isFunction = (v, msg) => isA(v, "function", msg);
 
 export const hasObjectProperty = (o, p, msg) => {
     isObject(o, msg);
@@ -127,7 +129,6 @@ const _throws = (func, type, message, ...args) => {
                 if (cleanMessage === message)
                     return e;
             }
-            return e;
         }
         _fail(`Expected to throw a ${type.name} with message "${message}", got ${e.name} with message "${e.message}"`);
     }

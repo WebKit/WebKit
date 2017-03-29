@@ -1,3 +1,17 @@
+2017-03-29  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly: add shell-only Memory mode helper
+        https://bugs.webkit.org/show_bug.cgi?id=170227
+
+        Reviewed by Mark Lam.
+
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+        (functionWebAssemblyMemoryMode):
+        * wasm/WasmMemory.h:
+        * wasm/js/JSWebAssemblyInstance.h:
+        * wasm/js/JSWebAssemblyMemory.h:
+
 2017-03-29  Keith Miller  <keith_miller@apple.com>
 
         WebAssembly: pack OpcodeOrigin to fit in a pointer

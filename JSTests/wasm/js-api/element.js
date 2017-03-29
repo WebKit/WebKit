@@ -181,7 +181,7 @@ import * as assert from '../assert.js';
             if (j === i)
                 assert.eq(table.get(j)(i*2), i*2 + 42);
             else
-                assert.throws(() => table.get(j)(i*2), TypeError, "table.get(j) is not a function.");
+                assert.throws(() => table.get(j)(i*2), TypeError, "table.get(j) is not a function. (In 'table.get(j)(i*2)', 'table.get(j)' is null)");
         }
     }
     for (let i = 0; i < 19; i++)
