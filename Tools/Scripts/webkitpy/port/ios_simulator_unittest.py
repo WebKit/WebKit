@@ -23,23 +23,20 @@
 import time
 
 from webkitpy.port.ios_simulator import IOSSimulatorPort
-from webkitpy.port import darwin_testcase
-from webkitpy.common.system.filesystem_mock import MockFileSystem
+from webkitpy.port import ios_testcase
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.tool.mocktool import MockOptions
-from webkitpy.common.system.executive_mock import MockExecutive, MockExecutive2, MockProcess, ScriptError
-from webkitpy.common.system.systemhost_mock import MockSystemHost
+from webkitpy.common.system.executive_mock import MockExecutive2, ScriptError
 
 
-class iosTest(darwin_testcase.DarwinTest):
+class IOSSimulatorTest(ios_testcase.IOSTest):
     os_name = 'ios-simulator'
     os_version = ''
     port_name = 'ios-simulator'
     port_maker = IOSSimulatorPort
-    is_simulator = True
 
     def make_port(self, host=None, port_name=None, options=None, os_name=None, os_version=None, **kwargs):
-        port = super(iosTest, self).make_port(host=host, port_name=port_name, options=options, os_name=os_name, s_version=os_version, kwargs=kwargs)
+        port = super(IOSSimulatorTest, self).make_port(host=host, port_name=port_name, options=options, os_name=os_name, s_version=os_version, kwargs=kwargs)
         port.set_option('child_processes', 1)
         return port
 
@@ -58,7 +55,7 @@ class iosTest(darwin_testcase.DarwinTest):
         def fake_time_cb():
             times = [0, 20, 40]
             return lambda: times.pop(0)
-        port = self.make_port(port_name='ios-simulator')
+        port = self.make_port(port_name=self.port_name)
         port._get_crash_log('DumpRenderTree', 1234, None, None, time.time(), wait_for_log=False)
 
     def test_32bit(self):

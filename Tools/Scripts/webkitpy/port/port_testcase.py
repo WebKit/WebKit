@@ -82,7 +82,7 @@ class PortTestCase(unittest.TestCase):
     os_version = None
     port_maker = TestWebKitPort
     port_name = None
-    is_simulator = False
+    disable_setup = False
 
     def make_port(self, host=None, port_name=None, options=None, os_name=None, os_version=None, **kwargs):
         host = host or MockSystemHost(os_name=(os_name or self.os_name), os_version=(os_version or self.os_version))
@@ -252,8 +252,8 @@ class PortTestCase(unittest.TestCase):
             self.proc = MockServerProcess(port, nm, cmd, env, lines=['diff: 100% failed\n', 'diff: 100% failed\n'])
             return self.proc
 
-        # FIXME: Can't pretend to run a simulator's setup, so just skip this test.
-        if self.is_simulator:
+        # FIXME: Can't pretend to run setup for some ports, so just skip this test.
+        if self.disable_setup:
             return
 
         port._server_process_constructor = make_proc
@@ -279,8 +279,8 @@ class PortTestCase(unittest.TestCase):
             self.proc = MockServerProcess(port, nm, cmd, env, crashed=True)
             return self.proc
 
-        # FIXME: Can't pretend to run a simulator's setup, so just skip this test.
-        if self.is_simulator:
+        # FIXME: Can't pretend to run setup for some ports, so just skip this test.
+        if self.disable_setup:
             return
 
         port._server_process_constructor = make_proc
