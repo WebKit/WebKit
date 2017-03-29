@@ -55,8 +55,6 @@
 
 namespace JSC {
 
-class VM;
-
 static const unsigned jitAllocationGranule = 32;
 
 typedef WTF::MetaAllocatorHandle ExecutableMemoryHandle;
@@ -117,9 +115,7 @@ class ExecutableAllocator {
     enum ProtectionSetting { Writable, Executable };
 
 public:
-    ExecutableAllocator(VM&);
-    ~ExecutableAllocator();
-    
+    static ExecutableAllocator& singleton();
     static void initializeAllocator();
 
     bool isValid() const;
@@ -134,13 +130,17 @@ public:
     static void dumpProfile() { }
 #endif
 
-    RefPtr<ExecutableMemoryHandle> allocate(VM&, size_t sizeInBytes, void* ownerUID, JITCompilationEffort);
+    RefPtr<ExecutableMemoryHandle> allocate(size_t sizeInBytes, void* ownerUID, JITCompilationEffort);
 
     bool isValidExecutableMemory(const AbstractLocker&, void* address);
 
     static size_t committedByteCount();
 
     Lock& getLock() const;
+private:
+
+    ExecutableAllocator();
+    ~ExecutableAllocator();
 };
 
 #endif // ENABLE(JIT) && ENABLE(ASSEMBLER)

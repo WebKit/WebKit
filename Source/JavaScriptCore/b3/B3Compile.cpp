@@ -38,7 +38,7 @@
 
 namespace JSC { namespace B3 {
 
-Compilation compile(VM& vm, Procedure& proc, unsigned optLevel)
+Compilation compile(Procedure& proc, unsigned optLevel)
 {
     TimingScope timingScope("Compilation");
     
@@ -46,7 +46,7 @@ Compilation compile(VM& vm, Procedure& proc, unsigned optLevel)
     
     CCallHelpers jit;
     generate(proc, jit);
-    LinkBuffer linkBuffer(vm, jit, nullptr);
+    LinkBuffer linkBuffer(jit, nullptr);
 
     return Compilation(FINALIZE_CODE(linkBuffer, ("B3::Compilation")), proc.releaseByproducts());
 }

@@ -118,16 +118,14 @@ SlowPathCallKey SlowPathCallContext::keyWithTarget(void* callTarget) const
     return SlowPathCallKey(m_thunkSaveSet, callTarget, m_argumentRegisters, m_offset);
 }
 
-SlowPathCall SlowPathCallContext::makeCall(void* callTarget)
+SlowPathCall SlowPathCallContext::makeCall(VM& vm, void* callTarget)
 {
     SlowPathCall result = SlowPathCall(m_jit.call(), keyWithTarget(callTarget));
 
     m_jit.addLinkTask(
-        [result] (LinkBuffer& linkBuffer) {
-            VM& vm = linkBuffer.vm();
-
+        [result, &vm] (LinkBuffer& linkBuffer) {
             MacroAssemblerCodeRef thunk =
-                vm.ftlThunks->getSlowPathCallThunk(vm, result.key());
+                vm.ftlThunks->getSlowPathCallThunk(result.key());
 
             linkBuffer.link(result.call(), CodeLocationLabel(thunk.code()));
         });

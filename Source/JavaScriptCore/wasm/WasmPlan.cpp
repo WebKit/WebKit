@@ -274,13 +274,13 @@ void Plan::complete(const AbstractLocker&)
                 SignatureIndex signatureIndex = m_moduleInformation->internalFunctionSignatureIndices[functionIndex];
                 String signatureDescription = SignatureInformation::get(&m_vm, signatureIndex)->toString();
                 {
-                    LinkBuffer linkBuffer(m_vm, *context.wasmEntrypointJIT, nullptr);
+                    LinkBuffer linkBuffer(*context.wasmEntrypointJIT, nullptr);
                     m_wasmInternalFunctions[functionIndex]->wasmEntrypoint.compilation =
                     std::make_unique<B3::Compilation>(FINALIZE_CODE(linkBuffer, ("WebAssembly function[%i] %s", functionIndex, signatureDescription.ascii().data())), WTFMove(context.wasmEntrypointByproducts));
                 }
 
                 {
-                    LinkBuffer linkBuffer(m_vm, *context.jsEntrypointJIT, nullptr);
+                    LinkBuffer linkBuffer(*context.jsEntrypointJIT, nullptr);
                     linkBuffer.link(context.jsEntrypointToWasmEntrypointCall, FunctionPtr(m_wasmInternalFunctions[functionIndex]->wasmEntrypoint.compilation->code().executableAddress()));
 
                     m_wasmInternalFunctions[functionIndex]->jsToWasmEntrypoint.compilation =

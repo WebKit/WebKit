@@ -60,6 +60,7 @@ class Structure;
 class StructureStubInfo;
 class Symbol;
 class SymbolTable;
+class VM;
 class WatchpointSet;
 
 struct ByValInfo;

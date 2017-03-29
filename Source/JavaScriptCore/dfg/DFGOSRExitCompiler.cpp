@@ -173,7 +173,7 @@ void compileOSRExit(ExecState* exec)
 
         exitCompiler.compileExit(*vm, exit, operands, recovery);
         
-        LinkBuffer patchBuffer(*vm, jit, codeBlock);
+        LinkBuffer patchBuffer(jit, codeBlock);
         exit.m_code = FINALIZE_CODE_IF(
             shouldDumpDisassembly() || Options::verboseOSR(),
             patchBuffer,

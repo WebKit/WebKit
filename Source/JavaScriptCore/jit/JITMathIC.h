@@ -128,7 +128,7 @@ public:
         return false;
     }
 
-    void generateOutOfLine(VM& vm, CodeBlock* codeBlock, FunctionPtr callReplacement)
+    void generateOutOfLine(CodeBlock* codeBlock, FunctionPtr callReplacement)
     {
         auto linkJumpToOutOfLineSnippet = [&] () {
             CCallHelpers jit(codeBlock);
@@ -160,7 +160,7 @@ public:
             if (generatedInline) {
                 auto jumpToDone = jit.jump();
 
-                LinkBuffer linkBuffer(vm, jit, codeBlock, JITCompilationCanFail);
+                LinkBuffer linkBuffer(jit, codeBlock, JITCompilationCanFail);
                 if (!linkBuffer.didFailToAllocate()) {
                     linkBuffer.link(generationState.slowPathJumps, slowPathStartLocation());
                     linkBuffer.link(jumpToDone, doneLocation());
@@ -200,7 +200,7 @@ public:
                 return;
             endJumpList.append(jit.jump());
 
-            LinkBuffer linkBuffer(vm, jit, codeBlock, JITCompilationCanFail);
+            LinkBuffer linkBuffer(jit, codeBlock, JITCompilationCanFail);
             if (linkBuffer.didFailToAllocate())
                 return;
 

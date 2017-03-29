@@ -491,7 +491,7 @@ static void compileStub(
     reifyInlinedCallFrames(jit, exit);
     adjustAndJumpToTarget(*vm, jit, exit);
     
-    LinkBuffer patchBuffer(*vm, jit, codeBlock);
+    LinkBuffer patchBuffer(jit, codeBlock);
     exit.m_code = FINALIZE_CODE_IF(
         shouldDumpDisassembly() || Options::verboseOSR() || Options::verboseFTLOSRExit(),
         patchBuffer,

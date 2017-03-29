@@ -141,8 +141,7 @@ void compile(State& state, Safepoint::Result& safepointResult)
             linkBuffer.link(call, FunctionPtr(lookupExceptionHandler));
         });
 
-    state.finalizer->b3CodeLinkBuffer = std::make_unique<LinkBuffer>(
-        vm, jit, codeBlock, JITCompilationCanFail);
+    state.finalizer->b3CodeLinkBuffer = std::make_unique<LinkBuffer>(jit, codeBlock, JITCompilationCanFail);
     if (state.finalizer->b3CodeLinkBuffer->didFailToAllocate()) {
         state.allocationFailed = true;
         return;

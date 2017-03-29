@@ -114,7 +114,7 @@ static MacroAssemblerCodeRef wasmToJs(VM* vm, Bag<CallLinkInfo>& callLinkInfos, 
                 ASSERT(!!vm->callFrameForCatch);
             };
 
-            LinkBuffer linkBuffer(*vm, jit, GLOBAL_THUNK_ID);
+            LinkBuffer linkBuffer(jit, GLOBAL_THUNK_ID);
             linkBuffer.link(call, throwBadI64);
             return FINALIZE_CODE(linkBuffer, ("WebAssembly->JavaScript invalid i64 use in import[%i]", importIndex));
         }
@@ -412,7 +412,7 @@ static MacroAssemblerCodeRef wasmToJs(VM* vm, Bag<CallLinkInfo>& callLinkInfos, 
         });
     }
 
-    LinkBuffer patchBuffer(*vm, jit, GLOBAL_THUNK_ID);
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID);
     patchBuffer.link(slowCall, FunctionPtr(vm->getCTIStub(linkCallThunkGenerator).code().executableAddress()));
     CodeLocationLabel callReturnLocation(patchBuffer.locationOfNearCall(slowCall));
     CodeLocationLabel hotPathBegin(patchBuffer.locationOf(targetToCheck));
@@ -426,7 +426,7 @@ static MacroAssemblerCodeRef wasmToJs(VM* vm, Bag<CallLinkInfo>& callLinkInfos, 
     return FINALIZE_CODE(patchBuffer, ("WebAssembly->JavaScript import[%i] %s", importIndex, signatureDescription.ascii().data()));
 }
 
-static MacroAssemblerCodeRef wasmToWasm(VM* vm, unsigned importIndex)
+static MacroAssemblerCodeRef wasmToWasm(unsigned importIndex)
 {
     const PinnedRegisterInfo& pinnedRegs = PinnedRegisterInfo::get();
     JIT jit;
@@ -462,7 +462,7 @@ static MacroAssemblerCodeRef wasmToWasm(VM* vm, unsigned importIndex)
     jit.loadPtr(JIT::Address(scratch, WebAssemblyFunction::offsetOfWasmEntryPointCode()), scratch);
     jit.jump(scratch);
 
-    LinkBuffer patchBuffer(*vm, jit, GLOBAL_THUNK_ID);
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID);
     return FINALIZE_CODE(patchBuffer, ("WebAssembly->WebAssembly import[%i]", importIndex));
 }
 
@@ -470,7 +470,7 @@ WasmExitStubs exitStubGenerator(VM* vm, Bag<CallLinkInfo>& callLinkInfos, Signat
 {
     WasmExitStubs stubs;
     stubs.wasmToJs = wasmToJs(vm, callLinkInfos, signatureIndex, importIndex);
-    stubs.wasmToWasm = wasmToWasm(vm, importIndex);
+    stubs.wasmToWasm = wasmToWasm(importIndex);
     return stubs;
 }
 

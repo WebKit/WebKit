@@ -77,7 +77,7 @@ MacroAssemblerCodeRef throwExceptionFromCallSlowPathGenerator(VM* vm)
     jit.call(GPRInfo::nonArgGPR0);
     jit.jumpToExceptionHandler(*vm);
 
-    LinkBuffer patchBuffer(*vm, jit, GLOBAL_THUNK_ID);
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID);
     return FINALIZE_CODE(patchBuffer, ("Throw exception from call slow path thunk"));
 }
 
@@ -142,7 +142,7 @@ MacroAssemblerCodeRef linkCallThunkGenerator(VM* vm)
     
     slowPathFor(jit, vm, operationLinkCall);
     
-    LinkBuffer patchBuffer(*vm, jit, GLOBAL_THUNK_ID);
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID);
     return FINALIZE_CODE(patchBuffer, ("Link call slow path thunk"));
 }
 
@@ -154,7 +154,7 @@ MacroAssemblerCodeRef linkPolymorphicCallThunkGenerator(VM* vm)
     
     slowPathFor(jit, vm, operationLinkPolymorphicCall);
     
-    LinkBuffer patchBuffer(*vm, jit, GLOBAL_THUNK_ID);
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID);
     return FINALIZE_CODE(patchBuffer, ("Link polymorphic call slow path thunk"));
 }
 
@@ -223,7 +223,7 @@ MacroAssemblerCodeRef virtualThunkFor(VM* vm, CallLinkInfo& callLinkInfo)
     
     slowPathFor(jit, vm, operationVirtualCall);
     
-    LinkBuffer patchBuffer(*vm, jit, GLOBAL_THUNK_ID);
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID);
     return FINALIZE_CODE(
         patchBuffer,
         ("Virtual %s slow path thunk",
@@ -382,7 +382,7 @@ static MacroAssemblerCodeRef nativeForGenerator(VM* vm, CodeSpecializationKind k
 
     jit.jumpToExceptionHandler(*vm);
 
-    LinkBuffer patchBuffer(*vm, jit, GLOBAL_THUNK_ID);
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID);
     return FINALIZE_CODE(patchBuffer, ("native %s%s trampoline", entryType == EnterViaJumpWithSavedTags ? "Tail With Saved Tags " : entryType == EnterViaJumpWithoutSavedTags ? "Tail Without Saved Tags " : "", toCString(kind).data()));
 }
 
@@ -529,7 +529,7 @@ MacroAssemblerCodeRef arityFixupGenerator(VM* vm)
     jit.ret();
 #endif
 
-    LinkBuffer patchBuffer(*vm, jit, GLOBAL_THUNK_ID);
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID);
     return FINALIZE_CODE(patchBuffer, ("fixup arity"));
 }
 
@@ -539,7 +539,7 @@ MacroAssemblerCodeRef unreachableGenerator(VM* vm)
 
     jit.breakpoint();
 
-    LinkBuffer patchBuffer(*vm, jit, GLOBAL_THUNK_ID);
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID);
     return FINALIZE_CODE(patchBuffer, ("unreachable thunk"));
 }
 
@@ -1127,7 +1127,7 @@ MacroAssemblerCodeRef boundThisNoArgsFunctionCallGenerator(VM* vm)
     jit.emitFunctionEpilogue();
     jit.ret();
     
-    LinkBuffer linkBuffer(*vm, jit, GLOBAL_THUNK_ID);
+    LinkBuffer linkBuffer(jit, GLOBAL_THUNK_ID);
     linkBuffer.link(noCode, CodeLocationLabel(vm->jitStubs->ctiNativeTailCallWithoutSavedTags(vm)));
     return FINALIZE_CODE(
         linkBuffer, ("Specialized thunk for bound function calls with no arguments"));
@@ -1167,7 +1167,7 @@ MacroAssemblerCodeRef throwExceptionFromWasmThunkGenerator(VM* vm)
         ASSERT(!!vm->callFrameForCatch);
     };
 
-    LinkBuffer linkBuffer(*vm, jit, GLOBAL_THUNK_ID);
+    LinkBuffer linkBuffer(jit, GLOBAL_THUNK_ID);
     linkBuffer.link(call, throwWasmException);
     return FINALIZE_CODE(
         linkBuffer, ("Throw exception from Wasm"));

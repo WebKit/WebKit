@@ -32,7 +32,6 @@
 #include "JITCode.h"
 #include "JSCInlines.h"
 #include "Options.h"
-#include "VM.h"
 #include <wtf/CompilationThread.h>
 
 namespace JSC {
@@ -242,8 +241,7 @@ void LinkBuffer::allocate(MacroAssembler& macroAssembler, void* ownerUID, JITCom
         initialSize = macroAssembler.m_assembler.codeSize();
     }
     
-    ASSERT(m_vm != nullptr);
-    m_executableMemory = m_vm->executableAllocator.allocate(*m_vm, initialSize, ownerUID, effort);
+    m_executableMemory = ExecutableAllocator::singleton().allocate(initialSize, ownerUID, effort);
     if (!m_executableMemory)
         return;
     m_code = m_executableMemory->start();

@@ -165,9 +165,6 @@ static bool enableAssembler(ExecutableAllocator& executableAllocator)
 
 VM::VM(VMType vmType, HeapType heapType)
     : m_apiLock(adoptRef(new JSLock(this)))
-#if ENABLE(ASSEMBLER)
-    , executableAllocator(*this)
-#endif
     , heap(this, heapType)
     , auxiliarySpace("Auxiliary", heap, AllocatorAttributes(DoesNotNeedDestruction, HeapCell::Auxiliary))
     , cellSpace("JSCell", heap, AllocatorAttributes(DoesNotNeedDestruction, HeapCell::JSCell))
@@ -198,7 +195,7 @@ VM::VM(VMType vmType, HeapType heapType)
     , m_rtTraceList(new RTTraceList())
 #endif
 #if ENABLE(ASSEMBLER)
-    , m_canUseAssembler(enableAssembler(executableAllocator))
+    , m_canUseAssembler(enableAssembler(ExecutableAllocator::singleton()))
 #endif
 #if ENABLE(JIT)
     , m_canUseJIT(m_canUseAssembler && Options::useJIT())

@@ -256,7 +256,7 @@ struct BacktrackingLevel {
 class SelectorCodeGenerator {
 public:
     SelectorCodeGenerator(const CSSSelector*, SelectorContext);
-    SelectorCompilationStatus compile(JSC::VM*, JSC::MacroAssemblerCodeRef&);
+    SelectorCompilationStatus compile(JSC::MacroAssemblerCodeRef&);
 
 private:
     static const Assembler::RegisterID returnRegister;
@@ -395,7 +395,7 @@ SelectorCompilationStatus compileSelector(const CSSSelector* lastSelector, JSC::
     if (!vm->canUseJIT())
         return SelectorCompilationStatus::CannotCompile;
     SelectorCodeGenerator codeGenerator(lastSelector, selectorContext);
-    return codeGenerator.compile(vm, codeRef);
+    return codeGenerator.compile(codeRef);
 }
 
 static inline FragmentRelation fragmentRelationForSelectorRelation(CSSSelector::RelationType relation)
@@ -1208,7 +1208,7 @@ void computeBacktrackingMemoryRequirements(SelectorFragmentList& selectorFragmen
     }
 }
 
-inline SelectorCompilationStatus SelectorCodeGenerator::compile(JSC::VM* vm, JSC::MacroAssemblerCodeRef& codeRef)
+inline SelectorCompilationStatus SelectorCodeGenerator::compile(JSC::MacroAssemblerCodeRef& codeRef)
 {
     switch (m_functionType) {
     case FunctionType::SimpleSelectorChecker:
@@ -1223,7 +1223,7 @@ inline SelectorCompilationStatus SelectorCodeGenerator::compile(JSC::VM* vm, JSC
         return SelectorCompilationStatus::CannotCompile;
     }
 
-    JSC::LinkBuffer linkBuffer(*vm, m_assembler, CSS_CODE_ID, JSC::JITCompilationCanFail);
+    JSC::LinkBuffer linkBuffer(m_assembler, CSS_CODE_ID, JSC::JITCompilationCanFail);
     if (!linkBuffer.isValid()) {
         // This could be SelectorCompilationStatus::NotCompiled but that would cause us to re-enter
         // the CSS JIT every time we evaluate that selector.

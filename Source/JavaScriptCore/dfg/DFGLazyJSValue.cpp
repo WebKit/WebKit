@@ -229,7 +229,7 @@ void LazyJSValue::emit(CCallHelpers& jit, JSValueRegs result) const
     
     jit.addLinkTask(
         [codeBlock, label, thisValue] (LinkBuffer& linkBuffer) {
-            JSValue realValue = thisValue.getValue(linkBuffer.vm());
+            JSValue realValue = thisValue.getValue(*codeBlock->vm());
             RELEASE_ASSERT(realValue.isCell());
 
             codeBlock->addConstant(realValue);

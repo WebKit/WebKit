@@ -91,7 +91,7 @@ void ftlThunkAwareRepatchCall(CodeBlock* codeBlock, CodeLocationCall call, Funct
                 MacroAssembler::readCallTarget(call).executableAddress()));
         key = key.withCallTarget(newCalleeFunction.executableAddress());
         newCalleeFunction = FunctionPtr(
-            thunks.getSlowPathCallThunk(vm, key).code().executableAddress());
+            thunks.getSlowPathCallThunk(key).code().executableAddress());
     }
 #else // ENABLE(FTL_JIT)
     UNUSED_PARAM(codeBlock);
@@ -931,7 +931,7 @@ void linkPolymorphicCall(
     stubJit.restoreReturnAddressBeforeReturn(GPRInfo::regT4);
     AssemblyHelpers::Jump slow = stubJit.jump();
         
-    LinkBuffer patchBuffer(vm, stubJit, owner, JITCompilationCanFail);
+    LinkBuffer patchBuffer(stubJit, owner, JITCompilationCanFail);
     if (patchBuffer.didFailToAllocate()) {
         linkVirtualFor(exec, callLinkInfo);
         return;

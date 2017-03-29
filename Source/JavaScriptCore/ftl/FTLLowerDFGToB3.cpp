@@ -5981,6 +5981,7 @@ private:
 
         CodeOrigin codeOrigin = codeOriginDescriptionOfCallSite();
         State* state = &m_ftlState;
+        VM* vm = &this->vm();
         patchpoint->setGenerator(
             [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
                 AllowMacroScratchRegisterUsage allowScratch(jit);
@@ -6019,7 +6020,7 @@ private:
                 jit.addLinkTask(
                     [=] (LinkBuffer& linkBuffer) {
                         MacroAssemblerCodePtr linkCall =
-                            linkBuffer.vm().getCTIStub(linkCallThunkGenerator).code();
+                            vm->getCTIStub(linkCallThunkGenerator).code();
                         linkBuffer.link(slowCall, FunctionPtr(linkCall.executableAddress()));
 
                         callLinkInfo->setCallLocations(
@@ -6278,6 +6279,7 @@ private:
 
         CodeOrigin codeOrigin = codeOriginDescriptionOfCallSite();
         State* state = &m_ftlState;
+        VM* vm = &this->vm();
         patchpoint->setGenerator(
             [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
                 AllowMacroScratchRegisterUsage allowScratch(jit);
@@ -6329,7 +6331,7 @@ private:
                 jit.addLinkTask(
                     [=] (LinkBuffer& linkBuffer) {
                         MacroAssemblerCodePtr linkCall =
-                            linkBuffer.vm().getCTIStub(linkCallThunkGenerator).code();
+                            vm->getCTIStub(linkCallThunkGenerator).code();
                         linkBuffer.link(slowCall, FunctionPtr(linkCall.executableAddress()));
 
                         callLinkInfo->setCallLocations(
@@ -6403,6 +6405,7 @@ private:
         
         CodeOrigin codeOrigin = codeOriginDescriptionOfCallSite();
         State* state = &m_ftlState;
+        VM* vm = &this->vm();
         patchpoint->setGenerator(
             [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
                 AllowMacroScratchRegisterUsage allowScratch(jit);
@@ -6456,7 +6459,7 @@ private:
                 auto callWithExceptionCheck = [&] (void* callee) {
                     jit.move(CCallHelpers::TrustedImmPtr(callee), GPRInfo::nonPreservedNonArgumentGPR);
                     jit.call(GPRInfo::nonPreservedNonArgumentGPR);
-                    exceptions->append(jit.emitExceptionCheck(state->vm(), AssemblyHelpers::NormalExceptionCheck, AssemblyHelpers::FarJumpWidth));
+                    exceptions->append(jit.emitExceptionCheck(*vm, AssemblyHelpers::NormalExceptionCheck, AssemblyHelpers::FarJumpWidth));
                 };
 
                 CCallHelpers::JumpList slowCase;
@@ -6582,7 +6585,7 @@ private:
                 jit.addLinkTask(
                     [=] (LinkBuffer& linkBuffer) {
                         MacroAssemblerCodePtr linkCall =
-                            linkBuffer.vm().getCTIStub(linkCallThunkGenerator).code();
+                            vm->getCTIStub(linkCallThunkGenerator).code();
                         linkBuffer.link(slowCall, FunctionPtr(linkCall.executableAddress()));
                         
                         callLinkInfo->setCallLocations(
@@ -6672,6 +6675,7 @@ private:
         
         CodeOrigin codeOrigin = codeOriginDescriptionOfCallSite();
         State* state = &m_ftlState;
+        VM* vm = &this->vm();
         patchpoint->setGenerator(
             [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
                 AllowMacroScratchRegisterUsage allowScratch(jit);
@@ -6763,7 +6767,7 @@ private:
                 auto callWithExceptionCheck = [&] (void* callee) {
                     jit.move(CCallHelpers::TrustedImmPtr(callee), GPRInfo::nonPreservedNonArgumentGPR);
                     jit.call(GPRInfo::nonPreservedNonArgumentGPR);
-                    exceptions->append(jit.emitExceptionCheck(state->vm(), AssemblyHelpers::NormalExceptionCheck, AssemblyHelpers::FarJumpWidth));
+                    exceptions->append(jit.emitExceptionCheck(*vm, AssemblyHelpers::NormalExceptionCheck, AssemblyHelpers::FarJumpWidth));
                 };
 
                 unsigned originalStackHeight = params.proc().frameSize();
@@ -6779,7 +6783,7 @@ private:
                         inlineCallFrame = node->origin.semantic.inlineCallFrame;
 
                     // emitSetupVarargsFrameFastCase modifies the stack pointer if it succeeds.
-                    emitSetupVarargsFrameFastCase(state->vm(), jit, scratchGPR2, scratchGPR1, scratchGPR2, scratchGPR3, inlineCallFrame, data->firstVarArgOffset, slowCase);
+                    emitSetupVarargsFrameFastCase(*vm, jit, scratchGPR2, scratchGPR1, scratchGPR2, scratchGPR3, inlineCallFrame, data->firstVarArgOffset, slowCase);
 
                     CCallHelpers::Jump done = jit.jump();
                     slowCase.link(&jit);
@@ -6861,7 +6865,7 @@ private:
                 jit.addLinkTask(
                     [=] (LinkBuffer& linkBuffer) {
                         MacroAssemblerCodePtr linkCall =
-                            linkBuffer.vm().getCTIStub(linkCallThunkGenerator).code();
+                            vm->getCTIStub(linkCallThunkGenerator).code();
                         linkBuffer.link(slowCall, FunctionPtr(linkCall.executableAddress()));
                         
                         callLinkInfo->setCallLocations(
@@ -6922,8 +6926,9 @@ private:
         
         CodeOrigin codeOrigin = codeOriginDescriptionOfCallSite();
         State* state = &m_ftlState;
+        VM& vm = this->vm();
         patchpoint->setGenerator(
-            [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            [=, &vm] (CCallHelpers& jit, const StackmapGenerationParams& params) {
                 AllowMacroScratchRegisterUsage allowScratch(jit);
                 CallSiteIndex callSiteIndex = state->jitCode->common.addUniqueCallSiteIndex(codeOrigin);
                 
@@ -6956,7 +6961,7 @@ private:
                 
                 jit.addPtr(CCallHelpers::TrustedImm32(requiredBytes), CCallHelpers::stackPointerRegister);
                 jit.load64(CCallHelpers::calleeFrameSlot(CallFrameSlot::callee), GPRInfo::regT0);
-                jit.emitDumbVirtualCall(callLinkInfo);
+                jit.emitDumbVirtualCall(vm, callLinkInfo);
                 
                 done.link(&jit);
                 jit.addPtr(

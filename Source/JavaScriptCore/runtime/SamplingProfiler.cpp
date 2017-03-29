@@ -342,7 +342,7 @@ void SamplingProfiler::takeSample(const AbstractLocker&, std::chrono::microsecon
 
         LockHolder machineThreadsLocker(m_vm.heap.machineThreads().getLock());
         LockHolder codeBlockSetLocker(m_vm.heap.codeBlockSet().getLock());
-        LockHolder executableAllocatorLocker(m_vm.executableAllocator.getLock());
+        LockHolder executableAllocatorLocker(ExecutableAllocator::singleton().getLock());
 
         bool didSuspend = m_jscExecutionThread->suspend();
         if (didSuspend) {
@@ -364,7 +364,7 @@ void SamplingProfiler::takeSample(const AbstractLocker&, std::chrono::microsecon
             }
             // FIXME: Lets have a way of detecting when we're parsing code.
             // https://bugs.webkit.org/show_bug.cgi?id=152761
-            if (m_vm.executableAllocator.isValidExecutableMemory(executableAllocatorLocker, machinePC)) {
+            if (ExecutableAllocator::singleton().isValidExecutableMemory(executableAllocatorLocker, machinePC)) {
                 if (m_vm.isExecutingInRegExpJIT) {
                     // FIXME: We're executing a regexp. Lets gather more intersting data.
                     // https://bugs.webkit.org/show_bug.cgi?id=152729

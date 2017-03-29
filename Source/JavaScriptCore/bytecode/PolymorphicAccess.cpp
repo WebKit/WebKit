@@ -514,7 +514,7 @@ AccessGenerationResult PolymorphicAccess::regenerate(
         callSiteIndexForExceptionHandling = state.callSiteIndexForExceptionHandling();
     }
 
-    LinkBuffer linkBuffer(vm, jit, codeBlock, JITCompilationCanFail);
+    LinkBuffer linkBuffer(jit, codeBlock, JITCompilationCanFail);
     if (linkBuffer.didFailToAllocate()) {
         if (verbose)
             dataLog("Did fail to allocate.\n");

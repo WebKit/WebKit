@@ -66,7 +66,6 @@
 #include "JSCInlines.h"
 #include "LinkBuffer.h"
 #include "PureNaN.h"
-#include "VM.h"
 #include <cmath>
 #include <string>
 #include <wtf/FastTLS.h>
@@ -118,11 +117,9 @@ StaticLock crashLock;
         CRASH(); \
     } while (false)
 
-VM* vm;
-
-std::unique_ptr<Compilation> compile(Procedure& procedure, unsigned optLevel = 1)
+std::unique_ptr<Compilation> compileProc(Procedure& procedure, unsigned optLevel = 1)
 {
-    return std::make_unique<Compilation>(B3::compile(*vm, procedure, optLevel));
+    return std::make_unique<Compilation>(B3::compile(procedure, optLevel));
 }
 
 template<typename T, typename... Arguments>
@@ -141,7 +138,7 @@ T invoke(const Compilation& code, Arguments... arguments)
 template<typename T, typename... Arguments>
 T compileAndRun(Procedure& procedure, Arguments... arguments)
 {
-    return invoke<T>(*compile(procedure), arguments...);
+    return invoke<T>(*compileProc(procedure), arguments...);
 }
 
 void lowerToAirForTesting(Procedure& proc)
@@ -312,7 +309,7 @@ void testLoadAcq42()
             root->appendNew<ConstPtrValue>(proc, Origin(), &x),
             0, HeapRange(42), HeapRange(42)));
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     if (isARM64())
         checkUsesInstruction(*code, "lda");
     CHECK(invoke<int>(*code) == 42);
@@ -615,7 +612,7 @@ void testAddArgZeroImmZDef()
             arg,
             constZero));
 
-    auto code = compile(proc, 0);
+    auto code = compileProc(proc, 0);
     CHECK(invoke<int64_t>(*code, 0x0123456789abcdef) == 0x89abcdef);
 }
 
@@ -632,7 +629,7 @@ void testAddLoadTwice()
             proc, Return, Origin(),
             root->appendNew<Value>(proc, Add, Origin(), load, load));
 
-        auto code = compile(proc, optLevel);
+        auto code = compileProc(proc, optLevel);
         CHECK(invoke<int32_t>(*code) == 42 * 2);
     };
 
@@ -984,7 +981,7 @@ void testMulLoadTwice()
             proc, Return, Origin(),
             root->appendNew<Value>(proc, Mul, Origin(), load, load));
 
-        auto code = compile(proc, optLevel);
+        auto code = compileProc(proc, optLevel);
         CHECK(invoke<int32_t>(*code) == 42 * 42);
     };
 
@@ -1004,7 +1001,7 @@ void testMulAddArgsLeft()
     Value* added = root->appendNew<Value>(proc, Add, Origin(), multiplied, arg2);
     root->appendNewControlValue(proc, Return, Origin(), added);
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
 
     auto testValues = int64Operands();
     for (auto a : testValues) {
@@ -1028,7 +1025,7 @@ void testMulAddArgsRight()
     Value* added = root->appendNew<Value>(proc, Add, Origin(), arg0, multiplied);
     root->appendNewControlValue(proc, Return, Origin(), added);
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
 
     auto testValues = int64Operands();
     for (auto a : testValues) {
@@ -1055,7 +1052,7 @@ void testMulAddArgsLeft32()
     Value* added = root->appendNew<Value>(proc, Add, Origin(), multiplied, arg2);
     root->appendNewControlValue(proc, Return, Origin(), added);
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
 
     auto testValues = int32Operands();
     for (auto a : testValues) {
@@ -1082,7 +1079,7 @@ void testMulAddArgsRight32()
     Value* added = root->appendNew<Value>(proc, Add, Origin(), arg0, multiplied);
     root->appendNewControlValue(proc, Return, Origin(), added);
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
 
     auto testValues = int32Operands();
     for (auto a : testValues) {
@@ -1106,7 +1103,7 @@ void testMulSubArgsLeft()
     Value* added = root->appendNew<Value>(proc, Sub, Origin(), multiplied, arg2);
     root->appendNewControlValue(proc, Return, Origin(), added);
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
 
     auto testValues = int64Operands();
     for (auto a : testValues) {
@@ -1130,7 +1127,7 @@ void testMulSubArgsRight()
     Value* added = root->appendNew<Value>(proc, Sub, Origin(), arg0, multiplied);
     root->appendNewControlValue(proc, Return, Origin(), added);
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
 
     auto testValues = int64Operands();
     for (auto a : testValues) {
@@ -1157,7 +1154,7 @@ void testMulSubArgsLeft32()
     Value* added = root->appendNew<Value>(proc, Sub, Origin(), multiplied, arg2);
     root->appendNewControlValue(proc, Return, Origin(), added);
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
 
     auto testValues = int32Operands();
     for (auto a : testValues) {
@@ -1184,7 +1181,7 @@ void testMulSubArgsRight32()
     Value* added = root->appendNew<Value>(proc, Sub, Origin(), arg0, multiplied);
     root->appendNewControlValue(proc, Return, Origin(), added);
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
 
     auto testValues = int32Operands();
     for (auto a : testValues) {
@@ -1208,7 +1205,7 @@ void testMulNegArgs()
     Value* added = root->appendNew<Value>(proc, Sub, Origin(), zero, multiplied);
     root->appendNewControlValue(proc, Return, Origin(), added);
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
 
     auto testValues = int64Operands();
     for (auto a : testValues) {
@@ -1232,7 +1229,7 @@ void testMulNegArgs32()
     Value* added = root->appendNew<Value>(proc, Sub, Origin(), zero, multiplied);
     root->appendNewControlValue(proc, Return, Origin(), added);
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
 
     auto testValues = int32Operands();
     for (auto a : testValues) {
@@ -4636,7 +4633,7 @@ void testCompareFloatToDoubleThroughPhi(float a, float b)
     Value* equal = tail->appendNew<Value>(proc, Equal, Origin(), doubleInput, arg2AsFRoundedDouble);
     tail->appendNewControlValue(proc, Return, Origin(), equal);
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     int32_t integerA = bitwise_cast<int32_t>(a);
     double doubleB = b;
     CHECK(invoke<int64_t>(*code, 1, integerA, doubleB) == (a == b));
@@ -4685,7 +4682,7 @@ void testDoubleToFloatThroughPhi(float value)
     Value* floatResult = tail->appendNew<Value>(proc, DoubleToFloat, Origin(), doubleInput);
     tail->appendNewControlValue(proc, Return, Origin(), floatResult);
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     CHECK(isIdentical(invoke<float>(*code, 1, bitwise_cast<int32_t>(value)), value + 42.5f));
     CHECK(isIdentical(invoke<float>(*code, 0, bitwise_cast<int32_t>(value)), static_cast<float>(M_PI)));
 }
@@ -4740,7 +4737,7 @@ void testReduceFloatToDoubleValidates()
             result);
     tail->appendNewControlValue(proc, Return, Origin(), result);
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     CHECK(isIdentical(invoke<float>(*code, 1), 11.5f * 11.5f + static_cast<float>(bitwise_cast<double>(static_cast<uint64_t>(1))) + 11.5f));
     CHECK(isIdentical(invoke<float>(*code, 0), 10.5f * 10.5f + static_cast<float>(bitwise_cast<double>(static_cast<uint64_t>(0))) + 10.5f));
 }
@@ -4780,7 +4777,7 @@ void testDoubleProducerPhiToFloatConversion(float value)
     Value* floatResult = tail->appendNew<Value>(proc, DoubleToFloat, Origin(), finalAdd);
     tail->appendNewControlValue(proc, Return, Origin(), floatResult);
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     CHECK(isIdentical(invoke<float>(*code, 1, bitwise_cast<int32_t>(value)), value + value));
     CHECK(isIdentical(invoke<float>(*code, 0, bitwise_cast<int32_t>(value)), 42.5f + value));
 }
@@ -4829,7 +4826,7 @@ void testDoubleProducerPhiToFloatConversionWithDoubleConsumer(float value)
 
     tail->appendNewControlValue(proc, Return, Origin(), doubleAdd);
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     CHECK(isIdentical(invoke<double>(*code, 1, bitwise_cast<int32_t>(value)), (value + value) + static_cast<double>(value)));
     CHECK(isIdentical(invoke<double>(*code, 0, bitwise_cast<int32_t>(value)), static_cast<double>((42.5f + value) + 42.5f)));
 }
@@ -4869,7 +4866,7 @@ void testDoubleProducerPhiWithNonFloatConst(float value, double constValue)
     Value* floatResult = tail->appendNew<Value>(proc, DoubleToFloat, Origin(), finalAdd);
     tail->appendNewControlValue(proc, Return, Origin(), floatResult);
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     CHECK(isIdentical(invoke<float>(*code, 1, bitwise_cast<int32_t>(value)), value + value));
     CHECK(isIdentical(invoke<float>(*code, 0, bitwise_cast<int32_t>(value)), static_cast<float>(constValue + value)));
 }
@@ -5225,7 +5222,7 @@ void testIToD64Arg()
     Value* srcAsDouble = root->appendNew<Value>(proc, IToD, Origin(), src);
     root->appendNewControlValue(proc, Return, Origin(), srcAsDouble);
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     for (auto testValue : int64Operands())
         CHECK(isIdentical(invoke<double>(*code, testValue.value), static_cast<double>(testValue.value)));
 }
@@ -5238,7 +5235,7 @@ void testIToF64Arg()
     Value* srcAsFloat = root->appendNew<Value>(proc, IToF, Origin(), src);
     root->appendNewControlValue(proc, Return, Origin(), srcAsFloat);
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     for (auto testValue : int64Operands())
         CHECK(isIdentical(invoke<float>(*code, testValue.value), static_cast<float>(testValue.value)));
 }
@@ -5252,7 +5249,7 @@ void testIToD32Arg()
     Value* srcAsDouble = root->appendNew<Value>(proc, IToD, Origin(), src);
     root->appendNewControlValue(proc, Return, Origin(), srcAsDouble);
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     for (auto testValue : int32Operands())
         CHECK(isIdentical(invoke<double>(*code, testValue.value), static_cast<double>(testValue.value)));
 }
@@ -5266,7 +5263,7 @@ void testIToF32Arg()
     Value* srcAsFloat = root->appendNew<Value>(proc, IToF, Origin(), src);
     root->appendNewControlValue(proc, Return, Origin(), srcAsFloat);
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     for (auto testValue : int32Operands())
         CHECK(isIdentical(invoke<float>(*code, testValue.value), static_cast<float>(testValue.value)));
 }
@@ -5280,7 +5277,7 @@ void testIToD64Mem()
     Value* srcAsDouble = root->appendNew<Value>(proc, IToD, Origin(), loadedSrc);
     root->appendNewControlValue(proc, Return, Origin(), srcAsDouble);
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     int64_t inMemoryValue;
     for (auto testValue : int64Operands()) {
         inMemoryValue = testValue.value;
@@ -5298,7 +5295,7 @@ void testIToF64Mem()
     Value* srcAsFloat = root->appendNew<Value>(proc, IToF, Origin(), loadedSrc);
     root->appendNewControlValue(proc, Return, Origin(), srcAsFloat);
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     int64_t inMemoryValue;
     for (auto testValue : int64Operands()) {
         inMemoryValue = testValue.value;
@@ -5316,7 +5313,7 @@ void testIToD32Mem()
     Value* srcAsDouble = root->appendNew<Value>(proc, IToD, Origin(), loadedSrc);
     root->appendNewControlValue(proc, Return, Origin(), srcAsDouble);
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     int32_t inMemoryValue;
     for (auto testValue : int32Operands()) {
         inMemoryValue = testValue.value;
@@ -5334,7 +5331,7 @@ void testIToF32Mem()
     Value* srcAsFloat = root->appendNew<Value>(proc, IToF, Origin(), loadedSrc);
     root->appendNewControlValue(proc, Return, Origin(), srcAsFloat);
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     int32_t inMemoryValue;
     for (auto testValue : int32Operands()) {
         inMemoryValue = testValue.value;
@@ -5392,7 +5389,7 @@ void testIToDReducedToIToF64Arg()
     Value* floatResult = root->appendNew<Value>(proc, DoubleToFloat, Origin(), srcAsDouble);
     root->appendNewControlValue(proc, Return, Origin(), floatResult);
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     for (auto testValue : int64Operands())
         CHECK(isIdentical(invoke<float>(*code, testValue.value), static_cast<float>(testValue.value)));
 }
@@ -5407,7 +5404,7 @@ void testIToDReducedToIToF32Arg()
     Value* floatResult = root->appendNew<Value>(proc, DoubleToFloat, Origin(), srcAsDouble);
     root->appendNewControlValue(proc, Return, Origin(), floatResult);
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     for (auto testValue : int32Operands())
         CHECK(isIdentical(invoke<float>(*code, testValue.value), static_cast<float>(testValue.value)));
 }
@@ -5789,7 +5786,7 @@ void testStoreRelAddLoadAcq32(int amount)
         proc, Return, Origin(),
         root->appendNew<Const32Value>(proc, Origin(), 0));
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     if (isARM64()) {
         checkUsesInstruction(*code, "lda");
         checkUsesInstruction(*code, "stl");
@@ -5862,7 +5859,7 @@ void testStoreRelAddLoadAcq8(int amount, B3::Opcode loadOpcode)
         proc, Return, Origin(),
         root->appendNew<Const32Value>(proc, Origin(), 0));
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     if (isARM64()) {
         checkUsesInstruction(*code, "lda");
         checkUsesInstruction(*code, "stl");
@@ -5901,7 +5898,7 @@ void testStoreRelAddFenceLoadAcq8(int amount, B3::Opcode loadOpcode)
         proc, Return, Origin(),
         root->appendNew<Const32Value>(proc, Origin(), 0));
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     if (isARM64()) {
         checkUsesInstruction(*code, "lda");
         checkUsesInstruction(*code, "stl");
@@ -5974,7 +5971,7 @@ void testStoreRelAddLoadAcq16(int amount, B3::Opcode loadOpcode)
         proc, Return, Origin(),
         root->appendNew<Const32Value>(proc, Origin(), 0));
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     if (isARM64()) {
         checkUsesInstruction(*code, "lda");
         checkUsesInstruction(*code, "stl");
@@ -6043,7 +6040,7 @@ void testStoreRelAddLoadAcq64(int amount)
         proc, Return, Origin(),
         root->appendNew<Const32Value>(proc, Origin(), 0));
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     if (isARM64()) {
         checkUsesInstruction(*code, "lda");
         checkUsesInstruction(*code, "stl");
@@ -7049,7 +7046,7 @@ void testBranch()
         proc, Return, Origin(),
         elseCase->appendNew<Const32Value>(proc, Origin(), 0));
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     CHECK(invoke<int>(*code, 42) == 1);
     CHECK(invoke<int>(*code, 0) == 0);
 }
@@ -7074,7 +7071,7 @@ void testBranchPtr()
         proc, Return, Origin(),
         elseCase->appendNew<Const32Value>(proc, Origin(), 0));
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     CHECK(invoke<int>(*code, static_cast<intptr_t>(42)) == 1);
     CHECK(invoke<int>(*code, static_cast<intptr_t>(0)) == 0);
 }
@@ -7107,7 +7104,7 @@ void testDiamond()
     elseResult->setPhi(phi);
     done->appendNewControlValue(proc, Return, Origin(), phi);
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     CHECK(invoke<int>(*code, 42) == 1);
     CHECK(invoke<int>(*code, 0) == 0);
 }
@@ -7137,7 +7134,7 @@ void testBranchNotEqual()
         proc, Return, Origin(),
         elseCase->appendNew<Const32Value>(proc, Origin(), 0));
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     CHECK(invoke<int>(*code, 42) == 1);
     CHECK(invoke<int>(*code, 0) == 0);
 }
@@ -7167,7 +7164,7 @@ void testBranchNotEqualCommute()
         proc, Return, Origin(),
         elseCase->appendNew<Const32Value>(proc, Origin(), 0));
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     CHECK(invoke<int>(*code, 42) == 1);
     CHECK(invoke<int>(*code, 0) == 0);
 }
@@ -7200,7 +7197,7 @@ void testBranchNotEqualNotEqual()
         proc, Return, Origin(),
         elseCase->appendNew<Const32Value>(proc, Origin(), 0));
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     CHECK(invoke<int>(*code, 42) == 1);
     CHECK(invoke<int>(*code, 0) == 0);
 }
@@ -7230,7 +7227,7 @@ void testBranchEqual()
         proc, Return, Origin(),
         elseCase->appendNew<Const32Value>(proc, Origin(), 1));
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     CHECK(invoke<int>(*code, 42) == 1);
     CHECK(invoke<int>(*code, 0) == 0);
 }
@@ -7263,7 +7260,7 @@ void testBranchEqualEqual()
         proc, Return, Origin(),
         elseCase->appendNew<Const32Value>(proc, Origin(), 0));
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     CHECK(invoke<int>(*code, 42) == 1);
     CHECK(invoke<int>(*code, 0) == 0);
 }
@@ -7293,7 +7290,7 @@ void testBranchEqualCommute()
         proc, Return, Origin(),
         elseCase->appendNew<Const32Value>(proc, Origin(), 1));
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     CHECK(invoke<int>(*code, 42) == 1);
     CHECK(invoke<int>(*code, 0) == 0);
 }
@@ -7326,7 +7323,7 @@ void testBranchEqualEqual1()
         proc, Return, Origin(),
         elseCase->appendNew<Const32Value>(proc, Origin(), 1));
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     CHECK(invoke<int>(*code, 42) == 1);
     CHECK(invoke<int>(*code, 0) == 0);
 }
@@ -7741,7 +7738,7 @@ void testBranchLoadPtr()
         proc, Return, Origin(),
         elseCase->appendNew<Const32Value>(proc, Origin(), 0));
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     intptr_t cond;
     cond = 42;
     CHECK(invoke<int>(*code, &cond) == 1);
@@ -7771,7 +7768,7 @@ void testBranchLoad32()
         proc, Return, Origin(),
         elseCase->appendNew<Const32Value>(proc, Origin(), 0));
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     int32_t cond;
     cond = 42;
     CHECK(invoke<int>(*code, &cond) == 1);
@@ -7801,7 +7798,7 @@ void testBranchLoad8S()
         proc, Return, Origin(),
         elseCase->appendNew<Const32Value>(proc, Origin(), 0));
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     int8_t cond;
     cond = -1;
     CHECK(invoke<int>(*code, &cond) == 1);
@@ -7831,7 +7828,7 @@ void testBranchLoad8Z()
         proc, Return, Origin(),
         elseCase->appendNew<Const32Value>(proc, Origin(), 0));
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     uint8_t cond;
     cond = 1;
     CHECK(invoke<int>(*code, &cond) == 1);
@@ -7861,7 +7858,7 @@ void testBranchLoad16S()
         proc, Return, Origin(),
         elseCase->appendNew<Const32Value>(proc, Origin(), 0));
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     int16_t cond;
     cond = -1;
     CHECK(invoke<int>(*code, &cond) == 1);
@@ -7891,7 +7888,7 @@ void testBranchLoad16Z()
         proc, Return, Origin(),
         elseCase->appendNew<Const32Value>(proc, Origin(), 0));
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     uint16_t cond;
     cond = 1;
     CHECK(invoke<int>(*code, &cond) == 1);
@@ -7931,7 +7928,7 @@ void testBranch8WithLoad8ZIndex()
         proc, Return, Origin(),
         elseCase->appendNew<Const32Value>(proc, Origin(), 0));
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     uint32_t cond;
     cond = 0xffffffffU; // All bytes are 0xff.
     CHECK(invoke<int>(*code, &cond - 2, (sizeof(uint32_t) * 2) >> logScale) == 1);
@@ -8068,7 +8065,7 @@ void testComplex(unsigned numVars, unsigned numConstructs)
 
     current->appendNewControlValue(proc, Return, Origin(), vars[0]);
 
-    compile(proc);
+    compileProc(proc);
 
     double after = monotonicallyIncreasingTimeMS();
     dataLog(toCString("    That took ", after - before, " ms.\n"));
@@ -8617,7 +8614,7 @@ void testSimpleCheck()
     root->appendNewControlValue(
         proc, Return, Origin(), root->appendNew<Const32Value>(proc, Origin(), 0));
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     
     CHECK(invoke<int>(*code, 0) == 0);
     CHECK(invoke<int>(*code, 1) == 42);
@@ -8636,7 +8633,7 @@ void testCheckFalse()
     root->appendNewControlValue(
         proc, Return, Origin(), root->appendNew<Const32Value>(proc, Origin(), 0));
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     
     CHECK(invoke<int>(*code) == 0);
 }
@@ -8662,7 +8659,7 @@ void testCheckTrue()
     root->appendNewControlValue(
         proc, Return, Origin(), root->appendNew<Const32Value>(proc, Origin(), 0));
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     
     CHECK(invoke<int>(*code) == 42);
 }
@@ -8693,7 +8690,7 @@ void testCheckLessThan()
     root->appendNewControlValue(
         proc, Return, Origin(), root->appendNew<Const32Value>(proc, Origin(), 0));
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     
     CHECK(invoke<int>(*code, 42) == 0);
     CHECK(invoke<int>(*code, 1000) == 0);
@@ -8739,7 +8736,7 @@ void testCheckMegaCombo()
     root->appendNewControlValue(
         proc, Return, Origin(), root->appendNew<Const32Value>(proc, Origin(), 0));
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
 
     int8_t value;
     value = 42;
@@ -8794,7 +8791,7 @@ void testCheckTrickyMegaCombo()
     root->appendNewControlValue(
         proc, Return, Origin(), root->appendNew<Const32Value>(proc, Origin(), 0));
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
 
     int8_t value;
     value = 42;
@@ -8858,7 +8855,7 @@ void testCheckTwoMegaCombos()
     root->appendNewControlValue(
         proc, Return, Origin(), root->appendNew<Const32Value>(proc, Origin(), 0));
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
 
     int8_t value;
     value = 42;
@@ -8939,7 +8936,7 @@ void testCheckTwoNonRedundantMegaCombos()
     elseCase->appendNewControlValue(
         proc, Return, Origin(), elseCase->appendNew<Const32Value>(proc, Origin(), 45));
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
 
     int8_t value;
 
@@ -8994,7 +8991,7 @@ void testCheckAddImm()
         proc, Return, Origin(),
         root->appendNew<Value>(proc, IToD, Origin(), checkAdd));
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
 
     CHECK(invoke<double>(*code, 0) == 42.0);
     CHECK(invoke<double>(*code, 1) == 43.0);
@@ -9030,7 +9027,7 @@ void testCheckAddImmCommute()
         proc, Return, Origin(),
         root->appendNew<Value>(proc, IToD, Origin(), checkAdd));
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
 
     CHECK(invoke<double>(*code, 0) == 42.0);
     CHECK(invoke<double>(*code, 1) == 43.0);
@@ -9065,7 +9062,7 @@ void testCheckAddImmSomeRegister()
         proc, Return, Origin(),
         root->appendNew<Value>(proc, IToD, Origin(), checkAdd));
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
 
     CHECK(invoke<double>(*code, 0) == 42.0);
     CHECK(invoke<double>(*code, 1) == 43.0);
@@ -9102,7 +9099,7 @@ void testCheckAdd()
         proc, Return, Origin(),
         root->appendNew<Value>(proc, IToD, Origin(), checkAdd));
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
 
     CHECK(invoke<double>(*code, 0, 42) == 42.0);
     CHECK(invoke<double>(*code, 1, 42) == 43.0);
@@ -9135,7 +9132,7 @@ void testCheckAdd64()
         proc, Return, Origin(),
         root->appendNew<Value>(proc, IToD, Origin(), checkAdd));
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
 
     CHECK(invoke<double>(*code, 0ll, 42ll) == 42.0);
     CHECK(invoke<double>(*code, 1ll, 42ll) == 43.0);
@@ -9156,7 +9153,7 @@ void testCheckAddFold(int a, int b)
         });
     root->appendNewControlValue(proc, Return, Origin(), checkAdd);
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
 
     CHECK(invoke<int>(*code) == a + b);
 }
@@ -9177,7 +9174,7 @@ void testCheckAddFoldFail(int a, int b)
         });
     root->appendNewControlValue(proc, Return, Origin(), checkAdd);
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
 
     CHECK(invoke<int>(*code) == 42);
 }
@@ -9284,7 +9281,7 @@ void testCheckAddSelfOverflow64()
 
     root->appendNewControlValue(proc, Return, Origin(), checkAdd);
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
 
     CHECK(invoke<int64_t>(*code, 0ll) == 0);
     CHECK(invoke<int64_t>(*code, 1ll) == 2);
@@ -9315,7 +9312,7 @@ void testCheckAddSelfOverflow32()
 
     root->appendNewControlValue(proc, Return, Origin(), checkAdd);
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
 
     CHECK(invoke<int32_t>(*code, 0ll) == 0);
     CHECK(invoke<int32_t>(*code, 1ll) == 2);
@@ -9350,7 +9347,7 @@ void testCheckSubImm()
         proc, Return, Origin(),
         root->appendNew<Value>(proc, IToD, Origin(), checkSub));
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
 
     CHECK(invoke<double>(*code, 0) == -42.0);
     CHECK(invoke<double>(*code, 1) == -41.0);
@@ -9392,7 +9389,7 @@ void testCheckSubBadImm()
         proc, Return, Origin(),
         root->appendNew<Value>(proc, IToD, Origin(), checkSub));
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
 
     CHECK(invoke<double>(*code, 0) == -static_cast<double>(badImm));
     CHECK(invoke<double>(*code, -1) == -static_cast<double>(badImm) - 1);
@@ -9429,7 +9426,7 @@ void testCheckSub()
         proc, Return, Origin(),
         root->appendNew<Value>(proc, IToD, Origin(), checkSub));
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
 
     CHECK(invoke<double>(*code, 0, 42) == -42.0);
     CHECK(invoke<double>(*code, 1, 42) == -41.0);
@@ -9467,7 +9464,7 @@ void testCheckSub64()
         proc, Return, Origin(),
         root->appendNew<Value>(proc, IToD, Origin(), checkSub));
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
 
     CHECK(invoke<double>(*code, 0ll, 42ll) == -42.0);
     CHECK(invoke<double>(*code, 1ll, 42ll) == -41.0);
@@ -9488,7 +9485,7 @@ void testCheckSubFold(int a, int b)
         });
     root->appendNewControlValue(proc, Return, Origin(), checkSub);
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
 
     CHECK(invoke<int>(*code) == a - b);
 }
@@ -9509,7 +9506,7 @@ void testCheckSubFoldFail(int a, int b)
         });
     root->appendNewControlValue(proc, Return, Origin(), checkSub);
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
 
     CHECK(invoke<int>(*code) == 42);
 }
@@ -9538,7 +9535,7 @@ void testCheckNeg()
         proc, Return, Origin(),
         root->appendNew<Value>(proc, IToD, Origin(), checkNeg));
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
 
     CHECK(invoke<double>(*code, 0) == 0.0);
     CHECK(invoke<double>(*code, 1) == -1.0);
@@ -9568,7 +9565,7 @@ void testCheckNeg64()
         proc, Return, Origin(),
         root->appendNew<Value>(proc, IToD, Origin(), checkNeg));
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
 
     CHECK(invoke<double>(*code, 0ll) == 0.0);
     CHECK(invoke<double>(*code, 1ll) == -1.0);
@@ -9605,7 +9602,7 @@ void testCheckMul()
         proc, Return, Origin(),
         root->appendNew<Value>(proc, IToD, Origin(), checkMul));
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
 
     CHECK(invoke<double>(*code, 0, 42) == 0.0);
     CHECK(invoke<double>(*code, 1, 42) == 42.0);
@@ -9646,7 +9643,7 @@ void testCheckMulMemory()
         proc, Return, Origin(),
         root->appendNew<Value>(proc, IToD, Origin(), checkMul));
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
 
     left = 0;
     right = 42;
@@ -9693,7 +9690,7 @@ void testCheckMul2()
         proc, Return, Origin(),
         root->appendNew<Value>(proc, IToD, Origin(), checkMul));
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
 
     CHECK(invoke<double>(*code, 0) == 0.0);
     CHECK(invoke<double>(*code, 1) == 2.0);
@@ -9726,7 +9723,7 @@ void testCheckMul64()
         proc, Return, Origin(),
         root->appendNew<Value>(proc, IToD, Origin(), checkMul));
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
 
     CHECK(invoke<double>(*code, 0, 42) == 0.0);
     CHECK(invoke<double>(*code, 1, 42) == 42.0);
@@ -9747,7 +9744,7 @@ void testCheckMulFold(int a, int b)
         });
     root->appendNewControlValue(proc, Return, Origin(), checkMul);
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
 
     CHECK(invoke<int>(*code) == a * b);
 }
@@ -9768,7 +9765,7 @@ void testCheckMulFoldFail(int a, int b)
         });
     root->appendNewControlValue(proc, Return, Origin(), checkMul);
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
 
     CHECK(invoke<int>(*code) == 42);
 }
@@ -9884,7 +9881,7 @@ void testCheckMul64SShr()
         proc, Return, Origin(),
         root->appendNew<Value>(proc, IToD, Origin(), checkMul));
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
 
     CHECK(invoke<double>(*code, 0ll, 42ll) == 0.0);
     CHECK(invoke<double>(*code, 1ll, 42ll) == 0.0);
@@ -10734,7 +10731,7 @@ void testSwitch(unsigned degree, unsigned gap = 1)
         switchValue->appendCase(SwitchCase(gap * i, FrequentedBlock(newBlock)));
     }
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
 
     for (unsigned i = 0; i < degree; ++i) {
         CHECK(invoke<int32_t>(*code, i * gap, 42, 11) == ((i & 1) ? 11 : 42));
@@ -10777,7 +10774,7 @@ void testSwitchChillDiv(unsigned degree, unsigned gap = 1)
         switchValue->appendCase(SwitchCase(gap * i, FrequentedBlock(newBlock)));
     }
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
 
     for (unsigned i = 0; i < degree; ++i) {
         dataLog("i = ", i, "\n");
@@ -10816,7 +10813,7 @@ void testSwitchTargettingSameBlock()
     switchValue->appendCase(SwitchCase(3, FrequentedBlock(otherTarget)));
     switchValue->appendCase(SwitchCase(13, FrequentedBlock(otherTarget)));
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
 
     for (unsigned i = 0; i < 20; ++i) {
         int32_t expected = (i == 3 || i == 13) ? 42 : 5;
@@ -10844,7 +10841,7 @@ void testSwitchTargettingSameBlockFoldPathConstant()
     switchValue->appendCase(SwitchCase(3, FrequentedBlock(otherTarget)));
     switchValue->appendCase(SwitchCase(13, FrequentedBlock(otherTarget)));
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
 
     for (unsigned i = 0; i < 20; ++i) {
         int32_t expected = (i == 3 || i == 13) ? i : 42;
@@ -11202,7 +11199,7 @@ void testBasicSelect()
             root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1),
             root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2)));
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     CHECK(invoke<intptr_t>(*code, 42, 1, 2) == 1);
     CHECK(invoke<intptr_t>(*code, 42, 642462, 32533) == 642462);
     CHECK(invoke<intptr_t>(*code, 43, 1, 2) == 2);
@@ -11221,7 +11218,7 @@ void testSelectTest()
             root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1),
             root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2)));
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     CHECK(invoke<intptr_t>(*code, 42, 1, 2) == 1);
     CHECK(invoke<intptr_t>(*code, 42, 642462, 32533) == 642462);
     CHECK(invoke<intptr_t>(*code, 0, 1, 2) == 2);
@@ -11243,7 +11240,7 @@ void testSelectCompareDouble()
             root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
             root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1)));
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     CHECK(invoke<intptr_t>(*code, -1.0, 1.0, 1, 2) == 1);
     CHECK(invoke<intptr_t>(*code, 42.5, 42.51, 642462, 32533) == 642462);
     CHECK(invoke<intptr_t>(*code, PNaN, 0.0, 1, 2) == 2);
@@ -11340,7 +11337,7 @@ void testSelectDouble()
             root->appendNew<ArgumentRegValue>(proc, Origin(), FPRInfo::argumentFPR0),
             root->appendNew<ArgumentRegValue>(proc, Origin(), FPRInfo::argumentFPR1)));
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     CHECK(invoke<double>(*code, 42, 1.5, 2.6) == 1.5);
     CHECK(invoke<double>(*code, 42, 642462.7, 32533.8) == 642462.7);
     CHECK(invoke<double>(*code, 43, 1.9, 2.0) == 2.0);
@@ -11359,7 +11356,7 @@ void testSelectDoubleTest()
             root->appendNew<ArgumentRegValue>(proc, Origin(), FPRInfo::argumentFPR0),
             root->appendNew<ArgumentRegValue>(proc, Origin(), FPRInfo::argumentFPR1)));
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     CHECK(invoke<double>(*code, 42, 1.5, 2.6) == 1.5);
     CHECK(invoke<double>(*code, 42, 642462.7, 32533.8) == 642462.7);
     CHECK(invoke<double>(*code, 0, 1.9, 2.0) == 2.0);
@@ -11381,7 +11378,7 @@ void testSelectDoubleCompareDouble()
             root->appendNew<ArgumentRegValue>(proc, Origin(), FPRInfo::argumentFPR2),
             root->appendNew<ArgumentRegValue>(proc, Origin(), FPRInfo::argumentFPR3)));
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     CHECK(invoke<double>(*code, -1.0, 1.0, 1.1, 2.2) == 1.1);
     CHECK(invoke<double>(*code, 42.5, 42.51, 642462.3, 32533.4) == 642462.3);
     CHECK(invoke<double>(*code, PNaN, 0.0, 1.5, 2.6) == 2.6);
@@ -11467,7 +11464,7 @@ void testSelectDoubleCompareDouble(bool (*operation)(double, double))
                     arg1),
                 arg2,
                 arg3));
-        auto code = compile(proc);
+        auto code = compileProc(proc);
 
         for (auto& left : floatingPointOperands<double>()) {
             for (auto& right : floatingPointOperands<double>()) {
@@ -11494,7 +11491,7 @@ void testSelectDoubleCompareDouble(bool (*operation)(double, double))
         keepValuesLive->setGenerator([&] (CCallHelpers&, const StackmapGenerationParams&) { });
 
         root->appendNewControlValue(proc, Return, Origin(), result);
-        auto code = compile(proc);
+        auto code = compileProc(proc);
 
         for (auto& left : floatingPointOperands<double>()) {
             for (auto& right : floatingPointOperands<double>()) {
@@ -11521,7 +11518,7 @@ void testSelectDoubleCompareDouble(bool (*operation)(double, double))
         keepValuesLive->setGenerator([&] (CCallHelpers&, const StackmapGenerationParams&) { });
 
         root->appendNewControlValue(proc, Return, Origin(), result);
-        auto code = compile(proc);
+        auto code = compileProc(proc);
 
         for (auto& left : floatingPointOperands<double>()) {
             for (auto& right : floatingPointOperands<double>()) {
@@ -11549,7 +11546,7 @@ void testSelectDoubleCompareDouble(bool (*operation)(double, double))
         keepValuesLive->setGenerator([&] (CCallHelpers&, const StackmapGenerationParams&) { });
 
         root->appendNewControlValue(proc, Return, Origin(), result);
-        auto code = compile(proc);
+        auto code = compileProc(proc);
 
         for (auto& left : floatingPointOperands<double>()) {
             for (auto& right : floatingPointOperands<double>()) {
@@ -11575,7 +11572,7 @@ void testSelectDoubleCompareDouble(bool (*operation)(double, double))
                     arg1),
                 arg2,
                 arg0));
-        auto code = compile(proc);
+        auto code = compileProc(proc);
 
         for (auto& left : floatingPointOperands<double>()) {
             for (auto& right : floatingPointOperands<double>()) {
@@ -11601,7 +11598,7 @@ void testSelectDoubleCompareDouble(bool (*operation)(double, double))
         keepValuesLive->setGenerator([&] (CCallHelpers&, const StackmapGenerationParams&) { });
 
         root->appendNewControlValue(proc, Return, Origin(), result);
-        auto code = compile(proc);
+        auto code = compileProc(proc);
 
         for (auto& left : floatingPointOperands<double>()) {
             for (auto& right : floatingPointOperands<double>()) {
@@ -11653,7 +11650,7 @@ void testSelectFloatCompareFloat(bool (*operation)(float, float))
                     arg1),
                 arg2,
                 arg3));
-        auto code = compile(proc);
+        auto code = compileProc(proc);
 
         for (auto& left : floatingPointOperands<float>()) {
             for (auto& right : floatingPointOperands<float>()) {
@@ -11688,7 +11685,7 @@ void testSelectFloatCompareFloat(bool (*operation)(float, float))
         keepValuesLive->setGenerator([&] (CCallHelpers&, const StackmapGenerationParams&) { });
 
         root->appendNewControlValue(proc, Return, Origin(), result);
-        auto code = compile(proc);
+        auto code = compileProc(proc);
 
         for (auto& left : floatingPointOperands<float>()) {
             for (auto& right : floatingPointOperands<float>()) {
@@ -11723,7 +11720,7 @@ void testSelectFloatCompareFloat(bool (*operation)(float, float))
         keepValuesLive->setGenerator([&] (CCallHelpers&, const StackmapGenerationParams&) { });
 
         root->appendNewControlValue(proc, Return, Origin(), result);
-        auto code = compile(proc);
+        auto code = compileProc(proc);
 
         for (auto& left : floatingPointOperands<float>()) {
             for (auto& right : floatingPointOperands<float>()) {
@@ -11759,7 +11756,7 @@ void testSelectFloatCompareFloat(bool (*operation)(float, float))
         keepValuesLive->setGenerator([&] (CCallHelpers&, const StackmapGenerationParams&) { });
 
         root->appendNewControlValue(proc, Return, Origin(), result);
-        auto code = compile(proc);
+        auto code = compileProc(proc);
 
         for (auto& left : floatingPointOperands<float>()) {
             for (auto& right : floatingPointOperands<float>()) {
@@ -11791,7 +11788,7 @@ void testSelectFloatCompareFloat(bool (*operation)(float, float))
                     arg1),
                 arg2,
                 arg0));
-        auto code = compile(proc);
+        auto code = compileProc(proc);
 
         for (auto& left : floatingPointOperands<float>()) {
             for (auto& right : floatingPointOperands<float>()) {
@@ -11823,7 +11820,7 @@ void testSelectFloatCompareFloat(bool (*operation)(float, float))
         keepValuesLive->setGenerator([&] (CCallHelpers&, const StackmapGenerationParams&) { });
 
         root->appendNewControlValue(proc, Return, Origin(), result);
-        auto code = compile(proc);
+        auto code = compileProc(proc);
 
         for (auto& left : floatingPointOperands<float>()) {
             for (auto& right : floatingPointOperands<float>()) {
@@ -11860,7 +11857,7 @@ void testSelectFold(intptr_t value)
             root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
             root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1)));
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     CHECK(invoke<intptr_t>(*code, 1, 2) == (value == 42 ? 1 : 2));
     CHECK(invoke<intptr_t>(*code, 642462, 32533) == (value == 42 ? 642462 : 32533));
 }
@@ -11883,7 +11880,7 @@ void testSelectInvert()
             root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1),
             root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2)));
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     CHECK(invoke<intptr_t>(*code, 42, 1, 2) == 1);
     CHECK(invoke<intptr_t>(*code, 42, 642462, 32533) == 642462);
     CHECK(invoke<intptr_t>(*code, 43, 1, 2) == 2);
@@ -11926,7 +11923,7 @@ void testCheckSelect()
         proc, Return, Origin(),
         root->appendNew<Const32Value>(proc, Origin(), 0));
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     CHECK(generationCount == 1);
     CHECK(invoke<int>(*code, true) == 0);
     CHECK(invoke<int>(*code, false) == 666);
@@ -11997,7 +11994,7 @@ void testCheckSelectCheckSelect()
         proc, Return, Origin(),
         root->appendNew<Const32Value>(proc, Origin(), 0));
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     CHECK(generationCount == 1);
     CHECK(generationCount2 == 1);
     CHECK(invoke<int>(*code, true, true) == 0);
@@ -12043,7 +12040,7 @@ void testCheckSelectAndCSE()
         proc, Return, Origin(),
         root->appendNew<Value>(proc, Add, Origin(), addValue, addValue2));
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     CHECK(generationCount == 1);
     CHECK(invoke<int>(*code, true) == 0);
     CHECK(invoke<int>(*code, false) == 666);
@@ -12452,7 +12449,7 @@ void testTrivialInfiniteLoop()
     root->appendNewControlValue(proc, Jump, Origin(), FrequentedBlock(loop));
     loop->appendNewControlValue(proc, Jump, Origin(), FrequentedBlock(loop));
 
-    compile(proc);
+    compileProc(proc);
 }
 
 void testFoldPathEqual()
@@ -12477,7 +12474,7 @@ void testFoldPathEqual()
         elseBlock->appendNew<Value>(
             proc, Equal, Origin(), arg, elseBlock->appendNew<ConstPtrValue>(proc, Origin(), 0)));
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     CHECK(invoke<intptr_t>(*code, 0) == 1);
     CHECK(invoke<intptr_t>(*code, 1) == 0);
     CHECK(invoke<intptr_t>(*code, 42) == 0);
@@ -12494,7 +12491,7 @@ void testLShiftSelf32()
         proc, Return, Origin(),
         root->appendNew<Value>(proc, Shl, Origin(), arg, arg));
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
 
     auto check = [&] (int32_t value) {
         CHECK(invoke<int32_t>(*code, value) == value << (value & 31));
@@ -12517,7 +12514,7 @@ void testRShiftSelf32()
         proc, Return, Origin(),
         root->appendNew<Value>(proc, SShr, Origin(), arg, arg));
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
 
     auto check = [&] (int32_t value) {
         CHECK(invoke<int32_t>(*code, value) == value >> (value & 31));
@@ -12540,7 +12537,7 @@ void testURShiftSelf32()
         proc, Return, Origin(),
         root->appendNew<Value>(proc, ZShr, Origin(), arg, arg));
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
 
     auto check = [&] (uint32_t value) {
         CHECK(invoke<uint32_t>(*code, value) == value >> (value & 31));
@@ -12562,7 +12559,7 @@ void testLShiftSelf64()
         root->appendNew<Value>(
             proc, Shl, Origin(), arg, root->appendNew<Value>(proc, Trunc, Origin(), arg)));
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
 
     auto check = [&] (int64_t value) {
         CHECK(invoke<int64_t>(*code, value) == value << (value & 63));
@@ -12586,7 +12583,7 @@ void testRShiftSelf64()
         root->appendNew<Value>(
             proc, SShr, Origin(), arg, root->appendNew<Value>(proc, Trunc, Origin(), arg)));
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
 
     auto check = [&] (int64_t value) {
         CHECK(invoke<int64_t>(*code, value) == value >> (value & 63));
@@ -12610,7 +12607,7 @@ void testURShiftSelf64()
         root->appendNew<Value>(
             proc, ZShr, Origin(), arg, root->appendNew<Value>(proc, Trunc, Origin(), arg)));
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
 
     auto check = [&] (uint64_t value) {
         CHECK(invoke<uint64_t>(*code, value) == value >> (value & 63));
@@ -12643,7 +12640,7 @@ void testPatchpointDoubleRegs()
 
     root->appendNewControlValue(proc, Return, Origin(), patchpoint);
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     CHECK(numCalls == 1);
     CHECK(invoke<double>(*code, 42.5) == 42.5);
 }
@@ -12676,7 +12673,7 @@ void testSpillDefSmallerThanUse()
     Value* result = root->appendNew<Value>(proc, Sub, Origin(), forceSpill, arg64);
     root->appendNewControlValue(proc, Return, Origin(), result);
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     CHECK(invoke<int64_t>(*code, 0xffffffff00000000) == 0);
 }
 
@@ -12730,7 +12727,7 @@ void testSpillUseLargerThanDef()
     elseResult->setPhi(phi);
     tail->appendNewControlValue(proc, Return, Origin(), phi);
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     CHECK(invoke<uint64_t>(*code, 1, 0xffffffff00000000) == 0);
     CHECK(invoke<uint64_t>(*code, 0, 0xffffffff00000000) == 0xffffffff00000000);
 
@@ -12812,7 +12809,7 @@ void testLateRegister()
         });
     root->appendNewControlValue(proc, Return, Origin(), secondPatchpoint);
     
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     CHECK(invoke<uint64_t>(*code) == result);
 }
 
@@ -12986,7 +12983,7 @@ void testInterpreter()
         proc, Return, Origin(),
         stop->appendIntConstant(proc, Origin(), pointerType(), 0));
     
-    auto interpreter = compile(proc);
+    auto interpreter = compileProc(proc);
     
     Vector<intptr_t> data;
     Vector<intptr_t> code;
@@ -13136,7 +13133,7 @@ void testEntrySwitchSimple()
     
     CCallHelpers jit;
     generate(proc, jit);
-    LinkBuffer linkBuffer(*vm, jit, nullptr);
+    LinkBuffer linkBuffer(jit, nullptr);
     CodeLocationLabel labelOne = linkBuffer.locationOf(proc.entrypointLabel(0));
     CodeLocationLabel labelTwo = linkBuffer.locationOf(proc.entrypointLabel(1));
     CodeLocationLabel labelThree = linkBuffer.locationOf(proc.entrypointLabel(2));
@@ -13169,7 +13166,7 @@ void testEntrySwitchNoEntrySwitch()
     
     CCallHelpers jit;
     generate(proc, jit);
-    LinkBuffer linkBuffer(*vm, jit, nullptr);
+    LinkBuffer linkBuffer(jit, nullptr);
     CodeLocationLabel labelOne = linkBuffer.locationOf(proc.entrypointLabel(0));
     CodeLocationLabel labelTwo = linkBuffer.locationOf(proc.entrypointLabel(1));
     CodeLocationLabel labelThree = linkBuffer.locationOf(proc.entrypointLabel(2));
@@ -13256,7 +13253,7 @@ void testEntrySwitchWithCommonPaths()
     
     CCallHelpers jit;
     generate(proc, jit);
-    LinkBuffer linkBuffer(*vm, jit, nullptr);
+    LinkBuffer linkBuffer(jit, nullptr);
     CodeLocationLabel labelOne = linkBuffer.locationOf(proc.entrypointLabel(0));
     CodeLocationLabel labelTwo = linkBuffer.locationOf(proc.entrypointLabel(1));
     CodeLocationLabel labelThree = linkBuffer.locationOf(proc.entrypointLabel(2));
@@ -13373,7 +13370,7 @@ void testEntrySwitchWithCommonPathsAndNonTrivialEntrypoint()
     
     CCallHelpers jit;
     generate(proc, jit);
-    LinkBuffer linkBuffer(*vm, jit, nullptr);
+    LinkBuffer linkBuffer(jit, nullptr);
     CodeLocationLabel labelOne = linkBuffer.locationOf(proc.entrypointLabel(0));
     CodeLocationLabel labelTwo = linkBuffer.locationOf(proc.entrypointLabel(1));
     CodeLocationLabel labelThree = linkBuffer.locationOf(proc.entrypointLabel(2));
@@ -13451,7 +13448,7 @@ void testEntrySwitchLoop()
     
     CCallHelpers jit;
     generate(proc, jit);
-    LinkBuffer linkBuffer(*vm, jit, nullptr);
+    LinkBuffer linkBuffer(jit, nullptr);
     CodeLocationLabel labelOne = linkBuffer.locationOf(proc.entrypointLabel(0));
     CodeLocationLabel labelTwo = linkBuffer.locationOf(proc.entrypointLabel(1));
     
@@ -13500,7 +13497,7 @@ void testSomeEarlyRegister()
         
         root->appendNew<Value>(proc, Return, Origin(), patchpoint);
         
-        compile(proc);
+        compileProc(proc);
         CHECK(ranFirstPatchpoint);
         CHECK(ranSecondPatchpoint);
     };
@@ -13614,7 +13611,7 @@ void testTerminalPatchpointThatNeedsToBeSpilled()
     
     slowPath->appendNew<Value>(proc, Return, Origin(), slowPath->appendNew<Const32Value>(proc, Origin(), 20));
     
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     CHECK_EQ(invoke<int>(*code), 10);
 }
 
@@ -13702,7 +13699,7 @@ void testTerminalPatchpointThatNeedsToBeSpilled2()
     Options::maxB3TailDupBlockSize() = 0;
     Options::maxB3TailDupBlockSuccessors() = 0;
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     CHECK_EQ(invoke<int>(*code, 1), 1);
     CHECK_EQ(invoke<int>(*code, 0), 0);
     CHECK_EQ(invoke<int>(*code, 42), 666);
@@ -13776,7 +13773,7 @@ void testPatchpointTerminalReturnValue(bool successIsRare)
     slowPathUpsilon->setPhi(phi);
     continuation->appendNew<Value>(proc, Return, Origin(), phi);
     
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     CHECK_EQ(invoke<int>(*code, 0), 31);
     CHECK_EQ(invoke<int>(*code, 1), 32);
     CHECK_EQ(invoke<int>(*code, 41), 72);
@@ -13794,7 +13791,7 @@ void testMemoryFence()
     root->appendNew<FenceValue>(proc, Origin());
     root->appendNew<Value>(proc, Return, Origin(), root->appendIntConstant(proc, Origin(), Int32, 42));
     
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     CHECK_EQ(invoke<int>(*code), 42);
     if (isX86())
         checkUsesInstruction(*code, "lock or $0x0, (%rsp)");
@@ -13813,7 +13810,7 @@ void testStoreFence()
     root->appendNew<FenceValue>(proc, Origin(), HeapRange::top(), HeapRange());
     root->appendNew<Value>(proc, Return, Origin(), root->appendIntConstant(proc, Origin(), Int32, 42));
     
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     CHECK_EQ(invoke<int>(*code), 42);
     checkDoesNotUseInstruction(*code, "lock");
     checkDoesNotUseInstruction(*code, "mfence");
@@ -13830,7 +13827,7 @@ void testLoadFence()
     root->appendNew<FenceValue>(proc, Origin(), HeapRange(), HeapRange::top());
     root->appendNew<Value>(proc, Return, Origin(), root->appendIntConstant(proc, Origin(), Int32, 42));
     
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     CHECK_EQ(invoke<int>(*code), 42);
     checkDoesNotUseInstruction(*code, "lock");
     checkDoesNotUseInstruction(*code, "mfence");
@@ -14055,7 +14052,7 @@ void testPCOriginMapDoesntInsertNops()
 
     root->appendNew<Value>(proc, Return, Origin());
 
-    compile(proc);
+    compileProc(proc);
 }
 
 void testPinRegisters()
@@ -14090,7 +14087,7 @@ void testPinRegisters()
                 CHECK_EQ(params[0].gpr(), GPRInfo::regCS0);
             });
         root->appendNew<Value>(proc, Return, Origin());
-        auto code = compile(proc);
+        auto code = compileProc(proc);
         bool usesCSRs = false;
         for (Air::BasicBlock* block : proc.code()) {
             for (Air::Inst& inst : *block) {
@@ -14129,7 +14126,7 @@ void testX86LeaAddAddShlLeft()
         root->appendNew<ConstPtrValue>(proc, Origin(), 100));
     root->appendNew<Value>(proc, Return, Origin(), result);
     
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     checkUsesInstruction(*code, "lea 0x64(%rdi,%rsi,4), %rax");
     CHECK_EQ(invoke<intptr_t>(*code, 1, 2), (1 + (2 << 2)) + 100);
 }
@@ -14151,7 +14148,7 @@ void testX86LeaAddAddShlRight()
         root->appendNew<ConstPtrValue>(proc, Origin(), 100));
     root->appendNew<Value>(proc, Return, Origin(), result);
     
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     checkUsesInstruction(*code, "lea 0x64(%rdi,%rsi,4), %rax");
     CHECK_EQ(invoke<intptr_t>(*code, 1, 2), (1 + (2 << 2)) + 100);
 }
@@ -14170,7 +14167,7 @@ void testX86LeaAddAdd()
         root->appendNew<ConstPtrValue>(proc, Origin(), 100));
     root->appendNew<Value>(proc, Return, Origin(), result);
     
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     CHECK_EQ(invoke<intptr_t>(*code, 1, 2), (1 + 2) + 100);
     checkDisassembly(
         *code,
@@ -14195,7 +14192,7 @@ void testX86LeaAddShlRight()
             root->appendNew<Const32Value>(proc, Origin(), 2)));
     root->appendNew<Value>(proc, Return, Origin(), result);
     
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     checkUsesInstruction(*code, "lea (%rdi,%rsi,4), %rax");
     CHECK_EQ(invoke<intptr_t>(*code, 1, 2), 1 + (2 << 2));
 }
@@ -14214,7 +14211,7 @@ void testX86LeaAddShlLeftScale1()
             root->appendNew<Const32Value>(proc, Origin(), 0)));
     root->appendNew<Value>(proc, Return, Origin(), result);
     
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     CHECK_EQ(invoke<intptr_t>(*code, 1, 2), 1 + 2);
     checkDisassembly(
         *code,
@@ -14239,7 +14236,7 @@ void testX86LeaAddShlLeftScale2()
             root->appendNew<Const32Value>(proc, Origin(), 1)));
     root->appendNew<Value>(proc, Return, Origin(), result);
     
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     checkUsesInstruction(*code, "lea (%rdi,%rsi,2), %rax");
     CHECK_EQ(invoke<intptr_t>(*code, 1, 2), 1 + (2 << 1));
 }
@@ -14258,7 +14255,7 @@ void testX86LeaAddShlLeftScale4()
         root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
     root->appendNew<Value>(proc, Return, Origin(), result);
     
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     checkUsesInstruction(*code, "lea (%rdi,%rsi,4), %rax");
     CHECK_EQ(invoke<intptr_t>(*code, 1, 2), 1 + (2 << 2));
 }
@@ -14277,7 +14274,7 @@ void testX86LeaAddShlLeftScale8()
             root->appendNew<Const32Value>(proc, Origin(), 3)));
     root->appendNew<Value>(proc, Return, Origin(), result);
     
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     checkUsesInstruction(*code, "lea (%rdi,%rsi,8), %rax");
     CHECK_EQ(invoke<intptr_t>(*code, 1, 2), 1 + (2 << 3));
 }
@@ -14296,7 +14293,7 @@ void testAddShl32()
             root->appendNew<Const32Value>(proc, Origin(), 32)));
     root->appendNew<Value>(proc, Return, Origin(), result);
     
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     CHECK_EQ(invoke<intptr_t>(*code, 1, 2), 1 + (static_cast<intptr_t>(2) << static_cast<intptr_t>(32)));
 }
 
@@ -14314,7 +14311,7 @@ void testAddShl64()
             root->appendNew<Const32Value>(proc, Origin(), 64)));
     root->appendNew<Value>(proc, Return, Origin(), result);
     
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     CHECK_EQ(invoke<intptr_t>(*code, 1, 2), 1 + 2);
 }
 
@@ -14332,7 +14329,7 @@ void testAddShl65()
             root->appendNew<Const32Value>(proc, Origin(), 65)));
     root->appendNew<Value>(proc, Return, Origin(), result);
     
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     CHECK_EQ(invoke<intptr_t>(*code, 1, 2), 1 + (2 << 1));
 }
 
@@ -14396,7 +14393,7 @@ void testLoadBaseIndexShift2()
                     proc, Shl, Origin(),
                     root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1),
                     root->appendNew<Const32Value>(proc, Origin(), 2)))));
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     if (isX86())
         checkUsesInstruction(*code, "(%rdi,%rsi,4)");
     int32_t value = 12341234;
@@ -14420,7 +14417,7 @@ void testLoadBaseIndexShift32()
                     proc, Shl, Origin(),
                     root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1),
                     root->appendNew<Const32Value>(proc, Origin(), 32)))));
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     int32_t value = 12341234;
     char* ptr = bitwise_cast<char*>(&value);
     for (unsigned i = 0; i < 10; ++i)
@@ -14437,7 +14434,7 @@ void testOptimizeMaterialization()
         root->appendNew<ConstPtrValue>(proc, Origin(), 0x123423453456llu + 35));
     root->appendNew<Value>(proc, Return, Origin());
     
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     bool found = false;
     for (Air::BasicBlock* block : proc.code()) {
         for (Air::Inst& inst : *block) {
@@ -14493,7 +14490,7 @@ void testAtomicWeakCAS()
         
         done->appendNew<Value>(proc, Return, Origin());
         
-        auto code = compile(proc);
+        auto code = compileProc(proc);
         T value[2];
         value[0] = 42;
         value[1] = 13;
@@ -14524,7 +14521,7 @@ void testAtomicWeakCAS()
         
         done->appendNew<Value>(proc, Return, Origin());
         
-        auto code = compile(proc);
+        auto code = compileProc(proc);
         T value[2];
         value[0] = 42;
         value[1] = 13;
@@ -14558,7 +14555,7 @@ void testAtomicWeakCAS()
         
         fail->appendNew<Value>(proc, Return, Origin());
         
-        auto code = compile(proc);
+        auto code = compileProc(proc);
         T value[2];
         value[0] = 42;
         value[1] = 13;
@@ -14600,7 +14597,7 @@ void testAtomicWeakCAS()
         
         fail->appendNew<Value>(proc, Return, Origin());
         
-        auto code = compile(proc);
+        auto code = compileProc(proc);
         T value[2];
         value[0] = 42;
         value[1] = 13;
@@ -14626,7 +14623,7 @@ void testAtomicWeakCAS()
                 root->appendIntConstant(proc, Origin(), type, 0xbeef),
                 root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)));
         
-        auto code = compile(proc);
+        auto code = compileProc(proc);
         T value[2];
         value[0] = 42;
         value[1] = 13;
@@ -14655,7 +14652,7 @@ void testAtomicWeakCAS()
                     root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)),
                 root->appendNew<Const32Value>(proc, Origin(), 0)));
         
-        auto code = compile(proc);
+        auto code = compileProc(proc);
         T value[2];
         value[0] = 42;
         value[1] = 13;
@@ -14682,7 +14679,7 @@ void testAtomicWeakCAS()
                 root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
                 42));
         
-        auto code = compile(proc);
+        auto code = compileProc(proc);
         T value[2];
         value[0] = 42;
         value[1] = 13;
@@ -14746,7 +14743,7 @@ void testAtomicStrongCAS()
         
         fail->appendNew<Value>(proc, Return, Origin());
         
-        auto code = compile(proc);
+        auto code = compileProc(proc);
         T value[2];
         value[0] = 42;
         value[1] = 13;
@@ -14787,7 +14784,7 @@ void testAtomicStrongCAS()
         
         fail->appendNew<Value>(proc, Return, Origin());
         
-        auto code = compile(proc);
+        auto code = compileProc(proc);
         T value[2];
         value[0] = 42;
         value[1] = 13;
@@ -14828,7 +14825,7 @@ void testAtomicStrongCAS()
         
         fail->appendNew<Value>(proc, Return, Origin());
         
-        auto code = compile(proc);
+        auto code = compileProc(proc);
         T value[2];
         value[0] = 42;
         value[1] = 13;
@@ -14853,7 +14850,7 @@ void testAtomicStrongCAS()
                 root->appendIntConstant(proc, Origin(), type, 0xbeef),
                 root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)));
         
-        auto code = compile(proc);
+        auto code = compileProc(proc);
         T value[2];
         value[0] = 42;
         value[1] = 13;
@@ -14885,7 +14882,7 @@ void testAtomicStrongCAS()
                     root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)),
                 root->appendIntConstant(proc, Origin(), type, 42)));
         
-        auto code = compile(proc);
+        auto code = compileProc(proc);
         T value[2];
         value[0] = 42;
         value[1] = 13;
@@ -14916,7 +14913,7 @@ void testAtomicStrongCAS()
                     root->appendIntConstant(proc, Origin(), type, 42)),
                 root->appendNew<Const32Value>(proc, Origin(), 0)));
             
-        auto code = compile(proc);
+        auto code = compileProc(proc);
         T value[2];
         value[0] = 42;
         value[1] = 13;
@@ -14997,7 +14994,7 @@ void testAtomicXchg(B3::Opcode opcode)
                 root->appendIntConstant(proc, Origin(), type, 1),
                 root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)));
     
-        auto code = compile(proc);
+        auto code = compileProc(proc);
         T value[2];
         value[0] = 5;
         value[1] = 100;
@@ -15017,7 +15014,7 @@ void testAtomicXchg(B3::Opcode opcode)
                 root->appendIntConstant(proc, Origin(), type, 42),
                 root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)));
     
-        auto code = compile(proc);
+        auto code = compileProc(proc);
         T value[2];
         value[0] = 5;
         value[1] = 100;
@@ -15036,7 +15033,7 @@ void testAtomicXchg(B3::Opcode opcode)
             root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
         root->appendNew<Value>(proc, Return, Origin());
     
-        auto code = compile(proc);
+        auto code = compileProc(proc);
         T value[2];
         value[0] = 5;
         value[1] = 100;
@@ -15056,7 +15053,7 @@ void testAtomicXchg(B3::Opcode opcode)
             0, HeapRange(42), HeapRange());
         root->appendNew<Value>(proc, Return, Origin());
     
-        auto code = compile(proc);
+        auto code = compileProc(proc);
         T value[2];
         value[0] = 5;
         value[1] = 100;
@@ -15089,7 +15086,7 @@ void testDepend32()
     values[0] = 42;
     values[1] = 0xbeef;
     
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     if (isARM64())
         checkUsesInstruction(*code, "eor");
     else if (isX86()) {
@@ -15119,7 +15116,7 @@ void testDepend64()
     values[0] = 42;
     values[1] = 0xbeef;
     
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     if (isARM64())
         checkUsesInstruction(*code, "eor");
     else if (isX86()) {
@@ -15154,7 +15151,7 @@ void testWasmBoundsCheck(unsigned offset)
     Value* result = root->appendNew<Const32Value>(proc, Origin(), 0x42);
     root->appendNewControlValue(proc, Return, Origin(), result);
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     CHECK_EQ(invoke<int32_t>(*code, 1, 2 + offset), 0x42);
     CHECK_EQ(invoke<int32_t>(*code, 3, 2 + offset), 42);
     CHECK_EQ(invoke<int32_t>(*code, 2, 2 + offset), 42);
@@ -15205,7 +15202,7 @@ void testWasmAddress()
     incUpsilon->setPhi(indexPhi);
 
 
-    auto code = compile(proc);
+    auto code = compileProc(proc);
     invoke<void>(*code, loopCount, numToStore, values.data());
     for (unsigned value : values)
         CHECK_EQ(numToStore, value);
@@ -15318,7 +15315,6 @@ double negativeZero()
 void run(const char* filter)
 {
     JSC::initializeThreading();
-    vm = &VM::create(LargeHeap).leakRef();
 
     Deque<RefPtr<SharedTask<void()>>> tasks;
 
@@ -15999,7 +15995,7 @@ void run(const char* filter)
     RUN(testTrunc((static_cast<int64_t>(1) << 40) + 42));
     RUN(testAdd1(45));
     RUN(testAdd1Ptr(51));
-    RUN(testAdd1Ptr(bitwise_cast<intptr_t>(vm)));
+    RUN(testAdd1Ptr(static_cast<intptr_t>(0xbaadbeef)));
     RUN(testNeg32(52));
     RUN(testNegPtr(53));
     RUN(testStoreAddLoad32(46));

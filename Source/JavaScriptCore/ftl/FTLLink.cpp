@@ -162,7 +162,7 @@ void link(State& state)
             jit.emitFunctionEpilogue();
             mainPathJumps.append(jit.jump());
 
-            linkBuffer = std::make_unique<LinkBuffer>(vm, jit, codeBlock, JITCompilationCanFail);
+            linkBuffer = std::make_unique<LinkBuffer>(jit, codeBlock, JITCompilationCanFail);
             if (linkBuffer->didFailToAllocate()) {
                 state.allocationFailed = true;
                 return;
@@ -186,7 +186,7 @@ void link(State& state)
         jit.emitFunctionEpilogue();
         CCallHelpers::Jump mainPathJump = jit.jump();
         
-        linkBuffer = std::make_unique<LinkBuffer>(vm, jit, codeBlock, JITCompilationCanFail);
+        linkBuffer = std::make_unique<LinkBuffer>(jit, codeBlock, JITCompilationCanFail);
         if (linkBuffer->didFailToAllocate()) {
             state.allocationFailed = true;
             return;

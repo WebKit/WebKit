@@ -1409,7 +1409,7 @@ public:
         functor(TypeofType::Undefined, true);
     }
     
-    void emitDumbVirtualCall(CallLinkInfo*);
+    void emitDumbVirtualCall(VM&, CallLinkInfo*);
     
     Vector<BytecodeAndMachineOffset>& decodedCodeMapFor(CodeBlock*);
 

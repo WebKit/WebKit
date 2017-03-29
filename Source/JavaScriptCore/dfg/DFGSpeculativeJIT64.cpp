@@ -966,7 +966,7 @@ void SpeculativeJIT::emitCall(Node* node)
         // This is the part where we meant to make a normal call. Oops.
         m_jit.addPtr(TrustedImm32(requiredBytes), JITCompiler::stackPointerRegister);
         m_jit.load64(JITCompiler::calleeFrameSlot(CallFrameSlot::callee), GPRInfo::regT0);
-        m_jit.emitDumbVirtualCall(callLinkInfo);
+        m_jit.emitDumbVirtualCall(*m_jit.vm(), callLinkInfo);
         
         done.link(&m_jit);
         setResultAndResetStack();

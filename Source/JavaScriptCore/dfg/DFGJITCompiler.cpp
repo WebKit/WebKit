@@ -394,7 +394,7 @@ void JITCompiler::compile()
     m_speculative->createOSREntries();
     setEndOfCode();
 
-    auto linkBuffer = std::make_unique<LinkBuffer>(*vm(), *this, m_codeBlock, JITCompilationCanFail);
+    auto linkBuffer = std::make_unique<LinkBuffer>(*this, m_codeBlock, JITCompilationCanFail);
     if (linkBuffer->didFailToAllocate()) {
         m_graph.m_plan.finalizer = std::make_unique<FailedFinalizer>(m_graph.m_plan);
         return;
@@ -488,7 +488,7 @@ void JITCompiler::compileFunction()
     setEndOfCode();
 
     // === Link ===
-    auto linkBuffer = std::make_unique<LinkBuffer>(*vm(), *this, m_codeBlock, JITCompilationCanFail);
+    auto linkBuffer = std::make_unique<LinkBuffer>(*this, m_codeBlock, JITCompilationCanFail);
     if (linkBuffer->didFailToAllocate()) {
         m_graph.m_plan.finalizer = std::make_unique<FailedFinalizer>(m_graph.m_plan);
         return;

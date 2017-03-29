@@ -107,8 +107,8 @@ auto VMInspector::isValidExecutableMemory(const VMInspector::Locker&, void* mach
 #if ENABLE(JIT)
     bool found = false;
     bool hasTimeout = false;
-    iterate([&] (VM& vm) -> FunctorStatus {
-        auto allocator = vm.executableAllocator;
+    iterate([&] (VM&) -> FunctorStatus {
+        auto& allocator = ExecutableAllocator::singleton();
         auto& lock = allocator.getLock();
 
         bool isSafeToLock = ensureIsSafeToLock(lock);

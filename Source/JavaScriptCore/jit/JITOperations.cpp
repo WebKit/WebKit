@@ -2375,7 +2375,7 @@ EncodedJSValue JIT_OPERATION operationValueAddProfiledOptimize(ExecState* exec, 
     ASSERT(arithProfile);
     arithProfile->observeLHSAndRHS(op1, op2);
     auto nonOptimizeVariant = operationValueAddProfiledNoOptimize;
-    addIC->generateOutOfLine(*vm, exec->codeBlock(), nonOptimizeVariant);
+    addIC->generateOutOfLine(exec->codeBlock(), nonOptimizeVariant);
 
 #if ENABLE(MATH_IC_STATS)
     exec->codeBlock()->dumpMathICStats();
@@ -2408,7 +2408,7 @@ EncodedJSValue JIT_OPERATION operationValueAddOptimize(ExecState* exec, EncodedJ
     auto nonOptimizeVariant = operationValueAddNoOptimize;
     if (ArithProfile* arithProfile = addIC->arithProfile())
         arithProfile->observeLHSAndRHS(op1, op2);
-    addIC->generateOutOfLine(*vm, exec->codeBlock(), nonOptimizeVariant);
+    addIC->generateOutOfLine(exec->codeBlock(), nonOptimizeVariant);
 
 #if ENABLE(MATH_IC_STATS)
     exec->codeBlock()->dumpMathICStats();
@@ -2485,7 +2485,7 @@ EncodedJSValue JIT_OPERATION operationValueMulOptimize(ExecState* exec, EncodedJ
     auto nonOptimizeVariant = operationValueMulNoOptimize;
     if (ArithProfile* arithProfile = mulIC->arithProfile())
         arithProfile->observeLHSAndRHS(JSValue::decode(encodedOp1), JSValue::decode(encodedOp2));
-    mulIC->generateOutOfLine(*vm, exec->codeBlock(), nonOptimizeVariant);
+    mulIC->generateOutOfLine(exec->codeBlock(), nonOptimizeVariant);
 
 #if ENABLE(MATH_IC_STATS)
     exec->codeBlock()->dumpMathICStats();
@@ -2512,7 +2512,7 @@ EncodedJSValue JIT_OPERATION operationValueMulProfiledOptimize(ExecState* exec, 
     ASSERT(arithProfile);
     arithProfile->observeLHSAndRHS(JSValue::decode(encodedOp1), JSValue::decode(encodedOp2));
     auto nonOptimizeVariant = operationValueMulProfiledNoOptimize;
-    mulIC->generateOutOfLine(*vm, exec->codeBlock(), nonOptimizeVariant);
+    mulIC->generateOutOfLine(exec->codeBlock(), nonOptimizeVariant);
 
 #if ENABLE(MATH_IC_STATS)
     exec->codeBlock()->dumpMathICStats();
@@ -2583,7 +2583,7 @@ EncodedJSValue JIT_OPERATION operationArithNegateProfiledOptimize(ExecState* exe
     ArithProfile* arithProfile = negIC->arithProfile();
     ASSERT(arithProfile);
     arithProfile->observeLHS(operand);
-    negIC->generateOutOfLine(vm, exec->codeBlock(), operationArithNegateProfiled);
+    negIC->generateOutOfLine(exec->codeBlock(), operationArithNegateProfiled);
 
 #if ENABLE(MATH_IC_STATS)
     exec->codeBlock()->dumpMathICStats();
@@ -2607,7 +2607,7 @@ EncodedJSValue JIT_OPERATION operationArithNegateOptimize(ExecState* exec, Encod
 
     if (ArithProfile* arithProfile = negIC->arithProfile())
         arithProfile->observeLHS(operand);
-    negIC->generateOutOfLine(vm, exec->codeBlock(), operationArithNegate);
+    negIC->generateOutOfLine(exec->codeBlock(), operationArithNegate);
 
 #if ENABLE(MATH_IC_STATS)
     exec->codeBlock()->dumpMathICStats();
@@ -2675,7 +2675,7 @@ EncodedJSValue JIT_OPERATION operationValueSubOptimize(ExecState* exec, EncodedJ
     auto nonOptimizeVariant = operationValueSubNoOptimize;
     if (ArithProfile* arithProfile = subIC->arithProfile())
         arithProfile->observeLHSAndRHS(JSValue::decode(encodedOp1), JSValue::decode(encodedOp2));
-    subIC->generateOutOfLine(*vm, exec->codeBlock(), nonOptimizeVariant);
+    subIC->generateOutOfLine(exec->codeBlock(), nonOptimizeVariant);
 
 #if ENABLE(MATH_IC_STATS)
     exec->codeBlock()->dumpMathICStats();
@@ -2701,7 +2701,7 @@ EncodedJSValue JIT_OPERATION operationValueSubProfiledOptimize(ExecState* exec, 
     ASSERT(arithProfile);
     arithProfile->observeLHSAndRHS(JSValue::decode(encodedOp1), JSValue::decode(encodedOp2));
     auto nonOptimizeVariant = operationValueSubProfiledNoOptimize;
-    subIC->generateOutOfLine(*vm, exec->codeBlock(), nonOptimizeVariant);
+    subIC->generateOutOfLine(exec->codeBlock(), nonOptimizeVariant);
 
 #if ENABLE(MATH_IC_STATS)
     exec->codeBlock()->dumpMathICStats();

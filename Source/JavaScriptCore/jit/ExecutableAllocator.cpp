@@ -311,15 +311,25 @@ private:
 };
 
 static FixedVMPoolExecutableAllocator* allocator;
+static ExecutableAllocator* executableAllocator;
 
 void ExecutableAllocator::initializeAllocator()
 {
     ASSERT(!allocator);
     allocator = new FixedVMPoolExecutableAllocator();
     CodeProfiling::notifyAllocator(allocator);
+
+    executableAllocator = new ExecutableAllocator;
 }
 
-ExecutableAllocator::ExecutableAllocator(VM&)
+ExecutableAllocator& ExecutableAllocator::singleton()
+{
+    ASSERT(allocator);
+    ASSERT(executableAllocator);
+    return *executableAllocator;
+}
+
+ExecutableAllocator::ExecutableAllocator()
 {
     ASSERT(allocator);
 }
@@ -362,7 +372,7 @@ double ExecutableAllocator::memoryPressureMultiplier(size_t addedMemoryUsage)
     return result;
 }
 
-RefPtr<ExecutableMemoryHandle> ExecutableAllocator::allocate(VM&, size_t sizeInBytes, void* ownerUID, JITCompilationEffort effort)
+RefPtr<ExecutableMemoryHandle> ExecutableAllocator::allocate(size_t sizeInBytes, void* ownerUID, JITCompilationEffort effort)
 {
     if (Options::logExecutableAllocation()) {
         MetaAllocator::Statistics stats = allocator->currentStatistics();

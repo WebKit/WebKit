@@ -59,7 +59,7 @@ public:
 
     // NOTE: The call that this returns is already going to be linked by the JIT using addLinkTask(),
     // so there is no need for you to link it yourself.
-    SlowPathCall makeCall(void* callTarget);
+    SlowPathCall makeCall(VM&, void* callTarget);
 
 private:
     SlowPathCallKey keyWithTarget(void* callTarget) const;
@@ -84,7 +84,7 @@ SlowPathCall callOperation(
     {
         SlowPathCallContext context(usedRegisters, jit, sizeof...(ArgumentTypes) + 1, resultGPR);
         jit.setupArgumentsWithExecState(arguments...);
-        call = context.makeCall(function.value());
+        call = context.makeCall(vm, function.value());
     }
     if (exceptionTarget)
         exceptionTarget->append(jit.emitExceptionCheck(vm));

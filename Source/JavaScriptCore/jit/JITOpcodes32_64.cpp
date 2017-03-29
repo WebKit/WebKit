@@ -126,7 +126,7 @@ JIT::CodeRef JIT::privateCompileCTINativeCall(VM* vm, NativeFunction func)
     jumpToExceptionHandler(*vm);
 
     // All trampolines constructed! copy the code, link up calls, and set the pointers on the Machine object.
-    LinkBuffer patchBuffer(*vm, *this, GLOBAL_THUNK_ID);
+    LinkBuffer patchBuffer(*this, GLOBAL_THUNK_ID);
 
     patchBuffer.link(nativeCall, FunctionPtr(func));
     return FINALIZE_CODE(patchBuffer, ("JIT CTI native call"));
@@ -1061,7 +1061,7 @@ void JIT::privateCompileHasIndexedProperty(ByValInfo* byValInfo, ReturnAddressPt
     move(TrustedImm32(1), regT0);
     Jump done = jump();
 
-    LinkBuffer patchBuffer(*m_vm, *this, m_codeBlock);
+    LinkBuffer patchBuffer(*this, m_codeBlock);
     
     patchBuffer.link(badType, CodeLocationLabel(MacroAssemblerCodePtr::createFromExecutableAddress(returnAddress.value())).labelAtOffset(byValInfo->returnAddressToSlowPath));
     patchBuffer.link(slowCases, CodeLocationLabel(MacroAssemblerCodePtr::createFromExecutableAddress(returnAddress.value())).labelAtOffset(byValInfo->returnAddressToSlowPath));

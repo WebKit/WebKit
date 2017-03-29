@@ -1,3 +1,283 @@
+2017-03-29  Saam Barati  <sbarati@apple.com>
+
+        LinkBuffer and ExecutableAllocator shouldn't have anything to do with VM
+        https://bugs.webkit.org/show_bug.cgi?id=170210
+
+        Reviewed by Mark Lam.
+
+        This is one more step in the direction of PIC-ified Wasm.
+        LinkBuffer and ExecutableAllocator have no business knowing about VM.
+
+        * assembler/LinkBuffer.cpp:
+        (JSC::LinkBuffer::allocate):
+        * assembler/LinkBuffer.h:
+        (JSC::LinkBuffer::LinkBuffer):
+        (JSC::LinkBuffer::vm): Deleted.
+        * b3/B3Compile.cpp:
+        (JSC::B3::compile):
+        * b3/B3Compile.h:
+        * b3/air/testair.cpp:
+        * b3/testb3.cpp:
+        (JSC::B3::compileProc):
+        (JSC::B3::compileAndRun):
+        (JSC::B3::testLoadAcq42):
+        (JSC::B3::testAddArgZeroImmZDef):
+        (JSC::B3::testAddLoadTwice):
+        (JSC::B3::testMulLoadTwice):
+        (JSC::B3::testMulAddArgsLeft):
+        (JSC::B3::testMulAddArgsRight):
+        (JSC::B3::testMulAddArgsLeft32):
+        (JSC::B3::testMulAddArgsRight32):
+        (JSC::B3::testMulSubArgsLeft):
+        (JSC::B3::testMulSubArgsRight):
+        (JSC::B3::testMulSubArgsLeft32):
+        (JSC::B3::testMulSubArgsRight32):
+        (JSC::B3::testMulNegArgs):
+        (JSC::B3::testMulNegArgs32):
+        (JSC::B3::testCompareFloatToDoubleThroughPhi):
+        (JSC::B3::testDoubleToFloatThroughPhi):
+        (JSC::B3::testReduceFloatToDoubleValidates):
+        (JSC::B3::testDoubleProducerPhiToFloatConversion):
+        (JSC::B3::testDoubleProducerPhiToFloatConversionWithDoubleConsumer):
+        (JSC::B3::testDoubleProducerPhiWithNonFloatConst):
+        (JSC::B3::testIToD64Arg):
+        (JSC::B3::testIToF64Arg):
+        (JSC::B3::testIToD32Arg):
+        (JSC::B3::testIToF32Arg):
+        (JSC::B3::testIToD64Mem):
+        (JSC::B3::testIToF64Mem):
+        (JSC::B3::testIToD32Mem):
+        (JSC::B3::testIToF32Mem):
+        (JSC::B3::testIToDReducedToIToF64Arg):
+        (JSC::B3::testIToDReducedToIToF32Arg):
+        (JSC::B3::testStoreRelAddLoadAcq32):
+        (JSC::B3::testStoreRelAddLoadAcq8):
+        (JSC::B3::testStoreRelAddFenceLoadAcq8):
+        (JSC::B3::testStoreRelAddLoadAcq16):
+        (JSC::B3::testStoreRelAddLoadAcq64):
+        (JSC::B3::testBranch):
+        (JSC::B3::testBranchPtr):
+        (JSC::B3::testDiamond):
+        (JSC::B3::testBranchNotEqual):
+        (JSC::B3::testBranchNotEqualCommute):
+        (JSC::B3::testBranchNotEqualNotEqual):
+        (JSC::B3::testBranchEqual):
+        (JSC::B3::testBranchEqualEqual):
+        (JSC::B3::testBranchEqualCommute):
+        (JSC::B3::testBranchEqualEqual1):
+        (JSC::B3::testBranchLoadPtr):
+        (JSC::B3::testBranchLoad32):
+        (JSC::B3::testBranchLoad8S):
+        (JSC::B3::testBranchLoad8Z):
+        (JSC::B3::testBranchLoad16S):
+        (JSC::B3::testBranchLoad16Z):
+        (JSC::B3::testBranch8WithLoad8ZIndex):
+        (JSC::B3::testComplex):
+        (JSC::B3::testSimpleCheck):
+        (JSC::B3::testCheckFalse):
+        (JSC::B3::testCheckTrue):
+        (JSC::B3::testCheckLessThan):
+        (JSC::B3::testCheckMegaCombo):
+        (JSC::B3::testCheckTrickyMegaCombo):
+        (JSC::B3::testCheckTwoMegaCombos):
+        (JSC::B3::testCheckTwoNonRedundantMegaCombos):
+        (JSC::B3::testCheckAddImm):
+        (JSC::B3::testCheckAddImmCommute):
+        (JSC::B3::testCheckAddImmSomeRegister):
+        (JSC::B3::testCheckAdd):
+        (JSC::B3::testCheckAdd64):
+        (JSC::B3::testCheckAddFold):
+        (JSC::B3::testCheckAddFoldFail):
+        (JSC::B3::testCheckAddSelfOverflow64):
+        (JSC::B3::testCheckAddSelfOverflow32):
+        (JSC::B3::testCheckSubImm):
+        (JSC::B3::testCheckSubBadImm):
+        (JSC::B3::testCheckSub):
+        (JSC::B3::testCheckSub64):
+        (JSC::B3::testCheckSubFold):
+        (JSC::B3::testCheckSubFoldFail):
+        (JSC::B3::testCheckNeg):
+        (JSC::B3::testCheckNeg64):
+        (JSC::B3::testCheckMul):
+        (JSC::B3::testCheckMulMemory):
+        (JSC::B3::testCheckMul2):
+        (JSC::B3::testCheckMul64):
+        (JSC::B3::testCheckMulFold):
+        (JSC::B3::testCheckMulFoldFail):
+        (JSC::B3::testCheckMul64SShr):
+        (JSC::B3::testSwitch):
+        (JSC::B3::testSwitchChillDiv):
+        (JSC::B3::testSwitchTargettingSameBlock):
+        (JSC::B3::testSwitchTargettingSameBlockFoldPathConstant):
+        (JSC::B3::testBasicSelect):
+        (JSC::B3::testSelectTest):
+        (JSC::B3::testSelectCompareDouble):
+        (JSC::B3::testSelectDouble):
+        (JSC::B3::testSelectDoubleTest):
+        (JSC::B3::testSelectDoubleCompareDouble):
+        (JSC::B3::testSelectFloatCompareFloat):
+        (JSC::B3::testSelectFold):
+        (JSC::B3::testSelectInvert):
+        (JSC::B3::testCheckSelect):
+        (JSC::B3::testCheckSelectCheckSelect):
+        (JSC::B3::testCheckSelectAndCSE):
+        (JSC::B3::testTrivialInfiniteLoop):
+        (JSC::B3::testFoldPathEqual):
+        (JSC::B3::testLShiftSelf32):
+        (JSC::B3::testRShiftSelf32):
+        (JSC::B3::testURShiftSelf32):
+        (JSC::B3::testLShiftSelf64):
+        (JSC::B3::testRShiftSelf64):
+        (JSC::B3::testURShiftSelf64):
+        (JSC::B3::testPatchpointDoubleRegs):
+        (JSC::B3::testSpillDefSmallerThanUse):
+        (JSC::B3::testSpillUseLargerThanDef):
+        (JSC::B3::testLateRegister):
+        (JSC::B3::testInterpreter):
+        (JSC::B3::testEntrySwitchSimple):
+        (JSC::B3::testEntrySwitchNoEntrySwitch):
+        (JSC::B3::testEntrySwitchWithCommonPaths):
+        (JSC::B3::testEntrySwitchWithCommonPathsAndNonTrivialEntrypoint):
+        (JSC::B3::testEntrySwitchLoop):
+        (JSC::B3::testSomeEarlyRegister):
+        (JSC::B3::testTerminalPatchpointThatNeedsToBeSpilled):
+        (JSC::B3::testTerminalPatchpointThatNeedsToBeSpilled2):
+        (JSC::B3::testPatchpointTerminalReturnValue):
+        (JSC::B3::testMemoryFence):
+        (JSC::B3::testStoreFence):
+        (JSC::B3::testLoadFence):
+        (JSC::B3::testPCOriginMapDoesntInsertNops):
+        (JSC::B3::testPinRegisters):
+        (JSC::B3::testX86LeaAddAddShlLeft):
+        (JSC::B3::testX86LeaAddAddShlRight):
+        (JSC::B3::testX86LeaAddAdd):
+        (JSC::B3::testX86LeaAddShlRight):
+        (JSC::B3::testX86LeaAddShlLeftScale1):
+        (JSC::B3::testX86LeaAddShlLeftScale2):
+        (JSC::B3::testX86LeaAddShlLeftScale4):
+        (JSC::B3::testX86LeaAddShlLeftScale8):
+        (JSC::B3::testAddShl32):
+        (JSC::B3::testAddShl64):
+        (JSC::B3::testAddShl65):
+        (JSC::B3::testLoadBaseIndexShift2):
+        (JSC::B3::testLoadBaseIndexShift32):
+        (JSC::B3::testOptimizeMaterialization):
+        (JSC::B3::testAtomicWeakCAS):
+        (JSC::B3::testAtomicStrongCAS):
+        (JSC::B3::testAtomicXchg):
+        (JSC::B3::testDepend32):
+        (JSC::B3::testDepend64):
+        (JSC::B3::testWasmBoundsCheck):
+        (JSC::B3::testWasmAddress):
+        (JSC::B3::run):
+        (JSC::B3::compile): Deleted.
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::PolymorphicAccess::regenerate):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::compile):
+        (JSC::DFG::JITCompiler::compileFunction):
+        * dfg/DFGLazyJSValue.cpp:
+        (JSC::DFG::LazyJSValue::emit):
+        * dfg/DFGOSRExitCompiler.cpp:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        * dfg/DFGThunks.cpp:
+        (JSC::DFG::osrExitGenerationThunkGenerator):
+        (JSC::DFG::osrEntryThunkGenerator):
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::compile):
+        * ftl/FTLLazySlowPath.cpp:
+        (JSC::FTL::LazySlowPath::generate):
+        * ftl/FTLLink.cpp:
+        (JSC::FTL::link):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstruct):
+        (JSC::FTL::DFG::LowerDFGToB3::compileTailCall):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstructVarargsSpread):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstructVarargs):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallEval):
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileStub):
+        * ftl/FTLOSRExitHandle.cpp:
+        (JSC::FTL::OSRExitHandle::emitExitThunk):
+        * ftl/FTLSlowPathCall.cpp:
+        (JSC::FTL::SlowPathCallContext::makeCall):
+        * ftl/FTLSlowPathCall.h:
+        (JSC::FTL::callOperation):
+        * ftl/FTLState.h:
+        * ftl/FTLThunks.cpp:
+        (JSC::FTL::genericGenerationThunkGenerator):
+        (JSC::FTL::slowPathCallThunkGenerator):
+        * ftl/FTLThunks.h:
+        (JSC::FTL::generateIfNecessary):
+        (JSC::FTL::Thunks::getSlowPathCallThunk):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::emitDumbVirtualCall):
+        * jit/AssemblyHelpers.h:
+        * jit/ExecutableAllocator.cpp:
+        (JSC::ExecutableAllocator::initializeAllocator):
+        (JSC::ExecutableAllocator::singleton):
+        (JSC::ExecutableAllocator::ExecutableAllocator):
+        (JSC::ExecutableAllocator::allocate):
+        * jit/ExecutableAllocator.h:
+        * jit/JIT.cpp:
+        (JSC::JIT::compileWithoutLinking):
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileCallEvalSlowCase):
+        * jit/JITMathIC.h:
+        (JSC::JITMathIC::generateOutOfLine):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::privateCompileHasIndexedProperty):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::privateCompileHasIndexedProperty):
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::stringGetByValStubGenerator):
+        (JSC::JIT::privateCompileGetByVal):
+        (JSC::JIT::privateCompileGetByValWithCachedId):
+        (JSC::JIT::privateCompilePutByVal):
+        (JSC::JIT::privateCompilePutByValWithCachedId):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::stringGetByValStubGenerator):
+        * jit/JITStubRoutine.h:
+        * jit/Repatch.cpp:
+        (JSC::ftlThunkAwareRepatchCall):
+        (JSC::linkPolymorphicCall):
+        * jit/SpecializedThunkJIT.h:
+        (JSC::SpecializedThunkJIT::finalize):
+        * jit/ThunkGenerators.cpp:
+        (JSC::throwExceptionFromCallSlowPathGenerator):
+        (JSC::linkCallThunkGenerator):
+        (JSC::linkPolymorphicCallThunkGenerator):
+        (JSC::virtualThunkFor):
+        (JSC::nativeForGenerator):
+        (JSC::arityFixupGenerator):
+        (JSC::unreachableGenerator):
+        (JSC::boundThisNoArgsFunctionCallGenerator):
+        (JSC::throwExceptionFromWasmThunkGenerator):
+        * llint/LLIntThunks.cpp:
+        (JSC::LLInt::generateThunkWithJumpTo):
+        * runtime/SamplingProfiler.cpp:
+        (JSC::SamplingProfiler::takeSample):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+        * runtime/VMTraps.cpp:
+        (JSC::VMTraps::tryInstallTrapBreakpoints):
+        * tools/VMInspector.cpp:
+        * wasm/WasmBinding.cpp:
+        (JSC::Wasm::wasmToJs):
+        (JSC::Wasm::wasmToWasm):
+        (JSC::Wasm::exitStubGenerator):
+        * wasm/WasmPlan.cpp:
+        (JSC::Wasm::Plan::complete):
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::YarrGenerator::compile):
+        (JSC::Yarr::jitCompile):
+
 2017-03-29  Keith Miller  <keith_miller@apple.com>
 
         WebAssembly: Worklist should periodically check in to see if there are higher priority jobs to do.

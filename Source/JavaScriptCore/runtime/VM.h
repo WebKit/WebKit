@@ -285,14 +285,6 @@ private:
     RefPtr<JSLock> m_apiLock;
 
 public:
-#if ENABLE(ASSEMBLER)
-    // executableAllocator should be destructed after the heap, as the heap can call executableAllocator
-    // in its destructor.
-    ExecutableAllocator executableAllocator;
-#endif
-
-    // The heap should be just after executableAllocator and before other members to ensure that it's
-    // destructed after all the objects that reference it.
     Heap heap;
     
     Subspace auxiliarySpace;

@@ -250,7 +250,7 @@ void VMTraps::tryInstallTrapBreakpoints(SignalContext& context, StackBounds stac
         return; // Let the SignalSender try again later.
 
     {
-        auto allocator = vm.executableAllocator;
+        auto& allocator = ExecutableAllocator::singleton();
         auto allocatorLocker = tryHoldLock(allocator.getLock());
         if (!allocatorLocker)
             return; // Let the SignalSender try again later.
