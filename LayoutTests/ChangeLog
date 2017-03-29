@@ -1,5 +1,22 @@
 2017-03-28  Jason Marcell  <jmarcell@apple.com>
 
+        Merge r214194. rdar://problem/31101594
+
+    2017-03-20  Daniel Bates  <dabates@apple.com>
+
+            Prevent new navigations from onbeforeunload handler
+            https://bugs.webkit.org/show_bug.cgi?id=169891
+            <rdar://problem/31155736>
+
+            Reviewed by Ryosuke Niwa.
+
+            Update test to ensure that we disallow navigation initiated via a DOM click event from
+            an onbeforeunload handler.
+
+            * fast/events/before-unload-forbidden-navigation.html:
+
+2017-03-28  Jason Marcell  <jmarcell@apple.com>
+
         Merge r214237. rdar://problem/31178134
 
     2017-03-21  Brady Eidson  <beidson@apple.com>

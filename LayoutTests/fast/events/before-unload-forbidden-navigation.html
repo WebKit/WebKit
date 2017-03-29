@@ -12,6 +12,7 @@ if (window.testRunner) {
 }
 
 var log = document.getElementById('log');
+var didFireBeforeUnloadEvent = false;
 
 function test(iframe) {
     if (iframe.done) {
@@ -25,9 +26,22 @@ function test(iframe) {
     iframe.contentWindow.location.href = 'resources/before-unload-in-subframe-child.html';
 }
 
+function navigateByClickingHyperlink(contentWindow, url) {
+    var link = contentWindow.document.createElement('a');
+    link.href = url;
+    link.click();
+}
+
 function fired(contentWindow) {
+    if (didFireBeforeUnloadEvent)
+        return;
+    didFireBeforeUnloadEvent = true;
+
     location.href = 'resources/before-unload-in-subframe-fail.html';
     contentWindow.location.href = 'resources/before-unload-in-subframe-fail.html';
+    navigateByClickingHyperlink(contentWindow, 'resources/before-unload-in-subframe-fail.html');
+    navigateByClickingHyperlink(window, 'resources/before-unload-in-subframe-fail.html');
+
     log.innerHTML = 'PASS 1/2';
     contentWindow.frameElement.halfPassed = true;
 }
