@@ -8,6 +8,10 @@ Trac: indexOfRevision (0, 1, 1)Rerun
 Trac: commitsOnBranchLaterThanRevision (0, 1, 1)Rerun
 Trac: commitsOnBranchLaterThanRevision no commits (0, 1, 1)Rerun
 Trac: commitsOnBranchInRevisionRange (0, 1, 1)Rerun
+Trac: revisionURL (0, 2, 2)Rerun
+Trac: revisionURL with Trac Identifier (0, 2, 2)Rerun
+Trac: _xmlTimelineURL (0, 2, 2)Rerun
+Trac: _xmlTimelineURL with Trac Identifier (0, 2, 2)Rerun
 BuildBotQueueView: _appendPendingRevisionCount (0, 1, 1)Rerun
 BuildBotQueueView: _popoverLinesForCommitRange (0, 1, 1)Rerun
 BuildBotQueueView: _presentPopoverForPendingCommits (0, 1, 1)Rerun
@@ -18,6 +22,10 @@ BuildBotQueueView: _revisionContentWithPopoverForIteration (0, 3, 3)Rerun
 BuildBotQueueView: _revisionContentWithPopoverForIteration has previousIteration (0, 4, 4)Rerun
 BuildBotQueueView: _formatRevisionForDisplay Subversion (0, 1, 1)Rerun
 BuildBotQueueView: _formatRevisionForDisplay Git (0, 1, 1)Rerun
+BuildBotQueueView: _popoverContentForJavaScriptCoreTestRegressions load failure UI test (0, 3, 3)Rerun
+BuildBotQueueView: _presentPopoverForJavaScriptCoreTestRegressions including loading (0, 0, 0)Rerun
+BuildBotQueueView: _createLoadingIndicator (0, 3, 3)Rerun
+BuildBotQueueView: _presentPopoverForJavaScriptCoreTestRegressions already loaded (0, 4, 4)Rerun
 BuildBotQueue: compareIterations by revisions (0, 3, 3)Rerun
 BuildBotQueue: compareIterations by loaded (one revision missing) (0, 2, 2)Rerun
 BuildBotQueue: compareIterations by loaded (same revision) (0, 2, 2)Rerun
@@ -32,3 +40,9 @@ no commits to trunk since previous result
 commits since previous result
 r33022bob@webkit.orgcommit message
 r33020george@webkit.orgcommit message
+idbuild #1javascriptcore test failures
+Loading…
+idbuild #1javascriptcore test failures
+uno
+dos
+tres
