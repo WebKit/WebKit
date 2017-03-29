@@ -1,3 +1,20 @@
+2017-03-29  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Volume slider is initially empty
+        https://bugs.webkit.org/show_bug.cgi?id=170237
+        <rdar://problem/31319077>
+
+        Reviewed by Dean Jackson.
+
+        Fixing fallout from https://bugs.webkit.org/show_bug.cgi?id=167935 where we changed the behavior
+        of layout() to happen prior to a commit. In this one instance, we were overriding layout() to run
+        after a commit, so we now override commit(). Otherwise, the <canvas> that we draw the volume slider
+        into would have its "width" and "height" properties set after we drew, which would clear the <canvas>.
+
+        * Modules/modern-media-controls/controls/slider.js:
+        (Slider.prototype.commit):
+        (Slider.prototype.layout): Deleted.
+
 2017-03-29  Zan Dobersek  <zdobersek@igalia.com>
 
         [GCrypt] Move over empty GnuTLS-based SUBTLE_CRYPTO implementation files

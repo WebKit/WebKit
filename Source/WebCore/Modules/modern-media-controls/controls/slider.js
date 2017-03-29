@@ -98,9 +98,9 @@ class Slider extends LayoutItem
         }
     }
 
-    layout()
+    commit()
     {
-        super.layout();
+        super.commit();
         this.draw(this._canvas.element.getContext("2d"));
     }
 
