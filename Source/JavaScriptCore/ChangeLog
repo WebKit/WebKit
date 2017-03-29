@@ -1,3 +1,15 @@
+2017-03-29  Mark Lam  <mark.lam@apple.com>
+
+        Remove obsolete references to HeapTimer in JavaScriptCore.order.
+        https://bugs.webkit.org/show_bug.cgi?id=170252
+
+        Reviewed by Saam Barati.
+
+        The HeapTimer was renamed to JSRunLoopTimer back in r214504.  These HeapTimer
+        entries are now no longer meaningful.
+
+        * JavaScriptCore.order:
+
 2017-03-29  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly: add shell-only Memory mode helper
