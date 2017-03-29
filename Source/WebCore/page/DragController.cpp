@@ -1013,7 +1013,7 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
     }
 
 #if ENABLE(ATTACHMENT_ELEMENT)
-    if (m_dragSourceAction & DragSourceActionAttachment) {
+    if (is<HTMLAttachmentElement>(element) && m_dragSourceAction & DragSourceActionAttachment) {
         if (!dataTransfer.pasteboard().hasData()) {
             selectElement(element);
             if (!attachmentURL.isEmpty()) {

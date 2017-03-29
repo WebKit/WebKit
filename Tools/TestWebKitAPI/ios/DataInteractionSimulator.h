@@ -71,6 +71,7 @@ typedef NS_ENUM(NSInteger, DataInteractionPhase) {
 @property (nonatomic, strong) UIItemProvider *externalItemProvider;
 @property (nonatomic, readonly) NSArray *observedEventNames;
 @property (nonatomic, readonly) NSArray *finalSelectionRects;
+@property (nonatomic, readonly) DataInteractionPhase phase;
 
 @end
 

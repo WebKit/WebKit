@@ -209,6 +209,11 @@ static NSArray *dataInteractionEventNames()
     _externalItemProvider = externalItemProvider;
 }
 
+- (DataInteractionPhase)phase
+{
+    return _phase;
+}
+
 #pragma mark - _WKTestingDelegate
 
 - (void)webViewDidPerformDataInteractionControllerOperation:(WKWebView *)webView

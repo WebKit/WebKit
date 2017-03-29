@@ -1,3 +1,22 @@
+2017-03-29  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Links with empty hrefs should not be drag sources
+        https://bugs.webkit.org/show_bug.cgi?id=170241
+        <rdar://problem/31305505>
+
+        Reviewed by Tim Horton.
+
+        Adds a new API test: DataInteractionTests.LinkWithEmptyHREF.
+
+        * TestWebKitAPI/Tests/ios/DataInteractionTests.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/ios/DataInteractionSimulator.h:
+
+        Expose the current phase of the data interaction simulator for verifying behaviors in unit tests.
+
+        * TestWebKitAPI/ios/DataInteractionSimulator.mm:
+        (-[DataInteractionSimulator phase]):
+
 2017-03-29  Jonathan Bedard  <jbedard@apple.com>
 
         Use TCP instead of FIFOs for Simulator/Device communication

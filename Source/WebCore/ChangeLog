@@ -1,3 +1,22 @@
+2017-03-29  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Links with empty hrefs should not be drag sources
+        https://bugs.webkit.org/show_bug.cgi?id=170241
+        <rdar://problem/31305505>
+
+        Reviewed by Tim Horton.
+
+        The m_dragSouceAction member of DragController represents the drag source actions that are available to the
+        document, rather than the available actions given the dragging element. Thus, it is not correct to only check
+        that (m_dragSourceAction & DragSourceActionAttachment) before proceeding down the attachment dragging codepath.
+        This should be additionally guarded with a check that the element being dragged is, in fact, an attachment
+        element.
+
+        New API test (see Tools/ChangeLog).
+
+        * page/DragController.cpp:
+        (WebCore::DragController::startDrag):
+
 2017-03-29  Jeremy Jones  <jeremyj@apple.com>
 
         WebVideoFullscreenInterfaceAVKit needs a strong self ref before dispatching to the main thread.

@@ -172,6 +172,7 @@ TEST(DataInteractionTests, CanPreventStart)
     RetainPtr<DataInteractionSimulator> dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
     [dataInteractionSimulator runFrom:CGPointMake(100, 50) to:CGPointMake(100, 300)];
 
+    EXPECT_EQ(DataInteractionCancelled, [dataInteractionSimulator phase]);
     EXPECT_FALSE([webView editorContainsImageElement]);
 
     NSArray *observedEventNames = [dataInteractionSimulator observedEventNames];
@@ -290,6 +291,19 @@ TEST(DataInteractionTests, LargeImageToTargetDiv)
     RetainPtr<DataInteractionSimulator> dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
     [dataInteractionSimulator runFrom:CGPointMake(200, 400) to:CGPointMake(200, 150)];
     EXPECT_WK_STREQ("PASS", [webView stringByEvaluatingJavaScript:@"target.textContent"].UTF8String);
+}
+
+TEST(DataInteractionTests, LinkWithEmptyHREF)
+{
+    RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView synchronouslyLoadTestPageNamed:@"link-and-input"];
+    [webView stringByEvaluatingJavaScript:@"document.querySelector('a').href = ''"];
+
+    RetainPtr<DataInteractionSimulator> dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    [dataInteractionSimulator runFrom:CGPointMake(100, 50) to:CGPointMake(100, 300)];
+
+    EXPECT_EQ(DataInteractionCancelled, [dataInteractionSimulator phase]);
+    EXPECT_WK_STREQ("", [webView editorValue].UTF8String);
 }
 
 } // namespace TestWebKitAPI
