@@ -179,6 +179,11 @@ Buildbot.prototype = {
         return this.layoutTestResultsDirectoryURLForIteration(iteration) + "/results.html";
     },
 
+    dashboardTestResultsURLForIteration: function(iteration)
+    {
+        return this.layoutTestResultsDirectoryURLForIteration(iteration) + "/dashboard-layout-test-results/index-pretty-diff.html";
+    },
+
     layoutTestFullResultsURLForIteration: function(iteration)
     {
         return this.layoutTestResultsDirectoryURLForIteration(iteration) + "/full_results.json";

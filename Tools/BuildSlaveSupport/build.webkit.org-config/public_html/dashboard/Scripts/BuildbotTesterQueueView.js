@@ -108,6 +108,9 @@ BuildbotTesterQueueView.prototype = {
                     } else if (/(?=.*test)(?=.*jsc)/.test(failedStep.name)) {
                         var status = new StatusLineView(messageElement, StatusLineView.Status.Bad, this._testStepFailureDescription(failedStep), failedStep.failureCount, iteration.queue.buildbot.javaScriptCoreTestStdioUrlForIteration(iteration, failedStep.name));
                         new PopoverTracker(status.statusBubbleElement, this._presentPopoverForJavaScriptCoreTestRegressions.bind(this, failedStep.name), iteration);
+                    } else if (failedStep.name === "dashboard-tests") {
+                        var status = new StatusLineView(messageElement, StatusLineView.Status.Bad, this._testStepFailureDescription(failedStep), undefined, iteration.queue.buildbot.dashboardTestResultsURLForIteration(iteration));
+                        new PopoverTracker(status.statusBubbleElement, this._presentPopoverForGenericTestFailures.bind(this), iteration);
                     } else {
                         var status = new StatusLineView(messageElement, StatusLineView.Status.Bad, this._testStepFailureDescription(failedStep), failedStep.failureCount ? failedStep.failureCount : undefined, failedStep.URL);
                         new PopoverTracker(status.statusBubbleElement, this._presentPopoverForGenericTestFailures.bind(this), iteration);
@@ -252,6 +255,8 @@ BuildbotTesterQueueView.prototype = {
         iteration.failedTestSteps.forEach(function(failedStep) {
             if (failedStep.name === "layout-test")
                 addResultKind(this._testStepFailureDescriptionWithCount(failedStep), iteration.queue.buildbot.layoutTestResultsURLForIteration(iteration));
+            if (failedStep.name === "dashboard-tests")
+                addResultKind(this._testStepFailureDescription(failedStep), iteration.queue.buildbot.dashboardTestResultsURLForIteration(iteration));
             else
                 addResultKind(this._testStepFailureDescriptionWithCount(failedStep), failedStep.URL);
         }, this);

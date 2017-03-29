@@ -1,3 +1,25 @@
+2017-03-28  Alexey Proskuryakov  <ap@apple.com>
+
+        Fix dashboard test results on the dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=170158
+
+        Reviewed by Tim Horton.
+
+        Link to result diff instead of stdio. Looking at the diff, I wonder if it can be
+        further improved, as it's not super readable, but stdio is entirely useless in this context.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Buildbot.js:
+        (Buildbot.prototype.dashboardTestResultsURLForIteration): Generate formatted diff link.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotIteration.js:
+        Fixed a typo in step name, so that it's actually treated as productive.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotTesterQueueView.js:
+        (BuildbotTesterQueueView.prototype.appendBuilderQueueStatus):
+        (BuildbotTesterQueueView.prototype.update):
+        (BuildbotTesterQueueView.prototype._presentPopoverForGenericTestFailures):
+        Added special handling for dashboard test results.
+
 2017-03-28  Aakash Jain  <aakash_jain@apple.com>
 
         Fix Dashboard test _presentPopoverForJavaScriptCoreTestRegressions

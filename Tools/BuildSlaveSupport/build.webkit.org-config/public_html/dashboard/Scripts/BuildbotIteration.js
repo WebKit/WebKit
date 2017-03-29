@@ -81,7 +81,7 @@ BuildbotIteration.TestSteps = {
     "layout-test": "layout test",
     "perf-test": "performance test",
     "run-api-tests": "api test",
-    "run-dashboard-tests": "dashboard test",
+    "dashboard-tests": "dashboard test",
     "webkit-32bit-jsc-test": "javascript test",
     "webkit-jsc-cloop-test": "javascript cloop test",
     "webkitperl-test": "webkitperl test",
