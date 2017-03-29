@@ -1,3 +1,19 @@
+2017-03-29  Jeremy Jones  <jeremyj@apple.com>
+
+        WebVideoFullscreenInterfaceAVKit needs a strong self ref before dispatching to the main thread.
+        https://bugs.webkit.org/show_bug.cgi?id=170129
+
+        Reviewed by David Kilzer.
+
+        No new tests becuase no new behavior.
+
+        Hold a strong reference to WebVideoFullscreenInterfaceAVKit when dispatching to the main thread.
+        Make WebVideoFullscreenInterfaceAVKit safe to retain from non-main thread.
+
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.h:
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        (WebVideoFullscreenInterfaceAVKit::exitFullscreen):
+
 2017-03-29  Zan Dobersek  <zdobersek@igalia.com>
 
         [GCrypt] Add a Handle<> class to help with GCrypt object lifetime control
