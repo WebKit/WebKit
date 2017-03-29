@@ -88,7 +88,10 @@ Settings.prototype = {
     {
         if (!platformName)
             return '';
-        return platformName.substr(0, platformName.indexOf("-"));
+        var result = platformName.substr(0, platformName.indexOf("-"));
+        if (result === "macos")
+            result = "mac";
+        return result;
     },
 
     toggleHiddenPlatformFamily: function(platformFamily)
