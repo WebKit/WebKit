@@ -1195,7 +1195,7 @@ static ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicyToApply(Frame& s
 
 bool FrameLoader::isNavigationAllowed() const
 {
-    return m_pageDismissalEventBeingDispatched == PageDismissalType::None && NavigationDisablerForBeforeUnload::isNavigationAllowed();
+    return m_pageDismissalEventBeingDispatched == PageDismissalType::None && NavigationDisabler::isNavigationAllowed();
 }
 
 void FrameLoader::loadURL(const FrameLoadRequest& frameLoadRequest, const String& referrer, FrameLoadType newLoadType, Event* event, PassRefPtr<FormState> prpFormState)
@@ -2949,7 +2949,7 @@ bool FrameLoader::shouldClose()
 
     bool shouldClose = false;
     {
-        NavigationDisablerForBeforeUnload navigationDisabler;
+        NavigationDisabler navigationDisabler;
         size_t i;
 
         for (i = 0; i < targetFrames.size(); i++) {
