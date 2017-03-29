@@ -1,3 +1,21 @@
+2017-03-29  Jason Marcell  <jmarcell@apple.com>
+
+        Merge r214291. rdar://problem/30922110
+
+    2017-03-22  Jiewen Tan  <jiewen_tan@apple.com>
+
+            ASSERT_WITH_SECURITY_IMPLICATION hit when removing an <input type="range"> while dragging on iOS
+            https://bugs.webkit.org/show_bug.cgi?id=165535
+            <rdar://problem/29559749>
+
+            Reviewed by Ryosuke Niwa.
+
+            This test case is only enabled in iOS simulator WK2.
+
+            * TestExpectations:
+            * fast/forms/range/range-remove-on-drag-expected.txt: Added.
+            * fast/forms/range/range-remove-on-drag.html: Added.
+
 2017-03-28  Jason Marcell  <jmarcell@apple.com>
 
         Merge r214365. rdar://problem/30922115

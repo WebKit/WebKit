@@ -1064,3 +1064,6 @@ http/tests/ssl/media-stream
 
 animations/font-variations
 fast/text/variations
+
+# Test only works on iOS WK2. webkit.org/b/165535
+fast/forms/range/range-remove-on-drag.html [ Skip ]
