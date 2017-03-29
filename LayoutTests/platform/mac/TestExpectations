@@ -1483,6 +1483,8 @@ media/modern-media-controls/media-documents/ipad/media-document-audio-ios-sizing
 media/modern-media-controls/media-documents/ipad/media-document-video-ios-sizing.html [ Skip ]
 media/modern-media-controls/audio/audio-controls-styles.html [ Skip ]
 
+webkit.org/b/169677 [ Release ] http/tests/media/modern-media-controls/time-labels-support/long-time.html [ Pass Timeout ]
+
 webkit.org/b/169118 [ Debug ] media/modern-media-controls/fullscreen-support/fullscreen-support-click.html [ Pass Timeout ]
 
 webkit.org/b/167266 media/modern-media-controls/media-controller/media-controller-auto-hide-mouse-enter-over-controls-bar.html [ Pass Failure ]
