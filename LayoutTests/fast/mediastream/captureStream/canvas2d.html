@@ -44,6 +44,8 @@ function printLine()
 promise_test((test) => {
     var stream = canvas1.captureStream();
 
+    if (window.internals)
+        assert_true(internals.pageMediaState().toLowerCase().indexOf("capture") == -1, "media state should not contain any camera capture");
     promise = checkCanvas(canvas1, stream);
 
     printLine();
