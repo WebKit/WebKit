@@ -48,6 +48,9 @@ struct PeerConnectionFactoryAndThreads : public rtc::MessageHandler {
     std::unique_ptr<rtc::Thread> signalingThread;
     rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface> factory;
     bool networkThreadWithSocketServer { false };
+    Function<std::unique_ptr<cricket::WebRtcVideoEncoderFactory>()> encoderFactoryGetter;
+    Function<std::unique_ptr<cricket::WebRtcVideoDecoderFactory>()> decoderFactoryGetter;
+
 private:
     void OnMessage(rtc::Message*);
 };
@@ -55,6 +58,10 @@ private:
 static inline PeerConnectionFactoryAndThreads& staticFactoryAndThreads()
 {
     static NeverDestroyed<PeerConnectionFactoryAndThreads> factoryAndThreads;
+#if PLATFORM(COCOA)
+    factoryAndThreads.get().encoderFactoryGetter = []() -> std::unique_ptr<cricket::WebRtcVideoEncoderFactory> { return std::make_unique<webrtc::VideoToolboxVideoEncoderFactory>(); };
+    factoryAndThreads.get().decoderFactoryGetter = []() -> std::unique_ptr<cricket::WebRtcVideoDecoderFactory> { return std::make_unique<webrtc::VideoToolboxVideoDecoderFactory>(); };
+#endif
     return factoryAndThreads.get();
 }
 
@@ -112,7 +119,10 @@ static void initializePeerConnectionFactoryAndThreads()
 
     factoryAndThreads.audioDeviceModule = std::make_unique<LibWebRTCAudioModule>();
 
-    factoryAndThreads.factory = webrtc::CreatePeerConnectionFactory(factoryAndThreads.networkThread.get(), factoryAndThreads.networkThread.get(), factoryAndThreads.signalingThread.get(), factoryAndThreads.audioDeviceModule.get(), new webrtc::VideoToolboxVideoEncoderFactory(), new webrtc::VideoToolboxVideoDecoderFactory());
+    std::unique_ptr<cricket::WebRtcVideoEncoderFactory> encoderFactory = factoryAndThreads.encoderFactoryGetter ? factoryAndThreads.encoderFactoryGetter() : nullptr;
+    std::unique_ptr<cricket::WebRtcVideoDecoderFactory> decoderFactory = factoryAndThreads.decoderFactoryGetter ? factoryAndThreads.decoderFactoryGetter() : nullptr;
+
+    factoryAndThreads.factory = webrtc::CreatePeerConnectionFactory(factoryAndThreads.networkThread.get(), factoryAndThreads.networkThread.get(), factoryAndThreads.signalingThread.get(), factoryAndThreads.audioDeviceModule.get(), encoderFactory.release(), decoderFactory.release());
 
     ASSERT(factoryAndThreads.factory);
 }
@@ -124,6 +134,22 @@ webrtc::PeerConnectionFactoryInterface* LibWebRTCProvider::factory()
     if (!staticFactoryAndThreads().factory)
         initializePeerConnectionFactoryAndThreads();
     return staticFactoryAndThreads().factory;
+}
+
+void LibWebRTCProvider::setDecoderFactoryGetter(Function<std::unique_ptr<cricket::WebRtcVideoDecoderFactory>()>&& getter)
+{
+    if (!staticFactoryAndThreads().factory)
+        initializePeerConnectionFactoryAndThreads();
+
+    staticFactoryAndThreads().decoderFactoryGetter = WTFMove(getter);
+}
+
+void LibWebRTCProvider::setEncoderFactoryGetter(Function<std::unique_ptr<cricket::WebRtcVideoEncoderFactory>()>&& getter)
+{
+    if (!staticFactoryAndThreads().factory)
+        initializePeerConnectionFactoryAndThreads();
+
+    staticFactoryAndThreads().encoderFactoryGetter = WTFMove(getter);
 }
 
 void LibWebRTCProvider::setPeerConnectionFactory(rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface>&& factory)

@@ -58,6 +58,9 @@ public:
     static WEBCORE_EXPORT void callOnWebRTCNetworkThread(Function<void()>&&);
     static WEBCORE_EXPORT void callOnWebRTCSignalingThread(Function<void()>&&);
     static WEBCORE_EXPORT webrtc::PeerConnectionFactoryInterface* factory();
+    static WEBCORE_EXPORT void setDecoderFactoryGetter(Function<std::unique_ptr<cricket::WebRtcVideoDecoderFactory>()>&&);
+    static WEBCORE_EXPORT void setEncoderFactoryGetter(Function<std::unique_ptr<cricket::WebRtcVideoEncoderFactory>()>&&);
+
     // Used for mock testing
     static void setPeerConnectionFactory(rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface>&&);
 
