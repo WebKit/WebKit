@@ -33,12 +33,6 @@ PASS candidate.sdpMLineIndex is 6
 
 Dictionary argument is mandatory.
 PASS new RTCIceCandidate(); threw exception TypeError: Not enough arguments.
-Dictionary member 'candidate' is required.
-PASS new RTCIceCandidate({}); threw exception TypeError: Member RTCIceCandidateInit.candidate is required and must be an instance of DOMString.
-PASS new RTCIceCandidate({sdpMid:"bar", sdpMLineIndex:6}); threw exception TypeError: Member RTCIceCandidateInit.candidate is required and must be an instance of DOMString.
-PASS new RTCIceCandidate({sdpMid:"bar"}); threw exception TypeError: Member RTCIceCandidateInit.candidate is required and must be an instance of DOMString.
-PASS new RTCIceCandidate({sdpMLineIndex:6}); threw exception TypeError: Member RTCIceCandidateInit.candidate is required and must be an instance of DOMString.
-
 One of the 'sdpMid' or 'sdpMLineIndex' members must be present (and not null or undefined).
 PASS new RTCIceCandidate({candidate:"foo"}); threw exception TypeError: Type error.
 PASS new RTCIceCandidate({candidate:"foo", sdpMid: null}); threw exception TypeError: Type error.

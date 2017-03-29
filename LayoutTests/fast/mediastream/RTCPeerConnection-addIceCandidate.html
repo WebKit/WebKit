@@ -55,6 +55,8 @@
                 badSdpMid = sdpMid + "_foo";
                 shouldNotBe("sdpMid", "badSdpMid");
 
+                sdpMid = 1;
+
                 return promiseShouldReject("pc.addIceCandidate(new RTCIceCandidate({candidate: validCandidate, sdpMid: badSdpMid}))");
             })
             .then(function () {
@@ -73,9 +75,22 @@
                 return promiseShouldReject("pc.addIceCandidate(new RTCIceCandidate({candidate: 'bad content', sdpMLineIndex: sdpMLineIndex}))");
             })
             .then(function () {
+                debug("*** Test valid candidate with no mid and mlineindex");
+                return promiseShouldReject("pc.addIceCandidate({candidate: validCandidate})");
+            })
+            .then(function () {
                 debug("<br>*** Test some OK input");
                 // Testing passing a RTCIceCandidateInit
                 return promiseShouldResolve("pc.addIceCandidate({candidate: validCandidate, sdpMid: sdpMid})");
+            })
+            .then(function () {
+                return promiseShouldResolve("pc.addIceCandidate({candidate: validCandidate, sdpMLineIndex: sdpMLineIndex})");
+            })
+            .then(function () {
+                return promiseShouldResolve("pc.addIceCandidate(undefined)");
+            })
+            .then(function () {
+                return promiseShouldResolve("pc.addIceCandidate(null)");
             })
             .then(function () {
                 // Testing passing a RTCIceCandidate

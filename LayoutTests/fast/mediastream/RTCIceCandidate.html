@@ -54,13 +54,6 @@
             debug("Dictionary argument is mandatory.");
             shouldThrow('new RTCIceCandidate();');
 
-            debug("Dictionary member 'candidate' is required.");
-            shouldThrow('new RTCIceCandidate({});');
-            shouldThrow('new RTCIceCandidate({sdpMid:"bar", sdpMLineIndex:6});');
-            shouldThrow('new RTCIceCandidate({sdpMid:"bar"});');
-            shouldThrow('new RTCIceCandidate({sdpMLineIndex:6});');
-            debug("");
-
             debug("One of the 'sdpMid' or 'sdpMLineIndex' members must be present (and not null or undefined).");
             shouldThrow('new RTCIceCandidate({candidate:"foo"});');
             shouldThrow('new RTCIceCandidate({candidate:"foo", sdpMid: null});');

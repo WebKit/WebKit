@@ -28,7 +28,7 @@ function promiseShouldResolve(expr) {
             done();
         })
         .catch(function (reason) {
-            testFailed("promise " + expr + " rejected unexpectedly.");
+            testFailed("promise " + expr + " rejected unexpectedly:" + reason);
             done();
         });
     });

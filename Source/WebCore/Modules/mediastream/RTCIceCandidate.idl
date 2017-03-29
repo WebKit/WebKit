@@ -61,8 +61,7 @@
     Conditional=WEB_RTC,
     EnabledAtRuntime=PeerConnection
 ] dictionary RTCIceCandidateInit {
-    // FIXME 169662: no longer required, with default string
-    required DOMString candidate;
+    DOMString candidate = "";
     DOMString? sdpMid = null;
     unsigned short? sdpMLineIndex = null;
     // FIXME 169662: missing ufrag
