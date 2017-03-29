@@ -1,5 +1,36 @@
 2017-03-29  Zan Dobersek  <zdobersek@igalia.com>
 
+        [GCrypt] Move over empty GnuTLS-based SUBTLE_CRYPTO implementation files
+        https://bugs.webkit.org/show_bug.cgi?id=170232
+
+        Reviewed by Michael Catanzaro.
+
+        Migrate the GnuTLS SUBTLE_CRYPTO implementation files to the gcrypt/
+        directory. The implementation files themselves are no-op, so this is
+        a simple move-and-rename operation that will enable proceeding with
+        the libgcrypt-based implementation of SUBTLE_CRYPTO functionality.
+
+        No change in behavior. The SUBTLE_CRYPTO feature should build as it
+        did before, and the implementations are empty anyway.
+
+        * PlatformGTK.cmake:
+        * crypto/gcrypt/CryptoAlgorithmAES_CBCGCrypt.cpp: Renamed from Source/WebCore/crypto/gnutls/CryptoAlgorithmAES_CBCGnuTLS.cpp.
+        * crypto/gcrypt/CryptoAlgorithmAES_CFBGCrypt.cpp: Renamed from Source/WebCore/crypto/gnutls/CryptoAlgorithmAES_CFBGnuTLS.cpp.
+        * crypto/gcrypt/CryptoAlgorithmAES_GCMGCrypt.cpp: Renamed from Source/WebCore/crypto/gnutls/CryptoAlgorithmAES_GCMGnuTLS.cpp.
+        * crypto/gcrypt/CryptoAlgorithmAES_KWGCrypt.cpp: Renamed from Source/WebCore/crypto/gnutls/CryptoAlgorithmAES_KWGnuTLS.cpp.
+        * crypto/gcrypt/CryptoAlgorithmECDHGCrypt.cpp: Renamed from Source/WebCore/crypto/gnutls/CryptoAlgorithmECDHGnuTLS.cpp.
+        * crypto/gcrypt/CryptoAlgorithmPBKDF2GCrypt.cpp: Renamed from Source/WebCore/crypto/gnutls/CryptoAlgorithmPBKDF2GnuTLS.cpp.
+        * crypto/gcrypt/CryptoAlgorithmRSAES_PKCS1_v1_5GCrypt.cpp: Renamed from Source/WebCore/crypto/gnutls/CryptoAlgorithmRSAES_PKCS1_v1_5GnuTLS.cpp.
+        * crypto/gcrypt/CryptoAlgorithmRSASSA_PKCS1_v1_5GCrypt.cpp: This one already exists.
+        * crypto/gcrypt/CryptoAlgorithmRSA_OAEPGCrypt.cpp: Renamed from Source/WebCore/crypto/gnutls/CryptoAlgorithmRSA_OAEPGnuTLS.cpp.
+        * crypto/gcrypt/CryptoAlgorithmRegistryGCrypt.cpp: Renamed from Source/WebCore/crypto/gnutls/CryptoAlgorithmRegistryGnuTLS.cpp.
+        * crypto/gcrypt/CryptoKeyECGCrypt.cpp: Renamed from Source/WebCore/crypto/gnutls/CryptoKeyECGnuTLS.cpp.
+        * crypto/gcrypt/CryptoKeyRSAGCrypt.cpp: Renamed from Source/WebCore/crypto/gnutls/CryptoKeyRSAGnuTLS.cpp.
+        * crypto/gcrypt/SerializedCryptoKeyWrapGCrypt.cpp: Renamed from Source/WebCore/crypto/gnutls/SerializedCryptoKeyWrapGnuTLS.cpp.
+        * crypto/gnutls/CryptoAlgorithmRSASSA_PKCS1_v1_5GnuTLS.cpp: Removed.
+
+2017-03-29  Zan Dobersek  <zdobersek@igalia.com>
+
         [GnuTLS] Remove unused CryptoDigestGnuTLS, CryptoAlgorithmHMACGnuTLS implementation files
         https://bugs.webkit.org/show_bug.cgi?id=170231
 

@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2014 Igalia S.L. All rights reserved.
  * Copyright (C) 2016 Yusuke Suzuki <utatane.tea@gmail.com>.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -32,8 +33,6 @@
 #include "CryptoKeyRSA.h"
 #include "ExceptionCode.h"
 #include "NotImplemented.h"
-#include <gcrypt.h>
-#include <wtf/CryptographicUtilities.h>
 
 namespace WebCore {
 
