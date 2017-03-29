@@ -42,6 +42,11 @@ namespace {
 const bool verbose = false;
 }
 
+static NEVER_INLINE NO_RETURN_DUE_TO_CRASH void webAssemblyCouldntGetFastMemory()
+{
+    CRASH();
+}
+
 inline bool mmapBytes(size_t bytes, void*& memory)
 {
     dataLogIf(verbose, "Attempting to mmap ", bytes, " bytes: ");
@@ -98,16 +103,6 @@ const HashSet<void*>& viewActiveFastMemories(const AbstractLocker& locker)
 
 inline bool tryGetFastMemory(VM& vm, void*& memory, size_t& mappedCapacity, MemoryMode& mode)
 {
-    // We might GC here so we should be holding the API lock.
-    // FIXME: We should be able to syncronously trigger the GC from another thread.
-    ASSERT(vm.currentThreadIsHoldingAPILock());
-    if (!fastMemoryEnabled())
-        return false;
-
-    // We need to be sure we have a stub prior to running code.
-    if (!vm.getCTIStub(throwExceptionFromWasmThunkGenerator).size())
-        return false;
-
     auto dequeFastMemory = [&] () -> bool {
         // FIXME: We should eventually return these to the OS if we go some number of GCs
         // without using them.
@@ -123,6 +118,16 @@ inline bool tryGetFastMemory(VM& vm, void*& memory, size_t& mappedCapacity, Memo
         return false;
     };
 
+    // We might GC here so we should be holding the API lock.
+    // FIXME: We should be able to syncronously trigger the GC from another thread.
+    ASSERT(vm.currentThreadIsHoldingAPILock());
+    if (UNLIKELY(!fastMemoryEnabled()))
+        goto fail;
+
+    // We need to be sure we have a stub prior to running code.
+    if (UNLIKELY(!vm.getCTIStub(throwExceptionFromWasmThunkGenerator).size()))
+        goto fail;
+
     ASSERT(allocatedFastMemories <= maxFastMemories);
     if (dequeFastMemory())
         return true;
@@ -131,7 +136,9 @@ inline bool tryGetFastMemory(VM& vm, void*& memory, size_t& mappedCapacity, Memo
     if (allocatedFastMemories == maxFastMemories) {
         // There is a reasonable chance that another module has died but has not been collected yet. Don't lose hope yet!
         vm.heap.collectAllGarbage();
-        return dequeFastMemory();
+        if (dequeFastMemory())
+            return true;
+        goto fail;
     }
 
     if (mmapBytes(fastMemoryMappedBytes, memory)) {
@@ -142,7 +149,16 @@ inline bool tryGetFastMemory(VM& vm, void*& memory, size_t& mappedCapacity, Memo
         auto result = activeFastMemories(locker).add(memory);
         ASSERT_UNUSED(result, result.isNewEntry);
     }
-    return memory;
+
+    if (memory)
+        return true;
+    goto fail;
+
+fail:
+    if (UNLIKELY(Options::crashIfWebAssemblyCantFastMemory()))
+        webAssemblyCouldntGetFastMemory();
+
+    return false;
 }
 
 inline void releaseFastMemory(void*& memory, size_t writableSize, size_t mappedCapacity, MemoryMode mode)

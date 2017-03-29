@@ -434,6 +434,7 @@ typedef const char* optionString;
     \
     v(bool, simulateWebAssemblyLowMemory, false, Normal, "If true, the Memory object won't mmap the full 'maximum' range and instead will allocate the minimum required amount.") \
     v(bool, useWebAssemblyFastMemory, true, Normal, "If true, we will try to use a 32-bit address space with a signal handler to bounds check wasm memory.") \
+    v(bool, crashIfWebAssemblyCantFastMemory, false, Normal, "If true, we will crash if we can't obtain fast memory for wasm.") \
     v(bool, useWebAssemblyFastTLS, true, Normal, "If true, we will try to use fast thread-local storage if available on the current platform.")
 
 
