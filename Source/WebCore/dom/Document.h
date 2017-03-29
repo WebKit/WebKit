@@ -936,12 +936,10 @@ public:
     WEBCORE_EXPORT Ref<XPathNSResolver> createNSResolver(Node* nodeResolver);
     WEBCORE_EXPORT ExceptionOr<Ref<XPathResult>> evaluate(const String& expression, Node* contextNode, RefPtr<XPathNSResolver>&&, unsigned short type, XPathResult*);
 
-    enum PendingSheetLayout { NoLayoutWithPendingSheets, DidLayoutWithPendingSheets, IgnoreLayoutWithPendingSheets };
-
-    bool didLayoutWithPendingStylesheets() const { return m_pendingSheetLayout == DidLayoutWithPendingSheets; }
-
-    bool hasNodesWithPlaceholderStyle() const { return m_hasNodesWithPlaceholderStyle; }
-    void setHasNodesWithPlaceholderStyle() { m_hasNodesWithPlaceholderStyle = true; }
+    bool hasNodesWithNonFinalStyle() const { return m_hasNodesWithNonFinalStyle; }
+    void setHasNodesWithNonFinalStyle() { m_hasNodesWithNonFinalStyle = true; }
+    bool hasNodesWithMissingStyle() const { return m_hasNodesWithMissingStyle; }
+    void setHasNodesWithMissingStyle() { m_hasNodesWithMissingStyle = true; }
 
     void updateFocusAppearanceSoon(SelectionRestorationMode);
     void cancelFocusAppearanceUpdate();
@@ -1678,15 +1676,11 @@ private:
     bool m_wellFormed { false };
     bool m_createRenderers { true };
 
-    bool m_hasNodesWithPlaceholderStyle { false };
+    bool m_hasNodesWithNonFinalStyle { false };
+    bool m_hasNodesWithMissingStyle { false };
     // But sometimes you need to ignore pending stylesheet count to
     // force an immediate layout when requested by JS.
     bool m_ignorePendingStylesheets { false };
-
-    // If we do ignore the pending stylesheet count, then we need to add a boolean
-    // to track that this happened so that we can do a full repaint when the stylesheets
-    // do eventually load.
-    PendingSheetLayout m_pendingSheetLayout { NoLayoutWithPendingSheets };
 
     bool m_hasElementUsingStyleBasedEditability { false };
     bool m_focusNavigationStartingNodeIsRemoved { false };
