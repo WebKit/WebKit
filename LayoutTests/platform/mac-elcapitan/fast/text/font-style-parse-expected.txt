@@ -1,8 +1,8 @@
 PASS window.getComputedStyle(document.getElementById('test1')).fontStyle is "normal"
 FAIL window.getComputedStyle(document.getElementById('test2')).fontStyle should be oblique 1deg. Was normal.
-FAIL window.getComputedStyle(document.getElementById('test3')).fontStyle should be oblique 180deg. Was normal.
-FAIL window.getComputedStyle(document.getElementById('test4')).fontStyle should be oblique 359.75deg. Was normal.
-FAIL window.getComputedStyle(document.getElementById('test5')).fontStyle should be oblique 1440deg. Was normal.
+FAIL window.getComputedStyle(document.getElementById('test3')).fontStyle should be oblique 18deg. Was normal.
+FAIL window.getComputedStyle(document.getElementById('test4')).fontStyle should be oblique 16deg. Was normal.
+FAIL window.getComputedStyle(document.getElementById('test5')).fontStyle should be oblique 14.25deg. Was normal.
 PASS window.getComputedStyle(document.getElementById('test6')).fontStyle is "normal"
 PASS window.getComputedStyle(document.getElementById('test7')).fontStyle is "normal"
 PASS window.getComputedStyle(document.getElementById('test8')).fontStyle is "italic"
@@ -11,7 +11,7 @@ PASS window.getComputedStyle(document.getElementById('test10')).fontStyle is "no
 PASS window.getComputedStyle(document.getElementById('test11')).fontStyle is "normal"
 PASS window.getComputedStyle(document.getElementById('test12')).fontStyle is "normal"
 PASS window.getComputedStyle(document.getElementById('test13')).fontStyle is "normal"
-FAIL window.getComputedStyle(document.getElementById('test14')).fontStyle should be oblique 1441deg. Was normal.
+FAIL window.getComputedStyle(document.getElementById('test14')).fontStyle should be oblique 15.25deg. Was normal.
 PASS window.getComputedStyle(document.getElementById('test15')).fontStyle is "italic"
 PASS window.getComputedStyle(document.getElementById('test16')).fontStyle is "italic"
 PASS window.getComputedStyle(document.getElementById('test17')).fontStyle is "normal"

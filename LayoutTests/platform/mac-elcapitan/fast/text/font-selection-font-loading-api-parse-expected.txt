@@ -1,53 +1,48 @@
-PASS window.getComputedStyle(document.getElementById('test1')).fontStyle is "normal"
-FAIL window.getComputedStyle(document.getElementById('test2')).fontStyle should be oblique 1deg. Was normal.
-FAIL window.getComputedStyle(document.getElementById('test3')).fontStyle should be oblique 18deg. Was normal.
-FAIL window.getComputedStyle(document.getElementById('test4')).fontStyle should be oblique 16deg. Was normal.
-FAIL window.getComputedStyle(document.getElementById('test5')).fontStyle should be oblique 14.25deg. Was normal.
-PASS window.getComputedStyle(document.getElementById('test6')).fontStyle is "normal"
-PASS window.getComputedStyle(document.getElementById('test7')).fontStyle is "normal"
-PASS window.getComputedStyle(document.getElementById('test8')).fontStyle is "italic"
-PASS window.getComputedStyle(document.getElementById('test9')).fontStyle is "italic"
-PASS window.getComputedStyle(document.getElementById('test10')).fontStyle is "normal"
-PASS window.getComputedStyle(document.getElementById('test11')).fontStyle is "normal"
-PASS window.getComputedStyle(document.getElementById('test12')).fontStyle is "normal"
-PASS window.getComputedStyle(document.getElementById('test13')).fontStyle is "normal"
-FAIL window.getComputedStyle(document.getElementById('test14')).fontStyle should be oblique 15.25deg. Was normal.
-PASS window.getComputedStyle(document.getElementById('test15')).fontStyle is "italic"
-PASS window.getComputedStyle(document.getElementById('test16')).fontStyle is "italic"
-PASS window.getComputedStyle(document.getElementById('test17')).fontStyle is "normal"
-PASS window.getComputedStyle(document.getElementById('test18')).fontStyle is "italic"
-PASS window.getComputedStyle(document.getElementById('test19')).fontStyle is "italic"
-PASS window.getComputedStyle(document.getElementById('test20')).fontStyle is "normal"
-FAIL window.getComputedStyle(document.getElementById('test21')).fontStyle should be oblique 14deg. Was normal.
-PASS window.getComputedStyle(document.getElementById('test1')).font is "normal normal normal normal 16px/18px Times"
-FAIL window.getComputedStyle(document.getElementById('test2')).font should be 16px/18px Times. Was normal normal normal normal 16px/18px Times.
-FAIL window.getComputedStyle(document.getElementById('test3')).font should be 16px/18px Times. Was normal normal normal normal 16px/18px Times.
-FAIL window.getComputedStyle(document.getElementById('test4')).font should be 16px/18px Times. Was normal normal normal normal 16px/18px Times.
-FAIL window.getComputedStyle(document.getElementById('test5')).font should be 16px/18px Times. Was normal normal normal normal 16px/18px Times.
-PASS window.getComputedStyle(document.getElementById('test6')).font is "normal normal normal normal 16px/18px Times"
-PASS window.getComputedStyle(document.getElementById('test7')).font is "normal normal normal normal 16px/18px Times"
-PASS window.getComputedStyle(document.getElementById('test8')).font is "italic normal normal normal 16px/18px Times"
-PASS window.getComputedStyle(document.getElementById('test9')).font is "italic normal normal normal 16px/18px Times"
-PASS window.getComputedStyle(document.getElementById('test10')).font is "normal normal normal normal 16px/18px Times"
-PASS window.getComputedStyle(document.getElementById('test11')).font is "normal normal normal normal 16px/18px Times"
-PASS window.getComputedStyle(document.getElementById('test12')).font is "normal normal normal normal 16px/18px Times"
-PASS window.getComputedStyle(document.getElementById('test13')).font is "normal normal normal normal 16px/18px Times"
-FAIL window.getComputedStyle(document.getElementById('test14')).font should be 16px/18px Times. Was normal normal normal normal 16px/18px Times.
-PASS window.getComputedStyle(document.getElementById('test15')).font is "italic normal 100 normal 48px/49px 'Helvetica Neue'"
-PASS window.getComputedStyle(document.getElementById('test16')).font is "italic normal 100 normal 48px/49px 'Helvetica Neue'"
-PASS window.getComputedStyle(document.getElementById('test17')).font is "normal normal 100 normal 48px/49px 'Helvetica Neue'"
-PASS window.getComputedStyle(document.getElementById('test18')).font is "italic normal normal normal 48px/49px 'Helvetica Neue'"
-PASS window.getComputedStyle(document.getElementById('test19')).font is "italic small-caps 100 extra-expanded 48px/49px 'Helvetica Neue'"
-PASS window.getComputedStyle(document.getElementById('test20')).font is "normal normal normal normal 16px/18px Times"
-FAIL window.getComputedStyle(document.getElementById('test21')).font should be 48px/49px 'Helvetica Neue'. Was normal normal normal normal 16px/18px Times.
-PASS document.getElementById('test1').style.font is ""
-PASS document.getElementById('test15').style.font is "italic 100 48px/49px 'Helvetica Neue'"
-PASS document.getElementById('test16').style.font is "italic 100 48px/49px 'Helvetica Neue'"
-PASS document.getElementById('test17').style.font is "100 48px/49px 'Helvetica Neue'"
-PASS document.getElementById('test18').style.font is "italic 48px/49px 'Helvetica Neue'"
-PASS document.getElementById('test19').style.font is "italic small-caps 100 extra-expanded 48px/49px 'Helvetica Neue'"
-PASS document.getElementById('test20').style.font is ""
-FAIL document.getElementById('test21').style.font should be oblique 14deg small-caps 123 extra-expanded 48px/49px 'Helvetica Neue'. Was .
+FAIL setFontFaceWeight(fontFace, '1') should be 1. Threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern.
+PASS setFontFaceWeight(fontFace, '100') is "100"
+PASS setFontFaceWeight(fontFace, '200') is "200"
+PASS setFontFaceWeight(fontFace, '300') is "300"
+PASS setFontFaceWeight(fontFace, '400') is "normal"
+PASS setFontFaceWeight(fontFace, 'normal') is "normal"
+PASS setFontFaceWeight(fontFace, '500') is "500"
+PASS setFontFaceWeight(fontFace, '600') is "600"
+PASS setFontFaceWeight(fontFace, '700') is "bold"
+PASS setFontFaceWeight(fontFace, 'bold') is "bold"
+PASS setFontFaceWeight(fontFace, '800') is "800"
+PASS setFontFaceWeight(fontFace, '900') is "900"
+PASS setFontFaceWeight(fontFace, 'garbage') threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS setFontFaceWeight(fontFace, 'initial') threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+FAIL setFontFaceWeight(fontFace, 'calc(3 + 4)') should be 7. Threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern.
+PASS setFontFaceWeight(fontFace, 'calc(100 + 200)') is "300"
+PASS setFontFaceWeight(fontFace, 'calc(150 + 50)') is "200"
+FAIL setFontFaceStretch(fontFace, '1%') should be 1%. Threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern.
+PASS setFontFaceStretch(fontFace, '2') threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS setFontFaceStretch(fontFace, 'ultra-condensed') is "ultra-condensed"
+PASS setFontFaceStretch(fontFace, 'extra-condensed') is "extra-condensed"
+PASS setFontFaceStretch(fontFace, 'condensed') is "condensed"
+PASS setFontFaceStretch(fontFace, 'semi-condensed') is "semi-condensed"
+PASS setFontFaceStretch(fontFace, 'normal') is "normal"
+PASS setFontFaceStretch(fontFace, 'semi-expanded') is "semi-expanded"
+PASS setFontFaceStretch(fontFace, 'expanded') is "expanded"
+PASS setFontFaceStretch(fontFace, 'extra-expanded') is "extra-expanded"
+PASS setFontFaceStretch(fontFace, 'ultra-expanded') is "ultra-expanded"
+PASS setFontFaceStretch(fontFace, 'garbage') threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS setFontFaceStretch(fontFace, 'initial') threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS setFontFaceStretch(fontFace, 'calc(3 + 4)') threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+FAIL setFontFaceStretch(fontFace, 'calc(3% + 4%)') should be 7%. Threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern.
+FAIL setFontFaceStyle(fontFace, 'oblique 1deg') should be oblique 1deg. Threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern.
+FAIL setFontFaceStyle(fontFace, 'oblique 20grad') should be oblique 18deg. Threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern.
+FAIL setFontFaceStyle(fontFace, 'oblique 0.28318rad') should be oblique 16deg. Threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern.
+FAIL setFontFaceStyle(fontFace, 'oblique 0.04turn') should be oblique 14.25deg. Threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern.
+PASS setFontFaceStyle(fontFace, 'oblique 5') threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS setFontFaceStyle(fontFace, 'oblique 20') threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS setFontFaceStyle(fontFace, 'italic') is "italic"
+PASS setFontFaceStyle(fontFace, 'oblique') is "italic"
+PASS setFontFaceStyle(fontFace, 'normal') is "normal"
+PASS setFontFaceStyle(fontFace, 'garbage') threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS setFontFaceStyle(fontFace, 'initial') threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS setFontFaceStyle(fontFace, 'oblique calc(3 + 4)') threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+FAIL setFontFaceStyle(fontFace, 'oblique calc(0.04turn + 1deg)') should be oblique 15.25deg. Threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern.
 PASS successfullyParsed is true
 
 TEST COMPLETE
