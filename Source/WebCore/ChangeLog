@@ -1,3 +1,17 @@
+2017-03-29  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GCrypt] Add a Handle<> class to help with GCrypt object lifetime control
+        https://bugs.webkit.org/show_bug.cgi?id=170238
+
+        Reviewed by Michael Catanzaro.
+
+        The platform-specific CryptoAlgorithmHMAC implementation is modified
+        to showcase the GCrypt::Handle<> use. HandleDeleter<gcry_mac_hd_t>
+        is added accordingly.
+
+        * crypto/gcrypt/CryptoAlgorithmHMACGCrypt.cpp:
+        (WebCore::calculateSignature):
+
 2017-03-29  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Variation fonts: Make sure that feature detection and preprocessor macros are right

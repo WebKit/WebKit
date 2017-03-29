@@ -35,7 +35,7 @@
 #include "CryptoKeyHMAC.h"
 #include "ExceptionCode.h"
 #include "ScriptExecutionContext.h"
-#include <gcrypt.h>
+#include <pal/crypto/gcrypt/Handle.h>
 #include <wtf/CryptographicUtilities.h>
 
 namespace WebCore {
@@ -60,42 +60,28 @@ static int getGCryptDigestAlgorithm(CryptoAlgorithmIdentifier hashFunction)
 
 static std::optional<Vector<uint8_t>> calculateSignature(int algorithm, const Vector<uint8_t>& key, const uint8_t* data, size_t dataLength)
 {
-    size_t digestLength = gcry_mac_get_algo_maclen(algorithm);
     const void* keyData = key.data() ? key.data() : reinterpret_cast<const uint8_t*>("");
 
-    bool result = false;
-    Vector<uint8_t> signature;
-
-    gcry_mac_hd_t hd;
-    gcry_error_t err;
-
-    err = gcry_mac_open(&hd, algorithm, 0, nullptr);
+    PAL::GCrypt::Handle<gcry_mac_hd_t> hd;
+    gcry_error_t err = gcry_mac_open(&hd, algorithm, 0, nullptr);
     if (err)
-        goto cleanup;
+        return std::nullopt;
 
     err = gcry_mac_setkey(hd, keyData, key.size());
     if (err)
-        goto cleanup;
+        return std::nullopt;
 
     err = gcry_mac_write(hd, data, dataLength);
     if (err)
-        goto cleanup;
-
-    signature.resize(digestLength);
-    err = gcry_mac_read(hd, signature.data(), &digestLength);
-    if (err)
-        goto cleanup;
-
-    signature.resize(digestLength);
-    result = true;
-
-cleanup:
-    if (hd)
-        gcry_mac_close(hd);
-
-    if (!result)
         return std::nullopt;
 
+    size_t digestLength = gcry_mac_get_algo_maclen(algorithm);
+    Vector<uint8_t> signature(digestLength);
+    err = gcry_mac_read(hd, signature.data(), &digestLength);
+    if (err)
+        return std::nullopt;
+
+    signature.resize(digestLength);
     return WTFMove(signature);
 }
 

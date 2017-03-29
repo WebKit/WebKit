@@ -1,5 +1,58 @@
 2017-03-29  Zan Dobersek  <zdobersek@igalia.com>
 
+        [GCrypt] Add a Handle<> class to help with GCrypt object lifetime control
+        https://bugs.webkit.org/show_bug.cgi?id=170238
+
+        Reviewed by Michael Catanzaro.
+
+        Add a GCrypt-specific Handle<> template class, inside the GCrypt namespace.
+        Objects of this class should be used as 'smart handles', cleaning up upon
+        destruction the GCrypt object that's represented by the handle they manage.
+
+        This mimics the std::unique_ptr<> idea, but is narrowly focused towards
+        how such handles are used in the libgcrypt API. A GCrypt::Handle<> object
+        can be consturcted from an existing handle or with the default null value.
+        It can be cleared upon request via clear(), and the managed handle can be
+        released via release().
+
+        The address of the managed handle can be retrieved through the address-of
+        operator. An implicit conversion operator is also added. This allows
+        frictionless use of GCrypt::Handle<> objects with existing libgcrypt APIs.
+
+        The negation operator is implemented to support testing the nullness of
+        the managed handle. The raw handle value is also retrieveable through
+        the handle() method.
+
+        The copy and move constructors and assignment operators are deleted.
+        They are not at the moment required anywhere in the work-in-progress
+        implementation of subtle crypto functionality.
+
+        As with other resource management classes, upon destruction, the
+        GCrypt::Handle<> object destroys the resource it manages. This is done
+        through objects of the HandleDeleter<> template class. Specializations
+        of this class have to implement the call operator that properly
+        releases the resource. Because the operator is deleted by default,
+        a compilation error will be thrown when deleting a resource of some
+        type for which the proper HandleDeleter specialization isn't provided.
+
+        std::unique_ptr<> could be used, but it could also be mis-used. I find
+        a mini-class with an interface that's specific to libgcrypt API
+        interactions to be preferrable to a std::unique_ptr<> with a custom
+        deleter.
+
+        * pal/crypto/gcrypt/Handle.h: Added.
+        (PAL::GCrypt::Handle::Handle):
+        (PAL::GCrypt::Handle::~Handle):
+        (PAL::GCrypt::Handle::clear):
+        (PAL::GCrypt::Handle::release):
+        (PAL::GCrypt::Handle::operator&):
+        (PAL::GCrypt::Handle::handle):
+        (PAL::GCrypt::Handle::operator T):
+        (PAL::GCrypt::Handle::operator!):
+        (PAL::GCrypt::HandleDeleter<gcry_mac_hd_t>::operator()):
+
+2017-03-29  Zan Dobersek  <zdobersek@igalia.com>
+
         [GnuTLS] Remove unused CryptoDigestGnuTLS, CryptoAlgorithmHMACGnuTLS implementation files
         https://bugs.webkit.org/show_bug.cgi?id=170231
 
