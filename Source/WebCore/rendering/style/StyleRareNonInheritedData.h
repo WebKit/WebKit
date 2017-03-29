@@ -220,7 +220,7 @@ public:
 
     unsigned hasAttrContent : 1;
 
-    unsigned isNotFinal : 1;
+    unsigned isPlaceholderStyle : 1;
 
 private:
     StyleRareNonInheritedData();
