@@ -1,3 +1,13 @@
+2017-03-29  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GnuTLS] Remove unused CryptoDigestGnuTLS, CryptoAlgorithmHMACGnuTLS implementation files
+        https://bugs.webkit.org/show_bug.cgi?id=170231
+
+        Reviewed by Michael Catanzaro.
+
+        * crypto/gnutls/CryptoAlgorithmHMACGnuTLS.cpp: Removed. The GCrypt counterpart
+        is already in use, and this file wasn't even being built.
+
 2017-03-29  Youenn Fablet  <youenn@apple.com>
 
         Move DTMF WebRTC extension behind its own compile flag
