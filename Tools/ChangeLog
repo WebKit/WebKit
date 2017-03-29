@@ -1,5 +1,16 @@
 2017-03-29  Jonathan Bedard  <jbedard@apple.com>
 
+        Simulator testing stops after the first crash
+        <rdar://problem/31325362>
+
+        Unreviewed infrastructure fix.
+
+        * Scripts/webkitpy/xcode/simulated_device.py:
+        (SimulatedDevice):
+        (SimulatedDevice.launch_app): Increase timeout when attempting to launch app.
+
+2017-03-29  Jonathan Bedard  <jbedard@apple.com>
+
         webkitpy: Standardize web-server port definitions
         https://bugs.webkit.org/show_bug.cgi?id=170144
         <rdar://problem/31284026>

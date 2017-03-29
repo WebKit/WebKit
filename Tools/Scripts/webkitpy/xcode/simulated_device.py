@@ -156,7 +156,8 @@ class SimulatedDevice(object):
                 pass
         return False
 
-    def launch_app(self, bundle_id, args, env=None, timeout=10):
+    # FIXME: Increase timeout for <rdar://problem/31331576>
+    def launch_app(self, bundle_id, args, env=None, timeout=300):
         environment_to_use = {}
         SIMCTL_ENV_PREFIX = 'SIMCTL_CHILD_'
         for value in (env or {}):
