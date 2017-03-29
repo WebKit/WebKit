@@ -31,6 +31,7 @@
 #import "WKWebViewInternal.h"
 #import "_WKFrameHandle.h"
 #import <wtf/RetainPtr.h>
+#import <wtf/SetForScope.h>
 
 @interface UIPrintPageRenderer ()
 @property (nonatomic) CGRect paperRect;
@@ -40,6 +41,7 @@
 @implementation _WKWebViewPrintFormatter {
     RetainPtr<_WKFrameHandle> _frameToPrint;
     RetainPtr<CGPDFDocumentRef> _printedDocument;
+    BOOL _suppressPageCountRecalc;
 }
 
 - (_WKFrameHandle *)frameToPrint
@@ -61,6 +63,7 @@
 
 - (void)_setSnapshotPaperRect:(CGRect)paperRect
 {
+    SetForScope<BOOL> suppressPageCountRecalc(_suppressPageCountRecalc, YES);
     UIPrintPageRenderer *printPageRenderer = self.printPageRenderer;
     printPageRenderer.paperRect = paperRect;
     printPageRenderer.printableRect = paperRect;
@@ -71,6 +74,12 @@
     _printedDocument = nullptr;
     NSUInteger pageCount = [self._webView._printProvider _wk_pageCountForPrintFormatter:self];
     return std::min<NSUInteger>(pageCount, NSIntegerMax);
+}
+
+- (void)_setNeedsRecalc
+{
+    if (!_suppressPageCountRecalc)
+        [super _setNeedsRecalc];
 }
 
 - (CGRect)rectForPageAtIndex:(NSInteger)pageIndex

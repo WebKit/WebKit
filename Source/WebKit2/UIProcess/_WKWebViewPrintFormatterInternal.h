@@ -29,6 +29,7 @@
 
 @interface UIPrintFormatter ()
 - (CGRect)_pageContentRect:(BOOL)firstPage;
+- (void)_setNeedsRecalc;
 @end
 
 @interface _WKWebViewPrintFormatter ()
