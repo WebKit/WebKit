@@ -1,3 +1,16 @@
+2017-03-29  Sam Brodkin  <isam@apple.com>
+
+        Web Inspector: Network tab content view is blank after reload
+        https://bugs.webkit.org/show_bug.cgi?id=168029
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/NetworkSidebarPanel.js:
+        (WebInspector.NetworkSidebarPanel.prototype._networkTimelineReset):
+        showDefaultContentView() which shows networkGridView in the contentView was not being called
+        when the NetworkSidebarPanel was not visible. Removing the if statement always shows the
+        networkGridView which fixes the bug. This wouldn't be easy to regression test.
+
 2017-03-28  Brian Burg  <bburg@apple.com>
 
         Web Inspector: RTL: keyboard shortcuts with directionality need to be flipped (forward/back, etc)
