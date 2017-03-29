@@ -1,5 +1,39 @@
 2017-03-29  Antoine Quint  <graouts@apple.com>
 
+        [Modern Media Controls] Controls bar may disappear while captions menu is visible (redux)
+        https://bugs.webkit.org/show_bug.cgi?id=170239
+        <rdar://problem/31320685>
+
+        Reviewed by Dean Jackson.
+
+        We did some work in webkit.org/b/168751 to prevent the controls bar from disappearing while the
+        captions menu is visible. But there were two cases where the behavior was not as intended:
+
+            1. the controls bar would hide upon exiting the video.
+            2. clicking on the controls bar while the caption panel is up would hide the controls bar
+               as well as the captions panel.
+
+        Instead of determining that the "userInteractionEnabled" property being set to "false" is indicative
+        of secondary UI, such as the tracks panel, being attached to the controls bar, we now have an
+        explicit property to specify this. Now, when "hasSecondaryUIAttached" is "true", we prevent the
+        controls bar from fading when exiting the media.
+
+        Additionally, when dismissing the tracks panel, we check whether a mouse event lead to this and check
+        if the mouse was positioned over the controls bar. If that is the case, we no longer hide the controls
+        bar and only dismiss the tracks panel.
+
+        Test: media/modern-media-controls/tracks-panel/tracks-panel-controls-bar-remains-visible-after-clicking-over-it.html
+
+        * Modules/modern-media-controls/controls/controls-bar.js:
+        (ControlsBar.prototype.set userInteractionEnabled):
+        (ControlsBar.prototype.handleEvent):
+        (ControlsBar.prototype._autoHideTimerFired):
+        * Modules/modern-media-controls/controls/macos-media-controls.js:
+        (MacOSMediaControls.prototype.showTracksPanel):
+        (MacOSMediaControls.prototype.hideTracksPanel):
+
+2017-03-29  Antoine Quint  <graouts@apple.com>
+
         [Modern Media Controls] Volume slider is initially empty
         https://bugs.webkit.org/show_bug.cgi?id=170237
         <rdar://problem/31319077>

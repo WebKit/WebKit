@@ -14,7 +14,7 @@
 
 window.jsTestIsAsync = true;
 
-description("Showing the tracks panel should suspend the auto-hide behavior until it's hidden.");
+description("Clicking on the controls bar to dismiss the tracks panel should not hide the controls bar, only the track panel.");
 
 const mediaControls = new MacOSInlineMediaControls({ width: 680, height: 300 });
 
@@ -36,18 +36,13 @@ shouldBecomeEqual("mediaControls.tracksPanel.element.parentNode", "mediaControls
         shouldBeFalse("mediaControls.controlsBar.faded");
 
         debug("");
-        debug("Now enter and exit the media controls, the controls bar should remain visible");
-        eventSender.mouseMoveTo(700, 10);
-        eventSender.mouseMoveTo(650, 10);
-        eventSender.mouseMoveTo(700, 10);
-        shouldBeFalse("mediaControls.controlsBar.faded");
+        debug("Click on the controls bar to dismiss the panel, the controls bar should remain visible");
+        eventSender.mouseMoveTo(670, 290);
+        eventSender.mouseDown();
+        eventSender.mouseUp();
 
-        // And now dismiss the tracks panel and check that the controls bar
-        // fades out as well.
-        debug("");
-        debug("mediaControls.hideTracksPanel()");
-        mediaControls.hideTracksPanel();
-        shouldBeTrue("mediaControls.controlsBar.faded");
+        shouldBeFalse("mediaControls.controlsBar.faded");
+        shouldBeFalse("mediaControls.tracksPanel.presented");
 
         debug("");
         mediaControls.element.remove();

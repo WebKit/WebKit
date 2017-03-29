@@ -77,7 +77,7 @@ function audioTracksDidChange()
     dumpAudioTracksEnabledState();
 
     if (media.audioTracks[1].enabled)
-        shadowRoot.lastChild.addEventListener("transitionend", event => clickOnTracksButton(clickOnThirdAudioTrack));
+        shadowRoot.querySelector(".tracks-panel").addEventListener("transitionend", event => clickOnTracksButton(clickOnThirdAudioTrack));
     else if (media.audioTracks[2].enabled) {
         debug("");
         media.remove();

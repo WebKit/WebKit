@@ -40,6 +40,7 @@ class ControlsBar extends LayoutNode
 
         this.fadesWhileIdle = false;
         this.userInteractionEnabled = true;
+        this.hasSecondaryUIAttached = false;
 
         this.element.addEventListener("focusin", this);
     }
@@ -72,10 +73,6 @@ class ControlsBar extends LayoutNode
 
         this._userInteractionEnabled = flag;
         this.markDirtyProperty("userInteractionEnabled");
-
-        if (this._userInteractionEnabled && this._controlsShouldFadeWhenUserInteractionBecomesEnabled)
-            this.faded = true;
-        delete this._controlsShouldFadeWhenUserInteractionBecomesEnabled;
     }
 
     get fadesWhileIdle()
@@ -162,7 +159,7 @@ class ControlsBar extends LayoutNode
             if (event.type === "mousemove") {
                 this.faded = false;
                 this._resetAutoHideTimer(true);
-            } else if (event.type === "mouseleave" && this._fadesWhileIdle && !this._enforceAutoHideTimer)
+            } else if (event.type === "mouseleave" && this._fadesWhileIdle && !this.hasSecondaryUIAttached && !this._enforceAutoHideTimer)
                 this.faded = true;
         } else if (event.currentTarget === this.element) {
             if (event.type === "mouseenter") {
@@ -248,16 +245,7 @@ class ControlsBar extends LayoutNode
             return;
 
         this._cancelAutoHideTimer();
-        if (!this._fadesWhileIdle)
-            return;
-
-        // We don't want to fade the controls when user interaction becomes disabled
-        // because secondary UI attached to the controls is being shown and we want
-        // to wait until it no longer is to fade the controls out.
-        if (!this._userInteractionEnabled)
-            this._controlsShouldFadeWhenUserInteractionBecomesEnabled = true;
-        else
-            this.faded = true;
+        this.faded = this._fadesWhileIdle && !this.hasSecondaryUIAttached;
     }
 
 }

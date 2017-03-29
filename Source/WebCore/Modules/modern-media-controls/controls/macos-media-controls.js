@@ -48,6 +48,7 @@ class MacOSMediaControls extends MediaControls
         this.tracksButton.on = true;
         this.tracksButton.element.blur();
         this.controlsBar.userInteractionEnabled = false;
+        this.controlsBar.hasSecondaryUIAttached = true;
         this.tracksPanel.presentInParent(this);
 
         const controlsBounds = this.element.getBoundingClientRect();
@@ -60,9 +61,19 @@ class MacOSMediaControls extends MediaControls
 
     hideTracksPanel()
     {
+        let shouldFadeControlsBar = true;
+        if (window.event instanceof MouseEvent) {
+            const x = window.event.clientX;
+            const y = window.event.clientY;
+            const bounds = this.controlsBar.element.getBoundingClientRect();
+            shouldFadeControlsBar = x < bounds.left || x > bounds.right || y < bounds.top || y > bounds.bottom;
+        }
+            
         this.tracksButton.on = false;
         this.tracksButton.element.focus();
         this.controlsBar.userInteractionEnabled = true;
+        this.controlsBar.hasSecondaryUIAttached = false;
+        this.controlsBar.faded = shouldFadeControlsBar;
         this.tracksPanel.hide();
     }
 

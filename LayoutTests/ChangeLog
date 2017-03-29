@@ -1,3 +1,23 @@
+2017-03-29  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Controls bar may disappear while captions menu is visible (redux)
+        https://bugs.webkit.org/show_bug.cgi?id=170239
+        <rdar://problem/31320685>
+
+        Reviewed by Dean Jackson.
+
+        We extend an existing test to cover the case where we would hide the controls bar while the tracks panel
+        is up by mousing out of the media. We also add a new test where we check that clicking over the controls
+        bar to dismiss the tracks panel does not hide the controls bar. Finally, we make a small change to an
+        existing test to listen to "transitionend" event on the tracks panel specifically since with this patch
+        the controls bar would disappear and trigger a similar event when disappearing as the tracks panel is dismissed.
+
+        * media/modern-media-controls/tracks-panel/tracks-panel-controls-bar-remains-visible-after-clicking-over-it-expected.txt: Added.
+        * media/modern-media-controls/tracks-panel/tracks-panel-controls-bar-remains-visible-after-clicking-over-it.html: Added.
+        * media/modern-media-controls/tracks-panel/tracks-panel-prevent-controls-bar-from-fading-expected.txt:
+        * media/modern-media-controls/tracks-panel/tracks-panel-prevent-controls-bar-from-fading.html:
+        * media/modern-media-controls/tracks-support/tracks-support-click-track-in-panel.html:
+
 2017-03-28  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark fast/workers/worker-close-more.html as a flaky timeout.
