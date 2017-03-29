@@ -1,5 +1,30 @@
 2017-03-28  Brian Burg  <bburg@apple.com>
 
+        Web Inspector: RTL: keyboard shortcuts with directionality need to be flipped (forward/back, etc)
+        https://bugs.webkit.org/show_bug.cgi?id=165761
+
+        Reviewed by Matt Baker.
+
+        Original patch by Devin Rousso.
+
+        * UserInterface/Views/ContentBrowser.js:
+        (WebInspector.ContentBrowser):
+        * UserInterface/Views/TabBrowser.js:
+        (WebInspector.TabBrowser):
+        Flip the functionality of keyboard shortcuts when in RTL so that the action of
+        pressing the left or right arrows/curly braces matches what happens when the
+        corresponding left or right buttons are clicked.
+
+        * UserInterface/Views/DataGrid.js:
+        (WebInspector.DataGrid.prototype._keyDown):
+        * UserInterface/Views/LogContentView.js:
+        (WebInspector.LogContentView.prototype._keyDown):
+        * UserInterface/Views/TreeOutline.js:
+        (WebInspector.TreeOutline.prototype._treeKeyDown):
+        Flip the Left and Right keyboard shortcuts to expand/collapse the selected item when in RTL.
+
+2017-03-28  Brian Burg  <bburg@apple.com>
+
         Web Inspector: Add "Disable Caches" option that only applies to the inspected page while Web Inspector is open
         https://bugs.webkit.org/show_bug.cgi?id=169865
         <rdar://problem/31250573>

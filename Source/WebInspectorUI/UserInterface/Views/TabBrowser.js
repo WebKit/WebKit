@@ -54,15 +54,26 @@ WebInspector.TabBrowser = class TabBrowser extends WebInspector.View
         let showNextTab = () => { this._showNextTab(); };
         let showPreviousTab = () => { this._showPreviousTab(); };
 
-        this._showNextTabKeyboardShortcut1 = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl | WebInspector.KeyboardShortcut.Modifier.Shift, WebInspector.KeyboardShortcut.Key.RightCurlyBrace, showNextTab);
-        this._showPreviousTabKeyboardShortcut1 = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl | WebInspector.KeyboardShortcut.Modifier.Shift, WebInspector.KeyboardShortcut.Key.LeftCurlyBrace, showPreviousTab);
-        this._showNextTabKeyboardShortcut2 = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.Control, WebInspector.KeyboardShortcut.Key.Tab, showNextTab);
-        this._showPreviousTabKeyboardShortcut2 = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.Control | WebInspector.KeyboardShortcut.Modifier.Shift, WebInspector.KeyboardShortcut.Key.Tab, showPreviousTab);
+        let isRTL = WebInspector.resolvedLayoutDirection() === WebInspector.LayoutDirection.RTL;
 
-        this._showNextTabKeyboardShortcut3 = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl | WebInspector.KeyboardShortcut.Modifier.Shift, WebInspector.KeyboardShortcut.Key.Right, this._showNextTabCheckingForEditableField.bind(this));
-        this._showNextTabKeyboardShortcut3.implicitlyPreventsDefault = false;
-        this._showPreviousTabKeyboardShortcut3 = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl | WebInspector.KeyboardShortcut.Modifier.Shift, WebInspector.KeyboardShortcut.Key.Left, this._showPreviousTabCheckingForEditableField.bind(this));
-        this._showPreviousTabKeyboardShortcut3.implicitlyPreventsDefault = false;
+        let nextKey1 = isRTL ? WebInspector.KeyboardShortcut.Key.LeftCurlyBrace : WebInspector.KeyboardShortcut.Key.RightCurlyBrace;
+        let previousKey1 = isRTL ? WebInspector.KeyboardShortcut.Key.RightCurlyBrace : WebInspector.KeyboardShortcut.Key.LeftCurlyBrace;
+
+        this._showNextTabKeyboardShortcut1 = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl | WebInspector.KeyboardShortcut.Modifier.Shift, nextKey1, showNextTab);
+        this._showPreviousTabKeyboardShortcut1 = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl | WebInspector.KeyboardShortcut.Modifier.Shift, previousKey1, showPreviousTab);
+
+        let nextModifier2 = isRTL ? WebInspector.KeyboardShortcut.Modifier.Shift : 0;
+        let previousModifier2 = isRTL ? 0 : WebInspector.KeyboardShortcut.Modifier.Shift;
+
+        this._showNextTabKeyboardShortcut2 = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.Control | nextModifier2, WebInspector.KeyboardShortcut.Key.Tab, showNextTab);
+        this._showPreviousTabKeyboardShortcut2 = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.Control | previousModifier2, WebInspector.KeyboardShortcut.Key.Tab, showPreviousTab);
+
+        let previousTabKey = isRTL ? WebInspector.KeyboardShortcut.Key.Right : WebInspector.KeyboardShortcut.Key.Left;
+        let nextTabKey = isRTL ? WebInspector.KeyboardShortcut.Key.Left : WebInspector.KeyboardShortcut.Key.Right;
+        this._previousTabKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl | WebInspector.KeyboardShortcut.Modifier.Shift, previousTabKey, this._showPreviousTabCheckingForEditableField.bind(this));
+        this._previousTabKeyboardShortcut.implicitlyPreventsDefault = false;
+        this._nextTabKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl | WebInspector.KeyboardShortcut.Modifier.Shift, nextTabKey, this._showNextTabCheckingForEditableField.bind(this));
+        this._nextTabKeyboardShortcut.implicitlyPreventsDefault = false;
 
         this._tabBar.addEventListener(WebInspector.TabBar.Event.TabBarItemSelected, this._tabBarItemSelected, this);
         this._tabBar.addEventListener(WebInspector.TabBar.Event.TabBarItemAdded, this._tabBarItemAdded, this);

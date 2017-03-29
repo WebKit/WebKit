@@ -39,23 +39,30 @@ WebInspector.ContentBrowser = class ContentBrowser extends WebInspector.View
         this.addSubview(this._contentViewContainer);
 
         if (!disableBackForward) {
-            this._backKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl | WebInspector.KeyboardShortcut.Modifier.Control, WebInspector.KeyboardShortcut.Key.Left, this._backButtonClicked.bind(this), this.element);
-            this._forwardKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl | WebInspector.KeyboardShortcut.Modifier.Control, WebInspector.KeyboardShortcut.Key.Right, this._forwardButtonClicked.bind(this), this.element);
+            let isRTL = WebInspector.resolvedLayoutDirection() === WebInspector.LayoutDirection.RTL;
+
+            let goBack = () => { this.goBack(); };
+            let goForward = () => { this.goForward(); };
+
+            let backShortcutKey = isRTL ? WebInspector.KeyboardShortcut.Key.Right : WebInspector.KeyboardShortcut.Key.Left;
+            let forwardShortcutKey = isRTL ? WebInspector.KeyboardShortcut.Key.Left : WebInspector.KeyboardShortcut.Key.Right;
+            this._backKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl | WebInspector.KeyboardShortcut.Modifier.Control, backShortcutKey, goBack, this.element);
+            this._forwardKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl | WebInspector.KeyboardShortcut.Modifier.Control, forwardShortcutKey, goForward, this.element);
 
             let leftArrow = "Images/BackForwardArrows.svg#left-arrow-mask";
             let rightArrow = "Images/BackForwardArrows.svg#right-arrow-mask";
-            let backButtonImage = WebInspector.resolvedLayoutDirection() === WebInspector.LayoutDirection.RTL ? rightArrow : leftArrow;
-            let forwardButtonImage = WebInspector.resolvedLayoutDirection() === WebInspector.LayoutDirection.RTL ? leftArrow : rightArrow;
+            let backButtonImage = isRTL ? rightArrow : leftArrow;
+            let forwardButtonImage = isRTL ? leftArrow : rightArrow;
 
-            this._backButtonNavigationItem = new WebInspector.ButtonNavigationItem("back", WebInspector.UIString("Back (%s)").format(this._backKeyboardShortcut.displayName), backButtonImage, 8, 13);
-            this._backButtonNavigationItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._backButtonClicked, this);
-            this._backButtonNavigationItem.enabled = false;
-            this._navigationBar.addNavigationItem(this._backButtonNavigationItem);
+            this._backNavigationItem = new WebInspector.ButtonNavigationItem("back", WebInspector.UIString("Back (%s)").format(this._backKeyboardShortcut.displayName), backButtonImage, 8, 13);
+            this._backNavigationItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, goBack);
+            this._backNavigationItem.enabled = false;
+            this._navigationBar.addNavigationItem(this._backNavigationItem);
 
-            this._forwardButtonNavigationItem = new WebInspector.ButtonNavigationItem("forward", WebInspector.UIString("Forward (%s)").format(this._forwardKeyboardShortcut.displayName), forwardButtonImage, 8, 13);
-            this._forwardButtonNavigationItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._forwardButtonClicked, this);
-            this._forwardButtonNavigationItem.enabled = false;
-            this._navigationBar.addNavigationItem(this._forwardButtonNavigationItem);
+            this._forwardNavigationItem = new WebInspector.ButtonNavigationItem("forward", WebInspector.UIString("Forward (%s)").format(this._forwardKeyboardShortcut.displayName), forwardButtonImage, 8, 13);
+            this._forwardNavigationItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, goForward);
+            this._forwardNavigationItem.enabled = false;
+            this._navigationBar.addNavigationItem(this._forwardNavigationItem);
 
             this._navigationBar.addNavigationItem(new WebInspector.DividerNavigationItem);
         }
@@ -282,16 +289,6 @@ WebInspector.ContentBrowser = class ContentBrowser extends WebInspector.View
 
     // Private
 
-    _backButtonClicked(event)
-    {
-        this.goBack();
-    }
-
-    _forwardButtonClicked(event)
-    {
-        this.goForward();
-    }
-
     _findBannerDidShow(event)
     {
         var currentContentView = this.currentContentView;
@@ -363,11 +360,11 @@ WebInspector.ContentBrowser = class ContentBrowser extends WebInspector.View
 
     _updateBackForwardButtons()
     {
-        if (!this._backButtonNavigationItem || !this._forwardButtonNavigationItem)
+        if (!this._backNavigationItem || !this._forwardNavigationItem)
             return;
 
-        this._backButtonNavigationItem.enabled = this.canGoBack();
-        this._forwardButtonNavigationItem.enabled = this.canGoForward();
+        this._backNavigationItem.enabled = this.canGoBack();
+        this._forwardNavigationItem.enabled = this.canGoForward();
     }
 
     _updateContentViewNavigationItems()
