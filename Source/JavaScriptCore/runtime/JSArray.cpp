@@ -855,7 +855,12 @@ JSArray* JSArray::fastSlice(ExecState& exec, unsigned startIndex, unsigned count
         if (count >= MIN_SPARSE_ARRAY_INDEX || structure(vm)->holesMustForwardToPrototype(vm))
             return nullptr;
 
-        Structure* resultStructure = exec.lexicalGlobalObject()->arrayStructureForIndexingTypeDuringAllocation(arrayType);
+        JSGlobalObject* lexicalGlobalObject = exec.lexicalGlobalObject();
+        Structure* resultStructure = lexicalGlobalObject->arrayStructureForIndexingTypeDuringAllocation(arrayType);
+        if (UNLIKELY(hasAnyArrayStorage(resultStructure->indexingType())))
+            return nullptr;
+
+        ASSERT(!lexicalGlobalObject->isHavingABadTime());
         JSArray* resultArray = JSArray::tryCreateUninitialized(vm, resultStructure, count);
         if (!resultArray)
             return nullptr;

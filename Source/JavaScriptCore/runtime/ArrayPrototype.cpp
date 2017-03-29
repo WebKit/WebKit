@@ -1303,7 +1303,12 @@ EncodedJSValue JSC_HOST_CALL arrayProtoPrivateFuncConcatMemcpy(ExecState* exec)
         return JSValue::encode(result);
     }
 
-    Structure* resultStructure = exec->lexicalGlobalObject()->arrayStructureForIndexingTypeDuringAllocation(type);
+    JSGlobalObject* lexicalGlobalObject = exec->lexicalGlobalObject();
+    Structure* resultStructure = lexicalGlobalObject->arrayStructureForIndexingTypeDuringAllocation(type);
+    if (UNLIKELY(hasAnyArrayStorage(resultStructure->indexingType())))
+        return JSValue::encode(jsNull());
+
+    ASSERT(!lexicalGlobalObject->isHavingABadTime());
     JSArray* result = JSArray::tryCreateUninitialized(vm, resultStructure, resultSize);
     if (UNLIKELY(!result)) {
         throwOutOfMemoryError(exec, scope);
