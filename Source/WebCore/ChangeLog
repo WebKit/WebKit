@@ -1,3 +1,22 @@
+2017-03-27  Brent Fulgham  <bfulgham@apple.com>
+
+        Only attach Attributes to a given element one time
+        https://bugs.webkit.org/show_bug.cgi?id=170125
+        <rdar://problem/31279676>
+
+        Reviewed by Chris Dumez.
+
+        Attach the attribute node to the Element before calling 'setAttributeInternal', since that method may cause
+        arbitrary JavaScript events to fire. 
+
+        Test: fast/dom/Attr/only-attach-attr-once.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::attachAttributeNodeIfNeeded): Added.
+        (WebCore::Element::setAttributeNode): Use new method. Revise to attach attribute before calling 'setAttributeInternal'. 
+        (WebCore::Element::setAttributeNodeNS): Ditto.
+        * dom/Element.h:
+
 2017-03-28  Youenn Fablet  <youenn@apple.com>
 
         Stop RTCDataChannel when closing page

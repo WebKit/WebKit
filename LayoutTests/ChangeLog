@@ -1,3 +1,16 @@
+2017-03-27  Brent Fulgham  <bfulgham@apple.com>
+
+        Only attach Attributes to a given element one time
+        https://bugs.webkit.org/show_bug.cgi?id=170125
+        <rdar://problem/31279676>
+
+        Reviewed by Chris Dumez.
+
+        * fast/dom/Attr/make-unique-element-data-while-replacing-attr-expected.txt: Rebaselined.
+        * fast/dom/Attr/make-unique-element-data-while-replacing-attr.html: Add check before setting new value.
+        * fast/dom/Attr/only-attach-attr-once-expected.txt: Added.
+        * fast/dom/Attr/only-attach-attr-once.html: Added.
+
 2017-03-28  Youenn Fablet  <youenn@apple.com>
 
         Stop RTCDataChannel when closing page

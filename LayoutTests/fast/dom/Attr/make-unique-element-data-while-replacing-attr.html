@@ -13,6 +13,8 @@ let oldAttr = document.createAttributeNS('http://www.w3.org/XML/1998/namespace',
 oldAttr.value = 'a';
 element.setAttributeNode(oldAttr);
 
+shouldBeEqualToString('element.getAttribute("width")', 'a');
+
 element.addEventListener('DOMSubtreeModified', () => { element.cloneNode(); }, true);
 
 let newAttr = document.createAttributeNS('http://www.w3.org/1999/xhtml','width');
