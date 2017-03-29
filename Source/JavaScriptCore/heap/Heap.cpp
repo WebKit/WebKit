@@ -1961,7 +1961,7 @@ Heap::Ticket Heap::requestCollection(std::optional<CollectionScope> scope)
     // right now. This is an optimization that prevents the collector thread from ever starting in most
     // cases.
     ASSERT(m_lastServedTicket <= m_lastGrantedTicket);
-    if (m_lastServedTicket == m_lastGrantedTicket) {
+    if ((m_lastServedTicket == m_lastGrantedTicket) && (m_currentPhase == CollectorPhase::NotRunning)) {
         if (false)
             dataLog("Taking the conn.\n");
         m_worldState.exchangeOr(mutatorHasConnBit);
