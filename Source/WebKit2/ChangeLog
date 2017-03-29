@@ -1,5 +1,27 @@
 2017-03-29  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r214495. rdar://problem/31242019
+
+    2017-03-28  Timothy Horton  <timothy_horton@apple.com>
+
+            Safari crashes when attempting to close tab that is displaying PDF
+            https://bugs.webkit.org/show_bug.cgi?id=170201
+            <rdar://problem/31242019>
+
+            Reviewed by Wenson Hsieh.
+
+            * UIProcess/API/Cocoa/WKWebView.mm:
+            (-[WKWebView _doAfterNextStablePresentationUpdate:]):
+            Adopt BlockPtr to fix a leak.
+
+            (-[WKWebView _firePresentationUpdateForPendingStableStatePresentationCallbacks]):
+            dispatch_async in the doAfterNextPresentationUpdate callback; since this
+            recursively calls itself, in cases where doAfterNextPresentationUpdate
+            returns synchronously (e.g. if the Web Process is missing), we would
+            recurse infinitely.
+
+2017-03-29  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r214449. rdar://problem/30787872
 
     2017-03-27  Andy Estes  <aestes@apple.com>

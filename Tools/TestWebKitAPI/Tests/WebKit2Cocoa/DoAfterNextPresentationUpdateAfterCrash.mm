@@ -53,4 +53,24 @@ TEST(WebKit2, DoAfterNextPresentationUpdateAfterCrash)
     TestWebKitAPI::Util::run(&gotCallback);
 }
 
+TEST(WebKit2, DoAfterNextStablePresentationUpdateAfterCrash)
+{
+    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)]);
+    
+    [webView loadHTMLString:@"test" baseURL:nil];
+    [webView _test_waitForDidFinishNavigation];
+    
+    [webView _killWebContentProcessAndResetState];
+    
+    __block bool gotCallback = false;
+    [webView _doAfterNextStablePresentationUpdate:^ {
+        gotCallback = true;
+    }];
+    
+    [webView loadHTMLString:@"test" baseURL:nil];
+    [webView _test_waitForDidFinishNavigation];
+    
+    TestWebKitAPI::Util::run(&gotCallback);
+}
+
 #endif
