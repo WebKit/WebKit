@@ -1,3 +1,15 @@
+2017-03-29  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly: NFC s/goto/lambda/g
+        https://bugs.webkit.org/show_bug.cgi?id=170242
+
+        Reviewed by Mark Lam.
+
+        Lambdas are more in-style than the goto I just used.
+
+        * wasm/WasmMemory.cpp:
+        (JSC::Wasm::tryGetFastMemory):
+
 2017-03-28  Saam Barati  <sbarati@apple.com>
 
         AssemblyHelpers should not have a VM field

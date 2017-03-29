@@ -118,15 +118,21 @@ inline bool tryGetFastMemory(VM& vm, void*& memory, size_t& mappedCapacity, Memo
         return false;
     };
 
+    auto fail = [] () -> bool {
+        if (UNLIKELY(Options::crashIfWebAssemblyCantFastMemory()))
+            webAssemblyCouldntGetFastMemory();
+        return false;
+    };
+
     // We might GC here so we should be holding the API lock.
     // FIXME: We should be able to syncronously trigger the GC from another thread.
     ASSERT(vm.currentThreadIsHoldingAPILock());
     if (UNLIKELY(!fastMemoryEnabled()))
-        goto fail;
+        return fail();
 
     // We need to be sure we have a stub prior to running code.
     if (UNLIKELY(!vm.getCTIStub(throwExceptionFromWasmThunkGenerator).size()))
-        goto fail;
+        return fail();
 
     ASSERT(allocatedFastMemories <= maxFastMemories);
     if (dequeFastMemory())
@@ -138,7 +144,7 @@ inline bool tryGetFastMemory(VM& vm, void*& memory, size_t& mappedCapacity, Memo
         vm.heap.collectAllGarbage();
         if (dequeFastMemory())
             return true;
-        goto fail;
+        return fail();
     }
 
     if (mmapBytes(fastMemoryMappedBytes, memory)) {
@@ -152,13 +158,8 @@ inline bool tryGetFastMemory(VM& vm, void*& memory, size_t& mappedCapacity, Memo
 
     if (memory)
         return true;
-    goto fail;
 
-fail:
-    if (UNLIKELY(Options::crashIfWebAssemblyCantFastMemory()))
-        webAssemblyCouldntGetFastMemory();
-
-    return false;
+    return fail();
 }
 
 inline void releaseFastMemory(void*& memory, size_t writableSize, size_t mappedCapacity, MemoryMode mode)
