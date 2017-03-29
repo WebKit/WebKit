@@ -316,7 +316,6 @@ typedef enum {
 @property (nonatomic) CGFloat verticalScrollDecelerationFactor;
 @property (nonatomic, readonly) BOOL _isInterruptingDeceleration;
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 110000
-@property (nonatomic, setter=_setEdgesScrollingContentIntoSafeArea:) UIRectEdge _edgesScrollingContentIntoSafeArea;
 @property (nonatomic, readonly) UIEdgeInsets _systemContentInset;
 #endif
 @end

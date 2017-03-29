@@ -509,10 +509,6 @@ static uint32_t convertSystemLayoutDirection(NSUserInterfaceLayoutDirection dire
     [_scrollView setInternalDelegate:self];
     [_scrollView setBouncesZoom:YES];
 
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
-    [_scrollView _setEdgesScrollingContentIntoSafeArea:UIRectEdgeAll];
-#endif
-
     [self addSubview:_scrollView.get()];
 
     static uint32_t programSDKVersion = dyld_get_program_sdk_version();
