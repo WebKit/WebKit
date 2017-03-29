@@ -46,13 +46,13 @@ class ResultsTable extends ComponentBase {
         });
 
         this.renderReplace(this.content().querySelector('table'), [
-            element('thead', [
+            tableBodies.length ? element('thead', [
                 buildHeaders([
                     ComponentBase.createElement('th', {colspan: hasGroupHeading ? 2 : 1}, headingLabel),
                     element('th', 'Result'),
                     repositoryList.map((repository) => element('th', repository.label())),
                 ]),
-            ]),
+            ]) : [],
             tableBodies,
         ]);
 
@@ -115,7 +115,7 @@ class ResultsTable extends ComponentBase {
             }
         }
         if (!commitSets.length)
-            return [];
+            return [[], []];
 
         const changedRepositorySet = new Set;
         const constantCommits = new Set;

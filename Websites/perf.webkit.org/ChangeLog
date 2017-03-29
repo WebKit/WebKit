@@ -1,3 +1,12 @@
+2017-03-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fix after r214502. Analysis tasks without any test groups are throwing exceptions.
+
+        * public/v3/components/results-table.js:
+        (ResultsTable.prototype.renderTable): Don't show the header row when there are no content to show. 
+        (ResultsTable.prototype._computeRepositoryList): Return a pair of arrays. The caller expects the repository
+        list to be an array, not undefined.
+
 2017-03-28  Ryosuke Niwa  <rniwa@webkit.org>
 
         Modernize AnalysisTaskPage
