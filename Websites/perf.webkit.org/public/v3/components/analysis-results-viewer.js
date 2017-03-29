@@ -55,8 +55,11 @@ class AnalysisResultsViewer extends ResultsTable {
         const selectedCell = this.content().querySelector('td.selected');
         if (selectedCell)
             selectedCell.classList.remove('selected');
-        if (this._groupToCellMap && this._currentTestGroup)
-            this._groupToCellMap.get(this._currentTestGroup).classList.add('selected');
+        if (this._groupToCellMap && this._currentTestGroup) {
+            const cell = this._groupToCellMap.get(this._currentTestGroup);
+            if (cell)
+                cell.classList.add('selected');
+        }
 
         Instrumentation.endMeasuringTime('AnalysisResultsViewer', 'render');
     }

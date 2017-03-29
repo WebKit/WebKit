@@ -1,5 +1,13 @@
 2017-03-29  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Another build fix after r214502.
+
+        * public/v3/components/analysis-results-viewer.js:
+        (AnalysisResultsViewer.prototype.render): this._groupToCellMap.get may not contain the cell when startPoint
+        or metric had not been fetched yet even if currentTestGroup is set.
+
+2017-03-29  Ryosuke Niwa  <rniwa@webkit.org>
+
         Build fix after r214502. Analysis tasks without any test groups are throwing exceptions.
 
         * public/v3/components/results-table.js:
