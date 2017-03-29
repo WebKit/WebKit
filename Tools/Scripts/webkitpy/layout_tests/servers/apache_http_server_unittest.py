@@ -57,6 +57,9 @@ class TestLayoutTestApacheHttpd(unittest.TestCase):
         server._check_that_all_ports_are_available = lambda: True
         server._is_server_running_on_all_ports = lambda: True
         server._wait_for_action = fake_pid
+
+        self.assertEqual(server.ports_to_forward(), [8000, 8080, 8443])
+
         oc = OutputCapture()
         try:
             oc.capture_output()

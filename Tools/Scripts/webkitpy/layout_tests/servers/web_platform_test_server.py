@@ -97,6 +97,9 @@ class WebPlatformTestServer(http_server_base.HttpServerBase):
                         port["sslcert"] = True
                     self._mappings.append(port)
 
+    def ports_to_forward(self):
+        return [mapping['port'] for mapping in self._mappings]
+
     def _install_modules(self):
         modules_file_path = self._filesystem.join(self._doc_root_path, "..", "resources", "web-platform-tests-modules.json")
         if not self._filesystem.isfile(modules_file_path):

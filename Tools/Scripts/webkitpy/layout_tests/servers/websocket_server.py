@@ -44,12 +44,11 @@ _WS_LOG_NAME = 'pywebsocket.ws.log'
 _WSS_LOG_NAME = 'pywebsocket.wss.log'
 
 
-_DEFAULT_WS_PORT = 8880
-_DEFAULT_WSS_PORT = 9323
-
-
 class PyWebSocket(http_server.Lighttpd):
-    def __init__(self, port_obj, output_dir, port=_DEFAULT_WS_PORT,
+    DEFAULT_WS_PORT = 8880
+    DEFAULT_WSS_PORT = 9323
+
+    def __init__(self, port_obj, output_dir, port=DEFAULT_WS_PORT,
                  root=None, use_tls=False,
                  private_key=None, certificate=None, ca_certificate=None,
                  pidfile=None):
@@ -57,7 +56,7 @@ class PyWebSocket(http_server.Lighttpd):
           output_dir: the absolute path to the layout test result directory
         """
         http_server.Lighttpd.__init__(self, port_obj, output_dir,
-                                      port=_DEFAULT_WS_PORT,
+                                      port=PyWebSocket.DEFAULT_WS_PORT,
                                       root=root)
         self._output_dir = output_dir
         self._pid_file = pidfile
@@ -106,6 +105,9 @@ class PyWebSocket(http_server.Lighttpd):
             self._log_prefix = _WSS_LOG_NAME
         else:
             self._log_prefix = _WS_LOG_NAME
+
+    def ports_to_forward(self):
+        return [self._port]
 
     def _prepare_config(self):
         log_file_name = self._log_prefix

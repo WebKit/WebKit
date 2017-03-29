@@ -56,6 +56,7 @@ class TestHttpServer(unittest.TestCase):
                               "/mock/one-additional-dir": "/mock-checkout/one-additional-dir",
                               "/mock/another-additional-dir": "/mock-checkout/one-additional-dir"})
         self.assertRaises(ServerError, server.start)
+        self.assertEqual(server.ports_to_forward(), [8000, 8080, 8443])
 
         config_file = host.filesystem.read_text_file("/mock/output_dir/lighttpd.conf")
         self.assertEqual(re.findall(r"alias.url.+", config_file), [

@@ -56,9 +56,9 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
         if self._port is not None:
             self._mappings = [{'port': self._port}]
         else:
-            self._mappings = [{'port': 8000},
-                              {'port': 8080},
-                              {'port': 8443, 'sslcert': True}]
+            self._mappings = [{'port': self.HTTP_SERVER_PORT},
+                              {'port': self.ALTERNATIVE_HTTP_SERVER_PORT},
+                              {'port': self.HTTPS_SERVER_PORT, 'sslcert': True}]
         self._output_dir = output_dir
         self._filesystem.maybe_make_directory(output_dir)
 

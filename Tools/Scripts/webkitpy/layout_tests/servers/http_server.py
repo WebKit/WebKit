@@ -75,9 +75,9 @@ class Lighttpd(http_server_base.HttpServerBase):
         if self._webkit_tests:
             self.VIRTUALCONFIG.extend(
                # Three mappings (one with SSL) for LayoutTests http tests
-               [{'port': 8000, 'docroot': self._webkit_tests},
-                {'port': 8080, 'docroot': self._webkit_tests},
-                {'port': 8443, 'docroot': self._webkit_tests,
+               [{'port': self.HTTP_SERVER_PORT, 'docroot': self._webkit_tests},
+                {'port': self.ALTERNATIVE_HTTP_SERVER_PORT, 'docroot': self._webkit_tests},
+                {'port': self.HTTPS_SERVER_PORT, 'docroot': self._webkit_tests,
                  'sslcert': self._pem_file}])
 
     def _prepare_config(self):
@@ -143,9 +143,9 @@ class Lighttpd(http_server_base.HttpServerBase):
 
                 # default set of ports as for LayoutTests but with a
                 # specified root.
-                mappings = [{'port': 8000, 'docroot': self._root},
-                            {'port': 8080, 'docroot': self._root},
-                            {'port': 8443, 'docroot': self._root,
+                mappings = [{'port': self.HTTP_SERVER_PORT, 'docroot': self._root},
+                            {'port': self.ALTERNATIVE_HTTP_SERVER_PORT, 'docroot': self._root},
+                            {'port': self.HTTPS_SERVER_PORT, 'docroot': self._root,
                              'sslcert': self._pem_file}]
         else:
             mappings = self.VIRTUALCONFIG

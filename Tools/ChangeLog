@@ -1,3 +1,37 @@
+2017-03-29  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Standardize web-server port definitions
+        https://bugs.webkit.org/show_bug.cgi?id=170144
+        <rdar://problem/31284026>
+
+        Reviewed by Daniel Bates.
+
+        Default web-server ports should be declared in global variables.
+        Add functions to web-servers which return the ports these servers
+        are using so that other tools can forward them.
+
+        * Scripts/webkitpy/layout_tests/servers/apache_http_server.py:
+        (LayoutTestApacheHttpd.__init__): Use shared constants in http_server_base.py.
+        * Scripts/webkitpy/layout_tests/servers/apache_http_server_unittest.py:
+        (TestLayoutTestApacheHttpd.test_start_cmd): Check port_to_forward for expected values.
+        * Scripts/webkitpy/layout_tests/servers/http_server.py:
+        (Lighttpd.__init__): Use shared constants in http_server_base.py.
+        (Lighttpd._prepare_config): Ditto.
+        * Scripts/webkitpy/layout_tests/servers/http_server_base.py:
+        (HttpServerBase): Add default port constants.
+        (HttpServerBase.ports_to_forward): Add function to return ports used for http server.
+        * Scripts/webkitpy/layout_tests/servers/http_server_unittest.py:
+        (TestHttpServer.test_start_cmd): Check port_to_forward for expected values.
+        * Scripts/webkitpy/layout_tests/servers/web_platform_test_server.py:
+         (WebPlatformTestServer.ports_to_forward): Add function to return ports used for web-platform tests.
+        * Scripts/webkitpy/layout_tests/servers/websocket_server.py:
+        (PyWebSocket): Make default port values public.
+        (PyWebSocket.__init__): Use public default port.
+        (PyWebSocket.ports_to_forward): Return port used in an array.
+        * Scripts/webkitpy/port/base.py:
+        (Port.to.ports_to_forward): Return all ports used the various web-servers managed by the port object.
+        (Port.to.start_websocket_server): Use PyWebSocket port constants.
+
 2017-03-29  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Links with empty hrefs should not be drag sources

@@ -57,8 +57,7 @@ from webkitpy.port import driver
 from webkitpy.port import image_diff
 from webkitpy.port import server_process
 from webkitpy.port.factory import PortFactory
-from webkitpy.layout_tests.servers import apache_http_server
-from webkitpy.layout_tests.servers import http_server
+from webkitpy.layout_tests.servers import apache_http_server, http_server
 from webkitpy.layout_tests.servers import web_platform_test_server
 from webkitpy.layout_tests.servers import websocket_server
 
@@ -938,6 +937,18 @@ class Port(object):
         storage, it should override this method."""
         pass
 
+    def ports_to_forward(self):
+        ports = []
+        if self._http_server:
+            ports.extend(self._http_server.ports_to_forward())
+        if self._websocket_server:
+            ports.extend(self._websocket_server.ports_to_forward())
+        if self._websocket_server:
+            ports.extend(self._websocket_secure_server.ports_to_forward())
+        if self._web_platform_test_server:
+            ports.extend(self._web_platform_test_server.ports_to_forward())
+        return ports
+
     def start_http_server(self, additional_dirs=None):
         """Start a web server. Raise an error if it can't start or is already running.
 
@@ -975,7 +986,7 @@ class Port(object):
         self._websocket_server_temporary_directory = websocket_server_temporary_directory
         if self._extract_certificate_from_pem(pem_file, certificate_file) and self._extract_private_key_from_pem(pem_file, private_key_file):
             secure_server = self._websocket_secure_server = websocket_server.PyWebSocket(self, self.results_directory(),
-                                use_tls=True, port=9323, private_key=private_key_file, certificate=certificate_file)
+                                use_tls=True, port=websocket_server.PyWebSocket.DEFAULT_WSS_PORT, private_key=private_key_file, certificate=certificate_file)
             secure_server.start()
             self._websocket_secure_server = secure_server
 

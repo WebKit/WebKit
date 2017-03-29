@@ -47,6 +47,10 @@ class ServerError(Exception):
 class HttpServerBase(object):
     """A skeleton class for starting and stopping servers used by the layout tests."""
 
+    HTTP_SERVER_PORT = 8000
+    ALTERNATIVE_HTTP_SERVER_PORT = 8080
+    HTTPS_SERVER_PORT = 8443
+
     def __init__(self, port_obj):
         self._executive = port_obj._executive
         self._filesystem = port_obj._filesystem
@@ -67,6 +71,9 @@ class HttpServerBase(object):
 
         self._runtime_path = self._filesystem.join(tmpdir, "WebKit")
         self._filesystem.maybe_make_directory(self._runtime_path)
+
+    def ports_to_forward(self):
+        return [mapping['port'] for mapping in self._mappings]
 
     def start(self):
         """Starts the server. It is an error to start an already started server.
