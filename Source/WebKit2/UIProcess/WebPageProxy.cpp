@@ -6552,11 +6552,6 @@ void WebPageProxy::handleAutoplayEvent(uint32_t event)
 }
 
 #if PLATFORM(MAC)
-void WebPageProxy::removeNavigationGestureSnapshot()
-{
-    m_pageClient.removeNavigationGestureSnapshot();
-}
-
 void WebPageProxy::performImmediateActionHitTestAtLocation(FloatPoint point)
 {
     m_process->send(Messages::WebPage::PerformImmediateActionHitTestAtLocation(point), m_pageID);

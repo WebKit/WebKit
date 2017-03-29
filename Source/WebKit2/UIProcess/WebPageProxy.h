@@ -1088,8 +1088,6 @@ public:
 #endif
 
 #if PLATFORM(MAC)
-    void removeNavigationGestureSnapshot();
-
     API::HitTestResult* lastMouseMoveHitTestResult() const { return m_lastMouseMoveHitTestResult.get(); }
     void performImmediateActionHitTestAtLocation(WebCore::FloatPoint);
 

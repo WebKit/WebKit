@@ -770,12 +770,6 @@ void PageClientImpl::didSameDocumentNavigationForMainFrame(SameDocumentNavigatio
         gestureController->didSameDocumentNavigationForMainFrame(type);
 }
 
-void PageClientImpl::removeNavigationGestureSnapshot()
-{
-    if (auto gestureController = m_impl->gestureController())
-        gestureController->removeSwipeSnapshot();
-}
-
 void PageClientImpl::handleControlledElementIDResponse(const String& identifier)
 {
 #if WK_API_ENABLED

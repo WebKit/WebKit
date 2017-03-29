@@ -208,7 +208,6 @@ private:
     void didFinishLoadForMainFrame() override;
     void didFailLoadForMainFrame() override;
     void didSameDocumentNavigationForMainFrame(SameDocumentNavigationType) override;
-    void removeNavigationGestureSnapshot() override;
     void handleControlledElementIDResponse(const String&) override;
     void handleActiveNowPlayingSessionInfoResponse(bool hasActiveSession, const String& title, double duration, double elapsedTime) override;
 
