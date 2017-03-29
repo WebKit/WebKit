@@ -235,7 +235,6 @@ private:
     BasicBlock* m_currentBlock;
     Vector<Variable*> m_locals;
     Vector<UnlinkedWasmToWasmCall>& m_unlinkedWasmToWasmCalls; // List each call site and the function index whose address it should be patched with.
-    Vector<std::unique_ptr<OpcodeOrigin>> m_origins;
     GPRReg m_memoryBaseGPR;
     GPRReg m_memorySizeGPR;
     GPRReg m_wasmContextGPR;
@@ -1272,10 +1271,7 @@ static void createJSToWasmWrapper(CompilationContext& compilationContext, WasmIn
 
 auto B3IRGenerator::origin() -> Origin
 {
-    if (m_origins.isEmpty() || m_origins.last()->location != m_parser->currentOpcodeStartingOffset())
-        m_origins.append(std::make_unique<OpcodeOrigin>(m_parser->currentOpcode(), m_parser->currentOpcodeStartingOffset()));
-
-    return Origin(m_origins.last().get());
+    return bitwise_cast<Origin>(OpcodeOrigin(m_parser->currentOpcode(), m_parser->currentOpcodeStartingOffset()));
 }
 
 Expected<std::unique_ptr<WasmInternalFunction>, String> parseAndCompile(VM& vm, CompilationContext& compilationContext, const uint8_t* functionStart, size_t functionLength, const Signature* signature, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, const ModuleInformation& info, const Vector<SignatureIndex>& moduleSignatureIndicesToUniquedSignatureIndices, MemoryMode mode, unsigned optLevel)
@@ -1289,7 +1285,7 @@ Expected<std::unique_ptr<WasmInternalFunction>, String> parseAndCompile(VM& vm, 
 
     procedure.setOriginPrinter([] (PrintStream& out, Origin origin) {
         if (origin.data())
-            out.print("Wasm: ", *bitwise_cast<OpcodeOrigin*>(origin.data()));
+            out.print("Wasm: ", bitwise_cast<OpcodeOrigin>(origin));
     });
 
     B3IRGenerator context(vm, info, procedure, result.get(), unlinkedWasmToWasmCalls, mode);

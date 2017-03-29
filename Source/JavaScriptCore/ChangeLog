@@ -1,3 +1,22 @@
+2017-03-29  Keith Miller  <keith_miller@apple.com>
+
+        WebAssembly: pack OpcodeOrigin to fit in a pointer
+        https://bugs.webkit.org/show_bug.cgi?id=170244
+
+        Reviewed by Michael Saboff.
+
+        This patch makes it so we don't have to have allocate the OpcodeOrigin and can just
+        pack all the data into the pointer B3::Origin already has.
+
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::parseAndCompile):
+        * wasm/WasmOpcodeOrigin.cpp:
+        (JSC::Wasm::OpcodeOrigin::dump):
+        * wasm/WasmOpcodeOrigin.h:
+        (JSC::Wasm::OpcodeOrigin::OpcodeOrigin):
+        (JSC::Wasm::OpcodeOrigin::opcode):
+        (JSC::Wasm::OpcodeOrigin::location):
+
 2017-03-29  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly: NFC s/goto/lambda/g

@@ -28,22 +28,28 @@
 #include "B3Origin.h"
 #include "WasmFormat.h"
 
+#include <wtf/ForbidHeapAllocation.h>
+
 namespace JSC { namespace Wasm {
 
 class OpcodeOrigin {
-    WTF_MAKE_FAST_ALLOCATED;
-    WTF_MAKE_NONCOPYABLE(OpcodeOrigin);
+    WTF_FORBID_HEAP_ALLOCATION;
 public:
-    OpcodeOrigin(OpType op, size_t offset)
-        : opcode(op)
-        , location(offset)
+    OpcodeOrigin() = default;
+    OpcodeOrigin(OpType opcode, size_t offset)
     {
+        ASSERT(static_cast<uint32_t>(offset) == offset);
+        packedData = (static_cast<uint64_t>(opcode) << 32) | offset;
     }
 
     void dump(PrintStream&) const;
 
-    const OpType opcode;
-    const size_t location;
+    OpType opcode() const { return static_cast<OpType>(packedData >> 32); }
+    size_t location() const { return static_cast<uint32_t>(packedData); }
+
+private:
+    static_assert(sizeof(void*) == sizeof(uint64_t), "this packing doesn't work if this isn't the case");
+    uint64_t packedData { 0 };
 };
 
 } } // namespace JSC::Wasm
