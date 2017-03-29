@@ -1,3 +1,25 @@
+2017-03-29  Youenn Fablet  <youenn@apple.com>
+
+        Move DTMF WebRTC extension behind its own compile flag
+        https://bugs.webkit.org/show_bug.cgi?id=170226
+
+        Reviewed by Eric Carlson.
+
+        Moving RTCDTMFSender and RTCDTMFToneChangeEvent behinf a WEB_RTC_DTMF compile flag.
+        This compile flag is not set on any supported platform yet.
+        Disabling related test and updated test expectations.
+
+        * Modules/mediastream/RTCDTMFSender.cpp:
+        * Modules/mediastream/RTCDTMFSender.h:
+        * Modules/mediastream/RTCDTMFSender.idl:
+        * Modules/mediastream/RTCDTMFToneChangeEvent.cpp:
+        * Modules/mediastream/RTCDTMFToneChangeEvent.h:
+        * Modules/mediastream/RTCDTMFToneChangeEvent.idl:
+        * dom/EventNames.in:
+        * dom/EventTargetFactory.in:
+        * platform/mediastream/RTCDTMFSenderHandler.h:
+        * platform/mediastream/RTCDTMFSenderHandlerClient.h:
+
 2017-03-29  Antoine Quint  <graouts@apple.com>
 
         [mac-wk1] LayoutTest media/modern-media-controls/airplay-button/airplay-button.html is a flaky timeout

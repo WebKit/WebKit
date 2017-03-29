@@ -25,7 +25,7 @@ Node
 Notification conditional=NOTIFICATIONS|LEGACY_NOTIFICATIONS
 Performance conditional=WEB_TIMING
 RTCDataChannel conditional=WEB_RTC
-RTCDTMFSender conditional=WEB_RTC
+RTCDTMFSender conditional=WEB_RTC_DTMF
 RTCPeerConnection conditional=WEB_RTC
 SourceBuffer conditional=MEDIA_SOURCE
 SourceBufferList conditional=MEDIA_SOURCE

@@ -1,3 +1,16 @@
+2017-03-29  Youenn Fablet  <youenn@apple.com>
+
+        Move DTMF WebRTC extension behind its own compile flag
+        https://bugs.webkit.org/show_bug.cgi?id=170226
+
+        Reviewed by Eric Carlson.
+
+        * TestExpectations:
+        * platform/mac-elcapitan/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac-wk1/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac-yosemite/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac/js/dom/global-constructors-attributes-expected.txt:
+
 2017-03-29  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK][OWR] Rebaseline fast/mediastream/RTCPeerConnection-addIceCandidate.html after r214527

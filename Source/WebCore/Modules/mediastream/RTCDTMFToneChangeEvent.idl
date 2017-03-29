@@ -25,7 +25,7 @@
  */
 
 [
-    Conditional=WEB_RTC,
+    Conditional=WEB_RTC_DTMF,
     Constructor(DOMString type, optional RTCDTMFToneChangeEventInit eventInitDict),
     EnabledAtRuntime=PeerConnection,
 ] interface RTCDTMFToneChangeEvent : Event {
@@ -33,7 +33,7 @@
 };
 
 [
-    Conditional=WEB_RTC,
+    Conditional=WEB_RTC_DTMF,
     EnabledAtRuntime=PeerConnection
 ] dictionary RTCDTMFToneChangeEventInit : EventInit {
     required DOMString tone;

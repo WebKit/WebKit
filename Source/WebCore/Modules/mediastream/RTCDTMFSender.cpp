@@ -26,7 +26,7 @@
 #include "config.h"
 #include "RTCDTMFSender.h"
 
-#if ENABLE(WEB_RTC)
+#if ENABLE(WEB_RTC_DTMF)
 
 #include "MediaStreamTrack.h"
 #include "RTCDTMFSenderHandler.h"

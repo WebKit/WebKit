@@ -718,6 +718,7 @@ fast/mediastream/RTCPeerConnection-more-media-to-negotiate.html [ Skip ]
 fast/mediastream/RTCPeerConnection-overloaded-operations-params.html [ Skip ]
 fast/mediastream/RTCRtpSender-replaceTrack.html [ Skip ]
 fast/mediastream/RTCPeerConnection-icecandidate-event.html [ Pass Failure ]
+fast/mediastream/RTCPeerConnection-dtmf.html [ Failure ]
 
 # Need updating wptserve
 imported/w3c/web-platform-tests/XMLHttpRequest/setrequestheader-content-type.htm [ Skip ]

@@ -26,7 +26,7 @@
 
 #pragma once
 
-#if ENABLE(WEB_RTC)
+#if ENABLE(WEB_RTC_DTMF)
 
 #include <wtf/text/WTFString.h>
 

@@ -1263,11 +1263,6 @@ PASS Object.getOwnPropertyDescriptor(global, 'RGBColor').hasOwnProperty('get') i
 PASS Object.getOwnPropertyDescriptor(global, 'RGBColor').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'RGBColor').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'RGBColor').configurable is true
-PASS Object.getOwnPropertyDescriptor(global, 'RTCDTMFToneChangeEvent').value is RTCDTMFToneChangeEvent
-PASS Object.getOwnPropertyDescriptor(global, 'RTCDTMFToneChangeEvent').hasOwnProperty('get') is false
-PASS Object.getOwnPropertyDescriptor(global, 'RTCDTMFToneChangeEvent').hasOwnProperty('set') is false
-PASS Object.getOwnPropertyDescriptor(global, 'RTCDTMFToneChangeEvent').enumerable is false
-PASS Object.getOwnPropertyDescriptor(global, 'RTCDTMFToneChangeEvent').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'RTCIceCandidate').value is RTCIceCandidate
 PASS Object.getOwnPropertyDescriptor(global, 'RTCIceCandidate').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'RTCIceCandidate').hasOwnProperty('set') is false

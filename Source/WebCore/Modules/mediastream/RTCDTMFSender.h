@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEB_RTC)
+#if ENABLE(WEB_RTC_DTMF)
 
 #include "ActiveDOMObject.h"
 #include "EventTarget.h"
