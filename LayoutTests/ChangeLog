@@ -1,3 +1,19 @@
+2017-03-29  Chris Dumez  <cdumez@apple.com>
+
+        Animated SVG images are not paused in pages loaded in the background
+        https://bugs.webkit.org/show_bug.cgi?id=170043
+        <rdar://problem/31234412>
+
+        Reviewed by Simon Fraser.
+
+        Extend layout test coverage.
+
+        * svg/animations/animations-paused-in-background-page-expected.txt: Added.
+        * svg/animations/animations-paused-in-background-page-iframe-expected.txt: Added.
+        * svg/animations/animations-paused-in-background-page-iframe.html: Added.
+        * svg/animations/animations-paused-in-background-page.html: Added.
+        * svg/animations/resources/iframe-with-animated-svg-image.html: Added.
+
 2017-03-29  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Post-commit test gardening after r214546

@@ -296,7 +296,8 @@ FrameView::FrameView(Frame& frame)
 Ref<FrameView> FrameView::create(Frame& frame)
 {
     Ref<FrameView> view = adoptRef(*new FrameView(frame));
-    view->show();
+    if (frame.page() && frame.page()->isVisible())
+        view->show();
     return view;
 }
 
@@ -304,7 +305,8 @@ Ref<FrameView> FrameView::create(Frame& frame, const IntSize& initialSize)
 {
     Ref<FrameView> view = adoptRef(*new FrameView(frame));
     view->Widget::setFrameRect(IntRect(view->location(), initialSize));
-    view->show();
+    if (frame.page() && frame.page()->isVisible())
+        view->show();
     return view;
 }
 

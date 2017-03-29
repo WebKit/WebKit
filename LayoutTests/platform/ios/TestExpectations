@@ -309,6 +309,8 @@ webkit.org/b/165799 fast/dom/timer-throttling-hidden-page-non-nested.html [ Skip
 webkit.org/b/165799 fast/events/page-visibility-onvisibilitychange.html [ Skip ]
 webkit.org/b/165799 media/media-playback-page-visibility.html [ Skip ]
 webkit.org/b/165799 svg/animations/animations-paused-page-non-visible.html [ Skip ]
+webkit.org/b/165799 svg/animations/animations-paused-in-background-page-iframe.html [ Skip ]
+webkit.org/b/165799 svg/animations/animations-paused-in-background-page.html [ Skip ]
 
 # AutoFill button is not supported
 fast/forms/auto-fill-button/mouse-down-input-mouse-release-auto-fill-button.html

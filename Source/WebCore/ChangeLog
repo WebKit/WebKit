@@ -1,3 +1,49 @@
+2017-03-29  Chris Dumez  <cdumez@apple.com>
+
+        Animated SVG images are not paused in pages loaded in the background
+        https://bugs.webkit.org/show_bug.cgi?id=170043
+        <rdar://problem/31234412>
+
+        Reviewed by Simon Fraser.
+
+        Animated SVG images are not paused in pages loaded in the background. We rely
+        on FrameView::isOffscreen() to stop images animations in background tab (See
+        logic in RenderElement's shouldRepaintForImageAnimation()). This works fine
+        if a tab is visble and then becomes hidden (i.e. by switching to another
+        tab). However, in the case where the tab gets loaded while in the background
+        (e.g. opening link in new background tab, or session restore), then the
+        animations would not be paused, due to FrameView::isOffscreen() erroneously
+        returning false in this case.
+
+        Normally, the following chain of events happens:
+        - Page is visible, we construct a main frame and its FrameView for loading
+          the page. When a FrameView is constructed, we call FrameView::show() to
+          make it visible. Then, if the page becomes non-visible, we call
+          Page::setIsVisibleInternal(false) which calls FrameView::hide(). After
+          that, FrameView::isOffscreen() correctly returns true because we properly
+          called FrameView::hide().
+
+        However, when doing a load while the Page is hidden, the following was
+        happening:
+        - Page is not visible, we call Page::setIsVisibleInternal(false) which tries
+          to call FrameView::hide() for the main frame but it does not have a FrameView
+          yet (because the load has not started). We start the load and end up creating
+          a FrameView. The FrameView constructor was calling FrameView::show()
+          unconditionally, thus making the FrameView think is visible, even though its
+          page isn't. At this point, FrameView::isOffscreen() was returning false
+          and animations would keep running, even though the page is not visible.
+
+        To address the issue, we now call FrameView::show() in FrameView::create() only
+        if the Page is actually visible, instead of calling it unconditionally. If the
+        page ever becomes visible, Page::setIsVisibleInternal(true) will be called and
+        it will take care of calling FrameView::show() then.
+
+        Tests: svg/animations/animations-paused-in-background-page-iframe.html
+               svg/animations/animations-paused-in-background-page.html
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::create):
+
 2017-03-29  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Links with empty hrefs should not be drag sources
