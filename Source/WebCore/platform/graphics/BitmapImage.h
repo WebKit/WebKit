@@ -136,7 +136,6 @@ protected:
     NativeImagePtr frameImageAtIndex(size_t index) { return m_source.frameImageAtIndex(index); }
     NativeImagePtr frameImageAtIndexCacheIfNeeded(size_t, SubsamplingLevel = SubsamplingLevel::Default, const GraphicsContext* = nullptr);
 
-    String sourceURL() const { return imageObserver() ? imageObserver()->sourceUrl().string() : emptyString(); }
     bool allowSubsampling() const { return imageObserver() && imageObserver()->allowSubsampling(); }
     bool allowLargeImageAsyncDecoding() const { return imageObserver() && imageObserver()->allowLargeImageAsyncDecoding(); }
     bool allowAnimatedImageAsyncDecoding() const { return imageObserver() && imageObserver()->allowAnimatedImageAsyncDecoding(); }

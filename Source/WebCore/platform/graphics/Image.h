@@ -136,6 +136,7 @@ public:
     // Typically the CachedImage that owns us.
     ImageObserver* imageObserver() const { return m_imageObserver; }
     void setImageObserver(ImageObserver* observer) { m_imageObserver = observer; }
+    String sourceURL() const;
 
     enum TileRule { StretchTile, RoundTile, SpaceTile, RepeatTile };
 
@@ -187,7 +188,7 @@ protected:
     virtual void drawFrameMatchingSourceSize(GraphicsContext&, const FloatRect& dstRect, const IntSize& srcSize, CompositeOperator) { }
 #endif
     virtual void draw(GraphicsContext&, const FloatRect& dstRect, const FloatRect& srcRect, CompositeOperator, BlendMode, DecodingMode, ImageOrientationDescription) = 0;
-    void drawTiled(GraphicsContext&, const FloatRect& dstRect, const FloatPoint& srcPoint, const FloatSize& tileSize, const FloatSize& spacing, CompositeOperator, BlendMode);
+    void drawTiled(GraphicsContext&, const FloatRect& dstRect, const FloatPoint& srcPoint, const FloatSize& tileSize, const FloatSize& spacing, CompositeOperator, BlendMode, DecodingMode);
     void drawTiled(GraphicsContext&, const FloatRect& dstRect, const FloatRect& srcRect, const FloatSize& tileScaleFactor, TileRule hRule, TileRule vRule, CompositeOperator);
 
     // Supporting tiled drawing

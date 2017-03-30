@@ -163,11 +163,12 @@ void BitmapImage::draw(GraphicsContext& context, const FloatRect& destRect, cons
     if (destRect.isEmpty() || srcRect.isEmpty())
         return;
 
-    float scale = subsamplingScale(context, destRect, srcRect);
-    m_currentSubsamplingLevel = allowSubsampling() ? m_source.subsamplingLevelForScale(scale) : SubsamplingLevel::Default;
-    IntSize sizeForDrawing = enclosingIntRect(context.getCTM().mapRect(destRect)).size();
+    FloatSize scale = nativeImageDrawingScale(context, destRect, srcRect);
+    float subsamplingScale = std::min(float(1), std::max(scale.width(), scale.height()));
+    m_currentSubsamplingLevel = allowSubsampling() ? m_source.subsamplingLevelForScale(subsamplingScale) : SubsamplingLevel::Default;
+    IntSize sizeForDrawing = expandedIntSize(size() * scale);
 
-    LOG(Images, "BitmapImage::%s - %p - url: %s [subsamplingLevel = %d scale = %.4f]", __FUNCTION__, this, sourceURL().utf8().data(), static_cast<int>(m_currentSubsamplingLevel), scale);
+    LOG(Images, "BitmapImage::%s - %p - url: %s [subsamplingLevel = %d scale = %.4f]", __FUNCTION__, this, sourceURL().utf8().data(), static_cast<int>(m_currentSubsamplingLevel), subsamplingScale);
 
     NativeImagePtr image;
     if (decodingMode == DecodingMode::Asynchronous && shouldUseAsyncDecodingForLargeImages()) {
@@ -175,8 +176,8 @@ void BitmapImage::draw(GraphicsContext& context, const FloatRect& destRect, cons
 
         if (!frameHasDecodedNativeImageCompatibleWithOptionsAtIndex(m_currentFrame, m_currentSubsamplingLevel, DecodingOptions(sizeForDrawing))
             && !frameIsBeingDecodedAndIsCompatibleWithOptionsAtIndex(m_currentFrame, DecodingOptions(sizeForDrawing))) {
-            m_source.requestFrameAsyncDecodingAtIndex(0, m_currentSubsamplingLevel, sizeForDrawing);
             LOG(Images, "BitmapImage::%s - %p - url: %s [requesting large async decoding]", __FUNCTION__, this, sourceURL().utf8().data());
+            m_source.requestFrameAsyncDecodingAtIndex(0, m_currentSubsamplingLevel, sizeForDrawing);
         }
 
         if (!frameHasDecodedNativeImageCompatibleWithOptionsAtIndex(m_currentFrame, m_currentSubsamplingLevel, DecodingMode::Asynchronous)) {
@@ -186,6 +187,7 @@ void BitmapImage::draw(GraphicsContext& context, const FloatRect& destRect, cons
         }
 
         image = frameImageAtIndex(m_currentFrame);
+        LOG(Images, "BitmapImage::%s - %p - url: %s [a decoded image frame is available for drawing]", __FUNCTION__, this, sourceURL().utf8().data());
     } else {
         StartAnimationStatus status = internalStartAnimation();
         ASSERT_IMPLIES(status == StartAnimationStatus::DecodingActive, frameHasFullSizeNativeImageAtIndex(m_currentFrame, m_currentSubsamplingLevel));
@@ -416,7 +418,8 @@ void BitmapImage::stopAnimation()
     // This timer is used to animate all occurrences of this image. Don't invalidate
     // the timer unless all renderers have stopped drawing.
     clearTimer();
-    m_source.stopAsyncDecodingQueue();
+    if (canAnimate())
+        m_source.stopAsyncDecodingQueue();
 }
 
 void BitmapImage::resetAnimation()
@@ -434,6 +437,8 @@ void BitmapImage::resetAnimation()
 void BitmapImage::newFrameNativeImageAvailableAtIndex(size_t index)
 {
     UNUSED_PARAM(index);
+    LOG(Images, "BitmapImage::%s - %p - url: %s [requested frame %ld is now available]", __FUNCTION__, this, sourceURL().utf8().data(), index);
+
     if (canAnimate()) {
         ASSERT(index == (m_currentFrame + 1) % frameCount());
         

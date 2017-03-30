@@ -1,3 +1,56 @@
+2017-03-30  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        REGRESSION (r213764): Background image from sprite sheet incorrectly scaled
+        https://bugs.webkit.org/show_bug.cgi?id=169547
+
+        Reviewed by Simon Fraser.
+
+        The bug happens when drawing only a rectangle of an image not the whole
+        image. In BitmapImage::draw(), sizeForDrawing was calculated as the destRect
+        scaled by the transformation which is applied to the GraphicsContext. Two
+        problems with this approach. The first one is destRect can be only part of
+        the image. The second problem is, the ratio destRect / srcRect is another
+        scaling that needs to be considered.
+
+        To fix this issue, first the base size has to be size of the image and not
+        destRect.size(). Secondly, we need to scale this base size with the context
+        transformation multiplied by the ratio destRect / srcRect. This scaling is
+        exactly the same scaling which is calculated in subsamplingScale(). Finally
+        we use this scaled size as the sizeForDrawing to send to the ImageDecoder.
+
+        Test: fast/images/sprite-sheet-image-draw.html
+
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::draw): Fix the bug.
+        (WebCore::BitmapImage::stopAnimation): Stops the async image decoding for animated images only.
+        The decoding for large images will be stopped when BitmapImage::newFrameNativeImageAvailableAtIndex()
+        is called and the decoding queue is idle.
+        (WebCore::BitmapImage::newFrameNativeImageAvailableAtIndex): Add image logging.
+        * platform/graphics/BitmapImage.h: Move sourceURL() to the Image class.
+        * platform/graphics/GraphicsContext.cpp: Pass imagePaintingOptions.m_decodingMode to Image::drawTiled().
+        (WebCore::GraphicsContext::drawTiledImage): Pass imagePaintingOptions.m_decodingMode) to Image::drawTiled().
+        * platform/graphics/Image.cpp:
+        (WebCore::Image::sourceURL): Moved from BitmapImage.
+        (WebCore::Image::drawTiled): Add a DecodingMode argument instead of calling always with DecodingMode::Synchronous.
+        * platform/graphics/Image.h:
+        * platform/graphics/ImageFrameCache.cpp:
+        (WebCore::ImageFrameCache::cacheAsyncFrameNativeImageAtIndex): Add image logging.
+        (WebCore::ImageFrameCache::startAsyncDecodingQueue): Ditto,
+        (WebCore::ImageFrameCache::requestFrameAsyncDecodingAtIndex): Ditto.
+        (WebCore::ImageFrameCache::stopAsyncDecodingQueue): Ditto.
+        (WebCore::ImageFrameCache::sourceURL): A helper function to avoid checking the value of m_image.
+        * platform/graphics/ImageFrameCache.h:
+        * platform/graphics/NativeImage.h: Rename subsamplingScale() to nativeImageDrawingScale() and return image scaling instead.
+        * platform/graphics/cairo/NativeImageCairo.cpp:
+        (WebCore::nativeImageDrawingScale): Ditto.
+        (WebCore::subsamplingScale): Deleted.
+        * platform/graphics/cg/NativeImageCG.cpp:
+        (WebCore::nativeImageDrawingScale): Ditto.
+        (WebCore::subsamplingScale): Deleted.
+        * platform/graphics/win/NativeImageDirect2D.cpp:
+        (WebCore::nativeImageDrawingScale): Ditto.
+        (WebCore::subsamplingScale): Deleted.
+
 2017-03-30  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Assertion failure in InspectorStyleProperty::setRawTextFromStyleDeclaration

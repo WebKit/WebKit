@@ -73,14 +73,14 @@ Color nativeImageSinglePixelSolidColor(const NativeImagePtr& image)
     return Color(pixel[0] * 255 / pixel[3], pixel[1] * 255 / pixel[3], pixel[2] * 255 / pixel[3], pixel[3]);
 }
 
-float subsamplingScale(GraphicsContext& context, const FloatRect& destRect, const FloatRect& srcRect)
+FloatSize nativeImageDrawingScale(GraphicsContext& context, const FloatRect& destRect, const FloatRect& srcRect)
 {
     // Never use subsampled images for drawing into PDF contexts.
     if (wkCGContextIsPDFContext(context.platformContext()))
-        return 1;
+        return { 1, 1 };
 
     CGRect transformedDestinationRect = CGRectApplyAffineTransform(destRect, CGContextGetCTM(context.platformContext()));
-    return std::min<float>(1, std::max(transformedDestinationRect.size.width / srcRect.width(), transformedDestinationRect.size.height / srcRect.height()));
+    return { static_cast<float>(transformedDestinationRect.size.width / srcRect.width()), static_cast<float>(transformedDestinationRect.size.height / srcRect.height()) };
 }
 
 void drawNativeImage(const NativeImagePtr& image, GraphicsContext& context, const FloatRect& destRect, const FloatRect& srcRect, const IntSize& srcSize, CompositeOperator op, BlendMode mode, const ImageOrientation& orientation)

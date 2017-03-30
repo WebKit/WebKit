@@ -79,6 +79,11 @@ bool Image::setData(RefPtr<SharedBuffer>&& data, bool allDataReceived)
     return dataChanged(allDataReceived);
 }
 
+String Image::sourceURL() const
+{
+    return imageObserver() ? imageObserver()->sourceUrl().string() : emptyString();
+}
+
 void Image::fillWithSolidColor(GraphicsContext& ctxt, const FloatRect& dstRect, const Color& color, CompositeOperator op)
 {
     if (!color.isVisible())
@@ -90,7 +95,7 @@ void Image::fillWithSolidColor(GraphicsContext& ctxt, const FloatRect& dstRect, 
     ctxt.setCompositeOperation(previousOperator);
 }
 
-void Image::drawTiled(GraphicsContext& ctxt, const FloatRect& destRect, const FloatPoint& srcPoint, const FloatSize& scaledTileSize, const FloatSize& spacing, CompositeOperator op, BlendMode blendMode)
+void Image::drawTiled(GraphicsContext& ctxt, const FloatRect& destRect, const FloatPoint& srcPoint, const FloatSize& scaledTileSize, const FloatSize& spacing, CompositeOperator op, BlendMode blendMode, DecodingMode decodingMode)
 {
     Color color = singlePixelSolidColor();
     if (color.isValid()) {
@@ -126,7 +131,7 @@ void Image::drawTiled(GraphicsContext& ctxt, const FloatRect& destRect, const Fl
         visibleSrcRect.setY((destRect.y() - oneTileRect.y()) / scale.height());
         visibleSrcRect.setWidth(destRect.width() / scale.width());
         visibleSrcRect.setHeight(destRect.height() / scale.height());
-        draw(ctxt, destRect, visibleSrcRect, op, blendMode, DecodingMode::Synchronous, ImageOrientationDescription());
+        draw(ctxt, destRect, visibleSrcRect, op, blendMode, decodingMode, ImageOrientationDescription());
         return;
     }
 
@@ -139,7 +144,7 @@ void Image::drawTiled(GraphicsContext& ctxt, const FloatRect& destRect, const Fl
             visibleSrcRect.setY((destRect.y() - oneTileRect.y()) / scale.height());
             visibleSrcRect.setWidth(1);
             visibleSrcRect.setHeight(destRect.height() / scale.height());
-            draw(ctxt, destRect, visibleSrcRect, op, BlendModeNormal, DecodingMode::Synchronous, ImageOrientationDescription());
+            draw(ctxt, destRect, visibleSrcRect, op, BlendModeNormal, decodingMode, ImageOrientationDescription());
             return;
         }
         if (size().height() == 1 && intersection(oneTileRect, destRect).width() == destRect.width()) {
@@ -148,7 +153,7 @@ void Image::drawTiled(GraphicsContext& ctxt, const FloatRect& destRect, const Fl
             visibleSrcRect.setY(0);
             visibleSrcRect.setWidth(destRect.width() / scale.width());
             visibleSrcRect.setHeight(1);
-            draw(ctxt, destRect, visibleSrcRect, op, BlendModeNormal, DecodingMode::Synchronous, ImageOrientationDescription());
+            draw(ctxt, destRect, visibleSrcRect, op, BlendModeNormal, decodingMode, ImageOrientationDescription());
             return;
         }
     }
@@ -180,7 +185,7 @@ void Image::drawTiled(GraphicsContext& ctxt, const FloatRect& destRect, const Fl
                 FloatRect fromRect(toFloatPoint(currentTileRect.location() - oneTileRect.location()), currentTileRect.size());
                 fromRect.scale(1 / scale.width(), 1 / scale.height());
 
-                draw(ctxt, toRect, fromRect, op, BlendModeNormal, DecodingMode::Synchronous, ImageOrientationDescription());
+                draw(ctxt, toRect, fromRect, op, BlendModeNormal, decodingMode, ImageOrientationDescription());
                 toX += currentTileRect.width();
                 currentTileRect.shiftXEdgeTo(oneTileRect.x());
             }

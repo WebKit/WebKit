@@ -742,7 +742,7 @@ void GraphicsContext::drawTiledImage(Image& image, const FloatRect& destination,
     }
 
     InterpolationQualityMaintainer interpolationQualityForThisScope(*this, imagePaintingOptions.m_interpolationQuality);
-    image.drawTiled(*this, destination, source, tileSize, spacing, imagePaintingOptions.m_compositeOperator, imagePaintingOptions.m_blendMode);
+    image.drawTiled(*this, destination, source, tileSize, spacing, imagePaintingOptions.m_compositeOperator, imagePaintingOptions.m_blendMode, imagePaintingOptions.m_decodingMode);
 }
 
 void GraphicsContext::drawTiledImage(Image& image, const FloatRect& destination, const FloatRect& source, const FloatSize& tileScaleFactor,

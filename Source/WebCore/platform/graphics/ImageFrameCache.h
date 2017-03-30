@@ -66,6 +66,7 @@ public:
 
     void growFrames();
     void clearMetadata();
+    String sourceURL() const;
     
     // Asynchronous image decoding
     void startAsyncDecodingQueue();

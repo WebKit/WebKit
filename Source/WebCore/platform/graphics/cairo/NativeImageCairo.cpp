@@ -56,9 +56,10 @@ Color nativeImageSinglePixelSolidColor(const NativeImagePtr& image)
     return colorFromPremultipliedARGB(*pixel);
 }
 
-float subsamplingScale(GraphicsContext&, const FloatRect&, const FloatRect&)
+FloatSize nativeImageDrawingScale(GraphicsContext& context, const FloatRect& destRect, const FloatRect& srcRect)
 {
-    return 1;
+    auto transformedDestinationRect = context.getCTM().mapRect(destRect);
+    return { static_cast<float>(transformedDestinationRect.width() / srcRect.width()), static_cast<float>(transformedDestinationRect.height() / srcRect.height()) };
 }
 
 void drawNativeImage(const NativeImagePtr& image, GraphicsContext& context, const FloatRect& destRect, const FloatRect& srcRect, const IntSize&, CompositeOperator op, BlendMode mode, const ImageOrientation& orientation)

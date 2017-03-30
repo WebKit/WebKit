@@ -28,6 +28,7 @@
 
 #include "Image.h"
 #include "ImageObserver.h"
+#include "Logging.h"
 #include <wtf/SystemTracing.h>
 
 #if USE(CG)
@@ -249,6 +250,7 @@ void ImageFrameCache::cacheAsyncFrameNativeImageAtIndex(NativeImagePtr&& nativeI
 
     // Clean the old native image and set a new one
     cacheFrameNativeImageAtIndex(WTFMove(nativeImage), index, subsamplingLevel, decodingOptions);
+    LOG(Images, "ImageFrameCache::%s - %p - url: %s [frame %ld has been cached]", __FUNCTION__, this, sourceURL().utf8().data(), index);
 
     // Notify the image with the readiness of the new frame NativeImage.
     if (m_image)
@@ -283,6 +285,10 @@ void ImageFrameCache::startAsyncDecodingQueue()
 
             // Get the frame NativeImage on the decoding thread.
             NativeImagePtr nativeImage = protectedDecoder->createFrameImageAtIndex(frameRequest.index, frameRequest.subsamplingLevel, frameRequest.decodingOptions);
+            if (nativeImage)
+                LOG(Images, "ImageFrameCache::%s - %p - url: %s [frame %ld has been decoded]", __FUNCTION__, this, sourceURL().utf8().data(), frameRequest.index);
+            else
+                LOG(Images, "ImageFrameCache::%s - %p - url: %s [decoding for frame %ld has failed]", __FUNCTION__, this, sourceURL().utf8().data(), frameRequest.index);
 
             // Update the cached frames on the main thread to avoid updating the MemoryCache from a different thread.
             callOnMainThread([this, protectedQueue = protectedQueue.copyRef(), nativeImage, frameRequest] () mutable {
@@ -291,7 +297,8 @@ void ImageFrameCache::startAsyncDecodingQueue()
                     ASSERT(m_frameCommitQueue.first() == frameRequest);
                     m_frameCommitQueue.removeFirst();
                     cacheAsyncFrameNativeImageAtIndex(WTFMove(nativeImage), frameRequest.index, frameRequest.subsamplingLevel, frameRequest.decodingOptions);
-                }
+                } else
+                    LOG(Images, "ImageFrameCache::%s - %p - url: %s [frame %ld will not cached]", __FUNCTION__, this, sourceURL().utf8().data(), frameRequest.index);
             });
         }
     });
@@ -316,6 +323,7 @@ bool ImageFrameCache::requestFrameAsyncDecodingAtIndex(size_t index, Subsampling
     if (!hasAsyncDecodingQueue())
         startAsyncDecodingQueue();
 
+    LOG(Images, "ImageFrameCache::%s - %p - url: %s [enqueuing frame %ld for decoding]", __FUNCTION__, this, sourceURL().utf8().data(), index);
     m_frameRequestQueue.enqueue({ index, subsamplingLevel, sizeForDrawing });
     m_frameCommitQueue.append({ index, subsamplingLevel, sizeForDrawing });
     return true;
@@ -333,13 +341,16 @@ void ImageFrameCache::stopAsyncDecodingQueue()
     
     std::for_each(m_frameCommitQueue.begin(), m_frameCommitQueue.end(), [this](const ImageFrameRequest& frameRequest) {
         ImageFrame& frame = m_frames[frameRequest.index];
-        if (!frame.isEmpty())
+        if (!frame.isEmpty()) {
+            LOG(Images, "ImageFrameCache::%s - %p - url: %s [decoding has been cancelled for frame %ld]", __FUNCTION__, this, sourceURL().utf8().data(), frameRequest.index);
             frame.clear();
+        }
     });
 
     m_frameRequestQueue.close();
     m_frameCommitQueue.clear();
     m_decodingQueue = nullptr;
+    LOG(Images, "ImageFrameCache::%s - %p - url: %s [decoding has been stopped]", __FUNCTION__, this, sourceURL().utf8().data());
 }
 
 const ImageFrame& ImageFrameCache::frameAtIndexCacheIfNeeded(size_t index, ImageFrame::Caching caching, const std::optional<SubsamplingLevel>& subsamplingLevel)
@@ -377,6 +388,11 @@ void ImageFrameCache::clearMetadata()
 {
     m_frameCount = std::nullopt;
     m_singlePixelSolidColor = std::nullopt;
+}
+
+String ImageFrameCache::sourceURL() const
+{
+    return m_image ? m_image->sourceURL() : emptyString();
 }
 
 template<typename T, T (ImageDecoder::*functor)() const>

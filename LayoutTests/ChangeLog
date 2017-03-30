@@ -1,3 +1,15 @@
+2017-03-30  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        REGRESSION (r213764): Background image from sprite sheet incorrectly scaled
+        https://bugs.webkit.org/show_bug.cgi?id=169547
+
+        Reviewed by Simon Fraser.
+
+        * fast/images/async-image-background-image.html:
+        * fast/images/resources/sprite-sheet-red-green-blue.png: Added.
+        * fast/images/sprite-sheet-image-draw-expected.html: Added.
+        * fast/images/sprite-sheet-image-draw.html: Added.
+
 2017-03-30  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Assertion failure in InspectorStyleProperty::setRawTextFromStyleDeclaration
