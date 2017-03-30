@@ -1,5 +1,12 @@
 2017-03-29  Keith Miller  <keith_miller@apple.com>
 
+        Unreviewed, fix the build, again. Hopefully for the last time!
+
+        * runtime/Options.cpp:
+        (JSC::parse):
+
+2017-03-29  Keith Miller  <keith_miller@apple.com>
+
         Unreviewed, windows build fix.
 
         * runtime/Options.cpp:

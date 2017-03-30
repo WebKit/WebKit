@@ -89,12 +89,15 @@ static bool parse(const char* string, unsigned& value)
     return sscanf(string, "%u", &value) == 1;
 }
 
-#if USE(JSVALUE64)
-static bool parse(const char* string, size_t& value)
+static bool parse(const char* string, unsigned long& value)
 {
     return sscanf(string, "%lu", &value);
 }
-#endif
+
+static bool parse(const char* string, unsigned long long& value)
+{
+    return sscanf(string, "%llu", &value);
+}
 
 static bool parse(const char* string, double& value)
 {
