@@ -1,5 +1,12 @@
 2017-03-29  Keith Miller  <keith_miller@apple.com>
 
+        Unreviewed, windows build fix.
+
+        * runtime/Options.cpp:
+        (JSC::parse):
+
+2017-03-29  Keith Miller  <keith_miller@apple.com>
+
         WebAssembly: B3IRGenerator should pool constants
         https://bugs.webkit.org/show_bug.cgi?id=170266
 
