@@ -82,56 +82,57 @@ WebInspector.WebSocketContentView = class WebSocketContentView extends WebInspec
     shown()
     {
         this._updateFrames();
-        this._updateState();
-
-        this._resource.addEventListener(WebInspector.WebSocketResource.Event.FrameAdded, this._updateFrames, this);
-        this._resource.addEventListener(WebInspector.WebSocketResource.Event.ReadyStateChanged, this._updateState, this);
+        this._resource.addEventListener(WebInspector.WebSocketResource.Event.FrameAdded, this._updateFramesSoon, this);
+        this._resource.addEventListener(WebInspector.WebSocketResource.Event.ReadyStateChanged, this._updateFramesSoon, this);
     }
 
     hidden()
     {
-        this._resource.removeEventListener(WebInspector.WebSocketResource.Event.FrameAdded, this._updateFrames, this);
-        this._resource.removeEventListener(WebInspector.WebSocketResource.Event.ReadyStateChanged, this._updateState, this);
-    }
-
-    addFrame(data, isOutgoing, opcode, time)
-    {
-        let nodeText;
-        if (opcode === WebInspector.WebSocketResource.OpCodes.TextFrame)
-            nodeText = data;
-        else
-            nodeText = WebInspector.WebSocketContentView.textForOpcode(opcode);
-
-        let attributes = {
-            isOutgoing,
-            isText: opcode === WebInspector.WebSocketResource.OpCodes.TextFrame,
-        };
-
-        this._addRow(nodeText, time, attributes);
+        this._resource.removeEventListener(WebInspector.WebSocketResource.Event.FrameAdded, this._updateFramesSoon, this);
+        this._resource.removeEventListener(WebInspector.WebSocketResource.Event.ReadyStateChanged, this._updateFramesSoon, this);
     }
 
     // Private
 
+    _updateFramesSoon()
+    {
+        this.onNextFrame._updateFrames();
+    }
+
     _updateFrames()
     {
+        let shouldScrollToBottom = this._dataGrid.isScrolledToLastRow();
+
         let framesLength = this._resource.frames.length;
         for (let index = this._framesRendered; index < framesLength; index++) {
             let frame = this._resource.frames[index];
             let {data, isOutgoing, opcode, walltime} = frame;
-            this.addFrame(data, isOutgoing, opcode, walltime);
+            this._addFrame(data, isOutgoing, opcode, walltime);
         }
+
         this._framesRendered = framesLength;
+
+        if (this._lastRenderedReadyState !== this._resource.readyState) {
+            if (this._resource.readyState === WebInspector.WebSocketResource.ReadyState.Closed)
+                this._dataGrid.appendChild(new WebInspector.SpanningDataGridNode(WebInspector.UIString("Connection Closed")));
+
+            this._lastRenderedReadyState = this._resource.readyState;
+        }
+
+        if (shouldScrollToBottom)
+            this._dataGrid.onNextFrame.scrollToLastRow();
     }
 
-    _updateState(event)
+    _addFrame(data, isOutgoing, opcode, time)
     {
-        if (this._lastRenderedReadyState === this._resource.readyState)
-            return;
+        let nodeText;
+        let isText = opcode === WebInspector.WebSocketResource.OpCodes.TextFrame;
+        if (isText)
+            nodeText = data;
+        else
+            nodeText = WebInspector.WebSocketContentView.textForOpcode(opcode);
 
-        if (this._resource.readyState === WebInspector.WebSocketResource.ReadyState.Closed)
-            this._dataGrid.appendChild(new WebInspector.SpanningDataGridNode(WebInspector.UIString("Connection Closed")));
-
-        this._lastRenderedReadyState = this._resource.readyState;
+        this._addRow(nodeText, time, {isOutgoing, isText});
     }
 
     _addRow(data, time, attributes = {})

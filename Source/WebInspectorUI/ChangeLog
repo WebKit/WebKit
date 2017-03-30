@@ -1,3 +1,28 @@
+2017-03-29  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: WebSockets: Messages log should remain being scrolled to the bottom when a new message is added
+        https://bugs.webkit.org/show_bug.cgi?id=170090
+
+        Reviewed by Matt Baker.
+
+        Adding many Web Socket messages quickly can create a performance bottleneck. Batch addition of DataGrid nodes
+        using requestAnimationFrame, and scroll to the bottom of the DataGrid at most once per a batch update.
+
+        * UserInterface/Views/WebSocketContentView.js:
+        (WebInspector.WebSocketContentView):
+        (WebInspector.WebSocketContentView.prototype.shown):
+        (WebInspector.WebSocketContentView.prototype.hidden):
+        (WebInspector.WebSocketContentView.prototype._updateFramesSoon):
+        Batch WebSocketContentView DOM modifications using requestAnimationFrame.
+
+        (WebInspector.WebSocketContentView.prototype._updateFrames):
+        (WebInspector.WebSocketContentView.prototype._addFrame):
+        (WebInspector.WebSocketContentView.prototype.addFrame): Deleted.
+        Make addFrame method private since it isn't used anywhere outside of this class.
+
+        (WebInspector.WebSocketContentView.prototype._updateState): Deleted.
+        Make _updateState a part of _updateFramesSoon.
+
 2017-03-29  Sam Brodkin  <isam@apple.com>
 
         Web Inspector: Network tab content view is blank after reload
