@@ -3,6 +3,18 @@
         Try to normalize variation ranges
         https://bugs.webkit.org/show_bug.cgi?id=170119
 
+        Unreviewed.
+
+        Addressing post-review comment.
+
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::isGXVariableFont):
+
+2017-03-29  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Try to normalize variation ranges
+        https://bugs.webkit.org/show_bug.cgi?id=170119
+
         Reviewed by Simon Fraser.
 
         TrueType GX-style variation fonts use one particular scale for values on their

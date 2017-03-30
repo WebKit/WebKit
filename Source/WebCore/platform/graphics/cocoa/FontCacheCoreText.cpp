@@ -441,7 +441,7 @@ static inline bool isGXVariableFont(CTFontRef font)
         // "The returned set will contain unboxed values, which can be extracted like so:"
         // "CTFontTableTag tag = (CTFontTableTag)(uintptr_t)CFArrayGetValueAtIndex(tags, index);"
         CTFontTableTag tableTag = static_cast<CTFontTableTag>(reinterpret_cast<uintptr_t>(CFArrayGetValueAtIndex(tables.get(), i)));
-        if (tableTag == 'stat')
+        if (tableTag == 'STAT')
             return false;
     }
     return true;
