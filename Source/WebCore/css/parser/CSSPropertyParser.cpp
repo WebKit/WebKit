@@ -2619,10 +2619,45 @@ static RefPtr<CSSValue> consumeShapeOutside(CSSParserTokenRange& range, const CS
     return list;
 }
 
+static bool isBaselineKeyword(CSSValueID id)
+{
+    return identMatches<CSSValueFirst, CSSValueLast, CSSValueBaseline>(id);
+}
+
+static RefPtr<CSSValue> consumeBaselineKeyword(CSSParserTokenRange& range)
+{
+    CSSValueID id = range.peek().id();
+    if (identMatches<CSSValueBaseline>(id))
+        return consumeIdent(range);
+
+    if (RefPtr<CSSPrimitiveValue> preference = consumeIdent<CSSValueFirst, CSSValueLast>(range)) {
+        if (range.peek().id() == CSSValueBaseline)
+            return createPrimitiveValuePair(preference.releaseNonNull(), consumeIdent(range), Pair::IdenticalValueEncoding::Coalesce);
+    }
+    return nullptr;
+}
+
+
 static RefPtr<CSSValue> consumeContentDistributionOverflowPosition(CSSParserTokenRange& range)
 {
-    if (identMatches<CSSValueNormal, CSSValueBaseline, CSSValueLastBaseline>(range.peek().id()))
+    CSSValueID id = range.peek().id();
+    if (identMatches<CSSValueNormal>(id))
         return CSSContentDistributionValue::create(CSSValueInvalid, range.consumeIncludingWhitespace().id(), CSSValueInvalid);
+
+    if (isBaselineKeyword(id)) {
+        RefPtr<CSSValue> baseline = consumeBaselineKeyword(range);
+        if (!baseline)
+            return nullptr;
+        CSSValueID baselineID = CSSValueBaseline;
+        auto& primitiveValue = downcast<CSSPrimitiveValue>(*baseline);
+        if (auto* pairValue = primitiveValue.pairValue()) {
+            if (pairValue->first()->valueID() == CSSValueLast)
+                baselineID = CSSValueLastBaseline;
+            else
+                baselineID = CSSValueFirstBaseline;
+        }
+        return CSSContentDistributionValue::create(CSSValueInvalid, baselineID, CSSValueInvalid);
+    }
 
     CSSValueID distribution = CSSValueInvalid;
     CSSValueID position = CSSValueInvalid;
@@ -3017,25 +3052,13 @@ static RefPtr<CSSPrimitiveValue> consumeSelfPositionKeyword(CSSParserTokenRange&
     return nullptr;
 }
 
-static RefPtr<CSSValue> consumeBaselineKeyword(CSSParserTokenRange& range)
-{
-    CSSValueID id = range.peek().id();
-    if (identMatches<CSSValueBaseline>(id))
-        return consumeIdent(range);
-
-    if (RefPtr<CSSPrimitiveValue> preference = consumeIdent<CSSValueFirst, CSSValueLast>(range)) {
-        if (range.peek().id() == CSSValueBaseline)
-            return createPrimitiveValuePair(preference.releaseNonNull(), consumeIdent(range), Pair::IdenticalValueEncoding::Coalesce);
-    }
-    return nullptr;
-}
-
 static RefPtr<CSSValue> consumeSelfPositionOverflowPosition(CSSParserTokenRange& range)
 {
-    if (identMatches<CSSValueAuto, CSSValueNormal, CSSValueStretch>(range.peek().id()))
+    CSSValueID id = range.peek().id();
+    if (identMatches<CSSValueAuto, CSSValueNormal, CSSValueStretch>(id))
         return consumeIdent(range);
 
-    if (identMatches<CSSValueFirst, CSSValueLast, CSSValueBaseline>(range.peek().id()))
+    if (isBaselineKeyword(id))
         return consumeBaselineKeyword(range);
 
     RefPtr<CSSPrimitiveValue> overflowPosition = consumeIdent<CSSValueUnsafe, CSSValueSafe>(range);

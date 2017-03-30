@@ -1,6 +1,4 @@
 <!DOCTYPE html>
-<html>
-<head>
 <style>
 #alignContentAuto {
     align-content: auto;
@@ -10,8 +8,12 @@
     align-content: baseline;
 }
 
+#alignContentFirstBaseline {
+    align-content: first baseline;
+}
+
 #alignContentLastBaseline {
-    align-content: last-baseline;
+    align-content: last baseline;
 }
 
 #alignContentSpaceBetween {
@@ -127,20 +129,15 @@
     align-content: center left;
 }
 </style>
-<script src="../resources/js-test.js"></script>
-</head>
-<body>
+<p>Test that setting and getting align-content works as expected</p>
 <div id="alignContentAuto"></div>
 <div id="alignContentBaseline"></div>
+<div id="alignContentFirstBaseline"></div>
 <div id="alignContentLastBaseline"></div>
 <div id="alignContentSpaceBetween"></div>
 <div id="alignContentSpaceAround"></div>
 <div id="alignContentSpaceEvenly"></div>
 <div id="alignContentStretch"></div>
-<div id="alignContentSpaceBetweenSafe"></div>
-<div id="alignContentSpaceAroundUnsafe"></div>
-<div id="alignContentStretchUnsafe"></div>
-<div id="alignContentStretchrue"></div>
 <div id="alignContentStart"></div>
 <div id="alignContentEnd"></div>
 <div id="alignContentCenter"></div>
@@ -167,195 +164,177 @@
 <div id="alignContentRightSafeUnsafe"></div>
 <div id="alignContentCenterLeft"></div>
 
-<script src="resources/alignment-parsing-utils.js"></script>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="resources/alignment-parsing-utils-th.js"></script>
 <script>
-description('Test that setting and getting align-content works as expected');
+test(function() {
+    var alignContentAuto = document.getElementById("alignContentAuto");
+    checkValues(alignContentAuto, "alignContent", "align-content", "", "normal");
+    var alignContentBaseline = document.getElementById("alignContentBaseline");
+    checkValues(alignContentBaseline, "alignContent", "align-content", "", "baseline");
+    var alignContentLastBaseline = document.getElementById("alignContentFirstBaseline");
+    checkValues(alignContentLastBaseline, "alignContent", "align-content", "", "baseline");
+    var alignContentLastBaseline = document.getElementById("alignContentLastBaseline");
+    checkValues(alignContentLastBaseline, "alignContent", "align-content", "", "last baseline");
+    var alignContentSpaceBetween = document.getElementById("alignContentSpaceBetween");
+    checkValues(alignContentSpaceBetween, "alignContent", "align-content", "", "space-between");
+    var alignContentSpaceAround = document.getElementById("alignContentSpaceAround");
+    checkValues(alignContentSpaceAround, "alignContent", "align-content", "", "space-around");
+    var alignContentSpaceEvenly = document.getElementById("alignContentSpaceEvenly");
+    checkValues(alignContentSpaceEvenly, "alignContent", "align-content", "", "space-evenly");
+    var alignContentStretch = document.getElementById("alignContentStretch");
+    checkValues(alignContentStretch, "alignContent", "align-content", "", "stretch");
+    var alignContentStart = document.getElementById("alignContentStart");
+    checkValues(alignContentStart, "alignContent", "align-content", "", "start");
+    var alignContentEnd = document.getElementById("alignContentEnd");
+    checkValues(alignContentEnd, "alignContent", "align-content", "", "end");
+    var alignContentCenter = document.getElementById("alignContentCenter");
+    checkValues(alignContentCenter, "alignContent", "align-content", "", "center");
+    var alignContentLeft = document.getElementById("alignContentLeft");
+    checkValues(alignContentLeft, "alignContent", "align-content", "", "left");
+    var alignContentRight = document.getElementById("alignContentRight");
+    checkValues(alignContentRight, "alignContent", "align-content", "", "right");
+    var alignContentFlexStart = document.getElementById("alignContentFlexStart");
+    checkValues(alignContentFlexStart, "alignContent", "align-content", "", "flex-start");
+    var alignContentFlexEnd = document.getElementById("alignContentFlexEnd");
+    checkValues(alignContentFlexEnd, "alignContent", "align-content", "", "flex-end");
+    var alignContentEndUnsafe = document.getElementById("alignContentEndUnsafe");
+    checkValues(alignContentEndUnsafe, "alignContent", "align-content", "", "end unsafe");
+    var alignContentCenterUnsafe = document.getElementById("alignContentCenterUnsafe");
+    checkValues(alignContentCenterUnsafe, "alignContent", "align-content", "", "center unsafe");
+    var alignContentRightSafe = document.getElementById("alignContentRightSafe");
+    checkValues(alignContentRightSafe, "alignContent", "align-content", "", "right safe");
+    var alignContentLeftUnsafe = document.getElementById("alignContentLeftUnsafe");
+    checkValues(alignContentLeftUnsafe, "alignContent", "align-content", "", "left unsafe");
+    var alignContentFlexStartUnsafe = document.getElementById("alignContentFlexStartUnsafe");
+    checkValues(alignContentFlexStartUnsafe, "alignContent", "align-content", "", "flex-start unsafe");
+    var alignContentFlexEndSafe = document.getElementById("alignContentFlexEndSafe");
+    checkValues(alignContentFlexEndSafe, "alignContent", "align-content", "", "flex-end safe");
+    var alignContentSpaceBetweenLeft = document.getElementById("alignContentSpaceBetweenLeft");
+    checkValues(alignContentSpaceBetweenLeft, "alignContent", "align-content", "", "space-between left");
+    var alignContentSpaceAroundCenter = document.getElementById("alignContentSpaceAroundCenter");
+    checkValues(alignContentSpaceAroundCenter, "alignContent", "align-content", "", "space-around center");
+    var alignContentSpaceEvenlyRight = document.getElementById("alignContentSpaceEvenlyRight");
+    checkValues(alignContentSpaceEvenlyRight, "alignContent", "align-content", "", "space-evenly right");
+    var alignContentStretchStartSafe = document.getElementById("alignContentStretchStartSafe");
+    checkValues(alignContentStretchStartSafe, "alignContent", "align-content", "", "stretch start safe");
+    var alignContentSpaceAroundEndUnsafe = document.getElementById("alignContentSpaceAroundEndUnsafe");
+    checkValues(alignContentSpaceAroundEndUnsafe, "alignContent", "align-content", "", "space-around end unsafe");
+    var alignContentSpaceEvenlyFlexStartSafe = document.getElementById("alignContentSpaceEvenlyFlexStartSafe");
+    checkValues(alignContentSpaceEvenlyFlexStartSafe, "alignContent", "align-content", "", "space-evenly flex-start safe");
+}, "Test getting align-content values previously set through CSS.");
 
-debug("Test getting align-content set through CSS");
-var alignContentAuto = document.getElementById("alignContentAuto");
-shouldBeEqualToString("getComputedStyle(alignContentAuto, '').getPropertyValue('align-content')", "normal");
+test(function() {
+    var alignContentSpaceBetweenSafe = document.getElementById("alignContentSpaceBetweenSafe");
+    checkValues(alignContentSpaceBetweenSafe, "alignContent", "align-content", "", "normal");
+    var alignContentSpaceBetweenStretch = document.getElementById("alignContentSpaceBetweenStretch");
+    checkValues(alignContentSpaceBetweenStretch, "alignContent", "align-content", "", "normal");
+    var alignContentSafe = document.getElementById("alignContentSafe");
+    checkValues(alignContentSafe, "alignContent", "align-content", "", "normal");
+    var alignContentRightSafeUnsafe = document.getElementById("alignContentRightSafeUnsafe");
+    checkValues(alignContentRightSafeUnsafe, "alignContent", "align-content", "", "normal");
+    var alignContentCenterLeft = document.getElementById("alignContentCenterLeft");
+    checkValues(alignContentCenterLeft, "alignContent", "align-content", "", "normal");
+}, "Test setting invalid values to align-content through CSS.");
 
-var alignContentBaseline = document.getElementById("alignContentBaseline");
-shouldBeEqualToString("getComputedStyle(alignContentBaseline, '').getPropertyValue('align-content')", "baseline");
+test(function() {
+    element = document.createElement("div");
+    document.body.appendChild(element);
+    checkValues(element, "alignContent", "align-content", "", "normal");
+}, "Test initial value of align-content through JS");
 
-var alignContentLastBaseline = document.getElementById("alignContentLastBaseline");
-shouldBeEqualToString("getComputedStyle(alignContentLastBaseline, '').getPropertyValue('align-content')", "last-baseline");
+test(function() {
+    element = document.createElement("div");
+    document.body.appendChild(element);
+    element.style.alignContent = "center";
+    checkValues(element, "alignContent", "align-content",  "center", "center");
 
-var alignContentSpaceBetween = document.getElementById("alignContentSpaceBetween");
-shouldBeEqualToString("getComputedStyle(alignContentSpaceBetween, '').getPropertyValue('align-content')", "space-between");
+    element.style.alignContent = "unsafe start";
+    checkValues(element, "alignContent", "align-content",  "start unsafe", "start unsafe");
 
-var alignContentSpaceAround = document.getElementById("alignContentSpaceAround");
-shouldBeEqualToString("getComputedStyle(alignContentSpaceAround, '').getPropertyValue('align-content')", "space-around");
+    element.style.alignContent = "flex-end safe";
+    checkValues(element, "alignContent", "align-content",  "flex-end safe", "flex-end safe");
 
-var alignContentSpaceEvenly = document.getElementById("alignContentSpaceEvenly");
-shouldBeEqualToString("getComputedStyle(alignContentSpaceEvenly, '').getPropertyValue('align-content')", "space-evenly");
+    element.style.alignContent = "space-between right safe";
+    checkValues(element, "alignContent", "align-content",  "space-between right safe", "space-between right safe");
 
-var alignContentStretch = document.getElementById("alignContentStretch");
-shouldBeEqualToString("getComputedStyle(alignContentStretch, '').getPropertyValue('align-content')", "stretch");
+    element.style.alignContent = "stretch center";
+    checkValues(element, "alignContent", "align-content",  "stretch center", "stretch center");
 
-var alignContentStart = document.getElementById("alignContentStart");
-shouldBeEqualToString("getComputedStyle(alignContentStart, '').getPropertyValue('align-content')", "start");
+    element.style.alignContent = "right unsafe";
+    checkValues(element, "alignContent", "align-content",  "right unsafe", "right unsafe");
 
-var alignContentEnd = document.getElementById("alignContentEnd");
-shouldBeEqualToString("getComputedStyle(alignContentEnd, '').getPropertyValue('align-content')", "end");
+    element.style.justifyContent = "first baseline";
+    checkValues(element, "justifyContent", "justify-content",  "first baseline", "baseline");
 
-var alignContentCenter = document.getElementById("alignContentCenter");
-shouldBeEqualToString("getComputedStyle(alignContentCenter, '').getPropertyValue('align-content')", "center");
+    element.style.justifyContent = "last baseline";
+    checkValues(element, "justifyContent", "justify-content",  "last baseline", "last baseline");
 
-var alignContentLeft = document.getElementById("alignContentLeft");
-shouldBeEqualToString("getComputedStyle(alignContentLeft, '').getPropertyValue('align-content')", "left");
+    element.style.alignContent = "normal";
+    checkValues(element, "alignContent", "align-content",  "normal", "normal");
 
-var alignContentRight = document.getElementById("alignContentRight");
-shouldBeEqualToString("getComputedStyle(alignContentRight, '').getPropertyValue('align-content')", "right");
+    element.style.display = "flex";
+    element.style.alignContent = "normal";
+    checkValues(element, "alignContent", "align-content",  "normal", "normal");
 
-var alignContentFlexStart = document.getElementById("alignContentFlexStart");
-shouldBeEqualToString("getComputedStyle(alignContentFlexStart, '').getPropertyValue('align-content')", "flex-start");
+    element.style.display = "grid";
+    element.style.alignContent = "normal";
+    checkValues(element, "alignContent", "align-content",  "normal", "normal");
 
-var alignContentFlexEnd = document.getElementById("alignContentFlexEnd");
-shouldBeEqualToString("getComputedStyle(alignContentFlexEnd, '').getPropertyValue('align-content')", "flex-end");
+    element.style.alignContent = "flex-end";
+    checkValues(element, "alignContent", "align-content",  "flex-end", "flex-end");
+}, "Test getting and setting align-content through JS");
 
-var alignContentEndUnsafe = document.getElementById("alignContentEndUnsafe");
-shouldBeEqualToString("getComputedStyle(alignContentEndUnsafe, '').getPropertyValue('align-content')", "end unsafe");
+test(function() {
+    element = document.createElement("div");
+    document.body.appendChild(element);
 
-var alignContentCenterUnsafe = document.getElementById("alignContentCenterUnsafe");
-shouldBeEqualToString("getComputedStyle(alignContentCenterUnsafe, '').getPropertyValue('align-content')", "center unsafe");
+    checkBadValues(element, "alignContent", "align-content",  "");
+    checkBadValues(element, "alignContent", "align-content",  "auto");
+    checkBadValues(element, "alignContent", "align-content",  "unsafe auto");
+    checkBadValues(element, "alignContent", "align-content",  "auto safe");
+    checkBadValues(element, "alignContent", "align-content",  "auto left");
+    checkBadValues(element, "alignContent", "align-content",  "baseline safe");
+    checkBadValues(element, "alignContent", "align-content",  "last-baseline center");
+    checkBadValues(element, "alignContent", "align-content",  "unsafe unsafe");
+    checkBadValues(element, "alignContent", "align-content",  "unsafe safe");
+    checkBadValues(element, "alignContent", "align-content",  "center start");
+    checkBadValues(element, "alignContent", "align-content",  "baseline safe");
+    checkBadValues(element, "alignContent", "align-content",  "unsafe baseline");
+    checkBadValues(element, "alignContent", "align-content",  "unsafe safe left");
+    checkBadValues(element, "alignContent", "align-content",  "unsafe left safe");
+    checkBadValues(element, "alignContent", "align-content",  "left safe unsafe safe");
+    checkBadValues(element, "alignContent", "align-content",  "start right space-between");
+    checkBadValues(element, "alignContent", "align-content",  "safe stretch");
+    checkBadValues(element, "alignContent", "align-content",  "normal space-between");
+    checkBadValues(element, "alignContent", "align-content",  "stretch normal");
+    checkBadValues(element, "alignContent", "align-content",  "normal safe");
+    checkBadValues(element, "alignContent", "align-content",  "space-around stretch");
+    checkBadValues(element, "alignContent", "align-content",  "end space-between start");
+    checkBadValues(element, "alignContent", "align-content",  "right safe left");
+    checkBadValues(element, "alignContent", "align-content",  "unsafe");
+    checkBadValues(element, "alignContent", "align-content",  "safe");
+}, "Test bad combinations of align-content");
 
-var alignContentRightSafe = document.getElementById("alignContentRightSafe");
-shouldBeEqualToString("getComputedStyle(alignContentRightSafe, '').getPropertyValue('align-content')", "right safe");
+test(function() {
+    element.style.display = "";
+    checkInitialValues(element, "alignContent", "align-content", "center", "normal");
+}, "Test the value 'initial'");
 
-var alignContentLeftUnsafe = document.getElementById("alignContentLeftUnsafe");
-shouldBeEqualToString("getComputedStyle(alignContentLeftUnsafe, '').getPropertyValue('align-content')", "left unsafe");
+test(function() {
+    element.style.display = "grid";
+    checkInitialValues(element, "alignContent", "align-content", "left safe", "normal");
+}, "Test the value 'initial' for grid containers");
 
-var alignContentFlexStartUnsafe = document.getElementById("alignContentFlexStartUnsafe");
-shouldBeEqualToString("getComputedStyle(alignContentFlexStartUnsafe, '').getPropertyValue('align-content')", "flex-start unsafe");
+test(function() {
+    element.style.display = "flex";
+    checkInitialValues(element, "alignContent", "align-content", "right unsafe", "normal");
+}, "Test the value 'initial' for flex containers");
 
-var alignContentFlexEndSafe = document.getElementById("alignContentFlexEndSafe");
-shouldBeEqualToString("getComputedStyle(alignContentFlexEndSafe, '').getPropertyValue('align-content')", "flex-end safe");
-
-var alignContentSpaceBetweenLeft = document.getElementById("alignContentSpaceBetweenLeft");
-shouldBeEqualToString("getComputedStyle(alignContentSpaceBetweenLeft, '').getPropertyValue('align-content')", "space-between left");
-
-var alignContentSpaceAroundCenter = document.getElementById("alignContentSpaceAroundCenter");
-shouldBeEqualToString("getComputedStyle(alignContentSpaceAroundCenter, '').getPropertyValue('align-content')", "space-around center");
-
-var alignContentSpaceEvenlyRight = document.getElementById("alignContentSpaceEvenlyRight");
-shouldBeEqualToString("getComputedStyle(alignContentSpaceEvenlyRight, '').getPropertyValue('align-content')", "space-evenly right");
-
-var alignContentStretchStartSafe = document.getElementById("alignContentStretchStartSafe");
-shouldBeEqualToString("getComputedStyle(alignContentStretchStartSafe, '').getPropertyValue('align-content')", "stretch start safe");
-
-var alignContentSpaceAroundEndUnsafe = document.getElementById("alignContentSpaceAroundEndUnsafe");
-shouldBeEqualToString("getComputedStyle(alignContentSpaceAroundEndUnsafe, '').getPropertyValue('align-content')", "space-around end unsafe");
-
-var alignContentSpaceEvenlyFlexStartSafe = document.getElementById("alignContentSpaceEvenlyFlexStartSafe");
-shouldBeEqualToString("getComputedStyle(alignContentSpaceEvenlyFlexStartSafe, '').getPropertyValue('align-content')", "space-evenly flex-start safe");
-
-var alignContentSpaceBetweenSafe = document.getElementById("alignContentSpaceBetweenSafe");
-shouldBeEqualToString("getComputedStyle(alignContentSpaceBetweenSafe, '').getPropertyValue('align-content')", "normal");
-
-var alignContentSpaceAroundUnsafe = document.getElementById("alignContentSpaceBetweenStretch");
-shouldBeEqualToString("getComputedStyle(alignContentSpaceBetweenStretch, '').getPropertyValue('align-content')", "normal");
-
-var alignContentSpaceAroundUnsafe = document.getElementById("alignContentSafe");
-shouldBeEqualToString("getComputedStyle(alignContentSafe, '').getPropertyValue('align-content')", "normal");
-
-var alignContentSpaceAroundUnsafe = document.getElementById("alignContentRightSafeUnsafe");
-shouldBeEqualToString("getComputedStyle(alignContentRightSafeUnsafe, '').getPropertyValue('align-content')", "normal");
-
-var alignContentSpaceAroundUnsafe = document.getElementById("alignContentCenterLeft");
-shouldBeEqualToString("getComputedStyle(alignContentCenterLeft, '').getPropertyValue('align-content')", "normal");
-
-debug("");
-debug("Test initial value of align-content through JS");
-element = document.createElement("div");
-document.body.appendChild(element);
-shouldBeEqualToString("getComputedStyle(element, '').getPropertyValue('align-content')", "normal");
-
-debug("");
-debug("Test getting and setting align-content through JS");
-element = document.createElement("div");
-document.body.appendChild(element);
-element.style.alignContent = "center";
-checkValues(element, "alignContent", "align-content",  "center", "center");
-
-element.style.alignContent = "unsafe start";
-checkValues(element, "alignContent", "align-content",  "start unsafe", "start unsafe");
-
-element.style.alignContent = "flex-end safe";
-checkValues(element, "alignContent", "align-content",  "flex-end safe", "flex-end safe");
-
-element.style.alignContent = "space-between right safe";
-checkValues(element, "alignContent", "align-content",  "space-between right safe", "space-between right safe");
-
-element.style.alignContent = "stretch center";
-checkValues(element, "alignContent", "align-content",  "stretch center", "stretch center");
-
-element.style.alignContent = "right unsafe";
-checkValues(element, "alignContent", "align-content",  "right unsafe", "right unsafe");
-
-element.style.alignContent = "normal";
-checkValues(element, "alignContent", "align-content",  "normal", "normal");
-
-element.style.display = "-webkit-flex";
-element.style.alignContent = "normal";
-checkValues(element, "alignContent", "align-content",  "normal", "normal");
-
-element.style.display = "grid";
-element.style.alignContent = "normal";
-checkValues(element, "alignContent", "align-content",  "normal", "normal");
-
-element.style.alignContent = "flex-end";
-checkValues(element, "alignContent", "align-content",  "flex-end", "flex-end");
-
-debug("");
-debug("Test bad combinations of align-content");
-element = document.createElement("div");
-document.body.appendChild(element);
-
-checkBadValues(element, "alignContent", "align-content",  "");
-checkBadValues(element, "alignContent", "align-content",  "auto");
-checkBadValues(element, "alignContent", "align-content",  "unsafe auto");
-checkBadValues(element, "alignContent", "align-content",  "auto safe");
-checkBadValues(element, "alignContent", "align-content",  "auto left");
-checkBadValues(element, "alignContent", "align-content",  "baseline safe");
-checkBadValues(element, "alignContent", "align-content",  "last baseline center");
-checkBadValues(element, "alignContent", "align-content",  "unsafe unsafe");
-checkBadValues(element, "alignContent", "align-content",  "unsafe safe");
-checkBadValues(element, "alignContent", "align-content",  "center start");
-checkBadValues(element, "alignContent", "align-content",  "baseline safe");
-checkBadValues(element, "alignContent", "align-content",  "unsafe baseline");
-checkBadValues(element, "alignContent", "align-content",  "unsafe safe left");
-checkBadValues(element, "alignContent", "align-content",  "unsafe left safe");
-checkBadValues(element, "alignContent", "align-content",  "left safe unsafe safe");
-checkBadValues(element, "alignContent", "align-content",  "start right space-between");
-checkBadValues(element, "alignContent", "align-content",  "safe stretch");
-checkBadValues(element, "alignContent", "align-content",  "space-around stretch");
-checkBadValues(element, "alignContent", "align-content",  "end space-between start");
-checkBadValues(element, "alignContent", "align-content",  "right safe left");
-checkBadValues(element, "alignContent", "align-content",  "unsafe");
-checkBadValues(element, "alignContent", "align-content",  "safe");
-
-debug("");
-debug("Test the value 'initial'");
-element.style.display = "";
-checkInitialValues(element, "alignContent", "align-content", "stretch center", "normal");
-
-debug("");
-debug("Test the value 'initial' for grid containers");
-element.style.display = "grid";
-checkInitialValues(element, "alignContent", "align-content", "space-between left", "normal");
-
-debug("");
-debug("Test the value 'initial' for flex containers");
-element.style.display = "-webkit-flex";
-checkInitialValues(element, "alignContent", "align-content", "right unsafe", "normal");
-
-debug("");
-debug("Test the value 'inherit'");
-checkInheritValues("alignContent", "align-content", "end");
-checkInheritValues("alignContent", "align-content", "left safe");
-checkInheritValues("alignContent", "align-content", "stretch center");
-
+test(function() {
+    checkInheritValues("alignContent", "align-content", "end");
+    checkInheritValues("alignContent", "align-content", "left safe");
+    checkInheritValues("alignContent", "align-content", "center unsafe");
+}, "Test the value 'inherit'");
 </script>
-</body>
-</html>

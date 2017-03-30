@@ -5024,6 +5024,8 @@ template<> inline CSSPrimitiveValue::operator ItemPosition() const
         return ItemPositionStretch;
     case CSSValueBaseline:
         return ItemPositionBaseline;
+    case CSSValueFirstBaseline:
+        return ItemPositionBaseline;
     case CSSValueLastBaseline:
         return ItemPositionLastBaseline;
     case CSSValueCenter:
@@ -5126,6 +5128,8 @@ template<> inline CSSPrimitiveValue::operator ContentPosition() const
     case CSSValueNormal:
         return ContentPositionNormal;
     case CSSValueBaseline:
+        return ContentPositionBaseline;
+    case CSSValueFirstBaseline:
         return ContentPositionBaseline;
     case CSSValueLastBaseline:
         return ContentPositionLastBaseline;

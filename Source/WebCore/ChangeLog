@@ -1,3 +1,40 @@
+2017-03-30  Javier Fernandez  <jfernandez@igalia.com>
+
+        [css-align] Adapt content-alignment properties to the new baseline syntax
+        https://bugs.webkit.org/show_bug.cgi?id=170262
+
+        Reviewed by David Hyatt.
+
+        The baseline-position syntax has changed recently, so we need to update
+        the CSS properties using the old syntax. This patch address only the
+        content-alignment (align-content and justify-content).
+
+        I used this patch to adapt the implementation of the parsing logic for
+        these properties to the new Blink's CSS Parsing Design.
+
+        The new baseline syntax is "[first | last ]? baseline" which implies
+        modifying the parsing and computed value logic.
+
+        There are several layout tests affected by this change, so I'll update
+        them accordingly.
+
+        No new tests, just added/modified some cases to the tests we
+        already have using the new baseline values.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::valueForContentPositionAndDistributionWithOverflowAlignment):
+        * css/CSSContentDistributionValue.cpp:
+        (WebCore::CSSContentDistributionValue::customCSSText):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::operator ItemPosition):
+        (WebCore::CSSPrimitiveValue::operator ContentPosition):
+        * css/CSSValueKeywords.in:
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::isBaselineKeyword):
+        (WebCore::consumeBaselineKeyword):
+        (WebCore::consumeContentDistributionOverflowPosition):
+        (WebCore::consumeSelfPositionOverflowPosition):
+
 2017-03-30  James Craig  <jcraig@apple.com>
 
         AX: Expose a new AXSubrole for explicit ARIA "group" role

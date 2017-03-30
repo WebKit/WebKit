@@ -2479,16 +2479,29 @@ static Ref<CSSValueList> valueForContentPositionAndDistributionWithOverflowAlign
 {
     auto& cssValuePool = CSSValuePool::singleton();
     auto result = CSSValueList::createSpaceSeparated();
+    // Handle content-distribution values
     if (data.distribution() != ContentDistributionDefault)
         result->append(cssValuePool.createValue(data.distribution()));
-    if (data.distribution() == ContentDistributionDefault || data.position() != ContentPositionNormal) {
-        bool gridEnabled = false;
-        gridEnabled = RuntimeEnabledFeatures::sharedFeatures().isCSSGridLayoutEnabled();
-        if (data.position() != ContentPositionNormal || gridEnabled)
-            result->append(cssValuePool.createValue(data.position()));
-        else
-            result->append(cssValuePool.createIdentifierValue(normalBehaviorValueID));
+
+    bool gridEnabled = false;
+    gridEnabled = RuntimeEnabledFeatures::sharedFeatures().isCSSGridLayoutEnabled();
+
+    // Handle content-position values (either as fallback or actual value)
+    switch (data.position()) {
+    case ContentPositionNormal:
+        // Handle 'normal' value, not valid as content-distribution fallback.
+        if (data.distribution() == ContentDistributionDefault)
+            result->append(cssValuePool.createIdentifierValue(gridEnabled ? CSSValueNormal : normalBehaviorValueID));
+        break;
+    case ContentPositionLastBaseline:
+        result->append(cssValuePool.createIdentifierValue(CSSValueLast));
+        result->append(cssValuePool.createIdentifierValue(CSSValueBaseline));
+        break;
+    default:
+        result->append(cssValuePool.createValue(data.position()));
     }
+
+    // Handle overflow-alignment (only allowed for content-position values)
     if ((data.position() >= ContentPositionCenter || data.distribution() != ContentDistributionDefault) && data.overflow() != OverflowAlignmentDefault)
         result->append(cssValuePool.createValue(data.overflow()));
     ASSERT(result->length() > 0);
