@@ -1719,6 +1719,24 @@ ExceptionOr<unsigned> Internals::touchEventHandlerCount()
     return document->touchEventHandlerCount();
 }
 
+ExceptionOr<Ref<ClientRectList>> Internals::touchEventRectsForEvent(const String& eventName)
+{
+    Document* document = contextDocument();
+    if (!document || !document->page())
+        return Exception { INVALID_ACCESS_ERR };
+
+    return document->page()->touchEventRectsForEvent(eventName);
+}
+
+ExceptionOr<Ref<ClientRectList>> Internals::passiveTouchEventListenerRects()
+{
+    Document* document = contextDocument();
+    if (!document || !document->page())
+        return Exception { INVALID_ACCESS_ERR };
+
+    return document->page()->passiveTouchEventListenerRects();
+}
+
 // FIXME: Remove the document argument. It is almost always the same as
 // contextDocument(), with the exception of a few tests that pass a
 // different document, and could just make the call through another Internals

@@ -1,3 +1,29 @@
+2017-03-28  Simon Fraser  <simon.fraser@apple.com>
+
+        Make it possible to dump touch event regions for testing
+        https://bugs.webkit.org/show_bug.cgi?id=170209
+        <rdar://problem/31309258>
+
+        Reviewed by Tim Horton.
+
+        Expose internals.touchEventRectsForEvent() and internals.passiveTouchEventListenerRects(), which
+        fetch data via Page.
+
+        Because the regions are normally updated on a timer, we have to force an eager update via Document::updateTouchEventRegions().
+
+        Test: fast/events/touch/ios/touch-event-regions.html
+
+        * page/Page.cpp:
+        (WebCore::Page::nonFastScrollableRects):
+        (WebCore::Page::touchEventRectsForEvent):
+        (WebCore::Page::passiveTouchEventListenerRects):
+        * page/Page.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::touchEventRectsForEvent):
+        (WebCore::Internals::passiveTouchEventListenerRects):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2017-03-29  Zalan Bujtas  <zalan@apple.com>
 
         RenderBlockFlow::addFloatsToNewParent should check if float is already added to the object list.

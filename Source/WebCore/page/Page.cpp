@@ -423,6 +423,49 @@ Ref<ClientRectList> Page::nonFastScrollableRects()
     return ClientRectList::create(quads);
 }
 
+Ref<ClientRectList> Page::touchEventRectsForEvent(const String& eventName)
+{
+    if (Document* document = m_mainFrame->document()) {
+        document->updateLayout();
+#if ENABLE(IOS_TOUCH_EVENTS)
+        document->updateTouchEventRegions();
+#endif
+    }
+
+    Vector<IntRect> rects;
+    if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator()) {
+        const EventTrackingRegions& eventTrackingRegions = scrollingCoordinator->absoluteEventTrackingRegions();
+        const auto& region = eventTrackingRegions.eventSpecificSynchronousDispatchRegions.get(eventName);
+        rects.appendVector(region.rects());
+    }
+
+    Vector<FloatQuad> quads(rects.size());
+    for (size_t i = 0; i < rects.size(); ++i)
+        quads[i] = FloatRect(rects[i]);
+
+    return ClientRectList::create(quads);
+}
+
+Ref<ClientRectList> Page::passiveTouchEventListenerRects()
+{
+    if (Document* document = m_mainFrame->document()) {
+        document->updateLayout();
+#if ENABLE(IOS_TOUCH_EVENTS)
+        document->updateTouchEventRegions();
+#endif  
+    }
+
+    Vector<IntRect> rects;
+    if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator())
+        rects.appendVector(scrollingCoordinator->absoluteEventTrackingRegions().asynchronousDispatchRegion.rects());
+
+    Vector<FloatQuad> quads(rects.size());
+    for (size_t i = 0; i < rects.size(); ++i)
+        quads[i] = FloatRect(rects[i]);
+
+    return ClientRectList::create(quads);
+}
+
 #if ENABLE(VIEW_MODE_CSS_MEDIA)
 struct ViewModeInfo {
     const char* name;

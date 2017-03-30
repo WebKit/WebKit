@@ -237,6 +237,9 @@ public:
     WEBCORE_EXPORT String synchronousScrollingReasonsAsText();
     WEBCORE_EXPORT Ref<ClientRectList> nonFastScrollableRects();
 
+    WEBCORE_EXPORT Ref<ClientRectList> touchEventRectsForEvent(const String& eventName);
+    WEBCORE_EXPORT Ref<ClientRectList> passiveTouchEventListenerRects();
+
     Settings& settings() const { return *m_settings; }
     ProgressTracker& progress() const { return *m_progress; }
     BackForwardController& backForward() const { return *m_backForwardController; }
