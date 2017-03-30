@@ -1,3 +1,13 @@
+2017-03-30  Eric Carlson  <eric.carlson@apple.com>
+
+        [Crash] WebCore::AudioBuffer::AudioBuffer don't checking illegal value
+        https://bugs.webkit.org/show_bug.cgi?id=169956
+
+        Reviewed by Youenn Fablet.
+
+        * webaudio/audiobuffer-crash-expected.txt: Added.
+        * webaudio/audiobuffer-crash.html: Added.
+
 2017-03-30  Simon Fraser  <simon.fraser@apple.com>
 
         Add some tests that dump the touch event regions with various content configurations
