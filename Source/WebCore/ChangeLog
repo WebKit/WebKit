@@ -1,3 +1,15 @@
+2017-03-30  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GCrypt] Register missing algorithms in CryptoAlgorithmRegistry::platformRegisterAlgoritmhs()
+        https://bugs.webkit.org/show_bug.cgi?id=170273
+
+        Reviewed by Michael Catanzaro.
+
+        * crypto/gcrypt/CryptoAlgorithmRegistryGCrypt.cpp:
+        (WebCore::CryptoAlgorithmRegistry::platformRegisterAlgorithms):
+        Add registerAlgorithm<> calls for AES_CFB, AES_GCM, ECDH and
+        PBKDF2 algorithms.
+
 2017-03-30  Brent Fulgham  <bfulgham@apple.com>
 
         Remove unused MediaControlsApple implementation
