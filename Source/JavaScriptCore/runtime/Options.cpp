@@ -89,6 +89,8 @@ static bool parse(const char* string, unsigned& value)
     return sscanf(string, "%u", &value) == 1;
 }
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-function"
 static bool parse(const char* string, unsigned long& value)
 {
     return sscanf(string, "%lu", &value);
@@ -98,6 +100,7 @@ static bool parse(const char* string, unsigned long long& value)
 {
     return sscanf(string, "%llu", &value);
 }
+#pragma GCC diagnostic pop
 
 static bool parse(const char* string, double& value)
 {
