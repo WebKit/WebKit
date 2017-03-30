@@ -2624,6 +2624,7 @@ set(WebCore_SOURCES
     rendering/style/ContentData.cpp
     rendering/style/CounterDirectives.cpp
     rendering/style/FillLayer.cpp
+    rendering/style/GridPosition.cpp
     rendering/style/GridPositionsResolver.cpp
     rendering/style/KeyframeList.cpp
     rendering/style/NinePieceImage.cpp

@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<title>Test for auto-fit and auto-fill with huge grids (lots of tracks)</title>
+<meta name="author" title="Sergio Villar Senin" href="mailto:svillar@igalia.com">
+<link href="resources/grid.css" rel="stylesheet">
+<link href="../css-intrinsic-dimensions/resources/width-keyword-classes.css" rel="stylesheet">
+<link href="../css-intrinsic-dimensions/resources/height-keyword-classes.css" rel="stylesheet">
+
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="resources/grid-definitions-parsing-utils.js"></script>
+<style>
+ .wideGrid { width: 1000000000px; }
+ .tallGrid { height: 1000000000px; }
+
+ .width25k { width: 25000px; }
+ .height25k { height: 25000px; }
+
+ .lastColumn { grid-column: -2 / -1; }
+ .lastRow { grid-row: -2 / -1; }
+
+ .minSizeWideGrid { min-width: 1000000000px; }
+ .minSizeTallGrid { min-height: 1000000000px; }
+
+ .lotsOfFixedRepeatWithAutoFitCols { grid-template-columns: repeat(auto-fit, 10px 2px 8px) repeat(992, 1px); }
+ .lotsOfFixedRepeatWithAutoFillCols { grid-template-columns: repeat(auto-fill, 10px 2px 8px 7px 20px) repeat(995, 1px); }
+
+ .lotsOfAutoRepeatWithAutoFitCols { grid-template-columns: repeat(auto-fit, 10px 2px 8px) repeat(10, 1px); }
+ .lotsOfAutoRepeatWithAutoFillCols { grid-template-columns: repeat(auto-fill, 10px 2px 8px 7px 20px) repeat(10, 1px); }
+
+ .lotsOfFixedRepeatWithAutoFitColsReversed { grid-template-columns:  repeat(992, 1px) repeat(auto-fit, 10px 2px 8px); }
+ .lotsOfFixedRepeatWithAutoFillColsReversed { grid-template-columns:  repeat(995, 1px) repeat(auto-fill, 10px 2px 8px 7px 20px); }
+
+ .lotsOfFixedRepeatWithAutoFitRows { grid-template-rows: repeat(auto-fit, 10px 2px 8px) repeat(992, 1px); }
+ .lotsOfFixedRepeatWithAutoFillRows { grid-template-rows: repeat(auto-fill, 10px 2px 8px 7px 20px) repeat(995, 1px); }
+
+ .lotsOfAutoRepeatWithAutoFitRows { grid-template-rows: repeat(auto-fit, 10px 2px 8px) repeat(10, 1px); }
+ .lotsOfAutoRepeatWithAutoFillRows { grid-template-rows: repeat(auto-fill, 10px 2px 8px 7px 20px) repeat(10, 1px); }
+
+ .lotsOfFixedRepeatWithAutoFitRowsReversed { grid-template-rows:  repeat(992, 1px) repeat(auto-fit, 10px 2px 8px); }
+ .lotsOfFixedRepeatWithAutoFillRowsReversed { grid-template-rows: repeat(995, 1px) repeat(auto-fill, 10px 2px 8px 7px 20px); }
+
+ .autoFitRows25px { grid-template-rows: repeat(auto-fit, 10px 2px 8px 5px); }
+ .autoFitCols25px { grid-template-columns: repeat(auto-fit, 10px 2px 8px 5px); }
+
+ .autoFillRows25px { grid-template-rows: repeat(auto-fill, 17px 8px); }
+ .autoFillCols25px { grid-template-columns: repeat(auto-fill, 2px 23px); }
+
+ .autoFitRows205pxFixed5px { grid-template-rows: repeat(900, 5px) repeat(auto-fit, 20px 50px 13px 50px 72px); }
+ .autoFitCols205pxFixed5px { grid-template-columns: repeat(900, 5px) repeat(auto-fit, 20px 50px 13px 50px 72px); }
+
+ .autoFillRows205pxFixed5px { grid-template-rows:  repeat(900, 5px) repeat(auto-fill, 200px 5px); }
+ .autoFillCols205pxFixed5px { grid-template-columns: repeat(900, 5px) repeat(auto-fill, 200px 5px); }
+
+ .autoFitAndAThousandFixedRows { grid-template-rows: repeat(auto-fit, 20px 50px 72px) repeat(1000, 37px); }
+ .autoFitAndAThousandFixedCols { grid-template-columns: repeat(auto-fit, 20px 50px 72px) repeat(1000, 37px); }
+
+ .autoFillAndAThousandFixedRows { grid-template-rows: repeat(auto-fill, 2px) repeat(1000, 37px); }
+ .autoFillAndAThousandFixedCols { grid-template-columns: repeat(auto-fill, 2px) repeat(1000, 37px); }
+
+ .autoFitAndMoreThanThousandFixedRows { grid-template-rows:  repeat(700, 7px) repeat(auto-fit, 11px 13px 125px) repeat(600, 6px); }
+ .autoFitAndMoreThanThousandFixedCols { grid-template-columns:  repeat(700, 7px) repeat(auto-fit, 11px 13px 125px) repeat(600, 6px); }
+
+ .autoFillAndMoreThanThousandFixedRows { grid-template-rows: repeat(700, 7px) repeat(auto-fill, 20px 50px 72px) repeat(600, 6px); }
+ .autoFillAndMoreThanThousandFixedCols { grid-template-columns: repeat(700, 7px) repeat(auto-fill, 20px 50px 72px) repeat(600, 6px); }
+</style>
+
+<p>This test checks that we properly enforce the maximum number of grid tracks in different situations.</p>
+
+<div id="autoFillGridCols" class="grid"></div>
+<div id="autoFitGridCols" class="grid">
+    <div style="grid-column: 1;"></div>
+    <div style="grid-column: 2;"></div>
+    <div class="lastColumn"></div>
+</div>
+
+<div id="autoFillGridRows" class="grid"></div>
+<div id="autoFitGridRows" class="grid">
+    <div style="grid-row: 1;"></div>
+    <div style="grid-row: 2;"></div>
+    <div class="lastRow"></div>
+</div>
+
+<script>
+var maxTracksForTesting = 1000;  // Keep this value in sync with the ones used in CSS definitions.
+var autoFillGridElementCols = document.getElementById("autoFillGridCols");
+var autoFitGridElementCols = document.getElementById("autoFitGridCols");
+var autoFillGridElementRows = document.getElementById("autoFillGridRows");
+var autoFitGridElementRows = document.getElementById("autoFitGridRows");
+if (window.internals)
+    window.internals.setGridMaxTracksLimit(maxTracksForTesting);
+
+function getTracksCheckingLength(gridElement, property, length, classNames) {
+    for (let className of classNames)
+        gridElement.classList.add(className);
+
+    var propertyValue = getComputedStyle(gridElement, '').getPropertyValue(property);
+    for (let className of classNames)
+        gridElement.classList.remove(className);
+
+    if (propertyValue == "") {
+        assert_equals(length, 0);
+        return [];
+    }
+
+    var tracks = propertyValue.split(' ');
+    assert_equals(tracks.length, length);
+    return tracks;
+}
+
+test(function() {
+    var autoFillGrid = getTracksCheckingLength(autoFillGridElementCols, "grid-template-columns", maxTracksForTesting, ["wideGrid", "lotsOfFixedRepeatWithAutoFillCols"]);
+    var autoFitGrid = getTracksCheckingLength(autoFitGridElementCols, "grid-template-columns", maxTracksForTesting, ["wideGrid", "lotsOfFixedRepeatWithAutoFitCols"]);
+    assert_equals(autoFitGrid[maxTracksForTesting - 1], "10px");
+    assert_equals(autoFitGrid[maxTracksForTesting - 2], "0px");
+    assert_equals(autoFitGrid[0], "10px");
+    assert_equals(autoFitGrid[1], "2px");
+
+    assert_equals(autoFillGrid[maxTracksForTesting - 1], "20px");
+    assert_equals(autoFillGrid[maxTracksForTesting - 2], "7px");
+    assert_equals(autoFillGrid[0], "10px");
+    assert_equals(autoFillGrid[1], "2px");
+}, "Test that we don't get more than kGridMaxTracks repetitions even on very wide grids (normal tracks clamped).");
+
+test(function() {
+    var autoFillGrid = getTracksCheckingLength(autoFillGridElementRows, "grid-template-rows", maxTracksForTesting, ["tallGrid", "lotsOfFixedRepeatWithAutoFillRows"]);
+    var autoFitGrid = getTracksCheckingLength(autoFitGridElementRows, "grid-template-rows", maxTracksForTesting, ["tallGrid", "lotsOfFixedRepeatWithAutoFitRows"]);
+    assert_equals(autoFitGrid[maxTracksForTesting - 1], "10px");
+    assert_equals(autoFitGrid[maxTracksForTesting - 2], "0px");
+    assert_equals(autoFitGrid[0], "10px");
+    assert_equals(autoFitGrid[1], "2px");
+
+    assert_equals(autoFillGrid[maxTracksForTesting - 1], "20px");
+    assert_equals(autoFillGrid[maxTracksForTesting - 2], "7px");
+    assert_equals(autoFillGrid[0], "10px");
+    assert_equals(autoFillGrid[1], "2px");
+}, "Test that we don't get more than kGridMaxTracks repetitions even on very tall grids (normal tracks clamped).");
+
+test(function() {
+    var autoFillGrid = getTracksCheckingLength(autoFillGridElementCols, "grid-template-columns", maxTracksForTesting, ["wideGrid", "lotsOfFixedRepeatWithAutoFillColsReversed"]);
+    var autoFitGrid = getTracksCheckingLength(autoFitGridElementCols, "grid-template-columns", maxTracksForTesting, ["wideGrid", "lotsOfFixedRepeatWithAutoFitColsReversed"]);
+
+    assert_equals(autoFitGrid[maxTracksForTesting - 1], "2px");
+    assert_equals(autoFitGrid[maxTracksForTesting - 2], "0px");
+    assert_equals(autoFitGrid[0], "1px");
+    assert_equals(autoFitGrid[1], "1px");
+
+    assert_equals(autoFillGrid[maxTracksForTesting - 1], "20px");
+    assert_equals(autoFillGrid[maxTracksForTesting - 2], "7px");
+    assert_equals(autoFillGrid[0], "1px");
+    assert_equals(autoFillGrid[1], "1px");
+}, "Test that we don't get more than kGridMaxTracks repetitions even on very wide grids (auto repeat tracks clamped).");
+
+test(function() {
+    var autoFillGrid = getTracksCheckingLength(autoFillGridElementRows, "grid-template-rows", maxTracksForTesting, ["tallGrid", "lotsOfFixedRepeatWithAutoFillRowsReversed"]);
+    var autoFitGrid = getTracksCheckingLength(autoFitGridElementRows, "grid-template-rows", maxTracksForTesting, ["tallGrid", "lotsOfFixedRepeatWithAutoFitRowsReversed"]);
+
+    assert_equals(autoFitGrid[maxTracksForTesting - 1], "2px");
+    assert_equals(autoFitGrid[maxTracksForTesting - 2], "0px");
+    assert_equals(autoFitGrid[0], "1px");
+    assert_equals(autoFitGrid[1], "1px");
+
+    assert_equals(autoFillGrid[maxTracksForTesting - 1], "20px");
+    assert_equals(autoFillGrid[maxTracksForTesting - 2], "7px");
+    assert_equals(autoFillGrid[0], "1px");
+    assert_equals(autoFillGrid[1], "1px");
+}, "Test that we don't get more than kGridMaxTracks repetitions even on very tall grids (auto repeat tracks clamped).");
+
+test(function() {
+    autoFillGridElementCols.style.gridGap = "100px";
+    autoFitGridElementCols.style.gridGap = "100px";
+
+    var autoFillGrid = getTracksCheckingLength(autoFillGridElementCols, "grid-template-columns", maxTracksForTesting, ["wideGrid", "lotsOfAutoRepeatWithAutoFillCols"]);
+    var autoFitGrid = getTracksCheckingLength(autoFitGridElementCols, "grid-template-columns", maxTracksForTesting, ["wideGrid", "lotsOfAutoRepeatWithAutoFitCols"]);
+
+    assert_equals(autoFitGrid[maxTracksForTesting - 1], "10px");
+    assert_equals(autoFitGrid[maxTracksForTesting - 2], "0px");
+    assert_equals(autoFillGrid[maxTracksForTesting - 1], "20px");
+    assert_equals(autoFillGrid[maxTracksForTesting - 2], "7px");
+
+    autoFillGridElementCols.style.gridGap = "1000000px";
+    autoFitGridElementCols.style.gridGap = "1000000px";
+
+    getTracksCheckingLength(autoFillGridElementCols, "grid-template-columns", 130, ["wideGrid", "lotsOfAutoRepeatWithAutoFillCols"]);
+    getTracksCheckingLength(autoFitGridElementCols, "grid-template-columns", 82, ["wideGrid", "lotsOfAutoRepeatWithAutoFitCols"]);
+
+    autoFillGridElementCols.style.gridGap = "0px";
+    autoFitGridElementCols.style.gridGap = "0px";
+}, "Test that we don't get more than kGridMaxTracks repetitions even on very wide grids with gaps.");
+
+test(function() {
+    autoFillGridElementRows.style.gridGap = "100px";
+    autoFitGridElementRows.style.gridGap = "100px";
+
+    var autoFillGrid = getTracksCheckingLength(autoFillGridElementRows, "grid-template-rows", maxTracksForTesting, ["tallGrid", "lotsOfAutoRepeatWithAutoFillRows"]);
+    var autoFitGrid = getTracksCheckingLength(autoFitGridElementRows, "grid-template-rows", maxTracksForTesting, ["tallGrid", "lotsOfAutoRepeatWithAutoFitRows"]);
+
+    assert_equals(autoFitGrid[maxTracksForTesting - 1], "10px");
+    assert_equals(autoFitGrid[maxTracksForTesting - 2], "0px");
+    assert_equals(autoFillGrid[maxTracksForTesting - 1], "20px");
+    assert_equals(autoFillGrid[maxTracksForTesting - 2], "7px");
+
+    autoFillGridElementRows.style.gridGap = "1000000px";
+    autoFitGridElementRows.style.gridGap = "1000000px";
+
+    getTracksCheckingLength(autoFillGridElementRows, "grid-template-rows", 130, ["tallGrid", "lotsOfAutoRepeatWithAutoFillRows"]);
+    getTracksCheckingLength(autoFitGridElementRows, "grid-template-rows", 82, ["tallGrid", "lotsOfAutoRepeatWithAutoFitRows"]);
+
+    autoFillGridElementRows.style.gridGap = "0px";
+    autoFitGridElementRows.style.gridGap = "0px";
+}, "Test that we don't get more than kGridMaxTracks repetitions even on very tall grids with gaps.");
+
+test(function() {
+    var autoFillCols = getTracksCheckingLength(autoFillGridElementCols, "grid-template-columns", maxTracksForTesting, ["lotsOfAutoRepeatWithAutoFillCols", "minSizeWideGrid", "min-content"]);
+    var autoFitCols = getTracksCheckingLength(autoFitGridElementCols, "grid-template-columns", maxTracksForTesting, ["lotsOfAutoRepeatWithAutoFitCols", "minSizeWideGrid", "min-content"]);
+
+    // Check that clamping auto repetitions does not reduce the amount of the other tracks.
+    assert_equals(autoFillCols[maxTracksForTesting - 1], "20px");
+    assert_equals(autoFillCols[maxTracksForTesting - 2], "7px");
+    assert_equals(autoFitCols[maxTracksForTesting - 1], "10px");
+    assert_equals(autoFitCols[maxTracksForTesting - 2], "0px");
+}, "Test that we don't get more than kGridMaxTracks repetitions even on very wide grids with gaps and min-width.");
+
+test(function() {
+    var autoFillRows = getTracksCheckingLength(autoFillGridElementRows, "grid-template-rows", maxTracksForTesting, ["lotsOfAutoRepeatWithAutoFillRows", "minSizeTallGrid", "min-content"]);
+    var autoFitRows = getTracksCheckingLength(autoFitGridElementRows, "grid-template-rows", maxTracksForTesting, ["lotsOfAutoRepeatWithAutoFitRows", "minSizeTallGrid", "min-content"]);
+
+    assert_equals(autoFillRows[maxTracksForTesting - 1], "20px");
+    assert_equals(autoFillRows[maxTracksForTesting - 2], "7px");
+    assert_equals(autoFitRows[maxTracksForTesting - 1], "10px");
+    assert_equals(autoFitRows[maxTracksForTesting - 2], "0px");
+}, "Test that we don't get more than kGridMaxTracks repetitions even on very tall grids with gaps and min-height.");
+
+test(function() {
+    var autoFillRows = getTracksCheckingLength(autoFillGridElementRows, "grid-template-rows", maxTracksForTesting, ["height25k", "autoFillRows25px"]);
+    var autoFitRows = getTracksCheckingLength(autoFitGridElementRows, "grid-template-rows", maxTracksForTesting, ["height25k", "autoFitRows25px"]);
+
+    assert_equals(autoFillRows[maxTracksForTesting - 1], "8px");
+    assert_equals(autoFillRows[maxTracksForTesting - 2], "17px");
+    assert_equals(autoFitRows[maxTracksForTesting - 1], "5px");
+    assert_equals(autoFitRows[maxTracksForTesting - 2], "0px");
+}, "Test that we don't crash when there are exactly kGridMaxTracks auto repeat rows on very tall grids.");
+
+test(function() {
+    var autoFillCols = getTracksCheckingLength(autoFillGridElementCols, "grid-template-columns", maxTracksForTesting, ["width25k", "autoFillCols25px"]);
+    var autoFitCols = getTracksCheckingLength(autoFitGridElementCols, "grid-template-columns", maxTracksForTesting, ["width25k", "autoFitCols25px"]);
+
+    assert_equals(autoFillCols[maxTracksForTesting - 1], "23px");
+    assert_equals(autoFillCols[maxTracksForTesting - 2], "2px");
+    assert_equals(autoFitCols[maxTracksForTesting - 1], "5px");
+    assert_equals(autoFitCols[maxTracksForTesting - 2], "0px");
+}, "Test that we don't crash when there are exactly kGridMaxTracks auto repeat columns on very wide grids.");
+
+test(function() {
+    var autoFillRows = getTracksCheckingLength(autoFillGridElementRows, "grid-template-rows", maxTracksForTesting, ["height25k", "autoFillRows205pxFixed5px"]);
+    var autoFitRows = getTracksCheckingLength(autoFitGridElementRows, "grid-template-rows", maxTracksForTesting, ["height25k", "autoFitRows205pxFixed5px"]);
+
+    assert_equals(autoFillRows[maxTracksForTesting - 1], "5px");
+    assert_equals(autoFillRows[maxTracksForTesting - 2], "200px");
+    assert_equals(autoFitRows[maxTracksForTesting - 1], "72px");
+    assert_equals(autoFitRows[maxTracksForTesting - 2], "0px");
+}, "Test that we don't crash when there are exactly kGridMaxTracks (normal and auto-repeat) rows on very tall grids.");
+
+test(function() {
+    var autoFillCols = getTracksCheckingLength(autoFillGridElementCols, "grid-template-columns", maxTracksForTesting, ["width25k", "autoFillCols205pxFixed5px"]);
+    var autoFitCols = getTracksCheckingLength(autoFitGridElementCols, "grid-template-columns", maxTracksForTesting, ["width25k", "autoFitCols205pxFixed5px"]);
+
+    assert_equals(autoFillCols[maxTracksForTesting - 1], "5px");
+    assert_equals(autoFillCols[maxTracksForTesting - 2], "200px");
+    assert_equals(autoFitCols[maxTracksForTesting - 1], "72px");
+    assert_equals(autoFitCols[maxTracksForTesting - 2], "0px");
+}, "Test that we don't crash when there are exactly kGridMaxTracks (normal and auto-repeat) columns on very wide grids.");
+
+test(function() {
+    var autoFillGrid = getTracksCheckingLength(autoFillGridElementRows, "grid-template-rows", maxTracksForTesting, ["height25k", "autoFillAndAThousandFixedRows"]);
+    var autoFitGrid = getTracksCheckingLength(autoFitGridElementRows, "grid-template-rows", maxTracksForTesting, ["height25k", "autoFitAndAThousandFixedRows"]);
+
+    assert_equals(autoFillGrid[maxTracksForTesting - 1], "37px");
+    assert_equals(autoFillGrid[0], "2px");
+    assert_equals(autoFitGrid[maxTracksForTesting - 1], "37px");
+    assert_equals(autoFitGrid[0], "20px");
+}, "Test that we don't crash when there are exactly kGridMaxTracks non auto-repeat rows on very tall grids.");
+
+test(function() {
+    var autoFillGrid = getTracksCheckingLength(autoFillGridElementCols, "grid-template-columns", maxTracksForTesting, ["width25k", "autoFillAndAThousandFixedCols"]);
+    var autoFitGrid = getTracksCheckingLength(autoFitGridElementCols, "grid-template-columns", maxTracksForTesting, ["width25k", "autoFitAndAThousandFixedCols"]);
+
+    assert_equals(autoFillGrid[maxTracksForTesting - 1], "37px");
+    assert_equals(autoFillGrid[0], "2px");
+    assert_equals(autoFitGrid[maxTracksForTesting - 1], "37px");
+    assert_equals(autoFitGrid[0], "20px");
+}, "Test that we don't crash when there are exactly kGridMaxTracks non auto-repeat columns on very wide grids.");
+
+test(function() {
+    var autoFillGrid = getTracksCheckingLength(autoFillGridElementRows, "grid-template-rows", maxTracksForTesting, ["tallGrid", "autoFillAndAThousandFixedRows"]);
+    var autoFitGrid = getTracksCheckingLength(autoFitGridElementRows, "grid-template-rows", maxTracksForTesting, ["tallGrid", "autoFitAndAThousandFixedRows"]);
+
+    assert_equals(autoFillGrid[maxTracksForTesting - 1], "2px");
+    assert_equals(autoFillGrid[0], "2px");
+    assert_equals(autoFitGrid[maxTracksForTesting - 1], "20px");
+    assert_equals(autoFitGrid[0], "20px");
+}, "Test that we don't crash when there are exactly kGridMaxTracks non auto-repeat rows on very tall grids with enough room for auto repetitions.");
+
+test(function() {
+    var autoFillGrid = getTracksCheckingLength(autoFillGridElementCols, "grid-template-columns", maxTracksForTesting, ["wideGrid", "autoFillAndAThousandFixedCols"]);
+    var autoFitGrid = getTracksCheckingLength(autoFitGridElementCols, "grid-template-columns", maxTracksForTesting, ["wideGrid", "autoFitAndAThousandFixedCols"]);
+
+    assert_equals(autoFillGrid[maxTracksForTesting - 1], "2px");
+    assert_equals(autoFillGrid[0], "2px");
+    assert_equals(autoFitGrid[maxTracksForTesting - 1], "20px");
+    assert_equals(autoFitGrid[0], "20px");
+}, "Test that we don't crash when there are exactly kGridMaxTracks non auto-repeat columns on very wide grids with enough room for auto repetitions.");
+
+test(function() {
+    var autoFillGrid = getTracksCheckingLength(autoFillGridElementRows, "grid-template-rows", maxTracksForTesting, ["height25k", "autoFillAndMoreThanThousandFixedRows"]);
+    var autoFitGrid = getTracksCheckingLength(autoFitGridElementRows, "grid-template-rows", maxTracksForTesting, ["height25k", "autoFitAndMoreThanThousandFixedRows"]);
+
+    assert_equals(autoFillGrid[maxTracksForTesting - 1], "72px");
+    assert_equals(autoFillGrid[0], "7px");
+    assert_equals(autoFitGrid[maxTracksForTesting - 1], "125px");
+    assert_equals(autoFitGrid[0], "7px");
+}, "Test that we don't crash when there are more than kGridMaxTracks non auto-repeat rows on very tall grids.");
+
+test(function() {
+    var autoFillGrid = getTracksCheckingLength(autoFillGridElementCols, "grid-template-columns", maxTracksForTesting, ["width25k", "autoFillAndMoreThanThousandFixedCols"]);
+    var autoFitGrid = getTracksCheckingLength(autoFitGridElementCols, "grid-template-columns", maxTracksForTesting, ["width25k", "autoFitAndMoreThanThousandFixedCols"]);
+
+    assert_equals(autoFillGrid[maxTracksForTesting - 1], "72px");
+    assert_equals(autoFillGrid[0], "7px");
+    assert_equals(autoFitGrid[maxTracksForTesting - 1], "125px");
+    assert_equals(autoFitGrid[0], "7px");
+}, "Test that we don't crash when there are more than kGridMaxTracks non auto-repeat columns on very wide grids.");
+
+</script>

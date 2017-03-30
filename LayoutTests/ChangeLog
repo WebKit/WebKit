@@ -1,3 +1,18 @@
+2017-03-27  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-grid] Clamp the number of autorepeat tracks
+        https://bugs.webkit.org/show_bug.cgi?id=170120
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Added a new test to check the clamping of grid tracks. It's mostly all JavaScript in order
+        to allow us to run several test cases over a small number of grids in a single file quite
+        fast. The other option was to statically (CSS) create several huge grids, something that
+        could potentially be very expensive in terms of memory and CPU leading to timeouts.
+
+        * fast/css-grid-layout/grid-auto-repeat-huge-grid-expected.txt: Added.
+        * fast/css-grid-layout/grid-auto-repeat-huge-grid.html: Added.
+
 2017-03-30  Antoine Quint  <graouts@apple.com>
 
         [mac-wk1] LayoutTest media/modern-media-controls/airplay-button/airplay-button.html is a flaky timeout

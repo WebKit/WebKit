@@ -3332,7 +3332,7 @@ static bool consumeGridTrackRepeatFunction(CSSParserTokenRange& range, CSSParser
         RefPtr<CSSPrimitiveValue> repetition = consumePositiveInteger(args);
         if (!repetition)
             return false;
-        repetitions = clampTo<size_t>(repetition->doubleValue(), 0, kGridMaxTracks);
+        repetitions = clampTo<size_t>(repetition->doubleValue(), 0, GridPosition::max());
         repeatedValues = CSSValueList::createSpaceSeparated();
     }
     if (!consumeCommaIncludingWhitespace(args))
@@ -3362,7 +3362,7 @@ static bool consumeGridTrackRepeatFunction(CSSParserTokenRange& range, CSSParser
         list.append(repeatedValues.releaseNonNull());
     else {
         // We clamp the repetitions to a multiple of the repeat() track list's size, while staying below the max grid size.
-        repetitions = std::min(repetitions, kGridMaxTracks / numberOfTracks);
+        repetitions = std::min(repetitions, GridPosition::max() / numberOfTracks);
         for (size_t i = 0; i < repetitions; ++i) {
             for (size_t j = 0; j < repeatedValues->length(); ++j)
                 list.append(*repeatedValues->itemWithoutBoundsCheck(j));

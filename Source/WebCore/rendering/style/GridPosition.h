@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2012 Google Inc. All rights reserved.
- * Copyright (C) 2013, 2014 Igalia S.L.
+ * Copyright (C) 2013-2017 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -35,9 +35,6 @@
 
 namespace WebCore {
 
-// Recommended maximum size for both explicit and implicit grids.
-const int kGridMaxTracks = 1000000;
-
 enum GridPositionType {
     AutoPosition,
     ExplicitPosition, // [ <integer> || <string> ]
@@ -67,68 +64,30 @@ public:
     bool isSpan() const { return m_type == SpanPosition; }
     bool isNamedGridArea() const { return m_type == NamedGridAreaPosition; }
 
-    void setExplicitPosition(int position, const String& namedGridLine)
-    {
-        m_type = ExplicitPosition;
-        setIntegerPosition(position);
-        m_namedGridLine = namedGridLine;
-    }
+    WEBCORE_EXPORT void setExplicitPosition(int position, const String& namedGridLine);
+    void setAutoPosition();
+    WEBCORE_EXPORT void setSpanPosition(int position, const String& namedGridLine);
+    void setNamedGridArea(const String&);
 
-    void setAutoPosition()
-    {
-        m_type = AutoPosition;
-        m_integerPosition = 0;
-    }
+    WEBCORE_EXPORT int integerPosition() const;
+    String namedGridLine() const;
+    WEBCORE_EXPORT int spanPosition() const;
 
-    // 'span' values cannot be negative, yet we reuse the <integer> position which can
-    // be. This means that we have to convert the span position to an integer, losing
-    // some precision here. It shouldn't be an issue in practice though.
-    void setSpanPosition(int position, const String& namedGridLine)
-    {
-        m_type = SpanPosition;
-        setIntegerPosition(position);
-        m_namedGridLine = namedGridLine;
-    }
+    bool operator==(const GridPosition& other) const;
 
-    void setNamedGridArea(const String& namedGridArea)
-    {
-        m_type = NamedGridAreaPosition;
-        m_namedGridLine = namedGridArea;
-    }
+    bool shouldBeResolvedAgainstOppositePosition() const { return isAuto() || isSpan(); }
 
-    int integerPosition() const
-    {
-        ASSERT(type() == ExplicitPosition);
-        return m_integerPosition;
-    }
+    // Note that grid line 1 is internally represented by the index 0, that's why the max value for
+    // a position is kGridMaxTracks instead of kGridMaxTracks + 1.
+    static int max();
+    static int min();
 
-    String namedGridLine() const
-    {
-        ASSERT(type() == ExplicitPosition || type() == SpanPosition || type() == NamedGridAreaPosition);
-        return m_namedGridLine;
-    }
-
-    int spanPosition() const
-    {
-        ASSERT(type() == SpanPosition);
-        return m_integerPosition;
-    }
-
-    bool operator==(const GridPosition& other) const
-    {
-        return m_type == other.m_type && m_integerPosition == other.m_integerPosition && m_namedGridLine == other.m_namedGridLine;
-    }
-
-    bool shouldBeResolvedAgainstOppositePosition() const
-    {
-        return isAuto() || isSpan();
-    }
+    WEBCORE_EXPORT static void setMaxPositionForTesting(unsigned);
 
 private:
-    void setIntegerPosition(int integerPosition)
-    {
-        m_integerPosition = clampTo(integerPosition, -kGridMaxTracks, kGridMaxTracks);
-    }
+    static std::optional<int> gMaxPositionForTesting;
+
+    void setIntegerPosition(int integerPosition) { m_integerPosition = clampTo(integerPosition, min(), max()); }
 
     GridPositionType m_type;
     int m_integerPosition;

@@ -250,6 +250,8 @@ enum EventThrottlingBehavior {
     boolean isImageAnimating(HTMLImageElement element);
     void setClearDecoderAfterAsyncFrameRequestForTesting(HTMLImageElement element, boolean value);
 
+    void setGridMaxTracksLimit(unsigned long maxTracksLimit);
+
     readonly attribute InternalSettings settings;
     readonly attribute unsigned long workerThreadCount;
 

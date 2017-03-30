@@ -45,6 +45,8 @@ unsigned Grid::numTracks(GridTrackSizingDirection direction) const
 
 void Grid::ensureGridSize(unsigned maximumRowSize, unsigned maximumColumnSize)
 {
+    ASSERT(static_cast<int>(maximumRowSize) < GridPosition::max() * 2);
+    ASSERT(static_cast<int>(maximumColumnSize) < GridPosition::max() * 2);
     const size_t oldColumnSize = numTracks(ForColumns);
     const size_t oldRowSize = numTracks(ForRows);
     if (maximumRowSize > oldRowSize) {
@@ -74,6 +76,8 @@ void Grid::insert(RenderBox& child, const GridArea& area)
 
 void Grid::setSmallestTracksStart(int rowStart, int columnStart)
 {
+    ASSERT(rowStart > GridPosition::min() && rowStart < GridPosition::max() - 1);
+    ASSERT(columnStart > GridPosition::min() && columnStart < GridPosition::max() - 1);
     m_smallestRowStart = rowStart;
     m_smallestColumnStart = columnStart;
 }
@@ -96,6 +100,8 @@ void Grid::setGridItemArea(const RenderBox& item, GridArea area)
 
 void Grid::setAutoRepeatTracks(unsigned autoRepeatRows, unsigned autoRepeatColumns)
 {
+    ASSERT(static_cast<unsigned>(GridPosition::max()) >= numTracks(ForRows) + autoRepeatRows);
+    ASSERT(static_cast<unsigned>(GridPosition::max()) >= numTracks(ForColumns) + autoRepeatColumns);
     m_autoRepeatRows = autoRepeatRows;
     m_autoRepeatColumns =  autoRepeatColumns;
 }
@@ -107,11 +113,13 @@ unsigned Grid::autoRepeatTracks(GridTrackSizingDirection direction) const
 
 void Grid::setAutoRepeatEmptyColumns(std::unique_ptr<OrderedTrackIndexSet> autoRepeatEmptyColumns)
 {
+    ASSERT(!autoRepeatEmptyColumns || (autoRepeatEmptyColumns->size() <= m_autoRepeatColumns));
     m_autoRepeatEmptyColumns = WTFMove(autoRepeatEmptyColumns);
 }
 
 void Grid::setAutoRepeatEmptyRows(std::unique_ptr<OrderedTrackIndexSet> autoRepeatEmptyRows)
 {
+    ASSERT(!autoRepeatEmptyRows || (autoRepeatEmptyRows->size() <= m_autoRepeatRows));
     m_autoRepeatEmptyRows = WTFMove(autoRepeatEmptyRows);
 }
 

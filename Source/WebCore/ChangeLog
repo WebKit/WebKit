@@ -1,3 +1,73 @@
+2017-03-27  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-grid] Clamp the number of autorepeat tracks
+        https://bugs.webkit.org/show_bug.cgi?id=170120
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        As suggested by the specs we do clamp the maximum number of tracks per grid in order to
+        minimize potential OOM situations. However we were not considering the case of the recently
+        added auto repeat syntax. Abnormally huge values for the width/height on the grid container
+        could lead to a number of auto repeat tracks higher than the maximum.
+
+        A new API was added to Internals in order to test limits without having to create huge
+        grids. This new API allows clients to set an arbitrary limit to the number of tracks. The
+        addition of this new API forced us to add GridPosition.cpp to the project to define the
+        global variable we use for testing. We took the chance to move part of the implementation
+        from the header file to the source file.
+
+        Last but not least, several new ASSERTs were added to Grid.cpp implementation to ensure that
+        we do not surpass the grid track limits.
+
+        Test: fast/css-grid-layout/grid-auto-repeat-huge-grid.html
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeGridTrackRepeatFunction):
+        * rendering/Grid.cpp:
+        (WebCore::Grid::ensureGridSize): Added ASSERT.
+        (WebCore::Grid::setSmallestTracksStart): Ditto.
+        (WebCore::Grid::setAutoRepeatTracks): Ditto.
+        (WebCore::Grid::setAutoRepeatEmptyColumns): Ditto.
+        (WebCore::Grid::setAutoRepeatEmptyRows): Ditto.
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::clampAutoRepeatTracks): New method.
+        (WebCore::RenderGrid::placeItemsOnGrid): Clamp the number of auto repeat tracks before
+        passing them to the Grid.
+        * rendering/RenderGrid.h:
+        * rendering/style/GridArea.h:
+        (WebCore::GridSpan::GridSpan):
+        * rendering/style/GridPosition.cpp: Added.
+        (WebCore::GridPosition::setExplicitPosition):
+        (WebCore::GridPosition::setAutoPosition):
+        (WebCore::GridPosition::setSpanPosition):
+        (WebCore::GridPosition::setNamedGridArea):
+        (WebCore::GridPosition::integerPosition):
+        (WebCore::GridPosition::namedGridLine):
+        (WebCore::GridPosition::spanPosition):
+        (WebCore::GridPosition::operator==):
+        * rendering/style/GridPosition.h:
+        (WebCore::GridPosition::shouldBeResolvedAgainstOppositePosition):
+        (WebCore::GridPosition::max):
+        (WebCore::GridPosition::min):
+        (WebCore::GridPosition::setMaxPositionForTesting):
+        (WebCore::GridPosition::setExplicitPosition): Deleted.
+        (WebCore::GridPosition::setAutoPosition): Deleted.
+        (WebCore::GridPosition::setSpanPosition): Deleted.
+        (WebCore::GridPosition::setNamedGridArea): Deleted.
+        (WebCore::GridPosition::integerPosition): Deleted.
+        (WebCore::GridPosition::namedGridLine): Deleted.
+        (WebCore::GridPosition::spanPosition): Deleted.
+        (WebCore::GridPosition::operator==): Deleted.
+        * rendering/style/GridPositionsResolver.cpp:
+        (WebCore::GridPositionsResolver::explicitGridColumnCount):
+        (WebCore::GridPositionsResolver::explicitGridRowCount):
+        * testing/Internals.cpp:
+        (WebCore::Internals::setGridMaxTracksLimit):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2017-03-29  Ryosuke Niwa  <rniwa@webkit.org>
 
         Disconnecting a HTMLObjectElement does not always unload its content document

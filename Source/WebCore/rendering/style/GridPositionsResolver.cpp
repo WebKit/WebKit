@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Igalia S.L.
+ * Copyright (C) 2014-2017 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -187,12 +187,12 @@ static void adjustGridPositionsFromStyle(const RenderStyle& gridContainerStyle, 
 
 unsigned GridPositionsResolver::explicitGridColumnCount(const RenderStyle& gridContainerStyle, unsigned autoRepeatTracksCount)
 {
-    return std::min<unsigned>(std::max(gridContainerStyle.gridColumns().size() + autoRepeatTracksCount, gridContainerStyle.namedGridAreaColumnCount()), kGridMaxTracks);
+    return std::min<unsigned>(std::max(gridContainerStyle.gridColumns().size() + autoRepeatTracksCount, gridContainerStyle.namedGridAreaColumnCount()), GridPosition::max());
 }
 
 unsigned GridPositionsResolver::explicitGridRowCount(const RenderStyle& gridContainerStyle, unsigned autoRepeatTracksCount)
 {
-    return std::min<unsigned>(std::max(gridContainerStyle.gridRows().size() + autoRepeatTracksCount, gridContainerStyle.namedGridAreaRowCount()), kGridMaxTracks);
+    return std::min<unsigned>(std::max(gridContainerStyle.gridRows().size() + autoRepeatTracksCount, gridContainerStyle.namedGridAreaRowCount()), GridPosition::max());
 }
 
 static unsigned explicitGridSizeForSide(const RenderStyle& gridContainerStyle, GridPositionSide side, unsigned autoRepeatTracksCount)

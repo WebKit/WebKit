@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011 Apple Inc. All rights reserved.
- * Copyright (C) 2013, 2014 Igalia S.L.
+ * Copyright (C) 2013-2017 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -63,7 +63,7 @@ public:
     // Required by GridTrackSizingAlgorithm. Keep them under control.
     bool isOrthogonalChild(const RenderBox&) const;
     LayoutUnit guttersSize(const Grid&, GridTrackSizingDirection, unsigned startLine, unsigned span, SizingOperation) const;
-    
+
 protected:
     ItemPosition selfAlignmentNormalBehavior(const RenderBox* child = nullptr) const override
     {
@@ -85,6 +85,8 @@ private:
     std::optional<LayoutUnit> computeIntrinsicLogicalContentHeightUsing(Length logicalHeightLength, std::optional<LayoutUnit> intrinsicContentHeight, LayoutUnit borderAndPadding) const override;
 
     unsigned computeAutoRepeatTracksCount(GridTrackSizingDirection, SizingOperation) const;
+
+    unsigned clampAutoRepeatTracks(GridTrackSizingDirection, unsigned autoRepeatTracks) const;
 
     std::unique_ptr<OrderedTrackIndexSet> computeEmptyTracksForAutoRepeat(Grid&, GridTrackSizingDirection) const;
 

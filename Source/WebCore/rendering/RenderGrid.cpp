@@ -535,10 +535,31 @@ std::unique_ptr<OrderedTrackIndexSet> RenderGrid::computeEmptyTracksForAutoRepea
     return emptyTrackIndexes;
 }
 
+unsigned RenderGrid::clampAutoRepeatTracks(GridTrackSizingDirection direction, unsigned autoRepeatTracks) const
+{
+    if (!autoRepeatTracks)
+        return 0;
+
+    unsigned insertionPoint = direction == ForColumns ? style().gridAutoRepeatColumnsInsertionPoint() : style().gridAutoRepeatRowsInsertionPoint();
+    unsigned maxTracks = static_cast<unsigned>(GridPosition::max());
+
+    if (!insertionPoint)
+        return std::min(autoRepeatTracks, maxTracks);
+
+    if (insertionPoint >= maxTracks)
+        return 0;
+
+    return std::min(autoRepeatTracks, maxTracks - insertionPoint);
+}
+
 void RenderGrid::placeItemsOnGrid(Grid& grid, SizingOperation sizingOperation) const
 {
     unsigned autoRepeatColumns = computeAutoRepeatTracksCount(ForColumns, sizingOperation);
     unsigned autoRepeatRows = computeAutoRepeatTracksCount(ForRows, sizingOperation);
+
+    autoRepeatRows = clampAutoRepeatTracks(ForRows, autoRepeatRows);
+    autoRepeatColumns = clampAutoRepeatTracks(ForColumns, autoRepeatColumns);
+
     if (autoRepeatColumns != grid.autoRepeatTracks(ForColumns) || autoRepeatRows != grid.autoRepeatTracks(ForRows)) {
         grid.setNeedsItemsPlacement(true);
         grid.setAutoRepeatTracks(autoRepeatRows, autoRepeatColumns);

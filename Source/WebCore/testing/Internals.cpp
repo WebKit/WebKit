@@ -62,6 +62,7 @@
 #include "FrameLoader.h"
 #include "FrameView.h"
 #include "GCObservation.h"
+#include "GridPosition.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLIFrameElement.h"
 #include "HTMLImageElement.h"
@@ -768,6 +769,11 @@ void Internals::setClearDecoderAfterAsyncFrameRequestForTesting(HTMLImageElement
         return;
 
     downcast<BitmapImage>(*image).setClearDecoderAfterAsyncFrameRequestForTesting(value);
+}
+
+void Internals::setGridMaxTracksLimit(unsigned maxTrackLimit)
+{
+    GridPosition::setMaxPositionForTesting(maxTrackLimit);
 }
 
 void Internals::clearPageCache()

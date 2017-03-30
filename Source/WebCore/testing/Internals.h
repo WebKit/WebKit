@@ -118,6 +118,8 @@ public:
     bool isImageAnimating(HTMLImageElement&);
     void setClearDecoderAfterAsyncFrameRequestForTesting(HTMLImageElement&, bool);
 
+    void setGridMaxTracksLimit(unsigned);
+
     void clearPageCache();
     unsigned pageCacheSize() const;
 
