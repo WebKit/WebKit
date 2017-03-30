@@ -85,6 +85,7 @@ CFBitVectorRef CTFontCopyGlyphCoverageForFeature(CTFontRef, CFDictionaryRef feat
 CTFontDescriptorRef CTFontDescriptorCreateWithAttributesAndOptions(CFDictionaryRef attributes, CTFontDescriptorOptions);
 
 extern const CFStringRef kCTFontCSSWeightAttribute;
+extern const CFStringRef kCTFontCSSWidthAttribute;
 extern const CFStringRef kCTFontDescriptorTextStyleAttribute;
 extern const CFStringRef kCTFontUIFontDesignTrait;
 

@@ -36,6 +36,7 @@
 #include <wtf/NeverDestroyed.h>
 
 #define SHOULD_USE_CORE_TEXT_FONT_LOOKUP (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101200)
+#define HAS_CORE_TEXT_WIDTH_ATTRIBUTE ((PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000))
 
 namespace WebCore {
 
@@ -419,8 +420,7 @@ static VariationDefaultsMap defaultVariationValues(CTFontRef font)
     }
     return result;
 }
-#endif
-#if ENABLE(VARIATION_FONTS)
+
 static inline bool fontIsSystemFont(CTFontRef font)
 {
     if (CTFontDescriptorIsSystemUIFont(adoptCF(CTFontCopyFontDescriptor(font)).get()))
@@ -477,12 +477,14 @@ static inline float denormalizeSlope(float value)
 }
 #endif
 
+#if !HAS_CORE_TEXT_WIDTH_ATTRIBUTE || ENABLE(VARIATION_FONTS)
 static inline float normalizeWidth(float value)
 {
     if (value < 0.5)
         return value * 50 + 100;
     return value * 150 + 50;
 }
+#endif
 
 RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, TextRenderingMode textRenderingMode, const FontFeatureSettings* fontFaceFeatures, const FontVariantSettings* fontFaceVariantSettings, const FontFeatureSettings& features, const FontVariantSettings& variantSettings, FontSelectionRequest fontSelectionRequest, const FontVariationSettings& variations, FontOpticalSizing fontOpticalSizing, float size)
 {
@@ -664,6 +666,7 @@ RefPtr<Font> FontCache::similarFont(const FontDescription& description, const At
     return nullptr;
 }
 
+#if !HAS_CORE_TEXT_WIDTH_ATTRIBUTE
 static float stretchFromCoreTextTraits(CFDictionaryRef traits)
 {
     auto widthNumber = static_cast<CFNumberRef>(CFDictionaryGetValue(traits, kCTFontWidthTrait));
@@ -675,6 +678,7 @@ static float stretchFromCoreTextTraits(CFDictionaryRef traits)
     ASSERT_UNUSED(success, success);
     return normalizeWidth(ctWidth);
 }
+#endif
 
 static void invalidateFontCache();
 
@@ -971,6 +975,19 @@ static VariationCapabilities variationCapabilitiesForFontDescriptor(CTFontDescri
     return result;
 }
 
+#if !SHOULD_USE_CORE_TEXT_FONT_LOOKUP || HAS_CORE_TEXT_WIDTH_ATTRIBUTE
+static float getCSSAttribute(CTFontDescriptorRef fontDescriptor, const CFStringRef attribute, float fallback)
+{
+    auto number = adoptCF(static_cast<CFNumberRef>(CTFontDescriptorCopyAttribute(fontDescriptor, attribute)));
+    if (!number)
+        return fallback;
+    float cssValue;
+    auto success = CFNumberGetValue(number.get(), kCFNumberFloatType, &cssValue);
+    ASSERT_UNUSED(success, success);
+    return cssValue;
+}
+#endif
+
 FontSelectionCapabilities capabilitiesForFontDescriptor(CTFontDescriptorRef fontDescriptor)
 {
     if (!fontDescriptor)
@@ -978,19 +995,21 @@ FontSelectionCapabilities capabilitiesForFontDescriptor(CTFontDescriptorRef font
 
     VariationCapabilities variationCapabilities = variationCapabilitiesForFontDescriptor(fontDescriptor);
 
-#if SHOULD_USE_CORE_TEXT_FONT_LOOKUP
-    bool weightComesFromTraits = !variationCapabilities.weight;
+#if SHOULD_USE_CORE_TEXT_FONT_LOOKUP || !HAS_CORE_TEXT_WIDTH_ATTRIBUTE
+    bool weightOrWidthComeFromTraits = !variationCapabilities.weight || !variationCapabilities.width;
 #else
-    bool weightComesFromTraits = false;
+    bool weightOrWidthComeFromTraits = false;
 #endif
 
-    if (!variationCapabilities.slope || !variationCapabilities.width || weightComesFromTraits) {
+    if (!variationCapabilities.slope || weightOrWidthComeFromTraits) {
         auto traits = adoptCF(static_cast<CFDictionaryRef>(CTFontDescriptorCopyAttribute(fontDescriptor, kCTFontTraitsAttribute)));
         if (traits) {
+#if !HAS_CORE_TEXT_WIDTH_ATTRIBUTE
             if (!variationCapabilities.width) {
                 auto widthValue = stretchFromCoreTextTraits(traits.get());
                 variationCapabilities.width = {{ widthValue, widthValue }};
             }
+#endif
 
             if (!variationCapabilities.slope) {
                 auto symbolicTraitsNumber = static_cast<CFNumberRef>(CFDictionaryGetValue(traits.get(), kCTFontSymbolicTrait));
@@ -1022,14 +1041,15 @@ FontSelectionCapabilities capabilitiesForFontDescriptor(CTFontDescriptorRef font
 
 #if !SHOULD_USE_CORE_TEXT_FONT_LOOKUP
     if (!variationCapabilities.weight) {
-        auto weightNumber = adoptCF(static_cast<CFNumberRef>(CTFontDescriptorCopyAttribute(fontDescriptor, kCTFontCSSWeightAttribute)));
-        if (weightNumber) {
-            float cssWeight;
-            auto success = CFNumberGetValue(weightNumber.get(), kCFNumberFloatType, &cssWeight);
-            ASSERT_UNUSED(success, success);
-            variationCapabilities.weight = {{ cssWeight, cssWeight }};
-        } else
-            variationCapabilities.weight = {{ static_cast<float>(normalWeightValue()), static_cast<float>(normalWeightValue()) }};
+        auto value = getCSSAttribute(fontDescriptor, kCTFontCSSWeightAttribute, static_cast<float>(normalWeightValue()));
+        variationCapabilities.weight = {{ value, value }};
+    }
+#endif
+
+#if HAS_CORE_TEXT_WIDTH_ATTRIBUTE
+    if (!variationCapabilities.width) {
+        auto value = getCSSAttribute(fontDescriptor, kCTFontCSSWidthAttribute, static_cast<float>(normalStretchValue()));
+        variationCapabilities.width = {{ value, value }};
     }
 #endif
 
