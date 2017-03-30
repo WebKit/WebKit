@@ -1,3 +1,21 @@
+2017-03-30  Brent Fulgham  <bfulgham@apple.com>
+
+        Remove unused MediaControlsApple implementation
+        https://bugs.webkit.org/show_bug.cgi?id=170258
+        <rdar://problem/31331056>
+
+        Reviewed by Eric Carlson.
+
+        Remove dead code related to old media controls. We switched to HTML5-based media controls
+        several years ago.
+
+        No new tests. Removing this dead code should have no change in behavior.
+
+        * WebCore.xcodeproj/project.pbxproj: Remove unused files.
+        * dom/EventListener.h: Remove unused event type.
+        * html/shadow/MediaControlsApple.cpp: Removed.
+        * html/shadow/MediaControlsApple.h: Removed.
+
 2017-03-30  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] ImageCairoWin.cpp: error C2660: 'WebCore::BitmapImage::draw': function does not take 6 arguments

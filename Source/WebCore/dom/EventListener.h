@@ -43,7 +43,6 @@ public:
         GObjectEventListenerType,
         NativeEventListenerType,
         SVGTRefTargetEventListenerType,
-        MediaControlsAppleEventListenerType 
     };
 
     virtual ~EventListener() { }
