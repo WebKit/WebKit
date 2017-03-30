@@ -1,3 +1,10 @@
+2017-03-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fix after r214280. Don't render components until its element is inserted into a document.
+
+        * public/v3/components/base.js:
+        (ComponentBase):
+
 2017-03-29  Ryosuke Niwa  <rniwa@webkit.org>
 
         Another build fix after r214502.

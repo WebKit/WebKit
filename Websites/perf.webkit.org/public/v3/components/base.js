@@ -18,7 +18,7 @@ class ComponentBase {
         this._actionCallbacks = new Map;
 
         if (!ComponentBase.useNativeCustomElements)
-            this.enqueueToRender();
+            element.addEventListener('DOMNodeInsertedIntoDocument', () => this.enqueueToRender());
         if (!ComponentBase.useNativeCustomElements && new.target.enqueueToRenderOnResize)
             ComponentBase._connectedComponentToRenderOnResize(this);
     }
@@ -288,7 +288,7 @@ class ComponentBase {
     }
 }
 
-ComponentBase.useNativeCustomElements = !!window.customElements;
+ComponentBase.useNativeCustomElements = false;//!!window.customElements;
 ComponentBase._componentByName = new Map;
 ComponentBase._componentByClass = new Map;
 ComponentBase._currentlyConstructedByInterface = new Map;
