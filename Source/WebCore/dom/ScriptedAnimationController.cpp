@@ -82,6 +82,8 @@ bool ScriptedAnimationController::requestAnimationFrameEnabled() const
 void ScriptedAnimationController::suspend()
 {
     dispatchLoggingEventIfRequired("raf-suspend");
+    if (m_document && m_document->frame() && m_document->frame()->settings().shouldDispatchRequestAnimationFrameEvents())
+        WTFReportBacktrace();
     ++m_suspendCount;
 }
 
