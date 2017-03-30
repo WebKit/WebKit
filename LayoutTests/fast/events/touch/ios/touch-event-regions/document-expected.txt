@@ -1,0 +1,10 @@
+touchstart
+0, 0 - 800, 600
+touchstart
+
+touchend
+
+touchforcechange
+
+passive
+

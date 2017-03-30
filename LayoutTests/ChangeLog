@@ -1,3 +1,20 @@
+2017-03-30  Simon Fraser  <simon.fraser@apple.com>
+
+        Add some tests that dump the touch event regions with various content configurations
+        https://bugs.webkit.org/show_bug.cgi?id=170216
+
+        Followup: add missing results files, and tweak iframes.html to show that regions fail to
+        take iframe borders into account.
+
+        * fast/events/touch/ios/touch-event-regions/active-passive-nesting-expected.txt: Added.
+        * fast/events/touch/ios/touch-event-regions/columns-expected.txt: Added.
+        * fast/events/touch/ios/touch-event-regions/complex-expected.txt: Added.
+        * fast/events/touch/ios/touch-event-regions/document-expected.txt: Added.
+        * fast/events/touch/ios/touch-event-regions/iframes-expected.txt: Added.
+        * fast/events/touch/ios/touch-event-regions/iframes.html:
+        * fast/events/touch/ios/touch-event-regions/overflow-expected.txt: Added.
+        * fast/events/touch/ios/touch-event-regions/range-sliders-expected.txt: Added.
+
 2017-03-30  Per Arne Vollan  <pvollan@apple.com>
 
         [mac-wk1 debug] LayoutTest media/track/track-cue-rendering-with-padding.html is a flaky timeout
