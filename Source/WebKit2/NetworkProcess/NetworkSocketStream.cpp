@@ -59,6 +59,11 @@ void NetworkSocketStream::close()
     m_impl->platformClose();
 }
 
+NetworkSocketStream::~NetworkSocketStream()
+{
+    close();
+}
+
 void NetworkSocketStream::didOpenSocketStream(SocketStreamHandle& handle)
 {
     ASSERT_UNUSED(handle, &handle == m_impl.ptr());

@@ -47,7 +47,8 @@ namespace WebKit {
 class NetworkSocketStream : public RefCounted<NetworkSocketStream>, public IPC::MessageSender, public IPC::MessageReceiver, public WebCore::SocketStreamHandleClient {
 public:
     static Ref<NetworkSocketStream> create(WebCore::URL&&, WebCore::SessionID, const String& credentialPartition, uint64_t, IPC::Connection&);
-    
+    ~NetworkSocketStream();
+
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
 
     void sendData(const IPC::DataReference&, uint64_t);
