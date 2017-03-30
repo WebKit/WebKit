@@ -2153,8 +2153,11 @@ void RenderBlockFlow::addFloatsToNewParent(RenderBlockFlow& toBlockFlow) const
     if (!toBlockFlow.m_floatingObjects)
         toBlockFlow.createFloatingObjects();
 
-    for (auto& floatingObject : m_floatingObjects->set())
+    for (auto& floatingObject : m_floatingObjects->set()) {
+        if (toBlockFlow.containsFloat(floatingObject->renderer()))
+            continue;
         toBlockFlow.m_floatingObjects->add(floatingObject->cloneForNewParent());
+    }
 }
 
 void RenderBlockFlow::moveAllChildrenIncludingFloatsTo(RenderBlock& toBlock, bool fullRemoveInsert)
