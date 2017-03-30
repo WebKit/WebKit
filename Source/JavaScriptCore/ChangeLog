@@ -1,3 +1,49 @@
+2017-03-30  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly: fix misc JS API implementation inconsistencies
+        https://bugs.webkit.org/show_bug.cgi?id=170187
+
+        Reviewed by Keith Miller.
+
+        Auto-generate lookup tables.
+        Methods should be on prototype.
+        Exception returns should be idiomatic.
+
+        * wasm/JSWebAssembly.cpp: validate / compile / instantiate should
+        be on the prototype
+        (JSC::JSWebAssembly::create):
+        (JSC::JSWebAssembly::finishCreation):
+        (JSC::reject): Deleted.
+        (JSC::webAssemblyCompileFunc): Deleted.
+        (JSC::resolve): Deleted.
+        (JSC::instantiate): Deleted.
+        (JSC::compileAndInstantiate): Deleted.
+        (JSC::webAssemblyInstantiateFunc): Deleted.
+        (JSC::webAssemblyValidateFunc): Deleted.
+        * wasm/JSWebAssembly.h:
+        * wasm/js/WebAssemblyMemoryPrototype.cpp: move from JSWebAssembly.cpp
+        (JSC::webAssemblyMemoryProtoFuncBuffer):
+        (JSC::WebAssemblyMemoryPrototype::create):
+        (JSC::WebAssemblyMemoryPrototype::finishCreation):
+        * wasm/js/WebAssemblyMemoryPrototype.h:
+        * wasm/js/WebAssemblyPrototype.cpp:
+        (JSC::reject):
+        (JSC::webAssemblyCompileFunc):
+        (JSC::resolve):
+        (JSC::instantiate):
+        (JSC::compileAndInstantiate):
+        (JSC::webAssemblyInstantiateFunc):
+        (JSC::webAssemblyValidateFunc):
+        (JSC::webAssemblyFunctionValidate): Deleted.
+        (JSC::webAssemblyFunctionCompile): Deleted.
+        * wasm/js/WebAssemblyTablePrototype.cpp:
+        (JSC::webAssemblyTableProtoFuncGrow):
+        (JSC::webAssemblyTableProtoFuncGet):
+        (JSC::webAssemblyTableProtoFuncSet):
+        (JSC::WebAssemblyTablePrototype::create):
+        (JSC::WebAssemblyTablePrototype::finishCreation):
+        * wasm/js/WebAssemblyTablePrototype.h:
+
 2017-03-29  Keith Miller  <keith_miller@apple.com>
 
         Unreviewed, fix the build, again. Hopefully for the last time, again!

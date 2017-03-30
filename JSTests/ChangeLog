@@ -1,3 +1,16 @@
+2017-03-30  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly: fix misc JS API implementation inconsistencies
+        https://bugs.webkit.org/show_bug.cgi?id=170187
+
+        Reviewed by Keith Miller.
+
+        Verify that WebAssembly function are on the object's __proto__.
+
+        * wasm/js-api/Module-compile.js:
+        * wasm/js-api/validate.js:
+        * wasm/js-api/web-assembly-instantiate.js:
+
 2017-03-29  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly: add shell-only Memory mode helper
