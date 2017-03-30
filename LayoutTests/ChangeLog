@@ -1,3 +1,15 @@
+2017-03-30  Per Arne Vollan  <pvollan@apple.com>
+
+        REGRESSION(~r212322): LayoutTest media/track/track-cue-container-rendering-position.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=168660
+
+        Reviewed Eric Carlson.
+
+        The textTrackDisplayElement call will fail and throw an exception if the text track display element
+        has not yet been added to the text track container element. We wait until it has been added.
+
+        * media/track/track-cue-container-rendering-position.html:
+
 2017-03-29  Ryosuke Niwa  <rniwa@webkit.org>
 
         Disconnecting a HTMLObjectElement does not always unload its content document

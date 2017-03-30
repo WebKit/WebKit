@@ -10,7 +10,9 @@
         <script>
 
         var cueDisplayElement;
-
+        var retries = 0;
+        var maxRetries = 256;
+        
         function testPosition()
         {
             if (!window.internals) {
@@ -18,8 +20,22 @@
                 return;
             }
 
+            // The textTrackDisplayElement call will fail and throw an exception if the text track display element
+            // has not yet been added to the text track container element. We wait until it has been added.
+            try {
+                cueDisplayElement = textTrackDisplayElement(video, 'display', 0);
+            } catch (exception) {
+                retries++;
+                if (retries > maxRetries) {
+                    consoleWrite("The test failed because the text track display element was not found.");
+                    endTest();
+                }
+                else
+                    setTimeout(testPosition, 100);
+                return;
+            }
+
             consoleWrite("");
-            cueDisplayElement = textTrackDisplayElement(video, 'display', 0);
             document.body.offsetTop;
             testExpected("cueDisplayElement.offsetTop > (video.videoHeight * .70)", true);
             endTest();
@@ -31,7 +47,7 @@
 
             findMediaElement();
             video.src = findMediaFile('video', '../content/test');
-            waitForEvent('canplaythrough', function () {setTimeout(testPosition, 100);});
+            waitForEvent('canplaythrough', testPosition);
         }
 
         setCaptionDisplayMode('Automatic');
