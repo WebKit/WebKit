@@ -13,6 +13,19 @@ scheduler.debug = debug;
 
 description("Testing the <code>AirplayButton</code> class.");
 
+document.addEventListener("visibilitychange", (event) => {
+    debug("visibilitychange");
+    dumpVisibility();
+});
+
+function dumpVisibility()
+{
+    debug(`document.hidden = ${document.hidden}`);
+    debug(`document.visibilityState = ${document.visibilityState}`);
+}
+
+dumpVisibility();
+
 if (window.internals) {
     ["raf-suspend", "raf-resume", "raf-add-throttling-reason", "raf-remove-throttling-reason", "raf-register-callback", "raf-cancel-callback", "raf-did-cancel-callback", "raf-service-scripted-animations", "raf-will-fire", "raf-did-fire", "raf-schedule-animation", "raf-schedule-animation-display-refresh-monitor", "raf-schedule-animation-timer", "raf-schedule-animation-frame-view"].forEach(eventType => document.addEventListener(eventType, handleRAFEvent));
     window.internals.settings.setShouldDispatchRequestAnimationFrameEvents(true);
@@ -24,7 +37,8 @@ function handleRAFEvent(event)
     if (event.type === "raf-did-fire") {
         receivedRAFDidFireEvent = true;
         considerFinishingTest();
-    }
+    } else if (event.type === "raf-suspend")
+    dumpVisibility();
 }
 
 function considerFinishingTest()
