@@ -161,7 +161,7 @@ void allocateStack(Code& code)
 
     // Now we handle the spill slots.
     StackSlotLiveness liveness(code);
-    IndexMap<StackSlot, HashSet<StackSlot*>> interference(code.stackSlots().size());
+    IndexMap<StackSlot*, HashSet<StackSlot*>> interference(code.stackSlots().size());
     Vector<StackSlot*> slots;
 
     // We will perform some spill coalescing. To make that effective, we need to be able to identify
@@ -309,7 +309,7 @@ void allocateStack(Code& code)
             return a.frequency > b.frequency;
         });
     
-    IndexMap<StackSlot, StackSlot*> remappedStackSlots(code.stackSlots().size());
+    IndexMap<StackSlot*, StackSlot*> remappedStackSlots(code.stackSlots().size());
     auto remap = [&] (StackSlot* slot) -> StackSlot* {
         if (!slot)
             return nullptr;

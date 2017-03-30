@@ -49,7 +49,7 @@ namespace {
 const bool verbose = false;
 } // anonymous namespace
 
-void demoteValues(Procedure& proc, const IndexSet<Value>& values)
+void demoteValues(Procedure& proc, const IndexSet<Value*>& values)
 {
     HashMap<Value*, Variable*> map;
     HashMap<Value*, Variable*> phiMap;
@@ -121,7 +121,7 @@ bool fixSSA(Procedure& proc)
     // Just for sanity, remove any unused variables first. It's unlikely that this code has any
     // bugs having to do with dead variables, but it would be silly to have to fix such a bug if
     // it did arise.
-    IndexSet<Variable> liveVariables;
+    IndexSet<Variable*> liveVariables;
     for (Value* value : proc.values()) {
         if (VariableValue* variableValue = value->as<VariableValue>())
             liveVariables.add(variableValue->variable());
@@ -145,7 +145,7 @@ bool fixSSA(Procedure& proc)
 
     // Create a SSACalculator::Variable ("calcVar") for every variable.
     Vector<Variable*> calcVarToVariable;
-    IndexMap<Variable, SSACalculator::Variable*> variableToCalcVar(proc.variables().size());
+    IndexMap<Variable*, SSACalculator::Variable*> variableToCalcVar(proc.variables().size());
 
     for (Variable* variable : proc.variables()) {
         SSACalculator::Variable* calcVar = ssa.newVariable();
@@ -185,7 +185,7 @@ bool fixSSA(Procedure& proc)
 
     // Now perform the conversion.
     InsertionSet insertionSet(proc);
-    IndexMap<Variable, Value*> mapping(proc.variables().size());
+    IndexMap<Variable*, Value*> mapping(proc.variables().size());
     for (BasicBlock* block : proc.blocksInPreOrder()) {
         mapping.clear();
 

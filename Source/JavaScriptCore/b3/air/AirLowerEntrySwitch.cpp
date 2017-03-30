@@ -82,7 +82,7 @@ void lowerEntrySwitch(Code& code)
     // Now duplicate them.
     Vector<FrequentedBlock> entrypoints;
     entrypoints.append(FrequentedBlock(code[0], entrypointFrequencies[0]));
-    IndexMap<BasicBlock, BasicBlock*> map(code.size());
+    IndexMap<BasicBlock*, BasicBlock*> map(code.size());
     for (unsigned entrypointIndex = 1; entrypointIndex < code.proc().numEntrypoints(); ++entrypointIndex) {
         map.clear();
         for (BasicBlock* block : worklist.seen().values(code))

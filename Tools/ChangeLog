@@ -1,3 +1,15 @@
+2017-03-30  Filip Pizlo  <fpizlo@apple.com>
+
+        Air should support linear scan for optLevel<2
+        https://bugs.webkit.org/show_bug.cgi?id=170161
+
+        Reviewed by Saam Barati.
+        
+        This makes us run a bunch of JS tests at optLevel=1 to force testing of this new compiler
+        pipeline.
+
+        * Scripts/run-jsc-stress-tests:
+
 2017-03-30  Aakash Jain  <aakash_jain@apple.com>
 
         Support tvOS and watchOS in webkitdirs.pm

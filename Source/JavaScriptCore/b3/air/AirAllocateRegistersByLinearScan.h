@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,29 +20,31 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #pragma once
 
 #if ENABLE(B3_JIT)
 
-#include "B3Value.h"
-#include <wtf/IndexSet.h>
-#include <wtf/Vector.h>
+#include "CPU.h"
+#include "Options.h"
 
-namespace JSC { namespace B3 {
+namespace JSC { namespace B3 { namespace Air {
 
-class Procedure;
+class Code;
 
-// Turns all mentions of the given values into accesses to variables. This is meant to be used
-// from phases that don't like SSA for whatever reason.
-void demoteValues(Procedure&, const IndexSet<Value*>&);
+// This implements the Poletto and Sarkar register allocator called "linear scan":
+// http://dl.acm.org/citation.cfm?id=330250
+//
+// This is not Air's primary register allocator. We use it only when running at optLevel<2. That's not
+// the default level. This register allocator is optimized primarily for running quickly. It's expected
+// that improvements to this register allocator should focus on improving its execution time without much
+// regard for the quality of generated code. If you want good code, use graph coloring.
+//
+// For Air's primary register allocator, see AirAllocateRegistersByGraphColoring.h|cpp.
+void allocateRegistersByLinearScan(Code&);
 
-// This fixes SSA for you. Use this after you have done demoteValues() and you have performed
-// whatever evil transformation you needed.
-bool fixSSA(Procedure&);
-
-} } // namespace JSC::B3
+} } } // namespace JSC::B3::Air
 
 #endif // ENABLE(B3_JIT)

@@ -114,7 +114,7 @@ template<typename BasicBlock>
 Vector<BasicBlock*> blocksInPreOrder(BasicBlock* root)
 {
     Vector<BasicBlock*> result;
-    GraphNodeWorklist<BasicBlock*, IndexSet<BasicBlock>> worklist;
+    GraphNodeWorklist<BasicBlock*, IndexSet<BasicBlock*>> worklist;
     worklist.push(root);
     while (BasicBlock* block = worklist.pop()) {
         result.append(block);
@@ -128,7 +128,7 @@ template<typename BasicBlock>
 Vector<BasicBlock*> blocksInPostOrder(BasicBlock* root)
 {
     Vector<BasicBlock*> result;
-    PostOrderGraphNodeWorklist<BasicBlock*, IndexSet<BasicBlock>> worklist;
+    PostOrderGraphNodeWorklist<BasicBlock*, IndexSet<BasicBlock*>> worklist;
     worklist.push(root);
     while (GraphNodeWithOrder<BasicBlock*> item = worklist.pop()) {
         switch (item.order) {

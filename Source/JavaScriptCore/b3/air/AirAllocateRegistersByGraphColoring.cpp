@@ -29,6 +29,7 @@
 #if ENABLE(B3_JIT)
 
 #include "AirCode.h"
+#include "AirFixSpillsAfterTerminals.h"
 #include "AirInsertionSet.h"
 #include "AirInstInlines.h"
 #include "AirLiveness.h"
@@ -1585,6 +1586,9 @@ protected:
         m_coalescingCandidates.clear();
         m_worklistMoves.clear();
 
+        // FIXME: It seems like we don't need to recompute liveness. We just need to update its data
+        // structures so that it knows that the newly introduced temporaries are not live at any basic
+        // block boundary. This should trivially be true for now.
         TmpLiveness<bank> liveness(m_code);
         for (BasicBlock* block : m_code) {
             typename TmpLiveness<bank>::LocalCalc localCalc(liveness, block);
@@ -1798,7 +1802,7 @@ public:
         m_numIterations = 0;
         allocateOnBank<FP>();
 
-        fixSpillsAfterTerminals();
+        fixSpillsAfterTerminals(m_code);
 
         if (reportStats)
             dataLog("Num iterations = ", m_numIterations, "\n");
@@ -1954,7 +1958,7 @@ private:
                 }
 
                 inst.forEachTmpFast([&] (Tmp& tmp) {
-                    if (tmp.isReg() || tmp.isGP() == (bank != GP))
+                    if (tmp.isReg() || tmp.bank() != bank)
                         return;
 
                     Tmp aliasTmp = allocator.getAlias(tmp);
@@ -2132,7 +2136,7 @@ private:
                     // other. As well, we need this if the previous instruction had any late effects,
                     // since otherwise the scratch would appear to interfere with those. On the other
                     // hand, the late use added at the end of this spill move (previously it was just a
-                    // late def) doesn't change the padding situation: the late def would have already
+                    // late def) doesn't change the padding situation.: the late def would have already
                     // caused it to report hasLateUseOrDef in Inst::needsPadding.
                     insertionSet.insert(instIndex, Nop, inst.origin);
                     continue;
@@ -2169,9 +2173,12 @@ private:
 
                     tmp = m_code.newTmp(bank);
                     unspillableTmps.add(AbsoluteTmpMapper<bank>::absoluteIndex(tmp));
+                    
+                    if (role == Arg::Scratch)
+                        return;
 
                     Arg arg = Arg::stack(stackSlotEntry->value);
-                    if (Arg::isAnyUse(role) && role != Arg::Scratch)
+                    if (Arg::isAnyUse(role))
                         insertionSet.insert(instIndex, move, inst.origin, arg, tmp);
                     if (Arg::isAnyDef(role))
                         insertionSet.insert(instIndex + 1, move, inst.origin, tmp, arg);
@@ -2185,66 +2192,6 @@ private:
                 });
             }
         }
-    }
-
-    void fixSpillsAfterTerminals()
-    {
-        // Because there may be terminals that produce values, IRC may
-        // want to spill those terminals. It'll happen to spill it after
-        // the terminal. If we left the graph in this state, it'd be invalid
-        // because a terminal must be the last instruction in a block.
-        // We fix that here.
-
-        InsertionSet insertionSet(m_code);
-
-        bool addedBlocks = false;
-
-        for (BasicBlock* block : m_code) {
-            unsigned terminalIndex = block->size();
-            bool foundTerminal = false;
-            while (terminalIndex--) {
-                if (block->at(terminalIndex).isTerminal()) {
-                    foundTerminal = true;
-                    break;
-                }
-            }
-            ASSERT_UNUSED(foundTerminal, foundTerminal);
-
-            if (terminalIndex == block->size() - 1)
-                continue;
-
-            // There must be instructions after the terminal because it's not the last instruction.
-            ASSERT(terminalIndex < block->size() - 1);
-            Vector<Inst, 1> instsToMove;
-            for (unsigned i = terminalIndex + 1; i < block->size(); i++)
-                instsToMove.append(block->at(i));
-            RELEASE_ASSERT(instsToMove.size());
-
-            for (FrequentedBlock& frequentedSuccessor : block->successors()) {
-                BasicBlock* successor = frequentedSuccessor.block();
-                // If successor's only predecessor is block, we can plant the spill inside
-                // the successor. Otherwise, we must split the critical edge and create
-                // a new block for the spill.
-                if (successor->numPredecessors() == 1) {
-                    insertionSet.insertInsts(0, instsToMove);
-                    insertionSet.execute(successor);
-                } else {
-                    addedBlocks = true;
-                    // FIXME: We probably want better block ordering here.
-                    BasicBlock* newBlock = m_code.addBlock();
-                    for (const Inst& inst : instsToMove)
-                        newBlock->appendInst(inst);
-                    newBlock->appendInst(Inst(Jump, instsToMove.last().origin));
-                    newBlock->successors().append(successor);
-                    frequentedSuccessor.block() = newBlock;
-                }
-            }
-
-            block->resize(terminalIndex + 1);
-        }
-
-        if (addedBlocks)
-            m_code.resetReachability();
     }
 
     Code& m_code;

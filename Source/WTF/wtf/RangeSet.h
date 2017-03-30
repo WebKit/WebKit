@@ -77,6 +77,10 @@ public:
         m_isCompact = false;
 
         // We append without compacting only if doing so is guaranteed not to resize the vector.
+        // FIXME: This heuristic is almost certainly wrong, because we don't control the capacity. I
+        // think that this means that we will sometimes be rage-compacting when we are just shy of the
+        // capacity.
+        // https://bugs.webkit.org/show_bug.cgi?id=170308
         if (m_ranges.size() + 1 < m_ranges.capacity()) {
             m_ranges.append(range);
             return;

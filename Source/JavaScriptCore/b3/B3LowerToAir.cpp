@@ -3379,10 +3379,10 @@ private:
         RELEASE_ASSERT_NOT_REACHED();
     }
     
-    IndexSet<Value> m_locked; // These are values that will have no Tmp in Air.
-    IndexMap<Value, Tmp> m_valueToTmp; // These are values that must have a Tmp in Air. We say that a Value* with a non-null Tmp is "pinned".
-    IndexMap<Value, Tmp> m_phiToTmp; // Each Phi gets its own Tmp.
-    IndexMap<B3::BasicBlock, Air::BasicBlock*> m_blockToBlock;
+    IndexSet<Value*> m_locked; // These are values that will have no Tmp in Air.
+    IndexMap<Value*, Tmp> m_valueToTmp; // These are values that must have a Tmp in Air. We say that a Value* with a non-null Tmp is "pinned".
+    IndexMap<Value*, Tmp> m_phiToTmp; // Each Phi gets its own Tmp.
+    IndexMap<B3::BasicBlock*, Air::BasicBlock*> m_blockToBlock;
     HashMap<B3::StackSlot*, Air::StackSlot*> m_stackToStack;
     HashMap<Variable*, Tmp> m_variableToTmp;
 

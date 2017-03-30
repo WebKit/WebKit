@@ -100,6 +100,7 @@ set(WTF_HEADERS
     RAMSize.h
     RandomNumber.h
     RandomNumberSeed.h
+    Range.h
     RangeSet.h
     RawPointer.h
     RecursiveLockAdapter.h

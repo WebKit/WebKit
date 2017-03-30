@@ -27,50 +27,71 @@
 
 #if ENABLE(B3_JIT)
 
-#include "AirBasicBlock.h"
-#include "AirCode.h"
-#include <wtf/IndexMap.h>
-#include <wtf/IndexSet.h>
+#include "AirInsertionSet.h"
+#include <wtf/Insertion.h>
+#include <wtf/Vector.h>
 
 namespace JSC { namespace B3 { namespace Air {
 
-class CFG {
-    WTF_MAKE_NONCOPYABLE(CFG);
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    typedef BasicBlock* Node;
-    typedef IndexSet<BasicBlock*> Set;
-    template<typename T> using Map = IndexMap<BasicBlock*, T>;
-    typedef Vector<BasicBlock*, 4> List;
+class BasicBlock;
+class Code;
 
-    CFG(Code& code)
-        : m_code(code)
+// Phased insertions allow you to ascribe phases to the things inserted at an instruction boundary.
+class PhaseInsertion : public Insertion {
+public:
+    PhaseInsertion() { }
+    
+    template<typename T>
+    PhaseInsertion(size_t index, unsigned phase, T&& element)
+        : Insertion(index, std::forward<T>(element))
+        , m_phase(phase)
     {
     }
-
-    Node root() { return m_code[0]; }
-
-    template<typename T>
-    Map<T> newMap() { return IndexMap<JSC::B3::Air::BasicBlock*, T>(m_code.size()); }
-
-    SuccessorCollection<BasicBlock, BasicBlock::SuccessorList> successors(Node node) { return node->successorBlocks(); }
-    BasicBlock::PredecessorList& predecessors(Node node) { return node->predecessors(); }
-
-    unsigned index(Node node) const { return node->index(); }
-    Node node(unsigned index) const { return m_code[index]; }
-    unsigned numNodes() const { return m_code.size(); }
-
-    PointerDump<BasicBlock> dump(Node node) const { return pointerDump(node); }
-
-    void dump(PrintStream& out) const
+    
+    unsigned phase() const { return m_phase; }
+    
+    bool operator<(const PhaseInsertion& other) const
     {
-        m_code.dump(out);
+        if (index() != other.index())
+            return index() < other.index();
+        return m_phase < other.m_phase;
     }
 
 private:
-    Code& m_code;
+    unsigned m_phase { 0 };
+};
+
+class PhaseInsertionSet {
+public:
+    PhaseInsertionSet()
+    {
+    }
+    
+    template<typename T>
+    void appendInsertion(T&& insertion)
+    {
+        m_insertions.append(std::forward<T>(insertion));
+    }
+    
+    template<typename Inst>
+    void insertInst(size_t index, unsigned phase, Inst&& inst)
+    {
+        appendInsertion(PhaseInsertion(index, phase, std::forward<Inst>(inst)));
+    }
+    
+    template<typename... Arguments>
+    void insert(size_t index, unsigned phase, Arguments&&... arguments)
+    {
+        insertInst(index, phase, Inst(std::forward<Arguments>(arguments)...));
+    }
+    
+    void execute(BasicBlock*);
+
+private:
+    Vector<PhaseInsertion, 8> m_insertions;
 };
 
 } } } // namespace JSC::B3::Air
 
 #endif // ENABLE(B3_JIT)
+

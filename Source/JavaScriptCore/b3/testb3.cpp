@@ -117,7 +117,7 @@ StaticLock crashLock;
         CRASH(); \
     } while (false)
 
-std::unique_ptr<Compilation> compileProc(Procedure& procedure, unsigned optLevel = 1)
+std::unique_ptr<Compilation> compileProc(Procedure& procedure, unsigned optLevel = defaultOptLevel())
 {
     return std::make_unique<Compilation>(B3::compile(procedure, optLevel));
 }
@@ -987,6 +987,7 @@ void testMulLoadTwice()
 
     test(0);
     test(1);
+    test(2);
 }
 
 void testMulAddArgsLeft()

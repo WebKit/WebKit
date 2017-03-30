@@ -28,6 +28,7 @@
 #if ENABLE(B3_JIT)
 
 #include "JSExportMacros.h"
+#include "Options.h"
 #include <wtf/Optional.h>
 
 namespace JSC { namespace B3 {
@@ -168,6 +169,13 @@ static IntType rotateLeft(IntType value, int32_t shift)
     int32_t mask = bits - 1;
     shift &= mask;
     return (uValue << shift) | (uValue >> ((bits - shift) & mask));
+}
+
+inline unsigned defaultOptLevel()
+{
+    // This should almost always return 2, but we allow this default to be lowered for testing. Some
+    // components will deliberately set the optLevel.
+    return Options::defaultB3OptLevel();
 }
 
 } } // namespace JSC::B3

@@ -155,10 +155,10 @@ void fixPartialRegisterStalls(Code& code)
 
     // For each block, this provides the distance to the last instruction setting each register
     // on block *entry*.
-    IndexMap<BasicBlock, FPDefDistance> lastDefDistance(code.size());
+    IndexMap<BasicBlock*, FPDefDistance> lastDefDistance(code.size());
 
     // Blocks with dirty distance at head.
-    IndexSet<BasicBlock> dirty;
+    IndexSet<BasicBlock*> dirty;
 
     // First, we compute the local distance for each block and push it to the successors.
     for (BasicBlock* block : code) {

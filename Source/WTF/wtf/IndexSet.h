@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 
 #include <wtf/BitVector.h>
 #include <wtf/CommaPrinter.h>
+#include <wtf/IndexKeyType.h>
 
 namespace WTF {
 
@@ -42,30 +43,30 @@ public:
     {
     }
 
-    bool add(T* value)
+    bool add(const T& value)
     {
-        return !m_set.set(value->index());
+        return !m_set.set(IndexKeyType<T>::index(value));
     }
 
     template<typename Iterable>
     bool addAll(const Iterable& iterable)
     {
         bool result = false;
-        for (T* value : iterable)
+        for (const T& value : iterable)
             result |= add(value);
         return result;
     }
 
-    bool remove(T* value)
+    bool remove(const T& value)
     {
-        return m_set.clear(value->index());
+        return m_set.clear(IndexKeyType<T>::index(value));
     }
 
-    bool contains(T* value) const
+    bool contains(const T& value) const
     {
         if (!value)
             return false;
-        return m_set.get(value->index());
+        return m_set.get(IndexKeyType<T>::index(value));
     }
 
     size_t size() const
@@ -100,7 +101,7 @@ public:
             {
             }
 
-            T* operator*()
+            T operator*()
             {
                 return m_collection->at(*m_iter);
             }

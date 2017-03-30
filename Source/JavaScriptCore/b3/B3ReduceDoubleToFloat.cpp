@@ -424,18 +424,18 @@ private:
 
     // Set of all the Double values that are actually used as Double.
     // Converting any of them to Float would lose precision.
-    IndexSet<Value> m_valuesUsedAsDouble;
+    IndexSet<Value*> m_valuesUsedAsDouble;
 
     // Set of all the Phi of type Double that really contains a Double.
     // Any Double Phi not in the set can be converted to Float without losing precision.
-    IndexSet<Value> m_phisContainingDouble;
+    IndexSet<Value*> m_phisContainingDouble;
 
     // Any value that was converted from producing a Double to producing a Float.
     // This set does not include Phi-Upsilons.
-    IndexSet<Value> m_convertedValue;
+    IndexSet<Value*> m_convertedValue;
 
     // Any value that previously produced Double and now produce Float.
-    IndexSet<Value> m_convertedPhis;
+    IndexSet<Value*> m_convertedPhis;
 };
 
 void printGraphIfConverting(Procedure& procedure)

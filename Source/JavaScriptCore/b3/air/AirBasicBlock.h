@@ -42,6 +42,7 @@ namespace Air {
 class BlockInsertionSet;
 class Code;
 class InsertionSet;
+class PhaseInsertionSet;
 
 class BasicBlock {
     WTF_MAKE_NONCOPYABLE(BasicBlock);
@@ -140,6 +141,7 @@ private:
     friend class BlockInsertionSet;
     friend class Code;
     friend class InsertionSet;
+    friend class PhaseInsertionSet;
     template<typename> friend class B3::GenericBlockInsertionSet;
     
     BasicBlock(unsigned index, double frequency);

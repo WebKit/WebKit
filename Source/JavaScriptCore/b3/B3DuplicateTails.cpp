@@ -68,7 +68,7 @@ public:
 
         m_proc.resetValueOwners();
 
-        IndexSet<BasicBlock> candidates;
+        IndexSet<BasicBlock*> candidates;
 
         for (BasicBlock* block : m_proc) {
             if (block->size() > m_maxSize)
@@ -82,7 +82,7 @@ public:
         }
 
         // Collect the set of values that must be de-SSA'd.
-        IndexSet<Value> valuesToDemote;
+        IndexSet<Value*> valuesToDemote;
         for (BasicBlock* block : m_proc) {
             for (Value* value : *block) {
                 if (value->opcode() == Phi && candidates.contains(block))

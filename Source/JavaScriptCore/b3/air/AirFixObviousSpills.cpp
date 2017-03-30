@@ -547,7 +547,7 @@ private:
     };
 
     Code& m_code;
-    IndexMap<BasicBlock, State> m_atHead;
+    IndexMap<BasicBlock*, State> m_atHead;
     State m_state;
     BasicBlock* m_block { nullptr };
     unsigned m_instIndex { 0 };

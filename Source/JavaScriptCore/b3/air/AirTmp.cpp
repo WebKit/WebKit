@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,7 +28,14 @@
 
 #if ENABLE(B3_JIT)
 
+#include "AirTmpInlines.h"
+
 namespace JSC { namespace B3 { namespace Air {
+
+template<> const char* const Tmp::Indexed<GP>::dumpPrefix = "%tmp";
+template<> const char* const Tmp::Indexed<FP>::dumpPrefix = "%ftmp";
+template<> const char* const Tmp::AbsolutelyIndexed<GP>::dumpPrefix = "%abs";
+template<> const char* const Tmp::AbsolutelyIndexed<FP>::dumpPrefix = "%fabs";
 
 void Tmp::dump(PrintStream& out) const
 {

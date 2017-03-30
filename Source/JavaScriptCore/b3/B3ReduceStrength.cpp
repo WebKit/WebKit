@@ -2392,7 +2392,7 @@ private:
 
     void killDeadCode()
     {
-        GraphNodeWorklist<Value*, IndexSet<Value>> worklist;
+        GraphNodeWorklist<Value*, IndexSet<Value*>> worklist;
         Vector<UpsilonValue*, 64> upsilons;
         for (BasicBlock* block : m_proc) {
             for (Value* value : *block) {
@@ -2429,7 +2429,7 @@ private:
                 break;
         }
 
-        IndexSet<Variable> liveVariables;
+        IndexSet<Variable*> liveVariables;
         
         for (BasicBlock* block : m_proc) {
             size_t sourceIndex = 0;

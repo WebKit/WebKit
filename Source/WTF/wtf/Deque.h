@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -89,6 +89,19 @@ public:
     void removeLast();
     void remove(iterator&);
     void remove(const_iterator&);
+    
+    template<typename Func> void removeAllMatching(const Func&);
+    
+    // This is a priority enqueue. The callback is given a value, and if it returns true, then this
+    // will put the appended value before that value. It will keep bubbling until the callback returns
+    // false or the value ends up at the head of the queue.
+    template<typename U, typename Func>
+    void appendAndBubble(U&&, const Func&);
+    
+    // Remove and return the last element for which the callback returns true. Returns a null version of
+    // T if it the callback always returns false.
+    template<typename Func>
+    T takeLast(const Func&);
 
     void clear();
 
@@ -522,6 +535,55 @@ inline void Deque<T, inlineCapacity>::remove(size_t position)
         m_end = (m_end - 1 + m_buffer.capacity()) % m_buffer.capacity();
     }
     checkValidity();
+}
+
+template<typename T, size_t inlineCapacity>
+template<typename Func>
+inline void Deque<T, inlineCapacity>::removeAllMatching(const Func& func)
+{
+    size_t count = size();
+    while (count--) {
+        T value = takeFirst();
+        if (!func(value))
+            append(WTFMove(value));
+    }
+}
+
+template<typename T, size_t inlineCapacity>
+template<typename U, typename Func>
+inline void Deque<T, inlineCapacity>::appendAndBubble(U&& value, const Func& func)
+{
+    append(WTFMove(value));
+    iterator begin = this->begin();
+    iterator iter = end();
+    --iter;
+    while (iter != begin) {
+        iterator prev = iter;
+        --prev;
+        if (!func(*prev))
+            return;
+        std::swap(*prev, *iter);
+        iter = prev;
+    }
+}
+
+template<typename T, size_t inlineCapacity>
+template<typename Func>
+inline T Deque<T, inlineCapacity>::takeLast(const Func& func)
+{
+    unsigned count = 0;
+    unsigned size = this->size();
+    while (count < size) {
+        T candidate = takeLast();
+        if (func(candidate)) {
+            while (count--)
+                append(takeFirst());
+            return candidate;
+        }
+        count++;
+        prepend(WTFMove(candidate));
+    }
+    return T();
 }
 
 #ifdef NDEBUG

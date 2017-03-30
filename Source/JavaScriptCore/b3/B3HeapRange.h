@@ -27,90 +27,15 @@
 
 #if ENABLE(B3_JIT)
 
-#include <limits.h>
-#include <wtf/MathExtras.h>
-#include <wtf/PrintStream.h>
+#include <wtf/Range.h>
 
 namespace JSC { namespace B3 {
 
 // Alias analysis in B3 is done by checking if two integer ranges overlap. This is powerful enough
 // to be used for TBAA-style alias analysis used by the DFG, FTL, and LLVM: you just turn each node
 // in the tree of abstract heaps into a pre/post range.
-//
-// Note that the 'begin' is inclusive, while the 'end' is exclusive. These two ranges are non-
-// overlapping:
-//
-//     rangeA = 0...8
-//     rangeB = 8...16
 
-class HeapRange {
-public:
-    typedef unsigned Type;
-    
-    HeapRange()
-        : m_begin(0)
-        , m_end(0)
-    {
-    }
-
-    explicit HeapRange(unsigned value)
-        : m_begin(value)
-        , m_end(value + 1)
-    {
-        ASSERT(m_end >= m_begin);
-    }
-
-    HeapRange(unsigned begin, unsigned end)
-        : m_begin(begin)
-        , m_end(end)
-    {
-        ASSERT(m_end >= m_begin);
-        if (m_begin == m_end) {
-            // Canonicalize empty ranges.
-            m_begin = 0;
-            m_end = 0;
-        }
-    }
-
-    static HeapRange top()
-    {
-        return HeapRange(0, UINT_MAX);
-    }
-
-    bool operator==(const HeapRange& other) const
-    {
-        return m_begin == other.m_begin
-            && m_end == other.m_end;
-    }
-
-    bool operator!=(const HeapRange& other) const
-    {
-        return !(*this == other);
-    }
-    
-    HeapRange operator|(const HeapRange& other) const
-    {
-        return HeapRange(
-            std::min(m_begin, other.m_begin),
-            std::max(m_end, other.m_end));
-    }
-    
-    explicit operator bool() const { return m_begin != m_end; }
-
-    unsigned begin() const { return m_begin; }
-    unsigned end() const { return m_end; }
-
-    bool overlaps(const HeapRange& other) const
-    {
-        return WTF::rangesOverlap(m_begin, m_end, other.m_begin, other.m_end);
-    }
-
-    JS_EXPORT_PRIVATE void dump(PrintStream& out) const;
-
-private:
-    unsigned m_begin;
-    unsigned m_end;
-};
+typedef Range<unsigned> HeapRange;
 
 } } // namespace JSC::B3
 

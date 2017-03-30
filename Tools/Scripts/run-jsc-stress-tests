@@ -428,6 +428,7 @@ $numPasses = 0
 BASE_OPTIONS = ["--useFTLJIT=false", "--useFunctionDotArguments=true", "--maxPerThreadStackUsage=1572864"]
 EAGER_OPTIONS = ["--thresholdForJITAfterWarmUp=10", "--thresholdForJITSoon=10", "--thresholdForOptimizeAfterWarmUp=20", "--thresholdForOptimizeAfterLongWarmUp=20", "--thresholdForOptimizeSoon=20", "--thresholdForFTLOptimizeAfterWarmUp=20", "--thresholdForFTLOptimizeSoon=20", "--maximumEvalCacheableSourceLength=150000", "--useEagerCodeBlockJettisonTiming=true"]
 NO_CJIT_OPTIONS = ["--useConcurrentJIT=false", "--thresholdForJITAfterWarmUp=100", "--scribbleFreeCells=true"]
+B3O1_OPTIONS = ["--defaultB3OptLevel=1"]
 FTL_OPTIONS = ["--useFTLJIT=true"]
 
 def shouldCollectContinuously?
@@ -853,6 +854,10 @@ def runFTLNoCJIT(*optionalTestSpecificOptions)
     run("misc-ftl-no-cjit", *(FTL_OPTIONS + NO_CJIT_OPTIONS + optionalTestSpecificOptions))
 end
 
+def runFTLNoCJITB3O1(*optionalTestSpecificOptions)
+    run("ftl-no-cjit-b3o1", *(FTL_OPTIONS + NO_CJIT_OPTIONS + B3O1_OPTIONS + optionalTestSpecificOptions))
+end
+
 def runFTLNoCJITValidate(*optionalTestSpecificOptions)
     run("ftl-no-cjit-validate-sampling-profiler", "--validateGraph=true", "--useSamplingProfiler=true", "--airForceIRCAllocator=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + optionalTestSpecificOptions))
 end
@@ -883,6 +888,10 @@ end
 
 def runFTLEagerNoCJITValidate(*optionalTestSpecificOptions)
     run("ftl-eager-no-cjit", "--validateGraph=true", "--airForceIRCAllocator=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + EAGER_OPTIONS + COLLECT_CONTINUOUSLY_OPTIONS + optionalTestSpecificOptions))
+end
+
+def runFTLEagerNoCJITB3O1(*optionalTestSpecificOptions)
+    run("ftl-eager-no-cjit", "--validateGraph=true", "--airForceIRCAllocator=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + EAGER_OPTIONS + B3O1_OPTIONS + optionalTestSpecificOptions))
 end
 
 def runFTLEagerNoCJITOSRValidation(*optionalTestSpecificOptions)
@@ -934,10 +943,12 @@ def defaultRun
 
             runNoFTL
             runFTLNoCJITValidate
+            runFTLNoCJITB3O1
             runFTLNoCJITNoPutStackValidate
             runFTLNoCJITNoInlineValidate
             runFTLEager
             runFTLEagerNoCJITValidate
+            runFTLEagerNoCJITB3O1
             runFTLNoCJITSmallPool
         end
     end
@@ -959,6 +970,7 @@ def defaultNoNoLLIntRun
 
             runNoFTL
             runFTLNoCJITValidate
+            runFTLNoCJITB3O1
             runFTLNoCJITNoPutStackValidate
             runFTLNoCJITNoInlineValidate
             runFTLEager
@@ -988,6 +1000,7 @@ def defaultSpotCheckNoMaximalFlush
 
     runFTLNoCJITOSRValidation
     runFTLNoCJITNoAccessInlining
+    runFTLNoCJITB3O1
 end
 
 def defaultSpotCheck
@@ -1010,6 +1023,7 @@ def defaultNoEagerRun
         runNoFTL
         runFTLNoCJITValidate
         runFTLNoCJITNoInlineValidate
+        runFTLNoCJITB3O1
     end
 end
 
@@ -1279,6 +1293,10 @@ def runLayoutTestFTLEagerNoCJIT
     runLayoutTest("ftl-eager-no-cjit", "--testTheFTL=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + EAGER_OPTIONS))
 end
 
+def runLayoutTestFTLEagerNoCJITB3O1
+    runLayoutTest("ftl-eager-no-cjit-b3o1", "--testTheFTL=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + EAGER_OPTIONS + B3O1_OPTIONS))
+end
+
 def noFTLRunLayoutTest
     if !$jitTests
         return
@@ -1463,6 +1481,10 @@ def runNoisyTestNoCJIT
     runNoisyTest("ftl-no-cjit", "--validateBytecode=true", "--validateGraphAtEachPhase=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + COLLECT_CONTINUOUSLY_OPTIONS))
 end
 
+def runNoisyTestNoCJITB3O1
+    runNoisyTest("ftl-no-cjit", "--validateBytecode=true", "--validateGraphAtEachPhase=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + B3O1_OPTIONS))
+end
+
 def runNoisyTestEagerNoCJIT
     runNoisyTest("ftl-eager-no-cjit", "--validateBytecode=true", "--validateGraphAtEachPhase=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + EAGER_OPTIONS + COLLECT_CONTINUOUSLY_OPTIONS))
 end
@@ -1472,6 +1494,7 @@ def defaultRunNoisyTest
     if $jitTests and $isFTLPlatform
         runNoisyTestNoFTL
         runNoisyTestNoCJIT
+        runNoisyTestNoCJITB3O1
         runNoisyTestEagerNoCJIT
     end
 end

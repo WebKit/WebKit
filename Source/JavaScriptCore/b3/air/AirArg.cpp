@@ -282,6 +282,37 @@ void printInternal(PrintStream& out, Arg::Temperature temperature)
     RELEASE_ASSERT_NOT_REACHED();
 }
 
+void printInternal(PrintStream& out, Arg::Phase phase)
+{
+    switch (phase) {
+    case Arg::Early:
+        out.print("Early");
+        return;
+    case Arg::Late:
+        out.print("Late");
+        return;
+    }
+
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+void printInternal(PrintStream& out, Arg::Timing timing)
+{
+    switch (timing) {
+    case Arg::OnlyEarly:
+        out.print("OnlyEarly");
+        return;
+    case Arg::OnlyLate:
+        out.print("OnlyLate");
+        return;
+    case Arg::EarlyAndLate:
+        out.print("EarlyAndLate");
+        return;
+    }
+
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
 void printInternal(PrintStream& out, Arg::Role role)
 {
     switch (role) {

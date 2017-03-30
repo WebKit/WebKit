@@ -30,6 +30,7 @@
 #include "AirBasicBlock.h"
 #include "AirCode.h"
 #include "AirInst.h"
+#include "AirLiveness.h"
 #include "RegisterSet.h"
 
 namespace JSC { namespace B3 { namespace Air {
@@ -52,6 +53,19 @@ public:
             : m_block(block)
             , m_workset(liveness.m_liveAtTail[block])
         {
+        }
+        
+        // If you computed Tmp liveness for some bank, you can use reg liveness to fill in the blanks.
+        // Note that what happens to the registers not belonging to the bank is arbitrary - they may get
+        // set or not.
+        template<Bank bank>
+        LocalCalc(TmpLiveness<bank>& liveness, BasicBlock* block)
+            : m_block(block)
+        {
+            for (Tmp tmp : liveness.liveAtTail(block)) {
+                if (tmp.isReg())
+                    m_workset.set(tmp.reg());
+            }
         }
         
         const RegisterSet& live() const
@@ -84,8 +98,8 @@ public:
     }
     
 private:
-    IndexMap<BasicBlock, RegisterSet> m_liveAtHead;
-    IndexMap<BasicBlock, RegisterSet> m_liveAtTail;
+    IndexMap<BasicBlock*, RegisterSet> m_liveAtHead;
+    IndexMap<BasicBlock*, RegisterSet> m_liveAtTail;
 };
 
 } } } // namespace JSC::B3::Air

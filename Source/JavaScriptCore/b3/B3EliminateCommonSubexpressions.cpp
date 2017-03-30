@@ -682,7 +682,7 @@ private:
     Dominators& m_dominators;
     PureCSE m_pureCSE;
     
-    IndexMap<BasicBlock, ImpureBlockData> m_impureBlockData;
+    IndexMap<BasicBlock*, ImpureBlockData> m_impureBlockData;
 
     ImpureBlockData m_data;
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,30 +20,25 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "B3HeapRange.h"
+#pragma once
 
 #if ENABLE(B3_JIT)
 
-namespace JSC { namespace B3 {
+namespace JSC { namespace B3 { namespace Air {
 
-void HeapRange::dump(PrintStream& out) const
-{
-    if (*this == HeapRange()) {
-        out.print("Bottom");
-        return;
-    }
-    if (*this == top()) {
-        out.print("Top");
-        return;
-    }
-    out.print(m_begin, "...", m_end);
-}
+class Code;
 
-} } // namespace JSC::B3
+// Because there may be terminals that produce values, the register allocator may
+// want to spill those terminals. It'll happen to spill it after
+// the terminal. If we left the graph in this state, it'd be invalid
+// because a terminal must be the last instruction in a block.
+// We fix that here.
+void fixSpillsAfterTerminals(Code&);
+
+} } } // namespace JSC::B3::Air
 
 #endif // ENABLE(B3_JIT)
 

@@ -73,7 +73,7 @@ private:
     {
         Dominators& dominators = m_proc.dominators();
         HashMap<ValueKey, Value*> valueForConstant;
-        IndexMap<BasicBlock, Vector<Value*>> materializations(m_proc.size());
+        IndexMap<BasicBlock*, Vector<Value*>> materializations(m_proc.size());
 
         // We determine where things get materialized based on where they are used.
         for (BasicBlock* block : m_proc) {
@@ -274,7 +274,7 @@ private:
         for (auto& entry : m_constTable)
             m_dataSection[entry.value] = entry.key.value();
 
-        IndexSet<Value> offLimits;
+        IndexSet<Value*> offLimits;
         for (BasicBlock* block : m_proc) {
             for (unsigned valueIndex = 0; valueIndex < block->size(); ++valueIndex) {
                 StackmapValue* value = block->at(valueIndex)->as<StackmapValue>();

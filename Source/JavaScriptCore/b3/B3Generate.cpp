@@ -57,7 +57,7 @@ void prepareForGeneration(Procedure& procedure, unsigned optLevel)
     TimingScope timingScope("prepareForGeneration");
 
     generateToAir(procedure, optLevel);
-    Air::prepareForGeneration(procedure.code());
+    Air::prepareForGeneration(procedure.code(), optLevel);
 }
 
 void generate(Procedure& procedure, CCallHelpers& jit)
@@ -80,7 +80,7 @@ void generateToAir(Procedure& procedure, unsigned optLevel)
     if (shouldValidateIR())
         validate(procedure);
 
-    if (optLevel >= 1) {
+    if (optLevel >= 2) {
         reduceDoubleToFloat(procedure);
         reduceStrength(procedure);
         eliminateCommonSubexpressions(procedure);
@@ -91,12 +91,15 @@ void generateToAir(Procedure& procedure, unsigned optLevel)
         
         // FIXME: Add more optimizations here.
         // https://bugs.webkit.org/show_bug.cgi?id=150507
+    } else if (optLevel >= 1) {
+        // FIXME: Explore better "quick mode" optimizations.
+        reduceStrength(procedure);
     }
 
     // This puts the IR in quirks mode.
     lowerMacros(procedure);
 
-    if (optLevel >= 1) {
+    if (optLevel >= 2) {
         reduceStrength(procedure);
 
         // FIXME: Add more optimizations here.

@@ -59,7 +59,7 @@ public:
         appendInsertion(Insertion(index, std::forward<Inst>(inst)));
     }
 
-    template <typename InstVector>
+    template<typename InstVector>
     void insertInsts(size_t index, const InstVector& insts)
     {
         for (const Inst& inst : insts)

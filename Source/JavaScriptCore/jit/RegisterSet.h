@@ -102,8 +102,16 @@ public:
     }
     
     // Also allow add/remove/contains terminology, which means the same thing as set/clear/get.
-    void add(Reg reg) { set(reg); }
-    void remove(Reg reg) { clear(reg); }
+    bool add(Reg reg)
+    {
+        ASSERT(!!reg);
+        return !m_bits.testAndSet(reg.index());
+    }
+    bool remove(Reg reg)
+    {
+        ASSERT(!!reg);
+        return m_bits.testAndClear(reg.index());
+    }
     bool contains(Reg reg) const { return get(reg); }
     
     void merge(const RegisterSet& other) { m_bits.merge(other.m_bits); }

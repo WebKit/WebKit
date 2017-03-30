@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,8 +39,8 @@ class CFG {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     typedef BasicBlock* Node;
-    typedef IndexSet<BasicBlock> Set;
-    template<typename T> using Map = IndexMap<BasicBlock, T>;
+    typedef IndexSet<BasicBlock*> Set;
+    template<typename T> using Map = IndexMap<BasicBlock*, T>;
     typedef Vector<BasicBlock*, 4> List;
 
     CFG(Procedure& proc)
@@ -51,7 +51,7 @@ public:
     Node root() { return m_proc[0]; }
 
     template<typename T>
-    Map<T> newMap() { return IndexMap<JSC::B3::BasicBlock, T>(m_proc.size()); }
+    Map<T> newMap() { return IndexMap<JSC::B3::BasicBlock*, T>(m_proc.size()); }
 
     SuccessorCollection<BasicBlock, BasicBlock::SuccessorList> successors(Node node) { return node->successorBlocks(); }
     BasicBlock::PredecessorList& predecessors(Node node) { return node->predecessors(); }

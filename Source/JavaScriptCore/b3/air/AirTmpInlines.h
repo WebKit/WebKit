@@ -92,6 +92,58 @@ struct AbsoluteTmpMapper<FP> {
     }
 };
 
+template<Bank theBank>
+class Tmp::Indexed : public Tmp {
+public:
+    static const char* const dumpPrefix;
+    
+    Indexed(Tmp tmp)
+        : Tmp(tmp)
+    {
+    }
+    
+    unsigned index() const
+    {
+        return tmpIndex(theBank);
+    }
+};
+
+template<Bank theBank>
+class Tmp::AbsolutelyIndexed : public Tmp {
+public:
+    static const char* const dumpPrefix;
+
+    AbsolutelyIndexed(Tmp tmp)
+        : Tmp(tmp)
+    {
+    }
+    
+    unsigned index() const
+    {
+        return AbsoluteTmpMapper<theBank>::absoluteIndex(*this);
+    }
+};
+
+template<Bank theBank>
+inline Tmp::Indexed<theBank> Tmp::indexed() const
+{
+    return Indexed<theBank>(*this);
+}
+
+template<Bank theBank>
+inline Tmp::AbsolutelyIndexed<theBank> Tmp::absolutelyIndexed() const
+{
+    return AbsolutelyIndexed<theBank>(*this);
+}
+
+inline Tmp Tmp::tmpForAbsoluteIndex(Bank bank, unsigned index)
+{
+    if (bank == GP)
+        return AbsoluteTmpMapper<GP>::tmpFromAbsoluteIndex(index);
+    ASSERT(bank == FP);
+    return AbsoluteTmpMapper<FP>::tmpFromAbsoluteIndex(index);
+}
+
 } } } // namespace JSC::B3::Air
 
 #endif // ENABLE(B3_JIT)

@@ -92,6 +92,17 @@ public:
         Cold,
         Warm
     };
+    
+    enum Phase : int8_t {
+        Early,
+        Late
+    };
+    
+    enum Timing : int8_t {
+        OnlyEarly,
+        OnlyLate,
+        EarlyAndLate
+    };
 
     enum Role : int8_t {
         // Use means that the Inst will read from this value before doing anything else.
@@ -253,7 +264,82 @@ public:
     {
         return isColdUse(role) ? Cold : Warm;
     }
-
+    
+    static bool activeAt(Role role, Phase phase)
+    {
+        switch (role) {
+        case Use:
+        case ColdUse:
+        case EarlyDef:
+        case EarlyZDef:
+        case UseAddr:
+            return phase == Early;
+        case LateUse:
+        case LateColdUse:
+        case Def:
+        case ZDef:
+            return phase == Late;
+        case UseDef:
+        case UseZDef:
+        case Scratch:
+            return true;
+        }
+        ASSERT_NOT_REACHED();
+    }
+    
+    static bool activeAt(Timing timing, Phase phase)
+    {
+        switch (timing) {
+        case OnlyEarly:
+            return phase == Early;
+        case OnlyLate:
+            return phase == Late;
+        case EarlyAndLate:
+            return true;
+        }
+        ASSERT_NOT_REACHED();
+    }
+    
+    static Timing timing(Role role)
+    {
+        switch (role) {
+        case Use:
+        case ColdUse:
+        case EarlyDef:
+        case EarlyZDef:
+        case UseAddr:
+            return OnlyEarly;
+        case LateUse:
+        case LateColdUse:
+        case Def:
+        case ZDef:
+            return OnlyLate;
+        case UseDef:
+        case UseZDef:
+        case Scratch:
+            return EarlyAndLate;
+        }
+        ASSERT_NOT_REACHED();
+    }
+    
+    template<typename Func>
+    static void forEachPhase(Timing timing, const Func& func)
+    {
+        if (activeAt(timing, Early))
+            func(Early);
+        if (activeAt(timing, Late))
+            func(Late);
+    }
+    
+    template<typename Func>
+    static void forEachPhase(Role role, const Func& func)
+    {
+        if (activeAt(role, Early))
+            func(Early);
+        if (activeAt(role, Late))
+            func(Late);
+    }
+    
     // Returns true if the Role implies that the Inst will Use the Arg before doing anything else.
     static bool isEarlyUse(Role role)
     {
@@ -1354,6 +1440,8 @@ namespace WTF {
 
 JS_EXPORT_PRIVATE void printInternal(PrintStream&, JSC::B3::Air::Arg::Kind);
 JS_EXPORT_PRIVATE void printInternal(PrintStream&, JSC::B3::Air::Arg::Temperature);
+JS_EXPORT_PRIVATE void printInternal(PrintStream&, JSC::B3::Air::Arg::Phase);
+JS_EXPORT_PRIVATE void printInternal(PrintStream&, JSC::B3::Air::Arg::Timing);
 JS_EXPORT_PRIVATE void printInternal(PrintStream&, JSC::B3::Air::Arg::Role);
 JS_EXPORT_PRIVATE void printInternal(PrintStream&, JSC::B3::Air::Arg::Signedness);
 

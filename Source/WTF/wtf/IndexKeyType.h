@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,24 +25,17 @@
 
 #pragma once
 
-#if ENABLE(B3_JIT)
+namespace WTF {
 
-#include "B3Value.h"
-#include <wtf/IndexSet.h>
-#include <wtf/Vector.h>
+template<typename T>
+struct IndexKeyType {
+    static size_t index(const T& key) { return key.index(); }
+};
 
-namespace JSC { namespace B3 {
+template<typename T>
+struct IndexKeyType<T*> {
+    static size_t index(T* key) { return key->index(); }
+};
 
-class Procedure;
+} // namespace WTF
 
-// Turns all mentions of the given values into accesses to variables. This is meant to be used
-// from phases that don't like SSA for whatever reason.
-void demoteValues(Procedure&, const IndexSet<Value*>&);
-
-// This fixes SSA for you. Use this after you have done demoteValues() and you have performed
-// whatever evil transformation you needed.
-bool fixSSA(Procedure&);
-
-} } // namespace JSC::B3
-
-#endif // ENABLE(B3_JIT)

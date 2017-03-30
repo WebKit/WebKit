@@ -1,3 +1,145 @@
+2017-03-30  Filip Pizlo  <fpizlo@apple.com>
+
+        Air should support linear scan for optLevel<2
+        https://bugs.webkit.org/show_bug.cgi?id=170161
+
+        Reviewed by Saam Barati.
+        
+        This changes the default opt level of B3 to 2. It makes the other opt levels useful by adding a
+        new register allocator. This new linear scan allocator will produce significantly worse code.
+        But it will produce that code a lot faster than IRC or Briggs.
+        
+        The opt levels are:
+            0: no optimizations, linear scan
+            1: some optimizations, linear scan
+            2: full optimizations, graph coloring (IRC or Briggs based on CPU)
+        
+        What we used to call optLevel=1 is not called optLevel=2, or better yet,
+        optLevel=B3::defaultOptLevel(). We no longer have anything like the old optLevel=0 (which did no
+        optimizations but ran graph coloring).
+        
+        allocateRegistersByLinearScan() faithfully implements Massimiliano Poletto and Vivek Sarkar's
+        famous algorithm. It uses the variant that handles clobbered registers by avoiding assigning
+        ranges to those registers if the range overlaps a clobber. It's engineered to allocate registers
+        very quickly and generate inefficient code without falling off a cliff.
+        
+        The new optLevel=1 speeds up B3 by a factor of 2, and results in a 80% throughput regression.
+        Linear scan runs 4.7x faster than graph coloring on average.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * b3/B3BasicBlockUtils.h:
+        (JSC::B3::blocksInPreOrder):
+        (JSC::B3::blocksInPostOrder):
+        * b3/B3BlockWorklist.h:
+        * b3/B3CFG.h:
+        (JSC::B3::CFG::newMap):
+        * b3/B3Common.h:
+        (JSC::B3::defaultOptLevel):
+        * b3/B3Compile.h:
+        * b3/B3DuplicateTails.cpp:
+        * b3/B3EliminateCommonSubexpressions.cpp:
+        * b3/B3FixSSA.cpp:
+        (JSC::B3::demoteValues):
+        (JSC::B3::fixSSA):
+        * b3/B3FixSSA.h:
+        * b3/B3Generate.cpp:
+        (JSC::B3::prepareForGeneration):
+        (JSC::B3::generateToAir):
+        * b3/B3Generate.h:
+        * b3/B3HeapRange.cpp: Removed.
+        * b3/B3HeapRange.h:
+        (JSC::B3::HeapRange::HeapRange): Deleted.
+        (JSC::B3::HeapRange::top): Deleted.
+        (JSC::B3::HeapRange::operator==): Deleted.
+        (JSC::B3::HeapRange::operator!=): Deleted.
+        (JSC::B3::HeapRange::operator|): Deleted.
+        (JSC::B3::HeapRange::operator bool): Deleted.
+        (JSC::B3::HeapRange::begin): Deleted.
+        (JSC::B3::HeapRange::end): Deleted.
+        (JSC::B3::HeapRange::overlaps): Deleted.
+        * b3/B3LowerToAir.cpp:
+        * b3/B3MoveConstants.cpp:
+        * b3/B3PhiChildren.h:
+        * b3/B3Procedure.cpp:
+        (JSC::B3::Procedure::dump):
+        (JSC::B3::Procedure::deleteOrphans):
+        (JSC::B3::Procedure::setBlockOrderImpl):
+        * b3/B3ReduceDoubleToFloat.cpp:
+        * b3/B3ReduceStrength.cpp:
+        * b3/B3SSACalculator.h:
+        * b3/B3UseCounts.h:
+        * b3/air/AirAllocateRegistersByGraphColoring.cpp:
+        * b3/air/AirAllocateRegistersByLinearScan.cpp: Added.
+        (JSC::B3::Air::allocateRegistersByLinearScan):
+        * b3/air/AirAllocateRegistersByLinearScan.h: Added.
+        * b3/air/AirAllocateStack.cpp:
+        (JSC::B3::Air::allocateStack):
+        * b3/air/AirArg.cpp:
+        (WTF::printInternal):
+        * b3/air/AirArg.h:
+        (JSC::B3::Air::Arg::activeAt):
+        (JSC::B3::Air::Arg::timing):
+        (JSC::B3::Air::Arg::forEachPhase):
+        * b3/air/AirBasicBlock.h:
+        * b3/air/AirBlockWorklist.h:
+        * b3/air/AirCFG.h:
+        (JSC::B3::Air::CFG::newMap):
+        * b3/air/AirEliminateDeadCode.cpp:
+        (JSC::B3::Air::eliminateDeadCode):
+        * b3/air/AirFixObviousSpills.cpp:
+        * b3/air/AirFixPartialRegisterStalls.cpp:
+        (JSC::B3::Air::fixPartialRegisterStalls):
+        * b3/air/AirFixSpillsAfterTerminals.cpp: Added.
+        (JSC::B3::Air::fixSpillsAfterTerminals):
+        * b3/air/AirFixSpillsAfterTerminals.h: Added.
+        * b3/air/AirGenerate.cpp:
+        (JSC::B3::Air::prepareForGeneration):
+        (JSC::B3::Air::generate):
+        * b3/air/AirGenerate.h:
+        * b3/air/AirGenerationContext.h:
+        * b3/air/AirInsertionSet.h:
+        * b3/air/AirInst.cpp:
+        (JSC::B3::Air::Inst::needsPadding):
+        * b3/air/AirLowerAfterRegAlloc.cpp:
+        (JSC::B3::Air::lowerAfterRegAlloc):
+        * b3/air/AirLowerEntrySwitch.cpp:
+        (JSC::B3::Air::lowerEntrySwitch):
+        * b3/air/AirOpcode.opcodes:
+        * b3/air/AirPhaseInsertionSet.cpp: Added.
+        (JSC::B3::Air::PhaseInsertionSet::execute):
+        * b3/air/AirPhaseInsertionSet.h: Added.
+        (JSC::B3::Air::PhaseInsertion::PhaseInsertion):
+        (JSC::B3::Air::PhaseInsertion::phase):
+        (JSC::B3::Air::PhaseInsertion::operator<):
+        (JSC::B3::Air::PhaseInsertionSet::PhaseInsertionSet):
+        (JSC::B3::Air::PhaseInsertionSet::appendInsertion):
+        (JSC::B3::Air::PhaseInsertionSet::insertInst):
+        (JSC::B3::Air::PhaseInsertionSet::insert):
+        * b3/air/AirRegLiveness.h:
+        (JSC::B3::Air::RegLiveness::LocalCalc::LocalCalc):
+        * b3/air/AirSpillEverything.cpp:
+        (JSC::B3::Air::spillEverything):
+        * b3/air/AirTmp.cpp:
+        * b3/air/AirTmp.h:
+        (JSC::B3::Air::Tmp::tmpForIndex):
+        * b3/air/AirTmpInlines.h:
+        (JSC::B3::Air::Tmp::Indexed::Indexed):
+        (JSC::B3::Air::Tmp::Indexed::index):
+        (JSC::B3::Air::Tmp::AbsolutelyIndexed::AbsolutelyIndexed):
+        (JSC::B3::Air::Tmp::AbsolutelyIndexed::index):
+        (JSC::B3::Air::Tmp::indexed):
+        (JSC::B3::Air::Tmp::absolutelyIndexed):
+        (JSC::B3::Air::Tmp::tmpForAbsoluteIndex):
+        * b3/testb3.cpp:
+        (JSC::B3::compile):
+        (JSC::B3::testMulLoadTwice):
+        * jit/RegisterSet.h:
+        (JSC::RegisterSet::add):
+        (JSC::RegisterSet::remove):
+        * runtime/Options.h:
+        * wasm/WasmB3IRGenerator.h:
+
 2017-03-30  Youenn Fablet  <youenn@apple.com>
 
         Clean up RTCDataChannel

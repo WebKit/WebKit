@@ -29,6 +29,7 @@
 #if ENABLE(B3_JIT)
 
 #include "AirAllocateRegistersByGraphColoring.h"
+#include "AirAllocateRegistersByLinearScan.h"
 #include "AirAllocateStack.h"
 #include "AirCode.h"
 #include "AirEliminateDeadCode.h"
@@ -57,7 +58,7 @@
 
 namespace JSC { namespace B3 { namespace Air {
 
-void prepareForGeneration(Code& code)
+void prepareForGeneration(Code& code, unsigned optLevel)
 {
     TimingScope timingScope("Air::prepareForGeneration");
     
@@ -89,18 +90,22 @@ void prepareForGeneration(Code& code)
     // For debugging, you can use spillEverything() to put everything to the stack between each Inst.
     if (Options::airSpillsEverything())
         spillEverything(code);
-    else
+    else if (optLevel >= 2)
         allocateRegistersByGraphColoring(code);
+    else
+        allocateRegistersByLinearScan(code);
 
     if (Options::logAirRegisterPressure()) {
         dataLog("Register pressure after register allocation:\n");
         logRegisterPressure(code);
     }
-
-    // This replaces uses of spill slots with registers or constants if possible. It does this by
-    // minimizing the amount that we perturb the already-chosen register allocation. It may extend
-    // the live ranges of registers though.
-    fixObviousSpills(code);
+    
+    if (optLevel >= 2) {
+        // This replaces uses of spill slots with registers or constants if possible. It does this by
+        // minimizing the amount that we perturb the already-chosen register allocation. It may extend
+        // the live ranges of registers though.
+        fixObviousSpills(code);
+    }
 
     lowerAfterRegAlloc(code);
 
@@ -165,7 +170,7 @@ void generate(Code& code, CCallHelpers& jit)
         if (block)
             context.blockLabels[block] = Box<CCallHelpers::Label>::create();
     }
-    IndexMap<BasicBlock, CCallHelpers::JumpList> blockJumps(code.size());
+    IndexMap<BasicBlock*, CCallHelpers::JumpList> blockJumps(code.size());
 
     auto link = [&] (CCallHelpers::Jump jump, BasicBlock* target) {
         if (context.blockLabels[target]->isSet()) {

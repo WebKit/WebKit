@@ -40,7 +40,7 @@ bool eliminateDeadCode(Code& code)
     PhaseScope phaseScope(code, "eliminateDeadCode");
 
     HashSet<Tmp> liveTmps;
-    IndexSet<StackSlot> liveStackSlots;
+    IndexSet<StackSlot*> liveStackSlots;
     bool changed;
 
     auto isArgLive = [&] (const Arg& arg) -> bool {

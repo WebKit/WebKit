@@ -60,7 +60,8 @@ bool Inst::hasLateUseOrDef()
 
 bool Inst::needsPadding(Inst* prevInst, Inst* nextInst)
 {
-    return prevInst && nextInst && prevInst->hasLateUseOrDef() && nextInst->hasEarlyDef();
+    bool result = prevInst && nextInst && prevInst->hasLateUseOrDef() && nextInst->hasEarlyDef();
+    return result;
 }
 
 bool Inst::hasArgEffects()

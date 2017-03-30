@@ -1,3 +1,46 @@
+2017-03-30  Filip Pizlo  <fpizlo@apple.com>
+
+        Air should support linear scan for optLevel<2
+        https://bugs.webkit.org/show_bug.cgi?id=170161
+
+        Reviewed by Saam Barati.
+        
+        This change introduces a new low-latency register allocator. It can allocate registers very
+        quickly by doing a relatively poor job. Implementing this algorithm required beefing up some of
+        our core algorithms.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/Deque.h: Make it possible to do some basic priority queueing with this data structure.
+        (WTF::inlineCapacity>::removeAllMatching):
+        (WTF::inlineCapacity>::appendAndBubble):
+        (WTF::inlineCapacity>::takeLast):
+        * wtf/IndexKeyType.h: Added. This makes it possible to use IndexMap and IndexSet with value or pointer types. Previously they just worked with pointer types.
+        (WTF::IndexKeyType::index):
+        * wtf/IndexMap.h: Adopt IndexKeyType.
+        (WTF::IndexMap::operator[]):
+        (WTF::IndexMap::append):
+        * wtf/IndexSet.h: Adopt IndexKeyType.
+        (WTF::IndexSet::add):
+        (WTF::IndexSet::addAll):
+        (WTF::IndexSet::remove):
+        (WTF::IndexSet::contains):
+        (WTF::IndexSet::Iterable::iterator::operator*):
+        * wtf/Range.h: Added. This used to be B3::HeapRange. This generalizes that data structure to any kind of range stuff.
+        (WTF::Range::Range):
+        (WTF::Range::top):
+        (WTF::Range::operator==):
+        (WTF::Range::operator!=):
+        (WTF::Range::operator bool):
+        (WTF::Range::operator|):
+        (WTF::Range::operator|=):
+        (WTF::Range::begin):
+        (WTF::Range::end):
+        (WTF::Range::overlaps):
+        (WTF::Range::dump):
+        * wtf/RangeSet.h:
+        (WTF::RangeSet::add):
+
 2017-03-25  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Move platformThreadSignal to WTF

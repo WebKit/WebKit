@@ -30,6 +30,7 @@
 
 #include "AirArgInlines.h"
 #include "AirCode.h"
+#include "AirFixSpillsAfterTerminals.h"
 #include "AirInsertionSet.h"
 #include "AirInstInlines.h"
 #include "AirLiveness.h"
@@ -46,7 +47,7 @@ void spillEverything(Code& code)
     padInterference(code);
 
     // We want to know the set of registers used at every point in every basic block.
-    IndexMap<BasicBlock, Vector<RegisterSet>> usedRegisters(code.size());
+    IndexMap<BasicBlock*, Vector<RegisterSet>> usedRegisters(code.size());
     GPLiveness gpLiveness(code);
     FPLiveness fpLiveness(code);
     for (BasicBlock* block : code) {
@@ -173,10 +174,13 @@ void spillEverything(Code& code)
                     RELEASE_ASSERT(chosenReg);
 
                     tmp = Tmp(chosenReg);
+                    
+                    if (role == Arg::Scratch)
+                        return;
 
                     Opcode move = bank == GP ? Move : MoveDouble;
 
-                    if (Arg::isAnyUse(role) && role != Arg::Scratch)
+                    if (Arg::isAnyUse(role))
                         insertionSet.insert(instIndex, move, inst.origin, arg, tmp);
                     if (Arg::isAnyDef(role))
                         insertionSet.insert(instIndex + 1, move, inst.origin, tmp, arg);
@@ -184,6 +188,8 @@ void spillEverything(Code& code)
         }
         insertionSet.execute(block);
     }
+    
+    fixSpillsAfterTerminals(code);
 }
 
 } } } // namespace JSC::B3::Air

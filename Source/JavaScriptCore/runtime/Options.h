@@ -225,6 +225,7 @@ typedef const char* optionString;
     v(bool, useFTLJIT, true, Normal, "allows the FTL JIT to be used if true") \
     v(bool, useFTLTBAA, true, Normal, nullptr) \
     v(bool, validateFTLOSRExitLiveness, false, Normal, nullptr) \
+    v(unsigned, defaultB3OptLevel, 2, Normal, nullptr) \
     v(bool, b3AlwaysFailsBeforeCompile, false, Normal, nullptr) \
     v(bool, b3AlwaysFailsBeforeLink, false, Normal, nullptr) \
     v(bool, ftlCrashes, false, Normal, nullptr) /* fool-proof way of checking that you ended up in the FTL. ;-) */\
@@ -398,6 +399,8 @@ typedef const char* optionString;
     v(bool, logB3PhaseTimes, false, Normal, nullptr) \
     v(double, rareBlockPenalty, 0.001, Normal, nullptr) \
     v(bool, airSpillsEverything, false, Normal, nullptr) \
+    v(bool, airLinearScanVerbose, false, Normal, nullptr) \
+    v(bool, airLinearScanSpillsEverything, false, Normal, nullptr) \
     v(bool, airForceBriggsAllocator, false, Normal, nullptr) \
     v(bool, airForceIRCAllocator, false, Normal, nullptr) \
     v(bool, coalesceSpillSlots, true, Normal, nullptr) \

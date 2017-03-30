@@ -48,7 +48,7 @@ public:
     typedef SharedTask<LatePathFunction> LatePath;
 
     Vector<RefPtr<LatePath>> latePaths;
-    IndexMap<BasicBlock, Box<CCallHelpers::Label>> blockLabels;
+    IndexMap<BasicBlock*, Box<CCallHelpers::Label>> blockLabels;
     BasicBlock* currentBlock { nullptr };
     unsigned indexInBlock { UINT_MAX };
     Code* code { nullptr };

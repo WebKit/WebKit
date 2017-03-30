@@ -649,7 +649,7 @@ Move32 U:G:32, ZD:G:32
 Move32 U:G:32, ZD:G:32, S:G:32
     Addr, Addr, Tmp
 
-StoreZero32 U:G:32
+StoreZero32 D:G:32
     Addr
     Index
 

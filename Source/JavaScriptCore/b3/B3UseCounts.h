@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,7 +48,7 @@ private:
         unsigned numUsingInstructions { 0 };
     };
     
-    IndexMap<Value, Counts> m_counts;
+    IndexMap<Value*, Counts> m_counts;
 };
 
 } } // namespace JSC::B3
