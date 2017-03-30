@@ -34,7 +34,6 @@ interface EventSendingController {
     void mouseForceChanged(double force);
     void mouseScrollBy(long x, long y);
     void mouseScrollByWithWheelAndMomentumPhases(long x, long y, DOMString phase, DOMString momentum);
-    void swipeGestureWithWheelAndMomentumPhases(long x, long y, DOMString phase, DOMString momentum);
     void continuousMouseScrollBy(long x, long y, optional boolean paged);
     object contextClick();
     void scheduleAsynchronousClick();

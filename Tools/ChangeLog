@@ -1,3 +1,45 @@
+2017-03-29  Tim Horton  <timothy_horton@apple.com>
+
+        Swipe gesture tests don't work on macOS Sierra
+        https://bugs.webkit.org/show_bug.cgi?id=161675
+        <rdar://problem/23379930>
+
+        Reviewed by Darin Adler.
+
+        * DumpRenderTree/mac/UIScriptControllerMac.mm:
+        (WTR::UIScriptController::platformPlayBackEventStream):
+        (WTR::UIScriptController::beginBackSwipe):
+        (WTR::UIScriptController::completeBackSwipe):
+        * TestRunnerShared/EventSerialization/mac/EventSerializerMac.h: Copied from Tools/DumpRenderTree/mac/UIScriptControllerMac.mm.
+        * TestRunnerShared/EventSerialization/mac/EventSerializerMac.mm: Added.
+        (eventIsOfType):
+        (eventIsOfTypes):
+        (eventIsOfGestureType):
+        (eventIsOfGestureTypes):
+        (+[EventSerializer dictionaryForEvent:relativeToTime:]):
+        (+[EventSerializer createEventForDictionary:inWindow:relativeToTime:]):
+        (+[EventSerializer playEventStream:inWindow:completionHandler:]):
+        * TestRunnerShared/EventSerialization/mac/SharedEventStreamsMac.h: Copied from Tools/WebKitTestRunner/mac/UIScriptControllerMac.mm.
+        * TestRunnerShared/EventSerialization/mac/SharedEventStreamsMac.mm: Added.
+        (beginSwipeBackEventStream):
+        (completeSwipeBackEventStream):
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+        * TestRunnerShared/UIScriptContext/UIScriptController.cpp:
+        (WTR::UIScriptController::playBackEventStream):
+        (WTR::UIScriptController::beginBackSwipe):
+        (WTR::UIScriptController::completeBackSwipe):
+        (WTR::UIScriptController::platformPlayBackEventStream):
+        (WTR::UIScriptController::platformClearAllCallbacks): Deleted.
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        * TestRunnerShared/spi/CoreGraphicsSPI.h: Added.
+        * TestRunnerShared/spi/IOKitSPI.h: Renamed from Tools/WebKitTestRunner/ios/IOKitSPI.h.
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+        * WebKitTestRunner/mac/UIScriptControllerMac.mm:
+        (WTR::playBackEvents):
+        (WTR::UIScriptController::beginBackSwipe):
+        (WTR::UIScriptController::completeBackSwipe):
+        (WTR::UIScriptController::platformPlayBackEventStream):
+
 2017-03-29  Jonathan Bedard  <jbedard@apple.com>
 
         webkitpy: Robust test clean-up

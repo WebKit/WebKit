@@ -6,37 +6,67 @@ html {
 </style>
 <script src="resources/swipe-test.js"></script>
 <script>
-function startSwipeGesture()
+function runTest()
 {
-    eventSender.mouseMoveTo(100, 100);
-
-    eventQueue.enqueueSwipeEvent(0, 0, 'maybegin');
-    eventQueue.enqueueScrollEvent(1, 0, 'began');
-    
-    eventQueue.callAfterEventDispatch(goBack);
+    playEventStream(`[{
+        "relativeTimeMS" : 0,
+        "kCGEventScrollGestureFlagBits" : 1,
+        "kCGEventGestureHIDType" : 6,
+        "kCGSEventTypeField" : 29,
+        "kCGEventGesturePhase" : 128,
+        "windowLocation" : "{400, 300}"
+      },
+      {
+        "relativeTimeMS" : 8,
+        "kCGEventGestureHIDType" : 61,
+        "kCGSEventTypeField" : 29,
+        "kCGEventGestureStartEndSeriesType" : 6,
+        "windowLocation" : "{0, 0}"
+      },
+      {
+        "kCGEventGestureHIDType" : 6,
+        "relativeTimeMS" : 8,
+        "windowLocation" : "{400, 300}",
+        "kCGEventGesturePhase" : 1,
+        "kCGEventScrollGestureFlagBits" : 1,
+        "kCGSEventTypeField" : 29,
+        "kCGEventGestureScrollX" : 2
+      },
+      {
+        "relativeTimeMS" : 8,
+        "windowLocation" : "{400, 300}",
+        "kCGScrollWheelEventScrollPhase" : 1,
+        "kCGScrollWheelEventIsContinuous" : 1,
+        "kCGScrollWheelEventPointDeltaAxis2" : 1,
+        "kCGSEventTypeField" : 22
+      }]`, goBack);
 }
 
 function goBack()
 {
     window.history.back();
 
-    eventQueue.callAfterEventDispatch(continueSwipeGesture);
+    setTimeout(continueTest, 0);
 }
 
-function continueSwipeGesture()
+function continueTest()
 {
-    eventQueue.enqueueScrollEvent(1, 0, 'changed');
-
-    eventQueue.callAfterEventDispatch(completeSwipeGesture);
+    playEventStream(`[
+      {
+        "relativeTimeMS" : 0,
+        "windowLocation" : "{400, 300}",
+        "kCGScrollWheelEventScrollPhase" : 1,
+        "kCGScrollWheelEventIsContinuous" : 1,
+        "kCGScrollWheelEventPointDeltaAxis2" : 20,
+        "kCGSEventTypeField" : 22
+      }]`, function () {
+        completeTest();
+      });
 }
 
-function completeSwipeGesture()
+function completeTest()
 {
-    eventQueue.enqueueSwipeEvent(1, 0, 'changed');
-    eventQueue.enqueueSwipeEvent(256, 0, 'changed');
-    eventQueue.enqueueSwipeEvent(0, 0, 'ended');
-
-    eventQueue.callAfterEventDispatch(testComplete);
+    completeSwipeGesture(testComplete);
 }
 
 function didBeginSwipeCallback()
@@ -79,7 +109,7 @@ window.onload = function () {
         updateContent();
 
         setTimeout(function () {
-            startSwipeGesture();
+            runTest();
         }, 0);
     }, 0);
 };

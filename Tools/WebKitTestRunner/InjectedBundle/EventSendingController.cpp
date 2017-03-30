@@ -483,38 +483,6 @@ void EventSendingController::mouseScrollByWithWheelAndMomentumPhases(int x, int 
     WKBundlePagePostMessage(InjectedBundle::singleton().page()->page(), EventSenderMessageName.get(), EventSenderMessageBody.get());
 }
 
-void EventSendingController::swipeGestureWithWheelAndMomentumPhases(int x, int y, JSStringRef phaseStr, JSStringRef momentumStr)
-{
-    WKRetainPtr<WKStringRef> EventSenderMessageName(AdoptWK, WKStringCreateWithUTF8CString("EventSender"));
-    WKRetainPtr<WKMutableDictionaryRef> EventSenderMessageBody(AdoptWK, WKMutableDictionaryCreate());
-
-    WKRetainPtr<WKStringRef> subMessageKey(AdoptWK, WKStringCreateWithUTF8CString("SubMessage"));
-    WKRetainPtr<WKStringRef> subMessageName(AdoptWK, WKStringCreateWithUTF8CString("SwipeGestureWithWheelAndMomentumPhases"));
-    WKDictionarySetItem(EventSenderMessageBody.get(), subMessageKey.get(), subMessageName.get());
-
-    WKRetainPtr<WKStringRef> xKey(AdoptWK, WKStringCreateWithUTF8CString("X"));
-    WKRetainPtr<WKDoubleRef> xRef(AdoptWK, WKDoubleCreate(x));
-    WKDictionarySetItem(EventSenderMessageBody.get(), xKey.get(), xRef.get());
-
-    WKRetainPtr<WKStringRef> yKey(AdoptWK, WKStringCreateWithUTF8CString("Y"));
-    WKRetainPtr<WKDoubleRef> yRef(AdoptWK, WKDoubleCreate(y));
-    WKDictionarySetItem(EventSenderMessageBody.get(), yKey.get(), yRef.get());
-
-    uint64_t phase = cgEventPhaseFromString(phaseStr);
-    uint64_t momentum = cgEventMomentumPhaseFromString(momentumStr);
-
-    WKRetainPtr<WKStringRef> phaseKey(AdoptWK, WKStringCreateWithUTF8CString("Phase"));
-    WKRetainPtr<WKUInt64Ref> phaseRef(AdoptWK, WKUInt64Create(phase));
-    WKDictionarySetItem(EventSenderMessageBody.get(), phaseKey.get(), phaseRef.get());
-
-    WKRetainPtr<WKStringRef> momentumKey(AdoptWK, WKStringCreateWithUTF8CString("Momentum"));
-    WKRetainPtr<WKUInt64Ref> momentumRef(AdoptWK, WKUInt64Create(momentum));
-    WKDictionarySetItem(EventSenderMessageBody.get(), momentumKey.get(), momentumRef.get());
-
-    WKBundlePageForceRepaint(InjectedBundle::singleton().page()->page()); // Triggers a scrolling tree commit.
-    WKBundlePagePostMessage(InjectedBundle::singleton().page()->page(), EventSenderMessageName.get(), EventSenderMessageBody.get());
-}
-
 void EventSendingController::continuousMouseScrollBy(int x, int y, bool paged)
 {
     WKRetainPtr<WKStringRef> EventSenderMessageName(AdoptWK, WKStringCreateWithUTF8CString("EventSender"));

@@ -95,6 +95,9 @@ public:
     void immediateScrollToOffset(long x, long y);
     void immediateZoomToScale(double scale);
 
+    void beginBackSwipe(JSValueRef callback);
+    void completeBackSwipe(JSValueRef callback);
+
     void setDidStartFormControlInteractionCallback(JSValueRef);
     JSValueRef didStartFormControlInteractionCallback() const;
 
@@ -121,6 +124,8 @@ public:
 
     void setDidEndScrollingCallback(JSValueRef);
     JSValueRef didEndScrollingCallback() const;
+
+    void playBackEventStream(JSStringRef stream, JSValueRef callback);
 
     double zoomScale() const;
     double minimumZoomScale() const;
@@ -166,6 +171,7 @@ private:
     void platformSetDidHideKeyboardCallback();
     void platformSetDidEndScrollingCallback();
     void platformClearAllCallbacks();
+    void platformPlayBackEventStream(JSStringRef, JSValueRef);
 
     JSClassRef wrapperClass() final;
 

@@ -136,6 +136,18 @@ void UIScriptController::addViewToWindow(JSValueRef callback)
     });
 }
 
+void UIScriptController::beginBackSwipe(JSValueRef callback)
+{
+}
+
+void UIScriptController::completeBackSwipe(JSValueRef callback)
+{
+}
+
+void UIScriptController::platformPlayBackEventStream(JSStringRef, JSValueRef)
+{
+}
+
 }
 
 #endif // PLATFORM(MAC)

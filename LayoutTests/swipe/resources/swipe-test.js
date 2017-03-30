@@ -1,50 +1,3 @@
-var eventQueue = {
-    enqueueScrollEvent: function (x, y, phase) {
-        this._queue.push(function () {
-            log("scroll event (delta " + x + " " + y + ", phase '" + phase + "')");
-            window.eventSender.mouseScrollByWithWheelAndMomentumPhases(x, y, phase, 'none');
-        });
-        this._processEventQueueSoon();
-    },
-
-    enqueueSwipeEvent: function (x, y, phase) {
-        this._queue.push(function () {
-            log("swipe event (delta " + x + " " + y + ", phase '" + phase + "')");
-            window.eventSender.swipeGestureWithWheelAndMomentumPhases(x, y, phase, 'none');
-        });
-        this._processEventQueueSoon();
-    },
-
-    hasPendingEvents: function () {
-        return this._queue.length != 0;
-    },
-
-    callAfterEventDispatch: function (callback) {
-        var interval = setInterval(function () { 
-            if (!eventQueue.hasPendingEvents()) {
-                clearInterval(interval);
-                callback();
-            }
-        }, 0);
-    },
-
-    _queue: [],
-
-    _processEventQueue: function () {
-        if (!this._queue.length)
-            return;
-
-        var item = this._queue.shift();
-        item();
-        this._processEventQueueSoon();
-    },
-
-    _processEventQueueSoon: function () {
-        clearTimeout(this._processingTimeout);
-        this._processingTimeout = setTimeout(this._processEventQueue.bind(this), 0);
-    }
-}
-
 function shouldBe(expected, actual, message)
 {
     if (expected != actual)
@@ -84,4 +37,37 @@ function measuredDurationShouldBeLessThan(key, timeInMS, message)
     var duration = Date.now() - window.localStorage[key + "swipeStartTime"];
     if (duration >= timeInMS)
         log("Failure. " + message + " (expected: " + timeInMS + ", actual: " + duration + ")");
+}
+
+function startSwipeGesture(callback)
+{
+    log("startSwipeGesture");
+    testRunner.runUIScript(`
+    (function() {
+        uiController.beginBackSwipe(function() {
+            uiController.uiScriptComplete();
+        });
+    })();`, callback || function () {});
+}
+
+function completeSwipeGesture(callback)
+{
+    log("completeSwipeGesture");
+    testRunner.runUIScript(`
+    (function() {
+        uiController.completeBackSwipe(function() {
+            uiController.uiScriptComplete();
+        });
+    })();`, callback || function () {});
+}
+
+function playEventStream(stream, callback)
+{
+    log("playEventStream");
+    testRunner.runUIScript(`
+    (function() {
+        uiController.playBackEventStream(\`${stream}\`, function() {
+            uiController.uiScriptComplete();
+        });
+    })();`, callback || function () {});
 }

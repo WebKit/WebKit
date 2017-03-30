@@ -23,12 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IOKitSPI_h
-#define IOKitSPI_h
+#pragma once
 
 #import <wtf/Platform.h>
-
-#if PLATFORM(IOS)
 
 #if USE(APPLE_INTERNAL_SDK)
 
@@ -89,7 +86,13 @@ enum {
     kIOHIDEventTypeNULL,
     kIOHIDEventTypeVendorDefined,
     kIOHIDEventTypeKeyboard = 3,
+    kIOHIDEventTypeRotation = 5,
+    kIOHIDEventTypeScroll = 6,
+    kIOHIDEventTypeZoom = 8,
     kIOHIDEventTypeDigitizer = 11,
+    kIOHIDEventTypeNavigationSwipe = 16,
+    kIOHIDEventTypeForce = 32,
+
 };
 typedef uint32_t IOHIDEventType;
 
@@ -198,7 +201,3 @@ enum {
 WTF_EXTERN_C_END
 
 #endif // USE(APPLE_INTERNAL_SDK)
-
-#endif // PLATFORM(IOS)
-
-#endif // IOKitSPI_h

@@ -194,6 +194,11 @@ JSObjectRef UIScriptController::contentsOfUserInterfaceItem(JSStringRef interfac
 }
 #endif
 
+void UIScriptController::playBackEventStream(JSStringRef stream, JSValueRef callback)
+{
+    platformPlayBackEventStream(stream, callback);
+}
+
 #if !PLATFORM(IOS)
 void UIScriptController::touchDownAtPoint(long x, long y, long touchCount, JSValueRef)
 {
@@ -415,6 +420,18 @@ void UIScriptController::overridePreference(JSStringRef, JSStringRef)
 }
 
 void UIScriptController::insertText(JSStringRef, int, int)
+{
+}
+
+void UIScriptController::beginBackSwipe(JSValueRef callback)
+{
+}
+
+void UIScriptController::completeBackSwipe(JSValueRef callback)
+{
+}
+
+void UIScriptController::platformPlayBackEventStream(JSStringRef, JSValueRef)
 {
 }
 

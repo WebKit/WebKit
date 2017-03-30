@@ -399,11 +399,6 @@ void EventSenderProxy::mouseScrollByWithWheelAndMomentumPhases(int x, int y, int
     mouseScrollBy(x, y);
 }
 
-void EventSenderProxy::swipeGestureWithWheelAndMomentumPhases(int, int, int, int)
-{
-    notImplemented();
-}
-
 void EventSenderProxy::leapForward(int milliseconds)
 {
     if (m_eventQueue.isEmpty())

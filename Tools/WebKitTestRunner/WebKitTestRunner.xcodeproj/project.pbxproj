@@ -62,6 +62,11 @@
 		29A8FCDD145F0337009045A6 /* JSAccessibilityTextMarkerRange.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29A8FCE1345E7021006AA5A6 /* JSAccessibilityTextMarkerRange.cpp */; };
 		29A8FCE2145F037B009045A6 /* AccessibilityTextMarkerRange.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29A8FCE1145F037B009045A6 /* AccessibilityTextMarkerRange.cpp */; };
 		29A8FCE5145F0464009045A6 /* AccessibilityTextMarkerRangeMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 29A8FCE4145F0464009045A6 /* AccessibilityTextMarkerRangeMac.mm */; };
+		2DB6187E1D7D58D400978D19 /* CoreGraphicsSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DB6187D1D7D58D400978D19 /* CoreGraphicsSPI.h */; };
+		2DD4C49A1D6E7D3B0007379C /* EventSerializerMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD4C4981D6E7D3B0007379C /* EventSerializerMac.h */; };
+		2DD4C49B1D6E7D3B0007379C /* EventSerializerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DD4C4991D6E7D3B0007379C /* EventSerializerMac.mm */; };
+		2DFA98481D7F70CF00AFF2C9 /* SharedEventStreamsMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DFA98461D7F70CF00AFF2C9 /* SharedEventStreamsMac.h */; };
+		2DFA98491D7F70CF00AFF2C9 /* SharedEventStreamsMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DFA98471D7F70CF00AFF2C9 /* SharedEventStreamsMac.mm */; };
 		2E34C90018B68808000067BB /* WebKitTestRunnerInjectedBundle.bundle in Copy Plug-Ins */ = {isa = PBXBuildFile; fileRef = BC25186211D15D54002EBC01 /* WebKitTestRunnerInjectedBundle.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		2E63ED8A1891AD7E002A7AFC /* AccessibilityControllerIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2E63ED751891ACE9002A7AFC /* AccessibilityControllerIOS.mm */; };
 		2E63ED8B1891AD7E002A7AFC /* AccessibilityTextMarkerIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2E63ED771891ACE9002A7AFC /* AccessibilityTextMarkerIOS.mm */; };
@@ -208,7 +213,7 @@
 		0FEB90A31905BC6A000FDBF3 /* CrashReporterInfo.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CrashReporterInfo.mm; path = cocoa/CrashReporterInfo.mm; sourceTree = "<group>"; };
 		0FEBF8581BB61DF20028722D /* HIDEventGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HIDEventGenerator.h; sourceTree = "<group>"; };
 		0FEBF8591BB61DF20028722D /* HIDEventGenerator.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = HIDEventGenerator.mm; sourceTree = "<group>"; };
-		0FEBF85B1BB62A370028722D /* IOKitSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IOKitSPI.h; sourceTree = "<group>"; };
+		0FEBF85B1BB62A370028722D /* IOKitSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = IOKitSPI.h; path = ../TestRunnerShared/spi/IOKitSPI.h; sourceTree = "<group>"; };
 		0FEBF85C1BB62D460028722D /* UIKitSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UIKitSPI.h; sourceTree = "<group>"; };
 		1A3326051B75396500F89F62 /* TestOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestOptions.h; sourceTree = "<group>"; };
 		1CA211C71BCA107300B2101F /* FontWithFeatures.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = FontWithFeatures.otf; sourceTree = "<group>"; };
@@ -238,7 +243,12 @@
 		29A8FCE1345E7021006AA5A6 /* JSAccessibilityTextMarkerRange.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAccessibilityTextMarkerRange.cpp; sourceTree = "<group>"; };
 		29A8FCE1345E7021006AA5A7 /* JSAccessibilityTextMarkerRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAccessibilityTextMarkerRange.h; sourceTree = "<group>"; };
 		29A8FCE4145F0464009045A6 /* AccessibilityTextMarkerRangeMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AccessibilityTextMarkerRangeMac.mm; sourceTree = "<group>"; };
+		2DB6187D1D7D58D400978D19 /* CoreGraphicsSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CoreGraphicsSPI.h; path = ../TestRunnerShared/spi/CoreGraphicsSPI.h; sourceTree = "<group>"; };
 		2DCE2CD11B84524500C7F832 /* TestControllerCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TestControllerCocoa.mm; path = cocoa/TestControllerCocoa.mm; sourceTree = "<group>"; };
+		2DD4C4981D6E7D3B0007379C /* EventSerializerMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EventSerializerMac.h; path = mac/EventSerializerMac.h; sourceTree = "<group>"; };
+		2DD4C4991D6E7D3B0007379C /* EventSerializerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = EventSerializerMac.mm; path = mac/EventSerializerMac.mm; sourceTree = "<group>"; };
+		2DFA98461D7F70CF00AFF2C9 /* SharedEventStreamsMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SharedEventStreamsMac.h; path = mac/SharedEventStreamsMac.h; sourceTree = "<group>"; };
+		2DFA98471D7F70CF00AFF2C9 /* SharedEventStreamsMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SharedEventStreamsMac.mm; path = mac/SharedEventStreamsMac.mm; sourceTree = "<group>"; };
 		2E63ED751891ACE9002A7AFC /* AccessibilityControllerIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AccessibilityControllerIOS.mm; sourceTree = "<group>"; };
 		2E63ED761891ACE9002A7AFC /* AccessibilityNotificationHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityNotificationHandler.h; sourceTree = "<group>"; };
 		2E63ED771891ACE9002A7AFC /* AccessibilityTextMarkerIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AccessibilityTextMarkerIOS.mm; sourceTree = "<group>"; };
@@ -474,7 +484,9 @@
 		0F73B5471BA782FE004B3EF4 /* UIScriptContext */ = {
 			isa = PBXGroup;
 			children = (
+				2DB6187F1D7D598800978D19 /* spi */,
 				0F73B54B1BA78350004B3EF4 /* Bindings */,
+				2DD4C4971D6E7D3B0007379C /* Event Serialization */,
 				0F73B54E1BA78954004B3EF4 /* Derived Sources */,
 				0F18E6DD1D6B9AAF0027E547 /* UIScriptContext.cpp */,
 				0F18E6DE1D6B9AAF0027E547 /* UIScriptContext.h */,
@@ -552,6 +564,35 @@
 			name = Accessibility;
 			sourceTree = "<group>";
 		};
+		2DB6187F1D7D598800978D19 /* spi */ = {
+			isa = PBXGroup;
+			children = (
+				2DB6187D1D7D58D400978D19 /* CoreGraphicsSPI.h */,
+				0FEBF85B1BB62A370028722D /* IOKitSPI.h */,
+			);
+			name = spi;
+			sourceTree = "<group>";
+		};
+		2DD4C4971D6E7D3B0007379C /* Event Serialization */ = {
+			isa = PBXGroup;
+			children = (
+				2DFA984A1D7F79E000AFF2C9 /* mac */,
+			);
+			name = "Event Serialization";
+			path = ../TestRunnerShared/EventSerialization;
+			sourceTree = "<group>";
+		};
+		2DFA984A1D7F79E000AFF2C9 /* mac */ = {
+			isa = PBXGroup;
+			children = (
+				2DD4C4981D6E7D3B0007379C /* EventSerializerMac.h */,
+				2DD4C4991D6E7D3B0007379C /* EventSerializerMac.mm */,
+				2DFA98461D7F70CF00AFF2C9 /* SharedEventStreamsMac.h */,
+				2DFA98471D7F70CF00AFF2C9 /* SharedEventStreamsMac.mm */,
+			);
+			name = mac;
+			sourceTree = "<group>";
+		};
 		2E63ED741891ACE9002A7AFC /* ios */ = {
 			isa = PBXGroup;
 			children = (
@@ -589,7 +630,6 @@
 			children = (
 				0FEBF8581BB61DF20028722D /* HIDEventGenerator.h */,
 				0FEBF8591BB61DF20028722D /* HIDEventGenerator.mm */,
-				0FEBF85B1BB62A370028722D /* IOKitSPI.h */,
 				2EE52D131890A9FB0010ED21 /* PlatformWebViewIOS.mm */,
 				2EE52D141890A9FB0010ED21 /* TestControllerIOS.mm */,
 				0FEBF85C1BB62D460028722D /* UIKitSPI.h */,
@@ -765,7 +805,10 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2DB6187E1D7D58D400978D19 /* CoreGraphicsSPI.h in Headers */,
 				0F73B5521BA78968004B3EF4 /* JSUIScriptController.h in Headers */,
+				2DFA98481D7F70CF00AFF2C9 /* SharedEventStreamsMac.h in Headers */,
+				2DD4C49A1D6E7D3B0007379C /* EventSerializerMac.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -972,8 +1015,10 @@
 				0F73B5511BA78968004B3EF4 /* JSUIScriptController.cpp in Sources */,
 				0F18E7181D6BC4560027E547 /* JSWrapper.cpp in Sources */,
 				A185103C1B9AE0FE00744AEB /* Options.cpp in Sources */,
+				2DD4C49B1D6E7D3B0007379C /* EventSerializerMac.mm in Sources */,
 				A18510401B9AE13100744AEB /* PixelDumpSupport.cpp in Sources */,
 				A18510411B9AE13800744AEB /* TestController.cpp in Sources */,
+				2DFA98491D7F70CF00AFF2C9 /* SharedEventStreamsMac.mm in Sources */,
 				A185103B1B9AE0E200744AEB /* TestControllerCocoa.mm in Sources */,
 				31DA8A3D1E7205CC00E1DF2F /* IOSLayoutTestCommunication.cpp in Sources */,
 				A18510421B9AE13E00744AEB /* TestInvocation.cpp in Sources */,
