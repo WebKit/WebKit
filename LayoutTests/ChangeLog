@@ -1,3 +1,12 @@
+2017-03-30  Youenn Fablet  <youenn@apple.com>
+
+        webrtc/video-stats.html and webrtc/video-replace-track.html are flaky
+        https://bugs.webkit.org/show_bug.cgi?id=170294
+
+        Unreviewed.
+
+        * TestExpectations: Marking these tests as flaky.
+
 2017-03-30  Eric Carlson  <eric.carlson@apple.com>
 
         [Crash] WebCore::AudioBuffer::AudioBuffer don't checking illegal value
