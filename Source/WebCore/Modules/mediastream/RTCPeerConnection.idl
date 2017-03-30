@@ -42,7 +42,7 @@ typedef RTCRtpTransceiverDirection RtpTransceiverDirection;
     unsigned short maxRetransmits;
     USVString protocol = "";
     boolean negotiated = false;
-    unsigned short id;
+    [EnforceRange] unsigned short id;
     // FIXME 169644: missing priority
 };
 

@@ -67,25 +67,25 @@ private:
 
 class IceConnectionNotifier : public MockNotifier {
 public:
-    IceConnectionNotifier(RTCPeerConnectionHandlerClient*, RTCPeerConnectionHandlerClient::IceConnectionState, RTCPeerConnectionHandlerClient::IceGatheringState);
+    IceConnectionNotifier(RTCPeerConnectionHandlerClient*, RTCIceConnectionState, RTCIceGatheringState);
 
     void fire() override;
 
 private:
     RTCPeerConnectionHandlerClient* m_client;
-    RTCPeerConnectionHandlerClient::IceConnectionState m_connectionState;
-    RTCPeerConnectionHandlerClient::IceGatheringState m_gatheringState;
+    RTCIceConnectionState m_connectionState;
+    RTCIceGatheringState m_gatheringState;
 };
 
 class SignalingStateNotifier : public MockNotifier {
 public:
-    SignalingStateNotifier(RTCPeerConnectionHandlerClient*, RTCPeerConnectionHandlerClient::SignalingState);
+    SignalingStateNotifier(RTCPeerConnectionHandlerClient*, RTCSignalingState);
 
     void fire() override;
 
 private:
     RTCPeerConnectionHandlerClient* m_client;
-    RTCPeerConnectionHandlerClient::SignalingState m_signalingState;
+    RTCSignalingState m_signalingState;
 };
 
 class RemoteDataChannelNotifier : public MockNotifier {
@@ -100,13 +100,13 @@ private:
 
 class DataChannelStateNotifier : public MockNotifier {
 public:
-    DataChannelStateNotifier(RTCDataChannelHandlerClient*, RTCDataChannelHandlerClient::ReadyState);
+    DataChannelStateNotifier(RTCDataChannelHandlerClient*, RTCDataChannelState);
 
     void fire() override;
 
 private:
     RTCDataChannelHandlerClient* m_client;
-    RTCDataChannelHandlerClient::ReadyState m_state;
+    RTCDataChannelState m_state;
 };
 
 } // namespace WebCore

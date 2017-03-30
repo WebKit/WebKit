@@ -1,3 +1,12 @@
+2017-03-30  Youenn Fablet  <youenn@apple.com>
+
+        Clean up RTCDataChannel
+        https://bugs.webkit.org/show_bug.cgi?id=169732
+
+        Reviewed by Chris Dumez.
+
+        * runtime/CommonIdentifiers.h: Adding RTCDataChannelEvent.
+
 2017-03-30  Saam Barati  <sbarati@apple.com>
 
         WebAssembly: pass Wasm::Context* to vmEntryToWasm when not using fast TLS

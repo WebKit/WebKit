@@ -1439,6 +1439,7 @@
 		316DCB4F1E7910A6001B5F87 /* JSRTCSignalingState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 316DCB491E7910A6001B5F87 /* JSRTCSignalingState.cpp */; };
 		316DCB501E7910A6001B5F87 /* JSRTCSignalingState.h in Headers */ = {isa = PBXBuildFile; fileRef = 316DCB4A1E7910A6001B5F87 /* JSRTCSignalingState.h */; };
 		316DCB8A1E7A6996001B5F87 /* RTCIceTransport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 316DCB881E7A6996001B5F87 /* RTCIceTransport.cpp */; };
+		316DE7021E83AE1D0084C261 /* RTCDataChannelState.h in Headers */ = {isa = PBXBuildFile; fileRef = 316DE7011E83AE1D0084C261 /* RTCDataChannelState.h */; };
 		316FE0710E6CCBEE00BF6088 /* JSCSSKeyframeRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 316FE06D0E6CCBEE00BF6088 /* JSCSSKeyframeRule.cpp */; };
 		316FE0720E6CCBEE00BF6088 /* JSCSSKeyframeRule.h in Headers */ = {isa = PBXBuildFile; fileRef = 316FE06E0E6CCBEE00BF6088 /* JSCSSKeyframeRule.h */; };
 		316FE0730E6CCBEE00BF6088 /* JSCSSKeyframesRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 316FE06F0E6CCBEE00BF6088 /* JSCSSKeyframesRule.cpp */; };
@@ -8961,6 +8962,7 @@
 		316DCB881E7A6996001B5F87 /* RTCIceTransport.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RTCIceTransport.cpp; sourceTree = "<group>"; };
 		316DCB891E7A6996001B5F87 /* RTCIceTransport.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RTCIceTransport.idl; sourceTree = "<group>"; };
 		316DCB8E1E7A6C79001B5F87 /* RTCIceTransportState.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RTCIceTransportState.idl; sourceTree = "<group>"; };
+		316DE7011E83AE1D0084C261 /* RTCDataChannelState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCDataChannelState.h; sourceTree = "<group>"; };
 		316FE06D0E6CCBEE00BF6088 /* JSCSSKeyframeRule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCSSKeyframeRule.cpp; sourceTree = "<group>"; };
 		316FE06E0E6CCBEE00BF6088 /* JSCSSKeyframeRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCSSKeyframeRule.h; sourceTree = "<group>"; };
 		316FE06F0E6CCBEE00BF6088 /* JSCSSKeyframesRule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCSSKeyframesRule.cpp; sourceTree = "<group>"; };
@@ -16033,6 +16035,7 @@
 				3135910C1E7DDCB600F30630 /* RTCBundlePolicy.h */,
 				07221BA217CF0AD400848E51 /* RTCDataChannelHandler.h */,
 				07221BA317CF0AD400848E51 /* RTCDataChannelHandlerClient.h */,
+				316DE7011E83AE1D0084C261 /* RTCDataChannelState.h */,
 				07221BA417CF0AD400848E51 /* RTCDTMFSenderHandler.h */,
 				07221BA517CF0AD400848E51 /* RTCDTMFSenderHandlerClient.h */,
 				07221BA617CF0AD400848E51 /* RTCIceCandidateDescriptor.cpp */,
@@ -26808,6 +26811,7 @@
 				FC9A0F75164094CF003D6B8D /* DOMCSSNamespace.h in Headers */,
 				9B3A8872145632F9003AE8F5 /* DOMDOMSettableTokenList.h in Headers */,
 				7AABA25A14BC613300AA9A11 /* DOMEditor.h in Headers */,
+				316DE7021E83AE1D0084C261 /* RTCDataChannelState.h in Headers */,
 				BC1BDF25156C18C7001C1243 /* DOMError.h in Headers */,
 				2ED609BD1145B07100C8684E /* DOMFormData.h in Headers */,
 				A8185F3B09765766005826D9 /* DOMImplementation.h in Headers */,

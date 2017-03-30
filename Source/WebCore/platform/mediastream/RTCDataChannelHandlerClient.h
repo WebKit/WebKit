@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 Google Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +27,7 @@
 
 #if ENABLE(WEB_RTC)
 
+#include "RTCDataChannelState.h"
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/WTFString.h>
 
@@ -33,20 +35,13 @@ namespace WebCore {
 
 class RTCDataChannelHandlerClient : public ThreadSafeRefCounted<RTCDataChannelHandlerClient> {
 public:
-    enum ReadyState {
-        ReadyStateConnecting = 0,
-        ReadyStateOpen = 1,
-        ReadyStateClosing = 2,
-        ReadyStateClosed = 3,
-    };
-
     virtual ~RTCDataChannelHandlerClient() { }
 
-    virtual void didChangeReadyState(ReadyState) = 0;
+    virtual void didChangeReadyState(RTCDataChannelState) = 0;
     virtual void didReceiveStringData(const String&) = 0;
     virtual void didReceiveRawData(const char*, size_t) = 0;
     virtual void didDetectError() = 0;
-    virtual void bufferedAmountIsDecreasing() = 0;
+    virtual void bufferedAmountIsDecreasing(size_t) = 0;
 };
 
 } // namespace WebCore

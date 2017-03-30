@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 Google Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,16 +33,22 @@
 
 namespace WebCore {
 
-class RTCDataChannelEvent : public Event {
+class RTCDataChannelEvent final : public Event {
 public:
-    static Ref<RTCDataChannelEvent> create(const AtomicString& type, bool canBubble, bool cancelable, Ref<RTCDataChannel>&&);
+    struct Init : EventInit {
+        RefPtr<RTCDataChannel> channel;
+    };
 
-    RTCDataChannel* channel();
+    static Ref<RTCDataChannelEvent> create(const AtomicString& type, bool canBubble, bool cancelable, Ref<RTCDataChannel>&&);
+    static Ref<RTCDataChannelEvent> create(const AtomicString& type, Init&&, IsTrusted = IsTrusted::No);
+
+    RTCDataChannel& channel();
 
     virtual EventInterface eventInterface() const;
 
 private:
     RTCDataChannelEvent(const AtomicString& type, bool canBubble, bool cancelable, Ref<RTCDataChannel>&&);
+    RTCDataChannelEvent(const AtomicString& type, Init&&, IsTrusted);
 
     Ref<RTCDataChannel> m_channel;
 };

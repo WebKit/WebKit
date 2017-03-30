@@ -1,5 +1,6 @@
 /*
- *  Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
+ * Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -67,7 +68,7 @@ void VoidRequestNotifier::fire()
         m_request->requestFailed(m_errorName);
 }
 
-IceConnectionNotifier::IceConnectionNotifier(RTCPeerConnectionHandlerClient* client, RTCPeerConnectionHandlerClient::IceConnectionState connectionState, RTCPeerConnectionHandlerClient::IceGatheringState gatheringState)
+IceConnectionNotifier::IceConnectionNotifier(RTCPeerConnectionHandlerClient* client, RTCIceConnectionState connectionState, RTCIceGatheringState gatheringState)
     : m_client(client)
     , m_connectionState(connectionState)
     , m_gatheringState(gatheringState)
@@ -80,7 +81,7 @@ void IceConnectionNotifier::fire()
     m_client->didChangeIceConnectionState(m_connectionState);
 }
 
-SignalingStateNotifier::SignalingStateNotifier(RTCPeerConnectionHandlerClient* client, RTCPeerConnectionHandlerClient::SignalingState signalingState)
+SignalingStateNotifier::SignalingStateNotifier(RTCPeerConnectionHandlerClient* client, RTCSignalingState signalingState)
     : m_client(client)
     , m_signalingState(signalingState)
 {
@@ -101,7 +102,7 @@ void RemoteDataChannelNotifier::fire()
     m_client->didAddRemoteDataChannel(std::make_unique<RTCDataChannelHandlerMock>("RTCDataChannelHandlerMock", RTCDataChannelInit()));
 }
 
-DataChannelStateNotifier::DataChannelStateNotifier(RTCDataChannelHandlerClient* client, RTCDataChannelHandlerClient::ReadyState state)
+DataChannelStateNotifier::DataChannelStateNotifier(RTCDataChannelHandlerClient* client, RTCDataChannelState state)
     : m_client(client)
     , m_state(state)
 {

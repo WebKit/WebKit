@@ -600,7 +600,7 @@ void LibWebRTCMediaEndpoint::addDataChannel(rtc::scoped_refptr<webrtc::DataChann
         callOnMainThread([channel = channel.copyRef()] {
             // FIXME: We should be able to write channel->didChangeReadyState(...)
             RTCDataChannelHandlerClient& client = channel.get();
-            client.didChangeReadyState(RTCDataChannel::ReadyStateOpen);
+            client.didChangeReadyState(RTCDataChannelState::Open);
         });
     }
 

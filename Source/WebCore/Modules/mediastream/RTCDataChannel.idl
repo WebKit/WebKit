@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 Google Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,24 +26,27 @@
 [
     ActiveDOMObject,
     Conditional=WEB_RTC,
-    NoInterfaceObject,
+    EnabledAtRuntime=PeerConnection,
 ] interface RTCDataChannel : EventTarget {
-    readonly attribute DOMString label;
+    // FIXME: Add support for priority attribute.
+
+    readonly attribute USVString label;
     readonly attribute boolean ordered;
     readonly attribute unsigned short? maxPacketLifeTime;
     readonly attribute unsigned short? maxRetransmits;
-    readonly attribute DOMString protocol;
+    readonly attribute USVString protocol;
     readonly attribute boolean negotiated;
     readonly attribute unsigned short? id;
-    readonly attribute DOMString readyState;
+    readonly attribute RTCDataChannelState readyState;
     readonly attribute unsigned long bufferedAmount;
+    attribute unsigned long bufferedAmountLowThreshold;
 
     [SetterMayThrowException] attribute DOMString binaryType;
 
     [MayThrowException] void send(ArrayBuffer data);
     [MayThrowException] void send(ArrayBufferView data);
     [MayThrowException] void send(Blob data);
-    [MayThrowException] void send(DOMString data);
+    [MayThrowException] void send(USVString data);
 
     void close();
 
@@ -50,4 +54,16 @@
     attribute EventHandler onerror;
     attribute EventHandler onclose;
     attribute EventHandler onmessage;
+    attribute EventHandler onbufferedamountlow;
+};
+
+[
+    Conditional=WEB_RTC,
+    EnabledAtRuntime=PeerConnection,
+    ImplementedAs=RTCDataChannelState
+] enum RTCDataChannelState {
+    "connecting",
+    "open",
+    "closing",
+    "closed"
 };

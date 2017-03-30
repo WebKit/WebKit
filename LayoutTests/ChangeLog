@@ -1,3 +1,13 @@
+2017-03-30  Youenn Fablet  <youenn@apple.com>
+
+        Clean up RTCDataChannel
+        https://bugs.webkit.org/show_bug.cgi?id=169732
+
+        Reviewed by Chris Dumez.
+
+        * webrtc/datachannel/bufferedAmountLowThreshold-expected.txt: Added.
+        * webrtc/datachannel/bufferedAmountLowThreshold.html: Added.
+
 2017-03-30  Chris Dumez  <cdumez@apple.com>
 
         svg/animations/animations-paused-in-background-page.html is flaky

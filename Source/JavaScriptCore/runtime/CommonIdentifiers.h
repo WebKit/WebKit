@@ -100,8 +100,10 @@
     macro(ReferenceError) \
     macro(Reflect) \
     macro(RegExp) \
-    macro(Response) \
     macro(Request) \
+    macro(Response) \
+    macro(RTCDataChannel) \
+    macro(RTCDataChannelEvent) \
     macro(RTCDTMFToneChangeEvent) \
     macro(RTCIceCandidate) \
     macro(RTCIceTransport) \

@@ -64,19 +64,19 @@ void LibWebRTCDataChannelHandler::close()
 
 void LibWebRTCDataChannelHandler::OnStateChange()
 {
-    RTCDataChannel::ReadyState state;
+    RTCDataChannelState state;
     switch (m_channel->state()) {
     case webrtc::DataChannelInterface::kConnecting:
-        state = RTCDataChannel::ReadyStateConnecting;
+        state = RTCDataChannelState::Connecting;
         break;
     case webrtc::DataChannelInterface::kOpen:
-        state = RTCDataChannel::ReadyStateOpen;
+        state = RTCDataChannelState::Open;
         break;
     case webrtc::DataChannelInterface::kClosing:
-        state = RTCDataChannel::ReadyStateClosing;
+        state = RTCDataChannelState::Closing;
         break;
     case webrtc::DataChannelInterface::kClosed:
-        state = RTCDataChannel::ReadyStateClosed;
+        state = RTCDataChannelState::Closed;
         break;
     }
     ASSERT(m_client);
@@ -104,8 +104,8 @@ void LibWebRTCDataChannelHandler::OnBufferedAmountChange(uint64_t previousAmount
     if (previousAmount <= m_channel->buffered_amount())
         return;
     ASSERT(m_client);
-    callOnMainThread([protectedClient = makeRef(*m_client)] {
-        protectedClient->bufferedAmountIsDecreasing();
+    callOnMainThread([protectedClient = makeRef(*m_client), amount = m_channel->buffered_amount()] {
+        protectedClient->bufferedAmountIsDecreasing(static_cast<size_t>(amount));
     });
 }
 

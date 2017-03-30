@@ -33,6 +33,9 @@
 
 #if ENABLE(WEB_RTC)
 
+#include "RTCIceConnectionState.h"
+#include "RTCIceGatheringState.h"
+#include "RTCSignalingState.h"
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {
@@ -43,38 +46,13 @@ class RTCIceCandidateDescriptor;
 
 class RTCPeerConnectionHandlerClient {
 public:
-    enum SignalingState {
-        SignalingStateStable = 1,
-        SignalingStateHaveLocalOffer = 2,
-        SignalingStateHaveRemoteOffer = 3,
-        SignalingStateHaveLocalPrAnswer = 4,
-        SignalingStateHaveRemotePrAnswer = 5,
-        SignalingStateClosed = 6,
-    };
-
-    enum IceConnectionState {
-        IceConnectionStateNew = 1,
-        IceConnectionStateChecking = 2,
-        IceConnectionStateConnected = 3,
-        IceConnectionStateCompleted = 4,
-        IceConnectionStateFailed = 5,
-        IceConnectionStateDisconnected = 6,
-        IceConnectionStateClosed = 7
-    };
-
-    enum IceGatheringState {
-        IceGatheringStateNew = 1,
-        IceGatheringStateGathering = 2,
-        IceGatheringStateComplete = 3
-    };
-
     virtual ~RTCPeerConnectionHandlerClient() { }
 
     virtual void negotiationNeeded() = 0;
     virtual void didGenerateIceCandidate(PassRefPtr<RTCIceCandidateDescriptor>) = 0;
-    virtual void didChangeSignalingState(SignalingState) = 0;
-    virtual void didChangeIceGatheringState(IceGatheringState) = 0;
-    virtual void didChangeIceConnectionState(IceConnectionState) = 0;
+    virtual void didChangeSignalingState(RTCSignalingState) = 0;
+    virtual void didChangeIceGatheringState(RTCIceGatheringState) = 0;
+    virtual void didChangeIceConnectionState(RTCIceConnectionState) = 0;
     virtual void didAddRemoteStream(PassRefPtr<MediaStreamPrivate>) = 0;
     virtual void didRemoveRemoteStream(MediaStreamPrivate*) = 0;
     virtual void didAddRemoteDataChannel(std::unique_ptr<RTCDataChannelHandler>) = 0;

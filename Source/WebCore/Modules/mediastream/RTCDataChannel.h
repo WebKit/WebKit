@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 Google Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -57,7 +58,7 @@ public:
     std::optional<unsigned short> id() const { return m_options.id; };
 
     String label() const { return m_label; }
-    const AtomicString& readyState() const;
+    RTCDataChannelState readyState() const {return m_readyState; }
     size_t bufferedAmount() const;
     size_t bufferedAmountLowThreshold() const { return m_bufferedAmountLowThreshold; }
     void setBufferedAmountLowThreshold(size_t value) { m_bufferedAmountLowThreshold = value; }
@@ -90,20 +91,20 @@ private:
     // ActiveDOMObject API
     void stop() final;
     const char* activeDOMObjectName() const final { return "RTCDataChannel"; }
-    bool canSuspendForDocumentSuspension() const final { return m_readyState == ReadyStateClosed; }
+    bool canSuspendForDocumentSuspension() const final { return m_readyState == RTCDataChannelState::Closed; }
 
     // RTCDataChannelHandlerClient API
-    void didChangeReadyState(ReadyState) final;
+    void didChangeReadyState(RTCDataChannelState) final;
     void didReceiveStringData(const String&) final;
     void didReceiveRawData(const char*, size_t) final;
     void didDetectError() final;
-    void bufferedAmountIsDecreasing() final;
+    void bufferedAmountIsDecreasing(size_t) final;
 
     std::unique_ptr<RTCDataChannelHandler> m_handler;
 
+    // FIXME: m_stopped is probably redundant with m_readyState.
     bool m_stopped { false };
-
-    ReadyState m_readyState { ReadyStateConnecting };
+    RTCDataChannelState m_readyState { RTCDataChannelState::Connecting };
 
     enum class BinaryType { Blob, ArrayBuffer };
     BinaryType m_binaryType { BinaryType::ArrayBuffer };
