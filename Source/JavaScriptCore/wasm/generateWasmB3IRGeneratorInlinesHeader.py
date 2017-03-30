@@ -174,7 +174,7 @@ def generateB3OpCode(index, op, params):
 
 
 def generateConstCode(index, value, type):
-    return "Value* " + temp(index) + " = m_currentBlock->appendIntConstant(m_proc, origin(), B3::" + type + ", " + value + ");"
+    return "Value* " + temp(index) + " = constant(" + type + ", " + value + ");"
 
 
 def generateB3Code(wasmOp, source):

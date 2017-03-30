@@ -35,11 +35,13 @@
 #include "B3ConstPtrValue.h"
 #include "B3FixSSA.h"
 #include "B3Generate.h"
+#include "B3InsertionSet.h"
 #include "B3SlotBaseValue.h"
 #include "B3StackmapGenerationParams.h"
 #include "B3SwitchValue.h"
 #include "B3Validate.h"
 #include "B3ValueInlines.h"
+#include "B3ValueKey.h"
 #include "B3Variable.h"
 #include "B3VariableValue.h"
 #include "B3WasmAddressValue.h"
@@ -207,6 +209,9 @@ public:
     void dump(const Vector<ControlEntry>& controlStack, const ExpressionList* expressionStack);
     void setParser(FunctionParser<B3IRGenerator>* parser) { m_parser = parser; };
 
+    Value* constant(B3::Type, uint64_t bits);
+    void insertConstants();
+
 private:
     void emitExceptionCheck(CCallHelpers&, ExceptionType);
 
@@ -217,7 +222,6 @@ private:
 
     void unify(Variable* target, const ExpressionType source);
     void unifyValuesWithBlock(const ExpressionList& resultStack, ResultList& stack);
-    Value* zeroForType(Type);
 
     void emitChecksForModOrDiv(B3::Opcode, ExpressionType left, ExpressionType right);
 
@@ -235,10 +239,11 @@ private:
     BasicBlock* m_currentBlock;
     Vector<Variable*> m_locals;
     Vector<UnlinkedWasmToWasmCall>& m_unlinkedWasmToWasmCalls; // List each call site and the function index whose address it should be patched with.
+    HashMap<ValueKey, Value*> m_constantPool;
+    InsertionSet m_constantInsertionValues;
     GPRReg m_memoryBaseGPR;
     GPRReg m_memorySizeGPR;
     GPRReg m_wasmContextGPR;
-    Value* m_zeroValues[numTypes];
     Value* m_instanceValue; // FIXME: make this lazy https://bugs.webkit.org/show_bug.cgi?id=169792
 };
 
@@ -302,22 +307,9 @@ B3IRGenerator::B3IRGenerator(VM& vm, const ModuleInformation& info, Procedure& p
     , m_mode(mode)
     , m_proc(procedure)
     , m_unlinkedWasmToWasmCalls(unlinkedWasmToWasmCalls)
+    , m_constantInsertionValues(m_proc)
 {
     m_currentBlock = m_proc.addBlock();
-
-    for (unsigned i = 0; i < numTypes; ++i) {
-        switch (B3::Type b3Type = toB3Type(linearizedToType(i))) {
-        case B3::Int32:
-        case B3::Int64:
-        case B3::Float:
-        case B3::Double:
-            m_zeroValues[i] = m_currentBlock->appendIntConstant(m_proc, Origin(), b3Type, 0);
-            break;
-        case B3::Void:
-            m_zeroValues[i] = nullptr;
-            break;
-        }
-    }
 
     // FIXME we don't really need to pin registers here if there's no memory. It makes wasm -> wasm thunks simpler for now. https://bugs.webkit.org/show_bug.cgi?id=166623
     const PinnedRegisterInfo& pinnedRegs = PinnedRegisterInfo::get();
@@ -389,12 +381,19 @@ void B3IRGenerator::emitExceptionCheck(CCallHelpers& jit, ExceptionType type)
     });
 }
 
-Value* B3IRGenerator::zeroForType(Type type)
+Value* B3IRGenerator::constant(B3::Type type, uint64_t bits)
 {
-    ASSERT(type != Void);
-    Value* zeroValue = m_zeroValues[linearizeType(type)];
-    ASSERT(zeroValue);
-    return zeroValue;
+    auto result = m_constantPool.ensure(ValueKey(opcodeForConstant(type), type, static_cast<int64_t>(bits)), [&] {
+        Value* result = m_proc.addConstant(origin(), type, bits);
+        m_constantInsertionValues.insertValue(0, result);
+        return result;
+    });
+    return result.iterator->value;
+}
+
+void B3IRGenerator::insertConstants()
+{
+    m_constantInsertionValues.execute(m_proc.at(0));
 }
 
 auto B3IRGenerator::addLocal(Type type, uint32_t count) -> PartialResult
@@ -404,7 +403,7 @@ auto B3IRGenerator::addLocal(Type type, uint32_t count) -> PartialResult
     for (uint32_t i = 0; i < count; ++i) {
         Variable* local = m_proc.addVariable(toB3Type(type));
         m_locals.uncheckedAppend(local);
-        m_currentBlock->appendNew<VariableValue>(m_proc, Set, origin(), local, zeroForType(type));
+        m_currentBlock->appendNew<VariableValue>(m_proc, Set, origin(), local, addConstant(type, 0));
     }
     return { };
 }
@@ -644,7 +643,7 @@ auto B3IRGenerator::load(LoadOpType op, ExpressionType pointer, ExpressionType& 
         case LoadOpType::I32Load:
         case LoadOpType::I32Load16U:
         case LoadOpType::I32Load8U:
-            result = zeroForType(I32);
+            result = constant(Int32, 0);
             break;
         case LoadOpType::I64Load8S:
         case LoadOpType::I64Load8U:
@@ -653,13 +652,13 @@ auto B3IRGenerator::load(LoadOpType op, ExpressionType pointer, ExpressionType& 
         case LoadOpType::I64Load32S:
         case LoadOpType::I64Load:
         case LoadOpType::I64Load16U:
-            result = zeroForType(I64);
+            result = constant(Int64, 0);
             break;
         case LoadOpType::F32Load:
-            result = zeroForType(F32);
+            result = constant(Float, 0);
             break;
         case LoadOpType::F64Load:
-            result = zeroForType(F64);
+            result = constant(Double, 0);
             break;
         }
 
@@ -748,22 +747,7 @@ auto B3IRGenerator::addSelect(ExpressionType condition, ExpressionType nonZero, 
 
 B3IRGenerator::ExpressionType B3IRGenerator::addConstant(Type type, uint64_t value)
 {
-    switch (type) {
-    case Wasm::I32:
-        return m_currentBlock->appendNew<Const32Value>(m_proc, origin(), static_cast<int32_t>(value));
-    case Wasm::I64:
-        return m_currentBlock->appendNew<Const64Value>(m_proc, origin(), value);
-    case Wasm::F32:
-        return m_currentBlock->appendNew<ConstFloatValue>(m_proc, origin(), bitwise_cast<float>(static_cast<int32_t>(value)));
-    case Wasm::F64:
-        return m_currentBlock->appendNew<ConstDoubleValue>(m_proc, origin(), bitwise_cast<double>(value));
-    case Wasm::Void:
-    case Wasm::Func:
-    case Wasm::Anyfunc:
-        break;
-    }
-    RELEASE_ASSERT_NOT_REACHED();
-    return nullptr;
+    return constant(toB3Type(type), value);
 }
 
 B3IRGenerator::ControlData B3IRGenerator::addTopLevel(Type signature)
@@ -1007,7 +991,7 @@ auto B3IRGenerator::addCallIndirect(const Signature* signature, SignatureIndex s
     // Compute the offset in the table index space we are looking for.
     ExpressionType offset = m_currentBlock->appendNew<Value>(m_proc, Mul, origin(),
         m_currentBlock->appendNew<Value>(m_proc, ZExt32, origin(), calleeIndex),
-        m_currentBlock->appendIntConstant(m_proc, origin(), pointerType(), sizeof(CallableFunction)));
+        constant(pointerType(), sizeof(CallableFunction)));
     ExpressionType callableFunction = m_currentBlock->appendNew<Value>(m_proc, Add, origin(), callableFunctionBuffer, offset);
 
     // Check that the CallableFunction is initialized. We trap if it isn't. An "invalid" SignatureIndex indicates it's not initialized.
@@ -1079,6 +1063,10 @@ static void dumpExpressionStack(const CommaPrinter& comma, const B3IRGenerator::
 
 void B3IRGenerator::dump(const Vector<ControlEntry>& controlStack, const ExpressionList* expressionStack)
 {
+    dataLogLn("Constants:");
+    for (const auto& constant : m_constantPool)
+        dataLogLn(deepDump(m_proc, constant.value));
+
     dataLogLn("Processing Graph:");
     dataLog(m_proc);
     dataLogLn("With current block:", *m_currentBlock);
@@ -1292,6 +1280,8 @@ Expected<std::unique_ptr<WasmInternalFunction>, String> parseAndCompile(VM& vm, 
     FunctionParser<B3IRGenerator> parser(&vm, context, functionStart, functionLength, signature, info, moduleSignatureIndicesToUniquedSignatureIndices);
     WASM_FAIL_IF_HELPER_FAILS(parser.parse());
 
+    context.insertConstants();
+
     procedure.resetReachability();
     if (!ASSERT_DISABLED)
         validate(procedure, "After parsing:\n");
@@ -1320,8 +1310,7 @@ void B3IRGenerator::emitChecksForModOrDiv(B3::Opcode operation, ExpressionType l
 
     {
         CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
-            m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), right,
-                m_currentBlock->appendIntConstant(m_proc, origin(), type, 0)));
+            m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), right, constant(type, 0)));
 
         check->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
             this->emitExceptionCheck(jit, ExceptionType::DivisionByZero);
@@ -1333,10 +1322,8 @@ void B3IRGenerator::emitChecksForModOrDiv(B3::Opcode operation, ExpressionType l
 
         CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
             m_currentBlock->appendNew<Value>(m_proc, BitAnd, origin(),
-                m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), left,
-                    m_currentBlock->appendIntConstant(m_proc, origin(), type, min)),
-                m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), right,
-                    m_currentBlock->appendIntConstant(m_proc, origin(), type, -1))));
+                m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), left, constant(type, min)),
+                m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), right, constant(type, -1))));
 
         check->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
             this->emitExceptionCheck(jit, ExceptionType::IntegerOverflow);
@@ -1559,12 +1546,12 @@ auto B3IRGenerator::addOp<OpType::F32Trunc>(ExpressionType arg, ExpressionType& 
 template<>
 auto B3IRGenerator::addOp<OpType::I32TruncSF64>(ExpressionType arg, ExpressionType& result) -> PartialResult
 {
-    Value* max = m_currentBlock->appendNew<ConstDoubleValue>(m_proc, origin(), -static_cast<double>(std::numeric_limits<int32_t>::min()));
-    Value* min = m_currentBlock->appendNew<ConstDoubleValue>(m_proc, origin(), static_cast<double>(std::numeric_limits<int32_t>::min()));
+    Value* max = constant(Double, bitwise_cast<uint64_t>(-static_cast<double>(std::numeric_limits<int32_t>::min())));
+    Value* min = constant(Double, bitwise_cast<uint64_t>(static_cast<double>(std::numeric_limits<int32_t>::min())));
     Value* outOfBounds = m_currentBlock->appendNew<Value>(m_proc, BitAnd, origin(),
         m_currentBlock->appendNew<Value>(m_proc, LessThan, origin(), arg, max),
         m_currentBlock->appendNew<Value>(m_proc, GreaterEqual, origin(), arg, min));
-    outOfBounds = m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), outOfBounds, zeroForType(I32));
+    outOfBounds = m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), outOfBounds, constant(Int32, 0));
     CheckValue* trap = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(), outOfBounds);
     trap->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams&) {
         this->emitExceptionCheck(jit, ExceptionType::OutOfBoundsTrunc);
@@ -1582,12 +1569,12 @@ auto B3IRGenerator::addOp<OpType::I32TruncSF64>(ExpressionType arg, ExpressionTy
 template<>
 auto B3IRGenerator::addOp<OpType::I32TruncSF32>(ExpressionType arg, ExpressionType& result) -> PartialResult
 {
-    Value* max = m_currentBlock->appendNew<ConstFloatValue>(m_proc, origin(), -static_cast<float>(std::numeric_limits<int32_t>::min()));
-    Value* min = m_currentBlock->appendNew<ConstFloatValue>(m_proc, origin(), static_cast<float>(std::numeric_limits<int32_t>::min()));
+    Value* max = constant(Float, bitwise_cast<uint32_t>(-static_cast<float>(std::numeric_limits<int32_t>::min())));
+    Value* min = constant(Float, bitwise_cast<uint32_t>(static_cast<float>(std::numeric_limits<int32_t>::min())));
     Value* outOfBounds = m_currentBlock->appendNew<Value>(m_proc, BitAnd, origin(),
         m_currentBlock->appendNew<Value>(m_proc, LessThan, origin(), arg, max),
         m_currentBlock->appendNew<Value>(m_proc, GreaterEqual, origin(), arg, min));
-    outOfBounds = m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), outOfBounds, zeroForType(I32));
+    outOfBounds = m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), outOfBounds, constant(Int32, 0));
     CheckValue* trap = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(), outOfBounds);
     trap->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams&) {
         this->emitExceptionCheck(jit, ExceptionType::OutOfBoundsTrunc);
@@ -1606,12 +1593,12 @@ auto B3IRGenerator::addOp<OpType::I32TruncSF32>(ExpressionType arg, ExpressionTy
 template<>
 auto B3IRGenerator::addOp<OpType::I32TruncUF64>(ExpressionType arg, ExpressionType& result) -> PartialResult
 {
-    Value* max = m_currentBlock->appendNew<ConstDoubleValue>(m_proc, origin(), static_cast<double>(std::numeric_limits<int32_t>::min()) * -2.0);
-    Value* min = m_currentBlock->appendNew<ConstDoubleValue>(m_proc, origin(), -1.0);
+    Value* max = constant(Double, bitwise_cast<uint64_t>(static_cast<double>(std::numeric_limits<int32_t>::min()) * -2.0));
+    Value* min = constant(Double, bitwise_cast<uint64_t>(-1.0));
     Value* outOfBounds = m_currentBlock->appendNew<Value>(m_proc, BitAnd, origin(),
         m_currentBlock->appendNew<Value>(m_proc, LessThan, origin(), arg, max),
         m_currentBlock->appendNew<Value>(m_proc, GreaterThan, origin(), arg, min));
-    outOfBounds = m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), outOfBounds, zeroForType(I32));
+    outOfBounds = m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), outOfBounds, constant(Int32, 0));
     CheckValue* trap = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(), outOfBounds);
     trap->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams&) {
         this->emitExceptionCheck(jit, ExceptionType::OutOfBoundsTrunc);
@@ -1629,12 +1616,12 @@ auto B3IRGenerator::addOp<OpType::I32TruncUF64>(ExpressionType arg, ExpressionTy
 template<>
 auto B3IRGenerator::addOp<OpType::I32TruncUF32>(ExpressionType arg, ExpressionType& result) -> PartialResult
 {
-    Value* max = m_currentBlock->appendNew<ConstFloatValue>(m_proc, origin(), static_cast<float>(std::numeric_limits<int32_t>::min()) * -2.0);
-    Value* min = m_currentBlock->appendNew<ConstFloatValue>(m_proc, origin(), -1.0);
+    Value* max = constant(Float, bitwise_cast<uint32_t>(static_cast<float>(std::numeric_limits<int32_t>::min()) * static_cast<float>(-2.0)));
+    Value* min = constant(Float, bitwise_cast<uint32_t>(static_cast<float>(-1.0)));
     Value* outOfBounds = m_currentBlock->appendNew<Value>(m_proc, BitAnd, origin(),
         m_currentBlock->appendNew<Value>(m_proc, LessThan, origin(), arg, max),
         m_currentBlock->appendNew<Value>(m_proc, GreaterThan, origin(), arg, min));
-    outOfBounds = m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), outOfBounds, zeroForType(I32));
+    outOfBounds = m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), outOfBounds, constant(Int32, 0));
     CheckValue* trap = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(), outOfBounds);
     trap->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams&) {
         this->emitExceptionCheck(jit, ExceptionType::OutOfBoundsTrunc);
@@ -1652,12 +1639,12 @@ auto B3IRGenerator::addOp<OpType::I32TruncUF32>(ExpressionType arg, ExpressionTy
 template<>
 auto B3IRGenerator::addOp<OpType::I64TruncSF64>(ExpressionType arg, ExpressionType& result) -> PartialResult
 {
-    Value* max = m_currentBlock->appendNew<ConstDoubleValue>(m_proc, origin(), -static_cast<double>(std::numeric_limits<int64_t>::min()));
-    Value* min = m_currentBlock->appendNew<ConstDoubleValue>(m_proc, origin(), static_cast<double>(std::numeric_limits<int64_t>::min()));
+    Value* max = constant(Double, bitwise_cast<uint64_t>(-static_cast<double>(std::numeric_limits<int64_t>::min())));
+    Value* min = constant(Double, bitwise_cast<uint64_t>(static_cast<double>(std::numeric_limits<int64_t>::min())));
     Value* outOfBounds = m_currentBlock->appendNew<Value>(m_proc, BitAnd, origin(),
         m_currentBlock->appendNew<Value>(m_proc, LessThan, origin(), arg, max),
         m_currentBlock->appendNew<Value>(m_proc, GreaterEqual, origin(), arg, min));
-    outOfBounds = m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), outOfBounds, zeroForType(I32));
+    outOfBounds = m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), outOfBounds, constant(Int32, 0));
     CheckValue* trap = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(), outOfBounds);
     trap->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams&) {
         this->emitExceptionCheck(jit, ExceptionType::OutOfBoundsTrunc);
@@ -1675,28 +1662,28 @@ auto B3IRGenerator::addOp<OpType::I64TruncSF64>(ExpressionType arg, ExpressionTy
 template<>
 auto B3IRGenerator::addOp<OpType::I64TruncUF64>(ExpressionType arg, ExpressionType& result) -> PartialResult
 {
-    Value* max = m_currentBlock->appendNew<ConstDoubleValue>(m_proc, origin(), static_cast<double>(std::numeric_limits<int64_t>::min()) * -2.0);
-    Value* min = m_currentBlock->appendNew<ConstDoubleValue>(m_proc, origin(), -1.0);
+    Value* max = constant(Double, bitwise_cast<uint64_t>(static_cast<double>(std::numeric_limits<int64_t>::min()) * -2.0));
+    Value* min = constant(Double, bitwise_cast<uint64_t>(-1.0));
     Value* outOfBounds = m_currentBlock->appendNew<Value>(m_proc, BitAnd, origin(),
         m_currentBlock->appendNew<Value>(m_proc, LessThan, origin(), arg, max),
         m_currentBlock->appendNew<Value>(m_proc, GreaterThan, origin(), arg, min));
-    outOfBounds = m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), outOfBounds, zeroForType(I32));
+    outOfBounds = m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), outOfBounds, constant(Int32, 0));
     CheckValue* trap = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(), outOfBounds);
     trap->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams&) {
         this->emitExceptionCheck(jit, ExceptionType::OutOfBoundsTrunc);
     });
 
-    Value* constant;
+    Value* signBitConstant;
     if (isX86()) {
         // Since x86 doesn't have an instruction to convert floating points to unsigned integers, we at least try to do the smart thing if
         // the numbers are would be positive anyway as a signed integer. Since we cannot materialize constants into fprs we have b3 do it
         // so we can pool them if needed.
-        constant = m_currentBlock->appendNew<ConstDoubleValue>(m_proc, origin(), static_cast<double>(std::numeric_limits<uint64_t>::max() - std::numeric_limits<int64_t>::max()));
+        signBitConstant = constant(Double, bitwise_cast<uint64_t>(static_cast<double>(std::numeric_limits<uint64_t>::max() - std::numeric_limits<int64_t>::max())));
     }
     PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, Int64, origin());
     patchpoint->append(arg, ValueRep::SomeRegister);
     if (isX86()) {
-        patchpoint->append(constant, ValueRep::SomeRegister);
+        patchpoint->append(signBitConstant, ValueRep::SomeRegister);
         patchpoint->numFPScratchRegisters = 1;
     }
     patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
@@ -1717,12 +1704,12 @@ auto B3IRGenerator::addOp<OpType::I64TruncUF64>(ExpressionType arg, ExpressionTy
 template<>
 auto B3IRGenerator::addOp<OpType::I64TruncSF32>(ExpressionType arg, ExpressionType& result) -> PartialResult
 {
-    Value* max = m_currentBlock->appendNew<ConstFloatValue>(m_proc, origin(), -static_cast<float>(std::numeric_limits<int64_t>::min()));
-    Value* min = m_currentBlock->appendNew<ConstFloatValue>(m_proc, origin(), static_cast<float>(std::numeric_limits<int64_t>::min()));
+    Value* max = constant(Float, bitwise_cast<uint32_t>(-static_cast<float>(std::numeric_limits<int64_t>::min())));
+    Value* min = constant(Float, bitwise_cast<uint32_t>(static_cast<float>(std::numeric_limits<int64_t>::min())));
     Value* outOfBounds = m_currentBlock->appendNew<Value>(m_proc, BitAnd, origin(),
         m_currentBlock->appendNew<Value>(m_proc, LessThan, origin(), arg, max),
         m_currentBlock->appendNew<Value>(m_proc, GreaterEqual, origin(), arg, min));
-    outOfBounds = m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), outOfBounds, zeroForType(I32));
+    outOfBounds = m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), outOfBounds, constant(Int32, 0));
     CheckValue* trap = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(), outOfBounds);
     trap->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams&) {
         this->emitExceptionCheck(jit, ExceptionType::OutOfBoundsTrunc);
@@ -1740,28 +1727,28 @@ auto B3IRGenerator::addOp<OpType::I64TruncSF32>(ExpressionType arg, ExpressionTy
 template<>
 auto B3IRGenerator::addOp<OpType::I64TruncUF32>(ExpressionType arg, ExpressionType& result) -> PartialResult
 {
-    Value* max = m_currentBlock->appendNew<ConstFloatValue>(m_proc, origin(), static_cast<float>(std::numeric_limits<int64_t>::min()) * -2.0);
-    Value* min = m_currentBlock->appendNew<ConstFloatValue>(m_proc, origin(), -1.0);
+    Value* max = constant(Float, bitwise_cast<uint32_t>(static_cast<float>(std::numeric_limits<int64_t>::min()) * static_cast<float>(-2.0)));
+    Value* min = constant(Float, bitwise_cast<uint32_t>(static_cast<float>(-1.0)));
     Value* outOfBounds = m_currentBlock->appendNew<Value>(m_proc, BitAnd, origin(),
         m_currentBlock->appendNew<Value>(m_proc, LessThan, origin(), arg, max),
         m_currentBlock->appendNew<Value>(m_proc, GreaterThan, origin(), arg, min));
-    outOfBounds = m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), outOfBounds, zeroForType(I32));
+    outOfBounds = m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), outOfBounds, constant(Int32, 0));
     CheckValue* trap = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(), outOfBounds);
     trap->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams&) {
         this->emitExceptionCheck(jit, ExceptionType::OutOfBoundsTrunc);
     });
 
-    Value* constant;
+    Value* signBitConstant;
     if (isX86()) {
         // Since x86 doesn't have an instruction to convert floating points to unsigned integers, we at least try to do the smart thing if
-        // the numbers are would be positive anyway as a signed integer. Since we cannot materialize constants into fprs we have b3 do it
+        // the numbers would be positive anyway as a signed integer. Since we cannot materialize constants into fprs we have b3 do it
         // so we can pool them if needed.
-        constant = m_currentBlock->appendNew<ConstFloatValue>(m_proc, origin(), static_cast<float>(std::numeric_limits<uint64_t>::max() - std::numeric_limits<int64_t>::max()));
+        signBitConstant = constant(Float, bitwise_cast<uint32_t>(static_cast<float>(std::numeric_limits<uint64_t>::max() - std::numeric_limits<int64_t>::max())));
     }
     PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, Int64, origin());
     patchpoint->append(arg, ValueRep::SomeRegister);
     if (isX86()) {
-        patchpoint->append(constant, ValueRep::SomeRegister);
+        patchpoint->append(signBitConstant, ValueRep::SomeRegister);
         patchpoint->numFPScratchRegisters = 1;
     }
     patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {

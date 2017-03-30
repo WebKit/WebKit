@@ -1,3 +1,31 @@
+2017-03-29  Keith Miller  <keith_miller@apple.com>
+
+        WebAssembly: B3IRGenerator should pool constants
+        https://bugs.webkit.org/show_bug.cgi?id=170266
+
+        Reviewed by Filip Pizlo.
+
+        This patch adds a HashMap to B3IRGenerator that contains all the constants used in a function.
+        B3IRGenerator then uses an InsertionSet to add all those constants to the root BB. This doesn't
+        appear to be a compile time improvement but it could be valuable in the future.
+
+        * b3/B3Opcode.h:
+        (JSC::B3::opcodeForConstant):
+        * b3/B3Procedure.cpp:
+        (JSC::B3::Procedure::addConstant):
+        * b3/B3Procedure.h:
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::B3IRGenerator):
+        (JSC::Wasm::B3IRGenerator::constant):
+        (JSC::Wasm::B3IRGenerator::insertConstants):
+        (JSC::Wasm::B3IRGenerator::addConstant):
+        (JSC::Wasm::B3IRGenerator::dump):
+        (JSC::Wasm::parseAndCompile):
+        (JSC::Wasm::B3IRGenerator::emitChecksForModOrDiv):
+        (JSC::Wasm::B3IRGenerator::zeroForType): Deleted.
+        * wasm/generateWasmB3IRGeneratorInlinesHeader.py:
+        (generateConstCode):
+
 2017-03-29  Saam Barati  <sbarati@apple.com>
 
         LinkBuffer and ExecutableAllocator shouldn't have anything to do with VM

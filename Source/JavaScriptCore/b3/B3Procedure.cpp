@@ -89,6 +89,7 @@ Value* Procedure::clone(Value* value)
     return m_values.add(WTFMove(clone));
 }
 
+
 Value* Procedure::addIntConstant(Origin origin, Type type, int64_t value)
 {
     switch (type) {
@@ -109,6 +110,23 @@ Value* Procedure::addIntConstant(Origin origin, Type type, int64_t value)
 Value* Procedure::addIntConstant(Value* likeValue, int64_t value)
 {
     return addIntConstant(likeValue->origin(), likeValue->type(), value);
+}
+
+Value* Procedure::addConstant(Origin origin, Type type, uint64_t bits)
+{
+    switch (type) {
+    case Int32:
+        return add<Const32Value>(origin, static_cast<int32_t>(bits));
+    case Int64:
+        return add<Const64Value>(origin, bits);
+    case Float:
+        return add<ConstFloatValue>(origin, bitwise_cast<float>(static_cast<int32_t>(bits)));
+    case Double:
+        return add<ConstDoubleValue>(origin, bitwise_cast<double>(bits));
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        return nullptr;
+    }
 }
 
 Value* Procedure::addBottom(Origin origin, Type type)

@@ -391,6 +391,18 @@ inline bool isConstant(Opcode opcode)
     }
 }
 
+inline Opcode opcodeForConstant(Type type)
+{
+    switch (type) {
+    case Int32: return Const32;
+    case Int64: return Const64;
+    case Float: return ConstFloat;
+    case Double: return ConstDouble;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+}
+
 inline bool isDefinitelyTerminal(Opcode opcode)
 {
     switch (opcode) {
