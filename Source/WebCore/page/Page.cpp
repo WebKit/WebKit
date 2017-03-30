@@ -1138,6 +1138,8 @@ void Page::removeActivityStateChangeObserver(ActivityStateChangeObserver& observ
 
 void Page::suspendScriptedAnimations()
 {
+    if (settings().shouldDispatchRequestAnimationFrameEvents())
+        WTFReportBacktrace();
     m_scriptedAnimationsSuspended = true;
     for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (frame->document())
