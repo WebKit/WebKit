@@ -1,3 +1,28 @@
+2017-03-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Add some tests that dump the touch event regions with various content configurations
+        https://bugs.webkit.org/show_bug.cgi?id=170216
+
+        Reviewed by Dean Jackson.
+
+        Tests for touch event regions. Some of these are modeled after tests in tiled-drawing/scrolling/non-fast-region/.
+
+        * fast/events/touch/ios/touch-event-regions/resources/touch-regions-helper.js: Added.
+        * fast/events/touch/ios/touch-event-regions/active-passive-nesting-expected.html: Added.
+        * fast/events/touch/ios/touch-event-regions/active-passive-nesting.html: Added.
+        * fast/events/touch/ios/touch-event-regions/columns-expected.txt: Added.
+        * fast/events/touch/ios/touch-event-regions/columns.html: Added.
+        * fast/events/touch/ios/touch-event-regions/complex-expected.txt: Added.
+        * fast/events/touch/ios/touch-event-regions/complex.html: Added.
+        * fast/events/touch/ios/touch-event-regions/document-expected.txt: Added.
+        * fast/events/touch/ios/touch-event-regions/document.html: Added.
+        * fast/events/touch/ios/touch-event-regions/iframes-expected.txt: Added.
+        * fast/events/touch/ios/touch-event-regions/iframes.html: Added.
+        * fast/events/touch/ios/touch-event-regions/overflow-expected.txt: Added.
+        * fast/events/touch/ios/touch-event-regions/overflow.html: Added.
+        * fast/events/touch/ios/touch-event-regions/range-sliders-expected.txt: Added.
+        * fast/events/touch/ios/touch-event-regions/range-sliders.html: Added.
+
 2017-03-28  Simon Fraser  <simon.fraser@apple.com>
 
         Make it possible to dump touch event regions for testing

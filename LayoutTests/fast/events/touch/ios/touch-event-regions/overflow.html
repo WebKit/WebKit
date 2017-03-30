@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="initial-scale=1.0">
+    <style>
+        .container {
+            height: 200px;
+            width: 200px;
+            border: 1px solid black;
+            margin: 50px;
+            overflow: hidden;
+        }
+        .box {
+            height: 100px;
+            width: 120px;
+            border: 1px solid black;
+            margin: 150px 10px;
+        }
+        .contents {
+            height: 500px;
+            background-color: silver;
+        }
+    </style>
+    <script src="resources/touch-regions-helper.js"></script>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        window.addEventListener('load', dumpRegions, false);
+    </script>
+</head>
+<body>
+
+    <div class="container" ontouchstart="(void)0">
+        <div class="contents">
+            touch start on container
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="box" ontouchstart="(void)0">touchstart inside overflow</div>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="initial-scale=1.0">
+    <script src="resources/touch-regions-helper.js"></script>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        window.addEventListener('load', dumpRegions, false);
+    </script>
+</head>
+<body>
+
+    <input type="range" style="width: 10px; height: 200px; -webkit-appearance: slider-vertical;">
+    <input type="range">
+    <input type="range" style="transform: scale(2); transform-origin: top left;">
+
+</body>
+</html>
