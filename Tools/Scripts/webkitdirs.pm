@@ -102,6 +102,8 @@ use constant {
     GTK      => "GTK",
     Efl      => "Efl",
     iOS      => "iOS",
+    tvOS     => "tvOS",
+    watchOS  => "watchOS",
     Mac      => "Mac",
     JSCOnly  => "JSCOnly",
     WinCairo => "WinCairo",
@@ -464,6 +466,20 @@ sub determineXcodeSDK
     if (checkForArgumentAndRemoveFromARGV("--simulator") || checkForArgumentAndRemoveFromARGV("--ios-simulator")) {
         $xcodeSDK ||= 'iphonesimulator';
     }
+    if (checkForArgumentAndRemoveFromARGV("--tvos-device")) {
+        my $hasInternalSDK = exitStatus(system("xcrun --sdk appletvos.internal --show-sdk-version > /dev/null 2>&1")) == 0;
+        $xcodeSDK ||=  $hasInternalSDK ? "appletvos.internal" : "appletvos";
+    }
+    if (checkForArgumentAndRemoveFromARGV("--tvos-simulator")) {
+        $xcodeSDK ||= "appletvsimulator";
+    }
+    if (checkForArgumentAndRemoveFromARGV("--watchos-device")) {
+        my $hasInternalSDK = exitStatus(system("xcrun --sdk watchos.internal --show-sdk-version > /dev/null 2>&1")) == 0;
+        $xcodeSDK ||=  $hasInternalSDK ? "watchos.internal" : "watchos";
+    }
+    if (checkForArgumentAndRemoveFromARGV("--watchos-simulator")) {
+        $xcodeSDK ||= "watchsimulator";
+    }
 }
 
 sub xcodeSDK
@@ -482,9 +498,13 @@ sub xcodeSDKPlatformName()
 {
     determineXcodeSDK();
     return "" if !defined $xcodeSDK;
+    return "appletvos" if $xcodeSDK =~ /appletvos/i;
+    return "appletvsimulator" if $xcodeSDK =~ /appletvsimulator/i;
     return "iphoneos" if $xcodeSDK =~ /iphoneos/i;
     return "iphonesimulator" if $xcodeSDK =~ /iphonesimulator/i;
     return "macosx" if $xcodeSDK =~ /macosx/i;
+    return "watchos" if $xcodeSDK =~ /watchos/i;
+    return "watchsimulator" if $xcodeSDK =~ /watchsimulator/i;
     die "Couldn't determine platform name from Xcode SDK";
 }
 
@@ -1039,6 +1059,10 @@ sub determinePortName()
         determineXcodeSDK();
         if (willUseIOSDeviceSDK() || willUseIOSSimulatorSDK()) {
             $portName = iOS;
+        } elsif (willUseAppleTVDeviceSDK() || willUseAppleTVSimulatorSDK()) {
+            $portName = tvOS;
+        } elsif (willUseWatchDeviceSDK() || willUseWatchSimulatorSDK()) {
+            $portName = watchOS;
         } else {
             $portName = Mac;
         }
@@ -1223,7 +1247,7 @@ sub isAppleWebKit()
 
 sub isAppleCocoaWebKit()
 {
-    return (portName() eq Mac) || isIOSWebKit();
+    return (portName() eq Mac) || isIOSWebKit() || isTVOSWebKit() || isWatchOSWebKit();
 }
 
 sub isAppleWinWebKit()
@@ -1289,9 +1313,44 @@ sub willUseIOSSimulatorSDK()
     return xcodeSDKPlatformName() eq "iphonesimulator";
 }
 
+sub willUseAppleTVDeviceSDK()
+{
+    return xcodeSDKPlatformName() eq "appletvos";
+}
+
+sub willUseAppleTVSimulatorSDK()
+{
+    return xcodeSDKPlatformName() eq "appletvsimulator";
+}
+
+sub willUseWatchDeviceSDK()
+{
+    return xcodeSDKPlatformName() eq "watchos";
+}
+
+sub willUseWatchSimulatorSDK()
+{
+    return xcodeSDKPlatformName() eq "watchsimulator";
+}
+
 sub isIOSWebKit()
 {
     return portName() eq iOS;
+}
+
+sub isTVOSWebKit()
+{
+    return portName() eq tvOS;
+}
+
+sub isWatchOSWebKit()
+{
+    return portName() eq watchOS;
+}
+
+sub isIOSLikeWebKit()
+{
+    return  isIOSWebKit() || isTVOSWebKit() || isWatchOSWebKit();
 }
 
 sub determineNmPath()
