@@ -4045,8 +4045,15 @@ static bool isAssistableInputType(InputType type)
     
     if ([uiDelegate respondsToSelector:@selector(_webView:showCustomSheetForElement:)]) {
         if ([uiDelegate _webView:_webView showCustomSheetForElement:element]) {
-            // Prevent tap-and-hold and drag.
-            [UIApp _cancelAllTouches];
+#if ENABLE(DATA_INTERACTION)
+            BOOL shouldCancelAllTouches = !_dataInteractionState.sourceAction;
+#else
+            BOOL shouldCancelAllTouches = YES;
+#endif
+            // Prevent tap-and-hold and panning.
+            if (shouldCancelAllTouches)
+                [UIApp _cancelAllTouches];
+
             return YES;
         }
     }

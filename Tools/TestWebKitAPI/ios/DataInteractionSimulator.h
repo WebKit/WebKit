@@ -67,6 +67,8 @@ typedef NS_ENUM(NSInteger, DataInteractionPhase) {
 - (instancetype)initWithWebView:(TestWKWebView *)webView;
 - (void)runFrom:(CGPoint)startLocation to:(CGPoint)endLocation;
 
+@property (nonatomic) BOOL shouldEnsureUIApplication;
+@property (nonatomic) BlockPtr<BOOL(_WKActivatedElementInfo *)> showCustomActionSheetBlock;
 @property (nonatomic) BlockPtr<NSArray *(NSArray *)> convertItemProvidersBlock;
 @property (nonatomic, strong) UIItemProvider *externalItemProvider;
 @property (nonatomic, readonly) NSArray *observedEventNames;
