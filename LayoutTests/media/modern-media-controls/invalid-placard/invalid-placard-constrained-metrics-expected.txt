@@ -1,0 +1,17 @@
+Testing the invalid placard with constrained metrics.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Setting width and height to 50
+PASS placard.children[0].children.length is 1
+PASS placard.children[0].children.length is 1
+PASS placard.children[0].children[0] instanceof IconButton is true
+
+Setting width and height to 49
+PASS placard.children[0].children.length is 0
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

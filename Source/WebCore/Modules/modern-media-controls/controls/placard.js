@@ -23,8 +23,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-const MinWidthToDisplayIcon = 170;
-const MinHeightToDisplayIcon = 170;
 const MinHeightToDisplayDescription = 100;
 const MinHeightToDisplayTitle = 40;
 
@@ -51,6 +49,8 @@ class Placard extends LayoutItem
         if (!!description)
             this._descriptionNode = new LayoutNode(`<div class="description">${description}</div>`);
 
+        this.minDimensionToDisplayIcon = 170;
+
         this.width = width;
         this.height = height;
     }
@@ -63,7 +63,7 @@ class Placard extends LayoutItem
 
         const children = [];
 
-        if (this._iconButton && this.width >= MinWidthToDisplayIcon && this.height >= MinHeightToDisplayIcon)
+        if (this._iconButton && this.width >= this.minDimensionToDisplayIcon && this.height >= this.minDimensionToDisplayIcon)
             children.push(this._iconButton);
 
         if (this._titleNode && this.height >= MinHeightToDisplayTitle)

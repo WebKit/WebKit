@@ -1,3 +1,25 @@
+2017-03-30  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Invalid placard icon is not visible for short video
+        https://bugs.webkit.org/show_bug.cgi?id=170277
+        <rdar://problem/31327955>
+
+        Reviewed by Eric Carlson.
+
+        Make the minimum dimension needed to display a placard icon configurable and let the
+        invalid placard use a 50pt dimension. We also make a drive-by fix to reset "text-align"
+        for media controls as having a "text-align: center" inherited value would mess up
+        positioning of the placard icon and make it flush to the right of the placard.
+
+        Test: media/modern-media-controls/invalid-placard/invalid-placard-constrained-metrics.html
+
+        * Modules/modern-media-controls/controls/invalid-placard.js:
+        (InvalidPlacard):
+        * Modules/modern-media-controls/controls/media-controls.css:
+        (.media-controls):
+        * Modules/modern-media-controls/controls/placard.js:
+        (Placard.prototype.layout):
+
 2017-03-30  Zan Dobersek  <zdobersek@igalia.com>
 
         [GCrypt] Register missing algorithms in CryptoAlgorithmRegistry::platformRegisterAlgoritmhs()

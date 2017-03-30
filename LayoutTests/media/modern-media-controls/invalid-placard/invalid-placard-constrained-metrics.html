@@ -1,0 +1,27 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<body>
+<script type="text/javascript">
+
+description("Testing the invalid placard with constrained metrics.");
+
+const placard = new InvalidPlacard({ layoutTraits: LayoutTraits.macOS });
+
+debug("Setting width and height to 50");
+placard.width = 50;
+placard.height = 50;
+shouldBe("placard.children[0].children.length", "1");
+shouldBe("placard.children[0].children.length", "1");
+shouldBeTrue("placard.children[0].children[0] instanceof IconButton");
+
+debug("");
+debug("Setting width and height to 49");
+placard.width = 49;
+placard.height = 49;
+shouldBe("placard.children[0].children.length", "0");
+
+debug("");
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
