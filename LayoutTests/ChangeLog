@@ -1,3 +1,15 @@
+2017-03-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Disconnecting a HTMLObjectElement does not always unload its content document
+        https://bugs.webkit.org/show_bug.cgi?id=169606
+
+        Reviewed by Andy Estes.
+
+        Add a regression test.
+
+        * fast/dom/removing-focused-object-element-expected.txt: Added.
+        * fast/dom/removing-focused-object-element.html: Added.
+
 2017-03-29  Simon Fraser  <simon.fraser@apple.com>
 
         Add some tests that dump the touch event regions with various content configurations
