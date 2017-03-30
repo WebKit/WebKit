@@ -634,8 +634,7 @@
   # Difference in Object.getOwnPropertyDescriptor(functiong.__proto__, 'caller').
   cmd: runChakra :skip, "NoException", "typeErrorAccessor.baseline", []
 - path: ChakraCore/test/Function/FuncBody.js
-  # This crashes in JSC.
-  cmd: runChakra :skip, "NoException", "FuncBodyES5.baseline", []
+  cmd: runChakra :baseline, "NoException", "FuncBodyES5.baseline-jsc", []
 - path: ChakraCore/test/Function/FuncBody.bug227901.js
   cmd: runChakra :baseline, "NoException", "FuncBody.bug227901.baseline-jsc", []
 - path: ChakraCore/test/Function/FuncBody.bug232281.js

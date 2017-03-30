@@ -1,3 +1,16 @@
+2017-03-30  Michael Saboff  <msaboff@apple.com>
+
+        Enable ChakraCore/Function/FuncBody.js test as it now works
+        https://bugs.webkit.org/show_bug.cgi?id=170301
+
+        Reviewed by Mark Lam.
+
+        This test no longer crashes, so enable it and create a JSC specific
+        expected file.
+
+        * ChakraCore.yaml:
+        * ChakraCore/test/Function/FuncBodyES5.baseline-jsc: Added.
+
 2017-03-30  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly: fix misc JS API implementation inconsistencies
