@@ -1,3 +1,18 @@
+2017-03-30  Mark Lam  <mark.lam@apple.com>
+
+        IntlObject should not be using JSArray::initializeIndex().
+        https://bugs.webkit.org/show_bug.cgi?id=170302
+        <rdar://problem/31356918>
+
+        Reviewed by Saam Barati.
+
+        JSArray::initializeIndex() is only meant to be used with arrays created using
+        JSArray::tryCreateForInitializationPrivate() under very constrained conditions.
+
+        * runtime/IntlObject.cpp:
+        (JSC::canonicalizeLocaleList):
+        (JSC::intlObjectFuncGetCanonicalLocales):
+
 2017-03-30  Filip Pizlo  <fpizlo@apple.com>
 
         Air should support linear scan for optLevel<2
