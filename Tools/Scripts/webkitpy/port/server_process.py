@@ -114,7 +114,8 @@ class ServerProcess(object):
             raise ValueError("%s already running" % self._name)
         self._reset()
         # close_fds is a workaround for http://bugs.python.org/issue2320
-        close_fds = not self._host.platform.is_win()
+        # In Python 2.7.10, close_fds is also supported on Windows.
+        close_fds = True
         self._proc = self._host.executive.popen(self._cmd, stdin=self._host.executive.PIPE,
             stdout=self._host.executive.PIPE,
             stderr=self._host.executive.PIPE,

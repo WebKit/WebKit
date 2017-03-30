@@ -1,3 +1,17 @@
+2017-03-30  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Pass close_fds = True in Python popen call.
+        https://bugs.webkit.org/show_bug.cgi?id=170172
+
+        Reviewed by Brent Fulgham.
+
+        This was previously not supported on Windows, but in Python 2.7.10 it is.
+
+        * Scripts/webkitpy/common/system/executive.py:
+        (Executive._should_close_fds):
+        * Scripts/webkitpy/port/server_process.py:
+        (ServerProcess._start):
+
 2017-03-30  Aakash Jain  <aakash_jain@apple.com>
 
         Change my status to be a WebKit reviewer.
