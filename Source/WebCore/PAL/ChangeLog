@@ -1,3 +1,19 @@
+2017-03-30  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GCrypt] Add the Utilities.h header
+        https://bugs.webkit.org/show_bug.cgi?id=170269
+
+        Reviewed by Michael Catanzaro.
+
+        Add a libgcrypt-specific Utilities.h header under PAL. It will contain
+        common functions that are shared throughout the code that leverages
+        libgcrypt.
+
+        * pal/crypto/gcrypt/Utilities.h: Added.
+        (PAL::GCrypt::logError): Use WTFLogAlways() to report the passed-in libgcrypt error.
+        (PAL::GCrypt::aesAlgorithmForKeySize): Return a GCRY_CIPHER_AES{128,192,256} value
+        that matches up with the passed-in key size.
+
 2017-03-29  Zan Dobersek  <zdobersek@igalia.com>
 
         [GCrypt] Add a Handle<> class to help with GCrypt object lifetime control
