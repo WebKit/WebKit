@@ -1,5 +1,11 @@
 2017-03-30  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Revert an erronously change in the previous commit.
+
+        * public/v3/components/base.js:
+
+2017-03-30  Ryosuke Niwa  <rniwa@webkit.org>
+
         Build fix after r214280. Don't render components until its element is inserted into a document.
 
         * public/v3/components/base.js:

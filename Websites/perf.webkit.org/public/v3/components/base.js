@@ -288,7 +288,7 @@ class ComponentBase {
     }
 }
 
-ComponentBase.useNativeCustomElements = false;//!!window.customElements;
+ComponentBase.useNativeCustomElements = !!window.customElements;
 ComponentBase._componentByName = new Map;
 ComponentBase._componentByClass = new Map;
 ComponentBase._currentlyConstructedByInterface = new Map;
