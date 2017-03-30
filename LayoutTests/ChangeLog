@@ -1,3 +1,15 @@
+2017-03-30  Per Arne Vollan  <pvollan@apple.com>
+
+        [mac-wk1 debug] LayoutTest media/track/track-cue-rendering-with-padding.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=170188
+
+        Reviewed by Eric Carlson.
+
+        The textTrackDisplayElement call will fail and throw an exception if the text track display element
+        has not yet been added to the text track container element. We wait until it has been added.
+
+        * media/track/track-cue-rendering-with-padding.html:
+
 2017-03-30  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Invalid placard icon is not visible for short video
