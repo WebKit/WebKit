@@ -4,6 +4,12 @@
 <script src="../../http/tests/inspector/resources/inspector-test.js"></script>
 <link rel="stylesheet" href="resources/external.css">
 <style>body { color: blue; }</style>
+<style>
+html {
+    /* Semicolon after value intentionally omitted. Test for https://webkit.org/b/170279. */
+    -webkit-text-size-adjust: none
+}
+</style>
 <script>
 var style = document.createElement("style");
 style.textContent = "body { color: gray; }";
@@ -20,7 +26,7 @@ function test()
     WebInspector.cssStyleManager.fetchStyleSheetsIfNeeded();
     InspectorBackend.runAfterPendingDispatches(function() {
         let styleSheets = WebInspector.cssStyleManager.styleSheets;
-        InspectorTest.expectThat(styleSheets.length === 3, "There should be three stylesheets.");
+        InspectorTest.expectThat(styleSheets.length === 4, "There should be four stylesheets.");
 
         for (let styleSheet of styleSheets) {
             InspectorTest.log("");

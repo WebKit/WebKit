@@ -1,3 +1,23 @@
+2017-03-30  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Assertion failure in InspectorStyleProperty::setRawTextFromStyleDeclaration
+        https://bugs.webkit.org/show_bug.cgi?id=170279
+        <rdar://problem/30200492>
+
+        Reviewed by David Hyatt.
+
+        The SourceRange for a CSSPropertySourceData should be relative to the start
+        of the declaration body, not the start of the StyleSheetHandler’s parsed
+        text. This only affected the ranges of unparsed (parsedOK == false) properties
+        lacking a trailing semi-colon.
+
+        This patch doesn't change the behavior of InspectorStyleSheet other than
+        silencing an irksome assert, as String::substring does a safety check on
+        the passed in length.
+
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::fixUnparsedProperties):
+
 2017-03-30  Youenn Fablet  <youenn@apple.com> and Jon Lee <jonlee@apple.com>
 
         Clean up RTCDataChannel

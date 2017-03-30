@@ -278,9 +278,9 @@ static inline void fixUnparsedProperties(const CharacterType* characters, CSSRul
             --propertyEnd;
         
         // propertyEnd points at the last property text character.
-        unsigned newPropertyEnd = propertyEnd + styleStart + 1;
-        if (currentData->range.end != newPropertyEnd) {
-            currentData->range.end = newPropertyEnd;
+        unsigned newRangeEnd = (propertyEnd - styleStart) + 1;
+        if (currentData->range.end != newRangeEnd) {
+            currentData->range.end = newRangeEnd;
             unsigned valueStart = styleStart + currentData->range.start + currentData->name.length();
             while (valueStart < propertyEnd && characters[valueStart] != ':')
                 ++valueStart;

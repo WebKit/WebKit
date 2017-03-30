@@ -1,3 +1,14 @@
+2017-03-30  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Assertion failure in InspectorStyleProperty::setRawTextFromStyleDeclaration
+        https://bugs.webkit.org/show_bug.cgi?id=170279
+        <rdar://problem/30200492>
+
+        Reviewed by David Hyatt.
+
+        * inspector/css/getAllStyleSheets.html:
+        Add stylesheet with an "unparsed" property having no final semicolon.
+
 2017-03-30  Youenn Fablet  <youenn@apple.com>
 
         Clean up RTCDataChannel
