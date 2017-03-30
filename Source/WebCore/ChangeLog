@@ -1,3 +1,42 @@
+2017-03-30  James Craig  <jcraig@apple.com>
+
+        AX: Expose a new AXSubrole for explicit ARIA "group" role
+        https://bugs.webkit.org/show_bug.cgi?id=169810
+        <rdar://problem/31039693>
+
+        Reviewed by Chris Fleizach.
+
+        Split GroupRole into generics (GroupRole) and explicit groups 
+        (ApplicationGroupRole) so we can expose a subrole on the explicit 
+        groups. Account for the change in ARIA Tree and Menu hierachies. 
+        Update the computedRoleValue for WebKit Inspector usage, too.
+
+        Updated existing tests.
+
+        Test: accessibility/list-detection2.html:
+        Test: accessibility/roles-computedRoleString.html:
+        Test: inspector/dom/getAccessibilityPropertiesForNode.html:
+        Test: inspector/dom/highlightFrame.html:
+        Test: inspector/dom/highlightSelector.html:
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::helpText):
+        (WebCore::AccessibilityNodeObject::hierarchicalLevel):
+        (WebCore::AccessibilityNodeObject::remapAriaRoleDueToParent):
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::accessibleNameDerivesFromContent):
+        (WebCore::AccessibilityObject::ariaTreeItemContent):
+        (WebCore::initializeRoleMap):
+        (WebCore::AccessibilityObject::computedRoleString):
+        * accessibility/AccessibilityObject.h:
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (atkRole):
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper determineIsAccessibilityElement]):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (createAccessibilityRoleMap):
+        (-[WebAccessibilityObjectWrapper subrole]):
+
 2017-03-30  Chris Dumez  <cdumez@apple.com>
 
         We are spending a lot of time bzero'ing AudioChannel buffers on uni-watch.com

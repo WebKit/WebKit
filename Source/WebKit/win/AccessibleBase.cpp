@@ -887,6 +887,7 @@ static long MSAARole(AccessibilityRole role)
             return ROLE_SYSTEM_COLUMN;
         case WebCore::RowRole:
             return ROLE_SYSTEM_ROW;
+        case WebCore::ApplicationGroupRole:
         case WebCore::GroupRole:
         case WebCore::RadioGroupRole:
             return ROLE_SYSTEM_GROUPING;

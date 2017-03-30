@@ -548,6 +548,7 @@ static AtkRole atkRole(AccessibilityObject* coreObject)
     case SVGRootRole:
     case TabPanelRole:
         return ATK_ROLE_PANEL;
+    case ApplicationGroupRole:
     case GroupRole:
         return coreObject->isStyleFormatGroup() ? ATK_ROLE_SECTION : ATK_ROLE_PANEL;
     case RowHeaderRole:

@@ -1866,6 +1866,7 @@ static const AccessibilityRoleMap& createAccessibilityRoleMap()
         { ApplicationAlertRole, NSAccessibilityGroupRole },
         { ApplicationAlertDialogRole, NSAccessibilityGroupRole },
         { ApplicationDialogRole, NSAccessibilityGroupRole },
+        { ApplicationGroupRole, NSAccessibilityGroupRole },
         { ApplicationLogRole, NSAccessibilityGroupRole },
         { ApplicationMarqueeRole, NSAccessibilityGroupRole },
         { ApplicationStatusRole, NSAccessibilityGroupRole },
@@ -2023,6 +2024,8 @@ static NSString* roleValueToNSString(AccessibilityRole value)
             return @"AXApplicationAlertDialog";
         case ApplicationDialogRole:
             return @"AXApplicationDialog";
+        case ApplicationGroupRole:
+            return @"AXApplicationGroup";
         case ApplicationLogRole:
             return @"AXApplicationLog";
         case ApplicationMarqueeRole:

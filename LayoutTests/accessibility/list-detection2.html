@@ -118,29 +118,29 @@
 
 
     <h1>EXPLICIT FAILURE CASES: These next examples are <strong>NOT</strong> lists because these "list markers" are faked as background images. One is even a background image on a ::before pseudo-element, but that does not count as a listmarker. List markers should only be inferred by the <code>content</code> property or the <code>list-style</code> properties.</h1>
-    <ul data-role="group" class="ex nomarkers backgroundmarkers" data-note=" w/ background image (NOT A LIST)">
+    <ul data-role="" class="ex nomarkers backgroundmarkers" data-note=" w/ background image (NOT A LIST)">
         <li>foo</li>
         <li>bar</li>
         <li>baz</li>
     </ul>
-    <ul data-role="group" class="ex nomarkers backgroundmarkersbefore" data-note=" w/ background on ::before (NOT A LIST)">
+    <ul data-role="" class="ex nomarkers backgroundmarkersbefore" data-note=" w/ background on ::before (NOT A LIST)">
         <li>foo</li>
         <li>bar</li>
         <li>baz</li>
     </ul>
 
     <h1>EXPLICIT FAILURE CASES: These next examples are <strong>NOT</strong> there is no explicit role or any style or list markers to indicate this is actually intended as a list.</h1>
-    <ul data-role="group" class="ex inline" data-note=" w/o explicit role and displayed inline, which defaults to no markers (NOT A LIST)">
+    <ul data-role="" class="ex inline" data-note=" w/o explicit role and displayed inline, which defaults to no markers (NOT A LIST)">
         <li>foo</li>
         <li>bar</li>
         <li>baz</li>
     </ul>
-    <ol data-role="group" class="ex inline" data-note=" w/o explicit role and displayed inline, which defaults to no markers (NOT A LIST)">
+    <ol data-role="" class="ex inline" data-note=" w/o explicit role and displayed inline, which defaults to no markers (NOT A LIST)">
         <li>foo</li>
         <li>bar</li>
         <li>baz</li>
     </ol>
-    <ul data-role="group" class="ex nomarkers" data-note=" w/o explicit role and no markers (NOT A LIST)">
+    <ul data-role="" class="ex nomarkers" data-note=" w/o explicit role and no markers (NOT A LIST)">
         <li>foo</li>
         <li>bar</li>
         <li>baz</li>

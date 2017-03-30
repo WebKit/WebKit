@@ -300,6 +300,7 @@ bool AccessibilityObject::accessibleNameDerivesFromContent() const
     case ApplicationAlertRole:
     case ApplicationAlertDialogRole:
     case ApplicationDialogRole:
+    case ApplicationGroupRole:
     case ApplicationLogRole:
     case ApplicationMarqueeRole:
     case ApplicationStatusRole:
@@ -1829,7 +1830,7 @@ void AccessibilityObject::ariaTreeItemContent(AccessibilityChildrenVector& resul
     // The ARIA tree item content are the item that are not other tree items or their containing groups.
     for (const auto& child : children()) {
         AccessibilityRole role = child->roleValue();
-        if (role == TreeItemRole || role == GroupRole)
+        if (role == TreeItemRole || role == GroupRole || role == ApplicationGroupRole)
             continue;
         
         result.append(child);
@@ -2110,39 +2111,39 @@ static void initializeRoleMap()
         { "doc-afterword", LandmarkRegionRole },
         { "doc-appendix", LandmarkRegionRole },
         { "doc-backlink", WebCoreLinkRole },
-        { "doc-biblioentry", GroupRole },
+        { "doc-biblioentry", ApplicationGroupRole },
         { "doc-bibliography", LandmarkRegionRole },
         { "doc-biblioref", WebCoreLinkRole },
         { "doc-chapter", LandmarkRegionRole },
-        { "doc-colophon", GroupRole },
+        { "doc-colophon", ApplicationGroupRole },
         { "doc-conclusion", LandmarkRegionRole },
         { "doc-cover", ImageRole },
-        { "doc-credit", GroupRole },
+        { "doc-credit", ApplicationGroupRole },
         { "doc-credits", LandmarkRegionRole },
-        { "doc-dedication", GroupRole },
-        { "doc-endnote", GroupRole },
+        { "doc-dedication", ApplicationGroupRole },
+        { "doc-endnote", ApplicationGroupRole },
         { "doc-endnotes", LandmarkRegionRole },
-        { "doc-epigraph", GroupRole },
+        { "doc-epigraph", ApplicationGroupRole },
         { "doc-epilogue", LandmarkRegionRole },
         { "doc-errata", LandmarkRegionRole },
-        { "doc-example", GroupRole },
-        { "doc-footnote", GroupRole },
+        { "doc-example", ApplicationGroupRole },
+        { "doc-footnote", ApplicationGroupRole },
         { "doc-foreword", LandmarkRegionRole },
         { "doc-glossary", LandmarkRegionRole },
         { "doc-glossref", WebCoreLinkRole },
         { "doc-index", LandmarkNavigationRole },
         { "doc-introduction", LandmarkRegionRole },
         { "doc-noteref", WebCoreLinkRole },
-        { "doc-notice", GroupRole },
-        { "doc-pagebreak", GroupRole },
+        { "doc-notice", ApplicationGroupRole },
+        { "doc-pagebreak", ApplicationGroupRole },
         { "doc-pagelist", LandmarkNavigationRole },
         { "doc-part", LandmarkRegionRole },
         { "doc-preface", LandmarkRegionRole },
         { "doc-prologue", LandmarkRegionRole },
-        { "doc-pullquote", GroupRole },
-        { "doc-qna", GroupRole },
+        { "doc-pullquote", ApplicationGroupRole },
+        { "doc-qna", ApplicationGroupRole },
         { "doc-subtitle", HeadingRole },
-        { "doc-tip", GroupRole },
+        { "doc-tip", ApplicationGroupRole },
         { "doc-toc", LandmarkNavigationRole },
         { "grid", GridRole },
         { "gridcell", GridCellRole },
@@ -2154,7 +2155,7 @@ static void initializeRoleMap()
         { "document", DocumentRole },
         { "form", FormRole },
         { "rowheader", RowHeaderRole },
-        { "group", GroupRole },
+        { "group", ApplicationGroupRole },
         { "heading", HeadingRole },
         { "img", ImageRole },
         { "link", WebCoreLinkRole },
@@ -2244,6 +2245,8 @@ String AccessibilityObject::computedRoleString() const
 {
     // FIXME: Need a few special cases that aren't in the RoleMap: option, etc. http://webkit.org/b/128296
     AccessibilityRole role = roleValue();
+    if (role == GroupRole)
+        return ""; // Special-casing an empty value because generic block elements (GroupRole) are not the same as role="group" (ApplicationGroupRole).
     if (role == HorizontalRuleRole)
         role = SplitterRole;
     if (role == PopUpButtonRole || role == ToggleButtonRole)

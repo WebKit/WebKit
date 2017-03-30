@@ -901,7 +901,7 @@ div[role=doc-backlink]
       
 div[role=doc-biblioentry]
       AXRole: AXGroup
-      AXSubrole: 
+      AXSubrole: AXApplicationGroup
       AXRoleDescription: group
       
 div[role=doc-bibliography]
@@ -921,7 +921,7 @@ div[role=doc-chapter]
       
 div[role=doc-colophon]
       AXRole: AXGroup
-      AXSubrole: 
+      AXSubrole: AXApplicationGroup
       AXRoleDescription: group
       
 div[role=doc-conclusion]
@@ -936,7 +936,7 @@ div[role=doc-cover]
       
 div[role=doc-credit]
       AXRole: AXGroup
-      AXSubrole: 
+      AXSubrole: AXApplicationGroup
       AXRoleDescription: group
       
 div[role=doc-credits]
@@ -946,12 +946,12 @@ div[role=doc-credits]
       
 div[role=doc-dedication]
       AXRole: AXGroup
-      AXSubrole: 
+      AXSubrole: AXApplicationGroup
       AXRoleDescription: group
       
 div[role=doc-endnote]
       AXRole: AXGroup
-      AXSubrole: 
+      AXSubrole: AXApplicationGroup
       AXRoleDescription: group
       
 div[role=doc-endnotes]
@@ -961,7 +961,7 @@ div[role=doc-endnotes]
       
 div[role=doc-epigraph]
       AXRole: AXGroup
-      AXSubrole: 
+      AXSubrole: AXApplicationGroup
       AXRoleDescription: group
       
 div[role=doc-epilogue]
@@ -976,12 +976,12 @@ div[role=doc-errata]
       
 div[role=doc-example]
       AXRole: AXGroup
-      AXSubrole: 
+      AXSubrole: AXApplicationGroup
       AXRoleDescription: group
       
 div[role=doc-footnote]
       AXRole: AXGroup
-      AXSubrole: 
+      AXSubrole: AXApplicationGroup
       AXRoleDescription: group
       
 div[role=doc-foreword]
@@ -1016,12 +1016,12 @@ div[role=doc-noteref]
       
 div[role=doc-notice]
       AXRole: AXGroup
-      AXSubrole: 
+      AXSubrole: AXApplicationGroup
       AXRoleDescription: group
       
 div[role=doc-pagebreak]
       AXRole: AXGroup
-      AXSubrole: 
+      AXSubrole: AXApplicationGroup
       AXRoleDescription: group
       
 div[role=doc-pagelist]
@@ -1046,12 +1046,12 @@ div[role=doc-prologue]
       
 div[role=doc-pullquote]
       AXRole: AXGroup
-      AXSubrole: 
+      AXSubrole: AXApplicationGroup
       AXRoleDescription: group
       
 div[role=doc-qna]
       AXRole: AXGroup
-      AXSubrole: 
+      AXSubrole: AXApplicationGroup
       AXRoleDescription: group
       
 div[role=doc-subtitle]
@@ -1061,7 +1061,7 @@ div[role=doc-subtitle]
       
 div[role=doc-tip]
       AXRole: AXGroup
-      AXSubrole: 
+      AXSubrole: AXApplicationGroup
       AXRoleDescription: group
       
 div[role=doc-toc]
@@ -1111,7 +1111,7 @@ div[role=gridcell]
       
 div[role=group]
       AXRole: AXGroup
-      AXSubrole: 
+      AXSubrole: AXApplicationGroup
       AXRoleDescription: group
       
 div[role=heading]

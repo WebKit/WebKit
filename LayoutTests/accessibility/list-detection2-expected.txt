@@ -17,9 +17,9 @@ PASS: ul w/ bullet content on ::before -> list.
 PASS: ul w/ bullet content on inline ::before -> list. 
 PASS: ol w/ counter content on ::before -> list. 
 PASS: ol w/ counter content on inline ::before -> list. 
-PASS: ul w/ background image (NOT A LIST) -> group. 
-PASS: ul w/ background on ::before (NOT A LIST) -> group. 
-PASS: ul w/o explicit role and displayed inline, which defaults to no markers (NOT A LIST) -> group. 
-PASS: ol w/o explicit role and displayed inline, which defaults to no markers (NOT A LIST) -> group. 
-PASS: ul w/o explicit role and no markers (NOT A LIST) -> group. 
+PASS: ul w/ background image (NOT A LIST) -> . 
+PASS: ul w/ background on ::before (NOT A LIST) -> . 
+PASS: ul w/o explicit role and displayed inline, which defaults to no markers (NOT A LIST) -> . 
+PASS: ol w/o explicit role and displayed inline, which defaults to no markers (NOT A LIST) -> . 
+PASS: ul w/o explicit role and no markers (NOT A LIST) -> . 
 

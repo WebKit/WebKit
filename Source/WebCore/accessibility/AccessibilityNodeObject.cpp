@@ -1606,7 +1606,7 @@ String AccessibilityNodeObject::helpText() const
         AccessibilityObject* axObj = axObjectCache()->getOrCreate(ancestor);
         if (axObj) {
             AccessibilityRole role = axObj->roleValue();
-            if (role != GroupRole && role != UnknownRole)
+            if (role != ApplicationGroupRole && role != GroupRole && role != UnknownRole)
                 break;
         }
     }
@@ -1633,7 +1633,7 @@ unsigned AccessibilityNodeObject::hierarchicalLevel() const
     unsigned level = 1;
     for (AccessibilityObject* parent = parentObject(); parent; parent = parent->parentObject()) {
         AccessibilityRole parentRole = parent->ariaRoleAttribute();
-        if (parentRole == GroupRole)
+        if (parentRole == ApplicationGroupRole)
             level++;
         else if (parentRole == TreeRole)
             break;
@@ -2150,7 +2150,7 @@ AccessibilityRole AccessibilityNodeObject::remapAriaRoleDueToParent(Accessibilit
         if (role == ListBoxOptionRole && parentAriaRole == MenuRole)
             return MenuItemRole;
         // An aria "menuitem" may map to MenuButton or MenuItem depending on its parent.
-        if (role == MenuItemRole && parentAriaRole == GroupRole)
+        if (role == MenuItemRole && parentAriaRole == ApplicationGroupRole)
             return MenuButtonRole;
         
         // If the parent had a different role, then we don't need to continue searching up the chain.

@@ -833,6 +833,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
         case ApplicationAlertRole:
         case ApplicationAlertDialogRole:
         case ApplicationDialogRole:
+        case ApplicationGroupRole:
         case ApplicationLogRole:
         case ApplicationMarqueeRole:
         case ApplicationStatusRole:

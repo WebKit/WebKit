@@ -1,3 +1,20 @@
+2017-03-30  James Craig  <jcraig@apple.com>
+
+        AX: Expose a new AXSubrole for explicit ARIA "group" role
+        https://bugs.webkit.org/show_bug.cgi?id=169810
+        <rdar://problem/31039693>
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/list-detection2-expected.txt:
+        * accessibility/list-detection2.html:
+        * accessibility/roles-computedRoleString.html:
+        * inspector/dom/getAccessibilityPropertiesForNode-expected.txt:
+        * inspector/dom/highlightFrame-expected.txt:
+        * inspector/dom/highlightSelector-expected.txt:
+        * platform/mac/accessibility/roles-computedRoleString-expected.txt:
+        * platform/mac/accessibility/roles-exposed-expected.txt:
+
 2017-03-30  Youenn Fablet  <youenn@apple.com>
 
         webrtc/video-stats.html and webrtc/video-replace-track.html are flaky

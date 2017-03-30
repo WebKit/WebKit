@@ -49,10 +49,10 @@ PASS: nav -> navigation.
 PASS: ol -> list. 
 PASS: li -> listitem. 
 PASS: p -> . 
-PASS: pre -> group. 
+PASS: pre -> . 
 PASS: progress -> progressbar. 
 PASS: samp -> . 
-PASS: section:not([aria-label]:not([aria-labelledby]) -> group. 
+PASS: section:not([aria-label]:not([aria-labelledby]) -> . 
 PASS: section[aria-label] -> region. 
 PASS: section[aria-labelledby] -> region. 
 PASS: select:not([multiple]) -> button. 
