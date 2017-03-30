@@ -304,13 +304,8 @@ void AudioNode::processIfNecessary(size_t framesToProcess)
 
         if (silentInputs && propagatesSilence())
             silenceOutputs();
-        else {
-            // Unsilence the outputs first because the processing of the node may cause the outputs
-            // to go silent and we want to propagate that hint to the downstream nodes!  (For
-            // example, a Gain node with a gain of 0 will want to silence its output.)
-            unsilenceOutputs();
+        else
             process(framesToProcess);
-        }
     }
 }
 
@@ -355,12 +350,6 @@ void AudioNode::silenceOutputs()
 {
     for (auto& output : m_outputs)
         output->bus()->zero();
-}
-
-void AudioNode::unsilenceOutputs()
-{
-    for (auto& output : m_outputs)
-        output->bus()->clearSilentFlag();
 }
 
 void AudioNode::enableOutputsIfNecessary()

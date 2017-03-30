@@ -1,3 +1,33 @@
+2017-03-30  Chris Dumez  <cdumez@apple.com>
+
+        We are spending a lot of time bzero'ing AudioChannel buffers on uni-watch.com
+        https://bugs.webkit.org/show_bug.cgi?id=170288
+        <rdar://problem/31289132>
+
+        Reviewed by Eric Carlson.
+
+        We are spending a lot of time bzero'ing AudioChannel buffers on uni-watch.com due
+        to doubleclick ads using WebAudio with a 0-gain GainNode. We should optimize the
+        0-gain case as much as possible.
+
+        No new tests, only an optimization.
+
+        * Modules/webaudio/AudioNode.cpp:
+        (WebCore::AudioNode::processIfNecessary):
+        Drop call to unsilenceOutputs() before calling AudioNode::process(). The AudioChannel
+        API already takes care of clearing its 'silent' flag whenever its buffer changes so
+        there should be no need to explicitly clearing the 'silent' flag before calling
+        process(). This was causing us to zero out buffers that were already filled with
+        zeros because AudioChannel::zero() would no longer return early, not knowing the
+        channel is already silent. This reduces the number of bzero() calls by ~3.5x on
+        uni-watch.com (from 100 calls every ~20ms to 100 calls every ~70ms.
+
+        * Modules/webaudio/AudioNode.h:
+        * platform/audio/mac/AudioDestinationMac.cpp:
+        (WebCore::AudioDestinationMac::render):
+        Avoid clamping the values in the channel buffer if the channel is silent since this
+        will have no effect (given that the buffer only contains zeros).
+
 2017-03-30  Eric Carlson  <eric.carlson@apple.com>
 
         [Crash] WebCore::AudioBuffer::AudioBuffer don't checking illegal value
