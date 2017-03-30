@@ -1154,16 +1154,14 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
         }
 
         if (propertyNameIsValid) {
-            // The property's name is valid but its value is not (either it is not supported for this property or there is no value).
-            var semicolon = /:\s*/.exec(property.text);
-            var start = {line: from.line, ch: semicolon.index + semicolon[0].length};
-            var end = {line: to.line, ch: start.ch + property.value.length};
+            let start = {line: from.line, ch: from.ch + property.name.length + 2};
+            let end = {line: to.line, ch: start.ch + property.value.length};
 
             this._codeMirror.markText(start, end, {className: "invalid"});
 
             if (/^(?:\d+)$/.test(property.value)) {
                 invalidMarkerInfo = {
-                    position: start,
+                    position: from,
                     title: WebInspector.UIString("The value “%s” needs units.\nClick to add “px” to the value.").format(property.value),
                     correction: property.name + ": " + property.value + "px;",
                     autocomplete: false
@@ -1172,7 +1170,7 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
                 var valueReplacement = property.value.length ? WebInspector.UIString("The value “%s” is not supported for this property.\nClick to delete and open autocomplete.").format(property.value) : WebInspector.UIString("This property needs a value.\nClick to open autocomplete.");
 
                 invalidMarkerInfo = {
-                    position: start,
+                    position: from,
                     title: valueReplacement,
                     correction: property.name + ": ",
                     autocomplete: true
