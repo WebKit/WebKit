@@ -7,7 +7,7 @@ PASS internals.isImageAnimating(testImage) is true
 Setting page visibility to hidden
 PASS internals.isImageAnimating(testImage) became false
 Setting page visibility to visible
-PASS internals.isImageAnimating(testImage) became false
+PASS internals.isImageAnimating(testImage) became true
 PASS successfullyParsed is true
 
 TEST COMPLETE

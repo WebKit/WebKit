@@ -11,7 +11,7 @@ function makePageVisible()
     debug("Setting page visibility to visible");
     if (window.testRunner)
         testRunner.setPageVisibility('visible');
-    shouldBecomeEqual("internals.isImageAnimating(testImage)", "false", finishJSTest);
+    shouldBecomeEqual("internals.isImageAnimating(testImage)", "true", finishJSTest);
 }
 
 window.onload = function() {
