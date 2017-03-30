@@ -2457,6 +2457,11 @@ void HTMLMediaElement::setReadyState(MediaPlayer::ReadyState state)
         shouldUpdateDisplayState = true;
     }
 
+    // If we transition to the Future Data state and we're about to begin playing, ensure playback is actually permitted first,
+    // honoring any playback denial reasons such as the requirement of a user gesture.
+    if (m_readyState == HAVE_FUTURE_DATA && oldState < HAVE_FUTURE_DATA && potentiallyPlaying() && !m_mediaSession->playbackPermitted(*this))
+        pauseInternal();
+
     if (shouldUpdateDisplayState) {
         updateDisplayState();
         if (hasMediaControls()) {

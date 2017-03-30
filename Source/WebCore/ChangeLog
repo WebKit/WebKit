@@ -1,3 +1,18 @@
+2017-03-30  Matt Rajca  <mrajca@apple.com>
+
+        YouTube sometimes does not respect "user gesture" restriction for videos.
+        https://bugs.webkit.org/show_bug.cgi?id=170297
+
+        I discovered a code path that does not honor the "user gesture" requirement and playback is able to begin
+        even though we have a restriction in place. When using Media Source Extensions, which YouTube does, we transition
+        from a "Have Metadata" to a "Future Data" state that causes playback to begin, however, we never check
+        if we have a playback restriction in place.
+
+        Reviewed by Eric Carlson.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::setReadyState):
+
 2017-03-30  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         REGRESSION (r213764): Background image from sprite sheet incorrectly scaled
