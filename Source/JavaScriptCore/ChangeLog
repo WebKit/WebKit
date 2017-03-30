@@ -1,3 +1,48 @@
+2017-03-30  Saam Barati  <sbarati@apple.com>
+
+        WebAssembly: pass Wasm::Context* to vmEntryToWasm when not using fast TLS
+        https://bugs.webkit.org/show_bug.cgi?id=170182
+
+        Reviewed by Mark Lam.
+
+        This is one more step in the direction of PIC-ified Wasm.
+        I'm removing assumptions that a wasm callee is a cell. We used to use
+        the callee to get the WasmContext off the callee's VM. Instead,
+        this patch makes it so that we pass in the context as a parameter
+        to the JS entrypoint.
+
+        * heap/MarkedBlock.h:
+        (JSC::MarkedBlock::offsetOfVM): Deleted.
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::loadWasmContext):
+        (JSC::AssemblyHelpers::storeWasmContext):
+        (JSC::AssemblyHelpers::loadWasmContextNeedsMacroScratchRegister):
+        (JSC::AssemblyHelpers::storeWasmContextNeedsMacroScratchRegister):
+        * jsc.cpp:
+        (functionTestWasmModuleFunctions):
+        * runtime/VM.h:
+        (JSC::VM::wasmContextOffset): Deleted.
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::materializeWasmContext):
+        (JSC::Wasm::B3IRGenerator::restoreWasmContext):
+        (JSC::Wasm::B3IRGenerator::B3IRGenerator):
+        (JSC::Wasm::createJSToWasmWrapper):
+        * wasm/WasmContext.cpp:
+        (JSC::Wasm::loadContext):
+        (JSC::Wasm::storeContext):
+        (JSC::loadWasmContext): Deleted.
+        (JSC::storeWasmContext): Deleted.
+        * wasm/WasmContext.h:
+        (JSC::Wasm::useFastTLS):
+        (JSC::Wasm::useFastTLSForContext):
+        * wasm/WasmMemoryInformation.cpp:
+        (JSC::Wasm::PinnedRegisterInfo::get):
+        * wasm/WasmMemoryInformation.h:
+        (JSC::Wasm::useFastTLS): Deleted.
+        (JSC::Wasm::useFastTLSForWasmContext): Deleted.
+        * wasm/js/WebAssemblyFunction.cpp:
+        (JSC::callWebAssemblyFunction):
+
 2017-03-30  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly: fix misc JS API implementation inconsistencies

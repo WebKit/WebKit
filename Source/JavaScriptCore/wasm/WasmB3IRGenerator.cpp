@@ -52,6 +52,7 @@
 #include "JSWebAssemblyRuntimeError.h"
 #include "VirtualRegister.h"
 #include "WasmCallingConvention.h"
+#include "WasmContext.h"
 #include "WasmExceptionType.h"
 #include "WasmFunctionParser.h"
 #include "WasmMemory.h"
@@ -249,7 +250,7 @@ private:
 
 Value* B3IRGenerator::materializeWasmContext(Procedure& proc, BasicBlock* block)
 {
-    if (useFastTLSForWasmContext()) {
+    if (useFastTLSForContext()) {
         PatchpointValue* patchpoint = block->appendNew<PatchpointValue>(proc, pointerType(), Origin());
         if (CCallHelpers::loadWasmContextNeedsMacroScratchRegister())
             patchpoint->clobber(RegisterSet::macroScratchRegisters());
@@ -273,7 +274,7 @@ Value* B3IRGenerator::materializeWasmContext(Procedure& proc, BasicBlock* block)
 
 void B3IRGenerator::restoreWasmContext(Procedure& proc, BasicBlock* block, Value* arg)
 {
-    if (useFastTLSForWasmContext()) {
+    if (useFastTLSForContext()) {
         PatchpointValue* patchpoint = block->appendNew<PatchpointValue>(proc, B3::Void, Origin());
         if (CCallHelpers::storeWasmContextNeedsMacroScratchRegister())
             patchpoint->clobber(RegisterSet::macroScratchRegisters());
@@ -316,7 +317,7 @@ B3IRGenerator::B3IRGenerator(VM& vm, const ModuleInformation& info, Procedure& p
     m_memoryBaseGPR = pinnedRegs.baseMemoryPointer;
     m_wasmContextGPR = pinnedRegs.wasmContextPointer;
     m_proc.pinRegister(m_memoryBaseGPR);
-    if (!useFastTLSForWasmContext())
+    if (!useFastTLSForContext())
         m_proc.pinRegister(m_wasmContextGPR);
     ASSERT(!pinnedRegs.sizeRegisters[0].sizeOffset);
     m_memorySizeGPR = pinnedRegs.sizeRegisters[0].sizeRegister;
@@ -1147,6 +1148,8 @@ static void createJSToWasmWrapper(CompilationContext& compilationContext, WasmIn
         jit.storePtr(reg, CCallHelpers::Address(GPRInfo::callFrameRegister, offset));
     }
 
+    GPRReg wasmContextGPR = pinnedRegs.wasmContextPointer;
+
     {
         CCallHelpers::Address calleeFrame = CCallHelpers::Address(MacroAssembler::stackPointerRegister, -static_cast<ptrdiff_t>(sizeof(CallerFrameAndPC)));
         numGPRs = 0;
@@ -1155,7 +1158,15 @@ static void createJSToWasmWrapper(CompilationContext& compilationContext, WasmIn
         // we can use this as a scratch for now since we saved it above.
         GPRReg scratchReg = pinnedRegs.baseMemoryPointer;
 
-        ptrdiff_t jsOffset = CallFrameSlot::thisArgument * sizeof(void*);
+        ptrdiff_t jsOffset = CallFrameSlot::thisArgument * sizeof(EncodedJSValue);
+
+        // vmEntryToWasm passes Wasm::Context* as the first JS argument when we're
+        // not using fast TLS to hold the Wasm::Context*.
+        if (!useFastTLSForContext()) {
+            jit.loadPtr(CCallHelpers::Address(GPRInfo::callFrameRegister, jsOffset), wasmContextGPR);
+            jsOffset += sizeof(EncodedJSValue);
+        }
+
         ptrdiff_t wasmOffset = CallFrame::headerSizeInRegisters * sizeof(void*);
         for (unsigned i = 0; i < signature->argumentCount(); i++) {
             switch (signature->argument(i)) {
@@ -1201,25 +1212,15 @@ static void createJSToWasmWrapper(CompilationContext& compilationContext, WasmIn
                 RELEASE_ASSERT_NOT_REACHED();
             }
 
-            jsOffset += sizeof(void*);
+            jsOffset += sizeof(EncodedJSValue);
         }
-    }
-
-    // FIXME: JStoWasm wrapper should take JSWebAssemblyInstance pointer as an argument directly.
-    // https://bugs.webkit.org/show_bug.cgi?id=170182
-    GPRReg wasmContext = pinnedRegs.wasmContextPointer;
-    if (!useFastTLSForWasmContext()) {
-        jit.loadPtr(CCallHelpers::Address(GPRInfo::callFrameRegister, CallFrameSlot::callee * static_cast<int>(sizeof(Register))), wasmContext);
-        jit.andPtr(CCallHelpers::TrustedImmPtr(MarkedBlock::blockMask), wasmContext);
-        jit.loadPtr(CCallHelpers::Address(wasmContext, MarkedBlock::offsetOfVM()), wasmContext);
-        jit.loadPtr(CCallHelpers::Address(wasmContext, VM::wasmContextOffset()), wasmContext);
     }
 
     if (!!info.memory) {
         GPRReg baseMemory = pinnedRegs.baseMemoryPointer;
 
-        if (!useFastTLSForWasmContext())
-            jit.loadPtr(CCallHelpers::Address(wasmContext, JSWebAssemblyInstance::offsetOfMemory()), baseMemory);
+        if (!useFastTLSForContext())
+            jit.loadPtr(CCallHelpers::Address(wasmContextGPR, JSWebAssemblyInstance::offsetOfMemory()), baseMemory);
         else {
             jit.loadWasmContext(baseMemory);
             jit.loadPtr(CCallHelpers::Address(baseMemory, JSWebAssemblyInstance::offsetOfMemory()), baseMemory);

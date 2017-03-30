@@ -75,6 +75,7 @@
 #include "SuperSampler.h"
 #include "TestRunnerUtils.h"
 #include "TypeProfilerLog.h"
+#include "WasmContext.h"
 #include "WasmFaultSignalHandler.h"
 #include "WasmMemory.h"
 #include "WasmPlanInlines.h"
@@ -3224,6 +3225,13 @@ static EncodedJSValue JSC_HOST_CALL functionTestWasmModuleFunctions(ExecState* e
             JSArray* arguments = jsCast<JSArray*>(test->getIndexQuickly(1));
 
             MarkedArgumentBuffer boxedArgs;
+            if (!Wasm::useFastTLSForContext()) {
+                // When not using fast TLS, the code we emit expects Wasm::Context*
+                // as the first argument. These tests that this API supports don't ever
+                // use a Context. So this is just a hack to get it to not barf.
+                // We really need to remove this API.
+                boxedArgs.append(jsNumber(0xbadbeef));
+            }
             for (unsigned argIndex = 0; argIndex < arguments->length(); ++argIndex)
                 boxedArgs.append(box(exec, vm, arguments->getIndexQuickly(argIndex)));
 

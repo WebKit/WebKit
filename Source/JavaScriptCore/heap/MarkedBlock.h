@@ -299,11 +299,6 @@ public:
     bool isMarkedRaw(const void* p);
     HeapVersion markingVersion() const { return m_markingVersion; }
 
-    static ptrdiff_t offsetOfVM()
-    {
-        return OBJECT_OFFSETOF(MarkedBlock, m_vm);
-    }
-    
 private:
     static const size_t atomAlignmentMask = atomSize - 1;
 

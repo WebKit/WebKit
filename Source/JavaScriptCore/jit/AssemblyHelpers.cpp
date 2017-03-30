@@ -33,6 +33,7 @@
 #include "LinkBuffer.h"
 
 #if ENABLE(WEBASSEMBLY)
+#include "WasmContext.h"
 #include "WasmMemoryInformation.h"
 #endif
 
@@ -777,7 +778,7 @@ void AssemblyHelpers::emitConvertValueToBoolean(VM& vm, JSValueRegs value, GPRRe
 void AssemblyHelpers::loadWasmContext(GPRReg dst)
 {
 #if ENABLE(FAST_TLS_JIT)
-    if (Wasm::useFastTLSForWasmContext()) {
+    if (Wasm::useFastTLSForContext()) {
         loadFromTLSPtr(fastTLSOffsetForKey(WTF_WASM_CONTEXT_KEY), dst);
         return;
     }
@@ -788,7 +789,7 @@ void AssemblyHelpers::loadWasmContext(GPRReg dst)
 void AssemblyHelpers::storeWasmContext(GPRReg src)
 {
 #if ENABLE(FAST_TLS_JIT)
-    if (Wasm::useFastTLSForWasmContext()) {
+    if (Wasm::useFastTLSForContext()) {
         storeToTLSPtr(src, fastTLSOffsetForKey(WTF_WASM_CONTEXT_KEY));
         return;
     }
@@ -799,7 +800,7 @@ void AssemblyHelpers::storeWasmContext(GPRReg src)
 bool AssemblyHelpers::loadWasmContextNeedsMacroScratchRegister()
 {
 #if ENABLE(FAST_TLS_JIT)
-    if (Wasm::useFastTLSForWasmContext())
+    if (Wasm::useFastTLSForContext())
         return loadFromTLSPtrNeedsMacroScratchRegister();
 #endif
     return false;
@@ -808,7 +809,7 @@ bool AssemblyHelpers::loadWasmContextNeedsMacroScratchRegister()
 bool AssemblyHelpers::storeWasmContextNeedsMacroScratchRegister()
 {
 #if ENABLE(FAST_TLS_JIT)
-    if (Wasm::useFastTLSForWasmContext())
+    if (Wasm::useFastTLSForContext())
         return storeToTLSPtrNeedsMacroScratchRegister();
 #endif
     return false;

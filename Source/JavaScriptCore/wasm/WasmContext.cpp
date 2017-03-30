@@ -32,28 +32,28 @@
 #include <mutex>
 #include <wtf/FastTLS.h>
 
-namespace JSC {
+namespace JSC { namespace Wasm {
 
-WasmContext* loadWasmContext(VM& vm)
+Context* loadContext(VM& vm)
 {
 #if ENABLE(FAST_TLS_JIT)
-    if (Options::useWebAssemblyFastTLS())
-        return bitwise_cast<WasmContext*>(_pthread_getspecific_direct(WTF_WASM_CONTEXT_KEY));
+    if (useFastTLSForContext())
+        return bitwise_cast<Context*>(_pthread_getspecific_direct(WTF_WASM_CONTEXT_KEY));
 #endif
     // FIXME: Save this state elsewhere to allow PIC. https://bugs.webkit.org/show_bug.cgi?id=169773
     return vm.wasmContext;
 }
 
-void storeWasmContext(VM& vm, WasmContext* instance)
+void storeContext(VM& vm, Context* context)
 {
 #if ENABLE(FAST_TLS_JIT)
-    if (Options::useWebAssemblyFastTLS())
-        _pthread_setspecific_direct(WTF_WASM_CONTEXT_KEY, bitwise_cast<void*>(instance));
+    if (useFastTLSForContext())
+        _pthread_setspecific_direct(WTF_WASM_CONTEXT_KEY, bitwise_cast<void*>(context));
 #endif
     // FIXME: Save this state elsewhere to allow PIC. https://bugs.webkit.org/show_bug.cgi?id=169773
-    vm.wasmContext = instance;
+    vm.wasmContext = context;
 }
 
-} // namespace JSC
+} } // namespace JSC::Wasm
 
 #endif // ENABLE(WEBASSEMBLY)

@@ -483,11 +483,6 @@ public:
         return OBJECT_OFFSETOF(VM, targetMachinePCForThrow);
     }
 
-    static ptrdiff_t wasmContextOffset()
-    {
-        return OBJECT_OFFSETOF(VM, wasmContext);
-    }
-
     void restorePreviousException(Exception* exception) { setException(exception); }
 
     void clearLastException() { m_lastException = nullptr; }

@@ -81,20 +81,6 @@ private:
     bool m_isImport { false };
 };
 
-inline bool useFastTLS()
-{
-#if ENABLE(FAST_TLS_JIT)
-    return Options::useWebAssemblyFastTLS();
-#else
-    return false;
-#endif
-}
-
-inline bool useFastTLSForWasmContext()
-{
-    return useFastTLS();
-}
-
 } } // namespace JSC::Wasm
 
 #endif // ENABLE(WASM)

@@ -29,6 +29,7 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "WasmCallingConvention.h"
+#include "WasmContext.h"
 #include "WasmMemory.h"
 #include <wtf/NeverDestroyed.h>
 
@@ -64,12 +65,12 @@ const PinnedRegisterInfo& PinnedRegisterInfo::get()
         //        see: https://bugs.webkit.org/show_bug.cgi?id=162952
         Vector<unsigned> pinnedSizes = { 0 };
         unsigned numberOfPinnedRegisters = pinnedSizes.size() + 1;
-        if (!useFastTLSForWasmContext())
+        if (!useFastTLSForContext())
             ++numberOfPinnedRegisters;
         Vector<GPRReg> pinnedRegs = getPinnedRegisters(numberOfPinnedRegisters);
 
         baseMemoryPointer = pinnedRegs.takeLast();
-        if (!useFastTLSForWasmContext())
+        if (!useFastTLSForContext())
             wasmContextPointer = pinnedRegs.takeLast();
 
         ASSERT(pinnedSizes.size() == pinnedRegs.size());
