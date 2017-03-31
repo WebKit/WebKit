@@ -1268,6 +1268,16 @@ PASS Object.getOwnPropertyDescriptor(global, 'RGBColor').hasOwnProperty('get') i
 PASS Object.getOwnPropertyDescriptor(global, 'RGBColor').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'RGBColor').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'RGBColor').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'RTCDataChannel').value is RTCDataChannel
+PASS Object.getOwnPropertyDescriptor(global, 'RTCDataChannel').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'RTCDataChannel').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'RTCDataChannel').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'RTCDataChannel').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'RTCDataChannelEvent').value is RTCDataChannelEvent
+PASS Object.getOwnPropertyDescriptor(global, 'RTCDataChannelEvent').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'RTCDataChannelEvent').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'RTCDataChannelEvent').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'RTCDataChannelEvent').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'RTCIceCandidate').value is RTCIceCandidate
 PASS Object.getOwnPropertyDescriptor(global, 'RTCIceCandidate').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'RTCIceCandidate').hasOwnProperty('set') is false
