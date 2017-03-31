@@ -1,3 +1,15 @@
+2017-03-31  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Update W3C Test Suite
+        https://bugs.webkit.org/show_bug.cgi?id=170170
+
+        Reviewed by Youenn Fablet.
+
+        Update path to tests in TestExpectations as the CSS Grid Layout suite
+        is now under web-platform-tests.
+
+        * TestExpectations:
+
 2017-03-31  Antoine Quint  <graouts@apple.com>
 
         [mac-wk1] LayoutTest media/modern-media-controls/airplay-button/airplay-button.html is a flaky timeout

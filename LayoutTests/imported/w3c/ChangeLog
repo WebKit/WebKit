@@ -1,3 +1,306 @@
+2017-03-31  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Update W3C Test Suite
+        https://bugs.webkit.org/show_bug.cgi?id=170170
+
+        Reviewed by Youenn Fablet.
+
+        This adds 2 new tests for "Implied Minimum Size of Grid Items" section,
+        which check the behavior of percentages:
+        - grid-items/grid-minimum-size-grid-items-019.html
+        - grid-items/grid-minimum-size-grid-items-020.html
+
+        Additionally, as the csswg-test repo has been merged into web-platform-tests,
+        we're using the new path in this import.
+
+        * csswg-test/css-grid-1/grid-definition/w3c-import.log: Removed.
+        * csswg-test/css-grid-1/grid-items/w3c-import.log: Removed.
+        * csswg-test/css-grid-1/grid-model/w3c-import.log: Removed.
+        * csswg-test/css-grid-1/placement/w3c-import.log: Removed.
+        * csswg-test/css-grid-1/w3c-import.log: Removed.
+        * resources/import-expectations.json:
+        * resources/resource-files.json:
+        * web-platform-tests/css/css-grid-1/OWNERS: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/OWNERS.
+        * web-platform-tests/css/css-grid-1/README.md: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/README.md.
+        * web-platform-tests/css/css-grid-1/grid-definition/fr-unit-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-definition/fr-unit-expected.html.
+        * web-platform-tests/css/css-grid-1/grid-definition/fr-unit-with-percentage-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-definition/fr-unit-with-percentage-expected.html.
+        * web-platform-tests/css/css-grid-1/grid-definition/fr-unit-with-percentage.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-definition/fr-unit-with-percentage.html.
+        * web-platform-tests/css/css-grid-1/grid-definition/fr-unit.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-definition/fr-unit.html.
+        * web-platform-tests/css/css-grid-1/grid-definition/grid-inline-support-flexible-lengths-001-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-definition/grid-inline-support-flexible-lengths-001-expected.txt.
+        * web-platform-tests/css/css-grid-1/grid-definition/grid-inline-support-flexible-lengths-001.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-definition/grid-inline-support-flexible-lengths-001.xht.
+        * web-platform-tests/css/css-grid-1/grid-definition/grid-inline-support-grid-template-areas-001-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-definition/grid-inline-support-grid-template-areas-001-expected.txt.
+        * web-platform-tests/css/css-grid-1/grid-definition/grid-inline-support-grid-template-areas-001.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-definition/grid-inline-support-grid-template-areas-001.xht.
+        * web-platform-tests/css/css-grid-1/grid-definition/grid-inline-support-grid-template-columns-rows-001-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-definition/grid-inline-support-grid-template-columns-rows-001-expected.txt.
+        * web-platform-tests/css/css-grid-1/grid-definition/grid-inline-support-grid-template-columns-rows-001.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-definition/grid-inline-support-grid-template-columns-rows-001.xht.
+        * web-platform-tests/css/css-grid-1/grid-definition/grid-inline-support-named-grid-lines-001-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-definition/grid-inline-support-named-grid-lines-001-expected.txt.
+        * web-platform-tests/css/css-grid-1/grid-definition/grid-inline-support-named-grid-lines-001.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-definition/grid-inline-support-named-grid-lines-001.xht.
+        * web-platform-tests/css/css-grid-1/grid-definition/grid-inline-support-repeat-001-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-definition/grid-inline-support-repeat-001-expected.txt.
+        * web-platform-tests/css/css-grid-1/grid-definition/grid-inline-support-repeat-001.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-definition/grid-inline-support-repeat-001.xht.
+        * web-platform-tests/css/css-grid-1/grid-definition/grid-inline-template-columns-rows-resolved-values-001-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-definition/grid-inline-template-columns-rows-resolved-values-001-expected.txt.
+        * web-platform-tests/css/css-grid-1/grid-definition/grid-inline-template-columns-rows-resolved-values-001.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-definition/grid-inline-template-columns-rows-resolved-values-001.xht.
+        * web-platform-tests/css/css-grid-1/grid-definition/grid-layout-auto-tracks-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-definition/grid-layout-auto-tracks-expected.html.
+        * web-platform-tests/css/css-grid-1/grid-definition/grid-layout-auto-tracks.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-definition/grid-layout-auto-tracks.html.
+        * web-platform-tests/css/css-grid-1/grid-definition/grid-layout-basic-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-definition/grid-layout-basic-expected.html.
+        * web-platform-tests/css/css-grid-1/grid-definition/grid-layout-basic.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-definition/grid-layout-basic.html.
+        * web-platform-tests/css/css-grid-1/grid-definition/grid-layout-repeat-notation-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-definition/grid-layout-repeat-notation-expected.html.
+        * web-platform-tests/css/css-grid-1/grid-definition/grid-layout-repeat-notation.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-definition/grid-layout-repeat-notation.html.
+        * web-platform-tests/css/css-grid-1/grid-definition/grid-support-flexible-lengths-001-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-definition/grid-support-flexible-lengths-001-expected.txt.
+        * web-platform-tests/css/css-grid-1/grid-definition/grid-support-flexible-lengths-001.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-definition/grid-support-flexible-lengths-001.xht.
+        * web-platform-tests/css/css-grid-1/grid-definition/grid-support-grid-template-areas-001-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-definition/grid-support-grid-template-areas-001-expected.txt.
+        * web-platform-tests/css/css-grid-1/grid-definition/grid-support-grid-template-areas-001.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-definition/grid-support-grid-template-areas-001.xht.
+        * web-platform-tests/css/css-grid-1/grid-definition/grid-support-grid-template-columns-rows-001-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-definition/grid-support-grid-template-columns-rows-001-expected.txt.
+        * web-platform-tests/css/css-grid-1/grid-definition/grid-support-grid-template-columns-rows-001.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-definition/grid-support-grid-template-columns-rows-001.xht.
+        * web-platform-tests/css/css-grid-1/grid-definition/grid-support-named-grid-lines-001-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-definition/grid-support-named-grid-lines-001-expected.txt.
+        * web-platform-tests/css/css-grid-1/grid-definition/grid-support-named-grid-lines-001.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-definition/grid-support-named-grid-lines-001.xht.
+        * web-platform-tests/css/css-grid-1/grid-definition/grid-support-repeat-001-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-definition/grid-support-repeat-001-expected.txt.
+        * web-platform-tests/css/css-grid-1/grid-definition/grid-support-repeat-001.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-definition/grid-support-repeat-001.xht.
+        * web-platform-tests/css/css-grid-1/grid-definition/grid-template-columns-rows-resolved-values-001-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-definition/grid-template-columns-rows-resolved-values-001-expected.txt.
+        * web-platform-tests/css/css-grid-1/grid-definition/grid-template-columns-rows-resolved-values-001.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-definition/grid-template-columns-rows-resolved-values-001.xht.
+        * web-platform-tests/css/css-grid-1/grid-definition/support/testing-utils.js: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-definition/support/testing-utils.js.
+        * web-platform-tests/css/css-grid-1/grid-definition/support/w3c-import.log: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-definition/support/w3c-import.log.
+        * web-platform-tests/css/css-grid-1/grid-definition/w3c-import.log: Added.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-inline-items-001-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-inline-items-001-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-inline-items-001.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-inline-items-001.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-inline-items-002-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-inline-items-002-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-inline-items-002.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-inline-items-002.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-inline-items-003-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-inline-items-003-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-inline-items-003.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-inline-items-003.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-inline-items-inline-blocks-001-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-inline-items-inline-blocks-001-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-inline-items-inline-blocks-001.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-inline-items-inline-blocks-001.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-inline-order-property-auto-placement-001-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-inline-order-property-auto-placement-001-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-inline-order-property-auto-placement-001.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-inline-order-property-auto-placement-001.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-inline-order-property-auto-placement-002-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-inline-order-property-auto-placement-002-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-inline-order-property-auto-placement-002.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-inline-order-property-auto-placement-002.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-inline-order-property-auto-placement-003-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-inline-order-property-auto-placement-003-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-inline-order-property-auto-placement-003.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-inline-order-property-auto-placement-003.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-inline-order-property-auto-placement-004-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-inline-order-property-auto-placement-004-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-inline-order-property-auto-placement-004.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-inline-order-property-auto-placement-004.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-inline-order-property-auto-placement-005-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-inline-order-property-auto-placement-005-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-inline-order-property-auto-placement-005.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-inline-order-property-auto-placement-005.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-inline-order-property-painting-001-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-inline-order-property-painting-001-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-inline-order-property-painting-001.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-inline-order-property-painting-001.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-inline-order-property-painting-002-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-inline-order-property-painting-002-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-inline-order-property-painting-002.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-inline-order-property-painting-002.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-inline-order-property-painting-003-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-inline-order-property-painting-003-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-inline-order-property-painting-003.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-inline-order-property-painting-003.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-inline-order-property-painting-004-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-inline-order-property-painting-004-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-inline-order-property-painting-004.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-inline-order-property-painting-004.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-inline-order-property-painting-005-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-inline-order-property-painting-005-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-inline-order-property-painting-005.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-inline-order-property-painting-005.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-inline-z-axis-ordering-001-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-inline-z-axis-ordering-001-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-inline-z-axis-ordering-001.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-inline-z-axis-ordering-001.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-inline-z-axis-ordering-002-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-inline-z-axis-ordering-002-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-inline-z-axis-ordering-002.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-inline-z-axis-ordering-002.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-inline-z-axis-ordering-003-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-inline-z-axis-ordering-003-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-inline-z-axis-ordering-003.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-inline-z-axis-ordering-003.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-inline-z-axis-ordering-004-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-inline-z-axis-ordering-004-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-inline-z-axis-ordering-004.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-inline-z-axis-ordering-004.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-inline-z-axis-ordering-005-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-inline-z-axis-ordering-005-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-inline-z-axis-ordering-005.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-inline-z-axis-ordering-005.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-inline-z-axis-ordering-overlapped-items-001-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-inline-z-axis-ordering-overlapped-items-001-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-inline-z-axis-ordering-overlapped-items-001.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-inline-z-axis-ordering-overlapped-items-001.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-inline-z-axis-ordering-overlapped-items-002-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-inline-z-axis-ordering-overlapped-items-002-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-inline-z-axis-ordering-overlapped-items-002.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-inline-z-axis-ordering-overlapped-items-002.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-inline-z-axis-ordering-overlapped-items-003-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-inline-z-axis-ordering-overlapped-items-003-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-inline-z-axis-ordering-overlapped-items-003.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-inline-z-axis-ordering-overlapped-items-003.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-inline-z-axis-ordering-overlapped-items-004-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-inline-z-axis-ordering-overlapped-items-004-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-inline-z-axis-ordering-overlapped-items-004.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-inline-z-axis-ordering-overlapped-items-004.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-inline-z-axis-ordering-overlapped-items-005-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-inline-z-axis-ordering-overlapped-items-005-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-inline-z-axis-ordering-overlapped-items-005.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-inline-z-axis-ordering-overlapped-items-005.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-inline-z-axis-ordering-overlapped-items-006-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-inline-z-axis-ordering-overlapped-items-006-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-inline-z-axis-ordering-overlapped-items-006.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-inline-z-axis-ordering-overlapped-items-006.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-item-containing-block-001-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-item-containing-block-001-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-item-containing-block-001.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-item-containing-block-001.html.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-item-containing-block-002-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-item-containing-block-002-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-item-containing-block-002.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-item-containing-block-002.html.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-item-containing-block-003-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-item-containing-block-003-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-item-containing-block-003.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-item-containing-block-003.html.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-item-containing-block-004-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-item-containing-block-004-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-item-containing-block-004.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-item-containing-block-004.html.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-items-001-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-items-001-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-items-001.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-items-001.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-items-002-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-items-002-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-items-002.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-items-002.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-items-003-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-items-003-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-items-003.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-items-003.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-items-inline-blocks-001-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-items-inline-blocks-001-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-items-inline-blocks-001.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-items-inline-blocks-001.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-items-sizing-alignment-001-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-items-sizing-alignment-001-expected.html.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-items-sizing-alignment-001.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-items-sizing-alignment-001.html.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-layout-grid-in-grid-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-layout-grid-in-grid-expected.html.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-layout-grid-in-grid.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-layout-grid-in-grid.html.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-layout-z-order-a-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-layout-z-order-a-expected.html.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-layout-z-order-a.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-layout-z-order-a.html.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-layout-z-order-b-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-layout-z-order-b-expected.html.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-layout-z-order-b.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-layout-z-order-b.html.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-minimum-size-grid-items-001-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-minimum-size-grid-items-001-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-minimum-size-grid-items-001.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-minimum-size-grid-items-001.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-minimum-size-grid-items-002-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-minimum-size-grid-items-002-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-minimum-size-grid-items-002.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-minimum-size-grid-items-002.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-minimum-size-grid-items-003-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-minimum-size-grid-items-003-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-minimum-size-grid-items-003.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-minimum-size-grid-items-003.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-minimum-size-grid-items-004-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-minimum-size-grid-items-004-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-minimum-size-grid-items-004.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-minimum-size-grid-items-004.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-minimum-size-grid-items-005-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-minimum-size-grid-items-005-expected.html.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-minimum-size-grid-items-005.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-minimum-size-grid-items-005.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-minimum-size-grid-items-006-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-minimum-size-grid-items-006-expected.html.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-minimum-size-grid-items-006.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-minimum-size-grid-items-006.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-minimum-size-grid-items-007-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-minimum-size-grid-items-007-expected.html.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-minimum-size-grid-items-007.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-minimum-size-grid-items-007.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-minimum-size-grid-items-008-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-minimum-size-grid-items-008-expected.html.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-minimum-size-grid-items-008.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-minimum-size-grid-items-008.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-minimum-size-grid-items-009-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-minimum-size-grid-items-009-expected.html.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-minimum-size-grid-items-009.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-minimum-size-grid-items-009.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-minimum-size-grid-items-010-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-minimum-size-grid-items-010-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-minimum-size-grid-items-010.html: Copied from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-minimum-size-grid-items-010.html.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-minimum-size-grid-items-011-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-minimum-size-grid-items-011-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-minimum-size-grid-items-011.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-minimum-size-grid-items-011.html.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-minimum-size-grid-items-012-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-minimum-size-grid-items-012-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-minimum-size-grid-items-012.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-minimum-size-grid-items-012.html.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-minimum-size-grid-items-013-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-minimum-size-grid-items-013-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-minimum-size-grid-items-013.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-minimum-size-grid-items-013.html.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-minimum-size-grid-items-014-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-minimum-size-grid-items-014-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-minimum-size-grid-items-014.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-minimum-size-grid-items-014.html.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-minimum-size-grid-items-015-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-minimum-size-grid-items-015-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-minimum-size-grid-items-015.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-minimum-size-grid-items-015.html.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-minimum-size-grid-items-016-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-minimum-size-grid-items-016-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-minimum-size-grid-items-016.html: Copied from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-minimum-size-grid-items-016.html.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-minimum-size-grid-items-017-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-minimum-size-grid-items-017-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-minimum-size-grid-items-017.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-minimum-size-grid-items-017.html.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-minimum-size-grid-items-018-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-minimum-size-grid-items-018-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-minimum-size-grid-items-018.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-minimum-size-grid-items-018.html.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-minimum-size-grid-items-019-expected.xht: Copied from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-order-property-painting-001-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-minimum-size-grid-items-019.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-minimum-size-grid-items-010.html.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-minimum-size-grid-items-020-expected.xht: Copied from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-order-property-painting-002-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-minimum-size-grid-items-020.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-minimum-size-grid-items-016.html.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-order-property-auto-placement-001-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-order-property-auto-placement-001-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-order-property-auto-placement-001.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-order-property-auto-placement-001.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-order-property-auto-placement-002-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-order-property-auto-placement-002-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-order-property-auto-placement-002.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-order-property-auto-placement-002.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-order-property-auto-placement-003-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-order-property-auto-placement-003-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-order-property-auto-placement-003.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-order-property-auto-placement-003.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-order-property-auto-placement-004-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-order-property-auto-placement-004-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-order-property-auto-placement-004.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-order-property-auto-placement-004.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-order-property-auto-placement-005-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-order-property-auto-placement-005-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-order-property-auto-placement-005.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-order-property-auto-placement-005.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-order-property-painting-001-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-order-property-painting-001-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-order-property-painting-001.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-order-property-painting-001.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-order-property-painting-002-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-order-property-painting-002-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-order-property-painting-002.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-order-property-painting-002.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-order-property-painting-003-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-order-property-painting-003-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-order-property-painting-003.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-order-property-painting-003.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-order-property-painting-004-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-order-property-painting-004-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-order-property-painting-004.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-order-property-painting-004.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-order-property-painting-005-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-order-property-painting-005-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-order-property-painting-005.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-order-property-painting-005.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-z-axis-ordering-001-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-z-axis-ordering-001-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-z-axis-ordering-001.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-z-axis-ordering-001.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-z-axis-ordering-002-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-z-axis-ordering-002-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-z-axis-ordering-002.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-z-axis-ordering-002.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-z-axis-ordering-003-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-z-axis-ordering-003-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-z-axis-ordering-003.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-z-axis-ordering-003.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-z-axis-ordering-004-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-z-axis-ordering-004-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-z-axis-ordering-004.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-z-axis-ordering-004.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-z-axis-ordering-005-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-z-axis-ordering-005-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-z-axis-ordering-005.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-z-axis-ordering-005.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-z-axis-ordering-overlapped-items-001-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-z-axis-ordering-overlapped-items-001-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-z-axis-ordering-overlapped-items-001.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-z-axis-ordering-overlapped-items-001.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-z-axis-ordering-overlapped-items-002-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-z-axis-ordering-overlapped-items-002-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-z-axis-ordering-overlapped-items-002.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-z-axis-ordering-overlapped-items-002.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-z-axis-ordering-overlapped-items-003-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-z-axis-ordering-overlapped-items-003-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-z-axis-ordering-overlapped-items-003.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-z-axis-ordering-overlapped-items-003.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-z-axis-ordering-overlapped-items-004-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-z-axis-ordering-overlapped-items-004-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-z-axis-ordering-overlapped-items-004.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-z-axis-ordering-overlapped-items-004.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-z-axis-ordering-overlapped-items-005-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-z-axis-ordering-overlapped-items-005-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-z-axis-ordering-overlapped-items-005.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-z-axis-ordering-overlapped-items-005.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-z-axis-ordering-overlapped-items-006-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-z-axis-ordering-overlapped-items-006-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/grid-z-axis-ordering-overlapped-items-006.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/grid-z-axis-ordering-overlapped-items-006.xht.
+        * web-platform-tests/css/css-grid-1/grid-items/ref-filled-green-100px-square-image.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/ref-filled-green-100px-square-image.html.
+        * web-platform-tests/css/css-grid-1/grid-items/support/100x100-green.png: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/support/100x100-green.png.
+        * web-platform-tests/css/css-grid-1/grid-items/support/100x50-green.png: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/support/100x50-green.png.
+        * web-platform-tests/css/css-grid-1/grid-items/support/200x200-green.png: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/support/200x200-green.png.
+        * web-platform-tests/css/css-grid-1/grid-items/support/50x100-green.png: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/support/50x100-green.png.
+        * web-platform-tests/css/css-grid-1/grid-items/support/50x50-green.png: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/support/50x50-green.png.
+        * web-platform-tests/css/css-grid-1/grid-items/support/w3c-import.log: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-items/support/w3c-import.log.
+        * web-platform-tests/css/css-grid-1/grid-items/w3c-import.log: Added.
+        * web-platform-tests/css/css-grid-1/grid-layout-properties-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-layout-properties-expected.txt.
+        * web-platform-tests/css/css-grid-1/grid-layout-properties.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-layout-properties.html.
+        * web-platform-tests/css/css-grid-1/grid-model/display-grid-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/display-grid-expected.html.
+        * web-platform-tests/css/css-grid-1/grid-model/display-grid.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/display-grid.html.
+        * web-platform-tests/css/css-grid-1/grid-model/display-inline-grid-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/display-inline-grid-expected.html.
+        * web-platform-tests/css/css-grid-1/grid-model/display-inline-grid.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/display-inline-grid.html.
+        * web-platform-tests/css/css-grid-1/grid-model/grid-computed-value-display-floated-items-001-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-computed-value-display-floated-items-001-expected.txt.
+        * web-platform-tests/css/css-grid-1/grid-model/grid-computed-value-display-floated-items-001.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-computed-value-display-floated-items-001.xht.
+        * web-platform-tests/css/css-grid-1/grid-model/grid-display-grid-001-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-display-grid-001-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-model/grid-display-grid-001.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-display-grid-001.xht.
+        * web-platform-tests/css/css-grid-1/grid-model/grid-display-inline-grid-001-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-display-inline-grid-001-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-model/grid-display-inline-grid-001.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-display-inline-grid-001.xht.
+        * web-platform-tests/css/css-grid-1/grid-model/grid-first-letter-001-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-first-letter-001-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-model/grid-first-letter-001.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-first-letter-001.xht.
+        * web-platform-tests/css/css-grid-1/grid-model/grid-first-letter-002-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-first-letter-002-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-model/grid-first-letter-002.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-first-letter-002.xht.
+        * web-platform-tests/css/css-grid-1/grid-model/grid-first-letter-003-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-first-letter-003-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-model/grid-first-letter-003.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-first-letter-003.xht.
+        * web-platform-tests/css/css-grid-1/grid-model/grid-first-line-001-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-first-line-001-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-model/grid-first-line-001.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-first-line-001.xht.
+        * web-platform-tests/css/css-grid-1/grid-model/grid-first-line-002-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-first-line-002-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-model/grid-first-line-002.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-first-line-002.xht.
+        * web-platform-tests/css/css-grid-1/grid-model/grid-first-line-003-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-first-line-003-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-model/grid-first-line-003.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-first-line-003.xht.
+        * web-platform-tests/css/css-grid-1/grid-model/grid-float-001-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-float-001-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-model/grid-float-001.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-float-001.xht.
+        * web-platform-tests/css/css-grid-1/grid-model/grid-floats-no-intrude-001-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-floats-no-intrude-001-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-model/grid-floats-no-intrude-001.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-floats-no-intrude-001.xht.
+        * web-platform-tests/css/css-grid-1/grid-model/grid-inline-first-letter-001-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-inline-first-letter-001-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-model/grid-inline-first-letter-001.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-inline-first-letter-001.xht.
+        * web-platform-tests/css/css-grid-1/grid-model/grid-inline-first-letter-002-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-inline-first-letter-002-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-model/grid-inline-first-letter-002.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-inline-first-letter-002.xht.
+        * web-platform-tests/css/css-grid-1/grid-model/grid-inline-first-letter-003-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-inline-first-letter-003-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-model/grid-inline-first-letter-003.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-inline-first-letter-003.xht.
+        * web-platform-tests/css/css-grid-1/grid-model/grid-inline-first-line-001-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-inline-first-line-001-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-model/grid-inline-first-line-001.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-inline-first-line-001.xht.
+        * web-platform-tests/css/css-grid-1/grid-model/grid-inline-first-line-002-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-inline-first-line-002-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-model/grid-inline-first-line-002.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-inline-first-line-002.xht.
+        * web-platform-tests/css/css-grid-1/grid-model/grid-inline-first-line-003-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-inline-first-line-003-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-model/grid-inline-first-line-003.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-inline-first-line-003.xht.
+        * web-platform-tests/css/css-grid-1/grid-model/grid-inline-float-001-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-inline-float-001-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-model/grid-inline-float-001.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-inline-float-001.xht.
+        * web-platform-tests/css/css-grid-1/grid-model/grid-inline-floats-no-intrude-001-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-inline-floats-no-intrude-001-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-model/grid-inline-floats-no-intrude-001.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-inline-floats-no-intrude-001.xht.
+        * web-platform-tests/css/css-grid-1/grid-model/grid-inline-margins-no-collapse-001-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-inline-margins-no-collapse-001-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-model/grid-inline-margins-no-collapse-001.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-inline-margins-no-collapse-001.xht.
+        * web-platform-tests/css/css-grid-1/grid-model/grid-inline-multicol-001-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-inline-multicol-001-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-model/grid-inline-multicol-001.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-inline-multicol-001.xht.
+        * web-platform-tests/css/css-grid-1/grid-model/grid-inline-vertical-align-001-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-inline-vertical-align-001-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-model/grid-inline-vertical-align-001.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-inline-vertical-align-001.xht.
+        * web-platform-tests/css/css-grid-1/grid-model/grid-margins-no-collapse-001-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-margins-no-collapse-001-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-model/grid-margins-no-collapse-001.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-margins-no-collapse-001.xht.
+        * web-platform-tests/css/css-grid-1/grid-model/grid-multicol-001-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-multicol-001-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-model/grid-multicol-001.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-multicol-001.xht.
+        * web-platform-tests/css/css-grid-1/grid-model/grid-support-display-001-expected.txt: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-support-display-001-expected.txt.
+        * web-platform-tests/css/css-grid-1/grid-model/grid-support-display-001.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-support-display-001.xht.
+        * web-platform-tests/css/css-grid-1/grid-model/grid-vertical-align-001-expected.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-vertical-align-001-expected.xht.
+        * web-platform-tests/css/css-grid-1/grid-model/grid-vertical-align-001.xht: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/grid-model/grid-vertical-align-001.xht.
+        * web-platform-tests/css/css-grid-1/grid-model/w3c-import.log: Added.
+        * web-platform-tests/css/css-grid-1/implicit-grids/grid-support-grid-auto-columns-rows-001-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/implicit-grids/grid-support-grid-auto-columns-rows-001-expected.html.
+        * web-platform-tests/css/css-grid-1/implicit-grids/grid-support-grid-auto-columns-rows-001.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/implicit-grids/grid-support-grid-auto-columns-rows-001.html.
+        * web-platform-tests/css/css-grid-1/implicit-grids/w3c-import.log: Copied from LayoutTests/imported/w3c/csswg-test/css-grid-1/implicit-grids/w3c-import.log.
+        * web-platform-tests/css/css-grid-1/layout-algorithm/grid-layout-free-space-unit-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/layout-algorithm/grid-layout-free-space-unit-expected.html.
+        * web-platform-tests/css/css-grid-1/layout-algorithm/grid-layout-free-space-unit.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/layout-algorithm/grid-layout-free-space-unit.html.
+        * web-platform-tests/css/css-grid-1/layout-algorithm/w3c-import.log: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/implicit-grids/w3c-import.log.
+        * web-platform-tests/css/css-grid-1/placement/grid-layout-grid-span-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/placement/grid-layout-grid-span-expected.html.
+        * web-platform-tests/css/css-grid-1/placement/grid-layout-grid-span.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/placement/grid-layout-grid-span.html.
+        * web-platform-tests/css/css-grid-1/placement/grid-layout-lines-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/placement/grid-layout-lines-expected.html.
+        * web-platform-tests/css/css-grid-1/placement/grid-layout-lines-shorthands-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/placement/grid-layout-lines-shorthands-expected.html.
+        * web-platform-tests/css/css-grid-1/placement/grid-layout-lines-shorthands.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/placement/grid-layout-lines-shorthands.html.
+        * web-platform-tests/css/css-grid-1/placement/grid-layout-lines.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/placement/grid-layout-lines.html.
+        * web-platform-tests/css/css-grid-1/placement/grid-layout-placement-shorthands-expected.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/placement/grid-layout-placement-shorthands-expected.html.
+        * web-platform-tests/css/css-grid-1/placement/grid-layout-placement-shorthands.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/placement/grid-layout-placement-shorthands.html.
+        * web-platform-tests/css/css-grid-1/placement/w3c-import.log: Added.
+        * web-platform-tests/css/css-grid-1/test-plan/index.html: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/test-plan/index.html.
+        * web-platform-tests/css/css-grid-1/test-plan/w3c-import.log: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/test-plan/w3c-import.log.
+        * web-platform-tests/css/css-grid-1/w3c-import.log: Renamed from LayoutTests/imported/w3c/csswg-test/css-grid-1/layout-algorithm/w3c-import.log.
+
 2017-03-30  Youenn Fablet  <youenn@apple.com>
 
         Clean up RTCDataChannel
