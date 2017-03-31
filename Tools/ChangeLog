@@ -1,3 +1,14 @@
+2017-03-30  Sam Weinig  <sam@webkit.org>
+
+        Expose the WKView SPI, _prepareForMoveToWindow:withCompletionHandler as WKWebView SPI
+        https://bugs.webkit.org/show_bug.cgi?id=170315
+
+        Reviewed by Simon Fraser.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/PrepareForMoveToWindow.mm: Added.
+        Add test showing the completion handler is called.
+
 2017-03-30  Filip Pizlo  <fpizlo@apple.com>
 
         Air should support linear scan for optLevel<2

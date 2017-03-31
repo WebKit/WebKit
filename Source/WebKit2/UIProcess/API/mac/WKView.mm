@@ -1260,10 +1260,9 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(NSUs
 
 - (void)_prepareForMoveToWindow:(NSWindow *)targetWindow withCompletionHandler:(void(^)(void))completionHandler
 {
-    auto copiedCompletionHandler = Block_copy(completionHandler);
-    _data->_impl->prepareForMoveToWindow(targetWindow, [copiedCompletionHandler] {
-        copiedCompletionHandler();
-        Block_release(copiedCompletionHandler);
+    auto completionHandlerCopy = makeBlockPtr(completionHandler);
+    _data->_impl->prepareForMoveToWindow(targetWindow, [completionHandlerCopy] {
+        completionHandlerCopy();
     });
 }
 
