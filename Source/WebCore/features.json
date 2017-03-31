@@ -817,8 +817,8 @@
     {
         "name": "HTML Interactive Form Validation",
         "status": {
-            "status": "In Development",
-            "enabled-by-default": false
+            "status": "Done",
+            "enabled-by-default": true
         },
         "url": "https://html.spec.whatwg.org/#constraint-validation",
         "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=164382",
