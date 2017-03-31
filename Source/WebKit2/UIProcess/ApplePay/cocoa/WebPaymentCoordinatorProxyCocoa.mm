@@ -78,9 +78,14 @@ SOFT_LINK_CONSTANT(PassKit, PKPaymentErrorPostalAddressUserInfoKey, NSString *);
 #endif
 
 typedef void (^PKCanMakePaymentsCompletion)(BOOL isValid, NSError *error);
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
+extern "C" void PKCanMakePaymentsWithMerchantIdentifierDomainAndSourceApplication(NSString *identifier, NSString *domain, NSString *sourceApplicationSecondaryIdentifier, PKCanMakePaymentsCompletion completion);
+SOFT_LINK_FUNCTION_MAY_FAIL_FOR_SOURCE(WebKit, PassKit, PKCanMakePaymentsWithMerchantIdentifierAndDomainAndSourceApplication, void, (NSString *identifier, NSString *domain, NSString *sourceApplicationSecondaryIdentifier, PKCanMakePaymentsCompletion completion), (identifier, domain, sourceApplicationSecondaryIdentifier, completion));
+#else
 extern "C" void PKCanMakePaymentsWithMerchantIdentifierAndDomain(NSString *identifier, NSString *domain, PKCanMakePaymentsCompletion completion);
-
 SOFT_LINK_FUNCTION_MAY_FAIL_FOR_SOURCE(WebKit, PassKit, PKCanMakePaymentsWithMerchantIdentifierAndDomain, void, (NSString *identifier, NSString *domain, PKCanMakePaymentsCompletion completion), (identifier, domain, completion));
+#endif
+
 
 @implementation WKPaymentAuthorizationViewControllerDelegate
 
@@ -281,6 +286,23 @@ bool WebPaymentCoordinatorProxy::platformCanMakePayments()
 
 void WebPaymentCoordinatorProxy::platformCanMakePaymentsWithActiveCard(const String& merchantIdentifier, const String& domainName, std::function<void (bool)> completionHandler)
 {
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
+    if (!canLoad_PassKit_PKCanMakePaymentsWithMerchantIdentifierAndDomainAndSourceApplication()) {
+        RunLoop::main().dispatch([completionHandler] {
+            completionHandler(false);
+        });
+        return;
+    }
+
+    softLink_PassKit_PKCanMakePaymentsWithMerchantIdentifierAndDomainAndSourceApplication(merchantIdentifier, domainName, m_webPageProxy.process().processPool().configuration().sourceApplicationSecondaryIdentifier(), [completionHandler](BOOL canMakePayments, NSError *error) {
+        if (error)
+            LOG_ERROR("PKCanMakePaymentsWithMerchantIdentifierAndDomain error %@", error);
+
+        RunLoop::main().dispatch([completionHandler, canMakePayments] {
+            completionHandler(canMakePayments);
+        });
+    });
+#else
     if (!canLoad_PassKit_PKCanMakePaymentsWithMerchantIdentifierAndDomain()) {
         RunLoop::main().dispatch([completionHandler] {
             completionHandler(false);
@@ -296,6 +318,7 @@ void WebPaymentCoordinatorProxy::platformCanMakePaymentsWithActiveCard(const Str
             completionHandler(canMakePayments);
         });
     });
+#endif
 }
 
 void WebPaymentCoordinatorProxy::platformOpenPaymentSetup(const String& merchantIdentifier, const String& domainName, std::function<void (bool)> completionHandler)

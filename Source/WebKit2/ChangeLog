@@ -1,3 +1,14 @@
+2017-03-29  Anders Carlsson  <andersca@apple.com>
+
+        Adopt PKCanMakePaymentsWithMerchantIdentifierAndDomainAndSourceApplication
+        https://bugs.webkit.org/show_bug.cgi?id=170257
+        rdar://problem/31289764
+
+        Reviewed by Beth Dakin.
+
+        * UIProcess/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.mm:
+        (WebKit::WebPaymentCoordinatorProxy::platformCanMakePaymentsWithActiveCard):
+
 2017-03-31  Csaba Osztrogonác  <ossy@webkit.org>
 
         Mac cmake buildfix after r214403
