@@ -1,5 +1,19 @@
 2017-03-30  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Modernize BuildbotSyncer and BuildbotTriggerable
+        https://bugs.webkit.org/show_bug.cgi?id=170310
+
+        Reviewed by Chris Dumez.
+
+        Modernized the code to use arrow functions and other modern idoms in ES2016.
+
+        * ReadMe.md: Added instructions on how to run tests, and moved the steps to configure postgres
+        above the steps to configure Apache since only the former is needed to run tests.
+        * tools/js/buildbot-syncer.js:
+        * tools/js/buildbot-triggerable.js:
+
+2017-03-30  Ryosuke Niwa  <rniwa@webkit.org>
+
         Yet another build fix after r214502. Workaround webkit.org/b/169907 for now.
 
         * public/v3/pages/analysis-task-page.js:

@@ -37,6 +37,46 @@ Then run `tools/remote-cache-server.py start`. This launches a httpd server on p
 The script caches remote server's responses under `public/data/remote-cache` and never revalidates them (to allow offline work).
 If you needed the latest content, delete caches stored in this directory by running `tools/remote-cache-server.py reset`.
 
+## Running Tests
+
+There are three kinds of tests in directories of the same name: `unit-tests`, `server tests`, and `browser-tests`.
+
+ - `unit-tests`: These tests various models and common JS code used in v3 UI and tools. They mock JSON APIs and model object.
+ - `server-tests`: Server tests use a real Apache server in accordance with `testServer` in `config.json` and a Postgres database by the name of `testDatabaseName` specified in `config.json`. They're functional tests and may test both the backend database schema, PHP, and corresponding front-end code although many of them directly queries and modifies the database.
+ - `browser-tests`: These are tests to be ran inside a Web browser, and tests v3 UI's interaction with browser's DOM API.
+
+To run `unit-tests` and `server-tests`, simply run `./tools/run-tests.py` after installing dependencies and configuring the PostgreSQL.
+To run `browser-tests`, open `browser-tests/index.html` inside a Web browser.
+
+## Configuring PostgreSQL
+
+Run the following command to setup a Postgres server at `/Volumes/Data/perf.webkit.org/PostgresSQL` (or wherever you'd prefer):
+`python ./tools/setup-database.py /Volumes/Data/perf.webkit.org/PostgresSQL`
+
+It automatically retrieves the database name, the username, and the password from `config.json`.
+
+### Starting PostgreSQL
+
+The setup script automatically starts the database but you may need to run the following command to manually start the database after reboot.
+
+- Starting the database: `/Applications/Server.app/Contents/ServerRoot/usr/bin/pg_ctl -D /Volumes/Data/perf.webkit.org/PostgresSQL -l /Volumes/Data/perf.webkit.org/PostgresSQL/logfile -o "-k /Volumes/Data/perf.webkit.org/PostgresSQL" start`
+- Stopping the database: `/Applications/Server.app/Contents/ServerRoot/usr/bin/pg_ctl -D /Volumes/Data/perf.webkit.org/PostgresSQL -l /Volumes/Data/perf.webkit.org/PostgresSQL/logfile -o "-k /Volumes/Data/perf.webkit.org/PostgresSQL" stop`
+
+### Initializing the Database
+
+Run `database/init-database.sql` in psql as `webkit-perf-db-user`:
+`/Applications/Server.app/Contents/ServerRoot/usr/bin/psql webkit-perf-db -h localhost --username webkit-perf-db-user -f init-database.sql`
+
+### Making a Backup and Restoring
+
+Use `pg_dump` and `pg_restore` to backup and restore the database. If you're replicating the production database for development purposes, you may consider excluding `run_iterations` table, which takes up 2/3 of the storage space, to reduce the size of the database for your local copy. Adjust the number of concurrent processes to use by `--jobs` and adjust the compression level by `--compress` (0 is no compression, 9 is most compressed).
+
+- Making the fullbackup of the database: `/Applications/Server.app/Contents/ServerRoot/usr/bin/pg_dump -h localhost webkit-perf-db --format=directory --file=<path to backup directory> --jobs=4 --no-owner --compress=7`
+
+- Making an abridged backup without `run_iterations` table: `/Applications/Server.app/Contents/ServerRoot/usr/bin/pg_dump -h localhost webkit-perf-db --format=directory --file=<path to backup directory> --jobs=4 --no-owner --compress=7 --exclude-table=run_iterations`
+
+- Restoring the database: `/Applications/Server.app/Contents/ServerRoot/usr/bin/pg_restore --format=directory --jobs=4 --no-owner --host localhost --username=webkit-perf-db-user <path to backup directory> --dbname=webkit-perf-db`
+    
 ## Configuring Apache
 
 ### Instructions if you're using Server.app
@@ -108,35 +148,6 @@ AuthDigestProvider file
 AuthUserFile "<Realm>"
 Require valid-user
 ```
-
-## Configuring PostgreSQL
-
-Run the following command to setup a Postgres server at `/Volumes/Data/perf.webkit.org/PostgresSQL` (or wherever you'd prefer):
-`python ./tools/setup-database.py /Volumes/Data/perf.webkit.org/PostgresSQL`
-
-It automatically retrieves the database name, the username, and the password from `config.json`.
-
-### Starting PostgreSQL
-
-The setup script automatically starts the database but you may need to run the following command to manually start the database after reboot.
-
-- Starting the database: `/Applications/Server.app/Contents/ServerRoot/usr/bin/pg_ctl -D /Volumes/Data/perf.webkit.org/PostgresSQL -l /Volumes/Data/perf.webkit.org/PostgresSQL/logfile -o "-k /Volumes/Data/perf.webkit.org/PostgresSQL" start`
-- Stopping the database: `/Applications/Server.app/Contents/ServerRoot/usr/bin/pg_ctl -D /Volumes/Data/perf.webkit.org/PostgresSQL -l /Volumes/Data/perf.webkit.org/PostgresSQL/logfile -o "-k /Volumes/Data/perf.webkit.org/PostgresSQL" stop`
-
-### Initializing the Database
-
-Run `database/init-database.sql` in psql as `webkit-perf-db-user`:
-`/Applications/Server.app/Contents/ServerRoot/usr/bin/psql webkit-perf-db -h localhost --username webkit-perf-db-user -f init-database.sql`
-
-### Making a Backup and Restoring
-
-Use `pg_dump` and `pg_restore` to backup and restore the database. If you're replicating the production database for development purposes, you may consider excluding `run_iterations` table, which takes up 2/3 of the storage space, to reduce the size of the database for your local copy. Adjust the number of concurrent processes to use by `--jobs` and adjust the compression level by `--compress` (0 is no compression, 9 is most compressed).
-
-- Making the fullbackup of the database: `/Applications/Server.app/Contents/ServerRoot/usr/bin/pg_dump -h localhost webkit-perf-db --format=directory --file=<path to backup directory> --jobs=4 --no-owner --compress=7`
-
-- Making an abridged backup without `run_iterations` table: `/Applications/Server.app/Contents/ServerRoot/usr/bin/pg_dump -h localhost webkit-perf-db --format=directory --file=<path to backup directory> --jobs=4 --no-owner --compress=7 --exclude-table=run_iterations`
-
-- Restoring the database: `/Applications/Server.app/Contents/ServerRoot/usr/bin/pg_restore --format=directory --jobs=4 --no-owner --host localhost --username=webkit-perf-db-user <path to backup directory> --dbname=webkit-perf-db`
 
 ## Concepts
 
