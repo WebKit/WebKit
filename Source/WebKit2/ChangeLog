@@ -1,3 +1,17 @@
+2017-03-31  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Modern media controls should never be enabled in non cocoa ports
+        https://bugs.webkit.org/show_bug.cgi?id=170338
+
+        Reviewed by Michael Catanzaro.
+
+        It's currently enabled, because it uses the default value for all other runtime features, but modern media
+        controls are not a cross-platform feature. I think this is why media/video-click-dblckick-standalone.html
+        started to fail in GTK+ port after r214426. I can't reprouduce the failure locally, so I can't confirm it,
+        though.
+
+        * Shared/WebPreferencesDefinitions.h:
+
 2017-03-30  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed GTK+ build fix. List WebCore before JavaScriptCore as the

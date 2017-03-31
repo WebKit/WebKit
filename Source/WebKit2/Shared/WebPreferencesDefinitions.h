@@ -316,6 +316,12 @@
 #define DEFAULT_EXPERIMENTAL_FEATURES_ENABLED false
 #endif
 
+#if PLATFORM(COCOA)
+#define DEFAULT_MODERN_MEDIA_CONTROLS_ENABLED true
+#else
+#define DEFAULT_MODERN_MEDIA_CONTROLS_ENABLED false
+#endif
+
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101200
 // <https://webkit.org/b/168415> El Capitan NetworkLoadTiming values are sometimes jumbled
 #define DEFAULT_RESOURCE_TIMING_ENABLED false
@@ -335,7 +341,7 @@
 #define FOR_EACH_WEBKIT_EXPERIMENTAL_FEATURE_PREFERENCE(macro) \
     macro(SpringTimingFunctionEnabled, springTimingFunctionEnabled, Bool, bool, DEFAULT_EXPERIMENTAL_FEATURES_ENABLED, "CSS Spring Animations", "CSS Spring Animation prototype") \
     macro(LinkPreloadEnabled, linkPreloadEnabled, Bool, bool, DEFAULT_EXPERIMENTAL_FEATURES_ENABLED, "Link Preload", "Link preload support") \
-    macro(ModernMediaControlsEnabled, modernMediaControlsEnabled, Bool, bool, DEFAULT_EXPERIMENTAL_FEATURES_ENABLED, "Modern Media Controls", "Use modern media controls look") \
+    macro(ModernMediaControlsEnabled, modernMediaControlsEnabled, Bool, bool, DEFAULT_MODERN_MEDIA_CONTROLS_ENABLED, "Modern Media Controls", "Use modern media controls look") \
     macro(ResourceTimingEnabled, resourceTimingEnabled, Bool, bool, DEFAULT_RESOURCE_TIMING_ENABLED, "Resource Timing", "Enable ResourceTiming API") \
     macro(SubtleCryptoEnabled, subtleCryptoEnabled, Bool, bool, DEFAULT_EXPERIMENTAL_FEATURES_ENABLED, "SubtleCrypto", "Enable SubtleCrypto support") \
     macro(UserTimingEnabled, userTimingEnabled, Bool, bool, DEFAULT_EXPERIMENTAL_FEATURES_ENABLED, "User Timing", "Enable UserTiming API") \
