@@ -1481,13 +1481,18 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 
 - (BOOL)pointIsInAssistedNode:(CGPoint)point
 {
+    // This method is still implemented for backwards compatibility with older UIKit versions.
+    return [self textInteractionGesture:UIWKGestureLoupe shouldBeginAtPoint:point];
+}
+
+- (BOOL)textInteractionGesture:(UIWKGestureType)gesture shouldBeginAtPoint:(CGPoint)point
+{
     InteractionInformationRequest request(roundedIntPoint(point));
     [self ensurePositionInformationIsUpToDate:request];
 
 #if ENABLE(DATA_INTERACTION)
-    if (_positionInformation.hasSelectionAtPosition) {
+    if (_positionInformation.hasSelectionAtPosition && gesture == UIWKGestureLoupe) {
         // If the position might initiate data interaction, we don't want to change the selection.
-        // FIXME: This should be renamed to something more precise, such as textInteractionShouldRecognizeGestureAtPoint:
         return NO;
     }
 #endif

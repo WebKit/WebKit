@@ -1,3 +1,19 @@
+2017-03-31  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [WK2] Tapping editable text inside of a range selection no longer changes the selection to a caret
+        https://bugs.webkit.org/show_bug.cgi?id=170327
+        <rdar://problem/31363816>
+
+        Reviewed by Tim Horton.
+
+        Adds a new WK2 interaction test for iOS verifying that tapping a selection in editable content sets the selection
+        to a caret, rather than maintaining the range selection. This test is disabled in OpenSource, since it relies on
+        synthetic touch events.
+
+        * TestExpectations:
+        * editing/selection/caret-after-tap-in-editable-selection-expected.txt: Added.
+        * editing/selection/caret-after-tap-in-editable-selection.html: Added.
+
 2017-03-31  Alexey Proskuryakov  <ap@apple.com>
 
         Mark fast/mediastream/MediaStream-page-muted.html as flaky for
