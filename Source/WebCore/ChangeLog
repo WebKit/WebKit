@@ -1,3 +1,11 @@
+2017-03-31  Sam Weinig  <sam@webkit.org>
+
+        Remove unneeded custom constructors include.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/ios: Removed.
+        * bindings/js/ios/TouchConstructors.cpp: Removed.
+
 2017-03-31  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Check if the store exists before clearing it

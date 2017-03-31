@@ -4248,7 +4248,6 @@
 		A1C7FAA2133A5D3500D6732D /* JSXPathResultCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1C7FAA1133A5D3500D6732D /* JSXPathResultCustom.cpp */; };
 		A1CC11641E493D0100EFA69C /* FileSystemMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = A1CC11621E493D0100EFA69C /* FileSystemMac.mm */; };
 		A1DE712D18612AC100734192 /* TouchEvents.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1DE712B18612AC100734192 /* TouchEvents.cpp */; };
-		A1DE71321861322200734192 /* TouchConstructors.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1DE71301861322200734192 /* TouchConstructors.cpp */; };
 		A1E1154413015C3D0054AC8C /* DistantLightSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1E1154313015C3D0054AC8C /* DistantLightSource.cpp */; };
 		A1E1154613015C4E0054AC8C /* PointLightSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1E1154513015C4E0054AC8C /* PointLightSource.cpp */; };
 		A1E1154813015C5D0054AC8C /* SpotLightSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1E1154713015C5D0054AC8C /* SpotLightSource.cpp */; };
@@ -12388,7 +12387,6 @@
 		A1C7FAA1133A5D3500D6732D /* JSXPathResultCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSXPathResultCustom.cpp; sourceTree = "<group>"; };
 		A1CC11621E493D0100EFA69C /* FileSystemMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileSystemMac.mm; sourceTree = "<group>"; };
 		A1DE712B18612AC100734192 /* TouchEvents.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TouchEvents.cpp; sourceTree = "<group>"; };
-		A1DE71301861322200734192 /* TouchConstructors.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TouchConstructors.cpp; sourceTree = "<group>"; };
 		A1E1154313015C3D0054AC8C /* DistantLightSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DistantLightSource.cpp; sourceTree = "<group>"; };
 		A1E1154513015C4E0054AC8C /* PointLightSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PointLightSource.cpp; sourceTree = "<group>"; };
 		A1E1154713015C5D0054AC8C /* SpotLightSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpotLightSource.cpp; sourceTree = "<group>"; };
@@ -23722,7 +23720,6 @@
 		BCCE58B41061E925008FB35A /* Constructors */ = {
 			isa = PBXGroup;
 			children = (
-				CE261694187E6469007955F3 /* ios */,
 				7C0CEF2D1E4A56C5008DEB80 /* JSDOMBuiltinConstructor.h */,
 				7C0CEF2E1E4A5832008DEB80 /* JSDOMBuiltinConstructorBase.cpp */,
 				7C0CEF2A1E4A556C008DEB80 /* JSDOMBuiltinConstructorBase.h */,
@@ -24166,14 +24163,6 @@
 				CE799FAA1C6A50660097B518 /* ContentSecurityPolicySourceListDirective.h */,
 			);
 			name = csp;
-			sourceTree = "<group>";
-		};
-		CE261694187E6469007955F3 /* ios */ = {
-			isa = PBXGroup;
-			children = (
-				A1DE71301861322200734192 /* TouchConstructors.cpp */,
-			);
-			path = ios;
 			sourceTree = "<group>";
 		};
 		CE26169D187E6554007955F3 /* airplay */ = {
@@ -33255,7 +33244,6 @@
 				93309EA4099EB78C0056E581 /* Timer.cpp in Sources */,
 				E44613AF0CD6331000FADA75 /* TimeRanges.cpp in Sources */,
 				0FDF45A91BD1C82500E4FA8C /* TimingFunction.cpp in Sources */,
-				A1DE71321861322200734192 /* TouchConstructors.cpp in Sources */,
 				A1DE712D18612AC100734192 /* TouchEvents.cpp in Sources */,
 				070334D9145A006F008D8D45 /* TrackBase.cpp in Sources */,
 				070334D31459FFAD008D8D45 /* TrackEvent.cpp in Sources */,
