@@ -2715,9 +2715,9 @@ void Document::implicitClose()
         accessSVGExtensions().dispatchSVGLoadEventToOutermostSVGElements();
 
     dispatchWindowLoadEvent();
-    enqueuePageshowEvent(PageshowEventNotPersisted);
+    dispatchPageshowEvent(PageshowEventNotPersisted);
     if (m_pendingStateObject)
-        enqueuePopstateEvent(WTFMove(m_pendingStateObject));
+        dispatchPopstateEvent(WTFMove(m_pendingStateObject));
 
     if (f)
         f->loader().dispatchOnloadEvents();
@@ -5294,7 +5294,7 @@ void Document::statePopped(PassRefPtr<SerializedScriptValue> stateObject)
     // Per step 11 of section 6.5.9 (history traversal) of the HTML5 spec, we 
     // defer firing of popstate until we're in the complete state.
     if (m_readyState == Complete)
-        enqueuePopstateEvent(stateObject);
+        dispatchPopstateEvent(stateObject);
     else
         m_pendingStateObject = stateObject;
 }
@@ -5562,7 +5562,7 @@ void Document::displayBufferModifiedByEncodingInternal(CharacterType* buffer, un
 template void Document::displayBufferModifiedByEncodingInternal<LChar>(LChar*, unsigned) const;
 template void Document::displayBufferModifiedByEncodingInternal<UChar>(UChar*, unsigned) const;
 
-void Document::enqueuePageshowEvent(PageshowEventPersistence persisted)
+void Document::dispatchPageshowEvent(PageshowEventPersistence persisted)
 {
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=36334 Pageshow event needs to fire asynchronously.
     dispatchWindowEvent(PageTransitionEvent::create(eventNames().pageshowEvent, persisted), this);
@@ -5573,7 +5573,7 @@ void Document::enqueueHashchangeEvent(const String& oldURL, const String& newURL
     enqueueWindowEvent(HashChangeEvent::create(oldURL, newURL));
 }
 
-void Document::enqueuePopstateEvent(RefPtr<SerializedScriptValue>&& stateObject)
+void Document::dispatchPopstateEvent(RefPtr<SerializedScriptValue>&& stateObject)
 {
     dispatchWindowEvent(PopStateEvent::create(WTFMove(stateObject), m_domWindow ? m_domWindow->history() : nullptr));
 }

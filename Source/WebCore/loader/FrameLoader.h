@@ -348,7 +348,6 @@ private:
 
     void closeOldDataSources();
     void willRestoreFromCachedPage();
-    void didRestoreFromCachedPage();
 
     bool shouldReloadToHandleUnreachableURL(DocumentLoader*);
 
