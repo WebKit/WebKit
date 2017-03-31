@@ -123,6 +123,15 @@ TEST(WebKit2, FindInPage)
 
     TestWebKitAPI::Util::run(&findMatchesDone);
     findMatchesDone = false;
+
+    // Ensure that we cap the number of matches. There are actually 1600, but we only get the first 1000.
+    [webView findMatchesForString:@" " relativeToMatch:nil findOptions:noFindOptions maxResults:NSUIntegerMax resultCollector:^(NSArray *matches, BOOL didWrap) {
+        EXPECT_EQ((NSUInteger)1000, matches.count);
+
+        findMatchesDone = true;
+    }];
+    TestWebKitAPI::Util::run(&findMatchesDone);
+    findMatchesDone = false;
 }
 
 #endif

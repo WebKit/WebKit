@@ -33,6 +33,7 @@
 #import "WebImage.h"
 #import "WebPageProxy.h"
 #import <WebCore/NSTextFinderSPI.h>
+#import <algorithm>
 #import <wtf/Deque.h>
 
 // FIXME: Implement support for replace.
@@ -41,6 +42,8 @@
 
 using namespace WebCore;
 using namespace WebKit;
+
+static const NSUInteger maximumFindMatches = 1000;
 
 @interface WKTextFinderClient ()
 
@@ -172,6 +175,11 @@ private:
 
 - (void)findMatchesForString:(NSString *)targetString relativeToMatch:(id <NSTextFinderAsynchronousDocumentFindMatch>)relativeMatch findOptions:(NSTextFinderAsynchronousDocumentFindOptions)findOptions maxResults:(NSUInteger)maxResults resultCollector:(void (^)(NSArray *matches, BOOL didWrap))resultCollector
 {
+    // Limit the number of results, for performance reasons; NSTextFinder always
+    // passes either 1 or NSUIntegerMax, which results in search time being
+    // proportional to document length.
+    maxResults = std::min(maxResults, maximumFindMatches);
+
     unsigned kitFindOptions = 0;
 
     if (findOptions & NSTextFinderAsynchronousDocumentFindOptionsBackwards)
