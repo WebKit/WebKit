@@ -1,3 +1,12 @@
+2017-03-31  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Mac cmake buildfix after r214403
+        https://bugs.webkit.org/show_bug.cgi?id=170346
+
+        Unreviewed speculative buildfix.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+
 2017-03-31  Brady Eidson  <beidson@apple.com>
 
         Remove erroneously committed changes from r214078
