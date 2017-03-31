@@ -79,8 +79,6 @@
 #include "CachedTextTrack.h"
 #endif
 
-#define PRELOAD_DEBUG 0
-
 #define RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), Network, "%p - CachedResourceLoader::" fmt, this, ##__VA_ARGS__)
 
 namespace WebCore {
@@ -1237,9 +1235,6 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::preload(CachedResourc
         m_preloads = std::make_unique<ListHashSet<CachedResource*>>();
     m_preloads->add(resource.get());
 
-#if PRELOAD_DEBUG
-    printf("PRELOADING %s\n",  resource->url().latin1().data());
-#endif
     return resource;
 }
 
@@ -1271,9 +1266,6 @@ bool CachedResourceLoader::isPreloaded(const String& urlString) const
 
 void CachedResourceLoader::clearPreloads(ClearPreloadsMode mode)
 {
-#if PRELOAD_DEBUG
-    printPreloadStats();
-#endif
     if (!m_preloads)
         return;
 
@@ -1293,53 +1285,6 @@ void CachedResourceLoader::clearPreloads(ClearPreloadsMode mode)
     }
     m_preloads = WTFMove(remainingLinkPreloads);
 }
-
-#if PRELOAD_DEBUG
-void CachedResourceLoader::printPreloadStats()
-{
-    unsigned scripts = 0;
-    unsigned scriptMisses = 0;
-    unsigned stylesheets = 0;
-    unsigned stylesheetMisses = 0;
-    unsigned images = 0;
-    unsigned imageMisses = 0;
-    for (auto& resource : m_preloads) {
-        if (resource->preloadResult() == CachedResource::PreloadNotReferenced)
-            printf("!! UNREFERENCED PRELOAD %s\n", resource->url().latin1().data());
-        else if (resource->preloadResult() == CachedResource::PreloadReferencedWhileComplete)
-            printf("HIT COMPLETE PRELOAD %s\n", resource->url().latin1().data());
-        else if (resource->preloadResult() == CachedResource::PreloadReferencedWhileLoading)
-            printf("HIT LOADING PRELOAD %s\n", resource->url().latin1().data());
-
-        if (resource->type() == CachedResource::Script) {
-            scripts++;
-            if (resource->preloadResult() < CachedResource::PreloadReferencedWhileLoading)
-                scriptMisses++;
-        } else if (resource->type() == CachedResource::CSSStyleSheet) {
-            stylesheets++;
-            if (resource->preloadResult() < CachedResource::PreloadReferencedWhileLoading)
-                stylesheetMisses++;
-        } else {
-            images++;
-            if (resource->preloadResult() < CachedResource::PreloadReferencedWhileLoading)
-                imageMisses++;
-        }
-
-        if (resource->errorOccurred() && resource->preloadResult() == CachedResource::PreloadNotReferenced)
-            MemoryCache::singleton().remove(resource);
-
-        resource->decreasePreloadCount();
-    }
-    m_preloads = nullptr;
-
-    if (scripts)
-        printf("SCRIPTS: %d (%d hits, hit rate %d%%)\n", scripts, scripts - scriptMisses, (scripts - scriptMisses) * 100 / scripts);
-    if (stylesheets)
-        printf("STYLESHEETS: %d (%d hits, hit rate %d%%)\n", stylesheets, stylesheets - stylesheetMisses, (stylesheets - stylesheetMisses) * 100 / stylesheets);
-    if (images)
-        printf("IMAGES:  %d (%d hits, hit rate %d%%)\n", images, images - imageMisses, (images - imageMisses) * 100 / images);
-}
-#endif
 
 const ResourceLoaderOptions& CachedResourceLoader::defaultCachedResourceOptions()
 {

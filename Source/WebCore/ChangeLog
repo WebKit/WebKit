@@ -1,3 +1,20 @@
+2017-03-31  Yoav Weiss  <yoav@yoav.ws>
+
+        Remove PRELOAD_DEBUG related code.
+        https://bugs.webkit.org/show_bug.cgi?id=170352
+
+        Reviewed by Youenn Fablet.
+
+        As the PRELOAD_DEBUG related code stopped building and it seems like no one noticed,
+        it seems safe to assume that we can remove that code. This patch removes it.
+
+        No new tests as there's no functional change.
+
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::preload):
+        (WebCore::CachedResourceLoader::clearPreloads):
+        (WebCore::CachedResourceLoader::printPreloadStats): Deleted.
+
 2017-03-31  Brady Eidson  <beidson@apple.com>
 
         Clean up the "StorageType" enum.
