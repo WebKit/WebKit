@@ -1,5 +1,12 @@
 2017-03-30  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Yet another build fix after r214502. Workaround webkit.org/b/169907 for now.
+
+        * public/v3/pages/analysis-task-page.js:
+        (AnalysisTaskPage.cssTemplate):
+
+2017-03-30  Ryosuke Niwa  <rniwa@webkit.org>
+
         Revert an erronously change in the previous commit.
 
         * public/v3/components/base.js:

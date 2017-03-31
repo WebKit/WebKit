@@ -798,11 +798,17 @@ class AnalysisTaskPage extends PageWithHeading {
             }
 
             #platform-metric-names:empty {
-                display: none;
+                visibility: hidden;
+                height: 0;
+                width: 0;
+                /* FIXME: Use display: none instead once r214290 is shipped everywhere */
             }
 
             .error-message:empty {
-                display: none;
+                visibility: hidden;
+                height: 0;
+                width: 0;
+                /* FIXME: Use display: none instead once r214290 is shipped everywhere */
             }
 
             .error-message:not(:empty) {
