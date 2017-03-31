@@ -47,6 +47,7 @@ enum {
     kWKSnapshotOptionsForceWhiteText = 1 << 5,
     kWKSnapshotOptionsPrinting = 1 << 6,
     kWKSnapshotOptionsExcludeOverflow = 1 << 7,
+    kWKSnapshotOptionsExtendedColor = 1 << 8,
 };
 typedef uint32_t WKSnapshotOptions;
 

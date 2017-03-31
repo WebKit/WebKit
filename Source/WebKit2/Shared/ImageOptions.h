@@ -30,6 +30,7 @@ namespace WebKit {
 
 enum ImageOptions {
     ImageOptionsShareable = 1 << 0,
+    ImageOptionsExtendedColor = 1 << 1,
 };
 
 enum {
@@ -41,6 +42,7 @@ enum {
     SnapshotOptionsForceBlackText = 1 << 6,
     SnapshotOptionsForceWhiteText = 1 << 7,
     SnapshotOptionsPrinting = 1 << 8,
+    SnapshotOptionsExtendedColor = 1 << 9,
 };
 typedef uint32_t SnapshotOptions;
 
@@ -51,6 +53,10 @@ inline ImageOptions snapshotOptionsToImageOptions(SnapshotOptions snapshotOption
 
     if (snapshotOptions & SnapshotOptionsShareable)
         imageOptions |= ImageOptionsShareable;
+    
+    if (snapshotOptions & SnapshotOptionsExtendedColor)
+        imageOptions |= ImageOptionsExtendedColor;
+    
 
     return static_cast<ImageOptions>(imageOptions);
 }

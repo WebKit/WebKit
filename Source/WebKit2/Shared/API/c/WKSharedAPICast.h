@@ -931,6 +931,9 @@ inline SnapshotOptions snapshotOptionsFromImageOptions(WKImageOptions wkImageOpt
     if (wkImageOptions & kWKImageOptionsShareable)
         snapshotOptions |= SnapshotOptionsShareable;
 
+    if (wkImageOptions & kWKSnapshotOptionsExtendedColor)
+        snapshotOptions |= SnapshotOptionsExtendedColor;
+    
     return snapshotOptions;
 }
 

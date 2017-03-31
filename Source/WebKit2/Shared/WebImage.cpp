@@ -34,13 +34,17 @@ namespace WebKit {
 
 RefPtr<WebImage> WebImage::create(const IntSize& size, ImageOptions options)
 {
+    int sharableOptions = ShareableBitmap::SupportsAlpha;
+    
+    if (options & ImageOptionsExtendedColor)
+        sharableOptions |= ShareableBitmap::SupportsExtendedColor;
     if (options & ImageOptionsShareable) {
-        auto bitmap = ShareableBitmap::createShareable(size, ShareableBitmap::SupportsAlpha);
+        auto bitmap = ShareableBitmap::createShareable(size, sharableOptions);
         if (!bitmap)
             return nullptr;
         return WebImage::create(bitmap.releaseNonNull());
     }
-    auto bitmap = ShareableBitmap::create(size, ShareableBitmap::SupportsAlpha);
+    auto bitmap = ShareableBitmap::create(size, sharableOptions);
     if (!bitmap)
         return nullptr;
     return WebImage::create(bitmap.releaseNonNull());
