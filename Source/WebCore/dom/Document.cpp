@@ -6006,6 +6006,13 @@ int Document::requestAnimationFrame(Ref<RequestAnimationFrameCallback>&& callbac
         // controller on a background tab, for example.
         if (!page() || page()->scriptedAnimationsSuspended())
             m_scriptedAnimationController->suspend();
+
+        if (settings().shouldDispatchRequestAnimationFrameEvents()) {
+            if (!page())
+                dispatchEvent(Event::create("raf-no-page", false, false));
+            else if (page()->scriptedAnimationsSuspended())
+                dispatchEvent(Event::create("raf-scripted-animations-suspended-on-page", false, false));
+        }
     }
 
     return m_scriptedAnimationController->registerCallback(WTFMove(callback));
