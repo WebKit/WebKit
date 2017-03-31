@@ -42,6 +42,7 @@
 #include <WebCore/Storage.h>
 #include <WebCore/StorageEventDispatcher.h>
 #include <WebCore/StorageMap.h>
+#include <WebCore/StorageType.h>
 
 using namespace WebCore;
 
@@ -70,7 +71,8 @@ StorageAreaMap::StorageAreaMap(StorageNamespaceImpl* storageNamespace, Ref<WebCo
     , m_hasPendingGetValues(false)
 {
     switch (m_storageType) {
-    case WebCore::LocalStorage:
+    case StorageType::Local:
+    case StorageType::TransientLocal:
         if (SecurityOrigin* topLevelOrigin = storageNamespace->topLevelOrigin())
             WebProcess::singleton().parentProcessConnection()->send(Messages::StorageManager::CreateTransientLocalStorageMap(m_storageMapID, storageNamespace->storageNamespaceID(), SecurityOriginData::fromSecurityOrigin(*topLevelOrigin), SecurityOriginData::fromSecurityOrigin(m_securityOrigin)), 0);
         else
@@ -78,7 +80,7 @@ StorageAreaMap::StorageAreaMap(StorageNamespaceImpl* storageNamespace, Ref<WebCo
 
         break;
 
-    case WebCore::SessionStorage:
+    case StorageType::Session:
         WebProcess::singleton().parentProcessConnection()->send(Messages::StorageManager::CreateSessionStorageMap(m_storageMapID, storageNamespace->storageNamespaceID(), SecurityOriginData::fromSecurityOrigin(m_securityOrigin)), 0);
         break;
     }
@@ -302,7 +304,7 @@ void StorageAreaMap::dispatchStorageEvent(uint64_t sourceStorageAreaID, const St
         applyChange(key, newValue);
     }
 
-    if (storageType() == SessionStorage)
+    if (storageType() == StorageType::Session)
         dispatchSessionStorageEvent(sourceStorageAreaID, key, oldValue, newValue, urlString);
     else
         dispatchLocalStorageEvent(sourceStorageAreaID, key, oldValue, newValue, urlString);
@@ -315,7 +317,7 @@ void StorageAreaMap::clearCache()
 
 void StorageAreaMap::dispatchSessionStorageEvent(uint64_t sourceStorageAreaID, const String& key, const String& oldValue, const String& newValue, const String& urlString)
 {
-    ASSERT(storageType() == SessionStorage);
+    ASSERT(storageType() == StorageType::Session);
 
     // Namespace IDs for session storage namespaces are equivalent to web page IDs
     // so we can get the right page here.
@@ -349,7 +351,7 @@ void StorageAreaMap::dispatchSessionStorageEvent(uint64_t sourceStorageAreaID, c
 
 void StorageAreaMap::dispatchLocalStorageEvent(uint64_t sourceStorageAreaID, const String& key, const String& oldValue, const String& newValue, const String& urlString)
 {
-    ASSERT(storageType() == LocalStorage);
+    ASSERT(isLocalStorage(storageType()));
 
     Vector<RefPtr<Frame>> frames;
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,42 +25,17 @@
 
 #pragma once
 
-#include <wtf/Forward.h>
-#include <wtf/RefCounted.h>
-#include <wtf/text/WTFString.h>
-
 namespace WebCore {
 
-class Frame;
-class SecurityOrigin;
-class StorageSyncManager;
-
-enum class StorageType;
-
-struct SecurityOriginData;
-
-class StorageArea : public RefCounted<StorageArea> {
-public:
-    virtual ~StorageArea() { }
-
-    virtual unsigned length() = 0;
-    virtual String key(unsigned index) = 0;
-    virtual String item(const String& key) = 0;
-    virtual void setItem(Frame* sourceFrame, const String& key, const String& value, bool& quotaException) = 0;
-    virtual void removeItem(Frame* sourceFrame, const String& key) = 0;
-    virtual void clear(Frame* sourceFrame) = 0;
-    virtual bool contains(const String& key) = 0;
-
-    virtual bool canAccessStorage(Frame*) = 0;
-    virtual StorageType storageType() const = 0;
-
-    virtual size_t memoryBytesUsedByCache() = 0;
-
-    virtual void incrementAccessCount() { }
-    virtual void decrementAccessCount() { }
-    virtual void closeDatabaseIfIdle() { }
-
-    virtual SecurityOriginData securityOrigin() const = 0;
+enum class StorageType {
+    Session,
+    Local,
+    TransientLocal,
 };
+
+inline bool isLocalStorage(StorageType storageType)
+{
+    return storageType == StorageType::Local || storageType == StorageType::TransientLocal;
+}
 
 } // namespace WebCore

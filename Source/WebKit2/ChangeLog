@@ -1,3 +1,21 @@
+2017-03-31  Brady Eidson  <beidson@apple.com>
+
+        Clean up the "StorageType" enum.
+        https://bugs.webkit.org/show_bug.cgi?id=170349
+
+        Reviewed by Tim Horton.
+
+        * WebProcess/Storage/StorageAreaMap.cpp:
+        (WebKit::StorageAreaMap::StorageAreaMap):
+        (WebKit::StorageAreaMap::dispatchStorageEvent):
+        (WebKit::StorageAreaMap::dispatchSessionStorageEvent):
+        (WebKit::StorageAreaMap::dispatchLocalStorageEvent):
+        
+        * WebProcess/Storage/StorageNamespaceImpl.cpp:
+        (WebKit::StorageNamespaceImpl::createSessionStorageNamespace):
+        (WebKit::StorageNamespaceImpl::createLocalStorageNamespace):
+        (WebKit::StorageNamespaceImpl::createTransientLocalStorageNamespace):
+
 2017-03-31  Tim Horton  <timothy_horton@apple.com>
 
         Remove bundle checks for attachmentElementEnabled

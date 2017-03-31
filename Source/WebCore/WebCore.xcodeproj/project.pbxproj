@@ -2258,6 +2258,7 @@
 		516103B01CADBA7A0016B4C7 /* IDBValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 516103AD1CADB9A30016B4C7 /* IDBValue.cpp */; };
 		5162C7F411F77EFB00612EFE /* SchemeRegistry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5162C7F211F77EFA00612EFE /* SchemeRegistry.cpp */; };
 		5162C7F511F77EFB00612EFE /* SchemeRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = 5162C7F311F77EFB00612EFE /* SchemeRegistry.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		5166D3CD1E8ED48F00AD62E3 /* StorageType.h in Headers */ = {isa = PBXBuildFile; fileRef = 5166D3CC1E8ED41100AD62E3 /* StorageType.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		516953971329A3C800B92D04 /* IconDatabaseBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 516953951329A3C800B92D04 /* IconDatabaseBase.cpp */; };
 		516953981329A3C800B92D04 /* IconDatabaseBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 516953961329A3C800B92D04 /* IconDatabaseBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		516BB7940CE91E6800512F79 /* JSTreeWalkerCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 516BB7920CE91E6800512F79 /* JSTreeWalkerCustom.cpp */; };
@@ -9927,6 +9928,7 @@
 		51645B521B9F889B00F789CE /* IDBVersionChangeEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBVersionChangeEvent.cpp; sourceTree = "<group>"; };
 		51645B531B9F889B00F789CE /* IDBVersionChangeEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBVersionChangeEvent.h; sourceTree = "<group>"; };
 		51645B541B9F88E800F789CE /* IDBCursor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBCursor.cpp; sourceTree = "<group>"; };
+		5166D3CC1E8ED41100AD62E3 /* StorageType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageType.h; sourceTree = "<group>"; };
 		516953951329A3C800B92D04 /* IconDatabaseBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IconDatabaseBase.cpp; sourceTree = "<group>"; };
 		516953961329A3C800B92D04 /* IconDatabaseBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IconDatabaseBase.h; sourceTree = "<group>"; };
 		516BB7920CE91E6800512F79 /* JSTreeWalkerCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSTreeWalkerCustom.cpp; sourceTree = "<group>"; };
@@ -16840,6 +16842,7 @@
 				C50D0E810FF4272900AC2644 /* StorageNamespace.h */,
 				1A3763691A2E68BB009A7EE2 /* StorageNamespaceProvider.cpp */,
 				1A37636A1A2E68BB009A7EE2 /* StorageNamespaceProvider.h */,
+				5166D3CC1E8ED41100AD62E3 /* StorageType.h */,
 			);
 			indentWidth = 4;
 			path = storage;
@@ -28498,6 +28501,7 @@
 				CDE7FC45181904B1002BBB77 /* OrderIterator.h in Headers */,
 				0014628B103CD1DE000B20DB /* OriginAccessEntry.h in Headers */,
 				FE9E89FC16E2DC0500A908F8 /* OriginLock.h in Headers */,
+				5166D3CD1E8ED48F00AD62E3 /* StorageType.h in Headers */,
 				FD581FAF1520F91F003A7A75 /* OscillatorNode.h in Headers */,
 				BC5EB5DD0E81B8DD00B25965 /* OutlineValue.h in Headers */,
 				7A29F57218C69514004D0F81 /* OutOfBandTextTrackPrivateAVF.h in Headers */,

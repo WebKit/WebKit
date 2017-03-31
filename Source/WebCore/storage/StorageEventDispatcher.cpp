@@ -36,6 +36,7 @@
 #include "SecurityOrigin.h"
 #include "SecurityOriginData.h"
 #include "StorageEvent.h"
+#include "StorageType.h"
 
 namespace WebCore {
 
@@ -77,7 +78,7 @@ void StorageEventDispatcher::dispatchLocalStorageEvents(const String& key, const
 
 void StorageEventDispatcher::dispatchSessionStorageEventsToFrames(Page& page, const Vector<RefPtr<Frame>>& frames, const String& key, const String& oldValue, const String& newValue, const String& url, const SecurityOriginData& securityOrigin)
 {
-    InspectorInstrumentation::didDispatchDOMStorageEvent(page, key, oldValue, newValue, SessionStorage, securityOrigin.securityOrigin().ptr());
+    InspectorInstrumentation::didDispatchDOMStorageEvent(page, key, oldValue, newValue, StorageType::Session, securityOrigin.securityOrigin().ptr());
 
     for (auto& frame : frames) {
         auto result = frame->document()->domWindow()->sessionStorage();
@@ -89,7 +90,7 @@ void StorageEventDispatcher::dispatchSessionStorageEventsToFrames(Page& page, co
 void StorageEventDispatcher::dispatchLocalStorageEventsToFrames(PageGroup& pageGroup, const Vector<RefPtr<Frame>>& frames, const String& key, const String& oldValue, const String& newValue, const String& url, const SecurityOriginData& securityOrigin)
 {
     for (auto& page : pageGroup.pages())
-        InspectorInstrumentation::didDispatchDOMStorageEvent(*page, key, oldValue, newValue, LocalStorage, securityOrigin.securityOrigin().ptr());
+        InspectorInstrumentation::didDispatchDOMStorageEvent(*page, key, oldValue, newValue, StorageType::Local, securityOrigin.securityOrigin().ptr());
 
     for (auto& frame : frames) {
         auto result = frame->document()->domWindow()->localStorage();

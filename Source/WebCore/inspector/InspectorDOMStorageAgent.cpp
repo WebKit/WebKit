@@ -45,6 +45,7 @@
 #include "Storage.h"
 #include "StorageNamespace.h"
 #include "StorageNamespaceProvider.h"
+#include "StorageType.h"
 #include "VoidCallback.h"
 #include <inspector/InspectorFrontendDispatchers.h>
 #include <inspector/InspectorValues.h>
@@ -163,7 +164,7 @@ void InspectorDOMStorageAgent::didDispatchDOMStorageEvent(const String& key, con
     if (!m_enabled)
         return;
 
-    RefPtr<Inspector::Protocol::DOMStorage::StorageId> id = storageId(securityOrigin, storageType == LocalStorage);
+    RefPtr<Inspector::Protocol::DOMStorage::StorageId> id = storageId(securityOrigin, storageType == StorageType::Local);
 
     if (key.isNull())
         m_frontendDispatcher->domStorageItemsCleared(id);

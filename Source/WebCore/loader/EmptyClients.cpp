@@ -56,6 +56,7 @@
 #include "StorageArea.h"
 #include "StorageNamespace.h"
 #include "StorageNamespaceProvider.h"
+#include "StorageType.h"
 #include "TextCheckerClient.h"
 #include "ThreadableWebSocketChannel.h"
 #include "UserContentProvider.h"
@@ -549,7 +550,7 @@ class EmptyStorageNamespaceProvider final : public StorageNamespaceProvider {
         void clear(Frame*) final { }
         bool contains(const String&) final { return false; }
         bool canAccessStorage(Frame*) final { return false; }
-        StorageType storageType() const final { return LocalStorage; }
+        StorageType storageType() const final { return StorageType::Local; }
         size_t memoryBytesUsedByCache() final { return 0; }
         SecurityOriginData securityOrigin() const final { return { }; }
     };
