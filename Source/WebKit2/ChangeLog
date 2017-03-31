@@ -1,3 +1,12 @@
+2017-03-31  Brady Eidson  <beidson@apple.com>
+
+        Remove erroneously committed changes from r214078
+
+        Unreviewed.
+
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeNetworkProcess): Whoops!
+
 2017-03-31  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Modern media controls should never be enabled in non cocoa ports
