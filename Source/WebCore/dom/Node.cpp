@@ -309,11 +309,14 @@ void Node::willBeDeletedFrom(Document& document)
         document.didRemoveWheelEventHandler(*this, EventHandlerRemoval::All);
 #if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS)
         document.removeTouchEventListener(this, true);
-        document.removeTouchEventHandler(this, true);
 #else
         // FIXME: This should call didRemoveTouchEventHandler().
 #endif
     }
+
+#if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS)
+    document.removeTouchEventHandler(this, true);
+#endif
 
     if (AXObjectCache* cache = document.existingAXObjectCache())
         cache->remove(this);
