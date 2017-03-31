@@ -1,3 +1,28 @@
+2017-03-31  Andy Estes  <aestes@apple.com>
+
+        REGRESSION (r202472): Data Detection overwrites existing links in detected ranges
+        https://bugs.webkit.org/show_bug.cgi?id=170365
+        <rdar://problem/29205721>
+
+        Reviewed by Tim Horton.
+
+        r202472 changed the node traversal in searchForLinkRemovingExistingDDLinks() to only
+        consider nodes that are descendants of startNode, but we need to traverse all nodes between
+        startNode and endNode to find existing non-DD links.
+
+        As a result, we'd add a Data Detector link to the following snippet and make the original
+        links un-clickable:
+
+            <a href='#'>tomorrow</a> <a href='#'>night</a>
+
+        Fix this by not specifying a stayWithin node when calling NodeTraversal::next(). The loop
+        will terminate when we reach endNode.
+
+        Updated WebKit2.DataDetectionReferenceDate API test.
+
+        * editing/cocoa/DataDetection.mm:
+        (WebCore::searchForLinkRemovingExistingDDLinks):
+
 2017-03-31  Eric Carlson  <eric.carlson@apple.com>
 
         Incoming video source doesn't propogate frame rotation
