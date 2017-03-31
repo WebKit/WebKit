@@ -1,3 +1,19 @@
+2017-03-31  Mark Lam  <mark.lam@apple.com>
+
+        Array.prototype.splice() should not be using JSArray::tryCreateForInitializationPrivate().
+        https://bugs.webkit.org/show_bug.cgi?id=170303
+        <rdar://problem/31358281>
+
+        Reviewed by Filip Pizlo.
+
+        This is because it needs to call getProperty() later to get the values for
+        initializing the array.  getProperty() can execute arbitrary code and potentially
+        trigger the GC.  This is not allowed for clients of JSArray::tryCreateForInitializationPrivate().
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncSplice):
+        (JSC::copySplicedArrayElements): Deleted.
+
 2017-03-31  Oleksandr Skachkov  <gskachkov@gmail.com>
 
         String.prototype.replace incorrectly applies "special replacement parameters" when passed a function
