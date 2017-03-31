@@ -3345,10 +3345,12 @@ if (ENABLE_GRAPHICS_CONTEXT_3D)
         ${THIRDPARTY_DIR}/ANGLE/src/common/tls.cpp
 
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/AddAndTrueToLoopCondition.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/AddDefaultReturnStatements.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/ArrayReturnValueToOutParameter.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/ASTMetadataHLSL.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/blocklayout.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/blocklayoutHLSL.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/BreakVariableAliasingInInnerLoops.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/BuiltInFunctionEmulator.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/BuiltInFunctionEmulatorGLSL.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/BuiltInFunctionEmulatorHLSL.cpp
@@ -3362,6 +3364,7 @@ if (ENABLE_GRAPHICS_CONTEXT_3D)
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/DirectiveHandler.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/EmulateGLFragColorBroadcast.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/EmulatePrecision.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/ExpandIntegerPowExpressions.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/ExtensionGLSL.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/glslang_lex.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/glslang_tab.cpp
@@ -3373,8 +3376,9 @@ if (ENABLE_GRAPHICS_CONTEXT_3D)
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/InitializeParseContext.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/InitializeVariables.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/Intermediate.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/IntermTraverse.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/IntermNode.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/IntermNodePatternMatcher.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/IntermTraverse.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/intermOut.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/LoopInfo.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/Operator.cpp
@@ -3394,6 +3398,7 @@ if (ENABLE_GRAPHICS_CONTEXT_3D)
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/RewriteDoWhile.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/RewriteElseBlocks.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/RewriteTexelFetchOffset.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/RewriteUnaryMinusOperatorInt.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/ScalarizeVecAndMatConstructorArgs.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/SearchSymbol.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/SeparateArrayInitialization.cpp
@@ -3401,8 +3406,11 @@ if (ENABLE_GRAPHICS_CONTEXT_3D)
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/SeparateDeclarations.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/ShaderLang.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/ShaderVars.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/SimplifyLoopConditions.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/SplitSequenceOperator.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/StructureHLSL.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/SymbolTable.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/TextureFunctionHLSL.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/TranslatorESSL.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/TranslatorGLSL.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/TranslatorHLSL.cpp

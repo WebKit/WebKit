@@ -707,8 +707,8 @@ if (APPLE)
     )
 else ()
     set(WebKit2_LIBRARIES
-        JavaScriptCore
         WebCore
+        JavaScriptCore
     )
 endif ()
 

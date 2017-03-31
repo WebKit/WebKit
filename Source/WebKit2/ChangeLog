@@ -1,3 +1,11 @@
+2017-03-30  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK+ build fix. List WebCore before JavaScriptCore as the
+        two WebKit2 dependency libraries to avoid WTF directiories being
+        listed for inclusion before WebCore directories at compile-time.
+
+        * CMakeLists.txt:
+
 2017-03-30  Megan Gardner  <megan_gardner@apple.com>
 
         Allow for extended color in snapshots
