@@ -3,7 +3,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Peter Kelly (pmk@post.com)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2017 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -685,6 +685,8 @@ private:
 
     // Anyone thinking of using this should call document instead of ownerDocument.
     void ownerDocument() const = delete;
+    
+    void attachAttributeNodeIfNeeded(Attr&);
 
     QualifiedName m_tagName;
     RefPtr<ElementData> m_elementData;

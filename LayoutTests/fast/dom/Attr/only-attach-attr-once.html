@@ -1,0 +1,25 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Test that we properly handle attempts to attach an Attribute to the same node multiple times. Test passes if there is no Debug ASSERT.");
+
+window.callback = () => {
+    window.callback = null;
+
+    shouldThrow("div.setAttributeNodeNS(src)", "'InUseAttributeError (DOM Exception 10): The attribute is in use.'");
+    frame.setAttributeNodeNS(document.createAttribute('src'));
+};
+
+let src = document.createAttribute('src');
+src.value = 'javascript:parent.callback()';
+
+let div = document.createElement('div');
+let frame = document.body.appendChild(document.createElement('iframe'));
+frame.setAttributeNodeNS(src);
+</script>
+</body>
+</html>

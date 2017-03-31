@@ -1,0 +1,10 @@
+Test that we properly handle attempts to attach an Attribute to the same node multiple times. Test passes if there is no Debug ASSERT.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS div.setAttributeNodeNS(src) threw exception InUseAttributeError (DOM Exception 10): The attribute is in use..
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
