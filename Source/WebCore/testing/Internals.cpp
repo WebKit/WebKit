@@ -351,7 +351,7 @@ static bool markerTypeFrom(const String& markerType, DocumentMarker::MarkerType&
 #endif
     else
         return false;
-    
+
     return true;
 }
 
@@ -391,9 +391,9 @@ void Internals::resetToConsistentState(Page& page)
     page.setPaginationLineGridEnabled(false);
 
     page.setDefersLoading(false);
-    
+
     page.mainFrame().setTextZoomFactor(1.0f);
-    
+
     FrameView* mainFrameView = page.mainFrame().view();
     if (mainFrameView) {
         mainFrameView->setHeaderHeight(0);
@@ -596,7 +596,7 @@ bool Internals::isLoadingFromMemoryCache(const String& url)
 
     ResourceRequest request(contextDocument()->completeURL(url));
     request.setDomainForCachePartition(contextDocument()->topOrigin().domainForCachePartition());
-    
+
     CachedResource* resource = MemoryCache::singleton().resourceForRequest(request, contextDocument()->page()->sessionID());
     return resource && resource->status() == CachedResource::Cached;
 }
@@ -724,11 +724,11 @@ void Internals::setImageFrameDecodingDuration(HTMLImageElement& element, float d
     auto* cachedImage = element.cachedImage();
     if (!cachedImage)
         return;
-    
+
     auto* image = cachedImage->image();
     if (!is<BitmapImage>(image))
         return;
-    
+
     downcast<BitmapImage>(*image).setFrameDecodingDurationForTesting(duration);
 }
 
@@ -988,7 +988,7 @@ static unsigned deferredStyleRulesCountForList(const Vector<RefPtr<StyleRuleBase
                 count++;
             continue;
         }
-        
+
         StyleRuleGroup* groupRule = nullptr;
         if (is<StyleRuleMedia>(rule.get()))
             groupRule = downcast<StyleRuleMedia>(rule.get());
@@ -996,11 +996,11 @@ static unsigned deferredStyleRulesCountForList(const Vector<RefPtr<StyleRuleBase
             groupRule = downcast<StyleRuleSupports>(rule.get());
         if (!groupRule)
             continue;
-        
+
         auto* groupChildRules = groupRule->childRulesWithoutDeferredParsing();
         if (!groupChildRules)
             continue;
-        
+
         count += deferredStyleRulesCountForList(*groupChildRules);
     }
 
@@ -1023,7 +1023,7 @@ static unsigned deferredGroupRulesCountForList(const Vector<RefPtr<StyleRuleBase
             groupRule = downcast<StyleRuleSupports>(rule.get());
         if (!groupRule)
             continue;
-        
+
         auto* groupChildRules = groupRule->childRulesWithoutDeferredParsing();
         if (!groupChildRules)
             count++;
@@ -1048,7 +1048,7 @@ static unsigned deferredKeyframesRulesCountForList(const Vector<RefPtr<StyleRule
                 count++;
             continue;
         }
-        
+
         StyleRuleGroup* groupRule = nullptr;
         if (is<StyleRuleMedia>(rule.get()))
             groupRule = downcast<StyleRuleMedia>(rule.get());
@@ -1056,14 +1056,14 @@ static unsigned deferredKeyframesRulesCountForList(const Vector<RefPtr<StyleRule
             groupRule = downcast<StyleRuleSupports>(rule.get());
         if (!groupRule)
             continue;
-        
+
         auto* groupChildRules = groupRule->childRulesWithoutDeferredParsing();
         if (!groupChildRules)
             continue;
-        
+
         count += deferredKeyframesRulesCountForList(*groupChildRules);
     }
-    
+
     return count;
 }
 
@@ -1136,7 +1136,7 @@ std::optional<Internals::EventThrottlingBehavior> Internals::eventThrottlingBeha
     auto behavior = document->page()->eventThrottlingBehaviorOverride();
     if (!behavior)
         return std::nullopt;
-    
+
     switch (behavior.value()) {
     case WebCore::EventThrottlingBehavior::Responsive:
         return Internals::EventThrottlingBehavior::Responsive;
@@ -1201,7 +1201,7 @@ void Internals::enableMockSpeechSynthesizer()
     SpeechSynthesis* synthesis = DOMWindowSpeechSynthesis::speechSynthesis(*document->domWindow());
     if (!synthesis)
         return;
-    
+
     synthesis->setPlatformSynthesizer(std::make_unique<PlatformSpeechSynthesizerMock>(synthesis));
 }
 
@@ -1633,7 +1633,7 @@ ExceptionOr<RefPtr<Range>> Internals::rangeForDictionaryLookupAtLocation(int x, 
         return Exception { INVALID_ACCESS_ERR };
 
     document->updateLayoutIgnorePendingStylesheets();
-    
+
     HitTestResult result = document->frame()->mainFrame().eventHandler().hitTestResultAtPoint(IntPoint(x, y));
     NSDictionary *options = nullptr;
     return DictionaryLookup::rangeAtHitTestResult(result, &options);
@@ -1789,7 +1789,7 @@ ExceptionOr<RefPtr<NodeList>> Internals::nodesFromRect(Document& document, int c
     } else {
         HitTestResult result(point, topPadding, rightPadding, bottomPadding, leftPadding);
         renderView->hitTest(request, result);
-        
+
         const HitTestResult::NodeSet& nodeSet = result.rectBasedTestResult();
         matches.reserveInitialCapacity(nodeSet.size());
         for (auto& node : nodeSet)
@@ -1910,7 +1910,7 @@ bool Internals::hasSpellingMarker(int from, int length)
 
     return document->frame()->editor().selectionStartHasMarkerFor(DocumentMarker::Spelling, from, length);
 }
-    
+
 bool Internals::hasAutocorrectedMarker(int from, int length)
 {
     Document* document = contextDocument();
@@ -2163,7 +2163,7 @@ unsigned Internals::numberOfScrollableAreas()
 
     return count;
 }
-    
+
 ExceptionOr<bool> Internals::isPageBoxVisible(int pageNumber)
 {
     Document* document = contextDocument();
@@ -2216,7 +2216,7 @@ ExceptionOr<uint64_t> Internals::layerIDForElement(Element& element)
     auto& layerModelObject = downcast<RenderLayerModelObject>(*element.renderer());
     if (!layerModelObject.layer()->isComposited())
         return Exception { NOT_FOUND_ERR };
-    
+
     auto* backing = layerModelObject.layer()->backing();
     return backing->graphicsLayer()->primaryLayerID();
 }
@@ -2285,11 +2285,11 @@ ExceptionOr<void> Internals::setElementUsesDisplayListDrawing(Element& element, 
 
     if (!element.renderer()->hasLayer())
         return Exception { INVALID_ACCESS_ERR };
-    
+
     RenderLayer* layer = downcast<RenderLayerModelObject>(element.renderer())->layer();
     if (!layer->isComposited())
         return Exception { INVALID_ACCESS_ERR };
-    
+
     layer->backing()->setUsesDisplayListDrawing(usesDisplayListDrawing);
     return { };
 }
@@ -2314,7 +2314,7 @@ ExceptionOr<void> Internals::setElementTracksDisplayListReplay(Element& element,
     RenderLayer* layer = downcast<RenderLayerModelObject>(element.renderer())->layer();
     if (!layer->isComposited())
         return Exception { INVALID_ACCESS_ERR };
-    
+
     layer->backing()->setIsTrackingDisplayListReplay(isTrackingReplay);
     return { };
 }
@@ -2554,7 +2554,7 @@ void Internals::setFooterHeight(float height)
 
     document->view()->setFooterHeight(height);
 }
-    
+
 void Internals::setTopContentInset(float contentInset)
 {
     Document* document = contextDocument();
@@ -2698,7 +2698,7 @@ ExceptionOr<unsigned> Internals::styleRecalcCount()
     Document* document = contextDocument();
     if (!document)
         return Exception { INVALID_ACCESS_ERR };
-    
+
     return document->styleRecalcCount();
 }
 
@@ -2725,7 +2725,7 @@ ExceptionOr<unsigned> Internals::compositingUpdateCount()
     Document* document = contextDocument();
     if (!document || !document->renderView())
         return Exception { INVALID_ACCESS_ERR };
-    
+
     return document->renderView()->compositor().compositingUpdateCount();
 }
 
@@ -3017,10 +3017,10 @@ ExceptionOr<void> Internals::setCaptionDisplayMode(const String& mode)
     Document* document = contextDocument();
     if (!document || !document->page())
         return Exception { INVALID_ACCESS_ERR };
-    
+
 #if ENABLE(VIDEO_TRACK)
     auto& captionPreferences = document->page()->group().captionPreferences();
-    
+
     if (equalLettersIgnoringASCIICase(mode, "automatic"))
         captionPreferences.setCaptionDisplayMode(CaptionUserPreferences::Automatic);
     else if (equalLettersIgnoringASCIICase(mode, "forcedonly"))
@@ -3085,12 +3085,12 @@ ExceptionOr<bool> Internals::isPluginUnavailabilityIndicatorObscured(Element& el
 
     return downcast<RenderEmbeddedObject>(*renderer).isReplacementObscured();
 }
-    
+
 bool Internals::isPluginSnapshotted(Element& element)
 {
     return is<HTMLPlugInElement>(element) && downcast<HTMLPlugInElement>(element).displayState() <= HTMLPlugInElement::DisplayingSnapshot;
 }
-    
+
 #if ENABLE(MEDIA_SOURCE)
 
 void Internals::initializeMockMediaSource()
@@ -3108,7 +3108,7 @@ Vector<String> Internals::bufferedSamplesForTrackID(SourceBuffer& buffer, const 
 {
     return buffer.bufferedSamplesForTrackID(trackID);
 }
-    
+
 Vector<String> Internals::enqueuedSamplesForTrackID(SourceBuffer& buffer, const AtomicString& trackID)
 {
     return buffer.enqueuedSamplesForTrackID(trackID);
@@ -3148,7 +3148,7 @@ void Internals::endMediaSessionInterruption(const String& flagsString)
 
     if (equalLettersIgnoringASCIICase(flagsString, "mayresumeplaying"))
         flags = PlatformMediaSession::MayResumePlaying;
-    
+
     PlatformMediaSessionManager::sharedManager().endInterruption(flags);
 }
 
@@ -3301,7 +3301,7 @@ ExceptionOr<void> Internals::postRemoteControlCommand(const String& commandStrin
         command = PlatformMediaSession::SeekToPlaybackPositionCommand;
     else
         return Exception { INVALID_ACCESS_ERR };
-    
+
     PlatformMediaSessionManager::sharedManager().didReceiveRemoteControlCommand(command, &parameter);
     return { };
 }
@@ -3572,12 +3572,12 @@ static void appendOffsets(StringBuilder& builder, const Vector<LayoutUnit>& snap
             builder.appendLiteral(", ");
         else
             justStarting = false;
-        
+
         builder.append(String::number(coordinate.toUnsigned()));
     }
     builder.appendLiteral(" }");
 }
-    
+
 void Internals::setPlatformMomentumScrollingPredictionEnabled(bool enabled)
 {
     ScrollingMomentumCalculator::setPlatformMomentumScrollingPredictionEnabled(enabled);
@@ -3592,13 +3592,13 @@ ExceptionOr<String> Internals::scrollSnapOffsets(Element& element)
 
     RenderBox& box = *element.renderBox();
     ScrollableArea* scrollableArea;
-    
+
     if (box.isBody()) {
         FrameView* frameView = box.frame().mainFrame().view();
         if (!frameView || !frameView->isScrollable())
             return Exception { INVALID_ACCESS_ERR };
         scrollableArea = frameView;
-        
+
     } else {
         if (!box.canBeScrolledAndHasScrollableArea())
             return Exception { INVALID_ACCESS_ERR };
@@ -3607,7 +3607,7 @@ ExceptionOr<String> Internals::scrollSnapOffsets(Element& element)
 
     if (!scrollableArea)
         return String();
-    
+
     StringBuilder result;
 
     if (auto* offsets = scrollableArea->horizontalSnapOffsets()) {
@@ -3696,7 +3696,7 @@ void Internals::setShowAllPlugins(bool show)
     Document* document = contextDocument();
     if (!document)
         return;
-    
+
     Page* page = document->page();
     if (!page)
         return;
@@ -3729,6 +3729,32 @@ bool Internals::isReadableStreamDisturbed(JSC::ExecState& state, JSValue stream)
     return returnedValue.asBoolean();
 }
 
+#if ENABLE(READABLE_BYTE_STREAM_API)
+
+JSValue Internals::cloneArrayBuffer(JSC::ExecState& state, JSValue buffer, JSValue srcByteOffset, JSValue srcLength)
+{
+    JSGlobalObject* globalObject = state.vmEntryGlobalObject();
+    JSVMClientData* clientData = static_cast<JSVMClientData*>(state.vm().clientData);
+    const Identifier& privateName = clientData->builtinNames().cloneArrayBufferPrivateName();
+    JSValue value;
+    PropertySlot propertySlot(value, PropertySlot::InternalMethodType::Get);
+    globalObject->methodTable()->getOwnPropertySlot(globalObject, &state, privateName, propertySlot);
+    value = propertySlot.getValue(&state, privateName);
+    ASSERT(value.isFunction());
+
+    JSObject* function = value.getObject();
+    CallData callData;
+    CallType callType = JSC::getCallData(function, callData);
+    ASSERT(callType != JSC::CallType::None);
+    MarkedArgumentBuffer arguments;
+    arguments.append(buffer);
+    arguments.append(srcByteOffset);
+    arguments.append(srcLength);
+
+    return JSC::call(&state, function, callType, callData, JSC::jsUndefined(), arguments);
+}
+
+#endif
 #endif
 
 String Internals::resourceLoadStatisticsForOrigin(const String& origin)
