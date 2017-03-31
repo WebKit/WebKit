@@ -1,3 +1,17 @@
+2017-03-31  Oleksandr Skachkov  <gskachkov@gmail.com>
+
+        String.prototype.replace incorrectly applies "special replacement parameters" when passed a function
+        https://bugs.webkit.org/show_bug.cgi?id=170151
+
+        Reviewed by Saam Barati.
+
+        * js/script-tests/string_replace_function.js: Added.
+        * js/script-tests/string_replace_regexp.js: Renamed from LayoutTests/js/script-tests/string_replace.js.
+        * js/string_replace_function-expected.txt: Added.
+        * js/string_replace_function.html: Copied from LayoutTests/js/string_replace.html.
+        * js/string_replace_regexp-expected.txt: Renamed from LayoutTests/js/string_replace-expected.txt.
+        * js/string_replace_regexp.html: Renamed from LayoutTests/js/string_replace.html.
+
 2017-03-31  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Update W3C Test Suite
