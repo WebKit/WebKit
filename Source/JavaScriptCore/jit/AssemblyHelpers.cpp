@@ -582,7 +582,7 @@ void AssemblyHelpers::emitRandomThunk(VM& vm, GPRReg scratch0, GPRReg scratch1, 
 void AssemblyHelpers::restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer(VM& vm)
 {
 #if NUMBER_OF_CALLEE_SAVES_REGISTERS > 0
-    RegisterAtOffsetList* allCalleeSaves = vm.getAllCalleeSaveRegisterOffsets();
+    RegisterAtOffsetList* allCalleeSaves = VM::getAllCalleeSaveRegisterOffsets();
     RegisterSet dontRestoreRegisters = RegisterSet::stackRegisters();
     unsigned registerCount = allCalleeSaves->size();
 
@@ -870,6 +870,29 @@ void AssemblyHelpers::debugCall(VM& vm, V_DebugOperation_EPP function, void* arg
         load32(buffer + i, GPRInfo::toRegister(i));
 #endif
     }
+}
+
+void AssemblyHelpers::copyCalleeSavesToVMEntryFrameCalleeSavesBufferImpl(GPRReg calleeSavesBuffer)
+{
+#if NUMBER_OF_CALLEE_SAVES_REGISTERS > 0
+    addPtr(TrustedImm32(VMEntryFrame::calleeSaveRegistersBufferOffset()), calleeSavesBuffer);
+
+    RegisterAtOffsetList* allCalleeSaves = VM::getAllCalleeSaveRegisterOffsets();
+    RegisterSet dontCopyRegisters = RegisterSet::stackRegisters();
+    unsigned registerCount = allCalleeSaves->size();
+    
+    for (unsigned i = 0; i < registerCount; i++) {
+        RegisterAtOffset entry = allCalleeSaves->at(i);
+        if (dontCopyRegisters.get(entry.reg()))
+            continue;
+        if (entry.reg().isGPR())
+            storePtr(entry.reg().gpr(), Address(calleeSavesBuffer, entry.offset()));
+        else
+            storeDouble(entry.reg().fpr(), Address(calleeSavesBuffer, entry.offset()));
+    }
+#else
+    UNUSED_PARAM(calleeSavesBuffer);
+#endif
 }
 
 } // namespace JSC

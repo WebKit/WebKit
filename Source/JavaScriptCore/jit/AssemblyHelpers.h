@@ -333,27 +333,23 @@ public:
 #endif
     }
 
+    // If you use this, be aware that vmGPR will get trashed.
+    void copyCalleeSavesToVMEntryFrameCalleeSavesBuffer(GPRReg vmGPR)
+    {
+#if NUMBER_OF_CALLEE_SAVES_REGISTERS > 0
+        loadPtr(Address(vmGPR, VM::topVMEntryFrameOffset()), vmGPR);
+        copyCalleeSavesToVMEntryFrameCalleeSavesBufferImpl(vmGPR);
+#else
+        UNUSED_PARAM(vmGPR);
+#endif
+    }
+
     void copyCalleeSavesToVMEntryFrameCalleeSavesBuffer(VM& vm, const TempRegisterSet& usedRegisters = { RegisterSet::stubUnavailableRegisters() })
     {
 #if NUMBER_OF_CALLEE_SAVES_REGISTERS > 0
         GPRReg temp1 = usedRegisters.getFreeGPR(0);
-
         loadPtr(&vm.topVMEntryFrame, temp1);
-        addPtr(TrustedImm32(VMEntryFrame::calleeSaveRegistersBufferOffset()), temp1);
-
-        RegisterAtOffsetList* allCalleeSaves = vm.getAllCalleeSaveRegisterOffsets();
-        RegisterSet dontCopyRegisters = RegisterSet::stackRegisters();
-        unsigned registerCount = allCalleeSaves->size();
-        
-        for (unsigned i = 0; i < registerCount; i++) {
-            RegisterAtOffset entry = allCalleeSaves->at(i);
-            if (dontCopyRegisters.get(entry.reg()))
-                continue;
-            if (entry.reg().isGPR())
-                storePtr(entry.reg().gpr(), Address(temp1, entry.offset()));
-            else
-                storeDouble(entry.reg().fpr(), Address(temp1, entry.offset()));
-        }
+        copyCalleeSavesToVMEntryFrameCalleeSavesBufferImpl(temp1);
 #else
         UNUSED_PARAM(vm);
         UNUSED_PARAM(usedRegisters);
@@ -376,7 +372,7 @@ public:
         loadPtr(&vm.topVMEntryFrame, temp1);
         addPtr(TrustedImm32(VMEntryFrame::calleeSaveRegistersBufferOffset()), temp1);
 
-        RegisterAtOffsetList* allCalleeSaves = vm.getAllCalleeSaveRegisterOffsets();
+        RegisterAtOffsetList* allCalleeSaves = VM::getAllCalleeSaveRegisterOffsets();
         RegisterAtOffsetList* currentCalleeSaves = codeBlock()->calleeSaveRegisters();
         RegisterSet dontCopyRegisters = RegisterSet::stackRegisters();
         unsigned registerCount = allCalleeSaves->size();
@@ -1591,6 +1587,8 @@ public:
 #endif
 
 protected:
+    void copyCalleeSavesToVMEntryFrameCalleeSavesBufferImpl(GPRReg calleeSavesBuffer);
+
     CodeBlock* m_codeBlock;
     CodeBlock* m_baselineCodeBlock;
 

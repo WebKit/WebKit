@@ -33,6 +33,7 @@
 #include "VM.h"
 #include "WasmExceptionType.h"
 #include "WasmMemory.h"
+#include "WasmThunks.h"
 
 #include <signal.h>
 #include <wtf/Lock.h>
@@ -49,7 +50,7 @@ static struct sigaction oldSigBusHandler;
 static struct sigaction oldSigSegvHandler;
 static bool fastHandlerInstalled { false };
 static StaticLock codeLocationsLock;
-static LazyNeverDestroyed<HashSet<std::tuple<VM*, void*, void*>>> codeLocations; // (vm, start, end)
+static LazyNeverDestroyed<HashSet<std::tuple<void*, void*>>> codeLocations; // (start, end)
 
 static void trapHandler(int signal, siginfo_t* sigInfo, void* ucontext)
 {
@@ -81,14 +82,13 @@ static void trapHandler(int signal, siginfo_t* sigInfo, void* ucontext)
             dataLogLnIf(verbose, "found active fast memory for faulting address");
             LockHolder locker(codeLocationsLock);
             for (auto range : codeLocations.get()) {
-                VM* vm;
                 void* start;
                 void* end;
-                std::tie(vm, start, end) = range;
+                std::tie(start, end) = range;
                 dataLogLnIf(verbose, "function start: ", RawPointer(start), " end: ", RawPointer(end));
                 if (start <= faultingInstruction && faultingInstruction < end) {
                     dataLogLnIf(verbose, "found match");
-                    MacroAssemblerCodeRef exceptionStub = vm->jitStubs->existingCTIStub(throwExceptionFromWasmThunkGenerator);
+                    MacroAssemblerCodeRef exceptionStub = Thunks::singleton().existingStub(throwExceptionFromWasmThunkGenerator);
                     // If for whatever reason we don't have a stub then we should just treat this like a regular crash.
                     if (!exceptionStub)
                         break;
@@ -108,20 +108,20 @@ static void trapHandler(int signal, siginfo_t* sigInfo, void* ucontext)
         sigaction(signal, &oldSigSegvHandler, nullptr);
 }
 
-void registerCode(VM& vm, void* start, void* end)
+void registerCode(void* start, void* end)
 {
     if (!fastMemoryEnabled())
         return;
     LockHolder locker(codeLocationsLock);
-    codeLocations->add(std::make_tuple(&vm, start, end));
+    codeLocations->add(std::make_tuple(start, end));
 }
 
-void unregisterCode(VM& vm, void* start, void* end)
+void unregisterCode(void* start, void* end)
 {
     if (!fastMemoryEnabled())
         return;
     LockHolder locker(codeLocationsLock);
-    codeLocations->remove(std::make_tuple(&vm, start, end));
+    codeLocations->remove(std::make_tuple(start, end));
 }
 
 bool fastMemoryEnabled()

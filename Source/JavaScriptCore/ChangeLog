@@ -1,3 +1,77 @@
+2017-03-30  Saam Barati  <sbarati@apple.com>
+
+        WebAssembly: When Wasm calls to C, it should use Wasm::Context* instead of ExecState* to get VM
+        https://bugs.webkit.org/show_bug.cgi?id=170185
+
+        Reviewed by Michael Saboff.
+
+        This is one more step in the direction of PIC-ified Wasm.
+        When we lift WasmCallee above VM, we will no longer be
+        able to get VM from ExecState*. This patch ensures that
+        we don't do that from within the Wasm runtime. Instead,
+        we use the Wasm::Context* to get the VM.
+
+        This patch also adds a new class, Wasm::Thunks. There
+        is a single Wasm::Thunks that lives in the process. It
+        is responsible for generating a thunk that Wasm relies on.
+        The only such thunk right now is the exception throwing
+        thunk.
+
+        This patch also rids WasmFaultSignalHandler from any knowledge
+        of VM. Previously, it relied on VM to get the exception handling
+        thunk.
+
+        The only part of the Wasm runtime that will be allowed
+        to get VM& from ExecState will be WasmBinding. In the
+        future, we plan to keep the calls out to JS to keep
+        a JSCell as the callee.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGOSREntry.cpp:
+        (JSC::DFG::prepareOSREntry):
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileStub):
+        * interpreter/Interpreter.cpp:
+        (JSC::UnwindFunctor::copyCalleeSavesToVMEntryFrameCalleeSavesBuffer):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer):
+        (JSC::AssemblyHelpers::copyCalleeSavesToVMEntryFrameCalleeSavesBufferImpl):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::copyCalleeSavesToVMEntryFrameCalleeSavesBuffer):
+        * jit/ThunkGenerators.cpp:
+        (JSC::throwExceptionFromWasmThunkGenerator): Deleted.
+        * jit/ThunkGenerators.h:
+        * runtime/InitializeThreading.cpp:
+        (JSC::initializeThreading):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        (JSC::VM::getAllCalleeSaveRegisterOffsets):
+        * runtime/VM.h:
+        (JSC::VM::topVMEntryFrameOffset):
+        (JSC::VM::getAllCalleeSaveRegisterOffsets): Deleted.
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::emitExceptionCheck):
+        * wasm/WasmFaultSignalHandler.cpp:
+        (JSC::Wasm::trapHandler):
+        * wasm/WasmMemory.cpp:
+        (JSC::Wasm::tryGetFastMemory):
+        * wasm/WasmThunks.cpp: Added.
+        (JSC::Wasm::throwExceptionFromWasmThunkGenerator):
+        (JSC::Wasm::Thunks::initialize):
+        (JSC::Wasm::Thunks::singleton):
+        (JSC::Wasm::Thunks::stub):
+        (JSC::Wasm::Thunks::existingStub):
+        * wasm/WasmThunks.h: Added.
+        * wasm/js/JSWebAssemblyInstance.cpp:
+        (JSC::JSWebAssemblyInstance::JSWebAssemblyInstance):
+        * wasm/js/JSWebAssemblyInstance.h:
+        (JSC::JSWebAssemblyInstance::offsetOfVM):
+        * wasm/js/JSWebAssemblyMemory.cpp:
+        (JSC::JSWebAssemblyMemory::grow):
+        * wasm/js/JSWebAssemblyMemory.h:
+        * wasm/js/WebAssemblyMemoryPrototype.cpp:
+        (JSC::webAssemblyMemoryProtoFuncGrow):
+
 2017-03-30  Mark Lam  <mark.lam@apple.com>
 
         IntlObject should not be using JSArray::initializeIndex().

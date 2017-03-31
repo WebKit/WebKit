@@ -947,6 +947,7 @@ set(JavaScriptCore_SOURCES
     wasm/WasmPlan.cpp
     wasm/WasmOpcodeOrigin.cpp
     wasm/WasmSignature.cpp
+    wasm/WasmThunks.cpp
     wasm/WasmValidate.cpp
     wasm/WasmWorklist.cpp
 

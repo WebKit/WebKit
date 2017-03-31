@@ -51,6 +51,7 @@ Structure* JSWebAssemblyInstance::createStructure(VM& vm, JSGlobalObject* global
 
 JSWebAssemblyInstance::JSWebAssemblyInstance(VM& vm, Structure* structure, unsigned numImportFunctions)
     : Base(vm, structure)
+    , m_vm(&vm)
     , m_numImportFunctions(numImportFunctions)
 {
     memset(importFunctions(), 0, m_numImportFunctions * sizeof(WriteBarrier<JSObject>));

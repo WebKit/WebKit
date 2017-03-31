@@ -39,6 +39,7 @@
 #include "Options.h"
 #include "StructureIDTable.h"
 #include "SuperSampler.h"
+#include "WasmThunks.h"
 #include "WriteBarrier.h"
 #include <mutex>
 #include <wtf/MainThread.h>
@@ -70,6 +71,10 @@ void initializeThreading()
         initializeSuperSampler();
         WTFThreadData& threadData = wtfThreadData();
         threadData.setSavedLastStackTop(threadData.stack().origin());
+
+#if ENABLE(WEBASSEMBLY)
+        Wasm::Thunks::initialize();
+#endif
     });
 }
 

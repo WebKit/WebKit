@@ -456,9 +456,7 @@ public:
         return jitStubs->ctiStub(this, generator);
     }
     
-    std::unique_ptr<RegisterAtOffsetList> allCalleeSaveRegisterOffsets;
-    
-    RegisterAtOffsetList* getAllCalleeSaveRegisterOffsets() { return allCalleeSaveRegisterOffsets.get(); }
+    static RegisterAtOffsetList* getAllCalleeSaveRegisterOffsets();
 
 #endif // ENABLE(JIT)
     std::unique_ptr<CommonSlowPaths::ArityCheckData> arityCheckData;
@@ -481,6 +479,11 @@ public:
     static ptrdiff_t targetMachinePCForThrowOffset()
     {
         return OBJECT_OFFSETOF(VM, targetMachinePCForThrow);
+    }
+
+    static ptrdiff_t topVMEntryFrameOffset()
+    {
+        return OBJECT_OFFSETOF(VM, topVMEntryFrame);
     }
 
     void restorePreviousException(Exception* exception) { setException(exception); }

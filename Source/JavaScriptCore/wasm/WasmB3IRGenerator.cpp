@@ -57,6 +57,7 @@
 #include "WasmFunctionParser.h"
 #include "WasmMemory.h"
 #include "WasmOpcodeOrigin.h"
+#include "WasmThunks.h"
 #include <wtf/Optional.h>
 
 void dumpProcedure(void* ptr)
@@ -161,7 +162,7 @@ public:
             return fail(__VA_ARGS__);             \
     } while (0)
 
-    B3IRGenerator(VM&, const ModuleInformation&, Procedure&, WasmInternalFunction*, Vector<UnlinkedWasmToWasmCall>&, MemoryMode);
+    B3IRGenerator(const ModuleInformation&, Procedure&, WasmInternalFunction*, Vector<UnlinkedWasmToWasmCall>&, MemoryMode);
 
     PartialResult WARN_UNUSED_RETURN addArguments(const Signature*);
     PartialResult WARN_UNUSED_RETURN addLocal(Type, uint32_t);
@@ -232,7 +233,6 @@ private:
 
     Origin origin();
 
-    VM& m_vm;
     FunctionParser<B3IRGenerator>* m_parser;
     const ModuleInformation& m_info;
     MemoryMode m_mode;
@@ -302,9 +302,8 @@ void B3IRGenerator::restoreWasmContext(Procedure& proc, BasicBlock* block, Value
     });
 }
 
-B3IRGenerator::B3IRGenerator(VM& vm, const ModuleInformation& info, Procedure& procedure, WasmInternalFunction* compilation, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, MemoryMode mode)
-    : m_vm(vm)
-    , m_info(info)
+B3IRGenerator::B3IRGenerator(const ModuleInformation& info, Procedure& procedure, WasmInternalFunction* compilation, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, MemoryMode mode)
+    : m_info(info)
     , m_mode(mode)
     , m_proc(procedure)
     , m_unlinkedWasmToWasmCalls(unlinkedWasmToWasmCalls)
@@ -376,9 +375,8 @@ void B3IRGenerator::emitExceptionCheck(CCallHelpers& jit, ExceptionType type)
     jit.move(CCallHelpers::TrustedImm32(static_cast<uint32_t>(type)), GPRInfo::argumentGPR1);
     auto jumpToExceptionStub = jit.jump();
 
-    VM* vm = &m_vm;
-    jit.addLinkTask([vm, jumpToExceptionStub] (LinkBuffer& linkBuffer) {
-        linkBuffer.link(jumpToExceptionStub, CodeLocationLabel(vm->getCTIStub(throwExceptionFromWasmThunkGenerator).code()));
+    jit.addLinkTask([jumpToExceptionStub] (LinkBuffer& linkBuffer) {
+        linkBuffer.link(jumpToExceptionStub, CodeLocationLabel(Thunks::singleton().stub(throwExceptionFromWasmThunkGenerator).code()));
     });
 }
 
@@ -443,8 +441,8 @@ auto B3IRGenerator::addUnreachable() -> PartialResult
 
 auto B3IRGenerator::addGrowMemory(ExpressionType delta, ExpressionType& result) -> PartialResult
 {
-    int32_t (*growMemory) (ExecState*, JSWebAssemblyInstance*, int32_t) = [] (ExecState* exec, JSWebAssemblyInstance* wasmContext, int32_t delta) -> int32_t {
-        VM& vm = exec->vm();
+    int32_t (*growMemory) (Context*, int32_t) = [] (Context* wasmContext, int32_t delta) -> int32_t {
+        VM& vm = *wasmContext->vm();
         auto scope = DECLARE_THROW_SCOPE(vm);
 
         JSWebAssemblyMemory* wasmMemory = wasmContext->memory();
@@ -453,7 +451,9 @@ auto B3IRGenerator::addGrowMemory(ExpressionType delta, ExpressionType& result) 
             return -1;
 
         bool shouldThrowExceptionsOnFailure = false;
-        PageCount result = wasmMemory->grow(exec, static_cast<uint32_t>(delta), shouldThrowExceptionsOnFailure);
+        // grow() does not require ExecState* if it doesn't throw exceptions.
+        ExecState* exec = nullptr; 
+        PageCount result = wasmMemory->grow(vm, exec, static_cast<uint32_t>(delta), shouldThrowExceptionsOnFailure);
         RELEASE_ASSERT(!scope.exception());
         if (!result)
             return -1;
@@ -463,7 +463,7 @@ auto B3IRGenerator::addGrowMemory(ExpressionType delta, ExpressionType& result) 
 
     result = m_currentBlock->appendNew<CCallValue>(m_proc, Int32, origin(),
         m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), bitwise_cast<void*>(growMemory)),
-        m_currentBlock->appendNew<B3::Value>(m_proc, B3::FramePointer, origin()), m_instanceValue, delta);
+        m_instanceValue, delta);
 
     restoreWebAssemblyGlobalState(m_info.memory, m_instanceValue, m_proc, m_currentBlock);
 
@@ -1277,7 +1277,7 @@ Expected<std::unique_ptr<WasmInternalFunction>, String> parseAndCompile(VM& vm, 
             out.print("Wasm: ", bitwise_cast<OpcodeOrigin>(origin));
     });
 
-    B3IRGenerator context(vm, info, procedure, result.get(), unlinkedWasmToWasmCalls, mode);
+    B3IRGenerator context(info, procedure, result.get(), unlinkedWasmToWasmCalls, mode);
     FunctionParser<B3IRGenerator> parser(&vm, context, functionStart, functionLength, signature, info, moduleSignatureIndicesToUniquedSignatureIndices);
     WASM_FAIL_IF_HELPER_FAILS(parser.parse());
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,45 +27,29 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "JSDestructibleObject.h"
-#include "JSObject.h"
-#include "WasmMemory.h"
-#include <wtf/RefPtr.h>
+#include "MacroAssemblerCodeRef.h"
 
-namespace JSC {
+namespace JSC { namespace Wasm {
 
-class ArrayBuffer;
-class JSArrayBuffer;
+MacroAssemblerCodeRef throwExceptionFromWasmThunkGenerator();
 
-class JSWebAssemblyMemory : public JSDestructibleObject {
+typedef MacroAssemblerCodeRef (*ThunkGenerator)();
+
+class Thunks {
 public:
-    typedef JSDestructibleObject Base;
+    static void initialize();
+    static Thunks& singleton();
 
-    static JSWebAssemblyMemory* create(VM&, Structure*, Ref<Wasm::Memory>&&);
-    static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
-
-    DECLARE_EXPORT_INFO;
-
-    Wasm::Memory& memory() { return m_memory.get(); }
-    JSArrayBuffer* buffer(VM& vm, JSGlobalObject*);
-    Wasm::PageCount grow(VM&, ExecState*, uint32_t delta, bool shouldThrowExceptionsOnFailure);
-
-    static ptrdiff_t offsetOfMemory() { return OBJECT_OFFSETOF(JSWebAssemblyMemory, m_memoryBase); }
-    static ptrdiff_t offsetOfSize() { return OBJECT_OFFSETOF(JSWebAssemblyMemory, m_memorySize); }
+    MacroAssemblerCodeRef stub(ThunkGenerator);
+    MacroAssemblerCodeRef existingStub(ThunkGenerator);
 
 private:
-    JSWebAssemblyMemory(VM&, Structure*, Ref<Wasm::Memory>&&);
-    void finishCreation(VM&);
-    static void destroy(JSCell*);
-    static void visitChildren(JSCell*, SlotVisitor&);
+    Thunks() = default;
 
-    void* m_memoryBase;
-    size_t m_memorySize;
-    Ref<Wasm::Memory> m_memory;
-    WriteBarrier<JSArrayBuffer> m_bufferWrapper;
-    RefPtr<ArrayBuffer> m_buffer;
+    HashMap<ThunkGenerator, MacroAssemblerCodeRef> m_stubs;
+    Lock m_lock;
 };
 
-} // namespace JSC
+} } // namespace JSC::Wasm
 
 #endif // ENABLE(WEBASSEMBLY)

@@ -33,12 +33,9 @@
 #include "JSArray.h"
 #include "JSBoundFunction.h"
 #include "JSCInlines.h"
-#include "JSWebAssemblyInstance.h"
-#include "JSWebAssemblyRuntimeError.h"
 #include "MathCommon.h"
 #include "MaxFrameExtentForSlowPathCall.h"
 #include "SpecializedThunkJIT.h"
-#include "WasmExceptionType.h"
 #include <wtf/InlineASM.h>
 #include <wtf/StringPrintStream.h>
 #include <wtf/text/StringImpl.h>
@@ -1132,47 +1129,6 @@ MacroAssemblerCodeRef boundThisNoArgsFunctionCallGenerator(VM* vm)
     return FINALIZE_CODE(
         linkBuffer, ("Specialized thunk for bound function calls with no arguments"));
 }
-
-#if ENABLE(WEBASSEMBLY)
-MacroAssemblerCodeRef throwExceptionFromWasmThunkGenerator(VM* vm)
-{
-    CCallHelpers jit;
-
-    // The thing that jumps here must move ExceptionType into the argumentGPR1 and jump here.
-    // We're allowed to use temp registers here, but not callee saves.
-    {
-        RegisterSet usedRegisters = RegisterSet::stubUnavailableRegisters();
-        usedRegisters.set(GPRInfo::argumentGPR1);
-        jit.copyCalleeSavesToVMEntryFrameCalleeSavesBuffer(*vm, usedRegisters);
-    }
-
-    jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
-    jit.loadWasmContext(GPRInfo::argumentGPR2);
-    CCallHelpers::Call call = jit.call();
-    jit.jumpToExceptionHandler(*vm);
-
-    void (*throwWasmException)(ExecState*, Wasm::ExceptionType, JSWebAssemblyInstance*) = [] (ExecState* exec, Wasm::ExceptionType type, JSWebAssemblyInstance* wasmContext) {
-        VM* vm = &exec->vm();
-        NativeCallFrameTracer tracer(vm, exec);
-
-        {
-            auto throwScope = DECLARE_THROW_SCOPE(*vm);
-            JSGlobalObject* globalObject = wasmContext->globalObject();
-
-            JSWebAssemblyRuntimeError* error = JSWebAssemblyRuntimeError::create(exec, *vm, globalObject->WebAssemblyRuntimeErrorStructure(), Wasm::errorMessageForExceptionType(type));
-            throwException(exec, throwScope, error);
-        }
-
-        genericUnwind(vm, exec);
-        ASSERT(!!vm->callFrameForCatch);
-    };
-
-    LinkBuffer linkBuffer(jit, GLOBAL_THUNK_ID);
-    linkBuffer.link(call, throwWasmException);
-    return FINALIZE_CODE(
-        linkBuffer, ("Throw exception from Wasm"));
-}
-#endif // ENABLE(WEBASSEMBLY)
 
 } // namespace JSC
 

@@ -31,8 +31,8 @@ class VM;
 
 namespace Wasm {
 
-void registerCode(VM&, void* start, void* end);
-void unregisterCode(VM&, void* start, void* end);
+void registerCode(void* start, void* end);
+void unregisterCode(void* start, void* end);
 
 bool fastMemoryEnabled();
 JS_EXPORT_PRIVATE void enableFastMemory();

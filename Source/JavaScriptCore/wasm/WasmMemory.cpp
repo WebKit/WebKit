@@ -30,6 +30,7 @@
 
 #include "VM.h"
 #include "WasmFaultSignalHandler.h"
+#include "WasmThunks.h"
 
 #include <wtf/HexNumber.h>
 #include <wtf/NeverDestroyed.h>
@@ -131,7 +132,7 @@ inline bool tryGetFastMemory(VM& vm, void*& memory, size_t& mappedCapacity, Memo
         return fail();
 
     // We need to be sure we have a stub prior to running code.
-    if (UNLIKELY(!vm.getCTIStub(throwExceptionFromWasmThunkGenerator).size()))
+    if (UNLIKELY(!Thunks::singleton().stub(throwExceptionFromWasmThunkGenerator)))
         return fail();
 
     ASSERT(allocatedFastMemories <= maxFastMemories);

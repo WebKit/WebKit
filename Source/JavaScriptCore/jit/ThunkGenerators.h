@@ -64,10 +64,5 @@ MacroAssemblerCodeRef randomThunkGenerator(VM*);
 MacroAssemblerCodeRef truncThunkGenerator(VM*);
 
 MacroAssemblerCodeRef boundThisNoArgsFunctionCallGenerator(VM*);
-
-#if ENABLE(WEBASSEMBLY)
-MacroAssemblerCodeRef throwExceptionFromWasmThunkGenerator(VM*);
-#endif
-
 }
 #endif // ENABLE(JIT)
