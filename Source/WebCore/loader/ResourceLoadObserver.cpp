@@ -70,7 +70,8 @@ void ResourceLoadObserver::setStatisticsStore(Ref<ResourceLoadStatisticsStore>&&
 
 void ResourceLoadObserver::clearInMemoryAndPersistentStore()
 {
-    m_store->clearInMemoryAndPersistent();
+    if (m_store)
+        m_store->clearInMemoryAndPersistent();
 }
 
 void ResourceLoadObserver::clearInMemoryAndPersistentStore(std::chrono::system_clock::time_point modifiedSince)
