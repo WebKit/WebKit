@@ -1,3 +1,14 @@
+2017-03-31  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix WTR crashes in GTK+ port after r214413.
+
+        Fixes: http/tests/ssl/upgrade-origin-usage.html
+               http/tests/websocket/tests/hybi/network-process-crash-error.html
+               http/tests/websocket/tests/hybi/simple-wss.html
+
+        * WebKitTestRunner/gtk/TestControllerGtk.cpp:
+        (WTR::TestController::platformContext): Return the context.
+
 2017-03-30  Sam Weinig  <sam@webkit.org>
 
         Expose the WKView SPI, _prepareForMoveToWindow:withCompletionHandler as WKWebView SPI

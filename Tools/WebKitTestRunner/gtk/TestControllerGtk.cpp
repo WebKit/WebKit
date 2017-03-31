@@ -135,7 +135,7 @@ void TestController::runModal(PlatformWebView*)
 
 WKContextRef TestController::platformContext()
 {
-    return nullptr;
+    return m_context.get();
 }
 
 const char* TestController::platformLibraryPathForTesting()
