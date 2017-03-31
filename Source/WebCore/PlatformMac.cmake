@@ -118,6 +118,7 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/mediastream/mac"
     "${WEBCORE_DIR}/platform/network/cocoa"
     "${WEBCORE_DIR}/platform/network/cf"
+    "${WEBCORE_DIR}/platform/network/ios"
     "${WEBCORE_DIR}/platform/network/mac"
     "${WEBCORE_DIR}/platform/text/cf"
     "${WEBCORE_DIR}/platform/text/mac"

@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if USE(QUICK_LOOK)
+
 #include "PreviewLoaderClient.h"
 #include <wtf/NeverDestroyed.h>
 
@@ -47,3 +49,5 @@ private:
 };
 
 } // namespace WebCore
+
+#endif // USE(QUICK_LOOK)

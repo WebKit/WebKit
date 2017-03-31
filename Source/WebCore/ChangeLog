@@ -1,3 +1,13 @@
+2017-03-31  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Mac cmake buildfix after r214666
+        https://bugs.webkit.org/show_bug.cgi?id=170342
+
+        Unreviewed buildfix.
+
+        * PlatformMac.cmake:
+        * testing/MockPreviewLoaderClient.h:
+
 2017-03-31  Sam Weinig  <sam@webkit.org>
 
         Remove unneeded custom constructors include.
