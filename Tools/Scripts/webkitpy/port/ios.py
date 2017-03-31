@@ -131,7 +131,8 @@ class IOSPort(DarwinPort):
         for i in xrange(self.child_processes()):
             device = self.device_for_worker_number(i)
             try:
-                self.device_for_worker_number(i).finished_testing()
+                if device:
+                    device.finished_testing()
             except BaseException as e:
                 trace = traceback.format_exc()
                 if isinstance(e, Exception):

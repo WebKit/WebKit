@@ -1,3 +1,13 @@
+2017-03-31  Jonathan Bedard  <jbedard@apple.com>
+
+        Unreviewed fix after r214569
+        https://bugs.webkit.org/show_bug.cgi?id=170255
+
+        Unreviewed infrastructure fix.
+
+        * Scripts/webkitpy/port/ios.py:
+        (IOSPort.clean_up_test_run): Check if the device is defined before teardown.
+
 2017-03-31  Andy Estes  <aestes@apple.com>
 
         REGRESSION (r202472): Data Detection overwrites existing links in detected ranges
