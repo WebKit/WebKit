@@ -1,5 +1,12 @@
 2017-03-31  Alexey Proskuryakov  <ap@apple.com>
 
+        Mark fast/mediastream/MediaStream-page-muted.html as flaky for
+        https://bugs.webkit.org/show_bug.cgi?id=170355
+
+        * TestExpectations:
+
+2017-03-31  Alexey Proskuryakov  <ap@apple.com>
+
         Correction for the previous change - this is an image failure.
 
         * platform/mac-wk2/TestExpectations:

@@ -1243,3 +1243,6 @@ webkit.org/b/168409 media/modern-media-controls/airplay-button/airplay-button.ht
 webkit.org/b/169625 imported/w3c/web-platform-tests/cors/status.htm [ Pass Failure ]
 
 webkit.org/b/170130 fast/events/before-unload-adopt-subframe-to-outside.html [ Pass Timeout ]
+
+[ Release ] webkit.org/b/170355 fast/mediastream/MediaStream-page-muted.html [ Pass Timeout ]
+[ Debug ] webkit.org/b/170355 fast/mediastream/MediaStream-page-muted.html [ Pass Crash ]
