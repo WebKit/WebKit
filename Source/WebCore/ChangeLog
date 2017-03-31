@@ -1,3 +1,20 @@
+2017-03-31  Eric Carlson  <eric.carlson@apple.com>
+
+        Incoming video source doesn't propogate frame rotation
+        https://bugs.webkit.org/show_bug.cgi?id=170364
+
+        Reviewed by Youenn Fablet.
+
+        No new tests, the mock video source doesn't support rotation. Test will be added when
+        this is fixed in https://bugs.webkit.org/show_bug.cgi?id=169822. The changes were 
+        verified manually.
+
+        * platform/mediastream/mac/RealtimeIncomingVideoSource.cpp:
+        (WebCore::RealtimeIncomingVideoSource::OnFrame): Convert frame rotation to sample
+        orientation and swap width and height when necessary.
+        (WebCore::RealtimeIncomingVideoSource::processNewSample):
+        * platform/mediastream/mac/RealtimeIncomingVideoSource.h:
+
 2017-03-31  Chris Dumez  <cdumez@apple.com>
 
         Possible null dereference under SourceBuffer::sourceBufferPrivateDidReceiveSample()

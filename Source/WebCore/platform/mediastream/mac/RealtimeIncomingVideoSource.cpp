@@ -170,13 +170,32 @@ void RealtimeIncomingVideoSource::OnFrame(const webrtc::VideoFrame& frame)
 
     unsigned width = frame.width();
     unsigned height = frame.height();
+
+    MediaSample::VideoOrientation orientation;
+    switch (frame.rotation()) {
+    case webrtc::kVideoRotation_0:
+        orientation = MediaSample::VideoOrientation::Portrait;
+        break;
+    case webrtc::kVideoRotation_180:
+        orientation = MediaSample::VideoOrientation::PortraitUpsideDown;
+        break;
+    case webrtc::kVideoRotation_90:
+        orientation = MediaSample::VideoOrientation::LandscapeRight;
+        std::swap(width, height);
+        break;
+    case webrtc::kVideoRotation_270:
+        orientation = MediaSample::VideoOrientation::LandscapeLeft;
+        std::swap(width, height);
+        break;
+    }
+
     RefPtr<RealtimeIncomingVideoSource> protectedThis(this);
-    callOnMainThread([protectedThis = WTFMove(protectedThis), sample = WTFMove(sample), width, height] {
-        protectedThis->processNewSample(sample.get(), width, height);
+    callOnMainThread([protectedThis = WTFMove(protectedThis), sample = WTFMove(sample), width, height, orientation] {
+        protectedThis->processNewSample(sample.get(), width, height, orientation);
     });
 }
 
-void RealtimeIncomingVideoSource::processNewSample(CMSampleBufferRef sample, unsigned width, unsigned height)
+void RealtimeIncomingVideoSource::processNewSample(CMSampleBufferRef sample, unsigned width, unsigned height, MediaSample::VideoOrientation orientation)
 {
     m_buffer = sample;
     if (width != m_currentSettings.width() || height != m_currentSettings.height()) {
@@ -185,7 +204,7 @@ void RealtimeIncomingVideoSource::processNewSample(CMSampleBufferRef sample, uns
         settingsDidChange();
     }
 
-    videoSampleAvailable(MediaSampleAVFObjC::create(sample));
+    videoSampleAvailable(MediaSampleAVFObjC::create(sample, orientation));
 }
 
 RefPtr<RealtimeMediaSourceCapabilities> RealtimeIncomingVideoSource::capabilities() const
