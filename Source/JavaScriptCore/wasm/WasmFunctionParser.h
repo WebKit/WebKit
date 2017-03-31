@@ -46,7 +46,7 @@ public:
     typedef typename Context::ControlType ControlType;
     typedef typename Context::ExpressionList ExpressionList;
 
-    FunctionParser(VM*, Context&, const uint8_t* functionStart, size_t functionLength, const Signature&, const ModuleInformation&, const Vector<SignatureIndex>&);
+    FunctionParser(Context&, const uint8_t* functionStart, size_t functionLength, const Signature&, const ModuleInformation&, const Vector<SignatureIndex>&);
 
     Result WARN_UNUSED_RETURN parse();
 
@@ -95,8 +95,8 @@ private:
 };
 
 template<typename Context>
-FunctionParser<Context>::FunctionParser(VM* vm, Context& context, const uint8_t* functionStart, size_t functionLength, const Signature& signature, const ModuleInformation& info, const Vector<SignatureIndex>& moduleSignatureIndicesToUniquedSignatureIndices)
-    : Parser(vm, functionStart, functionLength)
+FunctionParser<Context>::FunctionParser(Context& context, const uint8_t* functionStart, size_t functionLength, const Signature& signature, const ModuleInformation& info, const Vector<SignatureIndex>& moduleSignatureIndicesToUniquedSignatureIndices)
+    : Parser(functionStart, functionLength)
     , m_context(context)
     , m_signature(signature)
     , m_info(info)

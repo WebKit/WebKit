@@ -45,8 +45,8 @@ class ModuleParser : public Parser<ModuleParserResult> {
 public:
 
 
-    ModuleParser(VM* vm, const uint8_t* sourceBuffer, size_t sourceLength)
-        : Parser(vm, sourceBuffer, sourceLength)
+    ModuleParser(const uint8_t* sourceBuffer, size_t sourceLength)
+        : Parser(sourceBuffer, sourceLength)
     {
     }
 

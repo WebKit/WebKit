@@ -1,5 +1,31 @@
 2017-03-31  Saam Barati  <sbarati@apple.com>
 
+        WebAssembly: Strip WasmParser and WasmFunctionParser from knowing about VM
+        https://bugs.webkit.org/show_bug.cgi?id=170312
+
+        Reviewed by Mark Lam.
+
+        This is another step towards PIC-ifying Wasm. This patch removes
+        the VM field that is no longer used.
+
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::parseAndCompile):
+        * wasm/WasmB3IRGenerator.h:
+        * wasm/WasmFunctionParser.h:
+        (JSC::Wasm::FunctionParser<Context>::FunctionParser):
+        * wasm/WasmModuleParser.h:
+        (JSC::Wasm::ModuleParser::ModuleParser):
+        * wasm/WasmParser.h:
+        (JSC::Wasm::Parser<SuccessType>::Parser):
+        * wasm/WasmPlan.cpp:
+        (JSC::Wasm::Plan::parseAndValidateModule):
+        (JSC::Wasm::Plan::compileFunctions):
+        * wasm/WasmValidate.cpp:
+        (JSC::Wasm::validateFunction):
+        * wasm/WasmValidate.h:
+
+2017-03-31  Saam Barati  <sbarati@apple.com>
+
         WebAssembly: Ref count Signature and SignatureInformation should not care about VM
         https://bugs.webkit.org/show_bug.cgi?id=170316
 

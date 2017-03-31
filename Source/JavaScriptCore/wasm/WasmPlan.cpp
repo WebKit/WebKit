@@ -104,7 +104,7 @@ bool Plan::parseAndValidateModule()
         startTime = MonotonicTime::now();
 
     {
-        ModuleParser moduleParser(&m_vm, m_source, m_sourceLength);
+        ModuleParser moduleParser(m_source, m_sourceLength);
         auto parseResult = moduleParser.parse();
         if (!parseResult) {
             fail(holdLock(m_lock), WTFMove(parseResult.error()));
@@ -123,7 +123,7 @@ bool Plan::parseAndValidateModule()
         SignatureIndex signatureIndex = m_moduleInformation->internalFunctionSignatureIndices[functionIndex];
         const Signature& signature = SignatureInformation::get(signatureIndex);
 
-        auto validationResult = validateFunction(&m_vm, functionStart, functionLength, signature, *m_moduleInformation, m_moduleSignatureIndicesToUniquedSignatureIndices);
+        auto validationResult = validateFunction(functionStart, functionLength, signature, *m_moduleInformation, m_moduleSignatureIndicesToUniquedSignatureIndices);
         if (!validationResult) {
             if (verbose) {
                 for (unsigned i = 0; i < functionLength; ++i)
@@ -242,10 +242,10 @@ void Plan::compileFunctions(CompilationEffort effort)
         const Signature& signature = SignatureInformation::get(signatureIndex);
         unsigned functionIndexSpace = m_wasmExitStubs.size() + functionIndex;
         ASSERT_UNUSED(functionIndexSpace, m_moduleInformation->signatureIndexFromFunctionIndexSpace(functionIndexSpace) == signatureIndex);
-        ASSERT(validateFunction(&m_vm, functionStart, functionLength, signature, *m_moduleInformation, m_moduleSignatureIndicesToUniquedSignatureIndices));
+        ASSERT(validateFunction(functionStart, functionLength, signature, *m_moduleInformation, m_moduleSignatureIndicesToUniquedSignatureIndices));
 
         m_unlinkedWasmToWasmCalls[functionIndex] = Vector<UnlinkedWasmToWasmCall>();
-        auto parseAndCompileResult = parseAndCompile(m_vm, m_compilationContexts[functionIndex], functionStart, functionLength, signature, m_unlinkedWasmToWasmCalls[functionIndex], *m_moduleInformation, m_moduleSignatureIndicesToUniquedSignatureIndices, m_mode);
+        auto parseAndCompileResult = parseAndCompile(m_compilationContexts[functionIndex], functionStart, functionLength, signature, m_unlinkedWasmToWasmCalls[functionIndex], *m_moduleInformation, m_moduleSignatureIndicesToUniquedSignatureIndices, m_mode);
 
         if (UNLIKELY(!parseAndCompileResult)) {
             auto locker = holdLock(m_lock);

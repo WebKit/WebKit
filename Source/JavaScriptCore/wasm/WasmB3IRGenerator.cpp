@@ -1263,7 +1263,7 @@ auto B3IRGenerator::origin() -> Origin
     return bitwise_cast<Origin>(OpcodeOrigin(m_parser->currentOpcode(), m_parser->currentOpcodeStartingOffset()));
 }
 
-Expected<std::unique_ptr<WasmInternalFunction>, String> parseAndCompile(VM& vm, CompilationContext& compilationContext, const uint8_t* functionStart, size_t functionLength, const Signature& signature, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, const ModuleInformation& info, const Vector<SignatureIndex>& moduleSignatureIndicesToUniquedSignatureIndices, MemoryMode mode, unsigned optLevel)
+Expected<std::unique_ptr<WasmInternalFunction>, String> parseAndCompile(CompilationContext& compilationContext, const uint8_t* functionStart, size_t functionLength, const Signature& signature, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, const ModuleInformation& info, const Vector<SignatureIndex>& moduleSignatureIndicesToUniquedSignatureIndices, MemoryMode mode, unsigned optLevel)
 {
     auto result = std::make_unique<WasmInternalFunction>();
 
@@ -1278,7 +1278,7 @@ Expected<std::unique_ptr<WasmInternalFunction>, String> parseAndCompile(VM& vm, 
     });
 
     B3IRGenerator context(info, procedure, result.get(), unlinkedWasmToWasmCalls, mode);
-    FunctionParser<B3IRGenerator> parser(&vm, context, functionStart, functionLength, signature, info, moduleSignatureIndicesToUniquedSignatureIndices);
+    FunctionParser<B3IRGenerator> parser(context, functionStart, functionLength, signature, info, moduleSignatureIndicesToUniquedSignatureIndices);
     WASM_FAIL_IF_HELPER_FAILS(parser.parse());
 
     context.insertConstants();

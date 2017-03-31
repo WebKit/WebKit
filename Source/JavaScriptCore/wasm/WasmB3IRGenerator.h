@@ -30,7 +30,6 @@
 #include "B3Common.h"
 #include "B3Compilation.h"
 #include "CCallHelpers.h"
-#include "VM.h"
 #include "WasmFormat.h"
 #include "WasmMemory.h"
 #include <wtf/Expected.h>
@@ -49,7 +48,7 @@ struct CompilationContext {
     CCallHelpers::Call jsEntrypointToWasmEntrypointCall;
 };
 
-Expected<std::unique_ptr<WasmInternalFunction>, String> parseAndCompile(VM&, CompilationContext&, const uint8_t*, size_t, const Signature&, Vector<UnlinkedWasmToWasmCall>&, const ModuleInformation&, const Vector<SignatureIndex>&, MemoryMode, unsigned optLevel = B3::defaultOptLevel());
+Expected<std::unique_ptr<WasmInternalFunction>, String> parseAndCompile(CompilationContext&, const uint8_t*, size_t, const Signature&, Vector<UnlinkedWasmToWasmCall>&, const ModuleInformation&, const Vector<SignatureIndex>&, MemoryMode, unsigned optLevel = B3::defaultOptLevel());
 
 } } // namespace JSC::Wasm
 
