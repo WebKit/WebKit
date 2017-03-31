@@ -1,5 +1,39 @@
 2017-03-30  Ryosuke Niwa  <rniwa@webkit.org>
 
+        sync-buildbot.js can schedule more than one build per builder
+        https://bugs.webkit.org/show_bug.cgi?id=170318
+
+        Reviewed by Saam Barati.
+
+        The bug was caused by _scheduleNextRequestInGroupIfSlaveIsAvailable not returning a promise when
+        scheduling the first build request of a test group. This resulted in _pullBuildbotOnAllSyncers
+        to prematurely resolve before POST'ing new build had finished. That in turn could result in the
+        next cycle of syncing to occur before POST'ing has actually taken place.
+
+        More precisely, when the nextRequest was the first request or its associated syncer object could
+        not be identified, we were supposed to find the first available syncer, schedule the request,
+        and then return the promise returned by scheduleRequestInGroupIfAvailable. However, the for loop
+        which called scheduleRequestInGroupIfAvailable on every syncer was declaring its own variable
+        named "promise" thereby shadowing the outer variable, which is returned to the caller.
+
+        Fixed the bug by not declaring a shadowing variable, and refactored the code. Namely, the only
+        reason we had such a complicated logic with two local variables, promise and syncer, was so that
+        we could log that we're scheduling a build. Extracted this code as _scheduleRequestWithLog.
+
+        _scheduleNextRequestInGroupIfSlaveIsAvailable can now simply exit early with a call to
+        _scheduleRequestWithLog when the syncer is readily identified. When looping over syncers, it can
+        simply return the first non-null result of _scheduleNextRequestInGroupIfSlaveIsAvailable.
+
+        * server-tests/tools-buildbot-triggerable-tests.js: Added a test case where we wait 10ms after
+        receiving the request to POST a build. There should be no new network request until we resolve
+        this request.
+
+        * tools/js/buildbot-triggerable.js:
+        (BuildbotTriggerable.prototype._scheduleNextRequestInGroupIfSlaveIsAvailable): Fixed the bug.
+        (BuildbotTriggerable.prototype._scheduleRequestWithLog): Extracted.
+
+2017-03-30  Ryosuke Niwa  <rniwa@webkit.org>
+
         Modernize BuildbotSyncer and BuildbotTriggerable
         https://bugs.webkit.org/show_bug.cgi?id=170310
 

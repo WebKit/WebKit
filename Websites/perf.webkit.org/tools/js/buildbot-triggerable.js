@@ -143,32 +143,28 @@ class BuildbotTriggerable {
         if (!nextRequest)
             return null;
 
-        let promise;
-        let syncer;
         if (!!nextRequest.order()) {
-            syncer = groupInfo.syncer;
-            if (!syncer)
-                this._logger.error(`Could not identify the syncer for ${nextRequest.id()}.`);
-            else
-                promise = syncer.scheduleRequestInGroupIfAvailable(nextRequest, groupInfo.slaveName);
+            const syncer = groupInfo.syncer;
+            if (syncer)
+                return this._scheduleRequestWithLog(syncer, nextRequest, groupInfo.slaveName);
+            this._logger.error(`Could not identify the syncer for ${nextRequest.id()}.`);
         }
 
-        if (!syncer) {
-            for (syncer of this._syncers) {
-                // FIXME: This shouldn't be a new variable.
-                let promise = syncer.scheduleRequestInGroupIfAvailable(nextRequest);
-                if (promise)
-                    break;
-            }
+        for (const syncer of this._syncers) {
+            const promise = this._scheduleRequestWithLog(syncer, nextRequest, null);
+            if (promise)
+                return promise;
         }
-
-        if (promise) {
-            let slaveName = groupInfo.slaveName ? ` on ${groupInfo.slaveName}` : '';
-            this._logger.log(`Scheduling build request ${nextRequest.id()}${slaveName} in ${syncer.builderName()}`);
-            return promise;
-        }
-
         return null;
+    }
+
+    _scheduleRequestWithLog(syncer, request, slaveName)
+    {
+        const promise = syncer.scheduleRequestInGroupIfAvailable(request, slaveName);
+        if (!promise)
+            return promise;
+        this._logger.log(`Scheduling build request ${request.id()}${slaveName ? ' on ' + slaveName : ''} in ${syncer.builderName()}`);
+        return promise;
     }
 
     static _testGroupMapForBuildRequests(buildRequests)
