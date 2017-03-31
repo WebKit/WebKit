@@ -1,5 +1,15 @@
 2017-03-31  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed GTK+ gardening. Update expectations of several tests.
+
+        Also rebaseline fast/css/getComputedStyle/computed-style-font-family.html after r214394, it also requires variation
+        fonts.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/css/getComputedStyle/computed-style-font-family-expected.txt: Added.
+
+2017-03-31  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed GTK+ gardening. Rebaseline several tests after r214546.
 
         GTK+ port doesn't support variation fonts. Also mark canvas/philip/tests/2d.pattern.animated.gif.html as failing

@@ -645,6 +645,7 @@ webrtc/audio-replace-track.html [ Failure ]
 webrtc/video-mediastreamtrack-stats.html [ Failure ]
 webrtc/video-replace-track-to-null.html [ Failure ]
 webrtc/video-replace-track.html [ Failure ]
+webrtc/video-getParameters.html [ Failure ]
 imported/w3c/web-platform-tests/webrtc/datachannel-emptystring.html [ Failure ]
 imported/w3c/web-platform-tests/webrtc/no-media-call.html [ Failure ]
 imported/w3c/web-platform-tests/webrtc/promises-call.html [ Failure ]
@@ -661,7 +662,7 @@ webkit.org/b/79203 fast/mediastream/RTCPeerConnection-ice.html [ Timeout ]
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-stats.html [ Failure ]
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-media-setup-single-dialog.html [ Failure ]
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-media-setup-two-dialogs.html [ Failure ]
-webkit.org/b/79203 fast/mediastream/RTCPeerConnection-remotely-assigned-transceiver-mid.html [ Failure ]
+webkit.org/b/79203 fast/mediastream/RTCPeerConnection-remotely-assigned-transceiver-mid.html [ Timeout Failure ]
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-setLocalDescription-offer.html [ Failure ]
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-setRemoteDescription-offer.html [ Failure ]
 webkit.org/b/79203 fast/mediastream/RTCRtpSender-replaceTrack.html [ Failure ]
@@ -791,6 +792,7 @@ webkit.org/b/133122 imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/rsa
 webkit.org/b/133122 imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/rsa_pss.worker.html [ Failure ]
 webkit.org/b/133122 imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/test_rsa_pkcs.html [ Failure ]
 webkit.org/b/133122 imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/test_rsa_pss.html [ Failure ]
+webkit.org/b/133122 imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/test_wrapKey_unwrapKey.html [ Failure ]
 # We don't support ECDH functions
 webkit.org/b/169272 imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_ECDH.worker.html [ Skip ]
 webkit.org/b/169272 imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_ECDH.worker.html [ Skip ]
@@ -2031,6 +2033,8 @@ webkit.org/b/168780 fast/forms/input-first-letter-edit.html [ ImageOnlyFailure P
 webkit.org/b/116277 media/video-buffered.html [ Pass Failure ]
 
 webkit.org/b/169621 imported/w3c/web-platform-tests/IndexedDB/fire-error-event-exception.html [ Pass Failure ]
+
+webkit.org/b/170337 fast/repaint/obscured-background-no-repaint.html [ Pass Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
@@ -3417,7 +3421,7 @@ webkit.org/b/168373 fullscreen/video-controls-rtl.html [ Failure ]
 webkit.org/b/168373 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/readyState_during_canplaythrough.html [ Failure ]
 webkit.org/b/168373 media/media-preload-no-delay-loadevent.html [ Failure ]
 webkit.org/b/168373 media/video-background-playback.html [ Failure Timeout ]
-webkit.org/b/168373 media/video-concurrent-playback.html [ Failure ]
+webkit.org/b/168373 media/video-concurrent-playback.html [ Failure Timeout ]
 webkit.org/b/132055 media/track/track-datacue.html [ Failure ]
 
 # [GTK] Some reftest fail with only one or two pixel differences in diff image
@@ -3481,6 +3485,7 @@ webkit.org/b/105954 http/tests/navigation/reload-subframe-object.html [ Failure 
 webkit.org/b/170053 media/video-load-require-user-gesture.html [ Failure ]
 
 webkit.org/b/170335 canvas/philip/tests/2d.pattern.animated.gif.html [ Failure ]
+webkit.org/b/170335 svg/animations/animated-svg-image-outside-viewport-paused.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
