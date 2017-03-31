@@ -1,3 +1,16 @@
+2017-03-31  Chris Dumez  <cdumez@apple.com>
+
+        Possible null dereference under SourceBuffer::sourceBufferPrivateDidReceiveSample()
+        https://bugs.webkit.org/show_bug.cgi?id=159639
+
+        Reviewed by Eric Carlson.
+
+        Add a null check for trackBuffer.description before dereferencing as it seems
+        it can be null.
+
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::sourceBufferPrivateDidReceiveSample):
+
 2017-03-31  Youenn Fablet  <youenn@apple.com>
 
         Fix memory leak in CreateSessionDescriptionObserver::OnSuccess

@@ -1498,7 +1498,7 @@ void SourceBuffer::sourceBufferPrivateDidReceiveSample(MediaSample& sample)
                 // FIXME: Add support for sample splicing.
 
                 // If track buffer contains video coded frames:
-                if (trackBuffer.description->isVideo()) {
+                if (trackBuffer.description && trackBuffer.description->isVideo()) {
                     // 1.14.2.1 Let overlapped frame presentation timestamp equal the presentation timestamp
                     // of overlapped frame.
                     MediaTime overlappedFramePresentationTimestamp = overlappedFrame->presentationTime();
