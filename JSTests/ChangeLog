@@ -1,5 +1,16 @@
 2017-03-30  Michael Saboff  <msaboff@apple.com>
 
+        Turning ChakraCore/test/fieldopts/objtypespec-newobj-invalidation.1.js back as it appears to always work
+        https://bugs.webkit.org/show_bug.cgi?id=170313
+
+        Reviewed by Saam Barati.
+
+        Enable ChakraCore/test/fieldopts/objtypespec-newobj-invalidation.1.js as it seems solid.
+
+        * ChakraCore.yaml:
+
+2017-03-30  Michael Saboff  <msaboff@apple.com>
+
         Enable ChakraCore/Function/FuncBody.js test as it now works
         https://bugs.webkit.org/show_bug.cgi?id=170301
 
