@@ -160,7 +160,7 @@ void RealtimeIncomingVideoSource::OnFrame(const webrtc::VideoFrame& frame)
     }
     CFRelease(formatDescription);
 
-    RetainPtr<CMSampleBufferRef> sample = sampleBuffer;
+    auto sample = adoptCF(sampleBuffer);
 
     CFArrayRef attachmentsArray = CMSampleBufferGetSampleAttachmentsArray(sampleBuffer, true);
     for (CFIndex i = 0; i < CFArrayGetCount(attachmentsArray); ++i) {
