@@ -79,6 +79,7 @@ fast/attachment/attachment-subtitle-resize.html
 
 # This test only makes sense on iOS
 fast/attachment/attachment-wrapping-action.html
+editing/selection/character-granularity-selected-range-after-dismissing-selection.html [ Skip ]
 editing/selection/caret-after-tap-in-editable-selection.html [ Skip ]
 
 # Only iOS has selection UI drawn by UIKit

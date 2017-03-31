@@ -2977,6 +2977,11 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 - (void)setSelectedTextRange:(UITextRange *)range
 {
+    if (_webView.configuration.selectionGranularity != WKSelectionGranularityCharacter)
+        return;
+
+    if (!range)
+        [self clearSelection];
 }
 
 - (BOOL)hasMarkedText

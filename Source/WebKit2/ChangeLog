@@ -1,5 +1,28 @@
 2017-03-31  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        [WK2] Tapping away to dismiss the selection does not update the selected DOM range using character granularity
+        https://bugs.webkit.org/show_bug.cgi?id=170328
+        <rdar://problem/30904558>
+
+        Reviewed by Tim Horton.
+
+        When UIKit clears the selection while in text interaction mode, it notifies its document view (i.e., the
+        WKContentView) by setting its selected text range to nil. When character granularity selection is enabled, use
+        this as a cue to notify the web process that the selection is being cleared out.
+
+        -setSelectedTextRange: is a noop in the general case because the web process acts as the source of truth for what
+        the selection currently consists of, and notifies the UI process and UIKit via WKTextPosition and WKTextRange.
+        However, in the case of character granularity selections, tapping away to clear the selection is handled by
+        UIKit's text gesture recognizer cluster, which then informs the document (via -setSelectedTextRange:) that the
+        selection should be cleared out.
+
+        Adds a new Layout test: editing/selection/character-granularity-selected-range-after-dismissing-selection.html.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView setSelectedTextRange:]):
+
+2017-03-31  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         [WK2] Tapping editable text inside of a range selection no longer changes the selection to a caret
         https://bugs.webkit.org/show_bug.cgi?id=170327
         <rdar://problem/31363816>
