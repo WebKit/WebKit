@@ -166,13 +166,7 @@ private:
 #endif
     _mainContentUserGestureOverrideEnabled = NO;
     _invisibleAutoplayNotPermitted = NO;
-
-// FIXME: <rdar://problem/25135244> Should default to NO once clients have adopted the setting.
-#if PLATFORM(IOS)
-    _attachmentElementEnabled = IOSApplication::isMobileMail();
-#else
-    _attachmentElementEnabled = MacApplication::isAppleMail();
-#endif
+    _attachmentElementEnabled = NO;
 
 #if PLATFORM(IOS)
     _respectsImageOrientation = YES;

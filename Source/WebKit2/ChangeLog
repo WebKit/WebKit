@@ -1,3 +1,17 @@
+2017-03-31  Tim Horton  <timothy_horton@apple.com>
+
+        Remove bundle checks for attachmentElementEnabled
+        https://bugs.webkit.org/show_bug.cgi?id=170329
+        <rdar://problem/25135244>
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]):
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration init]):
+        Remove bundle checks.
+
 2017-03-29  Anders Carlsson  <andersca@apple.com>
 
         Adopt PKCanMakePaymentsWithMerchantIdentifierAndDomainAndSourceApplication
