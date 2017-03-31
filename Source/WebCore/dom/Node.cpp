@@ -1957,7 +1957,7 @@ static inline bool tryAddEventListener(Node* targetNode, const AtomicString& eve
 #endif // PLATFORM(IOS)
 
 #if ENABLE(IOS_GESTURE_EVENTS) && ENABLE(TOUCH_EVENTS)
-    if (eventType == eventNames().gesturestartEvent || eventType == eventNames().gesturechangeEvent || eventType == eventNames().gestureendEvent)
+    if (eventNames().isGestureEventType(eventType))
         targetNode->document().addTouchEventHandler(targetNode);
 #endif
 
@@ -1998,7 +1998,7 @@ static inline bool tryRemoveEventListener(Node* targetNode, const AtomicString& 
 #endif // PLATFORM(IOS)
 
 #if ENABLE(IOS_GESTURE_EVENTS) && ENABLE(TOUCH_EVENTS)
-    if (eventType == eventNames().gesturestartEvent || eventType == eventNames().gesturechangeEvent || eventType == eventNames().gestureendEvent)
+    if (eventNames().isGestureEventType(eventType))
         targetNode->document().removeTouchEventHandler(targetNode);
 #endif
 

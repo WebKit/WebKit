@@ -1,5 +1,18 @@
 2017-03-30  Simon Fraser  <simon.fraser@apple.com>
 
+        Minor cleanup checking for gesture event names
+        https://bugs.webkit.org/show_bug.cgi?id=170319
+
+        Reviewed by Tim Horton.
+
+        Just use isGestureEventType() in a couple of places.
+
+        * dom/Node.cpp:
+        (WebCore::tryAddEventListener):
+        (WebCore::tryRemoveEventListener):
+
+2017-03-30  Simon Fraser  <simon.fraser@apple.com>
+
         Rename a touch event function, and new touch region test results
         https://bugs.webkit.org/show_bug.cgi?id=170309
         rdar://problem/31329520
