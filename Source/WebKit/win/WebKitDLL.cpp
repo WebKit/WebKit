@@ -39,6 +39,7 @@
 #include <WebCore/IconDatabase.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageGroup.h>
+#include <WebCore/PlatformDisplay.h>
 #include <WebCore/RenderThemeWin.h>
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/WebCoreInstanceHandle.h>
@@ -164,6 +165,9 @@ void shutDownWebKit()
 {
     WebCore::iconDatabase().close();
     WebKit::WebStorageNamespaceProvider::closeLocalStorage();
+#if USE(EGL)
+    PlatformDisplay::shutDownEglDisplays();
+#endif
 }
 
 //FIXME: We should consider moving this to a new file for cross-project functionality

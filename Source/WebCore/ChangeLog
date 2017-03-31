@@ -1,3 +1,23 @@
+2017-03-31  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] WebCore::PlatformDisplay::terminateEGLDisplay causes a crash in libGLESv2.dll while processing atexit
+        https://bugs.webkit.org/show_bug.cgi?id=170331
+
+        Reviewed by Michael Catanzaro.
+
+        WebCore::PlatformDisplay uses atexit to destruct EGL displays
+        while exiting process. But, when the atexit will be processed,
+        heap of libGLESv2.dll would be already destructed and causing a
+        crash on Windows. Do not use atexit for Windows.
+
+        AppleWin port does not use PlatformDisplay. Thus, it does not have
+        this bug.
+
+        * platform/graphics/PlatformDisplay.cpp:
+        (WebCore::PlatformDisplay::initializeEGLDisplay): Do not use atexit for Windows.
+        (WebCore::PlatformDisplay::shutDownEglDisplays): Added.
+        * platform/graphics/PlatformDisplay.h: Added a declaration of shutDownEglDisplays.
+
 2017-03-31  Yoav Weiss  <yoav@yoav.ws>
 
         Remove PRELOAD_DEBUG related code.

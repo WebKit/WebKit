@@ -1,3 +1,13 @@
+2017-03-31  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] WebCore::PlatformDisplay::terminateEGLDisplay causes a crash in libGLESv2.dll while processing atexit
+        https://bugs.webkit.org/show_bug.cgi?id=170331
+
+        Reviewed by Michael Catanzaro.
+
+        * WebKitDLL.cpp:
+        (shutDownWebKit): Call PlatformDisplay::shutDownEglDisplays in shutDownWebKit.
+
 2017-03-30  James Craig  <jcraig@apple.com>
 
         AX: Expose a new AXSubrole for explicit ARIA "group" role
