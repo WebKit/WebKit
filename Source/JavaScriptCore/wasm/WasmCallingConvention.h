@@ -120,7 +120,7 @@ public:
     }
 
     template<typename Functor>
-    void loadArguments(const Signature* signature, B3::Procedure& proc, B3::BasicBlock* block, B3::Origin origin, const Functor& functor) const
+    void loadArguments(const Signature& signature, B3::Procedure& proc, B3::BasicBlock* block, B3::Origin origin, const Functor& functor) const
     {
         B3::Value* framePointer = block->appendNew<B3::Value>(proc, B3::FramePointer, origin);
 
@@ -128,8 +128,8 @@ public:
         size_t fpArgumentCount = 0;
         size_t stackOffset = headerSize;
 
-        for (size_t i = 0; i < signature->argumentCount(); ++i) {
-            B3::Type type = toB3Type(signature->argument(i));
+        for (size_t i = 0; i < signature.argumentCount(); ++i) {
+            B3::Type type = toB3Type(signature.argument(i));
             B3::Value* argument;
             B3::ValueRep rep = marshallArgument(type, gpArgumentCount, fpArgumentCount, stackOffset);
             if (rep.isReg()) {

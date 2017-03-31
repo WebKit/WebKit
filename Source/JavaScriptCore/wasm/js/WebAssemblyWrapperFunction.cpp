@@ -64,8 +64,8 @@ WebAssemblyWrapperFunction* WebAssemblyWrapperFunction::create(VM& vm, JSGlobalO
     String name = "";
     NativeExecutable* executable = vm.getHostFunction(callWebAssemblyWrapperFunction, NoIntrinsic, callHostFunctionAsConstructor, nullptr, name);
     WebAssemblyWrapperFunction* result = new (NotNull, allocateCell<WebAssemblyWrapperFunction>(vm.heap)) WebAssemblyWrapperFunction(vm, globalObject, globalObject->webAssemblyWrapperFunctionStructure(), signatureIndex, codeBlock->wasmToJsCallStubForImport(importIndex));
-    const Wasm::Signature* signature = Wasm::SignatureInformation::get(&vm, signatureIndex);
-    result->finishCreation(vm, executable, signature->argumentCount(), name, function, codeBlock);
+    const Wasm::Signature& signature = Wasm::SignatureInformation::get(signatureIndex);
+    result->finishCreation(vm, executable, signature.argumentCount(), name, function, codeBlock);
     return result;
 }
 

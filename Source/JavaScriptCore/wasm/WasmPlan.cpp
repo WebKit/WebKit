@@ -121,7 +121,7 @@ bool Plan::parseAndValidateModule()
         size_t functionLength = m_functionLocationInBinary[functionIndex].end - m_functionLocationInBinary[functionIndex].start;
         ASSERT(functionLength <= m_sourceLength);
         SignatureIndex signatureIndex = m_moduleInformation->internalFunctionSignatureIndices[functionIndex];
-        const Signature* signature = SignatureInformation::get(&m_vm, signatureIndex);
+        const Signature& signature = SignatureInformation::get(signatureIndex);
 
         auto validationResult = validateFunction(&m_vm, functionStart, functionLength, signature, *m_moduleInformation, m_moduleSignatureIndicesToUniquedSignatureIndices);
         if (!validationResult) {
@@ -239,7 +239,7 @@ void Plan::compileFunctions(CompilationEffort effort)
         size_t functionLength = m_functionLocationInBinary[functionIndex].end - m_functionLocationInBinary[functionIndex].start;
         ASSERT(functionLength <= m_sourceLength);
         SignatureIndex signatureIndex = m_moduleInformation->internalFunctionSignatureIndices[functionIndex];
-        const Signature* signature = SignatureInformation::get(&m_vm, signatureIndex);
+        const Signature& signature = SignatureInformation::get(signatureIndex);
         unsigned functionIndexSpace = m_wasmExitStubs.size() + functionIndex;
         ASSERT_UNUSED(functionIndexSpace, m_moduleInformation->signatureIndexFromFunctionIndexSpace(functionIndexSpace) == signatureIndex);
         ASSERT(validateFunction(&m_vm, functionStart, functionLength, signature, *m_moduleInformation, m_moduleSignatureIndicesToUniquedSignatureIndices));
@@ -272,19 +272,20 @@ void Plan::complete(const AbstractLocker&)
             {
                 CompilationContext& context = m_compilationContexts[functionIndex];
                 SignatureIndex signatureIndex = m_moduleInformation->internalFunctionSignatureIndices[functionIndex];
-                String signatureDescription = SignatureInformation::get(&m_vm, signatureIndex)->toString();
                 {
                     LinkBuffer linkBuffer(*context.wasmEntrypointJIT, nullptr);
-                    m_wasmInternalFunctions[functionIndex]->wasmEntrypoint.compilation =
-                    std::make_unique<B3::Compilation>(FINALIZE_CODE(linkBuffer, ("WebAssembly function[%i] %s", functionIndex, signatureDescription.ascii().data())), WTFMove(context.wasmEntrypointByproducts));
+                    m_wasmInternalFunctions[functionIndex]->wasmEntrypoint.compilation = std::make_unique<B3::Compilation>(
+                        FINALIZE_CODE(linkBuffer, ("WebAssembly function[%i] %s", functionIndex, SignatureInformation::get(signatureIndex).toString().ascii().data())),
+                        WTFMove(context.wasmEntrypointByproducts));
                 }
 
                 {
                     LinkBuffer linkBuffer(*context.jsEntrypointJIT, nullptr);
                     linkBuffer.link(context.jsEntrypointToWasmEntrypointCall, FunctionPtr(m_wasmInternalFunctions[functionIndex]->wasmEntrypoint.compilation->code().executableAddress()));
 
-                    m_wasmInternalFunctions[functionIndex]->jsToWasmEntrypoint.compilation =
-                    std::make_unique<B3::Compilation>(FINALIZE_CODE(linkBuffer, ("JavaScript->WebAssembly entrypoint[%i] %s", functionIndex, signatureDescription.ascii().data())), WTFMove(context.jsEntrypointByproducts));
+                    m_wasmInternalFunctions[functionIndex]->jsToWasmEntrypoint.compilation = std::make_unique<B3::Compilation>(
+                        FINALIZE_CODE(linkBuffer, ("JavaScript->WebAssembly entrypoint[%i] %s", functionIndex, SignatureInformation::get(signatureIndex).toString().ascii().data())),
+                        WTFMove(context.jsEntrypointByproducts));
                 }
             }
 

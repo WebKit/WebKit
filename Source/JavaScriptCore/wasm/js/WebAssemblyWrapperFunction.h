@@ -60,6 +60,9 @@ private:
     WriteBarrier<JSWebAssemblyCodeBlock> m_codeBlock;
     WriteBarrier<JSObject> m_function;
     void* m_wasmEntrypointCode;
+    // It's safe to just hold the raw signatureIndex because we have a reference
+    // to our CodeBlock, which points to the Module that exported us, which
+    // ensures that the actual Signature doesn't get deallocated.
     Wasm::SignatureIndex m_signatureIndex;
 };
 

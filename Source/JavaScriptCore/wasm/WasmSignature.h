@@ -34,6 +34,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/HashTraits.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Vector.h>
 
 namespace WTF {
@@ -46,12 +47,12 @@ class VM;
 
 namespace Wasm {
 
-typedef uint32_t SignatureArgCount;
-typedef uint32_t SignatureIndex;
+using SignatureArgCount = uint32_t;
+using SignatureIndex = uint32_t;
 
-class Signature {
+class Signature : public ThreadSafeRefCounted<Signature> {
+    WTF_MAKE_FAST_ALLOCATED;
     static const constexpr SignatureArgCount s_retCount = 1;
-    typedef uint64_t allocationSizeRoundsUpTo;
 
     Signature() = delete;
     Signature(const Signature&) = delete;
@@ -65,9 +66,9 @@ class Signature {
         return i + reinterpret_cast<Type*>(reinterpret_cast<char*>(this) + sizeof(Signature));
     }
     Type* storage(SignatureArgCount i) const { return const_cast<Signature*>(this)->storage(i); }
-    static uint32_t allocatedSize(SignatureArgCount argCount)
+    static size_t allocatedSize(SignatureArgCount argCount)
     {
-        return WTF::roundUpToMultipleOf<sizeof(allocationSizeRoundsUpTo)>(sizeof(Signature) + (s_retCount + argCount) * sizeof(Type));
+        return sizeof(Signature) + (s_retCount + argCount) * sizeof(Type);
     }
 
 public:
@@ -86,19 +87,26 @@ public:
     void dump(WTF::PrintStream& out) const;
     bool operator==(const Signature& rhs) const
     {
-        return allocatedSize(argumentCount()) == allocatedSize(rhs.argumentCount()) && !memcmp(this, &rhs, allocatedSize(argumentCount()));
+        if (argumentCount() != rhs.argumentCount())
+            return false;
+        if (returnType() != rhs.returnType())
+            return false;
+        for (unsigned i = 0; i < argumentCount(); ++i) {
+            if (argument(i) != rhs.argument(i))
+                return false;
+        }
+        return true;
     }
     unsigned hash() const;
 
-    static Signature* create(SignatureArgCount);
-    static void destroy(Signature*);
+    static RefPtr<Signature> tryCreate(SignatureArgCount);
 
     // Signatures are uniqued and, for call_indirect, validated at runtime. Tables can create invalid SignatureIndex values which cause call_indirect to fail. We use 0 as the invalidIndex so that the codegen can easily test for it and trap, and we add a token invalid entry in SignatureInformation.
     static const constexpr SignatureIndex invalidIndex = 0;
+    static const constexpr SignatureIndex firstValidIndex = invalidIndex + 1;
 
 private:
     friend class SignatureInformation;
-    static Signature* createInvalid();
     SignatureArgCount m_argCount;
     // Return Type and arguments are stored here.
 };
@@ -151,17 +159,22 @@ namespace JSC { namespace Wasm {
 // Signature information is held globally on VM to allow all signatures to be unique. This is required when wasm calls another wasm instance.
 // Note: signatures are never removed from VM because that would require accounting for all WebAssembly.Module and which signatures they use. The maximum number of signatures is bounded, and isn't worth the counting overhead. We could clear everything when we reach zero outstanding WebAssembly.Module. https://bugs.webkit.org/show_bug.cgi?id=166037
 class SignatureInformation {
-    HashMap<Wasm::SignatureHash, Wasm::SignatureIndex> m_signatureMap;
-    Vector<Signature*> m_signatures;
-    Lock m_lock;
-    static SignatureInformation* get(VM*);
+    WTF_MAKE_NONCOPYABLE(SignatureInformation);
+
     SignatureInformation();
-    SignatureInformation(const SignatureInformation&) = delete;
 
 public:
-    ~SignatureInformation();
-    static SignatureIndex WARN_UNUSED_RETURN adopt(VM*, Signature*);
-    static const Signature* WARN_UNUSED_RETURN get(VM*, SignatureIndex);
+    static SignatureInformation& singleton();
+
+    static std::pair<SignatureIndex, Ref<Signature>> WARN_UNUSED_RETURN adopt(Ref<Signature>&&);
+    static const Signature& WARN_UNUSED_RETURN get(SignatureIndex);
+    static void tryCleanup();
+
+private:
+    HashMap<Wasm::SignatureHash, Wasm::SignatureIndex> m_signatureMap;
+    HashMap<Wasm::SignatureIndex, Ref<Signature>> m_indexMap;
+    SignatureIndex m_nextIndex { Signature::firstValidIndex };
+    Lock m_lock;
 };
 
 } } // namespace JSC::Wasm

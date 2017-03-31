@@ -72,6 +72,9 @@ private:
     void* m_wasmEntryPointCode; // Cache code pointer: allows the wasm -> wasm stub to do a single load and jump instead of having dependent loads.
     WriteBarrier<JSWebAssemblyCallee> m_jsEntrypoint;
     WriteBarrier<JSWebAssemblyCallee> m_wasmEntrypoint;
+    // It's safe to just hold the raw signatureIndex because we have a reference
+    // to our Instance, which points to the Module that exported us, which
+    // ensures that the actual Signature doesn't get deallocated.
     Wasm::SignatureIndex m_signatureIndex;
 };
 

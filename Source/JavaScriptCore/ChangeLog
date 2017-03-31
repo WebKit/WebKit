@@ -1,3 +1,64 @@
+2017-03-31  Saam Barati  <sbarati@apple.com>
+
+        WebAssembly: Ref count Signature and SignatureInformation should not care about VM
+        https://bugs.webkit.org/show_bug.cgi?id=170316
+
+        Reviewed by Keith Miller.
+
+        This is yet again another step towards PIC-ifying Wasm.
+        Signature should be ref counted so we can tell when
+        no code is holding onto a Signature. This makes it easy
+        to free unused Signatures. Also, this patch rids SignatureInfo
+        of any VM knowledge. Now, there is just a single SignatureInfo that
+        lives in a process.
+
+        * runtime/VM.h:
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::createJSToWasmWrapper):
+        (JSC::Wasm::parseAndCompile):
+        * wasm/WasmB3IRGenerator.h:
+        * wasm/WasmBinding.cpp:
+        (JSC::Wasm::wasmToJs):
+        * wasm/WasmCallingConvention.h:
+        (JSC::Wasm::CallingConvention::loadArguments):
+        * wasm/WasmFormat.h:
+        * wasm/WasmFunctionParser.h:
+        (JSC::Wasm::FunctionParser<Context>::FunctionParser):
+        * wasm/WasmModuleParser.cpp:
+        * wasm/WasmPlan.cpp:
+        (JSC::Wasm::Plan::parseAndValidateModule):
+        (JSC::Wasm::Plan::compileFunctions):
+        (JSC::Wasm::Plan::complete):
+        * wasm/WasmSignature.cpp:
+        (JSC::Wasm::Signature::hash):
+        (JSC::Wasm::Signature::tryCreate):
+        (JSC::Wasm::SignatureInformation::SignatureInformation):
+        (JSC::Wasm::SignatureInformation::singleton):
+        (JSC::Wasm::SignatureInformation::adopt):
+        (JSC::Wasm::SignatureInformation::get):
+        (JSC::Wasm::SignatureInformation::tryCleanup):
+        (JSC::Wasm::Signature::create): Deleted.
+        (JSC::Wasm::Signature::createInvalid): Deleted.
+        (JSC::Wasm::Signature::destroy): Deleted.
+        (JSC::Wasm::SignatureInformation::~SignatureInformation): Deleted.
+        * wasm/WasmSignature.h:
+        (JSC::Wasm::Signature::allocatedSize):
+        (JSC::Wasm::Signature::operator==):
+        * wasm/WasmValidate.cpp:
+        (JSC::Wasm::validateFunction):
+        * wasm/WasmValidate.h:
+        * wasm/js/JSWebAssemblyModule.cpp:
+        (JSC::JSWebAssemblyModule::destroy):
+        * wasm/js/WebAssemblyFunction.cpp:
+        (JSC::callWebAssemblyFunction):
+        * wasm/js/WebAssemblyFunction.h:
+        * wasm/js/WebAssemblyModuleRecord.cpp:
+        (JSC::WebAssemblyModuleRecord::link):
+        (JSC::WebAssemblyModuleRecord::evaluate):
+        * wasm/js/WebAssemblyWrapperFunction.cpp:
+        (JSC::WebAssemblyWrapperFunction::create):
+        * wasm/js/WebAssemblyWrapperFunction.h:
+
 2017-03-31  Mark Lam  <mark.lam@apple.com>
 
         Array.prototype.splice() should not be using JSArray::tryCreateForInitializationPrivate().

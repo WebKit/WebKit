@@ -102,6 +102,7 @@ void JSWebAssemblyModule::finishCreation(VM& vm, RefPtr<Wasm::Plan>&& plan)
 void JSWebAssemblyModule::destroy(JSCell* cell)
 {
     static_cast<JSWebAssemblyModule*>(cell)->JSWebAssemblyModule::~JSWebAssemblyModule();
+    Wasm::SignatureInformation::tryCleanup();
 }
 
 void JSWebAssemblyModule::setCodeBlock(VM& vm, Wasm::MemoryMode mode, JSWebAssemblyCodeBlock* codeBlock)

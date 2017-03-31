@@ -96,7 +96,7 @@ public:
         return fail(__VA_ARGS__);                   \
     } while (0)
 
-    Result WARN_UNUSED_RETURN addArguments(const Signature*);
+    Result WARN_UNUSED_RETURN addArguments(const Signature&);
     Result WARN_UNUSED_RETURN addLocal(Type, uint32_t);
     ExpressionType addConstant(Type type, uint64_t) { return type; }
 
@@ -138,8 +138,8 @@ public:
     Result WARN_UNUSED_RETURN addUnreachable() { return { }; }
 
     // Calls
-    Result WARN_UNUSED_RETURN addCall(unsigned calleeIndex, const Signature*, const Vector<ExpressionType>& args, ExpressionType& result);
-    Result WARN_UNUSED_RETURN addCallIndirect(const Signature*, SignatureIndex, const Vector<ExpressionType>& args, ExpressionType& result);
+    Result WARN_UNUSED_RETURN addCall(unsigned calleeIndex, const Signature&, const Vector<ExpressionType>& args, ExpressionType& result);
+    Result WARN_UNUSED_RETURN addCallIndirect(const Signature&, SignatureIndex, const Vector<ExpressionType>& args, ExpressionType& result);
 
     bool hasMemory() const { return !!m_module.memory; }
 
@@ -160,10 +160,10 @@ private:
     const ModuleInformation& m_module;
 };
 
-auto Validate::addArguments(const Signature* signature) -> Result
+auto Validate::addArguments(const Signature& signature) -> Result
 {
-    for (size_t i = 0; i < signature->argumentCount(); ++i)
-        WASM_FAIL_IF_HELPER_FAILS(addLocal(signature->argument(i), 1));
+    for (size_t i = 0; i < signature.argumentCount(); ++i)
+        WASM_FAIL_IF_HELPER_FAILS(addLocal(signature.argument(i), 1));
     return { };
 }
 
@@ -324,30 +324,30 @@ auto Validate::addEndToUnreachable(ControlEntry& entry) -> Result
     return { };
 }
 
-auto Validate::addCall(unsigned, const Signature* signature, const Vector<ExpressionType>& args, ExpressionType& result) -> Result
+auto Validate::addCall(unsigned, const Signature& signature, const Vector<ExpressionType>& args, ExpressionType& result) -> Result
 {
-    WASM_VALIDATOR_FAIL_IF(signature->argumentCount() != args.size(), "arity mismatch in call, got ", args.size(), " arguments, expected ", signature->argumentCount());
+    WASM_VALIDATOR_FAIL_IF(signature.argumentCount() != args.size(), "arity mismatch in call, got ", args.size(), " arguments, expected ", signature.argumentCount());
 
     for (unsigned i = 0; i < args.size(); ++i)
-        WASM_VALIDATOR_FAIL_IF(args[i] != signature->argument(i), "argument type mismatch in call, got ", args[i], ", expected ", signature->argument(i));
+        WASM_VALIDATOR_FAIL_IF(args[i] != signature.argument(i), "argument type mismatch in call, got ", args[i], ", expected ", signature.argument(i));
 
-    result = signature->returnType();
+    result = signature.returnType();
     return { };
 }
 
-auto Validate::addCallIndirect(const Signature* signature, SignatureIndex signatureIndex, const Vector<ExpressionType>& args, ExpressionType& result) -> Result
+auto Validate::addCallIndirect(const Signature& signature, SignatureIndex signatureIndex, const Vector<ExpressionType>& args, ExpressionType& result) -> Result
 {
     UNUSED_PARAM(signatureIndex);
     ASSERT(signatureIndex != Signature::invalidIndex);
-    const auto argumentCount = signature->argumentCount();
+    const auto argumentCount = signature.argumentCount();
     WASM_VALIDATOR_FAIL_IF(argumentCount != args.size() - 1, "arity mismatch in call_indirect, got ", args.size() - 1, " arguments, expected ", argumentCount);
 
     for (unsigned i = 0; i < argumentCount; ++i)
-        WASM_VALIDATOR_FAIL_IF(args[i] != signature->argument(i), "argument type mismatch in call_indirect, got ", args[i], ", expected ", signature->argument(i));
+        WASM_VALIDATOR_FAIL_IF(args[i] != signature.argument(i), "argument type mismatch in call_indirect, got ", args[i], ", expected ", signature.argument(i));
 
     WASM_VALIDATOR_FAIL_IF(args.last() != I32, "non-i32 call_indirect index ", args.last());
 
-    result = signature->returnType();
+    result = signature.returnType();
     return { };
 }
 
@@ -382,7 +382,7 @@ void Validate::dump(const Vector<ControlEntry>& controlStack, const ExpressionLi
     dataLogLn();
 }
 
-Expected<void, String> validateFunction(VM* vm, const uint8_t* source, size_t length, const Signature* signature, const ModuleInformation& module, const Vector<SignatureIndex>& moduleSignatureIndicesToUniquedSignatureIndices)
+Expected<void, String> validateFunction(VM* vm, const uint8_t* source, size_t length, const Signature& signature, const ModuleInformation& module, const Vector<SignatureIndex>& moduleSignatureIndicesToUniquedSignatureIndices)
 {
     Validate context(module);
     FunctionParser<Validate> validator(vm, context, source, length, signature, module, moduleSignatureIndicesToUniquedSignatureIndices);

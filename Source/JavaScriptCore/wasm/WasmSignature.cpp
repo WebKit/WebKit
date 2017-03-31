@@ -39,8 +39,6 @@ namespace {
 const bool verbose = false;
 }
 
-const constexpr SignatureIndex Signature::invalidIndex;
-
 String Signature::toString() const
 {
     String result(makeString(returnType()));
@@ -61,95 +59,97 @@ void Signature::dump(PrintStream& out) const
 
 unsigned Signature::hash() const
 {
-    uint32_t sizeToHash = allocatedSize(argumentCount()) / sizeof(allocationSizeRoundsUpTo);
-    // Assumes over-allocated memory was zero-initialized, and rounded-up to allocationSizeRoundsUpTo so that a wider hash can be performed.
-    ASSERT(sizeToHash * sizeof(allocationSizeRoundsUpTo) == allocatedSize(argumentCount()));
     unsigned accumulator = 0xa1bcedd8u;
-    const auto* pos = reinterpret_cast<const allocationSizeRoundsUpTo*>(this);
-    for (uint32_t i = 0; i < sizeToHash; ++i)
-        accumulator = WTF::pairIntHash(accumulator, WTF::IntHash<allocationSizeRoundsUpTo>::hash(*pos));
+    for (uint32_t i = 0; i < argumentCount(); ++i)
+        accumulator = WTF::pairIntHash(accumulator, WTF::IntHash<uint8_t>::hash(static_cast<uint8_t>(argument(i))));
+    accumulator = WTF::pairIntHash(accumulator, WTF::IntHash<uint8_t>::hash(static_cast<uint8_t>(returnType())));
     return accumulator;
 }
 
-Signature* Signature::create(SignatureArgCount argumentCount)
+RefPtr<Signature> Signature::tryCreate(SignatureArgCount argumentCount)
 {
-    // Hashing relies on allocation zero-initializing trailing elements.
-    auto allocated = tryFastCalloc(allocatedSize(argumentCount), 1);
-    Signature* signature;
-    if (!allocated.getValue(signature))
+    // We use WTF_MAKE_FAST_ALLOCATED for this class.
+    auto result = tryFastMalloc(allocatedSize(argumentCount));
+    void* memory = nullptr;
+    if (!result.getValue(memory))
         return nullptr;
-    new (signature) Signature(argumentCount);
-    return signature;
-}
-
-Signature* Signature::createInvalid()
-{
-    Signature* signature = create(0);
-    RELEASE_ASSERT(signature);
-    new (signature) Signature(std::numeric_limits<SignatureArgCount>::max());
-    return signature;
-}
-
-void Signature::destroy(Signature* signature)
-{
-    fastFree(signature);
-}
-
-SignatureInformation::~SignatureInformation()
-{
-    for (size_t i = 0; i < m_signatures.size(); ++i)
-        Signature::destroy(m_signatures[i]);
+    Signature* signature = new (NotNull, memory) Signature(argumentCount);
+    return adoptRef(signature);
 }
 
 SignatureInformation::SignatureInformation()
 {
-    // The zeroth entry is an invalid signature, to match invalidIndex.
-    ASSERT(!Signature::invalidIndex);
-    Signature* invalidSignature = Signature::createInvalid();
-    auto addResult = m_signatureMap.add(SignatureHash { invalidSignature }, Signature::invalidIndex);
-    RELEASE_ASSERT(addResult.isNewEntry);
-    ASSERT(Signature::invalidIndex == addResult.iterator->value);
-    m_signatures.append(invalidSignature);
 }
 
-SignatureInformation* SignatureInformation::get(VM* vm)
+SignatureInformation& SignatureInformation::singleton()
 {
-    std::call_once(vm->m_wasmSignatureInformationOnceFlag, [vm] {
-        vm->m_wasmSignatureInformation = std::unique_ptr<SignatureInformation>(new SignatureInformation());
+    static SignatureInformation* theOne;
+    static std::once_flag signatureInformationFlag;
+    std::call_once(signatureInformationFlag, [] () {
+        theOne = new SignatureInformation;
     });
-    return vm->m_wasmSignatureInformation.get();
+
+    return *theOne;
 }
 
-SignatureIndex SignatureInformation::adopt(VM* vm, Signature* signature)
+std::pair<SignatureIndex, Ref<Signature>> SignatureInformation::adopt(Ref<Signature>&& signature)
 {
-    SignatureInformation* info = get(vm);
-    LockHolder lock(info->m_lock);
+    SignatureInformation& info = singleton();
+    LockHolder lock(info.m_lock);
 
-    SignatureIndex nextValue = info->m_signatures.size();
-    auto addResult = info->m_signatureMap.add(SignatureHash { signature }, nextValue);
+    SignatureIndex nextValue = info.m_nextIndex;
+    auto addResult = info.m_signatureMap.add(SignatureHash { signature.ptr() }, nextValue);
     if (addResult.isNewEntry) {
+        ++info.m_nextIndex;
+        RELEASE_ASSERT(info.m_nextIndex > nextValue); // crash on overflow.
         ASSERT(nextValue == addResult.iterator->value);
         if (verbose)
-            dataLogLn("Adopt new signature ", *signature, " with index ", addResult.iterator->value, " hash: ", signature->hash());
-        info->m_signatures.append(signature);
-        return nextValue;
+            dataLogLn("Adopt new signature ", signature.get(), " with index ", addResult.iterator->value, " hash: ", signature->hash());
+
+        auto addResult = info.m_indexMap.add(nextValue, signature.copyRef());
+        RELEASE_ASSERT(addResult.isNewEntry);
+        ASSERT(info.m_indexMap.size() == info.m_signatureMap.size());
+        return std::make_pair(nextValue, WTFMove(signature));
     }
     if (verbose)
-        dataLogLn("Existing signature ", *signature, " with index ", addResult.iterator->value, " hash: ", signature->hash());
-    Signature::destroy(signature);
+        dataLogLn("Existing signature ", signature.get(), " with index ", addResult.iterator->value, " hash: ", signature->hash());
     ASSERT(addResult.iterator->value != Signature::invalidIndex);
-    return addResult.iterator->value;
+    ASSERT(info.m_indexMap.contains(addResult.iterator->value));
+    return std::make_pair(addResult.iterator->value, Ref<Signature>(*info.m_indexMap.get(addResult.iterator->value)));
 }
 
-const Signature* SignatureInformation::get(VM* vm, SignatureIndex index)
+const Signature& SignatureInformation::get(SignatureIndex index)
 {
     ASSERT(index != Signature::invalidIndex);
-    SignatureInformation* info = get(vm);
-    LockHolder lock(info->m_lock);
+    SignatureInformation& info = singleton();
+    LockHolder lock(info.m_lock);
 
-    if (verbose)
-        dataLogLn("Got signature ", *info->m_signatures.at(index), " at index ", index);
-    return info->m_signatures.at(index);
+    return *info.m_indexMap.get(index);
+}
+
+void SignatureInformation::tryCleanup()
+{
+    SignatureInformation& info = singleton();
+    LockHolder lock(info.m_lock);
+
+    Vector<std::pair<SignatureIndex, Signature*>> toRemove;
+    for (const auto& pair : info.m_indexMap) {
+        const Ref<Signature>& signature = pair.value;
+        if (signature->refCount() == 1) {
+            // We're the only owner.
+            toRemove.append(std::make_pair(pair.key, signature.ptr()));
+        }
+    }
+    for (const auto& pair : toRemove) {
+        bool removed = info.m_signatureMap.remove(SignatureHash { pair.second });
+        ASSERT(removed);
+        removed = info.m_indexMap.remove(pair.first);
+        ASSERT(removed);
+    }
+    if (info.m_signatureMap.isEmpty()) {
+        ASSERT(info.m_indexMap.isEmpty());
+        info.m_nextIndex = Signature::firstValidIndex;
+    }
 }
 
 } } // namespace JSC::Wasm

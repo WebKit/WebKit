@@ -57,22 +57,22 @@ static EncodedJSValue JSC_HOST_CALL callWebAssemblyFunction(ExecState* exec)
     if (!wasmFunction)
         return JSValue::encode(throwException(exec, scope, createTypeError(exec, "expected a WebAssembly function", defaultSourceAppender, runtimeTypeForValue(exec->jsCallee()))));
     Wasm::SignatureIndex signatureIndex = wasmFunction->signatureIndex();
-    const Wasm::Signature* signature = Wasm::SignatureInformation::get(&vm, signatureIndex);
+    const Wasm::Signature& signature = Wasm::SignatureInformation::get(signatureIndex);
 
     // Make sure that the memory we think we are going to run with matches the one we expect.
     ASSERT(wasmFunction->instance()->codeBlock()->isSafeToRun(wasmFunction->instance()->memory()));
     {
         // Check if we have a disallowed I64 use.
 
-        for (unsigned argIndex = 0; argIndex < signature->argumentCount(); ++argIndex) {
-            if (signature->argument(argIndex) == Wasm::I64) {
+        for (unsigned argIndex = 0; argIndex < signature.argumentCount(); ++argIndex) {
+            if (signature.argument(argIndex) == Wasm::I64) {
                 JSWebAssemblyRuntimeError* error = JSWebAssemblyRuntimeError::create(exec, vm, exec->lexicalGlobalObject()->WebAssemblyRuntimeErrorStructure(),
                     "WebAssembly function with an i64 argument can't be called from JavaScript");
                 return JSValue::encode(throwException(exec, scope, error));
             }
         }
 
-        if (signature->returnType() == Wasm::I64) {
+        if (signature.returnType() == Wasm::I64) {
             JSWebAssemblyRuntimeError* error = JSWebAssemblyRuntimeError::create(exec, vm, exec->lexicalGlobalObject()->WebAssemblyRuntimeErrorStructure(),
                 "WebAssembly function that returns i64 can't be called from JavaScript");
             return JSValue::encode(throwException(exec, scope, error));
@@ -88,9 +88,9 @@ static EncodedJSValue JSC_HOST_CALL callWebAssemblyFunction(ExecState* exec)
     if (!Wasm::useFastTLSForContext())
         boxedArgs.append(wasmContext);
 
-    for (unsigned argIndex = 0; argIndex < signature->argumentCount(); ++argIndex) {
+    for (unsigned argIndex = 0; argIndex < signature.argumentCount(); ++argIndex) {
         JSValue arg = exec->argument(argIndex);
-        switch (signature->argument(argIndex)) {
+        switch (signature.argument(argIndex)) {
         case Wasm::I32:
             arg = JSValue::decode(arg.toInt32(exec));
             break;
@@ -140,7 +140,7 @@ static EncodedJSValue JSC_HOST_CALL callWebAssemblyFunction(ExecState* exec)
     Wasm::storeContext(vm, prevWasmContext);
     RETURN_IF_EXCEPTION(scope, { });
 
-    switch (signature->returnType()) {
+    switch (signature.returnType()) {
     case Wasm::Void:
         return JSValue::encode(jsUndefined());
     case Wasm::I32:

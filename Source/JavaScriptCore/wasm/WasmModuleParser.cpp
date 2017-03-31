@@ -108,6 +108,7 @@ auto ModuleParser::parseType() -> PartialResult
     WASM_PARSER_FAIL_IF(!parseVarUInt32(count), "can't get Type section's count");
     WASM_PARSER_FAIL_IF(count == std::numeric_limits<uint32_t>::max(), "Type section's count is too big ", count);
     WASM_PARSER_FAIL_IF(!m_result.moduleSignatureIndicesToUniquedSignatureIndices.tryReserveCapacity(count), "can't allocate enough memory for Type section's ", count, " entries");
+    WASM_PARSER_FAIL_IF(!m_result.module->usedSignatures.tryReserveCapacity(count), "can't allocate enough memory for Type section's ", count, " entries");
 
     for (uint32_t i = 0; i < count; ++i) {
         int8_t type;
@@ -118,8 +119,9 @@ auto ModuleParser::parseType() -> PartialResult
         WASM_PARSER_FAIL_IF(type != Func, i, "th Type is non-Func ", type);
         WASM_PARSER_FAIL_IF(!parseVarUInt32(argumentCount), "can't get ", i, "th Type's argument count");
         WASM_PARSER_FAIL_IF(argumentCount == std::numeric_limits<uint32_t>::max(), i, "th argument count is too big ", argumentCount);
-        std::unique_ptr<Signature, void (*)(Signature*)> signature(Signature::create(argumentCount), &Signature::destroy);
-        WASM_PARSER_FAIL_IF(!signature, "can't allocate enough memory for Type section's ", i, "th signature");
+        RefPtr<Signature> maybeSignature = Signature::tryCreate(argumentCount);
+        WASM_PARSER_FAIL_IF(!maybeSignature, "can't allocate enough memory for Type section's ", i, "th signature");
+        Ref<Signature> signature = maybeSignature.releaseNonNull();
 
         for (unsigned i = 0; i < argumentCount; ++i) {
             Type argumentType;
@@ -138,8 +140,9 @@ auto ModuleParser::parseType() -> PartialResult
             returnType = Type::Void;
         signature->returnType() = returnType;
 
-        SignatureIndex signatureIndex = SignatureInformation::adopt(m_vm, signature.release());
-        m_result.moduleSignatureIndicesToUniquedSignatureIndices.uncheckedAppend(signatureIndex);
+        std::pair<SignatureIndex, Ref<Signature>> result = SignatureInformation::adopt(WTFMove(signature));
+        m_result.moduleSignatureIndicesToUniquedSignatureIndices.uncheckedAppend(result.first);
+        m_result.module->usedSignatures.uncheckedAppend(WTFMove(result.second));
     }
     return { };
 }
@@ -414,9 +417,9 @@ auto ModuleParser::parseStart() -> PartialResult
     WASM_PARSER_FAIL_IF(!parseVarUInt32(startFunctionIndex), "can't get Start index");
     WASM_PARSER_FAIL_IF(startFunctionIndex >= m_result.module->functionIndexSpaceSize(), "Start index ", startFunctionIndex, " exceeds function index space ", m_result.module->functionIndexSpaceSize());
     SignatureIndex signatureIndex = m_result.module->signatureIndexFromFunctionIndexSpace(startFunctionIndex);
-    const Signature* signature = SignatureInformation::get(m_vm, signatureIndex);
-    WASM_PARSER_FAIL_IF(signature->argumentCount(), "Start function can't have arguments");
-    WASM_PARSER_FAIL_IF(signature->returnType() != Void, "Start function can't return a value");
+    const Signature& signature = SignatureInformation::get(signatureIndex);
+    WASM_PARSER_FAIL_IF(signature.argumentCount(), "Start function can't have arguments");
+    WASM_PARSER_FAIL_IF(signature.returnType() != Void, "Start function can't return a value");
     m_result.module->startFunctionIndexSpace = startFunctionIndex;
     return { };
 }

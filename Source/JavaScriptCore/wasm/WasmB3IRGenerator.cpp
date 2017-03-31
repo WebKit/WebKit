@@ -164,7 +164,7 @@ public:
 
     B3IRGenerator(const ModuleInformation&, Procedure&, WasmInternalFunction*, Vector<UnlinkedWasmToWasmCall>&, MemoryMode);
 
-    PartialResult WARN_UNUSED_RETURN addArguments(const Signature*);
+    PartialResult WARN_UNUSED_RETURN addArguments(const Signature&);
     PartialResult WARN_UNUSED_RETURN addLocal(Type, uint32_t);
     ExpressionType addConstant(Type, uint64_t);
 
@@ -204,8 +204,8 @@ public:
     PartialResult WARN_UNUSED_RETURN addEndToUnreachable(ControlEntry&);
 
     // Calls
-    PartialResult WARN_UNUSED_RETURN addCall(uint32_t calleeIndex, const Signature*, Vector<ExpressionType>& args, ExpressionType& result);
-    PartialResult WARN_UNUSED_RETURN addCallIndirect(const Signature*, SignatureIndex, Vector<ExpressionType>& args, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addCall(uint32_t calleeIndex, const Signature&, Vector<ExpressionType>& args, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addCallIndirect(const Signature&, SignatureIndex, Vector<ExpressionType>& args, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addUnreachable();
 
     void dump(const Vector<ControlEntry>& controlStack, const ExpressionList* expressionStack);
@@ -407,12 +407,12 @@ auto B3IRGenerator::addLocal(Type type, uint32_t count) -> PartialResult
     return { };
 }
 
-auto B3IRGenerator::addArguments(const Signature* signature) -> PartialResult
+auto B3IRGenerator::addArguments(const Signature& signature) -> PartialResult
 {
     ASSERT(!m_locals.size());
-    WASM_COMPILE_FAIL_IF(!m_locals.tryReserveCapacity(signature->argumentCount()), "can't allocate memory for ", signature->argumentCount(), " arguments");
+    WASM_COMPILE_FAIL_IF(!m_locals.tryReserveCapacity(signature.argumentCount()), "can't allocate memory for ", signature.argumentCount(), " arguments");
 
-    m_locals.grow(signature->argumentCount());
+    m_locals.grow(signature.argumentCount());
     wasmCallingConvention().loadArguments(signature, m_proc, m_currentBlock, Origin(),
         [=] (ExpressionType argument, unsigned i) {
             Variable* argumentVariable = m_proc.addVariable(argument->type());
@@ -881,11 +881,11 @@ auto B3IRGenerator::addEndToUnreachable(ControlEntry& entry) -> PartialResult
     return { };
 }
 
-auto B3IRGenerator::addCall(uint32_t functionIndex, const Signature* signature, Vector<ExpressionType>& args, ExpressionType& result) -> PartialResult
+auto B3IRGenerator::addCall(uint32_t functionIndex, const Signature& signature, Vector<ExpressionType>& args, ExpressionType& result) -> PartialResult
 {
-    ASSERT(signature->argumentCount() == args.size());
+    ASSERT(signature.argumentCount() == args.size());
 
-    Type returnType = signature->returnType();
+    Type returnType = signature.returnType();
     Vector<UnlinkedWasmToWasmCall>* unlinkedWasmToWasmCalls = &m_unlinkedWasmToWasmCalls;
 
     if (m_info.isImportedFunctionFromFunctionIndexSpace(functionIndex)) {
@@ -962,11 +962,11 @@ auto B3IRGenerator::addCall(uint32_t functionIndex, const Signature* signature, 
     return { };
 }
 
-auto B3IRGenerator::addCallIndirect(const Signature* signature, SignatureIndex signatureIndex, Vector<ExpressionType>& args, ExpressionType& result) -> PartialResult
+auto B3IRGenerator::addCallIndirect(const Signature& signature, SignatureIndex signatureIndex, Vector<ExpressionType>& args, ExpressionType& result) -> PartialResult
 {
     ASSERT(signatureIndex != Signature::invalidIndex);
     ExpressionType calleeIndex = args.takeLast();
-    ASSERT(signature->argumentCount() == args.size());
+    ASSERT(signature.argumentCount() == args.size());
 
     ExpressionType callableFunctionBuffer;
     ExpressionType callableFunctionBufferSize;
@@ -1022,7 +1022,7 @@ auto B3IRGenerator::addCallIndirect(const Signature* signature, SignatureIndex s
 
     ExpressionType calleeCode = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), callableFunction, OBJECT_OFFSETOF(CallableFunction, code));
 
-    Type returnType = signature->returnType();
+    Type returnType = signature.returnType();
     result = wasmCallingConvention().setupCall(m_proc, m_currentBlock, origin(), args, toB3Type(returnType),
         [=] (PatchpointValue* patchpoint) {
             patchpoint->effects.writesPinned = true;
@@ -1083,7 +1083,7 @@ void B3IRGenerator::dump(const Vector<ControlEntry>& controlStack, const Express
     dataLogLn();
 }
 
-static void createJSToWasmWrapper(CompilationContext& compilationContext, WasmInternalFunction& function, const Signature* signature, const ModuleInformation& info)
+static void createJSToWasmWrapper(CompilationContext& compilationContext, WasmInternalFunction& function, const Signature& signature, const ModuleInformation& info)
 {
     CCallHelpers& jit = *compilationContext.jsEntrypointJIT;
 
@@ -1116,8 +1116,8 @@ static void createJSToWasmWrapper(CompilationContext& compilationContext, WasmIn
     totalFrameSize -= sizeof(CallerFrameAndPC);
     unsigned numGPRs = 0;
     unsigned numFPRs = 0;
-    for (unsigned i = 0; i < signature->argumentCount(); i++) {
-        switch (signature->argument(i)) {
+    for (unsigned i = 0; i < signature.argumentCount(); i++) {
+        switch (signature.argument(i)) {
         case Wasm::I64:
         case Wasm::I32:
             if (numGPRs >= wasmCallingConvention().m_gprArgs.size())
@@ -1168,12 +1168,12 @@ static void createJSToWasmWrapper(CompilationContext& compilationContext, WasmIn
         }
 
         ptrdiff_t wasmOffset = CallFrame::headerSizeInRegisters * sizeof(void*);
-        for (unsigned i = 0; i < signature->argumentCount(); i++) {
-            switch (signature->argument(i)) {
+        for (unsigned i = 0; i < signature.argumentCount(); i++) {
+            switch (signature.argument(i)) {
             case Wasm::I32:
             case Wasm::I64:
                 if (numGPRs >= wasmCallingConvention().m_gprArgs.size()) {
-                    if (signature->argument(i) == Wasm::I32) {
+                    if (signature.argument(i) == Wasm::I32) {
                         jit.load32(CCallHelpers::Address(GPRInfo::callFrameRegister, jsOffset), scratchReg);
                         jit.store32(scratchReg, calleeFrame.withOffset(wasmOffset));
                     } else {
@@ -1182,7 +1182,7 @@ static void createJSToWasmWrapper(CompilationContext& compilationContext, WasmIn
                     }
                     wasmOffset += sizeof(void*);
                 } else {
-                    if (signature->argument(i) == Wasm::I32)
+                    if (signature.argument(i) == Wasm::I32)
                         jit.load32(CCallHelpers::Address(GPRInfo::callFrameRegister, jsOffset), wasmCallingConvention().m_gprArgs[numGPRs].gpr());
                     else
                         jit.load64(CCallHelpers::Address(GPRInfo::callFrameRegister, jsOffset), wasmCallingConvention().m_gprArgs[numGPRs].gpr());
@@ -1192,7 +1192,7 @@ static void createJSToWasmWrapper(CompilationContext& compilationContext, WasmIn
             case Wasm::F32:
             case Wasm::F64:
                 if (numFPRs >= wasmCallingConvention().m_fprArgs.size()) {
-                    if (signature->argument(i) == Wasm::F32) {
+                    if (signature.argument(i) == Wasm::F32) {
                         jit.load32(CCallHelpers::Address(GPRInfo::callFrameRegister, jsOffset), scratchReg);
                         jit.store32(scratchReg, calleeFrame.withOffset(wasmOffset));
                     } else {
@@ -1201,7 +1201,7 @@ static void createJSToWasmWrapper(CompilationContext& compilationContext, WasmIn
                     }
                     wasmOffset += sizeof(void*);
                 } else {
-                    if (signature->argument(i) == Wasm::F32)
+                    if (signature.argument(i) == Wasm::F32)
                         jit.loadFloat(CCallHelpers::Address(GPRInfo::callFrameRegister, jsOffset), wasmCallingConvention().m_fprArgs[numFPRs].fpr());
                     else
                         jit.loadDouble(CCallHelpers::Address(GPRInfo::callFrameRegister, jsOffset), wasmCallingConvention().m_fprArgs[numFPRs].fpr());
@@ -1243,7 +1243,7 @@ static void createJSToWasmWrapper(CompilationContext& compilationContext, WasmIn
         jit.loadPtr(CCallHelpers::Address(GPRInfo::callFrameRegister, offset), reg);
     }
 
-    switch (signature->returnType()) {
+    switch (signature.returnType()) {
     case Wasm::F32:
         jit.moveFloatTo32(FPRInfo::returnValueFPR, GPRInfo::returnValueGPR);
         break;
@@ -1263,7 +1263,7 @@ auto B3IRGenerator::origin() -> Origin
     return bitwise_cast<Origin>(OpcodeOrigin(m_parser->currentOpcode(), m_parser->currentOpcodeStartingOffset()));
 }
 
-Expected<std::unique_ptr<WasmInternalFunction>, String> parseAndCompile(VM& vm, CompilationContext& compilationContext, const uint8_t* functionStart, size_t functionLength, const Signature* signature, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, const ModuleInformation& info, const Vector<SignatureIndex>& moduleSignatureIndicesToUniquedSignatureIndices, MemoryMode mode, unsigned optLevel)
+Expected<std::unique_ptr<WasmInternalFunction>, String> parseAndCompile(VM& vm, CompilationContext& compilationContext, const uint8_t* functionStart, size_t functionLength, const Signature& signature, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, const ModuleInformation& info, const Vector<SignatureIndex>& moduleSignatureIndicesToUniquedSignatureIndices, MemoryMode mode, unsigned optLevel)
 {
     auto result = std::make_unique<WasmInternalFunction>();
 

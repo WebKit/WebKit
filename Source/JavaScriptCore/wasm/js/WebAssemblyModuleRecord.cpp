@@ -128,8 +128,8 @@ void WebAssemblyModuleRecord::link(ExecState* exec, JSWebAssemblyModule* module,
                 JSWebAssemblyCallee* jsEntrypointCallee = codeBlock->jsEntrypointCalleeFromFunctionIndexSpace(exp.kindIndex);
                 JSWebAssemblyCallee* wasmEntrypointCallee = codeBlock->wasmEntrypointCalleeFromFunctionIndexSpace(exp.kindIndex);
                 Wasm::SignatureIndex signatureIndex = module->signatureIndexFromFunctionIndexSpace(exp.kindIndex);
-                const Wasm::Signature* signature = Wasm::SignatureInformation::get(&vm, signatureIndex);
-                WebAssemblyFunction* function = WebAssemblyFunction::create(vm, globalObject, signature->argumentCount(), exp.field, instance, jsEntrypointCallee, wasmEntrypointCallee, signatureIndex);
+                const Wasm::Signature& signature = Wasm::SignatureInformation::get(signatureIndex);
+                WebAssemblyFunction* function = WebAssemblyFunction::create(vm, globalObject, signature.argumentCount(), exp.field, instance, jsEntrypointCallee, wasmEntrypointCallee, signatureIndex);
                 exportedValue = function;
             }
             break;
@@ -188,17 +188,17 @@ void WebAssemblyModuleRecord::link(ExecState* exec, JSWebAssemblyModule* module,
     if (hasStart) {
         auto startFunctionIndexSpace = moduleInformation.startFunctionIndexSpace.value_or(0);
         Wasm::SignatureIndex signatureIndex = module->signatureIndexFromFunctionIndexSpace(startFunctionIndexSpace);
-        const Wasm::Signature* signature = Wasm::SignatureInformation::get(&vm, signatureIndex);
+        const Wasm::Signature& signature = Wasm::SignatureInformation::get(signatureIndex);
         // The start function must not take any arguments or return anything. This is enforced by the parser.
-        ASSERT(!signature->argumentCount());
-        ASSERT(signature->returnType() == Wasm::Void);
+        ASSERT(!signature.argumentCount());
+        ASSERT(signature.returnType() == Wasm::Void);
         if (startFunctionIndexSpace < codeBlock->functionImportCount()) {
             JSObject* startFunction = instance->importFunction(startFunctionIndexSpace);
             m_startFunction.set(vm, this, startFunction);
         } else {
             JSWebAssemblyCallee* jsEntrypointCallee = codeBlock->jsEntrypointCalleeFromFunctionIndexSpace(startFunctionIndexSpace);
             JSWebAssemblyCallee* wasmEntrypointCallee = codeBlock->wasmEntrypointCalleeFromFunctionIndexSpace(startFunctionIndexSpace);
-            WebAssemblyFunction* function = WebAssemblyFunction::create(vm, globalObject, signature->argumentCount(), "start", instance, jsEntrypointCallee, wasmEntrypointCallee, signatureIndex);
+            WebAssemblyFunction* function = WebAssemblyFunction::create(vm, globalObject, signature.argumentCount(), "start", instance, jsEntrypointCallee, wasmEntrypointCallee, signatureIndex);
             m_startFunction.set(vm, this, function);
         }
     }
@@ -272,13 +272,13 @@ JSValue WebAssemblyModuleRecord::evaluate(ExecState* exec)
 
                 JSWebAssemblyCallee* jsEntrypointCallee = codeBlock->jsEntrypointCalleeFromFunctionIndexSpace(functionIndex);
                 JSWebAssemblyCallee* wasmEntrypointCallee = codeBlock->wasmEntrypointCalleeFromFunctionIndexSpace(functionIndex);
-                const Wasm::Signature* signature = Wasm::SignatureInformation::get(&vm, signatureIndex);
+                const Wasm::Signature& signature = Wasm::SignatureInformation::get(signatureIndex);
                 // FIXME: Say we export local function "foo" at function index 0.
                 // What if we also set it to the table an Element w/ index 0.
                 // Does (new Instance(...)).exports.foo === table.get(0)?
                 // https://bugs.webkit.org/show_bug.cgi?id=165825
                 WebAssemblyFunction* function = WebAssemblyFunction::create(
-                    vm, m_instance->globalObject(), signature->argumentCount(), String(), m_instance.get(), jsEntrypointCallee, wasmEntrypointCallee, signatureIndex);
+                    vm, m_instance->globalObject(), signature.argumentCount(), String(), m_instance.get(), jsEntrypointCallee, wasmEntrypointCallee, signatureIndex);
 
                 table->setFunction(vm, tableIndex, function);
                 ++tableIndex;

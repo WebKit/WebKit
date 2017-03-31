@@ -234,6 +234,7 @@ struct ModuleInformation {
     Vector<Import> imports;
     Vector<SignatureIndex> importFunctionSignatureIndices;
     Vector<SignatureIndex> internalFunctionSignatureIndices;
+    Vector<Ref<Signature>> usedSignatures;
 
     MemoryInformation memory;
 
