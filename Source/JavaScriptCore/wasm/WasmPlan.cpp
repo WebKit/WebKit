@@ -245,7 +245,7 @@ void Plan::compileFunctions(CompilationEffort effort)
         ASSERT(validateFunction(functionStart, functionLength, signature, *m_moduleInformation, m_moduleSignatureIndicesToUniquedSignatureIndices));
 
         m_unlinkedWasmToWasmCalls[functionIndex] = Vector<UnlinkedWasmToWasmCall>();
-        auto parseAndCompileResult = parseAndCompile(m_compilationContexts[functionIndex], functionStart, functionLength, signature, m_unlinkedWasmToWasmCalls[functionIndex], *m_moduleInformation, m_moduleSignatureIndicesToUniquedSignatureIndices, m_mode);
+        auto parseAndCompileResult = parseAndCompile(m_compilationContexts[functionIndex], functionStart, functionLength, signature, m_unlinkedWasmToWasmCalls[functionIndex], *m_moduleInformation, m_moduleSignatureIndicesToUniquedSignatureIndices, m_mode, Options::webAssemblyB3OptimizationLevel());
 
         if (UNLIKELY(!parseAndCompileResult)) {
             auto locker = holdLock(m_lock);
