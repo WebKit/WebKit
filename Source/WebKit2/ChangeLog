@@ -1,3 +1,13 @@
+2017-04-01  Dan Bernstein  <mitz@apple.com>
+
+        [Xcode] In engineering builds, linker warns about libwebrtc.dylib’s install name being invalid
+        https://bugs.webkit.org/show_bug.cgi?id=170385
+
+        Reviewed by Tim Horton.
+
+        * Configurations/WebKit.xcconfig: When WebKit is relocatable, tell the linker that it’s
+          not going to be in the shared cache, even if its install name implies that it might be.
+
 2017-03-31  Simon Fraser  <simon.fraser@apple.com>
 
         Remove a logging statement left in by mistake.
