@@ -1145,18 +1145,20 @@ public:
     double lastHandledUserGestureTimestamp() const { return m_lastHandledUserGestureTimestamp; }
     void updateLastHandledUserGestureTimestamp();
 
-#if ENABLE(TOUCH_EVENTS)
-    bool hasTouchEventHandlers() const { return (m_touchEventTargets.get()) ? m_touchEventTargets->size() : false; }
-#else
-    bool hasTouchEventHandlers() const { return false; }
-#endif
-
     // Used for testing. Count handlers in the main document, and one per frame which contains handlers.
     WEBCORE_EXPORT unsigned wheelEventHandlerCount() const;
     WEBCORE_EXPORT unsigned touchEventHandlerCount() const;
 
     WEBCORE_EXPORT void startTrackingStyleRecalcs();
     WEBCORE_EXPORT unsigned styleRecalcCount() const;
+
+#if ENABLE(TOUCH_EVENTS)
+    bool hasTouchEventHandlers() const { return (m_touchEventTargets.get()) ? m_touchEventTargets->size() : false; }
+    bool touchEventTargetsContain(Node& node) const { return m_touchEventTargets ? m_touchEventTargets->contains(&node) : false; }
+#else
+    bool hasTouchEventHandlers() const { return false; }
+    bool touchEventTargetsContain(Node&) const { return false; }
+#endif
 
     void didAddTouchEventHandler(Node&);
     void didRemoveTouchEventHandler(Node&, EventHandlerRemoval = EventHandlerRemoval::One);

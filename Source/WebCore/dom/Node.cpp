@@ -301,6 +301,14 @@ Node::~Node()
         clearEventTargetData();
 
     document().decrementReferencingNodeCount();
+
+#if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS) && (!ASSERT_DISABLED || ENABLE(SECURITY_ASSERTIONS))
+    for (auto* document : Document::allDocuments()) {
+        ASSERT_WITH_SECURITY_IMPLICATION(!document->touchEventListenersContain(*this));
+        ASSERT_WITH_SECURITY_IMPLICATION(!document->touchEventHandlersContain(*this));
+        ASSERT_WITH_SECURITY_IMPLICATION(!document->touchEventTargetsContain(*this));
+    }
+#endif
 }
 
 void Node::willBeDeletedFrom(Document& document)
