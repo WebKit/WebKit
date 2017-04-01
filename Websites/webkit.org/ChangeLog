@@ -1,3 +1,16 @@
+2017-03-31  Dean Jackson  <dino@apple.com>
+
+        Unreviewed. Add some WebGPU examples.
+
+        * demos/webgpu/2d.html: Added.
+        * demos/webgpu/2d.js: Added.
+        * demos/webgpu/cubes.html: Added.
+        * demos/webgpu/cubes.js: Added.
+        * demos/webgpu/shared.css: Added.
+        * demos/webgpu/shared.js: Added.
+        * demos/webgpu/simple.html: Added.
+        * demos/webgpu/simple.js: Added.
+
 2017-03-11  Jon Davis  <jond@apple.com>
 
         Add Swift syntax highlighting to webkit.org
