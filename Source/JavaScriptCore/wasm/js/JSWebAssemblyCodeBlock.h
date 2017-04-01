@@ -49,9 +49,9 @@ public:
     typedef JSCell Base;
     static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
 
-    static JSWebAssemblyCodeBlock* create(VM& vm, JSWebAssemblyModule* owner, Wasm::MemoryMode mode, Ref<Wasm::Plan>&& plan, unsigned calleeCount)
+    static JSWebAssemblyCodeBlock* create(VM& vm, JSWebAssemblyModule* owner, Wasm::MemoryMode mode, Ref<Wasm::Plan>&& plan, unsigned calleeCount, unsigned functionImportCount)
     {
-        auto* result = new (NotNull, allocateCell<JSWebAssemblyCodeBlock>(vm.heap, allocationSize(calleeCount))) JSWebAssemblyCodeBlock(vm, owner, mode, WTFMove(plan), calleeCount);
+        auto* result = new (NotNull, allocateCell<JSWebAssemblyCodeBlock>(vm.heap, allocationSize(calleeCount, functionImportCount))) JSWebAssemblyCodeBlock(vm, owner, mode, WTFMove(plan), calleeCount);
         result->finishCreation(vm);
         return result;
     }
@@ -111,6 +111,13 @@ public:
         return m_wasmExitStubs[importIndex].wasmToJs.code().executableAddress();
     }
 
+    static ptrdiff_t offsetOfImportWasmToJSStub(unsigned calleeCount, unsigned importIndex)
+    {
+        return offsetOfCallees()
+            + (sizeof(WriteBarrier<JSWebAssemblyCallee>) * calleeCount * 2)
+            + (sizeof(void*) * importIndex);
+    }
+
 private:
     JSWebAssemblyCodeBlock(VM&, JSWebAssemblyModule*, Wasm::MemoryMode, Ref<Wasm::Plan>&&, unsigned calleeCount);
     DECLARE_EXPORT_INFO;
@@ -118,14 +125,21 @@ private:
     static void destroy(JSCell*);
     static void visitChildren(JSCell*, SlotVisitor&);
 
-    static size_t offsetOfCallees()
+    static ptrdiff_t offsetOfCallees()
     {
         return WTF::roundUpToMultipleOf<sizeof(WriteBarrier<JSWebAssemblyCallee>)>(sizeof(JSWebAssemblyCodeBlock));
     }
 
-    static size_t allocationSize(unsigned numCallees)
+    static size_t allocationSize(unsigned calleeCount, unsigned functionImportCount)
     {
-        return offsetOfCallees() + sizeof(WriteBarrier<JSWebAssemblyCallee>) * numCallees * 2;
+        return offsetOfCallees()
+            + (sizeof(WriteBarrier<JSWebAssemblyCallee>) * calleeCount * 2)
+            + (sizeof(void*) * functionImportCount);
+    }
+
+    void*& importWasmToJSStub(unsigned calleeCount, unsigned importIndex)
+    {
+        return *bitwise_cast<void**>(bitwise_cast<char*>(this) + offsetOfImportWasmToJSStub(calleeCount, importIndex));
     }
 
     class UnconditionalFinalizer : public JSC::UnconditionalFinalizer {

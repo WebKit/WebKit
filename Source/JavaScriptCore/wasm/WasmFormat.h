@@ -269,10 +269,6 @@ struct ModuleInformation {
 struct UnlinkedWasmToWasmCall {
     CodeLocationCall callLocation;
     size_t functionIndex;
-    enum class Target : uint8_t {
-        ToJs,
-        ToWasm,
-    } target;
 };
 
 struct Entrypoint {

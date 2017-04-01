@@ -1,3 +1,39 @@
+2017-03-31  Saam Barati  <sbarati@apple.com>
+
+        WebAssembly: Make our calls out to JS PIC friendly
+        https://bugs.webkit.org/show_bug.cgi?id=170261
+
+        Reviewed by Keith Miller.
+
+        This patch removes a direct call from the module to the Wasm to JS stub.
+        Instead, we do an indirect call to the stub by loading the stub's executable
+        address off of the CodeBlock. This is to make the code we emit for comply with
+        requirements needed for PIC.
+        
+        Adding this indirection is not ideal. Although this patch is neutral on
+        WasmBench, we really want to get back to a world where we have an IC
+        call infrastructure. This patch is obviously a regression on some
+        types of programs. I've filed this bug to make sure we implement a
+        PIC compliant Wasm to JS call IC:
+        https://bugs.webkit.org/show_bug.cgi?id=170375
+
+        * wasm/WasmB3IRGenerator.cpp:
+        * wasm/WasmFormat.h:
+        * wasm/WasmPlan.cpp:
+        (JSC::Wasm::Plan::complete):
+        * wasm/js/JSWebAssemblyCodeBlock.cpp:
+        (JSC::JSWebAssemblyCodeBlock::initialize):
+        * wasm/js/JSWebAssemblyCodeBlock.h:
+        (JSC::JSWebAssemblyCodeBlock::create):
+        (JSC::JSWebAssemblyCodeBlock::offsetOfImportWasmToJSStub):
+        (JSC::JSWebAssemblyCodeBlock::offsetOfCallees):
+        (JSC::JSWebAssemblyCodeBlock::allocationSize):
+        (JSC::JSWebAssemblyCodeBlock::importWasmToJSStub):
+        * wasm/js/JSWebAssemblyInstance.cpp:
+        (JSC::JSWebAssemblyInstance::addUnitializedCodeBlock):
+        * wasm/js/JSWebAssemblyInstance.h:
+        (JSC::JSWebAssemblyInstance::offsetOfCodeBlock):
+
 2017-03-31  Keith Miller  <keith_miller@apple.com>
 
         WebAssembly: webAssemblyB3OptimizationLevel should use defaultB3OptLevel by default

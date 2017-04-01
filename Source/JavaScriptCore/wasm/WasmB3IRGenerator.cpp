@@ -908,24 +908,30 @@ auto B3IRGenerator::addCall(uint32_t functionIndex, const Signature& signature, 
                     AllowMacroScratchRegisterUsage allowScratch(jit);
                     CCallHelpers::Call call = jit.call();
                     jit.addLinkTask([unlinkedWasmToWasmCalls, call, functionIndex] (LinkBuffer& linkBuffer) {
-                        unlinkedWasmToWasmCalls->append({ linkBuffer.locationOf(call), functionIndex, UnlinkedWasmToWasmCall::Target::ToWasm });
+                        unlinkedWasmToWasmCalls->append({ linkBuffer.locationOf(call), functionIndex });
                     });
                 });
             });
         UpsilonValue* wasmCallResultUpsilon = returnType == Void ? nullptr : isWasmBlock->appendNew<UpsilonValue>(m_proc, origin(), wasmCallResult);
         isWasmBlock->appendNewControlValue(m_proc, Jump, origin(), continuation);
 
+        // FIXME: Lets remove this indirection by creating a PIC friendly IC
+        // for calls out to JS. This shouldn't be that hard to do. We could probably
+        // implement the IC to be over Wasm::Context*.
+        // https://bugs.webkit.org/show_bug.cgi?id=170375
+        Value* codeBlock = isJSBlock->appendNew<MemoryValue>(m_proc,
+            Load, pointerType(), origin(), m_instanceValue, JSWebAssemblyInstance::offsetOfCodeBlock());
+        Value* jumpDestination = isJSBlock->appendNew<MemoryValue>(m_proc,
+            Load, pointerType(), origin(), codeBlock, JSWebAssemblyCodeBlock::offsetOfImportWasmToJSStub(m_info.internalFunctionCount(), functionIndex));
         Value* jsCallResult = wasmCallingConvention().setupCall(m_proc, isJSBlock, origin(), args, toB3Type(returnType),
-            [=] (PatchpointValue* patchpoint) {
+            [&] (PatchpointValue* patchpoint) {
                 patchpoint->effects.writesPinned = true;
                 patchpoint->effects.readsPinned = true;
+                patchpoint->append(jumpDestination, ValueRep::SomeRegister);
                 patchpoint->clobberLate(PinnedRegisterInfo::get().toSave());
-                patchpoint->setGenerator([unlinkedWasmToWasmCalls, functionIndex] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+                patchpoint->setGenerator([unlinkedWasmToWasmCalls, functionIndex, returnType] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
                     AllowMacroScratchRegisterUsage allowScratch(jit);
-                    CCallHelpers::Call call = jit.call();
-                    jit.addLinkTask([unlinkedWasmToWasmCalls, call, functionIndex] (LinkBuffer& linkBuffer) {
-                        unlinkedWasmToWasmCalls->append({ linkBuffer.locationOf(call), functionIndex, UnlinkedWasmToWasmCall::Target::ToJs });
-                    });
+                    jit.call(params[returnType == Void ? 0 : 1].gpr());
                 });
             });
         UpsilonValue* jsCallResultUpsilon = returnType == Void ? nullptr : isJSBlock->appendNew<UpsilonValue>(m_proc, origin(), jsCallResult);
@@ -953,7 +959,7 @@ auto B3IRGenerator::addCall(uint32_t functionIndex, const Signature& signature, 
                     AllowMacroScratchRegisterUsage allowScratch(jit);
                     CCallHelpers::Call call = jit.call();
                     jit.addLinkTask([unlinkedWasmToWasmCalls, call, functionIndex] (LinkBuffer& linkBuffer) {
-                        unlinkedWasmToWasmCalls->append({ linkBuffer.locationOf(call), functionIndex, UnlinkedWasmToWasmCall::Target::ToWasm });
+                        unlinkedWasmToWasmCalls->append({ linkBuffer.locationOf(call), functionIndex });
                     });
                 });
             });

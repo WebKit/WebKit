@@ -72,6 +72,10 @@ void JSWebAssemblyCodeBlock::initialize()
     m_callLinkInfos = plan().takeCallLinkInfos();
     m_wasmExitStubs = plan().takeWasmExitStubs();
 
+    // The code a module emits to call into JS relies on us to set this up.
+    for (unsigned i = 0; i < m_wasmExitStubs.size(); i++)
+        importWasmToJSStub(m_calleeCount, i) = m_wasmExitStubs[i].wasmToJs.code().executableAddress();
+
     plan().initializeCallees([&] (unsigned calleeIndex, JSWebAssemblyCallee* jsEntrypointCallee, JSWebAssemblyCallee* wasmEntrypointCallee) {
         setJSEntrypointCallee(vm, calleeIndex, jsEntrypointCallee);
         setWasmEntrypointCallee(vm, calleeIndex, wasmEntrypointCallee);

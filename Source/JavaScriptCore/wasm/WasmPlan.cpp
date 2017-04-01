@@ -296,13 +296,9 @@ void Plan::complete(const AbstractLocker&)
                 void* executableAddress;
                 if (m_moduleInformation->isImportedFunctionFromFunctionIndexSpace(call.functionIndex)) {
                     // FIXME imports could have been linked in B3, instead of generating a patchpoint. This condition should be replaced by a RELEASE_ASSERT. https://bugs.webkit.org/show_bug.cgi?id=166462
-                    executableAddress = call.target == UnlinkedWasmToWasmCall::Target::ToJs
-                    ? m_wasmExitStubs.at(call.functionIndex).wasmToJs.code().executableAddress()
-                    : m_wasmExitStubs.at(call.functionIndex).wasmToWasm.code().executableAddress();
-                } else {
-                    ASSERT(call.target != UnlinkedWasmToWasmCall::Target::ToJs);
+                    executableAddress = m_wasmExitStubs.at(call.functionIndex).wasmToWasm.code().executableAddress();
+                } else
                     executableAddress = m_wasmInternalFunctions.at(call.functionIndex - m_wasmExitStubs.size())->wasmEntrypoint.compilation->code().executableAddress();
-                }
                 MacroAssembler::repatchCall(call.callLocation, CodeLocationLabel(executableAddress));
             }
         }
