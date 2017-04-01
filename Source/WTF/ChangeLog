@@ -1,3 +1,12 @@
+2017-04-01  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Mac cmake buildfix after 214586.
+        https://bugs.webkit.org/show_bug.cgi?id=170381
+
+        Unreviewed.
+
+        * wtf/BlockPtr.h:
+
 2017-03-30  Filip Pizlo  <fpizlo@apple.com>
 
         Air should support linear scan for optLevel<2

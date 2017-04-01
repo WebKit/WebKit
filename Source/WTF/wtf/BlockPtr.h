@@ -26,6 +26,7 @@
 #pragma once
 
 #include <Block.h>
+#include <utility>
 #include <wtf/Assertions.h>
 
 namespace WTF {
