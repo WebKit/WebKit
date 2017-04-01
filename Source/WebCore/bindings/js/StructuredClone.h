@@ -31,7 +31,6 @@ class ExecState;
 
 namespace WebCore {
 
-JSC::EncodedJSValue JSC_HOST_CALL cloneArrayBuffer(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL structuredCloneArrayBuffer(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL structuredCloneArrayBufferView(JSC::ExecState*);
 

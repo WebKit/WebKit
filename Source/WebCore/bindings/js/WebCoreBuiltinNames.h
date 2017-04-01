@@ -39,7 +39,6 @@ namespace WebCore {
     macro(body) \
     macro(byobRequest) \
     macro(cancel) \
-    macro(cloneArrayBuffer) \
     macro(cloneForJS) \
     macro(closeRequested) \
     macro(closedPromiseCapability) \

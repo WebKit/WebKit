@@ -1,3 +1,11 @@
+2017-04-01  Alexey Proskuryakov  <ap@apple.com>
+
+        Rolling back http://trac.webkit.org/r214663 - memory corruption
+
+        * streams/readable-stream-byob-request-expected.txt:
+        * streams/readable-stream-byob-request.js:
+        (self.importScripts.test): Deleted.
+
 2017-03-31  Zalan Bujtas  <zalan@apple.com>
 
         <table>: Including <caption>, <thead> or <tbody> causes clipping across page breaks

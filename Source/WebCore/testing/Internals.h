@@ -188,14 +188,14 @@ public:
 
     void invalidateFontCache();
     void setFontSmoothingEnabled(bool);
-
+    
     ExceptionOr<void> setLowPowerModeEnabled(bool);
 
     ExceptionOr<void> setScrollViewPosition(int x, int y);
-
+    
     ExceptionOr<Ref<ClientRect>> layoutViewportRect();
     ExceptionOr<Ref<ClientRect>> visualViewportRect();
-
+    
     ExceptionOr<void> setViewBaseBackgroundColor(const String& colorValue);
 
     ExceptionOr<void> setPagination(const String& mode, int gap, int pageLength);
@@ -368,7 +368,7 @@ public:
 
     ExceptionOr<void> startTrackingLayerFlushes();
     ExceptionOr<unsigned> layerFlushCount();
-
+    
     ExceptionOr<void> startTrackingStyleRecalcs();
     ExceptionOr<unsigned> styleRecalcCount();
     unsigned lastStyleUpdateSize() const;
@@ -523,13 +523,10 @@ public:
 
 #if ENABLE(READABLE_STREAM_API)
     bool isReadableStreamDisturbed(JSC::ExecState&, JSC::JSValue);
-#if ENABLE(READABLE_BYTE_STREAM_API)
-    JSC::JSValue cloneArrayBuffer(JSC::ExecState&, JSC::JSValue, JSC::JSValue, JSC::JSValue);
-#endif
 #endif
 
     String composedTreeAsText(Node&);
-
+    
     bool isProcessingUserGesture();
 
     RefPtr<GCObservation> observeGC(JSC::JSValue);
@@ -538,7 +535,7 @@ public:
     void setUserInterfaceLayoutDirection(UserInterfaceLayoutDirection);
 
     bool userPrefersReducedMotion() const;
-
+    
     void reportBacktrace();
 
     enum class BaseWritingDirection { Natural, Ltr, Rtl };

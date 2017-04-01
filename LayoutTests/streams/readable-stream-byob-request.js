@@ -241,22 +241,4 @@ promise_test(function() {
 // FIXME: when ReadableStreamBYOBReader is implemented, add tests with elementSize different from 1
 // so that more code can be covered.
 
-if (!self.importScripts) {
-    // Test only if not Worker.
-    const CloneArrayBuffer = internals.cloneArrayBuffer.bind(internals);
-
-    test(function() {
-        const typedArray = new Uint8Array([3, 5, 7]);
-        const clonedBuffer = CloneArrayBuffer(typedArray.buffer, 1, 1);
-        const otherArray = new Uint8Array(clonedBuffer);
-        assert_equals(otherArray.byteLength, 1);
-        assert_equals(otherArray.byteOffset, 0);
-        assert_equals(otherArray.buffer.byteLength, 1);
-        assert_equals(otherArray[0], 5);
-        // Check that when typedArray is modified, otherArray is not modified.
-        typedArray[1] = 0;
-        assert_equals(otherArray[0], 5);
-    }, "Test cloneArrayBuffer implementation");
-}
-
 done();

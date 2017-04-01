@@ -378,6 +378,17 @@ function readableByteStreamControllerRespondInternal(controller, bytesWritten)
     }
 }
 
+function cloneArrayBuffer(srcBuffer, srcByteOffset, srcLength)
+{
+    "use strict";
+
+    // FIXME: Below implementation returns the appropriate data but does not perform
+    // exactly what is described by ECMAScript CloneArrayBuffer operation. This should
+    // be fixed in a follow up patch implementing cloneArrayBuffer in JSC (similarly to
+    // structuredCloneArrayBuffer implementation).
+    return srcBuffer.slice(srcByteOffset, srcByteOffset + srcLength);
+}
+
 function readableByteStreamControllerRespondInReadableState(controller, bytesWritten, pullIntoDescriptor)
 {
     "use strict";

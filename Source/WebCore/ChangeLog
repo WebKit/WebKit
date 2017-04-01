@@ -1,3 +1,44 @@
+2017-04-01  Alexey Proskuryakov  <ap@apple.com>
+
+        Rolling back http://trac.webkit.org/r214663 - memory corruption
+
+        * Modules/streams/ReadableByteStreamInternals.js:
+        (cloneArrayBuffer):
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::JSDOMGlobalObject::addBuiltinGlobals):
+        * bindings/js/StructuredClone.cpp:
+        (WebCore::structuredCloneArrayBuffer):
+        (WebCore::cloneArrayBufferImpl): Deleted.
+        (WebCore::cloneArrayBuffer): Deleted.
+        * bindings/js/StructuredClone.h:
+        * bindings/js/WebCoreBuiltinNames.h:
+        * testing/Internals.cpp:
+        (WebCore::markerTypeFrom):
+        (WebCore::Internals::resetToConsistentState):
+        (WebCore::Internals::isLoadingFromMemoryCache):
+        (WebCore::Internals::setImageFrameDecodingDuration):
+        (WebCore::deferredStyleRulesCountForList):
+        (WebCore::deferredGroupRulesCountForList):
+        (WebCore::deferredKeyframesRulesCountForList):
+        (WebCore::Internals::eventThrottlingBehaviorOverride):
+        (WebCore::Internals::enableMockSpeechSynthesizer):
+        (WebCore::Internals::rangeForDictionaryLookupAtLocation):
+        (WebCore::Internals::nodesFromRect):
+        (WebCore::Internals::layerIDForElement):
+        (WebCore::Internals::setElementUsesDisplayListDrawing):
+        (WebCore::Internals::setElementTracksDisplayListReplay):
+        (WebCore::Internals::styleRecalcCount):
+        (WebCore::Internals::compositingUpdateCount):
+        (WebCore::Internals::setCaptionDisplayMode):
+        (WebCore::Internals::endMediaSessionInterruption):
+        (WebCore::Internals::postRemoteControlCommand):
+        (WebCore::appendOffsets):
+        (WebCore::Internals::scrollSnapOffsets):
+        (WebCore::Internals::setShowAllPlugins):
+        (WebCore::Internals::cloneArrayBuffer): Deleted.
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2017-03-31  Zalan Bujtas  <zalan@apple.com>
 
         <table>: Including <caption>, <thead> or <tbody> causes clipping across page breaks
