@@ -35,7 +35,9 @@
 #include "HTMLNames.h"
 #include "HTMLTableElement.h"
 #include "LayoutRepainter.h"
+#include "RenderBlockFlow.h"
 #include "RenderChildIterator.h"
+#include "RenderDescendantIterator.h"
 #include "RenderIterator.h"
 #include "RenderLayer.h"
 #include "RenderNamedFlowFragment.h"
@@ -592,6 +594,12 @@ void RenderTable::layout()
             repaintRectangle(LayoutRect(visualOverflowRect().x(), movedSectionLogicalTop, visualOverflowRect().width(), visualOverflowRect().maxY() - movedSectionLogicalTop));
         else
             repaintRectangle(LayoutRect(movedSectionLogicalTop, visualOverflowRect().y(), visualOverflowRect().maxX() - movedSectionLogicalTop, visualOverflowRect().height()));
+    }
+
+    bool paginated = view().layoutState() && view().layoutState()->isPaginated();
+    if (sectionMoved && paginated) {
+        markForPaginationRelayoutIfNeeded();
+        layoutIfNeeded();
     }
     
     // FIXME: This value isn't the intrinsic content logical height, but we need

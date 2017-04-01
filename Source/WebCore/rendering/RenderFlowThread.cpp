@@ -43,6 +43,8 @@
 #include "RenderNamedFlowFragment.h"
 #include "RenderNamedFlowThread.h"
 #include "RenderRegion.h"
+#include "RenderTableCell.h"
+#include "RenderTableSection.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "TransformState.h"
@@ -1225,6 +1227,10 @@ LayoutUnit RenderFlowThread::offsetFromLogicalTopOfFirstRegion(const RenderBlock
         if (!containerBlock)
             return 0;
         LayoutPoint currentBlockLocation = currentBlock->location();
+        if (is<RenderTableCell>(*currentBlock)) {
+            if (auto* section = downcast<RenderTableCell>(*currentBlock).section())
+                currentBlockLocation.moveBy(section->location());
+        }
 
         if (containerBlock->style().writingMode() != currentBlock->style().writingMode()) {
             // We have to put the block rect in container coordinates

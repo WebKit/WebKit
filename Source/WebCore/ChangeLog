@@ -1,3 +1,22 @@
+2017-03-31  Zalan Bujtas  <zalan@apple.com>
+
+        <table>: Including <caption>, <thead> or <tbody> causes clipping across page breaks
+        https://bugs.webkit.org/show_bug.cgi?id=170348
+        <rdar://problem/24727151>
+
+        Reviewed by David Hyatt.
+
+        1. In RenderFlowThread::offsetFromLogicalTopOfFirstRegion() we need to take table section offset into account (they are skipped
+        during the containing block traversal).
+        2. Trigger paginated relayout when body is moved vertically due to caption/thead etc.
+
+        Test: fast/multicol/table-section-page-break.html
+
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::offsetFromLogicalTopOfFirstRegion):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::layout):
+
 2017-03-31  Simon Fraser  <simon.fraser@apple.com>
 
         Rename DOMWindow's m_touchEventListenerCount to m_touchAndGestureEventListenerCount

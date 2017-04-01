@@ -1,3 +1,14 @@
+2017-03-31  Zalan Bujtas  <zalan@apple.com>
+
+        <table>: Including <caption>, <thead> or <tbody> causes clipping across page breaks
+        https://bugs.webkit.org/show_bug.cgi?id=170348
+        <rdar://problem/24727151>
+
+        Reviewed by David Hyatt.
+
+        * fast/multicol/table-section-page-break-expected.html: Added.
+        * fast/multicol/table-section-page-break.html: Added.
+
 2017-03-31  Chris Dumez  <cdumez@apple.com>
 
         LayoutTest fast/images/animated-gif-restored-from-bfcache.html is a flaky failure
