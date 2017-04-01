@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000 Peter Kelly (pmk@post.com)
- * Copyright (C) 2006 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2013 Samsung Electronics. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -87,6 +87,7 @@ private:
 #if ENABLE(XSLT)
     bool m_isXSL { false };
 #endif
+    bool m_isHandlingBeforeLoad { false };
 };
 
 } // namespace WebCore
