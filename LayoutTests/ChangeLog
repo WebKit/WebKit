@@ -1,3 +1,24 @@
+2017-03-31  Chris Dumez  <cdumez@apple.com>
+
+        LayoutTest fast/images/animated-gif-restored-from-bfcache.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=162510
+        <rdar://problem/31380650>
+
+        Reviewed by Alexey Proskuryakov.
+
+        The test restores a page from PageCache and wants to check that an animated
+        GIF is properly animating. To do so, it store the data of the current image
+        frame, and then checks in a 100ms timer that the current image frame is
+        different. This is flaky by nature since the image only has 10 frames and
+        you therefore have a 1/10 chance that the new frame will be the same as the
+        previous one, even if the image is properly animating.
+
+        To address the problem, do a setInterval instead of a setTimeout and check
+        until the frame becomes different.
+
+        * fast/images/animated-gif-restored-from-bfcache.html:
+        * platform/mac/TestExpectations:
+
 2017-03-31  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [WK2] Tapping away to dismiss the selection does not update the selected DOM range using character granularity

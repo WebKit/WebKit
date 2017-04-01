@@ -17,7 +17,7 @@
         context.drawImage(image, 0, 0);
         var frameOne = context.getImageData(0, 0, 1, 1).data;
 
-        window.setTimeout(function() {
+        handle = window.setInterval(function() {
             context.drawImage(image, 0, 0);
             var frameTwo = context.getImageData(0, 0, 1, 1).data;
 
@@ -26,13 +26,13 @@
                 && frameOne[1] == frameTwo[1]
                 && frameOne[2] == frameTwo[2]
                 && frameOne[3] == frameTwo[3])
-                console.innerHTML = "<span style='color:red'>FAIL</span>";
-            else
-                console.innerHTML = "<span style='color:green'>PASS</span>";
+                return;
 
+            window.clearInterval(handle);
+            console.innerHTML = "<span style='color:green'>PASS</span>";
             if (window.testRunner)
                 testRunner.notifyDone();
-        }, 100);
+        }, 10);
     }
 
     window.onpageshow = function(event) {
