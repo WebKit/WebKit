@@ -38,14 +38,8 @@ function main($paths) {
             $commits = $fetcher->fetch_last_reported_between_orders($repository_id, $from, $to);
         else
             $commits = $fetcher->fetch_last_reported($repository_id);
-    } else if (ctype_alnum($filter)) {
+    } else
         $commits = $fetcher->fetch_revision($repository_id, $filter);
-    } else { // V2 UI compatibility.
-        $matches = array();
-        if (!preg_match('/([A-Za-z0-9]+)[\:\-]([A-Za-z0-9]+)/', $filter, $matches))
-            exit_with_error('UnknownFilter', array('repositoryName' => $repository_name, 'filter' => $filter));
-        $commits = $fetcher->fetch_between($repository_id, $matches[1], $matches[2]);
-    }
 
     if (!is_array($commits))
         exit_with_error('FailedToFetchCommits', array('repository' => $repository_id, 'filter' => $filter));

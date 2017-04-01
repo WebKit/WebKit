@@ -1,3 +1,11 @@
+2017-03-31  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fix. For OS versions, we can end up with non-alphanumeric revision.
+        Delete the code path only used by the v2 UI since nobody uses that now.
+
+        * public/api/commits.php:
+        (main):
+
 2017-03-30  Ryosuke Niwa  <rniwa@webkit.org>
 
         sync-buildbot.js can schedule more than one build per builder
