@@ -1,3 +1,10 @@
+2017-03-31  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove a logging statement left in by mistake.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::restoreViewState):
+
 2017-03-31  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Address post-review feedback after r214692
