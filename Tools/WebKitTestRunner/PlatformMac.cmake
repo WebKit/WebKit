@@ -1,6 +1,8 @@
 find_library(CARBON_LIBRARY Carbon)
 
+find_library(APPLICATIONSERVICES_LIBRARY ApplicationServices)
 find_library(CORESERVICES_LIBRARY CoreServices)
+add_definitions(-iframework ${APPLICATIONSERVICES_LIBRARY}/Versions/Current/Frameworks)
 add_definitions(-iframework ${CORESERVICES_LIBRARY}/Versions/Current/Frameworks)
 
 if ("${CURRENT_OSX_VERSION}" MATCHES "10.9")
