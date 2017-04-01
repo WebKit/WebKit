@@ -435,7 +435,7 @@ typedef const char* optionString;
     \
     v(bool, failToCompileWebAssemblyCode, false, Normal, "If true, no Wasm::Plan will sucessfully compile a function.") \
     v(size, webAssemblyPartialCompileLimit, 5000, Normal, "Limit on the number of bytes a Wasm::Plan::compile should attempt before checking for other work.") \
-    v(unsigned, webAssemblyB3OptimizationLevel, 2, Normal, "B3 Optimization level for Web Assembly modules.") \
+    v(unsigned, webAssemblyB3OptimizationLevel, Options::defaultB3OptLevel(), Normal, "B3 Optimization level for Web Assembly modules.") \
     \
     v(bool, simulateWebAssemblyLowMemory, false, Normal, "If true, the Memory object won't mmap the full 'maximum' range and instead will allocate the minimum required amount.") \
     v(bool, useWebAssemblyFastMemory, true, Normal, "If true, we will try to use a 32-bit address space with a signal handler to bounds check wasm memory.") \
