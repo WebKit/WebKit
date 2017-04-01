@@ -1,5 +1,20 @@
 2017-03-31  Simon Fraser  <simon.fraser@apple.com>
 
+        Rename DOMWindow's m_touchEventListenerCount to m_touchAndGestureEventListenerCount
+        https://bugs.webkit.org/show_bug.cgi?id=170371
+
+        Reviewed by Tim Horton.
+
+        This count tracks touch and gesture event listeners, so name it appropriately.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::addEventListener):
+        (WebCore::DOMWindow::removeEventListener):
+        (WebCore::DOMWindow::removeAllEventListeners):
+        * page/DOMWindow.h:
+
+2017-03-31  Simon Fraser  <simon.fraser@apple.com>
+
         When destroying a Node, assert that it's been removed from all the touch handler maps
         https://bugs.webkit.org/show_bug.cgi?id=170363
         rdar://problem/31377469

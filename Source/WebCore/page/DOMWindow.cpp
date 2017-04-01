@@ -1819,11 +1819,11 @@ bool DOMWindow::addEventListener(const AtomicString& eventType, Ref<EventListene
 #endif
 #if ENABLE(IOS_TOUCH_EVENTS)
     else if (eventNames().isTouchEventType(eventType))
-        ++m_touchEventListenerCount;
+        ++m_touchAndGestureEventListenerCount;
 #endif
 #if ENABLE(IOS_GESTURE_EVENTS)
     else if (eventNames().isGestureEventType(eventType))
-        ++m_touchEventListenerCount;
+        ++m_touchAndGestureEventListenerCount;
 #endif
 #if ENABLE(GAMEPAD)
     else if (eventNames().isGamepadEventType(eventType))
@@ -1910,14 +1910,14 @@ bool DOMWindow::removeEventListener(const AtomicString& eventType, EventListener
 #endif
 #if ENABLE(IOS_TOUCH_EVENTS)
     else if (eventNames().isTouchEventType(eventType)) {
-        ASSERT(m_touchEventListenerCount > 0);
-        --m_touchEventListenerCount;
+        ASSERT(m_touchAndGestureEventListenerCount > 0);
+        --m_touchAndGestureEventListenerCount;
     }
 #endif
 #if ENABLE(IOS_GESTURE_EVENTS)
     else if (eventNames().isGestureEventType(eventType)) {
-        ASSERT(m_touchEventListenerCount > 0);
-        --m_touchEventListenerCount;
+        ASSERT(m_touchAndGestureEventListenerCount > 0);
+        --m_touchAndGestureEventListenerCount;
     }
 #endif
 #if ENABLE(GAMEPAD)
@@ -2023,7 +2023,7 @@ void DOMWindow::removeAllEventListeners()
 #endif
 
 #if ENABLE(IOS_TOUCH_EVENTS) || ENABLE(IOS_GESTURE_EVENTS)
-    m_touchEventListenerCount = 0;
+    m_touchAndGestureEventListenerCount = 0;
 #endif
 
 #if ENABLE(TOUCH_EVENTS)
