@@ -1,3 +1,21 @@
+2017-04-01  Oleksandr Skachkov  <gskachkov@gmail.com>
+
+        Object with numerical keys with gaps gets filled by NaN values
+        https://bugs.webkit.org/show_bug.cgi?id=164412
+
+        Reviewed by Mark Lam.
+
+        This patch fixes issue when object have two properties 
+        with name as number. The issue appears when during invoking 
+        convertDoubleToArrayStorage, array is filled by pNaN and 
+        method converting it to real NaN. This happeneds because a 
+        pNaN in a Double array is a hole, and Double arrays cannot 
+        have NaN values. To fix issue we need to check value and 
+        clear it if it pNaN.
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::convertDoubleToArrayStorage):
+
 2017-03-31  Saam Barati  <sbarati@apple.com>
 
         WebAssembly: Make our calls out to JS PIC friendly

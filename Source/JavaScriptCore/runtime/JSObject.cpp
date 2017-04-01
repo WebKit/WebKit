@@ -1288,9 +1288,12 @@ ArrayStorage* JSObject::convertDoubleToArrayStorage(VM& vm, NonPropertyTransitio
     Butterfly* butterfly = m_butterfly.get();
     for (unsigned i = 0; i < vectorLength; i++) {
         double value = butterfly->contiguousDouble()[i];
+        if (value != value) {
+            newStorage->m_vector[i].clear();
+            continue;
+        }
         newStorage->m_vector[i].setWithoutWriteBarrier(JSValue(JSValue::EncodeAsDouble, value));
-        if (value == value)
-            newStorage->m_numValuesInVector++;
+        newStorage->m_numValuesInVector++;
     }
     
     StructureID oldStructureID = this->structureID();
