@@ -122,8 +122,10 @@ class DarwinPort(ApplePort):
         all_crash_log = self._look_for_all_crash_logs_in_log_dir(start_time)
         return self._merge_crash_logs(crash_logs, all_crash_log, crashed_processes)
 
-    def sample_process(self, name, pid):
-        exit_status = self._executive.run_command([
+    def sample_process(self, name, pid, target_host=None):
+        host = target_host or self.host
+        tempdir = host.filesystem.mkdtemp()
+        exit_status = host.executive.run_command([
             "/usr/bin/sudo",
             "-n",
             "/usr/sbin/spindump",
@@ -131,34 +133,45 @@ class DarwinPort(ApplePort):
             10,
             10,
             "-file",
-            self.spindump_file_path(name, pid),
+            DarwinPort.spindump_file_path(host, name, pid, str(tempdir)),
         ], return_exit_code=True)
         if exit_status:
             try:
-                self._executive.run_command([
+                host.executive.run_command([
                     "/usr/bin/sample",
                     pid,
                     10,
                     10,
                     "-file",
-                    self.sample_file_path(name, pid),
+                    DarwinPort.sample_file_path(host, name, pid, str(tempdir)),
                 ])
+                host.filesystem.move_to_base_host(DarwinPort.sample_file_path(host, name, pid, str(tempdir)),
+                                                  DarwinPort.sample_file_path(self.host, name, pid, self.results_directory()))
             except ScriptError as e:
                 _log.warning('Unable to sample process:' + str(e))
+        else:
+            host.filesystem.move_to_base_host(DarwinPort.spindump_file_path(host, name, pid, str(tempdir)),
+                                              DarwinPort.spindump_file_path(self.host, name, pid, self.results_directory()))
+        host.filesystem.rmtree(str(tempdir))
 
-    def sample_file_path(self, name, pid):
-        return self._filesystem.join(self.results_directory(), "{0}-{1}-sample.txt".format(name, pid))
+    @staticmethod
+    def sample_file_path(host, name, pid, directory):
+        return host.filesystem.join(directory, "{0}-{1}-sample.txt".format(name, pid))
 
-    def spindump_file_path(self, name, pid):
-        return self._filesystem.join(self.results_directory(), "{0}-{1}-spindump.txt".format(name, pid))
+    @staticmethod
+    def spindump_file_path(host, name, pid, directory):
+        return host.filesystem.join(directory, "{0}-{1}-spindump.txt".format(name, pid))
 
     def look_for_new_samples(self, unresponsive_processes, start_time):
         sample_files = {}
         for (test_name, process_name, pid) in unresponsive_processes:
-            sample_file = self.sample_file_path(process_name, pid)
-            if not self._filesystem.isfile(sample_file):
-                continue
-            sample_files[test_name] = sample_file
+            sample_file = DarwinPort.sample_file_path(self.host, process_name, pid, self.results_directory())
+            if self._filesystem.isfile(sample_file):
+                sample_files[test_name] = sample_file
+            else:
+                spindump_file = DarwinPort.spindump_file_path(self.host, process_name, pid, self.results_directory())
+                if self._filesystem.isfile(spindump_file):
+                    sample_files[test_name] = spindump_file
         return sample_files
 
     def make_command(self):

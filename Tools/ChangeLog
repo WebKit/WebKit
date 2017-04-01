@@ -1,5 +1,71 @@
 2017-03-31  Jonathan Bedard  <jbedard@apple.com>
 
+        webkitpy: Add target host concept
+        https://bugs.webkit.org/show_bug.cgi?id=170186
+        <rdar://problem/31301797>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Adding the idea of a target host. Target hosts are objects conforming to the
+        structure of the SystemHost object in Scripts/webkitpy/common/system/systemhost.py
+        Target hosts are the hosts associated with a worker process.
+
+        * Scripts/webkitpy/common/system/filesystem.py:
+        (FileSystem.map_base_host_path): Convert a path from an absolute path on the base
+        host to an absolute path on this host.
+        (FileSystem.move_to_base_host): Move file from this host to the base host.
+        (FileSystem.move_from_base_host): Move file from the base host to this host.
+        (FileSystem.copy_to_base_host): Copy file from this host to the base host.
+        (FileSystem.copy_from_base_host): Copy file from the base host to this host.
+        * Scripts/webkitpy/common/system/filesystem_mock.py:
+        (MockFileSystem.map_base_host_path): Convert a path from an absolute path on the base
+        host to an absolute path on this host.
+        (MockFileSystem.move_to_base_host): Move file from this host to the base host.
+        (MockFileSystem.move_from_base_host): Move file from the base host to this host.
+        (MockFileSystem.copy_to_base_host): Copy file from this host to the base host.
+        (MockFileSystem.copy_from_base_host): Copy file from the base host to this host.
+        * Scripts/webkitpy/port/base.py:
+        (Port.target_host): Return host determined by worker number.
+        (Port.abspath_for_test): Accept optional target_host argument to return location
+        of test on a target host.
+        (Port._driver_tempdir): Accept optional target_host argument to return a temporary
+        directory on a target host.
+        (Port.sample_process): Accept optional target_host argument to sample process on
+        a target host.
+        * Scripts/webkitpy/port/darwin.py:
+        (DarwinPort.sample_process): Run sample process on target host.
+        (DarwinPort.sample_file_path): Accept directory for file.
+        (DarwinPort.spindump_file_path): Ditto.
+        * Scripts/webkitpy/port/darwin_testcase.py:
+        (DarwinTest.test_spindump): Check file movement.
+        (DarwinTest.test_sample_process): Ditto.
+        (DarwinTest.test_sample_process_exception):
+        * Scripts/webkitpy/port/driver.py:
+        (Driver.__init__): Add and set self._target_host variable.
+        (Driver._start): Pass target host to _driver_tempdir().
+        (Driver.stop): Call the target host's rmtree.
+        (Driver._check_for_driver_timeout): Pass target host to sample_process.
+        (Driver._check_for_driver_crash_or_unresponsiveness): Ditto.
+        (Driver._command_from_driver_input): Pass target host to abspath_for_test and map
+        layout test directory to target host.
+        * Scripts/webkitpy/port/ios.py:
+        (IOSPort):
+        (IOSPort.target_host): Replaced device_for_worker_number.
+        (IOSPort.setup_test_run): Replace device_for_worker_number with target_host.
+        (IOSPort.device_for_worker_number): Replaced with target_host.
+        * Scripts/webkitpy/port/server_process.py:
+        (ServerProcess.__init__): Accept target_host instead of worker_number.
+        (ServerProcess._start): Replace _host with _target_host.
+        (ServerProcess._handle_timeout): Ditto.
+        (ServerProcess._kill): Ditto.
+        * Scripts/webkitpy/port/simulator_process.py:
+        (SimulatorProcess.__init__): Accept target_host instead of worker_number.
+        (SimulatorProcess._start): Replace _device with _target_host.
+        (SimulatorProcess.stop): Ditto.
+        (SimulatorProcess._kill): Deleted.
+
+2017-03-31  Jonathan Bedard  <jbedard@apple.com>
+
         Unreviewed fix after r214569
         https://bugs.webkit.org/show_bug.cgi?id=170255
 

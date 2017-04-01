@@ -77,13 +77,13 @@ class IOSPort(DarwinPort):
             raise RuntimeError('Device at {} could not be found'.format(number))
         return device
 
-    # FIXME: This is only exposed so that SimulatorProcess can use it.
-    def device_for_worker_number(self, number):
-        if self._printing_cmd_line:
-            return None
+    # A device is the target host for a specific worker number.
+    def target_host(self, worker_number=None):
+        if self._printing_cmd_line or worker_number is None:
+            return self.host
         # When using simulated devices, this means webkitpy is managing the devices.
         if self.using_multiple_devices():
-            return self._testing_device(number)
+            return self._testing_device(worker_number)
         return self._current_device
 
     def default_baseline_search_path(self):
@@ -111,7 +111,7 @@ class IOSPort(DarwinPort):
         self._create_devices(device_class)
 
         for i in xrange(self.child_processes()):
-            device = self.device_for_worker_number(i)
+            device = self.target_host(i)
             _log.debug('Installing to {}'.format(device))
             # Without passing DYLD_LIBRARY_PATH, libWebCoreTestSupport cannot be loaded and DRT/WKTR will crash pre-launch,
             # leaving a crash log which will be picked up in results.  No DYLD_FRAMEWORK_PATH will also cause the DRT/WKTR to
@@ -120,7 +120,7 @@ class IOSPort(DarwinPort):
                 raise RuntimeError('Failed to install app {} on device {}'.format(self._path_to_driver(), device.udid))
 
         for i in xrange(self.child_processes()):
-            self.device_for_worker_number(i).prepare_for_testing()
+            self.target_host(i).prepare_for_testing()
 
     def clean_up_test_run(self):
         super(IOSPort, self).clean_up_test_run()
@@ -129,7 +129,7 @@ class IOSPort(DarwinPort):
         # Failure to teardown devices can leave things in a bad state.
         exception_list = []
         for i in xrange(self.child_processes()):
-            device = self.device_for_worker_number(i)
+            device = self.target_host(i)
             try:
                 if device:
                     device.finished_testing()

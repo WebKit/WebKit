@@ -60,7 +60,7 @@ class ServerProcess(object):
     indefinitely. The class also handles transparently restarting processes
     as necessary to keep issuing commands."""
 
-    def __init__(self, port_obj, name, cmd, env=None, universal_newlines=False, treat_no_data_as_crash=False, worker_number=None):
+    def __init__(self, port_obj, name, cmd, env=None, universal_newlines=False, treat_no_data_as_crash=False, target_host=None):
         self._port = port_obj
         self._name = name  # Should be the command name (e.g. DumpRenderTree, ImageDiff)
         self._cmd = cmd
@@ -69,7 +69,7 @@ class ServerProcess(object):
         # Don't set if there will be binary data or the data must be ASCII encoded.
         self._universal_newlines = universal_newlines
         self._treat_no_data_as_crash = treat_no_data_as_crash
-        self._host = self._port.host
+        self._target_host = target_host or port_obj.host
         self._pid = None
         self._reset()
 
@@ -116,9 +116,9 @@ class ServerProcess(object):
         # close_fds is a workaround for http://bugs.python.org/issue2320
         # In Python 2.7.10, close_fds is also supported on Windows.
         close_fds = True
-        self._proc = self._host.executive.popen(self._cmd, stdin=self._host.executive.PIPE,
-            stdout=self._host.executive.PIPE,
-            stderr=self._host.executive.PIPE,
+        self._proc = self._target_host.executive.popen(self._cmd, stdin=self._target_host.executive.PIPE,
+            stdout=self._target_host.executive.PIPE,
+            stderr=self._target_host.executive.PIPE,
             close_fds=close_fds,
             env=self._env,
             universal_newlines=self._universal_newlines)
@@ -219,7 +219,7 @@ class ServerProcess(object):
     def _handle_timeout(self):
         self.timed_out = True
         if self._port.get_option("sample_on_timeout"):
-            self._port.sample_process(self._name, self._proc.pid)
+            self._port.sample_process(self._name, self._proc.pid, self._target_host)
 
     def _split_string_after_index(self, string, index):
         return string[:index], string[index:]
@@ -378,7 +378,7 @@ class ServerProcess(object):
         self.stop(0.0)
 
     def _kill(self):
-        self._host.executive.kill_process(self._proc.pid)
+        self._target_host.executive.kill_process(self._proc.pid)
         if self._proc.poll() is not None:
             self._proc.wait()
 

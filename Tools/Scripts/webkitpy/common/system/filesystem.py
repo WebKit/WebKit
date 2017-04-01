@@ -310,3 +310,28 @@ class FileSystem(object):
 
     def compare(self, path1, path2):
         return filecmp.cmp(path1, path2)
+
+    def map_base_host_path(self, path):
+        """Returns a path from the base host localized for this host. By default,
+        this host assumes it is the base host and maps the path to itself"""
+        return path
+
+    def move_to_base_host(self, source, destination):
+        """Moves a file from this host to the base host. By default, this host
+        assumes it is the base host and will just execute a move."""
+        self.move(source, destination)
+
+    def move_from_base_host(self, source, destination):
+        """Moves a file from the base host to this host. By default, this host
+        assumes it is the base host and will just execute a move."""
+        self.move(source, destination)
+
+    def copy_to_base_host(self, source, destination):
+        """Copy a file from this host to the base host. By default, this host
+        assumes it is the base host and will just execute a copytree."""
+        self.copytree(source, destination)
+
+    def copy_from_base_host(self, source, destination):
+        """Copy a file from the base host to this host. By default, this host
+        assumes it is the base host and will just execute a copytree."""
+        self.copytree(source, destination)

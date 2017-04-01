@@ -133,6 +133,7 @@ class Driver(object):
         self._port = port
         self._worker_number = worker_number
         self._no_timeout = no_timeout
+        self._target_host = port.target_host(worker_number)
 
         self._driver_tempdir = None
         self._driver_user_directory_suffix = None
@@ -359,16 +360,16 @@ class Driver(object):
         # Each driver process should be using individual directories under _driver_tempdir (which is deleted when stopping),
         # however some subsystems on some platforms could end up using process default ones.
         self._port._clear_global_caches_and_temporary_files()
-        self._driver_tempdir = self._port._driver_tempdir()
+        self._driver_tempdir = self._port._driver_tempdir(self._target_host)
         self._driver_user_directory_suffix = os.path.basename(str(self._driver_tempdir))
         user_cache_directory = self._port._path_to_user_cache_directory(self._driver_user_directory_suffix)
         if user_cache_directory:
-            self._port._filesystem.maybe_make_directory(user_cache_directory)
+            self._target_host.filesystem.maybe_make_directory(user_cache_directory)
             self._driver_user_cache_directory = user_cache_directory
         environment = self._setup_environ_for_test()
         self._crashed_process_name = None
         self._crashed_pid = None
-        self._server_process = self._port._test_runner_process_constructor(self._port, self._server_name, self.cmd_line(pixel_tests, per_test_args), environment, worker_number=self._worker_number)
+        self._server_process = self._port._test_runner_process_constructor(self._port, self._server_name, self.cmd_line(pixel_tests, per_test_args), environment, target_host=self._target_host)
         self._server_process.start()
 
     def _run_post_start_tasks(self):
@@ -388,10 +389,10 @@ class Driver(object):
                 self._profiler.profile_after_exit()
 
         if self._driver_tempdir:
-            self._port._filesystem.rmtree(str(self._driver_tempdir))
+            self._target_host.filesystem.rmtree(str(self._driver_tempdir))
             self._driver_tempdir = None
         if self._driver_user_cache_directory:
-            self._port._filesystem.rmtree(self._driver_user_cache_directory)
+            self._target_host.filesystem.rmtree(self._driver_user_cache_directory)
             self._driver_user_cache_directory = None
 
     def cmd_line(self, pixel_tests, per_test_args):
@@ -432,7 +433,7 @@ class Driver(object):
             self.error_from_test += err_line
             _log.debug(err_line)
             if self._port.get_option("sample_on_timeout"):
-                self._port.sample_process(child_process_name, child_process_pid)
+                self._port.sample_process(child_process_name, child_process_pid, self._target_host)
         if out_line == "FAIL: Timed out waiting for notifyDone to be called\n":
             self._driver_timed_out = True
 
@@ -461,7 +462,7 @@ class Driver(object):
             _log.debug('%s is unresponsive, pid = %s' % (child_process_name, str(child_process_pid)))
             self._driver_timed_out = True
             if child_process_pid:
-                self._port.sample_process(child_process_name, child_process_pid)
+                self._port.sample_process(child_process_name, child_process_pid, self._target_host)
             self.error_from_test += error_line
             self._server_process.write('#SAMPLE FINISHED\n', True)  # Must be able to ignore a broken pipe here, target process may already be closed.
             return True
@@ -474,9 +475,9 @@ class Driver(object):
         elif self.is_web_platform_test(driver_input.test_name) or (self.is_http_test(driver_input.test_name) and (self._port.get_option('webkit_test_runner') or sys.platform == "cygwin")):
             command = self.test_to_uri(driver_input.test_name)
             command += "'--absolutePath'"
-            command += self._port.abspath_for_test(driver_input.test_name)
+            command += self._port.abspath_for_test(driver_input.test_name, self._target_host)
         else:
-            command = self._port.abspath_for_test(driver_input.test_name)
+            command = self._port.abspath_for_test(driver_input.test_name, self._target_host)
             if sys.platform == 'cygwin':
                 command = path.cygpath(command)
 

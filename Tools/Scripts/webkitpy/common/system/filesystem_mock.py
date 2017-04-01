@@ -420,6 +420,21 @@ class MockFileSystem(object):
     def compare(self, path1, path2):
         return self.read_binary_file(path1) == self.read_binary_file(path2)
 
+    def map_base_host_path(self, path):
+        return path
+
+    def move_to_base_host(self, source, destination):
+        self.move(source, destination)
+
+    def move_from_base_host(self, source, destination):
+        self.move(source, destination)
+
+    def copy_to_base_host(self, source, destination):
+        self.move(source, destination)
+
+    def copy_from_base_host(self, source, destination):
+        self.move(source, destination)
+
 
 class WritableBinaryFileObject(object):
     def __init__(self, fs, path):

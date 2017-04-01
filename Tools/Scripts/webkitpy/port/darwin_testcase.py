@@ -92,9 +92,12 @@ class DarwinTest(port_testcase.PortTestCase):
             print args
 
         port = self.make_port()
-        port._executive = MockExecutive2(run_command_fn=logging_run_command)
-        expected_stdout = "['/usr/bin/sudo', '-n', '/usr/sbin/spindump', 42, 10, 10, '-file', '/mock-build/layout-test-results/test-42-spindump.txt']\n"
+        port.host.filesystem.files['/__im_tmp/tmp_0_/test-42-spindump.txt'] = 'Spindump file'
+        port.host.executive = MockExecutive2(run_command_fn=logging_run_command)
+        expected_stdout = "['/usr/bin/sudo', '-n', '/usr/sbin/spindump', 42, 10, 10, '-file', '/__im_tmp/tmp_0_/test-42-spindump.txt']\n"
         OutputCapture().assert_outputs(self, port.sample_process, args=['test', 42], expected_stdout=expected_stdout)
+        self.assertEqual(port.host.filesystem.files['/mock-build/layout-test-results/test-42-spindump.txt'], 'Spindump file')
+        self.assertIsNone(port.host.filesystem.files['/__im_tmp/tmp_0_/test-42-spindump.txt'])
 
     def test_sample_process(self):
 
@@ -105,9 +108,12 @@ class DarwinTest(port_testcase.PortTestCase):
             return 0
 
         port = self.make_port()
-        port._executive = MockExecutive2(run_command_fn=logging_run_command)
-        expected_stdout = "['/usr/bin/sample', 42, 10, 10, '-file', '/mock-build/layout-test-results/test-42-sample.txt']\n"
+        port.host.filesystem.files['/__im_tmp/tmp_0_/test-42-sample.txt'] = 'Sample file'
+        port.host.executive = MockExecutive2(run_command_fn=logging_run_command)
+        expected_stdout = "['/usr/bin/sample', 42, 10, 10, '-file', '/__im_tmp/tmp_0_/test-42-sample.txt']\n"
         OutputCapture().assert_outputs(self, port.sample_process, args=['test', 42], expected_stdout=expected_stdout)
+        self.assertEqual(port.host.filesystem.files['/mock-build/layout-test-results/test-42-sample.txt'], 'Sample file')
+        self.assertIsNone(port.host.filesystem.files['/__im_tmp/tmp_0_/test-42-sample.txt'])
 
     def test_sample_process_exception(self):
         def throwing_run_command(args):
@@ -116,5 +122,5 @@ class DarwinTest(port_testcase.PortTestCase):
             raise ScriptError("MOCK script error")
 
         port = self.make_port()
-        port._executive = MockExecutive2(run_command_fn=throwing_run_command)
+        port.host.executive = MockExecutive2(run_command_fn=throwing_run_command)
         OutputCapture().assert_outputs(self, port.sample_process, args=['test', 42])

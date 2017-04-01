@@ -70,13 +70,11 @@ class SimulatorProcess(ServerProcess):
             self.socket.close()
             return result
 
+    def __init__(self, port_obj, name, cmd, env=None, universal_newlines=False, treat_no_data_as_crash=False, target_host=None):
+        env['PORT'] = str(target_host.listening_port())  # The target_host should be a device.
+        super(SimulatorProcess, self).__init__(port_obj, name, cmd, env, universal_newlines, treat_no_data_as_crash, target_host)
 
-    def __init__(self, port_obj, name, cmd, env=None, universal_newlines=False, treat_no_data_as_crash=False, worker_number=None):
         self._bundle_id = port_obj.app_identifier_from_bundle(cmd[0])
-        self._device = port_obj.device_for_worker_number(worker_number)
-
-        env['PORT'] = str(self._device.listening_port())
-        super(SimulatorProcess, self).__init__(port_obj, name, cmd, env, universal_newlines, treat_no_data_as_crash)
 
     @staticmethod
     def _accept_connection_create_file(server, type):
@@ -91,12 +89,12 @@ class SimulatorProcess(ServerProcess):
 
         # Each device has a listening socket intitilaized during the port's setup_test_run.
         # 3 client connections will be accepted for stdin, stdout and stderr in that order.
-        self._device.listening_socket.listen(3)
-        self._pid = self._device.launch_app(self._bundle_id, self._cmd[1:], env=self._env)
+        self._target_host.listening_socket.listen(3)
+        self._pid = self._target_host.launch_app(self._bundle_id, self._cmd[1:], env=self._env)
 
         def handler(signum, frame):
             assert signum == signal.SIGALRM
-            raise Exception('Timed out waiting for process to connect at port {}'.format(self._device.listening_port()))
+            raise Exception('Timed out waiting for process to connect at port {}'.format(self._target_host.listening_port()))
         signal.signal(signal.SIGALRM, handler)
         signal.alarm(3)  # In seconds
 
@@ -105,12 +103,12 @@ class SimulatorProcess(ServerProcess):
         stderr = None
         try:
             # This order matches the client side connections in Tools/TestRunnerShared/IOSLayoutTestCommunication.cpp setUpIOSLayoutTestCommunication()
-            stdin = SimulatorProcess._accept_connection_create_file(self._device.listening_socket, 'w')
-            stdout = SimulatorProcess._accept_connection_create_file(self._device.listening_socket, 'rb')
-            stderr = SimulatorProcess._accept_connection_create_file(self._device.listening_socket, 'rb')
+            stdin = SimulatorProcess._accept_connection_create_file(self._target_host.listening_socket, 'w')
+            stdout = SimulatorProcess._accept_connection_create_file(self._target_host.listening_socket, 'rb')
+            stderr = SimulatorProcess._accept_connection_create_file(self._target_host.listening_socket, 'rb')
         except:
             # We set self._proc as _reset() and _kill() depend on it.
-            self._proc = SimulatorProcess.Popen(self._pid, stdin, stdout, stderr, self._device)
+            self._proc = SimulatorProcess.Popen(self._pid, stdin, stdout, stderr, self._target_host)
             if self._proc.poll() is not None:
                 self._reset()
                 raise Exception('App {} crashed before stdin could be attached'.format(os.path.basename(self._cmd[0])))
@@ -119,14 +117,9 @@ class SimulatorProcess(ServerProcess):
             raise
         signal.alarm(0)  # Cancel alarm
 
-        self._proc = SimulatorProcess.Popen(self._pid, stdin, stdout, stderr, self._device)
+        self._proc = SimulatorProcess.Popen(self._pid, stdin, stdout, stderr, self._target_host)
 
     def stop(self, timeout_secs=3.0):
         if self._proc:
-            self._device.executive.kill_process(self._proc.pid)
+            self._target_host.executive.kill_process(self._proc.pid)
         return super(SimulatorProcess, self).stop(timeout_secs)
-
-    def _kill(self):
-        self._device.executive.kill_process(self._proc.pid)
-        if self._proc.poll() is not None:
-            self._proc.wait()

@@ -142,6 +142,9 @@ class Port(object):
         self._layout_tests_dir = hasattr(options, 'layout_tests_dir') and options.layout_tests_dir and self._filesystem.abspath(options.layout_tests_dir)
         self._w3c_resource_files = None
 
+    def target_host(self, worker_number=None):
+        return self.host
+
     def architecture(self):
         return self.get_option('architecture')
 
@@ -802,10 +805,11 @@ class Port(object):
             return self.host.filesystem.abspath(filename)
 
     @memoized
-    def abspath_for_test(self, test_name):
+    def abspath_for_test(self, test_name, target_host=None):
         """Returns the full path to the file for a given test name. This is the
-        inverse of relative_test_filename()."""
-        return self._filesystem.join(self.layout_tests_dir(), test_name)
+        inverse of relative_test_filename() if no target_host is specified."""
+        host = target_host or self.host
+        return host.filesystem.join(host.filesystem.map_base_host_path(self.layout_tests_dir()), test_name)
 
     def jsc_results_directory(self):
         return self._build_path()
@@ -1282,8 +1286,9 @@ class Port(object):
             local_driver_path = base + ".exe"
         return local_driver_path
 
-    def _driver_tempdir(self):
-        return self._filesystem.mkdtemp(prefix='%s-' % self.driver_name())
+    def _driver_tempdir(self, target_host=None):
+        host = target_host or self.host
+        return host.filesystem.mkdtemp(prefix='{}s-'.format(self.driver_name()))
 
     def _path_to_user_cache_directory(self, suffix=None):
         return None
@@ -1354,7 +1359,7 @@ class Port(object):
     def look_for_new_samples(self, unresponsive_processes, start_time):
         pass
 
-    def sample_process(self, name, pid):
+    def sample_process(self, name, pid, target_host=None):
         pass
 
     def find_system_pid(self, name, pid):
