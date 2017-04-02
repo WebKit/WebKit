@@ -67,6 +67,12 @@
 /* Label for PDF page number indicator. */
 "%d of %d" = "%d of %d";
 
+/* window title for a standalone image (uses multiplication symbol, not x) */
+"%s %d×%d pixels" = "%s %d×%d pixels";
+
+/* Name of application's single WebCrypto master key in Keychain */
+"%s WebCrypto Master Key" = "%s WebCrypto Master Key";
+
 /* Present the number of selected <option> items in a <select multiple> element (iOS only) */
 "%zu Items" = "%zu Items";
 
@@ -87,9 +93,6 @@
 
 /* Menu item title for KEYGEN pop-up menu */
 "2048 (High Grade)" = "2048 (High Grade)";
-
-/* window title for a standalone image (uses multiplication symbol, not x) */
-"<filename> %d×%d pixels" = "<filename> %d×%d pixels";
 
 /* WKErrorJavaScriptExceptionOccurred description */
 "A JavaScript exception occurred" = "A JavaScript exception occurred";
@@ -173,7 +176,7 @@
 "Click to restart" = "Click to restart";
 
 /* WKErrorContentExtensionStoreCompileFailed description */
-"Compiling a WKContentExtension failed" = "Compiling a WKContentExtension failed";
+"Compiling a WKUserContentExtension failed" = "Compiling a WKUserContentExtension failed";
 
 /* WebKitErrorCannotShowMIMEType description */
 "Content with specified MIME type can’t be shown" = "Content with specified MIME type can’t be shown";
@@ -359,13 +362,13 @@
 "Look Up “%@”" = "Look Up “%@”";
 
 /* Look Up context menu item with selected word */
-"Look Up “<selection>”" = "Look Up “<selection>”";
+"Look Up “%s”" = "Look Up “%s”";
 
 /* WKErrorContentExtensionStoreLookupFailed description */
-"Looking up a WKContentExtension failed" = "Looking up a WKContentExtension failed";
+"Looking up a WKUserContentExtension failed" = "Looking up a WKUserContentExtension failed";
 
 /* WKErrorContentExtensionStoreVersionMismatch description */
-"Looking up a WKContentExtension found a binary that is incompatible" = "Looking up a WKContentExtension found a binary that is incompatible";
+"Looking up a WKUserContentExtension found a binary that is incompatible" = "Looking up a WKUserContentExtension found a binary that is incompatible";
 
 /* Media Loop context menu item */
 "Loop" = "Loop";
@@ -506,7 +509,7 @@
 "Reload" = "Reload";
 
 /* WKErrorContentExtensionStoreRemoveFailed description */
-"Removing a WKContentExtension failed" = "Removing a WKContentExtension failed";
+"Removing a WKUserContentExtension failed" = "Removing a WKUserContentExtension failed";
 
 /* default label for Reset buttons in forms on web pages */
 "Reset" = "Reset";
@@ -763,8 +766,14 @@
 /* Validation message for input form controls with value lower than allowed minimum */
 "Value must be greater than or equal to %@" = "Value must be greater than or equal to %@";
 
+/* Validation message for input form controls with value lower than allowed minimum */
+"Value must be greater than or equal to %s" = "Value must be greater than or equal to %s";
+
 /* Validation message for input form controls with value higher than allowed maximum */
 "Value must be less than or equal to %@" = "Value must be less than or equal to %@";
+
+/* Validation message for input form controls with value higher than allowed maximum */
+"Value must be less than or equal to %s" = "Value must be less than or equal to %s";
 
 /* Web Inspector window title when inspecting Web Inspector */
 "Web Inspector [%d] — %@" = "Web Inspector [%d] — %@";
@@ -1068,12 +1077,6 @@
 
 /* HTTP result code string */
 "proxy authentication required" = "proxy authentication required";
-
-/* Validation message for input form controls with value higher than allowed maximum */
-"range overflow" = "range overflow";
-
-/* Validation message for input form controls with value lower than allowed minimum */
-"range underflow" = "range underflow";
 
 /* HTTP result code string */
 "redirected" = "redirected";

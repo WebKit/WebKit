@@ -1,5 +1,16 @@
 2017-04-01  Dan Bernstein  <mitz@apple.com>
 
+        Localizable strings files are out of date
+        https://bugs.webkit.org/show_bug.cgi?id=170383
+
+        Reviewed by Tim Horton.
+
+        Ran update-webkit-localizable-strings.
+
+        * English.lproj/Localizable.strings:
+
+2017-04-01  Dan Bernstein  <mitz@apple.com>
+
         [Xcode] In engineering builds, linker warns about libwebrtc.dylib’s install name being invalid
         https://bugs.webkit.org/show_bug.cgi?id=170385
 
