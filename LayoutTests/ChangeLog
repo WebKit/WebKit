@@ -1,3 +1,13 @@
+2017-04-01  Jon Lee  <jonlee@apple.com>
+
+        Add missing text styles
+        https://bugs.webkit.org/show_bug.cgi?id=170295
+        rdar://problem/30219503
+
+        Reviewed by Dean Jackson.
+
+        * platform/ios/ios/fast/text/opticalFontWithTextStyle.html: Update test to include title0 and title4.
+
 2017-04-01  Chris Dumez  <cdumez@apple.com>
 
         We should pause silent WebAudio rendering in background tabs

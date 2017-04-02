@@ -1,3 +1,19 @@
+2017-04-01  Jon Lee  <jonlee@apple.com>
+
+        Add missing text styles
+        https://bugs.webkit.org/show_bug.cgi?id=170295
+        rdar://problem/30219503
+
+        Reviewed by Dean Jackson.
+
+        Updated existing test to include new text styles.
+
+        * css/CSSValueKeywords.in: Add title0 and title4.
+        * platform/spi/cocoa/CoreTextSPI.h:
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::cachedSystemFontDescription):
+        (WebCore::RenderThemeIOS::updateCachedSystemFontDescription):
+
 2017-04-01  Dan Bernstein  <mitz@apple.com>
 
         [iOS] <input type=file> label should be specified using plural rules
