@@ -1,3 +1,24 @@
+2017-04-01  Zalan Bujtas  <zalan@apple.com>
+
+        Long Arabic text in ContentEditable with css white-space=pre hangs Safari
+        https://bugs.webkit.org/show_bug.cgi?id=170245
+
+        Reviewed by Myles C. Maxfield.
+
+        While searching for mid-word break, we measure the text by codepoints in a loop until the accumulated width > available width.
+        When we see that the accumulated width for the individual codepoints overflows, we join the codepoints and re-measure them.
+        These 2 widths could be considerably different for number of reasons (ligatures is a prime example). When we figure that
+        the run still fits, we go back to the main loop (since we are not supposed to wrap the line here) and take the next codepoint.
+        However this time we start the measurement from the last whitespace, so we end up remeasuring a potentially long chuck of text
+        until we hit the wrapping point. This is way too expensive.
+        This patch changes the logic so that we just go back to measuring individual codepoints until we hit the constrain again.  
+
+        Covered by existing tests.
+
+        * rendering/line/BreakingContext.h:
+        (WebCore::BreakingContext::handleText): canUseSimpleFontCodePath() is just to mitigate the potential risk of regression and
+        complex text is more likely to fall into this category. 
+
 2017-04-01  Jon Lee  <jonlee@apple.com>
 
         Add missing text styles
