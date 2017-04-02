@@ -1,12 +1,3 @@
-/* File Upload multiple photos label */
-"# Photos (file upload on page label for multiple photos)" = "%@ Photos";
-
-/* File Upload images and videos label */
-"# Photos and # Videos (file upload on page label for image and videos)" = "%@ and %@";
-
-/* File Upload multiple videos label */
-"# Videos (file upload on page label for multiple videos)" = "%@ Videos";
-
 /* accessibility help text for media controller time value >= 1 day */
 "%1$d days %2$d hours %3$d minutes %4$d seconds" = "%1$d days %2$d hours %3$d minutes %4$d seconds";
 
@@ -67,6 +58,9 @@
 /* Label for PDF page number indicator. */
 "%d of %d" = "%d of %d";
 
+/* label next to file upload control; parameters are the number of photos and the number of videos */
+"%lu photo(s) and %lu video(s)" = "%lu photo(s) and %lu video(s)";
+
 /* window title for a standalone image (uses multiplication symbol, not x) */
 "%s %d×%d pixels" = "%s %d×%d pixels";
 
@@ -81,12 +75,6 @@
 
 /* Present the element <select multiple> when a single <option> is selected (iOS only) */
 "1 Item" = "1 Item";
-
-/* File Upload single photo label */
-"1 Photo (file upload on page label for one photo)" = "1 Photo";
-
-/* File Upload single video label */
-"1 Video (file upload on page label for one video)" = "1 Video";
 
 /* Option in segmented control for choosing list type in text editing */
 "1. 2. 3." = "1. 2. 3.";
