@@ -1,3 +1,12 @@
+2017-04-01  Alexey Proskuryakov  <ap@apple.com>
+
+        Rolling back <https://trac.webkit.org/r214697>, as it made WebKit2.DataDetectionReferenceDate time out.
+
+        Was REGRESSION (r202472): Data Detection overwrites existing links in detected ranges
+        https://bugs.webkit.org/show_bug.cgi?id=170365
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/DataDetection.mm:
+
 2017-04-01  Csaba Osztrogonác  <ossy@webkit.org>
 
         Mac cmake buildfix after 214586.
