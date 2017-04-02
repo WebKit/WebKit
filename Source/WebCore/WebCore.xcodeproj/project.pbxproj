@@ -3282,6 +3282,7 @@
 		83120C711C56F3FB001CB112 /* HTMLDataElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 834B86A71C56E83A00F3F0E3 /* HTMLDataElement.h */; };
 		832B843419D8E55100B26055 /* SVGAnimateElementBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 832B843319D8E55100B26055 /* SVGAnimateElementBase.h */; };
 		832B843619D8E57400B26055 /* SVGAnimateElementBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 832B843519D8E57400B26055 /* SVGAnimateElementBase.cpp */; };
+		83407FC11E8D9C1700E048D3 /* VisibilityChangeClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 83407FC01E8D9C1200E048D3 /* VisibilityChangeClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		834476EE1DA5BC57002B6ED2 /* JSScrollToOptions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83E9B3001DA5A51E00FFE8F6 /* JSScrollToOptions.cpp */; };
 		834476EF1DA5BC5E002B6ED2 /* JSScrollToOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 83E9B3011DA5A51E00FFE8F6 /* JSScrollToOptions.h */; };
 		8348BFAB1B85729800912F36 /* ClassCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8348BFA91B85729500912F36 /* ClassCollection.cpp */; };
@@ -11261,6 +11262,7 @@
 		8329DCC21C7A6AE300730B33 /* HTMLHyperlinkElementUtils.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLHyperlinkElementUtils.idl; sourceTree = "<group>"; };
 		832B843319D8E55100B26055 /* SVGAnimateElementBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAnimateElementBase.h; sourceTree = "<group>"; };
 		832B843519D8E57400B26055 /* SVGAnimateElementBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGAnimateElementBase.cpp; sourceTree = "<group>"; };
+		83407FC01E8D9C1200E048D3 /* VisibilityChangeClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VisibilityChangeClient.h; sourceTree = "<group>"; };
 		8348BFA91B85729500912F36 /* ClassCollection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ClassCollection.cpp; sourceTree = "<group>"; };
 		8348BFAA1B85729500912F36 /* ClassCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClassCollection.h; sourceTree = "<group>"; };
 		834B86A61C56E83A00F3F0E3 /* HTMLDataElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLDataElement.idl; sourceTree = "<group>"; };
@@ -25687,6 +25689,7 @@
 				BCDF317A11F8D683003C5BF8 /* UserTypingGestureIndicator.h */,
 				CEF418CC1179678C009D112C /* ViewportArguments.cpp */,
 				CEF418CD1179678C009D112C /* ViewportArguments.h */,
+				83407FC01E8D9C1200E048D3 /* VisibilityChangeClient.h */,
 				419BC2DC1685329900D64D6D /* VisitedLinkState.cpp */,
 				419BC2DD1685329900D64D6D /* VisitedLinkState.h */,
 				31C0FF1B0E4CEB6E007D6FE5 /* WebKitAnimationEvent.cpp */,
@@ -29641,6 +29644,7 @@
 				26F9A83918A046AC00AEB88A /* ViewportConfiguration.h in Headers */,
 				3FFFF9AE159D9B060020BBD5 /* ViewportStyleResolver.h in Headers */,
 				93309E20099E64920056E581 /* VisiblePosition.h in Headers */,
+				83407FC11E8D9C1700E048D3 /* VisibilityChangeClient.h in Headers */,
 				A883DF280F3D045D00F19BF6 /* VisibleSelection.h in Headers */,
 				93309E1E099E64920056E581 /* VisibleUnits.h in Headers */,
 				419BC2DF1685329900D64D6D /* VisitedLinkState.h in Headers */,

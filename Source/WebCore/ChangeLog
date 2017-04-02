@@ -1,3 +1,44 @@
+2017-04-01  Chris Dumez  <cdumez@apple.com>
+
+        We should pause silent WebAudio rendering in background tabs
+        https://bugs.webkit.org/show_bug.cgi?id=170299
+        <rdar://problem/31289132>
+
+        Reviewed by Eric Carlson.
+
+        We should pause silent WebAudio rendering in background tabs since it uses CPU and is
+        not observable by the user. Such silent WebAudio rendering seems to be used by
+        doubleclick ads.
+
+        Test: webaudio/silent-audio-interrupted-in-background.html
+
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::lazyInitialize):
+        (WebCore::AudioContext::uninitialize):
+        Have AudioContext register / unregister itself with the Document to get
+        visibility change notifications, similarly to what HTMLMediaElement was
+        already doing.
+
+        (WebCore::AudioContext::visibilityStateChanged):
+        Begin / End session interruption whenever the page visiblity changes.
+
+        * Modules/webaudio/AudioContext.h:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        * dom/Document.cpp:
+        (WebCore::Document::registerForVisibilityStateChangedCallbacks):
+        (WebCore::Document::unregisterForVisibilityStateChangedCallbacks):
+        (WebCore::Document::visibilityStateChanged):
+        * dom/Document.h:
+        * dom/Element.h:
+        * dom/VisibilityChangeClient.h: Added.
+        (WebCore::VisibilityChangeClient::~VisibilityChangeClient):
+        * html/HTMLMediaElement.h:
+        Introduce a new VisibilityChangeClient interface and have both AudioContext
+        and HTMLMediaElement subclass it. Previously, the visibilityStateChanged()
+        function was on Element but this prevented AudioContext from registering
+        itself since AudioContext is not an Element.
+
 2017-04-01  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] A couple of UI strings use three periods instead of an ellipsis

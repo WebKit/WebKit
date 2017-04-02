@@ -1530,21 +1530,21 @@ void Document::titleElementTextChanged(Element& titleElement)
     updateTitleFromTitleElement();
 }
 
-void Document::registerForVisibilityStateChangedCallbacks(Element* element)
+void Document::registerForVisibilityStateChangedCallbacks(VisibilityChangeClient* client)
 {
-    m_visibilityStateCallbackElements.add(element);
+    m_visibilityStateCallbackClients.add(client);
 }
 
-void Document::unregisterForVisibilityStateChangedCallbacks(Element* element)
+void Document::unregisterForVisibilityStateChangedCallbacks(VisibilityChangeClient* client)
 {
-    m_visibilityStateCallbackElements.remove(element);
+    m_visibilityStateCallbackClients.remove(client);
 }
 
 void Document::visibilityStateChanged()
 {
     dispatchEvent(Event::create(eventNames().visibilitychangeEvent, false, false));
-    for (auto* element : m_visibilityStateCallbackElements)
-        element->visibilityStateChanged();
+    for (auto* client : m_visibilityStateCallbackClients)
+        client->visibilityStateChanged();
 }
 
 auto Document::visibilityState() const -> VisibilityState

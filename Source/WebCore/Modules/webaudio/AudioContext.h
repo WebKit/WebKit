@@ -35,6 +35,7 @@
 #include "MediaCanStartListener.h"
 #include "MediaProducer.h"
 #include "PlatformMediaSession.h"
+#include "VisibilityChangeClient.h"
 #include <atomic>
 #include <wtf/HashSet.h>
 #include <wtf/MainThread.h>
@@ -75,7 +76,7 @@ class WaveShaperNode;
 // AudioContext is the cornerstone of the web audio API and all AudioNodes are created from it.
 // For thread safety between the audio thread and the main thread, it has a rendering graph locking mechanism. 
 
-class AudioContext : public ActiveDOMObject, public ThreadSafeRefCounted<AudioContext>, public EventTargetWithInlineData, public MediaCanStartListener, public MediaProducer, private PlatformMediaSessionClient {
+class AudioContext : public ActiveDOMObject, public ThreadSafeRefCounted<AudioContext>, public EventTargetWithInlineData, public MediaCanStartListener, public MediaProducer, private PlatformMediaSessionClient, private VisibilityChangeClient {
 public:
     // Create an AudioContext for rendering to the audio hardware.
     static RefPtr<AudioContext> create(Document&);
@@ -318,6 +319,8 @@ private:
     bool shouldOverrideBackgroundPlaybackRestriction(PlatformMediaSession::InterruptionType) const override { return false; }
     String sourceApplicationIdentifier() const override;
     bool canProduceAudio() const final { return true; }
+
+    void visibilityStateChanged() final;
 
     // EventTarget
     void refEventTarget() override { ref(); }

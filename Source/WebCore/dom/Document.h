@@ -163,6 +163,7 @@ class StyleSheetList;
 class Text;
 class TextResourceDecoder;
 class TreeWalker;
+class VisibilityChangeClient;
 class VisitedLinkState;
 class XPathEvaluator;
 class XPathExpression;
@@ -1006,8 +1007,8 @@ public:
     void userInterfaceLayoutDirectionChanged();
 #endif
 
-    void registerForVisibilityStateChangedCallbacks(Element*);
-    void unregisterForVisibilityStateChangedCallbacks(Element*);
+    void registerForVisibilityStateChangedCallbacks(VisibilityChangeClient*);
+    void unregisterForVisibilityStateChangedCallbacks(VisibilityChangeClient*);
 
 #if ENABLE(VIDEO)
     void registerForAllowsMediaDocumentInlinePlaybackChangedCallbacks(HTMLMediaElement&);
@@ -1520,7 +1521,7 @@ private:
     HashSet<HTMLMediaElement*> m_userInterfaceLayoutDirectionChangedElements;
 #endif
 
-    HashSet<Element*> m_visibilityStateCallbackElements;
+    HashSet<VisibilityChangeClient*> m_visibilityStateCallbackClients;
 #if ENABLE(VIDEO)
     HashSet<HTMLMediaElement*> m_allowsMediaDocumentInlinePlaybackElements;
 #endif

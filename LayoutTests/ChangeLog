@@ -1,3 +1,16 @@
+2017-04-01  Chris Dumez  <cdumez@apple.com>
+
+        We should pause silent WebAudio rendering in background tabs
+        https://bugs.webkit.org/show_bug.cgi?id=170299
+        <rdar://problem/31289132>
+
+        Reviewed by Eric Carlson.
+
+        Add layout test coverage.
+
+        * webaudio/silent-audio-interrupted-in-background-expected.txt: Added.
+        * webaudio/silent-audio-interrupted-in-background.html: Added.
+
 2017-04-01  Alexey Proskuryakov  <ap@apple.com>
 
         Rolling back http://trac.webkit.org/r214663 - memory corruption

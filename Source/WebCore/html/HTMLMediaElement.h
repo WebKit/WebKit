@@ -37,6 +37,7 @@
 #include "MediaElementSession.h"
 #include "MediaProducer.h"
 #include "UserInterfaceLayoutDirection.h"
+#include "VisibilityChangeClient.h"
 
 #if ENABLE(VIDEO_TRACK)
 #include "AudioTrack.h"
@@ -111,6 +112,7 @@ class HTMLMediaElement
     , private MediaCanStartListener
     , private MediaPlayerClient
     , private MediaProducer
+    , private VisibilityChangeClient
 #if ENABLE(VIDEO_TRACK)
     , private AudioTrackClient
     , private TextTrackClient

@@ -54,6 +54,7 @@
 #include "HRTFDatabaseLoader.h"
 #include "HRTFPanner.h"
 #include "JSDOMPromise.h"
+#include "Logging.h"
 #include "NetworkingContext.h"
 #include "OfflineAudioCompletionEvent.h"
 #include "OfflineAudioDestinationNode.h"
@@ -104,6 +105,8 @@ const int UndefinedThreadIdentifier = 0xffffffff;
 const unsigned MaxPeriodicWaveLength = 4096;
 
 namespace WebCore {
+
+#define RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(document()->page() && document()->page()->isAlwaysOnLoggingAllowed(), Media, "%p - AudioContext::" fmt, this, ##__VA_ARGS__)
     
 bool AudioContext::isSampleRateRangeGood(float sampleRate)
 {
@@ -215,6 +218,7 @@ void AudioContext::lazyInitialize()
 
         if (!isOfflineContext()) {
             document()->addAudioProducer(this);
+            document()->registerForVisibilityStateChangedCallbacks(this);
 
             // This starts the audio thread. The destination node's provideInput() method will now be called repeatedly to render audio.
             // Each time provideInput() is called, a portion of the audio stream is rendered. Let's call this time period a "render quantum".
@@ -259,6 +263,7 @@ void AudioContext::uninitialize()
 
     if (!isOfflineContext()) {
         document()->removeAudioProducer(this);
+        document()->unregisterForVisibilityStateChangedCallbacks(this);
 
         ASSERT(s_hardwareContextCount);
         --s_hardwareContextCount;
@@ -361,6 +366,25 @@ String AudioContext::sourceApplicationIdentifier() const
             return networkingContext->sourceApplicationIdentifier();
     }
     return emptyString();
+}
+
+void AudioContext::visibilityStateChanged()
+{
+    // Do not suspend if audio is audible.
+    if (mediaState() == MediaProducer::IsPlayingAudio)
+        return;
+
+    if (document()->hidden()) {
+        if (state() == State::Running) {
+            RELEASE_LOG_IF_ALLOWED("visibilityStateChanged() Suspending playback after going to the background");
+            m_mediaSession->beginInterruption(PlatformMediaSession::EnteringBackground);
+        }
+    } else {
+        if (state() == State::Interrupted) {
+            RELEASE_LOG_IF_ALLOWED("visibilityStateChanged() Resuming playback after entering foreground");
+            m_mediaSession->endInterruption(PlatformMediaSession::MayResumePlaying);
+        }
+    }
 }
 
 ExceptionOr<Ref<AudioBuffer>> AudioContext::createBuffer(unsigned numberOfChannels, size_t numberOfFrames, float sampleRate)

@@ -400,9 +400,6 @@ public:
     virtual void didBecomeFullscreenElement() { }
     virtual void willStopBeingFullscreenElement() { }
 
-    // Use Document::registerForVisibilityStateChangedCallbacks() to subscribe to this.
-    virtual void visibilityStateChanged() { }
-
 #if ENABLE(VIDEO_TRACK)
     virtual void captionPreferencesChanged() { }
 #endif
