@@ -675,7 +675,7 @@ String imageTitle(const String& filename, const IntSize& size)
 
 String mediaElementLoadingStateText()
 {
-    return WEB_UI_STRING("Loading...", "Media controller status message when the media is loading");
+    return WEB_UI_STRING("Loading…", "Media controller status message when the media is loading");
 }
 
 String mediaElementLiveBroadcastStateText()

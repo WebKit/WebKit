@@ -77,7 +77,7 @@ String contextMenuItemTagShowFonts()
 
 String contextMenuItemTagStyles()
 {
-    return WEB_UI_STRING("Styles...", "Styles context menu item");
+    return WEB_UI_STRING("Styles…", "Styles context menu item");
 }
 
 String contextMenuItemTagShowColors()

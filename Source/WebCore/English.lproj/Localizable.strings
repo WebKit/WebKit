@@ -350,7 +350,7 @@
 "Live Broadcast" = "Live Broadcast";
 
 /* Media controller status message when the media is loading */
-"Loading..." = "Loading...";
+"Loading…" = "Loading…";
 
 /* 'Website' name displayed when local documents have stored local data */
 "Local documents on your computer" = "Local documents on your computer";
@@ -623,7 +623,7 @@
 "Stop Speaking" = "Stop Speaking";
 
 /* Styles context menu item */
-"Styles..." = "Styles...";
+"Styles…" = "Styles…";
 
 /* default label for Submit buttons in forms on web pages */
 "Submit" = "Submit";
