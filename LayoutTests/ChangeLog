@@ -1,3 +1,18 @@
+2017-04-01  Per Arne Vollan  <pvollan@apple.com>
+
+        Add test for expected fallback behavior between stroke-width and -webkit-text-stroke-width.
+        https://bugs.webkit.org/show_bug.cgi?id=169466
+
+        Reviewed by Jon Lee.
+
+        Now that we have added support for stroke-width, we should have a test for expected fallback behavior between
+        stroke-width and -webkit-text-stroke-width. Currently, stroke-width is always preferred, also when inherited,
+        and when -webkit-text-stroke-width is declared inline. When stroke-width is not specified, we fall back to
+        -webkit-text-stroke-width.
+
+        * fast/css/stroke-width-fallback-expected.html: Added.
+        * fast/css/stroke-width-fallback.html: Added.
+
 2017-04-01  Jon Lee  <jonlee@apple.com>
 
         Add missing text styles

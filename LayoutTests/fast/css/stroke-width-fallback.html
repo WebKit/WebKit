@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        div {
+            font-size: 80px;
+            color: gray;
+            text-shadow: none;
+            -webkit-text-stroke-color: blue;
+        }
+    
+        stroke-width-class {
+            stroke-width: 25px;
+        }
+    </style>
+</head>
+<body>
+
+<div style="-webkit-text-stroke-width: 10px;">&#x25fc;</div>
+<div style="stroke-width: 25px; -webkit-text-stroke-width: 10px;">&#x25fc;</div>
+<div style="-webkit-text-stroke-width: 10px; stroke-width: 25px;">&#x25fc;</div>
+<div style="-webkit-text-stroke-width: 10px; stroke-width: 25px; stroke-width: 30px;">&#x25fc;</div>
+<div style="-webkit-text-stroke-width: 10px; stroke-width: 25px; -webkit-text-stroke-width: 30px;">&#x25fc;</div>
+
+<div style="stroke-width: 25px;"><span style="-webkit-text-stroke-width: 10px;">&#x25fc;</span></div>
+<div style="-webkit-text-stroke-width: 10px;"><span style="stroke-width: 25px;">&#x25fc;</span></div>
+<div style="-webkit-text-stroke-width: 10px;"><span>&#x25fc;</span></div>
+<div style="stroke-width: 25px; -webkit-text-stroke-width: 10px;"><span>&#x25fc;</span></div>
+<div style="-webkit-text-stroke-width: 10px; stroke-width: 25px;"><span>&#x25fc;</span></div>
+
+<div class="stroke-width-class" style="-webkit-text-stroke-width: 10px;">&#x25fc;</div>
+
+</body>
+</html>
