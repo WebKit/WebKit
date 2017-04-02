@@ -1248,3 +1248,7 @@ webkit.org/b/170130 fast/events/before-unload-adopt-subframe-to-outside.html [ P
 
 [ Release ] webkit.org/b/170355 fast/mediastream/MediaStream-page-muted.html [ Pass Timeout ]
 [ Debug ] webkit.org/b/170355 fast/mediastream/MediaStream-page-muted.html [ Pass Crash ]
+
+# rdar://problem/30975761
+[ Debug ] http/tests/fetch/fetch-in-worker-crash.html [ Pass Crash ]
+webkit.org/b/170395 [ Debug ] imported/w3c/web-platform-tests/fetch/api/cors/cors-preflight-status.html [ Pass Crash ]
