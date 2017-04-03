@@ -1,5 +1,21 @@
 2017-03-15  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [JSC] Default parameter part should be retrieved by op_get_argument opcode instead of changing arity
+        https://bugs.webkit.org/show_bug.cgi?id=164582
+
+        Reviewed by Saam Barati.
+
+        * stress/function-with-defaults-inlining.js: Added.
+        (shouldBe):
+        (ok):
+        (a):
+        * stress/function-with-defaults-non-inlining.js: Added.
+        (shouldBe):
+        (ok):
+        (a):
+
+2017-03-15  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [DFG] ToString operation should have fixup for primitives to say this node does not have side effects
         https://bugs.webkit.org/show_bug.cgi?id=169544
 
