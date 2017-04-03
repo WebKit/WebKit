@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -105,7 +105,16 @@ struct RangeKey {
             out.print("ArrayBounds(");
             break;
         }
-        out.print(m_source, ", ", m_key, ")");
+        if (m_source)
+            out.print(m_source);
+        else
+            out.print("null");
+        out.print(", ");
+        if (m_key)
+            out.print(m_key);
+        else
+            out.print("null");
+        out.print(")");
     }
     
     RangeKind m_kind;
@@ -249,7 +258,13 @@ private:
                     Node* maxNode;
                     
                     if (!data.m_key.m_source) {
-                        minNode = 0;
+                        // data.m_key.m_source being null means that we're comparing against int32 constants (see rangeKeyAndAddend()).
+                        // Since CheckInBounds does an unsigned comparison, if the minBound >= 0, it is also covered by the
+                        // maxBound comparison. However, if minBound < 0, then CheckInBounds should always fail its speculation check.
+                        // We'll force an OSR exit in that case.
+                        minNode = nullptr;
+                        if (range.m_minBound < 0)
+                            m_insertionSet.insertNode(nodeIndex, SpecNone, ForceOSRExit, node->origin);
                         maxNode = m_insertionSet.insertConstant(
                             nodeIndex, maxOrigin, jsNumber(range.m_maxBound));
                     } else {
