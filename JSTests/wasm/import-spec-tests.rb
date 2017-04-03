@@ -37,20 +37,17 @@ raise unless WASM_PATH.dirname.basename.to_s == "JSTests"
 def usage
     puts ""
     puts "usage:"
-    puts "    import-spec-tests.rb --spec <path-to-wasm-spec-git-repo> --wabt <path-to-wabt-git-repo> [-v]"
+    puts "    import-spec-tests.rb --spec <path-to-wasm-spec-git-repo> [-v]"
     puts ""
-    puts "    wabt's git repo can be found here: https://github.com/WebAssembly/wabt"
     puts "    the wasm spec's git repo can be found here: https://github.com/WebAssembly/spec"
     puts ""
     exit 1
 end
 
 $specDirectory = nil
-$wabtDirectory = nil
 $verbose = false
 
 GetoptLong.new(['--spec',GetoptLong::REQUIRED_ARGUMENT],
-               ['--wabt', GetoptLong::REQUIRED_ARGUMENT],
                ['-v', GetoptLong::OPTIONAL_ARGUMENT],
                ['--help', GetoptLong::OPTIONAL_ARGUMENT],
                ).each {
@@ -60,43 +57,37 @@ GetoptLong.new(['--spec',GetoptLong::REQUIRED_ARGUMENT],
         usage
     when '--spec'
         $specDirectory = arg
-    when '--wabt'
-        $wabtDirectory = arg
     when '-v'
         $verbose = true
     end
 }
 
 raise unless $specDirectory
-raise unless $wabtDirectory
 
 $resultDirectory = File.join(WASM_PATH, "spec-tests")
+$harnessDirectory = File.join(WASM_PATH, "spec-harness")
 
-begin
-    FileUtils.remove_dir($resultDirectory)
-rescue
-    puts "No directroy: #{$resultDirectory}" if $verbose
+$specTestDirectory = File.join($specDirectory, "test")
+
+def removeDir(file)
+    begin
+        FileUtils.remove_dir(file)
+    rescue
+        puts "No directory: #{file}" if $verbose
+    end
 end
 
+removeDir($resultDirectory)
+removeDir($harnessDirectory)
+
 FileUtils.mkdir($resultDirectory)
+FileUtils.cp_r(File.join($specTestDirectory, "harness"), $harnessDirectory)
 
-$wabtScript = File.join($wabtDirectory, "test", "run-gen-spec-js.py")
+$genScript = File.join($specTestDirectory, "build.py")
+stdout, stderr, status = Open3.capture3("#{$genScript} --js #{$resultDirectory}")
+if stderr != ""
+    puts "failed to generate tests"
+    puts "The error is:\n--------------\n #{stderr}\n--------------\n" if $verbose
+end
+puts stdout if $verbose
 
-Dir.entries(File.join($specDirectory, "test", "core")).each {
-    | wast |
-
-    next if File.extname(wast) != ".wast"
-    next if File.extname(File.basename(wast, ".wast")) == ".fail"
-
-    stdout, stderr, status = Open3.capture3("#{$wabtScript} #{File.join($specDirectory, "test", "core", wast)}")
-    if stderr != ""
-        puts "Skipping making test for file: #{wast} because of a wabt error"
-        puts "The error is:\n--------------\n #{stderr}\n--------------\n" if $verbose
-    else
-        resultFile = wast + ".js"
-        puts "Creating imported JS file: #{File.join($resultDirectory, resultFile)}"
-        File.open(File.join($resultDirectory, resultFile), "w") { 
-            |f| f.write(stdout)
-        }
-    end
-}

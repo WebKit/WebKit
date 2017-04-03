@@ -1,3 +1,14 @@
+2017-04-03  Keith Miller  <keith_miller@apple.com>
+
+        WebAssembly: Update spec tests
+        https://bugs.webkit.org/show_bug.cgi?id=170361
+
+        Rubber-stamped by Saam Barati.
+
+        Update the runner to know the new wasm spec test harness code.
+
+        * Scripts/run-jsc-stress-tests:
+
 2017-04-01  Alexey Proskuryakov  <ap@apple.com>
 
         Rolling back <https://trac.webkit.org/r214697>, as it made WebKit2.DataDetectionReferenceDate time out.

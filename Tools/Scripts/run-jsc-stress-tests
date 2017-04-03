@@ -1204,11 +1204,15 @@ def runWebAssemblySpecTest(mode)
 
     return if !$jitTests
     return if !$isFTLPlatform
-    modules = Dir[WASMTESTS_PATH + "*.js"].map { |f| File.basename(f) }
     prepareExtraAbsoluteFiles(WASMTESTS_PATH, ["wasm.json"])
+
+    modules = Dir[WASMTESTS_PATH + "*.js"].map { |f| File.basename(f) }
     prepareExtraRelativeFiles(modules.map { |f| "../../" + f }, $collection)
 
-    runWithOutputHandler("default-wasm", noisyOutputHandler, "-m", "--useWebAssembly=1")
+    harness = Dir[WASMTESTS_PATH + "spec-harness/" + "*.js"].map { |f| File.basename(f) }
+    prepareExtraRelativeFiles(harness.map { |f| "../../spec-harness/" + f }, $collection)
+
+    runWithOutputHandler("default-wasm", noisyOutputHandler, "--useWebAssembly=1", "../spec-harness.js")
 end
 
 def runChakra(mode, exception, baselineFile, extraFiles)
