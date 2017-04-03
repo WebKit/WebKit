@@ -1,9 +1,9 @@
-This test checks that const variables can shadow global object's named properties.
+Tests that declaring a const "location" variable in a worker does not throw.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS bodyId is 3
+SUCCESS: location was properly shadowed
 PASS successfullyParsed is true
 
 TEST COMPLETE

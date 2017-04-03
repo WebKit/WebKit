@@ -1,3 +1,37 @@
+2017-03-19  Chris Dumez  <cdumez@apple.com>
+
+        `const location = "foo"` throws in a worker
+        https://bugs.webkit.org/show_bug.cgi?id=169839
+
+        Reviewed by Mark Lam.
+
+        Our HasRestrictedGlobalProperty check in JSC was slightly wrong, causing us
+        to sometimes throw a Syntax exception when we shouldn't when declaring a
+        const/let variable and sometimes not throw an exception when we should have.
+
+        This aligns our behavior with ES6, Firefox and Chrome.
+
+        * runtime/ProgramExecutable.cpp:
+        (JSC::hasRestrictedGlobalProperty):
+        (JSC::ProgramExecutable::initializeGlobalProperties):
+        Rewrite hasRestrictedGlobalProperty logic as per the EcmaScript spec:
+        - http://www.ecma-international.org/ecma-262/6.0/index.html#sec-hasproperty
+        In particular, they were 2 issues:
+        - We should throw a SyntaxError if hasProperty() returned true but getOwnProperty()
+          would fail to return a descriptor. This would happen for properties that are
+          not OWN properties, but defined somewhere in the prototype chain. The spec does
+          not say to use hasProperty(), only getOwnProperty() and says we should return
+          false if getOwnProperty() does not return a descriptor. This is what we do now.
+        - We would fail to throw when declaring a let/const variable that shadows an own
+          property whose value is undefined. This is because the previous code was
+          explicitly checking for this case. I believe this was a misinterpretation of
+          ES6 which says:
+          """
+          Let desc be O.[[GetOwnProperty]](P).
+          If desc is undefined, return false.
+          """
+          We should check that desc is undefined, not desc.value. This is now fixed.
+
 2017-03-19  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         import(arg) crashes when ToString(arg) throws
