@@ -1,3 +1,17 @@
+2017-04-03  Keith Miller  <keith_miller@apple.com>
+
+        WebAssembly: remove lastAllocatedMode from Memory
+        https://bugs.webkit.org/show_bug.cgi?id=170405
+
+        Reviewed by Mark Lam.
+
+        It's not used anymore so there isn't any point in keeping it around.
+
+        * wasm/WasmMemory.cpp:
+        (JSC::Wasm::Memory::createImpl):
+        (JSC::Wasm::Memory::lastAllocatedMode): Deleted.
+        * wasm/WasmMemory.h:
+
 2017-04-03  Zan Dobersek  <zdobersek@igalia.com>
 
         [jsc] Add patchableJumpSize() for MIPS

@@ -73,7 +73,6 @@ public:
     PageCount initial() const { return m_initial; }
     PageCount maximum() const { return m_maximum; }
 
-    static MemoryMode lastAllocatedMode();
     MemoryMode mode() const { return m_mode; }
 
     // grow() should only be called from the JSWebAssemblyMemory object since that object needs to update internal

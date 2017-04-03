@@ -73,15 +73,6 @@ const char* makeString(MemoryMode mode)
     return "";
 }
 
-// We use this as a heuristic to guess what mode a memory import will be. Most of the time we expect users to
-// allocate the memory they are going to pass to all their modules right before compilation.
-static MemoryMode lastAllocatedMemoryMode { MemoryMode::Signaling };
-
-MemoryMode Memory::lastAllocatedMode()
-{
-    return lastAllocatedMemoryMode;
-}
-
 static const unsigned maxFastMemories = 4;
 static unsigned allocatedFastMemories { 0 };
 StaticLock memoryLock;
@@ -216,7 +207,6 @@ RefPtr<Memory> Memory::createImpl(VM& vm, PageCount initial, PageCount maximum, 
         if (mode == MemoryMode::Signaling)
             return nullptr;
 
-        lastAllocatedMemoryMode = MemoryMode::BoundsChecking;
         return adoptRef(new Memory(initial, maximum));
     };
 
@@ -260,7 +250,6 @@ RefPtr<Memory> Memory::createImpl(VM& vm, PageCount initial, PageCount maximum, 
         return nullptr;
     }
 
-    lastAllocatedMemoryMode = mode;
     dataLogLnIf(verbose, "Memory::create mmap succeeded");
     return adoptRef(new Memory(memory, initial, maximum, mappedCapacity, mode));
 }
