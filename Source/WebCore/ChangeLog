@@ -1,3 +1,33 @@
+2017-03-15  Dave Hyatt  <hyatt@apple.com>
+
+        Positioned SVG not sized correctly
+        https://bugs.webkit.org/show_bug.cgi?id=169693
+        <rdar://problem/30996893>
+
+        Reviewed by Zalan Bujtas.
+
+        Test: svg/in-html/rect-positioned.html
+
+        Change computeReplacedLogicalHeight to take an estimatedUsedWidth. This
+        value is used instead of the available logical width to resolve replaced
+        elements without intrinsic sizes but with aspect ratios set.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computeReplacedLogicalHeight):
+        * rendering/RenderBox.h:
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::computeConstrainedLogicalWidth):
+        (WebCore::RenderReplaced::computeReplacedLogicalWidth):
+        (WebCore::RenderReplaced::computeReplacedLogicalHeight):
+        * rendering/RenderReplaced.h:
+        * rendering/RenderVideo.cpp:
+        (WebCore::RenderVideo::computeReplacedLogicalHeight): Deleted.
+        * rendering/RenderVideo.h:
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::computeReplacedLogicalWidth):
+        (WebCore::RenderSVGRoot::computeReplacedLogicalHeight):
+        * rendering/svg/RenderSVGRoot.h:
+
 2017-03-15  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Initialize m_button, m_clickCount members in PlatformMouseEvent constructors

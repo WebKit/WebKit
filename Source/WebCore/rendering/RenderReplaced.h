@@ -30,7 +30,7 @@ public:
     virtual ~RenderReplaced();
 
     LayoutUnit computeReplacedLogicalWidth(ShouldComputePreferred = ComputeActual) const override;
-    LayoutUnit computeReplacedLogicalHeight() const override;
+    LayoutUnit computeReplacedLogicalHeight(std::optional<LayoutUnit> estimatedUsedWidth = std::nullopt) const override;
 
     LayoutRect replacedContentRect(const LayoutSize& intrinsicSize) const;
 
@@ -69,6 +69,8 @@ protected:
     void willBeDestroyed() override;
 
 private:
+    LayoutUnit computeConstrainedLogicalWidth(ShouldComputePreferred) const;
+
     virtual RenderBox* embeddedContentBox() const { return 0; }
     const char* renderName() const override { return "RenderReplaced"; }
 

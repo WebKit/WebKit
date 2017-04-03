@@ -125,17 +125,11 @@ LayoutUnit RenderSVGRoot::computeReplacedLogicalWidth(ShouldComputePreferred sho
     if (isEmbeddedThroughFrameContainingSVGDocument())
         return containingBlock()->availableLogicalWidth();
 
-    if (style().logicalWidth().isSpecified() || style().logicalMaxWidth().isSpecified())
-        return RenderReplaced::computeReplacedLogicalWidth(shouldComputePreferred);
-
-    if (svgSVGElement().hasIntrinsicWidth())
-        return resolveLengthAttributeForSVG(svgSVGElement().intrinsicWidth(), style().effectiveZoom(), containingBlock()->availableLogicalWidth());
-
     // SVG embedded via SVGImage (background-image/border-image/etc) / Inline SVG.
     return RenderReplaced::computeReplacedLogicalWidth(shouldComputePreferred);
 }
 
-LayoutUnit RenderSVGRoot::computeReplacedLogicalHeight() const
+LayoutUnit RenderSVGRoot::computeReplacedLogicalHeight(std::optional<LayoutUnit> estimatedUsedWidth) const
 {
     // When we're embedded through SVGImage (border-image/background-image/<html:img>/...) we're forced to resize to a specific size.
     if (!m_containerSize.isEmpty())
@@ -144,14 +138,8 @@ LayoutUnit RenderSVGRoot::computeReplacedLogicalHeight() const
     if (isEmbeddedThroughFrameContainingSVGDocument())
         return containingBlock()->availableLogicalHeight(IncludeMarginBorderPadding);
 
-    if (style().logicalHeight().isSpecified() || style().logicalMaxHeight().isSpecified())
-        return RenderReplaced::computeReplacedLogicalHeight();
-
-    if (svgSVGElement().hasIntrinsicHeight())
-        return resolveLengthAttributeForSVG(svgSVGElement().intrinsicHeight(), style().effectiveZoom(), containingBlock()->availableLogicalHeight(IncludeMarginBorderPadding).toFloat());
-
     // SVG embedded via SVGImage (background-image/border-image/etc) / Inline SVG.
-    return RenderReplaced::computeReplacedLogicalHeight();
+    return RenderReplaced::computeReplacedLogicalHeight(estimatedUsedWidth);
 }
 
 void RenderSVGRoot::layout()
