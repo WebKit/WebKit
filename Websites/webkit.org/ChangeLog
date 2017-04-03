@@ -1,3 +1,19 @@
+2017-04-03  Dean Jackson  <dino@apple.com>
+
+        Unreviewed. More WebGPU demos.
+
+        * demos/webgpu/2d.jpg: Added.
+        * demos/webgpu/2d.js:
+        * demos/webgpu/circle.svg: Added.
+        * demos/webgpu/cubes.jpg: Added.
+        * demos/webgpu/hello.html: Added.
+        * demos/webgpu/hello.jpg: Added.
+        * demos/webgpu/hello.js: Copied from Websites/webkit.org/demos/webgpu/2d.js.
+        (init):
+        (render):
+        * demos/webgpu/index.html: Added.
+        * demos/webgpu/simple.jpg: Added.
+
 2017-03-31  Dean Jackson  <dino@apple.com>
 
         Unreviewed. Add some WebGPU examples.
