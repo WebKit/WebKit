@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+    testRunner.waitUntilDone();
+}
+</script>
+<iframe id="iframe"></iframe>
+<script>
+var frame = document.getElementById("iframe");
+frame.contentWindow.onunload = () => {
+    var link = document.createElement('a');
+    link.href = "about:blank";
+    link.click();
+
+    window.setTimeout(() => {
+        // Do nothing.
+    }, 0);
+};
+window.location = 'javascript:"PASS did not crash.<script>window.testRunner && window.testRunner.notifyDone();</' + 'script>"';
+</script>
+</body>
+</html>
