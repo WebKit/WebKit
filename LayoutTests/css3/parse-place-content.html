@@ -8,6 +8,12 @@
 #placeContentBaseline {
     place-content: baseline;
 }
+#placeContentFirstBaseline {
+    place-content: first baseline;
+}
+#placeContentLastBaseline {
+    place-content: last baseline;
+}
 #placeContentStart {
     place-content: start;
 }
@@ -63,6 +69,8 @@
 
     <div id="placeContentNormal"></div>
     <div id="placeContentBaseline"></div>
+    <div id="placeContentFirstBaseline"></div>
+    <div id="placeContentLastBaseline"></div>
     <div id="placeContentStart"></div>
     <div id="placeContentFlexStart"></div>
     <div id="placeContentEnd"></div>
@@ -82,20 +90,30 @@
 <script>
 function checkPlaceContentValues(element, value, alignValue, justifyValue)
 {
-     var res = value.split(" ");
-     if (res.length < 2)
-         res[1] = res[0];
-     checkValues(element, "alignContent", "align-content", res[0], alignValue);
-     checkValues(element, "justifyContent", "justify-content", res[1], justifyValue);
+    var res = value.split(" ");
+    var alignContentSpecified = res[0];
+    var justifyContentSpecified = "";
+    if (res[0] === "first" || res[0] === "last") {
+        alignContentSpecified = res[0] + " " + res[1];
+        if (res.length > 2)
+            justifyContentSpecified = res.slice(2).join(" ");
+    } else {
+        justifyContentSpecified = res.slice(1).join(" ");
+    }
+
+    if (justifyContentSpecified === "")
+         justifyContentSpecified = alignContentSpecified;
+     checkValues(element, "alignContent", "align-content", alignContentSpecified, alignValue);
+     checkValues(element, "justifyContent", "justify-content", justifyContentSpecified, justifyValue);
 }
 
 function checkPlaceContentValuesJS(value, alignValue, justifyValue)
 {
-   element = document.createElement("div");
-   document.body.appendChild(element);
-   element.style.placeContent = value;
-   checkValues(element, "placeContent", "place-content", value, alignValue + ' ' + justifyValue)
-   checkPlaceContentValues(element, value, alignValue, justifyValue)
+    element = document.createElement("div");
+    document.body.appendChild(element);
+    element.style.placeContent = value;
+    checkValues(element, "placeContent", "place-content", value, alignValue + ' ' + justifyValue)
+    checkPlaceContentValues(element, value, alignValue, justifyValue)
 }
 
 function checkPlaceContentValuesBadJS(value)
@@ -137,6 +155,16 @@ test(function() {
     checkValues(placeContentBaseline, "placeContent", "place-content", "", "baseline baseline");
     checkPlaceContentValues(placeContentBaseline, "", "baseline", "baseline");
 }, "Test getting the Computed Value of place-content's longhand properties when setting 'baseline' value through CSS.");
+
+test(function() {
+    checkValues(placeContentFirstBaseline, "placeContent", "place-content", "", "baseline baseline");
+    checkPlaceContentValues(placeContentFirstBaseline, "", "baseline", "baseline");
+}, "Test getting the Computed Value of place-content's longhand properties when setting 'first baseline' value through CSS.");
+
+test(function() {
+    checkValues(placeContentLastBaseline, "placeContent", "place-content", "", "last baseline last baseline");
+    checkPlaceContentValues(placeContentLastBaseline, "", "last baseline", "last baseline");
+}, "Test getting the Computed Value of place-content's longhand properties when setting 'last baseline' value through CSS.");
 
 test(function() {
     checkValues(placeContentStart, "placeContent", "place-content", "", "start start");
@@ -214,10 +242,7 @@ test(function() {
 }, "Test setting 'start end left' as incorrect value through CSS.");
 
 test(function() {
-    // FIXME: We will get FAIL for placeContent specified values tests because we still don't know how to serialize this shortand.
-    // https://github.com/w3c/csswg-drafts/issues/1041
     checkPlaceContentValuesJS("center", "center", "center");
-    checkPlaceContentValuesJS("start start", "start", "start");
     checkPlaceContentValuesJS("center start", "center", "start");
     checkPlaceContentValuesJS("space-between end", "space-between", "end");
     checkPlaceContentValuesJS("normal end", "normal", "end");
@@ -231,6 +256,7 @@ test(function() {
     checkPlaceContentValuesBadJS("10px", "normal", "normal");
     checkPlaceContentValuesBadJS("stretch safe", "normal", "normal");
     checkPlaceContentValuesBadJS("space-between start end", "normal", "normal");
+    checkPlaceContentValuesBadJS("", "normal", "normal");
 }, "Test setting incorrect values through JS.");
 
 test(function() {

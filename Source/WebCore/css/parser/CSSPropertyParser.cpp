@@ -2619,9 +2619,37 @@ static RefPtr<CSSValue> consumeShapeOutside(CSSParserTokenRange& range, const CS
     return list;
 }
 
+static bool isContentDistributionKeyword(CSSValueID id)
+{
+    return identMatches<CSSValueSpaceBetween, CSSValueSpaceAround, CSSValueSpaceEvenly, CSSValueStretch>(id);
+}
+
+static bool isContentPositionKeyword(CSSValueID id)
+{
+    return identMatches<CSSValueStart, CSSValueEnd, CSSValueCenter, CSSValueFlexStart, CSSValueFlexEnd, CSSValueLeft, CSSValueRight>(id);
+}
+
+static bool isOverflowKeyword(CSSValueID id)
+{
+    return CSSPropertyParserHelpers::identMatches<CSSValueUnsafe, CSSValueSafe>(id);
+}
+
 static bool isBaselineKeyword(CSSValueID id)
 {
     return identMatches<CSSValueFirst, CSSValueLast, CSSValueBaseline>(id);
+}
+
+static CSSValueID getBaselineKeyword(RefPtr<CSSValue> value)
+{
+    auto& primitiveValue = downcast<CSSPrimitiveValue>(*value);
+    if (auto* pairValue = primitiveValue.pairValue()) {
+        ASSERT(pairValue->second()->valueID() == CSSValueBaseline);
+        if (pairValue->first()->valueID() == CSSValueLast)
+            return CSSValueLastBaseline;
+        return CSSValueFirstBaseline;
+    }
+    ASSERT(primitiveValue.valueID() == CSSValueBaseline);
+    return CSSValueBaseline;
 }
 
 static RefPtr<CSSValue> consumeBaselineKeyword(CSSParserTokenRange& range)
@@ -2648,15 +2676,7 @@ static RefPtr<CSSValue> consumeContentDistributionOverflowPosition(CSSParserToke
         RefPtr<CSSValue> baseline = consumeBaselineKeyword(range);
         if (!baseline)
             return nullptr;
-        CSSValueID baselineID = CSSValueBaseline;
-        auto& primitiveValue = downcast<CSSPrimitiveValue>(*baseline);
-        if (auto* pairValue = primitiveValue.pairValue()) {
-            if (pairValue->first()->valueID() == CSSValueLast)
-                baselineID = CSSValueLastBaseline;
-            else
-                baselineID = CSSValueFirstBaseline;
-        }
-        return CSSContentDistributionValue::create(CSSValueInvalid, baselineID, CSSValueInvalid);
+        return CSSContentDistributionValue::create(CSSValueInvalid, getBaselineKeyword(baseline), CSSValueInvalid);
     }
 
     CSSValueID distribution = CSSValueInvalid;
@@ -2664,15 +2684,15 @@ static RefPtr<CSSValue> consumeContentDistributionOverflowPosition(CSSParserToke
     CSSValueID overflow = CSSValueInvalid;
     do {
         CSSValueID id = range.peek().id();
-        if (identMatches<CSSValueSpaceBetween, CSSValueSpaceAround, CSSValueSpaceEvenly, CSSValueStretch>(id)) {
+        if (isContentDistributionKeyword(id)) {
             if (distribution != CSSValueInvalid)
                 return nullptr;
             distribution = id;
-        } else if (identMatches<CSSValueStart, CSSValueEnd, CSSValueCenter, CSSValueFlexStart, CSSValueFlexEnd, CSSValueLeft, CSSValueRight>(id)) {
+        } else if (isContentPositionKeyword(id)) {
             if (position != CSSValueInvalid)
                 return nullptr;
             position = id;
-        } else if (identMatches<CSSValueUnsafe, CSSValueSafe>(id)) {
+        } else if (isOverflowKeyword(id)) {
             if (overflow != CSSValueInvalid)
                 return nullptr;
             overflow = id;
@@ -5451,12 +5471,16 @@ bool CSSPropertyParser::consumeGridShorthand(bool important)
 static RefPtr<CSSValue> consumeSimplifiedContentPosition(CSSParserTokenRange& range)
 {
     CSSValueID id = range.peek().id();
-    if (identMatches<CSSValueNormal, CSSValueBaseline, CSSValueLastBaseline>(id))
+    if (identMatches<CSSValueNormal>(id) || isContentPositionKeyword(id))
         return CSSContentDistributionValue::create(CSSValueInvalid, range.consumeIncludingWhitespace().id(), CSSValueInvalid);
-    if (identMatches<CSSValueSpaceBetween, CSSValueSpaceAround, CSSValueSpaceEvenly, CSSValueStretch>(id))
+    if (isBaselineKeyword(id)) {
+        RefPtr<CSSValue> baseline = consumeBaselineKeyword(range);
+        if (!baseline)
+            return nullptr;
+        return CSSContentDistributionValue::create(CSSValueInvalid, getBaselineKeyword(baseline.releaseNonNull()), CSSValueInvalid);
+    }
+    if (isContentDistributionKeyword(id))
         return CSSContentDistributionValue::create(range.consumeIncludingWhitespace().id(), CSSValueInvalid, CSSValueInvalid);
-    if (identMatches<CSSValueStart, CSSValueEnd, CSSValueCenter, CSSValueFlexStart, CSSValueFlexEnd, CSSValueLeft, CSSValueRight>(id))
-        return CSSContentDistributionValue::create(CSSValueInvalid, range.consumeIncludingWhitespace().id(), CSSValueInvalid);
     return nullptr;
 }
 

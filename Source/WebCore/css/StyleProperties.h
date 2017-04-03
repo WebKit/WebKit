@@ -157,6 +157,7 @@ protected:
 private:
     String getShorthandValue(const StylePropertyShorthand&) const;
     String getCommonValue(const StylePropertyShorthand&) const;
+    String placeContentPropertyValue() const;
     enum CommonValueMode { OmitUncommonValues, ReturnNullOnUncommonValues };
     String borderPropertyValue(CommonValueMode) const;
     String getLayeredShorthandValue(const StylePropertyShorthand&) const;

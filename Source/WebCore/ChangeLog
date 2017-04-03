@@ -1,3 +1,28 @@
+2017-04-03  Javier Fernandez  <jfernandez@igalia.com>
+
+        [css-align] Adapt place-content alignment shorthand to the new baseline syntax
+        https://bugs.webkit.org/show_bug.cgi?id=170340
+
+        Reviewed by David Hyatt.
+
+        Now that the align-content and justify-content CSS properties are
+        adapted to the new baseline-position CSS values syntax we can adapt the
+        shorthand that controls such properties to the new syntax as well.
+
+        No new tests, just adding some additional cases to the tests we already have.
+
+        * css/StyleProperties.cpp:
+        (WebCore::StyleProperties::getPropertyValue):
+        (WebCore::StyleProperties::placeContentPropertyValue):
+        * css/StyleProperties.h:
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::isContentDistributionKeyword):
+        (WebCore::isContentPositionKeyword):
+        (WebCore::isOverflowKeyword):
+        (WebCore::getBaselineKeyword):
+        (WebCore::consumeContentDistributionOverflowPosition):
+        (WebCore::consumeSimplifiedContentPosition):
+
 2017-04-03  Nan Wang  <n_wang@apple.com>
 
         AX: Expose link children when doing search predication on iOS
