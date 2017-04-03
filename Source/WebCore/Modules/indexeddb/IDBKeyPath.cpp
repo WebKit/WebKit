@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +31,7 @@
 
 #include <wtf/ASCIICType.h>
 #include <wtf/dtoa.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -220,6 +222,31 @@ IDBKeyPath isolatedCopy(const IDBKeyPath& keyPath)
 
     return WTF::visit(visitor, keyPath);
 }
+
+#ifndef NDEBUG
+String loggingString(const IDBKeyPath& path)
+{
+    auto visitor = WTF::makeVisitor([](const String& string) {
+        return makeString("< ", string, " >");
+    }, [](const Vector<String>& strings) {
+        if (strings.isEmpty())
+            return String("< >");
+
+        StringBuilder builder;
+        builder.append("< ");
+        for (size_t i = 0; i < strings.size() - 1; ++i) {
+            builder.append(strings[i]);
+            builder.append(", ");
+        }
+        builder.append(strings.last());
+        builder.append(" >");
+
+        return builder.toString();
+    });
+
+    return WTF::visit(visitor, path);
+}
+#endif
 
 } // namespace WebCore
 

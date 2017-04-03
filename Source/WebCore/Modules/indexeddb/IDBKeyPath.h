@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -51,6 +52,10 @@ inline std::optional<IDBKeyPath> isolatedCopy(const std::optional<IDBKeyPath>& v
         return { };
     return isolatedCopy(variant.value());
 }
+
+#ifndef NDEBUG
+String loggingString(const IDBKeyPath&);
+#endif
 
 } // namespace WebCore
 
