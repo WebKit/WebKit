@@ -1,3 +1,14 @@
+2017-03-14  Tomas Popela  <tpopela@redhat.com>
+
+        Wrong condition in offlineasm/risc.rb
+        https://bugs.webkit.org/show_bug.cgi?id=169597
+
+        Reviewed by Mark Lam.
+
+        It's missing the 'and' operator between the conditions.
+
+        * offlineasm/risc.rb:
+
 2017-03-14  Mark Lam  <mark.lam@apple.com>
 
         BytecodeGenerator should use the same function to determine if it needs to store the DerivedConstructor in an ArrowFunction lexical environment.
