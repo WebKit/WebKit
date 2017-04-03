@@ -1,3 +1,19 @@
+2017-04-03  Nan Wang  <n_wang@apple.com>
+
+        AX: Expose link children when doing search predication on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=170424
+        <rdar://problem/31413335>
+
+        The children of links are accessible elements on iOS instead of the link itself, 
+        so we should expose the children when doing predicated searches as well.
+
+        Reviewed by Chris Fleizach.
+
+        Test: accessibility/ios-simulator/ios-search-predicate-link-children.html
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::isAccessibilityObjectSearchMatchAtIndex):
+
 2017-04-03  Jer Noble  <jer.noble@apple.com>
 
         No audio output for MediaStream-backed audio elements on iOS

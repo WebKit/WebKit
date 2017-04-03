@@ -201,8 +201,14 @@ bool AccessibilityObject::isAccessibilityObjectSearchMatchAtIndex(AccessibilityO
     case LandmarkSearchKey:
         return axObject->isLandmark();
         
-    case LinkSearchKey:
-        return axObject->isLink();
+    case LinkSearchKey: {
+        bool isLink = axObject->isLink();
+#if PLATFORM(IOS)
+        if (!isLink)
+            isLink = axObject->isDescendantOfRole(WebCoreLinkRole);
+#endif
+        return isLink;
+    }
         
     case ListSearchKey:
         return axObject->isList();

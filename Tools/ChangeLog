@@ -1,3 +1,16 @@
+2017-04-03  Nan Wang  <n_wang@apple.com>
+
+        AX: Expose link children when doing search predication on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=170424
+        <rdar://problem/31413335>
+
+        Reviewed by Chris Fleizach.
+
+        * DumpRenderTree/ios/AccessibilityUIElementIOS.mm:
+        (AccessibilityUIElement::uiElementForSearchPredicate):
+        * WebKitTestRunner/InjectedBundle/ios/AccessibilityUIElementIOS.mm:
+        (WTR::AccessibilityUIElement::uiElementForSearchPredicate):
+
 2017-04-03  Brian Burg  <bburg@apple.com>
 
         run-safari should support launching with custom language and locale
