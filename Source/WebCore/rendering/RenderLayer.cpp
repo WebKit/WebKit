@@ -1902,7 +1902,7 @@ void RenderLayer::addChild(RenderLayer* child, RenderLayer* beforeChild)
 
 RenderLayer* RenderLayer::removeChild(RenderLayer* oldChild)
 {
-    if (!renderer().documentBeingDestroyed())
+    if (!renderer().renderTreeBeingDestroyed())
         compositor().layerWillBeRemoved(*this, *oldChild);
 
     // remove the child
@@ -6122,7 +6122,7 @@ RenderLayerBacking* RenderLayer::ensureBacking()
 
 void RenderLayer::clearBacking(bool layerBeingDestroyed)
 {
-    if (m_backing && !renderer().documentBeingDestroyed())
+    if (m_backing && !renderer().renderTreeBeingDestroyed())
         compositor().layerBecameNonComposited(*this);
     m_backing = nullptr;
 
@@ -6263,12 +6263,12 @@ void RenderLayer::setParent(RenderLayer* parent)
     if (parent == m_parent)
         return;
 
-    if (m_parent && !renderer().documentBeingDestroyed())
+    if (m_parent && !renderer().renderTreeBeingDestroyed())
         compositor().layerWillBeRemoved(*m_parent, *this);
     
     m_parent = parent;
 
-    if (m_parent && !renderer().documentBeingDestroyed())
+    if (m_parent && !renderer().renderTreeBeingDestroyed())
         compositor().layerWasAdded(*m_parent, *this);
 }
 
@@ -6283,7 +6283,7 @@ void RenderLayer::dirtyZOrderLists()
         m_negZOrderList->clear();
     m_zOrderListsDirty = true;
 
-    if (!renderer().documentBeingDestroyed()) {
+    if (!renderer().renderTreeBeingDestroyed()) {
         if (isFlowThreadCollectingGraphicsLayersUnderRegions())
             downcast<RenderFlowThread>(renderer()).setNeedsLayerToRegionMappingsUpdate();
         compositor().setCompositingLayersNeedRebuild();
@@ -6307,7 +6307,7 @@ void RenderLayer::dirtyNormalFlowList()
         m_normalFlowList->clear();
     m_normalFlowListDirty = true;
 
-    if (!renderer().documentBeingDestroyed()) {
+    if (!renderer().renderTreeBeingDestroyed()) {
         if (isFlowThreadCollectingGraphicsLayersUnderRegions())
             downcast<RenderFlowThread>(renderer()).setNeedsLayerToRegionMappingsUpdate();
         compositor().setCompositingLayersNeedRebuild();
@@ -6757,7 +6757,7 @@ void RenderLayer::updateOutOfFlowPositioned(const RenderStyle* oldStyle)
     bool wasOutOfFlowPositioned = oldStyle && (oldStyle->position() == AbsolutePosition || oldStyle->position() == FixedPosition);
     if (parent() && (renderer().isOutOfFlowPositioned() != wasOutOfFlowPositioned)) {
         parent()->dirtyAncestorChainHasOutOfFlowPositionedDescendantStatus();
-        if (!renderer().documentBeingDestroyed() && acceleratedCompositingForOverflowScrollEnabled())
+        if (!renderer().renderTreeBeingDestroyed() && acceleratedCompositingForOverflowScrollEnabled())
             compositor().setShouldReevaluateCompositingAfterLayout();
     }
 }
@@ -6918,7 +6918,7 @@ void RenderLayer::createReflection()
 
 void RenderLayer::removeReflection()
 {
-    if (!m_reflection->documentBeingDestroyed())
+    if (!m_reflection->renderTreeBeingDestroyed())
         m_reflection->removeLayers(this);
 
     m_reflection->setParent(nullptr);

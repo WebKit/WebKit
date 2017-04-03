@@ -177,7 +177,7 @@ void CounterNode::resetRenderers()
 {
     if (!m_rootRenderer)
         return;
-    bool skipLayoutAndPerfWidthsRecalc = m_rootRenderer->documentBeingDestroyed();
+    bool skipLayoutAndPerfWidthsRecalc = m_rootRenderer->renderTreeBeingDestroyed();
     auto* current = m_rootRenderer;
     while (current) {
         if (!skipLayoutAndPerfWidthsRecalc)

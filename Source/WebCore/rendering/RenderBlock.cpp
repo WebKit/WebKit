@@ -345,7 +345,7 @@ RenderBlock::~RenderBlock()
 
 void RenderBlock::willBeDestroyed()
 {
-    if (!documentBeingDestroyed()) {
+    if (!renderTreeBeingDestroyed()) {
         if (parent())
             parent()->dirtyLinesFromChangedChild(*this);
     }
@@ -780,7 +780,7 @@ static bool canDropAnonymousBlock(const RenderBlock& anonymousBlock)
 
 static bool canMergeContiguousAnonymousBlocks(RenderObject& oldChild, RenderObject* previous, RenderObject* next)
 {
-    if (oldChild.documentBeingDestroyed() || oldChild.isInline() || oldChild.virtualContinuation())
+    if (oldChild.renderTreeBeingDestroyed() || oldChild.isInline() || oldChild.virtualContinuation())
         return false;
 
     if (previous) {
@@ -816,7 +816,7 @@ void RenderBlock::removeChild(RenderObject& oldChild)
 {
     // No need to waste time in merging or removing empty anonymous blocks.
     // We can just bail out if our document is getting destroyed.
-    if (documentBeingDestroyed()) {
+    if (renderTreeBeingDestroyed()) {
         RenderBox::removeChild(oldChild);
         return;
     }

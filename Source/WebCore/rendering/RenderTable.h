@@ -222,7 +222,7 @@ public:
     bool needsSectionRecalc() const { return m_needsSectionRecalc; }
     void setNeedsSectionRecalc()
     {
-        if (documentBeingDestroyed())
+        if (renderTreeBeingDestroyed())
             return;
         m_needsSectionRecalc = true;
         setNeedsLayout();

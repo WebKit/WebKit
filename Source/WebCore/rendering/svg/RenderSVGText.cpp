@@ -161,7 +161,7 @@ inline bool RenderSVGText::shouldHandleSubtreeMutations() const
 void RenderSVGText::subtreeChildWasAdded(RenderObject* child)
 {
     ASSERT(child);
-    if (!shouldHandleSubtreeMutations() || documentBeingDestroyed())
+    if (!shouldHandleSubtreeMutations() || renderTreeBeingDestroyed())
         return;
 
     // The positioning elements cache doesn't include the new 'child' yet. Clear the
@@ -249,7 +249,7 @@ void RenderSVGText::subtreeChildWillBeRemoved(RenderObject* child, Vector<SVGTex
     bool stopAfterNext = false;
     SVGTextLayoutAttributes* previous = nullptr;
     SVGTextLayoutAttributes* next = nullptr;
-    if (!documentBeingDestroyed())
+    if (!renderTreeBeingDestroyed())
         findPreviousAndNextAttributes(*this, &text, stopAfterNext, previous, next);
 
     if (previous)
@@ -263,7 +263,7 @@ void RenderSVGText::subtreeChildWillBeRemoved(RenderObject* child, Vector<SVGTex
 
 void RenderSVGText::subtreeChildWasRemoved(const Vector<SVGTextLayoutAttributes*, 2>& affectedAttributes)
 {
-    if (!shouldHandleSubtreeMutations() || documentBeingDestroyed()) {
+    if (!shouldHandleSubtreeMutations() || renderTreeBeingDestroyed()) {
         ASSERT(affectedAttributes.isEmpty());
         return;
     }
@@ -278,7 +278,7 @@ void RenderSVGText::subtreeChildWasRemoved(const Vector<SVGTextLayoutAttributes*
 void RenderSVGText::subtreeStyleDidChange(RenderSVGInlineText* text)
 {
     ASSERT(text);
-    if (!shouldHandleSubtreeMutations() || documentBeingDestroyed())
+    if (!shouldHandleSubtreeMutations() || renderTreeBeingDestroyed())
         return;
 
     checkLayoutAttributesConsistency(this, m_layoutAttributes);

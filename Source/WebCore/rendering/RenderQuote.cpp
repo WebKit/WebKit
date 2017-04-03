@@ -446,7 +446,7 @@ void RenderQuote::detachQuote()
         view().setRenderQuoteHead(m_next);
     if (m_next)
         m_next->m_previous = m_previous;
-    if (!documentBeingDestroyed()) {
+    if (!renderTreeBeingDestroyed()) {
         for (RenderQuote* quote = m_next; quote; quote = quote->m_next)
             quote->updateDepth();
     }

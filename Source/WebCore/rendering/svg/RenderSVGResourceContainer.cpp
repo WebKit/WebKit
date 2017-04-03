@@ -133,7 +133,7 @@ void RenderSVGResourceContainer::markClientForInvalidation(RenderObject& client,
         client.setNeedsBoundariesUpdate();
         break;
     case RepaintInvalidation:
-        if (!client.documentBeingDestroyed())
+        if (!client.renderTreeBeingDestroyed())
             client.repaint();
         break;
     case ParentOnlyInvalidation:

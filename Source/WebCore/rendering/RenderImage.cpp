@@ -230,7 +230,7 @@ void RenderImage::styleDidChange(StyleDifference diff, const RenderStyle* oldSty
 
 void RenderImage::imageChanged(WrappedImagePtr newImage, const IntRect* rect)
 {
-    if (documentBeingDestroyed())
+    if (renderTreeBeingDestroyed())
         return;
 
     if (hasVisibleBoxDecorations() || hasMask() || hasShapeOutside())
@@ -337,7 +337,7 @@ void RenderImage::repaintOrMarkForLayout(ImageSizeChangeType imageSizeChange, co
 
 void RenderImage::notifyFinished(CachedResource& newImage)
 {
-    if (documentBeingDestroyed())
+    if (renderTreeBeingDestroyed())
         return;
 
     invalidateBackgroundObscurationStatus();

@@ -272,7 +272,7 @@ void RenderText::styleDidChange(StyleDifference diff, const RenderStyle* oldStyl
 
 void RenderText::removeAndDestroyTextBoxes()
 {
-    if (!documentBeingDestroyed())
+    if (!renderTreeBeingDestroyed())
         m_lineBoxes.removeAllFromParent(*this);
 #if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
     else
