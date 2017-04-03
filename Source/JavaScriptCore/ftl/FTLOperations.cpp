@@ -264,7 +264,7 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
                 CodeBlock* codeBlock = baselineCodeBlockForOriginAndBaselineCodeBlock(
                     materialization->origin(), exec->codeBlock());
 
-                unsigned numberOfArgumentsToSkip = codeBlock->numParameters() - 1;
+                unsigned numberOfArgumentsToSkip = codeBlock->numberOfArgumentsToSkip();
                 JSGlobalObject* globalObject = codeBlock->globalObject();
                 Structure* structure = globalObject->restParameterStructure();
                 JSValue* argumentsToCopyRegion = exec->addressOfArgumentsStart() + numberOfArgumentsToSkip;
@@ -358,7 +358,7 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
             return result;
         }
         case PhantomCreateRest: {
-            unsigned numberOfArgumentsToSkip = codeBlock->numParameters() - 1;
+            unsigned numberOfArgumentsToSkip = codeBlock->numberOfArgumentsToSkip();
             JSGlobalObject* globalObject = codeBlock->globalObject();
             Structure* structure = globalObject->restParameterStructure();
             ASSERT(argumentCount > 0);

@@ -2327,7 +2327,8 @@ void CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         case op_create_rest: {
             int numberOfArgumentsToSkip = instructions[i + 3].u.operand;
             ASSERT_UNUSED(numberOfArgumentsToSkip, numberOfArgumentsToSkip >= 0);
-            ASSERT_WITH_MESSAGE(numberOfArgumentsToSkip == numParameters() - 1, "We assume that this is true when rematerializing the rest parameter during OSR exit in the FTL JIT.");
+            // This is used when rematerializing the rest parameter during OSR exit in the FTL JIT.");
+            m_numberOfArgumentsToSkip = numberOfArgumentsToSkip;
             break;
         }
 
