@@ -343,8 +343,11 @@ webkit.org/b/161312 imported/w3c/web-platform-tests/html/semantics/document-meta
 imported/w3c/web-platform-tests/fetch/api/cors/cors-origin.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/fetch/api/cors/cors-preflight.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/fetch/api/cors/cors-preflight-redirect.html [ DumpJSConsoleLogInStdErr ]
-imported/w3c/web-platform-tests/fetch/api/cors/cors-preflight-status.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/fetch/api/cors/cors-redirect-preflight.html [ DumpJSConsoleLogInStdErr ]
+
+# rdar://problem/30975761
+[ Debug ] http/tests/fetch/fetch-in-worker-crash.html [ DumpJSConsoleLogInStdErr Pass Crash ]
+webkit.org/b/170395 [ Debug ] imported/w3c/web-platform-tests/fetch/api/cors/cors-preflight-status.html [ DumpJSConsoleLogInStdErr Pass Crash ]
 
 webkit.org/b/159724 imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect-post-upload.htm [ Failure Pass ]
 webkit.org/b/167380 imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-protocol-setter-non-broken.html [ Failure Pass ]
@@ -1246,9 +1249,5 @@ webkit.org/b/169625 imported/w3c/web-platform-tests/cors/status.htm [ Pass Failu
 
 webkit.org/b/170130 fast/events/before-unload-adopt-subframe-to-outside.html [ Pass Timeout ]
 
-[ Release ] webkit.org/b/170355 fast/mediastream/MediaStream-page-muted.html [ Pass Timeout ]
-[ Debug ] webkit.org/b/170355 fast/mediastream/MediaStream-page-muted.html [ Pass Crash ]
-
-# rdar://problem/30975761
-[ Debug ] http/tests/fetch/fetch-in-worker-crash.html [ Pass Crash ]
-webkit.org/b/170395 [ Debug ] imported/w3c/web-platform-tests/fetch/api/cors/cors-preflight-status.html [ Pass Crash ]
+webkit.org/b/170355 [ Release ] fast/mediastream/MediaStream-page-muted.html [ Pass Timeout ]
+webkit.org/b/170355 [ Debug ] fast/mediastream/MediaStream-page-muted.html [ Pass Crash ]

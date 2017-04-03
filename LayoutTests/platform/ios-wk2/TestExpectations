@@ -488,7 +488,6 @@ fast/events/mouseenterleave-on-subframe.html [ Failure ]
 fast/events/mouseout-dead-node.html [ Failure ]
 fast/events/mouseover-mouseout.html [ Failure ]
 fast/events/mouseup-outside-document.html [ Failure ]
-fast/events/onclick-list-marker.html [ Failure Timeout ]
 fast/events/overflow-scroll-fake-mouse-move.html [ Failure ]
 fast/flexbox/clear-overflow-before-scroll-update.html [ Failure ]
 fast/flexbox/line-clamp-link-after-ellipsis.html [ Failure ]
@@ -652,7 +651,6 @@ fast/encoding/utf-16-little-endian.html [ Failure ]
 fast/forms/basic-buttons.html [ Failure ]
 fast/forms/basic-textareas-quirks.html [ Failure ]
 fast/forms/targeted-frame-submission.html [ Failure ]
-fast/forms/validation-message-in-relative-body.html [ Failure ]
 fast/frames/onlyCommentInIFrame.html [ Failure ]
 fast/hidpi/image-srcset-invalid-descriptor.html [ Failure ]
 fast/html/listing.html [ Failure ]
@@ -1452,15 +1450,15 @@ css2.1/20110323/replaced-intrinsic-002.htm [ Pass ]
 fast/replaced/pdf-as-object-and-embed.html [ Pass ]
 
 # These tests test the Shadow DOM based HTML form validation UI but iOS WK2 is using native dialogs instead.
-fast/forms/validation-message-on-listbox.html
-fast/forms/validation-message-on-menulist.html
-fast/forms/validation-message-on-radio.html
-fast/forms/validation-message-on-checkbox.html
-fast/forms/validation-message-on-range.html
-fast/forms/validation-message-clone.html
-fast/forms/validation-message-in-relative-body.html
-fast/forms/validation-message-appearance.html
-fast/forms/validation-message-on-textarea.html 
+fast/forms/validation-message-on-listbox.html [ Skip ]
+fast/forms/validation-message-on-menulist.html [ Skip ]
+fast/forms/validation-message-on-radio.html [ Skip ]
+fast/forms/validation-message-on-checkbox.html [ Skip ]
+fast/forms/validation-message-on-range.html [ Skip ]
+fast/forms/validation-message-clone.html [ Skip ]
+fast/forms/validation-message-in-relative-body.html [ Skip ]
+fast/forms/validation-message-appearance.html [ Skip ]
+fast/forms/validation-message-on-textarea.html  [ Skip ]
 
 # Flaky as of 06/08/2015
 compositing/overflow/overflow-positioning.html [ Failure ImageOnlyFailure Pass ]
