@@ -967,6 +967,20 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSlice(ExecState* exec)
     return JSValue::encode(result);
 }
 
+template<bool needToFillHolesManually>
+inline bool copySplicedArrayElements(ExecState* exec, ThrowScope& scope, JSObject* result, JSObject* thisObj, unsigned actualStart, unsigned actualDeleteCount)
+{
+    VM& vm = scope.vm();
+    for (unsigned k = 0; k < actualDeleteCount; ++k) {
+        JSValue v = getProperty(exec, thisObj, k + actualStart);
+        RETURN_IF_EXCEPTION(scope, false);
+        if (UNLIKELY(!v && !needToFillHolesManually))
+            continue;
+        result->initializeIndex(vm, k, v);
+    }
+    return true;
+}
+
 EncodedJSValue JSC_HOST_CALL arrayProtoFuncSplice(ExecState* exec)
 {
     // 15.4.4.12
@@ -1046,13 +1060,21 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSplice(ExecState* exec)
                 throwOutOfMemoryError(exec, scope);
                 return encodedJSValue();
             }
-            
-            for (unsigned k = 0; k < actualDeleteCount; ++k) {
-                JSValue v = getProperty(exec, thisObj, k + actualStart);
-                RETURN_IF_EXCEPTION(scope, encodedJSValue());
-                if (UNLIKELY(!v))
-                    continue;
-                result->initializeIndex(vm, k, v);
+
+            // The result can have an ArrayStorage indexing type if we're having a bad time.
+            bool isArrayStorage = hasAnyArrayStorage(result->indexingType());
+            bool success = false;
+            if (UNLIKELY(isArrayStorage)) {
+                static const bool needToFillHolesManually = true;
+                success = copySplicedArrayElements<needToFillHolesManually>(exec, scope, result, thisObj, actualStart, actualDeleteCount);
+            } else {
+                ASSERT(hasUndecided(result->indexingType()));
+                static const bool needToFillHolesManually = false;
+                success = copySplicedArrayElements<needToFillHolesManually>(exec, scope, result, thisObj, actualStart, actualDeleteCount);
+            }
+            if (UNLIKELY(!success)) {
+                ASSERT(scope.exception());
+                return encodedJSValue();
             }
         }
     }
