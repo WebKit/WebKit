@@ -839,6 +839,11 @@ public:
         cacheFlush(insn, flushSize);
     }
 
+    static void relinkJumpToNop(void* from)
+    {
+        relinkJump(from, from);
+    }
+
     static void relinkCall(void* from, void* to)
     {
         void* start;
