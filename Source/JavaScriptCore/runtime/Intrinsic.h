@@ -79,6 +79,7 @@ enum JS_EXPORT_PRIVATE Intrinsic {
     AtomicsWakeIntrinsic,
     AtomicsXorIntrinsic,
     ToLowerCaseIntrinsic,
+    ParseIntIntrinsic,
 
     // Getter intrinsics.
     TypedArrayLengthIntrinsic,

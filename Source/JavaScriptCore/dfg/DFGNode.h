@@ -1484,6 +1484,7 @@ public:
         case LoadFromJSMapBucket:
         case CallDOMGetter:
         case CallDOM:
+        case ParseInt:
             return true;
         default:
             return false;

@@ -163,6 +163,11 @@ int32_t JIT_OPERATION operationMapHash(ExecState*, EncodedJSValue input);
 JSCell* JIT_OPERATION operationJSMapFindBucket(ExecState*, JSCell*, EncodedJSValue, int32_t);
 JSCell* JIT_OPERATION operationJSSetFindBucket(ExecState*, JSCell*, EncodedJSValue, int32_t);
 
+EncodedJSValue JIT_OPERATION operationParseIntNoRadixGeneric(ExecState*, EncodedJSValue);
+EncodedJSValue JIT_OPERATION operationParseIntStringNoRadix(ExecState*, JSString*);
+EncodedJSValue JIT_OPERATION operationParseIntString(ExecState*, JSString*, int32_t);
+EncodedJSValue JIT_OPERATION operationParseIntGeneric(ExecState*, EncodedJSValue, int32_t);
+
 JSCell* JIT_OPERATION operationNewStringObject(ExecState*, JSString*, Structure*);
 JSCell* JIT_OPERATION operationToStringOnCell(ExecState*, JSCell*);
 JSCell* JIT_OPERATION operationToString(ExecState*, EncodedJSValue);

@@ -25,7 +25,7 @@
 #include "InlineCallFrame.h"
 #include "JSScope.h"
 #include "JSCInlines.h"
-#include "JSGlobalObjectFunctions.h"
+#include "ParseInt.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace JSC {
