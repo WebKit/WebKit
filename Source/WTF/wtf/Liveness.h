@@ -57,8 +57,8 @@ public:
             
             IndexVector& liveAtTail = m_liveAtTail[block];
 
-            Adapter::forEachLateUse(
-                block, Adapter::blockSize(block) - 1,
+            Adapter::forEachUse(
+                block, Adapter::blockSize(block),
                 [&] (unsigned index) {
                     liveAtTail.append(index);
                 });
@@ -91,7 +91,7 @@ public:
                     localCalc.execute(instIndex);
 
                 // Handle the early def's of the first instruction.
-                Adapter::forEachEarlyDef(
+                Adapter::forEachDef(
                     block, 0,
                     [&] (unsigned index) {
                         m_workset.remove(index);
@@ -220,30 +220,20 @@ public:
         {
             auto& workset = m_liveness.m_workset;
 
-            // First handle the early def's of the next instruction.
-            m_liveness.forEachEarlyDef(
+            // Want an easy example to help you visualize how this works?
+            // Check out B3VariableLiveness.h.
+            //
+            // Want a hard example to help you understand the hard cases?
+            // Check out AirLiveness.h.
+            
+            m_liveness.forEachDef(
                 m_block, instIndex + 1,
                 [&] (unsigned index) {
                     workset.remove(index);
                 });
             
-            // Then handle def's.
-            m_liveness.forEachLateDef(
+            m_liveness.forEachUse(
                 m_block, instIndex,
-                [&] (unsigned index) {
-                    workset.remove(index);
-                });
-
-            // Then handle use's.
-            m_liveness.forEachEarlyUse(
-                m_block, instIndex,
-                [&] (unsigned index) {
-                    workset.add(index);
-                });
-
-            // And finally, handle the late use's of the previous instruction.
-            m_liveness.forEachLateUse(
-                m_block, instIndex - 1,
                 [&] (unsigned index) {
                     workset.add(index);
                 });

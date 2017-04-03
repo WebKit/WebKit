@@ -61,9 +61,12 @@ struct VariableLivenessAdapter {
     }
     
     template<typename Func>
-    void forEachEarlyUse(BasicBlock* block, unsigned valueIndex, const Func& func)
+    void forEachUse(BasicBlock* block, unsigned valueBoundaryIndex, const Func& func)
     {
-        Value* value = block->get(valueIndex);
+        // We want all of the uses that happen between valueBoundaryIndex-1 and
+        // valueBoundaryIndex. Since the Get opcode is the only value that has a use and since
+        // this is an early use, we only care about block[valueBoundaryIndex].
+        Value* value = block->get(valueBoundaryIndex);
         if (!value)
             return;
         if (value->opcode() != Get)
@@ -72,19 +75,12 @@ struct VariableLivenessAdapter {
     }
     
     template<typename Func>
-    void forEachLateUse(BasicBlock*, unsigned, const Func&)
+    void forEachDef(BasicBlock* block, unsigned valueBoundaryIndex, const Func& func)
     {
-    }
-    
-    template<typename Func>
-    void forEachEarlyDef(BasicBlock*, unsigned, const Func&)
-    {
-    }
-    
-    template<typename Func>
-    void forEachLateDef(BasicBlock* block, unsigned valueIndex, const Func& func)
-    {
-        Value* value = block->get(valueIndex);
+        // We want all of the defs that happen between valueBoundaryIndex-1 and
+        // valueBoundaryIndex. Since the Set opcode is the only value that has a def and since
+        // this is an late def, we only care about block[valueBoundaryIndex - 1].
+        Value* value = block->get(valueBoundaryIndex - 1);
         if (!value)
             return;
         if (value->opcode() != Set)

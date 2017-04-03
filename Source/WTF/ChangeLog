@@ -1,3 +1,19 @@
+2017-04-03  Filip Pizlo  <fpizlo@apple.com>
+
+        WTF::Liveness should have an API that focuses on actions at instruction boundaries
+        https://bugs.webkit.org/show_bug.cgi?id=170407
+
+        Reviewed by Keith Miller.
+        
+        Change the Liveness<> API to handle early and late things in one lump inside forEachUse
+        and forEachDef functions. This reduces the amount of different functions that Liveness<>
+        expects from its adaptor. This makes it easier to implement optimizations that cache the
+        use/def behavior of each instruction boundary.
+
+        * wtf/Liveness.h:
+        (WTF::Liveness::Liveness):
+        (WTF::Liveness::LocalCalc::execute):
+
 2017-04-01  Csaba Osztrogonác  <ossy@webkit.org>
 
         Mac cmake buildfix after 214586.

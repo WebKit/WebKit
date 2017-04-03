@@ -1,5 +1,35 @@
 2017-04-03  Filip Pizlo  <fpizlo@apple.com>
 
+        WTF::Liveness should have an API that focuses on actions at instruction boundaries
+        https://bugs.webkit.org/show_bug.cgi?id=170407
+
+        Reviewed by Keith Miller.
+        
+        Adopt changes to the WTF::Liveness<> API. Instead of having separate functions for the
+        early/late versions of uses and defs, we now have just a use/def API. Those
+        automatically take care of eary/late issues as needed.
+        
+        This reduces the API surface between WTF::Liveness<> and its clients, which makes it
+        easier to implement some other optimizations I'm thinking about.
+
+        * b3/B3VariableLiveness.h:
+        (JSC::B3::VariableLivenessAdapter::forEachUse):
+        (JSC::B3::VariableLivenessAdapter::forEachDef):
+        (JSC::B3::VariableLivenessAdapter::forEachEarlyUse): Deleted.
+        (JSC::B3::VariableLivenessAdapter::forEachLateUse): Deleted.
+        (JSC::B3::VariableLivenessAdapter::forEachEarlyDef): Deleted.
+        (JSC::B3::VariableLivenessAdapter::forEachLateDef): Deleted.
+        * b3/air/AirLiveness.h:
+        (JSC::B3::Air::LivenessAdapter::blockSize):
+        (JSC::B3::Air::LivenessAdapter::forEachUse):
+        (JSC::B3::Air::LivenessAdapter::forEachDef):
+        (JSC::B3::Air::LivenessAdapter::forEachEarlyUse): Deleted.
+        (JSC::B3::Air::LivenessAdapter::forEachLateUse): Deleted.
+        (JSC::B3::Air::LivenessAdapter::forEachEarlyDef): Deleted.
+        (JSC::B3::Air::LivenessAdapter::forEachLateDef): Deleted.
+
+2017-04-03  Filip Pizlo  <fpizlo@apple.com>
+
         Inst::forEachArg could compile to more compact code
         https://bugs.webkit.org/show_bug.cgi?id=170406
 

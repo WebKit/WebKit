@@ -50,67 +50,55 @@ struct LivenessAdapter {
     {
         return block->size();
     }
+    
+    template<typename Func>
+    void forEachUse(BasicBlock* block, size_t instBoundaryIndex, const Func& func)
+    {
+        if (Inst* prevInst = block->get(instBoundaryIndex - 1)) {
+            prevInst->forEach<typename Adapter::Thing>(
+                [&] (typename Adapter::Thing& thing, Arg::Role role, Bank bank, Width) {
+                    if (Arg::isLateUse(role)
+                        && Adapter::acceptsBank(bank)
+                        && Adapter::acceptsRole(role))
+                        func(Adapter::valueToIndex(thing));
+                });
+        }
+        
+        if (Inst* nextInst = block->get(instBoundaryIndex)) {
+            nextInst->forEach<typename Adapter::Thing>(
+                [&] (typename Adapter::Thing& thing, Arg::Role role, Bank bank, Width) {
+                    if (Arg::isEarlyUse(role)
+                        && Adapter::acceptsBank(bank)
+                        && Adapter::acceptsRole(role))
+                        func(Adapter::valueToIndex(thing));
+                });
+        }
+    }
+    
+    template<typename Func>
+    void forEachDef(BasicBlock* block, size_t instBoundaryIndex, const Func& func)
+    {
+        if (Inst* prevInst = block->get(instBoundaryIndex - 1)) {
+            prevInst->forEach<typename Adapter::Thing>(
+                [&] (typename Adapter::Thing& thing, Arg::Role role, Bank bank, Width) {
+                    if (Arg::isLateDef(role)
+                        && Adapter::acceptsBank(bank)
+                        && Adapter::acceptsRole(role))
+                        func(Adapter::valueToIndex(thing));
+                });
+        }
+        
+        if (Inst* nextInst = block->get(instBoundaryIndex)) {
+            nextInst->forEach<typename Adapter::Thing>(
+                [&] (typename Adapter::Thing& thing, Arg::Role role, Bank bank, Width) {
+                    if (Arg::isEarlyDef(role)
+                        && Adapter::acceptsBank(bank)
+                        && Adapter::acceptsRole(role))
+                        func(Adapter::valueToIndex(thing));
+                });
+        }
+    }
 
-    template<typename Func>
-    void forEachEarlyUse(BasicBlock* block, unsigned instIndex, const Func& func)
-    {
-        Inst* inst = block->get(instIndex);
-        if (!inst)
-            return;
-        inst->forEach<typename Adapter::Thing>(
-            [&] (typename Adapter::Thing& thing, Arg::Role role, Bank bank, Width) {
-                if (Arg::isEarlyUse(role)
-                    && Adapter::acceptsBank(bank)
-                    && Adapter::acceptsRole(role))
-                    func(Adapter::valueToIndex(thing));
-            });
-    }
-    
-    template<typename Func>
-    void forEachLateUse(BasicBlock* block, unsigned instIndex, const Func& func)
-    {
-        Inst* inst = block->get(instIndex);
-        if (!inst)
-            return;
-        inst->forEach<typename Adapter::Thing>(
-            [&] (typename Adapter::Thing& thing, Arg::Role role, Bank bank, Width) {
-                if (Arg::isLateUse(role)
-                    && Adapter::acceptsBank(bank)
-                    && Adapter::acceptsRole(role))
-                    func(Adapter::valueToIndex(thing));
-            });
-    }
-    
-    template<typename Func>
-    void forEachEarlyDef(BasicBlock* block, unsigned instIndex, const Func& func)
-    {
-        Inst* inst = block->get(instIndex);
-        if (!inst)
-            return;
-        inst->forEach<typename Adapter::Thing>(
-            [&] (typename Adapter::Thing& thing, Arg::Role role, Bank bank, Width) {
-                if (Arg::isEarlyDef(role)
-                    && Adapter::acceptsBank(bank)
-                    && Adapter::acceptsRole(role))
-                    func(Adapter::valueToIndex(thing));
-            });
-    }
-    
-    template<typename Func>
-    void forEachLateDef(BasicBlock* block, unsigned instIndex, const Func& func)
-    {
-        Inst* inst = block->get(instIndex);
-        if (!inst)
-            return;
-        inst->forEach<typename Adapter::Thing>(
-            [&] (typename Adapter::Thing& thing, Arg::Role role, Bank bank, Width) {
-                if (Arg::isLateDef(role)
-                    && Adapter::acceptsBank(bank)
-                    && Adapter::acceptsRole(role))
-                    func(Adapter::valueToIndex(thing));
-            });
-    }
-    
     Code& code;
 };
 
