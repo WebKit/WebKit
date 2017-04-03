@@ -897,6 +897,7 @@ private:
         case StringCharAt:
         case CallStringConstructor:
         case ToString:
+        case NumberToStringWithRadix:
         case MakeRope:
         case StrCat: {
             setPrediction(SpecString);

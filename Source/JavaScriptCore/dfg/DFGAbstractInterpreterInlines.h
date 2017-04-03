@@ -1858,6 +1858,9 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 m_graph.registerStructure(m_graph.globalObjectFor(node->origin.semantic)->stringObjectStructure()));
             break;
         case StringOrStringObjectUse:
+        case Int32Use:
+        case Int52RepUse:
+        case DoubleRepUse:
         case NotCellUse:
             break;
         case CellUse:
@@ -1871,6 +1874,11 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         forNode(node).set(m_graph, m_vm.stringStructure.get());
         break;
     }
+
+    case NumberToStringWithRadix:
+        clobberWorld(node->origin.semantic, clobberLimit);
+        forNode(node).set(m_graph, m_graph.m_vm.stringStructure.get());
+        break;
         
     case NewStringObject: {
         ASSERT(node->structure()->classInfo() == StringObject::info());

@@ -56,6 +56,8 @@ enum JS_EXPORT_PRIVATE Intrinsic {
     StringPrototypeValueOfIntrinsic,
     StringPrototypeReplaceIntrinsic,
     StringPrototypeReplaceRegExpIntrinsic,
+    StringPrototypeToLowerCaseIntrinsic,
+    NumberPrototypeToStringIntrinsic,
     IMulIntrinsic,
     RandomIntrinsic,
     FRoundIntrinsic,
@@ -78,7 +80,6 @@ enum JS_EXPORT_PRIVATE Intrinsic {
     AtomicsWaitIntrinsic,
     AtomicsWakeIntrinsic,
     AtomicsXorIntrinsic,
-    ToLowerCaseIntrinsic,
     ParseIntIntrinsic,
 
     // Getter intrinsics.

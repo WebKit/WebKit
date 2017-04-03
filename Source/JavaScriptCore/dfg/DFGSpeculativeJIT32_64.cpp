@@ -2796,6 +2796,11 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case NumberToStringWithRadix: {
+        compileNumberToStringWithRadix(node);
+        break;
+    }
+
     case GetByValWithThis: {
         JSValueOperand base(this, node->child1());
         JSValueRegs baseRegs = base.jsValueRegs();
@@ -3730,7 +3735,7 @@ void SpeculativeJIT::compile(Node* node)
         
     case ToString:
     case CallStringConstructor: {
-        compileToStringOrCallStringConstructorOnCell(node);
+        compileToStringOrCallStringConstructor(node);
         break;
     }
         

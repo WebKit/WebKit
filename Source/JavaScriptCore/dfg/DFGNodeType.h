@@ -335,6 +335,7 @@ namespace JSC { namespace DFG {
     macro(ToNumber, NodeResultJS | NodeMustGenerate) \
     macro(CallObjectConstructor, NodeResultJS) \
     macro(CallStringConstructor, NodeResultJS | NodeMustGenerate) \
+    macro(NumberToStringWithRadix, NodeResultJS | NodeMustGenerate) \
     macro(NewStringObject, NodeResultJS) \
     macro(MakeRope, NodeResultJS) \
     macro(In, NodeResultBoolean | NodeMustGenerate) \

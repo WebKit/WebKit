@@ -1401,6 +1401,9 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
             write(Heap);
             return;
 
+        case Int32Use:
+        case Int52RepUse:
+        case DoubleRepUse:
         case NotCellUse:
             def(PureValue(node));
             return;
@@ -1448,6 +1451,11 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
 
     case ToLowerCase:
         def(PureValue(node));
+        return;
+
+    case NumberToStringWithRadix:
+        read(World);
+        write(Heap);
         return;
         
     case LastNodeType:

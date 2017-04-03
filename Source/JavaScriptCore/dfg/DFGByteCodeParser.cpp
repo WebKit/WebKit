@@ -2711,7 +2711,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, int resultOperand, Intrin
         return true;
     }
 
-    case ToLowerCaseIntrinsic: {
+    case StringPrototypeToLowerCaseIntrinsic: {
         if (argumentCountIncludingThis != 1)
             return false;
 
@@ -2722,6 +2722,26 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, int resultOperand, Intrin
         Node* thisString = get(virtualRegisterForArgument(0, registerOffset));
         Node* result = addToGraph(ToLowerCase, thisString);
         set(VirtualRegister(resultOperand), result);
+        return true;
+    }
+
+    case NumberPrototypeToStringIntrinsic: {
+        if (argumentCountIncludingThis != 1 && argumentCountIncludingThis != 2)
+            return false;
+
+        if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
+            return false;
+
+        insertChecks();
+        Node* thisNumber = get(virtualRegisterForArgument(0, registerOffset));
+        if (argumentCountIncludingThis == 1) {
+            Node* result = addToGraph(ToString, thisNumber);
+            set(VirtualRegister(resultOperand), result);
+        } else {
+            Node* radix = get(virtualRegisterForArgument(1, registerOffset));
+            Node* result = addToGraph(NumberToStringWithRadix, thisNumber, radix);
+            set(VirtualRegister(resultOperand), result);
+        }
         return true;
     }
 

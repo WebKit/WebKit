@@ -3711,7 +3711,7 @@ void SpeculativeJIT::compile(Node* node)
         
     case ToString:
     case CallStringConstructor: {
-        compileToStringOrCallStringConstructorOnCell(node);
+        compileToStringOrCallStringConstructor(node);
         break;
     }
         
@@ -5004,6 +5004,11 @@ void SpeculativeJIT::compile(Node* node)
 
     case ToLowerCase: {
         compileToLowerCase(node);
+        break;
+    }
+
+    case NumberToStringWithRadix: {
+        compileNumberToStringWithRadix(node);
         break;
     }
 

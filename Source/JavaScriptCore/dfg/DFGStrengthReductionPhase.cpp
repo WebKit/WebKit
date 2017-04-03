@@ -390,6 +390,37 @@ private:
             break;
         }
 
+        case ToString:
+        case CallStringConstructor: {
+            Edge& child1 = m_node->child1();
+            switch (child1.useKind()) {
+            case Int32Use:
+            case Int52RepUse:
+            case DoubleRepUse: {
+                if (child1->hasConstant()) {
+                    JSValue value = child1->constant()->value();
+                    if (value) {
+                        String result;
+                        if (value.isInt32())
+                            result = String::number(value.asInt32());
+                        else if (value.isNumber())
+                            result = String::numberToStringECMAScript(value.asNumber());
+
+                        if (!result.isNull()) {
+                            m_node->convertToLazyJSConstant(m_graph, LazyJSValue::newString(m_graph, result));
+                            m_changed = true;
+                        }
+                    }
+                }
+                break;
+            }
+
+            default:
+                break;
+            }
+            break;
+        }
+
         case GetArrayLength: {
             if (m_node->arrayMode().type() == Array::Generic
                 || m_node->arrayMode().type() == Array::String) {
