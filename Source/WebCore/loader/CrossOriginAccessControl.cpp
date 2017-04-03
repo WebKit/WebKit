@@ -120,7 +120,8 @@ ResourceRequest createAccessControlPreflightRequest(const ResourceRequest& reque
 
             headerBuffer.append(headerField);
         }
-        preflightRequest.setHTTPHeaderField(HTTPHeaderName::AccessControlRequestHeaders, headerBuffer.toString());
+        if (!headerBuffer.isEmpty())
+            preflightRequest.setHTTPHeaderField(HTTPHeaderName::AccessControlRequestHeaders, headerBuffer.toString());
     }
 
     return preflightRequest;

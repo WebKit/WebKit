@@ -13,4 +13,5 @@ PASS CORS [GET] [several headers], server allows
 PASS CORS [GET] [several headers], server refuses 
 PASS CORS [PUT] [several headers], server allows 
 PASS CORS [PUT] [several headers], server refuses 
+PASS CORS [PUT] [only safe headers], server allows 
 
