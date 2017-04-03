@@ -1249,7 +1249,7 @@ WebInspector.SourceCodeTextEditor = class SourceCodeTextEditor extends WebInspec
             if (!WebInspector.isShowingDebuggerTab()) {
                 contextMenu.appendSeparator();
                 contextMenu.appendItem(WebInspector.UIString("Reveal in Debugger Tab"), () => {
-                    WebInspector.showDebuggerTab(breakpoints[0]);
+                    WebInspector.showDebuggerTab({breakpointToSelect: breakpoints[0]});
                 });
             }
 

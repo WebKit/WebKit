@@ -118,4 +118,5 @@ WebInspector.settings = {
     stylesShowInlineWarnings: new WebInspector.Setting("styles-show-inline-warning", true),
     stylesInsertNewline: new WebInspector.Setting("styles-insert-newline", true),
     stylesSelectOnFirstClick: new WebInspector.Setting("styles-select-on-first-click", true),
+    showScopeChainOnPause: new WebInspector.Setting("show-scope-chain-sidebar", true),
 };

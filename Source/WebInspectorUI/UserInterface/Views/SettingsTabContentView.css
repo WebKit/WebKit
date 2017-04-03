@@ -25,12 +25,13 @@
  */
 
 .content-view.settings {
+    padding: 6vh 0;
     overflow-y: auto;
     background-color: hsl(0, 0%, 93%);
 }
 
 .content-view.settings > .header {
-    margin: 6vh auto 4vh;
+    margin: 0 auto 4vh;
     text-align: center;
     font-size: 32px;
     font-weight: lighter;

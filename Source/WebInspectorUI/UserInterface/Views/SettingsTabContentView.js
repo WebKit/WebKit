@@ -207,6 +207,15 @@ WebInspector.SettingsTabContentView = class SettingsTabContentView extends WebIn
 
         createSeparator();
 
+        createContainer(WebInspector.UIString("Debugger:"), (valueControllerContainer) => {
+            let checkbox = createCheckbox(WebInspector.settings.showScopeChainOnPause);
+            valueControllerContainer.appendChild(checkbox);
+
+            valueControllerContainer.append(WebInspector.UIString("Show Scope Chain on pause"));
+        });
+
+        createSeparator();
+
         createContainer(WebInspector.UIString("Zoom:"), (valueControllerContainer) => {
             let select = valueControllerContainer.createChild("select");
             select.addEventListener("change", (event) => {
