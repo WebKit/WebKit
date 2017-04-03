@@ -79,6 +79,10 @@
     font-size: 11px;
 }
 
+.sidebar > .panel.navigation.debugger .details-section.paused-reason.collapsed > .header > .options {
+    display: block;
+}
+
 .sidebar > .panel.navigation.debugger .details-section > .content {
     display: block;
 }

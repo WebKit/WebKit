@@ -42,8 +42,6 @@ WebInspector.ProbeSetDetailsSection = class ProbeSetDetailsSection extends WebIn
 
         this.element.classList.add("probe-set");
 
-        this._optionsElement = optionsElement;
-
         this._listenerSet = new WebInspector.EventListenerSet(this, "ProbeSetDetailsSection UI listeners");
         this._probeSet = probeSet;
         this._dataGrid = dataGrid;
@@ -96,24 +94,17 @@ WebInspector.ProbeSetDetailsSection = class ProbeSetDetailsSection extends WebIn
     _updateLinkElement()
     {
         var breakpoint = this._probeSet.breakpoint;
-        var titleElement = null;
         if (breakpoint.sourceCodeLocation.sourceCode)
-            titleElement = WebInspector.createSourceCodeLocationLink(breakpoint.sourceCodeLocation);
+            this.titleElement = WebInspector.createSourceCodeLocationLink(breakpoint.sourceCodeLocation);
         else {
             // Fallback for when we can't create a live source link.
             console.assert(!breakpoint.resolved);
 
             var location = breakpoint.sourceCodeLocation;
-            titleElement = WebInspector.linkifyLocation(breakpoint.contentIdentifier, location.displayLineNumber, location.displayColumnNumber);
+            this.titleElement = WebInspector.linkifyLocation(breakpoint.contentIdentifier, location.displayLineNumber, location.displayColumnNumber);
         }
 
-        titleElement.classList.add(WebInspector.ProbeSetDetailsSection.DontFloatLinkStyleClassName);
-
-        if (this._linkElement)
-            this._optionsElement.removeChild(this._linkElement);
-
-        this._linkElement = titleElement;
-        this._optionsElement.appendChild(this._linkElement);
+        this.titleElement.classList.add(WebInspector.ProbeSetDetailsSection.DontFloatLinkStyleClassName);
     }
 
     _addProbeButtonClicked(event)

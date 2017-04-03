@@ -85,6 +85,19 @@ WebInspector.DetailsSection = class DetailsSection extends WebInspector.Object
         this._titleElement.textContent = title;
     }
 
+    get titleElement()
+    {
+        return this._titleElement;
+    }
+
+    set titleElement(element)
+    {
+        console.assert(element instanceof HTMLElement, "Expected titleElement to be an HTMLElement.", element);
+
+        this._headerElement.replaceChild(element, this._titleElement);
+        this._titleElement = element;
+    }
+
     get collapsed()
     {
         return this._element.classList.contains(WebInspector.DetailsSection.CollapsedStyleClassName);

@@ -147,7 +147,6 @@ WebInspector.VisualStyleDetailsPanel = class VisualStyleDetailsPanel extends Web
 
         function createOptionsElement() {
             let container = document.createElement("div");
-            container.classList.add("visual-style-section-clear");
             container.title = WebInspector.UIString("Clear modified properties");
             container.addEventListener("click", this._clearModifiedSection.bind(this, camelCaseId));
             return container;

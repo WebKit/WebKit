@@ -35,19 +35,12 @@
     font-weight: normal;
 }
 
-.sidebar > .panel.details.css-style .visual > .details-section .details-section > .header > .visual-style-section-clear {
-    position: absolute;
-    right: 5px;
+.sidebar > .panel.details.css-style .visual > .details-section .details-section > .header > .options {
     width: 15px;
     height: 15px;
     background-image: url(../Images/NavigationItemTrash.svg);
     background-size: 15px 15px;
     opacity: 0.7;
-}
-
-.sidebar > .panel.details.css-style .visual > .details-section .details-section.collapsed > .header > .visual-style-section-clear,
-.sidebar > .panel.details.css-style .visual > .details-section .details-section:not(.modified) > .header > .visual-style-section-clear {
-    display: none;
 }
 
 .sidebar > .panel.details.css-style .visual > .details-section .details-section > .header > span {

@@ -24,7 +24,6 @@
  */
 
 .sidebar > .panel.dom-node-details .details-section.dom-node-event-listeners > .header > .filter {
-    display: inline-block;
     position: relative;
     width: 14px;
     height: 14px;
@@ -44,10 +43,6 @@ body[dir=rtl] .sidebar > .panel.dom-node-details .details-section.dom-node-event
 
 .sidebar > .panel.dom-node-details .details-section.dom-node-event-listeners > .header > .filter:active {
     filter: brightness(0.5);
-}
-
-.sidebar > .panel.dom-node-details .details-section.dom-node-event-listeners.collapsed > .header > .filter {
-    display: none;
 }
 
 .sidebar > .panel.dom-node-details .details-section.dom-node-event-listeners > .header > .filter > select {

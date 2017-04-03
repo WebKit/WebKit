@@ -1,3 +1,47 @@
+2017-04-03  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: DetailsSection should hide header "options" when collapsed
+        https://bugs.webkit.org/show_bug.cgi?id=170029
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/DOMNodeDetailsSidebarPanel.css:
+        (.sidebar > .panel.dom-node-details .details-section.dom-node-event-listeners > .header > .filter):
+        (.sidebar > .panel.dom-node-details .details-section.dom-node-event-listeners.collapsed > .header > .filter): Deleted.
+        DetailsSection is responsible for hiding options when collapsed.
+
+        * UserInterface/Views/DebuggerSidebarPanel.css:
+        (.sidebar > .panel.navigation.debugger .details-section.paused-reason.collapsed > .header > .options):
+
+        * UserInterface/Views/DetailsSection.css:
+        (body[dir=ltr] .details-section > .header > .options,):
+        (body[dir=ltr] .details-section > .header::before,):
+        (.details-section.collapsed  > .header > .options):
+        (body[dir=ltr] .details-section > .header > :matches(label, .node-link, .go-to-arrow),): Deleted.
+        (.details-section.collapsed  > .header > label): Deleted.
+        Removed unnecessary rules. The "options" class covers these cases.
+
+        * UserInterface/Views/DetailsSection.js:
+        (WebInspector.DetailsSection.prototype.get titleElement):
+        (WebInspector.DetailsSection.prototype.set titleElement):
+        Added title element customization so that the hack used by ProbeSetDetailsSection
+        to get a link into the title can be removed. Yuck!
+
+        * UserInterface/Views/ProbeSetDetailsSection.js:
+        (WebInspector.ProbeSetDetailsSection):
+        (WebInspector.ProbeSetDetailsSection.prototype._updateLinkElement):
+        Use the new DetailsSection title element setter.
+
+        * UserInterface/Views/VisualStyleDetailsPanel.css:
+        (.sidebar > .panel.details.css-style .visual > .details-section .details-section > .header > .options):
+        (.sidebar > .panel.details.css-style .visual > .details-section .details-section > .header > .visual-style-section-clear): Deleted.
+        (.sidebar > .panel.details.css-style .visual > .details-section .details-section.collapsed > .header > .visual-style-section-clear,): Deleted.
+        Remove the "visual-style-section-clear" class, as it's no longer needed.
+
+        * UserInterface/Views/VisualStyleDetailsPanel.js:
+        (WebInspector.VisualStyleDetailsPanel.prototype._generateSection.createOptionsElement):
+        (WebInspector.VisualStyleDetailsPanel.prototype._generateSection):
+
 2017-04-03  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: "Space" is not localizable in Timelines record button tooltips

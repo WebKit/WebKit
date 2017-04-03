@@ -79,15 +79,13 @@ body[dir=rtl] .details-section > .header {
     border: none;
 }
 
-body[dir=ltr] .details-section > .header > :matches(label, .node-link, .go-to-arrow),
-body[dir=ltr] .details-section > .header > .options > .navigation-bar,
+body[dir=ltr] .details-section > .header > .options,
 body[dir=rtl] .details-section > .header::before {
     float: right;
 }
 
 body[dir=ltr] .details-section > .header::before,
-body[dir=rtl] .details-section > .header > .options > .navigation-bar,
-body[dir=rtl] .details-section > .header > :matches(label, .node-link, .go-to-arrow) {
+body[dir=rtl] .details-section > .header > .options {
     float: left;
 }
 
@@ -146,7 +144,7 @@ body[dir=rtl] .details-section > .header::before {
     text-align: end;
 }
 
-.details-section.collapsed  > .header > label {
+.details-section.collapsed  > .header > .options {
     display: none;
 }
 
