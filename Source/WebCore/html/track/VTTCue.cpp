@@ -223,6 +223,10 @@ void VTTCueBox::applyCSSProperties(const IntSize& videoSize)
 
         setInlineStyleProperty(CSSPropertyWhiteSpace, CSSValuePre);
     }
+
+    // Make sure shadow or stroke is not clipped.
+    setInlineStyleProperty(CSSPropertyOverflow, CSSValueVisible);
+    m_cue.element().setInlineStyleProperty(CSSPropertyOverflow, CSSValueVisible);
 }
 
 const AtomicString& VTTCueBox::vttCueBoxShadowPseudoId()

@@ -141,6 +141,10 @@ void TextTrackCueGenericBoxElement::applyCSSProperties(const IntSize& videoSize)
         setInlineStyleProperty(CSSPropertyBackgroundColor, cue->backgroundColor().serialized());
     setInlineStyleProperty(CSSPropertyWritingMode, cue->getCSSWritingMode(), false);
     setInlineStyleProperty(CSSPropertyWhiteSpace, CSSValuePreWrap);
+
+    // Make sure shadow or stroke is not clipped.
+    setInlineStyleProperty(CSSPropertyOverflow, CSSValueVisible);
+    cueElement->setInlineStyleProperty(CSSPropertyOverflow, CSSValueVisible);
 }
 
 TextTrackCueGeneric::TextTrackCueGeneric(ScriptExecutionContext& context, const MediaTime& start, const MediaTime& end, const String& content)
