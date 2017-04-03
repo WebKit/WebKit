@@ -3917,6 +3917,8 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
             return CSSPrimitiveValue::create(style->joinStyle());
         case CSSPropertyStrokeWidth:
             return zoomAdjustedPixelValueForLength(style->strokeWidth(), *style);
+        case CSSPropertyStrokeMiterlimit:
+            return CSSPrimitiveValue::create(style->strokeMiterLimit(), CSSPrimitiveValue::CSS_NUMBER);
 
         /* Unimplemented CSS 3 properties (including CSS3 shorthand properties) */
         case CSSPropertyAll:
@@ -4018,7 +4020,6 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
         case CSSPropertyShapeRendering:
         case CSSPropertyStroke:
         case CSSPropertyStrokeDasharray:
-        case CSSPropertyStrokeMiterlimit:
         case CSSPropertyStrokeOpacity:
         case CSSPropertyAlignmentBaseline:
         case CSSPropertyBaselineShift:

@@ -3023,8 +3023,7 @@
             "inherited": true,
             "codegen-properties": {
                 "name-for-methods": "StrokeMiterLimit",
-                "converter": "Number<float>",
-                "svg": true
+                "converter": "Number<float>"
             },
             "specification": {
                 "category": "svg",

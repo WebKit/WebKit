@@ -431,7 +431,7 @@ void SVGRenderSupport::applyStrokeStyleToContext(GraphicsContext* context, const
     context->setLineCap(style.capStyle());
     context->setLineJoin(style.joinStyle());
     if (style.joinStyle() == MiterJoin)
-        context->setMiterLimit(svgStyle.strokeMiterLimit());
+        context->setMiterLimit(style.strokeMiterLimit());
 
     const Vector<SVGLengthValue>& dashes = svgStyle.strokeDashArray();
     if (dashes.isEmpty())

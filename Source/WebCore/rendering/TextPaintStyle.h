@@ -52,6 +52,7 @@ struct TextPaintStyle {
     PaintOrder paintOrder { PaintOrder::Normal };
     LineJoin lineJoin { MiterJoin };
     LineCap lineCap { ButtCap };
+    float miterLimit { defaultMiterLimit };
 };
 
 TextPaintStyle computeTextPaintStyle(const Frame&, const RenderStyle&, const PaintInfo&);

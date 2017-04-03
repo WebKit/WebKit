@@ -71,7 +71,6 @@ public:
     static Color initialStrokePaintColor() { return Color(); }
     static String initialStrokePaintUri() { return String(); }
     static Vector<SVGLengthValue> initialStrokeDashArray() { return { }; }
-    static float initialStrokeMiterLimit() { return 4; }
     static float initialStopOpacity() { return 1; }
     static Color initialStopColor() { return Color(0, 0, 0); }
     static float initialFloodOpacity() { return 1; }
@@ -116,7 +115,6 @@ public:
     void setStrokePaint(SVGPaintType, const Color&, const String& uri, bool applyToRegularStyle = true, bool applyToVisitedLinkStyle = false);
 
     void setStrokeDashArray(const Vector<SVGLengthValue>&);
-    void setStrokeMiterLimit(float);
     void setStrokeDashOffset(const Length&);
     void setKerning(const SVGLengthValue&);
     void setStopOpacity(float);
@@ -161,7 +159,6 @@ public:
     const Color& strokePaintColor() const { return m_strokeData->paintColor; }
     const String& strokePaintUri() const { return m_strokeData->paintUri; }
     Vector<SVGLengthValue> strokeDashArray() const { return m_strokeData->dashArray; }
-    float strokeMiterLimit() const { return m_strokeData->miterLimit; }
     const Length& strokeDashOffset() const { return m_strokeData->dashOffset; }
     SVGLengthValue kerning() const { return m_textData->kerning; }
     float stopOpacity() const { return m_stopData->opacity; }
@@ -372,12 +369,6 @@ inline void SVGRenderStyle::setStrokeDashArray(const Vector<SVGLengthValue>& arr
 {
     if (!(m_strokeData->dashArray == array))
         m_strokeData.access().dashArray = array;
-}
-
-inline void SVGRenderStyle::setStrokeMiterLimit(float limit)
-{
-    if (!(m_strokeData->miterLimit == limit))
-        m_strokeData.access().miterLimit = limit;
 }
 
 inline void SVGRenderStyle::setStrokeDashOffset(const Length& offset)

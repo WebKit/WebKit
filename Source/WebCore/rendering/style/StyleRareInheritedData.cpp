@@ -130,6 +130,7 @@ StyleRareInheritedData::StyleRareInheritedData()
     , joinStyle(RenderStyle::initialJoinStyle())
     , hasSetStrokeWidth(false)
     , strokeWidth(RenderStyle::initialOneLength())
+    , miterLimit(RenderStyle::initialStrokeMiterLimit())
     , hyphenationLimitBefore(-1)
     , hyphenationLimitAfter(-1)
     , hyphenationLimitLines(-1)
@@ -217,6 +218,7 @@ inline StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedDa
     , joinStyle(o.joinStyle)
     , hasSetStrokeWidth(o.hasSetStrokeWidth)
     , strokeWidth(o.strokeWidth)
+    , miterLimit(o.miterLimit)
     , hyphenationString(o.hyphenationString)
     , hyphenationLimitBefore(o.hyphenationLimitBefore)
     , hyphenationLimitAfter(o.hyphenationLimitAfter)
@@ -328,6 +330,7 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
         && joinStyle == o.joinStyle
         && hasSetStrokeWidth == o.hasSetStrokeWidth
         && strokeWidth == o.strokeWidth
+        && miterLimit == o.miterLimit
         && customProperties == o.customProperties
         && arePointingToEqualData(listStyleImage, o.listStyleImage);
 }

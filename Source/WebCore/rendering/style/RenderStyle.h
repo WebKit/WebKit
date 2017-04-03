@@ -1245,7 +1245,7 @@ public:
     void setApplePayButtonType(ApplePayButtonType type) { SET_VAR(m_rareNonInheritedData, applePayButtonType, static_cast<unsigned>(type)); }
 #endif
 
-    // Support for paint-order, stroke-linecap, and stroke-linejoin from https://drafts.fxtf.org/paint/.
+    // Support for paint-order, stroke-linecap, stroke-linejoin, and stroke-miterlimit from https://drafts.fxtf.org/paint/.
     void setPaintOrder(PaintOrder order) { SET_VAR(m_rareInheritedData, paintOrder, static_cast<unsigned>(order)); }
     PaintOrder paintOrder() const { return static_cast<PaintOrder>(m_rareInheritedData->paintOrder); }
     static PaintOrder initialPaintOrder() { return PaintOrder::Normal; }
@@ -1268,7 +1268,11 @@ public:
     bool hasExplicitlySetStrokeWidth() const { return m_rareInheritedData->hasSetStrokeWidth; };
     bool hasPositiveStrokeWidth() const;
     
-    
+    float strokeMiterLimit() const { return m_rareInheritedData->miterLimit; }
+    void setStrokeMiterLimit(float f) { SET_VAR(m_rareInheritedData, miterLimit, f); }
+    static float initialStrokeMiterLimit() { return defaultMiterLimit; }
+
+
     const SVGRenderStyle& svgStyle() const { return m_svgStyle; }
     SVGRenderStyle& accessSVGStyle() { return m_svgStyle.access(); }
 
@@ -1287,8 +1291,6 @@ public:
     void setStrokeDashArray(Vector<SVGLengthValue> array) { accessSVGStyle().setStrokeDashArray(array); }
     const Length& strokeDashOffset() const { return svgStyle().strokeDashOffset(); }
     void setStrokeDashOffset(Length&& d) { accessSVGStyle().setStrokeDashOffset(WTFMove(d)); }
-    float strokeMiterLimit() const { return svgStyle().strokeMiterLimit(); }
-    void setStrokeMiterLimit(float f) { accessSVGStyle().setStrokeMiterLimit(f); }
 
     const Length& cx() const { return svgStyle().cx(); }
     void setCx(Length&& cx) { accessSVGStyle().setCx(WTFMove(cx)); }

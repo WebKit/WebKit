@@ -642,6 +642,13 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle& other, unsigned& chang
 
         if (textStrokeWidth() != other.textStrokeWidth())
             return true;
+        
+        // These properties affect the cached stroke bounding box rects.
+        if (m_rareInheritedData->capStyle != other.m_rareInheritedData->capStyle
+            || m_rareInheritedData->joinStyle != other.m_rareInheritedData->joinStyle
+            || m_rareInheritedData->strokeWidth != other.m_rareInheritedData->strokeWidth
+            || m_rareInheritedData->miterLimit != other.m_rareInheritedData->miterLimit)
+            return true;
     }
 
     if (m_inheritedData->lineHeight != other.m_inheritedData->lineHeight
@@ -909,12 +916,6 @@ StyleDifference RenderStyle::diff(const RenderStyle& other, unsigned& changedCon
         if (svgChange == StyleDifferenceLayout)
             return svgChange;
     }
-
-    // These properties affect the cached stroke bounding box rects.
-    if (m_rareInheritedData->capStyle != other.m_rareInheritedData->capStyle
-        || m_rareInheritedData->joinStyle != other.m_rareInheritedData->joinStyle
-        || m_rareInheritedData->strokeWidth != other.m_rareInheritedData->strokeWidth)
-        return StyleDifferenceLayout;
 
     if (changeRequiresLayout(other, changedContextSensitiveProperties))
         return StyleDifferenceLayout;

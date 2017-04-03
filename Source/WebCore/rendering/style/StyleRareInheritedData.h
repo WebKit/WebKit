@@ -141,6 +141,7 @@ public:
     unsigned joinStyle : 2; // LineJoin
     unsigned hasSetStrokeWidth : 1;
     Length strokeWidth;    
+    float miterLimit;
 
     AtomicString hyphenationString;
     short hyphenationLimitBefore;

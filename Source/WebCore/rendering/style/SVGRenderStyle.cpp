@@ -188,7 +188,6 @@ StyleDifference SVGRenderStyle::diff(const SVGRenderStyle& other) const
         if (m_strokeData->paintType != other.m_strokeData->paintType
             || m_strokeData->paintColor != other.m_strokeData->paintColor
             || m_strokeData->paintUri != other.m_strokeData->paintUri
-            || m_strokeData->miterLimit != other.m_strokeData->miterLimit
             || m_strokeData->dashArray != other.m_strokeData->dashArray
             || m_strokeData->dashOffset != other.m_strokeData->dashOffset
             || m_strokeData->visitedLinkPaintColor != other.m_strokeData->visitedLinkPaintColor

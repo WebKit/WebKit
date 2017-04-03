@@ -445,7 +445,7 @@ bool RenderSVGShape::hasSmoothStroke() const
 {
     const SVGRenderStyle& svgStyle = style().svgStyle();
     return svgStyle.strokeDashArray().isEmpty()
-        && svgStyle.strokeMiterLimit() == svgStyle.initialStrokeMiterLimit()
+        && style().strokeMiterLimit() == style().initialStrokeMiterLimit()
         && style().joinStyle() == style().initialJoinStyle()
         && style().capStyle() == style().initialCapStyle();
 }

@@ -743,4 +743,6 @@ enum class PaintType {
     Markers
 };
 
+extern const float defaultMiterLimit;
+
 } // namespace WebCore

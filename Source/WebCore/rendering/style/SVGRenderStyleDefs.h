@@ -137,7 +137,6 @@ namespace WebCore {
         }
 
         float opacity;
-        float miterLimit;
 
         Length dashOffset;
         Vector<SVGLengthValue> dashArray;

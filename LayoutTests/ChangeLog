@@ -1,3 +1,17 @@
+2017-04-03  Per Arne Vollan  <pvollan@apple.com>
+
+        Implement stroke-miterlimit.
+        https://bugs.webkit.org/show_bug.cgi?id=169078
+
+        Reviewed by Dean Jackson.
+
+        * fast/css/stroke-miterlimit-default-expected.html: Added.
+        * fast/css/stroke-miterlimit-default.html: Added.
+        * fast/css/stroke-miterlimit-large-expected-mismatch.html: Added.
+        * fast/css/stroke-miterlimit-large.html: Added.
+        * fast/css/stroke-miterlimit-zero-expected-mismatch.html: Added.
+        * fast/css/stroke-miterlimit-zero.html: Added.
+
 2017-04-02  Alexey Proskuryakov  <ap@apple.com>
 
         Remove accidentally added DumpJSConsoleLogInStdErr from http/tests/fetch/fetch-in-worker-crash.html expectation.

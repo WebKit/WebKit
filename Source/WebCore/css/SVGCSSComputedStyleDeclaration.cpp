@@ -113,8 +113,6 @@ RefPtr<CSSValue> ComputedStyleExtractor::svgPropertyValue(CSSPropertyID property
             return CSSPrimitiveValue::create(svgStyle.colorRendering());
         case CSSPropertyShapeRendering:
             return CSSPrimitiveValue::create(svgStyle.shapeRendering());
-        case CSSPropertyStrokeMiterlimit:
-            return CSSPrimitiveValue::create(svgStyle.strokeMiterLimit(), CSSPrimitiveValue::CSS_NUMBER);
         case CSSPropertyStrokeOpacity:
             return CSSPrimitiveValue::create(svgStyle.strokeOpacity(), CSSPrimitiveValue::CSS_NUMBER);
         case CSSPropertyAlignmentBaseline:

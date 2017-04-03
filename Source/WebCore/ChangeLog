@@ -1,3 +1,57 @@
+2017-04-03  Per Arne Vollan  <pvollan@apple.com>
+
+        Implement stroke-miterlimit.
+        https://bugs.webkit.org/show_bug.cgi?id=169078
+
+        Reviewed by Dean Jackson.
+
+        Support stroke-miterlimit for text rendering, see https://drafts.fxtf.org/paint/.
+
+        Tests: fast/css/stroke-miterlimit-default.html
+               fast/css/stroke-miterlimit-large.html
+               fast/css/stroke-miterlimit-zero.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * css/CSSProperties.json:
+        * css/SVGCSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::svgPropertyValue):
+        * rendering/TextPaintStyle.cpp:
+        (WebCore::computeTextPaintStyle):
+        (WebCore::updateGraphicsContext):
+        * rendering/TextPaintStyle.h:
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::diff):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::strokeMiterLimit):
+        (WebCore::RenderStyle::setStrokeMiterLimit):
+        (WebCore::RenderStyle::initialStrokeMiterLimit):
+        (WebCore::RenderStyle::setStrokeDashOffset):
+        * rendering/style/RenderStyleConstants.cpp:
+        * rendering/style/RenderStyleConstants.h:
+        * rendering/style/SVGRenderStyle.cpp:
+        (WebCore::SVGRenderStyle::diff):
+        * rendering/style/SVGRenderStyle.h:
+        (WebCore::SVGRenderStyle::initialStrokeDashArray):
+        (WebCore::SVGRenderStyle::strokeDashArray):
+        (WebCore::SVGRenderStyle::initialStrokeMiterLimit): Deleted.
+        (WebCore::SVGRenderStyle::strokeMiterLimit): Deleted.
+        (WebCore::SVGRenderStyle::setStrokeMiterLimit): Deleted.
+        * rendering/style/SVGRenderStyleDefs.cpp:
+        (WebCore::StyleStrokeData::StyleStrokeData):
+        (WebCore::StyleStrokeData::operator==):
+        * rendering/style/SVGRenderStyleDefs.h:
+        * rendering/style/StyleRareInheritedData.cpp:
+        (WebCore::StyleRareInheritedData::StyleRareInheritedData):
+        (WebCore::StyleRareInheritedData::operator==):
+        * rendering/style/StyleRareInheritedData.h:
+        * rendering/svg/RenderSVGShape.cpp:
+        (WebCore::RenderSVGShape::hasSmoothStroke):
+        * rendering/svg/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderSupport::applyStrokeStyleToContext):
+        * rendering/svg/SVGRenderTreeAsText.cpp:
+        (WebCore::writeStyle):
+
 2017-04-03  Alejandro G. Castro  <alex@igalia.com>
 
         [OWR] Fix class structure for the OWR mock classes after last modifications
