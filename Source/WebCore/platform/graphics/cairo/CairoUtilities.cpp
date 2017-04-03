@@ -39,6 +39,7 @@
 #include "RefPtrCairo.h"
 #include "Region.h"
 #include <wtf/Assertions.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/Vector.h>
 
 #if ENABLE(ACCELERATED_2D_CANVAS)
@@ -46,6 +47,14 @@
 #endif
 
 namespace WebCore {
+
+#if USE(FREETYPE) && !PLATFORM(GTK)
+const cairo_font_options_t* getDefaultCairoFontOptions()
+{
+    static NeverDestroyed<cairo_font_options_t*> options = cairo_font_options_create();
+    return options;
+}
+#endif
 
 void copyContextProperties(cairo_t* srcCr, cairo_t* dstCr)
 {

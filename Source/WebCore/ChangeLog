@@ -1,3 +1,34 @@
+2017-03-22  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Honor GTK+ font settings
+        https://bugs.webkit.org/show_bug.cgi?id=82889
+
+        Reviewed by Carlos Garcia Campos.
+
+        After much discussion with Behdad and Martin (who is still not completely convinced I think
+        :) I want to merge cairo font options into the Fontconfig pattern used for rendering using
+        cairo_ft_font_options_substitute(). This is how the API was designed to be used anyway.
+        Fontconfig will still have final say over whether to actually respect the desktop settings
+        or not, so it can still choose to ignore the desktop's settings, but I don't think it makes
+        sense to have desktop-wide font settings and not tell Fontconfig about them, especially when
+        the whole point of WebKitGTK+ is desktop integration. This should also reduce complaints
+        that we're not following desktop settings and that we're drawing fonts differently than
+        Firefox.
+
+        * PlatformGTK.cmake:
+        * platform/graphics/cairo/CairoUtilities.cpp:
+        (WebCore::getDefaultCairoFontOptions):
+        * platform/graphics/cairo/CairoUtilities.h:
+        * platform/graphics/freetype/FontCacheFreeType.cpp:
+        (WebCore::createFontConfigPatternForCharacters):
+        (WebCore::strongAliasesForFamily):
+        (WebCore::FontCache::createFontPlatformData):
+        * platform/graphics/freetype/FontPlatformDataFreeType.cpp:
+        (WebCore::getDefaultFontconfigOptions):
+        (WebCore::getDefaultCairoFontOptions): Deleted.
+        * platform/graphics/gtk/GdkCairoUtilities.cpp:
+        (getDefaultCairoFontOptions):
+
 2017-03-22  Chris Dumez  <cdumez@apple.com>
 
         WebKit should disallow beforeunload alerts from web pages users have never interacted with
