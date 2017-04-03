@@ -110,14 +110,17 @@ class IOSPort(DarwinPort):
     def setup_test_run(self, device_class=None):
         self._create_devices(device_class)
 
-        for i in xrange(self.child_processes()):
-            device = self.target_host(i)
-            _log.debug('Installing to {}'.format(device))
-            # Without passing DYLD_LIBRARY_PATH, libWebCoreTestSupport cannot be loaded and DRT/WKTR will crash pre-launch,
-            # leaving a crash log which will be picked up in results.  No DYLD_FRAMEWORK_PATH will also cause the DRT/WKTR to
-            # crash, but this crash will occur post-launch, after install_app has already killed the process.
-            if not device.install_app(self._path_to_driver(), {'DYLD_LIBRARY_PATH': self._build_path()}):
-                raise RuntimeError('Failed to install app {} on device {}'.format(self._path_to_driver(), device.udid))
+        if self.get_option('install'):
+            for i in xrange(self.child_processes()):
+                device = self.target_host(i)
+                _log.debug('Installing to {}'.format(device))
+                # Without passing DYLD_LIBRARY_PATH, libWebCoreTestSupport cannot be loaded and DRT/WKTR will crash pre-launch,
+                # leaving a crash log which will be picked up in results.  No DYLD_FRAMEWORK_PATH will also cause the DRT/WKTR to
+                # crash, but this crash will occur post-launch, after install_app has already killed the process.
+                if not device.install_app(self._path_to_driver(), {'DYLD_LIBRARY_PATH': self._build_path()}):
+                    raise RuntimeError('Failed to install app {} on device {}'.format(self._path_to_driver(), device.udid))
+        else:
+            _log.debug('Skipping installation')
 
         for i in xrange(self.child_processes()):
             self.target_host(i).prepare_for_testing()

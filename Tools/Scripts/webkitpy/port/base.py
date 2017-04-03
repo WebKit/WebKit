@@ -227,12 +227,12 @@ class Port(object):
         # If we're using a pre-built copy of WebKit (--root), we assume it also includes a build of DRT.
         if not self._root_was_set and self.get_option('build') and not self._build_driver():
             return False
-        if not self._check_driver():
+        if self.get_option('install') and not self._check_driver():
             return False
         if self.get_option('pixel_tests'):
             if not self.check_image_diff():
                 return False
-        if not self._check_port_build():
+        if self.get_option('install') and not self._check_port_build():
             return False
         return True
 

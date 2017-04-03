@@ -56,6 +56,9 @@ def platform_options(use_globs=False):
         optparse.make_option('--gtk', action='store_const', dest='platform',
             const=('gtk*' if use_globs else 'gtk'),
             help=('Alias for --platform=gtk*' if use_globs else 'Alias for --platform=gtk')),
+        optparse.make_option('--no-install', action='store_const',
+            const=False, default=True, dest='install',
+            help='Skip install step for device and simulator testing'),
         ]
 
 
