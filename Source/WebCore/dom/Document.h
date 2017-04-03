@@ -1059,9 +1059,9 @@ public:
     void enqueueWindowEvent(Ref<Event>&&);
     void enqueueDocumentEvent(Ref<Event>&&);
     void enqueueOverflowEvent(Ref<Event>&&);
-    void enqueuePageshowEvent(PageshowEventPersistence);
+    void dispatchPageshowEvent(PageshowEventPersistence);
     void enqueueHashchangeEvent(const String& oldURL, const String& newURL);
-    void enqueuePopstateEvent(RefPtr<SerializedScriptValue>&& stateObject);
+    void dispatchPopstateEvent(RefPtr<SerializedScriptValue>&& stateObject);
     DocumentEventQueue& eventQueue() const final { return m_eventQueue; }
 
     WEBCORE_EXPORT void addMediaCanStartListener(MediaCanStartListener*);
