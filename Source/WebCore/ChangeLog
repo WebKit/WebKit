@@ -1,3 +1,40 @@
+2017-03-22  Antti Koivisto  <antti@apple.com>
+
+        Dynamically applied :empty pseudo class with display:none does not get unapplied
+        https://bugs.webkit.org/show_bug.cgi?id=169907
+
+        Reviewed by Ryosuke Niwa.
+
+        We improperly reset the styleAffectedByEmpty bit when removing the renderer when :empty starts
+        applying. We then fail to invalidate the style when the element becomes non-empty again.
+
+        Fix by resetting the style relation bits only when computing the style.
+
+        Test: fast/css/empty-display-none-invalidation.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::resetStyleRelations):
+
+            Expose this separately.
+
+        (WebCore::Element::clearStyleDerivedDataBeforeDetachingRenderer):
+
+            Don't reset style relation bits when removing renderers.
+
+        * dom/Element.h:
+        * dom/ElementRareData.h:
+        (WebCore::ElementRareData::resetComputedStyle):
+        (WebCore::ElementRareData::resetStyleRelations):
+
+            Reset all these bits in one function.
+
+        (WebCore::ElementRareData::resetDynamicRestyleObservations): Deleted.
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::resetStyleForNonRenderedDescendants):
+        (WebCore::Style::TreeResolver::resolveComposedTree):
+
+            Call the explicit style relation reset function when recomputing style.
+
 2017-03-22  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Honor GTK+ font settings

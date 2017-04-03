@@ -514,6 +514,7 @@ public:
     void clearBeforePseudoElement();
     void clearAfterPseudoElement();
     void resetComputedStyle();
+    void resetStyleRelations();
     void clearStyleDerivedDataBeforeDetachingRenderer();
     void clearHoverAndActiveStatusBeforeDetachingRenderer();
 

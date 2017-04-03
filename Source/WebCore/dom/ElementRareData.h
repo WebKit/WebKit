@@ -46,7 +46,7 @@ public:
     PseudoElement* afterPseudoElement() const { return m_afterPseudoElement.get(); }
 
     void resetComputedStyle();
-    void resetDynamicRestyleObservations();
+    void resetStyleRelations();
     
     int tabIndex() const { return m_tabIndex; }
     void setTabIndexExplicitly(int index) { m_tabIndex = index; m_tabIndexWasSetExplicitly = true; }
@@ -215,13 +215,13 @@ inline void ElementRareData::resetComputedStyle()
 {
     m_computedStyle = nullptr;
     m_hasDisplayContents = false;
+}
+
+inline void ElementRareData::resetStyleRelations()
+{
     setStyleAffectedByEmpty(false);
     setStyleAffectedByFocusWithin(false);
     setChildIndex(0);
-}
-
-inline void ElementRareData::resetDynamicRestyleObservations()
-{
     setStyleAffectedByActive(false);
     setChildrenAffectedByDrag(false);
     setChildrenAffectedByLastChildRules(false);
