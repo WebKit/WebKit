@@ -32,6 +32,13 @@
 namespace PAL {
 namespace GCrypt {
 
+// Copied from gcrypt.h. This macro is new in version 1.7.0, which we do not
+// want to require yet. Remove this in summer 2019.
+#ifndef gcry_cipher_final
+#define gcry_cipher_final(a) \
+            gcry_cipher_ctl ((a), GCRYCTL_FINALIZE, NULL, 0)
+#endif
+
 static inline void logError(gcry_error_t error)
 {
     WTFLogAlways("libgcrypt error: source '%s', description '%s'",

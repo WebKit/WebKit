@@ -1,3 +1,9 @@
+2017-04-03  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, attempt to fix build with libgcrypt < 1.7.0
+
+        * pal/crypto/gcrypt/Utilities.h:
+
 2017-04-03  Zan Dobersek  <zdobersek@igalia.com>
 
         [GCrypt] Implement CryptoKeyEC::keySizeInBits(), ::platformGeneratePair()
