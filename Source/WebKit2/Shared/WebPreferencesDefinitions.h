@@ -296,6 +296,12 @@
 #define DEFAULT_EXPERIMENTAL_FEATURES_ENABLED false
 #endif
 
+#if PLATFORM(COCOA)
+#define DEFAULT_MODERN_MEDIA_CONTROLS_ENABLED true
+#else
+#define DEFAULT_MODERN_MEDIA_CONTROLS_ENABLED false
+#endif
+
 // For experimental features:
 // - The type should be boolean.
 // - You must provide the last two parameters for all experimental features. They
@@ -309,7 +315,7 @@
     macro(SpringTimingFunctionEnabled, springTimingFunctionEnabled, Bool, bool, DEFAULT_EXPERIMENTAL_FEATURES_ENABLED, "CSS Spring Animations", "CSS Spring Animation prototype") \
     macro(GamepadsEnabled, gamepadsEnabled, Bool, bool, DEFAULT_EXPERIMENTAL_FEATURES_ENABLED, "Gamepads", "Web Gamepad API support") \
     macro(LinkPreloadEnabled, linkPreloadEnabled, Bool, bool, DEFAULT_EXPERIMENTAL_FEATURES_ENABLED, "Link Preload", "Link preload support") \
-    macro(ModernMediaControlsEnabled, modernMediaControlsEnabled, Bool, bool, DEFAULT_EXPERIMENTAL_FEATURES_ENABLED, "Modern Media Controls", "Use modern media controls look") \
+    macro(ModernMediaControlsEnabled, modernMediaControlsEnabled, Bool, bool, DEFAULT_MODERN_MEDIA_CONTROLS_ENABLED, "Modern Media Controls", "Use modern media controls look") \
     macro(InputEventsEnabled, inputEventsEnabled, Bool, bool, DEFAULT_EXPERIMENTAL_FEATURES_ENABLED, "Input Events", "Enable InputEvents support") \
     macro(PeerConnectionEnabled, peerConnectionEnabled, Bool, bool, false, "WebRTC", "Enable WebRTC API") \
     macro(SubtleCryptoEnabled, subtleCryptoEnabled, Bool, bool, DEFAULT_EXPERIMENTAL_FEATURES_ENABLED, "SubtleCrypto", "Enable SubtleCrypto support") \
