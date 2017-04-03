@@ -1,3 +1,14 @@
+2017-03-14  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Remove redundant check for "firstLine" in RenderBlock::lineHeight()
+        https://bugs.webkit.org/show_bug.cgi?id=169610
+
+        Reviewed by Michael Catanzaro.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::lineHeight): Remove test of "firstLine" that
+        was already checked in the condition for the enclosing if-clause.
+
 2017-03-13  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Make RepaintRegionAccumulator hold a WeakPtr to its root RenderView
