@@ -1,3 +1,15 @@
+2017-04-03  Zan Dobersek  <zdobersek@igalia.com>
+
+        [jsc] Add patchableJumpSize() for MIPS
+        https://bugs.webkit.org/show_bug.cgi?id=169716
+
+        Reviewed by Yusuke Suzuki.
+
+        * assembler/MIPSAssembler.h:
+        (JSC::MIPSAssembler::patchableJumpSize): Added.
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::patchableJumpSize): Added.
+
 2017-04-03  Guillaume Emont  <guijemont@igalia.com>
 
         [jsc] implement MIPSAssembler::relinkJumpToNop()

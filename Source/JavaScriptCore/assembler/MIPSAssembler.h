@@ -917,6 +917,11 @@ public:
         return sizeof(MIPSWord) * 4;
     }
 
+    static constexpr ptrdiff_t patchableJumpSize()
+    {
+        return sizeof(MIPSWord) * 8;
+    }
+
     static void revertJumpToMove(void* instructionStart, RegisterID rt, int imm)
     {
         MIPSWord* insn = static_cast<MIPSWord*>(instructionStart);
