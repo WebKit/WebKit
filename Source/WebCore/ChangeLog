@@ -1,3 +1,16 @@
+2017-04-03  Alejandro G. Castro  <alex@igalia.com>
+
+        [OWR] Fix class structure for the OWR mock classes after last modifications
+        https://bugs.webkit.org/show_bug.cgi?id=170173
+
+        Reviewed by Youenn Fablet.
+
+        In case of OWR MockRealtimeMediaSource inherits from
+        RealtimeMediaSourceOwr, so we have to change some of the function
+        interfaces.
+
+        * platform/mock/MockRealtimeMediaSource.h:
+
 2017-04-02  Alexey Proskuryakov  <ap@apple.com>
 
         Build fix for

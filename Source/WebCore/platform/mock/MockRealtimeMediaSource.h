@@ -61,7 +61,9 @@ protected:
 
     virtual void updateSettings(RealtimeMediaSourceSettings&) = 0;
     virtual void initializeCapabilities(RealtimeMediaSourceCapabilities&) = 0;
+#if !USE(OPENWEBRTC)
     virtual void initializeSupportedConstraints(RealtimeMediaSourceSupportedConstraints&) = 0;
+#endif
 
     void startProducingData() override;
     void stopProducingData() override;
@@ -76,7 +78,12 @@ protected:
 
 private:
     void initializeCapabilities();
+#if USE(OPENWEBRTC)
+    void initializeSettings() final;
+#else
     void initializeSettings();
+#endif
+
     bool isProducingData() const override { return m_isProducingData; }
 
     RealtimeMediaSourceSettings m_currentSettings;
