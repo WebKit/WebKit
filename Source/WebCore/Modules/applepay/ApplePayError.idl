@@ -38,7 +38,8 @@
     "phoneNumber",
     "emailAddress",
     "name",
-    "address",
+    "postalAddress",
+    "addressLines",
     "locality",
     "postalCode",
     "administrativeArea",
@@ -46,11 +47,10 @@
 };
 
 [
-    Constructor(ApplePayErrorCode errorCode, optional DOMString message = "", optional ApplePayErrorContactField contactField),
+    Constructor(ApplePayErrorCode errorCode, optional ApplePayErrorContactField contactField, optional DOMString message = ""),
     Conditional=APPLE_PAY_DELEGATE,
 ] interface ApplePayError {
     attribute ApplePayErrorCode code;
-    attribute DOMString message;
-
     attribute ApplePayErrorContactField? contactField;
+    attribute DOMString message;
 };

@@ -38,24 +38,24 @@ public:
     using Code = PaymentError::Code;
     using ContactField = PaymentError::ContactField;
 
-    static Ref<ApplePayError> create(Code, const String& message, std::optional<ContactField>);
+    static Ref<ApplePayError> create(Code, std::optional<ContactField>, const String& message);
     virtual ~ApplePayError();
 
     Code code() const { return m_code; }
     void setCode(Code code) { m_code = code; }
 
-    String message() const { return m_message; }
-    void setMessage(String&& message) { m_message = WTFMove(message); }
-
     std::optional<ContactField> contactField() const { return m_contactField; }
     void setContactField(std::optional<ContactField> contactField) { m_contactField = contactField; }
 
+    String message() const { return m_message; }
+    void setMessage(String&& message) { m_message = WTFMove(message); }
+
 private:
-    ApplePayError(Code, const String& message, std::optional<ContactField>);
+    ApplePayError(Code, std::optional<ContactField>, const String& message);
 
     Code m_code;
-    String m_message;
     std::optional<ContactField> m_contactField;
+    String m_message;
 };
 
 }

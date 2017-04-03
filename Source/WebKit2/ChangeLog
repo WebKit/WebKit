@@ -1,3 +1,16 @@
+2017-04-03  Anders Carlsson  <andersca@apple.com>
+
+        Tweak ApplePaySession API
+        https://bugs.webkit.org/show_bug.cgi?id=170409
+        rdar://problem/31405459
+
+        Reviewed by Tim Horton.
+
+        Update for WebCore changes.
+
+        * UIProcess/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.mm:
+        (WebKit::toNSError):
+
 2017-04-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] URI Fragment is lost after redirect

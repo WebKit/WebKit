@@ -616,7 +616,11 @@ static RetainPtr<NSError> toNSError(const WebCore::PaymentError& error)
             pkContactField = getPKContactFieldName();
             break;
 
-        case WebCore::PaymentError::ContactField::Address:
+        case WebCore::PaymentError::ContactField::PostalAddress:
+            pkContactField = getPKContactFieldPostalAddress();
+            break;
+
+        case WebCore::PaymentError::ContactField::AddressLines:
             pkContactField = getPKContactFieldPostalAddress();
             postalAddressKey = getCNPostalAddressStreetKey();
             break;

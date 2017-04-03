@@ -1,3 +1,20 @@
+2017-04-03  Anders Carlsson  <andersca@apple.com>
+
+        Tweak ApplePaySession API
+        https://bugs.webkit.org/show_bug.cgi?id=170409
+        rdar://problem/31405459
+
+        Reviewed by Tim Horton.
+
+        Rename "address" to "addressLines". Add "postalAddress". Reorder the ApplePayError constructor parameters.
+
+        * Modules/applepay/ApplePayError.cpp:
+        (WebCore::ApplePayError::create):
+        (WebCore::ApplePayError::ApplePayError):
+        * Modules/applepay/ApplePayError.h:
+        * Modules/applepay/ApplePayError.idl:
+        * Modules/applepay/PaymentRequest.h:
+
 2017-04-03  Zan Dobersek  <zdobersek@igalia.com>
 
         [GCrypt] Implement CryptoKeyEC::keySizeInBits(), ::platformGeneratePair()
