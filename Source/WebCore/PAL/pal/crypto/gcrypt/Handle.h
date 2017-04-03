@@ -83,6 +83,14 @@ private:
 };
 
 template<>
+struct HandleDeleter<gcry_cipher_hd_t> {
+    void operator()(gcry_cipher_hd_t handle)
+    {
+        gcry_cipher_close(handle);
+    }
+};
+
+template<>
 struct HandleDeleter<gcry_mac_hd_t> {
     void operator()(gcry_mac_hd_t handle)
     {

@@ -1,5 +1,27 @@
 2017-04-03  Zan Dobersek  <zdobersek@igalia.com>
 
+        [GCrypt] Implement AES_GCM support
+        https://bugs.webkit.org/show_bug.cgi?id=170271
+
+        Reviewed by Michael Catanzaro.
+
+        Implement the CryptoAlgorithmAES_GCM::platform{Encrypt,Decrypt}
+        functionality for configurations that use libgcrypt. This is done
+        by leveraging the gcry_cipher_* APIs for the AES algorithm that's
+        deducted appropriately from the key size and the GCM cipher mode.
+
+        No new tests -- current ones cover this sufficiently, but are not yet
+        enabled due to other missing platform-specific SUBTLE_CRYPTO
+        implementations.
+
+        * crypto/gcrypt/CryptoAlgorithmAES_GCMGCrypt.cpp:
+        (WebCore::gcryptEncrypt):
+        (WebCore::gcryptDecrypt):
+        (WebCore::CryptoAlgorithmAES_GCM::platformEncrypt):
+        (WebCore::CryptoAlgorithmAES_GCM::platformDecrypt):
+
+2017-04-03  Zan Dobersek  <zdobersek@igalia.com>
+
         [GCrypt] Implement PBKDF2 support
         https://bugs.webkit.org/show_bug.cgi?id=170270
 

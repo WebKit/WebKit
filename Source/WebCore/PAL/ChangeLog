@@ -1,3 +1,14 @@
+2017-04-03  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GCrypt] Implement AES_GCM support
+        https://bugs.webkit.org/show_bug.cgi?id=170271
+
+        Reviewed by Michael Catanzaro.
+
+        * pal/crypto/gcrypt/Handle.h:
+        (PAL::GCrypt::HandleDeleter<gcry_cipher_hd_t>::operator()): Specialize
+        the HandleDeleter<> template for the gcry_cipher_hd_t type.
+
 2017-03-30  Zan Dobersek  <zdobersek@igalia.com>
 
         [GCrypt] Add the Utilities.h header
