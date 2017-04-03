@@ -96,13 +96,12 @@
         function () {
             debug("     With a lock in place send a wheel event.")
             targetdiv1.onwheel = eventNotExpected;
-            targetdiv2.onwheel = eventExpected;
+            targetdiv2.onwheel = eventExpectedThenNextStep;
             document.body.onwheel = eventExpected;
             if (window.eventSender) {
                 window.eventSender.leapForward(1000);
                 window.eventSender.mouseScrollBy(0,10);
             }
-            doNextStep();
         },
         function () {
             debug("     With a lock in place send a click.")

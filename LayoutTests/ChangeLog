@@ -1,3 +1,17 @@
+2017-04-03  Jeremy Jones  <jeremyj@apple.com>
+
+        LayoutTest pointer-lock/mouse-event-delivery.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=167965
+
+        Reviewed by Jon Lee.
+
+        Wait for wheel event before doing next step of test. The wheel event is delivered asynchronously and
+        can therefore be delivered later than expected by the test. This is already done for the first one,
+        do this for the second one also.
+
+        * platform/mac-wk2/TestExpectations:
+        * pointer-lock/mouse-event-delivery.html:
+
 2017-04-01  Simon Fraser  <simon.fraser@apple.com>
 
         Clean up touch event handler registration when moving nodes between documents
