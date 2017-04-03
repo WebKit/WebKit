@@ -59,7 +59,7 @@ private:
         void markIsInUse() { m_lastUsedTime = monotonicallyIncreasingTime(); }
 
         RefPtr<BitmapTexture> m_texture;
-        double m_lastUsedTime;
+        double m_lastUsedTime { 0.0 };
     };
 
     void scheduleReleaseUnusedTextures();
