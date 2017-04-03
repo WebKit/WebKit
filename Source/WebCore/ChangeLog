@@ -1,3 +1,20 @@
+2017-03-14  Alan Kinsley  <zalan@apple.com>
+
+        Simple line layout: Adjust hyphenation constrains based on the normal line layout line-breaking logic.
+        https://bugs.webkit.org/show_bug.cgi?id=169617
+
+        Reviewed by Antti Koivisto.
+
+        This patch ensures that simple line layout ends up with the same hyphenation context as normal line layout. 
+
+        Test: fast/text/simple-line-layout-hyphenation-constrains.html
+
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::hyphenPositionForFragment): see webkit.org/b/169613
+        (WebCore::SimpleLineLayout::splitFragmentToFitLine):
+        * rendering/line/BreakingContext.h: Integral -> fractional.
+        (WebCore::tryHyphenating):
+
 2017-03-14  Adrian Perez de Castro  <aperez@igalia.com>
 
         Remove redundant check for "firstLine" in RenderBlock::lineHeight()
