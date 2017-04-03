@@ -98,5 +98,13 @@ struct HandleDeleter<gcry_mac_hd_t> {
     }
 };
 
+template<>
+struct HandleDeleter<gcry_sexp_t> {
+    void operator()(gcry_sexp_t handle)
+    {
+        gcry_sexp_release(handle);
+    }
+};
+
 } // namespace GCrypt
 } // namespace PAL

@@ -37,8 +37,9 @@ typedef CCECCryptorRef PlatformECKey;
 #endif
 
 #if PLATFORM(GTK)
-typedef struct _PlatformECKeyGnuTLS PlatformECKeyGnuTLS;
-typedef PlatformECKeyGnuTLS *PlatformECKey;
+// gcry_sexp* equates gcry_sexp_t.
+struct gcry_sexp;
+typedef gcry_sexp* PlatformECKey;
 #endif
 
 

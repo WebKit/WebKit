@@ -1,5 +1,50 @@
 2017-04-03  Zan Dobersek  <zdobersek@igalia.com>
 
+        [GCrypt] Implement CryptoKeyEC::keySizeInBits(), ::platformGeneratePair()
+        https://bugs.webkit.org/show_bug.cgi?id=170345
+
+        Reviewed by Michael Catanzaro.
+
+        Start implementing the libgcrypt-based platform bits of CryptoKeyEC.
+
+        Implement keySizeInBits() by returning the appropriate size for this
+        object's curve type. An assertion is added to ensure that this size
+        matches the one that's returned by gcry_pk_get_nbits() for this
+        object's EC key as represented by the m_platformKey gcry_sexp_t object.
+
+        Implement platformGeneratePair() by constructing a genkey s-expression
+        that requests a generation of an EC key for the specified curve type.
+        The s-expression is then passed to gcry_pk_genkey(), and the public
+        and private key data is then retrieved from the returned s-expression
+        upon success and used to create the public and private CryptoKeyEC
+        objects.
+
+        The PlatformECKey type alias is changed to match gcry_sexp_t. The
+        CryptoKeyEC destructor releases the gcry_sexp_t object through
+        a PAL::GCrypt::HandleDeleter<gcry_sexp_t> instance.
+
+        The method definitions in the CryptoKeyECGCrypt.cpp file are also
+        sorted to match the declaration order in the header.
+
+        No new tests -- current ones cover this sufficiently, but are not yet
+        enabled due to other missing platform-specific SUBTLE_CRYPTO
+        implementations.
+
+        * crypto/gcrypt/CryptoKeyECGCrypt.cpp:
+        (WebCore::curveSize):
+        (WebCore::curveName):
+        (WebCore::CryptoKeyEC::~CryptoKeyEC):
+        (WebCore::CryptoKeyEC::keySizeInBits):
+        (WebCore::CryptoKeyEC::platformGeneratePair):
+        (WebCore::CryptoKeyEC::platformImportSpki):
+        (WebCore::CryptoKeyEC::platformImportPkcs8):
+        (WebCore::CryptoKeyEC::platformExportRaw):
+        (WebCore::CryptoKeyEC::platformAddFieldElements):
+        (WebCore::CryptoKeyEC::platformExportSpki):
+        * crypto/keys/CryptoKeyEC.h:
+
+2017-04-03  Zan Dobersek  <zdobersek@igalia.com>
+
         [GCrypt] Implement AES_KW support
         https://bugs.webkit.org/show_bug.cgi?id=170274
 

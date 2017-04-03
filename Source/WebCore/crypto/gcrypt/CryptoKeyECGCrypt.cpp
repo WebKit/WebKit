@@ -30,36 +30,68 @@
 
 #include "CryptoKeyPair.h"
 #include "NotImplemented.h"
+#include <pal/crypto/gcrypt/Handle.h>
+#include <pal/crypto/gcrypt/Utilities.h>
 
 namespace WebCore {
 
-struct _PlatformECKeyGnuTLS {
-};
+static size_t curveSize(CryptoKeyEC::NamedCurve curve)
+{
+    switch (curve) {
+    case CryptoKeyEC::NamedCurve::P256:
+        return 256;
+    case CryptoKeyEC::NamedCurve::P384:
+        return 384;
+    }
+}
+
+static const char* curveName(CryptoKeyEC::NamedCurve curve)
+{
+    switch (curve) {
+    case CryptoKeyEC::NamedCurve::P256:
+        return "NIST P-256";
+    case CryptoKeyEC::NamedCurve::P384:
+        return "NIST P-384";
+    }
+}
 
 CryptoKeyEC::~CryptoKeyEC()
 {
-    notImplemented();
+    if (m_platformKey)
+        PAL::GCrypt::HandleDeleter<gcry_sexp_t>()(m_platformKey);
 }
 
 size_t CryptoKeyEC::keySizeInBits() const
 {
-    notImplemented();
-
-    return 0;
+    size_t size = curveSize(m_curve);
+    ASSERT(size == gcry_pk_get_nbits(m_platformKey));
+    return size;
 }
 
-Vector<uint8_t> CryptoKeyEC::platformExportRaw() const
+std::optional<CryptoKeyPair> CryptoKeyEC::platformGeneratePair(CryptoAlgorithmIdentifier identifier, NamedCurve curve, bool extractable, CryptoKeyUsageBitmap usages)
 {
-    notImplemented();
+    PAL::GCrypt::Handle<gcry_sexp_t> genkeySexp;
+    gcry_error_t error = gcry_sexp_build(&genkeySexp, nullptr, "(genkey(ecc(curve %s)))", curveName(curve));
+    if (error != GPG_ERR_NO_ERROR) {
+        PAL::GCrypt::logError(error);
+        return std::nullopt;
+    }
 
-    return { };
-}
+    PAL::GCrypt::Handle<gcry_sexp_t> keyPairSexp;
+    error = gcry_pk_genkey(&keyPairSexp, genkeySexp);
+    if (error != GPG_ERR_NO_ERROR) {
+        PAL::GCrypt::logError(error);
+        return std::nullopt;
+    }
 
-std::optional<CryptoKeyPair> CryptoKeyEC::platformGeneratePair(CryptoAlgorithmIdentifier, NamedCurve, bool, CryptoKeyUsageBitmap)
-{
-    notImplemented();
+    PAL::GCrypt::Handle<gcry_sexp_t> publicKeySexp(gcry_sexp_find_token(keyPairSexp, "public-key", 0));
+    PAL::GCrypt::Handle<gcry_sexp_t> privateKeySexp(gcry_sexp_find_token(keyPairSexp, "private-key", 0));
+    if (!publicKeySexp || !privateKeySexp)
+        return std::nullopt;
 
-    return std::nullopt;
+    auto publicKey = CryptoKeyEC::create(identifier, curve, CryptoKeyType::Public, publicKeySexp.release(), true, usages);
+    auto privateKey = CryptoKeyEC::create(identifier, curve, CryptoKeyType::Private, privateKeySexp.release(), extractable, usages);
+    return CryptoKeyPair { WTFMove(publicKey), WTFMove(privateKey) };
 }
 
 RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportRaw(CryptoAlgorithmIdentifier, NamedCurve, Vector<uint8_t>&&, bool, CryptoKeyUsageBitmap)
@@ -83,11 +115,6 @@ RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportJWKPrivate(CryptoAlgorithmIdentif
     return nullptr;
 }
 
-void CryptoKeyEC::platformAddFieldElements(JsonWebKey&) const
-{
-    notImplemented();
-}
-
 RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportSpki(CryptoAlgorithmIdentifier, NamedCurve, Vector<uint8_t>&&, bool, CryptoKeyUsageBitmap)
 {
     notImplemented();
@@ -95,18 +122,30 @@ RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportSpki(CryptoAlgorithmIdentifier, N
     return nullptr;
 }
 
-Vector<uint8_t> CryptoKeyEC::platformExportSpki() const
+RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportPkcs8(CryptoAlgorithmIdentifier, NamedCurve, Vector<uint8_t>&&, bool, CryptoKeyUsageBitmap)
+{
+    notImplemented();
+
+    return nullptr;
+}
+
+Vector<uint8_t> CryptoKeyEC::platformExportRaw() const
 {
     notImplemented();
 
     return { };
 }
 
-RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportPkcs8(CryptoAlgorithmIdentifier, NamedCurve, Vector<uint8_t>&&, bool, CryptoKeyUsageBitmap)
+void CryptoKeyEC::platformAddFieldElements(JsonWebKey&) const
+{
+    notImplemented();
+}
+
+Vector<uint8_t> CryptoKeyEC::platformExportSpki() const
 {
     notImplemented();
 
-    return nullptr;
+    return { };
 }
 
 Vector<uint8_t> CryptoKeyEC::platformExportPkcs8() const

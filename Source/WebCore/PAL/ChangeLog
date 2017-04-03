@@ -1,5 +1,16 @@
 2017-04-03  Zan Dobersek  <zdobersek@igalia.com>
 
+        [GCrypt] Implement CryptoKeyEC::keySizeInBits(), ::platformGeneratePair()
+        https://bugs.webkit.org/show_bug.cgi?id=170345
+
+        Reviewed by Michael Catanzaro.
+
+        * pal/crypto/gcrypt/Handle.h:
+        (PAL::GCrypt::HandleDeleter<gcry_sexp_t>::operator()): Add a HandleDeleter
+        specialization for the gcry_sexp_t type.
+
+2017-04-03  Zan Dobersek  <zdobersek@igalia.com>
+
         [GCrypt] Implement AES_GCM support
         https://bugs.webkit.org/show_bug.cgi?id=170271
 
