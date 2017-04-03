@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2014 Igalia S.L. All rights reserved.
+ * Copyright (C) 2017 Metrological Group B.V.
+ * Copyright (C) 2017 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,19 +29,108 @@
 
 #if ENABLE(SUBTLE_CRYPTO)
 
+#include "CryptoKeyAES.h"
 #include "ExceptionCode.h"
 #include "NotImplemented.h"
+#include <pal/crypto/gcrypt/Handle.h>
+#include <pal/crypto/gcrypt/Utilities.h>
 
 namespace WebCore {
 
-void CryptoAlgorithmAES_KW::platformWrapKey(Ref<CryptoKey>&&, Vector<uint8_t>&&, VectorCallback&&, ExceptionCallback&&)
+static std::optional<Vector<uint8_t>> gcryptWrapKey(const Vector<uint8_t>& key, const Vector<uint8_t>& data)
 {
-    notImplemented();
+    auto algorithm = PAL::GCrypt::aesAlgorithmForKeySize(key.size() * 8);
+    if (!algorithm)
+        return std::nullopt;
+
+    PAL::GCrypt::Handle<gcry_cipher_hd_t> handle;
+    gcry_error_t error = gcry_cipher_open(&handle, *algorithm, GCRY_CIPHER_MODE_AESWRAP, 0);
+    if (error != GPG_ERR_NO_ERROR) {
+        PAL::GCrypt::logError(error);
+        return std::nullopt;
+    }
+
+    error = gcry_cipher_setkey(handle, key.data(), key.size());
+    if (error != GPG_ERR_NO_ERROR) {
+        PAL::GCrypt::logError(error);
+        return std::nullopt;
+    }
+
+    error = gcry_cipher_final(handle);
+    if (error != GPG_ERR_NO_ERROR) {
+        PAL::GCrypt::logError(error);
+        return std::nullopt;
+    }
+
+    // On encryption the provided output buffer must be 64 bit (8 byte) larger than the input buffer.
+    Vector<uint8_t> output(data.size() + 8);
+    error = gcry_cipher_encrypt(handle, output.data(), output.size(), data.data(), data.size());
+    if (error != GPG_ERR_NO_ERROR) {
+        PAL::GCrypt::logError(error);
+        return std::nullopt;
+    }
+
+    return output;
 }
 
-void CryptoAlgorithmAES_KW::platformUnwrapKey(Ref<CryptoKey>&&, Vector<uint8_t>&&, VectorCallback&&, ExceptionCallback&&)
+static std::optional<Vector<uint8_t>> gcryptUnwrapKey(const Vector<uint8_t>& key, const Vector<uint8_t>& data)
 {
-    notImplemented();
+    auto algorithm = PAL::GCrypt::aesAlgorithmForKeySize(key.size() * 8);
+    if (!algorithm)
+        return std::nullopt;
+
+    PAL::GCrypt::Handle<gcry_cipher_hd_t> handle;
+    gcry_error_t error = gcry_cipher_open(&handle, *algorithm, GCRY_CIPHER_MODE_AESWRAP, 0);
+    if (error != GPG_ERR_NO_ERROR) {
+        PAL::GCrypt::logError(error);
+        return std::nullopt;
+    }
+
+    error = gcry_cipher_setkey(handle, key.data(), key.size());
+    if (error != GPG_ERR_NO_ERROR) {
+        PAL::GCrypt::logError(error);
+        return std::nullopt;
+    }
+
+    error = gcry_cipher_final(handle);
+    if (error != GPG_ERR_NO_ERROR) {
+        PAL::GCrypt::logError(error);
+        return std::nullopt;
+    }
+
+    // On decryption the output buffer may be specified 64 bit (8 byte) shorter than then input buffer.
+    Vector<uint8_t> output(data.size() - 8);
+    error = gcry_cipher_decrypt(handle, output.data(), output.size(), data.data(), data.size());
+    if (error != GPG_ERR_NO_ERROR) {
+        PAL::GCrypt::logError(error);
+        return std::nullopt;
+    }
+
+    return output;
+}
+
+void CryptoAlgorithmAES_KW::platformWrapKey(Ref<CryptoKey>&& key, Vector<uint8_t>&& data, VectorCallback&& callback, ExceptionCallback&& exceptionCallback)
+{
+    auto& aesKey = downcast<CryptoKeyAES>(key.get());
+    auto output = gcryptWrapKey(aesKey.key(), data);
+    if (!output) {
+        exceptionCallback(OperationError);
+        return;
+    }
+
+    callback(*output);
+}
+
+void CryptoAlgorithmAES_KW::platformUnwrapKey(Ref<CryptoKey>&& key, Vector<uint8_t>&& data, VectorCallback&& callback, ExceptionCallback&& exceptionCallback)
+{
+    auto& aesKey = downcast<CryptoKeyAES>(key.get());
+    auto output = gcryptUnwrapKey(aesKey.key(), data);
+    if (!output) {
+        exceptionCallback(OperationError);
+        return;
+    }
+
+    callback(*output);
 }
 
 ExceptionOr<void> CryptoAlgorithmAES_KW::platformEncrypt(const CryptoKeyAES&, const CryptoOperationData&, VectorCallback&&, VoidCallback&&)

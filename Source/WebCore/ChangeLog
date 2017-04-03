@@ -1,5 +1,27 @@
 2017-04-03  Zan Dobersek  <zdobersek@igalia.com>
 
+        [GCrypt] Implement AES_KW support
+        https://bugs.webkit.org/show_bug.cgi?id=170274
+
+        Reviewed by Michael Catanzaro.
+
+        Implement the CryptoAlgorithmAES_KW::platform{Wrap,Unwrap}Key()
+        functionality for configurations that use libgcrypt. This is done
+        by leveraging the gcry_cipher_* APIs for the AES algorithm that's
+        deducted appropriately from the key size and the AESWRAP cipher mode.
+
+        No new tests -- current ones cover this sufficiently, but are not yet
+        enabled due to other missing platform-specific SUBTLE_CRYPTO
+        implementations.
+
+        * crypto/gcrypt/CryptoAlgorithmAES_KWGCrypt.cpp:
+        (WebCore::gcryptWrapKey):
+        (WebCore::gcryptUnwrapKey):
+        (WebCore::CryptoAlgorithmAES_KW::platformWrapKey):
+        (WebCore::CryptoAlgorithmAES_KW::platformUnwrapKey):
+
+2017-04-03  Zan Dobersek  <zdobersek@igalia.com>
+
         [GCrypt] Implement AES_GCM support
         https://bugs.webkit.org/show_bug.cgi?id=170271
 
