@@ -1,3 +1,19 @@
+2017-04-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] URI Fragment is lost after redirect
+        https://bugs.webkit.org/show_bug.cgi?id=170058
+
+        Reviewed by Michael Catanzaro.
+
+        In case of redirection check if the current request has a fragment identifier and apply it to the redirection
+        only when it doesn't have a fragment identifier yet.
+
+        * NetworkProcess/soup/NetworkDataTaskSoup.cpp:
+        (WebKit::NetworkDataTaskSoup::NetworkDataTaskSoup):
+        (WebKit::NetworkDataTaskSoup::createRequest):
+        (WebKit::NetworkDataTaskSoup::continueHTTPRedirection):
+        * NetworkProcess/soup/NetworkDataTaskSoup.h:
+
 2017-04-03  Antti Koivisto  <antti@apple.com>
 
         Mutex may be freed too late in NetworkCache::Storage::traverse

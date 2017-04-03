@@ -75,7 +75,7 @@ NetworkDataTaskSoup::NetworkDataTaskSoup(NetworkSession& session, NetworkDataTas
         }
         applyAuthenticationToRequest(request);
     }
-    createRequest(request);
+    createRequest(WTFMove(request));
 }
 
 NetworkDataTaskSoup::~NetworkDataTaskSoup()
@@ -102,9 +102,11 @@ void NetworkDataTaskSoup::setPendingDownloadLocation(const String& filename, con
     m_allowOverwriteDownload = allowOverwrite;
 }
 
-void NetworkDataTaskSoup::createRequest(const ResourceRequest& request)
+void NetworkDataTaskSoup::createRequest(ResourceRequest&& request)
 {
-    GUniquePtr<SoupURI> soupURI = request.createSoupURI();
+    m_currentRequest = WTFMove(request);
+
+    GUniquePtr<SoupURI> soupURI = m_currentRequest.createSoupURI();
     if (!soupURI) {
         scheduleFailure(InvalidURLFailure);
         return;
@@ -116,9 +118,9 @@ void NetworkDataTaskSoup::createRequest(const ResourceRequest& request)
         return;
     }
 
-    request.updateSoupRequest(soupRequest.get());
+    m_currentRequest.updateSoupRequest(soupRequest.get());
 
-    if (!request.url().protocolIsInHTTPFamily()) {
+    if (!m_currentRequest.url().protocolIsInHTTPFamily()) {
         m_soupRequest = WTFMove(soupRequest);
         return;
     }
@@ -132,7 +134,7 @@ void NetworkDataTaskSoup::createRequest(const ResourceRequest& request)
 
     unsigned messageFlags = SOUP_MESSAGE_NO_REDIRECT;
 
-    request.updateSoupMessage(soupMessage.get());
+    m_currentRequest.updateSoupMessage(soupMessage.get());
     if (m_shouldContentSniff == DoNotSniffContent)
         soup_message_disable_feature(soupMessage.get(), SOUP_TYPE_CONTENT_SNIFFER);
     if (m_user.isEmpty() && m_password.isEmpty() && m_storedCredentials == DoNotAllowStoredCredentials) {
@@ -158,7 +160,7 @@ void NetworkDataTaskSoup::createRequest(const ResourceRequest& request)
     soup_message_set_flags(soupMessage.get(), static_cast<SoupMessageFlags>(soup_message_get_flags(soupMessage.get()) | messageFlags));
 
 #if SOUP_CHECK_VERSION(2, 43, 1)
-    soup_message_set_priority(soupMessage.get(), toSoupMessagePriority(request.priority()));
+    soup_message_set_priority(soupMessage.get(), toSoupMessagePriority(m_currentRequest.priority()));
 #endif
 
     m_soupRequest = WTFMove(soupRequest);
@@ -636,14 +638,17 @@ void NetworkDataTaskSoup::continueHTTPRedirection()
         return;
     }
 
-    ResourceRequest request = m_firstRequest;
-    request.setURL(URL(m_response.url(), m_response.httpHeaderField(HTTPHeaderName::Location)));
+    ResourceRequest request = m_currentRequest;
+    URL redirectedURL = URL(m_response.url(), m_response.httpHeaderField(HTTPHeaderName::Location));
+    if (!redirectedURL.hasFragmentIdentifier() && request.url().hasFragmentIdentifier())
+        redirectedURL.setFragmentIdentifier(request.url().fragmentIdentifier());
+    request.setURL(redirectedURL);
 
     // Should not set Referer after a redirect from a secure resource to non-secure one.
     if (m_shouldClearReferrerOnHTTPSToHTTPRedirect && !request.url().protocolIs("https") && protocolIs(request.httpReferrer(), "https"))
         request.clearHTTPReferrer();
 
-    bool isCrossOrigin = !protocolHostAndPortAreEqual(m_firstRequest.url(), request.url());
+    bool isCrossOrigin = !protocolHostAndPortAreEqual(m_currentRequest.url(), request.url());
     if (!equalLettersIgnoringASCIICase(request.httpMethod(), "get")) {
         // Change newRequest method to GET if change was made during a previous redirection or if current redirection says so.
         if (m_soupMessage->method == SOUP_METHOD_GET || !request.url().protocolIsInHTTPFamily() || shouldRedirectAsGET(m_soupMessage.get(), isCrossOrigin)) {
@@ -689,7 +694,7 @@ void NetworkDataTaskSoup::continueHTTPRedirection()
 #endif
             applyAuthenticationToRequest(request);
         }
-        createRequest(request);
+        createRequest(WTFMove(request));
         if (m_soupRequest && m_state != State::Suspended) {
             m_state = State::Suspended;
             resume();

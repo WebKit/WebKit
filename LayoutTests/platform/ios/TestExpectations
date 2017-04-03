@@ -2931,3 +2931,5 @@ fast/css-generated-content/initial-letter-pagination-raised.html [ Skip ]
 fast/css-generated-content/initial-letter-pagination-sunken.html [ Skip ]
 fast/css-generated-content/initial-letter-pagination-raised-rl.html [ Skip ]
 fast/css-generated-content/initial-letter-pagination-sunken-rl.html [ Skip ]
+
+webkit.org/b/158420 http/tests/navigation/redirect-to-fragment2.html [ Failure ]

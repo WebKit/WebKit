@@ -1,3 +1,24 @@
+2017-04-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] URI Fragment is lost after redirect
+        https://bugs.webkit.org/show_bug.cgi?id=170058
+
+        Reviewed by Michael Catanzaro.
+
+        Add tests to check we correctly handle fragment identifiers on server redirections.
+
+        * http/tests/navigation/redirect-preserves-fragment-expected.txt: Added.
+        * http/tests/navigation/redirect-preserves-fragment.html: Added.
+        * http/tests/navigation/redirect-to-fragment-expected.txt: Added.
+        * http/tests/navigation/redirect-to-fragment.html: Added.
+        * http/tests/navigation/redirect-to-fragment2-expected.txt: Added.
+        * http/tests/navigation/redirect-to-fragment2.html: Added.
+        * http/tests/navigation/resources/redirect-preserves-fragment.php: Added.
+        * http/tests/navigation/resources/redirect-to-fragment.php: Added.
+        * http/tests/navigation/resources/redirect-to-fragment2.php: Added.
+        * platform/ios/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2017-04-03  Youenn Fablet  <youenn@apple.com>
 
         captureStream is getting black frames with webgl canvas

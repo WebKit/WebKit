@@ -1568,3 +1568,5 @@ http/tests/media/video-served-as-text-with-type.html [ Skip ]
 webkit.org/b/168132 http/tests/xmlhttprequest/simple-cross-origin-progress-events.html [ Pass Timeout ]
 
 webkit.org/b/169838 [ Release ] fast/workers/worker-close-more.html [ Pass Timeout ]
+
+webkit.org/b/158420 http/tests/navigation/redirect-to-fragment2.html [ Failure ]

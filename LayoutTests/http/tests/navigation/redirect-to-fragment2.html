@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpResourceLoadCallbacks();
+    testRunner.waitUntilDone();
+}
+
+onload = function() {
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+</script>
+</head>
+<body>
+<p>Test passes if WebKit keeps fragment identifier from first redirected URL.</p>
+<iframe src="resources/redirect-to-fragment2.php"></iframe>
+</body>
+</html>
