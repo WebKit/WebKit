@@ -1,3 +1,31 @@
+2017-04-03  Devin Rousso  <webkit@devinrousso.com>
+
+        REGRESSION (r214354): Web Inspector: WebSocket connection icon obscures close content view icon
+        https://bugs.webkit.org/show_bug.cgi?id=170104
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/ResourceTreeElement.css:
+        (.item.resource.resource-type-websocket .status > .ready-state):
+        (.item.resource.resource-type-websocket:not(.selected) .status .ready-state.open):
+        (.tree-outline:not(:focus, .force-focus) .item.resource.resource-type-websocket.selected .status .ready-state.open):
+        (body:matches(.window-inactive, .window-docked-inactive) .item.resource.resource-type-websocket.selected .status .ready-state.open):
+        (.item.resource.resource-type-websocket:not(.selected) .status .ready-state.connecting):
+        (.tree-outline:not(:focus, .force-focus) .item.resource.resource-type-websocket.selected .status .ready-state.connecting):
+        (body:matches(.window-inactive, .window-docked-inactive) .item.resource.resource-type-websocket.selected .status .ready-state.connecting):
+        (.item.resource.resource-type-websocket .status > div): Deleted.
+        (.item.resource.resource-type-websocket:not(.selected) .status .open): Deleted.
+        (.tree-outline:not(:focus, .force-focus) .item.resource.resource-type-websocket.selected .status .open): Deleted.
+        (body:matches(.window-inactive, .window-docked-inactive) .item.resource.resource-type-websocket.selected .status .open): Deleted.
+        (.item.resource.resource-type-websocket:not(.selected) .status .connecting): Deleted.
+        (.tree-outline:not(:focus, .force-focus) .item.resource.resource-type-websocket.selected .status .connecting): Deleted.
+        (body:matches(.window-inactive, .window-docked-inactive) .item.resource.resource-type-websocket.selected .status .connecting): Deleted.
+
+        * UserInterface/Views/WebSocketResourceTreeElement.js:
+        (WebInspector.WebSocketResourceTreeElement.prototype._updateConnectionStatus):
+        Apply an additional CSS class to the connection indicator element so that the styles can be
+        applied more specifically to just that element.
+
 2017-04-01  Jon Lee  <jonlee@apple.com>
 
         Add missing text styles

@@ -54,7 +54,7 @@ WebInspector.WebSocketResourceTreeElement = class WebSocketResourceTreeElement e
 
         case WebInspector.WebSocketResource.ReadyState.Connecting:
             var connectionIndicatorElement = document.createElement("div");
-            connectionIndicatorElement.classList.add("connecting");
+            connectionIndicatorElement.classList.add("ready-state", "connecting");
             connectionIndicatorElement.title = WebInspector.UIString("Connecting");
 
             this.status = connectionIndicatorElement;
@@ -62,7 +62,7 @@ WebInspector.WebSocketResourceTreeElement = class WebSocketResourceTreeElement e
 
         case WebInspector.WebSocketResource.ReadyState.Open:
             var connectionIndicatorElement = document.createElement("div");
-            connectionIndicatorElement.classList.add("open");
+            connectionIndicatorElement.classList.add("ready-state", "open");
             connectionIndicatorElement.title = WebInspector.UIString("Open");
 
             this.status = connectionIndicatorElement;
