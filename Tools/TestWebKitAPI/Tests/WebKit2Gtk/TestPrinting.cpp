@@ -391,7 +391,7 @@ public:
         sendKeyEvent(gdkKeyValue, GDK_KEY_RELEASE, modifiers);
     }
 
-    WebKitPrintOperation* createWebKitPrintOperation()
+    void createWebKitPrintOperation()
     {
         m_printOperation = adoptGRef(webkit_print_operation_new(m_webView));
         g_assert(m_printOperation);
