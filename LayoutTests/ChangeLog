@@ -1,3 +1,13 @@
+2017-03-21  Sergio Villar Senin  <svillar@igalia.com>
+
+        [Soup] "Only from websites I visit" cookie policy is broken
+        https://bugs.webkit.org/show_bug.cgi?id=168912
+
+        Reviewed by Carlos Garcia Campos.
+
+        * http/tests/security/cookies/third-party-cookie-blocking-redirect-expected.txt: Added.
+        * http/tests/security/cookies/third-party-cookie-blocking-redirect.html: Added.
+
 2017-03-21  Brady Eidson  <beidson@apple.com>
 
         Disable all virtual tables.
