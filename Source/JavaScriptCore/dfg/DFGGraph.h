@@ -293,13 +293,44 @@ public:
         Node* left = add->child1().node();
         Node* right = add->child2().node();
 
-        auto isAnyIntSpeculationForAdd = [](SpeculatedType value) {
-            return !!value && (value & (SpecAnyInt | SpecAnyIntAsDouble)) == value;
+        if (hasExitSite(add, Int52Overflow))
+            return false;
+
+        if (Node::shouldSpeculateAnyInt(left, right))
+            return true;
+
+        auto shouldSpeculateAnyIntForAdd = [](Node* node) {
+            auto isAnyIntSpeculationForAdd = [](SpeculatedType value) {
+                return !!value && (value & (SpecAnyInt | SpecAnyIntAsDouble)) == value;
+            };
+
+            // When DoubleConstant node appears, it means that users explicitly write a constant in their code with double form instead of integer form (1.0 instead of 1).
+            // In that case, we should honor this decision: using it as integer is not appropriate.
+            if (node->op() == DoubleConstant)
+                return false;
+            return isAnyIntSpeculationForAdd(node->prediction());
         };
 
-        return isAnyIntSpeculationForAdd(left->prediction())
-            && isAnyIntSpeculationForAdd(right->prediction())
-            && !hasExitSite(add, Int52Overflow);
+        // Allow AnyInt ArithAdd only when the one side of the binary operation should be speculated AnyInt. It is a bit conservative
+        // decision. This is because Double to Int52 conversion is not so cheap. Frequent back-and-forth conversions between Double and Int52
+        // rather hurt the performance. If the one side of the operation is already Int52, the cost for constructing ArithAdd becomes
+        // cheap since only one Double to Int52 conversion could be required.
+        // This recovers some regression in assorted tests while keeping kraken crypto improvements.
+        if (!left->shouldSpeculateAnyInt() && !right->shouldSpeculateAnyInt())
+            return false;
+
+        auto usesAsNumbers = [](Node* node) {
+            NodeFlags flags = node->flags() & NodeBytecodeBackPropMask;
+            if (!flags)
+                return false;
+            return (flags & (NodeBytecodeUsesAsNumber | NodeBytecodeNeedsNegZero | NodeBytecodeUsesAsInt | NodeBytecodeUsesAsArrayIndex)) == flags;
+        };
+
+        // Wrapping Int52 to Value is also not so cheap. Thus, we allow Int52 addition only when the node is used as number.
+        if (!usesAsNumbers(add))
+            return false;
+
+        return shouldSpeculateAnyIntForAdd(left) && shouldSpeculateAnyIntForAdd(right);
     }
     
     bool binaryArithShouldSpeculateInt32(Node* node, PredictionPass pass)
