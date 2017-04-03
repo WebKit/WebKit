@@ -42,6 +42,8 @@ public:
     void updateCounter();
 
 private:
+    void willBeDestroyed() override;
+    
     const char* renderName() const override;
     bool isCounter() const override;
     String originalText() const override;

@@ -45,6 +45,7 @@ public:
     void hidePopup();
 
 private:
+    void willBeDestroyed() override;
     void centerContainerIfNeeded(RenderBox*) const override;
     LayoutUnit computeControlLogicalHeight(LayoutUnit lineHeight, LayoutUnit nonContentHeight) const override;
     LayoutUnit computeLogicalHeightLimit() const override;

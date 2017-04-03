@@ -176,6 +176,7 @@ RenderBoxModelObject::RenderBoxModelObject(Document& document, RenderStyle&& sty
 
 RenderBoxModelObject::~RenderBoxModelObject()
 {
+    // Do not add any code here. Add it to willBeDestroyed() instead.
 }
 
 void RenderBoxModelObject::willBeDestroyed()

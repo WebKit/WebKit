@@ -50,10 +50,17 @@ RenderLayerModelObject::RenderLayerModelObject(Document& document, RenderStyle&&
 
 RenderLayerModelObject::~RenderLayerModelObject()
 {
+    // Do not add any code here. Add it to willBeDestroyed() instead.
+}
+
+void RenderLayerModelObject::willBeDestroyed()
+{
     if (isPositioned()) {
         if (style().hasViewportConstrainedPosition())
             view().frameView().removeViewportConstrainedObject(this);
     }
+
+    RenderElement::willBeDestroyed();
 
     // Our layer should have been destroyed and cleared by now
     ASSERT(!hasLayer());

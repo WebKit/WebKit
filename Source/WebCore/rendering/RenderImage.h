@@ -71,6 +71,8 @@ public:
     void setHasShadowControls(bool hasShadowControls) { m_hasShadowControls = hasShadowControls; }
 
 protected:
+    void willBeDestroyed() override;
+
     bool needsPreferredWidthsRecalculation() const final;
     RenderBox* embeddedContentBox() const final;
     void computeIntrinsicRatioInformation(FloatSize& intrinsicSize, double& intrinsicRatio) const final;

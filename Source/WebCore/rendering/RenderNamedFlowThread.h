@@ -96,6 +96,7 @@ protected:
     void resetMarkForDestruction();
 
 private:
+    void willBeDestroyed() override;
     const char* renderName() const override;
     bool isRenderNamedFlowThread() const override { return true; }
     bool isChildAllowed(const RenderObject&, const RenderStyle&) const override;

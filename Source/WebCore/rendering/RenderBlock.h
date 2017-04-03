@@ -395,6 +395,8 @@ protected:
 
     void preparePaginationBeforeBlockLayout(bool&);
 
+    void blockWillBeDestroyed();
+
 private:
     static std::unique_ptr<RenderBlock> createAnonymousBlockWithStyleAndDisplay(Document&, const RenderStyle&, EDisplay);
 

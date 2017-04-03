@@ -60,7 +60,10 @@ public:
 #if !ASSERT_DISABLED
     bool inLayout() const { return m_inLayout; }
 #endif
+
 private:
+    void willBeDestroyed() override;
+
     const char* renderName() const override { return "RenderListItem"; }
 
     bool isListItem() const override { return true; }

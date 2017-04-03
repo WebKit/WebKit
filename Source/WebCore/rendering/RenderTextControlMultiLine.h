@@ -34,6 +34,7 @@ public:
     HTMLTextAreaElement& textAreaElement() const;
 
 private:
+    void willBeDestroyed() override;
     void element() const = delete;
 
     bool isTextArea() const override { return true; }

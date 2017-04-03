@@ -615,6 +615,7 @@ protected:
     void updateFromStyle() override;
 
     void willBeRemovedFromTree() override;
+    void willBeDestroyed() override;
 
     bool createsNewFormattingContext() const;
 

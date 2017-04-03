@@ -1,3 +1,116 @@
+2017-03-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Move code out of renderer destructors into willBeDestroyed()
+        https://bugs.webkit.org/show_bug.cgi?id=169650
+
+        Reviewed by Antti Koivisto.
+
+        This is done for four reasons. First, code in willBeDestroyed() is able to call
+        virtual functions on derived classes. Second, this code will run before we've destroyed
+        the renderer's rareData, so can safely access it. Third, RenderWidget is special, and can have
+        its lifetime extended via manual ref-counting, and we want all cleanup to complete
+        before it goes into this weird zombie state. Fourth, in a shiny future where we have
+        ref-counted RenderObjects, we want cleanup code to be run explicitly and not tied
+        to object lifetime, and this is a step in that direction.
+
+        For all classes that derive from RenderObject, move code from the destructor into
+        willBeDestroyed(). New willBeDestroyed() implementations must call the base class.
+
+        RenderBlock and RenderBlockFlow are special; RenderBlockFlow::willBeDestroyed()
+        skips over RenderBlock::willBeDestroyed(), but they both need to run some code, which
+        I moved into RenderBlock::blockWillBeDestroyed().
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::~RenderBlock):
+        (WebCore::RenderBlock::willBeDestroyed):
+        (WebCore::RenderBlock::blockWillBeDestroyed):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::~RenderBlockFlow):
+        (WebCore::RenderBlockFlow::willBeDestroyed):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::~RenderBox):
+        (WebCore::RenderBox::willBeDestroyed):
+        * rendering/RenderBox.h:
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::~RenderBoxModelObject):
+        * rendering/RenderCounter.cpp:
+        (WebCore::RenderCounter::~RenderCounter):
+        (WebCore::RenderCounter::willBeDestroyed):
+        * rendering/RenderCounter.h:
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::~RenderElement):
+        (WebCore::RenderElement::willBeDestroyed):
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::~RenderEmbeddedObject):
+        (WebCore::RenderEmbeddedObject::willBeDestroyed):
+        * rendering/RenderEmbeddedObject.h:
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::~RenderImage):
+        (WebCore::RenderImage::willBeDestroyed):
+        * rendering/RenderImage.h:
+        * rendering/RenderLayerModelObject.cpp:
+        (WebCore::RenderLayerModelObject::~RenderLayerModelObject):
+        (WebCore::RenderLayerModelObject::willBeDestroyed):
+        * rendering/RenderLayerModelObject.h:
+        * rendering/RenderLineBreak.cpp:
+        (WebCore::RenderLineBreak::~RenderLineBreak):
+        (WebCore::RenderLineBreak::willBeDestroyed):
+        * rendering/RenderLineBreak.h:
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::~RenderListBox):
+        (WebCore::RenderListBox::willBeDestroyed):
+        * rendering/RenderListBox.h:
+        * rendering/RenderListItem.cpp:
+        (WebCore::RenderListItem::~RenderListItem):
+        (WebCore::RenderListItem::willBeDestroyed):
+        * rendering/RenderListItem.h:
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::~RenderListMarker):
+        (WebCore::RenderListMarker::willBeDestroyed):
+        * rendering/RenderListMarker.h:
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::~RenderMenuList):
+        (WebCore::RenderMenuList::willBeDestroyed):
+        * rendering/RenderMenuList.h:
+        * rendering/RenderNamedFlowThread.cpp:
+        (WebCore::RenderNamedFlowThread::~RenderNamedFlowThread):
+        (WebCore::RenderNamedFlowThread::willBeDestroyed):
+        * rendering/RenderNamedFlowThread.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::willBeDestroyed):
+        * rendering/RenderQuote.cpp:
+        (WebCore::RenderQuote::~RenderQuote):
+        (WebCore::RenderQuote::willBeDestroyed):
+        * rendering/RenderQuote.h:
+        * rendering/RenderSearchField.cpp:
+        (WebCore::RenderSearchField::~RenderSearchField):
+        (WebCore::RenderSearchField::willBeDestroyed):
+        * rendering/RenderSearchField.h:
+        * rendering/RenderSnapshottedPlugIn.cpp:
+        (WebCore::RenderSnapshottedPlugIn::~RenderSnapshottedPlugIn):
+        (WebCore::RenderSnapshottedPlugIn::willBeDestroyed):
+        * rendering/RenderSnapshottedPlugIn.h:
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::~RenderText):
+        (WebCore::RenderText::willBeDestroyed):
+        * rendering/RenderTextControlMultiLine.cpp:
+        (WebCore::RenderTextControlMultiLine::~RenderTextControlMultiLine):
+        (WebCore::RenderTextControlMultiLine::willBeDestroyed):
+        * rendering/RenderTextControlMultiLine.h:
+        * rendering/RenderVideo.cpp:
+        (WebCore::RenderVideo::~RenderVideo):
+        (WebCore::RenderVideo::willBeDestroyed):
+        * rendering/RenderVideo.h:
+        * rendering/RenderWidget.h:
+        * rendering/svg/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::~RenderSVGImage):
+        (WebCore::RenderSVGImage::willBeDestroyed):
+        * rendering/svg/RenderSVGImage.h:
+        * rendering/svg/RenderSVGResourceContainer.cpp:
+        (WebCore::RenderSVGResourceContainer::~RenderSVGResourceContainer):
+        (WebCore::RenderSVGResourceContainer::willBeDestroyed):
+
 2017-03-20  Emanuele Aina  <emanuele.aina@collabora.com>
 
         [Cairo] Ensure depth and stencil renderbuffers are created on GLESv2
