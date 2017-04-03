@@ -1,3 +1,20 @@
+2017-04-03  Jeremy Jones  <jeremyj@apple.com>
+
+        Do not set WebAVPlayerLayerView background to black in fullscreen.
+        https://bugs.webkit.org/show_bug.cgi?id=170132
+        rdar://problem/30839278
+
+        Reviewed by Tim Horton.
+
+        No new tests because no behavior change.
+
+        The black background on WebAVPlayerLayerView interferes with the fullscreen animation
+        and has been removed.
+
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        (WebVideoFullscreenInterfaceAVKit::enterFullscreen):
+        (WebVideoFullscreenInterfaceAVKit::enterFullscreenStandard):
+
 2017-04-03  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (r207669): FileMaker Pro Help pages do not render correctly
