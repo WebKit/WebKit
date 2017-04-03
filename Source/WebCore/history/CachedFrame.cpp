@@ -35,13 +35,10 @@
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "FrameView.h"
-#include "HistoryController.h"
-#include "HistoryItem.h"
 #include "Logging.h"
 #include "MainFrame.h"
 #include "Page.h"
 #include "PageCache.h"
-#include "PageTransitionEvent.h"
 #include "SVGDocumentExtensions.h"
 #include "ScriptController.h"
 #include "SerializedScriptValue.h"
@@ -116,6 +113,7 @@ void CachedFrameBase::restore()
         ASSERT(childFrame->view()->frame().page());
         frame.tree().appendChild(childFrame->view()->frame());
         childFrame->open();
+        ASSERT_WITH_SECURITY_IMPLICATION(m_document == frame.document());
     }
 
 #if PLATFORM(IOS)
@@ -130,14 +128,6 @@ void CachedFrameBase::restore()
         }
     }
 #endif
-
-    // FIXME: update Page Visibility state here.
-    // https://bugs.webkit.org/show_bug.cgi?id=116770
-    m_document->enqueuePageshowEvent(PageshowEventPersisted);
-
-    HistoryItem* historyItem = frame.loader().history().currentItem();
-    if (historyItem && historyItem->stateObject())
-        m_document->enqueuePopstateEvent(historyItem->stateObject());
 
     frame.view()->didRestoreFromPageCache();
 }
