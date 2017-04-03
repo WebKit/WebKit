@@ -1,3 +1,31 @@
+2017-03-20  Emanuele Aina  <emanuele.aina@collabora.com>
+
+        [Cairo] Ensure depth and stencil renderbuffers are created on GLESv2
+        https://bugs.webkit.org/show_bug.cgi?id=166643
+
+        Reviewed by Darin Adler.
+
+        If the gfx device doesn't support GL_OES_packed_depth_stencil, the
+        separate depth and stencil buffers are not generated.
+
+        Copy what GraphicsContext3DEfl used to do and apply it in
+        GraphicsContext3DCairo.
+
+        The Intel gfx driver seem to tolerate unbound renderbuffers, but
+        enabling debugging in Mesa yields an error:
+
+        $ MESA_DEBUG=1 \
+          MESA_EXTENSION_OVERRIDE=-GL_OES_packed_depth_stencil
+          ./bin/MiniBrowser http://webglsamples.org/aquarium/aquarium.html
+        Mesa: User error: GL_INVALID_OPERATION in glRenderbufferStorage(no renderbuffer bound)
+
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/cairo/GraphicsContext3DCairo.cpp:
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+        Ensure separate depth and stencil renderbuffers are created.
+        (WebCore::GraphicsContext3D::~GraphicsContext3D):
+        Ensure separate depth and stencil renderbuffers are released.
+
 2017-03-17  Dave Hyatt  <hyatt@apple.com>
 
         Disable per-region boxes for multicolumn
