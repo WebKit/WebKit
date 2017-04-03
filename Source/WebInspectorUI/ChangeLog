@@ -1,3 +1,42 @@
+2017-04-03  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: RTL: layout issues in call frame tree elements and async call stacks
+        https://bugs.webkit.org/show_bug.cgi?id=170419
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/CallFrameTreeElement.css:
+        (.tree-outline .item.call-frame .status):
+        (body[dir=ltr] .tree-outline .item.call-frame .status):
+        (body[dir=rtl] .tree-outline .item.call-frame .status):
+        Flip the current call frame indicator and make sure it sticks to the leading edge.
+
+        (.tree-outline .item.call-frame.async-boundary):
+        (body[dir=ltr] .tree-outline:not(.single-thread) > .children > .item.call-frame.async-boundary):
+        (body[dir=rtl] .tree-outline:not(.single-thread) > .children > .item.call-frame.async-boundary):
+        (.tree-outline .item.call-frame.async-boundary .icon):
+        (body[dir=ltr] .tree-outline .item.call-frame.async-boundary .icon):
+        (body[dir=rtl] .tree-outline .item.call-frame.async-boundary .icon):
+        Flip the icon's padding.
+
+        (.tree-outline .item.call-frame.async-boundary::after):
+        (body[dir=ltr] .tree-outline .item.call-frame.async-boundary::after):
+        (body[dir=rtl] .tree-outline .item.call-frame.async-boundary::after):
+        (.tree-outline .item.call-frame.async-boundary::before):
+        (body[dir=ltr] .tree-outline .item.call-frame.async-boundary::before):
+        (body[dir=rtl] .tree-outline .item.call-frame.async-boundary::before):
+        (.tree-outline:not(.single-thread) > .children > .item.call-frame.async-boundary): Deleted.
+        Fix the leading and trailing horizontal rules so they have correct spacing.
+
+        * UserInterface/Views/CallFrameView.css:
+        (.call-frame .icon): Remove redundant property.
+
+        * UserInterface/Views/DebuggerSidebarPanel.css:
+        (.sidebar > .panel.navigation.debugger .tree-outline.single-thread):
+        (body[dir=ltr] .sidebar > .panel.navigation.debugger .tree-outline.single-thread):
+        (body[dir=rtl] .sidebar > .panel.navigation.debugger .tree-outline.single-thread):
+        Fix the leading unindent for call tree frame elements.
+
 2017-04-03  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Elements tab: show indicators for hidden DOM breakpoints
