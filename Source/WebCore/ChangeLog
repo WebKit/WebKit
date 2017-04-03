@@ -1,3 +1,20 @@
+2017-03-22  Brent Fulgham  <bfulgham@apple.com>
+
+        ASan violation in IconLoader::stopLoading
+        https://bugs.webkit.org/show_bug.cgi?id=169960
+        <rdar://problem/30577691>
+
+        Reviewed by David Kilzer.
+
+        DocumentLoader::finishLoadingIcon handles the life cycle of the IconLoader. Once this method is called,
+        we should return immediately rather than attempt to make further modifications to the IconLoader.
+
+        No new tests due to lack of test features (see https://bugs.webkit.org/show_bug.cgi?id=164895). Easily
+        tested in MiniBrowser under ASan visiting websites with icons.
+
+        * loader/icon/IconLoader.cpp:
+        (WebCore::IconLoader::notifyFinished):
+
 2017-03-21  Antti Koivisto  <antti@apple.com>
 
         Use AtomicString in RuleSet and RuleFeature

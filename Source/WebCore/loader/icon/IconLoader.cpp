@@ -124,17 +124,20 @@ void IconLoader::notifyFinished(CachedResource& resource)
 
     LOG(IconDatabase, "IconLoader::finishLoading() - Committing iconURL %s to database", m_resource->url().string().ascii().data());
 
-    if (m_frame) {
-        m_frame->loader().icon().commitToDatabase(m_resource->url());
-
-        // Setting the icon data only after committing to the database ensures that the data is
-        // kept in memory (so it does not have to be read from the database asynchronously), since
-        // there is a page URL referencing it.
-        iconDatabase().setIconDataForIconURL(data, m_resource->url().string());
-        m_frame->loader().client().dispatchDidReceiveIcon();
-
-    } else
+    if (!m_frame) {
+        // DocumentLoader::finishedLoadingIcon destroys this IconLoader as it finishes. This will automatically
+        // trigger IconLoader::stopLoading() during destruction, so we should just return here.
         m_documentLoader->finishedLoadingIcon(*this, data);
+        return;
+    }
+
+    m_frame->loader().icon().commitToDatabase(m_resource->url());
+
+    // Setting the icon data only after committing to the database ensures that the data is
+    // kept in memory (so it does not have to be read from the database asynchronously), since
+    // there is a page URL referencing it.
+    iconDatabase().setIconDataForIconURL(data, m_resource->url().string());
+    m_frame->loader().client().dispatchDidReceiveIcon();
 
     stopLoading();
 }
