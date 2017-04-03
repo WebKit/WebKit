@@ -1,3 +1,18 @@
+2017-04-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Share implementation of JSRunLoopTimer::timerDidFire
+        https://bugs.webkit.org/show_bug.cgi?id=170392
+
+        Reviewed by Michael Catanzaro.
+
+        The code is cross-platform but it's duplicated in CF and GLib implementations, it could be shared instead.
+
+        * runtime/JSRunLoopTimer.cpp:
+        (JSC::JSRunLoopTimer::timerDidFire): Move common implementation here.
+        (JSC::JSRunLoopTimer::setRunLoop): Use timerDidFireCallback.
+        (JSC::JSRunLoopTimer::timerDidFireCallback): Call JSRunLoopTimer::timerDidFire().
+        * runtime/JSRunLoopTimer.h:
+
 2017-04-01  Oleksandr Skachkov  <gskachkov@gmail.com>
 
         Object with numerical keys with gaps gets filled by NaN values
