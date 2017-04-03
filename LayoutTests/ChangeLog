@@ -1,5 +1,11 @@
 2017-04-02  Alexey Proskuryakov  <ap@apple.com>
 
+        Remove accidentally added DumpJSConsoleLogInStdErr from http/tests/fetch/fetch-in-worker-crash.html expectation.
+
+        * TestExpectations:
+
+2017-04-02  Alexey Proskuryakov  <ap@apple.com>
+
         Build fix for
         Add missing text styles
         https://bugs.webkit.org/show_bug.cgi?id=170295

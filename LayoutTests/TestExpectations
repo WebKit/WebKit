@@ -346,7 +346,7 @@ imported/w3c/web-platform-tests/fetch/api/cors/cors-preflight-redirect.html [ Du
 imported/w3c/web-platform-tests/fetch/api/cors/cors-redirect-preflight.html [ DumpJSConsoleLogInStdErr ]
 
 # rdar://problem/30975761
-[ Debug ] http/tests/fetch/fetch-in-worker-crash.html [ DumpJSConsoleLogInStdErr Pass Crash ]
+[ Debug ] http/tests/fetch/fetch-in-worker-crash.html [ Pass Crash ]
 webkit.org/b/170395 [ Debug ] imported/w3c/web-platform-tests/fetch/api/cors/cors-preflight-status.html [ DumpJSConsoleLogInStdErr Pass Crash ]
 
 webkit.org/b/159724 imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect-post-upload.htm [ Failure Pass ]
