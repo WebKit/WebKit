@@ -1,3 +1,19 @@
+2017-04-03  Antti Koivisto  <antti@apple.com>
+
+        Mutex may be freed too late in NetworkCache::Storage::traverse
+        https://bugs.webkit.org/show_bug.cgi?id=170400
+        <rdar://problem/30515865>
+
+        Reviewed by Carlos Garcia Campos and Andreas Kling.
+
+        Fix a race.
+
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::Storage::traverse):
+
+            Ensure the mutex is not accessed after we dispatch to the main thread.
+            The main thread call deletes the owning TraverseOperation.
+
 2017-04-01  Dan Bernstein  <mitz@apple.com>
 
         [iOS] <input type=file> label should be specified using plural rules

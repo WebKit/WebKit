@@ -859,11 +859,13 @@ void Storage::traverse(const String& type, TraverseFlags flags, TraverseHandler&
                 return traverseOperation.activeCount <= maximumParallelReadCount;
             });
         });
-        // Wait for all reads to finish.
-        std::unique_lock<Lock> lock(traverseOperation.activeMutex);
-        traverseOperation.activeCondition.wait(lock, [&traverseOperation] {
-            return !traverseOperation.activeCount;
-        });
+        {
+            // Wait for all reads to finish.
+            std::unique_lock<Lock> lock(traverseOperation.activeMutex);
+            traverseOperation.activeCondition.wait(lock, [&traverseOperation] {
+                return !traverseOperation.activeCount;
+            });
+        }
         RunLoop::main().dispatch([this, &traverseOperation] {
             traverseOperation.handler(nullptr, { });
             m_activeTraverseOperations.remove(&traverseOperation);
