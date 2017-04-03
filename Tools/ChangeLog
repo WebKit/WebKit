@@ -1,3 +1,16 @@
+2017-04-03  Brian Burg  <bburg@apple.com>
+
+        run-safari should support launching with custom language and locale
+        https://bugs.webkit.org/show_bug.cgi?id=170397
+
+        Reviewed by Alexey Proskuryakov.
+
+        Hook up -AppleLanguages and -AppleLocale to command line options.
+
+        * Scripts/webkitdirs.pm:
+        (printHelpAndExitForRunAndDebugWebKitAppIfNeeded):
+        (argumentsForRunAndDebugMacWebKitApp):
+
 2017-04-03  Jonathan Bedard  <jbedard@apple.com>
 
         webkitpy: Provide option to skip install

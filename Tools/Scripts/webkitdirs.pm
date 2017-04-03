@@ -2176,7 +2176,12 @@ sub printHelpAndExitForRunAndDebugWebKitAppIfNeeded
 Usage: @{[basename($0)]} [options] [args ...]
   --help                            Show this help message
   --no-saved-state                  Launch the application without state restoration
-  -g|--guard-malloc                 Enable Guard Malloc (OS X only)
+
+Options specific to macOS:
+  -g|--guard-malloc                 Enable Guard Malloc
+  --lang=LANGUAGE                   Use a specific language instead of system language.
+                                    This accepts a language name (German) or a language code (de, ar, pt_BR, etc).
+  --locale=LOCALE                   Use a specific locale instead of the system region.
 EOF
 
     exit(1);
@@ -2190,6 +2195,17 @@ sub argumentsForRunAndDebugMacWebKitApp()
         # FIXME: Don't set ApplePersistenceIgnoreState once all supported OS versions respect ApplePersistenceIgnoreStateQuietly (rdar://15032886).
         push @args, ("-ApplePersistenceIgnoreState", "YES");
     }
+
+    my $lang;
+    if (checkForArgumentAndRemoveFromARGVGettingValue("--lang", \$lang)) {
+        push @args, ("-AppleLanguages", "(" . $lang . ")");
+    }
+
+    my $locale;
+    if (checkForArgumentAndRemoveFromARGVGettingValue("--locale", \$locale)) {
+        push @args, ("-AppleLocale", $locale);
+    }
+
     unshift @args, @ARGV;
 
     return @args;
