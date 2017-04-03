@@ -234,7 +234,7 @@ bool AudioSampleDataSource::pullSamplesInternal(AudioBufferList& buffer, size_t&
         const double tenMS = .01;
         const double fiveMS = .005;
         double sampleRate = m_outputDescription->sampleRate();
-        m_outputSampleOffset = timeStamp + (endFrame - sampleCount);
+        m_outputSampleOffset = (endFrame - sampleCount) - timeStamp;
         if (m_lastPushedSampleCount > sampleRate * twentyMS)
             m_outputSampleOffset -= sampleRate * twentyMS;
         else if (m_lastPushedSampleCount > sampleRate * tenMS)

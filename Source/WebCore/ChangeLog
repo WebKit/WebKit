@@ -1,3 +1,16 @@
+2017-04-03  Jer Noble  <jer.noble@apple.com>
+
+        No audio output for MediaStream-backed audio elements on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=170427
+
+        Reviewed by Eric Carlson.
+
+        The logic for setting the output timestamp offset in AudioSampleDataSource was reversed; instead of
+        subtracting out the timestamp of the first pull request, it effectively doubled it.
+
+        * platform/audio/mac/AudioSampleDataSource.mm:
+        (WebCore::AudioSampleDataSource::pullSamplesInternal):
+
 2017-04-03  Dave Hyatt  <hyatt@apple.com>
 
         Japanese fonts in vertical text should support synthesized italics
