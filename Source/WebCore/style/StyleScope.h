@@ -163,8 +163,6 @@ private:
     HashSet<const Element*> m_elementsInHeadWithPendingSheets;
     HashSet<const Element*> m_elementsInBodyWithPendingSheets;
 
-    bool m_didUpdateActiveStyleSheets { false };
-
     std::optional<UpdateType> m_pendingUpdate;
     bool m_hasDescendantWithPendingUpdate { false };
 

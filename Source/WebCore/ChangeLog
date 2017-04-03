@@ -1,3 +1,25 @@
+2017-04-03  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (r207669): FileMaker Pro Help pages do not render correctly
+        https://bugs.webkit.org/show_bug.cgi?id=170402
+        <rdar://problem/31004344>
+
+        Reviewed by Simon Fraser.
+
+        If a new stylesheet load is started from the load event the document.styleSheets does not
+        always reflect the already loaded stylesheets.
+
+        Test: fast/css/document-stylesheets-dynamic.html
+
+        * style/StyleScope.cpp:
+        (WebCore::Style::Scope::updateActiveStyleSheets):
+
+            Remove an old optimization where we would not update active stylesheets if there were pending
+            (head) stylesheet loads and they had not been updated already.
+            This is probably not a valuable optimization anymore with the new lazy stylesheet update strategy.
+
+        * style/StyleScope.h:
+
 2017-04-03  Anders Carlsson  <andersca@apple.com>
 
         Tweak ApplePaySession API
