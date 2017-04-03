@@ -1,5 +1,7 @@
 /*
  * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Metrological Group B.V.
+ * Copyright (C) 2017 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,13 +30,76 @@
 
 #if ENABLE(SUBTLE_CRYPTO)
 
-#include "NotImplemented.h"
+#include "CryptoAlgorithmPbkdf2Params.h"
+#include "CryptoKeyRaw.h"
+#include "ExceptionCode.h"
+#include "ScriptExecutionContext.h"
+#include <pal/crypto/gcrypt/Utilities.h>
 
 namespace WebCore {
 
-void CryptoAlgorithmPBKDF2::platformDeriveBits(std::unique_ptr<CryptoAlgorithmParameters>&&, Ref<CryptoKey>&&, size_t, VectorCallback&&, ExceptionCallback&&, ScriptExecutionContext&, WorkQueue&)
+static std::optional<Vector<uint8_t>> gcryptDeriveBits(const Vector<uint8_t>& keyData, const Vector<uint8_t>& saltData, CryptoAlgorithmIdentifier hashIdentifier, size_t iterations, size_t length)
 {
-    notImplemented();
+    int hashAlgorithm;
+    switch (hashIdentifier) {
+    case CryptoAlgorithmIdentifier::SHA_1:
+        hashAlgorithm = GCRY_MD_SHA1;
+        break;
+    case CryptoAlgorithmIdentifier::SHA_224:
+        hashAlgorithm = GCRY_MD_SHA224;
+        break;
+    case CryptoAlgorithmIdentifier::SHA_256:
+        hashAlgorithm = GCRY_MD_SHA256;
+        break;
+    case CryptoAlgorithmIdentifier::SHA_384:
+        hashAlgorithm = GCRY_MD_SHA384;
+        break;
+    case CryptoAlgorithmIdentifier::SHA_512:
+        hashAlgorithm = GCRY_MD_SHA512;
+        break;
+    default:
+        return std::nullopt;
+    }
+
+    // Length, in bits, is a multiple of 8, as guaranteed by CryptoAlgorithmPBKDF2::deriveBits().
+    ASSERT(!(length % 8));
+
+    Vector<uint8_t> result(length / 8);
+    gcry_error_t error = gcry_kdf_derive(keyData.data(), keyData.size(), GCRY_KDF_PBKDF2, hashAlgorithm, saltData.data(), saltData.size(), iterations, result.size(), result.data());
+    if (error != GPG_ERR_NO_ERROR) {
+        PAL::GCrypt::logError(error);
+        return std::nullopt;
+    }
+
+    return result;
+}
+
+void CryptoAlgorithmPBKDF2::platformDeriveBits(std::unique_ptr<CryptoAlgorithmParameters>&& parameters, Ref<CryptoKey>&& key, size_t length, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
+{
+    context.ref();
+    workQueue.dispatch(
+        [parameters = WTFMove(parameters), key = WTFMove(key), length, callback = WTFMove(callback), exceptionCallback = WTFMove(exceptionCallback), &context]() mutable {
+            auto& pbkdf2Parameters = downcast<CryptoAlgorithmPbkdf2Params>(*parameters);
+            auto& rawKey = downcast<CryptoKeyRaw>(key.get());
+
+            auto output = gcryptDeriveBits(rawKey.key(), pbkdf2Parameters.saltVector(), pbkdf2Parameters.hashIdentifier, pbkdf2Parameters.iterations, length);
+            if (!output) {
+                // We should only dereference callbacks after being back to the Document/Worker threads.
+                context.postTask(
+                    [callback = WTFMove(callback), exceptionCallback = WTFMove(exceptionCallback)](ScriptExecutionContext& context) {
+                        exceptionCallback(OperationError);
+                        context.deref();
+                    });
+                return;
+            }
+
+            // We should only dereference callbacks after being back to the Document/Worker threads.
+            context.postTask(
+                [output = WTFMove(*output), callback = WTFMove(callback), exceptionCallback = WTFMove(exceptionCallback)](ScriptExecutionContext& context) {
+                    callback(output);
+                    context.deref();
+                });
+        });
 }
 
 } // namespace WebCore

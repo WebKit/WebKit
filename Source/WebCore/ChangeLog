@@ -1,3 +1,23 @@
+2017-04-03  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GCrypt] Implement PBKDF2 support
+        https://bugs.webkit.org/show_bug.cgi?id=170270
+
+        Reviewed by Michael Catanzaro.
+
+        Implement the CryptoAlgorithmPBKDF2::platformDeriveBits() functionality
+        for configurations that use libgcrypt. This is done by leveraging the
+        gcry_kdf_derive() API, using GCRY_KDF_PBKDF2 as the preferred KDF
+        along with the properly deducted SHA algorithm.
+
+        No new tests -- current ones cover this sufficiently, but are not yet
+        enabled due to other missing platform-specific SUBTLE_CRYPTO
+        implementations.
+
+        * crypto/gcrypt/CryptoAlgorithmPBKDF2GCrypt.cpp:
+        (WebCore::gcryptDeriveBits):
+        (WebCore::CryptoAlgorithmPBKDF2::platformDeriveBits):
+
 2017-04-01  Simon Fraser  <simon.fraser@apple.com>
 
         Clean up touch event handler registration when moving nodes between documents
