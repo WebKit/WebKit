@@ -58,7 +58,7 @@ private:
     void startTimeout();
     void stopTimeout();
 
-    void createRequest(const WebCore::ResourceRequest&);
+    void createRequest(WebCore::ResourceRequest&&);
     void clearRequest();
     static void sendRequestCallback(SoupRequest*, GAsyncResult*, NetworkDataTaskSoup*);
     void didSendRequest(GRefPtr<GInputStream>&&);
@@ -127,6 +127,7 @@ private:
     GRefPtr<GAsyncResult> m_pendingResult;
     WebCore::ProtectionSpace m_protectionSpaceForPersistentStorage;
     WebCore::Credential m_credentialForPersistentStorage;
+    WebCore::ResourceRequest m_currentRequest;
     WebCore::ResourceResponse m_response;
     Vector<char> m_readBuffer;
     unsigned m_redirectCount { 0 };
