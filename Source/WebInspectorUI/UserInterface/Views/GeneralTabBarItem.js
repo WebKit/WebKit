@@ -32,7 +32,7 @@ WebInspector.GeneralTabBarItem = class GeneralTabBarItem extends WebInspector.Ta
 
         let closeButtonElement = document.createElement("div");
         closeButtonElement.classList.add(WebInspector.TabBarItem.CloseButtonStyleClassName);
-        closeButtonElement.title = WebInspector.UIString("Close tab");
+        closeButtonElement.title = WebInspector.UIString("Click to close this tab; Option-click to close all tabs except this one");
         this.element.insertBefore(closeButtonElement, this.element.firstChild);
 
         this.element.addEventListener("contextmenu", this._handleContextMenuEvent.bind(this));

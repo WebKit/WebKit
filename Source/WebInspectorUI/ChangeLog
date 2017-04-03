@@ -1,3 +1,16 @@
+2017-04-03  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Tooltip for close tab button should match Safari
+        https://bugs.webkit.org/show_bug.cgi?id=170417
+        <rdar://problem/31378423>
+
+        Reviewed by Matt Baker.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Views/GeneralTabBarItem.js:
+        (WebInspector.GeneralTabBarItem):
+        Updated tooltip to match Safari's most descriptive tooltip.
+
 2017-04-03  Devin Rousso  <webkit@devinrousso.com>
 
         REGRESSION (r214354): Web Inspector: WebSocket connection icon obscures close content view icon
