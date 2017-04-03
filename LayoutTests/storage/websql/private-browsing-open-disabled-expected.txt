@@ -1,0 +1,1 @@
+Caught exception opening a WebSQL database in private browsing: SecurityError (DOM Exception 18): The operation is insecure.
