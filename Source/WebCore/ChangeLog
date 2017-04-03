@@ -1,3 +1,24 @@
+2017-03-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [Cairo] Handle the blend mode in GraphicsContext::drawPattern
+        https://bugs.webkit.org/show_bug.cgi?id=169746
+
+        Reviewed by Žan Doberšek.
+
+        We are not taking into account the blend mode when passing the cairo operator to drawPatternToCairoContext().
+        This is based on patch by Žan Doberšek, just adding the toCairoOperator changes to make it easier to handle
+        it. Instead of checking everywhere if blend mode is Normal to decide whether to use toCairoOperator with
+        CompositeOperator or BlendMode, there's no a single toCairoOperator that receives both parameters, but BlendMode
+        is optional and defaults to Normal.
+
+        * platform/graphics/cairo/CairoUtilities.cpp:
+        (WebCore::toCairoCompositeOperator):
+        (WebCore::toCairoOperator):
+        * platform/graphics/cairo/CairoUtilities.h:
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::setPlatformCompositeOperation):
+        (WebCore::GraphicsContext::drawPattern):
+
 2017-03-16  Simon Fraser  <simon.fraser@apple.com>
 
         RenderView::documentBeingDestroyed() needs a new name.
