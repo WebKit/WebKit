@@ -1,5 +1,49 @@
 2017-04-03  Filip Pizlo  <fpizlo@apple.com>
 
+        Move the Liveness<> adapters from AirLiveness.h to AirLivenessAdapter.h.
+
+        Rubber stamped by Keith Miller.
+        
+        This will make it easier to write other code that uses those adapters.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * b3/air/AirLiveness.h:
+        (JSC::B3::Air::LivenessAdapter::LivenessAdapter): Deleted.
+        (JSC::B3::Air::LivenessAdapter::blockSize): Deleted.
+        (JSC::B3::Air::LivenessAdapter::forEachUse): Deleted.
+        (JSC::B3::Air::LivenessAdapter::forEachDef): Deleted.
+        (JSC::B3::Air::TmpLivenessAdapter::TmpLivenessAdapter): Deleted.
+        (JSC::B3::Air::TmpLivenessAdapter::numIndices): Deleted.
+        (JSC::B3::Air::TmpLivenessAdapter::acceptsBank): Deleted.
+        (JSC::B3::Air::TmpLivenessAdapter::acceptsRole): Deleted.
+        (JSC::B3::Air::TmpLivenessAdapter::valueToIndex): Deleted.
+        (JSC::B3::Air::TmpLivenessAdapter::indexToValue): Deleted.
+        (JSC::B3::Air::StackSlotLivenessAdapter::StackSlotLivenessAdapter): Deleted.
+        (JSC::B3::Air::StackSlotLivenessAdapter::numIndices): Deleted.
+        (JSC::B3::Air::StackSlotLivenessAdapter::acceptsBank): Deleted.
+        (JSC::B3::Air::StackSlotLivenessAdapter::acceptsRole): Deleted.
+        (JSC::B3::Air::StackSlotLivenessAdapter::valueToIndex): Deleted.
+        (JSC::B3::Air::StackSlotLivenessAdapter::indexToValue): Deleted.
+        * b3/air/AirLivenessAdapter.h: Added.
+        (JSC::B3::Air::LivenessAdapter::LivenessAdapter):
+        (JSC::B3::Air::LivenessAdapter::blockSize):
+        (JSC::B3::Air::LivenessAdapter::forEachUse):
+        (JSC::B3::Air::LivenessAdapter::forEachDef):
+        (JSC::B3::Air::TmpLivenessAdapter::TmpLivenessAdapter):
+        (JSC::B3::Air::TmpLivenessAdapter::numIndices):
+        (JSC::B3::Air::TmpLivenessAdapter::acceptsBank):
+        (JSC::B3::Air::TmpLivenessAdapter::acceptsRole):
+        (JSC::B3::Air::TmpLivenessAdapter::valueToIndex):
+        (JSC::B3::Air::TmpLivenessAdapter::indexToValue):
+        (JSC::B3::Air::StackSlotLivenessAdapter::StackSlotLivenessAdapter):
+        (JSC::B3::Air::StackSlotLivenessAdapter::numIndices):
+        (JSC::B3::Air::StackSlotLivenessAdapter::acceptsBank):
+        (JSC::B3::Air::StackSlotLivenessAdapter::acceptsRole):
+        (JSC::B3::Air::StackSlotLivenessAdapter::valueToIndex):
+        (JSC::B3::Air::StackSlotLivenessAdapter::indexToValue):
+
+2017-04-03  Filip Pizlo  <fpizlo@apple.com>
+
         WTF::Liveness should have an API that focuses on actions at instruction boundaries
         https://bugs.webkit.org/show_bug.cgi?id=170407
 
