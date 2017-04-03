@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <script src="../resources/js-test-pre.js"></script>
+    </head>
+    <body>
+        <script>
+            description("Attempting to create a large AudioBuffer should not crash.");
+            shouldThrow("context = new webkitAudioContext().createBuffer(1, -1, 44100)");
+            testPassed("Test passed because if it didn't crash.");
+        </script>
+
+        <script src="../resources/js-test-post.js"></script>
+    </body>
+</html>

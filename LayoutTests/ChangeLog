@@ -1,3 +1,13 @@
+2017-03-30  Eric Carlson  <eric.carlson@apple.com>
+
+        [Crash] WebCore::AudioBuffer::AudioBuffer don't checking illegal value
+        https://bugs.webkit.org/show_bug.cgi?id=169956
+
+        Reviewed by Youenn Fablet.
+
+        * webaudio/audiobuffer-crash-expected.txt: Added.
+        * webaudio/audiobuffer-crash.html: Added.
+
 2017-03-29  Ryosuke Niwa  <rniwa@webkit.org>
 
         Disconnecting a HTMLObjectElement does not always unload its content document
