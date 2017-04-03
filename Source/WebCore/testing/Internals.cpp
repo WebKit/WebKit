@@ -85,6 +85,7 @@
 #include "InstrumentingAgents.h"
 #include "IntRect.h"
 #include "InternalSettings.h"
+#include "JSImageData.h"
 #include "Language.h"
 #include "LibWebRTCProvider.h"
 #include "MainFrame.h"
@@ -3895,6 +3896,33 @@ void Internals::observeMediaStreamTrack(MediaStreamTrack& track)
     m_track = &track;
     m_track->source().addObserver(*this);
 }
+
+void Internals::grabNextMediaStreamTrackFrame(TrackFramePromise&& promise)
+{
+    m_nextTrackFramePromise = WTFMove(promise);
+}
+
+void Internals::videoSampleAvailable(MediaSample& sample)
+{
+    m_trackVideoSampleCount++;
+    if (!m_nextTrackFramePromise)
+        return;
+
+    auto videoSettings = m_track->getSettings();
+    if (!videoSettings.width || !videoSettings.height)
+        return;
+
+    auto rgba = sample.getRGBAImageData();
+    if (!rgba)
+        return;
+    auto imageData = ImageData::create(rgba.releaseNonNull(), *videoSettings.width, *videoSettings.height);
+    if (!imageData.hasException())
+        m_nextTrackFramePromise->resolve(imageData.releaseReturnValue().releaseNonNull());
+    else
+        m_nextTrackFramePromise->reject(imageData.exception().code());
+    m_nextTrackFramePromise = std::nullopt;
+}
+
 #endif
 
 } // namespace WebCore

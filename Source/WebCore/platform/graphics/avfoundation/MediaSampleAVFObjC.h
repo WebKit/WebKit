@@ -41,6 +41,8 @@ public:
     static RefPtr<MediaSampleAVFObjC> createImageSample(Ref<JSC::Uint8ClampedArray>&&, unsigned long width, unsigned long height);
     static RefPtr<MediaSampleAVFObjC> createImageSample(Vector<uint8_t>&&, unsigned long width, unsigned long height);
 
+    RefPtr<JSC::Uint8ClampedArray> getRGBAImageData() const final;
+
 private:
     MediaSampleAVFObjC(CMSampleBufferRef sample)
         : m_sample(sample)

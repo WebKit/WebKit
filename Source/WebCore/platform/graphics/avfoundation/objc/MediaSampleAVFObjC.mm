@@ -26,6 +26,8 @@
 #import "config.h"
 #import "MediaSampleAVFObjC.h"
 
+#import "PixelBufferConformerCV.h"
+#import <runtime/TypedArrayInlines.h>
 #import <wtf/PrintStream.h>
 
 #import "CoreMediaSoftLink.h"
@@ -263,6 +265,30 @@ Ref<MediaSample> MediaSampleAVFObjC::createNonDisplayingCopy() const
     }
 
     return MediaSampleAVFObjC::create(adoptCF(newSampleBuffer).get(), m_id);
+}
+
+RefPtr<JSC::Uint8ClampedArray> MediaSampleAVFObjC::getRGBAImageData() const
+{
+    const OSType imageFormat = kCVPixelFormatType_32RGBA;
+    RetainPtr<CFNumberRef> imageFormatNumber = adoptCF(CFNumberCreate(nullptr,  kCFNumberIntType,  &imageFormat));
+
+    RetainPtr<CFMutableDictionaryRef> conformerOptions = adoptCF(CFDictionaryCreateMutable(0, 1, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+    CFDictionarySetValue(conformerOptions.get(), kCVPixelBufferPixelFormatTypeKey, imageFormatNumber.get());
+    PixelBufferConformerCV pixelBufferConformer(conformerOptions.get());
+
+    auto pixelBuffer = static_cast<CVPixelBufferRef>(CMSampleBufferGetImageBuffer(m_sample.get()));
+    auto rgbaPixelBuffer = pixelBufferConformer.convert(pixelBuffer);
+    auto status = CVPixelBufferLockBaseAddress(rgbaPixelBuffer.get(), kCVPixelBufferLock_ReadOnly);
+    ASSERT(status == noErr);
+
+    void* data = CVPixelBufferGetBaseAddressOfPlane(rgbaPixelBuffer.get(), 0);
+    size_t byteLength = CVPixelBufferGetHeight(pixelBuffer) * CVPixelBufferGetWidth(pixelBuffer) * 4;
+    auto result = JSC::Uint8ClampedArray::create(JSC::ArrayBuffer::create(data, byteLength), 0, byteLength);
+
+    status = CVPixelBufferUnlockBaseAddress(rgbaPixelBuffer.get(), kCVPixelBufferLock_ReadOnly);
+    ASSERT(status == noErr);
+
+    return result;
 }
 
 }

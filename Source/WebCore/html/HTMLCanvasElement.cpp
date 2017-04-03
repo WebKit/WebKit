@@ -603,7 +603,7 @@ ExceptionOr<Ref<MediaStream>> HTMLCanvasElement::captureStream(ScriptExecutionCo
 
     if (frameRequestRate && frameRequestRate.value() < 0)
         return Exception(NOT_SUPPORTED_ERR, ASCIILiteral("frameRequestRate is negative"));
-    
+
     auto track = CanvasCaptureMediaStreamTrack::create(context, *this, WTFMove(frameRequestRate));
     auto stream =  MediaStream::create(context);
     stream->addTrack(track);

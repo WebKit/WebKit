@@ -46,7 +46,7 @@ public:
     ActiveDOMCallback(ScriptExecutionContext* context);
     virtual ~ActiveDOMCallback();
 
-    bool canInvokeCallback() const;
+    WEBCORE_EXPORT bool canInvokeCallback() const;
 };
 
 } // namespace WebCore

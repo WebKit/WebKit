@@ -1,0 +1,81 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+    <body>
+        <canvas id="canvas1" width=400px height=400px></canvas>
+        <video id="video1" controls autoplay width=400px height=400px></video>
+        <br>
+        <canvas id="canvas2" width=400px height=400px></canvas>
+        <video id="video2" controls autoplay width=400px height=400px></video>
+        <script src="../../../resources/testharness.js"></script>
+        <script src="../../../resources/testharnessreport.js"></script>
+        <script>
+
+var canvas1 = document.getElementById("canvas1");
+var canvas2 = document.getElementById("canvas2");
+var video1 = document.getElementById("video1");
+var video2 = document.getElementById("video2");
+var gl1 = canvas1.getContext('webgl', { preserveDrawingBuffer: false } );
+var gl2 = canvas2.getContext('webgl', { preserveDrawingBuffer: true } );
+
+function modifyCanvas(gl, green)
+{
+    gl.clearColor(0, green ? 1 : 0, 0, 1);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+
+    setTimeout(() => { modifyCanvas(gl, !green) }, 500);
+}
+
+function checkGreenPixel(value, cptr)
+{
+    var index = cptr % 4;
+    if (index == 0)
+        return value == 0;
+    if (index == 1)
+        return value == 255;
+    if (index == 2)
+        return value == 0;
+    if (index == 3)
+        return value == 255;
+}
+
+promise_test((test) => {
+    var stream = canvas1.captureStream();
+    video1.srcObject = stream;
+
+    if (!window.internals)
+        var promise = Promise.resolve();
+    else {
+        internals.observeMediaStreamTrack(stream.getVideoTracks()[0]);
+        var promise = internals.grabNextMediaStreamTrackFrame().then((data) => {
+            data.data.forEach((value, cptr) => {
+                assert_true(checkGreenPixel(value, cptr), "expecting value " + cptr + " to be part of a green pixel");
+            });
+        })
+    }
+
+    modifyCanvas(gl1, true);
+    return promise;
+}, "captureStream with 3d context drawing - not buffered initially");
+
+promise_test((test) => {
+    var stream = canvas2.captureStream();
+    video2.srcObject = stream;
+
+    if (!window.internals)
+        var promise = Promise.resolve();
+    else {
+        internals.observeMediaStreamTrack(stream.getVideoTracks()[0]);
+        var promise = internals.grabNextMediaStreamTrackFrame().then((data) => {
+            data.data.forEach((value, cptr) => {
+                assert_true(checkGreenPixel(value, cptr), "expecting value " + cptr + " to be part of a green pixel");
+            });
+        })
+    }
+
+    modifyCanvas(gl2, true);
+    return promise;
+}, "captureStream with 3d context drawing - buffered initially");
+
+        </script>
+    </body>
+</html>

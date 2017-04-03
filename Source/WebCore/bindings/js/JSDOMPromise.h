@@ -88,7 +88,7 @@ public:
     void reject();
     void reject(std::nullptr_t);
     void reject(Exception&&);
-    void reject(ExceptionCode, const String& = { });
+    WEBCORE_EXPORT void reject(ExceptionCode, const String& = { });
     void reject(const JSC::PrivateName&);
 
     template<typename Callback>
@@ -122,7 +122,7 @@ private:
 
     JSC::JSPromiseDeferred* deferred() const { return guarded(); }
 
-    void callFunction(JSC::ExecState&, JSC::JSValue function, JSC::JSValue resolution);
+    WEBCORE_EXPORT void callFunction(JSC::ExecState&, JSC::JSValue function, JSC::JSValue resolution);
     void resolve(JSC::ExecState& state, JSC::JSValue resolution) { callFunction(state, deferred()->resolve(), resolution); }
     void reject(JSC::ExecState& state, JSC::JSValue resolution) { callFunction(state, deferred()->reject(), resolution); }
 };
@@ -212,7 +212,7 @@ Ref<DeferredPromise> createDeferredPromise(JSC::ExecState&, JSDOMWindow&);
 void fulfillPromiseWithJSON(Ref<DeferredPromise>&&, const String&);
 void fulfillPromiseWithArrayBuffer(Ref<DeferredPromise>&&, ArrayBuffer*);
 void fulfillPromiseWithArrayBuffer(Ref<DeferredPromise>&&, const void*, size_t);
-void rejectPromiseWithExceptionIfAny(JSC::ExecState&, JSDOMGlobalObject&, JSC::JSPromiseDeferred&);
+WEBCORE_EXPORT void rejectPromiseWithExceptionIfAny(JSC::ExecState&, JSDOMGlobalObject&, JSC::JSPromiseDeferred&);
 JSC::EncodedJSValue createRejectedPromiseWithTypeError(JSC::ExecState&, const String&);
 
 using PromiseFunction = void(JSC::ExecState&, Ref<DeferredPromise>&&);

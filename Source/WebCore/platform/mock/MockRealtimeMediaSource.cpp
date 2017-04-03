@@ -98,7 +98,7 @@ RefPtr<RealtimeMediaSourceCapabilities> MockRealtimeMediaSource::capabilities() 
 void MockRealtimeMediaSource::initializeSettings()
 {
     if (m_currentSettings.deviceId().isEmpty()) {
-        m_currentSettings.setSupportedConstraits(supportedConstraints());
+        m_currentSettings.setSupportedConstraints(supportedConstraints());
         m_currentSettings.setDeviceId(id());
     }
 

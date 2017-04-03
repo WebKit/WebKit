@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-class DOMGuardedObject : public RefCounted<DOMGuardedObject>, public ActiveDOMCallback {
+class WEBCORE_EXPORT DOMGuardedObject : public RefCounted<DOMGuardedObject>, public ActiveDOMCallback {
 public:
     ~DOMGuardedObject();
 

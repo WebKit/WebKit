@@ -89,7 +89,7 @@ public:
         String deviceId;
         String groupId;
     };
-    TrackSettings getSettings() const;
+    WEBCORE_EXPORT TrackSettings getSettings() const;
 
     struct TrackCapabilities {
         std::optional<LongRange> width;

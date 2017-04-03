@@ -31,6 +31,7 @@
     Constructor(unsigned long sw, unsigned long sh),
     ConstructorMayThrowException,
     CustomToJSObject,
+    ExportMacro=WEBCORE_EXPORT,
     Exposed=(Window,Worker),
     ImplementationLacksVTable,
 ] interface ImageData {

@@ -470,7 +470,7 @@ void WebGLRenderingContext::clear(GC3Dbitfield mask)
     }
     if (!clearIfComposited(mask))
         m_context->clear(mask);
-    markContextChanged();
+    markContextChangedAndNotifyCanvasObserver();
 }
 
 WebGLAny WebGLRenderingContext::getParameter(GC3Denum pname)

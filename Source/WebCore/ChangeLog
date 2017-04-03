@@ -1,3 +1,60 @@
+2017-04-03  Youenn Fablet  <youenn@apple.com>
+
+        captureStream is getting black frames with webgl canvas
+        https://bugs.webkit.org/show_bug.cgi?id=170325
+
+        Reviewed by Dean Jackson.
+
+        Test: fast/mediastream/captureStream/canvas3d.html
+
+        Changing the webgl context to save buffers in case the canvas is captured.
+        Adding a canvas changed notification in case of clear.
+        In the future, we might want to change this notification and do it when endPaint or similar is called.
+
+        Adding an Internals API to grab the RGBA equivalent of the next track frame.
+        For that purpose, adding a bunch of WEBCORE_EXPORT.
+
+        * Modules/mediastream/CanvasCaptureMediaStreamTrack.cpp:
+        (WebCore::CanvasCaptureMediaStreamTrack::Source::Source): Adding constraints support so that track settings
+        getter actually transmits the width and height of the source.
+        (WebCore::CanvasCaptureMediaStreamTrack::Source::canvasChanged): ensuring webgl canvas context keep their drawing buffer.
+        * Modules/mediastream/MediaStreamTrack.h:
+        * bindings/js/JSDOMGuardedObject.h:
+        * bindings/js/JSDOMPromise.h:
+        (WebCore::DeferredPromise::resolve):
+        (WebCore::DeferredPromise::reject):
+        * dom/ActiveDOMCallback.h:
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::captureStream):
+        * html/ImageData.h:
+        * html/ImageData.idl:
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::clear): ensuring canvas observers get notified in case of clear calls.
+        * html/canvas/WebGLRenderingContextBase.h:
+        (WebCore::WebGLRenderingContextBase::preserveDrawingBuffer): Added to allow canvas capture to update this property.
+        * platform/MediaSample.h:
+        (WebCore::MediaSample::getRGBAImageData): Added for internals API.
+        * platform/graphics/avfoundation/MediaSampleAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaSampleAVFObjC.mm:
+        (WebCore::MediaSampleAVFObjC::getRGBAImageData):
+        * platform/graphics/cv/PixelBufferConformerCV.cpp:
+        (WebCore::PixelBufferConformerCV::convert): Helper routine for getRGBAImageData.
+        * platform/graphics/cv/PixelBufferConformerCV.h:
+        * platform/mediastream/RealtimeMediaSourceSettings.h:
+        (WebCore::RealtimeMediaSourceSettings::setSupportedConstraints):
+        (WebCore::RealtimeMediaSourceSettings::setSupportedConstraits): Deleted.
+        * platform/mediastream/mac/AVMediaCaptureSource.mm:
+        (WebCore::AVMediaCaptureSource::initializeSettings):
+        * platform/mediastream/openwebrtc/RealtimeAudioSourceOwr.h:
+        * platform/mediastream/openwebrtc/RealtimeVideoSourceOwr.h:
+        * platform/mock/MockRealtimeMediaSource.cpp:
+        (WebCore::MockRealtimeMediaSource::initializeSettings):
+        * testing/Internals.cpp:
+        (WebCore::Internals::grabNextMediaStreamTrackFrame):
+        (WebCore::Internals::videoSampleAvailable):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2017-04-03  Per Arne Vollan  <pvollan@apple.com>
 
         Implement stroke-miterlimit.

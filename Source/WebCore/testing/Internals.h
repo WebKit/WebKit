@@ -29,9 +29,11 @@
 #include "CSSComputedStyleDeclaration.h"
 #include "ContextDestructionObserver.h"
 #include "ExceptionOr.h"
+#include "JSDOMPromise.h"
 #include "PageConsoleClient.h"
 #include "RealtimeMediaSource.h"
 #include <runtime/Float32Array.h>
+#include <wtf/Optional.h>
 
 #if ENABLE(MEDIA_SESSION)
 #include "MediaSessionInterruptionProvider.h"
@@ -54,6 +56,7 @@ class HTMLInputElement;
 class HTMLLinkElement;
 class HTMLMediaElement;
 class HTMLSelectElement;
+class ImageData;
 class InspectorStubFrontend;
 class InternalSettings;
 class MallocStatistics;
@@ -562,6 +565,8 @@ public:
     unsigned long trackAudioSampleCount() const { return m_trackAudioSampleCount; }
     unsigned long trackVideoSampleCount() const { return m_trackVideoSampleCount; }
     void observeMediaStreamTrack(MediaStreamTrack&);
+    using TrackFramePromise = DOMPromise<IDLInterface<ImageData>>;
+    void grabNextMediaStreamTrackFrame(TrackFramePromise&&);
 #endif
 
 private:
@@ -573,12 +578,13 @@ private:
 
     // RealtimeMediaSource::Observer API
 #if ENABLE(MEDIA_STREAM)
-    void videoSampleAvailable(MediaSample&) final { m_trackVideoSampleCount++; }
+    void videoSampleAvailable(MediaSample&) final;
     void audioSamplesAvailable(const MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t) final { m_trackAudioSampleCount++; }
 
     unsigned long m_trackVideoSampleCount { 0 };
     unsigned long m_trackAudioSampleCount { 0 };
     RefPtr<MediaStreamTrack> m_track;
+    std::optional<TrackFramePromise> m_nextTrackFramePromise;
 #endif
 
     std::unique_ptr<InspectorStubFrontend> m_inspectorFrontend;

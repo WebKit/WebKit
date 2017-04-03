@@ -204,7 +204,7 @@ void AVMediaCaptureSource::commitConfiguration()
 void AVMediaCaptureSource::initializeSettings()
 {
     if (m_currentSettings.deviceId().isEmpty())
-        m_currentSettings.setSupportedConstraits(supportedConstraints());
+        m_currentSettings.setSupportedConstraints(supportedConstraints());
 
     m_currentSettings.setDeviceId(id());
     updateSettings(m_currentSettings);

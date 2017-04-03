@@ -72,6 +72,24 @@ static void CVPixelBufferReleaseInfoCallback(void* info)
     CFRelease(pixelBuffer);
 }
 
+RetainPtr<CVPixelBufferRef> PixelBufferConformerCV::convert(CVPixelBufferRef rawBuffer)
+{
+#if USE(VIDEOTOOLBOX)
+    RetainPtr<CVPixelBufferRef> buffer { rawBuffer };
+
+    if (!VTPixelBufferConformerIsConformantPixelBuffer(m_pixelConformer.get(), buffer.get())) {
+        CVPixelBufferRef outputBuffer = nullptr;
+        OSStatus status = VTPixelBufferConformerCopyConformedPixelBuffer(m_pixelConformer.get(), buffer.get(), false, &outputBuffer);
+        if (status != noErr || !outputBuffer)
+            return nullptr;
+        return adoptCF(outputBuffer);
+    }
+#else
+    UNUSED_PARAM(rawBuffer);
+#endif
+    return nullptr;
+}
+
 RetainPtr<CGImageRef> PixelBufferConformerCV::createImageFromPixelBuffer(CVPixelBufferRef rawBuffer)
 {
     RetainPtr<CVPixelBufferRef> buffer { rawBuffer };

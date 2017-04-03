@@ -59,7 +59,7 @@ RealtimeAudioSourceOwr(const String& id, RealtimeMediaSource::Type type, const S
 protected:
     void initializeSettings() final {
         if (m_currentSettings.deviceId().isEmpty())
-            m_currentSettings.setSupportedConstraits(supportedConstraints());
+            m_currentSettings.setSupportedConstraints(supportedConstraints());
 
         m_currentSettings.setDeviceId(id());
     }

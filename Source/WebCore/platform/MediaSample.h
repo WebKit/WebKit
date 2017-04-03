@@ -27,6 +27,7 @@
 #define MediaSample_h
 
 #include "FloatSize.h"
+#include <runtime/TypedArrays.h>
 #include <wtf/MediaTime.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/AtomicString.h>
@@ -68,6 +69,8 @@ public:
     enum DivideFlags { BeforePresentationTime, AfterPresentationTime };
     virtual std::pair<RefPtr<MediaSample>, RefPtr<MediaSample>> divide(const MediaTime& presentationTime) = 0;
     virtual Ref<MediaSample> createNonDisplayingCopy() const = 0;
+
+    virtual RefPtr<JSC::Uint8ClampedArray> getRGBAImageData() const { return nullptr; }
 
     enum SampleFlags {
         None = 0,
