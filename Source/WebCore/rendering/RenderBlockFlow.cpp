@@ -36,7 +36,6 @@
 #include "LayoutRepainter.h"
 #include "Logging.h"
 #include "RenderCombineText.h"
-#include "RenderFlowThread.h"
 #include "RenderInline.h"
 #include "RenderIterator.h"
 #include "RenderLayer.h"
@@ -46,6 +45,7 @@
 #include "RenderMultiColumnFlowThread.h"
 #include "RenderMultiColumnSet.h"
 #include "RenderNamedFlowFragment.h"
+#include "RenderNamedFlowThread.h"
 #include "RenderTableCell.h"
 #include "RenderText.h"
 #include "RenderView.h"
@@ -876,7 +876,7 @@ void RenderBlockFlow::determineLogicalLeftPositionForChild(RenderBox& child, App
         
     // Some objects (e.g., tables, horizontal rules, overflow:auto blocks) avoid floats. They need
     // to shift over as necessary to dodge any floats that might get in the way.
-    if (child.avoidsFloats() && containsFloats() && !flowThreadContainingBlock())
+    if (child.avoidsFloats() && containsFloats() && !is<RenderNamedFlowThread>(flowThreadContainingBlock()))
         newPosition += computeStartPositionDeltaForChildAvoidingFloats(child, marginStartForChild(child));
 
     setLogicalLeftForChild(child, style().isLeftToRightDirection() ? newPosition : totalAvailableLogicalWidth - newPosition - logicalWidthForChild(child), applyDelta);
