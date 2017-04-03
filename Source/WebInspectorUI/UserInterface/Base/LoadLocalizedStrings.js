@@ -32,3 +32,30 @@
     if (localizedStringsURL)
         document.write("<script src=\"" + localizedStringsURL + "\"></script>");
 })();
+
+WebInspector.unlocalizedString = function(string)
+{
+    // Intentionally do nothing, since this is for engineering builds
+    // (such as in Debug UI) or in text that is standardized in English.
+    // For example, CSS property names and values are never localized.
+    return string;
+};
+
+WebInspector.UIString = function(string, vararg)
+{
+    if (WebInspector.dontLocalizeUserInterface)
+        return string;
+
+    if (window.localizedStrings && string in window.localizedStrings)
+        return window.localizedStrings[string];
+
+    if (!this._missingLocalizedStrings)
+        this._missingLocalizedStrings = {};
+
+    if (!(string in this._missingLocalizedStrings)) {
+        console.error("Localized string \"" + string + "\" was not found.");
+        this._missingLocalizedStrings[string] = true;
+    }
+
+    return "LOCALIZED STRING NOT FOUND";
+};

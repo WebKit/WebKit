@@ -102,6 +102,7 @@ WebInspector.assumingMainTarget = () => WebInspector.mainTarget;
 
 WebInspector.isDebugUIEnabled = () => false;
 
+WebInspector.unlocalizedString = (string) => string;
 WebInspector.UIString = (string) => string;
 
 WebInspector.indentString = () => "    ";

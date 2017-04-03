@@ -767,6 +767,7 @@ localizedStrings["Sort Ascending"] = "Sort Ascending";
 localizedStrings["Sort Descending"] = "Sort Descending";
 localizedStrings["Source"] = "Source";
 localizedStrings["Sources"] = "Sources";
+localizedStrings["Space"] = "Space";
 localizedStrings["Spaces"] = "Spaces";
 localizedStrings["Spacing"] = "Spacing";
 localizedStrings["Specificity: (%d, %d, %d)"] = "Specificity: (%d, %d, %d)";
