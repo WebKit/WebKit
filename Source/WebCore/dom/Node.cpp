@@ -315,15 +315,16 @@ void Node::willBeDeletedFrom(Document& document)
 {
     if (hasEventTargetData()) {
         document.didRemoveWheelEventHandler(*this, EventHandlerRemoval::All);
-#if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS)
-        document.removeTouchEventListener(this, true);
-#else
-        // FIXME: This should call didRemoveTouchEventHandler().
+#if ENABLE(TOUCH_EVENTS)
+#if PLATFORM(IOS)
+        document.removeTouchEventListener(*this, EventHandlerRemoval::All);
+#endif
+        document.didRemoveTouchEventHandler(*this, EventHandlerRemoval::All);
 #endif
     }
 
 #if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS)
-    document.removeTouchEventHandler(this, true);
+    document.removeTouchEventHandler(*this, EventHandlerRemoval::All);
 #endif
 
     if (AXObjectCache* cache = document.existingAXObjectCache())
@@ -1919,14 +1920,30 @@ void Node::didMoveToNewDocument(Document& oldDocument)
         document().didAddWheelEventHandler(*this);
     }
 
-    unsigned numTouchEventHandlers = 0;
+    unsigned numTouchEventListeners = 0;
     for (auto& name : eventNames().touchEventNames())
-        numTouchEventHandlers += eventListeners(name).size();
+        numTouchEventListeners += eventListeners(name).size();
 
-    for (unsigned i = 0; i < numTouchEventHandlers; ++i) {
+    for (unsigned i = 0; i < numTouchEventListeners; ++i) {
         oldDocument.didRemoveTouchEventHandler(*this);
         document().didAddTouchEventHandler(*this);
+
+#if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS)
+        oldDocument.removeTouchEventListener(*this);
+        document().addTouchEventListener(*this);
+#endif
     }
+
+#if ENABLE(TOUCH_EVENTS) && ENABLE(IOS_GESTURE_EVENTS)
+    unsigned numGestureEventListeners = 0;
+    for (auto& name : eventNames().gestureEventNames())
+        numGestureEventListeners += eventListeners(name).size();
+
+    for (unsigned i = 0; i < numGestureEventListeners; ++i) {
+        oldDocument.removeTouchEventHandler(*this);
+        document().addTouchEventHandler(*this);
+    }
+#endif
 
     if (auto* registry = mutationObserverRegistry()) {
         for (auto& registration : *registry)
@@ -1937,6 +1954,16 @@ void Node::didMoveToNewDocument(Document& oldDocument)
         for (auto& registration : *transientRegistry)
             document().addMutationObserverTypes(registration->mutationTypes());
     }
+
+#if !ASSERT_DISABLED || ENABLE(SECURITY_ASSERTIONS)
+#if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS)
+    ASSERT_WITH_SECURITY_IMPLICATION(!oldDocument.touchEventListenersContain(*this));
+    ASSERT_WITH_SECURITY_IMPLICATION(!oldDocument.touchEventHandlersContain(*this));
+#endif
+#if ENABLE(TOUCH_EVENTS) && ENABLE(IOS_GESTURE_EVENTS)
+    ASSERT_WITH_SECURITY_IMPLICATION(!oldDocument.touchEventTargetsContain(*this));
+#endif
+#endif
 }
 
 static inline bool tryAddEventListener(Node* targetNode, const AtomicString& eventType, Ref<EventListener>&& listener, const EventTarget::AddEventListenerOptions& options)
@@ -1963,13 +1990,13 @@ static inline bool tryAddEventListener(Node* targetNode, const AtomicString& eve
 
 #if ENABLE(TOUCH_EVENTS)
     if (eventNames().isTouchEventType(eventType))
-        targetNode->document().addTouchEventListener(targetNode);
+        targetNode->document().addTouchEventListener(*targetNode);
 #endif
 #endif // PLATFORM(IOS)
 
 #if ENABLE(IOS_GESTURE_EVENTS) && ENABLE(TOUCH_EVENTS)
     if (eventNames().isGestureEventType(eventType))
-        targetNode->document().addTouchEventHandler(targetNode);
+        targetNode->document().addTouchEventHandler(*targetNode);
 #endif
 
     return true;
@@ -2004,13 +2031,13 @@ static inline bool tryRemoveEventListener(Node* targetNode, const AtomicString& 
 
 #if ENABLE(TOUCH_EVENTS)
     if (eventNames().isTouchEventType(eventType))
-        targetNode->document().removeTouchEventListener(targetNode);
+        targetNode->document().removeTouchEventListener(*targetNode);
 #endif
 #endif // PLATFORM(IOS)
 
 #if ENABLE(IOS_GESTURE_EVENTS) && ENABLE(TOUCH_EVENTS)
     if (eventNames().isGestureEventType(eventType))
-        targetNode->document().removeTouchEventHandler(targetNode);
+        targetNode->document().removeTouchEventHandler(*targetNode);
 #endif
 
     return true;

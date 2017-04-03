@@ -549,7 +549,7 @@ void SliderThumbElement::registerForTouchEvents()
 
     ASSERT(shouldAcceptTouchEvents());
 
-    document().addTouchEventHandler(this);
+    document().addTouchEventHandler(*this);
     m_isRegisteredAsTouchEventListener = true;
 }
 
@@ -561,7 +561,7 @@ void SliderThumbElement::unregisterForTouchEvents()
     clearExclusiveTouchIdentifier();
     stopDragging();
 
-    document().removeTouchEventHandler(this);
+    document().removeTouchEventHandler(*this);
     m_isRegisteredAsTouchEventListener = false;
 }
 

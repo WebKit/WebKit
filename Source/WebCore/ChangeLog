@@ -1,3 +1,39 @@
+2017-04-01  Simon Fraser  <simon.fraser@apple.com>
+
+        Clean up touch event handler registration when moving nodes between documents
+        https://bugs.webkit.org/show_bug.cgi?id=170384
+        rdar://problem/30816694
+
+        Reviewed by Chris Dumez.
+
+        Make sure that Node::didMoveToNewDocument() does the correct unregistration on the
+        old document, and registration on the new document for nodes with touch event listeners,
+        and gesture event listeners. Touch "handler" nodes (those for overflow and sliders) are
+        already correctly moved via renderer-related teardown.
+
+        Add assertions that fire when removal was not complete.
+
+        Use references in more places.
+
+        Tests: fast/events/touch/ios/gesture-node-move-between-documents.html
+               fast/events/touch/ios/overflow-node-move-between-documents.html
+               fast/events/touch/ios/slider-node-move-between-documents.html
+               fast/events/touch/ios/touch-node-move-between-documents.html
+
+        * dom/EventNames.h:
+        (WebCore::EventNames::gestureEventNames):
+        * dom/Node.cpp:
+        (WebCore::Node::willBeDeletedFrom):
+        (WebCore::Node::didMoveToNewDocument):
+        (WebCore::tryAddEventListener):
+        (WebCore::tryRemoveEventListener):
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::SliderThumbElement::registerForTouchEvents):
+        (WebCore::SliderThumbElement::unregisterForTouchEvents):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::registerAsTouchEventListenerForScrolling):
+        (WebCore::RenderLayer::unregisterAsTouchEventListenerForScrolling):
+
 2017-04-03  Youenn Fablet  <youenn@apple.com>
 
         captureStream is getting black frames with webgl canvas

@@ -2194,7 +2194,7 @@ void RenderLayer::registerAsTouchEventListenerForScrolling()
     if (!renderer().element() || m_registeredAsTouchEventListenerForScrolling)
         return;
     
-    renderer().document().addTouchEventHandler(renderer().element());
+    renderer().document().addTouchEventHandler(*renderer().element());
     m_registeredAsTouchEventListenerForScrolling = true;
 }
 
@@ -2203,7 +2203,7 @@ void RenderLayer::unregisterAsTouchEventListenerForScrolling()
     if (!renderer().element() || !m_registeredAsTouchEventListenerForScrolling)
         return;
 
-    renderer().document().removeTouchEventHandler(renderer().element());
+    renderer().document().removeTouchEventHandler(*renderer().element());
     m_registeredAsTouchEventListenerForScrolling = false;
 }
 #endif // ENABLE(IOS_TOUCH_EVENTS)

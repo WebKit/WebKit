@@ -319,6 +319,7 @@ public:
 #endif
 
     std::array<std::reference_wrapper<const AtomicString>, 5> touchEventNames() const;
+    std::array<std::reference_wrapper<const AtomicString>, 3> gestureEventNames() const;
 
 private:
     EventNames(); // Private to prevent accidental call to EventNames() instead of eventNames().
@@ -357,6 +358,11 @@ inline bool EventNames::isWheelEventType(const AtomicString& eventType) const
 inline std::array<std::reference_wrapper<const AtomicString>, 5> EventNames::touchEventNames() const
 {
     return { { touchstartEvent, touchmoveEvent, touchendEvent, touchcancelEvent, touchforcechangeEvent } };
+}
+
+inline std::array<std::reference_wrapper<const AtomicString>, 3> EventNames::gestureEventNames() const
+{
+    return { { gesturestartEvent, gesturechangeEvent, gestureendEvent } };
 }
 
 #if ENABLE(GAMEPAD)

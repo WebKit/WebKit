@@ -1,3 +1,22 @@
+2017-04-01  Simon Fraser  <simon.fraser@apple.com>
+
+        Clean up touch event handler registration when moving nodes between documents
+        https://bugs.webkit.org/show_bug.cgi?id=170384
+        rdar://problem/30816694
+
+        Reviewed by Chris Dumez.
+
+        Tests for moving nodes with various listener/handler combinations between documents.
+
+        * fast/events/touch/ios/gesture-node-move-between-documents-expected.txt: Added.
+        * fast/events/touch/ios/gesture-node-move-between-documents.html: Added.
+        * fast/events/touch/ios/overflow-node-move-between-documents-expected.txt: Added.
+        * fast/events/touch/ios/overflow-node-move-between-documents.html: Added.
+        * fast/events/touch/ios/slider-node-move-between-documents-expected.txt: Added.
+        * fast/events/touch/ios/slider-node-move-between-documents.html: Added.
+        * fast/events/touch/ios/touch-node-move-between-documents-expected.txt: Added.
+        * fast/events/touch/ios/touch-node-move-between-documents.html: Added.
+
 2017-04-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] URI Fragment is lost after redirect
