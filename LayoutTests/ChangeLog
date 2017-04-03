@@ -1,3 +1,17 @@
+2017-04-03  John Wilander  <wilander@apple.com>
+
+        Remove timeout expectations after bug fix
+        https://bugs.webkit.org/show_bug.cgi?id=168262
+
+        Unreviewed test gardening.
+
+        Remove timeout expectations after bug fix in
+        https://bugs.webkit.org/show_bug.cgi?id=170400
+
+        * platform/wk2/TestExpectations:
+            Remove expected timeout for the first five test cases
+            under http/tests/loading/resourceLoadStatistics/.
+
 2017-04-03  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (r207669): FileMaker Pro Help pages do not render correctly
