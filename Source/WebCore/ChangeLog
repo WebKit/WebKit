@@ -1,3 +1,32 @@
+2017-04-03  Dave Hyatt  <hyatt@apple.com>
+
+        Japanese fonts in vertical text should support synthesized italics
+        https://bugs.webkit.org/show_bug.cgi?id=169301
+
+        Reviewed by Simon Fraser.
+
+        Updated test in fast/text/international.
+
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::nonSyntheticItalicFont): Deleted.
+        * platform/graphics/Font.h:
+        Removed the non-synthetic italic font member, since it's not used.
+
+        * platform/graphics/FontCascadeFonts.cpp:
+        (WebCore::glyphDataForNonCJKCharacterWithGlyphOrientation):
+        Patched to ensure that a text-orientation-fallback font data is always
+        returned in the synthetic oblique case, so that non-CJK and CJK are
+        guaranteed to be broken up so that their slants can be applied differently.
+
+        (WebCore::FontCascadeFonts::glyphDataForSystemFallback):
+        (WebCore::FontCascadeFonts::glyphDataForNormalVariant):
+        (WebCore::glyphDataForCJKCharacterWithoutSyntheticItalic): Deleted.
+        Patched to no longer turn off synthetic oblique for CJK.
+
+        * platform/graphics/cocoa/FontCascadeCocoa.mm:
+        (WebCore::FontCascade::drawGlyphs):
+        Apply the correct italic transform to CJK when in vertical text.
+
 2017-04-03  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (r206744): CSS background-image in style attribute ignored when using createHTMLDocument method of DOM parsing

@@ -95,7 +95,6 @@ public:
     const Font& noSynthesizableFeaturesFont() const;
     const Font* emphasisMarkFont(const FontDescription&) const;
     const Font& brokenIdeographFont() const;
-    const Font& nonSyntheticItalicFont() const;
 
     const Font* variantFont(const FontDescription& description, FontVariant variant) const
     {
@@ -272,7 +271,6 @@ private:
         RefPtr<Font> brokenIdeograph;
         RefPtr<Font> verticalRightOrientation;
         RefPtr<Font> uprightOrientation;
-        RefPtr<Font> nonSyntheticItalic;
     };
 
     mutable std::unique_ptr<DerivedFonts> m_derivedFontData;

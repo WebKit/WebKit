@@ -328,22 +328,6 @@ const Font& Font::brokenIdeographFont() const
     return *m_derivedFontData->brokenIdeograph;
 }
 
-const Font& Font::nonSyntheticItalicFont() const
-{
-    if (!m_derivedFontData)
-        m_derivedFontData = std::make_unique<DerivedFonts>(isCustomFont());
-    if (!m_derivedFontData->nonSyntheticItalic) {
-#if PLATFORM(COCOA) || USE(CAIRO)
-        FontPlatformData nonSyntheticItalicFontPlatformData = FontPlatformData::cloneWithSyntheticOblique(m_platformData, false);
-#else
-        FontPlatformData nonSyntheticItalicFontPlatformData(m_platformData);
-#endif
-        m_derivedFontData->nonSyntheticItalic = create(nonSyntheticItalicFontPlatformData, isCustomFont());
-    }
-    ASSERT(m_derivedFontData->nonSyntheticItalic != this);
-    return *m_derivedFontData->nonSyntheticItalic;
-}
-
 #ifndef NDEBUG
 String Font::description() const
 {

@@ -1,3 +1,15 @@
+2017-04-03  Dave Hyatt  <hyatt@apple.com>
+
+        Japanese fonts in vertical text should support synthesized italics
+        https://bugs.webkit.org/show_bug.cgi?id=169301
+
+        Reviewed by Simon Fraser.
+
+        * fast/text/international/synthesized-italic-vertical-expected.html:
+        * fast/text/international/synthesized-italic-vertical.html:
+        * platform/mac/fast/text/international/synthesized-italic-vertical-latin-expected.png: Removed.
+        * platform/mac/fast/text/international/synthesized-italic-vertical-latin-expected.txt: Removed.
+
 2017-04-03  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (r206744): CSS background-image in style attribute ignored when using createHTMLDocument method of DOM parsing

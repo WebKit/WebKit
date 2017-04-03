@@ -243,9 +243,12 @@ void FontCascade::drawGlyphs(GraphicsContext& context, const Font& font, const G
     matrix.d = -matrix.d;
     if (platformData.syntheticOblique()) {
         static float obliqueSkew = tanf(syntheticObliqueAngle() * piFloat / 180);
-        if (platformData.orientation() == Vertical)
-            matrix = CGAffineTransformConcat(matrix, CGAffineTransformMake(1, obliqueSkew, 0, 1, 0, 0));
-        else
+        if (platformData.orientation() == Vertical) {
+            if (font.isTextOrientationFallback())
+                matrix = CGAffineTransformConcat(matrix, CGAffineTransformMake(1, obliqueSkew, 0, 1, 0, 0));
+            else
+                matrix = CGAffineTransformConcat(matrix, CGAffineTransformMake(1, -obliqueSkew, 0, 1, 0, 0));
+        } else
             matrix = CGAffineTransformConcat(matrix, CGAffineTransformMake(1, 0, -obliqueSkew, 1, 0, 0));
     }
     ScopedTextMatrix restorer(matrix, cgContext);

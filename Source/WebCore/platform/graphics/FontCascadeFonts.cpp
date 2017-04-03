@@ -281,23 +281,18 @@ static bool shouldIgnoreRotation(UChar32 character)
 
     return false;
 }
-
-#if PLATFORM(COCOA) || USE(CAIRO)
-static GlyphData glyphDataForCJKCharacterWithoutSyntheticItalic(UChar32 character, GlyphData& data)
-{
-    GlyphData nonItalicData = data.font->nonSyntheticItalicFont().glyphDataForCharacter(character);
-    if (nonItalicData.font)
-        return nonItalicData;
-    return data;
-}
-#endif
     
 static GlyphData glyphDataForNonCJKCharacterWithGlyphOrientation(UChar32 character, NonCJKGlyphOrientation orientation, const GlyphData& data)
 {
+    bool syntheticOblique = data.font->platformData().syntheticOblique();
     if (orientation == NonCJKGlyphOrientation::Upright || shouldIgnoreRotation(character)) {
         GlyphData uprightData = data.font->uprightOrientationFont().glyphDataForCharacter(character);
-        // If the glyphs are the same, then we know we can just use the horizontal glyph rotated vertically to be upright.
-        if (data.glyph == uprightData.glyph)
+        // If the glyphs are the same, then we know we can just use the horizontal glyph rotated vertically
+        // to be upright. For synthetic oblique, however, we will always return the uprightData to ensure
+        // that non-CJK and CJK runs are broken up. This guarantees that vertical
+        // fonts without isTextOrientationFallback() set contain CJK characters only and thus we can get
+        // the oblique slant correct.
+        if (data.glyph == uprightData.glyph && !syntheticOblique)
             return data;
         // The glyphs are distinct, meaning that the font has a vertical-right glyph baked into it. We can't use that
         // glyph, so we fall back to the upright data and use the horizontal glyph.
@@ -305,10 +300,14 @@ static GlyphData glyphDataForNonCJKCharacterWithGlyphOrientation(UChar32 charact
             return uprightData;
     } else if (orientation == NonCJKGlyphOrientation::Mixed) {
         GlyphData verticalRightData = data.font->verticalRightOrientationFont().glyphDataForCharacter(character);
-        // If the glyphs are distinct, we will make the assumption that the font has a vertical-right glyph baked
-        // into it.
-        if (data.glyph != verticalRightData.glyph)
+        
+        // If there is a baked-in rotated glyph, we will use it unless syntheticOblique is set. If
+        // synthetic oblique is set, we fall back to the horizontal glyph. This guarantees that vertical
+        // fonts without isTextOrientationFallback() set contain CJK characters only and thus we can get
+        // the oblique slant correct.
+        if (data.glyph != verticalRightData.glyph && !syntheticOblique)
             return data;
+
         // The glyphs are identical, meaning that we should just use the horizontal glyph.
         if (verticalRightData.font)
             return verticalRightData;
@@ -340,10 +339,6 @@ GlyphData FontCascadeFonts::glyphDataForSystemFallback(UChar32 c, const FontCasc
     if (fallbackGlyphData.font && fallbackGlyphData.font->platformData().orientation() == Vertical && !fallbackGlyphData.font->isTextOrientationFallback()) {
         if (variant == NormalVariant && !FontCascade::isCJKIdeographOrSymbol(c))
             fallbackGlyphData = glyphDataForNonCJKCharacterWithGlyphOrientation(c, description.nonCJKGlyphOrientation(), fallbackGlyphData);
-#if PLATFORM(COCOA) || USE(CAIRO)
-        if (fallbackGlyphData.font->platformData().syntheticOblique() && FontCascade::isCJKIdeographOrSymbol(c))
-            fallbackGlyphData = glyphDataForCJKCharacterWithoutSyntheticItalic(c, fallbackGlyphData);
-#endif
     }
 
     // Keep the system fallback fonts we use alive.
@@ -390,10 +385,6 @@ GlyphData FontCascadeFonts::glyphDataForNormalVariant(UChar32 c, const FontCasca
                 // to make sure you get a square (even for broken glyphs like symbols used for punctuation).
                 return glyphDataForVariant(c, description, BrokenIdeographVariant, fallbackIndex);
             }
-#if PLATFORM(COCOA) || USE(CAIRO)
-            if (data.font->platformData().syntheticOblique())
-                return glyphDataForCJKCharacterWithoutSyntheticItalic(c, data);
-#endif
         }
         return data;
     }
