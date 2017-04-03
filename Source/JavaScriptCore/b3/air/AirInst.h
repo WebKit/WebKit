@@ -45,7 +45,6 @@ namespace Air {
 struct GenerationContext;
 
 struct Inst {
-public:
     typedef Vector<Arg, 3> ArgList;
 
     Inst()
@@ -207,6 +206,11 @@ public:
     ArgList args;
     Value* origin; // The B3::Value that this originated from.
     Kind kind;
+
+private:
+    template<typename Func>
+    void forEachArgSimple(const Func&);
+    void forEachArgCustom(ScopedLambda<EachArgCallback>);
 };
 
 } } } // namespace JSC::B3::Air

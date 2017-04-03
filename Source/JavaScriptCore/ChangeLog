@@ -1,3 +1,36 @@
+2017-04-03  Filip Pizlo  <fpizlo@apple.com>
+
+        Inst::forEachArg could compile to more compact code
+        https://bugs.webkit.org/show_bug.cgi?id=170406
+
+        Reviewed by Sam Weinig.
+        
+        Prior to this change, Inst::forEachArg compiled to a ginormous ALWAYS_INLINE switch statement.
+        It had one case for each opcode, and then each of those cases would have a switch statement over
+        the number of operands. Then the cases of that switch statement would have a sequence of calls to
+        the passed lambda. This meant that every user of forEachArg would generate an insane amount of
+        code. It also meant that the inlining achieved nothing, since the lambda would surely then not
+        be inlined - and if it was, then the icache pressure due to code bloat would surely negate any
+        benefits.
+        
+        This replaces that code with a loop over a compact look-up table. We use the opcode and number of
+        operands as keys into that look-up table. The table only takes about 20KB. It has one byte for
+        each argument in each overload of each opcode.
+        
+        I can't measure any reproducible change in performance, but the JavaScriptCore framework binary
+        shrinks by 2.7 MB. This is a 15% reduction in JavaScriptCore binary size.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * b3/B3Width.h:
+        * b3/air/AirCustom.h:
+        (JSC::B3::Air::PatchCustom::forEachArg):
+        * b3/air/AirFormTable.h: Added.
+        (JSC::B3::Air::decodeFormRole):
+        (JSC::B3::Air::decodeFormBank):
+        (JSC::B3::Air::decodeFormWidth):
+        * b3/air/AirInst.h:
+        * b3/air/opcode_generator.rb:
+
 2017-04-03  Keith Miller  <keith_miller@apple.com>
 
         WebAssembly: remove lastAllocatedMode from Memory

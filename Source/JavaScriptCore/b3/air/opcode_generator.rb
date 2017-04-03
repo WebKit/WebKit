@@ -54,7 +54,7 @@ class Arg
     
     def self.widthCode(width)
         if width == "Ptr"
-            "pointerWidth()"
+            "POINTER_WIDTH"
         else
             "Width#{width}"
         end
@@ -93,6 +93,10 @@ class Arg
     
     def roleCode
         Arg.roleCode(role)
+    end
+    
+    def to_s
+        "#{role}:#{bank}:#{width}"
     end
 end
 
@@ -514,7 +518,7 @@ writeH("Opcode") {
     | outp |
     outp.puts "namespace JSC { namespace B3 { namespace Air {"
     outp.puts "enum Opcode : int16_t {"
-    $opcodes.keys.sort.each {
+    $opcodes.keys.each {
         | opcode |
         outp.puts "    #{opcode},"
     }
@@ -645,10 +649,23 @@ def endArchs(outp, archs)
     outp.puts "#endif"
 end
 
+maxNumOperands = 0
+$opcodes.values.each {
+    | opcode |
+    next if opcode.custom
+    opcode.overloads.each {
+        | overload |
+        maxNumOperands = overload.signature.length if overload.signature.length > maxNumOperands
+    }
+}
+
+formTableWidth = (maxNumOperands + 1) * maxNumOperands / 2
+
 writeH("OpcodeUtils") {
     | outp |
     outp.puts "#include \"AirCustom.h\""
     outp.puts "#include \"AirInst.h\""
+    outp.puts "#include \"AirFormTable.h\""
     outp.puts "namespace JSC { namespace B3 { namespace Air {"
     
     outp.puts "inline bool opgenHiddenTruth() { return true; }"
@@ -660,19 +677,34 @@ writeH("OpcodeUtils") {
     outp.puts "} while (false)"
 
     outp.puts "template<typename Functor>"
-    outp.puts "void Inst::forEachArg(const Functor& functor)"
+    outp.puts "ALWAYS_INLINE void Inst::forEachArg(const Functor& functor)"
     outp.puts "{"
-    matchInstOverload(outp, :fast, "this") {
-        | opcode, overload |
+    outp.puts "switch (kind.opcode) {"
+    $opcodes.values.each {
+        | opcode |
         if opcode.custom
-            outp.puts "#{opcode.name}Custom::forEachArg(*this, functor);"
-        else
-            overload.signature.each_with_index {
-                | arg, index |
-                outp.puts "functor(args[#{index}], Arg::#{arg.roleCode}, #{arg.bank}P, #{arg.widthCode});"
-            }
+            outp.puts "case Opcode::#{opcode.name}:"
         end
     }
+    outp.puts "forEachArgCustom(scopedLambdaRef<EachArgCallback>(functor));"
+    outp.puts "return;"
+    outp.puts "default:"
+    outp.puts "forEachArgSimple(functor);"
+    outp.puts "return;"
+    outp.puts "}"
+    outp.puts "}"
+    
+    outp.puts "template<typename Func>"
+    outp.puts "ALWAYS_INLINE void Inst::forEachArgSimple(const Func& func)"
+    outp.puts "{"
+    outp.puts "    size_t numOperands = args.size();"
+    outp.puts "    size_t formOffset = (numOperands - 1) * numOperands / 2;"
+    outp.puts "    uint8_t* formBase = g_formTable + kind.opcode * #{formTableWidth} + formOffset;"
+    outp.puts "    for (size_t i = 0; i < numOperands; ++i) {"
+    outp.puts "        uint8_t form = formBase[i];"
+    outp.puts "        ASSERT(!(form & (1 << formInvalidShift)));"
+    outp.puts "        func(args[i], decodeFormRole(form), decodeFormBank(form), decodeFormWidth(form));"
+    outp.puts "    }"
     outp.puts "}"
 
     outp.puts "template<typename... Arguments>"
@@ -789,6 +821,56 @@ writeH("OpcodeGenerated") {
     outp.puts "}"
     outp.puts "} // namespace WTF"
     outp.puts "namespace JSC { namespace B3 { namespace Air {"
+    
+    outp.puts "uint8_t g_formTable[#{$opcodes.size * formTableWidth}] = {"
+    $opcodes.values.each {
+        | opcode |
+        overloads = [nil] * (maxNumOperands + 1)
+        unless opcode.custom
+            opcode.overloads.each {
+                | overload |
+                overloads[overload.signature.length] = overload
+            }
+        end
+        
+        (0..maxNumOperands).each {
+            | numOperands |
+            overload = overloads[numOperands]
+            if overload
+                outp.puts "// #{opcode.name} #{overload.signature.join(', ')}"
+                numOperands.times {
+                    | index |
+                    arg = overload.signature[index]
+                    outp.print "ENCODE_INST_FORM(Arg::#{arg.roleCode}, #{arg.bank}P, #{arg.widthCode}), "
+                }
+            else
+                outp.puts "// Invalid: #{opcode.name} with numOperands = #{numOperands}"
+                numOperands.times {
+                    outp.print "INVALID_INST_FORM, "
+                }
+            end
+            outp.puts
+        }
+    }
+    outp.puts "};"
+    
+    outp.puts "void Inst::forEachArgCustom(ScopedLambda<EachArgCallback> lambda)"
+    outp.puts "{"
+    outp.puts "switch (kind.opcode) {"
+    $opcodes.values.each {
+        | opcode |
+        if opcode.custom
+            outp.puts "case Opcode::#{opcode.name}:"
+            outp.puts "#{opcode.name}Custom::forEachArg(*this, lambda);"
+            outp.puts "break;"
+        end
+    }
+    outp.puts "default:"
+    outp.puts "dataLog(\"Bad call to forEachArgCustom, not custom opcode: \", kind, \"\\n\");"
+    outp.puts "RELEASE_ASSERT_NOT_REACHED();"
+    outp.puts "}"
+    outp.puts "}"
+    
     outp.puts "bool Inst::isValidForm()"
     outp.puts "{"
     matchInstOverloadForm(outp, :safe, "this") {
@@ -1138,91 +1220,5 @@ writeH("OpcodeGenerated") {
     outp.puts "}"
 
     outp.puts "} } } // namespace JSC::B3::Air"
-}
-
-# This is a hack for JSAir. It's a joke.
-File.open("JSAir_opcode.js", "w") {
-    | outp |
-    outp.puts "\"use strict\";"
-    outp.puts "// Generated by opcode_generator.rb from #{$fileName} -- do not edit!"
-    
-    $opcodes.values.each {
-        | opcode |
-        outp.puts "const #{opcode.name} = Symbol(#{opcode.name.inspect});"
-    }
-    
-    outp.puts "function Inst_forEachArg(inst, func)"
-    outp.puts "{"
-    outp.puts "let replacement;"
-    outp.puts "switch (inst.opcode) {"
-    $opcodes.values.each {
-        | opcode |
-        outp.puts "case Opcode::#{opcode.name}:"
-        if opcode.custom
-            outp.puts "#{opcode.name}Custom.forEachArg(inst, func);"
-        else
-            needOverloadSwitch = opcode.overloads.size != 1
-            outp.puts "switch (inst.args.length) {" if needOverloadSwitch
-            opcode.overloads.each {
-                | overload |
-                outp.puts "case #{overload.signature.length}:" if needOverloadSwitch
-                overload.signature.each_with_index {
-                    | arg, index |
-                    outp.puts "inst.visitArg(#{index}, func, Arg.#{arg.roleCode}, #{arg.bank}P, #{arg.width});"
-                }
-                outp.puts "break;"
-            }
-            if needOverloadSwitch
-                outp.puts "default:"
-                outp.puts "throw new Error(\"Bad overload\");"
-                outp.puts "break;"
-                outp.puts "}"
-            end
-        end
-        outp.puts "break;"
-    }
-    outp.puts "default:"
-    outp.puts "throw \"Bad opcode\";"
-    outp.puts "}"
-    outp.puts "}"
-    
-    outp.puts "function Inst_hasNonArgEffects(inst)"
-    outp.puts "{"
-    outp.puts "switch (inst.opcode) {"
-    foundTrue = false
-    $opcodes.values.each {
-        | opcode |
-        if opcode.attributes[:terminal] or opcode.attributes[:effects]
-            outp.puts "case Opcode::#{opcode.name}:"
-            foundTrue = true
-        end
-    }
-    if foundTrue
-        outp.puts "return true;"
-    end
-    $opcodes.values.each {
-        | opcode |
-        if opcode.custom
-            outp.puts "case Opcode::#{opcode.name}:"
-            outp.puts "return #{opcode.name}Custom.hasNonArgNonControlEffects(inst);"
-        end
-    }
-    outp.puts "default:"
-    outp.puts "return false;"
-    outp.puts "}"
-    outp.puts "}"
-    
-    outp.puts "function opcodeCode(opcode)"
-    outp.puts "{"
-    outp.puts "switch (opcode) {"
-    $opcodes.keys.sort.each_with_index {
-        | opcode, index |
-        outp.puts "case Opcode::#{opcode}:"
-        outp.puts "return #{index}"
-    }
-    outp.puts "default:"
-    outp.puts "throw new Error(\"bad opcode\");"
-    outp.puts "}"
-    outp.puts "}"
 }
 
