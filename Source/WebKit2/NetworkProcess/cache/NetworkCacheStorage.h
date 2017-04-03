@@ -90,7 +90,7 @@ public:
     static const unsigned version = 11;
 #if PLATFORM(MAC)
     /// Allow the last stable version of the cache to co-exist with the latest development one.
-    static const unsigned lastStableVersion = 9;
+    static const unsigned lastStableVersion = 11;
 #endif
 
     String basePath() const;

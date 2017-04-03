@@ -1,3 +1,19 @@
+2017-04-02  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r214559. rdar://problem/31371683
+
+    2017-03-29  Antti Koivisto  <antti@apple.com>
+
+            Increment the last stable network cache version on Mac
+            https://bugs.webkit.org/show_bug.cgi?id=170248
+            <rdar://problem/31326040>
+
+            Reviewed by Chris Dumez.
+
+            Bump to the latest release.
+
+            * NetworkProcess/cache/NetworkCacheStorage.h:
+
 2017-03-30  Jason Marcell  <jmarcell@apple.com>
 
         Merge r214003. rdar://problem/31331131
