@@ -386,6 +386,8 @@ private:
 
     void applyShouldOpenExternalURLsPolicyToNewDocumentLoader(DocumentLoader&, ShouldOpenExternalURLsPolicy propagatedPolicy);
 
+    bool isNavigationAllowed() const;
+
     Frame& m_frame;
     FrameLoaderClient& m_client;
 

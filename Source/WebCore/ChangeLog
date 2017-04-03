@@ -1,3 +1,22 @@
+2017-03-20  Daniel Bates  <dabates@apple.com>
+
+        Prevent new navigations from onbeforeunload handler
+        https://bugs.webkit.org/show_bug.cgi?id=169891
+        <rdar://problem/31155736>
+
+        Reviewed by Ryosuke Niwa.
+
+        Ensure that all navigations initiated from an onbeforeunload handler are disallowed
+        regardless of how they were scheduled. Such navigations go against the expectation
+        of a user.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::isNavigationAllowed): Added.
+        (WebCore::FrameLoader::loadURL): Modified code to call FrameLoader::isNavigationAllowed().
+        (WebCore::FrameLoader::loadWithDocumentLoader): Ditto.
+        (WebCore::FrameLoader::stopAllLoaders): Ditto.
+        * loader/FrameLoader.h:
+
 2017-03-20  Simon Fraser  <simon.fraser@apple.com>
 
         Move code out of renderer destructors into willBeDestroyed()
