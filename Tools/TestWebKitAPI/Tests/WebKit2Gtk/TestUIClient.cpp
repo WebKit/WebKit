@@ -298,6 +298,15 @@ public:
         return m_mouseTargetHitTestResult.get();
     }
 
+    void simulateUserInterqaction()
+    {
+        mouseMoveTo(1, 1);
+        keyStroke(GDK_KEY_Down);
+        keyStroke(GDK_KEY_Up);
+        while (gtk_events_pending())
+            gtk_main_iteration();
+    }
+
     virtual GtkWidget* viewCreate(WebKitWebView* webView, WebKitNavigationAction* navigation)
     {
         g_assert(webView == m_webView);
@@ -519,6 +528,8 @@ static void testWebViewDisallowModalDialogs(ModalDialogsTest* test, gconstpointe
 
 static void testWebViewJavaScriptDialogs(UIClientTest* test, gconstpointer)
 {
+    test->showInWindowAndWaitUntilMapped(GTK_WINDOW_TOPLEVEL);
+
     static const char* htmlOnLoadFormat = "<html><body onLoad=\"%s\"></body></html>";
     static const char* jsAlertFormat = "alert('%s')";
     static const char* jsConfirmFormat = "do { confirmed = confirm('%s'); } while (!confirmed); alert('confirmed');";
@@ -557,6 +568,7 @@ static void testWebViewJavaScriptDialogs(UIClientTest* test, gconstpointer)
 
     // Reload should trigger onbeforeunload.
 #if 0
+    test->simulateUserInterqaction();
     // FIXME: reloading HTML data doesn't emit finished load event.
     // See https://bugs.webkit.org/show_bug.cgi?id=139089.
     test->m_scriptDialogConfirmed = false;
@@ -566,6 +578,7 @@ static void testWebViewJavaScriptDialogs(UIClientTest* test, gconstpointer)
 #endif
 
     // Navigation should trigger onbeforeunload.
+    test->simulateUserInterqaction();
     test->m_scriptDialogConfirmed = false;
     test->loadHtml("<html></html>", nullptr);
     test->waitUntilLoadFinished();
@@ -575,6 +588,7 @@ static void testWebViewJavaScriptDialogs(UIClientTest* test, gconstpointer)
     test->m_scriptDialogConfirmed = false;
     test->loadHtml(beforeUnloadDialogHTML.get(), nullptr);
     test->waitUntilLoadFinished();
+    test->simulateUserInterqaction();
     test->tryCloseAndWaitUntilClosed();
     g_assert(test->m_scriptDialogConfirmed);
 
