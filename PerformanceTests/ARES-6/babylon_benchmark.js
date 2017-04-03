@@ -22,38 +22,47 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+"use strict";
 
-const isInBrowser = false;
+const BabylonBenchmarkCode = String.raw`
+<script src="Babylon/index.js"></script>
+<script src="Babylon/benchmark.js"></script>
+<script>
+var results = [];
+var benchmark = new BabylonBenchmark();
+var numIterations = 200;
+for (var i = 0; i < numIterations; ++i) {
+    var before = currentTime();
+    benchmark.runIteration();
+    var after = currentTime();
+    results.push(after - before);
+}
+reportResult(results);
+</script>`;
 
-function makeBenchmarkRunner(sources, benchmarkConstructor) {
-    let source = "'use strict';"
-    for (let file of sources) {
-        source += readFile(file);
-    }
-    source += `
-        this.results = [];
-        var benchmark = new ${benchmarkConstructor}();
-        var numIterations = 200;
-        for (var i = 0; i < numIterations; ++i) {
-            var before = currentTime();
-            benchmark.runIteration();
-            var after = currentTime();
-            results.push(after - before);
-        }
-    `;
-    return function doRun() {
-        let globalObjectOfScript = runString(source);
-        let results = globalObjectOfScript.results;
-        reportResult(results);
-    }
+
+let runBabylonBenchmark = null;
+if (!isInBrowser) {
+    let sources = [
+        "Babylon/index.js"
+        , "Babylon/benchmark.js"
+    ];
+
+    runBabylonBenchmark = makeBenchmarkRunner(sources, "BabylonBenchmark");
 }
 
-load("driver.js");
-load("results.js");
-load("stats.js");
-load("air_benchmark.js");
-load("basic_benchmark.js");
-load("babylon_benchmark.js");
-load("glue.js");
+const BabylonBenchmarkRunner = {
+    name: "Babylon",
+    code: BabylonBenchmarkCode,
+    run: runBabylonBenchmark,
+    cells: {}
+};
 
-driver.start(8);
+if (isInBrowser) {
+    BabylonBenchmarkRunner.cells = {
+        firstIteration: document.getElementById("BabylonFirstIteration"),
+        averageWorstCase: document.getElementById("BabylonAverageWorstCase"),
+        steadyState: document.getElementById("BabylonSteadyState"),
+        message: document.getElementById("BabylonMessage")
+    };
+}

@@ -1,3 +1,192 @@
+2017-04-03  Saam Barati  <sbarati@apple.com>
+
+        Add a new test to ARES6
+        https://bugs.webkit.org/show_bug.cgi?id=170077
+
+        Rubber stamped by Filip Pizlo.
+
+        This patch adds a new test to ARES6. The test is called Babylon. Babylon is
+        the JavaScript parser that is part of the Babel transpiler. The test runs
+        the parser on 4 different JS scripts.
+
+        * ARES-6/Babylon: Added.
+        * ARES-6/Babylon/AUTHORS: Added.
+        * ARES-6/Babylon/air-blob.js: Added.
+        (Reg):
+        (Reg.fromReg):
+        (Reg.prototype.get index):
+        (Reg.prototype.get type):
+        (Reg.prototype.get name):
+        (Reg.prototype.get isCalleeSave):
+        (Reg.prototype.get isReg):
+        (Reg.prototype.hash):
+        (Reg.prototype.toString):
+        (Reg.extract):
+        (Reg.forEachFast):
+        (Reg.forEach):
+        (newGPR):
+        (Reg.gprs.Reg.fprs.Reg.calleeSaveGPRs.Reg.calleeSaveFPRs.Reg.calleeSaves):
+        * ARES-6/Babylon/babylon-blob.js: Added.
+        (export.default.Parser):
+        (export.default.Parser.prototype.isReservedWord):
+        (export.default.Parser.prototype.hasPlugin):
+        (export.default.Parser.prototype.extend):
+        (export.default.Parser.prototype.loadPlugins):
+        (export.default.Parser.prototype.parse):
+        * ARES-6/Babylon/basic-blob.js: Added.
+        (Basic.NumberApply):
+        (Basic.Variable):
+        (Basic.Const):
+        (Basic.NumberPow):
+        (Basic.NumberMul):
+        (Basic.NumberDiv):
+        (Basic.NumberNeg):
+        (Basic.NumberAdd):
+        (Basic.NumberSub):
+        (Basic.StringVar):
+        (Basic.Equals):
+        (Basic.NotEquals):
+        (Basic.LessThan):
+        (Basic.GreaterThan):
+        (Basic.LessEqual):
+        (Basic.GreaterEqual):
+        (Basic.GoTo):
+        (Basic.GoSub):
+        (Basic.Def):
+        (Basic.Let):
+        (Basic.If):
+        (Basic.Return):
+        (Basic.Stop):
+        (Basic.On):
+        (sideState.shouldStop):
+        (Basic.For):
+        (Basic.Next):
+        (Basic.Print):
+        (Basic.Input):
+        (Basic.Read):
+        (Basic.Restore):
+        (Basic.Dim):
+        (Basic.Randomize):
+        (Basic.End):
+        (Basic.Program):
+        * ARES-6/Babylon/benchmark.js: Added.
+        (this.performance.performance.now.currentTime):
+        (else.this.preciseTime.currentTime):
+        (else.currentTime):
+        (BabylonBenchmark.appendSource):
+        (BabylonBenchmark):
+        (BabylonBenchmark.prototype.runIteration.parse):
+        (BabylonBenchmark.prototype.runIteration.parseExpression):
+        (BabylonBenchmark.prototype.runIteration):
+        (runBenchmark):
+        * ARES-6/Babylon/index.js: Added.
+        (isIdentifierStart):
+        (isIdentifierChar):
+        (isNewLine):
+        (Position):
+        (SourceLocation):
+        (getLineInfo):
+        (TokenType):
+        (KeywordTokenType):
+        (BinopTokenType):
+        (TokContext):
+        (tt.parenR.updateContext.tt.braceR.updateContext):
+        (tt.name.updateContext):
+        (tt.braceL.updateContext):
+        (tt.dollarBraceL.updateContext):
+        (tt.parenL.updateContext):
+        (tt.incDec.updateContext):
+        (tt._function.updateContext):
+        (tt.backQuote.updateContext):
+        (State.prototype.init):
+        (State.prototype.curPosition):
+        (State.prototype.clone):
+        (State):
+        (Token):
+        (codePointToString):
+        (Tokenizer):
+        (Tokenizer.prototype.next):
+        (Tokenizer.prototype.eat):
+        (Tokenizer.prototype.match):
+        (Tokenizer.prototype.isKeyword):
+        (Tokenizer.prototype.lookahead):
+        (Tokenizer.prototype.setStrict):
+        (Tokenizer.prototype.curContext):
+        (Tokenizer.prototype.nextToken):
+        (Tokenizer.prototype.readToken):
+        (Tokenizer.prototype.fullCharCodeAtPos):
+        (Tokenizer.prototype.pushComment):
+        (Tokenizer.prototype.skipBlockComment):
+        (Tokenizer.prototype.skipLineComment):
+        (Tokenizer.prototype.skipSpace):
+        (Tokenizer.prototype.finishToken):
+        (Tokenizer.prototype.readToken_dot):
+        (Tokenizer.prototype.readToken_slash):
+        (Tokenizer.prototype.readToken_mult_modulo):
+        (Tokenizer.prototype.readToken_pipe_amp):
+        (Tokenizer.prototype.readToken_caret):
+        (Tokenizer.prototype.readToken_plus_min):
+        (Tokenizer.prototype.readToken_lt_gt):
+        (Tokenizer.prototype.readToken_eq_excl):
+        (Tokenizer.prototype.getTokenFromCode):
+        (Tokenizer.prototype.finishOp):
+        (Tokenizer.prototype.readRegexp):
+        (Tokenizer.prototype.readInt):
+        (Tokenizer.prototype.readRadixNumber):
+        (Tokenizer.prototype.readNumber):
+        (Tokenizer.prototype.readCodePoint):
+        (Tokenizer.prototype.readString):
+        (Tokenizer.prototype.readTmplToken):
+        (Tokenizer.prototype.readEscapedChar):
+        (Tokenizer.prototype.readHexChar):
+        (Tokenizer.prototype.readWord1):
+        (Tokenizer.prototype.readWord):
+        (Tokenizer.prototype.braceIsBlock):
+        (Tokenizer.prototype.updateContext):
+        (getOptions):
+        (prototype.isReservedWord):
+        (prototype.hasPlugin):
+        (prototype.extend):
+        (prototype.loadPlugins):
+        (prototype.parse):
+        (last):
+        (pp.addComment):
+        (pp.processComment):
+        (pp.checkPropClash):
+        (pp.getExpression):
+        (pp.parseExpression):
+        (pp.parseMaybeAssign):
+        (pos.set i):
+        * ARES-6/Babylon/inspector-blob.js: Added.
+        (WebInspector.ScriptSyntaxTree):
+        (WebInspector.ScriptSyntaxTree.prototype.get parsedSuccessfully):
+        (WebInspector.ScriptSyntaxTree.prototype.forEachNode):
+        (WebInspector.ScriptSyntaxTree.prototype.filter):
+        (WebInspector.ScriptSyntaxTree.prototype.containersOfOffset):
+        (WebInspector.ScriptSyntaxTree.prototype.filterByRange.filterForNodesInRange):
+        (WebInspector.ScriptSyntaxTree.prototype.filterByRange):
+        (WebInspector.ScriptSyntaxTree.prototype.containsNonEmptyReturnStatement.removeFunctionsFilter):
+        (WebInspector.ScriptSyntaxTree.prototype.containsNonEmptyReturnStatement):
+        (WebInspector.ScriptSyntaxTree.functionReturnDivot):
+        (WebInspector.ScriptSyntaxTree.prototype.updateTypes):
+        (WebInspector.ScriptSyntaxTree.prototype._gatherIdentifiersInDeclaration.gatherIdentifiers):
+        (WebInspector.ScriptSyntaxTree.prototype._gatherIdentifiersInDeclaration):
+        (WebInspector.ScriptSyntaxTree.prototype._defaultParserState):
+        (WebInspector.ScriptSyntaxTree.prototype._recurse):
+        (WebInspector.ScriptSyntaxTree.prototype._recurseArray):
+        (WebInspector.ScriptSyntaxTree.prototype._createInternalSyntaxTree):
+        * ARES-6/about.html:
+        * ARES-6/babylon_benchmark.js: Added.
+        * ARES-6/cli.js:
+        * ARES-6/glue.js:
+        * ARES-6/index.html:
+        * ARES-6/results.js:
+        (Results.prototype.reportResult):
+        (Results.prototype.reportResult.averageAbovePercentile): Deleted.
+        * ARES-6/styles.css:
+        (.test):
+        (@media only screen and (max-width: 784px)):
+
 2017-03-29  Zalan Bujtas <zalan@apple.com>
 
         [Arabic text] Add whitespace preserve/word wrap performance test.

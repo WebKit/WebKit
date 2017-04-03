@@ -54,7 +54,7 @@
             </div>
  
             <div class="score">
-                <label>Worst 2%</label>
+                <label>Worst 4 Iterations</label>
                 <span id="AirAverageWorstCase">
                     <span class="value">&#8709;</span><span class="units">ms</span>
                 </span>
@@ -66,7 +66,6 @@
                     <span class="value">&#8709;</span><span class="units">ms</span>
                 </span>
             </div>
-            
         </div>
     
         <div class="basic test">
@@ -81,7 +80,7 @@
             </div>
  
             <div class="score">
-                <label>Worst 2%</label>
+                <label>Worst 4 Iteratons</label>
                 <span id="BasicAverageWorstCase">
                     <span class="value">&#8709;</span><span class="units">ms</span>                    
                 </span>
@@ -93,15 +92,40 @@
                     <span class="value">&#8709;</span><span class="units">ms</span>                    
                 </span>
             </div>
-            
         </div>
-        
+
+        <div class="babylon test">
+            <div id="BabylonMessage" class="indicator">.</div>
+            <h2>Babylon</h2> 
+            
+            <div class="score">
+                <label>First Iteration</label>
+                <span id="BabylonFirstIteration">
+                    <span class="value">&#8709;</span><span class="units">ms</span>                    
+                </span>
+            </div>
+ 
+            <div class="score">
+                <label>Worst 4 Iterations</label>
+                <span id="BabylonAverageWorstCase">
+                    <span class="value">&#8709;</span><span class="units">ms</span>                    
+                </span>
+            </div>
+
+            <div class="score">
+                <label>Average</label>
+                <span id="BabylonSteadyState">
+                    <span class="value">&#8709;</span><span class="units">ms</span>                    
+                </span>
+            </div>
+        </div>
     </div>
     </main>
     
     <iframe id="magic" frameBorder=0></iframe>
     <script src="air_benchmark.js"></script>
     <script src="basic_benchmark.js"></script>
+    <script src="babylon_benchmark.js"></script>
     <script src="glue.js"></script>
         
 </body>

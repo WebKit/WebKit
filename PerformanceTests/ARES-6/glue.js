@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,7 +28,7 @@ const driver = new Driver(
     isInBrowser ? document.getElementById("status") : null,
     isInBrowser ? document.getElementById("trigger") : null,
     function() {
-        driver.start(10)
+        driver.start(8)
     },
     isInBrowser ? document.getElementById("magic") : null,
     isInBrowser ? document.getElementById("Geomean") : null,
@@ -40,4 +40,5 @@ function reportResult(...args) {
 
 driver.addBenchmark(AirBenchmarkRunner);
 driver.addBenchmark(BasicBenchmarkRunner);
+driver.addBenchmark(BabylonBenchmarkRunner);
 driver.readyTrigger();

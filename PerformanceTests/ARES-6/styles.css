@@ -143,7 +143,9 @@ p {
     margin-bottom: 3rem;
     opacity: 0;
     animation: fade-in 1s ease-out 700ms forwards;
+    min-width: 40%;
 }
+
 .test:nth-child(odd) {
     animation-delay: 900ms;
 }

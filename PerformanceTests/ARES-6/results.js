@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -54,45 +54,12 @@ class Results {
     
     reportResult(times)
     {
-        function averageAbovePercentile(numbers, percentile) {
-            // Don't change the original array.
-            numbers = numbers.slice();
-            
-            // Sort in ascending order.
-            numbers.sort(function(a, b) { return a - b; });
-            
-            // Now the elements we want are at the end. Keep removing them until the array size shrinks too much.
-            // Examples assuming percentile = 99:
-            //
-            // - numbers.length starts at 100: we will remove just the worst entry and then not remove anymore,
-            //   since then numbers.length / originalLength = 0.99.
-            //
-            // - numbers.length starts at 1000: we will remove the ten worst.
-            //
-            // - numbers.length starts at 10: we will remove just the worst.
-            var numbersWeWant = [];
-            var originalLength = numbers.length;
-            while (numbers.length / originalLength > percentile / 100)
-                numbersWeWant.push(numbers.pop());
-            
-            var sum = 0;
-            for (var i = 0; i < numbersWeWant.length; ++i)
-                sum += numbersWeWant[i];
-            
-            var result = sum / numbersWeWant.length;
-            
-            // Do a sanity check.
-            if (numbers.length && result < numbers[numbers.length - 1]) {
-                throw "Sanity check fail: the worst case result is " + result +
-                    " but we didn't take into account " + numbers;
-            }
-            
-            return result;
-        }
+        if (times.length < 5)
+            throw new Error("We expect >= 5 iterations");
 
         this.firstIteration.add(times[0]);
-        let steadyTimes = times.slice(1);
-        this.averageWorstCase.add(averageAbovePercentile(steadyTimes, 98));
+        let steadyTimes = times.slice(1).sort((a, b) => b - a); // Sort in reverse order.
+        this.averageWorstCase.add((times[0] + times[1] + times[2] + times[3]) / 4);
         this.steadyState.add(steadyTimes.reduce((previous, current) => previous + current) / steadyTimes.length);
         this.reportDone();
     }
