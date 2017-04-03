@@ -31,6 +31,11 @@ function shouldHaveSyntaxError(str) {
     testPassed("Has syntax error: '" + str + "'");
 }
 
+function shouldHaveSyntaxErrorSloppyOnly(str) {
+    assert(hasSyntaxError(str));
+    assert(hasSyntaxError("function dummy() { " + str + " }"));
+    testPassed("Has syntax error: '" + str + "'");
+}
 
 function shouldNotHaveSyntaxError(str) {
     assert(!hasSyntaxError(str));
@@ -51,6 +56,13 @@ function shouldHaveSyntaxErrorStrictOnly(str)
     assert(hasSyntaxError(str));
     assert(hasSyntaxError("(function dummy() { " + str + " })"));
     testPassed("Has syntax error: '" + str + "'");
+}
+
+function shouldNotHaveSyntaxErrorSloppyOnly(str)
+{
+    assert(!hasSyntaxError(str));
+    assert(!hasSyntaxError("(function dummy() { " + str + " })"));
+    testPassed("Does not have syntax error: '" + str + "'");
 }
 
 shouldNotHaveSyntaxError("let x = 20; if (truth()) { let x = 30; }");
@@ -86,6 +98,7 @@ shouldNotHaveSyntaxError("let x = { set foo(x) { class foo { } } };");
 shouldNotHaveSyntaxError("let x = { get foo() { const foo = 20; } };");
 shouldNotHaveSyntaxError("let x = { get foo() { let foo = 20; } };");
 shouldNotHaveSyntaxError("let x = { get foo() { class foo { } } };");
+shouldNotHaveSyntaxErrorSloppyOnly("let x; with ({}) let: y = 3;");
 
 shouldHaveSyntaxError("let let;");
 shouldHaveSyntaxError("const let;");
@@ -140,6 +153,7 @@ shouldHaveSyntaxError("function f() { class x{}; var {x} = 20; }");
 shouldHaveSyntaxError("function f() { class x{}; var [x] = 20; }");
 shouldHaveSyntaxError("function f() { class x{};  function x(){} }");
 shouldHaveSyntaxError("function f() { function x(){}; class x{}; }");
+shouldHaveSyntaxErrorSloppyOnly("let x; with ({}) let y = 3;");
 
 // Stay classy, ES6.
 shouldHaveSyntaxErrorStrictOnly("let;");
@@ -154,3 +168,4 @@ shouldHaveSyntaxErrorStrictOnly("let: for (v in {}) break;");
 shouldHaveSyntaxErrorStrictOnly("let: for (v in {}) break;");
 shouldHaveSyntaxErrorStrictOnly("let: for (var v = 0; false; ) {};");
 shouldHaveSyntaxErrorStrictOnly("try { } catch(let) {}");
+shouldHaveSyntaxErrorStrictOnly("let x; if (true) let: x = 3;");
