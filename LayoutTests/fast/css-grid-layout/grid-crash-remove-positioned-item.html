@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<script>
+  if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+<p>webkit.org/b/169739 - [css-grid] Crash on debug removing a positioned child</p>
+<p>This test has PASSED if it does not CRASH on debug.</p>
+<div id="grid" style="display: grid;">
+  <!-- This grid item with some text is needed, otherwise RenderGrid::paintChildren()
+       won't be called after removing the positioned item. -->
+  <div>item</div>
+</div>
+<script>
+  var abspositem = document.createElement("div");
+  abspositem.style.position = "absolute";
+  var grid = document.getElementById("grid");
+  grid.appendChild(abspositem);
+  document.body.offsetLeft;
+  grid.removeChild(abspositem);
+</script>
