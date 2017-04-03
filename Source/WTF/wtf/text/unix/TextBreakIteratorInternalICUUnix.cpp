@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Alp Toker <alp@atoker.com>
+ * Copyright (C) 2017 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -20,17 +20,21 @@
 #include "config.h"
 #include "TextBreakIteratorInternalICU.h"
 
+#include <locale.h>
+
 namespace WTF {
 
 const char* currentSearchLocaleID()
 {
-    // FIXME: Should use system locale.
+    if (auto* localeDefault = setlocale(LC_MESSAGES, nullptr))
+        return localeDefault;
     return "";
 }
 
 const char* currentTextBreakLocaleID()
 {
-    // FIXME: Should use system locale.
+    if (auto* localeDefault = setlocale(LC_MESSAGES, nullptr))
+        return localeDefault;
     return "en_us";
 }
 

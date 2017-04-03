@@ -10,7 +10,7 @@ list(APPEND WTF_SOURCES
     PlatformUserPreferredLanguagesUnix.cpp
     UniStdExtras.cpp
 
-    text/gtk/TextBreakIteratorInternalICUGtk.cpp
+    text/unix/TextBreakIteratorInternalICUUnix.cpp
 )
 
 list(APPEND WTF_LIBRARIES
