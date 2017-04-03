@@ -177,9 +177,9 @@ RuleSet::~RuleSet()
 {
 }
 
-void RuleSet::addToRuleSet(AtomicStringImpl* key, AtomRuleMap& map, const RuleData& ruleData)
+void RuleSet::addToRuleSet(const AtomicString& key, AtomRuleMap& map, const RuleData& ruleData)
 {
-    if (!key)
+    if (key.isNull())
         return;
     auto& rules = map.add(key, nullptr).iterator->value;
     if (!rules)
@@ -187,7 +187,7 @@ void RuleSet::addToRuleSet(AtomicStringImpl* key, AtomRuleMap& map, const RuleDa
     rules->append(ruleData);
 }
 
-static unsigned rulesCountForName(const RuleSet::AtomRuleMap& map, AtomicStringImpl* name)
+static unsigned rulesCountForName(const RuleSet::AtomRuleMap& map, const AtomicString& name)
 {
     if (const auto* rules = map.get(name))
         return rules->size();
@@ -218,7 +218,7 @@ void RuleSet::addRule(StyleRule* rule, unsigned selectorIndex, AddRuleFlags addR
             idSelector = selector;
             break;
         case CSSSelector::Class: {
-            auto* className = selector->value().impl();
+            auto& className = selector->value();
             if (!classSelector) {
                 classSelector = selector;
                 classBucketSize = rulesCountForName(m_classRules, className);
@@ -305,7 +305,7 @@ void RuleSet::addRule(StyleRule* rule, unsigned selectorIndex, AddRuleFlags addR
     if (customPseudoElementSelector) {
         // FIXME: Custom pseudo elements are handled by the shadow tree's selector filter. It doesn't know about the main DOM.
         ruleData.disableSelectorFiltering();
-        addToRuleSet(customPseudoElementSelector->value().impl(), m_shadowPseudoElementRules, ruleData);
+        addToRuleSet(customPseudoElementSelector->value(), m_shadowPseudoElementRules, ruleData);
         return;
     }
 
@@ -315,12 +315,12 @@ void RuleSet::addRule(StyleRule* rule, unsigned selectorIndex, AddRuleFlags addR
     }
 
     if (idSelector) {
-        addToRuleSet(idSelector->value().impl(), m_idRules, ruleData);
+        addToRuleSet(idSelector->value(), m_idRules, ruleData);
         return;
     }
 
     if (classSelector) {
-        addToRuleSet(classSelector->value().impl(), m_classRules, ruleData);
+        addToRuleSet(classSelector->value(), m_classRules, ruleData);
         return;
     }
 
@@ -335,8 +335,8 @@ void RuleSet::addRule(StyleRule* rule, unsigned selectorIndex, AddRuleFlags addR
     }
 
     if (tagSelector) {
-        addToRuleSet(tagSelector->tagQName().localName().impl(), m_tagLocalNameRules, ruleData);
-        addToRuleSet(tagSelector->tagLowercaseLocalName().impl(), m_tagLowercaseLocalNameRules, ruleData);
+        addToRuleSet(tagSelector->tagQName().localName(), m_tagLocalNameRules, ruleData);
+        addToRuleSet(tagSelector->tagLowercaseLocalName(), m_tagLowercaseLocalNameRules, ruleData);
         return;
     }
 

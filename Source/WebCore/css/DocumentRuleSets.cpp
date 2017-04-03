@@ -124,7 +124,7 @@ void DocumentRuleSets::collectFeatures() const
     m_features.shrinkToFit();
 }
 
-RuleSet* DocumentRuleSets::ancestorClassRules(AtomicStringImpl* className) const
+RuleSet* DocumentRuleSets::ancestorClassRules(const AtomicString& className) const
 {
     auto addResult = m_ancestorClassRuleSets.add(className, nullptr);
     if (addResult.isNewEntry) {
@@ -134,7 +134,7 @@ RuleSet* DocumentRuleSets::ancestorClassRules(AtomicStringImpl* className) const
     return addResult.iterator->value.get();
 }
 
-const DocumentRuleSets::AttributeRules* DocumentRuleSets::ancestorAttributeRulesForHTML(AtomicStringImpl* attributeName) const
+const DocumentRuleSets::AttributeRules* DocumentRuleSets::ancestorAttributeRulesForHTML(const AtomicString& attributeName) const
 {
     auto addResult = m_ancestorAttributeRuleSetsForHTML.add(attributeName, nullptr);
     auto& value = addResult.iterator->value;
