@@ -48,7 +48,7 @@ class HeapTimer : public ThreadSafeRefCounted<HeapTimer> {
 public:
     HeapTimer(VM*);
 #if USE(CF)
-    static void timerDidFire(CFRunLoopTimerRef, void*);
+    static void timerDidFireCallback(CFRunLoopTimerRef, void*);
 #endif
     
     JS_EXPORT_PRIVATE virtual ~HeapTimer();
@@ -78,12 +78,11 @@ protected:
     Lock m_shutdownMutex;
 #elif USE(GLIB)
     static const long s_decade;
-    void timerDidFire();
     GRefPtr<GSource> m_timer;
 #endif
     
 private:
-    void invalidate();
+    void timerDidFire();
 };
 
 } // namespace JSC

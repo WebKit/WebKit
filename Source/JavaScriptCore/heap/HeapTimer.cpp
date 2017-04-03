@@ -40,6 +40,25 @@
 
 namespace JSC {
 
+void HeapTimer::timerDidFire()
+{
+    m_apiLock->lock();
+
+    RefPtr<VM> vm = m_apiLock->vm();
+    if (!vm) {
+        // The VM has been destroyed, so we should just give up.
+        m_apiLock->unlock();
+        return;
+    }
+
+    {
+        JSLockHolder locker(vm.get());
+        doWork();
+    }
+
+    m_apiLock->unlock();
+}
+
 #if USE(CF)
     
 const CFTimeInterval HeapTimer::s_decade = 60 * 60 * 24 * 365 * 10;
@@ -64,7 +83,7 @@ void HeapTimer::setRunLoop(CFRunLoopRef runLoop)
         m_runLoop = runLoop;
         memset(&m_context, 0, sizeof(CFRunLoopTimerContext));
         m_context.info = this;
-        m_timer = adoptCF(CFRunLoopTimerCreate(kCFAllocatorDefault, s_decade, s_decade, 0, 0, HeapTimer::timerDidFire, &m_context));
+        m_timer = adoptCF(CFRunLoopTimerCreate(kCFAllocatorDefault, s_decade, s_decade, 0, 0, HeapTimer::timerDidFireCallback, &m_context));
         CFRunLoopAddTimer(m_runLoop.get(), m_timer.get(), kCFRunLoopCommonModes);
     }
 }
@@ -74,24 +93,9 @@ HeapTimer::~HeapTimer()
     setRunLoop(0);
 }
 
-void HeapTimer::timerDidFire(CFRunLoopTimerRef, void* contextPtr)
+void HeapTimer::timerDidFireCallback(CFRunLoopTimerRef, void* contextPtr)
 {
-    HeapTimer* timer = static_cast<HeapTimer*>(contextPtr);
-    timer->m_apiLock->lock();
-
-    RefPtr<VM> vm = timer->m_apiLock->vm();
-    if (!vm) {
-        // The VM has been destroyed, so we should just give up.
-        timer->m_apiLock->unlock();
-        return;
-    }
-
-    {
-        JSLockHolder locker(vm.get());
-        timer->doWork();
-    }
-
-    timer->m_apiLock->unlock();
+    static_cast<JSRunLoopTimer*>(contextPtr)->timerDidFire();
 }
 
 void HeapTimer::scheduleTimer(double intervalInSeconds)
@@ -143,24 +147,6 @@ HeapTimer::~HeapTimer()
     g_source_destroy(m_timer.get());
 }
 
-void HeapTimer::timerDidFire()
-{
-    m_apiLock->lock();
-
-    if (!m_apiLock->vm()) {
-        // The VM has been destroyed, so we should just give up.
-        m_apiLock->unlock();
-        return;
-    }
-
-    {
-        JSLockHolder locker(m_vm);
-        doWork();
-    }
-
-    m_apiLock->unlock();
-}
-
 void HeapTimer::scheduleTimer(double intervalInSeconds)
 {
     g_source_set_ready_time(m_timer.get(), g_get_monotonic_time() + intervalInSeconds * G_USEC_PER_SEC);
@@ -179,10 +165,6 @@ HeapTimer::HeapTimer(VM* vm)
 }
 
 HeapTimer::~HeapTimer()
-{
-}
-
-void HeapTimer::invalidate()
 {
 }
 
