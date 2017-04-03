@@ -1,3 +1,27 @@
+2017-03-22  Dean Jackson  <dino@apple.com>
+
+        NeverDestroyed<MediaQueryEvaluator> must explicitly construct with a String
+        https://bugs.webkit.org/show_bug.cgi?id=169987
+        <rdar://problem/31211087>
+
+        Reviewed by Alex Christensen.
+
+        CSSDefaultStyleSheets creates a static MediaQueryEvaluator, but thanks
+        to the template magic of NeverDestroyed, it was converting the char*
+        argument into a bool, and calling the wrong constructor.
+
+        Unfortunately this is difficult to test because it only affects
+        the default UA style sheets, and they currently don't have
+        and @media rules (which would always evaluate to true given
+        the bug). I don't want to put in a useless rule just to check
+        if the bug is fixed. When one is added for bug 168447, this change
+        will be exercised.
+
+        * css/CSSDefaultStyleSheets.cpp: Explicitly construct with a String
+        rather than a char*.
+        (WebCore::screenEval):
+        (WebCore::printEval):
+
 2017-03-22  Antti Koivisto  <antti@apple.com>
 
         Dynamically applied :empty pseudo class with display:none does not get unapplied
