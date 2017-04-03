@@ -63,6 +63,7 @@ WebInspector.TreeElement = class TreeElement extends WebInspector.Object
     removeChildAtIndex() { return WebInspector.TreeOutline.prototype.removeChildAtIndex.apply(this, arguments); }
     removeChildren() { return WebInspector.TreeOutline.prototype.removeChildren.apply(this, arguments); }
     removeChildrenRecursive() { return WebInspector.TreeOutline.prototype.removeChildrenRecursive.apply(this, arguments); }
+    selfOrDescendant() { return WebInspector.TreeOutline.prototype.selfOrDescendant.apply(this, arguments); }
 
     get arrowToggleWidth()
     {

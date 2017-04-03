@@ -682,6 +682,7 @@ localizedStrings["Resume Thread"] = "Resume Thread";
 localizedStrings["Retained Size"] = "Retained Size";
 localizedStrings["Return type for anonymous function"] = "Return type for anonymous function";
 localizedStrings["Return type for function: %s"] = "Return type for function: %s";
+localizedStrings["Reveal Breakpoint"] = "Reveal Breakpoint";
 localizedStrings["Reveal in DOM Tree"] = "Reveal in DOM Tree";
 localizedStrings["Reveal in Debugger Tab"] = "Reveal in Debugger Tab";
 localizedStrings["Reveal in Original Resource"] = "Reveal in Original Resource";

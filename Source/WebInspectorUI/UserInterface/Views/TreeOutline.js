@@ -397,6 +397,20 @@ WebInspector.TreeOutline = class TreeOutline extends WebInspector.Object
         return null;
     }
 
+    selfOrDescendant(predicate)
+    {
+        let treeElements = [this];
+        while (treeElements.length) {
+            let treeElement = treeElements.shift();
+            if (predicate(treeElement))
+                return treeElement;
+
+            treeElements = treeElements.concat(treeElement.children);
+        }
+
+        return false;
+    }
+
     findTreeElement(representedObject, isAncestor, getParent)
     {
         if (!representedObject)

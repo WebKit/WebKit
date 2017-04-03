@@ -295,3 +295,11 @@ body[dir=rtl] .tree-outline.dom li.parent.shadow::after {
 .node-state-changed {
     animation: node-state-changed 1s cubic-bezier(0.25, 0, 0.25, 1);
 }
+
+@keyframes dom-tree-outline-highlight-fadeout {
+    from { background-color: highlight; }
+}
+
+.highlight .selection-area {
+    animation: "dom-tree-outline-highlight-fadeout" 2s;
+}
