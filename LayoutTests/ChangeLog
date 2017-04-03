@@ -1,5 +1,13 @@
 2017-04-02  Alexey Proskuryakov  <ap@apple.com>
 
+        Build fix for
+        Add missing text styles
+        https://bugs.webkit.org/show_bug.cgi?id=170295
+
+        * platform/ios/ios/fast/text/opticalFontWithTextStyle-expected.txt:
+
+2017-04-02  Alexey Proskuryakov  <ap@apple.com>
+
         Fix lint errors.
 
         * TestExpectations:

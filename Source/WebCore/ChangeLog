@@ -1,3 +1,13 @@
+2017-04-02  Alexey Proskuryakov  <ap@apple.com>
+
+        Build fix for
+        Add missing text styles
+        https://bugs.webkit.org/show_bug.cgi?id=170295
+
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::cachedSystemFontDescription):
+        (WebCore::RenderThemeIOS::updateCachedSystemFontDescription):
+
 2017-04-01  Zalan Bujtas  <zalan@apple.com>
 
         Long Arabic text in ContentEditable with css white-space=pre hangs Safari

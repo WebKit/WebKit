@@ -1141,7 +1141,7 @@ FontCascadeDescription& RenderThemeIOS::cachedSystemFontDescription(CSSValueID v
     static NeverDestroyed<FontCascadeDescription> title1Font;
     static NeverDestroyed<FontCascadeDescription> title2Font;
     static NeverDestroyed<FontCascadeDescription> title3Font;
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
     static NeverDestroyed<FontCascadeDescription> title4Font;
 #endif
 
@@ -1179,7 +1179,7 @@ FontCascadeDescription& RenderThemeIOS::cachedSystemFontDescription(CSSValueID v
         return title2Font;
     case CSSValueAppleSystemTitle3:
         return title3Font;
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
     case CSSValueAppleSystemTitle4:
         return title4Font;
 #endif
@@ -1241,7 +1241,7 @@ void RenderThemeIOS::updateCachedSystemFontDescription(CSSValueID valueID, FontC
         textStyle = kCTUIFontTextStyleTitle3;
         fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(textStyle, contentSizeCategory(), 0));
         break;
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
     case CSSValueAppleSystemTitle4:
         textStyle = kCTUIFontTextStyleTitle4;
         fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(textStyle, contentSizeCategory(), 0));
