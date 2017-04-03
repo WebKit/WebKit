@@ -2064,6 +2064,10 @@ void RenderBlockFlow::styleDidChange(StyleDifference diff, const RenderStyle* ol
         parentBlock->markAllDescendantsWithFloatsForLayout();
         parentBlock->markSiblingsWithFloatsForLayout();
     }
+    // Fresh floats need to be reparented if they actually belong to the previous anonymous block.
+    // It copies the logic of RenderBlock::addChildIgnoringContinuation
+    if (noLongerAffectsParentBlock() && style().isFloating() && previousSibling() && previousSibling()->isAnonymousBlock())
+        downcast<RenderBoxModelObject>(*parent()).moveChildTo(&downcast<RenderBoxModelObject>(*previousSibling()), this);
 
     if (auto fragment = renderNamedFlowFragment())
         fragment->setStyle(RenderNamedFlowFragment::createStyle(style()));
