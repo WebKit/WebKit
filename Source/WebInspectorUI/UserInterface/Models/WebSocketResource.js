@@ -61,7 +61,15 @@ WebInspector.WebSocketResource = class WebSocketResource extends WebInspector.Re
 
     addFrame(data, isOutgoing, opcode, timestamp, elapsedTime)
     {
-        let frame = {data, isOutgoing, opcode, walltime: this._walltimeForWebSocketTimestamp(timestamp)};
+        let frameData;
+
+        // Binary data is never shown in the UI, don't clog memory with it.
+        if (opcode === WebInspector.WebSocketResource.OpCodes.BinaryFrame)
+            frameData = null;
+        else
+            frameData = data;
+
+        let frame = {data: frameData, isOutgoing, opcode, walltime: this._walltimeForWebSocketTimestamp(timestamp)};
         this._frames.push(frame);
 
         this.increaseSize(data.length, elapsedTime);

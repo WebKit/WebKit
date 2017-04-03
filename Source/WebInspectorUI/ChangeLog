@@ -1,3 +1,14 @@
+2017-04-03  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: WebSockets: Don't store binary frames in memory since they are never shown
+        https://bugs.webkit.org/show_bug.cgi?id=169649
+        <rdar://problem/31053069>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Models/WebSocketResource.js:
+        (WebInspector.WebSocketResource.prototype.addFrame):
+
 2017-04-03  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: Preference for Auto Showing Scope Chain sidebar on pause
