@@ -1,3 +1,12 @@
+2017-04-03  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Remove no longer needed forward declarations
+        https://bugs.webkit.org/show_bug.cgi?id=170415
+
+        Reviewed by Dan Bernstein.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+
 2017-04-03  Anders Carlsson  <andersca@apple.com>
 
         Tweak ApplePaySession API
