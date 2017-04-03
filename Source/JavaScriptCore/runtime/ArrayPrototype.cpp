@@ -1042,8 +1042,10 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSplice(ExecState* exec)
             }
         } else {
             result = JSArray::tryCreateForInitializationPrivate(vm, exec->lexicalGlobalObject()->arrayStructureForIndexingTypeDuringAllocation(ArrayWithUndecided), actualDeleteCount);
-            if (!result)
-                return JSValue::encode(throwOutOfMemoryError(exec, scope));
+            if (UNLIKELY(!result)) {
+                throwOutOfMemoryError(exec, scope);
+                return encodedJSValue();
+            }
             
             for (unsigned k = 0; k < actualDeleteCount; ++k) {
                 JSValue v = getProperty(exec, thisObj, k + actualStart);

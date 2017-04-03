@@ -363,6 +363,9 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
             Structure* structure = globalObject->restParameterStructure();
             ASSERT(argumentCount > 0);
             unsigned arraySize = (argumentCount - 1) > numberOfArgumentsToSkip ? argumentCount - 1 - numberOfArgumentsToSkip : 0;
+
+            // FIXME: we should throw an out of memory error here if tryCreateForInitializationPrivate() fails.
+            // https://bugs.webkit.org/show_bug.cgi?id=169784
             JSArray* array = JSArray::tryCreateForInitializationPrivate(vm, structure, arraySize);
             RELEASE_ASSERT(array);
 
@@ -452,6 +455,8 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
             }
         }
 
+        // FIXME: we should throw an out of memory error here if checkedArraySize has hasOverflowed() or tryCreateForInitializationPrivate() fails.
+        // https://bugs.webkit.org/show_bug.cgi?id=169784
         unsigned arraySize = checkedArraySize.unsafeGet(); // Crashes if overflowed.
         JSArray* result = JSArray::tryCreateForInitializationPrivate(vm, structure, arraySize);
         RELEASE_ASSERT(result);

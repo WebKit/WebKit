@@ -2086,6 +2086,10 @@ JSCell* JIT_OPERATION operationNewArrayWithSpreadSlow(ExecState* exec, void* buf
     Structure* structure = globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous);
 
     JSArray* result = JSArray::tryCreateForInitializationPrivate(vm, structure, length);
+    if (UNLIKELY(!result)) {
+        throwOutOfMemoryError(exec, scope);
+        return nullptr;
+    }
     RETURN_IF_EXCEPTION(scope, nullptr);
 
     unsigned index = 0;

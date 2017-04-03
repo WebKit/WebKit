@@ -300,6 +300,7 @@ inline JSArray* constructArray(ExecState* exec, Structure* arrayStructure, const
     // FIXME: we should probably throw an out of memory error here, but
     // when making this change we should check that all clients of this
     // function will correctly handle an exception being thrown from here.
+    // https://bugs.webkit.org/show_bug.cgi?id=169786
     RELEASE_ASSERT(array);
 
     for (unsigned i = 0; i < length; ++i)
@@ -315,6 +316,7 @@ inline JSArray* constructArray(ExecState* exec, Structure* arrayStructure, const
     // FIXME: we should probably throw an out of memory error here, but
     // when making this change we should check that all clients of this
     // function will correctly handle an exception being thrown from here.
+    // https://bugs.webkit.org/show_bug.cgi?id=169786
     RELEASE_ASSERT(array);
 
     for (unsigned i = 0; i < length; ++i)
@@ -330,6 +332,7 @@ inline JSArray* constructArrayNegativeIndexed(ExecState* exec, Structure* arrayS
     // FIXME: we should probably throw an out of memory error here, but
     // when making this change we should check that all clients of this
     // function will correctly handle an exception being thrown from here.
+    // https://bugs.webkit.org/show_bug.cgi?id=169786
     RELEASE_ASSERT(array);
 
     for (int i = 0; i < static_cast<int>(length); ++i)

@@ -81,7 +81,12 @@ ALWAYS_INLINE JSArray* createRegExpMatchesArray(
     
     if (UNLIKELY(globalObject->isHavingABadTime())) {
         array = JSArray::tryCreateForInitializationPrivate(vm, &deferralContext, globalObject->regExpMatchesArrayStructure(), numSubpatterns + 1);
-        
+        // FIXME: we should probably throw an out of memory error here, but
+        // when making this change we should check that all clients of this
+        // function will correctly handle an exception being thrown from here.
+        // https://bugs.webkit.org/show_bug.cgi?id=169786
+        RELEASE_ASSERT(array);
+
         setProperties();
         
         array->initializeIndexWithoutBarrier(0, jsSubstringOfResolved(vm, &deferralContext, input, result.start, result.end - result.start));
