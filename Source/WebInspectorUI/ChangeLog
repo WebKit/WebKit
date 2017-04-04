@@ -1,5 +1,17 @@
 2017-04-04  Brian Burg  <bburg@apple.com>
 
+        Web Inspector: RTL: fix alignment of close button shown while docked
+        https://bugs.webkit.org/show_bug.cgi?id=170472
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/Toolbar.css:
+        (.toolbar .control-section):
+        (body[dir=ltr] .toolbar .control-section):
+        (body[dir=rtl] .toolbar .control-section):
+
+2017-04-04  Brian Burg  <bburg@apple.com>
+
         Web Inspector: RTL: layout issues in debugger dashboard, arrows are on wrong side
         https://bugs.webkit.org/show_bug.cgi?id=170425
 
