@@ -193,7 +193,9 @@ NS_ASSUME_NONNULL_END
 
 #endif // __has_include(<AVFoundation/AVSampleBufferRenderSynchronizer.h>)
 
-#if __has_include(<AVFoundation/AVSampleBufferDisplayLayer.h>)
+#if ((PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED < 110000)) && __has_include(<AVFoundation/AVQueuedSampleBufferRendering.h>)
+#import <AVfoundation/AVQueuedSampleBufferRendering.h>
+#elif __has_include(<AVFoundation/AVSampleBufferDisplayLayer.h>)
 #import <AVFoundation/AVSampleBufferDisplayLayer.h>
 #else
 

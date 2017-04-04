@@ -1,5 +1,11 @@
 2017-04-04  Jer Noble  <jer.noble@apple.com>
 
+        Unreviewed build fix: fix compilation error on Sierra.
+
+        * platform/spi/mac/AVFoundationSPI.h:
+
+2017-04-04  Jer Noble  <jer.noble@apple.com>
+
         Move AVSampleBufferDisplayLayer declarations into AVFoundationSPI.h
         https://bugs.webkit.org/show_bug.cgi?id=170471
 
