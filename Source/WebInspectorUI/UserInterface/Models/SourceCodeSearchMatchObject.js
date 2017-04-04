@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -46,7 +46,7 @@ WebInspector.SourceCodeSearchMatchObject = class SourceCodeSearchMatchObject ext
 
     get className()
     {
-        return WebInspector.SourceCodeSearchMatchObject.SourceCodeMatchIconStyleClassName;
+        return "source-code-match";
     }
 
     saveIdentityToCookie(cookie)
@@ -58,8 +58,6 @@ WebInspector.SourceCodeSearchMatchObject = class SourceCodeSearchMatchObject ext
         cookie[WebInspector.SourceCodeSearchMatchObject.TextRangeKey] = [textRange.startLine, textRange.startColumn, textRange.endLine, textRange.endColumn].join();
     }
 };
-
-WebInspector.SourceCodeSearchMatchObject.SourceCodeMatchIconStyleClassName = "source-code-match-icon";
 
 WebInspector.SourceCodeSearchMatchObject.TypeIdentifier = "source-code-search-match-object";
 WebInspector.SourceCodeSearchMatchObject.URLCookieKey = "source-code-url";

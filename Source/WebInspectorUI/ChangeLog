@@ -1,3 +1,31 @@
+2017-04-03  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: RTL: results in Search navigation sidebar have misplaced highlights
+        https://bugs.webkit.org/show_bug.cgi?id=170292
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Models/SourceCodeSearchMatchObject.js:
+        (WebInspector.SourceCodeSearchMatchObject.prototype.get className):
+        * UserInterface/Views/SearchIcons.css:
+        (.source-code-match .icon):
+        (.source-code-match-icon .icon): Deleted.
+        Remove -icon suffix from the class name since the class is attached to a result
+        and is not specific to the icon displayed within the result <li>.
+
+        * UserInterface/Views/SearchResultTreeElement.js:
+        (WebInspector.SearchResultTreeElement.truncateAndHighlightTitle):
+        Flip the leading and trailing context in RTL so that the highlight is not overflowed
+        to the left when too much context is included on the right side. Less context must be
+        used in RTL because we must not overflow to the right, as it may hide the result. And,
+        we don't know the exact starting character either as it may be overflowed to the right
+        as the user resizes the expanded sidebar larger or smaller. So show less context to
+        be conservative about never overflowing the highlighted result string.
+
+        * UserInterface/Views/SearchSidebarPanel.css:
+        (.sidebar > .panel.navigation.search .item.source-code-match .title):
+        When in RTL, show source code matches as LTR with text-align to right.
+
 2017-04-03  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: clicking on the body of a CSS rule after editing the selector causes the section to disappear
