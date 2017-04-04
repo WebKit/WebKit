@@ -1282,6 +1282,12 @@ Expected<std::unique_ptr<WasmInternalFunction>, String> parseAndCompile(Compilat
         if (origin.data())
             out.print("Wasm: ", bitwise_cast<OpcodeOrigin>(origin));
     });
+    
+    // This means we cannot use either StackmapGenerationParams::usedRegisters() or
+    // StackmapGenerationParams::unavailableRegisters(). In exchange for this concession, we
+    // don't strictly need to run Air::reportUsedRegisters(), which saves a bit of CPU time at
+    // optLevel=1.
+    procedure.setNeedsUsedRegisters(false);
 
     B3IRGenerator context(info, procedure, result.get(), unlinkedWasmToWasmCalls, mode);
     FunctionParser<B3IRGenerator> parser(context, functionStart, functionLength, signature, info, moduleSignatureIndicesToUniquedSignatureIndices);
@@ -1296,7 +1302,7 @@ Expected<std::unique_ptr<WasmInternalFunction>, String> parseAndCompile(Compilat
     dataLogIf(verbose, "Pre SSA: ", procedure);
     fixSSA(procedure);
     dataLogIf(verbose, "Post SSA: ", procedure);
-
+    
     {
         B3::prepareForGeneration(procedure, optLevel);
         B3::generate(procedure, *compilationContext.wasmEntrypointJIT);

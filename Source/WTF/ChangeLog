@@ -1,3 +1,17 @@
+2017-04-04  Filip Pizlo  <fpizlo@apple.com>
+
+        Don't need to Air::reportUsedRegisters for wasm at -O1
+        https://bugs.webkit.org/show_bug.cgi?id=170459
+
+        Reviewed by Saam Barati.
+        
+        Just moved the liveness computation into a method, which enabled me to do the profiling
+        that I used to write this patch.
+
+        * wtf/Liveness.h:
+        (WTF::Liveness::Liveness):
+        (WTF::Liveness::compute):
+
 2017-04-03  Filip Pizlo  <fpizlo@apple.com>
 
         Air liveness should build constraints and solve them rather than repeatedly parsing IR

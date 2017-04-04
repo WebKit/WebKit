@@ -232,6 +232,12 @@ public:
 
     // This tells the register allocators to stay away from this register.
     JS_EXPORT_PRIVATE void pinRegister(Reg);
+    
+    // You can turn off used registers calculation. This may speed up compilation a bit. But if
+    // you turn it off then you cannot use StackmapGenerationParams::usedRegisters() or
+    // StackmapGenerationParams::unavailableRegisters().
+    void setNeedsUsedRegisters(bool value) { m_needsUsedRegisters = value; }
+    bool needsUsedRegisters() const { return m_needsUsedRegisters; }
 
     JS_EXPORT_PRIVATE unsigned frameSize() const;
     JS_EXPORT_PRIVATE const RegisterAtOffsetList& calleeSaveRegisters() const;
@@ -267,6 +273,7 @@ private:
     RefPtr<SharedTask<void(PrintStream&, Origin)>> m_originPrinter;
     const void* m_frontendData;
     PCToOriginMap m_pcToOriginMap;
+    bool m_needsUsedRegisters { true };
     bool m_hasQuirks { false };
 };
 

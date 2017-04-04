@@ -38,6 +38,8 @@ public:
     Liveness(Code& code)
         : WTF::Liveness<Adapter>(code.cfg(), code)
     {
+        SuperSamplerScope samplingScope(false);
+        WTF::Liveness<Adapter>::compute();
     }
 };
 

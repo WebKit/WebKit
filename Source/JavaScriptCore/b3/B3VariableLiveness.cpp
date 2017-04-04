@@ -33,6 +33,7 @@ namespace JSC { namespace B3 {
 VariableLiveness::VariableLiveness(Procedure& proc)
     : WTF::Liveness<VariableLivenessAdapter>(proc.cfg(), proc)
 {
+    compute();
 }
 
 VariableLiveness::~VariableLiveness()

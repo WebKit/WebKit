@@ -1,3 +1,67 @@
+2017-04-04  Filip Pizlo  <fpizlo@apple.com>
+
+        Don't need to Air::reportUsedRegisters for wasm at -O1
+        https://bugs.webkit.org/show_bug.cgi?id=170459
+
+        Reviewed by Saam Barati.
+        
+        I did some refactorings to Liveness<> to try to understand its performance. Based on
+        this I concluded that the bigger immediate issue is just removing unnecessary phases
+        from -O1.
+        
+        This removes Air::reportUsedRegisters() from -O1 if the user has indicated that he is
+        not interested in StackmapGenerationParams::usedRegisters(). The logic here is a bit
+        weird because of how Air does spill code generation. The register allocator's spiller
+        will emit spill code using identifiable spill slots, which allows subsequent phases to
+        register-allocate the spill slots. We do this by a forward flow CSE phase called
+        fixObviousSpills (which is a terrible name since there is no longer anything obvious
+        about some of the spills that this phase can fix!). As is most natural for CSEs over
+        3AC, it rewires the uses of redundant computations rather than removing the redundant
+        computations. This means that if a spill got "fixed", there may be either or both of
+        the following:
+        
+        - Dead loads from the stack.
+        - Dead stores to the stack.
+        
+        We know that a load from the stack is dead if the register is dead at the point of the
+        load. We know that a store to the stack is dead if the spill slot is dead at the point
+        of the store.
+        
+        Unfortunately, liveness analysis - over either registers or spill slots - is expensive.
+        
+        Fortunately, allocateStack() already does liveness analysis over spill slots. So, we
+        baked elimination of stores to the stack into that phase. That aspect of clean-up after
+        the spill CSE comes for free.
+        
+        Also fortunately for the FTL, we have to do reportUsedRegisters() anyway. This is a
+        phase that enables StackmapGenerationParams::usedRegisters() to work, which then
+        enables the FTL's patchpoints to do crazy slow-path live range splitting. So, Air's
+        strategy for the load fix-up after spill CSE is to do it as part of
+        reportUsedRegisters().
+        
+        This patch introduces the Procedure::setNeedsUsedRegisters() API. But if you set
+        needsUsedRegisters to false then we will still run reportUsedRegisters() at -O2 as an
+        optimization - it removes dead loads from the stack that are left behind from
+        fixObviousSpills().
+        
+        This is a ~6% compile time progression at -O1.
+
+        * b3/B3Procedure.h:
+        (JSC::B3::Procedure::setNeedsUsedRegisters):
+        (JSC::B3::Procedure::needsUsedRegisters):
+        * b3/B3StackmapGenerationParams.h:
+        * b3/B3VariableLiveness.cpp:
+        (JSC::B3::VariableLiveness::VariableLiveness):
+        * b3/air/AirCode.cpp:
+        (JSC::B3::Air::Code::needsUsedRegisters):
+        * b3/air/AirCode.h:
+        * b3/air/AirGenerate.cpp:
+        (JSC::B3::Air::prepareForGeneration):
+        * b3/air/AirLiveness.h:
+        (JSC::B3::Air::Liveness::Liveness):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::parseAndCompile):
+
 2017-04-03  Filip Pizlo  <fpizlo@apple.com>
 
         Air liveness should build constraints and solve them rather than repeatedly parsing IR

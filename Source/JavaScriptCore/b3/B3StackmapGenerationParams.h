@@ -60,6 +60,7 @@ public:
     Vector<ValueRep>::const_iterator end() const { return m_reps.end(); }
     
     // This tells you the registers that were used.
+    // NOTE: This will report bogus information if you did proc.setNeedsUsedRegisters(false).
     const RegisterSet& usedRegisters() const;
 
     // This is a useful helper if you want to do register allocation inside of a patchpoint. The
@@ -79,6 +80,8 @@ public:
     //
     // I.e. it is like usedRegisters() but also includes unsaved callee-saves and excludes scratch
     // registers.
+    //
+    // NOTE: This will report bogus information if you did proc.setNeedsUsedRegisters(false).
     JS_EXPORT_PRIVATE RegisterSet unavailableRegisters() const;
 
     GPRReg gpScratch(unsigned index) const { return m_gpScratch[index]; }

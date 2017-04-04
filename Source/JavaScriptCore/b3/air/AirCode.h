@@ -90,6 +90,8 @@ public:
     bool isPinned(Reg reg) const { return !mutableRegs().get(reg); }
     
     void pinRegister(Reg);
+    
+    bool needsUsedRegisters() const;
 
     JS_EXPORT_PRIVATE BasicBlock* addBlock(double frequency = 1);
 

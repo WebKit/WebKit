@@ -87,6 +87,11 @@ void Code::pinRegister(Reg reg)
     ASSERT(!regs.contains(reg));
 }
 
+bool Code::needsUsedRegisters() const
+{
+    return m_proc.needsUsedRegisters();
+}
+
 BasicBlock* Code::addBlock(double frequency)
 {
     std::unique_ptr<BasicBlock> block(new BasicBlock(m_blocks.size(), frequency));

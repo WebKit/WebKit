@@ -122,8 +122,10 @@ void prepareForGeneration(Code& code, unsigned optLevel)
     // phase.
     simplifyCFG(code);
 
-    // This is needed to satisfy a requirement of B3::StackmapValue.
-    reportUsedRegisters(code);
+    // This is needed to satisfy a requirement of B3::StackmapValue. This also removes dead
+    // code. We can avoid running this when certain optimizations are disabled.
+    if (optLevel >= 2 || code.needsUsedRegisters())
+        reportUsedRegisters(code);
 
     // Attempt to remove false dependencies between instructions created by partial register changes.
     // This must be executed as late as possible as it depends on the instructions order and register
