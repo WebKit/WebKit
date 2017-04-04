@@ -1,3 +1,15 @@
+2017-04-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Allow MiniBrowser windows to receive local file drags again
+        https://bugs.webkit.org/show_bug.cgi?id=170422
+
+        Reviewed by Wenson Hsieh.
+
+        Adopt the new UIDelegate SPI to allow drops.
+
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (-[WK2BrowserWindowController _webView:dragDestinationActionMaskForDraggingInfo:]):
+
 2017-04-03  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK][JHBuild] Fetch libvpx from a release tarball instead of git

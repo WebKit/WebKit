@@ -34,6 +34,7 @@
 #import <WebKit/WKNavigationDelegate.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKUIDelegate.h>
+#import <WebKit/WKUIDelegatePrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
@@ -512,6 +513,11 @@ static BOOL areEssentiallyEqual(double a, double b)
         else
             completionHandler(nil);
     }];
+}
+
+- (WKDragDestinationAction)_webView:(WKWebView *)webView dragDestinationActionMaskForDraggingInfo:(id)draggingInfo
+{
+    return WKDragDestinationActionAny;
 }
 
 - (void)updateTextFieldFromURL:(NSURL *)URL
