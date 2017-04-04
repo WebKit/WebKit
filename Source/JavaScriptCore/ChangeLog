@@ -1,3 +1,14 @@
+2017-04-04  Keith Miller  <keith_miller@apple.com>
+
+        WasmBench asserts in debug jsc
+        https://bugs.webkit.org/show_bug.cgi?id=170462
+
+        Reviewed by Saam Barati.
+
+        The assertion should have been an if.
+
+        * wasm/WasmWorklist.cpp:
+
 2017-04-04  Filip Pizlo  <fpizlo@apple.com>
 
         Air::lowerAfterRegAlloc should bail early if it finds no Shuffles or ColdCCalls

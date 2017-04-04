@@ -115,9 +115,8 @@ protected:
         // FIXME: this should check in occasionally to see if there are new, higher priority e.g. synchronous, plans that need to be run.
         // https://bugs.webkit.org/show_bug.cgi?id=170204
         plan->compileFunctions(Plan::Partial);
-        ASSERT(!plan->hasWork());
 
-        {
+        if (!plan->hasWork()) {
             LockHolder locker(*worklist.m_lock);
             auto queue = worklist.m_queue;
             // Another thread may have removed our plan from the queue already.
