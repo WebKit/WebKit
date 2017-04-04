@@ -28,6 +28,7 @@
 #include "ActiveDOMCallback.h"
 #include "JSDOMGlobalObject.h"
 #include <heap/HeapInlines.h>
+#include <heap/SlotVisitorInlines.h>
 #include <heap/StrongInlines.h>
 #include <runtime/JSCell.h>
 
