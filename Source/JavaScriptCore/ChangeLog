@@ -1,3 +1,58 @@
+2017-04-03  Mark Lam  <mark.lam@apple.com>
+
+        Fix incorrect capacity delta calculation reported in SparseArrayValueMap::add().
+        https://bugs.webkit.org/show_bug.cgi?id=170412
+        <rdar://problem/29697336>
+
+        Reviewed by Filip Pizlo.
+
+        Here's an example of code that will trigger underflow in the "deprecatedExtraMemory"
+        reported by SparseArrayValueMap::add() that is added to Heap::m_deprecatedExtraMemorySize:
+        
+            arr = new Array;
+            Object.defineProperty(arr, 18, ({writable: true, configurable: true}));
+            for (var i = 0; i < 3; ++i) {
+                Array.prototype.push.apply(arr, ["", () => {}, {}]);
+                Array.prototype.sort.apply(arr, [() => {}, []]);
+            }
+
+        However, Heap::m_deprecatedExtraMemorySize is only 1 of 3 values that are added
+        up to form the result of Heap::extraMemorySize().  Heap::m_extraMemorySize and
+        Heap::m_arrayBuffers.size() are the other 2.
+
+        While Heap::m_arrayBuffers.size() is bounded by actual allocated memory, both
+        Heap::m_deprecatedExtraMemorySize and Heap::m_extraMemorySize are added to
+        without any bounds checks, and they are only reset to 0 at the start of a full
+        GC.  As a result, if we have a long sequence of eden GCs with a lot of additions
+        to Heap::m_extraMemorySize and/or Heap::m_deprecatedExtraMemorySize, then these
+        values could theoretically overflow.  Coupling this with the underflow from
+        SparseArrayValueMap::add(), the result for Heap::extraMemorySize() can easily
+        overflow.  Note: Heap::extraMemorySize() is used to compute the value
+        currentHeapSize.
+
+        If multiple conditions line up just right, the above overflows can result in this
+        debug assertion failure during an eden GC:
+
+            ASSERT(currentHeapSize >= m_sizeAfterLastCollect);
+
+        Otherwise, the effects of the overflows will only result in the computed
+        currentHeapSize not being representative of actual memory usage, and therefore,
+        a full GC may be triggered earlier or later than is ideal.
+
+        This patch ensures that SparseArrayValueMap::add() cannot underflow
+        Heap::m_deprecatedExtraMemorySize.  It also adds overflows checks in the
+        calculations of Heap::m_deprecatedExtraMemorySize, Heap::m_extraMemorySize, and
+        Heap::extraMemorySize() so that their values are saturated appropriately to
+        ensure that GC collections are triggered based on representative memory usage.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::deprecatedReportExtraMemorySlowCase):
+        (JSC::Heap::extraMemorySize):
+        (JSC::Heap::updateAllocationLimits):
+        (JSC::Heap::reportExtraMemoryVisited):
+        * runtime/SparseArrayValueMap.cpp:
+        (JSC::SparseArrayValueMap::add):
+
 2017-04-03  Filip Pizlo  <fpizlo@apple.com>
 
         Move the Liveness<> adapters from AirLiveness.h to AirLivenessAdapter.h.
