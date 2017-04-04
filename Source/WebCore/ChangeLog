@@ -1,3 +1,18 @@
+2017-04-04  Jer Noble  <jer.noble@apple.com>
+
+        Move AVSampleBufferDisplayLayer declarations into AVFoundationSPI.h
+        https://bugs.webkit.org/show_bug.cgi?id=170471
+
+        Reviewed by Eric Carlson.
+
+        Move the declaration of AVSampleBufferDisplayLayer (and related classes) into AVFoundationSPI.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::addDisplayLayer): Deleted.
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::removeDisplayLayer): Deleted.
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        * platform/spi/mac/AVFoundationSPI.h:
+
 2017-04-04  Saam Barati  <sbarati@apple.com>
 
         WebAssembly: JSWebAssemblyCallee should not be a JSCell

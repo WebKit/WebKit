@@ -163,6 +163,17 @@ NS_ASSUME_NONNULL_END
 #import <CoreMedia/CMSampleBuffer.h>
 #import <CoreMedia/CMSync.h>
 
+#if __has_include(<AVFoundation/AVSampleBufferRenderSynchronizer.h>)
+#import <AVFoundation/AVSampleBufferRenderSynchronizer.h>
+
+NS_ASSUME_NONNULL_BEGIN
+@interface AVSampleBufferRenderSynchronizer (AVSampleBufferRenderSynchronizerPrivate)
+- (void)removeRenderer:(id)renderer atTime:(CMTime)time withCompletionHandler:(void (^)(BOOL didRemoveRenderer))completionHandler;
+@end
+NS_ASSUME_NONNULL_END
+
+#else
+
 NS_ASSUME_NONNULL_BEGIN
 
 @interface AVSampleBufferRenderSynchronizer : NSObject
@@ -179,6 +190,32 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 NS_ASSUME_NONNULL_END
+
+#endif // __has_include(<AVFoundation/AVSampleBufferRenderSynchronizer.h>)
+
+#if __has_include(<AVFoundation/AVSampleBufferDisplayLayer.h>)
+#import <AVFoundation/AVSampleBufferDisplayLayer.h>
+#else
+
+NS_ASSUME_NONNULL_BEGIN
+
+#pragma mark -
+#pragma mark AVSampleBufferDisplayLayer
+
+@interface AVSampleBufferDisplayLayer : CALayer
+- (NSInteger)status;
+- (NSError*)error;
+- (void)enqueueSampleBuffer:(CMSampleBufferRef)sampleBuffer;
+- (void)flush;
+- (void)flushAndRemoveImage;
+- (BOOL)isReadyForMoreMediaData;
+- (void)requestMediaDataWhenReadyOnQueue:(dispatch_queue_t)queue usingBlock:(void (^)(void))block;
+- (void)stopRequestingMediaData;
+@end
+
+NS_ASSUME_NONNULL_END
+
+#endif // __has_include(<AVFoundation/AVSampleBufferDisplayLayer.h>)
 
 #if __has_include(<AVFoundation/AVSampleBufferAudioRenderer.h>)
 #import <AVFoundation/AVSampleBufferAudioRenderer.h>
