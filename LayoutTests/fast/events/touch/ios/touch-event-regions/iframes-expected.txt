@@ -1,0 +1,13 @@
+
+touchstart
+44, 36 - 228, 56
+144, 156 - 244, 256
+82, 614 - 198, 730
+touchstart
+
+touchend
+
+touchforcechange
+
+passive
+
