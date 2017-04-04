@@ -392,15 +392,6 @@ void Scope::updateActiveStyleSheets(UpdateType updateType)
         return;
     }
 
-    // Don't bother updating, since we haven't loaded all our style info yet
-    // and haven't calculated the style resolver for the first time.
-    if (!m_shadowRoot && !m_didUpdateActiveStyleSheets && m_pendingStyleSheetCount) {
-        clearResolver();
-        return;
-    }
-
-    m_didUpdateActiveStyleSheets = true;
-
     Vector<RefPtr<StyleSheet>> activeStyleSheets;
     collectActiveStyleSheets(activeStyleSheets);
 

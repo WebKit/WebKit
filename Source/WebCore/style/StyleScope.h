@@ -150,7 +150,6 @@ private:
     // We use this count of pending sheets to detect when we can begin attaching
     // elements and when it is safe to execute scripts.
     int m_pendingStyleSheetCount { 0 };
-    bool m_didUpdateActiveStyleSheets { false };
 
     std::optional<UpdateType> m_pendingUpdate;
     bool m_hasDescendantWithPendingUpdate { false };
