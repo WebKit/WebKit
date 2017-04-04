@@ -57,7 +57,7 @@ void FindClient::didCountStringMatches(WebPageProxy*, const String& string, uint
         [m_delegate.get() _webView:m_webView didCountMatches:matchCount forString:string];
 }
 
-void FindClient::didFindString(WebPageProxy*, const String& string, const Vector<WebCore::IntRect>&, uint32_t matchCount, int32_t matchIndex)
+void FindClient::didFindString(WebPageProxy*, const String& string, const Vector<WebCore::IntRect>&, uint32_t matchCount, int32_t matchIndex, bool)
 {
     if (m_delegateMethods.webviewDidFindString)
         [m_delegate.get() _webView:m_webView didFindMatches:matchCount forString:string withMatchIndex:matchIndex];

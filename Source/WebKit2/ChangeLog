@@ -1,3 +1,40 @@
+2017-04-04  Tim Horton  <timothy_horton@apple.com>
+
+        [Mac] -[WKWebView findMatchesForString:relativeToMatch:findOptions:maxResults:resultCollector:] invokes the resultCollector with didWrap = NO even when it wraps
+        https://bugs.webkit.org/show_bug.cgi?id=165801
+        <rdar://problem/29649535>
+
+        Reviewed by Wenson Hsieh.
+
+        Previously, when doing an incremental find that wrapped, we would 
+        say that it did not, leading NSTextFinder to not provide its usual
+        wrapping UI, and other clients of the NSTextFinderClient protocol to
+        get confused by the lack of wrapping.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didFindString):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/API/APIFindClient.h:
+        (API::FindClient::didFindString):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageFindClient):
+        * UIProcess/Cocoa/FindClient.h:
+        * UIProcess/Cocoa/FindClient.mm:
+        (WebKit::FindClient::didFindString):
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::updateFindUIAfterPageScroll):
+        (WebKit::FindController::findString):
+        * WebProcess/WebPage/FindController.h:
+        Plumb DidWrap from FindController's call to findString back through
+        the DidFindString message.
+
+        * UIProcess/mac/WKTextFinderClient.mm:
+        (-[WKTextFinderClient didFindStringMatchesWithRects:didWrapAround:]):
+        (-[WKTextFinderClient didFindStringMatchesWithRects:]): Deleted.
+        Make use of the new DidWrap information to stop lying to NSTextFinder
+        about whether a wrap actually occurred.
+
 2017-04-03  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Data interaction should register type identifiers in order of priority

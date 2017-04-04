@@ -114,7 +114,7 @@ static Frame* frameWithSelection(Page* page)
     return 0;
 }
 
-void FindController::updateFindUIAfterPageScroll(bool found, const String& string, FindOptions options, unsigned maxMatchCount)
+void FindController::updateFindUIAfterPageScroll(bool found, const String& string, FindOptions options, unsigned maxMatchCount, DidWrap didWrap)
 {
     Frame* selectedFrame = frameWithSelection(m_webPage->corePage());
     
@@ -181,7 +181,7 @@ void FindController::updateFindUIAfterPageScroll(bool found, const String& strin
             m_findMatches.append(range);
         }
 
-        m_webPage->send(Messages::WebPageProxy::DidFindString(string, matchRects, matchCount, m_foundStringMatchIndex));
+        m_webPage->send(Messages::WebPageProxy::DidFindString(string, matchRects, matchCount, m_foundStringMatchIndex, didWrap == DidWrap::Yes));
 
         if (!(options & FindOptionsShowFindIndicator) || !selectedFrame || !updateFindIndicator(*selectedFrame, shouldShowOverlay))
             hideFindIndicator();
@@ -232,10 +232,11 @@ void FindController::findString(const String& string, FindOptions options, unsig
     m_findMatches.clear();
 
     bool found;
+    DidWrap didWrap = DidWrap::No;
     if (pluginView)
         found = pluginView->findString(string, coreOptions, maxMatchCount);
     else
-        found = m_webPage->corePage()->findString(string, coreOptions);
+        found = m_webPage->corePage()->findString(string, coreOptions, &didWrap);
 
     if (found) {
         didFindString();
@@ -249,8 +250,8 @@ void FindController::findString(const String& string, FindOptions options, unsig
     }
 
     RefPtr<WebPage> protectedWebPage = m_webPage;
-    m_webPage->drawingArea()->dispatchAfterEnsuringUpdatedScrollPosition([protectedWebPage, found, string, options, maxMatchCount] () {
-        protectedWebPage->findController().updateFindUIAfterPageScroll(found, string, options, maxMatchCount);
+    m_webPage->drawingArea()->dispatchAfterEnsuringUpdatedScrollPosition([protectedWebPage, found, string, options, maxMatchCount, didWrap] () {
+        protectedWebPage->findController().updateFindUIAfterPageScroll(found, string, options, maxMatchCount, didWrap);
     });
 }
 

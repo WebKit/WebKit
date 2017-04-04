@@ -647,19 +647,19 @@ void Page::setCanStartMedia(bool canStartMedia)
     }
 }
 
-static Frame* incrementFrame(Frame* curr, bool forward, bool wrapFlag)
+static Frame* incrementFrame(Frame* curr, bool forward, CanWrap canWrap, DidWrap* didWrap = nullptr)
 {
     return forward
-        ? curr->tree().traverseNextWithWrap(wrapFlag)
-        : curr->tree().traversePreviousWithWrap(wrapFlag);
+        ? curr->tree().traverseNext(canWrap, didWrap)
+        : curr->tree().traversePrevious(canWrap, didWrap);
 }
 
-bool Page::findString(const String& target, FindOptions options)
+bool Page::findString(const String& target, FindOptions options, DidWrap* didWrap)
 {
     if (target.isEmpty())
         return false;
 
-    bool shouldWrap = options & WrapAround;
+    CanWrap canWrap = options & WrapAround ? CanWrap::Yes : CanWrap::No;
     Frame* frame = &focusController().focusedOrMainFrame();
     Frame* startFrame = frame;
     do {
@@ -669,12 +669,14 @@ bool Page::findString(const String& target, FindOptions options)
             focusController().setFocusedFrame(frame);
             return true;
         }
-        frame = incrementFrame(frame, !(options & Backwards), shouldWrap);
+        frame = incrementFrame(frame, !(options & Backwards), canWrap, didWrap);
     } while (frame && frame != startFrame);
 
     // Search contents of startFrame, on the other side of the selection that we did earlier.
     // We cheat a bit and just research with wrap on
-    if (shouldWrap && !startFrame->selection().isNone()) {
+    if (canWrap == CanWrap::Yes && !startFrame->selection().isNone()) {
+        if (didWrap)
+            *didWrap = DidWrap::Yes;
         bool found = startFrame->editor().findString(target, options | WrapAround | StartInSelection);
         focusController().setFocusedFrame(frame);
         return found;
@@ -693,7 +695,7 @@ void Page::findStringMatchingRanges(const String& target, FindOptions options, i
         frame->editor().countMatchesForText(target, 0, options, limit ? (limit - matchRanges.size()) : 0, true, &matchRanges);
         if (frame->selection().isRange())
             frameWithSelection = frame;
-        frame = incrementFrame(frame, true, false);
+        frame = incrementFrame(frame, true, CanWrap::No);
     } while (frame);
 
     if (matchRanges.isEmpty())
@@ -735,19 +737,19 @@ RefPtr<Range> Page::rangeOfString(const String& target, Range* referenceRange, F
     if (referenceRange && referenceRange->ownerDocument().page() != this)
         return nullptr;
 
-    bool shouldWrap = options & WrapAround;
+    CanWrap canWrap = options & WrapAround ? CanWrap::Yes : CanWrap::No;
     Frame* frame = referenceRange ? referenceRange->ownerDocument().frame() : &mainFrame();
     Frame* startFrame = frame;
     do {
         if (RefPtr<Range> resultRange = frame->editor().rangeOfString(target, frame == startFrame ? referenceRange : 0, options & ~WrapAround))
             return resultRange;
 
-        frame = incrementFrame(frame, !(options & Backwards), shouldWrap);
+        frame = incrementFrame(frame, !(options & Backwards), canWrap);
     } while (frame && frame != startFrame);
 
     // Search contents of startFrame, on the other side of the reference range that we did earlier.
     // We cheat a bit and just search again with wrap on.
-    if (shouldWrap && referenceRange) {
+    if (canWrap == CanWrap::Yes && referenceRange) {
         if (RefPtr<Range> resultRange = startFrame->editor().rangeOfString(target, referenceRange, options | WrapAround | StartInSelection))
             return resultRange;
     }
@@ -767,7 +769,7 @@ unsigned Page::findMatchesForText(const String& target, FindOptions options, uns
         if (shouldMarkMatches == MarkMatches)
             frame->editor().setMarkedTextMatchesAreHighlighted(shouldHighlightMatches == HighlightMatches);
         matchCount += frame->editor().countMatchesForText(target, 0, options, maxMatchCount ? (maxMatchCount - matchCount) : 0, shouldMarkMatches == MarkMatches, 0);
-        frame = incrementFrame(frame, true, false);
+        frame = incrementFrame(frame, true, CanWrap::No);
     } while (frame);
 
     return matchCount;
@@ -788,7 +790,7 @@ void Page::unmarkAllTextMatches()
     Frame* frame = &mainFrame();
     do {
         frame->document()->markers().removeMarkers(DocumentMarker::TextMatch);
-        frame = incrementFrame(frame, true, false);
+        frame = incrementFrame(frame, true, CanWrap::No);
     } while (frame);
 }
 

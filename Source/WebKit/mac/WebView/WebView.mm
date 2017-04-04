@@ -6796,9 +6796,10 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 static WebFrame *incrementFrame(WebFrame *frame, WebFindOptions options = 0)
 {
     Frame* coreFrame = core(frame);
+    CanWrap canWrap = options & WebFindOptionsWrapAround ? CanWrap::Yes : CanWrap::No;
     return kit((options & WebFindOptionsBackwards)
-        ? coreFrame->tree().traversePreviousWithWrap(options & WebFindOptionsWrapAround)
-        : coreFrame->tree().traverseNextWithWrap(options & WebFindOptionsWrapAround));
+        ? coreFrame->tree().traversePrevious(canWrap)
+        : coreFrame->tree().traverseNext(canWrap));
 }
 
 - (BOOL)searchFor:(NSString *)string direction:(BOOL)forward caseSensitive:(BOOL)caseFlag wrap:(BOOL)wrapFlag

@@ -1,3 +1,15 @@
+2017-04-04  Tim Horton  <timothy_horton@apple.com>
+
+        [Mac] -[WKWebView findMatchesForString:relativeToMatch:findOptions:maxResults:resultCollector:] invokes the resultCollector with didWrap = NO even when it wraps
+        https://bugs.webkit.org/show_bug.cgi?id=165801
+        <rdar://problem/29649535>
+
+        Reviewed by Wenson Hsieh.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/FindInPage.mm:
+        (TEST):
+        Add some tests for wrapping finds.
+
 2017-04-03  Joseph Pecoraro  <pecoraro@apple.com>
 
         Add some new patterns to filter-build-webkit

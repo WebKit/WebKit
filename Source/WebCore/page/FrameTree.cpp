@@ -403,18 +403,21 @@ Frame* FrameTree::traverseNextRendered(const Frame* stayWithin) const
     return nullptr;
 }
 
-Frame* FrameTree::traverseNextWithWrap(bool wrap) const
+Frame* FrameTree::traverseNext(CanWrap canWrap, DidWrap* didWrap) const
 {
     if (Frame* result = traverseNext())
         return result;
 
-    if (wrap)
+    if (canWrap == CanWrap::Yes) {
+        if (didWrap)
+            *didWrap = DidWrap::Yes;
         return &m_thisFrame.mainFrame();
+    }
 
     return nullptr;
 }
 
-Frame* FrameTree::traversePreviousWithWrap(bool wrap) const
+Frame* FrameTree::traversePrevious(CanWrap canWrap, DidWrap* didWrap) const
 {
     // FIXME: besides the wrap feature, this is just the traversePreviousNode algorithm
 
@@ -424,20 +427,23 @@ Frame* FrameTree::traversePreviousWithWrap(bool wrap) const
         return parentFrame;
     
     // no siblings, no parent, self==top
-    if (wrap)
+    if (canWrap == CanWrap::Yes) {
+        if (didWrap)
+            *didWrap = DidWrap::Yes;
         return deepLastChild();
+    }
 
     // top view is always the last one in this ordering, so prev is nil without wrap
     return nullptr;
 }
 
-Frame* FrameTree::traverseNextInPostOrderWithWrap(bool wrap) const
+Frame* FrameTree::traverseNextInPostOrder(CanWrap canWrap) const
 {
     if (m_nextSibling)
         return m_nextSibling->tree().deepFirstChild();
     if (m_parent)
         return m_parent;
-    if (wrap)
+    if (canWrap == CanWrap::Yes)
         return deepFirstChild();
     return nullptr;
 }

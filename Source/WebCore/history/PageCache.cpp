@@ -374,7 +374,7 @@ static void setPageCacheState(Page& page, Document::PageCacheState pageCacheStat
 // Note that destruction happens bottom-up so that the main frame's tree dies last.
 static void destroyRenderTree(MainFrame& mainFrame)
 {
-    for (Frame* frame = mainFrame.tree().traversePreviousWithWrap(true); frame; frame = frame->tree().traversePreviousWithWrap(false)) {
+    for (Frame* frame = mainFrame.tree().traversePrevious(CanWrap::Yes); frame; frame = frame->tree().traversePrevious(CanWrap::No)) {
         if (!frame->document())
             continue;
         auto& document = *frame->document();

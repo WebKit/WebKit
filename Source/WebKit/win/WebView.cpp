@@ -3856,9 +3856,10 @@ HRESULT WebView::hostWindow(_Deref_opt_out_ HWND* window)
 
 static Frame *incrementFrame(Frame *curr, bool forward, bool wrapFlag)
 {
+    CanWrap canWrap = wrapFlag ? CanWrap::Yes : CanWrap::No;
     return forward
-        ? curr->tree().traverseNextWithWrap(wrapFlag)
-        : curr->tree().traversePreviousWithWrap(wrapFlag);
+        ? curr->tree().traverseNext(canWrap)
+        : curr->tree().traversePrevious(canWrap);
 }
 
 HRESULT WebView::searchFor(_In_ BSTR str, BOOL forward, BOOL caseFlag, BOOL wrapFlag, _Out_ BOOL* found)

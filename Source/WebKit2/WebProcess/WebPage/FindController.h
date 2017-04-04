@@ -41,6 +41,8 @@
 namespace WebCore {
 class Frame;
 class Range;
+
+enum class DidWrap : bool;
 }
 
 namespace WebKit {
@@ -81,7 +83,7 @@ private:
     Vector<WebCore::IntRect> rectsForTextMatchesInRect(WebCore::IntRect clipRect);
     bool updateFindIndicator(WebCore::Frame& selectedFrame, bool isShowingOverlay, bool shouldAnimate = true);
 
-    void updateFindUIAfterPageScroll(bool found, const String&, FindOptions, unsigned maxMatchCount);
+    void updateFindUIAfterPageScroll(bool found, const String&, FindOptions, unsigned maxMatchCount, WebCore::DidWrap);
 
     void willFindString();
     void didFindString();

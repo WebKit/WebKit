@@ -931,7 +931,7 @@ void WKPageSetPageFindClient(WKPageRef pageRef, const WKPageFindClientBase* wkCl
         }
 
     private:
-        void didFindString(WebPageProxy* page, const String& string, const Vector<WebCore::IntRect>&, uint32_t matchCount, int32_t) override
+        void didFindString(WebPageProxy* page, const String& string, const Vector<WebCore::IntRect>&, uint32_t matchCount, int32_t, bool didWrapAround) override
         {
             if (!m_client.didFindString)
                 return;

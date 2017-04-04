@@ -1,3 +1,38 @@
+2017-04-04  Tim Horton  <timothy_horton@apple.com>
+
+        [Mac] -[WKWebView findMatchesForString:relativeToMatch:findOptions:maxResults:resultCollector:] invokes the resultCollector with didWrap = NO even when it wraps
+        https://bugs.webkit.org/show_bug.cgi?id=165801
+        <rdar://problem/29649535>
+
+        Reviewed by Wenson Hsieh.
+
+        New API tests: WebKit2.FindInPageWrapping*
+
+        * page/FrameTree.cpp:
+        (WebCore::FrameTree::traverseNextWithWrap):
+        (WebCore::FrameTree::traversePreviousWithWrap):
+        (WebCore::FrameTree::traverseNextInPostOrderWithWrap):
+        * page/FrameTree.h:
+        Add CanWrap and DidWrap boolean enums, and add an optional out argument
+        to traverse*WithWrap indicating whether a wrap actually occurred.
+
+        * history/CachedPage.cpp:
+        (WebCore::firePageShowAndPopStateEvents):
+        * history/PageCache.cpp:
+        (WebCore::destroyRenderTree):
+        Adjust to the new CanWrap enum.
+        
+        * page/Page.cpp:
+        (WebCore::incrementFrame):
+        (WebCore::Page::findString):
+        (WebCore::Page::findStringMatchingRanges):
+        (WebCore::Page::rangeOfString):
+        (WebCore::Page::findMatchesForText):
+        (WebCore::Page::unmarkAllTextMatches):
+        * page/Page.h:
+        Adjust to the new CanWrap enum, and optionally plumb DidWrap through
+        to callers of findString().
+
 2017-04-04  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] PLATFORM(GTK) && !USE(COORDINATED_GRAPHICS_THREADED) is no longer possible

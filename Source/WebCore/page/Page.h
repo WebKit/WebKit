@@ -145,6 +145,9 @@ enum class EventThrottlingBehavior {
     Unresponsive
 };
 
+enum class CanWrap : bool;
+enum class DidWrap : bool;
+
 class Page : public Supplementable<Page> {
     WTF_MAKE_NONCOPYABLE(Page);
     WTF_MAKE_FAST_ALLOCATED;
@@ -264,7 +267,7 @@ public:
     void setTabKeyCyclesThroughElements(bool b) { m_tabKeyCyclesThroughElements = b; }
     bool tabKeyCyclesThroughElements() const { return m_tabKeyCyclesThroughElements; }
 
-    WEBCORE_EXPORT bool findString(const String&, FindOptions);
+    WEBCORE_EXPORT bool findString(const String&, FindOptions, DidWrap* = nullptr);
 
     WEBCORE_EXPORT RefPtr<Range> rangeOfString(const String&, Range*, FindOptions);
 
