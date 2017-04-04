@@ -388,6 +388,8 @@
 		FE8925B01D00DAEC0046907E /* Indenter.h in Headers */ = {isa = PBXBuildFile; fileRef = FE8925AF1D00DAEC0046907E /* Indenter.h */; };
 		FEDACD3D1630F83F00C69634 /* StackStats.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEDACD3B1630F83F00C69634 /* StackStats.cpp */; };
 		FEDACD3E1630F83F00C69634 /* StackStats.h in Headers */ = {isa = PBXBuildFile; fileRef = FEDACD3C1630F83F00C69634 /* StackStats.h */; };
+		FC6EC2BF20F849969C6A5BE1 /* RandomDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = 24F1B248619F412296D1C19C /* RandomDevice.h */; };
+		A3B725EC987446AD93F1A440 /* RandomDevice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C8F597CA2A57417FBAB92FD6 /* RandomDevice.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -788,6 +790,8 @@
 		FE8925AF1D00DAEC0046907E /* Indenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Indenter.h; sourceTree = "<group>"; };
 		FEDACD3B1630F83F00C69634 /* StackStats.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StackStats.cpp; sourceTree = "<group>"; };
 		FEDACD3C1630F83F00C69634 /* StackStats.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StackStats.h; sourceTree = "<group>"; };
+		24F1B248619F412296D1C19C /* RandomDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RandomDevice.h; path = RandomDevice.h; sourceTree = "<group>"; };
+		C8F597CA2A57417FBAB92FD6 /* RandomDevice.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RandomDevice.cpp; path = RandomDevice.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1102,6 +1106,8 @@
 				0FC4488216FE9FE100844BE9 /* ProcessID.h */,
 				143F611D1565F0F900DB514A /* RAMSize.cpp */,
 				143F611E1565F0F900DB514A /* RAMSize.h */,
+				24F1B248619F412296D1C19C /* RandomDevice.h */,
+				C8F597CA2A57417FBAB92FD6 /* RandomDevice.cpp */,
 				A8A472FB151A825B004123FF /* RandomNumber.cpp */,
 				A8A472FC151A825B004123FF /* RandomNumber.h */,
 				A8A472FD151A825B004123FF /* RandomNumberSeed.h */,
@@ -1550,6 +1556,7 @@
 				0F9D3363165DBA73005AD387 /* PrintStream.h in Headers */,
 				0FC4488316FE9FE100844BE9 /* ProcessID.h in Headers */,
 				143F61201565F0F900DB514A /* RAMSize.h in Headers */,
+				FC6EC2BF20F849969C6A5BE1 /* RandomDevice.h in Headers */,
 				A8A47415151A825B004123FF /* RandomNumber.h in Headers */,
 				A8A47416151A825B004123FF /* RandomNumberSeed.h in Headers */,
 				0F725CAC1C50461600AD943A /* RangeSet.h in Headers */,
@@ -1806,6 +1813,7 @@
 				DCEE22031CEA7551000C2396 /* PlatformUserPreferredLanguagesMac.mm in Sources */,
 				0F9D3362165DBA73005AD387 /* PrintStream.cpp in Sources */,
 				143F611F1565F0F900DB514A /* RAMSize.cpp in Sources */,
+				A3B725EC987446AD93F1A440 /* RandomDevice.cpp in Sources */,
 				A8A47414151A825B004123FF /* RandomNumber.cpp in Sources */,
 				A8A4741A151A825B004123FF /* RefCountedLeakCounter.cpp in Sources */,
 				2CDED0F318115C85004DBA70 /* RunLoop.cpp in Sources */,

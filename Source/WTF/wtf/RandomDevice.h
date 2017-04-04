@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc.
+ * Copyright (C) 2017 Yusuke Suzuki <utatane.tea@gmail.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,21 +21,40 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "OSRandomSource.h"
+#pragma once
 
-#include <wtf/NeverDestroyed.h>
-#include <wtf/RandomDevice.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/StdLibExtras.h>
 
 namespace WTF {
 
-void cryptographicallyRandomValuesFromOS(unsigned char* buffer, size_t length)
-{
-    static NeverDestroyed<RandomDevice> device;
-    device.get().cryptographicallyRandomValues(buffer, length);
-}
+class RandomDevice {
+    WTF_MAKE_NONCOPYABLE(RandomDevice);
+public:
+#if OS(DARWIN) || OS(WINDOWS)
+    RandomDevice() = default;
+#else
+    RandomDevice();
+    ~RandomDevice();
+#endif
+
+    // This function attempts to fill buffer with randomness from the operating
+    // system. Rather than calling this function directly, consider calling
+    // cryptographicallyRandomNumber or cryptographicallyRandomValues.
+    void cryptographicallyRandomValues(unsigned char* buffer, size_t length);
+
+private:
+#if OS(DARWIN) || OS(WINDOWS)
+#elif OS(UNIX)
+    int m_fd { -1 };
+#else
+#error "This configuration doesn't have a strong source of randomness."
+// WARNING: When adding new sources of OS randomness, the randomness must
+//          be of cryptographic quality!
+#endif
+};
 
 }
