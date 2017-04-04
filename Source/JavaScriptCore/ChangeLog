@@ -1,3 +1,12 @@
+2017-04-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Remove stale LLVM Header Path includes from JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=170483
+
+        Reviewed by Mark Lam.
+
+        * Configurations/Base.xcconfig:
+
 2017-04-04  Filip Pizlo  <fpizlo@apple.com>
 
         B3::LowerToAir incorrectly selects BitXor(AtomicStrongCAS(...), $1)
