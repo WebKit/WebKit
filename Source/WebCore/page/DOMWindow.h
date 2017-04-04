@@ -327,7 +327,7 @@ public:
     void resetAllGeolocationPermission();
 
 #if ENABLE(IOS_TOUCH_EVENTS) || ENABLE(IOS_GESTURE_EVENTS)
-    bool hasTouchEventListeners() const { return m_touchEventListenerCount > 0; }
+    bool hasTouchOrGestureEventListeners() const { return m_touchAndGestureEventListenerCount > 0; }
 #endif
 
 #if ENABLE(USER_MESSAGE_HANDLERS)
@@ -409,7 +409,7 @@ private:
 #endif
 
 #if ENABLE(IOS_TOUCH_EVENTS) || ENABLE(IOS_GESTURE_EVENTS)
-    unsigned m_touchEventListenerCount { 0 };
+    unsigned m_touchAndGestureEventListenerCount { 0 };
 #endif
 
 #if ENABLE(GAMEPAD)
