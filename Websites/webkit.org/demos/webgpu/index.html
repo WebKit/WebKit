@@ -88,9 +88,14 @@ section p a {
     grid-row: 1;
 }
 
-.warning {
+.howto {
     grid-column: 1 / 4;
     grid-row: 2;
+}
+
+.warning {
+    grid-column: 1 / 4;
+    grid-row: 3;
     border: 2px solid var(--sub-highlight);
     background-color: var(--highlight);
     color: black;
@@ -142,11 +147,7 @@ section p a {
         grid-gap: 6vw;
     }
 
-    .intro {
-        grid-column: 1;
-    }
-
-    .warning {
+    .intro, .howto, .warning {
         grid-column: 1;
     }
 
@@ -175,6 +176,11 @@ section p a {
             implementation and the <a
             href="https://webkit.org/wp-content/uploads/webgpu-api-proposal.html
             ">documented proposal</a>, most of which are documented in the code.
+        </p>
+        <p class="howto">
+            Make sure you are on a system with WebGPU enabled. In Safari, first
+            make sure the Developer Menu is visible (Preferences → Advanced),
+            then Develop → Experimental Features → Enable WebGPU.
         </p>
         <p class="warning">
             WebGPU is an experimental technology, and you should not browse the entire
