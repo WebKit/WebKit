@@ -1,3 +1,17 @@
+2017-04-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Various settings in Minibrowser are off by default, and should be on
+        https://bugs.webkit.org/show_bug.cgi?id=170465
+        rdar://problem/31421543
+
+        Reviewed by Tim Horton.
+
+        Explicitly set preferences that should be on by default to enabled, if they have not been
+        set previously.
+
+        * MiniBrowser/mac/SettingsController.m:
+        (-[SettingsController init]):
+
 2017-04-04  JF Bastien  <jfbastien@apple.com>
 
         Add JF Bastien as reviewer
