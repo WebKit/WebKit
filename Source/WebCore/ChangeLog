@@ -1,3 +1,16 @@
+2017-04-04  Youenn Fablet  <youenn@apple.com>
+
+        [Debug] ASSERT(!throwScope.exception()) on imported/w3c/web-platform-tests/fetch/api/cors/cors-preflight-status-worker.html
+        https://bugs.webkit.org/show_bug.cgi?id=170395
+        <rdar://problem/31394017>
+
+        Reviewed by Mark Lam.
+
+        No change of behavior.
+
+        * bindings/js/JSDOMPromise.cpp:
+        (WebCore::DeferredPromise::reject): Adding early ASSERT that creating an exception is happening correctly.
+
 2017-04-04  Alexey Proskuryakov  <ap@apple.com>
 
         Rolling back the build fix, as it broke other builds.

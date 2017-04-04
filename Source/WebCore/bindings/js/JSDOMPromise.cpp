@@ -94,7 +94,12 @@ void DeferredPromise::reject(Exception&& exception)
     ASSERT(m_globalObject);
     auto& state = *m_globalObject->globalExec();
     JSC::JSLockHolder locker(&state);
-    reject(state, createDOMException(state, WTFMove(exception)));
+
+    auto scope = DECLARE_CATCH_SCOPE(state.vm());
+    auto error = createDOMException(state, WTFMove(exception));
+    ASSERT_UNUSED(scope, !scope.exception());
+
+    reject(state, error);
 }
 
 void DeferredPromise::reject(ExceptionCode ec, const String& message)
@@ -104,9 +109,14 @@ void DeferredPromise::reject(ExceptionCode ec, const String& message)
 
     ASSERT(deferred());
     ASSERT(m_globalObject);
-    JSC::ExecState* state = m_globalObject->globalExec();
-    JSC::JSLockHolder locker(state);
-    reject(*state, createDOMException(state, ec, message));
+    auto& state = *m_globalObject->globalExec();
+    JSC::JSLockHolder locker(&state);
+
+    auto scope = DECLARE_CATCH_SCOPE(state.vm());
+    auto error = createDOMException(&state, ec, message);
+    ASSERT_UNUSED(scope, !scope.exception());
+
+    reject(state, error);
 }
 
 void DeferredPromise::reject(const JSC::PrivateName& privateName)
