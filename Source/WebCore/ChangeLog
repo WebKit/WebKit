@@ -1,3 +1,21 @@
+2017-04-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Change Document's lastHandledUserGestureTimestamp to be a MonotonicTime
+        https://bugs.webkit.org/show_bug.cgi?id=170468
+
+        Reviewed by Zalan Bujtas.
+        
+        Change the double to MonotonicTime. No behavior change.
+
+        * dom/Document.cpp:
+        (WebCore::Document::updateLastHandledUserGestureTimestamp):
+        * dom/Document.h:
+        (WebCore::Document::lastHandledUserGestureTimestamp):
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::documentHadRecentUserGesture):
+        * loader/FrameLoader.cpp:
+        (WebCore::shouldAskForNavigationConfirmation):
+
 2017-04-04  Youenn Fablet  <youenn@apple.com>
 
         [Debug] ASSERT(!throwScope.exception()) on imported/w3c/web-platform-tests/fetch/api/cors/cors-preflight-status-worker.html

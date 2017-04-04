@@ -6310,7 +6310,7 @@ Document::RegionFixedPair Document::absoluteRegionForEventTargets(const EventTar
 
 void Document::updateLastHandledUserGestureTimestamp()
 {
-    m_lastHandledUserGestureTimestamp = monotonicallyIncreasingTime();
+    m_lastHandledUserGestureTimestamp = MonotonicTime::now();
     ResourceLoadObserver::sharedObserver().logUserInteractionWithReducedTimeResolution(*this);
 }
 

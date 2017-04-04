@@ -1143,7 +1143,7 @@ public:
     void didAddWheelEventHandler(Node&);
     void didRemoveWheelEventHandler(Node&, EventHandlerRemoval = EventHandlerRemoval::One);
 
-    double lastHandledUserGestureTimestamp() const { return m_lastHandledUserGestureTimestamp; }
+    MonotonicTime lastHandledUserGestureTimestamp() const { return m_lastHandledUserGestureTimestamp; }
     void updateLastHandledUserGestureTimestamp();
 
     // Used for testing. Count handlers in the main document, and one per frame which contains handlers.
@@ -1572,7 +1572,7 @@ private:
 #endif
     std::unique_ptr<EventTargetSet> m_wheelEventTargets;
 
-    double m_lastHandledUserGestureTimestamp { 0 };
+    MonotonicTime m_lastHandledUserGestureTimestamp;
 
     void clearScriptedAnimationController();
     RefPtr<ScriptedAnimationController> m_scriptedAnimationController;

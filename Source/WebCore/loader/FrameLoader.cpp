@@ -3036,7 +3036,7 @@ void FrameLoader::dispatchUnloadEvents(UnloadEventPolicy unloadEventPolicy)
 
 static bool shouldAskForNavigationConfirmation(Document& document, const BeforeUnloadEvent& event)
 {
-    bool userDidInteractWithPage = document.topDocument().lastHandledUserGestureTimestamp() > 0;
+    bool userDidInteractWithPage = static_cast<bool>(document.topDocument().lastHandledUserGestureTimestamp());
     // Web pages can request we ask for confirmation before navigating by:
     // - Cancelling the BeforeUnloadEvent (modern way)
     // - Setting the returnValue attribute on the BeforeUnloadEvent to a non-empty string.
