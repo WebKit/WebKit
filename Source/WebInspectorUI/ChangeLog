@@ -1,3 +1,40 @@
+2017-04-04  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: RTL: layout issues in debugger dashboard, arrows are on wrong side
+        https://bugs.webkit.org/show_bug.cgi?id=170425
+
+        Reviewed by Devin Rousso.
+
+        We need to move the up/down dashboard arrows to the trailing side for RTL.
+        Clean up some messy spacing rules so that the source location does not
+        overlap the arrows or get too close to the function icon.
+
+        * UserInterface/Views/DashboardContainerView.css:
+        (.toolbar .dashboard):
+        (body[dir=ltr] .toolbar .dashboard):
+        (body[dir=rtl] .toolbar .dashboard):
+        (.dashboard-container .advance-arrow):
+        (body[dir=ltr] .dashboard-container .advance-arrow):
+        (body[dir=rtl] .dashboard-container .advance-arrow):
+        (.toolbar.label-only .dashboard-container .advance-arrow):
+        (body[dir=ltr] .toolbar.label-only .dashboard-container .advance-arrow):
+        (body[dir=rtl] .toolbar.label-only .dashboard-container .advance-arrow):
+        * UserInterface/Views/DebuggerDashboardView.css:
+        (.toolbar .dashboard.debugger):
+        (body[dir=ltr] .toolbar .dashboard.debugger):
+        (body[dir=rtl] .toolbar .dashboard.debugger):
+        (.dashboard.debugger .navigation-bar):
+        (body[dir=ltr] .dashboard.debugger .navigation-bar):
+        (body[dir=rtl] .dashboard.debugger .navigation-bar):
+        (.dashboard.debugger > .location):
+        (.dashboard.debugger > .location > :first-child):
+        (body[dir=ltr] .dashboard.debugger > .location > :last-child):
+        (body[dir=rtl] .dashboard.debugger > .location > :last-child):
+        (.dashboard.debugger > .location .function-icon):
+        (body[dir=ltr] .dashboard.debugger > .location .function-icon):
+        (body[dir=rtl] .dashboard.debugger > .location .function-icon):
+        (.dashboard.debugger > .location .go-to-link):
+
 2017-04-03  Brian Burg  <bburg@apple.com>
 
         Web Inspector: RTL: results in Search navigation sidebar have misplaced highlights
