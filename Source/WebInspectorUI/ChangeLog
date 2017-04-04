@@ -1,3 +1,15 @@
+2017-04-03  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: RTL: hierarchical path component labels should guess directionality based on content
+        https://bugs.webkit.org/show_bug.cgi?id=170298
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/HierarchicalPathComponent.js:
+        (WebInspector.HierarchicalPathComponent):
+        Use dir="auto" since this will properly set 'unicode-bidi:isolate' for form elements too.
+        This is applied to the title label and to the <select> for the path component.
+
 2017-04-03  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Show additional pause reason details for DOM "subtree modified" breakpoint

@@ -51,6 +51,7 @@ WebInspector.HierarchicalPathComponent = class HierarchicalPathComponent extends
 
         this._titleElement = document.createElement("div");
         this._titleElement.className = "title";
+        this._titleElement.setAttribute("dir", "auto");
         this._element.appendChild(this._titleElement);
 
         this._titleContentElement = document.createElement("div");
@@ -62,6 +63,7 @@ WebInspector.HierarchicalPathComponent = class HierarchicalPathComponent extends
         this._element.appendChild(this._separatorElement);
 
         this._selectElement = document.createElement("select");
+        this._selectElement.setAttribute("dir", "auto");
         this._selectElement.addEventListener("mouseover", this._selectElementMouseOver.bind(this));
         this._selectElement.addEventListener("mouseout", this._selectElementMouseOut.bind(this));
         this._selectElement.addEventListener("mousedown", this._selectElementMouseDown.bind(this));
