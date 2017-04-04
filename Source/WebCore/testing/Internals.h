@@ -422,6 +422,7 @@ public:
     void emulateRTCPeerConnectionPlatformEvent(RTCPeerConnection&, const String& action);
     void useMockRTCPeerConnectionFactory(const String&);
     void setICECandidateFiltering(bool);
+    void setEnumeratingAllNetworkInterfacesEnabled(bool);
 #endif
 
     String getImageSourceURL(Element&);

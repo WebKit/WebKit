@@ -102,8 +102,10 @@ promise_test((test) => {
 promise_test((test) => {
     counter = 0;
     return new Promise((resolve, reject) => {
-        if (window.internals)
+        if (window.internals) {
             internals.useMockRTCPeerConnectionFactory("TwoRealPeerConnections");
+            internals.setEnumeratingAllNetworkInterfacesEnabled(true);
+        }
 
         finishTest = resolve;
         createConnections((localConnection) => {

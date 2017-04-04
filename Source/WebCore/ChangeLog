@@ -1,3 +1,20 @@
+2017-04-04  Youenn Fablet  <youenn@apple.com>
+
+        LayoutTest webrtc/libwebrtc/descriptionGetters.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=169481
+
+        Reviewed by Eric Carlson.
+
+        No need to enumerate all network interfaces in most layout tests.
+        Adding an Internals API for that in case we want to use TCP localhost candidates.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::Internals):
+        (WebCore::Internals::setEnumeratingAllNetworkInterfacesEnabled):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
+
 2017-04-04  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed build fix: fix compilation error on Sierra.
