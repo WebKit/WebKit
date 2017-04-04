@@ -1,5 +1,25 @@
 2017-04-03  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r214702. rdar://problem/31407633
+
+    2017-03-31  Simon Fraser  <simon.fraser@apple.com>
+
+            When destroying a Node, assert that it's been removed from all the touch handler maps
+            https://bugs.webkit.org/show_bug.cgi?id=170363
+            rdar://problem/31377469
+
+            Reviewed by Tim Horton.
+
+            Assert that the Node has been removed from the touch handler maps in all documents on destruction.
+
+            * dom/Document.h:
+            (WebCore::Document::hasTouchEventHandlers):
+            (WebCore::Document::touchEventTargetsContain):
+            * dom/Node.cpp:
+            (WebCore::Node::~Node):
+
+2017-04-03  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r214649. rdar://problem/31407626
 
     2017-03-30  Simon Fraser  <simon.fraser@apple.com>
