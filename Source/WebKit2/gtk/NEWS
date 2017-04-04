@@ -1,4 +1,16 @@
 ==================
+WebKitGTK+  2.16.1
+==================
+
+  - Fix no-third-party cookies policy in case of redirections.
+  - Keep URL fragments after server redirections.
+  - Honor GTK+ font settings.
+  - Ensure depth and stencil renderbuffers are created on GLESv2.
+  - Prevent new navigations from onbeforeunload handler and document unload.
+  - Disallow beforeunload alerts from web pages users have never interacted with.
+  - Fix several crashes and rendering issues.
+
+==================
 WebKitGTK+  2.16.0
 ==================
 
