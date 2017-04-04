@@ -1,3 +1,17 @@
+2017-04-03  Joseph Pecoraro  <pecoraro@apple.com>
+
+        TestWebKitAPI: Warning: Multiple build commands for Ahem.ttf
+        https://bugs.webkit.org/show_bug.cgi?id=170430
+
+        Reviewed by Alexey Proskuryakov.
+
+        * TestWebKitAPI/Tests/mac/Ahem.ttf: Removed.
+        Eliminate one of the copies of Ahem.ttf.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        Once eliminated, there is now only one Ahem.ttf that is copied
+        to the Resources bundle. Drive-by sort the project file.
+
 2017-04-03  Simon Fraser  <simon.fraser@apple.com>
 
         Allow MiniBrowser windows to receive local file drags again
