@@ -31,6 +31,7 @@
 #include "AirCFG.h"
 #include "AirCode.h"
 #include "AirInstInlines.h"
+#include "AirLivenessConstraints.h"
 #include "AirStackSlot.h"
 #include "AirTmpInlines.h"
 
@@ -42,6 +43,7 @@ struct LivenessAdapter {
     
     LivenessAdapter(Code& code)
         : code(code)
+        , constraints(code)
     {
     }
     
@@ -53,52 +55,19 @@ struct LivenessAdapter {
     template<typename Func>
     void forEachUse(BasicBlock* block, size_t instBoundaryIndex, const Func& func)
     {
-        if (Inst* prevInst = block->get(instBoundaryIndex - 1)) {
-            prevInst->forEach<typename Adapter::Thing>(
-                [&] (typename Adapter::Thing& thing, Arg::Role role, Bank bank, Width) {
-                    if (Arg::isLateUse(role)
-                        && Adapter::acceptsBank(bank)
-                        && Adapter::acceptsRole(role))
-                        func(Adapter::valueToIndex(thing));
-                });
-        }
-        
-        if (Inst* nextInst = block->get(instBoundaryIndex)) {
-            nextInst->forEach<typename Adapter::Thing>(
-                [&] (typename Adapter::Thing& thing, Arg::Role role, Bank bank, Width) {
-                    if (Arg::isEarlyUse(role)
-                        && Adapter::acceptsBank(bank)
-                        && Adapter::acceptsRole(role))
-                        func(Adapter::valueToIndex(thing));
-                });
-        }
+        for (unsigned index : constraints.at(block, instBoundaryIndex).use)
+            func(index);
     }
     
     template<typename Func>
     void forEachDef(BasicBlock* block, size_t instBoundaryIndex, const Func& func)
     {
-        if (Inst* prevInst = block->get(instBoundaryIndex - 1)) {
-            prevInst->forEach<typename Adapter::Thing>(
-                [&] (typename Adapter::Thing& thing, Arg::Role role, Bank bank, Width) {
-                    if (Arg::isLateDef(role)
-                        && Adapter::acceptsBank(bank)
-                        && Adapter::acceptsRole(role))
-                        func(Adapter::valueToIndex(thing));
-                });
-        }
-        
-        if (Inst* nextInst = block->get(instBoundaryIndex)) {
-            nextInst->forEach<typename Adapter::Thing>(
-                [&] (typename Adapter::Thing& thing, Arg::Role role, Bank bank, Width) {
-                    if (Arg::isEarlyDef(role)
-                        && Adapter::acceptsBank(bank)
-                        && Adapter::acceptsRole(role))
-                        func(Adapter::valueToIndex(thing));
-                });
-        }
+        for (unsigned index : constraints.at(block, instBoundaryIndex).def)
+            func(index);
     }
 
     Code& code;
+    LivenessConstraints<Adapter> constraints;
 };
 
 template<Bank adapterBank, Arg::Temperature minimumTemperature = Arg::Cold>

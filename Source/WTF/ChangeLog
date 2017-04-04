@@ -1,3 +1,13 @@
+2017-04-03  Filip Pizlo  <fpizlo@apple.com>
+
+        Air liveness should build constraints and solve them rather than repeatedly parsing IR
+        https://bugs.webkit.org/show_bug.cgi?id=170421
+
+        Reviewed by Saam Barati.
+
+        * wtf/Vector.h:
+        (WTF::minCapacity>::appendIfNotContains): Because sometimes Vector<> is the best kind of set.
+
 2017-04-03  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [WTF] Introduce WTF::RandomDevice which keeps /dev/urandom opened

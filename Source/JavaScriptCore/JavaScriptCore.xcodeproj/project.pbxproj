@@ -119,6 +119,7 @@
 		0F15F15F14B7A73E005DE37D /* CommonSlowPaths.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F15F15D14B7A73A005DE37D /* CommonSlowPaths.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F1725FF1B48719A00AC3A55 /* DFGMinifiedGraph.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F1725FE1B48719A00AC3A55 /* DFGMinifiedGraph.cpp */; };
 		0F1829691E92EE54005B1EA8 /* AirLivenessAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F1829681E92EE51005B1EA8 /* AirLivenessAdapter.h */; };
+		0F18296B1E92F6DC005B1EA8 /* AirLivenessConstraints.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F18296A1E92F6DA005B1EA8 /* AirLivenessConstraints.h */; };
 		0F18D3CF1B55A6E0002C5C9F /* DFGAdaptiveStructureWatchpoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F18D3CD1B55A6E0002C5C9F /* DFGAdaptiveStructureWatchpoint.cpp */; };
 		0F18D3D01B55A6E0002C5C9F /* DFGAdaptiveStructureWatchpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F18D3CE1B55A6E0002C5C9F /* DFGAdaptiveStructureWatchpoint.h */; };
 		0F190CAC189D82F6000AE5F0 /* ProfilerJettisonReason.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F190CAA189D82F6000AE5F0 /* ProfilerJettisonReason.cpp */; };
@@ -2654,6 +2655,7 @@
 		0F15F15D14B7A73A005DE37D /* CommonSlowPaths.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommonSlowPaths.h; sourceTree = "<group>"; };
 		0F1725FE1B48719A00AC3A55 /* DFGMinifiedGraph.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGMinifiedGraph.cpp; path = dfg/DFGMinifiedGraph.cpp; sourceTree = "<group>"; };
 		0F1829681E92EE51005B1EA8 /* AirLivenessAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirLivenessAdapter.h; path = b3/air/AirLivenessAdapter.h; sourceTree = "<group>"; };
+		0F18296A1E92F6DA005B1EA8 /* AirLivenessConstraints.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirLivenessConstraints.h; path = b3/air/AirLivenessConstraints.h; sourceTree = "<group>"; };
 		0F18D3CD1B55A6E0002C5C9F /* DFGAdaptiveStructureWatchpoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGAdaptiveStructureWatchpoint.cpp; path = dfg/DFGAdaptiveStructureWatchpoint.cpp; sourceTree = "<group>"; };
 		0F18D3CE1B55A6E0002C5C9F /* DFGAdaptiveStructureWatchpoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGAdaptiveStructureWatchpoint.h; path = dfg/DFGAdaptiveStructureWatchpoint.h; sourceTree = "<group>"; };
 		0F190CAA189D82F6000AE5F0 /* ProfilerJettisonReason.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ProfilerJettisonReason.cpp; path = profiler/ProfilerJettisonReason.cpp; sourceTree = "<group>"; };
@@ -5613,6 +5615,7 @@
 				0FDF67D51D9DC43E001B9825 /* AirKind.h */,
 				2684D4371C00161C0081D663 /* AirLiveness.h */,
 				0F1829681E92EE51005B1EA8 /* AirLivenessAdapter.h */,
+				0F18296A1E92F6DA005B1EA8 /* AirLivenessConstraints.h */,
 				0FE34C171C4B39AE0003A512 /* AirLogRegisterPressure.cpp */,
 				0FE34C181C4B39AE0003A512 /* AirLogRegisterPressure.h */,
 				0F6183251C45BF070072450B /* AirLowerAfterRegAlloc.cpp */,
@@ -8966,6 +8969,7 @@
 				2A4BB7F318A41179008A0FCD /* JSManagedValueInternal.h in Headers */,
 				A700874217CBE8EB00C3E643 /* JSMap.h in Headers */,
 				A74DEF96182D991400522C22 /* JSMapIterator.h in Headers */,
+				0F18296B1E92F6DC005B1EA8 /* AirLivenessConstraints.h in Headers */,
 				9959E92D1BD17FA4001AA413 /* jsmin.py in Headers */,
 				E3D239C91B829C1C00BBEF67 /* JSModuleEnvironment.h in Headers */,
 				D9722752DC54459B9125B539 /* JSModuleLoader.h in Headers */,

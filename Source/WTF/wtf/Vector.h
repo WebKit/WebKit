@@ -706,6 +706,8 @@ public:
     template<typename U> bool contains(const U&) const;
     template<typename U> size_t find(const U&) const;
     template<typename U> size_t reverseFind(const U&) const;
+    
+    template<typename U> bool appendIfNotContains(const U&);
 
     void shrink(size_t size);
     void grow(size_t size);
@@ -923,6 +925,16 @@ size_t Vector<T, inlineCapacity, OverflowHandler, minCapacity>::reverseFind(cons
             return index;
     }
     return notFound;
+}
+
+template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity>
+template<typename U>
+bool Vector<T, inlineCapacity, OverflowHandler, minCapacity>::appendIfNotContains(const U& value)
+{
+    if (contains(value))
+        return false;
+    append(value);
+    return true;
 }
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity>
