@@ -163,10 +163,6 @@ NS_ASSUME_NONNULL_END
 #import <CoreMedia/CMSampleBuffer.h>
 #import <CoreMedia/CMSync.h>
 
-#if __has_include(<AVFoundation/AVSampleBufferRenderSynchronizer.h>)
-#import <AVFoundation/AVSampleBufferRenderSynchronizer.h>
-#else
-
 NS_ASSUME_NONNULL_BEGIN
 
 @interface AVSampleBufferRenderSynchronizer : NSObject
@@ -183,8 +179,6 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 NS_ASSUME_NONNULL_END
-
-#endif // __has_include(<AVFoundation/AVSampleBufferRenderSynchronizer.h>)
 
 #if __has_include(<AVFoundation/AVSampleBufferAudioRenderer.h>)
 #import <AVFoundation/AVSampleBufferAudioRenderer.h>

@@ -1,5 +1,11 @@
 2017-04-04  Alexey Proskuryakov  <ap@apple.com>
 
+        Rolling back the build fix, as it broke other builds.
+
+        * platform/spi/mac/AVFoundationSPI.h:
+
+2017-04-04  Alexey Proskuryakov  <ap@apple.com>
+
         Build fix.
 
         Rubber-stamped by Jer Noble.
