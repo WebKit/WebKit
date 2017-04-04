@@ -974,14 +974,43 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
                 if (!domBreakpoint)
                     return;
 
-                this._pauseReasonTreeOutline = this.createContentTreeOutline(true, true);
+                const suppressFiltering = true;
+                this._pauseReasonTreeOutline = this.createContentTreeOutline(suppressFiltering);
 
-                let domBreakpointTreeElement = new WebInspector.DOMBreakpointTreeElement(domBreakpoint, WebInspector.DebuggerSidebarPanel.PausedBreakpointIconStyleClassName, WebInspector.UIString("Triggered DOM Breakpoint"));
-                let domBreakpointDetailsSection = new WebInspector.DetailsSectionRow;
+                let type = WebInspector.DOMBreakpointTreeElement.displayNameForType(domBreakpoint.type);
+                let domBreakpointTreeElement = new WebInspector.DOMBreakpointTreeElement(domBreakpoint, WebInspector.DebuggerSidebarPanel.PausedBreakpointIconStyleClassName, type);
+                let domBreakpointRow = new WebInspector.DetailsSectionRow;
                 this._pauseReasonTreeOutline.appendChild(domBreakpointTreeElement);
-                domBreakpointDetailsSection.element.appendChild(this._pauseReasonTreeOutline.element);
+                domBreakpointRow.element.appendChild(this._pauseReasonTreeOutline.element);
 
-                this._pauseReasonGroup.rows = [domBreakpointDetailsSection];
+                let ownerElementRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Element"), WebInspector.linkifyNodeReference(domNode));
+                this._pauseReasonGroup.rows = [domBreakpointRow, ownerElementRow];
+
+                if (domBreakpoint.type !== WebInspector.DOMBreakpoint.Type.SubtreeModified)
+                    return true;
+
+                console.assert(pauseData.targetNode);
+
+                let remoteObject = WebInspector.RemoteObject.fromPayload(pauseData.targetNode, target);
+                remoteObject.pushNodeToFrontend((nodeId) => {
+                    if (!nodeId)
+                        return;
+
+                    let node = WebInspector.domTreeManager.nodeForId(nodeId);
+                    console.assert(node, "Missing node for id.", nodeId);
+                    if (!node)
+                        return;
+
+                    let fragment = document.createDocumentFragment();
+                    let description = pauseData.insertion ? WebInspector.UIString("Child added to ") : WebInspector.UIString("Removed descendant ");
+                    fragment.append(description, WebInspector.linkifyNodeReference(node));
+
+                    let targetDescriptionRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Details"), fragment);
+                    targetDescriptionRow.element.classList.add("target-description");
+
+                    this._pauseReasonGroup.rows = this._pauseReasonGroup.rows.concat(targetDescriptionRow);
+                });
+
                 return true;
             }
             break;

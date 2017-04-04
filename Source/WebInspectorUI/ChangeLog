@@ -1,3 +1,19 @@
+2017-04-03  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Show additional pause reason details for DOM "subtree modified" breakpoint
+        https://bugs.webkit.org/show_bug.cgi?id=169479
+
+        Reviewed by Timothy Hatcher.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        New Pause Reason UI strings.
+
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WebInspector.DebuggerSidebarPanel.prototype._updatePauseReasonSection):
+        Include a link for the target node when breaking for subtree modifications.
+        This is either the parent of a node being inserted, or a node that is
+        being removed.
+
 2017-04-03  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: showing the Find banner doesn't immediately focus it
