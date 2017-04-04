@@ -1,5 +1,61 @@
 2017-04-04  Filip Pizlo  <fpizlo@apple.com>
 
+        Air::lowerAfterRegAlloc should bail early if it finds no Shuffles or ColdCCalls
+        https://bugs.webkit.org/show_bug.cgi?id=170305
+
+        Reviewed by Saam Barati.
+        
+        This reduces and sometimes completely eliminates the need to run lowerAfterRegAlloc().
+        
+        This lowers the Shuffle for the arguments of a CCall before register allocation unless
+        the CCall arguments require a real shuffle (like if the CCall arguments were argument
+        registers). This lowers a ColdCCall like a CCall for optLevel<2.
+        
+        Finally, lowerAfterRegAlloc() now checks if there are any Shuffles or CCalls before it
+        does anything else. For wasm at -O1, this means that the phase doesn't run at all. This
+        is a ~3% wasm -O1 compile time progression.
+        
+        To make this easy, I changed optLevel into a property of Procedure and Code rather than
+        an argument we thread through everything. I like how Procedure and Code are dumping
+        ground classes. This does not bother me. Note that I cloned optLevel into Procedure and
+        Code so that it's cheap to query inside Air phases.
+
+        * b3/B3Compile.cpp:
+        (JSC::B3::compile):
+        * b3/B3Compile.h:
+        * b3/B3Generate.cpp:
+        (JSC::B3::prepareForGeneration):
+        (JSC::B3::generateToAir):
+        * b3/B3Generate.h:
+        * b3/B3Procedure.cpp:
+        (JSC::B3::Procedure::setOptLevel):
+        * b3/B3Procedure.h:
+        (JSC::B3::Procedure::optLevel):
+        * b3/air/AirCode.h:
+        (JSC::B3::Air::Code::isPinned):
+        (JSC::B3::Air::Code::setOptLevel):
+        (JSC::B3::Air::Code::optLevel):
+        * b3/air/AirEmitShuffle.cpp:
+        (JSC::B3::Air::ShufflePair::bank):
+        (JSC::B3::Air::ShufflePair::opcode):
+        (JSC::B3::Air::ShufflePair::inst):
+        (JSC::B3::Air::emitShuffle):
+        * b3/air/AirEmitShuffle.h:
+        (JSC::B3::Air::moveFor):
+        * b3/air/AirGenerate.cpp:
+        (JSC::B3::Air::prepareForGeneration):
+        * b3/air/AirGenerate.h:
+        * b3/air/AirLowerAfterRegAlloc.cpp:
+        (JSC::B3::Air::lowerAfterRegAlloc):
+        * b3/air/AirLowerMacros.cpp:
+        (JSC::B3::Air::lowerMacros):
+        * b3/testb3.cpp:
+        (JSC::B3::compileProc):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::parseAndCompile):
+
+2017-04-04  Filip Pizlo  <fpizlo@apple.com>
+
         Don't need to Air::reportUsedRegisters for wasm at -O1
         https://bugs.webkit.org/show_bug.cgi?id=170459
 

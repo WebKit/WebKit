@@ -56,13 +56,23 @@ void lowerAfterRegAlloc(Code& code)
     if (verbose)
         dataLog("Code before lowerAfterRegAlloc:\n", code);
     
-    // FIXME:
-    // 1) This should bail early if there are no Shuffles or ColdCCalls.
-    //    https://bugs.webkit.org/show_bug.cgi?id=170305
-    // 2) We should not introduce Shuffles for normal calls.
-    //    https://bugs.webkit.org/show_bug.cgi?id=170306
-    // 3) We should emit ColdCCall only at optLevel==1.
-    //    https://bugs.webkit.org/show_bug.cgi?id=170307
+    auto isRelevant = [] (Inst& inst) -> bool {
+        return inst.kind.opcode == Shuffle || inst.kind.opcode == ColdCCall;
+    };
+    
+    bool haveAnyRelevant = false;
+    for (BasicBlock* block : code) {
+        for (Inst& inst : *block) {
+            if (isRelevant(inst)) {
+                haveAnyRelevant = true;
+                break;
+            }
+        }
+        if (haveAnyRelevant)
+            break;
+    }
+    if (!haveAnyRelevant)
+        return;
 
     HashMap<Inst*, RegisterSet> usedRegisters;
 
@@ -75,16 +85,14 @@ void lowerAfterRegAlloc(Code& code)
             
             RegisterSet set;
 
-            bool isRelevant = inst.kind.opcode == Shuffle || inst.kind.opcode == ColdCCall;
-            
-            if (isRelevant) {
+            if (isRelevant(inst)) {
                 for (Reg reg : localCalc.live())
                     set.set(reg);
             }
             
             localCalc.execute(instIndex);
 
-            if (isRelevant)
+            if (isRelevant(inst))
                 usedRegisters.add(&inst, set);
         }
     }

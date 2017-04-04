@@ -1288,6 +1288,8 @@ Expected<std::unique_ptr<WasmInternalFunction>, String> parseAndCompile(Compilat
     // don't strictly need to run Air::reportUsedRegisters(), which saves a bit of CPU time at
     // optLevel=1.
     procedure.setNeedsUsedRegisters(false);
+    
+    procedure.setOptLevel(optLevel);
 
     B3IRGenerator context(info, procedure, result.get(), unlinkedWasmToWasmCalls, mode);
     FunctionParser<B3IRGenerator> parser(context, functionStart, functionLength, signature, info, moduleSignatureIndicesToUniquedSignatureIndices);
@@ -1304,7 +1306,7 @@ Expected<std::unique_ptr<WasmInternalFunction>, String> parseAndCompile(Compilat
     dataLogIf(verbose, "Post SSA: ", procedure);
     
     {
-        B3::prepareForGeneration(procedure, optLevel);
+        B3::prepareForGeneration(procedure);
         B3::generate(procedure, *compilationContext.wasmEntrypointJIT);
         compilationContext.wasmEntrypointByproducts = procedure.releaseByproducts();
         result->wasmEntrypoint.calleeSaveRegisters = procedure.calleeSaveRegisters();

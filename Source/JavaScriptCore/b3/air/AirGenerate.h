@@ -39,7 +39,7 @@ class Code;
 
 // This takes an Air::Code that hasn't had any stack allocation and optionally hasn't had any
 // register allocation and does both of those things.
-JS_EXPORT_PRIVATE void prepareForGeneration(Code&, unsigned optLevel = defaultOptLevel());
+JS_EXPORT_PRIVATE void prepareForGeneration(Code&);
 
 // This generates the code using the given CCallHelpers instance. Note that this may call callbacks
 // in the supplied code as it is generating.

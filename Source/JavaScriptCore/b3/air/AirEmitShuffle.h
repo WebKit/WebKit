@@ -39,6 +39,19 @@ namespace Air {
 
 class Code;
 
+inline Opcode moveFor(Bank bank, Width width)
+{
+    switch (width) {
+    case Width32:
+        return bank == GP ? Move32 : MoveFloat;
+    case Width64:
+        return bank == GP ? Move : MoveDouble;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        return Oops;
+    }
+}
+
 class ShufflePair {
 public:
     ShufflePair()
@@ -58,6 +71,14 @@ public:
     // The width determines the kind of move we do. You can only choose Width32 or Width64 right now.
     // For GP, it picks between Move32 and Move. For FP, it picks between MoveFloat and MoveDouble.
     Width width() const { return m_width; }
+    
+    Bank bank() const;
+    Opcode opcode() const;
+    
+    // Creates an instruction for the move represented by this shuffle pair. You need to pass
+    // Code if this is a memory->memory pair. You can pass null if you know that it's not. In
+    // fact, passing null is a good way to assert that this is not a memory->memory pair.
+    Inst inst(Code*, Value* origin) const;
 
     void dump(PrintStream&) const;
     

@@ -88,8 +88,10 @@ public:
     const RegisterSet& mutableRegs() const { return m_mutableRegs; }
     
     bool isPinned(Reg reg) const { return !mutableRegs().get(reg); }
-    
     void pinRegister(Reg);
+    
+    void setOptLevel(unsigned optLevel) { m_optLevel = optLevel; }
+    unsigned optLevel() const { return m_optLevel; }
     
     bool needsUsedRegisters() const;
 
@@ -322,6 +324,7 @@ private:
     RefPtr<WasmBoundsCheckGenerator> m_wasmBoundsCheckGenerator;
     const char* m_lastPhaseName;
     std::unique_ptr<Disassembler> m_disassembler;
+    unsigned m_optLevel { defaultOptLevel() };
 };
 
 } } } // namespace JSC::B3::Air

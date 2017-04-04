@@ -334,6 +334,12 @@ void Procedure::pinRegister(Reg reg)
     code().pinRegister(reg);
 }
 
+void Procedure::setOptLevel(unsigned optLevel)
+{
+    m_optLevel = optLevel;
+    code().setOptLevel(optLevel);
+}
+
 unsigned Procedure::frameSize() const
 {
     return code().frameSize();

@@ -46,7 +46,7 @@ class Procedure;
 // Then you keep the Compilation object alive for as long as you want to be able to run the code.
 // If this API feels too high-level, you can use B3::generate() directly.
 
-JS_EXPORT_PRIVATE Compilation compile(Procedure&, unsigned optLevel = defaultOptLevel());
+JS_EXPORT_PRIVATE Compilation compile(Procedure&);
 
 } } // namespace JSC::B3
 

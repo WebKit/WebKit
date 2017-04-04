@@ -38,11 +38,11 @@
 
 namespace JSC { namespace B3 {
 
-Compilation compile(Procedure& proc, unsigned optLevel)
+Compilation compile(Procedure& proc)
 {
     TimingScope timingScope("Compilation");
     
-    prepareForGeneration(proc, optLevel);
+    prepareForGeneration(proc);
     
     CCallHelpers jit;
     generate(proc, jit);

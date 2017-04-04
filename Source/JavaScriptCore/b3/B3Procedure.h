@@ -233,6 +233,9 @@ public:
     // This tells the register allocators to stay away from this register.
     JS_EXPORT_PRIVATE void pinRegister(Reg);
     
+    JS_EXPORT_PRIVATE void setOptLevel(unsigned value);
+    unsigned optLevel() const { return m_optLevel; }
+    
     // You can turn off used registers calculation. This may speed up compilation a bit. But if
     // you turn it off then you cannot use StackmapGenerationParams::usedRegisters() or
     // StackmapGenerationParams::unavailableRegisters().
@@ -273,6 +276,7 @@ private:
     RefPtr<SharedTask<void(PrintStream&, Origin)>> m_originPrinter;
     const void* m_frontendData;
     PCToOriginMap m_pcToOriginMap;
+    unsigned m_optLevel { defaultOptLevel() };
     bool m_needsUsedRegisters { true };
     bool m_hasQuirks { false };
 };

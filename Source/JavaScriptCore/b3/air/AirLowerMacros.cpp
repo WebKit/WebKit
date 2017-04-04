@@ -30,6 +30,7 @@
 
 #include "AirCCallingConvention.h"
 #include "AirCode.h"
+#include "AirEmitShuffle.h"
 #include "AirInsertionSet.h"
 #include "AirInstInlines.h"
 #include "AirPhaseScope.h"
@@ -46,23 +47,46 @@ void lowerMacros(Code& code)
     for (BasicBlock* block : code) {
         for (unsigned instIndex = 0; instIndex < block->size(); ++instIndex) {
             Inst& inst = block->at(instIndex);
-
-            switch (inst.kind.opcode) {
-            case CCall: {
+            
+            auto handleCall = [&] () {
                 CCallValue* value = inst.origin->as<CCallValue>();
                 Kind oldKind = inst.kind;
 
                 Vector<Arg> destinations = computeCCallingConvention(code, value);
-
-                Inst shuffleArguments(Shuffle, value);
+                
                 unsigned offset = value->type() == Void ? 0 : 1;
+                Vector<ShufflePair, 16> shufflePairs;
+                bool hasRegisterSource = false;
                 for (unsigned i = 1; i < destinations.size(); ++i) {
                     Value* child = value->child(i);
-                    shuffleArguments.args.append(inst.args[offset + i]);
-                    shuffleArguments.args.append(destinations[i]);
-                    shuffleArguments.args.append(Arg::widthArg(widthForType(child->type())));
+                    ShufflePair pair(inst.args[offset + i], destinations[i], widthForType(child->type()));
+                    shufflePairs.append(pair);
+                    hasRegisterSource |= pair.src().isReg();
                 }
-                insertionSet.insertInst(instIndex, WTFMove(shuffleArguments));
+                
+                if (UNLIKELY(hasRegisterSource))
+                    insertionSet.insertInst(instIndex, createShuffle(inst.origin, Vector<ShufflePair>(shufflePairs)));
+                else {
+                    // If none of the inputs are registers, then we can efficiently lower this
+                    // shuffle before register allocation. First we lower all of the moves to
+                    // memory, in the hopes that this is the last use of the operands. This
+                    // avoids creating interference between argument registers and arguments
+                    // that don't go into argument registers.
+                    for (ShufflePair& pair : shufflePairs) {
+                        if (pair.dst().isMemory())
+                            insertionSet.insertInst(instIndex, pair.inst(&code, inst.origin));
+                    }
+                    
+                    // Fill the argument registers by starting with the first one. This avoids
+                    // creating interference between things passed to low-numbered argument
+                    // registers and high-numbered argument registers. The assumption here is
+                    // that lower-numbered argument registers are more likely to be
+                    // incidentally clobbered.
+                    for (ShufflePair& pair : shufflePairs) {
+                        if (!pair.dst().isMemory())
+                            insertionSet.insertInst(instIndex, pair.inst(nullptr, inst.origin));
+                    }
+                }
 
                 // Indicate that we're using our original callee argument.
                 destinations[0] = inst.args[0];
@@ -91,8 +115,17 @@ void lowerMacros(Code& code)
                     insertionSet.insert(instIndex + 1, Move, value, result, resultDst);
                     break;
                 }
+            };
+
+            switch (inst.kind.opcode) {
+            case ColdCCall:
+                if (code.optLevel() < 2)
+                    handleCall();
                 break;
-            }
+                
+            case CCall:
+                handleCall();
+                break;
 
             default:
                 break;

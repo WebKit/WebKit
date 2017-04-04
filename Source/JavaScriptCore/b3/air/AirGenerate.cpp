@@ -58,7 +58,7 @@
 
 namespace JSC { namespace B3 { namespace Air {
 
-void prepareForGeneration(Code& code, unsigned optLevel)
+void prepareForGeneration(Code& code)
 {
     TimingScope timingScope("Air::prepareForGeneration");
     
@@ -90,7 +90,7 @@ void prepareForGeneration(Code& code, unsigned optLevel)
     // For debugging, you can use spillEverything() to put everything to the stack between each Inst.
     if (Options::airSpillsEverything())
         spillEverything(code);
-    else if (optLevel >= 2)
+    else if (code.optLevel() >= 2)
         allocateRegistersByGraphColoring(code);
     else
         allocateRegistersByLinearScan(code);
@@ -100,7 +100,7 @@ void prepareForGeneration(Code& code, unsigned optLevel)
         logRegisterPressure(code);
     }
     
-    if (optLevel >= 2) {
+    if (code.optLevel() >= 2) {
         // This replaces uses of spill slots with registers or constants if possible. It does this by
         // minimizing the amount that we perturb the already-chosen register allocation. It may extend
         // the live ranges of registers though.
@@ -124,7 +124,7 @@ void prepareForGeneration(Code& code, unsigned optLevel)
 
     // This is needed to satisfy a requirement of B3::StackmapValue. This also removes dead
     // code. We can avoid running this when certain optimizations are disabled.
-    if (optLevel >= 2 || code.needsUsedRegisters())
+    if (code.optLevel() >= 2 || code.needsUsedRegisters())
         reportUsedRegisters(code);
 
     // Attempt to remove false dependencies between instructions created by partial register changes.

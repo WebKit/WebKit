@@ -119,7 +119,8 @@ StaticLock crashLock;
 
 std::unique_ptr<Compilation> compileProc(Procedure& procedure, unsigned optLevel = defaultOptLevel())
 {
-    return std::make_unique<Compilation>(B3::compile(procedure, optLevel));
+    procedure.setOptLevel(optLevel);
+    return std::make_unique<Compilation>(B3::compile(procedure));
 }
 
 template<typename T, typename... Arguments>
