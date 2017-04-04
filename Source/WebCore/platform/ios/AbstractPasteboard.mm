@@ -23,33 +23,47 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
+#include "config.h"
+#include "AbstractPasteboard.h"
 
-#if TARGET_OS_IPHONE
+#import <wtf/RetainPtr.h>
 
-WEBCORE_EXPORT @interface WebPasteboardItemData : NSObject
+#if PLATFORM(IOS)
 
-+ (instancetype)itemWithRepresentingObjects:(NSArray *)representingObjects additionalData:(NSDictionary *)additionalData;
-
-@property (nonatomic, readonly, strong) NSArray *representingObjects;
-@property (nonatomic, readonly, strong) NSDictionary *additionalData;
-
-@end
-
-@protocol AbstractPasteboard <NSObject>
-@required
-
-@property (readonly, nonatomic) NSInteger numberOfItems;
-
-- (NSArray<NSString *> *)pasteboardTypes;
-- (NSArray *)dataForPasteboardType:(NSString *)pasteboardType inItemSet:(NSIndexSet *)itemSet;
-- (NSArray *)valuesForPasteboardType:(NSString *)pasteboardType inItemSet:(NSIndexSet *)itemSet;
-- (NSInteger)changeCount;
-
-@optional
-- (void)setItemsFromObjectRepresentations:(NSArray<WebPasteboardItemData *> *)itemData;
-- (void)setItems:(NSArray<NSDictionary *> *)items;
+@interface WebPasteboardItemData ()
+{
+    RetainPtr<NSArray> _representingObjects;
+    RetainPtr<NSDictionary> _additionalData;
+}
 
 @end
 
-#endif // TARGET_OS_IPHONE
+@implementation WebPasteboardItemData
+
++ (instancetype)itemWithRepresentingObjects:(NSArray *)representingObjects additionalData:(NSDictionary *)additionalData
+{
+    return [[[self alloc] initWithRepresentingObjects:representingObjects additionalData:additionalData] autorelease];
+}
+
+- (instancetype)initWithRepresentingObjects:(NSArray *)representingObjects additionalData:(NSDictionary *)additionalData
+{
+    if (self = [super init]) {
+        _representingObjects = representingObjects;
+        _additionalData = additionalData;
+    }
+    return self;
+}
+
+- (NSArray *)representingObjects
+{
+    return _representingObjects.get();
+}
+
+- (NSDictionary *)additionalData
+{
+    return _additionalData.get();
+}
+
+@end
+
+#endif // PLATFORM(IOS)

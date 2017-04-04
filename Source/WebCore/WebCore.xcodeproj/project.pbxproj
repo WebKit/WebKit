@@ -6830,6 +6830,7 @@
 		F48223131E386E240066FC79 /* AbstractPasteboard.h in Headers */ = {isa = PBXBuildFile; fileRef = F48223121E386E240066FC79 /* AbstractPasteboard.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F4BFB9851E1DDF9B00862C24 /* DumpEditingHistory.js in Copy Scripts */ = {isa = PBXBuildFile; fileRef = F48389831E1DDF2B0076B7EA /* DumpEditingHistory.js */; };
 		F4BFB9861E1DDF9B00862C24 /* EditingHistoryUtil.js in Copy Scripts */ = {isa = PBXBuildFile; fileRef = F48389841E1DDF2B0076B7EA /* EditingHistoryUtil.js */; };
+		F4D831621E908C0700941174 /* AbstractPasteboard.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4D831611E908C0700941174 /* AbstractPasteboard.mm */; };
 		F50664F7157F52DC00AC226F /* FormController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F50664F5157F52DC00AC226F /* FormController.cpp */; };
 		F50664F8157F52DC00AC226F /* FormController.h in Headers */ = {isa = PBXBuildFile; fileRef = F50664F6157F52DC00AC226F /* FormController.h */; };
 		F513A3EA15FF4841001526DB /* ValidationMessageClient.h in Headers */ = {isa = PBXBuildFile; fileRef = F513A3E915FF4841001526DB /* ValidationMessageClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -15332,6 +15333,7 @@
 		F48223121E386E240066FC79 /* AbstractPasteboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractPasteboard.h; sourceTree = "<group>"; };
 		F48389831E1DDF2B0076B7EA /* DumpEditingHistory.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = DumpEditingHistory.js; path = Scripts/DumpEditingHistory.js; sourceTree = "<group>"; };
 		F48389841E1DDF2B0076B7EA /* EditingHistoryUtil.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = EditingHistoryUtil.js; path = Scripts/EditingHistoryUtil.js; sourceTree = "<group>"; };
+		F4D831611E908C0700941174 /* AbstractPasteboard.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AbstractPasteboard.mm; sourceTree = "<group>"; };
 		F50664F5157F52DC00AC226F /* FormController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FormController.cpp; sourceTree = "<group>"; };
 		F50664F6157F52DC00AC226F /* FormController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FormController.h; sourceTree = "<group>"; };
 		F513A3E915FF4841001526DB /* ValidationMessageClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ValidationMessageClient.h; sourceTree = "<group>"; };
@@ -20863,6 +20865,7 @@
 			children = (
 				A148328B187F506800DA63A6 /* wak */,
 				F48223121E386E240066FC79 /* AbstractPasteboard.h */,
+				F4D831611E908C0700941174 /* AbstractPasteboard.mm */,
 				2655414B1489AA2B000DFC5D /* CursorIOS.cpp */,
 				A1ED778A1BE3293F00DC1791 /* Device.cpp */,
 				A1ED778B1BE3294000DC1791 /* Device.h */,
@@ -31629,6 +31632,7 @@
 				A6148A7812E41E3B0044A784 /* JSHTMLKeygenElement.cpp in Sources */,
 				1AE2AB210A1CE63B00B42B25 /* JSHTMLLabelElement.cpp in Sources */,
 				1AE2AB230A1CE63B00B42B25 /* JSHTMLLegendElement.cpp in Sources */,
+				F4D831621E908C0700941174 /* AbstractPasteboard.mm in Sources */,
 				1AE2AB250A1CE63B00B42B25 /* JSHTMLLIElement.cpp in Sources */,
 				A80E7B100A19D606007FB8C5 /* JSHTMLLinkElement.cpp in Sources */,
 				1AE2AB270A1CE63B00B42B25 /* JSHTMLMapElement.cpp in Sources */,

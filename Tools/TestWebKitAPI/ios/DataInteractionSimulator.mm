@@ -202,10 +202,14 @@ static NSArray *dataInteractionEventNames()
 
         _dataOperationSession = adoptNS([[MockDataOperationSession alloc] initWithProvider:itemProviders.firstObject location:self._currentLocation window:[_webView window]]);
         [_dataInteractionSession setItems:items];
-        if (!self.showCustomActionSheetBlock) {
-            [_webView _simulateWillBeginDataInteractionWithSession:_dataInteractionSession.get()];
-            _phase = DataInteractionBegan;
+        _sourceItemProviders = itemProviders;
+        if (self.showCustomActionSheetBlock) {
+            // Defer progress until the custom action sheet is dismissed.
+            return;
         }
+
+        [_webView _simulateWillBeginDataInteractionWithSession:_dataInteractionSession.get()];
+        _phase = DataInteractionBegan;
         break;
     }
     case DataInteractionBegan:
@@ -233,6 +237,11 @@ static NSArray *dataInteractionEventNames()
 {
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(_advanceProgress) object:nil];
     [self performSelector:@selector(_advanceProgress) withObject:nil afterDelay:progressTimeStep];
+}
+
+- (NSArray *)sourceItemProviders
+{
+    return _sourceItemProviders.get();
 }
 
 - (UIItemProvider *)externalItemProvider
@@ -274,6 +283,7 @@ static NSArray *dataInteractionEventNames()
         DataInteractionSimulator *weakSelf = strongSelf.get();
         [weakSelf->_webView _simulateWillBeginDataInteractionWithSession:weakSelf->_dataInteractionSession.get()];
         weakSelf->_phase = DataInteractionBegan;
+        [weakSelf _scheduleAdvanceProgress];
     });
 
     return self.showCustomActionSheetBlock(element);

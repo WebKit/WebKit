@@ -152,6 +152,14 @@ FragmentAndResources Editor::createFragment(NSAttributedString *string)
     return result;
 }
 
+static RefPtr<SharedBuffer> archivedDataForAttributedString(NSAttributedString *attributedString)
+{
+    if (!attributedString.length)
+        return nullptr;
+
+    return SharedBuffer::wrapNSData([NSKeyedArchiver archivedDataWithRootObject:attributedString]);
+}
+
 void Editor::writeSelectionToPasteboard(Pasteboard& pasteboard)
 {
     NSAttributedString *attributedString = attributedStringFromRange(*selectedRange());
@@ -161,6 +169,7 @@ void Editor::writeSelectionToPasteboard(Pasteboard& pasteboard)
     content.dataInWebArchiveFormat = selectionInWebArchiveFormat();
     content.dataInRTFDFormat = attributedString.containsAttachments ? dataInRTFDFormat(attributedString) : nullptr;
     content.dataInRTFFormat = dataInRTFFormat(attributedString);
+    content.dataInAttributedStringFormat = archivedDataForAttributedString(attributedString);
     // FIXME: Why don't we want this on iOS?
 #if PLATFORM(MAC)
     content.dataInHTMLFormat = selectionInHTMLFormat();
@@ -180,6 +189,7 @@ void Editor::writeSelection(PasteboardWriterData& pasteboardWriterData)
     webContent.dataInWebArchiveFormat = selectionInWebArchiveFormat();
     webContent.dataInRTFDFormat = attributedString.containsAttachments ? dataInRTFDFormat(attributedString) : nullptr;
     webContent.dataInRTFFormat = dataInRTFFormat(attributedString);
+    webContent.dataInAttributedStringFormat = archivedDataForAttributedString(attributedString);
     // FIXME: Why don't we want this on iOS?
 #if PLATFORM(MAC)
     webContent.dataInHTMLFormat = selectionInHTMLFormat();

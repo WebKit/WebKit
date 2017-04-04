@@ -5378,6 +5378,8 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     WebKit::ViewSnapshotStore::singleton().setDisableSnapshotVolatilityForTesting(true);
 }
 
+#if PLATFORM(IOS)
+
 - (void)_simulateDataInteractionEntered:(id)info
 {
 #if ENABLE(DATA_INTERACTION)
@@ -5435,6 +5437,8 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     [_contentView _simulatePrepareForDataInteractionSession:session completion:completion];
 #endif
 }
+
+#endif // PLATFORM(IOS)
 
 @end
 

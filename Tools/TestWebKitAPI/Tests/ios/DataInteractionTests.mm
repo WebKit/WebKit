@@ -62,6 +62,14 @@ static void checkSelectionRectsWithLogging(NSArray *expected, NSArray *observed)
     EXPECT_TRUE([expected isEqualToArray:observed]);
 }
 
+static void checkTypeIdentifierPrecedesOtherTypeIdentifier(DataInteractionSimulator *simulator, NSString *firstType, NSString *secondType)
+{
+    NSArray *registeredTypes = [simulator.sourceItemProviders.firstObject registeredTypeIdentifiers];
+    EXPECT_TRUE([registeredTypes containsObject:firstType]);
+    EXPECT_TRUE([registeredTypes containsObject:secondType]);
+    EXPECT_TRUE([registeredTypes indexOfObject:firstType] < [registeredTypes indexOfObject:secondType]);
+}
+
 namespace TestWebKitAPI {
 
 TEST(DataInteractionTests, ImageToContentEditable)
@@ -79,6 +87,7 @@ TEST(DataInteractionTests, ImageToContentEditable)
     EXPECT_TRUE([observedEventNames containsObject:DataInteractionOverEventName]);
     EXPECT_TRUE([observedEventNames containsObject:DataInteractionPerformOperationEventName]);
     checkSelectionRectsWithLogging(@[ makeCGRectValue(1, 201, 215, 174) ], [dataInteractionSimulator finalSelectionRects]);
+    checkTypeIdentifierPrecedesOtherTypeIdentifier(dataInteractionSimulator.get(), (NSString *)kUTTypePNG, (NSString *)kUTTypeFileURL);
 }
 
 TEST(DataInteractionTests, ImageToTextarea)
@@ -99,6 +108,7 @@ TEST(DataInteractionTests, ImageToTextarea)
 
     NSArray *expectedSelectionRects = [NSArray arrayWithObjects:makeCGRectValue(6, 203, 188, 14), makeCGRectValue(6, 217, 188, 14), makeCGRectValue(6, 231, 66, 14), nil];
     checkSelectionRectsWithLogging(expectedSelectionRects, [dataInteractionSimulator finalSelectionRects]);
+    checkTypeIdentifierPrecedesOtherTypeIdentifier(dataInteractionSimulator.get(), (NSString *)kUTTypePNG, (NSString *)kUTTypeFileURL);
 }
 
 TEST(DataInteractionTests, ContentEditableToContentEditable)
@@ -117,6 +127,7 @@ TEST(DataInteractionTests, ContentEditableToContentEditable)
     EXPECT_TRUE([observedEventNames containsObject:DataInteractionOverEventName]);
     EXPECT_TRUE([observedEventNames containsObject:DataInteractionPerformOperationEventName]);
     checkSelectionRectsWithLogging(@[ makeCGRectValue(1, 201, 961, 227) ], [dataInteractionSimulator finalSelectionRects]);
+    checkTypeIdentifierPrecedesOtherTypeIdentifier(dataInteractionSimulator.get(), (NSString *)kUTTypeRTFD, (NSString *)kUTTypeUTF8PlainText);
 }
 
 TEST(DataInteractionTests, ContentEditableToTextarea)
@@ -135,6 +146,20 @@ TEST(DataInteractionTests, ContentEditableToTextarea)
     EXPECT_TRUE([observedEventNames containsObject:DataInteractionOverEventName]);
     EXPECT_TRUE([observedEventNames containsObject:DataInteractionPerformOperationEventName]);
     checkSelectionRectsWithLogging(@[ makeCGRectValue(6, 203, 990, 232) ], [dataInteractionSimulator finalSelectionRects]);
+    checkTypeIdentifierPrecedesOtherTypeIdentifier(dataInteractionSimulator.get(), (NSString *)kUTTypeRTFD, (NSString *)kUTTypeUTF8PlainText);
+}
+
+TEST(DataInteractionTests, TextAreaToInput)
+{
+    RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView synchronouslyLoadTestPageNamed:@"textarea-to-input"];
+
+    RetainPtr<DataInteractionSimulator> dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    [dataInteractionSimulator runFrom:CGPointMake(100, 50) to:CGPointMake(100, 300)];
+
+    EXPECT_EQ([webView stringByEvaluatingJavaScript:@"source.value"].length, 0UL);
+    EXPECT_WK_STREQ("Hello world", [webView editorValue].UTF8String);
+    checkSelectionRectsWithLogging(@[ makeCGRectValue(101, 241, 990, 232) ], [dataInteractionSimulator finalSelectionRects]);
 }
 
 TEST(DataInteractionTests, LinkToInput)
@@ -152,6 +177,7 @@ TEST(DataInteractionTests, LinkToInput)
     EXPECT_TRUE([observedEventNames containsObject:DataInteractionOverEventName]);
     EXPECT_TRUE([observedEventNames containsObject:DataInteractionPerformOperationEventName]);
     checkSelectionRectsWithLogging(@[ makeCGRectValue(101, 273, 2057, 232) ], [dataInteractionSimulator finalSelectionRects]);
+    checkTypeIdentifierPrecedesOtherTypeIdentifier(dataInteractionSimulator.get(), (NSString *)kUTTypeURL, (NSString *)kUTTypeUTF8PlainText);
 }
 
 TEST(DataInteractionTests, BackgroundImageLinkToInput)
@@ -169,6 +195,7 @@ TEST(DataInteractionTests, BackgroundImageLinkToInput)
     EXPECT_TRUE([observedEventNames containsObject:DataInteractionOverEventName]);
     EXPECT_TRUE([observedEventNames containsObject:DataInteractionPerformOperationEventName]);
     checkSelectionRectsWithLogging(@[ makeCGRectValue(101, 241, 2057, 232) ], [dataInteractionSimulator finalSelectionRects]);
+    checkTypeIdentifierPrecedesOtherTypeIdentifier(dataInteractionSimulator.get(), (NSString *)kUTTypeURL, (NSString *)kUTTypeUTF8PlainText);
 }
 
 TEST(DataInteractionTests, CanPreventStart)
@@ -298,6 +325,7 @@ TEST(DataInteractionTests, LargeImageToTargetDiv)
     RetainPtr<DataInteractionSimulator> dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
     [dataInteractionSimulator runFrom:CGPointMake(200, 400) to:CGPointMake(200, 150)];
     EXPECT_WK_STREQ("PASS", [webView stringByEvaluatingJavaScript:@"target.textContent"].UTF8String);
+    checkTypeIdentifierPrecedesOtherTypeIdentifier(dataInteractionSimulator.get(), (NSString *)kUTTypePNG, (NSString *)kUTTypeFileURL);
 }
 
 TEST(DataInteractionTests, LinkWithEmptyHREF)

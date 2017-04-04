@@ -1,3 +1,61 @@
+2017-04-03  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Data interaction should register type identifiers in order of priority
+        https://bugs.webkit.org/show_bug.cgi?id=170428
+        <rdar://problem/30633296>
+
+        Reviewed by Tim Horton.
+
+        Currently, due to the shared logic for writing to a UIPasteboard (in the case of copy/paste) and the shared
+        UIItemProvider-based pasteboard wrapper (in the case of data interaction), we don't enforce any particular
+        ordering in which type identifiers are registered in the generated item provider. This is because
+        -[UIPasteboard setItems:] only takes an unordered mapping of type identifiers to objects.
+
+        To fix this, we introduce a separate way to set pasteboard data that first writes a list of object
+        representations in order of priority (which is dependent on the content being interacted with) and then register
+        individual type-data mappings at the end.
+
+        Augmented existing API tests in DataInteractionTests to check for the existence and priority of type identifiers
+        in the UIItemProviders created upon starting data interaction. Also adds a new unit test:
+        DataInteractionTests.TextAreaToInput.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * editing/cocoa/EditorCocoa.mm:
+        (WebCore::archivedDataForAttributedString):
+        (WebCore::Editor::writeSelectionToPasteboard):
+        (WebCore::Editor::writeSelection):
+        * platform/Pasteboard.h:
+        * platform/PasteboardWriterData.h:
+        * platform/PlatformPasteboard.h:
+        * platform/ios/AbstractPasteboard.h:
+        * platform/ios/AbstractPasteboard.mm: Copied from Source/WebCore/platform/ios/AbstractPasteboard.h.
+
+        Introduce WebPasteboardItemData, a wrapper around a list of objects representating the pasteboard data in order
+        of priority, and a dictionary containing additional NSData blobs that contain data useful for private clients.
+
+        (+[WebPasteboardItemData itemWithRepresentingObjects:additionalData:]):
+        (-[WebPasteboardItemData initWithRepresentingObjects:additionalData:]):
+        (-[WebPasteboardItemData representingObjects]):
+        (-[WebPasteboardItemData additionalData]):
+        * platform/ios/PlatformPasteboardIOS.mm:
+        (WebCore::richTextRepresentationsForPasteboardWebContent):
+        (WebCore::PlatformPasteboard::writeObjectRepresentations):
+        (WebCore::PlatformPasteboard::write):
+
+        Tweaked to check whether the pasteboard responds to -setItemsFromObjectRepresentations:. If so, uses the
+        PlatformPasteboard::writeObjectRepresentations codepath to write data to the pasteboard, respecting type
+        priority.
+
+        * platform/ios/WebItemProviderPasteboard.mm:
+        (-[WebItemProviderPasteboard pasteboardTypes]):
+        (-[WebItemProviderPasteboard setItemProviders:]):
+        (-[WebItemProviderPasteboard setItemsFromObjectRepresentations:]):
+
+        Replaces -setItems: with -setItemsFromObjectRepresentations:, which respects the priority of each object
+        representation of the data in the pasteboard.
+
+        (-[WebItemProviderPasteboard setItems:]): Deleted.
+
 2017-04-03  Javier Fernandez  <jfernandez@igalia.com>
 
         [css-align] Adapt place-content alignment shorthand to the new baseline syntax

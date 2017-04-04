@@ -88,6 +88,12 @@ public:
 #endif
 
 private:
+#if PLATFORM(IOS)
+    WEBCORE_EXPORT void writeObjectRepresentations(const PasteboardWebContent&);
+    WEBCORE_EXPORT void writeObjectRepresentations(const PasteboardImage&);
+    WEBCORE_EXPORT void writeObjectRepresentations(const String& pasteboardType, const String& text);
+#endif
+
 #if PLATFORM(MAC)
     RetainPtr<NSPasteboard> m_pasteboard;
 #endif

@@ -69,6 +69,7 @@ struct PasteboardWebContent {
     RefPtr<SharedBuffer> dataInWebArchiveFormat;
     RefPtr<SharedBuffer> dataInRTFDFormat;
     RefPtr<SharedBuffer> dataInRTFFormat;
+    RefPtr<SharedBuffer> dataInAttributedStringFormat;
     String dataInHTMLFormat;
     String dataInStringFormat;
     Vector<String> clientTypes;

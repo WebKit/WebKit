@@ -1,3 +1,24 @@
+2017-04-03  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Data interaction should register type identifiers in order of priority
+        https://bugs.webkit.org/show_bug.cgi?id=170428
+        <rdar://problem/30633296>
+
+        Reviewed by Tim Horton.
+
+        Augments existing unit tests to check for the existence and priority of type identifiers in the UIItemProviders
+        created upon starting data interaction. Also fixes a race condition in one of the unit tests and adds a new unit
+        test for data interaction from a textarea to an input.
+
+        * TestWebKitAPI/Tests/ios/DataInteractionTests.mm:
+        (checkTypeIdentifierPrecedesOtherTypeIdentifier):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/ios/DataInteractionSimulator.h:
+        * TestWebKitAPI/ios/DataInteractionSimulator.mm:
+        (-[DataInteractionSimulator _advanceProgress]):
+        (-[DataInteractionSimulator sourceItemProviders]):
+        (-[DataInteractionSimulator _webView:showCustomSheetForElement:]):
+
 2017-04-03  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK][JHBuild] Update mesa repository url for tarballs

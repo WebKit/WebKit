@@ -1404,6 +1404,7 @@ void ArgumentCoder<PasteboardWebContent>::encode(Encoder& encoder, const Pastebo
     encodeSharedBuffer(encoder, content.dataInWebArchiveFormat.get());
     encodeSharedBuffer(encoder, content.dataInRTFDFormat.get());
     encodeSharedBuffer(encoder, content.dataInRTFFormat.get());
+    encodeSharedBuffer(encoder, content.dataInAttributedStringFormat.get());
 
     encoder << content.clientTypes;
     encoder << static_cast<uint64_t>(content.clientData.size());
@@ -1422,6 +1423,8 @@ bool ArgumentCoder<PasteboardWebContent>::decode(Decoder& decoder, PasteboardWeb
     if (!decodeSharedBuffer(decoder, content.dataInRTFDFormat))
         return false;
     if (!decodeSharedBuffer(decoder, content.dataInRTFFormat))
+        return false;
+    if (!decodeSharedBuffer(decoder, content.dataInAttributedStringFormat))
         return false;
     if (!decoder.decode(content.clientTypes))
         return false;

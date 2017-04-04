@@ -1,3 +1,19 @@
+2017-04-03  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Data interaction should register type identifiers in order of priority
+        https://bugs.webkit.org/show_bug.cgi?id=170428
+        <rdar://problem/30633296>
+
+        Reviewed by Tim Horton.
+
+        Serialize PasteboardWebContent.dataInAttributedStringFormat when sending over IPC. Refer to WebCore ChangeLog
+        for more details.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<PasteboardWebContent>::encode):
+        (IPC::ArgumentCoder<PasteboardWebContent>::decode):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+
 2017-04-03  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remove no longer needed forward declarations

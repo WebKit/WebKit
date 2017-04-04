@@ -80,6 +80,7 @@ static BOOL isImageType(NSString *type)
 
 @implementation WebItemProviderPasteboard {
     RetainPtr<NSArray> _itemProviders;
+    RetainPtr<NSArray> _cachedTypeIdentifiers;
 }
 
 + (instancetype)sharedInstance
@@ -104,10 +105,22 @@ static BOOL isImageType(NSString *type)
 
 - (NSArray<NSString *> *)pasteboardTypes
 {
+    if (_cachedTypeIdentifiers)
+        return _cachedTypeIdentifiers.get();
+
     NSMutableSet<NSString *> *allTypes = [NSMutableSet set];
-    for (UIItemProvider *provider in _itemProviders.get())
-        [allTypes addObjectsFromArray:provider.registeredTypeIdentifiers];
-    return allTypes.allObjects;
+    NSMutableArray<NSString *> *allTypesInOrder = [NSMutableArray array];
+    for (UIItemProvider *provider in _itemProviders.get()) {
+        for (NSString *typeIdentifier in provider.registeredTypeIdentifiers) {
+            if ([allTypes containsObject:typeIdentifier])
+                continue;
+
+            [allTypes addObject:typeIdentifier];
+            [allTypesInOrder addObject:typeIdentifier];
+        }
+    }
+    _cachedTypeIdentifiers = allTypesInOrder;
+    return _cachedTypeIdentifiers.get();
 }
 
 - (NSArray<UIItemProvider *> *)itemProviders
@@ -123,6 +136,7 @@ static BOOL isImageType(NSString *type)
 
     _itemProviders = itemProviders;
     _changeCount++;
+    _cachedTypeIdentifiers = nil;
 }
 
 - (NSInteger)numberOfItems
@@ -130,40 +144,38 @@ static BOOL isImageType(NSString *type)
     return [_itemProviders count];
 }
 
-- (void)setItems:(NSArray *)items
+- (void)setItemsFromObjectRepresentations:(NSArray<WebPasteboardItemData *> *)itemData
 {
     NSMutableArray *providers = [NSMutableArray array];
-    for (NSDictionary *item in items) {
-        if (!item.count)
+    for (WebPasteboardItemData *data in itemData) {
+        if (!data.representingObjects.count && !data.additionalData.count)
             continue;
+
         RetainPtr<UIItemProvider> itemProvider = adoptNS([[getUIItemProviderClass() alloc] init]);
-        RetainPtr<NSMutableDictionary> itemRepresentationsCopy = adoptNS([item mutableCopy]);
-        // First, let the platform write all the default object types it can recognize, such as NSString and NSURL.
-        for (NSString *typeIdentifier in [itemRepresentationsCopy allKeys]) {
-            id representingObject = [itemRepresentationsCopy objectForKey:typeIdentifier];
+        // First, register all platform objects, prioritizing objects at the beginning of the array.
+        for (id representingObject in data.representingObjects) {
             if (![representingObject conformsToProtocol:@protocol(UIItemProviderWriting)])
                 continue;
 
-            id <UIItemProviderWriting> objectToWrite = (id <UIItemProviderWriting>)representingObject;
-            if (![objectToWrite.writableTypeIdentifiersForItemProvider containsObject:typeIdentifier])
-                continue;
-
-            [itemRepresentationsCopy removeObjectForKey:typeIdentifier];
-            [itemProvider registerObject:objectToWrite options:nil];
+            [itemProvider registerObject:(id <UIItemProviderWriting>)representingObject options:nil];
         }
 
-        // Secondly, WebKit uses some custom type representations and/or type identifiers, so we need to write these as well.
-        for (NSString *typeIdentifier in itemRepresentationsCopy.get()) {
+        // Next, register other custom data representations for type identifiers.
+        NSDictionary <NSString *, NSData *> *additionalData = data.additionalData;
+        for (NSString *typeIdentifier in additionalData) {
+            if (![additionalData[typeIdentifier] isKindOfClass:[NSData class]])
+                continue;
+
             [itemProvider registerDataRepresentationForTypeIdentifier:typeIdentifier options:nil loadHandler:^NSProgress *(UIItemProviderDataLoadCompletionBlock completionBlock)
             {
-                completionBlock([itemRepresentationsCopy objectForKey:typeIdentifier], nil);
+                completionBlock(additionalData[typeIdentifier], nil);
                 return [NSProgress discreteProgressWithTotalUnitCount:100];
             }];
         }
         [providers addObject:itemProvider.get()];
     }
-    _changeCount++;
-    _itemProviders = providers;
+
+    self.itemProviders = providers;
 }
 
 - (NSArray *)dataForPasteboardType:(NSString *)pasteboardType inItemSet:(NSIndexSet *)itemSet
