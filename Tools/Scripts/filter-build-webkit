@@ -138,11 +138,11 @@ for (my $previousLine = "", my $line = <>; $line; $previousLine = $line, $line =
         $buildFinished = 1;
     } elsif ($line =~ /^===/) {
         printLine($line, STYLE_HEADER);
-    } elsif ($line =~ /Checking Dependencies|Check dependencies|Create product structure|Write auxiliary files/) {
+    } elsif ($line =~ /Checking Dependencies|Check dependencies|Create product structure|Write auxiliary files|LinkStoryboards/) {
         printLine($line, STYLE_PLAIN);
     } elsif ($line =~ /\*\* BUILD SUCCEEDED \*\*/) {
         printLine("Build Succeeded", STYLE_SUCCESS);
-    } elsif ($line =~ /^(\e\[1m)?(PhaseScriptExecution|ClCompile|CompileC|Distributed-CompileC|Ld|PBXCp|CpResource|CopyPNGFile|CopyTiffFile|CpHeader|Preprocess|Processing|ProcessInfoPlistFile|ProcessPCH|ProcessPCH\+\+|Touch|Libtool|CopyStringsFile|Mig|CreateUniversalBinary|Analyze|AnalyzeShallow|ProcessProductPackaging|CodeSign|SymLink|Updating|CompileDTraceScript|CompileXIB|StripNIB|CopyPlistFile|GenerateDSYMFile|ExternalBuildToolExecution)(\e\[0m)? ("[^"]+"|(\\|(?<=\\)\s|\S)+)?/) {
+    } elsif ($line =~ /^(\e\[1m)?(PhaseScriptExecution|ClCompile|CompileC|Distributed-CompileC|Ld|PBXCp|CpResource|CopyPNGFile|CopyTiffFile|CpHeader|Preprocess|Processing|ProcessInfoPlistFile|ProcessPCH|ProcessPCH\+\+|Touch|Libtool|CopyStringsFile|Mig|CreateUniversalBinary|Analyze|AnalyzeShallow|ProcessProductPackaging|CodeSign|Validate|SymLink|Updating|CompileDTraceScript|CompileXIB|StripNIB|CopyPlistFile|GenerateDSYMFile|GenerateTAPI|CompileStoryboard|ExternalBuildToolExecution)(\e\[0m)? ("[^"]+"|(\\|(?<=\\)\s|\S)+)?/) {
         my ($command, $path) = ($2, basename($4));
         $path =~ s/("|\\|\.[ah]$)//g;
         printLine("$command $path", STYLE_PLAIN);
@@ -235,7 +235,7 @@ sub shouldIgnoreLine($$)
 
     return 1 if $line =~ /^\s*$/;
     return 1 if $line =~ /^Build settings from command line:/;
-    return 1 if $line =~ /make: Nothing to be done for `all'\./;
+    return 1 if $line =~ /make(\[\d+\])?: Nothing to be done for `all'\./;
     return 1 if $line =~ /^JavaScriptCore\/create_hash_table/;
     return 1 if $line =~ /JavaScriptCore.framework\/PrivateHeaders\/create_hash_table/;
     return 1 if $line =~ /^JavaScriptCore\/pcre\/dftables/;

@@ -1,3 +1,13 @@
+2017-04-03  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Add some new patterns to filter-build-webkit
+        https://bugs.webkit.org/show_bug.cgi?id=170429
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/filter-build-webkit:
+        (setOutputFormatOption):
+
 2017-04-03  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Data interaction should register type identifiers in order of priority
