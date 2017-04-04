@@ -1,3 +1,11 @@
+2017-04-03  Alexey Proskuryakov  <ap@apple.com>
+
+        Re-adding flaky timeout expectation for http/tests/loading/resourceLoadStatistics/non-prevalent-resource-with-user-interaction.html
+
+        This test still times out, most of the time.
+
+        * platform/wk2/TestExpectations:
+
 2017-04-03  Javier Fernandez  <jfernandez@igalia.com>
 
         [css-align] Adapt place-content alignment shorthand to the new baseline syntax
