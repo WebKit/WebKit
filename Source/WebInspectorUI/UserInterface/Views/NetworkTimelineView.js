@@ -73,11 +73,11 @@ WebInspector.NetworkTimelineView = class NetworkTimelineView extends WebInspecto
         columns.priority.width = "5%";
         columns.priority.hidden = true;
 
-        columns.remoteAddress.title = WebInspector.UIString("Remote Address");
+        columns.remoteAddress.title = WebInspector.UIString("IP Address");
         columns.remoteAddress.width = "8%";
         columns.remoteAddress.hidden = true;
 
-        columns.connectionIdentifier.title = WebInspector.UIString("Connection");
+        columns.connectionIdentifier.title = WebInspector.UIString("Connection ID");
         columns.connectionIdentifier.width = "5%";
         columns.connectionIdentifier.hidden = true;
         columns.connectionIdentifier.aligned = "right";

@@ -136,7 +136,7 @@ WebInspector.ResourceTimelineDataGridNode = class ResourceTimelineDataGridNode e
             return value || emDash;
 
         case "priority":
-            return this._displayNameForPriority(value);
+            return WebInspector.Resource.displayNameForPriority(value) || emDash;
         }
 
         return super.createCellContent(columnIdentifier, cell);
@@ -199,20 +199,6 @@ WebInspector.ResourceTimelineDataGridNode = class ResourceTimelineDataGridNode e
     }
 
     // Private
-
-    _displayNameForPriority(priority)
-    {
-        switch (priority) {
-        case WebInspector.Resource.NetworkPriority.Low:
-            return WebInspector.UIString("Low");
-        case WebInspector.Resource.NetworkPriority.Medium:
-            return WebInspector.UIString("Medium");
-        case WebInspector.Resource.NetworkPriority.High:
-            return WebInspector.UIString("High");
-        }
-
-        return emDash;
-    }
 
     _createNameCellDocumentFragment()
     {

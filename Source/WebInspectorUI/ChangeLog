@@ -1,3 +1,44 @@
+2017-04-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Include more Network information in Resource Details Sidebar
+        https://bugs.webkit.org/show_bug.cgi?id=170470
+
+        Reviewed by Brian Burg.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        Updated localized strings.
+
+        * UserInterface/Models/Resource.js:
+        (WebInspector.Resource.displayNameForProtocol):
+        (WebInspector.Resource.displayNameForPriority):
+        Aggregate all display name helpers here.
+
+        * UserInterface/Views/DetailsSectionSimpleRow.js:
+        (WebInspector.DetailsSectionSimpleRow.prototype.get tooltip):
+        (WebInspector.DetailsSectionSimpleRow.prototype.set tooltip):
+        Allow setting a tooltip on the value.
+
+        * UserInterface/Views/NetworkGridContentView.css:
+        (.cache-type):
+        Cache type shows up in multiple places. Simplify the CSS to apply anywhere.
+
+        * UserInterface/Views/NetworkGridContentView.js:
+        (WebInspector.NetworkGridContentView):
+        * UserInterface/Views/NetworkTimelineView.js:
+        (WebInspector.NetworkTimelineView):
+        Updated column names.
+
+        * UserInterface/Views/ResourceDetailsSidebarPanel.js:
+        (WebInspector.ResourceDetailsSidebarPanel):
+        (WebInspector.ResourceDetailsSidebarPanel.prototype._refreshRequestAndResponse):
+        (WebInspector.ResourceDetailsSidebarPanel.prototype._cachedRowValue):
+        Include more detail information in the sidebar.
+
+        * UserInterface/Views/ResourceTimelineDataGridNode.js:
+        (WebInspector.ResourceTimelineDataGridNode.prototype.createCellContent):
+        (WebInspector.ResourceTimelineDataGridNode.prototype._displayNameForPriority): Deleted.
+        Use shared code for display names.
+
 2017-04-04  Brian Burg  <bburg@apple.com>
 
         Web Inspector: RTL: fix alignment of close button shown while docked

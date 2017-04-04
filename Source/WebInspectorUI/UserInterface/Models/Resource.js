@@ -137,6 +137,40 @@ WebInspector.Resource = class Resource extends WebInspector.SourceCode
         }
     }
 
+    static displayNameForProtocol(protocol)
+    {
+        switch (protocol) {
+        case "h2":
+            return "HTTP/2";
+        case "http/1.0":
+            return "HTTP/1.0";
+        case "http/1.1":
+            return "HTTP/1.1";
+        case "spdy/2":
+            return "SPDY/2";
+        case "spdy/3":
+            return "SPDY/3";
+        case "spdy/3.1":
+            return "SPDY/3.1";
+        default:
+            return null;
+        }
+    }
+
+    static displayNameForPriority(priority)
+    {
+        switch (priority) {
+        case WebInspector.Resource.NetworkPriority.Low:
+            return WebInspector.UIString("Low");
+        case WebInspector.Resource.NetworkPriority.Medium:
+            return WebInspector.UIString("Medium");
+        case WebInspector.Resource.NetworkPriority.High:
+            return WebInspector.UIString("High");
+        default:
+            return null;
+        }
+    }
+
     static responseSourceFromPayload(source)
     {
         if (!source)

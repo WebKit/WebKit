@@ -75,6 +75,9 @@ WebInspector.ResourceDetailsSidebarPanel = class ResourceDetailsSidebarPanel ext
         this._statusTextRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Status"));
         this._statusCodeRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Code"));
 
+        this._remoteAddressRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("IP Address"));
+        this._connectionIdentifierRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Connection ID"));
+
         this._encodedSizeRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Encoded"));
         this._decodedSizeRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Decoded"));
         this._transferSizeRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Transferred"));
@@ -84,10 +87,11 @@ WebInspector.ResourceDetailsSidebarPanel = class ResourceDetailsSidebarPanel ext
 
         let requestGroup = new WebInspector.DetailsSectionGroup([this._requestMethodRow, this._protocolRow, this._priorityRow, this._cachedRow]);
         let statusGroup = new WebInspector.DetailsSectionGroup([this._statusTextRow, this._statusCodeRow]);
+        let connectionGroup = new WebInspector.DetailsSectionGroup([this._remoteAddressRow, this._connectionIdentifierRow]);
         let sizeGroup = new WebInspector.DetailsSectionGroup([this._encodedSizeRow, this._decodedSizeRow, this._transferSizeRow]);
         let compressionGroup = new WebInspector.DetailsSectionGroup([this._compressedRow, this._compressionRow]);
 
-        this._requestAndResponseSection = new WebInspector.DetailsSection("resource-request-response", WebInspector.UIString("Request & Response"), [requestGroup, statusGroup, sizeGroup, compressionGroup]);
+        this._requestAndResponseSection = new WebInspector.DetailsSection("resource-request-response", WebInspector.UIString("Request & Response"), [requestGroup, statusGroup, connectionGroup, sizeGroup, compressionGroup]);
 
         this._requestHeadersRow = new WebInspector.DetailsSectionDataGridRow(null, WebInspector.UIString("No Request Headers"));
         this._requestHeadersSection = new WebInspector.DetailsSection("resource-request-headers", WebInspector.UIString("Request Headers"));
@@ -312,25 +316,15 @@ WebInspector.ResourceDetailsSidebarPanel = class ResourceDetailsSidebarPanel ext
 
         // COMPATIBILITY(iOS 10.3): Network load metrics were not previously available.
         if (window.NetworkAgent && NetworkAgent.hasEventParameter("loadingFinished", "metrics")) {
-            this._protocolRow.value = this._resource.protocol || emDash;
-
-            switch (this._resource.priority) {
-            case WebInspector.Resource.NetworkPriority.Low:
-                this._priorityRow.value = WebInspector.UIString("Low");
-                break;
-            case WebInspector.Resource.NetworkPriority.Medium:
-                this._priorityRow.value = WebInspector.UIString("Medium");
-                break;
-            case WebInspector.Resource.NetworkPriority.High:
-                this._priorityRow.value = WebInspector.UIString("High");
-                break;
-            default:
-                this._priorityRow.value = emDash;
-                break;
-            }
+            let protocolDisplayName = WebInspector.Resource.displayNameForProtocol(this._resource.protocol);
+            this._protocolRow.value = protocolDisplayName || emDash;
+            this._protocolRow.tooltip = protocolDisplayName ? this._resource.protocol : "";
+            this._priorityRow.value = WebInspector.Resource.displayNameForPriority(this._resource.priority) || emDash;
+            this._remoteAddressRow.value = this._resource.remoteAddress || emDash;
+            this._connectionIdentifierRow.value = this._resource.connectionIdentifier || emDash;
         }
 
-        this._cachedRow.value = this._resource.cached ? WebInspector.UIString("Yes") : WebInspector.UIString("No");
+        this._cachedRow.value = this._cachedRowValue();
 
         this._statusCodeRow.value = this._resource.statusCode || emDash;
         this._statusTextRow.value = this._resource.statusText || emDash;
@@ -467,6 +461,22 @@ WebInspector.ResourceDetailsSidebarPanel = class ResourceDetailsSidebarPanel ext
             } else
                 hideImageSection.call(this);
         });
+    }
+
+    _cachedRowValue()
+    {
+        let responseSource = this._resource.responseSource;
+        if (responseSource === WebInspector.Resource.ResponseSource.MemoryCache || responseSource === WebInspector.Resource.ResponseSource.DiskCache) {
+            console.assert(this._resource.cached, "This resource has a cache responseSource it should also be marked as cached", this._resource);
+            let span = document.createElement("span");
+            let cacheType = document.createElement("span");
+            cacheType.classList = "cache-type";
+            cacheType.textContent = responseSource === WebInspector.Resource.ResponseSource.MemoryCache ? WebInspector.UIString("(Memory)") : WebInspector.UIString("(Disk)");
+            span.append(WebInspector.UIString("Yes"), " ", cacheType);
+            return span;
+        }
+
+        return this._resource.cached ? WebInspector.UIString("Yes") : WebInspector.UIString("No");
     }
 
     _goToRequestDataClicked()

@@ -109,6 +109,16 @@ WebInspector.DetailsSectionSimpleRow = class DetailsSectionSimpleRow extends Web
         } else
             this._valueElement.textContent = this._value;
     }
+
+    get tooltip()
+    {
+        return this._valueElement.title;
+    }
+
+    set tooltip(x)
+    {
+        this._valueElement.title = x;
+    }
 };
 
 WebInspector.DetailsSectionSimpleRow.DataStyleClassName = "data";
