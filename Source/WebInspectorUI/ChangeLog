@@ -1,3 +1,16 @@
+2017-04-03  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: clicking on the body of a CSS rule after editing the selector causes the section to disappear
+        https://bugs.webkit.org/show_bug.cgi?id=169803
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/CSSStyleDeclarationSection.js:
+        (WebInspector.CSSStyleDeclarationSection.prototype._handleKeyDown):
+        (WebInspector.CSSStyleDeclarationSection.prototype._handleBlur):
+        Keep the section marked as `_editorActive` if the action taken would still place focus
+        within the section (selector or properties).  Doing so will prevent it from being removed.
+
 2017-04-03  Brian Burg  <bburg@apple.com>
 
         Web Inspector: RTL: hierarchical path component labels should guess directionality based on content
