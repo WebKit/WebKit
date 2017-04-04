@@ -1,3 +1,15 @@
+2017-04-04  Megan Gardner  <megan_gardner@apple.com>
+
+        Fix leaks in WebUITextIndicatorData
+        https://bugs.webkit.org/show_bug.cgi?id=170480
+
+        Reviewed by Wenson Hsieh.
+
+        Removes extraneous retains.
+
+        * WebView/WebView.mm:
+        (-[WebUITextIndicatorData initWithImage:textIndicatorData:scale:]):
+
 2017-04-04  Tim Horton  <timothy_horton@apple.com>
 
         [Mac] -[WKWebView findMatchesForString:relativeToMatch:findOptions:maxResults:resultCollector:] invokes the resultCollector with didWrap = NO even when it wraps
