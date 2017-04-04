@@ -1311,8 +1311,14 @@ WebInspector._focusChanged = function(event)
         if (codeMirrorEditorElement && codeMirrorEditorElement !== this.currentFocusElement) {
             this.previousFocusElement = this.currentFocusElement;
             this.currentFocusElement = codeMirrorEditorElement;
-            return;
         }
+
+        // Due to the change in WebInspector.isEventTargetAnEditableField (r196271), this return
+        // will also get run when WebInspector.startEditing is called on an element. We do not want
+        // to return early in this case, as WebInspector.EditingConfig handles its own editing
+        // completion, so only return early if the focus change target is not from WebInspector.startEditing.
+        if (!WebInspector.isBeingEdited(event.target))
+            return;
     }
 
     var selection = window.getSelection();

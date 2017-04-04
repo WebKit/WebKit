@@ -1,3 +1,15 @@
+2017-04-03  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: showing the Find banner doesn't immediately focus it
+        https://bugs.webkit.org/show_bug.cgi?id=169804
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector._focusChanged):
+        Slightly change the logic from <https://webkit.org/b/168119> (r213689) to not prevent a new
+        selection if the focus change target is an element from WebInspector.startEditing.
+
 2017-04-03  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: WebSockets: Don't store binary frames in memory since they are never shown
