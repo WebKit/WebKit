@@ -1,3 +1,22 @@
+2017-04-04  Filip Pizlo  <fpizlo@apple.com>
+
+        B3::LowerToAir incorrectly selects BitXor(AtomicStrongCAS(...), $1)
+        https://bugs.webkit.org/show_bug.cgi?id=169867
+
+        Reviewed by Saam Barati.
+        
+        The BitXor(AtomicWeakCAS(...), $1) optimization makes a lot of sense because we an fold the
+        BitXor into the CAS condition read-out. But there is no version of this that is profitable or
+        correct for AtomicStrongCAS. The inversion case is handled by Equal(AtomicStrongCAS(...), ...)
+        becoming NotEqual(AtomicStrongCAS(...), ...), and we alraedy handle that separately.
+        
+        So, the fix here is to make the BitXor CAS pattern only recognize AtomicWeakCAS.
+
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::lower):
+        * b3/testb3.cpp:
+        (JSC::B3::testAtomicStrongCAS):
+
 2017-04-04  Saam Barati  <sbarati@apple.com>
 
         WebAssembly: JSWebAssemblyCallee should not be a JSCell
