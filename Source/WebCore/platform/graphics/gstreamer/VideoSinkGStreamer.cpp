@@ -73,10 +73,6 @@ public:
         : m_timer(RunLoop::main(), this, &VideoRenderRequestScheduler::render)
 #endif
     {
-#if PLATFORM(GTK) && !USE(COORDINATED_GRAPHICS_THREADED)
-        // Use a higher priority than WebCore timers (G_PRIORITY_HIGH_IDLE + 20).
-        m_timer.setPriority(G_PRIORITY_HIGH_IDLE + 19);
-#endif
     }
 
     void start()
