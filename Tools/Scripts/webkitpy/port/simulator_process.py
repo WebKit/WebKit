@@ -96,7 +96,7 @@ class SimulatorProcess(ServerProcess):
             assert signum == signal.SIGALRM
             raise Exception('Timed out waiting for process to connect at port {}'.format(self._target_host.listening_port()))
         signal.signal(signal.SIGALRM, handler)
-        signal.alarm(3)  # In seconds
+        signal.alarm(6)  # In seconds
 
         stdin = None
         stdout = None

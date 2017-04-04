@@ -150,7 +150,7 @@ class SimulatedDevice(object):
                     'Print CFBundleIdentifier',
                     self._host.filesystem.join(app_path, 'Info.plist'),
                 ]).rstrip()
-                self._host.executive.kill_process(self.launch_app(bundle_id, [], env=env, timeout=1))
+                self._host.executive.kill_process(self.launch_app(bundle_id, [], env=env, timeout=3))
                 return True
             except RuntimeError:
                 pass

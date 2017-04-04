@@ -1,3 +1,14 @@
+2017-04-04  Jonathan Bedard  <jbedard@apple.com>
+
+        Increase timeouts for simulator testing
+
+        Unreviewed infrastructure fix.
+
+        * Scripts/webkitpy/port/simulator_process.py:
+        (SimulatorProcess._start): Increase timeout from 3 to 6 seconds.
+        * Scripts/webkitpy/xcode/simulated_device.py:
+        (SimulatedDevice.install_app): Increase timeout from 1 to 3 seconds.
+
 2017-04-04  Tim Horton  <timothy_horton@apple.com>
 
         [Mac] -[WKWebView findMatchesForString:relativeToMatch:findOptions:maxResults:resultCollector:] invokes the resultCollector with didWrap = NO even when it wraps
