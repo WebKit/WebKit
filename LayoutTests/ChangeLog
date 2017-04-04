@@ -1,3 +1,12 @@
+2017-04-04  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Mark media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-buttons-styles.html as flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=170456
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2017-04-04  Youenn Fablet  <youenn@apple.com>
 
         webrtc/peer-connection-audio-mute.html is flaky
