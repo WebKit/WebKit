@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -46,7 +46,6 @@
 
     width: 15px;
 
-    margin-left: -1px;
     border: 0;
     background: none;
     -webkit-appearance: none;
@@ -75,8 +74,22 @@
     background-color: hsla(0, 0%, 0%, 0.03);
     border-radius: 3px;
 
-    padding: 0 10px 1px 0;
-    margin: 3px 0 2px -1px;
+    padding-bottom: 1px;
+    margin-top: 3px;
+    margin-bottom: 2px;
+
+    --type-tree-element-prototype-padding-end: 10px;
+    --type-tree-element-prototype-margin-start: -1px;
+}
+
+body[dir=ltr] .item.type-tree-element.prototype {
+    padding-right: var(--type-tree-element-prototype-padding-end);
+    margin-left: var(--type-tree-element-prototype-margin-start);
+}
+
+body[dir=rtl] .item.type-tree-element.prototype {
+    padding-left: var(--type-tree-element-prototype-padding-end);
+    margin-right: var(--type-tree-element-prototype-margin-start);
 }
 
 .item.type-tree-element.prototype:hover,

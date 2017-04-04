@@ -1,3 +1,27 @@
+2017-04-04  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: RTL: layout issues in Type Profiler popovers
+        https://bugs.webkit.org/show_bug.cgi?id=170467
+
+        Reviewed by Timothy Hatcher.
+
+        Flip some margins and padding. Remove the -1px leading margin for
+        the prototype disclosure button, as it is unnecessary and looks
+        (more) wrong when in RTL.
+
+        * UserInterface/Views/TypeTreeElement.css:
+        (.item.type-tree-element > .disclosure-button):
+        (.item.type-tree-element.prototype):
+        (body[dir=ltr] .item.type-tree-element.prototype):
+        (body[dir=rtl] .item.type-tree-element.prototype):
+        * UserInterface/Views/TypeTreeView.css:
+        (.tree-outline.type):
+        (body[dir=ltr] .tree-outline.type):
+        (body[dir=rtl] .tree-outline.type):
+        (.tree-outline.type li .empty-message):
+        (body[dir=ltr] .tree-outline.type li .empty-message):
+        (body[dir=rtl] .tree-outline.type li .empty-message):
+
 2017-04-04  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Include more Network information in Resource Details Sidebar
