@@ -1,5 +1,15 @@
 2017-04-04  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Add back results that were accidentally removed with r214848.
+        https://bugs.webkit.org/show_bug.cgi?id=169301
+
+        Unreviewed test gardening.
+
+        * platform/mac/fast/text/international/synthesized-italic-vertical-latin-expected.png: Added.
+        * platform/mac/fast/text/international/synthesized-italic-vertical-latin-expected.txt: Added.
+
+2017-04-04  Ryan Haddad  <ryanhaddad@apple.com>
+
         Mark media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-buttons-styles.html as flaky.
         https://bugs.webkit.org/show_bug.cgi?id=170456
 
