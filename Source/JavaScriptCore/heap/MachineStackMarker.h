@@ -74,14 +74,13 @@ public:
 
     JS_EXPORT_PRIVATE void addCurrentThread(); // Only needs to be called by clients that can use the same heap from multiple threads.
 
-    class Thread {
+    class ThreadData {
         WTF_MAKE_FAST_ALLOCATED;
-        Thread(const PlatformThread& platThread, void* base, void* end);
-
     public:
-        ~Thread();
+        ThreadData();
+        ~ThreadData();
 
-        static Thread* createForCurrentThread();
+        static ThreadData* createForCurrentThread();
 
         struct Registers {
             void* stackPointer() const;
@@ -118,12 +117,9 @@ public:
 #else
 #error Need a thread register struct for this platform
 #endif
-            
+
             PlatformRegisters regs;
         };
-        
-        bool operator==(const PlatformThread& other) const;
-        bool operator!=(const PlatformThread& other) const { return !(*this == other); }
 
         bool suspend();
         void resume();
@@ -131,7 +127,6 @@ public:
         void freeRegisters(Registers&);
         std::pair<void*, size_t> captureStack(void* stackTop);
 
-        Thread* next;
         PlatformThread platformThread;
         void* stackBase;
         void* stackEnd;
@@ -143,6 +138,32 @@ public:
         int suspendCount { 0 };
         std::atomic<bool> suspended { false };
 #endif
+    };
+
+    class Thread {
+        WTF_MAKE_FAST_ALLOCATED;
+        Thread(ThreadData*);
+
+    public:
+        using Registers = ThreadData::Registers;
+
+        static Thread* createForCurrentThread();
+
+        bool operator==(const PlatformThread& other) const;
+        bool operator!=(const PlatformThread& other) const { return !(*this == other); }
+
+        bool suspend() { return data->suspend(); }
+        void resume() { data->resume(); }
+        size_t getRegisters(Registers& regs) { return data->getRegisters(regs); }
+        void freeRegisters(Registers& regs) { data->freeRegisters(regs); }
+        std::pair<void*, size_t> captureStack(void* stackTop) { return data->captureStack(stackTop); }
+
+        const PlatformThread& platformThread() { return data->platformThread; }
+        void* stackBase() const { return data->stackBase; }
+        void* stackEnd() const { return data->stackEnd; }
+
+        Thread* next;
+        ThreadData* data;
     };
 
     Lock& getLock() { return m_registeredThreadsMutex; }
