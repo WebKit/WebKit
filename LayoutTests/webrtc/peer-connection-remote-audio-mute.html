@@ -30,13 +30,14 @@
                     };
                 });
             }).then(() => {
-                return analyseAudio(remoteStream, 500).then((results) => {
+                return analyseAudio(remoteStream, 200).then((results) => {
                     assert_true(results.heardHum, "heard hum from remote enabled track");
                 });
             }).then(() => {
                 remoteTrack.enabled = false;
+                return waitFor(100);
             }).then(() => {
-                return analyseAudio(remoteStream, 500).then((results) => {
+                return analyseAudio(remoteStream, 200).then((results) => {
                     assert_false(results.heardHum, "not heard hum from remote disabled track");
                 });
             });
