@@ -31,19 +31,20 @@
 #include "InlineCallFrame.h"
 #include "Interpreter.h"
 #include "JSCInlines.h"
-#include "JSWebAssemblyCallee.h"
+#include "WasmCallee.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace JSC {
 
-StackVisitor::StackVisitor(CallFrame* startFrame)
+StackVisitor::StackVisitor(CallFrame* startFrame, VM* vm)
 {
     m_frame.m_index = 0;
     m_frame.m_isWasmFrame = false;
     CallFrame* topFrame;
     if (startFrame) {
-        m_frame.m_VMEntryFrame = startFrame->vm().topVMEntryFrame;
-        topFrame = startFrame->vm().topCallFrame;
+        ASSERT(vm);
+        m_frame.m_VMEntryFrame = vm->topVMEntryFrame;
+        topFrame = vm->topCallFrame;
         
         if (topFrame && static_cast<void*>(m_frame.m_VMEntryFrame) == static_cast<void*>(topFrame)) {
             topFrame = vmEntryRecord(m_frame.m_VMEntryFrame)->m_prevTopCallFrame;
@@ -103,7 +104,7 @@ void StackVisitor::readFrame(CallFrame* callFrame)
         return;
     }
 
-    if (callFrame->callee()->isAnyWasmCallee(callFrame->vm())) {
+    if (callFrame->isAnyWasmCallee()) {
         readNonInlinedFrame(callFrame);
         return;
     }
@@ -155,10 +156,10 @@ void StackVisitor::readNonInlinedFrame(CallFrame* callFrame, CodeOrigin* codeOri
     m_frame.m_callerIsVMEntryFrame = m_frame.m_CallerVMEntryFrame != m_frame.m_VMEntryFrame;
     m_frame.m_isWasmFrame = false;
 
-    JSCell* callee = callFrame->callee();
+    CalleeBits callee = callFrame->callee();
     m_frame.m_callee = callee;
 
-    if (callee->isAnyWasmCallee(*callee->vm())) {
+    if (callFrame->isAnyWasmCallee()) {
         m_frame.m_isWasmFrame = true;
         m_frame.m_codeBlock = nullptr;
         m_frame.m_bytecodeOffset = 0;
@@ -204,7 +205,7 @@ void StackVisitor::readInlinedFrame(CallFrame* callFrame, CodeOrigin* codeOrigin
 
         JSFunction* callee = inlineCallFrame->calleeForCallFrame(callFrame);
         m_frame.m_callee = callee;
-        ASSERT(m_frame.callee());
+        ASSERT(!!m_frame.callee().rawPtr());
 
         // The callerFrame just needs to be non-null to indicate that we
         // haven't reached the last frame yet. Setting it to the root
@@ -254,14 +255,12 @@ RegisterAtOffsetList* StackVisitor::Frame::calleeSaveRegisters()
 
 #if ENABLE(WEBASSEMBLY)
     if (isWasmFrame()) {
-        if (JSCell* callee = this->callee()) {
-            if (JSWebAssemblyCallee* wasmCallee = jsDynamicCast<JSWebAssemblyCallee*>(*callee->vm(), callee))
-                return wasmCallee->calleeSaveRegisters();
-            // Other wasm callees (e.g, stubs) don't use callee save registers, so nothing needs
-            // to be restored for them.
+        if (callee().isCell()) {
+            RELEASE_ASSERT(isWebAssemblyToJSCallee(callee().asCell()));
+            return nullptr;
         }
-
-        return nullptr;
+        Wasm::Callee* wasmCallee = callee().asWasmCallee();
+        return wasmCallee->calleeSaveRegisters();
     }
 #endif // ENABLE(WEBASSEMBLY)
 
@@ -276,7 +275,6 @@ RegisterAtOffsetList* StackVisitor::Frame::calleeSaveRegisters()
 String StackVisitor::Frame::functionName() const
 {
     String traceLine;
-    JSCell* callee = this->callee();
 
     switch (codeType()) {
     case CodeType::Wasm:
@@ -288,12 +286,14 @@ String StackVisitor::Frame::functionName() const
     case CodeType::Module:
         traceLine = ASCIILiteral("module code");
         break;
-    case CodeType::Native:
+    case CodeType::Native: {
+        JSCell* callee = this->callee().asCell();
         if (callee)
             traceLine = getCalculatedDisplayName(callFrame()->vm(), jsCast<JSObject*>(callee)).impl();
         break;
-    case CodeType::Function:
-        traceLine = getCalculatedDisplayName(callFrame()->vm(), jsCast<JSObject*>(callee)).impl();
+    }
+    case CodeType::Function: 
+        traceLine = getCalculatedDisplayName(callFrame()->vm(), jsCast<JSObject*>(this->callee().asCell())).impl();
         break;
     case CodeType::Global:
         traceLine = ASCIILiteral("global code");
@@ -455,7 +455,7 @@ void StackVisitor::Frame::dump(PrintStream& out, Indenter indent, std::function<
             out.print(indent, "InlineCallFrame: ", RawPointer(m_inlineCallFrame), "\n");
 #endif
 
-        out.print(indent, "callee: ", RawPointer(callee()), "\n");
+        out.print(indent, "callee: ", RawPointer(callee().rawPtr()), "\n");
         out.print(indent, "returnPC: ", RawPointer(returnPC), "\n");
         out.print(indent, "callerFrame: ", RawPointer(callerFrame), "\n");
         unsigned locationRawBits = callFrame->callSiteAsRawBits();

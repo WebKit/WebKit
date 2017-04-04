@@ -455,7 +455,7 @@ static MacroAssemblerCodeRef wasmToWasm(unsigned importIndex)
     }
 
     // Tail call into the callee WebAssembly function.
-    jit.loadPtr(JIT::Address(scratch, WebAssemblyFunction::offsetOfWasmEntryPointCode()), scratch);
+    jit.loadPtr(JIT::Address(scratch, WebAssemblyFunction::offsetOfWasmEntrypoint()), scratch);
     jit.jump(scratch);
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID);

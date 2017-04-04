@@ -47,7 +47,7 @@ class SamplingProfiler : public ThreadSafeRefCounted<SamplingProfiler> {
 public:
 
     struct UnprocessedStackFrame {
-        UnprocessedStackFrame(CodeBlock* codeBlock, EncodedJSValue callee, CallSiteIndex callSiteIndex)
+        UnprocessedStackFrame(CodeBlock* codeBlock, CalleeBits callee, CallSiteIndex callSiteIndex)
             : unverifiedCallee(callee)
             , verifiedCodeBlock(codeBlock)
             , callSiteIndex(callSiteIndex)
@@ -57,13 +57,10 @@ public:
             : cCodePC(pc)
         { }
 
-        UnprocessedStackFrame()
-        {
-            unverifiedCallee = JSValue::encode(JSValue());
-        }
+        UnprocessedStackFrame() = default;
 
         void* cCodePC { nullptr };
-        EncodedJSValue unverifiedCallee;
+        CalleeBits unverifiedCallee;
         CodeBlock* verifiedCodeBlock { nullptr };
         CallSiteIndex callSiteIndex;
     };

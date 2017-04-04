@@ -28,9 +28,10 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "JSCell.h"
-#include "JSWebAssemblyCallee.h"
 #include "PromiseDeferredTimer.h"
+#include "Structure.h"
 #include "UnconditionalFinalizer.h"
+#include "WasmCallee.h"
 #include "WasmFormat.h"
 #include <wtf/Bag.h>
 #include <wtf/Vector.h>
@@ -51,7 +52,7 @@ public:
 
     static JSWebAssemblyCodeBlock* create(VM& vm, JSWebAssemblyModule* owner, Wasm::MemoryMode mode, Ref<Wasm::Plan>&& plan, unsigned calleeCount, unsigned functionImportCount)
     {
-        auto* result = new (NotNull, allocateCell<JSWebAssemblyCodeBlock>(vm.heap, allocationSize(calleeCount, functionImportCount))) JSWebAssemblyCodeBlock(vm, owner, mode, WTFMove(plan), calleeCount);
+        auto* result = new (NotNull, allocateCell<JSWebAssemblyCodeBlock>(vm.heap, allocationSize(functionImportCount))) JSWebAssemblyCodeBlock(vm, owner, mode, WTFMove(plan), calleeCount);
         result->finishCreation(vm);
         return result;
     }
@@ -75,35 +76,21 @@ public:
     String& errorMessage() { ASSERT(!runnable()); return m_errorMessage; }
     bool isSafeToRun(JSWebAssemblyMemory*) const;
 
-    JSWebAssemblyCallee* jsEntrypointCalleeFromFunctionIndexSpace(unsigned functionIndexSpace)
+    // These two callee getters are only valid once the callees have been populated.
+    Wasm::Callee& jsEntrypointCalleeFromFunctionIndexSpace(unsigned functionIndexSpace)
     {
         RELEASE_ASSERT(functionIndexSpace >= functionImportCount());
         unsigned calleeIndex = functionIndexSpace - functionImportCount();
         RELEASE_ASSERT(calleeIndex < m_calleeCount);
-        return callees()[calleeIndex].get();
+        return *m_callees[calleeIndex].get();
     }
-
-    JSWebAssemblyCallee* wasmEntrypointCalleeFromFunctionIndexSpace(unsigned functionIndexSpace)
+    Wasm::Callee& wasmEntrypointCalleeFromFunctionIndexSpace(unsigned functionIndexSpace)
     {
         RELEASE_ASSERT(functionIndexSpace >= functionImportCount());
         unsigned calleeIndex = functionIndexSpace - functionImportCount();
         RELEASE_ASSERT(calleeIndex < m_calleeCount);
-        return callees()[calleeIndex + m_calleeCount].get();
+        return *m_callees[calleeIndex + m_calleeCount].get();
     }
-
-    void setJSEntrypointCallee(VM& vm, unsigned calleeIndex, JSWebAssemblyCallee* callee)
-    {
-        RELEASE_ASSERT(calleeIndex < m_calleeCount);
-        callees()[calleeIndex].set(vm, this, callee);
-    }
-
-    void setWasmEntrypointCallee(VM& vm, unsigned calleeIndex, JSWebAssemblyCallee* callee)
-    {
-        RELEASE_ASSERT(calleeIndex < m_calleeCount);
-        callees()[calleeIndex + m_calleeCount].set(vm, this, callee);
-    }
-
-    WriteBarrier<JSWebAssemblyCallee>* callees() { return bitwise_cast<WriteBarrier<JSWebAssemblyCallee>*>(bitwise_cast<char*>(this) + offsetOfCallees()); }
 
     void* wasmToJsCallStubForImport(unsigned importIndex)
     {
@@ -111,35 +98,42 @@ public:
         return m_wasmExitStubs[importIndex].wasmToJs.code().executableAddress();
     }
 
-    static ptrdiff_t offsetOfImportWasmToJSStub(unsigned calleeCount, unsigned importIndex)
+    static ptrdiff_t offsetOfImportWasmToJSStub(unsigned importIndex)
     {
-        return offsetOfCallees()
-            + (sizeof(WriteBarrier<JSWebAssemblyCallee>) * calleeCount * 2)
-            + (sizeof(void*) * importIndex);
+        return offsetOfImportStubs() + sizeof(void*) * importIndex;
     }
 
 private:
+    void setJSEntrypointCallee(unsigned calleeIndex, Ref<Wasm::Callee>&& callee)
+    {
+        RELEASE_ASSERT(calleeIndex < m_calleeCount);
+        m_callees[calleeIndex] = WTFMove(callee);
+    }
+    void setWasmEntrypointCallee(unsigned calleeIndex, Ref<Wasm::Callee>&& callee)
+    {
+        RELEASE_ASSERT(calleeIndex < m_calleeCount);
+        m_callees[calleeIndex + m_calleeCount] = WTFMove(callee);
+    }
+
     JSWebAssemblyCodeBlock(VM&, JSWebAssemblyModule*, Wasm::MemoryMode, Ref<Wasm::Plan>&&, unsigned calleeCount);
     DECLARE_EXPORT_INFO;
     static const bool needsDestruction = true;
     static void destroy(JSCell*);
     static void visitChildren(JSCell*, SlotVisitor&);
 
-    static ptrdiff_t offsetOfCallees()
+    static ptrdiff_t offsetOfImportStubs()
     {
-        return WTF::roundUpToMultipleOf<sizeof(WriteBarrier<JSWebAssemblyCallee>)>(sizeof(JSWebAssemblyCodeBlock));
+        return WTF::roundUpToMultipleOf<sizeof(void*)>(sizeof(JSWebAssemblyCodeBlock));
     }
 
-    static size_t allocationSize(unsigned calleeCount, unsigned functionImportCount)
+    static size_t allocationSize(unsigned functionImportCount)
     {
-        return offsetOfCallees()
-            + (sizeof(WriteBarrier<JSWebAssemblyCallee>) * calleeCount * 2)
-            + (sizeof(void*) * functionImportCount);
+        return offsetOfImportStubs() + sizeof(void*) * functionImportCount;
     }
 
-    void*& importWasmToJSStub(unsigned calleeCount, unsigned importIndex)
+    void*& importWasmToJSStub(unsigned importIndex)
     {
-        return *bitwise_cast<void**>(bitwise_cast<char*>(this) + offsetOfImportWasmToJSStub(calleeCount, importIndex));
+        return *bitwise_cast<void**>(bitwise_cast<char*>(this) + offsetOfImportWasmToJSStub(importIndex));
     }
 
     class UnconditionalFinalizer : public JSC::UnconditionalFinalizer {
@@ -150,6 +144,7 @@ private:
     UnconditionalFinalizer m_unconditionalFinalizer;
     Bag<CallLinkInfo> m_callLinkInfos;
     Vector<Wasm::WasmExitStubs> m_wasmExitStubs;
+    Vector<RefPtr<Wasm::Callee>> m_callees;
     // The plan that is compiling this code block.
     RefPtr<Wasm::Plan> m_plan;
     String m_errorMessage;

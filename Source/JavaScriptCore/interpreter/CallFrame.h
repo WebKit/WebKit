@@ -23,6 +23,7 @@
 #pragma once
 
 #include "AbstractPC.h"
+#include "CalleeBits.h"
 #include "MacroAssemblerCodeRef.h"
 #include "Register.h"
 #include "StackVisitor.h"
@@ -86,10 +87,18 @@ namespace JSC  {
     public:
         static const int headerSizeInRegisters = CallFrameSlot::argumentCount + 1;
 
-        JSValue calleeAsValue() const { return this[CallFrameSlot::callee].jsValue(); }
-        JSObject* jsCallee() const { return this[CallFrameSlot::callee].object(); }
-        JSCell* callee() const { return this[CallFrameSlot::callee].unboxedCell(); }
-        SUPPRESS_ASAN JSValue unsafeCallee() const { return this[CallFrameSlot::callee].asanUnsafeJSValue(); }
+        JSValue calleeAsValue() const
+        {
+            ASSERT(!callee().isWasm());
+            return this[CallFrameSlot::callee].jsValue();
+        }
+        JSObject* jsCallee() const
+        {
+            ASSERT(!callee().isWasm());
+            return this[CallFrameSlot::callee].object();
+        }
+        CalleeBits callee() const { return CalleeBits(this[CallFrameSlot::callee].pointer()); }
+        SUPPRESS_ASAN CalleeBits unsafeCallee() const { return CalleeBits(this[CallFrameSlot::callee].pointer()); }
         CodeBlock* codeBlock() const { return this[CallFrameSlot::codeBlock].Register::codeBlock(); }
         CodeBlock** addressOfCodeBlock() const { return bitwise_cast<CodeBlock**>(this + CallFrameSlot::codeBlock); }
         SUPPRESS_ASAN CodeBlock* unsafeCodeBlock() const { return this[CallFrameSlot::codeBlock].Register::asanUnsafeCodeBlock(); }
@@ -98,9 +107,15 @@ namespace JSC  {
             ASSERT(this[scopeRegisterOffset].Register::scope());
             return this[scopeRegisterOffset].Register::scope();
         }
-
         // Global object in which execution began.
+        // This variant is not safe to call from a Wasm frame.
         JS_EXPORT_PRIVATE JSGlobalObject* vmEntryGlobalObject();
+        // This variant is safe to call from a Wasm frame.
+        JSGlobalObject* vmEntryGlobalObject(VM&);
+
+        JSGlobalObject* wasmAwareLexicalGlobalObject(VM&);
+
+        bool isAnyWasmCallee();
 
         // Global object in which the currently executing code was defined.
         // Differs from vmEntryGlobalObject() during function calls across web browser frames.
@@ -257,9 +272,17 @@ namespace JSC  {
         //     StackVisitor::Status operator()(StackVisitor&) const;
         // FIXME: This method is improper. We rely on the fact that we can call it with a null
         // receiver. We should always be using StackVisitor directly.
+        // It's only valid to call this from a non-wasm top frame.
         template <typename Functor> void iterate(const Functor& functor)
         {
-            StackVisitor::visit<Functor>(this, functor);
+            VM* vm;
+            void* rawThis = this;
+            if (!!rawThis) {
+                RELEASE_ASSERT(callee().isCell());
+                vm = &this->vm();
+            } else
+                vm = nullptr;
+            StackVisitor::visit<Functor>(this, vm, functor);
         }
 
         void dump(PrintStream&);

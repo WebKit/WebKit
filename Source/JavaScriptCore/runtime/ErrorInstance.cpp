@@ -156,8 +156,10 @@ void ErrorInstance::finishCreation(ExecState* exec, VM& vm, const String& messag
     bool hasTrace = addErrorInfoAndGetBytecodeOffset(exec, vm, this, useCurrentFrame, callFrame, hasSourceAppender() ? &bytecodeOffset : nullptr);
 
     if (hasTrace && callFrame && hasSourceAppender()) {
-        if (callFrame && callFrame->codeBlock()) 
+        if (callFrame && callFrame->codeBlock()) {
+            ASSERT(!callFrame->callee().isWasm());
             appendSourceToError(callFrame, this, bytecodeOffset);
+        }
     }
 }
 

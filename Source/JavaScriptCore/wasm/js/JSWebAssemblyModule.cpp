@@ -29,10 +29,10 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "JSCInlines.h"
-#include "JSWebAssemblyCallee.h"
 #include "JSWebAssemblyCodeBlock.h"
 #include "JSWebAssemblyCompileError.h"
 #include "JSWebAssemblyMemory.h"
+#include "WasmCallee.h"
 #include "WasmFormat.h"
 #include "WasmMemory.h"
 #include "WasmPlan.h"

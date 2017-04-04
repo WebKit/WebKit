@@ -47,8 +47,7 @@ JSWebAssemblyCodeBlock::JSWebAssemblyCodeBlock(VM& vm, JSWebAssemblyModule* owne
     m_module.set(vm, this, owner);
     ASSERT(!module()->codeBlock(mode));
     module()->setCodeBlock(vm, mode, this);
-
-    memset(callees(), 0, m_calleeCount * sizeof(WriteBarrier<JSWebAssemblyCallee>) * 2);
+    m_callees.resize(m_calleeCount * 2);
 }
 
 void JSWebAssemblyCodeBlock::initialize()
@@ -57,7 +56,7 @@ void JSWebAssemblyCodeBlock::initialize()
         return;
 
     VM& vm = plan().vm();
-    ASSERT(vm.currentThreadIsHoldingAPILock());
+    ASSERT_UNUSED(vm, vm.currentThreadIsHoldingAPILock());
     RELEASE_ASSERT(!plan().hasWork());
 
     if (plan().failed()) {
@@ -74,11 +73,11 @@ void JSWebAssemblyCodeBlock::initialize()
 
     // The code a module emits to call into JS relies on us to set this up.
     for (unsigned i = 0; i < m_wasmExitStubs.size(); i++)
-        importWasmToJSStub(m_calleeCount, i) = m_wasmExitStubs[i].wasmToJs.code().executableAddress();
+        importWasmToJSStub(i) = m_wasmExitStubs[i].wasmToJs.code().executableAddress();
 
-    plan().initializeCallees([&] (unsigned calleeIndex, JSWebAssemblyCallee* jsEntrypointCallee, JSWebAssemblyCallee* wasmEntrypointCallee) {
-        setJSEntrypointCallee(vm, calleeIndex, jsEntrypointCallee);
-        setWasmEntrypointCallee(vm, calleeIndex, wasmEntrypointCallee);
+    plan().initializeCallees([&] (unsigned calleeIndex, Ref<Wasm::Callee>&& jsEntrypointCallee, Ref<Wasm::Callee>&& wasmEntrypointCallee) {
+        setJSEntrypointCallee(calleeIndex, WTFMove(jsEntrypointCallee));
+        setWasmEntrypointCallee(calleeIndex, WTFMove(wasmEntrypointCallee));
     });
 
     m_plan = nullptr;
@@ -118,8 +117,6 @@ void JSWebAssemblyCodeBlock::visitChildren(JSCell* cell, SlotVisitor& visitor)
 
     Base::visitChildren(thisObject, visitor);
     visitor.append(thisObject->m_module);
-    for (unsigned i = 0; i < thisObject->m_calleeCount * 2; i++)
-        visitor.append(thisObject->callees()[i]);
 
     visitor.addUnconditionalFinalizer(&thisObject->m_unconditionalFinalizer);
 }

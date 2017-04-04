@@ -31,6 +31,7 @@
 #include "Interpreter.h"
 #include "JSCInlines.h"
 #include "VMEntryScope.h"
+#include "WasmContext.h"
 #include <wtf/StringPrintStream.h>
 
 namespace JSC {
@@ -185,7 +186,8 @@ Register* CallFrame::topOfFrameInternal()
 
 JSGlobalObject* CallFrame::vmEntryGlobalObject()
 {
-    if (callee()->isObject()) { 
+    RELEASE_ASSERT(callee().isCell());
+    if (callee().asCell()->isObject()) { 
         if (this == lexicalGlobalObject()->globalExec())
             return lexicalGlobalObject();
     }
@@ -195,6 +197,44 @@ JSGlobalObject* CallFrame::vmEntryGlobalObject()
     // dynamic global object must be set since code is running
     ASSERT(vm().entryScope);
     return vm().entryScope->globalObject();
+}
+
+JSGlobalObject* CallFrame::vmEntryGlobalObject(VM& vm)
+{
+    if (callee().isCell() && callee().asCell()->isObject()) {
+        if (this == lexicalGlobalObject()->globalExec())
+            return lexicalGlobalObject();
+    }
+
+    // For any ExecState that's not a globalExec, the 
+    // dynamic global object must be set since code is running
+    ASSERT(vm.entryScope);
+    return vm.entryScope->globalObject();
+}
+
+JSGlobalObject* CallFrame::wasmAwareLexicalGlobalObject(VM& vm)
+{
+#if ENABLE(WEBASSEMBLY)
+    if (!callee().isWasm())
+        return lexicalGlobalObject();
+    return Wasm::loadContext(vm)->globalObject();
+#else
+    UNUSED_PARAM(vm);
+    return lexicalGlobalObject();
+#endif
+}
+
+bool CallFrame::isAnyWasmCallee()
+{
+    CalleeBits callee = this->callee();
+    if (callee.isWasm())
+        return true;
+
+    ASSERT(callee.isCell());
+    if (!!callee.rawPtr() && isWebAssemblyToJSCallee(callee.asCell()))
+        return true;
+
+    return false;
 }
 
 CallFrame* CallFrame::callerFrame(VMEntryFrame*& currVMEntryFrame)
@@ -219,9 +259,11 @@ SUPPRESS_ASAN CallFrame* CallFrame::unsafeCallerFrame(VMEntryFrame*& currVMEntry
 
 SourceOrigin CallFrame::callerSourceOrigin()
 {
+    RELEASE_ASSERT(callee().isCell());
+    VM* vm = &this->vm();
     SourceOrigin sourceOrigin;
     bool haveSkippedFirstFrame = false;
-    StackVisitor::visit(this, [&](StackVisitor& visitor) {
+    StackVisitor::visit(this, vm, [&](StackVisitor& visitor) {
         if (!std::exchange(haveSkippedFirstFrame, true))
             return StackVisitor::Status::Continue;
 

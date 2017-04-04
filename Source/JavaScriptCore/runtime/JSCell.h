@@ -101,7 +101,6 @@ public:
     bool isString() const;
     bool isSymbol() const;
     bool isObject() const;
-    bool isAnyWasmCallee(VM&) const;
     bool isGetterSetter() const;
     bool isCustomGetterSetter() const;
     bool isProxy() const;

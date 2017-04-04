@@ -28,7 +28,6 @@
 #include "JSFunction.h"
 #include "JSString.h"
 #include "JSObject.h"
-#include "JSWebAssemblyCallee.h"
 #include "NumberObject.h"
 #include "WebAssemblyToJSCallee.h"
 #include <wtf/MathExtras.h>
@@ -293,17 +292,6 @@ bool JSCell::setPrototype(JSObject*, ExecState*, JSValue, bool)
 JSValue JSCell::getPrototype(JSObject*, ExecState*)
 {
     RELEASE_ASSERT_NOT_REACHED();
-}
-
-bool JSCell::isAnyWasmCallee(VM& vm) const
-{
-#if ENABLE(WEBASSEMBLY)
-    return inherits(vm, JSWebAssemblyCallee::info()) || isWebAssemblyToJSCallee(this);
-#else
-    UNUSED_PARAM(vm);
-    return false;
-#endif
-
 }
 
 } // namespace JSC

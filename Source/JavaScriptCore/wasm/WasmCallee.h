@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,37 +23,36 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "JSWebAssemblyCallee.h"
+#pragma once
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "JSCInlines.h"
-#include "WasmFaultSignalHandler.h"
+#include "RegisterAtOffsetList.h"
+#include "WasmFormat.h"
+#include <wtf/ThreadSafeRefCounted.h>
 
-namespace JSC {
+namespace JSC { namespace Wasm {
 
-const ClassInfo JSWebAssemblyCallee::s_info = { "WebAssemblyCallee", nullptr, 0, CREATE_METHOD_TABLE(JSWebAssemblyCallee) };
+class Callee : public ThreadSafeRefCounted<Callee> {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
 
-JSWebAssemblyCallee::JSWebAssemblyCallee(VM& vm)
-    : Base(vm, vm.webAssemblyCalleeStructure.get())
-{ }
+    static Ref<Callee> create(Wasm::Entrypoint&& entrypoint)
+    {
+        Callee* callee = new Callee(WTFMove(entrypoint));
+        return adoptRef(*callee);
+    }
 
-void JSWebAssemblyCallee::finishCreation(VM& vm, Wasm::Entrypoint&& entrypoint)
-{
-    Base::finishCreation(vm);
+    void* entrypoint() { return m_entrypoint.compilation->code().executableAddress(); }
 
-    m_entrypoint = WTFMove(entrypoint);
-    Wasm::registerCode(m_entrypoint.compilation->codeRef().executableMemory()->start(), m_entrypoint.compilation->codeRef().executableMemory()->end());
-}
+    RegisterAtOffsetList* calleeSaveRegisters() { return &m_entrypoint.calleeSaveRegisters; }
 
-void JSWebAssemblyCallee::destroy(JSCell* cell)
-{
-    JSWebAssemblyCallee* thisObject = static_cast<JSWebAssemblyCallee*>(cell);
-    Wasm::unregisterCode(thisObject->m_entrypoint.compilation->codeRef().executableMemory()->start(), thisObject->m_entrypoint.compilation->codeRef().executableMemory()->end());
-    thisObject->JSWebAssemblyCallee::~JSWebAssemblyCallee();
-}
+private:
+    JS_EXPORT_PRIVATE Callee(Wasm::Entrypoint&&);
 
-} // namespace JSC
+    Wasm::Entrypoint m_entrypoint;
+};
+
+} } // namespace JSC::Wasm
 
 #endif // ENABLE(WEBASSEMBLY)

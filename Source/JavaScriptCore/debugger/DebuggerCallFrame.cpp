@@ -60,16 +60,16 @@ private:
     mutable unsigned m_column;
 };
 
-Ref<DebuggerCallFrame> DebuggerCallFrame::create(CallFrame* callFrame)
+Ref<DebuggerCallFrame> DebuggerCallFrame::create(VM& vm, CallFrame* callFrame)
 {
-    if (UNLIKELY(callFrame == callFrame->lexicalGlobalObject()->globalExec())) {
+    if (UNLIKELY(callFrame == callFrame->wasmAwareLexicalGlobalObject(vm)->globalExec())) {
         ShadowChicken::Frame emptyFrame;
         RELEASE_ASSERT(!emptyFrame.isTailDeleted);
-        return adoptRef(*new DebuggerCallFrame(callFrame, emptyFrame));
+        return adoptRef(*new DebuggerCallFrame(vm, callFrame, emptyFrame));
     }
 
     Vector<ShadowChicken::Frame> frames;
-    callFrame->vm().shadowChicken().iterate(callFrame->vm(), callFrame, [&] (const ShadowChicken::Frame& frame) -> bool {
+    vm.shadowChicken().iterate(vm, callFrame, [&] (const ShadowChicken::Frame& frame) -> bool {
         frames.append(frame);
         return true;
     });
@@ -78,24 +78,24 @@ Ref<DebuggerCallFrame> DebuggerCallFrame::create(CallFrame* callFrame)
     ASSERT(!frames[0].isTailDeleted); // The top frame should never be tail deleted.
 
     RefPtr<DebuggerCallFrame> currentParent = nullptr;
-    ExecState* exec = callFrame->lexicalGlobalObject()->globalExec();
+    ExecState* exec = callFrame->wasmAwareLexicalGlobalObject(vm)->globalExec();
     // This walks the stack from the entry stack frame to the top of the stack.
     for (unsigned i = frames.size(); i--; ) {
         const ShadowChicken::Frame& frame = frames[i];
         if (!frame.isTailDeleted)
             exec = frame.frame;
-        Ref<DebuggerCallFrame> currentFrame = adoptRef(*new DebuggerCallFrame(exec, frame));
+        Ref<DebuggerCallFrame> currentFrame = adoptRef(*new DebuggerCallFrame(vm, exec, frame));
         currentFrame->m_caller = currentParent;
         currentParent = WTFMove(currentFrame);
     }
     return *currentParent;
 }
 
-DebuggerCallFrame::DebuggerCallFrame(CallFrame* callFrame, const ShadowChicken::Frame& frame)
+DebuggerCallFrame::DebuggerCallFrame(VM& vm, CallFrame* callFrame, const ShadowChicken::Frame& frame)
     : m_validMachineFrame(callFrame)
     , m_shadowChickenFrame(frame)
 {
-    m_position = currentPosition();
+    m_position = currentPosition(vm);
 }
 
 RefPtr<DebuggerCallFrame> DebuggerCallFrame::callerFrame()
@@ -284,7 +284,7 @@ void DebuggerCallFrame::invalidate()
     }
 }
 
-TextPosition DebuggerCallFrame::currentPosition()
+TextPosition DebuggerCallFrame::currentPosition(VM& vm)
 {
     if (!m_validMachineFrame)
         return TextPosition();
@@ -297,13 +297,13 @@ TextPosition DebuggerCallFrame::currentPosition()
         }
     }
 
-    return positionForCallFrame(m_validMachineFrame);
+    return positionForCallFrame(vm, m_validMachineFrame);
 }
 
-TextPosition DebuggerCallFrame::positionForCallFrame(CallFrame* callFrame)
+TextPosition DebuggerCallFrame::positionForCallFrame(VM& vm, CallFrame* callFrame)
 {
     LineAndColumnFunctor functor;
-    callFrame->iterate(functor);
+    StackVisitor::visit(callFrame, &vm, functor);
     return TextPosition(OrdinalNumber::fromOneBasedInt(functor.line()), OrdinalNumber::fromOneBasedInt(functor.column()));
 }
 

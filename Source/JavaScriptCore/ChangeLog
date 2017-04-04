@@ -1,3 +1,187 @@
+2017-04-04  Saam Barati  <sbarati@apple.com>
+
+        WebAssembly: JSWebAssemblyCallee should not be a JSCell
+        https://bugs.webkit.org/show_bug.cgi?id=170135
+
+        Reviewed by Michael Saboff.
+
+        This patch is perhaps the last big change to the design of fundamental
+        Wasm API to allow for PIC. It changes JSWebAssemblyCallee into a thing
+        called Wasm::Callee. It serves the same purpose as before, except
+        Wasm::Callee is not a JSCell. I had to refactor the various parts of the
+        runtime that will see CallFrame's with Wasm::Callee's in the callee slot.
+        Thankfully, the parts of the runtime that Wasm touches are limited. The
+        main refactoring is changing the exception handling code, such as taking
+        a stack trace, to be friendly to seeing a non JSCell callee.
+        
+        The callee() function on ExecState now returns a class I added in this
+        patch called CalleeBits. CalleeBits will tell you if the callee is a
+        JSCell or a Wasm::Callee. We tag Wasm::Callee's with a 1 in their lower
+        bit so we can easily tell what is and isn't a Wasm::Callee.
+        
+        The stub that calls out from Wasm to JS still puts a JSCell callee
+        into the call frame, even though the callee logically represents a
+        Wasm frame. The reason for this is that we use the call IC infrastructure
+        to make a call out to JS code, and the code that writes the IC expects
+        a JSCell as the callee. This is knowingly part of our design. When we
+        do structured cloning of Wasm Modules, we'll need to regenerate these
+        JS call stubs.
+
+        * API/JSContextRef.cpp:
+        (BacktraceFunctor::operator()):
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::pauseIfNeeded):
+        (JSC::Debugger::currentDebuggerCallFrame):
+        * debugger/DebuggerCallFrame.cpp:
+        (JSC::DebuggerCallFrame::create):
+        (JSC::DebuggerCallFrame::DebuggerCallFrame):
+        (JSC::DebuggerCallFrame::currentPosition):
+        (JSC::DebuggerCallFrame::positionForCallFrame):
+        * debugger/DebuggerCallFrame.h:
+        * interpreter/CallFrame.cpp:
+        (JSC::CallFrame::vmEntryGlobalObject):
+        (JSC::CallFrame::wasmAwareLexicalGlobalObject):
+        (JSC::CallFrame::isAnyWasmCallee):
+        (JSC::CallFrame::callerSourceOrigin):
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::calleeAsValue):
+        (JSC::ExecState::jsCallee):
+        (JSC::ExecState::callee):
+        (JSC::ExecState::unsafeCallee):
+        (JSC::ExecState::scope):
+        (JSC::ExecState::iterate):
+        * interpreter/CalleeBits.h: Added.
+        (JSC::CalleeBits::CalleeBits):
+        (JSC::CalleeBits::operator=):
+        (JSC::CalleeBits::boxWasm):
+        (JSC::CalleeBits::isWasm):
+        (JSC::CalleeBits::isCell):
+        (JSC::CalleeBits::asCell):
+        (JSC::CalleeBits::asWasmCallee):
+        (JSC::CalleeBits::rawPtr):
+        * interpreter/Interpreter.cpp:
+        (JSC::GetStackTraceFunctor::operator()):
+        (JSC::Interpreter::getStackTrace):
+        (JSC::notifyDebuggerOfUnwinding):
+        (JSC::UnwindFunctor::UnwindFunctor):
+        (JSC::UnwindFunctor::operator()):
+        (JSC::UnwindFunctor::copyCalleeSavesToVMEntryFrameCalleeSavesBuffer):
+        (JSC::Interpreter::unwind):
+        (JSC::Interpreter::notifyDebuggerOfExceptionToBeThrown):
+        * interpreter/Interpreter.h:
+        * interpreter/Register.h:
+        (JSC::Register::pointer):
+        * interpreter/ShadowChicken.cpp:
+        (JSC::ShadowChicken::update):
+        * interpreter/ShadowChickenInlines.h:
+        (JSC::ShadowChicken::iterate):
+        * interpreter/StackVisitor.cpp:
+        (JSC::StackVisitor::StackVisitor):
+        (JSC::StackVisitor::readFrame):
+        (JSC::StackVisitor::readNonInlinedFrame):
+        (JSC::StackVisitor::readInlinedFrame):
+        (JSC::StackVisitor::Frame::calleeSaveRegisters):
+        (JSC::StackVisitor::Frame::functionName):
+        (JSC::StackVisitor::Frame::dump):
+        * interpreter/StackVisitor.h:
+        (JSC::StackVisitor::Frame::callee):
+        (JSC::StackVisitor::visit):
+        * jit/Repatch.cpp:
+        (JSC::linkFor):
+        (JSC::linkPolymorphicCall):
+        * jsc.cpp:
+        (callWasmFunction):
+        (functionTestWasmModuleFunctions):
+        * runtime/ArrayPrototype.cpp:
+        * runtime/Error.cpp:
+        (JSC::addErrorInfoAndGetBytecodeOffset):
+        * runtime/ErrorInstance.cpp:
+        (JSC::ErrorInstance::finishCreation):
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::isAnyWasmCallee): Deleted.
+        * runtime/JSCell.h:
+        * runtime/JSCellInlines.h:
+        (JSC::ExecState::vm):
+        * runtime/JSFunction.cpp:
+        (JSC::RetrieveArgumentsFunctor::operator()):
+        (JSC::RetrieveCallerFunctionFunctor::operator()):
+        * runtime/JSGlobalObject.cpp:
+        * runtime/SamplingProfiler.cpp:
+        (JSC::FrameWalker::recordJSFrame):
+        (JSC::SamplingProfiler::processUnverifiedStackTraces):
+        * runtime/SamplingProfiler.h:
+        (JSC::SamplingProfiler::UnprocessedStackFrame::UnprocessedStackFrame):
+        * runtime/StackFrame.cpp:
+        (JSC::StackFrame::sourceURL):
+        (JSC::StackFrame::functionName):
+        * runtime/StackFrame.h:
+        (JSC::StackFrame::wasm):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        (JSC::VM::throwException):
+        * runtime/VM.h:
+        * wasm/JSWebAssembly.h:
+        * wasm/WasmB3IRGenerator.cpp:
+        * wasm/WasmBinding.cpp:
+        (JSC::Wasm::wasmToWasm):
+        * wasm/WasmCallee.cpp: Copied from Source/JavaScriptCore/wasm/js/JSWebAssemblyCallee.cpp.
+        (JSC::Wasm::Callee::Callee):
+        (JSC::JSWebAssemblyCallee::JSWebAssemblyCallee): Deleted.
+        (JSC::JSWebAssemblyCallee::finishCreation): Deleted.
+        (JSC::JSWebAssemblyCallee::destroy): Deleted.
+        * wasm/WasmCallee.h: Copied from Source/JavaScriptCore/wasm/js/JSWebAssemblyCallee.h.
+        (JSC::Wasm::Callee::create):
+        (JSC::JSWebAssemblyCallee::create): Deleted.
+        (JSC::JSWebAssemblyCallee::createStructure): Deleted.
+        (JSC::JSWebAssemblyCallee::entrypoint): Deleted.
+        (JSC::JSWebAssemblyCallee::calleeSaveRegisters): Deleted.
+        * wasm/WasmContext.h:
+        * wasm/WasmPlan.cpp:
+        * wasm/WasmPlan.h:
+        * wasm/WasmPlanInlines.h:
+        (JSC::Wasm::Plan::initializeCallees):
+        * wasm/WasmThunks.cpp:
+        (JSC::Wasm::throwExceptionFromWasmThunkGenerator):
+        * wasm/js/JSWebAssemblyCallee.cpp: Removed.
+        * wasm/js/JSWebAssemblyCallee.h: Removed.
+        * wasm/js/JSWebAssemblyCodeBlock.cpp:
+        (JSC::JSWebAssemblyCodeBlock::JSWebAssemblyCodeBlock):
+        (JSC::JSWebAssemblyCodeBlock::initialize):
+        (JSC::JSWebAssemblyCodeBlock::visitChildren):
+        * wasm/js/JSWebAssemblyCodeBlock.h:
+        (JSC::JSWebAssemblyCodeBlock::create):
+        (JSC::JSWebAssemblyCodeBlock::jsEntrypointCalleeFromFunctionIndexSpace):
+        (JSC::JSWebAssemblyCodeBlock::wasmEntrypointCalleeFromFunctionIndexSpace):
+        (JSC::JSWebAssemblyCodeBlock::wasmToJsCallStubForImport):
+        (JSC::JSWebAssemblyCodeBlock::offsetOfImportWasmToJSStub):
+        (JSC::JSWebAssemblyCodeBlock::setJSEntrypointCallee):
+        (JSC::JSWebAssemblyCodeBlock::setWasmEntrypointCallee):
+        (JSC::JSWebAssemblyCodeBlock::offsetOfImportStubs):
+        (JSC::JSWebAssemblyCodeBlock::allocationSize):
+        (JSC::JSWebAssemblyCodeBlock::importWasmToJSStub):
+        (JSC::JSWebAssemblyCodeBlock::callees): Deleted.
+        (JSC::JSWebAssemblyCodeBlock::offsetOfCallees): Deleted.
+        * wasm/js/JSWebAssemblyInstance.h:
+        (JSC::JSWebAssemblyInstance::webAssemblyToJSCallee):
+        * wasm/js/JSWebAssemblyModule.cpp:
+        * wasm/js/WebAssemblyFunction.cpp:
+        (JSC::callWebAssemblyFunction):
+        (JSC::WebAssemblyFunction::create):
+        (JSC::WebAssemblyFunction::WebAssemblyFunction):
+        (JSC::WebAssemblyFunction::visitChildren):
+        (JSC::WebAssemblyFunction::finishCreation):
+        * wasm/js/WebAssemblyFunction.h:
+        (JSC::WebAssemblyFunction::wasmEntrypoint):
+        (JSC::WebAssemblyFunction::jsEntrypoint):
+        (JSC::WebAssemblyFunction::offsetOfWasmEntrypoint):
+        (JSC::WebAssemblyFunction::offsetOfWasmEntryPointCode): Deleted.
+        * wasm/js/WebAssemblyModuleConstructor.cpp:
+        * wasm/js/WebAssemblyModuleRecord.cpp:
+        (JSC::WebAssemblyModuleRecord::link):
+        (JSC::WebAssemblyModuleRecord::evaluate):
+
 2017-04-04  Keith Miller  <keith_miller@apple.com>
 
         WasmBench asserts in debug jsc

@@ -56,7 +56,6 @@
 #include "JSSourceCode.h"
 #include "JSString.h"
 #include "JSTypedArrays.h"
-#include "JSWebAssemblyCallee.h"
 #include "JSWebAssemblyInstance.h"
 #include "JSWebAssemblyMemory.h"
 #include "LLIntData.h"
@@ -75,6 +74,7 @@
 #include "SuperSampler.h"
 #include "TestRunnerUtils.h"
 #include "TypeProfilerLog.h"
+#include "WasmCallee.h"
 #include "WasmContext.h"
 #include "WasmFaultSignalHandler.h"
 #include "WasmMemory.h"
@@ -3157,7 +3157,7 @@ static JSValue box(ExecState* exec, VM& vm, JSValue wasmValue)
 }
 
 // FIXME: https://bugs.webkit.org/show_bug.cgi?id=168582.
-static JSValue callWasmFunction(VM* vm, JSGlobalObject* globalObject, JSWebAssemblyCallee* wasmCallee, const ArgList& boxedArgs)
+static JSValue callWasmFunction(VM* vm, JSGlobalObject* globalObject, Wasm::Callee* wasmCallee, const ArgList& boxedArgs)
 {
     JSValue firstArgument;
     int argCount = 1;
@@ -3202,15 +3202,15 @@ static EncodedJSValue JSC_HOST_CALL functionTestWasmModuleFunctions(ExecState* e
     if (plan->internalFunctionCount() != functionCount)
         CRASH();
 
-    MarkedArgumentBuffer callees;
-    MarkedArgumentBuffer keepAlive;
+    Vector<Ref<Wasm::Callee>> jsEntrypointCallees;
+    Vector<Ref<Wasm::Callee>> wasmEntrypointCallees;
     {
         unsigned lastIndex = UINT_MAX;
         plan->initializeCallees(
-            [&] (unsigned calleeIndex, JSWebAssemblyCallee* jsEntrypointCallee, JSWebAssemblyCallee* wasmEntrypointCallee) {
+            [&] (unsigned calleeIndex, Ref<Wasm::Callee>&& jsEntrypointCallee, Ref<Wasm::Callee>&& wasmEntrypointCallee) {
                 RELEASE_ASSERT(!calleeIndex || (calleeIndex - 1 == lastIndex));
-                callees.append(jsEntrypointCallee);
-                keepAlive.append(wasmEntrypointCallee);
+                jsEntrypointCallees.append(WTFMove(jsEntrypointCallee));
+                wasmEntrypointCallees.append(WTFMove(wasmEntrypointCallee));
                 lastIndex = calleeIndex;
             });
     }
@@ -3238,7 +3238,7 @@ static EncodedJSValue JSC_HOST_CALL functionTestWasmModuleFunctions(ExecState* e
             JSValue callResult;
             {
                 auto scope = DECLARE_THROW_SCOPE(vm);
-                callResult = callWasmFunction(&vm, exec->lexicalGlobalObject(), jsCast<JSWebAssemblyCallee*>(callees.at(i)), boxedArgs);
+                callResult = callWasmFunction(&vm, exec->lexicalGlobalObject(), jsEntrypointCallees[i].ptr(), boxedArgs);
                 RETURN_IF_EXCEPTION(scope, { });
             }
             JSValue expected = box(exec, vm, result);

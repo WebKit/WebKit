@@ -595,11 +595,15 @@ void linkFor(
     ASSERT(!callLinkInfo.stub());
 
     CallFrame* callerFrame = exec->callerFrame();
+    // Our caller must have a cell for a callee. When calling
+    // this from Wasm, we ensure the callee is a cell.
+    ASSERT(callerFrame->callee().isCell());
+
     VM& vm = callerFrame->vm();
     CodeBlock* callerCodeBlock = callerFrame->codeBlock();
 
     // WebAssembly -> JS stubs don't have a valid CodeBlock.
-    JSCell* owner = isWebAssemblyToJSCallee(callerFrame->callee()) ? webAssemblyOwner(callerFrame->callee()) : callerCodeBlock;
+    JSCell* owner = isWebAssemblyToJSCallee(callerFrame->callee().asCell()) ? webAssemblyOwner(callerFrame->callee().asCell()) : callerCodeBlock;
     ASSERT(owner);
 
     ASSERT(!callLinkInfo.isLinked());
@@ -717,12 +721,17 @@ void linkPolymorphicCall(
     }
 
     CallFrame* callerFrame = exec->callerFrame();
+
+    // Our caller must be have a cell for a callee. When calling
+    // this from Wasm, we ensure the callee is a cell.
+    ASSERT(callerFrame->callee().isCell());
+
     VM& vm = callerFrame->vm();
     CodeBlock* callerCodeBlock = callerFrame->codeBlock();
-    bool isWebAssembly = isWebAssemblyToJSCallee(callerFrame->callee());
+    bool isWebAssembly = isWebAssemblyToJSCallee(callerFrame->callee().asCell());
 
     // WebAssembly -> JS stubs don't have a valid CodeBlock.
-    JSCell* owner = isWebAssembly ? webAssemblyOwner(callerFrame->callee()) : callerCodeBlock;
+    JSCell* owner = isWebAssembly ? webAssemblyOwner(callerFrame->callee().asCell()) : callerCodeBlock;
     ASSERT(owner);
 
     CallVariantList list;

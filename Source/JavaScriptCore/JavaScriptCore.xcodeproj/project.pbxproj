@@ -1315,6 +1315,8 @@
 		473DA4A4764C45FE871B0485 /* DefinePropertyAttributes.h in Headers */ = {isa = PBXBuildFile; fileRef = 169948EDE68D4054B01EF797 /* DefinePropertyAttributes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5250D2D11E8DA05A0029A932 /* WasmThunks.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5250D2CF1E8DA05A0029A932 /* WasmThunks.cpp */; };
 		5250D2D21E8DA05A0029A932 /* WasmThunks.h in Headers */ = {isa = PBXBuildFile; fileRef = 5250D2D01E8DA05A0029A932 /* WasmThunks.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		525C0DD91E935847002184CD /* WasmCallee.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 525C0DD71E935847002184CD /* WasmCallee.cpp */; };
+		525C0DDA1E935847002184CD /* WasmCallee.h in Headers */ = {isa = PBXBuildFile; fileRef = 525C0DD81E935847002184CD /* WasmCallee.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		52678F8E1A031009006A306D /* BasicBlockLocation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52678F8C1A031009006A306D /* BasicBlockLocation.cpp */; };
 		52678F8F1A031009006A306D /* BasicBlockLocation.h in Headers */ = {isa = PBXBuildFile; fileRef = 52678F8D1A031009006A306D /* BasicBlockLocation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		52678F911A04177C006A306D /* ControlFlowProfiler.h in Headers */ = {isa = PBXBuildFile; fileRef = 52678F901A04177C006A306D /* ControlFlowProfiler.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1499,6 +1501,7 @@
 		7964656A1B952FF0003059EE /* GetPutInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 796465681B952FF0003059EE /* GetPutInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7965C2161E5D799600B7591D /* AirAllocateRegistersByGraphColoring.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7965C2141E5D799600B7591D /* AirAllocateRegistersByGraphColoring.cpp */; };
 		7965C2171E5D799600B7591D /* AirAllocateRegistersByGraphColoring.h in Headers */ = {isa = PBXBuildFile; fileRef = 7965C2151E5D799600B7591D /* AirAllocateRegistersByGraphColoring.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		796DAA2B1E89CCD6005DF24A /* CalleeBits.h in Headers */ = {isa = PBXBuildFile; fileRef = 796DAA2A1E89CCD6005DF24A /* CalleeBits.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		796FB43A1DFF8C3F0039C95D /* JSWebAssemblyHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = 796FB4391DFF8C3F0039C95D /* JSWebAssemblyHelpers.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		797E07A91B8FCFB9008400BA /* JSGlobalLexicalEnvironment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 797E07A71B8FCFB9008400BA /* JSGlobalLexicalEnvironment.cpp */; };
 		797E07AA1B8FCFB9008400BA /* JSGlobalLexicalEnvironment.h in Headers */ = {isa = PBXBuildFile; fileRef = 797E07A81B8FCFB9008400BA /* JSGlobalLexicalEnvironment.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1530,8 +1533,6 @@
 		79D5CD5B1C1106A900CECA07 /* SamplingProfiler.h in Headers */ = {isa = PBXBuildFile; fileRef = 79D5CD591C1106A900CECA07 /* SamplingProfiler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		79DAE27A1E03C82200B526AA /* WasmExceptionType.h in Headers */ = {isa = PBXBuildFile; fileRef = 79DAE2791E03C82200B526AA /* WasmExceptionType.h */; };
 		79DFCBDB1D88C59600527D03 /* HasOwnPropertyCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 79DFCBDA1D88C59600527D03 /* HasOwnPropertyCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		79E423E21DEE65320078D355 /* JSWebAssemblyCallee.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 79E423E01DEE65320078D355 /* JSWebAssemblyCallee.cpp */; };
-		79E423E31DEE65320078D355 /* JSWebAssemblyCallee.h in Headers */ = {isa = PBXBuildFile; fileRef = 79E423E11DEE65320078D355 /* JSWebAssemblyCallee.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		79EE0BFF1B4AFB85000385C9 /* VariableEnvironment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 79EE0BFD1B4AFB85000385C9 /* VariableEnvironment.cpp */; };
 		79EE0C001B4AFB85000385C9 /* VariableEnvironment.h in Headers */ = {isa = PBXBuildFile; fileRef = 79EE0BFE1B4AFB85000385C9 /* VariableEnvironment.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		79F8FC1E1B9FED0F00CA66AB /* DFGMaximalFlushInsertionPhase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 79F8FC1C1B9FED0F00CA66AB /* DFGMaximalFlushInsertionPhase.cpp */; };
@@ -3821,6 +3822,8 @@
 		51F0EC0705C86C9A00E6DF1B /* libobjc.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libobjc.dylib; path = /usr/lib/libobjc.dylib; sourceTree = "<absolute>"; };
 		5250D2CF1E8DA05A0029A932 /* WasmThunks.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WasmThunks.cpp; sourceTree = "<group>"; };
 		5250D2D01E8DA05A0029A932 /* WasmThunks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmThunks.h; sourceTree = "<group>"; };
+		525C0DD71E935847002184CD /* WasmCallee.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WasmCallee.cpp; sourceTree = "<group>"; };
+		525C0DD81E935847002184CD /* WasmCallee.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmCallee.h; sourceTree = "<group>"; };
 		52678F8C1A031009006A306D /* BasicBlockLocation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BasicBlockLocation.cpp; sourceTree = "<group>"; };
 		52678F8D1A031009006A306D /* BasicBlockLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BasicBlockLocation.h; sourceTree = "<group>"; };
 		52678F901A04177C006A306D /* ControlFlowProfiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ControlFlowProfiler.h; sourceTree = "<group>"; };
@@ -4048,6 +4051,7 @@
 		796465681B952FF0003059EE /* GetPutInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetPutInfo.h; sourceTree = "<group>"; };
 		7965C2141E5D799600B7591D /* AirAllocateRegistersByGraphColoring.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AirAllocateRegistersByGraphColoring.cpp; path = b3/air/AirAllocateRegistersByGraphColoring.cpp; sourceTree = "<group>"; };
 		7965C2151E5D799600B7591D /* AirAllocateRegistersByGraphColoring.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirAllocateRegistersByGraphColoring.h; path = b3/air/AirAllocateRegistersByGraphColoring.h; sourceTree = "<group>"; };
+		796DAA2A1E89CCD6005DF24A /* CalleeBits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CalleeBits.h; sourceTree = "<group>"; };
 		796FB4391DFF8C3F0039C95D /* JSWebAssemblyHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSWebAssemblyHelpers.h; path = js/JSWebAssemblyHelpers.h; sourceTree = "<group>"; };
 		797E07A71B8FCFB9008400BA /* JSGlobalLexicalEnvironment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSGlobalLexicalEnvironment.cpp; sourceTree = "<group>"; };
 		797E07A81B8FCFB9008400BA /* JSGlobalLexicalEnvironment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSGlobalLexicalEnvironment.h; sourceTree = "<group>"; };
@@ -4079,8 +4083,6 @@
 		79D5CD591C1106A900CECA07 /* SamplingProfiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SamplingProfiler.h; sourceTree = "<group>"; };
 		79DAE2791E03C82200B526AA /* WasmExceptionType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmExceptionType.h; sourceTree = "<group>"; };
 		79DFCBDA1D88C59600527D03 /* HasOwnPropertyCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HasOwnPropertyCache.h; sourceTree = "<group>"; };
-		79E423E01DEE65320078D355 /* JSWebAssemblyCallee.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSWebAssemblyCallee.cpp; path = js/JSWebAssemblyCallee.cpp; sourceTree = "<group>"; };
-		79E423E11DEE65320078D355 /* JSWebAssemblyCallee.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSWebAssemblyCallee.h; path = js/JSWebAssemblyCallee.h; sourceTree = "<group>"; };
 		79EE0BFD1B4AFB85000385C9 /* VariableEnvironment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VariableEnvironment.cpp; sourceTree = "<group>"; };
 		79EE0BFE1B4AFB85000385C9 /* VariableEnvironment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VariableEnvironment.h; sourceTree = "<group>"; };
 		79F8FC1C1B9FED0F00CA66AB /* DFGMaximalFlushInsertionPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGMaximalFlushInsertionPhase.cpp; path = dfg/DFGMaximalFlushInsertionPhase.cpp; sourceTree = "<group>"; };
@@ -5744,6 +5746,7 @@
 				0F55F0F114D1063600AC7649 /* AbstractPC.cpp */,
 				0F55F0F214D1063600AC7649 /* AbstractPC.h */,
 				A7F8690E0F9584A100558697 /* CachedCall.h */,
+				796DAA2A1E89CCD6005DF24A /* CalleeBits.h */,
 				1429D8DB0ED2205B00B89619 /* CallFrame.cpp */,
 				1429D8DC0ED2205B00B89619 /* CallFrame.h */,
 				A7F869EC0F95C2EC00558697 /* CallFrameClosure.h */,
@@ -6307,6 +6310,8 @@
 				53F40E921D5A4AB30099A1B6 /* WasmB3IRGenerator.h */,
 				AD4B1DF71DF244D70071AE32 /* WasmBinding.cpp */,
 				AD4B1DF81DF244D70071AE32 /* WasmBinding.h */,
+				525C0DD71E935847002184CD /* WasmCallee.cpp */,
+				525C0DD81E935847002184CD /* WasmCallee.h */,
 				53FD04D11D7AB187003287D3 /* WasmCallingConvention.cpp */,
 				53FD04D21D7AB187003287D3 /* WasmCallingConvention.h */,
 				AD412B311E7B2E8A008AF157 /* WasmContext.cpp */,
@@ -7937,8 +7942,6 @@
 		AD2FCB8A1DB5840000B3E736 /* js */ = {
 			isa = PBXGroup;
 			children = (
-				79E423E01DEE65320078D355 /* JSWebAssemblyCallee.cpp */,
-				79E423E11DEE65320078D355 /* JSWebAssemblyCallee.h */,
 				5383AA2F1E65E8A100A532FC /* JSWebAssemblyCodeBlock.cpp */,
 				AD9E852E1E8A0C6E008DE39E /* JSWebAssemblyCodeBlock.h */,
 				AD2FCBA61DB58DA400B3E736 /* JSWebAssemblyCompileError.cpp */,
@@ -8727,6 +8730,7 @@
 				A5EA710919F6DE7C0098F5EC /* generate_objc_header.py in Headers */,
 				A5EA710A19F6DE7E0098F5EC /* generate_objc_internal_header.py in Headers */,
 				A5EA710719F6DE780098F5EC /* generate_objc_protocol_type_conversions_header.py in Headers */,
+				525C0DDA1E935847002184CD /* WasmCallee.h in Headers */,
 				990DA67F1C8E316A00295159 /* generate_objc_protocol_type_conversions_implementation.py in Headers */,
 				C4F4B6F51A05C984005CAB76 /* generate_objc_protocol_types_implementation.py in Headers */,
 				C4703CD6192844CC0013FBEA /* generator.py in Headers */,
@@ -8868,6 +8872,7 @@
 				79B1788E1D399B8000B1A567 /* JITMathICForwards.h in Headers */,
 				79AF0BE41D3EFD4C00E95FA5 /* JITMathICInlineResult.h in Headers */,
 				FE187A021BFBE5610038BBCA /* JITMulGenerator.h in Headers */,
+				796DAA2B1E89CCD6005DF24A /* CalleeBits.h in Headers */,
 				FE99B2491C24C3D300C82159 /* JITNegGenerator.h in Headers */,
 				0F24E54D17EE274900ABB217 /* JITOperations.h in Headers */,
 				FE3A06C01C11041A00390FDD /* JITRightShiftGenerator.h in Headers */,
@@ -9035,7 +9040,6 @@
 				A7482B9311671147003B0712 /* JSWeakObjectMapRefPrivate.h in Headers */,
 				709FB8681AE335C60039D069 /* JSWeakSet.h in Headers */,
 				AD2FCC311DB83D4900B3E736 /* JSWebAssembly.h in Headers */,
-				79E423E31DEE65320078D355 /* JSWebAssemblyCallee.h in Headers */,
 				AD2FCBE31DB58DAD00B3E736 /* JSWebAssemblyCompileError.h in Headers */,
 				796FB43A1DFF8C3F0039C95D /* JSWebAssemblyHelpers.h in Headers */,
 				AD2FCBE51DB58DAD00B3E736 /* JSWebAssemblyInstance.h in Headers */,
@@ -10603,7 +10607,6 @@
 				A7482B9411671147003B0712 /* JSWeakObjectMapRefPrivate.cpp in Sources */,
 				709FB8671AE335C60039D069 /* JSWeakSet.cpp in Sources */,
 				AD2FCC301DB83D4900B3E736 /* JSWebAssembly.cpp in Sources */,
-				79E423E21DEE65320078D355 /* JSWebAssemblyCallee.cpp in Sources */,
 				AD2FCBE21DB58DAD00B3E736 /* JSWebAssemblyCompileError.cpp in Sources */,
 				AD2FCBE41DB58DAD00B3E736 /* JSWebAssemblyInstance.cpp in Sources */,
 				ADE802981E08F1DE0058DE78 /* JSWebAssemblyLinkError.cpp in Sources */,
@@ -10726,6 +10729,7 @@
 				14280841107EC0930013E7B2 /* RegExp.cpp in Sources */,
 				A1712B3B11C7B212007A5315 /* RegExpCache.cpp in Sources */,
 				8642C510151C06A90046D4EF /* RegExpCachedResult.cpp in Sources */,
+				525C0DD91E935847002184CD /* WasmCallee.cpp in Sources */,
 				14280842107EC0930013E7B2 /* RegExpConstructor.cpp in Sources */,
 				8642C512151C083D0046D4EF /* RegExpMatchesArray.cpp in Sources */,
 				14280843107EC0930013E7B2 /* RegExpObject.cpp in Sources */,

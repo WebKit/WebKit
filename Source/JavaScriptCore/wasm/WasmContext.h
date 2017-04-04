@@ -27,11 +27,11 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "JSWebAssemblyInstance.h"
 #include "Options.h"
 
 namespace JSC {
 
-class JSWebAssemblyInstance;
 class VM;
 
 namespace Wasm {

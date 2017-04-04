@@ -76,6 +76,8 @@ namespace JSC {
         int32_t& payload();
         int32_t& tag();
 
+        void* pointer() const;
+
         static Register withInt(int32_t i)
         {
             Register r = jsNumber(i);
@@ -192,6 +194,15 @@ namespace JSC {
         return u.encodedValue.ptr;
 #else
         return bitwise_cast<JSCell*>(payload());
+#endif
+    }
+
+    ALWAYS_INLINE void* Register::pointer() const
+    {
+#if USE(JSVALUE64)
+        return u.encodedValue.ptr;
+#else
+        return bitwise_cast<void*>(payload());
 #endif
     }
 

@@ -260,9 +260,11 @@ public:
         if (m_remainingCapacityForFrameCapture) {
             // If callee is unknown, but we've not added any frame yet, we should
             // still add the frame, because something called us, and gave us arguments.
-            JSCell* callee = visitor->callee();
-            if (!callee && visitor->index())
-                return StackVisitor::Done;
+            if (visitor->callee().isCell()) {
+                JSCell* callee = visitor->callee().asCell();
+                if (!callee && visitor->index())
+                    return StackVisitor::Done;
+            }
 
             StringBuilder& builder = m_builder;
             if (!builder.isEmpty())
@@ -281,7 +283,7 @@ public:
                 builder.appendNumber(lineNumber);
             }
 
-            if (!callee)
+            if (!visitor->callee().rawPtr())
                 return StackVisitor::Done;
 
             m_remainingCapacityForFrameCapture--;

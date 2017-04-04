@@ -42,9 +42,10 @@ intptr_t StackFrame::sourceID() const
 
 String StackFrame::sourceURL() const
 {
+    if (m_isWasmFrame)
+        return ASCIILiteral("[wasm code]");
+
     if (!m_codeBlock) {
-        if (m_callee && m_callee->isAnyWasmCallee(*m_callee->vm()))
-            return ASCIILiteral("[wasm code]");
         return ASCIILiteral("[native code]");
     }
 
@@ -56,6 +57,9 @@ String StackFrame::sourceURL() const
 
 String StackFrame::functionName(VM& vm) const
 {
+    if (m_isWasmFrame)
+        return ASCIILiteral("<wasm>");
+
     if (m_codeBlock) {
         switch (m_codeBlock->codeType()) {
         case EvalCode:
@@ -72,8 +76,6 @@ String StackFrame::functionName(VM& vm) const
     }
     String name;
     if (m_callee) {
-        if (m_callee->isAnyWasmCallee(*m_callee->vm()))
-            return ASCIILiteral("<wasm>");
         if (m_callee->isObject())
             name = getCalculatedDisplayName(vm, jsCast<JSObject*>(m_callee.get())).impl();
     }

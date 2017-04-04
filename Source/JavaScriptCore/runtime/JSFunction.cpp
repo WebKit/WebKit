@@ -237,7 +237,10 @@ public:
 
     StackVisitor::Status operator()(StackVisitor& visitor) const
     {
-        JSCell* callee = visitor->callee();
+        if (!visitor->callee().isCell())
+            return StackVisitor::Continue;
+
+        JSCell* callee = visitor->callee().asCell();
         if (callee != m_targetCallee)
             return StackVisitor::Continue;
 
@@ -279,7 +282,10 @@ public:
 
     StackVisitor::Status operator()(StackVisitor& visitor) const
     {
-        JSCell* callee = visitor->callee();
+        if (!visitor->callee().isCell())
+            return StackVisitor::Continue;
+
+        JSCell* callee = visitor->callee().asCell();
 
         if (callee && callee->inherits(*callee->vm(), JSBoundFunction::info()))
             return StackVisitor::Continue;

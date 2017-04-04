@@ -178,7 +178,7 @@ bool addErrorInfoAndGetBytecodeOffset(ExecState* exec, VM& vm, JSObject* obj, bo
 
         if (bytecodeOffset) {
             FindFirstCallerFrameWithCodeblockFunctor functor(exec);
-            vm.topCallFrame->iterate(functor);
+            StackVisitor::visit(vm.topCallFrame, &vm, functor);
             callFrame = functor.foundCallFrame();
             unsigned stackIndex = functor.index();
             *bytecodeOffset = 0;

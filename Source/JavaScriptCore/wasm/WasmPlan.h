@@ -39,7 +39,6 @@ namespace JSC {
 
 class CallLinkInfo;
 class JSGlobalObject;
-class JSWebAssemblyCallee;
 class JSPromiseDeferred;
 
 namespace Wasm {

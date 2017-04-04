@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "CalleeBits.h"
 #include "VMEntryRecord.h"
 #include <functional>
 #include <wtf/Indenter.h>
@@ -62,7 +63,7 @@ public:
         size_t argumentCountIncludingThis() const { return m_argumentCountIncludingThis; }
         bool callerIsVMEntryFrame() const { return m_callerIsVMEntryFrame; }
         CallFrame* callerFrame() const { return m_callerFrame; }
-        JSCell* callee() const { return m_callee; }
+        CalleeBits callee() const { return m_callee; }
         CodeBlock* codeBlock() const { return m_codeBlock; }
         unsigned bytecodeOffset() const { return m_bytecodeOffset; }
         InlineCallFrame* inlineCallFrame() const {
@@ -110,7 +111,7 @@ public:
         VMEntryFrame* m_VMEntryFrame;
         VMEntryFrame* m_CallerVMEntryFrame;
         CallFrame* m_callerFrame;
-        JSCell* m_callee;
+        CalleeBits m_callee;
         CodeBlock* m_codeBlock;
         size_t m_index;
         size_t m_argumentCountIncludingThis;
@@ -130,9 +131,9 @@ public:
     //     Status operator()(StackVisitor&) const;
 
     template <typename Functor>
-    static void visit(CallFrame* startFrame, const Functor& functor)
+    static void visit(CallFrame* startFrame, VM* vm, const Functor& functor)
     {
-        StackVisitor visitor(startFrame);
+        StackVisitor visitor(startFrame, vm);
         while (visitor->callFrame()) {
             Status status = functor(visitor);
             if (status != Continue)
@@ -146,7 +147,7 @@ public:
     void unwindToMachineCodeBlockFrame();
 
 private:
-    JS_EXPORT_PRIVATE StackVisitor(CallFrame* startFrame);
+    JS_EXPORT_PRIVATE StackVisitor(CallFrame* startFrame, VM*);
 
     JS_EXPORT_PRIVATE void gotoNextFrame();
 

@@ -117,13 +117,13 @@ protected:
     void recordJSFrame(Vector<UnprocessedStackFrame>& stackTrace)
     {
         CallSiteIndex callSiteIndex;
-        JSValue unsafeCallee = m_callFrame->unsafeCallee();
+        CalleeBits unsafeCallee = m_callFrame->unsafeCallee();
         CodeBlock* codeBlock = m_callFrame->unsafeCodeBlock();
         if (codeBlock) {
             ASSERT(isValidCodeBlock(codeBlock));
             callSiteIndex = m_callFrame->unsafeCallSiteIndex();
         }
-        stackTrace[m_depth] = UnprocessedStackFrame(codeBlock, JSValue::encode(unsafeCallee), callSiteIndex);
+        stackTrace[m_depth] = UnprocessedStackFrame(codeBlock, unsafeCallee, callSiteIndex);
         m_depth++;
     }
 
@@ -485,11 +485,16 @@ void SamplingProfiler::processUnverifiedStackTraces()
             stackTrace.frames.append(StackFrame());
         };
 
-        auto storeCalleeIntoLastFrame = [&] (EncodedJSValue encodedCallee) {
+        auto storeCalleeIntoLastFrame = [&] (CalleeBits calleeBits) {
             // Set the callee if it's a valid GC object.
-            JSValue callee = JSValue::decode(encodedCallee);
             StackFrame& stackFrame = stackTrace.frames.last();
             bool alreadyHasExecutable = !!stackFrame.executable;
+            if (calleeBits.isWasm()) {
+                stackFrame.frameType = FrameType::Unknown;
+                return;
+            }
+
+            JSValue callee = calleeBits.asCell();
             if (!HeapUtil::isValueGCObject(m_vm.heap, filter, callee)) {
                 if (!alreadyHasExecutable)
                     stackFrame.frameType = FrameType::Unknown;

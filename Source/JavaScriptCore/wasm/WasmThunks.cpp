@@ -70,6 +70,14 @@ MacroAssemblerCodeRef throwExceptionFromWasmThunkGenerator()
         genericUnwind(vm, exec);
         ASSERT(!!vm->callFrameForCatch);
         ASSERT(!!vm->targetMachinePCForThrow);
+        // FIXME: We could make this better:
+        // This is a total hack, but the llint (both op_catch and handleUncaughtException)
+        // require a cell in the callee field to load the VM. (The baseline JIT does not require
+        // this since it is compiled with a constant VM pointer.) We could make the calling convention
+        // for exceptions first load callFrameForCatch info call frame register before jumping
+        // to the exception handler. If we did this, we could remove this terrible hack.
+        // https://bugs.webkit.org/show_bug.cgi?id=170440
+        bitwise_cast<uint64_t*>(exec)[CallFrameSlot::callee] = bitwise_cast<uint64_t>(wasmContext->webAssemblyToJSCallee());
         return vm->targetMachinePCForThrow;
     };
 

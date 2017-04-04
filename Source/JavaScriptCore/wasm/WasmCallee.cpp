@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,49 +23,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "WasmCallee.h"
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "JSCell.h"
-#include "RegisterAtOffsetList.h"
-#include "Structure.h"
-#include "WasmFormat.h"
+#include "WasmFaultSignalHandler.h"
 
-namespace JSC {
+namespace JSC { namespace Wasm {
 
-class JSWebAssemblyCallee : public JSCell {
-public:
-    typedef JSCell Base;
-    static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
+Callee::Callee(Entrypoint&& entrypoint)
+    : m_entrypoint(WTFMove(entrypoint))
+{
+    registerCode(m_entrypoint.compilation->codeRef().executableMemory()->start(), m_entrypoint.compilation->codeRef().executableMemory()->end());
+}
 
-    static JSWebAssemblyCallee* create(VM& vm, Wasm::Entrypoint&& entrypoint)
-    {
-        JSWebAssemblyCallee* callee = new (NotNull, allocateCell<JSWebAssemblyCallee>(vm.heap)) JSWebAssemblyCallee(vm);
-        callee->finishCreation(vm, WTFMove(entrypoint));
-        return callee;
-    }
-
-    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype) 
-    {
-        return Structure::create(vm, globalObject, prototype, TypeInfo(CellType, StructureFlags), info());
-    }
-
-    DECLARE_EXPORT_INFO;
-    static const bool needsDestruction = true;
-    static void destroy(JSCell*);
-
-    void* entrypoint() { return m_entrypoint.compilation->code().executableAddress(); }
-
-    RegisterAtOffsetList* calleeSaveRegisters() { return &m_entrypoint.calleeSaveRegisters; }
-
-private:
-    JS_EXPORT_PRIVATE void finishCreation(VM&, Wasm::Entrypoint&&);
-    JS_EXPORT_PRIVATE JSWebAssemblyCallee(VM&);
-
-    Wasm::Entrypoint m_entrypoint;
-};
-
-} // namespace JSC
+} } // namespace JSC::Wasm
 
 #endif // ENABLE(WEBASSEMBLY)

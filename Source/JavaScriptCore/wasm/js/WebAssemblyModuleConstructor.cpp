@@ -33,11 +33,11 @@
 #include "JSArrayBuffer.h"
 #include "JSCInlines.h"
 #include "JSTypedArrays.h"
-#include "JSWebAssemblyCallee.h"
 #include "JSWebAssemblyCompileError.h"
 #include "JSWebAssemblyHelpers.h"
 #include "JSWebAssemblyModule.h"
 #include "SymbolTable.h"
+#include "WasmCallee.h"
 #include "WasmPlan.h"
 #include "WebAssemblyModulePrototype.h"
 #include <wtf/StdLibExtras.h>

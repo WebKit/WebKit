@@ -237,7 +237,6 @@ VM::VM(VMType vmType, HeapType heapType)
     programExecutableStructure.set(*this, ProgramExecutable::createStructure(*this, 0, jsNull()));
     functionExecutableStructure.set(*this, FunctionExecutable::createStructure(*this, 0, jsNull()));
 #if ENABLE(WEBASSEMBLY)
-    webAssemblyCalleeStructure.set(*this, JSWebAssemblyCallee::createStructure(*this, 0, jsNull()));
     webAssemblyToJSCalleeStructure.set(*this, WebAssemblyToJSCallee::createStructure(*this, 0, jsNull()));
     webAssemblyCodeBlockStructure.set(*this, JSWebAssemblyCodeBlock::createStructure(*this, 0, jsNull()));
 #endif
@@ -616,14 +615,14 @@ void VM::throwException(ExecState* exec, Exception* exception)
 
     ASSERT(exec == topCallFrame || exec == exec->lexicalGlobalObject()->globalExec() || exec == exec->vmEntryGlobalObject()->globalExec());
 
-    interpreter->notifyDebuggerOfExceptionToBeThrown(exec, exception);
+    interpreter->notifyDebuggerOfExceptionToBeThrown(*this, exec, exception);
 
     setException(exception);
 }
 
 JSValue VM::throwException(ExecState* exec, JSValue thrownValue)
 {
-    VM& vm = exec->vm();
+    VM& vm = *this;
     Exception* exception = jsDynamicCast<Exception*>(vm, thrownValue);
     if (!exception)
         exception = Exception::create(*this, thrownValue);

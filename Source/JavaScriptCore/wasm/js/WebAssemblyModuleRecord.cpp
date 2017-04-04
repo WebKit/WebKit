@@ -125,8 +125,8 @@ void WebAssemblyModuleRecord::link(ExecState* exec, JSWebAssemblyModule* module,
                 //     a. Let func be an Exported Function Exotic Object created from c.
                 //     b. Append func to funcs.
                 //     c. Return func.
-                JSWebAssemblyCallee* jsEntrypointCallee = codeBlock->jsEntrypointCalleeFromFunctionIndexSpace(exp.kindIndex);
-                JSWebAssemblyCallee* wasmEntrypointCallee = codeBlock->wasmEntrypointCalleeFromFunctionIndexSpace(exp.kindIndex);
+                Wasm::Callee& jsEntrypointCallee = codeBlock->jsEntrypointCalleeFromFunctionIndexSpace(exp.kindIndex);
+                Wasm::Callee& wasmEntrypointCallee = codeBlock->wasmEntrypointCalleeFromFunctionIndexSpace(exp.kindIndex);
                 Wasm::SignatureIndex signatureIndex = module->signatureIndexFromFunctionIndexSpace(exp.kindIndex);
                 const Wasm::Signature& signature = Wasm::SignatureInformation::get(signatureIndex);
                 WebAssemblyFunction* function = WebAssemblyFunction::create(vm, globalObject, signature.argumentCount(), exp.field, instance, jsEntrypointCallee, wasmEntrypointCallee, signatureIndex);
@@ -196,8 +196,8 @@ void WebAssemblyModuleRecord::link(ExecState* exec, JSWebAssemblyModule* module,
             JSObject* startFunction = instance->importFunction(startFunctionIndexSpace);
             m_startFunction.set(vm, this, startFunction);
         } else {
-            JSWebAssemblyCallee* jsEntrypointCallee = codeBlock->jsEntrypointCalleeFromFunctionIndexSpace(startFunctionIndexSpace);
-            JSWebAssemblyCallee* wasmEntrypointCallee = codeBlock->wasmEntrypointCalleeFromFunctionIndexSpace(startFunctionIndexSpace);
+            Wasm::Callee& jsEntrypointCallee = codeBlock->jsEntrypointCalleeFromFunctionIndexSpace(startFunctionIndexSpace);
+            Wasm::Callee& wasmEntrypointCallee = codeBlock->wasmEntrypointCalleeFromFunctionIndexSpace(startFunctionIndexSpace);
             WebAssemblyFunction* function = WebAssemblyFunction::create(vm, globalObject, signature.argumentCount(), "start", instance, jsEntrypointCallee, wasmEntrypointCallee, signatureIndex);
             m_startFunction.set(vm, this, function);
         }
@@ -270,8 +270,8 @@ JSValue WebAssemblyModuleRecord::evaluate(ExecState* exec)
                     continue;
                 }
 
-                JSWebAssemblyCallee* jsEntrypointCallee = codeBlock->jsEntrypointCalleeFromFunctionIndexSpace(functionIndex);
-                JSWebAssemblyCallee* wasmEntrypointCallee = codeBlock->wasmEntrypointCalleeFromFunctionIndexSpace(functionIndex);
+                Wasm::Callee& jsEntrypointCallee = codeBlock->jsEntrypointCalleeFromFunctionIndexSpace(functionIndex);
+                Wasm::Callee& wasmEntrypointCallee = codeBlock->wasmEntrypointCalleeFromFunctionIndexSpace(functionIndex);
                 const Wasm::Signature& signature = Wasm::SignatureInformation::get(signatureIndex);
                 // FIXME: Say we export local function "foo" at function index 0.
                 // What if we also set it to the table an Element w/ index 0.

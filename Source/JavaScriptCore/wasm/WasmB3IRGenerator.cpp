@@ -922,7 +922,7 @@ auto B3IRGenerator::addCall(uint32_t functionIndex, const Signature& signature, 
         Value* codeBlock = isJSBlock->appendNew<MemoryValue>(m_proc,
             Load, pointerType(), origin(), m_instanceValue, JSWebAssemblyInstance::offsetOfCodeBlock());
         Value* jumpDestination = isJSBlock->appendNew<MemoryValue>(m_proc,
-            Load, pointerType(), origin(), codeBlock, JSWebAssemblyCodeBlock::offsetOfImportWasmToJSStub(m_info.internalFunctionCount(), functionIndex));
+            Load, pointerType(), origin(), codeBlock, JSWebAssemblyCodeBlock::offsetOfImportWasmToJSStub(functionIndex));
         Value* jsCallResult = wasmCallingConvention().setupCall(m_proc, isJSBlock, origin(), args, toB3Type(returnType),
             [&] (PatchpointValue* patchpoint) {
                 patchpoint->effects.writesPinned = true;

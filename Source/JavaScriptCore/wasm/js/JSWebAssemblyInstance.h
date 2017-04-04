@@ -83,6 +83,8 @@ public:
     static size_t offsetOfImportFunctions() { return WTF::roundUpToMultipleOf<sizeof(WriteBarrier<JSCell>)>(sizeof(JSWebAssemblyInstance)); }
     static size_t offsetOfImportFunction(size_t importFunctionNum) { return offsetOfImportFunctions() + importFunctionNum * sizeof(sizeof(WriteBarrier<JSCell>)); }
 
+    WebAssemblyToJSCallee* webAssemblyToJSCallee() { return m_callee.get(); }
+
 protected:
     JSWebAssemblyInstance(VM&, Structure*, unsigned numImportFunctions);
     void finishCreation(VM&, JSWebAssemblyModule*, JSModuleNamespaceObject*);

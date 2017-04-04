@@ -27,7 +27,8 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "JSWebAssemblyCallee.h"
+#include "CalleeBits.h"
+#include "WasmCallee.h"
 #include "WasmPlan.h"
 
 namespace JSC { namespace Wasm {
@@ -39,13 +40,13 @@ void Plan::initializeCallees(const Functor& callback)
     for (unsigned internalFunctionIndex = 0; internalFunctionIndex < m_wasmInternalFunctions.size(); ++internalFunctionIndex) {
         WasmInternalFunction* function = m_wasmInternalFunctions[internalFunctionIndex].get();
 
-        JSWebAssemblyCallee* jsEntrypointCallee = JSWebAssemblyCallee::create(m_vm, WTFMove(function->jsToWasmEntrypoint));
-        MacroAssembler::repatchPointer(function->jsToWasmCalleeMoveLocation, jsEntrypointCallee);
+        Ref<Wasm::Callee> jsEntrypointCallee = Wasm::Callee::create(WTFMove(function->jsToWasmEntrypoint));
+        MacroAssembler::repatchPointer(function->jsToWasmCalleeMoveLocation, CalleeBits::boxWasm(jsEntrypointCallee.ptr()));
 
-        JSWebAssemblyCallee* wasmEntrypointCallee = JSWebAssemblyCallee::create(m_vm, WTFMove(function->wasmEntrypoint));
-        MacroAssembler::repatchPointer(function->wasmCalleeMoveLocation, wasmEntrypointCallee);
+        Ref<Wasm::Callee> wasmEntrypointCallee = Wasm::Callee::create(WTFMove(function->wasmEntrypoint));
+        MacroAssembler::repatchPointer(function->wasmCalleeMoveLocation, CalleeBits::boxWasm(wasmEntrypointCallee.ptr()));
 
-        callback(internalFunctionIndex, jsEntrypointCallee, wasmEntrypointCallee);
+        callback(internalFunctionIndex, WTFMove(jsEntrypointCallee), WTFMove(wasmEntrypointCallee));
     }
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,57 +25,54 @@
 
 #pragma once
 
-#include "Strong.h"
-#include <limits.h>
+#include <wtf/StdLibExtras.h>
 
 namespace JSC {
 
-class CodeBlock;
-class JSObject;
+namespace Wasm {
+class Callee;
+}
 
-class StackFrame {
+class JSCell;
+
+class CalleeBits {
+    static constexpr uintptr_t wasmTag = 1;
 public:
-    StackFrame() = default;
+    CalleeBits() = default;
+    CalleeBits(void* ptr) : m_ptr(ptr) { } 
 
-    StackFrame(VM& vm, JSCell* callee)
-        : m_callee(vm, callee)
-    { }
-
-    StackFrame(VM& vm, JSCell* callee, CodeBlock* codeBlock, unsigned bytecodeOffset)
-        : m_callee(vm, callee)
-        , m_codeBlock(vm, codeBlock)
-        , m_bytecodeOffset(bytecodeOffset)
-    { }
-
-    static StackFrame wasm()
+    CalleeBits& operator=(JSCell* cell)
     {
-        StackFrame result;
-        result.m_isWasmFrame = true;
-        return result;
+        m_ptr = cell;
+        ASSERT(isCell());
+        return *this;
     }
 
-    bool hasLineAndColumnInfo() const { return !!m_codeBlock; }
+    static void* boxWasm(Wasm::Callee* callee)
+    {
+        ASSERT(!(bitwise_cast<uintptr_t>(callee) & wasmTag));
+        return bitwise_cast<void*>(bitwise_cast<uintptr_t>(callee) | wasmTag);
+    }
+
+    bool isWasm() const { return bitwise_cast<uintptr_t>(m_ptr) & wasmTag; }
+    bool isCell() const { return !isWasm(); }
+
+    JSCell* asCell() const
+    {
+        ASSERT(!isWasm());
+        return static_cast<JSCell*>(m_ptr);
+    }
+
+    Wasm::Callee* asWasmCallee() const
+    {
+        ASSERT(isWasm());
+        return bitwise_cast<Wasm::Callee*>(bitwise_cast<uintptr_t>(m_ptr) & ~wasmTag);
+    }
+
+    void* rawPtr() const { return m_ptr; }
     
-    void computeLineAndColumn(unsigned& line, unsigned& column) const;
-    String functionName(VM&) const;
-    intptr_t sourceID() const;
-    String sourceURL() const;
-    String toString(VM&) const;
-
-    bool hasBytecodeOffset() const { return m_bytecodeOffset != UINT_MAX; }
-    unsigned bytecodeOffset()
-    {
-        ASSERT(m_bytecodeOffset != UINT_MAX);
-        return m_bytecodeOffset;
-    }
-
-
 private:
-    Strong<JSCell> m_callee { };
-    Strong<CodeBlock> m_codeBlock { };
-    unsigned m_bytecodeOffset { UINT_MAX };
-    bool m_isWasmFrame { false };
+    void* m_ptr { nullptr };
 };
 
 } // namespace JSC
-

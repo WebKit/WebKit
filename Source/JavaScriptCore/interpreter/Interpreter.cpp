@@ -472,14 +472,14 @@ public:
         }
 
         if (m_remainingCapacityForFrameCapture) {
-            if (!visitor->isWasmFrame()
-                && !!visitor->codeBlock()
-                && !visitor->codeBlock()->unlinkedCodeBlock()->isBuiltinFunction()) {
+            if (visitor->isWasmFrame())
+                m_results.append(StackFrame::wasm());
+            else if (!!visitor->codeBlock() && !visitor->codeBlock()->unlinkedCodeBlock()->isBuiltinFunction()) {
                 m_results.append(
-                    StackFrame(m_vm, visitor->callee(), visitor->codeBlock(), visitor->bytecodeOffset()));
+                    StackFrame(m_vm, visitor->callee().asCell(), visitor->codeBlock(), visitor->bytecodeOffset()));
             } else {
                 m_results.append(
-                    StackFrame(m_vm,  visitor->callee()));
+                    StackFrame(m_vm, visitor->callee().asCell()));
             }
     
             m_remainingCapacityForFrameCapture--;
@@ -503,7 +503,7 @@ void Interpreter::getStackTrace(Vector<StackFrame>& results, size_t framesToSkip
         return;
 
     size_t framesCount = 0;
-    callFrame->iterate([&] (StackVisitor&) -> StackVisitor::Status {
+    StackVisitor::visit(callFrame, &vm, [&] (StackVisitor&) -> StackVisitor::Status {
         framesCount++;
         return StackVisitor::Continue;
     });
@@ -514,7 +514,7 @@ void Interpreter::getStackTrace(Vector<StackFrame>& results, size_t framesToSkip
     framesCount = std::min(maxStackSize, framesCount);
 
     GetStackTraceFunctor functor(vm, results, framesToSkip, framesCount);
-    callFrame->iterate(functor);
+    StackVisitor::visit(callFrame, &vm, functor);
     ASSERT(results.size() == results.capacity());
 }
 
@@ -575,13 +575,13 @@ private:
     mutable HandlerInfo* m_handler;
 };
 
-ALWAYS_INLINE static void notifyDebuggerOfUnwinding(CallFrame* callFrame)
+ALWAYS_INLINE static void notifyDebuggerOfUnwinding(VM& vm, CallFrame* callFrame)
 {
-    VM& vm = callFrame->vm();
     auto catchScope = DECLARE_CATCH_SCOPE(vm);
-    if (Debugger* debugger = callFrame->vmEntryGlobalObject()->debugger()) {
+    if (Debugger* debugger = callFrame->vmEntryGlobalObject(vm)->debugger()) {
         SuspendExceptionScope scope(&vm);
-        if (jsDynamicCast<JSFunction*>(vm, callFrame->jsCallee()))
+        if (callFrame->isAnyWasmCallee()
+            || (callFrame->callee().isCell() && callFrame->callee().asCell()->inherits(vm, JSFunction::info())))
             debugger->unwindEvent(callFrame);
         else
             debugger->didExecuteProgram(callFrame);
@@ -591,8 +591,9 @@ ALWAYS_INLINE static void notifyDebuggerOfUnwinding(CallFrame* callFrame)
 
 class UnwindFunctor {
 public:
-    UnwindFunctor(CallFrame*& callFrame, bool isTermination, CodeBlock*& codeBlock, HandlerInfo*& handler)
-        : m_callFrame(callFrame)
+    UnwindFunctor(VM& vm, CallFrame*& callFrame, bool isTermination, CodeBlock*& codeBlock, HandlerInfo*& handler)
+        : m_vm(vm)
+        , m_callFrame(callFrame)
         , m_isTermination(isTermination)
         , m_codeBlock(codeBlock)
         , m_handler(handler)
@@ -614,7 +615,7 @@ public:
             }
         }
 
-        notifyDebuggerOfUnwinding(m_callFrame);
+        notifyDebuggerOfUnwinding(m_vm, m_callFrame);
 
         copyCalleeSavesToVMEntryFrameCalleeSavesBuffer(visitor);
 
@@ -634,13 +635,12 @@ private:
         if (!currentCalleeSaves)
             return;
 
-        VM& vm = m_callFrame->vm();
         RegisterAtOffsetList* allCalleeSaves = VM::getAllCalleeSaveRegisterOffsets();
         RegisterSet dontCopyRegisters = RegisterSet::stackRegisters();
         intptr_t* frame = reinterpret_cast<intptr_t*>(m_callFrame->registers());
 
         unsigned registerCount = currentCalleeSaves->size();
-        VMEntryRecord* record = vmEntryRecord(vm.topVMEntryFrame);
+        VMEntryRecord* record = vmEntryRecord(m_vm.topVMEntryFrame);
         for (unsigned i = 0; i < registerCount; i++) {
             RegisterAtOffset currentEntry = currentCalleeSaves->at(i);
             if (dontCopyRegisters.get(currentEntry.reg()))
@@ -654,6 +654,7 @@ private:
 #endif
     }
 
+    VM& m_vm;
     CallFrame*& m_callFrame;
     bool m_isTermination;
     CodeBlock*& m_codeBlock;
@@ -686,18 +687,17 @@ NEVER_INLINE HandlerInfo* Interpreter::unwind(VM& vm, CallFrame*& callFrame, Exc
 
     // Calculate an exception handler vPC, unwinding call frames as necessary.
     HandlerInfo* handler = nullptr;
-    UnwindFunctor functor(callFrame, isTerminatedExecutionException(vm, exception), codeBlock, handler);
-    callFrame->iterate(functor);
+    UnwindFunctor functor(vm, callFrame, isTerminatedExecutionException(vm, exception), codeBlock, handler);
+    StackVisitor::visit(callFrame, &vm, functor);
     if (!handler)
         return nullptr;
 
     return handler;
 }
 
-void Interpreter::notifyDebuggerOfExceptionToBeThrown(CallFrame* callFrame, Exception* exception)
+void Interpreter::notifyDebuggerOfExceptionToBeThrown(VM& vm, CallFrame* callFrame, Exception* exception)
 {
-    VM& vm = callFrame->vm();
-    Debugger* debugger = callFrame->vmEntryGlobalObject()->debugger();
+    Debugger* debugger = callFrame->vmEntryGlobalObject(vm)->debugger();
     if (debugger && debugger->needsExceptionCallbacks() && !exception->didNotifyInspectorOfThrow()) {
         // This code assumes that if the debugger is enabled then there is no inlining.
         // If that assumption turns out to be false then we'll ignore the inlined call
@@ -710,7 +710,7 @@ void Interpreter::notifyDebuggerOfExceptionToBeThrown(CallFrame* callFrame, Exce
             hasCatchHandler = false;
         else {
             GetCatchHandlerFunctor functor;
-            callFrame->iterate(functor);
+            StackVisitor::visit(callFrame, &vm, functor);
             HandlerInfo* handler = functor.handler();
             ASSERT(!handler || handler->isCatchHandler());
             hasCatchHandler = !!handler;

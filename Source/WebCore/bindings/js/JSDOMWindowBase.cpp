@@ -304,12 +304,12 @@ DOMWindow& callerDOMWindow(ExecState* exec)
             if (auto* codeBlock = visitor->codeBlock())
                 m_globalObject = codeBlock->globalObject();
             else {
-                ASSERT(visitor->callee());
+                ASSERT(visitor->callee().rawPtr());
                 // FIXME: Callee is not an object if the caller is Web Assembly.
                 // Figure out what to do here. We can probably get the global object
                 // from the top-most Wasm Instance. https://bugs.webkit.org/show_bug.cgi?id=165721
-                if (visitor->callee()->isObject())
-                    m_globalObject = jsCast<JSObject*>(visitor->callee())->globalObject();
+                if (visitor->callee().isCell() && visitor->callee().asCell()->isObject())
+                    m_globalObject = jsCast<JSObject*>(visitor->callee().asCell())->globalObject();
             }
             return StackVisitor::Done;
         }

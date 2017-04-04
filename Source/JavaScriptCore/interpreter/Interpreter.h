@@ -138,7 +138,7 @@ namespace JSC {
         void getArgumentsData(CallFrame*, JSFunction*&, ptrdiff_t& firstParameterIndex, Register*& argv, int& argc);
         
         NEVER_INLINE HandlerInfo* unwind(VM&, CallFrame*&, Exception*, UnwindStart);
-        void notifyDebuggerOfExceptionToBeThrown(CallFrame*, Exception*);
+        void notifyDebuggerOfExceptionToBeThrown(VM&, CallFrame*, Exception*);
         NEVER_INLINE void debug(CallFrame*, DebugHookType);
         static JSString* stackTraceAsString(VM&, const Vector<StackFrame>&);
 

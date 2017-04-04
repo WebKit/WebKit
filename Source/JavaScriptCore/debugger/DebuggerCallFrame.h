@@ -45,7 +45,7 @@ class DebuggerCallFrame : public RefCounted<DebuggerCallFrame> {
 public:
     enum Type { ProgramType, FunctionType };
 
-    static Ref<DebuggerCallFrame> create(CallFrame*);
+    static Ref<DebuggerCallFrame> create(VM&, CallFrame*);
 
     JS_EXPORT_PRIVATE RefPtr<DebuggerCallFrame> callerFrame();
     ExecState* globalExec();
@@ -69,14 +69,14 @@ public:
     // The following are only public for the Debugger's use only. They will be
     // made private soon. Other clients should not use these.
 
-    JS_EXPORT_PRIVATE TextPosition currentPosition();
-    JS_EXPORT_PRIVATE static TextPosition positionForCallFrame(CallFrame*);
+    JS_EXPORT_PRIVATE TextPosition currentPosition(VM&);
+    JS_EXPORT_PRIVATE static TextPosition positionForCallFrame(VM&, CallFrame*);
     JS_EXPORT_PRIVATE static SourceID sourceIDForCallFrame(CallFrame*);
 
     bool isTailDeleted() const { return m_shadowChickenFrame.isTailDeleted; }
 
 private:
-    DebuggerCallFrame(CallFrame*, const ShadowChicken::Frame&);
+    DebuggerCallFrame(VM&, CallFrame*, const ShadowChicken::Frame&);
 
     CallFrame* m_validMachineFrame;
     RefPtr<DebuggerCallFrame> m_caller;

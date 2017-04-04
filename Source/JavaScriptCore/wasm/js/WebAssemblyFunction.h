@@ -28,7 +28,7 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "JSFunction.h"
-#include "JSWebAssemblyCallee.h"
+#include "WasmCallee.h"
 #include <wtf/Noncopyable.h>
 
 namespace JSC {
@@ -49,29 +49,31 @@ public:
 
     DECLARE_EXPORT_INFO;
 
-    JS_EXPORT_PRIVATE static WebAssemblyFunction* create(VM&, JSGlobalObject*, unsigned, const String&, JSWebAssemblyInstance*, JSWebAssemblyCallee* jsEntrypoint, JSWebAssemblyCallee* wasmEntrypoint, Wasm::SignatureIndex);
+    JS_EXPORT_PRIVATE static WebAssemblyFunction* create(VM&, JSGlobalObject*, unsigned, const String&, JSWebAssemblyInstance*, Wasm::Callee& jsEntrypoint, Wasm::Callee& wasmEntrypoint, Wasm::SignatureIndex);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     JSWebAssemblyInstance* instance() const { return m_instance.get(); }
     Wasm::SignatureIndex signatureIndex() const { return m_signatureIndex; }
-    void* wasmEntrypoint() { return m_wasmEntryPointCode; }
-    void* jsEntrypoint() { return m_jsEntrypoint->entrypoint(); }
+    void* wasmEntrypoint() { return m_wasmEntrypoint; }
+    void* jsEntrypoint() { return m_jsEntrypoint; }
 
     static ptrdiff_t offsetOfInstance() { return OBJECT_OFFSETOF(WebAssemblyFunction, m_instance); }
-    static ptrdiff_t offsetOfWasmEntryPointCode() { return OBJECT_OFFSETOF(WebAssemblyFunction, m_wasmEntryPointCode); }
+    static ptrdiff_t offsetOfWasmEntrypoint() { return OBJECT_OFFSETOF(WebAssemblyFunction, m_wasmEntrypoint); }
 
 protected:
     static void visitChildren(JSCell*, SlotVisitor&);
 
-    void finishCreation(VM&, NativeExecutable*, unsigned length, const String& name, JSWebAssemblyInstance*, JSWebAssemblyCallee* jsEntrypoint, JSWebAssemblyCallee* wasmEntrypoint);
+    void finishCreation(VM&, NativeExecutable*, unsigned length, const String& name, JSWebAssemblyInstance*);
 
 private:
-    WebAssemblyFunction(VM&, JSGlobalObject*, Structure*, JSWebAssemblyCallee*, Wasm::SignatureIndex);
+    WebAssemblyFunction(VM&, JSGlobalObject*, Structure*, Wasm::Callee& jsEntrypoint, Wasm::Callee& wasmEntrypoint, Wasm::SignatureIndex);
 
     WriteBarrier<JSWebAssemblyInstance> m_instance;
-    void* m_wasmEntryPointCode; // Cache code pointer: allows the wasm -> wasm stub to do a single load and jump instead of having dependent loads.
-    WriteBarrier<JSWebAssemblyCallee> m_jsEntrypoint;
-    WriteBarrier<JSWebAssemblyCallee> m_wasmEntrypoint;
+    // We can hold raw pointers to these executable address pointers since
+    // we have a GC reference to our instance, which keeps alive the CodeBlock,
+    // which owns this pointer.
+    void* m_jsEntrypoint;
+    void* m_wasmEntrypoint;
     // It's safe to just hold the raw signatureIndex because we have a reference
     // to our Instance, which points to the Module that exported us, which
     // ensures that the actual Signature doesn't get deallocated.

@@ -33,7 +33,7 @@ namespace JSC {
 template<typename Functor>
 void ShadowChicken::iterate(VM& vm, ExecState* exec, const Functor& functor)
 {
-    DeferGC deferGC(exec->vm().heap);
+    DeferGC deferGC(vm.heap);
 
     update(vm, exec);
     
