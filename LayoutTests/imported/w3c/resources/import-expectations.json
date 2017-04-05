@@ -199,6 +199,7 @@
     "web-platform-tests/html/browsers/sandboxing": "skip", 
     "web-platform-tests/html/browsers/windows/auxiliary-browsing-contexts/": "import", 
     "web-platform-tests/html/browsers/windows/browsing-context-first-created.xhtml": "skip", 
+    "web-platform-tests/html/browsers/windows/browsing-context-names": "import", 
     "web-platform-tests/html/browsers/windows/nested-browsing-contexts/frameElement.html": "skip", 
     "web-platform-tests/html/browsers/windows/targeting-cross-origin-nested-browsing-contexts.html": "skip", 
     "web-platform-tests/html/dom/documents/dom-tree-accessors/Document.currentScript.sub.html": "skip", 

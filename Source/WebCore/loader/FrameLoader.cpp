@@ -3198,7 +3198,7 @@ void FrameLoader::continueLoadAfterNewWindowPolicy(const ResourceRequest& reques
 
     mainFrame->loader().forceSandboxFlags(frame->loader().effectiveSandboxFlags());
 
-    if (frameName != "_blank")
+    if (!equalIgnoringASCIICase(frameName, "_blank"))
         mainFrame->tree().setName(frameName);
 
     mainFrame->page()->setOpenedByDOM();
@@ -3704,9 +3704,9 @@ RefPtr<Frame> createWindow(Frame& openerFrame, Frame& lookupFrame, const FrameLo
 
     created = false;
 
-    if (!request.frameName().isEmpty() && request.frameName() != "_blank") {
+    if (!request.frameName().isEmpty() && !equalIgnoringASCIICase(request.frameName(), "_blank")) {
         if (RefPtr<Frame> frame = lookupFrame.loader().findFrameForNavigation(request.frameName(), openerFrame.document())) {
-            if (request.frameName() != "_self") {
+            if (!equalIgnoringASCIICase(request.frameName(), "_self")) {
                 if (Page* page = frame->page())
                     page->chrome().focus();
             }
@@ -3742,7 +3742,7 @@ RefPtr<Frame> createWindow(Frame& openerFrame, Frame& lookupFrame, const FrameLo
 
     frame->loader().forceSandboxFlags(openerFrame.document()->sandboxFlags());
 
-    if (request.frameName() != "_blank")
+    if (!equalIgnoringASCIICase(request.frameName(), "_blank"))
         frame->tree().setName(request.frameName());
 
     page->chrome().setToolbarsVisible(features.toolBarVisible || features.locationBarVisible);

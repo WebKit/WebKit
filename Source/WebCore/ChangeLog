@@ -1,3 +1,32 @@
+2017-04-05  Chris Dumez  <cdumez@apple.com>
+
+        _blank / _self / _parent / _top browsing context names should be case-insensitive
+        https://bugs.webkit.org/show_bug.cgi?id=169747
+
+        Reviewed by Alex Christensen.
+
+        _blank / _self / _parent / _top browsing context names should be case-insensitive
+        as per the HTML specification:
+        - https://html.spec.whatwg.org/#browsing-context-names
+
+        This aligns our behavior with Firefox as well. See discussion at:
+        - https://github.com/whatwg/html/issues/2443
+
+        Tests: imported/w3c/web-platform-tests/html/browsers/windows/browsing-context-names/browsing-context-_blank.html
+               imported/w3c/web-platform-tests/html/browsers/windows/browsing-context-names/browsing-context-choose-parent-001.html
+               imported/w3c/web-platform-tests/html/browsers/windows/browsing-context-names/browsing-context-choose-parent-002.html
+               imported/w3c/web-platform-tests/html/browsers/windows/browsing-context-names/browsing-context-choose-parent-003.html
+               imported/w3c/web-platform-tests/html/browsers/windows/browsing-context-names/browsing-context-choose-parent-004.html
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::continueLoadAfterNewWindowPolicy):
+        (WebCore::createWindow):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::open):
+        * page/FrameTree.cpp:
+        (WebCore::FrameTree::uniqueChildName):
+        (WebCore::FrameTree::find):
+
 2017-04-05  Miguel Gomez  <magomez@igalia.com>
 
         [GTK+] PNG animations that should run once are not played at all

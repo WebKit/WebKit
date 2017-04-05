@@ -2263,9 +2263,9 @@ RefPtr<DOMWindow> DOMWindow::open(const String& urlString, const AtomicString& f
     // Get the target frame for the special cases of _top and _parent.
     // In those cases, we schedule a location change right now and return early.
     Frame* targetFrame = nullptr;
-    if (frameName == "_top")
+    if (equalIgnoringASCIICase(frameName, "_top"))
         targetFrame = &m_frame->tree().top();
-    else if (frameName == "_parent") {
+    else if (equalIgnoringASCIICase(frameName, "_parent")) {
         if (Frame* parent = m_frame->tree().parent())
             targetFrame = parent;
         else

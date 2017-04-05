@@ -1,3 +1,47 @@
+2017-04-05  Chris Dumez  <cdumez@apple.com>
+
+        _blank / _self / _parent / _top browsing context names should be case-insensitive
+        https://bugs.webkit.org/show_bug.cgi?id=169747
+
+        Reviewed by Alex Christensen.
+
+        Import test coverage from upstream web-platform-tests.
+
+        * resources/import-expectations.json:
+        * web-platform-tests/html/browsers/windows/browsing-context-names/001.html:
+        * web-platform-tests/html/browsers/windows/browsing-context-names/002.html:
+        * web-platform-tests/html/browsers/windows/browsing-context-names/browsing-context-_blank-expected.txt: Added.
+        * web-platform-tests/html/browsers/windows/browsing-context-names/browsing-context-_blank.html: Added.
+        * web-platform-tests/html/browsers/windows/browsing-context-names/browsing-context-choose-existing.html:
+        * web-platform-tests/html/browsers/windows/browsing-context-names/browsing-context-choose-parent-001-expected.txt: Added.
+        * web-platform-tests/html/browsers/windows/browsing-context-names/browsing-context-choose-parent-001.html: Added.
+        * web-platform-tests/html/browsers/windows/browsing-context-names/browsing-context-choose-parent-002-expected.txt: Added.
+        * web-platform-tests/html/browsers/windows/browsing-context-names/browsing-context-choose-parent-002.html: Added.
+        * web-platform-tests/html/browsers/windows/browsing-context-names/browsing-context-choose-parent-003-expected.txt: Added.
+        * web-platform-tests/html/browsers/windows/browsing-context-names/browsing-context-choose-parent-003.html: Added.
+        * web-platform-tests/html/browsers/windows/browsing-context-names/browsing-context-choose-parent-004-expected.txt: Added.
+        * web-platform-tests/html/browsers/windows/browsing-context-names/browsing-context-choose-parent-004.html: Added.
+        * web-platform-tests/html/browsers/windows/browsing-context-names/browsing-context-choose-self-1.html:
+        * web-platform-tests/html/browsers/windows/browsing-context-names/browsing-context-choose-self-2.html:
+        * web-platform-tests/html/browsers/windows/browsing-context-names/browsing-context-default-name-expected.txt:
+        * web-platform-tests/html/browsers/windows/browsing-context-names/browsing-context-default-name.html:
+        * web-platform-tests/html/browsers/windows/browsing-context-names/existing.html:
+        * web-platform-tests/html/browsers/windows/browsing-context-names/resources/parent-iframe-1.html: Added.
+        * web-platform-tests/html/browsers/windows/browsing-context-names/resources/parent-iframe-2.html: Copied from LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/browsing-context-names/existing.html.
+        * web-platform-tests/html/browsers/windows/browsing-context-names/resources/parent-iframe-3.html: Added.
+        * web-platform-tests/html/browsers/windows/browsing-context-names/resources/parent-iframe-insensitive-1.html: Added.
+        * web-platform-tests/html/browsers/windows/browsing-context-names/resources/parent-iframe-insensitive-2.html: Added.
+        * web-platform-tests/html/browsers/windows/browsing-context-names/resources/parent-top-nested.html: Added.
+        * web-platform-tests/html/browsers/windows/browsing-context-names/resources/parent-top-replace.html: Added.
+        * web-platform-tests/html/browsers/windows/browsing-context-names/resources/parent-top.html: Added.
+        * web-platform-tests/html/browsers/windows/browsing-context-names/resources/post-to-opener.html: Added.
+        * web-platform-tests/html/browsers/windows/browsing-context-names/resources/post-to-top-or-close.html: Added.
+        * web-platform-tests/html/browsers/windows/browsing-context-names/resources/post-to-top.html: Added.
+        * web-platform-tests/html/browsers/windows/browsing-context-names/resources/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/browsing-context-names/w3c-import.log.
+        * web-platform-tests/html/browsers/windows/browsing-context-names/self1.html:
+        * web-platform-tests/html/browsers/windows/browsing-context-names/self2.html:
+        * web-platform-tests/html/browsers/windows/browsing-context-names/w3c-import.log:
+
 2017-03-31  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Update W3C Test Suite

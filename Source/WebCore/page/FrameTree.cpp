@@ -109,7 +109,7 @@ void FrameTree::removeChild(Frame& child)
 AtomicString FrameTree::uniqueChildName(const AtomicString& requestedName) const
 {
     // If the requested name (the frame's "name" attribute) is unique, just use that.
-    if (!requestedName.isEmpty() && !child(requestedName) && requestedName != "_blank")
+    if (!requestedName.isEmpty() && !child(requestedName) && !equalIgnoringASCIICase(requestedName, "_blank"))
         return requestedName;
 
     // The "name" attribute was not unique or absent. Generate a name based on the
@@ -251,17 +251,18 @@ Frame* FrameTree::child(const AtomicString& name) const
 
 Frame* FrameTree::find(const AtomicString& name) const
 {
-    if (name == "_self" || name == "_current" || name.isEmpty())
+    // FIXME: _current is not part of the HTML specification.
+    if (equalIgnoringASCIICase(name, "_self") || name == "_current" || name.isEmpty())
         return &m_thisFrame;
     
-    if (name == "_top")
+    if (equalIgnoringASCIICase(name, "_top"))
         return &top();
     
-    if (name == "_parent")
+    if (equalIgnoringASCIICase(name, "_parent"))
         return parent() ? parent() : &m_thisFrame;
 
     // Since "_blank" should never be any frame's name, the following is only an optimization.
-    if (name == "_blank")
+    if (equalIgnoringASCIICase(name, "_blank"))
         return nullptr;
 
     // Search subtree starting with this frame first.
