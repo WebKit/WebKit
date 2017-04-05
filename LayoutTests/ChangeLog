@@ -1,3 +1,10 @@
+2017-04-04  Alexey Proskuryakov  <ap@apple.com>
+
+        Mark imported/w3c/web-platform-tests/fetch/api/response/response-trailer.html as flaky
+        for https://bugs.webkit.org/show_bug.cgi?id=170493
+
+        * platform/mac/TestExpectations:
+
 2017-04-04  Youenn Fablet  <youenn@apple.com>
 
         Canvas is tainted when painting a video with MediaStreamTrack
