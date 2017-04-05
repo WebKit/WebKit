@@ -1,3 +1,13 @@
+2017-04-04  Mark Lam  <mark.lam@apple.com>
+
+        On ARM64, DFG::SpeculativeJIT::compileArithMod() failed to ensure result is of DataFormatInt32.
+        https://bugs.webkit.org/show_bug.cgi?id=170473
+        <rdar://problem/29912391>
+
+        Reviewed by Saam Barati.
+
+        * stress/regress-170473.js: Added.
+
 2017-04-03  Mark Lam  <mark.lam@apple.com>
 
         Fix incorrect capacity delta calculation reported in SparseArrayValueMap::add().

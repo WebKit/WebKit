@@ -5101,7 +5101,10 @@ void SpeculativeJIT::compileArithMod(Node* node)
             speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branchTest32(JITCompiler::Zero, divisorGPR));
         else {
             JITCompiler::Jump denominatorNotZero = m_jit.branchTest32(JITCompiler::NonZero, divisorGPR);
-            m_jit.move(divisorGPR, quotientThenRemainderGPR);
+            // We know that the low 32-bit of divisorGPR is 0, but we don't know if the high bits are.
+            // So, use TrustedImm32(0) on ARM instead because done expects the result to be in DataFormatInt32.
+            // Using an immediate 0 doesn't cost anything extra on ARM.
+            m_jit.move(TrustedImm32(0), quotientThenRemainderGPR);
             done.append(m_jit.jump());
             denominatorNotZero.link(&m_jit);
         }

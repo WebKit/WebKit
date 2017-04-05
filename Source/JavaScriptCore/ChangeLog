@@ -1,3 +1,29 @@
+2017-04-04  Mark Lam  <mark.lam@apple.com>
+
+        On ARM64, DFG::SpeculativeJIT::compileArithMod() failed to ensure result is of DataFormatInt32.
+        https://bugs.webkit.org/show_bug.cgi?id=170473
+        <rdar://problem/29912391>
+
+        Reviewed by Saam Barati.
+
+        In Unchecked mode, when DFG::SpeculativeJIT::compileArithMod() detects that the
+        divisor is 0, we want it to return 0.  The result is expected to be of
+        DataFormatIn32.
+
+        The ARM implementation just returns the value in the divisor register.  However,
+        the divisor in this case can be of DataFormatJSInt32.  On ARM64, returning the
+        divisor register yields the wrong result format because the same register also
+        holds the upper 32-bit of the JSValue encoding.  The fix is to return an
+        immediate 0 instead.
+
+        Also turned on the assertion in jitAssertIsInt32 for ARM64.  This assertion being
+        disabled may have contributed to this bug going unnoticed all this time.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileArithMod):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::jitAssertIsInt32):
+
 2017-04-04  Filip Pizlo  <fpizlo@apple.com>
 
         Air::eliminateDeadCode should not repeatedly process the same live instructions

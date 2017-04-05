@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2013-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -192,7 +192,7 @@ void AssemblyHelpers::clearSamplingFlag(int32_t flag)
 #if USE(JSVALUE64)
 void AssemblyHelpers::jitAssertIsInt32(GPRReg gpr)
 {
-#if CPU(X86_64)
+#if CPU(X86_64) || CPU(ARM64)
     Jump checkInt32 = branch64(BelowOrEqual, gpr, TrustedImm64(static_cast<uintptr_t>(0xFFFFFFFFu)));
     abortWithReason(AHIsNotInt32);
     checkInt32.link(this);
