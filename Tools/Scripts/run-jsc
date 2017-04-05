@@ -37,22 +37,30 @@ use Getopt::Long;
 use webkitdirs;
 Getopt::Long::Configure("pass_through");
 
-my $usage = "Usage: run-jsc [--count run_count] shell_file [file2...]";
+my $usage = "Usage: run-jsc [--count run_count] [--debug] shell_file [file2...]";
 
 my $count = 1;
+my $debug = 0;
+
 GetOptions("count|c=i" => \$count);
+GetOptions("debug" => \$debug);
 
 setConfiguration();
 
-my $jsc = File::Spec->catfile(jscProductDir(), "jsc ") . "@ARGV";
+my $jsc;
+if ($debug) {
+    my $debugger = defined($ENV{"DEBUGGER"}) ? $ENV{"DEBUGGER"} : "lldb";
+    $jsc = $debugger . " " . File::Spec->catfile(jscProductDir(), "jsc -- ") . "@ARGV";
+} else {
+    $jsc = File::Spec->catfile(jscProductDir(), "jsc ") . "@ARGV";
+}
 
 my $dyld = jscProductDir();
 
 $ENV{"DYLD_FRAMEWORK_PATH"} = $dyld;
 print STDERR "Running $count time(s): DYLD_FRAMEWORK_PATH=$dyld $jsc\n";
-while ($count--) {
-    if (system("$jsc") != 0) {
-        last;
-    }
-}
 
+while ($count--) {
+    my $status = system("$jsc") >> 8;
+    exit $status if $status != 0;
+}

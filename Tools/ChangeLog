@@ -1,3 +1,18 @@
+2017-04-05  Keith Miller  <keith_miller@apple.com>
+
+        Add debug option to run-jsc script
+        https://bugs.webkit.org/show_bug.cgi?id=170503
+
+        Reviewed by Yusuke Suzuki.
+
+        Adds a new option to the run-jsc script so that when passed
+        "--debug" it will wrap the jsc call with an lldb invocation. If
+        someone wishes to use a different debugger they can set the
+        DEBUGGER environment variable. Additionally, run-jsc now exits
+        with the exit status of the jsc call.
+
+        * Scripts/run-jsc:
+
 2017-04-05  Andy Estes  <aestes@apple.com>
 
         REGRESSION (r202472): Data Detection overwrites existing links in detected ranges
