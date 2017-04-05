@@ -92,7 +92,7 @@ static EncodedJSValue JSC_HOST_CALL webAssemblyCompileFunc(ExecState* exec)
 
     Ref<Plan> plan = adoptRef(*new Plan(vm, WTFMove(source), Plan::Validation, [promise, globalObject] (Plan& p) mutable {
         RefPtr<Plan> plan = makeRef(p);
-        plan->vm().promiseDeferredTimer->scheduleWorkSoon(promise, [promise, globalObject, plan = WTFMove(plan)] () mutable {
+        p.vm().promiseDeferredTimer->scheduleWorkSoon(promise, [promise, globalObject, plan = WTFMove(plan)] () mutable {
             VM& vm = plan->vm();
             auto scope = DECLARE_CATCH_SCOPE(vm);
             ExecState* exec = globalObject->globalExec();
@@ -169,7 +169,7 @@ static void instantiate(VM& vm, ExecState* exec, JSPromiseDeferred* promise, JSW
     // https://bugs.webkit.org/show_bug.cgi?id=170205
     Ref<Plan> plan = adoptRef(*new Plan(vm, makeRef(const_cast<Wasm::ModuleInformation&>(module->moduleInformation())), Plan::FullCompile, [promise, instance, module, entries] (Plan& p) {
         RefPtr<Plan> plan = makeRef(p);
-        plan->vm().promiseDeferredTimer->scheduleWorkSoon(promise, [promise, instance, module, entries, plan = WTFMove(plan)] () {
+        p.vm().promiseDeferredTimer->scheduleWorkSoon(promise, [promise, instance, module, entries, plan = WTFMove(plan)] () {
             VM& vm = plan->vm();
             ExecState* exec = instance->globalObject()->globalExec();
             resolve(vm, exec, promise, instance, module, entries);
@@ -195,7 +195,7 @@ static void compileAndInstantiate(VM& vm, ExecState* exec, JSPromiseDeferred* pr
 
     Ref<Plan> plan = adoptRef(*new Plan(vm, WTFMove(source), Plan::Validation, [promise, importObject, globalObject] (Plan& p) mutable {
         RefPtr<Plan> plan = makeRef(p);
-        plan->vm().promiseDeferredTimer->scheduleWorkSoon(promise, [promise, importObject, globalObject, plan = WTFMove(plan)] () mutable {
+        p.vm().promiseDeferredTimer->scheduleWorkSoon(promise, [promise, importObject, globalObject, plan = WTFMove(plan)] () mutable {
             VM& vm = plan->vm();
             auto scope = DECLARE_CATCH_SCOPE(vm);
             ExecState* exec = globalObject->globalExec();

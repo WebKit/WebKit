@@ -1,3 +1,18 @@
+2017-04-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebAssembly: several tests added in r214504 crash when building with GCC
+        https://bugs.webkit.org/show_bug.cgi?id=170390
+
+        Reviewed by Saam Barati.
+
+        The pattern foo->bar([f = WTFMove(foo)]{}); crashes when building with GCC, I assume the move happens before the
+        foo is used to invoke the function.
+
+        * wasm/js/WebAssemblyPrototype.cpp:
+        (JSC::webAssemblyCompileFunc): Use p.vm() instead of plan->vm(), because plan is moved by the lambda.
+        (JSC::instantiate): Ditto.
+        (JSC::compileAndInstantiate): Ditto.
+
 2017-03-16  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Generate TemplateObjects at linking time
