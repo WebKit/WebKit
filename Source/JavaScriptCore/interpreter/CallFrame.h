@@ -87,7 +87,14 @@ namespace JSC  {
     public:
         static const int headerSizeInRegisters = CallFrameSlot::argumentCount + 1;
 
-        JSValue calleeAsValue() const
+        // This function should only be called in very specific circumstances
+        // when you've guaranteed the callee can't be a Wasm callee, and can
+        // be an arbitrary JSValue. This function should basically never be used.
+        // Its only use right now is when we are making a call, and we're not
+        // yet sure if the callee is a cell. In general, a JS callee is guaranteed
+        // to be a cell, however, there is a brief window where we need to check
+        // to see if it's a cell, and if it's not, we throw an exception.
+        JSValue guaranteedJSValueCallee() const
         {
             ASSERT(!callee().isWasm());
             return this[CallFrameSlot::callee].jsValue();

@@ -834,7 +834,7 @@ EncodedJSValue JIT_OPERATION operationCallEval(ExecState* exec, ExecState* execC
 
     execCallee->setCodeBlock(0);
     
-    if (!isHostFunction(execCallee->calleeAsValue(), globalFuncEval))
+    if (!isHostFunction(execCallee->guaranteedJSValueCallee(), globalFuncEval))
         return JSValue::encode(JSValue());
 
     JSValue result = eval(execCallee);
@@ -917,7 +917,7 @@ SlowPathReturnType JIT_OPERATION operationLinkCall(ExecState* execCallee, CallLi
     
     RELEASE_ASSERT(!callLinkInfo->isDirect());
     
-    JSValue calleeAsValue = execCallee->calleeAsValue();
+    JSValue calleeAsValue = execCallee->guaranteedJSValueCallee();
     JSCell* calleeAsFunctionCell = getJSFunction(calleeAsValue);
     if (!calleeAsFunctionCell) {
         // FIXME: We should cache these kinds of calls. They can be common and currently they are
@@ -1034,7 +1034,7 @@ inline SlowPathReturnType virtualForWithFunction(
     CodeSpecializationKind kind = callLinkInfo->specializationKind();
     NativeCallFrameTracer tracer(vm, exec);
 
-    JSValue calleeAsValue = execCallee->calleeAsValue();
+    JSValue calleeAsValue = execCallee->guaranteedJSValueCallee();
     calleeAsFunctionCell = getJSFunction(calleeAsValue);
     if (UNLIKELY(!calleeAsFunctionCell))
         return handleHostCall(execCallee, calleeAsValue, callLinkInfo);

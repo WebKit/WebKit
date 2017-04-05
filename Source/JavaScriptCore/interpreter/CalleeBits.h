@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "JSCJSValue.h"
 #include <wtf/StdLibExtras.h>
 
 namespace JSC {
@@ -36,7 +37,6 @@ class Callee;
 class JSCell;
 
 class CalleeBits {
-    static constexpr uintptr_t wasmTag = 1;
 public:
     CalleeBits() = default;
     CalleeBits(void* ptr) : m_ptr(ptr) { } 
@@ -48,13 +48,23 @@ public:
         return *this;
     }
 
+#if ENABLE(WEBASSEMBLY)
     static void* boxWasm(Wasm::Callee* callee)
     {
-        ASSERT(!(bitwise_cast<uintptr_t>(callee) & wasmTag));
-        return bitwise_cast<void*>(bitwise_cast<uintptr_t>(callee) | wasmTag);
+        CalleeBits result(bitwise_cast<void*>(bitwise_cast<uintptr_t>(callee) | TagBitsWasm));
+        ASSERT(result.isWasm());
+        return result.rawPtr();
     }
+#endif
 
-    bool isWasm() const { return bitwise_cast<uintptr_t>(m_ptr) & wasmTag; }
+    bool isWasm() const
+    {
+#if ENABLE(WEBASSEMBLY)
+        return (bitwise_cast<uintptr_t>(m_ptr) & TagWasmMask) == TagBitsWasm;
+#else
+        return false;
+#endif
+    }
     bool isCell() const { return !isWasm(); }
 
     JSCell* asCell() const
@@ -63,11 +73,13 @@ public:
         return static_cast<JSCell*>(m_ptr);
     }
 
+#if ENABLE(WEBASSEMBLY)
     Wasm::Callee* asWasmCallee() const
     {
         ASSERT(isWasm());
-        return bitwise_cast<Wasm::Callee*>(bitwise_cast<uintptr_t>(m_ptr) & ~wasmTag);
+        return bitwise_cast<Wasm::Callee*>(bitwise_cast<uintptr_t>(m_ptr) & ~TagBitsWasm);
     }
+#endif
 
     void* rawPtr() const { return m_ptr; }
     

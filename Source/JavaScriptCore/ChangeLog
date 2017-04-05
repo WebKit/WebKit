@@ -1,3 +1,44 @@
+2017-04-05  Saam Barati  <sbarati@apple.com>
+
+        REGRESSION fix bad isWasm() test by ensuring proper Wasm callee bit pattern
+        https://bugs.webkit.org/show_bug.cgi?id=170494
+        <rdar://problem/31446485>
+
+        Reviewed by Yusuke Suzuki and Mark Lam.
+
+        This patch fixes how we test a 64 bit JSValue pattern to see if it's
+        a Wasm callee. We now tag Wasm::Callee's with 0b011 in their lower 3 bits.
+        The new test is for a Wasm Callee is as follows:
+        isWasm(uint64_t x)
+        {
+            return x & 0xffff000000000007 == 3;
+        }
+        
+        This test works because the lower 3 bits of the non-number immediate values are as follows:
+        undefined: 0b010
+        null:      0b010
+        true:      0b111
+        false:     0b110
+        The test rejects all of these because none have just the value 3 in their lower 3 bits.
+        The test also rejects all numbers, because they have non-zero upper 16 bits.
+        The test also rejects normal cells because they won't have the number 3 as
+        their lower 3 bits. Note, this bit pattern also allows the normal JSValue isCell(), etc,
+        predicates to work on a Wasm::Callee because the various tests will fail if you
+        bit casted a boxed Wasm::Callee* to a JSValue. isCell() would fail since it sees
+        TagBitTypeOther. The other tests also trivially fail, since it won't be a number,
+        and it won't be equal to null, undefined, true, or false. The isBoolean() predicate
+        will fail because we won't have TagBitBool set.
+
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::guaranteedJSValueCallee):
+        (JSC::ExecState::calleeAsValue): Deleted.
+        * interpreter/CalleeBits.h:
+        (JSC::CalleeBits::boxWasm):
+        (JSC::CalleeBits::isWasm):
+        (JSC::CalleeBits::asWasmCallee):
+        * jit/JITOperations.cpp:
+        * runtime/JSCJSValue.h:
+
 2017-04-05  Keith Miller  <keith_miller@apple.com>
 
         WebAssembly: Plans should be able to have more than one completion task.

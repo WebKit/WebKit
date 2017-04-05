@@ -433,6 +433,26 @@ public:
     // alignment for a GC cell, and in the zero page).
     #define ValueEmpty   0x0ll
     #define ValueDeleted 0x4ll
+
+    #define TagBitsWasm (TagBitTypeOther | 0x1)
+    #define TagWasmMask (TagTypeNumber | 0x7)
+    // We tag Wasm non-JSCell pointers with a 3 at the bottom. We can test if a 64-bit JSValue pattern
+    // is a Wasm callee by masking the upper 16 bits and the lower 3 bits, and seeing if
+    // the resulting value is 3. The full test is: x & TagWasmMask == TagBitsWasm
+    // This works because the lower 3 bits of the non-number immediate values are as follows:
+    // undefined: 0b010
+    // null:      0b010
+    // true:      0b111
+    // false:     0b110
+    // The test rejects all of these because none have just the value 3 in their lower 3 bits.
+    // The test rejects all numbers because they have non-zero upper 16 bits.
+    // The test also rejects normal cells because they won't have the number 3 as
+    // their lower 3 bits. Note, this bit pattern also allows the normal JSValue isCell(), etc,
+    // predicates to work on a Wasm::Callee because the various tests will fail if you
+    // bit casted a boxed Wasm::Callee* to a JSValue. isCell() would fail since it sees
+    // TagBitTypeOther. The other tests also trivially fail, since it won't be a number,
+    // and it won't be equal to null, undefined, true, or false. The isBoolean() predicate
+    // will fail because we won't have TagBitBool set.
 #endif
 
 private:
