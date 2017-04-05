@@ -1,5 +1,14 @@
 2017-04-04  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Mark fast/images/slower-animation-than-decoding-image.html as flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=168390
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
+2017-04-04  Ryan Haddad  <ryanhaddad@apple.com>
+
         Mark fast/images/reset-image-animation.html as flaky.
         https://bugs.webkit.org/show_bug.cgi?id=170177
 
