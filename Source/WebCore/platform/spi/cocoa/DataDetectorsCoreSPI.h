@@ -106,8 +106,8 @@ extern NSString * const DDURLScheme;
 #define DDResultPropertyPassiveDisplay   (1 << 0)
 
 typedef struct __DDQueryOffset {
-    CFIndex queryIndex:32;
-    CFIndex offset:32;
+    CFIndex queryIndex;
+    CFIndex offset;
 } DDQueryOffset;
 
 typedef struct __DDQueryRange {
@@ -116,8 +116,6 @@ typedef struct __DDQueryRange {
 } DDQueryRange;
 
 #endif // !USE(APPLE_INTERNAL_SDK)
-
-static_assert(sizeof(DDQueryOffset) == 8, "DDQueryOffset is no longer 8 bytes. Update the definition of DDQueryOffset in this file to match the new size.");
 
 typedef struct __DDScanQuery *DDScanQueryRef;
 typedef struct __DDScanner *DDScannerRef;

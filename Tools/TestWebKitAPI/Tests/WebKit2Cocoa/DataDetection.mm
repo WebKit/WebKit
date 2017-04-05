@@ -69,7 +69,7 @@ void expectLinkCount(WKWebView *webView, NSString *HTMLString, unsigned linkCoun
     ranScript = false;
 }
 
-TEST(WebKit2, DataDetectionReferenceDate)
+TEST(WebKit2, DISABLED_DataDetectionReferenceDate)
 {
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [configuration setDataDetectorTypes:WKDataDetectorTypeCalendarEvent];
