@@ -91,6 +91,8 @@ private:
 
     // FIXME(146853): Implement necessary conformations to standard in HTMLMediaElement for MediaStream
 
+    bool didPassCORSAccessCheck() const final;
+
     void load(const String&) override;
 #if ENABLE(MEDIA_SOURCE)
     void load(const String&, MediaSourcePrivateClient*) override;

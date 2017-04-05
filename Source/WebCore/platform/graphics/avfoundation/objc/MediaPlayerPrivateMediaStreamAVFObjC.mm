@@ -553,6 +553,14 @@ void MediaPlayerPrivateMediaStreamAVFObjC::load(MediaStreamPrivate& stream)
     });
 }
 
+bool MediaPlayerPrivateMediaStreamAVFObjC::didPassCORSAccessCheck() const
+{
+    // We are only doing a check on the active video track since the sole consumer of this API is canvas.
+    // FIXME: We should change the name of didPassCORSAccessCheck if it is expected to stay like this.
+    const auto* track = m_mediaStreamPrivate->activeVideoTrack();
+    return !track || !track->isIsolated();
+}
+
 void MediaPlayerPrivateMediaStreamAVFObjC::cancelLoad()
 {
     LOG(Media, "MediaPlayerPrivateMediaStreamAVFObjC::cancelLoad(%p)", this);

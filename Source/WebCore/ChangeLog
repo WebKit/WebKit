@@ -1,3 +1,22 @@
+2017-04-04  Youenn Fablet  <youenn@apple.com>
+
+        Canvas is tainted when painting a video with MediaStreamTrack
+        https://bugs.webkit.org/show_bug.cgi?id=170486
+
+        Reviewed by Eric Carlson.
+
+        Test: http/tests/media/media-stream/getusermedia-with-canvas.html
+
+        Adding the notion of isolated source so that we can later on implement WebRTC isolated tracks.
+        For now, canvas will not be tainted if painted from a MediaStreamTrack.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::didPassCORSAccessCheck):
+        * platform/mediastream/MediaStreamTrackPrivate.h:
+        (WebCore::MediaStreamTrackPrivate::isIsolated):
+        * platform/mediastream/RealtimeMediaSource.h:
+
 2017-04-04  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r214894, r214895, r214907, r214912,

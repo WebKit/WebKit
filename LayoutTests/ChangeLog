@@ -1,5 +1,20 @@
 2017-04-04  Youenn Fablet  <youenn@apple.com>
 
+        Canvas is tainted when painting a video with MediaStreamTrack
+        https://bugs.webkit.org/show_bug.cgi?id=170486
+
+        Reviewed by Eric Carlson.
+
+        * http/tests/media/media-stream/getusermedia-with-canvas-expected.txt: Added.
+        * http/tests/media/media-stream/getusermedia-with-canvas.html: Added.
+        * http/tests/media/media-stream/resources/getUserMedia-helper.js: Added.
+        (reject):
+        (getUserMedia):
+        (defaultRejectOrCatch):
+        (setupVideoElementWithStream):
+
+2017-04-04  Youenn Fablet  <youenn@apple.com>
+
         [Mac] Add back web audio support for getUserMedia MediaStreamTrack
         https://bugs.webkit.org/show_bug.cgi?id=170482
 

@@ -120,6 +120,8 @@ public:
 
     virtual void settingsDidChange();
 
+    virtual bool isIsolated() const { return false; }
+    
     void videoSampleAvailable(MediaSample&);
     void audioSamplesAvailable(const MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t);
     
