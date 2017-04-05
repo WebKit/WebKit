@@ -81,6 +81,7 @@ private:
     bool consumeGridAreaShorthand(bool important);
 
     bool consumePlaceContentShorthand(bool important);
+    bool consumePlaceItemsShorthand(bool important);
 
     bool consumeFont(bool important);
     bool consumeFontVariantShorthand(bool important);

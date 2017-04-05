@@ -1,3 +1,14 @@
+2017-04-05  Javier Fernandez  <jfernandez@igalia.com>
+
+        [css-align] Implement the place-items shorthand
+        https://bugs.webkit.org/show_bug.cgi?id=168847
+
+        Reviewed by David Hyatt.
+
+        Regression tests for the new place-content alignment shorthand.
+
+        * css3/parse-place-items.html: Added.
+
 2017-04-05  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [WebRTC][OpenWebRTC] Add support for SDP BUNDLE ("a:group:BUNDLE" and "a=bundle-only" lines)

@@ -2619,6 +2619,11 @@ static RefPtr<CSSValue> consumeShapeOutside(CSSParserTokenRange& range, const CS
     return list;
 }
 
+static bool isAutoOrNormalOrStretch(CSSValueID id)
+{
+    return identMatches<CSSValueAuto, CSSValueNormal, CSSValueStretch>(id);
+}
+
 static bool isContentDistributionKeyword(CSSValueID id)
 {
     return identMatches<CSSValueSpaceBetween, CSSValueSpaceAround, CSSValueSpaceEvenly, CSSValueStretch>(id);
@@ -3075,7 +3080,7 @@ static RefPtr<CSSPrimitiveValue> consumeSelfPositionKeyword(CSSParserTokenRange&
 static RefPtr<CSSValue> consumeSelfPositionOverflowPosition(CSSParserTokenRange& range)
 {
     CSSValueID id = range.peek().id();
-    if (identMatches<CSSValueAuto, CSSValueNormal, CSSValueStretch>(id))
+    if (isAutoOrNormalOrStretch(id))
         return consumeIdent(range);
 
     if (isBaselineKeyword(id))
@@ -5505,6 +5510,41 @@ bool CSSPropertyParser::consumePlaceContentShorthand(bool important)
     return true;
 }
 
+static RefPtr<CSSValue> consumeSimplifiedItemPosition(CSSParserTokenRange& range)
+{
+    CSSValueID id = range.peek().id();
+    if (isAutoOrNormalOrStretch(id))
+        return consumeIdent(range);
+
+    if (isBaselineKeyword(id))
+        return consumeBaselineKeyword(range);
+
+    return consumeSelfPositionKeyword(range);
+}
+
+bool CSSPropertyParser::consumePlaceItemsShorthand(bool important)
+{
+    ASSERT(shorthandForProperty(CSSPropertyPlaceItems).length() == 2);
+
+    // align-items property does not allow the 'auto' value.
+    if (identMatches<CSSValueAuto>(m_range.peek().id()))
+        return false;
+
+    RefPtr<CSSValue> alignItemsValue = consumeSimplifiedItemPosition(m_range);
+    if (!alignItemsValue)
+        return false;
+    RefPtr<CSSValue> justifyItemsValue = m_range.atEnd() ? alignItemsValue : consumeSimplifiedItemPosition(m_range);
+    if (!justifyItemsValue)
+        return false;
+
+    if (!m_range.atEnd())
+        return false;
+
+    addProperty(CSSPropertyAlignItems, CSSPropertyPlaceItems, alignItemsValue.releaseNonNull(), important);
+    addProperty(CSSPropertyJustifyItems, CSSPropertyPlaceItems, justifyItemsValue.releaseNonNull(), important);
+    return true;
+}
+
 bool CSSPropertyParser::parseShorthand(CSSPropertyID property, bool important)
 {
     switch (property) {
@@ -5688,6 +5728,8 @@ bool CSSPropertyParser::parseShorthand(CSSPropertyID property, bool important)
         return consumeGridShorthand(important);
     case CSSPropertyPlaceContent:
         return consumePlaceContentShorthand(important);
+    case CSSPropertyPlaceItems:
+        return consumePlaceItemsShorthand(important);
     case CSSPropertyWebkitMarquee:
         return consumeShorthandGreedily(webkitMarqueeShorthand(), important);
     default:

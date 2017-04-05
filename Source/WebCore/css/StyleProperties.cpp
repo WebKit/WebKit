@@ -186,7 +186,9 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
     case CSSPropertyGridRow:
         return getShorthandValue(gridRowShorthand());
     case CSSPropertyPlaceContent:
-        return placeContentPropertyValue();
+        return getAlignmentShorthandValue(placeContentShorthand());
+    case CSSPropertyPlaceItems:
+        return getAlignmentShorthandValue(placeItemsShorthand());
     case CSSPropertyFont:
         return fontValue();
     case CSSPropertyMargin:
@@ -583,11 +585,11 @@ String StyleProperties::getCommonValue(const StylePropertyShorthand& shorthand) 
     return res;
 }
 
-String StyleProperties::placeContentPropertyValue() const
+String StyleProperties::getAlignmentShorthandValue(const StylePropertyShorthand& shorthand) const
 {
-    String value = getCommonValue(placeContentShorthand());
+    String value = getCommonValue(shorthand);
     if (value.isNull() || value.isEmpty())
-        return getShorthandValue(placeContentShorthand());
+        return getShorthandValue(shorthand);
     return value;
 }
 

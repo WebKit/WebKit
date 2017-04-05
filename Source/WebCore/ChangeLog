@@ -1,3 +1,35 @@
+2017-04-05  Javier Fernandez  <jfernandez@igalia.com>
+
+        [css-align] Implement the place-items shorthand
+        https://bugs.webkit.org/show_bug.cgi?id=168847
+
+        Reviewed by David Hyatt.
+
+        The CSS Box Alignment specification defines a new shorthand to set the
+        Content Alignment properties (align-items and justify-items) at the
+        same time.
+
+        This patch provides the implementation of the CSS parsing logic and the
+        required regression tests. For the time being, as it happens with the
+        rest of the new alignment properties, the new parsing logic is
+        implemented behind the CSS Grid Layout runtime flag.
+
+        Test: css3/parse-place-items.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * css/CSSProperties.json:
+        * css/StyleProperties.cpp:
+        (WebCore::StyleProperties::getPropertyValue):
+        (WebCore::StyleProperties::getAlignmentShorthandValue):
+        * css/StyleProperties.h:
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::isAutoOrNormalOrStretch):
+        (WebCore::consumeSelfPositionOverflowPosition):
+        (WebCore::consumeSimplifiedItemPosition):
+        (WebCore::CSSPropertyParser::consumePlaceItemsShorthand):
+        * css/parser/CSSPropertyParser.h:
+
 2017-04-05  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r214932.
