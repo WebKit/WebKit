@@ -1,3 +1,15 @@
+2017-04-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Show a log message when an invalid message is received in non cocoa ports
+        https://bugs.webkit.org/show_bug.cgi?id=170506
+
+        Reviewed by Michael Catanzaro.
+
+        We just crash, but without knowing the details about the message it's impossible to debug.
+
+        * Shared/ChildProcess.cpp:
+        (WebKit::ChildProcess::didReceiveInvalidMessage):
+
 2017-04-04  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Move WebErrors from WebProcess to Shared and get rid of ErrorsGtk in WebCore
