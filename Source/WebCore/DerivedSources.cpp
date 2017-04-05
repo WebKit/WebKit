@@ -180,7 +180,6 @@
 #include "JSDOMTokenList.cpp"
 #include "JSDOMURL.cpp"
 #include "JSDOMURLMediaSource.cpp"
-#include "JSDOMURLMediaStream.cpp"
 #include "JSDOMWindow.cpp"
 #include "JSDOMWindowFetch.cpp"
 #include "JSDOMWindowIndexedDatabase.cpp"

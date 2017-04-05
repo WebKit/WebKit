@@ -661,8 +661,6 @@
 		15C7708D100D3C6B005BA267 /* ValidityState.h in Headers */ = {isa = PBXBuildFile; fileRef = 15C7708A100D3C6A005BA267 /* ValidityState.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		15C77093100D3CA8005BA267 /* JSValidityState.h in Headers */ = {isa = PBXBuildFile; fileRef = 15C77091100D3CA8005BA267 /* JSValidityState.h */; };
 		15C77094100D3CA8005BA267 /* JSValidityState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15C77092100D3CA8005BA267 /* JSValidityState.cpp */; };
-		15FCC9FC1B4DF7F200E72326 /* DOMURLMediaStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 073794ED19EE364200E5A045 /* DOMURLMediaStream.cpp */; };
-		15FCC9FE1B4DF85E00E72326 /* DOMURLMediaStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 15FCC9FD1B4DF85600E72326 /* DOMURLMediaStream.h */; };
 		163E88F7118A39D200ED9231 /* SimpleFontDataCoreText.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 163E88F5118A39D200ED9231 /* SimpleFontDataCoreText.cpp */; };
 		16EA24CEEAB2A60534218ACF /* MathMLOperatorDictionary.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D4F72C653A64807A83E76FB8 /* MathMLOperatorDictionary.cpp */; };
 		185BCF280F3279CE000EA262 /* ThreadTimers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 185BCF260F3279CE000EA262 /* ThreadTimers.cpp */; };
@@ -7497,8 +7495,6 @@
 		073794E419EE2FF200E5A045 /* JSRTCConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSRTCConfiguration.h; sourceTree = "<group>"; };
 		073794E919EE341E00E5A045 /* JSRTCIceServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSRTCIceServer.cpp; sourceTree = "<group>"; };
 		073794EA19EE341E00E5A045 /* JSRTCIceServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSRTCIceServer.h; sourceTree = "<group>"; };
-		073794ED19EE364200E5A045 /* DOMURLMediaStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMURLMediaStream.cpp; sourceTree = "<group>"; };
-		073794EE19EE364200E5A045 /* DOMURLMediaStream.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DOMURLMediaStream.idl; sourceTree = "<group>"; };
 		073794F319F5864E00E5A045 /* RTCDataChannelHandlerMock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RTCDataChannelHandlerMock.cpp; sourceTree = "<group>"; };
 		073794F419F5864E00E5A045 /* RTCDataChannelHandlerMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCDataChannelHandlerMock.h; sourceTree = "<group>"; };
 		073794F719F5864E00E5A045 /* RTCNotifiersMock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RTCNotifiersMock.cpp; sourceTree = "<group>"; };
@@ -8038,7 +8034,6 @@
 		15C7708A100D3C6A005BA267 /* ValidityState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ValidityState.h; sourceTree = "<group>"; };
 		15C77091100D3CA8005BA267 /* JSValidityState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSValidityState.h; sourceTree = "<group>"; };
 		15C77092100D3CA8005BA267 /* JSValidityState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSValidityState.cpp; sourceTree = "<group>"; };
-		15FCC9FD1B4DF85600E72326 /* DOMURLMediaStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMURLMediaStream.h; sourceTree = "<group>"; };
 		163E88F5118A39D200ED9231 /* SimpleFontDataCoreText.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleFontDataCoreText.cpp; sourceTree = "<group>"; };
 		185BCF260F3279CE000EA262 /* ThreadTimers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ThreadTimers.cpp; sourceTree = "<group>"; };
 		185BCF270F3279CE000EA262 /* ThreadTimers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreadTimers.h; sourceTree = "<group>"; };
@@ -15875,9 +15870,6 @@
 				41C7E1051E6A54360027B4DE /* CanvasCaptureMediaStreamTrack.cpp */,
 				41C7E1061E6A54360027B4DE /* CanvasCaptureMediaStreamTrack.h */,
 				41C7E1081E6AA37C0027B4DE /* CanvasCaptureMediaStreamTrack.idl */,
-				073794ED19EE364200E5A045 /* DOMURLMediaStream.cpp */,
-				15FCC9FD1B4DF85600E72326 /* DOMURLMediaStream.h */,
-				073794EE19EE364200E5A045 /* DOMURLMediaStream.idl */,
 				93A806111E03B51C008A1F26 /* DoubleRange.h */,
 				93A806121E03B51C008A1F26 /* DoubleRange.idl */,
 				93A806131E03B51C008A1F26 /* LongRange.h */,
@@ -26840,7 +26832,6 @@
 				76FC2B0C12370DA0006A991A /* DOMTokenList.h in Headers */,
 				2E37DFDB12DBAFB800A6B233 /* DOMURL.h in Headers */,
 				CD9DE18217AAD6A400EA386D /* DOMURLMediaSource.h in Headers */,
-				15FCC9FE1B4DF85E00E72326 /* DOMURLMediaStream.h in Headers */,
 				1403B99709EB13AF00797C7F /* DOMWindow.h in Headers */,
 				51FA2D78152132B300C1BA0B /* DOMWindowExtension.h in Headers */,
 				5185FC751BB4C4E80012898F /* DOMWindowIndexedDatabase.h in Headers */,
@@ -30815,7 +30806,6 @@
 				76FC2B0B12370DA0006A991A /* DOMTokenList.cpp in Sources */,
 				2E37DFDA12DBAFB800A6B233 /* DOMURL.cpp in Sources */,
 				CD9DE18117AAD6A400EA386D /* DOMURLMediaSource.cpp in Sources */,
-				15FCC9FC1B4DF7F200E72326 /* DOMURLMediaStream.cpp in Sources */,
 				1403B99809EB13AF00797C7F /* DOMWindow.cpp in Sources */,
 				517FBA1E151AB17C00B57959 /* DOMWindowExtension.cpp in Sources */,
 				418C39561C8DAC7F0051C8A3 /* DOMWindowFetch.cpp in Sources */,

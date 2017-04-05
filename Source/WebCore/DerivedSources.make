@@ -162,7 +162,6 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/mediasource/VideoPlaybackQuality.idl \
     $(WebCore)/Modules/mediasource/VideoTrackMediaSource.idl \
     $(WebCore)/Modules/mediastream/CanvasCaptureMediaStreamTrack.idl \
-    $(WebCore)/Modules/mediastream/DOMURLMediaStream.idl \
     $(WebCore)/Modules/mediastream/DoubleRange.idl \
     $(WebCore)/Modules/mediastream/LongRange.idl \
     $(WebCore)/Modules/mediastream/MediaDeviceInfo.idl \

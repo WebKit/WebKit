@@ -34,7 +34,7 @@
     JSGenerateToJSObject,
     InterfaceName=URL,
     ImplementationLacksVTable,
-    ExportMacro=WEBCORE_EXPORT,
+    ExportMacro=WEBCORE_EXPORT
 ] interface DOMURL {
     [SetterMayThrowException, URL] stringifier attribute USVString href;
     readonly attribute USVString origin;

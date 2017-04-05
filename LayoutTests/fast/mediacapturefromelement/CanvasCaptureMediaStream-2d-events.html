@@ -43,7 +43,7 @@ function playMediaStream() {
 
   var video = document.createElement('video');
   try {
-    video.src = window.URL.createObjectURL(stream);
+    video.srcObject = stream;
     testPassed('Plugged stream to video tag.');
   } catch(e) {
     testFailed('Exception plugging stream to <video>: ' + e);

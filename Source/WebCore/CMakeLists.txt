@@ -218,7 +218,6 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/mediasource/VideoPlaybackQuality.idl
 
     Modules/mediastream/CanvasCaptureMediaStreamTrack.idl
-    Modules/mediastream/DOMURLMediaStream.idl
     Modules/mediastream/DoubleRange.idl
     Modules/mediastream/LongRange.idl
     Modules/mediastream/MediaDeviceInfo.idl
@@ -944,7 +943,6 @@ set(WebCore_SOURCES
     Modules/mediasource/VideoPlaybackQuality.cpp
 
     Modules/mediastream/CanvasCaptureMediaStreamTrack.cpp
-    Modules/mediastream/DOMURLMediaStream.cpp
     Modules/mediastream/MediaConstraintsImpl.cpp
     Modules/mediastream/MediaDeviceInfo.cpp
     Modules/mediastream/MediaDevices.cpp

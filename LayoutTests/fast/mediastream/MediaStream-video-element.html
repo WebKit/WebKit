@@ -5,7 +5,7 @@
         <script>
             var video;
             var mediaStream;
-            
+
             function logEvent(element, eventName, func)
             {
                 function _eventCallback(evt)
@@ -58,7 +58,6 @@
                 debug("<br>**** check video element ****");
                 shouldBe('video.videoWidth', 'mediaStream.getVideoTracks()[0].getSettings().width');
                 shouldBe('video.videoHeight', 'mediaStream.getVideoTracks()[0].getSettings().height');
-                shouldBe('video.src.indexOf("blob:")', '0');
 
                 debug("<br>**** check video tracks ****");
                 shouldBe('video.videoTracks.length', '1');
@@ -93,9 +92,9 @@
             {
                 mediaStream = stream;
                 testPassed('mediaDevices.getUserMedia succeeded.');
-                        
+
                 debug("<br>**** setup video element ****");
-                evalAndLog("video.src = window.URL.createObjectURL(mediaStream)");
+                evalAndLog("video.srcObject = mediaStream");
             }
 
             function start()

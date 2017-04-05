@@ -53,7 +53,7 @@
     function setupStream(stream)
     {
         mediaStream = stream;
-        video.src = window.URL.createObjectURL(mediaStream);
+        video.srcObject = mediaStream;
     }
 
     function failedToSetupStream()

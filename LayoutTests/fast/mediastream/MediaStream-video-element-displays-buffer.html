@@ -72,7 +72,7 @@
     {
         mediaStream = stream;
         testPassed('mediaDevices.getUserMedia generated a stream successfully.');
-        evalAndLog(`videos[${currentTest}].src = window.URL.createObjectURL(mediaStream)`);
+        evalAndLog(`videos[${currentTest}].srcObject = mediaStream`);
     }
 
     function canplay()
