@@ -53,7 +53,7 @@ class MediaSourcePrivateClient;
 class PixelBufferConformerCV;
 class VideoTrackPrivateMediaStream;
 
-#if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
+#if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 class VideoFullscreenLayerManager;
 #endif
 
@@ -172,6 +172,7 @@ private:
     void updateTracks();
     void updateRenderingMode();
     void checkSelectedVideoTrack();
+    void updateDisplayLayer();
 
     void scheduleDeferredTask(Function<void ()>&&);
 
@@ -206,7 +207,7 @@ private:
     void sampleBufferUpdated(MediaStreamTrackPrivate&, MediaSample&) override;
     void readyStateChanged(MediaStreamTrackPrivate&) override;
 
-#if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
+#if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     void setVideoFullscreenLayer(PlatformLayer*, std::function<void()> completionHandler) override;
     void setVideoFullscreenFrame(FloatRect) override;
 #endif
@@ -215,7 +216,7 @@ private:
 
     AudioSourceProvider* audioSourceProvider() final;
 
-    CGAffineTransform videoTransformationMatrix(MediaSample&);
+    CGAffineTransform videoTransformationMatrix(MediaSample&, bool forceUpdate = false);
 
     MediaPlayer* m_player { nullptr };
     WeakPtrFactory<MediaPlayerPrivateMediaStreamAVFObjC> m_weakPtrFactory;
@@ -261,9 +262,8 @@ private:
     bool m_pendingSelectedTrackCheck { false };
     bool m_shouldDisplayFirstVideoFrame { false };
     bool m_transformIsValid { false };
-    bool m_videoSizeChanged;
 
-#if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
+#if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     std::unique_ptr<VideoFullscreenLayerManager> m_videoFullscreenLayerManager;
 #endif
 };
