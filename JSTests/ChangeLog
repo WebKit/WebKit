@@ -1,5 +1,13 @@
 2017-04-05  Michael Saboff  <msaboff@apple.com>
 
+        Unreviewed rollout of r214642 as the test still intermittently fails.
+
+        Disabled ChakraCore/test/fieldopts/objtypespec-newobj-invalidation.1.js.
+
+        * ChakraCore.yaml:
+
+2017-04-05  Michael Saboff  <msaboff@apple.com>
+
         REGRESSION (Safari 10.1): Inserting elements into arrays fails when array contains very large numbers
         https://bugs.webkit.org/show_bug.cgi?id=170264
         <rdar://problem/31375593>
