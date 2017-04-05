@@ -1,3 +1,13 @@
+2016-09-30  Youenn Fablet  <youenn@apple.com>
+
+        DumpRenderTree crashed in com.apple.WebCore: WTF::Optional<WebCore::FetchBodyOwner::BlobLoader>::operator bool const + 12
+        https://bugs.webkit.org/show_bug.cgi?id=162483
+
+        Reviewed by Alex Christensen.
+
+        * fetch/closing-while-fetching-blob-expected.txt: Added.
+        * fetch/closing-while-fetching-blob.html: Added.
+
 2017-02-09  Antti Koivisto  <antti@apple.com>
 
         Tear down existing renderers when adding a shadow root.
