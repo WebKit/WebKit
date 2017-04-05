@@ -182,14 +182,12 @@ bool RangeInputType::hasTouchEventHandler() const
     return true;
 }
 #endif
+#endif // ENABLE(TOUCH_EVENTS)
 
-#if PLATFORM(IOS)
 void RangeInputType::disabledAttributeChanged()
 {
     typedSliderThumbElement().disabledAttributeChanged();
 }
-#endif
-#endif // ENABLE(TOUCH_EVENTS)
 
 void RangeInputType::handleKeydownEvent(KeyboardEvent& event)
 {

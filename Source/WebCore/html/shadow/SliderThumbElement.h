@@ -52,9 +52,9 @@ public:
 
 #if ENABLE(IOS_TOUCH_EVENTS)
     void handleTouchEvent(TouchEvent&);
+#endif
 
     void disabledAttributeChanged();
-#endif
 
 private:
     SliderThumbElement(Document&);

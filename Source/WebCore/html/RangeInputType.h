@@ -81,9 +81,7 @@ private:
     void handleTouchEvent(TouchEvent&) final;
 #endif
 
-#if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS)
     void disabledAttributeChanged() final;
-#endif
 
 #if ENABLE(TOUCH_EVENTS) && !PLATFORM(IOS) && ENABLE(TOUCH_SLIDER)
     bool hasTouchEventHandler() const final;

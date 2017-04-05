@@ -1,3 +1,35 @@
+2017-04-05  Chris Dumez  <cdumez@apple.com>
+
+        <input type="range"> changing to disabled while active breaks all pointer events
+        https://bugs.webkit.org/show_bug.cgi?id=170447
+        <rdar://problem/31442875>
+
+        Reviewed by Geoffrey Garen.
+
+        When a range's slider is being moved, we set SliderThumbElement's m_inDragMode flag
+        to true and mark the range elements as the CapturingMouseEventsElement. When we get
+        the mouseUp event, we are supposed to exit drag mode. However, when the range element
+        gets disabled while dragging, we do not get the mouseUp event and we need to make
+        sure we exit dragging mode anyway. r112547 tried to fix this by calling stopDragging()
+        in SliderThumbElement::defaultEventHandler() when the input element is disabled.
+        While this often works, this is fragile and we sometimes fail to exit dragging mode
+        when we should.
+
+        This patch addressed the issue by calling stopDragging() in
+        SliderThumbElement::disabledAttributeChanged() instead. This is much safer as we
+        guarantee will exit dragging mode whenever the range element gets disabled, even
+        if SliderThumbElement::defaultEventHandler() does not get called after that.
+
+        Test: fast/forms/range/disabled-while-dragging.html
+
+        * html/RangeInputType.cpp:
+        (WebCore::RangeInputType::disabledAttributeChanged):
+        * html/RangeInputType.h:
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::SliderThumbElement::defaultEventHandler):
+        (WebCore::SliderThumbElement::disabledAttributeChanged):
+        * html/shadow/SliderThumbElement.h:
+
 2017-04-05  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Video doesn't render in fullscreen on iOS

@@ -380,6 +380,8 @@ http/tests/navigation/keyboard-events-during-provisional-navigation.html [ Skip 
 media/audio-dealloc-crash.html [ Skip ]
 
 # This test uses EventSender's mouseMoveTo, mouseUp and mouseDown
+fast/forms/range/disabled-while-dragging.html [ Skip ]
+fast/forms/range/range-drag-when-toggled-disabled.html [ Skip ]
 fast/media/video-element-in-details-collapse.html [ Skip ]
 
 # The file-wrapper part of <attachment> is not yet working on iOS
@@ -1421,7 +1423,6 @@ fast/forms/password-doubleclick-selection.html [ Failure ]
 fast/forms/password-placeholder-text-security.html [ Pass ImageOnlyFailure ]
 fast/forms/placeholder-position.html [ Failure ]
 fast/forms/radio/indeterminate-radio.html [ Pass Failure ]
-fast/forms/range/range-drag-when-toggled-disabled.html [ Failure ]
 fast/forms/range/range-drag.html [ Failure ]
 fast/forms/range/range-hit-test-with-padding.html [ Failure ]
 fast/forms/range/range-slow-drag-to-edge.html [ Failure ]
