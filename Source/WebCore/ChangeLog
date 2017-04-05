@@ -1,3 +1,16 @@
+2017-04-05  Andreas Kling  <akling@apple.com>
+
+        Make inactive web processes behave as though under memory pressure.
+        https://bugs.webkit.org/show_bug.cgi?id=170042
+        <rdar://problem/31038445>
+
+        Reviewed by Antti Koivisto.
+
+        Prevent PerformanceMonitor from marking the process as inactive at startup.
+        This fixes the API test failure that caused this patch to get rolled out.
+
+        * page/PerformanceMonitor.h:
+
 2017-04-05  Youenn Fablet  <youenn@apple.com>
 
         Switch to kCVPixelFormatType_420YpCbCr8BiPlanarFullRange for Mac video capture format

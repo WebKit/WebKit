@@ -79,14 +79,7 @@ public:
         m_lowMemoryHandler = WTFMove(handler);
     }
 
-    bool isUnderMemoryPressure() const
-    {
-        return m_underMemoryPressure
-#if PLATFORM(MAC)
-            || m_memoryUsagePolicy >= MemoryUsagePolicy::Strict
-#endif
-            || m_isSimulatingMemoryPressure;
-    }
+    WTF_EXPORT_PRIVATE static bool isUnderMemoryPressure();
     void setUnderMemoryPressure(bool);
 
 #if OS(LINUX)
@@ -184,7 +177,7 @@ private:
     };
 #endif
 
-    WebsamProcessState m_processState { WebsamProcessState::Inactive };
+    WebsamProcessState m_processState { WebsamProcessState::Active };
 
     bool m_installed { false };
     LowMemoryHandler m_lowMemoryHandler;
