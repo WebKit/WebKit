@@ -29,8 +29,8 @@
 #include "JSPromiseDeferred.h"
 #include "StrongInlines.h"
 #include "VM.h"
-
 #include <wtf/Locker.h>
+#include <wtf/RunLoop.h>
 
 namespace JSC {
 
@@ -68,22 +68,28 @@ void PromiseDeferredTimer::doWork()
         }
     }
 
-#if USE(CF)
     if (m_pendingPromises.isEmpty() && m_shouldStopRunLoopWhenAllPromisesFinish)
+#if USE(CF)
         CFRunLoopStop(m_runLoop.get());
+#else
+        RunLoop::current().stop();
 #endif
 }
 
-#if USE(CF)
 void PromiseDeferredTimer::runRunLoop()
 {
     ASSERT(!m_vm->currentThreadIsHoldingAPILock());
+#if USE(CF)
     ASSERT(CFRunLoopGetCurrent() == m_runLoop.get());
+#endif
     m_shouldStopRunLoopWhenAllPromisesFinish = true;
     if (m_pendingPromises.size())
+#if USE(CF)
         CFRunLoopRun();
-}
+#else
+        RunLoop::run();
 #endif
+}
 
 void PromiseDeferredTimer::addPendingPromise(JSPromiseDeferred* ticket, Vector<Strong<JSCell>>&& dependencies)
 {

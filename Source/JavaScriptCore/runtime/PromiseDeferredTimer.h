@@ -61,17 +61,14 @@ public:
     void scheduleBlockedTask(JSPromiseDeferred*, Task&&);
 
     void stopRunningTasks() { m_runTasks = false; }
-#if USE(CF)
+
     JS_EXPORT_PRIVATE void runRunLoop();
-#endif
 
 private:
     HashMap<JSPromiseDeferred*, Vector<Strong<JSCell>>> m_pendingPromises;
     Lock m_taskLock;
     bool m_runTasks { true };
-#if USE(CF)
     bool m_shouldStopRunLoopWhenAllPromisesFinish { false };
-#endif
     Vector<std::tuple<JSPromiseDeferred*, Task>> m_tasks;
     HashMap<JSPromiseDeferred*, Vector<Task>> m_blockedTasks;
 };

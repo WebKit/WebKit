@@ -3812,9 +3812,7 @@ int runJSC(CommandLine options, const Func& func)
 
         vm.drainMicrotasks();
     }
-#if USE(CF)
     vm.promiseDeferredTimer->runRunLoop();
-#endif
 
     result = success && (asyncTestExpectedPasses == asyncTestPasses) ? 0 : 3;
 
