@@ -1,3 +1,15 @@
+2017-04-05  Brent Fulgham  <bfulgham@apple.com>
+
+        [WK2][iOS] Add entitlements to enable audio/video capture in WebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=170507
+        <rdar://problem/31121248>
+
+        Reviewed by Youenn Fablet.
+
+        Add two entitlements that are required to access audio/video capture on iOS.
+
+        * Configurations/WebContent-iOS.entitlements:
+
 2017-04-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Show a log message when an invalid message is received in non cocoa ports

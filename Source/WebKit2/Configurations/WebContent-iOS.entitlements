@@ -24,5 +24,9 @@
 	</array>
 	<key>dynamic-codesigning</key>
 	<true/>
+	<key>com.apple.private.coremedia.pidinheritance.allow</key>
+	<true/>
+	<key>com.apple.private.coremedia.extensions.audiorecording.allow</key>
+	<true/>
 </dict>
 </plist>
