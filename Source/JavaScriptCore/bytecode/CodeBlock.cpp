@@ -60,6 +60,7 @@
 #include "JSModuleEnvironment.h"
 #include "JSSet.h"
 #include "JSString.h"
+#include "JSTemplateRegistryKey.h"
 #include "LLIntData.h"
 #include "LLIntEntrypoint.h"
 #include "LLIntPrototypeLoadAdaptiveStructureWatchpoint.h"
@@ -404,7 +405,8 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
     if (vm.typeProfiler() || vm.controlFlowProfiler())
         vm.functionHasExecutedCache()->removeUnexecutedRange(ownerExecutable->sourceID(), ownerExecutable->typeProfilingStartOffset(), ownerExecutable->typeProfilingEndOffset());
 
-    setConstantRegisters(unlinkedCodeBlock->constantRegisters(), unlinkedCodeBlock->constantsSourceCodeRepresentation());
+    if (!setConstantRegisters(unlinkedCodeBlock->constantRegisters(), unlinkedCodeBlock->constantsSourceCodeRepresentation()))
+        return false;
     if (!setConstantIdentifierSetRegisters(vm, unlinkedCodeBlock->constantIdentifierSets()))
         return false;
     if (unlinkedCodeBlock->usesGlobalObject())
@@ -885,13 +887,15 @@ bool CodeBlock::setConstantIdentifierSetRegisters(VM& vm, const Vector<ConstantI
         }
         m_constantRegisters[entry.second].set(vm, this, JSValue(jsSet));
     }
-    
-    scope.release();
     return true;
 }
 
-void CodeBlock::setConstantRegisters(const Vector<WriteBarrier<Unknown>>& constants, const Vector<SourceCodeRepresentation>& constantsSourceCodeRepresentation)
+bool CodeBlock::setConstantRegisters(const Vector<WriteBarrier<Unknown>>& constants, const Vector<SourceCodeRepresentation>& constantsSourceCodeRepresentation)
 {
+    auto scope = DECLARE_THROW_SCOPE(*m_vm);
+    JSGlobalObject* globalObject = m_globalObject.get();
+    ExecState* exec = globalObject->globalExec();
+
     ASSERT(constants.size() == constantsSourceCodeRepresentation.size());
     size_t count = constants.size();
     m_constantRegisters.resizeToFit(count);
@@ -900,7 +904,7 @@ void CodeBlock::setConstantRegisters(const Vector<WriteBarrier<Unknown>>& consta
         JSValue constant = constants[i].get();
 
         if (!constant.isEmpty()) {
-            if (SymbolTable* symbolTable = jsDynamicCast<SymbolTable*>(*vm(), constant)) {
+            if (SymbolTable* symbolTable = jsDynamicCast<SymbolTable*>(*m_vm, constant)) {
                 if (hasTypeProfiler) {
                     ConcurrentJSLocker locker(symbolTable->m_lock);
                     symbolTable->prepareForTypeProfiling(locker);
@@ -911,6 +915,10 @@ void CodeBlock::setConstantRegisters(const Vector<WriteBarrier<Unknown>>& consta
                     clone->setRareDataCodeBlock(this);
 
                 constant = clone;
+            } else if (isTemplateRegistryKey(*m_vm, constant)) {
+                auto* templateObject = globalObject->templateRegistry().getTemplateObject(exec, jsCast<JSTemplateRegistryKey*>(constant));
+                RETURN_IF_EXCEPTION(scope, false);
+                constant = templateObject;
             }
         }
 
@@ -918,6 +926,8 @@ void CodeBlock::setConstantRegisters(const Vector<WriteBarrier<Unknown>>& consta
     }
 
     m_constantsSourceCodeRepresentation = constantsSourceCodeRepresentation;
+
+    return true;
 }
 
 void CodeBlock::setAlternative(VM& vm, CodeBlock* alternative)

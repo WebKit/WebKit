@@ -3057,12 +3057,15 @@ JSString* BytecodeGenerator::addStringConstant(const Identifier& identifier)
     return stringInMap;
 }
 
-JSTemplateRegistryKey* BytecodeGenerator::addTemplateRegistryKeyConstant(Ref<TemplateRegistryKey>&& templateRegistryKey)
+RegisterID* BytecodeGenerator::addTemplateRegistryKeyConstant(Ref<TemplateRegistryKey>&& templateRegistryKey)
 {
     return m_templateRegistryKeyMap.ensure(templateRegistryKey.copyRef(), [&] {
         auto* result = JSTemplateRegistryKey::create(*vm(), WTFMove(templateRegistryKey));
-        addConstantValue(result);
-        return result;
+        unsigned index = m_nextConstantOffset;
+        m_constantPoolRegisters.append(FirstConstantRegisterIndex + m_nextConstantOffset);
+        ++m_nextConstantOffset;
+        m_codeBlock->addConstant(result);
+        return &m_constantPoolRegisters[index];
     }).iterator->value;
 }
 
@@ -4311,11 +4314,10 @@ RegisterID* BytecodeGenerator::emitGetTemplateObject(RegisterID* dst, TaggedTemp
         else
             cookedStrings.append(string->cooked()->impl());
     }
-
-    RefPtr<RegisterID> getTemplateObject = emitGetGlobalPrivate(newTemporary(), propertyNames().builtinNames().getTemplateObjectPrivateName());
-    CallArguments arguments(*this, nullptr);
-    emitLoad(arguments.thisRegister(), JSValue(addTemplateRegistryKeyConstant(m_vm->templateRegistryKeyTable().createKey(WTFMove(rawStrings), WTFMove(cookedStrings)))));
-    return emitCall(dst, getTemplateObject.get(), NoExpectedFunction, arguments, taggedTemplate->divot(), taggedTemplate->divotStart(), taggedTemplate->divotEnd(), DebuggableCall::No);
+    RefPtr<RegisterID> constant = addTemplateRegistryKeyConstant(m_vm->templateRegistryKeyTable().createKey(WTFMove(rawStrings), WTFMove(cookedStrings)));
+    if (!dst)
+        return constant.get();
+    return emitMove(dst, constant.get());
 }
 
 RegisterID* BytecodeGenerator::emitGetGlobalPrivate(RegisterID* dst, const Identifier& property)

@@ -80,7 +80,6 @@ namespace JSC {
     macro(typedArraySubarrayCreate) \
     macro(BuiltinLog) \
     macro(homeObject) \
-    macro(getTemplateObject) \
     macro(templateRegistryKey) \
     macro(enqueueJob) \
     macro(promiseState) \

@@ -943,7 +943,7 @@ namespace JSC {
 
         typedef HashMap<double, JSValue> NumberMap;
         typedef HashMap<UniquedStringImpl*, JSString*, IdentifierRepHash> IdentifierStringMap;
-        typedef HashMap<Ref<TemplateRegistryKey>, JSTemplateRegistryKey*> TemplateRegistryKeyMap;
+        typedef HashMap<Ref<TemplateRegistryKey>, RegisterID*> TemplateRegistryKeyMap;
         
         // Helper for emitCall() and emitConstruct(). This works because the set of
         // expected functions have identical behavior for both call and construct
@@ -1028,7 +1028,7 @@ namespace JSC {
 
     public:
         JSString* addStringConstant(const Identifier&);
-        JSTemplateRegistryKey* addTemplateRegistryKeyConstant(Ref<TemplateRegistryKey>&&);
+        RegisterID* addTemplateRegistryKeyConstant(Ref<TemplateRegistryKey>&&);
 
         Vector<UnlinkedInstruction, 0, UnsafeVectorOverflow>& instructions() { return m_instructions; }
 

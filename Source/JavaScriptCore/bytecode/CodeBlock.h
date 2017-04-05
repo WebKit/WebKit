@@ -921,7 +921,7 @@ private:
 
     bool setConstantIdentifierSetRegisters(VM&, const Vector<ConstantIndentifierSetEntry>& constants);
 
-    void setConstantRegisters(const Vector<WriteBarrier<Unknown>>& constants, const Vector<SourceCodeRepresentation>& constantsSourceCodeRepresentation);
+    bool setConstantRegisters(const Vector<WriteBarrier<Unknown>>& constants, const Vector<SourceCodeRepresentation>& constantsSourceCodeRepresentation);
 
     void replaceConstant(int index, JSValue value)
     {

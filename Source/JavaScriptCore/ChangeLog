@@ -1,3 +1,35 @@
+2017-03-16  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Generate TemplateObjects at linking time
+        https://bugs.webkit.org/show_bug.cgi?id=169743
+
+        Reviewed by Keith Miller.
+
+        Currently, the code calls getTemplateObject to get appropriate template objects at runtime.
+        But this template object is constant value and never changed. So instead of creating it
+        at runtime, we should create it at linking time and store it in the constant registers.
+
+        * builtins/BuiltinNames.h:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finishCreation):
+        (JSC::CodeBlock::setConstantRegisters):
+        * bytecode/CodeBlock.h:
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedCodeBlock::shrinkToFit):
+        * bytecode/UnlinkedCodeBlock.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::addTemplateRegistryKeyConstant):
+        (JSC::BytecodeGenerator::emitGetTemplateObject):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::TaggedTemplateNode::emitBytecode):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::getTemplateObject): Deleted.
+        * runtime/JSTemplateRegistryKey.cpp:
+        * runtime/JSTemplateRegistryKey.h:
+        (JSC::isTemplateRegistryKey):
+
 2017-04-04  Mark Lam  <mark.lam@apple.com>
 
         On ARM64, DFG::SpeculativeJIT::compileArithMod() failed to ensure result is of DataFormatInt32.

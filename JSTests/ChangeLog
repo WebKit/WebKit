@@ -1,3 +1,14 @@
+2017-03-16  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Generate TemplateObjects at linking time
+        https://bugs.webkit.org/show_bug.cgi?id=169743
+
+        Reviewed by Keith Miller.
+
+        * stress/template-string-tags-eval.js: Added.
+        (shouldBe):
+        (tag):
+
 2017-04-04  Mark Lam  <mark.lam@apple.com>
 
         On ARM64, DFG::SpeculativeJIT::compileArithMod() failed to ensure result is of DataFormatInt32.

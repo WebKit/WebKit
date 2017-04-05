@@ -31,18 +31,20 @@
 
 namespace JSC {
 
-class JSTemplateRegistryKey final : public JSDestructibleObject {
+class JSTemplateRegistryKey final : public JSCell {
 public:
-    typedef JSDestructibleObject Base;
+    using Base = JSCell;
+
+    static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
+    static const bool needsDestruction = true;
+    DECLARE_INFO;
 
     static JSTemplateRegistryKey* create(VM&, Ref<TemplateRegistryKey>&&);
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
-        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
+        return Structure::create(vm, globalObject, prototype, TypeInfo(CellType, StructureFlags), info());
     }
-
-    DECLARE_INFO;
 
     const TemplateRegistryKey& templateRegistryKey() const { return m_templateRegistryKey.get(); }
 
@@ -54,5 +56,15 @@ private:
 
     Ref<TemplateRegistryKey> m_templateRegistryKey;
 };
+
+inline bool isTemplateRegistryKey(VM& vm, JSCell* cell)
+{
+    return cell->classInfo(vm) == JSTemplateRegistryKey::info();
+}
+
+inline bool isTemplateRegistryKey(VM& vm, JSValue v)
+{
+    return v.isCell() && isTemplateRegistryKey(vm, v.asCell());
+}
 
 } // namespace JSC

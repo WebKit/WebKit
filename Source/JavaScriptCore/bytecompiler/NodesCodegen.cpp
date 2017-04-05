@@ -344,7 +344,7 @@ RegisterID* TaggedTemplateNode::emitBytecode(BytecodeGenerator& generator, Regis
             tag = generator.emitGetById(generator.newTemporary(), base.get(), dot->identifier());
     }
 
-    RefPtr<RegisterID> templateObject = generator.emitGetTemplateObject(generator.newTemporary(), this);
+    RefPtr<RegisterID> templateObject = generator.emitGetTemplateObject(nullptr, this);
 
     unsigned expressionsCount = 0;
     for (TemplateExpressionListNode* templateExpression = m_templateLiteral->templateExpressions(); templateExpression; templateExpression = templateExpression->next())

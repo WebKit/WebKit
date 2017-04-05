@@ -220,6 +220,7 @@ public:
         m_constantsSourceCodeRepresentation.append(SourceCodeRepresentation::Other);
         return result;
     }
+
     unsigned registerIndexForLinkTimeConstant(LinkTimeConstant type)
     {
         unsigned index = static_cast<unsigned>(type);
