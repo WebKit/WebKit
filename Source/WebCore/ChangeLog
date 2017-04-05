@@ -1,3 +1,9 @@
+2017-04-04  Alexey Proskuryakov  <ap@apple.com>
+
+        More build fixing.
+
+        * platform/spi/mac/AVFoundationSPI.h:
+
 2017-04-04  Simon Fraser  <simon.fraser@apple.com>
 
         Do some minor FEColorMatrix code cleanup and optimization

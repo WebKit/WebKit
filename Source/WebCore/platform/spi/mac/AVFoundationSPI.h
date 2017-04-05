@@ -219,7 +219,9 @@ NS_ASSUME_NONNULL_END
 
 #endif // __has_include(<AVFoundation/AVSampleBufferDisplayLayer.h>)
 
-#if __has_include(<AVFoundation/AVSampleBufferAudioRenderer.h>)
+#if ((PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED < 110000)) && __has_include(<AVFoundation/AVQueuedSampleBufferRendering.h>)
+// Nothing to do, AVfoundation/AVQueuedSampleBufferRendering.h was imported above.
+#elif __has_include(<AVFoundation/AVSampleBufferAudioRenderer.h>)
 #import <AVFoundation/AVSampleBufferAudioRenderer.h>
 #else
 
