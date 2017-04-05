@@ -1,3 +1,20 @@
+2017-04-05  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Invalid address specified to RtlValidateHeap at std::ctype<char>::_Tidy() when finishing MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=157067
+
+        Reviewed by Per Arne Vollan.
+
+        WebKit is compiled with /MT switch to use static CRT on Windows.
+        But, WinCairo port does not link the static CRT by specifying
+        /NODEFAULTLIB:LIBCMT and /NODEFAULTLIB:LIBCMTD switches.
+        Eventually, a dynamically linked CRT is linked.  This causes
+        potential heap corruption.
+
+        * PlatformWin.cmake: Do not set /NODEFAULTLIB:LIBCMT and
+        /NODEFAULTLIB:LIBCMTD, but /NODEFAULTLIB:MSVCRT and
+        /NODEFAULTLIB:MSVCRTD as well as AppleWin port does
+
 2017-03-31  Brady Eidson  <beidson@apple.com>
 
         Clean up the "StorageType" enum.
