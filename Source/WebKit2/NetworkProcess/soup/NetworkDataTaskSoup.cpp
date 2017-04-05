@@ -869,7 +869,7 @@ void NetworkDataTaskSoup::download()
     ASSERT(!m_response.isNull());
 
     if (m_response.httpStatusCode() >= 400) {
-        didFailDownload(platformDownloadNetworkError(m_response.httpStatusCode(), m_response.url(), m_response.httpStatusText()));
+        didFailDownload(downloadNetworkError(m_response.url(), m_response.httpStatusText()));
         return;
     }
 
@@ -884,7 +884,7 @@ void NetworkDataTaskSoup::download()
     else
         outputStream = adoptGRef(g_file_create(m_downloadDestinationFile.get(), G_FILE_CREATE_NONE, nullptr, &error.outPtr()));
     if (!outputStream) {
-        didFailDownload(platformDownloadDestinationError(m_response, error->message));
+        didFailDownload(downloadDestinationError(m_response, error->message));
         return;
     }
 
@@ -893,7 +893,7 @@ void NetworkDataTaskSoup::download()
     m_downloadIntermediateFile = adoptGRef(g_file_new_for_uri(intermediateURI.get()));
     outputStream = adoptGRef(g_file_replace(m_downloadIntermediateFile.get(), 0, TRUE, G_FILE_CREATE_NONE, 0, &error.outPtr()));
     if (!outputStream) {
-        didFailDownload(platformDownloadDestinationError(m_response, error->message));
+        didFailDownload(downloadDestinationError(m_response, error->message));
         return;
     }
     m_downloadOutputStream = adoptGRef(G_OUTPUT_STREAM(outputStream.leakRef()));
@@ -927,7 +927,7 @@ void NetworkDataTaskSoup::writeDownloadCallback(GOutputStream* outputStream, GAs
         bytesWritten = writeTaskResult;
 #endif
     if (error)
-        task->didFailDownload(platformDownloadDestinationError(task->m_response, error->message));
+        task->didFailDownload(downloadDestinationError(task->m_response, error->message));
     else
         task->didWriteDownload(bytesWritten);
 }
@@ -982,7 +982,7 @@ void NetworkDataTaskSoup::didFinishDownload()
     ASSERT(m_downloadIntermediateFile);
     GUniqueOutPtr<GError> error;
     if (!g_file_move(m_downloadIntermediateFile.get(), m_downloadDestinationFile.get(), G_FILE_COPY_OVERWRITE, m_cancellable.get(), nullptr, nullptr, &error.outPtr())) {
-        didFailDownload(platformDownloadDestinationError(m_response, error->message));
+        didFailDownload(downloadDestinationError(m_response, error->message));
         return;
     }
 
@@ -1026,7 +1026,7 @@ void NetworkDataTaskSoup::cleanDownloadFiles()
 void NetworkDataTaskSoup::didFail(const ResourceError& error)
 {
     if (isDownload()) {
-        didFailDownload(platformDownloadNetworkError(error.errorCode(), error.failingURL(), error.localizedDescription()));
+        didFailDownload(downloadNetworkError(error.failingURL(), error.localizedDescription()));
         return;
     }
 

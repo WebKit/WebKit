@@ -27,11 +27,11 @@
 #include "WebPrintOperationGtk.h"
 
 #include "WebCoreArgumentCoders.h"
+#include "WebErrors.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
 #include "WebProcess.h"
 #include <WebCore/DocumentLoader.h>
-#include <WebCore/ErrorsGtk.h>
 #include <WebCore/Frame.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/NotImplemented.h>

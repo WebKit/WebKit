@@ -20,7 +20,8 @@
 #include "config.h"
 #include "WebKitPrivate.h"
 
-#include "ErrorsGtk.h"
+#include "APIError.h"
+#include "WKErrorRef.h"
 #include "WebEvent.h"
 #include "WebKitError.h"
 #include <gdk/gdk.h>
@@ -113,49 +114,39 @@ unsigned wkEventMouseButtonToWebKitMouseButton(WKEventMouseButton wkButton)
 unsigned toWebKitError(unsigned webCoreError)
 {
     switch (webCoreError) {
-    case WebCore::NetworkErrorFailed:
-        return WEBKIT_NETWORK_ERROR_FAILED;
-    case WebCore::NetworkErrorTransport:
-        return WEBKIT_NETWORK_ERROR_TRANSPORT;
-    case WebCore::NetworkErrorUnknownProtocol:
-        return WEBKIT_NETWORK_ERROR_UNKNOWN_PROTOCOL;
-    case WebCore::NetworkErrorCancelled:
+    case API::Error::Network::Cancelled:
         return WEBKIT_NETWORK_ERROR_CANCELLED;
-    case WebCore::NetworkErrorFileDoesNotExist:
+    case API::Error::Network::FileDoesNotExist:
         return WEBKIT_NETWORK_ERROR_FILE_DOES_NOT_EXIST;
-    case WebCore::PolicyErrorFailed:
-        return WEBKIT_POLICY_ERROR_FAILED;
-    case WebCore::PolicyErrorCannotShowMimeType:
+    case kWKErrorCodeCannotShowMIMEType:
         return WEBKIT_POLICY_ERROR_CANNOT_SHOW_MIME_TYPE;
-    case WebCore::PolicyErrorCannotShowURL:
+    case kWKErrorCodeCannotShowURL:
         return WEBKIT_POLICY_ERROR_CANNOT_SHOW_URI;
-    case WebCore::PolicyErrorFrameLoadInterruptedByPolicyChange:
+    case kWKErrorCodeFrameLoadInterruptedByPolicyChange:
         return WEBKIT_POLICY_ERROR_FRAME_LOAD_INTERRUPTED_BY_POLICY_CHANGE;
-    case WebCore::PolicyErrorCannotUseRestrictedPort:
+    case kWKErrorCodeCannotUseRestrictedPort:
         return WEBKIT_POLICY_ERROR_CANNOT_USE_RESTRICTED_PORT;
-    case WebCore::PluginErrorFailed:
-        return WEBKIT_PLUGIN_ERROR_FAILED;
-    case WebCore::PluginErrorCannotFindPlugin:
+    case kWKErrorCodeCannotFindPlugIn:
         return WEBKIT_PLUGIN_ERROR_CANNOT_FIND_PLUGIN;
-    case WebCore::PluginErrorCannotLoadPlugin:
+    case kWKErrorCodeCannotLoadPlugIn:
         return WEBKIT_PLUGIN_ERROR_CANNOT_LOAD_PLUGIN;
-    case WebCore::PluginErrorJavaUnavailable:
+    case kWKErrorCodeJavaUnavailable:
         return WEBKIT_PLUGIN_ERROR_JAVA_UNAVAILABLE;
-    case WebCore::PluginErrorConnectionCancelled:
+    case kWKErrorCodePlugInCancelledConnection:
         return WEBKIT_PLUGIN_ERROR_CONNECTION_CANCELLED;
-    case WebCore::PluginErrorWillHandleLoad:
+    case kWKErrorCodePlugInWillHandleLoad:
         return WEBKIT_PLUGIN_ERROR_WILL_HANDLE_LOAD;
-    case WebCore::DownloadErrorNetwork:
+    case API::Error::Download::Transport:
         return WEBKIT_DOWNLOAD_ERROR_NETWORK;
-    case WebCore::DownloadErrorCancelledByUser:
+    case API::Error::Download::CancelledByUser:
         return WEBKIT_DOWNLOAD_ERROR_CANCELLED_BY_USER;
-    case WebCore::DownloadErrorDestination:
+    case API::Error::Download::Destination:
         return WEBKIT_DOWNLOAD_ERROR_DESTINATION;
-    case WebCore::PrintErrorGeneral:
+    case API::Error::Print::General:
         return WEBKIT_PRINT_ERROR_GENERAL;
-    case WebCore::PrintErrorPrinterNotFound:
+    case API::Error::Print::PrinterNotFound:
         return WEBKIT_PRINT_ERROR_PRINTER_NOT_FOUND;
-    case WebCore::PrintErrorInvalidPageRange:
+    case API::Error::Print::InvalidPageRange:
         return WEBKIT_PRINT_ERROR_INVALID_PAGE_RANGE;
     default:
         // This may be a user app defined error, which needs to be passed as-is.
@@ -166,50 +157,40 @@ unsigned toWebKitError(unsigned webCoreError)
 unsigned toWebCoreError(unsigned webKitError)
 {
     switch (webKitError) {
-    case WEBKIT_NETWORK_ERROR_FAILED:
-        return WebCore::NetworkErrorFailed;
-    case WEBKIT_NETWORK_ERROR_TRANSPORT:
-        return WebCore::NetworkErrorTransport;
-    case WEBKIT_NETWORK_ERROR_UNKNOWN_PROTOCOL:
-        return WebCore::NetworkErrorUnknownProtocol;
     case WEBKIT_NETWORK_ERROR_CANCELLED:
-        return WebCore::NetworkErrorCancelled;
+        return API::Error::Network::Cancelled;
     case WEBKIT_NETWORK_ERROR_FILE_DOES_NOT_EXIST:
-        return WebCore::NetworkErrorFileDoesNotExist;
-    case WEBKIT_POLICY_ERROR_FAILED:
-        return WebCore::PolicyErrorFailed;
+        return API::Error::Network::FileDoesNotExist;
     case WEBKIT_POLICY_ERROR_CANNOT_SHOW_MIME_TYPE:
-        return WebCore::PolicyErrorCannotShowMimeType;
+        return kWKErrorCodeCannotShowMIMEType;
     case WEBKIT_POLICY_ERROR_CANNOT_SHOW_URI:
-        return WebCore::PolicyErrorCannotShowURL;
+        return kWKErrorCodeCannotShowURL;
     case WEBKIT_POLICY_ERROR_FRAME_LOAD_INTERRUPTED_BY_POLICY_CHANGE:
-        return WebCore::PolicyErrorFrameLoadInterruptedByPolicyChange;
+        return kWKErrorCodeFrameLoadInterruptedByPolicyChange;
     case WEBKIT_POLICY_ERROR_CANNOT_USE_RESTRICTED_PORT:
-        return WebCore::PolicyErrorCannotUseRestrictedPort;
-    case WEBKIT_PLUGIN_ERROR_FAILED:
-        return WebCore::PluginErrorFailed;
+        return kWKErrorCodeCannotUseRestrictedPort;
     case WEBKIT_PLUGIN_ERROR_CANNOT_FIND_PLUGIN:
-        return WebCore::PluginErrorCannotFindPlugin;
+        return kWKErrorCodeCannotFindPlugIn;
     case WEBKIT_PLUGIN_ERROR_CANNOT_LOAD_PLUGIN:
-        return WebCore::PluginErrorCannotLoadPlugin;
+        return kWKErrorCodeCannotLoadPlugIn;
     case WEBKIT_PLUGIN_ERROR_JAVA_UNAVAILABLE:
-        return WebCore::PluginErrorJavaUnavailable;
+        return kWKErrorCodeJavaUnavailable;
     case WEBKIT_PLUGIN_ERROR_CONNECTION_CANCELLED:
-        return WebCore::PluginErrorConnectionCancelled;
+        return kWKErrorCodePlugInCancelledConnection;
     case WEBKIT_PLUGIN_ERROR_WILL_HANDLE_LOAD:
-        return WebCore::PluginErrorWillHandleLoad;
+        return kWKErrorCodePlugInWillHandleLoad;
     case WEBKIT_DOWNLOAD_ERROR_NETWORK:
-        return WebCore::DownloadErrorNetwork;
+        return API::Error::Download::Transport;
     case WEBKIT_DOWNLOAD_ERROR_CANCELLED_BY_USER:
-        return WebCore::DownloadErrorCancelledByUser;
+        return API::Error::Download::CancelledByUser;
     case WEBKIT_DOWNLOAD_ERROR_DESTINATION:
-        return WebCore::DownloadErrorDestination;
+        return API::Error::Download::Destination;
     case WEBKIT_PRINT_ERROR_GENERAL:
-        return WebCore::PrintErrorGeneral;
+        return API::Error::Print::General;
     case WEBKIT_PRINT_ERROR_PRINTER_NOT_FOUND:
-        return WebCore::PrintErrorPrinterNotFound;
+        return API::Error::Print::PrinterNotFound;
     case WEBKIT_PRINT_ERROR_INVALID_PAGE_RANGE:
-        return WebCore::PrintErrorInvalidPageRange;
+        return API::Error::Print::InvalidPageRange;
     default:
         // This may be a user app defined error, which needs to be passed as-is.
         return webKitError;

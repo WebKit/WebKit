@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Intel Corporation. All rights reserved.
+ * Copyright (C) 2010-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,24 +23,38 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "DownloadSoupErrors.h"
+#import "config.h"
+#import "WebErrors.h"
 
-#include <WebCore/ErrorsGtk.h>
-#include <WebCore/ResourceError.h>
+#import "APIError.h"
+#import "WKErrorRef.h"
+#import <WebCore/LocalizedStrings.h>
+#import <WebCore/ResourceRequest.h>
+#import <WebCore/ResourceResponse.h>
 
 using namespace WebCore;
+using namespace WebKit;
 
 namespace WebKit {
 
-ResourceError platformDownloadNetworkError(int errorCode, const URL& failingURL, const String& localizedDescription)
+static RetainPtr<NSError> createNSError(NSString* domain, int code, NSURL *URL)
 {
-    return downloadNetworkError(ResourceError(errorDomainDownload, errorCode, failingURL, localizedDescription));
+    NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+        URL, @"NSErrorFailingURLKey",
+        [URL absoluteString], @"NSErrorFailingURLStringKey",
+        nil];
+
+    return adoptNS([[NSError alloc] initWithDomain:domain code:code userInfo:userInfo]);
 }
 
-ResourceError platformDownloadDestinationError(const ResourceResponse& response, const String& message)
+ResourceError cancelledError(const ResourceRequest& request)
 {
-    return downloadDestinationError(response, message);
+    return ResourceError(createNSError(NSURLErrorDomain, NSURLErrorCancelled, request.url()).get());
+}
+
+ResourceError fileDoesNotExistError(const ResourceResponse& response)
+{
+    return ResourceError(createNSError(NSURLErrorDomain, NSURLErrorFileDoesNotExist, response.url()).get());
 }
 
 } // namespace WebKit

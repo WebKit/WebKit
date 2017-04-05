@@ -25,11 +25,13 @@
 
 #pragma once
 
+#include <wtf/Forward.h>
+
 namespace WebCore {
-    class URL;
-    class ResourceError;
-    class ResourceRequest;
-    class ResourceResponse;
+class URL;
+class ResourceError;
+class ResourceRequest;
+class ResourceResponse;
 }
 
 namespace WebKit {
@@ -46,5 +48,17 @@ WebCore::ResourceError cannotShowMIMETypeError(const WebCore::ResourceResponse&)
 WebCore::ResourceError fileDoesNotExistError(const WebCore::ResourceResponse&);
 WebCore::ResourceError pluginWillHandleLoadError(const WebCore::ResourceResponse&);
 WebCore::ResourceError internalError(const WebCore::URL&);
+
+#if USE(SOUP)
+WebCore::ResourceError downloadNetworkError(const WebCore::URL&, const WTF::String&);
+WebCore::ResourceError downloadCancelledByUserError(const WebCore::ResourceResponse&);
+WebCore::ResourceError downloadDestinationError(const WebCore::ResourceResponse&, const WTF::String&);
+#endif
+
+#if PLATFORM(GTK)
+WebCore::ResourceError printError(const WebCore::URL&, const WTF::String&);
+WebCore::ResourceError printerNotFoundError(const WebCore::URL&);
+WebCore::ResourceError invalidPageRangeToPrint(const WebCore::URL&);
+#endif
 
 } // namespace WebKit

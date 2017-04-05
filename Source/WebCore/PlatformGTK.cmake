@@ -139,7 +139,6 @@ list(APPEND WebCore_SOURCES
     platform/graphics/x11/XUniqueResource.cpp
 
     platform/gtk/DragDataGtk.cpp
-    platform/gtk/ErrorsGtk.cpp
     platform/gtk/LocalizedStringsGtk.cpp
     platform/gtk/PasteboardGtk.cpp
     platform/gtk/ScrollAnimatorGtk.cpp

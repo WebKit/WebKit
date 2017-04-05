@@ -1,3 +1,67 @@
+2017-04-04  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Move WebErrors from WebProcess to Shared and get rid of ErrorsGtk in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=156974
+
+        Reviewed by Sam Weinig.
+
+        WebErrors are not only used by the frame loader client in the web process, but also by the network process. So,
+        move them to Shared make most of the implementation cross-platform.
+
+        * CMakeLists.txt: Add new files to compilation.
+        * NetworkProcess/soup/NetworkDataTaskSoup.cpp:
+        (WebKit::NetworkDataTaskSoup::download): Use WebErrors directly instead of platform methods that are no longer needed.
+        (WebKit::NetworkDataTaskSoup::writeDownloadCallback): Ditto.
+        (WebKit::NetworkDataTaskSoup::didFinishDownload): Ditto.
+        (WebKit::NetworkDataTaskSoup::didFail): Ditto.
+        * PlatformGTK.cmake: Add new files to compilation and remove DownloadSoupErrorsGtk.cpp
+        * PlatformMac.cmake:
+        * Shared/API/APIError.cpp: Add error domains used by glib based ports.
+        (API::Error::webKitNetworkErrorDomain):
+        (API::Error::webKitPolicyErrorDomain):
+        (API::Error::webKitPluginErrorDomain):
+        (API::Error::webKitDownloadErrorDomain):
+        (API::Error::webKitPrintErrorDomain):
+        * Shared/API/APIError.h:
+        * Shared/Cocoa/WebErrorsCocoa.mm: Copied from Source/WebKit2/WebProcess/WebCoreSupport/WebErrors.h.
+        (WebKit::createNSError):
+        (WebKit::cancelledError):
+        (WebKit::fileDoesNotExistError):
+        * Shared/WebErrors.cpp: Copied from Source/WebKit2/WebProcess/WebCoreSupport/gtk/WebErrorsGtk.cpp.
+        (WebKit::blockedError):
+        (WebKit::blockedByContentBlockerError):
+        (WebKit::cannotShowURLError):
+        (WebKit::interruptedForPolicyChangeError):
+        (WebKit::blockedByContentFilterError):
+        (WebKit::cannotShowMIMETypeError):
+        (WebKit::pluginWillHandleLoadError):
+        (WebKit::internalError):
+        * Shared/WebErrors.h: Renamed from Source/WebKit2/WebProcess/WebCoreSupport/WebErrors.h.
+        * Shared/glib/WebErrorsGlib.cpp: Renamed from Source/WebKit2/WebProcess/WebCoreSupport/gtk/WebErrorsGtk.cpp.
+        (WebKit::cancelledError):
+        (WebKit::fileDoesNotExistError):
+        * Shared/gtk/WebErrorsGtk.cpp: Copied from Source/WebKit2/NetworkProcess/Downloads/gtk/DownloadSoupErrorsGtk.cpp.
+        (WebKit::printError):
+        (WebKit::printerNotFoundError):
+        (WebKit::invalidPageRangeToPrint):
+        * Shared/soup/WebErrorsSoup.cpp: Renamed from Source/WebKit2/NetworkProcess/Downloads/gtk/DownloadSoupErrorsGtk.cpp.
+        (WebKit::downloadNetworkError):
+        (WebKit::downloadCancelledByUserError):
+        (WebKit::downloadDestinationError):
+        * UIProcess/API/gtk/WebKitDownload.cpp:
+        * UIProcess/API/gtk/WebKitError.cpp:
+        (webkit_network_error_quark):
+        (webkit_policy_error_quark):
+        (webkit_plugin_error_quark):
+        (webkit_download_error_quark):
+        (webkit_print_error_quark):
+        * UIProcess/API/gtk/WebKitPrivate.cpp:
+        (toWebKitError):
+        (toWebCoreError):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/mac/WebErrorsMac.mm: Removed.
+        * WebProcess/WebPage/gtk/WebPrintOperationGtk.cpp:
+
 2017-04-04  Youenn Fablet  <youenn@apple.com>
 
         [Mac] Add back web audio support for getUserMedia MediaStreamTrack

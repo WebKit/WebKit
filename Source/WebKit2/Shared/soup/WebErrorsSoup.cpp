@@ -1,7 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
- * Portions Copyright (c) 2010 Motorola Mobility, Inc.  All rights reserved.
- * Copyright (C) 2011 Igalia S.L.
+ * Copyright (C) 2017 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,60 +27,27 @@
 #include "WebErrors.h"
 
 #include "APIError.h"
-#include <WebCore/ErrorsGtk.h>
+#include <WebCore/LocalizedStrings.h>
 #include <WebCore/ResourceError.h>
-#include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
-#include <WebKit/WKErrorRef.h>
-#include <glib/gi18n-lib.h>
 
 using namespace WebCore;
 
 namespace WebKit {
 
-ResourceError cancelledError(const ResourceRequest& request)
+ResourceError downloadNetworkError(const URL& failingURL, const String& localizedDescription)
 {
-    return WebCore::cancelledError(request);
+    return ResourceError(API::Error::webKitDownloadErrorDomain(), API::Error::Download::Transport, failingURL, localizedDescription);
 }
 
-ResourceError blockedError(const ResourceRequest& request)
+ResourceError downloadCancelledByUserError(const ResourceResponse& response)
 {
-    return WebCore::blockedError(request);
+    return ResourceError(API::Error::webKitDownloadErrorDomain(), API::Error::Download::CancelledByUser, response.url(), WEB_UI_STRING("User cancelled the download", "The download was cancelled by the user"));
 }
 
-ResourceError blockedByContentBlockerError(const ResourceRequest& request)
+ResourceError downloadDestinationError(const ResourceResponse& response, const String& localizedDescription)
 {
-    return WebCore::blockedByContentBlockerError(request);
-}
-
-ResourceError cannotShowURLError(const ResourceRequest& request)
-{
-    return WebCore::cannotShowURLError(request);
-}
-
-ResourceError interruptedForPolicyChangeError(const ResourceRequest& request)
-{
-    return WebCore::interruptedForPolicyChangeError(request);
-}
-
-ResourceError cannotShowMIMETypeError(const ResourceResponse& response)
-{
-    return WebCore::cannotShowMIMETypeError(response);
-}
-
-ResourceError fileDoesNotExistError(const ResourceResponse& response)
-{
-    return WebCore::fileDoesNotExistError(response);
-}
-
-ResourceError pluginWillHandleLoadError(const ResourceResponse& response)
-{
-    return WebCore::pluginWillHandleLoadError(response);
-}
-
-WebCore::ResourceError internalError(const WebCore::URL& url)
-{
-    return ResourceError(API::Error::webKitErrorDomain(), kWKErrorInternal, url, _("Internal error"));
+    return ResourceError(API::Error::webKitDownloadErrorDomain(), API::Error::Download::Destination, response.url(), localizedDescription);
 }
 
 } // namespace WebKit

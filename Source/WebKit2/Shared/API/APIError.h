@@ -49,6 +49,19 @@ public:
     }
 
     static const WTF::String& webKitErrorDomain();
+    enum Network { Cancelled = 302, FileDoesNotExist = 303 };
+    static const WTF::String& webKitNetworkErrorDomain();
+    static const WTF::String& webKitPolicyErrorDomain();
+    static const WTF::String& webKitPluginErrorDomain();
+#if USE(SOUP)
+    enum Download { Transport = 499, CancelledByUser = 400, Destination = 401 };
+    static const WTF::String& webKitDownloadErrorDomain();
+#endif
+#if PLATFORM(GTK)
+    enum Print { General = 599, PrinterNotFound = 500, InvalidPageRange = 501 };
+    static const WTF::String& webKitPrintErrorDomain();
+#endif
+
 
     const WTF::String& domain() const { return m_platformError.domain(); }
     int errorCode() const { return m_platformError.errorCode(); }

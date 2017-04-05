@@ -21,12 +21,12 @@
 #include "WebKitDownload.h"
 
 #include "DownloadProxy.h"
+#include "WebErrors.h"
 #include "WebKitDownloadPrivate.h"
 #include "WebKitMarshal.h"
 #include "WebKitPrivate.h"
 #include "WebKitURIRequestPrivate.h"
 #include "WebKitURIResponsePrivate.h"
-#include <WebCore/ErrorsGtk.h>
 #include <WebCore/ResourceResponse.h>
 #include <glib/gi18n-lib.h>
 #include <wtf/glib/GRefPtr.h>

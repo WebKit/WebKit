@@ -1,3 +1,12 @@
+2017-04-04  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Move WebErrors from WebProcess to Shared and get rid of ErrorsGtk in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=156974
+
+        Reviewed by Sam Weinig.
+
+        * POTFILES.in: Add new paths with translatable strings.
+
 2017-03-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Make it possible to use WEB_UI_STRING macros to mark translatable strings in glib based ports

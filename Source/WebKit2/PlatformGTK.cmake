@@ -30,8 +30,6 @@ list(APPEND WebKit2_SOURCES
 
     NetworkProcess/CustomProtocols/soup/LegacyCustomProtocolManagerSoup.cpp
 
-    NetworkProcess/Downloads/gtk/DownloadSoupErrorsGtk.cpp
-
     NetworkProcess/cache/NetworkCacheCodersSoup.cpp
     NetworkProcess/cache/NetworkCacheDataSoup.cpp
     NetworkProcess/cache/NetworkCacheIOChannelSoup.cpp
@@ -75,6 +73,8 @@ list(APPEND WebKit2_SOURCES
 
     Shared/cairo/ShareableBitmapCairo.cpp
 
+    Shared/glib/WebErrorsGlib.cpp
+
     Shared/gtk/ArgumentCodersGtk.cpp
     Shared/gtk/NativeWebKeyboardEventGtk.cpp
     Shared/gtk/NativeWebMouseEventGtk.cpp
@@ -83,12 +83,14 @@ list(APPEND WebKit2_SOURCES
     Shared/gtk/PrintInfoGtk.cpp
     Shared/gtk/ProcessExecutablePathGtk.cpp
     Shared/gtk/WebContextMenuItemGtk.cpp
+    Shared/gtk/WebErrorsGtk.cpp
     Shared/gtk/WebEventFactory.cpp
     Shared/gtk/WebSelectionData.cpp
 
     Shared/linux/WebMemorySamplerLinux.cpp
 
     Shared/soup/WebCoreArgumentCodersSoup.cpp
+    Shared/soup/WebErrorsSoup.cpp
 
     Shared/unix/ChildProcessMain.cpp
 
@@ -475,7 +477,6 @@ list(APPEND WebKit2_SOURCES
     WebProcess/WebCoreSupport/gtk/WebContextMenuClientGtk.cpp
     WebProcess/WebCoreSupport/gtk/WebDragClientGtk.cpp
     WebProcess/WebCoreSupport/gtk/WebEditorClientGtk.cpp
-    WebProcess/WebCoreSupport/gtk/WebErrorsGtk.cpp
     WebProcess/WebCoreSupport/gtk/WebPopupMenuGtk.cpp
 
     WebProcess/WebCoreSupport/soup/WebFrameNetworkingContext.cpp

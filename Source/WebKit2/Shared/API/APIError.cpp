@@ -38,6 +38,52 @@ const WTF::String& Error::webKitErrorDomain()
     return webKitErrorDomainString;
 }
 
+const WTF::String& Error::webKitNetworkErrorDomain()
+{
+#if USE(GLIB)
+    static NeverDestroyed<WTF::String> webKitErrorDomainString(ASCIILiteral("WebKitNetworkError"));
+    return webKitErrorDomainString;
+#else
+    return webKitErrorDomain();
+#endif
+}
+
+const WTF::String& Error::webKitPolicyErrorDomain()
+{
+#if USE(GLIB)
+    static NeverDestroyed<WTF::String> webKitErrorDomainString(ASCIILiteral("WebKitPolicyError"));
+    return webKitErrorDomainString;
+#else
+    return webKitErrorDomain();
+#endif
+}
+
+const WTF::String& Error::webKitPluginErrorDomain()
+{
+#if USE(GLIB)
+    static NeverDestroyed<WTF::String> webKitErrorDomainString(ASCIILiteral("WebKitPluginError"));
+    return webKitErrorDomainString;
+#else
+    return webKitErrorDomain();
+#endif
+}
+
+#if USE(SOUP)
+const WTF::String& Error::webKitDownloadErrorDomain()
+{
+    static NeverDestroyed<WTF::String> webKitErrorDomainString(ASCIILiteral("WebKitDownloadError"));
+    return webKitErrorDomainString;
+}
+#endif
+
+#if PLATFORM(GTK)
+const WTF::String& Error::webKitPrintErrorDomain()
+{
+    static NeverDestroyed<WTF::String> webKitErrorDomainString(ASCIILiteral("WebKitPrintError"));
+    return webKitErrorDomainString;
+}
+#endif
+
 void Error::encode(IPC::Encoder& encoder) const
 {
     encoder << platformError();

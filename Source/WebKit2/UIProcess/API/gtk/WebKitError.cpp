@@ -22,7 +22,6 @@
 #include "WebKitError.h"
 
 #include "WebKitPrivate.h"
-#include <WebCore/ErrorsGtk.h>
 
 using namespace WebCore;
 
@@ -37,27 +36,27 @@ using namespace WebCore;
 
 GQuark webkit_network_error_quark()
 {
-    return g_quark_from_static_string(WebCore::errorDomainNetwork);
+    return g_quark_from_static_string(reinterpret_cast<const char*>(API::Error::webKitNetworkErrorDomain().characters8()));
 }
 
 GQuark webkit_policy_error_quark()
 {
-    return g_quark_from_static_string(WebCore::errorDomainPolicy);
+    return g_quark_from_static_string(reinterpret_cast<const char*>(API::Error::webKitPolicyErrorDomain().characters8()));
 }
 
 GQuark webkit_plugin_error_quark()
 {
-    return g_quark_from_static_string(WebCore::errorDomainPlugin);
+    return g_quark_from_static_string(reinterpret_cast<const char*>(API::Error::webKitPluginErrorDomain().characters8()));
 }
 
 GQuark webkit_download_error_quark()
 {
-    return g_quark_from_static_string(WebCore::errorDomainDownload);
+    return g_quark_from_static_string(reinterpret_cast<const char*>(API::Error::webKitDownloadErrorDomain().characters8()));
 }
 
 GQuark webkit_print_error_quark()
 {
-    return g_quark_from_static_string(WebCore::errorDomainPrint);
+    return g_quark_from_static_string(reinterpret_cast<const char*>(API::Error::webKitPrintErrorDomain().characters8()));
 }
 
 GQuark webkit_javascript_error_quark()

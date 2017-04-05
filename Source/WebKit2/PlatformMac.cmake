@@ -116,6 +116,7 @@ list(APPEND WebKit2_SOURCES
     Shared/Cocoa/WKNSURLExtras.mm
     Shared/Cocoa/WKNSURLRequest.mm
     Shared/Cocoa/WKObject.mm
+    Shared/Cocoa/WebErrorsCocoa.mm
 
     Shared/Plugins/Netscape/mac/NetscapePluginModuleMac.mm
     Shared/Plugins/Netscape/mac/PluginInformationMac.mm
@@ -355,7 +356,6 @@ list(APPEND WebKit2_SOURCES
     WebProcess/WebCoreSupport/mac/WebContextMenuClientMac.mm
     WebProcess/WebCoreSupport/mac/WebDragClientMac.mm
     WebProcess/WebCoreSupport/mac/WebEditorClientMac.mm
-    WebProcess/WebCoreSupport/mac/WebErrorsMac.mm
     WebProcess/WebCoreSupport/mac/WebFrameNetworkingContext.mm
     WebProcess/WebCoreSupport/mac/WebPopupMenuMac.mm
     WebProcess/WebCoreSupport/mac/WebSystemInterface.mm

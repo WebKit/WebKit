@@ -1,7 +1,10 @@
 # List of source files which contain translatable strings.
-ErrorsGtk.cpp
 LocalizedStringsGtk.cpp
 ../LocalizedStrings.cpp
+../../../WebKit2/Shared/WebErrors.cpp
+../../../WebKit2/Shared/glib/WebErrorsGlib.cpp
+../../../WebKit2/Shared/gtk/WebErrorsGtk.cpp
+../../../WebKit2/Shared/soup/WebErrorsSoup.cpp
 ../../../WebKit2/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp
 ../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp
 ../../../WebKit2/UIProcess/API/gtk/WebKitFaviconDatabase.cpp
