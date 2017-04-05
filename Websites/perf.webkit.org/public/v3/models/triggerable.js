@@ -4,19 +4,26 @@ class Triggerable extends LabeledObject {
     {
         super(id, object);
         this._name = object.name;
+        this._isDisabled = !!object.isDisabled;
         this._acceptedRepositories = object.acceptedRepositories;
+        this._repositoryGroups = object.repositoryGroups;
         this._configurationList = object.configurations;
+        this._acceptedTests = new Set;
 
-        let configurationMap = this.ensureNamedStaticMap('testConfigurations');
+        const configurationMap = this.ensureNamedStaticMap('testConfigurations');
         for (const config of object.configurations) {
-            const [testId, platformId] = config;
-            const key = `${testId}-${platformId}`;
+            const key = `${config.test.id()}-${config.platform.id()}`;
+            this._acceptedTests.add(config.test);
             console.assert(!(key in configurationMap));
             configurationMap[key] = this;
         }
     }
 
+    isDisabled() { return this._isDisabled; }
     acceptedRepositories() { return this._acceptedRepositories; }
+    repositoryGroups() { return this._repositoryGroups; }
+
+    acceptsTest(test) { return this._acceptedTests.has(test); }
 
     static findByTestConfiguration(test, platform)
     {
@@ -30,8 +37,25 @@ class Triggerable extends LabeledObject {
         }
         return null;
     }
-
 }
 
-if (typeof module != 'undefined')
+class TriggerableRepositoryGroup extends LabeledObject {
+
+    constructor(id, object)
+    {
+        super(id, object);
+        this._description = object.description;
+        this._acceptsCustomRoots = !!object.acceptsCustomRoots;
+        this._repositories = object.repositories;
+    }
+
+    description() { return this._description || this.name(); }
+    acceptsCustomRoots() { return this._acceptsCustomRoots; }
+    repositories() { return this._repositories; }
+}
+
+if (typeof module != 'undefined') {
     module.exports.Triggerable = Triggerable;
+    module.exports.TriggerableRepositoryGroup = TriggerableRepositoryGroup;
+}
+

@@ -145,6 +145,7 @@ const tableToPrefixMap = {
     'tests': 'test',
     'tracker_repositories': 'tracrepo',
     'triggerable_configurations': 'trigconfig',
+    'triggerable_repository_groups': 'repositorygroup',
     'triggerable_repositories': 'trigrepo',
     'platforms': 'platform',
     'reports': 'report',

@@ -1,3 +1,87 @@
+2017-04-05  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Introduce the notion of repository groups to triggerables
+        https://bugs.webkit.org/show_bug.cgi?id=170228
+
+        Reviewed by Chris Dumez.
+
+        On some triggerable, it's desirable to specify multiple sets of repositories that are accepted.
+
+        For example, if a repository X transitioned from Subversion to Git, and if a triggerable accepted X and
+        some other repository Y, then it's desirable to two sets: (X-Subversion, Y) and (X-Git, Y) since neither
+        (X-Subversion, X-Git) nor (X-Subversion, X-Git, Y) makes sense as a set.
+
+        This patch introduces triggerable_repository_groups table to represent a set of repositories accepted by
+        a triggerable. It has many to one relationship to build_triggerables and triggerable_repositories in turn
+        now has many to one relationship to triggerable_repository_groups instead of build_triggerables.
+
+        Also make it possible to disable a triggerable e.g. a set of tests and platforms are no longer supported.
+        We don't want to delete the triggerable completely from the database since it would result in the associated
+        A/B testing results being purged, which is not desirale.
+
+        To migrate an existing database, run the following transaction:
+        ```sql
+        BEGIN;
+        ALTER TABLE build_triggerables ADD COLUMN triggerable_disabled boolean NOT NULL DEFAULT FALSE;
+
+        CREATE TABLE triggerable_repository_groups (
+            repositorygroup_id serial PRIMARY KEY,
+            repositorygroup_triggerable integer REFERENCES build_triggerables NOT NULL,
+            repositorygroup_name varchar(256) NOT NULL,
+            repositorygroup_description varchar(256),
+            repositorygroup_accepts_roots boolean NOT NULL DEFAULT FALSE,
+            CONSTRAINT repository_group_name_must_be_unique_for_triggerable
+                UNIQUE(repositorygroup_triggerable, repositorygroup_name));
+        INSERT INTO triggerable_repository_groups (repositorygroup_triggerable, repositorygroup_name)
+            SELECT triggerable_id, 'default' FROM build_triggerables;
+
+        ALTER TABLE triggerable_repositories ADD COLUMN trigrepo_group integer REFERENCES triggerable_repository_groups;
+        UPDATE triggerable_repositories SET trigrepo_group = repositorygroup_id FROM triggerable_repository_groups
+            WHERE trigrepo_triggerable = repositorygroup_triggerable;
+        ALTER TABLE triggerable_repositories ALTER COLUMN trigrepo_group SET NOT NULL;
+
+        ALTER TABLE triggerable_repositories DROP COLUMN trigrepo_triggerable;
+        ALTER TABLE triggerable_repositories DROP COLUMN trigrepo_sub_roots;
+        END;
+        ```
+
+        * init-database.sql:
+        * public/admin/triggerables.php: Use a custom column to make forms to add and configure repository groups.
+        (insert_triggerable_repositories): Added.
+        (generate_repository_list): Added.
+        (generate_repository_form): Added.
+        (generate_repository_checkboxes): Now generates checkboxes for a repository group instead of a triggerable.
+
+        * public/include/manifest-generator.php:
+        (fetch_triggerables): Fixed the bug that we were not filtering results with query in /api/triggerable.
+        Rewrote it to include an array of repository groups, which in turn contains an array of repositories along
+        with its name and a description, and a boolean indicating whether it accepts a custom root file or not.
+        The boolean will be used when we're adding the support for perf try bots. We will keep acceptedRepositories
+        since it's still used by detect-changes.js.
+
+        * public/v3/models/manifest.js:
+        (Manifest._didFetchManifest): Resolve repositoriy, test, and platform IDs to their respective objects.
+
+        * public/v3/models/triggerable.js:
+        (Triggerable):
+        (Triggerable.prototype.isDisabled): Added.
+        (Triggerable.prototype.repositoryGroups): Added.
+        (Triggerable.prototype.acceptsTest): Added.
+        (TriggerableRepositoryGroup): Added.
+        (TriggerableRepositoryGroup.prototype.description): Added.
+        (TriggerableRepositoryGroup.prototype.acceptsCustomRoots): Added.
+        (TriggerableRepositoryGroup.prototype.repositories): Added.
+
+        * public/v3/pages/analysis-task-page.js:
+        (AnalysisTaskPage.prototype._didFetchTask): Don't use a disabled triggerable.
+
+        * server-tests/api-manifest-tests.js: Updated a test case to test repository groups.
+
+        * tools/js/database.js:
+        (tableToPrefixMap): Added triggerable_repository_groups.
+
+        * tools/js/v3-models.js: Imported TriggerableRepositoryGroup from triggerable.js.
+
 2017-03-31  Ryosuke Niwa  <rniwa@webkit.org>
 
         Build fix. For OS versions, we can end up with non-alphanumeric revision.

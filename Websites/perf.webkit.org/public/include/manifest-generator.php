@@ -189,32 +189,64 @@ class ManifestGenerator {
 
     static function fetch_triggerables($db, $query)
     {
-        $triggerables = $db->fetch_table('build_triggerables');
+        $triggerables = $db->select_rows('build_triggerables', 'triggerable', $query);
         if (!$triggerables)
             return array();
 
         $id_to_triggerable = array();
-        foreach ($triggerables as $row) {
+        $triggerable_id_to_repository_set = array();
+        foreach ($triggerables as &$row) {
             $id = $row['triggerable_id'];
             $id_to_triggerable[$id] = array(
-                'id' => $id,
                 'name' => $row['triggerable_name'],
+                'isDisabled' => Database::is_true($row['triggerable_disabled']),
                 'acceptedRepositories' => array(),
+                'repositoryGroups' => array(),
                 'configurations' => array());
+            $triggerable_id_to_repository_set[$id] = array();
         }
 
-        $repository_map = $db->fetch_table('triggerable_repositories');
-        if ($repository_map) {
-            foreach ($repository_map as $row) {
-                $triggerable = &$id_to_triggerable[$row['trigrepo_triggerable']];
-                array_push($triggerable['acceptedRepositories'], $row['trigrepo_repository']);
+        $repository_groups = $db->fetch_table('triggerable_repository_groups', 'repositorygroup_name');
+        $group_repositories = $db->fetch_table('triggerable_repositories');
+        if ($repository_groups && $group_repositories) {
+            $repository_set_by_group = array();
+            foreach ($group_repositories as &$repository_row) {
+                $group_id = $repository_row['trigrepo_group'];
+                array_ensure_item_has_array($repository_set_by_group, $group_id);
+                array_push($repository_set_by_group[$group_id], $repository_row['trigrepo_repository']);
+            }
+            foreach ($repository_groups as &$group_row) {
+                $triggerable_id = $group_row['repositorygroup_triggerable'];
+                if (!array_key_exists($triggerable_id, $id_to_triggerable))
+                    continue;
+                $triggerable = &$id_to_triggerable[$triggerable_id];
+                $group_id = $group_row['repositorygroup_id'];
+                $repository_list = array_get($repository_set_by_group, $group_id, array());
+                array_push($triggerable['repositoryGroups'], array(
+                    'id' => $group_row['repositorygroup_id'],
+                    'name' => $group_row['repositorygroup_name'],
+                    'description' => $group_row['repositorygroup_description'],
+                    'acceptsCustomRoots' => Database::is_true($group_row['repositorygroup_accepts_roots']),
+                    'repositories' => $repository_list));
+                // V2 UI compatibility.
+                foreach ($repository_list as $repository_id) {
+                    $set = &$triggerable_id_to_repository_set[$triggerable_id];
+                    if (array_key_exists($repository_id, $set))
+                        continue;
+                    $set[$repository_id] = true;
+                    array_push($triggerable['acceptedRepositories'], $repository_id);
+                }
+
             }
         }
 
         $configuration_map = $db->fetch_table('triggerable_configurations');
         if ($configuration_map) {
-            foreach ($configuration_map as $row) {
-                $triggerable = &$id_to_triggerable[$row['trigconfig_triggerable']];
+            foreach ($configuration_map as &$row) {
+                $triggerable_id = $row['trigconfig_triggerable'];
+                if (!array_key_exists($triggerable_id, $id_to_triggerable))
+                    continue;
+                $triggerable = &$id_to_triggerable[$triggerable_id];
                 array_push($triggerable['configurations'], array($row['trigconfig_test'], $row['trigconfig_platform']));
             }
         }

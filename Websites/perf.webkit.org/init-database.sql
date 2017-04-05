@@ -23,6 +23,7 @@ DROP TABLE IF EXISTS analysis_strategies CASCADE;
 DROP TYPE IF EXISTS analysis_task_result_type CASCADE;
 DROP TABLE IF EXISTS build_triggerables CASCADE;
 DROP TABLE IF EXISTS triggerable_configurations CASCADE;
+DROP TABLE IF EXISTS triggerable_repository_groups CASCADE;
 DROP TABLE IF EXISTS triggerable_repositories CASCADE;
 DROP TABLE IF EXISTS uploaded_files CASCADE;
 DROP TABLE IF EXISTS bugs CASCADE;
@@ -229,12 +230,20 @@ CREATE TABLE bugs (
 
 CREATE TABLE build_triggerables (
     triggerable_id serial PRIMARY KEY,
-    triggerable_name varchar(64) NOT NULL UNIQUE);
+    triggerable_name varchar(64) NOT NULL UNIQUE,
+    triggerable_disabled boolean NOT NULL DEFAULT FALSE);
+
+CREATE TABLE triggerable_repository_groups (
+    repositorygroup_id serial PRIMARY KEY,
+    repositorygroup_triggerable integer REFERENCES build_triggerables NOT NULL,
+    repositorygroup_name varchar(256) NOT NULL,
+    repositorygroup_description varchar(256),
+    repositorygroup_accepts_roots boolean NOT NULL DEFAULT FALSE,
+    CONSTRAINT repository_group_name_must_be_unique_for_triggerable UNIQUE(repositorygroup_triggerable, repositorygroup_name));
 
 CREATE TABLE triggerable_repositories (
-    trigrepo_triggerable integer REFERENCES build_triggerables NOT NULL,
     trigrepo_repository integer REFERENCES repositories NOT NULL,
-    trigrepo_sub_roots boolean NOT NULL DEFAULT FALSE);
+    trigrepo_group integer REFERENCES triggerable_repository_groups NOT NULL);
 
 CREATE TABLE triggerable_configurations (
     trigconfig_test integer REFERENCES tests NOT NULL,

@@ -413,7 +413,8 @@ class AnalysisTaskPage extends PageWithHeading {
         const platform = task.platform();
         const metric = task.metric();
         const lastModified = platform.lastModified(metric);
-        this._triggerable = Triggerable.findByTestConfiguration(metric.test(), platform);
+        const triggerable = Triggerable.findByTestConfiguration(metric.test(), platform);
+        this._triggerable = triggerable && !triggerable.isDisabled() ? triggerable : null;
         this._metric = metric;
 
         this._measurementSet = MeasurementSet.findSet(platform.id(), metric.id(), lastModified);

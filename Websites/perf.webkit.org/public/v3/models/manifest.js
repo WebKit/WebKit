@@ -47,6 +47,14 @@ class Manifest {
             raw.acceptedRepositories = raw.acceptedRepositories.map((repositoryId) => {
                 return Repository.findById(repositoryId);
             });
+            raw.repositoryGroups = raw.repositoryGroups.map((group) => {
+                group.repositories = group.repositories.map((repositoryId) => Repository.findById(repositoryId));
+                return TriggerableRepositoryGroup.ensureSingleton(group.id, group);
+            });
+            raw.configurations = raw.configurations.map((configuration) => {
+                const [testId, platformId] = configuration;
+                return {test: Test.findById(testId), platform: Platform.findById(platformId)};
+            });
         });
 
         Instrumentation.endMeasuringTime('Manifest', '_didFetchManifest');
