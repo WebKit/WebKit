@@ -632,6 +632,7 @@
 		0F9B1DB41C0E42A500E5BFD2 /* FTLOutput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F9B1DB31C0E42A500E5BFD2 /* FTLOutput.cpp */; };
 		0F9B1DB71C0E42BD00E5BFD2 /* FTLOSRExitHandle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F9B1DB51C0E42BD00E5BFD2 /* FTLOSRExitHandle.cpp */; };
 		0F9B1DB81C0E42BD00E5BFD2 /* FTLOSRExitHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9B1DB61C0E42BD00E5BFD2 /* FTLOSRExitHandle.h */; };
+		0F9C03D51E9476F200CD9125 /* AirTmpSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9C03D41E9476F000CD9125 /* AirTmpSet.h */; };
 		0F9CABC81DB54A780008E83B /* AirPadInterference.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F9CABC61DB54A760008E83B /* AirPadInterference.cpp */; };
 		0F9CABC91DB54A7A0008E83B /* AirPadInterference.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9CABC71DB54A760008E83B /* AirPadInterference.h */; };
 		0F9D3370165DBB90005AD387 /* Disassembler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F9D336E165DBB8D005AD387 /* Disassembler.cpp */; };
@@ -3166,6 +3167,7 @@
 		0F9B1DB31C0E42A500E5BFD2 /* FTLOutput.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLOutput.cpp; path = ftl/FTLOutput.cpp; sourceTree = "<group>"; };
 		0F9B1DB51C0E42BD00E5BFD2 /* FTLOSRExitHandle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLOSRExitHandle.cpp; path = ftl/FTLOSRExitHandle.cpp; sourceTree = "<group>"; };
 		0F9B1DB61C0E42BD00E5BFD2 /* FTLOSRExitHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLOSRExitHandle.h; path = ftl/FTLOSRExitHandle.h; sourceTree = "<group>"; };
+		0F9C03D41E9476F000CD9125 /* AirTmpSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirTmpSet.h; path = b3/air/AirTmpSet.h; sourceTree = "<group>"; };
 		0F9CABC61DB54A760008E83B /* AirPadInterference.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AirPadInterference.cpp; path = b3/air/AirPadInterference.cpp; sourceTree = "<group>"; };
 		0F9CABC71DB54A760008E83B /* AirPadInterference.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirPadInterference.h; path = b3/air/AirPadInterference.h; sourceTree = "<group>"; };
 		0F9D336E165DBB8D005AD387 /* Disassembler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Disassembler.cpp; path = disassembler/Disassembler.cpp; sourceTree = "<group>"; };
@@ -5656,6 +5658,7 @@
 				0FEC85681BDACDC70080FF74 /* AirTmp.cpp */,
 				0FEC85691BDACDC70080FF74 /* AirTmp.h */,
 				0FEC856A1BDACDC70080FF74 /* AirTmpInlines.h */,
+				0F9C03D41E9476F000CD9125 /* AirTmpSet.h */,
 				0FE0E4AB1C24C94A002E17B6 /* AirTmpWidth.cpp */,
 				0FE0E4AC1C24C94A002E17B6 /* AirTmpWidth.h */,
 				0F3730921C0D67EE00052BFA /* AirUseCounts.h */,
@@ -8351,6 +8354,7 @@
 				6553A33217A1F1EE008CF6F3 /* CommonSlowPathsExceptions.h in Headers */,
 				0FD82E39141AB14D00179C94 /* CompactJITCodeMap.h in Headers */,
 				A7E5A3A81797432D00E893C0 /* CompilationResult.h in Headers */,
+				0F9C03D51E9476F200CD9125 /* AirTmpSet.h in Headers */,
 				BC18C3F40E16F5CD00B34460 /* Completion.h in Headers */,
 				0F6FC751196110A800E1D02D /* ComplexGetStatus.h in Headers */,
 				0FDB2CEA174896C7007B3C1B /* ConcurrentJSLock.h in Headers */,

@@ -1,3 +1,31 @@
+2017-04-04  Filip Pizlo  <fpizlo@apple.com>
+
+        Air::eliminateDeadCode() should not use a HashSet
+        https://bugs.webkit.org/show_bug.cgi?id=170487
+
+        Reviewed by Saam Barati.
+        
+        Introduce TmpSet, which is like a HashSet<Tmp>. Use this to make eliminateDeadCode()
+        about 50% faster, resulting in a 1% wasm -O1 compile time progression.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * b3/air/AirEliminateDeadCode.cpp:
+        (JSC::B3::Air::eliminateDeadCode):
+        * b3/air/AirTmpSet.h: Added.
+        (JSC::B3::Air::TmpSet::TmpSet):
+        (JSC::B3::Air::TmpSet::add):
+        (JSC::B3::Air::TmpSet::remove):
+        (JSC::B3::Air::TmpSet::contains):
+        (JSC::B3::Air::TmpSet::size):
+        (JSC::B3::Air::TmpSet::isEmpty):
+        (JSC::B3::Air::TmpSet::iterator::iterator):
+        (JSC::B3::Air::TmpSet::iterator::operator*):
+        (JSC::B3::Air::TmpSet::iterator::operator++):
+        (JSC::B3::Air::TmpSet::iterator::operator==):
+        (JSC::B3::Air::TmpSet::iterator::operator!=):
+        (JSC::B3::Air::TmpSet::begin):
+        (JSC::B3::Air::TmpSet::end):
+
 2017-04-04  Keith Miller  <keith_miller@apple.com>
 
         WebAssembly: ModuleInformation should be a ref counted thing that can be shared across threads.

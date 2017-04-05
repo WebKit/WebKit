@@ -31,6 +31,8 @@
 #include "AirCode.h"
 #include "AirInstInlines.h"
 #include "AirPhaseScope.h"
+#include "AirTmpInlines.h"
+#include "AirTmpSet.h"
 #include <wtf/IndexSet.h>
 
 namespace JSC { namespace B3 { namespace Air {
@@ -39,7 +41,7 @@ bool eliminateDeadCode(Code& code)
 {
     PhaseScope phaseScope(code, "eliminateDeadCode");
 
-    HashSet<Tmp> liveTmps;
+    TmpSet liveTmps;
     IndexSet<StackSlot*> liveStackSlots;
     bool changed;
 
@@ -63,7 +65,7 @@ bool eliminateDeadCode(Code& code)
         case Arg::Tmp:
             if (arg.isReg())
                 return false;
-            return liveTmps.add(arg.tmp()).isNewEntry;
+            return liveTmps.add(arg.tmp());
         case Arg::Stack:
             if (arg.stackSlot()->isLocked())
                 return false;
