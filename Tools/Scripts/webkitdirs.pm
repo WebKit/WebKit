@@ -1348,7 +1348,7 @@ sub isWatchOSWebKit()
     return portName() eq watchOS;
 }
 
-sub isIOSLikeWebKit()
+sub isEmbeddedWebKit()
 {
     return  isIOSWebKit() || isTVOSWebKit() || isWatchOSWebKit();
 }

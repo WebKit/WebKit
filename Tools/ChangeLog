@@ -1,3 +1,13 @@
+2017-04-05  Aakash Jain  <aakash_jain@apple.com>
+
+        Rename isIOSLikeWebKit to isEmbeddedWebKit.
+
+        Rubber-stamped by Alexey Proskuryakov. 
+
+        * Scripts/webkitdirs.pm:
+        (isEmbeddedWebKit): Added
+        (isIOSLikeWebKit): Deleted.
+
 2017-04-05  Alex Christensen  <achristensen@webkit.org>
 
         Fix CMake build.
