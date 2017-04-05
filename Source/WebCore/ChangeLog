@@ -1,3 +1,13 @@
+2017-04-05  Alex Christensen  <achristensen@webkit.org>
+
+        Fix CMake build.
+
+        * platform/graphics/avfoundation/objc/MediaSampleAVFObjC.mm:
+        Some JavaScript inline functions were not being accessed from this file with different enable flags.
+        * platform/spi/cf/CFNetworkSPI.h:
+        * platform/spi/cocoa/NSURLConnectionSPI.h:
+        Moved NSURLSession-specific SPI from NSURLConnectionSPI.h to CFNetworkSPI.h.
+
 2017-04-05  Chris Dumez  <cdumez@apple.com>
 
         _blank / _self / _parent / _top browsing context names should be case-insensitive

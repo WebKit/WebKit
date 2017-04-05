@@ -62,7 +62,7 @@
 		29A8FCDD145F0337009045A6 /* JSAccessibilityTextMarkerRange.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29A8FCE1345E7021006AA5A6 /* JSAccessibilityTextMarkerRange.cpp */; };
 		29A8FCE2145F037B009045A6 /* AccessibilityTextMarkerRange.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29A8FCE1145F037B009045A6 /* AccessibilityTextMarkerRange.cpp */; };
 		29A8FCE5145F0464009045A6 /* AccessibilityTextMarkerRangeMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 29A8FCE4145F0464009045A6 /* AccessibilityTextMarkerRangeMac.mm */; };
-		2DB6187E1D7D58D400978D19 /* CoreGraphicsSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DB6187D1D7D58D400978D19 /* CoreGraphicsSPI.h */; };
+		2DB6187E1D7D58D400978D19 /* CoreGraphicsTestSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DB6187D1D7D58D400978D19 /* CoreGraphicsTestSPI.h */; };
 		2DD4C49A1D6E7D3B0007379C /* EventSerializerMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD4C4981D6E7D3B0007379C /* EventSerializerMac.h */; };
 		2DD4C49B1D6E7D3B0007379C /* EventSerializerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DD4C4991D6E7D3B0007379C /* EventSerializerMac.mm */; };
 		2DFA98481D7F70CF00AFF2C9 /* SharedEventStreamsMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DFA98461D7F70CF00AFF2C9 /* SharedEventStreamsMac.h */; };
@@ -243,7 +243,7 @@
 		29A8FCE1345E7021006AA5A6 /* JSAccessibilityTextMarkerRange.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAccessibilityTextMarkerRange.cpp; sourceTree = "<group>"; };
 		29A8FCE1345E7021006AA5A7 /* JSAccessibilityTextMarkerRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAccessibilityTextMarkerRange.h; sourceTree = "<group>"; };
 		29A8FCE4145F0464009045A6 /* AccessibilityTextMarkerRangeMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AccessibilityTextMarkerRangeMac.mm; sourceTree = "<group>"; };
-		2DB6187D1D7D58D400978D19 /* CoreGraphicsSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CoreGraphicsSPI.h; path = ../TestRunnerShared/spi/CoreGraphicsSPI.h; sourceTree = "<group>"; };
+		2DB6187D1D7D58D400978D19 /* CoreGraphicsTestSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CoreGraphicsTestSPI.h; path = ../TestRunnerShared/spi/CoreGraphicsTestSPI.h; sourceTree = "<group>"; };
 		2DCE2CD11B84524500C7F832 /* TestControllerCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TestControllerCocoa.mm; path = cocoa/TestControllerCocoa.mm; sourceTree = "<group>"; };
 		2DD4C4981D6E7D3B0007379C /* EventSerializerMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EventSerializerMac.h; path = mac/EventSerializerMac.h; sourceTree = "<group>"; };
 		2DD4C4991D6E7D3B0007379C /* EventSerializerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = EventSerializerMac.mm; path = mac/EventSerializerMac.mm; sourceTree = "<group>"; };
@@ -567,7 +567,7 @@
 		2DB6187F1D7D598800978D19 /* spi */ = {
 			isa = PBXGroup;
 			children = (
-				2DB6187D1D7D58D400978D19 /* CoreGraphicsSPI.h */,
+				2DB6187D1D7D58D400978D19 /* CoreGraphicsTestSPI.h */,
 				0FEBF85B1BB62A370028722D /* IOKitSPI.h */,
 			);
 			name = spi;
@@ -805,7 +805,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2DB6187E1D7D58D400978D19 /* CoreGraphicsSPI.h in Headers */,
+				2DB6187E1D7D58D400978D19 /* CoreGraphicsTestSPI.h in Headers */,
 				0F73B5521BA78968004B3EF4 /* JSUIScriptController.h in Headers */,
 				2DFA98481D7F70CF00AFF2C9 /* SharedEventStreamsMac.h in Headers */,
 				2DD4C49A1D6E7D3B0007379C /* EventSerializerMac.h in Headers */,

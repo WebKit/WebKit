@@ -1,3 +1,17 @@
+2017-04-05  Alex Christensen  <achristensen@webkit.org>
+
+        Fix CMake build.
+
+        * TestRunnerShared/EventSerialization/mac/EventSerializerMac.mm:
+        * TestRunnerShared/spi/CoreGraphicsSPI.h: Removed.
+        * TestRunnerShared/spi/CoreGraphicsTestSPI.h: Copied from Tools/TestRunnerShared/spi/CoreGraphicsSPI.h.
+        There is a CoreGraphicsSPI.h in WebCore and the CMake build was finding the wrong one.
+        Since we just inherit the include paths from WebCore in the CMake build and since this SPI is only used for testing,
+        I just renamed CoreGraphicsSPI.h to CoreGraphicsTestSPI.h to avoid any name collisions.
+        * WebKitTestRunner/PlatformMac.cmake:
+        Add some missing files.
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+
 2017-04-05  Keith Miller  <keith_miller@apple.com>
 
         Add debug option to run-jsc script

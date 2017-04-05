@@ -28,7 +28,7 @@
 
 #if PLATFORM(MAC)
 
-#import "CoreGraphicsSPI.h"
+#import "CoreGraphicsTestSPI.h"
 #import "IOKitSPI.h"
 #import <algorithm>
 #import <mach/mach_time.h>

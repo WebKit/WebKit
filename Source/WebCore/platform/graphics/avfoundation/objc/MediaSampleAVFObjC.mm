@@ -27,6 +27,7 @@
 #import "MediaSampleAVFObjC.h"
 
 #import "PixelBufferConformerCV.h"
+#import <runtime/JSCInlines.h>
 #import <runtime/TypedArrayInlines.h>
 #import <wtf/PrintStream.h>
 

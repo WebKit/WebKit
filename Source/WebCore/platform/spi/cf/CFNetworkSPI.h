@@ -120,6 +120,13 @@ typedef void (^CFCachedURLResponseCallBackBlock)(CFCachedURLResponseRef);
 @end
 #endif
 
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
+@interface NSURLSessionTaskTransactionMetrics ()
+@property (copy, readonly) NSString* _remoteAddressAndPort;
+@property (copy, readonly) NSUUID* _connectionIdentifier;
+@end
+#endif
+
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000)
 @interface NSHTTPCookie ()
 @property (nullable, readonly, copy) NSString *_storagePartition;
