@@ -1,3 +1,19 @@
+2017-04-05  Miguel Gomez  <magomez@igalia.com>
+
+        [GTK+] PNG animations that should run once are not played at all
+        https://bugs.webkit.org/show_bug.cgi?id=170499
+
+        Reviewed by Carlos Garcia Campos.
+
+        The repetition count reported bu the PNGImageDecoder is wrong. It's returning m_playCount - 1, which
+        means 0 for the animations that need to be played once. Change it to return an appropriate value.
+
+        Covered by existent tests.
+
+        * platform/image-decoders/png/PNGImageDecoder.cpp:
+        (WebCore::PNGImageDecoder::repetitionCount):
+        * platform/image-decoders/png/PNGImageDecoder.h:
+
 2017-04-05  Andy Estes  <aestes@apple.com>
 
         REGRESSION (r202472): Data Detection overwrites existing links in detected ranges

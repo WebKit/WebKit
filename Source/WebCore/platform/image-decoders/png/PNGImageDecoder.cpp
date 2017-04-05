@@ -227,6 +227,18 @@ PNGImageDecoder::~PNGImageDecoder()
 {
 }
 
+#if ENABLE(APNG)
+RepetitionCount PNGImageDecoder::repetitionCount() const
+{
+    // APNG format uses 0 to indicate that an animation must play indefinitely. But
+    // the RepetitionCount enumeration uses RepetitionCountInfinite, so we need to adapt this.
+    if (!m_playCount)
+        return RepetitionCountInfinite;
+
+    return m_playCount;
+}
+#endif
+
 bool PNGImageDecoder::isSizeAvailable()
 {
     if (!ImageDecoder::isSizeAvailable())
