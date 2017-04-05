@@ -25,18 +25,16 @@
 
 WebInspector.XHRBreakpoint = class XHRBreakpoint extends WebInspector.Object
 {
-    constructor(documentURL, url, disabled)
+    constructor(url, disabled)
     {
         super();
 
-        this._documentURL = documentURL;
         this._url = url;
         this._disabled = disabled || false;
     }
 
     // Public
 
-    get documentURL() { return this._documentURL; }
     get url() { return this._url; }
 
     get disabled()
@@ -56,7 +54,7 @@ WebInspector.XHRBreakpoint = class XHRBreakpoint extends WebInspector.Object
 
     get serializableInfo()
     {
-        let info = {documentURL: this._documentURL, url: this._url};
+        let info = {url: this._url};
         if (this._disabled)
             info.disabled = true;
 
@@ -65,12 +63,10 @@ WebInspector.XHRBreakpoint = class XHRBreakpoint extends WebInspector.Object
 
     saveIdentityToCookie(cookie)
     {
-        cookie[WebInspector.XHRBreakpoint.DocumentURLCookieKey] = this._documentURL;
         cookie[WebInspector.XHRBreakpoint.URLCookieKey] = this._url;
     }
 };
 
-WebInspector.XHRBreakpoint.DocumentURLCookieKey = "xhr-breakpoint-document-url";
 WebInspector.XHRBreakpoint.URLCookieKey = "xhr-breakpoint-url";
 
 WebInspector.XHRBreakpoint.Event = {

@@ -1,3 +1,13 @@
+2017-04-05  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: XHR breakpoints should be global
+        https://bugs.webkit.org/show_bug.cgi?id=170033
+
+        Reviewed by Joseph Pecoraro..
+
+        * inspector/dom-debugger/xhr-breakpoints.html:
+        Update for XHRBreakpoint constructor change.
+
 2017-04-05  Chris Dumez  <cdumez@apple.com>
 
         <input type="range"> changing to disabled while active breaks all pointer events

@@ -1171,8 +1171,7 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
         if (!url)
             return;
 
-        let documentURL = WebInspector.frameResourceManager.mainFrame.url;
-        WebInspector.domDebuggerManager.addXHRBreakpoint(new WebInspector.XHRBreakpoint(documentURL, url));
+        WebInspector.domDebuggerManager.addXHRBreakpoint(new WebInspector.XHRBreakpoint(url));
     }
 };
 

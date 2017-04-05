@@ -48,7 +48,7 @@ function test()
             if (!mainFrame)
                 reject();
 
-            let breakpoint = new WebInspector.XHRBreakpoint(mainFrame.url, url);
+            let breakpoint = new WebInspector.XHRBreakpoint(url);
             WebInspector.domDebuggerManager.awaitEvent(WebInspector.DOMDebuggerManager.Event.XHRBreakpointAdded)
             .then(() => {
                 InspectorTest.expectFalse(breakpoint.disabled, "Breakpoint should not be disabled initially.");

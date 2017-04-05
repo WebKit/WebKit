@@ -1,3 +1,50 @@
+2017-04-05  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: XHR breakpoints should be global
+        https://bugs.webkit.org/show_bug.cgi?id=170033
+
+        Reviewed by Joseph Pecoraro.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        Shorten XHR breakpoint tree element "URL contains:" title to "URL".
+
+        * UserInterface/Controllers/DOMDebuggerManager.js:
+        Change storage of XHR breakpoints from a map to a simple array.
+        (WebInspector.DOMDebuggerManager):
+        (WebInspector.DOMDebuggerManager.prototype.get xhrBreakpoints):
+        (WebInspector.DOMDebuggerManager.prototype.addXHRBreakpoint):
+        Dispatch the "breakpoint added" event immediately after adding the
+        breakpoint, rather than waiting for it to resolve.
+
+        (WebInspector.DOMDebuggerManager.prototype.removeXHRBreakpoint):
+        (WebInspector.DOMDebuggerManager.prototype._speculativelyResolveBreakpoints):
+        (WebInspector.DOMDebuggerManager.prototype._resolveXHRBreakpoint):
+        (WebInspector.DOMDebuggerManager.prototype._saveXHRBreakpoints):
+        (WebInspector.DOMDebuggerManager.prototype._mainResourceDidChange):
+
+        * UserInterface/Models/XHRBreakpoint.js:
+        An XHR breakpoint should not be associated with a particular document.
+        (WebInspector.XHRBreakpoint):
+        (WebInspector.XHRBreakpoint.prototype.get serializableInfo):
+        (WebInspector.XHRBreakpoint.prototype.saveIdentityToCookie):
+        (WebInspector.XHRBreakpoint.prototype.get documentURL): Deleted.
+
+        * UserInterface/Views/DebuggerSidebarPanel.css:
+        Use default emdash-separated title/subtitle style instead of the
+        custom "URL contains:" labeling.
+
+        (.sidebar > .panel.navigation.debugger .details-section.xhr-breakpoints .item.breakpoint .subtitle):
+        (.sidebar > .panel.navigation.debugger .details-section.xhr-breakpoints .item.breakpoint .subtitle:before): Deleted.
+        (body[dir=ltr] .sidebar > .panel.navigation.debugger .details-section.xhr-breakpoints .item.breakpoint .subtitle): Deleted.
+        (body[dir=rtl] .sidebar > .panel.navigation.debugger .details-section.xhr-breakpoints .item.breakpoint .subtitle): Deleted.
+
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WebInspector.DebuggerSidebarPanel.prototype.willDismissPopover):
+        (WebInspector.DebuggerSidebarPanel):
+
+        * UserInterface/Views/XHRBreakpointTreeElement.js:
+        (WebInspector.XHRBreakpointTreeElement):
+
 2017-04-04  Brian Burg  <bburg@apple.com>
 
         Web Inspector: RTL: layout issues in Type Profiler popovers
