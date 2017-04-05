@@ -1,3 +1,17 @@
+2017-04-05  Keith Miller  <keith_miller@apple.com>
+
+        WebAssembly: We shouldn't need to pin size registers if we have a fast memory.
+        https://bugs.webkit.org/show_bug.cgi?id=170504
+
+        Reviewed by Mark Lam.
+
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::B3IRGenerator):
+        (JSC::Wasm::createJSToWasmWrapper):
+        (JSC::Wasm::parseAndCompile):
+        * wasm/WasmMemoryInformation.h:
+        (JSC::Wasm::PinnedRegisterInfo::toSave):
+
 2017-04-05  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Suppress warnings in GCC

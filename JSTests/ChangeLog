@@ -1,3 +1,15 @@
+2017-04-05  Keith Miller  <keith_miller@apple.com>
+
+        WebAssembly: We shouldn't need to pin size registers if we have a fast memory.
+        https://bugs.webkit.org/show_bug.cgi?id=170504
+
+        Reviewed by Mark Lam.
+
+        * wasm/function-tests/trap-after-cross-instance-call.js: Added.
+        (b.new.WebAssembly.Memory):
+        (importObject.foo.bar):
+        (wasmFrameCountFromError):
+
 2017-03-16  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Generate TemplateObjects at linking time

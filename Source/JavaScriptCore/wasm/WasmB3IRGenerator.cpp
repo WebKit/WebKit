@@ -243,7 +243,7 @@ private:
     HashMap<ValueKey, Value*> m_constantPool;
     InsertionSet m_constantInsertionValues;
     GPRReg m_memoryBaseGPR;
-    GPRReg m_memorySizeGPR;
+    GPRReg m_memorySizeGPR { InvalidGPRReg };
     GPRReg m_wasmContextGPR;
     Value* m_instanceValue; // FIXME: make this lazy https://bugs.webkit.org/show_bug.cgi?id=169792
 };
@@ -313,15 +313,20 @@ B3IRGenerator::B3IRGenerator(const ModuleInformation& info, Procedure& procedure
 
     // FIXME we don't really need to pin registers here if there's no memory. It makes wasm -> wasm thunks simpler for now. https://bugs.webkit.org/show_bug.cgi?id=166623
     const PinnedRegisterInfo& pinnedRegs = PinnedRegisterInfo::get();
+
     m_memoryBaseGPR = pinnedRegs.baseMemoryPointer;
-    m_wasmContextGPR = pinnedRegs.wasmContextPointer;
     m_proc.pinRegister(m_memoryBaseGPR);
+
+    m_wasmContextGPR = pinnedRegs.wasmContextPointer;
     if (!useFastTLSForContext())
         m_proc.pinRegister(m_wasmContextGPR);
-    ASSERT(!pinnedRegs.sizeRegisters[0].sizeOffset);
-    m_memorySizeGPR = pinnedRegs.sizeRegisters[0].sizeRegister;
-    for (const PinnedSizeRegisterInfo& regInfo : pinnedRegs.sizeRegisters)
-        m_proc.pinRegister(regInfo.sizeRegister);
+
+    if (mode != MemoryMode::Signaling) {
+        ASSERT(!pinnedRegs.sizeRegisters[0].sizeOffset);
+        m_memorySizeGPR = pinnedRegs.sizeRegisters[0].sizeRegister;
+        for (const PinnedSizeRegisterInfo& regInfo : pinnedRegs.sizeRegisters)
+            m_proc.pinRegister(regInfo.sizeRegister);
+    }
 
     if (info.memory) {
         m_proc.setWasmBoundsCheckGenerator([=] (CCallHelpers& jit, GPRReg pinnedGPR, unsigned) {
@@ -903,6 +908,7 @@ auto B3IRGenerator::addCall(uint32_t functionIndex, const Signature& signature, 
             [=] (PatchpointValue* patchpoint) {
                 patchpoint->effects.writesPinned = true;
                 patchpoint->effects.readsPinned = true;
+                // We need to clobber all potential pinned registers since we might be leaving the instance.
                 patchpoint->clobberLate(PinnedRegisterInfo::get().toSave());
                 patchpoint->setGenerator([unlinkedWasmToWasmCalls, functionIndex] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
                     AllowMacroScratchRegisterUsage allowScratch(jit);
@@ -928,6 +934,7 @@ auto B3IRGenerator::addCall(uint32_t functionIndex, const Signature& signature, 
                 patchpoint->effects.writesPinned = true;
                 patchpoint->effects.readsPinned = true;
                 patchpoint->append(jumpDestination, ValueRep::SomeRegister);
+                // We need to clobber all potential pinned registers since we might be leaving the instance.
                 patchpoint->clobberLate(PinnedRegisterInfo::get().toSave());
                 patchpoint->setGenerator([unlinkedWasmToWasmCalls, functionIndex, returnType] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
                     AllowMacroScratchRegisterUsage allowScratch(jit);
@@ -1032,6 +1039,7 @@ auto B3IRGenerator::addCallIndirect(const Signature& signature, Vector<Expressio
         [=] (PatchpointValue* patchpoint) {
             patchpoint->effects.writesPinned = true;
             patchpoint->effects.readsPinned = true;
+            // We need to clobber all potential pinned registers since we might be leaving the instance.
             patchpoint->clobberLate(PinnedRegisterInfo::get().toSave());
 
             patchpoint->append(calleeCode, ValueRep::SomeRegister);
@@ -1088,7 +1096,7 @@ void B3IRGenerator::dump(const Vector<ControlEntry>& controlStack, const Express
     dataLogLn();
 }
 
-static void createJSToWasmWrapper(CompilationContext& compilationContext, WasmInternalFunction& function, const Signature& signature, const ModuleInformation& info)
+static void createJSToWasmWrapper(CompilationContext& compilationContext, WasmInternalFunction& function, const Signature& signature, const ModuleInformation& info, MemoryMode mode)
 {
     CCallHelpers& jit = *compilationContext.jsEntrypointJIT;
 
@@ -1104,7 +1112,7 @@ static void createJSToWasmWrapper(CompilationContext& compilationContext, WasmIn
     });
 
     const PinnedRegisterInfo& pinnedRegs = PinnedRegisterInfo::get();
-    RegisterSet toSave = pinnedRegs.toSave();
+    RegisterSet toSave = pinnedRegs.toSave(mode);
 
 #if !ASSERT_DISABLED
     unsigned toSaveSize = toSave.numberOfSetGPRs();
@@ -1230,13 +1238,17 @@ static void createJSToWasmWrapper(CompilationContext& compilationContext, WasmIn
             jit.loadWasmContext(baseMemory);
             jit.loadPtr(CCallHelpers::Address(baseMemory, JSWebAssemblyInstance::offsetOfMemory()), baseMemory);
         }
-        const auto& sizeRegs = pinnedRegs.sizeRegisters;
-        ASSERT(sizeRegs.size() >= 1);
-        ASSERT(!sizeRegs[0].sizeOffset); // The following code assumes we start at 0, and calculates subsequent size registers relative to 0.
-        jit.loadPtr(CCallHelpers::Address(baseMemory, JSWebAssemblyMemory::offsetOfSize()), sizeRegs[0].sizeRegister);
+
+        if (mode != MemoryMode::Signaling) {
+            const auto& sizeRegs = pinnedRegs.sizeRegisters;
+            ASSERT(sizeRegs.size() >= 1);
+            ASSERT(!sizeRegs[0].sizeOffset); // The following code assumes we start at 0, and calculates subsequent size registers relative to 0.
+            jit.loadPtr(CCallHelpers::Address(baseMemory, JSWebAssemblyMemory::offsetOfSize()), sizeRegs[0].sizeRegister);
+            for (unsigned i = 1; i < sizeRegs.size(); ++i)
+                jit.add64(CCallHelpers::TrustedImm32(-sizeRegs[i].sizeOffset), sizeRegs[0].sizeRegister, sizeRegs[i].sizeRegister);
+        }
+
         jit.loadPtr(CCallHelpers::Address(baseMemory, JSWebAssemblyMemory::offsetOfMemory()), baseMemory);
-        for (unsigned i = 1; i < sizeRegs.size(); ++i)
-            jit.add64(CCallHelpers::TrustedImm32(-sizeRegs[i].sizeOffset), sizeRegs[0].sizeRegister, sizeRegs[i].sizeRegister);
     }
 
     compilationContext.jsEntrypointToWasmEntrypointCall = jit.call();
@@ -1311,7 +1323,7 @@ Expected<std::unique_ptr<WasmInternalFunction>, String> parseAndCompile(Compilat
         result->wasmEntrypoint.calleeSaveRegisters = procedure.calleeSaveRegisters();
     }
 
-    createJSToWasmWrapper(compilationContext, *result, signature, info);
+    createJSToWasmWrapper(compilationContext, *result, signature, info, mode);
     return WTFMove(result);
 }
 
