@@ -1,3 +1,17 @@
+2017-04-05  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Add pid logging for simulator processes
+        https://bugs.webkit.org/show_bug.cgi?id=170505
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitpy/port/simulator_process.py:
+        (SimulatorProcess._start.handler): Add pid to exception.
+        (SimulatorProcess._start): Ditto.
+        * Scripts/webkitpy/xcode/simulated_device.py:
+        (SimulatedDevice.launch_app): Log pid when the process fails to launch and when
+        a pid is successfully returned.
+
 2017-04-05  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r214932.

@@ -94,7 +94,7 @@ class SimulatorProcess(ServerProcess):
 
         def handler(signum, frame):
             assert signum == signal.SIGALRM
-            raise Exception('Timed out waiting for process to connect at port {}'.format(self._target_host.listening_port()))
+            raise Exception('Timed out waiting for pid {} to connect at port {}'.format(self._pid, self._target_host.listening_port()))
         signal.signal(signal.SIGALRM, handler)
         signal.alarm(6)  # In seconds
 
@@ -111,7 +111,7 @@ class SimulatorProcess(ServerProcess):
             self._proc = SimulatorProcess.Popen(self._pid, stdin, stdout, stderr, self._target_host)
             if self._proc.poll() is not None:
                 self._reset()
-                raise Exception('App {} crashed before stdin could be attached'.format(os.path.basename(self._cmd[0])))
+                raise Exception('App {} with pid {} crashed before stdin could be attached'.format(os.path.basename(self._cmd[0]), self._pid))
             self._kill()
             self._reset()
             raise
