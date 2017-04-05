@@ -1350,7 +1350,7 @@ sub isWatchOSWebKit()
 
 sub isEmbeddedWebKit()
 {
-    return  isIOSWebKit() || isTVOSWebKit() || isWatchOSWebKit();
+    return isIOSWebKit() || isTVOSWebKit() || isWatchOSWebKit();
 }
 
 sub determineNmPath()

@@ -1,5 +1,14 @@
 2017-04-05  Aakash Jain  <aakash_jain@apple.com>
 
+        Formatting fix to remove extra space.
+
+        Unreviewed formatting fix.
+
+        * Scripts/webkitdirs.pm:
+        (isEmbeddedWebKit): Remove extra space.
+
+2017-04-05  Aakash Jain  <aakash_jain@apple.com>
+
         Rename isIOSLikeWebKit to isEmbeddedWebKit.
 
         Rubber-stamped by Alexey Proskuryakov. 
