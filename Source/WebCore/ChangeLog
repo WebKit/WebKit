@@ -1,3 +1,20 @@
+2017-04-05  Jer Noble  <jer.noble@apple.com>
+
+        [MSE] Seeks to currentTime=0 will fail if currentTime is already 0.
+        https://bugs.webkit.org/show_bug.cgi?id=170510
+        <rdar://problem/30988403>
+
+        Reviewed by Eric Carlson.
+
+        Test: media/media-source/media-source-unnecessary-seek-seeked.html
+
+        The AVSampleBufferRenderSynchronizer won't fire a time jumped notification if no seek is actully
+        necessary. So short circuit the seek logic if the seek time is identical to the current synchronizer
+        time.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::seekInternal):
+
 2017-04-05  Chris Dumez  <cdumez@apple.com>
 
         <input type="range"> changing to disabled while active breaks all pointer events

@@ -1,3 +1,13 @@
+2017-04-05  Jer Noble  <jer.noble@apple.com>
+
+        [MSE] Seeks to currentTime=0 will fail if currentTime is already 0.
+        https://bugs.webkit.org/show_bug.cgi?id=170510
+
+        Reviewed by Eric Carlson.
+
+        * media/media-source/media-source-unnecessary-seek-seeked-expected.txt: Added.
+        * media/media-source/media-source-unnecessary-seek-seeked.html: Added.
+
 2017-04-05  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: XHR breakpoints should be global
