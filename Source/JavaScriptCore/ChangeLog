@@ -1,3 +1,32 @@
+2017-04-05  Guilherme Iscaro  <iscaro@profusion.mobi>
+
+        Do not use BLX for immediates (ARM-32)
+
+        https://bugs.webkit.org/show_bug.cgi?id=170351
+
+        Reviewed by Mark Lam.
+
+        Currently the offline asm generator for 32-bit ARM code translates the
+        'call' meta-instruction (which may be found in LowLevelInterpreter.asm
+        and friends) to the ARM's BLX instrunction. The BLX instruction may be
+        used for labels (immediates) and registers and one side effect of BLX
+        is that it may switch the processor's instruction set.
+        A 'BLX register' instruction will change/remain the processor state to
+        ARM if the  register_bit[0] is set to 0 or change/remain to Thumb if
+        register_bit[0] is set to 1. However, a 'BLX label' instruction will
+        always switch the processor state. It switches ARM to thumb and vice-versa.
+        This behaviour is unwanted, since the C++ code and the offlineasm generated code
+        are both compiled using the same instruction set, thus a instruction
+        set change will likely produce a crash. In order to fix the problem the
+        BL instruction can be used for labels. It will branch just like BLX,
+        but it won't change the instruction set. It's important to note that
+        Darwin is not affected by this problem, thus to minimize the impact of
+        this change the BL instruction will only be used on non-darwin targets.
+
+        BLX reference: http://infocenter.arm.com/help/topic/com.arm.doc.dui0489i/CIHBJCDC.html?resultof=%22%62%6c%78%22%20
+
+        * offlineasm/arm.rb:
+
 2017-04-05  Keith Miller  <keith_miller@apple.com>
 
         WebAssembly: We shouldn't need to pin size registers if we have a fast memory.
