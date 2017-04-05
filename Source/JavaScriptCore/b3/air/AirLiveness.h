@@ -28,6 +28,7 @@
 #if ENABLE(B3_JIT)
 
 #include "AirLivenessAdapter.h"
+#include "B3TimingScope.h"
 #include <wtf/Liveness.h>
 
 namespace JSC { namespace B3 { namespace Air {
@@ -39,6 +40,7 @@ public:
         : WTF::Liveness<Adapter>(code.cfg(), code)
     {
         SuperSamplerScope samplingScope(false);
+        TimingScope timingScope("Air::Liveness");
         WTF::Liveness<Adapter>::compute();
     }
 };

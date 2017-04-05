@@ -28,11 +28,14 @@
 
 #if ENABLE(B3_JIT)
 
+#include "B3TimingScope.h"
+
 namespace JSC { namespace B3 {
 
 VariableLiveness::VariableLiveness(Procedure& proc)
     : WTF::Liveness<VariableLivenessAdapter>(proc.cfg(), proc)
 {
+    TimingScope timingScope("B3::VariableLiveness");
     compute();
 }
 

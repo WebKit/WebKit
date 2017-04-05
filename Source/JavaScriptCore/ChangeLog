@@ -1,3 +1,47 @@
+2017-04-04  Filip Pizlo  <fpizlo@apple.com>
+
+        B3::fixSSA() needs a tune-up
+        https://bugs.webkit.org/show_bug.cgi?id=170485
+
+        Reviewed by Saam Barati.
+        
+        After the various optimizations to liveness, register allocation, and other phases, the
+        fixSSA() phase now looks like one of the top offenders. This includes a bunch of
+        changes to make this phase run faster. This is a ~7% wasm -O1 compile time progression.
+        
+        Here's what I did:
+        
+        - We now use IndexSparseSet instead of IndexMap for tracking variable values. This
+          makes it cheaper to chew through small blocks while there is a non-trivial number of
+          total variables.
+        
+        - We now do a "local SSA conversion" pass before anything else. This eliminates
+          obvious Get's. If we were using temporary Variables, it would eliminate many of
+          those. That's useful for when we use demoteValues() and duplciateTails(). For wasm
+          -O1, we mainly care about the fact that it makes a bunch of Set's dead.
+        
+        - We now do a Set DCE pass after the local SSA but before SSA conversion. This ensures
+          that any block-local live intervals of Variables disappear and don't need further
+          consideration.
+        
+        - We now cache the reaching defs calculation.
+        
+        - We now perform the reaching defs calculation lazily.
+
+        * b3/B3FixSSA.cpp:
+        (JSC::B3::demoteValues):
+        (JSC::B3::fixSSA):
+        * b3/B3SSACalculator.cpp:
+        (JSC::B3::SSACalculator::reachingDefAtTail):
+        * b3/B3VariableLiveness.cpp:
+        (JSC::B3::VariableLiveness::VariableLiveness):
+        * b3/air/AirLiveness.h:
+        (JSC::B3::Air::Liveness::Liveness):
+        * dfg/DFGLivenessAnalysisPhase.cpp:
+        (JSC::DFG::LivenessAnalysisPhase::LivenessAnalysisPhase): Deleted.
+        (JSC::DFG::LivenessAnalysisPhase::run): Deleted.
+        (JSC::DFG::LivenessAnalysisPhase::processBlock): Deleted.
+
 2017-04-04  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remove stale LLVM Header Path includes from JavaScriptCore

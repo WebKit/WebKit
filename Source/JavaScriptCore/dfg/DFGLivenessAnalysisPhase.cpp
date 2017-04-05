@@ -41,11 +41,15 @@
 
 namespace JSC { namespace DFG {
 
+namespace {
+
 // Uncomment this to log hashtable operations.
 // static const char templateString[] = "unsigned, DefaultHash<unsigned>::Hash, WTF::UnsignedWithZeroKeyHashTraits<unsigned>";
 // typedef LoggingHashSet<templateString, unsigned, DefaultHash<unsigned>::Hash, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> LiveSet;
 
 typedef HashSet<unsigned, DefaultHash<unsigned>::Hash, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> LiveSet;
+
+typedef IndexSparseSet<unsigned, DefaultIndexSparseSetTraits<unsigned>, UnsafeVectorOverflow> Workset;
 
 class LivenessAnalysisPhase : public Phase {
 public:
@@ -57,7 +61,7 @@ public:
         , m_liveAtTail(m_graph)
     {
         m_graph.m_indexingCache->recompute();
-        m_workset = std::make_unique<IndexSparseSet<UnsafeVectorOverflow>>(m_graph.m_indexingCache->numIndices());
+        m_workset = std::make_unique<Workset>(m_graph.m_indexingCache->numIndices());
     }
 
     bool run()
@@ -185,8 +189,10 @@ private:
     BlockMap<LiveSet> m_liveAtTail;
 
     // Single sparse set allocated once and used by every basic block.
-    std::unique_ptr<IndexSparseSet<UnsafeVectorOverflow>> m_workset;
+    std::unique_ptr<Workset> m_workset;
 };
+
+} // anonymous namespace
 
 bool performLivenessAnalysis(Graph& graph)
 {

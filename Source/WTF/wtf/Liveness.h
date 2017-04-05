@@ -40,6 +40,7 @@ public:
     typedef typename Adapter::CFG CFG;
     typedef typename Adapter::Thing Thing;
     typedef Vector<unsigned, 4, UnsafeVectorOverflow> IndexVector;
+    typedef IndexSparseSet<unsigned, DefaultIndexSparseSetTraits<unsigned>, UnsafeVectorOverflow> Workset;
     
     template<typename... Arguments>
     Liveness(CFG& cfg, Arguments&&... arguments)
@@ -74,7 +75,7 @@ public:
 
             class iterator {
             public:
-                iterator(Adapter& adapter, IndexSparseSet<UnsafeVectorOverflow>::const_iterator sparceSetIterator)
+                iterator(Adapter& adapter, Workset::const_iterator sparceSetIterator)
                     : m_adapter(adapter)
                     , m_sparceSetIterator(sparceSetIterator)
                 {
@@ -96,7 +97,7 @@ public:
 
             private:
                 Adapter& m_adapter;
-                IndexSparseSet<UnsafeVectorOverflow>::const_iterator m_sparceSetIterator;
+                Workset::const_iterator m_sparceSetIterator;
             };
 
             iterator begin() const { return iterator(m_liveness, m_liveness.m_workset.begin()); }
@@ -227,7 +228,7 @@ public:
         return Iterable<IndexVector>(*this, m_liveAtTail[block]);
     }
 
-    IndexSparseSet<UnsafeVectorOverflow>& workset() { return m_workset; }
+    Workset& workset() { return m_workset; }
     
     class LiveAtHead {
     public:
@@ -359,7 +360,7 @@ private:
     friend class LocalCalc::Iterable;
 
     CFG& m_cfg;
-    IndexSparseSet<UnsafeVectorOverflow> m_workset;
+    Workset m_workset;
     typename CFG::template Map<IndexVector> m_liveAtHead;
     typename CFG::template Map<IndexVector> m_liveAtTail;
 };

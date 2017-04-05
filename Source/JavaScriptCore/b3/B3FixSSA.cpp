@@ -42,11 +42,215 @@
 #include "B3VariableValue.h"
 #include <wtf/CommaPrinter.h>
 #include <wtf/IndexSet.h>
+#include <wtf/IndexSparseSet.h>
 
 namespace JSC { namespace B3 {
 
 namespace {
+
 const bool verbose = false;
+
+void killDeadVariables(Procedure& proc)
+{
+    IndexSet<Variable*> liveVariables;
+    for (Value* value : proc.values()) {
+        if (value->opcode() == Get)
+            liveVariables.add(value->as<VariableValue>()->variable());
+    }
+
+    for (Value* value : proc.values()) {
+        if (value->opcode() == Set && !liveVariables.contains(value->as<VariableValue>()->variable()))
+            value->replaceWithNop();
+    }
+
+    for (Variable* variable : proc.variables()) {
+        if (!liveVariables.contains(variable))
+            proc.deleteVariable(variable);
+    }
+}
+
+void fixSSALocally(Procedure& proc)
+{
+    IndexSparseSet<KeyValuePair<unsigned, Value*>> mapping(proc.variables().size());
+    for (BasicBlock* block : proc.blocksInPreOrder()) {
+        mapping.clear();
+
+        for (unsigned valueIndex = 0; valueIndex < block->size(); ++valueIndex) {
+            Value* value = block->at(valueIndex);
+            value->performSubstitution();
+
+            switch (value->opcode()) {
+            case Get: {
+                VariableValue* variableValue = value->as<VariableValue>();
+                Variable* variable = variableValue->variable();
+
+                if (KeyValuePair<unsigned, Value*>* replacement = mapping.get(variable->index()))
+                    value->replaceWithIdentity(replacement->value);
+                break;
+            }
+                
+            case Set: {
+                VariableValue* variableValue = value->as<VariableValue>();
+                Variable* variable = variableValue->variable();
+
+                mapping.set(variable->index(), value->child(0));
+                break;
+            }
+
+            default:
+                break;
+            }
+        }
+    }
+}
+
+void fixSSAGlobally(Procedure& proc)
+{
+    VariableLiveness liveness(proc);
+    
+    // Kill any dead Set's. Each Set creates work for us, so this is profitable.
+    for (BasicBlock* block : proc) {
+        VariableLiveness::LocalCalc localCalc(liveness, block);
+        for (unsigned valueIndex = block->size(); valueIndex--;) {
+            Value* value = block->at(valueIndex);
+            if (value->opcode() == Set && !localCalc.isLive(value->as<VariableValue>()->variable()))
+                value->replaceWithNop();
+            localCalc.execute(valueIndex);
+        }
+    }
+    
+    VariableLiveness::LiveAtHead liveAtHead = liveness.liveAtHead();
+    
+    SSACalculator ssa(proc);
+
+    // Create a SSACalculator::Variable ("calcVar") for every variable.
+    Vector<Variable*> calcVarToVariable;
+    IndexMap<Variable*, SSACalculator::Variable*> variableToCalcVar(proc.variables().size());
+
+    for (Variable* variable : proc.variables()) {
+        SSACalculator::Variable* calcVar = ssa.newVariable();
+        RELEASE_ASSERT(calcVar->index() == calcVarToVariable.size());
+        calcVarToVariable.append(variable);
+        variableToCalcVar[variable] = calcVar;
+    }
+
+    // Create Defs for all of the stores to the stack variable.
+    for (BasicBlock* block : proc) {
+        for (Value* value : *block) {
+            if (value->opcode() != Set)
+                continue;
+
+            Variable* variable = value->as<VariableValue>()->variable();
+
+            if (SSACalculator::Variable* calcVar = variableToCalcVar[variable])
+                ssa.newDef(calcVar, block, value->child(0));
+        }
+    }
+
+    // Decide where Phis are to be inserted. This creates them but does not insert them.
+    {
+        TimingScope timingScope("fixSSA: computePhis");
+        ssa.computePhis(
+            [&] (SSACalculator::Variable* calcVar, BasicBlock* block) -> Value* {
+                Variable* variable = calcVarToVariable[calcVar->index()];
+                if (!liveAtHead.isLiveAtHead(block, variable))
+                    return nullptr;
+                
+                Value* phi = proc.add<Value>(Phi, variable->type(), block->at(0)->origin());
+                if (verbose) {
+                    dataLog(
+                        "Adding Phi for ", pointerDump(variable), " at ", *block, ": ",
+                        deepDump(proc, phi), "\n");
+                }
+                return phi;
+            });
+    }
+
+    // Now perform the conversion.
+    TimingScope timingScope("fixSSA: convert");
+    InsertionSet insertionSet(proc);
+    IndexSparseSet<KeyValuePair<unsigned, Value*>> mapping(proc.variables().size());
+    for (BasicBlock* block : proc.blocksInPreOrder()) {
+        mapping.clear();
+        
+        auto ensureMapping = [&] (Variable* variable, unsigned valueIndex, Origin origin) -> Value* {
+            KeyValuePair<unsigned, Value*>* found = mapping.get(variable->index());
+            if (found)
+                return found->value;
+            
+            SSACalculator::Variable* calcVar = variableToCalcVar[variable];
+            SSACalculator::Def* def = ssa.reachingDefAtHead(block, calcVar);
+            if (def) {
+                mapping.set(variable->index(), def->value());
+                return def->value();
+            }
+            
+            return insertionSet.insertBottom(valueIndex, origin, variable->type());
+        };
+
+        for (SSACalculator::Def* phiDef : ssa.phisForBlock(block)) {
+            Variable* variable = calcVarToVariable[phiDef->variable()->index()];
+
+            insertionSet.insertValue(0, phiDef->value());
+            mapping.set(variable->index(), phiDef->value());
+        }
+
+        for (unsigned valueIndex = 0; valueIndex < block->size(); ++valueIndex) {
+            Value* value = block->at(valueIndex);
+            value->performSubstitution();
+
+            switch (value->opcode()) {
+            case Get: {
+                VariableValue* variableValue = value->as<VariableValue>();
+                Variable* variable = variableValue->variable();
+
+                value->replaceWithIdentity(ensureMapping(variable, valueIndex, value->origin()));
+                break;
+            }
+                
+            case Set: {
+                VariableValue* variableValue = value->as<VariableValue>();
+                Variable* variable = variableValue->variable();
+
+                mapping.set(variable->index(), value->child(0));
+                value->replaceWithNop();
+                break;
+            }
+
+            default:
+                break;
+            }
+        }
+
+        unsigned upsilonInsertionPoint = block->size() - 1;
+        Origin upsilonOrigin = block->last()->origin();
+        for (BasicBlock* successorBlock : block->successorBlocks()) {
+            for (SSACalculator::Def* phiDef : ssa.phisForBlock(successorBlock)) {
+                Value* phi = phiDef->value();
+                SSACalculator::Variable* calcVar = phiDef->variable();
+                Variable* variable = calcVarToVariable[calcVar->index()];
+
+                Value* mappedValue = ensureMapping(variable, upsilonInsertionPoint, upsilonOrigin);
+                if (verbose) {
+                    dataLog(
+                        "Mapped value for ", *variable, " with successor Phi ", *phi,
+                        " at end of ", *block, ": ", pointerDump(mappedValue), "\n");
+                }
+                
+                insertionSet.insert<UpsilonValue>(
+                    upsilonInsertionPoint, upsilonOrigin, mappedValue, phi);
+            }
+        }
+
+        insertionSet.execute(block);
+    }
+
+    if (verbose) {
+        dataLog("B3 after SSA conversion:\n");
+        dataLog(proc);
+    }
+}
+
 } // anonymous namespace
 
 void demoteValues(Procedure& proc, const IndexSet<Value*>& values)
@@ -118,154 +322,23 @@ bool fixSSA(Procedure& proc)
 {
     PhaseScope phaseScope(proc, "fixSSA");
 
+    // Lots of variables have trivial local liveness. We can allocate those without any
+    // trouble.
+    fixSSALocally(proc);
+
     // Just for sanity, remove any unused variables first. It's unlikely that this code has any
     // bugs having to do with dead variables, but it would be silly to have to fix such a bug if
     // it did arise.
-    IndexSet<Variable*> liveVariables;
-    for (Value* value : proc.values()) {
-        if (VariableValue* variableValue = value->as<VariableValue>())
-            liveVariables.add(variableValue->variable());
-    }
-
-    for (Variable* variable : proc.variables()) {
-        if (!liveVariables.contains(variable))
-            proc.deleteVariable(variable);
-    }
-
+    killDeadVariables(proc);
+    
     if (proc.variables().isEmpty())
         return false;
-
+    
     // We know that we have variables to optimize, so do that now.
     breakCriticalEdges(proc);
+
+    fixSSAGlobally(proc);
     
-    VariableLiveness liveness(proc);
-    VariableLiveness::LiveAtHead liveAtHead = liveness.liveAtHead();
-    
-    SSACalculator ssa(proc);
-
-    // Create a SSACalculator::Variable ("calcVar") for every variable.
-    Vector<Variable*> calcVarToVariable;
-    IndexMap<Variable*, SSACalculator::Variable*> variableToCalcVar(proc.variables().size());
-
-    for (Variable* variable : proc.variables()) {
-        SSACalculator::Variable* calcVar = ssa.newVariable();
-        RELEASE_ASSERT(calcVar->index() == calcVarToVariable.size());
-        calcVarToVariable.append(variable);
-        variableToCalcVar[variable] = calcVar;
-    }
-
-    // Create Defs for all of the stores to the stack variable.
-    for (BasicBlock* block : proc) {
-        for (Value* value : *block) {
-            if (value->opcode() != Set)
-                continue;
-
-            Variable* variable = value->as<VariableValue>()->variable();
-
-            if (SSACalculator::Variable* calcVar = variableToCalcVar[variable])
-                ssa.newDef(calcVar, block, value->child(0));
-        }
-    }
-
-    // Decide where Phis are to be inserted. This creates them but does not insert them.
-    ssa.computePhis(
-        [&] (SSACalculator::Variable* calcVar, BasicBlock* block) -> Value* {
-            Variable* variable = calcVarToVariable[calcVar->index()];
-            if (!liveAtHead.isLiveAtHead(block, variable))
-                return nullptr;
-            
-            Value* phi = proc.add<Value>(Phi, variable->type(), block->at(0)->origin());
-            if (verbose) {
-                dataLog(
-                    "Adding Phi for ", pointerDump(variable), " at ", *block, ": ",
-                    deepDump(proc, phi), "\n");
-            }
-            return phi;
-        });
-
-    // Now perform the conversion.
-    InsertionSet insertionSet(proc);
-    IndexMap<Variable*, Value*> mapping(proc.variables().size());
-    for (BasicBlock* block : proc.blocksInPreOrder()) {
-        mapping.clear();
-
-        for (Variable* variable : liveness.liveAtHead(block)) {
-            SSACalculator::Variable* calcVar = variableToCalcVar[variable];
-            SSACalculator::Def* def = ssa.reachingDefAtHead(block, calcVar);
-            if (def)
-                mapping[variable] = def->value();
-        }
-
-        for (SSACalculator::Def* phiDef : ssa.phisForBlock(block)) {
-            Variable* variable = calcVarToVariable[phiDef->variable()->index()];
-
-            insertionSet.insertValue(0, phiDef->value());
-            mapping[variable] = phiDef->value();
-        }
-
-        for (unsigned valueIndex = 0; valueIndex < block->size(); ++valueIndex) {
-            Value* value = block->at(valueIndex);
-            value->performSubstitution();
-
-            switch (value->opcode()) {
-            case Get: {
-                VariableValue* variableValue = value->as<VariableValue>();
-                Variable* variable = variableValue->variable();
-
-                if (Value* replacement = mapping[variable])
-                    value->replaceWithIdentity(replacement);
-                else {
-                    value->replaceWithIdentity(
-                        insertionSet.insertBottom(valueIndex, value));
-                }
-                break;
-            }
-                
-            case Set: {
-                VariableValue* variableValue = value->as<VariableValue>();
-                Variable* variable = variableValue->variable();
-
-                mapping[variable] = value->child(0);
-                value->replaceWithNop();
-                break;
-            }
-
-            default:
-                break;
-            }
-        }
-
-        unsigned upsilonInsertionPoint = block->size() - 1;
-        Origin upsilonOrigin = block->last()->origin();
-        for (BasicBlock* successorBlock : block->successorBlocks()) {
-            for (SSACalculator::Def* phiDef : ssa.phisForBlock(successorBlock)) {
-                Value* phi = phiDef->value();
-                SSACalculator::Variable* calcVar = phiDef->variable();
-                Variable* variable = calcVarToVariable[calcVar->index()];
-
-                Value* mappedValue = mapping[variable];
-                if (verbose) {
-                    dataLog(
-                        "Mapped value for ", *variable, " with successor Phi ", *phi,
-                        " at end of ", *block, ": ", pointerDump(mappedValue), "\n");
-                }
-                
-                if (!mappedValue)
-                    mappedValue = insertionSet.insertBottom(upsilonInsertionPoint, phi);
-                
-                insertionSet.insert<UpsilonValue>(
-                    upsilonInsertionPoint, upsilonOrigin, mappedValue, phi);
-            }
-        }
-
-        insertionSet.execute(block);
-    }
-
-    if (verbose) {
-        dataLog("B3 after SSA conversion:\n");
-        dataLog(proc);
-    }
-
     return true;
 }
 

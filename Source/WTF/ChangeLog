@@ -1,5 +1,40 @@
 2017-04-04  Filip Pizlo  <fpizlo@apple.com>
 
+        B3::fixSSA() needs a tune-up
+        https://bugs.webkit.org/show_bug.cgi?id=170485
+
+        Reviewed by Saam Barati.
+        
+        This makes IndexSparseSet capable of being used as a map if you instantiate it with
+        KeyValuePair<unsigned, ValueType>.
+
+        * wtf/HashTraits.h:
+        * wtf/IndexSparseSet.h:
+        (WTF::DefaultIndexSparseSetTraits::create):
+        (WTF::DefaultIndexSparseSetTraits::key):
+        (WTF::OverflowHandler>::IndexSparseSet):
+        (WTF::OverflowHandler>::add):
+        (WTF::OverflowHandler>::set):
+        (WTF::OverflowHandler>::remove):
+        (WTF::OverflowHandler>::clear):
+        (WTF::OverflowHandler>::size):
+        (WTF::OverflowHandler>::isEmpty):
+        (WTF::OverflowHandler>::contains):
+        (WTF::OverflowHandler>::sort):
+        (WTF::IndexSparseSet<OverflowHandler>::IndexSparseSet): Deleted.
+        (WTF::IndexSparseSet<OverflowHandler>::add): Deleted.
+        (WTF::IndexSparseSet<OverflowHandler>::remove): Deleted.
+        (WTF::IndexSparseSet<OverflowHandler>::clear): Deleted.
+        (WTF::IndexSparseSet<OverflowHandler>::size): Deleted.
+        (WTF::IndexSparseSet<OverflowHandler>::isEmpty): Deleted.
+        (WTF::IndexSparseSet<OverflowHandler>::contains): Deleted.
+        (WTF::IndexSparseSet<OverflowHandler>::sort): Deleted.
+        * wtf/Liveness.h:
+        (WTF::Liveness::LocalCalc::Iterable::iterator::iterator):
+        (WTF::Liveness::workset):
+
+2017-04-04  Filip Pizlo  <fpizlo@apple.com>
+
         Don't need to Air::reportUsedRegisters for wasm at -O1
         https://bugs.webkit.org/show_bug.cgi?id=170459
 

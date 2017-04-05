@@ -371,6 +371,7 @@ struct CustomHashTraits : public GenericHashTraits<T> {
 } // namespace WTF
 
 using WTF::HashTraits;
+using WTF::KeyValuePair;
 using WTF::PairHashTraits;
 using WTF::NullableHashTraits;
 using WTF::SimpleClassHashTraits;

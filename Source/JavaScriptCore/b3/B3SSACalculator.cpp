@@ -98,11 +98,14 @@ SSACalculator::Def* SSACalculator::nonLocalReachingDef(BasicBlock* block, Variab
     return reachingDefAtTail(m_dominators->idom(block), variable);
 }
 
-SSACalculator::Def* SSACalculator::reachingDefAtTail(BasicBlock* block, Variable* variable)
+SSACalculator::Def* SSACalculator::reachingDefAtTail(BasicBlock* startingBlock, Variable* variable)
 {
-    for (; block; block = m_dominators->idom(block)) {
-        if (Def* def = m_data[block].m_defs.get(variable))
+    for (BasicBlock* block = startingBlock; block; block = m_dominators->idom(block)) {
+        if (Def* def = m_data[block].m_defs.get(variable)) {
+            for (BasicBlock* otherBlock = startingBlock; otherBlock != block; otherBlock = m_dominators->idom(otherBlock))
+                m_data[block].m_defs.add(variable, def);
             return def;
+        }
     }
     return nullptr;
 }
