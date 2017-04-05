@@ -44,7 +44,7 @@ bool eliminateDeadCode(Code& code)
     TmpSet liveTmps;
     IndexSet<StackSlot*> liveStackSlots;
     bool changed;
-
+    
     auto isArgLive = [&] (const Arg& arg) -> bool {
         switch (arg.kind()) {
         case Arg::Tmp:
@@ -57,21 +57,6 @@ bool eliminateDeadCode(Code& code)
             return liveStackSlots.contains(arg.stackSlot());
         default:
             return true;
-        }
-    };
-
-    auto addLiveArg = [&] (const Arg& arg) -> bool {
-        switch (arg.kind()) {
-        case Arg::Tmp:
-            if (arg.isReg())
-                return false;
-            return liveTmps.add(arg.tmp());
-        case Arg::Stack:
-            if (arg.stackSlot()->isLocked())
-                return false;
-            return liveStackSlots.add(arg.stackSlot());
-        default:
-            return false;
         }
     };
 
@@ -91,39 +76,55 @@ bool eliminateDeadCode(Code& code)
             });
         return storesToLive;
     };
-
-    auto handleInst = [&] (Inst& inst) {
+    
+    // Returns true if it's live.
+    auto handleInst = [&] (Inst& inst) -> bool {
         if (!isInstLive(inst))
-            return;
+            return false;
 
         // We get here if the Inst is live. For simplicity we say that a live instruction forces
         // liveness upon everything it mentions.
         for (Arg& arg : inst.args) {
-            changed |= addLiveArg(arg);
+            if (arg.isStack() && !arg.stackSlot()->isLocked())
+                changed |= liveStackSlots.add(arg.stackSlot());
             arg.forEachTmpFast(
                 [&] (Tmp& tmp) {
-                    changed |= addLiveArg(tmp);
+                    if (!tmp.isReg())
+                        changed |= liveTmps.add(tmp);
                 });
         }
+        return true;
     };
 
+    Vector<Inst*> possiblyDead;
+    
+    for (BasicBlock* block : code) {
+        for (Inst& inst : *block) {
+            if (!handleInst(inst))
+                possiblyDead.append(&inst);
+        }
+    }
+    
     auto runForward = [&] () -> bool {
         changed = false;
-        for (BasicBlock* block : code) {
-            for (Inst& inst : *block)
-                handleInst(inst);
-        }
+        possiblyDead.removeAllMatching(
+            [&] (Inst* inst) -> bool {
+                bool result = handleInst(*inst);
+                changed |= result;
+                return result;
+            });
         return changed;
     };
 
     auto runBackward = [&] () -> bool {
         changed = false;
-        for (unsigned blockIndex = code.size(); blockIndex--;) {
-            BasicBlock* block = code[blockIndex];
-            if (!block)
-                continue;
-            for (unsigned instIndex = block->size(); instIndex--;)
-                handleInst(block->at(instIndex));
+        for (unsigned i = possiblyDead.size(); i--;) {
+            bool result = handleInst(*possiblyDead[i]);
+            if (result) {
+                possiblyDead[i] = possiblyDead.last();
+                possiblyDead.removeLast();
+                changed = true;
+            }
         }
         return changed;
     };

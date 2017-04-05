@@ -1,5 +1,22 @@
 2017-04-04  Filip Pizlo  <fpizlo@apple.com>
 
+        Air::eliminateDeadCode should not repeatedly process the same live instructions
+        https://bugs.webkit.org/show_bug.cgi?id=170490
+
+        Reviewed by Keith Miller.
+        
+        This makes the eliminateDeadCode() fixpoint somewhat worklist-based: we track the set
+        of Insts that might be dead. Every time we detect that one is live, we remove it from
+        the set. This is a big (>2x) speed-up because lots of Insts are immediately found to
+        be live.
+        
+        This is a ~1% wasm -O1 compile time progression.
+
+        * b3/air/AirEliminateDeadCode.cpp:
+        (JSC::B3::Air::eliminateDeadCode):
+
+2017-04-04  Filip Pizlo  <fpizlo@apple.com>
+
         Air::eliminateDeadCode() should not use a HashSet
         https://bugs.webkit.org/show_bug.cgi?id=170487
 
