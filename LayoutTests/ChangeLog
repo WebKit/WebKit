@@ -1,3 +1,12 @@
+2017-04-04  Youenn Fablet  <youenn@apple.com>
+
+        [Mac] Add back web audio support for getUserMedia MediaStreamTrack
+        https://bugs.webkit.org/show_bug.cgi?id=170482
+
+        Reviewed by Eric Carlson.
+
+        * TestExpectations:
+
 2017-04-04  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark fast/images/slower-animation-than-decoding-image.html as flaky.

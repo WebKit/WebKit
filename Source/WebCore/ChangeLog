@@ -1,3 +1,18 @@
+2017-04-04  Youenn Fablet  <youenn@apple.com>
+
+        [Mac] Add back web audio support for getUserMedia MediaStreamTrack
+        https://bugs.webkit.org/show_bug.cgi?id=170482
+
+        Reviewed by Eric Carlson.
+
+        ´Covered by reenabled test.
+
+        Exporting method and class used in WebKit2.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/audio/mac/CAAudioStreamDescription.h:
+        * platform/mediastream/mac/WebAudioSourceProviderAVFObjC.h:
+
 2017-04-04  Alexey Proskuryakov  <ap@apple.com>
 
         More build fixing.

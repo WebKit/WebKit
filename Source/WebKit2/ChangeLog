@@ -1,3 +1,13 @@
+2017-04-04  Youenn Fablet  <youenn@apple.com>
+
+        [Mac] Add back web audio support for getUserMedia MediaStreamTrack
+        https://bugs.webkit.org/show_bug.cgi?id=170482
+
+        Reviewed by Eric Carlson.
+
+        * WebProcess/cocoa/UserMediaCaptureManager.cpp:
+        (WebKit::UserMediaCaptureManager::Source::setStorage):
+
 2017-04-04  Tim Horton  <timothy_horton@apple.com>
 
         [Mac] -[WKWebView findMatchesForString:relativeToMatch:findOptions:maxResults:resultCollector:] invokes the resultCollector with didWrap = NO even when it wraps

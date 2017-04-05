@@ -44,7 +44,7 @@ namespace WebCore {
 class AudioSampleDataSource;
 class CAAudioStreamDescription;
 
-class WebAudioSourceProviderAVFObjC : public RefCounted<WebAudioSourceProviderAVFObjC>, public AudioSourceProvider, RealtimeMediaSource::Observer {
+class WEBCORE_EXPORT WebAudioSourceProviderAVFObjC : public RefCounted<WebAudioSourceProviderAVFObjC>, public AudioSourceProvider, RealtimeMediaSource::Observer {
 public:
     static Ref<WebAudioSourceProviderAVFObjC> create(RealtimeMediaSource&);
     virtual ~WebAudioSourceProviderAVFObjC();

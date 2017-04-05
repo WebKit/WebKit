@@ -43,7 +43,7 @@ public:
 
     const PlatformDescription& platformDescription() const final;
 
-    PCMFormat format() const final;
+    WEBCORE_EXPORT PCMFormat format() const final;
 
     double sampleRate() const final { return m_streamDescription.mSampleRate; }
     bool isPCM() const final { return m_streamDescription.mFormatID == kAudioFormatLinearPCM; }

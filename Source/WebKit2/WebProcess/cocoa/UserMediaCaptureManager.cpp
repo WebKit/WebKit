@@ -38,6 +38,7 @@
 #include <WebCore/MediaConstraintsImpl.h>
 #include <WebCore/RealtimeMediaSourceCenter.h>
 #include <WebCore/WebAudioBufferList.h>
+#include <WebCore/WebAudioSourceProviderAVFObjC.h>
 
 using namespace WebCore;
 
@@ -79,6 +80,9 @@ public:
     void setStorage(const SharedMemory::Handle& handle, const WebCore::CAAudioStreamDescription& description, uint64_t numberOfFrames)
     {
         m_description = description;
+        if (m_audioSourceProvider)
+            m_audioSourceProvider->prepare(&m_description.streamDescription());
+
         if (handle.isNull()) {
             m_ringBuffer.deallocate();
             storage().setReadOnly(false);
@@ -110,7 +114,14 @@ public:
     void startProducingData() final { m_manager.startProducingData(m_id); }
     void stopProducingData() final { m_manager.stopProducingData(m_id); }
 
-    AudioSourceProvider* audioSourceProvider() final { return nullptr; }
+    AudioSourceProvider* audioSourceProvider() final {
+        if (!m_audioSourceProvider) {
+            m_audioSourceProvider = WebAudioSourceProviderAVFObjC::create(*this);
+            if (m_description.format() != AudioStreamDescription::None)
+                m_audioSourceProvider->prepare(&m_description.streamDescription());
+        }
+        return m_audioSourceProvider.get();
+    }
 
 private:
     // RealtimeMediaSource
@@ -123,6 +134,7 @@ private:
     RealtimeMediaSourceSettings m_settings;
     CAAudioStreamDescription m_description;
     CARingBuffer m_ringBuffer;
+    RefPtr<WebAudioSourceProviderAVFObjC> m_audioSourceProvider;
 };
 
 UserMediaCaptureManager::UserMediaCaptureManager(WebProcess* process)
