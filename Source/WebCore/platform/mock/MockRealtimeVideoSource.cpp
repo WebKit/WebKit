@@ -77,7 +77,7 @@ RefPtr<MockRealtimeVideoSource> MockRealtimeVideoSource::createMuted(const Strin
 
 RealtimeMediaSource::CaptureFactory& MockRealtimeVideoSource::factory()
 {
-    NeverDestroyed<MockRealtimeVideoSourceFactory> factory;
+    static NeverDestroyed<MockRealtimeVideoSourceFactory> factory;
     return factory.get();
 }
 

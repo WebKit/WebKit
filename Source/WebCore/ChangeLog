@@ -1,3 +1,18 @@
+2017-04-05  Alejandro G. Castro  <alex@igalia.com>
+
+        [Webrtc] Mock realtime sources factories should be static after r213941
+        https://bugs.webkit.org/show_bug.cgi?id=170282
+
+        Reviewed by Alex Christensen.
+
+        If we don't make the variables static we would be returning a
+        local variable.
+
+        * platform/mock/MockRealtimeAudioSource.cpp:
+        (WebCore::MockRealtimeAudioSource::factory):
+        * platform/mock/MockRealtimeVideoSource.cpp:
+        (WebCore::MockRealtimeVideoSource::factory):
+
 2017-04-05  Alex Christensen  <achristensen@webkit.org>
 
         Fix CMake build.

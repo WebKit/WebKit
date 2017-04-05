@@ -70,7 +70,7 @@ RefPtr<MockRealtimeAudioSource> MockRealtimeAudioSource::createMuted(const Strin
 
 RealtimeMediaSource::CaptureFactory& MockRealtimeAudioSource::factory()
 {
-    NeverDestroyed<MockRealtimeAudioSourceFactory> factory;
+    static NeverDestroyed<MockRealtimeAudioSourceFactory> factory;
     return factory.get();
 }
 
