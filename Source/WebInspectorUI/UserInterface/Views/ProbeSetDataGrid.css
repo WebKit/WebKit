@@ -59,7 +59,7 @@
     border-bottom: 2px solid hsl(0, 0%, 40%);
 }
 
-.details-section.probe-set .data-grid > tr.data-updated {
+.details-section.probe-set .data-grid tr.data-updated {
     animation-duration: 0.3s;
     animation-name: blink-probe-frame;
 }

@@ -1,5 +1,22 @@
 2017-04-05  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: Probe values not showing in sidebar
+        https://bugs.webkit.org/show_bug.cgi?id=170143
+
+        Reviewed by Joseph Pecoraro.
+
+        Force the DataGrid to refresh its layout after adding a probe sample.
+
+        * UserInterface/Views/ProbeSetDataGrid.css:
+        (.details-section.probe-set .data-grid tr.data-updated):
+        (.details-section.probe-set .data-grid > tr.data-updated): Deleted.
+        Drive-by fix: selector didn't match any rows.
+
+        * UserInterface/Views/ProbeSetDataGrid.js:
+        (WebInspector.ProbeSetDataGrid.prototype._updateNodeForFrame):
+
+2017-04-05  Matt Baker  <mattbaker@apple.com>
+
         Web Inspector: XHR breakpoints should be global
         https://bugs.webkit.org/show_bug.cgi?id=170033
 
