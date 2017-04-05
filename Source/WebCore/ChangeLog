@@ -1,5 +1,18 @@
 2017-04-05  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Unreviewed, rolling out r214962.
+
+        Roll r214937 back in because it wasn't at fault for the build
+        breakage.
+
+        Reverted changeset:
+
+        "Unreviewed, rolling out r214937."
+        https://bugs.webkit.org/show_bug.cgi?id=170365
+        http://trac.webkit.org/changeset/214962
+
+2017-04-05  Ryan Haddad  <ryanhaddad@apple.com>
+
         Unreviewed, rolling out r214937.
 
         This change broke an internal build.
