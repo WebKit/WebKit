@@ -47,6 +47,7 @@ class WebProcessProxy;
 class StorageManager : public IPC::Connection::WorkQueueMessageReceiver {
 public:
     static Ref<StorageManager> create(const String& localStorageDirectory);
+    static Ref<StorageManager> createEphemeral();
     ~StorageManager();
 
     void createSessionStorageNamespace(uint64_t storageNamespaceID, unsigned quotaInBytes);
@@ -99,7 +100,7 @@ private:
 
     Ref<WorkQueue> m_queue;
 
-    Ref<LocalStorageDatabaseTracker> m_localStorageDatabaseTracker;
+    RefPtr<LocalStorageDatabaseTracker> m_localStorageDatabaseTracker;
     HashMap<uint64_t, RefPtr<LocalStorageNamespace>> m_localStorageNamespaces;
 
     HashMap<std::pair<uint64_t, WebCore::SecurityOriginData>, RefPtr<TransientLocalStorageNamespace>> m_transientLocalStorageNamespaces;
