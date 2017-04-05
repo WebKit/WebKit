@@ -1,3 +1,30 @@
+2017-04-04  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r214894, r214895, r214907, r214912,
+        and r214918.
+        https://bugs.webkit.org/show_bug.cgi?id=170491
+
+        Caused build failures on Mac (Requested by rniwa on #webkit).
+
+        Reverted changesets:
+
+        "Build fix."
+        http://trac.webkit.org/changeset/214894
+
+        "Rolling back the build fix, as it broke other builds."
+        http://trac.webkit.org/changeset/214895
+
+        "Move AVSampleBufferDisplayLayer declarations into
+        AVFoundationSPI.h"
+        https://bugs.webkit.org/show_bug.cgi?id=170471
+        http://trac.webkit.org/changeset/214907
+
+        "Unreviewed build fix: fix compilation error on Sierra."
+        http://trac.webkit.org/changeset/214912
+
+        "More build fixing."
+        http://trac.webkit.org/changeset/214918
+
 2017-04-04  Youenn Fablet  <youenn@apple.com>
 
         [Mac] Add back web audio support for getUserMedia MediaStreamTrack

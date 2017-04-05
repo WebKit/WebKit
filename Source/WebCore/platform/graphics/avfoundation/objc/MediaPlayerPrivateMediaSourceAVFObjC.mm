@@ -73,6 +73,12 @@ SOFT_LINK_CONSTANT(AVFoundation, AVAudioTimePitchAlgorithmVarispeed, NSString*)
 #define AVAudioTimePitchAlgorithmVarispeed getAVAudioTimePitchAlgorithmVarispeed()
 
 #pragma mark -
+#pragma mark AVSampleBufferDisplayLayer
+
+@interface AVSampleBufferDisplayLayer : CALayer
+@end
+
+#pragma mark -
 #pragma mark AVVideoPerformanceMetrics
 
 @interface AVVideoPerformanceMetrics : NSObject
