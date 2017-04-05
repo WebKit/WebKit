@@ -1,3 +1,13 @@
+2017-04-05  Javier Fernandez  <jfernandez@igalia.com>
+
+        [GTK] Unreviewed tests gardening
+        https://bugs.webkit.org/show_bug.cgi?id=170497
+
+        Unreviewed test gardening. Rebaseline tests after r214712.
+
+        * platform/gtk/fast/multicol/table-vertical-align-expected.txt:
+
+
 2017-04-04  Alexey Proskuryakov  <ap@apple.com>
 
         Mark imported/w3c/web-platform-tests/fetch/api/response/response-trailer.html as flaky
