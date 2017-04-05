@@ -1,3 +1,18 @@
+2017-04-05  Andy Estes  <aestes@apple.com>
+
+        [ios-simulator] API test WebKit2.DataDetectionReferenceDate timing out
+        https://bugs.webkit.org/show_bug.cgi?id=161967
+
+        Reviewed by Alexey Proskuryakov.
+
+        DataDetectorsCoreSPI.h defined DDQueryOffset as a struct of two CFIndexes, which is 16 bytes
+        on LP64, but the struct is actually defined as two CFIndex-typed 32-bit bitfields, which is
+        8 bytes on LP64. This breaks the ABI on Public SDK builds when calling functions that take
+        or return DDQueryOffsets.
+
+        * platform/spi/cocoa/DataDetectorsCoreSPI.h: Updated the DDQueryOffset definition for
+        Public SDK builds, and added a static_assert to detect future size changes at compile time.
+
 2017-04-04  Jer Noble  <jer.noble@apple.com>
 
         Move AVSampleBufferDisplayLayer declarations into AVFoundationSPI.h

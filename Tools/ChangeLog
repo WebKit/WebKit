@@ -1,3 +1,13 @@
+2017-04-05  Andy Estes  <aestes@apple.com>
+
+        [ios-simulator] API test WebKit2.DataDetectionReferenceDate timing out
+        https://bugs.webkit.org/show_bug.cgi?id=161967
+
+        Reviewed by Alexey Proskuryakov.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/DataDetection.mm:
+        (TEST): Re-enabled WebKit2.DataDetectionReferenceDate.
+
 2017-04-04  Simon Fraser  <simon.fraser@apple.com>
 
         Various settings in Minibrowser are off by default, and should be on
