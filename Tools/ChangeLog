@@ -1,3 +1,13 @@
+2017-04-05  Jonathan Bedard  <jbedard@apple.com>
+
+        Increase timeouts for simulator testing
+        Unreviewed infrastructure fix.
+
+        r214895 was not sufficient, increasing timeouts again.
+
+        * Scripts/webkitpy/xcode/simulated_device.py:
+        (SimulatedDevice.install_app): Increase timeout from 3 to 10 seconds.
+
 2017-04-05  Aakash Jain  <aakash_jain@apple.com>
 
         Formatting fix to remove extra space.
