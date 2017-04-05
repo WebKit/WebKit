@@ -139,7 +139,7 @@ public:
 
     // Calls
     Result WARN_UNUSED_RETURN addCall(unsigned calleeIndex, const Signature&, const Vector<ExpressionType>& args, ExpressionType& result);
-    Result WARN_UNUSED_RETURN addCallIndirect(const Signature&, SignatureIndex, const Vector<ExpressionType>& args, ExpressionType& result);
+    Result WARN_UNUSED_RETURN addCallIndirect(const Signature&, const Vector<ExpressionType>& args, ExpressionType& result);
 
     bool hasMemory() const { return !!m_module.memory; }
 
@@ -335,10 +335,8 @@ auto Validate::addCall(unsigned, const Signature& signature, const Vector<Expres
     return { };
 }
 
-auto Validate::addCallIndirect(const Signature& signature, SignatureIndex signatureIndex, const Vector<ExpressionType>& args, ExpressionType& result) -> Result
+auto Validate::addCallIndirect(const Signature& signature, const Vector<ExpressionType>& args, ExpressionType& result) -> Result
 {
-    UNUSED_PARAM(signatureIndex);
-    ASSERT(signatureIndex != Signature::invalidIndex);
     const auto argumentCount = signature.argumentCount();
     WASM_VALIDATOR_FAIL_IF(argumentCount != args.size() - 1, "arity mismatch in call_indirect, got ", args.size() - 1, " arguments, expected ", argumentCount);
 
@@ -382,10 +380,10 @@ void Validate::dump(const Vector<ControlEntry>& controlStack, const ExpressionLi
     dataLogLn();
 }
 
-Expected<void, String> validateFunction(const uint8_t* source, size_t length, const Signature& signature, const ModuleInformation& module, const Vector<SignatureIndex>& moduleSignatureIndicesToUniquedSignatureIndices)
+Expected<void, String> validateFunction(const uint8_t* source, size_t length, const Signature& signature, const ModuleInformation& module)
 {
     Validate context(module);
-    FunctionParser<Validate> validator(context, source, length, signature, module, moduleSignatureIndicesToUniquedSignatureIndices);
+    FunctionParser<Validate> validator(context, source, length, signature, module);
     WASM_FAIL_IF_HELPER_FAILS(validator.parse());
     return { };
 }

@@ -3214,7 +3214,7 @@ static EncodedJSValue JSC_HOST_CALL functionTestWasmModuleFunctions(ExecState* e
                 lastIndex = calleeIndex;
             });
     }
-    std::unique_ptr<Wasm::ModuleInformation> moduleInformation = plan->takeModuleInformation();
+    Ref<Wasm::ModuleInformation> moduleInformation = plan->takeModuleInformation();
     RELEASE_ASSERT(!moduleInformation->memory);
 
     for (uint32_t i = 0; i < functionCount; ++i) {

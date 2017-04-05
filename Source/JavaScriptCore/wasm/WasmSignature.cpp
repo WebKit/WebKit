@@ -127,6 +127,16 @@ const Signature& SignatureInformation::get(SignatureIndex index)
     return *info.m_indexMap.get(index);
 }
 
+SignatureIndex SignatureInformation::get(const Signature& signature)
+{
+    SignatureInformation& info = singleton();
+    LockHolder lock(info.m_lock);
+
+    auto result = info.m_signatureMap.get(SignatureHash { &signature });
+    ASSERT(result != Signature::invalidIndex);
+    return result;
+}
+
 void SignatureInformation::tryCleanup()
 {
     SignatureInformation& info = singleton();

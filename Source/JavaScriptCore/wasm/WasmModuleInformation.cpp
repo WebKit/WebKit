@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,32 +23,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "WasmModuleInformation.h"
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "B3Common.h"
-#include "B3Compilation.h"
-#include "CCallHelpers.h"
-#include "WasmMemory.h"
-#include "WasmModuleInformation.h"
-#include <wtf/Expected.h>
-
-extern "C" void dumpProcedure(void*);
-
 namespace JSC { namespace Wasm {
 
-class MemoryInformation;
-
-struct CompilationContext {
-    std::unique_ptr<CCallHelpers> jsEntrypointJIT;
-    std::unique_ptr<B3::OpaqueByproducts> jsEntrypointByproducts;
-    std::unique_ptr<CCallHelpers> wasmEntrypointJIT;
-    std::unique_ptr<B3::OpaqueByproducts> wasmEntrypointByproducts;
-    CCallHelpers::Call jsEntrypointToWasmEntrypointCall;
-};
-
-Expected<std::unique_ptr<WasmInternalFunction>, String> parseAndCompile(CompilationContext&, const uint8_t*, size_t, const Signature&, Vector<UnlinkedWasmToWasmCall>&, const ModuleInformation&, MemoryMode, unsigned optLevel);
+ModuleInformation::~ModuleInformation() { }
 
 } } // namespace JSC::Wasm
 

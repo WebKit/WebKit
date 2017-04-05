@@ -943,6 +943,7 @@ set(JavaScriptCore_SOURCES
     wasm/WasmFormat.cpp
     wasm/WasmMemory.cpp
     wasm/WasmMemoryInformation.cpp
+    wasm/WasmModuleInformation.cpp
     wasm/WasmModuleParser.cpp
     wasm/WasmPageCount.cpp
     wasm/WasmPlan.cpp

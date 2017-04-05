@@ -30,6 +30,7 @@
 #include "B3Compilation.h"
 #include "B3Procedure.h"
 #include "WasmFormat.h"
+#include "WasmModuleInformation.h"
 #include "WasmOps.h"
 #include "WasmSections.h"
 #include <type_traits>
@@ -37,6 +38,7 @@
 #include <wtf/LEBDecoder.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/WTFString.h>
+#include <wtf/unicode/UTF8.h>
 
 namespace JSC { namespace Wasm {
 
@@ -60,7 +62,7 @@ protected:
 
     bool WARN_UNUSED_RETURN consumeCharacter(char);
     bool WARN_UNUSED_RETURN consumeString(const char*);
-    bool WARN_UNUSED_RETURN consumeUTF8String(String&, size_t);
+    bool WARN_UNUSED_RETURN consumeUTF8String(Vector<LChar>&, size_t);
 
     bool WARN_UNUSED_RETURN parseVarUInt1(uint8_t&);
     bool WARN_UNUSED_RETURN parseInt7(int8_t&);
@@ -140,18 +142,29 @@ ALWAYS_INLINE bool Parser<SuccessType>::consumeString(const char* str)
 }
 
 template<typename SuccessType>
-ALWAYS_INLINE bool Parser<SuccessType>::consumeUTF8String(String& result, size_t stringLength)
+ALWAYS_INLINE bool Parser<SuccessType>::consumeUTF8String(Vector<LChar>& result, size_t stringLength)
 {
-    if (stringLength == 0) {
-        result = emptyString();
-        return true;
-    }
     if (length() < stringLength || m_offset > length() - stringLength)
         return false;
-    result = String::fromUTF8(static_cast<const LChar*>(&source()[m_offset]), stringLength);
-    m_offset += stringLength;
-    if (result.isEmpty())
+    if (!result.tryReserveCapacity(stringLength))
         return false;
+
+    const uint8_t* stringStart = source() + m_offset;
+
+    // We don't cache the UTF-16 characters since it seems likely the string is ascii.
+    if (UNLIKELY(!charactersAreAllASCII(stringStart, stringLength))) {
+        Vector<UChar, 1024> buffer(stringLength);
+        UChar* bufferStart = buffer.data();
+
+        UChar* bufferCurrent = bufferStart;
+        const char* stringCurrent = reinterpret_cast<const char*>(stringStart);
+        if (WTF::Unicode::convertUTF8ToUTF16(&stringCurrent, reinterpret_cast<const char *>(stringStart + stringLength), &bufferCurrent, bufferCurrent + buffer.size()) != WTF::Unicode::conversionOK)
+            return false;
+    }
+
+    result.grow(stringLength);
+    memcpy(result.data(), stringStart, stringLength);
+    m_offset += stringLength;
     return true;
 }
 

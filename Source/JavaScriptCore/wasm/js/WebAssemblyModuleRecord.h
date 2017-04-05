@@ -28,7 +28,7 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "AbstractModuleRecord.h"
-#include "WasmFormat.h"
+#include "WasmModuleInformation.h"
 
 namespace JSC {
 

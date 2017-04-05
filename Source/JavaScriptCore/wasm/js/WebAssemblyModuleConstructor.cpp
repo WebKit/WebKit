@@ -75,13 +75,13 @@ JSValue WebAssemblyModuleConstructor::createModule(ExecState* exec, JSValue buff
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    RefPtr<ArrayBuffer> source = createSourceBufferFromValue(vm, exec, buffer);
+    Vector<uint8_t> source = createSourceBufferFromValue(vm, exec, buffer);
     RETURN_IF_EXCEPTION(scope, { });
 
-    RefPtr<Wasm::Plan> plan = adoptRef(new Wasm::Plan(vm, *source, Wasm::Plan::Validation, Wasm::Plan::dontFinalize));
+    RefPtr<Wasm::Plan> plan = adoptRef(new Wasm::Plan(vm, WTFMove(source), Wasm::Plan::Validation, Wasm::Plan::dontFinalize));
     if (!plan->parseAndValidateModule())
         return throwException(exec, scope, JSWebAssemblyCompileError::create(exec, vm, exec->lexicalGlobalObject()->WebAssemblyCompileErrorStructure(), plan->errorMessage()));
-    return JSWebAssemblyModule::createStub(vm, exec, structure, WTFMove(source), WTFMove(plan));
+    return JSWebAssemblyModule::createStub(vm, exec, structure, WTFMove(plan));
 }
 
 WebAssemblyModuleConstructor* WebAssemblyModuleConstructor::create(VM& vm, Structure* structure, WebAssemblyModulePrototype* thisPrototype)

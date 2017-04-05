@@ -1,3 +1,101 @@
+2017-04-04  Keith Miller  <keith_miller@apple.com>
+
+        WebAssembly: ModuleInformation should be a ref counted thing that can be shared across threads.
+        https://bugs.webkit.org/show_bug.cgi?id=170478
+
+        Reviewed by Saam Barati.
+
+        ModuleInformation has been moved to its own file and is now
+        ThreadSafeRefCounted.  All the Strings we used to keep in the
+        ModuleInformation have been switched to Vector<LChar> this has the
+        advantage that it can be passed across threads. However, this does
+        mean that we need to decode the utf8 strings in each thread. This
+        is likely not a problem because:
+
+        1) most modules have few imports/exports/custom sections.
+        2) most of the time they are ascii so the conversion is cheap.
+        3) we only have to do it once per thread, and there shouldn't be too many.
+
+        This patch also removes
+        moduleSignatureIndicesToUniquedSignatureIndices since that
+        information can already be recovered from the
+        SignatureInformation.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * jsc.cpp:
+        (functionTestWasmModuleFunctions):
+        * runtime/Identifier.h:
+        (JSC::Identifier::fromString):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::parseAndCompile):
+        * wasm/WasmB3IRGenerator.h:
+        * wasm/WasmFormat.cpp:
+        (JSC::Wasm::makeString):
+        (JSC::Wasm::ModuleInformation::~ModuleInformation): Deleted.
+        * wasm/WasmFormat.h:
+        (JSC::Wasm::makeString):
+        (JSC::Wasm::ModuleInformation::functionIndexSpaceSize): Deleted.
+        (JSC::Wasm::ModuleInformation::isImportedFunctionFromFunctionIndexSpace): Deleted.
+        (JSC::Wasm::ModuleInformation::signatureIndexFromFunctionIndexSpace): Deleted.
+        (JSC::Wasm::ModuleInformation::importFunctionCount): Deleted.
+        (JSC::Wasm::ModuleInformation::internalFunctionCount): Deleted.
+        * wasm/WasmFunctionParser.h:
+        (JSC::Wasm::FunctionParser<Context>::FunctionParser):
+        * wasm/WasmModuleInformation.cpp: Copied from Source/JavaScriptCore/wasm/WasmValidate.h.
+        (JSC::Wasm::ModuleInformation::~ModuleInformation):
+        * wasm/WasmModuleInformation.h: Added.
+        (JSC::Wasm::ModuleInformation::functionIndexSpaceSize):
+        (JSC::Wasm::ModuleInformation::isImportedFunctionFromFunctionIndexSpace):
+        (JSC::Wasm::ModuleInformation::signatureIndexFromFunctionIndexSpace):
+        (JSC::Wasm::ModuleInformation::importFunctionCount):
+        (JSC::Wasm::ModuleInformation::internalFunctionCount):
+        (JSC::Wasm::ModuleInformation::ModuleInformation):
+        * wasm/WasmModuleParser.cpp:
+        * wasm/WasmModuleParser.h:
+        (JSC::Wasm::ModuleParser::ModuleParser):
+        * wasm/WasmParser.h:
+        (JSC::Wasm::Parser<SuccessType>::consumeUTF8String):
+        * wasm/WasmPlan.cpp:
+        (JSC::Wasm::Plan::Plan):
+        (JSC::Wasm::Plan::parseAndValidateModule):
+        (JSC::Wasm::Plan::prepare):
+        (JSC::Wasm::Plan::compileFunctions):
+        (JSC::Wasm::Plan::complete):
+        (JSC::Wasm::Plan::cancel):
+        * wasm/WasmPlan.h:
+        (JSC::Wasm::Plan::internalFunctionCount):
+        (JSC::Wasm::Plan::takeModuleInformation):
+        * wasm/WasmSignature.cpp:
+        (JSC::Wasm::SignatureInformation::get):
+        * wasm/WasmSignature.h:
+        * wasm/WasmValidate.cpp:
+        (JSC::Wasm::validateFunction):
+        * wasm/WasmValidate.h:
+        * wasm/js/JSWebAssemblyHelpers.h:
+        (JSC::createSourceBufferFromValue):
+        * wasm/js/JSWebAssemblyModule.cpp:
+        (JSC::JSWebAssemblyModule::createStub):
+        (JSC::JSWebAssemblyModule::JSWebAssemblyModule):
+        (JSC::JSWebAssemblyModule::finishCreation):
+        * wasm/js/JSWebAssemblyModule.h:
+        (JSC::JSWebAssemblyModule::moduleInformation):
+        (JSC::JSWebAssemblyModule::source):
+        * wasm/js/WebAssemblyInstanceConstructor.cpp:
+        (JSC::constructJSWebAssemblyInstance):
+        * wasm/js/WebAssemblyModuleConstructor.cpp:
+        (JSC::WebAssemblyModuleConstructor::createModule):
+        * wasm/js/WebAssemblyModulePrototype.cpp:
+        (JSC::webAssemblyModuleProtoCustomSections):
+        (JSC::webAssemblyModuleProtoImports):
+        (JSC::webAssemblyModuleProtoExports):
+        * wasm/js/WebAssemblyModuleRecord.cpp:
+        (JSC::WebAssemblyModuleRecord::link):
+        * wasm/js/WebAssemblyModuleRecord.h:
+        * wasm/js/WebAssemblyPrototype.cpp:
+        (JSC::webAssemblyCompileFunc):
+        (JSC::instantiate):
+        (JSC::compileAndInstantiate):
+
 2017-04-04  Filip Pizlo  <fpizlo@apple.com>
 
         B3::fixSSA() needs a tune-up

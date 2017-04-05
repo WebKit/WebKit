@@ -55,7 +55,12 @@ Segment::Ptr Segment::adoptPtr(Segment* segment)
     return Ptr(segment, &Segment::destroy);
 }
 
-JS_EXPORT_PRIVATE ModuleInformation::~ModuleInformation() { }
+String makeString(const Vector<LChar>& characters)
+{
+    String result = String::fromUTF8(characters);
+    ASSERT(result);
+    return result;
+}
 
 } } // namespace JSC::Wasm
 

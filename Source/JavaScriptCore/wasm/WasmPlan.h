@@ -30,7 +30,7 @@
 #include "CompilationResult.h"
 #include "VM.h"
 #include "WasmB3IRGenerator.h"
-#include "WasmFormat.h"
+#include "WasmModuleInformation.h"
 #include <wtf/Bag.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Vector.h>
@@ -49,8 +49,10 @@ public:
     typedef std::function<void(Plan&)> CompletionTask;
     enum AsyncWork : uint8_t { FullCompile, Validation };
     // Note: CompletionTask should not hold a reference to the Plan otherwise there will be a reference cycle.
-    Plan(VM&, ArrayBuffer&, AsyncWork, CompletionTask&&);
-    JS_EXPORT_PRIVATE Plan(VM&, Vector<uint8_t>&, AsyncWork, CompletionTask&&);
+    Plan(VM&, Ref<ModuleInformation>, AsyncWork, CompletionTask&&);
+    JS_EXPORT_PRIVATE Plan(VM&, Vector<uint8_t>&&, AsyncWork, CompletionTask&&);
+    // Note: This constructor should only be used if you are not actually building a module e.g. validation/function tests
+    // FIXME: When we get rid of function tests we should remove AsyncWork from this constructor.
     JS_EXPORT_PRIVATE Plan(VM&, const uint8_t*, size_t, AsyncWork, CompletionTask&&);
     JS_EXPORT_PRIVATE ~Plan();
 
@@ -72,10 +74,10 @@ public:
     size_t internalFunctionCount() const
     {
         RELEASE_ASSERT(!failed() && !hasWork());
-        return m_functionLocationInBinary.size();
+        return m_moduleInformation->internalFunctionCount();
     }
 
-    std::unique_ptr<ModuleInformation>&& takeModuleInformation()
+    Ref<ModuleInformation>&& takeModuleInformation()
     {
         RELEASE_ASSERT(!failed() && !hasWork());
         return WTFMove(m_moduleInformation);
@@ -130,9 +132,7 @@ private:
 
     const char* stateString(State);
 
-    std::unique_ptr<ModuleInformation> m_moduleInformation;
-    Vector<FunctionLocationInBinary> m_functionLocationInBinary;
-    Vector<SignatureIndex> m_moduleSignatureIndicesToUniquedSignatureIndices;
+    Ref<ModuleInformation> m_moduleInformation;
     Bag<CallLinkInfo> m_callLinkInfos;
     Vector<WasmExitStubs> m_wasmExitStubs;
     Vector<std::unique_ptr<WasmInternalFunction>> m_wasmInternalFunctions;
@@ -149,7 +149,7 @@ private:
     MemoryMode m_mode { MemoryMode::BoundsChecking };
     Lock m_lock;
     Condition m_completed;
-    State m_state { State::Initial };
+    State m_state;
     const AsyncWork m_asyncWork;
     uint8_t m_numberOfActiveThreads { 0 };
     uint32_t m_currentIndex { 0 };

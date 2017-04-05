@@ -126,8 +126,8 @@ int decodeUTF8Sequence(const char* sequence)
 static const unsigned char firstByteMark[7] = { 0x00, 0x00, 0xC0, 0xE0, 0xF0, 0xF8, 0xFC };
 
 ConversionResult convertLatin1ToUTF8(
-                                     const LChar** sourceStart, const LChar* sourceEnd, 
-                                     char** targetStart, char* targetEnd)
+    const LChar** sourceStart, const LChar* sourceEnd, 
+    char** targetStart, char* targetEnd)
 {
     ConversionResult result = conversionOK;
     const LChar* source = *sourceStart;

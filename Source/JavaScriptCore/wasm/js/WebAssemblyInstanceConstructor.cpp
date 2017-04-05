@@ -87,7 +87,7 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyInstance(ExecState* ex
         if (instance->codeBlock())
             Wasm::ensureWorklist().completePlanSynchronously(instance->codeBlock()->plan());
         else {
-            Ref<Wasm::Plan> plan = adoptRef(*new Plan(vm, module->source(), Plan::FullCompile, Plan::dontFinalize));
+            Ref<Wasm::Plan> plan = adoptRef(*new Plan(vm, makeRef(const_cast<Wasm::ModuleInformation&>(module->moduleInformation())), Plan::FullCompile, Plan::dontFinalize));
             plan->setModeAndPromise(instance->memoryMode(), nullptr);
             instance->addUnitializedCodeBlock(vm, plan.copyRef());
 

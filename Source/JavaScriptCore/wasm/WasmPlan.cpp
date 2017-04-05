@@ -50,21 +50,30 @@ namespace JSC { namespace Wasm {
 
 static const bool verbose = false;
 
-Plan::Plan(VM& vm, ArrayBuffer& source, AsyncWork work, CompletionTask&& task)
-    : Plan(vm, reinterpret_cast<uint8_t*>(source.data()), source.byteLength(), work, WTFMove(task))
+Plan::Plan(VM& vm, Ref<ModuleInformation> info, AsyncWork work, CompletionTask&& task)
+    : m_moduleInformation(WTFMove(info))
+    , m_vm(vm)
+    , m_completionTask(task)
+    , m_source(m_moduleInformation->source.data())
+    , m_sourceLength(m_moduleInformation->source.size())
+    , m_state(State::Validated)
+    , m_asyncWork(work)
 {
 }
 
-Plan::Plan(VM& vm, Vector<uint8_t>& source, AsyncWork work, CompletionTask&& task)
-    : Plan(vm, source.data(), source.size(), work, WTFMove(task))
+Plan::Plan(VM& vm, Vector<uint8_t>&& source, AsyncWork work, CompletionTask&& task)
+    : Plan(vm, makeRef(*new ModuleInformation(WTFMove(source))), work, WTFMove(task))
 {
+    m_state = State::Initial;
 }
 
 Plan::Plan(VM& vm, const uint8_t* source, size_t sourceLength, AsyncWork work, CompletionTask&& task)
-    : m_vm(vm)
+    : m_moduleInformation(makeRef(*new ModuleInformation(Vector<uint8_t>())))
+    , m_vm(vm)
     , m_completionTask(task)
     , m_source(source)
     , m_sourceLength(sourceLength)
+    , m_state(State::Initial)
     , m_asyncWork(work)
 {
 }
@@ -97,33 +106,33 @@ void Plan::fail(const AbstractLocker& locker, String&& errorMessage)
 
 bool Plan::parseAndValidateModule()
 {
-    ASSERT(m_state == State::Initial);
+    if (m_state != State::Initial)
+        return true;
+
     dataLogLnIf(verbose, "starting validation");
     MonotonicTime startTime;
     if (verbose || Options::reportCompileTimes())
         startTime = MonotonicTime::now();
 
     {
-        ModuleParser moduleParser(m_source, m_sourceLength);
+        ModuleParser moduleParser(m_source, m_sourceLength, m_moduleInformation);
         auto parseResult = moduleParser.parse();
         if (!parseResult) {
             fail(holdLock(m_lock), WTFMove(parseResult.error()));
             return false;
         }
-        m_moduleInformation = WTFMove(parseResult->module);
-        m_functionLocationInBinary = WTFMove(parseResult->functionLocationInBinary);
-        m_moduleSignatureIndicesToUniquedSignatureIndices = WTFMove(parseResult->moduleSignatureIndicesToUniquedSignatureIndices);
     }
 
-    for (unsigned functionIndex = 0; functionIndex < m_functionLocationInBinary.size(); ++functionIndex) {
-        dataLogLnIf(verbose, "Processing function starting at: ", m_functionLocationInBinary[functionIndex].start, " and ending at: ", m_functionLocationInBinary[functionIndex].end);
-        const uint8_t* functionStart = m_source + m_functionLocationInBinary[functionIndex].start;
-        size_t functionLength = m_functionLocationInBinary[functionIndex].end - m_functionLocationInBinary[functionIndex].start;
+    const auto& functionLocations = m_moduleInformation->functionLocationInBinary;
+    for (unsigned functionIndex = 0; functionIndex < functionLocations.size(); ++functionIndex) {
+        dataLogLnIf(verbose, "Processing function starting at: ", functionLocations[functionIndex].start, " and ending at: ", functionLocations[functionIndex].end);
+        const uint8_t* functionStart = m_source + functionLocations[functionIndex].start;
+        size_t functionLength = functionLocations[functionIndex].end - functionLocations[functionIndex].start;
         ASSERT(functionLength <= m_sourceLength);
         SignatureIndex signatureIndex = m_moduleInformation->internalFunctionSignatureIndices[functionIndex];
         const Signature& signature = SignatureInformation::get(signatureIndex);
 
-        auto validationResult = validateFunction(functionStart, functionLength, signature, *m_moduleInformation, m_moduleSignatureIndicesToUniquedSignatureIndices);
+        auto validationResult = validateFunction(functionStart, functionLength, signature, m_moduleInformation.get());
         if (!validationResult) {
             if (verbose) {
                 for (unsigned i = 0; i < functionLength; ++i)
@@ -163,22 +172,23 @@ void Plan::prepare()
         return true;
     };
 
+    const auto& functionLocations = m_moduleInformation->functionLocationInBinary;
     if (!tryReserveCapacity(m_wasmExitStubs, m_moduleInformation->importFunctionSignatureIndices.size(), " WebAssembly to JavaScript stubs")
-        || !tryReserveCapacity(m_unlinkedWasmToWasmCalls, m_functionLocationInBinary.size(), " unlinked WebAssembly to WebAssembly calls")
-        || !tryReserveCapacity(m_wasmInternalFunctions, m_functionLocationInBinary.size(), " WebAssembly functions")
-        || !tryReserveCapacity(m_compilationContexts, m_functionLocationInBinary.size(), " compilation contexts"))
+        || !tryReserveCapacity(m_unlinkedWasmToWasmCalls, functionLocations.size(), " unlinked WebAssembly to WebAssembly calls")
+        || !tryReserveCapacity(m_wasmInternalFunctions, functionLocations.size(), " WebAssembly functions")
+        || !tryReserveCapacity(m_compilationContexts, functionLocations.size(), " compilation contexts"))
         return;
 
-    m_unlinkedWasmToWasmCalls.resize(m_functionLocationInBinary.size());
-    m_wasmInternalFunctions.resize(m_functionLocationInBinary.size());
-    m_compilationContexts.resize(m_functionLocationInBinary.size());
+    m_unlinkedWasmToWasmCalls.resize(functionLocations.size());
+    m_wasmInternalFunctions.resize(functionLocations.size());
+    m_compilationContexts.resize(functionLocations.size());
 
     for (unsigned importIndex = 0; importIndex < m_moduleInformation->imports.size(); ++importIndex) {
         Import* import = &m_moduleInformation->imports[importIndex];
         if (import->kind != ExternalKind::Function)
             continue;
         unsigned importFunctionIndex = m_wasmExitStubs.size();
-        dataLogLnIf(verbose, "Processing import function number ", importFunctionIndex, ": ", import->module, ": ", import->field);
+        dataLogLnIf(verbose, "Processing import function number ", importFunctionIndex, ": ", makeString(import->module), ": ", makeString(import->field));
         SignatureIndex signatureIndex = m_moduleInformation->importFunctionSignatureIndices.at(import->kindIndex);
         m_wasmExitStubs.uncheckedAppend(exitStubGenerator(&m_vm, m_callLinkInfos, signatureIndex, importFunctionIndex));
     }
@@ -219,6 +229,7 @@ void Plan::compileFunctions(CompilationEffort effort)
     ThreadCountHolder holder(*this);
 
     size_t bytesCompiled = 0;
+    const auto& functionLocations = m_moduleInformation->functionLocationInBinary;
     while (true) {
         if (effort == Partial && bytesCompiled >= Options::webAssemblyPartialCompileLimit())
             return;
@@ -226,7 +237,7 @@ void Plan::compileFunctions(CompilationEffort effort)
         uint32_t functionIndex;
         {
             auto locker = holdLock(m_lock);
-            if (m_currentIndex >= m_functionLocationInBinary.size()) {
+            if (m_currentIndex >= functionLocations.size()) {
                 if (hasWork())
                     moveToState(State::Compiled);
                 return;
@@ -235,17 +246,17 @@ void Plan::compileFunctions(CompilationEffort effort)
             ++m_currentIndex;
         }
 
-        const uint8_t* functionStart = m_source + m_functionLocationInBinary[functionIndex].start;
-        size_t functionLength = m_functionLocationInBinary[functionIndex].end - m_functionLocationInBinary[functionIndex].start;
+        const uint8_t* functionStart = m_source + functionLocations[functionIndex].start;
+        size_t functionLength = functionLocations[functionIndex].end - functionLocations[functionIndex].start;
         ASSERT(functionLength <= m_sourceLength);
         SignatureIndex signatureIndex = m_moduleInformation->internalFunctionSignatureIndices[functionIndex];
         const Signature& signature = SignatureInformation::get(signatureIndex);
         unsigned functionIndexSpace = m_wasmExitStubs.size() + functionIndex;
         ASSERT_UNUSED(functionIndexSpace, m_moduleInformation->signatureIndexFromFunctionIndexSpace(functionIndexSpace) == signatureIndex);
-        ASSERT(validateFunction(functionStart, functionLength, signature, *m_moduleInformation, m_moduleSignatureIndicesToUniquedSignatureIndices));
+        ASSERT(validateFunction(functionStart, functionLength, signature, m_moduleInformation.get()));
 
         m_unlinkedWasmToWasmCalls[functionIndex] = Vector<UnlinkedWasmToWasmCall>();
-        auto parseAndCompileResult = parseAndCompile(m_compilationContexts[functionIndex], functionStart, functionLength, signature, m_unlinkedWasmToWasmCalls[functionIndex], *m_moduleInformation, m_moduleSignatureIndicesToUniquedSignatureIndices, m_mode, Options::webAssemblyB3OptimizationLevel());
+        auto parseAndCompileResult = parseAndCompile(m_compilationContexts[functionIndex], functionStart, functionLength, signature, m_unlinkedWasmToWasmCalls[functionIndex], m_moduleInformation.get(), m_mode, Options::webAssemblyB3OptimizationLevel());
 
         if (UNLIKELY(!parseAndCompileResult)) {
             auto locker = holdLock(m_lock);
@@ -253,7 +264,7 @@ void Plan::compileFunctions(CompilationEffort effort)
                 // Multiple compiles could fail simultaneously. We arbitrarily choose the first.
                 fail(locker, makeString(parseAndCompileResult.error(), ", in function at index ", String::number(functionIndex))); // FIXME make this an Expected.
             }
-            m_currentIndex = m_functionLocationInBinary.size();
+            m_currentIndex = functionLocations.size();
             return;
         }
 
@@ -264,11 +275,11 @@ void Plan::compileFunctions(CompilationEffort effort)
 
 void Plan::complete(const AbstractLocker&)
 {
-    ASSERT(m_state != State::Compiled || m_currentIndex >= m_functionLocationInBinary.size());
+    ASSERT(m_state != State::Compiled || m_currentIndex >= m_moduleInformation->functionLocationInBinary.size());
     dataLogLnIf(verbose, "Starting Completion");
 
     if (m_state == State::Compiled) {
-        for (uint32_t functionIndex = 0; functionIndex < m_functionLocationInBinary.size(); functionIndex++) {
+        for (uint32_t functionIndex = 0; functionIndex < m_moduleInformation->functionLocationInBinary.size(); functionIndex++) {
             {
                 CompilationContext& context = m_compilationContexts[functionIndex];
                 SignatureIndex signatureIndex = m_moduleInformation->internalFunctionSignatureIndices[functionIndex];
@@ -324,7 +335,7 @@ void Plan::cancel()
 {
     LockHolder locker(m_lock);
     if (m_state != State::Completed) {
-        m_currentIndex = m_functionLocationInBinary.size();
+        m_currentIndex = m_moduleInformation->functionLocationInBinary.size();
         fail(locker, ASCIILiteral("WebAssembly Plan was canceled. If you see this error message please file a bug at bugs.webkit.org!"));
     }
 }

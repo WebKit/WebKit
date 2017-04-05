@@ -31,7 +31,7 @@
 #include "JSObject.h"
 #include "JSWebAssemblyCodeBlock.h"
 #include "UnconditionalFinalizer.h"
-#include "WasmFormat.h"
+#include "WasmModuleInformation.h"
 #include <wtf/Bag.h>
 #include <wtf/Vector.h>
 
@@ -49,12 +49,12 @@ class JSWebAssemblyModule : public JSDestructibleObject {
 public:
     typedef JSDestructibleObject Base;
 
-    static JSWebAssemblyModule* createStub(VM&, ExecState*, Structure*, RefPtr<ArrayBuffer>&& source, RefPtr<Wasm::Plan>&&);
+    static JSWebAssemblyModule* createStub(VM&, ExecState*, Structure*, RefPtr<Wasm::Plan>&&);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     DECLARE_INFO;
 
-    const Wasm::ModuleInformation& moduleInformation() const { return *m_moduleInformation.get(); }
+    const Wasm::ModuleInformation& moduleInformation() const { return m_moduleInformation.get(); }
     SymbolTable* exportSymbolTable() const { return m_exportSymbolTable.get(); }
     Wasm::SignatureIndex signatureIndexFromFunctionIndexSpace(unsigned functionIndexSpace) const
     {
@@ -64,20 +64,19 @@ public:
 
     JSWebAssemblyCodeBlock* codeBlock(Wasm::MemoryMode mode) { return m_codeBlocks[static_cast<size_t>(mode)].get(); }
 
-    ArrayBuffer& source() const { return m_sourceBuffer.get(); }
+    const Vector<uint8_t>& source() const { return moduleInformation().source; }
 
 private:
     friend class JSWebAssemblyCodeBlock;
 
     void setCodeBlock(VM&, Wasm::MemoryMode, JSWebAssemblyCodeBlock*);
 
-    JSWebAssemblyModule(VM&, Structure*, RefPtr<ArrayBuffer>&&);
-    void finishCreation(VM&, RefPtr<Wasm::Plan>&&);
+    JSWebAssemblyModule(VM&, Structure*, Wasm::Plan&);
+    void finishCreation(VM&);
     static void destroy(JSCell*);
     static void visitChildren(JSCell*, SlotVisitor&);
 
-    Ref<ArrayBuffer> m_sourceBuffer;
-    std::unique_ptr<const Wasm::ModuleInformation> m_moduleInformation;
+    Ref<Wasm::ModuleInformation> m_moduleInformation;
     WriteBarrier<SymbolTable> m_exportSymbolTable;
     WriteBarrier<JSWebAssemblyCodeBlock> m_codeBlocks[Wasm::NumberOfMemoryModes];
     WriteBarrier<WebAssemblyToJSCallee> m_callee;

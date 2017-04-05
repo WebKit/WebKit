@@ -89,7 +89,7 @@ static_assert(static_cast<int>(ExternalKind::Table)    == 1, "Wasm needs Table t
 static_assert(static_cast<int>(ExternalKind::Memory)   == 2, "Wasm needs Memory to have the value 2");
 static_assert(static_cast<int>(ExternalKind::Global)   == 3, "Wasm needs Global to have the value 3");
 
-static inline const char* makeString(ExternalKind kind)
+inline const char* makeString(ExternalKind kind)
 {
     switch (kind) {
     case ExternalKind::Function: return "function";
@@ -102,17 +102,19 @@ static inline const char* makeString(ExternalKind kind)
 }
 
 struct Import {
-    String module;
-    String field;
+    const Vector<LChar> module;
+    const Vector<LChar> field;
     ExternalKind kind;
     unsigned kindIndex; // Index in the vector of the corresponding kind.
 };
 
 struct Export {
-    String field;
+    const Vector<LChar> field;
     ExternalKind kind;
     unsigned kindIndex; // Index in the vector of the corresponding kind.
 };
+
+String makeString(const Vector<LChar>& characters);
 
 struct Global {
     enum Mutability : uint8_t {
@@ -226,44 +228,8 @@ private:
 };
     
 struct CustomSection {
-    String name;
+    Vector<LChar> name;
     Vector<uint8_t> payload;
-};
-
-struct ModuleInformation {
-    Vector<Import> imports;
-    Vector<SignatureIndex> importFunctionSignatureIndices;
-    Vector<SignatureIndex> internalFunctionSignatureIndices;
-    Vector<Ref<Signature>> usedSignatures;
-
-    MemoryInformation memory;
-
-    Vector<Export> exports;
-    std::optional<uint32_t> startFunctionIndexSpace;
-    Vector<Segment::Ptr> data;
-    Vector<Element> elements;
-    TableInformation tableInformation;
-    Vector<Global> globals;
-    unsigned firstInternalGlobal { 0 };
-    Vector<CustomSection> customSections;
-
-    size_t functionIndexSpaceSize() const { return importFunctionSignatureIndices.size() + internalFunctionSignatureIndices.size(); }
-    bool isImportedFunctionFromFunctionIndexSpace(size_t functionIndex) const
-    {
-        ASSERT(functionIndex < functionIndexSpaceSize());
-        return functionIndex < importFunctionSignatureIndices.size();
-    }
-    SignatureIndex signatureIndexFromFunctionIndexSpace(size_t functionIndex) const
-    {
-        return isImportedFunctionFromFunctionIndexSpace(functionIndex)
-            ? importFunctionSignatureIndices[functionIndex]
-            : internalFunctionSignatureIndices[functionIndex - importFunctionSignatureIndices.size()];
-    }
-
-    uint32_t importFunctionCount() const { return importFunctionSignatureIndices.size(); }
-    uint32_t internalFunctionCount() const { return internalFunctionSignatureIndices.size(); }
-
-    ~ModuleInformation();
 };
 
 struct UnlinkedWasmToWasmCall {

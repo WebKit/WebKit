@@ -37,7 +37,6 @@
 #include "JSWebAssemblyLinkError.h"
 #include "JSWebAssemblyModule.h"
 #include "ProtoCallFrame.h"
-#include "WasmFormat.h"
 #include "WasmSignature.h"
 #include "WebAssemblyFunction.h"
 #include <limits>
@@ -129,7 +128,7 @@ void WebAssemblyModuleRecord::link(ExecState* exec, JSWebAssemblyModule* module,
                 Wasm::Callee& wasmEntrypointCallee = codeBlock->wasmEntrypointCalleeFromFunctionIndexSpace(exp.kindIndex);
                 Wasm::SignatureIndex signatureIndex = module->signatureIndexFromFunctionIndexSpace(exp.kindIndex);
                 const Wasm::Signature& signature = Wasm::SignatureInformation::get(signatureIndex);
-                WebAssemblyFunction* function = WebAssemblyFunction::create(vm, globalObject, signature.argumentCount(), exp.field, instance, jsEntrypointCallee, wasmEntrypointCallee, signatureIndex);
+                WebAssemblyFunction* function = WebAssemblyFunction::create(vm, globalObject, signature.argumentCount(), String::fromUTF8(exp.field), instance, jsEntrypointCallee, wasmEntrypointCallee, signatureIndex);
                 exportedValue = function;
             }
             break;

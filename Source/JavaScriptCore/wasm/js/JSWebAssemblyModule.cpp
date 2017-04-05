@@ -43,7 +43,7 @@ namespace JSC {
 
 const ClassInfo JSWebAssemblyModule::s_info = { "WebAssembly.Module", &Base::s_info, nullptr, CREATE_METHOD_TABLE(JSWebAssemblyModule) };
 
-JSWebAssemblyModule* JSWebAssemblyModule::createStub(VM& vm, ExecState* exec, Structure* structure, RefPtr<ArrayBuffer>&& source, RefPtr<Wasm::Plan>&& plan)
+JSWebAssemblyModule* JSWebAssemblyModule::createStub(VM& vm, ExecState* exec, Structure* structure, RefPtr<Wasm::Plan>&& plan)
 {
     ASSERT(!plan->hasWork());
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -52,8 +52,8 @@ JSWebAssemblyModule* JSWebAssemblyModule::createStub(VM& vm, ExecState* exec, St
         return nullptr;
     }
 
-    auto* module = new (NotNull, allocateCell<JSWebAssemblyModule>(vm.heap)) JSWebAssemblyModule(vm, structure, WTFMove(source));
-    module->finishCreation(vm, WTFMove(plan));
+    auto* module = new (NotNull, allocateCell<JSWebAssemblyModule>(vm.heap)) JSWebAssemblyModule(vm, structure, *plan.get());
+    module->finishCreation(vm);
     return module;
 }
 
@@ -62,37 +62,23 @@ Structure* JSWebAssemblyModule::createStructure(VM& vm, JSGlobalObject* globalOb
     return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
 }
 
-JSWebAssemblyModule::JSWebAssemblyModule(VM& vm, Structure* structure, RefPtr<ArrayBuffer>&& source)
+JSWebAssemblyModule::JSWebAssemblyModule(VM& vm, Structure* structure, Wasm::Plan& plan)
     : Base(vm, structure)
-    , m_sourceBuffer(source.releaseNonNull())
+    , m_moduleInformation(plan.takeModuleInformation())
 {
 }
 
-void JSWebAssemblyModule::finishCreation(VM& vm, RefPtr<Wasm::Plan>&& plan)
+void JSWebAssemblyModule::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
-
-    std::unique_ptr<Wasm::ModuleInformation> moduleInformation = plan->takeModuleInformation();
-    for (auto& exp : moduleInformation->exports) {
-        ASSERT(exp.field.isSafeToSendToAnotherThread());
-        exp.field = AtomicString(exp.field);
-    }
-    for (auto& imp : moduleInformation->imports) {
-        ASSERT(imp.field.isSafeToSendToAnotherThread());
-        imp.field = AtomicString(imp.field);
-        ASSERT(imp.module.isSafeToSendToAnotherThread());
-        imp.module = AtomicString(imp.module);
-    }
-
-    m_moduleInformation = WTFMove(moduleInformation);
 
     // On success, a new WebAssembly.Module object is returned with [[Module]] set to the validated Ast.module.
     SymbolTable* exportSymbolTable = SymbolTable::create(vm);
     for (auto& exp : m_moduleInformation->exports) {
         auto offset = exportSymbolTable->takeNextScopeOffset(NoLockingNecessary);
-        ASSERT(exp.field.impl()->isAtomic());
-        exportSymbolTable->set(NoLockingNecessary, static_cast<AtomicStringImpl*>(exp.field.impl()), SymbolTableEntry(VarOffset(offset)));
+        String field = String::fromUTF8(exp.field);
+        exportSymbolTable->set(NoLockingNecessary, AtomicString(field).impl(), SymbolTableEntry(VarOffset(offset)));
     }
 
     m_exportSymbolTable.set(vm, this, exportSymbolTable);

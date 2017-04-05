@@ -168,6 +168,7 @@ public:
 
     static std::pair<SignatureIndex, Ref<Signature>> WARN_UNUSED_RETURN adopt(Ref<Signature>&&);
     static const Signature& WARN_UNUSED_RETURN get(SignatureIndex);
+    static SignatureIndex WARN_UNUSED_RETURN get(const Signature&);
     static void tryCleanup();
 
 private:

@@ -1,3 +1,20 @@
+2017-04-04  Keith Miller  <keith_miller@apple.com>
+
+        WebAssembly: ModuleInformation should be a ref counted thing that can be shared across threads.
+        https://bugs.webkit.org/show_bug.cgi?id=170478
+
+        Reviewed by Saam Barati.
+
+        This adds a new String::fromUTF8 that converts a vector of characters to
+        a string.
+
+        Also, it cleans up some style.
+
+        * wtf/text/WTFString.h:
+        (WTF::String::fromUTF8):
+        * wtf/unicode/UTF8.cpp:
+        (WTF::Unicode::convertLatin1ToUTF8):
+
 2017-04-04  Filip Pizlo  <fpizlo@apple.com>
 
         B3::fixSSA() needs a tune-up

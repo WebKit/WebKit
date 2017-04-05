@@ -83,20 +83,20 @@ static EncodedJSValue JSC_HOST_CALL webAssemblyCompileFunc(ExecState* exec)
     JSPromiseDeferred* promise = JSPromiseDeferred::create(exec, globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
-    RefPtr<ArrayBuffer> source = createSourceBufferFromValue(vm, exec, exec->argument(0));
+    Vector<uint8_t> source = createSourceBufferFromValue(vm, exec, exec->argument(0));
     RETURN_IF_EXCEPTION(scope, { });
 
     Vector<Strong<JSCell>> dependencies;
     dependencies.append(Strong<JSCell>(vm, globalObject));
     vm.promiseDeferredTimer->addPendingPromise(promise, WTFMove(dependencies));
 
-    Ref<Plan> plan = adoptRef(*new Plan(vm, *source, Plan::Validation, [source, promise, globalObject] (Plan& p) mutable {
+    Ref<Plan> plan = adoptRef(*new Plan(vm, WTFMove(source), Plan::Validation, [promise, globalObject] (Plan& p) mutable {
         RefPtr<Plan> plan = makeRef(p);
-        plan->vm().promiseDeferredTimer->scheduleWorkSoon(promise, [source, promise, globalObject, plan = WTFMove(plan)] () mutable {
+        plan->vm().promiseDeferredTimer->scheduleWorkSoon(promise, [promise, globalObject, plan = WTFMove(plan)] () mutable {
             VM& vm = plan->vm();
             auto scope = DECLARE_CATCH_SCOPE(vm);
             ExecState* exec = globalObject->globalExec();
-            JSValue module = JSWebAssemblyModule::createStub(vm, exec, globalObject->WebAssemblyModuleStructure(), WTFMove(source), WTFMove(plan));
+            JSValue module = JSWebAssemblyModule::createStub(vm, exec, globalObject->WebAssemblyModuleStructure(), WTFMove(plan));
             if (scope.exception()) {
                 reject(exec, scope, promise);
                 return;
@@ -167,7 +167,7 @@ static void instantiate(VM& vm, ExecState* exec, JSPromiseDeferred* promise, JSW
 
     // FIXME: This re-parses the module header, which shouldn't be necessary.
     // https://bugs.webkit.org/show_bug.cgi?id=170205
-    Ref<Plan> plan = adoptRef(*new Plan(vm, module->source(), Plan::FullCompile, [promise, instance, module, entries] (Plan& p) {
+    Ref<Plan> plan = adoptRef(*new Plan(vm, makeRef(const_cast<Wasm::ModuleInformation&>(module->moduleInformation())), Plan::FullCompile, [promise, instance, module, entries] (Plan& p) {
         RefPtr<Plan> plan = makeRef(p);
         plan->vm().promiseDeferredTimer->scheduleWorkSoon(promise, [promise, instance, module, entries, plan = WTFMove(plan)] () {
             VM& vm = plan->vm();
@@ -184,7 +184,7 @@ static void instantiate(VM& vm, ExecState* exec, JSPromiseDeferred* promise, JSW
 static void compileAndInstantiate(VM& vm, ExecState* exec, JSPromiseDeferred* promise, JSValue buffer, JSObject* importObject)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
-    RefPtr<ArrayBuffer> source = createSourceBufferFromValue(vm, exec, buffer);
+    Vector<uint8_t> source = createSourceBufferFromValue(vm, exec, buffer);
     RETURN_IF_EXCEPTION(scope, void());
 
     auto* globalObject = exec->lexicalGlobalObject();
@@ -193,13 +193,13 @@ static void compileAndInstantiate(VM& vm, ExecState* exec, JSPromiseDeferred* pr
     dependencies.append(Strong<JSCell>(vm, importObject));
     vm.promiseDeferredTimer->addPendingPromise(promise, WTFMove(dependencies));
 
-    Ref<Plan> plan = adoptRef(*new Plan(vm, *source, Plan::Validation, [source, promise, importObject, globalObject] (Plan& p) mutable {
+    Ref<Plan> plan = adoptRef(*new Plan(vm, WTFMove(source), Plan::Validation, [promise, importObject, globalObject] (Plan& p) mutable {
         RefPtr<Plan> plan = makeRef(p);
-        plan->vm().promiseDeferredTimer->scheduleWorkSoon(promise, [source, promise, importObject, globalObject, plan = WTFMove(plan)] () mutable {
+        plan->vm().promiseDeferredTimer->scheduleWorkSoon(promise, [promise, importObject, globalObject, plan = WTFMove(plan)] () mutable {
             VM& vm = plan->vm();
             auto scope = DECLARE_CATCH_SCOPE(vm);
             ExecState* exec = globalObject->globalExec();
-            JSWebAssemblyModule* module = JSWebAssemblyModule::createStub(vm, exec, globalObject->WebAssemblyModuleStructure(), WTFMove(source), plan.copyRef());
+            JSWebAssemblyModule* module = JSWebAssemblyModule::createStub(vm, exec, globalObject->WebAssemblyModuleStructure(), plan.copyRef());
             if (scope.exception()) {
                 reject(exec, scope, promise);
                 return;

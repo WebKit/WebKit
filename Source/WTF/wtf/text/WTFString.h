@@ -433,6 +433,7 @@ public:
     static String fromUTF8(const char* s, size_t length) { return fromUTF8(reinterpret_cast<const LChar*>(s), length); };
     static String fromUTF8(const char* s) { return fromUTF8(reinterpret_cast<const LChar*>(s)); };
     WTF_EXPORT_STRING_API static String fromUTF8(const CString&);
+    static String fromUTF8(const Vector<LChar>& characters);
 
     // Tries to convert the passed in string to UTF-8, but will fall back to Latin-1 if the string is not valid UTF-8.
     WTF_EXPORT_STRING_API static String fromUTF8WithLatin1Fallback(const LChar*, size_t);
@@ -693,6 +694,13 @@ private:
 
 // Shared global empty string.
 WTF_EXPORT_STRING_API const String& emptyString();
+
+inline String String::fromUTF8(const Vector<LChar>& characters)
+{
+    if (characters.isEmpty())
+        return emptyString();
+    return fromUTF8(characters.data(), characters.size());
+}
 
 template<unsigned length> inline bool equalLettersIgnoringASCIICase(const String& string, const char (&lowercaseLetters)[length])
 {
