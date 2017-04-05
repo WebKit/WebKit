@@ -22,6 +22,7 @@
 #include "config.h"
 #include "CharacterData.h"
 
+#include "Attr.h"
 #include "ElementTraversal.h"
 #include "EventNames.h"
 #include "ExceptionCode.h"
@@ -208,7 +209,9 @@ void CharacterData::setDataAndUpdate(const String& newData, unsigned offsetOfRep
 
 void CharacterData::notifyParentAfterChange(ContainerNode::ChildChangeSource source)
 {
-    NoEventDispatchAssertion assertNoEventDispatch;
+#if !ASSERT_DISABLED
+    auto assertNoEventDispatch = std::make_unique<NoEventDispatchAssertion>();
+#endif
 
     document().incDOMTreeVersion();
 
@@ -221,6 +224,13 @@ void CharacterData::notifyParentAfterChange(ContainerNode::ChildChangeSource sou
         ElementTraversal::nextSibling(*this),
         source
     };
+
+#if !ASSERT_DISABLED
+    // Attribute CharacterData is expected to fire events.
+    if (is<Attr>(*parentNode()))
+        assertNoEventDispatch = nullptr;
+#endif
+
     parentNode()->childrenChanged(change);
 }
 

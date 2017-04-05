@@ -1,3 +1,19 @@
+2017-04-04  Brent Fulgham  <bfulgham@apple.com>
+
+        Do not assert when CharacterData representing an Attr fires events
+        https://bugs.webkit.org/show_bug.cgi?id=170454
+        <rdar://problem/30979320>
+
+        Reviewed by Ryosuke Niwa.
+
+        Make the NoEventDispatchAssertion in CharacterData::notifyParentAfterChange conditional
+        since Attr elements should be allowed to fire events.
+
+        Tests: fast/dom/no-assert-for-malformed-js-url-attribute.html
+
+        * dom/CharacterData.cpp:
+        (WebCore::CharacterData::notifyParentAfterChange):
+
 2017-04-04  Youenn Fablet  <youenn@apple.com>
 
         LayoutTest webrtc/libwebrtc/descriptionGetters.html is a flaky failure

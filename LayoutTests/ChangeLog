@@ -1,3 +1,14 @@
+2017-04-04  Brent Fulgham  <bfulgham@apple.com>
+
+        Do not assert when CharacterData representing an Attr fires events
+        https://bugs.webkit.org/show_bug.cgi?id=170454
+        <rdar://problem/30979320>
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/dom/no-assert-for-malformed-js-url-attribute-expected.txt: Added.
+        * fast/dom/no-assert-for-malformed-js-url-attribute.html: Added.
+
 2017-04-04  Youenn Fablet  <youenn@apple.com>
 
         LayoutTest webrtc/libwebrtc/descriptionGetters.html is a flaky failure
