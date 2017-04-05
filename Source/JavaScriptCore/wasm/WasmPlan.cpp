@@ -53,12 +53,12 @@ static const bool verbose = false;
 Plan::Plan(VM& vm, Ref<ModuleInformation> info, AsyncWork work, CompletionTask&& task)
     : m_moduleInformation(WTFMove(info))
     , m_vm(vm)
-    , m_completionTask(task)
     , m_source(m_moduleInformation->source.data())
     , m_sourceLength(m_moduleInformation->source.size())
     , m_state(State::Validated)
     , m_asyncWork(work)
 {
+    m_completionTasks.append(WTFMove(task));
 }
 
 Plan::Plan(VM& vm, Vector<uint8_t>&& source, AsyncWork work, CompletionTask&& task)
@@ -70,12 +70,12 @@ Plan::Plan(VM& vm, Vector<uint8_t>&& source, AsyncWork work, CompletionTask&& ta
 Plan::Plan(VM& vm, const uint8_t* source, size_t sourceLength, AsyncWork work, CompletionTask&& task)
     : m_moduleInformation(makeRef(*new ModuleInformation(Vector<uint8_t>())))
     , m_vm(vm)
-    , m_completionTask(task)
     , m_source(source)
     , m_sourceLength(sourceLength)
     , m_state(State::Initial)
     , m_asyncWork(work)
 {
+    m_completionTasks.append(WTFMove(task));
 }
 
 const char* Plan::stateString(State state)
@@ -102,6 +102,15 @@ void Plan::fail(const AbstractLocker& locker, String&& errorMessage)
     dataLogLnIf(verbose, "failing with message: ", errorMessage);
     m_errorMessage = WTFMove(errorMessage);
     complete(locker);
+}
+
+void Plan::addCompletionTask(CompletionTask&& task)
+{
+    LockHolder locker(m_lock);
+    if (m_state != State::Completed)
+        m_completionTasks.append(WTFMove(task));
+    else
+        task(*this);
 }
 
 bool Plan::parseAndValidateModule()
@@ -317,7 +326,8 @@ void Plan::complete(const AbstractLocker&)
 
     if (m_state != State::Completed) {
         moveToState(State::Completed);
-        m_completionTask(*this);
+        for (auto& task : m_completionTasks)
+            task(*this);
         m_completed.notifyAll();
     }
 }

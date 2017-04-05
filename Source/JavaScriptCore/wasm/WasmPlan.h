@@ -56,6 +56,8 @@ public:
     JS_EXPORT_PRIVATE Plan(VM&, const uint8_t*, size_t, AsyncWork, CompletionTask&&);
     JS_EXPORT_PRIVATE ~Plan();
 
+    void addCompletionTask(CompletionTask&&);
+
     bool parseAndValidateModule();
 
     JS_EXPORT_PRIVATE void prepare();
@@ -95,13 +97,8 @@ public:
         return WTFMove(m_wasmExitStubs);
     }
 
-    void setModeAndPromise(MemoryMode mode, JSPromiseDeferred* promise)
-    {
-        m_mode = mode;
-        m_pendingPromise = promise;
-    }
+    void setMode(MemoryMode mode) { m_mode = mode; }
     MemoryMode mode() const { return m_mode; }
-    JSPromiseDeferred* pendingPromise() { return m_pendingPromise; }
     VM& vm() const { return m_vm; }
 
     enum class State : uint8_t {
@@ -139,8 +136,7 @@ private:
     Vector<CompilationContext> m_compilationContexts;
 
     VM& m_vm;
-    JSPromiseDeferred* m_pendingPromise { nullptr };
-    CompletionTask m_completionTask;
+    Vector<CompletionTask, 1> m_completionTasks;
 
     Vector<Vector<UnlinkedWasmToWasmCall>> m_unlinkedWasmToWasmCalls;
     const uint8_t* m_source;

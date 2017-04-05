@@ -88,7 +88,7 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyInstance(ExecState* ex
             Wasm::ensureWorklist().completePlanSynchronously(instance->codeBlock()->plan());
         else {
             Ref<Wasm::Plan> plan = adoptRef(*new Plan(vm, makeRef(const_cast<Wasm::ModuleInformation&>(module->moduleInformation())), Plan::FullCompile, Plan::dontFinalize));
-            plan->setModeAndPromise(instance->memoryMode(), nullptr);
+            plan->setMode(instance->memoryMode());
             instance->addUnitializedCodeBlock(vm, plan.copyRef());
 
             auto& worklist = Wasm::ensureWorklist();

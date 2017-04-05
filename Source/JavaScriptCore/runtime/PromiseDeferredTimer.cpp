@@ -60,12 +60,6 @@ void PromiseDeferredTimer::doWork()
             task();
             m_vm->drainMicrotasks();
         }
-
-        auto waitingTasks = m_blockedTasks.take(ticket);
-        for (const Task& unblockedTask : waitingTasks) {
-            unblockedTask();
-            m_vm->drainMicrotasks();
-        }
     }
 
     if (m_pendingPromises.isEmpty() && m_shouldStopRunLoopWhenAllPromisesFinish)
@@ -120,9 +114,6 @@ bool PromiseDeferredTimer::cancelPendingPromise(JSPromiseDeferred* ticket)
     if (result)
         dataLogLnIf(verbose, "Canceling promise: ", RawPointer(ticket));
 
-    auto blockedTasks = m_blockedTasks.take(ticket);
-    for (const Task& task : blockedTasks)
-        task();
     return result;
 }
 
@@ -132,14 +123,6 @@ void PromiseDeferredTimer::scheduleWorkSoon(JSPromiseDeferred* ticket, Task&& ta
     m_tasks.append(std::make_tuple(ticket, WTFMove(task)));
     if (!isScheduled())
         scheduleTimer(0);
-}
-
-void PromiseDeferredTimer::scheduleBlockedTask(JSPromiseDeferred* blockingTicket, Task&& task)
-{
-    ASSERT(m_vm->currentThreadIsHoldingAPILock());
-    ASSERT(m_pendingPromises.contains(blockingTicket));
-    auto result = m_blockedTasks.add(blockingTicket, Vector<Task>());
-    result.iterator->value.append(WTFMove(task));
 }
 
 } // namespace JSC

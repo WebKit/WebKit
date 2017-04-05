@@ -156,10 +156,12 @@ static void instantiate(VM& vm, ExecState* exec, JSPromiseDeferred* promise, JSW
     vm.promiseDeferredTimer->addPendingPromise(promise, WTFMove(dependencies));
 
     if (instance->codeBlock()) {
-        vm.promiseDeferredTimer->scheduleBlockedTask(instance->codeBlock()->plan().pendingPromise(), [&vm, promise, instance, module, entries] () {
-            auto* globalObject = instance->globalObject();
-            ExecState* exec = globalObject->globalExec();
-            resolve(vm, exec, promise, instance, module, entries);
+        instance->codeBlock()->plan().addCompletionTask([promise, instance, module, entries] (Plan& p) {
+            RefPtr<Plan> plan = makeRef(p);
+            p.vm().promiseDeferredTimer->scheduleWorkSoon(promise, [promise, instance, module, entries, plan = WTFMove(plan)] () {
+                ExecState* exec = instance->globalObject()->globalExec();
+                resolve(plan->vm(), exec, promise, instance, module, entries);
+            });
         });
         return;
     }
@@ -177,7 +179,7 @@ static void instantiate(VM& vm, ExecState* exec, JSPromiseDeferred* promise, JSW
     }));
 
     instance->addUnitializedCodeBlock(vm, plan.copyRef());
-    plan->setModeAndPromise(instance->memoryMode(), promise);
+    plan->setMode(instance->memoryMode());
     Wasm::ensureWorklist().enqueue(WTFMove(plan));
 }
 

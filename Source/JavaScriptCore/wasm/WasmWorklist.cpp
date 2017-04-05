@@ -187,10 +187,8 @@ void Worklist::enqueue(Ref<Plan> plan)
         });
     }
 
-    // If we don't have a promise it must be synchronous so we should boost the priority.
-    Priority priority = plan->pendingPromise() ? Priority::Preparation : Priority::Synchronous;
-    dataLogLnIf(verbose, "Enqueuing plan with priority: ", priorityString(priority));
-    m_queue.push({ priority, nextTicket(),  WTFMove(plan) });
+    dataLogLnIf(verbose, "Enqueuing plan");
+    m_queue.push({ Priority::Preparation, nextTicket(),  WTFMove(plan) });
     m_planEnqueued->notifyOne(locker);
 }
 
