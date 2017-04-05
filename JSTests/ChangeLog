@@ -1,3 +1,17 @@
+2017-04-05  Michael Saboff  <msaboff@apple.com>
+
+        REGRESSION (Safari 10.1): Inserting elements into arrays fails when array contains very large numbers
+        https://bugs.webkit.org/show_bug.cgi?id=170264
+        <rdar://problem/31375593>
+
+        Rubber-stamped by Saam Barati.
+
+        The original bug was fixed in: https://trac.webkit.org/changeset/214714
+        I'm just adding another test for good measure.
+
+        * stress/double-array-to-array-storage.js: Added.
+        (assert):
+
 2017-04-05  Keith Miller  <keith_miller@apple.com>
 
         WebAssembly: We shouldn't need to pin size registers if we have a fast memory.
