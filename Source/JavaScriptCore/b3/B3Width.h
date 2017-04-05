@@ -130,6 +130,7 @@ inline uint64_t mask(Width width)
     case Width64:
         return 0xffffffffffffffffllu;
     }
+    ASSERT_NOT_REACHED();
 }
 
 } } // namespace JSC::B3

@@ -82,6 +82,7 @@ static inline const char* makeString(Section section)
         FOR_EACH_WASM_SECTION(STRINGIFY_SECTION_NAME)
 #undef STRINGIFY_SECTION_NAME
     }
+    ASSERT_NOT_REACHED();
 }
 
 } } // namespace JSC::Wasm

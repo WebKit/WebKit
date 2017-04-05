@@ -88,6 +88,7 @@ Opcode storeOpcode(Bank bank, Width width)
     case FP:
         return Store;
     }
+    ASSERT_NOT_REACHED();
 }
 
 } } // namespace JSC::B3

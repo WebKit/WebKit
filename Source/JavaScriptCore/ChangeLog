@@ -1,3 +1,27 @@
+2017-04-05  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Suppress warnings in GCC
+        https://bugs.webkit.org/show_bug.cgi?id=170501
+
+        Reviewed by Keith Miller.
+
+        Should use ASSERT_NOT_REACHED since return-type pragma is only
+        enabled under ASSERT_DISABLED environment. We shoud use
+        ASSERT_NOTREACHED to emit assertions in debug build. It effectively
+        catches bugs while keeping performance in release build.
+
+        * b3/B3Opcode.cpp:
+        (JSC::B3::storeOpcode):
+        * b3/B3Width.h:
+        (JSC::B3::mask):
+        * runtime/Options.cpp:
+        (JSC::parse):
+        * wasm/WasmSections.h:
+        (JSC::Wasm::makeString):
+        * wasm/WasmSignature.cpp:
+        (JSC::Wasm::SignatureInformation::tryCleanup):
+        * wasm/generateWasmValidateInlinesHeader.py:
+
 2017-04-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Implement PromiseDeferredTimer for non CF based ports

@@ -144,6 +144,7 @@ auto Validate::load(LoadOpType op, ExpressionType pointer, ExpressionType& resul
     switch (op) {
 """ + loadCases + """
     }
+    ASSERT_NOT_REACHED();
 }
 
 auto Validate::store(StoreOpType op, ExpressionType pointer, ExpressionType value, uint32_t) -> Result
@@ -154,6 +155,7 @@ auto Validate::store(StoreOpType op, ExpressionType pointer, ExpressionType valu
     switch (op) {
 """ + storeCases + """
     }
+    ASSERT_NOT_REACHED();
 }
 
 } } // namespace JSC::Wasm

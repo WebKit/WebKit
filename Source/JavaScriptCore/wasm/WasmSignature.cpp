@@ -152,9 +152,9 @@ void SignatureInformation::tryCleanup()
     }
     for (const auto& pair : toRemove) {
         bool removed = info.m_signatureMap.remove(SignatureHash { pair.second });
-        ASSERT(removed);
+        ASSERT_UNUSED(removed, removed);
         removed = info.m_indexMap.remove(pair.first);
-        ASSERT(removed);
+        ASSERT_UNUSED(removed, removed);
     }
     if (info.m_signatureMap.isEmpty()) {
         ASSERT(info.m_indexMap.isEmpty());

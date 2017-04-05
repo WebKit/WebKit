@@ -280,6 +280,16 @@
 #define PURE_FUNCTION
 #endif
 
+/* UNUSED_FUNCTION */
+
+#if !defined(UNUSED_FUNCTION) && COMPILER(GCC_OR_CLANG)
+#define UNUSED_FUNCTION __attribute__((unused))
+#endif
+
+#if !defined(UNUSED_FUNCTION)
+#define UNUSED_FUNCTION
+#endif
+
 /* REFERENCED_FROM_ASM */
 
 #if !defined(REFERENCED_FROM_ASM) && COMPILER(GCC_OR_CLANG)

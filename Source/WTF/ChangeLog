@@ -1,3 +1,15 @@
+2017-04-05  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Suppress warnings in GCC
+        https://bugs.webkit.org/show_bug.cgi?id=170501
+
+        Reviewed by Keith Miller.
+
+        Add a new macro UNUSED_FUNCTION to annotate unused static functions.
+        #pragma GCC diagnostic ignored "-Wunused-function" does not work.
+
+        * wtf/Compiler.h:
+
 2017-04-04  Filip Pizlo  <fpizlo@apple.com>
 
         Air::eliminateDeadCode() should not use a HashSet
