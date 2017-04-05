@@ -15,7 +15,10 @@ PASS muteChangedEvent.target.muted is true
 EVENT: mute
 PASS muteChangedEvent.target.muted is true
 
-PASS window.internals.pageMediaState().includes('HasActiveAudioCaptureDevice') && window.internals.pageMediaState().includes('HasActiveVideoCaptureDevice') became false
+PASS window.internals.pageMediaState().includes(HasMutedAudioCaptureDevice) became true
+PASS window.internals.pageMediaState().includes(HasMutedVideoCaptureDevice) became true
+PASS window.internals.pageMediaState().includes(HasActiveAudioCaptureDevice) became false
+PASS window.internals.pageMediaState().includes(HasActiveVideoCaptureDevice) became false
 
 *** Unmuting capture devices
 EVENT: unmute
@@ -23,7 +26,10 @@ PASS muteChangedEvent.target.muted is false
 EVENT: unmute
 PASS muteChangedEvent.target.muted is false
 
-PASS window.internals.pageMediaState().includes('HasActiveAudioCaptureDevice') && window.internals.pageMediaState().includes('HasActiveVideoCaptureDevice') became true
+PASS window.internals.pageMediaState().includes(HasActiveAudioCaptureDevice) became true
+PASS window.internals.pageMediaState().includes(HasActiveVideoCaptureDevice) became true
+PASS window.internals.pageMediaState().includes(HasMutedAudioCaptureDevice) became false
+PASS window.internals.pageMediaState().includes(HasMutedVideoCaptureDevice) became false
 PASS successfullyParsed is true
 
 TEST COMPLETE

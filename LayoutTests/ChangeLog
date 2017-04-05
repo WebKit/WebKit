@@ -1,3 +1,14 @@
+2017-04-05  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Host application should be able to mute and unmute media streams
+        https://bugs.webkit.org/show_bug.cgi?id=170519
+        <rdar://problem/31174326>
+
+        Reviewed by Youenn Fablet.
+
+        * fast/mediastream/MediaStream-page-muted-expected.txt:
+        * fast/mediastream/MediaStream-page-muted.html:
+
 2017-04-05  Javier Fernandez  <jfernandez@igalia.com>
 
         [css-align] Implement the place-items shorthand

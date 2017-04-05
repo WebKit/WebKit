@@ -1,3 +1,41 @@
+2017-04-05  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Host application should be able to mute and unmute media streams
+        https://bugs.webkit.org/show_bug.cgi?id=170519
+        <rdar://problem/31174326>
+
+        Reviewed by Youenn Fablet.
+
+        No new tests, fast/mediastream/MediaStream-page-muted.html was updated.
+
+        * Modules/mediastream/MediaStream.cpp:
+        (WebCore::MediaStream::~MediaStream): Fix a typo.
+        (WebCore::MediaStream::pageMutedStateDidChange): Don't store muted state, let the private
+        stream store it.
+        (WebCore::MediaStream::mediaState): Deal with new muted state flags.
+        * Modules/mediastream/MediaStream.h:
+
+        * dom/Document.cpp:
+        (WebCore::Document::prepareForDestruction): Clear media state before the frame is cleared.
+
+        * page/MediaProducer.h: Add muted flags.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::checkSelectedVideoTrack): The display layer
+        should not be visible when the video track is muted.
+
+        * platform/mediastream/MediaStreamPrivate.cpp:
+        (WebCore::MediaStreamPrivate::addTrack): Mute the new track if necessary.
+        (WebCore::MediaStreamPrivate::startProducingData): Do nothing when muted.
+        (WebCore::MediaStreamPrivate::setExternallyMuted): New, mute/unmute tracks.
+        * platform/mediastream/MediaStreamPrivate.h:
+
+        * platform/mediastream/RealtimeMediaSource.cpp:
+        (WebCore::RealtimeMediaSource::setMuted): Start/stop producing data.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::pageMediaState): Support new media stream muted flags.
+
 2017-04-05  Andreas Kling  <akling@apple.com>
 
         Make inactive web processes behave as though under memory pressure.

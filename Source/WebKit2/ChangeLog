@@ -1,3 +1,17 @@
+2017-04-05  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Host application should be able to mute and unmute media streams
+        https://bugs.webkit.org/show_bug.cgi?id=170519
+        <rdar://problem/31174326>
+
+        Reviewed by Youenn Fablet.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageGetMediaState): Support new media stream state flags.
+        * UIProcess/API/C/WKPagePrivate.h:
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h: Ditto.
+        * UIProcess/Cocoa/UIDelegate.mm: Ditto.
+
 2017-04-05  Brady Eidson  <beidson@apple.com>
 
         Refactor so WebsiteDataStores always have a StorageManager.

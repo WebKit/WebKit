@@ -157,7 +157,6 @@ private:
 
     bool m_isActive { false };
     bool m_isMuted { true };
-    bool m_externallyMuted { false };
     bool m_isWaitingUntilMediaCanStart { false };
 };
 

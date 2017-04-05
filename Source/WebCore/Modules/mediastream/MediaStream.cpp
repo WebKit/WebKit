@@ -104,7 +104,7 @@ MediaStream::MediaStream(ScriptExecutionContext& context, RefPtr<MediaStreamPriv
 
 MediaStream::~MediaStream()
 {
-    // Set isActive to false immediately so an callbacks triggered by shutting down, e.g.
+    // Set isActive to false immediately so any callbacks triggered by shutting down, e.g.
     // mediaState(), are short circuited.
     m_isActive = false;
     MediaStreamRegistry::shared().unregisterStream(*this);
@@ -300,15 +300,7 @@ void MediaStream::pageMutedStateDidChange()
     if (!document)
         return;
 
-    bool pageMuted = document->page()->isMediaCaptureMuted();
-    if (m_externallyMuted == pageMuted)
-        return;
-
-    m_externallyMuted = pageMuted;
-    if (pageMuted)
-        stopProducingData();
-    else
-        startProducingData();
+    m_private->setMuted(document->page()->isMediaCaptureMuted());
 }
 
 MediaProducer::MediaStateFlags MediaStream::mediaState() const
@@ -320,14 +312,22 @@ MediaProducer::MediaStateFlags MediaStream::mediaState() const
 
     if (m_private->hasAudio()) {
         state |= HasAudioOrVideo;
-        if (m_private->hasCaptureAudioSource() && m_private->isProducingData())
-            state |= HasActiveAudioCaptureDevice;
+        if (m_private->hasCaptureAudioSource()) {
+            if (m_private->isProducingData())
+                state |= HasActiveAudioCaptureDevice;
+            else if (m_private->muted())
+                state |= HasMutedAudioCaptureDevice;
+        }
     }
 
     if (m_private->hasVideo()) {
         state |= HasAudioOrVideo;
-        if (m_private->hasCaptureVideoSource() && m_private->isProducingData())
-            state |= HasActiveVideoCaptureDevice;
+        if (m_private->hasCaptureVideoSource()) {
+            if (m_private->isProducingData())
+                state |= HasActiveVideoCaptureDevice;
+            else if (m_private->muted())
+                state |= HasMutedVideoCaptureDevice;
+        }
     }
 
     return state;

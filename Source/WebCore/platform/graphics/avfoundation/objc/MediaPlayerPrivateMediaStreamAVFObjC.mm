@@ -950,7 +950,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::checkSelectedVideoTrack()
         if (oldVideoTrack != m_activeVideoTrack)
             m_imagePainter.reset();
         ensureLayers();
-        m_sampleBufferDisplayLayer.get().hidden = hideVideoLayer;
+        m_sampleBufferDisplayLayer.get().hidden = hideVideoLayer || m_displayMode < PausedImage;
         m_pendingSelectedTrackCheck = false;
         updateDisplayMode();
     });

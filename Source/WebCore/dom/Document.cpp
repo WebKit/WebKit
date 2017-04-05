@@ -2267,6 +2267,11 @@ void Document::prepareForDestruction()
 
     m_cachedResourceLoader->stopUnusedPreloadsTimer();
 
+    if (page() && m_mediaState != MediaProducer::IsNotPlaying) {
+        m_mediaState = MediaProducer::IsNotPlaying;
+        page()->updateIsPlayingMedia(HTMLMediaElementInvalidID);
+    }
+
     detachFromFrame();
 
     m_hasPreparedForDestruction = true;

@@ -2813,6 +2813,10 @@ WKMediaState WKPageGetMediaState(WKPageRef page)
         state |= kWKMediaHasActiveAudioCaptureDevice;
     if (coreState & WebCore::MediaProducer::HasActiveVideoCaptureDevice)
         state |= kWKMediaHasActiveVideoCaptureDevice;
+    if (coreState & WebCore::MediaProducer::HasMutedAudioCaptureDevice)
+        state |= kWKMediaHasMutedAudioCaptureDevice;
+    if (coreState & WebCore::MediaProducer::HasMutedVideoCaptureDevice)
+        state |= kWKMediaHasMutedVideoCaptureDevice;
 
     return state;
 }

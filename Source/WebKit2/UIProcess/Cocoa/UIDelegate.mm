@@ -443,9 +443,13 @@ void UIDelegate::UIClient::mediaCaptureStateDidChange(WebCore::MediaProducer::Me
 
     _WKMediaCaptureState mediaCaptureState = _WKMediaCaptureStateNone;
     if (state & WebCore::MediaProducer::HasActiveAudioCaptureDevice)
-        mediaCaptureState |= _WKMediaCaptureStateMicrophone;
+        mediaCaptureState |= _WKMediaCaptureStateActiveMicrophone;
     if (state & WebCore::MediaProducer::HasActiveVideoCaptureDevice)
-        mediaCaptureState |= _WKMediaCaptureStateCamera;
+        mediaCaptureState |= _WKMediaCaptureStateActiveCamera;
+    if (state & WebCore::MediaProducer::HasActiveAudioCaptureDevice)
+        mediaCaptureState |= _WKMediaCaptureStateMutedMicrophone;
+    if (state & WebCore::MediaProducer::HasMutedVideoCaptureDevice)
+        mediaCaptureState |= _WKMediaCaptureStateMutedCamera;
 
     [(id <WKUIDelegatePrivate>)delegate _webView:webView mediaCaptureStateDidChange:mediaCaptureState];
 }

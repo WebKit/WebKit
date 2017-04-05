@@ -91,6 +91,13 @@ void RealtimeMediaSource::setMuted(bool muted)
     if (stopped())
         return;
 
+    if (muted) {
+        // FIXME: We need to figure out how to guarantee that at least one black video frame is
+        // emitted after being muted.
+        stopProducingData();
+    } else
+        startProducingData();
+
     for (auto& observer : m_observers)
         observer->sourceMutedChanged();
 }
