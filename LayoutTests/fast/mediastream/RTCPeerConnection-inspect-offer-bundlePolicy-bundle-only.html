@@ -1,0 +1,113 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+    <head>
+        <script src="../../resources/js-test-pre.js"></script>
+        <script src="./resources/sdp-utils.js"></script>
+    </head>
+    <body>
+        <script>
+
+            description("Inspect that the SDP offer contains the correct number of a=bundle-only lines according to the bundlePolicy value.");
+
+            if (window.testRunner)
+                testRunner.setUserMediaPermission(true);
+            else {
+                debug("This test can not be run without the testRunner");
+                finishJSTest();
+            }
+
+            function testBundlePolicySDP(bundlePolicy) {
+                var mediaDescriptionVariables = [];
+                var numberOfExtraTracksPerType = 5;
+                var stream;
+                var numberOfGeneratedBundleOnlyLines = 0;
+                var numberOfExpectedBundleOnlyLines = 0;
+                var numberOfDifferentTypeTracks = 2; // audio and video
+
+                switch (bundlePolicy) {
+                    case "max-compat":
+                        // None of the m= sections should have a=bundle-only.
+                        numberOfExpectedBundleOnlyLines = 0;
+                        break;
+                    case "max-bundle":
+                        // All the m= sections (except the first one) should have a=bundle-only.
+                        numberOfExpectedBundleOnlyLines = numberOfDifferentTypeTracks * (numberOfExtraTracksPerType + 1 ) - 1;
+                        break;
+                     default: // balanced
+                        // All the m= sections (except the first one of each type) should have a=bundle-only.
+                        numberOfExpectedBundleOnlyLines = numberOfDifferentTypeTracks * numberOfExtraTracksPerType;
+                        break;
+                    }
+                if (numberOfExpectedBundleOnlyLines < 0)
+                    numberOfExpectedBundleOnlyLines = 0;
+
+                var connectionConfig = { iceServers:[{urls:'stun:foo.com'}],
+                                         bundlePolicy: bundlePolicy };
+                var pc = new RTCPeerConnection(connectionConfig);
+
+                navigator.mediaDevices.getUserMedia({ "audio": true, "video": true})
+                .then(function (stream) {
+                    testPassed("Start promise chain for bundlePolicy: " + bundlePolicy);
+                    var audioTrack = stream.getAudioTracks()[0];
+                    var videoTrack = stream.getVideoTracks()[0];
+                    pc.addTrack(audioTrack, stream);
+                    pc.addTrack(videoTrack, stream);
+                    mediaDescriptionVariables.push({ "trackId": audioTrack.id, "streamId": stream.id });
+                    mediaDescriptionVariables.push({ "trackId": videoTrack.id, "streamId": stream.id });
+                    for(var i=0; i < numberOfExtraTracksPerType; i++){
+                        var audioTrackCloned = audioTrack.clone();
+                        var videoTrackCloned = videoTrack.clone();
+                        pc.addTrack(audioTrackCloned, stream);
+                        pc.addTrack(videoTrackCloned, stream);
+                        mediaDescriptionVariables.push({ "trackId": audioTrackCloned.id, "streamId": stream.id });
+                        mediaDescriptionVariables.push({ "trackId": videoTrackCloned.id, "streamId": stream.id });
+                    }
+                    return pc.createOffer();
+                })
+                .then(function (offer) {
+                    testPassed("Generated SDP offer for bundlePolicy: " + bundlePolicy);
+                    printComparableSessionDescription(offer, mediaDescriptionVariables);
+                    offer.sdp.split("\r\n").forEach(function (line) {
+                        if (line == "a=bundle-only") {
+                            numberOfGeneratedBundleOnlyLines++;
+                        };
+                    });
+                    if (numberOfExpectedBundleOnlyLines == numberOfGeneratedBundleOnlyLines) {
+                        testPassed("Generated SDP offer for bundlePolicy: " + bundlePolicy + ". Got the expected number of a=bundle-only lines: " + numberOfGeneratedBundleOnlyLines);
+                    } else {
+                        testFailed("Generated SDP offer for bundlePolicy: " + bundlePolicy + ". Expected " + numberOfExpectedBundleOnlyLines + " a=bundle-only lines, but got " + numberOfGeneratedBundleOnlyLines + " lines instead.");
+                    }
+                    runNextSubTestIfNotFinished();
+
+                })
+                .catch(function (error) {
+                    testFailed("Error caught in promise chain: " + error);
+                    finishJSTest();
+                });
+
+            };
+
+
+            function runNextSubTestIfNotFinished() {
+                if (subTestsCompleted == bundlePolicies.length) {
+                    testPassed("Tested the following bundlePolicy values: " + bundlePolicies.join(" "));
+                    finishJSTest();
+                } else {
+                    testBundlePolicySDP(bundlePolicies[subTestsCompleted]);
+                    subTestsCompleted++;
+                };
+            };
+
+
+            var subTestsCompleted = 0;
+            var bundlePolicies = ["max-compat", "balanced", "max-bundle"];
+
+            runNextSubTestIfNotFinished();
+
+            window.jsTestIsAsync = true;
+            window.successfullyParsed = true;
+
+        </script>
+        <script src="../../resources/js-test-post.js"></script>
+    </body>
+</html>

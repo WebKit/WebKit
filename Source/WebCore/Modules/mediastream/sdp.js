@@ -68,6 +68,7 @@ if (typeof(SDP) == "undefined")
             "o=${username} ${sessionId} ${sessionVersion} ${netType} ${addressType} ${address}\r\n" +
             "s=${sessionName}\r\n" +
             "t=${startTime} ${stopTime}\r\n" +
+            "${bundleLine}" +
             "${msidsemanticLine}",
 
         "msidsemantic": "a=msid-semantic:WMS ${mediaStreamIds}\r\n",
@@ -77,6 +78,7 @@ if (typeof(SDP) == "undefined")
             "c=${netType} ${addressType} ${address}\r\n" +
             "${rtcpLine}" +
             "${rtcpMuxLine}" +
+            "${bundleOnlyLine}" +
             "a=${mode}\r\n" +
             "${midLine}" +
             "${rtpMapLines}" +
@@ -96,6 +98,7 @@ if (typeof(SDP) == "undefined")
         "rtcp": "a=rtcp:${port}${[ ]netType}${[ ]addressType}${[ ]address}\r\n",
         "rtcpMux": "a=rtcp-mux\r\n",
         "mid": "a=mid:${mid}\r\n",
+        "bundle": "a=group:BUNDLE ${midsBundle}\r\n",
 
         "rtpMap": "a=rtpmap:${type} ${encodingName}/${clockRate}${[/]channels}\r\n",
         "fmtp": "a=fmtp:${type} ${parameters}\r\n",
@@ -373,6 +376,7 @@ if (typeof(SDP) == "undefined")
             "sessionName": "-",
             "startTime": 0,
             "stopTime": 0,
+            "bundlePolicy": "balanced",
             "mediaDescriptions": []
         });
         addDefaults(sdpObj.originator, {
@@ -386,6 +390,8 @@ if (typeof(SDP) == "undefined")
         var sdpText = fillTemplate(templates.sdp, sdpObj);
         sdpText = fillTemplate(sdpText, sdpObj.originator);
 
+        var midsBundle = [];
+        var mediatypesBundle = [];
         var msidsemanticLine = "";
         var mediaStreamIds = [];
         sdpObj.mediaDescriptions.forEach(function (mdesc) {
@@ -412,10 +418,16 @@ if (typeof(SDP) == "undefined")
             });
             var mblock = fillTemplate(templates.mblock, mediaDescription);
 
-            var midInfo = {"midLine": ""};
-            if (mediaDescription.mid)
-                midInfo.midLine = fillTemplate(templates.mid, mediaDescription);
-            mblock = fillTemplate(mblock, midInfo);
+            var midBundleInfo = {"midLine": "", "bundleOnlyLine": ""};
+            if (mediaDescription.mid) {
+                midBundleInfo.midLine = fillTemplate(templates.mid, mediaDescription);
+                if ((sdpObj.bundlePolicy == "balanced"   && mediatypesBundle.includes(mediaDescription.type)) ||
+                    (sdpObj.bundlePolicy == "max-bundle" && mediatypesBundle.length > 0))
+                    midBundleInfo.bundleOnlyLine = "a=bundle-only\r\n";
+                mediatypesBundle.push(mediaDescription.type)
+                midsBundle.push(mediaDescription.mid);
+            }
+            mblock = fillTemplate(mblock, midBundleInfo);
 
             var payloadInfo = {"rtpMapLines": "", "fmtpLines": "", "nackLines": "",
                 "nackpliLines": "", "ccmfirLines": "", "ericScreamLines": ""};
@@ -522,6 +534,11 @@ if (typeof(SDP) == "undefined")
 
             sdpText += mblock;
         });
+
+        var bundleLine = "";
+        if (midsBundle.length > 0)
+            bundleLine = fillTemplate(templates.bundle, { "midsBundle": midsBundle.join(" ") });
+        sdpText = fillTemplate(sdpText, { "bundleLine": bundleLine });
 
         return sdpText;
     };

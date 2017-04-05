@@ -16,9 +16,18 @@
             "msid": "^a=(ssrc:\\d+ )?msid:([\\w+/\\-=]+) +([\\w+/\\-=]+).*$",
             "iceufrag": "^a=ice-ufrag:([\\w+/]*).*$",
             "icepwd": "^a=ice-pwd:([\\w+/]*).*$",
+            "bundle": "^a=group:BUNDLE .*$",
         };
 
         var mdescIndex = -1;
+
+        var mid;
+        var mids = [];
+        sdp.split("\r\n").forEach(function (line) {
+           if (mid = match(line, regexp.mid))
+                mids.push(mid[1]);
+        });
+
         sdp.split("\r\n").forEach(function (line) {
             if (match(line, regexp.mline)) {
                 // Media block ("header" line)
@@ -32,6 +41,9 @@
                     // The session-id should be a number between 0 and LLONG_MAX (2^63-1).
                     if (sessid >= 0 && sessid <= 9223372036854775807)
                         line = line.replace(oline[2], verified("session-id"));
+                } else if (match(line, regexp.bundle)) {
+                    if (mids.length > 0)
+                        line = line.replace("a=group:BUNDLE " + mids.join(" "), "a=group:BUNDLE " + verified("bundle"));
                 } else if (match(line, regexp.msidsemantic)) {
                     mdescVariables.forEach(function (variables) {
                         line = line.replace(variables.streamId, verified("media-stream-id"));
@@ -40,7 +52,6 @@
             } else {
                 // Media block (content lines)
                 var cname;
-                var mid;
                 var msid;
                 var iceufrag;
                 var icepwd;
@@ -49,7 +60,7 @@
                     line = line.replace(cname[1], verified("ssrc"));
                     line = line.replace(cname[2], verified("cname"));
                 } else if (mid = match(line, regexp.mid))
-                    line = line.replace(mid[1], verified("mid"))
+                    line = line.replace(mid[1], verified("mid"));
                 else if (msid = match(line, regexp.msid)) {
                     if (msid[1])
                         line = line.replace(msid[1], verified("ssrc"));

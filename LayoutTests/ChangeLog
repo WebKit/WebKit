@@ -1,3 +1,28 @@
+2017-04-05  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [WebRTC][OpenWebRTC] Add support for SDP BUNDLE ("a:group:BUNDLE" and "a=bundle-only" lines)
+        https://bugs.webkit.org/show_bug.cgi?id=170157
+
+        Reviewed by Alejandro G. Castro.
+
+        The test fast/mediastream/RTCPeerConnection-inspect-offer-bundlePolicy-bundle-only.html
+        is used to check that we generate the "a=bundle-only" lines on the "m=" sections
+        according to the bundlePolicy. The 3 possible values of bundlePolicy are tested.
+        To properly test bundlePolicy:"balanced" we generate 5 extra tracks (6 in total)
+        for each one of the audio media type and video media type.
+
+        * TestExpectations: Set RTCPeerConnection-inspect-offer-bundlePolicy-bundle-only.html
+        as failing in the general TestExpectations, because the libwebrtc backend currently
+        doesn't generate the expected a=bundle-only lines.
+        On the GTK+ port TestExpectations file this is overriden, and the test is marked to pass.
+        The whole fast/mediastream directory is already overriden to pass.
+        * fast/mediastream/RTCPeerConnection-inspect-offer-bundlePolicy-bundle-only-expected.txt: Added.
+        * fast/mediastream/RTCPeerConnection-inspect-offer-bundlePolicy-bundle-only.html: Added.
+        * fast/mediastream/resources/sdp-utils.js:
+        (printComparableSessionDescription): Validate the a=group:BUNDLE line to contain the required MID identifiers.
+        * platform/gtk/fast/mediastream/RTCPeerConnection-inspect-answer-expected.txt: Added. Rebaseline with the expected a=group:BUNDLE line.
+        * platform/gtk/fast/mediastream/RTCPeerConnection-inspect-offer-expected.txt: Added. Rebaseline with the expected a=group:BUNDLE line.
+
 2017-04-05  Jer Noble  <jer.noble@apple.com>
 
         [MSE] Seeks to currentTime=0 will fail if currentTime is already 0.
