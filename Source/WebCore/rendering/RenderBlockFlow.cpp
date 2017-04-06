@@ -36,7 +36,6 @@
 #include "LayoutRepainter.h"
 #include "Logging.h"
 #include "RenderCombineText.h"
-#include "RenderFlexibleBox.h"
 #include "RenderInline.h"
 #include "RenderIterator.h"
 #include "RenderLayer.h"
@@ -1866,19 +1865,14 @@ bool RenderBlockFlow::hasNextPage(LayoutUnit logicalOffset, PageBoundaryRule pag
 
 LayoutUnit RenderBlockFlow::adjustForUnsplittableChild(RenderBox& child, LayoutUnit logicalOffset, LayoutUnit childBeforeMargin, LayoutUnit childAfterMargin)
 {
-    // When flexboxes are embedded inside a block flow, they don't perform any adjustments for unsplittable
-    // children. We'll treat flexboxes themselves as unsplittable just to get them to paginate properly inside
-    // a block flow.
-    bool isUnsplittable = childBoxIsUnsplittableForFragmentation(child);
-    if (!isUnsplittable && !(child.isFlexibleBox() && !downcast<RenderFlexibleBox>(child).isFlexibleBoxImpl()))
+    if (!childBoxIsUnsplittableForFragmentation(child))
         return logicalOffset;
 
     RenderFlowThread* flowThread = flowThreadContainingBlock();
     LayoutUnit childLogicalHeight = logicalHeightForChild(child) + childBeforeMargin + childAfterMargin;
     LayoutUnit pageLogicalHeight = pageLogicalHeightForOffset(logicalOffset);
     bool hasUniformPageLogicalHeight = !flowThread || flowThread->regionsHaveUniformLogicalHeight();
-    if (isUnsplittable)
-        updateMinimumPageHeight(logicalOffset, childLogicalHeight);
+    updateMinimumPageHeight(logicalOffset, childLogicalHeight);
     if (!pageLogicalHeight || (hasUniformPageLogicalHeight && childLogicalHeight > pageLogicalHeight)
         || !hasNextPage(logicalOffset))
         return logicalOffset;

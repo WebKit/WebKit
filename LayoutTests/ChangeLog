@@ -1,5 +1,17 @@
 2017-04-06  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Unreviewed, rolling out r215041.
+
+        The LayoutTest for this change is failing on ios-simulator.
+
+        Reverted changeset:
+
+        "Rendering flexbox children across columns"
+        https://bugs.webkit.org/show_bug.cgi?id=164166
+        http://trac.webkit.org/changeset/215041
+
+2017-04-06  Ryan Haddad  <ryanhaddad@apple.com>
+
         Unreviewed, rolling out r215046.
 
         This change broke internal builds.
