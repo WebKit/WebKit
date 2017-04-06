@@ -172,7 +172,7 @@ class SimulatedDevice(object):
 
         def _install_timeout(signum, frame):
             assert signum == signal.SIGALRM
-            raise Exception('Timed out waiting for process to open {} on {}'.format(bundle_id, self.udid))
+            raise RuntimeError('Timed out waiting for process to open {} on {}'.format(bundle_id, self.udid))
 
         output = None
         signal.signal(signal.SIGALRM, _install_timeout)

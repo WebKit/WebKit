@@ -1,3 +1,13 @@
+2017-04-06  Jonathan Bedard  <jbedard@apple.com>
+
+        REGRESSION: Simulators failing to install after launch_app times out
+        <rdar://problem/31478107>
+
+        Unreviewed infrastructure fix.
+
+        * Scripts/webkitpy/xcode/simulated_device.py:
+        (SimulatedDevice.launch_app._install_timeout): Raise RuntimeError, not Exception.
+
 2017-04-05  Joseph Pecoraro  <pecoraro@apple.com>
 
         test262: module test progressions need updated expectations (@@iterator changes)
