@@ -96,11 +96,11 @@ class Cache {
     friend class WTF::NeverDestroyed<Cache>;
 public:
     enum class Option {
-        EfficacyLogging,
+        EfficacyLogging = 1 << 0,
         // In testing mode we try to eliminate sources of randomness. Cache does not shrink and there are no read timeouts.
-        TestingMode,
+        TestingMode = 1 << 1,
 #if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
-        SpeculativeRevalidation,
+        SpeculativeRevalidation = 1 << 2,
 #endif
     };
     bool initialize(const String& cachePath, OptionSet<Option>);

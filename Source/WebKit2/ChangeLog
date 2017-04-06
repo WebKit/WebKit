@@ -1,3 +1,14 @@
+2017-04-06  Anders Carlsson  <andersca@apple.com>
+
+        OptionSet options need to be powers of two
+        https://bugs.webkit.org/show_bug.cgi?id=170565
+
+        Reviewed by Chris Dumez.
+
+        Change Cache::Option to be powers of two.
+
+        * NetworkProcess/cache/NetworkCache.h:
+
 2017-04-06  Youenn Fablet  <youenn@apple.com>
 
         WebRTC tests gardening
