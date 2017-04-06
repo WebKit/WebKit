@@ -1054,13 +1054,7 @@ void GraphicsContext::setPlatformCompositeOperation(CompositeOperator op, BlendM
     if (paintingDisabled())
         return;
 
-    cairo_operator_t cairo_op;
-    if (blendOp == BlendModeNormal)
-        cairo_op = toCairoOperator(op);
-    else
-        cairo_op = toCairoOperator(blendOp);
-
-    cairo_set_operator(platformContext()->cr(), cairo_op);
+    cairo_set_operator(platformContext()->cr(), toCairoOperator(op, blendOp));
 }
 
 void GraphicsContext::canvasClip(const Path& path, WindRule windRule)
@@ -1201,7 +1195,7 @@ void GraphicsContext::drawPattern(Image& image, const FloatRect& tileRect, const
         return;
 
     cairo_t* cr = platformContext()->cr();
-    drawPatternToCairoContext(cr, surface.get(), IntSize(image.size()), tileRect, patternTransform, phase, toCairoOperator(op), destRect);
+    drawPatternToCairoContext(cr, surface.get(), IntSize(image.size()), tileRect, patternTransform, phase, toCairoOperator(op, blendMode), destRect);
 }
 
 void GraphicsContext::setPlatformShouldAntialias(bool enable)
