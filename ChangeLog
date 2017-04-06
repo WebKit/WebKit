@@ -1,3 +1,9 @@
+2017-04-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.14.6 release.
+
+        * Source/cmake/OptionsGTK.cmake: Bump version numbers.
+
 2017-02-23  Tomas Popela  <tpopela@redhat.com>
 
         [GTK] Compilation fails if using ninja together with icecream and cmake > 3.5

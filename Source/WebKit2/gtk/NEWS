@@ -1,4 +1,25 @@
 ==================
+WebKitGTK+  2.14.6
+==================
+
+What's new in WebKitGTK+ 2.14.6?
+
+  - Fix rendering issues in long documents with transparent background.
+  - Fix no-third-party cookies policy in case of redirections.
+  - Honor GTK+ font settings.
+  - Fix rendering artifacts when resizing the window in accelerated compositing mode.
+  - Remove flickering when leaving accelerated compositing mode.
+  - Fix web process deadlocks when destroying the media player.
+  - Properly handle copy drag and drop operations.
+  - Ensure we never try to load GTK2 plugins in Wayland.
+  - Fix a hang when sending an IPC messages fails because socket read buffers are full.
+  - Fix several crashes and rendering issues.
+  - Security fixes: CVE-2017-2369, CVE-2017-2460, CVE-2017-2470, CVE-2017-2475, CVE-2017-2481, CVE-2017-2476,
+    CVE-2017-2471, CVE-2017-2466, CVE-2017-2459, CVE-2017-2454, CVE-2017-2446, CVE-2017-2468, CVE-2017-2465,
+    CVE-2016-9643, CVE-2017-2377, CVE-2017-2364, CVE-2017-2367, CVE-2017-2442, CVE-2017-2419, CVE-2017-2392,
+    CVE-2017-2405, CVE-2017-2394.
+
+==================
 WebKitGTK+  2.14.5
 ==================
 

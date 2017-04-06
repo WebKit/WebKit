@@ -1,3 +1,9 @@
+2017-04-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.14.6 release.
+
+        * gtk/NEWS: Add release notes for 2.14.6.
+
 2017-03-21  Sergio Villar Senin  <svillar@igalia.com>
 
         [Soup] "Only from websites I visit" cookie policy is broken
