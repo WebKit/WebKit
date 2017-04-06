@@ -148,15 +148,16 @@ void SlotAssignment::didChangeSlot(const AtomicString& slotAttrValue, ChangeType
     auto it = m_slots.find(slotName);
     if (it == m_slots.end())
         return;
+    
+    it->value->assignedNodes.clear();
+    m_slotAssignmentsIsValid = false;
 
     HTMLSlotElement* slotElement = findFirstSlotElement(*it->value, shadowRoot);
     if (!slotElement)
         return;
 
-    if (changeType == ChangeType::DirectChild) {
+    if (changeType == ChangeType::DirectChild)
         shadowRoot.host()->setNeedsStyleRecalc(ReconstructRenderTree);
-        m_slotAssignmentsIsValid = false;
-    }
 
     if (shadowRoot.mode() == ShadowRoot::Mode::UserAgent)
         return;
