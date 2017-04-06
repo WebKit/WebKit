@@ -203,7 +203,7 @@ ul.feature-details {
     font-size: 2rem;
     display: inline-block;
     position: relative;
-    min-width: 4em;
+    min-width: 5em;
     text-align: right;
 }
 
@@ -223,13 +223,13 @@ ul.feature-details {
     border-color: transparent transparent transparent transparent;
 }
 
-#status-filters .done,
-.feature-status.done,
-.feature-status.done a {
+#status-filters .supported,
+.feature-status.supported,
+.feature-status.supported a {
     color: #339900;
 }
 
-.status-marker.done {
+.status-marker.supported {
     border-color: #339900 transparent transparent transparent;
 }
 

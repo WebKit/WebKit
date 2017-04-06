@@ -1,3 +1,27 @@
+2017-04-06  Jon Davis  <jond@apple.com>
+
+        Updates feature status for recently shipped features
+        https://bugs.webkit.org/show_bug.cgi?id=170359
+
+        Reviewed by Brian Burg.
+
+        Added missing Gamepad entry.
+        Changed "Done" status to "Supported".
+        Also changed status from "In Development" to "Supported" for:
+        
+        - CSS Grid Layout Level 1
+        - CSS Inline Layout Module Level 3
+        - CSS Scroll Snap Points Module Level 1
+        - CSS Color Level 4
+        - Fetch API
+        - Indexed Database 2.0
+        - Media Capture and Streams
+        - Pointer Lock
+        - Preload
+        - Input Events
+
+        * features.json:
+
 2017-03-31  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebCrypto] Add support for AES-CTR

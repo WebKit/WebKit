@@ -5,7 +5,7 @@
         "url": "http://wiki.ecmascript.org/doku.php?id=harmony:specification_drafts",
         "keywords": ["es6", "es2015", "ecmascript"],
         "status": {
-            "status": "Done"
+            "status": "Supported"
         },
         "contact": [
             {
@@ -27,7 +27,7 @@
     {
         "name": "Internationalization API",
         "status": {
-            "status": "Done"
+            "status": "Supported"
         },
         "url": "http://ecma-international.org/publications/standards/Ecma-402.htm",
         "documentation-url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl",
@@ -66,7 +66,7 @@
     {
         "name": "Array.prototype.copyWithin",
         "status": {
-            "status": "Done",
+            "status": "Supported",
             "enabled-by-default": true
         },
         "url": "https://people.mozilla.org/~jorendorff/es6-draft.html#sec-array.prototype.copywithin",
@@ -81,7 +81,7 @@
     {
         "name": "Array.prototype.includes",
         "status": {
-            "status": "Done",
+            "status": "Supported",
             "enabled-by-default": true
         },
         "url": "https://github.com/tc39/Array.prototype.includes",
@@ -92,7 +92,7 @@
     {
         "name": "Arrow Functions",
         "status": {
-            "status": "Done",
+            "status": "Supported",
             "enabled-by-default": true
         },
         "url": "http://www.ecma-international.org/ecma-262/6.0/index.html#sec-arrow-function-definitions",
@@ -103,7 +103,7 @@
     {
         "name": "Block Scoping",
         "status": {
-            "status": "Done",
+            "status": "Supported",
             "enabled-by-default": true
         },
         "url": "http://www.ecma-international.org/ecma-262/6.0/#sec-let-and-const-declarations",
@@ -114,7 +114,7 @@
     {
         "name": "Classes",
         "status": {
-            "status": "Done",
+            "status": "Supported",
             "enabled-by-default": true
         },
         "url": "http://www.ecma-international.org/ecma-262/6.0/#sec-class-definitions",
@@ -125,7 +125,7 @@
     {
         "name": "Default Parameter Values",
         "status": {
-            "status": "Done",
+            "status": "Supported",
             "enabled-by-default": true
         },
         "url": "http://www.ecma-international.org/ecma-262/6.0/#sec-function-definitions",
@@ -136,7 +136,7 @@
     {
         "name": "Destructuring Syntax",
         "status": {
-            "status": "Done",
+            "status": "Supported",
             "enabled-by-default": true
         },
         "url": "http://www.ecma-international.org/ecma-262/6.0/#sec-destructuring-assignment",
@@ -147,7 +147,7 @@
     {
         "name": "Exponentiation Syntax",
         "status": {
-            "status": "Done",
+            "status": "Supported",
             "enabled-by-default": true
         },
         "url": "https://tc39.github.io/ecma262/#prod-ExponentiationExpression",
@@ -164,7 +164,7 @@
     {
         "name": "Generators",
         "status": {
-            "status": "Done",
+            "status": "Supported",
             "enabled-by-default": true
         },
         "url": "http://www.ecma-international.org/ecma-262/6.0/index.html#sec-generator-objects",
@@ -181,7 +181,7 @@
     {
         "name": "Map Data Structure",
         "status": {
-            "status": "Done",
+            "status": "Supported",
             "enabled-by-default": true
         },
         "url": "http://people.mozilla.org/~jorendorff/es6-draft.html#sec-map-constructor",
@@ -193,7 +193,7 @@
     {
         "name": "Modules",
         "status": {
-            "status": "Done",
+            "status": "Supported",
             "enabled-by-default": true
         },
         "url": "http://www.ecma-international.org/ecma-262/6.0/index.html#sec-modules",
@@ -205,7 +205,7 @@
     {
         "name": "Number Object Extensions",
         "status": {
-            "status": "Done",
+            "status": "Supported",
             "enabled-by-default": true
         },
         "url": "http://people.mozilla.org/~jorendorff/es6-draft.html#sec-number-objects",
@@ -217,7 +217,7 @@
     {
         "name": "Octal and Binary Literals",
         "status": {
-            "status": "Done",
+            "status": "Supported",
             "enabled-by-default": true
         },
         "url": "https://people.mozilla.org/~jorendorff/es6-draft.html#sec-literals-numeric-literals",
@@ -228,7 +228,7 @@
     {
         "name": "Promise Objects",
         "status": {
-            "status": "Done",
+            "status": "Supported",
             "enabled-by-default": true,
             "shipped": ["ios8-safari", "osx-safari-7.1"]
         },
@@ -240,7 +240,7 @@
     {
         "name": "Proxy Objects",
         "status": {
-            "status": "Done"
+            "status": "Supported"
         },
         "url": "http://www.ecma-international.org/ecma-262/6.0/index.html#sec-proxy-objects",
         "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=35731",
@@ -255,7 +255,7 @@
     {
         "name": "Reflect API",
         "status": {
-            "status": "Done",
+            "status": "Supported",
             "enabled-by-default": true
         },
         "url": "http://www.ecma-international.org/ecma-262/6.0/#sec-reflect-object",
@@ -266,7 +266,7 @@
     {
         "name": "Rest Parameter",
         "status": {
-            "status": "Done",
+            "status": "Supported",
             "enabled-by-default": true
         },
         "url": "http://www.ecma-international.org/ecma-262/6.0/#sec-function-definitions",
@@ -282,7 +282,7 @@
     {
         "name": "Set Data Structure",
         "status": {
-            "status": "Done",
+            "status": "Supported",
             "enabled-by-default": true
         },
         "url": "https://people.mozilla.org/~jorendorff/es6-draft.html#sec-set-constructor",
@@ -294,7 +294,7 @@
     {
         "name": "Symbol Objects",
         "status": {
-            "status": "Done",
+            "status": "Supported",
             "enabled-by-default": true
         },
         "url": "https://people.mozilla.org/~jorendorff/es6-draft.html#sec-symbol-objects",
@@ -309,7 +309,7 @@
     {
         "name": "Tagged Templates",
         "status": {
-            "status": "Done",
+            "status": "Supported",
             "enabled-by-default": true
         },
         "url": "http://people.mozilla.org/~jorendorff/es6-draft.html#sec-tagged-templates",
@@ -325,7 +325,7 @@
     {
         "name": "Tail Calls",
         "status": {
-            "status": "Done",
+            "status": "Supported",
             "enabled-by-default": true
         },
         "url": "http://www.ecma-international.org/ecma-262/6.0/index.html#sec-tail-position-calls",
@@ -336,7 +336,7 @@
     {
         "name": "Template Literals",
         "status": {
-            "status": "Done",
+            "status": "Supported",
             "enabled-by-default": true
         },
         "url": "http://people.mozilla.org/~jorendorff/es6-draft.html#sec-template-literals",
@@ -352,7 +352,7 @@
     {
         "name": "WeakMap",
         "status": {
-            "status": "Done",
+            "status": "Supported",
             "enabled-by-default": true
         },
         "url": "http://people.mozilla.org/~jorendorff/es6-draft.html#sec-weakmap-objects",
@@ -364,7 +364,7 @@
     {
         "name": "WeakSet",
         "status": {
-            "status": "Done",
+            "status": "Supported",
             "enabled-by-default": true
         },
         "url": "http://people.mozilla.org/~jorendorff/es6-draft.html#sec-weakset-objects",
@@ -380,7 +380,7 @@
     {
         "name": "for...of Loops",
         "status": {
-            "status": "Done",
+            "status": "Supported",
             "enabled-by-default": true
         },
         "url": "http://people.mozilla.org/~jorendorff/es6-draft.html#sec-for-in-and-for-of-statements",
@@ -392,7 +392,7 @@
     {
         "name": "new.target",
         "status": {
-            "status": "Done",
+            "status": "Supported",
             "enabled-by-default": true
         },
         "url": "http://www.ecma-international.org/ecma-262/6.0/#sec-built-in-function-objects",

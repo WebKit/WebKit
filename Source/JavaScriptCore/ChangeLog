@@ -1,3 +1,14 @@
+2017-04-06  Jon Davis  <jond@apple.com>
+
+        Updates feature status for recently shipped features
+        https://bugs.webkit.org/show_bug.cgi?id=170359
+
+        Reviewed by Brian Burg.
+
+        Changed "Done" status to "Supported".
+
+        * features.json:
+
 2017-04-06  Youenn Fablet  <youenn@apple.com>
 
         WebRTC tests gardening

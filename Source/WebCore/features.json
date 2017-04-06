@@ -31,7 +31,7 @@
     {
         "name": "CSS Color Level 4",
         "status": {
-            "status": "In Development",
+            "status": "Supported",
             "enabled-by-default": true
         },
         "url": "https://drafts.csswg.org/css-color/",
@@ -69,7 +69,7 @@
     {
         "name": "CSS Grid Layout Level 1",
         "status": {
-            "status": "In Development",
+            "status": "Supported",
             "enabled-by-default": true
         },
         "url": "http://dev.w3.org/csswg/css-grid/",
@@ -90,7 +90,7 @@
     {
         "name": "CSS Inline Layout Module Level 3",
         "status": {
-            "status": "In Development",
+            "status": "Supported",
             "enabled-by-default": true
         },
         "url": "http://dev.w3.org/csswg/css-inline/",
@@ -146,7 +146,7 @@
     {
         "name": "CSS Scroll Snap Points Module Level 1",
         "status": {
-            "status": "In Development",
+            "status": "Supported",
             "enabled-by-default": true
         },
         "url": "http://dev.w3.org/csswg/css-snappoints/",
@@ -188,7 +188,7 @@
     {
         "name": "CSS Variables",
         "status": {
-            "status": "Done",
+            "status": "Supported",
             "enabled-by-default": true
         },
         "url": "https://www.w3.org/TR/css-variables/",
@@ -204,7 +204,7 @@
     {
         "name": "CSS Will Change",
         "status": {
-            "status": "Done",
+            "status": "Supported",
             "enabled-by-default": true
         },
         "url": "https://drafts.csswg.org/css-will-change/",
@@ -218,7 +218,7 @@
     {
         "name": "Content Security Policy Level 2",
         "status": {
-            "status": "Done",
+            "status": "Supported",
             "enabled-by-default": true
         },
         "url": "https://w3c.github.io/webappsec-csp/2/",
@@ -253,7 +253,7 @@
     {
         "name": "DeviceOrientation Events",
         "status": {
-            "status": "Done",
+            "status": "Supported",
             "enabled-by-default": true
         },
         "description": "DOM events that provide information about the physical orientation and motion of a hosting device.",
@@ -264,7 +264,7 @@
     {
         "name": "Encoding",
         "status": {
-            "status": "Done",
+            "status": "Supported",
             "enabled-by-default": true
         },
         "url": "https://encoding.spec.whatwg.org",
@@ -278,9 +278,9 @@
             "email": "achristensen@webkit.org"
         }
     },    {
-        "name": "Fetch API",
+        "name": "Fetch",
         "status": {
-            "status": "In Development"
+            "status": "Supported"
         },
         "url": "https://fetch.spec.whatwg.org",
         "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=151937",
@@ -300,9 +300,25 @@
         "category": "css"
     },
     {
+        "name": "Gamepad",
+        "status": {
+            "status": "Supported"
+        },
+        "url": "https://www.w3.org/TR/gamepad/",
+        "webkit-url": "https://webkit.org/b/134076",
+        "keywords": ["gamepad", "gaming", "games", "controller"],
+        "category": "webapps",
+        "description": "An interface for accessing and responding to game controller device state.",
+        "contact": {
+            "name": "Jonathan Davis",
+            "email": "web-evangelist@apple.com",
+            "twitter": "@jonathandavis"
+        }
+    },
+    {
         "name": "Geolocation API",
         "status": {
-            "status": "Done",
+            "status": "Supported",
             "enabled-by-default": true
         },
         "description": "An API that provides scripted access to geographical location information associated with the hosting device.",
@@ -327,7 +343,7 @@
     {
         "name": "Indexed Database",
         "status": {
-            "status": "Done"
+            "status": "Supported"
         },
         "url": "http://www.w3.org/TR/IndexedDB/",
         "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=149117",
@@ -342,7 +358,7 @@
     {
         "name": "Indexed Database 2.0",
         "status": {
-            "status": "In Development"
+            "status": "Supported"
         },
         "url": "http://w3c.github.io/IndexedDB/",
         "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=160306",
@@ -376,7 +392,7 @@
     {
         "name": "Navigation Timing Level 1",
         "status": {
-            "status": "Done"
+            "status": "Supported"
         },
         "url": "https://www.w3.org/TR/navigation-timing/",
         "keywords": ["performance", "navigation timing"],
@@ -415,8 +431,7 @@
     {
         "name": "Pointer Lock",
         "status": {
-            "status": "In Development",
-            "enabled-by-default": false
+            "status": "Supported"
         },
         "url": "https://www.w3.org/TR/pointerlock/",
         "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=164652",
@@ -426,8 +441,7 @@
     {
         "name": "Preload",
         "status": {
-            "status": "In Development",
-            "enabled-by-default": false
+            "status": "Supported"
         },
         "url": "http://w3c.github.io/preload/",
         "webkit-url": "https://webkit.org/b/158720",
@@ -494,7 +508,7 @@
     {
         "name": "WOFF File Format 2.0",
         "status": {
-            "status": "Done"
+            "status": "Supported"
         },
         "url": "https://www.w3.org/TR/WOFF2/",
         "keywords": ["woff"],
@@ -568,7 +582,7 @@
     {
         "name": "WebGL 1",
         "status": {
-            "status": "Done",
+            "status": "Supported",
             "enabled-by-default": true
         },
         "url": "https://www.khronos.org/registry/webgl/specs/1.0/",
@@ -607,7 +621,7 @@
     {
         "name": "CSS Selector :any-link",
         "status": {
-            "status": "Done",
+            "status": "Supported",
             "enabled-by-default": true
         },
         "url": "http://dev.w3.org/csswg/selectors-4/#the-any-link-pseudo",
@@ -623,7 +637,7 @@
     {
         "name": "CSS Selector :focus-within",
         "status": {
-            "status": "Done",
+            "status": "Supported",
             "enabled-by-default": true
         },
         "url": "https://drafts.csswg.org/selectors-4/#the-focus-within-pseudo",
@@ -639,7 +653,7 @@
     {
         "name": "CSS Selector :lang() level 4",
         "status": {
-            "status": "Done",
+            "status": "Supported",
             "enabled-by-default": true
         },
         "url": "http://dev.w3.org/csswg/selectors-4/#the-lang-pseudo",
@@ -649,7 +663,7 @@
     {
         "name": "CSS Selector :matches()",
         "status": {
-            "status": "Done",
+            "status": "Supported",
             "enabled-by-default": true
         },
         "url": "http://dev.w3.org/csswg/selectors-4/#matches",
@@ -665,7 +679,7 @@
     {
         "name": "CSS Selector :not() level 4",
         "status": {
-            "status": "Done",
+            "status": "Supported",
             "enabled-by-default": true
         },
         "url": "http://dev.w3.org/csswg/selectors-4/#negation",
@@ -681,7 +695,7 @@
     {
         "name": "CSS Selector :nth-child(An+B of selector list) and :nth-last-child(An+B of selector list)",
         "status": {
-            "status": "Done",
+            "status": "Supported",
             "enabled-by-default": true
         },
         "url": "http://dev.w3.org/csswg/selectors-4/#the-nth-child-pseudo",
@@ -697,7 +711,7 @@
     {
         "name": "CSS Selector :placeholder-shown",
         "status": {
-            "status": "Done",
+            "status": "Supported",
             "enabled-by-default": true
         },
         "url": "http://dev.w3.org/csswg/selectors-4/#placeholder",
@@ -713,7 +727,7 @@
     {
         "name": "CSS Shapes Level 1",
         "status": {
-            "status": "Done",
+            "status": "Supported",
             "enabled-by-default": true
         },
         "url": "http://www.w3.org/TR/css-shapes-1/",
@@ -723,7 +737,7 @@
     {
         "name": "Case-insensitive attribute selectors",
         "status": {
-            "status": "Done",
+            "status": "Supported",
             "enabled-by-default": true
         },
         "url": "http://dev.w3.org/csswg/selectors-4/#attribute-case",
@@ -752,7 +766,7 @@
     {
         "name": "Custom Elements",
         "status": {
-            "status": "Done"
+            "status": "Supported"
         },
         "url": "http://w3c.github.io/webcomponents/spec/custom/",
         "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=150225",
@@ -766,7 +780,7 @@
     {
         "name": "Download Attribute",
         "status": {
-            "status": "Done"
+            "status": "Supported"
         },
         "url": "https://html.spec.whatwg.org/multipage/semantics.html#downloading-resources",
         "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=156056",
@@ -781,7 +795,7 @@
     {
         "name": "Element.closest()",
         "status": {
-            "status": "Done",
+            "status": "Supported",
             "enabled-by-default": true
         },
         "url": "https://dom.spec.whatwg.org/#dom-element-closest",
@@ -798,7 +812,7 @@
     {
         "name": "Filter Effects backdrop-filter property",
         "status": {
-            "status": "Done",
+            "status": "Supported",
             "enabled-by-default": true
         },
         "url": "http://dev.w3.org/fxtf/filters-2/#propdef-backdrop-filter",
@@ -808,7 +822,7 @@
     {
         "name": "Force Click Events",
         "status": {
-            "status": "Done",
+            "status": "Supported",
             "enabled-by-default": true
         },
         "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=142836",
@@ -817,7 +831,7 @@
     {
         "name": "HTML Interactive Form Validation",
         "status": {
-            "status": "Done",
+            "status": "Supported",
             "enabled-by-default": true
         },
         "url": "https://html.spec.whatwg.org/#constraint-validation",
@@ -863,7 +877,7 @@
     {
         "name": "Initial Letter",
         "status": {
-            "status": "Done",
+            "status": "Supported",
             "enabled-by-default": true
         },
         "url": "http://dev.w3.org/csswg/css-inline/#propdef-initial-letter",
@@ -873,7 +887,7 @@
     {
         "name": "Input Events",
         "status": {
-            "status": "In Development",
+            "status": "Supported",
             "enabled-by-default": false
         },
         "url": "https://w3c.github.io/input-events",
@@ -884,7 +898,7 @@
     {
         "name": "Interaction Media Features (pointer, hover, any-pointer, any-hover)",
         "status": {
-            "status": "Done",
+            "status": "Supported",
             "enabled-by-default": true
         },
         "url": "http://dev.w3.org/csswg/mediaqueries-4/#mf-interaction",
@@ -904,7 +918,7 @@
     {
         "name": "Navigator.hardwareConcurrency",
         "status": {
-            "status": "Done",
+            "status": "Supported",
             "enabled-by-default": true
         },
         "url": "https://wiki.whatwg.org/wiki/Navigator_HW_Concurrency",
@@ -914,7 +928,7 @@
     {
         "name": "Picture element",
         "status": {
-            "status": "Done",
+            "status": "Supported",
             "enabled-by-default": false
         },
         "url": "https://html.spec.whatwg.org/multipage/embedded-content.html#the-picture-element",
@@ -930,7 +944,7 @@
     {
         "name": "Position: sticky",
         "status": {
-            "status": "Done",
+            "status": "Supported",
             "enabled-by-default": true
         },
         "url": "http://dev.w3.org/csswg/css-position/#sticky-pos",
@@ -952,7 +966,7 @@
     {
         "name": "Shadow DOM",
         "status": {
-            "status": "Done",
+            "status": "Supported",
             "enabled-by-default": true
         },
         "url": "http://w3c.github.io/webcomponents/spec/shadow/",
@@ -978,7 +992,7 @@
     {
         "name": "Srcset w descriptor and related sizes attribute",
         "status": {
-            "status": "Done",
+            "status": "Supported",
             "enabled-by-default": true
         },
         "url": "https://html.spec.whatwg.org/multipage/embedded-content.html#the-img-element",
@@ -994,7 +1008,7 @@
     {
         "name": "Srcset x descriptor",
         "status": {
-            "status": "Done",
+            "status": "Supported",
             "enabled-by-default": true
         },
         "url": "https://html.spec.whatwg.org/multipage/embedded-content.html#the-img-element",
@@ -1010,7 +1024,7 @@
     {
         "name": "Strict Mixed Content Checking",
         "status": {
-            "status": "Done",
+            "status": "Supported",
             "enabled-by-default": true
         },
         "url": "https://w3c.github.io/webappsec-mixed-content/#strict-checking",
@@ -1039,7 +1053,7 @@
     {
         "name": "Template Element",
         "status": {
-            "status": "Done",
+            "status": "Supported",
             "enabled-by-default": true
         },
         "url": "http://www.w3.org/TR/html5/scripting-1.html#the-template-element",
@@ -1051,7 +1065,7 @@
     {
         "name": "Upgrade Insecure Requests",
         "status": {
-            "status": "Done",
+            "status": "Supported",
             "enabled-by-default": true
         },
         "url": "https://w3c.github.io/webappsec-upgrade-insecure-requests/",

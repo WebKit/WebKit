@@ -1,3 +1,14 @@
+2017-04-06  Jon Davis  <jond@apple.com>
+
+        Updates feature status for recently shipped features
+        https://bugs.webkit.org/show_bug.cgi?id=170359
+
+        Reviewed by Brian Burg.
+        
+        Added styles for "Supported" status.
+
+        * wp-content/themes/webkit/status.php:
+
 2017-04-04  Dean Jackson  <dino@apple.com>
 
         Unreviewed. Add details on how to enable the experimental feature.
