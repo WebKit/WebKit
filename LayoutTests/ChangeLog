@@ -1,3 +1,9 @@
+2017-02-09  Keith Miller  <keith_miller@apple.com>
+
+        Unreviewed, fix test for new .caller with native code caller semantics.
+
+        * js/dom/function-dot-arguments-and-caller.html:
+
 2017-02-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         Adopting a child node of a script element can run script
