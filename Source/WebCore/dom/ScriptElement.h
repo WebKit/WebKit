@@ -23,6 +23,7 @@
 
 #include "CachedResourceClient.h"
 #include "CachedResourceHandle.h"
+#include "ContainerNode.h"
 #include "Timer.h"
 #include <wtf/text/TextPosition.h>
 #include <wtf/text/WTFString.h>
@@ -71,7 +72,7 @@ protected:
     // Helper functions used by our parent classes.
     bool shouldCallFinishedInsertingSubtree(ContainerNode&);
     void finishedInsertingSubtree();
-    void childrenChanged();
+    void childrenChanged(const ContainerNode::ChildChange&);
     void handleSourceAttribute(const String& sourceUrl);
     void handleAsyncAttribute();
 

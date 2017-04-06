@@ -30,6 +30,7 @@
 #include "MutationEvent.h"
 #include "MutationObserverInterestGroup.h"
 #include "MutationRecord.h"
+#include "NoEventDispatchAssertion.h"
 #include "ProcessingInstruction.h"
 #include "RenderText.h"
 #include "StyleInheritedData.h"
@@ -208,6 +209,7 @@ void CharacterData::setDataAndUpdate(const String& newData, unsigned offsetOfRep
     if (document().frame())
         document().frame()->selection().textWasReplaced(this, offsetOfReplacedData, oldLength, newLength);
 
+    NoEventDispatchAssertion assertNoEventDispatch;
     document().incDOMTreeVersion();
     dispatchModifiedEvent(oldData);
 }

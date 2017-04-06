@@ -128,8 +128,6 @@ private:
 
     virtual HTMLFormElement* virtualForm() const;
 
-    Ref<DocumentFragment> textToFragment(const String&, ExceptionCode&);
-
     void dirAttributeChanged(const AtomicString&);
     void adjustDirectionalityIfNeededAfterChildAttributeChanged(Element* child);
     void adjustDirectionalityIfNeededAfterChildrenChanged(Element* beforeChange, ChildChangeType);

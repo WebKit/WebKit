@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ContainerNodeAlgorithms.h"
 
+#include "HTMLTextAreaElement.h"
 #include "NoEventDispatchAssertion.h"
 
 namespace WebCore {
@@ -87,7 +88,7 @@ void notifyNodeInsertedIntoTree(ContainerNode& insertionPoint, ContainerNode& no
 
 void notifyChildNodeInserted(ContainerNode& insertionPoint, Node& node, NodeVector& postInsertionNotificationTargets)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(!NoEventDispatchAssertion::isEventDispatchForbidden());
+    ASSERT_WITH_SECURITY_IMPLICATION(NoEventDispatchAssertion::isEventDispatchAllowedInSubtree(insertionPoint));
 
     InspectorInstrumentation::didInsertDOMNode(node.document(), node);
 

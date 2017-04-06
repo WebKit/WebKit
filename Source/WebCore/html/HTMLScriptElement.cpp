@@ -55,7 +55,7 @@ bool HTMLScriptElement::isURLAttribute(const Attribute& attribute) const
 void HTMLScriptElement::childrenChanged(const ChildChange& change)
 {
     HTMLElement::childrenChanged(change);
-    ScriptElement::childrenChanged();
+    ScriptElement::childrenChanged(change);
 }
 
 void HTMLScriptElement::parseAttribute(const QualifiedName& name, const AtomicString& value)

@@ -150,7 +150,7 @@ static void dispatchEventInDOM(Event& event, const EventPath& path, WindowEventC
 
 bool EventDispatcher::dispatchEvent(Node* origin, Event& event)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(!NoEventDispatchAssertion::isEventDispatchForbidden());
+    ASSERT_WITH_SECURITY_IMPLICATION(NoEventDispatchAssertion::isEventAllowedInMainThread());
     ASSERT(origin);
     RefPtr<Node> node(origin);
     RefPtr<FrameView> view = node->document().view();
@@ -170,7 +170,7 @@ bool EventDispatcher::dispatchEvent(Node* origin, Event& event)
     if (!event.target())
         return true;
 
-    ASSERT_WITH_SECURITY_IMPLICATION(!NoEventDispatchAssertion::isEventDispatchForbidden());
+    ASSERT_WITH_SECURITY_IMPLICATION(NoEventDispatchAssertion::isEventAllowedInMainThread());
 
     WindowEventContext windowEventContext(node.get(), eventPath.lastContextIfExists());
 

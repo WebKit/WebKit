@@ -67,13 +67,31 @@ public:
 
     void cloneChildNodes(ContainerNode& clone);
 
-    enum ChildChangeType { ElementInserted, ElementRemoved, TextInserted, TextRemoved, TextChanged, AllChildrenRemoved, NonContentsChildChanged };
+    enum ChildChangeType { ElementInserted, ElementRemoved, TextInserted, TextRemoved, TextChanged, AllChildrenRemoved, NonContentsChildRemoved, NonContentsChildInserted };
     enum ChildChangeSource { ChildChangeSourceParser, ChildChangeSourceAPI };
     struct ChildChange {
         ChildChangeType type;
         Element* previousSiblingElement;
         Element* nextSiblingElement;
         ChildChangeSource source;
+
+        bool isInsertion() const
+        {
+            switch (type) {
+            case ElementInserted:
+            case TextInserted:
+            case NonContentsChildInserted:
+                return true;
+            case ElementRemoved:
+            case TextRemoved:
+            case TextChanged:
+            case AllChildrenRemoved:
+            case NonContentsChildRemoved:
+                return false;
+            }
+            ASSERT_NOT_REACHED();
+            return false;
+        }
     };
     virtual void childrenChanged(const ChildChange&);
 

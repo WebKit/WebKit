@@ -432,14 +432,14 @@ void HTMLElement::parseAttribute(const QualifiedName& name, const AtomicString& 
         setAttributeEventListener(eventName, name, value);
 }
 
-Ref<DocumentFragment> HTMLElement::textToFragment(const String& text, ExceptionCode& ec)
+static Ref<DocumentFragment> textToFragment(Document& document, const String& text)
 {
-    ec = 0;
+    auto fragment = DocumentFragment::create(document);
 
-    auto fragment = DocumentFragment::create(document());
+    // It's safe to dispatch events on the new fragment since author scripts have no access to it yet.
+    NoEventDispatchAssertion::EventAllowedScope allowedScope(fragment);
 
     for (unsigned start = 0, length = text.length(); start < length; ) {
-
         // Find next line break.
         UChar c = 0;
         unsigned i;
@@ -449,17 +449,11 @@ Ref<DocumentFragment> HTMLElement::textToFragment(const String& text, ExceptionC
                 break;
         }
 
-        fragment->appendChild(Text::create(document(), text.substring(start, i - start)), ec);
-        if (ec)
-            break;
-
+        fragment->appendChild(Text::create(document, text.substring(start, i - start)));
         if (i == length)
             break;
 
-        fragment->appendChild(HTMLBRElement::create(document()), ec);
-        if (ec)
-            break;
-
+        fragment->appendChild(HTMLBRElement::create(document));
         // Make sure \r\n doesn't result in two line breaks.
         if (c == '\r' && i + 1 < length && text[i + 1] == '\n')
             ++i;
@@ -551,10 +545,11 @@ void HTMLElement::setInnerText(const String& text, ExceptionCode& ec)
     }
 
     // Add text nodes and <br> elements.
-    ec = 0;
-    Ref<DocumentFragment> fragment = textToFragment(text, ec);
-    if (!ec)
-        replaceChildrenWithFragment(*this, WTFMove(fragment), ec);
+    auto fragment = textToFragment(document(), text);
+    // FIXME: This should use replaceAllChildren() once it accepts DocumentFragments as input.
+    // It's safe to dispatch events on the new fragment since author scripts have no access to it yet.
+    NoEventDispatchAssertion::EventAllowedScope allowedScope(fragment.get());
+    return replaceChildrenWithFragment(*this, WTFMove(fragment), ec);
 }
 
 void HTMLElement::setOuterText(const String& text, ExceptionCode& ec)
@@ -581,7 +576,7 @@ void HTMLElement::setOuterText(const String& text, ExceptionCode& ec)
     
     // Convert text to fragment with <br> tags instead of linebreaks if needed.
     if (text.contains('\r') || text.contains('\n'))
-        newChild = textToFragment(text, ec);
+        newChild = textToFragment(document(), text);
     else
         newChild = Text::create(document(), text);
 
