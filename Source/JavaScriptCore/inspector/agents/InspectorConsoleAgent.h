@@ -57,6 +57,7 @@ public:
 
     void didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher*) override;
     void willDestroyFrontendAndBackend(DisconnectReason) override;
+    void discardValues() override;
 
     void enable(ErrorString&) override;
     void disable(ErrorString&) override;
