@@ -49,7 +49,6 @@ enum class MemoryUsagePolicy {
     Unrestricted, // Allocate as much as you want
     Conservative, // Maybe you don't cache every single thing
     Strict, // Time to start pinching pennies for real
-    Panic, // OH GOD WE'RE SINKING, THROW EVERYTHING OVERBOARD
 };
 
 enum class WebsamProcessState {
@@ -141,6 +140,7 @@ public:
     WebsamProcessState processState() const { return m_processState; }
 
 private:
+    size_t thresholdForMemoryKill();
     void memoryPressureStatusChanged();
 
     void uninstall();
@@ -154,8 +154,9 @@ private:
     void platformReleaseMemory(Critical);
     void platformInitialize();
 
-    NO_RETURN_DUE_TO_CRASH void didExceedMemoryLimitAndFailedToRecover();
     void measurementTimerFired();
+    void shrinkOrDie();
+    void setMemoryUsagePolicyBasedOnFootprint(size_t);
 
 #if OS(LINUX)
     class EventFDPoller {

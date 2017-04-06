@@ -1,3 +1,40 @@
+2017-04-06  Andreas Kling  <akling@apple.com>
+
+        Kill any WebContent process using over 16 GB of memory.
+        https://bugs.webkit.org/show_bug.cgi?id=170515
+        <rdar://problem/29930931>
+
+        Reviewed by Antti Koivisto.
+
+        Restructure the code since it was getting out of sync with the intended behavior.
+        Now there's a thresholdForMemoryKill() which returns the current memory limit based
+        on the process status.
+
+        The memory usage policy is separated from the killing, and now only drives the
+        asynchronous invocations of pressure relief that occur when we pass over one of
+        the policy edges (now 1GB for Conservative, 2GB for Strict.)
+
+        Removed the "Panic" policy and moved the memory kill logic to shrinkOrDie().
+
+        Behavior as of this patch:
+
+            - Everyone gets killed over 16 GB.
+            - Inactive processes get killed over 4 GB.
+            - Strict memory usage policy kicks in at 2 GB.
+            - Conservative memory usage policy at 1 GB.
+
+        Like before, we make a best-effort attempt to free up memory before killing the process.
+
+        * wtf/MemoryPressureHandler.cpp:
+        (WTF::toString):
+        (WTF::MemoryPressureHandler::thresholdForMemoryKill):
+        (WTF::thresholdForPolicy):
+        (WTF::policyForFootprint):
+        (WTF::MemoryPressureHandler::shrinkOrDie):
+        (WTF::MemoryPressureHandler::setMemoryUsagePolicyBasedOnFootprint):
+        (WTF::MemoryPressureHandler::measurementTimerFired):
+        * wtf/MemoryPressureHandler.h:
+
 2017-04-05  Andreas Kling  <akling@apple.com>
 
         Make inactive web processes behave as though under memory pressure.

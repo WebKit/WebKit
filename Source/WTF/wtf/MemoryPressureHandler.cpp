@@ -71,10 +71,20 @@ static const char* toString(MemoryUsagePolicy policy)
     case MemoryUsagePolicy::Unrestricted: return "Unrestricted";
     case MemoryUsagePolicy::Conservative: return "Conservative";
     case MemoryUsagePolicy::Strict: return "Strict";
-    case MemoryUsagePolicy::Panic: return "Panic";
     }
 }
 #endif
+
+size_t MemoryPressureHandler::thresholdForMemoryKill()
+{
+#if CPU(X86_64) || CPU(ARM64)
+    if (m_processState == WebsamProcessState::Active)
+        return 16 * GB;
+    return 4 * GB;
+#else
+    return 3 * GB;
+#endif
+}
 
 static size_t thresholdForPolicy(MemoryUsagePolicy policy)
 {
@@ -83,12 +93,6 @@ static size_t thresholdForPolicy(MemoryUsagePolicy policy)
         return 1 * GB;
     case MemoryUsagePolicy::Strict:
         return 2 * GB;
-    case MemoryUsagePolicy::Panic:
-#if CPU(X86_64) || CPU(ARM64)
-        return 4 * GB;
-#else
-        return 3 * GB;
-#endif
     case MemoryUsagePolicy::Unrestricted:
     default:
         ASSERT_NOT_REACHED();
@@ -98,13 +102,41 @@ static size_t thresholdForPolicy(MemoryUsagePolicy policy)
 
 static MemoryUsagePolicy policyForFootprint(size_t footprint)
 {
-    if (footprint >= thresholdForPolicy(MemoryUsagePolicy::Panic))
-        return MemoryUsagePolicy::Panic;
     if (footprint >= thresholdForPolicy(MemoryUsagePolicy::Strict))
         return MemoryUsagePolicy::Strict;
     if (footprint >= thresholdForPolicy(MemoryUsagePolicy::Conservative))
         return MemoryUsagePolicy::Conservative;
     return MemoryUsagePolicy::Unrestricted;
+}
+
+void MemoryPressureHandler::shrinkOrDie()
+{
+    RELEASE_LOG(MemoryPressure, "Process is above the memory kill threshold. Trying to shrink down.");
+    releaseMemory(Critical::Yes, Synchronous::Yes);
+
+    auto footprint = memoryFootprint();
+    RELEASE_ASSERT(footprint);
+    RELEASE_LOG(MemoryPressure, "New memory footprint: %lu MB", footprint.value() / MB);
+
+    if (footprint.value() < thresholdForMemoryKill()) {
+        RELEASE_LOG(MemoryPressure, "Shrank below memory kill threshold. Process gets to live.");
+        setMemoryUsagePolicyBasedOnFootprint(footprint.value());
+        return;
+    }
+
+    RELEASE_ASSERT(m_memoryKillCallback);
+    m_memoryKillCallback();
+}
+
+void MemoryPressureHandler::setMemoryUsagePolicyBasedOnFootprint(size_t footprint)
+{
+    auto newPolicy = policyForFootprint(footprint);
+    if (newPolicy == m_memoryUsagePolicy)
+        return;
+
+    RELEASE_LOG(MemoryPressure, "Memory usage policy changed: %s -> %s", toString(m_memoryUsagePolicy), toString(newPolicy));
+    m_memoryUsagePolicy = newPolicy;
+    memoryPressureStatusChanged();
 }
 
 void MemoryPressureHandler::measurementTimerFired()
@@ -114,56 +146,23 @@ void MemoryPressureHandler::measurementTimerFired()
         return;
 
     RELEASE_LOG(MemoryPressure, "Current memory footprint: %lu MB", footprint.value() / MB);
-
-    auto newPolicy = policyForFootprint(footprint.value());
-    if (newPolicy == m_memoryUsagePolicy) {
-        if (m_memoryUsagePolicy != MemoryUsagePolicy::Panic)
-            return;
-        RELEASE_LOG(MemoryPressure, "Memory usage still above panic threshold");
-    } else
-        RELEASE_LOG(MemoryPressure, "Memory usage policy changed: %s -> %s", toString(m_memoryUsagePolicy), toString(newPolicy));
-
-    m_memoryUsagePolicy = newPolicy;
-    memoryPressureStatusChanged();
-
-    if (newPolicy == MemoryUsagePolicy::Unrestricted)
-        return;
-
-    if (newPolicy == MemoryUsagePolicy::Conservative) {
-        // FIXME: Implement this policy by choosing which caches should respect it, and hooking them up.
+    if (footprint.value() >= thresholdForMemoryKill()) {
+        shrinkOrDie();
         return;
     }
 
-    if (newPolicy == MemoryUsagePolicy::Strict) {
-        RELEASE_LOG(MemoryPressure, "Attempting to reduce memory footprint by freeing less important objects.");
+    setMemoryUsagePolicyBasedOnFootprint(footprint.value());
+
+    switch (m_memoryUsagePolicy) {
+    case MemoryUsagePolicy::Unrestricted:
+        break;
+    case MemoryUsagePolicy::Conservative:
         releaseMemory(Critical::No, Synchronous::No);
-        return;
-    }
-
-    RELEASE_ASSERT(newPolicy == MemoryUsagePolicy::Panic);
-
-    RELEASE_LOG(MemoryPressure, "Attempting to reduce memory footprint by freeing more important objects.");
-    if (m_processState == WebsamProcessState::Active) {
+        break;
+    case MemoryUsagePolicy::Strict:
         releaseMemory(Critical::Yes, Synchronous::No);
-        return;
+        break;
     }
-
-    releaseMemory(Critical::Yes, Synchronous::Yes);
-
-    // Remeasure footprint to see how well the pressure handler did.
-    footprint = memoryFootprint();
-    RELEASE_ASSERT(footprint);
-
-    RELEASE_LOG(MemoryPressure, "New memory footprint: %lu MB", footprint.value() / MB);
-    if (footprint.value() < thresholdForPolicy(MemoryUsagePolicy::Panic)) {
-        m_memoryUsagePolicy = policyForFootprint(footprint.value());
-        RELEASE_LOG(MemoryPressure, "Pressure reduced below panic threshold. New memory usage policy: %s", toString(m_memoryUsagePolicy));
-        memoryPressureStatusChanged();
-        return;
-    }
-
-    if (m_memoryKillCallback)
-        m_memoryKillCallback();
 }
 
 void MemoryPressureHandler::setProcessState(WebsamProcessState state)
