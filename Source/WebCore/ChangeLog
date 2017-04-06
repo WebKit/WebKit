@@ -1,3 +1,18 @@
+2017-04-06  Andreas Kling  <akling@apple.com>
+
+        Stop forcing CA commit when memory pressure changes.
+        https://bugs.webkit.org/show_bug.cgi?id=170522
+        <rdar://problem/31460236>
+
+        Reviewed by Antti Koivisto.
+
+        Don't force a CA commit when reaching critical memory pressure. We're already doing a ton
+        of work in response to the pressure, and this was really a hack to try to react quickly on
+        512 MB devices which we don't support anymore.
+
+        * page/MemoryRelease.cpp:
+        (WebCore::releaseCriticalMemory):
+
 2017-04-06  Romain Bellessort  <romain.bellessort@crf.canon.fr>
 
         [Readable Streams API] Implement ReadableStreamBYOBRequest respondWithNewView()

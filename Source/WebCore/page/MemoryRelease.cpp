@@ -104,11 +104,6 @@ static void releaseCriticalMemory(Synchronous synchronous)
         GCController::singleton().garbageCollectSoon();
 #endif
     }
-
-    // We reduce tiling coverage while under memory pressure, so make sure to drop excess tiles ASAP.
-    Page::forEachPage([](Page& page) {
-        page.chrome().client().scheduleCompositingLayerFlush();
-    });
 }
 
 void releaseMemory(Critical critical, Synchronous synchronous)
