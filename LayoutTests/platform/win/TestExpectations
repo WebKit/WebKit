@@ -3796,6 +3796,9 @@ webrtc [ Skip ]
 imported/w3c/web-platform-tests/resource-timing/rt-nextHopProtocol.html [ Failure ]
 imported/w3c/web-platform-tests/resource-timing/rt-nextHopProtocol.worker.html [ Failure ]
 
+# Request Header information only available in WebKit2
+http/tests/inspector/network/resource-request-headers.html [ Failure ]
+
 # WebCrypto tests are failing.
 webkit.org/b/165090 imported/w3c/WebCryptoAPI [ Skip ]
 webkit.org/b/165090 imported/w3c/web-platform-tests/WebCryptoAPI [ Skip ]

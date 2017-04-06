@@ -1,3 +1,22 @@
+2017-04-06  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Show all headers in the Request Headers section of the Resource details sidebar
+        https://bugs.webkit.org/show_bug.cgi?id=16531
+        <rdar://problem/5712895>
+
+        Reviewed by Timothy Hatcher.
+
+        * http/tests/inspector/network/resource-request-headers-expected.txt: Added.
+        * http/tests/inspector/network/resource-request-headers.html: Added.
+        * http/tests/inspector/network/resources/basic-auth.php: Added.
+        Test coverage for Cookie and Basic Authentication headers.
+
+        * platform/mac/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+        * platform/win/TestExpectations:
+        Mark the test as expected to fail on WebKit1 CFNetwork based platforms,
+        and ElCapitan which uses the legacy non-NSURLSession loading path.
+
 2017-04-06  Youenn Fablet  <youenn@apple.com>
 
         LayoutTest fast/mediastream/getUserMedia-webaudio.html is flaky

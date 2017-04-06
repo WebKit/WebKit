@@ -307,6 +307,12 @@ static WebCore::NetworkLoadPriority toNetworkLoadPriority(float priority)
         if ([m respondsToSelector:@selector(_connectionIdentifier)])
             networkLoadMetrics.connectionIdentifier = String([m._connectionIdentifier UUIDString]);
 #endif
+
+        __block WebCore::HTTPHeaderMap requestHeaders;
+        [m.request.allHTTPHeaderFields enumerateKeysAndObjectsUsingBlock:^(NSString *name, NSString *value, BOOL *) {
+            requestHeaders.set(String(name), String(value));
+        }];
+        networkLoadMetrics.requestHeaders = WTFMove(requestHeaders);
     }
 }
 

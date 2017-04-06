@@ -223,6 +223,8 @@ Ref<Inspector::Protocol::Network::Metrics> InspectorNetworkAgent::buildObjectFor
         metrics->setRemoteAddress(*networkLoadMetrics.remoteAddress);
     if (networkLoadMetrics.connectionIdentifier)
         metrics->setConnectionIdentifier(*networkLoadMetrics.connectionIdentifier);
+    if (networkLoadMetrics.requestHeaders)
+        metrics->setRequestHeaders(buildObjectForHeaders(*networkLoadMetrics.requestHeaders));
 
     return metrics;
 }

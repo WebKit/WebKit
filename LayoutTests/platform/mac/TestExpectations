@@ -1535,9 +1535,12 @@ webkit.org/b/167975 imported/w3c/web-platform-tests/media-source/SourceBuffer-ab
 webkit.org/b/168415 [ ElCapitan ] imported/w3c/web-platform-tests/resource-timing/rt-cors.html [ Skip ]
 webkit.org/b/168415 [ ElCapitan ] imported/w3c/web-platform-tests/resource-timing/rt-cors.worker.html [ Skip ]
 
-# Resource Timing networking data not yet available without Network Session.
+# Resource Timing networking data not available without Network Session.
 [ ElCapitan ] imported/w3c/web-platform-tests/resource-timing/rt-nextHopProtocol.html [ Failure ]
 [ ElCapitan ] imported/w3c/web-platform-tests/resource-timing/rt-nextHopProtocol.worker.html [ Failure ]
+
+# Request Header networking data not available without Network Session.
+[ ElCapitan ] http/tests/inspector/network/resource-request-headers.html [ Failure ]
 
 # <rdar://problem/30610988>
 [ Sierra+ ] imported/w3c/web-platform-tests/fetch/api/redirect/redirect-count-cross-origin-worker.html [ Failure ]

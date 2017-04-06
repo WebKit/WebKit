@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include "HTTPHeaderMap.h"
 #include <wtf/Optional.h>
 #include <wtf/Seconds.h>
 #include <wtf/persistence/Decoder.h>
@@ -72,6 +73,8 @@ public:
             copy.connectionIdentifier = connectionIdentifier.value().isolatedCopy();
         if (priority)
             copy.priority = *priority;
+        if (requestHeaders)
+            copy.requestHeaders = requestHeaders.value().isolatedCopy();
 
         return copy;
     }
@@ -91,6 +94,15 @@ public:
         remoteAddress = std::nullopt;
         connectionIdentifier = std::nullopt;
         priority = std::nullopt;
+        requestHeaders = std::nullopt;
+    }
+
+    void clearNonTimingData()
+    {
+        remoteAddress = std::nullopt;
+        connectionIdentifier = std::nullopt;
+        priority = std::nullopt;
+        requestHeaders = std::nullopt;
     }
 
     bool operator==(const NetworkLoadMetrics& other) const
@@ -107,7 +119,8 @@ public:
             && protocol == other.protocol
             && remoteAddress == other.remoteAddress
             && connectionIdentifier == other.connectionIdentifier
-            && priority == other.priority;
+            && priority == other.priority
+            && requestHeaders == other.requestHeaders;
     }
 
     bool operator!=(const NetworkLoadMetrics& other) const
@@ -141,6 +154,7 @@ public:
     std::optional<String> remoteAddress;
     std::optional<String> connectionIdentifier;
     std::optional<NetworkLoadPriority> priority;
+    std::optional<HTTPHeaderMap> requestHeaders;
 };
 
 #if PLATFORM(COCOA)
@@ -167,6 +181,7 @@ void NetworkLoadMetrics::encode(Encoder& encoder) const
     encoder << remoteAddress;
     encoder << connectionIdentifier;
     encoder << priority;
+    encoder << requestHeaders;
 }
 
 template<class Decoder>
@@ -184,7 +199,8 @@ bool NetworkLoadMetrics::decode(Decoder& decoder, NetworkLoadMetrics& metrics)
         && decoder.decode(metrics.protocol)
         && decoder.decode(metrics.remoteAddress)
         && decoder.decode(metrics.connectionIdentifier)
-        && decoder.decode(metrics.priority);
+        && decoder.decode(metrics.priority)
+        && decoder.decode(metrics.requestHeaders);
 }
 
 } // namespace WebCore

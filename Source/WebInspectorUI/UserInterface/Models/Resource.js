@@ -602,6 +602,10 @@ WebInspector.Resource = class Resource extends WebInspector.SourceCode
             this._remoteAddress = metrics.remoteAddress;
         if (metrics.connectionIdentifier)
             this._connectionIdentifier = WebInspector.Resource.connectionIdentifierFromPayload(metrics.connectionIdentifier);
+        if (metrics.requestHeaders) {
+            this._requestHeaders = metrics.requestHeaders;
+            this.dispatchEventToListeners(WebInspector.Resource.Event.RequestHeadersDidChange);
+        }
     }
 
     requestContentFromBackend()

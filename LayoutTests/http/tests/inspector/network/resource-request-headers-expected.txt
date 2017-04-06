@@ -1,0 +1,38 @@
+127.0.0.1:8000 - didReceiveAuthenticationChallenge - Simulating cancelled authentication sheet
+127.0.0.1:8000 - didReceiveAuthenticationChallenge - Simulating cancelled authentication sheet
+Test for Resource request headers which may not have been immediately available but eventually are (Cookie, Authorization).
+
+
+== Running test suite: Resource.Metrics.RequestHeaders
+-- Running test case: Resource.Metrics.RequestHeaders.WithoutCookie
+PASS: Resource should be created.
+PASS: Resource should receive a Response.
+PASS: Request should not have a 'Cookie' header.
+
+-- Running test case: Resource.Metrics.RequestHeaders.WithCookie
+PASS: Resource should be created.
+PASS: Resource should receive a Response.
+PASS: 'Cookie' header value should be `InspectorTestCookie=1234`.
+
+-- Running test case: Resource.Metrics.RequestHeaders.BasicAuth.None
+PASS: Resource should be created.
+PASS: Resource should receive a Response.
+PASS: Resource should have a 401 status code.
+PASS: Response should have a 'WWW-Authenticate' response header for the failure.
+PASS: Request should not have a 'Authorization' header.
+
+-- Running test case: Resource.Metrics.RequestHeaders.BasicAuth.Failure
+PASS: Resource should be created.
+PASS: Resource should receive a Response.
+PASS: Resource should have a 401 status code.
+PASS: Response should have a 'WWW-Authenticate' response header for the failure.
+FAIL: 'Authorization' header value should be for badUsername:badPassword.
+    Expected: "Basic YmFkVXNlcm5hbWU6YmFkUGFzc3dvcmQ="
+    Actual: undefined
+
+-- Running test case: Resource.Metrics.RequestHeaders.BasicAuth.Success
+PASS: Resource should be created.
+PASS: Resource should receive a Response.
+PASS: Resource should have a 200 status code.
+PASS: 'Authorization' header value should be for goodUsername:goodPassword.
+

@@ -1,3 +1,17 @@
+2017-04-06  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Show all headers in the Request Headers section of the Resource details sidebar
+        https://bugs.webkit.org/show_bug.cgi?id=16531
+        <rdar://problem/5712895>
+
+        Reviewed by Timothy Hatcher.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:task:didFinishCollectingMetrics:]):
+        Include a complete list of the request headers sent for this load.
+        There may be headers that WebCore did not know about and developer
+        tools should be informed of.
+
 2017-04-06  Anders Carlsson  <andersca@apple.com>
 
         OptionSet options need to be powers of two

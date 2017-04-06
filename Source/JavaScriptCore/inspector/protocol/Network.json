@@ -84,7 +84,8 @@
                 { "name": "protocol", "type": "string", "optional": true, "description": "Network protocol. ALPN Protocol ID Identification Sequence, as per RFC 7301 (for example, http/2, http/1.1, spdy/3.1)" },
                 { "name": "priority", "type": "string", "enum": ["low", "medium", "high"], "optional": true, "description": "Network priority." },
                 { "name": "connectionIdentifier", "type": "string", "optional": true, "description": "Connection identifier." },
-                { "name": "remoteAddress", "type": "string", "optional": true, "description": "Remote IP address." }
+                { "name": "remoteAddress", "type": "string", "optional": true, "description": "Remote IP address." },
+                { "name": "requestHeaders", "$ref": "Headers", "optional": true, "description": "Refined HTTP request headers that were actually transmitted over the network." }
             ]
         },
         {
