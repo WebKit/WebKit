@@ -485,6 +485,10 @@ WK_EXPORT bool WKPreferencesGetLinkPreloadEnabled(WKPreferencesRef);
 WK_EXPORT void WKPreferencesSetCredentialManagementEnabled(WKPreferencesRef, bool flag);
 WK_EXPORT bool WKPreferencesGetCredentialManagementEnabled(WKPreferencesRef);
 
+// Defaults to true.
+WK_EXPORT void WKPreferencesSetInvisibleMediaAutoplayPermitted(WKPreferencesRef, bool flag);
+WK_EXPORT bool WKPreferencesGetInvisibleMediaAutoplayPermitted(WKPreferencesRef);
+
 #ifdef __cplusplus
 }
 #endif

@@ -852,6 +852,16 @@ bool WKPreferencesGetCredentialManagementEnabled(WKPreferencesRef preferencesRef
     return toImpl(preferencesRef)->credentialManagementEnabled();
 }
 
+void WKPreferencesSetInvisibleMediaAutoplayPermitted(WKPreferencesRef preferencesRef, bool flag)
+{
+    toImpl(preferencesRef)->setInvisibleAutoplayNotPermitted(!flag);
+}
+
+bool WKPreferencesGetInvisibleMediaAutoplayPermitted(WKPreferencesRef preferencesRef)
+{
+    return !toImpl(preferencesRef)->invisibleAutoplayNotPermitted();
+}
+
 void WKPreferencesSetShowsToolTipOverTruncatedText(WKPreferencesRef preferencesRef, bool flag)
 {
     toImpl(preferencesRef)->setShowsToolTipOverTruncatedText(flag);

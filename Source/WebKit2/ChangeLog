@@ -1,3 +1,18 @@
+2017-04-06  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] Add C private API to toggle invisibleAutoplayNotPermitted setting
+        https://bugs.webkit.org/show_bug.cgi?id=170524
+        <rdar://problem/31461472>
+
+        Reviewed by Eric Carlson.
+
+        Add C private API to toggle invisibleAutoplayNotPermitted setting.
+
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetInvisibleMediaAutoplayPermitted):
+        (WKPreferencesGetInvisibleMediaAutoplayPermitted):
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+
 2017-04-06  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK] Fix build with MEDIA_CAPTURE enabled
