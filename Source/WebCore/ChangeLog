@@ -1,3 +1,14 @@
+2017-04-06  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Host application should be able to mute and unmute media streams
+        https://bugs.webkit.org/show_bug.cgi?id=170519
+        <rdar://problem/31174326>
+
+        Unreviewed, fix crash introduced in r214980.
+
+        * Modules/mediastream/MediaStream.cpp:
+        (WebCore::MediaStream::MediaStream): NULL-check page.
+
 2017-04-06  Dave Hyatt  <hyatt@apple.com>
 
         Rendering flexbox children across columns

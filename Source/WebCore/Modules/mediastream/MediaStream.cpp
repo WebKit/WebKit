@@ -92,7 +92,7 @@ MediaStream::MediaStream(ScriptExecutionContext& context, RefPtr<MediaStreamPriv
     ASSERT(m_private);
 
     setIsActive(m_private->active());
-    if (document()->page()->isMediaCaptureMuted())
+    if (document()->page() && document()->page()->isMediaCaptureMuted())
         m_private->setCaptureTracksMuted(true);
     m_private->addObserver(*this);
     MediaStreamRegistry::shared().registerStream(*this);
