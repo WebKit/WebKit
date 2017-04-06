@@ -449,7 +449,7 @@ StyleRuleRegion::StyleRuleRegion(const StyleRuleRegion& o)
 
 #if ENABLE(CSS_DEVICE_ADAPTATION)
 StyleRuleViewport::StyleRuleViewport(Ref<StyleProperties>&& properties)
-    : StyleRuleBase(Viewport, 0)
+    : StyleRuleBase(Viewport)
     , m_properties(WTFMove(properties))
 {
 }

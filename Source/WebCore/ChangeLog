@@ -1,3 +1,14 @@
+2017-04-06  Tim Horton  <timothy_horton@apple.com>
+
+        Follow up to r209304, remove line numbers from one more StyleRule construction
+        https://bugs.webkit.org/show_bug.cgi?id=170564
+
+        Reviewed by Simon Fraser.
+
+        * css/StyleRule.cpp:
+        (WebCore::StyleRuleViewport::StyleRuleViewport):
+        This one was missed in r209304.
+
 2017-04-06  Timothy Horton  <timothy_horton@apple.com>
 
         Remove an unused member and constructor parameter from CSSPropertyParser
