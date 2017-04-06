@@ -1,3 +1,27 @@
+2017-04-06  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: Hittest always returns the first renderer in the block.
+        https://bugs.webkit.org/show_bug.cgi?id=170520
+        <rdar://problem/30979175>
+
+        Reviewed by Antti Koivisto.
+
+        This is incorrect now with <br> support (multiple renderers within the same block flow).
+
+        Test: fast/dom/Document/CaretRangeFromPoint/simple-line-layout-hittest-with-caret-range-from-point.html
+
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::positionForPoint): Related fix. We don't yet support positionForPoint with multiple renderes. 
+        * rendering/SimpleLineLayoutFlowContents.h:
+        (WebCore::SimpleLineLayout::FlowContents::segmentForRun): Empty runs are all valid.
+        * rendering/SimpleLineLayoutFunctions.cpp:
+        (WebCore::SimpleLineLayout::hitTestFlow):
+        (WebCore::SimpleLineLayout::collectFlowOverflow):
+        * rendering/SimpleLineLayoutResolver.cpp:
+        (WebCore::SimpleLineLayout::LineResolver::Iterator::operator*): This should eventually return a list of renderes.
+        * rendering/SimpleLineLayoutResolver.h:
+        (WebCore::SimpleLineLayout::RunResolver::flowContents):
+
 2017-04-06  Jon Davis  <jond@apple.com>
 
         Updates feature status for recently shipped features

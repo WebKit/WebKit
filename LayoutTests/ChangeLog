@@ -1,3 +1,14 @@
+2017-04-06  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: Hittest always returns the first renderer in the block.
+        https://bugs.webkit.org/show_bug.cgi?id=170520
+        <rdar://problem/30979175>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/dom/Document/CaretRangeFromPoint/simple-line-layout-hittest-with-caret-range-from-point-expected.html: Added.
+        * fast/dom/Document/CaretRangeFromPoint/simple-line-layout-hittest-with-caret-range-from-point.html: Added.
+
 2017-03-31  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebCrypto] Add support for AES-CTR

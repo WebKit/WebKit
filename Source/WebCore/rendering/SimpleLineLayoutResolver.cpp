@@ -272,7 +272,7 @@ LineResolver::Iterator::Iterator(RunResolver::Iterator runIterator)
 {
 }
 
-const FloatRect LineResolver::Iterator::operator*() const
+FloatRect LineResolver::Iterator::operator*() const
 {
     unsigned currentLine = m_runIterator.lineIndex();
     auto it = m_runIterator;
@@ -280,6 +280,13 @@ const FloatRect LineResolver::Iterator::operator*() const
     while (it.advance().lineIndex() == currentLine)
         rect.unite((*it).rect());
     return rect;
+}
+
+const RenderObject& LineResolver::Iterator::renderer() const
+{
+    // FIXME: This works as long as we've got only one renderer per line.
+    auto run = *m_runIterator;
+    return m_runIterator.resolver().flowContents().segmentForRun(run.start(), run.end()).renderer;
 }
 
 LineResolver::LineResolver(const RenderBlockFlow& flow, const Layout& layout)

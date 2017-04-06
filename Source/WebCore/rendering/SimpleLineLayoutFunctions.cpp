@@ -148,20 +148,20 @@ bool hitTestFlow(const RenderBlockFlow& flow, const Layout& layout, const HitTes
     if (style.visibility() != VISIBLE || style.pointerEvents() == PE_NONE)
         return false;
 
-    RenderObject& renderer = *flow.firstChild();
     LayoutRect rangeRect = locationInContainer.boundingBox();
     rangeRect.moveBy(-accumulatedOffset);
-
     auto resolver = lineResolver(flow, layout);
-    for (FloatRect lineRect : resolver.rangeForRect(rangeRect)) {
+    auto range = resolver.rangeForRect(rangeRect);
+    for (auto it = range.begin(), end = range.end(); it != end; ++it) {
+        auto lineRect = *it;
         lineRect.moveBy(accumulatedOffset);
         if (!locationInContainer.intersects(lineRect))
             continue;
+        auto& renderer = const_cast<RenderObject&>(it.renderer());
         renderer.updateHitTestResult(result, locationInContainer.point() - toLayoutSize(accumulatedOffset));
         if (!result.addNodeToRectBasedTestResult(renderer.node(), request, locationInContainer, lineRect))
             return true;
     }
-
     return false;
 }
 

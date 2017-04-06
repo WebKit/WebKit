@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that simple line layout hittest finds the same offset as normal line layout hittest.</title>
+<style>
+body {
+    margin: 0px;
+}
+
+div { 
+    line-height: 20px; 
+}
+</style>
+<script>
+if (window.internals)
+    internals.settings.setSimpleLineLayoutEnabled(false);
+</script>
+</head>
+<body>
+<div>f</div>
+<div>f<br>fo</div>
+<div>f<br>fo<br>foo</div>
+<div>f<br>fo<br>foo<br>foob</div>
+<div>f<br>fo<br>foo<br>foob<br>fooba</div>
+<div>f<br>fo<br>foo<br>foob<br>fooba<br>foobar</div>
+<script>
+var hittestResults = "";
+hittestResults += document.caretRangeFromPoint(5, 10).startOffset;
+hittestResults += document.caretRangeFromPoint(10, 50).startOffset;
+hittestResults += document.caretRangeFromPoint(12, 90).startOffset;
+hittestResults += document.caretRangeFromPoint(20, 190).startOffset;
+hittestResults += document.caretRangeFromPoint(25, 270).startOffset;
+hittestResults += document.caretRangeFromPoint(30, 410).startOffset;
+document.body.innerText = hittestResults
+</script>
+</body>
+</html>
