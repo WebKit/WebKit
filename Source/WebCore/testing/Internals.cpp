@@ -3773,6 +3773,15 @@ bool Internals::isProcessingUserGesture()
     return UserGestureIndicator::processingUserGesture();
 }
 
+double Internals::lastHandledUserGestureTimestamp()
+{
+    Document* document = contextDocument();
+    if (!document)
+        return 0;
+
+    return document->lastHandledUserGestureTimestamp().secondsSinceEpoch().value();
+}
+
 RefPtr<GCObservation> Internals::observeGC(JSC::JSValue value)
 {
     if (!value.isObject())

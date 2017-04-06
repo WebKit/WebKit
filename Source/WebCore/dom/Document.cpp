@@ -142,7 +142,6 @@
 #include "RenderView.h"
 #include "RenderWidget.h"
 #include "RequestAnimationFrameCallback.h"
-#include "ResourceLoadObserver.h"
 #include "RuntimeEnabledFeatures.h"
 #include "SVGDocumentExtensions.h"
 #include "SVGElement.h"
@@ -6313,10 +6312,12 @@ Document::RegionFixedPair Document::absoluteRegionForEventTargets(const EventTar
     return RegionFixedPair(targetRegion, insideFixedPosition);
 }
 
-void Document::updateLastHandledUserGestureTimestamp()
+void Document::updateLastHandledUserGestureTimestamp(MonotonicTime time)
 {
-    m_lastHandledUserGestureTimestamp = MonotonicTime::now();
-    ResourceLoadObserver::sharedObserver().logUserInteractionWithReducedTimeResolution(*this);
+    m_lastHandledUserGestureTimestamp = time;
+    
+    if (HTMLFrameOwnerElement* element = ownerElement())
+        element->document().updateLastHandledUserGestureTimestamp(time);
 }
 
 void Document::startTrackingStyleRecalcs()

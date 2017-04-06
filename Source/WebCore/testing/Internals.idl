@@ -501,6 +501,7 @@ enum EventThrottlingBehavior {
     DOMString composedTreeAsText(Node parent);
 
     boolean isProcessingUserGesture();
+    double lastHandledUserGestureTimestamp();
 
     GCObservation? observeGC(any observed);
 

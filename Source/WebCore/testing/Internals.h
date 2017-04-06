@@ -532,6 +532,7 @@ public:
     String composedTreeAsText(Node&);
     
     bool isProcessingUserGesture();
+    double lastHandledUserGestureTimestamp();
 
     RefPtr<GCObservation> observeGC(JSC::JSValue);
 

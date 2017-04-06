@@ -1,3 +1,14 @@
+2017-04-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Set lastHandledUserGestureTimestamp on all ancestor documents, not just the top document
+        https://bugs.webkit.org/show_bug.cgi?id=170479
+
+        Reviewed by Sam Weinig.
+
+        * fast/frames/user-gesture-timestamp-propagation-expected.txt: Added.
+        * fast/frames/user-gesture-timestamp-propagation.html: Added.
+        * platform/ios/TestExpectations:
+
 2017-04-05  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Host application should be able to mute and unmute media streams

@@ -1144,7 +1144,7 @@ public:
     void didRemoveWheelEventHandler(Node&, EventHandlerRemoval = EventHandlerRemoval::One);
 
     MonotonicTime lastHandledUserGestureTimestamp() const { return m_lastHandledUserGestureTimestamp; }
-    void updateLastHandledUserGestureTimestamp();
+    void updateLastHandledUserGestureTimestamp(MonotonicTime);
 
     // Used for testing. Count handlers in the main document, and one per frame which contains handlers.
     WEBCORE_EXPORT unsigned wheelEventHandlerCount() const;
