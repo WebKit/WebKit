@@ -1,5 +1,15 @@
 2017-04-05  Joseph Pecoraro  <pecoraro@apple.com>
 
+        test262: ES2017 test progressions need updated expectations (arguments.caller removed)
+        https://bugs.webkit.org/show_bug.cgi?id=170536
+
+        Reviewed by Mark Lam.
+
+        * test262.yaml:
+        After r208867 the tests are out of date and are now expected to fail.
+
+2017-04-05  Joseph Pecoraro  <pecoraro@apple.com>
+
         test262: Final rebaseline of existing tests, a few tests have started failing
         https://bugs.webkit.org/show_bug.cgi?id=170538
 
