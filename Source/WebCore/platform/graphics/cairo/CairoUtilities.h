@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CairoUtilities_h
-#define CairoUtilities_h
+#pragma once
 
 #if USE(CAIRO)
 
@@ -71,6 +70,8 @@ private:
     cairo_scaled_font_t* m_scaledFont { nullptr };
     FT_Face m_ftFace { nullptr };
 };
+
+const cairo_font_options_t* getDefaultCairoFontOptions();
 #endif
 
 void copyContextProperties(cairo_t* srcCr, cairo_t* dstCr);
@@ -97,5 +98,3 @@ RefPtr<cairo_region_t> toCairoRegion(const Region&);
 } // namespace WebCore
 
 #endif // USE(CAIRO)
-
-#endif // CairoUtilities_h
