@@ -442,9 +442,11 @@ public:
             
             simplifySSA();
             
-            m_proc.resetValueOwners();
-            m_dominators = &m_proc.dominators(); // Recompute if necessary.
-            m_pureCSE.clear();
+            if (m_proc.optLevel() >= 2) {
+                m_proc.resetValueOwners();
+                m_dominators = &m_proc.dominators(); // Recompute if necessary.
+                m_pureCSE.clear();
+            }
 
             for (BasicBlock* block : m_proc.blocksInPreOrder()) {
                 m_block = block;
@@ -457,23 +459,25 @@ public:
                     }
                     m_value = m_block->at(m_index);
                     m_value->performSubstitution();
-                    
                     reduceValueStrength();
-                    replaceIfRedundant();
+                    if (m_proc.optLevel() >= 2)
+                        replaceIfRedundant();
                 }
                 m_insertionSet.execute(m_block);
             }
 
             m_changedCFG |= m_blockInsertionSet.execute();
-            if (m_changedCFG) {
-                m_proc.resetReachability();
-                m_proc.invalidateCFG();
-                m_dominators = nullptr; // Dominators are not valid anymore, and we don't need them yet.
-                m_changed = true;
-            }
+            handleChangedCFGIfNecessary();
             
             result |= m_changed;
-        } while (m_changed);
+        } while (m_changed && m_proc.optLevel() >= 2);
+        
+        if (m_proc.optLevel() < 2) {
+            m_changedCFG = false;
+            simplifyCFG();
+            handleChangedCFGIfNecessary();
+        }
+        
         return result;
     }
     
@@ -726,6 +730,9 @@ private:
 
                     if (m_value->type() != Int32)
                         break;
+                    
+                    if (m_proc.optLevel() < 2)
+                        break;
 
                     int32_t divisor = m_value->child(1)->asInt32();
                     DivisionMagic<int32_t> magic = computeDivisionMagic(divisor);
@@ -821,6 +828,9 @@ private:
                     break;
 
                 default:
+                    if (m_proc.optLevel() < 2)
+                        break;
+                    
                     // Turn this: Mod(N, D)
                     // Into this: Sub(N, Mul(Div(N, D), D))
                     //
@@ -1841,6 +1851,9 @@ private:
                 checkValue->child(0) = checkValue->child(0)->child(0);
                 m_changed = true;
             }
+            
+            if (m_proc.optLevel() < 2)
+                break;
 
             // If we are checking some bounded-size SSA expression that leads to a Select that
             // has a constant as one of its results, then turn the Select into a Branch and split
@@ -1947,17 +1960,19 @@ private:
                 break;
             }
 
-            // If a check for the same property dominates us, we can kill the branch. This sort
-            // of makes sense here because it's cheap, but hacks like this show that we're going
-            // to need SCCP.
-            Value* check = m_pureCSE.findMatch(
-                ValueKey(Check, Void, m_value->child(0)), m_block, *m_dominators);
-            if (check) {
-                // The Check would have side-exited if child(0) was non-zero. So, it must be
-                // zero here.
-                m_block->taken().block()->removePredecessor(m_block);
-                m_value->replaceWithJump(m_block, m_block->notTaken());
-                m_changedCFG = true;
+            if (m_proc.optLevel() >= 2) {
+                // If a check for the same property dominates us, we can kill the branch. This sort
+                // of makes sense here because it's cheap, but hacks like this show that we're going
+                // to need SCCP.
+                Value* check = m_pureCSE.findMatch(
+                    ValueKey(Check, Void, m_value->child(0)), m_block, *m_dominators);
+                if (check) {
+                    // The Check would have side-exited if child(0) was non-zero. So, it must be
+                    // zero here.
+                    m_block->taken().block()->removePredecessor(m_block);
+                    m_value->replaceWithJump(m_block, m_block->notTaken());
+                    m_changedCFG = true;
+                }
             }
             break;
         }
@@ -2376,6 +2391,16 @@ private:
         if (m_changedCFG && verbose) {
             dataLog("B3 after simplifyCFG:\n");
             dataLog(m_proc);
+        }
+    }
+    
+    void handleChangedCFGIfNecessary()
+    {
+        if (m_changedCFG) {
+            m_proc.resetReachability();
+            m_proc.invalidateCFG();
+            m_dominators = nullptr; // Dominators are not valid anymore, and we don't need them yet.
+            m_changed = true;
         }
     }
 
