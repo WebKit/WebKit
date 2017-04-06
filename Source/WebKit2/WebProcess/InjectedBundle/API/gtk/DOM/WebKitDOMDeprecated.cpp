@@ -165,7 +165,7 @@ gboolean webkit_dom_html_input_element_get_capture(WebKitDOMHTMLInputElement* se
 #if ENABLE(MEDIA_CAPTURE)
     WebCore::JSMainThreadNullState state;
     WebCore::HTMLInputElement* item = WebKit::core(self);
-    return item->mediaCaptureType() != MediaCaptureTypeNone;
+    return item->mediaCaptureType() != WebCore::MediaCaptureTypeNone;
 #else
     UNUSED_PARAM(self);
     WEBKIT_WARN_FEATURE_NOT_PRESENT("Media Capture")
