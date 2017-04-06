@@ -132,12 +132,21 @@ static inline void executeReparentTask(HTMLConstructionSiteTask& task)
     if (auto* parent = task.child->parentNode())
         parent->parserRemoveChild(*task.child);
 
+    if (task.child->parentNode())
+        return;
+
     task.parent->parserAppendChild(*task.child);
 }
 
 static inline void executeInsertAlreadyParsedChildTask(HTMLConstructionSiteTask& task)
 {
     ASSERT(task.operation == HTMLConstructionSiteTask::InsertAlreadyParsedChild);
+
+    if (ContainerNode* parent = task.child->parentNode())
+        parent->parserRemoveChild(*task.child);
+
+    if (task.child->parentNode())
+        return;
 
     insert(task);
 }

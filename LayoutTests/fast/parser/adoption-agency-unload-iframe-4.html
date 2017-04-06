@@ -1,0 +1,47 @@
+<html>
+<head>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+
+let test = async_test('An element removed by the adoption agency algorithm must not be inserted if it had been inserted elsewhere');
+
+var p;
+test.step(() => {
+    const iframe = document.createElement('iframe');
+    document.body.appendChild(iframe);
+
+    let doc = iframe.contentDocument;
+    doc.write(`<body><a id="target" href="#"></a>`);
+
+    const target = doc.querySelector('a');
+    target.onfocus = () => {
+        target.onfocus = null;
+
+        test.step(() => {
+            let container = doc.querySelector('div');
+            container.remove();
+            doc.body.appendChild(p);
+        });
+
+        setTimeout(() => {
+            test.step(() => {
+                assert_equals(p.parentNode, doc.body);
+            });
+            test.done();
+            iframe.remove();
+        }, 0);
+    }
+
+    doc.write(`<div><b><p><script>
+        parent.p = document.querySelector('p');
+        document.write('<link rel="stylesheet" href="data:,a">');
+        location.hash = 'target';
+    <\/script></b></p></div></body>`);
+});
+
+</script>
+</body>
+</html>

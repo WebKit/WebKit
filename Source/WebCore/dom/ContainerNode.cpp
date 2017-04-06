@@ -593,23 +593,27 @@ void ContainerNode::removeBetween(Node* previousChild, Node* nextChild, Node& ol
 void ContainerNode::parserRemoveChild(Node& oldChild)
 {
     disconnectSubframesIfNeeded(*this, DescendantsOnly);
+    if (oldChild.parentNode() != this)
+        return;
 
-    NoEventDispatchAssertion assertNoEventDispatch;
+    {
+        NoEventDispatchAssertion assertNoEventDispatch;
 
-    document().nodeChildrenWillBeRemoved(*this);
+        document().nodeChildrenWillBeRemoved(*this);
 
-    ASSERT(oldChild.parentNode() == this);
-    ASSERT(!oldChild.isDocumentFragment());
+        ASSERT(oldChild.parentNode() == this);
+        ASSERT(!oldChild.isDocumentFragment());
 
-    Node* prev = oldChild.previousSibling();
-    Node* next = oldChild.nextSibling();
+        Node* prev = oldChild.previousSibling();
+        Node* next = oldChild.nextSibling();
 
-    ChildListMutationScope(*this).willRemoveChild(oldChild);
-    oldChild.notifyMutationObserversNodeWillDetach();
+        ChildListMutationScope(*this).willRemoveChild(oldChild);
+        oldChild.notifyMutationObserversNodeWillDetach();
 
-    removeBetween(prev, next, oldChild);
+        removeBetween(prev, next, oldChild);
 
-    notifyChildRemoved(oldChild, prev, next, ChildChangeSourceParser);
+        notifyChildRemoved(oldChild, prev, next, ChildChangeSourceParser);
+    }
 }
 
 // this differs from other remove functions because it forcibly removes all the children,
@@ -712,12 +716,13 @@ void ContainerNode::parserAppendChild(Node& newChild)
     ASSERT(!newChild.isDocumentFragment());
     ASSERT(!hasTagName(HTMLNames::templateTag));
 
-    if (&document() != &newChild.document())
-        document().adoptNode(newChild, ASSERT_NO_EXCEPTION);
-
     {
         NoEventDispatchAssertion assertNoEventDispatch;
         // FIXME: This method should take a PassRefPtr.
+
+        if (&document() != &newChild.document())
+            document().adoptNode(newChild, ASSERT_NO_EXCEPTION);
+
         appendChildCommon(newChild);
         treeScope().adoptIfNeeded(&newChild);
     }
