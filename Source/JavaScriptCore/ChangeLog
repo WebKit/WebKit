@@ -1,3 +1,17 @@
+2017-04-06  Guillaume Emont  <guijemont@igalia.com>
+
+        [JSC][MIPS][DFG] Use x86 generic HasOwnProperty
+        https://bugs.webkit.org/show_bug.cgi?id=170222
+
+        Reviewed by Yusuke Suzuki.
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        use the X86 special version for HasOwnProperty on MIPS too.
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        use the X86 special version for HasOwnProperty on MIPS too.
+
 2017-04-05  Saam Barati  <sbarati@apple.com>
 
         REGRESSION fix bad isWasm() test by ensuring proper Wasm callee bit pattern

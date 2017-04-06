@@ -1382,8 +1382,8 @@ private:
 
         case HasOwnProperty: {
             fixEdge<ObjectUse>(node->child1());
-#if CPU(X86) && USE(JSVALUE32_64)
-            // We don't have enough registers to do anything interesting on x86.
+#if (CPU(X86) || CPU(MIPS)) && USE(JSVALUE32_64)
+            // We don't have enough registers to do anything interesting on x86 and mips.
             fixEdge<UntypedUse>(node->child2());
 #else
             if (node->child2()->shouldSpeculateString())
