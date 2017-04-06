@@ -1,3 +1,12 @@
+2017-04-06  Youenn Fablet  <youenn@apple.com>
+
+        WebRTC tests gardening
+        https://bugs.webkit.org/show_bug.cgi?id=170508
+
+        Reviewed by Eric Carlson.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2017-04-03  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, attempt to fix build with libgcrypt < 1.7.0

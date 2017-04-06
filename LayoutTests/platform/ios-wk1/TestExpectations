@@ -10,6 +10,7 @@ editing/input/focus-change-with-marked-text.html [ Pass ]
 # Skip WebRTC for now in WK1
 imported/w3c/web-platform-tests/webrtc [ Skip ]
 webrtc [ Skip ]
+fast/events/constructors/media-stream-event-constructor.html
 
 # <rdar://problem/6501130> LayoutTests: Enable editing tests after we support editing
 editing/deleting/4922367.html

@@ -1,3 +1,12 @@
+2017-04-06  Youenn Fablet  <youenn@apple.com>
+
+        WebRTC tests gardening
+        https://bugs.webkit.org/show_bug.cgi?id=170508
+
+        Reviewed by Eric Carlson.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2017-04-06  Guillaume Emont  <guijemont@igalia.com>
 
         [JSC][MIPS][DFG] Use x86 generic HasOwnProperty
