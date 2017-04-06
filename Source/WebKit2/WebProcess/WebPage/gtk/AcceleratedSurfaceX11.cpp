@@ -30,8 +30,10 @@
 
 #include "WebPage.h"
 #include <WebCore/PlatformDisplayX11.h>
+#include <WebCore/RefPtrCairo.h>
 #include <X11/Xlib.h>
 #include <X11/extensions/Xcomposite.h>
+#include <cairo-xlib.h>
 #include <gdk/gdkx.h>
 #include <wtf/RunLoop.h>
 
@@ -46,6 +48,13 @@ std::unique_ptr<AcceleratedSurfaceX11> AcceleratedSurfaceX11::create(WebPage& we
     return std::unique_ptr<AcceleratedSurfaceX11>(new AcceleratedSurfaceX11(webPage));
 }
 
+static GdkVisual* defaultVisual()
+{
+    if (GdkVisual* visual = gdk_screen_get_rgba_visual(gdk_screen_get_default()))
+        return visual;
+    return gdk_screen_get_system_visual(gdk_screen_get_default());
+}
+
 AcceleratedSurfaceX11::AcceleratedSurfaceX11(WebPage& webPage)
     : AcceleratedSurface(webPage)
     , m_display(downcast<PlatformDisplayX11>(PlatformDisplay::sharedDisplay()).native())
@@ -53,10 +62,8 @@ AcceleratedSurfaceX11::AcceleratedSurfaceX11(WebPage& webPage)
     Screen* screen = DefaultScreenOfDisplay(m_display);
 
     ASSERT(downcast<PlatformDisplayX11>(PlatformDisplay::sharedDisplay()).native() == m_display);
-    GdkVisual* visual = gdk_screen_get_rgba_visual(gdk_screen_get_default());
-    if (!visual)
-        visual = gdk_screen_get_system_visual(gdk_screen_get_default());
 
+    GdkVisual* visual = defaultVisual();
     XUniqueColormap colormap(XCreateColormap(m_display, RootWindowOfScreen(screen), GDK_VISUAL_XVISUAL(visual), AllocNone));
 
     XSetWindowAttributes windowAttributes;
@@ -103,8 +110,7 @@ AcceleratedSurfaceX11::AcceleratedSurfaceX11(WebPage& webPage)
     }
     XSelectInput(m_display, m_window.get(), NoEventMask);
     XCompositeRedirectWindow(m_display, m_window.get(), CompositeRedirectManual);
-    m_pixmap = XCompositeNameWindowPixmap(m_display, m_window.get());
-    XSync(m_display, False);
+    createPixmap();
 }
 
 AcceleratedSurfaceX11::~AcceleratedSurfaceX11()
@@ -118,6 +124,16 @@ AcceleratedSurfaceX11::~AcceleratedSurfaceX11()
     m_parentWindow.reset();
 }
 
+void AcceleratedSurfaceX11::createPixmap()
+{
+    m_pixmap = XCompositeNameWindowPixmap(m_display, m_window.get());
+    RefPtr<cairo_surface_t> surface = adoptRef(cairo_xlib_surface_create(m_display, m_pixmap.get(), GDK_VISUAL_XVISUAL(defaultVisual()), m_size.width(), m_size.height()));
+    RefPtr<cairo_t> cr = adoptRef(cairo_create(surface.get()));
+    cairo_set_operator(cr.get(), CAIRO_OPERATOR_CLEAR);
+    cairo_paint(cr.get());
+    XSync(m_display, False);
+}
+
 bool AcceleratedSurfaceX11::resize(const IntSize& size)
 {
     if (!AcceleratedSurface::resize(size))
@@ -129,8 +145,7 @@ bool AcceleratedSurfaceX11::resize(const IntSize& size)
 
     // Release the previous pixmap later to give some time to the UI process to update.
     RunLoop::main().dispatchAfter(std::chrono::seconds(5), [pixmap = WTFMove(m_pixmap)] { });
-    m_pixmap = XCompositeNameWindowPixmap(m_display, m_window.get());
-    XSync(m_display, False);
+    createPixmap();
     return true;
 }
 
