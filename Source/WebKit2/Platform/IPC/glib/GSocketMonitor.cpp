@@ -42,7 +42,7 @@ gboolean GSocketMonitor::socketSourceCallback(GSocket*, GIOCondition condition, 
     return monitor->m_callback(condition);
 }
 
-void GSocketMonitor::start(GSocket* socket, GIOCondition condition, RunLoop& runLoop, std::function<gboolean (GIOCondition)>&& callback)
+void GSocketMonitor::start(GSocket* socket, GIOCondition condition, RunLoop& runLoop, Function<gboolean (GIOCondition)>&& callback)
 {
     stop();
 

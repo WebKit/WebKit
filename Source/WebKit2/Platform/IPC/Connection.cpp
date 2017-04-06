@@ -34,6 +34,10 @@
 #include <wtf/text/WTFString.h>
 #include <wtf/threads/BinarySemaphore.h>
 
+#if USE(UNIX_DOMAIN_SOCKETS)
+#include "UnixMessage.h"
+#endif
+
 namespace IPC {
 
 struct Connection::WaitForMessageState {
