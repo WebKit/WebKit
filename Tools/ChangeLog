@@ -1,5 +1,16 @@
 2017-04-05  Joseph Pecoraro  <pecoraro@apple.com>
 
+        test262: module test progressions need updated expectations (@@iterator changes)
+        https://bugs.webkit.org/show_bug.cgi?id=170535
+
+        Reviewed by Saam Barati.
+
+        * Scripts/run-jsc-stress-tests:
+        Add :failDueToOutdatedOrBadTest to distinguish between a test failure
+        in JavaScriptCore or an outdated or incorrect test262 test.
+
+2017-04-05  Joseph Pecoraro  <pecoraro@apple.com>
+
         Remove run-jsc-stress-tests benign warning about otool '-S' switch
         https://bugs.webkit.org/show_bug.cgi?id=170527
 
