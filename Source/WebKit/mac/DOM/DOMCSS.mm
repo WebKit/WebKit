@@ -61,31 +61,31 @@ Class kitClass(WebCore::StyleSheet* impl)
 Class kitClass(WebCore::CSSRule* impl)
 {
     switch (impl->type()) {
-        case DOM_UNKNOWN_RULE:
-            return [DOMCSSUnknownRule class];
-        case DOM_STYLE_RULE:
-            return [DOMCSSStyleRule class];
-        case DOM_CHARSET_RULE:
-            return [DOMCSSCharsetRule class];
-        case DOM_IMPORT_RULE:
-            return [DOMCSSImportRule class];
-        case DOM_MEDIA_RULE:
-            return [DOMCSSMediaRule class];
-        case DOM_FONT_FACE_RULE:
-            return [DOMCSSFontFaceRule class];
-        case DOM_PAGE_RULE:
-            return [DOMCSSPageRule class];
-        case DOM_KEYFRAMES_RULE:
-        case DOM_NAMESPACE_RULE:
-        case DOM_KEYFRAME_RULE:
-        case DOM_SUPPORTS_RULE:
+    case WebCore::CSSRule::UNKNOWN_RULE:
+        return [DOMCSSUnknownRule class];
+    case WebCore::CSSRule::STYLE_RULE:
+        return [DOMCSSStyleRule class];
+    case WebCore::CSSRule::CHARSET_RULE:
+        return [DOMCSSCharsetRule class];
+    case WebCore::CSSRule::IMPORT_RULE:
+        return [DOMCSSImportRule class];
+    case WebCore::CSSRule::MEDIA_RULE:
+        return [DOMCSSMediaRule class];
+    case WebCore::CSSRule::FONT_FACE_RULE:
+        return [DOMCSSFontFaceRule class];
+    case WebCore::CSSRule::PAGE_RULE:
+        return [DOMCSSPageRule class];
+    case WebCore::CSSRule::KEYFRAMES_RULE:
+    case WebCore::CSSRule::NAMESPACE_RULE:
+    case WebCore::CSSRule::KEYFRAME_RULE:
+    case WebCore::CSSRule::SUPPORTS_RULE:
 #if ENABLE(CSS_DEVICE_ADAPTATION)
-        case DOM_WEBKIT_VIEWPORT_RULE:
+    case WebCore::CSSRule::WEBKIT_VIEWPORT_RULE:
 #endif
 #if ENABLE(CSS_REGIONS)
-        case DOM_WEBKIT_REGION_RULE:
+    case WebCore::CSSRule::WEBKIT_REGION_RULE:
 #endif
-            return [DOMCSSRule class];
+        return [DOMCSSRule class];
     }
     ASSERT_NOT_REACHED();
     return nil;
