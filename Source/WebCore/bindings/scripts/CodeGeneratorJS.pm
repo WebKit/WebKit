@@ -4230,7 +4230,7 @@ sub GenerateCallbackImplementation
         push(@implContent, "    : ${interfaceName}()\n");
     }
     push(@implContent, "    , ActiveDOMCallback(globalObject->scriptExecutionContext())\n");
-    push(@implContent, "    , m_data(new " . GetJSCallbackDataType($interface) . "(callback, this))\n");
+    push(@implContent, "    , m_data(new " . GetJSCallbackDataType($interface) . "(callback, globalObject, this))\n");
     push(@implContent, "{\n");
     push(@implContent, "}\n\n");
 
