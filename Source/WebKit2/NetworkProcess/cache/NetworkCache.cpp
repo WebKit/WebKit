@@ -73,12 +73,12 @@ static void dumpFileChanged(Cache* cache)
 }
 #endif
 
-bool Cache::initialize(const String& cachePath, const Parameters& parameters)
+bool Cache::initialize(const String& cachePath, OptionSet<Option> options)
 {
-    m_storage = Storage::open(cachePath);
+    m_storage = Storage::open(cachePath, options.contains(Option::TestingMode) ? Storage::Mode::Testing : Storage::Mode::Normal);
 
 #if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
-    if (parameters.enableNetworkCacheSpeculativeRevalidation) {
+    if (options.contains(Option::SpeculativeRevalidation)) {
         m_lowPowerModeNotifier = std::make_unique<WebCore::LowPowerModeNotifier>([this](bool isLowPowerModeEnabled) {
             ASSERT(WTF::isMainThread());
             if (isLowPowerModeEnabled)
@@ -93,7 +93,7 @@ bool Cache::initialize(const String& cachePath, const Parameters& parameters)
     }
 #endif
 
-    if (parameters.enableEfficacyLogging)
+    if (options.contains(Option::EfficacyLogging))
         m_statistics = Statistics::open(cachePath);
 
 #if PLATFORM(COCOA)

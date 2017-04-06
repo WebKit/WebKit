@@ -1,3 +1,28 @@
+2017-04-06  Antti Koivisto  <antti@apple.com>
+
+        Implement testing mode for disk cache
+        https://bugs.webkit.org/show_bug.cgi?id=170547
+
+        Reviewed by Andreas Kling.
+
+        Disable read timeouts and cache shrinking in TestRunner to eliminate potential sources of randomness.
+
+        Cache directories are deleted by TestRunner so lack of shrinking does not consume the disk.
+
+        This is enabled by the existing WKContextUseTestingNetworkSession SPI.
+
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::Cache::initialize):
+        * NetworkProcess/cache/NetworkCache.h:
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::Storage::open):
+        (WebKit::NetworkCache::Storage::Storage):
+        (WebKit::NetworkCache::Storage::dispatchReadOperation):
+        (WebKit::NetworkCache::Storage::shrinkIfNeeded):
+        * NetworkProcess/cache/NetworkCacheStorage.h:
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::platformInitializeNetworkProcessCocoa):
+
 2017-04-06  Chris Dumez  <cdumez@apple.com>
 
         [WK2] Add C private API to toggle invisibleAutoplayNotPermitted setting

@@ -48,7 +48,8 @@ class IOChannel;
 class Storage {
     WTF_MAKE_NONCOPYABLE(Storage);
 public:
-    static std::unique_ptr<Storage> open(const String& cachePath);
+    enum class Mode { Normal, Testing };
+    static std::unique_ptr<Storage> open(const String& cachePath, Mode);
 
     struct Record {
         WTF_MAKE_FAST_ALLOCATED;
@@ -105,7 +106,7 @@ public:
     ~Storage();
 
 private:
-    Storage(const String& directoryPath, Salt);
+    Storage(const String& directoryPath, Mode, Salt);
 
     String recordDirectoryPathForKey(const Key&) const;
     String recordPathForKey(const Key&) const;
@@ -145,9 +146,9 @@ private:
 
     const String m_basePath;
     const String m_recordsPath;
-
+    
+    const Mode m_mode;
     const Salt m_salt;
-
     const bool m_canUseSharedMemoryForBodyData;
 
     size_t m_capacity { std::numeric_limits<size_t>::max() };

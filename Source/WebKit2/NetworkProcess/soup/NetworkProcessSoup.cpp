@@ -112,13 +112,15 @@ void NetworkProcess::platformInitializeNetworkProcess(const NetworkProcessCreati
 
     SoupNetworkSession::clearOldSoupCache(WebCore::directoryName(m_diskCacheDirectory));
 
-    NetworkCache::Cache::Parameters cacheParameters {
-        parameters.shouldEnableNetworkCacheEfficacyLogging
+    OptionSet<NetworkCache::Cache::Option> cacheOptions;
+    if (parameters.shouldEnableNetworkCacheEfficacyLogging)
+        cacheOptions |= NetworkCache::Cache::Option::EfficacyLogging;
 #if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
-        , parameters.shouldEnableNetworkCacheSpeculativeRevalidation
+    if (parameters.shouldEnableNetworkCacheSpeculativeRevalidation)
+        cacheOptions |= NetworkCache::Cache::Option::SpeculativeRevalidation;
 #endif
-    };
-    NetworkCache::singleton().initialize(m_diskCacheDirectory, cacheParameters);
+
+    NetworkCache::singleton().initialize(m_diskCacheDirectory, cacheOptions);
 
     if (!parameters.cookiePersistentStoragePath.isEmpty()) {
         supplement<WebCookieManager>()->setCookiePersistentStorage(parameters.cookiePersistentStoragePath,

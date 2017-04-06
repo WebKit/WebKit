@@ -33,6 +33,7 @@
 #include "ShareableResource.h"
 #include <WebCore/ResourceResponse.h>
 #include <wtf/Function.h>
+#include <wtf/OptionSet.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -94,13 +95,15 @@ class Cache {
     WTF_MAKE_NONCOPYABLE(Cache);
     friend class WTF::NeverDestroyed<Cache>;
 public:
-    struct Parameters {
-        bool enableEfficacyLogging;
+    enum class Option {
+        EfficacyLogging,
+        // In testing mode we try to eliminate sources of randomness. Cache does not shrink and there are no read timeouts.
+        TestingMode,
 #if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
-        bool enableNetworkCacheSpeculativeRevalidation;
+        SpeculativeRevalidation,
 #endif
     };
-    bool initialize(const String& cachePath, const Parameters&);
+    bool initialize(const String& cachePath, OptionSet<Option>);
     void setCapacity(size_t);
 
     bool isEnabled() const { return !!m_storage; }
