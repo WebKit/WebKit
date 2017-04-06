@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function runTest() {
+    object.name = "foo";
+    input.autofocus = true;
+    output.appendChild(input);
+    form.submit();
+    setTimeout(function() {
+    if (window.testRunner)
+        testRunner.notifyDone();
+    }, 0);
+}
+
+function focushandler() {
+    for(var i = 0; i < 100; i++) {
+        var e = document.createElement("input");
+        form.appendChild(e);
+    }
+}
+</script>
+<body onload="runTest()">
+    <p>This test passes if it does not crash.</p>
+    <form id="form">
+    <object id="object">
+    <output id="output">a</output>
+    <input id="input" onfocus="focushandler()">
+</body>
+</html>
