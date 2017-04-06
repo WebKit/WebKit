@@ -233,6 +233,13 @@ void NetworkLoad::continueDidReceiveResponse()
 #endif
 }
 
+#if USE(NETWORK_SESSION)
+bool NetworkLoad::shouldCaptureExtraNetworkLoadMetrics() const
+{
+    return m_client.get().shouldCaptureExtraNetworkLoadMetrics();
+}
+#endif
+
 NetworkLoadClient::ShouldContinueDidReceiveResponse NetworkLoad::sharedDidReceiveResponse(ResourceResponse&& response)
 {
     response.setSource(ResourceResponse::Source::Network);

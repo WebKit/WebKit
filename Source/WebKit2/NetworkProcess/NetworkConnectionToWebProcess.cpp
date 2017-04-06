@@ -386,6 +386,11 @@ void NetworkConnectionToWebProcess::storeDerivedDataToCache(const WebKit::Networ
     NetworkCache::singleton().storeData(dataKey, data.data(), data.size());
 }
 
+void NetworkConnectionToWebProcess::setCaptureExtraNetworkLoadMetricsEnabled(bool enabled)
+{
+    m_captureExtraNetworkLoadMetricsEnabled = enabled;
+}
+
 void NetworkConnectionToWebProcess::ensureLegacyPrivateBrowsingSession()
 {
     NetworkProcess::singleton().ensurePrivateBrowsingSession(SessionID::legacyPrivateSessionID());

@@ -58,6 +58,7 @@ public:
     virtual void didReceiveBuffer(Ref<WebCore::SharedBuffer>&&, int reportedEncodedDataLength) = 0;
     virtual void didFinishLoading(const WebCore::NetworkLoadMetrics&) = 0;
     virtual void didFailLoading(const WebCore::ResourceError&) = 0;
+    virtual bool shouldCaptureExtraNetworkLoadMetrics() const { return false; }
 };
 
 } // namespace WebKit

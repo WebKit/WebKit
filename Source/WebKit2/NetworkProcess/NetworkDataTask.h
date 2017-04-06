@@ -69,6 +69,8 @@ public:
     virtual void wasBlocked() = 0;
     virtual void cannotShowURL() = 0;
 
+    virtual bool shouldCaptureExtraNetworkLoadMetrics() const { return false; }
+
     void didCompleteWithError(const WebCore::ResourceError& error)
     {
         WebCore::NetworkLoadMetrics emptyMetrics;
@@ -90,6 +92,7 @@ public:
     virtual void invalidateAndCancel() = 0;
 
     void didReceiveResponse(WebCore::ResourceResponse&&, ResponseCompletionHandler&&);
+    bool shouldCaptureExtraNetworkLoadMetrics() const;
 
     enum class State {
         Running,

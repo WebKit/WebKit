@@ -1,5 +1,47 @@
 2017-04-06  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Only Capture Extra Network Load Metrics when there is a Web Inspector Frontend
+        https://bugs.webkit.org/show_bug.cgi?id=170525
+
+        Reviewed by Youenn Fablet.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:task:didFinishCollectingMetrics:]):
+        Only collect extra metrics if the WebProcess this load is for has enabled
+        collecting extra metrics.
+
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::setCaptureExtraNetworkLoadMetricsEnabled):
+        * WebProcess/Network/WebLoaderStrategy.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::setCaptureExtraNetworkLoadMetricsEnabled):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        (WebKit::NetworkConnectionToWebProcess::captureExtraNetworkLoadMetricsEnabled):
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        New bool state toggled through the loader policy.
+
+        * NetworkProcess/NetworkDataTask.cpp:
+        (WebKit::NetworkDataTask::shouldCaptureExtraNetworkLoadMetrics):
+        * NetworkProcess/NetworkDataTask.h:
+        (WebKit::NetworkDataTaskClient::shouldCaptureExtraNetworkLoadMetrics):
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::shouldCaptureExtraNetworkLoadMetrics):
+        * NetworkProcess/NetworkLoad.h:
+        * NetworkProcess/NetworkLoadClient.h:
+        (WebKit::NetworkLoadClient::shouldCaptureExtraNetworkLoadMetrics):
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::shouldCaptureExtraNetworkLoadMetrics):
+        * NetworkProcess/NetworkResourceLoader.h:
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoad.cpp:
+        (WebKit::NetworkCache::SpeculativeLoad::shouldCaptureExtraNetworkLoadMetrics):
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoad.h:
+        Default handling for network loads is to not include extra data. Thread
+        client messages back from the NetworkLoads / SpeculativeLoads to check
+        the NetworkConnectionToWebProcess state on whether or not we should collect
+        extra metrics.
+
+2017-04-06  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Show all headers in the Request Headers section of the Resource details sidebar
         https://bugs.webkit.org/show_bug.cgi?id=16531
         <rdar://problem/5712895>

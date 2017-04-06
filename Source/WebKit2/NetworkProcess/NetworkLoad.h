@@ -76,6 +76,8 @@ public:
     void setSuggestedFilename(const String&);
     void setPendingDownload(PendingDownload&);
     DownloadID pendingDownloadID() { return m_task->pendingDownloadID(); }
+
+    bool shouldCaptureExtraNetworkLoadMetrics() const final;
 #else
     WebCore::ResourceHandle* handle() const { return m_handle.get(); }
 

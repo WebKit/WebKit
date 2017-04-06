@@ -110,6 +110,11 @@ void NetworkDataTask::didReceiveResponse(ResourceResponse&& response, ResponseCo
     m_client->didReceiveResponseNetworkSession(WTFMove(response), WTFMove(completionHandler));
 }
 
+bool NetworkDataTask::shouldCaptureExtraNetworkLoadMetrics() const
+{
+    return m_client->shouldCaptureExtraNetworkLoadMetrics();
+}
+
 void NetworkDataTask::failureTimerFired()
 {
     RefPtr<NetworkDataTask> protectedThis(this);

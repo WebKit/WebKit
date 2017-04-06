@@ -64,6 +64,10 @@ private:
     void didFinishLoading(const WebCore::NetworkLoadMetrics&) override;
     void didFailLoading(const WebCore::ResourceError&) override;
 
+#if USE(NETWORK_SESSION)
+    bool shouldCaptureExtraNetworkLoadMetrics() const override;
+#endif
+
     void didComplete();
 
     GlobalFrameID m_frameID;

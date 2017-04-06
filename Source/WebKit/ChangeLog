@@ -1,3 +1,12 @@
+2017-04-06  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Only Capture Extra Network Load Metrics when there is a Web Inspector Frontend
+        https://bugs.webkit.org/show_bug.cgi?id=170525
+
+        Reviewed by Youenn Fablet.
+
+        * WebCoreSupport/WebResourceLoadScheduler.h:
+
 2017-04-05  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] Invalid address specified to RtlValidateHeap at std::ctype<char>::_Tidy() when finishing MiniBrowser

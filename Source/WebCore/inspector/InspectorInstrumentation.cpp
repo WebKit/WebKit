@@ -51,10 +51,12 @@
 #include "InspectorTimelineAgent.h"
 #include "InspectorWorkerAgent.h"
 #include "InstrumentingAgents.h"
+#include "LoaderStrategy.h"
 #include "MainFrame.h"
 #include "PageDebuggerAgent.h"
 #include "PageHeapAgent.h"
 #include "PageRuntimeAgent.h"
+#include "PlatformStrategies.h"
 #include "RenderObject.h"
 #include "RenderView.h"
 #include "ScriptController.h"
@@ -93,6 +95,16 @@ static HashSet<InstrumentingAgents*>* s_instrumentingAgentsSet = nullptr;
 }
 
 int InspectorInstrumentation::s_frontendCounter = 0;
+
+void InspectorInstrumentation::firstFrontendCreated()
+{
+    platformStrategies()->loaderStrategy()->setCaptureExtraNetworkLoadMetricsEnabled(true);
+}
+
+void InspectorInstrumentation::lastFrontendDeleted()
+{
+    platformStrategies()->loaderStrategy()->setCaptureExtraNetworkLoadMetricsEnabled(false);
+}
 
 static void didScheduleAsyncCall(InstrumentingAgents& instrumentingAgents, AsyncCallType type, int callbackId, ScriptExecutionContext& context, bool singleShot)
 {

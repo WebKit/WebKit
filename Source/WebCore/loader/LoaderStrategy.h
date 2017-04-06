@@ -63,6 +63,8 @@ public:
 
     virtual void storeDerivedDataToCache(const SHA1::Digest& bodyKey, const String& type, const String& partition, WebCore::SharedBuffer&) = 0;
 
+    virtual void setCaptureExtraNetworkLoadMetricsEnabled(bool) = 0;
+
 protected:
     virtual ~LoaderStrategy();
 };

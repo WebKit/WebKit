@@ -156,6 +156,13 @@ void SpeculativeLoad::didComplete()
     m_completionHandler(WTFMove(m_cacheEntry));
 }
 
+#if USE(NETWORK_SESSION)
+bool SpeculativeLoad::shouldCaptureExtraNetworkLoadMetrics() const
+{
+    return m_networkLoad->shouldCaptureExtraNetworkLoadMetrics();
+}
+#endif
+
 } // namespace NetworkCache
 } // namespace WebKit
 

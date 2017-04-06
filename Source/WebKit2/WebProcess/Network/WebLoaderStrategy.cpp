@@ -398,4 +398,9 @@ void WebLoaderStrategy::storeDerivedDataToCache(const SHA1::Digest& bodyHash, co
     WebProcess::singleton().networkConnection().connection().send(Messages::NetworkConnectionToWebProcess::StoreDerivedDataToCache(key, dataReference), 0);
 }
 
+void WebLoaderStrategy::setCaptureExtraNetworkLoadMetricsEnabled(bool enabled)
+{
+    WebProcess::singleton().networkConnection().connection().send(Messages::NetworkConnectionToWebProcess::SetCaptureExtraNetworkLoadMetricsEnabled(enabled), 0);
+}
+
 } // namespace WebKit

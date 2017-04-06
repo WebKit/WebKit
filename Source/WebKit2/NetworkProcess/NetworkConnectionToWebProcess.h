@@ -60,6 +60,8 @@ public:
 
     void didCleanupResourceLoader(NetworkResourceLoader&);
 
+    bool captureExtraNetworkLoadMetricsEnabled() const { return m_captureExtraNetworkLoadMetricsEnabled; }
+
     RefPtr<WebCore::BlobDataFileReference> getBlobDataFileReferenceForPath(const String& path);
 
 private:
@@ -105,6 +107,8 @@ private:
 
     void storeDerivedDataToCache(const WebKit::NetworkCache::DataKey&, const IPC::DataReference&);
 
+    void setCaptureExtraNetworkLoadMetricsEnabled(bool);
+
     void createSocketStream(WebCore::URL&&, WebCore::SessionID, String cachePartition, uint64_t);
     void destroySocketStream(uint64_t);
     
@@ -123,6 +127,8 @@ private:
 #if USE(LIBWEBRTC)
     RefPtr<NetworkRTCProvider> m_rtcProvider;
 #endif
+
+    bool m_captureExtraNetworkLoadMetricsEnabled { false };
 };
 
 } // namespace WebKit

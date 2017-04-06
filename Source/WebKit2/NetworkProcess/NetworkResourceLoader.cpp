@@ -709,4 +709,9 @@ bool NetworkResourceLoader::isAlwaysOnLoggingAllowed() const
     return sessionID().isAlwaysOnLoggingAllowed();
 }
 
+bool NetworkResourceLoader::shouldCaptureExtraNetworkLoadMetrics() const
+{
+    return m_connection->captureExtraNetworkLoadMetricsEnabled();
+}
+
 } // namespace WebKit

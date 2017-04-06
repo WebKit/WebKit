@@ -51,6 +51,8 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
 
     StoreDerivedDataToCache(WebKit::NetworkCache::DataKey key, IPC::DataReference data)
 
+    SetCaptureExtraNetworkLoadMetricsEnabled(bool enabled)
+
     CreateSocketStream(WebCore::URL url, WebCore::SessionID sessionID, String cachePartition, uint64_t identifier)
 
     EnsureLegacyPrivateBrowsingSession()

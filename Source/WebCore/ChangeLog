@@ -1,5 +1,28 @@
 2017-04-06  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Only Capture Extra Network Load Metrics when there is a Web Inspector Frontend
+        https://bugs.webkit.org/show_bug.cgi?id=170525
+
+        Reviewed by Youenn Fablet.
+
+        Covered by existing tests that when Web Inspector is open we enable collecting the extra data.
+
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::firstFrontendCreated):
+        (WebCore::InspectorInstrumentation::lastFrontendDeleted):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::frontendCreated):
+        (WebCore::InspectorInstrumentation::frontendDeleted):
+        When the first frontend is created enable a new loader strategy to
+        collect extra network load metrics. When the last frontend is closed
+        disable the extra metrics.
+
+        * loader/LoaderStrategy.h:
+        * platform/PlatformStrategies.h:
+        New load strategy to enable/disable new metrics.
+
+2017-04-06  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Show all headers in the Request Headers section of the Resource details sidebar
         https://bugs.webkit.org/show_bug.cgi?id=16531
         <rdar://problem/5712895>

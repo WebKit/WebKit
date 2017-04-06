@@ -249,9 +249,13 @@ public:
     static void layerTreeDidChange(Page*);
     static void renderLayerDestroyed(Page*, const RenderLayer&);
 
-    static void frontendCreated() { s_frontendCounter += 1; }
-    static void frontendDeleted() { s_frontendCounter -= 1; }
+    static void frontendCreated();
+    static void frontendDeleted();
     static bool hasFrontends() { return s_frontendCounter; }
+
+    static void firstFrontendCreated();
+    static void lastFrontendDeleted();
+
     static bool consoleAgentEnabled(ScriptExecutionContext*);
     static bool timelineAgentEnabled(ScriptExecutionContext*);
     static bool replayAgentEnabled(ScriptExecutionContext*);
@@ -1344,6 +1348,22 @@ inline InstrumentingAgents* InspectorInstrumentation::instrumentingAgentsForWork
 inline InstrumentingAgents& InspectorInstrumentation::instrumentingAgentsForWorkerGlobalScope(WorkerGlobalScope& workerGlobalScope)
 {
     return workerGlobalScope.inspectorController().m_instrumentingAgents;
+}
+
+inline void InspectorInstrumentation::frontendCreated()
+{
+    s_frontendCounter++;
+
+    if (s_frontendCounter == 1)
+        InspectorInstrumentation::firstFrontendCreated();
+}
+
+inline void InspectorInstrumentation::frontendDeleted()
+{
+    s_frontendCounter--;
+
+    if (!s_frontendCounter)
+        InspectorInstrumentation::lastFrontendDeleted();
 }
 
 } // namespace WebCore

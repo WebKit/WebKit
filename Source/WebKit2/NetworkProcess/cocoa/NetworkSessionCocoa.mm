@@ -299,20 +299,23 @@ static WebCore::NetworkLoadPriority toNetworkLoadPriority(float priority)
         networkLoadMetrics.responseStart = Seconds(responseStartInterval);
         networkLoadMetrics.responseEnd = Seconds(responseEndInterval);
         networkLoadMetrics.markComplete();
-
         networkLoadMetrics.protocol = String(m.networkProtocolName);
-        networkLoadMetrics.priority = toNetworkLoadPriority(task.priority);
+
+        if (networkDataTask->shouldCaptureExtraNetworkLoadMetrics()) {
+            networkLoadMetrics.priority = toNetworkLoadPriority(task.priority);
+
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
-        networkLoadMetrics.remoteAddress = String(m._remoteAddressAndPort);
-        if ([m respondsToSelector:@selector(_connectionIdentifier)])
-            networkLoadMetrics.connectionIdentifier = String([m._connectionIdentifier UUIDString]);
+            networkLoadMetrics.remoteAddress = String(m._remoteAddressAndPort);
+            if ([m respondsToSelector:@selector(_connectionIdentifier)])
+                networkLoadMetrics.connectionIdentifier = String([m._connectionIdentifier UUIDString]);
 #endif
 
-        __block WebCore::HTTPHeaderMap requestHeaders;
-        [m.request.allHTTPHeaderFields enumerateKeysAndObjectsUsingBlock:^(NSString *name, NSString *value, BOOL *) {
-            requestHeaders.set(String(name), String(value));
-        }];
-        networkLoadMetrics.requestHeaders = WTFMove(requestHeaders);
+            __block WebCore::HTTPHeaderMap requestHeaders;
+            [m.request.allHTTPHeaderFields enumerateKeysAndObjectsUsingBlock:^(NSString *name, NSString *value, BOOL *) {
+                requestHeaders.set(String(name), String(value));
+            }];
+            networkLoadMetrics.requestHeaders = WTFMove(requestHeaders);
+        }
     }
 }
 
