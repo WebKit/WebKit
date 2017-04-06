@@ -241,4 +241,117 @@ promise_test(function() {
 // FIXME: when ReadableStreamBYOBReader is implemented, add tests with elementSize different from 1
 // so that more code can be covered.
 
+test(function() {
+
+    let controller;
+    const rs = new ReadableStream({
+        autoAllocateChunkSize: 16,
+        start: function(c) {
+            controller = c;
+        },
+        type: "bytes"
+    });
+
+    rs.getReader().read();
+    const byobReq = controller.byobRequest;
+
+    assert_throws(new TypeError("Can only call ReadableStreamBYOBRequest.respondWithNewView on instances of ReadableStreamBYOBRequest"),
+        function() { byobReq.respondWithNewView.apply(rs, new Uint8Array(1)); });
+
+}, "Calling respondWithNewView() with a this object different from ReadableStreamBYOBRequest should throw a TypeError");
+
+test(function() {
+
+    let controller;
+    const rs = new ReadableStream({
+        autoAllocateChunkSize: 16,
+        start: function(c) {
+            controller = c;
+        },
+        type: "bytes"
+    });
+
+    rs.getReader().read();
+    const byobReq = controller.byobRequest;
+
+    assert_throws(new TypeError("Provided view is not an object"),
+        function() { byobReq.respondWithNewView(function() {}); });
+
+}, "Calling respondWithNewView() with an argument that is not an object should throw a TypeError");
+
+test(function() {
+
+    let controller;
+    const rs = new ReadableStream({
+        autoAllocateChunkSize: 16,
+        start: function(c) {
+            controller = c;
+        },
+        type: "bytes"
+    });
+
+    rs.getReader().read();
+    const byobReq = controller.byobRequest;
+
+    assert_throws(new TypeError("Provided view is not an ArrayBufferView"),
+        function() { byobReq.respondWithNewView({}); });
+
+}, "Calling respondWithNewView() with an argument that is not an ArrayBufferView should throw a TypeError");
+
+promise_test(function() {
+
+    const rs = new ReadableStream({
+        autoAllocateChunkSize: 2,
+        pull: function(controller) {
+            const newView = new Uint8Array([3, 6]);
+            const br = controller.byobRequest;
+            br.respondWithNewView(newView);
+        },
+        type: "bytes"
+    });
+
+    return rs.getReader().read().then(result => {
+        assert_equals(result.value.byteLength, 2);
+        assert_equals(result.value.byteOffset, 0);
+        assert_equals(result.value.buffer.byteLength, 2);
+        assert_equals(result.value[0], 3);
+        assert_equals(result.value[1], 6);
+    });
+}, "When using autoAllocateChunkSize, calling respondWithNewView() should succeed if view.byteLength is equal to autoAllocateChunkSize");
+
+promise_test(function(test) {
+
+    const rs = new ReadableStream({
+        autoAllocateChunkSize: 16,
+        pull: function(controller) {
+            const newView = new Uint8Array([3, 6]);
+            const br = controller.byobRequest;
+            br.respondWithNewView(newView);
+        },
+        type: "bytes"
+    });
+
+    const error = new RangeError("Invalid value for view.byteLength");
+
+    return promise_rejects(test, error, rs.getReader().read());
+}, "When using autoAllocateChunkSize, calling respondWithNewView() should throw a RangeError if view.byteOffset is different from 0");
+
+promise_test(function(test) {
+
+    const rs = new ReadableStream({
+        autoAllocateChunkSize: 16,
+        pull: function(controller) {
+            const buffer = new ArrayBuffer(3);
+            const newView = new Uint8Array(buffer, 1); // byteOffset of 1
+            const br = controller.byobRequest;
+            br.respondWithNewView(newView);
+        },
+        type: "bytes"
+    });
+
+    const error = new RangeError("Invalid value for view.byteOffset");
+
+    return promise_rejects(test, error, rs.getReader().read());
+}, "When using autoAllocateChunkSize, calling respondWithNewView() should throw a RangeError if view.byteLength is different from autoAllocateChunkSize");
+
 done();

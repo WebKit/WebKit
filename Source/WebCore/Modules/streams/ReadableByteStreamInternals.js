@@ -347,6 +347,24 @@ function readableByteStreamControllerEnqueueChunk(controller, buffer, byteOffset
     controller.@totalQueuedBytes += byteLength;
 }
 
+function readableByteStreamControllerRespondWithNewView(controller, view)
+{
+    "use strict";
+
+    @assert(controller.@pendingPullIntos.length > 0);
+
+    let firstDescriptor = controller.@pendingPullIntos[0];
+
+    if (firstDescriptor.byteOffset + firstDescriptor.bytesFilled !== view.byteOffset)
+        @throwRangeError("Invalid value for view.byteOffset");
+
+    if (firstDescriptor.byteLength !== view.byteLength)
+        @throwRangeError("Invalid value for view.byteLength");
+
+    firstDescriptor.buffer = view.buffer;
+    @readableByteStreamControllerRespondInternal(controller, view.byteLength);
+}
+
 function readableByteStreamControllerRespond(controller, bytesWritten)
 {
     "use strict";

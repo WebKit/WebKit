@@ -1,3 +1,15 @@
+2017-04-06  Romain Bellessort  <romain.bellessort@crf.canon.fr>
+
+        [Readable Streams API] Implement ReadableStreamBYOBRequest respondWithNewView()
+        https://bugs.webkit.org/show_bug.cgi?id=170339
+
+        Reviewed by Youenn Fablet.
+
+        Added new tests addressing respondWithNewView() behaviour.
+
+        * streams/readable-stream-byob-request-expected.txt: Updated.
+        * streams/readable-stream-byob-request.js: Added new tests.
+
 2017-04-06  Dave Hyatt  <hyatt@apple.com>
 
         Rendering flexbox children across columns
