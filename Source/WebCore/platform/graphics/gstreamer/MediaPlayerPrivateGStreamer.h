@@ -122,7 +122,7 @@ public:
     bool changePipelineState(GstState);
 
 #if ENABLE(WEB_AUDIO)
-    AudioSourceProvider* audioSourceProvider() override { return reinterpret_cast<AudioSourceProvider*>(m_audioSourceProvider.get()); }
+    AudioSourceProvider* audioSourceProvider() override;
 #endif
 
 private:
@@ -185,6 +185,7 @@ private:
     void newTextSample();
 #endif
 
+    void ensureAudioSourceProvider();
     void setAudioStreamProperties(GObject*);
 
     static void setAudioStreamPropertiesCallback(MediaPlayerPrivateGStreamer*, GObject*);
