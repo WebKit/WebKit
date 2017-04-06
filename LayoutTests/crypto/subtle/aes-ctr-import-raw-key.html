@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test importing a raw AES-CTR key with legnth 128");
+
+jsTestIsAsync = true;
+
+var rawKey = asciiToUint8Array("jnOw99oOZFLIEPMr");
+var extractable = true;
+
+debug("Importing a key...");
+crypto.subtle.importKey("raw", rawKey, "aes-ctr", extractable, ["encrypt", "decrypt", "wrapKey", "unwrapKey"]).then(function(result) {
+    key = result;
+
+    shouldBe("key.type", "'secret'");
+    shouldBe("key.extractable", "true");
+    shouldBe("key.algorithm.name", "'AES-CTR'");
+    shouldBe("key.algorithm.length", "128");
+    shouldBe("key.usages", "['decrypt', 'encrypt', 'unwrapKey', 'wrapKey']");
+
+    finishJSTest();
+});
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

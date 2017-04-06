@@ -38,6 +38,7 @@ public:
     enum class Class {
         None,
         AesCbcCfbParams,
+        AesCtrParams,
         AesGcmParams,
         AesKeyParams,
         EcKeyParams,

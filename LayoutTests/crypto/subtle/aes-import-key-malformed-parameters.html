@@ -51,6 +51,13 @@ shouldReject('crypto.subtle.importKey("jwk", {kty: "oct", k: "A72F", alg: "foo"}
 shouldReject('crypto.subtle.importKey("jwk", {kty: "oct", k: k128, alg: ""}, "aes-gcm", extractable, ["wrapKey", "unwrapKey"])');
 shouldReject('crypto.subtle.importKey("jwk", {kty: "oct", k: k192, alg: ""}, "aes-gcm", extractable, ["wrapKey", "unwrapKey"])');
 shouldReject('crypto.subtle.importKey("jwk", {kty: "oct", k: k256, alg: ""}, "aes-gcm", extractable, ["wrapKey", "unwrapKey"])');
+shouldReject('crypto.subtle.importKey("jwk", {kty: "oct", k: k128, alg: "A192CTR"}, "aes-ctr", extractable, ["encrypt", "decrypt", "wrapKey", "unwrapKey"])');
+shouldReject('crypto.subtle.importKey("jwk", {kty: "oct", k: k192, alg: "A256CTR"}, "aes-ctr", extractable, ["encrypt", "decrypt", "wrapKey", "unwrapKey"])');
+shouldReject('crypto.subtle.importKey("jwk", {kty: "oct", k: k256, alg: "A128CTR"}, "aes-ctr", extractable, ["encrypt", "decrypt", "wrapKey", "unwrapKey"])');
+shouldReject('crypto.subtle.importKey("jwk", {kty: "oct", k: "A72F", alg: "foo"}, "aes-ctr", extractable, ["wrapKey", "unwrapKey"])');
+shouldReject('crypto.subtle.importKey("jwk", {kty: "oct", k: k128, alg: ""}, "aes-ctr", extractable, ["wrapKey", "unwrapKey"])');
+shouldReject('crypto.subtle.importKey("jwk", {kty: "oct", k: k192, alg: ""}, "aes-ctr", extractable, ["wrapKey", "unwrapKey"])');
+shouldReject('crypto.subtle.importKey("jwk", {kty: "oct", k: k256, alg: ""}, "aes-ctr", extractable, ["wrapKey", "unwrapKey"])');
 // Jwk: wrong k format
 shouldReject('crypto.subtle.importKey("jwk", {kty: "oct", k: "!!!", alg: "foo"}, "aes-cbc", extractable, ["encrypt", "decrypt", "wrapKey", "unwrapKey"])');
 shouldReject('crypto.subtle.importKey("jwk", {kty: "oct", k: "", alg: "foo"}, "aes-cbc", extractable, ["encrypt", "decrypt", "wrapKey", "unwrapKey"])');

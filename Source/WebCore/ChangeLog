@@ -1,3 +1,71 @@
+2017-03-31  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebCrypto] Add support for AES-CTR
+        https://bugs.webkit.org/show_bug.cgi?id=169761
+        <rdar://problem/31331321>
+
+        Reviewed by Brent Fulgham.
+
+        This patch adds support for AES-CTR. Operations of AES-CTR include: encrypt, decrypt, generateKey,
+        importKey, exportKey, wrapKey, and unwrapKey. This implementation follows the latest WebCryptoAPI
+        spec: https://www.w3.org/TR/WebCryptoAPI/#aes-ctr.
+
+        Tests: crypto/subtle/aes-ctr-encrypt-malformed-parameters.html
+               crypto/subtle/aes-ctr-encrypt-overflow.html
+               crypto/subtle/aes-ctr-generate-export-key-jwk-length-128.html
+               crypto/subtle/aes-ctr-generate-export-key-jwk-length-192.html
+               crypto/subtle/aes-ctr-generate-export-key-jwk-length-256.html
+               crypto/subtle/aes-ctr-generate-export-raw-key.html
+               crypto/subtle/aes-ctr-generate-key-encrypt-decrypt.html
+               crypto/subtle/aes-ctr-generate-key.html
+               crypto/subtle/aes-ctr-import-jwk-key-length-128.html
+               crypto/subtle/aes-ctr-import-jwk-key-length-192.html
+               crypto/subtle/aes-ctr-import-jwk-key-length-256.html
+               crypto/subtle/aes-ctr-import-key-decrypt.html
+               crypto/subtle/aes-ctr-import-key-encrypt.html
+               crypto/subtle/aes-ctr-import-key-unwrap-jwk-key.html
+               crypto/subtle/aes-ctr-import-key-unwrap-raw-key.html
+               crypto/subtle/aes-ctr-import-key-wrap-jwk-key.html
+               crypto/subtle/aes-ctr-import-key-wrap-raw-key.html
+               crypto/subtle/aes-ctr-import-raw-key.html
+               crypto/workers/subtle/aes-ctr-import-key-decrypt.html
+               crypto/workers/subtle/aes-ctr-import-key-encrypt.html
+               crypto/workers/subtle/aes-ctr-import-key-unwrap-key.html
+               crypto/workers/subtle/aes-ctr-import-key-wrap-key.html
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * PlatformGTK.cmake:
+        * PlatformMac.cmake:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSSubtleCryptoCustom.cpp:
+        (WebCore::normalizeCryptoAlgorithmParameters):
+        * crypto/CryptoAlgorithmParameters.h:
+        * crypto/algorithms/CryptoAlgorithmAES_CTR.cpp: Added.
+        (WebCore::usagesAreInvalidForCryptoAlgorithmAES_CTR):
+        (WebCore::parametersAreValid):
+        (WebCore::CryptoAlgorithmAES_CTR::create):
+        (WebCore::CryptoAlgorithmAES_CTR::identifier):
+        (WebCore::CryptoAlgorithmAES_CTR::encrypt):
+        (WebCore::CryptoAlgorithmAES_CTR::decrypt):
+        (WebCore::CryptoAlgorithmAES_CTR::generateKey):
+        (WebCore::CryptoAlgorithmAES_CTR::importKey):
+        (WebCore::CryptoAlgorithmAES_CTR::exportKey):
+        (WebCore::CryptoAlgorithmAES_CTR::getKeyLength):
+        * crypto/algorithms/CryptoAlgorithmAES_CTR.h: Added.
+        * crypto/gcrypt/CryptoAlgorithmAES_CTRGCrypt.cpp: Added.
+        (WebCore::CryptoAlgorithmAES_CTR::platformEncrypt):
+        (WebCore::CryptoAlgorithmAES_CTR::platformDecrypt):
+        * crypto/mac/CryptoAlgorithmAES_CTRMac.cpp: Added.
+        (WebCore::bigIntegerToSize):
+        (WebCore::transformAES_CTR):
+        (WebCore::CryptoAlgorithmAES_CTR::platformEncrypt):
+        (WebCore::CryptoAlgorithmAES_CTR::platformDecrypt):
+        * crypto/mac/CryptoAlgorithmRegistryMac.cpp:
+        (WebCore::CryptoAlgorithmRegistry::platformRegisterAlgorithms):
+        * crypto/parameters/AesCtrParams.idl: Added.
+        * crypto/parameters/CryptoAlgorithmAesCtrParams.h: Added.
+
 2017-04-06  Youenn Fablet  <youenn@apple.com>
 
         WebRTC tests gardening

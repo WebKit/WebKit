@@ -1,3 +1,25 @@
+2017-03-31  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebCrypto] Add support for AES-CTR
+        https://bugs.webkit.org/show_bug.cgi?id=169761
+        <rdar://problem/31331321>
+
+        Reviewed by Brent Fulgham.
+
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.worker-expected.txt:
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/test_pbkdf2-expected.txt:
+        * web-platform-tests/WebCryptoAPI/encrypt_decrypt/aes_cbc.worker-expected.txt:
+        * web-platform-tests/WebCryptoAPI/encrypt_decrypt/aes_ctr.worker-expected.txt:
+        * web-platform-tests/WebCryptoAPI/encrypt_decrypt/test_aes_cbc-expected.txt:
+        * web-platform-tests/WebCryptoAPI/encrypt_decrypt/test_aes_ctr-expected.txt:
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_AES-CTR.worker-expected.txt:
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_AES-CTR.worker-expected.txt:
+        * web-platform-tests/WebCryptoAPI/generateKey/test_aes-ctr-expected.txt:
+        * web-platform-tests/WebCryptoAPI/generateKey/test_failures_AES-CTR-expected.txt:
+        * web-platform-tests/WebCryptoAPI/generateKey/test_successes_AES-CTR-expected.txt:
+        * web-platform-tests/WebCryptoAPI/import_export/symmetric_importKey.worker-expected.txt:
+        * web-platform-tests/WebCryptoAPI/import_export/test_symmetric_importKey-expected.txt:
+
 2017-04-05  Chris Dumez  <cdumez@apple.com>
 
         _blank / _self / _parent / _top browsing context names should be case-insensitive

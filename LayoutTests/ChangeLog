@@ -1,3 +1,62 @@
+2017-03-31  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebCrypto] Add support for AES-CTR
+        https://bugs.webkit.org/show_bug.cgi?id=169761
+        <rdar://problem/31331321>
+
+        Reviewed by Brent Fulgham.
+
+        * crypto/subtle/aes-ctr-encrypt-malformed-parameters-expected.txt: Added.
+        * crypto/subtle/aes-ctr-encrypt-malformed-parameters.html: Added.
+        * crypto/subtle/aes-ctr-generate-export-key-jwk-length-128-expected.txt: Added.
+        * crypto/subtle/aes-ctr-generate-export-key-jwk-length-128.html: Added.
+        * crypto/subtle/aes-ctr-generate-export-key-jwk-length-192-expected.txt: Added.
+        * crypto/subtle/aes-ctr-generate-export-key-jwk-length-192.html: Added.
+        * crypto/subtle/aes-ctr-generate-export-key-jwk-length-256-expected.txt: Added.
+        * crypto/subtle/aes-ctr-generate-export-key-jwk-length-256.html: Added.
+        * crypto/subtle/aes-ctr-generate-export-raw-key-expected.txt: Added.
+        * crypto/subtle/aes-ctr-generate-export-raw-key.html: Added.
+        * crypto/subtle/aes-ctr-generate-key-encrypt-decrypt-expected.txt: Added.
+        * crypto/subtle/aes-ctr-generate-key-encrypt-decrypt.html: Added.
+        * crypto/subtle/aes-ctr-generate-key-expected.txt: Added.
+        * crypto/subtle/aes-ctr-generate-key.html: Added.
+        * crypto/subtle/aes-ctr-import-jwk-key-length-128-expected.txt: Added.
+        * crypto/subtle/aes-ctr-import-jwk-key-length-128.html: Added.
+        * crypto/subtle/aes-ctr-import-jwk-key-length-192-expected.txt: Added.
+        * crypto/subtle/aes-ctr-import-jwk-key-length-192.html: Added.
+        * crypto/subtle/aes-ctr-import-jwk-key-length-256-expected.txt: Added.
+        * crypto/subtle/aes-ctr-import-jwk-key-length-256.html: Added.
+        * crypto/subtle/aes-ctr-import-key-decrypt-expected.txt: Added.
+        * crypto/subtle/aes-ctr-import-key-decrypt.html: Added.
+        * crypto/subtle/aes-ctr-import-key-encrypt-expected.txt: Added.
+        * crypto/subtle/aes-ctr-import-key-encrypt.html: Added.
+        * crypto/subtle/aes-ctr-import-key-unwrap-jwk-key-expected.txt: Added.
+        * crypto/subtle/aes-ctr-import-key-unwrap-jwk-key.html: Added.
+        * crypto/subtle/aes-ctr-import-key-unwrap-raw-key-expected.txt: Added.
+        * crypto/subtle/aes-ctr-import-key-unwrap-raw-key.html: Added.
+        * crypto/subtle/aes-ctr-import-key-wrap-jwk-key-expected.txt: Added.
+        * crypto/subtle/aes-ctr-import-key-wrap-jwk-key.html: Added.
+        * crypto/subtle/aes-ctr-import-key-wrap-raw-key-expected.txt: Added.
+        * crypto/subtle/aes-ctr-import-key-wrap-raw-key.html: Added.
+        * crypto/subtle/aes-ctr-import-raw-key-expected.txt: Added.
+        * crypto/subtle/aes-ctr-import-raw-key.html: Added.
+        * crypto/subtle/aes-generate-key-malformed-parameters-expected.txt:
+        * crypto/subtle/aes-generate-key-malformed-parameters.html:
+        * crypto/subtle/aes-import-key-malformed-parameters-expected.txt:
+        * crypto/subtle/aes-import-key-malformed-parameters.html:
+        * crypto/workers/subtle/aes-ctr-import-key-decrypt-expected.txt: Added.
+        * crypto/workers/subtle/aes-ctr-import-key-decrypt.html: Added.
+        * crypto/workers/subtle/aes-ctr-import-key-encrypt-expected.txt: Added.
+        * crypto/workers/subtle/aes-ctr-import-key-encrypt.html: Added.
+        * crypto/workers/subtle/aes-ctr-import-key-unwrap-key-expected.txt: Added.
+        * crypto/workers/subtle/aes-ctr-import-key-unwrap-key.html: Added.
+        * crypto/workers/subtle/aes-ctr-import-key-wrap-key-expected.txt: Added.
+        * crypto/workers/subtle/aes-ctr-import-key-wrap-key.html: Added.
+        * crypto/workers/subtle/resources/aes-ctr-import-key-decrypt.js: Added.
+        * crypto/workers/subtle/resources/aes-ctr-import-key-encrypt.js: Added.
+        * crypto/workers/subtle/resources/aes-ctr-import-key-unwrap-key.js: Added.
+        * crypto/workers/subtle/resources/aes-ctr-import-key-wrap-key.js: Added.
+
 2017-04-06  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark inspector/codemirror/prettyprinting-css-rules.html as flaky on release.
