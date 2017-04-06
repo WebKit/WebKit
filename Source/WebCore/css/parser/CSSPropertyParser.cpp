@@ -220,10 +220,9 @@ CSSPropertyID cssPropertyID(StringView string)
     
 using namespace CSSPropertyParserHelpers;
 
-CSSPropertyParser::CSSPropertyParser(const CSSParserTokenRange& range, const CSSParserContext& context, StyleSheetContents* styleSheetContents, Vector<CSSProperty, 256>* parsedProperties)
+CSSPropertyParser::CSSPropertyParser(const CSSParserTokenRange& range, const CSSParserContext& context, Vector<CSSProperty, 256>* parsedProperties)
     : m_range(range)
     , m_context(context)
-    , m_styleSheetContents(styleSheetContents)
     , m_parsedProperties(parsedProperties)
 {
     m_range.consumeWhitespace();
@@ -254,11 +253,11 @@ void CSSPropertyParser::addExpandedPropertyForValue(CSSPropertyID property, Ref<
         addProperty(longhands[i], property, value.copyRef(), important);
 }
 
-bool CSSPropertyParser::parseValue(CSSPropertyID propertyID, bool important, const CSSParserTokenRange& range, const CSSParserContext& context, StyleSheetContents* styleSheetContents, ParsedPropertyVector& parsedProperties, StyleRule::Type ruleType)
+bool CSSPropertyParser::parseValue(CSSPropertyID propertyID, bool important, const CSSParserTokenRange& range, const CSSParserContext& context, ParsedPropertyVector& parsedProperties, StyleRule::Type ruleType)
 {
     int parsedPropertiesSize = parsedProperties.size();
 
-    CSSPropertyParser parser(range, context, styleSheetContents, &parsedProperties);
+    CSSPropertyParser parser(range, context, &parsedProperties);
     bool parseSuccess;
 
 #if ENABLE(CSS_DEVICE_ADAPTATION)
@@ -277,9 +276,9 @@ bool CSSPropertyParser::parseValue(CSSPropertyID propertyID, bool important, con
     return parseSuccess;
 }
 
-RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, const CSSParserTokenRange& range, const CSSParserContext& context, StyleSheetContents* styleSheetContents)
+RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, const CSSParserTokenRange& range, const CSSParserContext& context)
 {
-    CSSPropertyParser parser(range, context, styleSheetContents, nullptr);
+    CSSPropertyParser parser(range, context, nullptr);
     RefPtr<CSSValue> value = parser.parseSingleValue(property);
     if (!value || !parser.m_range.atEnd())
         return nullptr;
