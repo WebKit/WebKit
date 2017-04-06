@@ -261,7 +261,12 @@ class SctpTransport::UsrSctpWrapper {
         return;
       }
 
+      // WEBKIT Change: disabling the blocking assertion as this is what SleepMs is about.
+      // FIXME: ensure usrsctp_finish is probably called without making blocking calls.
+      bool allowBlockingCalls = rtc::Thread::Current()->SetAllowBlockingCalls(true);
       rtc::Thread::SleepMs(10);
+      if (!allowBlockingCalls)
+        rtc::Thread::Current()->SetAllowBlockingCalls(false);
     }
     LOG(LS_ERROR) << "Failed to shutdown usrsctp.";
   }

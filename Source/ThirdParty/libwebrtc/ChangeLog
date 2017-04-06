@@ -1,3 +1,17 @@
+2017-04-06  Youenn Fablet  <youenn@apple.com>
+
+        WebRTC aborts when trying to sleep on a wrong thread
+        https://bugs.webkit.org/show_bug.cgi?id=170492
+        <rdar://problem/31446377>
+
+        Reviewed by Eric Carlson.
+
+        Libwebrtc network thread is set up so that it does not accept blocking calls to other threads.
+        as per ChannelManager::Init() in channelmanager.cc.
+        But rtc::Thread::SleepMs expects to block it.
+        Marking thread as blockable before calling SleepMs and resetting the value if needed afterwards.
+        * Source/webrtc/media/sctp/sctptransport.cc:
+
 2017-03-27  Alejandro G. Castro  <alex@igalia.com>
 
         Fixes for libwebrtc logging after r214288
