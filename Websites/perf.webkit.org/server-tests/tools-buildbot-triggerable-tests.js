@@ -917,35 +917,53 @@ describe('BuildbotTriggerable', function () {
     });
 
     describe('updateTriggerables', () => {
+
+        function refetchManifest()
+        {
+            MockData.resetV3Models();
+            return TestServer.remoteAPI().getJSON('/api/manifest').then((content) => Manifest._didFetchManifest(content));
+        }
+
         it('should update available triggerables', () => {
             const db = TestServer.database();
+            let macos;
+            let webkit;
             return MockData.addMockData(db).then(() => {
                 return Manifest.fetch();
             }).then(() => {
+                macos = Repository.findById(9);
+                assert.equal(macos.name(), 'macOS');
+                webkit = Repository.findById(11);
+                assert.equal(webkit.name(), 'WebKit');
+
                 return db.selectAll('triggerable_configurations', 'test');
             }).then((configurations) => {
                 assert.equal(configurations.length, 0);
                 assert.equal(Triggerable.all().length, 1);
 
-                let triggerable = Triggerable.all()[0];
+                const triggerable = Triggerable.all()[0];
                 assert.equal(triggerable.name(), 'build-webkit');
-                assert.deepEqual(triggerable.acceptedRepositories(), []);
 
-                let test = Test.findById(MockData.someTestId());
-                let platform = Platform.findById(MockData.somePlatformId());
+                const test = Test.findById(MockData.someTestId());
+                const platform = Platform.findById(MockData.somePlatformId());
                 assert.equal(Triggerable.findByTestConfiguration(test, platform), null);
 
-                let config = MockData.mockTestSyncConfigWithSingleBuilder();
-                let logger = new MockLogger;
-                let slaveInfo = {name: 'sync-slave', password: 'password'};
-                let buildbotTriggerable = new BuildbotTriggerable(config, TestServer.remoteAPI(), MockRemoteAPI, slaveInfo, logger);
+                const groups = TriggerableRepositoryGroup.sortByName(triggerable.repositoryGroups());
+                assert.equal(groups.length, 1);
+                assert.equal(groups[0].name(), 'webkit-svn');
+                assert.deepEqual(groups[0].repositories(), [webkit, macos]);
+
+                const config = MockData.mockTestSyncConfigWithSingleBuilder();
+                config.repositoryGroups = [
+                    {name: 'system-only', repositories: ['macOS'], properties: {'os': '<macOS>'}},
+                    {name: 'system-and-webkit', repositories: ['WebKit', 'macOS'], properties: {'os': '<macOS>', 'wk': '<WebKit>'}},
+                ]
+
+                const logger = new MockLogger;
+                const slaveInfo = {name: 'sync-slave', password: 'password'};
+                const buildbotTriggerable = new BuildbotTriggerable(config, TestServer.remoteAPI(), MockRemoteAPI, slaveInfo, logger);
                 return buildbotTriggerable.updateTriggerable();
-            }).then(() => {
-                MockData.resetV3Models();
-                assert.equal(Triggerable.all().length, 0);
-                return TestServer.remoteAPI().getJSON('/api/manifest');
-            }).then((manifestContent) => {
-                Manifest._didFetchManifest(manifestContent);
+            }).then(() => refetchManifest()).then(() => {
                 return db.selectAll('triggerable_configurations', 'test');
             }).then((configurations) => {
                 assert.equal(configurations.length, 1);
@@ -958,7 +976,30 @@ describe('BuildbotTriggerable', function () {
                 let platform = Platform.findById(MockData.somePlatformId());
                 let triggerable = Triggerable.findByTestConfiguration(test, platform);
                 assert.equal(triggerable.name(), 'build-webkit');
-            });
+
+                const groups = TriggerableRepositoryGroup.sortByName(triggerable.repositoryGroups());
+                assert.equal(groups.length, 2);
+                assert.equal(groups[0].name(), 'system-and-webkit');
+                assert.deepEqual(groups[0].repositories(), [webkit, macos]);
+                assert.equal(groups[1].name(), 'system-only');
+                assert.deepEqual(groups[1].repositories(), [macos]);
+
+                const config = MockData.mockTestSyncConfigWithSingleBuilder();
+                config.repositoryGroups = [ ];
+
+                const logger = new MockLogger;
+                const slaveInfo = {name: 'sync-slave', password: 'password'};
+                const buildbotTriggerable = new BuildbotTriggerable(config, TestServer.remoteAPI(), MockRemoteAPI, slaveInfo, logger);
+                return buildbotTriggerable.updateTriggerable();
+            }).then(() => refetchManifest()).then(() => {
+                assert.equal(Triggerable.all().length, 1);
+                const groups = TriggerableRepositoryGroup.sortByName(Triggerable.all()[0].repositoryGroups());
+                assert.equal(groups.length, 2);
+                assert.equal(groups[0].name(), 'system-and-webkit');
+                assert.deepEqual(groups[0].repositories(), [webkit, macos]);
+                assert.equal(groups[1].name(), 'system-only');
+                assert.deepEqual(groups[1].repositories(), [macos]);
+            })
         });
     });
 

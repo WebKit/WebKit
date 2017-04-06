@@ -19,8 +19,8 @@ class Triggerable extends LabeledObject {
         }
     }
 
+    name() { return this._name; }
     isDisabled() { return this._isDisabled; }
-    acceptedRepositories() { return this._acceptedRepositories; }
     repositoryGroups() { return this._repositoryGroups; }
 
     acceptsTest(test) { return this._acceptedTests.has(test); }
@@ -46,7 +46,19 @@ class TriggerableRepositoryGroup extends LabeledObject {
         super(id, object);
         this._description = object.description;
         this._acceptsCustomRoots = !!object.acceptsCustomRoots;
-        this._repositories = object.repositories;
+        this._repositories = Repository.sortByName(object.repositories);
+    }
+
+    accepts(commitSet)
+    {
+        const commitSetRepositories = Repository.sortByName(commitSet.repositories());
+        if (this._repositories.length != commitSetRepositories.length)
+            return false;
+        for (let i = 0; i < this._repositories.length; i++) {
+            if (this._repositories[i] != commitSetRepositories[i])
+                return false;
+        }
+        return true;
     }
 
     description() { return this._description || this.name(); }

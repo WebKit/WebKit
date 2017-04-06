@@ -12,16 +12,17 @@ let BuildbotSyncer = require('../tools/js/buildbot-syncer.js').BuildbotSyncer;
 function sampleiOSConfig()
 {
     return {
-        'shared':
-            {
-                'arguments': {
-                    'desired_image': {'root': 'iOS'},
-                    'opensource': {'rootOptions': ['WebKit-SVN', 'WebKit-Git']},
-                    'roots_dict': {'rootsExcluding': ['iOS']}
-                },
-                'slaveArgument': 'slavename',
-                'buildRequestArgument': 'build_request_id'
-            },
+        'slaveArgument': 'slavename',
+        'buildRequestArgument': 'build_request_id',
+        'repositoryGroups': {
+            'ios-svn-webkit': {
+                'repositories': ['WebKit', 'iOS'],
+                'properties': {
+                    'desired_image': '<iOS>',
+                    'opensource': '<WebKit>',
+                }
+            }
+        },
         'types': {
             'speedometer': {
                 'test': ['Speedometer'],
@@ -63,14 +64,8 @@ function sampleiOSConfigWithExpansions()
 {
     return {
         "triggerableName": "build-webkit-ios",
-        "shared":
-            {
-                "arguments": {
-                    "webkit-revision": {"root": "WebKit"},
-                    "os-version": {"root": "iOS"}
-                },
-                "buildRequestArgument": "build-request-id"
-            },
+        "buildRequestArgument": "build-request-id",
+        "repositoryGroups": { },
         "types": {
             "iphone-plt": {
                 "test": ["PLT-iPhone"],
@@ -110,35 +105,25 @@ function sampleiOSConfigWithExpansions()
     }
 }
 
-let sampleCommitSetData = {
-    'WebKit': {
-        'id': '111127',
-        'time': 1456955807334,
-        'repository': 'WebKit',
-        'revision': '197463',
-    },
-    'Shared': {
-        'id': '111237',
-        'time': 1456931874000,
-        'repository': 'Shared',
-        'revision': '80229',
-    },
-    'WebKit-Git': {
-        "id":"111239",
-        "time":1456931874000,
-        "repository":"WebKit-Git",
-        "revision":"9abcdef",
-    },
-};
-
 function smallConfiguration()
 {
     return {
-        'builder': 'some builder',
-        'platform': 'Some platform',
-        'test': ['Some test'],
-        'arguments': {},
-        'buildRequestArgument': 'id'};
+        'buildRequestArgument': 'id',
+        'repositoryGroups': {
+            'ios-svn-webkit': {
+                'repositories': ['iOS', 'WebKit'],
+                'properties': {
+                    'os': '<iOS>',
+                    'wk': '<WebKit>'
+                }
+            }
+        },
+        'configurations': [{
+            'builder': 'some builder',
+            'platform': 'Some platform',
+            'test': ['Some test']
+        }]
+    };
 }
 
 function smallPendingBuild()
@@ -210,12 +195,12 @@ function createSampleBuildRequest(platform, test)
     let commitSet = CommitSet.ensureSingleton('4197', {commits: [
         {'id': '111127', 'time': 1456955807334, 'repository': MockModels.webkit, 'revision': '197463'},
         {'id': '111237', 'time': 1456931874000, 'repository': MockModels.sharedRepository, 'revision': '80229'},
-        {'id': '111239', 'time': 1456931874000, 'repository': MockModels.webkitGit, 'revision': '9abcdef'},
         {'id': '88930', 'time': 0, 'repository': MockModels.ios, 'revision': '13A452'},
     ]});
 
-    let request = BuildRequest.ensureSingleton('16733-' + platform.id(), {'commitSet': commitSet, 'status': 'pending', 'platform': platform, 'test': test});
-    return request;
+    return BuildRequest.ensureSingleton('16733-' + platform.id(), {'triggerable': MockModels.triggerable,
+        repositoryGroup: MockModels.svnRepositoryGroup,
+        'commitSet': commitSet, 'status': 'pending', 'platform': platform, 'test': test});
 }
 
 function samplePendingBuild(buildRequestId, buildTime, slaveName)
@@ -229,11 +214,6 @@ function samplePendingBuild(buildRequestId, buildTime, slaveName)
             ['owner', '<unknown>', 'Force Build Form'],
             ['test_name', 'speedometer', 'Force Build Form'],
             ['reason', 'force build','Force Build Form'],
-            [
-                'roots_dict',
-                JSON.stringify(sampleCommitSetData),
-                'Force Build Form'
-            ],
             ['slavename', slaveName, ''],
             ['scheduler', 'ABTest-iPad-RunBenchmark-Tests-ForceScheduler', 'Scheduler']
         ],
@@ -280,7 +260,6 @@ function sampleInProgressBuild(slaveName)
             ['desired_image', '13A452', 'Force Build Form'],
             ['owner', '<unknown>', 'Force Build Form'],
             ['reason', 'force build', 'Force Build Form'],
-            ['roots_dict', JSON.stringify(sampleCommitSetData), 'Force Build Form'],
             ['scheduler', 'ABTest-iPad-RunBenchmark-Tests-ForceScheduler', 'Scheduler'],
             ['slavename', slaveName || 'ABTest-iPad-0', 'BuildSlave'],
         ],
@@ -356,7 +335,6 @@ function sampleFinishedBuild(buildRequestId, slaveName)
             ['desired_image', '13A452', 'Force Build Form'],
             ['owner', '<unknown>', 'Force Build Form'],
             ['reason', 'force build', 'Force Build Form'],
-            ['roots_dict', JSON.stringify(sampleCommitSetData), 'Force Build Form'],
             ['scheduler', 'ABTest-iPad-RunBenchmark-Tests-ForceScheduler', 'Scheduler'],
             ['slavename', slaveName || 'ABTest-iPad-0', 'BuildSlave'],
         ],
@@ -423,89 +401,68 @@ describe('BuildbotSyncer', () => {
     describe('_loadConfig', () => {
 
         it('should create BuildbotSyncer objects for a configuration that specify all required options', () => {
-            let syncers = BuildbotSyncer._loadConfig(MockRemoteAPI, {'configurations': [smallConfiguration()]});
-            assert.equal(syncers.length, 1);
+            assert.equal(BuildbotSyncer._loadConfig(MockRemoteAPI, smallConfiguration()).length, 1);
         });
 
         it('should throw when some required options are missing', () => {
             assert.throws(() => {
-                let config = smallConfiguration();
-                delete config['builder'];
-                BuildbotSyncer._loadConfig(MockRemoteAPI, {'configurations': [config]});
+                const config = smallConfiguration();
+                delete config.configurations[0].builder;
+                BuildbotSyncer._loadConfig(MockRemoteAPI, config);
             }, 'builder should be a required option');
             assert.throws(() => {
-                let config = smallConfiguration();
-                delete config['platform'];
-                BuildbotSyncer._loadConfig(MockRemoteAPI, {'configurations': [config]});
+                const config = smallConfiguration();
+                delete config.configurations[0].platform;
+                BuildbotSyncer._loadConfig(MockRemoteAPI, config);
             }, 'platform should be a required option');
             assert.throws(() => {
-                let config = smallConfiguration();
-                delete config['test'];
-                BuildbotSyncer._loadConfig(MockRemoteAPI, {'configurations': [config]});
+                const config = smallConfiguration();
+                delete config.configurations[0].test;
+                BuildbotSyncer._loadConfig(MockRemoteAPI, config);
             }, 'test should be a required option');
             assert.throws(() => {
-                let config = smallConfiguration();
-                delete config['arguments'];
-                BuildbotSyncer._loadConfig(MockRemoteAPI, {'configurations': [config]});
-            });
-            assert.throws(() => {
-                let config = smallConfiguration();
-                delete config['buildRequestArgument'];
-                BuildbotSyncer._loadConfig(MockRemoteAPI, {'configurations': [config]});
-            });
+                const config = smallConfiguration();
+                delete config.buildRequestArgument;
+                BuildbotSyncer._loadConfig(MockRemoteAPI, config);
+            }, 'buildRequestArgument should be required');
         });
 
         it('should throw when a test name is not an array of strings', () => {
             assert.throws(() => {
-                let config = smallConfiguration();
-                config.test = 'some test';
-                BuildbotSyncer._loadConfig(MockRemoteAPI, {'configurations': [config]});
+                const config = smallConfiguration();
+                config.configurations[0].test = 'some test';
+                BuildbotSyncer._loadConfig(MockRemoteAPI, config);
             });
             assert.throws(() => {
-                let config = smallConfiguration();
-                config.test = [1];
-                BuildbotSyncer._loadConfig(MockRemoteAPI, {'configurations': [config]});
+                const config = smallConfiguration();
+                config.configurations[0].test = [1];
+                BuildbotSyncer._loadConfig(MockRemoteAPI, config);
             });
         });
 
         it('should throw when arguments is not an object', () => {
             assert.throws(() => {
-                let config = smallConfiguration();
-                config.arguments = 'hello';
-                BuildbotSyncer._loadConfig(MockRemoteAPI, {'configurations': [config]});
+                const config = smallConfiguration();
+                config.configurations[0].arguments = 'hello';
+                BuildbotSyncer._loadConfig(MockRemoteAPI, config);
             });
         });
 
         it('should throw when arguments\'s values are malformed', () => {
             assert.throws(() => {
-                let config = smallConfiguration();
-                config.arguments = {'some': {'root': 'some root', 'rootsExcluding': ['other root']}};
-                BuildbotSyncer._loadConfig(RemoteAPI, {'configurations': [config]});
+                const config = smallConfiguration();
+                config.configurations[0].arguments = {'some': {'otherKey': 'some root'}};
+                BuildbotSyncer._loadConfig(RemoteAPI, config);
             });
             assert.throws(() => {
-                let config = smallConfiguration();
-                config.arguments = {'some': {'otherKey': 'some root'}};
-                BuildbotSyncer._loadConfig(RemoteAPI, {'configurations': [config]});
+                const config = smallConfiguration();
+                config.configurations[0].arguments = {'some': {'root': ['a', 'b']}};
+                BuildbotSyncer._loadConfig(RemoteAPI, config);
             });
             assert.throws(() => {
-                let config = smallConfiguration();
-                config.arguments = {'some': {'root': ['a', 'b']}};
-                BuildbotSyncer._loadConfig(RemoteAPI, {'configurations': [config]});
-            });
-            assert.throws(() => {
-                let config = smallConfiguration();
-                config.arguments = {'some': {'root': 1}};
-                BuildbotSyncer._loadConfig(RemoteAPI, {'configurations': [config]});
-            });
-            assert.throws(() => {
-                let config = smallConfiguration();
-                config.arguments = {'some': {'rootsExcluding': 'a'}};
-                BuildbotSyncer._loadConfig(RemoteAPI, {'configurations': [config]});
-            });
-            assert.throws(() => {
-                let config = smallConfiguration();
-                config.arguments = {'some': {'rootsExcluding': [1]}};
-                BuildbotSyncer._loadConfig(RemoteAPI, {'configurations': [config]});
+                const config = smallConfiguration();
+                config.configurations[0].arguments = {'some': {'root': 1}};
+                BuildbotSyncer._loadConfig(RemoteAPI, config);
             });
         });
 
@@ -565,13 +522,105 @@ describe('BuildbotSyncer', () => {
             assert.equal(configurations[1].platform, MockModels.ipad);
             assert.equal(configurations[1].test, MockModels.speedometer);
         });
+
+        it('should throw when repositoryGroups is not an object', () => {
+            assert.throws(() => {
+                const config = smallConfiguration();
+                config.repositoryGroups = 1;
+                BuildbotSyncer._loadConfig(MockRemoteAPI, config);
+            });
+            assert.throws(() => {
+                const config = smallConfiguration();
+                config.repositoryGroups = 'hello';
+                BuildbotSyncer._loadConfig(MockRemoteAPI, config);
+            });
+        });
+
+        it('should throw when a repository group does not specify a list of repository', () => {
+            assert.throws(() => {
+                const config = smallConfiguration();
+                config.repositoryGroups = {'some-group': {}};
+                BuildbotSyncer._loadConfig(MockRemoteAPI, config);
+            });
+            assert.throws(() => {
+                const config = smallConfiguration();
+                config.repositoryGroups = {'some-group': {'repositories': 1}};
+                BuildbotSyncer._loadConfig(MockRemoteAPI, config);
+            });
+        });
+
+        it('should throw when a repository group specifies an empty list of repository', () => {
+            assert.throws(() => {
+                const config = smallConfiguration();
+                config.repositoryGroups = {'some-group': {'repositories': []}};
+                BuildbotSyncer._loadConfig(MockRemoteAPI, config);
+            });
+        });
+
+        it('should throw when a repository group specifies a valid repository', () => {
+            assert.throws(() => {
+                const config = smallConfiguration();
+                config.repositoryGroups = {'some-group': {'repositories': ['InvalidRepositoryName']}};
+                BuildbotSyncer._loadConfig(MockRemoteAPI, config);
+            });
+        });
+
+        it('should throw when the description of a repository group is not a string', () => {
+            assert.throws(() => {
+                const config = smallConfiguration();
+                config.repositoryGroups = {'some-group': {'repositories': ['WebKit'], 'description': 1}};
+                BuildbotSyncer._loadConfig(MockRemoteAPI, config);
+            });
+            assert.throws(() => {
+                const config = smallConfiguration();
+                config.repositoryGroups = {'some-group': {'repositories': ['WebKit'], 'description': [1, 2]}};
+                BuildbotSyncer._loadConfig(MockRemoteAPI, config);
+            });
+        });
+
+        it('should throw when a repository group does not specify a dictionary of properties', () => {
+            assert.throws(() => {
+                const config = smallConfiguration();
+                config.repositoryGroups = {'some-group': {'repositories': ['WebKit'], properties: 1}};
+                BuildbotSyncer._loadConfig(MockRemoteAPI, config);
+            });
+            assert.throws(() => {
+                const config = smallConfiguration();
+                config.repositoryGroups = {'some-group': {'repositories': ['WebKit'], properties: 'hello'}};
+                BuildbotSyncer._loadConfig(MockRemoteAPI, config);
+            });
+        });
+
+        it('should throw when a repository group refers to a non-existent repository in the properties dictionary', () => {
+            assert.throws(() => {
+                const config = smallConfiguration();
+                config.repositoryGroups = {'some-group': {'repositories': ['WebKit'], properties: {'wk': '<InvalidRepository>'}}};
+                BuildbotSyncer._loadConfig(MockRemoteAPI, config);
+            });
+        });
+
+        it('should throw when a repository group refers to a repository in the properties dictionary which is not listed in the list of repositories', () => {
+            assert.throws(() => {
+                const config = smallConfiguration();
+                config.repositoryGroups = {'some-group': {'repositories': ['WebKit'], properties: {'os': '<iOS>'}}};
+                BuildbotSyncer._loadConfig(MockRemoteAPI, config);
+            });
+        });
+
+        it('should throw when a repository group does not use a lited repository', () => {
+            assert.throws(() => {
+                const config = smallConfiguration();
+                config.repositoryGroups = {'some-group': {'repositories': ['WebKit'], properties: {}}};
+                BuildbotSyncer._loadConfig(MockRemoteAPI, config);
+            });
+        });
     });
 
     describe('_propertiesForBuildRequest', () => {
         it('should include all properties specified in a given configuration', () => {
             let syncers = BuildbotSyncer._loadConfig(RemoteAPI, sampleiOSConfig());
             let properties = syncers[0]._propertiesForBuildRequest(createSampleBuildRequest(MockModels.iphone, MockModels.speedometer));
-            assert.deepEqual(Object.keys(properties), ['desired_image', 'opensource', 'roots_dict', 'test_name', 'forcescheduler', 'build_request_id']);
+            assert.deepEqual(Object.keys(properties).sort(), ['build_request_id', 'desired_image', 'forcescheduler', 'opensource', 'test_name']);
         });
 
         it('should preserve non-parametric property values', () => {
@@ -589,18 +638,6 @@ describe('BuildbotSyncer', () => {
             let syncers = BuildbotSyncer._loadConfig(RemoteAPI, sampleiOSConfig());
             let properties = syncers[0]._propertiesForBuildRequest(createSampleBuildRequest(MockModels.iphone, MockModels.speedometer));
             assert.equal(properties['desired_image'], '13A452');
-        });
-
-        it('should resolve "rootOptions"', () => {
-            let syncers = BuildbotSyncer._loadConfig(RemoteAPI, sampleiOSConfig());
-            let properties = syncers[0]._propertiesForBuildRequest(createSampleBuildRequest(MockModels.iphone, MockModels.speedometer));
-            assert.equal(properties['roots_dict'], JSON.stringify(sampleCommitSetData));
-        });
-
-        it('should resolve "rootsExcluding"', () => {
-            let syncers = BuildbotSyncer._loadConfig(RemoteAPI, sampleiOSConfig());
-            let properties = syncers[0]._propertiesForBuildRequest(createSampleBuildRequest(MockModels.iphone, MockModels.speedometer));
-            assert.equal(properties['roots_dict'], JSON.stringify(sampleCommitSetData));
         });
 
         it('should set the property for the build request id', () => {
@@ -887,11 +924,8 @@ describe('BuildbotSyncer', () => {
                 assert.deepEqual(requests[0].data, {
                     'build_request_id': '16733-' + MockModels.iphone.id(),
                     'desired_image': '13A452',
-                    "opensource": "9abcdef",
+                    "opensource": "197463",
                     'forcescheduler': 'ABTest-iPhone-RunBenchmark-Tests-ForceScheduler',
-                    'roots_dict': '{"WebKit":{"id":"111127","time":1456955807334,"repository":"WebKit","revision":"197463"},'
-                        + '"Shared":{"id":"111237","time":1456931874000,"repository":"Shared","revision":"80229"},'
-                        + '"WebKit-Git":{"id":"111239","time":1456931874000,"repository":"WebKit-Git","revision":"9abcdef"}}',
                     'slavename': 'some-slave',
                     'test_name': 'speedometer'
                 });
@@ -915,31 +949,31 @@ describe('BuildbotSyncer', () => {
         }
 
         it('should schedule a build if builder has no builds if slaveList is not specified', () => {
-            let syncer = BuildbotSyncer._loadConfig(MockRemoteAPI, {'configurations': [smallConfiguration()]})[0];
+            let syncer = BuildbotSyncer._loadConfig(MockRemoteAPI, smallConfiguration())[0];
 
             return pullBuildbotWithAssertion(syncer, [], {}).then(() => {
                 syncer.scheduleRequestInGroupIfAvailable(createSampleBuildRequest(MockModels.somePlatform, MockModels.someTest));
                 assert.equal(requests.length, 1);
                 assert.equal(requests[0].url, '/builders/some%20builder/force');
                 assert.equal(requests[0].method, 'POST');
-                assert.deepEqual(requests[0].data, {id: '16733-' + MockModels.somePlatform.id()});
+                assert.deepEqual(requests[0].data, {id: '16733-' + MockModels.somePlatform.id(), 'os': '13A452', 'wk': '197463'});
             });
         });
 
         it('should schedule a build if builder only has finished builds if slaveList is not specified', () => {
-            let syncer = BuildbotSyncer._loadConfig(MockRemoteAPI, {'configurations': [smallConfiguration()]})[0];
+            let syncer = BuildbotSyncer._loadConfig(MockRemoteAPI, smallConfiguration())[0];
 
             return pullBuildbotWithAssertion(syncer, [], {[-1]: smallFinishedBuild()}).then(() => {
                 syncer.scheduleRequestInGroupIfAvailable(createSampleBuildRequest(MockModels.somePlatform, MockModels.someTest));
                 assert.equal(requests.length, 1);
                 assert.equal(requests[0].url, '/builders/some%20builder/force');
                 assert.equal(requests[0].method, 'POST');
-                assert.deepEqual(requests[0].data, {id: '16733-' + MockModels.somePlatform.id()});
+                assert.deepEqual(requests[0].data, {id: '16733-' + MockModels.somePlatform.id(), 'os': '13A452', 'wk': '197463'});
             });
         });
 
         it('should not schedule a build if builder has a pending build if slaveList is not specified', () => {
-            let syncer = BuildbotSyncer._loadConfig(MockRemoteAPI, {'configurations': [smallConfiguration()]})[0];
+            let syncer = BuildbotSyncer._loadConfig(MockRemoteAPI, smallConfiguration())[0];
 
             return pullBuildbotWithAssertion(syncer, [smallPendingBuild()], {}).then(() => {
                 syncer.scheduleRequestInGroupIfAvailable(createSampleBuildRequest(MockModels.somePlatform, MockModels.someTest));
@@ -1041,7 +1075,7 @@ describe('BuildbotSyncer', () => {
         });
 
         it('should not schedule a build if a new request had been submitted to the same builder without slaveList', () => {
-            let syncer = BuildbotSyncer._loadConfig(MockRemoteAPI, {'configurations': [smallConfiguration()]})[0];
+            let syncer = BuildbotSyncer._loadConfig(MockRemoteAPI, smallConfiguration())[0];
 
             return pullBuildbotWithAssertion(syncer, [], {}).then(() => {
                 syncer.scheduleRequest(createSampleBuildRequest(MockModels.somePlatform, MockModels.someTest), null);

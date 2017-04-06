@@ -6,12 +6,14 @@ class BuildRequest extends DataModelObject {
     {
         super(id, object);
         this._triggerable = object.triggerable;
+        console.assert(!object.repositoryGroup || object.repositoryGroup instanceof TriggerableRepositoryGroup);
         this._analysisTaskId = object.task;
         this._testGroupId = object.testGroupId;
         console.assert(!object.testGroup || object.testGroup instanceof TestGroup);
         this._testGroup = object.testGroup;
         if (this._testGroup)
             this._testGroup.addBuildRequest(this);
+        this._repositoryGroup = object.repositoryGroup;
         console.assert(object.platform instanceof Platform);
         this._platform = object.platform;
         console.assert(object.test instanceof Test);
@@ -36,9 +38,11 @@ class BuildRequest extends DataModelObject {
         this._buildId = object.build;
     }
 
+    triggerable() { return this._triggerable; }
     analysisTaskId() { return this._analysisTaskId; }
     testGroupId() { return this._testGroupId; }
     testGroup() { return this._testGroup; }
+    repositoryGroup() { return this._repositoryGroup; }
     platform() { return this._platform; }
     test() { return this._test; }
     order() { return +this._order; }
@@ -129,6 +133,8 @@ class BuildRequest extends DataModelObject {
         });
 
         return data['buildRequests'].map(function (rawData) {
+            rawData.triggerable = Triggerable.findById(rawData.triggerable);
+            rawData.repositoryGroup = TriggerableRepositoryGroup.findById(rawData.repositoryGroup);
             rawData.platform = Platform.findById(rawData.platform);
             rawData.test = Test.findById(rawData.test);
             rawData.testGroupId = rawData.testGroup;

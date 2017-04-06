@@ -68,6 +68,7 @@ class BuildRequestsFetcher {
                 'id' => $row['request_id'],
                 'task' => $row['task_id'],
                 'triggerable' => $row['request_triggerable'],
+                'repositoryGroup' => $row['request_repository_group'],
                 'test' => $resolve_ids ? $test_path_resolver->path_for_test($test_id) : $test_id,
                 'platform' => $resolve_ids ? $id_to_platform_name[$platform_id] : $platform_id,
                 'testGroup' => $row['request_group'],

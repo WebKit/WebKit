@@ -53,7 +53,7 @@ function sampleBuildRequestData()
     };
 }
 
-describe('TestGroup', function () {
+describe('BuildRequest', function () {
     MockModels.inject();
 
     describe('waitingTime', function () {

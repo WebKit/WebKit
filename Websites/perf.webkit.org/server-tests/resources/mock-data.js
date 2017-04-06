@@ -16,21 +16,29 @@ MockData = {
         Test.clearStaticMap();
         TestGroup.clearStaticMap();
         Triggerable.clearStaticMap();
+        TriggerableRepositoryGroup.clearStaticMap();
     },
+    emptyTriggeragbleId() { return 1001; },
     someTestId() { return 200; },
     somePlatformId() { return 65; },
+    macosRepositoryId() { return 9; },
+    webkitRepositoryId() { return 11; },
+    gitWebkitRepositoryId() { return 111; },
     addMockData: function (db, statusList)
     {
         if (!statusList)
             statusList = ['pending', 'pending', 'pending', 'pending'];
         return Promise.all([
-            db.insert('build_triggerables', {id: 1, name: 'build-webkit'}),
+            db.insert('build_triggerables', {id: 1000, name: 'build-webkit'}),
             db.insert('build_slaves', {id: 20, name: 'sync-slave', password_hash: crypto.createHash('sha256').update('password').digest('hex')}),
-            db.insert('repositories', {id: 9, name: 'OS X'}),
-            db.insert('repositories', {id: 11, name: 'WebKit'}),
-            db.insert('commits', {id: 87832, repository: 9, revision: '10.11 15A284'}),
-            db.insert('commits', {id: 93116, repository: 11, revision: '191622', time: (new Date(1445945816878)).toISOString()}),
-            db.insert('commits', {id: 96336, repository: 11, revision: '192736', time: (new Date(1448225325650)).toISOString()}),
+            db.insert('repositories', {id: this.macosRepositoryId(), name: 'macOS'}),
+            db.insert('repositories', {id: this.webkitRepositoryId(), name: 'WebKit'}),
+            db.insert('triggerable_repository_groups', {id: 2001, name: 'webkit-svn', triggerable: 1000}),
+            db.insert('triggerable_repositories', {repository: this.macosRepositoryId(), group: 2001}),
+            db.insert('triggerable_repositories', {repository: this.webkitRepositoryId(), group: 2001}),
+            db.insert('commits', {id: 87832, repository: this.macosRepositoryId(), revision: '10.11 15A284'}),
+            db.insert('commits', {id: 93116, repository: this.webkitRepositoryId(), revision: '191622', time: (new Date(1445945816878)).toISOString()}),
+            db.insert('commits', {id: 96336, repository: this.webkitRepositoryId(), revision: '192736', time: (new Date(1448225325650)).toISOString()}),
             db.insert('platforms', {id: MockData.somePlatformId(), name: 'some platform'}),
             db.insert('tests', {id: MockData.someTestId(), name: 'some test'}),
             db.insert('test_metrics', {id: 300, test: 200, name: 'some metric'}),
@@ -43,22 +51,59 @@ MockData = {
             db.insert('commit_set_relationships', {set: 402, commit: 96336}),
             db.insert('analysis_tasks', {id: 500, platform: 65, metric: 300, name: 'some task'}),
             db.insert('analysis_test_groups', {id: 600, task: 500, name: 'some test group'}),
-            db.insert('build_requests', {id: 700, status: statusList[0], triggerable: 1, platform: 65, test: 200, group: 600, order: 0, commit_set: 401}),
-            db.insert('build_requests', {id: 701, status: statusList[1], triggerable: 1, platform: 65, test: 200, group: 600, order: 1, commit_set: 402}),
-            db.insert('build_requests', {id: 702, status: statusList[2], triggerable: 1, platform: 65, test: 200, group: 600, order: 2, commit_set: 401}),
-            db.insert('build_requests', {id: 703, status: statusList[3], triggerable: 1, platform: 65, test: 200, group: 600, order: 3, commit_set: 402}),
+            db.insert('build_requests', {id: 700, status: statusList[0], triggerable: 1000, repository_group: 2001, platform: 65, test: 200, group: 600, order: 0, commit_set: 401}),
+            db.insert('build_requests', {id: 701, status: statusList[1], triggerable: 1000, repository_group: 2001, platform: 65, test: 200, group: 600, order: 1, commit_set: 402}),
+            db.insert('build_requests', {id: 702, status: statusList[2], triggerable: 1000, repository_group: 2001, platform: 65, test: 200, group: 600, order: 2, commit_set: 401}),
+            db.insert('build_requests', {id: 703, status: statusList[3], triggerable: 1000, repository_group: 2001, platform: 65, test: 200, group: 600, order: 3, commit_set: 402}),
+        ]);
+    },
+    addEmptyTriggerable(db)
+    {
+        return Promise.all([
+            db.insert('build_triggerables', {id: this.emptyTriggeragbleId(), name: 'empty-triggerable'}),
+            db.insert('repositories', {id: this.macosRepositoryId(), name: 'macOS'}),
+            db.insert('repositories', {id: this.webkitRepositoryId(), name: 'WebKit'}),
+            db.insert('repositories', {id: this.gitWebkitRepositoryId(), name: 'Git-WebKit'}),
+            db.insert('platforms', {id: MockData.somePlatformId(), name: 'some platform'}),
+            db.insert('tests', {id: MockData.someTestId(), name: 'some test'}),
+        ]);
+    },
+    addMockTestGroupWithGitWebKit(db)
+    {
+        return Promise.all([
+            db.insert('repositories', {id: this.gitWebkitRepositoryId(), name: 'Git-WebKit'}),
+            db.insert('triggerable_repository_groups', {id: 2002, name: 'webkit-git', triggerable: 1000}),
+            db.insert('triggerable_repositories', {repository: this.macosRepositoryId(), group: 2002}),
+            db.insert('triggerable_repositories', {repository: this.gitWebkitRepositoryId(), group: 2002}),
+            db.insert('commits', {id: 193116, repository: this.gitWebkitRepositoryId(), revision: '2ceda45d3cd63cde58d0dbf5767714e03d902e43', time: (new Date(1445945816878)).toISOString()}),
+            db.insert('commits', {id: 196336, repository: this.gitWebkitRepositoryId(), revision: '8e294365a452a89785d6536ca7f0fc8a95fa152d', time: (new Date(1448225325650)).toISOString()}),
+            db.insert('commit_sets', {id: 1401}),
+            db.insert('commit_set_relationships', {set: 1401, commit: 87832}),
+            db.insert('commit_set_relationships', {set: 1401, commit: 193116}),
+            db.insert('commit_sets', {id: 1402}),
+            db.insert('commit_set_relationships', {set: 1402, commit: 87832}),
+            db.insert('commit_set_relationships', {set: 1402, commit: 196336}),
+            db.insert('analysis_test_groups', {id: 1600, task: 500, name: 'test group with git'}),
+            db.insert('build_requests', {id: 1700, status: 'pending', triggerable: 1000, repository_group: 2002, platform: 65, test: 200, group: 1600, order: 0, commit_set: 1401}),
+            db.insert('build_requests', {id: 1701, status: 'pending', triggerable: 1000, repository_group: 2002, platform: 65, test: 200, group: 1600, order: 1, commit_set: 1402}),
+            db.insert('build_requests', {id: 1702, status: 'pending', triggerable: 1000, repository_group: 2002, platform: 65, test: 200, group: 1600, order: 2, commit_set: 1401}),
+            db.insert('build_requests', {id: 1703, status: 'pending', triggerable: 1000, repository_group: 2002, platform: 65, test: 200, group: 1600, order: 3, commit_set: 1402}),
         ]);
     },
     addAnotherMockTestGroup: function (db, statusList, author)
     {
         if (!statusList)
             statusList = ['pending', 'pending', 'pending', 'pending'];
+        const test = MockData.someTestId();
+        const triggerable = 1000;
+        const platform = 65;
+        const repository_group = 2001;
         return Promise.all([
-            db.insert('analysis_test_groups', {id: 601, task: 500, name: 'another test group', author: author}),
-            db.insert('build_requests', {id: 713, status: statusList[3], triggerable: 1, platform: 65, test: 200, group: 601, order: 3, commit_set: 402}),
-            db.insert('build_requests', {id: 710, status: statusList[0], triggerable: 1, platform: 65, test: 200, group: 601, order: 0, commit_set: 401}),
-            db.insert('build_requests', {id: 712, status: statusList[2], triggerable: 1, platform: 65, test: 200, group: 601, order: 2, commit_set: 401}),
-            db.insert('build_requests', {id: 711, status: statusList[1], triggerable: 1, platform: 65, test: 200, group: 601, order: 1, commit_set: 402}),
+            db.insert('analysis_test_groups', {id: 601, task: 500, name: 'another test group', author}),
+            db.insert('build_requests', {id: 713, status: statusList[3], triggerable, repository_group, platform, test, group: 601, order: 3, commit_set: 402}),
+            db.insert('build_requests', {id: 710, status: statusList[0], triggerable, repository_group, platform, test, group: 601, order: 0, commit_set: 401}),
+            db.insert('build_requests', {id: 712, status: statusList[2], triggerable, repository_group, platform, test, group: 601, order: 2, commit_set: 401}),
+            db.insert('build_requests', {id: 711, status: statusList[1], triggerable, repository_group, platform, test, group: 601, order: 1, commit_set: 402}),
         ]);
     },
     mockTestSyncConfigWithSingleBuilder: function ()
@@ -66,16 +111,21 @@ MockData = {
         return {
             'triggerableName': 'build-webkit',
             'lookbackCount': 2,
+            'buildRequestArgument': 'build-request-id',
+            'repositoryGroups': {
+                'webkit-svn': {
+                    'repositories': ['WebKit', 'macOS'],
+                    'properties': {
+                        'os': '<macOS>',
+                        'wk': '<WebKit>',
+                    }
+                }
+            },
             'configurations': [
                 {
                     'platform': 'some platform',
                     'test': ['some test'],
                     'builder': 'some-builder-1',
-                    'arguments': {
-                        'wk': {'root': 'WebKit'},
-                        'os': {'root': 'OS X'},
-                    },
-                    'buildRequestArgument': 'build-request-id',
                 }
             ]
         }
@@ -85,26 +135,26 @@ MockData = {
         return {
             'triggerableName': 'build-webkit',
             'lookbackCount': 2,
+            'buildRequestArgument': 'build-request-id',
+            'repositoryGroups': {
+                'webkit-svn': {
+                    'repositories': ['WebKit', 'macOS'],
+                    'properties': {
+                        'os': '<macOS>',
+                        'wk': '<WebKit>',
+                    }
+                }
+            },
             'configurations': [
                 {
                     'platform': 'some platform',
                     'test': ['some test'],
                     'builder': 'some-builder-1',
-                    'arguments': {
-                        'wk': {'root': 'WebKit'},
-                        'os': {'root': 'OS X'},
-                    },
-                    'buildRequestArgument': 'build-request-id',
                 },
                 {
                     'platform': 'some platform',
                     'test': ['some test'],
                     'builder': 'some builder 2',
-                    'arguments': {
-                        'wk': {'root': 'WebKit'},
-                        'os': {'root': 'OS X'},
-                    },
-                    'buildRequestArgument': 'build-request-id',
                 }
             ]
         }

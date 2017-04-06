@@ -1,3 +1,159 @@
+2017-04-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Each build request should be associated with a repository group
+        https://bugs.webkit.org/show_bug.cgi?id=170528
+
+        Rubber-stamped by Chris Dumez.
+
+        Make the buildbot syncing script use the concept of repository groups so that each repository group can post
+        a different set of properties to buildbot. In order to do this, we associate each build request with
+        a repository group to use. Each triggerable's repository groups is now updated by the syncing scripts via
+        /api/update-triggerable just the same way the set of the supported platform, test pairs are updated.
+
+        Each repository group specifies the list of repositories, a dictionary that maps the buildbot property name
+        to either a string value or a repository name enclosed in < and >:
+
+        ```js
+        "repositoryGroups": {
+            "webkit-svn": {
+                "repositories": ["WebKit", "macOS"],
+                "properties": {"os": "<macOS>", "wk": "<WebKit>"}
+            }
+        }
+        ```
+
+        With this, removed the support for specifying a repository to use in generic dictionary of properties via
+        a dictionary with a single key of "root", "rootOptions", and "rootsExcluding". We now validate that the list of
+        repositories in each repository group matches exactly the ones used in buildbot properties as well as ones in
+        build requests.
+
+        After this patch, sync-with-buildbot.js will no longer schedule a build request without a repository group.
+        Run the appropriate database queries to set the repository group on each build request. Because of this change,
+        this patch also makes BuildbotTriggerable.prototype.syncOnce more robust against invalid build requests.
+        Instead of throwing an exception and exiting early, it simply skips all build requests that belong to the same
+        test group if the next build request to be scheduled does not specify a repository group.
+
+        * init-database.sql: Add request_repository_group column to build_requests table, and a unique constraint for
+        repository and group pair in triggerable_repositories table.
+
+        * public/api/update-triggerable.php:
+        (main): Validate and insert repository groups.
+        (validate_configurations): Extracted from main.
+        (validate_repository_groups): Added.
+
+        * public/v3/models/repository.js:
+        (Repository.findTopLevelByName): Added.
+
+        * public/include/build-requests-fetcher.php:
+        (BuildRequestsFetcher::results_internal): Include the repository group of each request in the JSON response.
+
+        * public/include/repository-group-finder.php: Added. A helper class to find the repository group for a given
+        triggerable for a list of repositories.
+        (RepositoryGroupFinder): Added. 
+        (RepositoryGroupFinder::__construct): Added.
+        (RepositoryGroupFinder::find_by_repositories): Added.
+        (RepositoryGroupFinder::populate_map): Added.
+
+        * public/privileged-api/create-test-group.php:
+        (main): Each element in an array returned by ensure_commit_sets and commit_sets_from_revision_sets now contains
+        "set", the list of commit IDs, and "repository_group", the repository group identified for each commit set.
+        Use that to set the repository group in each new build request. 
+        (commit_sets_from_revision_sets): Use RepositoryGroupFinder to find the right repository group.
+        (ensure_commit_sets): Ditto. There is no need to find a repository group for each commit set here since its
+        argument is keyed by the repository name. e.g. {"WebKit": [123, 456], "macOS": ["16A323", "16A323"]}
+
+        * public/v3/models/build-request.js:
+        (BuildRequest):
+        (BuildRequest.prototype.triggerable): Added.
+        (BuildRequest.prototype.repositoryGroup): Added.
+        (BuildRequest.constructBuildRequestsFromData): Resolve the triggerable and the repository group.
+
+        * public/v3/models/triggerable.js:
+        (Triggerable.prototype.name): Added.
+        (Triggerable.prototype.acceptedRepositories): Deleted.
+        (TriggerableRepositoryGroup):
+        (TriggerableRepositoryGroup.prototype.accepts): Added. Retruns true if the repository group
+
+        * server-tests/api-build-requests-tests.js: Added a test for getting the repository group of a build request.
+        * server-tests/api-manifest-tests.js: Added assertions for the repository groups.
+        * server-tests/api-report-tests.js:
+        (.emptyReport):
+        (.reportWithTwoLevelsOfAggregations):
+        * server-tests/api-update-triggerable.js: Added test cases for updating the repository groups associated with
+        a triggerable.
+        (.updateWithOSXRepositoryGroup):
+        (.mapRepositoriesByGroup):
+        * server-tests/privileged-api-create-test-group-tests.js:
+        (addTriggerableAndCreateTask): Add two repository groups for testing. Added assertions for repository groups
+        in existing test cases, and added a test case for creating a test group with two different repository groups.
+
+        * server-tests/resources/mock-data.js:
+        (MockData.resetV3Models): Reset TriggerableRepositoryGroup's static maps.
+        (MockData.emptyTriggeragbleId): Added.
+        (MockData.macosRepositoryId): Added.
+        (MockData.webkitRepositoryId): Added.
+        (MockData.gitWebkitRepositoryId): Added.
+        (MockData.addMockData): Create repository groups as needed. Renamed the "OS X" repository to "macOS" since some
+        tests were using the latter, and now we need mock data to be consistent across tests due to stricter checks.
+        (MockData.addEmptyTriggerable): Added. Used in api-update-triggerable.js.
+        (MockData.addMockTestGroupWithGitWebKit): Added. Used in api-build-requests-tests.js.
+        (MockData.addAnotherMockTestGroup): Cleanup.
+        (MockData.mockTestSyncConfigWithSingleBuilder): Updated the mock configuration per code changes.
+        (MockData.mockTestSyncConfigWithTwoBuilders): Ditto.
+
+        * server-tests/tools-buildbot-triggerable-tests.js: Updated a test case testing /api/update-triggerable to test
+        updating the set of repository groups in addition to the set of test, platform pairs.
+        (.refetchManifest): Added.
+
+        * tools/js/buildbot-syncer.js:
+        (BuildbotSyncer): Now takes a set of configurations shared across syncers: repositoryGroups, slaveArgument,
+        and buildRequestArgument as the third argument.
+        (BuildbotSyncer.prototype.repositoryGroups): Added.
+        (BuildbotSyncer.prototype._testGroupMapForBuildRequests): Cleaned up the code to use Array.prototype.find.
+        Also added an assertion that the build request is associated with a repository group.
+        (BuildbotSyncer.prototype._propertiesForBuildRequest): Removed the support for using an arbitary property to
+        specify a revision in favor of explicity listing each property and repository name in a repository group.
+        (BuildbotSyncer._loadConfig): Removed the support for "shared", which specified the set of buildbot properties
+        shared across syncers, the name of properties which specifies the build slave name and build request ID. These
+        values are not stored as top-level properties and superseded by the concept of repository groups.
+        (BuildbotSyncer._parseRepositoryGroup): Parses and validates repository groups.
+        (BuildbotSyncer._createTestConfiguration): We no longer expect each configuration to specify a dictionary of
+        properties or buildRequestArgument (often inherited from shared).
+        (BuildbotSyncer._validateAndMergeConfig): Removed "slaveArgument" and "buildRequestArgument" from the list of
+        allowed proeprties in each configuration now that they're specified as top-level properties.
+
+        * tools/js/buildbot-triggerable.js:
+        (BuildbotTriggerable.prototype.updateTriggerable): Update the associated repository groups.
+        (BuildbotTriggerable.prototype.syncOnce): Skip test groups for which the next build request to be scheduled is
+        not included in the list of valid build requests.
+        (BuildbotTriggerable.prototype._validateRequests): Now returns the list of valid build requests, which excludes
+        those that lack a repository group set.
+        (BuildbotTriggerable.prototype._nextRequestInGroup): Extracted from _scheduleRequestIfSlaveIsAvailable. Finds
+        the next build request to be scheduled for the test group.
+        (BuildbotTriggerable.prototype._scheduleRequestIfSlaveIsAvailable): Renamed from
+        _scheduleNextRequestInGroupIfSlaveIsAvailable. Now takes the syncer and the slave name as arguments instead of
+        a test group information since syncOnce now calls _nextRequestInGroup to find the next build request.
+
+        * tools/js/v3-models.js:
+
+        * unit-tests/build-request-tests.js: Fixed the test name.
+
+        * unit-tests/buildbot-syncer-tests.js: Removed tests for "rootOptions" and "rootsExcluding", and added tests
+        for parsing repository groups.
+        (sampleiOSConfig): Updated the mock configuration per code changes.
+        (sampleiOSConfigWithExpansions): Ditto.
+        (smallConfiguration): Ditto. Now returns the entire configuration instead of a single builder configuration.
+        Various test cases have been updated to reflect this.
+        (createSampleBuildRequest): Removed the git hash of WebKit to match the repository groups listed in the mock
+        configurations. The git hash was there to test "rootOptions", which this patch removed.
+        (samplePendingBuild): Removed "root_dict" from the list of properties. This was used to test "rootsExcluding"
+        which, again, this patch removed.
+        (sampleInProgressBuild): Ditto.
+        (sampleFinishedBuild): Ditto.
+
+        * unit-tests/resources/mock-v3-models.js:
+        (MockModels.inject): Added ock repository groups so that existing tests will continue to function.
+
 2017-04-05  Ryosuke Niwa  <rniwa@webkit.org>
 
         Introduce the notion of repository groups to triggerables

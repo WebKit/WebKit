@@ -8,6 +8,15 @@ class Repository extends LabeledObject {
         this._blameUrl = object.blameUrl;
         this._hasReportedCommits = object.hasReportedCommits;
         this._owner = object.owner;
+
+        if (!object.owner)
+            this.ensureNamedStaticMap('topLevelName')[this.name()] = this;
+    }
+
+    static findTopLevelByName(name)
+    {
+        const map = this.namedStaticMap('topLevelName');
+        return map ? map[name] : null;
     }
 
     hasUrlForRevision() { return !!this._url; }

@@ -13,6 +13,7 @@ var MockModels = {
             Test.clearStaticMap();
             TestGroup.clearStaticMap();
             BuildRequest.clearStaticMap();
+            Triggerable.clearStaticMap();
 
             MockModels.osx = Repository.ensureSingleton(9, {name: 'OS X'});
             MockModels.ios = Repository.ensureSingleton(22, {name: 'iOS'});
@@ -39,6 +40,23 @@ var MockModels = {
             MockModels.iPhonePLT = Test.ensureSingleton(1500, {name: 'PLT-iPhone'});
             MockModels.pltMean = Metric.ensureSingleton(1158, {name: 'Time', aggregator: 'Arithmetic', test: MockModels.plt});
             MockModels.elCapitan = Platform.ensureSingleton(31, {name: 'El Capitan', metrics: [MockModels.pltMean]});
+
+            MockModels.osRepositoryGroup = new TriggerableRepositoryGroup(31, {
+                name: 'ios',
+                repositories: [MockModels.ios]
+            });
+            MockModels.svnRepositoryGroup = new TriggerableRepositoryGroup(32, {
+                name: 'ios-svn-webkit',
+                repositories: [MockModels.ios, MockModels.webkit, MockModels.sharedRepository]
+            });
+            MockModels.gitRepositoryGroup = new TriggerableRepositoryGroup(33, {
+                name: 'ios-git-webkit',
+                repositories: [MockModels.ios, MockModels.webkitGit, MockModels.sharedRepository]
+            });
+            MockModels.triggerable = new Triggerable(3, {name: 'build-webkit',
+                repositoryGroups: [MockModels.osRepositoryGroup, MockModels.svnRepositoryGroup, MockModels.gitRepositoryGroup],
+                configurations: [{test: MockModels.iPhonePLT, platform: MockModels.iphone}]});
+
         });
     }
 }

@@ -21,7 +21,7 @@ describe("/api/report", function () {
             "platform": "Mountain Lion",
             "tests": {},
             "revisions": {
-                "OS X": {
+                "macOS": {
                     "revision": "10.8.2 12C60"
                 },
                 "WebKit": {
@@ -43,7 +43,7 @@ describe("/api/report", function () {
             "platform": "Mountain Lion",
             "tests": {},
             "revisions": {
-                "OS X": {
+                "macOS": {
                     "revision": "10.8.2 12C60"
                 },
                 "WebKit": {
@@ -232,7 +232,7 @@ describe("/api/report", function () {
             const commits = result[1];
             const buildCommitsRelations = result[2];
             assert.equal(repositories.length, 2);
-            assert.deepEqual(repositories.map((row) => { return row['name']; }).sort(), ['OS X', 'WebKit']);
+            assert.deepEqual(repositories.map((row) => row['name']).sort(), ['WebKit', 'macOS']);
 
             assert.equal(commits.length, 2);
             assert.equal(buildCommitsRelations.length, 2);
@@ -248,7 +248,7 @@ describe("/api/report", function () {
             for (let commit of commits)
                 repositoryNameToRevisionRow[repositoryIdToName[commit['repository']]] = commit;
 
-            assert.equal(repositoryNameToRevisionRow['OS X']['revision'], '10.8.2 12C60');
+            assert.equal(repositoryNameToRevisionRow['macOS']['revision'], '10.8.2 12C60');
             assert.equal(repositoryNameToRevisionRow['WebKit']['revision'], '141977');
             assert.equal(repositoryNameToRevisionRow['WebKit']['time'].toString(),
                 new Date('2013-02-06 08:55:20.9').toString());
@@ -368,7 +368,7 @@ describe("/api/report", function () {
             }
         },
         "revisions": {
-            "OS X": {
+            "macOS": {
                 "revision": "10.8.2 12C60"
             },
             "WebKit": {

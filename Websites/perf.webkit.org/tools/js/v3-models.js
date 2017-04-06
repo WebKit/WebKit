@@ -1,6 +1,7 @@
 'use strict';
 
-function importFromV3(file, name) {
+function importFromV3(file, name)
+{
     const modelsDirectory = '../../public/v3/';
 
     global[name] = require(modelsDirectory + file)[name];
@@ -24,6 +25,7 @@ importFromV3('models/platform.js', 'Platform');
 importFromV3('models/repository.js', 'Repository');
 importFromV3('models/commit-set.js', 'MeasurementCommitSet');
 importFromV3('models/commit-set.js', 'CommitSet');
+importFromV3('models/commit-set.js', 'CustomCommitSet');
 importFromV3('models/test.js', 'Test');
 importFromV3('models/test-group.js', 'TestGroup');
 importFromV3('models/time-series.js', 'TimeSeries');

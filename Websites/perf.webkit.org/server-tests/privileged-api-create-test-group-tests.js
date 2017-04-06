@@ -100,6 +100,10 @@ function addTriggerableAndCreateTask(name)
         'configurations': [
             {test: MockData.someTestId(), platform: MockData.somePlatformId()}
         ],
+        'repositoryGroups': [
+            {name: 'webkit-only', repositories: [MockData.webkitRepositoryId()]},
+            {name: 'system-and-webkit', repositories: [MockData.macosRepositoryId(), MockData.webkitRepositoryId()]},
+        ]
     };
     return MockData.addMockData(TestServer.database()).then(() => {
         return addSlaveForReport(report);
@@ -281,7 +285,7 @@ describe('/privileged-api/create-test-group', function () {
     it('should create a test group from commitSets with the repetition count of one when repetitionCount is omitted', () => {
         return addTriggerableAndCreateTask('some task').then((taskId) => {
             let insertedGroupId;
-            return PrivilegedAPI.sendRequest('create-test-group', {name: 'test', task: taskId, commitSets: {'WebKit': ['191622', '191623']}}).then((content) => {
+            return PrivilegedAPI.sendRequest('create-test-group', {name: 'test', task: taskId, commitSets: {'macOS': ['15A284', '15A284'], 'WebKit': ['191622', '191623']}}).then((content) => {
                 insertedGroupId = content['testGroupId'];
                 return TestGroup.fetchByTask(taskId);
             }).then((testGroups) => {
@@ -291,18 +295,31 @@ describe('/privileged-api/create-test-group', function () {
                 assert.equal(group.repetitionCount(), 1);
                 const requests = group.buildRequests();
                 assert.equal(requests.length, 2);
-                const webkit = Repository.all().filter((repository) => repository.name() == 'WebKit')[0];
-                assert.deepEqual(requests[0].commitSet().repositories(), [webkit]);
-                assert.deepEqual(requests[1].commitSet().repositories(), [webkit]);
-                assert.equal(requests[0].commitSet().revisionForRepository(webkit), '191622');
-                assert.equal(requests[1].commitSet().revisionForRepository(webkit), '191623');
+
+                const macos = Repository.findById(MockData.macosRepositoryId());
+                const webkit = Repository.findById(MockData.webkitRepositoryId());
+                const set0 = requests[0].commitSet();
+                const set1 = requests[1].commitSet();
+                assert.deepEqual(Repository.sortByNamePreferringOnesWithURL(set0.repositories()), [webkit, macos]);
+                assert.deepEqual(Repository.sortByNamePreferringOnesWithURL(set1.repositories()), [webkit, macos]);
+                assert.equal(set0.revisionForRepository(macos), '15A284');
+                assert.equal(set0.revisionForRepository(webkit), '191622');
+                assert.equal(set1.revisionForRepository(macos), '15A284');
+                assert.equal(set1.revisionForRepository(webkit), '191623');
+
+                const repositoryGroup = requests[0].repositoryGroup();
+                assert.equal(repositoryGroup.name(), 'system-and-webkit');
+                assert.equal(requests[1].repositoryGroup(), repositoryGroup);
+                assert(repositoryGroup.accepts(set0));
+                assert(repositoryGroup.accepts(set1));
             });
         });
     });
 
     it('should create a test group from revisionSets with the repetition count of one when repetitionCount is omitted', () => {
+        let webkit;
         return addTriggerableAndCreateTask('some task').then((taskId) => {
-            const webkit = Repository.all().find((repository) => repository.name() == 'WebKit');
+            const webkit = Repository.findById(MockData.webkitRepositoryId());
             const params = {name: 'test', task: taskId, revisionSets: [{[webkit.id()]: '191622'}, {[webkit.id()]: '191623'}]};
             let insertedGroupId;
             return PrivilegedAPI.sendRequest('create-test-group', params).then((content) => {
@@ -315,11 +332,19 @@ describe('/privileged-api/create-test-group', function () {
                 assert.equal(group.repetitionCount(), 1);
                 const requests = group.buildRequests();
                 assert.equal(requests.length, 2);
-                const webkit = Repository.all().filter((repository) => repository.name() == 'WebKit')[0];
-                assert.deepEqual(requests[0].commitSet().repositories(), [webkit]);
-                assert.deepEqual(requests[1].commitSet().repositories(), [webkit]);
-                assert.equal(requests[0].commitSet().revisionForRepository(webkit), '191622');
-                assert.equal(requests[1].commitSet().revisionForRepository(webkit), '191623');
+
+                const set0 = requests[0].commitSet();
+                const set1 = requests[1].commitSet();
+                assert.deepEqual(set0.repositories(), [webkit]);
+                assert.deepEqual(set1.repositories(), [webkit]);
+                assert.equal(set0.revisionForRepository(webkit), '191622');
+                assert.equal(set1.revisionForRepository(webkit), '191623');
+
+                const repositoryGroup = requests[0].repositoryGroup();
+                assert.equal(repositoryGroup.name(), 'webkit-only');
+                assert.equal(repositoryGroup, requests[1].repositoryGroup());
+                assert(repositoryGroup.accepts(set0));
+                assert(repositoryGroup.accepts(set1));
             });
         });
     });
@@ -340,17 +365,70 @@ describe('/privileged-api/create-test-group', function () {
                 assert.equal(requests.length, 4);
                 const webkit = Repository.all().filter((repository) => repository.name() == 'WebKit')[0];
                 const macos = Repository.all().filter((repository) => repository.name() == 'macOS')[0];
-                const set1 = requests[0].commitSet();
-                const set2 = requests[1].commitSet();
-                assert.equal(requests[2].commitSet(), set1);
-                assert.equal(requests[3].commitSet(), set2);
+
+                const set0 = requests[0].commitSet();
+                const set1 = requests[1].commitSet();
+                assert.equal(requests[2].commitSet(), set0);
+                assert.equal(requests[3].commitSet(), set1);
+                assert.deepEqual(Repository.sortByNamePreferringOnesWithURL(set0.repositories()), [webkit, macos]);
                 assert.deepEqual(Repository.sortByNamePreferringOnesWithURL(set1.repositories()), [webkit, macos]);
-                assert.deepEqual(Repository.sortByNamePreferringOnesWithURL(set2.repositories()), [webkit, macos]);
-                assert.equal(set1.revisionForRepository(webkit), '191622');
+                assert.equal(set0.revisionForRepository(webkit), '191622');
+                assert.equal(set0.revisionForRepository(macos), '15A284');
+                assert.equal(set1.revisionForRepository(webkit), '191623');
                 assert.equal(set1.revisionForRepository(macos), '15A284');
-                assert.equal(set2.revisionForRepository(webkit), '191623');
-                assert.equal(set2.revisionForRepository(macos), '15A284');
-                assert.equal(set1.commitForRepository(macos), set2.commitForRepository(macos));
+                assert.equal(set0.commitForRepository(macos), set1.commitForRepository(macos));
+
+                const repositoryGroup = requests[0].repositoryGroup();
+                assert.equal(repositoryGroup.name(), 'system-and-webkit');
+                assert.equal(requests[1].repositoryGroup(), repositoryGroup);
+                assert.equal(requests[2].repositoryGroup(), repositoryGroup);
+                assert.equal(requests[3].repositoryGroup(), repositoryGroup);
+                assert(repositoryGroup.accepts(set0));
+                assert(repositoryGroup.accepts(set1));
+            });
+        });
+    });
+
+    it('should create a test group using different repository groups if needed', () => {
+        let webkit;
+        let macos;
+        return addTriggerableAndCreateTask('some task').then((taskId) => {
+            webkit = Repository.findById(MockData.webkitRepositoryId());
+            macos = Repository.findById(MockData.macosRepositoryId());
+            const params = {name: 'test', task: taskId, repetitionCount: 2,
+                revisionSets: [{[macos.id()]: '15A284', [webkit.id()]: '191622'}, {[webkit.id()]: '191623'}]};
+            let insertedGroupId;
+            return PrivilegedAPI.sendRequest('create-test-group', params).then((content) => {
+                insertedGroupId = content['testGroupId'];
+                return TestGroup.fetchByTask(taskId);
+            }).then((testGroups) => {
+                assert.equal(testGroups.length, 1);
+                const group = testGroups[0];
+                assert.equal(group.id(), insertedGroupId);
+                assert.equal(group.repetitionCount(), 2);
+                const requests = group.buildRequests();
+                assert.equal(requests.length, 4);
+
+                const set0 = requests[0].commitSet();
+                const set1 = requests[1].commitSet();
+                assert.deepEqual(Repository.sortByNamePreferringOnesWithURL(set0.repositories()), [webkit, macos]);
+                assert.deepEqual(set1.repositories(), [webkit]);
+                assert.equal(set0.revisionForRepository(webkit), '191622');
+                assert.equal(set0.revisionForRepository(macos), '15A284');
+                assert.equal(set1.revisionForRepository(webkit), '191623');
+                assert.equal(set1.revisionForRepository(macos), null);
+
+                const repositoryGroup0 = requests[0].repositoryGroup();
+                assert.equal(repositoryGroup0.name(), 'system-and-webkit');
+                assert.equal(repositoryGroup0, requests[2].repositoryGroup());
+                assert(repositoryGroup0.accepts(set0));
+                assert(!repositoryGroup0.accepts(set1));
+
+                const repositoryGroup1 = requests[1].repositoryGroup();
+                assert.equal(repositoryGroup1.name(), 'webkit-only');
+                assert.equal(repositoryGroup1, requests[3].repositoryGroup());
+                assert(!repositoryGroup1.accepts(set0));
+                assert(repositoryGroup1.accepts(set1));
             });
         });
     });

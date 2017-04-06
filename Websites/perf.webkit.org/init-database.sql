@@ -243,7 +243,8 @@ CREATE TABLE triggerable_repository_groups (
 
 CREATE TABLE triggerable_repositories (
     trigrepo_repository integer REFERENCES repositories NOT NULL,
-    trigrepo_group integer REFERENCES triggerable_repository_groups NOT NULL);
+    trigrepo_group integer REFERENCES triggerable_repository_groups NOT NULL,
+    CONSTRAINT repository_must_be_unique_for_repository_group UNIQUE(trigrepo_repository, trigrepo_group));
 
 CREATE TABLE triggerable_configurations (
     trigconfig_test integer REFERENCES tests NOT NULL,
@@ -285,6 +286,7 @@ CREATE TYPE build_request_status_type as ENUM ('pending', 'scheduled', 'running'
 CREATE TABLE build_requests (
     request_id serial PRIMARY KEY,
     request_triggerable integer REFERENCES build_triggerables NOT NULL,
+    request_repository_group integer REFERENCES triggerable_repository_groups,
     request_platform integer REFERENCES platforms NOT NULL,
     request_test integer REFERENCES tests NOT NULL,
     request_group integer REFERENCES analysis_test_groups NOT NULL,

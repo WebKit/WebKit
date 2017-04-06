@@ -68,7 +68,7 @@ describe('/api/update-triggerable/', function () {
             return Promise.all([
                 addSlaveForReport(emptyUpdate),
                 db.insert('triggerable_configurations',
-                    {'triggerable': 1 /* build-webkit */, 'test': MockData.someTestId(), 'platform': MockData.somePlatformId()})
+                    {'triggerable': 1000 /* build-webkit */, 'test': MockData.someTestId(), 'platform': MockData.somePlatformId()})
             ]);
         }).then(() => {
             return TestServer.remoteAPI().postJSON('/api/update-triggerable/', emptyUpdate);
@@ -109,6 +109,293 @@ describe('/api/update-triggerable/', function () {
             return TestServer.remoteAPI().postJSON('/api/update-triggerable/', update);
         }).then((response) => {
             assert.equal(response['status'], 'InvalidConfigurationEntry');
+        });
+    });
+
+    function updateWithOSXRepositoryGroup()
+    {
+        return {
+            'slaveName': 'someSlave',
+            'slavePassword': 'somePassword',
+            'triggerable': 'empty-triggerable',
+            'configurations': [
+                {test: MockData.someTestId(), platform: MockData.somePlatformId()}
+            ],
+            'repositoryGroups': [
+                {name: 'system-only', repositories: [MockData.macosRepositoryId()]},
+            ]
+        };
+    }
+
+    it('should reject when repositoryGroups is not an array', () => {
+        const update = updateWithOSXRepositoryGroup();
+        update.repositoryGroups = 1;
+        return MockData.addEmptyTriggerable(TestServer.database()).then(() => {
+            return addSlaveForReport(update);
+        }).then(() => {
+            return TestServer.remoteAPI().postJSON('/api/update-triggerable/', update);
+        }).then((response) => {
+            assert.equal(response['status'], 'InvalidRepositoryGroups');
+        });
+    });
+
+    it('should reject when the name of a repository group is not specified', () => {
+        const update = updateWithOSXRepositoryGroup();
+        delete update.repositoryGroups[0].name;
+        return MockData.addEmptyTriggerable(TestServer.database()).then(() => {
+            return addSlaveForReport(update);
+        }).then(() => {
+            return TestServer.remoteAPI().postJSON('/api/update-triggerable/', update);
+        }).then((response) => {
+            assert.equal(response['status'], 'InvalidRepositoryGroup');
+        });
+    });
+
+    it('should reject when the repository list is not specified for a repository group', () => {
+        const update = updateWithOSXRepositoryGroup();
+        delete update.repositoryGroups[0].repositories;
+        return MockData.addEmptyTriggerable(TestServer.database()).then(() => {
+            return addSlaveForReport(update);
+        }).then(() => {
+            return TestServer.remoteAPI().postJSON('/api/update-triggerable/', update);
+        }).then((response) => {
+            assert.equal(response['status'], 'InvalidRepositoryGroup');
+        });
+    });
+
+    it('should reject when the repository list of a repository group is not an array', () => {
+        const update = updateWithOSXRepositoryGroup();
+        update.repositoryGroups[0].repositories = 'hi';
+        return MockData.addEmptyTriggerable(TestServer.database()).then(() => {
+            return addSlaveForReport(update);
+        }).then(() => {
+            return TestServer.remoteAPI().postJSON('/api/update-triggerable/', update);
+        }).then((response) => {
+            assert.equal(response['status'], 'InvalidRepositoryGroup');
+        });
+    });
+
+    it('should reject when a repository group contains an invalid repository id', () => {
+        const update = updateWithOSXRepositoryGroup();
+        update.repositoryGroups[0].repositories[0] = 999;
+        return MockData.addEmptyTriggerable(TestServer.database()).then(() => {
+            return addSlaveForReport(update);
+        }).then(() => {
+            return TestServer.remoteAPI().postJSON('/api/update-triggerable/', update);
+        }).then((response) => {
+            assert.equal(response['status'], 'InvalidRepository');
+        });
+    });
+
+    it('should reject when a repository group contains a duplicate repository id', () => {
+        const update = updateWithOSXRepositoryGroup();
+        const group = update.repositoryGroups[0];
+        group.repositories.push(group.repositories[0]);
+        return MockData.addEmptyTriggerable(TestServer.database()).then(() => {
+            return addSlaveForReport(update);
+        }).then(() => {
+            return TestServer.remoteAPI().postJSON('/api/update-triggerable/', update);
+        }).then((response) => {
+            assert.equal(response['status'], 'InvalidRepository');
+        });
+    });
+
+    it('should add a new repository group when there are none', () => {
+        const db = TestServer.database();
+        return MockData.addEmptyTriggerable(db).then(() => {
+            return addSlaveForReport(updateWithOSXRepositoryGroup());
+        }).then(() => {
+            return TestServer.remoteAPI().postJSON('/api/update-triggerable/', updateWithOSXRepositoryGroup());
+        }).then((response) => {
+            assert.equal(response['status'], 'OK');
+            return Promise.all([db.selectAll('triggerable_configurations', 'test'), db.selectAll('triggerable_repository_groups')]);
+        }).then((result) => {
+            const [configurations, repositoryGroups] = result;
+
+            assert.equal(configurations.length, 1);
+            assert.equal(configurations[0]['test'], MockData.someTestId());
+            assert.equal(configurations[0]['platform'], MockData.somePlatformId());
+
+            assert.equal(repositoryGroups.length, 1);
+            assert.equal(repositoryGroups[0]['name'], 'system-only');
+            assert.equal(repositoryGroups[0]['triggerable'], MockData.emptyTriggeragbleId());
+        });
+    });
+
+    it('should not add a duplicate repository group when there is a group of the same name', () => {
+        const db = TestServer.database();
+        let initialResult;
+        return MockData.addEmptyTriggerable(db).then(() => {
+            return addSlaveForReport(updateWithOSXRepositoryGroup());
+        }).then(() => {
+            return TestServer.remoteAPI().postJSONWithStatus('/api/update-triggerable/', updateWithOSXRepositoryGroup());
+        }).then((response) => {
+            return Promise.all([db.selectAll('triggerable_configurations', 'test'), db.selectAll('triggerable_repository_groups')]);
+        }).then((result) => {
+            initialResult = result;
+            return TestServer.remoteAPI().postJSONWithStatus('/api/update-triggerable/', updateWithOSXRepositoryGroup());
+        }).then(() => {
+            return Promise.all([db.selectAll('triggerable_configurations', 'test'), db.selectAll('triggerable_repository_groups')]);
+        }).then((result) => {
+            const [initialConfigurations, initialRepositoryGroups] = initialResult;
+            const [configurations, repositoryGroups] = result;
+            assert.deepEqual(configurations, initialConfigurations);
+            assert.deepEqual(repositoryGroups, initialRepositoryGroups);
+        })
+    });
+
+    it('should not add a duplicate repository group when there is a group of the same name', () => {
+        const db = TestServer.database();
+        let initialResult;
+        return MockData.addEmptyTriggerable(db).then(() => {
+            return addSlaveForReport(updateWithOSXRepositoryGroup());
+        }).then(() => {
+            return TestServer.remoteAPI().postJSONWithStatus('/api/update-triggerable/', updateWithOSXRepositoryGroup());
+        }).then((response) => {
+            return Promise.all([db.selectAll('triggerable_configurations', 'test'), db.selectAll('triggerable_repository_groups')]);
+        }).then((result) => {
+            initialResult = result;
+            return TestServer.remoteAPI().postJSONWithStatus('/api/update-triggerable/', updateWithOSXRepositoryGroup());
+        }).then(() => {
+            return Promise.all([db.selectAll('triggerable_configurations', 'test'), db.selectAll('triggerable_repository_groups')]);
+        }).then((result) => {
+            const [initialConfigurations, initialRepositoryGroups] = initialResult;
+            const [configurations, repositoryGroups] = result;
+            assert.deepEqual(configurations, initialConfigurations);
+            assert.deepEqual(repositoryGroups, initialRepositoryGroups);
+        })
+    });
+
+    it('should update the description of a repository group when the name matches', () => {
+        const db = TestServer.database();
+        const initialUpdate = updateWithOSXRepositoryGroup();
+        const secondUpdate = updateWithOSXRepositoryGroup();
+        secondUpdate.repositoryGroups[0].description = 'this group is awesome';
+        return MockData.addEmptyTriggerable(db).then(() => {
+            return addSlaveForReport(initialUpdate);
+        }).then(() => {
+            return TestServer.remoteAPI().postJSONWithStatus('/api/update-triggerable/', initialUpdate);
+        }).then((response) => db.selectAll('triggerable_repository_groups')).then((repositoryGroups) => {
+            assert.equal(repositoryGroups.length, 1);
+            assert.equal(repositoryGroups[0]['name'], 'system-only');
+            assert.equal(repositoryGroups[0]['description'], null);
+            return TestServer.remoteAPI().postJSONWithStatus('/api/update-triggerable/', secondUpdate);
+        }).then(() => db.selectAll('triggerable_repository_groups')).then((repositoryGroups) => {
+            assert.equal(repositoryGroups.length, 1);
+            assert.equal(repositoryGroups[0]['name'], 'system-only');
+            assert.equal(repositoryGroups[0]['description'], 'this group is awesome');
+        });
+    });
+
+    function updateWithMacWebKitRepositoryGroups()
+    {
+        return {
+            'slaveName': 'someSlave',
+            'slavePassword': 'somePassword',
+            'triggerable': 'empty-triggerable',
+            'configurations': [
+                {test: MockData.someTestId(), platform: MockData.somePlatformId()}
+            ],
+            'repositoryGroups': [
+                {name: 'system-only', repositories: [MockData.macosRepositoryId()]},
+                {name: 'system-and-webkit', repositories: [MockData.webkitRepositoryId(), MockData.macosRepositoryId()]},
+            ]
+        };
+    }
+
+    function mapRepositoriesByGroup(repositories)
+    {
+        const map = {};
+        for (const row of repositories) {
+            const groupId = row['group'];
+            if (!(groupId in map))
+                map[groupId] = [];
+            map[groupId].push(row['repository']);
+        }
+        return map;
+    }
+
+    it('should replace a repository when the repository group name matches', () => {
+        const db = TestServer.database();
+        const initialUpdate = updateWithMacWebKitRepositoryGroups();
+        const secondUpdate = updateWithMacWebKitRepositoryGroups();
+        let initialGroups;
+        secondUpdate.repositoryGroups[1].repositories[0] = MockData.gitWebkitRepositoryId();
+        return MockData.addEmptyTriggerable(db).then(() => {
+            return addSlaveForReport(initialUpdate);
+        }).then(() => {
+            return TestServer.remoteAPI().postJSONWithStatus('/api/update-triggerable/', initialUpdate);
+        }).then((response) => {
+            return Promise.all([db.selectAll('triggerable_repository_groups', 'name'), db.selectAll('triggerable_repositories', 'repository')]);
+        }).then((result) => {
+            const [repositoryGroups, repositories] = result;
+            assert.equal(repositoryGroups.length, 2);
+            assert.equal(repositoryGroups[0]['name'], 'system-and-webkit');
+            assert.equal(repositoryGroups[0]['triggerable'], MockData.emptyTriggeragbleId());
+            assert.equal(repositoryGroups[1]['name'], 'system-only');
+            assert.equal(repositoryGroups[1]['triggerable'], MockData.emptyTriggeragbleId());
+            initialGroups = repositoryGroups;
+
+            const repositoriesByGroup = mapRepositoriesByGroup(repositories);
+            assert.equal(Object.keys(repositoriesByGroup).length, 2);
+            assert.deepEqual(repositoriesByGroup[repositoryGroups[0]['id']], [MockData.macosRepositoryId(), MockData.webkitRepositoryId()]);
+            assert.deepEqual(repositoriesByGroup[repositoryGroups[1]['id']], [MockData.macosRepositoryId()]);
+
+            return TestServer.remoteAPI().postJSONWithStatus('/api/update-triggerable/', secondUpdate);
+        }).then(() => {
+            return Promise.all([db.selectAll('triggerable_repository_groups', 'name'), db.selectAll('triggerable_repositories', 'repository')]);
+        }).then((result) => {
+            const [repositoryGroups, repositories] = result;
+            assert.deepEqual(repositoryGroups, initialGroups);
+
+            const repositoriesByGroup = mapRepositoriesByGroup(repositories);
+            assert.equal(Object.keys(repositoriesByGroup).length, 2);
+            assert.deepEqual(repositoriesByGroup[initialGroups[0]['id']], [MockData.macosRepositoryId(), MockData.gitWebkitRepositoryId()]);
+            assert.deepEqual(repositoriesByGroup[initialGroups[1]['id']], [MockData.macosRepositoryId()]);
+        });
+    });
+
+    it('should replace a repository when the list of repositories matches', () => {
+        const db = TestServer.database();
+        const initialUpdate = updateWithMacWebKitRepositoryGroups();
+        const secondUpdate = updateWithMacWebKitRepositoryGroups();
+        let initialGroups;
+        let initialRepositories;
+        secondUpdate.repositoryGroups[0].name = 'mac-only';
+        return MockData.addEmptyTriggerable(db).then(() => {
+            return addSlaveForReport(initialUpdate);
+        }).then(() => {
+            return TestServer.remoteAPI().postJSONWithStatus('/api/update-triggerable/', initialUpdate);
+        }).then((response) => {
+            return Promise.all([db.selectAll('triggerable_repository_groups', 'name'), db.selectAll('triggerable_repositories', 'repository')]);
+        }).then((result) => {
+            const [repositoryGroups, repositories] = result;
+            assert.equal(repositoryGroups.length, 2);
+            assert.equal(repositoryGroups[0]['name'], 'system-and-webkit');
+            assert.equal(repositoryGroups[0]['triggerable'], MockData.emptyTriggeragbleId());
+            assert.equal(repositoryGroups[1]['name'], 'system-only');
+            assert.equal(repositoryGroups[1]['triggerable'], MockData.emptyTriggeragbleId());
+            initialGroups = repositoryGroups;
+
+            const repositoriesByGroup = mapRepositoriesByGroup(repositories);
+            assert.equal(Object.keys(repositoriesByGroup).length, 2);
+            assert.deepEqual(repositoriesByGroup[repositoryGroups[0]['id']], [MockData.macosRepositoryId(), MockData.webkitRepositoryId()]);
+            assert.deepEqual(repositoriesByGroup[repositoryGroups[1]['id']], [MockData.macosRepositoryId()]);
+            initialRepositories = repositories;
+
+            return TestServer.remoteAPI().postJSONWithStatus('/api/update-triggerable/', secondUpdate);
+        }).then(() => {
+            return Promise.all([db.selectAll('triggerable_repository_groups', 'name'), db.selectAll('triggerable_repositories', 'repository')]);
+        }).then((result) => {
+            const [repositoryGroups, repositories] = result;
+
+            assert.equal(repositoryGroups.length, 2);
+            assert.equal(repositoryGroups[0]['name'], 'mac-only');
+            assert.equal(repositoryGroups[0]['triggerable'], initialGroups[1]['triggerable']);
+            assert.equal(repositoryGroups[1]['name'], 'system-and-webkit');
+            assert.equal(repositoryGroups[1]['triggerable'], initialGroups[0]['triggerable']);
+
+            assert.deepEqual(repositories, initialRepositories);
         });
     });
 
