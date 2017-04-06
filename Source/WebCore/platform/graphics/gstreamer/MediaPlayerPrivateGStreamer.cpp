@@ -212,7 +212,6 @@ MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer()
         ASSERT(bus);
         gst_bus_set_sync_handler(bus.get(), nullptr, nullptr, nullptr);
         g_signal_handlers_disconnect_matched(m_pipeline.get(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
-        gst_element_set_state(m_pipeline.get(), GST_STATE_NULL);
     }
 
     if (m_videoSink) {
