@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<script>
+function test() {
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+    testRunner.dumpChildFramesAsText();
+
+    if (testRunner.setPrivateBrowsingEnabled)
+        testRunner.setPrivateBrowsingEnabled(true);
+
+    testRunner.setAlwaysAcceptCookies(false);
+}
+</script>
+
+<p>Checks that subresources that got redirected do not circumvent third-party cookie rules.<br>This test PASS if you can see the text "FAILED: Cookie not set".</p>
+<iframe onload="test" src="http://localhost:8000/cookies/resources/set-cookie-on-redirect.php?step=1"></iframe>
