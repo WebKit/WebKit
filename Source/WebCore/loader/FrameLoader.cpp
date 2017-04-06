@@ -361,6 +361,9 @@ void FrameLoader::urlSelected(const URL& url, const String& passedTarget, Event*
 
 void FrameLoader::urlSelected(const FrameLoadRequest& passedRequest, Event* triggeringEvent)
 {
+    ASSERT_WITH_SECURITY_IMPLICATION(!triggeringEvent || !triggeringEvent->target() || !triggeringEvent->target()->toNode()
+        || triggeringEvent->target()->toNode()->document().pageCacheState() == Document::NotInPageCache);
+
     Ref<Frame> protect(m_frame);
     FrameLoadRequest frameRequest(passedRequest);
 
@@ -384,10 +387,13 @@ void FrameLoader::submitForm(PassRefPtr<FormSubmission> submission)
     ASSERT(submission->data());
     ASSERT(submission->state());
     ASSERT(!submission->state()->sourceDocument()->frame() || submission->state()->sourceDocument()->frame() == &m_frame);
-    
+
     if (!m_frame.page())
         return;
-    
+
+    if (submission->state()->sourceDocument()->pageCacheState() != Document::NotInPageCache)
+        return;
+
     if (submission->action().isEmpty())
         return;
 
@@ -1126,6 +1132,9 @@ void FrameLoader::setupForReplace()
 
 void FrameLoader::loadFrameRequest(const FrameLoadRequest& request, Event* event, PassRefPtr<FormState> formState)
 {    
+    ASSERT_WITH_SECURITY_IMPLICATION(!event || !event->target() || !event->target()->toNode()
+        || event->target()->toNode()->document().pageCacheState() == Document::NotInPageCache);
+
     // Protect frame from getting blown away inside dispatchBeforeLoadEvent in loadWithDocumentLoader.
     Ref<Frame> protect(m_frame);
 
