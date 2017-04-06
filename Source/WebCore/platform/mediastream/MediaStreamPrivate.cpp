@@ -134,9 +134,6 @@ void MediaStreamPrivate::addTrack(RefPtr<MediaStreamTrackPrivate>&& track, Notif
     if (m_trackSet.contains(track->id()))
         return;
 
-    if (m_muted)
-        track->stopProducingData();
-
     track->addObserver(*this);
     m_trackSet.add(track->id(), track);
 
@@ -165,9 +162,6 @@ void MediaStreamPrivate::removeTrack(MediaStreamTrackPrivate& track, NotifyClien
 
 void MediaStreamPrivate::startProducingData()
 {
-    if (m_muted)
-        return;
-
     for (auto& track : m_trackSet.values())
         track->startProducingData();
 }
@@ -187,12 +181,8 @@ bool MediaStreamPrivate::isProducingData() const
     return false;
 }
 
-void MediaStreamPrivate::setMuted(bool muted)
+void MediaStreamPrivate::setCaptureTracksMuted(bool muted)
 {
-    if (m_muted == muted)
-        return;
-
-    m_muted = muted;
     for (auto& track : m_trackSet.values()) {
         if (track->isCaptureTrack())
             track->setMuted(muted);

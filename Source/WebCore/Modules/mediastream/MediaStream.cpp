@@ -90,7 +90,10 @@ MediaStream::MediaStream(ScriptExecutionContext& context, RefPtr<MediaStreamPriv
     , m_activityEventTimer(*this, &MediaStream::activityEventTimerFired)
 {
     ASSERT(m_private);
+
     setIsActive(m_private->active());
+    if (document()->page()->isMediaCaptureMuted())
+        m_private->setCaptureTracksMuted(true);
     m_private->addObserver(*this);
     MediaStreamRegistry::shared().registerStream(*this);
 
@@ -300,7 +303,7 @@ void MediaStream::pageMutedStateDidChange()
     if (!document)
         return;
 
-    m_private->setMuted(document->page()->isMediaCaptureMuted());
+    m_private->setCaptureTracksMuted(document->page()->isMediaCaptureMuted());
 }
 
 MediaProducer::MediaStateFlags MediaStream::mediaState() const

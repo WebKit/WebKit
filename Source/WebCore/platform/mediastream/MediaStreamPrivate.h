@@ -95,12 +95,11 @@ public:
 
     bool hasVideo() const;
     bool hasAudio() const;
-
-    void setMuted(bool);
     bool muted() const;
 
     bool hasCaptureVideoSource() const;
     bool hasCaptureAudioSource() const;
+    void setCaptureTracksMuted(bool);
 
     FloatSize intrinsicSize() const;
 
@@ -136,7 +135,6 @@ private:
     MediaStreamTrackPrivate* m_activeVideoTrack { nullptr };
     HashMap<String, RefPtr<MediaStreamTrackPrivate>> m_trackSet;
     bool m_isActive { false };
-    bool m_muted { false };
 };
 
 typedef Vector<RefPtr<MediaStreamPrivate>> MediaStreamPrivateVector;

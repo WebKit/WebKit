@@ -4,6 +4,26 @@
         https://bugs.webkit.org/show_bug.cgi?id=170519
         <rdar://problem/31174326>
 
+        Unreviewed, address review comments missed in the initial checkin.
+
+        * Modules/mediastream/MediaStream.cpp:
+        (WebCore::MediaStream::MediaStream): Mute the private stream if the page doesn't allow
+        capture.
+        (WebCore::MediaStream::pageMutedStateDidChange): setMuted -> setCaptureTracksMuted.
+
+        * platform/mediastream/MediaStreamPrivate.cpp:
+        (WebCore::MediaStreamPrivate::addTrack): Don't track muted state, the capture source already does.
+        (WebCore::MediaStreamPrivate::startProducingData):  Ditto.
+        (WebCore::MediaStreamPrivate::setCaptureTracksMuted): Renamed from setMuted.
+        (WebCore::MediaStreamPrivate::setMuted): Deleted.
+        * platform/mediastream/MediaStreamPrivate.h:
+
+2017-04-05  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Host application should be able to mute and unmute media streams
+        https://bugs.webkit.org/show_bug.cgi?id=170519
+        <rdar://problem/31174326>
+
         Reviewed by Youenn Fablet.
 
         No new tests, fast/mediastream/MediaStream-page-muted.html was updated.
