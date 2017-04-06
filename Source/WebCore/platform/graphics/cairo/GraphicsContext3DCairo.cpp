@@ -86,7 +86,6 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attributes, H
 #if USE(COORDINATED_GRAPHICS_THREADED)
     , m_intermediateTexture(0)
 #endif
-    , m_depthStencilBuffer(0)
     , m_layerComposited(false)
     , m_multisampleFBO(0)
     , m_multisampleDepthStencilBuffer(0)
@@ -129,9 +128,6 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attributes, H
         ::glBindTexture(GL_TEXTURE_2D, 0);
 #endif
 
-        m_state.boundFBO = m_fbo;
-        if (!m_attrs.antialias && (m_attrs.stencil || m_attrs.depth))
-            ::glGenRenderbuffers(1, &m_depthStencilBuffer);
 
         // Create a multisample FBO.
         if (m_attrs.antialias) {
@@ -141,6 +137,18 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attributes, H
             ::glGenRenderbuffers(1, &m_multisampleColorBuffer);
             if (m_attrs.stencil || m_attrs.depth)
                 ::glGenRenderbuffers(1, &m_multisampleDepthStencilBuffer);
+        } else {
+            // Bind canvas FBO.
+            glBindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_fbo);
+            m_state.boundFBO = m_fbo;
+#if USE(OPENGL_ES_2)
+            if (m_attrs.depth)
+                glGenRenderbuffers(1, &m_depthBuffer);
+            if (m_attrs.stencil)
+                glGenRenderbuffers(1, &m_stencilBuffer);
+#endif
+            if (m_attrs.stencil || m_attrs.depth)
+                glGenRenderbuffers(1, &m_depthStencilBuffer);
         }
     }
 
@@ -214,8 +222,15 @@ GraphicsContext3D::~GraphicsContext3D()
         if (m_attrs.stencil || m_attrs.depth)
             ::glDeleteRenderbuffers(1, &m_multisampleDepthStencilBuffer);
         ::glDeleteFramebuffers(1, &m_multisampleFBO);
-    } else {
-        if (m_attrs.stencil || m_attrs.depth)
+    } else if (m_attrs.stencil || m_attrs.depth) {
+#if USE(OPENGL_ES_2)
+        if (m_depthBuffer)
+            glDeleteRenderbuffers(1, &m_depthBuffer);
+
+        if (m_stencilBuffer)
+            glDeleteRenderbuffers(1, &m_stencilBuffer);
+#endif
+        if (m_depthStencilBuffer)
             ::glDeleteRenderbuffers(1, &m_depthStencilBuffer);
     }
     ::glDeleteFramebuffers(1, &m_fbo);
