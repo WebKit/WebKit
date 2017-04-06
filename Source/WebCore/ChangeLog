@@ -1,3 +1,19 @@
+2017-04-06  Dave Hyatt  <hyatt@apple.com>
+
+        Rendering flexbox children across columns
+        https://bugs.webkit.org/show_bug.cgi?id=164166
+        <rdar://problem/29055587>
+
+        Reviewed by Zalan Bujtas.
+
+        Added fast/multicol/flexbox-rows.html.
+
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::adjustForUnsplittableChild):
+        Treat block-level flexboxes that occur inside block flows the same as replaced
+        and unsplittable elements and push them to the next page if they don't fit. We don't
+        update the minimum page height though, since the flexbox is not really unsplittable.
+
 2017-04-05  Simon Fraser  <simon.fraser@apple.com>
 
         Set lastHandledUserGestureTimestamp on all ancestor documents, not just the top document

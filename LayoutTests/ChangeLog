@@ -1,3 +1,14 @@
+2017-04-06  Dave Hyatt  <hyatt@apple.com>
+
+        Rendering flexbox children across columns
+        https://bugs.webkit.org/show_bug.cgi?id=164166
+        <rdar://problem/29055587>
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/multicol/flexbox-rows-expected.html: Added.
+        * fast/multicol/flexbox-rows.html: Added.
+
 2017-04-05  Simon Fraser  <simon.fraser@apple.com>
 
         Set lastHandledUserGestureTimestamp on all ancestor documents, not just the top document
