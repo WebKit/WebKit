@@ -27,6 +27,7 @@
 #define SlotAssignment_h
 
 
+#include "RenderTreeUpdater.h"
 #include "ShadowRoot.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -116,12 +117,13 @@ inline void ShadowRoot::hostChildElementDidChange(const Element& childElement)
         m_slotAssignment->hostChildElementDidChange(childElement, *this);
 }
 
-inline void ShadowRoot::hostChildElementDidChangeSlotAttribute(const AtomicString& oldValue, const AtomicString& newValue)
+inline void ShadowRoot::hostChildElementDidChangeSlotAttribute(Element& element, const AtomicString& oldValue, const AtomicString& newValue)
 {
-    if (m_slotAssignment) {
-        m_slotAssignment->didChangeSlot(oldValue, SlotAssignment::ChangeType::DirectChild, *this);
-        m_slotAssignment->didChangeSlot(newValue, SlotAssignment::ChangeType::DirectChild, *this);
-    }
+    if (!m_slotAssignment)
+        return;
+    m_slotAssignment->didChangeSlot(oldValue, SlotAssignment::ChangeType::DirectChild, *this);
+    m_slotAssignment->didChangeSlot(newValue, SlotAssignment::ChangeType::DirectChild, *this);
+    RenderTreeUpdater::tearDownRenderers(element);
 }
 
 inline void ShadowRoot::innerSlotDidChange(const AtomicString& name)

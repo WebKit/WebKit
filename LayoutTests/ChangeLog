@@ -1,3 +1,19 @@
+2017-02-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Crash in render tree after dynamically mutating the slot value
+        https://bugs.webkit.org/show_bug.cgi?id=167502
+
+        Reviewed by Antti Koivisto.
+
+        Added regression tests for the crash, and one for assigning non-empty slot value to a child
+        of a summary element. The slot attribute should always be ignored since the fact summary
+        element has its own shadow tree is an implementation detail that should never be exposed.
+
+        * fast/html/details-summary-slot-expected.html: Added.
+        * fast/html/details-summary-slot.html: Added.
+        * fast/shadow-dom/shadow-slot-attribute-change-crash-expected.txt: Added.
+        * fast/shadow-dom/shadow-slot-attribute-change-crash.html: Added.
+
 2017-02-09  Antti Koivisto  <antti@apple.com>
 
         Details element doesn't work correctly when mutating content between closing and opening
