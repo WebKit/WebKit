@@ -20,14 +20,10 @@ promise_test((test) => {
             var audioContext = new webkitAudioContext();
             var script = audioContext.createScriptProcessor(2048, 1, 1);
             script.onaudioprocess = (event) => {
-                var sum = 0.0;
                 var squaredSum = 0.0;
                 event.inputBuffer.getChannelData(0).forEach((value) => {
-                    sum += value;
                     squaredSum += value * value;
                 });
-                if (Math.abs(sum) > 5)
-                    errorTest("sum is not below 1");
                 // Mock source should send some bips with sufficient energy to finish the test
                 if (squaredSum > 30) {
                     source.disconnect(script);
