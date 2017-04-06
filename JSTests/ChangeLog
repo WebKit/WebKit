@@ -1,5 +1,15 @@
 2017-04-05  Joseph Pecoraro  <pecoraro@apple.com>
 
+        test262: Final rebaseline of existing tests, a few tests have started failing
+        https://bugs.webkit.org/show_bug.cgi?id=170538
+
+        Reviewed by Mark Lam.
+
+        * test262.yaml:
+        These tests started failing a while ago. Mark them as legitmate failures.
+
+2017-04-05  Joseph Pecoraro  <pecoraro@apple.com>
+
         test262: Rebaseline expectations for now passing tests
         https://bugs.webkit.org/show_bug.cgi?id=170532
 
