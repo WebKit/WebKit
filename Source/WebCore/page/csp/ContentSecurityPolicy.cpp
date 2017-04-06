@@ -113,8 +113,6 @@ void ContentSecurityPolicy::copyStateFrom(const ContentSecurityPolicy* other)
     ASSERT(m_policies.isEmpty());
     for (auto& policy : other->m_policies)
         didReceiveHeader(policy->header(), policy->headerType(), ContentSecurityPolicy::PolicyFrom::Inherited);
-
-    copyUpgradeInsecureRequestStateFrom(*other);
 }
 
 void ContentSecurityPolicy::copyUpgradeInsecureRequestStateFrom(const ContentSecurityPolicy& other)

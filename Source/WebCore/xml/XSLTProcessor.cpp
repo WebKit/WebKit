@@ -94,6 +94,7 @@ Ref<Document> XSLTProcessor::createDocumentFromSource(const String& sourceString
             result->setCookieURL(oldDocument->cookieURL());
             result->setFirstPartyForCookies(oldDocument->firstPartyForCookies());
             result->contentSecurityPolicy()->copyStateFrom(oldDocument->contentSecurityPolicy());
+            result->contentSecurityPolicy()->copyUpgradeInsecureRequestStateFrom(*oldDocument->contentSecurityPolicy());
         }
 
         frame->setDocument(result.copyRef());
