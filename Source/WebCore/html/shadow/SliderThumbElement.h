@@ -142,7 +142,7 @@ private:
     AtomicString m_shadowPseudoId;
 };
 
-}
+} // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SliderContainerElement)
     static bool isType(const WebCore::Element& element) { return element.isSliderContainerElement(); }
@@ -150,4 +150,3 @@ SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SliderContainerElement)
 SPECIALIZE_TYPE_TRAITS_END()
 
 #endif
-
