@@ -1,3 +1,11 @@
+2017-04-06  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Skip a test that was accidentally enabled with r214982.
+
+        Unreviewed test gardening.
+
+        * platform/ios/TestExpectations:
+
 2017-04-06  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Show all headers in the Request Headers section of the Resource details sidebar
