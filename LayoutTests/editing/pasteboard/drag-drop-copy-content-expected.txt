@@ -1,0 +1,5 @@
+This tests the generic drag and drop where the copy of the content is requested (pressing Control on WebKitGTK+ or Alt on Mac when dropping the content) instead of the move. To manually run the test, select the "Text" in the textarea and drag it to the input on the left. When dropping the content request the copy operation. The test is passed if the input will contain "Text" and the textarea "Text!" strings.
+
+PASS: input
+PASS: textarea
+ 

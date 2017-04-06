@@ -289,7 +289,10 @@ bool DragAndDropHandler::drop(GdkDragContext* context, const IntPoint& position,
 
     droppingContext->dropHappened = true;
 
-    DragData dragData(droppingContext->selectionData.ptr(), position, convertWidgetPointToScreenPoint(m_page.viewWidget(), position), gdkDragActionToDragOperation(gdk_drag_context_get_actions(context)));
+    uint32_t flags = 0;
+    if ((gdk_drag_context_get_selected_action(context) & GDK_ACTION_COPY))
+        flags |= WebCore::DragApplicationIsCopyKeyDown;
+    DragData dragData(droppingContext->selectionData.ptr(), position, convertWidgetPointToScreenPoint(m_page.viewWidget(), position), gdkDragActionToDragOperation(gdk_drag_context_get_actions(context)), static_cast<WebCore::DragApplicationFlags>(flags));
     SandboxExtension::Handle handle;
     SandboxExtension::HandleArray sandboxExtensionForUpload;
     m_page.performDragOperation(dragData, String(), handle, sandboxExtensionForUpload);
