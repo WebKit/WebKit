@@ -2086,7 +2086,7 @@ RefPtr<Attr> Element::setAttributeNode(Attr& attrNode, ExceptionCode& ec)
             setAttributeInternal(existingAttributeIndex, attrNode.qualifiedName(), attrNode.value(), NotInSynchronizationOfLazyAttribute);
         else {
             removeAttributeInternal(existingAttributeIndex, NotInSynchronizationOfLazyAttribute);
-            unsigned existingAttributeIndexForFullQualifiedName = elementData.findAttributeIndexByName(attrNode.qualifiedName());
+            unsigned existingAttributeIndexForFullQualifiedName = ensureUniqueElementData().findAttributeIndexByName(attrNode.qualifiedName());
             setAttributeInternal(existingAttributeIndexForFullQualifiedName, attrNode.qualifiedName(), attrNode.value(), NotInSynchronizationOfLazyAttribute);
         }
     } else {
