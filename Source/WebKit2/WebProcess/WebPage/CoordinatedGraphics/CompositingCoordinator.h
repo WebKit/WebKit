@@ -79,6 +79,7 @@ public:
 
     void createRootLayer(const WebCore::IntSize&);
     WebCore::GraphicsLayer* rootLayer() const { return m_rootLayer.get(); }
+    WebCore::GraphicsLayer* rootCompositingLayer() const { return m_rootCompositingLayer; }
     WebCore::CoordinatedGraphicsLayer* mainContentsLayer();
 
     bool flushPendingLayerChanges();
