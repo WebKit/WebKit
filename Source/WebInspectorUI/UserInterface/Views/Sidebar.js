@@ -62,32 +62,38 @@ WebInspector.Sidebar = class Sidebar extends WebInspector.View
 
     addSidebarPanel(sidebarPanel)
     {
+        this.insertSidebarPanel(sidebarPanel, this._sidebarPanels.length);
+    }
+
+    insertSidebarPanel(sidebarPanel, index)
+    {
         console.assert(sidebarPanel instanceof WebInspector.SidebarPanel);
         if (!(sidebarPanel instanceof WebInspector.SidebarPanel))
-            return null;
+            return;
 
         console.assert(!sidebarPanel.parentSidebar);
         if (sidebarPanel.parentSidebar)
-            return null;
+            return;
 
-        this._sidebarPanels.push(sidebarPanel);
-        this.addSubview(sidebarPanel);
+        console.assert(index >= 0 && index <= this._sidebarPanels.length);
+        this._sidebarPanels.splice(index, 0, sidebarPanel);
+
+        let referenceView = this._sidebarPanels[index + 1] || null;
+        this.insertSubviewBefore(sidebarPanel, referenceView);
 
         if (this._navigationBar) {
             console.assert(sidebarPanel.navigationItem);
-            this._navigationBar.addNavigationItem(sidebarPanel.navigationItem);
+            this._navigationBar.insertNavigationItem(sidebarPanel.navigationItem, index);
         }
 
         sidebarPanel.added();
-
-        return sidebarPanel;
     }
 
     removeSidebarPanel(sidebarPanelOrIdentifierOrIndex)
     {
         var sidebarPanel = this.findSidebarPanel(sidebarPanelOrIdentifierOrIndex);
         if (!sidebarPanel)
-            return null;
+            return;
 
         sidebarPanel.selected = false;
 
@@ -110,8 +116,6 @@ WebInspector.Sidebar = class Sidebar extends WebInspector.View
         }
 
         sidebarPanel.removed();
-
-        return sidebarPanel;
     }
 
     get selectedSidebarPanel()

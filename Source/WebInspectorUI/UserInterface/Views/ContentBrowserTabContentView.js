@@ -142,6 +142,8 @@ WebInspector.ContentBrowserTabContentView = class ContentBrowserTabContentView e
         this._ignoreDetailsSidebarPanelSelectedEvent = true;
         this._ignoreDetailsSidebarPanelCollapsedEvent = true;
 
+        let hiddenSidebarPanels = 0;
+
         for (var i = 0; i < this.detailsSidebarPanels.length; ++i) {
             var sidebarPanel = this.detailsSidebarPanels[i];
             if (sidebarPanel.inspect(currentRepresentedObjects)) {
@@ -151,7 +153,8 @@ WebInspector.ContentBrowserTabContentView = class ContentBrowserTabContentView e
                 }
 
                 // The sidebar panel was not previously showing, so add the panel.
-                WebInspector.detailsSidebar.addSidebarPanel(sidebarPanel);
+                let index = i - hiddenSidebarPanels;
+                WebInspector.detailsSidebar.insertSidebarPanel(sidebarPanel, index);
 
                 if (this._lastSelectedDetailsSidebarPanelSetting.value === sidebarPanel.identifier) {
                     // Restore the sidebar panel selection if this sidebar panel was the last one selected by the user.
@@ -160,6 +163,7 @@ WebInspector.ContentBrowserTabContentView = class ContentBrowserTabContentView e
             } else {
                 // The sidebar panel can't inspect the current represented objects, so remove the panel and hide the toolbar item.
                 WebInspector.detailsSidebar.removeSidebarPanel(sidebarPanel);
+                hiddenSidebarPanels++;
             }
         }
 
