@@ -1,8 +1,0 @@
-{
-    "timeout": 600,
-    "count": 5,
-    "svn_source": "https://svn.webkit.org/repository/webkit/trunk/PerformanceTests/ES6SampleBench/@r206760",
-    "benchmark_patch": "data/patches/ES6SampleBench.patch",
-    "entry_point": "index.html",
-    "output_file": "es6bench.result"
-}

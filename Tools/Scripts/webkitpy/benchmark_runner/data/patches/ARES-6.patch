@@ -1,8 +1,8 @@
 diff --git a/driver.js b/driver.js
-index 609a562..afa4976 100644
+index 26394093758..f6496f970ee 100644
 --- a/driver.js
 +++ b/driver.js
-@@ -118,6 +118,31 @@ class Driver {
+@@ -136,6 +136,32 @@ class Driver {
          this._benchmark = this._iterator ? this._iterator.next().value : null;
          if (!this._benchmark) {
              if (!this._numIterations) {
@@ -17,32 +17,34 @@ index 609a562..afa4976 100644
 +
 +                let xhr = new XMLHttpRequest();
 +                xhr.open("POST", "/report");
-+                let content = JSON.stringify({"ES6SampleBench": {"metrics" : {"Time" : ["Geometric"]}, "tests" : tests}});
++                let content = JSON.stringify({"ARES-6": {"metrics" : {"Time" : ["Geometric"]}, "tests" : tests}});
 +                xhr.setRequestHeader("Content-type", "application/json");
 +                xhr.setRequestHeader("Content-length", content.length);
 +                xhr.setRequestHeader("Connection", "close");
 +
-+                xhr.onreadystatechange = function() {
-+                if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
++                xhr.onreadystatechange = () => {
++                   if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
 +                        closeRequest = new XMLHttpRequest();
 +                        closeRequest.open("GET", "/shutdown");
 +                        closeRequest.send();
 +                    }
 +                }
++
 +                xhr.send(content);
 +
                  if (isInBrowser) {
-                     this._triggerCell.innerHTML =
-                         (this._hadErrors ? "Failures encountered!" : "Success!") +
+                     this._statusCell.innerHTML =
+                         (this._hadErrors ? "Failures encountered!" : "Restart");
 diff --git a/index.html b/index.html
-index 5860e02..1a27c0c 100644
+index 230657bac24..fb740f7f06d 100644
 --- a/index.html
 +++ b/index.html
-@@ -8,6 +8,7 @@ window.onerror = function(message, url, lineNumber)
- {
-     document.getElementById("trigger").innerHTML = "ERROR: " + url + ":" + lineNumber + ": " + message;
- }
-+window.onload = function () { driver.start(4); }
+@@ -11,6 +11,8 @@
+         document.getElementById("error").innerHTML = "ERROR: " + url + ":" + lineNumber + ": " + message;
+     }
  
- const isInBrowser = true;
- </script>
++    window.onload = () => { setTimeout(() => driver.start(8), 3000); }
++
+     const isInBrowser = true;
+     </script>
+     <script src="driver.js"></script>
