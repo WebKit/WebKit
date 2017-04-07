@@ -1,5 +1,19 @@
 2017-04-07  John Wilander  <wilander@apple.com>
 
+        Follow-up fix for Soup platform.
+        https://bugs.webkit.org/show_bug.cgi?id=170322
+
+        Unreviewed build fix. Error introduced by me in
+        https://trac.webkit.org/changeset/215104/webkit.
+
+        No new tests.
+
+        * platform/network/soup/SocketStreamHandleImpl.h:
+            Move parameter change to the right
+            SocketStreamHandleImpl::create() function.
+
+2017-04-07  John Wilander  <wilander@apple.com>
+
         WebSocket streams should have network usage attributed to correct process
         https://bugs.webkit.org/show_bug.cgi?id=170322
         <rdar://problem/26413551>

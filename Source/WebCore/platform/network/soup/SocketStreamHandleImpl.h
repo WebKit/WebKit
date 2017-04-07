@@ -48,8 +48,8 @@ class SocketStreamHandleClient;
 
 class SocketStreamHandleImpl final : public SocketStreamHandle {
 public:
-    static Ref<SocketStreamHandleImpl> create(const URL&, SocketStreamHandleClient&, SessionID, const String&);
-    static Ref<SocketStreamHandle> create(GSocketConnection*, SocketStreamHandleClient&, SourceApplicationAuditToken&&);
+    static Ref<SocketStreamHandleImpl> create(const URL&, SocketStreamHandleClient&, SessionID, const String&, SourceApplicationAuditToken&&);
+    static Ref<SocketStreamHandle> create(GSocketConnection*, SocketStreamHandleClient&);
 
     virtual ~SocketStreamHandleImpl();
 
