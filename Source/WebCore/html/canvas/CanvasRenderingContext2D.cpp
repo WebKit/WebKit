@@ -2008,7 +2008,7 @@ ExceptionOr<RefPtr<ImageData>> CanvasRenderingContext2D::getImageData(ImageBuffe
     if (!buffer)
         return createEmptyImageData(imageDataRect.size());
 
-    auto byteArray = buffer->getUnmultipliedImageData(imageDataRect, coordinateSystem);
+    auto byteArray = buffer->getUnmultipliedImageData(imageDataRect, nullptr, coordinateSystem);
     if (!byteArray) {
         StringBuilder consoleMessage;
         consoleMessage.appendLiteral("Unable to get image data from canvas. Requested size was ");

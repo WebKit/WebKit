@@ -382,7 +382,7 @@ void ImageBuffer::drawPattern(GraphicsContext& destContext, const FloatRect& des
     }
 }
 
-RefPtr<Uint8ClampedArray> ImageBuffer::getUnmultipliedImageData(const IntRect& rect, CoordinateSystem coordinateSystem) const
+RefPtr<Uint8ClampedArray> ImageBuffer::getUnmultipliedImageData(const IntRect& rect, IntSize* pixelArrayDimensions, CoordinateSystem coordinateSystem) const
 {
     if (context().isAcceleratedContext())
         flushContext();
@@ -390,11 +390,14 @@ RefPtr<Uint8ClampedArray> ImageBuffer::getUnmultipliedImageData(const IntRect& r
     IntRect srcRect = rect;
     if (coordinateSystem == LogicalCoordinateSystem)
         srcRect.scale(m_resolutionScale);
+
+    if (pixelArrayDimensions)
+        *pixelArrayDimensions = srcRect.size();
 
     return m_data.getData(srcRect, internalSize(), context().isAcceleratedContext(), true, 1);
 }
 
-RefPtr<Uint8ClampedArray> ImageBuffer::getPremultipliedImageData(const IntRect& rect, CoordinateSystem coordinateSystem) const
+RefPtr<Uint8ClampedArray> ImageBuffer::getPremultipliedImageData(const IntRect& rect, IntSize* pixelArrayDimensions, CoordinateSystem coordinateSystem) const
 {
     if (context().isAcceleratedContext())
         flushContext();
@@ -402,6 +405,9 @@ RefPtr<Uint8ClampedArray> ImageBuffer::getPremultipliedImageData(const IntRect& 
     IntRect srcRect = rect;
     if (coordinateSystem == LogicalCoordinateSystem)
         srcRect.scale(m_resolutionScale);
+
+    if (pixelArrayDimensions)
+        *pixelArrayDimensions = srcRect.size();
 
     return m_data.getData(srcRect, internalSize(), context().isAcceleratedContext(), false, 1);
 }
