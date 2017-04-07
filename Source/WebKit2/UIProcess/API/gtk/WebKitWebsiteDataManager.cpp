@@ -641,8 +641,10 @@ static OptionSet<WebsiteDataType> toWebsiteDataTypes(WebKitWebsiteDataTypes type
         returnValue |= WebsiteDataType::WebSQLDatabases;
     if (types & WEBKIT_WEBSITE_DATA_INDEXEDDB_DATABASES)
         returnValue |= WebsiteDataType::IndexedDBDatabases;
+#if ENABLE(NETSCAPE_PLUGIN_API)
     if (types & WEBKIT_WEBSITE_DATA_PLUGIN_DATA)
         returnValue |= WebsiteDataType::PlugInData;
+#endif
     if (types & WEBKIT_WEBSITE_DATA_COOKIES)
         returnValue |= WebsiteDataType::Cookies;
     return returnValue;

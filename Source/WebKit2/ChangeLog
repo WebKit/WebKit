@@ -1,3 +1,17 @@
+2017-04-07  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Various build errors when plugin support is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=170015
+
+        Reviewed by Carlos Garcia Campos.
+
+        * PluginProcess/unix/PluginControllerProxyUnix.cpp:
+        * UIProcess/API/gtk/WebKitWebsiteData.cpp:
+        (recordContainsSupportedDataTypes):
+        (toWebKitWebsiteDataTypes):
+        * UIProcess/API/gtk/WebKitWebsiteDataManager.cpp:
+        (toWebsiteDataTypes):
+
 2017-04-07  John Wilander  <wilander@apple.com>
 
         WebSocket streams should have network usage attributed to correct process

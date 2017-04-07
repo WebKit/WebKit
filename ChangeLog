@@ -1,3 +1,21 @@
+2017-04-07  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Various build errors when plugin support is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=170015
+
+        Reviewed by Carlos Garcia Campos.
+
+        Allow building with ENABLE_NETSCAPE_PLUGIN_API=ON and ENABLE_X11_TARGET=OFF. This should be
+        possible as Carlos worked to ensure windowless plugins work properly outside X11. The GTK2
+        plugin process still depends on ENABLE_X11_TARGET because a plugin that uses GTK+ surely
+        wants to display a window, and is not going to work outside X11. (If the plugin links to
+        GTK+ but does not display a window, it's dumb and deserves to be broken.)
+
+        Also, make ENABLE_PLUGIN_PROCESS conditional on ENABLE_NETSCAPE_PLUGIN_API, not
+        ENABLE_X11_TARGET.
+
+        * Source/cmake/OptionsGTK.cmake:
+
 2017-04-07  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [CMake][Windows] WebKitGUID.lib should be built with the release CRT
