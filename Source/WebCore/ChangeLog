@@ -1,3 +1,21 @@
+2017-04-07  Brent Fulgham  <bfulgham@apple.com>
+
+        WebKit should percent encode single quotes in query strings
+        https://bugs.webkit.org/show_bug.cgi?id=170561
+        <rdar://problem/7415154>
+
+        Reviewed by Alex Christensen.
+
+        Modify the characterClassTable to instruct the URLParser to convert
+        the single-quote character ' to %27 in URL query strings.
+
+        Tests: URLParserTest in TestWebKitAPI.
+            fast/events/popup-blocked-from-unique-frame-via-window-open-named-sibling-frame.html
+            fast/frames/xss-auditor-handles-file-urls.html
+            http/tests/security/xssAuditor
+
+        * platform/URLParser.cpp:
+
 2017-04-07  Zalan Bujtas  <zalan@apple.com>
 
         Text insertion cursor disappears after pressing enter

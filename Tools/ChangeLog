@@ -1,3 +1,15 @@
+2017-04-07  Brent Fulgham  <bfulgham@apple.com>
+
+        WebKit should percent encode single quotes in query strings
+        https://bugs.webkit.org/show_bug.cgi?id=170561
+        <rdar://problem/7415154>
+
+        Reviewed by Alex Christensen.
+
+        Add a test case for single-quote in the URL query string.
+
+        * TestWebKitAPI/Tests/WebCore/URLParser.cpp:
+
 2017-04-06  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Make FontWithFeatures test font pass OTS

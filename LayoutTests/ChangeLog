@@ -1,3 +1,59 @@
+2017-04-07  Brent Fulgham  <bfulgham@apple.com>
+
+        WebKit should percent encode single quotes in query strings
+        https://bugs.webkit.org/show_bug.cgi?id=170561
+        <rdar://problem/7415154>
+
+        Reviewed by Alex Christensen.
+
+        Rebaseline tests after change.
+
+        * fast/events/popup-blocked-from-unique-frame-via-window-open-named-sibling-frame-expected.txt:
+        * fast/frames/xss-auditor-handles-file-urls-expected.txt:
+        * http/tests/security/xssAuditor/base-href-control-char-expected.txt:
+        * http/tests/security/xssAuditor/base-href-expected.txt:
+        * http/tests/security/xssAuditor/base-href-null-char-expected.txt:
+        * http/tests/security/xssAuditor/base-href-scheme-relative-expected.txt:
+        * http/tests/security/xssAuditor/embed-tag-control-char-expected.txt:
+        * http/tests/security/xssAuditor/embed-tag-expected.txt:
+        * http/tests/security/xssAuditor/embed-tag-javascript-url-expected.txt:
+        * http/tests/security/xssAuditor/embed-tag-null-char-expected.txt:
+        * http/tests/security/xssAuditor/form-action-expected.txt:
+        * http/tests/security/xssAuditor/formaction-on-button-expected.txt:
+        * http/tests/security/xssAuditor/formaction-on-input-expected.txt:
+        * http/tests/security/xssAuditor/frameset-injection-expected.txt:
+        * http/tests/security/xssAuditor/full-block-base-href-expected.txt:
+        * http/tests/security/xssAuditor/full-block-link-onclick-expected.txt:
+        * http/tests/security/xssAuditor/full-block-object-tag-expected.txt:
+        * http/tests/security/xssAuditor/full-block-script-tag-with-source-expected.txt:
+        * http/tests/security/xssAuditor/iframe-injection-expected.txt:
+        * http/tests/security/xssAuditor/iframe-javascript-url-more-encoding-expected.txt:
+        * http/tests/security/xssAuditor/img-onerror-non-ASCII-char-default-encoding-expected.txt:
+        * http/tests/security/xssAuditor/img-onerror-non-ASCII-char-expected.txt:
+        * http/tests/security/xssAuditor/link-onclick-ampersand-expected.txt:
+        * http/tests/security/xssAuditor/link-onclick-control-char-expected.txt:
+        * http/tests/security/xssAuditor/link-onclick-entities-expected.txt:
+        * http/tests/security/xssAuditor/link-onclick-expected.txt:
+        * http/tests/security/xssAuditor/link-onclick-null-char-expected.txt:
+        * http/tests/security/xssAuditor/object-embed-tag-control-char-expected.txt:
+        * http/tests/security/xssAuditor/object-embed-tag-expected.txt:
+        * http/tests/security/xssAuditor/object-embed-tag-null-char-expected.txt:
+        * http/tests/security/xssAuditor/object-tag-expected.txt:
+        * http/tests/security/xssAuditor/object-tag-javascript-url-expected.txt:
+        * http/tests/security/xssAuditor/script-tag-expression-follows-expected.txt:
+        * http/tests/security/xssAuditor/script-tag-with-16bit-unicode4-expected.txt:
+        * http/tests/security/xssAuditor/script-tag-with-16bit-unicode5-expected.txt:
+        * http/tests/security/xssAuditor/script-tag-with-comma-01-expected.txt:
+        * http/tests/security/xssAuditor/script-tag-with-source-control-char-expected.txt:
+        * http/tests/security/xssAuditor/script-tag-with-source-entities-expected.txt:
+        * http/tests/security/xssAuditor/script-tag-with-source-expected.txt:
+        * http/tests/security/xssAuditor/script-tag-with-source-null-char-expected.txt:
+        * http/tests/security/xssAuditor/script-tag-with-source-same-host-with-query-expected.txt:
+        * http/tests/security/xssAuditor/svg-animate-expected.txt:
+        * http/tests/security/xssAuditor/svg-script-tag-expected.txt:
+        * http/tests/security/xssAuditor/xss-filter-bypass-big5-expected.txt:
+        * http/tests/security/xssAuditor/xss-filter-bypass-sjis-expected.txt:
+
 2017-04-07  Youenn Fablet  <youenn@apple.com>
 
         Improve some WebRTC flaky tests
