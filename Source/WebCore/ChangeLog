@@ -1,3 +1,39 @@
+2017-04-07  John Wilander  <wilander@apple.com>
+
+        WebSocket streams should have network usage attributed to correct process
+        https://bugs.webkit.org/show_bug.cgi?id=170322
+        <rdar://problem/26413551>
+
+        Reviewed by Alex Christensen.
+
+        Tested manually since it requires a per-app VPN.
+
+        * page/SocketProvider.cpp:
+        (WebCore::SocketProvider::createSocketStreamHandle):
+            Sends in an empty struct since it doesn't have access to
+            platform dependent sourceApplicationAuditData.
+        * platform/network/SocketStreamHandle.h:
+            Declaration of a per-platform struct to hold CF data for
+            Cocoa platforms.
+        * platform/network/cf/SocketStreamHandleImpl.h:
+        (WebCore::SocketStreamHandleImpl::create):
+            Now takes WebCore::SourceApplicationAuditToken which is
+            passed on to the constructor.
+        * platform/network/cf/SocketStreamHandleImplCFNet.cpp:
+        (WebCore::SocketStreamHandleImpl::SocketStreamHandleImpl):
+            Now takes WebCore::SourceApplicationAuditToken which is
+            passed on to the streams once created.
+        (WebCore::SocketStreamHandleImpl::createStreams):
+            Now sets kCFStreamPropertySourceApplication for the two
+            streams.
+        * platform/network/curl/SocketStreamHandleImpl.h:
+        (WebCore::SocketStreamHandleImpl::create):
+            Added unused WebCore::SourceApplicationAuditToken parameter.
+        * platform/network/soup/SocketStreamHandleImpl.h:
+        * platform/network/soup/SocketStreamHandleImplSoup.cpp:
+        (WebCore::SocketStreamHandleImpl::create):
+            Added unused WebCore::SourceApplicationAuditToken parameter.
+
 2017-04-07  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION(r204512): WebSocket errors with "Failed to send WebSocket frame."  if too much data is sent

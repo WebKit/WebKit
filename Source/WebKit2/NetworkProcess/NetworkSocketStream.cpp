@@ -35,13 +35,13 @@ using namespace WebCore;
 
 namespace WebKit {
 
-Ref<NetworkSocketStream> NetworkSocketStream::create(WebCore::URL&& url, WebCore::SessionID sessionID, const String& credentialPartition, uint64_t identifier, IPC::Connection& connection)
+Ref<NetworkSocketStream> NetworkSocketStream::create(WebCore::URL&& url, WebCore::SessionID sessionID, const String& credentialPartition, uint64_t identifier, IPC::Connection& connection, SourceApplicationAuditToken&& auditData)
 {
-    return adoptRef(*new NetworkSocketStream(WTFMove(url), sessionID, credentialPartition, identifier, connection));
+    return adoptRef(*new NetworkSocketStream(WTFMove(url), sessionID, credentialPartition, identifier, connection, WTFMove(auditData)));
 }
 
-NetworkSocketStream::NetworkSocketStream(URL&& url, SessionID sessionID, const String& credentialPartition, uint64_t identifier, IPC::Connection& connection)
-    : m_impl(SocketStreamHandleImpl::create(url, *this, sessionID, credentialPartition))
+NetworkSocketStream::NetworkSocketStream(URL&& url, SessionID sessionID, const String& credentialPartition, uint64_t identifier, IPC::Connection& connection, SourceApplicationAuditToken&& auditData)
+    : m_impl(SocketStreamHandleImpl::create(url, *this, sessionID, credentialPartition, WTFMove(auditData)))
     , m_identifier(identifier)
     , m_connection(connection)
 {

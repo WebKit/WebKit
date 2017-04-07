@@ -34,7 +34,7 @@ namespace WebCore {
     
 Ref<SocketStreamHandle> SocketProvider::createSocketStreamHandle(const URL& url, SocketStreamHandleClient& client, SessionID sessionID, const String& credentialPartition)
 {
-    return SocketStreamHandleImpl::create(url, client, sessionID, credentialPartition);
+    return SocketStreamHandleImpl::create(url, client, sessionID, credentialPartition, { });
 }
     
 }

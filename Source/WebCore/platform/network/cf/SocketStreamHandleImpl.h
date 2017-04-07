@@ -46,7 +46,7 @@ class SocketStreamHandleClient;
 
 class SocketStreamHandleImpl : public SocketStreamHandle {
 public:
-    static Ref<SocketStreamHandleImpl> create(const URL& url, SocketStreamHandleClient& client, SessionID sessionID, const String& credentialPartition) { return adoptRef(*new SocketStreamHandleImpl(url, client, sessionID, credentialPartition)); }
+    static Ref<SocketStreamHandleImpl> create(const URL& url, SocketStreamHandleClient& client, SessionID sessionID, const String& credentialPartition, SourceApplicationAuditToken&& auditData) { return adoptRef(*new SocketStreamHandleImpl(url, client, sessionID, credentialPartition, WTFMove(auditData))); }
 
     virtual ~SocketStreamHandleImpl();
 
@@ -57,7 +57,7 @@ private:
     std::optional<size_t> platformSendInternal(const char*, size_t);
     bool sendPendingData();
 
-    WEBCORE_EXPORT SocketStreamHandleImpl(const URL&, SocketStreamHandleClient&, SessionID, const String& credentialPartition);
+    WEBCORE_EXPORT SocketStreamHandleImpl(const URL&, SocketStreamHandleClient&, SessionID, const String& credentialPartition, SourceApplicationAuditToken&&);
     void createStreams();
     void scheduleStreams();
     void chooseProxy();
@@ -101,7 +101,8 @@ private:
     RetainPtr<CFURLRef> m_httpsURL; // ws(s): replaced with https:
     SessionID m_sessionID;
     String m_credentialPartition;
-    
+    SourceApplicationAuditToken m_auditData;
+
     StreamBuffer<char, 1024 * 1024> m_buffer;
     static const unsigned maxBufferSize = 100 * 1024 * 1024;
 };

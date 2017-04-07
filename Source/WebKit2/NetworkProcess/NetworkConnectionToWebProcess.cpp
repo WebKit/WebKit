@@ -175,7 +175,11 @@ void NetworkConnectionToWebProcess::didReceiveInvalidMessage(IPC::Connection&, I
 void NetworkConnectionToWebProcess::createSocketStream(URL&& url, SessionID sessionID, String cachePartition, uint64_t identifier)
 {
     ASSERT(!m_networkSocketStreams.contains(identifier));
-    m_networkSocketStreams.set(identifier, NetworkSocketStream::create(WTFMove(url), sessionID, cachePartition, identifier, m_connection));
+    WebCore::SourceApplicationAuditToken token = { };
+#if PLATFORM(COCOA)
+    token = { NetworkProcess::singleton().sourceApplicationAuditData() };
+#endif
+    m_networkSocketStreams.set(identifier, NetworkSocketStream::create(WTFMove(url), sessionID, cachePartition, identifier, m_connection, WTFMove(token)));
 }
 
 void NetworkConnectionToWebProcess::destroySocketStream(uint64_t identifier)

@@ -38,6 +38,14 @@ namespace WebCore {
 
 class SocketStreamHandleClient;
 
+typedef struct {
+#if PLATFORM(COCOA)
+    RetainPtr<CFDataRef> sourceApplicationAuditData;
+#else
+    void *empty { nullptr };
+#endif
+} SourceApplicationAuditToken;
+
 class SocketStreamHandle : public ThreadSafeRefCounted<SocketStreamHandle> {
 public:
     enum SocketStreamState { Connecting, Open, Closing, Closed };

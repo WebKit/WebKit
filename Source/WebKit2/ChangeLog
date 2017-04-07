@@ -1,3 +1,22 @@
+2017-04-07  John Wilander  <wilander@apple.com>
+
+        WebSocket streams should have network usage attributed to correct process
+        https://bugs.webkit.org/show_bug.cgi?id=170322
+        <rdar://problem/26413551>
+
+        Reviewed by Alex Christensen.
+
+        Changes here are due to the added WebCore::SourceApplicationAuditToken parameter
+        in WebCore::SocketStreamHandleImpl::create().
+        WebKit::NetworkSocketStream takes it and passes it on.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::createSocketStream):
+        * NetworkProcess/NetworkSocketStream.cpp:
+        (WebKit::NetworkSocketStream::create):
+        (WebKit::NetworkSocketStream::NetworkSocketStream):
+        * NetworkProcess/NetworkSocketStream.h:
+
 2017-04-07  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, fix missing return value warning
