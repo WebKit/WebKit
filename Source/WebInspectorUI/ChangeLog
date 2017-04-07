@@ -1,3 +1,19 @@
+2017-04-07  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: DOM/XHR breakpoint tree elements shouldn't persist their represented objects
+        https://bugs.webkit.org/show_bug.cgi?id=170611
+        <rdar://problem/31506161>
+
+        Reviewed by Joseph Pecoraro.
+
+        Prevent tree elements for DOM and XHR breakpoints from persisting their
+        represented objects.
+
+        * UserInterface/Views/ContentView.js:
+        (WebInspector.ContentView.createFromRepresentedObject):
+        * UserInterface/Views/NavigationSidebarPanel.js:
+        (WebInspector.NavigationSidebarPanel.prototype._isTreeElementWithoutRepresentedObject):
+
 2017-04-06  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Source Map Resources should show up in the Debugger Sources list
