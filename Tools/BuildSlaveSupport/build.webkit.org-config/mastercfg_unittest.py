@@ -140,6 +140,34 @@ class RunJavaScriptCoreTestsTest(unittest.TestCase):
     5 failures found.""")
 
 
+class RunTest262TestsTest(unittest.TestCase):
+    def assertResults(self, expected_result, expected_text, rc, stdio):
+        cmd = StubRemoteCommand(rc, stdio)
+        step = RunTest262Tests()
+        step.commandComplete(cmd)
+        actual_results = step.evaluateCommand(cmd)
+        actual_text = step.getText2(cmd, actual_results)
+
+        self.assertEqual(expected_result, actual_results)
+        self.assertEqual(actual_text, expected_text)
+
+    def test_no_regressions_output(self):
+        self.assertResults(SUCCESS, ["test262-test"], 0, """Using the following jsc path: /WebKitBuild/Release/jsc
+168/168         """)
+
+    def test_failure_output(self):
+        self.assertResults(FAILURE, ["1 Test262 test failed"], 1, """Using the following jsc path: /WebKitBuild/Release/jsc
+test262.yaml/test262/test/built-ins/Array/from/iter-set-elem-prop-err.js.default: ERROR: Unexpected exit code: 0
+test262.yaml/test262/test/built-ins/Array/from/iter-set-elem-prop-err.js.default-strict: ERROR: Unexpected exit code: 0
+...
+43768/43768 (failed 1)         """)
+
+    def test_failures_output(self):
+        self.assertResults(FAILURE, ["75 Test262 tests failed"], 75, """Using the following jsc path: /WebKitBuild/Release/jsc
+...
+43768/43768 (failed 75)         """)
+
+
 class RunLLINTCLoopTestsTest(unittest.TestCase):
     def assertResults(self, expected_result, expected_text, rc, stdio):
         cmd = StubRemoteCommand(rc, stdio)
@@ -374,6 +402,7 @@ expected_build_steps = {
     'Apple El Capitan CMake Debug (Build)' :['configure build', 'svn', 'kill old processes', 'delete WebKitBuild directory', 'delete stale build files', 'compile-webkit'],
     'Apple El Capitan Debug (Build)' : ['configure build', 'svn', 'kill old processes', 'delete WebKitBuild directory', 'delete stale build files', 'compile-webkit', 'archive-built-product', 'upload', 'trigger'],
     'Apple El Capitan Debug JSC (Tests)' : ['configure build', 'svn', 'kill old processes', 'delete WebKitBuild directory', 'delete stale build files', 'download-built-product', 'extract-built-product', 'jscore-test'],
+    'Apple El Capitan Debug Test262 (Tests)' : ['configure build', 'svn', 'kill old processes', 'delete WebKitBuild directory', 'delete stale build files', 'download-built-product', 'extract-built-product', 'test262-test'],
     'Apple El Capitan Debug WK1 (Tests)' : ['configure build', 'svn', 'kill old processes', 'delete WebKitBuild directory', 'delete stale build files', 'download-built-product', 'extract-built-product', 'layout-test', 'run-api-tests', 'webkitpy-test', 'webkitperl-test', 'bindings-generation-tests', 'builtins-generator-tests', 'dashboard-tests', 'archive-test-results', 'upload', 'MasterShellCommand'],
     'Apple El Capitan Debug WK2 (Tests)' : ['configure build', 'svn', 'kill old processes', 'delete WebKitBuild directory', 'delete stale build files', 'download-built-product', 'extract-built-product', 'layout-test', 'run-api-tests', 'webkitpy-test', 'webkitperl-test', 'bindings-generation-tests', 'builtins-generator-tests', 'dashboard-tests', 'archive-test-results', 'upload', 'MasterShellCommand'],
     'Apple El Capitan LLINT CLoop (BuildAndTest)' : ['configure build', 'svn', 'kill old processes', 'delete WebKitBuild directory', 'delete stale build files', 'compile-webkit', 'webkit-jsc-cloop-test'],
@@ -381,6 +410,7 @@ expected_build_steps = {
     'Apple El Capitan Release (Build)' : ['configure build', 'svn', 'kill old processes', 'delete WebKitBuild directory', 'delete stale build files', 'compile-webkit', 'archive-built-product', 'upload', 'trigger'],
     'Apple El Capitan Release WK2 (Perf)' : ['configure build', 'svn', 'kill old processes', 'delete WebKitBuild directory', 'delete stale build files', 'download-built-product', 'extract-built-product', 'perf-test'],
     'Apple El Capitan Release JSC (Tests)' : ['configure build', 'svn', 'kill old processes', 'delete WebKitBuild directory', 'delete stale build files', 'download-built-product', 'extract-built-product', 'jscore-test'],
+    'Apple El Capitan Release Test262 (Tests)' : ['configure build', 'svn', 'kill old processes', 'delete WebKitBuild directory', 'delete stale build files', 'download-built-product', 'extract-built-product', 'test262-test'],
     'Apple El Capitan Release WK1 (Tests)' : ['configure build', 'svn', 'kill old processes', 'delete WebKitBuild directory', 'delete stale build files', 'download-built-product', 'extract-built-product', 'layout-test', 'run-api-tests', 'webkitpy-test', 'webkitperl-test', 'bindings-generation-tests', 'builtins-generator-tests', 'dashboard-tests', 'archive-test-results', 'upload', 'MasterShellCommand'],
     'Apple El Capitan Release WK2 (Tests)' : ['configure build', 'svn', 'kill old processes', 'delete WebKitBuild directory', 'delete stale build files', 'download-built-product', 'extract-built-product', 'layout-test', 'run-api-tests', 'webkitpy-test', 'webkitperl-test', 'bindings-generation-tests', 'builtins-generator-tests', 'dashboard-tests', 'archive-test-results', 'upload', 'MasterShellCommand'],
 

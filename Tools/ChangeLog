@@ -1,3 +1,23 @@
+2017-04-07  Aakash Jain  <aakash_jain@apple.com>
+
+        Add support for test262 JavaScriptCore tests
+        https://bugs.webkit.org/show_bug.cgi?id=170523
+
+        Reviewed by Daniel Bates.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json: Added bot433 and bot434.
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (RunTest262Tests): Added class to run Test262 tests.
+        (RunTest262Tests.start): Added.
+        (RunTest262Tests.countFailures): Method to count the failures.
+        (Test262Factory): Added Test262 factory class.
+        * BuildSlaveSupport/build.webkit.org-config/mastercfg_unittest.py:
+        (RunTest262TestsTest): Added unit tests.
+        (RunTest262TestsTest.assertResults): Helper method.
+        (RunTest262TestsTest.test_no_regressions_output): Added test case.
+        (test_failure_output): Same. 
+        (test_failures_output): Same.
+
 2017-04-07  Caio Lima  <ticaiolima@gmail.com>
 
         [JSC] Change --debug option to --debugger

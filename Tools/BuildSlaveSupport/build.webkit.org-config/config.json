@@ -20,6 +20,8 @@
                     { "name": "bot417", "platform": "mac-elcapitan" },
                     { "name": "bot418", "platform": "mac-elcapitan" },
                     { "name": "bot419", "platform": "mac-elcapitan" },
+                    { "name": "bot433", "platform": "mac-elcapitan" },
+                    { "name": "bot434", "platform": "mac-elcapitan" },
 
                     { "name": "bot118", "platform": "mac-sierra" },
                     { "name": "bot121", "platform": "mac-sierra" },
@@ -138,7 +140,7 @@
                     },
                     { "name": "Apple El Capitan Debug (Build)", "type": "Build", "builddir": "elcapitan-debug",
                       "platform": "mac-elcapitan", "configuration": "debug", "architectures": ["x86_64"],
-                      "triggers": ["elcapitan-debug-tests-jsc", "elcapitan-debug-tests-wk1", "elcapitan-debug-tests-wk2"],
+                      "triggers": ["elcapitan-debug-tests-jsc", "elcapitan-debug-tests-test262", "elcapitan-debug-tests-wk1", "elcapitan-debug-tests-wk2"],
                       "slavenames": ["bot415", "bot416"]
                     },
                     { "name": "Apple El Capitan CMake Debug (Build)", "type": "Build", "builddir": "elcapitan-cmake-debug",
@@ -160,6 +162,10 @@
                       "additionalArguments": ["--no-retry-failures", "--no-sample-on-timeout"],
                       "slavenames": ["bot162", "bot165"]
                     },
+                    { "name": "Apple El Capitan Debug Test262 (Tests)", "type": "Test262", "builddir": "elcapitan-debug-tests-test262",
+                      "platform": "mac-elcapitan", "configuration": "debug", "architectures": ["x86_64"],
+                      "slavenames": ["bot433"]
+                    },
                     { "name": "Apple El Capitan LLINT CLoop (BuildAndTest)", "type": "BuildAndTestLLINTCLoop", "builddir": "elcapitan-cloop-debug",
                       "platform": "mac-elcapitan", "configuration": "debug", "architectures": ["x86_64"],
                       "slavenames": ["bot169"]
@@ -170,7 +176,7 @@
                     },
                     { "name": "Apple El Capitan Release (Build)", "type": "Build", "builddir": "elcapitan-release",
                       "platform": "mac-elcapitan", "configuration": "release", "architectures": ["x86_64"],
-                      "triggers": ["elcapitan-release-tests-jsc", "elcapitan-release-tests-wk1", "elcapitan-release-tests-wk2", "elcapitan-release-perf"],
+                      "triggers": ["elcapitan-release-tests-jsc", "elcapitan-release-tests-test262", "elcapitan-release-tests-wk1", "elcapitan-release-tests-wk2", "elcapitan-release-perf"],
                       "slavenames": ["bot417", "bot418"]
                     },
                     { "name": "Apple El Capitan Release JSC (Tests)", "type": "TestJSC", "builddir": "elcapitan-release-tests-jsc",
@@ -195,6 +201,10 @@
                     { "name": "Apple El Capitan Release (32-bit Build)", "type": "Build", "builddir": "elcapitan-32bit-release",
                       "platform": "mac-elcapitan", "configuration": "release", "architectures": ["i386"],
                       "slavenames": ["bot419"]
+                    },
+                    { "name": "Apple El Capitan Release Test262 (Tests)", "type": "Test262", "builddir": "elcapitan-release-tests-test262",
+                      "platform": "mac-elcapitan", "configuration": "release", "architectures": ["x86_64"],
+                      "slavenames": ["bot434"]
                     },
                     {
                       "name": "Apple iOS 10 Release (Build)", "type": "Build", "builddir": "ios-10-release",
@@ -402,6 +412,12 @@
                     },
                     { "type": "Triggerable", "name": "elcapitan-release-perf",
                       "builderNames": ["Apple El Capitan Release WK2 (Perf)"]
+                    },
+                    { "type": "Triggerable", "name": "elcapitan-debug-tests-test262",
+                      "builderNames": ["Apple El Capitan Debug Test262 (Tests)"]
+                    },
+                    { "type": "Triggerable", "name": "elcapitan-release-tests-test262",
+                      "builderNames": ["Apple El Capitan Release Test262 (Tests)"]
                     },
                     { "type": "Triggerable", "name": "ios-simulator-10-release-tests-wk1",
                       "builderNames": ["Apple iOS 10 Simulator Release WK1 (Tests)"]
