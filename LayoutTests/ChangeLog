@@ -1,5 +1,20 @@
 2017-04-07  Chris Dumez  <cdumez@apple.com>
 
+        Audible autoplay videos should not get paused when outside the viewport
+        https://bugs.webkit.org/show_bug.cgi?id=170610
+        <rdar://problem/31505984>
+
+        Reviewed by Eric Carlson.
+
+        Add layout test coverage.
+
+        * media/video-restricted-invisible-autoplay-allowed-if-audible-expected.txt: Added.
+        * media/video-restricted-invisible-autoplay-allowed-if-audible.html: Copied from LayoutTests/media/video-restricted-invisible-autoplay-not-allowed.html.
+        * media/video-restricted-invisible-autoplay-allowed-when-visible.html:
+        * media/video-restricted-invisible-autoplay-not-allowed.html:
+
+2017-04-07  Chris Dumez  <cdumez@apple.com>
+
         Throttle / Align DOM Timers in cross-origin iframes to 30fps
         https://bugs.webkit.org/show_bug.cgi?id=170613
         <rdar://problem/31506444>

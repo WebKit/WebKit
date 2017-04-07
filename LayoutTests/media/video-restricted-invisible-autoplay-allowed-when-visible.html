@@ -8,6 +8,7 @@
                 video = document.createElement('video');
                 run('internals.setMediaElementRestrictions(video, "InvisibleAutoplayNotPermitted")');
                 video.autoplay = true;
+                video.volume = 0;
                 consoleWrite('** setting video.src');
                 video.src = findMediaFile('video', 'content/test');
 

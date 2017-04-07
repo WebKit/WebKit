@@ -1,0 +1,18 @@
+
+Test that "invisible autoplay not allowed restriction" does not pause audible media when scrolled out of view.
+
+** setting video.src
+
+EVENT(play)
+EXPECTED (video.paused == 'false') OK
+RUN(video.style.display = "none")
+EXPECTED (video.paused == 'false') OK
+RUN(video.style.removeProperty("display"))
+RUN(video.style.visibility = "hidden")
+EXPECTED (video.paused == 'false') OK
+RUN(video.style.removeProperty("visibility"))
+RUN(document.documentElement.style.height = window.innerHeight + 20 + video.offsetHeight)
+RUN(window.scrollBy(0, 20 + video.offsetHeight))
+EXPECTED (video.paused == 'false') OK
+END OF TEST
+

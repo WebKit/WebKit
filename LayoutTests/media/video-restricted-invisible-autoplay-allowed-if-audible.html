@@ -11,7 +11,7 @@
                 findMediaElement();
                 consoleWrite('** setting video.src');
                 video.src = findMediaFile('video', 'content/test');
-                video.volume = 0;
+                video.volume = 1;
 
                 waitForEventOnce('play', play1);
                 consoleWrite('');
@@ -19,45 +19,40 @@
 
             function play1()
             {
-                run('video.style.display = "none"');
-                waitForEventOnce('pause', pause1);
-            }
+                waitForEventAndFail('pause');
 
-            function pause1()
-            {
-                run('video.style.removeProperty("display")')
-                waitForEventOnce('play', play2);
+                testExpected('video.paused', false);
+                run('video.style.display = "none"');
+                setTimeout(play2, 10);
             }
 
             function play2()
             {
+                testExpected('video.paused', false);
+                run('video.style.removeProperty("display")');
                 run('video.style.visibility = "hidden"');
-                waitForEventOnce('pause', pause2);
-            }
-
-            function pause2()
-            {
-                run('video.style.removeProperty("visibility")');
-                waitForEventOnce('play', play3);
+                setTimeout(play3, 10);
             }
 
             function play3()
             {
+                testExpected('video.paused', false);
+                run('video.style.removeProperty("visibility")');
                 run('document.documentElement.style.height = window.innerHeight + 20 + video.offsetHeight');
                 run('window.scrollBy(0, 20 + video.offsetHeight)');
-                waitForEventOnce('pause', pause3);
+                setTimeout(play4, 10);
             }
 
-            function pause3()
+            function play4()
             {
-                run('window.scrollTo(0, 0)');
-                waitForEventOnce('play', endTest);
+                testExpected('video.paused', false);
+                endTest();
             }
         </script>
     </head>
 
     <body onload="start()">
         <video controls autoplay></video>
-        <p>Test that "invisible autoplay not allowed restriction" pauses media when scrolled out of view.</p>
+        <p>Test that "invisible autoplay not allowed restriction" does not pause audible media when scrolled out of view.</p>
     </body>
 </html>

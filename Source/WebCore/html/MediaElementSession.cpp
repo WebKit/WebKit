@@ -193,6 +193,10 @@ bool MediaElementSession::autoplayPermitted() const
     if (!hasBehaviorRestriction(MediaElementSession::InvisibleAutoplayNotPermitted))
         return true;
 
+    // If the media element is audible, allow autoplay even when not visible as pausing it would be observable by the user.
+    if ((!m_element.isVideo() || m_element.hasAudio()) && !m_element.muted() && m_element.volume())
+        return true;
+
     auto* renderer = m_element.renderer();
     if (!renderer)
         return false;
