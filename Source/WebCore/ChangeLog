@@ -1,3 +1,23 @@
+2017-04-07  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION(r204512): WebSocket errors with "Failed to send WebSocket frame."  if too much data is sent
+        https://bugs.webkit.org/show_bug.cgi?id=170463
+
+        Reviewed by Michael Catanzaro.
+
+        This only reproduces when using WebSockets to communicate with an external server.
+        When communicating with a local server, CFWriteStreamWrite succeeds too reliably, so
+        CFWriteStreamCanAcceptBytes returns true, when sometimes it doesn't when communicating
+        across the real internet.
+
+        * platform/network/cf/SocketStreamHandleImplCFNet.cpp:
+        (WebCore::SocketStreamHandleImpl::platformSendInternal):
+        * platform/network/soup/SocketStreamHandleImplSoup.cpp:
+        (WebCore::SocketStreamHandleImpl::platformSendInternal):
+        Returning std::nullopt means there was an error, which is not true when the socket stream
+        is in a state where it cannot be written to because it is actively communicating.
+        Returning 0 means 0 new bytes were sent, so we will try again later.
+
 2017-04-07  Eric Carlson  <eric.carlson@apple.com>
 
         MediaSample should store video sample rotation instead of orientation

@@ -656,10 +656,10 @@ SocketStreamHandleImpl::~SocketStreamHandleImpl()
 std::optional<size_t> SocketStreamHandleImpl::platformSendInternal(const char* data, size_t length)
 {
     if (!m_writeStream)
-        return std::nullopt;
+        return 0;
 
     if (!CFWriteStreamCanAcceptBytes(m_writeStream.get()))
-        return std::nullopt;
+        return 0;
 
     CFIndex result = CFWriteStreamWrite(m_writeStream.get(), reinterpret_cast<const UInt8*>(data), length);
     if (result == -1)
