@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "AirAllocateStack.h"
+#include "AirAllocateStackByGraphColoring.h"
 
 #if ENABLE(B3_JIT)
 
@@ -131,9 +131,9 @@ struct CoalescableMove {
 
 } // anonymous namespace
 
-void allocateStack(Code& code)
+void allocateStackByGraphColoring(Code& code)
 {
-    PhaseScope phaseScope(code, "allocateStack");
+    PhaseScope phaseScope(code, "allocateStackByGraphColoring");
 
     // Allocate all of the escaped slots in order. This is kind of a crazy algorithm to allow for
     // the possibility of stack slots being assigned frame offsets before we even get here.

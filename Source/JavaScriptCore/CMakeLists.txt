@@ -75,7 +75,7 @@ set(JavaScriptCore_SOURCES
 
     b3/air/AirAllocateRegistersByGraphColoring.cpp
     b3/air/AirAllocateRegistersByLinearScan.cpp
-    b3/air/AirAllocateStack.cpp
+    b3/air/AirAllocateStackByGraphColoring.cpp
     b3/air/AirArg.cpp
     b3/air/AirBasicBlock.cpp
     b3/air/AirBlockInsertionSet.cpp

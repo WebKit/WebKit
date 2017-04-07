@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,9 +34,12 @@ class Code;
 // This allocates StackSlots to places on the stack. It first allocates the pinned ones in index
 // order and then it allocates the rest using first fit. Takes the opportunity to kill dead
 // assignments to stack slots, since it knows which ones are live. Also fixes ZDefs to anonymous
-// stack slots.
+// stack slots. Also coalesces spill slots whenever possible.
+//
+// This is meant to be an optimal stack allocator, focused on generating great code. It's not
+// particularly fast, though.
 
-void allocateStack(Code&);
+void allocateStackByGraphColoring(Code&);
 
 } } } // namespace JSC::B3::Air
 

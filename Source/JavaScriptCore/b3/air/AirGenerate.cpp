@@ -30,7 +30,7 @@
 
 #include "AirAllocateRegistersByGraphColoring.h"
 #include "AirAllocateRegistersByLinearScan.h"
-#include "AirAllocateStack.h"
+#include "AirAllocateStackByGraphColoring.h"
 #include "AirCode.h"
 #include "AirEliminateDeadCode.h"
 #include "AirFixObviousSpills.h"
@@ -116,7 +116,7 @@ void prepareForGeneration(Code& code)
     // This turns all Stack and CallArg Args into Addr args that use the frame pointer. It does
     // this by first-fit allocating stack slots. It should be pretty darn close to optimal, so we
     // shouldn't have to worry about this very much.
-    allocateStack(code);
+    allocateStackByGraphColoring(code);
     
     // If we coalesced moves then we can unbreak critical edges. This is the main reason for this
     // phase.

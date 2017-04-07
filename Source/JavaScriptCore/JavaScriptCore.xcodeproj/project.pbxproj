@@ -934,8 +934,8 @@
 		0FEC85451BDACDAC0080FF74 /* B3ValueInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEC84FB1BDACDAC0080FF74 /* B3ValueInlines.h */; };
 		0FEC85461BDACDAC0080FF74 /* B3ValueRep.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FEC84FC1BDACDAC0080FF74 /* B3ValueRep.cpp */; };
 		0FEC85471BDACDAC0080FF74 /* B3ValueRep.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEC84FD1BDACDAC0080FF74 /* B3ValueRep.h */; };
-		0FEC856D1BDACDC70080FF74 /* AirAllocateStack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FEC85481BDACDC70080FF74 /* AirAllocateStack.cpp */; };
-		0FEC856E1BDACDC70080FF74 /* AirAllocateStack.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEC85491BDACDC70080FF74 /* AirAllocateStack.h */; };
+		0FEC856D1BDACDC70080FF74 /* AirAllocateStackByGraphColoring.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FEC85481BDACDC70080FF74 /* AirAllocateStackByGraphColoring.cpp */; };
+		0FEC856E1BDACDC70080FF74 /* AirAllocateStackByGraphColoring.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEC85491BDACDC70080FF74 /* AirAllocateStackByGraphColoring.h */; };
 		0FEC856F1BDACDC70080FF74 /* AirArg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FEC854A1BDACDC70080FF74 /* AirArg.cpp */; };
 		0FEC85701BDACDC70080FF74 /* AirArg.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEC854B1BDACDC70080FF74 /* AirArg.h */; };
 		0FEC85711BDACDC70080FF74 /* AirBasicBlock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FEC854C1BDACDC70080FF74 /* AirBasicBlock.cpp */; };
@@ -3483,8 +3483,8 @@
 		0FEC84FB1BDACDAC0080FF74 /* B3ValueInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3ValueInlines.h; path = b3/B3ValueInlines.h; sourceTree = "<group>"; };
 		0FEC84FC1BDACDAC0080FF74 /* B3ValueRep.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3ValueRep.cpp; path = b3/B3ValueRep.cpp; sourceTree = "<group>"; };
 		0FEC84FD1BDACDAC0080FF74 /* B3ValueRep.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3ValueRep.h; path = b3/B3ValueRep.h; sourceTree = "<group>"; };
-		0FEC85481BDACDC70080FF74 /* AirAllocateStack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AirAllocateStack.cpp; path = b3/air/AirAllocateStack.cpp; sourceTree = "<group>"; };
-		0FEC85491BDACDC70080FF74 /* AirAllocateStack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirAllocateStack.h; path = b3/air/AirAllocateStack.h; sourceTree = "<group>"; };
+		0FEC85481BDACDC70080FF74 /* AirAllocateStackByGraphColoring.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AirAllocateStackByGraphColoring.cpp; path = b3/air/AirAllocateStackByGraphColoring.cpp; sourceTree = "<group>"; };
+		0FEC85491BDACDC70080FF74 /* AirAllocateStackByGraphColoring.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirAllocateStackByGraphColoring.h; path = b3/air/AirAllocateStackByGraphColoring.h; sourceTree = "<group>"; };
 		0FEC854A1BDACDC70080FF74 /* AirArg.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AirArg.cpp; path = b3/air/AirArg.cpp; sourceTree = "<group>"; };
 		0FEC854B1BDACDC70080FF74 /* AirArg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirArg.h; path = b3/air/AirArg.h; sourceTree = "<group>"; };
 		0FEC854C1BDACDC70080FF74 /* AirBasicBlock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AirBasicBlock.cpp; path = b3/air/AirBasicBlock.cpp; sourceTree = "<group>"; };
@@ -5573,8 +5573,8 @@
 				7965C2151E5D799600B7591D /* AirAllocateRegistersByGraphColoring.h */,
 				0F2AC5681E8A0BD10001EE3F /* AirAllocateRegistersByLinearScan.cpp */,
 				0F2AC5691E8A0BD10001EE3F /* AirAllocateRegistersByLinearScan.h */,
-				0FEC85481BDACDC70080FF74 /* AirAllocateStack.cpp */,
-				0FEC85491BDACDC70080FF74 /* AirAllocateStack.h */,
+				0FEC85481BDACDC70080FF74 /* AirAllocateStackByGraphColoring.cpp */,
+				0FEC85491BDACDC70080FF74 /* AirAllocateStackByGraphColoring.h */,
 				0FEC854A1BDACDC70080FF74 /* AirArg.cpp */,
 				0FEC854B1BDACDC70080FF74 /* AirArg.h */,
 				0F64EAF21C4ECD0600621E9B /* AirArgInlines.h */,
@@ -8089,7 +8089,7 @@
 				AD4937C41DDBE6140077C807 /* AbstractModuleRecord.h in Headers */,
 				0F55F0F514D1063C00AC7649 /* AbstractPC.h in Headers */,
 				5370B4F61BF26205005C40FC /* AdaptiveInferredPropertyValueWatchpointBase.h in Headers */,
-				0FEC856E1BDACDC70080FF74 /* AirAllocateStack.h in Headers */,
+				0FEC856E1BDACDC70080FF74 /* AirAllocateStackByGraphColoring.h in Headers */,
 				0FEC85701BDACDC70080FF74 /* AirArg.h in Headers */,
 				0F64EAF31C4ECD0600621E9B /* AirArgInlines.h in Headers */,
 				0FEC85721BDACDC70080FF74 /* AirBasicBlock.h in Headers */,
@@ -9982,7 +9982,7 @@
 				AD4937C31DDBE6140077C807 /* AbstractModuleRecord.cpp in Sources */,
 				0F55F0F414D1063900AC7649 /* AbstractPC.cpp in Sources */,
 				5370B4F51BF26202005C40FC /* AdaptiveInferredPropertyValueWatchpointBase.cpp in Sources */,
-				0FEC856D1BDACDC70080FF74 /* AirAllocateStack.cpp in Sources */,
+				0FEC856D1BDACDC70080FF74 /* AirAllocateStackByGraphColoring.cpp in Sources */,
 				0FEC856F1BDACDC70080FF74 /* AirArg.cpp in Sources */,
 				0FEC85711BDACDC70080FF74 /* AirBasicBlock.cpp in Sources */,
 				0F6183291C45BF070072450B /* AirCCallingConvention.cpp in Sources */,

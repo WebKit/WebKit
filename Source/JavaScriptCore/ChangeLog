@@ -1,3 +1,20 @@
+2017-04-06  Filip Pizlo  <fpizlo@apple.com>
+
+        Rename allocateStack to allocateStackByGraphColoring.
+
+        Rubber stamped by Saam Barati.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * b3/air/AirAllocateStack.cpp: Removed.
+        * b3/air/AirAllocateStack.h: Removed.
+        * b3/air/AirAllocateStackByGraphColoring.cpp: Copied from Source/JavaScriptCore/b3/air/AirAllocateStack.cpp.
+        (JSC::B3::Air::allocateStackByGraphColoring):
+        (JSC::B3::Air::allocateStack): Deleted.
+        * b3/air/AirAllocateStackByGraphColoring.h: Copied from Source/JavaScriptCore/b3/air/AirAllocateStack.h.
+        * b3/air/AirGenerate.cpp:
+        (JSC::B3::Air::prepareForGeneration):
+
 2017-04-06  Michael Saboff  <msaboff@apple.com>
 
         Cannot Object.seal() or Object.freeze() global "this"
