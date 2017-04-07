@@ -1,3 +1,17 @@
+2017-04-07  Alex Christensen  <achristensen@webkit.org>
+
+        Private browsing sessions should not look in keychain for client certificates
+        https://bugs.webkit.org/show_bug.cgi?id=170618
+        <rdar://problem/18457427>
+
+        Reviewed by Dan Bernstein.
+
+        Our client certificate testing in WebKit leaves much to be desired.
+        See rdar://problem/17694210 for reproduction steps.
+
+        * platform/spi/cf/CFNetworkSPI.h:
+        Add some new SPI.
+
 2017-04-07  Zalan Bujtas  <zalan@apple.com>
 
         Simple line layout: FlowContents::segmentIndexForRunSlow skips empty runs.

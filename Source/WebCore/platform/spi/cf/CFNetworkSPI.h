@@ -114,6 +114,7 @@ typedef void (^CFCachedURLResponseCallBackBlock)(CFCachedURLResponseRef);
 @property (copy) NSData *_sourceApplicationAuditTokenData;
 @property (nullable, copy) NSString *_sourceApplicationBundleIdentifier;
 @property (nullable, copy) NSString *_sourceApplicationSecondaryIdentifier;
+@property BOOL _shouldSkipPreferredClientCertificateLookup NS_AVAILABLE(10_10, 8_0);
 #if PLATFORM(IOS)
 @property (nullable, copy) NSString *_CTDataConnectionServiceType;
 #endif

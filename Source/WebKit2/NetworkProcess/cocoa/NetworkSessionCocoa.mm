@@ -427,8 +427,11 @@ namespace WebKit {
     
 static NSURLSessionConfiguration *configurationForSessionID(const WebCore::SessionID& session)
 {
-    if (session.isEphemeral())
-        return [NSURLSessionConfiguration ephemeralSessionConfiguration];
+    if (session.isEphemeral()) {
+        NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration ephemeralSessionConfiguration];
+        configuration._shouldSkipPreferredClientCertificateLookup = YES;
+        return configuration;
+    }
     return [NSURLSessionConfiguration defaultSessionConfiguration];
 }
 
