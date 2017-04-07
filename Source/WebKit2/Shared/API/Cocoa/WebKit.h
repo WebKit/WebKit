@@ -25,6 +25,8 @@
 
 #import <WebKit/WKBackForwardList.h>
 #import <WebKit/WKBackForwardListItem.h>
+#import <WebKit/WKContentExtension.h>
+#import <WebKit/WKContentExtensionStore.h>
 #import <WebKit/WKError.h>
 #import <WebKit/WKFoundation.h>
 #import <WebKit/WKFrameInfo.h>

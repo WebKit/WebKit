@@ -1,3 +1,14 @@
+2017-04-06  Alex Christensen  <achristensen@webkit.org>
+
+        Add WKContentExtensionStore.h and WKContentExtension.h to public WebKit.h
+        https://bugs.webkit.org/show_bug.cgi?id=170533
+
+        Reviewed by Daniel Bates.
+
+        * Shared/API/Cocoa/WebKit.h:
+        In r213696 I added two public headers.  All public headers in WebKit are included with
+        #import <WebKit/WebKit.h>
+
 2017-04-06  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Hangs when loading under SpeculativeLoad::shouldCaptureExtraNetworkLoadMetrics
