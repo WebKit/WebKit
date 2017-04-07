@@ -1,3 +1,15 @@
+2017-04-07  Jonathan Bedard  <jbedard@apple.com>
+
+        REGRESSION (r214553): Allow layout-tests to be run from Xcode without re-directing stdout, stdin and stderr
+        https://bugs.webkit.org/show_bug.cgi?id=170601
+        <rdar://problem/31492696>
+
+        Reviewed by Simon Fraser.
+
+        * TestRunnerShared/IOSLayoutTestCommunication.cpp:
+        (setUpIOSLayoutTestCommunication): Skip TCP setup if no port is in the environment.
+        (tearDownIOSLayoutTestCommunication): Only teardown if TCP was used.
+
 2017-04-07  Aakash Jain  <aakash_jain@apple.com>
 
         Add support for test262 JavaScriptCore tests

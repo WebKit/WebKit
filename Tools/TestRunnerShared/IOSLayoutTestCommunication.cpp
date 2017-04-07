@@ -36,6 +36,7 @@
 static int stdinSocket;
 static int stdoutSocket;
 static int stderrSocket;
+static bool isUsingTCP = false;
 
 static int connectToServer(sockaddr_in& serverAddress)
 {
@@ -47,8 +48,12 @@ static int connectToServer(sockaddr_in& serverAddress)
 
 void setUpIOSLayoutTestCommunication()
 {
-    int port = atoi(getenv("PORT"));
+    char* portFromEnvironment = getenv("PORT");
+    if (!portFromEnvironment)
+        return;
+    int port = atoi(portFromEnvironment);
     RELEASE_ASSERT(port > 0);
+    isUsingTCP = true;
 
     struct hostent* host = gethostbyname("127.0.0.1");
     struct sockaddr_in serverAddress;
@@ -73,6 +78,8 @@ void setUpIOSLayoutTestCommunication()
 
 void tearDownIOSLayoutTestCommunication()
 {
+    if (!isUsingTCP)
+        return;
     close(stdinSocket);
     close(stdoutSocket);
     close(stderrSocket);
