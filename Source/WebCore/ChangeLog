@@ -1,3 +1,28 @@
+2017-04-07  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        REGRESSION(r211382): Complex text with justification erroneously overflows containers
+        https://bugs.webkit.org/show_bug.cgi?id=170399
+        <rdar://problem/31442008>
+
+        Reviewed by Simon Fraser.
+
+        When we perform justification, we adjust glyphs' advances to add extra space between words.
+        ComplexTextController maintains an invariant where m_totalWidth is equal to the sum of these
+        advances. However, in RTL text, inserting extra justification space to the left of a glyph
+        would break that invariant, and would increase the advances of two glyphs instead of just
+        one. Then, when we go to draw the text, the sum of the advances is wider than m_totalWidth,
+        which means the glyphs would be drawn outside of their container.
+
+        This regressed in r211382 simply because of an oversight and because there were no tests for
+        this codepath.
+
+        Test: ComplexTextControllerTest.TotalWidthWithJustification
+
+        * platform/graphics/ComplexTextController.cpp:
+        (WebCore::ComplexTextController::adjustGlyphsAndAdvances):
+        * rendering/InlineBox.h:
+        (WebCore::InlineBox::InlineBox):
+
 2017-04-07  Chris Dumez  <cdumez@apple.com>
 
         Throttle / Align DOM Timers in cross-origin iframes to 30fps

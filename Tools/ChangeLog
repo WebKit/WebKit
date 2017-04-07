@@ -1,3 +1,16 @@
+2017-04-07  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        REGRESSION(r211382): Complex text with justification erroneously overflows containers
+        https://bugs.webkit.org/show_bug.cgi?id=170399
+        <rdar://problem/31442008>
+
+        Reviewed by Simon Fraser.
+
+        Check for the invariant that the sum of the advances is equal to m_totalWidth.
+
+        * TestWebKitAPI/Tests/WebCore/ComplexTextController.cpp:
+        (TestWebKitAPI::TEST_F):
+
 2017-04-07  Ryan Haddad  <ryanhaddad@apple.com>
 
         [ios-simulator] API test WebKit2.WKWebProcessPlugInRangeHandle timing out

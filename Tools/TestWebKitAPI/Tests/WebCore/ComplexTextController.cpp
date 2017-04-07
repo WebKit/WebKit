@@ -355,4 +355,37 @@ TEST_F(ComplexTextControllerTest, VerticalAdvances)
     EXPECT_NEAR(glyphBuffer.advanceAt(3).height(), 256 - 64, 0.0001);
 }
 
+TEST_F(ComplexTextControllerTest, TotalWidthWithJustification)
+{
+    FontCascadeDescription description;
+    description.setOneFamily("Times");
+    description.setComputedSize(80);
+    FontCascade font(description);
+    font.update();
+
+    Vector<FloatSize> advances = { FloatSize(1, 0), FloatSize(2, 0), FloatSize(4, 0), FloatSize(8, 0), FloatSize(16, 0) };
+#if USE_LAYOUT_SPECIFIC_ADVANCES
+    Vector<FloatPoint> origins = { FloatPoint(), FloatPoint(), FloatPoint(), FloatPoint(), FloatPoint() };
+#else
+    Vector<FloatPoint> origins = { };
+#endif
+
+    FloatSize initialAdvance = FloatSize();
+
+    UChar characters[] = { 0x644, ' ', 0x644, ' ', 0x644 };
+    size_t charactersLength = WTF_ARRAY_LENGTH(characters);
+    TextRun textRun(StringView(characters, charactersLength), 0, 14, DefaultExpansion, RTL);
+    auto run = ComplexTextController::ComplexTextRun::create(advances, origins, { 5, 6, 7, 8, 9 }, { 4, 3, 2, 1, 0 }, initialAdvance, font.primaryFont(), characters, 0, charactersLength, 0, 5, false);
+    Vector<Ref<ComplexTextController::ComplexTextRun>> runs;
+    runs.append(WTFMove(run));
+    ComplexTextController controller(font, textRun, runs);
+
+    EXPECT_NEAR(controller.totalWidth(), 1 + 20 + 7 + 4 + 20 + 7 + 16, 0.0001);
+    GlyphBuffer glyphBuffer;
+    EXPECT_NEAR(controller.runWidthSoFar(), 0, 0.0001);
+    controller.advance(5, &glyphBuffer);
+    EXPECT_EQ(glyphBuffer.size(), 5U);
+    EXPECT_NEAR(glyphBuffer.advanceAt(0).width() + glyphBuffer.advanceAt(1).width() + glyphBuffer.advanceAt(2).width() + glyphBuffer.advanceAt(3).width() + glyphBuffer.advanceAt(4).width(), controller.totalWidth(), 0.0001);
+}
+
 }
