@@ -1,3 +1,9 @@
+2017-04-06  Dean Jackson  <dino@apple.com>
+
+        Fix broken link.
+
+        * demos/webgpu/index.html:
+
 2017-04-06  Jon Davis  <jond@apple.com>
 
         Updates feature status for recently shipped features
