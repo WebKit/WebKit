@@ -1,3 +1,17 @@
+2017-04-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Missing conversion from window to content coordinates when adjusting unobscured content rects for input view
+        https://bugs.webkit.org/show_bug.cgi?id=170603
+
+        Reviewed by Simon Fraser.
+
+        Refactors -[WKContentView _computeUnobscuredContentRectRespectingInputViewBounds:unobscuredContentRect:inputViewBounds:scale:]
+        to convert the input view bounds into content coordinates instead of using the zoom scale to adjust the height of inputViewBounds.
+        Covered by the existing LayoutTest, fixed-element-on-bottom-with-keyboard.html.
+
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView _computeUnobscuredContentRectRespectingInputViewBounds:unobscuredContentRect:inputViewBounds:scale:]):
+
 2017-04-07  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Various build errors when plugin support is disabled
