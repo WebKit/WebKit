@@ -1,3 +1,16 @@
+2017-04-07  Brent Fulgham  <bfulgham@apple.com>
+
+        [WK2][iOS] Add CoreMedia entitlement for WebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=170623
+        <rdar://problem/30020073>
+
+        Reviewed by Youenn Fablet.
+
+        Add new "com.apple.tcc.delegated-services" entitlement to allow CoreMedia
+        to work properly in WebRTC.
+
+        * Configurations/WebContent-iOS.entitlements:
+
 2017-04-07  Alex Christensen  <achristensen@webkit.org>
 
         Private browsing sessions should not look in keychain for client certificates

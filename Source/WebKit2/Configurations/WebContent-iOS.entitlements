@@ -28,5 +28,7 @@
 	<true/>
 	<key>com.apple.private.coremedia.extensions.audiorecording.allow</key>
 	<true/>
+	<key>com.apple.tcc.delegated-services</key>
+	<true/>
 </dict>
 </plist>
