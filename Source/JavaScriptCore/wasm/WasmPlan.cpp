@@ -52,13 +52,12 @@ static const bool verbose = false;
 
 Plan::Plan(VM& vm, Ref<ModuleInformation> info, AsyncWork work, CompletionTask&& task)
     : m_moduleInformation(WTFMove(info))
-    , m_vm(vm)
     , m_source(m_moduleInformation->source.data())
     , m_sourceLength(m_moduleInformation->source.size())
     , m_state(State::Validated)
     , m_asyncWork(work)
 {
-    m_completionTasks.append(WTFMove(task));
+    m_completionTasks.append(std::make_pair(&vm, WTFMove(task)));
 }
 
 Plan::Plan(VM& vm, Vector<uint8_t>&& source, AsyncWork work, CompletionTask&& task)
@@ -69,13 +68,12 @@ Plan::Plan(VM& vm, Vector<uint8_t>&& source, AsyncWork work, CompletionTask&& ta
 
 Plan::Plan(VM& vm, const uint8_t* source, size_t sourceLength, AsyncWork work, CompletionTask&& task)
     : m_moduleInformation(makeRef(*new ModuleInformation(Vector<uint8_t>())))
-    , m_vm(vm)
     , m_source(source)
     , m_sourceLength(sourceLength)
     , m_state(State::Initial)
     , m_asyncWork(work)
 {
-    m_completionTasks.append(WTFMove(task));
+    m_completionTasks.append(std::make_pair(&vm, WTFMove(task)));
 }
 
 const char* Plan::stateString(State state)
@@ -104,13 +102,13 @@ void Plan::fail(const AbstractLocker& locker, String&& errorMessage)
     complete(locker);
 }
 
-void Plan::addCompletionTask(CompletionTask&& task)
+void Plan::addCompletionTask(VM& vm, CompletionTask&& task)
 {
     LockHolder locker(m_lock);
     if (m_state != State::Completed)
-        m_completionTasks.append(WTFMove(task));
+        m_completionTasks.append(std::make_pair(&vm, WTFMove(task)));
     else
-        task(*this);
+        task->run(vm, *this);
 }
 
 bool Plan::parseAndValidateModule()
@@ -182,7 +180,7 @@ void Plan::prepare()
     };
 
     const auto& functionLocations = m_moduleInformation->functionLocationInBinary;
-    if (!tryReserveCapacity(m_wasmExitStubs, m_moduleInformation->importFunctionSignatureIndices.size(), " WebAssembly to JavaScript stubs")
+    if (!tryReserveCapacity(m_wasmToWasmExitStubs, m_moduleInformation->importFunctionSignatureIndices.size(), " WebAssembly to JavaScript stubs")
         || !tryReserveCapacity(m_unlinkedWasmToWasmCalls, functionLocations.size(), " unlinked WebAssembly to WebAssembly calls")
         || !tryReserveCapacity(m_wasmInternalFunctions, functionLocations.size(), " WebAssembly functions")
         || !tryReserveCapacity(m_compilationContexts, functionLocations.size(), " compilation contexts"))
@@ -196,10 +194,9 @@ void Plan::prepare()
         Import* import = &m_moduleInformation->imports[importIndex];
         if (import->kind != ExternalKind::Function)
             continue;
-        unsigned importFunctionIndex = m_wasmExitStubs.size();
+        unsigned importFunctionIndex = m_wasmToWasmExitStubs.size();
         dataLogLnIf(verbose, "Processing import function number ", importFunctionIndex, ": ", makeString(import->module), ": ", makeString(import->field));
-        SignatureIndex signatureIndex = m_moduleInformation->importFunctionSignatureIndices.at(import->kindIndex);
-        m_wasmExitStubs.uncheckedAppend(exitStubGenerator(&m_vm, m_callLinkInfos, signatureIndex, importFunctionIndex));
+        m_wasmToWasmExitStubs.uncheckedAppend(wasmToWasm(importFunctionIndex));
     }
 
     moveToState(State::Prepared);
@@ -260,7 +257,7 @@ void Plan::compileFunctions(CompilationEffort effort)
         ASSERT(functionLength <= m_sourceLength);
         SignatureIndex signatureIndex = m_moduleInformation->internalFunctionSignatureIndices[functionIndex];
         const Signature& signature = SignatureInformation::get(signatureIndex);
-        unsigned functionIndexSpace = m_wasmExitStubs.size() + functionIndex;
+        unsigned functionIndexSpace = m_wasmToWasmExitStubs.size() + functionIndex;
         ASSERT_UNUSED(functionIndexSpace, m_moduleInformation->signatureIndexFromFunctionIndexSpace(functionIndexSpace) == signatureIndex);
         ASSERT(validateFunction(functionStart, functionLength, signature, m_moduleInformation.get()));
 
@@ -316,9 +313,9 @@ void Plan::complete(const AbstractLocker&)
                 void* executableAddress;
                 if (m_moduleInformation->isImportedFunctionFromFunctionIndexSpace(call.functionIndex)) {
                     // FIXME imports could have been linked in B3, instead of generating a patchpoint. This condition should be replaced by a RELEASE_ASSERT. https://bugs.webkit.org/show_bug.cgi?id=166462
-                    executableAddress = m_wasmExitStubs.at(call.functionIndex).wasmToWasm.code().executableAddress();
+                    executableAddress = m_wasmToWasmExitStubs.at(call.functionIndex).code().executableAddress();
                 } else
-                    executableAddress = m_wasmInternalFunctions.at(call.functionIndex - m_wasmExitStubs.size())->wasmEntrypoint.compilation->code().executableAddress();
+                    executableAddress = m_wasmInternalFunctions.at(call.functionIndex - m_wasmToWasmExitStubs.size())->wasmEntrypoint.compilation->code().executableAddress();
                 MacroAssembler::repatchCall(call.callLocation, CodeLocationLabel(executableAddress));
             }
         }
@@ -327,7 +324,7 @@ void Plan::complete(const AbstractLocker&)
     if (m_state != State::Completed) {
         moveToState(State::Completed);
         for (auto& task : m_completionTasks)
-            task(*this);
+            task.second->run(*task.first, *this);
         m_completed.notifyAll();
     }
 }
@@ -341,13 +338,32 @@ void Plan::waitForCompletion()
     }
 }
 
-void Plan::cancel()
+bool Plan::tryRemoveVMAndCancelIfLast(VM& vm)
 {
     LockHolder locker(m_lock);
-    if (m_state != State::Completed) {
-        m_currentIndex = m_moduleInformation->functionLocationInBinary.size();
-        fail(locker, ASCIILiteral("WebAssembly Plan was canceled. If you see this error message please file a bug at bugs.webkit.org!"));
+
+    bool removedAnyTasks = false;
+    m_completionTasks.removeAllMatching([&] (const std::pair<VM*, CompletionTask>& pair) {
+        bool shouldRemove = pair.first == &vm;
+        removedAnyTasks |= shouldRemove;
+        return shouldRemove;
+    });
+
+    if (!removedAnyTasks)
+        return false;
+
+    if (m_state == State::Completed) {
+        // We trivially cancel anything that's completed.
+        return true;
     }
+
+    if (m_completionTasks.isEmpty()) {
+        m_currentIndex = m_moduleInformation->functionLocationInBinary.size();
+        fail(locker, ASCIILiteral("WebAssembly Plan was cancelled. If you see this error message please file a bug at bugs.webkit.org!"));
+        return true;
+    }
+
+    return false;
 }
 
 Plan::~Plan() { }

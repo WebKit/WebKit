@@ -39,11 +39,6 @@ class JSModuleNamespaceObject;
 class JSWebAssemblyModule;
 class WebAssemblyToJSCallee;
 
-namespace Wasm {
-class Plan;
-}
-
-
 class JSWebAssemblyInstance : public JSDestructibleObject {
 public:
     typedef JSDestructibleObject Base;
@@ -54,9 +49,7 @@ public:
     DECLARE_EXPORT_INFO;
 
     JSWebAssemblyCodeBlock* codeBlock() const { return m_codeBlock.get(); }
-    bool initialized() const { return codeBlock() && codeBlock()->initialized(); }
-    void addUnitializedCodeBlock(VM&, Ref<Wasm::Plan>);
-    void finalizeCreation(VM&, ExecState*);
+    void finalizeCreation(VM&, ExecState*, Ref<Wasm::CodeBlock>&&);
 
     JSWebAssemblyModule* module() const { return m_module.get(); }
 

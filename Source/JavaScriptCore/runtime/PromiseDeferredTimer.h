@@ -64,6 +64,7 @@ private:
     Lock m_taskLock;
     bool m_runTasks { true };
     bool m_shouldStopRunLoopWhenAllPromisesFinish { false };
+    bool m_currentlyRunningTask { false };
     Vector<std::tuple<JSPromiseDeferred*, Task>> m_tasks;
 };
 

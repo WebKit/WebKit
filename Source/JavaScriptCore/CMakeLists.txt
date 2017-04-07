@@ -938,11 +938,13 @@ set(JavaScriptCore_SOURCES
     wasm/WasmBinding.cpp
     wasm/WasmCallee.cpp
     wasm/WasmCallingConvention.cpp
+    wasm/WasmCodeBlock.cpp
     wasm/WasmContext.cpp
     wasm/WasmFaultSignalHandler.cpp
     wasm/WasmFormat.cpp
     wasm/WasmMemory.cpp
     wasm/WasmMemoryInformation.cpp
+    wasm/WasmModule.cpp
     wasm/WasmModuleInformation.cpp
     wasm/WasmModuleParser.cpp
     wasm/WasmPageCount.cpp

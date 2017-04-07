@@ -1,3 +1,12 @@
+2017-04-07  Saam Barati  <sbarati@apple.com>
+
+        WebAssembly: Make to a compilation API that allows for multi-VM concurrent compilations of Wasm Modules
+        https://bugs.webkit.org/show_bug.cgi?id=170488
+
+        Reviewed by JF Bastien.
+
+        * wtf/SharedTask.h: Make SharedTaskFunctor forward its arguments.
+
 2017-04-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Update the priorities used in glib main loop sources

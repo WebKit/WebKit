@@ -1321,6 +1321,8 @@
 		52678F8E1A031009006A306D /* BasicBlockLocation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52678F8C1A031009006A306D /* BasicBlockLocation.cpp */; };
 		52678F8F1A031009006A306D /* BasicBlockLocation.h in Headers */ = {isa = PBXBuildFile; fileRef = 52678F8D1A031009006A306D /* BasicBlockLocation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		52678F911A04177C006A306D /* ControlFlowProfiler.h in Headers */ = {isa = PBXBuildFile; fileRef = 52678F901A04177C006A306D /* ControlFlowProfiler.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		526AC4B61E977C5D003500E1 /* WasmCodeBlock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 526AC4B41E977C5D003500E1 /* WasmCodeBlock.cpp */; };
+		526AC4B71E977C5D003500E1 /* WasmCodeBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = 526AC4B51E977C5D003500E1 /* WasmCodeBlock.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		527773DE1AAF83AC00BDE7E8 /* RuntimeType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 527773DD1AAF83AC00BDE7E8 /* RuntimeType.cpp */; };
 		52B310FB1974AE610080857C /* FunctionHasExecutedCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 52B310FA1974AE610080857C /* FunctionHasExecutedCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		52B310FD1974AE870080857C /* FunctionHasExecutedCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52B310FC1974AE870080857C /* FunctionHasExecutedCache.cpp */; };
@@ -1490,6 +1492,8 @@
 		72AAF7CD1D0D31B3005E60BE /* JSCustomGetterSetterFunction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72AAF7CB1D0D318B005E60BE /* JSCustomGetterSetterFunction.cpp */; };
 		72AAF7CE1D0D31B3005E60BE /* JSCustomGetterSetterFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = 72AAF7CC1D0D318B005E60BE /* JSCustomGetterSetterFunction.h */; };
 		78274D8E4C4D4FCD9A1DC6E6 /* TemplateRegistryKey.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BDB4B5E099CD4C1BB3C1CF05 /* TemplateRegistryKey.cpp */; };
+		790081381E95A8EC0052D7CD /* WasmModule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 790081361E95A8EC0052D7CD /* WasmModule.cpp */; };
+		790081391E95A8EC0052D7CD /* WasmModule.h in Headers */ = {isa = PBXBuildFile; fileRef = 790081371E95A8EC0052D7CD /* WasmModule.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7905BB681D12050E0019FE57 /* InlineAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7905BB661D12050E0019FE57 /* InlineAccess.cpp */; };
 		7905BB691D12050E0019FE57 /* InlineAccess.h in Headers */ = {isa = PBXBuildFile; fileRef = 7905BB671D12050E0019FE57 /* InlineAccess.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		79160DBD1C8E3EC8008C085A /* ProxyRevoke.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 79160DBB1C8E3EC8008C085A /* ProxyRevoke.cpp */; };
@@ -3831,6 +3835,8 @@
 		52678F8C1A031009006A306D /* BasicBlockLocation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BasicBlockLocation.cpp; sourceTree = "<group>"; };
 		52678F8D1A031009006A306D /* BasicBlockLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BasicBlockLocation.h; sourceTree = "<group>"; };
 		52678F901A04177C006A306D /* ControlFlowProfiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ControlFlowProfiler.h; sourceTree = "<group>"; };
+		526AC4B41E977C5D003500E1 /* WasmCodeBlock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WasmCodeBlock.cpp; sourceTree = "<group>"; };
+		526AC4B51E977C5D003500E1 /* WasmCodeBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmCodeBlock.h; sourceTree = "<group>"; };
 		527773DD1AAF83AC00BDE7E8 /* RuntimeType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RuntimeType.cpp; sourceTree = "<group>"; };
 		52B310FA1974AE610080857C /* FunctionHasExecutedCache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FunctionHasExecutedCache.h; sourceTree = "<group>"; };
 		52B310FC1974AE870080857C /* FunctionHasExecutedCache.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FunctionHasExecutedCache.cpp; sourceTree = "<group>"; };
@@ -4043,6 +4049,8 @@
 		72AAF7CB1D0D318B005E60BE /* JSCustomGetterSetterFunction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCustomGetterSetterFunction.cpp; sourceTree = "<group>"; };
 		72AAF7CC1D0D318B005E60BE /* JSCustomGetterSetterFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCustomGetterSetterFunction.h; sourceTree = "<group>"; };
 		77B25CB2C3094A92A38E1DB3 /* JSModuleLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSModuleLoader.h; sourceTree = "<group>"; };
+		790081361E95A8EC0052D7CD /* WasmModule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WasmModule.cpp; sourceTree = "<group>"; };
+		790081371E95A8EC0052D7CD /* WasmModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmModule.h; sourceTree = "<group>"; };
 		7905BB661D12050E0019FE57 /* InlineAccess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InlineAccess.cpp; sourceTree = "<group>"; };
 		7905BB671D12050E0019FE57 /* InlineAccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InlineAccess.h; sourceTree = "<group>"; };
 		79160DBB1C8E3EC8008C085A /* ProxyRevoke.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProxyRevoke.cpp; sourceTree = "<group>"; };
@@ -6321,12 +6329,16 @@
 				525C0DD81E935847002184CD /* WasmCallee.h */,
 				53FD04D11D7AB187003287D3 /* WasmCallingConvention.cpp */,
 				53FD04D21D7AB187003287D3 /* WasmCallingConvention.h */,
+				526AC4B41E977C5D003500E1 /* WasmCodeBlock.cpp */,
+				526AC4B51E977C5D003500E1 /* WasmCodeBlock.h */,
 				AD412B311E7B2E8A008AF157 /* WasmContext.cpp */,
 				AD412B321E7B2E8A008AF157 /* WasmContext.h */,
 				79DAE2791E03C82200B526AA /* WasmExceptionType.h */,
 				AD2FCC321DC4045300B3E736 /* WasmFormat.cpp */,
 				7BC547D21B69599B00959B58 /* WasmFormat.h */,
 				53F40E8A1D5901BB0099A1B6 /* WasmFunctionParser.h */,
+				790081361E95A8EC0052D7CD /* WasmModule.cpp */,
+				790081371E95A8EC0052D7CD /* WasmModule.h */,
 				535557151D9DFA32006D583B /* WasmMemory.cpp */,
 				535557131D9D9EA5006D583B /* WasmMemory.h */,
 				79B759711DFA4C600052174C /* WasmMemoryInformation.cpp */,
@@ -8774,6 +8786,7 @@
 				DC3D2B0A1D34316200BA918C /* HeapCell.h in Headers */,
 				0F070A491D543A93006E7232 /* HeapCellInlines.h in Headers */,
 				0F32BD111BB34F190093A57F /* HeapHelperPool.h in Headers */,
+				526AC4B71E977C5D003500E1 /* WasmCodeBlock.h in Headers */,
 				C2DA778318E259990066FCB6 /* HeapInlines.h in Headers */,
 				2AD8932B17E3868F00668276 /* HeapIterationScope.h in Headers */,
 				A5339EC91BB4B4600054F005 /* HeapObserver.h in Headers */,
@@ -8922,6 +8935,7 @@
 				A58C024218E4A41A00032BC5 /* JSContextPrivate.h in Headers */,
 				BC18C41E0E16F5CD00B34460 /* JSContextRef.h in Headers */,
 				A5EA70EE19F5B5C40098F5EC /* JSContextRefInspectorSupport.h in Headers */,
+				790081391E95A8EC0052D7CD /* WasmModule.h in Headers */,
 				A5D2E665195E174000A518E7 /* JSContextRefInternal.h in Headers */,
 				0FF4B4C71E8893C500DBBE86 /* AirCFG.h in Headers */,
 				148CD1D8108CF902008163C6 /* JSContextRefPrivate.h in Headers */,
@@ -10366,6 +10380,7 @@
 				0FB105851675480F00F8AB6E /* ExitKind.cpp in Sources */,
 				0F5513A81D5A68CD00C32BD8 /* FreeList.cpp in Sources */,
 				0FEA0A1C1708B00700BB722C /* FTLAbstractHeap.cpp in Sources */,
+				790081381E95A8EC0052D7CD /* WasmModule.cpp in Sources */,
 				0FEA0A1E1708B00700BB722C /* FTLAbstractHeapRepository.cpp in Sources */,
 				0F485327187DFDEC0083B687 /* FTLAvailableRecovery.cpp in Sources */,
 				0FEA0A09170513DB00BB722C /* FTLCapabilities.cpp in Sources */,
@@ -10546,6 +10561,7 @@
 				798937781DCAB57300F8D4FB /* JSFixedArray.cpp in Sources */,
 				140566D6107EC271005DBC8D /* JSFunction.cpp in Sources */,
 				70B7919B1C024A46002481E2 /* JSGeneratorFunction.cpp in Sources */,
+				526AC4B61E977C5D003500E1 /* WasmCodeBlock.cpp in Sources */,
 				797E07A91B8FCFB9008400BA /* JSGlobalLexicalEnvironment.cpp in Sources */,
 				147F39D2107EC37600427A48 /* JSGlobalObject.cpp in Sources */,
 				A5FD0085189B1B7E00633231 /* JSGlobalObjectConsoleAgent.cpp in Sources */,

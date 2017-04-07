@@ -58,7 +58,7 @@ using Wasm::Plan;
 
 static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyInstance(ExecState* exec)
 {
-    auto& vm = exec->vm();
+    VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     // If moduleObject is not a WebAssembly.Module instance, a TypeError is thrown.
@@ -78,26 +78,7 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyInstance(ExecState* ex
     JSWebAssemblyInstance* instance = JSWebAssemblyInstance::create(vm, exec, module, importObject, instanceStructure);
     RETURN_IF_EXCEPTION(scope, { });
 
-    // There are three possible cases:
-    // 1) The instance already has an initialized CodeBlock (runnable), so we just need to finalizeCreation.
-    // 2) The instance has no CodeBlock, so we need to make one and compile the code for it.
-    // 3) The instance already has an uninitialized CodeBlock, so we need to wait for the compilation to finish.
-
-    if (!instance->initialized()) {
-        if (instance->codeBlock())
-            Wasm::ensureWorklist().completePlanSynchronously(instance->codeBlock()->plan());
-        else {
-            Ref<Wasm::Plan> plan = adoptRef(*new Plan(vm, makeRef(const_cast<Wasm::ModuleInformation&>(module->moduleInformation())), Plan::FullCompile, Plan::dontFinalize));
-            plan->setMode(instance->memoryMode());
-            instance->addUnitializedCodeBlock(vm, plan.copyRef());
-
-            auto& worklist = Wasm::ensureWorklist();
-            worklist.enqueue(plan.copyRef());
-            worklist.completePlanSynchronously(plan.get());
-        }
-    }
-
-    instance->finalizeCreation(vm, exec);
+    instance->finalizeCreation(vm, exec, module->module().compileSync(vm, instance->memoryMode()));
     RETURN_IF_EXCEPTION(scope, { });
     return JSValue::encode(instance);
 }

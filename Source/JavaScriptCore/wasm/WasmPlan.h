@@ -32,6 +32,7 @@
 #include "WasmB3IRGenerator.h"
 #include "WasmModuleInformation.h"
 #include <wtf/Bag.h>
+#include <wtf/SharedTask.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Vector.h>
 
@@ -45,8 +46,9 @@ namespace Wasm {
 
 class Plan : public ThreadSafeRefCounted<Plan> {
 public:
-    static void dontFinalize(Plan&) { }
-    typedef std::function<void(Plan&)> CompletionTask;
+    typedef void CallbackType(VM&, Plan&);
+    using CompletionTask = RefPtr<SharedTask<CallbackType>>;
+    static CompletionTask dontFinalize() { return createSharedTask<CallbackType>([](VM&, Plan&) { }); }
     enum AsyncWork : uint8_t { FullCompile, Validation };
     // Note: CompletionTask should not hold a reference to the Plan otherwise there will be a reference cycle.
     Plan(VM&, Ref<ModuleInformation>, AsyncWork, CompletionTask&&);
@@ -56,7 +58,9 @@ public:
     JS_EXPORT_PRIVATE Plan(VM&, const uint8_t*, size_t, AsyncWork, CompletionTask&&);
     JS_EXPORT_PRIVATE ~Plan();
 
-    void addCompletionTask(CompletionTask&&);
+    // If you guarantee the ordering here, you can rely on FIFO of the
+    // completion tasks being called.
+    void addCompletionTask(VM&, CompletionTask&&);
 
     bool parseAndValidateModule();
 
@@ -91,15 +95,14 @@ public:
         return WTFMove(m_callLinkInfos);
     }
 
-    Vector<WasmExitStubs>&& takeWasmExitStubs()
+    Vector<MacroAssemblerCodeRef>&& takeWasmToWasmExitStubs()
     {
         RELEASE_ASSERT(!failed() && !hasWork());
-        return WTFMove(m_wasmExitStubs);
+        return WTFMove(m_wasmToWasmExitStubs);
     }
 
     void setMode(MemoryMode mode) { m_mode = mode; }
     MemoryMode mode() const { return m_mode; }
-    VM& vm() const { return m_vm; }
 
     enum class State : uint8_t {
         Initial,
@@ -116,7 +119,8 @@ public:
     bool hasBeenPrepared() const { return m_state >= State::Prepared; }
 
     void waitForCompletion();
-    void cancel();
+    // Returns true if it cancelled the plan.
+    bool tryRemoveVMAndCancelIfLast(VM&);
 
 private:
     class ThreadCountHolder;
@@ -131,12 +135,11 @@ private:
 
     Ref<ModuleInformation> m_moduleInformation;
     Bag<CallLinkInfo> m_callLinkInfos;
-    Vector<WasmExitStubs> m_wasmExitStubs;
+    Vector<MacroAssemblerCodeRef> m_wasmToWasmExitStubs;
     Vector<std::unique_ptr<WasmInternalFunction>> m_wasmInternalFunctions;
     Vector<CompilationContext> m_compilationContexts;
 
-    VM& m_vm;
-    Vector<CompletionTask, 1> m_completionTasks;
+    Vector<std::pair<VM*, CompletionTask>, 1> m_completionTasks;
 
     Vector<Vector<UnlinkedWasmToWasmCall>> m_unlinkedWasmToWasmCalls;
     const uint8_t* m_source;

@@ -94,24 +94,17 @@ void JSWebAssemblyInstance::visitChildren(JSCell* cell, SlotVisitor& visitor)
         visitor.append(thisObject->importFunctions()[i]);
 }
 
-void JSWebAssemblyInstance::addUnitializedCodeBlock(VM& vm, Ref<Wasm::Plan> plan)
-{
-    auto* codeBlock = JSWebAssemblyCodeBlock::create(
-        vm, module(), memoryMode(), WTFMove(plan), module()->moduleInformation().internalFunctionCount(), module()->moduleInformation().importFunctionCount());
-    m_codeBlock.set(vm, this, codeBlock);
-    ASSERT(!codeBlock->initialized());
-}
-
-void JSWebAssemblyInstance::finalizeCreation(VM& vm, ExecState* exec)
+void JSWebAssemblyInstance::finalizeCreation(VM& vm, ExecState* exec, Ref<Wasm::CodeBlock>&& wasmCodeBlock)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
-    codeBlock()->initialize();
-
-    if (!codeBlock()->runnable()) {
-        throwException(exec, scope, JSWebAssemblyLinkError::create(exec, vm, globalObject()->WebAssemblyLinkErrorStructure(), codeBlock()->errorMessage()));
+    if (!wasmCodeBlock->runnable()) {
+        throwException(exec, scope, JSWebAssemblyLinkError::create(exec, vm, globalObject()->WebAssemblyLinkErrorStructure(), wasmCodeBlock->errorMessage()));
         return;
     }
-    RELEASE_ASSERT(codeBlock()->isSafeToRun(memory()));
+
+    RELEASE_ASSERT(wasmCodeBlock->isSafeToRun(memory()->memory().mode()));
+    m_codeBlock.set(vm, this,
+        JSWebAssemblyCodeBlock::create(vm, wasmCodeBlock.copyRef(), m_module->module().moduleInformation()));
 
     auto* moduleRecord = jsCast<WebAssemblyModuleRecord*>(m_moduleNamespaceObject->moduleRecord());
     moduleRecord->link(exec, module(), this);

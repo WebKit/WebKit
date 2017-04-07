@@ -38,7 +38,8 @@ class CallLinkInfo;
 
 namespace Wasm {
 
-WasmExitStubs exitStubGenerator(VM*, Bag<CallLinkInfo>&, SignatureIndex, unsigned);
+MacroAssemblerCodeRef wasmToWasm(unsigned importIndex);
+MacroAssemblerCodeRef wasmToJs(VM*, Bag<CallLinkInfo>& callLinkInfos, SignatureIndex, unsigned importIndex);
 
 } } // namespace JSC::Wasm
 

@@ -159,6 +159,8 @@ static EncodedJSValue JSC_HOST_CALL callWebAssemblyFunction(ExecState* exec)
 
 WebAssemblyFunction* WebAssemblyFunction::create(VM& vm, JSGlobalObject* globalObject, unsigned length, const String& name, JSWebAssemblyInstance* instance, Wasm::Callee& jsEntrypoint, Wasm::Callee& wasmEntrypoint, Wasm::SignatureIndex signatureIndex)
 {
+    ASSERT(&jsEntrypoint != &wasmEntrypoint);
+
     NativeExecutable* executable = vm.getHostFunction(callWebAssemblyFunction, NoIntrinsic, callHostFunctionAsConstructor, nullptr, name);
     Structure* structure = globalObject->webAssemblyFunctionStructure();
     WebAssemblyFunction* function = new (NotNull, allocateCell<WebAssemblyFunction>(vm.heap)) WebAssemblyFunction(vm, globalObject, structure, jsEntrypoint, wasmEntrypoint, signatureIndex);

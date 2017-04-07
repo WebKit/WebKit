@@ -43,16 +43,15 @@ namespace JSC {
 
 const ClassInfo JSWebAssemblyModule::s_info = { "WebAssembly.Module", &Base::s_info, nullptr, CREATE_METHOD_TABLE(JSWebAssemblyModule) };
 
-JSWebAssemblyModule* JSWebAssemblyModule::createStub(VM& vm, ExecState* exec, Structure* structure, RefPtr<Wasm::Plan>&& plan)
+JSWebAssemblyModule* JSWebAssemblyModule::createStub(VM& vm, ExecState* exec, Structure* structure, Wasm::Module::ValidationResult&& result)
 {
-    ASSERT(!plan->hasWork());
     auto scope = DECLARE_THROW_SCOPE(vm);
-    if (plan->failed()) {
-        throwException(exec, scope, JSWebAssemblyCompileError::create(exec, vm, structure->globalObject()->WebAssemblyCompileErrorStructure(), plan->errorMessage()));
+    if (!result.hasValue()) {
+        throwException(exec, scope, JSWebAssemblyCompileError::create(exec, vm, structure->globalObject()->WebAssemblyCompileErrorStructure(), result.error()));
         return nullptr;
     }
 
-    auto* module = new (NotNull, allocateCell<JSWebAssemblyModule>(vm.heap)) JSWebAssemblyModule(vm, structure, *plan.get());
+    auto* module = new (NotNull, allocateCell<JSWebAssemblyModule>(vm.heap)) JSWebAssemblyModule(vm, structure, result.value().releaseNonNull());
     module->finishCreation(vm);
     return module;
 }
@@ -62,9 +61,9 @@ Structure* JSWebAssemblyModule::createStructure(VM& vm, JSGlobalObject* globalOb
     return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
 }
 
-JSWebAssemblyModule::JSWebAssemblyModule(VM& vm, Structure* structure, Wasm::Plan& plan)
+JSWebAssemblyModule::JSWebAssemblyModule(VM& vm, Structure* structure, Ref<Wasm::Module>&& module)
     : Base(vm, structure)
-    , m_moduleInformation(plan.takeModuleInformation())
+    , m_module(WTFMove(module))
 {
 }
 
@@ -75,7 +74,8 @@ void JSWebAssemblyModule::finishCreation(VM& vm)
 
     // On success, a new WebAssembly.Module object is returned with [[Module]] set to the validated Ast.module.
     SymbolTable* exportSymbolTable = SymbolTable::create(vm);
-    for (auto& exp : m_moduleInformation->exports) {
+    const Wasm::ModuleInformation& moduleInformation = m_module->moduleInformation();
+    for (auto& exp : moduleInformation.exports) {
         auto offset = exportSymbolTable->takeNextScopeOffset(NoLockingNecessary);
         String field = String::fromUTF8(exp.field);
         exportSymbolTable->set(NoLockingNecessary, AtomicString(field).impl(), SymbolTableEntry(VarOffset(offset)));

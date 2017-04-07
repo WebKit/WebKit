@@ -65,13 +65,12 @@ const ClassInfo WebAssemblyPrototype::s_info = { "WebAssembly.prototype", &Base:
  @end
  */
 
-static EncodedJSValue reject(ExecState* exec, CatchScope& catchScope, JSPromiseDeferred* promise)
+static void reject(ExecState* exec, CatchScope& catchScope, JSPromiseDeferred* promise)
 {
     Exception* exception = catchScope.exception();
     ASSERT(exception);
     catchScope.clearException();
     promise->reject(exec, exception->value());
-    return JSValue::encode(promise->promise());
 }
 
 static EncodedJSValue JSC_HOST_CALL webAssemblyCompileFunc(ExecState* exec)
@@ -90,13 +89,11 @@ static EncodedJSValue JSC_HOST_CALL webAssemblyCompileFunc(ExecState* exec)
     dependencies.append(Strong<JSCell>(vm, globalObject));
     vm.promiseDeferredTimer->addPendingPromise(promise, WTFMove(dependencies));
 
-    Ref<Plan> plan = adoptRef(*new Plan(vm, WTFMove(source), Plan::Validation, [promise, globalObject] (Plan& p) mutable {
-        RefPtr<Plan> plan = makeRef(p);
-        p.vm().promiseDeferredTimer->scheduleWorkSoon(promise, [promise, globalObject, plan = WTFMove(plan)] () mutable {
-            VM& vm = plan->vm();
+    Wasm::Module::validateAsync(vm, WTFMove(source), createSharedTask<Wasm::Module::CallbackType>([promise, globalObject] (VM& vm, Wasm::Module::ValidationResult&& result) mutable {
+        vm.promiseDeferredTimer->scheduleWorkSoon(promise, [promise, globalObject, result = WTFMove(result), &vm] () mutable {
             auto scope = DECLARE_CATCH_SCOPE(vm);
             ExecState* exec = globalObject->globalExec();
-            JSValue module = JSWebAssemblyModule::createStub(vm, exec, globalObject->WebAssemblyModuleStructure(), WTFMove(plan));
+            JSValue module = JSWebAssemblyModule::createStub(vm, exec, globalObject->WebAssemblyModuleStructure(), WTFMove(result));
             if (scope.exception()) {
                 reject(exec, scope, promise);
                 return;
@@ -106,21 +103,20 @@ static EncodedJSValue JSC_HOST_CALL webAssemblyCompileFunc(ExecState* exec)
         });
     }));
 
-    Wasm::ensureWorklist().enqueue(WTFMove(plan));
     return JSValue::encode(promise->promise());
 }
 
 enum class Resolve { WithInstance, WithModuleAndInstance };
-static void resolve(VM& vm, ExecState* exec, JSPromiseDeferred* promise, JSWebAssemblyInstance* instance, JSWebAssemblyModule* module, Resolve entries)
+static void resolve(VM& vm, ExecState* exec, JSPromiseDeferred* promise, JSWebAssemblyInstance* instance, JSWebAssemblyModule* module, Ref<Wasm::CodeBlock>&& codeBlock, Resolve resolveKind)
 {
     auto scope = DECLARE_CATCH_SCOPE(vm);
-    instance->finalizeCreation(vm, exec);
+    instance->finalizeCreation(vm, exec, WTFMove(codeBlock));
     if (scope.exception()) {
         reject(exec, scope, promise);
         return;
     }
 
-    if (entries == Resolve::WithInstance)
+    if (resolveKind == Resolve::WithInstance)
         promise->resolve(exec, instance);
     else {
         JSObject* result = constructEmptyObject(exec);
@@ -130,7 +126,7 @@ static void resolve(VM& vm, ExecState* exec, JSPromiseDeferred* promise, JSWebAs
     }
 }
 
-static void instantiate(VM& vm, ExecState* exec, JSPromiseDeferred* promise, JSWebAssemblyModule* module, JSObject* importObject, Resolve entries)
+static void instantiate(VM& vm, ExecState* exec, JSPromiseDeferred* promise, JSWebAssemblyModule* module, JSObject* importObject, Resolve resolveKind)
 {
     auto scope = DECLARE_CATCH_SCOPE(vm);
     // In order to avoid potentially recompiling a module. We first gather all the import/memory information prior to compiling code.
@@ -140,47 +136,18 @@ static void instantiate(VM& vm, ExecState* exec, JSPromiseDeferred* promise, JSW
         return;
     }
 
-    // There are three possible cases:
-    // 1) The instance already has an initialized CodeBlock, so we have no more work to do.
-    // 2) The instance has no CodeBlock, so we need to make one and compile the code for it.
-    // 3) The instance already has an uninitialized CodeBlock, so someone else is compiling code and we just need to wait for them.
-
-    if (instance->initialized()) {
-        resolve(vm, exec, promise, instance, module, entries);
-        return;
-    }
-
     Vector<Strong<JSCell>> dependencies;
     // The instance keeps the module alive.
     dependencies.append(Strong<JSCell>(vm, instance));
     vm.promiseDeferredTimer->addPendingPromise(promise, WTFMove(dependencies));
-
-    if (instance->codeBlock()) {
-        instance->codeBlock()->plan().addCompletionTask([promise, instance, module, entries] (Plan& p) {
-            RefPtr<Plan> plan = makeRef(p);
-            p.vm().promiseDeferredTimer->scheduleWorkSoon(promise, [promise, instance, module, entries, plan = WTFMove(plan)] () {
-                ExecState* exec = instance->globalObject()->globalExec();
-                resolve(plan->vm(), exec, promise, instance, module, entries);
-            });
-        });
-        return;
-    }
-    ASSERT(!instance->codeBlock());
-
-    // FIXME: This re-parses the module header, which shouldn't be necessary.
-    // https://bugs.webkit.org/show_bug.cgi?id=170205
-    Ref<Plan> plan = adoptRef(*new Plan(vm, makeRef(const_cast<Wasm::ModuleInformation&>(module->moduleInformation())), Plan::FullCompile, [promise, instance, module, entries] (Plan& p) {
-        RefPtr<Plan> plan = makeRef(p);
-        p.vm().promiseDeferredTimer->scheduleWorkSoon(promise, [promise, instance, module, entries, plan = WTFMove(plan)] () {
-            VM& vm = plan->vm();
+    // Note: This completion task may or may not get called immediately.
+    module->module().compileAsync(vm, instance->memoryMode(), createSharedTask<Wasm::CodeBlock::CallbackType>([promise, instance, module, resolveKind] (VM& vm, Ref<Wasm::CodeBlock>&& refCodeBlock) mutable {
+        RefPtr<Wasm::CodeBlock> codeBlock = WTFMove(refCodeBlock);
+        vm.promiseDeferredTimer->scheduleWorkSoon(promise, [promise, instance, module, resolveKind, &vm, codeBlock = WTFMove(codeBlock)] () mutable {
             ExecState* exec = instance->globalObject()->globalExec();
-            resolve(vm, exec, promise, instance, module, entries);
+            resolve(vm, exec, promise, instance, module, codeBlock.releaseNonNull(), resolveKind);
         });
     }));
-
-    instance->addUnitializedCodeBlock(vm, plan.copyRef());
-    plan->setMode(instance->memoryMode());
-    Wasm::ensureWorklist().enqueue(WTFMove(plan));
 }
 
 static void compileAndInstantiate(VM& vm, ExecState* exec, JSPromiseDeferred* promise, JSValue buffer, JSObject* importObject)
@@ -195,13 +162,11 @@ static void compileAndInstantiate(VM& vm, ExecState* exec, JSPromiseDeferred* pr
     dependencies.append(Strong<JSCell>(vm, importObject));
     vm.promiseDeferredTimer->addPendingPromise(promise, WTFMove(dependencies));
 
-    Ref<Plan> plan = adoptRef(*new Plan(vm, WTFMove(source), Plan::Validation, [promise, importObject, globalObject] (Plan& p) mutable {
-        RefPtr<Plan> plan = makeRef(p);
-        p.vm().promiseDeferredTimer->scheduleWorkSoon(promise, [promise, importObject, globalObject, plan = WTFMove(plan)] () mutable {
-            VM& vm = plan->vm();
+    Wasm::Module::validateAsync(vm, WTFMove(source), createSharedTask<Wasm::Module::CallbackType>([promise, importObject, globalObject] (VM& vm, Wasm::Module::ValidationResult&& result) mutable {
+        vm.promiseDeferredTimer->scheduleWorkSoon(promise, [promise, importObject, globalObject, result = WTFMove(result), &vm] () mutable {
             auto scope = DECLARE_CATCH_SCOPE(vm);
             ExecState* exec = globalObject->globalExec();
-            JSWebAssemblyModule* module = JSWebAssemblyModule::createStub(vm, exec, globalObject->WebAssemblyModuleStructure(), plan.copyRef());
+            JSWebAssemblyModule* module = JSWebAssemblyModule::createStub(vm, exec, globalObject->WebAssemblyModuleStructure(), WTFMove(result));
             if (scope.exception()) {
                 reject(exec, scope, promise);
                 return;
@@ -210,8 +175,6 @@ static void compileAndInstantiate(VM& vm, ExecState* exec, JSPromiseDeferred* pr
             instantiate(vm, exec, promise, module, importObject, Resolve::WithModuleAndInstance);
         });
     }));
-
-    Wasm::ensureWorklist().enqueue(WTFMove(plan));
 }
 
 static EncodedJSValue JSC_HOST_CALL webAssemblyInstantiateFunc(ExecState* exec)
@@ -248,7 +211,7 @@ static EncodedJSValue JSC_HOST_CALL webAssemblyValidateFunc(ExecState* exec)
     size_t byteSize;
     uint8_t* base = getWasmBufferFromValue(exec, exec->argument(0), byteOffset, byteSize);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    Wasm::Plan plan(vm, base + byteOffset, byteSize, Plan::Validation, Plan::dontFinalize);
+    Wasm::Plan plan(vm, base + byteOffset, byteSize, Plan::Validation, Plan::dontFinalize());
     // FIXME: We might want to throw an OOM exception here if we detect that something will OOM.
     // https://bugs.webkit.org/show_bug.cgi?id=166015
     return JSValue::encode(jsBoolean(plan.parseAndValidateModule()));

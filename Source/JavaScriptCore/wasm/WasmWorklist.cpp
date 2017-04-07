@@ -217,18 +217,19 @@ void Worklist::stopAllPlansForVM(VM& vm)
 {
     LockHolder locker(*m_lock);
     iterate(locker, [&] (QueueElement& element) {
-        if (&element.plan->vm() == &vm) {
-            element.plan->cancel();
+        bool didCancel = element.plan->tryRemoveVMAndCancelIfLast(vm);
+        if (didCancel)
             return IterateResult::DropAndContinue;
-        }
         return IterateResult::Continue;
     });
 
     for (auto& thread : m_threads) {
-        if (thread->element.plan && &thread->element.plan->vm() == &vm) {
-            // We don't have to worry about the deadlocking since the thread can't block without clearing the plan and must hold the lock to do so.
-            thread->element.plan->cancel();
-            thread->synchronize.wait(*m_lock);
+        if (thread->element.plan) {
+            bool didCancel = thread->element.plan->tryRemoveVMAndCancelIfLast(vm);
+            if (didCancel) {
+                // We don't have to worry about the deadlocking since the thread can't block without clearing the plan and must hold the lock to do so.
+                thread->synchronize.wait(*m_lock);
+            }
         }
     }
 }

@@ -1,3 +1,133 @@
+2017-04-07  Saam Barati  <sbarati@apple.com>
+
+        WebAssembly: Make to a compilation API that allows for multi-VM concurrent compilations of Wasm Modules
+        https://bugs.webkit.org/show_bug.cgi?id=170488
+
+        Reviewed by JF Bastien.
+
+        This patch adds a class called Wasm::Module. It contains the bits from
+        JSWebAssemblyModule that were not VM specific. JSWebAssemblyModule
+        now has a Ref<Wasm::Module>. Similarly, there is now a Wasm::CodeBlock,
+        which owns the non-VM-specific bits that JSWebAssemblyCodeBlock used
+        to own.
+        
+        This patch also simplifies how we verify and compile code. Wasm::Module
+        now has an API for both sync/async validation and compilation. This
+        API abstracts away how Wasm::Plan works.
+        
+        This is hopefully the last patch needed before we can implement
+        window.postMessage for a JSWebAssemblyModule. I think all that's
+        needed now to implement postMessage is simply creating a new
+        JSWebAssemblyModule with the underlying Wasm::Module.
+        
+        This patch is neutral on WasmBench.
+        
+        Finally, this patch changes the promise deferred timer to
+        allow for new tasks to be added while we're executing
+        a task. Before, we'd deadlock if this happened.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * jsc.cpp:
+        (functionTestWasmModuleFunctions):
+        * runtime/PromiseDeferredTimer.cpp:
+        (JSC::PromiseDeferredTimer::doWork):
+        (JSC::PromiseDeferredTimer::scheduleWorkSoon):
+        * runtime/PromiseDeferredTimer.h:
+        * wasm/WasmB3IRGenerator.cpp:
+        * wasm/WasmBinding.cpp:
+        (JSC::Wasm::wasmToJs):
+        (JSC::Wasm::wasmToWasm):
+        (JSC::Wasm::exitStubGenerator): Deleted.
+        * wasm/WasmBinding.h:
+        * wasm/WasmCodeBlock.cpp: Added.
+        (JSC::Wasm::CodeBlock::CodeBlock):
+        (JSC::Wasm::CodeBlock::waitUntilFinished):
+        (JSC::Wasm::CodeBlock::compileAsync):
+        (JSC::Wasm::CodeBlock::isSafeToRun):
+        * wasm/WasmCodeBlock.h: Added.
+        (JSC::Wasm::CodeBlock::create):
+        (JSC::Wasm::CodeBlock::compilationFinished):
+        (JSC::Wasm::CodeBlock::runnable):
+        (JSC::Wasm::CodeBlock::errorMessage):
+        (JSC::Wasm::CodeBlock::functionImportCount):
+        (JSC::Wasm::CodeBlock::jsEntrypointCalleeFromFunctionIndexSpace):
+        (JSC::Wasm::CodeBlock::wasmEntrypointCalleeFromFunctionIndexSpace):
+        * wasm/WasmModule.cpp: Added.
+        (JSC::Wasm::Module::Module):
+        (JSC::Wasm::makeValidationResult):
+        (JSC::Wasm::Module::validateSyncImpl):
+        (JSC::Wasm::Module::getOrCreateCodeBlock):
+        (JSC::Wasm::Module::compileSync):
+        (JSC::Wasm::Module::makeValidationCallback):
+        (JSC::Wasm::Module::compileAsync):
+        * wasm/WasmModule.h: Added.
+        (JSC::Wasm::Module::create):
+        (JSC::Wasm::Module::validateSync):
+        (JSC::Wasm::Module::validateAsync):
+        (JSC::Wasm::Module::signatureIndexFromFunctionIndexSpace):
+        (JSC::Wasm::Module::moduleInformation):
+        (JSC::Wasm::Module::nonNullCodeBlock):
+        * wasm/WasmPlan.cpp:
+        (JSC::Wasm::Plan::Plan):
+        (JSC::Wasm::Plan::addCompletionTask):
+        (JSC::Wasm::Plan::prepare):
+        (JSC::Wasm::Plan::compileFunctions):
+        (JSC::Wasm::Plan::complete):
+        (JSC::Wasm::Plan::tryRemoveVMAndCancelIfLast):
+        (JSC::Wasm::Plan::cancel): Deleted.
+        * wasm/WasmPlan.h:
+        (JSC::Wasm::Plan::dontFinalize):
+        (JSC::Wasm::Plan::takeWasmToWasmExitStubs):
+        (JSC::Wasm::Plan::mode):
+        (JSC::Wasm::Plan::takeWasmExitStubs): Deleted.
+        (JSC::Wasm::Plan::vm): Deleted.
+        * wasm/WasmWorklist.cpp:
+        (JSC::Wasm::Worklist::stopAllPlansForVM):
+        * wasm/js/JSWebAssemblyCodeBlock.cpp:
+        (JSC::JSWebAssemblyCodeBlock::JSWebAssemblyCodeBlock):
+        (JSC::JSWebAssemblyCodeBlock::isSafeToRun):
+        (JSC::JSWebAssemblyCodeBlock::initialize): Deleted.
+        * wasm/js/JSWebAssemblyCodeBlock.h:
+        (JSC::JSWebAssemblyCodeBlock::create):
+        (JSC::JSWebAssemblyCodeBlock::functionImportCount):
+        (JSC::JSWebAssemblyCodeBlock::jsEntrypointCalleeFromFunctionIndexSpace):
+        (JSC::JSWebAssemblyCodeBlock::wasmEntrypointCalleeFromFunctionIndexSpace):
+        (JSC::JSWebAssemblyCodeBlock::wasmToJsCallStubForImport):
+        (JSC::JSWebAssemblyCodeBlock::mode): Deleted.
+        (JSC::JSWebAssemblyCodeBlock::initialized): Deleted.
+        (JSC::JSWebAssemblyCodeBlock::plan): Deleted.
+        (JSC::JSWebAssemblyCodeBlock::runnable): Deleted.
+        (JSC::JSWebAssemblyCodeBlock::errorMessage): Deleted.
+        (JSC::JSWebAssemblyCodeBlock::setJSEntrypointCallee): Deleted.
+        (JSC::JSWebAssemblyCodeBlock::setWasmEntrypointCallee): Deleted.
+        * wasm/js/JSWebAssemblyInstance.cpp:
+        (JSC::JSWebAssemblyInstance::finalizeCreation):
+        (JSC::JSWebAssemblyInstance::addUnitializedCodeBlock): Deleted.
+        * wasm/js/JSWebAssemblyInstance.h:
+        (JSC::JSWebAssemblyInstance::initialized): Deleted.
+        * wasm/js/JSWebAssemblyModule.cpp:
+        (JSC::JSWebAssemblyModule::createStub):
+        (JSC::JSWebAssemblyModule::JSWebAssemblyModule):
+        (JSC::JSWebAssemblyModule::finishCreation):
+        * wasm/js/JSWebAssemblyModule.h:
+        (JSC::JSWebAssemblyModule::moduleInformation):
+        (JSC::JSWebAssemblyModule::signatureIndexFromFunctionIndexSpace):
+        (JSC::JSWebAssemblyModule::module):
+        * wasm/js/WebAssemblyFunction.cpp:
+        (JSC::WebAssemblyFunction::create):
+        * wasm/js/WebAssemblyInstanceConstructor.cpp:
+        (JSC::constructJSWebAssemblyInstance):
+        * wasm/js/WebAssemblyModuleConstructor.cpp:
+        (JSC::WebAssemblyModuleConstructor::createModule):
+        * wasm/js/WebAssemblyPrototype.cpp:
+        (JSC::reject):
+        (JSC::webAssemblyCompileFunc):
+        (JSC::resolve):
+        (JSC::instantiate):
+        (JSC::compileAndInstantiate):
+        (JSC::webAssemblyValidateFunc):
+
 2017-04-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Update the priorities used in glib main loop sources

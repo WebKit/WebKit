@@ -44,10 +44,12 @@ PromiseDeferredTimer::PromiseDeferredTimer(VM& vm)
 void PromiseDeferredTimer::doWork()
 {
     ASSERT(m_vm->currentThreadIsHoldingAPILock());
-    LockHolder locker(m_taskLock);
+    m_taskLock.lock();
     cancelTimer();
-    if (!m_runTasks)
+    if (!m_runTasks) {
+        m_taskLock.unlock();
         return;
+    }
 
     while (!m_tasks.isEmpty()) {
         JSPromiseDeferred* ticket;
@@ -57,17 +59,27 @@ void PromiseDeferredTimer::doWork()
 
         // We may have already canceled these promises.
         if (m_pendingPromises.contains(ticket)) {
+            // Allow tasks we run now to schedule work.
+            m_currentlyRunningTask = true;
+            m_taskLock.unlock(); 
+
             task();
             m_vm->drainMicrotasks();
+
+            m_taskLock.lock();
+            m_currentlyRunningTask = false;
         }
     }
 
-    if (m_pendingPromises.isEmpty() && m_shouldStopRunLoopWhenAllPromisesFinish)
+    if (m_pendingPromises.isEmpty() && m_shouldStopRunLoopWhenAllPromisesFinish) {
 #if USE(CF)
         CFRunLoopStop(m_runLoop.get());
 #else
         RunLoop::current().stop();
 #endif
+    }
+
+    m_taskLock.unlock();
 }
 
 void PromiseDeferredTimer::runRunLoop()
@@ -121,7 +133,7 @@ void PromiseDeferredTimer::scheduleWorkSoon(JSPromiseDeferred* ticket, Task&& ta
 {
     LockHolder locker(m_taskLock);
     m_tasks.append(std::make_tuple(ticket, WTFMove(task)));
-    if (!isScheduled())
+    if (!isScheduled() && !m_currentlyRunningTask)
         scheduleTimer(0);
 }
 

@@ -32,55 +32,27 @@
 #include "JSWebAssemblyLinkError.h"
 #include "JSWebAssemblyMemory.h"
 #include "JSWebAssemblyModule.h"
+#include "WasmBinding.h"
 #include "WasmPlanInlines.h"
+
+#include <wtf/CurrentTime.h>
 
 namespace JSC {
 
 const ClassInfo JSWebAssemblyCodeBlock::s_info = { "WebAssemblyCodeBlock", nullptr, 0, CREATE_METHOD_TABLE(JSWebAssemblyCodeBlock) };
 
-JSWebAssemblyCodeBlock::JSWebAssemblyCodeBlock(VM& vm, JSWebAssemblyModule* owner,  Wasm::MemoryMode mode, Ref<Wasm::Plan>&& plan, unsigned calleeCount)
+JSWebAssemblyCodeBlock::JSWebAssemblyCodeBlock(VM& vm, Ref<Wasm::CodeBlock>&& codeBlock, const Wasm::ModuleInformation& moduleInformation)
     : Base(vm, vm.webAssemblyCodeBlockStructure.get())
-    , m_plan(WTFMove(plan))
-    , m_mode(mode)
-    , m_calleeCount(calleeCount)
+    , m_codeBlock(WTFMove(codeBlock))
 {
-    m_module.set(vm, this, owner);
-    ASSERT(!module()->codeBlock(mode));
-    module()->setCodeBlock(vm, mode, this);
-    m_callees.resize(m_calleeCount * 2);
-}
-
-void JSWebAssemblyCodeBlock::initialize()
-{
-    if (initialized())
-        return;
-
-    VM& vm = plan().vm();
-    ASSERT_UNUSED(vm, vm.currentThreadIsHoldingAPILock());
-    RELEASE_ASSERT(!plan().hasWork());
-
-    if (plan().failed()) {
-        m_errorMessage = plan().errorMessage();
-        m_plan = nullptr;
-        return;
+    // FIXME: We should not need to do this synchronously.
+    // https://bugs.webkit.org/show_bug.cgi?id=170567
+    m_wasmToJSExitStubs.reserveCapacity(m_codeBlock->functionImportCount());
+    for (unsigned importIndex = 0; importIndex < m_codeBlock->functionImportCount(); ++importIndex) {
+        Wasm::SignatureIndex signatureIndex = moduleInformation.importFunctionSignatureIndices.at(importIndex);
+        m_wasmToJSExitStubs.uncheckedAppend(Wasm::wasmToJs(&vm, m_callLinkInfos, signatureIndex, importIndex));
+        importWasmToJSStub(importIndex) = m_wasmToJSExitStubs[importIndex].code().executableAddress();
     }
-
-    RELEASE_ASSERT(plan().mode() == mode());
-    ASSERT(plan().internalFunctionCount() == m_calleeCount);
-
-    m_callLinkInfos = plan().takeCallLinkInfos();
-    m_wasmExitStubs = plan().takeWasmExitStubs();
-
-    // The code a module emits to call into JS relies on us to set this up.
-    for (unsigned i = 0; i < m_wasmExitStubs.size(); i++)
-        importWasmToJSStub(i) = m_wasmExitStubs[i].wasmToJs.code().executableAddress();
-
-    plan().initializeCallees([&] (unsigned calleeIndex, Ref<Wasm::Callee>&& jsEntrypointCallee, Ref<Wasm::Callee>&& wasmEntrypointCallee) {
-        setJSEntrypointCallee(calleeIndex, WTFMove(jsEntrypointCallee));
-        setWasmEntrypointCallee(calleeIndex, WTFMove(wasmEntrypointCallee));
-    });
-
-    m_plan = nullptr;
 }
 
 void JSWebAssemblyCodeBlock::destroy(JSCell* cell)
@@ -90,24 +62,7 @@ void JSWebAssemblyCodeBlock::destroy(JSCell* cell)
 
 bool JSWebAssemblyCodeBlock::isSafeToRun(JSWebAssemblyMemory* memory) const
 {
-    if (!runnable())
-        return false;
-
-    Wasm::MemoryMode codeMode = mode();
-    Wasm::MemoryMode memoryMode = memory->memory().mode();
-    switch (codeMode) {
-    case Wasm::MemoryMode::BoundsChecking:
-        return true;
-    case Wasm::MemoryMode::Signaling:
-        // Code being in Signaling mode means that it performs no bounds checks.
-        // Its memory, even if empty, absolutely must also be in Signaling mode
-        // because the page protection detects out-of-bounds accesses.
-        return memoryMode == Wasm::MemoryMode::Signaling;
-    case Wasm::MemoryMode::NumberOfMemoryModes:
-        break;
-    }
-    RELEASE_ASSERT_NOT_REACHED();
-    return false;
+    return m_codeBlock->isSafeToRun(memory->memory().mode());
 }
 
 void JSWebAssemblyCodeBlock::visitChildren(JSCell* cell, SlotVisitor& visitor)

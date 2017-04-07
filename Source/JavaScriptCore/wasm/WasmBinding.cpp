@@ -49,7 +49,7 @@ static void materializeImportJSCell(JIT& jit, unsigned importIndex, GPRReg resul
     jit.loadPtr(JIT::Address(result, JSWebAssemblyInstance::offsetOfImportFunction(importIndex)), result);
 }
 
-static MacroAssemblerCodeRef wasmToJs(VM* vm, Bag<CallLinkInfo>& callLinkInfos, SignatureIndex signatureIndex, unsigned importIndex)
+MacroAssemblerCodeRef wasmToJs(VM* vm, Bag<CallLinkInfo>& callLinkInfos, SignatureIndex signatureIndex, unsigned importIndex)
 {
     // FIXME: This function doesn't properly abstract away the calling convention.
     // It'd be super easy to do so: https://bugs.webkit.org/show_bug.cgi?id=169401
@@ -422,7 +422,7 @@ static MacroAssemblerCodeRef wasmToJs(VM* vm, Bag<CallLinkInfo>& callLinkInfos, 
     return FINALIZE_CODE(patchBuffer, ("WebAssembly->JavaScript import[%i] %s", importIndex, signature.toString().ascii().data()));
 }
 
-static MacroAssemblerCodeRef wasmToWasm(unsigned importIndex)
+MacroAssemblerCodeRef wasmToWasm(unsigned importIndex)
 {
     const PinnedRegisterInfo& pinnedRegs = PinnedRegisterInfo::get();
     JIT jit;
@@ -460,14 +460,6 @@ static MacroAssemblerCodeRef wasmToWasm(unsigned importIndex)
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID);
     return FINALIZE_CODE(patchBuffer, ("WebAssembly->WebAssembly import[%i]", importIndex));
-}
-
-WasmExitStubs exitStubGenerator(VM* vm, Bag<CallLinkInfo>& callLinkInfos, SignatureIndex signatureIndex, unsigned importIndex)
-{
-    WasmExitStubs stubs;
-    stubs.wasmToJs = wasmToJs(vm, callLinkInfos, signatureIndex, importIndex);
-    stubs.wasmToWasm = wasmToWasm(importIndex);
-    return stubs;
 }
 
 } } // namespace JSC::Wasm

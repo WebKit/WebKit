@@ -33,6 +33,7 @@
 #include "UnconditionalFinalizer.h"
 #include "WasmCallee.h"
 #include "WasmFormat.h"
+#include "WasmModule.h"
 #include <wtf/Bag.h>
 #include <wtf/Vector.h>
 
@@ -50,9 +51,9 @@ public:
     typedef JSCell Base;
     static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
 
-    static JSWebAssemblyCodeBlock* create(VM& vm, JSWebAssemblyModule* owner, Wasm::MemoryMode mode, Ref<Wasm::Plan>&& plan, unsigned calleeCount, unsigned functionImportCount)
+    static JSWebAssemblyCodeBlock* create(VM& vm, Ref<Wasm::CodeBlock> codeBlock, const Wasm::ModuleInformation& moduleInformation)
     {
-        auto* result = new (NotNull, allocateCell<JSWebAssemblyCodeBlock>(vm.heap, allocationSize(functionImportCount))) JSWebAssemblyCodeBlock(vm, owner, mode, WTFMove(plan), calleeCount);
+        auto* result = new (NotNull, allocateCell<JSWebAssemblyCodeBlock>(vm.heap, allocationSize(moduleInformation.importFunctionCount()))) JSWebAssemblyCodeBlock(vm, WTFMove(codeBlock), moduleInformation);
         result->finishCreation(vm);
         return result;
     }
@@ -62,40 +63,25 @@ public:
         return Structure::create(vm, globalObject, prototype, TypeInfo(CellType, StructureFlags), info());
     }
 
-    unsigned functionImportCount() const { return m_wasmExitStubs.size(); }
-    Wasm::MemoryMode mode() const { return m_mode; }
+    unsigned functionImportCount() const { return m_codeBlock->functionImportCount(); }
     JSWebAssemblyModule* module() const { return m_module.get(); }
 
-    // Don't call intialize directly, this should be called for you, as needed, by JSWebAssemblyInstance::finalizeCreation.
-    void initialize();
-    bool initialized() const { return !m_plan; }
-
-    Wasm::Plan& plan() const { ASSERT(!initialized()); return *m_plan; }
-
-    bool runnable() const { return initialized() && !m_errorMessage; }
-    String& errorMessage() { ASSERT(!runnable()); return m_errorMessage; }
     bool isSafeToRun(JSWebAssemblyMemory*) const;
 
     // These two callee getters are only valid once the callees have been populated.
+
     Wasm::Callee& jsEntrypointCalleeFromFunctionIndexSpace(unsigned functionIndexSpace)
     {
-        RELEASE_ASSERT(functionIndexSpace >= functionImportCount());
-        unsigned calleeIndex = functionIndexSpace - functionImportCount();
-        RELEASE_ASSERT(calleeIndex < m_calleeCount);
-        return *m_callees[calleeIndex].get();
+        return m_codeBlock->jsEntrypointCalleeFromFunctionIndexSpace(functionIndexSpace);
     }
     Wasm::Callee& wasmEntrypointCalleeFromFunctionIndexSpace(unsigned functionIndexSpace)
     {
-        RELEASE_ASSERT(functionIndexSpace >= functionImportCount());
-        unsigned calleeIndex = functionIndexSpace - functionImportCount();
-        RELEASE_ASSERT(calleeIndex < m_calleeCount);
-        return *m_callees[calleeIndex + m_calleeCount].get();
+        return m_codeBlock->wasmEntrypointCalleeFromFunctionIndexSpace(functionIndexSpace);
     }
 
     void* wasmToJsCallStubForImport(unsigned importIndex)
     {
-        RELEASE_ASSERT(importIndex < m_wasmExitStubs.size());
-        return m_wasmExitStubs[importIndex].wasmToJs.code().executableAddress();
+        return importWasmToJSStub(importIndex);
     }
 
     static ptrdiff_t offsetOfImportWasmToJSStub(unsigned importIndex)
@@ -104,18 +90,7 @@ public:
     }
 
 private:
-    void setJSEntrypointCallee(unsigned calleeIndex, Ref<Wasm::Callee>&& callee)
-    {
-        RELEASE_ASSERT(calleeIndex < m_calleeCount);
-        m_callees[calleeIndex] = WTFMove(callee);
-    }
-    void setWasmEntrypointCallee(unsigned calleeIndex, Ref<Wasm::Callee>&& callee)
-    {
-        RELEASE_ASSERT(calleeIndex < m_calleeCount);
-        m_callees[calleeIndex + m_calleeCount] = WTFMove(callee);
-    }
-
-    JSWebAssemblyCodeBlock(VM&, JSWebAssemblyModule*, Wasm::MemoryMode, Ref<Wasm::Plan>&&, unsigned calleeCount);
+    JSWebAssemblyCodeBlock(VM&, Ref<Wasm::CodeBlock>&&, const Wasm::ModuleInformation&);
     DECLARE_EXPORT_INFO;
     static const bool needsDestruction = true;
     static void destroy(JSCell*);
@@ -141,15 +116,10 @@ private:
     };
 
     WriteBarrier<JSWebAssemblyModule> m_module;
+    Ref<Wasm::CodeBlock> m_codeBlock;
+    Vector<MacroAssemblerCodeRef> m_wasmToJSExitStubs;
     UnconditionalFinalizer m_unconditionalFinalizer;
     Bag<CallLinkInfo> m_callLinkInfos;
-    Vector<Wasm::WasmExitStubs> m_wasmExitStubs;
-    Vector<RefPtr<Wasm::Callee>> m_callees;
-    // The plan that is compiling this code block.
-    RefPtr<Wasm::Plan> m_plan;
-    String m_errorMessage;
-    Wasm::MemoryMode m_mode;
-    unsigned m_calleeCount;
 };
 
 } // namespace JSC
