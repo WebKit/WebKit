@@ -37,8 +37,9 @@ typedef CCRSACryptorRef PlatformRSAKey;
 #endif
 
 #if PLATFORM(GTK)
-typedef struct _PlatformRSAKeyGnuTLS PlatformRSAKeyGnuTLS;
-typedef PlatformRSAKeyGnuTLS *PlatformRSAKey;
+// gcry_sexp* equates gcry_sexp_t.
+struct gcry_sexp;
+typedef gcry_sexp* PlatformRSAKey;
 #endif
 
 namespace WebCore {

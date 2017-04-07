@@ -33,20 +33,11 @@
 #include "CryptoKeyPair.h"
 #include "ExceptionCode.h"
 #include "NotImplemented.h"
+#include "ScriptExecutionContext.h"
+#include <pal/crypto/gcrypt/Handle.h>
+#include <pal/crypto/gcrypt/Utilities.h>
 
 namespace WebCore {
-
-struct _PlatformRSAKeyGnuTLS {
-};
-
-CryptoKeyRSA::CryptoKeyRSA(CryptoAlgorithmIdentifier identifier, CryptoAlgorithmIdentifier hash, bool hasHash, CryptoKeyType type, PlatformRSAKey platformKey, bool extractable, CryptoKeyUsageBitmap usage)
-    : CryptoKey(identifier, type, extractable, usage)
-    , m_platformKey(platformKey)
-    , m_restrictedToSpecificHash(hasHash)
-    , m_hash(hash)
-{
-    notImplemented();
-}
 
 RefPtr<CryptoKeyRSA> CryptoKeyRSA::create(CryptoAlgorithmIdentifier identifier, CryptoAlgorithmIdentifier hash, bool hasHash, const CryptoKeyDataRSAComponents& keyData, bool extractable, CryptoKeyUsageBitmap usage)
 {
@@ -61,9 +52,18 @@ RefPtr<CryptoKeyRSA> CryptoKeyRSA::create(CryptoAlgorithmIdentifier identifier, 
     return nullptr;
 }
 
+CryptoKeyRSA::CryptoKeyRSA(CryptoAlgorithmIdentifier identifier, CryptoAlgorithmIdentifier hash, bool hasHash, CryptoKeyType type, PlatformRSAKey platformKey, bool extractable, CryptoKeyUsageBitmap usage)
+    : CryptoKey(identifier, type, extractable, usage)
+    , m_platformKey(platformKey)
+    , m_restrictedToSpecificHash(hasHash)
+    , m_hash(hash)
+{
+}
+
 CryptoKeyRSA::~CryptoKeyRSA()
 {
-    notImplemented();
+    if (m_platformKey)
+        PAL::GCrypt::HandleDeleter<gcry_sexp_t>()(m_platformKey);
 }
 
 bool CryptoKeyRSA::isRestrictedToHash(CryptoAlgorithmIdentifier& identifier) const
@@ -81,38 +81,80 @@ size_t CryptoKeyRSA::keySizeInBits() const
     return 0;
 }
 
-std::unique_ptr<KeyAlgorithm> CryptoKeyRSA::buildAlgorithm() const
+// Convert the exponent vector to a 32-bit value, if possible.
+static std::optional<uint32_t> exponentVectorToUInt32(const Vector<uint8_t>& exponent)
 {
-    notImplemented();
-    Vector<uint8_t> publicExponent;
-    return std::make_unique<RsaKeyAlgorithm>(emptyString(), 0, WTFMove(publicExponent));
-}
+    if (exponent.size() > 4) {
+        if (std::any_of(exponent.begin(), exponent.end() - 4, [](uint8_t element) { return !!element; }))
+            return std::nullopt;
+    }
 
-std::unique_ptr<CryptoKeyData> CryptoKeyRSA::exportData() const
-{
-    ASSERT(extractable());
+    uint32_t result = 0;
+    for (size_t size = exponent.size(), i = std::min<size_t>(4, size); i > 0; --i) {
+        result <<= 8;
+        result += exponent[size - i];
+    }
 
-    notImplemented();
-    return nullptr;
+    return result;
 }
 
 void CryptoKeyRSA::generatePair(CryptoAlgorithmIdentifier algorithm, CryptoAlgorithmIdentifier hash, bool hasHash, unsigned modulusLength, const Vector<uint8_t>& publicExponent, bool extractable, CryptoKeyUsageBitmap usage, KeyPairCallback&& callback, VoidCallback&& failureCallback, ScriptExecutionContext* context)
 {
-    notImplemented();
-    failureCallback();
+    // libgcrypt doesn't report an error if the exponent is smaller than three or even.
+    auto e = exponentVectorToUInt32(publicExponent);
+    if (!e || *e < 3 || !(*e & 0x1)) {
+        failureCallback();
+        return;
+    }
 
-    UNUSED_PARAM(algorithm);
-    UNUSED_PARAM(hash);
-    UNUSED_PARAM(hasHash);
-    UNUSED_PARAM(modulusLength);
-    UNUSED_PARAM(publicExponent);
-    UNUSED_PARAM(extractable);
-    UNUSED_PARAM(usage);
-    UNUSED_PARAM(callback);
-    UNUSED_PARAM(context);
+    // libgcrypt doesn't support generating primes of less than 16 bits.
+    if (modulusLength < 16) {
+        failureCallback();
+        return;
+    }
+
+    PAL::GCrypt::Handle<gcry_sexp_t> genkeySexp;
+    gcry_error_t error = gcry_sexp_build(&genkeySexp, nullptr, "(genkey(rsa(nbits %d)(rsa-use-e %d)))", modulusLength, *e);
+    if (error != GPG_ERR_NO_ERROR) {
+        PAL::GCrypt::logError(error);
+        failureCallback();
+        return;
+    }
+
+    PAL::GCrypt::Handle<gcry_sexp_t> keyPairSexp;
+    error = gcry_pk_genkey(&keyPairSexp, genkeySexp);
+    if (error != GPG_ERR_NO_ERROR) {
+        PAL::GCrypt::logError(error);
+        failureCallback();
+        return;
+    }
+
+    PAL::GCrypt::Handle<gcry_sexp_t> publicKeySexp(gcry_sexp_find_token(keyPairSexp, "public-key", 0));
+    PAL::GCrypt::Handle<gcry_sexp_t> privateKeySexp(gcry_sexp_find_token(keyPairSexp, "private-key", 0));
+    if (!publicKeySexp || !privateKeySexp) {
+        failureCallback();
+        return;
+    }
+
+    context->ref();
+    context->postTask(
+        [algorithm, hash, hasHash, extractable, usage, publicKeySexp = publicKeySexp.release(), privateKeySexp = privateKeySexp.release(), callback = WTFMove(callback)](ScriptExecutionContext& context) mutable {
+            auto publicKey = CryptoKeyRSA::create(algorithm, hash, hasHash, CryptoKeyType::Public, publicKeySexp, true, usage);
+            auto privateKey = CryptoKeyRSA::create(algorithm, hash, hasHash, CryptoKeyType::Private, privateKeySexp, extractable, usage);
+
+            callback(CryptoKeyPair { WTFMove(publicKey), WTFMove(privateKey) });
+            context.deref();
+        });
 }
 
 RefPtr<CryptoKeyRSA> CryptoKeyRSA::importSpki(CryptoAlgorithmIdentifier, std::optional<CryptoAlgorithmIdentifier>, Vector<uint8_t>&&, bool, CryptoKeyUsageBitmap)
+{
+    notImplemented();
+
+    return nullptr;
+}
+
+RefPtr<CryptoKeyRSA> CryptoKeyRSA::importPkcs8(CryptoAlgorithmIdentifier, std::optional<CryptoAlgorithmIdentifier>, Vector<uint8_t>&&, bool, CryptoKeyUsageBitmap)
 {
     notImplemented();
 
@@ -126,18 +168,26 @@ ExceptionOr<Vector<uint8_t>> CryptoKeyRSA::exportSpki() const
     return Exception { NOT_SUPPORTED_ERR };
 }
 
-RefPtr<CryptoKeyRSA> CryptoKeyRSA::importPkcs8(CryptoAlgorithmIdentifier, std::optional<CryptoAlgorithmIdentifier>, Vector<uint8_t>&&, bool, CryptoKeyUsageBitmap)
-{
-    notImplemented();
-
-    return nullptr;
-}
-
 ExceptionOr<Vector<uint8_t>> CryptoKeyRSA::exportPkcs8() const
 {
     notImplemented();
 
     return Exception { NOT_SUPPORTED_ERR };
+}
+
+std::unique_ptr<KeyAlgorithm> CryptoKeyRSA::buildAlgorithm() const
+{
+    notImplemented();
+    Vector<uint8_t> publicExponent;
+    return std::make_unique<RsaKeyAlgorithm>(emptyString(), 0, WTFMove(publicExponent));
+}
+
+std::unique_ptr<CryptoKeyData> CryptoKeyRSA::exportData() const
+{
+    ASSERT(extractable());
+
+    notImplemented();
+    return nullptr;
 }
 
 } // namespace WebCore

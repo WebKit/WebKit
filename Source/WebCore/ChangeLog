@@ -1,3 +1,49 @@
+2017-04-07  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GCrypt] Implement CryptoKeyRSA::generatePair()
+        https://bugs.webkit.org/show_bug.cgi?id=170350
+
+        Reviewed by Michael Catanzaro.
+
+        Start implementing the libgcrypt-based platform bits of CryptoKeyRSA.
+
+        Implement generatePair() by constructing a genkey s-expression
+        that requests a generation of an RSA key that should use a modulus
+        of the specified bit-length and the specified exponent. The exponent
+        is extracted from an uint8_t array through a helper function. The
+        modulus length value is checked to be at least 16, since libgcrypt
+        does not support generating primes of less than that length in bits.
+
+        The returned s-expression upon request will contain the data for
+        both the public and the private key. gcry_sexp_t handles representing
+        those s-expressions are then passed to CryptoKeyRSA::create() before
+        invoking the success callback with a new CryptoKeyPair object in a
+        separate ScriptExecutionContext task.
+
+        The CryptoKeyRSA constructor simply has the notImplemented() call
+        removed. The destructor now invokes the HandleDeleter<gcry_sexp_t>
+        object instance to destroy the object represented by the
+        m_platformKey handle.
+
+        The methods in CryptoKeyRSA.cpp are also reordered to follow the
+        declaration order used in the header.
+
+        No new tests -- current ones cover this sufficiently, but are not yet
+        enabled due to other missing platform-specific SUBTLE_CRYPTO
+        implementations.
+
+        * crypto/gcrypt/CryptoKeyRSAGCrypt.cpp:
+        (WebCore::CryptoKeyRSA::CryptoKeyRSA):
+        (WebCore::CryptoKeyRSA::~CryptoKeyRSA):
+        (WebCore::exponentVectorToUInt32):
+        (WebCore::CryptoKeyRSA::generatePair):
+        (WebCore::CryptoKeyRSA::importSpki):
+        (WebCore::CryptoKeyRSA::importPkcs8):
+        (WebCore::CryptoKeyRSA::exportPkcs8):
+        (WebCore::CryptoKeyRSA::buildAlgorithm):
+        (WebCore::CryptoKeyRSA::exportData):
+        * crypto/keys/CryptoKeyRSA.h:
+
 2017-04-06  Youenn Fablet  <youenn@apple.com>
 
         [Debug] ASSERT(!throwScope.exception()) on imported/w3c/web-platform-tests/fetch/api/cors/cors-preflight-status-worker.html
