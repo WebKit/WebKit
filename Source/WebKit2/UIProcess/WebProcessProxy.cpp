@@ -1137,6 +1137,8 @@ static String diagnosticLoggingKeyForSimulatedCrashReason(SimulatedCrashReason r
         return DiagnosticLoggingKeys::exceededInactiveMemoryLimitKey();
     case SimulatedCrashReason::ExceededBackgroundCPULimit:
         return DiagnosticLoggingKeys::exceededBackgroundCPULimitKey();
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
     }
 }
 

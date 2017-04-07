@@ -1,3 +1,10 @@
+2017-04-07  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, fix missing return value warning
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::diagnosticLoggingKeyForSimulatedCrashReason):
+
 2017-04-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Update the priorities used in glib main loop sources
