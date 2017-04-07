@@ -252,7 +252,7 @@ private:
     float m_volume { 1 };
     DisplayMode m_displayMode { None };
     PlaybackState m_playbackState { PlaybackState::None };
-    MediaSample::VideoOrientation m_videoOrientation { MediaSample::VideoOrientation::Unknown };
+    MediaSample::VideoRotation m_videoRotation { MediaSample::VideoRotation::None };
     CGAffineTransform m_videoTransform;
     bool m_videoMirrored { false };
     bool m_playing { false };

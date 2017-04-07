@@ -1,3 +1,33 @@
+2017-04-07  Eric Carlson  <eric.carlson@apple.com>
+
+        MediaSample should store video sample rotation instead of orientation
+        https://bugs.webkit.org/show_bug.cgi?id=170598
+
+        Reviewed by Youenn Fablet.
+
+        No new tests, no functional change.
+
+        * platform/MediaSample.h:
+        (WebCore::MediaSample::videoRotation):
+        (WebCore::MediaSample::videoOrientation): Deleted.
+        * platform/graphics/avfoundation/MediaSampleAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::videoTransformationMatrix):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::enqueueVideoSample):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::updateDisplayLayer):
+
+        * platform/mediastream/mac/AVVideoCaptureSource.mm:
+        (WebCore::AVVideoCaptureSource::processNewFrame):
+
+        * platform/mediastream/mac/RealtimeIncomingVideoSource.cpp:
+        (WebCore::RealtimeIncomingVideoSource::OnFrame):
+        (WebCore::RealtimeIncomingVideoSource::processNewSample):
+        * platform/mediastream/mac/RealtimeIncomingVideoSource.h:
+
+        * platform/mediastream/mac/RealtimeOutgoingVideoSource.cpp:
+        (WebCore::RealtimeOutgoingVideoSource::videoSampleAvailable):
+
 2017-04-07  Brent Fulgham  <bfulgham@apple.com>
 
         WebKit should percent encode single quotes in query strings

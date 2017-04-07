@@ -428,25 +428,40 @@ void AVVideoCaptureSource::processNewFrame(RetainPtr<CMSampleBufferRef> sampleBu
     m_buffer = sampleBuffer;
     m_lastImage = nullptr;
 
-    MediaSample::VideoOrientation orientation = MediaSample::VideoOrientation::Unknown;
+    MediaSample::VideoRotation rotation;
+#if PLATFORM(IOS)
     switch ([connection videoOrientation]) {
     case AVCaptureVideoOrientationPortrait:
-        orientation = MediaSample::VideoOrientation::Portrait;
+        rotation = MediaSample::VideoRotation::UpsideDown;
         break;
     case AVCaptureVideoOrientationPortraitUpsideDown:
-        orientation = MediaSample::VideoOrientation::PortraitUpsideDown;
+        rotation = MediaSample::VideoRotation::None;
         break;
     case AVCaptureVideoOrientationLandscapeRight:
-        orientation = MediaSample::VideoOrientation::LandscapeRight;
-        break;
     case AVCaptureVideoOrientationLandscapeLeft:
-        orientation = MediaSample::VideoOrientation::LandscapeLeft;
+        rotation = MediaSample::VideoRotation::Right;
         break;
     }
+#else
+    switch ([connection videoOrientation]) {
+    case AVCaptureVideoOrientationPortrait:
+        rotation = MediaSample::VideoRotation::None;
+        break;
+    case AVCaptureVideoOrientationPortraitUpsideDown:
+        rotation = MediaSample::VideoRotation::UpsideDown;
+        break;
+    case AVCaptureVideoOrientationLandscapeRight:
+        rotation = MediaSample::VideoRotation::Right;
+        break;
+    case AVCaptureVideoOrientationLandscapeLeft:
+        rotation = MediaSample::VideoRotation::Left;
+        break;
+    }
+#endif
 
     bool settingsChanged = false;
     CMVideoDimensions dimensions = CMVideoFormatDescriptionGetDimensions(formatDescription);
-    if (orientation == MediaSample::VideoOrientation::LandscapeRight || orientation == MediaSample::VideoOrientation::LandscapeLeft)
+    if (rotation == MediaSample::VideoRotation::Right || rotation == MediaSample::VideoRotation::Left)
         std::swap(dimensions.width, dimensions.height);
 
     if (dimensions.width != m_width || dimensions.height != m_height) {
@@ -458,7 +473,7 @@ void AVVideoCaptureSource::processNewFrame(RetainPtr<CMSampleBufferRef> sampleBu
     if (settingsChanged)
         settingsDidChange();
 
-    videoSampleAvailable(MediaSampleAVFObjC::create(m_buffer.get(), orientation, [connection isVideoMirrored]));
+    videoSampleAvailable(MediaSampleAVFObjC::create(m_buffer.get(), rotation, [connection isVideoMirrored]));
 }
 
 void AVVideoCaptureSource::captureOutputDidOutputSampleBufferFromConnection(AVCaptureOutputType*, CMSampleBufferRef sampleBuffer, AVCaptureConnectionType* captureConnection)

@@ -314,18 +314,10 @@ CGAffineTransform MediaPlayerPrivateMediaStreamAVFObjC::videoTransformationMatri
     if (!width || !height)
         return CGAffineTransformIdentity;
 
-    ASSERT(m_videoOrientation >= MediaSample::VideoOrientation::Unknown);
-    ASSERT(m_videoOrientation <= MediaSample::VideoOrientation::LandscapeLeft);
+    ASSERT(m_videoRotation >= MediaSample::VideoRotation::None);
+    ASSERT(m_videoRotation <= MediaSample::VideoRotation::Left);
 
-    // Unknown, Portrait, PortraitUpsideDown, LandscapeRight, LandscapeLeft,
-#if PLATFORM(MAC)
-    static float sensorAngle[] = { 0, 0, 180, 90, 270 };
-#else
-    static float sensorAngle[] = { 0, 180, 0, 90, 270 };
-#endif
-    float rotation = sensorAngle[static_cast<int>(m_videoOrientation)];
-    m_videoTransform = CGAffineTransformMakeRotation(rotation * M_PI / 180);
-
+    m_videoTransform = CGAffineTransformMakeRotation(static_cast<int>(m_videoRotation) * M_PI / 180);
     if (sample.videoMirrored())
         m_videoTransform = CGAffineTransformScale(m_videoTransform, -1, 1);
 
@@ -370,8 +362,8 @@ void MediaPlayerPrivateMediaStreamAVFObjC::enqueueVideoSample(MediaStreamTrackPr
     updateSampleTimes(sample, timelineOffset, "MediaPlayerPrivateMediaStreamAVFObjC::enqueueVideoSample");
 
     if (m_sampleBufferDisplayLayer) {
-        if (sample.videoOrientation() != m_videoOrientation || sample.videoMirrored() != m_videoMirrored) {
-            m_videoOrientation = sample.videoOrientation();
+        if (sample.videoRotation() != m_videoRotation || sample.videoMirrored() != m_videoMirrored) {
+            m_videoRotation = sample.videoRotation();
             m_videoMirrored = sample.videoMirrored();
             runWithoutAnimations([this, &sample] {
                 m_sampleBufferDisplayLayer.get().affineTransform = videoTransformationMatrix(sample, true);
@@ -1121,7 +1113,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::updateDisplayLayer()
 
     auto backgroundBounds = m_backgroundLayer.get().bounds;
     auto videoBounds = backgroundBounds;
-    if (m_videoOrientation == MediaSample::VideoOrientation::LandscapeRight || m_videoOrientation == MediaSample::VideoOrientation::LandscapeLeft)
+    if (m_videoRotation == MediaSample::VideoRotation::Right || m_videoRotation == MediaSample::VideoRotation::Left)
         std::swap(videoBounds.size.width, videoBounds.size.height);
 
     m_sampleBufferDisplayLayer.get().bounds = videoBounds;

@@ -121,18 +121,17 @@ void RealtimeOutgoingVideoSource::videoSampleAvailable(MediaSample& sample)
     auto pixelFormatType = CVPixelBufferGetPixelFormatType(pixelBuffer);
 
     webrtc::VideoRotation rotation;
-    switch (sample.videoOrientation()) {
-    case MediaSample::VideoOrientation::Unknown:
-    case MediaSample::VideoOrientation::Portrait:
+    switch (sample.videoRotation()) {
+    case MediaSample::VideoRotation::None:
         rotation = webrtc::kVideoRotation_0;
         break;
-    case MediaSample::VideoOrientation::PortraitUpsideDown:
+    case MediaSample::VideoRotation::UpsideDown:
         rotation = webrtc::kVideoRotation_180;
         break;
-    case MediaSample::VideoOrientation::LandscapeRight:
+    case MediaSample::VideoRotation::Right:
         rotation = webrtc::kVideoRotation_90;
         break;
-    case MediaSample::VideoOrientation::LandscapeLeft:
+    case MediaSample::VideoRotation::Left:
         rotation = webrtc::kVideoRotation_270;
         break;
     }

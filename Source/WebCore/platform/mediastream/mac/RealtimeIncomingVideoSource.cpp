@@ -171,31 +171,31 @@ void RealtimeIncomingVideoSource::OnFrame(const webrtc::VideoFrame& frame)
     unsigned width = frame.width();
     unsigned height = frame.height();
 
-    MediaSample::VideoOrientation orientation;
+    MediaSample::VideoRotation rotation;
     switch (frame.rotation()) {
     case webrtc::kVideoRotation_0:
-        orientation = MediaSample::VideoOrientation::Portrait;
+        rotation = MediaSample::VideoRotation::None;
         break;
     case webrtc::kVideoRotation_180:
-        orientation = MediaSample::VideoOrientation::PortraitUpsideDown;
+        rotation = MediaSample::VideoRotation::UpsideDown;
         break;
     case webrtc::kVideoRotation_90:
-        orientation = MediaSample::VideoOrientation::LandscapeRight;
+        rotation = MediaSample::VideoRotation::Right;
         std::swap(width, height);
         break;
     case webrtc::kVideoRotation_270:
-        orientation = MediaSample::VideoOrientation::LandscapeLeft;
+        rotation = MediaSample::VideoRotation::Left;
         std::swap(width, height);
         break;
     }
 
     RefPtr<RealtimeIncomingVideoSource> protectedThis(this);
-    callOnMainThread([protectedThis = WTFMove(protectedThis), sample = WTFMove(sample), width, height, orientation] {
-        protectedThis->processNewSample(sample.get(), width, height, orientation);
+    callOnMainThread([protectedThis = WTFMove(protectedThis), sample = WTFMove(sample), width, height, rotation] {
+        protectedThis->processNewSample(sample.get(), width, height, rotation);
     });
 }
 
-void RealtimeIncomingVideoSource::processNewSample(CMSampleBufferRef sample, unsigned width, unsigned height, MediaSample::VideoOrientation orientation)
+void RealtimeIncomingVideoSource::processNewSample(CMSampleBufferRef sample, unsigned width, unsigned height, MediaSample::VideoRotation rotation)
 {
     m_buffer = sample;
     if (width != m_currentSettings.width() || height != m_currentSettings.height()) {
@@ -204,7 +204,7 @@ void RealtimeIncomingVideoSource::processNewSample(CMSampleBufferRef sample, uns
         settingsDidChange();
     }
 
-    videoSampleAvailable(MediaSampleAVFObjC::create(sample, orientation));
+    videoSampleAvailable(MediaSampleAVFObjC::create(sample, rotation));
 }
 
 RefPtr<RealtimeMediaSourceCapabilities> RealtimeIncomingVideoSource::capabilities() const

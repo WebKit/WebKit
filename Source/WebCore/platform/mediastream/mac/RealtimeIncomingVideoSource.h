@@ -64,7 +64,7 @@ private:
     MediaConstraints& constraints() { return *m_constraints.get(); }
     RealtimeMediaSourceSupportedConstraints& supportedConstraints();
 
-    void processNewSample(CMSampleBufferRef, unsigned, unsigned, MediaSample::VideoOrientation);
+    void processNewSample(CMSampleBufferRef, unsigned, unsigned, MediaSample::VideoRotation);
 
     bool isProducingData() const final { return m_isProducingData && m_buffer; }
     bool applySize(const IntSize&) final { return true; }
