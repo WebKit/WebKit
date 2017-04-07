@@ -61,7 +61,7 @@ Ref<CodeBlock> Module::getOrCreateCodeBlock(VM& vm, MemoryMode mode)
     // It's worth retrying.
     // FIXME: We might want to back off retrying at some point:
     // https://bugs.webkit.org/show_bug.cgi?id=170607
-    if (!codeBlock || !codeBlock->runnable()) {
+    if (!codeBlock || (codeBlock->compilationFinished() && !codeBlock->runnable())) {
         codeBlock = CodeBlock::create(vm, mode, const_cast<ModuleInformation&>(moduleInformation()));
         m_codeBlocks[static_cast<uint8_t>(mode)] = codeBlock;
     }

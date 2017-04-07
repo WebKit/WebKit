@@ -1,5 +1,20 @@
 2017-04-07  Saam Barati  <sbarati@apple.com>
 
+        WebAssembly: Module::getOrCreateCodeBlock is wrong
+        https://bugs.webkit.org/show_bug.cgi?id=170612
+
+        Reviewed by Keith Miller.
+
+        When we were getting a module's CodeBlock, we were checking if !runnable(),
+        and if !runnable(), we were re-creating the CodeBlock. This is wrong, since
+        !runnable() is true while the CodeBlock is compiling. Instead, we should check
+        if we've finished compiling, and if so, if that compilation failed.
+
+        * wasm/WasmModule.cpp:
+        (JSC::Wasm::Module::getOrCreateCodeBlock):
+
+2017-04-07  Saam Barati  <sbarati@apple.com>
+
         WebAssembly: Make to a compilation API that allows for multi-VM concurrent compilations of Wasm Modules
         https://bugs.webkit.org/show_bug.cgi?id=170488
 
