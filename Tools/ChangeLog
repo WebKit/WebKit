@@ -1,3 +1,10 @@
+2017-04-06  Alexey Proskuryakov  <ap@apple.com>
+
+        Disable flaky WebKit2.ResizeWithHiddenContentDoesNotHang
+        for https://bugs.webkit.org/show_bug.cgi?id=170195
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/AnimatedResize.mm:
+
 2017-04-06  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r215046.
