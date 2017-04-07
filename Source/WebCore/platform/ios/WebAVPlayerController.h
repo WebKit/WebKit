@@ -61,6 +61,7 @@ class WebPlaybackSessionInterfaceAVKit;
 @property CGSize contentDimensions;
 @property BOOL hasEnabledAudio;
 @property BOOL hasEnabledVideo;
+@property BOOL hasVideo;
 @property NSTimeInterval minTime;
 @property NSTimeInterval maxTime;
 @property NSTimeInterval contentDurationWithinEndTimes;

@@ -1,3 +1,18 @@
+2017-04-07  Per Arne Vollan  <pvollan@apple.com>
+
+        Add hasVideo property to WebAVPlayerController.
+        https://bugs.webkit.org/show_bug.cgi?id=170545
+        rdar://problem/31325182
+
+        Reviewed by Eric Carlson.
+
+        Add a new "hasVideo" property which can be used to discover if any video content is present in the playback item,
+        whether video content is currently enabled or not.
+
+        * platform/ios/WebAVPlayerController.h:
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        (WebVideoFullscreenInterfaceAVKit::hasVideoChanged):
+
 2017-04-07  Miguel Gomez  <magomez@igalia.com>
 
         [GTK+] Animations not played properly when using synchronous decoding
