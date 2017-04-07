@@ -1,5 +1,23 @@
 2017-04-07  Brent Fulgham  <bfulgham@apple.com>
 
+        Rebaseline additional tests after r215096.
+        https://bugs.webkit.org/show_bug.cgi?id=170561
+        <rdar://problem/7415154>
+
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-cross-in-cross-none-block-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-cross-in-cross-self-block-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-cross-in-same-none-block-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-cross-in-same-self-block-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-same-in-cross-none-block-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-same-in-cross-self-block-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-same-in-same-none-block-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-none-block-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-self-block-expected.txt:
+        * http/tests/security/no-popup-from-sandbox-top-expected.txt:
+        * http/tests/xmlhttprequest/origin-exact-matching-expected.txt:
+
+2017-04-07  Brent Fulgham  <bfulgham@apple.com>
+
         WebKit should percent encode single quotes in query strings
         https://bugs.webkit.org/show_bug.cgi?id=170561
         <rdar://problem/7415154>

@@ -27,7 +27,7 @@ Blocked access to external URL http://www1.localhost:8800/cors//resources/cors-m
 Blocked access to external URL http://www1.localhost:8800/cors//resources/cors-makeheader.py?origin=**
 Blocked access to external URL http://www1.localhost:8800/cors//resources/cors-makeheader.py?origin=%00*
 Blocked access to external URL http://www1.localhost:8800/cors//resources/cors-makeheader.py?origin=*%00
-Blocked access to external URL http://www1.localhost:8800/cors//resources/cors-makeheader.py?origin='*'
+Blocked access to external URL http://www1.localhost:8800/cors//resources/cors-makeheader.py?origin=%27*%27
 Blocked access to external URL http://www1.localhost:8800/cors//resources/cors-makeheader.py?origin=%22*%22
 Blocked access to external URL http://www1.localhost:8800/cors//resources/cors-makeheader.py?origin=*%20*
 Blocked access to external URL http://www1.localhost:8800/cors//resources/cors-makeheader.py?origin=*http%3A%2F%2F*

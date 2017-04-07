@@ -1,3 +1,12 @@
+2017-04-07  Brent Fulgham  <bfulgham@apple.com>
+
+        Rebaseline additional tests after r215096.
+        https://bugs.webkit.org/show_bug.cgi?id=170561
+        <rdar://problem/7415154>
+
+        * web-platform-tests/cors/allow-headers-expected.txt:
+        * web-platform-tests/cors/origin-expected.txt:
+
 2017-03-31  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebCrypto] Add support for AES-CTR
