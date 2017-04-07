@@ -35,22 +35,22 @@ use FindBin;
 use lib $FindBin::Bin;
 use Getopt::Long;
 use webkitdirs;
-Getopt::Long::Configure("pass_through");
+Getopt::Long::Configure("no_auto_abbrev", "pass_through");
 
-my $usage = "Usage: run-jsc [--count run_count] [--debug] shell_file [file2...]";
+my $usage = "Usage: run-jsc [--count run_count] [--debugger] shell_file [file2...]";
 
 my $count = 1;
-my $debug = 0;
+my $debugger = 0;
 
 GetOptions("count|c=i" => \$count);
-GetOptions("debug" => \$debug);
+GetOptions("debugger" => \$debugger);
 
 setConfiguration();
 
 my $jsc;
-if ($debug) {
-    my $debugger = defined($ENV{"DEBUGGER"}) ? $ENV{"DEBUGGER"} : "lldb";
-    $jsc = $debugger . " " . File::Spec->catfile(jscProductDir(), "jsc -- ") . "@ARGV";
+if ($debugger) {
+    my $debuggerCmd = defined($ENV{"DEBUGGER"}) ? $ENV{"DEBUGGER"} : "lldb";
+    $jsc = $debuggerCmd . " " . File::Spec->catfile(jscProductDir(), "jsc -- ") . "@ARGV";
 } else {
     $jsc = File::Spec->catfile(jscProductDir(), "jsc ") . "@ARGV";
 }

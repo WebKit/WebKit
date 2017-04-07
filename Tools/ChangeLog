@@ -1,3 +1,16 @@
+2017-04-07  Caio Lima  <ticaiolima@gmail.com>
+
+        [JSC] Change --debug option to --debugger
+        https://bugs.webkit.org/show_bug.cgi?id=170587
+
+        Reviewed by Keith Miller.
+
+        * Scripts/run-jsc:
+
+        This patch is changing the new debugger flag for Tools/Scripts/run-jsc
+        to --debugger to avoid shadowing --debug flag used to run JSC with
+        Debug build.
+
 2017-04-07  Brent Fulgham  <bfulgham@apple.com>
 
         WebKit should percent encode single quotes in query strings
