@@ -1,3 +1,32 @@
+2017-04-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Scroll offset jumps after a programmatic scroll in an overflow container with scroll snapping
+        https://bugs.webkit.org/show_bug.cgi?id=170560
+        <rdar://problem/31484693>
+
+        Reviewed by Tim Horton.
+
+        Test: css3/scroll-snap/scroll-snap-programmatic-overflow-scroll.html
+
+        Logic for maintaining the scroll snap state in ScrollController was previously removed from iOS when refactoring
+        ScrollController. This was done because scroll snapping on iOS is driven not by the ScrollController (as it is
+        on Mac) but rather by sending scroll snap offsets to the UI process and hooking into UIScrollView delegates to
+        handle retargeted scrolling.
+
+        However, on iOS, this ScrollController state is still important for the purposes of keeping the last active
+        snap point index in sync with the UI process when the scroll offset changes outside of a user gesture (i.e.
+        programmatic scrolling). Since the UI process does not get a chance to update the active snap offset during a
+        programmatic scroll, our last active snap offset state was only being updated to the last snap position that the
+        user manually scrolled to, making programmatic scrolling jump to this offset.
+
+        To fix this, we need to update scroll snap state on iOS within ScrollController. Also adds a new Layout test
+        that exercises programmatic scrolling in an overflow scrolling container on all platforms.
+
+        * platform/cocoa/ScrollController.mm:
+        (WebCore::otherScrollEventAxis):
+        (WebCore::ScrollController::updateScrollSnapState):
+        (WebCore::ScrollController::updateScrollSnapPoints):
+
 2017-04-05  Simon Fraser  <simon.fraser@apple.com>
 
         Throttle requestAnimationFrame in cross-origin iframes to 30fps

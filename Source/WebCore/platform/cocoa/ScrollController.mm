@@ -75,12 +75,12 @@ static float scrollWheelMultiplier()
     }
     return multiplier;
 }
+#endif
 
 static ScrollEventAxis otherScrollEventAxis(ScrollEventAxis axis)
 {
     return axis == ScrollEventAxis::Horizontal ? ScrollEventAxis::Vertical : ScrollEventAxis::Horizontal;
 }
-#endif
 
 ScrollController::ScrollController(ScrollControllerClient& client)
     : m_client(client)
@@ -555,40 +555,6 @@ bool ScrollController::processWheelEventForScrollSnap(const PlatformWheelEvent& 
     return !(isInertialScrolling && shouldOverrideInertialScrolling());
 }
 
-void ScrollController::updateScrollSnapState(const ScrollableArea& scrollableArea)
-{
-    if (auto* snapOffsets = scrollableArea.horizontalSnapOffsets()) {
-        if (auto* snapOffsetRanges = scrollableArea.horizontalSnapOffsetRanges())
-            updateScrollSnapPoints(ScrollEventAxis::Horizontal, *snapOffsets, *snapOffsetRanges);
-        else
-            updateScrollSnapPoints(ScrollEventAxis::Horizontal, *snapOffsets, { });
-    } else
-        updateScrollSnapPoints(ScrollEventAxis::Horizontal, { }, { });
-
-    if (auto* snapOffsets = scrollableArea.verticalSnapOffsets()) {
-        if (auto* snapOffsetRanges = scrollableArea.verticalSnapOffsetRanges())
-            updateScrollSnapPoints(ScrollEventAxis::Vertical, *snapOffsets, *snapOffsetRanges);
-        else
-            updateScrollSnapPoints(ScrollEventAxis::Vertical, *snapOffsets, { });
-    } else
-        updateScrollSnapPoints(ScrollEventAxis::Vertical, { }, { });
-}
-
-void ScrollController::updateScrollSnapPoints(ScrollEventAxis axis, const Vector<LayoutUnit>& snapPoints, const Vector<ScrollOffsetRange<LayoutUnit>>& snapRanges)
-{
-    if (!m_scrollSnapState) {
-        if (snapPoints.isEmpty())
-            return;
-
-        m_scrollSnapState = std::make_unique<ScrollSnapAnimatorState>();
-    }
-
-    if (snapPoints.isEmpty() && m_scrollSnapState->snapOffsetsForAxis(otherScrollEventAxis(axis)).isEmpty())
-        m_scrollSnapState = nullptr;
-    else
-        m_scrollSnapState->setSnapOffsetsAndPositionRangesForAxis(axis, snapPoints, snapRanges);
-}
-
 void ScrollController::startScrollSnapTimer()
 {
     if (m_scrollSnapTimer.isActive())
@@ -625,11 +591,41 @@ void ScrollController::scrollSnapTimerFired()
         stopScrollSnapTimer();
     }
 }
-#else
-void ScrollController::updateScrollSnapState(const ScrollableArea&)
-{
-}
 #endif // PLATFORM(MAC)
+
+void ScrollController::updateScrollSnapState(const ScrollableArea& scrollableArea)
+{
+    if (auto* snapOffsets = scrollableArea.horizontalSnapOffsets()) {
+        if (auto* snapOffsetRanges = scrollableArea.horizontalSnapOffsetRanges())
+            updateScrollSnapPoints(ScrollEventAxis::Horizontal, *snapOffsets, *snapOffsetRanges);
+        else
+            updateScrollSnapPoints(ScrollEventAxis::Horizontal, *snapOffsets, { });
+    } else
+        updateScrollSnapPoints(ScrollEventAxis::Horizontal, { }, { });
+
+    if (auto* snapOffsets = scrollableArea.verticalSnapOffsets()) {
+        if (auto* snapOffsetRanges = scrollableArea.verticalSnapOffsetRanges())
+            updateScrollSnapPoints(ScrollEventAxis::Vertical, *snapOffsets, *snapOffsetRanges);
+        else
+            updateScrollSnapPoints(ScrollEventAxis::Vertical, *snapOffsets, { });
+    } else
+        updateScrollSnapPoints(ScrollEventAxis::Vertical, { }, { });
+}
+
+void ScrollController::updateScrollSnapPoints(ScrollEventAxis axis, const Vector<LayoutUnit>& snapPoints, const Vector<ScrollOffsetRange<LayoutUnit>>& snapRanges)
+{
+    if (!m_scrollSnapState) {
+        if (snapPoints.isEmpty())
+            return;
+
+        m_scrollSnapState = std::make_unique<ScrollSnapAnimatorState>();
+    }
+
+    if (snapPoints.isEmpty() && m_scrollSnapState->snapOffsetsForAxis(otherScrollEventAxis(axis)).isEmpty())
+        m_scrollSnapState = nullptr;
+    else
+        m_scrollSnapState->setSnapOffsetsAndPositionRangesForAxis(axis, snapPoints, snapRanges);
+}
 
 unsigned ScrollController::activeScrollSnapIndexForAxis(ScrollEventAxis axis) const
 {
