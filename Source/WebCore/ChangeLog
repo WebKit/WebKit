@@ -1,3 +1,28 @@
+2017-04-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Do some minor FEColorMatrix code cleanup and optimization
+        https://bugs.webkit.org/show_bug.cgi?id=170474
+
+        Reviewed by Dean Jackson.
+
+        Don't switch inside of a pixel processing loop; repeat the loop inside switch (filterType).
+        
+        Change matrix() and saturateAndHueRotate() to dereference the source pixels once, instead
+        of multiple times, which is faster.
+        
+        This kind of code benefits from aligning things with spaces for readability, so do so,
+        violating webkit style.
+        
+        Add some off-by-default performance logging code.
+
+        Increases pixel processing performance from about 86ms per megapixel to 65ms per megapixel.
+
+        * platform/graphics/filters/FEColorMatrix.cpp:
+        (WebCore::matrix):
+        (WebCore::saturateAndHueRotate):
+        (WebCore::effectType):
+        (WebCore::FEColorMatrix::platformApplySoftware):
+
 2017-04-06  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r215041.
