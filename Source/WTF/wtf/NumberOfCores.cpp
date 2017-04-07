@@ -26,6 +26,8 @@
 #include "config.h"
 #include "NumberOfCores.h"
 
+#include <cstdio>
+
 #if OS(DARWIN)
 #include <sys/param.h>
 // sys/types.h must come before sys/sysctl.h because the latter uses

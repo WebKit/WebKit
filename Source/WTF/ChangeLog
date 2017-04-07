@@ -1,3 +1,12 @@
+2017-04-07  Ting-Wei Lan  <lantw44@gmail.com>
+
+        Include cstdio before using sscanf and stderr
+        https://bugs.webkit.org/show_bug.cgi?id=170098
+
+        Reviewed by Michael Catanzaro.
+
+        * wtf/NumberOfCores.cpp:
+
 2017-04-07  Saam Barati  <sbarati@apple.com>
 
         WebAssembly: Make to a compilation API that allows for multi-VM concurrent compilations of Wasm Modules
