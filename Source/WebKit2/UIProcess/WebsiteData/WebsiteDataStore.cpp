@@ -91,7 +91,6 @@ WebsiteDataStore::WebsiteDataStore(WebCore::SessionID sessionID)
     : m_identifier(generateIdentifier())
     , m_sessionID(sessionID)
     , m_configuration()
-    , m_storageManager(StorageManager::createEphemeral())
     , m_queue(WorkQueue::create("com.apple.WebKit.WebsiteDataStore"))
 {
     platformInitialize();

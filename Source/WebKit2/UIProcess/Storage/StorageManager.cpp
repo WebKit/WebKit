@@ -281,12 +281,12 @@ void StorageManager::StorageArea::clear()
 
 void StorageManager::StorageArea::openDatabaseAndImportItemsIfNeeded() const
 {
-    if (!m_localStorageNamespace || !m_localStorageNamespace->storageManager()->m_localStorageDatabaseTracker)
+    if (!m_localStorageNamespace)
         return;
 
     // We open the database here even if we've already imported our items to ensure that the database is open if we need to write to it.
     if (!m_localStorageDatabase)
-        m_localStorageDatabase = LocalStorageDatabase::create(m_localStorageNamespace->storageManager()->m_queue.copyRef(), *m_localStorageNamespace->storageManager()->m_localStorageDatabaseTracker, m_securityOrigin);
+        m_localStorageDatabase = LocalStorageDatabase::create(m_localStorageNamespace->storageManager()->m_queue.copyRef(), m_localStorageNamespace->storageManager()->m_localStorageDatabaseTracker.copyRef(), m_securityOrigin);
 
     if (m_didImportItemsFromDatabase)
         return;
@@ -451,17 +451,10 @@ Ref<StorageManager> StorageManager::create(const String& localStorageDirectory)
     return adoptRef(*new StorageManager(localStorageDirectory));
 }
 
-Ref<StorageManager> StorageManager::createEphemeral()
-{
-    return adoptRef(*new StorageManager({ }));
-}
-
 StorageManager::StorageManager(const String& localStorageDirectory)
     : m_queue(WorkQueue::create("com.apple.WebKit.StorageManager"))
+    , m_localStorageDatabaseTracker(LocalStorageDatabaseTracker::create(m_queue.copyRef(), localStorageDirectory))
 {
-    if (!localStorageDirectory.isEmpty())
-        m_localStorageDatabaseTracker = LocalStorageDatabaseTracker::create(m_queue.copyRef(), localStorageDirectory);
-
     // Make sure the encoding is initialized before we start dispatching things to the queue.
     UTF8Encoding();
 }
@@ -587,10 +580,8 @@ void StorageManager::getLocalStorageOrigins(std::function<void(HashSet<WebCore::
     m_queue->dispatch([this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)]() mutable {
         HashSet<SecurityOriginData> origins;
 
-        if (m_localStorageDatabaseTracker) {
-            for (auto& origin : m_localStorageDatabaseTracker->origins())
-                origins.add(origin);
-        }
+        for (auto& origin : m_localStorageDatabaseTracker->origins())
+            origins.add(origin);
 
         for (auto& transientLocalStorageNamespace : m_transientLocalStorageNamespaces.values()) {
             for (auto& origin : transientLocalStorageNamespace->origins())
@@ -606,9 +597,7 @@ void StorageManager::getLocalStorageOrigins(std::function<void(HashSet<WebCore::
 void StorageManager::getLocalStorageOriginDetails(std::function<void (Vector<LocalStorageDatabaseTracker::OriginDetails>)>&& completionHandler)
 {
     m_queue->dispatch([this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)]() mutable {
-        Vector<LocalStorageDatabaseTracker::OriginDetails> originDetails;
-        if (m_localStorageDatabaseTracker)
-            originDetails = m_localStorageDatabaseTracker->originDetails();
+        auto originDetails = m_localStorageDatabaseTracker->originDetails();
 
         RunLoop::main().dispatch([originDetails = WTFMove(originDetails), completionHandler = WTFMove(completionHandler)]() mutable {
             completionHandler(WTFMove(originDetails));
@@ -625,17 +614,14 @@ void StorageManager::deleteLocalStorageEntriesForOrigin(SecurityOriginData&& sec
         for (auto& transientLocalStorageNamespace : m_transientLocalStorageNamespaces.values())
             transientLocalStorageNamespace->clearStorageAreasMatchingOrigin(copiedOrigin);
 
-        if (m_localStorageDatabaseTracker)
-            m_localStorageDatabaseTracker->deleteDatabaseWithOrigin(copiedOrigin);
+        m_localStorageDatabaseTracker->deleteDatabaseWithOrigin(copiedOrigin);
     });
 }
 
 void StorageManager::deleteLocalStorageOriginsModifiedSince(std::chrono::system_clock::time_point time, std::function<void()>&& completionHandler)
 {
     m_queue->dispatch([this, protectedThis = makeRef(*this), time, completionHandler = WTFMove(completionHandler)]() mutable {
-        Vector<WebCore::SecurityOriginData> deletedOrigins;
-        if (m_localStorageDatabaseTracker)
-            deletedOrigins = m_localStorageDatabaseTracker->deleteDatabasesModifiedSince(time);
+        auto deletedOrigins = m_localStorageDatabaseTracker->deleteDatabasesModifiedSince(time);
 
         for (const auto& origin : deletedOrigins) {
             for (auto& localStorageNamespace : m_localStorageNamespaces.values())
@@ -665,8 +651,7 @@ void StorageManager::deleteLocalStorageEntriesForOrigins(const Vector<WebCore::S
             for (auto& transientLocalStorageNamespace : m_transientLocalStorageNamespaces.values())
                 transientLocalStorageNamespace->clearStorageAreasMatchingOrigin(origin);
 
-            if (m_localStorageDatabaseTracker)
-                m_localStorageDatabaseTracker->deleteDatabaseWithOrigin(origin);
+            m_localStorageDatabaseTracker->deleteDatabaseWithOrigin(origin);
         }
 
         RunLoop::main().dispatch(WTFMove(completionHandler));
