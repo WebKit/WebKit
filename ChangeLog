@@ -1,3 +1,18 @@
+2017-04-07  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [CMake][Windows] WebKitGUID.lib should be built with the release CRT
+        https://bugs.webkit.org/show_bug.cgi?id=170593
+
+        Reviewed by Brent Fulgham.
+
+        Source/cmake/OptionsWin.cmake has a trick to force using the
+        release CRT even for debug build configuration. But, this works
+        only for C++, but for C. As the result, WebKitGUID.lib is built
+        with the debug CRT in debug build configuration because it has C
+        source files.
+
+        * Source/cmake/OptionsWin.cmake: Process CMAKE_C_FLAGS_* as well as CMAKE_CXX_FLAGS_*.
+
 2017-04-06  Nael Ouedraogo  <nael.ouedraogo@crf.canon.fr>
 
         [GTK] Build fails when using icecream, ccache and cmake 3.6
