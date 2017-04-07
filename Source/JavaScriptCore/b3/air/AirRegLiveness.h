@@ -68,6 +68,15 @@ public:
             }
         }
         
+        LocalCalc(UnifiedTmpLiveness& liveness, BasicBlock* block)
+            : m_block(block)
+        {
+            for (Tmp tmp : liveness.liveAtTail(block)) {
+                if (tmp.isReg())
+                    m_workset.set(tmp.reg());
+            }
+        }
+        
         const RegisterSet& live() const
         {
             return m_workset;

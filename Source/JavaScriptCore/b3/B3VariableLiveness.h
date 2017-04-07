@@ -47,6 +47,10 @@ struct VariableLivenessAdapter {
     {
     }
     
+    void prepareToCompute()
+    {
+    }
+    
     unsigned numIndices()
     {
         return proc.variables().size();

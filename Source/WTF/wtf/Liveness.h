@@ -105,7 +105,7 @@ public:
             
             bool contains(const typename Adapter::Thing& thing) const
             {
-                return m_liveness.m_workset.contains(Adapter::valueToIndex(thing));
+                return m_liveness.m_workset.contains(m_liveness.valueToIndex(thing));
             }
 
         private:
@@ -210,7 +210,7 @@ public:
 
         bool contains(const typename Adapter::Thing& thing) const
         {
-            return m_liveness.m_workset.contains(Adapter::valueToIndex(thing));
+            return m_liveness.m_workset.contains(m_liveness.valueToIndex(thing));
         }
 
     private:
@@ -258,6 +258,8 @@ public:
 protected:
     void compute()
     {
+        Adapter::prepareToCompute();
+        
         // The liveAtTail of each block automatically contains the LateUse's of the terminal.
         for (unsigned blockIndex = m_cfg.numNodes(); blockIndex--;) {
             typename CFG::Node block = m_cfg.node(blockIndex);

@@ -36,6 +36,7 @@ template<> const char* const Tmp::Indexed<GP>::dumpPrefix = "%tmp";
 template<> const char* const Tmp::Indexed<FP>::dumpPrefix = "%ftmp";
 template<> const char* const Tmp::AbsolutelyIndexed<GP>::dumpPrefix = "%abs";
 template<> const char* const Tmp::AbsolutelyIndexed<FP>::dumpPrefix = "%fabs";
+const char* const Tmp::LinearlyIndexed::dumpPrefix = "%ltmp";
 
 void Tmp::dump(PrintStream& out) const
 {

@@ -38,6 +38,7 @@
 #include "AirPhaseScope.h"
 #include "AirRegLiveness.h"
 #include "AirTmpInlines.h"
+#include "AirTmpMap.h"
 #include <wtf/ListDump.h>
 #include <wtf/Range.h>
 
@@ -105,13 +106,12 @@ struct Clobber {
     RegisterSet regs;
 };
 
-template<Bank bank>
 class LinearScan {
 public:
     LinearScan(Code& code)
         : m_code(code)
         , m_startIndex(code.size())
-        , m_map(code.numTmps(bank))
+        , m_map(code)
         , m_insertionSets(code.size())
     {
     }
@@ -127,7 +127,11 @@ public:
         }
         for (;;) {
             prepareIntervals();
-            attemptScan();
+            m_didSpill = false;
+            forEachBank(
+                [&] (Bank bank) {
+                    attemptScan(bank);
+                });
             if (!m_didSpill)
                 break;
             emitSpillCode();
@@ -139,8 +143,12 @@ public:
 private:
     void buildRegisterSet()
     {
-        m_registers = m_code.regsInPriorityOrder(bank);
-        m_registerSet.setAll(m_registers);
+        forEachBank(
+            [&] (Bank bank) {
+                m_registers[bank] = m_code.regsInPriorityOrder(bank);
+                m_registerSet[bank].setAll(m_registers[bank]);
+                m_unifiedRegisterSet.merge(m_registerSet[bank]);
+            });
     }
 
     void buildIndices()
@@ -178,7 +186,7 @@ private:
     
     void buildIntervals()
     {
-        TmpLiveness<bank> liveness(m_code);
+        UnifiedTmpLiveness liveness(m_code);
         
         for (BasicBlock* block : m_code) {
             size_t indexOfHead = this->indexOfHead(block);
@@ -201,10 +209,8 @@ private:
                 Inst& inst = block->at(instIndex);
                 size_t indexOfEarly = indexOfHead + instIndex * 2;
                 inst.forEachTmp(
-                    [&] (Tmp& tmp, Arg::Role role, Bank tmpBank, Width) {
+                    [&] (Tmp& tmp, Arg::Role role, Bank, Width) {
                         if (tmp.isReg())
-                            return;
-                        if (tmpBank != bank)
                             return;
                         m_map[tmp].interval |= interval(indexOfEarly, Arg::timing(role));
                     });
@@ -223,7 +229,7 @@ private:
                         });
                     if (prev->kind.opcode == Patch)
                         prevRegs.merge(prev->extraClobberedRegs());
-                    prevRegs.filter(m_registerSet);
+                    prevRegs.filter(m_unifiedRegisterSet);
                     if (!prevRegs.isEmpty())
                         m_clobbers.append(Clobber(indexOfHead + instIndex * 2 - 1, prevRegs));
                 }
@@ -256,10 +262,10 @@ private:
         
         if (verbose()) {
             dataLog("Intervals:\n");
-            for (unsigned tmpIndex = 0; tmpIndex < m_code.numTmps(bank); ++tmpIndex) {
-                Tmp tmp = Tmp::tmpForIndex(bank, tmpIndex);
-                dataLog("    ", tmp, ": ", m_map[tmp], "\n");
-            }
+            m_code.forEachTmp(
+                [&] (Tmp tmp) {
+                    dataLog("    ", tmp, ": ", m_map[tmp], "\n");
+                });
         }
     }
     
@@ -276,23 +282,25 @@ private:
     
     void spillEverything()
     {
-        for (unsigned tmpIndex = 0; tmpIndex < m_code.numTmps(bank); ++tmpIndex)
-            spill(Tmp::tmpForIndex(bank, tmpIndex));
+        m_code.forEachTmp(
+            [&] (Tmp tmp) {
+                spill(tmp);
+            });
     }
     
     void prepareIntervals()
     {
         m_tmps.resize(0);
         
-        for (unsigned tmpIndex = 0; tmpIndex < m_code.numTmps(bank); ++tmpIndex) {
-            Tmp tmp = Tmp::tmpForIndex(bank, tmpIndex);
-            TmpData& data = m_map[tmp];
-            if (data.spilled)
-                continue;
-            
-            data.assigned = Reg();
-            m_tmps.append(tmp);
-        }
+        m_code.forEachTmp(
+            [&] (Tmp tmp) {
+                TmpData& data = m_map[tmp];
+                if (data.spilled)
+                    return;
+                
+                data.assigned = Reg();
+                m_tmps.append(tmp);
+            });
         
         std::sort(
             m_tmps.begin(), m_tmps.end(),
@@ -306,7 +314,7 @@ private:
         }
     }
     
-    Tmp addSpillTmpWithInterval(Interval interval)
+    Tmp addSpillTmpWithInterval(Bank bank, Interval interval)
     {
         TmpData data;
         data.interval = interval;
@@ -317,17 +325,19 @@ private:
         return tmp;
     }
     
-    void attemptScan()
+    void attemptScan(Bank bank)
     {
         // This is modeled after LinearScanRegisterAllocation in Fig. 1 in
         // http://dl.acm.org/citation.cfm?id=330250.
 
-        m_didSpill = false;
         m_active.clear();
         m_activeRegs = RegisterSet();
         
         size_t clobberIndex = 0;
         for (Tmp& tmp : m_tmps) {
+            if (tmp.bank() != bank)
+                continue;
+            
             TmpData& entry = m_map[tmp];
             size_t index = entry.interval.begin();
             
@@ -381,7 +391,7 @@ private:
                 while (clobberIndex < m_clobbers.size() && m_clobbers[clobberIndex].index < index)
                     clobberIndex++;
                 
-                RegisterSet possibleRegs = m_registerSet;
+                RegisterSet possibleRegs = m_registerSet[bank];
                 for (size_t i = clobberIndex; i < m_clobbers.size() && m_clobbers[i].index < entry.interval.end(); ++i)
                     possibleRegs.exclude(m_clobbers[i].regs);
                 
@@ -393,9 +403,9 @@ private:
                 dataLog("  Possible regs: ", entry.possibleRegs, "\n");
             
             // Find a free register that we are allowed to use.
-            if (m_active.size() != m_registers.size()) {
+            if (m_active.size() != m_registers[bank].size()) {
                 bool didAssign = false;
-                for (Reg reg : m_registers) {
+                for (Reg reg : m_registers[bank]) {
                     // FIXME: Could do priority coloring here.
                     // https://bugs.webkit.org/show_bug.cgi?id=170304
                     if (!m_activeRegs.contains(reg) && entry.possibleRegs.contains(reg)) {
@@ -481,8 +491,6 @@ private:
                         continue;
                     if (arg.isReg())
                         continue;
-                    if (arg.bank() != bank)
-                        continue;
                     StackSlot* spilled = m_map[arg.tmp()].spilled;
                     if (!spilled)
                         continue;
@@ -493,16 +501,14 @@ private:
                 
                 // Fall back on the hard way.
                 inst.forEachTmp(
-                    [&] (Tmp& tmp, Arg::Role role, Bank tmpBank, Width) {
+                    [&] (Tmp& tmp, Arg::Role role, Bank bank, Width) {
                         if (tmp.isReg())
-                            return;
-                        if (tmpBank != bank)
                             return;
                         StackSlot* spilled = m_map[tmp].spilled;
                         if (!spilled)
                             return;
                         Opcode move = bank == GP ? Move : MoveDouble;
-                        tmp = addSpillTmpWithInterval(interval(indexOfEarly, Arg::timing(role)));
+                        tmp = addSpillTmpWithInterval(bank, interval(indexOfEarly, Arg::timing(role)));
                         if (role == Arg::Scratch)
                             return;
                         if (Arg::isAnyUse(role))
@@ -524,10 +530,10 @@ private:
     {
         if (verbose()) {
             dataLog("About to allocate registers. State of all tmps:\n");
-            for (unsigned tmpIndex = 0; tmpIndex < m_code.numTmps(bank); ++tmpIndex) {
-                Tmp tmp = Tmp::tmpForIndex(bank, tmpIndex);
-                dataLog("    ", tmp, ": ", m_map[tmp], "\n");
-            }
+            m_code.forEachTmp(
+                [&] (Tmp tmp) {
+                    dataLog("    ", tmp, ": ", m_map[tmp], "\n");
+                });
             dataLog("IR:\n");
             dataLog(m_code);
         }
@@ -539,8 +545,6 @@ private:
                 inst.forEachTmpFast(
                     [&] (Tmp& tmp) {
                         if (tmp.isReg())
-                            return;
-                        if (tmp.bank() != bank)
                             return;
                         
                         Reg reg = m_map[tmp].assigned;
@@ -555,10 +559,11 @@ private:
     }
     
     Code& m_code;
-    Vector<Reg> m_registers;
-    RegisterSet m_registerSet;
+    Vector<Reg> m_registers[numBanks];
+    RegisterSet m_registerSet[numBanks];
+    RegisterSet m_unifiedRegisterSet;
     IndexMap<BasicBlock*, size_t> m_startIndex;
-    IndexMap<Tmp::Indexed<bank>, TmpData> m_map;
+    TmpMap<TmpData> m_map;
     IndexMap<BasicBlock*, PhaseInsertionSet> m_insertionSets;
     Vector<Clobber> m_clobbers; // After we allocate this, we happily point pointers into it.
     Vector<Tmp> m_tmps;
@@ -567,15 +572,14 @@ private:
     bool m_didSpill { false };
 };
 
-template<Bank bank>
 void runLinearScan(Code& code)
 {
     if (verbose())
-        dataLog("Air before linear scan for ", bank, ":\n", code);
-    LinearScan<bank> linearScan(code);
+        dataLog("Air before linear scan:\n", code);
+    LinearScan linearScan(code);
     linearScan.run();
     if (verbose())
-        dataLog("Air after linear scan for ", bank, ":\n", code);
+        dataLog("Air after linear scan:\n", code);
 }
 
 } // anonymous namespace
@@ -584,8 +588,7 @@ void allocateRegistersByLinearScan(Code& code)
 {
     PhaseScope phaseScope(code, "allocateRegistersByLinearScan");
     padInterference(code);
-    runLinearScan<FP>(code);
-    runLinearScan<GP>(code);
+    runLinearScan(code);
     fixSpillsAfterTerminals(code);
 }
 

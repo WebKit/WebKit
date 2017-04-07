@@ -1,3 +1,21 @@
+2017-04-06  Filip Pizlo  <fpizlo@apple.com>
+
+        Linear scan should run liveness only once
+        https://bugs.webkit.org/show_bug.cgi?id=170569
+
+        Reviewed by Keith Miller.
+        
+        Have Liveness<> call Adapter::prepareToCompute(), since this makes it a lot easier to implement
+        constraint generation, since the constraint generator now gets to run after the Adapter is fully
+        constructed.
+        
+        * wtf/IndexMap.h:
+        (WTF::IndexMap::append): Also make this a bit more versatile.
+        * wtf/Liveness.h:
+        (WTF::Liveness::LocalCalc::Iterable::contains):
+        (WTF::Liveness::Iterable::contains):
+        (WTF::Liveness::compute):
+
 2017-04-06  Andreas Kling  <akling@apple.com>
 
         Kill any WebContent process using over 16 GB of memory.

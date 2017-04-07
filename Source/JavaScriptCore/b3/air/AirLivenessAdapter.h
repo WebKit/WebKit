@@ -31,7 +31,6 @@
 #include "AirCFG.h"
 #include "AirCode.h"
 #include "AirInstInlines.h"
-#include "AirLivenessConstraints.h"
 #include "AirStackSlot.h"
 #include "AirTmpInlines.h"
 
@@ -41,10 +40,59 @@ template<typename Adapter>
 struct LivenessAdapter {
     typedef Air::CFG CFG;
     
+    typedef Vector<unsigned, 4> ActionsList;
+    
+    struct Actions {
+        Actions() { }
+        
+        ActionsList use;
+        ActionsList def;
+    };
+    
+    typedef Vector<Actions, 0, UnsafeVectorOverflow> ActionsForBoundary;
+    
     LivenessAdapter(Code& code)
         : code(code)
-        , constraints(code)
+        , m_actions(code.size())
     {
+    }
+    
+    Adapter& adapter()
+    {
+        return *static_cast<Adapter*>(this);
+    }
+    
+    void prepareToCompute()
+    {
+        for (BasicBlock* block : code) {
+            ActionsForBoundary& actionsForBoundary = m_actions[block];
+            actionsForBoundary.resize(block->size() + 1);
+            
+            for (size_t instIndex = block->size(); instIndex--;) {
+                Inst& inst = block->at(instIndex);
+                inst.forEach<typename Adapter::Thing>(
+                    [&] (typename Adapter::Thing& thing, Arg::Role role, Bank bank, Width) {
+                        if (!Adapter::acceptsBank(bank) || !Adapter::acceptsRole(role))
+                            return;
+                        
+                        unsigned index = adapter().valueToIndex(thing);
+                        
+                        if (Arg::isEarlyUse(role))
+                            actionsForBoundary[instIndex].use.appendIfNotContains(index);
+                        if (Arg::isEarlyDef(role))
+                            actionsForBoundary[instIndex].def.appendIfNotContains(index);
+                        if (Arg::isLateUse(role))
+                            actionsForBoundary[instIndex + 1].use.appendIfNotContains(index);
+                        if (Arg::isLateDef(role))
+                            actionsForBoundary[instIndex + 1].def.appendIfNotContains(index);
+                    });
+            }
+        }
+    }
+    
+    Actions& actionsAt(BasicBlock* block, unsigned instBoundaryIndex)
+    {
+        return m_actions[block][instBoundaryIndex];
     }
     
     unsigned blockSize(BasicBlock* block)
@@ -55,19 +103,19 @@ struct LivenessAdapter {
     template<typename Func>
     void forEachUse(BasicBlock* block, size_t instBoundaryIndex, const Func& func)
     {
-        for (unsigned index : constraints.at(block, instBoundaryIndex).use)
+        for (unsigned index : actionsAt(block, instBoundaryIndex).use)
             func(index);
     }
     
     template<typename Func>
     void forEachDef(BasicBlock* block, size_t instBoundaryIndex, const Func& func)
     {
-        for (unsigned index : constraints.at(block, instBoundaryIndex).def)
+        for (unsigned index : actionsAt(block, instBoundaryIndex).def)
             func(index);
     }
 
     Code& code;
-    LivenessConstraints<Adapter> constraints;
+    IndexMap<BasicBlock*, ActionsForBoundary> m_actions;
 };
 
 template<Bank adapterBank, Arg::Temperature minimumTemperature = Arg::Cold>
@@ -84,13 +132,35 @@ struct TmpLivenessAdapter : LivenessAdapter<TmpLivenessAdapter<adapterBank, mini
 
     unsigned numIndices()
     {
-        unsigned numTmps = Base::code.numTmps(adapterBank);
-        return AbsoluteTmpMapper<adapterBank>::absoluteIndex(numTmps);
+        return Tmp::absoluteIndexEnd(Base::code, adapterBank);
     }
     static bool acceptsBank(Bank bank) { return bank == adapterBank; }
     static bool acceptsRole(Arg::Role role) { return Arg::temperature(role) >= minimumTemperature; }
     static unsigned valueToIndex(Tmp tmp) { return AbsoluteTmpMapper<adapterBank>::absoluteIndex(tmp); }
     static Tmp indexToValue(unsigned index) { return AbsoluteTmpMapper<adapterBank>::tmpFromAbsoluteIndex(index); }
+};
+
+struct UnifiedTmpLivenessAdapter : LivenessAdapter<UnifiedTmpLivenessAdapter> {
+    typedef LivenessAdapter<UnifiedTmpLivenessAdapter> Base;
+    
+    static constexpr const char* name = "UnifiedTmpLiveness";
+
+    typedef Tmp Thing;
+    
+    UnifiedTmpLivenessAdapter(Code& code)
+        : Base(code)
+    {
+    }
+    
+    unsigned numIndices()
+    {
+        return Tmp::linearIndexEnd(code);
+    }
+    
+    static bool acceptsBank(Bank) { return true; }
+    static bool acceptsRole(Arg::Role) { return true; }
+    unsigned valueToIndex(Tmp tmp) { return tmp.linearlyIndexed(code).index(); }
+    Tmp indexToValue(unsigned index) { return Tmp::tmpForLinearIndex(code, index); }
 };
 
 struct StackSlotLivenessAdapter : LivenessAdapter<StackSlotLivenessAdapter> {

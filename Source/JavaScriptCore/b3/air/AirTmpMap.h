@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,73 +25,74 @@
 
 #pragma once
 
-#include <wtf/IndexKeyType.h>
-#include <wtf/Vector.h>
+#if ENABLE(B3_JIT)
 
-namespace WTF {
+#include "AirCode.h"
+#include "AirTmp.h"
+#include <wtf/IndexMap.h>
 
-// This is a map for keys that have an index(). It's super efficient for BasicBlocks. It's only
-// efficient for Values if you don't create too many of these maps, since Values can have very
-// sparse indices and there are a lot of Values.
+namespace JSC { namespace B3 { namespace Air {
 
-template<typename Key, typename Value>
-class IndexMap {
+// As an alternative to this, you could use IndexMap<Tmp::LinearlyIndexed, ...>, but this would fail
+// as soon as you added a new GP tmp.
+
+template<typename Value>
+class TmpMap {
 public:
-    IndexMap()
+    TmpMap()
     {
     }
     
     template<typename... Args>
-    explicit IndexMap(size_t size, Args&&... args)
+    TmpMap(Code& code, const Args&... args)
+        : m_gp(Tmp::absoluteIndexEnd(code, GP), args...)
+        , m_fp(Tmp::absoluteIndexEnd(code, FP), args...)
     {
-        m_vector.fill(Value(std::forward<Args>(args)...), size);
-    }
-
-    template<typename... Args>
-    void resize(size_t size, Args&&... args)
-    {
-        m_vector.fill(Value(std::forward<Args>(args)...), size);
-    }
-
-    template<typename... Args>
-    void clear(Args&&... args)
-    {
-        m_vector.fill(Value(std::forward<Args>(args)...), m_vector.size());
-    }
-
-    size_t size() const { return m_vector.size(); }
-
-    Value& operator[](size_t index)
-    {
-        return m_vector[index];
-    }
-
-    const Value& operator[](size_t index) const
-    {
-        return m_vector[index];
     }
     
-    Value& operator[](const Key& key)
+    template<typename... Args>
+    void resize(Code& code, const Args&... args)
     {
-        return m_vector[IndexKeyType<Key>::index(key)];
+        m_gp.resize(Tmp::absoluteIndexEnd(code, GP), args...);
+        m_fp.resize(Tmp::absoluteIndexEnd(code, FP), args...);
     }
     
-    const Value& operator[](const Key& key) const
+    template<typename... Args>
+    void clear(const Args&... args)
     {
-        return m_vector[IndexKeyType<Key>::index(key)];
+        m_gp.clear(args...);
+        m_fp.clear(args...);
+    }
+    
+    const Value& operator[](Tmp tmp) const
+    {
+        if (tmp.isGP())
+            return m_gp[tmp];
+        return m_fp[tmp];
+    }
+
+    Value& operator[](Tmp tmp)
+    {
+        if (tmp.isGP())
+            return m_gp[tmp];
+        return m_fp[tmp];
     }
     
     template<typename PassedValue>
-    void append(const Key& key, PassedValue&& value)
+    void append(Tmp tmp, PassedValue&& value)
     {
-        RELEASE_ASSERT(IndexKeyType<Key>::index(key) == m_vector.size());
-        m_vector.append(std::forward<PassedValue>(value));
+        if (tmp.isGP())
+            m_gp.append(tmp, std::forward<PassedValue>(value));
+        else
+            m_fp.append(tmp, std::forward<PassedValue>(value));
     }
 
 private:
-    Vector<Value, 0, UnsafeVectorOverflow> m_vector;
+    IndexMap<Tmp::AbsolutelyIndexed<GP>, Value> m_gp;
+    IndexMap<Tmp::AbsolutelyIndexed<FP>, Value> m_fp;
 };
 
-} // namespace WTF
+} } } // namespace JSC::B3::Air
 
-using WTF::IndexMap;
+#endif // ENABLE(B3_JIT)
+

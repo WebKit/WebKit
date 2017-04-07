@@ -50,6 +50,7 @@ using TmpLiveness = Liveness<TmpLivenessAdapter<bank, minimumTemperature>>;
 
 typedef Liveness<TmpLivenessAdapter<GP>> GPLiveness;
 typedef Liveness<TmpLivenessAdapter<FP>> FPLiveness;
+typedef Liveness<UnifiedTmpLivenessAdapter> UnifiedTmpLiveness;
 typedef Liveness<StackSlotLivenessAdapter> StackSlotLiveness;
 
 } } } // namespace JSC::B3::Air

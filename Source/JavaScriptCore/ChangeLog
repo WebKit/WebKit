@@ -1,3 +1,74 @@
+2017-04-06  Filip Pizlo  <fpizlo@apple.com>
+
+        Linear scan should run liveness only once
+        https://bugs.webkit.org/show_bug.cgi?id=170569
+
+        Reviewed by Keith Miller.
+        
+        Air has a longstanding design bug that Tmps from different banks are indexed independently. This
+        means that all of our analyses over Tmps do separate GP and FP passes. This does have some
+        marginal benefits (the rest of the algorithm is specialized for Bank) but it's probably net bad.
+        However, I don't want to think about solving that general problem.
+        
+        Instead, this just makes linear scan use a UnifiedTmpLiveness that uses a single "linear"
+        indexing for GP and FP. This lets me avoid the much larger refactoring (which would involve
+        substantial changes in graph coloring) while getting the bulk of the benefit (liveness runs once,
+        instead of twice, for linear scan).
+        
+        This patch implements a lot of plumbing to make it possible for Liveness<> to view Tmps as having
+        a unified indexing scheme. Tmp calls this LinearlyIndexed (to match the naming convention of
+        AbsolutelyIndexed and Indexed), while AirLiveness calls this UnifiedTmpLiveness. With this
+        change, -O1 never does any liveness analysis that uses separate GP and FP passes. I think this
+        eliminates any urgency from the larger Tmp indexing bug. We can probably live with graph coloring
+        doing separate passes.
+        
+        This is a ~6% speed-up for wasm -O1 compile times. I think this means that linear scan is no
+        longer the longest pole in the tent.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * b3/B3VariableLiveness.h:
+        (JSC::B3::VariableLivenessAdapter::prepareToCompute):
+        * b3/air/AirAllocateRegistersByLinearScan.cpp:
+        (JSC::B3::Air::allocateRegistersByLinearScan):
+        * b3/air/AirCode.h:
+        (JSC::B3::Air::Code::forEachTmp):
+        * b3/air/AirLiveness.h:
+        * b3/air/AirLivenessAdapter.h:
+        (JSC::B3::Air::LivenessAdapter::Actions::Actions):
+        (JSC::B3::Air::LivenessAdapter::LivenessAdapter):
+        (JSC::B3::Air::LivenessAdapter::adapter):
+        (JSC::B3::Air::LivenessAdapter::prepareToCompute):
+        (JSC::B3::Air::LivenessAdapter::actionsAt):
+        (JSC::B3::Air::LivenessAdapter::forEachUse):
+        (JSC::B3::Air::LivenessAdapter::forEachDef):
+        (JSC::B3::Air::TmpLivenessAdapter::numIndices):
+        (JSC::B3::Air::UnifiedTmpLivenessAdapter::UnifiedTmpLivenessAdapter):
+        (JSC::B3::Air::UnifiedTmpLivenessAdapter::numIndices):
+        (JSC::B3::Air::UnifiedTmpLivenessAdapter::acceptsBank):
+        (JSC::B3::Air::UnifiedTmpLivenessAdapter::acceptsRole):
+        (JSC::B3::Air::UnifiedTmpLivenessAdapter::valueToIndex):
+        (JSC::B3::Air::UnifiedTmpLivenessAdapter::indexToValue):
+        * b3/air/AirLivenessConstraints.h: Removed.
+        * b3/air/AirRegLiveness.h:
+        (JSC::B3::Air::RegLiveness::LocalCalc::LocalCalc):
+        * b3/air/AirTmp.cpp:
+        * b3/air/AirTmp.h:
+        * b3/air/AirTmpInlines.h:
+        (JSC::B3::Air::Tmp::LinearlyIndexed::LinearlyIndexed):
+        (JSC::B3::Air::Tmp::LinearlyIndexed::index):
+        (JSC::B3::Air::Tmp::linearlyIndexed):
+        (JSC::B3::Air::Tmp::indexEnd):
+        (JSC::B3::Air::Tmp::absoluteIndexEnd):
+        (JSC::B3::Air::Tmp::linearIndexEnd):
+        (JSC::B3::Air::Tmp::tmpForAbsoluteIndex):
+        (JSC::B3::Air::Tmp::tmpForLinearIndex):
+        * b3/air/AirTmpMap.h: Added.
+        (JSC::B3::Air::TmpMap::TmpMap):
+        (JSC::B3::Air::TmpMap::resize):
+        (JSC::B3::Air::TmpMap::clear):
+        (JSC::B3::Air::TmpMap::operator[]):
+        (JSC::B3::Air::TmpMap::append):
+
 2017-04-06  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r215046.

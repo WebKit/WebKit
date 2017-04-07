@@ -36,6 +36,7 @@
 namespace JSC { namespace B3 { namespace Air {
 
 class Arg;
+class Code;
 
 // A Tmp is a generalization of a register. It can be used to refer to any GPR or FPR. It can also
 // be used to refer to an unallocated register (i.e. a temporary). Like many Air classes, we use
@@ -165,12 +166,19 @@ public:
     
     template<Bank bank> class Indexed;
     template<Bank bank> class AbsolutelyIndexed;
+    class LinearlyIndexed;
     
     template<Bank bank>
     Indexed<bank> indexed() const;
     
     template<Bank bank>
     AbsolutelyIndexed<bank> absolutelyIndexed() const;
+    
+    LinearlyIndexed linearlyIndexed(Code&) const;
+
+    static unsigned indexEnd(Code&, Bank);
+    static unsigned absoluteIndexEnd(Code&, Bank);
+    static unsigned linearIndexEnd(Code&);
     
     bool isAlive() const
     {
@@ -214,7 +222,9 @@ public:
     }
     
     static Tmp tmpForAbsoluteIndex(Bank, unsigned);
-
+    
+    static Tmp tmpForLinearIndex(Code&, unsigned);
+    
 private:
     static int encodeGP(unsigned index)
     {

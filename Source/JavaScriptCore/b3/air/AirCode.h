@@ -130,6 +130,17 @@ public:
         }
         ASSERT_NOT_REACHED();
     }
+    
+    template<typename Func>
+    void forEachTmp(const Func& func)
+    {
+        for (unsigned bankIndex = 0; bankIndex < numBanks; ++bankIndex) {
+            Bank bank = static_cast<Bank>(bankIndex);
+            unsigned numTmps = this->numTmps(bank);
+            for (unsigned i = 0; i < numTmps; ++i)
+                func(Tmp::tmpForIndex(bank, i));
+        }
+    }
 
     unsigned callArgAreaSizeInBytes() const { return m_callArgAreaSize; }
 
