@@ -155,9 +155,9 @@ bool hitTestFlow(const RenderBlockFlow& flow, const Layout& layout, const HitTes
     for (auto it = range.begin(), end = range.end(); it != end; ++it) {
         auto lineRect = *it;
         lineRect.moveBy(accumulatedOffset);
+        auto& renderer = const_cast<RenderObject&>(it.renderer());
         if (!locationInContainer.intersects(lineRect))
             continue;
-        auto& renderer = const_cast<RenderObject&>(it.renderer());
         renderer.updateHitTestResult(result, locationInContainer.point() - toLayoutSize(accumulatedOffset));
         if (!result.addNodeToRectBasedTestResult(renderer.node(), request, locationInContainer, lineRect))
             return true;

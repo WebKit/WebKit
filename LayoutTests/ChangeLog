@@ -1,3 +1,13 @@
+2017-04-07  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: FlowContents::segmentIndexForRunSlow skips empty runs.
+        https://bugs.webkit.org/show_bug.cgi?id=170552
+
+        Reviewed by Antti Koivisto.
+
+        * fast/text/simple-line-layout-hover-over-subsequent-linebreaks-expected.txt: Added.
+        * fast/text/simple-line-layout-hover-over-subsequent-linebreaks.html: Added.
+
 2017-04-07  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark media/modern-media-controls/media-controller/media-controller-auto-hide-mouse-leave-after-play.html as flaky.
