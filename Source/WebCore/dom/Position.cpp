@@ -634,6 +634,13 @@ static bool isStreamer(const PositionIterator& pos)
     return pos.atStartOfNode();
 }
 
+static void ensureLineBoxesIfNeeded(RenderObject& renderer)
+{
+    if (!is<RenderText>(renderer) && !is<RenderLineBreak>(renderer))
+        return;
+    is<RenderText>(renderer) ? downcast<RenderText>(renderer).ensureLineBoxes() : downcast<RenderLineBreak>(renderer).ensureLineBoxes();
+}
+
 // This function and downstream() are used for moving back and forth between visually equivalent candidates.
 // For example, for the text node "foo     bar" where whitespace is collapsible, there are two candidates 
 // that map to the VisiblePosition between 'b' and the space.  This function will return the left candidate 
@@ -679,7 +686,7 @@ Position Position::upstream(EditingBoundaryCrossingRule rule) const
         RenderObject* renderer = currentNode.renderer();
         if (!renderer || renderer->style().visibility() != VISIBLE)
             continue;
-                 
+        ensureLineBoxesIfNeeded(*renderer);
         if (rule == CanCrossEditingBoundary && boundaryCrossed) {
             lastVisible = currentPosition;
             break;
@@ -704,8 +711,6 @@ Position Position::upstream(EditingBoundaryCrossingRule rule) const
         // return current position if it is in rendered text
         if (is<RenderText>(*renderer)) {
             auto& textRenderer = downcast<RenderText>(*renderer);
-            textRenderer.ensureLineBoxes();
-
             if (!textRenderer.firstTextBox())
                 continue;
             if (&currentNode != startNode) {
@@ -816,7 +821,7 @@ Position Position::downstream(EditingBoundaryCrossingRule rule) const
         auto* renderer = currentNode.renderer();
         if (!renderer || renderer->style().visibility() != VISIBLE)
             continue;
-            
+        ensureLineBoxesIfNeeded(*renderer);
         if (rule == CanCrossEditingBoundary && boundaryCrossed) {
             lastVisible = currentPosition;
             break;
@@ -836,8 +841,6 @@ Position Position::downstream(EditingBoundaryCrossingRule rule) const
         // return current position if it is in rendered text
         if (is<RenderText>(*renderer)) {
             auto& textRenderer = downcast<RenderText>(*renderer);
-            textRenderer.ensureLineBoxes();
-
             if (!textRenderer.firstTextBox())
                 continue;
             if (&currentNode != startNode) {
@@ -1230,9 +1233,11 @@ void Position::getInlineBoxAndOffset(EAffinity affinity, TextDirection primaryDi
     caretOffset = deprecatedEditingOffset();
     RenderObject* renderer = deprecatedNode()->renderer();
 
-    if (renderer->isBR())
-        inlineBox = !caretOffset ? downcast<RenderLineBreak>(*renderer).inlineBoxWrapper() : nullptr;
-    else if (is<RenderText>(*renderer)) {
+    if (renderer->isBR()) {
+        auto& lineBreakRenderer = downcast<RenderLineBreak>(*renderer);
+        lineBreakRenderer.ensureLineBoxes();
+        inlineBox = !caretOffset ? lineBreakRenderer.inlineBoxWrapper() : nullptr;
+    } else if (is<RenderText>(*renderer)) {
         auto& textRenderer = downcast<RenderText>(*renderer);
         textRenderer.ensureLineBoxes();
 

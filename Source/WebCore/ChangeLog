@@ -1,3 +1,29 @@
+2017-04-07  Zalan Bujtas  <zalan@apple.com>
+
+        Text insertion cursor disappears after pressing enter
+        https://bugs.webkit.org/show_bug.cgi?id=169291
+        <rdar://problem/30899611>
+
+        Reviewed by Tim Horton.
+
+        Positon upstream/downstream (as the result of VisiblePosition -> canonicalPosition) require
+        linebox tree. In addition to regular text, we need to bail out of simple line layout on line breaks too.
+
+        Test: editing/simple-line-layout-caret-is-gone.html
+
+        * dom/Position.cpp:
+        (WebCore::ensureLineBoxesIfNeeded):
+        (WebCore::Position::upstream):
+        (WebCore::Position::downstream):
+        (WebCore::Position::getInlineBoxAndOffset):
+        * rendering/RenderLineBreak.cpp:
+        (WebCore::RenderLineBreak::ensureLineBoxes):
+        (WebCore::RenderLineBreak::positionForPoint):
+        (WebCore::RenderLineBreak::setSelectionState):
+        (WebCore::RenderLineBreak::collectSelectionRects):
+        (WebCore::ensureLineBoxes): Deleted.
+        * rendering/RenderLineBreak.h:
+
 2017-04-07  Xan Lopez  <xlopez@igalia.com>
 
         [GTK] Fix codec name in OWR ASSERT

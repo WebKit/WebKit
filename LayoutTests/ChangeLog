@@ -1,3 +1,14 @@
+2017-04-07  Zalan Bujtas  <zalan@apple.com>
+
+        Text insertion cursor disappears after pressing enter
+        https://bugs.webkit.org/show_bug.cgi?id=169291
+        <rdar://problem/30899611>
+
+        Reviewed by Tim Horton.
+
+        * editing/simple-line-layout-caret-is-gone-expected.txt: Added.
+        * editing/simple-line-layout-caret-is-gone.html: Added.
+
 2017-04-06  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Make FontWithFeatures test font pass OTS
