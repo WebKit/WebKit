@@ -1,3 +1,14 @@
+2017-04-07  Xan Lopez  <xan@igalia.com>
+
+        [GTK] Add message about missing codecs to ASSERT in OWR
+        https://bugs.webkit.org/show_bug.cgi?id=170596
+
+        Reviewed by Carlos Garcia Campos.
+
+        * platform/mediastream/openwebrtc/MediaEndpointOwr.cpp:
+        (WebCore::MediaEndpointOwr::prepareMediaSession): add a message
+        about the missing coded to the ASSERT.
+
 2017-04-07  Tomas Popela  <tpopela@redhat.com>
 
         AX: Don't crash if no renderer is available for AccessibilityRenderObject
