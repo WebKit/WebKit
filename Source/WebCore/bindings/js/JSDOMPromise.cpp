@@ -95,9 +95,12 @@ void DeferredPromise::reject(Exception&& exception)
     auto& state = *m_globalObject->globalExec();
     JSC::JSLockHolder locker(&state);
 
-    auto scope = DECLARE_CATCH_SCOPE(state.vm());
+    auto scope = DECLARE_THROW_SCOPE(state.vm());
     auto error = createDOMException(state, WTFMove(exception));
-    ASSERT_UNUSED(scope, !scope.exception());
+    if (UNLIKELY(scope.exception())) {
+        ASSERT(isTerminatedExecutionException(state.vm(), scope.exception()));
+        return;
+    }
 
     reject(state, error);
 }
@@ -112,9 +115,13 @@ void DeferredPromise::reject(ExceptionCode ec, const String& message)
     auto& state = *m_globalObject->globalExec();
     JSC::JSLockHolder locker(&state);
 
-    auto scope = DECLARE_CATCH_SCOPE(state.vm());
+    auto scope = DECLARE_THROW_SCOPE(state.vm());
     auto error = createDOMException(&state, ec, message);
-    ASSERT_UNUSED(scope, !scope.exception());
+    if (UNLIKELY(scope.exception())) {
+        ASSERT(isTerminatedExecutionException(state.vm(), scope.exception()));
+        return;
+    }
+
 
     reject(state, error);
 }

@@ -1,3 +1,15 @@
+2017-04-06  Youenn Fablet  <youenn@apple.com>
+
+        [Debug] ASSERT(!throwScope.exception()) on imported/w3c/web-platform-tests/fetch/api/cors/cors-preflight-status-worker.html
+        https://bugs.webkit.org/show_bug.cgi?id=170395
+        <rdar://problem/31394017>
+
+        Reviewed by Mark Lam.
+
+        * bindings/js/JSDOMPromise.cpp:
+        (WebCore::DeferredPromise::reject): Exiting early in case of scope having an exception.
+        Adding an assertion to ensure this is a worker termination exception.
+
 2017-04-06  Andreas Kling  <akling@apple.com>
 
         Inaudible background tabs should become eligible for memory kill after 8 minutes
