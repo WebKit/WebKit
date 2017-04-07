@@ -1,3 +1,13 @@
+2017-04-07  Youenn Fablet  <youenn@apple.com>
+
+        Improve some WebRTC flaky tests
+        https://bugs.webkit.org/show_bug.cgi?id=170584
+
+        Reviewed by Alex Christensen.
+
+        * webrtc/libwebrtc/descriptionGetters.html:
+        * webrtc/video-replace-track-to-null.html:
+
 2017-04-07  Zalan Bujtas  <zalan@apple.com>
 
         Text insertion cursor disappears after pressing enter

@@ -81,6 +81,8 @@ promise_test((test) => {
         video.srcObject = remoteStream;
         return video.play();
     }).then(() => {
+        return waitFor(100);
+    }).then(() => {
         storeFrame();
         return waitFor(100);
     }).then(() => {
