@@ -40,6 +40,10 @@
 #include <gtk/gtk.h>
 #endif
 
+#if USE(GLIB_EVENT_LOOP)
+#include <wtf/glib/RunLoopSourcePriority.h>
+#endif
+
 using namespace WebCore;
 
 namespace WebKit {
@@ -48,6 +52,9 @@ DrawingAreaProxyImpl::DrawingAreaProxyImpl(WebPageProxy& webPageProxy)
     : AcceleratedDrawingAreaProxy(webPageProxy)
     , m_discardBackingStoreTimer(RunLoop::current(), this, &DrawingAreaProxyImpl::discardBackingStore)
 {
+#if USE(GLIB_EVENT_LOOP)
+    m_discardBackingStoreTimer.setPriority(RunLoopSourcePriority::ReleaseUnusedResourcesTimer);
+#endif
 }
 
 DrawingAreaProxyImpl::~DrawingAreaProxyImpl()
@@ -197,6 +204,10 @@ DrawingAreaProxyImpl::DrawingMonitor::DrawingMonitor(WebPageProxy& webPage)
     : m_webPage(webPage)
     , m_timer(RunLoop::main(), this, &DrawingMonitor::stop)
 {
+#if USE(GLIB_EVENT_LOOP)
+    // Give redraws more priority.
+    m_timer.setPriority(GDK_PRIORITY_REDRAW - 10);
+#endif
 }
 
 DrawingAreaProxyImpl::DrawingMonitor::~DrawingMonitor()

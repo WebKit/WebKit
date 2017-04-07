@@ -1,3 +1,16 @@
+2017-04-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Update the priorities used in glib main loop sources
+        https://bugs.webkit.org/show_bug.cgi?id=170457
+
+        Reviewed by Žan Doberšek.
+
+        * platform/glib/MainThreadSharedTimerGLib.cpp:
+        (WebCore::MainThreadSharedTimer::MainThreadSharedTimer):
+        * platform/graphics/texmap/TextureMapperPlatformLayerProxy.cpp:
+        (WebCore::TextureMapperPlatformLayerProxy::TextureMapperPlatformLayerProxy):
+        (WebCore::TextureMapperPlatformLayerProxy::activateOnCompositingThread):
+
 2017-04-07  Zan Dobersek  <zdobersek@igalia.com>
 
         [GCrypt] Implement AES_CBC support

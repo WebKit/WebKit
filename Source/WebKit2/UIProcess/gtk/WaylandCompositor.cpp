@@ -417,7 +417,6 @@ static GRefPtr<GSource> createWaylandLoopSource(struct wl_display* display)
 {
     GRefPtr<GSource> source = adoptGRef(g_source_new(&waylandLoopSourceFunctions, sizeof(WaylandLoopSource)));
     g_source_set_name(source.get(), "Nested Wayland compositor display event source");
-    g_source_set_priority(source.get(), G_PRIORITY_DEFAULT + 1);
 
     auto* wlLoopSource = reinterpret_cast<WaylandLoopSource*>(source.get());
     wlLoopSource->display = display;

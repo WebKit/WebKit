@@ -29,6 +29,7 @@
 
 #include <glib.h>
 #include <wtf/MainThread.h>
+#include <wtf/glib/RunLoopSourcePriority.h>
 
 namespace WTF {
 
@@ -60,6 +61,7 @@ RunLoop::RunLoop()
     m_mainLoops.append(innermostLoop);
 
     m_source = adoptGRef(g_source_new(&runLoopSourceFunctions, sizeof(GSource)));
+    g_source_set_priority(m_source.get(), RunLoopSourcePriority::RunLoopDispatcher);
     g_source_set_name(m_source.get(), "[WebKit] RunLoop work");
     g_source_set_can_recurse(m_source.get(), TRUE);
     g_source_set_callback(m_source.get(), [](gpointer userData) -> gboolean {
@@ -141,6 +143,7 @@ private:
 void RunLoop::dispatchAfter(Seconds duration, Function<void()>&& function)
 {
     GRefPtr<GSource> source = adoptGRef(g_timeout_source_new(duration.millisecondsAs<guint>()));
+    g_source_set_priority(source.get(), RunLoopSourcePriority::RunLoopTimer);
     g_source_set_name(source.get(), "[WebKit] RunLoop dispatchAfter");
 
     std::unique_ptr<DispatchAfterContext> context = std::make_unique<DispatchAfterContext>(WTFMove(function));
@@ -156,6 +159,7 @@ RunLoop::TimerBase::TimerBase(RunLoop& runLoop)
     : m_runLoop(runLoop)
     , m_source(adoptGRef(g_source_new(&runLoopSourceFunctions, sizeof(GSource))))
 {
+    g_source_set_priority(m_source.get(), RunLoopSourcePriority::RunLoopTimer);
     g_source_set_name(m_source.get(), "[WebKit] RunLoop::Timer work");
     g_source_set_callback(m_source.get(), [](gpointer userData) -> gboolean {
         RunLoop::TimerBase* timer = static_cast<RunLoop::TimerBase*>(userData);

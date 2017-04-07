@@ -30,8 +30,8 @@
 #include "config.h"
 #include "MainThread.h"
 
-#include <glib.h>
 #include <wtf/RunLoop.h>
+#include <wtf/glib/RunLoopSourcePriority.h>
 
 static pthread_t mainThreadPthread;
 
@@ -42,7 +42,7 @@ public:
     MainThreadDispatcher()
         : m_timer(RunLoop::main(), this, &MainThreadDispatcher::fired)
     {
-        m_timer.setPriority(G_PRIORITY_HIGH_IDLE + 20);
+        m_timer.setPriority(RunLoopSourcePriority::MainThreadDispatcherTimer);
     }
 
     void schedule()

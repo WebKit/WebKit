@@ -1,3 +1,27 @@
+2017-04-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Update the priorities used in glib main loop sources
+        https://bugs.webkit.org/show_bug.cgi?id=170457
+
+        Reviewed by Žan Doberšek.
+
+        * Shared/CoordinatedGraphics/threadedcompositor/CompositingRunLoop.cpp:
+        (WebKit::CompositingRunLoop::CompositingRunLoop):
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::DrawingAreaProxyImpl::DrawingAreaProxyImpl):
+        (WebKit::DrawingAreaProxyImpl::DrawingMonitor::DrawingMonitor):
+        * UIProcess/gtk/WaylandCompositor.cpp:
+        (WebKit::createWaylandLoopSource):
+        * WebProcess/WebPage/AcceleratedDrawingArea.cpp:
+        (WebKit::AcceleratedDrawingArea::AcceleratedDrawingArea):
+        * WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.cpp:
+        (WebKit::CompositingCoordinator::CompositingCoordinator):
+        * WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.h:
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp:
+        (WebKit::CoordinatedLayerTreeHost::CoordinatedLayerTreeHost):
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::DrawingAreaImpl):
+
 2017-04-06  Alex Christensen  <achristensen@webkit.org>
 
         Add WKContentExtensionStore.h and WKContentExtension.h to public WebKit.h

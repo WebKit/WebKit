@@ -34,7 +34,7 @@
 #include <wtf/WorkQueue.h>
 
 #if USE(GLIB_EVENT_LOOP)
-#include <glib.h>
+#include <wtf/glib/RunLoopSourcePriority.h>
 #endif
 
 namespace WebKit {
@@ -113,7 +113,7 @@ CompositingRunLoop::CompositingRunLoop(std::function<void ()>&& updateFunction)
     , m_updateFunction(WTFMove(updateFunction))
 {
 #if USE(GLIB_EVENT_LOOP)
-    m_updateTimer.setPriority(G_PRIORITY_HIGH_IDLE);
+    m_updateTimer.setPriority(RunLoopSourcePriority::CompositingThreadUpdateTimer);
 #endif
 }
 

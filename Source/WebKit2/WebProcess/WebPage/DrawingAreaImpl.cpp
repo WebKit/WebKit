@@ -37,6 +37,10 @@
 #include <WebCore/Page.h>
 #include <WebCore/Settings.h>
 
+#if USE(GLIB_EVENT_LOOP)
+#include <wtf/glib/RunLoopSourcePriority.h>
+#endif
+
 using namespace WebCore;
 
 namespace WebKit {
@@ -49,6 +53,9 @@ DrawingAreaImpl::DrawingAreaImpl(WebPage& webPage, const WebPageCreationParamete
     : AcceleratedDrawingArea(webPage, parameters)
     , m_displayTimer(RunLoop::main(), this, &DrawingAreaImpl::displayTimerFired)
 {
+#if USE(GLIB_EVENT_LOOP)
+    m_displayTimer.setPriority(RunLoopSourcePriority::NonAcceleratedDrawingTimer);
+#endif
 }
 
 void DrawingAreaImpl::setNeedsDisplay()

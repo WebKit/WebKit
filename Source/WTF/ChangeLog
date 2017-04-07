@@ -1,3 +1,25 @@
+2017-04-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Update the priorities used in glib main loop sources
+        https://bugs.webkit.org/show_bug.cgi?id=170457
+
+        Reviewed by Žan Doberšek.
+
+        Add an enum to define prirorities used in different GLib main sources. It allows to give them a better name
+        than high, low, medium, etc., but also to document them and other GLib based ports can define their own
+        values without changing all the places where they are used. The default values are based on the priorities
+        pre-defined by GLib.
+
+        * wtf/glib/MainThreadGLib.cpp:
+        (WTF::MainThreadDispatcher::MainThreadDispatcher):
+        * wtf/glib/RunLoopGLib.cpp:
+        (WTF::RunLoop::RunLoop):
+        (WTF::RunLoop::dispatchAfter):
+        (WTF::RunLoop::TimerBase::TimerBase):
+        * wtf/glib/RunLoopSourcePriority.h: Added.
+        * wtf/linux/MemoryPressureHandlerLinux.cpp:
+        (WTF::MemoryPressureHandler::EventFDPoller::EventFDPoller):
+
 2017-04-06  Filip Pizlo  <fpizlo@apple.com>
 
         Linear scan should run liveness only once

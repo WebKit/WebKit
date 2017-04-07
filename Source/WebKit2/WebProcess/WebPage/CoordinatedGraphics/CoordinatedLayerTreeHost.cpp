@@ -42,6 +42,10 @@
 #include "ThreadSafeCoordinatedSurface.h"
 #endif
 
+#if USE(GLIB_EVENT_LOOP)
+#include <wtf/glib/RunLoopSourcePriority.h>
+#endif
+
 using namespace WebCore;
 
 namespace WebKit {
@@ -60,6 +64,9 @@ CoordinatedLayerTreeHost::CoordinatedLayerTreeHost(WebPage& webPage)
     , m_coordinator(webPage.corePage(), *this)
     , m_layerFlushTimer(RunLoop::main(), this, &CoordinatedLayerTreeHost::layerFlushTimerFired)
 {
+#if USE(GLIB_EVENT_LOOP)
+    m_layerFlushTimer.setPriority(RunLoopSourcePriority::LayerFlushTimer);
+#endif
     m_coordinator.createRootLayer(m_webPage.size());
 
     CoordinatedSurface::setFactory(createCoordinatedSurface);

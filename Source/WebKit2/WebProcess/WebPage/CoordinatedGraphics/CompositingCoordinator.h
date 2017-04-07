@@ -37,7 +37,6 @@
 #include <WebCore/GraphicsLayerClient.h>
 #include <WebCore/GraphicsLayerFactory.h>
 #include <WebCore/IntRect.h>
-#include <WebCore/Timer.h>
 
 namespace WebCore {
 class Page;
@@ -158,7 +157,7 @@ private:
     bool m_didInitializeRootCompositingLayer { false };
 
     WebCore::FloatRect m_visibleContentsRect;
-    WebCore::Timer m_releaseInactiveAtlasesTimer;
+    RunLoop::Timer<CompositingCoordinator> m_releaseInactiveAtlasesTimer;
 
     double m_lastAnimationServiceTime { 0 };
 };

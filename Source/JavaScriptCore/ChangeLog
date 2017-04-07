@@ -1,3 +1,13 @@
+2017-04-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Update the priorities used in glib main loop sources
+        https://bugs.webkit.org/show_bug.cgi?id=170457
+
+        Reviewed by Žan Doberšek.
+
+        * runtime/JSRunLoopTimer.cpp:
+        (JSC::JSRunLoopTimer::JSRunLoopTimer):
+
 2017-04-06  Filip Pizlo  <fpizlo@apple.com>
 
         Rename allocateStack to allocateStackByGraphColoring.

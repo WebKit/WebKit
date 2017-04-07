@@ -28,15 +28,14 @@
 #include "config.h"
 #include "MainThreadSharedTimer.h"
 
-#include <glib.h>
+#include <wtf/glib/RunLoopSourcePriority.h>
 
 namespace WebCore {
 
 MainThreadSharedTimer::MainThreadSharedTimer()
     : m_timer(RunLoop::main(), this, &MainThreadSharedTimer::fired)
 {
-    // This is GDK_PRIORITY_REDRAW, but we don't want to depend on GDK here just to use a constant.
-    m_timer.setPriority(G_PRIORITY_HIGH_IDLE + 20);
+    m_timer.setPriority(RunLoopSourcePriority::MainThreadDispatcherTimer);
 }
 
 void MainThreadSharedTimer::setFireInterval(Seconds interval)

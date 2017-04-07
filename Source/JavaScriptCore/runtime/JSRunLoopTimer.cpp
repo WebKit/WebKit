@@ -37,6 +37,7 @@
 
 #if USE(GLIB)
 #include <glib.h>
+#include <wtf/glib/RunLoopSourcePriority.h>
 #endif
 
 namespace JSC {
@@ -133,6 +134,7 @@ JSRunLoopTimer::JSRunLoopTimer(VM* vm)
     , m_apiLock(&vm->apiLock())
     , m_timer(adoptGRef(g_source_new(&JSRunLoopTimerSourceFunctions, sizeof(GSource))))
 {
+    g_source_set_priority(m_timer.get(), RunLoopSourcePriority::JavascriptTimer);
     g_source_set_name(m_timer.get(), "[JavaScriptCore] JSRunLoopTimer");
     g_source_set_callback(m_timer.get(), [](gpointer userData) -> gboolean {
         auto& runLoopTimer = *static_cast<JSRunLoopTimer*>(userData);

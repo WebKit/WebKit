@@ -43,6 +43,7 @@
 
 #if USE(GLIB)
 #include <glib-unix.h>
+#include <wtf/glib/RunLoopSourcePriority.h>
 #endif
 
 #define LOG_CHANNEL_PREFIX Log
@@ -103,6 +104,7 @@ MemoryPressureHandler::EventFDPoller::EventFDPoller(int fd, std::function<void (
 {
 #if USE(GLIB)
     m_source = adoptGRef(g_source_new(&eventFDSourceFunctions, sizeof(EventFDSource)));
+    g_source_set_priority(m_source.get(), RunLoopSourcePriority::MemoryPressureHandlerTimer);
     g_source_set_name(m_source.get(), "WTF: MemoryPressureHandler");
     if (!g_unix_set_fd_nonblocking(m_fd.value(), TRUE, nullptr)) {
         LOG(MemoryPressure, "Failed to set eventfd nonblocking");
