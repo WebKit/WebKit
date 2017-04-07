@@ -1,3 +1,19 @@
+2017-04-07  Tomas Popela  <tpopela@redhat.com>
+
+        AX: Don't crash if no renderer is available for AccessibilityRenderObject
+        https://bugs.webkit.org/show_bug.cgi?id=170448
+
+        Reviewed by Chris Fleizach.
+
+        Don't crash or assert if no renderer is available, but early return
+        gracefully (as in other places in the AccessibilityRenderObject.cpp).
+        Spotted by running some tests through dogtail.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::isOffScreen):
+        (WebCore::AccessibilityRenderObject::isUnvisited):
+        (WebCore::AccessibilityRenderObject::isVisited):
+
 2017-04-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Update the priorities used in glib main loop sources

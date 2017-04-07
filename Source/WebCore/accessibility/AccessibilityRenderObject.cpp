@@ -531,7 +531,9 @@ bool AccessibilityRenderObject::isFileUploadButton() const
 
 bool AccessibilityRenderObject::isOffScreen() const
 {
-    ASSERT(m_renderer);
+    if (!m_renderer)
+        return true;
+
     IntRect contentRect = snappedIntRect(m_renderer->absoluteClippedOverflowRect());
     // FIXME: unclear if we need LegacyIOSDocumentVisibleRect.
     IntRect viewRect = m_renderer->view().frameView().visibleContentRect(ScrollableArea::LegacyIOSDocumentVisibleRect);
@@ -1569,12 +1571,18 @@ URL AccessibilityRenderObject::url() const
 
 bool AccessibilityRenderObject::isUnvisited() const
 {
+    if (!m_renderer)
+        return true;
+
     // FIXME: Is it a privacy violation to expose unvisited information to accessibility APIs?
     return m_renderer->style().isLink() && m_renderer->style().insideLink() == InsideUnvisitedLink;
 }
 
 bool AccessibilityRenderObject::isVisited() const
 {
+    if (!m_renderer)
+        return false;
+
     // FIXME: Is it a privacy violation to expose visited information to accessibility APIs?
     return m_renderer->style().isLink() && m_renderer->style().insideLink() == InsideVisitedLink;
 }
