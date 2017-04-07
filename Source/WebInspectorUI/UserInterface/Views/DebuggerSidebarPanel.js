@@ -201,6 +201,7 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
 
         this._scriptsContentTreeOutline = this.createContentTreeOutline();
         this._scriptsContentTreeOutline.addEventListener(WebInspector.TreeOutline.Event.SelectionDidChange, this._treeSelectionDidChange, this);
+        this._scriptsContentTreeOutline.includeSourceMapResourceChildren = true;
 
         let scriptsRow = new WebInspector.DetailsSectionRow;
         scriptsRow.element.appendChild(this._scriptsContentTreeOutline.element);

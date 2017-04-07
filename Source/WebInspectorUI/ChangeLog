@@ -1,5 +1,17 @@
 2017-04-06  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Source Map Resources should show up in the Debugger Sources list
+        https://bugs.webkit.org/show_bug.cgi?id=170581
+        <rdar://problem/31269140>
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WebInspector.DebuggerSidebarPanel):
+        Include SourceMapResources in the DebuggerSidebar's Sources tree outline.
+
+2017-04-06  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Show all headers in the Request Headers section of the Resource details sidebar
         https://bugs.webkit.org/show_bug.cgi?id=16531
         <rdar://problem/5712895>
