@@ -98,7 +98,7 @@ void ImageFrameCache::destroyDecodedData(size_t frameCount, size_t excludeFrame)
     for (size_t index = 0; index < frameCount; ++index) {
         if (index == excludeFrame)
             continue;
-        decodedSize += m_frames[index++].clearImage();
+        decodedSize += m_frames[index].clearImage();
     }
 
     decodedSizeReset(decodedSize);

@@ -1,3 +1,18 @@
+2017-04-07  Miguel Gomez  <magomez@igalia.com>
+
+        [GTK+] Animations not played properly when using synchronous decoding
+        https://bugs.webkit.org/show_bug.cgi?id=170591
+
+        Reviewed by Carlos Garcia Campos.
+
+        Fix an index error when destroying decoded frames that was sometimes deleting the frame we wanted
+        to keep.
+
+        Covered by exitent tests.
+
+        * platform/graphics/ImageFrameCache.cpp:
+        (WebCore::ImageFrameCache::destroyDecodedData):
+
 2017-04-07  Xan Lopez  <xan@igalia.com>
 
         [GTK] Add message about missing codecs to ASSERT in OWR
