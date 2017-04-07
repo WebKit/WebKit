@@ -1,3 +1,16 @@
+2017-04-06  Andreas Kling  <akling@apple.com>
+
+        Inaudible background tabs should become eligible for memory kill after 8 minutes
+        https://bugs.webkit.org/show_bug.cgi?id=170574
+        <rdar://problem/31488686>
+
+        Reviewed by Gavin Barraclough.
+
+        Lower the delay for potentially marking background tabs as inactive from 60 minutes to 8 minutes.
+        Letting a tab misbehave in the background for an entire hour was overly charitable.
+
+        * page/PerformanceMonitor.cpp:
+
 2017-04-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Scroll offset jumps after a programmatic scroll in an overflow container with scroll snapping

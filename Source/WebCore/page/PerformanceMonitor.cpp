@@ -48,7 +48,7 @@ static const std::chrono::minutes cpuUsageSamplingInterval { 10 };
 
 static const std::chrono::seconds memoryUsageMeasurementDelay { 10 };
 
-static const std::chrono::minutes delayBeforeProcessMayBecomeInactive { 60 };
+static const std::chrono::minutes delayBeforeProcessMayBecomeInactive { 8 };
 
 static const double postPageLoadCPUUsageDomainReportingThreshold { 20.0 }; // Reporting pages using over 20% CPU is roughly equivalent to reporting the 10% worst pages.
 #if !PLATFORM(IOS)
