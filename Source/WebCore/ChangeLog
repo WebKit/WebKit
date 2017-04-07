@@ -1,5 +1,28 @@
 2017-04-07  Zan Dobersek  <zdobersek@igalia.com>
 
+        [GCrypt] Implement AES_CBC support
+        https://bugs.webkit.org/show_bug.cgi?id=170550
+
+        Reviewed by Michael Catanzaro.
+
+        Implement the CryptoAlgorithmAES_CBC::platform{Encrypt,Decrypt}
+        functionality for configurations that use libgcrypt. This is done
+        by leveraging the gcry_cipher_* APIs for the AES algorithm that's
+        deduced appropriately from the key size and the CBC cipher mode.
+        Additionally, the PKCS#7 padding is implemented for each operation,
+        as demanded by the Web Crypto specification.
+
+        No new tests -- current ones cover this sufficiently, but are not yet
+        enabled due to missing platform-specific SUBTLE_CRYPTO implementations.
+
+        * crypto/gcrypt/CryptoAlgorithmAES_CBCGCrypt.cpp:
+        (WebCore::gcryptEncrypt):
+        (WebCore::gcryptDecrypt):
+        (WebCore::CryptoAlgorithmAES_CBC::platformEncrypt):
+        (WebCore::CryptoAlgorithmAES_CBC::platformDecrypt):
+
+2017-04-07  Zan Dobersek  <zdobersek@igalia.com>
+
         [GCrypt] Implement raw and JWK imports and exports for EC keys
         https://bugs.webkit.org/show_bug.cgi?id=170546
 
