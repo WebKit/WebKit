@@ -115,6 +115,12 @@ bool JSProxy::deleteProperty(JSCell* cell, ExecState* exec, PropertyName propert
     return thisObject->target()->methodTable(exec->vm())->deleteProperty(thisObject->target(), exec, propertyName);
 }
 
+bool JSProxy::isExtensible(JSObject* object, ExecState* exec)
+{
+    JSProxy* thisObject = jsCast<JSProxy*>(object);
+    return thisObject->target()->methodTable(exec->vm())->isExtensible(thisObject->target(), exec);
+}
+
 bool JSProxy::preventExtensions(JSObject* object, ExecState* exec)
 {
     JSProxy* thisObject = jsCast<JSProxy*>(object);

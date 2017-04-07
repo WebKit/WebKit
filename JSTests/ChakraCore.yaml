@@ -809,14 +809,11 @@
 - path: ChakraCore/test/LetConst/defer5.js
   cmd: runChakra :baseline, "ReferenceError", "defer5.baseline-jsc", []
 - path: ChakraCore/test/LetConst/delete.js
-  # Differences in Object.seal().
-  cmd: runChakra :skip, "NoException", "delete.baseline", []
+  cmd: runChakra :baseline, "NoException", "delete.baseline", []
 - path: ChakraCore/test/LetConst/dop.js
-  # Differences in Object.seal().
-  cmd: runChakra :skip, "NoException", "dop.baseline", []
+  cmd: runChakra :baseline, "NoException", "dop.baseline-jsc", []
 - path: ChakraCore/test/LetConst/dop1.js
-  # Differences in Object.seal().
-  cmd: runChakra :skip, "NoException", "dop1.baseline", []
+  cmd: runChakra :baseline, "NoException", "dop1.baseline-jsc", []
 - path: ChakraCore/test/LetConst/eval_fncdecl.js
   # Seems like a bug.  We try to define a function in a false "then" block.
   cmd: runChakra :skip, "NoException", "eval_fncdecl.baseline", []

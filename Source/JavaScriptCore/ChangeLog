@@ -1,3 +1,23 @@
+2017-04-06  Michael Saboff  <msaboff@apple.com>
+
+        Cannot Object.seal() or Object.freeze() global "this"
+        https://bugs.webkit.org/show_bug.cgi?id=170549
+
+        Reviewed by Mark Lam.
+
+        Needed to implement JSProxy::isExtensible() which returns the results of calling
+        the same on wrapped object.
+
+        Implemented step 11 of Runtime Semantics: EvalDeclarationInstantiation from the ECMAScript
+        spec to properly return a TypeError object when attempting to add properties to a
+        non-extensible global object.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+        * runtime/JSProxy.cpp:
+        (JSC::JSProxy::isExtensible):
+        * runtime/JSProxy.h:
+
 2017-04-06  Filip Pizlo  <fpizlo@apple.com>
 
         Linear scan should run liveness only once
