@@ -34,7 +34,7 @@ namespace WebCore {
 
 class CPUMonitor {
 public:
-    using ExceededCPULimitHandler = WTF::Function<void()>;
+    using ExceededCPULimitHandler = WTF::Function<void(double)>;
     WEBCORE_EXPORT CPUMonitor(Seconds checkInterval, ExceededCPULimitHandler&&);
 
     WEBCORE_EXPORT void setCPULimit(std::optional<double>);

@@ -430,8 +430,8 @@ void WebProcess::updateBackgroundCPUMonitorState()
     }
 
     if (!m_backgroundCPUMonitor) {
-        m_backgroundCPUMonitor = std::make_unique<CPUMonitor>(backgroundCPUMonitoringInterval, [this] {
-            RELEASE_LOG(PerformanceLogging, "%p - WebProcess exceeded background CPU limit of %.1f%%", this, m_backgroundCPULimit.value() * 100);
+        m_backgroundCPUMonitor = std::make_unique<CPUMonitor>(backgroundCPUMonitoringInterval, [this](double cpuUsage) {
+            RELEASE_LOG(PerformanceLogging, "%p - WebProcess exceeded background CPU limit of %.1f%% (was using %.1f%%)", this, m_backgroundCPULimit.value() * 100, cpuUsage * 100);
             parentProcessConnection()->send(Messages::WebProcessProxy::DidExceedBackgroundCPULimit(), 0);
         });
     }

@@ -65,7 +65,7 @@ void CPUMonitor::timerFired()
 
     auto cpuUsagePercent = cpuTime.value().percentageCPUUsageSince(m_lastCPUTime.value());
     if (cpuUsagePercent > m_cpuLimit.value() * 100)
-        m_exceededCPULimitHandler();
+        m_exceededCPULimitHandler(cpuUsagePercent / 100.);
 
     m_lastCPUTime = cpuTime;
 }

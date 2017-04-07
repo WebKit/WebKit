@@ -1,3 +1,13 @@
+2017-04-07  Chris Dumez  <cdumez@apple.com>
+
+        We should log how much CPU a background process was using when killing it due to CPU limiting
+        https://bugs.webkit.org/show_bug.cgi?id=170619
+
+        Reviewed by Andreas Kling.
+
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::updateBackgroundCPUMonitorState):
+
 2017-04-07  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Missing conversion from window to content coordinates when adjusting unobscured content rects for input view
