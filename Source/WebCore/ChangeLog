@@ -1,3 +1,21 @@
+2017-04-07  Chris Dumez  <cdumez@apple.com>
+
+        Throttle / Align DOM Timers in cross-origin iframes to 30fps
+        https://bugs.webkit.org/show_bug.cgi?id=170613
+        <rdar://problem/31506444>
+
+        Reviewed by Simon Fraser.
+
+        Throttle / Align DOM Timers in cross-origin iframes to 30fps unless the user
+        has interacted with them, in order to reduce power use.
+
+        Test: http/tests/frame-throttling/timer-throttle-in-cross-origin-subframe.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::domTimerAlignmentInterval):
+        (WebCore::Document::updateLastHandledUserGestureTimestamp):
+        * page/DOMTimer.h:
+
 2017-04-07  John Wilander  <wilander@apple.com>
 
         Follow-up fix for Soup platform.

@@ -2812,6 +2812,9 @@ Seconds Document::domTimerAlignmentInterval(bool hasReachedMaxNestingLevel) cons
     if (Page* page = this->page())
         alignmentInterval = std::max(alignmentInterval, page->domTimerAlignmentInterval());
 
+    if (!topOrigin().canAccess(securityOrigin()) && !hasHadUserInteraction())
+        alignmentInterval = std::max(alignmentInterval, DOMTimer::nonInteractedCrossOriginFrameAlignmentInterval());
+
     return alignmentInterval;
 }
 
@@ -6326,6 +6329,9 @@ void Document::updateLastHandledUserGestureTimestamp(MonotonicTime time)
         // It's OK to always remove NonInteractedCrossOriginFrame even if this frame isn't cross-origin.
         m_scriptedAnimationController->removeThrottlingReason(ScriptedAnimationController::ThrottlingReason::NonInteractedCrossOriginFrame);
     }
+
+    // DOM Timer alignment may depend on the user having interacted with the document.
+    didChangeTimerAlignmentInterval();
     
     if (HTMLFrameOwnerElement* element = ownerElement())
         element->document().updateLastHandledUserGestureTimestamp(time);
