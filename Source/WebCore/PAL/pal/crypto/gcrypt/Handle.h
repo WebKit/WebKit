@@ -91,10 +91,26 @@ struct HandleDeleter<gcry_cipher_hd_t> {
 };
 
 template<>
+struct HandleDeleter<gcry_ctx_t> {
+    void operator()(gcry_ctx_t handle)
+    {
+        gcry_ctx_release(handle);
+    }
+};
+
+template<>
 struct HandleDeleter<gcry_mac_hd_t> {
     void operator()(gcry_mac_hd_t handle)
     {
         gcry_mac_close(handle);
+    }
+};
+
+template<>
+struct HandleDeleter<gcry_mpi_t> {
+    void operator()(gcry_mpi_t handle)
+    {
+        gcry_mpi_release(handle);
     }
 };
 

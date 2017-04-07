@@ -1,5 +1,55 @@
 2017-04-07  Zan Dobersek  <zdobersek@igalia.com>
 
+        [GCrypt] Implement raw and JWK imports and exports for EC keys
+        https://bugs.webkit.org/show_bug.cgi?id=170546
+
+        Reviewed by Michael Catanzaro.
+
+        Implement import and export operations for EC keys, covering the raw
+        and JWK import/export types.
+
+        CryptoKeyEC::platformImportRaw() builds a public-key s-expression,
+        providing the curve name and the key data, and yields the gcry_sexp_t
+        object to the new CryptoKeyEC.
+
+        CryptoKeyEC::platformImportJWKPublic() first constructs a Vector<uint8_t>
+        object that contains the EC point in the uncompressed format. It then
+        puts that data into a newly-constructed public-key s-expression that is
+        then used to construct the new CryptoKeyEC object.
+
+        CryptoKeyEC::platformImportJWKPrivate() constructs the EC point data just
+        the same, but it also lays out the private key field element data into
+        the private-key s-expression that's then handed off to the CryptoKeyEC
+        object.
+
+        CryptoKeyEC::platformExportRaw() constructs a new EC operations context
+        and then uses it to retrieve the q parameter as an MPI. A Vector<uint8_t>
+        is retrieved from the MPI data through the extractMPIData() helper
+        function.
+
+        CryptoKeyEC::platformAddFieldElements() similarly uses the EC operations
+        context to retrieve the q parameter data, which it then splits into the
+        x and y field elements and Base64 URL-encodes them into a form that can
+        be placed in a JsonWebKey. If the key is private, the d parameter is
+        retrieved in the same fashion and again Base64 URL-encoded and stored
+        in the JsonWebKey object.
+
+        No new tests -- current ones cover this sufficiently, but are not yet
+        enabled due to other missing platform-specific SUBTLE_CRYPTO
+        implementations.
+
+        * crypto/gcrypt/CryptoKeyECGCrypt.cpp:
+        (WebCore::uncompressedPointSizeForCurve):
+        (WebCore::uncompressedFieldElementSizeForCurve):
+        (WebCore::extractMPIData):
+        (WebCore::CryptoKeyEC::platformImportRaw):
+        (WebCore::CryptoKeyEC::platformImportJWKPublic):
+        (WebCore::CryptoKeyEC::platformImportJWKPrivate):
+        (WebCore::CryptoKeyEC::platformExportRaw):
+        (WebCore::CryptoKeyEC::platformAddFieldElements):
+
+2017-04-07  Zan Dobersek  <zdobersek@igalia.com>
+
         [GCrypt] Implement CryptoKeyRSA::generatePair()
         https://bugs.webkit.org/show_bug.cgi?id=170350
 
