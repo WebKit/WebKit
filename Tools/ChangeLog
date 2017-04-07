@@ -1,3 +1,27 @@
+2017-04-06  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Make FontWithFeatures test font pass OTS
+        https://bugs.webkit.org/show_bug.cgi?id=169788
+
+        Reviewed by Tim Horton.
+
+        OTS, or the OpenType Sanitizer, is a check which tells if fonts are properly formed.
+        Previously, our FontWithFeatures test font did not pass this check. This patch updates
+        the font to pass the checks. Now, we can use this font on other platforms, and
+        contribute the font to the W3C for testing the CSS Fonts level 3 spec.
+
+        * FontWithFeatures/FontWithFeatures/FontCreator.cpp:
+        (Generator::appendCFFTable):
+        (Generator::Feature::operator<):
+        (Generator::appendGSUBTable):
+        (Generator::appendOS2Table):
+        (Generator::appendFormat4CMAPTable):
+        (Generator::appendHEADTable):
+        (Generator::appendHHEATable):
+        (Generator::NameRecord::operator<):
+        (Generator::appendNameSubtable):
+        (Generator::appendNAMETable):
+
 2017-04-06  Alexey Proskuryakov  <ap@apple.com>
 
         Disable flaky WebKit2.ResizeWithHiddenContentDoesNotHang

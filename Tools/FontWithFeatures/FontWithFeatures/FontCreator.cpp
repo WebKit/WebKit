@@ -612,7 +612,7 @@ private:
         result.push_back(operand32Bit);
         append32(clampTo<int32_t>(0)); // Bounding box x
         result.push_back(operand32Bit);
-        append32(clampTo<int32_t>(0)); // Bounding box y
+        append32(clampTo<int32_t>(-1)); // Bounding box y
         result.push_back(operand32Bit);
         append32(clampTo<int32_t>(unitsPerEm)); // Bounding box max x
         result.push_back(operand32Bit);
@@ -821,9 +821,20 @@ private:
             append16(i); // Features indices
     }
 
+    struct Feature {
+        bool operator<(const Feature& o) const
+        {
+            return tag < o.tag;
+        }
+
+        std::array<char, 5> tag;
+        uint16_t glyphToReplace;
+    };
+
     void appendGSUBTable()
     {
-        std::vector<std::array<char, 5>> features {{"liga"}, {"clig"}, {"dlig"}, {"hlig"}, {"calt"}, {"subs"}, {"sups"}, {"smcp"}, {"c2sc"}, {"pcap"}, {"c2pc"}, {"unic"}, {"titl"}, {"lnum"}, {"onum"}, {"pnum"}, {"tnum"}, {"frac"}, {"afrc"}, {"ordn"}, {"zero"}, {"hist"}, {"jp78"}, {"jp83"}, {"jp90"}, {"jp04"}, {"smpl"}, {"trad"}, {"fwid"}, {"pwid"}, {"ruby"}};
+        std::vector<Feature> features {{{"liga"}, 3}, {{"clig"}, 4}, {{"dlig"}, 5}, {{"hlig"}, 6}, {{"calt"}, 7}, {{"subs"}, 8}, {{"sups"}, 9}, {{"smcp"}, 10}, {{"c2sc"}, 11}, {{"pcap"}, 12}, {{"c2pc"}, 13}, {{"unic"}, 14}, {{"titl"}, 15}, {{"lnum"}, 16}, {{"onum"}, 17}, {{"pnum"}, 18}, {{"tnum"}, 19}, {{"frac"}, 20}, {{"afrc"}, 21}, {{"ordn"}, 22}, {{"zero"}, 23}, {{"hist"}, 24}, {{"jp78"}, 25}, {{"jp83"}, 26}, {{"jp90"}, 27}, {{"jp04"}, 28}, {{"smpl"}, 29}, {{"trad"}, 30}, {{"fwid"}, 31}, {{"pwid"}, 32}, {{"ruby"}, 33}};
+        std::sort(features.begin(), features.end());
         auto tableLocation = result.size();
         auto headerSize = 10;
 
@@ -850,7 +861,7 @@ private:
         append16(features.size()); // FeatureCount
         for (unsigned i = 0; i < features.size(); ++i) {
             auto& code = features[i];
-            append32BitCode(code.data()); // Feature name
+            append32BitCode(code.tag.data()); // Feature name
             append16(featureListSize + featureTableSize * i); // Offset of feature table, relative to beginning of FeatureList table
         }
         assert(featureListLocation + featureListSize == result.size());
@@ -880,7 +891,7 @@ private:
         }
 
         for (unsigned i = 0; i < features.size(); ++i)
-            appendSubstitutionSubtable(subtableRecordLocations[i], 3 + i, 1);
+            appendSubstitutionSubtable(subtableRecordLocations[i], features[i].glyphToReplace, 1);
     }
 
     void appendOS2Table()
@@ -913,10 +924,10 @@ private:
         append16(0); // First unicode index
         append16(0xFFFF); // Last unicode index
         append16(clampTo<int16_t>(unitsPerEm)); // Typographical ascender
-        append16(clampTo<int16_t>(1)); // Typographical descender
+        append16(clampTo<int16_t>(-1)); // Typographical descender
         append16(clampTo<int16_t>(unitsPerEm / 10)); // Typographical line gap
         append16(clampTo<uint16_t>(unitsPerEm)); // Windows-specific ascent
-        append16(clampTo<uint16_t>(1)); // Windows-specific descent
+        append16(clampTo<uint16_t>(0)); // Windows-specific descent
         append32(0xFF10FC07); // Bitmask for supported codepages (Part 1). Report all pages as supported.
         append32(0x0000FFFF); // Bitmask for supported codepages (Part 2). Report all pages as supported.
         append16(clampTo<int16_t>(unitsPerEm / 2)); // x-height
@@ -979,6 +990,7 @@ private:
         // idRangeOffset
         append16(0); // idRangeOffset
         append16(0);
+        append16(0);
 
         // Fonts strive to hold 2^16 glyphs, but with the current encoding scheme, we write 8 bytes per codepoint into this subtable.
         // Because the size of this subtable must be represented as a 16-bit number, we are limiting the number of glyphs we support to 2^13.
@@ -1024,7 +1036,7 @@ private:
         append32(0); // First half of modification date
         append32(0); // Last half of modification date
         append16(clampTo<int16_t>(0)); // bounding box x
-        append16(clampTo<int16_t>(0)); // bounding box y
+        append16(clampTo<int16_t>(-1)); // bounding box y
         append16(clampTo<int16_t>(unitsPerEm)); // bounding box max x
         append16(clampTo<int16_t>(unitsPerEm)); // bounding box max y
         append16(0); // Traits
@@ -1038,7 +1050,7 @@ private:
     {
         append32(0x00010000); // Version
         append16(clampTo<int16_t>(unitsPerEm)); // ascent
-        append16(clampTo<int16_t>(1)); // descent
+        append16(clampTo<int16_t>(-1)); // descent
         // WebKit SVG font rendering has hard coded the line gap to be 1/10th of the font size since 2008 (see r29719).
         append16(clampTo<int16_t>(unitsPerEm / 10)); // line gap
         append16(clampTo<uint16_t>(unitsPerEm)); // advance width max
@@ -1082,15 +1094,25 @@ private:
         append16(0); // No compound glyphs
     }
 
-    void appendNameSubtable(const std::string& s, uint16_t nameIdentifier)
+    struct NameRecord {
+        bool operator<(const NameRecord& o) const
+        {
+            return nameIdentifier < o.nameIdentifier;
+        }
+
+        uint16_t nameIdentifier;
+        std::string value;
+    };
+
+    void appendNameSubtable(const NameRecord& nameRecord)
     {
         append16(0); // Unicode
         append16(3); // Unicode version 2.0 or later
         append16(0); // Language
-        append16(nameIdentifier); // Name identifier
-        append16(s.length() * 2); // Code units get 2 bytes each
+        append16(nameRecord.nameIdentifier); // Name identifier
+        append16(nameRecord.value.length() * 2); // Code units get 2 bytes each
         append16(m_nameOffset); // Offset into name data
-        m_nameOffset += s.size() * 2; // Code units get 2 bytes each
+        m_nameOffset += nameRecord.value.size() * 2; // Code units get 2 bytes each
     }
 
     void append2ByteASCIIString(std::string& s)
@@ -1109,29 +1131,19 @@ private:
         append16(numberOfRecords); // Number of name records in table
         append16(6 + 12 * numberOfRecords); // Offset in bytes to the beginning of name character strings
 
-        appendNameSubtable(familyName, 1); // 1: Font Family.
-        appendNameSubtable(familyName, 2); // 2: Font Subfamily.
-        appendNameSubtable(familyName, 3); // 3: Unique subfamily identification.
-        appendNameSubtable(familyName, 4); // 4: Full name of the font.
-        appendNameSubtable(version, 5); // 5: Version of the name table.
-        appendNameSubtable(familyName, 6); // 6: PostScript name of the font.
+        std::vector<NameRecord> nameRecords = { { 1, familyName }, { 2, familyName }, { 3, familyName }, { 4, familyName }, { 5, version }, { 6, familyName } };
         for (FeatureType& type : featureDescription) {
-            appendNameSubtable(type.name, m_baseStringIndex + type.stringIndex);
+            nameRecords.push_back({ static_cast<uint16_t>(m_baseStringIndex + type.stringIndex), type.name });
             for (FeatureSelector& selector : type.selectors)
-                appendNameSubtable(selector.name, m_baseStringIndex + selector.stringIndex);
+                nameRecords.push_back({ static_cast<uint16_t>(m_baseStringIndex + selector.stringIndex), selector.name });
         }
+        std::sort(nameRecords.begin(), nameRecords.end());
 
-        append2ByteASCIIString(familyName);
-        append2ByteASCIIString(familyName);
-        append2ByteASCIIString(familyName);
-        append2ByteASCIIString(familyName);
-        append2ByteASCIIString(version);
-        append2ByteASCIIString(familyName);
-        for (FeatureType& type : featureDescription) {
-            append2ByteASCIIString(type.name);
-            for (FeatureSelector& selector : type.selectors)
-                append2ByteASCIIString(selector.name);
-        }
+        for (auto& nameRecord : nameRecords)
+            appendNameSubtable(nameRecord);
+
+        for (auto& nameRecord : nameRecords)
+            append2ByteASCIIString(nameRecord.value);
     }
     
     void appendPOSTTable()
