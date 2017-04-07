@@ -1,3 +1,12 @@
+2017-04-07  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Mark inspector/codemirror/prettyprinting-css.html as a flaky timeout.
+        https://bugs.webkit.org/show_bug.cgi?id=170615
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2017-04-07  Chris Dumez  <cdumez@apple.com>
 
         Audible autoplay videos should not get paused when outside the viewport
