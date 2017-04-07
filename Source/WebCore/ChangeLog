@@ -1,5 +1,35 @@
 2017-04-05  Simon Fraser  <simon.fraser@apple.com>
 
+        Throttle requestAnimationFrame in cross-origin iframes to 30fps
+        https://bugs.webkit.org/show_bug.cgi?id=170534
+
+        Reviewed by Dan Bates.
+
+        Add a throttling reason to ScriptedAnimationController which is NonInteractedCrossOriginFrame,
+        set on cross-origin iframes whose documents have never seen a user interaction. It's cleared
+        as soon as an interaction on this frame or a child frame is detected.
+
+        Move the initialization of the LowPowerMode throttling reason to Document::requestAnimationFrame(),
+        since it's more appropriate to compute NonInteractedCrossOriginFrame here than down in ScriptedAnimationController,
+        and best to do both in the same place.
+
+        Tests: http/tests/frame-throttling/raf-throttle-in-cross-origin-subframe.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::requestAnimationFrame):
+        (WebCore::Document::updateLastHandledUserGestureTimestamp):
+        * dom/Document.h:
+        (WebCore::Document::hasHadUserInteraction):
+        * dom/ScriptedAnimationController.cpp:
+        (WebCore::ScriptedAnimationController::ScriptedAnimationController):
+        (WebCore::throttlingReasonToString):
+        (WebCore::ScriptedAnimationController::interval):
+        * dom/ScriptedAnimationController.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::shouldAskForNavigationConfirmation):
+
+2017-04-05  Simon Fraser  <simon.fraser@apple.com>
+
         Use the Accelerate framework to optimize FEColorMatrix operations
         https://bugs.webkit.org/show_bug.cgi?id=170518
 

@@ -73,9 +73,10 @@ public:
     void resume();
 
     enum class ThrottlingReason {
-        VisuallyIdle    = 1 << 0,
-        OutsideViewport = 1 << 1,
-        LowPowerMode    = 1 << 2,
+        VisuallyIdle                    = 1 << 0,
+        OutsideViewport                 = 1 << 1,
+        LowPowerMode                    = 1 << 2,
+        NonInteractedCrossOriginFrame   = 1 << 3,
     };
     void addThrottlingReason(ThrottlingReason);
     void removeThrottlingReason(ThrottlingReason);

@@ -6011,6 +6011,12 @@ int Document::requestAnimationFrame(Ref<RequestAnimationFrameCallback>&& callbac
         if (!page() || page()->scriptedAnimationsSuspended())
             m_scriptedAnimationController->suspend();
 
+        if (page() && page()->isLowPowerModeEnabled())
+            m_scriptedAnimationController->addThrottlingReason(ScriptedAnimationController::ThrottlingReason::LowPowerMode);
+
+        if (!topOrigin().canAccess(securityOrigin()) && !hasHadUserInteraction())
+            m_scriptedAnimationController->addThrottlingReason(ScriptedAnimationController::ThrottlingReason::NonInteractedCrossOriginFrame);
+
         if (settings().shouldDispatchRequestAnimationFrameEvents()) {
             if (!page())
                 dispatchEvent(Event::create("raf-no-page", false, false));
@@ -6315,6 +6321,11 @@ Document::RegionFixedPair Document::absoluteRegionForEventTargets(const EventTar
 void Document::updateLastHandledUserGestureTimestamp(MonotonicTime time)
 {
     m_lastHandledUserGestureTimestamp = time;
+
+    if (static_cast<bool>(time) && m_scriptedAnimationController) {
+        // It's OK to always remove NonInteractedCrossOriginFrame even if this frame isn't cross-origin.
+        m_scriptedAnimationController->removeThrottlingReason(ScriptedAnimationController::ThrottlingReason::NonInteractedCrossOriginFrame);
+    }
     
     if (HTMLFrameOwnerElement* element = ownerElement())
         element->document().updateLastHandledUserGestureTimestamp(time);

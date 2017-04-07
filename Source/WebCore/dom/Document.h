@@ -1144,6 +1144,7 @@ public:
     void didRemoveWheelEventHandler(Node&, EventHandlerRemoval = EventHandlerRemoval::One);
 
     MonotonicTime lastHandledUserGestureTimestamp() const { return m_lastHandledUserGestureTimestamp; }
+    bool hasHadUserInteraction() const { return static_cast<bool>(m_lastHandledUserGestureTimestamp); }
     void updateLastHandledUserGestureTimestamp(MonotonicTime);
 
     // Used for testing. Count handlers in the main document, and one per frame which contains handlers.
