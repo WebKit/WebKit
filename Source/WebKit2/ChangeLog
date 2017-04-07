@@ -1,3 +1,15 @@
+2017-04-06  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Hangs when loading under SpeculativeLoad::shouldCaptureExtraNetworkLoadMetrics
+        https://bugs.webkit.org/show_bug.cgi?id=170575
+
+        Rubber-stamped by Brian Burg.
+
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoad.cpp:
+        (WebKit::NetworkCache::SpeculativeLoad::shouldCaptureExtraNetworkLoadMetrics): Deleted.
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoad.h:
+        m_networkLoad is a wrapper around `this` as the client, so we would infinite loop here.
+
 2017-04-06  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r214973.
