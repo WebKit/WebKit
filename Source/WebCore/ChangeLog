@@ -1,3 +1,13 @@
+2017-04-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Build fix: TimerBase::start(double, double) can't be inline and exported,
+        so make it non-inline.
+
+        * platform/Timer.cpp:
+        (WebCore::TimerBase::start):
+        * platform/Timer.h:
+        (WebCore::TimerBase::start): Deleted.
+
 2017-04-07  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (r203941): iAd Producer widgets fail to play in iBooks

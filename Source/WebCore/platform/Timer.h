@@ -57,7 +57,7 @@ public:
     WEBCORE_EXPORT virtual ~TimerBase();
 
     WEBCORE_EXPORT void start(Seconds nextFireInterval, Seconds repeatInterval);
-    WEBCORE_EXPORT void start(double nextFireInterval, double repeatInterval) { start(Seconds { nextFireInterval }, Seconds { repeatInterval }); }
+    WEBCORE_EXPORT void start(double nextFireInterval, double repeatInterval);
 
     void startRepeating(double repeatInterval) { start(repeatInterval, repeatInterval); }
     void startRepeating(std::chrono::milliseconds repeatInterval) { startRepeating(msToSeconds(repeatInterval)); }
