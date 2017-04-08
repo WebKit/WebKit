@@ -1,3 +1,17 @@
+2017-04-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Align the timers for throttled rAF to reduce power usage
+        https://bugs.webkit.org/show_bug.cgi?id=170630
+        rdar://problem/31490620
+
+        Reviewed by Chris Dumez.
+
+        Align the timers for all throttled ScriptedAnimationControllers in the process with
+        a resolution of 30ms, which reduces process wake-ups and thus saves power.
+
+        * dom/ScriptedAnimationController.cpp:
+        (WebCore::ScriptedAnimationController::scheduleAnimation):
+
 2017-04-08  Chris Dumez  <cdumez@apple.com>
 
         Drop std::chrono support from Timer class

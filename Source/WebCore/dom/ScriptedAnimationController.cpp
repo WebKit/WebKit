@@ -303,8 +303,18 @@ void ScriptedAnimationController::scheduleAnimation()
         return;
 
     Seconds animationInterval = interval();
-    double scheduleDelay = std::max<double>(animationInterval.value() - (m_document->domWindow()->nowTimestamp() - m_lastAnimationFrameTimestamp), 0);
-    m_animationTimer.startOneShot(scheduleDelay);
+
+    // FIXME: not ideal to snapshot time both in now() and nowTimestamp(), the latter of which also has reduced resolution.
+    MonotonicTime now = MonotonicTime::now();
+
+    MonotonicTime fireTime = now + std::max(animationInterval - Seconds(m_document->domWindow()->nowTimestamp() - m_lastAnimationFrameTimestamp), 0_s);
+    Seconds alignmentInterval = 30_ms;
+    // Snap to the nearest alignmentInterval.
+    Seconds alignment = (fireTime + alignmentInterval / 2) % alignmentInterval;
+    MonotonicTime alignedFireTime = fireTime - alignment;
+
+    m_animationTimer.startOneShot(alignedFireTime - now);
+
     dispatchLoggingEventIfRequired("raf-schedule-animation-timer");
 #else
     if (FrameView* frameView = m_document->view())
