@@ -1,3 +1,13 @@
+2017-04-07  Alex Christensen  <achristensen@webkit.org>
+
+        Enable SSE4 and NEON optimizations of libopus where available
+        https://bugs.webkit.org/show_bug.cgi?id=170592
+
+        Reviewed by Youenn Fablet.
+
+        * Configurations/opus.xcconfig:
+        * libwebrtc.xcodeproj/project.pbxproj:
+
 2017-04-06  Youenn Fablet  <youenn@apple.com>
 
         WebRTC aborts when trying to sleep on a wrong thread
