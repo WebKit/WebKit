@@ -1,3 +1,10 @@
+2017-04-07  Keith Miller  <keith_miller@apple.com>
+
+        Unreviewed, remove constexpr function since GTK didn't like it.
+
+        * wtf/PriorityQueue.h:
+        (WTF::PriorityQueue::parentOf):
+
 2017-04-07  Chris Dumez  <cdumez@apple.com>
 
         Start using MonotonicTime / Seconds in Timer class
