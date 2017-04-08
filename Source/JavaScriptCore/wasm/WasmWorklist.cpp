@@ -67,16 +67,15 @@ protected:
         auto& queue = worklist.m_queue;
         synchronize.notifyAll();
 
-        while (!queue.empty()) {
-
-            Priority priority = queue.top().priority;
+        while (!queue.isEmpty()) {
+            Priority priority = queue.peek().priority;
             if (priority == Worklist::Priority::Shutdown)
                 return PollResult::Stop;
 
-            element = queue.top();
+            element = queue.peek();
             // Only one thread should validate/prepare.
-            if (!queue.top().plan->hasBeenPrepared()) {
-                queue.pop();
+            if (!queue.peek().plan->hasBeenPrepared()) {
+                queue.dequeue();
                 return PollResult::Work;
             }
 
@@ -84,7 +83,7 @@ protected:
                 return PollResult::Work;
 
             // There must be a another thread linking this plan so we can deque and see if there is other work.
-            queue.pop();
+            queue.dequeue();
             element = QueueElement();
         }
         return PollResult::Wait;
@@ -92,7 +91,9 @@ protected:
 
     WorkResult work() override
     {
-        auto complete = [&] () {
+        auto complete = [&] (const AbstractLocker&) {
+            // We need to hold the lock to release our plan otherwise the main thread, while canceling plans
+            // might use after free the plan we are looking at
             element = QueueElement();
             return WorkResult::Continue;
         };
@@ -102,29 +103,19 @@ protected:
         if (!plan->hasBeenPrepared()) {
             plan->parseAndValidateModule();
             if (!plan->hasWork())
-                return complete();
+                return complete(holdLock(*worklist.m_lock));
             
             plan->prepare();
 
             LockHolder locker(*worklist.m_lock);
             element.setToNextPriority();
-            worklist.m_queue.push(element);
+            worklist.m_queue.enqueue(WTFMove(element));
             worklist.m_planEnqueued->notifyAll(locker);
+            return complete(locker);
         }
 
-        // FIXME: this should check in occasionally to see if there are new, higher priority e.g. synchronous, plans that need to be run.
-        // https://bugs.webkit.org/show_bug.cgi?id=170204
         plan->compileFunctions(Plan::Partial);
-
-        if (!plan->hasWork()) {
-            LockHolder locker(*worklist.m_lock);
-            auto queue = worklist.m_queue;
-            // Another thread may have removed our plan from the queue already.
-            if (!queue.empty() && queue.top().plan == element.plan)
-                queue.pop();
-        }
-
-        return complete();
+        return complete(holdLock(*worklist.m_lock));
     }
 
 public:
@@ -148,47 +139,17 @@ void Worklist::QueueElement::setToNextPriority()
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-enum class IterateResult { UpdateAndBreak, DropAndContinue, Continue };
-
-template<typename Functor>
-void Worklist::iterate(const AbstractLocker&, const Functor& func)
-{
-    // std::priority_queue does not have an iterator or decrease_key... :( While this is gross, this function
-    // shouldn't be called very often and the queue should be small.
-    // FIXME: we should have our own PriorityQueue that doesn't suck.
-    // https://bugs.webkit.org/show_bug.cgi?id=170145
-    std::vector<QueueElement> elements;
-    while (!m_queue.empty()) {
-        QueueElement element = m_queue.top();
-        m_queue.pop();
-        IterateResult result = func(element);
-        if (result == IterateResult::UpdateAndBreak) {
-            elements.push_back(element);
-            break;
-        }
-
-        if (result == IterateResult::Continue)
-            elements.push_back(element);
-        continue;
-    }
-    
-    for (auto element : elements)
-        m_queue.push(element);
-}
-
 void Worklist::enqueue(Ref<Plan> plan)
 {
     LockHolder locker(*m_lock);
 
     if (!ASSERT_DISABLED) {
-        iterate(locker, [&] (QueueElement& element) {
+        for (const auto& element : m_queue)
             ASSERT_UNUSED(element, element.plan.get() != &plan.get());
-            return IterateResult::Continue;
-        });
     }
 
     dataLogLnIf(verbose, "Enqueuing plan");
-    m_queue.push({ Priority::Preparation, nextTicket(),  WTFMove(plan) });
+    m_queue.enqueue({ Priority::Preparation, nextTicket(),  WTFMove(plan) });
     m_planEnqueued->notifyOne(locker);
 }
 
@@ -196,12 +157,12 @@ void Worklist::completePlanSynchronously(Plan& plan)
 {
     {
         LockHolder locker(*m_lock);
-        iterate(locker, [&] (QueueElement& element) {
+        m_queue.decreaseKey([&] (QueueElement& element) {
             if (element.plan == &plan) {
                 element.priority = Priority::Synchronous;
-                return IterateResult::UpdateAndBreak;
+                return true;
             }
-            return IterateResult::Continue;
+            return false;
         });
 
         for (auto& thread : m_threads) {
@@ -216,18 +177,22 @@ void Worklist::completePlanSynchronously(Plan& plan)
 void Worklist::stopAllPlansForVM(VM& vm)
 {
     LockHolder locker(*m_lock);
-    iterate(locker, [&] (QueueElement& element) {
+    Vector<QueueElement> elements;
+    while (!m_queue.isEmpty()) {
+        QueueElement element = m_queue.dequeue();
         bool didCancel = element.plan->tryRemoveVMAndCancelIfLast(vm);
-        if (didCancel)
-            return IterateResult::DropAndContinue;
-        return IterateResult::Continue;
-    });
+        if (!didCancel)
+            elements.append(WTFMove(element));
+    }
+
+    for (auto& element : elements)
+        m_queue.enqueue(WTFMove(element));
 
     for (auto& thread : m_threads) {
         if (thread->element.plan) {
             bool didCancel = thread->element.plan->tryRemoveVMAndCancelIfLast(vm);
             if (didCancel) {
-                // We don't have to worry about the deadlocking since the thread can't block without clearing the plan and must hold the lock to do so.
+                // We don't have to worry about the deadlocking since the thread can't block without checking for a new plan and must hold the lock to do so.
                 thread->synchronize.wait(*m_lock);
             }
         }
@@ -249,7 +214,7 @@ Worklist::~Worklist()
 {
     {
         LockHolder locker(*m_lock);
-        m_queue.push({ Priority::Shutdown, nextTicket(), nullptr });
+        m_queue.enqueue({ Priority::Shutdown, nextTicket(), nullptr });
         m_planEnqueued->notifyAll(locker);
     }
     for (unsigned i = 0; i < m_threads.size(); ++i)

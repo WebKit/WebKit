@@ -1,3 +1,48 @@
+2017-04-07  Keith Miller  <keith_miller@apple.com>
+
+        Add a PriorityQueue class
+        https://bugs.webkit.org/show_bug.cgi?id=170579
+
+        Reviewed by Saam Barati.
+
+        This patch adds a new PriorityQueue class that is backed by
+        WTF::Vector.  It also has a number of other niceties such as being
+        able to iterate the queue and increase or decrease keys.
+
+        One note is that increaseKey and decreaseKey are O(n) rather than
+        O(log(n)).  Traditionally, the lookup of the key is done with a
+        hash map but that's not feasible here.  This is because unless the
+        queue's element type is a pointer there is no good way maintain a
+        persistent reference to every entry in the queue while we sift.
+        The only way to update the location of an entry is to do a hash
+        table lookup with the entry's hash but this is probably more
+        expensive than just doing a linear search.
+
+        Also, add comparison operator functions, which can be passed to PriorityQueue.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/MathExtras.h:
+        (isLessThan):
+        (isLessThanEqual):
+        (isGreaterThan):
+        (isGreaterThanEqual):
+        * wtf/PriorityQueue.h: Added.
+        (WTF::PriorityQueue::size):
+        (WTF::PriorityQueue::isEmpty):
+        (WTF::PriorityQueue::enqueue):
+        (WTF::PriorityQueue::peek):
+        (WTF::PriorityQueue::dequeue):
+        (WTF::PriorityQueue::decreaseKey):
+        (WTF::PriorityQueue::increaseKey):
+        (WTF::PriorityQueue::begin):
+        (WTF::PriorityQueue::end):
+        (WTF::PriorityQueue::isValidHeap):
+        (WTF::PriorityQueue::parentOf):
+        (WTF::PriorityQueue::leftChildOf):
+        (WTF::PriorityQueue::rightChildOf):
+        (WTF::PriorityQueue::siftUp):
+        (WTF::PriorityQueue::siftDown):
+
 2017-04-07  Alex Christensen  <achristensen@webkit.org>
 
         Use audit_token_t instead of pid_t for checking sandbox of other processes

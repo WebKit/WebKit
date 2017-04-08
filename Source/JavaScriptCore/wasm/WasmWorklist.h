@@ -32,6 +32,7 @@
 #include <queue>
 
 #include <wtf/AutomaticThread.h>
+#include <wtf/PriorityQueue.h>
 #include <wtf/Vector.h>
 
 namespace JSC {
@@ -79,26 +80,20 @@ private:
         void setToNextPriority();
     };
 
-    struct Comparator {
-        bool operator()(const QueueElement& left, const QueueElement& right) const
-        {
-            if (left.priority == right.priority)
-                return left.ticket > right.ticket;
-            return left.priority > right.priority;
-        }
-    };
+    static bool isHigherPriority(const QueueElement& left, const QueueElement& right)
+    {
+        if (left.priority == right.priority)
+            return left.ticket > right.ticket;
+        return left.priority > right.priority;
+    }
 
-    template<typename Functor>
-    void iterate(const AbstractLocker&, const Functor&);
 
     Box<Lock> m_lock;
     RefPtr<AutomaticThreadCondition> m_planEnqueued;
     // Technically, this could overflow but that's unlikely. Even if it did, we will just compile things of the same
     // Priority it the wrong order, which isn't wrong, just suboptimal.
     Ticket m_lastGrantedTicket { 0 };
-    // FIXME: This should use WTF::Vector but WTF::Vector does not support random access iterator.
-    std::priority_queue<QueueElement, std::vector<QueueElement>, Comparator> m_queue;
-    HashMap<JSPromiseDeferred*, Plan*> m_activePlans;
+    PriorityQueue<QueueElement, isHigherPriority, 10> m_queue;
     Vector<std::unique_ptr<Thread>> m_threads;
 };
 

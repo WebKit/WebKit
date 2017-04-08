@@ -277,6 +277,11 @@ template<typename T> inline bool isGreaterThanNonZeroPowerOfTwo(T value, unsigne
     return !!((value >> 1) >> (power - 1));
 }
 
+template<typename T> constexpr inline bool isLessThan(const T& a, const T& b) { return a < b; }
+template<typename T> constexpr inline bool isLessThanEqual(const T& a, const T& b) { return a <= b; }
+template<typename T> constexpr inline bool isGreaterThan(const T& a, const T& b) { return a > b; }
+template<typename T> constexpr inline bool isGreaterThanEqual(const T& a, const T& b) { return a >= b; }
+
 #ifndef UINT64_C
 #if COMPILER(MSVC)
 #define UINT64_C(c) c ## ui64
