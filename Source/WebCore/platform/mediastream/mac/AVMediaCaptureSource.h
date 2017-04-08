@@ -68,7 +68,7 @@ public:
 
     void startProducingData() final;
     void stopProducingData() final;
-    bool isProducingData() const final { return m_isRunning; }
+    bool isProducingData() const final;
 
 protected:
     AVMediaCaptureSource(AVCaptureDevice*, const AtomicString&, RealtimeMediaSource::Type);

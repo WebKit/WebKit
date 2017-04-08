@@ -203,6 +203,8 @@ protected:
 
     const Vector<Observer*> observers() const { return m_observers; }
 
+    void notifyMutedObservers() const;
+
     bool m_muted { false };
     bool m_enabled { true };
 

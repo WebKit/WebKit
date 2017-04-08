@@ -274,8 +274,17 @@ void AVMediaCaptureSource::captureSessionIsRunningDidChange(bool state)
             return;
 
         m_isRunning = state;
-        setMuted(!m_isRunning);
+        if (m_muted == !m_isRunning)
+            return;
+
+        m_muted = !m_isRunning;
+        notifyMutedObservers();
     });
+}
+
+bool AVMediaCaptureSource::isProducingData() const
+{
+    return m_isRunning;
 }
 
 #if PLATFORM(IOS)

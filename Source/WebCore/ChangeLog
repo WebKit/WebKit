@@ -1,3 +1,23 @@
+2017-04-08  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream iOS] Update muted state when interrupted
+        https://bugs.webkit.org/show_bug.cgi?id=170605
+        <rdar://problem/31503896>
+
+        Reviewed by Youenn Fablet.
+
+        * platform/mediastream/RealtimeMediaSource.cpp:
+        (WebCore::RealtimeMediaSource::setMuted): Don't check both m_stopped and stopped(). Split code
+        to  notify observers out into notifyMutedObservers.
+        (WebCore::RealtimeMediaSource::notifyMutedObservers): Split from setMuted.
+        * platform/mediastream/RealtimeMediaSource.h:
+
+        * platform/mediastream/mac/AVMediaCaptureSource.h:
+        * platform/mediastream/mac/AVMediaCaptureSource.mm:
+        (WebCore::AVMediaCaptureSource::captureSessionIsRunningDidChange): Set m_muted directly and 
+        call notifyMutedObservers because the session has already stopped running.
+        (WebCore::AVMediaCaptureSource::isProducingData): Move from .h file to make debugging easier.
+
 2017-04-08  Simon Fraser  <simon.fraser@apple.com>
 
         Unprefix CSS cursor values grab and grabbing
