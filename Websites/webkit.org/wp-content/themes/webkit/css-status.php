@@ -32,61 +32,46 @@ function xhrPromise(url) {
 var origin = new URL("https://<?php echo strpos(WP_HOST, "webkit.org") !== false ? "svn.webkit.org" : WP_HOST; ?>/");
 var loadCSSProperties = xhrPromise(new URL("/repository/webkit/trunk/Source/WebCore/css/CSSProperties.json", origin));
 
-/*
-    TODO:
-        "r" not labeled as SVG. needs two links (circle and radialGradient)
-        filter on unspecified properties/values
-
-        need separate filters on properties and values
-        
-        background-repeat-x isn't a web-exposed longhand in the background property.
-
-        Need to indicate that some properties apply to SVG and HTML:
-            pointer-events
-            paint-order
-
-        Annotate appearance values.
-        Annotate things that only work in @rules like src or page, size, unicode-range, src, device orientation stuff.
-
-        Denote replacement properties & values (e.g. word-wrap is now overflow-wrap.) other than in comments
-
-        Show status comments
-        Mark things pending removal
-        Add a removed status.
-
-    PROPERTY ISSUES
-        -webkit-backface-visibility is not unprefixed
-        "animatable" wrong for animation properties.
-
-    Mark things as not applicable to the open web:
-            -webkit-border-fit
-            -apple-trailing-word
-            -webkit-column-progress
-            -webkit-column-axis
-
-            -webkit-border-fit?. r19862 for iChat.
-            status of margin-collapse properties
-
-    Mark things as internal-only:
-            -webkit-marquee*
-            -webkit-text-security
-            -webkit-text-decorations-in-effect
-            -webkit-nbsp-mode ?
-            -webkit-font-size-delta?
-*/
 </script>
 
 <style>
 
+.feature-status-page {
+    animation: none !important; /* This animation can trigger a hit-testing bug, so remove it for now */
+}
+
 .page {
     display: -webkit-flex;
     display: flex;
-    -webkit-flex-wrap: wrap;
-    flex-wrap: wrap;
+    flex-direction: column;
     -webkit-justify-content: space-between;
     justify-content: space-between;
     box-sizing: border-box;
     width: 100%;
+}
+
+section.side-by-side {
+    display: flex;
+    display: -webkit-flex;
+    flex: 1;
+    -webkit-flex: 1;
+}
+
+sidebar {
+    flex: 0 400px;
+    margin-right: 3rem;
+    font-size: 2rem;
+    margin-left: 1rem;
+}
+
+section.primary {
+    flex: 1;
+    -webkit-flex: 1;
+}
+
+.sticky {
+    position: -webkit-sticky;
+    top: 0;
 }
 
 .page h1 {
@@ -113,27 +98,22 @@ var loadCSSProperties = xhrPromise(new URL("/repository/webkit/trunk/Source/WebC
     font-size: 2.2rem;
 }
 
-.page p {
-    margin-bottom: 3rem;
-}
-
 .property-count {
     text-align: right;
     color: #999;
 }
 
-#property-list {
-    display: inline-block;
-    width: 65%;
-    word-wrap: break-word;
+.property-count p {
+    margin: 0;
 }
 
-/* Hide the internal links on search since they are unlikely to work. */
-#search:required:valid + *  .internal-reference {
-    display: none;
+#property-list {
+/*    word-wrap: break-word;*/
 }
 
 .property-header > h3:first-of-type {
+    -webkit-flex-grow: 1;
+    flex-grow: 1;
     margin: 0;
 }
 
@@ -176,8 +156,13 @@ ul.properties {
     margin-top: 1rem;
 }
 
+.comment {
+    font-size: smaller;
+}
+
 .more-info {
     margin-top: 0.5em;
+    font-size: smaller;
 }
 
 .sub-features {
@@ -206,7 +191,7 @@ ul.properties {
 
 ul.values {
     margin-left: 3em;
-    margin-top: 0.5em;
+    margin-bottom: 0.5em;
     cursor: default;
 }
 
@@ -217,13 +202,17 @@ ul.values {
 .property-header {
     position: relative;
     padding-right: 3rem;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-direction: row;
+    flex-direction: row;
 }
 
-.property-header:after {
+.property-header .toggle {
     display: inline-block;
-    content: "";
     background: url('images/menu-down.svg') no-repeat 50%;
     background-size: 2rem;
+    border: none;
     width: 2rem;
     height: 2rem;
     position: absolute;
@@ -234,16 +223,10 @@ ul.values {
     transition: transform 0.3s ease-out;
 }
 
-.property.opened .property-header:after {
+.property.opened .property-header .toggle {
     -webkit-transform: rotateX(-180deg);
     -moz-transform: rotateX(-180deg);
     transform: rotateX(-180deg);
-}
-
-.property-header h3 .internal-reference a {
-    color: #999;
-    text-decoration: none;
-    padding-left: 0.5em;
 }
 
 .property-header h3 .spec-label {
@@ -265,7 +248,7 @@ ul.values {
     color: #444;
 }
 
-.property-header .property-alias {
+.property-alias {
     font-size: smaller;
     color: #999;
 }
@@ -283,11 +266,6 @@ ul.values {
     color: #999;
 }
 
-.property-header h3 .internal-reference a:hover {
-    color: inherit;
-    text-decoration: underline;
-}
-
 .property.is-hidden {
     display: none;
 }
@@ -300,12 +278,11 @@ ul.property-details {
 }
 
 .property-status {
-    font-size: 2rem;
     display: inline-block;
     position: relative;
+    font-size: 2rem;
     min-width: 4em;
     text-align: right;
-    display: none; /* Hide status for now. */
 }
 
 .property-status,
@@ -324,13 +301,13 @@ ul.property-details {
     border-color: transparent transparent transparent transparent;
 }
 
-#status-filters .done,
-.property-status.done,
-.property-status.done a {
+#status-filters .supported,
+.property-status.supported,
+.property-status.supported a {
     color: #339900;
 }
 
-.status-marker.done {
+.status-marker.supported {
     border-color: #339900 transparent transparent transparent;
 }
 
@@ -394,13 +371,14 @@ ul.property-details {
     border-color: #FFC500 transparent transparent transparent;
 }
 
+#status-filters .removed,
 .property-status.removed,
 .property-status.removed a {
-    color: #999;
+    color: #7F7F7F;
 }
 
 .status-marker.removed {
-    border-color: #999 transparent transparent transparent;
+    border-color: #7F7F7F transparent transparent transparent;
 }
 
 #status-filters .non-standard,
@@ -443,17 +421,6 @@ ul.property-details {
     border-color: #804000 transparent transparent transparent;
 }
 
-
-sidebar {
-    width: -webkit-calc(33.33% - 3rem);
-    width: -moz-calc(33.33% - 3rem);
-    width: calc(33.33% - 3rem);
-    display: inline-block;
-    margin-right: 3rem;
-    font-size: 2rem;
-    margin-left: 1rem;
-}
-
 .property-filters {
     position: relative;
     top: 0;
@@ -489,15 +456,12 @@ sidebar {
 }
 
 #specifications {
-    max-height: 29rem;
-    overflow: auto;
-}
-
-#specifications li {
-    font-size: smaller;
-    cursor: hand;
-    margin-bottom: 0.5rem;
-    margin-left: 2rem;
+    display: block;
+    font-size: 1.6rem;
+    border: 1px solid silver;
+    width: calc(100% - 2rem);
+    height: 3rem;
+    margin: 1rem 2rem;
 }
 
 h3 a[name], .admin-bar h3 a[name] {
@@ -532,7 +496,6 @@ h3 a[name], .admin-bar h3 a[name] {
         margin-top: 0.4rem;
     }
 }
-
 </style>
     <?php if (have_posts()) : while (have_posts()) : the_post(); ?>
 
@@ -540,38 +503,46 @@ h3 a[name], .admin-bar h3 a[name] {
             <?php echo str_repeat('&nbsp;', 200);?>
             <h1><a href="<?php echo get_permalink() ?>" rel="bookmark" title="Permanent Link: <?php the_title(); ?>"><?php the_title(); ?></a></h1>
 
-            <sidebar>
-                <form id="property-filters" class="property-filters">
-                    <h2>Filters</h2>
-                    <input type="text" id="search" placeholder="Search filter&hellip;" title="Filter the property list." required>
-                    <h2>Filter by Status</h2>
-                    <ul id="status-filters">
-                    </ul>
-                </form>
+            <section class="side-by-side">
+                <sidebar>
+                    <section class="sticky">
+                        <form id="property-filters" class="property-filters">
+                            <h2>Filters</h2>
+                            <input type="text" id="search" placeholder="Search filter&hellip;" title="Filter the property list." required>
+                            <h2>Filter by Status</h2>
+                            <ul id="status-filters">
+                            </ul>
+                        </form>
 
-                <div class="prefixes">
-                    <h2>Filter by Prefix</h2>
-                    <ul id="prefix-filters">
-                    </ul>
-                </div>
-            </sidebar>
+                        <div class="prefixes">
+                            <h2>Filter by Prefix</h2>
+                            <ul id="prefix-filters">
+                            </ul>
+                        </div>
+                    </section>
+                </sidebar>
 
-            <div id="property-list">
-                <div class="property-count">
-                    <p><span id="property-count"></span> <span id="property-pluralize">properties</span></p>
-                </div>
-            </div>
+                <section class="primary">
+                    <div id="property-list">
+                        <div class="property-count">
+                            <p><span id="property-count"></span> <span id="property-pluralize">properties</span></p>
+                        </div>
+                    </div>
 
-            <template id="success-template">
-                <ul class="properties" id="properties-container"></ul>
+                    <template id="success-template">
+                        <ul class="properties" id="properties-container"></ul>
 
-                <p>Cannot find something? You can contact <a href="https://twitter.com/webkit">@webkit</a> on Twitter or contact the <a href="https://lists.webkit.org/mailman/listinfo/webkit-help">webkit-help</a> mailing list for questions.</p>
-                <p>You can also <a href="/contributing-code/">contribute to features</a> directly, the entire project is Open Source. To report bugs on existing features or check existing bug reports, see <a href="https://bugs.webkit.org">https://bugs.webkit.org</a>.</p>
-            </template>
-            <template id="error-template">
-                <p>Error: unable to load the features list (<span id="error-message"></span>).</p>
-                <p>If this is not resolved soon, please contact <a href="https://twitter.com/webkit">@webkit</a> on Twitter or the <a href="https://lists.webkit.org/mailman/listinfo/webkit-help">webkit-help</a> mailing list.</p>
-            </template>
+                        <p>Cannot find something? You can contact <a href="https://twitter.com/webkit">@webkit</a> on Twitter or contact the <a href="https://lists.webkit.org/mailman/listinfo/webkit-help">webkit-help</a> mailing list for questions.</p>
+                        <p>You can also <a href="/contributing-code/">contribute to features</a> directly, the entire project is Open Source. To report bugs on existing features or check existing bug reports, see <a href="https://bugs.webkit.org">https://bugs.webkit.org</a>.</p>
+                    </template>
+
+                    <template id="error-template">
+                        <p>Error: unable to load the features list (<span id="error-message"></span>).</p>
+                        <p>If this is not resolved soon, please contact <a href="https://twitter.com/webkit">@webkit</a> on Twitter or the <a href="https://lists.webkit.org/mailman/listinfo/webkit-help">webkit-help</a> mailing list.</p>
+                    </template>
+
+                </section>
+            </section>
         </div>
 
     <?php //comments_template(); ?>
@@ -585,6 +556,30 @@ h3 a[name], .admin-bar h3 a[name] {
 
 <script>
 function initializeStatusPage() {
+
+    const statusOrder = [
+        'supported',
+        'in-development',
+        'under-consideration',
+        'experimental',
+        'non-standard',
+        'not-considering',
+        'not-implemented',
+        'obsolete',
+        'removed',
+    ];
+    
+    const readableStatus = {
+        'supported': 'Supported',
+        'in-development': 'In Development',
+        'under-consideration': 'Under Consideration',
+        'experimental': 'Experimental',
+        'non-standard': 'Non-standard',
+        'not-considering': 'Not considering',
+        'not-implemented': 'Not implemented',
+        'obsolete': 'Obsolete',
+        'removed': 'Removed',
+    };
 
     function sortAlphabetically(array)
     {
@@ -671,25 +666,10 @@ function initializeStatusPage() {
 
         var container = document.createElement('li');
 
-        var hasSpecLink = specificationObject && "url" in specificationObject;
-        var hasReferenceLink = categoryObject && "url" in categoryObject;
-        var hasDocumentationLink = (specificationObject && "documentation-url" in specificationObject) || (categoryObject && "documentation-url" in categoryObject);
-        var hasContactObject = specificationObject && "contact" in specificationObject;
-
-        container.addEventListener('click', function (e) {
-            if (container.className.indexOf('opened') !== -1) {
-                container.className = container.className.replace(' opened','');
-            } else container.className += " opened";
-        });
-
         container.className = "property";
 
         var slug = propertyObject.name.toLowerCase().replace(/ /g, '-');
         container.setAttribute("id", "property-" + slug);
-
-        if (window.location.hash && window.location.hash == "#" + container.getAttribute('id')) {
-            container.className += " opened";
-        }
 
         var cornerStatus = document.createElement('div');
         cornerStatus.className = "status-marker ";
@@ -710,7 +690,8 @@ function initializeStatusPage() {
         titleElement.appendChild(anchorLinkElement);
 
         if (categoryObject) {
-            if (hasSpecLink) {
+            if (specificationObject && ("url" in specificationObject || "obsolete-url" in specificationObject)) {
+                var url = ("url" in specificationObject) ? specificationObject.url : specificationObject['obsolete-url'];
                 var specSpan = createLinkWithHeading("span", null, categoryObject.shortname, specificationObject.url);
                 specSpan.className = 'spec-label';
                 titleElement.appendChild(specSpan);
@@ -724,17 +705,17 @@ function initializeStatusPage() {
 
         featureHeaderContainer.appendChild(titleElement);
 
+        var toggledContentContainer = document.createElement('div');
+        toggledContentContainer.className = "toggleable";
+        descriptionContainer.appendChild(toggledContentContainer);
+
         var aliases = propertyNameAliases(propertyObject);
         if (aliases.length) {
             var propertyAliasDiv = document.createElement('div');
             propertyAliasDiv.className = 'property-alias';
             propertyAliasDiv.textContent = 'Also supported as: ' + aliases.join(', ');
-            featureHeaderContainer.appendChild(propertyAliasDiv);
+            toggledContentContainer.appendChild(propertyAliasDiv);
         }
-
-        var toggledContentContainer = document.createElement('div');
-        toggledContentContainer.className = "toggleable";
-        featureHeaderContainer.appendChild(toggledContentContainer);
 
         var longhands = propertyLonghands(propertyObject);
         if (longhands.length) {
@@ -833,18 +814,26 @@ function initializeStatusPage() {
         }
         
         var statusContainer = document.createElement("span");
-        cornerStatus.className += statusClassName = propertyObject.status.status.toLowerCase().replace(/ /g, '-');
-        statusContainer.className = "property-status " + statusClassName;
+        cornerStatus.className += propertyObject.status.status;
+        statusContainer.className = "property-status " + propertyObject.status.status;
         if ("webkit-url" in propertyObject) {
             var statusLink = document.createElement("a");
             statusLink.href = propertyObject["webkit-url"];
-            statusLink.textContent = propertyObject.status.status;
+            statusLink.textContent = readableStatus[propertyObject.status.status];
             statusContainer.appendChild(statusLink);
         } else {
-            statusContainer.textContent = propertyObject.status.status;
+            statusContainer.textContent = readableStatus[propertyObject.status.status];
         }
+        featureHeaderContainer.appendChild(statusContainer);
 
-        toggledContentContainer.appendChild(statusContainer);
+        var toggle = document.createElement('button');
+        toggle.className = 'toggle';
+
+        toggle.addEventListener('click', function (e) {
+            container.classList.toggle('opened');
+        });
+
+        featureHeaderContainer.appendChild(toggle);
         
         if (specificationObject && "description" in specificationObject) {
             var testDescription = document.createElement('p');
@@ -865,6 +854,13 @@ function initializeStatusPage() {
             toggledContentContainer.appendChild(comment);
         }
 
+        if (propertyObject.status && "comment" in propertyObject.status) {
+            var comment = document.createElement('p');
+            comment.className = 'comment';
+            comment.innerHTML = propertyObject.status.comment;
+            toggledContentContainer.appendChild(comment);
+        }
+
         container.appendChild(descriptionContainer);
         
         function getMostSpecificProperty(categoryObject, specificationObject, attributeName)
@@ -875,6 +871,10 @@ function initializeStatusPage() {
 
             return categoryObject[attributeName];
         }
+
+        var hasReferenceLink = categoryObject && "url" in categoryObject;
+        var hasDocumentationLink = (specificationObject && "documentation-url" in specificationObject) || (categoryObject && "documentation-url" in categoryObject);
+        var hasContactObject = specificationObject && "contact" in specificationObject;
 
         if (hasDocumentationLink || hasReferenceLink || hasContactObject) {
             var moreInfoList = document.createElement("ul");
@@ -888,6 +888,11 @@ function initializeStatusPage() {
             if (hasReferenceLink) {
                 var url = getMostSpecificProperty(categoryObject, specificationObject, 'url');
                 moreInfoList.appendChild(createLinkWithHeading("li", "Reference", url, url));
+
+                if ('obsolete-url' in specificationObject){
+                    var url = specificationObject['obsolete-url'];
+                    moreInfoList.appendChild(createLinkWithHeading("li", "Reference", url, url));
+                }
             }
 
             if (hasContactObject) {
@@ -916,26 +921,34 @@ function initializeStatusPage() {
         return container;
     }
     
-    function renderSpecifications(categories, properties)
+    function canonicalizeIdentifier(identifier)
+    {
+        return identifier.toLocaleLowerCase().replace(/ /g, '-');
+    }
+    
+    function renderSpecifications(categories, properties, selectedSpecifications)
     {
         var specificationsList = document.getElementById('specifications');
+        specificationsList.addEventListener('change', function() { updateSearch(properties); });
 
+        var selectedIndex = -1;
         var allCategories = Object.keys(categories).sort();
-        for (var categoryKey of allCategories) {
+        
+        for (var i = 0; i < allCategories.length; ++i) {
+            var categoryKey = allCategories[i];
             var category = categories[categoryKey];
-            var entry = document.createElement("li");
-            var label = document.createElement("label");
-            var input = document.createElement("input");
-            input.setAttribute('type','radio');
-            input.setAttribute('value', categoryKey);
-            input.setAttribute('name', 'categories');
-            input.addEventListener('change', function() { updateSearch(properties); });
-            label.appendChild(input);
-            label.className = categoryKey.toLocaleLowerCase().replace(/ /g, '-');
-            label.appendChild(document.createTextNode(" " + category['shortname']));
-            entry.appendChild(label);
-            specificationsList.appendChild(entry);
+            categoryKey = canonicalizeIdentifier(categoryKey);
+
+            var option = document.createElement("option");
+            option.setAttribute('value', categoryKey);
+            if (selectedSpecifications.indexOf(categoryKey) != -1)
+                selectedIndex = i;
+
+            option.appendChild(document.createTextNode(" " + category['shortname']));
+            specificationsList.appendChild(option);
         }
+        if (selectedIndex != -1)
+            specificationsList.selectedIndex = selectedIndex;
     }
     
     function getPropertyCategory(propertyObject)
@@ -970,17 +983,6 @@ function initializeStatusPage() {
         var featuresEls = document.querySelectorAll('.properties > li');
         var statusFilters = {};
 
-        var statusOrder = [
-            'done',
-            'in development',
-            'under consideration',
-            'experimental',
-            'non-standard',
-            'not considering',
-            'not implemented',
-            'obsolete',
-        ];
-
         properties.forEach(function(property, i) {
             property.el = featuresEls[i];
             property.visible = true;
@@ -997,18 +999,25 @@ function initializeStatusPage() {
             }
         });
         
+        var selectedStatuses = statusesFromURL();
+        var selectedSpecs = specificationsFromURL();
+        
         for (var key of statusOrder) {
             var status = statusFilters[key];
+            var canonicalStatus = canonicalizeIdentifier(status);
+
             var entry = document.createElement("li");
             var label = document.createElement("label");
             var input = document.createElement("input");
             input.setAttribute('type','checkbox');
-            input.setAttribute('value', key);
+            input.setAttribute('value', canonicalStatus);
+            if (selectedStatuses.indexOf(canonicalStatus) != -1)
+                input.checked = true;
             input.className = 'status-checkbox';
             input.addEventListener('change', function() { updateSearch(properties); });
             label.appendChild(input);
-            label.className = status.replace(/ /g, '-');
-            label.appendChild(document.createTextNode(" " + convertToTitleCase(status)));
+            label.className = canonicalStatus;
+            label.appendChild(document.createTextNode(" " + readableStatus[status]));
             entry.appendChild(label);
             statusContainer.appendChild(entry);
         }
@@ -1020,12 +1029,14 @@ function initializeStatusPage() {
             var input = document.createElement("input");
             input.id = 'by-spec-checkbox';
             input.setAttribute('type','checkbox');
+            if (selectedSpecs.length > 0)
+                input.checked = true;
             input.addEventListener('change', function() { updateSearch(properties); });
             label.appendChild(input);
             label.appendChild(document.createTextNode(" By Specification:"));
             entry.appendChild(label);
             
-            var specsList = document.createElement('ul');
+            var specsList = document.createElement('select');
             specsList.className = 'specifications';
             specsList.id = 'specifications';
             entry.appendChild(specsList);
@@ -1061,6 +1072,11 @@ function initializeStatusPage() {
             } else filtersForm.className += ' opened';
         });
 
+        var searchTerm = searchTermFromURL();
+        if (searchTerm.length) {
+            inputField.value = searchTerm;
+            inputField.placeholder = '';
+        }
         inputField.addEventListener('input', function() { updateSearch(properties); });
 
         var inputs = [].slice.call(filtersForm.getElementsByTagName('input'));
@@ -1070,7 +1086,7 @@ function initializeStatusPage() {
             });
         });
 
-        renderSpecifications(categories, properties);
+        renderSpecifications(categories, properties, selectedSpecs);
     }
 
     function getValuesOfCheckedItems(items)
@@ -1084,13 +1100,25 @@ function initializeStatusPage() {
         return checkedValues;
     }
 
+    function getValuesOfSelectedItems(select)
+    {
+        var selectedValues = [];
+        
+        if (select.selectedIndex != -1)
+            selectedValues.push(select.options[select.selectedIndex].value);
+        
+        return selectedValues;
+    }
+
     function selectedSpecifications()
     {
-        if (!document.getElementById('by-spec-checkbox').checked)
-            return [];
-
         var specificationsList = document.getElementById('specifications');
-        return getValuesOfCheckedItems([].slice.call(specificationsList.getElementsByTagName('input')));
+        if (!document.getElementById('by-spec-checkbox').checked) {
+            specificationsList.disabled = true;
+            return [];
+        }
+        specificationsList.disabled = false;
+        return getValuesOfSelectedItems(specificationsList);
     }
     
     function updateSearch(properties)
@@ -1109,6 +1137,7 @@ function initializeStatusPage() {
         document.getElementById('property-count').textContent = numVisible;
         
         updateSpecsState();
+        updateURL(searchTerm, selectedSpecifications(), activeStatusFilters, activePrefixFilters);
     }
     
     function updateSpecsState()
@@ -1120,6 +1149,75 @@ function initializeStatusPage() {
         radiobuttons.forEach(function(radiobutton,i) {
             radiobutton.disabled = !specsEnabled;
         });
+    }
+    
+    function updateURL(searchTerm, selectedSpecifications, activeStatusFilters, activePrefixFilters)
+    {
+        var searchString = '';
+        
+        function appendDelimiter()
+        {
+            searchString += searchString.length ? '&' : '?';
+        }
+        
+        if (searchTerm.length > 0) {
+            appendDelimiter();
+            searchString += 'search=' + encodeURIComponent(searchTerm);
+        }
+        
+        if (activeStatusFilters.length) {
+            appendDelimiter();
+            searchString += 'status=' + activeStatusFilters.join(',');
+        }
+
+        if (selectedSpecifications.length) {
+            appendDelimiter();
+            searchString += 'specs=' + selectedSpecifications.join(',');
+        }
+
+        if (activePrefixFilters.length) {
+            appendDelimiter();
+            searchString += 'prefix=' + activePrefixFilters.join(',');
+        }
+
+        var current = window.location.href;
+        window.location.href = current.replace(/#(.*)$/, '') + '#' + searchString;
+    }
+    
+    function searchTermFromURL()
+    {
+        var search = window.location.search;
+        var searchRegExp = /\#.*search=([^&]+)/;
+
+        var result;
+        if (result = window.location.href.match(searchRegExp))
+            return decodeURIComponent(result[1]);
+
+        return '';
+    }
+    
+    function statusesFromURL()
+    {
+        var search = window.location.search;
+        var statusRegExp = /\#.*status=([^&]+)/;
+
+        var result;
+        if (result = window.location.href.match(statusRegExp))
+            return result[1].split(',');
+
+        return [];
+    }
+
+    function specificationsFromURL()
+    {
+        var search = window.location.search;
+        var specsRegExp = /\#.*specs=([^&]+)/;
+
+        var result;
+        if (result = window.location.href.match(specsRegExp))
+            return result[1].split(',');
+
+        return [];
     }
 
     function valueOrAliasIsPrefixed(valueObj)
@@ -1197,6 +1295,9 @@ function initializeStatusPage() {
 
     function propertyIsSearchMatch(propertyObject, searchTerm)
     {
+        if (searchTerm.length == 0)
+            return true;
+
         if (propertyObject.name.toLowerCase().indexOf(searchTerm) !== -1)
             return true;
 
@@ -1226,6 +1327,17 @@ function initializeStatusPage() {
         return undefined;
     }
 
+    function getSpecificationObsoleteCategory(propertyObject)
+    {
+        if ('specification' in propertyObject) {
+            var specification = propertyObject.specification;
+            if ('obsolete-category' in specification) {
+                return specification['obsolete-category'];
+            }
+        }
+        return undefined;
+    }
+
     function isCategoryMatch(propertyObject, categories)
     {
         if (!categories.length)
@@ -1233,6 +1345,12 @@ function initializeStatusPage() {
 
         var category;
         if (category = getSpecificationCategory(propertyObject)) {
+            if (categories.indexOf(category) !== -1) {
+                return true;
+            }
+        }
+
+        if (category = getSpecificationObsoleteCategory(propertyObject)) {
             if (categories.indexOf(category) !== -1) {
                 return true;
             }
@@ -1259,7 +1377,7 @@ function initializeStatusPage() {
             return true;
         if (propertyObject.status === undefined)
             return false;
-        if (activeFilters.indexOf(propertyObject.status.status.toLowerCase()) !== -1)
+        if (activeFilters.indexOf(propertyObject.status.status) !== -1)
             return true;
         
         return false;
@@ -1382,14 +1500,16 @@ function initializeStatusPage() {
 
         if (!('status' in propertyObject)) {
             propertyObject.status = {
-                'status' : 'done',
+                'status' : 'supported',
                 'enabled-by-default' : true
             };
         } else if (!('status' in propertyObject.status))
-            propertyObject.status.status = 'done';
+            propertyObject.status.status = 'supported';
+            
+        propertyObject.status.status = canonicalizeIdentifier(propertyObject.status.status);
     }
     
-    function displayFeatures(results)
+    function renderContent(results)
     {
         var mainContent = document.getElementById("property-list");
         var successSubtree = document.importNode(document.getElementById("success-template").content, true);
@@ -1416,7 +1536,7 @@ function initializeStatusPage() {
         renderProperties(categories, everythingToShow);
 
         initSearch(everythingToShow, categories);
-        
+
         updateSearch(everythingToShow);
     }
 
@@ -1439,7 +1559,7 @@ function initializeStatusPage() {
         mainContent.appendChild(successSubtree);
     }
 
-    Promise.all([loadCSSProperties]).then(displayFeatures).catch(displayError);
+    Promise.all([loadCSSProperties]).then(renderContent).catch(displayError);
 }
 
 document.addEventListener("DOMContentLoaded", initializeStatusPage);

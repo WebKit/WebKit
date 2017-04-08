@@ -1,3 +1,17 @@
+2017-04-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Update the css-status page to handle changes in CSSProperties.json.
+        
+        Change the page structure to allow the left sidebar to use sticky positioning.
+        
+        "Done" -> "Supported".
+        
+        Save the search in the URL.
+        
+        Other formatting changes.
+
+        * wp-content/themes/webkit/css-status.php:
+
 2017-04-06  Dean Jackson  <dino@apple.com>
 
         Fix broken link.
