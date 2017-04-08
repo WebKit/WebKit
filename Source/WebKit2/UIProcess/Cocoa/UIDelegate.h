@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef UIClient_h
-#define UIClient_h
+#pragma once
 
 #import "WKFoundation.h"
 
@@ -76,7 +75,7 @@ private:
 
     private:
         // API::UIClient
-        PassRefPtr<WebKit::WebPageProxy> createNewPage(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, const WebCore::SecurityOriginData&, const WebCore::ResourceRequest&, const WebCore::WindowFeatures&, const WebKit::NavigationActionData&) override;
+        RefPtr<WebKit::WebPageProxy> createNewPage(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, const WebCore::SecurityOriginData&, const WebCore::ResourceRequest&, const WebCore::WindowFeatures&, const WebKit::NavigationActionData&) override;
         void close(WebKit::WebPageProxy*) override;
         void fullscreenMayReturnToInline(WebKit::WebPageProxy*) override;
         void didEnterFullscreen(WebKit::WebPageProxy*) override;
@@ -160,5 +159,3 @@ private:
 } // namespace WebKit
 
 #endif // WK_API_ENABLED
-
-#endif // UIClient_h

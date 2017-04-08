@@ -1546,9 +1546,9 @@ namespace WebKit {
 
 class RunBeforeUnloadConfirmPanelResultListener : public API::ObjectImpl<API::Object::Type::RunBeforeUnloadConfirmPanelResultListener> {
 public:
-    static PassRefPtr<RunBeforeUnloadConfirmPanelResultListener> create(Function<void (bool)>&& completionHandler)
+    static Ref<RunBeforeUnloadConfirmPanelResultListener> create(Function<void(bool)>&& completionHandler)
     {
-        return adoptRef(new RunBeforeUnloadConfirmPanelResultListener(WTFMove(completionHandler)));
+        return adoptRef(*new RunBeforeUnloadConfirmPanelResultListener(WTFMove(completionHandler)));
     }
 
     virtual ~RunBeforeUnloadConfirmPanelResultListener()
@@ -1571,9 +1571,9 @@ private:
 
 class RunJavaScriptAlertResultListener : public API::ObjectImpl<API::Object::Type::RunJavaScriptAlertResultListener> {
 public:
-    static PassRefPtr<RunJavaScriptAlertResultListener> create(Function<void ()>&& completionHandler)
+    static Ref<RunJavaScriptAlertResultListener> create(Function<void()>&& completionHandler)
     {
-        return adoptRef(new RunJavaScriptAlertResultListener(WTFMove(completionHandler)));
+        return adoptRef(*new RunJavaScriptAlertResultListener(WTFMove(completionHandler)));
     }
 
     virtual ~RunJavaScriptAlertResultListener()
@@ -1596,9 +1596,9 @@ private:
 
 class RunJavaScriptConfirmResultListener : public API::ObjectImpl<API::Object::Type::RunJavaScriptConfirmResultListener> {
 public:
-    static PassRefPtr<RunJavaScriptConfirmResultListener> create(Function<void (bool)>&& completionHandler)
+    static Ref<RunJavaScriptConfirmResultListener> create(Function<void(bool)>&& completionHandler)
     {
-        return adoptRef(new RunJavaScriptConfirmResultListener(WTFMove(completionHandler)));
+        return adoptRef(*new RunJavaScriptConfirmResultListener(WTFMove(completionHandler)));
     }
 
     virtual ~RunJavaScriptConfirmResultListener()
@@ -1611,7 +1611,7 @@ public:
     }
 
 private:
-    explicit RunJavaScriptConfirmResultListener(Function<void (bool)>&& completionHandler)
+    explicit RunJavaScriptConfirmResultListener(Function<void(bool)>&& completionHandler)
         : m_completionHandler(WTFMove(completionHandler))
     {
     }
@@ -1621,9 +1621,9 @@ private:
 
 class RunJavaScriptPromptResultListener : public API::ObjectImpl<API::Object::Type::RunJavaScriptPromptResultListener> {
 public:
-    static PassRefPtr<RunJavaScriptPromptResultListener> create(Function<void (const String&)>&& completionHandler)
+    static Ref<RunJavaScriptPromptResultListener> create(Function<void(const String&)>&& completionHandler)
     {
-        return adoptRef(new RunJavaScriptPromptResultListener(WTFMove(completionHandler)));
+        return adoptRef(*new RunJavaScriptPromptResultListener(WTFMove(completionHandler)));
     }
 
     virtual ~RunJavaScriptPromptResultListener()
@@ -1636,7 +1636,7 @@ public:
     }
 
 private:
-    explicit RunJavaScriptPromptResultListener(Function<void (const String&)>&& completionHandler)
+    explicit RunJavaScriptPromptResultListener(Function<void(const String&)>&& completionHandler)
         : m_completionHandler(WTFMove(completionHandler))
     {
     }
@@ -1708,7 +1708,7 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
         }
 
     private:
-        PassRefPtr<WebPageProxy> createNewPage(WebPageProxy* page, WebFrameProxy* initiatingFrame, const SecurityOriginData& securityOriginData, const ResourceRequest& resourceRequest, const WindowFeatures& windowFeatures, const NavigationActionData& navigationActionData) override
+        RefPtr<WebPageProxy> createNewPage(WebPageProxy* page, WebFrameProxy* initiatingFrame, const SecurityOriginData& securityOriginData, const ResourceRequest& resourceRequest, const WindowFeatures& windowFeatures, const NavigationActionData& navigationActionData) override
         {
             if (m_client.createNewPage) {
                 auto configuration = page->configuration().copy();

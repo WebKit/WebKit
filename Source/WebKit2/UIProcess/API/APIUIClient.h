@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef APIUIClient_h
-#define APIUIClient_h
+#pragma once
 
 #include "WKPage.h"
 #include "WebEvent.h"
@@ -32,7 +31,6 @@
 #include "WebPageProxy.h"
 #include <WebCore/FloatRect.h>
 #include <functional>
-#include <wtf/PassRefPtr.h>
 
 #if PLATFORM(IOS)
 OBJC_CLASS NSArray;
@@ -75,7 +73,7 @@ class UIClient {
 public:
     virtual ~UIClient() { }
 
-    virtual PassRefPtr<WebKit::WebPageProxy> createNewPage(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, const WebCore::SecurityOriginData&, const WebCore::ResourceRequest&, const WebCore::WindowFeatures&, const WebKit::NavigationActionData&) { return nullptr; }
+    virtual RefPtr<WebKit::WebPageProxy> createNewPage(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, const WebCore::SecurityOriginData&, const WebCore::ResourceRequest&, const WebCore::WindowFeatures&, const WebKit::NavigationActionData&) { return nullptr; }
     virtual void showPage(WebKit::WebPageProxy*) { }
     virtual void fullscreenMayReturnToInline(WebKit::WebPageProxy*) { }
     virtual void didEnterFullscreen(WebKit::WebPageProxy*) { }
@@ -180,5 +178,3 @@ public:
 };
 
 } // namespace API
-
-#endif // APIUIClient_h
