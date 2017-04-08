@@ -1,3 +1,12 @@
+2017-04-07  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, update 2 media tests after r215120 so they work on iOS.
+
+        Setting the volume is a no-op on iOS so mute the video instead.
+
+        * media/video-restricted-invisible-autoplay-allowed-when-visible.html:
+        * media/video-restricted-invisible-autoplay-not-allowed.html:
+
 2017-04-07  Yuichiro Kikura  <y.kikura@gmail.com>
 
         WebGPU: implement ComputeCommandEncoder and related components    

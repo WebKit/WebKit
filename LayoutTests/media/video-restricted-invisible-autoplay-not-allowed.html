@@ -11,7 +11,7 @@
                 findMediaElement();
                 consoleWrite('** setting video.src');
                 video.src = findMediaFile('video', 'content/test');
-                video.volume = 0;
+                video.muted = true;
 
                 waitForEventOnce('play', play1);
                 consoleWrite('');
