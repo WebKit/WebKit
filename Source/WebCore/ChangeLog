@@ -1,3 +1,52 @@
+2017-04-08  Chris Dumez  <cdumez@apple.com>
+
+        Timer's nextFireInterval() / repeatInterval() should return Seconds
+        https://bugs.webkit.org/show_bug.cgi?id=170639
+
+        Reviewed by Simon Fraser.
+
+        Timer's nextFireInterval() / repeatInterval() should return Seconds, not double.
+
+        * loader/NavigationScheduler.cpp:
+        * page/DOMTimer.cpp:
+        (WebCore::DOMTimer::updateTimerIntervalIfNecessary):
+        * page/SuspendableTimer.cpp:
+        (WebCore::SuspendableTimer::suspend):
+        (WebCore::SuspendableTimer::repeatInterval):
+        * page/SuspendableTimer.h:
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::timeToNextService):
+        (WebCore::AnimationBase::getTimeToNextEvent):
+        (WebCore::AnimationBase::goIntoEndingOrLoopingState):
+        * page/animation/AnimationBase.h:
+        * page/animation/CSSAnimationController.cpp:
+        (WebCore::CSSAnimationControllerPrivate::updateAnimations):
+        (WebCore::CSSAnimationControllerPrivate::updateAnimationTimerForRenderer):
+        (WebCore::CSSAnimationControllerPrivate::updateAnimationTimer):
+        (WebCore::CSSAnimationControllerPrivate::animationFrameCallbackFired):
+        * page/animation/CSSAnimationControllerPrivate.h:
+        * page/animation/CompositeAnimation.cpp:
+        (WebCore::CompositeAnimation::timeToNextService):
+        * page/animation/CompositeAnimation.h:
+        * page/animation/ImplicitAnimation.cpp:
+        (WebCore::ImplicitAnimation::timeToNextService):
+        * page/animation/ImplicitAnimation.h:
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::timeToNextService):
+        * page/animation/KeyframeAnimation.h:
+        * platform/ThreadTimers.cpp:
+        (WebCore::ThreadTimers::sharedTimerFiredInternal):
+        * platform/Timer.cpp:
+        (WebCore::TimerBase::nextFireInterval):
+        * platform/Timer.h:
+        (WebCore::TimerBase::repeatInterval):
+        * platform/graphics/ca/TileController.cpp:
+        (WebCore::TileController::setIsInWindow):
+        (WebCore::TileController::scheduleTileRevalidation):
+        * platform/graphics/ca/TileController.h:
+        * platform/graphics/ca/TileGrid.cpp:
+        (WebCore::TileGrid::revalidateTiles):
+
 2017-04-08  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed Mac cmake buildfix after r215051, just for fun.

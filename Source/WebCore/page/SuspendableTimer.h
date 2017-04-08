@@ -48,7 +48,7 @@ public:
     void startRepeating(double repeatInterval) { startRepeating(Seconds { repeatInterval }); }
     void startOneShot(double interval) { startOneShot(Seconds { interval }); }
 
-    double repeatInterval() const;
+    Seconds repeatInterval() const;
     void augmentFireInterval(double delta) { augmentFireInterval(Seconds { delta }); }
     void augmentRepeatInterval(double delta) { augmentRepeatInterval(Seconds { delta }); }
 
@@ -58,9 +58,6 @@ public:
     // FIXME: Use the overloads taking Seconds instead and drop these.
     void startRepeating(std::chrono::milliseconds repeatInterval) { startRepeating(msToSeconds(repeatInterval)); }
     void startOneShot(std::chrono::milliseconds interval) { startOneShot(msToSeconds(interval)); }
-
-    std::chrono::milliseconds repeatIntervalMS() const { return secondsToMS(repeatInterval()); }
-    Seconds repeatIntervalSeconds() const { return Seconds { repeatInterval() }; }
 
     void augmentFireInterval(Seconds delta);
     void augmentRepeatInterval(Seconds delta);

@@ -366,33 +366,33 @@ std::unique_ptr<RenderStyle> CompositeAnimation::getAnimatedStyle() const
     return resultStyle;
 }
 
-double CompositeAnimation::timeToNextService() const
+std::optional<Seconds> CompositeAnimation::timeToNextService() const
 {
-    // Returns the time at which next service is required. -1 means no service is required. 0 means 
+    // Returns the time at which next service is required. std::nullopt means no service is required. 0 means
     // service is required now, and > 0 means service is required that many seconds in the future.
-    double minT = -1;
+    std::optional<Seconds> minT;
     
     if (!m_transitions.isEmpty()) {
         for (auto& transition : m_transitions.values()) {
-            double t = transition->timeToNextService();
-            if (t == -1)
+            std::optional<Seconds> t = transition->timeToNextService();
+            if (!t)
                 continue;
-            if (t < minT || minT == -1)
-                minT = t;
-            if (minT == 0)
-                return 0;
+            if (!minT || t.value() < minT.value())
+                minT = t.value();
+            if (minT.value() == 0_s)
+                return 0_s;
         }
     }
     if (!m_keyframeAnimations.isEmpty()) {
         m_keyframeAnimations.checkConsistency();
         for (auto& animation : m_keyframeAnimations.values()) {
-            double t = animation->timeToNextService();
-            if (t == -1)
+            std::optional<Seconds> t = animation->timeToNextService();
+            if (!t)
                 continue;
-            if (t < minT || minT == -1)
-                minT = t;
-            if (minT == 0)
-                return 0;
+            if (!minT || t.value() < minT.value())
+                minT = t.value();
+            if (minT.value() == 0_s)
+                return 0_s;
         }
     }
 

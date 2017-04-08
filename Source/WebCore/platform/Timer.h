@@ -70,11 +70,9 @@ public:
     WEBCORE_EXPORT void stop();
     bool isActive() const;
 
-    double nextFireInterval() const; // FIXME: Should return Seconds.
+    Seconds nextFireInterval() const;
     Seconds nextUnalignedFireInterval() const;
-    double repeatInterval() const { return m_repeatInterval.value(); } // FIXME: Should return Seconds.
-    Seconds repeatIntervalSeconds() const { return m_repeatInterval; } // FIXME: Remove once repeatInterval() returns Seconds.
-    std::chrono::milliseconds repeatIntervalMS() const { return secondsToMS(repeatInterval()); }
+    Seconds repeatInterval() const { return m_repeatInterval; }
 
     void augmentFireInterval(Seconds delta) { setNextFireTime(m_nextFireTime + delta); }
     void augmentFireInterval(std::chrono::milliseconds delta) { augmentFireInterval(msToSeconds(delta)); }

@@ -400,7 +400,7 @@ void DOMTimer::updateTimerIntervalIfNecessary()
         return;
 
     if (repeatInterval()) {
-        ASSERT(repeatIntervalSeconds() == previousInterval);
+        ASSERT(repeatInterval() == previousInterval);
         LOG(DOMTimers, "%p - Updating DOMTimer's repeat interval from %.2f ms to %.2f ms due to throttling.", this, previousInterval.milliseconds(), m_currentTimerInterval.milliseconds());
         augmentRepeatInterval(m_currentTimerInterval - previousInterval);
     } else {

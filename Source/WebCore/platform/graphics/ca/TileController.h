@@ -36,6 +36,7 @@
 #include <wtf/Deque.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/Seconds.h>
 
 namespace WebCore {
 
@@ -141,7 +142,7 @@ public:
 private:
     TileGrid& tileGrid() { return *m_tileGrid; }
 
-    void scheduleTileRevalidation(double interval);
+    void scheduleTileRevalidation(Seconds interval);
 
     float topContentInset() const { return m_topContentInset; }
 

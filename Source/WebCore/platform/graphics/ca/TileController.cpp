@@ -285,7 +285,7 @@ void TileController::setIsInWindow(bool isInWindow)
     if (m_isInWindow)
         setNeedsRevalidateTiles();
     else {
-        const double tileRevalidationTimeout = 4;
+        const Seconds tileRevalidationTimeout = 4_s;
         scheduleTileRevalidation(tileRevalidationTimeout);
     }
 }
@@ -480,7 +480,7 @@ void TileController::adjustTileCoverageRect(FloatRect& coverageRect, const Float
 #endif
 }
 
-void TileController::scheduleTileRevalidation(double interval)
+void TileController::scheduleTileRevalidation(Seconds interval)
 {
     if (m_tileRevalidationTimer.isActive() && m_tileRevalidationTimer.nextFireInterval() < interval)
         return;

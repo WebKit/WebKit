@@ -365,7 +365,7 @@ void TileGrid::revalidateTiles(TileValidationPolicy validationPolicy)
     TileCohort currCohort = nextTileCohort();
     unsigned tilesInCohort = 0;
 
-    double minimumRevalidationTimerDuration = std::numeric_limits<double>::max();
+    Seconds minimumRevalidationTimerDuration = Seconds::infinity();
     bool needsTileRevalidation = false;
     
     auto tileSize = m_controller.tileSize();
@@ -404,7 +404,7 @@ void TileGrid::revalidateTiles(TileValidationPolicy validationPolicy)
                         continue;
                     double timeUntilCohortExpires = cohort.timeUntilExpiration();
                     if (timeUntilCohortExpires > 0) {
-                        minimumRevalidationTimerDuration = std::min(minimumRevalidationTimerDuration, timeUntilCohortExpires);
+                        minimumRevalidationTimerDuration = std::min(minimumRevalidationTimerDuration, Seconds { timeUntilCohortExpires });
                         needsTileRevalidation = true;
                     } else
                         tileLayer->removeFromSuperlayer();

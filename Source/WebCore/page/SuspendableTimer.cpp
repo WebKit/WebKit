@@ -66,7 +66,7 @@ void SuspendableTimer::suspend(ReasonForSuspension)
     m_savedIsActive = TimerBase::isActive();
     if (m_savedIsActive) {
         m_savedNextFireInterval = TimerBase::nextUnalignedFireInterval();
-        m_savedRepeatInterval = TimerBase::repeatIntervalSeconds();
+        m_savedRepeatInterval = TimerBase::repeatInterval();
         TimerBase::stop();
     }
 }
@@ -119,13 +119,13 @@ void SuspendableTimer::startOneShot(Seconds interval)
     }
 }
 
-double SuspendableTimer::repeatInterval() const
+Seconds SuspendableTimer::repeatInterval() const
 {
     if (!m_suspended)
         return TimerBase::repeatInterval();
     if (m_savedIsActive)
-        return m_savedRepeatInterval.value();
-    return 0;
+        return m_savedRepeatInterval;
+    return 0_s;
 }
 
 void SuspendableTimer::augmentFireInterval(Seconds delta)

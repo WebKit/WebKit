@@ -129,7 +129,7 @@ public:
 
     bool isAccelerated() const { return m_isAccelerated; }
 
-    virtual double timeToNextService();
+    virtual std::optional<Seconds> timeToNextService();
 
     double progress(double scale = 1, double offset = 0, const TimingFunction* = nullptr) const;
 
@@ -232,7 +232,7 @@ protected:
 
     static void setNeedsStyleRecalc(Element*);
     
-    void getTimeToNextEvent(double& time, bool& isLooping) const;
+    void getTimeToNextEvent(Seconds& time, bool& isLooping) const;
 
     double fractionalTime(double scale, double elapsedTime, double offset) const;
 

@@ -1,3 +1,16 @@
+2017-04-08  Chris Dumez  <cdumez@apple.com>
+
+        Timer's nextFireInterval() / repeatInterval() should return Seconds
+        https://bugs.webkit.org/show_bug.cgi?id=170639
+
+        Reviewed by Simon Fraser.
+
+        Timer's nextFireInterval() / repeatInterval() should return Seconds, not double.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::layerVolatilityTimerFired):
+        (WebKit::WebPage::markLayersVolatile):
+
 2017-04-07  Alex Christensen  <achristensen@webkit.org>
 
         Modernize WebPage.h

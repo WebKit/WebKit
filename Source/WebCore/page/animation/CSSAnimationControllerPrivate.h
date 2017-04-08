@@ -49,7 +49,7 @@ public:
     ~CSSAnimationControllerPrivate();
 
     // Returns the time until the next animation needs to be serviced, or -1 if there are none.
-    double updateAnimations(SetChanged callSetChanged = DoNotCallSetChanged);
+    std::optional<Seconds> updateAnimations(SetChanged callSetChanged = DoNotCallSetChanged);
     void updateAnimationTimer(SetChanged callSetChanged = DoNotCallSetChanged);
 
     CompositeAnimation& ensureCompositeAnimation(RenderElement&);

@@ -315,17 +315,17 @@ void ImplicitAnimation::checkForMatchingBackdropFilterFunctionLists()
 }
 #endif
 
-double ImplicitAnimation::timeToNextService()
+std::optional<Seconds> ImplicitAnimation::timeToNextService()
 {
-    double t = AnimationBase::timeToNextService();
-    if (t != 0 || preActive())
+    std::optional<Seconds> t = AnimationBase::timeToNextService();
+    if (!t || t.value() != 0_s || preActive())
         return t;
-        
+
     // A return value of 0 means we need service. But if this is an accelerated animation we 
     // only need service at the end of the transition.
     if (CSSPropertyAnimation::animationOfPropertyIsAccelerated(m_animatingProperty) && isAccelerated()) {
         bool isLooping;
-        getTimeToNextEvent(t, isLooping);
+        getTimeToNextEvent(t.value(), isLooping);
     }
     return t;
 }

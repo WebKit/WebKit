@@ -254,8 +254,8 @@ using namespace WebCore;
 namespace WebKit {
 
 static const double pageScrollHysteresisSeconds = 0.3;
-static const std::chrono::milliseconds initialLayerVolatilityTimerInterval { 20 };
-static const std::chrono::seconds maximumLayerVolatilityTimerInterval { 2 };
+static const Seconds initialLayerVolatilityTimerInterval { 20_ms };
+static const Seconds maximumLayerVolatilityTimerInterval { 2_s };
 
 #define RELEASE_LOG_IF_ALLOWED(...) RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), Layers, __VA_ARGS__)
 #define RELEASE_LOG_ERROR_IF_ALLOWED(...) RELEASE_LOG_ERROR_IF(isAlwaysOnLoggingAllowed(), Layers, __VA_ARGS__)
@@ -2164,7 +2164,7 @@ void WebPage::callVolatilityCompletionHandlers()
 
 void WebPage::layerVolatilityTimerFired()
 {
-    auto newInterval = 2 * m_layerVolatilityTimer.repeatIntervalMS();
+    Seconds newInterval = m_layerVolatilityTimer.repeatInterval() * 2.;
     bool didSucceed = markLayersVolatileImmediatelyIfPossible();
     if (didSucceed || newInterval > maximumLayerVolatilityTimerInterval) {
         m_layerVolatilityTimer.stop();
@@ -2173,7 +2173,7 @@ void WebPage::layerVolatilityTimerFired()
         return;
     }
 
-    RELEASE_LOG_ERROR_IF_ALLOWED("%p - WebPage - Failed to mark all layers as volatile, will retry in %lld ms", this, static_cast<long long>(newInterval.count()));
+    RELEASE_LOG_ERROR_IF_ALLOWED("%p - WebPage - Failed to mark all layers as volatile, will retry in %g ms", this, newInterval.value() * 1000);
     m_layerVolatilityTimer.startRepeating(newInterval);
 }
 
@@ -2204,7 +2204,7 @@ void WebPage::markLayersVolatile(std::function<void ()> completionHandler)
         return;
     }
 
-    RELEASE_LOG_IF_ALLOWED("%p - Failed to mark all layers as volatile, will retry in %lld ms", this, initialLayerVolatilityTimerInterval.count());
+    RELEASE_LOG_IF_ALLOWED("%p - Failed to mark all layers as volatile, will retry in %g ms", this, initialLayerVolatilityTimerInterval.value() * 1000);
     m_layerVolatilityTimer.startRepeating(initialLayerVolatilityTimerInterval);
 }
 

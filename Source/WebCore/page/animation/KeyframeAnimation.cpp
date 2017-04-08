@@ -490,14 +490,14 @@ void KeyframeAnimation::checkForMatchingBackdropFilterFunctionLists()
 }
 #endif
 
-double KeyframeAnimation::timeToNextService()
+std::optional<Seconds> KeyframeAnimation::timeToNextService()
 {
-    double t = AnimationBase::timeToNextService();
-    if (t != 0 || preActive())
+    std::optional<Seconds> t = AnimationBase::timeToNextService();
+    if (!t || t.value() != 0_s || preActive())
         return t;
-        
+
     // A return value of 0 means we need service. But if we only have accelerated animations we 
-    // only need service at the end of the transition
+    // only need service at the end of the transition.
     bool acceleratedPropertiesOnly = true;
     
     for (auto propertyID : m_keyframes.properties()) {
@@ -509,7 +509,7 @@ double KeyframeAnimation::timeToNextService()
 
     if (acceleratedPropertiesOnly) {
         bool isLooping;
-        getTimeToNextEvent(t, isLooping);
+        getTimeToNextEvent(t.value(), isLooping);
     }
 
     return t;

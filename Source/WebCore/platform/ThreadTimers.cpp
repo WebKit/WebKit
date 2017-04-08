@@ -111,7 +111,7 @@ void ThreadTimers::sharedTimerFiredInternal()
         timer->m_unalignedNextFireTime = MonotonicTime { };
         timer->heapDeleteMin();
 
-        Seconds interval = timer->repeatIntervalSeconds();
+        Seconds interval = timer->repeatInterval();
         timer->setNextFireTime(interval ? fireTime + interval : MonotonicTime { });
 
         // Once the timer has been fired, it may be deleted, so do nothing else with it after this point.

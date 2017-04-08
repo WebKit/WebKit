@@ -226,13 +226,13 @@ void TimerBase::stop()
     ASSERT(!inHeap());
 }
 
-double TimerBase::nextFireInterval() const
+Seconds TimerBase::nextFireInterval() const
 {
     ASSERT(isActive());
     MonotonicTime current = MonotonicTime::now();
     if (m_nextFireTime < current)
-        return 0;
-    return (m_nextFireTime - current).value();
+        return 0_s;
+    return m_nextFireTime - current;
 }
 
 inline void TimerBase::checkHeapIndex() const

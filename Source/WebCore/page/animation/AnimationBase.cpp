@@ -564,12 +564,12 @@ void AnimationBase::updatePlayState(EAnimPlayState playState)
     updateStateMachine(pause ?  AnimationStateInput::PlayStatePaused : AnimationStateInput::PlayStateRunning, -1);
 }
 
-double AnimationBase::timeToNextService()
+std::optional<Seconds> AnimationBase::timeToNextService()
 {
-    // Returns the time at which next service is required. -1 means no service is required. 0 means 
+    // Returns the time at which next service is required. std::nullopt means no service is required. 0 means
     // service is required now, and > 0 means service is required that many seconds in the future.
     if (paused() || isNew() || postActive() || fillingForwards())
-        return -1;
+        return std::nullopt;
     
     if (m_animationState == AnimationState::StartWaitTimer) {
 #if ENABLE(CSS_ANIMATIONS_LEVEL_2)
@@ -578,19 +578,19 @@ double AnimationBase::timeToNextService()
                 float currentScrollPosition = m_object->view().frameView().scrollPositionForFixedPosition().y().toFloat();
                 auto& scrollTrigger = downcast<ScrollAnimationTrigger>(*m_animation->trigger());
                 if (currentScrollPosition >= scrollTrigger.startValue().value() && (!scrollTrigger.hasEndValue() || currentScrollPosition <= scrollTrigger.endValue().value()))
-                    return 0;
+                    return 0_s;
             }
-            return -1;
+            return std::nullopt;
         }
 #endif
         double timeFromNow = m_animation->delay() - (beginAnimationUpdateTime() - m_requestedStartTime);
-        return std::max(timeFromNow, 0.0);
+        return std::max(Seconds { timeFromNow }, 0_s);
     }
     
     fireAnimationEventsIfNeeded();
         
     // In all other cases, we need service right away.
-    return 0;
+    return 0_s;
 }
 
 // Compute the fractional time, taking into account direction.
@@ -675,7 +675,7 @@ double AnimationBase::progress(double scale, double offset, const TimingFunction
     return 0;
 }
 
-void AnimationBase::getTimeToNextEvent(double& time, bool& isLooping) const
+void AnimationBase::getTimeToNextEvent(Seconds& time, bool& isLooping) const
 {
     // Decide when the end or loop event needs to fire
     const double elapsedDuration = std::max(beginAnimationUpdateTime() - m_startTime, 0.0);
@@ -696,12 +696,12 @@ void AnimationBase::getTimeToNextEvent(double& time, bool& isLooping) const
         isLooping = false;
     }
     
-    time = durationLeft;
+    time = Seconds { durationLeft };
 }
 
 void AnimationBase::goIntoEndingOrLoopingState()
 {
-    double t;
+    Seconds t;
     bool isLooping;
     getTimeToNextEvent(t, isLooping);
     LOG(Animations, "%p AnimationState %s -> %s", this, nameForState(m_animationState), isLooping ? "Looping" : "Ending");
