@@ -177,10 +177,12 @@
                 "no-default-color": true,
                 "high-priority": true
             },
+            "status": {
+                "comment": "All the values from CSS Color Level 3 are supported, as well as the 8- and 4-digit forms of hex color, and the color() function."
+            },
             "specification": {
                 "category": "css-color",
-                "url": "https://www.w3.org/TR/css-color-4/#the-color-property",
-                "comment": "All the values from CSS Color Level 3 are supported, as well as the 8- and 4-digit forms of hex color, and the color() function."
+                "url": "https://www.w3.org/TR/css-color-4/#the-color-property"
             }
         },
         "direction": {
@@ -202,6 +204,16 @@
             "values": [
                 "inline",
                 "block",
+                {
+                    "value": "flow",
+                    "status": "not implemented",
+                    "url": "https://www.w3.org/TR/css-display-3/#valdef-display-flow"
+                },
+                {
+                    "value": "flow-root",
+                    "status": "not implemented",
+                    "url": "https://www.w3.org/TR/css-display-3/#valdef-display-flow-root"
+                },
                 "list-item",
                 {
                     "value": "compact",
@@ -210,7 +222,7 @@
                 "inline-block",
                 {
                     "value": "run-in",
-                    "status": "Removed",
+                    "status": "removed",
                     "url": "https://www.w3.org/TR/css-display-3/#valdef-display-run-in",
                     "comment": "Removed in https://trac.webkit.org/r163560"
                 },
@@ -740,8 +752,8 @@
                     "status": "unimplemented"
                 }
             ],
-            "status": {
-                "comment":  "This is the highest priority property and 'is resolved before all other properties, to ensure that its value can be checked when determining a smart default font size', (<https://trac.webkit.org/browser/trunk/Source/WebCore/ChangeLog?rev=172861>)."
+            "codegen-properties": {
+                "comment": "This is the highest priority property and 'is resolved before all other properties, to ensure that its value can be checked when determining a smart default font size', (<https://trac.webkit.org/browser/trunk/Source/WebCore/ChangeLog?rev=172861>)."
             },
             "specification": {
                 "category": "css-ruby",
@@ -2780,9 +2792,11 @@
             "codegen-properties": {
                 "converter": "PaintOrder"
             },
+            "status": "supported",
             "specification": {
-                "category": "svg",
-                "url": "https://www.w3.org/TR/SVG2/painting.html#PaintOrderProperty"
+                "category": "css-text-fill-and-stroke",
+                "obsolete-category": "svg",
+                "obsolete-url": "https://www.w3.org/TR/SVG2/painting.html#PaintOrderProperty"
             }
         },
         "pointer-events": {
@@ -2987,9 +3001,12 @@
             "codegen-properties": {
                 "name-for-methods": "CapStyle"
             },
+            "status": "supported",
             "specification": {
-                "category": "svg",
-                "url": "https://www.w3.org/TR/SVG11/painting.html#StrokeLinecapProperty"
+                "category": "css-text-fill-and-stroke",
+                "url": "https://drafts.fxtf.org/fill-stroke-3/#propdef-stroke-linecap",
+                "obsolete-category": "svg",
+                "obsolete-url": "https://www.w3.org/TR/SVG11/painting.html#StrokeLinecapProperty"
             }
         },
         "stroke-linejoin": {
@@ -3002,9 +3019,12 @@
             "codegen-properties": {
                 "name-for-methods": "JoinStyle"
             },
+            "status": "supported",
             "specification": {
-                "category": "svg",
-                "url": "https://www.w3.org/TR/SVG11/painting.html#StrokeMiterlimitProperty"
+                "category": "css-text-fill-and-stroke",
+                "url": "https://drafts.fxtf.org/fill-stroke-3/#propdef-stroke-linejoin",
+                "obsolete-category": "svg",
+                "obsolete-url": "https://www.w3.org/TR/SVG11/painting.html#StrokeMiterlimitProperty"
             }
         },
         "stroke-miterlimit": {
@@ -3013,9 +3033,12 @@
                 "name-for-methods": "StrokeMiterLimit",
                 "converter": "Number<float>"
             },
+            "status": "supported",
             "specification": {
-                "category": "svg",
-                "url": "https://www.w3.org/TR/SVG11/painting.html#StrokeMiterlimitProperty"
+                "category": "css-text-fill-and-stroke",
+                "url": "https://drafts.fxtf.org/fill-stroke-3/#propdef-stroke-miterlimit",
+                "obsolete-category": "svg",
+                "obsolete-url": "https://www.w3.org/TR/SVG11/painting.html#StrokeMiterlimitProperty"
             }
         },
         "stroke-opacity": {
@@ -3036,9 +3059,12 @@
                 "initial": "initialOneLength",
                 "converter": "Length"
             },
+            "status": "supported",
             "specification": {
-                "category": "svg",
-                "url": "https://www.w3.org/TR/SVG11/painting.html#StrokeWidthProperty"
+                "category": "css-text-fill-and-stroke",
+                "url": "https://drafts.fxtf.org/fill-stroke-3/#propdef-stroke-width",
+                "obsolete-category": "svg",
+                "obsolete-url": "https://www.w3.org/TR/SVG11/painting.html#StrokeWidthProperty"
             }
         },
         "speak": {
@@ -3606,11 +3632,13 @@
             "codegen-properties": {
                 "name-for-methods": "OverflowWrap"
             },
-            "status": "obsolete",
+            "status": {
+                "status": "obsolete",
+                "comment": "Replaced by overflow-wrap"
+            },
             "specification": {
                 "category": "css-text",
-                "url": "https://www.w3.org/TR/css-text-3/#overflow-wrap",
-                "comment": "Replaced by overflow-wrap"
+                "url": "https://www.w3.org/TR/css-text-3/#overflow-wrap"
             }
         },
         "x": {
@@ -3783,9 +3811,7 @@
                 "fill-layer-property": true
             },
             "status": {
-                "status": "experimental"
-            },
-            "specification": {
+                "status": "experimental",
                 "comment": "Partially subsumed by background-blend-mode."
             }
         },
@@ -4973,11 +4999,13 @@
                 "none",
                 "edges"
             ],
-            "status": "obsolete",
+            "status": {
+                "status": "obsolete",
+                "comment": "Added in https://trac.webkit.org/changeset/108133"
+            },
             "specification": {
                 "category": "css-line-grid",
-                "url": "https://www.w3.org/TR/css-line-grid-1/",
-                "comment": "Added in https://trac.webkit.org/changeset/108133"
+                "url": "https://www.w3.org/TR/css-line-grid-1/"
             }
         },
         "line-break": {
@@ -5961,9 +5989,7 @@
                 "preserve-3d"
             ],
             "codegen-properties": {
-                "name-for-methods": "TransformStyle3D"
-            },
-            "status": {
+                "name-for-methods": "TransformStyle3D",
                 "comment": "Keeping -webkit-transform-style around is how we'll detect legacy content. At that point, we'll have to add a custom builder and a new ETransformStyle3D type. FIXME: this never happened."
             }
         },

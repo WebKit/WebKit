@@ -1,3 +1,22 @@
+2017-04-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Update CSSProperties.json with correct fill-and-stroke status, and other cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=170643
+
+        Reviewed by Chris Dumez.
+        
+        Update the CSSProperties.json style checker to allow:
+            - comments in codegen_properties
+            - obsolete-category and obsolete-url in specification blocks
+            - renamed "done" to "supported"
+            
+        Fix some references to codegen_properties to be codegen-properties.
+
+        * Scripts/webkitpy/style/checkers/jsonchecker.py:
+        (JSONCSSPropertiesChecker.validate_status_type):
+        (JSONCSSPropertiesChecker.validate_property_specification):
+        (JSONCSSPropertiesChecker.check_codegen_properties):
+
 2017-04-08  Youenn Fablet  <youenn@apple.com>
 
         WebRTC tests gardening

@@ -1,3 +1,30 @@
+2017-04-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Update CSSProperties.json with correct fill-and-stroke status, and other cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=170643
+
+        Reviewed by Chris Dumez.
+
+        Structural changes:
+            - move implementation-related "comment" blocks into "codegen-properties"
+            - move status-related "comment" blocks into "status"
+        
+        Add the concept of "obsolete-category" and "obsolete-url" for properties
+        like the text-fill-and-stroke properties that used to be specified in SVG but
+        now have their own module shared with CSS.
+        
+        Update the status of paint-order, stroke-linecap, stroke-linejoin, stroke-miterlimit
+        and stroke-width to "supported", overriding the default for css-text-fill-and-stroke which
+        is "under consideration".
+        
+        Add display values "flow" and "flow-root" but mark them as unimplemented.
+        
+        Fix makeprop.pl to ignore comments inside codegen-properties.
+
+        * css/CSSProperties.json:
+        * css/makeprop.pl:
+        (addProperty):
+
 2017-04-08  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream iOS] Update muted state when interrupted

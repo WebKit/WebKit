@@ -188,6 +188,8 @@ sub addProperty($$)
                     next;
                 } elsif ($codegenOptionName eq "skip-codegen") {
                     next;
+                } elsif ($codegenOptionName eq "comment") {
+                    next;
                 } elsif ($codegenOptionName eq "high-priority") {
                     $nameIsHighPriority{$name} = 1;
                 } elsif ($codegenOptionName eq "aliases") {

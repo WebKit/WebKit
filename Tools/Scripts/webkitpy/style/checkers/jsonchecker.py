@@ -177,7 +177,7 @@ class JSONCSSPropertiesChecker(JSONChecker):
         self.validate_string(property_name, property_key, key, value)
 
         allowed_statuses = {
-            'done',
+            'supported',
             'in development',
             'under consideration',
             'experimental',
@@ -229,6 +229,8 @@ class JSONCSSPropertiesChecker(JSONChecker):
         keys_and_validators = {
             'category': self.validate_property_category,
             'url': self.validate_url,
+            'obsolete-category': self.validate_property_category,
+            'obsolete-url': self.validate_url,
             'documentation-url': self.validate_url,
             'keywords': self.validate_array,
             'description': self.validate_string,
@@ -265,12 +267,13 @@ class JSONCSSPropertiesChecker(JSONChecker):
 
     def check_codegen_properties(self, property_name, codegen_properties):
         if not isinstance(codegen_properties, (dict, list)):
-            self._handle_style_error(0, 'json/syntax', 5, '"codegen_properties" for property "%s" is not a dictionary or array.' % property_name)
+            self._handle_style_error(0, 'json/syntax', 5, '"codegen-properties" for property "%s" is not a dictionary or array.' % property_name)
             return
 
         keys_and_validators = {
             'aliases': self.validate_array,
             'auto-functions': self.validate_boolean,
+            'comment': self.validate_string,
             'conditional-converter': self.validate_string,
             'converter': self.validate_string,
             'custom': self.validate_string,
@@ -293,7 +296,7 @@ class JSONCSSPropertiesChecker(JSONChecker):
 
         for key, value in codegen_properties.items():
             if key not in keys_and_validators:
-                self._handle_style_error(0, 'json/syntax', 5, 'codegen_properties for property "%s" has unexpected key "%s".' % (property_name, key))
+                self._handle_style_error(0, 'json/syntax', 5, 'codegen-properties for property "%s" has unexpected key "%s".' % (property_name, key))
                 return
 
-            keys_and_validators[key](property_name, 'codegen_properties', key, value)
+            keys_and_validators[key](property_name, 'codegen-properties', key, value)
