@@ -39,12 +39,13 @@
 #include <WebCore/SQLiteStatement.h>
 #include <WebCore/SQLiteTransaction.h>
 #include <wtf/RunLoop.h>
+#include <wtf/Seconds.h>
 
 namespace WebKit {
 namespace NetworkCache {
 
 static const char* StatisticsDatabaseName = "WebKitCacheStatistics.db";
-static const std::chrono::milliseconds mininumWriteInterval = std::chrono::milliseconds(10000);
+static const Seconds mininumWriteInterval { 10_s };
 
 static bool executeSQLCommand(WebCore::SQLiteDatabase& database, const String& sql)
 {

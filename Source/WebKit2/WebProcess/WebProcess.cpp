@@ -200,7 +200,7 @@ WebProcess::WebProcess()
     m_resourceLoadStatisticsStore->setNotificationCallback([this] {
         if (m_statisticsChangedTimer.isActive())
             return;
-        m_statisticsChangedTimer.startOneShot(std::chrono::seconds(5));
+        m_statisticsChangedTimer.startOneShot(5_s);
     });
 }
 
@@ -540,7 +540,7 @@ void WebProcess::setCacheModel(uint32_t cm)
     unsigned cacheTotalCapacity = 0;
     unsigned cacheMinDeadCapacity = 0;
     unsigned cacheMaxDeadCapacity = 0;
-    auto deadDecodedDataDeletionInterval = std::chrono::seconds { 0 };
+    Seconds deadDecodedDataDeletionInterval;
     unsigned pageCacheSize = 0;
     calculateMemoryCacheSizes(cacheModel, cacheTotalCapacity, cacheMinDeadCapacity, cacheMaxDeadCapacity, deadDecodedDataDeletionInterval, pageCacheSize);
 

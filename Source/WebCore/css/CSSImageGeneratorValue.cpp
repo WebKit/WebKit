@@ -39,7 +39,7 @@
 
 namespace WebCore {
 
-static const auto timeToKeepCachedGeneratedImages = std::chrono::seconds { 3 };
+static const Seconds timeToKeepCachedGeneratedImages { 3_s };
 
 class CSSImageGeneratorValue::CachedGeneratedImage {
     WTF_MAKE_FAST_ALLOCATED;

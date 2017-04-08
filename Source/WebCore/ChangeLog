@@ -1,3 +1,47 @@
+2017-04-08  Chris Dumez  <cdumez@apple.com>
+
+        Drop std::chrono support from Timer class
+        https://bugs.webkit.org/show_bug.cgi?id=170645
+
+        Reviewed by Sam Weinig.
+
+        Drop std::chrono support from Timer class now that we prefer using Seconds type.
+
+        * css/CSSImageGeneratorValue.cpp:
+        * html/HTMLPlugInImageElement.cpp:
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        * loader/cache/CachedResource.cpp:
+        (WebCore::deadDecodedDataDeletionIntervalForResourceType):
+        (WebCore::CachedResource::destroyDecodedDataIfNeeded):
+        * loader/cache/MemoryCache.cpp:
+        (WebCore::MemoryCache::MemoryCache):
+        * loader/cache/MemoryCache.h:
+        (WebCore::MemoryCache::setDeadDecodedDataDeletionInterval):
+        (WebCore::MemoryCache::deadDecodedDataDeletionInterval):
+        * page/PerformanceMonitor.cpp:
+        * page/SuspendableTimer.h:
+        * page/mac/ServicesOverlayController.h:
+        * page/mac/ServicesOverlayController.mm:
+        (WebCore::ServicesOverlayController::selectionRectsDidChange):
+        (WebCore::ServicesOverlayController::remainingTimeUntilHighlightShouldBeShown):
+        (WebCore::ServicesOverlayController::determineActiveHighlight):
+        (WebCore::ServicesOverlayController::mouseEvent):
+        * platform/Timer.h:
+        (WebCore::TimerBase::startRepeating):
+        (WebCore::TimerBase::startOneShot):
+        (WebCore::TimerBase::augmentFireInterval):
+        (WebCore::TimerBase::augmentRepeatInterval):
+        (WebCore::DeferrableOneShotTimer::DeferrableOneShotTimer):
+        * platform/graphics/FontCache.cpp:
+        (WebCore::FontCache::fontForFamily):
+        * platform/graphics/ca/TileController.cpp:
+        * platform/graphics/cg/IOSurfacePool.cpp:
+        * platform/graphics/cg/SubimageCacheWithTimer.cpp:
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::setTimeout):
+        (WebCore::XMLHttpRequest::createRequest):
+        * xml/XMLHttpRequest.h:
+
 2017-04-08  Simon Fraser  <simon.fraser@apple.com>
 
         Update CSSProperties.json with correct fill-and-stroke status, and other cleanup

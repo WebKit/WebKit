@@ -51,7 +51,6 @@ namespace WebCore {
 static const int cDefaultCacheCapacity = 8192 * 1024;
 static const double cMinDelayBeforeLiveDecodedPrune = 1; // Seconds.
 static const float cTargetPrunePercentage = .95f; // Percentage of capacity toward which we prune, to avoid immediately pruning again.
-static const auto defaultDecodedDataDeletionInterval = std::chrono::seconds { 0 };
 
 MemoryCache& MemoryCache::singleton()
 {
@@ -66,7 +65,6 @@ MemoryCache::MemoryCache()
     , m_capacity(cDefaultCacheCapacity)
     , m_minDeadCapacity(0)
     , m_maxDeadCapacity(cDefaultCacheCapacity)
-    , m_deadDecodedDataDeletionInterval(defaultDecodedDataDeletionInterval)
     , m_liveSize(0)
     , m_deadSize(0)
     , m_pruneTimer(*this, &MemoryCache::prune)

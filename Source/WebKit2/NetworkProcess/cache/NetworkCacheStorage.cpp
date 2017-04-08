@@ -577,7 +577,7 @@ void Storage::dispatchReadOperation(std::unique_ptr<ReadOperation> readOperation
     // Avoid randomness during testing.
     if (m_mode != Mode::Testing) {
         // I/O pressure may make disk operations slow. If they start taking very long time we rather go to network.
-        const auto readTimeout = 1500ms;
+        const Seconds readTimeout = 1500_ms;
         m_readOperationTimeoutTimer.startOneShot(readTimeout);
     }
 
@@ -800,7 +800,7 @@ void Storage::store(const Record& record, MappedBodyHandler&& mappedBodyHandler)
 
     // Delay the start of writes a bit to avoid affecting early page load.
     // Completing writes will dispatch more writes without delay.
-    static const auto initialWriteDelay = 1s;
+    static const Seconds initialWriteDelay = 1_s;
     m_writeOperationDispatchTimer.startOneShot(initialWriteDelay);
 }
 

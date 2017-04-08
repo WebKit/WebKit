@@ -285,7 +285,7 @@ TiledBacking* RemoteLayerTreeDrawingArea::mainFrameTiledBacking() const
 
 void RemoteLayerTreeDrawingArea::scheduleCompositingLayerFlushImmediately()
 {
-    m_layerFlushTimer.startOneShot(0ms);
+    m_layerFlushTimer.startOneShot(0_s);
 }
 
 void RemoteLayerTreeDrawingArea::scheduleCompositingLayerFlush()
@@ -304,9 +304,9 @@ void RemoteLayerTreeDrawingArea::scheduleCompositingLayerFlush()
     if (m_layerFlushTimer.isActive())
         return;
 
-    const auto initialFlushDelay = 500ms;
-    const auto flushDelay = 1500ms;
-    auto throttleDelay = m_isThrottlingLayerFlushes ? (m_isInitialThrottledLayerFlush ? initialFlushDelay : flushDelay) : 0ms;
+    const Seconds initialFlushDelay = 500_ms;
+    const Seconds flushDelay = 1500_ms;
+    Seconds throttleDelay = m_isThrottlingLayerFlushes ? (m_isInitialThrottledLayerFlush ? initialFlushDelay : flushDelay) : 0_s;
     m_isInitialThrottledLayerFlush = false;
 
     m_layerFlushTimer.startOneShot(throttleDelay);

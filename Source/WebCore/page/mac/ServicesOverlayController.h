@@ -31,6 +31,7 @@
 #include "PageOverlay.h"
 #include "Range.h"
 #include "Timer.h"
+#include <wtf/MonotonicTime.h>
 
 typedef struct __DDHighlight *DDHighlightRef;
 
@@ -122,7 +123,7 @@ private:
     bool hasRelevantSelectionServices();
 
     bool mouseIsOverHighlight(Highlight&, bool& mouseIsOverButton) const;
-    std::chrono::milliseconds remainingTimeUntilHighlightShouldBeShown(Highlight*) const;
+    Seconds remainingTimeUntilHighlightShouldBeShown(Highlight*) const;
     void determineActiveHighlightTimerFired();
 
     static bool highlightsAreEquivalent(const Highlight* a, const Highlight* b);
@@ -151,9 +152,9 @@ private:
 
     Highlight::Type m_dirtyHighlightTypes { 0 };
 
-    std::chrono::steady_clock::time_point m_lastSelectionChangeTime;
-    std::chrono::steady_clock::time_point m_nextActiveHighlightChangeTime;
-    std::chrono::steady_clock::time_point m_lastMouseUpTime;
+    MonotonicTime m_lastSelectionChangeTime;
+    MonotonicTime m_nextActiveHighlightChangeTime;
+    MonotonicTime m_lastMouseUpTime;
 
     RefPtr<Highlight> m_currentMouseDownOnButtonHighlight;
     IntPoint m_mousePosition;

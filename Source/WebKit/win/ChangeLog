@@ -1,3 +1,15 @@
+2017-04-08  Chris Dumez  <cdumez@apple.com>
+
+        Drop std::chrono support from Timer class
+        https://bugs.webkit.org/show_bug.cgi?id=170645
+
+        Reviewed by Sam Weinig.
+
+        Drop std::chrono support from Timer class now that we prefer using Seconds type.
+
+        * WebView.cpp:
+        (WebView::setCacheModel):
+
 2017-03-31  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] WebCore::PlatformDisplay::terminateEGLDisplay causes a crash in libGLESv2.dll while processing atexit

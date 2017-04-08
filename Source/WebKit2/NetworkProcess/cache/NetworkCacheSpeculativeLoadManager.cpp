@@ -39,6 +39,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RunLoop.h>
+#include <wtf/Seconds.h>
 
 namespace WebKit {
 
@@ -46,7 +47,7 @@ namespace NetworkCache {
 
 using namespace WebCore;
 
-static const auto preloadedEntryLifetime = 10s;
+static const Seconds preloadedEntryLifetime { 10_s };
 
 #if !LOG_DISABLED
 static HashCountedSet<String>& allSpeculativeLoadingDiagnosticMessages()

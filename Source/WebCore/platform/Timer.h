@@ -48,10 +48,6 @@ class TimerHeapElement;
 class TimerBase {
     WTF_MAKE_NONCOPYABLE(TimerBase);
     WTF_MAKE_FAST_ALLOCATED;
-protected:
-    static inline double msToSeconds(std::chrono::milliseconds duration) { return duration.count() * 0.001; }
-    static inline std::chrono::milliseconds secondsToMS(double duration) { return std::chrono::milliseconds((std::chrono::milliseconds::rep)(duration * 1000)); }
-
 public:
     WEBCORE_EXPORT TimerBase();
     WEBCORE_EXPORT virtual ~TimerBase();
@@ -60,11 +56,9 @@ public:
     WEBCORE_EXPORT void start(double nextFireInterval, double repeatInterval);
 
     void startRepeating(double repeatInterval) { start(repeatInterval, repeatInterval); }
-    void startRepeating(std::chrono::milliseconds repeatInterval) { startRepeating(msToSeconds(repeatInterval)); }
     void startRepeating(Seconds repeatInterval) { startRepeating(repeatInterval.value()); }
 
     void startOneShot(double interval) { start(interval, 0); }
-    void startOneShot(std::chrono::milliseconds interval) { startOneShot(msToSeconds(interval)); }
     void startOneShot(Seconds interval) { start(interval, 0_s); }
 
     WEBCORE_EXPORT void stop();
@@ -75,11 +69,9 @@ public:
     Seconds repeatInterval() const { return m_repeatInterval; }
 
     void augmentFireInterval(Seconds delta) { setNextFireTime(m_nextFireTime + delta); }
-    void augmentFireInterval(std::chrono::milliseconds delta) { augmentFireInterval(msToSeconds(delta)); }
     void augmentFireInterval(double delta) { augmentFireInterval(Seconds { delta }); }
 
     void augmentRepeatInterval(Seconds delta) { augmentFireInterval(delta); m_repeatInterval += delta; }
-    void augmentRepeatInterval(std::chrono::milliseconds delta) { augmentRepeatInterval(msToSeconds(delta)); }
     void augmentRepeatInterval(double delta) { augmentRepeatInterval(Seconds { delta }); }
 
     void didChangeAlignmentInterval();
@@ -166,12 +158,12 @@ inline bool TimerBase::isActive() const
 class DeferrableOneShotTimer : protected TimerBase {
 public:
     template<typename TimerFiredClass>
-    DeferrableOneShotTimer(TimerFiredClass& object, void (TimerFiredClass::*function)(), std::chrono::milliseconds delay)
+    DeferrableOneShotTimer(TimerFiredClass& object, void (TimerFiredClass::*function)(), Seconds delay)
         : DeferrableOneShotTimer(std::bind(function, &object), delay)
     {
     }
 
-    DeferrableOneShotTimer(std::function<void ()> function, std::chrono::milliseconds delay)
+    DeferrableOneShotTimer(std::function<void ()> function, Seconds delay)
         : m_function(WTFMove(function))
         , m_delay(delay)
         , m_shouldRestartWhenTimerFires(false)
@@ -213,7 +205,7 @@ private:
 
     std::function<void ()> m_function;
 
-    std::chrono::milliseconds m_delay;
+    Seconds m_delay;
     bool m_shouldRestartWhenTimerFires;
 };
 

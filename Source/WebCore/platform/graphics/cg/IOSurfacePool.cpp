@@ -33,7 +33,7 @@
 #include <chrono>
 #include <wtf/NeverDestroyed.h>
 
-const std::chrono::milliseconds collectionInterval = 500ms;
+static const Seconds collectionInterval { 500_ms };
 const std::chrono::seconds surfaceAgeBeforeMarkingPurgeable = 2s;
 const size_t defaultMaximumBytesCached = 1024 * 1024 * 64;
 

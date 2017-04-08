@@ -238,7 +238,7 @@ private:
     void networkErrorTimerFired();
 
     unsigned m_timeoutMilliseconds { 0 };
-    std::chrono::steady_clock::time_point m_sendingTime;
+    MonotonicTime m_sendingTime;
     Timer m_timeoutTimer;
 };
 

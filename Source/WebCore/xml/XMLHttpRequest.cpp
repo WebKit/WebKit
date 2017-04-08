@@ -245,8 +245,8 @@ ExceptionOr<void> XMLHttpRequest::setTimeout(unsigned timeout)
         return { };
 
     // If timeout is zero, we should use the default network timeout. But we disabled it so let's mimic it with a 60 seconds timeout value.
-    std::chrono::duration<double> interval = std::chrono::milliseconds { m_timeoutMilliseconds ? m_timeoutMilliseconds : 60000 } - (std::chrono::steady_clock::now() - m_sendingTime);
-    m_timeoutTimer.startOneShot(std::max(0.0, interval.count()));
+    Seconds interval = Seconds { m_timeoutMilliseconds ? m_timeoutMilliseconds / 1000. : 60. } - (MonotonicTime::now() - m_sendingTime);
+    m_timeoutTimer.startOneShot(std::max(interval, 0_s));
     return { };
 }
 
@@ -737,8 +737,8 @@ ExceptionOr<void> XMLHttpRequest::createRequest()
             request.setTimeoutInterval(m_timeoutMilliseconds / 1000.0);
         else {
             request.setTimeoutInterval(std::numeric_limits<double>::infinity());
-            m_sendingTime = std::chrono::steady_clock::now();
-            m_timeoutTimer.startOneShot(std::chrono::milliseconds { m_timeoutMilliseconds });
+            m_sendingTime = MonotonicTime::now();
+            m_timeoutTimer.startOneShot(Seconds { m_timeoutMilliseconds / 1000. });
         }
     }
 

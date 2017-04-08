@@ -23,11 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CacheModel_h
-#define CacheModel_h
+#pragma once
 
-#include <chrono>
 #include <stdint.h>
+#include <wtf/Seconds.h>
 
 namespace WebKit {
 
@@ -37,9 +36,7 @@ enum CacheModel {
     CacheModelPrimaryWebBrowser
 };
 
-void calculateMemoryCacheSizes(CacheModel, unsigned& cacheTotalCapacity, unsigned& cacheMinDeadCapacity, unsigned& cacheMaxDeadCapacity, std::chrono::seconds& deadDecodedDataDeletionInterval, unsigned& pageCacheCapacity);
+void calculateMemoryCacheSizes(CacheModel, unsigned& cacheTotalCapacity, unsigned& cacheMinDeadCapacity, unsigned& cacheMaxDeadCapacity, Seconds& deadDecodedDataDeletionInterval, unsigned& pageCacheCapacity);
 void calculateURLCacheSizes(CacheModel, uint64_t diskFreeSize, unsigned& urlCacheMemoryCapacity, uint64_t& urlCacheDiskCapacity);
 
 } // namespace WebKit
-
-#endif // CacheModel_h

@@ -49,7 +49,7 @@
 
 namespace WebCore {
 
-static const auto tileSizeUpdateDelay = std::chrono::milliseconds { 500 };
+static const Seconds tileSizeUpdateDelay { 500_ms };
 
 String TileController::tileGridContainerLayerName()
 {

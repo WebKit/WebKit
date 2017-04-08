@@ -102,7 +102,7 @@ namespace WebCore {
 
 const double secondsBetweenRestoreAttempts = 1.0;
 const int maxGLErrorsAllowedToConsole = 256;
-static const std::chrono::seconds checkContextLossHandlingDelay { 3 };
+static const Seconds checkContextLossHandlingDelay { 3_s };
 
 namespace {
     

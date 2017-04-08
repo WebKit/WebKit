@@ -1,5 +1,45 @@
 2017-04-08  Chris Dumez  <cdumez@apple.com>
 
+        Drop std::chrono support from Timer class
+        https://bugs.webkit.org/show_bug.cgi?id=170645
+
+        Reviewed by Sam Weinig.
+
+        Drop std::chrono support from Timer class now that we prefer using Seconds type.
+
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::Throttle::Throttle):
+        (WebKit::NetworkLoad::didReceiveResponseNetworkSession):
+        * NetworkProcess/NetworkProcess.h:
+        (WebKit::NetworkProcess::loadThrottleLatency):
+        * NetworkProcess/NetworkProcessCreationParameters.cpp:
+        * NetworkProcess/NetworkProcessCreationParameters.h:
+        * NetworkProcess/NetworkResourceLoadParameters.h:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::startNetworkLoad):
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoadManager.cpp:
+        * NetworkProcess/cache/NetworkCacheStatistics.cpp:
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::Storage::dispatchReadOperation):
+        (WebKit::NetworkCache::Storage::store):
+        * Shared/CacheModel.cpp:
+        (WebKit::calculateMemoryCacheSizes):
+        * Shared/CacheModel.h:
+        * Shared/mac/RemoteLayerBackingStoreCollection.mm:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeNetworkProcess):
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::maximumBufferingTime):
+        * WebProcess/Plugins/PluginView.cpp:
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::scheduleCompositingLayerFlushImmediately):
+        (WebKit::RemoteLayerTreeDrawingArea::scheduleCompositingLayerFlush):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::m_resourceLoadStatisticsStore):
+        (WebKit::WebProcess::setCacheModel):
+
+2017-04-08  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed attempt to fix GTK build after r215138.
 
         * UIProcess/API/gtk/WebKitUIClient.cpp:

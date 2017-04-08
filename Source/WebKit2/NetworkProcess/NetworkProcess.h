@@ -120,7 +120,7 @@ public:
     void shouldPartitionCookiesForTopPrivatelyOwnedDomains(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd);
 #endif
 
-    std::chrono::milliseconds loadThrottleLatency() const { return m_loadThrottleLatency; }
+    Seconds loadThrottleLatency() const { return m_loadThrottleLatency; }
 
 private:
     NetworkProcess();
@@ -212,7 +212,7 @@ private:
     bool m_suppressMemoryPressureHandler { false };
     bool m_diskCacheIsDisabledForTesting;
     bool m_canHandleHTTPSServerTrustEvaluation;
-    std::chrono::milliseconds m_loadThrottleLatency;
+    Seconds m_loadThrottleLatency;
 
     typedef HashMap<const char*, std::unique_ptr<NetworkProcessSupplement>, PtrHash<const char*>> NetworkProcessSupplementMap;
     NetworkProcessSupplementMap m_supplements;

@@ -41,14 +41,14 @@ namespace WebCore {
 
 #define RELEASE_LOG_IF_ALLOWED(channel, fmt, ...) RELEASE_LOG_IF(m_page.isAlwaysOnLoggingAllowed(), channel, "%p - PerformanceMonitor::" fmt, this, ##__VA_ARGS__)
 
-static const std::chrono::seconds cpuUsageMeasurementDelay { 5 };
-static const std::chrono::seconds postLoadCPUUsageMeasurementDuration { 10 };
-static const std::chrono::minutes backgroundCPUUsageMeasurementDuration { 5 };
-static const std::chrono::minutes cpuUsageSamplingInterval { 10 };
+static const Seconds cpuUsageMeasurementDelay { 5_s };
+static const Seconds postLoadCPUUsageMeasurementDuration { 10_s };
+static const Seconds backgroundCPUUsageMeasurementDuration { 5_min };
+static const Seconds cpuUsageSamplingInterval { 10_min };
 
-static const std::chrono::seconds memoryUsageMeasurementDelay { 10 };
+static const Seconds memoryUsageMeasurementDelay { 10_s };
 
-static const std::chrono::minutes delayBeforeProcessMayBecomeInactive { 8 };
+static const Seconds delayBeforeProcessMayBecomeInactive { 8_min };
 
 static const double postPageLoadCPUUsageDomainReportingThreshold { 20.0 }; // Reporting pages using over 20% CPU is roughly equivalent to reporting the 10% worst pages.
 #if !PLATFORM(IOS)

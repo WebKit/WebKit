@@ -38,6 +38,7 @@
 #include <WebCore/SessionID.h>
 #include <WebCore/SharedBuffer.h>
 #include <wtf/MainThread.h>
+#include <wtf/Seconds.h>
 
 #if PLATFORM(COCOA)
 #include "NetworkDataTaskCocoa.h"
@@ -54,7 +55,7 @@ using namespace WebCore;
 #if USE(NETWORK_SESSION)
 
 struct NetworkLoad::Throttle {
-    Throttle(NetworkLoad& load, std::chrono::milliseconds delay, ResourceResponse&& response, ResponseCompletionHandler&& handler)
+    Throttle(NetworkLoad& load, Seconds delay, ResourceResponse&& response, ResponseCompletionHandler&& handler)
         : timer(load, &NetworkLoad::throttleDelayCompleted)
         , response(WTFMove(response))
         , responseCompletionHandler(WTFMove(handler))
@@ -378,7 +379,7 @@ void NetworkLoad::didReceiveResponseNetworkSession(ResourceResponse&& response, 
     }
 
     auto delay = NetworkProcess::singleton().loadThrottleLatency();
-    if (delay > 0ms) {
+    if (delay > 0_s) {
         m_throttle = std::make_unique<Throttle>(*this, delay, WTFMove(response), WTFMove(completionHandler));
         return;
     }

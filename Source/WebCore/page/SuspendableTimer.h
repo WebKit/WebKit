@@ -55,16 +55,8 @@ public:
     void startRepeating(Seconds repeatInterval);
     void startOneShot(Seconds interval);
 
-    // FIXME: Use the overloads taking Seconds instead and drop these.
-    void startRepeating(std::chrono::milliseconds repeatInterval) { startRepeating(msToSeconds(repeatInterval)); }
-    void startOneShot(std::chrono::milliseconds interval) { startOneShot(msToSeconds(interval)); }
-
     void augmentFireInterval(Seconds delta);
     void augmentRepeatInterval(Seconds delta);
-
-    // FIXME: Use the overloads taking Seconds instead and drop these.
-    void augmentFireInterval(std::chrono::milliseconds delta) { augmentFireInterval(msToSeconds(delta)); }
-    void augmentRepeatInterval(std::chrono::milliseconds delta) { augmentRepeatInterval(msToSeconds(delta)); }
 
     using TimerBase::didChangeAlignmentInterval;
     using TimerBase::operator new;

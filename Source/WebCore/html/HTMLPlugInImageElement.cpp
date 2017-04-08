@@ -55,10 +55,10 @@ static const float sizingFullPageAreaRatioThreshold = 0.96;
 static const Seconds autostartSoonAfterUserGestureThreshold = 5_s;
 
 // This delay should not exceed the snapshot delay in PluginView.cpp
-static const auto simulatedMouseClickTimerDelay = std::chrono::milliseconds { 750 };
+static const Seconds simulatedMouseClickTimerDelay { 750_ms };
 
 #if PLATFORM(COCOA)
-static const auto removeSnapshotTimerDelay = std::chrono::milliseconds { 1500 };
+static const Seconds removeSnapshotTimerDelay { 1500_ms };
 #endif
 
 static const String titleText(Page& page, const String& mimeType)

@@ -8523,7 +8523,7 @@ static WebFrameView *containingFrameView(NSView *view)
     unsigned cacheTotalCapacity = 0;
     unsigned cacheMinDeadCapacity = 0;
     unsigned cacheMaxDeadCapacity = 0;
-    auto deadDecodedDataDeletionInterval = std::chrono::seconds { 0 };
+    Seconds deadDecodedDataDeletionInterval;
 
     unsigned pageCacheSize = 0;
 
@@ -8650,7 +8650,7 @@ static WebFrameView *containingFrameView(NSView *view)
         // can prove that the overall system gain would justify the regression.
         cacheMaxDeadCapacity = std::max<unsigned>(24, cacheMaxDeadCapacity);
 
-        deadDecodedDataDeletionInterval = std::chrono::seconds { 60 };
+        deadDecodedDataDeletionInterval = 60_s;
 
 #if PLATFORM(IOS)
         if (memSize >= 1024)

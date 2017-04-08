@@ -28,11 +28,12 @@
 
 #include <algorithm>
 #include <wtf/RAMSize.h>
+#include <wtf/Seconds.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WebKit {
 
-void calculateMemoryCacheSizes(CacheModel cacheModel, unsigned& cacheTotalCapacity, unsigned& cacheMinDeadCapacity, unsigned& cacheMaxDeadCapacity, std::chrono::seconds& deadDecodedDataDeletionInterval, unsigned& pageCacheCapacity)
+void calculateMemoryCacheSizes(CacheModel cacheModel, unsigned& cacheTotalCapacity, unsigned& cacheMinDeadCapacity, unsigned& cacheMaxDeadCapacity, Seconds& deadDecodedDataDeletionInterval, unsigned& pageCacheCapacity)
 {
     uint64_t memorySize = ramSize() / MB;
 
@@ -109,7 +110,7 @@ void calculateMemoryCacheSizes(CacheModel cacheModel, unsigned& cacheTotalCapaci
         // can prove that the overall system gain would justify the regression.
         cacheMaxDeadCapacity = std::max(24u, cacheMaxDeadCapacity);
 
-        deadDecodedDataDeletionInterval = std::chrono::seconds { 60 };
+        deadDecodedDataDeletionInterval = 60_s;
 
         break;
     }

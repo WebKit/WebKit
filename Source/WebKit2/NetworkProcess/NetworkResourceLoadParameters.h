@@ -32,6 +32,7 @@
 #include <WebCore/ResourceLoaderOptions.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/SessionID.h>
+#include <wtf/Seconds.h>
 
 namespace IPC {
 class Decoder;
@@ -50,7 +51,7 @@ public:
     ResourceLoadIdentifier identifier { 0 };
     Vector<RefPtr<SandboxExtension>> requestBodySandboxExtensions; // Created automatically for the sender.
     RefPtr<SandboxExtension> resourceSandboxExtension; // Created automatically for the sender.
-    std::chrono::milliseconds maximumBufferingTime { 0ms };
+    Seconds maximumBufferingTime;
     Vector<String> derivedCachedDataTypesToRetrieve;
 };
 
