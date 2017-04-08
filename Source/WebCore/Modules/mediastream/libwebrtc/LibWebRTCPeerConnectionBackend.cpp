@@ -213,7 +213,8 @@ void LibWebRTCPeerConnectionBackend::addVideoSource(Ref<RealtimeOutgoingVideoSou
 
 static inline Ref<RTCRtpReceiver> createReceiverForSource(ScriptExecutionContext& context, Ref<RealtimeMediaSource>&& source)
 {
-    auto remoteTrackPrivate = MediaStreamTrackPrivate::create(WTFMove(source));
+    String id = source->id();
+    auto remoteTrackPrivate = MediaStreamTrackPrivate::create(WTFMove(source), WTFMove(id));
     auto remoteTrack = MediaStreamTrack::create(context, WTFMove(remoteTrackPrivate));
 
     return RTCRtpReceiver::create(WTFMove(remoteTrack));

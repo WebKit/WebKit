@@ -1,3 +1,12 @@
+2017-04-08  Youenn Fablet  <youenn@apple.com>
+
+        MediaStreamTrack id should be preserved by PeerConnection
+        https://bugs.webkit.org/show_bug.cgi?id=170624
+
+        Reviewed by Eric Carlson.
+
+        * webrtc/video.html:
+
 2017-04-07  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, update 2 media tests after r215120 so they work on iOS.

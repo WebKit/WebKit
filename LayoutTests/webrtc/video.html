@@ -54,8 +54,9 @@ promise_test((test) => {
                 secondConnection.ontrack = (trackEvent) => {
                     assert_true(trackEvent.track instanceof MediaStreamTrack);
                     assert_true(trackEvent.receiver instanceof RTCRtpReceiver);
-                    assert_true(Array.isArray(trackEvent.streams), "Array.isArray() should return true")
-                    assert_true(Object.isFrozen(trackEvent.streams), "Object.isFrozen() should return true")
+                    assert_true(Array.isArray(trackEvent.streams), "Array.isArray() should return true");
+                    assert_true(Object.isFrozen(trackEvent.streams), "Object.isFrozen() should return true");
+                    assert_equals(trackEvent.track.id, stream.getVideoTracks()[0].id);
                     resolve(trackEvent.streams[0]);
                 };
             });

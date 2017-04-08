@@ -1,3 +1,15 @@
+2017-04-08  Youenn Fablet  <youenn@apple.com>
+
+        MediaStreamTrack id should be preserved by PeerConnection
+        https://bugs.webkit.org/show_bug.cgi?id=170624
+
+        Reviewed by Eric Carlson.
+
+        Covered by updated test.
+
+        * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.cpp:
+        (WebCore::createReceiverForSource): Setting track id according source id.
+
 2017-04-08  Chris Dumez  <cdumez@apple.com>
 
         Timer's nextFireInterval() / repeatInterval() should return Seconds
