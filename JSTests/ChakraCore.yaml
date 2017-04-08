@@ -1834,8 +1834,7 @@
   # Different behavior.
   cmd: runChakra :skip, "NoException", "proxytest9.baseline", []
 - path: ChakraCore/test/es6/ES6Function_bugs.js
-  # Different behavior with Object.seal().
-  cmd: runChakra :skip, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+  cmd: runChakra :pass, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
 - path: ChakraCore/test/es6/OS_2700778.js
   cmd: runChakra :pass, "NoException", "", []
 - path: ChakraCore/test/es6/bug_OS_2184795.js

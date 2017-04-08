@@ -28,7 +28,10 @@ var tests = [
                     get: function () { }
                     });
             }
-            assert.doesNotThrow(function () { g('length') }, "assertion failure on defineProperty 'length' with getter after sealing a function object");
+/* This check seems wrong in that we are trying to change length to a getter, which should throw.
+ * Verified that V8 also throws here.
+ *          assert.doesNotThrow(function () { g('length') }, "assertion failure on defineProperty 'length' with getter after sealing a function object");
+ */
             assert.throws(function () { g('arguments') }, TypeError, "Cannot redefine non-configurable property 'arguments'");
             assert.throws(function () { g('caller') }, TypeError, "Cannot redefine non-configurable property 'caller'");
          }
