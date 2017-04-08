@@ -151,6 +151,7 @@
 #include <runtime/JSCInlines.h>
 #include <runtime/JSCJSValue.h>
 #include <wtf/MemoryPressureHandler.h>
+#include <wtf/MonotonicTime.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuffer.h>
 #include <wtf/text/StringBuilder.h>
@@ -1081,7 +1082,7 @@ ExceptionOr<bool> Internals::isTimerThrottled(int timeoutId)
     if (timer->intervalClampedToMinimum() > timer->m_originalInterval)
         return true;
 
-    return !!timer->alignedFireTime(0_s);
+    return !!timer->alignedFireTime(MonotonicTime { });
 }
 
 bool Internals::isRequestAnimationFrameThrottled() const

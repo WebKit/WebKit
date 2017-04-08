@@ -27,6 +27,7 @@
 #ifndef ThreadTimers_h
 #define ThreadTimers_h
 
+#include <wtf/MonotonicTime.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
 
@@ -54,9 +55,9 @@ namespace WebCore {
         void fireTimersInNestedEventLoopInternal();
 
         Vector<TimerBase*> m_timerHeap;
-        SharedTimer* m_sharedTimer; // External object, can be a run loop on a worker thread. Normally set/reset by worker thread.
-        bool m_firingTimers; // Reentrancy guard.
-        double m_pendingSharedTimerFireTime;
+        SharedTimer* m_sharedTimer { nullptr }; // External object, can be a run loop on a worker thread. Normally set/reset by worker thread.
+        bool m_firingTimers { false }; // Reentrancy guard.
+        MonotonicTime m_pendingSharedTimerFireTime;
     };
 
 }

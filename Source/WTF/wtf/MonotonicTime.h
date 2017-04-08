@@ -78,6 +78,11 @@ public:
     {
         return fromRawSeconds(m_value - other.value());
     }
+
+    Seconds operator%(Seconds other) const
+    {
+        return Seconds { fmod(m_value, other.value()) };
+    }
     
     // Time is a scalar and scalars can be negated as this could arise from algebraic
     // transformations. So, we allow it.

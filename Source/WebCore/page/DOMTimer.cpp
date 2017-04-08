@@ -427,7 +427,7 @@ Seconds DOMTimer::intervalClampedToMinimum() const
     return interval;
 }
 
-std::optional<Seconds> DOMTimer::alignedFireTime(Seconds fireTime) const
+std::optional<MonotonicTime> DOMTimer::alignedFireTime(MonotonicTime fireTime) const
 {
     Seconds alignmentInterval = scriptExecutionContext()->domTimerAlignmentInterval(m_nestingLevel >= maxTimerNestingLevel);
     if (!alignmentInterval)
@@ -438,7 +438,7 @@ std::optional<Seconds> DOMTimer::alignedFireTime(Seconds fireTime) const
     // Force alignment to randomizedAlignment fraction of the way between alignemntIntervals, e.g.
     // if alignmentInterval is 10_ms and randomizedAlignment is 0.3 this will align to 3, 13, 23, ...
     Seconds randomizedOffset = alignmentInterval * randomizedProportion;
-    Seconds adjustedFireTime = fireTime - randomizedOffset;
+    MonotonicTime adjustedFireTime = fireTime - randomizedOffset;
     return adjustedFireTime - (adjustedFireTime % alignmentInterval) + alignmentInterval + randomizedOffset;
 }
 

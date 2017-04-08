@@ -1,3 +1,15 @@
+2017-04-07  Chris Dumez  <cdumez@apple.com>
+
+        Start using MonotonicTime / Seconds in Timer class
+        https://bugs.webkit.org/show_bug.cgi?id=170625
+
+        Reviewed by Simon Fraser.
+
+        Add modulo operator to MonotonicTime.
+
+        * wtf/MonotonicTime.h:
+        (WTF::MonotonicTime::operator%):
+
 2017-04-07  Keith Miller  <keith_miller@apple.com>
 
         Add a PriorityQueue class

@@ -45,14 +45,15 @@ public:
     bool isActive() const { return TimerBase::isActive() || (m_suspended && m_savedIsActive); }
     bool isSuspended() const { return m_suspended; }
 
-    void startRepeating(double repeatInterval);
-    void startOneShot(double interval);
-    double repeatInterval() const;
-    void augmentFireInterval(double delta);
-    void augmentRepeatInterval(double delta);
+    void startRepeating(double repeatInterval) { startRepeating(Seconds { repeatInterval }); }
+    void startOneShot(double interval) { startOneShot(Seconds { interval }); }
 
-    void startRepeating(Seconds repeatInterval) { startRepeating(repeatInterval.value()); }
-    void startOneShot(Seconds interval) { startOneShot(interval.value()); }
+    double repeatInterval() const;
+    void augmentFireInterval(double delta) { augmentFireInterval(Seconds { delta }); }
+    void augmentRepeatInterval(double delta) { augmentRepeatInterval(Seconds { delta }); }
+
+    void startRepeating(Seconds repeatInterval);
+    void startOneShot(Seconds interval);
 
     // FIXME: Use the overloads taking Seconds instead and drop these.
     void startRepeating(std::chrono::milliseconds repeatInterval) { startRepeating(msToSeconds(repeatInterval)); }
@@ -61,8 +62,8 @@ public:
     std::chrono::milliseconds repeatIntervalMS() const { return secondsToMS(repeatInterval()); }
     Seconds repeatIntervalSeconds() const { return Seconds { repeatInterval() }; }
 
-    void augmentFireInterval(Seconds delta) { augmentFireInterval(delta.value()); }
-    void augmentRepeatInterval(Seconds delta) { augmentRepeatInterval(delta.value()); }
+    void augmentFireInterval(Seconds delta);
+    void augmentRepeatInterval(Seconds delta);
 
     // FIXME: Use the overloads taking Seconds instead and drop these.
     void augmentFireInterval(std::chrono::milliseconds delta) { augmentFireInterval(msToSeconds(delta)); }
@@ -84,8 +85,8 @@ private:
     void suspend(ReasonForSuspension) final;
     void resume() final;
 
-    double m_savedNextFireInterval { 0 };
-    double m_savedRepeatInterval { 0 };
+    Seconds m_savedNextFireInterval;
+    Seconds m_savedRepeatInterval;
 
     bool m_suspended { false };
     bool m_savedIsActive { false };

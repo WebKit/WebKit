@@ -1,3 +1,57 @@
+2017-04-07  Chris Dumez  <cdumez@apple.com>
+
+        Start using MonotonicTime / Seconds in Timer class
+        https://bugs.webkit.org/show_bug.cgi?id=170625
+
+        Reviewed by Simon Fraser.
+
+        Start using MonotonicTime / Seconds in Timer class. More work will be needed
+        for the transition to be complete. I plan to do this in a follow-up.
+
+        * page/DOMTimer.cpp:
+        (WebCore::DOMTimer::alignedFireTime):
+        * page/DOMTimer.h:
+        * page/SuspendableTimer.cpp:
+        (WebCore::SuspendableTimer::suspend):
+        (WebCore::SuspendableTimer::startRepeating):
+        (WebCore::SuspendableTimer::startOneShot):
+        (WebCore::SuspendableTimer::repeatInterval):
+        (WebCore::SuspendableTimer::augmentFireInterval):
+        (WebCore::SuspendableTimer::augmentRepeatInterval):
+        * page/SuspendableTimer.h:
+        (WebCore::SuspendableTimer::startRepeating):
+        (WebCore::SuspendableTimer::startOneShot):
+        (WebCore::SuspendableTimer::augmentFireInterval):
+        (WebCore::SuspendableTimer::augmentRepeatInterval):
+        * platform/ThreadTimers.cpp:
+        (WebCore::ThreadTimers::ThreadTimers):
+        (WebCore::ThreadTimers::setSharedTimer):
+        (WebCore::ThreadTimers::updateSharedTimer):
+        (WebCore::ThreadTimers::sharedTimerFiredInternal):
+        (WebCore::ThreadTimers::fireTimersInNestedEventLoop):
+        * platform/ThreadTimers.h:
+        * platform/Timer.cpp:
+        (WebCore::TimerHeapLessThanFunction::operator()):
+        (WebCore::TimerBase::TimerBase):
+        (WebCore::TimerBase::start):
+        (WebCore::TimerBase::stop):
+        (WebCore::TimerBase::nextFireInterval):
+        (WebCore::TimerBase::heapPop):
+        (WebCore::TimerBase::updateHeapIfNeeded):
+        (WebCore::TimerBase::setNextFireTime):
+        (WebCore::TimerBase::nextUnalignedFireInterval):
+        * platform/Timer.h:
+        (WebCore::TimerBase::start):
+        (WebCore::TimerBase::startOneShot):
+        (WebCore::TimerBase::repeatInterval):
+        (WebCore::TimerBase::repeatIntervalSeconds):
+        (WebCore::TimerBase::augmentFireInterval):
+        (WebCore::TimerBase::augmentRepeatInterval):
+        (WebCore::TimerBase::alignedFireTime):
+        (WebCore::TimerBase::isActive):
+        * testing/Internals.cpp:
+        (WebCore::Internals::isTimerThrottled):
+
 2017-04-07  Yuichiro Kikura  <y.kikura@gmail.com>
 
         WebGPU: implement ComputeCommandEncoder and related components
