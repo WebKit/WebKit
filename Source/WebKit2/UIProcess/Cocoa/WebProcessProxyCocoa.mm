@@ -125,7 +125,7 @@ RefPtr<ObjCObjectGraph> WebProcessProxy::transformObjectsToHandles(ObjCObjectGra
 bool WebProcessProxy::platformIsBeingDebugged() const
 {
     // If the UI process is sandboxed, it cannot find out whether other processes are being debugged.
-    if (processIsSandboxed(getpid()))
+    if (currentProcessIsSandboxed())
         return false;
 
     struct kinfo_proc info;

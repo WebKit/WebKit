@@ -1,3 +1,14 @@
+2017-04-07  Alex Christensen  <achristensen@webkit.org>
+
+        Use audit_token_t instead of pid_t for checking sandbox of other processes
+        https://bugs.webkit.org/show_bug.cgi?id=170616
+        <rdar://problem/31158189>
+
+        Reviewed by Daniel Bates.
+
+        * wtf/spi/darwin/SandboxSPI.h:
+        Declare more SPI.
+
 2017-04-07  Ting-Wei Lan  <lantw44@gmail.com>
 
         Include cstdio before using sscanf and stderr

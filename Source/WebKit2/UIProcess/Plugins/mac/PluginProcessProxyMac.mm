@@ -105,7 +105,7 @@ void PluginProcessProxy::platformGetLaunchOptions(ProcessLauncher::LaunchOptions
     launchOptions.extraInitializationData.add("plugin-path", pluginProcessAttributes.moduleInfo.path);
 
     if (pluginProcessAttributes.sandboxPolicy == PluginProcessSandboxPolicyUnsandboxed) {
-        if (!processIsSandboxed(getpid()))
+        if (!currentProcessIsSandboxed())
             launchOptions.extraInitializationData.add("disable-sandbox", "1");
         else
             WTFLogAlways("Main process is sandboxed, ignoring plug-in sandbox policy");

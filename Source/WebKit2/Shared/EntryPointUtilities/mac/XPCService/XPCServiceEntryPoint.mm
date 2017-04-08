@@ -121,7 +121,7 @@ bool XPCServiceInitializerDelegate::hasEntitlement(const char* entitlement)
 
 bool XPCServiceInitializerDelegate::isClientSandboxed()
 {
-    return processIsSandboxed(xpc_connection_get_pid(m_connection.get()));
+    return connectedProcessIsSandboxed(m_connection.get());
 }
 
 void XPCServiceExit(OSObjectPtr<xpc_object_t>&& priorityBoostMessage)

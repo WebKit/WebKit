@@ -23,15 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SandboxUtilities_h
-#define SandboxUtilities_h
+#pragma once
 
 #import <sys/types.h>
 #import <wtf/Forward.h>
+#import <wtf/spi/darwin/XPCSPI.h>
 
 namespace WebKit {
 
-bool processIsSandboxed(pid_t);
+bool connectedProcessIsSandboxed(xpc_connection_t);
+bool currentProcessIsSandboxed();
 bool processHasContainer();
 
 // Returns an empty string if the process is not in a container.
@@ -40,5 +41,3 @@ String pathForProcessContainer();
 bool processHasEntitlement(NSString *entitlement);
 
 }
-
-#endif // SandboxUtilities_h

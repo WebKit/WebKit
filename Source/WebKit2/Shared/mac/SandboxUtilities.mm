@@ -30,13 +30,21 @@
 #import <sys/param.h>
 #import <wtf/spi/cocoa/SecuritySPI.h>
 #import <wtf/spi/darwin/SandboxSPI.h>
+#import <wtf/spi/darwin/XPCSPI.h>
 #import <wtf/text/WTFString.h>
 
 namespace WebKit {
 
-bool processIsSandboxed(pid_t pid)
+bool currentProcessIsSandboxed()
 {
-    return sandbox_check(pid, nullptr, SANDBOX_FILTER_NONE);
+    return sandbox_check(getpid(), nullptr, SANDBOX_FILTER_NONE);
+}
+
+bool connectedProcessIsSandboxed(xpc_connection_t connectionToParent)
+{
+    audit_token_t token;
+    xpc_connection_get_audit_token(connectionToParent, &token);
+    return sandbox_check_by_audit_token(token, nullptr, SANDBOX_FILTER_NONE);
 }
 
 static bool processHasContainer(pid_t pid)

@@ -1,3 +1,31 @@
+2017-04-07  Alex Christensen  <achristensen@webkit.org>
+
+        Use audit_token_t instead of pid_t for checking sandbox of other processes
+        https://bugs.webkit.org/show_bug.cgi?id=170616
+        <rdar://problem/31158189>
+
+        Reviewed by Daniel Bates.
+
+        pid's can be reused, so it's theoretically unsafe to use the pid of another process to check whether it's sandboxed.
+        Use an audit_token_t instead to be more sure that we are not mistakenly checking a new process that has reused the
+        old process's pid. For the current process, though, we have no xpc_connection_t to the process because we are the process.
+
+        * PluginProcess/mac/PluginProcessMac.mm:
+        (WebKit::PluginProcess::initializeSandbox):
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceEntryPoint.mm:
+        (WebKit::XPCServiceInitializerDelegate::isClientSandboxed):
+        * Shared/mac/SandboxUtilities.h:
+        * Shared/mac/SandboxUtilities.mm:
+        (WebKit::currentProcessIsSandboxed):
+        (WebKit::connectedProcessIsSandboxed):
+        (WebKit::processIsSandboxed): Deleted.
+        * UIProcess/Cocoa/WebProcessProxyCocoa.mm:
+        (WebKit::WebProcessProxy::platformIsBeingDebugged):
+        * UIProcess/Plugins/mac/PluginInfoStoreMac.mm:
+        (WebKit::PluginInfoStore::shouldUsePlugin):
+        * UIProcess/Plugins/mac/PluginProcessProxyMac.mm:
+        (WebKit::PluginProcessProxy::platformGetLaunchOptions):
+
 2017-04-07  Brent Fulgham  <bfulgham@apple.com>
 
         [WK2][iOS] Add CoreMedia entitlement for WebProcess

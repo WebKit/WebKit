@@ -100,7 +100,7 @@ bool PluginInfoStore::shouldUsePlugin(Vector<PluginModuleInfo>& alreadyLoadedPlu
         return false;
     }
 
-    if (processIsSandboxed(getpid()) && !plugin.hasSandboxProfile) {
+    if (currentProcessIsSandboxed() && !plugin.hasSandboxProfile) {
         LOG(Plugins, "Ignoring unsandboxed plug-in %s", plugin.bundleIdentifier.utf8().data());
         return false;
     }
