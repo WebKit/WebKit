@@ -71,6 +71,7 @@ public:
 
         BlockType type() const { return m_blockType; }
         Type signature() const { return m_signature; }
+        Type branchTargetSignature() const { return type() == BlockType::Loop ? Void : signature(); }
     private:
         BlockType m_blockType;
         Type m_signature;
@@ -265,18 +266,15 @@ auto Validate::addReturn(ControlType& topLevel, const ExpressionList& returnValu
 }
 
 auto Validate::checkBranchTarget(ControlType& target, const ExpressionList& expressionStack) -> Result
-    {
-        if (target.type() == BlockType::Loop)
-            return { };
-
-        if (target.signature() == Void)
-            return { };
-
-        WASM_VALIDATOR_FAIL_IF(expressionStack.isEmpty(), target.type() == BlockType::TopLevel ? "branch out of function" : "branch to block", " on empty expression stack, but expected ", target.signature());
-        WASM_VALIDATOR_FAIL_IF(target.signature() != expressionStack.last(), "branch's stack type doesn't match block's type");
-
+{
+    if (target.branchTargetSignature() == Void)
         return { };
-    }
+
+    WASM_VALIDATOR_FAIL_IF(expressionStack.isEmpty(), target.type() == BlockType::TopLevel ? "branch out of function" : "branch to block", " on empty expression stack, but expected ", target.signature());
+    WASM_VALIDATOR_FAIL_IF(target.branchTargetSignature() != expressionStack.last(), "branch's stack type doesn't match block's type");
+
+    return { };
+}
 
 auto Validate::addBranch(ControlType& target, ExpressionType condition, const ExpressionList& stack) -> Result
 {
@@ -290,7 +288,7 @@ auto Validate::addSwitch(ExpressionType condition, const Vector<ControlData*>& t
     WASM_VALIDATOR_FAIL_IF(condition != I32, "br_table with non-i32 condition ", condition);
 
     for (auto target : targets)
-        WASM_VALIDATOR_FAIL_IF(defaultTarget.signature() != target->signature(), "br_table target type mismatch");
+        WASM_VALIDATOR_FAIL_IF(defaultTarget.branchTargetSignature() != target->branchTargetSignature(), "br_table target type mismatch");
 
     return checkBranchTarget(defaultTarget, expressionStack);
 }
