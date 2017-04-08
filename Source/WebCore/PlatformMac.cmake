@@ -429,6 +429,8 @@ list(APPEND WebCore_SOURCES
     platform/graphics/cocoa/GPUBufferMetal.mm
     platform/graphics/cocoa/GPUCommandBufferMetal.mm
     platform/graphics/cocoa/GPUCommandQueueMetal.mm
+    platform/graphics/cocoa/GPUComputeCommandEncoderMetal.mm
+    platform/graphics/cocoa/GPUComputePipelineStateMetal.mm
     platform/graphics/cocoa/GPUDepthStencilDescriptorMetal.mm
     platform/graphics/cocoa/GPUDepthStencilStateMetal.mm
     platform/graphics/cocoa/GPUDeviceMetal.mm

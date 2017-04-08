@@ -1651,6 +1651,19 @@
 		37F818FD0D657606005E1F05 /* WebCoreURLResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 37F818FB0D657606005E1F05 /* WebCoreURLResponse.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		37F818FE0D657606005E1F05 /* WebCoreURLResponse.mm in Sources */ = {isa = PBXBuildFile; fileRef = 37F818FC0D657606005E1F05 /* WebCoreURLResponse.mm */; };
 		37FD4298118368460093C029 /* TreeDepthLimit.h in Headers */ = {isa = PBXBuildFile; fileRef = 37FD4297118368460093C029 /* TreeDepthLimit.h */; };
+		387AE95A1E8E92EF0000DE96 /* JSWebGPUSize.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 387AE9581E8E92EF0000DE96 /* JSWebGPUSize.cpp */; };
+		387AE95B1E8E92EF0000DE96 /* JSWebGPUSize.h in Headers */ = {isa = PBXBuildFile; fileRef = 387AE9591E8E92EF0000DE96 /* JSWebGPUSize.h */; };
+		38850C531E964C1100C60753 /* JSWebGPUCommandBufferCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 38850C521E964C1100C60753 /* JSWebGPUCommandBufferCustom.cpp */; };
+		389117411E8F4BF00061033E /* GPUComputeCommandEncoderMetal.mm in Sources */ = {isa = PBXBuildFile; fileRef = 381E35E91E8E20AC0043E850 /* GPUComputeCommandEncoderMetal.mm */; };
+		389117421E8F4BF00061033E /* GPUComputePipelineStateMetal.mm in Sources */ = {isa = PBXBuildFile; fileRef = 381E35EE1E8E24CB0043E850 /* GPUComputePipelineStateMetal.mm */; };
+		389117431E8F4BF00061033E /* GPUComputeCommandEncoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 381E35EB1E8E21990043E850 /* GPUComputeCommandEncoder.cpp */; };
+		389117441E8F4BF00061033E /* GPUComputePipelineState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 381E35ED1E8E247A0043E850 /* GPUComputePipelineState.cpp */; };
+		389D1E1E1E8F2B9E009795B9 /* WebGPUComputeCommandEncoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 381E35E81E8E1E160043E850 /* WebGPUComputeCommandEncoder.cpp */; };
+		389D1E1F1E8F2B9F009795B9 /* WebGPUComputePipelineState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 381E35E51E8E1C6A0043E850 /* WebGPUComputePipelineState.cpp */; };
+		38F23AAF1E8E83C400CE46F5 /* JSWebGPUComputeCommandEncoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 38F23AAE1E8E83C400CE46F5 /* JSWebGPUComputeCommandEncoder.cpp */; };
+		38F23AB31E8E83D000CE46F5 /* JSWebGPUComputeCommandEncoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 38F23AB01E8E83D000CE46F5 /* JSWebGPUComputeCommandEncoder.h */; };
+		38F23AB41E8E83D000CE46F5 /* JSWebGPUComputePipelineState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 38F23AB11E8E83D000CE46F5 /* JSWebGPUComputePipelineState.cpp */; };
+		38F23AB51E8E83D000CE46F5 /* JSWebGPUComputePipelineState.h in Headers */ = {isa = PBXBuildFile; fileRef = 38F23AB21E8E83D000CE46F5 /* JSWebGPUComputePipelineState.h */; };
 		3AC648B2129E146500C3EB25 /* EditingBoundary.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AC648B1129E146500C3EB25 /* EditingBoundary.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3C244FEAA375AC633F88BE6F /* RenderLayerModelObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C244FE4A375AC633F88BE6F /* RenderLayerModelObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3C244FEBA375AC633F88BE6F /* RenderLayerModelObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3C244FE5A375AC633F88BE6F /* RenderLayerModelObject.cpp */; };
@@ -9216,6 +9229,28 @@
 		37F818FC0D657606005E1F05 /* WebCoreURLResponse.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreURLResponse.mm; sourceTree = "<group>"; };
 		37FC96DA1104ED71003E1FAD /* TrailingFloatsRootInlineBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TrailingFloatsRootInlineBox.h; sourceTree = "<group>"; };
 		37FD4297118368460093C029 /* TreeDepthLimit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TreeDepthLimit.h; sourceTree = "<group>"; };
+		381E35E31E8E1B450043E850 /* WebGPUComputePipelineState.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebGPUComputePipelineState.idl; sourceTree = "<group>"; };
+		381E35E41E8E1BD40043E850 /* WebGPUComputePipelineState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUComputePipelineState.h; sourceTree = "<group>"; };
+		381E35E51E8E1C6A0043E850 /* WebGPUComputePipelineState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUComputePipelineState.cpp; sourceTree = "<group>"; };
+		381E35E61E8E1DB90043E850 /* WebGPUComputeCommandEncoder.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebGPUComputeCommandEncoder.idl; sourceTree = "<group>"; };
+		381E35E71E8E1E0A0043E850 /* WebGPUComputeCommandEncoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGPUComputeCommandEncoder.h; sourceTree = "<group>"; };
+		381E35E81E8E1E160043E850 /* WebGPUComputeCommandEncoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUComputeCommandEncoder.cpp; sourceTree = "<group>"; };
+		381E35E91E8E20AC0043E850 /* GPUComputeCommandEncoderMetal.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GPUComputeCommandEncoderMetal.mm; sourceTree = "<group>"; };
+		381E35EA1E8E20D90043E850 /* GPUComputeCommandEncoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPUComputeCommandEncoder.h; sourceTree = "<group>"; };
+		381E35EB1E8E21990043E850 /* GPUComputeCommandEncoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GPUComputeCommandEncoder.cpp; sourceTree = "<group>"; };
+		381E35EC1E8E23E40043E850 /* GPUComputePipelineState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPUComputePipelineState.h; sourceTree = "<group>"; };
+		381E35ED1E8E247A0043E850 /* GPUComputePipelineState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GPUComputePipelineState.cpp; sourceTree = "<group>"; };
+		381E35EE1E8E24CB0043E850 /* GPUComputePipelineStateMetal.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GPUComputePipelineStateMetal.mm; sourceTree = "<group>"; };
+		381E35EF1E8E3D7F0043E850 /* WebGPUSize.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebGPUSize.idl; sourceTree = "<group>"; };
+		381E35F51E8E4C420043E850 /* WebGPUSize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGPUSize.h; sourceTree = "<group>"; };
+		381E35F61E8E4D0E0043E850 /* GPUSize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPUSize.h; sourceTree = "<group>"; };
+		387AE9581E8E92EF0000DE96 /* JSWebGPUSize.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebGPUSize.cpp; sourceTree = "<group>"; };
+		387AE9591E8E92EF0000DE96 /* JSWebGPUSize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebGPUSize.h; sourceTree = "<group>"; };
+		38850C521E964C1100C60753 /* JSWebGPUCommandBufferCustom.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = JSWebGPUCommandBufferCustom.cpp; path = bindings/js/JSWebGPUCommandBufferCustom.cpp; sourceTree = "<group>"; };
+		38F23AAE1E8E83C400CE46F5 /* JSWebGPUComputeCommandEncoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebGPUComputeCommandEncoder.cpp; sourceTree = "<group>"; };
+		38F23AB01E8E83D000CE46F5 /* JSWebGPUComputeCommandEncoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebGPUComputeCommandEncoder.h; sourceTree = "<group>"; };
+		38F23AB11E8E83D000CE46F5 /* JSWebGPUComputePipelineState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebGPUComputePipelineState.cpp; sourceTree = "<group>"; };
+		38F23AB21E8E83D000CE46F5 /* JSWebGPUComputePipelineState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebGPUComputePipelineState.h; sourceTree = "<group>"; };
 		3AC648B1129E146500C3EB25 /* EditingBoundary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditingBoundary.h; sourceTree = "<group>"; };
 		3C244FE4A375AC633F88BE6F /* RenderLayerModelObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderLayerModelObject.h; sourceTree = "<group>"; };
 		3C244FE5A375AC633F88BE6F /* RenderLayerModelObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderLayerModelObject.cpp; sourceTree = "<group>"; };
@@ -16268,6 +16303,7 @@
 		0867D691FE84028FC02AAC07 /* WebKit */ = {
 			isa = PBXGroup;
 			children = (
+				38850C521E964C1100C60753 /* JSWebGPUCommandBufferCustom.cpp */,
 				1C09D04B1E31C32800725F18 /* PAL.xcodeproj */,
 				65C97AF208EA908800ACD273 /* config.h */,
 				EDEC98020AED7E170059137F /* WebCorePrefix.h */,
@@ -17943,6 +17979,12 @@
 				31A088CC1E737B4D003B6609 /* WebGPUCommandQueue.cpp */,
 				31A088CD1E737B4D003B6609 /* WebGPUCommandQueue.h */,
 				31A088CE1E737B4D003B6609 /* WebGPUCommandQueue.idl */,
+				381E35E81E8E1E160043E850 /* WebGPUComputeCommandEncoder.cpp */,
+				381E35E71E8E1E0A0043E850 /* WebGPUComputeCommandEncoder.h */,
+				381E35E61E8E1DB90043E850 /* WebGPUComputeCommandEncoder.idl */,
+				381E35E51E8E1C6A0043E850 /* WebGPUComputePipelineState.cpp */,
+				381E35E41E8E1BD40043E850 /* WebGPUComputePipelineState.h */,
+				381E35E31E8E1B450043E850 /* WebGPUComputePipelineState.idl */,
 				31A088CF1E737B4D003B6609 /* WebGPUDepthStencilDescriptor.cpp */,
 				31A088D01E737B4D003B6609 /* WebGPUDepthStencilDescriptor.h */,
 				31A088D11E737B4D003B6609 /* WebGPUDepthStencilDescriptor.idl */,
@@ -17990,6 +18032,8 @@
 				31A088FB1E737B4D003B6609 /* WebGPURenderPipelineState.cpp */,
 				31A088FC1E737B4D003B6609 /* WebGPURenderPipelineState.h */,
 				31A088FD1E737B4D003B6609 /* WebGPURenderPipelineState.idl */,
+				381E35F51E8E4C420043E850 /* WebGPUSize.h */,
+				381E35EF1E8E3D7F0043E850 /* WebGPUSize.idl */,
 				31A088FE1E737B4D003B6609 /* WebGPUTexture.cpp */,
 				31A088FF1E737B4D003B6609 /* WebGPUTexture.h */,
 				31A089001E737B4D003B6609 /* WebGPUTexture.idl */,
@@ -18026,6 +18070,10 @@
 				316BDBC51E75EE2400DE0D5A /* GPUCommandBuffer.h */,
 				316BDBB91E73880600DE0D5A /* GPUCommandQueue.cpp */,
 				316BDBBA1E73880600DE0D5A /* GPUCommandQueue.h */,
+				381E35EB1E8E21990043E850 /* GPUComputeCommandEncoder.cpp */,
+				381E35EA1E8E20D90043E850 /* GPUComputeCommandEncoder.h */,
+				381E35ED1E8E247A0043E850 /* GPUComputePipelineState.cpp */,
+				381E35EC1E8E23E40043E850 /* GPUComputePipelineState.h */,
 				316BDBF41E762ACD00DE0D5A /* GPUDepthStencilDescriptor.cpp */,
 				316BDBF51E762ACD00DE0D5A /* GPUDepthStencilDescriptor.h */,
 				316BDBEE1E76291B00DE0D5A /* GPUDepthStencilState.cpp */,
@@ -18055,6 +18103,7 @@
 				316BDBFD1E762F5700DE0D5A /* GPURenderPipelineDescriptor.h */,
 				316BDBFE1E762F5700DE0D5A /* GPURenderPipelineState.cpp */,
 				316BDBFF1E762F5700DE0D5A /* GPURenderPipelineState.h */,
+				381E35F61E8E4D0E0043E850 /* GPUSize.h */,
 				316BDBAF1E7354BB00DE0D5A /* GPUTexture.cpp */,
 				316BDBB01E7354BB00DE0D5A /* GPUTexture.h */,
 				316BDBB51E7357CB00DE0D5A /* GPUTextureDescriptor.cpp */,
@@ -21373,6 +21422,10 @@
 				31A089201E738D59003B6609 /* JSWebGPUCommandBuffer.h */,
 				31A089211E738D59003B6609 /* JSWebGPUCommandQueue.cpp */,
 				31A089231E738D59003B6609 /* JSWebGPUCommandQueue.h */,
+				38F23AAE1E8E83C400CE46F5 /* JSWebGPUComputeCommandEncoder.cpp */,
+				38F23AB01E8E83D000CE46F5 /* JSWebGPUComputeCommandEncoder.h */,
+				38F23AB11E8E83D000CE46F5 /* JSWebGPUComputePipelineState.cpp */,
+				38F23AB21E8E83D000CE46F5 /* JSWebGPUComputePipelineState.h */,
 				31A089241E738D59003B6609 /* JSWebGPUDepthStencilDescriptor.cpp */,
 				31A089261E738D59003B6609 /* JSWebGPUDepthStencilDescriptor.h */,
 				31A089271E738D59003B6609 /* JSWebGPUDepthStencilState.cpp */,
@@ -21401,6 +21454,8 @@
 				31A0894A1E738D59003B6609 /* JSWebGPURenderPipelineDescriptor.h */,
 				31A0894B1E738D59003B6609 /* JSWebGPURenderPipelineState.cpp */,
 				31A0894D1E738D59003B6609 /* JSWebGPURenderPipelineState.h */,
+				387AE9581E8E92EF0000DE96 /* JSWebGPUSize.cpp */,
+				387AE9591E8E92EF0000DE96 /* JSWebGPUSize.h */,
 				31A0894E1E738D59003B6609 /* JSWebGPUTexture.cpp */,
 				31A089501E738D59003B6609 /* JSWebGPUTexture.h */,
 				31A089511E738D59003B6609 /* JSWebGPUTextureDescriptor.cpp */,
@@ -23198,6 +23253,8 @@
 				316BDBA51E71FA6F00DE0D5A /* GPUBufferMetal.mm */,
 				316BDBC61E75EE3D00DE0D5A /* GPUCommandBufferMetal.mm */,
 				316BDBBD1E73881300DE0D5A /* GPUCommandQueueMetal.mm */,
+				381E35E91E8E20AC0043E850 /* GPUComputeCommandEncoderMetal.mm */,
+				381E35EE1E8E24CB0043E850 /* GPUComputePipelineStateMetal.mm */,
 				316BDBF81E762BEF00DE0D5A /* GPUDepthStencilDescriptorMetal.mm */,
 				316BDBF21E76293700DE0D5A /* GPUDepthStencilStateMetal.mm */,
 				316BDB881E6E141C00DE0D5A /* GPUDeviceMetal.mm */,
@@ -28117,6 +28174,8 @@
 				31A089561E738D59003B6609 /* JSWebGPUBuffer.h in Headers */,
 				31A089591E738D59003B6609 /* JSWebGPUCommandBuffer.h in Headers */,
 				31A0895C1E738D59003B6609 /* JSWebGPUCommandQueue.h in Headers */,
+				38F23AB31E8E83D000CE46F5 /* JSWebGPUComputeCommandEncoder.h in Headers */,
+				38F23AB51E8E83D000CE46F5 /* JSWebGPUComputePipelineState.h in Headers */,
 				31A0895F1E738D59003B6609 /* JSWebGPUDepthStencilDescriptor.h in Headers */,
 				31A089621E738D59003B6609 /* JSWebGPUDepthStencilState.h in Headers */,
 				31A089651E738D59003B6609 /* JSWebGPUDrawable.h in Headers */,
@@ -28131,6 +28190,7 @@
 				31A089801E738D5A003B6609 /* JSWebGPURenderPipelineColorAttachmentDescriptor.h in Headers */,
 				31A089831E738D5A003B6609 /* JSWebGPURenderPipelineDescriptor.h in Headers */,
 				31A089861E738D5A003B6609 /* JSWebGPURenderPipelineState.h in Headers */,
+				387AE95B1E8E92EF0000DE96 /* JSWebGPUSize.h in Headers */,
 				31A089891E738D5A003B6609 /* JSWebGPUTexture.h in Headers */,
 				31A0898C1E738D5A003B6609 /* JSWebGPUTextureDescriptor.h in Headers */,
 				31C0FF3E0E4CEFAC007D6FE5 /* JSWebKitAnimationEvent.h in Headers */,
@@ -31036,6 +31096,10 @@
 				316BDBC81E75F08D00DE0D5A /* GPUCommandBufferMetal.mm in Sources */,
 				316BDBBB1E73880600DE0D5A /* GPUCommandQueue.cpp in Sources */,
 				316BDBBE1E73881300DE0D5A /* GPUCommandQueueMetal.mm in Sources */,
+				389117431E8F4BF00061033E /* GPUComputeCommandEncoder.cpp in Sources */,
+				389117411E8F4BF00061033E /* GPUComputeCommandEncoderMetal.mm in Sources */,
+				389117441E8F4BF00061033E /* GPUComputePipelineState.cpp in Sources */,
+				389117421E8F4BF00061033E /* GPUComputePipelineStateMetal.mm in Sources */,
 				316BDBF61E762AD100DE0D5A /* GPUDepthStencilDescriptor.cpp in Sources */,
 				316BDBF91E762BF400DE0D5A /* GPUDepthStencilDescriptorMetal.mm in Sources */,
 				316BDBF11E76292500DE0D5A /* GPUDepthStencilState.cpp in Sources */,
@@ -31086,7 +31150,6 @@
 				E112F4711E3A861200D6CDFD /* Grid.cpp in Sources */,
 				E175BA991E8AE3380071454F /* GridPosition.cpp in Sources */,
 				CDF7483E18FEBCEC0006ECC0 /* GridPositionsResolver.cpp in Sources */,
-				316DCB4B1E7910A6001B5F87 /* JSRTCIceConnectionState.cpp in Sources */,
 				E12DE7171E4B749C00F9ACCF /* GridTrackSizingAlgorithm.cpp in Sources */,
 				F55B3DBF1251F12D003EF269 /* HiddenInputType.cpp in Sources */,
 				515BE19B1D54F6C100DD7C68 /* HIDGamepad.cpp in Sources */,
@@ -31467,7 +31530,6 @@
 				94E839551DFB2BC4007BC6A7 /* JSCSSNamespaceRule.cpp in Sources */,
 				BC46C2020C0DDC8F0020CFC3 /* JSCSSPageRule.cpp in Sources */,
 				14CF7B3309F6ECD700EB3665 /* JSCSSRule.cpp in Sources */,
-				316DCB4D1E7910A6001B5F87 /* JSRTCIceGatheringState.cpp in Sources */,
 				BC46C1EE0C0DDBDF0020CFC3 /* JSCSSRuleCustom.cpp in Sources */,
 				A8D05FA70A23B301005E7203 /* JSCSSRuleList.cpp in Sources */,
 				9392262F10321084006E7D5D /* JSCSSRuleListCustom.cpp in Sources */,
@@ -31848,9 +31910,12 @@
 				07969DAF17D14151007FF842 /* JSRTCDTMFSender.cpp in Sources */,
 				07969DB117D14151007FF842 /* JSRTCDTMFToneChangeEvent.cpp in Sources */,
 				07969DB517D14151007FF842 /* JSRTCIceCandidate.cpp in Sources */,
-				07969DB717D14151007FF842 /* JSRTCPeerConnectionIceEvent.cpp in Sources */,
+				316DCB4B1E7910A6001B5F87 /* JSRTCIceConnectionState.cpp in Sources */,
+				316DCB4D1E7910A6001B5F87 /* JSRTCIceGatheringState.cpp in Sources */,
 				073794EB19EE341E00E5A045 /* JSRTCIceServer.cpp in Sources */,
+				316DCB321E78FB70001B5F87 /* JSRTCOfferOptions.cpp in Sources */,
 				07969DB917D14151007FF842 /* JSRTCPeerConnection.cpp in Sources */,
+				07969DB717D14151007FF842 /* JSRTCPeerConnectionIceEvent.cpp in Sources */,
 				5E2C43711BCF0D750001E2BC /* JSRTCRtpReceiver.cpp in Sources */,
 				5E2C43731BCF0D750001E2BC /* JSRTCRtpSender.cpp in Sources */,
 				5E2C43731BCF0D750001E2BE /* JSRTCRtpParameters.cpp in Sources */,
@@ -32107,7 +32172,10 @@
 				77EF62F312F9DB7400C77BD2 /* JSWebGLVertexArrayObjectOES.cpp in Sources */,
 				31A089541E738D59003B6609 /* JSWebGPUBuffer.cpp in Sources */,
 				31A089571E738D59003B6609 /* JSWebGPUCommandBuffer.cpp in Sources */,
+				38850C531E964C1100C60753 /* JSWebGPUCommandBufferCustom.cpp in Sources */,
 				31A0895A1E738D59003B6609 /* JSWebGPUCommandQueue.cpp in Sources */,
+				38F23AAF1E8E83C400CE46F5 /* JSWebGPUComputeCommandEncoder.cpp in Sources */,
+				38F23AB41E8E83D000CE46F5 /* JSWebGPUComputePipelineState.cpp in Sources */,
 				31A0895D1E738D59003B6609 /* JSWebGPUDepthStencilDescriptor.cpp in Sources */,
 				31A089601E738D59003B6609 /* JSWebGPUDepthStencilState.cpp in Sources */,
 				31A089631E738D59003B6609 /* JSWebGPUDrawable.cpp in Sources */,
@@ -32124,6 +32192,7 @@
 				31A0897E1E738D5A003B6609 /* JSWebGPURenderPipelineColorAttachmentDescriptor.cpp in Sources */,
 				31A089811E738D5A003B6609 /* JSWebGPURenderPipelineDescriptor.cpp in Sources */,
 				31A089841E738D5A003B6609 /* JSWebGPURenderPipelineState.cpp in Sources */,
+				387AE95A1E8E92EF0000DE96 /* JSWebGPUSize.cpp in Sources */,
 				31A089871E738D5A003B6609 /* JSWebGPUTexture.cpp in Sources */,
 				31A0898A1E738D5A003B6609 /* JSWebGPUTextureDescriptor.cpp in Sources */,
 				31C0FF3D0E4CEFAC007D6FE5 /* JSWebKitAnimationEvent.cpp in Sources */,
@@ -32183,7 +32252,6 @@
 				A456FA2611AD4A830020B420 /* LabelsNodeList.cpp in Sources */,
 				E18772F1126E2629003DD586 /* Language.cpp in Sources */,
 				2917B5611473496C0052C9D0 /* LayerFlushScheduler.cpp in Sources */,
-				316DCB321E78FB70001B5F87 /* JSRTCOfferOptions.cpp in Sources */,
 				2917B566147349950052C9D0 /* LayerFlushSchedulerMac.cpp in Sources */,
 				7AA3A69F194B59B6001CBD24 /* LayerPool.cpp in Sources */,
 				0F36E7371BD1837A002DB891 /* LayoutPoint.cpp in Sources */,
@@ -33439,6 +33507,8 @@
 				31A089041E737D51003B6609 /* WebGPUBuffer.cpp in Sources */,
 				31A089051E737D51003B6609 /* WebGPUCommandBuffer.cpp in Sources */,
 				31A089061E737D51003B6609 /* WebGPUCommandQueue.cpp in Sources */,
+				389D1E1E1E8F2B9E009795B9 /* WebGPUComputeCommandEncoder.cpp in Sources */,
+				389D1E1F1E8F2B9F009795B9 /* WebGPUComputePipelineState.cpp in Sources */,
 				31A089071E737D51003B6609 /* WebGPUDepthStencilDescriptor.cpp in Sources */,
 				31A089081E737D51003B6609 /* WebGPUDepthStencilState.cpp in Sources */,
 				31A089091E737D51003B6609 /* WebGPUDrawable.cpp in Sources */,

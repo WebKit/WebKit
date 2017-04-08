@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Yuichiro Kikura (y.kikura@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,65 +23,29 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "GPUCommandBuffer.h"
+#pragma once
 
 #if ENABLE(WEBGPU)
 
-#import "GPUCommandQueue.h"
-#import "GPUDevice.h"
-#import "GPUDrawable.h"
-#import "Logging.h"
+#include "WebGPUObject.h"
 
-#import <Metal/Metal.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
-GPUCommandBuffer::GPUCommandBuffer(GPUCommandQueue* queue)
-{
-    LOG(WebGPU, "GPUCommandBuffer::GPUCommandBuffer()");
+class GPUComputePipelineState;
+class WebGPUFunction;
 
-    if (!queue || !queue->platformCommandQueue())
-        return;
+class WebGPUComputePipelineState : public WebGPUObject {
+public:
+    virtual ~WebGPUComputePipelineState();
+    static Ref<WebGPUComputePipelineState> create(WebGPURenderingContext*, WebGPUFunction*);
+    GPUComputePipelineState* computePipelineState() { return m_computePipelineState.get(); }
 
-    m_commandBuffer = (MTLCommandBuffer *)[queue->platformCommandQueue() commandBuffer];
-}
-
-MTLCommandBuffer *GPUCommandBuffer::platformCommandBuffer()
-{
-    return m_commandBuffer.get();
-}
-
-void GPUCommandBuffer::presentDrawable(GPUDrawable* drawable)
-{
-    if (!m_commandBuffer || !drawable->platformDrawable())
-        return;
-
-    [m_commandBuffer presentDrawable:static_cast<id<MTLDrawable>>(drawable->platformDrawable())];
-    drawable->release();
-}
-
-void GPUCommandBuffer::commit()
-{
-    if (!m_commandBuffer)
-        return;
-
-    [m_commandBuffer commit];
-}
-
-void GPUCommandBuffer::completed(Ref<DeferredPromise>&& passedPromise)
-{
-    if (!m_commandBuffer)
-        return;
-
-    RefPtr<DeferredPromise> promise(WTFMove(passedPromise));
-
-    [m_commandBuffer addCompletedHandler:^(id<MTLCommandBuffer>) {
-        callOnMainThread([promise] {
-            promise->resolve();
-        });
-    }];
-}
+private:
+    WebGPUComputePipelineState(WebGPURenderingContext*, WebGPUFunction*);
+    RefPtr<GPUComputePipelineState> m_computePipelineState;
+};
 
 } // namespace WebCore
 

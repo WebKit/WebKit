@@ -576,6 +576,8 @@ JS_BINDING_IDLS = \
     $(WebCore)/html/canvas/WebGPUBuffer.idl \
     $(WebCore)/html/canvas/WebGPUCommandBuffer.idl \
     $(WebCore)/html/canvas/WebGPUCommandQueue.idl \
+	$(WebCore)/html/canvas/WebGPUComputeCommandEncoder.idl \
+	$(WebCore)/html/canvas/WebGPUComputePipelineState.idl \
     $(WebCore)/html/canvas/WebGPUDepthStencilDescriptor.idl \
     $(WebCore)/html/canvas/WebGPUDepthStencilState.idl \
     $(WebCore)/html/canvas/WebGPUDrawable.idl \
@@ -590,6 +592,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/html/canvas/WebGPURenderPipelineColorAttachmentDescriptor.idl \
     $(WebCore)/html/canvas/WebGPURenderPipelineDescriptor.idl \
     $(WebCore)/html/canvas/WebGPURenderPipelineState.idl \
+	$(WebCore)/html/canvas/WebGPUSize.idl \
     $(WebCore)/html/canvas/WebGPUTexture.idl \
     $(WebCore)/html/canvas/WebGPUTextureDescriptor.idl \
     $(WebCore)/html/track/AudioTrack.idl \

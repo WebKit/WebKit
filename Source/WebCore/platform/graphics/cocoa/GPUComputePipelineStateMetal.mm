@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Yuichiro Kikura (y.kikura@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,63 +24,31 @@
  */
 
 #import "config.h"
-#import "GPUCommandBuffer.h"
+#import "GPUComputePipelineState.h"
 
 #if ENABLE(WEBGPU)
 
-#import "GPUCommandQueue.h"
 #import "GPUDevice.h"
-#import "GPUDrawable.h"
+#import "GPUFunction.h"
 #import "Logging.h"
 
 #import <Metal/Metal.h>
 
 namespace WebCore {
 
-GPUCommandBuffer::GPUCommandBuffer(GPUCommandQueue* queue)
+GPUComputePipelineState::GPUComputePipelineState(GPUDevice* device, GPUFunction* function)
 {
-    LOG(WebGPU, "GPUCommandBuffer::GPUCommandBuffer()");
+    LOG(WebGPU, "GPUComputePipelineState::GPUComputePipelineState()");
 
-    if (!queue || !queue->platformCommandQueue())
+    if (!device || !device->platformDevice() || !function || !function->platformFunction())
         return;
 
-    m_commandBuffer = (MTLCommandBuffer *)[queue->platformCommandQueue() commandBuffer];
+    m_computePipelineState = adoptNS((MTLComputePipelineState *)[device->platformDevice() newComputePipelineStateWithFunction:(id<MTLFunction>)function->platformFunction() error:nil]);
 }
 
-MTLCommandBuffer *GPUCommandBuffer::platformCommandBuffer()
+MTLComputePipelineState *GPUComputePipelineState::platformComputePipelineState()
 {
-    return m_commandBuffer.get();
-}
-
-void GPUCommandBuffer::presentDrawable(GPUDrawable* drawable)
-{
-    if (!m_commandBuffer || !drawable->platformDrawable())
-        return;
-
-    [m_commandBuffer presentDrawable:static_cast<id<MTLDrawable>>(drawable->platformDrawable())];
-    drawable->release();
-}
-
-void GPUCommandBuffer::commit()
-{
-    if (!m_commandBuffer)
-        return;
-
-    [m_commandBuffer commit];
-}
-
-void GPUCommandBuffer::completed(Ref<DeferredPromise>&& passedPromise)
-{
-    if (!m_commandBuffer)
-        return;
-
-    RefPtr<DeferredPromise> promise(WTFMove(passedPromise));
-
-    [m_commandBuffer addCompletedHandler:^(id<MTLCommandBuffer>) {
-        callOnMainThread([promise] {
-            promise->resolve();
-        });
-    }];
+    return m_computePipelineState.get();
 }
 
 } // namespace WebCore

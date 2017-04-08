@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Yuichiro Kikura (y.kikura@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,66 +23,46 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "GPUCommandBuffer.h"
+#pragma once
 
 #if ENABLE(WEBGPU)
 
-#import "GPUCommandQueue.h"
-#import "GPUDevice.h"
-#import "GPUDrawable.h"
-#import "Logging.h"
+#include "GPUSize.h"
+#include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
+#include <wtf/RetainPtr.h>
 
-#import <Metal/Metal.h>
+#if PLATFORM(COCOA)
+OBJC_CLASS MTLComputeCommandEncoder;
+#endif
 
 namespace WebCore {
+    
+class GPUBuffer;
+class GPUCommandBuffer;
+class GPUComputePipelineState;
 
-GPUCommandBuffer::GPUCommandBuffer(GPUCommandQueue* queue)
-{
-    LOG(WebGPU, "GPUCommandBuffer::GPUCommandBuffer()");
-
-    if (!queue || !queue->platformCommandQueue())
-        return;
-
-    m_commandBuffer = (MTLCommandBuffer *)[queue->platformCommandQueue() commandBuffer];
-}
-
-MTLCommandBuffer *GPUCommandBuffer::platformCommandBuffer()
-{
-    return m_commandBuffer.get();
-}
-
-void GPUCommandBuffer::presentDrawable(GPUDrawable* drawable)
-{
-    if (!m_commandBuffer || !drawable->platformDrawable())
-        return;
-
-    [m_commandBuffer presentDrawable:static_cast<id<MTLDrawable>>(drawable->platformDrawable())];
-    drawable->release();
-}
-
-void GPUCommandBuffer::commit()
-{
-    if (!m_commandBuffer)
-        return;
-
-    [m_commandBuffer commit];
-}
-
-void GPUCommandBuffer::completed(Ref<DeferredPromise>&& passedPromise)
-{
-    if (!m_commandBuffer)
-        return;
-
-    RefPtr<DeferredPromise> promise(WTFMove(passedPromise));
-
-    [m_commandBuffer addCompletedHandler:^(id<MTLCommandBuffer>) {
-        callOnMainThread([promise] {
-            promise->resolve();
-        });
-    }];
-}
-
+class GPUComputeCommandEncoder : public RefCounted<GPUComputeCommandEncoder> {
+public:
+    static RefPtr<GPUComputeCommandEncoder> create(GPUCommandBuffer*);
+    WEBCORE_EXPORT ~GPUComputeCommandEncoder();
+        
+    WEBCORE_EXPORT void setComputePipelineState(GPUComputePipelineState*);
+    WEBCORE_EXPORT void setBuffer(GPUBuffer*, unsigned, unsigned);
+    WEBCORE_EXPORT void dispatch(GPUSize, GPUSize);
+    WEBCORE_EXPORT void endEncoding();
+        
+#if PLATFORM(COCOA)
+    WEBCORE_EXPORT MTLComputeCommandEncoder *platformComputeCommandEncoder();
+#endif
+        
+private:
+    GPUComputeCommandEncoder(GPUCommandBuffer*);
+        
+#if PLATFORM(COCOA)
+    RetainPtr<MTLComputeCommandEncoder> m_computeCommandEncoder;
+#endif
+};
+    
 } // namespace WebCore
-
 #endif

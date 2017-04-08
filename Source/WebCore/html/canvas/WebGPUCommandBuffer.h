@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Yuichiro Kikura (y.kikura@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,6 +40,7 @@ class WebGPUDrawable;
 class WebGPUFunction;
 class WebGPURenderCommandEncoder;
 class WebGPURenderPassDescriptor;
+class WebGPUComputeCommandEncoder;
 
 class WebGPUCommandBuffer : public WebGPUObject {
 public:
@@ -49,6 +51,7 @@ public:
     void presentDrawable(WebGPUDrawable&);
 
     RefPtr<WebGPURenderCommandEncoder> createRenderCommandEncoderWithDescriptor(WebGPURenderPassDescriptor&);
+    RefPtr<WebGPUComputeCommandEncoder> createComputeCommandEncoder();
 
     GPUCommandBuffer* commandBuffer() { return m_commandBuffer.get(); }
 

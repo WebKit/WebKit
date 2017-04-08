@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Yuichiro Kikura (y.kikura@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,9 +34,11 @@
 #include "GPUDevice.h"
 #include "WebGPUBuffer.h"
 #include "WebGPUCommandQueue.h"
+#include "WebGPUComputePipelineState.h"
 #include "WebGPUDepthStencilDescriptor.h"
 #include "WebGPUDepthStencilState.h"
 #include "WebGPUDrawable.h"
+#include "WebGPUFunction.h"
 #include "WebGPULibrary.h"
 #include "WebGPURenderPassDescriptor.h"
 #include "WebGPURenderPipelineDescriptor.h"
@@ -156,6 +159,12 @@ RefPtr<WebGPURenderPipelineState> WebGPURenderingContext::createRenderPipelineSt
 RefPtr<WebGPUDepthStencilState> WebGPURenderingContext::createDepthStencilState(WebGPUDepthStencilDescriptor& descriptor)
 {
     RefPtr<WebGPUDepthStencilState> state = WebGPUDepthStencilState::create(this, &descriptor);
+    return state;
+}
+
+RefPtr<WebGPUComputePipelineState> WebGPURenderingContext::createComputePipelineState(WebGPUFunction& function)
+{
+    RefPtr<WebGPUComputePipelineState> state = WebGPUComputePipelineState::create(this, &function);
     return state;
 }
 

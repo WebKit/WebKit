@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Yuichiro Kikura (y.kikura@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +33,7 @@
 #include "GPUCommandQueue.h"
 #include "Logging.h"
 #include "WebGPUCommandQueue.h"
+#include "WebGPUComputeCommandEncoder.h"
 #include "WebGPUDrawable.h"
 #include "WebGPURenderCommandEncoder.h"
 #include "WebGPURenderPassDescriptor.h"
@@ -77,6 +79,12 @@ void WebGPUCommandBuffer::presentDrawable(WebGPUDrawable& drawable)
 RefPtr<WebGPURenderCommandEncoder> WebGPUCommandBuffer::createRenderCommandEncoderWithDescriptor(WebGPURenderPassDescriptor& descriptor)
 {
     RefPtr<WebGPURenderCommandEncoder> commandEncoder = WebGPURenderCommandEncoder::create(this->context(), this, &descriptor);
+    return commandEncoder;
+}
+
+RefPtr<WebGPUComputeCommandEncoder> WebGPUCommandBuffer::createComputeCommandEncoder()
+{
+    RefPtr<WebGPUComputeCommandEncoder> commandEncoder = WebGPUComputeCommandEncoder::create(this->context(), this);
     return commandEncoder;
 }
 

@@ -1,3 +1,79 @@
+2017-04-07  Yuichiro Kikura  <y.kikura@gmail.com>
+
+        WebGPU: implement ComputeCommandEncoder and related components
+        https://bugs.webkit.org/show_bug.cgi?id=170444
+
+        Reviewed by Alex Christensen.
+
+        I implemented WebGPUComputeCommandEncoder and related components based on the WebGPU proposal.
+        https://webkit.org/wp-content/uploads/webgpu-api-proposal.html
+
+        Test: fast/canvas/webgpu/webgpu-dispatch.html
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * PlatformMac.cmake:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSWebGPUCommandBufferCustom.cpp: Added.
+        (WebCore::JSWebGPUCommandBuffer::completed):
+        * html/canvas/WebGPUCommandBuffer.cpp:
+        (WebCore::WebGPUCommandBuffer::createComputeCommandEncoder):
+        * html/canvas/WebGPUCommandBuffer.h:
+        * html/canvas/WebGPUCommandBuffer.idl:
+        * html/canvas/WebGPUComputeCommandEncoder.cpp: Added.
+        (WebCore::GPUSizeMake):
+        (WebCore::WebGPUComputeCommandEncoder::create):
+        (WebCore::WebGPUComputeCommandEncoder::WebGPUComputeCommandEncoder):
+        (WebCore::WebGPUComputeCommandEncoder::~WebGPUComputeCommandEncoder):
+        (WebCore::WebGPUComputeCommandEncoder::setComputePipelineState):
+        (WebCore::WebGPUComputeCommandEncoder::setBuffer):
+        (WebCore::WebGPUComputeCommandEncoder::dispatch):
+        (WebCore::WebGPUComputeCommandEncoder::endEncoding):
+        * html/canvas/WebGPUComputeCommandEncoder.h: Copied from Source/WebCore/html/canvas/WebGPUCommandBuffer.h.
+        (WebCore::WebGPUComputeCommandEncoder::computeCommandEncoder):
+        * html/canvas/WebGPUComputeCommandEncoder.idl: Copied from Source/WebCore/html/canvas/WebGPUCommandBuffer.idl.
+        * html/canvas/WebGPUComputePipelineState.cpp: Copied from Source/WebCore/platform/graphics/gpu/GPUCommandBuffer.cpp.
+        (WebCore::WebGPUComputePipelineState::create):
+        (WebCore::WebGPUComputePipelineState::WebGPUComputePipelineState):
+        (WebCore::WebGPUComputePipelineState::~WebGPUComputePipelineState):
+        * html/canvas/WebGPUComputePipelineState.h: Copied from Source/WebCore/html/canvas/WebGPUCommandBuffer.h.
+        (WebCore::WebGPUComputePipelineState::computePipelineState):
+        * html/canvas/WebGPUComputePipelineState.idl: Copied from Source/WebCore/html/canvas/WebGPUCommandBuffer.idl.
+        * html/canvas/WebGPURenderingContext.cpp:
+        (WebCore::WebGPURenderingContext::createComputePipelineState):
+        * html/canvas/WebGPURenderingContext.h:
+        * html/canvas/WebGPURenderingContext.idl:
+        * html/canvas/WebGPUSize.h: Copied from Source/WebCore/html/canvas/WebGPUCommandBuffer.idl.
+        * html/canvas/WebGPUSize.idl: Copied from Source/WebCore/html/canvas/WebGPUCommandBuffer.idl.
+        * platform/graphics/cocoa/GPUCommandBufferMetal.mm:
+        (WebCore::GPUCommandBuffer::completed):
+        * platform/graphics/cocoa/GPUComputeCommandEncoderMetal.mm: Added.
+        (WebCore::MTLSizeMake):
+        (WebCore::GPUComputeCommandEncoder::GPUComputeCommandEncoder):
+        (WebCore::GPUComputeCommandEncoder::setComputePipelineState):
+        (WebCore::GPUComputeCommandEncoder::setBuffer):
+        (WebCore::GPUComputeCommandEncoder::dispatch):
+        (WebCore::GPUComputeCommandEncoder::endEncoding):
+        (WebCore::GPUComputeCommandEncoder::platformComputeCommandEncoder):
+        * platform/graphics/cocoa/GPUComputePipelineStateMetal.mm: Copied from Source/WebCore/platform/graphics/gpu/GPUCommandBuffer.cpp.
+        (WebCore::GPUComputePipelineState::GPUComputePipelineState):
+        (WebCore::GPUComputePipelineState::platformComputePipelineState):
+        * platform/graphics/gpu/GPUCommandBuffer.cpp:
+        (WebCore::GPUCommandBuffer::createComputeCommandEncoder):
+        * platform/graphics/gpu/GPUCommandBuffer.h:
+        * platform/graphics/gpu/GPUComputeCommandEncoder.cpp: Copied from Source/WebCore/platform/graphics/gpu/GPUCommandBuffer.cpp.
+        (WebCore::GPUComputeCommandEncoder::create):
+        (WebCore::GPUComputeCommandEncoder::~GPUComputeCommandEncoder):
+        (WebCore::GPUComputeCommandEncoder::setComputePipelineState):
+        (WebCore::GPUComputeCommandEncoder::setBuffer):
+        (WebCore::GPUComputeCommandEncoder::endEncoding):
+        * platform/graphics/gpu/GPUComputeCommandEncoder.h: Copied from Source/WebCore/platform/graphics/gpu/GPUCommandBuffer.h.
+        * platform/graphics/gpu/GPUComputePipelineState.cpp: Copied from Source/WebCore/html/canvas/WebGPUCommandBuffer.idl.
+        (WebCore::GPUComputePipelineState::create):
+        (WebCore::GPUComputePipelineState::~GPUComputePipelineState):
+        * platform/graphics/gpu/GPUComputePipelineState.h: Copied from Source/WebCore/platform/graphics/gpu/GPUCommandBuffer.h.
+        * platform/graphics/gpu/GPUSize.h: Copied from Source/WebCore/html/canvas/WebGPUCommandBuffer.idl.
+
 2017-04-07  Alex Christensen  <achristensen@webkit.org>
 
         Private browsing sessions should not look in keychain for client certificates

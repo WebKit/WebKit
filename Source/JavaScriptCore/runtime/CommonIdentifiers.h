@@ -132,6 +132,8 @@
     macro(WebGPUBuffer) \
     macro(WebGPUCommandBuffer) \
     macro(WebGPUCommandQueue) \
+    macro(WebGPUComputeCommandEncoder) \
+    macro(WebGPUComputePipelineState) \
     macro(WebGPUDepthStencilDescriptor) \
     macro(WebGPUDepthStencilState) \
     macro(WebGPUDrawable) \
@@ -146,6 +148,7 @@
     macro(WebGPURenderPipelineDescriptor) \
     macro(WebGPURenderPipelineState) \
     macro(WebGPURenderingContext) \
+    macro(WebGPUSize) \
     macro(WebGPUTexture) \
     macro(WebGPUTextureDescriptor) \
     macro(WebSocket) \

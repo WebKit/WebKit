@@ -1,3 +1,15 @@
+2017-04-07  Yuichiro Kikura  <y.kikura@gmail.com>
+
+        WebGPU: implement ComputeCommandEncoder and related components    
+        https://bugs.webkit.org/show_bug.cgi?id=170444
+
+        Reviewed by Alex Christensen.
+
+        Added a test case to ensure ComputeCommandEncoder is dispatched successfully
+
+        * fast/canvas/webgpu/webgpu-dispatch-expected.txt: Added.
+        * fast/canvas/webgpu/webgpu-dispatch.html: Added.
+
 2017-04-07  Zalan Bujtas  <zalan@apple.com>
 
         Simple line layout: FlowContents::segmentIndexForRunSlow skips empty runs.

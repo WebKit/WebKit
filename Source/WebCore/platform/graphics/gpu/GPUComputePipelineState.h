@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Yuichiro Kikura (y.kikura@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,66 +23,40 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "GPUCommandBuffer.h"
+#pragma once
 
 #if ENABLE(WEBGPU)
 
-#import "GPUCommandQueue.h"
-#import "GPUDevice.h"
-#import "GPUDrawable.h"
-#import "Logging.h"
+#include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
+#include <wtf/RetainPtr.h>
+#include <wtf/text/WTFString.h>
 
-#import <Metal/Metal.h>
+#if PLATFORM(COCOA)
+OBJC_CLASS MTLComputePipelineState;
+#endif
 
 namespace WebCore {
 
-GPUCommandBuffer::GPUCommandBuffer(GPUCommandQueue* queue)
-{
-    LOG(WebGPU, "GPUCommandBuffer::GPUCommandBuffer()");
+class GPUDevice;
+class GPUFunction;
 
-    if (!queue || !queue->platformCommandQueue())
-        return;
+class GPUComputePipelineState : public RefCounted<GPUComputePipelineState> {
+public:
+    static RefPtr<GPUComputePipelineState> create(GPUDevice*, GPUFunction*);
+    WEBCORE_EXPORT ~GPUComputePipelineState();
 
-    m_commandBuffer = (MTLCommandBuffer *)[queue->platformCommandQueue() commandBuffer];
-}
+#if PLATFORM(COCOA)
+    WEBCORE_EXPORT MTLComputePipelineState *platformComputePipelineState();
+#endif
 
-MTLCommandBuffer *GPUCommandBuffer::platformCommandBuffer()
-{
-    return m_commandBuffer.get();
-}
+private:
+    GPUComputePipelineState(GPUDevice*, GPUFunction*);
 
-void GPUCommandBuffer::presentDrawable(GPUDrawable* drawable)
-{
-    if (!m_commandBuffer || !drawable->platformDrawable())
-        return;
-
-    [m_commandBuffer presentDrawable:static_cast<id<MTLDrawable>>(drawable->platformDrawable())];
-    drawable->release();
-}
-
-void GPUCommandBuffer::commit()
-{
-    if (!m_commandBuffer)
-        return;
-
-    [m_commandBuffer commit];
-}
-
-void GPUCommandBuffer::completed(Ref<DeferredPromise>&& passedPromise)
-{
-    if (!m_commandBuffer)
-        return;
-
-    RefPtr<DeferredPromise> promise(WTFMove(passedPromise));
-
-    [m_commandBuffer addCompletedHandler:^(id<MTLCommandBuffer>) {
-        callOnMainThread([promise] {
-            promise->resolve();
-        });
-    }];
-}
+#if PLATFORM(COCOA)
+    RetainPtr<MTLComputePipelineState> m_computePipelineState;
+#endif
+};
 
 } // namespace WebCore
-
 #endif

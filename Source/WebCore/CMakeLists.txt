@@ -601,6 +601,8 @@ set(WebCore_NON_SVG_IDL_FILES
     html/canvas/WebGPUBuffer.idl
     html/canvas/WebGPUCommandBuffer.idl
     html/canvas/WebGPUCommandQueue.idl
+    html/canvas/WebGPUComputeCommandEncoder.idl
+    html/canvas/WebGPUComputePipelineState.idl
     html/canvas/WebGPUDepthStencilDescriptor.idl
     html/canvas/WebGPUDepthStencilState.idl
     html/canvas/WebGPUDrawable.idl
@@ -615,6 +617,7 @@ set(WebCore_NON_SVG_IDL_FILES
     html/canvas/WebGPURenderPipelineDescriptor.idl
     html/canvas/WebGPURenderPipelineState.idl
     html/canvas/WebGPURenderingContext.idl
+    html/canvas/WebGPUSize.idl
     html/canvas/WebGPUTexture.idl
     html/canvas/WebGPUTextureDescriptor.idl
 
@@ -1230,6 +1233,7 @@ set(WebCore_SOURCES
     bindings/js/JSWebGL2RenderingContextCustom.cpp
     bindings/js/JSWebGLRenderingContextBaseCustom.cpp
     bindings/js/JSWebGLRenderingContextCustom.cpp
+    bindings/js/JSWebGPUCommandBufferCustom.cpp
     bindings/js/JSWebGPURenderPassAttachmentDescriptorCustom.cpp
     bindings/js/JSWebGPURenderingContextCustom.cpp
     bindings/js/JSWebKitSubtleCryptoCustom.cpp
@@ -1825,6 +1829,8 @@ set(WebCore_SOURCES
     html/canvas/WebGPUBuffer.cpp
     html/canvas/WebGPUCommandBuffer.cpp
     html/canvas/WebGPUCommandQueue.cpp
+    html/canvas/WebGPUComputeCommandEncoder.cpp
+    html/canvas/WebGPUComputePipelineState.cpp
     html/canvas/WebGPUDepthStencilDescriptor.cpp
     html/canvas/WebGPUDepthStencilState.cpp
     html/canvas/WebGPUDrawable.cpp
@@ -2340,6 +2346,8 @@ set(WebCore_SOURCES
     platform/graphics/gpu/GPUBuffer.cpp
     platform/graphics/gpu/GPUCommandBuffer.cpp
     platform/graphics/gpu/GPUCommandQueue.cpp
+    platform/graphics/gpu/GPUComputeCommandEncoder.cpp
+    platform/graphics/gpu/GPUComputePipelineState.cpp
     platform/graphics/gpu/GPUDepthStencilDescriptor.cpp
     platform/graphics/gpu/GPUDepthStencilState.cpp
     platform/graphics/gpu/GPUDevice.cpp

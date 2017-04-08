@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Yuichiro Kikura (y.kikura@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +28,8 @@
 
 #if ENABLE(WEBGPU)
 
+#include "JSDOMPromise.h"
+
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
@@ -38,6 +41,7 @@ OBJC_CLASS MTLCommandBuffer;
 namespace WebCore {
 
 class GPUCommandQueue;
+class GPUComputeCommandEncoder;
 class GPUDrawable;
 class GPURenderCommandEncoder;
 class GPURenderPassDescriptor;
@@ -51,6 +55,8 @@ public:
     WEBCORE_EXPORT void presentDrawable(GPUDrawable*);
 
     WEBCORE_EXPORT RefPtr<GPURenderCommandEncoder> createRenderCommandEncoder(GPURenderPassDescriptor*);
+    WEBCORE_EXPORT RefPtr<GPUComputeCommandEncoder> createComputeCommandEncoder();
+    WEBCORE_EXPORT void completed(Ref<DeferredPromise>&&);
 
 #if PLATFORM(COCOA)
     WEBCORE_EXPORT MTLCommandBuffer *platformCommandBuffer();

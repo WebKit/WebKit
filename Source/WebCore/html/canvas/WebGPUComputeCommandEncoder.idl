@@ -1,5 +1,4 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
  * Copyright (C) 2017 Yuichiro Kikura (y.kikura@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,12 +26,12 @@
 [
     Conditional=WEBGPU,
     EnabledAtRuntime=WebGPU
-] interface WebGPUCommandBuffer {
+] interface WebGPUComputeCommandEncoder {
 
-    WebGPURenderCommandEncoder createRenderCommandEncoderWithDescriptor(WebGPURenderPassDescriptor descriptor);
-    WebGPUComputeCommandEncoder createComputeCommandEncoder();
-    void commit();
-    void presentDrawable(WebGPUDrawable drawable);
-    [CachedAttribute, CustomGetter] readonly attribute Promise<void> completed;
+    void setComputePipelineState(WebGPUComputePipelineState pipelineState);
+    void setBuffer(WebGPUBuffer buffer, unsigned long offset, unsigned long index);
+    void dispatch(WebGPUSize threadgroupsPerGrid, WebGPUSize threadsPerThreadgroup);
+
+    void endEncoding();
 
 };

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Yuichiro Kikura (y.kikura@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,6 +35,8 @@
 namespace WebCore {
 
 class WebGPUCommandQueue;
+class WebGPUComputePipelineState;
+class WebGPUFunction;
 class WebGPULibrary;
 class WebGPURenderPipelineDescriptor;
 class WebGPURenderPipelineState;
@@ -66,6 +69,8 @@ public:
     RefPtr<WebGPURenderPipelineState> createRenderPipelineState(WebGPURenderPipelineDescriptor&);
 
     RefPtr<WebGPUDepthStencilState> createDepthStencilState(WebGPUDepthStencilDescriptor&);
+
+    RefPtr<WebGPUComputePipelineState> createComputePipelineState(WebGPUFunction&);
 
     RefPtr<WebGPUCommandQueue> createCommandQueue();
 

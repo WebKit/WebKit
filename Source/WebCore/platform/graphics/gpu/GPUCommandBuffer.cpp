@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Yuichiro Kikura (y.kikura@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +30,7 @@
 #if ENABLE(WEBGPU)
 
 #include "GPUCommandQueue.h"
+#include "GPUComputeCommandEncoder.h"
 #include "GPUDevice.h"
 #include "GPURenderCommandEncoder.h"
 #include "GPURenderPassDescriptor.h"
@@ -52,8 +54,17 @@ RefPtr<GPURenderCommandEncoder> GPUCommandBuffer::createRenderCommandEncoder(GPU
     return GPURenderCommandEncoder::create(this, descriptor);
 }
 
+RefPtr<GPUComputeCommandEncoder> GPUCommandBuffer::createComputeCommandEncoder()
+{
+    return GPUComputeCommandEncoder::create(this);
+}
+
 #if !PLATFORM(COCOA)
 void GPUCommandBuffer::presentDrawable(GPUDrawable*)
+{
+}
+
+void GPUCommandBuffer::completed(Ref<DeferredPromise>&&);
 {
 }
 #endif

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Yuichiro Kikura (y.kikura@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,66 +23,47 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "GPUCommandBuffer.h"
+#include "config.h"
+#include "GPUComputeCommandEncoder.h"
 
 #if ENABLE(WEBGPU)
 
-#import "GPUCommandQueue.h"
-#import "GPUDevice.h"
-#import "GPUDrawable.h"
-#import "Logging.h"
-
-#import <Metal/Metal.h>
+#include "GPUBuffer.h"
+#include "GPUCommandBuffer.h"
+#include "GPUComputePipelineState.h"
+#include "Logging.h"
 
 namespace WebCore {
-
-GPUCommandBuffer::GPUCommandBuffer(GPUCommandQueue* queue)
+    
+RefPtr<GPUComputeCommandEncoder> GPUComputeCommandEncoder::create(GPUCommandBuffer* buffer)
 {
-    LOG(WebGPU, "GPUCommandBuffer::GPUCommandBuffer()");
-
-    if (!queue || !queue->platformCommandQueue())
-        return;
-
-    m_commandBuffer = (MTLCommandBuffer *)[queue->platformCommandQueue() commandBuffer];
+    RefPtr<GPUComputeCommandEncoder> encoder = adoptRef(new GPUComputeCommandEncoder(buffer));
+    return encoder;
+}
+    
+GPUComputeCommandEncoder::~GPUComputeCommandEncoder()
+{
+    LOG(WebGPU, "GPUComputeCommandEncoder::~GPUComputeCommandEncoder()");
+}
+    
+#if !PLATFORM(COCOA)
+void GPUComputeCommandEncoder::setComputePipelineState(GPUComputePipelineState*)
+{
+}
+    
+void GPUComputeCommandEncoder::setBuffer(GPUBuffer*, unsigned, unsigned)
+{
+}
+    
+void GPUComputeCommandEncoder::dispatch(GPUSize threadgroupsPerGrid, GPUSize threadsPerThreadgroup);
+{
 }
 
-MTLCommandBuffer *GPUCommandBuffer::platformCommandBuffer()
+void GPUComputeCommandEncoder::endEncoding()
 {
-    return m_commandBuffer.get();
 }
-
-void GPUCommandBuffer::presentDrawable(GPUDrawable* drawable)
-{
-    if (!m_commandBuffer || !drawable->platformDrawable())
-        return;
-
-    [m_commandBuffer presentDrawable:static_cast<id<MTLDrawable>>(drawable->platformDrawable())];
-    drawable->release();
-}
-
-void GPUCommandBuffer::commit()
-{
-    if (!m_commandBuffer)
-        return;
-
-    [m_commandBuffer commit];
-}
-
-void GPUCommandBuffer::completed(Ref<DeferredPromise>&& passedPromise)
-{
-    if (!m_commandBuffer)
-        return;
-
-    RefPtr<DeferredPromise> promise(WTFMove(passedPromise));
-
-    [m_commandBuffer addCompletedHandler:^(id<MTLCommandBuffer>) {
-        callOnMainThread([promise] {
-            promise->resolve();
-        });
-    }];
-}
-
+#endif
+    
 } // namespace WebCore
 
 #endif
