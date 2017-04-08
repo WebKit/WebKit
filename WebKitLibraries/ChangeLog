@@ -1,3 +1,9 @@
+2017-04-08  Dan Bernstein  <mitz@apple.com>
+
+        Removed an empty directory left behind after r212841.
+
+        * WebKitPrivateFrameworkStubs/iOS/10/CorePrediction.framework: Removed.
+
 2017-02-20  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r212685.
