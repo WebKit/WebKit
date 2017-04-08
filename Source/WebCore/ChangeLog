@@ -1,3 +1,27 @@
+2017-04-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Unprefix CSS cursor values grab and grabbing
+        https://bugs.webkit.org/show_bug.cgi?id=170543
+
+        Reviewed by Jon Lee.
+
+        Add support for unprefixed "grab" and "grabbing" values for cursor (retaining
+        support for the prefixed values) which are now in <https://drafts.csswg.org/css-ui-3/#cursor>
+
+        Canonicalize the order of the values based on the order in the spec in the enums
+        and switch statements.
+
+        Tested by fast/css/cursor-parsing.html
+
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator ECursor):
+        * css/CSSProperties.json:
+        * css/CSSValueKeywords.in:
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::selectCursor):
+        * rendering/style/RenderStyleConstants.h:
+
 2017-04-08  Youenn Fablet  <youenn@apple.com>
 
         WebRTC tests gardening

@@ -1487,34 +1487,62 @@ std::optional<Cursor> EventHandler::selectCursor(const HitTestResult& result, bo
             return iBeam;
         return pointerCursor();
     }
-    case CursorCross:
-        return crossCursor();
+    case CursorDefault:
+        return pointerCursor();
+    case CursorNone:
+        return noneCursor();
+    case CursorContextMenu:
+        return contextMenuCursor();
+    case CursorHelp:
+        return helpCursor();
     case CursorPointer:
         return handCursor();
+    case CursorProgress:
+        return progressCursor();
+    case CursorWait:
+        return waitCursor();
+    case CursorCell:
+        return cellCursor();
+    case CursorCrosshair:
+        return crossCursor();
+    case CursorText:
+        return iBeamCursor();
+    case CursorVerticalText:
+        return verticalTextCursor();
+    case CursorAlias:
+        return aliasCursor();
+    case CursorCopy:
+        return copyCursor();
     case CursorMove:
         return moveCursor();
-    case CursorAllScroll:
-        return moveCursor();
+    case CursorNoDrop:
+        return noDropCursor();
+    case CursorNotAllowed:
+        return notAllowedCursor();
+    case CursorGrab:
+        return grabCursor();
+    case CursorGrabbing:
+        return grabbingCursor();
     case CursorEResize:
         return eastResizeCursor();
-    case CursorWResize:
-        return westResizeCursor();
     case CursorNResize:
         return northResizeCursor();
-    case CursorSResize:
-        return southResizeCursor();
     case CursorNeResize:
         return northEastResizeCursor();
-    case CursorSwResize:
-        return southWestResizeCursor();
     case CursorNwResize:
         return northWestResizeCursor();
+    case CursorSResize:
+        return southResizeCursor();
     case CursorSeResize:
         return southEastResizeCursor();
-    case CursorNsResize:
-        return northSouthResizeCursor();
+    case CursorSwResize:
+        return southWestResizeCursor();
+    case CursorWResize:
+        return westResizeCursor();
     case CursorEwResize:
         return eastWestResizeCursor();
+    case CursorNsResize:
+        return northSouthResizeCursor();
     case CursorNeswResize:
         return northEastSouthWestResizeCursor();
     case CursorNwseResize:
@@ -1523,40 +1551,12 @@ std::optional<Cursor> EventHandler::selectCursor(const HitTestResult& result, bo
         return columnResizeCursor();
     case CursorRowResize:
         return rowResizeCursor();
-    case CursorText:
-        return iBeamCursor();
-    case CursorWait:
-        return waitCursor();
-    case CursorHelp:
-        return helpCursor();
-    case CursorVerticalText:
-        return verticalTextCursor();
-    case CursorCell:
-        return cellCursor();
-    case CursorContextMenu:
-        return contextMenuCursor();
-    case CursorProgress:
-        return progressCursor();
-    case CursorNoDrop:
-        return noDropCursor();
-    case CursorAlias:
-        return aliasCursor();
-    case CursorCopy:
-        return copyCursor();
-    case CursorNone:
-        return noneCursor();
-    case CursorNotAllowed:
-        return notAllowedCursor();
-    case CursorDefault:
-        return pointerCursor();
+    case CursorAllScroll:
+        return moveCursor();
     case CursorZoomIn:
         return zoomInCursor();
     case CursorZoomOut:
         return zoomOutCursor();
-    case CursorWebkitGrab:
-        return grabCursor();
-    case CursorWebkitGrabbing:
-        return grabbingCursor();
     }
     return pointerCursor();
 }

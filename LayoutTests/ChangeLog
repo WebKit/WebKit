@@ -1,3 +1,15 @@
+2017-04-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Unprefix CSS cursor values grab and grabbing
+        https://bugs.webkit.org/show_bug.cgi?id=170543
+
+        Reviewed by Jon Lee.
+
+        Enhanced the cursor test to check round-tripping of all values.
+
+        * fast/css/cursor-parsing-expected.txt:
+        * fast/css/cursor-parsing.html:
+
 2017-04-08  Youenn Fablet  <youenn@apple.com>
 
         WebRTC tests gardening

@@ -1866,18 +1866,12 @@
                 "move",
                 "no-drop",
                 "not-allowed",
-                {
-                    "value": "grab",
-                    "status": "unimplemented"
-                },
+                "grab",
                 {
                     "value": "-webkit-grab",
                     "status": "non-standard"
                 },
-                {
-                    "value": "grabbing",
-                    "status": "unimplemented"
-                },
+                "grabbing",
                 {
                     "value": "-webkit-grabbing",
                     "status": "non-standard"
@@ -1897,14 +1891,8 @@
                 "col-resize",
                 "row-resize",
                 "all-scroll",
-                {
-                    "value": "zoom-in",
-                    "status": "unimplemented"
-                },
-                {
-                    "value": "zoom-out",
-                    "status": "unimplemented"
-                },
+                "zoom-in",
+                "zoom-out",
                 {
                     "value": "-webkit-zoom-in",
                     "status": "non-standard"

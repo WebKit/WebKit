@@ -421,27 +421,31 @@ inline-grid
 // The order here must match the order of the ECursor enum in RenderStyleConstants.h.
 //
 auto
-crosshair
 default
-pointer
-move
-vertical-text
-cell
+// none
 context-menu
+help
+pointer
+progress
+wait
+cell
+crosshair
+text
+vertical-text
 alias
 // copy
-progress
+move
 no-drop
 not-allowed
-zoom-in
-zoom-out
+grab
+grabbing
 e-resize
+n-resize
 ne-resize
 nw-resize
-n-resize
+s-resize
 se-resize
 sw-resize
-s-resize
 w-resize
 ew-resize
 ns-resize
@@ -449,15 +453,13 @@ nesw-resize
 nwse-resize
 col-resize
 row-resize
-text
-wait
-help
 all-scroll
+zoom-in
+zoom-out
 -webkit-grab
 -webkit-grabbing
 -webkit-zoom-in
 -webkit-zoom-out
-// none
 //
 // CSS_PROP_CURSOR_VISIBILITY:
 // auto

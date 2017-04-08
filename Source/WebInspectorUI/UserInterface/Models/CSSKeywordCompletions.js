@@ -238,12 +238,12 @@ WebInspector.CSSKeywordCompletions._propertyKeywordMap = {
         "none", "hidden", "inset", "groove", "ridge", "outset", "dotted", "dashed", "solid", "double", "auto"
     ],
     "cursor": [
-        "none", "copy", "auto", "crosshair", "default", "pointer", "move", "vertical-text", "cell", "context-menu",
-        "alias", "progress", "no-drop", "not-allowed", "zoom-in", "zoom-out", "e-resize", "ne-resize",
-        "nw-resize", "n-resize", "se-resize", "sw-resize", "s-resize", "w-resize", "ew-resize", "ns-resize",
-        "nesw-resize", "nwse-resize", "col-resize", "row-resize", "text", "wait", "help", "all-scroll", "-webkit-grab",
-        "-webkit-zoom-in", "-webkit-zoom-out",
-        "-webkit-grabbing", "url()", "image-set()"
+        "auto", "default", "none", "context-menu", "help", "pointer", "progress", "wait", "cell", "crosshair", "text", "vertical-text",
+        "alias", "copy", "move", "no-drop", "not-allowed", "grab", "grabbing",
+        "e-resize", "n-resize", "ne-resize", "nw-resize", "s-resize", "se-resize", "sw-resize", "w-resize", "ew-resize", "ns-resize", "nesw-resize", "nwse-resize",
+        "col-resize", "row-resize", "all-scroll", "zoom-in", "zoom-out",
+        "-webkit-grab", "-webkit-grabbing", "-webkit-zoom-in", "-webkit-zoom-out",
+        "url()", "image-set()"
     ],
     "border-width": [
         "medium", "thick", "thin", "calc()"

@@ -1161,26 +1161,38 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ECursor e)
     case CursorAuto:
         m_value.valueID = CSSValueAuto;
         break;
-    case CursorCross:
-        m_value.valueID = CSSValueCrosshair;
-        break;
     case CursorDefault:
         m_value.valueID = CSSValueDefault;
+        break;
+    case CursorNone:
+        m_value.valueID = CSSValueNone;
+        break;
+    case CursorContextMenu:
+        m_value.valueID = CSSValueContextMenu;
+        break;
+    case CursorHelp:
+        m_value.valueID = CSSValueHelp;
         break;
     case CursorPointer:
         m_value.valueID = CSSValuePointer;
         break;
-    case CursorMove:
-        m_value.valueID = CSSValueMove;
+    case CursorProgress:
+        m_value.valueID = CSSValueProgress;
+        break;
+    case CursorWait:
+        m_value.valueID = CSSValueWait;
         break;
     case CursorCell:
         m_value.valueID = CSSValueCell;
         break;
+    case CursorCrosshair:
+        m_value.valueID = CSSValueCrosshair;
+        break;
+    case CursorText:
+        m_value.valueID = CSSValueText;
+        break;
     case CursorVerticalText:
         m_value.valueID = CSSValueVerticalText;
-        break;
-    case CursorContextMenu:
-        m_value.valueID = CSSValueContextMenu;
         break;
     case CursorAlias:
         m_value.valueID = CSSValueAlias;
@@ -1188,11 +1200,8 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ECursor e)
     case CursorCopy:
         m_value.valueID = CSSValueCopy;
         break;
-    case CursorNone:
-        m_value.valueID = CSSValueNone;
-        break;
-    case CursorProgress:
-        m_value.valueID = CSSValueProgress;
+    case CursorMove:
+        m_value.valueID = CSSValueMove;
         break;
     case CursorNoDrop:
         m_value.valueID = CSSValueNoDrop;
@@ -1200,14 +1209,17 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ECursor e)
     case CursorNotAllowed:
         m_value.valueID = CSSValueNotAllowed;
         break;
-    case CursorZoomIn:
-        m_value.valueID = CSSValueZoomIn;
+    case CursorGrab:
+        m_value.valueID = CSSValueGrab;
         break;
-    case CursorZoomOut:
-        m_value.valueID = CSSValueZoomOut;
+    case CursorGrabbing:
+        m_value.valueID = CSSValueGrabbing;
         break;
     case CursorEResize:
         m_value.valueID = CSSValueEResize;
+        break;
+    case CursorNResize:
+        m_value.valueID = CSSValueNResize;
         break;
     case CursorNeResize:
         m_value.valueID = CSSValueNeResize;
@@ -1215,17 +1227,14 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ECursor e)
     case CursorNwResize:
         m_value.valueID = CSSValueNwResize;
         break;
-    case CursorNResize:
-        m_value.valueID = CSSValueNResize;
+    case CursorSResize:
+        m_value.valueID = CSSValueSResize;
         break;
     case CursorSeResize:
         m_value.valueID = CSSValueSeResize;
         break;
     case CursorSwResize:
         m_value.valueID = CSSValueSwResize;
-        break;
-    case CursorSResize:
-        m_value.valueID = CSSValueSResize;
         break;
     case CursorWResize:
         m_value.valueID = CSSValueWResize;
@@ -1248,23 +1257,14 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ECursor e)
     case CursorRowResize:
         m_value.valueID = CSSValueRowResize;
         break;
-    case CursorText:
-        m_value.valueID = CSSValueText;
-        break;
-    case CursorWait:
-        m_value.valueID = CSSValueWait;
-        break;
-    case CursorHelp:
-        m_value.valueID = CSSValueHelp;
-        break;
     case CursorAllScroll:
         m_value.valueID = CSSValueAllScroll;
         break;
-    case CursorWebkitGrab:
-        m_value.valueID = CSSValueWebkitGrab;
+    case CursorZoomIn:
+        m_value.valueID = CSSValueZoomIn;
         break;
-    case CursorWebkitGrabbing:
-        m_value.valueID = CSSValueWebkitGrabbing;
+    case CursorZoomOut:
+        m_value.valueID = CSSValueZoomOut;
         break;
     }
 }
@@ -1275,6 +1275,10 @@ template<> inline CSSPrimitiveValue::operator ECursor() const
     switch (m_value.valueID) {
     case CSSValueCopy:
         return CursorCopy;
+    case CSSValueWebkitGrab:
+        return CursorGrab;
+    case CSSValueWebkitGrabbing:
+        return CursorGrabbing;
     case CSSValueWebkitZoomIn:
         return CursorZoomIn;
     case CSSValueWebkitZoomOut:

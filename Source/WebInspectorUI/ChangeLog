@@ -1,3 +1,15 @@
+2017-04-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Unprefix CSS cursor values grab and grabbing
+        https://bugs.webkit.org/show_bug.cgi?id=170543
+
+        Reviewed by Jon Lee.
+
+        Sort the cursor autosuggestions to match the order in the spec, and add the unprefixed
+        grab and grabbing values.
+
+        * UserInterface/Models/CSSKeywordCompletions.js:
+
 2017-04-07  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: DOM/XHR breakpoint tree elements shouldn't persist their represented objects
