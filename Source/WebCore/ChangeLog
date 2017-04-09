@@ -1,3 +1,21 @@
+2017-04-09  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        generate-bindings-all.pl shouldn't use Perl threads
+        https://bugs.webkit.org/show_bug.cgi?id=170106
+
+        Reviewed by Yusuke Suzuki.
+
+        The use of interpreter-based threads in Perl is officially
+        discouraged and not all Linux distributions and BSD compile Perl
+        with threads support. Use fork instead of threads to run
+        generate-bindings.pl in parallel.
+
+        * bindings/scripts/generate-bindings-all.pl:
+        (spawnGenerateBindingsIfNeeded): Added.
+        (executeCommand): Removed the workaround for Cygwin Perl threads.
+        (spawnCommand): Added.
+        (worker): Deleted.
+
 2017-04-09  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         REGRESSION(r214635): Calculate image subsampling only for CG
