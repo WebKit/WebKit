@@ -344,9 +344,9 @@ private:
                 restoreState(state);
             }
             
-            // Not a backreference, and not octal.
+            // Not a backreference, and not octal. Just a number.
             if (peek() >= '8') {
-                delegate.atomPatternCharacter('\\');
+                delegate.atomPatternCharacter(consume());
                 break;
             }
 

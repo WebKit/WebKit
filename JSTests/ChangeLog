@@ -1,3 +1,12 @@
+2017-04-09  Joseph Pecoraro  <pecoraro@apple.com>
+
+        test262: test262/test/annexB/language/literals/regexp/identity-escape.js
+        https://bugs.webkit.org/show_bug.cgi?id=170651
+
+        Reviewed by Saam Barati.
+
+        * test262.yaml:
+
 2017-04-07  Michael Saboff  <msaboff@apple.com>
 
         Fix and enable ChakraCore/test/es6/ES6Function_bugs.js after r215072
