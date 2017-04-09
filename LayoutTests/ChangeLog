@@ -1,3 +1,14 @@
+2017-04-08  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Variation Fonts] Width values of GX fonts are not mapped correctly
+        https://bugs.webkit.org/show_bug.cgi?id=170367
+
+        Reviewed by Simon Fraser.
+
+        * fast/text/variations/font-selection-properties-expected.html:
+        * fast/text/variations/gx-width-expected.html: Added.
+        * fast/text/variations/gx-width.html: Added.
+
 2017-04-08  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         A synchronous DecodingOptions should be compatible with any asynchronous sizeForDrawing DecodingOptions

@@ -464,25 +464,36 @@ static inline float denormalizeWeight(float value)
     return (value + 109.3) / 523.7;
 }
 
-static inline float denormalizeWidth(float value)
-{
-    if (value < 125)
-        return (value - 100) / 50;
-    return (value - 50) / 150;
-}
-
 static inline float denormalizeSlope(float value)
 {
     return value / 300;
 }
+
+static inline float denormalizeVariationWidth(float value)
+{
+    if (value <= 125)
+        return value / 100;
+    if (value <= 150)
+        return (value + 125) / 200;
+    return (value + 400) / 400;
+}
 #endif
 
-#if !HAS_CORE_TEXT_WIDTH_ATTRIBUTE || ENABLE(VARIATION_FONTS)
+#if ENABLE(VARIATION_FONTS) || !HAS_CORE_TEXT_WIDTH_ATTRIBUTE
+static inline float normalizeVariationWidth(float value)
+{
+    if (value <= 1.25)
+        return value * 100;
+    if (value <= 1.375)
+        return value * 200 - 125;
+    return value * 400 - 400;
+}
+#endif
+
+#if !HAS_CORE_TEXT_WIDTH_ATTRIBUTE
 static inline float normalizeWidth(float value)
 {
-    if (value < 0.5)
-        return value * 50 + 100;
-    return value * 150 + 50;
+    return normalizeVariationWidth(value + 1);
 }
 #endif
 
@@ -569,7 +580,7 @@ RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, TextRenderingMo
         float slope = fontSelectionRequest.slope;
         if (needsConversion) {
             weight = denormalizeWeight(weight);
-            width = denormalizeWidth(width);
+            width = denormalizeVariationWidth(width);
             slope = denormalizeSlope(slope);
         }
         applyVariation({{'w', 'g', 'h', 't'}}, weight);
@@ -964,7 +975,7 @@ static VariationCapabilities variationCapabilitiesForFontDescriptor(CTFontDescri
         if (result.weight)
             result.weight = {{ normalizeWeight(result.weight.value().minimum), normalizeWeight(result.weight.value().maximum) }};
         if (result.width)
-            result.width = {{ normalizeWidth(result.width.value().minimum), normalizeWidth(result.width.value().maximum) }};
+            result.width = {{ normalizeVariationWidth(result.width.value().minimum), normalizeVariationWidth(result.width.value().maximum) }};
         if (result.slope)
             result.slope = {{ normalizeSlope(result.slope.value().minimum), normalizeSlope(result.slope.value().maximum) }};
     }

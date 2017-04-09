@@ -1,3 +1,25 @@
+2017-04-08  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Variation Fonts] Width values of GX fonts are not mapped correctly
+        https://bugs.webkit.org/show_bug.cgi?id=170367
+
+        Reviewed by Simon Fraser.
+
+        For some reason, when I performed my calculations for how to map the 'wdth' axis of GX-style
+        variation fonts, I thought that font-stretch: 100% should map to a variation value of 0.0.
+        Instead, this should map to 1.0.
+
+        Test: fast/text/variations/gx-width.html
+
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::denormalizeSlope):
+        (WebCore::denormalizeVariationWidth):
+        (WebCore::normalizeVariationWidth):
+        (WebCore::normalizeWidth):
+        (WebCore::preparePlatformFont):
+        (WebCore::variationCapabilitiesForFontDescriptor):
+        (WebCore::denormalizeWidth): Deleted.
+
 2017-04-08  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream Mac] Revert change of Mac video capture format
