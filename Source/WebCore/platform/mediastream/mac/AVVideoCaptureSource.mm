@@ -103,7 +103,11 @@ using namespace WebCore;
 
 namespace WebCore {
 
+#if PLATFORM(MAC)
+const OSType videoCaptureFormat = kCVPixelFormatType_420YpCbCr8Planar;
+#else
 const OSType videoCaptureFormat = kCVPixelFormatType_420YpCbCr8BiPlanarFullRange;
+#endif
 
 class AVVideoCaptureSourceFactory : public RealtimeMediaSource::CaptureFactory {
 public:

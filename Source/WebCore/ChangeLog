@@ -1,3 +1,17 @@
+2017-04-08  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream Mac] Revert change of Mac video capture format
+        https://bugs.webkit.org/show_bug.cgi?id=170642
+        <rdar://problem/31520492>
+
+        Reviewed by Sam Weinig.
+
+        Revert r214968 which changed macOS video capture format to kCVPixelFormatType_420YpCbCr8BiPlanarFullRange
+        from kCVPixelFormatType_420YpCbCr8Planar because AVSampleBufferDisplayLayer sometimes fails
+        to display the former.
+
+        * platform/mediastream/mac/AVVideoCaptureSource.mm:
+
 2017-04-08  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         A synchronous DecodingOptions should be compatible with any asynchronous sizeForDrawing DecodingOptions
