@@ -109,7 +109,7 @@ void MockRealtimeAudioSource::startProducingData()
     MockRealtimeMediaSource::startProducingData();
 
     m_startTime = monotonicallyIncreasingTime();
-    m_timer.startRepeating(std::chrono::milliseconds(renderInterval()));
+    m_timer.startRepeating(renderInterval());
 }
 
 void MockRealtimeAudioSource::stopProducingData()

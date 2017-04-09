@@ -1,3 +1,15 @@
+2017-04-09  Chris Dumez  <cdumez@apple.com>
+
+        Drop Timer::startRepeating() overload taking a double
+        https://bugs.webkit.org/show_bug.cgi?id=170656
+
+        Reviewed by Yusuke Suzuki.
+
+        Drop Timer::startRepeating() overload taking a double as people should use Seconds type now.
+
+        * TestWebKitAPI/Tests/WTF/RunLoop.cpp:
+        (TestWebKitAPI::TEST):
+
 2017-04-09  Youenn Fablet  <youenn@apple.com>
 
         Resync WPT tests up to 23cd07d4685d81024b7440e042f8bbdb33e7ddec

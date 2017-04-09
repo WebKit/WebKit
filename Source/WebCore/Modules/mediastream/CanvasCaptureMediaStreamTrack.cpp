@@ -88,7 +88,7 @@ void CanvasCaptureMediaStreamTrack::Source::startProducingData()
         return;
 
     if (m_frameRequestRate.value())
-        m_requestFrameTimer.startRepeating(1. / m_frameRequestRate.value());
+        m_requestFrameTimer.startRepeating(1_s / m_frameRequestRate.value());
 }
 
 void CanvasCaptureMediaStreamTrack::Source::stopProducingData()

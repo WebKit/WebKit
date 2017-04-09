@@ -58,7 +58,6 @@ MediaController::MediaController(ScriptExecutionContext& context)
     , m_clock(Clock::create())
     , m_scriptExecutionContext(context)
     , m_timeupdateTimer(*this, &MediaController::scheduleTimeupdateEvent)
-    , m_previousTimeupdateTime(0)
 {
 }
 
@@ -664,7 +663,7 @@ void MediaController::returnToRealtime()
 
 // The spec says to fire periodic timeupdate events (those sent while playing) every
 // "15 to 250ms", we choose the slowest frequency
-static const double maxTimeupdateEventFrequency = 0.25;
+static const Seconds maxTimeupdateEventFrequency { 250_ms };
 
 void MediaController::startTimeupdateTimer()
 {
@@ -676,8 +675,8 @@ void MediaController::startTimeupdateTimer()
 
 void MediaController::scheduleTimeupdateEvent()
 {
-    double now = monotonicallyIncreasingTime();
-    double timedelta = now - m_previousTimeupdateTime;
+    MonotonicTime now = MonotonicTime::now();
+    Seconds timedelta = now - m_previousTimeupdateTime;
 
     if (timedelta < maxTimeupdateEventFrequency)
         return;

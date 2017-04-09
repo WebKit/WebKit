@@ -38,7 +38,7 @@ static const int64_t microsecondsPerSecond = 1000000;
 
 using namespace WebCore;
 
-static const std::chrono::minutes loggingInterval { 60 };
+static const Seconds loggingInterval { 60_min };
 
 PerActivityStateCPUUsageSampler::PerActivityStateCPUUsageSampler(WebProcessPool& processPool)
     : m_processPool(processPool)

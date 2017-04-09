@@ -168,7 +168,7 @@ void RenderMarquee::start()
         m_stopped = false;
     }
 
-    m_timer.startRepeating(speed() * 0.001);
+    m_timer.startRepeating(1_ms * speed());
 }
 
 void RenderMarquee::suspend()
@@ -230,7 +230,7 @@ void RenderMarquee::updateMarqueeStyle()
     if (speed() != marqueeSpeed()) {
         m_speed = marqueeSpeed();
         if (m_timer.isActive())
-            m_timer.startRepeating(speed() * 0.001);
+            m_timer.startRepeating(1_ms * speed());
     }
     
     // Check the loop count to see if we should now stop.

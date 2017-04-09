@@ -513,8 +513,8 @@ void InspectorOverlay::showPaintRect(const FloatRect& rect)
     m_paintRects.append(TimeRectPair(removeTime, rootRect));
 
     if (!m_paintRectUpdateTimer.isActive()) {
-        const double paintRectsUpdateIntervalSeconds = 0.032;
-        m_paintRectUpdateTimer.startRepeating(paintRectsUpdateIntervalSeconds);
+        const Seconds paintRectsUpdateInterval { 32_ms };
+        m_paintRectUpdateTimer.startRepeating(paintRectsUpdateInterval);
     }
 
     drawPaintRects();

@@ -178,7 +178,7 @@ public:
 #endif
     virtual void platformColorsDidChange();
 
-    virtual double caretBlinkInterval() const { return 0.5; }
+    virtual Seconds caretBlinkInterval() const { return 500_ms; }
 
     // System fonts and colors for CSS.
     void systemFont(CSSValueID, FontCascadeDescription&) const;

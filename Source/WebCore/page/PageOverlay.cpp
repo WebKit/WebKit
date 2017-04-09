@@ -250,7 +250,7 @@ void PageOverlay::stopFadeOutAnimation()
 void PageOverlay::startFadeAnimation()
 {
     m_fadeAnimationStartTime = currentTime();
-    m_fadeAnimationTimer.startRepeating(1 / fadeAnimationFrameRate);
+    m_fadeAnimationTimer.startRepeating(1_s / fadeAnimationFrameRate);
 }
 
 void PageOverlay::fadeAnimationTimerFired()

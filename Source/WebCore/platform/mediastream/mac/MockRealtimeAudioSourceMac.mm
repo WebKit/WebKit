@@ -125,7 +125,7 @@ void MockRealtimeAudioSourceMac::emitSampleBuffers(uint32_t frameCount)
 
 void MockRealtimeAudioSourceMac::reconfigure()
 {
-    m_maximiumFrameCount = WTF::roundUpToPowerOfTwo(renderInterval() / 1000. * sampleRate() * 2);
+    m_maximiumFrameCount = WTF::roundUpToPowerOfTwo(renderInterval().seconds() * sampleRate() * 2);
     ASSERT(m_maximiumFrameCount);
 
     const int bytesPerFloat = sizeof(Float32);

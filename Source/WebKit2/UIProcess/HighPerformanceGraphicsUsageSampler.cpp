@@ -33,7 +33,7 @@ namespace WebKit {
 
 using namespace WebCore;
 
-static const std::chrono::minutes samplingInterval { 10 };
+static const Seconds samplingInterval { 10_min };
 
 HighPerformanceGraphicsUsageSampler::HighPerformanceGraphicsUsageSampler(WebProcessPool& webProcessPool)
     : m_webProcessPool(webProcessPool)

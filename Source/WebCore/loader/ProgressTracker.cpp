@@ -52,7 +52,7 @@ static const double finalProgressValue = 0.9; // 1.0 - initialProgressValue
 static const int progressItemDefaultEstimatedLength = 1024 * 16;
 
 // Check if the load is progressing this often.
-static const double progressHeartbeatInterval = 0.1;
+static const Seconds progressHeartbeatInterval { 100_ms };
 
 // How many heartbeats must pass without progress before deciding the load is currently stalled.
 static const unsigned loadStalledHeartbeatCount = 4;

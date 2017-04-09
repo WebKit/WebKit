@@ -1,5 +1,17 @@
 2017-04-09  Chris Dumez  <cdumez@apple.com>
 
+        Drop Timer::startRepeating() overload taking a double
+        https://bugs.webkit.org/show_bug.cgi?id=170656
+
+        Reviewed by Yusuke Suzuki.
+
+        Drop Timer::startRepeating() overload taking a double as people should use Seconds type now.
+
+        * Plugins/WebNetscapePluginView.mm:
+        (PluginTimer::start):
+
+2017-04-09  Chris Dumez  <cdumez@apple.com>
+
         Start dropping Timer API dealing with double
         https://bugs.webkit.org/show_bug.cgi?id=170649
 

@@ -1,3 +1,66 @@
+2017-04-09  Chris Dumez  <cdumez@apple.com>
+
+        Drop Timer::startRepeating() overload taking a double
+        https://bugs.webkit.org/show_bug.cgi?id=170656
+
+        Reviewed by Yusuke Suzuki.
+
+        Drop Timer::startRepeating() overload taking a double as people should use Seconds type now.
+
+        * Modules/mediastream/CanvasCaptureMediaStreamTrack.cpp:
+        (WebCore::CanvasCaptureMediaStreamTrack::Source::startProducingData):
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::updateAppearance):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::startProgressEventTimer):
+        (WebCore::HTMLMediaElement::scheduleTimeupdateEvent):
+        * html/HTMLMediaElement.h:
+        * html/MediaController.cpp:
+        (MediaController::MediaController):
+        (MediaController::scheduleTimeupdateEvent):
+        * html/MediaController.h:
+        * html/MediaElementSession.cpp:
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::InspectorOverlay::showPaintRect):
+        * loader/ProgressTracker.cpp:
+        * page/AutoscrollController.cpp:
+        * page/Frame.cpp:
+        * page/PageOverlay.cpp:
+        (WebCore::PageOverlay::startFadeAnimation):
+        * page/SuspendableTimer.h:
+        * page/WheelEventTestTrigger.cpp:
+        (WebCore::WheelEventTestTrigger::setTestCallbackAndStartNotificationTimer):
+        * platform/Theme.h:
+        (WebCore::Theme::caretBlinkInterval):
+        * platform/Timer.h:
+        * platform/cocoa/ScrollController.mm:
+        (WebCore::ScrollController::startSnapRubberbandTimer):
+        (WebCore::ScrollController::startScrollSnapTimer):
+        * platform/graphics/ca/TileGrid.cpp:
+        (WebCore::TileGrid::scheduleCohortRemoval):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::setDownloadBuffering):
+        * platform/mediastream/mac/MockRealtimeAudioSourceMac.mm:
+        (WebCore::MockRealtimeAudioSourceMac::reconfigure):
+        * platform/mock/MockRealtimeAudioSource.cpp:
+        (WebCore::MockRealtimeAudioSource::startProducingData):
+        * platform/mock/MockRealtimeAudioSource.h:
+        (WebCore::MockRealtimeAudioSource::renderInterval):
+        * platform/mock/MockRealtimeVideoSource.cpp:
+        (WebCore::MockRealtimeVideoSource::startProducingData):
+        (WebCore::MockRealtimeVideoSource::applyFrameRate):
+        * rendering/RenderMarquee.cpp:
+        (WebCore::RenderMarquee::start):
+        (WebCore::RenderMarquee::updateMarqueeStyle):
+        * rendering/RenderTheme.h:
+        (WebCore::RenderTheme::caretBlinkInterval):
+        * rendering/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::caretBlinkInterval):
+        * rendering/RenderThemeGtk.h:
+        * xml/XMLHttpRequestProgressEventThrottle.cpp:
+        (WebCore::XMLHttpRequestProgressEventThrottle::dispatchThrottledProgressEvent):
+        * xml/XMLHttpRequestProgressEventThrottle.h:
+
 2017-04-09  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         generate-bindings-all.pl shouldn't use Perl threads

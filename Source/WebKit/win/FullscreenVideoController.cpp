@@ -52,7 +52,7 @@
 using namespace std;
 using namespace WebCore;
 
-static const float timerInterval = 0.033;
+static const Seconds timerInterval { 33_ms };
 
 // HUD Size
 static const int windowHeight = 59;

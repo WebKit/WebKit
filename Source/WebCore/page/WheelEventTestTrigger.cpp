@@ -60,7 +60,7 @@ void WheelEventTestTrigger::setTestCallbackAndStartNotificationTimer(std::functi
     }
     
     if (!m_testTriggerTimer.isActive())
-        m_testTriggerTimer.startRepeating(1.0 / 60.0);
+        m_testTriggerTimer.startRepeating(1_s / 60.);
 }
 
 void WheelEventTestTrigger::deferTestsForReason(ScrollableAreaIdentifier identifier, DeferTestTriggerReason reason)

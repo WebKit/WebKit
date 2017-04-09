@@ -326,7 +326,7 @@ NetscapePlugin::Timer::~Timer()
 
 void NetscapePlugin::Timer::start()
 {
-    double timeInterval = m_interval / 1000.0;
+    Seconds timeInterval = 1_ms * m_interval;
 
     if (m_repeat)
         m_timer.startRepeating(timeInterval);

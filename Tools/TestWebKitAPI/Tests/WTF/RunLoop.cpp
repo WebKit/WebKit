@@ -129,7 +129,7 @@ TEST(WTF_RunLoop, RepeatingTimer)
 
     {
         DerivedTimer timer(testFinished);
-        timer.startRepeating(0.01);
+        timer.startRepeating(10_ms);
         Util::run(&testFinished);
     }
 }

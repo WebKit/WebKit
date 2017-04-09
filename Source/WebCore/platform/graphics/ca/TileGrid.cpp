@@ -523,7 +523,7 @@ TileGrid::TileCohort TileGrid::oldestTileCohort() const
 
 void TileGrid::scheduleCohortRemoval()
 {
-    const double cohortRemovalTimerSeconds = 1;
+    const Seconds cohortRemovalTimerSeconds { 1_s };
 
     // Start the timer, or reschedule the timer from now if it's already active.
     if (!m_cohortRemovalTimer.isActive())

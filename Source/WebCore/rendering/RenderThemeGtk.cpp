@@ -1802,7 +1802,7 @@ bool RenderThemeGtk::paintInnerSpinButton(const RenderObject& renderObject, cons
 }
 #endif // GTK_CHECK_VERSION(3, 20, 0)
 
-double RenderThemeGtk::caretBlinkInterval() const
+Seconds RenderThemeGtk::caretBlinkInterval() const
 {
     GtkSettings* settings = gtk_settings_get_default();
 
@@ -1812,9 +1812,9 @@ double RenderThemeGtk::caretBlinkInterval() const
     g_object_get(settings, "gtk-cursor-blink", &shouldBlink, "gtk-cursor-blink-time", &time, nullptr);
 
     if (!shouldBlink)
-        return 0;
+        return 0_s;
 
-    return time / 2000.;
+    return 2_ms * time;
 }
 
 enum StyleColorType { StyleColorBackground, StyleColorForeground };

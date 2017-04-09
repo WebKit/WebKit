@@ -887,7 +887,7 @@ private:
     double m_playbackStartedTime { 0 };
 
     // The last time a timeupdate event was sent (based on monotonic clock).
-    double m_clockTimeAtLastUpdateEvent { 0 };
+    MonotonicTime m_clockTimeAtLastUpdateEvent;
 
     // The last time a timeupdate event was sent in movie time.
     MediaTime m_lastTimeUpdateEventMovieTime;

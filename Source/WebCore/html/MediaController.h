@@ -145,7 +145,7 @@ private:
     std::unique_ptr<Clock> m_clock;
     ScriptExecutionContext& m_scriptExecutionContext;
     Timer m_timeupdateTimer;
-    double m_previousTimeupdateTime;
+    MonotonicTime m_previousTimeupdateTime;
     bool m_resetCurrentTimeInNextPlay { false };
 };
 

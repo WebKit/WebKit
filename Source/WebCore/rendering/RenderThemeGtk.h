@@ -81,7 +81,7 @@ public:
     Color platformInactiveListBoxSelectionBackgroundColor() const override;
     Color platformInactiveListBoxSelectionForegroundColor() const override;
 
-    double caretBlinkInterval() const override;
+    Seconds caretBlinkInterval() const override;
 
     void platformColorsDidChange() override;
 

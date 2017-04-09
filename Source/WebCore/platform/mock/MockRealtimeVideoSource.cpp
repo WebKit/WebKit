@@ -101,7 +101,7 @@ void MockRealtimeVideoSource::startProducingData()
     }
 
     m_startTime = monotonicallyIncreasingTime();
-    m_timer.startRepeating(std::chrono::milliseconds(lround(1000 / frameRate())));
+    m_timer.startRepeating(1_ms * lround(1000 / frameRate()));
 }
 
 void MockRealtimeVideoSource::stopProducingData()
@@ -155,7 +155,7 @@ void MockRealtimeVideoSource::initializeSupportedConstraints(RealtimeMediaSource
 bool MockRealtimeVideoSource::applyFrameRate(double rate)
 {
     if (m_timer.isActive())
-        m_timer.startRepeating(std::chrono::milliseconds(lround(1000 / rate)));
+        m_timer.startRepeating(1_ms * lround(1000 / rate));
 
     updateSampleBuffer();
     return true;

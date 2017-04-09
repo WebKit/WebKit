@@ -76,7 +76,7 @@ public:
     virtual FontCascade systemFont(ThemeFont, FontDescription&) const { return FontCascade(); }
     
     // How fast the caret blinks in text fields.
-    virtual double caretBlinkInterval() const { return 0.5; }
+    virtual Seconds caretBlinkInterval() const { return 500_ms; }
 
     // Notification when the theme has changed
     virtual void themeChanged() { }

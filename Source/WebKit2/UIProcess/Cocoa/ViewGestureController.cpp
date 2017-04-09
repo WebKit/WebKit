@@ -41,7 +41,7 @@ using namespace WebCore;
 namespace WebKit {
 
 static const std::chrono::seconds swipeSnapshotRemovalWatchdogAfterFirstVisuallyNonEmptyLayoutDuration = 3s;
-static const std::chrono::milliseconds swipeSnapshotRemovalActiveLoadMonitoringInterval = 250ms;
+static const Seconds swipeSnapshotRemovalActiveLoadMonitoringInterval = 250_ms;
 
 #if PLATFORM(MAC)
 static const std::chrono::seconds swipeSnapshotRemovalWatchdogDuration = 5s;

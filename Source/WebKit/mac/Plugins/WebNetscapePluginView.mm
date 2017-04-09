@@ -136,7 +136,7 @@ public:
             timeInterval = std::max(timeInterval, ThrottledTimerInterval);
         
         if (m_repeat)
-            startRepeating(timeInterval);
+            startRepeating(Seconds { timeInterval });
         else
             startOneShot(timeInterval);
     }

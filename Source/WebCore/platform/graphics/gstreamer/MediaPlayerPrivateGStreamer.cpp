@@ -1949,7 +1949,7 @@ void MediaPlayerPrivateGStreamer::setDownloadBuffering()
     if (shouldDownload) {
         GST_DEBUG("Enabling on-disk buffering");
         g_object_set(m_pipeline.get(), "flags", flags | flagDownload, nullptr);
-        m_fillTimer.startRepeating(0.2);
+        m_fillTimer.startRepeating(200_ms);
     } else {
         GST_DEBUG("Disabling on-disk buffering");
         g_object_set(m_pipeline.get(), "flags", flags & ~flagDownload, nullptr);

@@ -45,7 +45,7 @@ using namespace WebCore;
 namespace WebKit {
 
 #ifndef NP_NO_CARBON
-static const double nullEventIntervalActive = 0.02;
+static const Seconds nullEventIntervalActive { 20_ms };
 
 static unsigned buttonStateFromLastMouseEvent;
 

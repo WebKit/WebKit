@@ -88,7 +88,7 @@ void WebMemorySampler::start(const SandboxExtension::Handle& sampleLogFileHandle
 
 void WebMemorySampler::initializeTimers(double interval)
 {
-    m_sampleTimer.startRepeating(1);
+    m_sampleTimer.startRepeating(1_s);
     printf("Started memory sampler for process %s %d", processName().utf8().data(), getpid());
     if (interval > 0) {
         m_stopTimer.startOneShot(interval);
