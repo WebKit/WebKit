@@ -31,13 +31,14 @@
 namespace WebCore {
 
 enum class DecodingMode {
+    None,
     Synchronous,
     Asynchronous
 };
 
 class DecodingOptions {
 public:
-    DecodingOptions(DecodingMode decodingMode = DecodingMode::Synchronous)
+    DecodingOptions(DecodingMode decodingMode = DecodingMode::None)
         : m_decodingModeOrSize(decodingMode)
     {
     }
@@ -52,6 +53,11 @@ public:
         return m_decodingModeOrSize == other.m_decodingModeOrSize;
     }
 
+    bool isNone() const
+    {
+        return hasDecodingMode() && WTF::get<DecodingMode>(m_decodingModeOrSize) == DecodingMode::None;
+    }
+    
     bool isSynchronous() const
     {
         return hasDecodingMode() && WTF::get<DecodingMode>(m_decodingModeOrSize) == DecodingMode::Synchronous;
@@ -62,24 +68,32 @@ public:
         return hasDecodingMode() && WTF::get<DecodingMode>(m_decodingModeOrSize) == DecodingMode::Asynchronous;
     }
 
-    bool isAsynchronousCompatibleWith(const DecodingOptions& DecodingOptions) const
+    bool isAsynchronousCompatibleWith(const DecodingOptions& decodingOptions) const
     {
-        if (!hasSize() || DecodingOptions.isSynchronous())
+        if (isNone() || decodingOptions.isNone())
             return false;
 
-        if (DecodingOptions.isAsynchronous())
+        // Comparing DecodingOptions with isAsynchronous() should not happen.
+        ASSERT(!isAsynchronous());
+        if (isAsynchronous() || decodingOptions.isSynchronous())
+            return false;
+        
+        // If the image was synchronously decoded, then it should fit any size.
+        // If we want an image regardless of its size, then the current decoded
+        // image should be fine.
+        if (isSynchronous() || decodingOptions.isAsynchronous())
             return true;
 
-        ASSERT(DecodingOptions.hasSize());
-        if (DecodingOptions.hasFullSize())
+        ASSERT(decodingOptions.hasSize());
+        if (decodingOptions.hasFullSize())
             return hasFullSize();
 
-        ASSERT(DecodingOptions.hasSizeForDrawing());
+        ASSERT(decodingOptions.hasSizeForDrawing());
         if (hasFullSize())
             return true;
 
         ASSERT(hasSizeForDrawing());
-        return maxDimension(*sizeForDrawing()) >= maxDimension(*DecodingOptions.sizeForDrawing());
+        return maxDimension(*sizeForDrawing()) >= maxDimension(*decodingOptions.sizeForDrawing());
     }
 
     bool hasFullSize() const

@@ -1,3 +1,23 @@
+2017-04-08  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        A synchronous DecodingOptions should be compatible with any asynchronous sizeForDrawing DecodingOptions
+        https://bugs.webkit.org/show_bug.cgi?id=170577
+
+        Reviewed by Simon Fraser.
+
+        Once a synchronous decoded frame is found, there is no need to decode it
+        again. This decoded frame is suitable for any sizeForDrawing. This will
+        prevent double decoding if one image client wants synchronous decoded
+        frame while the other needs an asynchronous decode frame for a specific
+        sizeForDrawing.
+
+        Test: fast/images/async-image-background-image-repeated.html
+
+        * platform/graphics/DecodingOptions.h:
+        (WebCore::DecodingOptions::DecodingOptions):
+        (WebCore::DecodingOptions::isNone):
+        (WebCore::DecodingOptions::isAsynchronousCompatibleWith):
+
 2017-04-08  Simon Fraser  <simon.fraser@apple.com>
 
         Align the timers for throttled rAF to reduce power usage
