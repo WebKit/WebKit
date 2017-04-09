@@ -163,12 +163,11 @@ void BitmapImage::draw(GraphicsContext& context, const FloatRect& destRect, cons
     if (destRect.isEmpty() || srcRect.isEmpty())
         return;
 
-    FloatSize scale = nativeImageDrawingScale(context, destRect, srcRect);
-    float subsamplingScale = std::min(float(1), std::max(scale.width(), scale.height()));
-    m_currentSubsamplingLevel = allowSubsampling() ? m_source.subsamplingLevelForScale(subsamplingScale) : SubsamplingLevel::Default;
-    IntSize sizeForDrawing = expandedIntSize(size() * scale);
-
-    LOG(Images, "BitmapImage::%s - %p - url: %s [subsamplingLevel = %d scale = %.4f]", __FUNCTION__, this, sourceURL().utf8().data(), static_cast<int>(m_currentSubsamplingLevel), subsamplingScale);
+    FloatSize scaleFactorForDrawing = context.scaleFactorForDrawing(destRect, srcRect);
+    IntSize sizeForDrawing = expandedIntSize(size() * scaleFactorForDrawing);
+    
+    m_currentSubsamplingLevel = allowSubsampling() ? m_source.subsamplingLevelForScaleFactor(context, scaleFactorForDrawing) : SubsamplingLevel::Default;
+    LOG(Images, "BitmapImage::%s - %p - url: %s [subsamplingLevel = %d scaleFactorForDrawing = (%.4f, %.4f)]", __FUNCTION__, this, sourceURL().utf8().data(), static_cast<int>(m_currentSubsamplingLevel), scaleFactorForDrawing.width(), scaleFactorForDrawing.height());
 
     NativeImagePtr image;
     if (decodingMode == DecodingMode::Asynchronous && shouldUseAsyncDecodingForLargeImages()) {

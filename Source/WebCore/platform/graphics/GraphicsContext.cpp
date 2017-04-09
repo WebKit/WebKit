@@ -1036,6 +1036,13 @@ FloatSize GraphicsContext::scaleFactor() const
     AffineTransform transform = getCTM(GraphicsContext::DefinitelyIncludeDeviceScale);
     return FloatSize(transform.xScale(), transform.yScale());
 }
+    
+FloatSize GraphicsContext::scaleFactorForDrawing(const FloatRect& destRect, const FloatRect& srcRect) const
+{
+    AffineTransform transform = getCTM(GraphicsContext::DefinitelyIncludeDeviceScale);
+    auto transformedDestRect = transform.mapRect(destRect);
+    return { static_cast<float>(transformedDestRect.width() / srcRect.width()), static_cast<float>(transformedDestRect.height() / srcRect.height()) };
+}
 
 void GraphicsContext::fillEllipse(const FloatRect& ellipse)
 {

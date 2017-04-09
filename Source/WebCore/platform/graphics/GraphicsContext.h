@@ -499,6 +499,7 @@ public:
     WEBCORE_EXPORT void applyDeviceScaleFactor(float);
     void platformApplyDeviceScaleFactor(float);
     FloatSize scaleFactor() const;
+    FloatSize scaleFactorForDrawing(const FloatRect& destRect, const FloatRect& srcRect) const;
 
 #if OS(WINDOWS)
     HDC getWindowsContext(const IntRect&, bool supportAlphaBlend, bool mayCreateBitmap); // The passed in rect is used to create a bitmap for compositing inside transparency layers.

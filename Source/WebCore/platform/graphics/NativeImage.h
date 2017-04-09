@@ -65,8 +65,6 @@ IntSize nativeImageSize(const NativeImagePtr&);
 bool nativeImageHasAlpha(const NativeImagePtr&);
 Color nativeImageSinglePixelSolidColor(const NativeImagePtr&);
 
-FloatSize nativeImageDrawingScale(GraphicsContext&, const FloatRect& destRect, const FloatRect& srcRect);
-
 void drawNativeImage(const NativeImagePtr&, GraphicsContext&, const FloatRect&, const FloatRect&, const IntSize&, CompositeOperator, BlendMode, const ImageOrientation&);
 void clearNativeImageSubimages(const NativeImagePtr&);
     

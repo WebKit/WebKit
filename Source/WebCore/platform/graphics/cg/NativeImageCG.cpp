@@ -36,10 +36,6 @@
 #include "IntSize.h"
 #include "SubimageCacheWithTimer.h"
 
-#if PLATFORM(WIN)
-#include <WebKitSystemInterface/WebKitSystemInterface.h>
-#endif
-
 namespace WebCore {
 
 IntSize nativeImageSize(const NativeImagePtr& image)
@@ -71,16 +67,6 @@ Color nativeImageSinglePixelSolidColor(const NativeImagePtr& image)
         return Color(0, 0, 0, 0);
 
     return Color(pixel[0] * 255 / pixel[3], pixel[1] * 255 / pixel[3], pixel[2] * 255 / pixel[3], pixel[3]);
-}
-
-FloatSize nativeImageDrawingScale(GraphicsContext& context, const FloatRect& destRect, const FloatRect& srcRect)
-{
-    // Never use subsampled images for drawing into PDF contexts.
-    if (wkCGContextIsPDFContext(context.platformContext()))
-        return { 1, 1 };
-
-    CGRect transformedDestinationRect = CGRectApplyAffineTransform(destRect, CGContextGetCTM(context.platformContext()));
-    return { static_cast<float>(transformedDestinationRect.size.width / srcRect.width()), static_cast<float>(transformedDestinationRect.size.height / srcRect.height()) };
 }
 
 void drawNativeImage(const NativeImagePtr& image, GraphicsContext& context, const FloatRect& destRect, const FloatRect& srcRect, const IntSize& srcSize, CompositeOperator op, BlendMode mode, const ImageOrientation& orientation)

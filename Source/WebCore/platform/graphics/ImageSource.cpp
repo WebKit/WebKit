@@ -29,18 +29,20 @@
 #include "config.h"
 #include "ImageSource.h"
 
+#include "GraphicsContext.h"
+
 #if USE(CG)
 #include "ImageDecoderCG.h"
+#if PLATFORM(WIN)
+#include <WebKitSystemInterface/WebKitSystemInterface.h>
+#endif
 #elif USE(DIRECT2D)
-#include "GraphicsContext.h"
 #include "ImageDecoderDirect2D.h"
-#include <WinCodec.h>
 #else
 #include "ImageDecoder.h"
 #endif
 
 #include "ImageOrientation.h"
-
 #include <wtf/CurrentTime.h>
 
 namespace WebCore {
@@ -177,13 +179,24 @@ SubsamplingLevel ImageSource::maximumSubsamplingLevel()
     return m_maximumSubsamplingLevel.value();
 }
 
-SubsamplingLevel ImageSource::subsamplingLevelForScale(float scale)
+SubsamplingLevel ImageSource::subsamplingLevelForScaleFactor(GraphicsContext& context, const FloatSize& scaleFactor)
 {
+#if USE(CG)
+    // Never use subsampled images for drawing into PDF contexts.
+    if (wkCGContextIsPDFContext(context.platformContext()))
+        return SubsamplingLevel::Default;
+
+    float scale = std::min(float(1), std::max(scaleFactor.width(), scaleFactor.height()));
     if (!(scale > 0 && scale <= 1))
         return SubsamplingLevel::Default;
 
     int result = std::ceil(std::log2(1 / scale));
     return static_cast<SubsamplingLevel>(std::min(result, static_cast<int>(maximumSubsamplingLevel())));
+#else
+    UNUSED_PARAM(context);
+    UNUSED_PARAM(scaleFactor);
+    return SubsamplingLevel::Default;
+#endif
 }
 
 NativeImagePtr ImageSource::createFrameImageAtIndex(size_t index, SubsamplingLevel subsamplingLevel)

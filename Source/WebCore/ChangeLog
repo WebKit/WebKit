@@ -1,3 +1,36 @@
+2017-04-09  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        REGRESSION(r214635): Calculate image subsampling only for CG
+        https://bugs.webkit.org/show_bug.cgi?id=170353
+
+        Reviewed by Simon Fraser.
+
+        In r214635, we needed to calculate the image scaleFactor for all platforms.
+        It was needed do the calculation: sizeForDrawing = sizeOfImage * imageScaleFactor.
+        This made ImageSource::subsamplingLevelForScale() now returns a SubsamplingLevel
+        not equal to SubsamplingLevel::Default if the image scaleFactor is greater
+        than {1, 1} for all platforms. The subsamplingLevel should only be used for CG.
+        
+        This is also a chance to make nativeImageDrawingScale() a across platform
+        function and move it to the GraphicsContext class.
+
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::draw):
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::scaleFactorForDrawing):
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/ImageSource.cpp:
+        (WebCore::ImageSource::subsamplingLevelForScaleFactor):
+        (WebCore::ImageSource::subsamplingLevelForScale): Deleted.
+        * platform/graphics/ImageSource.h:
+        * platform/graphics/NativeImage.h:
+        * platform/graphics/cairo/NativeImageCairo.cpp:
+        (WebCore::nativeImageDrawingScale): Deleted.
+        * platform/graphics/cg/NativeImageCG.cpp:
+        (WebCore::nativeImageDrawingScale): Deleted.
+        * platform/graphics/win/NativeImageDirect2D.cpp:
+        (WebCore::nativeImageDrawingScale): Deleted.
+
 2017-04-09  Chris Dumez  <cdumez@apple.com>
 
         Start dropping Timer API dealing with double

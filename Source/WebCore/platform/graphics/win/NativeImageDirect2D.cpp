@@ -60,17 +60,6 @@ Color nativeImageSinglePixelSolidColor(const NativeImagePtr& image)
     return Color();
 }
 
-FloatSize nativeImageDrawingScale(GraphicsContext& context, const FloatRect& destRect, const FloatRect& srcRect)
-{
-    D2D1_MATRIX_3X2_F ctm;
-    context.platformContext()->GetTransform(&ctm);
-
-    AffineTransform transform(ctm);
-
-    auto transformedDestinationRect = transform.mapRect(destRect);
-    return { static_cast<float>(transformedDestinationRect.width() / srcRect.width()), static_cast<float>(transformedDestinationRect.height() / srcRect.height()) };
-}
-
 void drawNativeImage(const NativeImagePtr& image, GraphicsContext& context, const FloatRect& destRect, const FloatRect& srcRect, const IntSize& srcSize, CompositeOperator compositeOp, BlendMode blendMode, const ImageOrientation& orientation)
 {
     auto platformContext = context.platformContext();
