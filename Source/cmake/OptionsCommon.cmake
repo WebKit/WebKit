@@ -208,6 +208,18 @@ if (NOT PORT STREQUAL "GTK")
     set(LIBEXEC_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/bin" CACHE PATH "Absolute path to install executables executed by the library")
 endif ()
 
+# The Ninja generator does not yet know how to build archives in pieces, and so response
+# files must be used to deal with very long linker command lines.
+# See https://bugs.webkit.org/show_bug.cgi?id=129771
+# The Apple Toolchain doesn't support response files.
+if (NOT APPLE)
+   # If using Ninja with cmake >= 3.6.0 and icecream, then the build is broken
+   # if enable the response files. See https://bugs.webkit.org/show_bug.cgi?id=168770
+   if (NOT ((((${CMAKE_CXX_COMPILER} MATCHES ".*ccache.*") AND ($ENV{CCACHE_PREFIX} MATCHES ".*icecc.*")) OR (${CMAKE_CXX_COMPILER} MATCHES ".*icecc.*")) AND (CMAKE_GENERATOR STREQUAL "Ninja") AND (${CMAKE_VERSION} VERSION_GREATER 3.5)))
+       set(CMAKE_NINJA_FORCE_RESPONSE_FILE 1)
+   endif ()
+endif ()
+
 # Macros for determining HAVE values.
 include(CheckIncludeFile)
 include(CheckFunctionExists)

@@ -1,3 +1,16 @@
+2017-04-08  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, rolling out r215150.
+
+        Broke buildbot
+
+        Reverted changeset:
+
+        "[CMake] Don't force-enable response files when using Ninja
+        generator"
+        https://bugs.webkit.org/show_bug.cgi?id=170105
+        http://trac.webkit.org/changeset/215150
+
 2017-04-08  Ting-Wei Lan  <lantw44@gmail.com>
 
         [CMake] Don't force-enable response files when using Ninja generator
