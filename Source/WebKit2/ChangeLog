@@ -1,3 +1,13 @@
+2017-04-09  Jon Lee  <jonlee@apple.com>
+
+        [WK2][iOS] Add CoreMedia entitlement for WebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=170623
+        rdar://problem/30020073
+
+        Reviewed by Youenn Fablet.
+
+        * Configurations/WebContent-iOS.entitlements: Update entitlement to an array of strings instead of bool.
+
 2017-04-09  Chris Dumez  <cdumez@apple.com>
 
         Start dropping Timer API dealing with double

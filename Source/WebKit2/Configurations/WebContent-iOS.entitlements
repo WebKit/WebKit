@@ -29,6 +29,9 @@
 	<key>com.apple.private.coremedia.extensions.audiorecording.allow</key>
 	<true/>
 	<key>com.apple.tcc.delegated-services</key>
-	<true/>
+	<array>
+		<string>kTCCServiceMicrophone</string>
+		<string>kTCCServiceCamera</string>
+	</array>
 </dict>
 </plist>
