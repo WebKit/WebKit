@@ -1,5 +1,31 @@
 2017-04-09  Joseph Pecoraro  <pecoraro@apple.com>
 
+        test262: test262/test/annexB/language/expressions/object/__proto__-fn-name.js
+        https://bugs.webkit.org/show_bug.cgi?id=170650
+
+        Reviewed by Saam Barati.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseClass):
+        (JSC::Parser<LexerType>::parseProperty):
+        There needs to be special handling of:
+        
+          PropertyDefinition :  PropertyName ':' AssignmentExpression
+         
+        When the property name is __proto__. In this case the
+        SetFunctionName path does not happen, so the name "__proto__"
+        is not inferred on any anonymous function. See:
+        https://tc39.github.io/ecma262/#sec-__proto__-property-names-in-object-initializers
+
+        * parser/Parser.h:
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::createProperty):
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createProperty):
+        Add an extra parameter to see if inferring / setting names are allowed.
+
+2017-04-09  Joseph Pecoraro  <pecoraro@apple.com>
+
         test262: test262/test/annexB/language/literals/regexp/identity-escape.js
         https://bugs.webkit.org/show_bug.cgi?id=170651
 

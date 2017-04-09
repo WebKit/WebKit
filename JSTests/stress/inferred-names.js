@@ -120,3 +120,15 @@ assert( ({ method([func = function*(){}]) { return func.name } }).method([]) ===
 assert( ({ method([func = ()=>{}]) { return func.name } }).method([]) === "func" );
 assert( ({ method({klass = class{}}) { return klass.name } }).method({}) === "klass" );
 assert( ({ method([klass = class{}]) { return klass.name } }).method([]) === "klass" );
+
+// B.3.1__proto__ Property Names in Object Initializers
+
+assert( ({__proto__: function(){}}).__proto__.name === "" );
+assert( ({__proto__: function*(){}}).__proto__.name === "" );
+assert( ({__proto__: ()=>{}}).__proto__.name === "" );
+assert( ({["__proto__"]: function(){}}).__proto__.name === "__proto__" );
+assert( ({["__proto__"]: function*(){}}).__proto__.name === "__proto__" );
+assert( ({["__proto__"]: ()=>{}}).__proto__.name === "__proto__" );
+assert( ({__proto__(){}}).__proto__.name === "__proto__" );
+assert( ({*__proto__(){}}).__proto__.name === "__proto__" );
+assert( ({__proto__(){}}).__proto__.name === "__proto__" );

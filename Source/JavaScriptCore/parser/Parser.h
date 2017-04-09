@@ -104,6 +104,11 @@ enum class DeclarationDefaultContext {
     ExportDefault,
 };
 
+enum class InferName {
+    Allowed,
+    Disallowed,
+};
+
 template <typename T> inline bool isEvalNode() { return false; }
 template <> inline bool isEvalNode<EvalNode>() { return true; }
 

@@ -1,5 +1,15 @@
 2017-04-09  Joseph Pecoraro  <pecoraro@apple.com>
 
+        test262: test262/test/annexB/language/expressions/object/__proto__-fn-name.js
+        https://bugs.webkit.org/show_bug.cgi?id=170650
+
+        Reviewed by Saam Barati.
+
+        * stress/inferred-names.js:
+        * test262.yaml:
+
+2017-04-09  Joseph Pecoraro  <pecoraro@apple.com>
+
         test262: test262/test/annexB/language/literals/regexp/identity-escape.js
         https://bugs.webkit.org/show_bug.cgi?id=170651
 

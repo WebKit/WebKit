@@ -490,14 +490,16 @@ public:
     ArgumentListNode* createArgumentsList(const JSTokenLocation& location, ExpressionNode* arg) { return new (m_parserArena) ArgumentListNode(location, arg); }
     ArgumentListNode* createArgumentsList(const JSTokenLocation& location, ArgumentListNode* args, ExpressionNode* arg) { return new (m_parserArena) ArgumentListNode(location, args, arg); }
 
-    PropertyNode* createProperty(const Identifier* propertyName, ExpressionNode* node, PropertyNode::Type type, PropertyNode::PutType putType, bool, SuperBinding superBinding, bool isClassProperty)
+    PropertyNode* createProperty(const Identifier* propertyName, ExpressionNode* node, PropertyNode::Type type, PropertyNode::PutType putType, bool, SuperBinding superBinding, InferName inferName, bool isClassProperty)
     {
-        if (node->isBaseFuncExprNode()) {
-            auto metadata = static_cast<BaseFuncExprNode*>(node)->metadata();
-            metadata->setEcmaName(*propertyName);
-            metadata->setInferredName(*propertyName);
-        } else if (node->isClassExprNode())
-            static_cast<ClassExprNode*>(node)->setEcmaName(*propertyName);
+        if (inferName == InferName::Allowed) {
+            if (node->isBaseFuncExprNode()) {
+                auto metadata = static_cast<BaseFuncExprNode*>(node)->metadata();
+                metadata->setEcmaName(*propertyName);
+                metadata->setInferredName(*propertyName);
+            } else if (node->isClassExprNode())
+                static_cast<ClassExprNode*>(node)->setEcmaName(*propertyName);
+        }
         return new (m_parserArena) PropertyNode(*propertyName, node, type, putType, superBinding, isClassProperty);
     }
     PropertyNode* createProperty(ExpressionNode* node, PropertyNode::Type type, PropertyNode::PutType putType, bool, SuperBinding superBinding, bool isClassProperty)
