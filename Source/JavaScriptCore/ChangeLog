@@ -1,3 +1,20 @@
+2017-04-08  Oliver Hunt  <oliver@apple.com>
+
+        Remove use of strcpy from JSC
+        https://bugs.webkit.org/show_bug.cgi?id=170646
+
+        Reviewed by Mark Lam.
+
+        Replace the use of strcpy with memcpy as strcpy keeps
+        on tripping various analyser warnings even though its
+        trivially safe in this case.
+
+        Essentially code hygiene, no change in behaviour, no
+        perf impact.
+
+        * dfg/DFGDisassembler.cpp:
+        (JSC::DFG::Disassembler::dumpDisassembly):
+
 2017-04-09  Joseph Pecoraro  <pecoraro@apple.com>
 
         test262: test262/test/annexB/language/expressions/object/__proto__-fn-name.js
