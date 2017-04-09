@@ -24,7 +24,7 @@ test.step(function() {
         }
 
         if (client.readyState === 4) {
-            assert_equals(countedLoading, 10, "LOADING state change may be emitted multiple times");
+            assert_greater_than(countedLoading, 1, "LOADING state change may be emitted multiple times");
 
             test.done();
         }

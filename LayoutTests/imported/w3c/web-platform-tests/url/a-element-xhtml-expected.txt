@@ -24,6 +24,7 @@ PASS Parsing: <http://f:
 /c> against <http://example.org/foo/bar> 
 PASS Parsing: <http://f:fifty-two/c> against <http://example.org/foo/bar> 
 PASS Parsing: <http://f:999999/c> against <http://example.org/foo/bar> 
+PASS Parsing: <non-special://f:999999/c> against <http://example.org/foo/bar> 
 FAIL Parsing: <http://f: 21 / b ? d # e > against <http://example.org/foo/bar> assert_equals: failure should set href to input expected "http://f: 21 / b ? d # e " but got "http://f: 21 / b ? d # e"
 PASS Parsing: <> against <http://example.org/foo/bar> 
 PASS Parsing: <  	> against <http://example.org/foo/bar> 
@@ -404,6 +405,28 @@ PASS Parsing: <?x> against <file:///test?test#test>
 PASS Parsing: <file:?x> against <file:///test?test#test> 
 PASS Parsing: <#x> against <file:///test?test#test> 
 PASS Parsing: <file:#x> against <file:///test?test#test> 
+FAIL Parsing: <file:\\//> against <about:blank> assert_equals: href expected "file:///" but got "file:////"
+FAIL Parsing: <file:\\\\> against <about:blank> assert_equals: href expected "file:///" but got "file:////"
+FAIL Parsing: <file:\\\\?fox> against <about:blank> assert_equals: href expected "file:///?fox" but got "file:////?fox"
+FAIL Parsing: <file:\\\\#guppy> against <about:blank> assert_equals: href expected "file:///#guppy" but got "file:////#guppy"
+FAIL Parsing: <file://spider///> against <about:blank> assert_equals: href expected "file://spider/" but got "file://spider///"
+FAIL Parsing: <file:\\localhost//> against <about:blank> assert_equals: href expected "file:///" but got "file:////"
+PASS Parsing: <file:///localhost//cat> against <about:blank> 
+FAIL Parsing: <file://\/localhost//cat> against <about:blank> assert_equals: href expected "file:///localhost//cat" but got "file:////localhost//cat"
+FAIL Parsing: <file://localhost//a//../..//> against <about:blank> assert_equals: href expected "file:///" but got "file://///"
+FAIL Parsing: </////mouse> against <file:///elephant> assert_equals: href expected "file:///mouse" but got "file://///mouse"
+PASS Parsing: <\//pig> against <file://lion/> 
+FAIL Parsing: <\/localhost//pig> against <file://lion/> assert_equals: href expected "file:///pig" but got "file:////pig"
+FAIL Parsing: <//localhost//pig> against <file://lion/> assert_equals: href expected "file:///pig" but got "file:////pig"
+FAIL Parsing: </..//localhost//pig> against <file://lion/> assert_equals: href expected "file://lion/localhost//pig" but got "file:////localhost//pig"
+PASS Parsing: <file://> against <file://ape/> 
+FAIL Parsing: </rooibos> against <file://tea/> assert_equals: href expected "file://tea/rooibos" but got "file:///rooibos"
+FAIL Parsing: </?chai> against <file://tea/> assert_equals: href expected "file://tea/?chai" but got "file:///?chai"
+FAIL Parsing: <file://example.net/C:/> against <about:blank> assert_equals: href expected "file:///C:/" but got "file://example.net/C:/"
+FAIL Parsing: <file://1.2.3.4/C:/> against <about:blank> assert_equals: href expected "file:///C:/" but got "file://1.2.3.4/C:/"
+FAIL Parsing: <file://[1::8]/C:/> against <about:blank> assert_equals: href expected "file:///C:/" but got "file://[1::8]/C:/"
+PASS Parsing: <file:/C|/> against <about:blank> 
+PASS Parsing: <file://C|/> against <about:blank> 
 PASS Parsing: <file:> against <about:blank> 
 PASS Parsing: <file:?q=v> against <about:blank> 
 PASS Parsing: <file:#frag> against <about:blank> 

@@ -23,7 +23,7 @@ FAIL RTCPeerConnection interface: operation setRemoteDescription(RTCSessionDescr
 PASS RTCPeerConnection interface: attribute remoteDescription 
 PASS RTCPeerConnection interface: attribute currentRemoteDescription 
 PASS RTCPeerConnection interface: attribute pendingRemoteDescription 
-PASS RTCPeerConnection interface: operation addIceCandidate([object Object],[object Object]) 
+PASS RTCPeerConnection interface: operation addIceCandidate(RTCIceCandidate) 
 PASS RTCPeerConnection interface: attribute signalingState 
 PASS RTCPeerConnection interface: attribute iceGatheringState 
 PASS RTCPeerConnection interface: attribute iceConnectionState 
@@ -81,7 +81,7 @@ PASS RTCPeerConnection interface: pc must inherit property "remoteDescription" w
 PASS RTCPeerConnection interface: pc must inherit property "currentRemoteDescription" with the proper type (8) 
 PASS RTCPeerConnection interface: pc must inherit property "pendingRemoteDescription" with the proper type (9) 
 PASS RTCPeerConnection interface: pc must inherit property "addIceCandidate" with the proper type (10) 
-PASS RTCPeerConnection interface: calling addIceCandidate([object Object],[object Object]) on pc with too few arguments must throw TypeError 
+PASS RTCPeerConnection interface: calling addIceCandidate(RTCIceCandidate) on pc with too few arguments must throw TypeError 
 FAIL RTCPeerConnection interface: pc must inherit property "signalingState" with the proper type (11) Unrecognized type RTCSignalingState
 FAIL RTCPeerConnection interface: pc must inherit property "iceGatheringState" with the proper type (12) Unrecognized type RTCIceGatheringState
 FAIL RTCPeerConnection interface: pc must inherit property "iceConnectionState" with the proper type (13) Unrecognized type RTCIceConnectionState

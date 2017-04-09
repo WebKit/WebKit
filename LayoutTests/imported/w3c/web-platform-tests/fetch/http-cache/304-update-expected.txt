@@ -1,0 +1,6 @@
+
+PASS HTTP cache updates returned headers from a Last-Modified 304. 
+PASS HTTP cache updates stored headers from a Last-Modified 304. 
+PASS HTTP cache updates returned headers from a ETag 304. 
+PASS HTTP cache updates stored headers from a ETag 304. 
+

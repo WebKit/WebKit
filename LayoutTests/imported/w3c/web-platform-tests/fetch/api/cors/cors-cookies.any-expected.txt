@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: line 46: ReferenceError: Can't find variable: get_host_info
+
+Harness Error (FAIL), message = ReferenceError: Can't find variable: get_host_info
+
+

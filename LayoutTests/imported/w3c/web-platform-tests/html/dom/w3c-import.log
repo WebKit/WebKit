@@ -15,6 +15,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/OWNERS
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/elements-embedded.js
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/elements-forms.js
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/elements-grouping.js

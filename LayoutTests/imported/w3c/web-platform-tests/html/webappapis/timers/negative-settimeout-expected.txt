@@ -1,0 +1,3 @@
+
+PASS Negative timeout in setTimeout 
+

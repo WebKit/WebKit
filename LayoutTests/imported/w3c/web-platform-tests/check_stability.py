@@ -311,7 +311,8 @@ def get_git_cmd(repo_path):
     def git(cmd, *args):
         full_cmd = ["git", cmd] + list(args)
         try:
-            return subprocess.check_output(full_cmd, cwd=repo_path, stderr=subprocess.STDOUT)
+            logger.debug(" ".join(full_cmd))
+            return subprocess.check_output(full_cmd, cwd=repo_path, stderr=subprocess.STDOUT).strip()
         except subprocess.CalledProcessError as e:
             logger.error("Git command exited with status %i" % e.returncode)
             logger.error(e.output)
@@ -363,10 +364,9 @@ class pwd(object):
         self.old_dir = None
 
 
-def fetch_wpt_master(user):
-    """Fetch the master branch via git."""
+def fetch_wpt(user, *args):
     git = get_git_cmd(wpt_root)
-    git("fetch", "https://github.com/%s/web-platform-tests.git" % user, "master:master")
+    git("fetch", "https://github.com/%s/web-platform-tests.git" % user, *args)
 
 
 def get_sha1():
@@ -390,13 +390,60 @@ def install_wptrunner():
     call("pip", "install", wptrunner_root)
 
 
-def get_files_changed():
+def get_branch_point(user):
+    git = get_git_cmd(wpt_root)
+    if os.environ.get("TRAVIS_PULL_REQUEST", "false") != "false":
+        # This is a PR, so the base branch is in TRAVIS_BRANCH
+        travis_branch = os.environ.get("TRAVIS_BRANCH")
+        assert travis_branch, "TRAVIS_BRANCH environment variable is defined"
+        branch_point = git("rev-parse", travis_branch)
+    else:
+        # Otherwise we aren't on a PR, so we try to find commits that are only in the
+        # current branch c.f.
+        # http://stackoverflow.com/questions/13460152/find-first-ancestor-commit-in-another-branch
+        head = git("rev-parse", "HEAD")
+        # To do this we need all the commits in the local copy
+        fetch_args = [user, "+refs/heads/*:refs/remotes/origin/*"]
+        if os.path.exists(os.path.join(wpt_root, ".git", "shallow")):
+            fetch_args.insert(1, "--unshallow")
+        fetch_wpt(*fetch_args)
+        not_heads = [item for item in git("rev-parse", "--not", "--all").split("\n")
+                     if item.strip() and not head in item]
+        commits = git("rev-list", "HEAD", *not_heads).split("\n")
+        branch_point = None
+        if len(commits):
+            first_commit = commits[-1]
+            if first_commit:
+                branch_point = git("rev-parse", first_commit + "^")
+
+        # The above heuristic will fail in the following cases:
+        #
+        # - The current branch has fallen behind the version retrieved via the above
+        #   `fetch` invocation
+        # - Changes on the current branch were rebased and therefore do not exist on any
+        #   other branch. This will result in the selection of a commit that is earlier
+        #   in the history than desired (as determined by calculating the later of the
+        #   branch point and the merge base)
+        #
+        # In either case, fall back to using the merge base as the branch point.
+        merge_base = git("merge-base", "HEAD", "origin/master")
+        if (branch_point is None or
+            (branch_point != merge_base and
+             not git("log", "--oneline", "%s..%s" % (merge_base, branch_point)).strip())):
+            logger.debug("Using merge-base as the branch point")
+            branch_point = merge_base
+        else:
+            logger.debug("Using first commit on another branch as the branch point")
+
+    logger.debug("Branch point from master: %s" % branch_point)
+    return branch_point
+
+
+def get_files_changed(branch_point):
     """Get and return files changed since current branch diverged from master."""
     root = os.path.abspath(os.curdir)
     git = get_git_cmd(wpt_root)
-    branch_point = git("merge-base", "HEAD", "master").strip()
-    logger.debug("Branch point from master: %s" % branch_point)
-    files = git("diff", "--name-only", "-z", "%s.." % branch_point)
+    files = git("diff", "--name-only", "-z", "%s..." % branch_point)
     if not files:
         return []
     assert files[-1] == "\0"
@@ -557,7 +604,7 @@ def process_results(log, iterations):
     results = handler.results
     for test_name, test in results.iteritems():
         if is_inconsistent(test["status"], iterations):
-            inconsistent.append((test_name, None, test["status"], None))
+            inconsistent.append((test_name, None, test["status"], []))
         for subtest_name, subtest in test["subtests"].iteritems():
             if is_inconsistent(subtest["status"], iterations):
                 inconsistent.append((test_name, subtest_name, subtest["status"], subtest["messages"]))
@@ -584,7 +631,7 @@ def markdown_adjust(s):
     s = s.replace('\t', u'\\t')
     s = s.replace('\n', u'\\n')
     s = s.replace('\r', u'\\r')
-    s = s.replace('`',  u'\\`')
+    s = s.replace('`',  u'')
     return s
 
 
@@ -677,7 +724,7 @@ def get_parser():
                         action="store",
                         # Travis docs say do not depend on USER env variable.
                         # This is a workaround to get what should be the same value
-                        default=os.environ.get("TRAVIS_REPO_SLUG").split('/')[0],
+                        default=os.environ.get("TRAVIS_REPO_SLUG", "w3c").split('/')[0],
                         help="Travis user name")
     parser.add_argument("--output-bytes",
                         action="store",
@@ -726,14 +773,16 @@ def main():
             logger.critical("Unrecognised browser %s" % browser_name)
             return 1
 
-        fetch_wpt_master(args.user)
+        fetch_wpt(args.user, "master:master")
 
         head_sha1 = get_sha1()
         logger.info("Testing web-platform-tests at revision %s" % head_sha1)
 
+        branch_point = get_branch_point(args.user)
+
         # For now just pass the whole list of changed files to wptrunner and
         # assume that it will run everything that's actually a test
-        files_changed = get_files_changed()
+        files_changed = get_files_changed(branch_point)
 
         if not files_changed:
             logger.info("No files changed")

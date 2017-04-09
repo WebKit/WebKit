@@ -7,26 +7,29 @@
 </head>
 <body>
 <script>
-function testICECandidatePoolSize(size, shouldThrow, expectedSize)
+function testValidPoolSize(size, expectedSize)
 {
     test(function() {
-        if (shouldThrow) {
-            assert_throws(new TypeError(), () => new RTCPeerConnection({iceCandidatePoolSize: size}))
-            return
-        }
         var pc = new RTCPeerConnection({iceCandidatePoolSize: size})
         assert_equals(pc.getConfiguration().iceCandidatePoolSize, expectedSize !== undefined ? expectedSize : size)
-    }, "Setting iceCandidatePoolSize to " + size)
+    }, "Setting iceCandidatePoolSize to a valid value: " + size)
 }
 
-testICECandidatePoolSize(10)
-testICECandidatePoolSize(0)
-testICECandidatePoolSize(null, false, 0)
-testICECandidatePoolSize(undefined, false, 0)
+function testInvalidPoolSize(size)
+{
+    test(function() {
+        assert_throws(new TypeError(), () => new RTCPeerConnection({iceCandidatePoolSize: size}))
+    }, "Setting iceCandidatePoolSize to an invalid value: " + size)
+}
 
-testICECandidatePoolSize(-1, true)
-testICECandidatePoolSize(1000, true)
-testICECandidatePoolSize("string", true)
+testValidPoolSize(10)
+testValidPoolSize(0)
+testValidPoolSize(null, 0)
+testValidPoolSize(undefined, 0)
+
+testInvalidPoolSize(-1)
+testInvalidPoolSize(1000)
+testInvalidPoolSize("string")
 </script>
 </body>
 </html>

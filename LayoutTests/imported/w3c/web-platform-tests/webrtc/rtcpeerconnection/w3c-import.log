@@ -15,6 +15,9 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/webrtc/rtcpeerconnection/canTrickleIceCandidates.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc/rtcpeerconnection/iceGatheringState.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc/rtcpeerconnection/rtcconfiguration-icecandidatepoolsize.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/rtcpeerconnection/rtcpeerconnection-constructor.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/rtcpeerconnection/rtcpeerconnection-idl.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/rtcpeerconnection/setRemoteDescription.html

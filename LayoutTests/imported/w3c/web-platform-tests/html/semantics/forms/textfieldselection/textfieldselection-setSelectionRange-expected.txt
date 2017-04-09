@@ -25,6 +25,8 @@ PASS input setSelectionRange({},1)
 PASS input setSelectionRange(NaN,1) 
 PASS input setSelectionRange(null,1) 
 PASS input setSelectionRange(undefined,1) 
+FAIL input setSelectionRange(Math.pow(2,32) - 2, Math.pow(2,32) - 1) assert_equals: element.selectionStart should be value.length expected 5 but got 0
+FAIL input setSelectionRange(Math.pow(2,31), Math.pow(2,32) - 1) assert_equals: element.selectionStart should be value.length expected 5 but got 0
 TIMEOUT input setSelectionRange fires a select event Test timed out
 PASS test of textarea.setSelectionRange 
 PASS textarea typeof(input.setSelectionRange)' 
@@ -46,4 +48,6 @@ PASS textarea setSelectionRange({},1)
 PASS textarea setSelectionRange(NaN,1) 
 PASS textarea setSelectionRange(null,1) 
 PASS textarea setSelectionRange(undefined,1) 
+FAIL textarea setSelectionRange(Math.pow(2,32) - 2, Math.pow(2,32) - 1) assert_equals: element.selectionStart should be value.length expected 5 but got 0
+FAIL textarea setSelectionRange(Math.pow(2,31), Math.pow(2,32) - 1) assert_equals: element.selectionStart should be value.length expected 5 but got 0
   

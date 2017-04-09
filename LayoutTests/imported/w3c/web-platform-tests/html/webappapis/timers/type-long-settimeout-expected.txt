@@ -1,0 +1,3 @@
+
+PASS Type long timeout for setTimeout 
+

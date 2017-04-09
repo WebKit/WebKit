@@ -1,0 +1,36 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the W3C CSS or WPT github:
+	https://github.com/w3c/csswg-test
+	https://github.com/w3c/web-platform-tests
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/resources/examples/apisample-error-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/resources/examples/apisample-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/resources/examples/apisample.htm
+/LayoutTests/imported/w3c/web-platform-tests/resources/examples/apisample10.html
+/LayoutTests/imported/w3c/web-platform-tests/resources/examples/apisample11.html
+/LayoutTests/imported/w3c/web-platform-tests/resources/examples/apisample12.html
+/LayoutTests/imported/w3c/web-platform-tests/resources/examples/apisample13.html
+/LayoutTests/imported/w3c/web-platform-tests/resources/examples/apisample14.html
+/LayoutTests/imported/w3c/web-platform-tests/resources/examples/apisample15.html
+/LayoutTests/imported/w3c/web-platform-tests/resources/examples/apisample16.html
+/LayoutTests/imported/w3c/web-platform-tests/resources/examples/apisample17.html
+/LayoutTests/imported/w3c/web-platform-tests/resources/examples/apisample2.htm
+/LayoutTests/imported/w3c/web-platform-tests/resources/examples/apisample3.htm
+/LayoutTests/imported/w3c/web-platform-tests/resources/examples/apisample4.htm
+/LayoutTests/imported/w3c/web-platform-tests/resources/examples/apisample5.htm
+/LayoutTests/imported/w3c/web-platform-tests/resources/examples/apisample6.html
+/LayoutTests/imported/w3c/web-platform-tests/resources/examples/apisample7.html
+/LayoutTests/imported/w3c/web-platform-tests/resources/examples/apisample8.html
+/LayoutTests/imported/w3c/web-platform-tests/resources/examples/apisample9.html

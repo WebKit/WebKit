@@ -1545,7 +1545,6 @@ webkit.org/b/168415 [ ElCapitan ] imported/w3c/web-platform-tests/resource-timin
 [ ElCapitan ] http/tests/inspector/network/resource-request-headers.html [ Failure ]
 
 # <rdar://problem/30610988>
-[ Sierra+ ] imported/w3c/web-platform-tests/fetch/api/redirect/redirect-count-cross-origin-worker.html [ Failure ]
 [ Sierra+ ] imported/w3c/web-platform-tests/fetch/api/redirect/redirect-count-cross-origin.html [ Failure ]
 [ Sierra+ ] imported/w3c/web-platform-tests/fetch/api/redirect/redirect-count-worker.html [ Failure ]
 [ Sierra+ ] imported/w3c/web-platform-tests/fetch/api/redirect/redirect-count.html [ Failure ]

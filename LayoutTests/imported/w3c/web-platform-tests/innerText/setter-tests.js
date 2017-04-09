@@ -1,6 +1,7 @@
 testText("<div>", "abc", "abc", "Simplest possible test");
 testHTML("<div>", "abc\ndef", "abc<br>def", "Newlines convert to <br> in non-white-space:pre elements");
 testHTML("<pre>", "abc\ndef", "abc<br>def", "Newlines convert to <br> in <pre> element");
+testHTML("<textarea>", "abc\ndef", "abc<br>def", "Newlines convert to <br> in <textarea> element");
 testHTML("<div style='white-space:pre'>", "abc\ndef", "abc<br>def", "Newlines convert to <br> in white-space:pre element");
 testHTML("<div>", "abc\rdef", "abc<br>def", "CRs convert to <br> in non-white-space:pre elements");
 testHTML("<pre>", "abc\rdef", "abc<br>def", "CRs convert to <br> in <pre> element");

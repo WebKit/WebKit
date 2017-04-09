@@ -1,3 +1,20 @@
+2017-04-09  Youenn Fablet  <youenn@apple.com>
+
+        Resync WPT tests up to 23cd07d4685d81024b7440e042f8bbdb33e7ddec
+        https://bugs.webkit.org/show_bug.cgi?id=170647
+
+        Reviewed by Sam Weinig.
+
+        * TestExpectations:
+        * platform/mac-wk1/imported/w3c/web-platform-tests/fetch/http-cache/304-update-expected.txt: Added.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/fetch/http-cache/cc-request-expected.txt: Added.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/fetch/http-cache/heuristic-expected.txt: Added.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/fetch/http-cache/invalidate-expected.txt: Added.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/fetch/http-cache/status-expected.txt: Added.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/html/browsers/windows/browsing-context-expected.txt: Added.
+        * platform/mac/TestExpectations:
+        * tests-options.json:
+
 2017-04-09  Joseph Pecoraro  <pecoraro@apple.com>
 
         test262: test262/test/annexB/language/literals/regexp/identity-escape.js

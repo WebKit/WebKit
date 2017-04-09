@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: line 29: ReferenceError: Can't find variable: dirname
+
+Harness Error (FAIL), message = ReferenceError: Can't find variable: dirname
+
+

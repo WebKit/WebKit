@@ -1,3 +1,6 @@
 
-FAIL XMLHttpRequest: send() - unserializable Document assert_throws: function "function () { client.send(input) }" did not throw
+PASS Serializing documents through XMLHttpRequest: '' 
+PASS Serializing documents through XMLHttpRequest: '<test:test/>' 
+PASS Serializing documents through XMLHttpRequest: '<test:test test:test="gee"/>' 
+FAIL Serializing documents through XMLHttpRequest: '<test:test test:test="gee" x="�"/>' assert_equals: expected "<test:test test:test=\"gee\" x=\"\ufffd\"/>" but got "<test:test test:test=\"gee\" x=\"\ufffd\ufffd\ufffd\"/>"
 

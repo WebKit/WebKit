@@ -104,4 +104,18 @@ test(() => {
 
 }, 'pipeThrough can handle calling a pipeTo that returns a non-promise thenable object');
 
+promise_test(() => {
+  const dummy = {
+    pipeTo() {
+      return Promise.reject(new Error('this rejection should not be reported as unhandled'));
+    }
+  };
+
+  ReadableStream.prototype.pipeThrough.call(dummy, { });
+
+  // The test harness should complain about unhandled rejections by then.
+  return flushAsyncEvents();
+
+}, 'pipeThrough should mark a real promise from a fake readable as handled');
+
 done();

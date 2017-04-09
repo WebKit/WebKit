@@ -19,6 +19,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/resources/echo-window-name.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/resources/nested-post-to-opener.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/resources/noreferrer-window-name.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/resources/opener-cross-origin-embed.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/resources/opener-cross-origin-end.txt
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/resources/opener-cross-origin.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/resources/post-to-opener.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/resources/target-cross-origin.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/resources/window-close-button.html

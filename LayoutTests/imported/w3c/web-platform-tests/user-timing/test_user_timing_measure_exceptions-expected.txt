@@ -12,12 +12,12 @@ PASS window.performance.measure("measure", "navigationStart", "mark"), where "ma
 PASS window.performance.measure("measure", "navigationStart", "mark"), where "mark" is a non-existent mark, threw a SYNTAX_ERR exception. 
 PASS window.performance.measure("measure", "mark", "mark"), where "mark" is a non-existent mark, threw an exception. 
 PASS window.performance.measure("measure", "mark", "mark"), where "mark" is a non-existent mark, threw a SYNTAX_ERR exception. 
-PASS window.performance.measure("measure", "unloadEventStart"), where "unloadEventStart" is a navigation timing attribute with a value of 0, threw an exception. 
-PASS window.performance.measure("measure", "unloadEventStart"), where "unloadEventStart" is a navigation timing attribute with a value of 0, threw an INVALID_ACCESS_ERR exception. 
-PASS window.performance.measure("measure", "unloadEventStart", "responseEnd"), where "unloadEventStart" is a navigation timing attribute with a value of 0, threw an exception. 
-PASS window.performance.measure("measure", "unloadEventStart", "responseEnd"), where "unloadEventStart" is a navigation timing attribute with a value of 0, threw an INVALID_ACCESS_ERR exception. 
-PASS window.performance.measure("measure", "navigationStart", "unloadEventStart"), where "unloadEventStart" is a navigation timing attribute with a value of 0, threw an exception. 
-PASS window.performance.measure("measure", "navigationStart", "unloadEventStart"), where "unloadEventStart" is a navigation timing attribute with a value of 0, threw an INVALID_ACCESS_ERR exception. 
-PASS window.performance.measure("measure", "unloadEventStart", "unloadEventStart"), where "unloadEventStart" is a navigation timing attribute with a value of 0, threw an exception. 
-PASS window.performance.measure("measure", "unloadEventStart", "unloadEventStart"), where "unloadEventStart" is a navigation timing attribute with a value of 0, threw an INVALID_ACCESS_ERR exception. 
+PASS window.performance.measure("measure", "loadEventEnd"), where "loadEventEnd" is a navigation timing attribute with a value of 0, threw an exception. 
+PASS window.performance.measure("measure", "loadEventEnd"), where "loadEventEnd" is a navigation timing attribute with a value of 0, threw an INVALID_ACCESS_ERR exception. 
+PASS window.performance.measure("measure", "loadEventEnd", "responseEnd"), where "loadEventEnd" is a navigation timing attribute with a value of 0, threw an exception. 
+PASS window.performance.measure("measure", "loadEventEnd", "responseEnd"), where "loadEventEnd" is a navigation timing attribute with a value of 0, threw an INVALID_ACCESS_ERR exception. 
+PASS window.performance.measure("measure", "navigationStart", "loadEventEnd"), where "loadEventEnd" is a navigation timing attribute with a value of 0, threw an exception. 
+PASS window.performance.measure("measure", "navigationStart", "loadEventEnd"), where "loadEventEnd" is a navigation timing attribute with a value of 0, threw an INVALID_ACCESS_ERR exception. 
+PASS window.performance.measure("measure", "loadEventEnd", "loadEventEnd"), where "loadEventEnd" is a navigation timing attribute with a value of 0, threw an exception. 
+PASS window.performance.measure("measure", "loadEventEnd", "loadEventEnd"), where "loadEventEnd" is a navigation timing attribute with a value of 0, threw an INVALID_ACCESS_ERR exception. 
 

@@ -25,4 +25,5 @@ FAIL Closing must be propagated forward: becomes closed after one chunk; prevent
 FAIL Closing must be propagated forward: becomes closed after one chunk; preventClose omitted; rejected close promise assert_array_equals: close must always be called with the controller lengths differ, expected 1 got 0
 PASS Closing must be propagated forward: becomes closed after one chunk; preventClose = true 
 FAIL Closing must be propagated forward: shutdown must not occur until the final write completes assert_array_equals: close must always be called with the controller lengths differ, expected 1 got 0
+PASS Closing must be propagated forward: shutdown must not occur until the final write completes; preventClose = true 
 

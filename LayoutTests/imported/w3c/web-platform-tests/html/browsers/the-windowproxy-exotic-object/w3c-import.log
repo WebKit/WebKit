@@ -16,6 +16,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-windowproxy-exotic-object/windowproxy-prototype-setting-cross-origin-domain.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-windowproxy-exotic-object/windowproxy-prototype-setting-cross-origin.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-windowproxy-exotic-object/windowproxy-prototype-setting-goes-cross-origin-domain.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-windowproxy-exotic-object/windowproxy-prototype-setting-same-origin-domain.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-windowproxy-exotic-object/windowproxy-prototype-setting-same-origin.html

@@ -4,4 +4,5 @@ FAIL Piping through a transform errored on the writable end does not cause an un
 PASS pipeThrough generically calls pipeTo with the appropriate args 
 PASS pipeThrough can handle calling a pipeTo that returns a non-promise object 
 PASS pipeThrough can handle calling a pipeTo that returns a non-promise thenable object 
+PASS pipeThrough should mark a real promise from a fake readable as handled 
 

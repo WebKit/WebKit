@@ -1,0 +1,39 @@
+CONSOLE MESSAGE: line 60: Error
+
+PASS Calling dispatchEvent(null). 
+FAIL If the event's initialized flag is not set, an InvalidStateError must be thrown (AnimationEvent). The operation is not supported.
+FAIL If the event's initialized flag is not set, an InvalidStateError must be thrown (BeforeUnloadEvent). The operation is not supported.
+FAIL If the event's initialized flag is not set, an InvalidStateError must be thrown (CloseEvent). The operation is not supported.
+PASS If the event's initialized flag is not set, an InvalidStateError must be thrown (CompositionEvent). 
+PASS If the event's initialized flag is not set, an InvalidStateError must be thrown (CustomEvent). 
+PASS If the event's initialized flag is not set, an InvalidStateError must be thrown (DeviceMotionEvent). 
+PASS If the event's initialized flag is not set, an InvalidStateError must be thrown (DeviceOrientationEvent). 
+FAIL If the event's initialized flag is not set, an InvalidStateError must be thrown (DragEvent). The operation is not supported.
+FAIL If the event's initialized flag is not set, an InvalidStateError must be thrown (ErrorEvent). The operation is not supported.
+PASS If the event's initialized flag is not set, an InvalidStateError must be thrown (Event). 
+PASS If the event's initialized flag is not set, an InvalidStateError must be thrown (Events). 
+FAIL If the event's initialized flag is not set, an InvalidStateError must be thrown (FocusEvent). The operation is not supported.
+PASS If the event's initialized flag is not set, an InvalidStateError must be thrown (HashChangeEvent). 
+PASS If the event's initialized flag is not set, an InvalidStateError must be thrown (HTMLEvents). 
+FAIL If the event's initialized flag is not set, an InvalidStateError must be thrown (IDBVersionChangeEvent). The operation is not supported.
+PASS If the event's initialized flag is not set, an InvalidStateError must be thrown (KeyboardEvent). 
+PASS If the event's initialized flag is not set, an InvalidStateError must be thrown (MessageEvent). 
+PASS If the event's initialized flag is not set, an InvalidStateError must be thrown (MouseEvent). 
+PASS If the event's initialized flag is not set, an InvalidStateError must be thrown (MouseEvents). 
+FAIL If the event's initialized flag is not set, an InvalidStateError must be thrown (PageTransitionEvent). The operation is not supported.
+PASS If the event's initialized flag is not set, an InvalidStateError must be thrown (PopStateEvent). 
+PASS If the event's initialized flag is not set, an InvalidStateError must be thrown (StorageEvent). 
+FAIL If the event's initialized flag is not set, an InvalidStateError must be thrown (SVGEvents). The operation is not supported.
+PASS If the event's initialized flag is not set, an InvalidStateError must be thrown (TextEvent). 
+FAIL If the event's initialized flag is not set, an InvalidStateError must be thrown (TouchEvent). The operation is not supported.
+FAIL If the event's initialized flag is not set, an InvalidStateError must be thrown (TrackEvent). The operation is not supported.
+FAIL If the event's initialized flag is not set, an InvalidStateError must be thrown (TransitionEvent). The operation is not supported.
+PASS If the event's initialized flag is not set, an InvalidStateError must be thrown (UIEvent). 
+PASS If the event's initialized flag is not set, an InvalidStateError must be thrown (UIEvents). 
+FAIL If the event's initialized flag is not set, an InvalidStateError must be thrown (WebGLContextEvent). The operation is not supported.
+PASS If the event's initialized flag is not set, an InvalidStateError must be thrown (WheelEvent). 
+PASS If the event's dispatch flag is set, an InvalidStateError must be thrown. 
+PASS Exceptions from event listeners must not be propagated. 
+PASS Event listeners added during dispatch should be called 
+PASS Event listeners should be called in order of addition 
+

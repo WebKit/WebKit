@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: line 8: Failed to set referrer policy: The value 'same-origin' is not one of 'no-referrer', 'origin', 'no-referrer-when-downgrade', or 'unsafe-url'. Defaulting to 'no-referrer'.
+
+FAIL Test referer header /beacon/resources/ navigator.sendBeacon is not a function. (In 'navigator.sendBeacon(testUrl)', 'navigator.sendBeacon' is undefined)
+FAIL Test referer header http://127.0.0.1:8800/beacon/resources/ navigator.sendBeacon is not a function. (In 'navigator.sendBeacon(testUrl)', 'navigator.sendBeacon' is undefined)
+

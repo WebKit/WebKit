@@ -1,0 +1,64 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the W3C CSS or WPT github:
+	https://github.com/w3c/csswg-test
+	https://github.com/w3c/web-platform-tests
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/allowany.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/array.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/attributes.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/callback.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/caller.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/constants.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/constructor.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/dictionary-inherits.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/dictionary.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/documentation-dos.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/documentation.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/enum.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/equivalent-decl.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/exception-inheritance.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/exception.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/getter-setter.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/identifier-qualified-names.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/implements.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/indexed-properties.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/inherits-getter.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/interface-inherits.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/iterator.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/namedconstructor.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/nointerfaceobject.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/nullable.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/nullableobjects.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/operation-optional-arg.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/overloading.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/overridebuiltins.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/partial-interface.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/primitives.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/prototyperoot.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/putforwards.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/reg-operations.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/replaceable.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/sequence.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/serializer.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/static.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/stringifier-attribute.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/stringifier-custom.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/stringifier.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/treatasnull.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/treatasundefined.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/typedef.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/typesuffixes.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/uniontype.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/variadic-operations.widl

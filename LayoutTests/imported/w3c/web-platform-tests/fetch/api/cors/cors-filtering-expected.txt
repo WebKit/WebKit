@@ -15,6 +15,8 @@ PASS CORS filter on Age header, header is exposed
 PASS CORS filter on Server header, header is exposed 
 PASS CORS filter on Warning header, header is exposed 
 PASS CORS filter on Content-Length header, header is exposed 
-PASS CORS filter on Set-Cookie header, header is exposed 
-PASS CORS filter on Set-Cookie2 header, header is exposed 
+PASS CORS filter on Set-Cookie header, header is forbidden 
+PASS CORS filter on Set-Cookie2 header, header is forbidden 
+PASS CORS filter on Set-Cookie header, header is forbidden(credentials = include) 
+PASS CORS filter on Set-Cookie2 header, header is forbidden(credentials = include) 
 

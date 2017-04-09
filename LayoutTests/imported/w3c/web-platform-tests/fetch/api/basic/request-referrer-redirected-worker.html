@@ -8,7 +8,7 @@
   </head>
   <body>
     <script>
-      let finalURL = "/fetch/api/basic/request-referrer.js";
+      let finalURL = "/fetch/api/basic/request-referrer.any.worker.js";
       let url = "/fetch/api/resources/redirect.py?location=" +
                 encodeURIComponent(finalURL);
       fetch_tests_from_worker(new Worker(url));

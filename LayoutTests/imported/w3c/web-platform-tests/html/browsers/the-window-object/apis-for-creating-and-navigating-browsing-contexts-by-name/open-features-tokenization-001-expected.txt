@@ -1,0 +1,13 @@
+
+FAIL tokenization should skip window features separators before `name` assert_equals: " noopener" should activate feature "noopener" expected null but got [stringifying object threw SecurityError (DOM Exception 18): Blocked a frame with origin "http://localhost:8800" from accessing a frame with origin "null".  The frame requesting access has a protocol of "http", the frame being accessed has a protocol of "". Protocols must match.
+ with type object]
+FAIL feature `name` should be converted to ASCII lowercase assert_equals: "NOOPENER" should activate feature "noopener" expected null but got [stringifying object threw SecurityError (DOM Exception 18): Blocked a frame with origin "http://localhost:8800" from accessing a frame with origin "null".  The frame requesting access has a protocol of "http", the frame being accessed has a protocol of "". Protocols must match.
+ with type object]
+FAIL after `name`, tokenization should skip window features separators that are not "=" or "," assert_equals: "noopener" should activate feature "noopener" expected null but got [stringifying object threw SecurityError (DOM Exception 18): Blocked a frame with origin "http://localhost:8800" from accessing a frame with origin "null".  The frame requesting access has a protocol of "http", the frame being accessed has a protocol of "". Protocols must match.
+ with type object]
+FAIL Tokenizing should ignore window feature separators except "," after initial "=" and before value assert_equals: "noopener=  yes" should activate feature "noopener" expected null but got [stringifying object threw SecurityError (DOM Exception 18): Blocked a frame with origin "http://localhost:8800" from accessing a frame with origin "null".  The frame requesting access has a protocol of "http", the frame being accessed has a protocol of "". Protocols must match.
+ with type object]
+FAIL Tokenizing should read characters until first window feature separator as `value` assert_equals: "noopener=noopener" should set "noopener" expected null but got object "[object Window]"
+FAIL "noopener" should be based on name (key), not value assert_equals: "noopener=false" should activate feature "noopener" expected null but got object "[object Window]"
+PASS invalid feature names should not tokenize as "noopener" 
+

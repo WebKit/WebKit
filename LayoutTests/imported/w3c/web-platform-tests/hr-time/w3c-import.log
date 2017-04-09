@@ -16,9 +16,8 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/hr-time/OWNERS
-/LayoutTests/imported/w3c/web-platform-tests/hr-time/basic.html
-/LayoutTests/imported/w3c/web-platform-tests/hr-time/basic.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/hr-time/basic.any.js
 /LayoutTests/imported/w3c/web-platform-tests/hr-time/idlharness.html
-/LayoutTests/imported/w3c/web-platform-tests/hr-time/monotonic-clock.html
+/LayoutTests/imported/w3c/web-platform-tests/hr-time/monotonic-clock.any.js
 /LayoutTests/imported/w3c/web-platform-tests/hr-time/test_cross_frame_start.html
 /LayoutTests/imported/w3c/web-platform-tests/hr-time/window-worker-time-origin.html

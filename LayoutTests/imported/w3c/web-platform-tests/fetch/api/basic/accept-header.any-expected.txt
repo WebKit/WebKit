@@ -1,0 +1,6 @@
+
+FAIL Request through fetch should have 'accept' header with value '*/*' Can't find variable: RESOURCES_DIR
+FAIL Request through fetch should have 'accept' header with value 'custom/*' Can't find variable: RESOURCES_DIR
+FAIL Request through fetch should have a 'accept-language' header Can't find variable: RESOURCES_DIR
+FAIL Request through fetch should have 'accept-language' header with value 'bzh' Can't find variable: RESOURCES_DIR
+

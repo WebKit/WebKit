@@ -138,6 +138,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/send-authentication-cors-basic-setrequestheader.htm
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/send-authentication-cors-setrequestheader-no-cred.htm
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/send-blob-with-no-mime-type.html
+/LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/send-conditional-cors.htm
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/send-conditional.htm
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/send-content-type-charset.htm
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/send-content-type-string.htm
@@ -181,9 +182,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/send-sync-response-event-order.htm
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/send-sync-timeout.htm
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/send-timeout-events.htm
-/LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/send-usp.html
-/LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/send-usp.js
-/LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/send-usp.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/send-usp.any.js
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/setrequestheader-after-send.htm
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/setrequestheader-allow-empty-value.htm
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/setrequestheader-allow-whitespace-in-value.htm

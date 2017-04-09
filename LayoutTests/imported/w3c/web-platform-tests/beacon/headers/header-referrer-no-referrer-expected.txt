@@ -1,0 +1,3 @@
+
+FAIL Test referer header /beacon/resources/ navigator.sendBeacon is not a function. (In 'navigator.sendBeacon(testUrl)', 'navigator.sendBeacon' is undefined)
+

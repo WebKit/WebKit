@@ -21,4 +21,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/noreferrer-cross-origin-window-name-manual.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/noreferrer-null-opener.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/noreferrer-window-name.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/opener-cross-origin-manual.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/targeting-multiple-cross-origin-manual.sub.html

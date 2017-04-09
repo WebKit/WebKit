@@ -143,13 +143,6 @@ PASS createEvent('popstateevent') should be initialized correctly.
 PASS POPSTATEEVENT should be an alias for PopStateEvent. 
 PASS createEvent('POPSTATEEVENT') should be initialized correctly. 
 PASS Should throw NOT_SUPPORTED_ERR for pluralized legacy event interface "PopStateEvents" 
-FAIL ProgressEvent should be an alias for ProgressEvent. The operation is not supported.
-FAIL createEvent('ProgressEvent') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
-FAIL progressevent should be an alias for ProgressEvent. The operation is not supported.
-FAIL createEvent('progressevent') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
-FAIL PROGRESSEVENT should be an alias for ProgressEvent. The operation is not supported.
-FAIL createEvent('PROGRESSEVENT') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
-PASS Should throw NOT_SUPPORTED_ERR for pluralized legacy event interface "ProgressEvents" 
 PASS StorageEvent should be an alias for StorageEvent. 
 PASS createEvent('StorageEvent') should be initialized correctly. 
 PASS storageevent should be an alias for StorageEvent. 
@@ -298,6 +291,8 @@ PASS Should throw NOT_SUPPORTED_ERR for non-legacy event interface "Presentation
 PASS Should throw NOT_SUPPORTED_ERR for pluralized non-legacy event interface "PresentationConnectionAvailableEvents" 
 PASS Should throw NOT_SUPPORTED_ERR for non-legacy event interface "PresentationConnectionCloseEvent" 
 PASS Should throw NOT_SUPPORTED_ERR for pluralized non-legacy event interface "PresentationConnectionCloseEvents" 
+PASS Should throw NOT_SUPPORTED_ERR for non-legacy event interface "ProgressEvent" 
+PASS Should throw NOT_SUPPORTED_ERR for pluralized non-legacy event interface "ProgressEvents" 
 PASS Should throw NOT_SUPPORTED_ERR for non-legacy event interface "PromiseRejectionEvent" 
 PASS Should throw NOT_SUPPORTED_ERR for pluralized non-legacy event interface "PromiseRejectionEvents" 
 PASS Should throw NOT_SUPPORTED_ERR for non-legacy event interface "PushEvent" 

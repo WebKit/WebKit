@@ -1,0 +1,8 @@
+
+FAIL step-start easing with input progress greater than 1 target.animate is not a function. (In 'target.animate', 'target.animate' is undefined)
+FAIL step-end easing with input progress greater than 1 target.animate is not a function. (In 'target.animate', 'target.animate' is undefined)
+FAIL step-end easing with input progress greater than 2 target.animate is not a function. (In 'target.animate', 'target.animate' is undefined)
+FAIL step-start easing with input progress less than 0 target.animate is not a function. (In 'target.animate', 'target.animate' is undefined)
+FAIL step-start easing with input progress less than -1 target.animate is not a function. (In 'target.animate', 'target.animate' is undefined)
+FAIL step-end easing with input progress less than 0 target.animate is not a function. (In 'target.animate', 'target.animate' is undefined)
+

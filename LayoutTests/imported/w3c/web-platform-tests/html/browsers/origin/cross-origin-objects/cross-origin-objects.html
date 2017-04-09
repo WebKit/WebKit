@@ -146,7 +146,13 @@ addTest(function(exception_t) {
     test_throws(exception_t, new TypeError, function() { protoSetter.call(C, new Object()); }, "proto setter |call| on cross-origin Window");
     test_throws(exception_t, new TypeError, function() { protoSetter.call(C.location, new Object()); }, "proto setter |call| on cross-origin Location");
   });
-}, "[[SetPrototypeOf]] should throw");
+  if (Reflect.setPrototypeOf) {
+    assert_false(Reflect.setPrototypeOf(C, new Object()),
+                 "Reflect.setPrototypeOf on cross-origin Window");
+    assert_false(Reflect.setPrototypeOf(C.location, new Object()),
+                "Reflect.setPrototypeOf on cross-origin Location");
+  }
+}, "[[SetPrototypeOf]] should return false");
 
 /*
  * [[IsExtensible]]

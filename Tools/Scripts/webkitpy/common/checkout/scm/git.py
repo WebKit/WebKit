@@ -581,8 +581,8 @@ class Git(SCM, SVNRepository):
     def files_changed_summary_for_commit(self, commit_id):
         return self._run_git(['diff-tree', '--shortstat', '--no-renames', '--no-commit-id', commit_id])
 
-    def fetch(self):
-        return self._run_git(['fetch'])
+    def fetch(self, remote='origin'):
+        return self._run_git(['fetch', remote])
 
     def checkout(self, revision, quiet=None):
         command = ['checkout', revision]

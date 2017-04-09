@@ -1,0 +1,8 @@
+Blocked access to external URL http://www1.localhost:8800/XMLHttpRequest/resources/conditional.py?tag=0.09154653510378963
+Blocked access to external URL http://www1.localhost:8800/XMLHttpRequest/resources/conditional.py?tag=0.25460048558200665&cors=yes
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT 304 without appropriate CORS header Test timed out
+TIMEOUT 304 with appropriate CORS header Test timed out
+

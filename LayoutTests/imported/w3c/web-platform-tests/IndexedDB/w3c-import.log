@@ -245,6 +245,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_createIndex12.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_createIndex13.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_createIndex14-exception_order.htm
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_createIndex15-autoincrement.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_createIndex2.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_createIndex3-usable-right-away.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_createIndex4-deleteIndex-event_order.htm
@@ -306,6 +307,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/interfaces.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/interfaces.idl
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/interfaces.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/key-conversion-exceptions.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/key_invalid.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/key_valid.html
@@ -324,6 +326,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/name-scopes.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/objectstore_keyorder.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/open-request-queue.html
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/parallel-cursors-upgrade.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/request_bubble-and-capture.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/string-list-ordering.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/support-promises.js

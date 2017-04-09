@@ -1,3 +1,8 @@
 
-PASS DOMTokenList iteration: keys, values, etc. 
+PASS classList 
+PASS classList.keys 
+PASS classList.values 
+PASS classList.entries 
+PASS classList.forEach 
+PASS classList inheritance from Array.prototype 
 

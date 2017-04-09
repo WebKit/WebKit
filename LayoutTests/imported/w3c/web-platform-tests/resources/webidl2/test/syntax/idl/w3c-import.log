@@ -1,0 +1,72 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the W3C CSS or WPT github:
+	https://github.com/w3c/csswg-test
+	https://github.com/w3c/web-platform-tests
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/idl/allowany.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/idl/array.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/idl/attributes.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/idl/callback.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/idl/caller.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/idl/constants.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/idl/constructor.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/idl/dictionary-inherits.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/idl/dictionary.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/idl/documentation-dos.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/idl/documentation.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/idl/enum.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/idl/equivalent-decl.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/idl/exception-inheritance.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/idl/exception.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/idl/extended-attributes.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/idl/generic.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/idl/getter-setter.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/idl/identifier-qualified-names.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/idl/implements.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/idl/indexed-properties.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/idl/inherits-getter.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/idl/interface-inherits.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/idl/iterable.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/idl/iterator.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/idl/legacyiterable.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/idl/map.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/idl/maplike.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/idl/namedconstructor.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/idl/nointerfaceobject.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/idl/nullable.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/idl/nullableobjects.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/idl/operation-optional-arg.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/idl/overloading.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/idl/overridebuiltins.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/idl/partial-interface.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/idl/primitives.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/idl/prototyperoot.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/idl/putforwards.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/idl/reg-operations.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/idl/replaceable.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/idl/sequence.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/idl/serializer.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/idl/setlike.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/idl/static.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/idl/stringifier-attribute.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/idl/stringifier-custom.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/idl/stringifier.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/idl/treatasnull.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/idl/treatasundefined.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/idl/typedef-nested.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/idl/typedef.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/idl/typesuffixes.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/idl/uniontype.widl
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/test/syntax/idl/variadic-operations.widl

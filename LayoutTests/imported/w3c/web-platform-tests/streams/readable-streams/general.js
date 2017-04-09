@@ -6,6 +6,9 @@ if (self.importScripts) {
   self.importScripts('/resources/testharness.js');
 }
 
+const error1 = new Error('error1');
+error1.name = 'error1';
+
 test(() => {
 
   new ReadableStream(); // ReadableStream constructed with no parameters
@@ -32,6 +35,8 @@ test(() => {
     'constructor should throw when the type is empty string');
   assert_throws(new RangeError(), () => new ReadableStream({ type: 'asdf' }),
     'constructor should throw when the type is asdf');
+  assert_throws(error1, () => new ReadableStream({ type: { get toString() {throw error1;} } }), 'constructor should throw when ToString() throws');
+  assert_throws(error1, () => new ReadableStream({ type: { toString() {throw error1;} } }), 'constructor should throw when ToString() throws');
 
 }, 'ReadableStream can\'t be constructed with an invalid type');
 
@@ -156,6 +161,13 @@ test(() => {
   assert_true(startCalled);
 
 }, 'ReadableStream start controller parameter should be extensible');
+
+test(() => {
+  (new ReadableStream()).getReader(undefined);
+  (new ReadableStream()).getReader({});
+  (new ReadableStream()).getReader({ mode: undefined, notmode: 'ignored' });
+  assert_throws(new RangeError(), () => (new ReadableStream()).getReader({ mode: 'potato' }));
+}, 'default ReadableStream getReader() should only accept mode:undefined');
 
 promise_test(() => {
 

@@ -35,6 +35,9 @@
     "imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_getKey.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/IndexedDB/key-conversion-exceptions.htm": [
         "slow"
     ],
@@ -42,6 +45,9 @@
         "slow"
     ],
     "imported/w3c/web-platform-tests/IndexedDB/keypath_maxsize.htm": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/IndexedDB/parallel-cursors-upgrade.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/IndexedDB/writer-starvation.htm": [
@@ -453,6 +459,18 @@
         "slow"
     ],
     "imported/w3c/web-platform-tests/fetch/api/request/request-keepalive-quota.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/fetch/http-cache/cc-request.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/fetch/http-cache/freshness.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/fetch/http-cache/heuristic.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/fetch/http-cache/partial.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/persisted-user-state-restoration/scroll-restoration-fragment-scrolling-cross-origin.html": [

@@ -1,6 +1,6 @@
 
 PASS Check request values when initialized from Request 
 PASS Check request values when initialized from Request and init values 
-FAIL Check request values when initialized from url string assert_equals: Check referrer attribute expected "http://localhost:8800/" but got "about:client"
+PASS Check request values when initialized from url string 
 PASS Check request values when initialized from url and init values 
 

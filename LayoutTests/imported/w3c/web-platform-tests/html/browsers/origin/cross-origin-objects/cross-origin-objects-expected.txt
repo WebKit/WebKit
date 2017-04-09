@@ -1,5 +1,5 @@
-CONSOLE MESSAGE: line 397: Blocked a frame with origin "http://localhost:8800" from accessing a frame with origin "http://127.0.0.1:8800". Protocols, domains, and ports must match.
-CONSOLE MESSAGE: line 397: Blocked a frame with origin "http://localhost:8800" from accessing a frame with origin "http://127.0.0.1:8800". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: line 403: Blocked a frame with origin "http://localhost:8800" from accessing a frame with origin "http://127.0.0.1:8800". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: line 403: Blocked a frame with origin "http://localhost:8800" from accessing a frame with origin "http://127.0.0.1:8800". Protocols, domains, and ports must match.
 
 PASS Basic sanity-checking 
 PASS Basic sanity-checking (exception type) 
@@ -7,8 +7,8 @@ PASS Only whitelisted properties are accessible cross-origin
 PASS Only whitelisted properties are accessible cross-origin (exception type) 
 PASS [[GetPrototypeOf]] should return null 
 PASS [[GetPrototypeOf]] should return null (exception type) 
-PASS [[SetPrototypeOf]] should throw 
-PASS [[SetPrototypeOf]] should throw (exception type) 
+PASS [[SetPrototypeOf]] should return false 
+PASS [[SetPrototypeOf]] should return false (exception type) 
 PASS [[IsExtensible]] should return true for cross-origin objects 
 PASS [[IsExtensible]] should return true for cross-origin objects (exception type) 
 PASS [[PreventExtensions]] should throw for cross-origin objects 

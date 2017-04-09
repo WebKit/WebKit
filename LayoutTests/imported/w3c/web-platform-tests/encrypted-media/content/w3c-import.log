@@ -26,5 +26,3 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/encrypted-media/content/video_512x288_h264-360k_enc_clear_dashinit.mp4
 /LayoutTests/imported/w3c/web-platform-tests/encrypted-media/content/video_512x288_h264-360k_enc_dashinit.mp4
 /LayoutTests/imported/w3c/web-platform-tests/encrypted-media/content/video_512x288_h264-360k_multikey_dashinit.mp4
-/LayoutTests/imported/w3c/web-platform-tests/encrypted-media/content/video_512x288_h264-360k_multikey_key1_dashinit.mp4
-/LayoutTests/imported/w3c/web-platform-tests/encrypted-media/content/video_512x288_h264-360k_multikey_key2_dashinit.mp4

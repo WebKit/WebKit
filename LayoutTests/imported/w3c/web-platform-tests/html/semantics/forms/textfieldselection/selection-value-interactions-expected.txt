@@ -1,0 +1,12 @@
+
+FAIL value dirty flag behavior after setRangeText on textarea not in body assert_equals: Calling setRangeText should set the value dirty flag expected "somexyzing" but got "set range text"
+FAIL value dirty flag behavior after setRangeText on input not in body assert_equals: Calling setRangeText should set the value dirty flag expected "somexyzing" but got "set range text"
+PASS value dirty flag behavior after setRangeText on textarea in body 
+PASS value dirty flag behavior after setRangeText on input in body 
+PASS value dirty flag behavior after setRangeText on textarea in body with parsed default value 
+PASS value dirty flag behavior after setRangeText on input in body with parsed default value 
+PASS value dirty flag behavior after setRangeText on focused textarea 
+PASS value dirty flag behavior after setRangeText on focused input 
+PASS value dirty flag behavior after setRangeText on focused then blurred textarea 
+PASS value dirty flag behavior after setRangeText on focused then blurred input 
+

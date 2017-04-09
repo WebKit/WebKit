@@ -16,3 +16,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/timers/evil-spec-example.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/timers/negative-setinterval.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/timers/negative-settimeout.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/timers/type-long-setinterval.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/timers/type-long-settimeout.html

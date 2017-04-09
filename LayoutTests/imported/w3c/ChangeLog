@@ -1,3 +1,1258 @@
+2017-04-09  Youenn Fablet  <youenn@apple.com>
+
+        Resync WPT tests up to 23cd07d4685d81024b7440e042f8bbdb33e7ddec
+        https://bugs.webkit.org/show_bug.cgi?id=170647
+
+        Reviewed by Sam Weinig.
+
+        Removing CSS import repository as it is merged into WPT.
+
+        * resources/TestRepositories:
+        * resources/import-expectations.json:
+        * resources/resource-files.json:
+        * web-platform-tests/%CERTS_DIR%/FEFE.pem: Added.
+        * web-platform-tests/%CERTS_DIR%/FEFF.pem: Added.
+        * web-platform-tests/%CERTS_DIR%/cacert.pem: Added.
+        * web-platform-tests/%CERTS_DIR%/cakey.pem: Added.
+        * web-platform-tests/%CERTS_DIR%/index.txt: Added.
+        * web-platform-tests/%CERTS_DIR%/index.txt.attr: Added.
+        * web-platform-tests/%CERTS_DIR%/index.txt.attr.old: Added.
+        * web-platform-tests/%CERTS_DIR%/index.txt.old: Added.
+        * web-platform-tests/%CERTS_DIR%/localhost.key: Added.
+        * web-platform-tests/%CERTS_DIR%/localhost.pem: Added.
+        * web-platform-tests/%CERTS_DIR%/serial: Added.
+        * web-platform-tests/%CERTS_DIR%/serial.old: Added.
+        * web-platform-tests/%CERTS_DIR%/w3c-import.log: Added.
+        * web-platform-tests/CONTRIBUTING.md:
+        * web-platform-tests/IndexedDB/idbcursor-direction-index-keyrange.htm:
+        * web-platform-tests/IndexedDB/idbcursor-direction-objectstore-keyrange.htm:
+        * web-platform-tests/IndexedDB/idbdatabase-transaction-exception-order-expected.txt:
+        * web-platform-tests/IndexedDB/idbdatabase-transaction-exception-order.html:
+        * web-platform-tests/IndexedDB/idbdatabase_createObjectStore9-invalidparameters.htm:
+        * web-platform-tests/IndexedDB/idbobjectstore_createIndex15-autoincrement-expected.txt: Added.
+        * web-platform-tests/IndexedDB/idbobjectstore_createIndex15-autoincrement.htm: Added.
+        * web-platform-tests/IndexedDB/idbobjectstore_deleted.htm:
+        * web-platform-tests/IndexedDB/interleaved-cursors-expected.txt: Added.
+        * web-platform-tests/IndexedDB/interleaved-cursors.html: Added.
+        * web-platform-tests/IndexedDB/parallel-cursors-upgrade-expected.txt: Added.
+        * web-platform-tests/IndexedDB/parallel-cursors-upgrade.html: Added.
+        * web-platform-tests/IndexedDB/support-promises.js:
+        (migrateNamedDatabase):
+        (createNamedDatabase):
+        (openNamedDatabase):
+        * web-platform-tests/IndexedDB/w3c-import.log:
+        * web-platform-tests/LICENSE.md:
+        * web-platform-tests/README.md:
+        * web-platform-tests/WebIDL/ecmascript-binding/es-exceptions/exceptions.html:
+        * web-platform-tests/XMLHttpRequest/event-readystatechange-loaded.htm:
+        * web-platform-tests/XMLHttpRequest/resources/auth2/corsenabled.py:
+        (main):
+        * web-platform-tests/XMLHttpRequest/resources/conditional.py:
+        (main):
+        * web-platform-tests/XMLHttpRequest/send-authentication-cors-basic-setrequestheader-expected.txt:
+        * web-platform-tests/XMLHttpRequest/send-authentication-cors-basic-setrequestheader.htm:
+        * web-platform-tests/XMLHttpRequest/send-conditional-cors-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/send-conditional-cors.htm: Added.
+        * web-platform-tests/XMLHttpRequest/send-entity-body-document-bogus-expected.txt:
+        * web-platform-tests/XMLHttpRequest/send-entity-body-document-bogus.htm:
+        * web-platform-tests/XMLHttpRequest/send-non-same-origin-expected.txt:
+        * web-platform-tests/XMLHttpRequest/send-non-same-origin.htm:
+        * web-platform-tests/XMLHttpRequest/send-usp.any-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/send-usp.any.html: Added.
+        * web-platform-tests/XMLHttpRequest/send-usp.any.js: Added.
+        (encode):
+        (x.onload.overall_test.step_func):
+        * web-platform-tests/XMLHttpRequest/w3c-import.log:
+        * web-platform-tests/background-fetch/OWNERS: Added.
+        * web-platform-tests/background-fetch/interfaces-expected.txt: Added.
+        * web-platform-tests/background-fetch/interfaces-worker.https-expected.txt: Added.
+        * web-platform-tests/background-fetch/interfaces-worker.https.html: Added.
+        * web-platform-tests/background-fetch/interfaces.html: Added.
+        * web-platform-tests/background-fetch/interfaces.idl: Added.
+        * web-platform-tests/background-fetch/interfaces.worker-expected.txt: Added.
+        * web-platform-tests/background-fetch/interfaces.worker.html: Added.
+        * web-platform-tests/background-fetch/interfaces.worker.js: Added.
+        (promise_test):
+        * web-platform-tests/background-fetch/w3c-import.log: Added.
+        * web-platform-tests/beacon/headers/header-referrer-no-referrer-expected.txt: Added.
+        * web-platform-tests/beacon/headers/header-referrer-no-referrer-when-downgrade.https-expected.txt: Added.
+        * web-platform-tests/beacon/headers/header-referrer-no-referrer-when-downgrade.https.html: Added.
+        * web-platform-tests/beacon/headers/header-referrer-no-referrer.html: Added.
+        * web-platform-tests/beacon/headers/header-referrer-origin-expected.txt: Added.
+        * web-platform-tests/beacon/headers/header-referrer-origin-when-cross-origin-expected.txt: Added.
+        * web-platform-tests/beacon/headers/header-referrer-origin-when-cross-origin.html: Added.
+        * web-platform-tests/beacon/headers/header-referrer-origin.html: Added.
+        * web-platform-tests/beacon/headers/header-referrer-same-origin-expected.txt: Added.
+        * web-platform-tests/beacon/headers/header-referrer-same-origin.html: Added.
+        * web-platform-tests/beacon/headers/header-referrer-strict-origin-when-cross-origin.https-expected.txt: Added.
+        * web-platform-tests/beacon/headers/header-referrer-strict-origin-when-cross-origin.https.html: Added.
+        * web-platform-tests/beacon/headers/header-referrer-strict-origin.https-expected.txt: Added.
+        * web-platform-tests/beacon/headers/header-referrer-strict-origin.https.html: Added.
+        * web-platform-tests/beacon/headers/header-referrer-unsafe-url.https-expected.txt: Added.
+        * web-platform-tests/beacon/headers/header-referrer-unsafe-url.https.html: Added.
+        * web-platform-tests/beacon/headers/header-referrer.js: Added.
+        (testReferrerHeader):
+        (return.new.Promise.):
+        (return.new.Promise):
+        * web-platform-tests/beacon/headers/w3c-import.log: Added.
+        * web-platform-tests/beacon/resources/inspect-header.py: Added.
+        (main):
+        * web-platform-tests/beacon/resources/w3c-import.log: Added.
+        * web-platform-tests/check_stability.py:
+        (get_git_cmd.git):
+        (fetch_wpt):
+        (get_branch_point):
+        (get_files_changed):
+        (process_results):
+        (markdown_adjust):
+        (get_parser):
+        (main):
+        * web-platform-tests/ci_lint.sh:
+        * web-platform-tests/cors/allow-headers-expected.txt:
+        * web-platform-tests/cors/allow-headers.htm:
+        * web-platform-tests/cors/origin-expected.txt:
+        * web-platform-tests/cors/origin.htm:
+        * web-platform-tests/cors/preflight-failure.htm:
+        * web-platform-tests/cors/redirect-userinfo-expected.txt:
+        * web-platform-tests/cors/redirect-userinfo.htm:
+        * web-platform-tests/cors/request-headers.htm:
+        * web-platform-tests/css-timing-1/OWNERS: Added.
+        * web-platform-tests/css-timing-1/cubic-bezier-timing-functions-output-expected.txt: Added.
+        * web-platform-tests/css-timing-1/cubic-bezier-timing-functions-output.html: Added.
+        * web-platform-tests/css-timing-1/frames-timing-functions-output-expected.txt: Added.
+        * web-platform-tests/css-timing-1/frames-timing-functions-output.html: Added.
+        * web-platform-tests/css-timing-1/frames-timing-functions-syntax-expected.txt: Added.
+        * web-platform-tests/css-timing-1/frames-timing-functions-syntax.html: Added.
+        * web-platform-tests/css-timing-1/step-timing-functions-output-expected.txt: Added.
+        * web-platform-tests/css-timing-1/step-timing-functions-output.html: Added.
+        * web-platform-tests/css-timing-1/testcommon.js: Added.
+        (createDiv):
+        (createElement):
+        (pxToNum):
+        (xForT):
+        (yForT):
+        (tForX):
+        (return.bezierClosure):
+        (cubicBezier):
+        * web-platform-tests/css-timing-1/w3c-import.log: Added.
+        * web-platform-tests/css/.htaccess: Added.
+        * web-platform-tests/css/OWNERS: Added.
+        * web-platform-tests/css/README.md: Added.
+        * web-platform-tests/css/build-css-testsuites.sh: Added.
+        * web-platform-tests/css/css-grid-1/grid-definition/grid-inline-support-flexible-lengths-001.xht:
+        * web-platform-tests/css/css-grid-1/grid-definition/grid-inline-support-grid-template-areas-001.xht:
+        * web-platform-tests/css/css-grid-1/grid-definition/grid-inline-support-grid-template-columns-rows-001.xht:
+        * web-platform-tests/css/css-grid-1/grid-definition/grid-inline-support-named-grid-lines-001.xht:
+        * web-platform-tests/css/css-grid-1/grid-definition/grid-inline-support-repeat-001.xht:
+        * web-platform-tests/css/css-grid-1/grid-definition/grid-inline-template-columns-rows-resolved-values-001.xht:
+        * web-platform-tests/css/css-grid-1/grid-definition/grid-support-flexible-lengths-001.xht:
+        * web-platform-tests/css/css-grid-1/grid-definition/grid-support-grid-template-areas-001.xht:
+        * web-platform-tests/css/css-grid-1/grid-definition/grid-support-grid-template-columns-rows-001.xht:
+        * web-platform-tests/css/css-grid-1/grid-definition/grid-support-named-grid-lines-001.xht:
+        * web-platform-tests/css/css-grid-1/grid-definition/grid-support-repeat-001.xht:
+        * web-platform-tests/css/css-grid-1/grid-definition/grid-template-columns-rows-resolved-values-001.xht:
+        * web-platform-tests/css/css-grid-1/grid-items/w3c-import.log:
+        * web-platform-tests/css/css-grid-1/grid-model/grid-computed-value-display-floated-items-001.xht:
+        * web-platform-tests/css/css-grid-1/grid-model/grid-support-display-001.xht:
+        * web-platform-tests/css/css-grid-1/grid-model/w3c-import.log:
+        * web-platform-tests/css/requirements.txt: Added.
+        * web-platform-tests/css/w3c-import.log: Added.
+        * web-platform-tests/dom/events/EventTarget-dispatchEvent-expected.txt:
+        * web-platform-tests/dom/lists/DOMTokenList-iteration-expected.txt:
+        * web-platform-tests/dom/lists/DOMTokenList-iteration.html:
+        * web-platform-tests/dom/lists/README.md: Added.
+        * web-platform-tests/dom/lists/w3c-import.log:
+        * web-platform-tests/dom/nodes/Document-createEvent-expected.txt:
+        * web-platform-tests/dom/nodes/Document-createEvent.html:
+        * web-platform-tests/dom/nodes/Document-createEvent.js:
+        * web-platform-tests/encrypted-media/content/content-metadata.js:
+        * web-platform-tests/encrypted-media/content/w3c-import.log:
+        * web-platform-tests/fetch/OWNERS:
+        * web-platform-tests/fetch/api/basic/accept-header-expected.txt: Removed.
+        * web-platform-tests/fetch/api/basic/accept-header-worker-expected.txt: Removed.
+        * web-platform-tests/fetch/api/basic/accept-header-worker.html: Removed.
+        * web-platform-tests/fetch/api/basic/accept-header.any-expected.txt: Added.
+        * web-platform-tests/fetch/api/basic/accept-header.any.html: Added.
+        * web-platform-tests/fetch/api/basic/accept-header.any.js: Added.
+        (promise_test):
+        * web-platform-tests/fetch/api/basic/accept-header.html: Removed.
+        * web-platform-tests/fetch/api/basic/accept-header.js: Removed.
+        * web-platform-tests/fetch/api/basic/accept-header.worker-expected.txt: Added.
+        * web-platform-tests/fetch/api/basic/accept-header.worker.html: Added.
+        * web-platform-tests/fetch/api/basic/mode-same-origin-expected.txt: Removed.
+        * web-platform-tests/fetch/api/basic/mode-same-origin-worker-expected.txt: Removed.
+        * web-platform-tests/fetch/api/basic/mode-same-origin-worker.html: Removed.
+        * web-platform-tests/fetch/api/basic/mode-same-origin.any-expected.txt: Added.
+        * web-platform-tests/fetch/api/basic/mode-same-origin.any.html: Added.
+        * web-platform-tests/fetch/api/basic/mode-same-origin.any.js: Added.
+        * web-platform-tests/fetch/api/basic/mode-same-origin.html: Removed.
+        * web-platform-tests/fetch/api/basic/mode-same-origin.js: Removed.
+        * web-platform-tests/fetch/api/basic/mode-same-origin.worker-expected.txt: Added.
+        * web-platform-tests/fetch/api/basic/mode-same-origin.worker.html: Added.
+        * web-platform-tests/fetch/api/basic/referrer-expected.txt: Removed.
+        * web-platform-tests/fetch/api/basic/referrer-worker-expected.txt: Removed.
+        * web-platform-tests/fetch/api/basic/referrer-worker.html: Removed.
+        * web-platform-tests/fetch/api/basic/referrer.any-expected.txt: Added.
+        * web-platform-tests/fetch/api/basic/referrer.any.html: Added.
+        * web-platform-tests/fetch/api/basic/referrer.any.js: Added.
+        * web-platform-tests/fetch/api/basic/referrer.html: Removed.
+        * web-platform-tests/fetch/api/basic/referrer.js: Removed.
+        * web-platform-tests/fetch/api/basic/referrer.worker-expected.txt: Added.
+        * web-platform-tests/fetch/api/basic/referrer.worker.html: Added.
+        * web-platform-tests/fetch/api/basic/request-forbidden-headers-expected.txt: Removed.
+        * web-platform-tests/fetch/api/basic/request-forbidden-headers-worker-expected.txt: Removed.
+        * web-platform-tests/fetch/api/basic/request-forbidden-headers-worker.html: Removed.
+        * web-platform-tests/fetch/api/basic/request-forbidden-headers.any-expected.txt: Added.
+        * web-platform-tests/fetch/api/basic/request-forbidden-headers.any.html: Added.
+        * web-platform-tests/fetch/api/basic/request-forbidden-headers.any.js: Added.
+        * web-platform-tests/fetch/api/basic/request-forbidden-headers.html: Removed.
+        * web-platform-tests/fetch/api/basic/request-forbidden-headers.js: Removed.
+        * web-platform-tests/fetch/api/basic/request-forbidden-headers.worker-expected.txt: Added.
+        * web-platform-tests/fetch/api/basic/request-forbidden-headers.worker.html: Added.
+        * web-platform-tests/fetch/api/basic/request-head-worker-expected.txt: Removed.
+        * web-platform-tests/fetch/api/basic/request-head-worker.html: Removed.
+        * web-platform-tests/fetch/api/basic/request-head.any-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/request-head-expected.txt.
+        * web-platform-tests/fetch/api/basic/request-head.any.html: Added.
+        * web-platform-tests/fetch/api/basic/request-head.any.js: Added.
+        (promise_test):
+        * web-platform-tests/fetch/api/basic/request-head.html: Removed.
+        * web-platform-tests/fetch/api/basic/request-head.js: Removed.
+        * web-platform-tests/fetch/api/basic/request-head.worker-expected.txt: Added.
+        * web-platform-tests/fetch/api/basic/request-head.worker.html: Added.
+        * web-platform-tests/fetch/api/basic/request-headers-expected.txt: Removed.
+        * web-platform-tests/fetch/api/basic/request-headers-worker-expected.txt: Removed.
+        * web-platform-tests/fetch/api/basic/request-headers-worker.html: Removed.
+        * web-platform-tests/fetch/api/basic/request-headers.any-expected.txt: Added.
+        * web-platform-tests/fetch/api/basic/request-headers.any.html: Added.
+        * web-platform-tests/fetch/api/basic/request-headers.any.js: Added.
+        * web-platform-tests/fetch/api/basic/request-headers.html: Removed.
+        * web-platform-tests/fetch/api/basic/request-headers.js: Removed.
+        * web-platform-tests/fetch/api/basic/request-headers.worker-expected.txt: Added.
+        * web-platform-tests/fetch/api/basic/request-headers.worker.html: Added.
+        * web-platform-tests/fetch/api/basic/request-referrer-expected.txt: Removed.
+        * web-platform-tests/fetch/api/basic/request-referrer-redirected-worker-expected.txt:
+        * web-platform-tests/fetch/api/basic/request-referrer-redirected-worker.html:
+        * web-platform-tests/fetch/api/basic/request-referrer-worker-expected.txt: Removed.
+        * web-platform-tests/fetch/api/basic/request-referrer-worker.html: Removed.
+        * web-platform-tests/fetch/api/basic/request-referrer.any-expected.txt: Added.
+        * web-platform-tests/fetch/api/basic/request-referrer.any.html: Added.
+        * web-platform-tests/fetch/api/basic/request-referrer.any.js: Added.
+        * web-platform-tests/fetch/api/basic/request-referrer.html: Removed.
+        * web-platform-tests/fetch/api/basic/request-referrer.js: Removed.
+        * web-platform-tests/fetch/api/basic/request-referrer.worker-expected.txt: Added.
+        * web-platform-tests/fetch/api/basic/request-referrer.worker.html: Added.
+        * web-platform-tests/fetch/api/basic/request-upload-expected.txt: Removed.
+        * web-platform-tests/fetch/api/basic/request-upload-worker-expected.txt: Removed.
+        * web-platform-tests/fetch/api/basic/request-upload-worker.html: Removed.
+        * web-platform-tests/fetch/api/basic/request-upload.any-expected.txt: Added.
+        * web-platform-tests/fetch/api/basic/request-upload.any.html: Added.
+        * web-platform-tests/fetch/api/basic/request-upload.any.js: Added.
+        * web-platform-tests/fetch/api/basic/request-upload.html: Removed.
+        * web-platform-tests/fetch/api/basic/request-upload.js: Removed.
+        * web-platform-tests/fetch/api/basic/request-upload.worker-expected.txt: Added.
+        * web-platform-tests/fetch/api/basic/request-upload.worker.html: Added.
+        * web-platform-tests/fetch/api/basic/scheme-about-worker-expected.txt: Removed.
+        * web-platform-tests/fetch/api/basic/scheme-about-worker.html: Removed.
+        * web-platform-tests/fetch/api/basic/scheme-about.any-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/scheme-about-expected.txt.
+        * web-platform-tests/fetch/api/basic/scheme-about.any.html: Added.
+        * web-platform-tests/fetch/api/basic/scheme-about.any.js: Added.
+        * web-platform-tests/fetch/api/basic/scheme-about.html: Removed.
+        * web-platform-tests/fetch/api/basic/scheme-about.js: Removed.
+        * web-platform-tests/fetch/api/basic/scheme-about.worker-expected.txt: Added.
+        * web-platform-tests/fetch/api/basic/scheme-about.worker.html: Added.
+        * web-platform-tests/fetch/api/basic/scheme-data-worker-expected.txt: Removed.
+        * web-platform-tests/fetch/api/basic/scheme-data-worker.html: Removed.
+        * web-platform-tests/fetch/api/basic/scheme-data.any-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/scheme-data-expected.txt.
+        * web-platform-tests/fetch/api/basic/scheme-data.any.html: Added.
+        * web-platform-tests/fetch/api/basic/scheme-data.any.js: Added.
+        * web-platform-tests/fetch/api/basic/scheme-data.html: Removed.
+        * web-platform-tests/fetch/api/basic/scheme-data.js: Removed.
+        * web-platform-tests/fetch/api/basic/scheme-data.worker-expected.txt: Added.
+        * web-platform-tests/fetch/api/basic/scheme-data.worker.html: Added.
+        * web-platform-tests/fetch/api/basic/stream-response-expected.txt: Removed.
+        * web-platform-tests/fetch/api/basic/stream-response-worker-expected.txt: Removed.
+        * web-platform-tests/fetch/api/basic/stream-response-worker.html: Removed.
+        * web-platform-tests/fetch/api/basic/stream-response.any-expected.txt: Added.
+        * web-platform-tests/fetch/api/basic/stream-response.any.html: Added.
+        * web-platform-tests/fetch/api/basic/stream-response.any.js: Added.
+        (promise_test):
+        * web-platform-tests/fetch/api/basic/stream-response.html: Removed.
+        * web-platform-tests/fetch/api/basic/stream-response.js: Removed.
+        * web-platform-tests/fetch/api/basic/stream-response.worker-expected.txt: Added.
+        * web-platform-tests/fetch/api/basic/stream-response.worker.html: Added.
+        * web-platform-tests/fetch/api/basic/w3c-import.log:
+        * web-platform-tests/fetch/api/cors/cors-basic-expected.txt: Removed.
+        * web-platform-tests/fetch/api/cors/cors-basic-worker-expected.txt: Removed.
+        * web-platform-tests/fetch/api/cors/cors-basic-worker.html: Removed.
+        * web-platform-tests/fetch/api/cors/cors-basic.any-expected.txt: Added.
+        * web-platform-tests/fetch/api/cors/cors-basic.any.html: Added.
+        * web-platform-tests/fetch/api/cors/cors-basic.any.js: Added.
+        * web-platform-tests/fetch/api/cors/cors-basic.html: Removed.
+        * web-platform-tests/fetch/api/cors/cors-basic.js: Removed.
+        * web-platform-tests/fetch/api/cors/cors-basic.worker-expected.txt: Added.
+        * web-platform-tests/fetch/api/cors/cors-basic.worker.html: Added.
+        * web-platform-tests/fetch/api/cors/cors-cookies-expected.txt: Removed.
+        * web-platform-tests/fetch/api/cors/cors-cookies-worker-expected.txt: Removed.
+        * web-platform-tests/fetch/api/cors/cors-cookies-worker.html: Removed.
+        * web-platform-tests/fetch/api/cors/cors-cookies.any-expected.txt: Added.
+        * web-platform-tests/fetch/api/cors/cors-cookies.any.html: Added.
+        * web-platform-tests/fetch/api/cors/cors-cookies.any.js: Added.
+        * web-platform-tests/fetch/api/cors/cors-cookies.html: Removed.
+        * web-platform-tests/fetch/api/cors/cors-cookies.js: Removed.
+        * web-platform-tests/fetch/api/cors/cors-cookies.worker-expected.txt: Added.
+        * web-platform-tests/fetch/api/cors/cors-cookies.worker.html: Added.
+        * web-platform-tests/fetch/api/cors/cors-filtering-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-filtering-worker-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-filtering.js:
+        (corsExposeFilter):
+        * web-platform-tests/fetch/api/cors/cors-no-preflight-expected.txt: Removed.
+        * web-platform-tests/fetch/api/cors/cors-no-preflight-worker-expected.txt: Removed.
+        * web-platform-tests/fetch/api/cors/cors-no-preflight-worker.html: Removed.
+        * web-platform-tests/fetch/api/cors/cors-no-preflight.any-expected.txt: Added.
+        * web-platform-tests/fetch/api/cors/cors-no-preflight.any.html: Added.
+        * web-platform-tests/fetch/api/cors/cors-no-preflight.any.js: Added.
+        * web-platform-tests/fetch/api/cors/cors-no-preflight.html: Removed.
+        * web-platform-tests/fetch/api/cors/cors-no-preflight.js: Removed.
+        * web-platform-tests/fetch/api/cors/cors-no-preflight.worker-expected.txt: Added.
+        * web-platform-tests/fetch/api/cors/cors-no-preflight.worker.html: Added.
+        * web-platform-tests/fetch/api/cors/cors-origin-expected.txt: Removed.
+        * web-platform-tests/fetch/api/cors/cors-origin-worker-expected.txt: Removed.
+        * web-platform-tests/fetch/api/cors/cors-origin-worker.html: Removed.
+        * web-platform-tests/fetch/api/cors/cors-origin.any-expected.txt: Added.
+        * web-platform-tests/fetch/api/cors/cors-origin.any.html: Added.
+        * web-platform-tests/fetch/api/cors/cors-origin.any.js: Added.
+        * web-platform-tests/fetch/api/cors/cors-origin.html: Removed.
+        * web-platform-tests/fetch/api/cors/cors-origin.js: Removed.
+        * web-platform-tests/fetch/api/cors/cors-origin.worker-expected.txt: Added.
+        * web-platform-tests/fetch/api/cors/cors-origin.worker.html: Added.
+        * web-platform-tests/fetch/api/cors/cors-preflight-expected.txt: Removed.
+        * web-platform-tests/fetch/api/cors/cors-preflight-redirect-expected.txt: Removed.
+        * web-platform-tests/fetch/api/cors/cors-preflight-redirect-worker-expected.txt: Removed.
+        * web-platform-tests/fetch/api/cors/cors-preflight-redirect-worker.html: Removed.
+        * web-platform-tests/fetch/api/cors/cors-preflight-redirect.any-expected.txt: Added.
+        * web-platform-tests/fetch/api/cors/cors-preflight-redirect.any.html: Added.
+        * web-platform-tests/fetch/api/cors/cors-preflight-redirect.any.js: Added.
+        * web-platform-tests/fetch/api/cors/cors-preflight-redirect.html: Removed.
+        * web-platform-tests/fetch/api/cors/cors-preflight-redirect.js: Removed.
+        * web-platform-tests/fetch/api/cors/cors-preflight-redirect.worker-expected.txt: Added.
+        * web-platform-tests/fetch/api/cors/cors-preflight-redirect.worker.html: Added.
+        * web-platform-tests/fetch/api/cors/cors-preflight-referrer-expected.txt: Removed.
+        * web-platform-tests/fetch/api/cors/cors-preflight-referrer-worker-expected.txt: Removed.
+        * web-platform-tests/fetch/api/cors/cors-preflight-referrer-worker.html: Removed.
+        * web-platform-tests/fetch/api/cors/cors-preflight-referrer.any-expected.txt: Added.
+        * web-platform-tests/fetch/api/cors/cors-preflight-referrer.any.html: Added.
+        * web-platform-tests/fetch/api/cors/cors-preflight-referrer.any.js: Added.
+        * web-platform-tests/fetch/api/cors/cors-preflight-referrer.html: Removed.
+        * web-platform-tests/fetch/api/cors/cors-preflight-referrer.js: Removed.
+        * web-platform-tests/fetch/api/cors/cors-preflight-referrer.worker-expected.txt: Added.
+        * web-platform-tests/fetch/api/cors/cors-preflight-referrer.worker.html: Added.
+        * web-platform-tests/fetch/api/cors/cors-preflight-star-expected.txt: Removed.
+        * web-platform-tests/fetch/api/cors/cors-preflight-star-worker-expected.txt: Removed.
+        * web-platform-tests/fetch/api/cors/cors-preflight-star-worker.html: Removed.
+        * web-platform-tests/fetch/api/cors/cors-preflight-star.any-expected.txt: Added.
+        * web-platform-tests/fetch/api/cors/cors-preflight-star.any.html: Added.
+        * web-platform-tests/fetch/api/cors/cors-preflight-star.any.js: Added.
+        * web-platform-tests/fetch/api/cors/cors-preflight-star.html: Removed.
+        * web-platform-tests/fetch/api/cors/cors-preflight-star.js: Removed.
+        * web-platform-tests/fetch/api/cors/cors-preflight-star.worker-expected.txt: Added.
+        * web-platform-tests/fetch/api/cors/cors-preflight-star.worker.html: Added.
+        * web-platform-tests/fetch/api/cors/cors-preflight-status-expected.txt: Removed.
+        * web-platform-tests/fetch/api/cors/cors-preflight-status-worker-expected.txt: Removed.
+        * web-platform-tests/fetch/api/cors/cors-preflight-status-worker.html: Removed.
+        * web-platform-tests/fetch/api/cors/cors-preflight-status.any-expected.txt: Added.
+        * web-platform-tests/fetch/api/cors/cors-preflight-status.any.html: Added.
+        * web-platform-tests/fetch/api/cors/cors-preflight-status.any.js: Added.
+        (corsPreflightStatus):
+        * web-platform-tests/fetch/api/cors/cors-preflight-status.html: Removed.
+        * web-platform-tests/fetch/api/cors/cors-preflight-status.js: Removed.
+        * web-platform-tests/fetch/api/cors/cors-preflight-status.worker-expected.txt: Added.
+        * web-platform-tests/fetch/api/cors/cors-preflight-status.worker.html: Added.
+        * web-platform-tests/fetch/api/cors/cors-preflight-worker-expected.txt: Removed.
+        * web-platform-tests/fetch/api/cors/cors-preflight-worker.html: Removed.
+        * web-platform-tests/fetch/api/cors/cors-preflight.any-expected.txt: Added.
+        * web-platform-tests/fetch/api/cors/cors-preflight.any.html: Added.
+        * web-platform-tests/fetch/api/cors/cors-preflight.any.js: Added.
+        * web-platform-tests/fetch/api/cors/cors-preflight.html: Removed.
+        * web-platform-tests/fetch/api/cors/cors-preflight.js: Removed.
+        * web-platform-tests/fetch/api/cors/cors-preflight.worker-expected.txt: Added.
+        * web-platform-tests/fetch/api/cors/cors-preflight.worker.html: Added.
+        * web-platform-tests/fetch/api/cors/cors-redirect-credentials-expected.txt: Removed.
+        * web-platform-tests/fetch/api/cors/cors-redirect-credentials-worker-expected.txt: Removed.
+        * web-platform-tests/fetch/api/cors/cors-redirect-credentials-worker.html: Removed.
+        * web-platform-tests/fetch/api/cors/cors-redirect-credentials.any-expected.txt: Added.
+        * web-platform-tests/fetch/api/cors/cors-redirect-credentials.any.html: Added.
+        * web-platform-tests/fetch/api/cors/cors-redirect-credentials.any.js: Added.
+        * web-platform-tests/fetch/api/cors/cors-redirect-credentials.html: Removed.
+        * web-platform-tests/fetch/api/cors/cors-redirect-credentials.js: Removed.
+        * web-platform-tests/fetch/api/cors/cors-redirect-credentials.worker-expected.txt: Added.
+        * web-platform-tests/fetch/api/cors/cors-redirect-credentials.worker.html: Added.
+        * web-platform-tests/fetch/api/cors/cors-redirect-expected.txt: Removed.
+        * web-platform-tests/fetch/api/cors/cors-redirect-preflight-expected.txt: Removed.
+        * web-platform-tests/fetch/api/cors/cors-redirect-preflight-worker-expected.txt: Removed.
+        * web-platform-tests/fetch/api/cors/cors-redirect-preflight-worker.html: Removed.
+        * web-platform-tests/fetch/api/cors/cors-redirect-preflight.any-expected.txt: Added.
+        * web-platform-tests/fetch/api/cors/cors-redirect-preflight.any.html: Added.
+        * web-platform-tests/fetch/api/cors/cors-redirect-preflight.any.js: Added.
+        * web-platform-tests/fetch/api/cors/cors-redirect-preflight.html: Removed.
+        * web-platform-tests/fetch/api/cors/cors-redirect-preflight.js: Removed.
+        * web-platform-tests/fetch/api/cors/cors-redirect-preflight.worker-expected.txt: Added.
+        * web-platform-tests/fetch/api/cors/cors-redirect-preflight.worker.html: Added.
+        * web-platform-tests/fetch/api/cors/cors-redirect-worker-expected.txt: Removed.
+        * web-platform-tests/fetch/api/cors/cors-redirect-worker.html: Removed.
+        * web-platform-tests/fetch/api/cors/cors-redirect.any-expected.txt: Added.
+        * web-platform-tests/fetch/api/cors/cors-redirect.any.html: Added.
+        * web-platform-tests/fetch/api/cors/cors-redirect.any.js: Added.
+        * web-platform-tests/fetch/api/cors/cors-redirect.html: Removed.
+        * web-platform-tests/fetch/api/cors/cors-redirect.js: Removed.
+        * web-platform-tests/fetch/api/cors/cors-redirect.worker-expected.txt: Added.
+        * web-platform-tests/fetch/api/cors/cors-redirect.worker.html: Added.
+        * web-platform-tests/fetch/api/cors/w3c-import.log:
+        * web-platform-tests/fetch/api/credentials/authentication-basic-expected.txt: Removed.
+        * web-platform-tests/fetch/api/credentials/authentication-basic-worker-expected.txt: Removed.
+        * web-platform-tests/fetch/api/credentials/authentication-basic-worker.html: Removed.
+        * web-platform-tests/fetch/api/credentials/authentication-basic.any-expected.txt: Added.
+        * web-platform-tests/fetch/api/credentials/authentication-basic.any.html: Added.
+        * web-platform-tests/fetch/api/credentials/authentication-basic.any.js: Added.
+        * web-platform-tests/fetch/api/credentials/authentication-basic.html: Removed.
+        * web-platform-tests/fetch/api/credentials/authentication-basic.js: Removed.
+        * web-platform-tests/fetch/api/credentials/authentication-basic.worker-expected.txt: Added.
+        * web-platform-tests/fetch/api/credentials/authentication-basic.worker.html: Added.
+        * web-platform-tests/fetch/api/credentials/cookies-expected.txt: Removed.
+        * web-platform-tests/fetch/api/credentials/cookies-worker-expected.txt: Removed.
+        * web-platform-tests/fetch/api/credentials/cookies-worker.html: Removed.
+        * web-platform-tests/fetch/api/credentials/cookies.any-expected.txt: Added.
+        * web-platform-tests/fetch/api/credentials/cookies.any.html: Added.
+        * web-platform-tests/fetch/api/credentials/cookies.any.js: Added.
+        * web-platform-tests/fetch/api/credentials/cookies.html: Removed.
+        * web-platform-tests/fetch/api/credentials/cookies.js: Removed.
+        * web-platform-tests/fetch/api/credentials/cookies.worker-expected.txt: Added.
+        * web-platform-tests/fetch/api/credentials/cookies.worker.html: Added.
+        * web-platform-tests/fetch/api/credentials/w3c-import.log:
+        * web-platform-tests/fetch/api/headers/headers-idl-expected.txt:
+        * web-platform-tests/fetch/api/headers/historical.any-expected.txt: Added.
+        * web-platform-tests/fetch/api/headers/historical.any.html: Added.
+        * web-platform-tests/fetch/api/headers/historical.any.js: Added.
+        (test):
+        * web-platform-tests/fetch/api/headers/historical.worker-expected.txt: Added.
+        * web-platform-tests/fetch/api/headers/historical.worker.html: Added.
+        * web-platform-tests/fetch/api/headers/w3c-import.log:
+        * web-platform-tests/fetch/api/redirect/redirect-count-cross-origin-worker-expected.txt:
+        * web-platform-tests/fetch/api/redirect/redirect-count-expected.txt:
+        * web-platform-tests/fetch/api/redirect/redirect-count-worker-expected.txt:
+        * web-platform-tests/fetch/api/redirect/redirect-location-expected.txt:
+        * web-platform-tests/fetch/api/redirect/redirect-location-worker-expected.txt:
+        * web-platform-tests/fetch/api/request/request-cache-only-if-cached-expected.txt: Removed.
+        * web-platform-tests/fetch/api/request/request-init-003.sub-expected.txt:
+        * web-platform-tests/fetch/api/request/request-init-003.sub.html:
+        * web-platform-tests/fetch/api/resources/redirect-count.py: Removed.
+        * web-platform-tests/fetch/http-cache/304-update-expected.txt: Added.
+        * web-platform-tests/fetch/http-cache/304-update.html: Added.
+        * web-platform-tests/fetch/http-cache/README.md: Added.
+        * web-platform-tests/fetch/http-cache/cc-request-expected.txt: Added.
+        * web-platform-tests/fetch/http-cache/cc-request.html: Added.
+        * web-platform-tests/fetch/http-cache/freshness-expected.txt: Added.
+        * web-platform-tests/fetch/http-cache/freshness.html: Added.
+        * web-platform-tests/fetch/http-cache/heuristic-expected.txt: Added.
+        * web-platform-tests/fetch/http-cache/heuristic.html: Added.
+        * web-platform-tests/fetch/http-cache/http-cache.js: Added.
+        (make_url):
+        (server_state):
+        (make_test.fetch_functions.push.):
+        (make_test.fetch_functions.push):
+        (make_test.):
+        (make_test.run_next_step):
+        (make_test):
+        (http_date):
+        * web-platform-tests/fetch/http-cache/invalidate-expected.txt: Added.
+        * web-platform-tests/fetch/http-cache/invalidate.html: Added.
+        * web-platform-tests/fetch/http-cache/partial-expected.txt: Added.
+        * web-platform-tests/fetch/http-cache/partial.html: Added.
+        * web-platform-tests/fetch/http-cache/resources/http-cache.py: Added.
+        (main):
+        * web-platform-tests/fetch/http-cache/resources/w3c-import.log: Added.
+        * web-platform-tests/fetch/http-cache/status-expected.txt: Added.
+        * web-platform-tests/fetch/http-cache/status.html: Added.
+        * web-platform-tests/fetch/http-cache/vary-expected.txt: Added.
+        * web-platform-tests/fetch/http-cache/vary.html: Added.
+        * web-platform-tests/fetch/http-cache/w3c-import.log: Added.
+        * web-platform-tests/fetch/nosniff/importscripts-expected.txt: Removed.
+        * web-platform-tests/hr-time/basic.any-expected.txt: Added.
+        * web-platform-tests/hr-time/basic.any.html: Added.
+        * web-platform-tests/hr-time/basic.any.js: Added.
+        (test):
+        (async_test):
+        * web-platform-tests/hr-time/monotonic-clock.any-expected.txt: Added.
+        * web-platform-tests/hr-time/monotonic-clock.any.html: Added.
+        * web-platform-tests/hr-time/monotonic-clock.any.js: Added.
+        (test):
+        * web-platform-tests/hr-time/monotonic-clock.worker-expected.txt: Added.
+        * web-platform-tests/hr-time/monotonic-clock.worker.html: Added.
+        * web-platform-tests/hr-time/w3c-import.log:
+        * web-platform-tests/html/OWNERS:
+        * web-platform-tests/html/browsers/browsing-the-web/unloading-documents/beforeunload-canceling-expected.txt:
+        * web-platform-tests/html/browsers/browsing-the-web/unloading-documents/beforeunload-canceling.html:
+        * web-platform-tests/html/browsers/history/the-location-interface/location-prototype-setting-cross-origin.sub-expected.txt: Added.
+        * web-platform-tests/html/browsers/history/the-location-interface/location-prototype-setting-cross-origin.sub.html: Added.
+        * web-platform-tests/html/browsers/history/the-location-interface/w3c-import.log:
+        * web-platform-tests/html/browsers/origin/cross-origin-objects/cross-origin-objects-expected.txt:
+        * web-platform-tests/html/browsers/origin/cross-origin-objects/cross-origin-objects.html:
+        * web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-tokenization-001-expected.txt: Added.
+        * web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-tokenization-001.html: Added.
+        * web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/resources/close-self.html: Added.
+        * web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/resources/w3c-import.log: Added.
+        * web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/w3c-import.log:
+        * web-platform-tests/html/browsers/the-windowproxy-exotic-object/w3c-import.log:
+        * web-platform-tests/html/browsers/the-windowproxy-exotic-object/windowproxy-prototype-setting-cross-origin.sub-expected.txt:
+        * web-platform-tests/html/browsers/the-windowproxy-exotic-object/windowproxy-prototype-setting-cross-origin.sub.html: Added.
+        * web-platform-tests/html/browsers/windows/auxiliary-browsing-contexts/opener-closed.html:
+        * web-platform-tests/html/browsers/windows/auxiliary-browsing-contexts/opener-multiple.html:
+        * web-platform-tests/html/browsers/windows/auxiliary-browsing-contexts/opener-noopener.html:
+        * web-platform-tests/html/browsers/windows/auxiliary-browsing-contexts/opener-noreferrer.html:
+        * web-platform-tests/html/browsers/windows/auxiliary-browsing-contexts/opener.html:
+        * web-platform-tests/html/browsers/windows/browsing-context-expected.txt:
+        * web-platform-tests/html/browsers/windows/browsing-context-names/choose-_blank-001-expected.txt: Added.
+        * web-platform-tests/html/browsers/windows/browsing-context-names/choose-_blank-001.html: Added.
+        * web-platform-tests/html/browsers/windows/browsing-context-names/choose-_blank-002-expected.txt: Added.
+        * web-platform-tests/html/browsers/windows/browsing-context-names/choose-_blank-002.html: Added.
+        * web-platform-tests/html/browsers/windows/browsing-context-names/choose-_blank-003-expected.txt: Added.
+        * web-platform-tests/html/browsers/windows/browsing-context-names/choose-_blank-003.html: Added.
+        * web-platform-tests/html/browsers/windows/browsing-context-names/choose-_parent-001-expected.txt: Added.
+        * web-platform-tests/html/browsers/windows/browsing-context-names/choose-_parent-001.html: Added.
+        * web-platform-tests/html/browsers/windows/browsing-context-names/choose-_parent-002-expected.txt: Added.
+        * web-platform-tests/html/browsers/windows/browsing-context-names/choose-_parent-002.html: Added.
+        * web-platform-tests/html/browsers/windows/browsing-context-names/choose-_parent-003-expected.txt: Added.
+        * web-platform-tests/html/browsers/windows/browsing-context-names/choose-_parent-003.html: Added.
+        * web-platform-tests/html/browsers/windows/browsing-context-names/choose-_parent-004-expected.txt: Added.
+        * web-platform-tests/html/browsers/windows/browsing-context-names/choose-_parent-004.html: Added.
+        * web-platform-tests/html/browsers/windows/browsing-context-names/choose-_self-001-expected.txt: Added.
+        * web-platform-tests/html/browsers/windows/browsing-context-names/choose-_self-001.html: Added.
+        * web-platform-tests/html/browsers/windows/browsing-context-names/choose-_self-002-expected.txt: Added.
+        * web-platform-tests/html/browsers/windows/browsing-context-names/choose-_self-002.html: Added.
+        * web-platform-tests/html/browsers/windows/browsing-context-names/choose-_top-001-expected.txt: Added.
+        * web-platform-tests/html/browsers/windows/browsing-context-names/choose-_top-001.html: Added.
+        * web-platform-tests/html/browsers/windows/browsing-context-names/choose-_top-002-expected.txt: Added.
+        * web-platform-tests/html/browsers/windows/browsing-context-names/choose-_top-002.html: Added.
+        * web-platform-tests/html/browsers/windows/browsing-context-names/choose-_top-003-expected.txt: Added.
+        * web-platform-tests/html/browsers/windows/browsing-context-names/choose-_top-003.html: Added.
+        * web-platform-tests/html/browsers/windows/browsing-context-names/choose-default-001-expected.txt: Added.
+        * web-platform-tests/html/browsers/windows/browsing-context-names/choose-default-001.html: Added.
+        * web-platform-tests/html/browsers/windows/browsing-context-names/choose-default-002-expected.txt: Added.
+        * web-platform-tests/html/browsers/windows/browsing-context-names/choose-default-002.html: Added.
+        * web-platform-tests/html/browsers/windows/browsing-context-names/choose-existing-001-expected.txt: Added.
+        * web-platform-tests/html/browsers/windows/browsing-context-names/choose-existing-001.html: Added.
+        * web-platform-tests/html/browsers/windows/browsing-context-names/resources/choose-_parent-001-iframe-1.html: Added.
+        * web-platform-tests/html/browsers/windows/browsing-context-names/resources/choose-_parent-002-iframe.html: Added.
+        * web-platform-tests/html/browsers/windows/browsing-context-names/resources/choose-_parent-002-window.html: Added.
+        * web-platform-tests/html/browsers/windows/browsing-context-names/resources/choose-_parent-003-iframe.html: Added.
+        * web-platform-tests/html/browsers/windows/browsing-context-names/resources/choose-_parent-003-window.html: Added.
+        * web-platform-tests/html/browsers/windows/browsing-context-names/resources/choose-_parent-004-iframe-1.html: Added.
+        * web-platform-tests/html/browsers/windows/browsing-context-names/resources/choose-_parent-004-iframe-2.html: Added.
+        * web-platform-tests/html/browsers/windows/browsing-context-names/resources/choose-_self-001-iframe.html: Added.
+        * web-platform-tests/html/browsers/windows/browsing-context-names/resources/choose-_self-002-iframe.html: Added.
+        * web-platform-tests/html/browsers/windows/browsing-context-names/resources/choose-_top-002-window.html: Added.
+        * web-platform-tests/html/browsers/windows/browsing-context-names/resources/choose-_top-003-iframe-1.html: Added.
+        * web-platform-tests/html/browsers/windows/browsing-context-names/resources/choose-_top-003-iframe-2.html: Added.
+        * web-platform-tests/html/browsers/windows/browsing-context-names/resources/choose-default-002-iframe.html: Added.
+        * web-platform-tests/html/browsers/windows/browsing-context-names/resources/choose-existing-001-iframe.html: Added.
+        * web-platform-tests/html/browsers/windows/browsing-context-names/resources/open-in-_parent.html: Added.
+        * web-platform-tests/html/browsers/windows/browsing-context-names/resources/open-in-_top.html: Added.
+        * web-platform-tests/html/browsers/windows/browsing-context-names/resources/report-has-opener.html: Added.
+        * web-platform-tests/html/browsers/windows/browsing-context-names/resources/report-is-top.html: Added.
+        * web-platform-tests/html/browsers/windows/browsing-context-names/resources/w3c-import.log:
+        * web-platform-tests/html/browsers/windows/browsing-context-names/w3c-import.log:
+        * web-platform-tests/html/browsers/windows/opener-cross-origin-manual.sub.html: Added.
+        * web-platform-tests/html/browsers/windows/resources/opener-cross-origin-embed.sub.html: Added.
+        * web-platform-tests/html/browsers/windows/resources/opener-cross-origin-end.txt: Added.
+        * web-platform-tests/html/browsers/windows/resources/opener-cross-origin.html: Added.
+        * web-platform-tests/html/browsers/windows/resources/w3c-import.log:
+        * web-platform-tests/html/browsers/windows/w3c-import.log:
+        * web-platform-tests/html/dom/OWNERS: Added.
+        * web-platform-tests/html/dom/w3c-import.log:
+        * web-platform-tests/html/resources/common.js:
+        (newIFrame):
+        * web-platform-tests/html/semantics/OWNERS: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/w3c-import.log:
+        * web-platform-tests/html/semantics/forms/textfieldselection/selection-start-end-expected.txt: Added.
+        * web-platform-tests/html/semantics/forms/textfieldselection/selection-start-end.html: Added.
+        * web-platform-tests/html/semantics/forms/textfieldselection/selection-value-interactions-expected.txt: Added.
+        * web-platform-tests/html/semantics/forms/textfieldselection/selection-value-interactions.html: Added.
+        * web-platform-tests/html/semantics/forms/textfieldselection/selection.html:
+        * web-platform-tests/html/semantics/forms/textfieldselection/textfieldselection-setSelectionRange-expected.txt:
+        * web-platform-tests/html/semantics/forms/textfieldselection/textfieldselection-setSelectionRange.html:
+        * web-platform-tests/html/semantics/forms/textfieldselection/w3c-import.log:
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/centering-expected.txt: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/centering-iframe.sub.html: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/centering.html: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/w3c-import.log:
+        * web-platform-tests/html/semantics/w3c-import.log:
+        * web-platform-tests/html/webappapis/the-windoworworkerglobalscope-mixin/Worker_Self_Origin.html:
+        * web-platform-tests/html/webappapis/timers/negative-setinterval-expected.txt: Added.
+        * web-platform-tests/html/webappapis/timers/negative-setinterval.html: Added.
+        * web-platform-tests/html/webappapis/timers/negative-settimeout-expected.txt: Added.
+        * web-platform-tests/html/webappapis/timers/negative-settimeout.html: Added.
+        * web-platform-tests/html/webappapis/timers/type-long-setinterval-expected.txt: Added.
+        * web-platform-tests/html/webappapis/timers/type-long-setinterval.html: Added.
+        * web-platform-tests/html/webappapis/timers/type-long-settimeout-expected.txt: Added.
+        * web-platform-tests/html/webappapis/timers/type-long-settimeout.html: Added.
+        * web-platform-tests/html/webappapis/timers/w3c-import.log:
+        * web-platform-tests/images/pattern.ogv: Added.
+        * web-platform-tests/images/pattern.png: Added.
+        * web-platform-tests/images/w3c-import.log:
+        * web-platform-tests/innerText/setter-expected.txt:
+        * web-platform-tests/innerText/setter-tests.js:
+        * web-platform-tests/innerText/setter.html:
+        * web-platform-tests/lint.whitelist:
+        * web-platform-tests/mediacapture-fromelement/idlharness-expected.txt: Added.
+        * web-platform-tests/mediacapture-fromelement/idlharness.html: Added.
+        * web-platform-tests/mediacapture-fromelement/w3c-import.log: Added.
+        * web-platform-tests/resource-timing/SyntheticResponse.py:
+        (main):
+        * web-platform-tests/resource-timing/resource-timing.js:
+        * web-platform-tests/resource-timing/resource_connection_reuse.html:
+        * web-platform-tests/resources/.htaccess: Added.
+        * web-platform-tests/resources/docs/api.md: Added.
+        * web-platform-tests/resources/docs/idlharness.md: Added.
+        * web-platform-tests/resources/docs/w3c-import.log: Added.
+        * web-platform-tests/resources/examples/apisample-error-worker.js: Added.
+        * web-platform-tests/resources/examples/apisample-worker.js: Added.
+        (test):
+        (async_test):
+        * web-platform-tests/resources/examples/apisample.htm: Added.
+        * web-platform-tests/resources/examples/apisample10.html: Added.
+        * web-platform-tests/resources/examples/apisample11.html: Added.
+        * web-platform-tests/resources/examples/apisample12.html: Added.
+        * web-platform-tests/resources/examples/apisample13.html: Added.
+        * web-platform-tests/resources/examples/apisample14.html: Added.
+        * web-platform-tests/resources/examples/apisample15.html: Added.
+        * web-platform-tests/resources/examples/apisample16.html: Added.
+        * web-platform-tests/resources/examples/apisample17.html: Added.
+        * web-platform-tests/resources/examples/apisample2.htm: Added.
+        * web-platform-tests/resources/examples/apisample3.htm: Added.
+        * web-platform-tests/resources/examples/apisample4.htm: Added.
+        * web-platform-tests/resources/examples/apisample5.htm: Added.
+        * web-platform-tests/resources/examples/apisample6.html: Added.
+        * web-platform-tests/resources/examples/apisample7.html: Added.
+        * web-platform-tests/resources/examples/apisample8.html: Added.
+        * web-platform-tests/resources/examples/apisample9.html: Added.
+        * web-platform-tests/resources/examples/w3c-import.log: Added.
+        * web-platform-tests/resources/idlharness.js:
+        (IdlInterface.prototype.test_member_iterable):
+        * web-platform-tests/resources/w3c-import.log: Added.
+        * web-platform-tests/resources/webidl2/coverage.html: Added.
+        * web-platform-tests/resources/webidl2/index.js: Added.
+        * web-platform-tests/resources/webidl2/lib/w3c-import.log: Added.
+        * web-platform-tests/resources/webidl2/package.json: Added.
+        * web-platform-tests/resources/webidl2/test/invalid.js: Added.
+        (idls.fs.readdirSync.dir.filter):
+        (map):
+        (errors.idls.map):
+        (i.func):
+        * web-platform-tests/resources/webidl2/test/invalid/idl/dict-required-default.widl: Added.
+        * web-platform-tests/resources/webidl2/test/invalid/idl/enum.widl: Added.
+        * web-platform-tests/resources/webidl2/test/invalid/idl/maplike-1type.widl: Added.
+        * web-platform-tests/resources/webidl2/test/invalid/idl/module.widl: Added.
+        * web-platform-tests/resources/webidl2/test/invalid/idl/nonnullableany.widl: Added.
+        * web-platform-tests/resources/webidl2/test/invalid/idl/nonnullableobjects.widl: Added.
+        * web-platform-tests/resources/webidl2/test/invalid/idl/raises.widl: Added.
+        * web-platform-tests/resources/webidl2/test/invalid/idl/readonly-iterable.widl: Added.
+        * web-platform-tests/resources/webidl2/test/invalid/idl/scopedname.widl: Added.
+        * web-platform-tests/resources/webidl2/test/invalid/idl/sequenceAsAttribute.widl: Added.
+        * web-platform-tests/resources/webidl2/test/invalid/idl/setlike-2types.widl: Added.
+        * web-platform-tests/resources/webidl2/test/invalid/idl/special-omittable.widl: Added.
+        * web-platform-tests/resources/webidl2/test/invalid/idl/stringconstants.idl: Added.
+        * web-platform-tests/resources/webidl2/test/invalid/idl/typedef-nested.widl: Added.
+        * web-platform-tests/resources/webidl2/test/invalid/idl/w3c-import.log: Added.
+        * web-platform-tests/resources/webidl2/test/invalid/json/dict-required-default.json: Added.
+        * web-platform-tests/resources/webidl2/test/invalid/json/enum.json: Added.
+        * web-platform-tests/resources/webidl2/test/invalid/json/maplike-1type.json: Added.
+        * web-platform-tests/resources/webidl2/test/invalid/json/module.json: Added.
+        * web-platform-tests/resources/webidl2/test/invalid/json/nonnullableany.json: Added.
+        * web-platform-tests/resources/webidl2/test/invalid/json/nonnullableobjects.json: Added.
+        * web-platform-tests/resources/webidl2/test/invalid/json/raises.json: Added.
+        * web-platform-tests/resources/webidl2/test/invalid/json/readonly-iterable.json: Added.
+        * web-platform-tests/resources/webidl2/test/invalid/json/scopedname.json: Added.
+        * web-platform-tests/resources/webidl2/test/invalid/json/sequenceAsAttribute.json: Added.
+        * web-platform-tests/resources/webidl2/test/invalid/json/setlike-2types.json: Added.
+        * web-platform-tests/resources/webidl2/test/invalid/json/special-omittable.json: Added.
+        * web-platform-tests/resources/webidl2/test/invalid/json/stringconstants.json: Added.
+        * web-platform-tests/resources/webidl2/test/invalid/json/typedef-nested.json: Added.
+        * web-platform-tests/resources/webidl2/test/invalid/json/w3c-import.log: Added.
+        * web-platform-tests/resources/webidl2/test/mocha.opts: Added.
+        * web-platform-tests/resources/webidl2/test/syntax.js: Added.
+        (idls.fs.readdirSync.dir.filter):
+        (map):
+        (jsons.idls.map):
+        (i.func):
+        * web-platform-tests/resources/webidl2/test/syntax/idl/allowany.widl: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/idl/array.widl: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/idl/attributes.widl: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/idl/callback.widl: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/idl/caller.widl: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/idl/constants.widl: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/idl/constructor.widl: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/idl/dictionary-inherits.widl: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/idl/dictionary.widl: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/idl/documentation-dos.widl: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/idl/documentation.widl: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/idl/enum.widl: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/idl/equivalent-decl.widl: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/idl/exception-inheritance.widl: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/idl/exception.widl: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/idl/extended-attributes.widl: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/idl/generic.widl: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/idl/getter-setter.widl: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/idl/identifier-qualified-names.widl: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/idl/implements.widl: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/idl/indexed-properties.widl: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/idl/inherits-getter.widl: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/idl/interface-inherits.widl: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/idl/iterable.widl: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/idl/iterator.widl: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/idl/legacyiterable.widl: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/idl/map.widl: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/idl/maplike.widl: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/idl/namedconstructor.widl: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/idl/nointerfaceobject.widl: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/idl/nullable.widl: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/idl/nullableobjects.widl: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/idl/operation-optional-arg.widl: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/idl/overloading.widl: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/idl/overridebuiltins.widl: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/idl/partial-interface.widl: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/idl/primitives.widl: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/idl/prototyperoot.widl: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/idl/putforwards.widl: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/idl/reg-operations.widl: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/idl/replaceable.widl: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/idl/sequence.widl: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/idl/serializer.widl: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/idl/setlike.widl: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/idl/static.widl: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/idl/stringifier-attribute.widl: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/idl/stringifier-custom.widl: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/idl/stringifier.widl: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/idl/treatasnull.widl: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/idl/treatasundefined.widl: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/idl/typedef-nested.widl: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/idl/typedef.widl: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/idl/typesuffixes.widl: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/idl/uniontype.widl: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/idl/variadic-operations.widl: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/idl/w3c-import.log: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/json/allowany.json: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/json/array.json: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/json/attributes.json: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/json/callback.json: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/json/caller.json: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/json/constants.json: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/json/constructor.json: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/json/dictionary-inherits.json: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/json/dictionary.json: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/json/documentation-dos.json: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/json/documentation.json: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/json/enum.json: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/json/equivalent-decl.json: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/json/exception-inheritance.json: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/json/exception.json: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/json/extended-attributes.json: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/json/generic.json: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/json/getter-setter.json: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/json/identifier-qualified-names.json: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/json/implements.json: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/json/indexed-properties.json: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/json/inherits-getter.json: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/json/interface-inherits.json: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/json/iterable.json: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/json/iterator.json: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/json/legacyiterable.json: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/json/map.json: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/json/maplike.json: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/json/namedconstructor.json: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/json/nointerfaceobject.json: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/json/nullable.json: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/json/nullableobjects.json: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/json/operation-optional-arg.json: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/json/overloading.json: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/json/overridebuiltins.json: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/json/partial-interface.json: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/json/primitives.json: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/json/prototyperoot.json: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/json/putforwards.json: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/json/reg-operations.json: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/json/replaceable.json: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/json/sequence.json: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/json/serializer.json: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/json/setlike.json: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/json/static.json: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/json/stringifier-attribute.json: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/json/stringifier-custom.json: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/json/stringifier.json: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/json/treatasnull.json: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/json/treatasundefined.json: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/json/typedef-nested.json: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/json/typedef.json: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/json/typesuffixes.json: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/json/uniontype.json: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/json/variadic-operations.json: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/json/w3c-import.log: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/opt/typedef-nested.json: Added.
+        * web-platform-tests/resources/webidl2/test/syntax/opt/w3c-import.log: Added.
+        * web-platform-tests/resources/webidl2/test/w3c-import.log: Added.
+        * web-platform-tests/resources/webidl2/test/web/make-web-tests.js: Added.
+        (dir):
+        (allFromDir):
+        * web-platform-tests/resources/webidl2/test/web/run-tests.js: Added.
+        (i.func):
+        * web-platform-tests/resources/webidl2/test/web/w3c-import.log: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/LICENSE: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/Makefile: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/README.md: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/doc/htmltodtd.xsl: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/doc/w3c-import.log: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/doc/widlproc.html: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/examples/Makefile: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/examples/README: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/examples/bondi.widl: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/examples/filesystem.widl: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/examples/spectowidl.xsl: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/examples/w3c-import.log: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/examples/widlhtml.css: Added.
+        (body):
+        (:link):
+        (:visited):
+        (a:active):
+        (a:link img, a:visited img):
+        (h1, h2, h3, h4, h5, h6):
+        (h1, h2, h3):
+        (h1):
+        (h2):
+        (h3):
+        (h4):
+        (h5):
+        (h6):
+        (.hide):
+        (code):
+        (ul.toc, ol.toc, ul.authors):
+        (div.head):
+        (div.head h1):
+        (div.head table):
+        (div.constraint, div.issue, div.note, div.notice):
+        (div.exampleInner pre):
+        (div.exampleOuter):
+        (div.exampleInner):
+        (div.exampleWrapper):
+        (div.exampleHeader):
+        (div.term):
+        (div.list):
+        (.optional):
+        (.copyright,.legalnotice):
+        (.copyright small):
+        (@media screen):
+        (a[href]:hover):
+        (ol.enumar):
+        (ol.enumla):
+        (ol.enumlr):
+        (ol.enumua):
+        (ol.enumur):
+        (.toc):
+        (pre):
+        (.examplecode):
+        (.def-api-feature-set dt, .def-api-feature dt, dt .def-device-cap, dt.const code):
+        (dt.attribute code, dt.method code):
+        (.def-device-caps dd):
+        (dt.method):
+        (.summary td):
+        * web-platform-tests/resources/webidl2/test/widlproc/src/comment.c: Added.
+        (setcommentnode):
+        (joininlinecomments):
+        (outputchildren):
+        (default_askend):
+        (root_askend):
+        (root_output):
+        (endspecificcnode):
+        (startcnode):
+        (para_output):
+        (para_end):
+        (return_output):
+        (author_output):
+        (code_end):
+        (code_output):
+        (text_end):
+        (text_output):
+        (html_output):
+        (param_output):
+        (api_feature_output):
+        (def_api_feature_askend):
+        (def_api_feature_output):
+        (def_api_feature_set_output):
+        (def_instantiated_output):
+        (def_device_cap_output):
+        (iswhitespace):
+        (parseword):
+        (dox_b):
+        (dox_n):
+        (dox_code):
+        (dox_endcode):
+        (dox_param):
+        (dox_para):
+        (dox_throw):
+        (dox_attr):
+        (parsecomment):
+        (parsecomments):
+        (attachcommenttonode):
+        (attachcomments):
+        (processcomments):
+        (outputdescriptive):
+        * web-platform-tests/resources/webidl2/test/widlproc/src/comment.h: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/src/entities.h: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/src/lex.c: Added.
+        (readinput):
+        (lexerrorexit):
+        (lexblockcomment):
+        (lexinlinecomment):
+        (lexnumber):
+        (lexstring):
+        (lexidentifier):
+        (lex):
+        (outputwidl):
+        * web-platform-tests/resources/webidl2/test/widlproc/src/lex.h: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/src/main.c: Added.
+        (options):
+        (main):
+        * web-platform-tests/resources/webidl2/test/widlproc/src/misc.c: Added.
+        (memalloc):
+        (memrealloc):
+        (memfree):
+        (memprintf):
+        (vmemprintf):
+        (vlocerrorexit):
+        (locerrorexit):
+        (errorexit):
+        * web-platform-tests/resources/webidl2/test/widlproc/src/misc.h: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/src/node.c: Added.
+        (newelement):
+        (newattr):
+        (newattrlist):
+        (addnode):
+        (reversechildren):
+        (nodeisempty):
+        (nodewalk):
+        (findchildelement):
+        (getattr):
+        (findchildelementwithnameattr):
+        (findreturntype):
+        (findparamidentifier):
+        (findthrowidentifier):
+        (outputid):
+        (outputnode):
+        * web-platform-tests/resources/webidl2/test/widlproc/src/node.h: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/src/os.h: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/src/parse.c: Added.
+        (tokerrorexit):
+        (lexnocomment):
+        (eat):
+        (setid):
+        (setidentifier):
+        (setargumentname):
+        (parsescopedname):
+        (parsescopednamelist):
+        (parsereturntype):
+        (parseunsignedintegertype):
+        (parsetypesuffix):
+        (parsetypesuffixstartingwitharray):
+        (parseprimitiveorstringtype):
+        (parsenonanytype):
+        (parseunionmembertype):
+        (parseuniontype):
+        (parsetype):
+        (parseextendedattribute):
+        (parseextendedattributelist):
+        (parseexceptionfield):
+        (parseargument):
+        (parseargumentlist):
+        (parseoperationrest):
+        (parsereturntypeandoperationrest):
+        (parseoptionaliteratorinterface):
+        (parseoperationoriteratorrest):
+        (parseattribute):
+        (parseserializer):
+        (parseattributeoroperationoriterator):
+        (parseconstexpr):
+        (parsedefaultvalue):
+        (parsedictionarymember):
+        (parseconst):
+        (parseimplementsstatement):
+        (parsetypedef):
+        (parseexception):
+        (parseinterface):
+        (parsecallback):
+        (parsedictionary):
+        (parseenum):
+        (parsedefinitions):
+        (parse):
+        * web-platform-tests/resources/webidl2/test/widlproc/src/parse.h: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/src/process.c: Added.
+        (outputnodeastext):
+        (printfqid):
+        (output):
+        (outputchildren):
+        (processfiles):
+        * web-platform-tests/resources/webidl2/test/widlproc/src/process.h: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/src/w3c-import.log: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/src/widlprocxmltohtml.xsl: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/Makefile: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/invalid/error/enum.txt: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/invalid/error/module.txt: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/invalid/error/nonnullableany.txt: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/invalid/error/nonnullableobjects.txt: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/invalid/error/scopedname.txt: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/invalid/error/sequenceAsAttribute.txt: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/invalid/error/stringconstants.idl: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/invalid/error/w3c-import.log: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/invalid/idl/enum.widl: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/invalid/idl/module.widl: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/invalid/idl/nonnullableany.widl: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/invalid/idl/nonnullableobjects.widl: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/invalid/idl/raises.widl: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/invalid/idl/scopedname.widl: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/invalid/idl/sequenceAsAttribute.widl: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/invalid/idl/special-omittable.widl: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/invalid/idl/stringconstants.idl: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/invalid/idl/w3c-import.log: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/allowany.widl: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/array.widl: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/attributes.widl: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/callback.widl: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/caller.widl: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/constants.widl: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/constructor.widl: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/dictionary-inherits.widl: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/dictionary.widl: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/documentation-dos.widl: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/documentation.widl: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/enum.widl: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/equivalent-decl.widl: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/exception-inheritance.widl: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/exception.widl: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/getter-setter.widl: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/identifier-qualified-names.widl: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/implements.widl: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/indexed-properties.widl: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/inherits-getter.widl: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/interface-inherits.widl: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/iterator.widl: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/namedconstructor.widl: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/nointerfaceobject.widl: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/nullable.widl: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/nullableobjects.widl: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/operation-optional-arg.widl: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/overloading.widl: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/overridebuiltins.widl: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/partial-interface.widl: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/primitives.widl: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/prototyperoot.widl: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/putforwards.widl: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/reg-operations.widl: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/replaceable.widl: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/sequence.widl: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/serializer.widl: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/static.widl: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/stringifier-attribute.widl: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/stringifier-custom.widl: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/stringifier.widl: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/treatasnull.widl: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/treatasundefined.widl: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/typedef.widl: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/typesuffixes.widl: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/uniontype.widl: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/variadic-operations.widl: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/idl/w3c-import.log: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/xml/allowany.widlprocxml: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/xml/array.widlprocxml: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/xml/attributes.widlprocxml: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/xml/callback.widlprocxml: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/xml/caller.widlprocxml: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/xml/constants.widlprocxml: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/xml/constructor.widlprocxml: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/xml/dictionary-inherits.widlprocxml: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/xml/dictionary.widlprocxml: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/xml/documentation-dos.widlprocxml: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/xml/documentation.widlprocxml: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/xml/enum.widlprocxml: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/xml/equivalent-decl.widlprocxml: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/xml/exception-inheritance.widlprocxml: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/xml/exception.widlprocxml: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/xml/identifier-qualified-names.widlprocxml: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/xml/implements.widlprocxml: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/xml/indexed-properties.widlprocxml: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/xml/inherits-getter.widlprocxml: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/xml/interface-inherits.widlprocxml: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/xml/iterator.widlprocxml: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/xml/module.widlprocxml: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/xml/namedconstructor.widlprocxml: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/xml/namespaceobject.widlprocxml: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/xml/nointerfaceobject.widlprocxml: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/xml/nullable.widlprocxml: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/xml/nullableobjects.widlprocxml: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/xml/operation-optional-arg.widlprocxml: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/xml/overloading.widlprocxml: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/xml/overridebuiltins.widlprocxml: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/xml/partial-interface.widlprocxml: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/xml/primitives.widlprocxml: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/xml/prototyperoot.widlprocxml: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/xml/putforwards.widlprocxml: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/xml/reg-operations.widlprocxml: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/xml/replaceable.widlprocxml: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/xml/sequence.widlprocxml: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/xml/serializer.widlprocxml: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/xml/special-omittable.widlprocxml: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/xml/static.widlprocxml: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/xml/stringifier-attribute.widlprocxml: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/xml/stringifier-custom.widlprocxml: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/xml/stringifier.widlprocxml: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/xml/treatasnull.widlprocxml: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/xml/treatasundefined.widlprocxml: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/xml/typedef.widlprocxml: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/xml/typesuffixes.widlprocxml: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/xml/uniontype.widlprocxml: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/xml/variadic-operations.widlprocxml: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/valid/xml/w3c-import.log: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/test/w3c-import.log: Added.
+        * web-platform-tests/resources/webidl2/test/widlproc/w3c-import.log: Added.
+        * web-platform-tests/resources/webidl2/w3c-import.log: Added.
+        * web-platform-tests/resources/webiwarning: inexact rename detection was skipped due to too many files.: Added.
+        * web-platform-tests/streams/piping/close-propagation-forward-expected.txt:
+        * web-platform-tests/streams/piping/close-propagation-forward.dedicatedworker-expected.txt:
+        * web-platform-tests/streams/piping/close-propagation-forward.js:
+        (promise_test):
+        * web-platform-tests/streams/piping/flow-control-expected.txt:
+        * web-platform-tests/streams/piping/flow-control.dedicatedworker-expected.txt:
+        * web-platform-tests/streams/piping/flow-control.js:
+        (promise_test):
+        * web-platform-tests/streams/piping/multiple-propagation-expected.txt:
+        * web-platform-tests/streams/piping/multiple-propagation.dedicatedworker-expected.txt:
+        * web-platform-tests/streams/piping/multiple-propagation.js:
+        (promise_test.t.string_appeared_here.then):
+        (promise_test.t.const.rs.recordingReadableStream.start):
+        (promise_test.t.return.flushAsyncEvents.then):
+        * web-platform-tests/streams/piping/pipe-through-expected.txt:
+        * web-platform-tests/streams/piping/pipe-through.dedicatedworker-expected.txt:
+        * web-platform-tests/streams/piping/pipe-through.js:
+        (promise_test):
+        * web-platform-tests/streams/readable-byte-streams/general-expected.txt:
+        * web-platform-tests/streams/readable-byte-streams/general.dedicatedworker-expected.txt:
+        * web-platform-tests/streams/readable-byte-streams/general.js:
+        (test):
+        * web-platform-tests/streams/readable-streams/general-expected.txt:
+        * web-platform-tests/streams/readable-streams/general.dedicatedworker-expected.txt:
+        * web-platform-tests/streams/readable-streams/general.js:
+        (test.get assert_throws):
+        (test):
+        * web-platform-tests/url/a-element-expected.txt:
+        * web-platform-tests/url/a-element-xhtml-expected.txt:
+        * web-platform-tests/url/interfaces-expected.txt:
+        * web-platform-tests/url/setters_tests.json:
+        * web-platform-tests/url/url-constructor-expected.txt:
+        * web-platform-tests/url/url-setters-expected.txt:
+        * web-platform-tests/url/urltestdata.json:
+        * web-platform-tests/user-timing/clear_all_marks.any-expected.txt: Added.
+        * web-platform-tests/user-timing/clear_all_marks.any.html: Added.
+        * web-platform-tests/user-timing/clear_all_marks.any.js: Added.
+        (test):
+        * web-platform-tests/user-timing/clear_all_marks.worker-expected.txt: Added.
+        * web-platform-tests/user-timing/clear_all_marks.worker.html: Added.
+        * web-platform-tests/user-timing/clear_all_measures.any-expected.txt: Added.
+        * web-platform-tests/user-timing/clear_all_measures.any.html: Added.
+        * web-platform-tests/user-timing/clear_all_measures.any.js: Added.
+        (test):
+        * web-platform-tests/user-timing/clear_all_measures.worker-expected.txt: Added.
+        * web-platform-tests/user-timing/clear_all_measures.worker.html: Added.
+        * web-platform-tests/user-timing/clear_non_existent_mark.any-expected.txt: Added.
+        * web-platform-tests/user-timing/clear_non_existent_mark.any.html: Added.
+        * web-platform-tests/user-timing/clear_non_existent_mark.any.js: Added.
+        (test):
+        * web-platform-tests/user-timing/clear_non_existent_mark.worker-expected.txt: Added.
+        * web-platform-tests/user-timing/clear_non_existent_mark.worker.html: Added.
+        * web-platform-tests/user-timing/clear_non_existent_measure.any-expected.txt: Added.
+        * web-platform-tests/user-timing/clear_non_existent_measure.any.html: Added.
+        * web-platform-tests/user-timing/clear_non_existent_measure.any.js: Added.
+        (test):
+        * web-platform-tests/user-timing/clear_non_existent_measure.worker-expected.txt: Added.
+        * web-platform-tests/user-timing/clear_non_existent_measure.worker.html: Added.
+        * web-platform-tests/user-timing/clear_one_mark.any-expected.txt: Added.
+        * web-platform-tests/user-timing/clear_one_mark.any.html: Added.
+        * web-platform-tests/user-timing/clear_one_mark.any.js: Added.
+        (test):
+        * web-platform-tests/user-timing/clear_one_mark.worker-expected.txt: Added.
+        * web-platform-tests/user-timing/clear_one_mark.worker.html: Added.
+        * web-platform-tests/user-timing/clear_one_measure.any-expected.txt: Added.
+        * web-platform-tests/user-timing/clear_one_measure.any.html: Added.
+        * web-platform-tests/user-timing/clear_one_measure.any.js: Added.
+        (test):
+        * web-platform-tests/user-timing/clear_one_measure.worker-expected.txt: Added.
+        * web-platform-tests/user-timing/clear_one_measure.worker.html: Added.
+        * web-platform-tests/user-timing/entry_type.any-expected.txt: Added.
+        * web-platform-tests/user-timing/entry_type.any.html: Added.
+        * web-platform-tests/user-timing/entry_type.any.js: Added.
+        (test):
+        * web-platform-tests/user-timing/entry_type.worker-expected.txt: Added.
+        * web-platform-tests/user-timing/entry_type.worker.html: Added.
+        * web-platform-tests/user-timing/idlharness-expected.txt:
+        * web-platform-tests/user-timing/idlharness.html:
+        * web-platform-tests/user-timing/invoke_with_timing_attributes-expected.txt: Added.
+        * web-platform-tests/user-timing/invoke_with_timing_attributes.html: Added.
+        * web-platform-tests/user-timing/invoke_with_timing_attributes.worker-expected.txt: Added.
+        * web-platform-tests/user-timing/invoke_with_timing_attributes.worker.html: Added.
+        * web-platform-tests/user-timing/invoke_with_timing_attributes.worker.js: Added.
+        (emit_test):
+        (emit_test2):
+        * web-platform-tests/user-timing/invoke_without_parameter-expected.txt: Added.
+        * web-platform-tests/user-timing/invoke_without_parameter.html: Added.
+        * web-platform-tests/user-timing/mark.any-expected.txt: Added.
+        * web-platform-tests/user-timing/mark.any.html: Added.
+        * web-platform-tests/user-timing/mark.any.js: Added.
+        (match_entries):
+        (filter_entries_by_type):
+        (test):
+        (test_mark):
+        * web-platform-tests/user-timing/mark.worker-expected.txt: Added.
+        * web-platform-tests/user-timing/mark.worker.html: Added.
+        * web-platform-tests/user-timing/mark_exceptions-expected.txt: Added.
+        * web-platform-tests/user-timing/mark_exceptions.html: Added.
+        * web-platform-tests/user-timing/measure-expected.txt: Added.
+        * web-platform-tests/user-timing/measure.html: Added.
+        * web-platform-tests/user-timing/measure_exceptions_navigation_timing-expected.txt: Added.
+        * web-platform-tests/user-timing/measure_exceptions_navigation_timing.html: Added.
+        * web-platform-tests/user-timing/measure_navigation_timing-expected.txt: Added.
+        * web-platform-tests/user-timing/measure_navigation_timing.html: Added.
+        * web-platform-tests/user-timing/measure_syntax_err.any-expected.txt: Added.
+        * web-platform-tests/user-timing/measure_syntax_err.any.html: Added.
+        * web-platform-tests/user-timing/measure_syntax_err.any.js: Added.
+        (test):
+        * web-platform-tests/user-timing/measure_syntax_err.worker-expected.txt: Added.
+        * web-platform-tests/user-timing/measure_syntax_err.worker.html: Added.
+        * web-platform-tests/user-timing/resources/webperftestharness.js:
+        * web-platform-tests/user-timing/test_user_timing_mark_exceptions-expected.txt:
+        * web-platform-tests/user-timing/test_user_timing_measure_exceptions-expected.txt:
+        * web-platform-tests/user-timing/user_timing_exists.any-expected.txt: Added.
+        * web-platform-tests/user-timing/user_timing_exists.any.html: Added.
+        * web-platform-tests/user-timing/user_timing_exists.any.js: Added.
+        (test):
+        * web-platform-tests/user-timing/user_timing_exists.worker-expected.txt: Added.
+        * web-platform-tests/user-timing/user_timing_exists.worker.html: Added.
+        * web-platform-tests/user-timing/w3c-import.log:
+        * web-platform-tests/w3c-import.log:
+        * web-platform-tests/webrtc/OWNERS:
+        * web-platform-tests/webrtc/rtcpeerconnection/canTrickleIceCandidates-expected.txt: Added.
+        * web-platform-tests/webrtc/rtcpeerconnection/canTrickleIceCandidates.html: Added.
+        * web-platform-tests/webrtc/rtcpeerconnection/iceGatheringState-expected.txt: Added.
+        * web-platform-tests/webrtc/rtcpeerconnection/iceGatheringState.html: Added.
+        * web-platform-tests/webrtc/rtcpeerconnection/rtcconfiguration-icecandidatepoolsize-expected.txt:
+        * web-platform-tests/webrtc/rtcpeerconnection/rtcconfiguration-icecandidatepoolsize.html:
+        * web-platform-tests/webrtc/rtcpeerconnection/rtcpeerconnection-idl-expected.txt:
+        * web-platform-tests/webrtc/rtcpeerconnection/rtcpeerconnection-idl.html:
+        * web-platform-tests/webrtc/rtcpeerconnection/w3c-import.log:
+
 2017-04-07  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaseline another test after r215096.

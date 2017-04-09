@@ -1,0 +1,3 @@
+
+FAIL Stream response's body Can't find variable: RESOURCES_DIR
+

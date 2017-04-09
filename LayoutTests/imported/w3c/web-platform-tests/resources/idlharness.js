@@ -1384,7 +1384,7 @@ IdlInterface.prototype.test_member_iterable = function(member)
 
     if (isPairIterator) {
         test(function() {
-            assert_equals(self[interfaceName].prototype[Symbol.iterator], self[interfaceName].prototype["entries"], "entries method is not the same as @@iterator");
+            assert_equals(self[interfaceName].prototype["entries"], self[interfaceName].prototype[Symbol.iterator], "entries method is not the same as @@iterator");
         }, "Testing pair iterable interface " + interfaceName);
     } else {
         test(function() {

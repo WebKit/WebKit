@@ -10,9 +10,9 @@ PASS Headers interface: operation get(ByteString)
 PASS Headers interface: operation has(ByteString) 
 PASS Headers interface: operation set(ByteString,ByteString) 
 FAIL Testing Symbol.iterator property of iterable interface Headers assert_equals: @@iterator function does not have the right name expected "entries" but got "[Symbol.Iterator]"
-FAIL Testing pair iterable interface Headers assert_equals: entries method is not the same as @@iterator expected function "function entries() {
+FAIL Testing pair iterable interface Headers assert_equals: entries method is not the same as @@iterator expected function "function [Symbol.Iterator]() {
     [native code]
-}" but got function "function [Symbol.Iterator]() {
+}" but got function "function entries() {
     [native code]
 }"
 PASS Headers interface: operation entries() 
