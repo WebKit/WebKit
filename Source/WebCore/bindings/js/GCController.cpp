@@ -71,7 +71,7 @@ void GCController::garbageCollectSoon()
 void GCController::garbageCollectOnNextRunLoop()
 {
     if (!m_GCTimer.isActive())
-        m_GCTimer.startOneShot(0);
+        m_GCTimer.startOneShot(0_s);
 }
 
 void GCController::gcTimerFired()

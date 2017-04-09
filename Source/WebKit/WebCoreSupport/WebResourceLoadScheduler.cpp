@@ -282,7 +282,7 @@ void WebResourceLoadScheduler::resumePendingRequests()
 void WebResourceLoadScheduler::scheduleServePendingRequests()
 {
     if (!m_requestTimer.isActive())
-        m_requestTimer.startOneShot(0);
+        m_requestTimer.startOneShot(0_s);
 }
 
 void WebResourceLoadScheduler::requestTimerFired()

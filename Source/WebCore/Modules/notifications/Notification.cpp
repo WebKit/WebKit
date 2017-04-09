@@ -74,7 +74,7 @@ Notification::Notification(Document& document, const String& title)
     // FIXME: Seems that m_notificationCenter can be null so should not be changed from RefPtr to Ref.
     // But the rest of the code in this class isn't trying to handle that case.
     ASSERT(m_notificationCenter->client());
-    m_taskTimer->startOneShot(0);
+    m_taskTimer->startOneShot(0_s);
 }
 
 #endif

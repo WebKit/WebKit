@@ -232,7 +232,7 @@ void CSSAnimationControllerPrivate::fireEventsAndUpdateStyle()
 void CSSAnimationControllerPrivate::startUpdateStyleIfNeededDispatcher()
 {
     if (!m_updateStyleIfNeededDispatcher.isActive())
-        m_updateStyleIfNeededDispatcher.startOneShot(0);
+        m_updateStyleIfNeededDispatcher.startOneShot(0_s);
 }
 
 void CSSAnimationControllerPrivate::addEventToDispatch(Element& element, const AtomicString& eventType, const String& name, double elapsedTime)

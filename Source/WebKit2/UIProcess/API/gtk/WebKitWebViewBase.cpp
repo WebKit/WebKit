@@ -219,7 +219,7 @@ static void webkitWebViewBaseScheduleUpdateActivityState(WebKitWebViewBase* webV
     if (priv->updateActivityStateTimer.isActive())
         return;
 
-    priv->updateActivityStateTimer.startOneShot(0);
+    priv->updateActivityStateTimer.startOneShot(0_s);
 }
 
 static gboolean toplevelWindowFocusInEvent(GtkWidget* widget, GdkEventFocus*, WebKitWebViewBase* webViewBase)

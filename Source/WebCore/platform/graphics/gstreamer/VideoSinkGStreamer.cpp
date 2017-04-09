@@ -115,7 +115,7 @@ public:
             webkitVideoSinkRepaintRequested(sink, sample.get());
 #else
         m_sink = sink;
-        m_timer.startOneShot(0);
+        m_timer.startOneShot(0_s);
         m_dataCondition.wait(m_sampleMutex);
 #endif
         return true;

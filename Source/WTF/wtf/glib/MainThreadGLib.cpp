@@ -47,7 +47,7 @@ public:
 
     void schedule()
     {
-        m_timer.startOneShot(0);
+        m_timer.startOneShot(0_s);
     }
 
 private:

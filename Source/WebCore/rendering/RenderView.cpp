@@ -154,7 +154,7 @@ void RenderView::scheduleLazyRepaint(RenderBox& renderer)
     renderer.setRenderBoxNeedsLazyRepaint(true);
     m_renderersNeedingLazyRepaint.add(&renderer);
     if (!m_lazyRepaintTimer.isActive())
-        m_lazyRepaintTimer.startOneShot(0);
+        m_lazyRepaintTimer.startOneShot(0_s);
 }
 
 void RenderView::unscheduleLazyRepaint(RenderBox& renderer)

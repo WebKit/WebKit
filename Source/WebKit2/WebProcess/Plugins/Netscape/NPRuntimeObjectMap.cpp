@@ -292,7 +292,7 @@ void NPRuntimeObjectMap::addToInvalidationQueue(NPObject* npObject)
     if (trySafeReleaseNPObject(npObject))
         return;
     if (m_npObjectsToFinalize.isEmpty())
-        m_finalizationTimer.startOneShot(0);
+        m_finalizationTimer.startOneShot(0_s);
     ASSERT(m_finalizationTimer.isActive());
     m_npObjectsToFinalize.append(npObject);
 }

@@ -189,7 +189,7 @@ void Geolocation::resume()
     ActiveDOMObject::resume();
 
     if (!m_resumeTimer.isActive())
-        m_resumeTimer.startOneShot(0);
+        m_resumeTimer.startOneShot(0_s);
 }
 
 void Geolocation::resumeTimerFired()

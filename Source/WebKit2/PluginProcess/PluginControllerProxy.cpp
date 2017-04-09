@@ -147,7 +147,7 @@ void PluginControllerProxy::destroy()
     if (m_pluginDestructionProtectCount || m_connection->connection()->inSendSync()) {
         // We have plug-in code on the stack so we can't destroy it right now.
         // Destroy it later.
-        m_pluginDestroyTimer.startOneShot(0);
+        m_pluginDestroyTimer.startOneShot(0_s);
         return;
     }
 
@@ -215,7 +215,7 @@ void PluginControllerProxy::startPaintTimer()
         return;
 
     // Start the timer.
-    m_paintTimer.startOneShot(0);
+    m_paintTimer.startOneShot(0_s);
 
     m_waitingForDidUpdate = true;
 }

@@ -261,7 +261,7 @@ void WebPopupMenuProxyGtk::menuUnmappedCallback(GtkWidget*, WebPopupMenuProxyGtk
     // When an item is activated, the menu is first hidden and then activate signal is emitted, so at this point we don't know
     // if the menu has been hidden because an item has been selected or because the menu has been dismissed. Wait until the next
     // main loop iteration to dismiss the menu, if an item is activated the timer will be cancelled.
-    popupMenu->m_dismissMenuTimer.startOneShot(0);
+    popupMenu->m_dismissMenuTimer.startOneShot(0_s);
 }
 
 void WebPopupMenuProxyGtk::selectItemCallback(GtkWidget* item, WebPopupMenuProxyGtk* popupMenu)

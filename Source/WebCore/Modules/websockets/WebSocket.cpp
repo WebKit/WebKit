@@ -503,7 +503,7 @@ void WebSocket::resume()
         m_channel->resume();
     else if (!m_pendingEvents.isEmpty() && !m_resumeTimer.isActive()) {
         // Fire the pending events in a timer as we are not allowed to execute arbitrary JS from resume().
-        m_resumeTimer.startOneShot(0);
+        m_resumeTimer.startOneShot(0_s);
     }
 
     m_shouldDelayEventFiring = false;

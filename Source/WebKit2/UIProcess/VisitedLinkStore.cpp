@@ -98,7 +98,7 @@ void VisitedLinkStore::addVisitedLinkHash(LinkHash linkHash)
     m_pendingVisitedLinks.add(linkHash);
 
     if (!m_pendingVisitedLinksTimer.isActive())
-        m_pendingVisitedLinksTimer.startOneShot(0);
+        m_pendingVisitedLinksTimer.startOneShot(0_s);
 }
 
 void VisitedLinkStore::removeAll()

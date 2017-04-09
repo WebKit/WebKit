@@ -390,7 +390,7 @@ void ServicesOverlayController::invalidateHighlightsOfType(Highlight::Type type)
         return;
 
     m_dirtyHighlightTypes |= type;
-    m_buildHighlightsTimer.startOneShot(0);
+    m_buildHighlightsTimer.startOneShot(0_s);
 }
 
 void ServicesOverlayController::buildPotentialHighlightsIfNeeded()

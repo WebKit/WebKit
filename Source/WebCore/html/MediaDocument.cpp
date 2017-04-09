@@ -233,7 +233,7 @@ void MediaDocument::mediaElementSawUnsupportedTracks()
     // and let the plugin handle this. Don't do it immediately as this 
     // function may be called directly from a media engine callback, and 
     // replaceChild will destroy the element, media player, and media engine.
-    m_replaceMediaElementTimer.startOneShot(0);
+    m_replaceMediaElementTimer.startOneShot(0_s);
 }
 
 void MediaDocument::replaceMediaElementTimerFired()

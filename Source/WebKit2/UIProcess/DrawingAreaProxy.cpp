@@ -83,7 +83,7 @@ void DrawingAreaProxy::setViewExposedRect(std::optional<WebCore::FloatRect> view
     m_viewExposedRect = viewExposedRect;
 
     if (!m_viewExposedRectChangedTimer.isActive())
-        m_viewExposedRectChangedTimer.startOneShot(0);
+        m_viewExposedRectChangedTimer.startOneShot(0_s);
 }
 
 void DrawingAreaProxy::viewExposedRectChangedTimerFired()

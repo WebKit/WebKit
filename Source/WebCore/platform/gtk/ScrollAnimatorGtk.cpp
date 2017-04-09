@@ -213,7 +213,7 @@ void ScrollAnimatorGtk::showOverlayScrollbars()
     if (m_overlayScrollbarAnimationTarget != m_overlayScrollbarAnimationCurrent) {
         m_overlayScrollbarAnimationStartTime = monotonicallyIncreasingTime();
         m_overlayScrollbarAnimationEndTime = m_overlayScrollbarAnimationStartTime + overflowScrollbarsAnimationDuration;
-        m_overlayScrollbarAnimationTimer.startOneShot(0);
+        m_overlayScrollbarAnimationTimer.startOneShot(0_s);
     } else
         hideOverlayScrollbars();
 }

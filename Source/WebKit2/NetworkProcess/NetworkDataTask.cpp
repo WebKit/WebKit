@@ -92,7 +92,7 @@ void NetworkDataTask::scheduleFailure(FailureType type)
 {
     ASSERT(type != NoFailure);
     m_scheduledFailureType = type;
-    m_failureTimer.startOneShot(0);
+    m_failureTimer.startOneShot(0_s);
 }
 
 void NetworkDataTask::didReceiveResponse(ResourceResponse&& response, ResponseCompletionHandler&& completionHandler)

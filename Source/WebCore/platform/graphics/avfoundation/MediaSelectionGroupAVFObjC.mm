@@ -166,7 +166,7 @@ void MediaSelectionGroupAVFObjC::updateOptions(const Vector<String>& characteris
 
     ASSERT(m_options.contains(preferredOption));
     m_selectedOption = m_options.get(preferredOption);
-    m_selectionTimer.startOneShot(0);
+    m_selectionTimer.startOneShot(0_s);
 }
 
 void MediaSelectionGroupAVFObjC::setSelectedOption(MediaSelectionOptionAVFObjC* option)
@@ -178,7 +178,7 @@ void MediaSelectionGroupAVFObjC::setSelectedOption(MediaSelectionOptionAVFObjC* 
     m_selectedOption = option;
     if (m_selectionTimer.isActive())
         m_selectionTimer.stop();
-    m_selectionTimer.startOneShot(0);
+    m_selectionTimer.startOneShot(0_s);
 }
 
 void MediaSelectionGroupAVFObjC::selectionTimerFired()

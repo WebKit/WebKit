@@ -117,7 +117,7 @@ void ValidationMessage::setMessage(const String& message)
         m_timer = std::make_unique<Timer>(*this, &ValidationMessage::buildBubbleTree);
     else
         m_timer = std::make_unique<Timer>(*this, &ValidationMessage::setMessageDOMAndStartTimer);
-    m_timer->startOneShot(0);
+    m_timer->startOneShot(0_s);
 }
 
 void ValidationMessage::setMessageDOMAndStartTimer()
@@ -228,7 +228,7 @@ void ValidationMessage::requestToHideMessage()
 
     // We must not modify the DOM tree in this context by the same reason as setMessage().
     m_timer = std::make_unique<Timer>(*this, &ValidationMessage::deleteBubbleTree);
-    m_timer->startOneShot(0);
+    m_timer->startOneShot(0_s);
 }
 
 bool ValidationMessage::shadowTreeContains(const Node& node) const

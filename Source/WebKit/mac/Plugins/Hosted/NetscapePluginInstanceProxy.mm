@@ -744,7 +744,7 @@ void NetscapePluginInstanceProxy::requestTimerFired()
     m_pluginRequests.removeFirst();
     
     if (!m_pluginRequests.isEmpty())
-        m_requestTimer.startOneShot(0);
+        m_requestTimer.startOneShot(0_s);
     
     performRequest(request.get());
 }
@@ -800,7 +800,7 @@ NPError NetscapePluginInstanceProxy::loadRequest(NSURLRequest *request, const ch
 
         auto pluginRequest = PluginRequest::create(requestID, request, target, allowPopups);
         m_pluginRequests.append(WTFMove(pluginRequest));
-        m_requestTimer.startOneShot(0);
+        m_requestTimer.startOneShot(0_s);
     } else {
         RefPtr<HostedNetscapePluginStream> stream = HostedNetscapePluginStream::create(this, requestID, request);
 

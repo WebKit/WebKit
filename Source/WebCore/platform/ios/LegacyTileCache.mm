@@ -420,7 +420,7 @@ void LegacyTileCache::finishedCreatingTiles(bool didCreateTiles, bool createMore
 
     // Keep creating tiles until the whole coverRect is covered.
     if (createMore)
-        m_tileCreationTimer.startOneShot(0);
+        m_tileCreationTimer.startOneShot(0_s);
 }
 
 void LegacyTileCache::tileCreationTimerFired()
@@ -782,7 +782,7 @@ void LegacyTileCache::setSpeculativeTileCreationEnabled(bool enabled)
         return;
     m_isSpeculativeTileCreationEnabled = enabled;
     if (m_isSpeculativeTileCreationEnabled)
-        m_tileCreationTimer.startOneShot(0);
+        m_tileCreationTimer.startOneShot(0_s);
 }
 
 bool LegacyTileCache::hasPendingDraw() const

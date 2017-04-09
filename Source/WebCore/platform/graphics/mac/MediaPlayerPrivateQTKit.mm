@@ -647,7 +647,7 @@ void MediaPlayerPrivateQTKit::seek(const MediaTime& inTime)
     if (maxMediaTimeSeekable() >= m_seekTo)
         doSeek();
     else 
-        m_seekTimer.start(0, 0.5f);
+        m_seekTimer.start(0_s, 500_ms);
 }
 
 void MediaPlayerPrivateQTKit::doSeek() 

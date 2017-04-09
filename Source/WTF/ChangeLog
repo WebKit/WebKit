@@ -1,3 +1,16 @@
+2017-04-09  Chris Dumez  <cdumez@apple.com>
+
+        Start dropping Timer API dealing with double
+        https://bugs.webkit.org/show_bug.cgi?id=170649
+
+        Reviewed by Yusuke Suzuki.
+
+        Start dropping Timer API dealing with double as people should use Seconds now.
+
+        * wtf/RunLoopTimer.h:
+        * wtf/glib/MainThreadGLib.cpp:
+        (WTF::MainThreadDispatcher::schedule):
+
 2017-04-07  Keith Miller  <keith_miller@apple.com>
 
         Unreviewed, remove constexpr function since GTK didn't like it.

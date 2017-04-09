@@ -83,7 +83,7 @@ void ScriptRunner::suspend()
 void ScriptRunner::resume()
 {
     if (hasPendingScripts())
-        m_timer.startOneShot(0);
+        m_timer.startOneShot(0_s);
 }
 
 void ScriptRunner::notifyFinished(PendingScript& pendingScript)
@@ -95,7 +95,7 @@ void ScriptRunner::notifyFinished(PendingScript& pendingScript)
         m_scriptsToExecuteSoon.append(m_pendingAsyncScripts.take(pendingScript)->ptr());
     }
     pendingScript.clearClient();
-    m_timer.startOneShot(0);
+    m_timer.startOneShot(0_s);
 }
 
 void ScriptRunner::timerFired()

@@ -48,7 +48,9 @@ public:
     WTF_EXPORT_PRIVATE void start(double nextFireInterval, double repeatInterval);
 
     void startRepeating(double repeatInterval) { start(repeatInterval, repeatInterval); }
+    void startRepeating(Seconds repeatInterval) { start(repeatInterval.value(), repeatInterval.value()); }
     void startOneShot(double interval) { start(interval, 0); }
+    void startOneShot(Seconds interval) { start(interval.value(), 0); }
 
     WTF_EXPORT_PRIVATE void stop();
     bool isActive() const;

@@ -106,7 +106,7 @@ void GeolocationClientMock::asyncUpdatePermission()
 {
     ASSERT(m_permissionState != PermissionStateUnset);
     if (!m_permissionTimer.isActive())
-        m_permissionTimer.startOneShot(0);
+        m_permissionTimer.startOneShot(0_s);
 }
 
 void GeolocationClientMock::permissionTimerFired()
@@ -165,7 +165,7 @@ void GeolocationClientMock::asyncUpdateController()
 {
     ASSERT(m_controller);
     if (m_isActive && !m_controllerTimer.isActive())
-        m_controllerTimer.startOneShot(0);
+        m_controllerTimer.startOneShot(0_s);
 }
 
 void GeolocationClientMock::controllerTimerFired()

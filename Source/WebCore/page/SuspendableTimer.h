@@ -49,8 +49,6 @@ public:
     void startOneShot(double interval) { startOneShot(Seconds { interval }); }
 
     Seconds repeatInterval() const;
-    void augmentFireInterval(double delta) { augmentFireInterval(Seconds { delta }); }
-    void augmentRepeatInterval(double delta) { augmentRepeatInterval(Seconds { delta }); }
 
     void startRepeating(Seconds repeatInterval);
     void startOneShot(Seconds interval);

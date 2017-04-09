@@ -80,7 +80,7 @@ public:
 
         m_messages.append(message);
         if (!m_timer.isActive())
-            m_timer.startOneShot(0);
+            m_timer.startOneShot(0_s);
     }
 
     void reset()
@@ -102,7 +102,7 @@ public:
             m_inspectedPageController->dispatchMessageFromFrontend(m_messages.takeFirst());
 
         if (!m_messages.isEmpty() && m_inspectedPageController)
-            m_timer.startOneShot(0);
+            m_timer.startOneShot(0_s);
     }
 
 private:

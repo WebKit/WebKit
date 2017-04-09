@@ -1,3 +1,58 @@
+2017-04-09  Chris Dumez  <cdumez@apple.com>
+
+        Start dropping Timer API dealing with double
+        https://bugs.webkit.org/show_bug.cgi?id=170649
+
+        Reviewed by Yusuke Suzuki.
+
+        Start dropping Timer API dealing with double as people should use Seconds now.
+
+        * NetworkProcess/NetworkDataTask.cpp:
+        (WebKit::NetworkDataTask::scheduleFailure):
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::resume):
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::destroy):
+        (WebKit::PluginControllerProxy::startPaintTimer):
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseScheduleUpdateActivityState):
+        * UIProcess/DrawingAreaProxy.cpp:
+        (WebKit::DrawingAreaProxy::setViewExposedRect):
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::DrawingAreaProxyImpl::DrawingMonitor::start):
+        * UIProcess/Plugins/gtk/PluginInfoCache.cpp:
+        (WebKit::PluginInfoCache::updatePluginInfo):
+        * UIProcess/VisitedLinkStore.cpp:
+        (WebKit::VisitedLinkStore::addVisitedLinkHash):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::m_hiddenPageThrottlingAutoIncreasesCounter):
+        * UIProcess/gtk/GestureController.cpp:
+        (WebKit::GestureController::ZoomGesture::scaleChanged):
+        * UIProcess/gtk/WebPopupMenuProxyGtk.cpp:
+        (WebKit::WebPopupMenuProxyGtk::menuUnmappedCallback):
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::scheduleInternallyFailedLoad):
+        * WebProcess/Plugins/Netscape/NPRuntimeObjectMap.cpp:
+        (WebKit::NPRuntimeObjectMap::addToInvalidationQueue):
+        * WebProcess/Plugins/Netscape/NetscapePluginStream.cpp:
+        (WebKit::NetscapePluginStream::deliverDataToPlugin):
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::pendingURLRequestsTimerFired):
+        (WebKit::PluginView::loadURL):
+        * WebProcess/WebPage/AcceleratedDrawingArea.cpp:
+        (WebKit::AcceleratedDrawingArea::exitAcceleratedCompositingModeSoon):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp:
+        (WebKit::CoordinatedLayerTreeHost::scheduleLayerFlush):
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::scheduleDisplay):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updateIsInWindow):
+        (WebKit::WebPage::addPluginView):
+        (WebKit::WebPage::setMayStartMediaWhenInWindow):
+        (WebKit::WebPage::didFinishLoad):
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::activityStateDidChange):
+
 2017-04-08  Chris Dumez  <cdumez@apple.com>
 
         Drop std::chrono support from Timer class

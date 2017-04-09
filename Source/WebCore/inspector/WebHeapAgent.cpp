@@ -66,7 +66,7 @@ void SendGarbageCollectionEventsTask::addGarbageCollection(GarbageCollectionData
     }
 
     if (!m_timer.isActive())
-        m_timer.startOneShot(0);
+        m_timer.startOneShot(0_s);
 }
 
 void SendGarbageCollectionEventsTask::reset()

@@ -55,13 +55,13 @@ void GeoNotifier::setFatalError(RefPtr<PositionError>&& error)
     m_fatalError = WTFMove(error);
     // An existing timer may not have a zero timeout.
     m_timer.stop();
-    m_timer.startOneShot(0);
+    m_timer.startOneShot(0_s);
 }
 
 void GeoNotifier::setUseCachedPosition()
 {
     m_useCachedPosition = true;
-    m_timer.startOneShot(0);
+    m_timer.startOneShot(0_s);
 }
 
 bool GeoNotifier::hasZeroTimeout() const

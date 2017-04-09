@@ -1145,7 +1145,7 @@ void PluginView::pendingURLRequestsTimerFired()
 
     // If there are more requests to perform, reschedule the timer.
     if (!m_pendingURLRequests.isEmpty())
-        m_pendingURLRequestsTimer.startOneShot(0);
+        m_pendingURLRequestsTimer.startOneShot(0_s);
     
     performURLRequest(urlRequest.get());
 }
@@ -1404,7 +1404,7 @@ void PluginView::loadURL(uint64_t requestID, const String& method, const String&
         frameLoadRequest.resourceRequest().setHTTPReferrer(referrer);
 
     m_pendingURLRequests.append(URLRequest::create(requestID, frameLoadRequest, allowPopups));
-    m_pendingURLRequestsTimer.startOneShot(0);
+    m_pendingURLRequestsTimer.startOneShot(0_s);
 }
 
 void PluginView::cancelStreamLoad(uint64_t streamID)

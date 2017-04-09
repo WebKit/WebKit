@@ -235,7 +235,7 @@ void RTCDataChannel::scheduleDispatchEvent(Ref<Event>&& event)
     m_scheduledEvents.append(WTFMove(event));
 
     if (!m_scheduledEventTimer.isActive())
-        m_scheduledEventTimer.startOneShot(0);
+        m_scheduledEventTimer.startOneShot(0_s);
 }
 
 void RTCDataChannel::scheduledEventTimerFired()

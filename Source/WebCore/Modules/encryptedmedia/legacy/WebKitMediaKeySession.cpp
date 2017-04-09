@@ -85,7 +85,7 @@ const String& WebKitMediaKeySession::sessionId() const
 void WebKitMediaKeySession::generateKeyRequest(const String& mimeType, Ref<Uint8Array>&& initData)
 {
     m_pendingKeyRequests.append({ mimeType, WTFMove(initData) });
-    m_keyRequestTimer.startOneShot(0);
+    m_keyRequestTimer.startOneShot(0_s);
 }
 
 void WebKitMediaKeySession::keyRequestTimerFired()
@@ -142,7 +142,7 @@ ExceptionOr<void> WebKitMediaKeySession::update(Ref<Uint8Array>&& key)
 
     // 2. Schedule a task to handle the call, providing key.
     m_pendingKeys.append(WTFMove(key));
-    m_addKeyTimer.startOneShot(0);
+    m_addKeyTimer.startOneShot(0_s);
 
     return { };
 }

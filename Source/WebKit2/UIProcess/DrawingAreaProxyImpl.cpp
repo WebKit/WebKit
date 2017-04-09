@@ -230,7 +230,7 @@ void DrawingAreaProxyImpl::DrawingMonitor::start(std::function<void (CallbackBas
     g_signal_connect_swapped(m_webPage.viewWidget(), "draw", reinterpret_cast<GCallback>(webViewDrawCallback), this);
     m_timer.startOneShot(1);
 #else
-    m_timer.startOneShot(0);
+    m_timer.startOneShot(0_s);
 #endif
 }
 

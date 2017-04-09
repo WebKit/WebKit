@@ -369,7 +369,7 @@ void Settings::setLoadsImagesAutomatically(bool loadsImagesAutomatically)
     // Starting these loads synchronously is not important.  By putting it on a 0-delay, properly closing the Page cancels them
     // before they have a chance to really start.
     // See http://webkit.org/b/60572 for more discussion.
-    m_setImageLoadingSettingsTimer.startOneShot(0);
+    m_setImageLoadingSettingsTimer.startOneShot(0_s);
 }
 
 void Settings::imageLoadingSettingsTimerFired()
@@ -407,7 +407,7 @@ void Settings::setImagesEnabled(bool areImagesEnabled)
     m_areImagesEnabled = areImagesEnabled;
 
     // See comment in setLoadsImagesAutomatically.
-    m_setImageLoadingSettingsTimer.startOneShot(0);
+    m_setImageLoadingSettingsTimer.startOneShot(0_s);
 }
 
 void Settings::setPreferMIMETypeForImages(bool preferMIMETypeForImages)

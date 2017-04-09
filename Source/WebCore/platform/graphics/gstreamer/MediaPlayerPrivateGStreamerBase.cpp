@@ -767,7 +767,7 @@ void MediaPlayerPrivateGStreamerBase::triggerRepaint(GstSample* sample)
 #if USE(COORDINATED_GRAPHICS_THREADED)
     if (!m_renderingCanBeAccelerated) {
         LockHolder locker(m_drawMutex);
-        m_drawTimer.startOneShot(0);
+        m_drawTimer.startOneShot(0_s);
         m_drawCondition.wait(m_drawMutex);
         return;
     }
@@ -789,7 +789,7 @@ void MediaPlayerPrivateGStreamerBase::triggerRepaint(GstSample* sample)
         ASSERT(!isMainThread());
 
         LockHolder locker(m_drawMutex);
-        m_drawTimer.startOneShot(0);
+        m_drawTimer.startOneShot(0_s);
         m_drawCondition.wait(m_drawMutex);
     }
 #else

@@ -392,7 +392,7 @@ void IDBTransaction::schedulePendingOperationTimer()
     ASSERT(currentThread() == m_database->originThreadID());
 
     if (!m_pendingOperationTimer.isActive())
-        m_pendingOperationTimer.startOneShot(0);
+        m_pendingOperationTimer.startOneShot(0_s);
 }
 
 void IDBTransaction::pendingOperationTimerFired()
@@ -444,7 +444,7 @@ void IDBTransaction::scheduleCompletedOperationTimer()
     ASSERT(currentThread() == m_database->originThreadID());
 
     if (!m_completedOperationTimer.isActive())
-        m_completedOperationTimer.startOneShot(0);
+        m_completedOperationTimer.startOneShot(0_s);
 }
 
 void IDBTransaction::completedOperationTimerFired()

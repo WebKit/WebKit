@@ -263,7 +263,7 @@ void WebSocketChannel::resume()
 {
     m_suspended = false;
     if ((!m_buffer.isEmpty() || m_closed) && m_client && !m_resumeTimer.isActive())
-        m_resumeTimer.startOneShot(0);
+        m_resumeTimer.startOneShot(0_s);
 }
 
 void WebSocketChannel::didOpenSocketStream(SocketStreamHandle& handle)

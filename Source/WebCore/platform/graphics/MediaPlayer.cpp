@@ -1121,7 +1121,7 @@ void MediaPlayer::networkStateChanged()
     if (m_private->networkState() >= FormatError && m_private->readyState() < HaveMetadata) {
         client().mediaPlayerEngineFailedToLoad();
         if (installedMediaEngines().size() > 1 && (m_contentMIMEType.isEmpty() || nextBestMediaEngine(m_currentMediaEngine))) {
-            m_reloadTimer.startOneShot(0);
+            m_reloadTimer.startOneShot(0_s);
             return;
         }
     }

@@ -3295,7 +3295,7 @@ void Editor::respondToChangedSelection(const VisibleSelection&, FrameSelection::
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION) && !PLATFORM(IOS)
     if (shouldDetectTelephoneNumbers())
-        m_telephoneNumberDetectionUpdateTimer.startOneShot(0);
+        m_telephoneNumberDetectionUpdateTimer.startOneShot(0_s);
 #endif
 
     setStartNewKillRingSequence(true);
@@ -3307,7 +3307,7 @@ void Editor::respondToChangedSelection(const VisibleSelection&, FrameSelection::
     m_editorUIUpdateTimerShouldCheckSpellingAndGrammar = options & FrameSelection::CloseTyping
         && !(options & FrameSelection::SpellCorrectionTriggered);
     m_editorUIUpdateTimerWasTriggeredByDictation = options & FrameSelection::DictationTriggered;
-    m_editorUIUpdateTimer.startOneShot(0);
+    m_editorUIUpdateTimer.startOneShot(0_s);
 }
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION) && !PLATFORM(IOS)

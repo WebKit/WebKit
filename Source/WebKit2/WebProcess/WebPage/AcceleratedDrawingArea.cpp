@@ -368,7 +368,7 @@ void AcceleratedDrawingArea::exitAcceleratedCompositingModeSoon()
     if (exitAcceleratedCompositingModePending())
         return;
 
-    m_exitCompositingTimer.startOneShot(0);
+    m_exitCompositingTimer.startOneShot(0_s);
 }
 
 void AcceleratedDrawingArea::exitAcceleratedCompositingModeNow()

@@ -247,7 +247,7 @@ void CaptionUserPreferencesMediaAF::setInterestedInCaptionPreferenceChanges()
 
     // Generating and registering the caption stylesheet can be expensive and this method is called indirectly when the parser creates an audio or
     // video element, so do it after a brief pause.
-    m_updateStyleSheetTimer.startOneShot(0);
+    m_updateStyleSheetTimer.startOneShot(0_s);
 }
 
 void CaptionUserPreferencesMediaAF::captionPreferencesChanged()

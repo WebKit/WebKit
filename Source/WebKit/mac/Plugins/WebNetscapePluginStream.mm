@@ -530,7 +530,7 @@ void WebNetscapePluginStream::deliverData()
         if (deliveryBytes <= 0) {
             // Plug-in can't receive anymore data right now. Send it later.
             if (!m_deliverDataTimer.isActive())
-                m_deliverDataTimer.startOneShot(0);
+                m_deliverDataTimer.startOneShot(0_s);
             break;
         } else {
             deliveryBytes = std::min(deliveryBytes, totalBytes - totalBytesDelivered);

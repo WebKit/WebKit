@@ -185,7 +185,7 @@ bool TextureMapperPlatformLayerProxy::scheduleUpdateOnCompositorThread(Function<
         return false;
 
     m_compositorThreadUpdateFunction = WTFMove(updateFunction);
-    m_compositorThreadUpdateTimer->startOneShot(0);
+    m_compositorThreadUpdateTimer->startOneShot(0_s);
     return true;
 }
 

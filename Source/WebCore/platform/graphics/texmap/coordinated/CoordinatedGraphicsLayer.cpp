@@ -1136,7 +1136,7 @@ bool CoordinatedGraphicsLayer::addAnimation(const KeyframeValueList& valueList, 
 
     m_lastAnimationStartTime = monotonicallyIncreasingTime() - delayAsNegativeTimeOffset;
     m_animations.add(TextureMapperAnimation(keyframesName, valueList, boxSize, *anim, listsMatch, m_lastAnimationStartTime, 0, TextureMapperAnimation::AnimationState::Playing));
-    m_animationStartedTimer.startOneShot(0);
+    m_animationStartedTimer.startOneShot(0_s);
     didChangeAnimations();
     return true;
 }

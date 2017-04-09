@@ -128,7 +128,7 @@ void ChangeRegionOversetTask::scheduleFor(WebKitNamedFlow* namedFlow, int docume
     m_namedFlows.add(namedFlow, documentNodeId);
 
     if (!m_timer.isActive())
-        m_timer.startOneShot(0);
+        m_timer.startOneShot(0_s);
 }
 
 void ChangeRegionOversetTask::unschedule(WebKitNamedFlow* namedFlow)

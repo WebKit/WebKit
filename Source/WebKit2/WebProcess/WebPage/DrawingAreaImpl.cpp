@@ -346,7 +346,7 @@ void DrawingAreaImpl::scheduleDisplay()
     if (m_displayTimer.isActive())
         return;
 
-    m_displayTimer.startOneShot(0);
+    m_displayTimer.startOneShot(0_s);
 }
 
 void DrawingAreaImpl::displayTimerFired()

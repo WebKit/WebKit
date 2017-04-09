@@ -981,7 +981,7 @@ ExceptionOr<void> DOMWindow::postMessage(JSC::ExecState& state, DOMWindow& calle
 
     // Schedule the message.
     auto* timer = new PostMessageTimer(*this, message.releaseReturnValue(), sourceOrigin, callerWindow, channels.releaseReturnValue(), WTFMove(target), WTFMove(stackTrace));
-    timer->startOneShot(0);
+    timer->startOneShot(0_s);
 
     return { };
 }

@@ -105,7 +105,7 @@ RefPtr<ResourceHandle> ResourceHandle::create(NetworkingContext* context, const 
 void ResourceHandle::scheduleFailure(FailureType type)
 {
     d->m_scheduledFailureType = type;
-    d->m_failureTimer.startOneShot(0);
+    d->m_failureTimer.startOneShot(0_s);
 }
 
 void ResourceHandle::failureTimerFired()
@@ -258,7 +258,7 @@ void ResourceHandle::setDefersLoading(bool defers)
             d->m_failureTimer.stop();
     } else if (d->m_scheduledFailureType != NoFailure) {
         ASSERT(!d->m_failureTimer.isActive());
-        d->m_failureTimer.startOneShot(0);
+        d->m_failureTimer.startOneShot(0_s);
     }
 
     platformSetDefersLoading(defers);

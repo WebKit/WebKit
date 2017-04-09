@@ -67,7 +67,7 @@ void PluginPackage::freeLibrarySoon()
     ASSERT(m_module);
     ASSERT(!m_loadCount);
 
-    m_freeLibraryTimer.startOneShot(0);
+    m_freeLibraryTimer.startOneShot(0_s);
 }
 
 void PluginPackage::freeLibraryTimerFired()

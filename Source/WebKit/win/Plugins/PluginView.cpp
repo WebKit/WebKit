@@ -475,7 +475,7 @@ void PluginView::requestTimerFired()
     // Schedule a new request before calling performRequest since the call to
     // performRequest can cause the plugin view to be deleted.
     if (!m_requests.isEmpty())
-        m_requestTimer.startOneShot(0);
+        m_requestTimer.startOneShot(0_s);
 
     performRequest(request.get());
 }
@@ -485,7 +485,7 @@ void PluginView::scheduleRequest(std::unique_ptr<PluginRequest> request)
     m_requests.append(WTFMove(request));
 
     if (!m_isJavaScriptPaused)
-        m_requestTimer.startOneShot(0);
+        m_requestTimer.startOneShot(0_s);
 }
 
 NPError PluginView::load(const FrameLoadRequest& frameLoadRequest, bool sendNotification, void* notifyData)
@@ -648,7 +648,7 @@ void PluginView::setJavaScriptPaused(bool paused)
     if (m_isJavaScriptPaused)
         m_requestTimer.stop();
     else if (!m_requests.isEmpty())
-        m_requestTimer.startOneShot(0);
+        m_requestTimer.startOneShot(0_s);
 }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
@@ -1175,7 +1175,7 @@ void PluginView::keepAlive()
         return;
 
     ref();
-    m_lifeSupportTimer.startOneShot(0);
+    m_lifeSupportTimer.startOneShot(0_s);
 }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)

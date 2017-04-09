@@ -138,7 +138,7 @@ void TextTrackLoader::notifyFinished(CachedResource& resource)
         m_cueParser->flush();
 
     if (!m_cueLoadTimer.isActive())
-        m_cueLoadTimer.startOneShot(0);
+        m_cueLoadTimer.startOneShot(0_s);
 
     cancelLoad();
 }
@@ -171,7 +171,7 @@ void TextTrackLoader::newCuesParsed()
         return;
 
     m_newCuesAvailable = true;
-    m_cueLoadTimer.startOneShot(0);
+    m_cueLoadTimer.startOneShot(0_s);
 }
 
 void TextTrackLoader::newRegionsParsed()
@@ -186,7 +186,7 @@ void TextTrackLoader::fileFailedToParse()
     m_state = Failed;
 
     if (!m_cueLoadTimer.isActive())
-        m_cueLoadTimer.startOneShot(0);
+        m_cueLoadTimer.startOneShot(0_s);
 
     cancelLoad();
 }

@@ -56,7 +56,7 @@ void LoadableTextTrack::scheduleLoad(const URL& url)
     // 3. Asynchronously run the remaining steps, while continuing with whatever task 
     // was responsible for creating the text track or changing the text track mode.
     if (!m_loadTimer.isActive())
-        m_loadTimer.startOneShot(0);
+        m_loadTimer.startOneShot(0_s);
 }
 
 Element* LoadableTextTrack::element()

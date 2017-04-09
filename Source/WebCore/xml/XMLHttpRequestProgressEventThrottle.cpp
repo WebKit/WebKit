@@ -208,7 +208,7 @@ void XMLHttpRequestProgressEventThrottle::resume()
     // the list of active DOM objects to resume them, and any activated JS event-handler
     // could insert new active DOM objects to the list.
     // m_deferEvents is kept true until all deferred events have been dispatched.
-    m_dispatchDeferredEventsTimer.startOneShot(0);
+    m_dispatchDeferredEventsTimer.startOneShot(0_s);
 }
 
 } // namespace WebCore

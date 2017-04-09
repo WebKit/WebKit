@@ -101,7 +101,7 @@ void HTMLParserScheduler::continueNextChunkTimerFired()
     // FIXME: The timer class should handle timer priorities instead of this code.
     // If a layout is scheduled, wait again to let the layout timer run first.
     if (m_parser.document()->isLayoutTimerActive()) {
-        m_continueNextChunkTimer.startOneShot(0);
+        m_continueNextChunkTimer.startOneShot(0_s);
         return;
     }
     m_parser.resumeParsingAfterYield();
@@ -120,7 +120,7 @@ bool HTMLParserScheduler::shouldYieldBeforeExecutingScript(PumpSession& session)
 void HTMLParserScheduler::scheduleForResume()
 {
     ASSERT(!m_suspended);
-    m_continueNextChunkTimer.startOneShot(0);
+    m_continueNextChunkTimer.startOneShot(0_s);
 }
 
 void HTMLParserScheduler::suspend()
@@ -148,7 +148,7 @@ void HTMLParserScheduler::resume()
     if (!m_isSuspendedWithActiveTimer)
         return;
     m_isSuspendedWithActiveTimer = false;
-    m_continueNextChunkTimer.startOneShot(0);
+    m_continueNextChunkTimer.startOneShot(0_s);
 }
 
 }

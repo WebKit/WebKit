@@ -201,7 +201,7 @@ void HIDGamepadProvider::deviceAdded(IOHIDDeviceRef device)
         // and we don't want to tell the client about any of them.
         // The m_connectionDelayTimer fires in a subsequent spin of the runloop after which
         // any connection events are actual new devices.
-        m_connectionDelayTimer.startOneShot(0);
+        m_connectionDelayTimer.startOneShot(0_s);
 
         LOG(Gamepad, "Device %p was added while suppressing callbacks, so this should be an 'already connected' event", device);
 

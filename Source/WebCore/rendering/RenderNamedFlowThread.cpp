@@ -537,7 +537,7 @@ void RenderNamedFlowThread::dispatchRegionOversetChangeEventIfNeeded()
     InspectorInstrumentation::didChangeRegionOverset(document(), namedFlow());
     
     if (!m_regionOversetChangeEventTimer.isActive() && namedFlow().hasEventListeners())
-        m_regionOversetChangeEventTimer.startOneShot(0);
+        m_regionOversetChangeEventTimer.startOneShot(0_s);
 }
 
 void RenderNamedFlowThread::regionOversetChangeEventTimerFired()

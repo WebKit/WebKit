@@ -254,7 +254,7 @@ void MockMediaEndpoint::dispatchFakeIceCandidates()
     // Reverse order to use takeLast() while keeping the above order
     m_fakeIceCandidates.reverse();
 
-    m_iceCandidateTimer.startOneShot(0);
+    m_iceCandidateTimer.startOneShot(0_s);
 }
 
 void MockMediaEndpoint::iceCandidateTimerFired()
@@ -264,7 +264,7 @@ void MockMediaEndpoint::iceCandidateTimerFired()
 
     if (!m_fakeIceCandidates.isEmpty()) {
         m_client.gotIceCandidate(m_mids[0], m_fakeIceCandidates.takeLast());
-        m_iceCandidateTimer.startOneShot(0);
+        m_iceCandidateTimer.startOneShot(0_s);
     } else
         m_client.doneGatheringCandidates(m_mids[0]);
 }
@@ -303,7 +303,7 @@ void MockMediaEndpoint::stepIceTransportStates()
     // Reverse order to use takeLast() while keeping the above order
     m_iceTransportStateChanges.reverse();
 
-    m_iceTransportTimer.startOneShot(0);
+    m_iceTransportTimer.startOneShot(0_s);
 }
 
 void MockMediaEndpoint::iceTransportTimerFired()
@@ -314,7 +314,7 @@ void MockMediaEndpoint::iceTransportTimerFired()
     auto stateChange = m_iceTransportStateChanges.takeLast();
     m_client.iceTransportStateChanged(stateChange.first, stateChange.second);
 
-    m_iceTransportTimer.startOneShot(0);
+    m_iceTransportTimer.startOneShot(0_s);
 }
 
 void MockMediaEndpoint::unmuteRemoteSourcesByMid()
@@ -329,7 +329,7 @@ void MockMediaEndpoint::unmuteRemoteSourcesByMid()
     for (int i = m_mids.size() - 1; i >= 0; --i)
         m_midsOfSourcesToUnmute.append(m_mids[i]);
 
-    m_unmuteTimer.startOneShot(0);
+    m_unmuteTimer.startOneShot(0_s);
 }
 
 void MockMediaEndpoint::unmuteTimerFired()
@@ -339,7 +339,7 @@ void MockMediaEndpoint::unmuteTimerFired()
         source->setMuted(false);
 
     if (!m_midsOfSourcesToUnmute.isEmpty())
-        m_unmuteTimer.startOneShot(0);
+        m_unmuteTimer.startOneShot(0_s);
 }
 
 } // namespace WebCore

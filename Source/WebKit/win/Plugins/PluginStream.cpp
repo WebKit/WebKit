@@ -349,7 +349,7 @@ void PluginStream::deliverData()
         int32_t deliveryBytes = m_pluginFuncs->writeready(m_instance, &m_stream);
 
         if (deliveryBytes <= 0) {
-            m_delayDeliveryTimer.startOneShot(0);
+            m_delayDeliveryTimer.startOneShot(0_s);
             break;
         } else {
             deliveryBytes = min(deliveryBytes, totalBytes - totalBytesDelivered);

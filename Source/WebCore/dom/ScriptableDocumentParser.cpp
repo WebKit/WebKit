@@ -54,7 +54,7 @@ void ScriptableDocumentParser::executeScriptsWaitingForStylesheetsSoon()
     if (!hasScriptsWaitingForStylesheets())
         return;
 
-    m_scriptsWaitingForStylesheetsExecutionTimer.startOneShot(0);
+    m_scriptsWaitingForStylesheetsExecutionTimer.startOneShot(0_s);
 }
 
 void ScriptableDocumentParser::scriptsWaitingForStylesheetsExecutionTimerFired()

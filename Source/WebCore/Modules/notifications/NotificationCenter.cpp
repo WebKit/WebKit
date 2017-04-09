@@ -94,7 +94,7 @@ void NotificationCenter::requestPermission(RefPtr<VoidCallback>&& callback)
     case SecurityOrigin::AlwaysDeny:
         if (m_callbacks.isEmpty()) {
             ref(); // Balanced by the derefs in NotificationCenter::stop and NotificationCenter::timerFired.
-            m_timer.startOneShot(0);
+            m_timer.startOneShot(0_s);
         }
         m_callbacks.append([callback]() {
             if (callback)

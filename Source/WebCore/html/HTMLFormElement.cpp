@@ -465,7 +465,7 @@ void HTMLFormElement::finishRequestAutocomplete(AutocompleteResult result)
 
     // Dispatch events later as this API is meant to work asynchronously in all situations and implementations.
     if (!m_requestAutocompleteTimer.isActive())
-        m_requestAutocompleteTimer.startOneShot(0);
+        m_requestAutocompleteTimer.startOneShot(0_s);
 }
 
 void HTMLFormElement::requestAutocompleteTimerFired()

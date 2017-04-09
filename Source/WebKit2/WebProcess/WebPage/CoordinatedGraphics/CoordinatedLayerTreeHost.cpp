@@ -84,7 +84,7 @@ void CoordinatedLayerTreeHost::scheduleLayerFlush()
     }
 
     if (!m_layerFlushTimer.isActive())
-        m_layerFlushTimer.startOneShot(0);
+        m_layerFlushTimer.startOneShot(0_s);
 }
 
 void CoordinatedLayerTreeHost::cancelPendingLayerFlush()

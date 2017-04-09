@@ -364,7 +364,7 @@ void ImageLoader::updatedHasPendingEvent()
             m_protectedElement = &element();
     } else {
         ASSERT(!m_derefElementTimer.isActive());
-        m_derefElementTimer.startOneShot(0);
+        m_derefElementTimer.startOneShot(0_s);
     }   
 }
 

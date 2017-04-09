@@ -86,7 +86,7 @@ void ScrollingCoordinatorIOS::scheduleTreeStateCommit()
     if (m_scrollingStateTreeCommitterTimer.isActive())
         return;
 
-    m_scrollingStateTreeCommitterTimer.startOneShot(0);
+    m_scrollingStateTreeCommitterTimer.startOneShot(0_s);
 }
 
 void ScrollingCoordinatorIOS::commitTreeState()

@@ -491,7 +491,7 @@ std::optional<ExceptionOr<void>> XMLHttpRequest::prepareToSend()
             return ExceptionOr<void> { Exception { NETWORK_ERR } };
         setPendingActivity(this);
         m_timeoutTimer.stop();
-        m_networkErrorTimer.startOneShot(0);
+        m_networkErrorTimer.startOneShot(0_s);
         return ExceptionOr<void> { };
     }
 
@@ -1028,7 +1028,7 @@ void XMLHttpRequest::didFail(const ResourceError& error)
         m_sendFlag = false;
         setPendingActivity(this);
         m_timeoutTimer.stop();
-        m_networkErrorTimer.startOneShot(0);
+        m_networkErrorTimer.startOneShot(0_s);
         return;
     }
     m_exceptionCode = NETWORK_ERR;
@@ -1249,7 +1249,7 @@ void XMLHttpRequest::resume()
     // We are not allowed to execute arbitrary JS in resume() so dispatch
     // the error event in a timer.
     if (m_dispatchErrorOnResuming && !m_resumeTimer.isActive())
-        m_resumeTimer.startOneShot(0);
+        m_resumeTimer.startOneShot(0_s);
 }
 
 void XMLHttpRequest::resumeTimerFired()

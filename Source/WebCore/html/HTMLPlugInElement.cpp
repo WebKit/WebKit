@@ -286,7 +286,7 @@ void HTMLPlugInElement::setDisplayState(DisplayState state)
     m_displayState = state;
     
     if ((state == DisplayingSnapshot || displayState() == PreparingPluginReplacement) && !m_swapRendererTimer.isActive())
-        m_swapRendererTimer.startOneShot(0);
+        m_swapRendererTimer.startOneShot(0_s);
 }
 
 void HTMLPlugInElement::didAddUserAgentShadowRoot(ShadowRoot* root)

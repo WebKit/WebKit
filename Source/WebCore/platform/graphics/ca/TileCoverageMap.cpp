@@ -79,7 +79,7 @@ TileCoverageMap::~TileCoverageMap()
 void TileCoverageMap::setNeedsUpdate()
 {
     if (!m_updateTimer.isActive())
-        m_updateTimer.startOneShot(0);
+        m_updateTimer.startOneShot(0_s);
 }
 
 void TileCoverageMap::updateTimerFired()

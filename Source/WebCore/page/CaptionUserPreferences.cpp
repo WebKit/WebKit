@@ -79,7 +79,7 @@ void CaptionUserPreferences::notify()
 
     m_havePreferences = true;
     if (!m_timer.isActive())
-        m_timer.startOneShot(0);
+        m_timer.startOneShot(0_s);
 }
 
 CaptionUserPreferences::CaptionDisplayMode CaptionUserPreferences::captionDisplayMode() const

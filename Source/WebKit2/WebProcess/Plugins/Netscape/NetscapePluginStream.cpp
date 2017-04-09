@@ -222,7 +222,7 @@ void NetscapePluginStream::deliverDataToPlugin()
 
         if (numBytesPluginCanHandle <= 0) {
             // The plug-in can't handle more data, we'll send the rest later
-            m_deliveryDataTimer.startOneShot(0);
+            m_deliveryDataTimer.startOneShot(0_s);
             break;
         }
 

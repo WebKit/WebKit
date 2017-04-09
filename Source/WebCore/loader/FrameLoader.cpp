@@ -868,7 +868,7 @@ void FrameLoader::startCheckCompleteTimer()
         return;
     if (m_checkTimer.isActive())
         return;
-    m_checkTimer.startOneShot(0);
+    m_checkTimer.startOneShot(0_s);
 }
 
 void FrameLoader::scheduleCheckCompleted()

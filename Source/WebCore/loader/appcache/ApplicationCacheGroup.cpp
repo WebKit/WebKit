@@ -1054,7 +1054,7 @@ void ApplicationCacheGroup::scheduleReachedMaxAppCacheSizeCallback()
 {
     ASSERT(isMainThread());
     auto* timer = new ChromeClientCallbackTimer(*this);
-    timer->startOneShot(0);
+    timer->startOneShot(0_s);
     // The timer will delete itself once it fires.
 }
 

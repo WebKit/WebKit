@@ -1,3 +1,251 @@
+2017-04-09  Chris Dumez  <cdumez@apple.com>
+
+        Start dropping Timer API dealing with double
+        https://bugs.webkit.org/show_bug.cgi?id=170649
+
+        Reviewed by Yusuke Suzuki.
+
+        Start dropping Timer API dealing with double as people should use Seconds now.
+
+        * Modules/encryptedmedia/legacy/WebKitMediaKeySession.cpp:
+        (WebCore::WebKitMediaKeySession::generateKeyRequest):
+        (WebCore::WebKitMediaKeySession::update):
+        * Modules/geolocation/GeoNotifier.cpp:
+        (WebCore::GeoNotifier::setFatalError):
+        (WebCore::GeoNotifier::setUseCachedPosition):
+        * Modules/geolocation/Geolocation.cpp:
+        (WebCore::Geolocation::resume):
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::schedulePendingOperationTimer):
+        (WebCore::IDBTransaction::scheduleCompletedOperationTimer):
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::invokeOperationAndTransactionTimer):
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::rangeRemoval):
+        (WebCore::SourceBuffer::appendBufferInternal):
+        * Modules/mediastream/MediaStream.cpp:
+        (WebCore::MediaStream::scheduleActiveStateChange):
+        * Modules/mediastream/RTCDTMFSender.cpp:
+        (WebCore::RTCDTMFSender::scheduleDispatchEvent):
+        * Modules/mediastream/RTCDataChannel.cpp:
+        (WebCore::RTCDataChannel::scheduleDispatchEvent):
+        * Modules/notifications/Notification.cpp:
+        * Modules/notifications/NotificationCenter.cpp:
+        (WebCore::NotificationCenter::requestPermission):
+        * Modules/vibration/Vibration.cpp:
+        (WebCore::Vibration::vibrate):
+        * Modules/websockets/WebSocket.cpp:
+        (WebCore::WebSocket::resume):
+        * Modules/websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::resume):
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::postNotification):
+        * bindings/js/GCController.cpp:
+        (WebCore::GCController::garbageCollectOnNextRunLoop):
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::beginLoadingFontSoon):
+        * dom/Document.cpp:
+        (WebCore::Document::scheduleStyleRecalc):
+        (WebCore::Document::updateFocusAppearanceSoon):
+        (WebCore::Document::resumeScheduledTasks):
+        (WebCore::Document::requestFullScreenForElement):
+        (WebCore::Document::webkitDidEnterFullScreenForElement):
+        (WebCore::Document::webkitDidExitFullScreenForElement):
+        (WebCore::Document::decrementLoadEventDelayCount):
+        (WebCore::Document::didAssociateFormControl):
+        (WebCore::Document::setCachedDOMCookies):
+        * dom/DocumentEventQueue.cpp:
+        (WebCore::DocumentEventQueue::enqueueEvent):
+        * dom/EventSender.h:
+        (WebCore::EventSender<T>::dispatchEventSoon):
+        * dom/Microtasks.cpp:
+        (WebCore::MicrotaskQueue::append):
+        * dom/ScriptRunner.cpp:
+        (WebCore::ScriptRunner::resume):
+        (WebCore::ScriptRunner::notifyFinished):
+        * dom/ScriptableDocumentParser.cpp:
+        (WebCore::ScriptableDocumentParser::executeScriptsWaitingForStylesheetsSoon):
+        * editing/Editor.cpp:
+        (WebCore::Editor::respondToChangedSelection):
+        * editing/SpellChecker.cpp:
+        (WebCore::SpellChecker::didCheck):
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::finishRequestAutocomplete):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::scheduleDelayedAction):
+        (WebCore::HTMLMediaElement::beginScanning):
+        * html/HTMLPlugInElement.cpp:
+        (WebCore::HTMLPlugInElement::setDisplayState):
+        * html/HTMLSourceElement.cpp:
+        (WebCore::HTMLSourceElement::scheduleErrorEvent):
+        (WebCore::HTMLSourceElement::resume):
+        * html/HTMLTrackElement.cpp:
+        (WebCore::HTMLTrackElement::scheduleLoad):
+        * html/MediaController.cpp:
+        (MediaController::currentTime):
+        (MediaController::scheduleEvent):
+        * html/MediaDocument.cpp:
+        (WebCore::MediaDocument::mediaElementSawUnsupportedTracks):
+        * html/MediaElementSession.cpp:
+        (WebCore::MediaElementSession::externalOutputDeviceAvailableDidChange):
+        * html/ValidationMessage.cpp:
+        (WebCore::ValidationMessage::setMessage):
+        (WebCore::ValidationMessage::requestToHideMessage):
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::loseContextImpl):
+        (WebCore::WebGLRenderingContextBase::forceRestoreContext):
+        (WebCore::WebGLRenderingContextBase::dispatchContextLostEvent):
+        * html/parser/HTMLParserScheduler.cpp:
+        (WebCore::HTMLParserScheduler::continueNextChunkTimerFired):
+        (WebCore::HTMLParserScheduler::scheduleForResume):
+        (WebCore::HTMLParserScheduler::resume):
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlTextTrackContainerElement::updateSizes):
+        * html/track/LoadableTextTrack.cpp:
+        (WebCore::LoadableTextTrack::scheduleLoad):
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::ChangeRegionOversetTask::scheduleFor):
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::RevalidateStyleAttributeTask::scheduleFor):
+        * inspector/InspectorFrontendClientLocal.cpp:
+        (WebCore::InspectorBackendDispatchTask::dispatch):
+        (WebCore::InspectorBackendDispatchTask::timerFired):
+        * inspector/WebHeapAgent.cpp:
+        (WebCore::SendGarbageCollectionEventsTask::addGarbageCollection):
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::startDataLoadTimer):
+        (WebCore::DocumentLoader::deliverSubstituteResourcesAfterDelay):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::startCheckCompleteTimer):
+        * loader/ImageLoader.cpp:
+        (WebCore::ImageLoader::updatedHasPendingEvent):
+        * loader/TextTrackLoader.cpp:
+        (WebCore::TextTrackLoader::notifyFinished):
+        (WebCore::TextTrackLoader::newCuesParsed):
+        (WebCore::TextTrackLoader::fileFailedToParse):
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::scheduleReachedMaxAppCacheSizeCallback):
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::Callback::Callback):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::loadDone):
+        * loader/cache/MemoryCache.cpp:
+        (WebCore::MemoryCache::pruneSoon):
+        * page/CaptionUserPreferences.cpp:
+        (WebCore::CaptionUserPreferences::notify):
+        * page/CaptionUserPreferencesMediaAF.cpp:
+        (WebCore::CaptionUserPreferencesMediaAF::setInterestedInCaptionPreferenceChanges):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::postMessage):
+        * page/DeviceController.cpp:
+        (WebCore::DeviceController::addDeviceEventListener):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::scheduleHoverStateUpdate):
+        * page/EventSource.cpp:
+        (WebCore::EventSource::scheduleInitialConnect):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout):
+        (WebCore::FrameView::performPostLayoutTasks):
+        * page/Settings.cpp:
+        (WebCore::Settings::setLoadsImagesAutomatically):
+        (WebCore::Settings::setImagesEnabled):
+        * page/SuspendableTimer.h:
+        * page/animation/CSSAnimationController.cpp:
+        (WebCore::CSSAnimationControllerPrivate::startUpdateStyleIfNeededDispatcher):
+        * page/mac/ServicesOverlayController.mm:
+        (WebCore::ServicesOverlayController::invalidateHighlightsOfType):
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::scheduleUpdateScrollPositionAfterAsyncScroll):
+        * page/scrolling/ios/ScrollingCoordinatorIOS.mm:
+        (WebCore::ScrollingCoordinatorIOS::scheduleTreeStateCommit):
+        * page/scrolling/mac/ScrollingCoordinatorMac.mm:
+        (WebCore::ScrollingCoordinatorMac::scheduleTreeStateCommit):
+        * platform/GenericTaskQueue.cpp:
+        (WebCore::TaskDispatcher<Timer>::postTask):
+        * platform/Scrollbar.cpp:
+        (WebCore::Scrollbar::autoscrollPressedPart):
+        (WebCore::Scrollbar::startTimerIfNeeded):
+        * platform/Scrollbar.h:
+        * platform/ScrollbarTheme.h:
+        (WebCore::ScrollbarTheme::initialAutoscrollTimerDelay):
+        (WebCore::ScrollbarTheme::autoscrollTimerDelay):
+        * platform/Timer.cpp:
+        * platform/Timer.h:
+        (WebCore::TimerBase::startRepeating):
+        (WebCore::TimerBase::startOneShot):
+        (WebCore::TimerBase::augmentFireInterval):
+        (WebCore::TimerBase::augmentRepeatInterval):
+        * platform/gamepad/mac/HIDGamepadProvider.cpp:
+        (WebCore::HIDGamepadProvider::deviceAdded):
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::networkStateChanged):
+        * platform/graphics/avfoundation/MediaSelectionGroupAVFObjC.mm:
+        (WebCore::MediaSelectionGroupAVFObjC::updateOptions):
+        (WebCore::MediaSelectionGroupAVFObjC::setSelectedOption):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::seekWithTolerance):
+        * platform/graphics/ca/TileCoverageMap.cpp:
+        (WebCore::TileCoverageMap::setNeedsUpdate):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::triggerRepaint):
+        * platform/graphics/gstreamer/VideoSinkGStreamer.cpp:
+        (VideoRenderRequestScheduler::requestRender):
+        * platform/graphics/texmap/TextureMapperPlatformLayerProxy.cpp:
+        (WebCore::TextureMapperPlatformLayerProxy::scheduleUpdateOnCompositorThread):
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::addAnimation):
+        * platform/gtk/ScrollAnimatorGtk.cpp:
+        (WebCore::ScrollAnimatorGtk::showOverlayScrollbars):
+        * platform/gtk/ScrollbarThemeGtk.h:
+        * platform/ios/LegacyTileCache.mm:
+        (WebCore::LegacyTileCache::finishedCreatingTiles):
+        (WebCore::LegacyTileCache::setSpeculativeTileCreationEnabled):
+        * platform/ios/ScrollbarThemeIOS.h:
+        * platform/ios/ScrollbarThemeIOS.mm:
+        (WebCore::ScrollbarThemeIOS::initialAutoscrollTimerDelay):
+        (WebCore::ScrollbarThemeIOS::autoscrollTimerDelay):
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::sendContentAreaScrolledSoon):
+        * platform/mac/ScrollbarThemeMac.h:
+        * platform/mac/ScrollbarThemeMac.mm:
+        (WebCore::ScrollbarThemeMac::preferencesChanged):
+        (WebCore::ScrollbarThemeMac::initialAutoscrollTimerDelay):
+        (WebCore::ScrollbarThemeMac::autoscrollTimerDelay):
+        * platform/mock/DeviceOrientationClientMock.cpp:
+        (WebCore::DeviceOrientationClientMock::setOrientation):
+        * platform/mock/GeolocationClientMock.cpp:
+        (WebCore::GeolocationClientMock::asyncUpdatePermission):
+        (WebCore::GeolocationClientMock::asyncUpdateController):
+        * platform/mock/MockMediaEndpoint.cpp:
+        (WebCore::MockMediaEndpoint::dispatchFakeIceCandidates):
+        (WebCore::MockMediaEndpoint::iceCandidateTimerFired):
+        (WebCore::MockMediaEndpoint::stepIceTransportStates):
+        (WebCore::MockMediaEndpoint::iceTransportTimerFired):
+        (WebCore::MockMediaEndpoint::unmuteRemoteSourcesByMid):
+        (WebCore::MockMediaEndpoint::unmuteTimerFired):
+        * platform/network/DataURLDecoder.cpp:
+        (WebCore::DataURLDecoder::DecodingResultDispatcher::startTimer):
+        * platform/network/ResourceHandle.cpp:
+        (WebCore::ResourceHandle::scheduleFailure):
+        (WebCore::ResourceHandle::setDefersLoading):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::scheduleCompositingLayerUpdate):
+        * rendering/RenderNamedFlowThread.cpp:
+        (WebCore::RenderNamedFlowThread::dispatchRegionOversetChangeEventIfNeeded):
+        * rendering/RenderScrollbarTheme.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::scheduleLazyRepaint):
+        * style/StyleScope.cpp:
+        (WebCore::Style::Scope::scheduleUpdate):
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::sendSVGLoadEventIfPossibleAsynchronously):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::prepareToSend):
+        (WebCore::XMLHttpRequest::didFail):
+        (WebCore::XMLHttpRequest::resume):
+        * xml/XMLHttpRequestProgressEventThrottle.cpp:
+        (WebCore::XMLHttpRequestProgressEventThrottle::resume):
+
 2017-04-08  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Variation Fonts] Width values of GX fonts are not mapped correctly

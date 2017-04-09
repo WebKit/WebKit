@@ -390,7 +390,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::seekWithTolerance(const MediaTime& ti
 
     if (m_seekTimer.isActive())
         m_seekTimer.stop();
-    m_seekTimer.startOneShot(0);
+    m_seekTimer.startOneShot(0_s);
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::seekInternal()

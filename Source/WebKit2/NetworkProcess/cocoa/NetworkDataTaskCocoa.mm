@@ -366,7 +366,7 @@ void NetworkDataTaskCocoa::cancel()
 void NetworkDataTaskCocoa::resume()
 {
     if (m_scheduledFailureType != NoFailure)
-        m_failureTimer.startOneShot(0);
+        m_failureTimer.startOneShot(0_s);
     [m_task resume];
 }
 

@@ -1515,7 +1515,7 @@ void UniqueIDBDatabase::invokeOperationAndTransactionTimer()
     ASSERT(!m_hardClosedForUserDelete);
 
     if (!m_operationAndTransactionTimer.isActive())
-        m_operationAndTransactionTimer.startOneShot(0);
+        m_operationAndTransactionTimer.startOneShot(0_s);
 }
 
 void UniqueIDBDatabase::operationAndTransactionTimerFired()

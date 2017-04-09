@@ -59,7 +59,7 @@ void DeviceOrientationClientMock::setOrientation(PassRefPtr<DeviceOrientationDat
 {
     m_orientation = orientation;
     if (m_isUpdating && !m_timer.isActive())
-        m_timer.startOneShot(0);
+        m_timer.startOneShot(0_s);
 }
 
 void DeviceOrientationClientMock::timerFired()

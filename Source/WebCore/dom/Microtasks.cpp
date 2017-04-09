@@ -52,7 +52,7 @@ void MicrotaskQueue::append(std::unique_ptr<Microtask>&& task)
 {
     m_microtaskQueue.append(WTFMove(task));
 
-    m_timer.startOneShot(0);
+    m_timer.startOneShot(0_s);
 }
 
 void MicrotaskQueue::remove(const Microtask& task)

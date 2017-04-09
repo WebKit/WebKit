@@ -246,7 +246,7 @@ void WebLoaderStrategy::scheduleLoad(ResourceLoader& resourceLoader, CachedResou
 void WebLoaderStrategy::scheduleInternallyFailedLoad(WebCore::ResourceLoader& resourceLoader)
 {
     m_internallyFailedResourceLoaders.add(&resourceLoader);
-    m_internallyFailedLoadTimer.startOneShot(0);
+    m_internallyFailedLoadTimer.startOneShot(0_s);
 }
 
 void WebLoaderStrategy::internallyFailedLoadTimerFired()

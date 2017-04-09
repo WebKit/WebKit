@@ -578,7 +578,7 @@ void Scope::scheduleUpdate(UpdateType update)
 
     if (m_pendingUpdateTimer.isActive())
         return;
-    m_pendingUpdateTimer.startOneShot(0);
+    m_pendingUpdateTimer.startOneShot(0_s);
 }
 
 void Scope::didChangeActiveStyleSheetCandidates()

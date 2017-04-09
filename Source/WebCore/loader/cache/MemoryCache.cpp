@@ -731,11 +731,11 @@ void MemoryCache::prune()
 
 void MemoryCache::pruneSoon()
 {
-     if (m_pruneTimer.isActive())
+    if (m_pruneTimer.isActive())
         return;
-     if (!needsPruning())
-         return;
-     m_pruneTimer.startOneShot(0);
+    if (!needsPruning())
+        return;
+    m_pruneTimer.startOneShot(0_s);
 }
 
 #ifndef NDEBUG

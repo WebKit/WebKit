@@ -48,8 +48,8 @@ public:
     void usesOverlayScrollbarsChanged() override;
     void updateScrollbarOverlayStyle(Scrollbar&)  override;
 
-    double initialAutoscrollTimerDelay() override;
-    double autoscrollTimerDelay() override;
+    Seconds initialAutoscrollTimerDelay() override;
+    Seconds autoscrollTimerDelay() override;
 
     ScrollbarButtonsPlacement buttonsPlacement() const override;
 

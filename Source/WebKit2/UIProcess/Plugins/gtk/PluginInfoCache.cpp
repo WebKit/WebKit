@@ -162,7 +162,7 @@ void PluginInfoCache::updatePluginInfo(const String& pluginPath, const PluginMod
         if (m_saveToFileIdle.isActive())
             return;
 
-        m_saveToFileIdle.startOneShot(0);
+        m_saveToFileIdle.startOneShot(0_s);
     }
 }
 

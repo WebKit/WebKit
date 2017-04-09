@@ -105,7 +105,7 @@ void ScrollingCoordinatorMac::scheduleTreeStateCommit()
         return;
 
     LOG(Scrolling, "ScrollingCoordinatorMac::scheduleTreeStateCommit");
-    m_scrollingStateTreeCommitterTimer.startOneShot(0);
+    m_scrollingStateTreeCommitterTimer.startOneShot(0_s);
 }
 
 void ScrollingCoordinatorMac::commitTreeState()

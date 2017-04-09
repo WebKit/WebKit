@@ -201,11 +201,6 @@ TimerBase::~TimerBase()
 #endif
 }
 
-void TimerBase::start(double nextFireInterval, double repeatInterval)
-{
-    start(Seconds { nextFireInterval }, Seconds { repeatInterval });
-}
-
 void TimerBase::start(Seconds nextFireInterval, Seconds repeatInterval)
 {
     ASSERT(canAccessThreadLocalDataForThread(m_thread));

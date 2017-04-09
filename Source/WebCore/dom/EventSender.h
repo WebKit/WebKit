@@ -66,7 +66,7 @@ template<typename T> void EventSender<T>::dispatchEventSoon(T& sender)
 {
     m_dispatchSoonList.append(&sender);
     if (!m_timer.isActive())
-        m_timer.startOneShot(0);
+        m_timer.startOneShot(0_s);
 }
 
 template<typename T> void EventSender<T>::cancelEvent(T& sender)

@@ -53,12 +53,11 @@ public:
     WEBCORE_EXPORT virtual ~TimerBase();
 
     WEBCORE_EXPORT void start(Seconds nextFireInterval, Seconds repeatInterval);
-    WEBCORE_EXPORT void start(double nextFireInterval, double repeatInterval);
 
-    void startRepeating(double repeatInterval) { start(repeatInterval, repeatInterval); }
-    void startRepeating(Seconds repeatInterval) { startRepeating(repeatInterval.value()); }
+    void startRepeating(double repeatInterval) { startRepeating(Seconds { repeatInterval }); }
+    void startRepeating(Seconds repeatInterval) { start(repeatInterval, repeatInterval); }
 
-    void startOneShot(double interval) { start(interval, 0); }
+    void startOneShot(double interval) { startOneShot(Seconds { interval }); }
     void startOneShot(Seconds interval) { start(interval, 0_s); }
 
     WEBCORE_EXPORT void stop();
@@ -69,10 +68,7 @@ public:
     Seconds repeatInterval() const { return m_repeatInterval; }
 
     void augmentFireInterval(Seconds delta) { setNextFireTime(m_nextFireTime + delta); }
-    void augmentFireInterval(double delta) { augmentFireInterval(Seconds { delta }); }
-
     void augmentRepeatInterval(Seconds delta) { augmentFireInterval(delta); m_repeatInterval += delta; }
-    void augmentRepeatInterval(double delta) { augmentRepeatInterval(Seconds { delta }); }
 
     void didChangeAlignmentInterval();
 

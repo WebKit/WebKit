@@ -52,8 +52,8 @@ public:
     int minimumThumbLength(Scrollbar&) override;
 
     // TODO: These are the default GTK+ values. At some point we should pull these from the theme itself.
-    double initialAutoscrollTimerDelay() override { return 0.20; }
-    double autoscrollTimerDelay() override { return 0.02; }
+    Seconds initialAutoscrollTimerDelay() override { return 200_ms; }
+    Seconds autoscrollTimerDelay() override { return 20_ms; }
     void themeChanged() override;
     bool usesOverlayScrollbars() const override { return m_usesOverlayScrollbars; }
     // When using overlay scrollbars, always invalidate the whole scrollbar when entering/leaving.

@@ -66,14 +66,14 @@ int ScrollbarThemeIOS::scrollbarThickness(ScrollbarControlSize)
     return 0;
 }
 
-double ScrollbarThemeIOS::initialAutoscrollTimerDelay()
+Seconds ScrollbarThemeIOS::initialAutoscrollTimerDelay()
 {
-    return 0;
+    return 0_s;
 }
 
-double ScrollbarThemeIOS::autoscrollTimerDelay()
+Seconds ScrollbarThemeIOS::autoscrollTimerDelay()
 {
-    return 0;
+    return 0_s;
 }
     
 ScrollbarButtonsPlacement ScrollbarThemeIOS::buttonsPlacement() const

@@ -373,7 +373,7 @@ void MediaStream::scheduleActiveStateChange()
     m_scheduledActivityEvents.append(Event::create(eventName, false, false));
 
     if (!m_activityEventTimer.isActive())
-        m_activityEventTimer.startOneShot(0);
+        m_activityEventTimer.startOneShot(0_s);
 }
 
 void MediaStream::activityEventTimerFired()

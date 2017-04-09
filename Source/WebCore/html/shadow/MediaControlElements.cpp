@@ -1368,7 +1368,7 @@ void MediaControlTextTrackContainerElement::updateSizes(bool forceUpdate)
     m_updateTextTrackRepresentationStyle = true;
 
     // FIXME (121170): This function is called during layout, and should lay out the text tracks immediately.
-    m_updateTimer.startOneShot(0);
+    m_updateTimer.startOneShot(0_s);
 }
 
 RefPtr<Image> MediaControlTextTrackContainerElement::createTextTrackRepresentationImage()

@@ -611,7 +611,7 @@ RenderLayerCompositor* RenderLayerCompositor::enclosingCompositorFlushingLayers(
 void RenderLayerCompositor::scheduleCompositingLayerUpdate()
 {
     if (!m_updateCompositingLayersTimer.isActive())
-        m_updateCompositingLayersTimer.startOneShot(0);
+        m_updateCompositingLayersTimer.startOneShot(0_s);
 }
 
 void RenderLayerCompositor::updateCompositingLayersTimerFired()

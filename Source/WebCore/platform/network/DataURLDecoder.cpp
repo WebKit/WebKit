@@ -79,7 +79,7 @@ private:
         ref();
 
         auto scheduledPairs = m_decodeTask->scheduleContext.scheduledPairs;
-        m_timer.startOneShot(0);
+        m_timer.startOneShot(0_s);
         m_timer.schedule(scheduledPairs);
     }
 

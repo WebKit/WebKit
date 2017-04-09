@@ -181,7 +181,7 @@ void HTMLTrackElement::scheduleLoad()
         return;
 
     // 4. Run the remainder of these steps asynchronously, allowing whatever caused these steps to run to continue.
-    m_loadTimer.startOneShot(0);
+    m_loadTimer.startOneShot(0_s);
 }
 
 void HTMLTrackElement::loadTimerFired()

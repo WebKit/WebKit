@@ -335,7 +335,7 @@ PluginView::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
         pushPopupsEnabledState(true);
 
-        m_popPopupsStateTimer.startOneShot(0);
+        m_popPopupsStateTimer.startOneShot(0_s);
     }
 
     if (message == WM_PRINTCLIENT) {

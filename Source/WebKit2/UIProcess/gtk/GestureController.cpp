@@ -206,7 +206,7 @@ void GestureController::ZoomGesture::scaleChanged(ZoomGesture* zoomGesture, doub
     if (zoomGesture->m_idle.isActive())
         return;
 
-    zoomGesture->m_idle.startOneShot(0);
+    zoomGesture->m_idle.startOneShot(0_s);
 }
 
 GestureController::ZoomGesture::ZoomGesture(WebPageProxy& page)

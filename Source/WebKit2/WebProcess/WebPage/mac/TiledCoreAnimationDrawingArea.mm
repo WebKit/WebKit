@@ -472,7 +472,7 @@ void TiledCoreAnimationDrawingArea::activityStateDidChange(ActivityState::Flags 
     }
 
     if (m_wantsDidUpdateActivityState || !m_nextActivityStateChangeCallbackIDs.isEmpty())
-        m_sendDidUpdateActivityStateTimer.startOneShot(0);
+        m_sendDidUpdateActivityStateTimer.startOneShot(0_s);
 }
 
 void TiledCoreAnimationDrawingArea::didUpdateActivityStateTimerFired()

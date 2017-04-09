@@ -1516,7 +1516,7 @@ void WebView::closeWindowSoon()
     m_closeWindowTimer = WindowCloseTimer::create(this);
     if (!m_closeWindowTimer)
         return;
-    m_closeWindowTimer->startOneShot(0);
+    m_closeWindowTimer->startOneShot(0_s);
 
     AddRef();
 }
