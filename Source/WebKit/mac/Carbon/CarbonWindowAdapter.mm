@@ -661,13 +661,12 @@ static OSStatus NSCarbonWindowHandleEvent(EventHandlerCallRef inEventHandlerCall
 	}
 }
 
-- (void)makeKeyWindow {
-	[NSApp _setMouseActivationInProgress:NO];
-	[NSApp setIsActive:YES];
-	[super makeKeyWindow];
-	WKShowKeyAndMain();
+- (void)makeKeyWindow
+{
+    [NSApp _setMouseActivationInProgress:NO];
+    [NSApp setIsActive:YES];
+    [super makeKeyWindow];
 }
-
 
 // Do the right thing for a Carbon window.
 - (BOOL)canBecomeKeyWindow {

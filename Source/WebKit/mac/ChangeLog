@@ -1,3 +1,14 @@
+2017-04-10  Anders Carlsson  <andersca@apple.com>
+
+        Remove call to WKShowKeyAndMain
+        https://bugs.webkit.org/show_bug.cgi?id=170691
+        rdar://problem/31050032
+
+        Reviewed by Beth Dakin.
+
+        * Carbon/CarbonWindowAdapter.mm:
+        (-[CarbonWindowAdapter makeKeyWindow]):
+
 2017-04-10  Jeremy Jones  <jeremyj@apple.com>
 
         Add CoreAudioCaptureSource.
