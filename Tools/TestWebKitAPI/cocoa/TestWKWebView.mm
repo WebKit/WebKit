@@ -31,7 +31,9 @@
 #import "TestNavigationDelegate.h"
 #import "Utilities.h"
 
+#import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WebKitPrivate.h>
+#import <WebKit/_WKProcessPoolConfiguration.h>
 #import <objc/runtime.h>
 #import <wtf/RetainPtr.h>
 
@@ -159,13 +161,13 @@ NSEventMask __simulated_forceClickAssociatedEventsMask(id self, SEL _cmd)
 @end
 
 @implementation TestWKWebView {
-    TestWKWebViewHostWindow *_hostWindow;
+    RetainPtr<TestWKWebViewHostWindow> _hostWindow;
     RetainPtr<TestMessageHandler> _testHandler;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
 {
-    WKWebViewConfiguration *defaultConfiguration = [[WKWebViewConfiguration alloc] init];
+    WKWebViewConfiguration *defaultConfiguration = [[[WKWebViewConfiguration alloc] init] autorelease];
     return [self initWithFrame:frame configuration:defaultConfiguration];
 }
 
@@ -177,17 +179,23 @@ NSEventMask __simulated_forceClickAssociatedEventsMask(id self, SEL _cmd)
     return self;
 }
 
+- (instancetype)initWithFrame:(CGRect)frame configuration:(WKWebViewConfiguration *)configuration processPoolConfiguration:(_WKProcessPoolConfiguration *)processPoolConfiguration
+{
+    [configuration setProcessPool:[[[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration] autorelease]];
+    return [self initWithFrame:frame configuration:configuration];
+}
+
 - (void)_setUpTestWindow:(NSRect)frame
 {
 #if PLATFORM(MAC)
-    _hostWindow = [[TestWKWebViewHostWindow alloc] initWithContentRect:frame styleMask:NSWindowStyleMaskBorderless backing:NSBackingStoreBuffered defer:NO];
+    _hostWindow = adoptNS([[TestWKWebViewHostWindow alloc] initWithContentRect:frame styleMask:NSWindowStyleMaskBorderless backing:NSBackingStoreBuffered defer:NO]);
     [_hostWindow setFrameOrigin:NSMakePoint(0, 0)];
     [_hostWindow setIsVisible:YES];
     [[_hostWindow contentView] addSubview:self];
     [_hostWindow makeKeyAndOrderFront:self];
 #else
-    _hostWindow = [[TestWKWebViewHostWindow alloc] initWithFrame:frame];
-    _hostWindow.hidden = NO;
+    _hostWindow = adoptNS([[TestWKWebViewHostWindow alloc] initWithFrame:frame]);
+    [_hostWindow setHidden:NO];
     [_hostWindow addSubview:self];
 #endif
 }
@@ -306,8 +314,8 @@ NSEventMask __simulated_forceClickAssociatedEventsMask(id self, SEL _cmd)
     NSString *characterAsString = [NSString stringWithFormat:@"%c" , character];
     NSEventType keyDownEventType = NSEventTypeKeyDown;
     NSEventType keyUpEventType = NSEventTypeKeyUp;
-    [self keyDown:[NSEvent keyEventWithType:keyDownEventType location:NSZeroPoint modifierFlags:0 timestamp:GetCurrentEventTime() windowNumber:_hostWindow.windowNumber context:nil characters:characterAsString charactersIgnoringModifiers:characterAsString isARepeat:NO keyCode:character]];
-    [self keyUp:[NSEvent keyEventWithType:keyUpEventType location:NSZeroPoint modifierFlags:0 timestamp:GetCurrentEventTime() windowNumber:_hostWindow.windowNumber context:nil characters:characterAsString charactersIgnoringModifiers:characterAsString isARepeat:NO keyCode:character]];
+    [self keyDown:[NSEvent keyEventWithType:keyDownEventType location:NSZeroPoint modifierFlags:0 timestamp:GetCurrentEventTime() windowNumber:[_hostWindow windowNumber] context:nil characters:characterAsString charactersIgnoringModifiers:characterAsString isARepeat:NO keyCode:character]];
+    [self keyUp:[NSEvent keyEventWithType:keyUpEventType location:NSZeroPoint modifierFlags:0 timestamp:GetCurrentEventTime() windowNumber:[_hostWindow windowNumber] context:nil characters:characterAsString charactersIgnoringModifiers:characterAsString isARepeat:NO keyCode:character]];
 }
 @end
 #endif

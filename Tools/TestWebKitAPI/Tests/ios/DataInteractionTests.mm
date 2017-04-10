@@ -35,6 +35,7 @@
 #import <UIKit/UIItemProvider_Private.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
+#import <WebKit/_WKProcessPoolConfiguration.h>
 
 @implementation TestWKWebView (DataInteractionTests)
 
@@ -387,14 +388,15 @@ TEST(DataInteractionTests, CustomActionSheetPopover)
 
 TEST(DataInteractionTests, UnresponsivePageDoesNotHangUI)
 {
-    RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    _WKProcessPoolConfiguration *processPoolConfiguration = [[[_WKProcessPoolConfiguration alloc] init] autorelease];
+    processPoolConfiguration.ignoreSynchronousMessagingTimeoutsForTesting = YES;
+
+    RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:[[[WKWebViewConfiguration alloc] init] autorelease] processPoolConfiguration:processPoolConfiguration]);
     [webView synchronouslyLoadTestPageNamed:@"simple"];
     [webView evaluateJavaScript:@"while(1);" completionHandler:nil];
 
-    NSTimeInterval startTime = [NSDate timeIntervalSinceReferenceDate];
+    // The test passes if we can prepare for data interaction without timing out.
     [webView _simulatePrepareForDataInteractionSession:nil completion:^() { }];
-
-    EXPECT_LT([NSDate timeIntervalSinceReferenceDate] - startTime, 1);
 }
 
 } // namespace TestWebKitAPI
