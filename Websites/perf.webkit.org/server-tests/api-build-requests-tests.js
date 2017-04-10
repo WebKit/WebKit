@@ -23,7 +23,7 @@ describe('/api/build-requests', function () {
             assert.deepEqual(content['buildRequests'], []);
             assert.deepEqual(content['commitSets'], []);
             assert.deepEqual(content['commits'], []);
-            assert.deepEqual(Object.keys(content).sort(), ['buildRequests', 'commitSets', 'commits', 'status']);
+            assert.deepEqual(Object.keys(content).sort(), ['buildRequests', 'commitSets', 'commits', 'status', 'uploadedFiles']);
         });
     });
 
@@ -31,7 +31,7 @@ describe('/api/build-requests', function () {
         return MockData.addMockData(TestServer.database()).then(() => {
             return TestServer.remoteAPI().getJSONWithStatus('/api/build-requests/build-webkit');
         }).then((content) => {
-            assert.deepEqual(Object.keys(content).sort(), ['buildRequests', 'commitSets', 'commits', 'status']);
+            assert.deepEqual(Object.keys(content).sort(), ['buildRequests', 'commitSets', 'commits', 'status', 'uploadedFiles']);
 
             assert.equal(content['commitSets'].length, 2);
             assert.equal(content['commitSets'][0].id, 401);
@@ -85,7 +85,7 @@ describe('/api/build-requests', function () {
         return MockData.addMockData(TestServer.database()).then(() => {
             return TestServer.remoteAPI().getJSONWithStatus('/api/build-requests/build-webkit?useLegacyIdResolution=true');
         }).then((content) => {
-            assert.deepEqual(Object.keys(content).sort(), ['buildRequests', 'commitSets', 'commits', 'status']);
+            assert.deepEqual(Object.keys(content).sort(), ['buildRequests', 'commitSets', 'commits', 'status', 'uploadedFiles']);
 
             assert.equal(content['commitSets'].length, 2);
             assert.equal(content['commitSets'][0].id, 401);
@@ -217,11 +217,11 @@ describe('/api/build-requests', function () {
 
             let firstWebKitCommit = firstCommitSet.commitForRepository(webkit);
             assert.equal(firstWebKitCommit.revision(), '191622');
-            assert.equal(+firstWebKitCommit.time(), 1445945816878);
+            assert.equal(+firstWebKitCommit.time(), +new Date('2015-10-27T11:36:56.88Z'));
 
             let secondWebKitCommit = secondCommitSet.commitForRepository(webkit);
             assert.equal(secondWebKitCommit.revision(), '192736');
-            assert.equal(+secondWebKitCommit.time(), 1448225325650);
+            assert.equal(+secondWebKitCommit.time(), +new Date('2015-11-22T20:48:45.65Z'));
         });
     });
 
@@ -396,4 +396,50 @@ describe('/api/build-requests', function () {
             assert.strictEqual(buildRequests[7].order(), 3);
         });
     });
+
+    it('should place build requests created by user before automatically created ones', () => {
+        const db = TestServer.database();
+        const someSize = 24 * 1024; // hashlib.sha256('1' * 24 * 1024).hexdigest()
+        const someHash = '3ffaa9e09f49d4d212582c092af2c1dcb2c9b52c8ca49c72ff99dcc5dc503a2b';
+        const otherSize = 42; // hashlib.sha256('2' * 42).hexdigest()
+        const otherHash = '66e378b3fb356925154435803c01afd10daebbf4a2edb583b34034aaca775a26';
+        return MockData.addMockData(db).then(() => Manifest.fetch()).then(() => {
+            return BuildRequest.fetchForTriggerable('build-webkit');
+        }).then((buildRequests) => {
+            assert.deepEqual(UploadedFile.all(), []);
+            assert.equal(buildRequests.length, 4);
+            const set0 = buildRequests[0].commitSet();
+            const set1 = buildRequests[1].commitSet();
+            assert.equal(buildRequests[2].commitSet(), set0);
+            assert.equal(buildRequests[3].commitSet(), set1);
+            assert.deepEqual(set0.customRoots(), []);
+            assert.deepEqual(set1.customRoots(), []);
+            return Promise.all([
+                db.insert('uploaded_files', {id: 1, filename: 'some-file.tar.gz', extension: '.tar.gz', size: someSize, sha256: someHash}),
+                db.insert('uploaded_files', {id: 2, filename: 'other-file.zip', extension: '.zip', size: otherSize, sha256: otherHash}),
+            ]).then(() => {
+                return db.insert('commit_set_relationships', {set: set0.id(), root_file: 1});
+            });
+        }).then(() => {
+            CommitSet.clearStaticMap();
+            BuildRequest.clearStaticMap();
+            return BuildRequest.fetchForTriggerable('build-webkit');
+        }).then((buildRequests) => {
+            const uploadedFiles = UploadedFile.all();
+            assert.equal(uploadedFiles.length, 1);
+
+            const someFile = UploadedFile.findById(1);
+            assert.equal(someFile.filename(), 'some-file.tar.gz');
+            assert.equal(someFile.size(), someSize);
+
+            assert.equal(buildRequests.length, 4);
+            const set0 = buildRequests[0].commitSet();
+            const set1 = buildRequests[1].commitSet();
+            assert.equal(buildRequests[2].commitSet(), set0);
+            assert.equal(buildRequests[3].commitSet(), set1);
+            assert.deepEqual(set0.customRoots(), [someFile]);
+            assert.deepEqual(set1.customRoots(), []);
+        });
+    });
+
 });

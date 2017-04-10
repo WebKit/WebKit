@@ -1,10 +1,12 @@
 'use strict';
 
-let assert = require('assert');
-let http = require('http');
-let https = require('https');
-let querystring = require('querystring');
-let CommonRemoteAPI = require('../../public/shared/common-remote.js').CommonRemoteAPI;
+const assert = require('assert');
+const http = require('http');
+const https = require('https');
+const querystring = require('querystring');
+const CommonRemoteAPI = require('../../public/shared/common-remote.js').CommonRemoteAPI;
+
+global.FormData = require('form-data');
 
 class NodeRemoteAPI extends CommonRemoteAPI {
     constructor(server)

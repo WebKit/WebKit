@@ -57,6 +57,9 @@ class Manifest {
             });
         });
 
+        if (typeof(UploadedFile) != 'undefined')
+            UploadedFile.fileUploadSizeLimit = rawResponse.fileUploadSizeLimit || 0;
+
         Instrumentation.endMeasuringTime('Manifest', '_didFetchManifest');
 
         return {

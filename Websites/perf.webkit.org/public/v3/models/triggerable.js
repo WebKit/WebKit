@@ -37,6 +37,19 @@ class Triggerable extends LabeledObject {
         }
         return null;
     }
+
+    static triggerablePlatformsForTests(tests)
+    {
+        console.assert(tests instanceof Array);
+        if (!tests.length)
+            return [];
+        return this.sortByName(Platform.all().filter((platform) => {
+            return tests.every((test) => {
+                const triggerable = Triggerable.findByTestConfiguration(test, platform);
+                return triggerable && !triggerable.isDisabled();
+            });
+        }));
+    }
 }
 
 class TriggerableRepositoryGroup extends LabeledObject {
@@ -64,6 +77,21 @@ class TriggerableRepositoryGroup extends LabeledObject {
     description() { return this._description || this.name(); }
     acceptsCustomRoots() { return this._acceptsCustomRoots; }
     repositories() { return this._repositories; }
+
+    static sortByNamePreferringSmallerRepositories(groupList)
+    {
+        return groupList.sort((a, b) => {
+            if (a.repositories().length < b.repositories().length)
+                return -1;
+            else if (a.repositories().length > b.repositories().length)
+                return 1;
+            if (a.name() < b.name())
+                return -1;
+            else if (a.name() > b.name())
+                return 1;
+            return 0;
+        });
+    }
 }
 
 if (typeof module != 'undefined') {

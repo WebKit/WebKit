@@ -1,9 +1,10 @@
 'use strict';
 
-let assert = require('assert');
+const assert = require('assert');
 
-let MockData = require('./resources/mock-data.js');
-let TestServer = require('./resources/test-server.js');
+const MockData = require('./resources/mock-data.js');
+const TestServer = require('./resources/test-server.js');
+const TemporaryFile = require('./resources/temporary-file.js').TemporaryFile;
 const addSlaveForReport = require('./resources/common-operations.js').addSlaveForReport;
 const prepareServerTest = require('./resources/common-operations.js').prepareServerTest;
 
@@ -116,6 +117,7 @@ function addTriggerableAndCreateTask(name)
 
 describe('/privileged-api/create-test-group', function () {
     prepareServerTest(this);
+    TemporaryFile.inject();
 
     it('should return "InvalidName" on an empty request', () => {
         return PrivilegedAPI.sendRequest('create-test-group', {}).then((content) => {
@@ -258,6 +260,18 @@ describe('/privileged-api/create-test-group', function () {
                 assert(false, 'should never be reached');
             }, (error) => {
                 assert.equal(error, 'RevisionNotFound');
+            });
+        });
+    });
+
+    it('should return "InvalidUploadedFile" when revision sets contains an invalid file ID', () => {
+        return addTriggerableAndCreateTask('some task').then((taskId) => {
+            const webkit = Repository.all().find((repository) => repository.name() == 'WebKit');
+            const revisionSets = [{[webkit.id()]: '191622', 'customRoots': ['1']}, {[webkit.id()]: '1'}];
+            return PrivilegedAPI.sendRequest('create-test-group', {name: 'test', task: taskId, revisionSets}).then((content) => {
+                assert(false, 'should never be reached');
+            }, (error) => {
+                assert.equal(error, 'InvalidUploadedFile');
             });
         });
     });
@@ -430,6 +444,83 @@ describe('/privileged-api/create-test-group', function () {
                 assert(!repositoryGroup1.accepts(set0));
                 assert(repositoryGroup1.accepts(set1));
             });
+        });
+    });
+
+    it('should create a test group with a custom root', () => {
+        return addTriggerableAndCreateTask('some task').then((taskId) => {
+            let insertedGroupId;
+            const webkit = Repository.all().filter((repository) => repository.name() == 'WebKit')[0];
+            const macos = Repository.all().filter((repository) => repository.name() == 'macOS')[0];
+            let uploadedFile;
+            return TemporaryFile.makeTemporaryFile('some.dat', 'some content').then((stream) => {
+                return PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true});
+            }).then((response) => {
+                uploadedFile = response['uploadedFile'];
+                const revisionSets = [{[webkit.id()]: '191622', [macos.id()]: '15A284'},
+                    {[webkit.id()]: '191622', [macos.id()]: '15A284', 'customRoots': [uploadedFile['id']]}];
+                return PrivilegedAPI.sendRequest('create-test-group', {name: 'test', task: taskId, repetitionCount: 2, revisionSets}).then((content) => {
+                    insertedGroupId = content['testGroupId'];
+                    return TestGroup.fetchByTask(taskId);
+                });
+            }).then((testGroups) => {
+                assert.equal(testGroups.length, 1);
+                const group = testGroups[0];
+                assert.equal(group.id(), insertedGroupId);
+                assert.equal(group.repetitionCount(), 2);
+                const requests = group.buildRequests();
+                assert.equal(requests.length, 4);
+
+                const set0 = requests[0].commitSet();
+                const set1 = requests[1].commitSet();
+                assert.equal(requests[2].commitSet(), set0);
+                assert.equal(requests[3].commitSet(), set1);
+                assert.deepEqual(Repository.sortByNamePreferringOnesWithURL(set0.repositories()), [webkit, macos]);
+                assert.deepEqual(set0.customRoots(), []);
+                assert.deepEqual(Repository.sortByNamePreferringOnesWithURL(set1.repositories()), [webkit, macos]);
+                assert.deepEqual(set1.customRoots(), [UploadedFile.ensureSingleton(uploadedFile['id'], uploadedFile)]);
+                assert.equal(set0.revisionForRepository(webkit), '191622');
+                assert.equal(set0.revisionForRepository(webkit), set1.revisionForRepository(webkit));
+                assert.equal(set0.commitForRepository(webkit), set1.commitForRepository(webkit));
+                assert.equal(set0.revisionForRepository(macos), '15A284');
+                assert.equal(set0.commitForRepository(macos), set1.commitForRepository(macos));
+                assert.equal(set0.revisionForRepository(macos), set1.revisionForRepository(macos));
+                assert(!set0.equals(set1));
+            });
+        });
+    });
+
+    it('should create a test group with an analysis task', () => {
+        let insertedGroupId;
+        let webkit;
+        return addTriggerableAndCreateTask('some task').then(() => {
+            webkit = Repository.all().filter((repository) => repository.name() == 'WebKit')[0];
+            const revisionSets = [{[webkit.id()]: '191622'}, {[webkit.id()]: '191623'}];
+            return PrivilegedAPI.sendRequest('create-test-group',
+                {name: 'test', taskName: 'other task', platform: MockData.somePlatformId(), test: MockData.someTestId(), revisionSets});
+        }).then((result) => {
+            insertedGroupId = result['testGroupId'];
+            return Promise.all([AnalysisTask.fetchById(result['taskId']), TestGroup.fetchByTask(result['taskId'])]);
+        }).then((result) => {
+            const [analysisTask, testGroups] = result;
+
+            assert.equal(analysisTask.name(), 'other task');
+
+            assert.equal(testGroups.length, 1);
+            const group = testGroups[0];
+            assert.equal(group.id(), insertedGroupId);
+            assert.equal(group.repetitionCount(), 1);
+            const requests = group.buildRequests();
+            assert.equal(requests.length, 2);
+
+            const set0 = requests[0].commitSet();
+            const set1 = requests[1].commitSet();
+            assert.deepEqual(set0.repositories(), [webkit]);
+            assert.deepEqual(set0.customRoots(), []);
+            assert.deepEqual(set1.repositories(), [webkit]);
+            assert.deepEqual(set1.customRoots(), []);
+            assert.equal(set0.revisionForRepository(webkit), '191622');
+            assert.equal(set1.revisionForRepository(webkit), '191623');
         });
     });
 

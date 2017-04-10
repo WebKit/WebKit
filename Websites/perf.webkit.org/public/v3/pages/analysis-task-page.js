@@ -409,6 +409,12 @@ class AnalysisTaskPage extends PageWithHeading {
         console.assert(!this._task);
 
         this._task = task;
+        const bugList = this.part('bug-list');
+        this.part('bug-list').setTask(this._task);
+        this.enqueueToRender();
+
+        if (task.isCustom())
+            return task;
 
         const platform = task.platform();
         const metric = task.metric();
@@ -425,11 +431,6 @@ class AnalysisTaskPage extends PageWithHeading {
         chart.configure(platform.id(), metric.id());
         chart.setOverviewDomain(domain[0], domain[1]);
         chart.setMainDomain(domain[0], domain[1]);
-
-        const bugList = this.part('bug-list');
-        this.part('bug-list').setTask(this._task);
-
-        this.enqueueToRender();
 
         return task;
     }
@@ -507,10 +508,10 @@ class AnalysisTaskPage extends PageWithHeading {
         this._renderCauseAndFixesLazily.evaluate(this._startPoint, this._task);
         this._renderRelatedTasksLazily.evaluate(this._task, this._relatedTasks);
 
-        this.content('chart-pane').style.display = this._task ? null : 'none';
+        this.content('chart-pane').style.display = this._task && !this._task.isCustom() ? null : 'none';
         this.part('chart-pane').setShowForm(!!this._triggerable);
 
-        this.content('results-pane').style.display = this._task ? null : 'none';
+        this.content('results-pane').style.display = this._task && !this._task.isCustom() ? null : 'none';
         this.part('results-pane').setShowForm(!!this._triggerable);
 
         Instrumentation.endMeasuringTime('AnalysisTaskPage', 'render');
@@ -519,7 +520,7 @@ class AnalysisTaskPage extends PageWithHeading {
     _renderTaskNameAndStatus(task, taskName, changeType)
     {
         this.part('analysis-task-name').setText(taskName);
-        if (task) {
+        if (task && !task.isCustom()) {
             const link = ComponentBase.createLink;
             const platform = task.platform();
             const metric = task.metric();

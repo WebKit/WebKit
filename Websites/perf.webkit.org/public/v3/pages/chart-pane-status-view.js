@@ -49,7 +49,7 @@ class ChartPaneStatusView extends ComponentBase {
                 element('td', 'Build'),
                 element('td', {colspan: 2}, [
                     url ? link(buildNumber, build.label(), url, true) : buildNumber,
-                    ` (${this._formatTime(build.buildTime())})`
+                    ` (${Metric.formatTime(build.buildTime())})`
                 ]),
             ]));
         }
@@ -70,12 +70,6 @@ class ChartPaneStatusView extends ComponentBase {
         }
 
         this.renderReplace(this.content('build-revision'), tableContent);
-    }
-
-    _formatTime(date)
-    {
-        console.assert(date instanceof Date);
-        return date.toISOString().replace('T', ' ').replace(/\.\d+Z$/, '');
     }
 
     setCurrentRepository(repository)

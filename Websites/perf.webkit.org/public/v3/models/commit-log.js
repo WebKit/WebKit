@@ -68,6 +68,20 @@ class CommitLog extends DataModelObject {
         return {repository: repository, label: label, url: repository.urlForRevisionRange(from, to)};
     }
 
+    static fetchLatestCommitForPlatform(repository, platform)
+    {
+        console.assert(repository instanceof Repository);
+        console.assert(platform instanceof Platform);
+        return this.cachedFetch(`/api/commits/${repository.id()}/latest`, {platform: platform.id()}).then((data) => {
+            const commits = data['commits'];
+            if (!commits || !commits.length)
+                return null;
+            const rawData = commits[0];
+            rawData.repository = repository;
+            return CommitLog.ensureSingleton(rawData.id, rawData);
+        });
+    }
+
     static fetchBetweenRevisions(repository, precedingRevision, lastRevision)
     {
         // FIXME: The cache should be smarter about fetching a range within an already fetched range, etc...

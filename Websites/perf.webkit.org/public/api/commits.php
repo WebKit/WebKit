@@ -30,7 +30,14 @@ function main($paths) {
     } else if ($filter == 'oldest') {
         $commits = $fetcher->fetch_oldest($repository_id);
     } else if ($filter == 'latest') {
-        $commits = $fetcher->fetch_latest($repository_id);
+        $platform_id = array_get($_GET, 'platform');
+        if ($platform_id) {
+            if (!is_numeric($platform_id))
+                exit_with_error('InvalidPlatform', array('platform' => $platform_id));
+            $platform_id = intval($platform_id);
+            $commits = $fetcher->fetch_latest_for_platform($repository_id, $platform_id);
+        } else
+            $commits = $fetcher->fetch_latest($repository_id);
     } else if ($filter == 'last-reported') {
         $from = array_get($_GET, 'from');
         $to = array_get($_GET, 'to');

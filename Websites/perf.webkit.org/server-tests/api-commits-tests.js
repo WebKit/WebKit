@@ -2,6 +2,7 @@
 
 const assert = require('assert');
 
+const MockData = require('./resources/mock-data.js');
 const TestServer = require('./resources/test-server.js');
 const addSlaveForReport = require('./resources/common-operations.js').addSlaveForReport;
 const prepareServerTest = require('./resources/common-operations.js').prepareServerTest;
@@ -213,7 +214,7 @@ describe("/api/commits/", function () {
             });
         });
 
-        it("should return the oldest commit", () => {
+        it("should return the latest commit", () => {
             const remote = TestServer.remoteAPI();
             return addSlaveForReport(subversionCommits).then(() => {
                 return remote.postJSONWithStatus('/api/report-commits/', subversionCommits);
@@ -236,6 +237,50 @@ describe("/api/commits/", function () {
                 assert.equal(result['status'], 'OK');
                 assert.equal(result['commits'].length, 1);
                 assert.equal(result['commits'][0]['revision'], systemVersionCommits['commits'][0]['revision']);
+            });
+        });
+
+        it("should return the latest commit for a given platform", () => {
+            const mockDataCommitReports = {
+                "slaveName": "someSlave",
+                "slavePassword": "somePassword",
+                "commits": [
+                    {
+                        "repository": "WebKit",
+                        "revision": "191622",
+                        "time": "2015-10-27T11:36:56.88Z",
+                        "author": {"account": "calvaris@igalia.com"},
+                        "message": "a message",
+                    },
+                    {
+                        "repository": "WebKit",
+                        "revision": "192736",
+                        "time": "2015-11-22T20:48:45.65Z",
+                        "author": {"account": "aestes@apple.com"},
+                        "message": "some message",
+                    },
+                    {
+                        "repository": "WebKit",
+                        "revision": "192903",
+                        "time": "2015-12-01T21:14:46.99Z",
+                        "author": {"account": "darin@apple.com"},
+                        "message": "another message",
+                    }
+                ]
+            }
+            const remote = TestServer.remoteAPI();
+            return MockData.addMockData(TestServer.database()).then(() => {
+                return addSlaveForReport(mockDataCommitReports);
+            }).then(() => {
+                return remote.postJSONWithStatus('/api/report-commits/', mockDataCommitReports);
+            }).then(() => {
+                return remote.getJSON('/api/commits/WebKit/latest?platform=' + MockData.somePlatformId());
+            }).then((result) => {
+                assert.equal(result['status'], 'OK');
+                assert.equal(result['commits'].length, 1);
+                const commit = result['commits'][0];
+                assert.equal(commit['revision'], '192736');
+                assert.equal(commit['time'], +new Date('2015-11-22T20:48:45.65Z'));
             });
         });
     });
