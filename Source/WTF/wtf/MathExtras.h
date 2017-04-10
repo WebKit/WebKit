@@ -141,10 +141,10 @@ inline float rad2grad(float r) { return r * 200.0f / piFloat; }
 inline float grad2rad(float g) { return g * piFloat / 200.0f; }
 
 // std::numeric_limits<T>::min() returns the smallest positive value for floating point types
-template<typename T> inline T defaultMinimumForClamp() { return std::numeric_limits<T>::min(); }
-template<> inline float defaultMinimumForClamp() { return -std::numeric_limits<float>::max(); }
-template<> inline double defaultMinimumForClamp() { return -std::numeric_limits<double>::max(); }
-template<typename T> inline T defaultMaximumForClamp() { return std::numeric_limits<T>::max(); }
+template<typename T> constexpr inline T defaultMinimumForClamp() { return std::numeric_limits<T>::min(); }
+template<> constexpr inline float defaultMinimumForClamp() { return -std::numeric_limits<float>::max(); }
+template<> constexpr inline double defaultMinimumForClamp() { return -std::numeric_limits<double>::max(); }
+template<typename T> constexpr inline T defaultMaximumForClamp() { return std::numeric_limits<T>::max(); }
 
 template<typename T> inline T clampTo(double value, T min = defaultMinimumForClamp<T>(), T max = defaultMaximumForClamp<T>())
 {
@@ -195,13 +195,9 @@ inline int clampToInteger(T x)
 
 // Explicitly accept 64bit result when clamping double value.
 // Keep in mind that double can only represent 53bit integer precisely.
-template<typename T> inline T clampToAccepting64(double value, T min = defaultMinimumForClamp<T>(), T max = defaultMaximumForClamp<T>())
+template<typename T> constexpr inline T clampToAccepting64(double value, T min = defaultMinimumForClamp<T>(), T max = defaultMaximumForClamp<T>())
 {
-    if (value >= static_cast<double>(max))
-        return max;
-    if (value <= static_cast<double>(min))
-        return min;
-    return static_cast<T>(value);
+    return (value >= static_cast<double>(max)) ? max : ((value <= static_cast<double>(min)) ? min : static_cast<T>(value));
 }
 
 inline bool isWithinIntRange(float x)

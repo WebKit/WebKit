@@ -121,7 +121,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 #if PLATFORM(IOS)
-static const Seconds scrollFrequency { 1000 / 60. };
+static const Seconds scrollFrequency { 1000_s / 60. };
 #endif
 
 DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, frameCounter, ("Frame"));

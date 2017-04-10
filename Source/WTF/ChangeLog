@@ -1,3 +1,42 @@
+2017-04-09  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Annotate Seconds' member functions and operators with constexpr
+        https://bugs.webkit.org/show_bug.cgi?id=170662
+
+        Reviewed by Daniel Bates.
+
+        Annotate Seconds' member functions and operators with constexpr.
+        It allows us to use Seconds calculation in compile time and use these
+        calculation for static const global variables.
+
+        operator% is an exception: it uses fmod and it is not offered as constexpr.
+
+        * wtf/MathExtras.h:
+        (defaultMinimumForClamp):
+        (defaultMaximumForClamp):
+        (clampToAccepting64):
+        Super unfortunate ugly code. This is because GCC 4.9 does not support C++14 relaxed constexpr.
+
+        * wtf/Seconds.h:
+        (WTF::Seconds::Seconds):
+        (WTF::Seconds::value):
+        (WTF::Seconds::minutes):
+        (WTF::Seconds::seconds):
+        (WTF::Seconds::milliseconds):
+        (WTF::Seconds::microseconds):
+        (WTF::Seconds::nanoseconds):
+        (WTF::Seconds::operator bool):
+        (WTF::Seconds::operator+):
+        (WTF::Seconds::operator-):
+        (WTF::Seconds::operator*):
+        (WTF::Seconds::operator/):
+        (WTF::Seconds::operator==):
+        (WTF::Seconds::operator!=):
+        (WTF::Seconds::operator<):
+        (WTF::Seconds::operator>):
+        (WTF::Seconds::operator<=):
+        (WTF::Seconds::operator>=):
+
 2017-04-09  Chris Dumez  <cdumez@apple.com>
 
         Start dropping Timer API dealing with double
