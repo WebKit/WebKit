@@ -1,3 +1,18 @@
+2017-04-10  Guillaume Emont  <guijemont@igalia.com>
+
+        [JSC] Do not run FTL stress tests on MIPS
+        https://bugs.webkit.org/show_bug.cgi?id=170684
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        run-jsc-stress-tests does not correctly detect MIPS platforms, and its
+        logic to detect if the platform supports FTL ignores that MIPS does
+        not support FTL. This adds detection of MIPS (with the magic number
+        determined empirically) and fixes the determination of whether we
+        support FTL.
+
+        * Scripts/run-jsc-stress-tests:
+
 2017-04-10  Jonathan Bedard  <jbedard@apple.com>
 
         webkitpy: Increase estimate for processes run by iOS Simulators
