@@ -470,6 +470,21 @@
         }
     },
     {
+        "name": "SVG in OpenType Fonts",
+        "status": {
+            "status": "Under Consideration"
+        },
+        "url": "https://www.microsoft.com/typography/otspec/svg.htm/",
+        "keywords": ["svg", "font", "opentype", "OT-SVG"],
+        "category": "rendering",
+        "description": "Allows Scalable Vector Graphics content within font files.",
+        "contact": {
+            "name": "Myles C. Maxfield",
+            "twitter": "@Litherum",
+            "email": "mmaxfield@apple.com"
+        }
+    },
+    {
         "name": "Service Workers",
         "status": {
             "status": "Under Consideration"
