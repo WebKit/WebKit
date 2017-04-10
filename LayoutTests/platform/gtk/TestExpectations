@@ -3436,8 +3436,6 @@ webkit.org/b/136109 fast/multicol/mixed-opacity-fixed-test.html [ ImageOnlyFailu
 webkit.org/b/168427 fast/scrolling/rtl-scrollbars-listbox.html [ ImageOnlyFailure ]
 webkit.org/b/168427 fast/scrolling/rtl-scrollbars-overflow-contents.html [ ImageOnlyFailure ]
 
-webkit.org/b/168425 fast/images/animated-png.html [ ImageOnlyFailure ]
-
 webkit.org/b/168428 imported/blink/css3/blending/mix-blend-mode-multiply.html [ ImageOnlyFailure ]
 
 webkit.org/b/168429 fast/text/simple-line-layout-simple-text-but-complex-font-path.html [ ImageOnlyFailure ]

@@ -65,7 +65,7 @@ typedef unsigned RGBA32; // Deprecated: Type for an RGBA quadruplet. Use RGBA cl
 WEBCORE_EXPORT RGBA32 makeRGB(int r, int g, int b);
 WEBCORE_EXPORT RGBA32 makeRGBA(int r, int g, int b, int a);
 
-RGBA32 makePremultipliedRGBA(int r, int g, int b, int a);
+RGBA32 makePremultipliedRGBA(int r, int g, int b, int a, bool ceiling = true);
 RGBA32 makeUnPremultipliedRGBA(int r, int g, int b, int a);
 
 WEBCORE_EXPORT RGBA32 colorWithOverrideAlpha(RGBA32 color, float overrideAlpha);
