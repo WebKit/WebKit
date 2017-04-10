@@ -60,9 +60,6 @@
 - path: wasm/spec-tests/comments.wast.js
   cmd: runWebAssemblySpecTest :normal
 
-- path: wasm/spec-tests/conversions.wast.js
-  cmd: runWebAssemblySpecTest :normal
-
 - path: wasm/spec-tests/custom_section.wast.js
   cmd: runWebAssemblySpecTest :skip
 
@@ -72,7 +69,13 @@
 - path: wasm/spec-tests/exports.wast.js
   cmd: runWebAssemblySpecTest :normal
 
+- path: wasm/spec-tests/f32_bitwise.wast.js
+  cmd: runWebAssemblySpecTest :normal
+
 - path: wasm/spec-tests/f32_cmp.wast.js
+  cmd: runWebAssemblySpecTest :normal
+
+- path: wasm/spec-tests/f64_bitwise.wast.js
   cmd: runWebAssemblySpecTest :normal
 
 - path: wasm/spec-tests/f64_cmp.wast.js

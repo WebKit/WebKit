@@ -1,3 +1,22 @@
+2017-04-10  Keith Miller  <keith_miller@apple.com>
+
+        WebAssembly: Update spec tests
+        https://bugs.webkit.org/show_bug.cgi?id=170683
+
+        Rubber-stamped by JF Bastien.
+
+        * wasm.yaml:
+        * wasm/spec-tests/br_table.wast.js:
+        * wasm/spec-tests/conversions.wast.js: Removed.
+        * wasm/spec-tests/f32_bitwise.wast.js: Added.
+        * wasm/spec-tests/f32_cmp.wast.js:
+        * wasm/spec-tests/f64_bitwise.wast.js: Added.
+        * wasm/spec-tests/f64_cmp.wast.js:
+        * wasm/spec-tests/i32.wast.js:
+        * wasm/spec-tests/i64.wast.js:
+        * wasm/spec-tests/int_exprs.wast.js:
+        * wasm/spec-tests/memory.wast.js:
+
 2017-04-09  Joseph Pecoraro  <pecoraro@apple.com>
 
         test262: test262/test/annexB/language/expressions/object/__proto__-fn-name.js
