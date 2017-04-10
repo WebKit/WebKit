@@ -2438,6 +2438,16 @@ PASS Object.getOwnPropertyDescriptor(global, 'WebGPUCommandQueue').hasOwnPropert
 PASS Object.getOwnPropertyDescriptor(global, 'WebGPUCommandQueue').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'WebGPUCommandQueue').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'WebGPUCommandQueue').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'WebGPUComputeCommandEncoder').value is WebGPUComputeCommandEncoder
+PASS Object.getOwnPropertyDescriptor(global, 'WebGPUComputeCommandEncoder').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'WebGPUComputeCommandEncoder').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'WebGPUComputeCommandEncoder').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'WebGPUComputeCommandEncoder').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'WebGPUComputePipelineState').value is WebGPUComputePipelineState
+PASS Object.getOwnPropertyDescriptor(global, 'WebGPUComputePipelineState').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'WebGPUComputePipelineState').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'WebGPUComputePipelineState').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'WebGPUComputePipelineState').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'WebGPUDepthStencilDescriptor').value is WebGPUDepthStencilDescriptor
 PASS Object.getOwnPropertyDescriptor(global, 'WebGPUDepthStencilDescriptor').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'WebGPUDepthStencilDescriptor').hasOwnProperty('set') is false
