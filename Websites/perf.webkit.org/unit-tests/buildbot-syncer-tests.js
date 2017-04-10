@@ -192,7 +192,7 @@ function createSampleBuildRequest(platform, test)
     assert(platform instanceof Platform);
     assert(test instanceof Test);
 
-    let commitSet = CommitSet.ensureSingleton('4197', {commits: [
+    let commitSet = CommitSet.ensureSingleton('4197', {customRoots: [], commits: [
         {'id': '111127', 'time': 1456955807334, 'repository': MockModels.webkit, 'revision': '197463'},
         {'id': '111237', 'time': 1456931874000, 'repository': MockModels.sharedRepository, 'revision': '80229'},
         {'id': '88930', 'time': 0, 'repository': MockModels.ios, 'revision': '13A452'},

@@ -127,6 +127,9 @@ class BuildRequest extends DataModelObject {
             commit.repository = Repository.findById(commit.repository);
         }
 
+        for (let uploadedFile of data['uploadedFiles'])
+            UploadedFile.ensureSingleton(uploadedFile.id, uploadedFile);
+
         const commitSets = data['commitSets'].map((row) => {
             row.commits = row.commits.map((commitId) => commitIdMap[commitId]);
             return CommitSet.ensureSingleton(row.id, row);

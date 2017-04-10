@@ -35,6 +35,7 @@ function main($id, $path, $post_data) {
         'buildRequests' => $resolve_id ? $requests_fetcher->results_with_resolved_ids() : $requests_fetcher->results(),
         'commitSets' => $requests_fetcher->commit_sets(),
         'commits' => $requests_fetcher->commits(),
+        'uploadedFiles' => $requests_fetcher->uploaded_files(),
     ));
 }
 

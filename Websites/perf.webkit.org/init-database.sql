@@ -204,8 +204,8 @@ CREATE TABLE analysis_tasks (
     task_segmentation integer REFERENCES analysis_strategies,
     task_test_range integer REFERENCES analysis_strategies,
     task_created_at timestamp NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
-    task_platform integer REFERENCES platforms NOT NULL,
-    task_metric integer REFERENCES test_metrics NOT NULL,
+    task_platform integer REFERENCES platforms,
+    task_metric integer REFERENCES test_metrics,
     task_start_run integer REFERENCES test_runs,
     task_start_run_time timestamp,
     task_end_run integer REFERENCES test_runs,
@@ -213,8 +213,13 @@ CREATE TABLE analysis_tasks (
     task_result analysis_task_result_type,
     task_needed boolean,
     CONSTRAINT analysis_task_should_be_unique_for_range UNIQUE(task_start_run, task_end_run),
-    CONSTRAINT analysis_task_should_not_be_associated_with_single_run
-        CHECK ((task_start_run IS NULL AND task_end_run IS NULL) OR (task_start_run IS NOT NULL AND task_end_run IS NOT NULL)));
+    CONSTRAINT analysis_task_must_be_associated_with_run_or_be_custom
+        CHECK ((task_start_run IS NULL AND task_start_run_time IS NULL
+                AND task_end_run IS NULL AND task_end_run_time IS NULL
+                AND task_platform IS NULL AND task_metric IS NULL)
+            OR (task_start_run IS NOT NULL AND task_start_run_time IS NOT NULL
+                AND task_end_run IS NOT NULL AND task_end_run_time IS NOT NULL
+                AND task_platform IS NOT NULL AND task_metric IS NOT NULL)));
 
 CREATE TABLE task_commits (
     taskcommit_task integer NOT NULL REFERENCES analysis_tasks ON DELETE CASCADE,
@@ -280,7 +285,9 @@ CREATE TABLE commit_sets (
 
 CREATE TABLE commit_set_relationships (
     commitset_set integer REFERENCES commit_sets NOT NULL,
-    commitset_commit integer REFERENCES commits NOT NULL);
+    commitset_commit integer REFERENCES commits,
+    commitset_root_file integer REFERENCES uploaded_files,
+    CONSTRAINT commitset_must_have_commit_or_root CHECK (commitset_commit IS NOT NULL OR commitset_root_file IS NOT NULL));
 
 CREATE TYPE build_request_status_type as ENUM ('pending', 'scheduled', 'running', 'failed', 'completed', 'canceled');
 CREATE TABLE build_requests (

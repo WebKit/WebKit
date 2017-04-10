@@ -15,9 +15,8 @@ function sampleTestGroup() {
             "createdAt": 1458688514000,
             "hidden": false,
             "buildRequests": ["16985", "16986", "16987", "16988", "16989", "16990", "16991", "16992"],
-            "commitSets": ["4255", "4256", "4255", "4256", "4255", "4256", "4255", "4256"]
-        }
-        ],
+            "commitSets": ["4255", "4256"],
+        }],
         "buildRequests": [{
             "id": "16985",
             "triggerable": "3",
@@ -67,16 +66,16 @@ function sampleTestGroup() {
             "url": null,
             "build": null,
             "createdAt": 1458688514000
-        }
-        ],
+        }],
         "commitSets": [{
             "id": "4255",
-            "commits": ["87832", "93116"]
+            "commits": ["87832", "93116"],
+            "customRoots": [],
         }, {
             "id": "4256",
-            "commits": ["87832", "96336"]
-        }
-        ],
+            "commits": ["87832", "96336"],
+            "customRoots": [],
+        }],
         "commits": [{
             "id": "87832",
             "repository": "9",
@@ -97,8 +96,8 @@ function sampleTestGroup() {
             "repository": "11",
             "revision": "192736",
             "time": 1448225325650
-        }
-        ],
+        }],
+        "uploadedFiles": [],
         "status": "OK"
     };
 }

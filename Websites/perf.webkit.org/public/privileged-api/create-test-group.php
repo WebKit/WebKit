@@ -11,16 +11,28 @@ function main()
 
     $arguments = validate_arguments($data, array(
         'name' => '/.+/',
-        'task' => 'int',
+        'task' => 'int?',
         'repetitionCount' => 'int?',
     ));
     $name = $arguments['name'];
-    $task_id = $arguments['task'];
+    $task_id = array_get($arguments, 'task');
+    $task_name = array_get($data, 'taskName');
     $repetition_count = $arguments['repetitionCount'];
+    $platform_id = array_get($data, 'platform');
+    $test_id = array_get($data, 'test');
     $revision_set_list = array_get($data, 'revisionSets');
     $commit_sets_info = array_get($data, 'commitSets');
 
-    require_format('Task', $task_id, '/^\d+$/');
+    if (!$task_id == !$task_name)
+        exit_with_error('InvalidTask');
+
+    if ($task_id)
+        require_format('Task', $task_id, '/^\d+$/');
+    if ($task_name || $platform_id || $test_id) {
+        require_format('Platform', $platform_id, '/^\d+$/');
+        require_format('Test', $test_id, '/^\d+$/');
+    }
+
     if (!$revision_set_list && !$commit_sets_info)
         exit_with_error('InvalidCommitSets');
 
@@ -29,39 +41,65 @@ function main()
     else if ($repetition_count < 1)
         exit_with_error('InvalidRepetitionCount', array('repetitionCount' => $repetition_count));
 
-    $task = $db->select_first_row('analysis_tasks', 'task', array('id' => $task_id));
-    if (!$task)
-        exit_with_error('InvalidTask', array('task' => $task_id));
-    $triggerable = find_triggerable_for_task($db, $task_id);
-    if (!$triggerable)
-        exit_with_error('TriggerableNotFoundForTask', array('task' => $task_id));
+    $triggerable_id = NULL;
+    if ($task_id) {
+        $task = $db->select_first_row('analysis_tasks', 'task', array('id' => $task_id));
+        if (!$task)
+            exit_with_error('InvalidTask', array('task' => $task_id));
+        $triggerable = find_triggerable_for_task($db, $task_id);
+        if ($triggerable) {
+            $triggerable_id = $triggerable['id'];
+            if (!$platform_id && !$test_id) {
+                $platform_id = $triggerable['platform'];
+                $test_id = $triggerable['test'];
+            } else {
+                if ($triggerable['platform'] && $platform_id != $triggerable['platform'])
+                    exit_with_error('InconsistentPlatform', array('groupPlatform' => $platform_id, 'taskPlatform' => $triggerable['platform']));
+                if ($triggerable['test'] && $test_id != $triggerable['test'])
+                    exit_with_error('InconsistentTest', array('groupTest' => $test_id, 'taskTest' => $triggerable['test']));
+            }
+        }
+    } else if ($platform_id && $test_id) {
+        $triggerable_configuration = $db->select_first_row('triggerable_configurations', 'trigconfig',
+            array('test' => $test_id, 'platform' => $platform_id));
+        if ($triggerable_configuration)
+            $triggerable_id = $triggerable_configuration['trigconfig_triggerable'];
+    }
+
+    if (!$triggerable_id)
+        exit_with_error('TriggerableNotFoundForTask', array('task' => $task_id, 'platform' => $platform_id, 'test' => $test_id));
 
     if ($revision_set_list)
-        $commit_sets = commit_sets_from_revision_sets($db, $triggerable['id'], $revision_set_list);
+        $commit_sets = commit_sets_from_revision_sets($db, $triggerable_id, $revision_set_list);
     else // V2 UI compatibility
-        $commit_sets = ensure_commit_sets($db, $triggerable['id'], $commit_sets_info);
+        $commit_sets = ensure_commit_sets($db, $triggerable_id, $commit_sets_info);
 
     $db->begin_transaction();
+
+    if ($task_name)
+        $task_id = $db->insert_row('analysis_tasks', 'task', array('name' => $task_name, 'author' => $author));
 
     $configuration_list = array();
     foreach ($commit_sets as $commit_list) {
         $commit_set_id = $db->insert_row('commit_sets', 'commitset', array());
-        foreach ($commit_list['set'] as $commit)
-            $db->insert_row('commit_set_relationships', 'commitset', array('set' => $commit_set_id, 'commit' => $commit), 'commit');
+        foreach ($commit_list['set'] as $commit_row) {
+            $commit_row['set'] = $commit_set_id;
+            $db->insert_row('commit_set_relationships', 'commitset', $commit_row, 'commit');
+        }
         array_push($configuration_list, array('commit_set' => $commit_set_id, 'repository_group' => $commit_list['repository_group']));
     }
 
     $group_id = $db->insert_row('analysis_test_groups', 'testgroup',
-        array('task' => $task['task_id'], 'name' => $name, 'author' => $author));
+        array('task' => $task_id, 'name' => $name, 'author' => $author));
 
     $order = 0;
     for ($i = 0; $i < $repetition_count; $i++) {
         foreach ($configuration_list as $config) {
             $db->insert_row('build_requests', 'request', array(
-                'triggerable' => $triggerable['id'],
+                'triggerable' => $triggerable_id,
                 'repository_group' => $config['repository_group'],
-                'platform' => $triggerable['platform'],
-                'test' => $triggerable['test'],
+                'platform' => $platform_id,
+                'test' => $test_id,
                 'group' => $group_id,
                 'order' => $order,
                 'commit_set' => $config['commit_set'],));
@@ -71,7 +109,7 @@ function main()
 
     $db->commit_transaction();
 
-    exit_with_success(array('testGroupId' => $group_id));
+    exit_with_success(array('taskId' => $task_id, 'testGroupId' => $group_id));
 }
 
 function commit_sets_from_revision_sets($db, $triggerable_id, $revision_set_list)
@@ -87,15 +125,23 @@ function commit_sets_from_revision_sets($db, $triggerable_id, $revision_set_list
 
         $commit_set = array();
         $repository_list = array();
-
         foreach ($revision_set as $repository_id => $revision) {
+            if ($repository_id == 'customRoots') {
+                $file_id_list = $revision;
+                foreach ($file_id_list as $file_id) {
+                    if (!$db->select_first_row('uploaded_files', 'file', array('id' => $file_id)))
+                        exit_with_error('InvalidUploadedFile', array('file' => $file_id));
+                    array_push($commit_set, array('root_file' => $file_id));
+                }
+                continue;
+            }
             if (!is_numeric($repository_id))
                 exit_with_error('InvalidRepository', array('repository' => $repository_id));
             $commit = $db->select_first_row('commits', 'commit',
                 array('repository' => intval($repository_id), 'revision' => $revision));
             if (!$commit)
                 exit_with_error('RevisionNotFound', array('repository' => $repository_id, 'revision' => $revision));
-            array_push($commit_set, $commit['commit_id']);
+            array_push($commit_set, array('commit' => $commit['commit_id']));
             array_push($repository_list, $repository_id);
         }
 
@@ -127,7 +173,7 @@ function ensure_commit_sets($db, $triggerable_id, $commit_sets_info) {
             if (!$commit)
                 exit_with_error('RevisionNotFound', array('repository' => $repository_name, 'revision' => $revision));
             array_set_default($commit_sets, $i, array('set' => array()));
-            array_push($commit_sets[$i]['set'], $commit['commit_id']);
+            array_push($commit_sets[$i]['set'], array('commit' => $commit['commit_id']));
         }
     }
 

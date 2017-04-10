@@ -118,6 +118,28 @@ class CommitLogFetcher {
         return $this->format_single_commit($this->db->select_last_row('commits', 'commit', array('repository' => $repository_id), array('time', 'order')));
     }
 
+    function fetch_latest_for_platform($repository_id, $platform_id)
+    {
+        $query_result = $this->db->query_and_fetch_all("SELECT commits.* FROM test_runs, builds, build_commits, commits
+            WHERE run_build = build_id AND NOT EXISTS (SELECT * FROM build_requests WHERE request_build = build_id)
+                AND run_config IN (SELECT config_id FROM test_configurations
+                    WHERE config_type = 'current' AND config_platform = $2 AND config_metric
+                        IN (SELECT metric_id FROM test_metrics, tests WHERE metric_id = test_id and test_parent IS NULL))
+                AND run_build = build_id AND commit_build = build_id AND build_commit = commit_id AND commit_repository = $1
+            ORDER BY build_time DESC LIMIT 1;", array($repository_id, $platform_id));
+        /* This query is approximation. It finds the commit of the last build instead of the last commit.
+        We would ideally run the following query but it's much slower ~70s compared to 300ms.
+            SELECT commits.*, commit_build, run_id
+                FROM commits, build_commits, test_runs
+                WHERE commit_repository = 9 AND commit_id = build_commit AND commit_build = run_build
+                AND run_config IN (SELECT config_id FROM test_configurations WHERE config_platform = 38 AND config_type = 'current')
+                AND NOT EXISTS (SELECT * FROM build_requests WHERE request_build = commit_build)
+                ORDER BY commit_time DESC, commit_order DESC LIMIT 1; */
+        if (!$query_result)
+            return array();
+        return $this->format_single_commit($query_result[0]);
+    }
+
     function fetch_last_reported($repository_id) {
         return $this->format_single_commit($this->db->select_last_row('commits', 'commit', array('repository' => $repository_id, 'reported' => true), array('time', 'order')));
     }

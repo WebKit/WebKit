@@ -23,7 +23,7 @@ describe('/api/build-requests', function () {
             assert.deepEqual(content['buildRequests'], []);
             assert.deepEqual(content['commitSets'], []);
             assert.deepEqual(content['commits'], []);
-            assert.deepEqual(Object.keys(content).sort(), ['buildRequests', 'commitSets', 'commits', 'status']);
+            assert.deepEqual(Object.keys(content).sort(), ['buildRequests', 'commitSets', 'commits', 'status', 'uploadedFiles']);
         });
     });
 
@@ -31,7 +31,7 @@ describe('/api/build-requests', function () {
         return MockData.addMockData(TestServer.database()).then(() => {
             return TestServer.remoteAPI().getJSONWithStatus('/api/build-requests/build-webkit');
         }).then((content) => {
-            assert.deepEqual(Object.keys(content).sort(), ['buildRequests', 'commitSets', 'commits', 'status']);
+            assert.deepEqual(Object.keys(content).sort(), ['buildRequests', 'commitSets', 'commits', 'status', 'uploadedFiles']);
 
             assert.equal(content['commitSets'].length, 2);
             assert.equal(content['commitSets'][0].id, 401);
@@ -85,7 +85,7 @@ describe('/api/build-requests', function () {
         return MockData.addMockData(TestServer.database()).then(() => {
             return TestServer.remoteAPI().getJSONWithStatus('/api/build-requests/build-webkit?useLegacyIdResolution=true');
         }).then((content) => {
-            assert.deepEqual(Object.keys(content).sort(), ['buildRequests', 'commitSets', 'commits', 'status']);
+            assert.deepEqual(Object.keys(content).sort(), ['buildRequests', 'commitSets', 'commits', 'status', 'uploadedFiles']);
 
             assert.equal(content['commitSets'].length, 2);
             assert.equal(content['commitSets'][0].id, 401);
