@@ -87,7 +87,7 @@ public:
 #endif
 
     // Returns the repeat interval of the animation for the progress bar.
-    double animationRepeatIntervalForProgressBar(RenderProgress&) const override;
+    Seconds animationRepeatIntervalForProgressBar(RenderProgress&) const override;
     // Returns the duration of the animation for the progress bar.
     double animationDurationForProgressBar(RenderProgress&) const override;
     IntRect progressBarRectForBounds(const RenderObject&, const IntRect&) const override;

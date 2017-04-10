@@ -1,3 +1,183 @@
+2017-04-10  Chris Dumez  <cdumez@apple.com>
+
+        Drop Timer::startOneShot() overload taking a double
+        https://bugs.webkit.org/show_bug.cgi?id=170659
+
+        Reviewed by Yusuke Suzuki.
+
+        Drop Timer::startOneShot() overload taking a double as people should use Seconds type now.
+
+        * Modules/geolocation/GeoNotifier.cpp:
+        (WebCore::GeoNotifier::startTimerIfNeeded):
+        * Modules/mediasession/WebMediaSessionManager.cpp:
+        (WebCore::WebMediaSessionManager::configureWatchdogTimer):
+        * Modules/mediasession/WebMediaSessionManager.h:
+        * Modules/mediastream/CanvasCaptureMediaStreamTrack.cpp:
+        (WebCore::CanvasCaptureMediaStreamTrack::Source::canvasChanged):
+        * Modules/vibration/Vibration.cpp:
+        (WebCore::Vibration::timerFired):
+        * Modules/websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::close):
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::enqueuePasswordValueChangeNotification):
+        (WebCore::AXObjectCache::postLiveRegionChangeNotification):
+        (WebCore::AXObjectCache::focusAriaModalNode):
+        * css/CSSFontFace.cpp:
+        (WebCore::CSSFontFace::setStatus):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::addToMatchedPropertiesCache):
+        * dom/Document.cpp:
+        (WebCore::Document::setVisualUpdatesAllowed):
+        (WebCore::Document::finishedParsing):
+        * dom/ScriptedAnimationController.cpp:
+        * editing/AlternativeTextController.cpp:
+        (WebCore::AlternativeTextController::startAlternativeTextUITimer):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::addBehaviorRestrictionsOnEndIfNecessary):
+        (WebCore::HTMLMediaElement::handleSeekToPlaybackPosition):
+        * html/SearchInputType.cpp:
+        (WebCore::SearchInputType::startSearchEventTimer):
+        * html/ValidationMessage.cpp:
+        (WebCore::ValidationMessage::setMessageDOMAndStartTimer):
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlPanelElement::startTimer):
+        (WebCore::MediaControlPanelElement::makeTransparent):
+        * html/track/VTTRegion.cpp:
+        (WebCore::VTTRegion::startTimer):
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::frameScheduledNavigationImpl):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::frameScheduledNavigation):
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::frameScheduledNavigation):
+        * inspector/InspectorPageAgent.h:
+        * loader/NavigationScheduler.cpp:
+        (WebCore::NavigationScheduler::startTimer):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::documentDidFinishLoadEvent):
+        * loader/icon/IconDatabase.cpp:
+        * page/EventHandler.cpp:
+        * page/EventSource.cpp:
+        (WebCore::EventSource::scheduleReconnect):
+        * page/FocusController.cpp:
+        (WebCore::FocusController::setFocusedElementNeedsRepaint):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scrollPositionChanged):
+        (WebCore::FrameView::enableSpeculativeTilingIfNeeded):
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        * page/Settings.h:
+        (WebCore::Settings::setTimeWithoutMouseMovementBeforeHidingControls):
+        (WebCore::Settings::timeWithoutMouseMovementBeforeHidingControls):
+        * page/SuspendableTimer.h:
+        * page/animation/CSSAnimationController.cpp:
+        * page/mac/EventHandlerMac.mm:
+        * page/mac/TextIndicatorWindow.mm:
+        (WebCore::TextIndicatorWindow::setTextIndicator):
+        * platform/HysteresisActivity.h:
+        (WebCore::HysteresisActivity::stop):
+        * platform/ScrollAnimationSmooth.cpp:
+        (WebCore::getAnimationParametersForGranularity):
+        (WebCore::ScrollAnimationSmooth::updatePerAxisData):
+        (WebCore::ScrollAnimationSmooth::animateScroll):
+        (WebCore::ScrollAnimationSmooth::animationTimerFired):
+        (WebCore::ScrollAnimationSmooth::startNextTimer):
+        * platform/ScrollAnimationSmooth.h:
+        * platform/Timer.h:
+        (WebCore::TimerBase::startRepeating):
+        * platform/audio/PlatformMediaSession.cpp:
+        (WebCore::PlatformMediaSession::scheduleClientDataBufferingCheck):
+        * platform/cocoa/ScrollController.mm:
+        (WebCore::ScrollController::scheduleStatelessScrollSnap):
+        * platform/gamepad/cocoa/GameControllerGamepadProvider.mm:
+        (WebCore::GameControllerGamepadProvider::gamepadHadInput):
+        * platform/gamepad/mac/HIDGamepadProvider.cpp:
+        (WebCore::HIDGamepadProvider::openAndScheduleManager):
+        (WebCore::HIDGamepadProvider::valuesChanged):
+        * platform/glib/MainThreadSharedTimerGLib.cpp:
+        (WebCore::MainThreadSharedTimer::setFireInterval):
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::startTimer):
+        (WebCore::BitmapImage::internalStartAnimation):
+        (WebCore::BitmapImage::advanceAnimation):
+        (WebCore::BitmapImage::resetAnimation):
+        * platform/graphics/BitmapImage.h:
+        * platform/graphics/MediaPlaybackTargetPicker.cpp:
+        * platform/graphics/ShadowBlur.cpp:
+        (WebCore::ScratchBuffer::scheduleScratchBufferPurge):
+        * platform/graphics/ca/LayerPool.cpp:
+        (WebCore::LayerPool::schedulePrune):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::changePipelineState):
+        * platform/graphics/mac/GraphicsContext3DMac.mm:
+        (WebCore::GraphicsContext3DManager::updateHighPerformanceState):
+        * platform/graphics/texmap/BitmapTexturePool.cpp:
+        (WebCore::BitmapTexturePool::scheduleReleaseUnusedTextures):
+        (WebCore::BitmapTexturePool::releaseUnusedTexturesTimerFired):
+        * platform/graphics/texmap/TextureMapperPlatformLayerProxy.cpp:
+        (WebCore::TextureMapperPlatformLayerProxy::scheduleReleaseUnusedBuffers):
+        (WebCore::TextureMapperPlatformLayerProxy::releaseUnusedBuffersTimerFired):
+        * platform/graphics/texmap/coordinated/CoordinatedImageBacking.cpp:
+        * platform/gtk/ScrollAnimatorGtk.cpp:
+        (WebCore::ScrollAnimatorGtk::overlayScrollbarAnimationTimerFired):
+        (WebCore::ScrollAnimatorGtk::showOverlayScrollbars):
+        (WebCore::ScrollAnimatorGtk::hideOverlayScrollbars):
+        * platform/gtk/ScrollAnimatorGtk.h:
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        (WebVideoFullscreenInterfaceAVKit::shouldExitFullscreenWithReason):
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::startScrollbarPaintTimer):
+        * platform/mock/MediaPlaybackTargetPickerMock.cpp:
+        * platform/mock/PlatformSpeechSynthesizerMock.cpp:
+        (WebCore::PlatformSpeechSynthesizerMock::speak):
+        * platform/mock/TimerEventBasedMock.h:
+        (WebCore::TimerEvent::TimerEvent):
+        * platform/network/DNSResolveQueue.cpp:
+        (WebCore::DNSResolveQueue::add):
+        (WebCore::DNSResolveQueue::timerFired):
+        * platform/network/PingHandle.h:
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::ResourceHandleManager::downloadTimerCallback):
+        (WebCore::ResourceHandleManager::add):
+        (WebCore::ResourceHandleManager::cancel):
+        * platform/network/mac/NetworkStateNotifierMac.cpp:
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::ResourceHandle::sendPendingRequest):
+        * rendering/ImageQualityController.cpp:
+        (WebCore::ImageQualityController::restartTimer):
+        * rendering/RenderLayerCompositor.cpp:
+        * rendering/RenderProgress.cpp:
+        (WebCore::RenderProgress::RenderProgress):
+        * rendering/RenderProgress.h:
+        * rendering/RenderText.cpp:
+        (WebCore::SecureTextTimer::restart):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::animationRepeatIntervalForProgressBar):
+        * rendering/RenderTheme.h:
+        (WebCore::RenderTheme::mediaControlsFadeOutDuration):
+        * rendering/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::animationRepeatIntervalForProgressBar):
+        * rendering/RenderThemeGtk.h:
+        * rendering/RenderThemeIOS.h:
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::animationRepeatIntervalForProgressBar):
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::animationRepeatIntervalForProgressBar):
+        (WebCore::RenderThemeMac::animationDurationForProgressBar):
+        * replay/EventLoopInputDispatcher.cpp:
+        (WebCore::EventLoopInputDispatcher::dispatchInputSoon):
+        * svg/animation/SMILTimeContainer.cpp:
+        (WebCore::SMILTimeContainer::startTimer):
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::setTimeWithoutMouseMovementBeforeHidingControls):
+        * testing/InternalSettings.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::setImageFrameDecodingDuration):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::createRequest):
+
 2017-04-10  Miguel Gomez  <magomez@igalia.com>
 
         REGRESSION(r205841): [GTK] Test fast/images/animated-png.html is failing since r205841

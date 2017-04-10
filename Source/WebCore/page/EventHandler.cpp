@@ -157,14 +157,14 @@ using namespace SVGNames;
 // during a scroll. The short interval is used if the content responds to the mouse events
 // in fakeMouseMoveDurationThreshold or less, otherwise the long interval is used.
 const double fakeMouseMoveDurationThreshold = 0.01;
-const double fakeMouseMoveShortInterval = 0.1;
-const double fakeMouseMoveLongInterval = 0.25;
+const Seconds fakeMouseMoveShortInterval = { 100_ms };
+const Seconds fakeMouseMoveLongInterval = { 250_ms };
 #endif
 
 #if ENABLE(CURSOR_SUPPORT)
 // The amount of time to wait for a cursor update on style and layout changes
 // Set to 50Hz, no need to be faster than common screen refresh rate
-const double cursorUpdateInterval = 0.02;
+static const Seconds cursorUpdateInterval { 20_ms };
 
 const int maximumCursorSize = 128;
 #endif

@@ -168,7 +168,7 @@ private:
 #endif
 #endif
 
-    double animationRepeatIntervalForProgressBar(RenderProgress&) const override;
+    Seconds animationRepeatIntervalForProgressBar(RenderProgress&) const override;
     double animationDurationForProgressBar(RenderProgress&) const override;
     void adjustProgressBarStyle(StyleResolver&, RenderStyle&, const Element*) const override;
     IntRect progressBarRectForBounds(const RenderObject&, const IntRect&) const override;

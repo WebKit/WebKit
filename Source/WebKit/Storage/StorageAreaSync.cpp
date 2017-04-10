@@ -41,7 +41,7 @@ namespace WebKit {
 
 // If the StorageArea undergoes rapid changes, don't sync each change to disk.
 // Instead, queue up a batch of items to sync and actually do the sync at the following interval.
-static const double StorageSyncInterval = 1.0;
+static const Seconds StorageSyncInterval { 1_s };
 
 // A sane limit on how many items we'll schedule to sync all at once.  This makes it
 // much harder to starve the rest of LocalStorage and the OS's IO subsystem in general.

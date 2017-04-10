@@ -144,7 +144,7 @@ void ValidationMessage::setMessageDOMAndStartTimer()
         m_timer = nullptr;
     else {
         m_timer = std::make_unique<Timer>(*this, &ValidationMessage::deleteBubbleTree);
-        m_timer->startOneShot(std::max(5.0, static_cast<double>(m_message.length()) * magnification / 1000));
+        m_timer->startOneShot(std::max(5_s, 1_ms * static_cast<double>(m_message.length()) * magnification));
     }
 }
 

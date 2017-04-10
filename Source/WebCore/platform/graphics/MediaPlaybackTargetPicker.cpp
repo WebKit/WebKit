@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-static const double pendingActionInterval = 1.0 / 10.0;
+static const Seconds pendingActionInterval { 100_ms };
 
 MediaPlaybackTargetPicker::MediaPlaybackTargetPicker(Client& client)
     : m_client(&client)

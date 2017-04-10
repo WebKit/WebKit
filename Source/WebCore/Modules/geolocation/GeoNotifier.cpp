@@ -87,7 +87,7 @@ void GeoNotifier::runErrorCallback(PositionError* error)
 
 void GeoNotifier::startTimerIfNeeded()
 {
-    m_timer.startOneShot(m_options.timeout / 1000.0);
+    m_timer.startOneShot(1_ms * m_options.timeout);
 }
 
 void GeoNotifier::stopTimer()

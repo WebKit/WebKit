@@ -140,7 +140,7 @@ AlternativeTextController::~AlternativeTextController()
 
 void AlternativeTextController::startAlternativeTextUITimer(AlternativeTextType type)
 {
-    const double correctionPanelTimerInterval = 0.3;
+    const Seconds correctionPanelTimerInterval { 300_ms };
     if (!isAutomaticSpellingCorrectionEnabled())
         return;
 

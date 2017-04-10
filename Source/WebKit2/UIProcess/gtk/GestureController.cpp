@@ -127,7 +127,7 @@ void GestureController::DragGesture::begin(DragGesture* dragGesture, double x, d
     GtkWidget* widget = gtk_event_controller_get_widget(GTK_EVENT_CONTROLLER(gesture));
     unsigned delay;
     g_object_get(gtk_widget_get_settings(widget), "gtk-long-press-time", &delay, nullptr);
-    dragGesture->m_longPressTimeout.startOneShot(delay / 1000.0);
+    dragGesture->m_longPressTimeout.startOneShot(1_ms * delay);
 }
 
 void GestureController::DragGesture::update(DragGesture* dragGesture, double x, double y, GtkGesture* gesture)

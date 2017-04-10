@@ -118,7 +118,7 @@ void EventLoopInputDispatcher::dispatchInputSoon()
     }
 
     LOG(WebReplay, "%-20s (WAIT: %.3f ms)", "ReplayEvents", waitInterval * 1000.0);
-    m_timer.startOneShot(waitInterval);
+    m_timer.startOneShot(1_s * waitInterval);
 }
 
 void EventLoopInputDispatcher::dispatchInput()

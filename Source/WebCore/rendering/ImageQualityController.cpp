@@ -35,7 +35,7 @@
 namespace WebCore {
 
 static const double cInterpolationCutoff = 800. * 800.;
-static const double cLowQualityTimeThreshold = 0.500; // 500 ms
+static const Seconds lowQualityTimeThreshold { 500_ms };
 
 ImageQualityController::ImageQualityController(const RenderView& renderView)
     : m_renderView(renderView)
@@ -94,7 +94,7 @@ void ImageQualityController::highQualityRepaintTimerFired()
 
 void ImageQualityController::restartTimer()
 {
-    m_timer.startOneShot(cLowQualityTimeThreshold);
+    m_timer.startOneShot(lowQualityTimeThreshold);
 }
 
 std::optional<InterpolationQuality> ImageQualityController::interpolationQualityFromStyle(const RenderStyle& style)

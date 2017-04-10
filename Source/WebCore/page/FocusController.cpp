@@ -1089,7 +1089,7 @@ bool FocusController::advanceFocusDirectionally(FocusDirection direction, Keyboa
 
 void FocusController::setFocusedElementNeedsRepaint()
 {
-    m_focusRepaintTimer.startOneShot(0.033);
+    m_focusRepaintTimer.startOneShot(33_ms);
 }
 
 void FocusController::focusRepaintTimerFired()

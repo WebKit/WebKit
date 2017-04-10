@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-static const double taskDelayInterval = 1.0 / 10.0;
+static const Seconds taskDelayInterval { 100_ms };
 
 struct ClientState {
     explicit ClientState(WebMediaSessionManagerClient& client, uint64_t contextId)
@@ -423,8 +423,8 @@ size_t WebMediaSessionManager::find(WebMediaSessionManagerClient* client, uint64
 
 void WebMediaSessionManager::configureWatchdogTimer()
 {
-    static const double watchdogTimerIntervalAfterPausing = 60 * 60;
-    static const double watchdogTimerIntervalAfterPlayingToEnd = 8 * 60;
+    static const Seconds watchdogTimerIntervalAfterPausing { 1_h };
+    static const Seconds watchdogTimerIntervalAfterPlayingToEnd { 8_min };
 
     if (!m_playbackTarget || !m_playbackTarget->hasActiveRoute()) {
         m_watchdogTimer.stop();
@@ -442,14 +442,14 @@ void WebMediaSessionManager::configureWatchdogTimer()
     }
 
     if (stopTimer) {
-        m_currentWatchdogInterval = 0;
+        m_currentWatchdogInterval = { };
         m_watchdogTimer.stop();
         LOG(Media, "WebMediaSessionManager::configureWatchdogTimer - timer stopped");
     } else {
-        double interval = didPlayToEnd ? watchdogTimerIntervalAfterPlayingToEnd : watchdogTimerIntervalAfterPausing;
+        Seconds interval = didPlayToEnd ? watchdogTimerIntervalAfterPlayingToEnd : watchdogTimerIntervalAfterPausing;
         if (interval != m_currentWatchdogInterval || !m_watchdogTimer.isActive()) {
             m_watchdogTimer.startOneShot(interval);
-            LOG(Media, "WebMediaSessionManager::configureWatchdogTimer - timer scheduled for %.0f", interval);
+            LOG(Media, "WebMediaSessionManager::configureWatchdogTimer - timer scheduled for %.0f seconds", interval.value());
         }
         m_currentWatchdogInterval = interval;
     }

@@ -67,7 +67,7 @@ static const int currentDatabaseVersion = 6;
 // Icons expire once every 4 days
 static const int iconExpirationTime = 60*60*24*4; 
 
-static const int updateTimerDelay = 5; 
+static const Seconds updateTimerDelay { 5_s };
 
 static bool checkIntegrityOnOpen = false;
 

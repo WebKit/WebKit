@@ -527,7 +527,7 @@ void CSSFontFace::setStatus(Status newStatus)
     }
 
     if (newStatus == Status::Loading)
-        m_timeoutTimer.startOneShot(webFontsShouldAlwaysFallBack() ? 0 : 3);
+        m_timeoutTimer.startOneShot(webFontsShouldAlwaysFallBack() ? 0_s : 3_s);
     else if (newStatus == Status::Success || newStatus == Status::Failure)
         m_timeoutTimer.stop();
 

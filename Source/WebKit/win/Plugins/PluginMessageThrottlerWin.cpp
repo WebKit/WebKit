@@ -39,7 +39,7 @@ namespace WebCore {
 // This value allows Flash 60 messages/second, which should be enough for video
 // playback, and also gets us over the limit for kicking into high-resolution
 // timer mode (see SharedTimerWin.cpp).
-static const double MessageThrottleTimeInterval = 0.016;
+static const Seconds messageThrottleTimeInterval { 16_ms };
 
 // During a continuous stream of messages, process one every 5ms.
 static const double MessageDirectProcessingInterval = 0.005;
@@ -95,7 +95,7 @@ void PluginMessageThrottlerWin::appendMessage(HWND hWnd, UINT msg, WPARAM wParam
     }
 
     if (!m_messageThrottleTimer.isActive())
-        m_messageThrottleTimer.startOneShot(MessageThrottleTimeInterval);
+        m_messageThrottleTimer.startOneShot(messageThrottleTimeInterval);
 }
 
 void PluginMessageThrottlerWin::processQueuedMessage()
@@ -118,7 +118,7 @@ void PluginMessageThrottlerWin::messageThrottleTimerFired()
     processQueuedMessage();
 
     if (m_front)
-        m_messageThrottleTimer.startOneShot(MessageThrottleTimeInterval);
+        m_messageThrottleTimer.startOneShot(messageThrottleTimeInterval);
 }
 
 PluginMessage* PluginMessageThrottlerWin::allocateMessage()

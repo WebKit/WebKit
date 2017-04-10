@@ -38,8 +38,8 @@
 
 namespace WebCore {
 
-static const double overflowScrollbarsAnimationDuration = 1;
-static const double overflowScrollbarsAnimationHideDelay = 2;
+static const Seconds overflowScrollbarsAnimationDuration { 1_s };
+static const Seconds overflowScrollbarsAnimationHideDelay { 2_s };
 
 std::unique_ptr<ScrollAnimator> ScrollAnimator::create(ScrollableArea& scrollableArea)
 {
@@ -176,10 +176,10 @@ void ScrollAnimatorGtk::overlayScrollbarAnimationTimerFired()
     if (m_overlayScrollbarsLocked)
         return;
 
-    double currentTime = monotonicallyIncreasingTime();
+    MonotonicTime currentTime = MonotonicTime::now();
     double progress = 1;
     if (currentTime < m_overlayScrollbarAnimationEndTime)
-        progress = (currentTime - m_overlayScrollbarAnimationStartTime) / (m_overlayScrollbarAnimationEndTime - m_overlayScrollbarAnimationStartTime);
+        progress = (currentTime - m_overlayScrollbarAnimationStartTime).value() / (m_overlayScrollbarAnimationEndTime - m_overlayScrollbarAnimationStartTime).value();
     progress = m_overlayScrollbarAnimationSource + (easeOutCubic(progress) * (m_overlayScrollbarAnimationTarget - m_overlayScrollbarAnimationSource));
     if (progress != m_overlayScrollbarAnimationCurrent) {
         m_overlayScrollbarAnimationCurrent = progress;
@@ -188,9 +188,9 @@ void ScrollAnimatorGtk::overlayScrollbarAnimationTimerFired()
 
     if (m_overlayScrollbarAnimationCurrent != m_overlayScrollbarAnimationTarget) {
         static const double frameRate = 60;
-        static const double tickTime = 1 / frameRate;
-        static const double minimumTimerInterval = .001;
-        double deltaToNextFrame = std::max(tickTime - (monotonicallyIncreasingTime() - currentTime), minimumTimerInterval);
+        static const Seconds tickTime = 1_s / frameRate;
+        static const Seconds minimumTimerInterval = 1_ms;
+        Seconds deltaToNextFrame = std::max(tickTime - (MonotonicTime::now() - currentTime), minimumTimerInterval);
         m_overlayScrollbarAnimationTimer.startOneShot(deltaToNextFrame);
     } else
         hideOverlayScrollbars();
@@ -211,7 +211,7 @@ void ScrollAnimatorGtk::showOverlayScrollbars()
     m_overlayScrollbarAnimationSource = m_overlayScrollbarAnimationCurrent;
     m_overlayScrollbarAnimationTarget = 1;
     if (m_overlayScrollbarAnimationTarget != m_overlayScrollbarAnimationCurrent) {
-        m_overlayScrollbarAnimationStartTime = monotonicallyIncreasingTime();
+        m_overlayScrollbarAnimationStartTime = MonotonicTime::now();
         m_overlayScrollbarAnimationEndTime = m_overlayScrollbarAnimationStartTime + overflowScrollbarsAnimationDuration;
         m_overlayScrollbarAnimationTimer.startOneShot(0_s);
     } else
@@ -231,7 +231,7 @@ void ScrollAnimatorGtk::hideOverlayScrollbars()
     m_overlayScrollbarAnimationTarget = 0;
     if (m_overlayScrollbarAnimationTarget == m_overlayScrollbarAnimationCurrent)
         return;
-    m_overlayScrollbarAnimationStartTime = monotonicallyIncreasingTime() + overflowScrollbarsAnimationHideDelay;
+    m_overlayScrollbarAnimationStartTime = MonotonicTime::now() + overflowScrollbarsAnimationHideDelay;
     m_overlayScrollbarAnimationEndTime = m_overlayScrollbarAnimationStartTime + overflowScrollbarsAnimationDuration + overflowScrollbarsAnimationHideDelay;
     m_overlayScrollbarAnimationTimer.startOneShot(overflowScrollbarsAnimationHideDelay);
 }

@@ -1199,7 +1199,7 @@ void Document::setVisualUpdatesAllowed(bool visualUpdatesAllowed)
     if (visualUpdatesAllowed)
         m_visualUpdatesSuppressionTimer.stop();
     else
-        m_visualUpdatesSuppressionTimer.startOneShot(settings().incrementalRenderingSuppressionTimeoutInSeconds());
+        m_visualUpdatesSuppressionTimer.startOneShot(1_s * settings().incrementalRenderingSuppressionTimeoutInSeconds());
 
     if (!visualUpdatesAllowed)
         return;
@@ -5004,8 +5004,8 @@ void Document::finishedParsing()
     // so that dynamically inserted content can also benefit from sharing optimizations.
     // Note that we don't refresh the timer on pool access since that could lead to huge caches being kept
     // alive indefinitely by something innocuous like JS setting .innerHTML repeatedly on a timer.
-    static const int timeToKeepSharedObjectPoolAliveAfterParsingFinishedInSeconds = 10;
-    m_sharedObjectPoolClearTimer.startOneShot(timeToKeepSharedObjectPoolAliveAfterParsingFinishedInSeconds);
+    static const Seconds timeToKeepSharedObjectPoolAliveAfterParsingFinished { 10_s };
+    m_sharedObjectPoolClearTimer.startOneShot(timeToKeepSharedObjectPoolAliveAfterParsingFinished);
 
     // Parser should have picked up all speculative preloads by now
     m_cachedResourceLoader->clearPreloads(CachedResourceLoader::ClearPreloadsMode::ClearSpeculativePreloads);

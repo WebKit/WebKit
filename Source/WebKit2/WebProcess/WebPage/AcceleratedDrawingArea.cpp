@@ -384,7 +384,7 @@ void AcceleratedDrawingArea::exitAcceleratedCompositingModeNow()
     m_previousLayerTreeHost->setIsDiscardable(true);
     m_previousLayerTreeHost->pauseRendering();
     m_previousLayerTreeHost->setLayerFlushSchedulingEnabled(false);
-    m_discardPreviousLayerTreeHostTimer.startOneShot(5);
+    m_discardPreviousLayerTreeHostTimer.startOneShot(5_s);
 #else
     m_layerTreeHost = nullptr;
 #endif

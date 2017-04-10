@@ -2515,7 +2515,7 @@ void FrameView::scrollPositionChanged(const ScrollPosition& oldPosition, const S
         m_delayedScrollEventTimer.stop();
         sendScrollEvent();
     } else if (!m_delayedScrollEventTimer.isActive())
-        m_delayedScrollEventTimer.startOneShot(throttlingDelay.value());
+        m_delayedScrollEventTimer.startOneShot(throttlingDelay);
 
     if (Document* document = frame().document())
         document->sendWillRevealEdgeEventsIfNeeded(oldPosition, newPosition, visibleContentRect(), contentsSize());
@@ -2934,7 +2934,7 @@ void FrameView::enableSpeculativeTilingIfNeeded()
     if (m_speculativeTilingEnableTimer.isActive())
         return;
     // Delay enabling a bit as load completion may trigger further loading from scripts.
-    static const double speculativeTilingEnableDelay = 0.5;
+    static const Seconds speculativeTilingEnableDelay { 500_ms };
     m_speculativeTilingEnableTimer.startOneShot(speculativeTilingEnableDelay);
 }
 

@@ -124,7 +124,7 @@ public:
         if (m_purgeTimer.isActive())
             m_purgeTimer.stop();
 
-        const double scratchBufferPurgeInterval = 2;
+        const Seconds scratchBufferPurgeInterval { 2_s };
         m_purgeTimer.startOneShot(scratchBufferPurgeInterval);
     }
     

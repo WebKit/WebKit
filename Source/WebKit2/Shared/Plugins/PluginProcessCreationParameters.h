@@ -30,6 +30,7 @@
 
 #include "Attachment.h"
 #include "PluginProcessAttributes.h"
+#include <wtf/Seconds.h>
 
 #if PLATFORM(COCOA)
 #include <WebCore/MachSendRight.h>
@@ -51,8 +52,8 @@ struct PluginProcessCreationParameters {
     PluginProcessType processType;
     bool supportsAsynchronousPluginInitialization;
 
-    double minimumLifetime;
-    double terminationTimeout;
+    Seconds minimumLifetime;
+    Seconds terminationTimeout;
 
 #if PLATFORM(COCOA)
     WebCore::MachSendRight acceleratedCompositingPort;

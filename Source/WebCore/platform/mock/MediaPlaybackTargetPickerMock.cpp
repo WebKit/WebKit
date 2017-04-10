@@ -37,7 +37,7 @@ using namespace WebCore;
 
 namespace WebCore {
 
-static const double timerInterval = 1.0 / 10.0;
+static const Seconds timerInterval { 100_ms };
 
 MediaPlaybackTargetPickerMock::MediaPlaybackTargetPickerMock(MediaPlaybackTargetPicker::Client& client)
     : MediaPlaybackTargetPicker(client)

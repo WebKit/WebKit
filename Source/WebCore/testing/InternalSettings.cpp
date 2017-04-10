@@ -570,7 +570,7 @@ ExceptionOr<void> InternalSettings::setTimeWithoutMouseMovementBeforeHidingContr
 {
     if (!m_page)
         return Exception { INVALID_ACCESS_ERR };
-    settings().setTimeWithoutMouseMovementBeforeHidingControls(time);
+    settings().setTimeWithoutMouseMovementBeforeHidingControls(Seconds { time });
     return { };
 }
 

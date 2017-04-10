@@ -31,7 +31,7 @@
 
 namespace WebKit {
     
-static const unsigned processSuspensionTimeout = 30;
+static const Seconds processSuspensionTimeout { 30_s };
     
 ProcessThrottler::ProcessThrottler(ProcessThrottlerClient& process)
     : m_process(process)

@@ -165,7 +165,7 @@ void SearchInputType::startSearchEventTimer()
 
     // After typing the first key, we wait 0.5 seconds.
     // After the second key, 0.4 seconds, then 0.3, then 0.2 from then on.
-    m_searchEventTimer.startOneShot(std::max(0.2, 0.6 - 0.1 * length));
+    m_searchEventTimer.startOneShot(std::max(200_ms, 600_ms - 100_ms * length));
 }
 
 void SearchInputType::stopSearchEventTimer()

@@ -168,7 +168,7 @@ static const double SeekTime = 0.2;
 static const Seconds ScanRepeatDelay { 1.5_s };
 static const double ScanMaximumRate = 8;
 
-static const double HideMediaControlsAfterEndedDelay = 6;
+static const Seconds hideMediaControlsAfterEndedDelay { 6_s };
 
 static void setFlags(unsigned& value, unsigned flags)
 {
@@ -4497,7 +4497,7 @@ void HTMLMediaElement::addBehaviorRestrictionsOnEndIfNecessary()
 
     m_mediaSession->addBehaviorRestriction(MediaElementSession::RequireUserGestureToControlControlsManager);
     m_playbackControlsManagerBehaviorRestrictionsTimer.stop();
-    m_playbackControlsManagerBehaviorRestrictionsTimer.startOneShot(HideMediaControlsAfterEndedDelay);
+    m_playbackControlsManagerBehaviorRestrictionsTimer.startOneShot(hideMediaControlsAfterEndedDelay);
 }
 
 void HTMLMediaElement::handleSeekToPlaybackPosition(double position)
@@ -4507,7 +4507,7 @@ void HTMLMediaElement::handleSeekToPlaybackPosition(double position)
     // Please see <rdar://problem/28457219> for more details.
     seek(MediaTime::createWithDouble(position));
     m_seekToPlaybackPositionEndedTimer.stop();
-    m_seekToPlaybackPositionEndedTimer.startOneShot(0.5);
+    m_seekToPlaybackPositionEndedTimer.startOneShot(500_ms);
 
     if (!m_isScrubbingRemotely) {
         m_isScrubbingRemotely = true;

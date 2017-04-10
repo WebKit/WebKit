@@ -143,7 +143,7 @@ void CanvasCaptureMediaStreamTrack::Source::canvasChanged(HTMLCanvasElement& can
     // FIXME: We should try to generate the frame at the time the screen is being updated.
     if (m_canvasChangedTimer.isActive())
         return;
-    m_canvasChangedTimer.startOneShot(0);
+    m_canvasChangedTimer.startOneShot(0_s);
 }
 
 void CanvasCaptureMediaStreamTrack::Source::captureCanvas()

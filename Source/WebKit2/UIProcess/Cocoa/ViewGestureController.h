@@ -159,7 +159,7 @@ private:
         bool eventOccurred(Events);
         bool cancelOutstandingEvent(Events);
 
-        void startWatchdog(std::chrono::seconds);
+        void startWatchdog(Seconds);
 
     private:
         static String eventsDescription(Events);

@@ -95,7 +95,7 @@ TEST(WTF_RunLoop, OneShotTimer)
 
     {
         DerivedTimer timer(testFinished);
-        timer.startOneShot(0.1);
+        timer.startOneShot(100_ms);
         Util::run(&testFinished);
     }
 }

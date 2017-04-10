@@ -52,7 +52,7 @@ static const NSUInteger windowStyleMask = NSWindowStyleMaskTitled | NSWindowStyl
 
 // The time we keep our WebView alive before closing it and its process.
 // Reusing the WebView improves start up time for people that jump in and out of the Inspector.
-static const unsigned webViewCloseTimeout = 60;
+static const Seconds webViewCloseTimeout { 1_min };
 
 // WKWebInspectorProxyObjCAdapter is a helper ObjC object used as a delegate or notification observer
 // for the sole purpose of getting back into the C++ code from an ObjC caller.

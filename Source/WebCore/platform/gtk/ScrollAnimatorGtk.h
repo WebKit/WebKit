@@ -80,8 +80,8 @@ private:
     double m_overlayScrollbarAnimationSource { 0 };
     double m_overlayScrollbarAnimationTarget { 0 };
     double m_overlayScrollbarAnimationCurrent { 0 };
-    double m_overlayScrollbarAnimationStartTime { 0 };
-    double m_overlayScrollbarAnimationEndTime { 0 };
+    MonotonicTime m_overlayScrollbarAnimationStartTime;
+    MonotonicTime m_overlayScrollbarAnimationEndTime;
 };
 
 } // namespace WebCore

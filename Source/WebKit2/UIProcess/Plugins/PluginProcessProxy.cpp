@@ -46,11 +46,11 @@ using namespace WebCore;
 
 namespace WebKit {
 
-static const double minimumLifetime = 2 * 60;
-static const double snapshottingMinimumLifetime = 30;
+static const Seconds minimumLifetime { 2_min };
+static const Seconds snapshottingMinimumLifetime { 30_s };
 
-static const double shutdownTimeout = 1 * 60;
-static const double snapshottingShutdownTimeout = 15;
+static const Seconds shutdownTimeout { 1_min };
+static const Seconds snapshottingShutdownTimeout { 15_s };
 
 static uint64_t generateCallbackID()
 {

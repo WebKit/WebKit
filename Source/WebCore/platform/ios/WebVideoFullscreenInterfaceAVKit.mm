@@ -82,7 +82,7 @@ static const char* boolString(bool val)
 }
 #endif
 
-static const double DefaultWatchdogTimerInterval = 1;
+static const Seconds defaultWatchdogTimerInterval { 1_s };
 
 @class WebAVMediaSelectionOption;
 
@@ -986,7 +986,7 @@ bool WebVideoFullscreenInterfaceAVKit::shouldExitFullscreenWithReason(WebVideoFu
     m_videoFullscreenModel->requestFullscreenMode(HTMLMediaElementEnums::VideoFullscreenModeNone, reason == ExitFullScreenReason::DoneButtonTapped);
 
     if (!m_watchdogTimer.isActive())
-        m_watchdogTimer.startOneShot(DefaultWatchdogTimerInterval);
+        m_watchdogTimer.startOneShot(defaultWatchdogTimerInterval);
 
     return false;
 }

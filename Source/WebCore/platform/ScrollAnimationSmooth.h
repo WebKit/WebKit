@@ -76,29 +76,29 @@ private:
         double desiredVelocity { 0 };
 
         double startPosition { 0 };
-        double startTime { 0 };
+        MonotonicTime startTime;
         double startVelocity { 0 };
 
-        double animationTime { 0 };
-        double lastAnimationTime { 0 };
+        Seconds animationTime;
+        MonotonicTime lastAnimationTime;
 
         double attackPosition { 0 };
-        double attackTime { 0 };
+        Seconds attackTime;
         Curve attackCurve { Curve::Quadratic };
 
         double releasePosition { 0 };
-        double releaseTime { 0 };
+        Seconds releaseTime;
         Curve releaseCurve { Curve::Quadratic };
 
         int visibleLength { 0 };
     };
 
     bool updatePerAxisData(PerAxisData&, ScrollGranularity, float delta, float minScrollPosition, float maxScrollPosition);
-    bool animateScroll(PerAxisData&, double currentTime);
+    bool animateScroll(PerAxisData&, MonotonicTime currentTime);
 
 #if USE(REQUEST_ANIMATION_FRAME_TIMER)
     void requestAnimationTimerFired();
-    void startNextTimer(double delay);
+    void startNextTimer(Seconds delay);
 #else
     void startNextTimer();
 #endif
@@ -110,7 +110,7 @@ private:
     PerAxisData m_horizontalData;
     PerAxisData m_verticalData;
 
-    double m_startTime { 0 };
+    MonotonicTime m_startTime;
 #if USE(REQUEST_ANIMATION_FRAME_TIMER)
     Timer m_animationTimer;
 #else

@@ -46,7 +46,7 @@ public:
 
         // If the server never responds, this object will hang around forever.
         // Set a very generous timeout, just in case.
-        m_timeoutTimer.startOneShot(60000);
+        m_timeoutTimer.startOneShot(60000_s);
     }
     
 private:

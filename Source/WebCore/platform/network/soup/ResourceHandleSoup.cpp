@@ -771,7 +771,7 @@ void ResourceHandle::sendPendingRequest()
 #endif
 
     if (d->m_firstRequest.timeoutInterval() > 0)
-        d->m_timeoutSource.startOneShot(d->m_firstRequest.timeoutInterval());
+        d->m_timeoutSource.startOneShot(1_s * d->m_firstRequest.timeoutInterval());
 
     // Balanced by a deref() in cleanupSoupRequestOperation, which should always run.
     ref();

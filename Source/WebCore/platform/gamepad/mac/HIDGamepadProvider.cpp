@@ -34,8 +34,8 @@
 
 namespace WebCore {
 
-static const double ConnectionDelayInterval = 0.5;
-static const double InputNotificationDelay = 0.05;
+static const Seconds connectionDelayInterval { 500_ms };
+static const Seconds inputNotificationDelay { 50_ms };
 
 static RetainPtr<CFDictionaryRef> deviceMatchingDictionary(uint32_t usagePage, uint32_t usage)
 {
@@ -142,9 +142,9 @@ void HIDGamepadProvider::openAndScheduleManager()
     IOHIDManagerScheduleWithRunLoop(m_manager.get(), CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
     IOHIDManagerOpen(m_manager.get(), kIOHIDOptionsTypeNone);
 
-    // Any connections we are notified of within the ConnectionDelayInterval of listening likely represent
+    // Any connections we are notified of within the connectionDelayInterval of listening likely represent
     // devices that were already connected, so we suppress notifying clients of these.
-    m_connectionDelayTimer.startOneShot(ConnectionDelayInterval);
+    m_connectionDelayTimer.startOneShot(connectionDelayInterval);
 }
 
 void HIDGamepadProvider::closeAndUnscheduleManager()
@@ -243,7 +243,7 @@ void HIDGamepadProvider::valuesChanged(IOHIDValueRef value)
     // This isActive check is necessary as we want to delay input notifications from the time of the first input,
     // and not push the notification out on every subsequent input.
     if (!m_inputNotificationTimer.isActive())
-        m_inputNotificationTimer.startOneShot(InputNotificationDelay);
+        m_inputNotificationTimer.startOneShot(inputNotificationDelay);
 }
 
 void HIDGamepadProvider::inputNotificationTimerFired()

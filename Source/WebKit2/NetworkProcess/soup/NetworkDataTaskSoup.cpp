@@ -291,7 +291,7 @@ void NetworkDataTaskSoup::timeoutFired()
 void NetworkDataTaskSoup::startTimeout()
 {
     if (m_firstRequest.timeoutInterval() > 0)
-        m_timeoutSource.startOneShot(m_firstRequest.timeoutInterval());
+        m_timeoutSource.startOneShot(1_s * m_firstRequest.timeoutInterval());
 }
 
 void NetworkDataTaskSoup::stopTimeout()

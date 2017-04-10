@@ -91,7 +91,7 @@ void WebMemorySampler::initializeTimers(double interval)
     m_sampleTimer.startRepeating(1_s);
     printf("Started memory sampler for process %s %d", processName().utf8().data(), getpid());
     if (interval > 0) {
-        m_stopTimer.startOneShot(interval);
+        m_stopTimer.startOneShot(1_s * interval);
         printf(" for a interval of %g seconds", interval);
     }
     printf("; Sampler log file stored at: %s\n", m_sampleLogFilePath.utf8().data());

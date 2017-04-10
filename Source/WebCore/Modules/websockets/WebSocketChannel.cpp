@@ -61,7 +61,7 @@
 
 namespace WebCore {
 
-const double TCPMaximumSegmentLifetime = 2 * 60.0;
+const Seconds TCPMaximumSegmentLifetime { 2_min };
 
 WebSocketChannel::WebSocketChannel(Document& document, WebSocketChannelClient& client, SocketProvider& provider)
     : m_document(&document)
@@ -207,7 +207,7 @@ void WebSocketChannel::close(int code, const String& reason)
     Ref<WebSocketChannel> protectedThis(*this); // An attempt to send closing handshake may fail, which will get the channel closed and dereferenced.
     startClosingHandshake(code, reason);
     if (m_closing && !m_closingTimer.isActive())
-        m_closingTimer.startOneShot(2 * TCPMaximumSegmentLifetime);
+        m_closingTimer.startOneShot(TCPMaximumSegmentLifetime * 2);
 }
 
 void WebSocketChannel::fail(const String& reason)

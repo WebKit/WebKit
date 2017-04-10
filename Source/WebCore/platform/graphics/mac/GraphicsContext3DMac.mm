@@ -278,8 +278,8 @@ void GraphicsContext3DManager::updateHighPerformanceState()
             LOG(WebGL, "Set a timer to turn off high-performance GPU.");
             // FIXME: Expose this value as a Setting, which would require this class
             // to reference a frame, page or document.
-            static const int timeToKeepHighPerformanceGPUAliveInSeconds = 10;
-            m_disableHighPerformanceGPUTimer.startOneShot(timeToKeepHighPerformanceGPUAliveInSeconds);
+            static const Seconds timeToKeepHighPerformanceGPUAlive { 10_s };
+            m_disableHighPerformanceGPUTimer.startOneShot(timeToKeepHighPerformanceGPUAlive);
         }
     }
 #endif

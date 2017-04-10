@@ -144,7 +144,7 @@ void CoordinatedImageBacking::releaseSurfaceIfNeeded()
     m_surface = nullptr;
 }
 
-static const double clearContentsTimerInterval = 3;
+static const Seconds clearContentsTimerInterval { 3_s };
 
 void CoordinatedImageBacking::updateVisibilityIfNeeded(bool& changedToVisible)
 {

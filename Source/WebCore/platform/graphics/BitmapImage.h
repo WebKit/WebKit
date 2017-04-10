@@ -97,8 +97,8 @@ public:
     bool currentFrameKnownToBeOpaque() const override { return !frameHasAlphaAtIndex(currentFrame()); }
     ImageOrientation orientationForCurrentFrame() const override { return frameOrientationAtIndex(currentFrame()); }
 
-    bool shouldUseAsyncDecodingForAnimatedImagesForTesting() const { return m_frameDecodingDurationForTesting > 0; }
-    void setFrameDecodingDurationForTesting(float duration) { m_frameDecodingDurationForTesting = duration; }
+    bool shouldUseAsyncDecodingForAnimatedImagesForTesting() const { return m_frameDecodingDurationForTesting > 0_s; }
+    void setFrameDecodingDurationForTesting(Seconds duration) { m_frameDecodingDurationForTesting = duration; }
     bool shouldUseAsyncDecodingForLargeImages();
     bool shouldUseAsyncDecodingForAnimatedImages();
     void setClearDecoderAfterAsyncFrameRequestForTesting(bool value) { m_clearDecoderAfterAsyncFrameRequestForTesting = value; }
@@ -190,7 +190,7 @@ protected:
 
 private:
     void clearTimer();
-    void startTimer(double delay);
+    void startTimer(Seconds delay);
     bool isBitmapImage() const override { return true; }
     void dump(TextStream&) const override;
 
@@ -207,11 +207,11 @@ private:
     SubsamplingLevel m_currentSubsamplingLevel { SubsamplingLevel::Default };
     std::unique_ptr<Timer> m_frameTimer;
     RepetitionCount m_repetitionsComplete { RepetitionCountNone }; // How many repetitions we've finished.
-    double m_desiredFrameStartTime { 0 }; // The system time at which we hope to see the next call to startAnimation().
+    MonotonicTime m_desiredFrameStartTime; // The system time at which we hope to see the next call to startAnimation().
     bool m_animationFinished { false };
 
-    float m_frameDecodingDurationForTesting { 0 };
-    double m_desiredFrameDecodeTimeForTesting { 0 };
+    Seconds m_frameDecodingDurationForTesting;
+    MonotonicTime m_desiredFrameDecodeTimeForTesting;
     bool m_clearDecoderAfterAsyncFrameRequestForTesting { false };
 #if !LOG_DISABLED
     size_t m_lateFrameCount { 0 };

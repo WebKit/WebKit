@@ -63,7 +63,7 @@ public:
         , m_timer(*this, &TimerEvent::timerFired)
         , m_notifier(notifier)
     {
-        m_timer.startOneShot(0.5);
+        m_timer.startOneShot(500_ms);
     }
 
     virtual ~TimerEvent()

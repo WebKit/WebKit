@@ -37,7 +37,7 @@ namespace WebCore {
 static const int gNamesToResolveImmediately = 4;
 
 // Coalesce prefetch requests for this long before sending them out.
-static const double gCoalesceDelayInSeconds = 1.0;
+static const Seconds coalesceDelay { 1_s };
 
 // Sending many DNS requests at once can overwhelm some gateways. See <rdar://8105550> for specific CFNET issues with CFHost throttling.
 static const int gMaxSimultaneousRequests = 8;
@@ -48,7 +48,7 @@ static const int gMaxSimultaneousRequests = 8;
 static const int gMaxRequestsToQueue = 64;
 
 // If there were queued names that couldn't be sent simultaneously, check the state of resolvers after this delay.
-static const double gRetryResolvingInSeconds = 0.1;
+static const Seconds resolvingRetryDelay { 100_ms };
 
 DNSResolveQueue& DNSResolveQueue::singleton()
 {
@@ -101,7 +101,7 @@ void DNSResolveQueue::add(const String& hostname)
     if (m_names.size() < gMaxRequestsToQueue) {
         m_names.add(hostname);
         if (!m_timer.isActive())
-            m_timer.startOneShot(gCoalesceDelayInSeconds);
+            m_timer.startOneShot(coalesceDelay);
     }
 }
 
@@ -122,7 +122,7 @@ void DNSResolveQueue::timerFired()
     }
 
     if (!m_names.isEmpty())
-        m_timer.startOneShot(gRetryResolvingInSeconds);
+        m_timer.startOneShot(resolvingRetryDelay);
 }
 
 } // namespace WebCore

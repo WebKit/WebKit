@@ -40,13 +40,13 @@ using namespace WebCore;
 
 namespace WebKit {
 
-static const std::chrono::seconds swipeSnapshotRemovalWatchdogAfterFirstVisuallyNonEmptyLayoutDuration = 3s;
-static const Seconds swipeSnapshotRemovalActiveLoadMonitoringInterval = 250_ms;
+static const Seconds swipeSnapshotRemovalWatchdogAfterFirstVisuallyNonEmptyLayoutDuration { 3_s };
+static const Seconds swipeSnapshotRemovalActiveLoadMonitoringInterval { 250_ms };
 
 #if PLATFORM(MAC)
-static const std::chrono::seconds swipeSnapshotRemovalWatchdogDuration = 5s;
+static const Seconds swipeSnapshotRemovalWatchdogDuration = 5_s;
 #else
-static const std::chrono::seconds swipeSnapshotRemovalWatchdogDuration = 3s;
+static const Seconds swipeSnapshotRemovalWatchdogDuration = 3_s;
 #endif
 
 static HashMap<uint64_t, ViewGestureController*>& viewGestureControllersForAllPages()
@@ -297,10 +297,10 @@ void ViewGestureController::SnapshotRemovalTracker::watchdogTimerFired()
     fireRemovalCallbackImmediately();
 }
 
-void ViewGestureController::SnapshotRemovalTracker::startWatchdog(std::chrono::seconds duration)
+void ViewGestureController::SnapshotRemovalTracker::startWatchdog(Seconds duration)
 {
-    log(String::format("(re)started watchdog timer for %lld seconds", duration.count()));
-    m_watchdogTimer.startOneShot(duration.count());
+    log(String::format("(re)started watchdog timer for %.1f seconds", duration.seconds()));
+    m_watchdogTimer.startOneShot(duration);
 }
 
 } // namespace WebKit

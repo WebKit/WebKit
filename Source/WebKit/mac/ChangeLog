@@ -1,3 +1,17 @@
+2017-04-10  Chris Dumez  <cdumez@apple.com>
+
+        Drop Timer::startOneShot() overload taking a double
+        https://bugs.webkit.org/show_bug.cgi?id=170659
+
+        Reviewed by Yusuke Suzuki.
+
+        Drop Timer::startOneShot() overload taking a double as people should use Seconds type now.
+
+        * Plugins/WebNetscapePluginView.mm:
+        (PluginTimer::start):
+        * Storage/WebStorageManager.mm:
+        (+[WebStorageManager setStorageDatabaseIdleInterval:]):
+
 2017-04-09  Chris Dumez  <cdumez@apple.com>
 
         Drop Timer::startRepeating() overload taking a double

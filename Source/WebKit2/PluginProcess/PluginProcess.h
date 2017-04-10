@@ -101,7 +101,7 @@ private:
 
     void platformInitializePluginProcess(PluginProcessCreationParameters&&);
     
-    void setMinimumLifetime(double);
+    void setMinimumLifetime(Seconds);
     void minimumLifetimeTimerFired();
     // Our web process connections.
     Vector<RefPtr<WebProcessConnection>> m_webProcessConnections;

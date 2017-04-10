@@ -179,7 +179,7 @@ public:
     static void loaderDetachedFromFrame(Frame&, DocumentLoader&);
     static void frameStartedLoading(Frame&);
     static void frameStoppedLoading(Frame&);
-    static void frameScheduledNavigation(Frame&, double delay);
+    static void frameScheduledNavigation(Frame&, Seconds delay);
     static void frameClearedScheduledNavigation(Frame&);
     static void willDestroyCachedResource(CachedResource&);
 
@@ -349,7 +349,7 @@ private:
     static void loaderDetachedFromFrameImpl(InstrumentingAgents&, DocumentLoader&);
     static void frameStartedLoadingImpl(InstrumentingAgents&, Frame&);
     static void frameStoppedLoadingImpl(InstrumentingAgents&, Frame&);
-    static void frameScheduledNavigationImpl(InstrumentingAgents&, Frame&, double delay);
+    static void frameScheduledNavigationImpl(InstrumentingAgents&, Frame&, Seconds delay);
     static void frameClearedScheduledNavigationImpl(InstrumentingAgents&, Frame&);
     static void willDestroyCachedResourceImpl(CachedResource&);
 
@@ -982,7 +982,7 @@ inline void InspectorInstrumentation::frameStoppedLoading(Frame& frame)
         frameStoppedLoadingImpl(*instrumentingAgents, frame);
 }
 
-inline void InspectorInstrumentation::frameScheduledNavigation(Frame& frame, double delay)
+inline void InspectorInstrumentation::frameScheduledNavigation(Frame& frame, Seconds delay)
 {
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
         frameScheduledNavigationImpl(*instrumentingAgents, frame, delay);

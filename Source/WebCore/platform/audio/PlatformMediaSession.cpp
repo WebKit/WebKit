@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-const double kClientDataBufferingTimerThrottleDelay = 0.1;
+static const Seconds clientDataBufferingTimerThrottleDelay { 100_ms };
 
 #if !LOG_DISABLED
 static const char* stateName(PlatformMediaSession::State state)
@@ -260,7 +260,7 @@ void PlatformMediaSession::visibilityChanged()
 void PlatformMediaSession::scheduleClientDataBufferingCheck()
 {
     if (!m_clientDataBufferingTimer.isActive())
-        m_clientDataBufferingTimer.startOneShot(kClientDataBufferingTimerThrottleDelay);
+        m_clientDataBufferingTimer.startOneShot(clientDataBufferingTimerThrottleDelay);
 }
 
 void PlatformMediaSession::clientDataBufferingTimerFired()

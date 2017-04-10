@@ -28,7 +28,7 @@
 
 namespace WebKit {
 
-static const double responsivenessTimeout = 3;
+static const Seconds responsivenessTimeout { 3_s };
 
 ResponsivenessTimer::ResponsivenessTimer(ResponsivenessTimer::Client& client)
     : m_client(client)

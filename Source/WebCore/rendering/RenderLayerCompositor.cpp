@@ -92,11 +92,11 @@ static const int canvasAreaThresholdRequiringCompositing = 50 * 100;
 #endif
 // During page loading delay layer flushes up to this many seconds to allow them coalesce, reducing workload.
 #if PLATFORM(IOS)
-static const double throttledLayerFlushInitialDelay = .5;
-static const double throttledLayerFlushDelay = 1.5;
+static const Seconds throttledLayerFlushInitialDelay { 500_ms };
+static const Seconds throttledLayerFlushDelay { 1.5_s };
 #else
-static const double throttledLayerFlushInitialDelay = .5;
-static const double throttledLayerFlushDelay = .5;
+static const Seconds throttledLayerFlushInitialDelay { 500_ms };
+static const Seconds throttledLayerFlushDelay { 500_ms };
 #endif
 
 using namespace HTMLNames;

@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-static const double StateChangeTimerInterval = 2.0;
+static const Seconds StateChangeTimerInterval { 2_s };
 
 void NetworkStateNotifier::updateState()
 {

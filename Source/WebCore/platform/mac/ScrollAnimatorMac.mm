@@ -1338,7 +1338,7 @@ void ScrollAnimatorMac::updateScrollerStyle()
 
 void ScrollAnimatorMac::startScrollbarPaintTimer()
 {
-    m_initialScrollbarPaintTimer.startOneShot(0.1);
+    m_initialScrollbarPaintTimer.startOneShot(100_ms);
 }
 
 bool ScrollAnimatorMac::scrollbarPaintTimerIsActive() const

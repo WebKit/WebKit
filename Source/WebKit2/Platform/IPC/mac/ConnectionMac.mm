@@ -82,20 +82,20 @@ enum {
 //    to ensure it has a chance to terminate cleanly.
 class ConnectionTerminationWatchdog {
 public:
-    static void createConnectionTerminationWatchdog(OSObjectPtr<xpc_connection_t>& xpcConnection, double intervalInSeconds)
+    static void createConnectionTerminationWatchdog(OSObjectPtr<xpc_connection_t>& xpcConnection, Seconds interval)
     {
-        new ConnectionTerminationWatchdog(xpcConnection, intervalInSeconds);
+        new ConnectionTerminationWatchdog(xpcConnection, interval);
     }
     
 private:
-    ConnectionTerminationWatchdog(OSObjectPtr<xpc_connection_t>& xpcConnection, double intervalInSeconds)
+    ConnectionTerminationWatchdog(OSObjectPtr<xpc_connection_t>& xpcConnection, Seconds interval)
         : m_xpcConnection(xpcConnection)
         , m_watchdogTimer(RunLoop::main(), this, &ConnectionTerminationWatchdog::watchdogTimerFired)
 #if PLATFORM(IOS)
         , m_assertion(std::make_unique<WebKit::ProcessAndUIAssertion>(xpc_connection_get_pid(m_xpcConnection.get()), WebKit::AssertionState::Background))
 #endif
     {
-        m_watchdogTimer.startOneShot(intervalInSeconds);
+        m_watchdogTimer.startOneShot(interval);
     }
     
     void watchdogTimerFired()
@@ -155,10 +155,10 @@ void Connection::platformInvalidate()
 #endif
 }
     
-void Connection::terminateSoon(double intervalInSeconds)
+void Connection::terminateSoon(Seconds interval)
 {
     if (m_xpcConnection)
-        ConnectionTerminationWatchdog::createConnectionTerminationWatchdog(m_xpcConnection, intervalInSeconds);
+        ConnectionTerminationWatchdog::createConnectionTerminationWatchdog(m_xpcConnection, interval);
 }
     
 void Connection::platformInitialize(Identifier identifier)

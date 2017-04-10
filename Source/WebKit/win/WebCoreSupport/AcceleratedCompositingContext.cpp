@@ -349,7 +349,7 @@ void AcceleratedCompositingContext::scheduleLayerFlush()
     if (m_layerFlushTimer.isActive())
         return;
 
-    m_layerFlushTimer.startOneShot(0.05);
+    m_layerFlushTimer.startOneShot(50_ms);
 }
 
 bool AcceleratedCompositingContext::flushPendingLayerChanges()

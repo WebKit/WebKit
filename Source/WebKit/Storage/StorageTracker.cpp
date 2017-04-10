@@ -52,7 +52,7 @@ static StorageTracker* storageTracker = nullptr;
 
 // If there is no document referencing a storage database, close the underlying database
 // after it has been idle for m_StorageDatabaseIdleInterval seconds.
-static const double DefaultStorageDatabaseIdleInterval = 300;
+static const Seconds defaultStorageDatabaseIdleInterval { 300_s };
     
 void StorageTracker::initializeTracker(const String& storagePath, StorageTrackerClient* client)
 {
@@ -97,7 +97,7 @@ StorageTracker::StorageTracker(const String& storagePath)
     , m_thread(std::make_unique<StorageThread>())
     , m_isActive(false)
     , m_needsInitialization(false)
-    , m_StorageDatabaseIdleInterval(DefaultStorageDatabaseIdleInterval)
+    , m_StorageDatabaseIdleInterval(defaultStorageDatabaseIdleInterval)
 {
 }
 

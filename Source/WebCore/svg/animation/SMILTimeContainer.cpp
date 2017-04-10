@@ -35,8 +35,8 @@
 
 namespace WebCore {
 
-static const Seconds SMILAnimationFrameDelay { 1.0 / 60 };
-static const Seconds SMILAnimationFrameThrottledDelay { 1.0 / 30 };
+static const Seconds SMILAnimationFrameDelay { 1_s / 60. };
+static const Seconds SMILAnimationFrameThrottledDelay { 1_s / 30. };
 
 SMILTimeContainer::SMILTimeContainer(SVGSVGElement& owner)
     : m_beginTime(0)
@@ -216,7 +216,7 @@ void SMILTimeContainer::startTimer(SMILTime elapsed, SMILTime fireTime, SMILTime
         return;
 
     SMILTime delay = std::max(fireTime - elapsed, minimumDelay);
-    m_timer.startOneShot(delay.value());
+    m_timer.startOneShot(1_s * delay.value());
 }
 
 void SMILTimeContainer::timerFired()

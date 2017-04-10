@@ -126,7 +126,7 @@ struct WebProcessCreationParameters {
     bool hasRichContentServices { false };
 #endif
 
-    double terminationTimeout { 0 };
+    Seconds terminationTimeout;
 
     TextCheckerState textCheckerState;
 

@@ -40,7 +40,7 @@ SOFT_LINK_CONSTANT_MAY_FAIL(GameController, GCControllerDidDisconnectNotificatio
 
 namespace WebCore {
 
-static const std::chrono::milliseconds InputNotificationDelay = 16ms;
+static const Seconds inputNotificationDelay { 16_ms };
 
 GameControllerGamepadProvider& GameControllerGamepadProvider::singleton()
 {
@@ -144,7 +144,7 @@ unsigned GameControllerGamepadProvider::indexForNewlyConnectedDevice()
 void GameControllerGamepadProvider::gamepadHadInput(GameControllerGamepad&, bool hadButtonPresses)
 {
     if (!m_inputNotificationTimer.isActive())
-        m_inputNotificationTimer.startOneShot(InputNotificationDelay);
+        m_inputNotificationTimer.startOneShot(inputNotificationDelay);
 
     if (hadButtonPresses)
         m_shouldMakeInvisibileGamepadsVisible = true;

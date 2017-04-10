@@ -46,7 +46,7 @@ public:
     {
         if (!m_context) {
             m_context = adoptNS([[JSContext alloc] init]);
-            m_timer.startOneShot(1);
+            m_timer.startOneShot(1_s);
         }
         return m_context.get();
     }

@@ -100,7 +100,7 @@
 
 namespace WebCore {
 
-const double secondsBetweenRestoreAttempts = 1.0;
+static const Seconds secondsBetweenRestoreAttempts { 1_s };
 const int maxGLErrorsAllowedToConsole = 256;
 static const Seconds checkContextLossHandlingDelay { 3_s };
 

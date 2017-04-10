@@ -49,9 +49,9 @@
 namespace WebCore {
 
 // Allow a little more than 60fps to make sure we can at least hit that frame rate.
-static const Seconds animationTimerDelay { 0.015 };
+static const Seconds animationTimerDelay { 15_ms };
 // Allow a little more than 30fps to make sure we can at least hit that frame rate.
-static const Seconds animationTimerThrottledDelay { 0.030 };
+static const Seconds animationTimerThrottledDelay { 30_ms };
 
 class AnimationPrivateUpdateBlock {
 public:

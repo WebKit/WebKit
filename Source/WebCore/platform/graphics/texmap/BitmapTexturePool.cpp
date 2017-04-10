@@ -33,8 +33,8 @@
 
 namespace WebCore {
 
-static const double s_releaseUnusedSecondsTolerance = 3;
-static const double s_releaseUnusedTexturesTimerInterval = 0.5;
+static const double releaseUnusedSecondsTolerance = 3;
+static const Seconds releaseUnusedTexturesTimerInterval { 500_ms };
 
 #if USE(TEXTURE_MAPPER_GL)
 BitmapTexturePool::BitmapTexturePool(RefPtr<GraphicsContext3D>&& context3D)
@@ -66,13 +66,13 @@ void BitmapTexturePool::scheduleReleaseUnusedTextures()
     if (m_releaseUnusedTexturesTimer.isActive())
         return;
 
-    m_releaseUnusedTexturesTimer.startOneShot(s_releaseUnusedTexturesTimerInterval);
+    m_releaseUnusedTexturesTimer.startOneShot(releaseUnusedTexturesTimerInterval);
 }
 
 void BitmapTexturePool::releaseUnusedTexturesTimerFired()
 {
-    // Delete entries, which have been unused in s_releaseUnusedSecondsTolerance.
-    double minUsedTime = monotonicallyIncreasingTime() - s_releaseUnusedSecondsTolerance;
+    // Delete entries, which have been unused in releaseUnusedSecondsTolerance.
+    double minUsedTime = monotonicallyIncreasingTime() - releaseUnusedSecondsTolerance;
 
     if (!m_textures.isEmpty()) {
         std::sort(m_textures.begin(), m_textures.end(),

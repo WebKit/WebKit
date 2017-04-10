@@ -212,7 +212,7 @@ Settings::Settings(Page* page)
     , m_touchEventEmulationEnabled(false)
 #endif
     , m_scrollingPerformanceLoggingEnabled(false)
-    , m_timeWithoutMouseMovementBeforeHidingControls(3)
+    , m_timeWithoutMouseMovementBeforeHidingControls(3_s)
     , m_setImageLoadingSettingsTimer(*this, &Settings::imageLoadingSettingsTimerFired)
     , m_hiddenPageDOMTimerThrottlingEnabled(false)
     , m_hiddenPageCSSAnimationSuspensionEnabled(false)

@@ -154,7 +154,7 @@ void CompositingRunLoop::startUpdateTimer(UpdateTiming timing)
     if (timing == WaitUntilNextFrame)
         nextUpdateTime = std::max((1 / targetFPS) - (monotonicallyIncreasingTime() - m_lastUpdateTime), 0.0);
 
-    m_updateTimer.startOneShot(nextUpdateTime);
+    m_updateTimer.startOneShot(1_s * nextUpdateTime);
 }
 
 void CompositingRunLoop::stopUpdateTimer()

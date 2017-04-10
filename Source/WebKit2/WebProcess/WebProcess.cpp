@@ -143,7 +143,7 @@ using namespace WebCore;
 static const double plugInAutoStartExpirationTimeUpdateThreshold = 29 * 24 * 60 * 60;
 
 // This should be greater than tileRevalidationTimeout in TileController.
-static const double nonVisibleProcessCleanupDelay = 10;
+static const Seconds nonVisibleProcessCleanupDelay { 10_s };
 
 namespace WebKit {
 

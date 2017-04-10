@@ -187,7 +187,7 @@ void DrawingAreaProxyImpl::discardBackingStoreSoon()
 
     // We'll wait this many seconds after the last paint before throwing away our backing store to save memory.
     // FIXME: It would be smarter to make this delay based on how expensive painting is. See <http://webkit.org/b/55733>.
-    static const double discardBackingStoreDelay = 2;
+    static const Seconds discardBackingStoreDelay = 2_s;
 
     m_discardBackingStoreTimer.startOneShot(discardBackingStoreDelay);
 }
@@ -228,7 +228,7 @@ void DrawingAreaProxyImpl::DrawingMonitor::start(std::function<void (CallbackBas
     m_callback = callback;
 #if PLATFORM(GTK)
     g_signal_connect_swapped(m_webPage.viewWidget(), "draw", reinterpret_cast<GCallback>(webViewDrawCallback), this);
-    m_timer.startOneShot(1);
+    m_timer.startOneShot(1_s);
 #else
     m_timer.startOneShot(0_s);
 #endif
@@ -255,7 +255,7 @@ void DrawingAreaProxyImpl::DrawingMonitor::didDraw()
     if (monotonicallyIncreasingTimeMS() - m_startTime > 1000)
         stop();
     else
-        m_timer.startOneShot(0.100);
+        m_timer.startOneShot(100_ms);
 }
 
 void DrawingAreaProxyImpl::dispatchAfterEnsuringDrawing(std::function<void(CallbackBase::Error)> callbackFunction)

@@ -2111,15 +2111,15 @@ void RenderThemeGtk::adjustProgressBarStyle(StyleResolver&, RenderStyle& style, 
 // These values have been copied from RenderThemeChromiumSkia.cpp
 static const int progressActivityBlocks = 5;
 static const int progressAnimationFrames = 10;
-static const double progressAnimationInterval = 0.125;
-double RenderThemeGtk::animationRepeatIntervalForProgressBar(RenderProgress&) const
+static const Seconds progressAnimationInterval { 125_ms };
+Seconds RenderThemeGtk::animationRepeatIntervalForProgressBar(RenderProgress&) const
 {
     return progressAnimationInterval;
 }
 
 double RenderThemeGtk::animationDurationForProgressBar(RenderProgress&) const
 {
-    return progressAnimationInterval * progressAnimationFrames * 2; // "2" for back and forth;
+    return progressAnimationInterval.value() * progressAnimationFrames * 2; // "2" for back and forth;
 }
 
 IntRect RenderThemeGtk::calculateProgressRect(const RenderObject& renderObject, const IntRect& fullBarRect)

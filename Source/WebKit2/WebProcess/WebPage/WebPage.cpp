@@ -5333,7 +5333,7 @@ static const float primarySnapshottedPlugInSearchBucketSize = 1.1;
 static const int primarySnapshottedPlugInMinimumWidth = 400;
 static const int primarySnapshottedPlugInMinimumHeight = 300;
 static const unsigned maxPrimarySnapshottedPlugInDetectionAttempts = 2;
-static const int deferredPrimarySnapshottedPlugInDetectionDelay = 3;
+static const Seconds deferredPrimarySnapshottedPlugInDetectionDelay = 3_s;
 static const float overlappingImageBoundsScale = 1.1;
 static const float minimumOverlappingImageToPluginDimensionScale = .9;
 
@@ -5441,7 +5441,7 @@ void WebPage::determinePrimarySnapshottedPlugIn()
     if (!candidatePlugIn) {
         LOG(Plugins, "Primary Plug-In Detection: fail - did not find a candidate plug-in.");
         if (m_numberOfPrimarySnapshotDetectionAttempts < maxPrimarySnapshottedPlugInDetectionAttempts) {
-            LOG(Plugins, "Primary Plug-In Detection: will attempt again in %ds.", deferredPrimarySnapshottedPlugInDetectionDelay);
+            LOG(Plugins, "Primary Plug-In Detection: will attempt again in %.1f s.", deferredPrimarySnapshottedPlugInDetectionDelay.value());
             m_determinePrimarySnapshottedPlugInTimer.startOneShot(deferredPrimarySnapshottedPlugInDetectionDelay);
         }
         return;

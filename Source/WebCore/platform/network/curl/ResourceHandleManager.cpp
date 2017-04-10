@@ -83,7 +83,7 @@
 namespace WebCore {
 
 const int selectTimeoutMS = 5;
-const double pollTimeSeconds = 0.05;
+static const Seconds pollTime { 50_ms };
 const int maxRunningJobs = 128;
 const char* const errorDomainCurl = "CurlErrorDomain";
 
@@ -727,7 +727,7 @@ void ResourceHandleManager::downloadTimerCallback()
     bool started = startScheduledJobs(); // new jobs might have been added in the meantime
 
     if (!m_downloadTimer.isActive() && (started || (runningHandles > 0)))
-        m_downloadTimer.startOneShot(pollTimeSeconds);
+        m_downloadTimer.startOneShot(pollTime);
 }
 
 void ResourceHandleManager::setProxyInfo(const String& host,
@@ -877,7 +877,7 @@ void ResourceHandleManager::add(ResourceHandle* job)
     job->ref();
     m_resourceHandleList.append(job);
     if (!m_downloadTimer.isActive())
-        m_downloadTimer.startOneShot(pollTimeSeconds);
+        m_downloadTimer.startOneShot(pollTime);
 }
 
 bool ResourceHandleManager::removeScheduledJob(ResourceHandle* job)
@@ -1238,7 +1238,7 @@ void ResourceHandleManager::cancel(ResourceHandle* job)
     ResourceHandleInternal* d = job->getInternal();
     d->m_cancelled = true;
     if (!m_downloadTimer.isActive())
-        m_downloadTimer.startOneShot(pollTimeSeconds);
+        m_downloadTimer.startOneShot(pollTime);
 }
 
 } // namespace WebCore

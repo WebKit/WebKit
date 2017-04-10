@@ -55,8 +55,6 @@ public:
     WEBCORE_EXPORT void start(Seconds nextFireInterval, Seconds repeatInterval);
 
     void startRepeating(Seconds repeatInterval) { start(repeatInterval, repeatInterval); }
-
-    void startOneShot(double interval) { startOneShot(Seconds { interval }); }
     void startOneShot(Seconds interval) { start(interval, 0_s); }
 
     WEBCORE_EXPORT void stop();

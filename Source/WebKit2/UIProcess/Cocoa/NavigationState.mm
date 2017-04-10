@@ -887,7 +887,7 @@ void NavigationState::didChangeIsLoading()
     } else {
         // Delay releasing the background activity for 3 seconds to give the application a chance to start another navigation
         // before suspending the WebContent process <rdar://problem/27910964>.
-        m_releaseActivityTimer.startOneShot(3s);
+        m_releaseActivityTimer.startOneShot(3_s);
     }
 #endif
 

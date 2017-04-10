@@ -114,10 +114,10 @@
 
 // We estimate the animation rate of a Mac OS X progress bar is 33 fps.
 // Hard code the value here because we haven't found API for it.
-const double progressAnimationFrameRate = 0.033;
+static const Seconds progressAnimationFrameRate = 33_ms;
 
 // Mac OS X progress bar animation seems to have 256 frames.
-const double progressAnimationNumFrames = 256;
+static const double progressAnimationNumFrames = 256;
 
 @interface WebCoreRenderThemeNotificationObserver : NSObject
 {
@@ -1129,14 +1129,14 @@ int RenderThemeMac::minimumProgressBarHeight(const RenderStyle& style) const
     return sizeForSystemFont(style, progressBarSizes()).height();
 }
 
-double RenderThemeMac::animationRepeatIntervalForProgressBar(RenderProgress&) const
+Seconds RenderThemeMac::animationRepeatIntervalForProgressBar(RenderProgress&) const
 {
     return progressAnimationFrameRate;
 }
 
 double RenderThemeMac::animationDurationForProgressBar(RenderProgress&) const
 {
-    return progressAnimationNumFrames * progressAnimationFrameRate;
+    return progressAnimationNumFrames * progressAnimationFrameRate.value();
 }
 
 void RenderThemeMac::adjustProgressBarStyle(StyleResolver&, RenderStyle&, const Element*) const

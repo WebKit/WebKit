@@ -370,7 +370,7 @@ bool MediaPlayerPrivateGStreamer::changePipelineState(GstState newState)
     if (newState == GST_STATE_READY && !m_readyTimerHandler.isActive()) {
         // Max interval in seconds to stay in the READY state on manual
         // state change requests.
-        static const double readyStateTimerDelay = 60;
+        static const Seconds readyStateTimerDelay { 1_min };
         m_readyTimerHandler.startOneShot(readyStateTimerDelay);
     } else if (newState != GST_STATE_READY)
         m_readyTimerHandler.stop();

@@ -41,7 +41,7 @@ MainThreadSharedTimer::MainThreadSharedTimer()
 void MainThreadSharedTimer::setFireInterval(Seconds interval)
 {
     ASSERT(m_firedFunction);
-    m_timer.startOneShot(interval.value());
+    m_timer.startOneShot(interval);
 }
 
 void MainThreadSharedTimer::stop()

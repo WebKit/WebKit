@@ -689,7 +689,7 @@ WebProcessProxy& WebProcessPool::createNewWebProcess(WebsiteDataStore* websiteDa
 
     parameters.iconDatabaseEnabled = !iconDatabasePath().isEmpty();
 
-    parameters.terminationTimeout = 0;
+    parameters.terminationTimeout = 0_s;
 
     parameters.textCheckerState = TextChecker::state();
 

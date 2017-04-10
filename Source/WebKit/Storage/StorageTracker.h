@@ -59,8 +59,8 @@ public:
     
     bool isActive();
 
-    double storageDatabaseIdleInterval() { return m_StorageDatabaseIdleInterval; }
-    void setStorageDatabaseIdleInterval(double interval) { m_StorageDatabaseIdleInterval = interval; }
+    Seconds storageDatabaseIdleInterval() { return m_StorageDatabaseIdleInterval; }
+    void setStorageDatabaseIdleInterval(Seconds interval) { m_StorageDatabaseIdleInterval = interval; }
 
     void syncFileSystemAndTrackerDatabase();
 
@@ -110,7 +110,7 @@ private:
     
     bool m_isActive;
     bool m_needsInitialization;
-    double m_StorageDatabaseIdleInterval;
+    Seconds m_StorageDatabaseIdleInterval;
 };
     
 } // namespace WebCore

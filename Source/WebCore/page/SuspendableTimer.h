@@ -45,8 +45,6 @@ public:
     bool isActive() const { return TimerBase::isActive() || (m_suspended && m_savedIsActive); }
     bool isSuspended() const { return m_suspended; }
 
-    void startOneShot(double interval) { startOneShot(Seconds { interval }); }
-
     Seconds repeatInterval() const;
 
     void startRepeating(Seconds repeatInterval);

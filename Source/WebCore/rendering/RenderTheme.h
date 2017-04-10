@@ -195,7 +195,7 @@ public:
     virtual ScrollbarControlSize scrollbarControlSizeForPart(ControlPart) { return RegularScrollbar; }
 
     // Returns the repeat interval of the animation for the progress bar.
-    virtual double animationRepeatIntervalForProgressBar(RenderProgress&) const;
+    virtual Seconds animationRepeatIntervalForProgressBar(RenderProgress&) const;
     // Returns the duration of the animation for the progress bar.
     virtual double animationDurationForProgressBar(RenderProgress&) const;
     virtual IntRect progressBarRectForBounds(const RenderObject&, const IntRect&) const;
@@ -208,7 +208,7 @@ public:
     virtual bool usesMediaControlVolumeSlider() const { return true; }
     virtual bool usesVerticalVolumeSlider() const { return true; }
     virtual double mediaControlsFadeInDuration() { return 0.1; }
-    virtual double mediaControlsFadeOutDuration() { return 0.3; }
+    virtual Seconds mediaControlsFadeOutDuration() { return 300_ms; }
     virtual String formatMediaControlsTime(float time) const;
     virtual String formatMediaControlsCurrentTime(float currentTime, float duration) const;
     virtual String formatMediaControlsRemainingTime(float currentTime, float duration) const;

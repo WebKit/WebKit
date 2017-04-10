@@ -286,7 +286,7 @@ void BitmapImage::clearTimer()
     m_frameTimer = nullptr;
 }
 
-void BitmapImage::startTimer(double delay)
+void BitmapImage::startTimer(Seconds delay)
 {
     ASSERT(!m_frameTimer);
     m_frameTimer = std::make_unique<Timer>(*this, &BitmapImage::advanceAnimation);
@@ -332,14 +332,14 @@ BitmapImage::StartAnimationStatus BitmapImage::internalStartAnimation()
     if (!m_source.isAllDataReceived() && !frameIsCompleteAtIndex(nextFrame))
         return StartAnimationStatus::IncompleteData;
 
-    double time = monotonicallyIncreasingTime();
+    MonotonicTime time = MonotonicTime::now();
 
     // Handle initial state.
     if (!m_desiredFrameStartTime)
         m_desiredFrameStartTime = time;
 
     // Setting 'm_desiredFrameStartTime' to 'time' means we are late; otherwise we are early.
-    m_desiredFrameStartTime = std::max(time, m_desiredFrameStartTime + frameDurationAtIndex(m_currentFrame));
+    m_desiredFrameStartTime = std::max(time, m_desiredFrameStartTime + Seconds { frameDurationAtIndex(m_currentFrame) });
 
     // Request async decoding for nextFrame only if this is required. If nextFrame is not in the frameCache,
     // it will be decoded on a separate work queue. When decoding nextFrame finishes, we will be notified
@@ -357,7 +357,7 @@ BitmapImage::StartAnimationStatus BitmapImage::internalStartAnimation()
         UNUSED_PARAM(isAsyncDecode);
 #endif
 
-        m_desiredFrameDecodeTimeForTesting = time + std::max(m_frameDecodingDurationForTesting, 0.0f);
+        m_desiredFrameDecodeTimeForTesting = time + std::max(m_frameDecodingDurationForTesting, 0_s);
         if (m_clearDecoderAfterAsyncFrameRequestForTesting)
             m_source.clear(data());
     }
@@ -374,7 +374,7 @@ void BitmapImage::advanceAnimation()
     // Pretend as if decoding nextFrame has taken m_frameDecodingDurationForTesting from
     // the time this decoding was requested.
     if (shouldUseAsyncDecodingForAnimatedImagesForTesting()) {
-        double time = monotonicallyIncreasingTime();
+        MonotonicTime time = MonotonicTime::now();
         // Start a timer with the remaining time from now till the m_desiredFrameDecodeTime.
         if (m_desiredFrameDecodeTimeForTesting > std::max(time, m_desiredFrameStartTime)) {
             startTimer(m_desiredFrameDecodeTimeForTesting - time);
@@ -426,7 +426,7 @@ void BitmapImage::resetAnimation()
     stopAnimation();
     m_currentFrame = 0;
     m_repetitionsComplete = RepetitionCountNone;
-    m_desiredFrameStartTime = 0;
+    m_desiredFrameStartTime = { };
     m_animationFinished = false;
 
     // For extremely large animations, when the animation is reset, we just throw everything away.

@@ -216,9 +216,9 @@ void PluginProcess::deleteWebsiteDataForHostNames(const Vector<String>& hostName
     parentProcessConnection()->send(Messages::PluginProcessProxy::DidDeleteWebsiteDataForHostNames(callbackID), 0);
 }
 
-void PluginProcess::setMinimumLifetime(double lifetime)
+void PluginProcess::setMinimumLifetime(Seconds lifetime)
 {
-    if (lifetime <= 0.0)
+    if (lifetime <= 0_s)
         return;
     
     disableTermination();

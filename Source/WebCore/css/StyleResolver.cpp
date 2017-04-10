@@ -135,6 +135,7 @@
 #include "WebKitCSSRegionRule.h"
 #include "WebKitFontFamilyNames.h"
 #include <bitset>
+#include <wtf/Seconds.h>
 #include <wtf/SetForScope.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
@@ -1251,8 +1252,8 @@ void StyleResolver::addToMatchedPropertiesCache(const RenderStyle* style, const 
     static const unsigned matchedDeclarationCacheAdditionsBetweenSweeps = 100;
     if (++m_matchedPropertiesCacheAdditionsSinceLastSweep >= matchedDeclarationCacheAdditionsBetweenSweeps
         && !m_matchedPropertiesCacheSweepTimer.isActive()) {
-        static const unsigned matchedDeclarationCacheSweepTimeInSeconds = 60;
-        m_matchedPropertiesCacheSweepTimer.startOneShot(matchedDeclarationCacheSweepTimeInSeconds);
+        static const Seconds matchedDeclarationCacheSweepTime { 1_min };
+        m_matchedPropertiesCacheSweepTimer.startOneShot(matchedDeclarationCacheSweepTime);
     }
 
     ASSERT(hash);

@@ -138,7 +138,7 @@ void EventSource::scheduleInitialConnect()
 void EventSource::scheduleReconnect()
 {
     m_state = CONNECTING;
-    m_connectTimer.startOneShot(m_reconnectDelay / 1000.0);
+    m_connectTimer.startOneShot(1_ms * m_reconnectDelay);
     dispatchEvent(Event::create(eventNames().errorEvent, false, false));
 }
 

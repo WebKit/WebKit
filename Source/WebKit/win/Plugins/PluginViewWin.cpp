@@ -839,7 +839,7 @@ void PluginView::invalidateRect(NPRect* rect)
         if (m_plugin->quirks().contains(PluginQuirkThrottleInvalidate)) {
             m_invalidRects.append(r);
             if (!m_invalidateTimer.isActive())
-                m_invalidateTimer.startOneShot(0.001);
+                m_invalidateTimer.startOneShot(1_ms);
         } else
             invalidateRect(r);
     }

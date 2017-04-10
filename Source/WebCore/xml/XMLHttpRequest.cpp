@@ -738,7 +738,7 @@ ExceptionOr<void> XMLHttpRequest::createRequest()
         else {
             request.setTimeoutInterval(std::numeric_limits<double>::infinity());
             m_sendingTime = MonotonicTime::now();
-            m_timeoutTimer.startOneShot(Seconds { m_timeoutMilliseconds / 1000. });
+            m_timeoutTimer.startOneShot(1_ms * m_timeoutMilliseconds);
         }
     }
 

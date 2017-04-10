@@ -110,9 +110,9 @@ namespace WebCore {
 using namespace HTMLNames;
 
 // Post value change notifications for password fields or elements contained in password fields at a 40hz interval to thwart analysis of typing cadence
-static double AccessibilityPasswordValueChangeNotificationInterval = 0.025;
-static double AccessibilityLiveRegionChangedNotificationInterval = 0.020;
-static double AccessibilityFocusAriaModalNodeNotificationInterval = 0.050;
+static const Seconds accessibilityPasswordValueChangeNotificationInterval { 25_ms };
+static const Seconds accessibilityLiveRegionChangedNotificationInterval { 20_ms };
+static const Seconds accessibilityFocusAriaModalNodeNotificationInterval { 50_ms };
 
 AccessibilityObjectInclusion AXComputedObjectAttributeCache::getIgnored(AXID id) const
 {
@@ -1311,7 +1311,7 @@ bool AXObjectCache::enqueuePasswordValueChangeNotification(AccessibilityObject* 
 
     m_passwordNotificationsToPost.add(observableObject);
     if (!m_passwordNotificationPostTimer.isActive())
-        m_passwordNotificationPostTimer.startOneShot(AccessibilityPasswordValueChangeNotificationInterval);
+        m_passwordNotificationPostTimer.startOneShot(accessibilityPasswordValueChangeNotificationInterval);
 
     return true;
 }
@@ -1338,7 +1338,7 @@ void AXObjectCache::postLiveRegionChangeNotification(AccessibilityObject* object
     if (!m_liveRegionObjectsSet.contains(object))
         m_liveRegionObjectsSet.add(object);
 
-    m_liveRegionChangedPostTimer.startOneShot(AccessibilityLiveRegionChangedNotificationInterval);
+    m_liveRegionChangedPostTimer.startOneShot(accessibilityLiveRegionChangedNotificationInterval);
 }
 
 void AXObjectCache::liveRegionChangedNotificationPostTimerFired()
@@ -1372,7 +1372,7 @@ void AXObjectCache::focusAriaModalNode()
     if (m_focusAriaModalNodeTimer.isActive())
         m_focusAriaModalNodeTimer.stop();
     
-    m_focusAriaModalNodeTimer.startOneShot(AccessibilityFocusAriaModalNodeNotificationInterval);
+    m_focusAriaModalNodeTimer.startOneShot(accessibilityFocusAriaModalNodeNotificationInterval);
 }
 
 void AXObjectCache::focusAriaModalNodeTimerFired()

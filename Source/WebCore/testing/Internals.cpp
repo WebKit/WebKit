@@ -729,7 +729,7 @@ void Internals::setImageFrameDecodingDuration(HTMLImageElement& element, float d
     if (!is<BitmapImage>(image))
         return;
     
-    downcast<BitmapImage>(*image).setFrameDecodingDurationForTesting(duration);
+    downcast<BitmapImage>(*image).setFrameDecodingDurationForTesting(Seconds { duration });
 }
 
 void Internals::resetImageAnimation(HTMLImageElement& element)

@@ -476,7 +476,7 @@ void TextIndicatorWindow::setTextIndicator(Ref<TextIndicator> textIndicator, CGR
         [m_textIndicatorView present];
 
     if (lifetime == TextIndicatorWindowLifetime::Temporary)
-        m_temporaryTextIndicatorTimer.startOneShot(timeBeforeFadeStarts);
+        m_temporaryTextIndicatorTimer.startOneShot(1_s * timeBeforeFadeStarts);
 }
 
 void TextIndicatorWindow::closeWindow()

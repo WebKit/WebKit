@@ -111,7 +111,7 @@ static WebNetscapePluginView *currentPluginView = nil;
 
 typedef struct OpaquePortState* PortState;
 
-static const double ThrottledTimerInterval = 0.25;
+static const Seconds throttledTimerInterval { 250_ms };
 
 class PluginTimer : public TimerBase {
 public:
@@ -130,10 +130,10 @@ public:
     {
         ASSERT(!isActive());
 
-        double timeInterval = m_interval / 1000.0;
+        Seconds timeInterval = 1_ms * m_interval;
         
         if (throttle)
-            timeInterval = std::max(timeInterval, ThrottledTimerInterval);
+            timeInterval = std::max(timeInterval, throttledTimerInterval);
         
         if (m_repeat)
             startRepeating(Seconds { timeInterval });

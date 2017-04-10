@@ -56,7 +56,7 @@ namespace WebCore {
 static const float lineHeight = 5.33;
 
 // Default scrolling animation time period (s).
-static const float scrollTime = 0.433;
+static const Seconds scrollTime { 433_ms };
 
 VTTRegion::VTTRegion(ScriptExecutionContext& context)
     : ContextDestructionObserver(&context)
@@ -403,7 +403,7 @@ void VTTRegion::startTimer()
     if (m_scrollTimer.isActive())
         return;
 
-    double duration = isScrollingRegion() ? scrollTime : 0;
+    Seconds duration = isScrollingRegion() ? scrollTime : 0_s;
     m_scrollTimer.startOneShot(duration);
 }
 
