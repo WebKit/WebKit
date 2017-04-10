@@ -1,5 +1,27 @@
 2017-04-10  Youenn Fablet  <youenn@apple.com>
 
+        Wrap legacy MediaStream API in runtime flag
+        https://bugs.webkit.org/show_bug.cgi?id=169877
+
+        Reviewed by Alex Christensen.
+
+        Covered by binding tests.
+
+        Marking navigator.getUserMedia and MediaStreamEvent as runtime enabled if mediastream and webrtclegacy api flags
+        are on.
+        Updated binding generator to support multiple runtime flags.
+
+        * Modules/mediastream/MediaStreamEvent.idl:
+        * Modules/mediastream/NavigatorUserMedia.idl:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GetRuntimeEnableFunctionName):
+        (GenerateImplementation):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::JSTestObjPrototype::finishCreation):
+        * bindings/scripts/test/TestObj.idl:
+
+2017-04-10  Youenn Fablet  <youenn@apple.com>
+
         Remove deprecated parts of media stream spec
         https://bugs.webkit.org/show_bug.cgi?id=169879
 

@@ -22,11 +22,10 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// FIXME 169871: legacy or remove
 [
     Conditional=WEB_RTC,
     Constructor(DOMString type, optional MediaStreamEventInit eventInitDict),
-    EnabledAtRuntime=MediaStream,
+    EnabledAtRuntime=WebRTCLegacyAPI&MediaStream,
 ] interface MediaStreamEvent : Event {
     readonly attribute MediaStream? stream;
 };

@@ -29,9 +29,8 @@
 */
 
 [
-    Conditional=MEDIA_STREAM,
-    EnabledAtRuntime=MediaStream,
+    Conditional=MEDIA_STREAM&WEB_RTC,
+    EnabledAtRuntime=WebRTCLegacyAPI&MediaStream,
 ] partial interface Navigator {
-    // FIXME 169871: wrap legacy setting
     [JSBuiltin] void getUserMedia(MediaStreamConstraints constraints, NavigatorUserMediaSuccessCallback successCallback, NavigatorUserMediaErrorCallback errorCallback);
 };

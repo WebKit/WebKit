@@ -105,7 +105,7 @@ enum TestConfidence { "high", "kinda-low" };
     [Reflect=customContentURLAttr, URL] attribute DOMString reflectedCustomURLAttr;
 
     // [EnabledAtRuntime] attributes and operations.
-    [Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeature] attribute DOMString enabledAtRuntimeAttribute;
+    [Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeature&TestFeature1] attribute DOMString enabledAtRuntimeAttribute;
     [Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeature] void enabledAtRuntimeOperation(DOMString testParam);
     [Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeature] void enabledAtRuntimeOperation(long testParam);
 
