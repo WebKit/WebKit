@@ -142,6 +142,12 @@ void WebPopupMenuProxyGtk::showPopupMenu(const IntRect& rect, TextDirection, dou
        m_client->failedToShowPopupMenu();
        return;
     }
+
+    // This ensures that the active item gets selected after popping up the menu, and
+    // as it says in "gtkcombobox.c" (line ~1606): it's ugly, but gets the job done.
+    GtkWidget* activeChild = gtk_menu_get_active(GTK_MENU(m_popup));
+    if (activeChild && gtk_widget_get_visible(activeChild))
+        gtk_menu_shell_select_item(GTK_MENU_SHELL(m_popup), activeChild);
 }
 
 void WebPopupMenuProxyGtk::hidePopupMenu()

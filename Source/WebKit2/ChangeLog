@@ -1,3 +1,14 @@
+2017-04-10  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK] Opening a popup menu does not pre-select the active item
+        https://bugs.webkit.org/show_bug.cgi?id=170680
+
+        Reviewed by Michael Catanzaro.
+
+        * UIProcess/gtk/WebPopupMenuProxyGtk.cpp:
+        (WebKit::WebPopupMenuProxyGtk::showPopupMenu): Use gtk_menu_shell_select_item() to
+        ensure that the active item appears selected right after popping up the menu.
+
 2017-04-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Enable DOM timer throttling and CSS animations suspension
