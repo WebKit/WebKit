@@ -131,18 +131,27 @@ public:
             special = nullptr;
         }
 
+        using ResultList = Vector<Variable*, 1>;
+
+        ResultList resultForBranch() const
+        {
+            if (type() == BlockType::Loop)
+                return ResultList();
+            return result;
+        }
+
     private:
         friend class B3IRGenerator;
         BlockType blockType;
         BasicBlock* continuation;
         BasicBlock* special;
-        Vector<Variable*, 1> result;
+        ResultList result;
     };
 
     typedef Value* ExpressionType;
     typedef ControlData ControlType;
     typedef Vector<ExpressionType, 1> ExpressionList;
-    typedef Vector<Variable*, 1> ResultList;
+    typedef ControlData::ResultList ResultList;
     typedef FunctionParser<B3IRGenerator>::ControlEntry ControlEntry;
 
     static constexpr ExpressionType emptyExpression = nullptr;
@@ -223,7 +232,7 @@ private:
     void emitStoreOp(StoreOpType, ExpressionType pointer, ExpressionType value, uint32_t offset);
 
     void unify(Variable* target, const ExpressionType source);
-    void unifyValuesWithBlock(const ExpressionList& resultStack, ResultList& stack);
+    void unifyValuesWithBlock(const ExpressionList& resultStack, const ResultList& stack);
 
     void emitChecksForModOrDiv(B3::Opcode, ExpressionType left, ExpressionType right);
 
@@ -821,8 +830,7 @@ auto B3IRGenerator::addReturn(const ControlData&, const ExpressionList& returnVa
 
 auto B3IRGenerator::addBranch(ControlData& data, ExpressionType condition, const ExpressionList& returnValues) -> PartialResult
 {
-    if (data.type() != BlockType::Loop)
-        unifyValuesWithBlock(returnValues, data.result);
+    unifyValuesWithBlock(returnValues, data.resultForBranch());
 
     BasicBlock* target = data.targetBlockForBranch();
     if (condition) {
@@ -843,8 +851,8 @@ auto B3IRGenerator::addBranch(ControlData& data, ExpressionType condition, const
 auto B3IRGenerator::addSwitch(ExpressionType condition, const Vector<ControlData*>& targets, ControlData& defaultTarget, const ExpressionList& expressionStack) -> PartialResult
 {
     for (size_t i = 0; i < targets.size(); ++i)
-        unifyValuesWithBlock(expressionStack, targets[i]->result);
-    unifyValuesWithBlock(expressionStack, defaultTarget.result);
+        unifyValuesWithBlock(expressionStack, targets[i]->resultForBranch());
+    unifyValuesWithBlock(expressionStack, defaultTarget.resultForBranch());
 
     SwitchValue* switchValue = m_currentBlock->appendNew<SwitchValue>(m_proc, origin(), condition);
     switchValue->setFallThrough(FrequentedBlock(defaultTarget.targetBlockForBranch()));
@@ -1060,7 +1068,7 @@ void B3IRGenerator::unify(Variable* variable, ExpressionType source)
     m_currentBlock->appendNew<VariableValue>(m_proc, Set, origin(), variable, source);
 }
 
-void B3IRGenerator::unifyValuesWithBlock(const ExpressionList& resultStack, ResultList& result)
+void B3IRGenerator::unifyValuesWithBlock(const ExpressionList& resultStack, const ResultList& result)
 {
     ASSERT(result.size() <= resultStack.size());
 

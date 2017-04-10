@@ -1,3 +1,19 @@
+2017-04-10  Keith Miller  <keith_miller@apple.com>
+
+        WebAssembly: Fix B3IRGenerator for BrTable
+        https://bugs.webkit.org/show_bug.cgi?id=170685
+
+        Reviewed by JF Bastien.
+
+        For some reason this didn't get included in r215141.
+
+        This fixes an issue with BrTable and loops where we would use the loop's return type
+        as the branch target type.
+
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::ControlData::resultForBranch):
+        (JSC::Wasm::B3IRGenerator::unifyValuesWithBlock):
+
 2017-04-08  Oliver Hunt  <oliver@apple.com>
 
         Remove use of strcpy from JSC
