@@ -1,3 +1,22 @@
+2017-04-10  Youenn Fablet  <youenn@apple.com>
+
+        Remove deprecated parts of media stream spec
+        https://bugs.webkit.org/show_bug.cgi?id=169879
+
+        Reviewed by Jon Lee.
+
+        Removing MediaStreamTrackState 'new' value which was unused.
+        Removing MediaStreamTrack _readonly attribute which was unused.
+
+        * Modules/mediastream/MediaStreamTrack.cpp:
+        (WebCore::MediaStreamTrack::readonly): Deleted.
+        * Modules/mediastream/MediaStreamTrack.h:
+        * Modules/mediastream/MediaStreamTrack.idl:
+        * platform/mediastream/MediaStreamTrackPrivate.cpp:
+        (WebCore::MediaStreamTrackPrivate::readonly): Deleted.
+        * platform/mediastream/MediaStreamTrackPrivate.h:
+        * platform/mediastream/RealtimeMediaSource.h:
+
 2017-04-10  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r215175.

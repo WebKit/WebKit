@@ -24,7 +24,7 @@
  */
 
 // FIXME 169871: remove "new"
-enum MediaStreamTrackState { "new", "live", "ended" };
+enum MediaStreamTrackState { "live", "ended" };
 
 [
     ActiveDOMObject,
@@ -53,9 +53,6 @@ enum MediaStreamTrackState { "new", "live", "ended" };
     Promise<void> applyConstraints(optional MediaTrackConstraints constraints);
 
     attribute EventHandler onoverconstrained;
-
-    // FIXME 169871: legacy or remove?
-    readonly attribute boolean _readonly;
 };
 
 [

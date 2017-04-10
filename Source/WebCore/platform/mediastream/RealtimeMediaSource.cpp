@@ -63,7 +63,6 @@ void RealtimeMediaSource::reset()
 {
     m_stopped = false;
     m_muted = false;
-    m_readonly = false;
 }
 
 void RealtimeMediaSource::addObserver(RealtimeMediaSource::Observer& observer)
@@ -145,11 +144,6 @@ void RealtimeMediaSource::audioSamplesAvailable(const MediaTime& time, const Pla
 {
     for (const auto& observer : m_observers)
         observer->audioSamplesAvailable(time, audioData, description, numberOfFrames);
-}
-
-bool RealtimeMediaSource::readonly() const
-{
-    return m_readonly;
 }
 
 void RealtimeMediaSource::stop(Observer* callingObserver)

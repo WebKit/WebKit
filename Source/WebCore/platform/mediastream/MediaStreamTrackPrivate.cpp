@@ -80,11 +80,6 @@ bool MediaStreamTrackPrivate::muted() const
     return m_source->muted();
 }
 
-bool MediaStreamTrackPrivate::readonly() const
-{
-    return m_source->readonly();
-}
-
 bool MediaStreamTrackPrivate::isCaptureTrack() const
 {
     return m_source->isCaptureSource();

@@ -71,7 +71,6 @@ public:
     bool muted() const;
     void setMuted(bool muted) { m_source->setMuted(muted); }
 
-    bool readonly() const;
     bool isCaptureTrack() const;
 
     bool enabled() const { return m_isEnabled; }

@@ -64,9 +64,8 @@ public:
     void setEnabled(bool);
 
     bool muted() const;
-    bool readonly() const;
 
-    enum class State { New, Live, Ended };
+    enum class State { Live, Ended };
     State readyState() const;
 
     bool ended() const;

@@ -98,11 +98,6 @@ bool MediaStreamTrack::muted() const
     return m_private->muted();
 }
 
-bool MediaStreamTrack::readonly() const
-{
-    return m_private->readonly();
-}
-
 auto MediaStreamTrack::readyState() const -> State
 {
     return ended() ? State::Ended : State::Live;

@@ -133,9 +133,6 @@ public:
     virtual bool enabled() const { return m_enabled; }
     virtual void setEnabled(bool);
 
-    virtual bool readonly() const;
-    virtual void setReadonly(bool readonly) { m_readonly = readonly; }
-
     virtual bool isCaptureSource() const { return false; }
 
     WEBCORE_EXPORT void addObserver(Observer&);
@@ -228,7 +225,6 @@ private:
 
     bool m_echoCancellation { false };
     bool m_stopped { false };
-    bool m_readonly { false };
     bool m_pendingSettingsDidChangeNotification { false };
     bool m_suppressNotifications { true };
 };
