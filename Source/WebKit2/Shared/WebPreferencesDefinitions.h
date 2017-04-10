@@ -241,6 +241,7 @@
     macro(HTTPEquivEnabled, httpEquivEnabled, Bool, bool, true, "", "") \
     macro(MockCaptureDevicesEnabled, mockCaptureDevicesEnabled, Bool, bool, false, "", "") \
     macro(MediaCaptureRequiresSecureConnection, mediaCaptureRequiresSecureConnection, Bool, bool, true, "", "") \
+    macro(UseAVFoundationAudioCapture, useAVFoundationAudioCapture, Bool, bool, false, "", "") \
     macro(EnumeratingAllNetworkInterfacesEnabled, enumeratingAllNetworkInterfacesEnabled, Bool, bool, false, "", "") \
     macro(WebRTCLegacyAPIEnabled, webRTCLegacyAPIEnabled, Bool, bool, true, "", "") \
     macro(ICECandidateFilteringEnabled, iceCandidateFilteringEnabled, Bool, bool, true, "", "") \

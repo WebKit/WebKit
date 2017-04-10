@@ -32,6 +32,7 @@
 #import "AVMediaCaptureSource.h"
 #import "AVVideoCaptureSource.h"
 #import "AudioSourceProvider.h"
+#import "CoreAudioCaptureSource.h"
 #import "Logging.h"
 #import "MediaConstraints.h"
 #import "RealtimeMediaSource.h"
@@ -91,6 +92,19 @@ using namespace WebCore;
 @end
 
 namespace WebCore {
+
+void AVCaptureDeviceManager::setUseAVFoundationAudioCapture(bool enabled)
+{
+    static bool active = false;
+    if (active == enabled)
+        return;
+
+    active = enabled;
+    if (active)
+        RealtimeMediaSourceCenter::singleton().setAudioFactory(AVAudioCaptureSource::factory());
+    else
+        RealtimeMediaSourceCenter::singleton().setAudioFactory(CoreAudioCaptureSource::factory());
+}
 
 Vector<CaptureDevice>& AVCaptureDeviceManager::captureDevices()
 {

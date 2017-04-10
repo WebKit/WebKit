@@ -2964,6 +2964,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings.setMockCaptureDevicesEnabled([preferences mockCaptureDevicesEnabled]);
     settings.setMediaCaptureRequiresSecureConnection([preferences mediaCaptureRequiresSecureConnection]);
     RuntimeEnabledFeatures::sharedFeatures().setMediaStreamEnabled([preferences mediaStreamEnabled]);
+    settings.setUseAVFoundationAudioCapture([preferences useAVFoundationAudioCapture]);
 #endif
 
 #if ENABLE(WEB_RTC)

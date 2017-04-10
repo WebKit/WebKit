@@ -1,3 +1,57 @@
+2017-04-10  Jeremy Jones  <jeremyj@apple.com>
+
+        Add CoreAudioCaptureSource.
+        https://bugs.webkit.org/show_bug.cgi?id=170112
+        rdar://problem/30293338
+
+        Reviewed by Eric Carlson.
+
+        No new tests because this provides the same funcitonality as AVAudioCaptureSource. 
+        Funcionality is covered by existing test cases.
+
+        Add CoreAudioCaptureSource for audio capture. And use it by default in AVCaptureDeviceManager.
+        Add UseAVFoundationAudioCapture setting to switch back to AVFoundation for audio capture.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/Settings.cpp:
+        (WebCore::Settings::useAVFoundationAudioCapture):
+        (WebCore::Settings::setUseAVFoundationAudioCapture):
+        * page/Settings.h:
+        * platform/mediastream/mac/AVCaptureDeviceManager.h:
+        * platform/mediastream/mac/AVCaptureDeviceManager.mm:
+        (WebCore::AVCaptureDeviceManager::setUseAVFoundationAudioCapture):
+        * platform/mediastream/mac/CoreAudioCaptureSource.cpp: Added.
+        (WebCore::CoreAudioCaptureSource::create):
+        (WebCore::CoreAudioCaptureSource::factory):
+        (WebCore::CoreAudioCaptureSource::CoreAudioCaptureSource):
+        (WebCore::CoreAudioCaptureSource::~CoreAudioCaptureSource):
+        (WebCore::CoreAudioCaptureSource::preferredSampleRate):
+        (WebCore::CoreAudioCaptureSource::preferredIOBufferDuration):
+        (WebCore::CoreAudioCaptureSource::configureMicrophoneProc):
+        (WebCore::CoreAudioCaptureSource::configureSpeakerProc):
+        (WebCore::CoreAudioCaptureSource::addMicrophoneDataConsumer):
+        (WebCore::CoreAudioCaptureSource::removeMicrophoneDataConsumer):
+        (WebCore::CoreAudioCaptureSource::addEchoCancellationSource):
+        (WebCore::CoreAudioCaptureSource::removeEchoCancellationSource):
+        (WebCore::CoreAudioCaptureSource::checkTimestamps):
+        (WebCore::CoreAudioCaptureSource::provideSpeakerData):
+        (WebCore::CoreAudioCaptureSource::speakerCallback):
+        (WebCore::CoreAudioCaptureSource::processMicrophoneSamples):
+        (WebCore::CoreAudioCaptureSource::microphoneCallback):
+        (WebCore::CoreAudioCaptureSource::defaultOutputDevice):
+        (WebCore::CoreAudioCaptureSource::defaultInputDevice):
+        (WebCore::CoreAudioCaptureSource::setupAudioUnits):
+        (WebCore::CoreAudioCaptureSource::startProducingData):
+        (WebCore::CoreAudioCaptureSource::stopProducingData):
+        (WebCore::CoreAudioCaptureSource::suspend):
+        (WebCore::CoreAudioCaptureSource::resume):
+        (WebCore::CoreAudioCaptureSource::capabilities):
+        (WebCore::CoreAudioCaptureSource::settings):
+        * platform/mediastream/mac/CoreAudioCaptureSource.h: Added.
+        * platform/mediastream/mac/RealtimeMediaSourceCenterMac.cpp:
+        (WebCore::RealtimeMediaSourceCenterMac::RealtimeMediaSourceCenterMac):
+        (WebCore::RealtimeMediaSourceCenterMac::defaultAudioFactory):
+
 2017-04-10  Youenn Fablet  <youenn@apple.com>
 
         Wrap legacy MediaStream API in runtime flag

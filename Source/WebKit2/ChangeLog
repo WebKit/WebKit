@@ -1,3 +1,25 @@
+2017-04-10  Jeremy Jones  <jeremyj@apple.com>
+
+        Add CoreAudioCaptureSource.
+        https://bugs.webkit.org/show_bug.cgi?id=170112
+        rdar://problem/30293338
+
+        Reviewed by Tim Horton.
+
+        Add UseAVFoundationAudioCapture preference to switch back from the new default of CoreAudio.
+
+        * Shared/WebPreferencesDefinitions.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetUseAVFoundationAudioCapture):
+        (WKPreferencesGetUseAVFoundationAudioCapture):
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.cpp:
+        (WebKit::UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstraints):
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::UserMediaPermissionRequestManagerProxy::syncWithWebCorePrefs):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2017-04-10  Brent Fulgham  <bfulgham@apple.com>
 
         [WK2][macOS] Block access to Apple Events before launch.

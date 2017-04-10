@@ -33,9 +33,9 @@
 #if ENABLE(MEDIA_STREAM)
 #include "RealtimeMediaSourceCenterMac.h"
 
-#include "AVAudioCaptureSource.h"
 #include "AVCaptureDeviceManager.h"
 #include "AVVideoCaptureSource.h"
+#include "CoreAudioCaptureSource.h"
 #include "Logging.h"
 #include "MediaStreamPrivate.h"
 #include <wtf/MainThread.h>
@@ -63,7 +63,7 @@ RealtimeMediaSourceCenterMac::RealtimeMediaSourceCenterMac()
     m_supportedConstraints.setSupportsDeviceId(true);
     m_supportedConstraints.setSupportsGroupId(true);
 
-    m_audioFactory = &AVAudioCaptureSource::factory();
+    m_audioFactory = &CoreAudioCaptureSource::factory();
     m_videoFactory = &AVVideoCaptureSource::factory();
 }
 
@@ -174,7 +174,7 @@ Vector<String> RealtimeMediaSourceCenterMac::bestSourcesForTypeAndConstraints(Re
 
 RealtimeMediaSource::CaptureFactory* RealtimeMediaSourceCenterMac::defaultAudioFactory()
 {
-    return &AVAudioCaptureSource::factory();
+    return &CoreAudioCaptureSource::factory();
 }
 
 RealtimeMediaSource::CaptureFactory* RealtimeMediaSourceCenterMac::defaultVideoFactory()

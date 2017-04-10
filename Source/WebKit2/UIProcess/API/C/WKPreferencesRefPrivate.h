@@ -433,6 +433,10 @@ WK_EXPORT bool WKPreferencesGetEnumeratingAllNetworkInterfacesEnabled(WKPreferen
 WK_EXPORT void WKPreferencesSetMediaCaptureRequiresSecureConnection(WKPreferencesRef, bool);
 WK_EXPORT bool WKPreferencesGetMediaCaptureRequiresSecureConnection(WKPreferencesRef);
 
+// Defaults to false.
+WK_EXPORT void WKPreferencesSetUseAVFoundationAudioCapture(WKPreferencesRef, bool);
+WK_EXPORT bool WKPreferencesGetUseAVFoundationAudioCapture(WKPreferencesRef);
+    
 // Defaults to false
 WK_EXPORT void WKPreferencesSetFetchAPIEnabled(WKPreferencesRef, bool flag);
 WK_EXPORT bool WKPreferencesGetFetchAPIEnabled(WKPreferencesRef);

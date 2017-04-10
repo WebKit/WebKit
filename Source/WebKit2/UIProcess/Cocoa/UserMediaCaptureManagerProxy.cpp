@@ -128,7 +128,7 @@ UserMediaCaptureManagerProxy::~UserMediaCaptureManagerProxy()
 void UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstraints(uint64_t id, const CaptureDevice& device, const MediaConstraintsData& constraintsData, bool& succeeded, String& invalidConstraints)
 {
     auto constraints = MediaConstraintsImpl::create(constraintsData);
-    RefPtr<RealtimeMediaSource> source = RealtimeMediaSourceCenter::singleton().defaultAudioFactory()->createMediaSourceForCaptureDeviceWithConstraints(device, constraints.ptr(), invalidConstraints);
+    auto source = RealtimeMediaSourceCenter::singleton().audioFactory()->createMediaSourceForCaptureDeviceWithConstraints(device, constraints.ptr(), invalidConstraints);
     succeeded = !!source;
     
     if (source)

@@ -45,6 +45,8 @@ namespace WebCore {
 class AVCaptureDeviceManager final : public CaptureDeviceManager {
     friend class NeverDestroyed<AVCaptureDeviceManager>;
 public:
+    WEBCORE_EXPORT static void setUseAVFoundationAudioCapture(bool);
+
     Vector<CaptureDevice>& captureDevices() final;
 
     static AVCaptureDeviceManager& singleton();

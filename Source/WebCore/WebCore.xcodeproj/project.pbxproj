@@ -73,7 +73,7 @@
 		070334E9145A1F36008D8D45 /* JSTrackCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 070334E8145A1F35008D8D45 /* JSTrackCustom.cpp */; };
 		070363E0181A1CDC00C074A5 /* AVAudioCaptureSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 070363D8181A1CDC00C074A5 /* AVAudioCaptureSource.h */; };
 		070363E1181A1CDC00C074A5 /* AVAudioCaptureSource.mm in Sources */ = {isa = PBXBuildFile; fileRef = 070363D9181A1CDC00C074A5 /* AVAudioCaptureSource.mm */; };
-		070363E2181A1CDC00C074A5 /* AVCaptureDeviceManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 070363DA181A1CDC00C074A5 /* AVCaptureDeviceManager.h */; };
+		070363E2181A1CDC00C074A5 /* AVCaptureDeviceManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 070363DA181A1CDC00C074A5 /* AVCaptureDeviceManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		070363E3181A1CDC00C074A5 /* AVCaptureDeviceManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = 070363DB181A1CDC00C074A5 /* AVCaptureDeviceManager.mm */; };
 		070363E4181A1CDC00C074A5 /* AVMediaCaptureSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 070363DC181A1CDC00C074A5 /* AVMediaCaptureSource.h */; };
 		070363E5181A1CDC00C074A5 /* AVMediaCaptureSource.mm in Sources */ = {isa = PBXBuildFile; fileRef = 070363DD181A1CDC00C074A5 /* AVMediaCaptureSource.mm */; };
@@ -274,7 +274,7 @@
 		07B5A30D14687D7100A81ECE /* JSTextTrackListCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07B5A30C14687D7100A81ECE /* JSTextTrackListCustom.cpp */; };
 		07B7116D1D899E63009F0FFB /* CaptureDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = 07B7116A1D899E63009F0FFB /* CaptureDevice.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		07B7116E1D899E63009F0FFB /* CaptureDeviceManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07B7116B1D899E63009F0FFB /* CaptureDeviceManager.cpp */; };
-		07B7116F1D899E63009F0FFB /* CaptureDeviceManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 07B7116C1D899E63009F0FFB /* CaptureDeviceManager.h */; };
+		07B7116F1D899E63009F0FFB /* CaptureDeviceManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 07B7116C1D899E63009F0FFB /* CaptureDeviceManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		07C046C31E42508B007201E7 /* CAAudioStreamDescription.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 073B87571E40DCFD0071C0EC /* CAAudioStreamDescription.cpp */; };
 		07C046C41E42508B007201E7 /* CAAudioStreamDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 073B87581E40DCFD0071C0EC /* CAAudioStreamDescription.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		07C046C81E425155007201E7 /* AudioTrackPrivateMediaStreamCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = 07C046C61E42512F007201E7 /* AudioTrackPrivateMediaStreamCocoa.h */; };
@@ -1673,6 +1673,7 @@
 		3F42B31E1881191B00278AAC /* WebVideoFullscreenControllerAVKit.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3F42B31C1881191B00278AAC /* WebVideoFullscreenControllerAVKit.mm */; };
 		3FBC4AF3189881560046EE38 /* WebVideoFullscreenInterfaceAVKit.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3FBC4AF1189881560046EE38 /* WebVideoFullscreenInterfaceAVKit.mm */; };
 		3FBC4AF4189881560046EE38 /* WebVideoFullscreenInterfaceAVKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 3FBC4AF2189881560046EE38 /* WebVideoFullscreenInterfaceAVKit.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3FF1FA661E7350FD00C1002F /* CoreAudioCaptureSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3F3BB5821E709EE400C701F2 /* CoreAudioCaptureSource.cpp */; };
 		3FF813A71DBA8640009BF001 /* PointerLockController.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CFC434F192406A900A0D3B5 /* PointerLockController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3FFFF9A8159D9A550020BBD5 /* WebKitCSSViewportRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3FFFF9A6159D9A550020BBD5 /* WebKitCSSViewportRule.cpp */; };
 		3FFFF9A9159D9A550020BBD5 /* WebKitCSSViewportRule.h in Headers */ = {isa = PBXBuildFile; fileRef = 3FFFF9A7159D9A550020BBD5 /* WebKitCSSViewportRule.h */; };
@@ -9257,6 +9258,8 @@
 		3F2B33E3165ABD3500E3987C /* WebKitCSSViewportRule.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebKitCSSViewportRule.idl; sourceTree = "<group>"; };
 		3F2B33E9165AF15500E3987C /* JSWebKitCSSViewportRule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebKitCSSViewportRule.cpp; sourceTree = "<group>"; };
 		3F2B33EA165AF15500E3987C /* JSWebKitCSSViewportRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebKitCSSViewportRule.h; sourceTree = "<group>"; };
+		3F3BB5821E709EE400C701F2 /* CoreAudioCaptureSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CoreAudioCaptureSource.cpp; sourceTree = "<group>"; };
+		3F3BB5831E709EE400C701F2 /* CoreAudioCaptureSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreAudioCaptureSource.h; sourceTree = "<group>"; };
 		3F42B31B1881191B00278AAC /* WebVideoFullscreenControllerAVKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebVideoFullscreenControllerAVKit.h; sourceTree = "<group>"; };
 		3F42B31C1881191B00278AAC /* WebVideoFullscreenControllerAVKit.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebVideoFullscreenControllerAVKit.mm; sourceTree = "<group>"; };
 		3FBC4AF1189881560046EE38 /* WebVideoFullscreenInterfaceAVKit.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebVideoFullscreenInterfaceAVKit.mm; sourceTree = "<group>"; };
@@ -16117,6 +16120,8 @@
 				070363DD181A1CDC00C074A5 /* AVMediaCaptureSource.mm */,
 				070363DE181A1CDC00C074A5 /* AVVideoCaptureSource.h */,
 				070363DF181A1CDC00C074A5 /* AVVideoCaptureSource.mm */,
+				3F3BB5821E709EE400C701F2 /* CoreAudioCaptureSource.cpp */,
+				3F3BB5831E709EE400C701F2 /* CoreAudioCaptureSource.h */,
 				0744ECEB1E0C4AE5000D0944 /* MockRealtimeAudioSourceMac.h */,
 				0744ECEC1E0C4AE5000D0944 /* MockRealtimeAudioSourceMac.mm */,
 				07EE76ED1BEA619800F89133 /* MockRealtimeVideoSourceMac.h */,
@@ -30618,6 +30623,7 @@
 				E13F01F11270E19000DFBA71 /* CookieStorageMac.mm in Sources */,
 				9746AF2114F4DDE6003E7A72 /* Coordinates.cpp in Sources */,
 				443817FF1A91B2F8006E04F2 /* CoreMediaSoftLink.cpp in Sources */,
+				3FF1FA661E7350FD00C1002F /* CoreAudioCaptureSource.cpp in Sources */,
 				CD7D33471C7A16BF00041293 /* CoreVideoSoftLink.cpp in Sources */,
 				BC5EB9500E82056B00B25965 /* CounterDirectives.cpp in Sources */,
 				9392F1500AD1862300691BD4 /* CounterNode.cpp in Sources */,

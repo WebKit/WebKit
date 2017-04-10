@@ -31,6 +31,10 @@
 #include <WebCore/RealtimeMediaSource.h>
 #include <WebCore/SecurityOriginData.h>
 
+#if ENABLE(MEDIA_STREAM) && USE(AVFOUNDATION)
+#include <WebCore/AVCaptureDeviceManager.h>
+#endif
+
 using namespace WebCore;
 
 namespace WebKit {
@@ -329,6 +333,11 @@ void UserMediaPermissionRequestManagerProxy::syncWithWebCorePrefs() const
     // this is a noop if the preference hasn't changed since the last time this was called.
     bool mockDevicesEnabled = m_page.preferences().mockCaptureDevicesEnabled();
     WebCore::MockRealtimeMediaSourceCenter::setMockRealtimeMediaSourceCenterEnabled(mockDevicesEnabled);
+
+#if USE(AVFOUNDATION)
+    bool useAVFoundationAudioCapture = m_page.preferences().useAVFoundationAudioCapture();
+    WebCore::AVCaptureDeviceManager::setUseAVFoundationAudioCapture(useAVFoundationAudioCapture);
+#endif
 #endif
 }
 
