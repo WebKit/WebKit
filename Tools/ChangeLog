@@ -1,3 +1,19 @@
+2017-04-10  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK] Misplaced right click menu on web page due to deprecated gtk_menu_popup()
+        https://bugs.webkit.org/show_bug.cgi?id=170553
+
+        Reviewed by Michael Catanzaro.
+
+        Use gtk_menu_popup_at_pointer() and gtk_menu_popup_at_rect() when
+        building with GTK+ 3.22 or newer. This allows the Wayland GTK+ backend
+        to properly position popup menus, and also avoids using functions
+        which were deprecated starting at that GTK+ release.
+
+        * MiniBrowser/gtk/BrowserSearchBar.c:
+        (searchEntryMenuIconPressedCallback):
+        Update MiniBrowser to use gtk_menu_popup_at_pointer().
+
 2017-04-10  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION (r214403): fast/events/drag-to-navigate.html and fast/events/only-valid-drop-targets-receive-file-drop.html failing
