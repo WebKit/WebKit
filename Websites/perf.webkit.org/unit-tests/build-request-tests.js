@@ -23,12 +23,10 @@ function sampleBuildRequestData()
         }],
         "commitSets": [{
             "id": "4255",
-            "commits": ["87832", "93116"],
-            "customRoots": [],
+            "commits": ["87832", "93116"]
         }, {
             "id": "4256",
-            "commits": ["87832", "96336"],
-            "customRoots": [],
+            "commits": ["87832", "96336"]
         }],
         "commits": [{
             "id": "87832",
@@ -51,7 +49,6 @@ function sampleBuildRequestData()
             "revision": "192736",
             "time": 1448225325650
         }],
-        "uploadedFiles": [],
         "status": "OK"
     };
 }

@@ -178,47 +178,26 @@ class TestGroup extends LabeledObject {
         });
     }
 
-    static createWithTask(taskName, platform, test, groupName, repetitionCount, commitSets)
-    {
-        console.assert(commitSets.length == 2);
-        const revisionSets = this._revisionSetsFromCommitSets(commitSets);
-        const params = {taskName, name: groupName, platform: platform.id(), test: test.id(), repetitionCount, revisionSets};
-        return PrivilegedAPI.sendRequest('create-test-group', params).then((data) => {
-            return AnalysisTask.fetchById(data['taskId']);
-        }).then((task) => {
-            return this._fetchTestGroupsForTask(task.id()).then(() => task);
-        });
-    }
-
     static createAndRefetchTestGroups(task, name, repetitionCount, commitSets)
     {
         console.assert(commitSets.length == 2);
-        const revisionSets = this._revisionSetsFromCommitSets(commitSets);
+
+        const revisionSets = commitSets.map((commitSet) => {
+            console.assert(commitSet instanceof CustomCommitSet || commitSet instanceof CommitSet);
+            const revisionSet = {};
+            for (let repository of commitSet.repositories())
+                revisionSet[repository.id()] = commitSet.revisionForRepository(repository);
+            return revisionSet;
+        });
+
         return PrivilegedAPI.sendRequest('create-test-group', {
             task: task.id(),
             name: name,
             repetitionCount: repetitionCount,
             revisionSets: revisionSets,
-        }).then((data) => this._fetchTestGroupsForTask(task.id()));
-    }
-
-    static _revisionSetsFromCommitSets(commitSets)
-    {
-        return commitSets.map((commitSet) => {
-            console.assert(commitSet instanceof CustomCommitSet || commitSet instanceof CommitSet);
-            const revisionSet = {};
-            for (let repository of commitSet.repositories())
-                revisionSet[repository.id()] = commitSet.revisionForRepository(repository);
-            const customRoots = commitSet.customRoots();
-            if (customRoots && customRoots.length)
-                revisionSet['customRoots'] = customRoots.map((uploadedFile) => uploadedFile.id());
-            return revisionSet;
+        }).then((data) => {
+            return this.cachedFetch('/api/test-groups', {task: task.id()}, true).then((data) => this._createModelsFromFetchedTestGroups(data));
         });
-    }
-
-    static _fetchTestGroupsForTask(taskId)
-    {
-        return this.cachedFetch('/api/test-groups', {task: taskId}, true).then((data) => this._createModelsFromFetchedTestGroups(data));
     }
 
     static fetchByTask(taskId)

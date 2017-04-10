@@ -52,7 +52,6 @@ class PageRouter {
             destinationPage.open(parsed.state);
         } else
             destinationPage.updateFromSerializedState(parsed.state, false);
-        destinationPage.enqueueToRender();
 
         return true;
     }

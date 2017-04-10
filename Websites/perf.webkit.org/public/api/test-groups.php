@@ -55,8 +55,7 @@ function main($path) {
     exit_with_success(array('testGroups' => $test_groups,
         'buildRequests' => $build_requests,
         'commitSets' => $build_requests_fetcher->commit_sets(),
-        'commits' => $build_requests_fetcher->commits(),
-        'uploadedFiles' => $build_requests_fetcher->uploaded_files()));
+        'commits' => $build_requests_fetcher->commits()));
 }
 
 function format_test_group($group_row) {

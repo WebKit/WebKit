@@ -15,6 +15,7 @@ function sampleAnalysisTask()
                 'bugs': [],
                 'buildRequestCount': '14',
                 'finishedBuildRequestCount': '6',
+                'category': 'identified',
                 'causes': [
                     '105975'
                 ],
@@ -23,10 +24,10 @@ function sampleAnalysisTask()
                 'endRunTime': 1454515020303,
                 'fixes': [],
                 'id': '1082',
-                'metric': MockModels.someMetric.id(),
+                'metric': '2884',
                 'name': 'Potential 1.2% regression between 2016-02-02 20:20 and 02-03 15:57',
                 'needed': null,
-                'platform': MockModels.somePlatform.id(),
+                'platform': '65',
                 'result': 'regression',
                 'segmentationStrategy': '1',
                 'startRun': '37117949',
@@ -48,38 +49,6 @@ function sampleAnalysisTask()
                 'time': 1454481246108
             }
         ],
-        'status': 'OK'
-    };
-}
-
-function sampleCustomAnalysisTask()
-{
-    return {
-        'analysisTasks': [
-            {
-                'id': '1000',
-                'createdAt': 1454594330000,
-                'author': null,
-                'buildRequestCount': '0',
-                'finishedBuildRequestCount': '0',
-                'bugs': [],
-                'causes': [ ],
-                'fixes': [],
-                'startRun': null,
-                'startRunTime': null,
-                'endRun': null,
-                'endRunTime': null,
-                'metric': null,
-                'name': 'Potential 1.2% regression between 2016-02-02 20:20 and 02-03 15:57',
-                'needed': null,
-                'platform': null,
-                'result': null,
-                'segmentationStrategy': null,
-                'testRangeStragegy': null,
-            }
-        ],
-        'commits': [],
-        'bugs': [],
         'status': 'OK'
     };
 }
@@ -150,43 +119,6 @@ function measurementCluster()
 describe('AnalysisTask', () => {
     MockModels.inject();
     let requests = MockRemoteAPI.inject();
-
-    function loadAnalysisTasks(rawData)
-    {
-        AnalysisTask._constructAnalysisTasksFromRawData(rawData);
-        return Promise.resolve();
-    }
-
-    describe('findByPlatformAndMetric', () => {
-        it('should return an empty array when there are no analysis tasks', () => {
-            assert.deepEqual(AnalysisTask.findByPlatformAndMetric(MockModels.somePlatform, MockModels.someMetric), []);
-        });
-
-        it('should return an array containing the matching non-custom analysis tasks', () => {
-            return loadAnalysisTasks(sampleAnalysisTask()).then(() => {
-                return loadAnalysisTasks(sampleCustomAnalysisTask());
-            }).then(() => {
-                const tasks = AnalysisTask.findByPlatformAndMetric(MockModels.somePlatform.id(), MockModels.someMetric.id());
-                assert.equal(tasks.length, 1);
-                const task = tasks[0];
-                assert.equal(task.id(), 1082);
-                assert.equal(task.isCustom(), false);
-                assert.equal(task.hasResults(), true);
-                assert.equal(task.hasPendingRequests(), true);
-                assert.equal(task.requestLabel(), '6 of 14');
-                assert.equal(task.startMeasurementId(), 37117949);
-                assert.equal(task.endMeasurementId(), 37253448);
-                assert.equal(task.author(), '');
-                assert.deepEqual(task.bugs(), []);
-                assert.deepEqual(task.causes(), [CommitLog.findById(105975)]);
-                assert.deepEqual(task.fixes(), []);
-                assert.deepEqual(task.platform(), MockModels.somePlatform);
-                assert.deepEqual(task.metric(), MockModels.someMetric);
-                assert.deepEqual(task.changeType(), 'regression');
-                assert.deepEqual(task.category(), 'investigated');
-            });
-        });
-    });
 
     describe('fetchAll', () => {
         it('should request all analysis tasks', () => {

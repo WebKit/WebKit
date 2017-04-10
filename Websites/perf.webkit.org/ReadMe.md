@@ -71,11 +71,11 @@ Run `database/init-database.sql` in psql as `webkit-perf-db-user`:
 
 Use `pg_dump` and `pg_restore` to backup and restore the database. If you're replicating the production database for development purposes, you may consider excluding `run_iterations` table, which takes up 2/3 of the storage space, to reduce the size of the database for your local copy. Adjust the number of concurrent processes to use by `--jobs` and adjust the compression level by `--compress` (0 is no compression, 9 is most compressed).
 
-- Making the fullbackup of the database: `/Applications/Server.app/Contents/ServerRoot/usr/bin/pg_dump -h localhost webkit-perf-db --format=directory --jobs=4 --no-owner --compress=7 --file=<path to backup directory>`
+- Making the fullbackup of the database: `/Applications/Server.app/Contents/ServerRoot/usr/bin/pg_dump -h localhost webkit-perf-db --format=directory --file=<path to backup directory> --jobs=4 --no-owner --compress=7`
 
-- Making an abridged backup without `run_iterations` table: `/Applications/Server.app/Contents/ServerRoot/usr/bin/pg_dump -h localhost webkit-perf-db --format=directory --jobs=4 --no-owner --compress=7 --exclude-table=run_iterations --file=<path to backup directory>`
+- Making an abridged backup without `run_iterations` table: `/Applications/Server.app/Contents/ServerRoot/usr/bin/pg_dump -h localhost webkit-perf-db --format=directory --file=<path to backup directory> --jobs=4 --no-owner --compress=7 --exclude-table=run_iterations`
 
-- Restoring the database: `/Applications/Server.app/Contents/ServerRoot/usr/bin/pg_restore --format=directory --jobs=4 --no-owner --host localhost --username=webkit-perf-db-user --dbname=webkit-perf-db <path to backup directory>`
+- Restoring the database: `/Applications/Server.app/Contents/ServerRoot/usr/bin/pg_restore --format=directory --jobs=4 --no-owner --host localhost --username=webkit-perf-db-user <path to backup directory> --dbname=webkit-perf-db`
     
 ## Configuring Apache
 
@@ -88,7 +88,7 @@ Use `pg_dump` and `pg_restore` to backup and restore the database. If you're rep
 
 ### Instructions if you're not using Server.app
 
- - Edit `/private/etc/apache2/httpd.conf`
+ - Edit /private/etc/apache2/httpd.conf
 
      1. Change DocumentRoot to `/Volumes/Data/perf.webkit.org/public/`
      2. Uncomment `LoadModule php5_module libexec/apache2/libphp5.so`

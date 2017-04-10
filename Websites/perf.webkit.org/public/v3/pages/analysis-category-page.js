@@ -123,9 +123,11 @@ class AnalysisCategoryPage extends PageWithHeading {
         Instrumentation.startMeasuringTime('AnalysisCategoryPage', 'reconstructTaskList');
 
         console.assert(this.router());
-        const currentCategory = this._categoryToolbar.currentCategory();
+        var currentCategory = this._categoryToolbar.currentCategory();
 
-        const tasks = AnalysisTask.all().filter((task) => task.category() == currentCategory).sort((a, b) => {
+        var tasks = AnalysisTask.all().filter(function (task) {
+            return task.category() == currentCategory;
+        }).sort(function (a, b) {
             if (a.hasPendingRequests() == b.hasPendingRequests())
                 return b.createdAt() - a.createdAt();
             else if (a.hasPendingRequests()) // a < b
@@ -135,25 +137,25 @@ class AnalysisCategoryPage extends PageWithHeading {
             return 0;
         });
 
-        const element = ComponentBase.createElement;
-        const link = ComponentBase.createLink;
-        const router = this.router();
+        var element = ComponentBase.createElement;
+        var link = ComponentBase.createLink;
+        var router = this.router();
         this.renderReplace(this.content().querySelector('tbody.analysis-tasks'),
-            tasks.map((task) => {
-                const status = AnalysisCategoryPage._computeStatus(task);
+            tasks.map(function (task) {
+                var status = AnalysisCategoryPage._computeStatus(task);
                 return element('tr', [
                     element('td', {class: 'status'},
                         element('span', {class: status.class}, status.label)),
                     element('td', link(task.label(), router.url(`analysis/task/${task.id()}`))),    
                     element('td', {class: 'bugs'},
-                        element('ul', task.bugs().map((bug) => {
-                            const url = bug.url();
-                            const title = bug.title();
+                        element('ul', task.bugs().map(function (bug) {
+                            var url = bug.url();
+                            var title = bug.title();
                             return element('li', url ? link(bug.label(), title, url, true) : title);
                         }))),
                     element('td', {class: 'author'}, task.author()),
-                    element('td', {class: 'platform'}, task.platform() ? task.platform().label() : null),
-                    element('td', task.metric() ? task.metric().fullName() : null),
+                    element('td', {class: 'platform'}, task.platform().label()),
+                    element('td', task.metric().fullName()),
                     ]);
             }));
 

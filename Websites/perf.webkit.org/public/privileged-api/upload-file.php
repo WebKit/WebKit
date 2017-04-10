@@ -10,7 +10,7 @@ define('MEGABYTES', 1024 * 1024);
 function main()
 {
     if (array_get($_SERVER, 'CONTENT_LENGTH') && empty($_POST) && empty($_FILES))
-        exit_with_error('FileSizeLimitExceeded');
+        exit_with_error('FileSizeLimitExceeded2');
 
     if (!verify_token(array_get($_POST, 'token')))
         exit_with_error('InvalidToken');
@@ -21,9 +21,6 @@ function main()
     $input_file = array_get($_FILES, 'newFile');
     if (!$input_file)
         exit_with_error('NoFileSpecified');
-
-    if ($input_file['error'] == UPLOAD_ERR_INI_SIZE || $input_file['error'] == UPLOAD_ERR_FORM_SIZE)
-        exit_with_error('FileSizeLimitExceeded');
 
     if ($input_file['error'] != UPLOAD_ERR_OK)
         exit_with_error('FailedToUploadFile', array('name' => $input_file['name'], 'error' => $input_file['error']));

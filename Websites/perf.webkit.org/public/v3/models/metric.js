@@ -119,14 +119,6 @@ class Metric extends LabeledObject {
         formatter.divisor = divisor;
         return formatter;
     };
-
-    static formatTime(utcTime)
-    {
-        // FIXME: This is incorrect when the offset cross day-life-saving change. It's good enough for now.
-        const offsetInMinutes = (new Date(utcTime)).getTimezoneOffset();
-        const timeInLocalTimeZone = new Date(utcTime - offsetInMinutes * 60 * 1000);
-        return timeInLocalTimeZone.toISOString().replace('T', ' ').replace(/\.\d+Z$/, '');
-    }
 }
 
 if (typeof module != 'undefined')

@@ -7,10 +7,10 @@ class AnalysisTask extends LabeledObject {
         this._author = object.author;
         this._createdAt = object.createdAt;
 
-        console.assert(!object.platform || object.platform instanceof Platform);
+        console.assert(object.platform instanceof Platform);
         this._platform = object.platform;
 
-        console.assert(!object.metric || object.metric instanceof Metric);
+        console.assert(object.metric instanceof Metric);
         this._metric = object.metric;
 
         this._startMeasurementId = object.startRun;
@@ -29,11 +29,7 @@ class AnalysisTask extends LabeledObject {
 
     static findByPlatformAndMetric(platformId, metricId)
     {
-        return this.all().filter((task) => {
-            const platform = task._platform;
-            const metric = task._metric;
-            return platform && metric && platform.id() == platformId && metric.id() == metricId;
-        });
+        return this.all().filter(function (task) { return task._platform.id() == platformId && task._metric.id() == metricId; });
     }
 
     updateSingleton(object)
@@ -59,8 +55,7 @@ class AnalysisTask extends LabeledObject {
         this._finishedBuildRequestCount = +object.finishedBuildRequestCount;
     }
 
-    isCustom() { return !this._platform; }
-    hasResults() { return !!this._finishedBuildRequestCount; }
+    hasResults() { return this._finishedBuildRequestCount; }
     hasPendingRequests() { return this._finishedBuildRequestCount < this._buildRequestCount; }
     requestLabel() { return `${this._finishedBuildRequestCount} of ${this._buildRequestCount}`; }
 
@@ -206,8 +201,6 @@ class AnalysisTask extends LabeledObject {
                 }
             }
             for (var otherTask of AnalysisTask.all()) {
-                if (task.isCustom())
-                    continue;
                 if (task.endTime() < otherTask.startTime()
                     || otherTask.endTime() < task.startTime()
                     || task.metric() != otherTask.metric())
@@ -264,6 +257,9 @@ class AnalysisTask extends LabeledObject {
         for (var rawData of data.analysisTasks) {
             rawData.platform = Platform.findById(rawData.platform);
             rawData.metric = Metric.findById(rawData.metric);
+            if (!rawData.platform || !rawData.metric)
+                continue;
+
             rawData.bugs = taskToBug[rawData.id];
             rawData.causes = resolveCommits(rawData.causes);
             rawData.fixes = resolveCommits(rawData.fixes);

@@ -8,7 +8,6 @@ class CommitSet extends DataModelObject {
         this._repositories = [];
         this._repositoryToCommitMap = {};
         this._latestCommitTime = null;
-        this._customRoots = [];
 
         if (!object)
             return;
@@ -19,14 +18,9 @@ class CommitSet extends DataModelObject {
             this._repositoryToCommitMap[repositoryId] = CommitLog.ensureSingleton(row.id, row);
             this._repositories.push(row.repository);
         }
-        for (let fileId of object.customRoots) {
-            const uploadedFile = UploadedFile.findById(fileId);
-            this._customRoots.push(uploadedFile);
-        }
     }
 
     repositories() { return this._repositories; }
-    customRoots() { return this._customRoots; }
     commitForRepository(repository) { return this._repositoryToCommitMap[repository.id()]; }
 
     revisionForRepository(repository)
@@ -53,18 +47,6 @@ class CommitSet extends DataModelObject {
             return false;
         for (var repositoryId in this._repositoryToCommitMap) {
             if (this._repositoryToCommitMap[repositoryId] != other._repositoryToCommitMap[repositoryId])
-                return false;
-        }
-        return CommitSet.areCustomRootsEqual(this._customRoots, other._customRoots);
-    }
-
-    static areCustomRootsEqual(customRoots1, customRoots2)
-    {
-        if (customRoots1.length != customRoots2.length)
-            return false;
-        const set2 = new Set(customRoots2);
-        for (let file of customRoots1) {
-            if (!set2.has(file))
                 return false;
         }
         return true;
@@ -124,7 +106,6 @@ class CustomCommitSet {
     constructor()
     {
         this._revisionListByRepository = new Map;
-        this._customRoots = [];
     }
 
     setRevisionForRepository(repository, revision)
@@ -133,29 +114,9 @@ class CustomCommitSet {
         this._revisionListByRepository.set(repository, revision);
     }
 
-    equals(other)
-    {
-        console.assert(other instanceof CustomCommitSet);
-        if (this._revisionListByRepository.size != other._revisionListByRepository.size)
-            return false;
-        for (let repository of this._revisionListByRepository.keys()) {
-            const thisRevision = this._revisionListByRepository.get(repository);
-            const otherRevision = other._revisionListByRepository.get(repository);
-            if (thisRevision != otherRevision)
-                return false;
-        }
-        return CommitSet.areCustomRootsEqual(this._customRoots, other._customRoots);
-    }
-
     repositories() { return Array.from(this._revisionListByRepository.keys()); }
     revisionForRepository(repository) { return this._revisionListByRepository.get(repository); }
-    customRoots() { return this._customRoots; }
 
-    addCustomRoot(uploadedFile)
-    {
-        console.assert(uploadedFile instanceof UploadedFile);
-        this._customRoots.push(uploadedFile);
-    }
 }
 
 if (typeof module != 'undefined') {

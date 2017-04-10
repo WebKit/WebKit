@@ -19,7 +19,7 @@ function createTrendLineExecutableFromAveragingFunction(callback) {
     }
 }
 
-const ChartTrendLineTypes = [
+var ChartTrendLineTypes = [
     {
         id: 0,
         label: 'None',
@@ -196,15 +196,15 @@ class ChartPane extends ChartPaneBase {
 
     _analyzeRange(startPoint, endPoint)
     {
-        const router = this._chartsPage.router();
-        const newWindow = window.open(router.url('analysis/task/create', {inProgress: true}), '_blank');
+        var router = this._chartsPage.router();
+        var newWindow = window.open(router.url('analysis/task/create'), '_blank');
 
-        const analyzePopover = this.content().querySelector('.chart-pane-analyze-popover');
-        const name = analyzePopover.querySelector('input').value;
+        var analyzePopover = this.content().querySelector('.chart-pane-analyze-popover');
+        var name = analyzePopover.querySelector('input').value;
         AnalysisTask.create(name, startPoint.id, endPoint.id).then((data) => {
             newWindow.location.href = router.url('analysis/task/' + data['taskId']);
             this.fetchAnalysisTasks(true);
-        }, (error) => {
+        }, function (error) {
             newWindow.location.href = router.url('analysis/task/create', {error: error});
         });
     }
@@ -272,6 +272,7 @@ class ChartPane extends ChartPaneBase {
         if (hasSelectedPoints) {
             actions.push(this._makePopoverActionItem(analyzePopover, 'Analyze', false));
             analyzePopover.onsubmit = this.createEventHandler(() => {
+                console.log(selectedPoints.length());
                 this._analyzeRange(selectedPoints.firstPoint(), selectedPoints.lastPoint());
             });
         } else {
