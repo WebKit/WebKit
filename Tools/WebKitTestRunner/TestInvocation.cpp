@@ -267,7 +267,7 @@ void TestInvocation::dumpResults()
 
     if (m_dumpPixels) {
         if (m_pixelResult)
-            dumpPixelsAndCompareWithExpected(m_pixelResult.get(), m_repaintRects.get(), TestInvocation::SnapshotResultType::WebContents);
+            dumpPixelsAndCompareWithExpected(SnapshotResultType::WebContents, m_repaintRects.get(), m_pixelResult.get());
         else if (m_pixelResultIsPending) {
             m_gotRepaint = false;
             WKPageForceRepaint(TestController::singleton().mainWebView()->page(), this, TestInvocation::forceRepaintDoneCallback);
@@ -278,8 +278,7 @@ void TestInvocation::dumpResults()
                 return;
             }
 
-            WKRetainPtr<WKImageRef> windowSnapshot = TestController::singleton().mainWebView()->windowSnapshotImage();
-            dumpPixelsAndCompareWithExpected(windowSnapshot.get(), m_repaintRects.get(), TestInvocation::SnapshotResultType::WebView);
+            dumpPixelsAndCompareWithExpected(SnapshotResultType::WebView, m_repaintRects.get());
         }
     }
 

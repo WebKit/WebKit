@@ -1,3 +1,37 @@
+2017-04-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WTR: Avoid conversion from platform image to WKImage and then to platform image again when dumping pixel results
+        https://bugs.webkit.org/show_bug.cgi?id=170653
+
+        Reviewed by Tim Horton.
+
+        When dumping pixels from a web view snapshot, we create a platform image that is then converted to a WKImage,
+        which is a ShareableBitmap, so the image is rendered into a graphics context. Then we immediately extract the
+        platform image back from the WKImage to dump the pixels. We could avoid that conversion by taking the web
+        snapshot from TestInvocation::dumpPixelsAndCompareWithExpected().
+
+        * WebKitTestRunner/PlatformWebView.h: Add PlatformImage typedef and use it as return value of windowSnapshotImage().
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::dumpResults): Pass the WKImage to dumpPixelsAndCompareWithExpected() only when pixel
+        results were created in the web process.
+        * WebKitTestRunner/TestInvocation.h: Make WKImage a default paramater of dumpPixelsAndCompareWithExpected().
+        * WebKitTestRunner/cairo/TestInvocationCairo.cpp:
+        (WTR::TestInvocation::dumpPixelsAndCompareWithExpected): Create the cairo surface from the given WKimage in case
+        of web contents snapshot, and use PlatformWebView::windowSnapshotImage() in case of web view snapshot.
+        * WebKitTestRunner/cg/TestInvocationCG.cpp:
+        (WTR::createCGContextFromCGImage): Changed to receive a CGImageRef and renamed.
+        (WTR::createCGContextFromImage): Get the CGImageRef from the WKImage and call createCGContextFromCGImage().
+        (WTR::paintRepaintRectOverlay): It receives now the image size instead of the WKImage.
+        (WTR::TestInvocation::dumpPixelsAndCompareWithExpected): Create the CGContextRef from the WKImage in case of web
+        contents snpashot, and use PlatformWebView::windowSnapshotImage() in case of web view snapshot.
+        * WebKitTestRunner/gtk/PlatformWebViewGtk.cpp:
+        (WTR::PlatformWebView::windowSnapshotImage): Return the cairo surface instead of creating a WKImage. Also use
+        RGB24 format to match what mac does (kCGWindowImageShouldBeOpaque).
+        * WebKitTestRunner/ios/PlatformWebViewIOS.mm:
+        (WTR::PlatformWebView::windowSnapshotImage): Return the CGImageRef instead of creating a WKImage.
+        * WebKitTestRunner/mac/PlatformWebViewMac.mm:
+        (WTR::PlatformWebView::windowSnapshotImage): Ditto.
+
 2017-04-10  Chris Dumez  <cdumez@apple.com>
 
         Drop Timer::startOneShot() overload taking a double

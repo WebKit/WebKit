@@ -271,7 +271,7 @@ void PlatformWebView::makeWebViewFirstResponder()
     [m_window makeFirstResponder:platformView()];
 }
 
-WKRetainPtr<WKImageRef> PlatformWebView::windowSnapshotImage()
+RetainPtr<CGImageRef> PlatformWebView::windowSnapshotImage()
 {
     [platformView() display];
     CGWindowImageOption options = kCGWindowImageBoundsIgnoreFraming | kCGWindowImageShouldBeOpaque;
@@ -279,10 +279,7 @@ WKRetainPtr<WKImageRef> PlatformWebView::windowSnapshotImage()
     if ([m_window backingScaleFactor] == 1)
         options |= kCGWindowImageNominalResolution;
 
-    RetainPtr<CGImageRef> windowSnapshotImage = adoptCF(CGWindowListCreateImage(CGRectNull, kCGWindowListOptionIncludingWindow, [m_window windowNumber], options));
-
-    // windowSnapshotImage will be in GenericRGB, as we've set the main display's color space to GenericRGB.
-    return adoptWK(WKImageCreateFromCGImage(windowSnapshotImage.get(), 0));
+    return adoptCF(CGWindowListCreateImage(CGRectNull, kCGWindowListOptionIncludingWindow, [m_window windowNumber], options));
 }
 
 bool PlatformWebView::viewSupportsOptions(const TestOptions& options) const

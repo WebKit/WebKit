@@ -46,12 +46,10 @@ static const CFStringRef kUTTypePNG = CFSTR("public.png");
 
 namespace WTR {
 
-static CGContextRef createCGContextFromImage(WKImageRef wkImage)
+static CGContextRef createCGContextFromCGImage(CGImageRef image)
 {
-    RetainPtr<CGImageRef> image = adoptCF(WKImageCreateCGImage(wkImage));
-
-    size_t pixelsWide = CGImageGetWidth(image.get());
-    size_t pixelsHigh = CGImageGetHeight(image.get());
+    size_t pixelsWide = CGImageGetWidth(image);
+    size_t pixelsHigh = CGImageGetHeight(image);
     size_t rowBytes = (4 * pixelsWide + 63) & ~63;
 
     // Creating this bitmap in the device color space should prevent any color conversion when the image of the web view is drawn into it.
@@ -60,8 +58,14 @@ static CGContextRef createCGContextFromImage(WKImageRef wkImage)
     if (!context)
         return nullptr;
 
-    CGContextDrawImage(context, CGRectMake(0, 0, pixelsWide, pixelsHigh), image.get());
+    CGContextDrawImage(context, CGRectMake(0, 0, pixelsWide, pixelsHigh), image);
     return context;
+}
+
+static CGContextRef createCGContextFromImage(WKImageRef wkImage)
+{
+    RetainPtr<CGImageRef> image = adoptCF(WKImageCreateCGImage(wkImage));
+    return createCGContextFromCGImage(image.get());
 }
 
 void computeMD5HashStringForContext(CGContextRef bitmapContext, char hashString[33])
@@ -118,10 +122,8 @@ static void dumpBitmap(CGContextRef bitmapContext, const char* checksum)
     printPNG(data, dataLength, checksum);
 }
 
-static void paintRepaintRectOverlay(CGContextRef context, WKImageRef image, WKArrayRef repaintRects)
+static void paintRepaintRectOverlay(CGContextRef context, WKSize imageSize, WKArrayRef repaintRects)
 {
-    WKSize imageSize = WKImageGetSize(image);
-
     CGContextSaveGState(context);
 
     // Using a transparency layer is easier than futzing with clipping.
@@ -146,14 +148,31 @@ static void paintRepaintRectOverlay(CGContextRef context, WKImageRef image, WKAr
     CGContextRestoreGState(context);
 }
 
-void TestInvocation::dumpPixelsAndCompareWithExpected(WKImageRef image, WKArrayRef repaintRects, SnapshotResultType snapshotType)
+void TestInvocation::dumpPixelsAndCompareWithExpected(SnapshotResultType snapshotType, WKArrayRef repaintRects, WKImageRef wkImage)
 {
-    if (!image) {
-        WTFLogAlways("dumpPixelsAndCompareWithExpected: image is null\n");
-        return;
+    RetainPtr<CGContextRef> context;
+    WKSize imageSize;
+
+    switch (snapshotType) {
+    case SnapshotResultType::WebContents:
+        if (!wkImage) {
+            WTFLogAlways("dumpPixelsAndCompareWithExpected: image is null\n");
+            return;
+        }
+        context = adoptCF(createCGContextFromImage(wkImage));
+        imageSize = WKImageGetSize(wkImage);
+        break;
+    case SnapshotResultType::WebView:
+        auto image = TestController::singleton().mainWebView()->windowSnapshotImage();
+        if (!image) {
+            WTFLogAlways("dumpPixelsAndCompareWithExpected: image is null\n");
+            return;
+        }
+        context = adoptCF(createCGContextFromCGImage(image.get()));
+        imageSize = WKSizeMake(CGImageGetWidth(image.get()), CGImageGetHeight(image.get()));
+        break;
     }
 
-    RetainPtr<CGContextRef> context = adoptCF(createCGContextFromImage(image));
     if (!context) {
         WTFLogAlways("dumpPixelsAndCompareWithExpected: context is null\n");
         return;
@@ -161,7 +180,7 @@ void TestInvocation::dumpPixelsAndCompareWithExpected(WKImageRef image, WKArrayR
 
     // A non-null repaintRects array means we're doing a repaint test.
     if (repaintRects)
-        paintRepaintRectOverlay(context.get(), image, repaintRects);
+        paintRepaintRectOverlay(context.get(), imageSize, repaintRects);
 
     char actualHash[33];
     computeMD5HashStringForContext(context.get(), actualHash);

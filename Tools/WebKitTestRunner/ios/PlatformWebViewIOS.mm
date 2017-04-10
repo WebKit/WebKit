@@ -250,7 +250,14 @@ void PlatformWebView::changeWindowScaleIfNeeded(float)
     // Retina only surface.
 }
 
-WKRetainPtr<WKImageRef> PlatformWebView::windowSnapshotImage()
+#if !USE(IOSURFACE)
+static void releaseDataProviderData(void* info, const void*, size_t)
+{
+    CARenderServerDestroyBuffer(static_cast<CARenderServerBufferRef>(info));
+}
+#endif
+
+RetainPtr<CGImageRef> PlatformWebView::windowSnapshotImage()
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 #if USE(IOSURFACE)
@@ -279,14 +286,11 @@ WKRetainPtr<WKImageRef> PlatformWebView::windowSnapshotImage()
     size_t rowBytes = CARenderServerGetBufferRowBytes(buffer);
 
     static CGColorSpaceRef sRGBSpace = CGColorSpaceCreateWithName(kCGColorSpaceSRGB);
-    RetainPtr<CGDataProviderRef> provider = adoptCF(CGDataProviderCreateWithData(0, data, CARenderServerGetBufferDataSize(buffer), nullptr));
+    RetainPtr<CGDataProviderRef> provider = adoptCF(CGDataProviderCreateWithData(0, data, CARenderServerGetBufferDataSize(buffer), releaseDataProviderData));
     
     RetainPtr<CGImageRef> cgImage = adoptCF(CGImageCreate(bufferWidth, bufferHeight, 8, 32, rowBytes, sRGBSpace, kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host, provider.get(), 0, false, kCGRenderingIntentDefault));
-    WKRetainPtr<WKImageRef> result = adoptWK(WKImageCreateFromCGImage(cgImage.get(), 0));
 
-    CARenderServerDestroyBuffer(buffer);
-
-    return result;
+    return cgImage;
 #endif
     END_BLOCK_OBJC_EXCEPTIONS;
 }

@@ -132,7 +132,7 @@ void PlatformWebView::changeWindowScaleIfNeeded(float)
 {
 }
 
-WKRetainPtr<WKImageRef> PlatformWebView::windowSnapshotImage()
+cairo_surface_t* PlatformWebView::windowSnapshotImage()
 {
     int width = gtk_widget_get_allocated_width(GTK_WIDGET(m_view));
     int height = gtk_widget_get_allocated_height(GTK_WIDGET(m_view));
@@ -140,16 +140,13 @@ WKRetainPtr<WKImageRef> PlatformWebView::windowSnapshotImage()
     while (gtk_events_pending())
         gtk_main_iteration();
 
-    cairo_surface_t* imageSurface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, width, height);
+    cairo_surface_t* imageSurface = cairo_image_surface_create(CAIRO_FORMAT_RGB24, width, height);
 
     cairo_t* context = cairo_create(imageSurface);
     gtk_widget_draw(GTK_WIDGET(m_view), context);
     cairo_destroy(context);
 
-    WKRetainPtr<WKImageRef> wkImage = adoptWK(WKImageCreateFromCairoSurface(imageSurface, 0 /* options */));
-
-    cairo_surface_destroy(imageSurface);
-    return wkImage;
+    return imageSurface;
 }
 
 void PlatformWebView::didInitializeClients()
