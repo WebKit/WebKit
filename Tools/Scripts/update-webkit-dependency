@@ -99,7 +99,9 @@ my $response = $ua->get($libsURL, "Range", "bytes=0-0");
 $ua->max_size(undef);
 
 if (! $response->is_success) {
-    print STDERR "Could not access $libsURL:\n", $response->headers_as_string, "\n";
+    print STDERR "Could not access $libsURL:\n";
+    print STDERR $response->message, "\n";
+    print STDERR $response->headers_as_string, "\n";
     print STDERR "Please ensure that $libsURL is reachable";
     if ($libsURL =~ /^https/i) {
         print STDERR " and that Perl can use LWP::Simple to connect to HTTPS URLs.\n";
@@ -165,7 +167,9 @@ if (! defined $lastModified) {
     $response = $ua->get($headerURL);
 
     if (! $response->is_success) {
-        print STDERR "Could not access $headerURL:\n", $response->headers_as_string, "\n";
+        print STDERR "Could not access $headerURL:\n";
+        print STDERR $response->message, "\n";
+        print STDERR $response->headers_as_string, "\n";
         print STDERR "Please ensure that $headerURL is reachable";
         if ($headerURL =~ /^https/i) {
             print STDERR " and that Perl can use LWP::Simple to connect to HTTPS URLs.\n";

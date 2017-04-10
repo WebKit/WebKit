@@ -1,3 +1,12 @@
+2017-04-10  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        update-webkit-dependency should report $response->message for diagnose
+        https://bugs.webkit.org/show_bug.cgi?id=170666
+
+        Reviewed by Alex Christensen.
+
+        * Scripts/update-webkit-dependency: Print $response->message to STDERR if an error happens.
+
 2017-04-10  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Data interaction on an image enclosed by an anchor should vend the anchor's URL
