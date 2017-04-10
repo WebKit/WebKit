@@ -83,8 +83,6 @@ SOFT_LINK_AVF_FRAMEWORK(CoreText)
 SOFT_LINK_AVF_FRAMEWORK_IMPORT(CoreText, CTFontDescriptorCopyAttribute,  CFTypeRef, (CTFontDescriptorRef descriptor, CFStringRef attribute), (descriptor, attribute));
 SOFT_LINK_AVF_POINTER(CoreText, kCTFontNameAttribute, CFStringRef)
 #define kCTFontNameAttribute getkCTFontNameAttribute()
-SOFT_LINK_AVF_POINTER(CoreText, kCTFontCascadeListAttribute, CFStringRef)
-#define kCTFontCascadeListAttribute getkCTFontCascadeListAttribute()
 
 #define CTFontDescriptorCopyAttribute softLink_CTFontDescriptorCopyAttribute
 
@@ -426,24 +424,13 @@ String CaptionUserPreferencesMediaAF::captionsDefaultFontCSS() const
     RetainPtr<CFTypeRef> name = adoptCF(CTFontDescriptorCopyAttribute(font.get(), kCTFontNameAttribute));
     if (!name)
         return emptyString();
-
+    
     StringBuilder builder;
     
     builder.append(getPropertyNameString(CSSPropertyFontFamily));
     builder.appendLiteral(": \"");
     builder.append(static_cast<CFStringRef>(name.get()));
     builder.append('"');
-
-    auto cascadeList = adoptCF(static_cast<CFArrayRef>(CTFontDescriptorCopyAttribute(font.get(), kCTFontCascadeListAttribute)));
-
-    for (CFIndex i = 0; i < CFArrayGetCount(cascadeList.get()); i++) {
-        auto fontCascade = static_cast<CTFontDescriptorRef>(CFArrayGetValueAtIndex(cascadeList.get(), i));
-        auto fontCascadeName = adoptCF(CTFontDescriptorCopyAttribute(fontCascade, kCTFontNameAttribute));
-        builder.append(", \"");
-        builder.append(static_cast<CFStringRef>(fontCascadeName.get()));
-        builder.append('"');
-    }
-    
     if (behavior == kMACaptionAppearanceBehaviorUseValue)
         builder.appendLiteral(" !important");
     builder.append(';');

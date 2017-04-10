@@ -1,3 +1,15 @@
+2017-04-10  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r215175.
+
+        This change caused a flaky crash in existing media tests.
+
+        Reverted changeset:
+
+        "Add fallback fonts to video captions stylesheet."
+        https://bugs.webkit.org/show_bug.cgi?id=170495
+        http://trac.webkit.org/changeset/215175
+
 2017-04-10  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Data interaction on an image enclosed by an anchor should vend the anchor's URL
