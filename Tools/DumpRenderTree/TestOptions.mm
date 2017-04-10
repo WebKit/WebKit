@@ -88,6 +88,8 @@ TestOptions::TestOptions(NSURL *testURL, const TestCommand& command)
             this->enablePointerLock = parseBooleanTestHeaderValue(value);
         else if (key == "enableCredentialManagement")
             this->enableCredentialManagement = parseBooleanTestHeaderValue(value);
+        else if (key == "enableDragDestinationActionLoad")
+            this->enableDragDestinationActionLoad = parseBooleanTestHeaderValue(value);
         pairStart = pairEnd + 1;
     }
 }

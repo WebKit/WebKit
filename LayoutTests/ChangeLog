@@ -1,3 +1,16 @@
+2017-04-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r214403): fast/events/drag-to-navigate.html and fast/events/only-valid-drop-targets-receive-file-drop.html failing
+        https://bugs.webkit.org/show_bug.cgi?id=170677
+        <rdar://problem/31512633>
+
+        Reviewed by Tim Horton.
+
+        Turn enableDragDestinationActionLoad on in these two LayoutTests via WKTR options.
+
+        * fast/events/drag-to-navigate.html:
+        * fast/events/only-valid-drop-targets-receive-file-drop.html:
+
 2017-04-10  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark media/modern-media-controls/volume-up-support/volume-up-support.html as flaky.

@@ -25,6 +25,8 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
+#import "TestOptions.h"
  
 #if !PLATFORM(IOS)
 #import <Cocoa/Cocoa.h>
@@ -39,10 +41,12 @@
     NSPoint windowOrigin;
     NSMutableSet *m_pendingGeolocationPermissionListeners;
     NSTimer *m_timer;
+    BOOL m_enableDragDestinationActionLoad;
 }
 
 - (void)resetWindowOrigin;
 - (void)didSetMockGeolocationPermission;
 - (int)numberOfPendingGeolocationPermissionRequests;
+- (void)resetToConsistentStateBeforeTesting:(const TestOptions&)options;
 
 @end

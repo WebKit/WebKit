@@ -33,6 +33,7 @@ struct TestOptions {
     bool enableModernMediaControls { true };
     bool enablePointerLock { false };
     bool enableCredentialManagement { false };
+    bool enableDragDestinationActionLoad { false };
 
     TestOptions(NSURL*, const TestCommand&);
 };

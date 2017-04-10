@@ -1,3 +1,24 @@
+2017-04-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r214403): fast/events/drag-to-navigate.html and fast/events/only-valid-drop-targets-receive-file-drop.html failing
+        https://bugs.webkit.org/show_bug.cgi?id=170677
+        <rdar://problem/31512633>
+
+        Reviewed by Tim Horton.
+
+        Fixes two drag and drop LayoutTests by introducing and enabling a TestOptions switch (enableDragDestinationActionLoad)
+        to allow dropping URLs to trigger page navigation.
+
+        * DumpRenderTree/TestOptions.h:
+        * DumpRenderTree/TestOptions.mm:
+        (TestOptions::TestOptions):
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetWebViewToConsistentStateBeforeTesting):
+        * DumpRenderTree/mac/UIDelegate.h:
+        * DumpRenderTree/mac/UIDelegate.mm:
+        (-[UIDelegate resetToConsistentStateBeforeTesting:]):
+        (-[UIDelegate webView:dragDestinationActionMaskForDraggingInfo:]):
+
 2017-04-10  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         update-webkit-dependency should report $response->message for diagnose

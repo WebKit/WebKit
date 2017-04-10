@@ -57,6 +57,11 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
     windowOrigin = NSZeroPoint;
 }
 
+- (void)resetToConsistentStateBeforeTesting:(const TestOptions&)options
+{
+    m_enableDragDestinationActionLoad = options.enableDragDestinationActionLoad;
+}
+
 - (void)webView:(WebView *)sender setFrame:(NSRect)frame
 {
     // FIXME: Do we need to resize an NSWindow too?
@@ -387,6 +392,18 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
 
     [resultListener chooseFilename:[filePaths firstObject]];
 }
+
+#if !PLATFORM(IOS)
+
+- (NSUInteger)webView:(WebView *)webView dragDestinationActionMaskForDraggingInfo:(id <NSDraggingInfo>)draggingInfo
+{
+    WebDragDestinationAction actions = WebDragDestinationActionAny;
+    if (!m_enableDragDestinationActionLoad)
+        actions &= ~WebDragDestinationActionLoad;
+    return actions;
+}
+
+#endif
 
 - (void)dealloc
 {
