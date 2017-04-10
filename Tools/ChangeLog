@@ -1,5 +1,41 @@
 2017-04-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Remove the GDK dependency from ImageDiff
+        https://bugs.webkit.org/show_bug.cgi?id=85299
+
+        Reviewed by Žan Doberšek.
+
+        Add a cairo only implementation of ImageDiff. We currently have 3 different implementations of ImageDiff: the
+        Gdk based one used by GTK+ port, the cairo based one used by WinCairo and the CG based one. Most of the code is
+        actually common in all of them, but it's duplicated. So, I've taken advantage of this patch to refactor the
+        ImageDiff code to share the common implementation. This patch adds the cross-platform code, and the cairo
+        implementation and enables it in the GTK+ port. In follow up patches we can move WinCairo to this implementation
+        and also add CG implementation.
+
+        * ImageDiff/CMakeLists.txt:
+        * ImageDiff/Cairo.cmake: Added.
+        * ImageDiff/ImageDiff.cpp: Added.
+        (main):
+        * ImageDiff/PlatformGTK.cmake:
+        * ImageDiff/PlatformImage.cpp: Added.
+        (ImageDiff::PlatformImage::isCompatible):
+        (ImageDiff::PlatformImage::difference):
+        * ImageDiff/PlatformImage.h: Added.
+        * ImageDiff/cairo/PlatformImageCairo.cpp: Added.
+        (ImageDiff::PlatformImage::createFromStdin):
+        (ImageDiff::PlatformImage::createFromDiffData):
+        (ImageDiff::PlatformImage::PlatformImage):
+        (ImageDiff::PlatformImage::~PlatformImage):
+        (ImageDiff::PlatformImage::width):
+        (ImageDiff::PlatformImage::height):
+        (ImageDiff::PlatformImage::rowBytes):
+        (ImageDiff::PlatformImage::hasAlpha):
+        (ImageDiff::PlatformImage::pixels):
+        (ImageDiff::PlatformImage::writeAsPNGToStdout):
+        * ImageDiff/gtk/ImageDiff.cpp: Removed.
+
+2017-04-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         REGRESSION(r214426): [GTK] Test media/video-click-dblckick-standalone.html started to fail in the bots after r214426
         https://bugs.webkit.org/show_bug.cgi?id=170667
 
