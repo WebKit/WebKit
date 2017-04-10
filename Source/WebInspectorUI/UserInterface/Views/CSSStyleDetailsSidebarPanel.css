@@ -156,20 +156,11 @@ body[dir=rtl] .sidebar > .panel.details.css-style > .content ~ .options-containe
 
 .sidebar > .panel.details.css-style > .content ~ .class-list-container > .new-class {
     display: flex;
-    align-items: center;
-}
-
-.sidebar > .panel.details.css-style > .content ~ .class-list-container > .new-class > input[type="checkbox"] {
-    pointer-events: none;
-}
-
-.sidebar > .panel.details.css-style > .content ~ .class-list-container > .new-class > .add-class-icon {
-    width: 12px;
-    height: 12px;
+    width: 100%;
 }
 
 .sidebar > .panel.details.css-style > .content ~ .class-list-container > .new-class > .class-name-input {
-    width: 100px;
+    flex-grow: 1;
     height: 18px;
     margin: 0;
 
@@ -182,11 +173,6 @@ body[dir=ltr] .sidebar > .panel.details.css-style > .content ~ .class-list-conta
 
 body[dir=rtl] .sidebar > .panel.details.css-style > .content ~ .class-list-container > .new-class > .class-name-input {
     margin-right: var(--panel-details-css-style-content-class-list-container-new-class-class-name-input-margin-start);
-}
-
-.sidebar > .panel.details.css-style > .content ~ .class-list-container > .new-class.active > .add-class-icon,
-.sidebar > .panel.details.css-style > .content ~ .class-list-container > .new-class:not(.active) > .class-name-input {
-    display: none;
 }
 
 .sidebar > .panel.details.css-style > .content ~ .class-list-container > *:matches(.new-class, .class-toggle) {

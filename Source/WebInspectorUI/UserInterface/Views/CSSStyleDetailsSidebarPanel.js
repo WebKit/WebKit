@@ -188,13 +188,6 @@ WebInspector.CSSStyleDetailsSidebarPanel = class CSSStyleDetailsSidebarPanel ext
         this._addClassContainer.title = WebInspector.UIString("Add a Class");
         this._addClassContainer.addEventListener("click", this._addClassContainerClicked.bind(this));
 
-        let addClassCheckbox = this._addClassContainer.createChild("input");
-        addClassCheckbox.type = "checkbox";
-        addClassCheckbox.checked = true;
-
-        let addClassIcon = useSVGSymbol("Images/Plus13.svg", "add-class-icon");
-        this._addClassContainer.appendChild(addClassIcon);
-
         this._addClassInput = this._addClassContainer.createChild("input", "class-name-input");
         this._addClassInput.setAttribute("placeholder", WebInspector.UIString("Enter Class Name"));
         this._addClassInput.addEventListener("keypress", this._addClassInputKeyPressed.bind(this));
