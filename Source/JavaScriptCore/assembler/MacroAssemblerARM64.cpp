@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +26,7 @@
 #include "config.h"
 
 #if ENABLE(ASSEMBLER) && CPU(ARM64)
-#include "MacroAssemblerARM64.h"
+#include "MacroAssembler.h"
 
 #include <wtf/InlineASM.h>
 
@@ -40,7 +40,7 @@ using namespace ARM64Registers;
 
 #if COMPILER(GCC_OR_CLANG)
 
-// The following are offsets for MacroAssemblerARM64::ProbeContext fields accessed
+// The following are offsets for ProbeContext fields accessed
 // by the ctiMasmProbeTrampoline stub.
 #define PTR_SIZE 8
 #define PROBE_PROBE_FUNCTION_OFFSET (0 * PTR_SIZE)
@@ -128,7 +128,7 @@ using namespace ARM64Registers;
 
 // These ASSERTs remind you that if you change the layout of ProbeContext,
 // you need to change ctiMasmProbeTrampoline offsets above to match.
-#define PROBE_OFFSETOF(x) offsetof(struct MacroAssemblerARM64::ProbeContext, x)
+#define PROBE_OFFSETOF(x) offsetof(struct ProbeContext, x)
 COMPILE_ASSERT(PROBE_OFFSETOF(probeFunction) == PROBE_PROBE_FUNCTION_OFFSET, ProbeContext_probeFunction_offset_matches_ctiMasmProbeTrampoline);
 COMPILE_ASSERT(PROBE_OFFSETOF(arg1) == PROBE_ARG1_OFFSET, ProbeContext_arg1_offset_matches_ctiMasmProbeTrampoline);
 COMPILE_ASSERT(PROBE_OFFSETOF(arg2) == PROBE_ARG2_OFFSET, ProbeContext_arg2_offset_matches_ctiMasmProbeTrampoline);
@@ -205,7 +205,7 @@ COMPILE_ASSERT(PROBE_OFFSETOF(cpu.q29) == PROBE_CPU_Q29_OFFSET, ProbeContext_cpu
 COMPILE_ASSERT(PROBE_OFFSETOF(cpu.q30) == PROBE_CPU_Q30_OFFSET, ProbeContext_cpu_q30_offset_matches_ctiMasmProbeTrampoline);
 COMPILE_ASSERT(PROBE_OFFSETOF(cpu.q31) == PROBE_CPU_Q31_OFFSET, ProbeContext_cpu_q31_offset_matches_ctiMasmProbeTrampoline);
 
-COMPILE_ASSERT(sizeof(MacroAssemblerARM64::ProbeContext) == PROBE_SIZE, ProbeContext_size_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(sizeof(ProbeContext) == PROBE_SIZE, ProbeContext_size_matches_ctiMasmProbeTrampoline);
 
 #undef PROBE_OFFSETOF
 
@@ -454,7 +454,7 @@ asm (
 );
 #endif // COMPILER(GCC_OR_CLANG)
 
-static void arm64ProbeTrampoline(MacroAssemblerARM64::ProbeContext* context)
+static void arm64ProbeTrampoline(ProbeContext* context)
 {
     void* origSP = context->cpu.sp;
     void* origPC = context->cpu.pc;
@@ -471,7 +471,7 @@ static void arm64ProbeTrampoline(MacroAssemblerARM64::ProbeContext* context)
     }
 }
 
-void MacroAssemblerARM64::probe(MacroAssemblerARM64::ProbeFunction function, void* arg1, void* arg2)
+void MacroAssemblerARM64::probe(ProbeFunction function, void* arg1, void* arg2)
 {
     sub64(TrustedImm32(8 * 8), sp);
 

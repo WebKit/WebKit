@@ -43,6 +43,11 @@ namespace JSC {
 
 #if ENABLE(ASSEMBLER)
 
+#if ENABLE(MASM_PROBE)
+struct ProbeContext;
+typedef void (*ProbeFunction)(struct ProbeContext*);
+#endif
+    
 class AllowMacroScratchRegisterUsage;
 class DisallowMacroScratchRegisterUsage;
 class LinkBuffer;
@@ -876,22 +881,6 @@ public:
                 RELEASE_ASSERT_NOT_REACHED();
             }
         }
-    };
-
-    struct ProbeContext;
-    typedef void (*ProbeFunction)(struct ProbeContext*);
-
-    struct ProbeContext {
-        ProbeFunction probeFunction;
-        void* arg1;
-        void* arg2;
-        CPUState cpu;
-
-        // Convenience methods:
-        void*& gpr(RegisterID regID) { return cpu.gpr(regID); }
-        double& fpr(FPRegisterID regID) { return cpu.fpr(regID); }
-        const char* gprName(RegisterID regID) { return cpu.gprName(regID); }
-        const char* fprName(FPRegisterID regID) { return cpu.fprName(regID); }
     };
 
     // This function emits code to preserve the CPUState (e.g. registers),

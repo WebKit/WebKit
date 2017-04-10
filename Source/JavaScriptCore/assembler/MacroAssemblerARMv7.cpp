@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +26,7 @@
 #include "config.h"
 
 #if ENABLE(ASSEMBLER) && CPU(ARM_THUMB2)
-#include "MacroAssemblerARMv7.h"
+#include "MacroAssembler.h"
 
 #include <wtf/InlineASM.h>
 
@@ -38,7 +38,7 @@ extern "C" void ctiMasmProbeTrampoline();
 
 #if COMPILER(GCC_OR_CLANG)
 
-// The following are offsets for MacroAssemblerARMv7::ProbeContext fields accessed
+// The following are offsets for ProbeContext fields accessed
 // by the ctiMasmProbeTrampoline stub.
 
 #define PTR_SIZE 4
@@ -108,7 +108,7 @@ extern "C" void ctiMasmProbeTrampoline();
 
 // These ASSERTs remind you that if you change the layout of ProbeContext,
 // you need to change ctiMasmProbeTrampoline offsets above to match.
-#define PROBE_OFFSETOF(x) offsetof(struct MacroAssemblerARMv7::ProbeContext, x)
+#define PROBE_OFFSETOF(x) offsetof(struct ProbeContext, x)
 COMPILE_ASSERT(PROBE_OFFSETOF(probeFunction) == PROBE_PROBE_FUNCTION_OFFSET, ProbeContext_probeFunction_offset_matches_ctiMasmProbeTrampoline);
 COMPILE_ASSERT(PROBE_OFFSETOF(arg1) == PROBE_ARG1_OFFSET, ProbeContext_arg1_offset_matches_ctiMasmProbeTrampoline);
 COMPILE_ASSERT(PROBE_OFFSETOF(arg2) == PROBE_ARG2_OFFSET, ProbeContext_arg2_offset_matches_ctiMasmProbeTrampoline);
@@ -167,7 +167,7 @@ COMPILE_ASSERT(PROBE_OFFSETOF(cpu.d29) == PROBE_CPU_D29_OFFSET, ProbeContext_cpu
 COMPILE_ASSERT(PROBE_OFFSETOF(cpu.d30) == PROBE_CPU_D30_OFFSET, ProbeContext_cpu_d30_offset_matches_ctiMasmProbeTrampoline);
 COMPILE_ASSERT(PROBE_OFFSETOF(cpu.d31) == PROBE_CPU_D31_OFFSET, ProbeContext_cpu_d31_offset_matches_ctiMasmProbeTrampoline);
 
-COMPILE_ASSERT(sizeof(MacroAssemblerARMv7::ProbeContext) == PROBE_SIZE, ProbeContext_size_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(sizeof(ProbeContext) == PROBE_SIZE, ProbeContext_size_matches_ctiMasmProbeTrampoline);
 
 #undef PROBE_OFFSETOF
     
@@ -324,7 +324,7 @@ asm (
 );
 #endif // COMPILER(GCC_OR_CLANG)
 
-void MacroAssemblerARMv7::probe(MacroAssemblerARMv7::ProbeFunction function, void* arg1, void* arg2)
+void MacroAssemblerARMv7::probe(ProbeFunction function, void* arg1, void* arg2)
 {
     push(RegisterID::lr);
     push(RegisterID::lr);

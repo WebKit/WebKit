@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +26,7 @@
 #include "config.h"
 
 #if ENABLE(ASSEMBLER) && (CPU(X86) || CPU(X86_64))
-#include "MacroAssemblerX86Common.h"
+#include "MacroAssembler.h"
 
 #include <wtf/InlineASM.h>
 
@@ -38,8 +38,7 @@ extern "C" void ctiMasmProbeTrampoline();
 
 #if COMPILER(GCC_OR_CLANG)
 
-// The following are offsets for MacroAssemblerX86Common::ProbeContext fields accessed
-// by the ctiMasmProbeTrampoline stub.
+// The following are offsets for ProbeContext fields accessed by the ctiMasmProbeTrampoline stub.
 
 #if CPU(X86)
 #define PTR_SIZE 4
@@ -105,7 +104,7 @@ extern "C" void ctiMasmProbeTrampoline();
 
 // These ASSERTs remind you that if you change the layout of ProbeContext,
 // you need to change ctiMasmProbeTrampoline offsets above to match.
-#define PROBE_OFFSETOF(x) offsetof(struct MacroAssemblerX86Common::ProbeContext, x)
+#define PROBE_OFFSETOF(x) offsetof(struct ProbeContext, x)
 COMPILE_ASSERT(PROBE_OFFSETOF(probeFunction) == PROBE_PROBE_FUNCTION_OFFSET, ProbeContext_probeFunction_offset_matches_ctiMasmProbeTrampoline);
 COMPILE_ASSERT(PROBE_OFFSETOF(arg1) == PROBE_ARG1_OFFSET, ProbeContext_arg1_offset_matches_ctiMasmProbeTrampoline);
 COMPILE_ASSERT(PROBE_OFFSETOF(arg2) == PROBE_ARG2_OFFSET, ProbeContext_arg2_offset_matches_ctiMasmProbeTrampoline);
@@ -152,7 +151,7 @@ COMPILE_ASSERT(PROBE_OFFSETOF(cpu.xmm14) == PROBE_CPU_XMM14_OFFSET, ProbeContext
 COMPILE_ASSERT(PROBE_OFFSETOF(cpu.xmm15) == PROBE_CPU_XMM15_OFFSET, ProbeContext_cpu_xmm15_offset_matches_ctiMasmProbeTrampoline);
 #endif // CPU(X86_64)
 
-COMPILE_ASSERT(sizeof(MacroAssemblerX86Common::ProbeContext) == PROBE_SIZE, ProbeContext_size_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(sizeof(ProbeContext) == PROBE_SIZE, ProbeContext_size_matches_ctiMasmProbeTrampoline);
 
 #undef PROBE_OFFSETOF
 
@@ -532,7 +531,7 @@ asm (
 // position before we push the ProbeContext frame. The saved rip will point to
 // the address of the instruction immediately following the probe. 
 
-void MacroAssemblerX86Common::probe(MacroAssemblerX86Common::ProbeFunction function, void* arg1, void* arg2)
+void MacroAssemblerX86Common::probe(ProbeFunction function, void* arg1, void* arg2)
 {
     push(RegisterID::esp);
     push(RegisterID::eax);

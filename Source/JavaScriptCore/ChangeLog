@@ -1,3 +1,41 @@
+2017-04-10  Mark Lam  <mark.lam@apple.com>
+
+        Move ProbeContext and ProbeFunction out of AbstractMacroAssembler.
+        https://bugs.webkit.org/show_bug.cgi?id=170681
+
+        Reviewed by Michael Saboff.
+
+        This is a refactoring step towards enabling custom probe printers the way printInternal() works for dataLog.
+
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::ProbeContext::gpr): Deleted.
+        (JSC::AbstractMacroAssembler::ProbeContext::fpr): Deleted.
+        (JSC::AbstractMacroAssembler::ProbeContext::gprName): Deleted.
+        (JSC::AbstractMacroAssembler::ProbeContext::fprName): Deleted.
+        * assembler/MacroAssembler.cpp:
+        (JSC::stdFunctionCallback):
+        (JSC::MacroAssembler::probe):
+        * assembler/MacroAssembler.h:
+        (JSC::ProbeContext::gpr):
+        (JSC::ProbeContext::fpr):
+        (JSC::ProbeContext::gprName):
+        (JSC::ProbeContext::fprName):
+        * assembler/MacroAssemblerARM.cpp:
+        (JSC::MacroAssemblerARM::probe):
+        * assembler/MacroAssemblerARM64.cpp:
+        (JSC::arm64ProbeTrampoline):
+        (JSC::MacroAssemblerARM64::probe):
+        * assembler/MacroAssemblerARMv7.cpp:
+        (JSC::MacroAssemblerARMv7::probe):
+        * assembler/MacroAssemblerPrinter.cpp:
+        * assembler/MacroAssemblerPrinter.h:
+        * assembler/MacroAssemblerX86Common.cpp:
+        (JSC::MacroAssemblerX86Common::probe):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::abstractStructure):
+        (JSC::FTL::DFG::LowerDFGToB3::probe): Deleted.
+        - Deleted because this became a useless place-holder after the transition to B3.
+
 2017-04-10  Keith Miller  <keith_miller@apple.com>
 
         WebAssembly: Fix B3IRGenerator for BrTable

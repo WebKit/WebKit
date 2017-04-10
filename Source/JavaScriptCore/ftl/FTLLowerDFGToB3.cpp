@@ -13999,13 +13999,6 @@ private:
     {
         return abstractStructure(edge.node());
     }
-    
-#if ENABLE(MASM_PROBE)
-    void probe(std::function<void (CCallHelpers::ProbeContext*)> probeFunc)
-    {
-        UNUSED_PARAM(probeFunc);
-    }
-#endif
 
     void crash()
     {

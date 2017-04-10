@@ -1822,6 +1822,25 @@ public:
 #endif
 };
 
+#if ENABLE(MASM_PROBE)
+struct ProbeContext {
+    using CPUState = MacroAssembler::CPUState;
+    using RegisterID = MacroAssembler::RegisterID;
+    using FPRegisterID = MacroAssembler::FPRegisterID;
+
+    ProbeFunction probeFunction;
+    void* arg1;
+    void* arg2;
+    CPUState cpu;
+
+    // Convenience methods:
+    void*& gpr(RegisterID regID) { return cpu.gpr(regID); }
+    double& fpr(FPRegisterID regID) { return cpu.fpr(regID); }
+    const char* gprName(RegisterID regID) { return cpu.gprName(regID); }
+    const char* fprName(FPRegisterID regID) { return cpu.fprName(regID); }
+};
+#endif // ENABLE(MASM_PROBE)
+    
 } // namespace JSC
 
 namespace WTF {
