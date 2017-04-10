@@ -1,3 +1,15 @@
+2017-04-10  Jon Lee  <jonlee@apple.com>
+
+        Update localizable strings to "full screen" from "fullscreen"
+        https://bugs.webkit.org/show_bug.cgi?id=170675
+        rdar://problem/28207034
+
+        Reviewed by Antoine Quint.
+
+        * UserInterface/Models/ScriptTimelineRecord.js:
+        (WebInspector.ScriptTimelineRecord.EventType.displayName): For localizable strings, it should consistently be
+        "full screen" instead of "fullscreen".
+
 2017-04-09  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: tabbing in Styles sidebar is broken when additional ":" and ";" are in the property value

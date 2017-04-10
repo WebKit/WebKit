@@ -388,7 +388,7 @@ String contextMenuItemTagEnterVideoFullscreen()
 
 String contextMenuItemTagExitVideoFullscreen()
 {
-    return WEB_UI_STRING("Exit Full Screen", "Video Exit Fullscreen context menu item");
+    return WEB_UI_STRING_KEY("Exit Full Screen", "Exit Full Screen (context menu)", "Video Exit Fullscreen context menu item");
 }
 #endif
 
@@ -712,9 +712,9 @@ String localizedMediaControlElementString(const String& name)
     if (name == "StatusDisplay")
         return WEB_UI_STRING("status", "accessibility label for movie status");
     if (name == "EnterFullscreenButton")
-        return WEB_UI_STRING("enter fullscreen", "accessibility label for enter fullscreen button");
+        return WEB_UI_STRING("enter full screen", "accessibility label for enter full screen button");
     if (name == "ExitFullscreenButton")
-        return WEB_UI_STRING("exit fullscreen", "accessibility label for exit fullscreen button");
+        return WEB_UI_STRING("exit full screen", "accessibility label for exit full screen button");
     if (name == "SeekForwardButton")
         return WEB_UI_STRING("fast forward", "accessibility label for fast forward button");
     if (name == "SeekBackButton")

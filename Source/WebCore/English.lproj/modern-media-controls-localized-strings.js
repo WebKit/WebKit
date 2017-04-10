@@ -1,7 +1,7 @@
 const UIStrings = {
     "AirPlay": "AirPlay",
     "Audio": "Audio",
-    "Enter Fullscreen": "Enter Fullscreen",
+    "Enter Full Screen": "Enter Full Screen",
     "Enter Picture in Picture": "Enter Picture in Picture",
     "Exit Full Screen": "Exit Full Screen",
     "Error": "Error",

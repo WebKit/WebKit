@@ -329,12 +329,12 @@ WebInspector.ScriptTimelineRecord.EventType.displayName = function(eventType, de
         nameMap.set("webkitEditableContentChanged", "Editable Content Changed");
         nameMap.set("webkitTransitionEnd", "Transition End");
         nameMap.set("webkitaddsourcebuffer", "Add Source Buffer");
-        nameMap.set("webkitbeginfullscreen", "Begin Fullscreen");
+        nameMap.set("webkitbeginfullscreen", "Begin Full Screen");
         nameMap.set("webkitcurrentplaybacktargetiswirelesschanged", "Current Playback Target Is Wireless Changed");
         nameMap.set("webkitdeviceproximity", "Device Proximity");
-        nameMap.set("webkitendfullscreen", "End Fullscreen");
-        nameMap.set("webkitfullscreenchange", "Fullscreen Change");
-        nameMap.set("webkitfullscreenerror", "Fullscreen Error");
+        nameMap.set("webkitendfullscreen", "End Full Screen");
+        nameMap.set("webkitfullscreenchange", "Full Screen Change");
+        nameMap.set("webkitfullscreenerror", "Full Screen Error");
         nameMap.set("webkitkeyadded", "Key Added");
         nameMap.set("webkitkeyerror", "Key Error");
         nameMap.set("webkitkeymessage", "Key Message");

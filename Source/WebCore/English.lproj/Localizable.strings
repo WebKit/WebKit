@@ -247,11 +247,11 @@
 /* Validation message for input form controls of type 'email' that have an invalid value */
 "Enter an email address" = "Enter an email address";
 
-/* Video Exit Fullscreen context menu item */
+/* Button for exiting full screen when in full screen media playback */
 "Exit Full Screen" = "Exit Full Screen";
 
-/* Button for exiting fullscreen when in fullscreen media playback */
-"Exit Fullscreen" = "Exit Fullscreen";
+/* Video Exit Fullscreen context menu item */
+"Exit Full Screen (context menu)" = "Exit Full Screen";
 
 /* menu item */
 "Exit Picture in Picture" = "Exit Picture in Picture";
@@ -883,11 +883,11 @@
 /* accessibility role description for an email field. */
 "email field" = "email field";
 
-/* accessibility label for enter fullscreen button */
-"enter fullscreen" = "enter fullscreen";
+/* accessibility label for enter full screen button */
+"enter full screen" = "enter full screen";
 
-/* accessibility label for exit fullscreen button */
-"exit fullscreen" = "exit fullscreen";
+/* accessibility label for exit full screen button */
+"exit full screen" = "exit full screen";
 
 /* HTTP result code string */
 "expectation failed" = "expectation failed";

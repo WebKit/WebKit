@@ -350,7 +350,7 @@ String insertListTypeNumberedAccessibilityTitle()
 
 String exitFullScreenButtonAccessibilityTitle()
 {
-    return WEB_UI_STRING("Exit Fullscreen", "Button for exiting fullscreen when in fullscreen media playback");
+    return WEB_UI_STRING("Exit Full Screen", "Button for exiting full screen when in full screen media playback");
 }
 #endif // PLATFORM(MAC)
 
