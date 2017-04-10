@@ -40,6 +40,7 @@
 #import <UIKit/UIView.h>
 #import <WebCore/Color.h>
 #import <WebCore/FloatQuad.h>
+#import <wtf/BlockPtr.h>
 #import <wtf/Forward.h>
 #import <wtf/Vector.h>
 #import <wtf/text/WTFString.h>
@@ -84,6 +85,8 @@ typedef void (^UIWKDictationContextHandler)(NSString *selectedText, NSString *be
 typedef void (^UIWKSelectionCompletionHandler)(void);
 typedef void (^UIWKSelectionWithDirectionCompletionHandler)(BOOL selectionEndIsMoving);
 typedef void (^UIWKKeyWebEventCompletionHandler)(::WebEvent *theEvent, BOOL wasHandled);
+
+typedef BlockPtr<void(WebKit::InteractionInformationAtPosition)> InteractionInformationCallback;
 
 namespace WebKit {
 
@@ -171,6 +174,7 @@ struct WKAutoCorrectionData {
     WebKit::WKSelectionDrawingInfo _lastSelectionDrawingInfo;
 
     std::optional<WebKit::InteractionInformationRequest> _outstandingPositionInformationRequest;
+    Vector<std::pair<WebKit::InteractionInformationRequest, InteractionInformationCallback>> _pendingPositionInformationHandlers;
     
     std::unique_ptr<WebKit::InputViewUpdateDeferrer> _inputViewUpdateDeferrer;
 

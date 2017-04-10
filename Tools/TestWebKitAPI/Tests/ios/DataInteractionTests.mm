@@ -362,6 +362,18 @@ TEST(DataInteractionTests, CustomActionSheetPopover)
     EXPECT_WK_STREQ("PASS", [webView stringByEvaluatingJavaScript:@"target.textContent"].UTF8String);
 }
 
+TEST(DataInteractionTests, UnresponsivePageDoesNotHangUI)
+{
+    RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView synchronouslyLoadTestPageNamed:@"simple"];
+    [webView evaluateJavaScript:@"while(1);" completionHandler:nil];
+
+    NSTimeInterval startTime = [NSDate timeIntervalSinceReferenceDate];
+    [webView _simulatePrepareForDataInteractionSession:nil completion:^() { }];
+
+    EXPECT_LT([NSDate timeIntervalSinceReferenceDate] - startTime, 1);
+}
+
 } // namespace TestWebKitAPI
 
 #endif // ENABLE(DATA_INTERACTION)

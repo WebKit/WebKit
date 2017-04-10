@@ -1281,33 +1281,51 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     [_actionSheetAssistant showDataDetectorsSheet];
 }
 
-- (SEL)_actionForLongPress
+- (SEL)_actionForLongPressFromPositionInformation:(const InteractionInformationAtPosition&)positionInformation
 {
-    if (!_positionInformation.touchCalloutEnabled)
+    if (!positionInformation.touchCalloutEnabled)
         return nil;
 
-    if (_positionInformation.isImage)
+    if (positionInformation.isImage)
         return @selector(_showImageSheet);
 
-    if (_positionInformation.isLink) {
-        NSURL *targetURL = [NSURL URLWithString:_positionInformation.url];
+    if (positionInformation.isLink) {
+        NSURL *targetURL = [NSURL URLWithString:positionInformation.url];
         if ([[getDDDetectionControllerClass() tapAndHoldSchemes] containsObject:targetURL.scheme.lowercaseString])
             return @selector(_showDataDetectorsSheet);
         return @selector(_showLinkSheet);
     }
-    
-    if (_positionInformation.isAttachment)
+    if (positionInformation.isAttachment)
         return @selector(_showAttachmentSheet);
 
     return nil;
 }
 
+- (SEL)_actionForLongPress
+{
+    return [self _actionForLongPressFromPositionInformation:_positionInformation];
+}
+
+- (void)doAfterPositionInformationUpdate:(void (^)(InteractionInformationAtPosition))action forRequest:(InteractionInformationRequest)request
+{
+    if ([self _currentPositionInformationIsValidForRequest:request]) {
+        // If the most recent position information is already valid, invoke the given action block immediately.
+        action(_positionInformation);
+        return;
+    }
+
+    _pendingPositionInformationHandlers.append({ request, action });
+
+    if (![self _hasValidOutstandingPositionInformationRequest:request])
+        [self requestAsynchronousPositionInformationUpdate:request];
+}
+
 - (void)ensurePositionInformationIsUpToDate:(WebKit::InteractionInformationRequest)request
 {
-    if (_hasValidPositionInformation && _positionInformation.request.isValidForRequest(request))
+    if ([self _currentPositionInformationIsValidForRequest:request])
         return;
 
-    if (_outstandingPositionInformationRequest && _outstandingPositionInformationRequest->isValidForRequest(request)) {
+    if ([self _hasValidOutstandingPositionInformationRequest:request]) {
         if (auto* connection = _page->process().connection()) {
             connection->waitForAndDispatchImmediately<Messages::WebPageProxy::DidReceivePositionInformation>(_page->pageID(), Seconds::infinity());
             return;
@@ -1316,16 +1334,47 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 
     _page->getPositionInformation(request, _positionInformation);
     _hasValidPositionInformation = YES;
+    [self _invokeAndRemovePendingHandlersValidForCurrentPositionInformation];
 }
 
 - (void)requestAsynchronousPositionInformationUpdate:(WebKit::InteractionInformationRequest)request
 {
-    if (_hasValidPositionInformation && _positionInformation.request.isValidForRequest(request))
+    if ([self _currentPositionInformationIsValidForRequest:request])
         return;
 
     _outstandingPositionInformationRequest = request;
 
     _page->requestPositionInformation(request);
+}
+
+- (BOOL)_currentPositionInformationIsValidForRequest:(const InteractionInformationRequest&)request
+{
+    return _hasValidPositionInformation && _positionInformation.request.isValidForRequest(request);
+}
+
+- (BOOL)_hasValidOutstandingPositionInformationRequest:(const InteractionInformationRequest&)request
+{
+    return _outstandingPositionInformationRequest && _outstandingPositionInformationRequest->isValidForRequest(request);
+}
+
+- (void)_invokeAndRemovePendingHandlersValidForCurrentPositionInformation
+{
+    ASSERT(_hasValidPositionInformation);
+
+    Vector<size_t> indicesOfHandledRequests;
+    for (size_t index = 0; index < _pendingPositionInformationHandlers.size(); ++index) {
+        auto& requestAndHandler = _pendingPositionInformationHandlers[index];
+        if (![self _currentPositionInformationIsValidForRequest:requestAndHandler.first])
+            continue;
+
+        if (requestAndHandler.second)
+            requestAndHandler.second(_positionInformation);
+
+        indicesOfHandledRequests.append(index);
+    }
+
+    while (indicesOfHandledRequests.size())
+        _pendingPositionInformationHandlers.remove(indicesOfHandledRequests.takeLast());
 }
 
 #if ENABLE(DATA_DETECTION)
@@ -1363,9 +1412,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
         if (_textSelectionAssistant) {
             // Request information about the position with sync message.
             // If the assisted node is the same, prevent the gesture.
-            InteractionInformationRequest request(roundedIntPoint(point));
-            _page->getPositionInformation(request, _positionInformation);
-            _hasValidPositionInformation = YES;
+            [self ensurePositionInformationIsUpToDate:InteractionInformationRequest(roundedIntPoint(point))];
             if (_positionInformation.nodeAtPositionIsAssistedNode)
                 return NO;
         }
@@ -1456,21 +1503,6 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 
     return _positionInformation.isSelectable;
 }
-
-#if ENABLE(DATA_INTERACTION)
-
-- (BOOL)pointIsInDataInteractionContent:(CGPoint)point
-{
-    InteractionInformationRequest request(roundedIntPoint(point));
-    [self ensurePositionInformationIsUpToDate:request];
-
-    if (_positionInformation.isImage || _positionInformation.isLink || _positionInformation.isAttachment)
-        return YES;
-
-    return _positionInformation.hasSelectionAtPosition;
-}
-
-#endif
 
 - (BOOL)pointIsNearMarkedText:(CGPoint)point
 {
@@ -1771,6 +1803,7 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     _hasValidPositionInformation = YES;
     if (_actionSheetAssistant)
         [_actionSheetAssistant updateSheetPosition];
+    [self _invokeAndRemovePendingHandlersValidForCurrentPositionInformation];
 }
 
 - (void)_willStartScrollingOrZooming

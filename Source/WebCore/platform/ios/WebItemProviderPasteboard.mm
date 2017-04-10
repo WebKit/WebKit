@@ -151,6 +151,8 @@ static BOOL isImageType(NSString *type)
         if (!data.representingObjects.count && !data.additionalData.count)
             continue;
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         RetainPtr<UIItemProvider> itemProvider = adoptNS([[getUIItemProviderClass() alloc] init]);
         // First, register all platform objects, prioritizing objects at the beginning of the array.
         for (id representingObject in data.representingObjects) {
@@ -173,6 +175,7 @@ static BOOL isImageType(NSString *type)
             }];
         }
         [providers addObject:itemProvider.get()];
+#pragma clang diagnostic pop
     }
 
     self.itemProviders = providers;
@@ -229,12 +232,12 @@ static BOOL isImageType(NSString *type)
 
 - (BOOL)_tryToCreateAndAppendObjectOfClass:(Class)objectClass toArray:(NSMutableArray *)array usingProvider:(UIItemProvider *)provider
 {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     if (![provider canCreateObjectOfClass:objectClass])
         return NO;
 
     // FIXME: <rdar://problem/30451096> Adopt asynchronous UIItemProvider methods when retrieving data.
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     id object = [provider createObjectOfClass:objectClass error:nil];
 #pragma clang diagnostic pop
     if (object)
