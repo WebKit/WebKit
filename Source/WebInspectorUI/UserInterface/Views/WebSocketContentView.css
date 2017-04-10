@@ -36,6 +36,7 @@
 .web-socket.content-view .data-grid td.data-column > div {
     height: auto;
     white-space: pre-wrap;
+    overflow-wrap: break-word;
 }
 
 body[dir=ltr] .web-socket.content-view > .data-grid .data-column > div {
