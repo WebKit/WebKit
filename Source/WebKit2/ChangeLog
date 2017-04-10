@@ -1,3 +1,17 @@
+2017-04-10  Brent Fulgham  <bfulgham@apple.com>
+
+        [WK2][macOS] Block access to Apple Events before launch.
+        https://bugs.webkit.org/show_bug.cgi?id=170626
+        <rdar://problem/16079334>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Clear the environment of the AppleEvent server name before initializing
+        AppKit so we never bother connecting.
+
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceMain.mm:
+        (main):
+
 2017-04-10  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK] Misplaced right click menu on web page due to deprecated gtk_menu_popup()

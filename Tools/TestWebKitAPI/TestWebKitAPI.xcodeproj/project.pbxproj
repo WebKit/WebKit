@@ -214,6 +214,8 @@
 		7A909A811D877480007E10F8 /* IntPoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A909A731D877475007E10F8 /* IntPoint.cpp */; };
 		7A909A821D877480007E10F8 /* IntRect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A909A741D877475007E10F8 /* IntRect.cpp */; };
 		7A909A831D877480007E10F8 /* IntSize.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A909A751D877475007E10F8 /* IntSize.cpp */; };
+		7A95BDE11E9BEC5F00865498 /* InjectedBundleAppleEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A95BDE01E9BEC4000865498 /* InjectedBundleAppleEvent.cpp */; };
+		7A95BDE21E9BEC7400865498 /* InjectedBundleAppleEvent_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A95BDDF1E9BEC4000865498 /* InjectedBundleAppleEvent_Bundle.cpp */; };
 		7AD3FE8E1D76131200B169A4 /* TransformationMatrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AD3FE8D1D75FB8D00B169A4 /* TransformationMatrix.cpp */; };
 		7AE9E5091AE5AE8B00CF874B /* test.pdf in Copy Resources */ = {isa = PBXBuildFile; fileRef = 7AE9E5081AE5AE8B00CF874B /* test.pdf */; };
 		7AEAD47F1E20116C00416EFE /* CrossPartitionFileSchemeAccess.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7AEAD47C1E20113800416EFE /* CrossPartitionFileSchemeAccess.mm */; };
@@ -1140,6 +1142,8 @@
 		7A909A731D877475007E10F8 /* IntPoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IntPoint.cpp; sourceTree = "<group>"; };
 		7A909A741D877475007E10F8 /* IntRect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IntRect.cpp; sourceTree = "<group>"; };
 		7A909A751D877475007E10F8 /* IntSize.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IntSize.cpp; sourceTree = "<group>"; };
+		7A95BDDF1E9BEC4000865498 /* InjectedBundleAppleEvent_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundleAppleEvent_Bundle.cpp; sourceTree = "<group>"; };
+		7A95BDE01E9BEC4000865498 /* InjectedBundleAppleEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundleAppleEvent.cpp; sourceTree = "<group>"; };
 		7A99D9931AD4A29D00373141 /* MenuTypesForMouseEvents.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MenuTypesForMouseEvents.mm; sourceTree = "<group>"; };
 		7AA021BA1AB09EA70052953F /* DateMath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DateMath.cpp; sourceTree = "<group>"; };
 		7AA6A1511AAC0B31002B2ED3 /* WorkQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkQueue.cpp; sourceTree = "<group>"; };
@@ -2370,6 +2374,8 @@
 		C0C5D3BB14598B6F00A802A6 /* mac */ = {
 			isa = PBXGroup;
 			children = (
+				7A95BDDF1E9BEC4000865498 /* InjectedBundleAppleEvent_Bundle.cpp */,
+				7A95BDE01E9BEC4000865498 /* InjectedBundleAppleEvent.cpp */,
 				9BD423991E04BD9800200395 /* AttributedSubstringForProposedRangeWithImage.mm */,
 				8349D3C11DB96DDA004A9F65 /* ContextMenuDownload.mm */,
 				BCAA485714A044D40088FAC4 /* EditorCommands.mm */,
@@ -2798,6 +2804,7 @@
 				7CCE7EC11A411A7E00447C4C /* HTMLCollectionNamedItem.mm in Sources */,
 				7CCE7EC21A411A7E00447C4C /* HTMLFormCollectionNamedItem.mm in Sources */,
 				7C83E0501D0A641800FEBCF3 /* HTMLParserIdioms.cpp in Sources */,
+				7A95BDE11E9BEC5F00865498 /* InjectedBundleAppleEvent.cpp in Sources */,
 				510477781D29923B009747EB /* IDBDeleteRecovery.mm in Sources */,
 				5110FCFA1E01CDB8006F8D0B /* IDBIndexUpgradeToV2.mm in Sources */,
 				51A587861D273AA9004BA9AF /* IndexedDBDatabaseProcessKill.mm in Sources */,
@@ -3039,6 +3046,7 @@
 				93F7E86F14DC8E5C00C84A99 /* NewFirstVisuallyNonEmptyLayoutFrames_Bundle.cpp in Sources */,
 				52E5CE4914D21EAB003B2BD8 /* ParentFrame_Bundle.cpp in Sources */,
 				C54237F116B8957D00E638FC /* PasteboardNotifications_Bundle.cpp in Sources */,
+				7A95BDE21E9BEC7400865498 /* InjectedBundleAppleEvent_Bundle.cpp in Sources */,
 				BC575BD9126F58E2006F0F12 /* PlatformUtilities.cpp in Sources */,
 				0F139E791A42457000F590F5 /* PlatformUtilitiesCocoa.mm in Sources */,
 				BC575BE0126F590D006F0F12 /* PlatformUtilitiesMac.mm in Sources */,
