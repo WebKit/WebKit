@@ -1,3 +1,9 @@
+2017-04-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed GTK+ gardening. Mark several tests as failing/timing out.
+
+        * platform/gtk/TestExpectations:
+
 2017-04-10  Miguel Gomez  <magomez@igalia.com>
 
         REGRESSION(r205841): [GTK] Test fast/images/animated-png.html is failing since r205841
