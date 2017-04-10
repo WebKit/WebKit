@@ -2931,6 +2931,12 @@ void FrameView::enableSpeculativeTilingIfNeeded()
     }
     if (!shouldEnableSpeculativeTilingDuringLoading(*this))
         return;
+
+    if (m_speculativeTilingDelayDisabledForTesting) {
+        speculativeTilingEnableTimerFired();
+        return;
+    }
+
     if (m_speculativeTilingEnableTimer.isActive())
         return;
     // Delay enabling a bit as load completion may trigger further loading from scripts.
@@ -2958,6 +2964,13 @@ void FrameView::show()
         adjustTiledBackingCoverage();
     }
 }
+
+void FrameView::hide()
+{
+    ScrollView::hide();
+    adjustTiledBackingCoverage();
+}
+
 void FrameView::convertSubtreeLayoutToFullLayout()
 {
     ASSERT(m_layoutRoot);

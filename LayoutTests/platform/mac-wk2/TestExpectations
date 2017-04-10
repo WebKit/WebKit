@@ -647,3 +647,5 @@ webkit.org/b/169719 fast/mediacapturefromelement/CanvasCaptureMediaStream-reques
 webkit.org/b/170203 fast/images/animated-image-different-dest-size.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/170410 fast/images/animated-gif-webkit-transform.html [ Pass Failure ]
+
+compositing/tiling/non-visible-window-tile-coverage.html [ Pass ]

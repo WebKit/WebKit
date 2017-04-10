@@ -800,6 +800,17 @@ void Internals::disableTileSizeUpdateDelay()
         backing->setTileSizeUpdateDelayDisabledForTesting(true);
 }
 
+void Internals::setSpeculativeTilingDelayDisabledForTesting(bool disabled)
+{
+    Document* document = contextDocument();
+    if (!document || !document->frame())
+        return;
+
+    if (auto* frameView = document->frame()->view())
+        frameView->setSpeculativeTilingDelayDisabledForTesting(disabled);
+}
+
+
 Node* Internals::treeScopeRootNode(Node& node)
 {
     return &node.treeScope().rootNode();

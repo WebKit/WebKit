@@ -1,3 +1,16 @@
+2017-04-10  Andreas Kling  <akling@apple.com>
+
+        Don't generate extra scrolling tiles for non-visible pages.
+        https://bugs.webkit.org/show_bug.cgi?id=167213
+        <rdar://problem/30105774>
+
+        Reviewed by Antti Koivisto.
+
+        * TestExpectations:
+        * compositing/tiling/non-visible-window-tile-coverage-expected.txt: Added.
+        * compositing/tiling/non-visible-window-tile-coverage.html: Added.
+        * platform/mac-wk2/TestExpectations:
+
 2017-04-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r214426): [GTK] Test media/video-click-dblckick-standalone.html started to fail in the bots after r214426

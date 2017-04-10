@@ -1,3 +1,31 @@
+2017-04-10  Andreas Kling  <akling@apple.com>
+
+        Don't generate extra scrolling tiles for non-visible pages.
+        https://bugs.webkit.org/show_bug.cgi?id=167213
+        <rdar://problem/30105774>
+
+        Reviewed by Antti Koivisto.
+
+        Reduce the tiling coverage to a minimum when the page is non-visible.
+        On macOS, this means that fully occluded web views can maintain a smaller set of tiles
+        in non-volatile surfaces, reducing net footprint.
+
+        Test: compositing/tiling/non-visible-window-tile-coverage.html
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::computePageTiledBackingCoverage): If the page's activity state is non-visible, use minimal tile coverage.
+        * platform/ScrollView.h:
+        * page/FrameView.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::hide): Call adjustTiledBackingCoverage() in hide() since it now takes page visibility into account.
+
+        (WebCore::FrameView::enableSpeculativeTilingIfNeeded):
+        * testing/Internals.cpp:
+        (WebCore::Internals::setSpeculativeTilingDelayDisabledForTesting):
+        * testing/Internals.h:
+        * testing/Internals.idl: Add an internals API for disabling the 500ms delay before speculative tiling begins after
+        the main frame load finishes. This is needed for reliably testing this change.
+
 2017-04-10  Per Arne Vollan  <pvollan@apple.com>
 
         Add fallback fonts to video captions stylesheet.

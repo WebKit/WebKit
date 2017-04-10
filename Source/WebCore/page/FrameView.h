@@ -582,6 +582,7 @@ public:
     void didChangeScrollOffset();
 
     void show() final;
+    void hide() final;
 
     bool shouldPlaceBlockDirectionScrollbarOnLeft() const final;
 
@@ -589,6 +590,8 @@ public:
 
     void willDestroyRenderTree();
     void didDestroyRenderTree();
+
+    void setSpeculativeTilingDelayDisabledForTesting(bool disabled) { m_speculativeTilingDelayDisabledForTesting = disabled; }
 
 protected:
     bool scrollContentsFastPath(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect) final;
@@ -862,6 +865,7 @@ private:
 
     bool m_visualUpdatesAllowedByClient;
     bool m_hasFlippedBlockRenderers;
+    bool m_speculativeTilingDelayDisabledForTesting { false };
 
     ScrollPinningBehavior m_scrollPinningBehavior;
 

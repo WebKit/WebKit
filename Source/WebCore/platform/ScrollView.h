@@ -349,7 +349,7 @@ public:
 
     // Widget overrides to ensure that our children's visibility status is kept up to date when we get shown and hidden.
     WEBCORE_EXPORT void show() override;
-    WEBCORE_EXPORT void hide() final;
+    WEBCORE_EXPORT void hide() override;
     WEBCORE_EXPORT void setParentVisible(bool) final;
     
     // Pan scrolling.

@@ -128,6 +128,8 @@ public:
 
     void disableTileSizeUpdateDelay();
 
+    void setSpeculativeTilingDelayDisabledForTesting(bool);
+
     Ref<CSSComputedStyleDeclaration> computedStyleIncludingVisitedInfo(Element&) const;
 
     Node* ensureUserAgentShadowRoot(Element& host);
