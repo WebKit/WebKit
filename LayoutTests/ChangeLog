@@ -1,5 +1,16 @@
 2017-04-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        REGRESSION(r214426): [GTK] Test media/video-click-dblckick-standalone.html started to fail in the bots after r214426
+        https://bugs.webkit.org/show_bug.cgi?id=170667
+
+        Reviewed by Žan Doberšek.
+
+        Unskip then test that is passing now.
+
+        * platform/gtk/TestExpectations:
+
+2017-04-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed GTK+ gardening. Mark several tests as failing/timing out.
 
         * platform/gtk/TestExpectations:

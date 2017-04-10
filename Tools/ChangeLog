@@ -1,5 +1,18 @@
 2017-04-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        REGRESSION(r214426): [GTK] Test media/video-click-dblckick-standalone.html started to fail in the bots after r214426
+        https://bugs.webkit.org/show_bug.cgi?id=170667
+
+        Reviewed by Žan Doberšek.
+
+        In r214666 we disabled modern media controls runtime feature for the GTK+ port, but layout tests still override
+        that value.
+
+        * WebKitTestRunner/gtk/TestControllerGtk.cpp:
+        (WTR::TestController::updatePlatformSpecificTestOptionsForTest): Disable modern media controls.
+
+2017-04-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         WTR: Avoid conversion from platform image to WKImage and then to platform image again when dumping pixel results
         https://bugs.webkit.org/show_bug.cgi?id=170653
 
