@@ -1,3 +1,13 @@
+2017-04-09  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: tabbing in Styles sidebar is broken when additional ":" and ";" are in the property value
+        https://bugs.webkit.org/show_bug.cgi?id=170184
+
+        Reviewed by Matt Baker.
+
+        * inspector/unit-tests/text-utilities-expected.txt: Added.
+        * inspector/unit-tests/text-utilities.html: Added.
+
 2017-04-09  Youenn Fablet  <youenn@apple.com>
 
         Resync WPT tests up to 23cd07d4685d81024b7440e042f8bbdb33e7ddec

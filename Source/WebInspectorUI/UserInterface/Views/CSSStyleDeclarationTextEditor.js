@@ -401,25 +401,27 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
 
     _highlightNextNameOrValue(codeMirror, cursor, text)
     {
-        var nextAnchor;
-        var nextHead;
+        let range = this._rangeForNextNameOrValue(codeMirror, cursor, text);
+        codeMirror.setSelection(range.from, range.to);
+    }
 
-        if (this._textAtCursorIsComment(codeMirror, cursor)) {
-            nextAnchor = 0;
+    _rangeForNextNameOrValue(codeMirror, cursor, text)
+    {
+        let nextAnchor = 0;
+        let nextHead = 0;
+
+        if (this._textAtCursorIsComment(codeMirror, cursor))
             nextHead = text.length;
-        } else {
-            var colonIndex = text.indexOf(":");
-            var substringIndex = colonIndex >= 0 && cursor.ch >= colonIndex ? colonIndex : 0;
-
-            var regExp = /(?:[^:;\s]\s*)+/g;
-            regExp.lastIndex = substringIndex;
-            var match = regExp.exec(text);
-
-            nextAnchor = match.index;
-            nextHead = nextAnchor + match[0].length;
+        else {
+            let range = WebInspector.rangeForNextCSSNameOrValue(text, cursor.ch);
+            nextAnchor = range.from;
+            nextHead = range.to;
         }
 
-        codeMirror.setSelection({line: cursor.line, ch: nextAnchor}, {line: cursor.line, ch: nextHead});
+        return {
+            from: {line: cursor.line, ch: nextAnchor},
+            to: {line: cursor.line, ch: nextHead},
+        };
     }
 
     _handleMouseDown(event)
@@ -457,41 +459,17 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
                     this._codeMirror.replaceRange(replacement, cursor);
                 }
             } else if (WebInspector.settings.stylesSelectOnFirstClick.value && this._mouseDownCursorPosition.previousRange) {
-                let from = {line: cursor.line, ch: 0};
-                let to = {line: cursor.line, ch: 0};
-
-                let colonIndex = line.indexOf(":");
-                if (colonIndex === -1) // Select entire line if unable to find colon, such as for a comment.
-                    colonIndex = line.length;
-
-                let text = line;
-
-                if (cursor.ch <= colonIndex) {
-                    text = text.substring(0, colonIndex);
-
-                    to.ch += colonIndex;
-                } else {
-                    text = text.substring(colonIndex + 1);
-
-                    from.ch += colonIndex + 1;
-                    to.ch += line.length;
-                }
-
-                let leadingSpacesCount = text.match(/^\s*/)[0].length;
-                let trailingNonWordCount = text.match(/[\s\;]*$/)[0].length;
-
-                from.ch += leadingSpacesCount;
-                to.ch -= trailingNonWordCount;
+                let range = this._rangeForNextNameOrValue(this._codeMirror, cursor, line);
 
                 let clickedDifferentLine = this._mouseDownCursorPosition.previousRange.from.line !== cursor.line || this._mouseDownCursorPosition.previousRange.to.line !== cursor.line;
                 let cursorInPreviousRange = cursor.ch >= this._mouseDownCursorPosition.previousRange.from.ch && cursor.ch <= this._mouseDownCursorPosition.previousRange.to.ch;
-                let previousInNewRange = this._mouseDownCursorPosition.previousRange.from.ch >= from.ch && this._mouseDownCursorPosition.previousRange.to.ch <= to.ch;
+                let previousInNewRange = this._mouseDownCursorPosition.previousRange.from.ch >= range.from.ch && this._mouseDownCursorPosition.previousRange.to.ch <= range.to.ch;
 
                 // Only select the new range if the editor is not focused, a new line is being clicked,
                 // or the new cursor position is outside of the previous range and the previous range is
                 // outside of the new range (meaning you're not clicking in the same area twice).
                 if (!this._codeMirror.hasFocus() || clickedDifferentLine || (!cursorInPreviousRange && !previousInNewRange))
-                    this._codeMirror.setSelection(from, to);
+                    this._codeMirror.setSelection(range.from, range.to);
             }
         }
 
