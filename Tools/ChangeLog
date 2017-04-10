@@ -1,3 +1,17 @@
+2017-04-10  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Increase estimate for processes run by iOS Simulators
+        https://bugs.webkit.org/show_bug.cgi?id=170678
+        <rdar://problem/31534061>
+
+        Reviewed by Aakash Jain.
+
+        Previously, it was estimated that each simulated iOS device would run about 100
+        processes.  With newer versions of iOS, this is closer to 125.
+
+        * Scripts/webkitpy/port/ios_simulator.py:
+        (IOSSimulatorPort): Increase process estimate from 100 to 125.
+
 2017-04-10  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK] Misplaced right click menu on web page due to deprecated gtk_menu_popup()

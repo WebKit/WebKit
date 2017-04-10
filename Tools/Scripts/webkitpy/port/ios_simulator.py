@@ -52,7 +52,7 @@ class IOSSimulatorPort(IOSPort):
     SIMULATOR_BUNDLE_ID = 'com.apple.iphonesimulator'
     SIMULATOR_DIRECTORY = "/tmp/WebKitTestingSimulators/"
     LSREGISTER_PATH = "/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Versions/Current/Support/lsregister"
-    PROCESS_COUNT_ESTIMATE_PER_SIMULATOR_INSTANCE = 100
+    PROCESS_COUNT_ESTIMATE_PER_SIMULATOR_INSTANCE = 125
 
     DEVICE_CLASS_MAP = {
         'x86_64': {
