@@ -351,7 +351,7 @@ static WebVideoFullscreenInterfaceAVKit::ExitFullScreenReason convertToExitFullS
 @interface WebAVPictureInPicturePlayerLayerView : UIView
 @end
 
-static CALayer* WebAVPictureInPicturePlayerLayerView_layerClass(id, SEL)
+static Class WebAVPictureInPicturePlayerLayerView_layerClass(id, SEL)
 {
     return [WebAVPlayerLayer class];
 }
@@ -374,7 +374,7 @@ static Class getWebAVPictureInPicturePlayerLayerViewClass()
 @property (retain) UIView* videoView;
 @end
 
-static CALayer *WebAVPlayerLayerView_layerClass(id, SEL)
+static Class WebAVPlayerLayerView_layerClass(id, SEL)
 {
     return [WebAVPlayerLayer class];
 }

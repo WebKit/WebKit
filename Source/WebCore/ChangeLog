@@ -1,3 +1,16 @@
+2017-04-10  Jeremy Jones  <jeremyj@apple.com>
+
+        PlayerLayerView +layerClass methods should use return type Class.
+        https://bugs.webkit.org/show_bug.cgi?id=165406
+
+        Reviewed by Sam Weinig.
+
+        No new tests because not behavior change.
+
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        (WebAVPictureInPicturePlayerLayerView_layerClass):
+        (WebAVPlayerLayerView_layerClass):
+
 2017-04-10  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         CachedImage should stop decoding images when unknown type is detected
