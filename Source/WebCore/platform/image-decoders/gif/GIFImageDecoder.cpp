@@ -52,7 +52,7 @@ void GIFImageDecoder::setData(SharedBuffer& data, bool allDataReceived)
 
 EncodedDataStatus GIFImageDecoder::encodedDataStatus()
 {
-    if (!ImageDecoder::isSizeAvailable())
+    if (ImageDecoder::encodedDataStatus() < EncodedDataStatus::SizeAvailable)
         decode(0, GIFSizeQuery);
 
     return ImageDecoder::encodedDataStatus();

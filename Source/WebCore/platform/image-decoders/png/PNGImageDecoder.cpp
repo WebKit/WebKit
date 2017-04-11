@@ -241,7 +241,7 @@ RepetitionCount PNGImageDecoder::repetitionCount() const
 
 EncodedDataStatus PNGImageDecoder::encodedDataStatus()
 {
-    if (!ImageDecoder::isSizeAvailable())
+    if (ImageDecoder::encodedDataStatus() < EncodedDataStatus::SizeAvailable)
         decode(true, 0);
 
     return ImageDecoder::encodedDataStatus();

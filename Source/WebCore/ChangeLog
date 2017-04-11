@@ -1,3 +1,29 @@
+2017-04-11  Miguel Gomez  <magomez@igalia.com>
+
+        REGRESSION(r215211): [GTK] Lots of image related tests are crashing, causing the test bot to exit early
+        https://bugs.webkit.org/show_bug.cgi?id=170721
+
+        Reviewed by Carlos Garcia Campos.
+
+        r215211 caused an infinite loop because of calls between ImageDecoder::isSizeAvailable() and the specializations of
+        ImageDecoder::encodedDataStatus(). Change the different decoders so ImageDecoder::encodedDataStatus doesn't call
+        ImageDecoder::isSizeAvailable().
+
+        Covered by existent tests.
+
+        * platform/image-decoders/bmp/BMPImageDecoder.cpp:
+        (WebCore::BMPImageDecoder::encodedDataStatus):
+        * platform/image-decoders/gif/GIFImageDecoder.cpp:
+        (WebCore::GIFImageDecoder::encodedDataStatus):
+        * platform/image-decoders/ico/ICOImageDecoder.cpp:
+        (WebCore::ICOImageDecoder::encodedDataStatus):
+        * platform/image-decoders/jpeg/JPEGImageDecoder.cpp:
+        (WebCore::JPEGImageDecoder::encodedDataStatus):
+        * platform/image-decoders/png/PNGImageDecoder.cpp:
+        (WebCore::PNGImageDecoder::encodedDataStatus):
+        * platform/image-decoders/webp/WEBPImageDecoder.cpp:
+        (WebCore::WEBPImageDecoder::encodedDataStatus):
+
 2017-04-10  Alex Christensen  <achristensen@webkit.org>
 
         Revert r215217

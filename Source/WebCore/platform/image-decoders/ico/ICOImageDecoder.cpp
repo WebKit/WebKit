@@ -71,7 +71,7 @@ void ICOImageDecoder::setData(SharedBuffer& data, bool allDataReceived)
 
 EncodedDataStatus ICOImageDecoder::encodedDataStatus()
 {
-    if (!ImageDecoder::isSizeAvailable())
+    if (ImageDecoder::encodedDataStatus() < EncodedDataStatus::SizeAvailable)
         decode(0, true);
 
     return ImageDecoder::encodedDataStatus();

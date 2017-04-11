@@ -66,7 +66,7 @@ void WEBPImageDecoder::clear()
 
 EncodedDataStatus WEBPImageDecoder::encodedDataStatus()
 {
-    if (!ImageDecoder::isSizeAvailable())
+    if (ImageDecoder::encodedDataStatus() < EncodedDataStatus::SizeAvailable)
         decode(true);
 
     return ImageDecoder::encodedDataStatus();

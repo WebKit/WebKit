@@ -58,7 +58,7 @@ void BMPImageDecoder::setData(SharedBuffer& data, bool allDataReceived)
 
 EncodedDataStatus BMPImageDecoder::encodedDataStatus()
 {
-    if (!ImageDecoder::isSizeAvailable())
+    if (ImageDecoder::encodedDataStatus() < EncodedDataStatus::SizeAvailable)
         decode(true);
 
     return ImageDecoder::encodedDataStatus();

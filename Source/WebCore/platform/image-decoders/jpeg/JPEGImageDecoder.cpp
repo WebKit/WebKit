@@ -512,7 +512,7 @@ JPEGImageDecoder::~JPEGImageDecoder()
 
 EncodedDataStatus JPEGImageDecoder::encodedDataStatus()
 {
-    if (!ImageDecoder::isSizeAvailable())
+    if (ImageDecoder::encodedDataStatus() < EncodedDataStatus::SizeAvailable)
         decode(true);
 
     return ImageDecoder::encodedDataStatus();
