@@ -78,7 +78,7 @@ void GCActivityCallback::cancelTimer()
 
 MonotonicTime GCActivityCallback::nextFireTime()
 {
-    return MonotonicTime::now() + (CFRunLoopTimerGetNextFireDate(m_timer.get()) - CFAbsoluteTimeGetCurrent());
+    return MonotonicTime::now() + Seconds(CFRunLoopTimerGetNextFireDate(m_timer.get()) - CFAbsoluteTimeGetCurrent());
 }
 #else
 void GCActivityCallback::scheduleTimer(Seconds newDelay)

@@ -1,5 +1,13 @@
 2017-04-11  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        Unreviewed, build fix for CF ports after r215241
+        https://bugs.webkit.org/show_bug.cgi?id=170725
+
+        * heap/GCActivityCallback.cpp:
+        (JSC::GCActivityCallback::nextFireTime):
+
+2017-04-11  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [WebCore][JSC] ResourceUsageData.{timeOfNextEdenCollection,timeOfNextFullCollection} should be MonotonicTime
         https://bugs.webkit.org/show_bug.cgi?id=170725
 
