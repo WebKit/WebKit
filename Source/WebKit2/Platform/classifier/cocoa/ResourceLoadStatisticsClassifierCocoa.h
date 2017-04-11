@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if HAVE(CORE_PREDICTION)
+
 #include "ResourceLoadStatisticsClassifier.h"
 #include <wtf/Platform.h>
 #include <wtf/text/WTFString.h>
@@ -44,3 +46,5 @@ private:
 };
     
 }
+
+#endif

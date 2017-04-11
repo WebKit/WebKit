@@ -1,3 +1,13 @@
+2017-04-11  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] WebKit unnecessarily soft-links CorePrediction
+        https://bugs.webkit.org/show_bug.cgi?id=170644
+
+        Reviewed by Sam Weinig.
+
+        * WebKitPrivateFrameworkStubs/iOS/10/CorePrediction.framework: Added this framework stub.
+        * WebKitPrivateFrameworkStubs/iOS/10/CorePrediction.framework/CorePrediction.tbd: Added.
+
 2017-04-08  Dan Bernstein  <mitz@apple.com>
 
         Removed an empty directory left behind after r212841.

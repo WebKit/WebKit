@@ -25,14 +25,33 @@
 
 #pragma once
 
-#include <WebCore/SoftLinking.h>
+#if HAVE(CORE_PREDICTION)
 
-struct svm_model;
-struct svm_node {
+#if USE(APPLE_INTERNAL_SDK)
+
+#import <CorePrediction/svm.h>
+
+#else
+
+struct svm_node
+{
     int index;
     double value;
 };
 
-SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(CorePrediction)
-SOFT_LINK(CorePrediction, svm_predict_values, double, (const struct svm_model *model, const struct svm_node *x, double* dec_values), (model, x, dec_values))
-SOFT_LINK(CorePrediction, svm_load_model, svm_model*, (const char *model_file_name), (model_file_name))
+#endif
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+typedef struct svm_node svm_node;
+
+struct svm_model *svm_load_model(const char *model_file_name);
+double svm_predict_values(const struct svm_model *model, const struct svm_node *x, double* dec_values);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif
