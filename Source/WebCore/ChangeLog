@@ -1,3 +1,16 @@
+2017-04-11  Dean Jackson  <dino@apple.com>
+
+        Disable outdated WritableStream API
+        https://bugs.webkit.org/show_bug.cgi?id=170749
+        <rdar://problem/31446233>
+
+        Reviewed by Tim Horton.
+
+        The API we implement is no longer accurate. Disable it until we
+        are compatible with the new specification
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2017-04-11  Matt Rajca  <mrajca@apple.com>
 
         Consider the current document when allowing autoplay quirks.
