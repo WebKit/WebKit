@@ -1991,7 +1991,7 @@ start:
         shift();
         if (m_current == '-') {
             shift();
-            if (m_atLineStart && m_current == '>') {
+            if ((m_atLineStart || m_terminator) && m_current == '>') {
                 if (m_scriptMode == JSParserScriptMode::Classic) {
                     shift();
                     goto inSingleLineComment;

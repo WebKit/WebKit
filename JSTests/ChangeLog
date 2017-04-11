@@ -1,5 +1,14 @@
 2017-04-11  Joseph Pecoraro  <pecoraro@apple.com>
 
+        test262: test262/test/annexB/language/comments/multi-line-html-close.js
+        https://bugs.webkit.org/show_bug.cgi?id=170648
+
+        Reviewed by Keith Miller.
+
+        * test262.yaml:
+
+2017-04-11  Joseph Pecoraro  <pecoraro@apple.com>
+
         test262: test262/test/built-ins/Array/S15.4.3_A2.2.js
         https://bugs.webkit.org/show_bug.cgi?id=170652
 
