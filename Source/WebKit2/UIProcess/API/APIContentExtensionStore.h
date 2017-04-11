@@ -64,6 +64,7 @@ public:
     void compileContentExtension(const WTF::String& identifier, WTF::String&& json, Function<void(RefPtr<API::ContentExtension>, std::error_code)>);
     void lookupContentExtension(const WTF::String& identifier, Function<void(RefPtr<API::ContentExtension>, std::error_code)>);
     void removeContentExtension(const WTF::String& identifier, Function<void(std::error_code)>);
+    void getAvailableContentExtensionIdentifiers(Function<void(WTF::Vector<WTF::String>)>);
 
     // For testing only.
     void synchronousRemoveAllContentExtensions();

@@ -31,6 +31,7 @@
 
 #import "APIContentExtensionStore.h"
 #import "WKErrorInternal.h"
+#import <wtf/BlockPtr.h>
 
 static WKErrorCode toWKErrorCode(const std::error_code& error)
 {
@@ -76,67 +77,58 @@ static WKErrorCode toWKErrorCode(const std::error_code& error)
 
 - (void)_compileContentExtensionForIdentifier:(NSString *)identifier encodedContentExtension:(NSString *)encodedContentExtension completionHandler:(void (^)(WKContentExtension *, NSError *))completionHandler releasesArgument:(BOOL)releasesArgument
 {
-    auto handler = adoptNS([completionHandler copy]);
-
     String json(encodedContentExtension);
     if (releasesArgument) {
         [encodedContentExtension release];
         encodedContentExtension = nil;
     }
 
-    _contentExtensionStore->compileContentExtension(identifier, WTFMove(json), [handler](RefPtr<API::ContentExtension> contentExtension, std::error_code error) {
+    _contentExtensionStore->compileContentExtension(identifier, WTFMove(json), [completionHandler = makeBlockPtr(completionHandler)](RefPtr<API::ContentExtension> contentExtension, std::error_code error) {
         if (error) {
-            auto rawHandler = (void (^)(WKContentExtension *, NSError *))handler.get();
-            
             auto userInfo = @{NSHelpAnchorErrorKey: [NSString stringWithFormat:@"Extension compilation failed: %s", error.message().c_str()]};
 
             // error.value() could have a specific compiler error that is not equal to WKErrorContentExtensionStoreCompileFailed.
             // We want to use error.message, but here we want to only pass on CompileFailed with userInfo from the std::error_code.
-            rawHandler(nil, [NSError errorWithDomain:WKErrorDomain code:WKErrorContentExtensionStoreCompileFailed userInfo:userInfo]);
-            return;
+            return completionHandler(nil, [NSError errorWithDomain:WKErrorDomain code:WKErrorContentExtensionStoreCompileFailed userInfo:userInfo]);
         }
-
-        auto rawHandler = (void (^)(WKContentExtension *, NSError *))handler.get();
-        rawHandler(WebKit::wrapper(*contentExtension.get()), nil);
+        completionHandler(WebKit::wrapper(*contentExtension.get()), nil);
     });
 }
 
 - (void)lookUpContentExtensionForIdentifier:(NSString *)identifier completionHandler:(void (^)(WKContentExtension *, NSError *))completionHandler
 {
-    auto handler = adoptNS([completionHandler copy]);
-
-    _contentExtensionStore->lookupContentExtension(identifier, [handler](RefPtr<API::ContentExtension> contentExtension, std::error_code error) {
+    _contentExtensionStore->lookupContentExtension(identifier, [completionHandler = makeBlockPtr(completionHandler)](RefPtr<API::ContentExtension> contentExtension, std::error_code error) {
         if (error) {
-            auto rawHandler = (void (^)(WKContentExtension *, NSError *))handler.get();
-
             auto userInfo = @{NSHelpAnchorErrorKey: [NSString stringWithFormat:@"Extension lookup failed: %s", error.message().c_str()]};
             auto wkError = toWKErrorCode(error);
             ASSERT(wkError == WKErrorContentExtensionStoreLookUpFailed || wkError == WKErrorContentExtensionStoreVersionMismatch);
-            rawHandler(nil, [NSError errorWithDomain:WKErrorDomain code:wkError userInfo:userInfo]);
-            return;
+            return completionHandler(nil, [NSError errorWithDomain:WKErrorDomain code:wkError userInfo:userInfo]);
         }
 
-        auto rawHandler = (void (^)(WKContentExtension *, NSError *))handler.get();
-        rawHandler(WebKit::wrapper(*contentExtension.get()), nil);
+        completionHandler(WebKit::wrapper(*contentExtension.get()), nil);
+    });
+}
+
+- (void)getAvailableContentExtensionIdentifiers:(void (^)(NSArray<NSString *>*))completionHandler
+{
+    _contentExtensionStore->getAvailableContentExtensionIdentifiers([completionHandler = makeBlockPtr(completionHandler)](Vector<String> identifiers) {
+        NSMutableArray<NSString *> *nsIdentifiers = [NSMutableArray arrayWithCapacity:identifiers.size()];
+        for (const auto& identifier : identifiers)
+            [nsIdentifiers addObject:identifier];
+        completionHandler(nsIdentifiers);
     });
 }
 
 - (void)removeContentExtensionForIdentifier:(NSString *)identifier completionHandler:(void (^)(NSError *))completionHandler
 {
-    auto handler = adoptNS([completionHandler copy]);
-
-    _contentExtensionStore->removeContentExtension(identifier, [handler](std::error_code error) {
+    _contentExtensionStore->removeContentExtension(identifier, [completionHandler = makeBlockPtr(completionHandler)](std::error_code error) {
         if (error) {
-            auto rawHandler = (void (^)(NSError *))handler.get();
-
             auto userInfo = @{NSHelpAnchorErrorKey: [NSString stringWithFormat:@"Extension removal failed: %s", error.message().c_str()]};
             ASSERT(toWKErrorCode(error) == WKErrorContentExtensionStoreRemoveFailed);
-            rawHandler([NSError errorWithDomain:WKErrorDomain code:WKErrorContentExtensionStoreRemoveFailed userInfo:userInfo]);
-            return;
+            return completionHandler([NSError errorWithDomain:WKErrorDomain code:WKErrorContentExtensionStoreRemoveFailed userInfo:userInfo]);
         }
 
-        auto rawHandler = (void (^)(NSError *))handler.get();
-        rawHandler(nil);
+        completionHandler(nil);
     });
 }
 

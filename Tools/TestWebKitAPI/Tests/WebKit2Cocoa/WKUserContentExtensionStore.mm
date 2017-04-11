@@ -199,6 +199,14 @@ TEST_F(WKContentExtensionStoreTest, NonDefaultStore)
     NSString *identifier = @"TestExtension";
     NSString *fileName = @"ContentExtension-TestExtension";
 
+    __block bool doneGettingAvailableIdentifiers = false;
+    [store getAvailableContentExtensionIdentifiers:^(NSArray<NSString *> *identifiers) {
+        EXPECT_NOT_NULL(identifiers);
+        EXPECT_EQ(identifiers.count, 0u);
+        doneGettingAvailableIdentifiers = true;
+    }];
+    TestWebKitAPI::Util::run(&doneGettingAvailableIdentifiers);
+    
     __block bool doneCompiling = false;
     [store compileContentExtensionForIdentifier:identifier encodedContentExtension:basicFilter completionHandler:^(WKContentExtension *filter, NSError *error) {
         EXPECT_NOT_NULL(filter);
@@ -206,6 +214,15 @@ TEST_F(WKContentExtensionStoreTest, NonDefaultStore)
         doneCompiling = true;
     }];
     TestWebKitAPI::Util::run(&doneCompiling);
+
+    doneGettingAvailableIdentifiers = false;
+    [store getAvailableContentExtensionIdentifiers:^(NSArray<NSString *> *identifiers) {
+        EXPECT_NOT_NULL(identifiers);
+        EXPECT_EQ(identifiers.count, 1u);
+        EXPECT_STREQ(identifiers[0].UTF8String, "TestExtension");
+        doneGettingAvailableIdentifiers = true;
+    }];
+    TestWebKitAPI::Util::run(&doneGettingAvailableIdentifiers);
 
     NSData *data = [NSData dataWithContentsOfURL:[tempDir URLByAppendingPathComponent:fileName]];
     EXPECT_NOT_NULL(data);
@@ -228,6 +245,27 @@ TEST_F(WKContentExtensionStoreTest, NonDefaultStore)
 
     NSData *dataAfterRemoving = [NSData dataWithContentsOfURL:[tempDir URLByAppendingPathComponent:fileName]];
     EXPECT_NULL(dataAfterRemoving);
+}
+
+TEST_F(WKContentExtensionStoreTest, MultipleExtensions)
+{
+    __block bool done = false;
+    [[WKContentExtensionStore defaultStore] compileContentExtensionForIdentifier:@"FirstExtension" encodedContentExtension:basicFilter completionHandler:^(WKContentExtension *filter, NSError *error) {
+        EXPECT_NOT_NULL(filter);
+        EXPECT_NULL(error);
+        [[WKContentExtensionStore defaultStore] compileContentExtensionForIdentifier:@"SecondExtension" encodedContentExtension:basicFilter completionHandler:^(WKContentExtension *filter, NSError *error) {
+            EXPECT_NOT_NULL(filter);
+            EXPECT_NULL(error);
+            [[WKContentExtensionStore defaultStore] getAvailableContentExtensionIdentifiers:^(NSArray<NSString *> *identifiers) {
+                EXPECT_NOT_NULL(identifiers);
+                EXPECT_EQ(identifiers.count, 2u);
+                EXPECT_STREQ(identifiers[0].UTF8String, "FirstExtension");
+                EXPECT_STREQ(identifiers[1].UTF8String, "SecondExtension");
+                done = true;
+            }];
+        }];
+    }];
+    TestWebKitAPI::Util::run(&done);
 }
 
 TEST_F(WKContentExtensionStoreTest, NonASCIISource)

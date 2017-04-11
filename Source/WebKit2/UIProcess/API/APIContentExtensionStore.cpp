@@ -75,9 +75,20 @@ ContentExtensionStore::~ContentExtensionStore()
 {
 }
 
+static const String& constructedPathPrefix()
+{
+    static NeverDestroyed<String> prefix("ContentExtension-");
+    return prefix;
+}
+
+static const String constructedPathFilter()
+{
+    return makeString(constructedPathPrefix(), '*');
+}
+
 static String constructedPath(const String& base, const String& identifier)
 {
-    return WebCore::pathByAppendingComponent(base, "ContentExtension-" + WebCore::encodeForFileName(identifier));
+    return WebCore::pathByAppendingComponent(base, makeString(constructedPathPrefix(), WebCore::encodeForFileName(identifier)));
 }
 
 // The size and offset of the densely packed bytes in the file, not sizeof and offsetof, which would
@@ -374,6 +385,23 @@ void ContentExtensionStore::lookupContentExtension(const WTF::String& identifier
         RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis), identifier = WTFMove(identifier), fileData = WTFMove(fileData), metaData = WTFMove(metaData), completionHandler = WTFMove(completionHandler)] {
             RefPtr<API::ContentExtension> contentExtension = createExtension(identifier, metaData, fileData);
             completionHandler(contentExtension, { });
+        });
+    });
+}
+
+void ContentExtensionStore::getAvailableContentExtensionIdentifiers(Function<void(WTF::Vector<WTF::String>)> completionHandler)
+{
+    m_readQueue->dispatch([protectedThis = makeRef(*this), storePath = m_storePath.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
+
+        Vector<String> fullPaths = WebCore::listDirectory(storePath, constructedPathFilter());
+        Vector<String> identifiers;
+        identifiers.reserveInitialCapacity(fullPaths.size());
+        const auto prefixLength = constructedPathPrefix().length();
+        for (const auto& path : fullPaths)
+            identifiers.uncheckedAppend(path.substring(path.reverseFind('/') + 1 + prefixLength));
+
+        RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler), identifiers = WTFMove(identifiers)]() mutable {
+            completionHandler(WTFMove(identifiers));
         });
     });
 }

@@ -1,3 +1,23 @@
+2017-04-10  Alex Christensen  <achristensen@webkit.org>
+
+        Add API to get available content extension identifiers in a WKContentExtensionStore
+        https://bugs.webkit.org/show_bug.cgi?id=170093
+
+        Reviewed by Geoffrey Garen.
+
+        * UIProcess/API/APIContentExtensionStore.cpp:
+        (API::constructedPathPrefix):
+        (API::constructedPathFilter):
+        (API::constructedPath):
+        (API::ContentExtensionStore::getAvailableContentExtensionIdentifiers):
+        * UIProcess/API/APIContentExtensionStore.h:
+        * UIProcess/API/Cocoa/WKContentExtensionStore.h:
+        * UIProcess/API/Cocoa/WKContentExtensionStore.mm:
+        (-[WKContentExtensionStore _compileContentExtensionForIdentifier:encodedContentExtension:completionHandler:releasesArgument:]):
+        (-[WKContentExtensionStore lookUpContentExtensionForIdentifier:completionHandler:]):
+        (-[WKContentExtensionStore getAvailableContentExtensionIdentifiers:]):
+        (-[WKContentExtensionStore removeContentExtensionForIdentifier:completionHandler:]):
+
 2017-04-10  Jeremy Jones  <jeremyj@apple.com>
 
         Add CoreAudioCaptureSource.
