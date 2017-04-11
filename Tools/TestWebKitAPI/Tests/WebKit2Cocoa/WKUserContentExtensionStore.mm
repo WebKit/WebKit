@@ -307,18 +307,10 @@ static bool receivedAlert { false };
 {
     switch (alertCount++) {
     case 0:
-        // FIXME: The first content blocker should be enabled here.
-        // ContentExtensionsBackend::addContentExtension isn't being called in the WebProcess
-        // until after the first main resource starts loading, so we need to send a message to the
-        // WebProcess before loading if we have installed content blockers.
-        // See rdar://problem/27788755
-        EXPECT_STREQ("content blockers disabled", message.UTF8String);
-        break;
-    case 1:
         // Default behavior.
         EXPECT_STREQ("content blockers enabled", message.UTF8String);
         break;
-    case 2:
+    case 1:
         // After having removed the content extension.
         EXPECT_STREQ("content blockers disabled", message.UTF8String);
         break;
@@ -358,10 +350,6 @@ TEST_F(WKContentExtensionStoreTest, AddRemove)
     alertCount = 0;
     receivedAlert = false;
     [webView loadRequest:request];
-    TestWebKitAPI::Util::run(&receivedAlert);
-
-    receivedAlert = false;
-    [webView reload];
     TestWebKitAPI::Util::run(&receivedAlert);
 
     [[configuration userContentController] removeContentExtension:extension.get()];

@@ -75,7 +75,7 @@ void DownloadProxy::cancel()
         return;
 
     if (NetworkProcessProxy* networkProcess = m_processPool->networkProcess())
-        networkProcess->connection()->send(Messages::NetworkProcess::CancelDownload(m_downloadID), 0);
+        networkProcess->send(Messages::NetworkProcess::CancelDownload(m_downloadID), 0);
 }
 
 void DownloadProxy::invalidate()
@@ -126,7 +126,7 @@ void DownloadProxy::canAuthenticateAgainstProtectionSpace(const ProtectionSpace&
 
     bool result = m_processPool->downloadClient().canAuthenticateAgainstProtectionSpace(getPtr(WebProtectionSpace::create(protectionSpace)));
     
-    networkProcessProxy->connection()->send(Messages::NetworkProcess::ContinueCanAuthenticateAgainstProtectionSpaceDownload(m_downloadID, result), 0);
+    networkProcessProxy->send(Messages::NetworkProcess::ContinueCanAuthenticateAgainstProtectionSpaceDownload(m_downloadID, result), 0);
 }
 #endif
 
@@ -144,7 +144,7 @@ void DownloadProxy::willSendRequest(const ResourceRequest& proposedRequest, cons
         if (!networkProcessProxy)
             return;
         
-        networkProcessProxy->connection()->send(Messages::NetworkProcess::ContinueWillSendRequest(protectedThis->m_downloadID, newRequest), 0);
+        networkProcessProxy->send(Messages::NetworkProcess::ContinueWillSendRequest(protectedThis->m_downloadID, newRequest), 0);
     });
 }
 #endif
@@ -189,7 +189,7 @@ void DownloadProxy::decideDestinationWithSuggestedFilenameAsync(DownloadID downl
         SandboxExtension::createHandle(destination, SandboxExtension::ReadWrite, sandboxExtensionHandle);
 
     if (NetworkProcessProxy* networkProcess = m_processPool->networkProcess())
-        networkProcess->connection()->send(Messages::NetworkProcess::ContinueDecidePendingDownloadDestination(downloadID, destination, sandboxExtensionHandle, allowOverwrite), 0);
+        networkProcess->send(Messages::NetworkProcess::ContinueDecidePendingDownloadDestination(downloadID, destination, sandboxExtensionHandle, allowOverwrite), 0);
 }
 
 #if !USE(NETWORK_SESSION)

@@ -824,8 +824,6 @@ void WebPageProxy::finishInitializingWebPageAfterProcessLaunch()
         return;
 
     m_needsToFinishInitializingWebPageAfterProcessLaunch = false;
-
-    m_process->addWebUserContentControllerProxy(m_userContentController);
     m_process->addVisitedLinkStore(m_visitedLinkStore);
 }
 
@@ -5594,6 +5592,8 @@ WebPageCreationParameters WebPageProxy::creationParameters()
     parameters.enumeratingAllNetworkInterfacesEnabled = m_preferences->enumeratingAllNetworkInterfacesEnabled();
 #endif
 #endif
+
+    m_process->addWebUserContentControllerProxy(m_userContentController, parameters);
 
     return parameters;
 }

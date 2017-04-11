@@ -56,6 +56,7 @@ namespace WebKit {
 class WebProcessProxy;
 class WebScriptMessageHandler;
 struct FrameInfoData;
+struct WebPageCreationParameters;
 
 class WebUserContentControllerProxy : public API::ObjectImpl<API::Object::Type::UserContentController>, private IPC::MessageReceiver {
 public:
@@ -68,7 +69,7 @@ public:
 
     uint64_t identifier() const { return m_identifier; }
 
-    void addProcess(WebProcessProxy&);
+    void addProcess(WebProcessProxy&, WebPageCreationParameters&);
     void removeProcess(WebProcessProxy&);
 
     API::Array& userScripts() { return m_userScripts.get(); }

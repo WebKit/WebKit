@@ -122,7 +122,7 @@ void DatabaseProcessProxy::getDatabaseProcessConnection(Ref<Messages::WebProcess
         return;
     }
 
-    connection()->send(Messages::DatabaseProcess::CreateDatabaseToWebProcessConnection(), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+    send(Messages::DatabaseProcess::CreateDatabaseToWebProcessConnection(), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
 }
 
 void DatabaseProcessProxy::didClose(IPC::Connection&)
@@ -217,7 +217,7 @@ void DatabaseProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Co
     }
 
     for (unsigned i = 0; i < m_numPendingConnectionRequests; ++i)
-        connection()->send(Messages::DatabaseProcess::CreateDatabaseToWebProcessConnection(), 0);
+        send(Messages::DatabaseProcess::CreateDatabaseToWebProcessConnection(), 0);
     
     m_numPendingConnectionRequests = 0;
 }

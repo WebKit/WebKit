@@ -101,6 +101,13 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << enumeratingAllNetworkInterfacesEnabled;
 #endif
 #endif
+    encoder << userContentWorlds;
+    encoder << userScripts;
+    encoder << userStyleSheets;
+    encoder << messageHandlers;
+#if ENABLE(CONTENT_EXTENSIONS)
+    encoder << contentExtensions;
+#endif
 }
 
 bool WebPageCreationParameters::decode(IPC::Decoder& decoder, WebPageCreationParameters& parameters)
@@ -236,6 +243,18 @@ bool WebPageCreationParameters::decode(IPC::Decoder& decoder, WebPageCreationPar
     if (!decoder.decode(parameters.enumeratingAllNetworkInterfacesEnabled))
         return false;
 #endif
+#endif
+    if (!decoder.decode(parameters.userContentWorlds))
+        return false;
+    if (!decoder.decode(parameters.userScripts))
+        return false;
+    if (!decoder.decode(parameters.userStyleSheets))
+        return false;
+    if (!decoder.decode(parameters.messageHandlers))
+        return false;
+#if ENABLE(CONTENT_EXTENSIONS)
+    if (!decoder.decode(parameters.contentExtensions))
+        return false;
 #endif
     return true;
 }

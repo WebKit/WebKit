@@ -1,5 +1,68 @@
 2017-04-10  Alex Christensen  <achristensen@webkit.org>
 
+        REGRESSION(r195479) First main resource load in new WebProcess bypasses content extensions
+        https://bugs.webkit.org/show_bug.cgi?id=170707
+        <rdar://problem/27788755>
+
+        Reviewed by Tim Horton.
+
+        We fix this by sending the UserContentController with the WebPageCreationParameters
+        instead of in a IPC message immediately following creation.  By the time the WebPage
+        receives its second message, it has already started loading the first main resource.
+        
+        I also changed all instances of calling ChildProcessProxy::connection() to send a message
+        in favor of calling ChildProcessProxy::send, which does the same thing except if a child
+        process has not started, it will put the message in a queue and send it when the process
+        is finished launching.  This was necessary because the UserContentController is now connected
+        to the process sooner, so there were some API tests that would try to send messages between
+        initiating a process launch and finishing a process launch, and this change preserves the
+        existing behavior in those cases.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * UIProcess/Databases/DatabaseProcessProxy.cpp:
+        (WebKit::DatabaseProcessProxy::getDatabaseProcessConnection):
+        (WebKit::DatabaseProcessProxy::didFinishLaunching):
+        * UIProcess/Downloads/DownloadProxy.cpp:
+        (WebKit::DownloadProxy::cancel):
+        (WebKit::DownloadProxy::canAuthenticateAgainstProtectionSpace):
+        (WebKit::DownloadProxy::willSendRequest):
+        (WebKit::DownloadProxy::decideDestinationWithSuggestedFilenameAsync):
+        * UIProcess/UserContent/WebUserContentControllerProxy.cpp:
+        (WebKit::WebUserContentControllerProxy::addProcess):
+        (WebKit::WebUserContentControllerProxy::addUserContentWorldUse):
+        (WebKit::WebUserContentControllerProxy::removeUserContentWorldUses):
+        (WebKit::WebUserContentControllerProxy::addUserScript):
+        (WebKit::WebUserContentControllerProxy::removeUserScript):
+        (WebKit::WebUserContentControllerProxy::removeAllUserScripts):
+        (WebKit::WebUserContentControllerProxy::addUserStyleSheet):
+        (WebKit::WebUserContentControllerProxy::removeUserStyleSheet):
+        (WebKit::WebUserContentControllerProxy::removeAllUserStyleSheets):
+        (WebKit::WebUserContentControllerProxy::addUserScriptMessageHandler):
+        (WebKit::WebUserContentControllerProxy::removeUserMessageHandlerForName):
+        (WebKit::WebUserContentControllerProxy::removeAllUserMessageHandlers):
+        (WebKit::WebUserContentControllerProxy::addContentExtension):
+        (WebKit::WebUserContentControllerProxy::removeContentExtension):
+        (WebKit::WebUserContentControllerProxy::removeAllContentExtensions):
+        * UIProcess/UserContent/WebUserContentControllerProxy.h:
+        * UIProcess/VisitedLinkStore.cpp:
+        (WebKit::VisitedLinkStore::removeAll):
+        (WebKit::VisitedLinkStore::pendingVisitedLinksTimerFired):
+        (WebKit::VisitedLinkStore::sendTable):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::finishInitializingWebPageAfterProcessLaunch):
+        (WebKit::WebPageProxy::creationParameters):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::addWebUserContentControllerProxy):
+        * UIProcess/WebProcessProxy.h:
+        * WebProcess/UserContent/WebUserContentController.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_backgroundCPULimit):
+
+2017-04-10  Alex Christensen  <achristensen@webkit.org>
+
         Add API to get available content extension identifiers in a WKContentExtensionStore
         https://bugs.webkit.org/show_bug.cgi?id=170093
 

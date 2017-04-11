@@ -1,5 +1,21 @@
 2017-04-10  Alex Christensen  <achristensen@webkit.org>
 
+        REGRESSION(r195479) First main resource load in new WebProcess bypasses content extensions
+        https://bugs.webkit.org/show_bug.cgi?id=170707
+        <rdar://problem/27788755>
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/WKUserContentExtensionStore.mm:
+        (-[ContentExtensionDelegate webView:runJavaScriptAlertPanelWithMessage:initiatedByFrame:completionHandler:]):
+        (TEST_F):
+        * TestWebKitAPI/Tests/WebKit2Cocoa/WebsitePolicies.mm:
+        (-[ContentBlockingWebsitePoliciesDelegate webView:runJavaScriptAlertPanelWithMessage:initiatedByFrame:completionHandler:]):
+        (-[ContentBlockingWebsitePoliciesDelegate _webView:decidePolicyForNavigationAction:decisionHandler:]):
+        (TEST):
+
+2017-04-10  Alex Christensen  <achristensen@webkit.org>
+
         Add API to get available content extension identifiers in a WKContentExtensionStore
         https://bugs.webkit.org/show_bug.cgi?id=170093
 

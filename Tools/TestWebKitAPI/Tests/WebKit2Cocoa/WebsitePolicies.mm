@@ -71,22 +71,14 @@ static size_t alertCount;
 {
     switch (alertCount++) {
     case 0:
-        // FIXME: The first content blocker should be enabled here.
-        // ContentExtensionsBackend::addContentExtension isn't being called in the WebProcess
-        // until after the first main resource starts loading, so we need to send a message to the
-        // WebProcess before loading if we have installed content blockers.
-        // See rdar://problem/27788755
-        EXPECT_STREQ("content blockers disabled", message.UTF8String);
-        break;
-    case 1:
         // Default behavior.
         EXPECT_STREQ("content blockers enabled", message.UTF8String);
         break;
-    case 2:
+    case 1:
         // After having set websitePolicies.contentBlockersEnabled to false.
         EXPECT_STREQ("content blockers disabled", message.UTF8String);
         break;
-    case 3:
+    case 2:
         // After having reloaded without content blockers.
         EXPECT_STREQ("content blockers disabled", message.UTF8String);
         break;
@@ -102,12 +94,9 @@ static size_t alertCount;
     _WKWebsitePolicies *websitePolicies = [[[_WKWebsitePolicies alloc] init] autorelease];
     switch (alertCount) {
     case 0:
-        // Verify an existing bug the first time a page is loaded in a new WebProcess.
-        break;
-    case 1:
         // Verify the content blockers behave correctly with the default behavior.
         break;
-    case 2:
+    case 1:
         {
             // Verify disabling content blockers works correctly.
             websitePolicies.contentBlockersEnabled = false;
@@ -120,7 +109,7 @@ static size_t alertCount;
             });
         }
         return;
-    case 3:
+    case 2:
         // Verify enabling content blockers has no effect when reloading without content blockers.
         websitePolicies.contentBlockersEnabled = true;
         break;
@@ -157,10 +146,6 @@ TEST(WebKit2, WebsitePoliciesContentBlockersEnabled)
     alertCount = 0;
     receivedAlert = false;
     [webView loadRequest:request];
-    TestWebKitAPI::Util::run(&receivedAlert);
-
-    receivedAlert = false;
-    [webView reload];
     TestWebKitAPI::Util::run(&receivedAlert);
 
     receivedAlert = false;

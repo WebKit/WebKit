@@ -98,7 +98,7 @@ public:
     unsigned visiblePageCount() const { return m_visiblePageCounter.value(); }
 
     void addVisitedLinkStore(VisitedLinkStore&);
-    void addWebUserContentControllerProxy(WebUserContentControllerProxy&);
+    void addWebUserContentControllerProxy(WebUserContentControllerProxy&, WebPageCreationParameters&);
     void didDestroyVisitedLinkStore(VisitedLinkStore&);
     void didDestroyWebUserContentControllerProxy(WebUserContentControllerProxy&);
 
