@@ -1814,7 +1814,7 @@ Seconds RenderThemeGtk::caretBlinkInterval() const
     if (!shouldBlink)
         return 0_s;
 
-    return 2_ms * time;
+    return 500_us * time;
 }
 
 enum StyleColorType { StyleColorBackground, StyleColorForeground };
