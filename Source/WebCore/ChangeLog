@@ -1,3 +1,19 @@
+2017-04-11  Matt Rajca  <mrajca@apple.com>
+
+        Consider the current document when allowing autoplay quirks.
+        https://bugs.webkit.org/show_bug.cgi?id=170744
+
+        Reviewed by Eric Carlson.
+
+        Added API test.
+
+        In addition to checking if the top-level document supports autoplay quirks, we should check
+        if the current document supports quirks. This allows all embedded YouTube videos (which use
+        iframes) to play correctly if the client allows autoplay quirks on youtube.com.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::dispatchPlayPauseEventsIfNeedsQuirks):
+
 2017-04-11  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r215245.

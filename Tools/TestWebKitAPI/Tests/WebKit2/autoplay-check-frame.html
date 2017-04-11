@@ -8,9 +8,13 @@
                     window.parent.postMessage('did-not-play', '*');
                 });
             }
+
+            function videoDidPause() {
+                window.parent.postMessage('on-pause', '*');
+            }
         </script>
     </head>
     <body onload="pageLoaded()">
-        <video id="video" playsinline src="test.mp4" />
+        <video id="video" onpause=videoDidPause() playsinline src="test.mp4" />
     </body>
 </html>

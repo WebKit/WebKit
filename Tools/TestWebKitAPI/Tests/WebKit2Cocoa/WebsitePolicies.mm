@@ -161,7 +161,7 @@ TEST(WebKit2, WebsitePoliciesContentBlockersEnabled)
 
 @interface AutoplayPoliciesDelegate : NSObject <WKNavigationDelegate, WKUIDelegate>
 @property (nonatomic, copy) _WKWebsiteAutoplayPolicy(^autoplayPolicyForURL)(NSURL *);
-@property (nonatomic) BOOL allowsAutoplayQuirks;
+@property (nonatomic, copy) BOOL(^allowsAutoplayQuirksForURL)(NSURL *);
 @end
 
 @implementation AutoplayPoliciesDelegate
@@ -176,7 +176,8 @@ TEST(WebKit2, WebsitePoliciesContentBlockersEnabled)
 - (void)_webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy, _WKWebsitePolicies *))decisionHandler
 {
     _WKWebsitePolicies *websitePolicies = [[[_WKWebsitePolicies alloc] init] autorelease];
-    websitePolicies.allowsAutoplayQuirks = _allowsAutoplayQuirks;
+    if (_allowsAutoplayQuirksForURL)
+        websitePolicies.allowsAutoplayQuirks = _allowsAutoplayQuirksForURL(navigationAction.request.URL);
     if (_autoplayPolicyForURL)
         websitePolicies.autoplayPolicy = _autoplayPolicyForURL(navigationAction.request.URL);
     decisionHandler(WKNavigationActionPolicyAllow, websitePolicies);
@@ -487,11 +488,28 @@ TEST(WebKit2, WebsitePoliciesAutoplayQuirks)
 
     NSURLRequest *requestWithAudio = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"autoplay-check" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
 
-    [delegate setAllowsAutoplayQuirks:YES];
+    [delegate setAllowsAutoplayQuirksForURL:^(NSURL *url) {
+        return YES;
+    }];
     [delegate setAutoplayPolicyForURL:^(NSURL *) {
         return _WKWebsiteAutoplayPolicyDeny;
     }];
     [webView loadRequest:requestWithAudio];
+    [webView waitForMessage:@"did-not-play"];
+    [webView waitForMessage:@"on-pause"];
+
+    receivedAutoplayEvent = std::nullopt;
+    [webView loadHTMLString:@"" baseURL:nil];
+
+    NSURLRequest *requestWithAudioInFrame = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"autoplay-check-in-iframe" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+
+    [delegate setAllowsAutoplayQuirksForURL:^(NSURL *url) {
+        return [url.lastPathComponent isEqualToString:@"autoplay-check-frame.html"];
+    }];
+    [delegate setAutoplayPolicyForURL:^(NSURL *) {
+        return _WKWebsiteAutoplayPolicyDeny;
+    }];
+    [webView loadRequest:requestWithAudioInFrame];
     [webView waitForMessage:@"did-not-play"];
     [webView waitForMessage:@"on-pause"];
 }

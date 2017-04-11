@@ -2320,7 +2320,8 @@ SuccessOr<MediaPlaybackDenialReason> HTMLMediaElement::canTransitionFromAutoplay
 
 void HTMLMediaElement::dispatchPlayPauseEventsIfNeedsQuirks()
 {
-    if (!needsAutoplayPlayPauseEventsQuirk(document().topDocument()))
+    auto& document = this->document();
+    if (!needsAutoplayPlayPauseEventsQuirk(document) && !needsAutoplayPlayPauseEventsQuirk(document.topDocument()))
         return;
 
     scheduleEvent(eventNames().playingEvent);
