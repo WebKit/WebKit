@@ -1,3 +1,19 @@
+2017-04-11  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK] Attach popup menu to web view widget
+        https://bugs.webkit.org/show_bug.cgi?id=145866
+
+        Use gtk_menu_attach_to_widget() to let GTK+ know that popup menus belong to a certain web view.
+        This improves the positioning choices that the toolkit can do, and solves a long-standing issue
+        that caused long popup menus to hang outside of the available display area under Wayland.
+
+        Based on a patch by Jonas Ådahl <jadahl@gmail.com>.
+
+        Reviewed by Carlos Garcia Campos.
+
+        * UIProcess/gtk/WebPopupMenuProxyGtk.cpp:
+        (WebKit::WebPopupMenuProxyGtk::showPopupMenu):
+
 2017-04-10  Alex Christensen  <achristensen@webkit.org>
 
         Revert r215217
