@@ -13,7 +13,6 @@
         <script>
 video = document.getElementById("video");
 canvas = document.getElementById("canvas");
-// FIXME: We should use tracks
 
 function isVideoBlack()
 {
@@ -41,9 +40,9 @@ promise_test((test) => {
             track = localStream.getVideoTracks()[0];
 
             createConnections((firstConnection) => {
-                firstConnection.addStream(localStream);
+                firstConnection.addTrack(track, localStream);
             }, (secondConnection) => {
-                secondConnection.onaddstream = (streamEvent) => { resolve(streamEvent.stream); };
+                secondConnection.ontrack = (trackEvent) => { resolve(trackEvent.streams[0]); };
             });
             setTimeout(() => reject("Test timed out"), 5000);
         });

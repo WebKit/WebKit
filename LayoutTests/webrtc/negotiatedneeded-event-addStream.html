@@ -20,7 +20,7 @@ promise_test((test) => {
         return new Promise((resolve, reject) => {
             var pc = new RTCPeerConnection();
             pc.onnegotiationneeded = () => { resolve(); };
-            pc.addStream(stream);
+            pc.addTrack(stream.getVideoTracks()[0], stream);
         });
     });
 }, "on negotiation needed in case of adding a stream");
@@ -33,7 +33,7 @@ promise_test((test) => {
         return new Promise((resolve, reject) => {
             var pc = new RTCPeerConnection();
             pc.onnegotiationneeded = () => { reject(); };
-            pc.addStream(stream);
+            pc.addTrack(stream.getVideoTracks()[0], stream);
             pc.close();
             setTimeout(resolve, 500);
         });

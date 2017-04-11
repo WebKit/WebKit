@@ -53,9 +53,9 @@ promise_test((test) => {
             finishTest = resolve;
             errorTest = reject;
             createConnections((firstConnection) => {
-                firstConnection.addStream(stream);
+                firstConnection.addTrack(stream.getVideoTracks()[0], stream);
             }, (secondConnection) => {
-                secondConnection.onaddstream = (streamEvent) => { testStream(streamEvent.stream); };
+                secondConnection.ontrack = (trackEvent) => { testStream(trackEvent.streams[0]); };
             });
         });
     });

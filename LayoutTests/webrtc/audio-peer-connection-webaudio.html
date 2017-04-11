@@ -14,9 +14,9 @@
         return navigator.mediaDevices.getUserMedia({audio: true}).then((stream) => {
             return new Promise((resolve, reject) => {
                 createConnections((firstConnection) => {
-                    firstConnection.addStream(stream);
+                    firstConnection.addTrack(stream.getAudioTracks()[0], stream);
                 }, (secondConnection) => {
-                    secondConnection.onaddstream = (streamEvent) => { resolve(streamEvent.stream); };
+                    secondConnection.ontrack = (event) => { resolve(event.streams[0]); };
                 });
                 setTimeout(() => reject("Test timed out"), 5000);
             });

@@ -17,7 +17,7 @@ promise_test((test) => {
      var currentSDP;
      return navigator.mediaDevices.getUserMedia({ video: true}).then((stream) => {
 
-        localConnection.addStream(stream);
+        localConnection.addTrack(stream.getVideoTracks()[0], stream);
         return localConnection.createOffer();
     }).then((desc) => {
         currentSDP = desc.sdp;
