@@ -1,3 +1,23 @@
+2017-04-11  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Fix fast/css-grid-layout/grid-simplified-layout-positioned.html
+        https://bugs.webkit.org/show_bug.cgi?id=167538
+
+        Reviewed by Darin Adler.
+
+        fast/css-grid-layout/grid-simplified-layout-positioned.html was flacky
+        as the caret was not always painted in the test runner.
+        The test was checking for a crash in simplified layout (see bug #163450)
+        and has nothing to do with the caret or "autofocus" behavior.
+        "autofocus" was needed to get the crash, so this change modifies
+        the test to blur the element, so the caret is not painted anymore.
+
+        * fast/css-grid-layout/grid-simplified-layout-positioned-expected.html:
+        Don't focus the input element.
+        * fast/css-grid-layout/grid-simplified-layout-positioned.html: Blur
+        the input element to avoid showing the caret.
+        * platform/mac-wk2/TestExpectations: Remove file from expectations.
+
 2017-04-10  Jiewen Tan  <jiewen_tan@apple.com>
 
         Unreviewed, test expectations update
