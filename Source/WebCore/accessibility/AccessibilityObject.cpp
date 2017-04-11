@@ -128,6 +128,9 @@ bool AccessibilityObject::isAccessibilityObjectSearchMatchAtIndex(AccessibilityO
     case AnyTypeSearchKey:
         return true;
         
+    case ArticleSearchKey:
+        return axObject->roleValue() == DocumentArticleRole;
+            
     case BlockquoteSameLevelSearchKey:
         return criteria->startObject
             && axObject->isBlockquote()

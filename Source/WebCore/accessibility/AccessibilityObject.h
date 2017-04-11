@@ -315,6 +315,7 @@ enum AccessibilitySearchDirection {
 
 enum AccessibilitySearchKey {
     AnyTypeSearchKey = 1,
+    ArticleSearchKey,
     BlockquoteSameLevelSearchKey,
     BlockquoteSearchKey,
     BoldFontSearchKey,

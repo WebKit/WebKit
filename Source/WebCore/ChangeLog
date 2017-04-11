@@ -1,5 +1,25 @@
 2017-04-11  Chris Fleizach  <cfleizach@apple.com>
 
+        AX: Web article navigation does not work (article rotor for Facebook, Twitter, Messages etc.)
+        https://bugs.webkit.org/show_bug.cgi?id=170330
+        <rdar://problem/31366105>
+
+        Reviewed by Joanmarie Diggs.
+
+        Add a search ability for the "article" role.
+
+        Test: accessibility/mac/search-predicate-article.html
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::isAccessibilityObjectSearchMatchAtIndex):
+        * accessibility/AccessibilityObject.h:
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper _accessibilityArticleAncestor]):
+        * accessibility/mac/WebAccessibilityObjectWrapperBase.mm:
+        (createAccessibilitySearchKeyMap):
+
+2017-04-11  Chris Fleizach  <cfleizach@apple.com>
+
         AX: PDF plugin needs to support PDF-DOM Mode
         https://bugs.webkit.org/show_bug.cgi?id=170589
 

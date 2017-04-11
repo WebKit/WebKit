@@ -555,6 +555,15 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
     return nil;
 }
 
+- (AccessibilityObjectWrapper*)_accessibilityArticleAncestor
+{
+    if (const AccessibilityObject* parent = AccessibilityObject::matchedParent(*m_object, false, [self] (const AccessibilityObject& object) {
+        return object.roleValue() == DocumentArticleRole;
+    }))
+        return parent->wrapper();
+    return nil;
+}
+
 - (AccessibilityObjectWrapper*)_accessibilityLandmarkAncestor
 {
     if (const AccessibilityObject* parent = AccessibilityObject::matchedParent(*m_object, false, [self] (const AccessibilityObject& object) {

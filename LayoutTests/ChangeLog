@@ -1,3 +1,14 @@
+2017-04-11  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Web article navigation does not work (article rotor for Facebook, Twitter, Messages etc.)
+        https://bugs.webkit.org/show_bug.cgi?id=170330
+        <rdar://problem/31366105>
+
+        Reviewed by Joanmarie Diggs.
+
+        * accessibility/mac/search-predicate-article-expected.txt:
+        * accessibility/mac/search-predicate-article.html:
+
 2017-04-11  Joseph Pecoraro  <pecoraro@apple.com>
 
         test262: test262/test/annexB/language/comments/multi-line-html-close.js
