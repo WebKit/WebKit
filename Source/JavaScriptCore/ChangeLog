@@ -1,3 +1,14 @@
+2017-04-11  Guillaume Emont  <guijemont@igalia.com>
+
+        [jsc] Add missing MacroAssemblerMIPS::or32() implementation
+        https://bugs.webkit.org/show_bug.cgi?id=169714
+
+        Reviewed by Michael Catanzaro.
+
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::or32):
+        Added or32(TrustedImm32, Address).
+
 2017-04-11  Joseph Pecoraro  <pecoraro@apple.com>
 
         test262: test262/test/annexB/language/comments/multi-line-html-close.js
