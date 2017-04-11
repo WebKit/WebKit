@@ -24,9 +24,9 @@ using namespace WebCore;
 
 namespace API {
 
-PassRefPtr<HitTestResult> HitTestResult::create(const WebKit::WebHitTestResultData& hitTestResultData)
+Ref<HitTestResult> HitTestResult::create(const WebKit::WebHitTestResultData& hitTestResultData)
 {
-    return adoptRef(new HitTestResult(hitTestResultData));
+    return adoptRef(*new HitTestResult(hitTestResultData));
 }
 
 } // namespace API

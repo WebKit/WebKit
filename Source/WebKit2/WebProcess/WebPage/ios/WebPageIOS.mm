@@ -941,7 +941,7 @@ static bool hasCustomLineHeight(Node& node)
     return renderer && renderer->style().lineHeight().isSpecified();
 }
     
-PassRefPtr<Range> WebPage::rangeForWebSelectionAtPosition(const IntPoint& point, const VisiblePosition& position, SelectionFlags& flags)
+RefPtr<Range> WebPage::rangeForWebSelectionAtPosition(const IntPoint& point, const VisiblePosition& position, SelectionFlags& flags)
 {
     HitTestResult result = m_page->mainFrame().eventHandler().hitTestResultAtPoint((point), HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::DisallowUserAgentShadowContent | HitTestRequest::AllowChildFrameContent);
 
@@ -1014,7 +1014,7 @@ PassRefPtr<Range> WebPage::rangeForWebSelectionAtPosition(const IntPoint& point,
     return range->collapsed() ? nullptr : range;
 }
 
-PassRefPtr<Range> WebPage::rangeForBlockAtPoint(const IntPoint& point)
+RefPtr<Range> WebPage::rangeForBlockAtPoint(const IntPoint& point)
 {
     HitTestResult result = m_page->mainFrame().eventHandler().hitTestResultAtPoint((point), HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::DisallowUserAgentShadowContent | HitTestRequest::IgnoreClipping);
 
@@ -1320,9 +1320,9 @@ static inline IntPoint computeEdgeCenter(const IntRect& box, SelectionHandlePosi
     }
 }
 
-PassRefPtr<Range> WebPage::expandedRangeFromHandle(Range* currentRange, SelectionHandlePosition handlePosition)
+Ref<Range> WebPage::expandedRangeFromHandle(Range& currentRange, SelectionHandlePosition handlePosition)
 {
-    IntRect currentBox = selectionBoxForRange(currentRange);
+    IntRect currentBox = selectionBoxForRange(&currentRange);
     IntPoint edgeCenter = computeEdgeCenter(currentBox, handlePosition);
     static const float maxDistance = 1000;
     const float multiple = powf(maxDistance, 1.0/(maxHitTests - 1));
@@ -1359,15 +1359,15 @@ PassRefPtr<Range> WebPage::expandedRangeFromHandle(Range* currentRange, Selectio
 
         RefPtr<Range> newRange;
         RefPtr<Range> rangeAtPosition = rangeForBlockAtPoint(testPoint);
-        if (!rangeAtPosition || &currentRange->ownerDocument() != &rangeAtPosition->ownerDocument())
+        if (!rangeAtPosition || &currentRange.ownerDocument() != &rangeAtPosition->ownerDocument())
             continue;
 
-        if (rangeAtPosition->contains(*currentRange))
+        if (rangeAtPosition->contains(currentRange))
             newRange = rangeAtPosition;
-        else if (currentRange->contains(*rangeAtPosition.get()))
-            newRange = currentRange;
+        else if (currentRange.contains(*rangeAtPosition.get()))
+            newRange = &currentRange;
         else
-            newRange = unionDOMRanges(currentRange, rangeAtPosition.get());
+            newRange = unionDOMRanges(&currentRange, rangeAtPosition.get());
 
         IntRect copyRect = selectionBoxForRange(newRange.get());
 
@@ -1408,18 +1408,18 @@ PassRefPtr<Range> WebPage::expandedRangeFromHandle(Range* currentRange, Selectio
     }
 
     if (bestRange)
-        return bestRange;
+        return bestRange.releaseNonNull();
 
     return currentRange;
 }
 
-PassRefPtr<Range> WebPage::contractedRangeFromHandle(Range* currentRange, SelectionHandlePosition handlePosition, SelectionFlags& flags)
+Ref<Range> WebPage::contractedRangeFromHandle(Range& currentRange, SelectionHandlePosition handlePosition, SelectionFlags& flags)
 {
     // Shrinking with a base and extent will always give better results. If we only have a single element,
     // see if we can break that down to a base and extent. Shrinking base and extent is comparatively straightforward.
     // Shrinking down to another element is unlikely to move just one edge, but we can try that as a fallback.
 
-    IntRect currentBox = selectionBoxForRange(currentRange);
+    IntRect currentBox = selectionBoxForRange(&currentRange);
     IntPoint edgeCenter = computeEdgeCenter(currentBox, handlePosition);
     flags = IsBlockSelection;
 
@@ -1479,13 +1479,13 @@ PassRefPtr<Range> WebPage::contractedRangeFromHandle(Range* currentRange, Select
         distance *= multiple;
 
         RefPtr<Range> newRange = rangeForBlockAtPoint(testPoint);
-        if (!newRange || &newRange->ownerDocument() != &currentRange->ownerDocument())
+        if (!newRange || &newRange->ownerDocument() != &currentRange.ownerDocument())
             continue;
 
         if (handlePosition == SelectionHandlePosition::Top || handlePosition == SelectionHandlePosition::Left)
-            newRange = Range::create(newRange->startContainer().document(), newRange->endPosition(), currentRange->endPosition());
+            newRange = Range::create(newRange->startContainer().document(), newRange->endPosition(), currentRange.endPosition());
         else
-            newRange = Range::create(newRange->startContainer().document(), currentRange->startPosition(), newRange->startPosition());
+            newRange = Range::create(newRange->startContainer().document(), currentRange.startPosition(), newRange->startPosition());
 
         IntRect copyRect = selectionBoxForRange(newRange.get());
         if (copyRect.isEmpty()) {
@@ -1508,7 +1508,7 @@ PassRefPtr<Range> WebPage::contractedRangeFromHandle(Range* currentRange, Select
             break;
         }
 
-        isBetterChoice = isBetterChoice && !areRangesEqual(newRange.get(), currentRange);
+        isBetterChoice = isBetterChoice && !areRangesEqual(newRange.get(), &currentRange);
         if (bestRange && isBetterChoice) {
             switch (handlePosition) {
             case SelectionHandlePosition::Top:
@@ -1529,7 +1529,7 @@ PassRefPtr<Range> WebPage::contractedRangeFromHandle(Range* currentRange, Select
     }
 
     if (!bestRange)
-        bestRange = currentRange;
+        bestRange = &currentRange;
     
     // If we can shrink down to text only, the only reason we wouldn't is that
     // there are multiple sub-element blocks beneath us.  If we didn't find
@@ -1538,7 +1538,7 @@ PassRefPtr<Range> WebPage::contractedRangeFromHandle(Range* currentRange, Select
     if (canShrinkToTextSelection(*bestRange.get()))
         flags = None;
 
-    return bestRange;
+    return bestRange.releaseNonNull();
 }
 
 void WebPage::computeExpandAndShrinkThresholdsForHandle(const IntPoint& point, SelectionHandlePosition handlePosition, float& growThreshold, float& shrinkThreshold)
@@ -1549,12 +1549,12 @@ void WebPage::computeExpandAndShrinkThresholdsForHandle(const IntPoint& point, S
     if (!currentRange)
         return;
 
-    RefPtr<Range> expandedRange = expandedRangeFromHandle(currentRange.get(), handlePosition);
+    Ref<Range> expandedRange = expandedRangeFromHandle(*currentRange, handlePosition);
     SelectionFlags flags;
-    RefPtr<Range> contractedRange = contractedRangeFromHandle(currentRange.get(), handlePosition, flags);
+    RefPtr<Range> contractedRange = contractedRangeFromHandle(*currentRange, handlePosition, flags);
 
     IntRect currentBounds = selectionBoxForRange(currentRange.get());
-    IntRect expandedBounds = selectionBoxForRange(expandedRange.get());
+    IntRect expandedBounds = selectionBoxForRange(expandedRange.ptr());
     IntRect contractedBounds = selectionBoxForRange(contractedRange.get());
 
     float current;
@@ -1602,7 +1602,7 @@ void WebPage::computeExpandAndShrinkThresholdsForHandle(const IntPoint& point, S
 
     growThreshold = current + (expanded - current) * fractionToGrow;
     shrinkThreshold = current + (contracted - current) * (1 - fractionToGrow);
-    if (areRangesEqual(expandedRange.get(), currentRange.get()))
+    if (areRangesEqual(expandedRange.ptr(), currentRange.get()))
         growThreshold = maxThreshold;
 
     if (flags & IsBlockSelection && areRangesEqual(contractedRange.get(), currentRange.get()))
@@ -1623,13 +1623,13 @@ static inline bool shouldExpand(SelectionHandlePosition handlePosition, const In
     }
 }
 
-PassRefPtr<WebCore::Range> WebPage::changeBlockSelection(const IntPoint& point, SelectionHandlePosition handlePosition, float& growThreshold, float& shrinkThreshold, SelectionFlags& flags)
+RefPtr<WebCore::Range> WebPage::changeBlockSelection(const IntPoint& point, SelectionHandlePosition handlePosition, float& growThreshold, float& shrinkThreshold, SelectionFlags& flags)
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
     RefPtr<Range> currentRange = m_currentBlockSelection ? m_currentBlockSelection.get() : frame.selection().selection().toNormalizedRange();
     if (!currentRange)
         return nullptr;
-    RefPtr<Range> newRange = shouldExpand(handlePosition, selectionBoxForRange(currentRange.get()), point) ? expandedRangeFromHandle(currentRange.get(), handlePosition) : contractedRangeFromHandle(currentRange.get(), handlePosition, flags);
+    RefPtr<Range> newRange = shouldExpand(handlePosition, selectionBoxForRange(currentRange.get()), point) ? expandedRangeFromHandle(*currentRange, handlePosition) : contractedRangeFromHandle(*currentRange, handlePosition, flags);
 
     if (newRange) {
         m_currentBlockSelection = newRange;
@@ -1954,7 +1954,7 @@ void WebPage::moveSelectionAtBoundaryWithDirection(uint32_t granularity, uint32_
     send(Messages::WebPageProxy::VoidCallback(callbackID));
 }
 
-PassRefPtr<Range> WebPage::rangeForGranularityAtPoint(const Frame& frame, const WebCore::IntPoint& point, uint32_t granularity, bool isInteractingWithAssistedNode)
+RefPtr<Range> WebPage::rangeForGranularityAtPoint(const Frame& frame, const WebCore::IntPoint& point, uint32_t granularity, bool isInteractingWithAssistedNode)
 {
     VisiblePosition position = visiblePositionInFocusedNodeForPoint(frame, point, isInteractingWithAssistedNode);
 
@@ -3250,7 +3250,7 @@ void WebPage::dispatchAsynchronousTouchEvents(const Vector<WebTouchEvent, 1>& qu
 }
 #endif
 
-void WebPage::computePagesForPrintingAndDrawToPDF(uint64_t frameID, const PrintInfo& printInfo, uint64_t callbackID, PassRefPtr<Messages::WebPage::ComputePagesForPrintingAndDrawToPDF::DelayedReply> reply)
+void WebPage::computePagesForPrintingAndDrawToPDF(uint64_t frameID, const PrintInfo& printInfo, uint64_t callbackID, Ref<Messages::WebPage::ComputePagesForPrintingAndDrawToPDF::DelayedReply>&& reply)
 {
     if (printInfo.snapshotFirstPage) {
         reply->send(1);

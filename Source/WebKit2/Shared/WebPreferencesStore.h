@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebPreferencesStore_h
-#define WebPreferencesStore_h
+#pragma once
 
 #include "Decoder.h"
 #include "Encoder.h"
@@ -183,5 +182,3 @@ struct WebPreferencesStore {
 };
 
 } // namespace WebKit
-
-#endif // WebPreferencesStore_h

@@ -74,7 +74,6 @@ public:
 #endif
     void continueWillSendRequest(WebCore::ResourceRequest&& newRequest);
 
-    WebCore::SharedBuffer* bufferedData() { return m_bufferedData.get(); }
     const WebCore::ResourceResponse& response() const { return m_response; }
 
     NetworkConnectionToWebProcess& connectionToWebProcess() { return m_connection; }

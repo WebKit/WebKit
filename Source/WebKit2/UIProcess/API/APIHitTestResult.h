@@ -17,8 +17,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef APIHitTestResult_h
-#define APIHitTestResult_h
+#pragma once
 
 #include "APIObject.h"
 #include "SharedMemory.h"
@@ -28,7 +27,6 @@
 #include <WebCore/IntRect.h>
 #include <WebCore/PageOverlay.h>
 #include <wtf/Forward.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -49,7 +47,7 @@ class WebFrame;
 
 class HitTestResult : public API::ObjectImpl<API::Object::Type::HitTestResult> {
 public:
-    static PassRefPtr<HitTestResult> create(const WebKit::WebHitTestResultData&);
+    static Ref<HitTestResult> create(const WebKit::WebHitTestResultData&);
 
     WTF::String absoluteImageURL() const { return m_data.absoluteImageURL; }
     WTF::String absolutePDFURL() const { return m_data.absolutePDFURL; }
@@ -86,5 +84,3 @@ private:
 };
 
 } // namespace API
-
-#endif // APIHitTestResult_h

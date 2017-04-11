@@ -44,7 +44,7 @@ Ref<WebPreferences> WebPreferences::create(const String& identifier, const Strin
     return adoptRef(*new WebPreferences(identifier, keyPrefix, globalDebugKeyPrefix));
 }
 
-PassRefPtr<WebPreferences> WebPreferences::createWithLegacyDefaults(const String& identifier, const String& keyPrefix, const String& globalDebugKeyPrefix)
+Ref<WebPreferences> WebPreferences::createWithLegacyDefaults(const String& identifier, const String& keyPrefix, const String& globalDebugKeyPrefix)
 {
     auto preferences = WebPreferences::create(identifier, keyPrefix, globalDebugKeyPrefix);
     // FIXME: The registerDefault...ValueForKey machinery is unnecessarily heavyweight and complicated.
@@ -53,7 +53,7 @@ PassRefPtr<WebPreferences> WebPreferences::createWithLegacyDefaults(const String
     preferences->registerDefaultBoolValueForKey(WebPreferencesKey::javaEnabledForLocalFilesKey(), true);
     preferences->registerDefaultBoolValueForKey(WebPreferencesKey::pluginsEnabledKey(), true);
     preferences->registerDefaultUInt32ValueForKey(WebPreferencesKey::storageBlockingPolicyKey(), WebCore::SecurityOrigin::AllowAllStorage);
-    return WTFMove(preferences);
+    return preferences;
 }
 
 WebPreferences::WebPreferences(const String& identifier, const String& keyPrefix, const String& globalDebugKeyPrefix)
@@ -77,7 +77,7 @@ WebPreferences::~WebPreferences()
     ASSERT(m_pages.isEmpty());
 }
 
-PassRefPtr<WebPreferences> WebPreferences::copy() const
+Ref<WebPreferences> WebPreferences::copy() const
 {
     return adoptRef(*new WebPreferences(*this));
 }

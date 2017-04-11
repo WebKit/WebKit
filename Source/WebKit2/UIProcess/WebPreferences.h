@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebPreferences_h
-#define WebPreferences_h
+#pragma once
 
 #include "APIExperimentalFeature.h"
 #include "APIObject.h"
@@ -32,7 +31,6 @@
 #include "WebPreferencesDefinitions.h"
 #include "WebPreferencesStore.h"
 #include <wtf/HashSet.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
 #define DECLARE_PREFERENCE_GETTER_AND_SETTERS(KeyUpper, KeyLower, TypeName, Type, DefaultValue, HumanReadableName, HumanReadableDescription) \
@@ -46,14 +44,14 @@ class WebPageProxy;
 class WebPreferences : public API::ObjectImpl<API::Object::Type::Preferences> {
 public:
     static Ref<WebPreferences> create(const String& identifier, const String& keyPrefix, const String& globalDebugKeyPrefix);
-    static PassRefPtr<WebPreferences> createWithLegacyDefaults(const String& identifier, const String& keyPrefix, const String& globalDebugKeyPrefix);
+    static Ref<WebPreferences> createWithLegacyDefaults(const String& identifier, const String& keyPrefix, const String& globalDebugKeyPrefix);
 
     explicit WebPreferences(const String& identifier, const String& keyPrefix, const String& globalDebugKeyPrefix);
     WebPreferences(const WebPreferences&);
 
     virtual ~WebPreferences();
 
-    PassRefPtr<WebPreferences> copy() const;
+    Ref<WebPreferences> copy() const;
 
     void addPage(WebPageProxy&);
     void removePage(WebPageProxy&);
@@ -110,5 +108,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // WebPreferences_h

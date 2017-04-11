@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebLoaderStrategy_h
-#define WebLoaderStrategy_h
+#pragma once
 
 #include "WebResourceLoader.h"
 #include <WebCore/LoaderStrategy.h>
@@ -81,5 +80,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif

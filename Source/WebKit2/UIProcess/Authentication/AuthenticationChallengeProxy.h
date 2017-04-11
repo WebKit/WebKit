@@ -23,12 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AuthenticationChallengeProxy_h
-#define AuthenticationChallengeProxy_h
+#pragma once
 
 #include "APIObject.h"
 #include <WebCore/AuthenticationChallenge.h>
-#include <wtf/PassRefPtr.h>
 
 namespace IPC {
 class Connection;
@@ -73,5 +71,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // WebAuthenticationChallengeProxy_h

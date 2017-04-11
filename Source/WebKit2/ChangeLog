@@ -1,3 +1,40 @@
+2017-04-11  Alex Christensen  <achristensen@webkit.org>
+
+        Modernize and clean up code
+        https://bugs.webkit.org/show_bug.cgi?id=170752
+
+        Reviewed by Sam Weinig.
+
+        * NetworkProcess/NetworkResourceLoader.h:
+        * Shared/WebPreferencesStore.h:
+        * UIProcess/API/APIHitTestResult.cpp:
+        (API::HitTestResult::create):
+        * UIProcess/API/APIHitTestResult.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesCreate):
+        (WKPreferencesCreateWithIdentifier):
+        (WKPreferencesCreateCopy):
+        * UIProcess/Authentication/AuthenticationChallengeProxy.h:
+        * UIProcess/WebPreferences.cpp:
+        (WebKit::WebPreferences::createWithLegacyDefaults):
+        (WebKit::WebPreferences::copy):
+        * UIProcess/WebPreferences.h:
+        * WebProcess/Network/WebLoaderStrategy.h:
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::requestCheckingOfString):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::addTextCheckingRequest):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::rangeForWebSelectionAtPosition):
+        (WebKit::WebPage::rangeForBlockAtPoint):
+        (WebKit::WebPage::expandedRangeFromHandle):
+        (WebKit::WebPage::contractedRangeFromHandle):
+        (WebKit::WebPage::computeExpandAndShrinkThresholdsForHandle):
+        (WebKit::WebPage::changeBlockSelection):
+        (WebKit::WebPage::rangeForGranularityAtPoint):
+        (WebKit::WebPage::computePagesForPrintingAndDrawToPDF):
+
 2017-04-11  Dean Jackson  <dino@apple.com>
 
         Disable outdated WritableStream API

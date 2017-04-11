@@ -529,7 +529,7 @@ void WebEditorClient::getGuessesForWord(const String& word, const String& contex
 void WebEditorClient::requestCheckingOfString(TextCheckingRequest& request, const WebCore::VisibleSelection& currentSelection)
 {
     uint64_t requestID = generateTextCheckingRequestID();
-    m_page->addTextCheckingRequest(requestID, &request);
+    m_page->addTextCheckingRequest(requestID, request);
 
     m_page->send(Messages::WebPageProxy::RequestCheckingOfString(requestID, request.data(), insertionPointFromCurrentSelection(currentSelection)));
 }
