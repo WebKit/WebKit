@@ -154,8 +154,8 @@ struct HistoricResourceUsageData {
     RingBuffer<size_t> totalExternalSize;
     RingBuffer<size_t> gcHeapSize;
     std::array<HistoricMemoryCategoryInfo, MemoryCategory::NumberOfCategories> categories;
-    double timeOfNextEdenCollection { 0 };
-    double timeOfNextFullCollection { 0 };
+    MonotonicTime timeOfNextEdenCollection { MonotonicTime::nan() };
+    MonotonicTime timeOfNextFullCollection { MonotonicTime::nan() };
 };
 
 HistoricResourceUsageData::HistoricResourceUsageData()
@@ -433,11 +433,11 @@ static String formatByteNumber(size_t number)
     return String::format("%lu", number);
 }
 
-static String gcTimerString(double timerFireDate, double now)
+static String gcTimerString(MonotonicTime timerFireDate, MonotonicTime now)
 {
-    if (!timerFireDate)
+    if (std::isnan(timerFireDate))
         return ASCIILiteral("[not scheduled]");
-    return String::format("%g", timerFireDate - now);
+    return String::format("%g", (timerFireDate - now).seconds());
 }
 
 void ResourceUsageOverlay::platformDraw(CGContextRef context)
@@ -478,7 +478,7 @@ void ResourceUsageOverlay::platformDraw(CGContextRef context)
     }
     y -= 5;
 
-    double now = WTF::currentTime();
+    MonotonicTime now = MonotonicTime::now();
     showText(context, 10, y + 10, colorForLabels, String::format("    Eden GC: %s", gcTimerString(data.timeOfNextEdenCollection, now).ascii().data()));
     showText(context, 10, y + 20, colorForLabels, String::format("    Full GC: %s", gcTimerString(data.timeOfNextFullCollection, now).ascii().data()));
 

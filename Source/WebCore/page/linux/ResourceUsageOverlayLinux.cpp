@@ -59,11 +59,11 @@ static String formatByteNumber(size_t number)
     return String::format("%lu", number);
 }
 
-static String gcTimerString(double timerFireDate, double now)
+static String gcTimerString(MonotonicTime timerFireDate, MonotonicTime now)
 {
-    if (!timerFireDate)
+    if (std::isnan(timerFireDate))
         return ASCIILiteral("[not scheduled]");
-    return String::format("%g", timerFireDate - now);
+    return String::format("%g", (timerFireDate - now).seconds());
 }
 
 static const float gFontSize = 14;
@@ -112,7 +112,7 @@ private:
         context.drawText(m_textFont, TextRun(string), position);
         position.move(0, gFontSize + 2);
 
-        double now = WTF::currentTime();
+        MonotonicTime now = MonotonicTime::now();
         string = "Eden GC: " + gcTimerString(gData.timeOfNextEdenCollection, now);
         context.drawText(m_textFont, TextRun(string), position);
         position.move(0, gFontSize + 2);

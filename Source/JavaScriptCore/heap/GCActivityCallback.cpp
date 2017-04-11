@@ -76,9 +76,9 @@ void GCActivityCallback::cancelTimer()
     CFRunLoopTimerSetNextFireDate(m_timer.get(), CFAbsoluteTimeGetCurrent() + s_decade.seconds());
 }
 
-double GCActivityCallback::nextFireTime()
+MonotonicTime GCActivityCallback::nextFireTime()
 {
-    return CFRunLoopTimerGetNextFireDate(m_timer.get());
+    return MonotonicTime::now() + (CFRunLoopTimerGetNextFireDate(m_timer.get()) - CFAbsoluteTimeGetCurrent());
 }
 #else
 void GCActivityCallback::scheduleTimer(Seconds newDelay)
@@ -98,11 +98,9 @@ void GCActivityCallback::cancelTimer()
     m_timer.startOneShot(s_decade);
 }
 
-double GCActivityCallback::nextFireTime()
+MonotonicTime GCActivityCallback::nextFireTime()
 {
-    // FIXME: Should return MonotonicTime.
-    // https://bugs.webkit.org/show_bug.cgi?id=170725
-    return (MonotonicTime::now() + m_timer.secondsUntilFire()).secondsSinceEpoch().value();
+    return MonotonicTime::now() + m_timer.secondsUntilFire();
 }
 #endif
 

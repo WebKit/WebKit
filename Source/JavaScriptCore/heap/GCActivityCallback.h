@@ -60,7 +60,7 @@ public:
 
     static bool s_shouldCreateGCTimer;
 
-    double nextFireTime();
+    MonotonicTime nextFireTime();
 
 protected:
     virtual Seconds lastGCLength() = 0;

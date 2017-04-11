@@ -353,5 +353,37 @@ TEST(WTF_Time, clamp)
     EXPECT_TRUE(negativeInfinity.nanosecondsAs<uint64_t>() == 0);
 }
 
+// Test MonotonicTime constexpr features. If they are not calculated in constexpr,
+// they invokes global constructors and becomes compile errors.
+static const MonotonicTime NaN = MonotonicTime::nan();
+static const MonotonicTime Infinity = MonotonicTime::infinity();
+static const MonotonicTime Zero = MonotonicTime::fromRawSeconds(0);
+static const MonotonicTime One = Zero + Seconds(1);
+static const MonotonicTime NegativeOne = Zero - Seconds(1);
+static const bool ZeroIsFalse = !!Zero;
+static const bool Equal = Zero == Zero;
+static const bool NotEqual = Zero != One;
+static const bool LessThan = Zero < One;
+static const bool GreaterThan = One > Zero;
+static const bool LessThanOrEqual = Zero <= Zero;
+static const bool GreaterThanOrEqual = Zero >= Zero;
+
+TEST(WTF_Time, constexprMonotonicTime)
+{
+    EXPECT_TRUE(std::isnan(NaN));
+    EXPECT_TRUE(std::isinf(Infinity));
+    EXPECT_TRUE(Zero.secondsSinceEpoch().value() == 0.0);
+    EXPECT_TRUE(One.secondsSinceEpoch().value() == 1.0);
+    EXPECT_TRUE(NegativeOne.secondsSinceEpoch().value() == -1.0);
+    EXPECT_FALSE(ZeroIsFalse);
+    EXPECT_TRUE(Equal);
+    EXPECT_TRUE(NotEqual);
+    EXPECT_TRUE(LessThan);
+    EXPECT_TRUE(GreaterThan);
+    EXPECT_TRUE(LessThanOrEqual);
+    EXPECT_TRUE(GreaterThanOrEqual);
+}
+
+
 } // namespace TestWebKitAPI
 

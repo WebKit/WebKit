@@ -28,6 +28,7 @@
 #if ENABLE(RESOURCE_USAGE)
 
 #include <array>
+#include <wtf/MonotonicTime.h>
 
 namespace WebCore {
 
@@ -68,8 +69,8 @@ struct ResourceUsageData {
     size_t totalDirtySize { 0 };
     size_t totalExternalSize { 0 };
     std::array<MemoryCategoryInfo, MemoryCategory::NumberOfCategories> categories;
-    double timeOfNextEdenCollection { 0 };
-    double timeOfNextFullCollection { 0 };
+    MonotonicTime timeOfNextEdenCollection { MonotonicTime::nan() };
+    MonotonicTime timeOfNextFullCollection { MonotonicTime::nan() };
 };
 
 } // namespace WebCore
