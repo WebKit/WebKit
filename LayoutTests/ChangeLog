@@ -1,5 +1,16 @@
 2017-04-11  Youenn Fablet  <youenn@apple.com>
 
+        [WK1] Add captureStream test with webrtc
+        https://bugs.webkit.org/show_bug.cgi?id=170746
+
+        Reviewed by Eric Carlson.
+
+        * platform/mac-wk1/TestExpectations: Activating this new test in WK1.
+        * webrtc/captureCanvas-webrtc-expected.txt: Added.
+        * webrtc/captureCanvas-webrtc.html: Added.
+
+2017-04-11  Youenn Fablet  <youenn@apple.com>
+
         Migrating webrtc tests to latest API
         https://bugs.webkit.org/show_bug.cgi?id=170709
 
