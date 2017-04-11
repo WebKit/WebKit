@@ -1,3 +1,18 @@
+2017-04-11  Yoav Weiss  <yoav@yoav.ws>
+
+        [link preload] Double downloads of preloaded content when it's in MemoryCache
+        https://bugs.webkit.org/show_bug.cgi?id=170122
+
+        Reviewed by Antti Koivisto.
+
+        * TestExpectations: Removed flakiness label from the header preload charset test.
+        * fast/loader/cache-encoding-expected.txt: Changed expectation.
+        * fast/loader/cache-encoding.html: Modified behavior to stick with the first decoded string.
+        * http/tests/preload/preload-encoding-expected.txt: Changed expectation.
+        * http/tests/preload/preload-encoding.html: Modified behavior to stick with the first decoded string.
+        * imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/script-charset-01-expected.txt: This test refers to the same file
+        twice and expects different decoding for it each time. This is the behavior that we modified, and therefore the test expectation is changed as well.
+
 2017-04-11  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Fix fast/css-grid-layout/grid-simplified-layout-positioned.html

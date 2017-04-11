@@ -1,3 +1,31 @@
+2017-04-11  Yoav Weiss  <yoav@yoav.ws>
+
+        [link preload] Double downloads of preloaded content when it's in MemoryCache
+        https://bugs.webkit.org/show_bug.cgi?id=170122
+
+        Reviewed by Antti Koivisto.
+
+        No new tests, but unflaked http/tests/preload/single_download_preload_headers_charset.html.
+
+        The test was flaky because it appears as if MemoryCache is not being evicted between runs,
+        and running multiple iterations of the test resulted in preloaded being taken out of MemoryCache
+        and not having the unknown encoding flag. In those cases, the result was a double download and
+        a failed test.
+
+        * loader/TextResourceDecoder.cpp:
+        (WebCore::TextResourceDecoder::setEncoding): Set the m_encodingSet flag.
+        * loader/TextResourceDecoder.h: Added an m_encodingSet flag initialized to false.
+        * loader/cache/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::setEncoding): Assert that stylesheets don't maintain decoded text.
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::CachedResource): Remove initialization of hasUnknownEncoding flag.
+        * loader/cache/CachedResource.h:
+        (WebCore::CachedResource::hasUnknownEncoding): Remove.
+        (WebCore::CachedResource::setHasUnknownEncoding): Remove.
+        (WebCore::CachedResource::CachedResource): Remove initialization of hasUnknownEncoding flag.
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::determineRevalidationPolicy): Set the encoding in case it changed.
+
 2017-04-11  Miguel Gomez  <magomez@igalia.com>
 
         REGRESSION(r215211): [GTK] Lots of image related tests are timing out, causing the test bot to exit early

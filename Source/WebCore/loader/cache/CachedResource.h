@@ -232,8 +232,6 @@ public:
     void decreasePreloadCount() { ASSERT(m_preloadCount); --m_preloadCount; }
     bool isLinkPreload() { return m_isLinkPreload; }
     void setLinkPreload() { m_isLinkPreload = true; }
-    bool hasUnknownEncoding() { return m_hasUnknownEncoding; }
-    void setHasUnknownEncoding(bool hasUnknownEncoding) { m_hasUnknownEncoding = hasUnknownEncoding; }
 
     void registerHandle(CachedResourceHandleBase*);
     WEBCORE_EXPORT void unregisterHandle(CachedResourceHandleBase*);
@@ -336,7 +334,6 @@ private:
     bool m_inCache { false };
     bool m_loading { false };
     bool m_isLinkPreload { false };
-    bool m_hasUnknownEncoding { false };
 
     bool m_switchingClientsToRevalidatedResource { false };
 

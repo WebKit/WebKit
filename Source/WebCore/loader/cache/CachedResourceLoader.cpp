@@ -935,12 +935,8 @@ CachedResourceLoader::RevalidationPolicy CachedResourceLoader::determineRevalida
         return Reload;
 
     auto* textDecoder = existingResource->textResourceDecoder();
-    if (textDecoder && !textDecoder->hasEqualEncodingForCharset(cachedResourceRequest.charset())) {
-        if (!existingResource->hasUnknownEncoding())
-            return Reload;
-        existingResource->setHasUnknownEncoding(false);
+    if (textDecoder && !textDecoder->hasEqualEncodingForCharset(cachedResourceRequest.charset()) && !textDecoder->encodingSet())
         existingResource->setEncoding(cachedResourceRequest.charset());
-    }
 
     // FIXME: We should use the same cache policy for all resource types. The raw resource policy is overly strict
     //        while the normal subresource policy is too loose.
