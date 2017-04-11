@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,26 +23,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WKGeolocationPosition.h"
+#import "_WKGeolocationPosition.h"
 
-#include "WKAPICast.h"
-#include "WebGeolocationPosition.h"
+#if WK_API_ENABLED && TARGET_OS_IPHONE
 
-using namespace WebKit;
+#import "WebGeolocationPosition.h"
 
-WKTypeID WKGeolocationPositionGetTypeID()
+namespace WebKit {
+
+inline _WKGeolocationPosition *wrapper(WebKit::WebGeolocationPosition &position)
 {
-    return toAPI(WebGeolocationPosition::APIType);
+    ASSERT([position.wrapper() isKindOfClass:[_WKGeolocationPosition class]]);
+    return (_WKGeolocationPosition *)position.wrapper();
 }
 
-WKGeolocationPositionRef WKGeolocationPositionCreate(double timestamp, double latitude, double longitude, double accuracy)
-{
-    return WKGeolocationPositionCreate_b(timestamp, latitude, longitude, accuracy, false, 0., false, 0., false, 0., false, 0.);
 }
 
-WKGeolocationPositionRef WKGeolocationPositionCreate_b(double timestamp, double latitude, double longitude, double accuracy, bool providesAltitude, double altitude, bool providesAltitudeAccuracy, double altitudeAccuracy, bool providesHeading, double heading, bool providesSpeed, double speed)
-{
-    auto position = WebGeolocationPosition::create(timestamp, latitude, longitude, accuracy, providesAltitude, altitude, providesAltitudeAccuracy, altitudeAccuracy, providesHeading, heading, providesSpeed, speed);
-    return toAPI(&position.leakRef());
+@interface _WKGeolocationPosition () <WKObject> {
+@package
+    API::ObjectStorage<WebKit::WebGeolocationPosition> _geolocationPosition;
 }
+@end
+
+#endif // WK_API_ENABLED && TARGET_OS_IPHONE

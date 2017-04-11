@@ -72,6 +72,7 @@
 #import "_WKDownloadInternal.h"
 #import "_WKExperimentalFeatureInternal.h"
 #import "_WKFrameHandleInternal.h"
+#import "_WKGeolocationPositionInternal.h"
 #import "_WKHitTestResultInternal.h"
 #import "_WKProcessPoolConfigurationInternal.h"
 #import "_WKUserContentWorldInternal.h"
@@ -178,6 +179,12 @@ void* Object::newObject(size_t size, Type type)
     case Type::FrameInfo:
         wrapper = [WKFrameInfo alloc];
         break;
+
+#if PLATFORM(IOS)
+    case Type::GeolocationPosition:
+        wrapper = [_WKGeolocationPosition alloc];
+        break;
+#endif
 
     case Type::HTTPCookieStore:
         wrapper = [WKHTTPCookieStore alloc];

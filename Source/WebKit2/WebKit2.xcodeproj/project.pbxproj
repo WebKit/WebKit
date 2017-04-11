@@ -1171,6 +1171,10 @@
 		5CD286581E7235D10094FDC8 /* WKContentExtensionStorePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CD286501E722F440094FDC8 /* WKContentExtensionStorePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5CE85B201C88E64B0070BFCE /* PingLoad.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CE85B1F1C88E6430070BFCE /* PingLoad.h */; };
 		5CFECB041E1ED1CC00F88504 /* LegacyCustomProtocolManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CFECB031E1ED1C800F88504 /* LegacyCustomProtocolManager.cpp */; };
+		636353A51E9858DF0009F8AF /* _WKGeolocationCoreLocationProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 63FABE191E970D65003011D5 /* _WKGeolocationCoreLocationProvider.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		63C32C251E9810D900699BD0 /* _WKGeolocationPosition.mm in Sources */ = {isa = PBXBuildFile; fileRef = 63C32C231E9810D900699BD0 /* _WKGeolocationPosition.mm */; };
+		63C32C261E9810D900699BD0 /* _WKGeolocationPosition.h in Headers */ = {isa = PBXBuildFile; fileRef = 63C32C241E9810D900699BD0 /* _WKGeolocationPosition.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		63C32C281E98119000699BD0 /* _WKGeolocationPositionInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 63C32C271E98119000699BD0 /* _WKGeolocationPositionInternal.h */; };
 		6501BD1A12F1243400E9F248 /* WKBundleInspector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65B86F1712F11D7B00B7DD8A /* WKBundleInspector.cpp */; };
 		659C551E130006410025C0C2 /* InjectedBundlePageResourceLoadClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6546A82913000164000CEB1C /* InjectedBundlePageResourceLoadClient.cpp */; };
 		65B86F1E12F11DE300B7DD8A /* WKBundleInspector.h in Headers */ = {isa = PBXBuildFile; fileRef = 65B86F1812F11D7B00B7DD8A /* WKBundleInspector.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3431,6 +3435,10 @@
 		5CFECB031E1ED1C800F88504 /* LegacyCustomProtocolManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LegacyCustomProtocolManager.cpp; path = NetworkProcess/CustomProtocols/LegacyCustomProtocolManager.cpp; sourceTree = "<group>"; };
 		5D442A5516D5856700AC3331 /* PluginService.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PluginService.entitlements; sourceTree = "<group>"; };
 		5DAD73F1116FF90C00EE5396 /* BaseTarget.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = BaseTarget.xcconfig; sourceTree = "<group>"; };
+		63C32C231E9810D900699BD0 /* _WKGeolocationPosition.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKGeolocationPosition.mm; sourceTree = "<group>"; };
+		63C32C241E9810D900699BD0 /* _WKGeolocationPosition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKGeolocationPosition.h; sourceTree = "<group>"; };
+		63C32C271E98119000699BD0 /* _WKGeolocationPositionInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKGeolocationPositionInternal.h; sourceTree = "<group>"; };
+		63FABE191E970D65003011D5 /* _WKGeolocationCoreLocationProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKGeolocationCoreLocationProvider.h; sourceTree = "<group>"; };
 		6546A82913000164000CEB1C /* InjectedBundlePageResourceLoadClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundlePageResourceLoadClient.cpp; sourceTree = "<group>"; };
 		6546A82A13000164000CEB1C /* InjectedBundlePageResourceLoadClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundlePageResourceLoadClient.h; sourceTree = "<group>"; };
 		65B86F1712F11D7B00B7DD8A /* WKBundleInspector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKBundleInspector.cpp; sourceTree = "<group>"; };
@@ -5522,6 +5530,10 @@
 				2E7A94491BBD95C600945547 /* _WKFocusedElementInfo.h */,
 				37A64E5618F38F4600EB30F1 /* _WKFormInputSession.h */,
 				CD78E1181DB7E5AD0014A2DE /* _WKFullscreenDelegate.h */,
+				63FABE191E970D65003011D5 /* _WKGeolocationCoreLocationProvider.h */,
+				63C32C241E9810D900699BD0 /* _WKGeolocationPosition.h */,
+				63C32C231E9810D900699BD0 /* _WKGeolocationPosition.mm */,
+				63C32C271E98119000699BD0 /* _WKGeolocationPositionInternal.h */,
 				5143B25E1DDCDFD10014FAC6 /* _WKIconLoadingDelegate.h */,
 				37A64E5418F38E3C00EB30F1 /* _WKInputDelegate.h */,
 				2D790A9C1AD7050D00AB90B3 /* _WKLayoutMode.h */,
@@ -8081,6 +8093,7 @@
 				93A88B3B1BC710D900ABA5C2 /* _WKHitTestResultInternal.h in Headers */,
 				510F59101DDE296900412FF5 /* _WKIconLoadingDelegate.h in Headers */,
 				37A64E5518F38E3C00EB30F1 /* _WKInputDelegate.h in Headers */,
+				63C32C281E98119000699BD0 /* _WKGeolocationPositionInternal.h in Headers */,
 				2D790A9D1AD7050D00AB90B3 /* _WKLayoutMode.h in Headers */,
 				510F59111DDE297000412FF5 /* _WKLinkIconParameters.h in Headers */,
 				A118A9F31908B8EA00F7C92B /* _WKNSFileManagerExtras.h in Headers */,
@@ -8277,6 +8290,7 @@
 				BCCF6B2512C93E7A008F9C35 /* ImageOptions.h in Headers */,
 				1A1EC69E1872092100B951F0 /* ImportanceAssertion.h in Headers */,
 				BC204EE311C83E98008F3375 /* InjectedBundle.h in Headers */,
+				636353A51E9858DF0009F8AF /* _WKGeolocationCoreLocationProvider.h in Headers */,
 				935EEBA2127761D0003322B8 /* InjectedBundleBackForwardList.h in Headers */,
 				935EEBA4127761D6003322B8 /* InjectedBundleBackForwardListItem.h in Headers */,
 				BCEE7DC5128B645D009827DA /* InjectedBundleClient.h in Headers */,
@@ -8790,6 +8804,7 @@
 				BC14DF9F120B635F00826C0C /* WKBundleScriptWorld.h in Headers */,
 				BC4075F6124FF0270068F20A /* WKCertificateInfo.h in Headers */,
 				BC407627124FF0400068F20A /* WKCertificateInfoMac.h in Headers */,
+				63C32C261E9810D900699BD0 /* _WKGeolocationPosition.h in Headers */,
 				BCA284D71492F2C7001F9042 /* WKConnection.h in Headers */,
 				BC5C75C814954DA600BC4775 /* WKConnectionInternal.h in Headers */,
 				BC4A6297147313A0006C681A /* WKConnectionRef.h in Headers */,
@@ -10326,6 +10341,7 @@
 				2DA944A31884E4F000ED86DB /* WebTouchEventIOS.cpp in Sources */,
 				BCA0EF8012331E78007D3CFB /* WebUndoStep.cpp in Sources */,
 				51D124281E6D3F5D002B2820 /* WebURLSchemeHandler.cpp in Sources */,
+				63C32C251E9810D900699BD0 /* _WKGeolocationPosition.mm in Sources */,
 				51D124331E6DE6CA002B2820 /* WebURLSchemeHandlerCocoa.mm in Sources */,
 				51D1242C1E6D41FD002B2820 /* WebURLSchemeHandlerProxy.cpp in Sources */,
 				51E8B68E1E712877001B7132 /* WebURLSchemeHandlerTask.cpp in Sources */,

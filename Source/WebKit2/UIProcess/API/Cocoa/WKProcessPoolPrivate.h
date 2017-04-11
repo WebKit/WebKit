@@ -31,6 +31,7 @@
 @class _WKProcessPoolConfiguration;
 @protocol _WKAutomationDelegate;
 @protocol _WKDownloadDelegate;
+@protocol _WKGeolocationCoreLocationProvider;
 
 @interface WKProcessPool ()
 - (instancetype)_initWithConfiguration:(_WKProcessPoolConfiguration *)configuration __attribute__((objc_method_family(init))) NS_DESIGNATED_INITIALIZER;
@@ -53,6 +54,10 @@
 
 @property (nonatomic, weak, setter=_setDownloadDelegate:) id <_WKDownloadDelegate> _downloadDelegate;
 @property (nonatomic, weak, setter=_setAutomationDelegate:) id <_WKAutomationDelegate> _automationDelegate WK_API_AVAILABLE(macosx(10.12), ios(10.0));
+
+#if TARGET_OS_IPHONE
+@property (nonatomic, setter=_setCoreLocationProvider:) id <_WKGeolocationCoreLocationProvider> _coreLocationProvider WK_API_AVAILABLE(ios(WK_IOS_TBA));
+#endif
 
 + (NSURL *)_websiteDataURLForContainerWithURL:(NSURL *)containerURL;
 + (NSURL *)_websiteDataURLForContainerWithURL:(NSURL *)containerURL bundleIdentifierIfNotInContainer:(NSString *)bundleIdentifier;

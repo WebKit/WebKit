@@ -1,3 +1,58 @@
+2017-04-11  David Quesada  <david_quesada@apple.com>
+
+        Add SPI for handling geolocation authorization requests
+        https://bugs.webkit.org/show_bug.cgi?id=170362
+        rdar://problem/17508627
+
+        Reviewed by Alex Christensen.
+
+        Add a new WKUIDelegate method for the WKGeolocationProviderIOS to call when a web page
+        requests geolocation access. To support testing this change, make it possible to override
+        the CoreLocation abstraction WKGeolocationProviderIOS uses. There is now a configurable
+        object on the process pool that implements a protocol for providing location updates for
+        web views in the process pool. If the client doesn't provide this object,
+        WKGeolocationProviderIOS falls back to an object that wraps the existing WebKit1
+        WebGeolocationCoreLocationProvider and conforms to the new protocol.
+
+        * Shared/Cocoa/APIObject.mm:
+        (API::Object::newObject):
+        * Shared/WebGeolocationPosition.h:
+        (WebKit::WebGeolocationPosition::create):
+        * UIProcess/API/C/WKGeolocationPosition.cpp:
+        (WKGeolocationPositionCreate_b):
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool _coreLocationProvider]):
+        (-[WKProcessPool _setCoreLocationProvider:]):
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+        * UIProcess/API/Cocoa/_WKGeolocationCoreLocationProvider.h: Copied from Source/WebKit2/UIProcess/API/C/WKGeolocationPosition.cpp.
+        * UIProcess/API/Cocoa/_WKGeolocationPosition.h: Copied from Source/WebKit2/UIProcess/API/C/WKGeolocationPosition.cpp.
+        * UIProcess/API/Cocoa/_WKGeolocationPosition.mm: Added.
+        (WebKit::if):
+        (-[_WKGeolocationPosition dealloc]):
+        (-[_WKGeolocationPosition _apiObject]):
+        * UIProcess/API/Cocoa/_WKGeolocationPositionInternal.h: Copied from Source/WebKit2/UIProcess/API/C/WKGeolocationPosition.cpp.
+        (WebKit::wrapper):
+        * UIProcess/ios/WKGeolocationProviderIOS.mm:
+        (kit):
+        (-[WKGeolocationProviderIOS initWithProcessPool:]):
+        (-[WKGeolocationProviderIOS geolocationAuthorizationGranted]):
+        (-[WKGeolocationProviderIOS positionChanged:]):
+        (-[WKLegacyCoreLocationProvider setListener:]):
+        (-[WKLegacyCoreLocationProvider requestGeolocationAuthorization]):
+        (-[WKLegacyCoreLocationProvider start]):
+        (-[WKLegacyCoreLocationProvider stop]):
+        (-[WKLegacyCoreLocationProvider setEnableHighAccuracy:]):
+        (-[WKLegacyCoreLocationProvider geolocationAuthorizationGranted]):
+        (-[WKLegacyCoreLocationProvider geolocationAuthorizationDenied]):
+        (-[WKLegacyCoreLocationProvider positionChanged:]):
+        (-[WKLegacyCoreLocationProvider errorOccurred:]):
+        (-[WKLegacyCoreLocationProvider resetGeolocation]):
+        Implement a new class that bridges the currently used WebGeolocationCoreLocationProvider
+        to conform to the _WKGeolocationCoreLocationProvider protocol that WKGeolocationProviderIOS
+        expects.
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2017-04-11  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Set correct audio session category when capturing audio

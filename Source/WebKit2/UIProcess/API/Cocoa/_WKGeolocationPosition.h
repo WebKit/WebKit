@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,26 +23,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WKGeolocationPosition.h"
+#import <WebKit/WKFoundation.h>
 
-#include "WKAPICast.h"
-#include "WebGeolocationPosition.h"
+#if WK_API_ENABLED && TARGET_OS_IPHONE
 
-using namespace WebKit;
+#import <Foundation/Foundation.h>
 
-WKTypeID WKGeolocationPositionGetTypeID()
-{
-    return toAPI(WebGeolocationPosition::APIType);
-}
+@class CLLocation;
 
-WKGeolocationPositionRef WKGeolocationPositionCreate(double timestamp, double latitude, double longitude, double accuracy)
-{
-    return WKGeolocationPositionCreate_b(timestamp, latitude, longitude, accuracy, false, 0., false, 0., false, 0., false, 0.);
-}
+NS_ASSUME_NONNULL_BEGIN
 
-WKGeolocationPositionRef WKGeolocationPositionCreate_b(double timestamp, double latitude, double longitude, double accuracy, bool providesAltitude, double altitude, bool providesAltitudeAccuracy, double altitudeAccuracy, bool providesHeading, double heading, bool providesSpeed, double speed)
-{
-    auto position = WebGeolocationPosition::create(timestamp, latitude, longitude, accuracy, providesAltitude, altitude, providesAltitudeAccuracy, altitudeAccuracy, providesHeading, heading, providesSpeed, speed);
-    return toAPI(&position.leakRef());
-}
+WK_CLASS_AVAILABLE(ios(WK_IOS_TBA))
+@interface _WKGeolocationPosition : NSObject
+
++ (instancetype)positionWithLocation:(CLLocation *)location;
+
+@end
+
+NS_ASSUME_NONNULL_END
+
+#endif // WK_API_ENABLED && TARGET_OS_IPHONE

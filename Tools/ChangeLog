@@ -1,3 +1,31 @@
+2017-04-11  David Quesada  <david_quesada@apple.com>
+
+        Add SPI for handling geolocation authorization requests
+        https://bugs.webkit.org/show_bug.cgi?id=170362
+        rdar://problem/17508627
+
+        Reviewed by Alex Christensen.
+
+        Add API tests for the new WKUIDelegate SPI for allowing or denying websites permission
+        to use geolocation. Adopt the new WKProcessPool._coreLocationProvider property to
+        provide a stub object to simulate the various configurations of geolocation permissions:
+        1. The app doesn't have permission to use geolocation.
+        2. The app is allowed to use geolocation, but the UI delegate denies the web view permission.
+        3. The app is allowed to use geolocation, and the UI delegate allows the web view permission.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/Geolocation.mm: Added.
+        (-[TestCoreLocationProvider setListener:]):
+        (-[TestCoreLocationProvider requestGeolocationAuthorization]):
+        (-[TestCoreLocationProvider start]):
+        (-[TestCoreLocationProvider stop]):
+        (-[TestCoreLocationProvider setEnableHighAccuracy:]):
+        (expectException):
+        (-[GeolocationTestUIDelegate _webView:requestGeolocationAuthorizationForURL:frame:decisionHandler:]):
+        (-[GeolocationTestUIDelegate webView:runJavaScriptAlertPanelWithMessage:initiatedByFrame:completionHandler:]):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit2Cocoa/GeolocationGetCurrentPositionResult.html: Added.
+
 2017-04-10  Matt Rajca  <mrajca@apple.com>
 
         Change autoplay state to "prevented" when media is paused due to restrictions.

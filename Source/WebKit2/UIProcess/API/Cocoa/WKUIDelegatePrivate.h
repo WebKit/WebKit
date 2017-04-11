@@ -35,6 +35,7 @@
 @class UIItemProvider;
 @class UIScrollView;
 @class UIViewController;
+@class WKFrameInfo;
 @class _WKContextMenuElementInfo;
 @class _WKActivatedElementInfo;
 @class _WKElementAction;
@@ -72,6 +73,7 @@ struct UIEdgeInsets;
 - (NSArray *)_webView:(WKWebView *)webView actionsForElement:(_WKActivatedElementInfo *)element defaultActions:(NSArray<_WKElementAction *> *)defaultActions;
 - (void)_webView:(WKWebView *)webView didNotHandleTapAsClickAtPoint:(CGPoint)point;
 - (BOOL)_webView:(WKWebView *)webView shouldRequestGeolocationAuthorizationForURL:(NSURL *)url isMainFrame:(BOOL)isMainFrame mainFrameURL:(NSURL *)mainFrameURL;
+- (void)_webView:(WKWebView *)webView requestGeolocationAuthorizationForURL:(NSURL *)url frame:(WKFrameInfo *)frame decisionHandler:(void (^)(BOOL authorized))decisionHandler WK_API_AVAILABLE(ios(WK_IOS_TBA));
 - (UIViewController *)_webView:(WKWebView *)webView previewViewControllerForURL:(NSURL *)url WK_API_AVAILABLE(ios(9.0));
 - (void)_webView:(WKWebView *)webView commitPreviewedViewController:(UIViewController *)previewedViewController WK_API_AVAILABLE(ios(9.0));
 - (void)_webView:(WKWebView *)webView willPreviewImageWithURL:(NSURL *)imageURL WK_API_AVAILABLE(ios(9.0));
