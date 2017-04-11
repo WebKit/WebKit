@@ -250,8 +250,11 @@ void AXObjectCache::setShouldRepostNotificationsForTests(bool value)
     axShouldRepostNotificationsForTests = value;
 }
 
-static void AXPostNotificationWithUserInfo(id object, NSString *notification, id userInfo)
+static void AXPostNotificationWithUserInfo(AccessibilityObjectWrapper *object, NSString *notification, id userInfo)
 {
+    if (id associatedPluginParent = [object associatedPluginParent])
+        object = associatedPluginParent;
+    
     NSAccessibilityPostNotificationWithUserInfo(object, notification, userInfo);
     // To simplify monitoring for notifications in tests, repost as a simple NSNotification instead of forcing test infrastucture to setup an IPC client and do all the translation between WebCore types and platform specific IPC types and back
     if (UNLIKELY(axShouldRepostNotificationsForTests))

@@ -972,6 +972,8 @@ public:
     WebURLSchemeHandlerProxy* urlSchemeHandlerForScheme(const String&);
     std::optional<double> backgroundCPULimit() const { return m_backgroundCPULimit; }
 
+    static PluginView* pluginViewForFrame(WebCore::Frame*);
+
 private:
     WebPage(uint64_t pageID, WebPageCreationParameters&&);
 
@@ -1212,7 +1214,6 @@ private:
     static bool platformCanHandleRequest(const WebCore::ResourceRequest&);
 
     static PluginView* focusedPluginViewForFrame(WebCore::Frame&);
-    static PluginView* pluginViewForFrame(WebCore::Frame*);
 
     static RefPtr<WebCore::Range> rangeFromEditingRange(WebCore::Frame&, const EditingRange&, EditingRangeIsRelativeTo = EditingRangeIsRelativeTo::EditableRoot);
 

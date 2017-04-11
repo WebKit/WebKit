@@ -63,6 +63,8 @@
 #import "LocalizedStrings.h"
 #import "MainFrame.h"
 #import "Page.h"
+#import "PluginDocument.h"
+#import "PluginViewBase.h"
 #import "RenderTextControl.h"
 #import "RenderView.h"
 #import "RenderWidget.h"
@@ -1682,6 +1684,21 @@ static NSMutableArray *convertStringsToNSArray(const Vector<String>& vector)
     return [self textMarkerRangeFromVisiblePositions:selection.visibleStart() endPosition:selection.visibleEnd()];
 }
 
+- (id)associatedPluginParent
+{
+    if (!m_object || !m_object->hasAttribute(x_apple_pdf_annotationAttr))
+        return nil;
+    
+    if (!m_object->document()->isPluginDocument())
+        return nil;
+        
+    Widget* pluginWidget = static_cast<PluginDocument*>(m_object->document())->pluginWidget();
+    if (!pluginWidget || !pluginWidget->isPluginViewBase())
+        return nil;
+
+    return static_cast<PluginViewBase*>(pluginWidget)->accessibilityAssociatedPluginParentForElement(m_object->element());
+}
+
 - (CGPoint)convertPointToScreenSpace:(FloatPoint &)point
 {
     FrameView* frameView = m_object->documentFrameView();
@@ -3082,6 +3099,10 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         m_object->classList(classList);
         return convertStringsToNSArray(classList);
     }
+    
+    // This allows us to connect to a plugin that creates a shadow node for editing (like PDFs).
+    if ([attributeName isEqualToString:@"_AXAssociatedPluginParent"])
+        return [self associatedPluginParent];
     
     // this is used only by DumpRenderTree for testing
     if ([attributeName isEqualToString:@"AXClickPoint"])

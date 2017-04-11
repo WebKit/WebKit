@@ -143,7 +143,7 @@ public:
     // For AX objects with elements that back them.
     AccessibilityObject* getOrCreate(RenderObject*);
     AccessibilityObject* getOrCreate(Widget*);
-    AccessibilityObject* getOrCreate(Node*);
+    WEBCORE_EXPORT AccessibilityObject* getOrCreate(Node*);
 
     // used for objects without backing elements
     AccessibilityObject* getOrCreate(AccessibilityRole);

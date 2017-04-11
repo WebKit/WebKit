@@ -33,6 +33,7 @@
 #include "Plugin.h"
 #include "WebEvent.h"
 #include "WebHitTestResultData.h"
+#include <WebCore/AXObjectCache.h>
 #include <WebCore/AffineTransform.h>
 #include <WebCore/FindOptions.h>
 #include <WebCore/ScrollableArea.h>
@@ -57,6 +58,7 @@ class DataReference;
 }
 
 namespace WebCore {
+class AXObjectCache;
 class Element;
 struct PluginInfo;
 }
@@ -103,6 +105,7 @@ public:
     void attemptToUnlockPDF(const String& password);
 
     WebCore::FloatRect convertFromPDFViewToScreen(const WebCore::FloatRect&) const;
+    WebCore::IntPoint convertFromRootViewToPDFView(const WebCore::IntPoint&) const;
     WebCore::IntRect boundsOnScreen() const;
     
     bool showContextMenuAtPoint(const WebCore::IntPoint&);
@@ -114,6 +117,9 @@ public:
 
     bool shouldPlaceBlockDirectionScrollbarOnLeft() const override { return false; }
 
+    PDFPluginAnnotation* activeAnnotation() const { return m_activeAnnotation.get(); }
+    WebCore::AXObjectCache* axObjectCache() const;
+    
 private:
     explicit PDFPlugin(WebFrame*);
 
@@ -168,11 +174,13 @@ private:
     bool handleScroll(WebCore::ScrollDirection, WebCore::ScrollGranularity) override;
     RefPtr<WebCore::SharedBuffer> liveResourceData() const override;
     void willDetatchRenderer() override;
-
+    bool pluginHandlesContentOffsetForAccessibilityHitTest() const override;
+    
     bool isBeingAsynchronouslyInitialized() const override { return false; }
 
     RetainPtr<PDFDocument> pdfDocumentForPrinting() const override { return m_pdfDocument; }
     NSObject *accessibilityObject() const override;
+    id accessibilityAssociatedPluginParentForElement(WebCore::Element*) const override;
 
     unsigned countFindMatches(const String& target, WebCore::FindOptions, unsigned maxMatchCount) override;
     bool findString(const String& target, WebCore::FindOptions, unsigned maxMatchCount) override;

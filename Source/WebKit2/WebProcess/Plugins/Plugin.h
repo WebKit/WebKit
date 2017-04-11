@@ -37,6 +37,7 @@
 
 #if PLATFORM(COCOA)
 #include "LayerHostingContext.h"
+typedef struct objc_object* id;
 
 OBJC_CLASS NSDictionary;
 OBJC_CLASS NSObject;
@@ -274,6 +275,7 @@ public:
 #if PLATFORM(COCOA)
     virtual RetainPtr<PDFDocument> pdfDocumentForPrinting() const { return 0; }
     virtual NSObject *accessibilityObject() const { return 0; }
+    virtual id accessibilityAssociatedPluginParentForElement(WebCore::Element*) const { return nullptr; }
 #endif
 
     virtual unsigned countFindMatches(const String& target, WebCore::FindOptions, unsigned maxMatchCount) = 0;
@@ -299,6 +301,8 @@ public:
     virtual bool requiresUnifiedScaleFactor() const { return false; }
 
     virtual void willDetatchRenderer() { }
+
+    virtual bool pluginHandlesContentOffsetForAccessibilityHitTest() const { return false; }
 
 protected:
     Plugin(PluginType);

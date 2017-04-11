@@ -86,6 +86,7 @@ public:
     bool sendComplexTextInput(uint64_t pluginComplexTextInputIdentifier, const String& textInput);
     RetainPtr<PDFDocument> pdfDocumentForPrinting() const { return m_plugin->pdfDocumentForPrinting(); }
     NSObject *accessibilityObject() const;
+    id accessibilityAssociatedPluginParentForElement(WebCore::Element*) const override;
 #endif
 
     WebCore::HTMLPlugInElement* pluginElement() const { return m_pluginElement.get(); }

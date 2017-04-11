@@ -158,8 +158,19 @@ typedef NS_ENUM(NSInteger, PDFLayerControllerCursorType) {
 - (NSValue *)accessibilityRangeForLineAttributeForParameter:(id)parameter;
 - (NSString *)accessibilityStringForRangeAttributeForParameter:(id)parameter;
 - (NSValue *)accessibilityBoundsForRangeAttributeForParameter:(id)parameter;
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
+- (NSArray *)accessibilityChildren;
+- (void)setAccessibilityParent:(id)parent;
+- (id)accessibilityElementForAnnotation:(PDFAnnotation *)annotation;
+#endif
 
 @end
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
+@interface PDFAnnotation (AccessibilityPrivate)
+- (id)accessibilityNode;
+@end
+#endif
 
 #endif
 

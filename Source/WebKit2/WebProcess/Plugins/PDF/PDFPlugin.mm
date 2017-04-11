@@ -50,6 +50,7 @@
 #import <JavaScriptCore/JSStringRefCF.h>
 #import <PDFKit/PDFKit.h>
 #import <QuartzCore/QuartzCore.h>
+#import <WebCore/AXObjectCache.h>
 #import <WebCore/ArchiveResource.h>
 #import <WebCore/Chrome.h>
 #import <WebCore/Cursor.h>
@@ -132,7 +133,6 @@ static const int defaultScrollMagnitudeThresholdForPageFlip = 20;
 
 @implementation WKPDFPluginAccessibilityObject
 
-@synthesize pdfLayerController=_pdfLayerController;
 @synthesize parent=_parent;
 @synthesize pdfPlugin=_pdfPlugin;
 
@@ -146,15 +146,51 @@ static const int defaultScrollMagnitudeThresholdForPageFlip = 20;
     return self;
 }
 
+- (PDFLayerController *)pdfLayerController
+{
+    return _pdfLayerController;
+}
+
+- (void)setPdfLayerController:(PDFLayerController *)pdfLayerController
+{
+    _pdfLayerController = pdfLayerController;
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
+    [_pdfLayerController setAccessibilityParent:self];
+#endif
+}
+
 - (BOOL)accessibilityIsIgnored
 {
     return NO;
+}
+
+// This is called by PDFAccessibilityNodes from inside PDFKit to get final bounds.
+- (NSRect)convertRectToScreenSpace:(NSRect)rect
+{
+    return _pdfPlugin->convertFromPDFViewToScreen(rect);
 }
 
 - (id)accessibilityAttributeValue:(NSString *)attribute
 {
     if ([attribute isEqualToString:NSAccessibilityParentAttribute])
         return _parent;
+    if ([attribute isEqualToString:NSAccessibilityTopLevelUIElementAttribute])
+        return [_parent accessibilityAttributeValue:NSAccessibilityTopLevelUIElementAttribute];
+    if ([attribute isEqualToString:NSAccessibilityWindowAttribute])
+        return [_parent accessibilityAttributeValue:NSAccessibilityWindowAttribute];
+    if ([attribute isEqualToString:NSAccessibilitySizeAttribute])
+        return [NSValue valueWithSize:_pdfPlugin->boundsOnScreen().size()];
+    if ([attribute isEqualToString:NSAccessibilityEnabledAttribute])
+        return [_parent accessibilityAttributeValue:NSAccessibilityEnabledAttribute];
+    if ([attribute isEqualToString:NSAccessibilityPositionAttribute])
+        return [NSValue valueWithPoint:_pdfPlugin->boundsOnScreen().location()];
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
+    if ([attribute isEqualToString:NSAccessibilityChildrenAttribute])
+        return @[ _pdfLayerController ];
+    if ([attribute isEqualToString:NSAccessibilityRoleAttribute])
+        return NSAccessibilityGroupRole;
+#else
     if ([attribute isEqualToString:NSAccessibilityValueAttribute])
         return [_pdfLayerController accessibilityValueAttribute];
     if ([attribute isEqualToString:NSAccessibilitySelectedTextAttribute])
@@ -165,22 +201,13 @@ static const int defaultScrollMagnitudeThresholdForPageFlip = 20;
         return [_pdfLayerController accessibilityNumberOfCharactersAttribute];
     if ([attribute isEqualToString:NSAccessibilityVisibleCharacterRangeAttribute])
         return [_pdfLayerController accessibilityVisibleCharacterRangeAttribute];
-    if ([attribute isEqualToString:NSAccessibilityTopLevelUIElementAttribute])
-        return [_parent accessibilityAttributeValue:NSAccessibilityTopLevelUIElementAttribute];
     if ([attribute isEqualToString:NSAccessibilityRoleAttribute])
         return [_pdfLayerController accessibilityRoleAttribute];
     if ([attribute isEqualToString:NSAccessibilityRoleDescriptionAttribute])
         return [_pdfLayerController accessibilityRoleDescriptionAttribute];
-    if ([attribute isEqualToString:NSAccessibilityWindowAttribute])
-        return [_parent accessibilityAttributeValue:NSAccessibilityWindowAttribute];
-    if ([attribute isEqualToString:NSAccessibilitySizeAttribute])
-        return [NSValue valueWithSize:_pdfPlugin->boundsOnScreen().size()];
     if ([attribute isEqualToString:NSAccessibilityFocusedAttribute])
         return [_parent accessibilityAttributeValue:NSAccessibilityFocusedAttribute];
-    if ([attribute isEqualToString:NSAccessibilityEnabledAttribute])
-        return [_parent accessibilityAttributeValue:NSAccessibilityEnabledAttribute];
-    if ([attribute isEqualToString:NSAccessibilityPositionAttribute])
-        return [NSValue valueWithPoint:_pdfPlugin->boundsOnScreen().location()];
+#endif
 
     return 0;
 }
@@ -213,20 +240,27 @@ static const int defaultScrollMagnitudeThresholdForPageFlip = 20;
     static NSArray *attributeNames = 0;
 
     if (!attributeNames) {
-        attributeNames = @[NSAccessibilityValueAttribute,
-            NSAccessibilitySelectedTextAttribute,
-            NSAccessibilitySelectedTextRangeAttribute,
-            NSAccessibilityNumberOfCharactersAttribute,
-            NSAccessibilityVisibleCharacterRangeAttribute,
+        attributeNames = @[
             NSAccessibilityParentAttribute,
-            NSAccessibilityRoleAttribute,
             NSAccessibilityWindowAttribute,
             NSAccessibilityTopLevelUIElementAttribute,
             NSAccessibilityRoleDescriptionAttribute,
             NSAccessibilitySizeAttribute,
-            NSAccessibilityFocusedAttribute,
             NSAccessibilityEnabledAttribute,
-            NSAccessibilityPositionAttribute];
+            NSAccessibilityPositionAttribute,
+            NSAccessibilityFocusedAttribute,
+            // PDFLayerController has its own accessibilityChildren.
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
+            NSAccessibilityChildrenAttribute
+#else
+            NSAccessibilityRoleAttribute,
+            NSAccessibilityValueAttribute,
+            NSAccessibilitySelectedTextAttribute,
+            NSAccessibilitySelectedTextRangeAttribute,
+            NSAccessibilityNumberOfCharactersAttribute,
+            NSAccessibilityVisibleCharacterRangeAttribute
+#endif
+            ];
         [attributeNames retain];
     }
 
@@ -235,12 +269,16 @@ static const int defaultScrollMagnitudeThresholdForPageFlip = 20;
 
 - (NSArray *)accessibilityActionNames
 {
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
+    return nil;
+#else
     static NSArray *actionNames = 0;
     
     if (!actionNames)
         actionNames = [[NSArray arrayWithObject:NSAccessibilityShowMenuAction] retain];
     
     return actionNames;
+#endif
 }
 
 - (void)accessibilityPerformAction:(NSString *)action
@@ -261,17 +299,59 @@ static const int defaultScrollMagnitudeThresholdForPageFlip = 20;
 
 - (NSArray *)accessibilityParameterizedAttributeNames
 {
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
+    return nil;
+#else
     return [_pdfLayerController accessibilityParameterizedAttributeNames];
+#endif
 }
 
 - (id)accessibilityFocusedUIElement
 {
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
+    if (WebKit::PDFPluginAnnotation* activeAnnotation = _pdfPlugin->activeAnnotation()) {
+        if (AXObjectCache* existingCache = _pdfPlugin->axObjectCache()) {
+            if (AccessibilityObject* object = existingCache->getOrCreate(activeAnnotation->element()))
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+                return [object->wrapper() accessibilityAttributeValue:@"_AXAssociatedPluginParent"];
+#pragma clang diagnostic pop
+        }
+    }
+    return nil;
+#else
     return self;
+#endif
 }
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
+- (id)accessibilityAssociatedControlForAnnotation:(PDFAnnotation *)annotation
+{
+    // Only active annotations seem to have their associated controls available.
+    WebKit::PDFPluginAnnotation* activeAnnotation = _pdfPlugin->activeAnnotation();
+    if (!activeAnnotation || ![activeAnnotation->annotation() isEqual:annotation])
+        return nil;
+    
+    AXObjectCache* cache = _pdfPlugin->axObjectCache();
+    if (!cache)
+        return nil;
+    
+    AccessibilityObject* object = cache->getOrCreate(activeAnnotation->element());
+    if (!object)
+        return nil;
+
+    return object->wrapper();
+}
+#endif
 
 - (id)accessibilityHitTest:(NSPoint)point
 {
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
+    point = _pdfPlugin->convertFromRootViewToPDFView(IntPoint(point));
+    return [_pdfLayerController accessibilityHitTest:point];
+#else
     return self;
+#endif
 }
 
 @end
@@ -1206,6 +1286,12 @@ IntPoint PDFPlugin::convertFromPDFViewToRootView(const IntPoint& point) const
     IntPoint pointInPluginCoordinates(point.x(), size().height() - point.y());
     return m_rootViewToPluginTransform.inverse().value_or(AffineTransform()).mapPoint(pointInPluginCoordinates);
 }
+    
+IntPoint PDFPlugin::convertFromRootViewToPDFView(const IntPoint& point) const
+{
+    IntPoint pointInPluginCoordinates = m_rootViewToPluginTransform.mapPoint(point);
+    return IntPoint(pointInPluginCoordinates.x(), size().height() - pointInPluginCoordinates.y());
+}
 
 FloatRect PDFPlugin::convertFromPDFViewToScreen(const FloatRect& rect) const
 {
@@ -1214,10 +1300,9 @@ FloatRect PDFPlugin::convertFromPDFViewToScreen(const FloatRect& rect) const
     if (!frameView)
         return FloatRect();
 
-    FloatPoint originInPluginCoordinates(rect.x(), size().height() - rect.y() - rect.height());
-    FloatRect rectInRootViewCoordinates = m_rootViewToPluginTransform.inverse().value_or(AffineTransform()).mapRect(FloatRect(originInPluginCoordinates, rect.size()));
-
-    return frameView->contentsToScreen(enclosingIntRect(rectInRootViewCoordinates));
+    FloatRect updatedRect = rect;
+    updatedRect.setLocation(convertFromPDFViewToRootView(IntPoint(updatedRect.location())));
+    return webFrame()->coreFrame()->page()->chrome().rootViewToScreen(enclosingIntRect(updatedRect));
 }
 
 IntRect PDFPlugin::boundsOnScreen() const
@@ -1674,6 +1759,17 @@ RefPtr<SharedBuffer> PDFPlugin::liveResourceData() const
     return SharedBuffer::wrapNSData(pdfData);
 }
 
+bool PDFPlugin::pluginHandlesContentOffsetForAccessibilityHitTest() const
+{
+    // The PDF plugin handles the scroll view offset natively as part of the layer conversions.
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
+    return true;
+#else
+    return false;
+#endif
+}
+
+    
 void PDFPlugin::saveToPDF()
 {
     // FIXME: We should probably notify the user that they can't save before the document is finished loading.
@@ -2014,6 +2110,11 @@ static NSRect rectInViewSpaceForRectInLayoutSpace(PDFLayerController* pdfLayerCo
 
     return NSRectFromCGRect(newRect);
 }
+    
+WebCore::AXObjectCache* PDFPlugin::axObjectCache() const
+{
+    return webFrame()->coreFrame()->document()->axObjectCache();
+}
 
 WebCore::FloatRect PDFPlugin::rectForSelectionInRootView(PDFSelection *selection) const
 {
@@ -2103,6 +2204,21 @@ NSData *PDFPlugin::liveData() const
     return rawData();
 }
 
+id PDFPlugin::accessibilityAssociatedPluginParentForElement(WebCore::Element* element) const
+{
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
+    if (!m_activeAnnotation)
+        return nil;
+    
+    if (m_activeAnnotation->element() != element)
+        return nil;
+    
+    return [m_activeAnnotation->annotation() accessibilityNode];
+#else
+    return nil;
+#endif
+}
+    
 NSObject *PDFPlugin::accessibilityObject() const
 {
     return m_accessibilityObject.get();

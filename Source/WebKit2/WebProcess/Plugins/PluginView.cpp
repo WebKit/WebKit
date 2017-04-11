@@ -555,6 +555,13 @@ bool PluginView::sendComplexTextInput(uint64_t pluginComplexTextInputIdentifier,
     return true;
 }
     
+id PluginView::accessibilityAssociatedPluginParentForElement(Element* element) const
+{
+    if (!m_plugin)
+        return nil;
+    return m_plugin->accessibilityAssociatedPluginParentForElement(element);
+}
+    
 NSObject *PluginView::accessibilityObject() const
 {
     if (!m_isInitialized || !m_plugin)

@@ -31,6 +31,10 @@
 #include "Widget.h"
 #include <wtf/text/WTFString.h>
 
+#if PLATFORM(COCOA)
+typedef struct objc_object* id;
+#endif
+
 namespace JSC {
     class ExecState;
     class JSGlobalObject;
@@ -83,6 +87,10 @@ public:
     
     virtual void willDetatchRenderer() { }
 
+#if PLATFORM(COCOA)
+    virtual id accessibilityAssociatedPluginParentForElement(Element*) const { return nullptr; }
+#endif
+    
 protected:
     explicit PluginViewBase(PlatformWidget widget = 0) : Widget(widget) { }
 };

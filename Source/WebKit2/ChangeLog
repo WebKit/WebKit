@@ -1,3 +1,46 @@
+2017-04-11  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: PDF plugin needs to support PDF-DOM Mode
+        https://bugs.webkit.org/show_bug.cgi?id=170589
+
+        Reviewed by Tim Horton.
+
+        Provide access to DOM objects with PDF document. This mean:
+           1) Support a different set of attributes for WKPDFPluginAccessibilityObject.
+                WKPDFPluginAccessibilityObject is now a group instead of forwarding attribute calls to the pdf layer.
+           2) Connect the focused UI element to the active annotation if possible.
+           3) Mark the PDF associated nodes with an attribute so they can be identified later so their correct parent can be found.
+
+        * WebProcess/Plugins/PDF/PDFLayerControllerSPI.h:
+        * WebProcess/Plugins/PDF/PDFPlugin.h:
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (-[WKPDFPluginAccessibilityObject pdfLayerController]):
+        (-[WKPDFPluginAccessibilityObject setPdfLayerController:]):
+        (-[WKPDFPluginAccessibilityObject convertRectToScreenSpace:]):
+        (-[WKPDFPluginAccessibilityObject accessibilityAttributeValue:]):
+        (-[WKPDFPluginAccessibilityObject accessibilityAttributeNames]):
+        (-[WKPDFPluginAccessibilityObject accessibilityActionNames]):
+        (-[WKPDFPluginAccessibilityObject accessibilityParameterizedAttributeNames]):
+        (-[WKPDFPluginAccessibilityObject accessibilityFocusedUIElement]):
+        (-[WKPDFPluginAccessibilityObject accessibilityAssociatedControlForAnnotation:]):
+        (-[WKPDFPluginAccessibilityObject accessibilityHitTest:]):
+        (WebKit::PDFPlugin::convertFromRootViewToPDFView):
+        (WebKit::PDFPlugin::convertFromPDFViewToScreen):
+        (WebKit::PDFPlugin::pluginHandlesContentOffsetForAccessibilityHitTest):
+        (WebKit::PDFPlugin::axObjectCache):
+        (WebKit::PDFPlugin::accessibilityShadowPluginParentForElement):
+        * WebProcess/Plugins/PDF/PDFPluginAnnotation.mm:
+        (WebKit::PDFPluginAnnotation::attach):
+        * WebProcess/Plugins/Plugin.h:
+        (WebKit::Plugin::accessibilityShadowPluginParentForElement):
+        (WebKit::Plugin::pluginHandlesContentOffsetForAccessibilityHitTest):
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::accessibilityShadowPluginParentForElement):
+        * WebProcess/Plugins/PluginView.h:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/mac/WKAccessibilityWebPageObjectMac.mm:
+        (-[WKAccessibilityWebPageObject accessibilityHitTest:]):
+
 2017-04-11  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK] Attach popup menu to web view widget

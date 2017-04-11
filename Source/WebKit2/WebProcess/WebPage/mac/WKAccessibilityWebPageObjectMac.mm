@@ -28,6 +28,7 @@
 
 #if PLATFORM(MAC)
 
+#import "PluginView.h"
 #import "WebFrame.h"
 #import "WebPage.h"
 #import "WKArray.h"
@@ -193,13 +194,21 @@ using namespace WebKit;
 {
     if (!m_page)
         return nil;
-    
+
     IntPoint convertedPoint = m_page->screenToRootView(IntPoint(point));
-    if (WebCore::FrameView* frameView = m_page->mainFrameView())
-        convertedPoint.moveBy(frameView->scrollPosition());
-    if (WebCore::Page* page = m_page->corePage())
-        convertedPoint.move(0, -page->topContentInset());
     
+    // Some plugins may be able to figure out the scroll position and inset on their own.
+    bool applyContentOffset = true;
+    if (auto pluginView = m_page->pluginViewForFrame(m_page->mainFrame()))
+        applyContentOffset = !pluginView->plugin()->pluginHandlesContentOffsetForAccessibilityHitTest();
+
+    if (applyContentOffset) {
+        if (WebCore::FrameView* frameView = m_page->mainFrameView())
+            convertedPoint.moveBy(frameView->scrollPosition());
+        if (WebCore::Page* page = m_page->corePage())
+            convertedPoint.move(0, -page->topContentInset());
+    }
+
     return [[self accessibilityRootObjectWrapper] accessibilityHitTest:convertedPoint];
 }
 #pragma clang diagnostic pop

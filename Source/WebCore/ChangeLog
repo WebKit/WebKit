@@ -1,3 +1,25 @@
+2017-04-11  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: PDF plugin needs to support PDF-DOM Mode
+        https://bugs.webkit.org/show_bug.cgi?id=170589
+
+        Reviewed by Tim Horton.
+
+        Provide WebCore support for accessibility connect to PDF document.
+        This includes the ability to connect a PDF annotation created node within WebKit to 
+         its PDFAnnotation parent (through use of shadowPluginParent).
+
+        * accessibility/AXObjectCache.h:
+        * accessibility/mac/AXObjectCacheMac.mm:
+        (WebCore::AXPostNotificationWithUserInfo):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.h:
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper shadowPluginParent]):
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:]):
+        * html/HTMLAttributeNames.in:
+        * plugins/PluginViewBase.h:
+        (WebCore::PluginViewBase::accessibilityShadowPluginParentForElement):
+
 2017-04-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r215153): Request Animation Frame broken when building without REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR
