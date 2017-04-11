@@ -1,3 +1,12 @@
+2017-04-10  Alex Christensen  <achristensen@webkit.org>
+
+        Continue enabling WebRTC
+        https://bugs.webkit.org/show_bug.cgi?id=170703
+
+        Reviewed by Youenn Fablet.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2017-04-10  Anders Carlsson  <andersca@apple.com>
 
         Remove call to WKShowKeyAndMain
