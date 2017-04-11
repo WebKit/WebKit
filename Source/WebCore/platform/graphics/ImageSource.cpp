@@ -111,7 +111,7 @@ void ImageSource::setData(SharedBuffer* data, bool allDataReceived)
     m_decoder->setData(*data, allDataReceived);
 }
 
-bool ImageSource::dataChanged(SharedBuffer* data, bool allDataReceived)
+EncodedDataStatus ImageSource::dataChanged(SharedBuffer* data, bool allDataReceived)
 {
     m_frameCache->destroyIncompleteDecodedData();
 
@@ -138,11 +138,12 @@ bool ImageSource::dataChanged(SharedBuffer* data, bool allDataReceived)
 #endif
 
     m_frameCache->clearMetadata();
-    if (!isSizeAvailable())
-        return false;
+    EncodedDataStatus status = encodedDataStatus();
+    if (status < EncodedDataStatus::SizeAvailable)
+        return status;
 
     m_frameCache->growFrames();
-    return true;
+    return status;
 }
 
 bool ImageSource::isAllDataReceived()

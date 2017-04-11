@@ -63,19 +63,17 @@ Image* Image::nullImage()
 
 bool Image::supportsType(const String& type)
 {
-    return MIMETypeRegistry::isSupportedImageResourceMIMEType(type); 
+    return MIMETypeRegistry::isSupportedImageResourceMIMEType(type);
 } 
 
-bool Image::setData(RefPtr<SharedBuffer>&& data, bool allDataReceived)
+EncodedDataStatus Image::setData(RefPtr<SharedBuffer>&& data, bool allDataReceived)
 {
     m_encodedImageData = WTFMove(data);
-    if (!m_encodedImageData.get())
-        return true;
 
-    int length = m_encodedImageData->size();
-    if (!length)
-        return true;
-    
+    // Don't do anything; it is an empty image.
+    if (!m_encodedImageData.get() || !m_encodedImageData->size())
+        return EncodedDataStatus::Complete;
+
     return dataChanged(allDataReceived);
 }
 

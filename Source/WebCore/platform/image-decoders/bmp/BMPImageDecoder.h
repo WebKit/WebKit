@@ -42,7 +42,7 @@ namespace WebCore {
         // ImageDecoder
         String filenameExtension() const override { return "bmp"; }
         void setData(SharedBuffer&, bool allDataReceived) override;
-        bool isSizeAvailable() override;
+        EncodedDataStatus encodedDataStatus() override;
         ImageFrame* frameBufferAtIndex(size_t index) override;
         // CAUTION: setFailed() deletes |m_reader|.  Be careful to avoid
         // accessing deleted memory, especially when calling this from inside

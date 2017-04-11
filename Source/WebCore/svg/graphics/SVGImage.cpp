@@ -416,11 +416,11 @@ void SVGImage::reportApproximateMemoryCost() const
     vm.heap.deprecatedReportExtraMemory(decodedImageMemoryCost + data()->size());
 }
 
-bool SVGImage::dataChanged(bool allDataReceived)
+EncodedDataStatus SVGImage::dataChanged(bool allDataReceived)
 {
-    // Don't do anything if is an empty image.
+    // Don't do anything; it is an empty image.
     if (!data()->size())
-        return true;
+        return EncodedDataStatus::Complete;
 
     if (allDataReceived) {
         PageConfiguration pageConfiguration(
@@ -466,7 +466,7 @@ bool SVGImage::dataChanged(bool allDataReceived)
         reportApproximateMemoryCost();
     }
 
-    return m_page != nullptr;
+    return m_page ? EncodedDataStatus::Complete : EncodedDataStatus::Unknown;
 }
 
 String SVGImage::filenameExtension() const

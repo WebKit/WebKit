@@ -69,7 +69,7 @@ void IconRecord::setImageData(RefPtr<SharedBuffer>&& data)
     m_image = BitmapImage::create();
 
     // Copy the provided data into the buffer of the new Image object.
-    if (!m_image->setData(WTFMove(data), true)) {
+    if (m_image->setData(WTFMove(data), true) < EncodedDataStatus::SizeAvailable) {
         LOG(IconDatabase, "Manual image data for iconURL '%s' FAILED - it was probably invalid image data", m_iconURL.ascii().data());
         m_image = nullptr;
     }

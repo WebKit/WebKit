@@ -1,3 +1,115 @@
+2017-04-10  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        CachedImage should stop decoding images when unknown type is detected
+        https://bugs.webkit.org/show_bug.cgi?id=170530
+
+        Reviewed by Tim Horton.
+
+        If the status of the encoded data is "unknown type", WebKit should stop
+        decoding the rest of the data. Ideally WebKit should also cancel loading
+        the rest of the encoded data.
+        
+        To do that we need to add a function to the ImageDecoder to return the
+        encodedDataStatus(). We also need to change the return type of Image::setData()
+        and Image::dataChanged() form bool to EncodedDataStatus.
+
+        * WebCore.xcodeproj/project.pbxproj: Add ImageTypes.h to the WebCore project.
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::addIncrementalDataBuffer): Replace checking !sizeAvailable 
+        by checking if encodedDataStatus isn't an error but it has not reached
+        sizeAvailable state
+        * loader/cache/CachedResourceClientWalker.h:
+        (WebCore::CachedResourceClientWalker::CachedResourceClientWalker): Unrelated clean-up.
+        (WebCore::CachedResourceClientWalker::next): Ditto.
+        * loader/icon/IconRecord.cpp:
+        (WebCore::IconRecord::setImageData): Image::setData() used to return a bool. Now it returns
+        an EncodedDataStatus. !setData() now means setData() < EncodedDataStatus::SizeAvailable.
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::dataChanged): Replace the return of dataChanged() from bool
+        by EncodedDataStatus.
+        * platform/graphics/BitmapImage.h: Replace isSizeAvailable() by a new function
+        named encodedDataStatus().
+        * platform/graphics/Image.cpp:
+        (WebCore::Image::setData): Code clean-up and adding a clarification comment.
+        * platform/graphics/Image.h: Change the return of setData() and dataChanged() to be
+        EncodedDataStatus.
+        (WebCore::Image::dataChanged): Return EncodedDataStatus::Unknown as an indication
+        the size is not available but we do not have an error.
+        * platform/graphics/ImageTypes.h: Added.
+        Image definitions which are shared among Image, ImageDecoder, ImageSource,
+        ImageFrameCache and ImageFrame used to be added to ImageFrame.h. This has
+        been annoying since these definitions aren't related to ImageFrame only.
+        A new header file named ImageTypes.h is to the to include such definitions.
+        (WebCore::operator++):
+        * platform/graphics/ImageFrame.h:
+        (WebCore::operator++): Deleted.
+        * platform/graphics/ImageFrameCache.cpp:
+        (WebCore::ImageFrameCache::ImageFrameCache): This is the case of a BitmapImage without
+        a decoder but with a NativeImage. The status has to be EncodedDataStatus::Complete.
+        (WebCore::ImageFrameCache::growFrames): Replace if (isSizeAvailable()) by
+        if (encodedDataStatus() >= EncodedDataStatus::SizeAvailable).
+        (WebCore::ImageFrameCache::metadata): Ditto.
+        (WebCore::ImageFrameCache::encodedDataStatus): This is a replacement for isSizeAvailable().
+        Don't cache the EncodedDataStatus until it is Complete. Don't call didDecodeProperties()
+        until the status >= EncodedDataStatus::SizeAvailable.
+        (WebCore::ImageFrameCache::isSizeAvailable): Deleted.
+        * platform/graphics/ImageFrameCache.h: Replace isSizeAvailable() by encodedDataStatus().
+        * platform/graphics/ImageSource.cpp:
+        (WebCore::ImageSource::dataChanged): Make return an EncodedDataStatus instead of returning
+        a bool for isSizeAvailable.
+        * platform/graphics/ImageSource.h:
+        (WebCore::ImageSource::encodedDataStatus): Replace isSizeAvailable() by encodedDataStatus().
+        (WebCore::ImageSource::isSizeAvailable): Deleted.
+        * platform/graphics/cg/ImageDecoderCG.cpp:
+        (WebCore::ImageDecoder::encodedDataStatus): Replace isSizeAvailable() by encodedDataStatus().
+        The logic of this function is the following:
+            -- CGImageSourceGetStatus() can return kCGImageStatusUnexpectedEOF, kCGImageStatusInvalidData
+            or kCGImageStatusReadingHeader even if CG will end up recovering form the error and drawing
+            the image. Actually CG initializes the status of CGImageSource before receiving any data
+            with kCGImageStatusInvalidData. So the status will be considered an error only if all the
+            data is received but CG does not move the status of this CGImageSource to Complete.
+            -- If CGImageSourceGetStatus() returns Incomplete, this means CG already created the image
+            reader and therefore the image type is known.
+            -- If CGImageSourceGetStatus() returns UnknownType, this means CG could not create the
+            image reader and this should be considered an error.
+        (WebCore::ImageDecoder::isSizeAvailable): Deleted.
+        * platform/graphics/cg/ImageDecoderCG.h: Replace isSizeAvailable() by encodedDataStatus().
+        * platform/graphics/cg/PDFDocumentImage.cpp:
+        (WebCore::PDFDocumentImage::dataChanged): The PDFDocument is created only when allDataReceived.
+        * platform/graphics/cg/PDFDocumentImage.h: Change the return type from bool to EncodedDataStatus.
+        * platform/image-decoders/ImageDecoder.h: 
+        (WebCore::ImageDecoder::encodedDataStatus): Add a new function encodedDataStatus(). Deduce the
+        status of the encoded data from the flags m_failed, m_isAllDataReceived and m_sizeAvailable in
+        this order.
+        (WebCore::ImageDecoder::isSizeAvailable): Make this function uses encodedDataStatus().
+        * platform/image-decoders/bmp/BMPImageDecoder.cpp:
+        (WebCore::BMPImageDecoder::encodedDataStatus): Replace isSizeAvailable() by encodedDataStatus().
+        (WebCore::BMPImageDecoder::isSizeAvailable): Deleted.
+        * platform/image-decoders/bmp/BMPImageDecoder.h:
+        * platform/image-decoders/gif/GIFImageDecoder.cpp:
+        (WebCore::GIFImageDecoder::encodedDataStatus): Ditto.
+        (WebCore::GIFImageDecoder::isSizeAvailable): Deleted.
+        * platform/image-decoders/gif/GIFImageDecoder.h:
+        * platform/image-decoders/ico/ICOImageDecoder.cpp:
+        (WebCore::ICOImageDecoder::encodedDataStatus): Ditto.
+        (WebCore::ICOImageDecoder::isSizeAvailable): Deleted.
+        * platform/image-decoders/ico/ICOImageDecoder.h:
+        * platform/image-decoders/jpeg/JPEGImageDecoder.cpp:
+        (WebCore::JPEGImageDecoder::encodedDataStatus): Ditto.
+        (WebCore::JPEGImageDecoder::isSizeAvailable): Deleted.
+        * platform/image-decoders/jpeg/JPEGImageDecoder.h:
+        * platform/image-decoders/png/PNGImageDecoder.cpp:
+        (WebCore::PNGImageDecoder::encodedDataStatus): Ditto.
+        (WebCore::PNGImageDecoder::isSizeAvailable): Deleted.
+        * platform/image-decoders/png/PNGImageDecoder.h:
+        * platform/image-decoders/webp/WEBPImageDecoder.cpp:
+        (WebCore::WEBPImageDecoder::encodedDataStatus): Ditto.
+        (WebCore::WEBPImageDecoder::isSizeAvailable): Deleted.
+        * platform/image-decoders/webp/WEBPImageDecoder.h:
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::dataChanged): m_page is created only when allDataReceived is true.
+        * svg/graphics/SVGImage.h:
+
 2017-04-10  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Mark SVG-Within-OpenType as "Under Consideration"

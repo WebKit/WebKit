@@ -54,7 +54,7 @@ ImageFrameCache::ImageFrameCache(Image* image)
 ImageFrameCache::ImageFrameCache(NativeImagePtr&& nativeImage)
 {
     m_frameCount = 1;
-    m_isSizeAvailable = true;
+    m_encodedDataStatus = EncodedDataStatus::Complete;
     growFrames();
 
     setNativeImage(WTFMove(nativeImage));
@@ -435,17 +435,24 @@ T ImageFrameCache::frameMetadataAtIndexCacheIfNeeded(size_t index, T (ImageFrame
     return cachedValue->value();
 }
 
-bool ImageFrameCache::isSizeAvailable()
+EncodedDataStatus ImageFrameCache::encodedDataStatus()
 {
-    if (m_isSizeAvailable)
-        return m_isSizeAvailable.value();
+    if (m_encodedDataStatus)
+        return m_encodedDataStatus.value();
     
-    if (!isDecoderAvailable() || !m_decoder->isSizeAvailable())
-        return false;
+    if (!isDecoderAvailable())
+        return EncodedDataStatus::Unknown;
     
-    m_isSizeAvailable = true;
+    EncodedDataStatus status = m_decoder->encodedDataStatus();
+    if (status < EncodedDataStatus::SizeAvailable)
+        return status;
+
     didDecodeProperties(m_decoder->bytesDecodedToDetermineProperties());
-    return true;
+    if (status < EncodedDataStatus::Complete)
+        return status;
+    
+    m_encodedDataStatus = status;
+    return status;
 }
 
 size_t ImageFrameCache::frameCount()

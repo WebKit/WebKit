@@ -63,7 +63,7 @@ public:
     bool isDecoderAvailable() const { return m_decoder.get(); }
 
     void setData(SharedBuffer* data, bool allDataReceived);
-    bool dataChanged(SharedBuffer* data, bool allDataReceived);
+    EncodedDataStatus dataChanged(SharedBuffer* data, bool allDataReceived);
 
     unsigned decodedSize() const { return m_frameCache->decodedSize(); }
     bool isAllDataReceived();
@@ -75,7 +75,7 @@ public:
     void stopAsyncDecodingQueue() { m_frameCache->stopAsyncDecodingQueue(); }
 
     // Image metadata which is calculated by the decoder or can deduced by the case of the memory NativeImage.
-    bool isSizeAvailable() { return m_frameCache->isSizeAvailable(); }
+    EncodedDataStatus encodedDataStatus() { return m_frameCache->encodedDataStatus(); }
     size_t frameCount() { return m_frameCache->frameCount(); }
     RepetitionCount repetitionCount() { return m_frameCache->repetitionCount(); }
     String filenameExtension() { return m_frameCache->filenameExtension(); }

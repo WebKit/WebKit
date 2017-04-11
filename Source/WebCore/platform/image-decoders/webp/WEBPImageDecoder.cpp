@@ -64,12 +64,12 @@ void WEBPImageDecoder::clear()
     m_decoder = 0;
 }
 
-bool WEBPImageDecoder::isSizeAvailable()
+EncodedDataStatus WEBPImageDecoder::encodedDataStatus()
 {
     if (!ImageDecoder::isSizeAvailable())
-         decode(true);
+        decode(true);
 
-    return ImageDecoder::isSizeAvailable();
+    return ImageDecoder::encodedDataStatus();
 }
 
 ImageFrame* WEBPImageDecoder::frameBufferAtIndex(size_t index)

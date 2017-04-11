@@ -43,7 +43,7 @@ namespace WebCore {
         // ImageDecoder
         String filenameExtension() const override { return "gif"; }
         void setData(SharedBuffer& data, bool allDataReceived) override;
-        bool isSizeAvailable() override;
+        EncodedDataStatus encodedDataStatus() override;
         bool setSize(const IntSize&) override;
         size_t frameCount() const override;
         RepetitionCount repetitionCount() const override;

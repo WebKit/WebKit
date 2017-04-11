@@ -56,12 +56,12 @@ void BMPImageDecoder::setData(SharedBuffer& data, bool allDataReceived)
         m_reader->setData(&data);
 }
 
-bool BMPImageDecoder::isSizeAvailable()
+EncodedDataStatus BMPImageDecoder::encodedDataStatus()
 {
     if (!ImageDecoder::isSizeAvailable())
         decode(true);
 
-    return ImageDecoder::isSizeAvailable();
+    return ImageDecoder::encodedDataStatus();
 }
 
 ImageFrame* BMPImageDecoder::frameBufferAtIndex(size_t index)

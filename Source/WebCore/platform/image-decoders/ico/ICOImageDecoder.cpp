@@ -69,12 +69,12 @@ void ICOImageDecoder::setData(SharedBuffer& data, bool allDataReceived)
         setDataForPNGDecoderAtIndex(i);
 }
 
-bool ICOImageDecoder::isSizeAvailable()
+EncodedDataStatus ICOImageDecoder::encodedDataStatus()
 {
     if (!ImageDecoder::isSizeAvailable())
         decode(0, true);
 
-    return ImageDecoder::isSizeAvailable();
+    return ImageDecoder::encodedDataStatus();
 }
 
 IntSize ICOImageDecoder::size()

@@ -97,7 +97,7 @@ void BitmapImage::destroyDecodedDataIfNecessary(bool destroyAll)
     destroyDecodedData(destroyAll);
 }
 
-bool BitmapImage::dataChanged(bool allDataReceived)
+EncodedDataStatus BitmapImage::dataChanged(bool allDataReceived)
 {
     return m_source.dataChanged(data(), allDataReceived);
 }

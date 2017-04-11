@@ -29,50 +29,12 @@
 #include "DecodingOptions.h"
 #include "ImageBackingStore.h"
 #include "ImageOrientation.h"
+#include "ImageTypes.h"
 #include "IntSize.h"
 #include "NativeImage.h"
 #include <wtf/Deque.h>
 
 namespace WebCore {
-
-class Color;
-
-// There are four subsampling levels: 0 = 1x, 1 = 0.5x, 2 = 0.25x, 3 = 0.125x.
-enum class SubsamplingLevel {
-    First = 0,
-    Default = First,
-    Level0 = First,
-    Level1,
-    Level2,
-    Level3,
-    Last = Level3,
-    Max
-};
-
-inline SubsamplingLevel& operator++(SubsamplingLevel& subsamplingLevel)
-{
-    subsamplingLevel = static_cast<SubsamplingLevel>(static_cast<int>(subsamplingLevel) + 1);
-    ASSERT(subsamplingLevel <= SubsamplingLevel::Max);
-    return subsamplingLevel;
-}
-
-typedef int RepetitionCount;
-
-enum {
-    RepetitionCountNone = 0,
-    RepetitionCountOnce = 1,
-    RepetitionCountInfinite = -1,
-};
-
-enum class AlphaOption {
-    Premultiplied,
-    NotPremultiplied
-};
-
-enum class GammaAndColorProfileOption {
-    Applied,
-    Ignored
-};
 
 class ImageFrame {
     friend class ImageFrameCache;

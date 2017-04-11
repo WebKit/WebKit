@@ -175,18 +175,38 @@ String ImageDecoder::filenameExtension() const
     return WebCore::preferredExtensionForImageSourceType(imageSourceType);
 }
 
-bool ImageDecoder::isSizeAvailable() const
+EncodedDataStatus ImageDecoder::encodedDataStatus() const
 {
-    // Ragnaros yells: TOO SOON! You have awakened me TOO SOON, Executus!
-    if (CGImageSourceGetStatus(m_nativeDecoder.get()) < kCGImageStatusIncomplete)
-        return false;
-    
-    RetainPtr<CFDictionaryRef> image0Properties = adoptCF(CGImageSourceCopyPropertiesAtIndex(m_nativeDecoder.get(), 0, imageSourceOptions().get()));
-    if (!image0Properties)
-        return false;
-    
-    return CFDictionaryContainsKey(image0Properties.get(), kCGImagePropertyPixelWidth)
-    && CFDictionaryContainsKey(image0Properties.get(), kCGImagePropertyPixelHeight);
+    switch (CGImageSourceGetStatus(m_nativeDecoder.get())) {
+    case kCGImageStatusUnknownType:
+        return EncodedDataStatus::Error;
+
+    case kCGImageStatusUnexpectedEOF:
+    case kCGImageStatusInvalidData:
+    case kCGImageStatusReadingHeader:
+        // Ragnaros yells: TOO SOON! You have awakened me TOO SOON, Executus!
+        if (!m_isAllDataReceived)
+            return EncodedDataStatus::Unknown;
+
+        return EncodedDataStatus::Error;
+
+    case kCGImageStatusIncomplete: {
+        RetainPtr<CFDictionaryRef> image0Properties = adoptCF(CGImageSourceCopyPropertiesAtIndex(m_nativeDecoder.get(), 0, imageSourceOptions().get()));
+        if (!image0Properties)
+            return EncodedDataStatus::TypeAvailable;
+        
+        if (!CFDictionaryContainsKey(image0Properties.get(), kCGImagePropertyPixelWidth) || !CFDictionaryContainsKey(image0Properties.get(), kCGImagePropertyPixelHeight))
+            return EncodedDataStatus::TypeAvailable;
+        
+        return EncodedDataStatus::SizeAvailable;
+    }
+
+    case kCGImageStatusComplete:
+        return EncodedDataStatus::Complete;
+    }
+
+    ASSERT_NOT_REACHED();
+    return EncodedDataStatus::Unknown;
 }
 
 size_t ImageDecoder::frameCount() const

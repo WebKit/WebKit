@@ -68,10 +68,10 @@ public:
     
     bool hasSingleSecurityOrigin() const override { return true; }
 
-    bool dataChanged(bool allDataReceived) override;
+    EncodedDataStatus dataChanged(bool allDataReceived) override;
     unsigned decodedSize() const { return m_source.decodedSize(); }
 
-    bool isSizeAvailable() const { return m_source.isSizeAvailable(); }
+    EncodedDataStatus encodedDataStatus() const { return m_source.encodedDataStatus(); }
     size_t frameCount() const { return m_source.frameCount(); }
     RepetitionCount repetitionCount() const { return m_source.repetitionCount(); }
     String filenameExtension() const override { return m_source.filenameExtension(); }

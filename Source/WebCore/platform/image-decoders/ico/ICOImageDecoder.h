@@ -45,7 +45,7 @@ namespace WebCore {
         // ImageDecoder
         String filenameExtension() const override { return "ico"; }
         void setData(SharedBuffer&, bool allDataReceived) override;
-        bool isSizeAvailable() override;
+        EncodedDataStatus encodedDataStatus() override;
         IntSize size() override;
         IntSize frameSizeAtIndex(size_t, SubsamplingLevel) override;
         bool setSize(const IntSize&) override;

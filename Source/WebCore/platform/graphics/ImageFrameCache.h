@@ -77,7 +77,8 @@ public:
 
     // Image metadata which is calculated either by the ImageDecoder or directly
     // from the NativeImage if this class was created for a memory image.
-    bool isSizeAvailable();
+    EncodedDataStatus encodedDataStatus();
+    bool isSizeAvailable() { return encodedDataStatus() >= EncodedDataStatus::SizeAvailable; }
     size_t frameCount();
     RepetitionCount repetitionCount();
     String filenameExtension();
@@ -162,7 +163,7 @@ private:
     RefPtr<WorkQueue> m_decodingQueue;
 
     // Image metadata.
-    std::optional<bool> m_isSizeAvailable;
+    std::optional<EncodedDataStatus> m_encodedDataStatus;
     std::optional<size_t> m_frameCount;
     std::optional<RepetitionCount> m_repetitionCount;
     std::optional<String> m_filenameExtension;

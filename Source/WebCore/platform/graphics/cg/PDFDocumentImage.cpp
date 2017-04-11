@@ -87,7 +87,7 @@ void PDFDocumentImage::computeIntrinsicDimensions(Length& intrinsicWidth, Length
     intrinsicRatio = FloatSize();
 }
 
-bool PDFDocumentImage::dataChanged(bool allDataReceived)
+EncodedDataStatus PDFDocumentImage::dataChanged(bool allDataReceived)
 {
     ASSERT(!m_document);
     if (allDataReceived && !m_document) {
@@ -98,7 +98,7 @@ bool PDFDocumentImage::dataChanged(bool allDataReceived)
             computeBoundsForCurrentPage();
         }
     }
-    return m_document; // Return true if size is available.
+    return m_document ? EncodedDataStatus::Complete : EncodedDataStatus::Unknown;
 }
 
 void PDFDocumentImage::setPdfImageCachingPolicy(PDFImageCachingPolicy pdfImageCachingPolicy)

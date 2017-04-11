@@ -42,7 +42,7 @@ public:
     virtual ~WEBPImageDecoder();
 
     String filenameExtension() const override { return "webp"; }
-    bool isSizeAvailable() override;
+    EncodedDataStatus encodedDataStatus() override;
     ImageFrame* frameBufferAtIndex(size_t index) override;
 
 private:

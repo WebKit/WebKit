@@ -65,7 +65,7 @@ private:
 
     bool hasSingleSecurityOrigin() const override { return true; }
 
-    bool dataChanged(bool allDataReceived) override;
+    EncodedDataStatus dataChanged(bool allDataReceived) override;
 
     void destroyDecodedData(bool /*destroyAll*/ = true) override;
 

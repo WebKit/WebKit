@@ -47,7 +47,8 @@ public:
     
     static size_t bytesDecodedToDetermineProperties();
 
-    bool isSizeAvailable() const;
+    EncodedDataStatus encodedDataStatus() const;
+    bool isSizeAvailable() { return encodedDataStatus() >= EncodedDataStatus::SizeAvailable; }
     size_t frameCount() const;
     RepetitionCount repetitionCount() const;
     String filenameExtension() const;

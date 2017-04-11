@@ -86,7 +86,7 @@ private:
     void computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio) final;
 
     void reportApproximateMemoryCost() const;
-    bool dataChanged(bool allDataReceived) final;
+    EncodedDataStatus dataChanged(bool allDataReceived) final;
 
     // FIXME: SVGImages will be unable to prune because this function is not implemented yet.
     void destroyDecodedData(bool) final { }
