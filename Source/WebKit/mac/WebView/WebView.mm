@@ -1736,6 +1736,9 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     _private->page->settings().setFontFallbackPrefersPictographs(true);
     _private->page->settings().setPictographFontFamily("AppleColorEmoji");
     
+    _private->page->settings().setScriptMarkupEnabled(false);
+    _private->page->settings().setScriptEnabled(true);
+    
     // FIXME: this is a workaround for <rdar://problem/11518688> REGRESSION: Quoted text font changes when replying to certain email
     _private->page->settings().setStandardFontFamily([_private->preferences standardFontFamily]);
     

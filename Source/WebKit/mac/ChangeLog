@@ -1,3 +1,14 @@
+2017-04-11  Dan Bernstein  <mitz@apple.com>
+
+        [iOS] Simple HTML documents should allow non-markup JavaScript
+        https://bugs.webkit.org/show_bug.cgi?id=170734
+
+        Reviewed by Sam Weinig.
+
+        * WebView/WebView.mm:
+        (-[WebView initSimpleHTMLDocumentWithStyle:frame:preferences:groupName:]): Enabled scripting
+          but disabled scripting markup.
+
 2017-04-10  Alex Christensen  <achristensen@webkit.org>
 
         Revert r215217
