@@ -93,10 +93,12 @@ public:
 
         WTF_EXPORT_PRIVATE void stop();
         WTF_EXPORT_PRIVATE bool isActive() const;
+        WTF_EXPORT_PRIVATE Seconds secondsUntilFire() const;
 
         virtual void fired() = 0;
 
 #if USE(GLIB_EVENT_LOOP)
+        void setName(const char*);
         void setPriority(int);
 #endif
 
@@ -106,8 +108,11 @@ public:
         Ref<RunLoop> m_runLoop;
 
 #if USE(WINDOWS_EVENT_LOOP)
+        bool isActive(const AbstractLocker&) const;
         static void timerFired(RunLoop*, uint64_t ID);
         uint64_t m_ID;
+        MonotonicTime m_nextFireDate;
+        Seconds m_interval;
         bool m_isRepeating;
 #elif USE(COCOA_EVENT_LOOP)
         static void timerFired(CFRunLoopTimerRef, void*);

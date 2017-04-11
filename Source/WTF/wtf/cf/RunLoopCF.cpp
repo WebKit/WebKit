@@ -119,4 +119,11 @@ bool RunLoop::TimerBase::isActive() const
     return m_timer && CFRunLoopTimerIsValid(m_timer.get());
 }
 
+Seconds RunLoop::TimerBase::secondsUntilFire() const
+{
+    if (isActive())
+        return std::max<Seconds>(Seconds { CFRunLoopTimerGetNextFireDate(m_timer.get()) - CFAbsoluteTimeGetCurrent() }, 0_s);
+    return 0_s;
+}
+
 } // namespace WTF

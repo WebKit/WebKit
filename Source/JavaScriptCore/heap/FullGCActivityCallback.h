@@ -39,7 +39,7 @@ public:
     void setDidSyncGCRecently() { m_didSyncGCRecently = true; }
 
 protected:
-    double lastGCLength() override;
+    Seconds lastGCLength() override;
     double gcTimeSlice(size_t bytes) override;
     double deathRate() override;
 

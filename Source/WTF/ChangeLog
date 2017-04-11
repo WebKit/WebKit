@@ -1,5 +1,29 @@
 2017-04-11  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [JSC][GTK] Use RunLoop::Timer in GTK port
+        https://bugs.webkit.org/show_bug.cgi?id=170723
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add secondsUntilFire method. And add setName and setPriority
+        for GTK RunLoop::Timer.
+
+        * wtf/RunLoop.h:
+        * wtf/cf/RunLoopCF.cpp:
+        (WTF::RunLoop::TimerBase::secondsUntilFire):
+        * wtf/generic/RunLoopGeneric.cpp:
+        (WTF::RunLoop::TimerBase::secondsUntilFire):
+        * wtf/glib/RunLoopGLib.cpp:
+        (WTF::RunLoop::TimerBase::setName):
+        (WTF::RunLoop::TimerBase::secondsUntilFire):
+        * wtf/win/RunLoopWin.cpp:
+        (WTF::RunLoop::TimerBase::timerFired):
+        (WTF::RunLoop::TimerBase::start):
+        (WTF::RunLoop::TimerBase::isActive):
+        (WTF::RunLoop::TimerBase::secondsUntilFire):
+
+2017-04-11  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [JSC] Enable JSRunLoopTimer for JSCOnly and Windows
         https://bugs.webkit.org/show_bug.cgi?id=170655
 

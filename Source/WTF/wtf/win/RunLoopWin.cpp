@@ -131,7 +131,8 @@ void RunLoop::TimerBase::timerFired(RunLoop* runLoop, uint64_t ID)
         if (!timer->m_isRepeating) {
             runLoop->m_activeTimers.remove(it);
             ::KillTimer(runLoop->m_runLoopMessageWindow, ID);
-        }
+        } else
+            m_nextFireDate = MonotonicTime::now() + m_interval;
     }
 
     timer->fired();
@@ -160,6 +161,8 @@ void RunLoop::TimerBase::start(double nextFireInterval, bool repeat)
     LockHolder locker(m_runLoop->m_activeTimersLock);
     m_isRepeating = repeat;
     m_runLoop->m_activeTimers.set(m_ID, this);
+    m_interval = Seconds(nextFireInterval);
+    m_nextFireDate = MonotonicTime::now() + m_interval;
     ::SetTimer(m_runLoop->m_runLoopMessageWindow, m_ID, nextFireInterval * 1000, 0);
 }
 
@@ -174,10 +177,24 @@ void RunLoop::TimerBase::stop()
     ::KillTimer(m_runLoop->m_runLoopMessageWindow, m_ID);
 }
 
+bool RunLoop::TimerBase::isActive(const AbstractLocker&) const
+{
+    return m_runLoop->m_activeTimers.contains(m_ID);
+}
+
 bool RunLoop::TimerBase::isActive() const
 {
     LockHolder locker(m_runLoop->m_activeTimersLock);
-    return m_runLoop->m_activeTimers.contains(m_ID);
+    return isActive(locker);
 }
+
+Seconds RunLoop::TimerBase::secondsUntilFire() const
+{
+    LockHolder locker(m_runLoop->m_activeTimersLock);
+    if (isActive(locker))
+        return std::max<Seconds>(m_nextFireDate - MonotonicTime::now(), 0_s);
+    return 0_s;
+}
+
 
 } // namespace WTF

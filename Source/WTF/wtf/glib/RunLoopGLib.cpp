@@ -176,6 +176,11 @@ RunLoop::TimerBase::~TimerBase()
     g_source_destroy(m_source.get());
 }
 
+void RunLoop::TimerBase::setName(const char* name)
+{
+    g_source_set_name(m_source.get(), name);
+}
+
 void RunLoop::TimerBase::setPriority(int priority)
 {
     g_source_set_priority(m_source.get(), priority);
@@ -209,6 +214,11 @@ void RunLoop::TimerBase::stop()
 bool RunLoop::TimerBase::isActive() const
 {
     return g_source_get_ready_time(m_source.get()) != -1;
+}
+
+Seconds RunLoop::TimerBase::secondsUntilFire() const
+{
+    return std::max<Seconds>(Seconds::fromMicroseconds(g_source_get_ready_time(m_source.get()) - g_get_monotonic_time()), 0_s);
 }
 
 } // namespace WTF

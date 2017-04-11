@@ -36,10 +36,6 @@
 #include <CoreFoundation/CoreFoundation.h>
 #endif
 
-#if USE(GLIB)
-#include <wtf/glib/GRefPtr.h>
-#endif
-
 namespace JSC {
 
 class JSLock;
@@ -50,12 +46,14 @@ public:
     JSRunLoopTimer(VM*);
 #if USE(CF)
     static void timerDidFireCallback(CFRunLoopTimerRef, void*);
+#else
+    void timerDidFireCallback();
 #endif
 
     JS_EXPORT_PRIVATE virtual ~JSRunLoopTimer();
     virtual void doWork() = 0;
 
-    void scheduleTimer(double intervalInSeconds);
+    void scheduleTimer(Seconds intervalInSeconds);
     void cancelTimer();
     bool isScheduled() const { return m_isScheduled; }
 
@@ -66,22 +64,18 @@ public:
 protected:
     VM* m_vm;
 
+    static const Seconds s_decade;
+
     RefPtr<JSLock> m_apiLock;
     bool m_isScheduled { false };
 #if USE(CF)
-    static const CFTimeInterval s_decade;
-
     RetainPtr<CFRunLoopTimerRef> m_timer;
     RetainPtr<CFRunLoopRef> m_runLoop;
 
     CFRunLoopTimerContext m_context;
 
     Lock m_shutdownMutex;
-#elif USE(GLIB)
-    static const long s_decade;
-    GRefPtr<GSource> m_timer;
 #else
-    static const Seconds s_decade;
     RunLoop::Timer<JSRunLoopTimer> m_timer;
 #endif
     

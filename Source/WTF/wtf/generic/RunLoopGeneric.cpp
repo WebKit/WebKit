@@ -293,4 +293,12 @@ bool RunLoop::TimerBase::isActive(const AbstractLocker&) const
     return m_scheduledTask;
 }
 
+Seconds RunLoop::TimerBase::secondsUntilFire() const
+{
+    LockHolder locker(m_runLoop->m_loopLock);
+    if (isActive(locker))
+        return std::max<Seconds>(m_scheduledTask->scheduledTimePoint() - MonotonicTime::now(), 0_s);
+    return 0_s;
+}
+
 } // namespace WTF

@@ -35,7 +35,7 @@
 
 namespace JSC {
 
-static const double sweepTimeSlice = .01; // seconds
+static const Seconds sweepTimeSlice = 10_ms; // seconds
 static const double sweepTimeTotal = .10;
 static const double sweepTimeMultiplier = 1.0 / sweepTimeTotal;
 
@@ -52,13 +52,13 @@ IncrementalSweeper::IncrementalSweeper(Heap* heap)
 
 void IncrementalSweeper::doWork()
 {
-    doSweep(WTF::monotonicallyIncreasingTime());
+    doSweep(MonotonicTime::now());
 }
 
-void IncrementalSweeper::doSweep(double sweepBeginTime)
+void IncrementalSweeper::doSweep(MonotonicTime sweepBeginTime)
 {
     while (sweepNextBlock()) {
-        double elapsedTime = WTF::monotonicallyIncreasingTime() - sweepBeginTime;
+        Seconds elapsedTime = MonotonicTime::now() - sweepBeginTime;
         if (elapsedTime < sweepTimeSlice)
             continue;
 

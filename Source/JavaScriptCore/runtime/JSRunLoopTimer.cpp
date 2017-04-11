@@ -35,12 +35,14 @@
 #include <wtf/MainThread.h>
 #include <wtf/Threading.h>
 
-#if USE(GLIB)
+#if USE(GLIB_EVENT_LOOP)
 #include <glib.h>
 #include <wtf/glib/RunLoopSourcePriority.h>
 #endif
 
 namespace JSC {
+
+const Seconds JSRunLoopTimer::s_decade { 60 * 60 * 24 * 365 * 10 };
 
 void JSRunLoopTimer::timerDidFire()
 {
@@ -63,8 +65,6 @@ void JSRunLoopTimer::timerDidFire()
 
 #if USE(CF)
 
-const CFTimeInterval JSRunLoopTimer::s_decade = 60 * 60 * 24 * 365 * 10;
-
 JSRunLoopTimer::JSRunLoopTimer(VM* vm)
     : m_vm(vm)
     , m_apiLock(&vm->apiLock())
@@ -85,7 +85,7 @@ void JSRunLoopTimer::setRunLoop(CFRunLoopRef runLoop)
         m_runLoop = runLoop;
         memset(&m_context, 0, sizeof(CFRunLoopTimerContext));
         m_context.info = this;
-        m_timer = adoptCF(CFRunLoopTimerCreate(kCFAllocatorDefault, CFAbsoluteTimeGetCurrent() + s_decade, s_decade, 0, 0, JSRunLoopTimer::timerDidFireCallback, &m_context));
+        m_timer = adoptCF(CFRunLoopTimerCreate(kCFAllocatorDefault, CFAbsoluteTimeGetCurrent() + s_decade.seconds(), s_decade.seconds(), 0, 0, JSRunLoopTimer::timerDidFireCallback, &m_context));
         CFRunLoopAddTimer(m_runLoop.get(), m_timer.get(), kCFRunLoopCommonModes);
     }
 }
@@ -100,77 +100,29 @@ void JSRunLoopTimer::timerDidFireCallback(CFRunLoopTimerRef, void* contextPtr)
     static_cast<JSRunLoopTimer*>(contextPtr)->timerDidFire();
 }
 
-void JSRunLoopTimer::scheduleTimer(double intervalInSeconds)
+void JSRunLoopTimer::scheduleTimer(Seconds intervalInSeconds)
 {
-    CFRunLoopTimerSetNextFireDate(m_timer.get(), CFAbsoluteTimeGetCurrent() + intervalInSeconds);
+    CFRunLoopTimerSetNextFireDate(m_timer.get(), CFAbsoluteTimeGetCurrent() + intervalInSeconds.seconds());
     m_isScheduled = true;
 }
 
 void JSRunLoopTimer::cancelTimer()
 {
-    CFRunLoopTimerSetNextFireDate(m_timer.get(), CFAbsoluteTimeGetCurrent() + s_decade);
-    m_isScheduled = false;
-}
-
-#elif USE(GLIB)
-
-const long JSRunLoopTimer::s_decade = 60 * 60 * 24 * 365 * 10;
-
-static GSourceFuncs JSRunLoopTimerSourceFunctions = {
-    nullptr, // prepare
-    nullptr, // check
-    // dispatch
-    [](GSource*, GSourceFunc callback, gpointer userData) -> gboolean
-    {
-        return callback(userData);
-    },
-    nullptr, // finalize
-    nullptr, // closure_callback
-    nullptr, // closure_marshall
-};
-
-JSRunLoopTimer::JSRunLoopTimer(VM* vm)
-    : m_vm(vm)
-    , m_apiLock(&vm->apiLock())
-    , m_timer(adoptGRef(g_source_new(&JSRunLoopTimerSourceFunctions, sizeof(GSource))))
-{
-    g_source_set_priority(m_timer.get(), RunLoopSourcePriority::JavascriptTimer);
-    g_source_set_name(m_timer.get(), "[JavaScriptCore] JSRunLoopTimer");
-    g_source_set_callback(m_timer.get(), [](gpointer userData) -> gboolean {
-        auto& runLoopTimer = *static_cast<JSRunLoopTimer*>(userData);
-        g_source_set_ready_time(runLoopTimer.m_timer.get(), g_get_monotonic_time() + JSRunLoopTimer::s_decade * G_USEC_PER_SEC);
-        runLoopTimer.timerDidFire();
-        return G_SOURCE_CONTINUE;
-    }, this, nullptr);
-    g_source_attach(m_timer.get(), g_main_context_get_thread_default());
-}
-
-JSRunLoopTimer::~JSRunLoopTimer()
-{
-    g_source_destroy(m_timer.get());
-}
-
-void JSRunLoopTimer::scheduleTimer(double intervalInSeconds)
-{
-    g_source_set_ready_time(m_timer.get(), g_get_monotonic_time() + intervalInSeconds * G_USEC_PER_SEC);
-    m_isScheduled = true;
-}
-
-void JSRunLoopTimer::cancelTimer()
-{
-    g_source_set_ready_time(m_timer.get(), g_get_monotonic_time() + s_decade * G_USEC_PER_SEC);
+    CFRunLoopTimerSetNextFireDate(m_timer.get(), CFAbsoluteTimeGetCurrent() + s_decade.seconds());
     m_isScheduled = false;
 }
 
 #else
 
-const Seconds JSRunLoopTimer::s_decade { 60 * 60 * 24 * 365 * 10 };
-
 JSRunLoopTimer::JSRunLoopTimer(VM* vm)
     : m_vm(vm)
     , m_apiLock(&vm->apiLock())
-    , m_timer(RunLoop::current(), this, &JSRunLoopTimer::timerDidFire)
+    , m_timer(RunLoop::current(), this, &JSRunLoopTimer::timerDidFireCallback)
 {
+#if USE(GLIB_EVENT_LOOP)
+    m_timer.setPriority(RunLoopSourcePriority::JavascriptTimer);
+    m_timer.setName("[JavaScriptCore] JSRunLoopTimer");
+#endif
     m_timer.startOneShot(s_decade);
 }
 
@@ -178,7 +130,13 @@ JSRunLoopTimer::~JSRunLoopTimer()
 {
 }
 
-void JSRunLoopTimer::scheduleTimer(double intervalInSeconds)
+void JSRunLoopTimer::timerDidFireCallback()
+{
+    m_timer.startOneShot(s_decade);
+    timerDidFire();
+}
+
+void JSRunLoopTimer::scheduleTimer(Seconds intervalInSeconds)
 {
     m_timer.startOneShot(intervalInSeconds);
     m_isScheduled = true;

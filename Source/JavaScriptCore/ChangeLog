@@ -1,3 +1,47 @@
+2017-04-11  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC][GTK] Use RunLoop::Timer in GTK port
+        https://bugs.webkit.org/show_bug.cgi?id=170723
+
+        Reviewed by Carlos Garcia Campos.
+
+        This patch makes GTK port use RunLoop::Timer for JSRunLoopTimer.
+        Only Cocoa-based ports use platform-specific Timer because it
+        has additional feature that changes RunLoop to the WebThread one.
+
+        And we enable Heap timers in all the ports including JSCOnly port.
+
+        * heap/EdenGCActivityCallback.cpp:
+        (JSC::EdenGCActivityCallback::lastGCLength):
+        * heap/EdenGCActivityCallback.h:
+        * heap/FullGCActivityCallback.cpp:
+        (JSC::FullGCActivityCallback::lastGCLength):
+        * heap/FullGCActivityCallback.h:
+        * heap/GCActivityCallback.cpp:
+        (JSC::GCActivityCallback::GCActivityCallback):
+        (JSC::GCActivityCallback::doWork):
+        (JSC::GCActivityCallback::scheduleTimer):
+        (JSC::GCActivityCallback::cancelTimer):
+        (JSC::GCActivityCallback::nextFireTime):
+        (JSC::GCActivityCallback::didAllocate):
+        * heap/GCActivityCallback.h:
+        * heap/IncrementalSweeper.cpp:
+        (JSC::IncrementalSweeper::doWork):
+        (JSC::IncrementalSweeper::doSweep):
+        * heap/IncrementalSweeper.h:
+        * heap/StopIfNecessaryTimer.cpp:
+        (JSC::StopIfNecessaryTimer::scheduleSoon):
+        * runtime/JSRunLoopTimer.cpp:
+        (JSC::JSRunLoopTimer::setRunLoop):
+        (JSC::JSRunLoopTimer::scheduleTimer):
+        (JSC::JSRunLoopTimer::cancelTimer):
+        (JSC::JSRunLoopTimer::JSRunLoopTimer):
+        (JSC::JSRunLoopTimer::~JSRunLoopTimer):
+        (JSC::JSRunLoopTimer::timerDidFireCallback):
+        * runtime/JSRunLoopTimer.h:
+        * runtime/PromiseDeferredTimer.cpp:
+        (JSC::PromiseDeferredTimer::scheduleWorkSoon):
+
 2017-04-11  Guillaume Emont  <guijemont@igalia.com>
 
         [jsc][mips] Add missing MacroAssembler functions after r214187

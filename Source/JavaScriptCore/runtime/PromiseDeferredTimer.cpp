@@ -134,7 +134,7 @@ void PromiseDeferredTimer::scheduleWorkSoon(JSPromiseDeferred* ticket, Task&& ta
     LockHolder locker(m_taskLock);
     m_tasks.append(std::make_tuple(ticket, WTFMove(task)));
     if (!isScheduled() && !m_currentlyRunningTask)
-        scheduleTimer(0);
+        scheduleTimer(0_s);
 }
 
 } // namespace JSC

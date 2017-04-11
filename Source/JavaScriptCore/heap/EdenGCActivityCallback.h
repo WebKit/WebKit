@@ -36,7 +36,7 @@ public:
     void doCollection() override;
 
 protected:
-    double lastGCLength() override;
+    Seconds lastGCLength() override;
     double gcTimeSlice(size_t bytes) override;
     double deathRate() override;
 };

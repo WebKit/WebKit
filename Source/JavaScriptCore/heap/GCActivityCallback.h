@@ -60,48 +60,28 @@ public:
 
     static bool s_shouldCreateGCTimer;
 
-#if USE(CF) || USE(GLIB)
-    double nextFireTime() const { return m_nextFireTime; }
-#endif
+    JS_EXPORT_PRIVATE double nextFireTime();
 
 protected:
-    virtual double lastGCLength() = 0;
+    virtual Seconds lastGCLength() = 0;
     virtual double gcTimeSlice(size_t bytes) = 0;
     virtual double deathRate() = 0;
 
-#if USE(CF)
     GCActivityCallback(VM* vm)
         : Base(vm)
         , m_enabled(true)
         , m_delay(s_decade)
     {
     }
-#elif USE(GLIB)
-    GCActivityCallback(VM* vm)
-        : Base(vm)
-        , m_enabled(true)
-        , m_delay(s_decade)
-    {
-    }
-#else
-    GCActivityCallback(VM* vm)
-        : Base(vm)
-        , m_enabled(true)
-    {
-    }
-#endif
 
     bool m_enabled;
 
-#if USE(CF) || USE(GLIB)
 protected:
     void cancelTimer();
-    void scheduleTimer(double);
+    void scheduleTimer(Seconds);
 
 private:
-    double m_delay;
-    double m_nextFireTime { 0 };
-#endif
+    Seconds m_delay;
 };
 
 } // namespace JSC

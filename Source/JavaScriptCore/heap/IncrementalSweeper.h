@@ -45,7 +45,7 @@ public:
     JS_EXPORT_PRIVATE void stopSweeping();
 
 private:
-    void doSweep(double startTime);
+    void doSweep(MonotonicTime startTime);
     void scheduleTimer();
     
     MarkedAllocator* m_currentAllocator;
