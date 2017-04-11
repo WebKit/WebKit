@@ -132,7 +132,7 @@ void RunLoop::TimerBase::timerFired(RunLoop* runLoop, uint64_t ID)
             runLoop->m_activeTimers.remove(it);
             ::KillTimer(runLoop->m_runLoopMessageWindow, ID);
         } else
-            m_nextFireDate = MonotonicTime::now() + m_interval;
+            timer->m_nextFireDate = MonotonicTime::now() + timer->m_interval;
     }
 
     timer->fired();

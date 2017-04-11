@@ -1,5 +1,13 @@
 2017-04-11  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        Unreviewed, build fix for Windows port after r215228
+        https://bugs.webkit.org/show_bug.cgi?id=170723
+
+        * wtf/win/RunLoopWin.cpp:
+        (WTF::RunLoop::TimerBase::timerFired):
+
+2017-04-11  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [JSC][GTK] Use RunLoop::Timer in GTK port
         https://bugs.webkit.org/show_bug.cgi?id=170723
 
