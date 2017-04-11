@@ -60,7 +60,7 @@ EncodedDataStatus GIFImageDecoder::encodedDataStatus()
 
 bool GIFImageDecoder::setSize(const IntSize& size)
 {
-    if (ImageDecoder::isSizeAvailable() && this->size() == size)
+    if (ImageDecoder::encodedDataStatus() >= EncodedDataStatus::SizeAvailable && this->size() == size)
         return true;
 
     if (!ImageDecoder::setSize(size))

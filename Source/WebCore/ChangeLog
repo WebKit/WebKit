@@ -1,5 +1,36 @@
 2017-04-11  Miguel Gomez  <magomez@igalia.com>
 
+        REGRESSION(r215211): [GTK] Lots of image related tests are timing out, causing the test bot to exit early
+        https://bugs.webkit.org/show_bug.cgi?id=170727
+
+        Reviewed by Carlos Garcia Campos.
+
+        Since r215211 ImageDecoder::isSizeAvailable() calls encodedDataStatus() in the different decoder implementations,
+        and those implementations force a partial decoding of the image if the size is not available yet. But
+        ImageDecoder::isSizeAvailable() was already being used inside the decoders assuming that it wasn't going to
+        force this partial decoding. Due to this, there are some situations where the partial decoding is not
+        desired but it's happening anyway. For example, the check in setSize(), which causes the partial decoding
+        to happen again and again because no value is actually set to the animation size (which causes the timouts
+        in the test bot).
+
+        To avoid this, replace all the calls to ImageDecoder::isSizeAvailable() inside the decoders with calls to
+        ImageDecoder::encodedDataStatus(), which doesn't force the partial decoding.
+
+        Covered by existent tests.
+
+        * platform/image-decoders/gif/GIFImageDecoder.cpp:
+        (WebCore::GIFImageDecoder::setSize):
+        * platform/image-decoders/ico/ICOImageDecoder.cpp:
+        (WebCore::ICOImageDecoder::decodeAtIndex):
+        * platform/image-decoders/jpeg/JPEGImageDecoder.h:
+        * platform/image-decoders/png/PNGImageDecoder.cpp:
+        (WebCore::PNGImageReader::decode):
+        (WebCore::PNGImageDecoder::frameBufferAtIndex):
+        * platform/image-decoders/webp/WEBPImageDecoder.cpp:
+        (WebCore::WEBPImageDecoder::decode):
+
+2017-04-11  Miguel Gomez  <magomez@igalia.com>
+
         REGRESSION(r215211): [GTK] Lots of image related tests are crashing, causing the test bot to exit early
         https://bugs.webkit.org/show_bug.cgi?id=170721
 

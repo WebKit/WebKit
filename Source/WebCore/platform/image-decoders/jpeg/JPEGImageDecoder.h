@@ -58,7 +58,7 @@ namespace WebCore {
 
         bool willDownSample()
         {
-            ASSERT(ImageDecoder::isSizeAvailable());
+            ASSERT(ImageDecoder::encodedDataStatus() >= EncodedDataStatus::SizeAvailable);
             return m_scaled;
         }
 

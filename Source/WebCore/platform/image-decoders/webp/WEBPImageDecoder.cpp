@@ -94,7 +94,7 @@ bool WEBPImageDecoder::decode(bool onlySize)
     const uint8_t* dataBytes = reinterpret_cast<const uint8_t*>(m_data->data());
     const size_t dataSize = m_data->size();
 
-    if (!ImageDecoder::isSizeAvailable()) {
+    if (ImageDecoder::encodedDataStatus() < EncodedDataStatus::SizeAvailable) {
         static const size_t imageHeaderSize = 30;
         if (dataSize < imageHeaderSize)
             return false;
@@ -116,7 +116,7 @@ bool WEBPImageDecoder::decode(bool onlySize)
             return setFailed();
     }
 
-    ASSERT(ImageDecoder::isSizeAvailable());
+    ASSERT(ImageDecoder::encodedDataStatus() >= EncodedDataStatus::SizeAvailable);
     if (onlySize)
         return true;
 

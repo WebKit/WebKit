@@ -223,7 +223,7 @@ bool ICOImageDecoder::decodeAtIndex(size_t index)
     }
     // Fail if the size the PNGImageDecoder calculated does not match the size
     // in the directory.
-    if (m_pngDecoders[index]->isSizeAvailable() && (m_pngDecoders[index]->size() != dirEntry.m_size))
+    if (m_pngDecoders[index]->encodedDataStatus() >= EncodedDataStatus::SizeAvailable && (m_pngDecoders[index]->size() != dirEntry.m_size))
         return setFailed();
     m_frameBufferCache[index] = *m_pngDecoders[index]->frameBufferAtIndex(0);
     return !m_pngDecoders[index]->failed() || setFailed();
