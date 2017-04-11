@@ -207,9 +207,7 @@ webkit.org/b/90980 fast/forms/textarea/textarea-state-restore.html [ Pass Timeou
 
 webkit.org/b/149087 http/tests/cache/disk-cache/disk-cache-cancel.html [ Pass Failure ]
 
-webkit.org/b/148890 http/tests/contentfiltering/load-substitute-data-from-appcache.html [ Pass Crash ]
-# One the bug is fixed, the below test will need a Pass expectation, because it's skipped in root TestExpectations.
-webkit.org/b/148890 http/tests/appcache/decide-navigation-policy-after-delay.html [ Pass Crash ]
+http/tests/appcache/decide-navigation-policy-after-delay.html [ Pass ]
 
 # DatabaseProcess cannot open some of these database filenames (DRT can open the exact same database filenames)
 webkit.org/b/154681 storage/indexeddb/database-odd-names.html
