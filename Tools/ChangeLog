@@ -1,3 +1,15 @@
+2017-04-10  Matt Rajca  <mrajca@apple.com>
+
+        Change autoplay state to "prevented" when media is paused due to restrictions.
+        https://bugs.webkit.org/show_bug.cgi?id=170686
+
+        Reviewed by Alex Christensen.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2/autoplay-muted-with-controls.html: Added test.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/WebsitePolicies.mm:
+        (TEST):
+
 2017-04-11  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [WebCore][JSC] ResourceUsageData.{timeOfNextEdenCollection,timeOfNextFullCollection} should be MonotonicTime

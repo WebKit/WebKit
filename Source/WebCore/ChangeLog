@@ -1,3 +1,26 @@
+2017-04-10  Matt Rajca  <mrajca@apple.com>
+
+        Change autoplay state to "prevented" when media is paused due to restrictions.
+        https://bugs.webkit.org/show_bug.cgi?id=170686
+
+        Reviewed by Alex Christensen.
+
+        Added API tests.
+
+        Currently, the autoplay state is set to "prevented" when playback is about to begin without
+        user interaction and there are restrictions in place. We should also be setting this flag when
+        autoplay is allowed but due to a change in audio tracks, for example, it gets paused.
+
+        This patch also moves some common logic into setPlaybackWithoutUserGesture without changing behavior.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::setReadyState):
+        (WebCore::HTMLMediaElement::play):
+        (WebCore::HTMLMediaElement::mediaPlayerDidAddAudioTrack):
+        (WebCore::HTMLMediaElement::mediaPlayerCharacteristicChanged):
+        (WebCore::HTMLMediaElement::setPlaybackWithoutUserGesture):
+        (WebCore::HTMLMediaElement::updateShouldPlay):
+
 2017-04-11  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Set correct audio session category when capturing audio
