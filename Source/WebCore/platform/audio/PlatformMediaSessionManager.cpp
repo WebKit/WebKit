@@ -73,7 +73,7 @@ void PlatformMediaSessionManager::resetRestrictions()
 
 bool PlatformMediaSessionManager::has(PlatformMediaSession::MediaType type) const
 {
-    ASSERT(type >= PlatformMediaSession::None && type <= PlatformMediaSession::WebAudio);
+    ASSERT(type >= PlatformMediaSession::None && type <= PlatformMediaSession::MediaStreamCapturingAudio);
 
     return anyOfSessions([type] (PlatformMediaSession& session, size_t) {
         return session.mediaType() == type;
@@ -96,7 +96,7 @@ bool PlatformMediaSessionManager::canProduceAudio() const
 
 int PlatformMediaSessionManager::count(PlatformMediaSession::MediaType type) const
 {
-    ASSERT(type >= PlatformMediaSession::None && type <= PlatformMediaSession::WebAudio);
+    ASSERT(type >= PlatformMediaSession::None && type <= PlatformMediaSession::MediaStreamCapturingAudio);
 
     int count = 0;
     for (auto* session : m_sessions) {

@@ -33,9 +33,11 @@
 #include "Document.h"
 #include "Event.h"
 #include "EventNames.h"
+#include "Frame.h"
 #include "Logging.h"
 #include "MediaStreamRegistry.h"
 #include "MediaStreamTrackEvent.h"
+#include "NetworkingContext.h"
 #include "Page.h"
 #include "RealtimeMediaSource.h"
 #include "URL.h"
@@ -75,6 +77,7 @@ MediaStream::MediaStream(ScriptExecutionContext& context, const MediaStreamTrack
     : ContextDestructionObserver(&context)
     , m_private(MediaStreamPrivate::create(createTrackPrivateVector(tracks)))
     , m_activityEventTimer(*this, &MediaStream::activityEventTimerFired)
+    , m_mediaSession(PlatformMediaSession::create(*this))
 {
     // This constructor preserves MediaStreamTrack instances and must be used by calls originating
     // from the JavaScript MediaStream constructor.
@@ -94,6 +97,7 @@ MediaStream::MediaStream(ScriptExecutionContext& context, Ref<MediaStreamPrivate
     : ContextDestructionObserver(&context)
     , m_private(WTFMove(streamPrivate))
     , m_activityEventTimer(*this, &MediaStream::activityEventTimerFired)
+    , m_mediaSession(PlatformMediaSession::create(*this))
 {
     setIsActive(m_private->active());
     if (document()->page() && document()->page()->isMediaCaptureMuted())
@@ -342,6 +346,8 @@ MediaProducer::MediaStateFlags MediaStream::mediaState() const
 
 void MediaStream::statusDidChange()
 {
+    m_mediaSession->canProduceAudioChanged();
+
     if (Document* document = this->document()) {
         if (m_isActive)
             document->setHasActiveMediaStreamTrack();
@@ -421,6 +427,63 @@ void MediaStream::removeObserver(MediaStream::Observer* observer)
 Document* MediaStream::document() const
 {
     return downcast<Document>(scriptExecutionContext());
+}
+
+PlatformMediaSession::MediaType MediaStream::mediaType() const
+{
+    // We only need to override the type when capturing audio, HTMLMediaElement and/or WebAudio
+    // will do the right thing when a stream is attached to a media element or an audio context.
+    if (m_private->hasAudio() && m_private->isProducingData() && m_private->hasCaptureAudioSource())
+        return PlatformMediaSession::MediaStreamCapturingAudio;
+
+    return PlatformMediaSession::None;
+}
+
+PlatformMediaSession::MediaType MediaStream::presentationType() const
+{
+    return mediaType();
+}
+
+PlatformMediaSession::CharacteristicsFlags MediaStream::characteristics() const
+{
+    PlatformMediaSession::CharacteristicsFlags state = PlatformMediaSession::HasNothing;
+
+    if (!m_private->isProducingData())
+        return state;
+
+    if (m_private->hasAudio())
+        state |= PlatformMediaSession::HasAudio;
+
+    if (m_private->hasVideo())
+        state |= PlatformMediaSession::HasVideo;
+
+    return state;
+}
+
+void MediaStream::mayResumePlayback(bool)
+{
+    // FIXME: should a media stream pay attention to this directly, or only when attached to a media element?
+}
+
+void MediaStream::suspendPlayback()
+{
+    // FIXME: should a media stream pay attention to this directly, or only when attached to a media element?
+}
+
+String MediaStream::sourceApplicationIdentifier() const
+{
+    Document* document = this->document();
+    if (document && document->frame()) {
+        if (NetworkingContext* networkingContext = document->frame()->loader().networkingContext())
+            return networkingContext->sourceApplicationIdentifier();
+    }
+
+    return emptyString();
+}
+
+bool MediaStream::canProduceAudio() const
+{
+    return !muted() && active() && m_private->hasAudio() && m_private->isProducingData();
 }
 
 } // namespace WebCore

@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
  * Copyright (C) 2011, 2015 Ericsson AB. All rights reserved.
- * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
  *
  * Redistribution and use in source and binary forms, with or without
@@ -36,6 +36,7 @@
 #include "MediaProducer.h"
 #include "MediaStreamPrivate.h"
 #include "MediaStreamTrack.h"
+#include "PlatformMediaSession.h"
 #include "ScriptWrappable.h"
 #include "Timer.h"
 #include "URLRegistry.h"
@@ -55,6 +56,7 @@ class MediaStream final
     , public MediaStreamPrivate::Observer
     , private MediaProducer
     , private MediaCanStartListener
+    , private PlatformMediaSessionClient
     , public RefCounted<MediaStream> {
 public:
     class Observer {
@@ -134,6 +136,20 @@ private:
     // MediaCanStartListener
     void mediaCanStart(Document&) final;
 
+    // PlatformMediaSessionClient
+    PlatformMediaSession::MediaType mediaType() const final;
+    PlatformMediaSession::MediaType presentationType() const final;
+    PlatformMediaSession::CharacteristicsFlags characteristics() const final;
+    void mayResumePlayback(bool shouldResume) final;
+    void suspendPlayback() final;
+    bool canReceiveRemoteControlCommands() const final { return false; }
+    void didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType, const PlatformMediaSession::RemoteCommandArgument*) final { }
+    bool supportsSeeking() const final { return false; }
+    bool shouldOverrideBackgroundPlaybackRestriction(PlatformMediaSession::InterruptionType) const final { return false; }
+    String sourceApplicationIdentifier() const final;
+    bool canProduceAudio() const final;
+    const Document* hostingDocument() const final { return document(); }
+
     bool internalAddTrack(Ref<MediaStreamTrack>&&, StreamModifier);
     bool internalRemoveTrack(const String&, StreamModifier);
 
@@ -154,6 +170,7 @@ private:
     Vector<Ref<Event>> m_scheduledActivityEvents;
 
     Vector<Observer*> m_observers;
+    std::unique_ptr<PlatformMediaSession> m_mediaSession;
 
     bool m_isActive { false };
     bool m_isMuted { true };

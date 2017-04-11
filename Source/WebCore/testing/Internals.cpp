@@ -3201,6 +3201,8 @@ static PlatformMediaSession::MediaType mediaTypeFromString(const String& mediaTy
         return PlatformMediaSession::VideoAudio;
     if (equalLettersIgnoringASCIICase(mediaTypeString, "webaudio"))
         return PlatformMediaSession::WebAudio;
+    if (equalLettersIgnoringASCIICase(mediaTypeString, "mediastreamcapturingaudio"))
+        return PlatformMediaSession::MediaStreamCapturingAudio;
 
     return PlatformMediaSession::None;
 }

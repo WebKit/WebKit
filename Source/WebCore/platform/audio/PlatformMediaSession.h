@@ -58,6 +58,7 @@ public:
         VideoAudio,
         Audio,
         WebAudio,
+        MediaStreamCapturingAudio,
     };
     MediaType mediaType() const;
     MediaType presentationType() const;

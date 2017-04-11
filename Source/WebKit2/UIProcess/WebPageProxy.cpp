@@ -6446,7 +6446,7 @@ void WebPageProxy::isPlayingMediaDidChange(MediaProducer::MediaStateFlags state,
     if (state == m_mediaState)
         return;
 
-    WebCore::MediaProducer::MediaStateFlags activeCaptureMask = WebCore::MediaProducer::HasActiveAudioCaptureDevice | WebCore::MediaProducer::HasActiveVideoCaptureDevice;
+    WebCore::MediaProducer::MediaStateFlags activeCaptureMask = WebCore::MediaProducer::HasActiveAudioCaptureDevice | WebCore::MediaProducer::HasActiveVideoCaptureDevice | WebCore::MediaProducer::HasMutedAudioCaptureDevice | WebCore::MediaProducer::HasMutedVideoCaptureDevice;
 #if ENABLE(MEDIA_STREAM)
     WebCore::MediaProducer::MediaStateFlags oldMediaStateHasActiveCapture = m_mediaState & activeCaptureMask;
     WebCore::MediaProducer::MediaStateFlags newMediaStateHasActiveCapture = state & activeCaptureMask;
