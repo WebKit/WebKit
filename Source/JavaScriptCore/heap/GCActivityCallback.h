@@ -60,7 +60,7 @@ public:
 
     static bool s_shouldCreateGCTimer;
 
-    JS_EXPORT_PRIVATE double nextFireTime();
+    double nextFireTime();
 
 protected:
     virtual Seconds lastGCLength() = 0;

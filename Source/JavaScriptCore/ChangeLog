@@ -1,5 +1,14 @@
 2017-04-11  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        Unreviewed, build fix for Windows after r215228 part 2
+        https://bugs.webkit.org/show_bug.cgi?id=170723
+
+        Since GCActivityCallback class is annotated exported, we do not need to annotate each member.
+
+        * heap/GCActivityCallback.h:
+
+2017-04-11  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [JSC][GTK] Use RunLoop::Timer in GTK port
         https://bugs.webkit.org/show_bug.cgi?id=170723
 
