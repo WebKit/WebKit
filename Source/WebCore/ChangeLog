@@ -1,5 +1,30 @@
 2017-04-11  Youenn Fablet  <youenn@apple.com>
 
+        Activate WebRTC data channel tests for WK1
+        https://bugs.webkit.org/show_bug.cgi?id=170710
+
+        Reviewed by Eric Carlson.
+
+        Covered by existing and activated tests.
+
+        Making LibWebRTCProvider::factory not static.
+        For that purpose LibWebRTCMediaEndpoint now stores its peer connection factory reference.
+        Making LibWebRTCProvider use libebrtc networking by default.
+
+        Removing some no longer needed checks related to libwebrtc availability.
+
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        (WebCore::LibWebRTCMediaEndpoint::LibWebRTCMediaEndpoint):
+        (WebCore::LibWebRTCMediaEndpoint::addTrack):
+        (WebCore::LibWebRTCMediaEndpoint::doCreateOffer):
+        (WebCore::LibWebRTCMediaEndpoint::doCreateAnswer):
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.h:
+        * platform/mediastream/libwebrtc/LibWebRTCProvider.cpp:
+        (WebCore::LibWebRTCProvider::factory):
+        * platform/mediastream/libwebrtc/LibWebRTCProvider.h:
+
+2017-04-11  Youenn Fablet  <youenn@apple.com>
+
         MediaStream id should be equal to msid
         https://bugs.webkit.org/show_bug.cgi?id=170712
 

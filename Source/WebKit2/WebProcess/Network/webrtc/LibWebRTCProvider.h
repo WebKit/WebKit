@@ -33,7 +33,7 @@ namespace WebKit {
 #if USE(LIBWEBRTC)
 class LibWebRTCProvider final : public WebCore::LibWebRTCProvider {
 public:
-    LibWebRTCProvider() = default;
+    LibWebRTCProvider() { m_useNetworkThreadWithSocketServer = false; }
 
 private:
     rtc::scoped_refptr<webrtc::PeerConnectionInterface> createPeerConnection(webrtc::PeerConnectionObserver&) final;

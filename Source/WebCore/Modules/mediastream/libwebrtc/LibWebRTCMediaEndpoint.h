@@ -171,6 +171,7 @@ private:
     };
 
     LibWebRTCPeerConnectionBackend& m_peerConnectionBackend;
+    webrtc::PeerConnectionFactoryInterface& m_peerConnectionFactory;
     rtc::scoped_refptr<webrtc::PeerConnectionInterface> m_backend;
 
     CreateSessionDescriptionObserver m_createSessionDescriptionObserver;

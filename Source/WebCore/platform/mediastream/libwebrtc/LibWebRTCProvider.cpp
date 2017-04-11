@@ -131,8 +131,10 @@ webrtc::PeerConnectionFactoryInterface* LibWebRTCProvider::factory()
 {
     if (!webRTCAvailable())
         return nullptr;
-    if (!staticFactoryAndThreads().factory)
+    if (!staticFactoryAndThreads().factory) {
+        staticFactoryAndThreads().networkThreadWithSocketServer = m_useNetworkThreadWithSocketServer;
         initializePeerConnectionFactoryAndThreads();
+    }
     return staticFactoryAndThreads().factory;
 }
 
