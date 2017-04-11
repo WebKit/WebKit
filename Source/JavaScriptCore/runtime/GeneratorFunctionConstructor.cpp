@@ -45,8 +45,6 @@ void GeneratorFunctionConstructor::finishCreation(VM& vm, GeneratorFunctionProto
 {
     Base::finishCreation(vm, "GeneratorFunction");
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, generatorFunctionPrototype, DontEnum | DontDelete | ReadOnly);
-
-    // Number of arguments for constructor
     putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(1), ReadOnly | DontEnum);
 }
 

@@ -1,3 +1,32 @@
+2017-04-11  Joseph Pecoraro  <pecoraro@apple.com>
+
+        test262: test262/test/built-ins/Array/S15.4.3_A2.2.js
+        https://bugs.webkit.org/show_bug.cgi?id=170652
+
+        Reviewed by Michael Saboff.
+
+        * runtime/ArrayConstructor.cpp:
+        (JSC::ArrayConstructor::finishCreation):
+        * runtime/BooleanConstructor.cpp:
+        (JSC::BooleanConstructor::finishCreation):
+        * runtime/DateConstructor.cpp:
+        (JSC::DateConstructor::finishCreation):
+        * runtime/FunctionConstructor.cpp:
+        (JSC::FunctionConstructor::finishCreation):
+        * runtime/JSArrayBufferConstructor.cpp:
+        (JSC::JSArrayBufferConstructor::finishCreation):
+        * runtime/NumberConstructor.cpp:
+        (JSC::NumberConstructor::finishCreation):
+        * runtime/ObjectConstructor.cpp:
+        (JSC::ObjectConstructor::finishCreation):
+        * runtime/RegExpConstructor.cpp:
+        (JSC::RegExpConstructor::finishCreation):
+        * runtime/StringConstructor.cpp:
+        (JSC::StringConstructor::finishCreation):
+        * runtime/SymbolConstructor.cpp:
+        (JSC::SymbolConstructor::finishCreation):
+        Ensure the "length" property on these native constructors is configurable (deletable).
+
 2017-04-11  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed, build fix for Windows after r215228 part 2

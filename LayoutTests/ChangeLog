@@ -1,3 +1,19 @@
+2017-04-11  Joseph Pecoraro  <pecoraro@apple.com>
+
+        test262: test262/test/built-ins/Array/S15.4.3_A2.2.js
+        https://bugs.webkit.org/show_bug.cgi?id=170652
+
+        Reviewed by Michael Saboff.
+
+        * ietestcenter/Javascript/15.2.3.3-4-186-expected.txt:
+        * ietestcenter/Javascript/15.2.3.3-4-191-expected.txt:
+        * ietestcenter/Javascript/15.2.3.3-4-194-expected.txt:
+        * ietestcenter/Javascript/15.2.3.3-4-201-expected.txt:
+        * ietestcenter/Javascript/15.3.3.2-1-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.4_Array/15.4.3/S15.4.3_A2.2-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.1_Date.prototype.constructor/S15.9.5.1_A3_T2-expected.txt:
+        These tests expected the opposite, they are now out of date.
+
 2017-04-11  Yoav Weiss  <yoav@yoav.ws>
 
         [link preload] Double downloads of preloaded content when it's in MemoryCache

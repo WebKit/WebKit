@@ -1,3 +1,19 @@
+2017-04-11  Joseph Pecoraro  <pecoraro@apple.com>
+
+        test262: test262/test/built-ins/Array/S15.4.3_A2.2.js
+        https://bugs.webkit.org/show_bug.cgi?id=170652
+
+        Reviewed by Michael Saboff.
+
+        * stress/native-constructors-length.js: Added.
+        (assertLengthDescriptorAttributes):
+        Add a quick test for the length properties of all native constructors.
+
+        * ChakraCore/test/es5/enumerable.baseline-jsc:
+        Rebaseline expectations for this test.
+
+        * test262.yaml:
+
 2017-04-10  Keith Miller  <keith_miller@apple.com>
 
         WebAssembly: Update spec tests

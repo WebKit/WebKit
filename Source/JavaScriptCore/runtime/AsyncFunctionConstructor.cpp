@@ -45,8 +45,6 @@ void AsyncFunctionConstructor::finishCreation(VM& vm, AsyncFunctionPrototype* pr
 {
     Base::finishCreation(vm, "AsyncFunction");
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, prototype, DontEnum | DontDelete | ReadOnly);
-
-    // Number of arguments for constructor
     putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(1), ReadOnly | DontEnum);
 }
 

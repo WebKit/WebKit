@@ -45,9 +45,7 @@ void FunctionConstructor::finishCreation(VM& vm, FunctionPrototype* functionProt
 {
     Base::finishCreation(vm, functionPrototype->classInfo()->className);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, functionPrototype, DontEnum | DontDelete | ReadOnly);
-
-    // Number of arguments for constructor
-    putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(1), ReadOnly | DontDelete | DontEnum);
+    putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(1), ReadOnly | DontEnum);
 }
 
 static EncodedJSValue JSC_HOST_CALL constructWithFunctionConstructor(ExecState* exec)
