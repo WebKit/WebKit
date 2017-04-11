@@ -53,6 +53,8 @@ WebKitBuildbot = function()
             "Apple El Capitan LLINT CLoop (BuildAndTest)": {heading: "LLINT CLoop (BuildAndTest)"},
             "Apple El Capitan Debug JSC (Tests)": {heading: "Debug JSC (Tests)"},
             "Apple El Capitan Release JSC (Tests)": {heading: "Release JSC (Tests)"},
+            "Apple El Capitan Debug Test262 (Tests)": {heading: "Debug Test262 (Tests)"},
+            "Apple El Capitan Release Test262 (Tests)": {heading: "Release Test262 (Tests)"},
         }},
         "Apple iOS 10 Release (Build)": {platform: Dashboard.Platform.iOS10Device, debug: false, builder: true, architecture: Buildbot.BuildArchitecture.Universal},
         "Apple iOS 10 Simulator Release (Build)": {platform: Dashboard.Platform.iOS10Simulator, debug: false, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},

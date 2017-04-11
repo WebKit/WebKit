@@ -1,3 +1,13 @@
+2017-04-10  Aakash Jain  <aakash_jain@apple.com>
+
+        Add test262 JavaScriptCore tests to dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=170711
+
+        Rubber-stamped by Joseph Pecoraro.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/WebKitBuildbot.js:
+        (WebKitBuildbot): Added test262 JSC tests to dashboard.
+
 2017-04-10  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION(r195479) First main resource load in new WebProcess bypasses content extensions
