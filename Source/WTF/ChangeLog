@@ -1,3 +1,21 @@
+2017-04-11  Zan Dobersek  <zdobersek@igalia.com>
+
+        REGRESSION(r213645): It made JSC tests super slow and timeout on AArch64 Linux
+        https://bugs.webkit.org/show_bug.cgi?id=169510
+
+        Reviewed by Saam Barati.
+
+        Add the `volatile` qualifiers for ASM statements that set up ldxr and stxr
+        instruction calls when HAVE(LL_SC) is enabled for aarch64 platforms.
+
+        This avoids indefinite execution when running GCC-compiled JSC on Linux.
+        Specific bug or expected behavior that differs from Clang wasn't determined.
+
+        HAVE(LL_SC) is re-enabled on non-Darwin aarch64 platforms.
+
+        * wtf/Atomics.h:
+        * wtf/Platform.h:
+
 2017-04-10  Thorsten Glaser  <tg@mirbsd.de>
 
         [GTK] Fix x32 build

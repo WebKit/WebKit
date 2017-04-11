@@ -190,7 +190,7 @@ struct Atomic {
                 : "r"(this) \
                 : "memory"); \
         } else { \
-            asm ( \
+            asm volatile ( \
                 "ldxr" suffix " %" modifier "0, [%1]" \
                 : "=r"(result) \
                 : "r"(this) \
@@ -210,7 +210,7 @@ struct Atomic {
                 : "r"(value), "r"(this) \
                 : "memory"); \
         } else { \
-            asm ( \
+            asm volatile ( \
                 "stxr" suffix " %w0, %" modifier "1, [%2]" \
                 : "=&r"(result) \
                 : "r"(value), "r"(this) \

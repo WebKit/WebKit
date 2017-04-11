@@ -757,8 +757,7 @@
 #define ENABLE_CONCURRENT_JS 1
 #endif
 
-/* FIXME: Enable it on Linux once https://bugs.webkit.org/show_bug.cgi?id=169510 is fixed. */
-#if CPU(ARM64) && OS(DARWIN)
+#if CPU(ARM64)
 #define HAVE_LL_SC 1
 #endif // CPU(ARM64) && OS(DARWIN)
 
