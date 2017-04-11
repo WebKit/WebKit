@@ -117,17 +117,21 @@ void RunLoop::wakeUp()
 
 void RunLoop::TimerBase::timerFired(RunLoop* runLoop, uint64_t ID)
 {
-    TimerMap::iterator it = runLoop->m_activeTimers.find(ID);
-    if (it == runLoop->m_activeTimers.end()) {
-        // The timer must have been stopped after the WM_TIMER message was posted to the message queue.
-        return;
-    }
+    TimerBase* timer = nullptr;
+    {
+        LockHolder locker(runLoop->m_activeTimersLock);
+        TimerMap::iterator it = runLoop->m_activeTimers.find(ID);
+        if (it == runLoop->m_activeTimers.end()) {
+            // The timer must have been stopped after the WM_TIMER message was posted to the message queue.
+            return;
+        }
 
-    TimerBase* timer = it->value;
+        timer = it->value;
 
-    if (!timer->m_isRepeating) {
-        runLoop->m_activeTimers.remove(it);
-        ::KillTimer(runLoop->m_runLoopMessageWindow, ID);
+        if (!timer->m_isRepeating) {
+            runLoop->m_activeTimers.remove(it);
+            ::KillTimer(runLoop->m_runLoopMessageWindow, ID);
+        }
     }
 
     timer->fired();
@@ -153,24 +157,27 @@ RunLoop::TimerBase::~TimerBase()
 
 void RunLoop::TimerBase::start(double nextFireInterval, bool repeat)
 {
+    LockHolder locker(m_runLoop->m_activeTimersLock);
     m_isRepeating = repeat;
-    m_runLoop.m_activeTimers.set(m_ID, this);
-    ::SetTimer(m_runLoop.m_runLoopMessageWindow, m_ID, nextFireInterval * 1000, 0);
+    m_runLoop->m_activeTimers.set(m_ID, this);
+    ::SetTimer(m_runLoop->m_runLoopMessageWindow, m_ID, nextFireInterval * 1000, 0);
 }
 
 void RunLoop::TimerBase::stop()
 {
-    TimerMap::iterator it = m_runLoop.m_activeTimers.find(m_ID);
-    if (it == m_runLoop.m_activeTimers.end())
+    LockHolder locker(m_runLoop->m_activeTimersLock);
+    TimerMap::iterator it = m_runLoop->m_activeTimers.find(m_ID);
+    if (it == m_runLoop->m_activeTimers.end())
         return;
 
-    m_runLoop.m_activeTimers.remove(it);
-    ::KillTimer(m_runLoop.m_runLoopMessageWindow, m_ID);
+    m_runLoop->m_activeTimers.remove(it);
+    ::KillTimer(m_runLoop->m_runLoopMessageWindow, m_ID);
 }
 
 bool RunLoop::TimerBase::isActive() const
 {
-    return m_runLoop.m_activeTimers.contains(m_ID);
+    LockHolder locker(m_runLoop->m_activeTimersLock);
+    return m_runLoop->m_activeTimers.contains(m_ID);
 }
 
 } // namespace WTF

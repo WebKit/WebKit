@@ -1,3 +1,35 @@
+2017-04-11  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Enable JSRunLoopTimer for JSCOnly and Windows
+        https://bugs.webkit.org/show_bug.cgi?id=170655
+
+        Reviewed by Carlos Garcia Campos.
+
+        This patch makes RunLoop::Timer in Generic and Windows thread-safe to use it
+        in JSC's JSRunLoopTimer. Eventually, we would like to replace JSRunLoopTimer's
+        platform-dependent implementation to WTF::RunLoop::Timer.
+
+        * wtf/RunLoop.h:
+        * wtf/cf/RunLoopCF.cpp:
+        (WTF::RunLoop::TimerBase::start):
+        * wtf/generic/RunLoopGeneric.cpp:
+        (WTF::RunLoop::TimerBase::ScheduledTask::EarliestSchedule::operator()):
+        (WTF::RunLoop::populateTasks):
+        (WTF::RunLoop::runImpl):
+        (WTF::RunLoop::schedule):
+        (WTF::RunLoop::scheduleAndWakeUp):
+        (WTF::RunLoop::TimerBase::~TimerBase):
+        (WTF::RunLoop::TimerBase::start):
+        (WTF::RunLoop::TimerBase::stop):
+        (WTF::RunLoop::TimerBase::isActive):
+        * wtf/glib/RunLoopGLib.cpp:
+        (WTF::RunLoop::TimerBase::TimerBase):
+        * wtf/win/RunLoopWin.cpp:
+        (WTF::RunLoop::TimerBase::timerFired):
+        (WTF::RunLoop::TimerBase::start):
+        (WTF::RunLoop::TimerBase::stop):
+        (WTF::RunLoop::TimerBase::isActive):
+
 2017-04-11  Zan Dobersek  <zdobersek@igalia.com>
 
         REGRESSION(r213645): It made JSC tests super slow and timeout on AArch64 Linux

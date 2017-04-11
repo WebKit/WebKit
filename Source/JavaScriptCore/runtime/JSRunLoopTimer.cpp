@@ -161,23 +161,35 @@ void JSRunLoopTimer::cancelTimer()
     g_source_set_ready_time(m_timer.get(), g_get_monotonic_time() + s_decade * G_USEC_PER_SEC);
     m_isScheduled = false;
 }
+
 #else
+
+const Seconds JSRunLoopTimer::s_decade { 60 * 60 * 24 * 365 * 10 };
+
 JSRunLoopTimer::JSRunLoopTimer(VM* vm)
     : m_vm(vm)
+    , m_apiLock(&vm->apiLock())
+    , m_timer(RunLoop::current(), this, &JSRunLoopTimer::timerDidFire)
 {
+    m_timer.startOneShot(s_decade);
 }
 
 JSRunLoopTimer::~JSRunLoopTimer()
 {
 }
 
-void JSRunLoopTimer::scheduleTimer(double)
+void JSRunLoopTimer::scheduleTimer(double intervalInSeconds)
 {
+    m_timer.startOneShot(intervalInSeconds);
+    m_isScheduled = true;
 }
 
 void JSRunLoopTimer::cancelTimer()
 {
+    m_timer.startOneShot(s_decade);
+    m_isScheduled = false;
 }
+
 #endif
-    
+
 } // namespace JSC

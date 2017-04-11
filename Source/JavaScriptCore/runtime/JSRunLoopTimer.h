@@ -28,6 +28,7 @@
 #include <wtf/Lock.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/RunLoop.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Threading.h>
 
@@ -79,6 +80,9 @@ protected:
 #elif USE(GLIB)
     static const long s_decade;
     GRefPtr<GSource> m_timer;
+#else
+    static const Seconds s_decade;
+    RunLoop::Timer<JSRunLoopTimer> m_timer;
 #endif
     
 private:
