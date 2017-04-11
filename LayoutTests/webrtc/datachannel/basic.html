@@ -45,9 +45,6 @@ var finishTest;
 promise_test((test) => {
     counter = 0;
     return new Promise((resolve, reject) => {
-        if (window.internals)
-            internals.useMockRTCPeerConnectionFactory("TwoRealPeerConnections");
-
         finishTest = resolve;
         createConnections((localConnection) => {
             localChannel = localConnection.createDataChannel('sendDataChannel');
@@ -64,9 +61,6 @@ promise_test((test) => {
 promise_test((test) => {
     counter = 0;
     return new Promise((resolve, reject) => {
-        if (window.internals)
-            internals.useMockRTCPeerConnectionFactory("TwoRealPeerConnections");
-
         finishTest = resolve;
         createConnections((localConnection) => {
             localChannel = localConnection.createDataChannel('sendDataChannel');
@@ -83,9 +77,6 @@ promise_test((test) => {
 promise_test((test) => {
     counter = 0;
     return new Promise((resolve, reject) => {
-        if (window.internals)
-            internals.useMockRTCPeerConnectionFactory("TwoRealPeerConnections");
-
         finishTest = resolve;
         createConnections((localConnection) => {
             localChannel = localConnection.createDataChannel('sendDataChannel');
@@ -103,7 +94,6 @@ promise_test((test) => {
     counter = 0;
     return new Promise((resolve, reject) => {
         if (window.internals) {
-            internals.useMockRTCPeerConnectionFactory("TwoRealPeerConnections");
             internals.setEnumeratingAllNetworkInterfacesEnabled(true);
         }
 
@@ -123,9 +113,6 @@ promise_test((test) => {
 promise_test((test) => {
     counter = 0;
     return new Promise((resolve, reject) => {
-        if (window.internals)
-            internals.useMockRTCPeerConnectionFactory("TwoRealPeerConnections");
-
         var checkDataChannelOptions = (channel, init) => {
             assert_equals(channel.ordered, init.ordered, "ordered");
             assert_equals(channel.maxPacketLifeTime, init.maxPacketLifeTime, "maxPacketLifeTime");
@@ -155,15 +142,11 @@ for (var cptr = 0; cptr < 16; ++cptr)
     longString += longString;
 
 test(() => {
-    if (window.internals)
-        internals.useMockRTCPeerConnectionFactory("OneRealPeerConnections");
     var pc = new RTCPeerConnection();
     assert_throws(new TypeError, () => { pc.createDataChannel(longString); });
 }, "Creating data channel with very long label");
 
 test(() => {
-    if (window.internals)
-        internals.useMockRTCPeerConnectionFactory("OneRealPeerConnections");
     var pc = new RTCPeerConnection();
     pc.close();
     assert_throws("InvalidStateError", () => { pc.createDataChannel('sendDataChannel'); });
@@ -172,8 +155,6 @@ test(() => {
 function testWrongDataChannelInit(init, title)
 {
     return test(() => {
-        if (window.internals)
-            internals.useMockRTCPeerConnectionFactory("OneRealPeerConnections");
         var pc = new RTCPeerConnection();
         assert_throws(new TypeError, () => { pc.createDataChannel('sendDataChannel', init); });
     }, "Wrong data channel init: " + title);
@@ -182,8 +163,6 @@ function testWrongDataChannelInit(init, title)
 function testRightDataChannelInit(init, title)
 {
     return test(() => {
-        if (window.internals)
-            internals.useMockRTCPeerConnectionFactory("OneRealPeerConnections");
         var pc = new RTCPeerConnection();
         channel = pc.createDataChannel('sendDataChannel', init);
 

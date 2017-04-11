@@ -450,10 +450,11 @@ static inline String trackId(webrtc::MediaStreamTrackInterface& videoTrack)
     return String(videoTrack.id().data(), videoTrack.id().size());
 }
 
-MediaStream& LibWebRTCMediaEndpoint::mediaStreamFromRTCStream(webrtc::MediaStreamInterface* rtcStream)
+MediaStream& LibWebRTCMediaEndpoint::mediaStreamFromRTCStream(webrtc::MediaStreamInterface& rtcStream)
 {
-    auto mediaStream = m_streams.ensure(rtcStream, [this] {
-        auto stream = MediaStream::create(*m_peerConnectionBackend.connection().scriptExecutionContext());
+    auto mediaStream = m_streams.ensure(&rtcStream, [&rtcStream, this] {
+        auto label = rtcStream.label();
+        auto stream = MediaStream::create(*m_peerConnectionBackend.connection().scriptExecutionContext(), MediaStreamPrivate::create({ }, String(label.data(), label.size())));
         auto streamPointer = stream.ptr();
         m_peerConnectionBackend.addRemoteStream(WTFMove(stream));
         return streamPointer;
@@ -466,7 +467,7 @@ void LibWebRTCMediaEndpoint::addRemoteStream(webrtc::MediaStreamInterface& rtcSt
     if (!RuntimeEnabledFeatures::sharedFeatures().webRTCLegacyAPIEnabled())
         return;
 
-    auto& mediaStream = mediaStreamFromRTCStream(&rtcStream);
+    auto& mediaStream = mediaStreamFromRTCStream(rtcStream);
     m_peerConnectionBackend.connection().fireEvent(MediaStreamEvent::create(eventNames().addstreamEvent, false, false, &mediaStream));
 }
 
@@ -516,7 +517,7 @@ void LibWebRTCMediaEndpoint::addRemoteTrack(rtc::scoped_refptr<webrtc::RtpReceiv
 
     Vector<RefPtr<MediaStream>> streams;
     for (auto& rtcStream : rtcStreams) {
-        auto& mediaStream = mediaStreamFromRTCStream(rtcStream.get());
+        auto& mediaStream = mediaStreamFromRTCStream(*rtcStream.get());
         streams.append(&mediaStream);
         mediaStream.addTrackFromPlatform(*track);
     }

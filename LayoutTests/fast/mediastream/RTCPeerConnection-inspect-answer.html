@@ -6,6 +6,9 @@
     </head>
     <body>
         <script>
+            if (window.internals)
+                internals.useMockRTCPeerConnectionFactory("");
+
             let remoteStream;
             let remotePcAudioTrack;
             let remotePcVideoTrack;

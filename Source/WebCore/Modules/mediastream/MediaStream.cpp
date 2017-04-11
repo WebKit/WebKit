@@ -57,40 +57,44 @@ Ref<MediaStream> MediaStream::create(ScriptExecutionContext& context, const Medi
     return adoptRef(*new MediaStream(context, tracks));
 }
 
-Ref<MediaStream> MediaStream::create(ScriptExecutionContext& context, RefPtr<MediaStreamPrivate>&& streamPrivate)
+Ref<MediaStream> MediaStream::create(ScriptExecutionContext& context, Ref<MediaStreamPrivate>&& streamPrivate)
 {
     return adoptRef(*new MediaStream(context, WTFMove(streamPrivate)));
 }
 
+static inline MediaStreamTrackPrivateVector createTrackPrivateVector(const MediaStreamTrackVector& tracks)
+{
+    MediaStreamTrackPrivateVector trackPrivates;
+    trackPrivates.reserveCapacity(tracks.size());
+    for (auto& track : tracks)
+        trackPrivates.append(&track->privateTrack());
+    return trackPrivates;
+}
+
 MediaStream::MediaStream(ScriptExecutionContext& context, const MediaStreamTrackVector& tracks)
     : ContextDestructionObserver(&context)
+    , m_private(MediaStreamPrivate::create(createTrackPrivateVector(tracks)))
     , m_activityEventTimer(*this, &MediaStream::activityEventTimerFired)
 {
     // This constructor preserves MediaStreamTrack instances and must be used by calls originating
     // from the JavaScript MediaStream constructor.
-    MediaStreamTrackPrivateVector trackPrivates;
-    trackPrivates.reserveCapacity(tracks.size());
 
     for (auto& track : tracks) {
         track->addObserver(*this);
         m_trackSet.add(track->id(), track);
-        trackPrivates.append(&track->privateTrack());
     }
 
-    m_private = MediaStreamPrivate::create(trackPrivates);
     setIsActive(m_private->active());
     m_private->addObserver(*this);
     MediaStreamRegistry::shared().registerStream(*this);
     document()->addAudioProducer(this);
 }
 
-MediaStream::MediaStream(ScriptExecutionContext& context, RefPtr<MediaStreamPrivate>&& streamPrivate)
+MediaStream::MediaStream(ScriptExecutionContext& context, Ref<MediaStreamPrivate>&& streamPrivate)
     : ContextDestructionObserver(&context)
-    , m_private(streamPrivate)
+    , m_private(WTFMove(streamPrivate))
     , m_activityEventTimer(*this, &MediaStream::activityEventTimerFired)
 {
-    ASSERT(m_private);
-
     setIsActive(m_private->active());
     if (document()->page() && document()->page()->isMediaCaptureMuted())
         m_private->setCaptureTracksMuted(true);
@@ -124,10 +128,10 @@ MediaStream::~MediaStream()
 RefPtr<MediaStream> MediaStream::clone()
 {
     MediaStreamTrackVector clonedTracks;
-    clonedTracks.reserveCapacity(m_trackSet.size());
+    clonedTracks.reserveInitialCapacity(m_trackSet.size());
 
     for (auto& track : m_trackSet.values())
-        clonedTracks.append(track->clone());
+        clonedTracks.uncheckedAppend(track->clone());
 
     return MediaStream::create(*scriptExecutionContext(), clonedTracks);
 }

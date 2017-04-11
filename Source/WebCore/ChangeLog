@@ -1,3 +1,41 @@
+2017-04-11  Youenn Fablet  <youenn@apple.com>
+
+        MediaStream id should be equal to msid
+        https://bugs.webkit.org/show_bug.cgi?id=170712
+
+        Reviewed by Eric Carlson.
+
+        Covered by rebased tests.
+
+        Setting MediaStream id to libwebrtc mediastream label.
+        Refactoring to use more Ref<> in MediaStream code.
+
+        Making PeerConnection use the libwebrtc backend by default for layout tests instead of the mock.
+
+        * Modules/mediastream/MediaStream.cpp:
+        (WebCore::MediaStream::create):
+        (WebCore::createTrackPrivateVector):
+        (WebCore::MediaStream::MediaStream):
+        * Modules/mediastream/MediaStream.h:
+        * Modules/mediastream/MediaStreamRegistry.cpp:
+        (WebCore::MediaStreamRegistry::lookUp):
+        * Modules/mediastream/UserMediaRequest.cpp:
+        (WebCore::UserMediaRequest::allow):
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        (WebCore::LibWebRTCMediaEndpoint::mediaStreamFromRTCStream):
+        (WebCore::LibWebRTCMediaEndpoint::addRemoteStream):
+        (WebCore::LibWebRTCMediaEndpoint::addRemoteTrack):
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.h:
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::load):
+        * platform/graphics/MediaPlayer.h:
+        * platform/mediastream/MediaStreamPrivate.cpp:
+        (WebCore::MediaStreamPrivate::MediaStreamPrivate):
+        * platform/mediastream/MediaStreamPrivate.h:
+        (WebCore::MediaStreamPrivate::create):
+        * testing/Internals.cpp:
+        (WebCore::Internals::Internals):
+
 2017-04-11  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Web article navigation does not work (article rotor for Facebook, Twitter, Messages etc.)

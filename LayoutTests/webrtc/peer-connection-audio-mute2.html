@@ -15,9 +15,6 @@
 
         var localTrack;
         return navigator.mediaDevices.getUserMedia({audio: true}).then((localStream) => {
-            if (window.internals)
-                internals.useMockRTCPeerConnectionFactory("TwoRealPeerConnections");
-
             localTrack = localStream.getAudioTracks()[0];
             var remoteStream;
             return new Promise((resolve, reject) => {

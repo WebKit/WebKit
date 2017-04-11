@@ -6,6 +6,9 @@
     </head>
     <body>
         <script>
+            if (window.internals)
+                internals.useMockRTCPeerConnectionFactory("");
+
             var stream;
             var audioTrack;
             var videoTrack;

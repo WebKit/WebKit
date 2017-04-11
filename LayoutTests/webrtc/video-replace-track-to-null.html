@@ -65,9 +65,6 @@ promise_test((test) => {
         frontStream = stream;
     }).then(() => {
         return new Promise((resolve, reject) => {
-            if (window.internals)
-                internals.useMockRTCPeerConnectionFactory("TwoRealPeerConnections");
-
             createConnections((firstConnection) => {
                 sender = firstConnection.addTrack(frontStream.getVideoTracks()[0], frontStream);
             }, (secondConnection) => {

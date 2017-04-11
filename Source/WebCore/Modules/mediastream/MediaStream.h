@@ -66,7 +66,7 @@ public:
     static Ref<MediaStream> create(ScriptExecutionContext&);
     static Ref<MediaStream> create(ScriptExecutionContext&, MediaStream&);
     static Ref<MediaStream> create(ScriptExecutionContext&, const MediaStreamTrackVector&);
-    static Ref<MediaStream> create(ScriptExecutionContext&, RefPtr<MediaStreamPrivate>&&);
+    static Ref<MediaStream> create(ScriptExecutionContext&, Ref<MediaStreamPrivate>&&);
     virtual ~MediaStream();
 
     String id() const { return m_private->id(); }
@@ -84,7 +84,7 @@ public:
     bool active() const { return m_isActive; }
     bool muted() const { return m_isMuted; }
 
-    MediaStreamPrivate* privateStream() const { return m_private.get(); }
+    MediaStreamPrivate& privateStream() { return m_private.get(); }
 
     void startProducingData();
     void stopProducingData();
@@ -106,7 +106,7 @@ public:
 
 protected:
     MediaStream(ScriptExecutionContext&, const MediaStreamTrackVector&);
-    MediaStream(ScriptExecutionContext&, RefPtr<MediaStreamPrivate>&&);
+    MediaStream(ScriptExecutionContext&, Ref<MediaStreamPrivate>&&);
 
     // ContextDestructionObserver
     void contextDestroyed() final;
@@ -146,7 +146,7 @@ private:
 
     MediaStreamTrackVector trackVectorForType(RealtimeMediaSource::Type) const;
 
-    RefPtr<MediaStreamPrivate> m_private;
+    Ref<MediaStreamPrivate> m_private;
 
     HashMap<String, RefPtr<MediaStreamTrack>> m_trackSet;
 

@@ -338,7 +338,7 @@ public:
     bool load(const URL&, const ContentType&, MediaSourcePrivateClient*);
 #endif
 #if ENABLE(MEDIA_STREAM)
-    bool load(MediaStreamPrivate*);
+    bool load(MediaStreamPrivate&);
 #endif
     void cancelLoad();
 

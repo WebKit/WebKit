@@ -428,12 +428,11 @@ bool MediaPlayer::load(const URL& url, const ContentType& contentType, MediaSour
 #endif
 
 #if ENABLE(MEDIA_STREAM)
-bool MediaPlayer::load(MediaStreamPrivate* mediaStream)
+bool MediaPlayer::load(MediaStreamPrivate& mediaStream)
 {
     ASSERT(!m_reloadTimer.isActive());
-    ASSERT(mediaStream);
 
-    m_mediaStream = mediaStream;
+    m_mediaStream = &mediaStream;
     m_keySystem = emptyString();
     m_contentMIMEType = emptyString();
     m_contentMIMETypeWasInferredFromExtension = false;

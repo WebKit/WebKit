@@ -38,7 +38,6 @@
 
 #include "GraphicsContext.h"
 #include "IntRect.h"
-#include "UUID.h"
 #include <wtf/MainThread.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
@@ -59,14 +58,9 @@ Ref<MediaStreamPrivate> MediaStreamPrivate::create(const Vector<Ref<RealtimeMedi
     return MediaStreamPrivate::create(tracks);
 }
 
-Ref<MediaStreamPrivate> MediaStreamPrivate::create(const MediaStreamTrackPrivateVector& tracks)
-{
-    return adoptRef(*new MediaStreamPrivate(createCanonicalUUIDString(), tracks));
-}
-
-MediaStreamPrivate::MediaStreamPrivate(const String& id, const MediaStreamTrackPrivateVector& tracks)
+MediaStreamPrivate::MediaStreamPrivate(const MediaStreamTrackPrivateVector& tracks, String&& id)
     : m_weakPtrFactory(this)
-    , m_id(id)
+    , m_id(WTFMove(id))
 {
     ASSERT(!m_id.isEmpty());
 

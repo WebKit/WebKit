@@ -20,8 +20,6 @@
             return navigator.mediaDevices.getUserMedia({ audio: { sampleRate: { exact: 48000 } } });
         }).then((stream) => {
             secondStream = stream;
-            if (window.internals)
-                internals.useMockRTCPeerConnectionFactory("TwoRealPeerConnections");
             return new Promise((resolve, reject) => {
                 createConnections((firstConnection) => {
                     sender = firstConnection.addTrack(firstStream.getAudioTracks()[0], firstStream);

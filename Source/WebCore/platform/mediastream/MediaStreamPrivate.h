@@ -39,6 +39,7 @@
 #include "FloatSize.h"
 #include "MediaStreamTrack.h"
 #include "MediaStreamTrackPrivate.h"
+#include "UUID.h"
 #include <wtf/Function.h>
 #include <wtf/HashMap.h>
 #include <wtf/MediaTime.h>
@@ -69,7 +70,7 @@ public:
     };
 
     static Ref<MediaStreamPrivate> create(const Vector<Ref<RealtimeMediaSource>>& audioSources, const Vector<Ref<RealtimeMediaSource>>& videoSources);
-    static Ref<MediaStreamPrivate> create(const MediaStreamTrackPrivateVector&);
+    static Ref<MediaStreamPrivate> create(const MediaStreamTrackPrivateVector& tracks, String&& id = createCanonicalUUIDString()) { return adoptRef(*new MediaStreamPrivate(tracks, WTFMove(id))); }
 
     virtual ~MediaStreamPrivate();
 
@@ -116,7 +117,7 @@ private:
 #endif
 
 private:
-    MediaStreamPrivate(const String&, const MediaStreamTrackPrivateVector&);
+    MediaStreamPrivate(const MediaStreamTrackPrivateVector&, String&&);
 
     // MediaStreamTrackPrivate::Observer
     void trackEnded(MediaStreamTrackPrivate&) override;

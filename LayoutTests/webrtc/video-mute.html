@@ -38,9 +38,6 @@ promise_test((test) => {
 
     return navigator.mediaDevices.getUserMedia({ video: true}).then((localStream) => {
         return new Promise((resolve, reject) => {
-            if (window.internals)
-                internals.useMockRTCPeerConnectionFactory("TwoRealPeerConnections");
-
             track = localStream.getVideoTracks()[0];
 
             createConnections((firstConnection) => {

@@ -94,7 +94,7 @@ MediaStream* MediaStreamRegistry::lookUp(const MediaStreamPrivate& privateStream
 {
     Vector<MediaStream*>& allStreams = mediaStreams();
     for (auto& stream : allStreams) {
-        if (stream->privateStream() == &privateStream)
+        if (&stream->privateStream() == &privateStream)
             return stream;
     }
 

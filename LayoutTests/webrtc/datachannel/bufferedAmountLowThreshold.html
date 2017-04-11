@@ -40,9 +40,6 @@ promise_test((test) => {
     counter = 0;
     var gotEvent = false;
     return new Promise((resolve, reject) => {
-        if (window.internals)
-            internals.useMockRTCPeerConnectionFactory("TwoRealPeerConnections");
-
         finishTest = resolve;
         createConnections((localConnection) => {
             localChannel = localConnection.createDataChannel('sendDataChannel');
@@ -81,9 +78,6 @@ promise_test((test) => {
     counter = 0;
     var gotEvent = false;
     return new Promise((resolve, reject) => {
-        if (window.internals)
-            internals.useMockRTCPeerConnectionFactory("TwoRealPeerConnections");
-
         finishTest = resolve;
         createConnections((localConnection) => {
             localChannel = localConnection.createDataChannel('sendDataChannel');
@@ -112,9 +106,6 @@ promise_test((test) => {
     counter = 0;
     var gotEvent = false;
     return new Promise((resolve, reject) => {
-        if (window.internals)
-            internals.useMockRTCPeerConnectionFactory("TwoRealPeerConnections");
-
         finishTest = resolve;
         createConnections((localConnection) => {
             localChannel = localConnection.createDataChannel('sendDataChannel');

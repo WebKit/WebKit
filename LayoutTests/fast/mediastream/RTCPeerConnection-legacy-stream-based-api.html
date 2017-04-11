@@ -5,6 +5,9 @@
     </head>
     <body>
         <script>
+            if (window.internals)
+                internals.useMockRTCPeerConnectionFactory("");
+
             description("Test RTCPeerConnection's legacy MediaStream-based API");
 
             let stream;

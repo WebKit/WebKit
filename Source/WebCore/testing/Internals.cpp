@@ -468,8 +468,9 @@ Internals::Internals(Document& document)
 #endif
 
 #if ENABLE(WEB_RTC)
+#if PLATFORM(GTK)
     enableMockMediaEndpoint();
-    useMockRTCPeerConnectionFactory(String());
+#endif
 #if USE(LIBWEBRTC)
     if (document.page())
         document.page()->rtcController().disableICECandidateFiltering();

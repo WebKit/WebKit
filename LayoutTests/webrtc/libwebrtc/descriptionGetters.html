@@ -12,9 +12,6 @@ if (window.testRunner)
     testRunner.setUserMediaPermission(true);
 
 promise_test((test) => {
-     if (window.internals)
-     internals.useMockRTCPeerConnectionFactory("TwoRealPeerConnections");
-
      var localConnection = new RTCPeerConnection();
      var remoteConnection = new RTCPeerConnection();
      var currentSDP;

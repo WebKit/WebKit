@@ -168,7 +168,7 @@ void UserMediaRequest::allow(const String& audioDeviceUID, const String& videoDe
             return;
         }
 
-        auto stream = MediaStream::create(*m_scriptExecutionContext, WTFMove(privateStream));
+        auto stream = MediaStream::create(*m_scriptExecutionContext, privateStream.releaseNonNull());
         if (stream->getTracks().isEmpty()) {
             deny(MediaAccessDenialReason::HardwareError, emptyString());
             return;
