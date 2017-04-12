@@ -1,3 +1,19 @@
+2017-04-12  Anders Carlsson  <andersca@apple.com>
+
+        Tweak WebCore::setMetadataURL function
+        https://bugs.webkit.org/show_bug.cgi?id=170786
+
+        Reviewed by Beth Dakin.
+
+        Get rid of the "referrer" parameter, it isn't used. Make the remaining parameters const. Swap the
+        urlString and path parameters since that makes more sense. Use String instead of NSString in the call to WKSetMetadataURL.
+
+        * platform/FileSystem.cpp:
+        (WebCore::setMetadataURL): Deleted.
+        * platform/FileSystem.h:
+        * platform/mac/FileSystemMac.mm:
+        (WebCore::setMetadataURL):
+
 2017-04-12  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Well-known variations should clamp to the values listed in the @font-face block

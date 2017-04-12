@@ -48,18 +48,17 @@ bool deleteEmptyDirectory(const String& path)
     return !rmdir(fileSystemRepresentation(path).data());
 }
 
-void setMetadataURL(String& URLString, const String& referrer, const String& path)
+void setMetadataURL(const String& path, const String& metadataURLString)
 {
-    NSURL *URL = URLWithUserTypedString(URLString, nil);
-    if (URL)
-        URLString = userVisibleString(URLByRemovingUserInfo(URL));
+    String urlString;
+    if (NSURL *url = URLWithUserTypedString(urlString, nil))
+        urlString = userVisibleString(URLByRemovingUserInfo(url));
+    else
+        urlString = metadataURLString;
 
     // Call WKSetMetadataURL on a background queue because it can take some time.
-    NSString *URLStringCopy = URLString;
-    NSString *referrerCopy = referrer;
-    NSString *pathCopy = path;
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        wkSetMetadataURL(URLStringCopy, referrerCopy, [NSString stringWithUTF8String:[pathCopy fileSystemRepresentation]]);
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), [path = path.isolatedCopy(), urlString = urlString.isolatedCopy()] {
+        wkSetMetadataURL(urlString, nil, [NSString stringWithUTF8String:[path fileSystemRepresentation]]);
     });
 }
 

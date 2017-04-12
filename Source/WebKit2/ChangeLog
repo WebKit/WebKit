@@ -1,3 +1,15 @@
+2017-04-12  Anders Carlsson  <andersca@apple.com>
+
+        Tweak WebCore::setMetadataURL function
+        https://bugs.webkit.org/show_bug.cgi?id=170786
+
+        Reviewed by Beth Dakin.
+
+        Update for WebCore changes.
+
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::namesOfPromisedFilesDroppedAtDestination):
+
 2017-04-12  Brent Fulgham  <bfulgham@apple.com>
 
         [WK2][Mac] Stop allowing access to disk arbitration process
