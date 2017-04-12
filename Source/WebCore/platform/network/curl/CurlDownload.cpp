@@ -43,9 +43,6 @@ namespace WebCore {
 // CurlDownloadManager -------------------------------------------------------------------
 
 CurlDownloadManager::CurlDownloadManager()
-: m_threadId(0)
-, m_curlMultiHandle(0)
-, m_runThread(false)
 {
     curl_global_init(CURL_GLOBAL_ALL);
     m_curlMultiHandle = curl_multi_init();
@@ -233,15 +230,7 @@ void CurlDownloadManager::downloadThread(void* data)
 
 CurlDownloadManager CurlDownload::m_downloadManager;
 
-CurlDownload::CurlDownload()
-    : m_curlHandle(nullptr)
-    , m_customHeaders(nullptr)
-    , m_url(nullptr)
-    , m_tempHandle(invalidPlatformFileHandle)
-    , m_deletesFileUponFailure(false)
-    , m_listener(nullptr)
-{
-}
+CurlDownload::CurlDownload() = default;
 
 CurlDownload::~CurlDownload()
 {

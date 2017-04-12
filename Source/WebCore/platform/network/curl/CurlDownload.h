@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef CurlDownload_h
-#define CurlDownload_h
+#pragma once
 
 #include "FileSystem.h"
 #include "ResourceHandle.h"
@@ -70,12 +69,12 @@ private:
     static void downloadThread(void* data);
 
     RefPtr<Thread> m_thread;
-    CURLM* m_curlMultiHandle;
+    CURLM* m_curlMultiHandle { nullptr };
     Vector<CURL*> m_pendingHandleList;
     Vector<CURL*> m_activeHandleList;
     Vector<CURL*> m_removedHandleList;
     mutable Lock m_mutex;
-    bool m_runThread;
+    bool m_runThread { false };
 };
 
 class CurlDownloadListener {
@@ -133,16 +132,16 @@ private:
     static void receivedDataCallback(CurlDownload*, int size);
     static void receivedResponseCallback(CurlDownload*);
 
-    CURL* m_curlHandle;
-    struct curl_slist* m_customHeaders;
-    char* m_url;
+    CURL* m_curlHandle { nullptr };
+    struct curl_slist* m_customHeaders { nullptr };
+    char* m_url { nullptr };
     String m_tempPath;
     String m_destination;
-    WebCore::PlatformFileHandle m_tempHandle;
+    WebCore::PlatformFileHandle m_tempHandle { invalidPlatformFileHandle };
     WebCore::ResourceResponse m_response;
-    bool m_deletesFileUponFailure;
+    bool m_deletesFileUponFailure { false };
     mutable Lock m_mutex;
-    CurlDownloadListener *m_listener;
+    CurlDownloadListener* m_listener { nullptr };
 
     static CurlDownloadManager m_downloadManager;
 
@@ -150,5 +149,3 @@ private:
 };
 
 }
-
-#endif

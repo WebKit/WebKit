@@ -1,3 +1,16 @@
+2017-04-12  Alex Christensen  <achristensen@webkit.org>
+
+        Fix WinCairo build after r215265
+        https://bugs.webkit.org/show_bug.cgi?id=170502
+
+        m_threadId was removed in the header but not in the constructor implementation.
+        Initializer lists are our friends.
+
+        * platform/network/curl/CurlDownload.cpp:
+        (WebCore::CurlDownloadManager::CurlDownloadManager):
+        (WebCore::CurlDownload::CurlDownload): Deleted.
+        * platform/network/curl/CurlDownload.h:
+
 2017-04-12  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed, build fix for Win and GTK
