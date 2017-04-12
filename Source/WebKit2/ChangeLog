@@ -1,5 +1,12 @@
 2017-04-12  Beth Dakin  <bdakin@apple.com>
 
+        32-bit build fix.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _mediaPlaybackControlsView]):
+
+2017-04-12  Beth Dakin  <bdakin@apple.com>
+
         More 32-bit build fix.
 
         * UIProcess/API/Cocoa/WKWebView.mm:
