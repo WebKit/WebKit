@@ -38,6 +38,7 @@
 #include "MediaProducer.h"
 #include "UserInterfaceLayoutDirection.h"
 #include "VisibilityChangeClient.h"
+#include <wtf/WeakPtr.h>
 
 #if ENABLE(VIDEO_TRACK)
 #include "AudioTrack.h"
@@ -73,6 +74,7 @@ class MediaElementAudioSourceNode;
 class MediaError;
 class MediaKeys;
 class MediaPlayer;
+class MediaResourceLoader;
 class MediaSession;
 class MediaSource;
 class MediaStream;
@@ -500,6 +502,8 @@ public:
     bool isTemporarilyAllowingInlinePlaybackAfterFullscreen() const {return m_temporarilyAllowingInlinePlaybackAfterFullscreen; }
 
     void isVisibleInViewportChanged();
+
+    WEBCORE_EXPORT const MediaResourceLoader* lastMediaResourceLoaderForTesting() const;
 
 protected:
     HTMLMediaElement(const QualifiedName&, Document&, bool createdByParser);
@@ -1032,6 +1036,8 @@ private:
     RefPtr<MediaController> m_mediaController;
 
     std::unique_ptr<DisplaySleepDisabler> m_sleepDisabler;
+
+    WeakPtr<const MediaResourceLoader> m_lastMediaResourceLoaderForTesting;
 
     friend class TrackDisplayUpdateScope;
 

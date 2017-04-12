@@ -31,8 +31,10 @@
 #include "CachedResourceHandle.h"
 #include "ContextDestructionObserver.h"
 #include "PlatformMediaResourceLoader.h"
+#include "ResourceResponse.h"
 #include <wtf/HashSet.h>
 #include <wtf/Ref.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -53,6 +55,11 @@ public:
     Document* document() { return m_document; }
     const String& crossOriginMode() const { return m_crossOriginMode; }
 
+    Vector<ResourceResponse> responsesForTesting() const { return m_responsesForTesting; }
+    void addResponseForTesting(const ResourceResponse&);
+
+    WeakPtr<const MediaResourceLoader> createWeakPtr() const { return m_weakFactory.createWeakPtr(); }
+
 private:
     void contextDestroyed() override;
 
@@ -60,6 +67,8 @@ private:
     RefPtr<HTMLMediaElement> m_mediaElement;
     String m_crossOriginMode;
     HashSet<MediaResource*> m_resources;
+    WeakPtrFactory<const MediaResourceLoader> m_weakFactory;
+    Vector<ResourceResponse> m_responsesForTesting;
 };
 
 class MediaResource : public PlatformMediaResource, CachedRawResourceClient {

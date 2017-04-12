@@ -212,8 +212,6 @@ static RetrieveDecision makeRetrieveDecision(const WebCore::ResourceRequest& req
     // FIXME: Support HEAD requests.
     if (request.httpMethod() != "GET")
         return RetrieveDecision::NoDueToHTTPMethod;
-    if (request.requester() == WebCore::ResourceRequest::Requester::Media)
-        return RetrieveDecision::NoDueToStreamingMedia;
     if (request.cachePolicy() == WebCore::ReloadIgnoringCacheData && !request.isConditional())
         return RetrieveDecision::NoDueToReloadIgnoringCache;
 
@@ -229,7 +227,34 @@ static bool isMediaMIMEType(const String& mimeType)
     return false;
 }
 
-static StoreDecision makeStoreDecision(const WebCore::ResourceRequest& originalRequest, const WebCore::ResourceResponse& response)
+static std::optional<size_t> expectedTotalResourceSizeFromContentRange(const WebCore::ResourceResponse& response)
+{
+    ASSERT(response.httpStatusCode() == 206);
+
+    auto contentRange = response.httpHeaderField(WebCore::HTTPHeaderName::ContentRange);
+    if (contentRange.isNull())
+        return { };
+
+    if (!contentRange.startsWith("bytes "))
+        return { };
+
+    auto slashPosition = contentRange.find('/');
+    if (slashPosition == notFound)
+        return { };
+
+    auto sizeStringLength = contentRange.length() - slashPosition - 1;
+    if (!sizeStringLength)
+        return { };
+
+    bool isValid;
+    auto size = StringView(contentRange).right(sizeStringLength).toIntStrict(isValid);
+    if (!isValid)
+        return { };
+
+    return size;
+}
+
+static StoreDecision makeStoreDecision(const WebCore::ResourceRequest& originalRequest, const WebCore::ResourceResponse& response, size_t bodySize)
 {
     if (!originalRequest.url().protocolIsInHTTPFamily() || !response.isHTTP())
         return StoreDecision::NoDueToProtocol;
@@ -263,15 +288,25 @@ static StoreDecision makeStoreDecision(const WebCore::ResourceRequest& originalR
             return StoreDecision::NoDueToUnlikelyToReuse;
     }
 
-    // Media loaded via XHR is likely being used for MSE streaming (YouTube and Netflix for example).
     // Streaming media fills the cache quickly and is unlikely to be reused.
     // FIXME: We should introduce a separate media cache partition that doesn't affect other resources.
     // FIXME: We should also make sure make the MSE paths are copy-free so we can use mapped buffers from disk effectively.
     auto requester = originalRequest.requester();
-    bool isDefinitelyStreamingMedia = requester == WebCore::ResourceRequest::Requester::Media;
+    bool isDefinitelyMedia = requester == WebCore::ResourceRequest::Requester::Media;
+    if (isDefinitelyMedia) {
+        // Allow caching of smaller media files if we know the total size.
+        const size_t maximumCacheableMediaSize = 5 * 1024 * 1024;
+        auto totalSize = response.httpStatusCode() == 206 ? expectedTotalResourceSizeFromContentRange(response) : bodySize;
+        if (!totalSize || *totalSize > maximumCacheableMediaSize)
+            return StoreDecision::NoDueToStreamingMedia;
+    }
+
     bool isLikelyStreamingMedia = requester == WebCore::ResourceRequest::Requester::XHR && isMediaMIMEType(response.mimeType());
-    if (isLikelyStreamingMedia || isDefinitelyStreamingMedia)
+    if (isLikelyStreamingMedia) {
+        // Media loaded via XHR is likely being used for MSE streaming (YouTube and Netflix for example).
+        // We have no way of knowing the total media size so disallow caching.
         return StoreDecision::NoDueToStreamingMedia;
+    }
 
     return StoreDecision::Yes;
 }
@@ -374,7 +409,7 @@ std::unique_ptr<Entry> Cache::store(const WebCore::ResourceRequest& request, con
 
     LOG(NetworkCache, "(NetworkProcess) storing %s, partition %s", request.url().string().latin1().data(), makeCacheKey(request).partition().latin1().data());
 
-    StoreDecision storeDecision = makeStoreDecision(request, response);
+    StoreDecision storeDecision = makeStoreDecision(request, response, responseData ? responseData->size() : 0);
     if (storeDecision != StoreDecision::Yes) {
         LOG(NetworkCache, "(NetworkProcess) didn't store, storeDecision=%d", static_cast<int>(storeDecision));
         auto key = makeCacheKey(request);
@@ -418,7 +453,7 @@ std::unique_ptr<Entry> Cache::storeRedirect(const WebCore::ResourceRequest& requ
 
     LOG(NetworkCache, "(NetworkProcess) storing redirect %s -> %s", request.url().string().latin1().data(), redirectRequest.url().string().latin1().data());
 
-    StoreDecision storeDecision = makeStoreDecision(request, response);
+    StoreDecision storeDecision = makeStoreDecision(request, response, 0);
     if (storeDecision != StoreDecision::Yes) {
         LOG(NetworkCache, "(NetworkProcess) didn't store redirect, storeDecision=%d", static_cast<int>(storeDecision));
         auto key = makeCacheKey(request);

@@ -45,6 +45,7 @@ MediaResourceLoader::MediaResourceLoader(Document& document, HTMLMediaElement& m
     , m_document(&document)
     , m_mediaElement(&mediaElement)
     , m_crossOriginMode(crossOriginMode)
+    , m_weakFactory(this)
 {
 }
 
@@ -94,6 +95,14 @@ void MediaResourceLoader::removeResource(MediaResource& mediaResource)
 {
     ASSERT(m_resources.contains(&mediaResource));
     m_resources.remove(&mediaResource);
+}
+
+void MediaResourceLoader::addResponseForTesting(const ResourceResponse& response)
+{
+    const auto maximumResponsesForTesting = 5;
+    if (m_responsesForTesting.size() > maximumResponsesForTesting)
+        return;
+    m_responsesForTesting.append(response);
 }
 
 Ref<MediaResource> MediaResource::create(MediaResourceLoader& loader, CachedResourceHandle<CachedRawResource> resource)
@@ -151,6 +160,8 @@ void MediaResource::responseReceived(CachedResource& resource, const ResourceRes
     m_didPassAccessControlCheck = m_resource->options().mode == FetchOptions::Mode::Cors;
     if (m_client)
         m_client->responseReceived(*this, response);
+
+    m_loader->addResponseForTesting(response);
 }
 
 bool MediaResource::shouldCacheResponse(CachedResource& resource, const ResourceResponse& response)

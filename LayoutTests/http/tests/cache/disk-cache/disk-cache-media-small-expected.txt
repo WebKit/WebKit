@@ -1,0 +1,7 @@
+First load
+Content range: bytes 0-1/192844, Response source: Network
+Content range: bytes 0-192843/192844, Response source: Network
+Second Load
+Content range: bytes 0-1/192844, Response source: Disk cache
+Content range: bytes 0-192843/192844, Response source: Disk cache
+ 

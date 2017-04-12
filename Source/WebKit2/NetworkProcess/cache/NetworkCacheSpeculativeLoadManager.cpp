@@ -364,6 +364,8 @@ void SpeculativeLoadManager::registerLoad(const GlobalFrameID& frameID, const Re
 
     if (request.httpMethod() != "GET")
         return;
+    if (!request.httpHeaderField(HTTPHeaderName::Range).isEmpty())
+        return;
 
     auto isMainResource = request.requester() == ResourceRequest::Requester::Main;
     if (isMainResource) {

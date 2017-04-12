@@ -137,6 +137,7 @@ fast/shadow-dom/pointerlockelement-in-slot.html
 # FIXME: Media tests not supported on iOS
 http/tests/media
 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements
+http/tests/cache/disk-cache/disk-cache-media-small.html
 
 # No touch events
 fast/events/touch [ Skip ]

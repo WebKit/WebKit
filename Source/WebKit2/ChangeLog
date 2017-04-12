@@ -1,3 +1,23 @@
+2017-04-10  Antti Koivisto  <antti@apple.com>
+
+        Cache small media resources in disk cache
+        https://bugs.webkit.org/show_bug.cgi?id=170676
+        <rdar://problem/31532649>
+
+        Reviewed by Andreas Kling.
+
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::makeRetrieveDecision):
+
+            Allow retrieving media resources.
+
+        (WebKit::NetworkCache::expectedTotalResourceSizeFromContentRange):
+        (WebKit::NetworkCache::expectedTotalResourceSize):
+        (WebKit::NetworkCache::makeStoreDecision):
+
+            Store media resource if we can figure out its total size and it is less than 5MB
+            (and it is cacheable by the usual rules).
+
 2017-04-12  Alex Christensen  <achristensen@webkit.org>
 
         Modernize vector adoption

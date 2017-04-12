@@ -646,4 +646,7 @@ webkit.org/b/170203 fast/images/animated-image-different-dest-size.html [ Pass I
 
 webkit.org/b/170410 fast/images/animated-gif-webkit-transform.html [ Pass Failure ]
 
+# Media loading via network cache requires Sierra or newer.
+[ ElCapitan ] http/tests/cache/disk-cache/disk-cache-media-small.html [ Failure ]
+
 compositing/tiling/non-visible-window-tile-coverage.html [ Pass ]

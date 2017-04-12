@@ -97,6 +97,8 @@ enum EventThrottlingBehavior {
     boolean isPreloaded(DOMString url);
     boolean isLoadingFromMemoryCache(DOMString url);
     DOMString xhrResponseSource(XMLHttpRequest xhr);
+    sequence<DOMString> mediaResponseSources(HTMLMediaElement media);
+    sequence<DOMString> mediaResponseContentRanges(HTMLMediaElement media);
     boolean isSharingStyleSheetContents(HTMLLinkElement a, HTMLLinkElement b);
     boolean isStyleSheetLoadingSubresources(HTMLLinkElement link);
     void clearMemoryCache();
