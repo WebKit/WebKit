@@ -1468,6 +1468,7 @@ inline bool isValidVisitedLinkProperty(CSSPropertyID id)
     case CSSPropertyWebkitTextStrokeColor:
     case CSSPropertyFill:
     case CSSPropertyStroke:
+    case CSSPropertyStrokeColor:
         return true;
     default:
         break;

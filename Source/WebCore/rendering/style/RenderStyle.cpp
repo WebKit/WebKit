@@ -886,7 +886,8 @@ bool RenderStyle::changeRequiresRepaintIfTextOrBorderOrOutline(const RenderStyle
         || m_rareInheritedData->textFillColor != other.m_rareInheritedData->textFillColor
         || m_rareInheritedData->textStrokeColor != other.m_rareInheritedData->textStrokeColor
         || m_rareInheritedData->textEmphasisColor != other.m_rareInheritedData->textEmphasisColor
-        || m_rareInheritedData->textEmphasisFill != other.m_rareInheritedData->textEmphasisFill)
+        || m_rareInheritedData->textEmphasisFill != other.m_rareInheritedData->textEmphasisFill
+        || m_rareInheritedData->strokeColor != other.m_rareInheritedData->strokeColor)
         return true;
 
     return false;
@@ -1754,6 +1755,9 @@ Color RenderStyle::colorIncludingFallback(int colorProperty, bool visitedLink) c
         break;
     case CSSPropertyWebkitTextStrokeColor:
         result = visitedLink ? visitedLinkTextStrokeColor() : textStrokeColor();
+        break;
+    case CSSPropertyStrokeColor:
+        result = visitedLink ? visitedLinkStrokeColor() : strokeColor();
         break;
     default:
         ASSERT_NOT_REACHED();

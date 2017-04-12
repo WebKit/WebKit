@@ -38,7 +38,7 @@ struct GreaterThanOrSameSizeAsStyleRareInheritedData : public RefCounted<Greater
     void* styleImage;
     Color firstColor;
     float firstFloat;
-    Color colors[5];
+    Color colors[7];
     void* ownPtrs[1];
     AtomicString atomicStrings[5];
     void* refPtrs[2];
@@ -129,6 +129,7 @@ StyleRareInheritedData::StyleRareInheritedData()
     , capStyle(RenderStyle::initialCapStyle())
     , joinStyle(RenderStyle::initialJoinStyle())
     , hasSetStrokeWidth(false)
+    , hasSetStrokeColor(false)
     , strokeWidth(RenderStyle::initialOneLength())
     , miterLimit(RenderStyle::initialStrokeMiterLimit())
     , hyphenationLimitBefore(-1)
@@ -217,7 +218,10 @@ inline StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedDa
     , capStyle(o.capStyle)
     , joinStyle(o.joinStyle)
     , hasSetStrokeWidth(o.hasSetStrokeWidth)
+    , hasSetStrokeColor(o.hasSetStrokeColor)
     , strokeWidth(o.strokeWidth)
+    , strokeColor(o.strokeColor)
+    , visitedLinkStrokeColor(o.visitedLinkStrokeColor)
     , miterLimit(o.miterLimit)
     , hyphenationString(o.hyphenationString)
     , hyphenationLimitBefore(o.hyphenationLimitBefore)
@@ -329,7 +333,10 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
         && capStyle == o.capStyle
         && joinStyle == o.joinStyle
         && hasSetStrokeWidth == o.hasSetStrokeWidth
+        && hasSetStrokeColor == o.hasSetStrokeColor
         && strokeWidth == o.strokeWidth
+        && strokeColor == o.strokeColor
+        && visitedLinkStrokeColor == o.visitedLinkStrokeColor
         && miterLimit == o.miterLimit
         && customProperties == o.customProperties
         && arePointingToEqualData(listStyleImage, o.listStyleImage);

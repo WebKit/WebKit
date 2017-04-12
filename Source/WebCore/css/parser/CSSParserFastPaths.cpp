@@ -168,6 +168,7 @@ static inline bool isColorPropertyID(CSSPropertyID propertyId)
     case CSSPropertyOutlineColor:
     case CSSPropertyStopColor:
     case CSSPropertyStroke:
+    case CSSPropertyStrokeColor:
     case CSSPropertyWebkitBorderAfterColor:
     case CSSPropertyWebkitBorderBeforeColor:
     case CSSPropertyWebkitBorderEndColor:

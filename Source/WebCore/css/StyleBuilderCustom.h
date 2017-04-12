@@ -140,6 +140,7 @@ public:
     static void applyValueWillChange(StyleResolver&, CSSValue&);
 
     static void applyValueStrokeWidth(StyleResolver&, CSSValue&);
+    static void applyValueStrokeColor(StyleResolver&, CSSValue&);
 
 private:
     static void resetEffectiveZoom(StyleResolver&);
@@ -1786,6 +1787,16 @@ inline void StyleBuilderCustom::applyValueStrokeWidth(StyleResolver& styleResolv
 {
     styleResolver.style()->setStrokeWidth(StyleBuilderConverter::convertLength(styleResolver, value));
     styleResolver.style()->setHasExplicitlySetStrokeWidth(true);
+}
+
+inline void StyleBuilderCustom::applyValueStrokeColor(StyleResolver& styleResolver, CSSValue& value)
+{
+    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
+    if (styleResolver.applyPropertyToRegularStyle())
+        styleResolver.style()->setStrokeColor(styleResolver.colorFromPrimitiveValue(primitiveValue, /* forVisitedLink */ false));
+    if (styleResolver.applyPropertyToVisitedLinkStyle())
+        styleResolver.style()->setVisitedLinkStrokeColor(styleResolver.colorFromPrimitiveValue(primitiveValue, /* forVisitedLink */ true));
+    styleResolver.style()->setHasExplicitlySetStrokeColor(true);
 }
 
 } // namespace WebCore

@@ -3052,6 +3052,19 @@
                 "url": "https://www.w3.org/TR/SVG11/painting.html#StrokeOpacityProperty"
             }
         },
+        "stroke-color": {
+            "inherited": true,
+            "codegen-properties": {
+                "custom": "Value",
+                "initial": "invalidColor",
+                "visited-link-color-support": true
+            },
+            "status": "supported",
+            "specification": {
+                "category": "css-text-fill-and-stroke",
+                "url": "https://drafts.fxtf.org/fill-stroke-3/#propdef-stroke-color"
+            }
+        },
         "stroke-width": {
             "inherited": true,
             "codegen-properties": {

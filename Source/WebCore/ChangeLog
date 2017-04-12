@@ -1,3 +1,50 @@
+2017-04-12  Per Arne Vollan  <pvollan@apple.com>
+
+        Implement stroke-color CSS property.
+        https://bugs.webkit.org/show_bug.cgi?id=169352
+
+        Reviewed by Jon Lee.
+
+        Support setting text stroke color using the CSS property stroke-color, see https://drafts.fxtf.org/paint/.
+        Text stroke color can currently be set with the -webkit-text-stroke-color property. To make sure this still
+        works, I added a check to determine if the stroke-color property has been explicitly set. If it has not been
+        set, we fall back to the value of the -webkit-text-stroke-color property.
+
+        Tests: fast/css/stroke-color-fallback.html
+               fast/css/stroke-color.html
+               fast/css/visited-link-stroke-color.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * css/CSSProperties.json:
+        * css/StyleBuilderCustom.h:
+        (WebCore::StyleBuilderCustom::applyValueStrokeColor):
+        * css/StyleResolver.cpp:
+        (WebCore::isValidVisitedLinkProperty):
+        * css/parser/CSSParserFastPaths.cpp:
+        (WebCore::isColorPropertyID):
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::CSSPropertyParser::parseSingleValue):
+        * rendering/TextDecorationPainter.cpp:
+        (WebCore::decorationColor):
+        * rendering/TextPaintStyle.cpp:
+        (WebCore::computeTextPaintStyle):
+        (WebCore::computeTextSelectionPaintStyle):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::changeRequiresRepaintIfTextOrBorderOrOutline):
+        (WebCore::RenderStyle::colorIncludingFallback):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::strokeColor):
+        (WebCore::RenderStyle::setStrokeColor):
+        (WebCore::RenderStyle::setVisitedLinkStrokeColor):
+        (WebCore::RenderStyle::visitedLinkStrokeColor):
+        (WebCore::RenderStyle::setHasExplicitlySetStrokeColor):
+        (WebCore::RenderStyle::hasExplicitlySetStrokeColor):
+        * rendering/style/StyleRareInheritedData.cpp:
+        (WebCore::StyleRareInheritedData::StyleRareInheritedData):
+        (WebCore::StyleRareInheritedData::operator==):
+        * rendering/style/StyleRareInheritedData.h:
+
 2017-04-11  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Use the DisplayRefreshMonitor facilities

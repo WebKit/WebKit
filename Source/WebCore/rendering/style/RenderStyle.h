@@ -1268,6 +1268,13 @@ public:
     bool hasExplicitlySetStrokeWidth() const { return m_rareInheritedData->hasSetStrokeWidth; };
     bool hasPositiveStrokeWidth() const;
     
+    Color strokeColor() const { return m_rareInheritedData->strokeColor; }
+    void setStrokeColor(const Color& v)  { SET_VAR(m_rareInheritedData, strokeColor, v); }
+    void setVisitedLinkStrokeColor(const Color& v) { SET_VAR(m_rareInheritedData, visitedLinkStrokeColor, v); }
+    const Color& visitedLinkStrokeColor() const { return m_rareInheritedData->visitedLinkStrokeColor; }
+    void setHasExplicitlySetStrokeColor(bool v) { SET_VAR(m_rareInheritedData, hasSetStrokeColor, static_cast<unsigned>(v)); }
+    bool hasExplicitlySetStrokeColor() const { return m_rareInheritedData->hasSetStrokeColor; };
+    
     float strokeMiterLimit() const { return m_rareInheritedData->miterLimit; }
     void setStrokeMiterLimit(float f) { SET_VAR(m_rareInheritedData, miterLimit, f); }
     static float initialStrokeMiterLimit() { return defaultMiterLimit; }

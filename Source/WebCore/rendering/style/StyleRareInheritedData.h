@@ -140,7 +140,10 @@ public:
     unsigned capStyle : 2; // LineCap
     unsigned joinStyle : 2; // LineJoin
     unsigned hasSetStrokeWidth : 1;
-    Length strokeWidth;    
+    unsigned hasSetStrokeColor : 1;
+    Length strokeWidth;
+    Color strokeColor;
+    Color visitedLinkStrokeColor;
     float miterLimit;
 
     AtomicString hyphenationString;

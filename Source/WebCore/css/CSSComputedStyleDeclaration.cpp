@@ -460,6 +460,7 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyRx,
     CSSPropertyRy,
     CSSPropertyStroke,
+    CSSPropertyStrokeColor,
     CSSPropertyStrokeDasharray,
     CSSPropertyStrokeDashoffset,
     CSSPropertyStrokeLinecap,
@@ -3920,6 +3921,8 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
             return CSSPrimitiveValue::create(style->joinStyle());
         case CSSPropertyStrokeWidth:
             return zoomAdjustedPixelValueForLength(style->strokeWidth(), *style);
+        case CSSPropertyStrokeColor:
+            return currentColorOrValidColor(style, style->strokeColor());
         case CSSPropertyStrokeMiterlimit:
             return CSSPrimitiveValue::create(style->strokeMiterLimit(), CSSPrimitiveValue::CSS_NUMBER);
 
