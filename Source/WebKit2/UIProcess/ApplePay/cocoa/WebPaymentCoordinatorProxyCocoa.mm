@@ -168,7 +168,10 @@ static WebCore::PaymentRequest::ShippingMethod toShippingMethod(PKShippingMethod
 - (void)paymentAuthorizationViewController:(PKPaymentAuthorizationViewController *)controller didSelectPaymentMethod:(PKPaymentMethod *)paymentMethod handler:(void (^)(PKPaymentRequestPaymentMethodUpdate *update))completion
 {
     if (!_webPaymentCoordinatorProxy) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         completion(adoptNS([allocPKPaymentRequestPaymentMethodUpdateInstance() initWithStatus:PKPaymentAuthorizationStatusFailure paymentSummaryItems:@[ ]]).get());
+#pragma clang diagnostic pop
         return;
     }
 
@@ -179,7 +182,10 @@ static WebCore::PaymentRequest::ShippingMethod toShippingMethod(PKShippingMethod
 
 - (void)paymentAuthorizationViewController:(PKPaymentAuthorizationViewController *)controller didSelectShippingMethod:(PKShippingMethod *)shippingMethod handler:(void (^)(PKPaymentRequestShippingMethodUpdate *update))completion {
     if (!_webPaymentCoordinatorProxy) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         completion(adoptNS([allocPKPaymentRequestShippingMethodUpdateInstance() initWithStatus:PKPaymentAuthorizationStatusFailure paymentSummaryItems:@[ ]]).get());
+#pragma clang diagnostic pop
         return;
     }
 
@@ -191,7 +197,10 @@ static WebCore::PaymentRequest::ShippingMethod toShippingMethod(PKShippingMethod
 - (void)paymentAuthorizationViewController:(PKPaymentAuthorizationViewController *)controller didSelectShippingContact:(PKContact *)contact handler:(void (^)(PKPaymentRequestShippingContactUpdate *update))completion
 {
     if (!_webPaymentCoordinatorProxy) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         completion(adoptNS([allocPKPaymentRequestShippingContactUpdateInstance() initWithStatus:PKPaymentAuthorizationStatusFailure errors:@[ ] paymentSummaryItems:@[ ] shippingMethods:@[ ]]).get());
+#pragma clang diagnostic pop
         return;
     }
 
@@ -704,7 +713,10 @@ void WebPaymentCoordinatorProxy::platformCompleteShippingMethodSelection(const s
         m_paymentAuthorizationViewControllerDelegate->_paymentSummaryItems = toPKPaymentSummaryItems(update->newTotalAndLineItems);
 
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     auto pkShippingMethodUpdate = adoptNS([allocPKPaymentRequestShippingMethodUpdateInstance() initWithStatus:toPKPaymentAuthorizationStatus(status) paymentSummaryItems:m_paymentAuthorizationViewControllerDelegate->_paymentSummaryItems.get()]);
+#pragma clang diagnostic pop
     m_paymentAuthorizationViewControllerDelegate->_didSelectShippingMethodCompletion(pkShippingMethodUpdate.get());
 #else
     m_paymentAuthorizationViewControllerDelegate->_didSelectShippingMethodCompletion(toPKPaymentAuthorizationStatus(status), m_paymentAuthorizationViewControllerDelegate->_paymentSummaryItems.get());
@@ -730,7 +742,10 @@ void WebPaymentCoordinatorProxy::platformCompleteShippingContactSelection(const 
     }
 
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     auto pkShippingContactUpdate = adoptNS([allocPKPaymentRequestShippingContactUpdateInstance() initWithStatus:toPKPaymentAuthorizationStatus(status) errors:update ? toNSErrors(update->errors).get() : @[ ] paymentSummaryItems:m_paymentAuthorizationViewControllerDelegate->_paymentSummaryItems.get() shippingMethods:m_paymentAuthorizationViewControllerDelegate->_shippingMethods.get()]);
+#pragma clang diagnostic pop
     m_paymentAuthorizationViewControllerDelegate->_didSelectShippingContactCompletion(pkShippingContactUpdate.get());
 #else
     m_paymentAuthorizationViewControllerDelegate->_didSelectShippingContactCompletion(toPKPaymentAuthorizationStatus(status), m_paymentAuthorizationViewControllerDelegate->_shippingMethods.get(), m_paymentAuthorizationViewControllerDelegate->_paymentSummaryItems.get());
@@ -748,7 +763,10 @@ void WebPaymentCoordinatorProxy::platformCompletePaymentMethodSelection(const st
 
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
     auto status = update ? update->status : WebCore::PaymentAuthorizationStatus::Success;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     auto pkPaymentMethodUpdate = adoptNS([allocPKPaymentRequestPaymentMethodUpdateInstance() initWithStatus:toPKPaymentAuthorizationStatus(status) paymentSummaryItems:m_paymentAuthorizationViewControllerDelegate->_paymentSummaryItems.get()]);
+#pragma clang diagnostic pop
     m_paymentAuthorizationViewControllerDelegate->_didSelectPaymentMethodCompletion(pkPaymentMethodUpdate.get());
 #else
     m_paymentAuthorizationViewControllerDelegate->_didSelectPaymentMethodCompletion(m_paymentAuthorizationViewControllerDelegate->_paymentSummaryItems.get());
