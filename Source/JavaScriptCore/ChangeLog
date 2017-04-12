@@ -1,3 +1,107 @@
+2017-04-12  Filip Pizlo  <fpizlo@apple.com>
+
+        B3 -O1 should not allocateStackByGraphColoring
+        https://bugs.webkit.org/show_bug.cgi?id=170742
+
+        Reviewed by Keith Miller.
+        
+        One of B3 -O1's longest running phases is allocateStackByGraphColoring. One approach to
+        this would be to make that phase cheaper. But it's weird that this phase reruns
+        liveness after register allocation already ran liveness. If only it could reuse the
+        liveness computed by register allocation then it would run a lot faster. At -O2, we do
+        not want this, since we run phases between register allocation and stack allocation,
+        and those phases are free to change the liveness of spill slots (in fact,
+        fixObviousSpills will both shorten and lengthen live ranges because of load and store
+        elimination, respectively). But at -O1, we don't really need to run any phases between
+        register and stack allocation.
+        
+        This changes Air's backend in the following ways:
+        
+        - Linear scan does stack allocation. This means that we don't need to run
+          allocateStackByGraphColoring at all. In reality, we reuse some of its innards, but
+          we don't run the expensive part of it (liveness->interference->coalescing->coloring).
+          This is a speed-up because we only run liveness once and reuse it for both register
+          and stack allocation.
+        
+        - Phases that previously ran between register and stack allocation are taken care of,
+          each in its own special way:
+          
+          -> handleCalleSaves: this is now a utility function called by both
+             allocateStackByGraphColoring and allocateRegistersAndStackByLinearScan.
+          
+          -> fixObviousSpills: we didn't run this at -O1, so nothing needs to be done.
+          
+          -> lowerAfterRegAlloc: this needed to be able to run before stack allocation because
+             it could change register usage (vis a vis callee saves) and it could introduce
+             spill slots. I changed this phase to have a secondary mode for when it runs after
+             stack allocation.
+        
+        - The part of allocateStackByGraphColoring that lowered stack addresses and took care
+          of the call arg area is now a separate phase called lowerStackArgs. We run this phase
+          regardless of optimization level. It's a cheap and general lowering.
+        
+        This also removes spillEverything, because we never use that phase, we never test it,
+        and it got in the way in this refactoring.
+        
+        This is a 21% speed-up on wasm -O1 compile times. This does not significantly change
+        -O1 throughput. We had already disabled allocateStack's most important optimization
+        (spill coalescing). This probably regresses average stack frame size, but I didn't
+        measure by how much. Stack frame size is really not that important. The algorithm in
+        allocateStackByGraphColoring is about much more than optimal frame size; it also
+        tries to avoid having to zero-extend 32-bit spills, it kills dead code, and of course
+        it coalesces.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * b3/B3Procedure.cpp:
+        (JSC::B3::Procedure::calleeSaveRegisterAtOffsetList):
+        (JSC::B3::Procedure::calleeSaveRegisters): Deleted.
+        * b3/B3Procedure.h:
+        * b3/B3StackmapGenerationParams.cpp:
+        (JSC::B3::StackmapGenerationParams::unavailableRegisters):
+        * b3/air/AirAllocateRegistersAndStackByLinearScan.cpp: Copied from Source/JavaScriptCore/b3/air/AirAllocateRegistersByLinearScan.cpp.
+        (JSC::B3::Air::allocateRegistersAndStackByLinearScan):
+        (JSC::B3::Air::allocateRegistersByLinearScan): Deleted.
+        * b3/air/AirAllocateRegistersAndStackByLinearScan.h: Copied from Source/JavaScriptCore/b3/air/AirAllocateRegistersByLinearScan.h.
+        * b3/air/AirAllocateRegistersByLinearScan.cpp: Removed.
+        * b3/air/AirAllocateRegistersByLinearScan.h: Removed.
+        * b3/air/AirAllocateStackByGraphColoring.cpp:
+        (JSC::B3::Air::allocateEscapedStackSlots):
+        (JSC::B3::Air::updateFrameSizeBasedOnStackSlots):
+        (JSC::B3::Air::allocateStackByGraphColoring):
+        * b3/air/AirAllocateStackByGraphColoring.h:
+        * b3/air/AirArg.cpp:
+        (JSC::B3::Air::Arg::stackAddr):
+        * b3/air/AirArg.h:
+        (JSC::B3::Air::Arg::stackAddr): Deleted.
+        * b3/air/AirCode.cpp:
+        (JSC::B3::Air::Code::addStackSlot):
+        (JSC::B3::Air::Code::setCalleeSaveRegisterAtOffsetList):
+        (JSC::B3::Air::Code::calleeSaveRegisterAtOffsetList):
+        (JSC::B3::Air::Code::dump):
+        * b3/air/AirCode.h:
+        (JSC::B3::Air::Code::setStackIsAllocated):
+        (JSC::B3::Air::Code::stackIsAllocated):
+        (JSC::B3::Air::Code::calleeSaveRegisters):
+        * b3/air/AirGenerate.cpp:
+        (JSC::B3::Air::prepareForGeneration):
+        (JSC::B3::Air::generate):
+        * b3/air/AirHandleCalleeSaves.cpp:
+        (JSC::B3::Air::handleCalleeSaves):
+        * b3/air/AirHandleCalleeSaves.h:
+        * b3/air/AirLowerAfterRegAlloc.cpp:
+        (JSC::B3::Air::lowerAfterRegAlloc):
+        * b3/air/AirLowerStackArgs.cpp: Added.
+        (JSC::B3::Air::lowerStackArgs):
+        * b3/air/AirLowerStackArgs.h: Added.
+        * b3/testb3.cpp:
+        (JSC::B3::testPinRegisters):
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::compile):
+        * jit/RegisterAtOffsetList.h:
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::parseAndCompile):
+
 2017-04-12  Michael Saboff  <msaboff@apple.com>
 
         Implement Object.isFrozen() and Object.isSealed() per ECMA spec

@@ -20,30 +20,21 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
 #pragma once
 
 #if ENABLE(B3_JIT)
 
-#include "CPU.h"
-#include "Options.h"
-
 namespace JSC { namespace B3 { namespace Air {
 
 class Code;
 
-// This implements the Poletto and Sarkar register allocator called "linear scan":
-// http://dl.acm.org/citation.cfm?id=330250
-//
-// This is not Air's primary register allocator. We use it only when running at optLevel<2. That's not
-// the default level. This register allocator is optimized primarily for running quickly. It's expected
-// that improvements to this register allocator should focus on improving its execution time without much
-// regard for the quality of generated code. If you want good code, use graph coloring.
-//
-// For Air's primary register allocator, see AirAllocateRegistersByGraphColoring.h|cpp.
-void allocateRegistersByLinearScan(Code&);
+// This turns stack and callArg references into actual FP-relative or SP-relative addresses.
+// Also fixes ZDefs to anonymous stack slots.
+
+void lowerStackArgs(Code&);
 
 } } } // namespace JSC::B3::Air
 

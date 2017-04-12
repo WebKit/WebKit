@@ -38,7 +38,7 @@ public:
     enum OffsetBaseType { FramePointerBased, ZeroBased };
 
     RegisterAtOffsetList();
-    RegisterAtOffsetList(RegisterSet, OffsetBaseType = FramePointerBased);
+    explicit RegisterAtOffsetList(RegisterSet, OffsetBaseType = FramePointerBased);
 
     void dump(PrintStream&) const;
 

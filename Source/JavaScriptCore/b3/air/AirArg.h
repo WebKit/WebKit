@@ -560,17 +560,8 @@ public:
         result.m_offset = offset;
         return result;
     }
-
-    static Arg stackAddr(int32_t offsetFromFP, unsigned frameSize, Width width)
-    {
-        Arg result = Arg::addr(Air::Tmp(GPRInfo::callFrameRegister), offsetFromFP);
-        if (!result.isValidForm(width)) {
-            result = Arg::addr(
-                Air::Tmp(MacroAssembler::stackPointerRegister),
-                offsetFromFP + frameSize);
-        }
-        return result;
-    }
+    
+    static Arg stackAddr(int32_t offsetFromFP, unsigned frameSize, Width);
 
     // If you don't pass a Width, this optimistically assumes that you're using the right width.
     static bool isValidScale(unsigned scale, std::optional<Width> width = std::nullopt)

@@ -1328,7 +1328,7 @@ Expected<std::unique_ptr<WasmInternalFunction>, String> parseAndCompile(Compilat
         B3::prepareForGeneration(procedure);
         B3::generate(procedure, *compilationContext.wasmEntrypointJIT);
         compilationContext.wasmEntrypointByproducts = procedure.releaseByproducts();
-        result->wasmEntrypoint.calleeSaveRegisters = procedure.calleeSaveRegisters();
+        result->wasmEntrypoint.calleeSaveRegisters = procedure.calleeSaveRegisterAtOffsetList();
     }
 
     createJSToWasmWrapper(compilationContext, *result, signature, info, mode);

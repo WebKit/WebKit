@@ -186,9 +186,22 @@ public:
     {
         m_entrypointLabels = std::forward<Vector>(vector);
     }
+    
+    void setStackIsAllocated(bool value)
+    {
+        m_stackIsAllocated = value;
+    }
+    
+    bool stackIsAllocated() const { return m_stackIsAllocated; }
+    
+    // This sets the callee save registers.
+    void setCalleeSaveRegisterAtOffsetList(RegisterAtOffsetList&&, StackSlot*);
 
-    const RegisterAtOffsetList& calleeSaveRegisters() const { return m_calleeSaveRegisters; }
-    RegisterAtOffsetList& calleeSaveRegisters() { return m_calleeSaveRegisters; }
+    // This returns the correctly offset list of callee save registers.
+    RegisterAtOffsetList calleeSaveRegisterAtOffsetList() const;
+    
+    // This just tells you what the callee saves are.
+    RegisterSet calleeSaveRegisters() const { return m_calleeSaveRegisters; }
 
     // Recomputes predecessors and deletes unreachable blocks.
     void resetReachability();
@@ -329,7 +342,10 @@ private:
     unsigned m_numFPTmps { 0 };
     unsigned m_frameSize { 0 };
     unsigned m_callArgAreaSize { 0 };
-    RegisterAtOffsetList m_calleeSaveRegisters;
+    bool m_stackIsAllocated { false };
+    RegisterAtOffsetList m_uncorrectedCalleeSaveRegisterAtOffsetList;
+    RegisterSet m_calleeSaveRegisters;
+    StackSlot* m_calleeSaveStackSlot { nullptr };
     Vector<FrequentedBlock> m_entrypoints; // This is empty until after lowerEntrySwitch().
     Vector<CCallHelpers::Label> m_entrypointLabels; // This is empty until code generation.
     RefPtr<WasmBoundsCheckGenerator> m_wasmBoundsCheckGenerator;

@@ -77,7 +77,7 @@ void compile(State& state, Safepoint::Result& safepointResult)
         return;
     
     std::unique_ptr<RegisterAtOffsetList> registerOffsets =
-        std::make_unique<RegisterAtOffsetList>(state.proc->calleeSaveRegisters());
+        std::make_unique<RegisterAtOffsetList>(state.proc->calleeSaveRegisterAtOffsetList());
     if (shouldDumpDisassembly())
         dataLog("Unwind info for ", CodeBlockWithJITType(state.graph.m_codeBlock, JITCode::FTLJIT), ": ", *registerOffsets, "\n");
     state.graph.m_codeBlock->setCalleeSaveRegisters(WTFMove(registerOffsets));

@@ -398,7 +398,6 @@ typedef const char* optionString;
     \
     v(bool, logB3PhaseTimes, false, Normal, nullptr) \
     v(double, rareBlockPenalty, 0.001, Normal, nullptr) \
-    v(bool, airSpillsEverything, false, Normal, nullptr) \
     v(bool, airLinearScanVerbose, false, Normal, nullptr) \
     v(bool, airLinearScanSpillsEverything, false, Normal, nullptr) \
     v(bool, airForceBriggsAllocator, false, Normal, nullptr) \

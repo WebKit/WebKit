@@ -893,7 +893,7 @@ def runFTLEagerNoCJITValidate(*optionalTestSpecificOptions)
 end
 
 def runFTLEagerNoCJITB3O1(*optionalTestSpecificOptions)
-    run("ftl-eager-no-cjit", "--validateGraph=true", "--airForceIRCAllocator=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + EAGER_OPTIONS + B3O1_OPTIONS + optionalTestSpecificOptions))
+    run("ftl-eager-no-cjit-b3o1", "--validateGraph=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + EAGER_OPTIONS + B3O1_OPTIONS + optionalTestSpecificOptions))
 end
 
 def runFTLEagerNoCJITOSRValidation(*optionalTestSpecificOptions)

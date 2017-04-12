@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,14 +30,11 @@
 
 #include "AirCode.h"
 #include "AirInstInlines.h"
-#include "AirPhaseScope.h"
 
 namespace JSC { namespace B3 { namespace Air {
 
 void handleCalleeSaves(Code& code)
 {
-    PhaseScope phaseScope(code, "handleCalleeSaves");
-
     RegisterSet usedCalleeSaves;
 
     for (BasicBlock* block : code) {
@@ -61,16 +58,15 @@ void handleCalleeSaves(Code& code)
     if (!usedCalleeSaves.numberOfSetRegisters())
         return;
 
-    code.calleeSaveRegisters() = RegisterAtOffsetList(usedCalleeSaves);
+    RegisterAtOffsetList calleeSaveRegisters = RegisterAtOffsetList(usedCalleeSaves);
 
     size_t byteSize = 0;
-    for (const RegisterAtOffset& entry : code.calleeSaveRegisters())
+    for (const RegisterAtOffset& entry : calleeSaveRegisters)
         byteSize = std::max(static_cast<size_t>(-entry.offset()), byteSize);
 
-    StackSlot* savesArea = code.addStackSlot(byteSize, StackSlotKind::Locked);
-    // This is a bit weird since we could have already pinned a different stack slot to this
-    // area. Also, our runtime does not require us to pin the saves area. Maybe we shouldn't pin it?
-    savesArea->setOffsetFromFP(-byteSize);
+    code.setCalleeSaveRegisterAtOffsetList(
+        WTFMove(calleeSaveRegisters),
+        code.addStackSlot(byteSize, StackSlotKind::Locked));
 }
 
 } } } // namespace JSC::B3::Air

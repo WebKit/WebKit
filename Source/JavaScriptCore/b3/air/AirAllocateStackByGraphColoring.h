@@ -33,13 +33,17 @@ class Code;
 
 // This allocates StackSlots to places on the stack. It first allocates the pinned ones in index
 // order and then it allocates the rest using first fit. Takes the opportunity to kill dead
-// assignments to stack slots, since it knows which ones are live. Also fixes ZDefs to anonymous
-// stack slots. Also coalesces spill slots whenever possible.
+// assignments to stack slots, since it knows which ones are live. Also coalesces spill slots
+// whenever possible.
 //
 // This is meant to be an optimal stack allocator, focused on generating great code. It's not
 // particularly fast, though.
 
 void allocateStackByGraphColoring(Code&);
+
+// These are utilities shared by this phase and allocateRegistersAndStackByLinearScan().
+void allocateEscapedStackSlots(Code&);
+void updateFrameSizeBasedOnStackSlots(Code&);
 
 } } } // namespace JSC::B3::Air
 

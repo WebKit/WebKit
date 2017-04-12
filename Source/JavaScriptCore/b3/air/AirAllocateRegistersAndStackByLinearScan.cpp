@@ -24,13 +24,15 @@
  */
 
 #include "config.h"
-#include "AirAllocateRegistersByLinearScan.h"
+#include "AirAllocateRegistersAndStackByLinearScan.h"
 
 #if ENABLE(B3_JIT)
 
+#include "AirAllocateStackByGraphColoring.h"
 #include "AirArgInlines.h"
 #include "AirCode.h"
 #include "AirFixSpillsAfterTerminals.h"
+#include "AirHandleCalleeSaves.h"
 #include "AirPhaseInsertionSet.h"
 #include "AirInstInlines.h"
 #include "AirLiveness.h"
@@ -84,6 +86,7 @@ struct TmpData {
     Reg assigned;
     bool isUnspillable { false };
     bool didBuildPossibleRegs { false };
+    unsigned spillIndex { 0 };
 };
 
 struct Clobber {
@@ -118,6 +121,7 @@ public:
     
     void run()
     {
+        padInterference(m_code);
         buildRegisterSet();
         buildIndices();
         buildIntervals();
@@ -126,11 +130,11 @@ public:
             emitSpillCode();
         }
         for (;;) {
-            prepareIntervals();
+            prepareIntervalsForScanForRegisters();
             m_didSpill = false;
             forEachBank(
                 [&] (Bank bank) {
-                    attemptScan(bank);
+                    attemptScanForRegisters(bank);
                 });
             if (!m_didSpill)
                 break;
@@ -138,6 +142,14 @@ public:
         }
         insertSpillCode();
         assignRegisters();
+        fixSpillsAfterTerminals(m_code);
+
+        handleCalleeSaves(m_code);
+        allocateEscapedStackSlots(m_code);
+        prepareIntervalsForScanForStack();
+        scanForStack();
+        updateFrameSizeBasedOnStackSlots(m_code);
+        m_code.setStackIsAllocated(true);
     }
     
 private:
@@ -186,6 +198,7 @@ private:
     
     void buildIntervals()
     {
+        TimingScope timingScope("LinearScan::buildIntervals");
         UnifiedTmpLiveness liveness(m_code);
         
         for (BasicBlock* block : m_code) {
@@ -266,6 +279,7 @@ private:
                 [&] (Tmp tmp) {
                     dataLog("    ", tmp, ": ", m_map[tmp], "\n");
                 });
+            dataLog("Clobbers: ", listDump(m_clobbers), "\n");
         }
     }
     
@@ -288,17 +302,37 @@ private:
             });
     }
     
-    void prepareIntervals()
+    void prepareIntervalsForScanForRegisters()
+    {
+        prepareIntervals(
+            [&] (TmpData& data) -> bool {
+                if (data.spilled)
+                    return false;
+                
+                data.assigned = Reg();
+                return true;
+            });
+    }
+    
+    void prepareIntervalsForScanForStack()
+    {
+        prepareIntervals(
+            [&] (TmpData& data) -> bool {
+                return data.spilled;
+            });
+    }
+    
+    template<typename SelectFunc>
+    void prepareIntervals(const SelectFunc& selectFunc)
     {
         m_tmps.resize(0);
         
         m_code.forEachTmp(
             [&] (Tmp tmp) {
                 TmpData& data = m_map[tmp];
-                if (data.spilled)
+                if (!selectFunc(data))
                     return;
                 
-                data.assigned = Reg();
                 m_tmps.append(tmp);
             });
         
@@ -308,10 +342,8 @@ private:
                 return m_map[a].interval.begin() < m_map[b].interval.begin();
             });
         
-        if (verbose()) {
+        if (verbose())
             dataLog("Tmps: ", listDump(m_tmps), "\n");
-            dataLog("Clobbers: ", listDump(m_clobbers), "\n");
-        }
     }
     
     Tmp addSpillTmpWithInterval(Bank bank, Interval interval)
@@ -325,7 +357,7 @@ private:
         return tmp;
     }
     
-    void attemptScan(Bank bank)
+    void attemptScanForRegisters(Bank bank)
     {
         // This is modeled after LinearScanRegisterAllocation in Fig. 1 in
         // http://dl.acm.org/citation.cfm?id=330250.
@@ -520,6 +552,45 @@ private:
         }
     }
     
+    void scanForStack()
+    {
+        // This is loosely modeled after LinearScanRegisterAllocation in Fig. 1 in
+        // http://dl.acm.org/citation.cfm?id=330250.
+
+        m_active.clear();
+        m_usedSpillSlots.clearAll();
+        
+        for (Tmp& tmp : m_tmps) {
+            TmpData& entry = m_map[tmp];
+            if (!entry.spilled)
+                continue;
+            
+            size_t index = entry.interval.begin();
+            
+            // This is ExpireOldIntervals in Fig. 1.
+            while (!m_active.isEmpty()) {
+                Tmp tmp = m_active.first();
+                TmpData& entry = m_map[tmp];
+                
+                bool expired = entry.interval.end() <= index;
+                
+                if (!expired)
+                    break;
+                
+                m_active.removeFirst();
+                m_usedSpillSlots.clear(entry.spillIndex);
+            }
+            
+            entry.spillIndex = m_usedSpillSlots.findBit(0, false);
+            ptrdiff_t offset = -static_cast<ptrdiff_t>(m_code.frameSize()) - static_cast<ptrdiff_t>(entry.spillIndex) * 8 - 8;
+            if (verbose())
+                dataLog("  Assigning offset = ", offset, " to spill ", pointerDump(entry.spilled), " for ", tmp, "\n");
+            entry.spilled->setOffsetFromFP(offset);
+            m_usedSpillSlots.set(entry.spillIndex);
+            m_active.append(tmp);
+        }
+    }
+    
     void insertSpillCode()
     {
         for (BasicBlock* block : m_code)
@@ -569,27 +640,21 @@ private:
     Vector<Tmp> m_tmps;
     Deque<Tmp> m_active;
     RegisterSet m_activeRegs;
+    BitVector m_usedSpillSlots;
     bool m_didSpill { false };
 };
 
-void runLinearScan(Code& code)
+} // anonymous namespace
+
+void allocateRegistersAndStackByLinearScan(Code& code)
 {
+    PhaseScope phaseScope(code, "allocateRegistersAndStackByLinearScan");
     if (verbose())
         dataLog("Air before linear scan:\n", code);
     LinearScan linearScan(code);
     linearScan.run();
     if (verbose())
         dataLog("Air after linear scan:\n", code);
-}
-
-} // anonymous namespace
-
-void allocateRegistersByLinearScan(Code& code)
-{
-    PhaseScope phaseScope(code, "allocateRegistersByLinearScan");
-    padInterference(code);
-    runLinearScan(code);
-    fixSpillsAfterTerminals(code);
 }
 
 } } } // namespace JSC::B3::Air

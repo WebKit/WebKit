@@ -14102,7 +14102,7 @@ void testPinRegisters()
                     });
             }
         }
-        for (const RegisterAtOffset& regAtOffset : proc.calleeSaveRegisters())
+        for (const RegisterAtOffset& regAtOffset : proc.calleeSaveRegisterAtOffsetList())
             usesCSRs |= csrs.get(regAtOffset.reg());
         CHECK_EQ(usesCSRs, !pin);
     };

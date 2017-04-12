@@ -243,7 +243,7 @@ public:
     bool needsUsedRegisters() const { return m_needsUsedRegisters; }
 
     JS_EXPORT_PRIVATE unsigned frameSize() const;
-    JS_EXPORT_PRIVATE const RegisterAtOffsetList& calleeSaveRegisters() const;
+    JS_EXPORT_PRIVATE RegisterAtOffsetList calleeSaveRegisterAtOffsetList() const;
 
     PCToOriginMap& pcToOriginMap() { return m_pcToOriginMap; }
     PCToOriginMap releasePCToOriginMap() { return WTFMove(m_pcToOriginMap); }

@@ -41,6 +41,17 @@
 
 namespace JSC { namespace B3 { namespace Air {
 
+Arg Arg::stackAddr(int32_t offsetFromFP, unsigned frameSize, Width width)
+{
+    Arg result = Arg::addr(Air::Tmp(GPRInfo::callFrameRegister), offsetFromFP);
+    if (!result.isValidForm(width)) {
+        result = Arg::addr(
+            Air::Tmp(MacroAssembler::stackPointerRegister),
+            offsetFromFP + frameSize);
+    }
+    return result;
+}
+
 bool Arg::isStackMemory() const
 {
     switch (kind()) {

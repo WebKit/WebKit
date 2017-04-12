@@ -345,9 +345,9 @@ unsigned Procedure::frameSize() const
     return code().frameSize();
 }
 
-const RegisterAtOffsetList& Procedure::calleeSaveRegisters() const
+RegisterAtOffsetList Procedure::calleeSaveRegisterAtOffsetList() const
 {
-    return code().calleeSaveRegisters();
+    return code().calleeSaveRegisterAtOffsetList();
 }
 
 Value* Procedure::addValueImpl(Value* value)

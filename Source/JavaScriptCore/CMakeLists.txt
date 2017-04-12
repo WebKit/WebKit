@@ -73,8 +73,8 @@ set(JavaScriptCore_SOURCES
     assembler/MacroAssemblerPrinter.cpp
     assembler/MacroAssemblerX86Common.cpp
 
+    b3/air/AirAllocateRegistersAndStackByLinearScan.cpp
     b3/air/AirAllocateRegistersByGraphColoring.cpp
-    b3/air/AirAllocateRegistersByLinearScan.cpp
     b3/air/AirAllocateStackByGraphColoring.cpp
     b3/air/AirArg.cpp
     b3/air/AirBasicBlock.cpp
@@ -100,6 +100,7 @@ set(JavaScriptCore_SOURCES
     b3/air/AirLowerAfterRegAlloc.cpp
     b3/air/AirLowerEntrySwitch.cpp
     b3/air/AirLowerMacros.cpp
+    b3/air/AirLowerStackArgs.cpp
     b3/air/AirOptimizeBlockOrder.cpp
     b3/air/AirPadInterference.cpp
     b3/air/AirPhaseInsertionSet.cpp
@@ -108,7 +109,6 @@ set(JavaScriptCore_SOURCES
     b3/air/AirReportUsedRegisters.cpp
     b3/air/AirSimplifyCFG.cpp
     b3/air/AirSpecial.cpp
-    b3/air/AirSpillEverything.cpp
     b3/air/AirStackSlot.cpp
     b3/air/AirStackSlotKind.cpp
     b3/air/AirTmp.cpp

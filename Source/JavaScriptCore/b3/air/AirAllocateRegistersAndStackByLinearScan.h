@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,29 +20,33 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #pragma once
 
 #if ENABLE(B3_JIT)
 
+#include "CPU.h"
+#include "Options.h"
+
 namespace JSC { namespace B3 { namespace Air {
 
 class Code;
 
-// This is a phase for testing. It behaves like a register allocator in the sense that it
-// eliminates temporaries from the program. It accomplishes this by always spilling all
-// temporaries. The resulting code is going to be very inefficient. This phase is great if you
-// think that there is a bug in the register allocator. You can confirm this by running this
-// phase instead of the register allocator.
+// This implements the Poletto and Sarkar register allocator called "linear scan":
+// http://dl.acm.org/citation.cfm?id=330250
 //
-// Note that even though this phase does the cheapest thing possible, it's not even written in a
-// particularly efficient way. So, don't get any ideas about using this phase to reduce compiler
-// latency. If you wanted to do that, you should come up with a clever algorithm instead of using
-// this silly thing.
-
-void spillEverything(Code&);
+// This is not Air's primary register allocator. We use it only when running at optLevel<2.
+// That's not the default level. This register allocator is optimized primarily for running
+// quickly. It's expected that improvements to this register allocator should focus on improving
+// its execution time without much regard for the quality of generated code. If you want good
+// code, use graph coloring.
+//
+// For Air's primary register allocator, see AirAllocateRegistersByGraphColoring.h|cpp.
+//
+// This also does stack allocation as an afterthought. It does not do any spill coalescing.
+void allocateRegistersAndStackByLinearScan(Code&);
 
 } } } // namespace JSC::B3::Air
 

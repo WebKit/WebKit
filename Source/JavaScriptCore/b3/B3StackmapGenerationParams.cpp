@@ -48,8 +48,7 @@ RegisterSet StackmapGenerationParams::unavailableRegisters() const
     RegisterSet result = usedRegisters();
     
     RegisterSet unsavedCalleeSaves = RegisterSet::vmCalleeSaveRegisters();
-    for (const RegisterAtOffset& regAtOffset : m_context.code->calleeSaveRegisters())
-        unsavedCalleeSaves.clear(regAtOffset.reg());
+    unsavedCalleeSaves.exclude(m_context.code->calleeSaveRegisters());
 
     result.merge(unsavedCalleeSaves);
 

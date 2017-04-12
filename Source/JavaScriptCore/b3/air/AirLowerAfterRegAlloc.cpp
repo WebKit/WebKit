@@ -75,7 +75,7 @@ void lowerAfterRegAlloc(Code& code)
         return;
 
     HashMap<Inst*, RegisterSet> usedRegisters;
-
+    
     RegLiveness liveness(code);
     for (BasicBlock* block : code) {
         RegLiveness::LocalCalc localCalc(liveness, block);
@@ -96,13 +96,29 @@ void lowerAfterRegAlloc(Code& code)
                 usedRegisters.add(&inst, set);
         }
     }
+    
+    std::array<std::array<StackSlot*, 2>, numBanks> slots;
+    forEachBank(
+        [&] (Bank bank) {
+            for (unsigned i = 0; i < 2; ++i)
+                slots[bank][i] = nullptr;
+        });
 
+    // If we run after stack allocation then we cannot use those callee saves that aren't in
+    // the callee save list. Note that we are only run after stack allocation in -O1, so this
+    // kind of slop is OK.
+    RegisterSet blacklistedCalleeSaves;
+    if (code.stackIsAllocated()) {
+        blacklistedCalleeSaves = RegisterSet::calleeSaveRegisters();
+        blacklistedCalleeSaves.exclude(code.calleeSaveRegisters());
+    }
+    
     auto getScratches = [&] (RegisterSet set, Bank bank) -> std::array<Arg, 2> {
         std::array<Arg, 2> result;
         for (unsigned i = 0; i < 2; ++i) {
             bool found = false;
             for (Reg reg : code.regsInPriorityOrder(bank)) {
-                if (!set.get(reg)) {
+                if (!set.get(reg) && !blacklistedCalleeSaves.get(reg)) {
                     result[i] = Tmp(reg);
                     set.set(reg);
                     found = true;
@@ -110,10 +126,10 @@ void lowerAfterRegAlloc(Code& code)
                 }
             }
             if (!found) {
-                result[i] = Arg::stack(
-                    code.addStackSlot(
-                        bytes(conservativeWidth(bank)),
-                        StackSlotKind::Spill));
+                StackSlot*& slot = slots[bank][i];
+                if (!slot)
+                    slot = code.addStackSlot(bytes(conservativeWidth(bank)), StackSlotKind::Spill);
+                result[i] = Arg::stack(slots[bank][i]);
             }
         }
         return result;
