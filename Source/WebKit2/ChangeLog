@@ -1,3 +1,10 @@
+2017-04-12  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK+ debug build fix. Drop an unused debug-only member
+        variable in the CompositingRunLoop class.
+
+        * Shared/CoordinatedGraphics/threadedcompositor/CompositingRunLoop.h:
+
 2017-04-11  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Use the DisplayRefreshMonitor facilities

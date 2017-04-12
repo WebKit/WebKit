@@ -68,9 +68,6 @@ private:
     void updateTimerFired();
 
     RunLoop::Timer<CompositingRunLoop> m_updateTimer;
-#ifndef NDEBUG
-    RunLoop& m_runLoop;
-#endif
     std::function<void ()> m_updateFunction;
     Atomic<UpdateState> m_updateState;
     Lock m_dispatchSyncConditionMutex;
