@@ -191,8 +191,10 @@ private:
     RetainPtr<NSCandidateListTouchBarItem> _richTextCandidateListTouchBarItem;
     RetainPtr<NSCandidateListTouchBarItem> _plainTextCandidateListTouchBarItem;
     RetainPtr<NSCandidateListTouchBarItem> _passwordTextCandidateListTouchBarItem;
+#if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
     RetainPtr<AVTouchBarPlaybackControlsProvider> mediaTouchBarProvider;
     RetainPtr<AVTouchBarScrubber> mediaPlaybackControlsView;
+#endif // ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
 
     BOOL _canCreateTouchBars;
     BOOL _isUpdatingTextTouchBar;
