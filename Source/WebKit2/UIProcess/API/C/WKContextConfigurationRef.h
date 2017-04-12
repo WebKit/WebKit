@@ -33,6 +33,7 @@ extern "C" {
 #endif
 
 WK_EXPORT WKContextConfigurationRef WKContextConfigurationCreate();
+WK_EXPORT WKContextConfigurationRef WKContextConfigurationCreateWithLegacyOptions();
 
 WK_EXPORT WKStringRef WKContextConfigurationCopyApplicationCacheDirectory(WKContextConfigurationRef configuration);
 WK_EXPORT void WKContextConfigurationSetApplicationCacheDirectory(WKContextConfigurationRef configuration, WKStringRef applicationCacheDirectory);

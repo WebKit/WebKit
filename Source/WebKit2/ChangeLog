@@ -1,5 +1,17 @@
 2017-04-12  Jer Noble  <jer.noble@apple.com>
 
+        [WK2] Add a C-API for creating a WKContextConfigurationRef with legacy options.
+        https://bugs.webkit.org/show_bug.cgi?id=170790
+
+        Reviewed by Alex Christensen.
+
+        * UIProcess/API/C/WKContextConfigurationRef.cpp:
+        (WKContextConfigurationCreate):
+        (WKContextConfigurationCreateWithLegacyOptions):
+        * UIProcess/API/C/WKContextConfigurationRef.h:
+
+2017-04-12  Jer Noble  <jer.noble@apple.com>
+
         [WK2] Do not pass microphone sandbox extension to WebProcess if capturing is happening in UIProcess.
         https://bugs.webkit.org/show_bug.cgi?id=170781
 

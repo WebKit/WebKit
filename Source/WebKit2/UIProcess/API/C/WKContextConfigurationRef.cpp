@@ -42,6 +42,11 @@ WKContextConfigurationRef WKContextConfigurationCreate()
     return toAPI(&configuration.leakRef());
 }
 
+WKContextConfigurationRef WKContextConfigurationCreateWithLegacyOptions()
+{
+    return toAPI(&API::ProcessPoolConfiguration::createWithLegacyOptions().leakRef());
+}
+
 WKStringRef WKContextConfigurationCopyDiskCacheDirectory(WKContextConfigurationRef configuration)
 {
     return toCopiedAPI(toImpl(configuration)->diskCacheDirectory());
