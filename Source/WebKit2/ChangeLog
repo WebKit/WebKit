@@ -1,5 +1,16 @@
 2017-04-12  Beth Dakin  <bdakin@apple.com>
 
+        More 32-bit build fix.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _mediaPlaybackControlsView]):
+        (-[WKWebView _addMediaPlaybackControlsView:]):
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _mediaPlaybackControlsView]):
+        (-[WKView _addMediaPlaybackControlsView:]):
+
+2017-04-12  Beth Dakin  <bdakin@apple.com>
+
         Another 32 bit build fix.
 
         * UIProcess/Cocoa/WebViewImpl.h:

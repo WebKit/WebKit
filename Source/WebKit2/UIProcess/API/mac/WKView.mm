@@ -1573,7 +1573,7 @@ static _WKOverlayScrollbarStyle toAPIScrollbarStyle(std::optional<WebCore::Scrol
 #endif
 }
 
-- (AVTouchBarScrubber *)_mediaPlaybackControlsView
+- (id)_mediaPlaybackControlsView
 {
 #if HAVE(TOUCH_BAR)
     return _data->_impl->clientWantsMediaPlaybackControlsView() ? _data->_impl->mediaPlaybackControlsView() : nil;
@@ -1583,7 +1583,7 @@ static _WKOverlayScrollbarStyle toAPIScrollbarStyle(std::optional<WebCore::Scrol
 }
 
 // This method is for subclasses to override.
-- (void)_addMediaPlaybackControlsView:(AVTouchBarScrubber *)mediaPlaybackControlsView
+- (void)_addMediaPlaybackControlsView:(id)mediaPlaybackControlsView
 {
 }
 
