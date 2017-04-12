@@ -27,52 +27,43 @@
 
 #include "GPRInfo.h"
 #include "LLIntPCRanges.h"
+#include <wtf/PlatformRegisters.h>
 #include <wtf/StdLibExtras.h>
-
-#if OS(DARWIN) || OS(FREEBSD) || defined(__GLIBC__)
-#include <signal.h>
-// Using signal.h didn't make mcontext_t and ucontext_t available on FreeBSD.
-// This bug has been fixed in FreeBSD 11.0-CURRENT, so this workaround can be
-// removed after FreeBSD 10.x goes EOL.
-// https://bugs.freebsd.org/bugzilla/show_bug.cgi?id=207079
-#if OS(FREEBSD)
-#include <ucontext.h>
-#endif
-#endif
-
-#if OS(DARWIN)
-#include <mach/thread_act.h>
-#endif
 
 namespace JSC {
 namespace MachineContext {
 
-#if OS(DARWIN)
 
-#if CPU(X86)
-typedef i386_thread_state_t PlatformRegisters;
-#elif CPU(X86_64)
-typedef x86_thread_state64_t PlatformRegisters;
-#elif CPU(PPC)
-typedef ppc_thread_state_t PlatformRegisters;
-#elif CPU(PPC64)
-typedef ppc_thread_state64_t PlatformRegisters;
-#elif CPU(ARM)
-typedef arm_thread_state_t PlatformRegisters;
-#elif CPU(ARM64)
-typedef arm_thread_state64_t PlatformRegisters;
-#else
-#error Unknown Architecture
-#endif
+void*& stackPointer(PlatformRegisters&);
+void* stackPointer(const PlatformRegisters&);
 
-#elif OS(WINDOWS)
+#if OS(WINDOWS) || USE(MACHINE_CONTEXT)
+void*& framePointer(PlatformRegisters&);
+void* framePointer(const PlatformRegisters&);
+void*& instructionPointer(PlatformRegisters&);
+void* instructionPointer(const PlatformRegisters&);
+template<size_t N> void*& argumentPointer(PlatformRegisters&);
+template<size_t N> void* argumentPointer(const PlatformRegisters&);
+#if ENABLE(JIT)
+void*& llintInstructionPointer(PlatformRegisters&);
+void* llintInstructionPointer(const PlatformRegisters&);
+#endif // ENABLE(JIT)
+#if USE(MACHINE_CONTEXT)
+void*& stackPointer(mcontext_t&);
+void* stackPointer(const mcontext_t&);
+void*& framePointer(mcontext_t&);
+void* framePointer(const mcontext_t&);
+void*& instructionPointer(mcontext_t&);
+void* instructionPointer(const mcontext_t&);
+template<size_t N> void*& argumentPointer(mcontext_t&);
+template<size_t N> void* argumentPointer(const mcontext_t&);
+#if ENABLE(JIT)
+void*& llintInstructionPointer(mcontext_t&);
+void* llintInstructionPointer(const mcontext_t&);
+#endif // ENABLE(JIT)
+#endif // USE(MACHINE_CONTEXT)
+#endif // OS(WINDOWS) || USE(MACHINE_CONTEXT)
 
-typedef CONTEXT PlatformRegisters;
-
-#endif
-
-
-#if OS(DARWIN) || OS(WINDOWS)
 inline void*& stackPointer(PlatformRegisters& regs)
 {
 #if OS(DARWIN)
@@ -118,17 +109,20 @@ inline void*& stackPointer(PlatformRegisters& regs)
 #error Unknown Architecture
 #endif
 
-#endif // OS(DARWIN)
+#elif USE(MACHINE_CONTEXT)
+    return stackPointer(regs.machineContext);
+#else
+    return regs.stackPointer;
+#endif
 }
 
 inline void* stackPointer(const PlatformRegisters& regs)
 {
     return stackPointer(const_cast<PlatformRegisters&>(regs));
 }
-#endif // OS(DARWIN) || OS(WINDOWS)
 
 
-#if OS(DARWIN) || ((OS(FREEBSD) || defined(__GLIBC__)) && (CPU(X86) || CPU(X86_64) || CPU(ARM) || CPU(ARM64) || CPU(MIPS)))
+#if USE(MACHINE_CONTEXT)
 inline void*& stackPointer(mcontext_t& machineContext)
 {
 #if OS(DARWIN)
@@ -171,10 +165,10 @@ inline void* stackPointer(const mcontext_t& machineContext)
 {
     return stackPointer(const_cast<mcontext_t&>(machineContext));
 }
-#endif // OS(DARWIN) || ((OS(FREEBSD) || defined(__GLIBC__)) && (CPU(X86) || CPU(X86_64) || CPU(ARM) || CPU(ARM64) || CPU(MIPS)))
+#endif // USE(MACHINE_CONTEXT)
 
 
-#if OS(DARWIN) || OS(WINDOWS)
+#if OS(WINDOWS) || USE(MACHINE_CONTEXT)
 inline void*& framePointer(PlatformRegisters& regs)
 {
 #if OS(DARWIN)
@@ -221,17 +215,19 @@ inline void*& framePointer(PlatformRegisters& regs)
 #error Unknown Architecture
 #endif
 
-#endif // OS(DARWIN)
+#elif USE(MACHINE_CONTEXT)
+    return framePointer(regs.machineContext);
+#endif
 }
 
 inline void* framePointer(const PlatformRegisters& regs)
 {
     return framePointer(const_cast<PlatformRegisters&>(regs));
 }
-#endif // OS(DARWIN) || OS(WINDOWS)
+#endif // OS(WINDOWS) || USE(MACHINE_CONTEXT)
 
 
-#if OS(DARWIN) || ((OS(FREEBSD) || defined(__GLIBC__)) && (CPU(X86) || CPU(X86_64) || CPU(ARM) || CPU(ARM64) || CPU(MIPS)))
+#if USE(MACHINE_CONTEXT)
 inline void*& framePointer(mcontext_t& machineContext)
 {
 #if OS(DARWIN)
@@ -278,10 +274,10 @@ inline void* framePointer(const mcontext_t& machineContext)
 {
     return framePointer(const_cast<mcontext_t&>(machineContext));
 }
-#endif // OS(DARWIN) || ((OS(FREEBSD) || defined(__GLIBC__)) && (CPU(X86) || CPU(X86_64) || CPU(ARM) || CPU(ARM64) || CPU(MIPS)))
+#endif // USE(MACHINE_CONTEXT)
 
 
-#if OS(DARWIN) || OS(WINDOWS)
+#if OS(WINDOWS) || USE(MACHINE_CONTEXT)
 inline void*& instructionPointer(PlatformRegisters& regs)
 {
 #if OS(DARWIN)
@@ -322,18 +318,19 @@ inline void*& instructionPointer(PlatformRegisters& regs)
 #error Unknown Architecture
 #endif
 
-#endif // OS(DARWIN)
+#elif USE(MACHINE_CONTEXT)
+    return instructionPointer(regs.machineContext);
+#endif
 }
 
 inline void* instructionPointer(const PlatformRegisters& regs)
 {
     return instructionPointer(const_cast<PlatformRegisters&>(regs));
 }
-#endif // OS(DARWIN) || OS(WINDOWS)
+#endif // OS(WINDOWS) || USE(MACHINE_CONTEXT)
 
 
-#if OS(DARWIN) || ((OS(FREEBSD) || defined(__GLIBC__)) && (CPU(X86) || CPU(X86_64) || CPU(ARM) || CPU(ARM64) || CPU(MIPS)))
-
+#if USE(MACHINE_CONTEXT)
 inline void*& instructionPointer(mcontext_t& machineContext)
 {
 #if OS(DARWIN)
@@ -380,12 +377,13 @@ inline void* instructionPointer(const mcontext_t& machineContext)
 {
     return instructionPointer(const_cast<mcontext_t&>(machineContext));
 }
-#endif // OS(DARWIN) || ((OS(FREEBSD) || defined(__GLIBC__)) && (CPU(X86) || CPU(X86_64) || CPU(ARM) || CPU(ARM64) || CPU(MIPS)))
+#endif // USE(MACHINE_CONTEXT)
 
 
-#if OS(DARWIN) || OS(WINDOWS)
-template<size_t N>
-void*& argumentPointer(PlatformRegisters&);
+#if OS(WINDOWS) || USE(MACHINE_CONTEXT)
+#if USE(MACHINE_CONTEXT)
+template<> void*& argumentPointer<1>(mcontext_t&);
+#endif
 
 template<>
 inline void*& argumentPointer<1>(PlatformRegisters& regs)
@@ -431,7 +429,9 @@ inline void*& argumentPointer<1>(PlatformRegisters& regs)
 #error Unknown Architecture
 #endif
 
-#endif // OS(DARWIN)
+#elif USE(MACHINE_CONTEXT)
+    return argumentPointer<1>(regs.machineContext);
+#endif
 }
 
 template<size_t N>
@@ -439,13 +439,9 @@ inline void* argumentPointer(const PlatformRegisters& regs)
 {
     return argumentPointer<N>(const_cast<PlatformRegisters&>(regs));
 }
-#endif // OS(DARWIN) || OS(WINDOWS)
+#endif // OS(WINDOWS) || USE(MACHINE_CONTEXT)
 
-
-#if OS(DARWIN) || ((OS(FREEBSD) || defined(__GLIBC__)) && (CPU(X86) || CPU(X86_64) || CPU(ARM) || CPU(ARM64) || CPU(MIPS)))
-template<unsigned N>
-void*& argumentPointer(mcontext_t&);
-
+#if USE(MACHINE_CONTEXT)
 template<>
 inline void*& argumentPointer<1>(mcontext_t& machineContext)
 {
@@ -494,10 +490,10 @@ inline void* argumentPointer(const mcontext_t& machineContext)
 {
     return argumentPointer<N>(const_cast<mcontext_t&>(machineContext));
 }
-#endif // OS(DARWIN) || ((OS(FREEBSD) || defined(__GLIBC__)) && (CPU(X86) || CPU(X86_64) || CPU(ARM) || CPU(ARM64) || CPU(MIPS)))
+#endif // USE(MACHINE_CONTEXT)
 
 #if ENABLE(JIT)
-#if OS(DARWIN) || OS(WINDOWS)
+#if OS(WINDOWS) || USE(MACHINE_CONTEXT)
 inline void*& llintInstructionPointer(PlatformRegisters& regs)
 {
     // LLInt uses regT4 as PC.
@@ -550,17 +546,19 @@ inline void*& llintInstructionPointer(PlatformRegisters& regs)
 #error Unknown Architecture
 #endif
 
-#endif // OS(DARWIN)
+#elif USE(MACHINE_CONTEXT)
+    return llintInstructionPointer(regs.machineContext);
+#endif
 }
 
 inline void* llintInstructionPointer(const PlatformRegisters& regs)
 {
     return llintInstructionPointer(const_cast<PlatformRegisters&>(regs));
 }
-#endif // OS(DARWIN) || OS(WINDOWS)
+#endif // OS(WINDOWS) || USE(MACHINE_CONTEXT)
 
 
-#if OS(DARWIN) || ((OS(FREEBSD) || defined(__GLIBC__)) && (CPU(X86) || CPU(X86_64) || CPU(ARM) || CPU(ARM64) || CPU(MIPS)))
+#if USE(MACHINE_CONTEXT)
 inline void*& llintInstructionPointer(mcontext_t& machineContext)
 {
     // LLInt uses regT4 as PC.
@@ -608,7 +606,7 @@ inline void* llintInstructionPointer(const mcontext_t& machineContext)
 {
     return llintInstructionPointer(const_cast<mcontext_t&>(machineContext));
 }
-#endif // OS(DARWIN) || ((OS(FREEBSD) || defined(__GLIBC__)) && (CPU(X86) || CPU(X86_64) || CPU(ARM) || CPU(ARM64) || CPU(MIPS)))
+#endif // USE(MACHINE_CONTEXT)
 #endif // ENABLE(JIT)
 
 }

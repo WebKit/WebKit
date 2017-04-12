@@ -226,19 +226,13 @@ size_t MachineThreads::MachineThread::getRegisters(MachineThread::Registers& reg
 
 void* MachineThreads::MachineThread::Registers::stackPointer() const
 {
-#if OS(DARWIN) || OS(WINDOWS) || ((OS(FREEBSD) || defined(__GLIBC__)) && ENABLE(JIT))
     return MachineContext::stackPointer(regs);
-#elif USE(PTHREADS)
-    return regs.stackPointer;
-#else
-#error Need a way to get the stack pointer for another thread on this platform
-#endif
 }
 
 #if ENABLE(SAMPLING_PROFILER)
 void* MachineThreads::MachineThread::Registers::framePointer() const
 {
-#if OS(DARWIN) || OS(WINDOWS) || (OS(FREEBSD) || defined(__GLIBC__))
+#if OS(WINDOWS) || USE(MACHINE_CONTEXT)
     return MachineContext::framePointer(regs);
 #else
 #error Need a way to get the frame pointer for another thread on this platform
@@ -247,7 +241,7 @@ void* MachineThreads::MachineThread::Registers::framePointer() const
 
 void* MachineThreads::MachineThread::Registers::instructionPointer() const
 {
-#if OS(DARWIN) || OS(WINDOWS) || (OS(FREEBSD) || defined(__GLIBC__))
+#if OS(WINDOWS) || USE(MACHINE_CONTEXT)
     return MachineContext::instructionPointer(regs);
 #else
 #error Need a way to get the instruction pointer for another thread on this platform
@@ -257,7 +251,7 @@ void* MachineThreads::MachineThread::Registers::instructionPointer() const
 void* MachineThreads::MachineThread::Registers::llintPC() const
 {
     // LLInt uses regT4 as PC.
-#if OS(DARWIN) || OS(WINDOWS) || (OS(FREEBSD) || defined(__GLIBC__))
+#if OS(WINDOWS) || USE(MACHINE_CONTEXT)
     return MachineContext::llintInstructionPointer(regs);
 #else
 #error Need a way to get the LLIntPC for another thread on this platform

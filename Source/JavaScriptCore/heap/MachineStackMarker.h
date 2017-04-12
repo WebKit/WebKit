@@ -63,7 +63,7 @@ public:
             void* instructionPointer() const;
             void* llintPC() const;
 #endif // ENABLE(SAMPLING_PROFILER)
-            WTF::PlatformRegisters regs;
+            PlatformRegisters regs;
         };
 
         Expected<void, Thread::PlatformSuspendError> suspend() { return m_thread->suspend(); }

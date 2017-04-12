@@ -59,9 +59,11 @@ typedef arm_thread_state64_t PlatformRegisters;
 
 using PlatformRegisters = CONTEXT;
 
-#elif (OS(FREEBSD) || defined(__GLIBC__)) && (CPU(X86) || CPU(X86_64) || CPU(ARM) || CPU(ARM64) || CPU(MIPS))
+#elif USE(MACHINE_CONTEXT)
 
-using PlatformRegisters = mcontext_t;
+struct PlatformRegisters {
+    mcontext_t machineContext;
+};
 
 #else
 
@@ -72,3 +74,5 @@ struct PlatformRegisters {
 #endif
 
 } // namespace WTF
+
+using WTF::PlatformRegisters;

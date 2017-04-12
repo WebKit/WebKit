@@ -1214,4 +1214,8 @@
 #define USE_LIBWEBRTC 1
 #endif
 
+#if OS(DARWIN) || ((OS(FREEBSD) || defined(__GLIBC__)) && (CPU(X86) || CPU(X86_64) || CPU(ARM) || CPU(ARM64) || CPU(MIPS)))
+#define USE_MACHINE_CONTEXT 1
+#endif
+
 #endif /* WTF_Platform_h */

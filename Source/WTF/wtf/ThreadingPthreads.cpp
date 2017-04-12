@@ -387,8 +387,8 @@ size_t Thread::getRegisters(PlatformRegisters& registers)
         CRASH();
     }
     return userCount * sizeof(uintptr_t);
-#elif (OS(FREEBSD) || defined(__GLIBC__)) && (CPU(X86) || CPU(X86_64) || CPU(ARM) || CPU(ARM64) || CPU(MIPS))
-    registers = m_suspendedMachineContext;
+#elif USE(MACHINE_CONTEXT)
+    registers.machineContext = m_suspendedMachineContext;
     return sizeof(PlatformRegisters);
 #elif OS(OPENBSD)
     // http://man.openbsd.org/pthread_stackseg_np.3
