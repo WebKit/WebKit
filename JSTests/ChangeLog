@@ -1,3 +1,20 @@
+2017-04-11  Michael Saboff  <msaboff@apple.com>
+
+        Implement Object.isFrozen() and Object.isSealed() per ECMA spec
+        https://bugs.webkit.org/show_bug.cgi?id=170753
+
+        Reviewed by Mark Lam.
+
+        Added JSC baseline and enabled defineIndexProperty test.
+
+        Note that JSC differs from Chakra in that a JSC doesn't use indexed
+        properties placed on the Array prototype when sorting the indexed 
+        properties of an Object.  This is behavior is considered undefined
+        in the standard.
+
+        * ChakraCore.yaml:
+        * ChakraCore/test/es5/defineIndexProperty.baseline-jsc: Added.
+
 2017-04-11  Joseph Pecoraro  <pecoraro@apple.com>
 
         test262: test262/test/annexB/language/comments/multi-line-html-close.js

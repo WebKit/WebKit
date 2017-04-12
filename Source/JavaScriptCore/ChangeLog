@@ -1,3 +1,21 @@
+2017-04-12  Michael Saboff  <msaboff@apple.com>
+
+        Implement Object.isFrozen() and Object.isSealed() per ECMA spec
+        https://bugs.webkit.org/show_bug.cgi?id=170753
+
+        Reviewed by Mark Lam.
+
+        * runtime/ObjectConstructor.cpp:
+        (JSC::testIntegrityLevel): Added local helper as described in the ECMA standard.
+
+        (JSC::objectConstructorSeal):
+        (JSC::objectConstructorFreeze):
+        Eliminated incomplete special handling of JSFinalObjects.
+
+        (JSC::objectConstructorIsSealed):
+        (JSC::objectConstructorIsFrozen):
+        Refactored to use the new testIntegrityLevel() helper.
+
 2017-04-12  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Use HAVE(MACHINE_CONTEXT) instead of USE(MACHINE_CONTEXT)

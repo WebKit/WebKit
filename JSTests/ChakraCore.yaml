@@ -1442,8 +1442,7 @@
 - path: ChakraCore/test/es5/defineProperty.js
   cmd: runChakra :baseline, "NoException", "defineProperty.baseline", ["../UnitTestFramework/UnitTestFramework.js"]
 - path: ChakraCore/test/es5/defineIndexProperty.js
-  # Differences in Obj.seal, Obj.frozen and sort.
-  cmd: runChakra :skip, "NoException", "defineIndexProperty.baseline", []
+  cmd: runChakra :baseline, "NoException", "defineIndexProperty.baseline-jsc", []
 - path: ChakraCore/test/es5/enumerable.js
   cmd: runChakra :baseline, "NoException", "enumerable.baseline-jsc", []
 - path: ChakraCore/test/es5/hasItem.js
