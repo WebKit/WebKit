@@ -587,6 +587,16 @@ static _WKStorageBlockingPolicy toAPI(WebCore::SecurityOrigin::StorageBlockingPo
     _preferences->setICECandidateFilteringEnabled(enabled);
 }
 
+- (BOOL)_webRTCLegacyAPIEnabled
+{
+    return _preferences->webRTCLegacyAPIEnabled();
+}
+
+- (void)_setWebRTCLegacyAPIEnabled:(BOOL)enabled
+{
+    _preferences->setWebRTCLegacyAPIEnabled(enabled);
+}
+
 @end
 
 #endif // WK_API_ENABLED

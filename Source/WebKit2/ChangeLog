@@ -1,3 +1,15 @@
+2017-04-12  Andrew Gold  <agold@apple.com>
+
+        Allow iOS to toggle webRTCAPI legacy flag.
+        https://bugs.webkit.org/show_bug.cgi?id=170735
+
+        Reviewed by Eric Carlson.
+
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences _webRTCLegacyAPIEnabled]):
+        (-[WKPreferences _setWebRTCLegacyAPIEnabled:]):
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+
 2017-04-12  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed, build fix for GTK port after r215262
