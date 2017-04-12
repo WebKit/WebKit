@@ -31,8 +31,6 @@
 #import <WebKit/WKView.h>
 #import <WebKit/_WKOverlayScrollbarStyle.h>
 
-@class AVTouchBarScrubber;
-
 @interface WKView (Private)
 
 /* C SPI support. */
@@ -135,8 +133,8 @@
 - (void)_gestureEventWasNotHandledByWebCore:(NSEvent *)event;
 
 @property (nonatomic, readwrite, setter=_setWantsMediaPlaybackControlsView:) BOOL _wantsMediaPlaybackControlsView;
-@property (nonatomic, readonly) AVTouchBarScrubber *_mediaPlaybackControlsView;
-- (void)_addMediaPlaybackControlsView:(AVTouchBarScrubber *)mediaPlaybackControlsView;
+@property (nonatomic, readonly)  id _mediaPlaybackControlsView;
+- (void)_addMediaPlaybackControlsView:(id)mediaPlaybackControlsView;
 - (void)_removeMediaPlaybackControlsView;
 
 @end
