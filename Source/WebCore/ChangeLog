@@ -1,5 +1,15 @@
 2017-04-12  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        Unreviewed, build fix for Win and GTK
+        https://bugs.webkit.org/show_bug.cgi?id=170758
+
+        * platform/posix/SharedBufferPOSIX.cpp:
+        (WebCore::SharedBuffer::createFromReadingFile):
+        * platform/win/SharedBufferWin.cpp:
+        (WebCore::SharedBuffer::createFromReadingFile):
+
+2017-04-12  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [WTF] Introduce Thread class and use RefPtr<Thread> and align Windows Threading implementation semantics to Pthread one
         https://bugs.webkit.org/show_bug.cgi?id=170502
 

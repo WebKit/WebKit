@@ -53,7 +53,7 @@ RefPtr<SharedBuffer> SharedBuffer::createFromReadingFile(const String& filePath)
         Vector<char> buffer(bytesToRead);
         DWORD bytesRead;
         if (ReadFile(fileHandle, buffer.data(), bytesToRead, &bytesRead, 0) && bytesToRead == bytesRead)
-            result = SharedBuffer::adoptVector(buffer);
+            result = SharedBuffer::create(WTFMove(buffer));
         else
             LOG_ERROR("Failed to fully read contents of file %s, GetLastError() = %u", filePath.ascii().data(), GetLastError());
     } else
