@@ -61,6 +61,9 @@ WK_EXPORT void WKContextConfigurationSetFullySynchronousModeIsAllowedForTesting(
 WK_EXPORT WKArrayRef WKContextConfigurationCopyOverrideLanguages(WKContextConfigurationRef configuration);
 WK_EXPORT void WKContextConfigurationSetOverrideLanguages(WKContextConfigurationRef configuration, WKArrayRef overrideLanguages);
 
+WK_EXPORT bool WKContextConfigurationShouldCaptureAudioInUIProcess(WKContextConfigurationRef configuration);
+WK_EXPORT void WKContextConfigurationSetShouldCaptureAudioInUIProcess(WKContextConfigurationRef configuration, bool allowed);
+
 #ifdef __cplusplus
 }
 #endif

@@ -1,3 +1,33 @@
+2017-04-12  Jer Noble  <jer.noble@apple.com>
+
+        [WK2] Do not pass microphone sandbox extension to WebProcess if capturing is happening in UIProcess.
+        https://bugs.webkit.org/show_bug.cgi?id=170781
+
+        Reviewed by Alex Christensen.
+
+        Simultaneously, allow clients to configure whether capturing will occur in the UIProcess through
+        _WKProcessPoolConfiguration.
+
+        * UIProcess/API/APIProcessPoolConfiguration.cpp:
+        (API::ProcessPoolConfiguration::copy):
+        * UIProcess/API/APIProcessPoolConfiguration.h:
+        * UIProcess/API/C/WKContextConfigurationRef.cpp:
+        (WKContextConfigurationShouldCaptureAudioInUIProcess):
+        (WKContextConfigurationSetShouldCaptureAudioInUIProcess):
+        * UIProcess/API/C/WKContextConfigurationRef.h:
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration copyWithZone:]):
+        (-[WKWebViewConfiguration _shouldCaptureAudioInUIProcess]):
+        (-[WKWebViewConfiguration _setShouldCaptureAudioInUIProcess:]):
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.h:
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.mm:
+        (-[_WKProcessPoolConfiguration shouldCaptureAudioInUIProcess]):
+        (-[_WKProcessPoolConfiguration setShouldCaptureAudioInUIProcess:]):
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::createNewWebProcess):
+
 2017-04-12  Keith Rollin  <krollin@apple.com>
 
         Add some missing NetworkResourceLoader logging

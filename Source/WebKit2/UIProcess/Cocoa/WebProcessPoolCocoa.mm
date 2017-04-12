@@ -256,10 +256,8 @@ void WebProcessPool::platformInitializeWebProcess(WebProcessCreationParameters& 
         webRTCEnabled = [defaults boolForKey:@"ExperimentalPeerConnectionEnabled"];
     
     // FIXME: Remove this and related parameter when <rdar://problem/29448368> is fixed.
-    if (mediaStreamEnabled || webRTCEnabled)
+    if (!parameters.shouldCaptureAudioInUIProcess && (mediaStreamEnabled || webRTCEnabled))
         SandboxExtension::createHandleForGenericExtension("com.apple.webkit.microphone", parameters.audioCaptureExtensionHandle);
-
-    parameters.shouldCaptureAudioInUIProcess = m_defaultPageGroup->preferences().shouldCaptureAudioInUIProcess();
 #endif
 }
 

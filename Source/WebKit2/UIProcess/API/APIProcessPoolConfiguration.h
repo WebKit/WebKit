@@ -117,6 +117,9 @@ public:
     bool alwaysRunsAtBackgroundPriority() const { return m_alwaysRunsAtBackgroundPriority; }
     void setAlwaysRunsAtBackgroundPriority(bool alwaysRunsAtBackgroundPriority) { m_alwaysRunsAtBackgroundPriority = alwaysRunsAtBackgroundPriority; }
 
+    bool shouldCaptureAudioInUIProcess() const { return m_shouldCaptureAudioInUIProcess; }
+    void setShouldCaptureAudioInUIProcess(bool shouldCaptureAudioInUIProcess) { m_shouldCaptureAudioInUIProcess = shouldCaptureAudioInUIProcess; }
+
 #if PLATFORM(IOS)
     const WTF::String& ctDataConnectionServiceType() const { return m_ctDataConnectionServiceType; }
     void setCTDataConnectionServiceType(const WTF::String& ctDataConnectionServiceType) { m_ctDataConnectionServiceType = ctDataConnectionServiceType; }
@@ -150,6 +153,7 @@ private:
     WTF::String m_sourceApplicationSecondaryIdentifier;
     bool m_allowsCellularAccess { true };
     bool m_alwaysRunsAtBackgroundPriority { false };
+    bool m_shouldCaptureAudioInUIProcess { false };
 #if PLATFORM(IOS)
     WTF::String m_ctDataConnectionServiceType;
 #endif
