@@ -1,3 +1,11 @@
+2017-04-12  Beth Dakin  <bdakin@apple.com>
+
+        Another 32 bit build fix.
+
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::mediaPlaybackControlsView):
+
 2017-04-12  Alex Christensen  <achristensen@webkit.org>
 
         Stop using didReceiveDataArray callback on El Capitan

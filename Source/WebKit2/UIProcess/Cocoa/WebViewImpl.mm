@@ -906,14 +906,14 @@ NSCandidateListTouchBarItem *WebViewImpl::candidateListTouchBarItem() const
     return isRichlyEditable() ? m_richTextCandidateListTouchBarItem.get() : m_plainTextCandidateListTouchBarItem.get();
 }
 
+#if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
 AVTouchBarScrubber *WebViewImpl::mediaPlaybackControlsView() const
 {
-#if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
     if (m_page->hasActiveVideoForControlsManager())
         return m_mediaPlaybackControlsView.get();
-#endif
     return nil;
 }
+#endif
 
 bool WebViewImpl::useMediaPlaybackControlsView() const
 {

@@ -515,7 +515,9 @@ public:
     void updateTouchBar();
     NSTouchBar *currentTouchBar() const { return m_currentTouchBar.get(); }
     NSCandidateListTouchBarItem *candidateListTouchBarItem() const;
+#if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
     AVTouchBarScrubber *mediaPlaybackControlsView() const;
+#endif
     NSTouchBar *textTouchBar() const;
     void dismissTextTouchBarPopoverItemWithIdentifier(NSString *);
 
