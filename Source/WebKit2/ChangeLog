@@ -1,3 +1,12 @@
+2017-04-12  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Audio source in UI process not identified as capture source
+        https://bugs.webkit.org/show_bug.cgi?id=170776
+
+        Reviewed by Youenn Fablet.
+
+        * WebProcess/cocoa/UserMediaCaptureManager.cpp: Override isCaptureSource.
+
 2017-04-12  Andrew Gold  <agold@apple.com>
 
         Allow iOS to toggle webRTCAPI legacy flag.

@@ -113,6 +113,7 @@ public:
 
     void startProducingData() final { m_manager.startProducingData(m_id); }
     void stopProducingData() final { m_manager.stopProducingData(m_id); }
+    bool isCaptureSource() const final { return true; }
 
     AudioSourceProvider* audioSourceProvider() final {
         if (!m_audioSourceProvider) {
