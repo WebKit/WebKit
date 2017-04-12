@@ -157,12 +157,12 @@ OBJC_CLASS AVFunctionBarPlaybackControlsProvider;
 OBJC_CLASS AVFunctionBarScrubber;
 OBJC_CLASS AVFunctionBarMediaSelectionOption;
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101300
+#if __MAC_OS_X_VERSION_MAX_ALLOWED < 101300
 typedef AVFunctionBarMediaSelectionOption AVTouchBarMediaSelectionOption;
 typedef AVFunctionBarPlaybackControlsProvider AVTouchBarPlaybackControlsProvider;
 typedef AVFunctionBarScrubber AVTouchBarScrubber;
 #define AVTouchBarPlaybackControlsControlling AVFunctionBarPlaybackControlsControlling
-#endif // __MAC_OS_X_VERSION_MIN_REQUIRED < 101300
+#endif // __MAC_OS_X_VERSION_MAX_ALLOWED < 101300
 
 #if USE(APPLE_INTERNAL_SDK)
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
