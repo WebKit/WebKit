@@ -77,7 +77,7 @@ CFRunLoopRef loaderRunLoop()
     std::unique_lock<StaticLock> lock(loaderRunLoopMutex);
 
     if (!loaderRunLoopObject) {
-        createThread(runLoaderThread, 0, "WebCore: CFNetwork Loader");
+        Thread::create(runLoaderThread, 0, "WebCore: CFNetwork Loader");
 
         loaderRunLoopConditionVariable.wait(lock, [] { return loaderRunLoopObject; });
     }

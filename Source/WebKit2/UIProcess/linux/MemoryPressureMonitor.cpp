@@ -248,7 +248,7 @@ MemoryPressureMonitor::MemoryPressureMonitor()
     if (m_eventFD == -1)
         return;
 
-    ThreadIdentifier threadIdentifier = createThread("MemoryPressureMonitor", [this] {
+    RefPtr<Thread> thread = Thread::create("MemoryPressureMonitor", [this] {
         double pollInterval = s_maxPollingIntervalInSeconds;
         while (true) {
             sleep(pollInterval);
@@ -271,7 +271,7 @@ MemoryPressureMonitor::MemoryPressureMonitor()
         }
         close(m_eventFD);
     });
-    detachThread(threadIdentifier);
+    thread->detach();
 }
 
 IPC::Attachment MemoryPressureMonitor::createHandle() const

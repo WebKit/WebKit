@@ -1,7 +1,8 @@
 /*
  * Copyright (C) 2007, 2009, 2015 Apple Inc. All rights reserved.
- * Copyright (C) 2007 Justin Haygood (jhaygood@reaktix.com)
+ * Copyright (C) 2007 Justin Haygood <jhaygood@reaktix.com>
  * Copyright (C) 2011 Research In Motion Limited. All rights reserved.
+ * Copyright (C) 2017 Yusuke Suzuki <utatane.tea@gmail.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,21 +34,19 @@
 
 #if USE(PTHREADS)
 
-#include "CurrentTime.h"
-#include "DateMath.h"
-#include "dtoa.h"
-#include "dtoa/cached-powers.h"
-#include "HashMap.h"
-#include "RandomNumberSeed.h"
-#include "StdLibExtras.h"
-#include "ThreadFunctionInvocation.h"
-#include "ThreadIdentifierDataPthreads.h"
-#include "ThreadSpecific.h"
+#include <errno.h>
+#include <wtf/CurrentTime.h>
 #include <wtf/DataLog.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RawPointer.h>
-#include <wtf/WTFThreadData.h>
-#include <errno.h>
+#include <wtf/StdLibExtras.h>
+#include <wtf/ThreadFunctionInvocation.h>
+#include <wtf/ThreadHolder.h>
+#include <wtf/WordLock.h>
+
+#if OS(LINUX)
+#include <sys/prctl.h>
+#endif
 
 #if !COMPILER(MSVC)
 #include <limits.h>
@@ -55,127 +54,131 @@
 #include <sys/time.h>
 #endif
 
-#if OS(LINUX)
-#include <sys/prctl.h>
+#if !OS(DARWIN) && OS(UNIX)
+
+#include <sys/mman.h>
+#include <unistd.h>
+
+#if OS(SOLARIS)
+#include <thread.h>
+#else
+#include <pthread.h>
 #endif
 
-#if !OS(DARWIN)
-#include <signal.h>
+#if HAVE(PTHREAD_NP_H)
+#include <pthread_np.h>
+#endif
+
 #endif
 
 namespace WTF {
 
-class PthreadState {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    enum JoinableState {
-        Joinable, // The default thread state. The thread can be joined on.
-
-        Joined, // Somebody waited on this thread to exit and this thread finally exited. This state is here because there can be a 
-                // period of time between when the thread exits (which causes pthread_join to return and the remainder of waitOnThreadCompletion to run) 
-                // and when threadDidExit is called. We need threadDidExit to take charge and delete the thread data since there's 
-                // nobody else to pick up the slack in this case (since waitOnThreadCompletion has already returned).
-
-        Detached // The thread has been detached and can no longer be joined on. At this point, the thread must take care of cleaning up after itself.
-    };
-
-    // Currently all threads created by WTF start out as joinable. 
-    PthreadState(pthread_t handle)
-        : m_joinableState(Joinable)
-        , m_didExit(false)
-        , m_pthreadHandle(handle)
-    {
-    }
-
-    JoinableState joinableState() { return m_joinableState; }
-    pthread_t pthreadHandle() { return m_pthreadHandle; }
-    void didBecomeDetached() { m_joinableState = Detached; }
-    void didExit() { m_didExit = true; }
-    void didJoin() { m_joinableState = Joined; }
-    bool hasExited() { return m_didExit; }
-
-private:
-    JoinableState m_joinableState;
-    bool m_didExit;
-    pthread_t m_pthreadHandle;
-};
-
-typedef HashMap<ThreadIdentifier, std::unique_ptr<PthreadState>> ThreadMap;
-
-void unsafeThreadWasDetached(ThreadIdentifier);
-void threadDidExit(ThreadIdentifier);
-void threadWasJoined(ThreadIdentifier);
-
-static Mutex& threadMapMutex()
+Thread::Thread()
 {
-    static NeverDestroyed<Mutex> mutex;
-    return mutex;
+#if !OS(DARWIN)
+    sem_init(&m_semaphoreForSuspendResume, /* Only available in this process. */ 0, /* Initial value for the semaphore. */ 0);
+#endif
 }
 
-void initializeThreading()
+Thread::~Thread()
 {
-    static bool isInitialized;
+#if !OS(DARWIN)
+    sem_destroy(&m_semaphoreForSuspendResume);
+#endif
+}
 
-    if (isInitialized)
+#if !OS(DARWIN)
+
+// We use SIGUSR2 to suspend and resume machine threads in JavaScriptCore.
+static constexpr const int SigThreadSuspendResume = SIGUSR2;
+static std::atomic<Thread*> targetThread { nullptr };
+static StaticWordLock globalSuspendLock;
+
+void Thread::signalHandlerSuspendResume(int, siginfo_t*, void* ucontext)
+{
+    // Touching thread local atomic types from signal handlers is allowed.
+    Thread* thread = targetThread.load();
+
+    if (thread->m_suspended.load(std::memory_order_acquire)) {
+        // This is signal handler invocation that is intended to be used to resume sigsuspend.
+        // So this handler invocation itself should not process.
+        //
+        // When signal comes, first, the system calls signal handler. And later, sigsuspend will be resumed. Signal handler invocation always precedes.
+        // So, the problem never happens that suspended.store(true, ...) will be executed before the handler is called.
+        // http://pubs.opengroup.org/onlinepubs/009695399/functions/sigsuspend.html
         return;
-
-    isInitialized = true;
-
-    WTF::double_conversion::initialize();
-    // StringImpl::empty() does not construct its static string in a threadsafe fashion,
-    // so ensure it has been initialized from here.
-    StringImpl::empty();
-    threadMapMutex();
-    initializeRandomNumberGenerator();
-    ThreadIdentifierData::initializeOnce();
-    wtfThreadData();
-    initializeDates();
-}
-
-static ThreadMap& threadMap()
-{
-    static NeverDestroyed<ThreadMap> map;
-    return map;
-}
-
-static ThreadIdentifier identifierByPthreadHandle(const pthread_t& pthreadHandle)
-{
-    MutexLocker locker(threadMapMutex());
-
-    ThreadMap::iterator i = threadMap().begin();
-    for (; i != threadMap().end(); ++i) {
-        if (pthread_equal(i->value->pthreadHandle(), pthreadHandle) && !i->value->hasExited())
-            return i->key;
     }
 
-    return 0;
+    ucontext_t* userContext = static_cast<ucontext_t*>(ucontext);
+#if CPU(PPC)
+    thread->m_suspendedMachineContext = *userContext->uc_mcontext.uc_regs;
+#else
+    thread->m_suspendedMachineContext = userContext->uc_mcontext;
+#endif
+
+    // Allow suspend caller to see that this thread is suspended.
+    // sem_post is async-signal-safe function. It means that we can call this from a signal handler.
+    // http://pubs.opengroup.org/onlinepubs/009695399/functions/xsh_chap02_04.html#tag_02_04_03
+    //
+    // And sem_post emits memory barrier that ensures that suspendedMachineContext is correctly saved.
+    // http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap04.html#tag_04_11
+    sem_post(&thread->m_semaphoreForSuspendResume);
+
+    // Reaching here, SigThreadSuspendResume is blocked in this handler (this is configured by sigaction's sa_mask).
+    // So before calling sigsuspend, SigThreadSuspendResume to this thread is deferred. This ensures that the handler is not executed recursively.
+    sigset_t blockedSignalSet;
+    sigfillset(&blockedSignalSet);
+    sigdelset(&blockedSignalSet, SigThreadSuspendResume);
+    sigsuspend(&blockedSignalSet);
+
+    // Allow resume caller to see that this thread is resumed.
+    sem_post(&thread->m_semaphoreForSuspendResume);
 }
 
-static ThreadIdentifier establishIdentifierForPthreadHandle(const pthread_t& pthreadHandle)
+#endif // !OS(DARWIN)
+
+void Thread::initializePlatformThreading()
 {
-    ASSERT(!identifierByPthreadHandle(pthreadHandle));
-    MutexLocker locker(threadMapMutex());
-    static ThreadIdentifier identifierCount = 1;
-    threadMap().add(identifierCount, std::make_unique<PthreadState>(pthreadHandle));
-    return identifierCount++;
+#if !OS(DARWIN)
+    // Signal handlers are process global configuration.
+    // Intentionally block SigThreadSuspendResume in the handler.
+    // SigThreadSuspendResume will be allowed in the handler by sigsuspend.
+    struct sigaction action;
+    sigemptyset(&action.sa_mask);
+    sigaddset(&action.sa_mask, SigThreadSuspendResume);
+
+    action.sa_sigaction = &signalHandlerSuspendResume;
+    action.sa_flags = SA_RESTART | SA_SIGINFO;
+    sigaction(SigThreadSuspendResume, &action, 0);
+#endif
 }
 
-static pthread_t pthreadHandleForIdentifierWithLockAlreadyHeld(ThreadIdentifier id)
+static void initializeCurrentThreadEvenIfNonWTFCreated()
 {
-    return threadMap().get(id)->pthreadHandle();
+#if !OS(DARWIN)
+    sigset_t mask;
+    sigemptyset(&mask);
+    sigaddset(&mask, SigThreadSuspendResume);
+    pthread_sigmask(SIG_UNBLOCK, &mask, 0);
+#endif
 }
 
 static void* wtfThreadEntryPoint(void* param)
 {
-    // Balanced by .leakPtr() in createThreadInternal.
+    // Balanced by .leakPtr() in Thread::createInternal.
     auto invocation = std::unique_ptr<ThreadFunctionInvocation>(static_cast<ThreadFunctionInvocation*>(param));
+
+    ThreadHolder::initialize(*invocation->thread);
+    invocation->thread = nullptr;
+
     invocation->function(invocation->data);
     return nullptr;
 }
 
-ThreadIdentifier createThreadInternal(ThreadFunction entryPoint, void* data, const char*)
+RefPtr<Thread> Thread::createInternal(ThreadFunction entryPoint, void* data, const char*)
 {
-    auto invocation = std::make_unique<ThreadFunctionInvocation>(entryPoint, data);
+    RefPtr<Thread> thread = adoptRef(new Thread());
+    auto invocation = std::make_unique<ThreadFunctionInvocation>(entryPoint, thread.get(), data);
     pthread_t threadHandle;
     pthread_attr_t attr;
     pthread_attr_init(&attr);
@@ -186,17 +189,18 @@ ThreadIdentifier createThreadInternal(ThreadFunction entryPoint, void* data, con
     pthread_attr_destroy(&attr);
     if (error) {
         LOG_ERROR("Failed to create pthread at entry point %p with data %p", wtfThreadEntryPoint, invocation.get());
-        return 0;
+        return nullptr;
     }
 
     // Balanced by std::unique_ptr constructor in wtfThreadEntryPoint.
     ThreadFunctionInvocation* leakedInvocation = invocation.release();
     UNUSED_PARAM(leakedInvocation);
 
-    return establishIdentifierForPthreadHandle(threadHandle);
+    thread->establish(threadHandle);
+    return thread;
 }
 
-void initializeCurrentThreadInternal(const char* threadName)
+void Thread::initializeCurrentThreadInternal(const char* threadName)
 {
 #if HAVE(PTHREAD_SETNAME_NP)
     pthread_setname_np(normalizeThreadName(threadName));
@@ -205,123 +209,228 @@ void initializeCurrentThreadInternal(const char* threadName)
 #else
     UNUSED_PARAM(threadName);
 #endif
-
-    ThreadIdentifier id = identifierByPthreadHandle(pthread_self());
-    ASSERT(id);
-    ThreadIdentifierData::initialize(id);
+    initializeCurrentThreadEvenIfNonWTFCreated();
 }
-    
-void changeThreadPriority(ThreadIdentifier threadID, int delta)
-{
-    pthread_t pthreadHandle;
-    ASSERT(threadID);
 
-    {
-        MutexLocker locker(threadMapMutex());
-        pthreadHandle = pthreadHandleForIdentifierWithLockAlreadyHeld(threadID);
-        ASSERT(pthreadHandle);
-    }
+void Thread::changePriority(int delta)
+{
+    std::unique_lock<std::mutex> locker(m_mutex);
 
     int policy;
     struct sched_param param;
 
-    if (pthread_getschedparam(pthreadHandle, &policy, &param))
+    if (pthread_getschedparam(m_handle, &policy, &param))
         return;
 
     param.sched_priority += delta;
 
-    pthread_setschedparam(pthreadHandle, policy, &param);
+    pthread_setschedparam(m_handle, policy, &param);
 }
 
-int waitForThreadCompletion(ThreadIdentifier threadID)
+int Thread::waitForCompletion()
 {
-    pthread_t pthreadHandle;
-    ASSERT(threadID);
-
+    pthread_t handle;
     {
-        // We don't want to lock across the call to join, since that can block our thread and cause deadlock.
-        MutexLocker locker(threadMapMutex());
-        pthreadHandle = pthreadHandleForIdentifierWithLockAlreadyHeld(threadID);
-        ASSERT(pthreadHandle);
+        std::unique_lock<std::mutex> locker(m_mutex);
+        handle = m_handle;
     }
 
-    int joinResult = pthread_join(pthreadHandle, 0);
+    int joinResult = pthread_join(handle, 0);
 
     if (joinResult == EDEADLK)
-        LOG_ERROR("ThreadIdentifier %u was found to be deadlocked trying to quit", threadID);
+        LOG_ERROR("ThreadIdentifier %u was found to be deadlocked trying to quit", m_id);
     else if (joinResult)
-        LOG_ERROR("ThreadIdentifier %u was unable to be joined.\n", threadID);
+        LOG_ERROR("ThreadIdentifier %u was unable to be joined.\n", m_id);
 
-    MutexLocker locker(threadMapMutex());
-    PthreadState* state = threadMap().get(threadID);
-    ASSERT(state);
-    ASSERT(state->joinableState() == PthreadState::Joinable);
+    std::unique_lock<std::mutex> locker(m_mutex);
+    ASSERT(joinableState() == Joinable);
 
-    // The thread has already exited, so clean up after it.
-    if (state->hasExited())
-        threadMap().remove(threadID);
-    // The thread hasn't exited yet, so don't clean anything up. Just signal that we've already joined on it so that it will clean up after itself.
-    else
-        state->didJoin();
+    // If the thread has already exited, then do nothing. If the thread hasn't exited yet, then just signal that we've already joined on it.
+    // In both cases, ThreadHolder::destruct() will take care of destroying Thread.
+    if (!hasExited())
+        didJoin();
 
     return joinResult;
 }
 
-void detachThread(ThreadIdentifier threadID)
+void Thread::detach()
 {
-    ASSERT(threadID);
-
-    MutexLocker locker(threadMapMutex());
-    pthread_t pthreadHandle = pthreadHandleForIdentifierWithLockAlreadyHeld(threadID);
-    ASSERT(pthreadHandle);
-
-    int detachResult = pthread_detach(pthreadHandle);
+    std::unique_lock<std::mutex> locker(m_mutex);
+    int detachResult = pthread_detach(m_handle);
     if (detachResult)
-        LOG_ERROR("ThreadIdentifier %u was unable to be detached\n", threadID);
+        LOG_ERROR("ThreadIdentifier %u was unable to be detached\n", m_id);
 
-    PthreadState* state = threadMap().get(threadID);
-    ASSERT(state);
-    if (state->hasExited())
-        threadMap().remove(threadID);
-    else
-        threadMap().get(threadID)->didBecomeDetached();
+    if (!hasExited())
+        didBecomeDetached();
 }
 
-void threadDidExit(ThreadIdentifier threadID)
+Thread& Thread::current()
 {
-    MutexLocker locker(threadMapMutex());
-    PthreadState* state = threadMap().get(threadID);
-    ASSERT(state);
-    
-    state->didExit();
-
-    if (state->joinableState() != PthreadState::Joinable)
-        threadMap().remove(threadID);
-}
-
-ThreadIdentifier currentThread()
-{
-    ThreadIdentifier id = ThreadIdentifierData::identifier();
-    if (id)
-        return id;
+    ThreadHolder* data = ThreadHolder::current();
+    if (data)
+        return data->thread();
 
     // Not a WTF-created thread, ThreadIdentifier is not established yet.
-    id = establishIdentifierForPthreadHandle(pthread_self());
-    ThreadIdentifierData::initialize(id);
-    return id;
+    RefPtr<Thread> thread = adoptRef(new Thread());
+    thread->establish(pthread_self());
+    ThreadHolder::initialize(*thread);
+    initializeCurrentThreadEvenIfNonWTFCreated();
+    return *thread;
 }
 
-bool signalThread(ThreadIdentifier threadID, int signalNumber)
+ThreadIdentifier Thread::currentID()
 {
-    pthread_t pthreadHandle;
-    ASSERT(threadID);
-    {
-        MutexLocker locker(threadMapMutex());
-        pthreadHandle = pthreadHandleForIdentifierWithLockAlreadyHeld(threadID);
-        ASSERT(pthreadHandle);
-    }
-    int errNo = pthread_kill(pthreadHandle, signalNumber);
+    return current().id();
+}
+
+bool Thread::signal(int signalNumber)
+{
+    std::unique_lock<std::mutex> locker(m_mutex);
+    int errNo = pthread_kill(m_handle, signalNumber);
     return !errNo; // A 0 errNo means success.
+}
+
+auto Thread::suspend() -> Expected<void, PlatformSuspendError>
+{
+    RELEASE_ASSERT_WITH_MESSAGE(id() != currentThread(), "We do not support suspending the current thread itself.");
+    std::unique_lock<std::mutex> locker(m_mutex);
+#if OS(DARWIN)
+    kern_return_t result = thread_suspend(m_platformThread);
+    if (result != KERN_SUCCESS)
+        return makeUnexpected(result);
+    return { };
+#else
+    {
+        // During suspend, suspend or resume should not be executed from the other threads.
+        // We use global lock instead of per thread lock.
+        // Consider the following case, there are threads A and B.
+        // And A attempt to suspend B and B attempt to suspend A.
+        // A and B send signals. And later, signals are delivered to A and B.
+        // In that case, both will be suspended.
+        WordLockHolder locker(globalSuspendLock);
+        if (!m_suspendCount) {
+            // Ideally, we would like to use pthread_sigqueue. It allows us to pass the argument to the signal handler.
+            // But it can be used in a few platforms, like Linux.
+            // Instead, we use Thread* stored in the thread local storage to pass it to the signal handler.
+            targetThread.store(this);
+            int result = pthread_kill(m_handle, SigThreadSuspendResume);
+            if (result)
+                return makeUnexpected(result);
+            sem_wait(&m_semaphoreForSuspendResume);
+            // Release barrier ensures that this operation is always executed after all the above processing is done.
+            m_suspended.store(true, std::memory_order_release);
+        }
+        ++m_suspendCount;
+        return { };
+    }
+#endif
+}
+
+void Thread::resume()
+{
+    std::unique_lock<std::mutex> locker(m_mutex);
+#if OS(DARWIN)
+    thread_resume(m_platformThread);
+#else
+    {
+        // During resume, suspend or resume should not be executed from the other threads.
+        WordLockHolder locker(globalSuspendLock);
+        if (m_suspendCount == 1) {
+            // When allowing SigThreadSuspendResume interrupt in the signal handler by sigsuspend and SigThreadSuspendResume is actually issued,
+            // the signal handler itself will be called once again.
+            // There are several ways to distinguish the handler invocation for suspend and resume.
+            // 1. Use different signal numbers. And check the signal number in the handler.
+            // 2. Use some arguments to distinguish suspend and resume in the handler. If pthread_sigqueue can be used, we can take this.
+            // 3. Use thread local storage with atomic variables in the signal handler.
+            // In this implementaiton, we take (3). suspended flag is used to distinguish it.
+            targetThread.store(this);
+            if (pthread_kill(m_handle, SigThreadSuspendResume) == ESRCH)
+                return;
+            sem_wait(&m_semaphoreForSuspendResume);
+            // Release barrier ensures that this operation is always executed after all the above processing is done.
+            m_suspended.store(false, std::memory_order_release);
+        }
+        --m_suspendCount;
+    }
+#endif
+}
+
+size_t Thread::getRegisters(PlatformRegisters& registers)
+{
+    std::unique_lock<std::mutex> locker(m_mutex);
+#if OS(DARWIN)
+#if CPU(X86)
+    unsigned userCount = sizeof(registers) / sizeof(int);
+    thread_state_flavor_t flavor = i386_THREAD_STATE;
+#elif CPU(X86_64)
+    unsigned userCount = x86_THREAD_STATE64_COUNT;
+    thread_state_flavor_t flavor = x86_THREAD_STATE64;
+#elif CPU(PPC)
+    unsigned userCount = PPC_THREAD_STATE_COUNT;
+    thread_state_flavor_t flavor = PPC_THREAD_STATE;
+#elif CPU(PPC64)
+    unsigned userCount = PPC_THREAD_STATE64_COUNT;
+    thread_state_flavor_t flavor = PPC_THREAD_STATE64;
+#elif CPU(ARM)
+    unsigned userCount = ARM_THREAD_STATE_COUNT;
+    thread_state_flavor_t flavor = ARM_THREAD_STATE;
+#elif CPU(ARM64)
+    unsigned userCount = ARM_THREAD_STATE64_COUNT;
+    thread_state_flavor_t flavor = ARM_THREAD_STATE64;
+#else
+#error Unknown Architecture
+#endif
+
+    kern_return_t result = thread_get_state(m_platformThread, flavor, (thread_state_t)&registers, &userCount);
+    if (result != KERN_SUCCESS) {
+        WTFReportFatalError(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, "JavaScript garbage collection failed because thread_get_state returned an error (%d). This is probably the result of running inside Rosetta, which is not supported.", result);
+        CRASH();
+    }
+    return userCount * sizeof(uintptr_t);
+#elif (OS(FREEBSD) || defined(__GLIBC__)) && (CPU(X86) || CPU(X86_64) || CPU(ARM) || CPU(ARM64) || CPU(MIPS))
+    registers = m_suspendedMachineContext;
+    return sizeof(PlatformRegisters);
+#elif OS(OPENBSD)
+    // http://man.openbsd.org/pthread_stackseg_np.3
+    stack_t ss;
+    int rc = pthread_stackseg_np(m_handle, &ss);
+    registers.stackPointer = ss.ss_sp;
+    return 0;
+#else
+    pthread_attr_t attribute;
+    pthread_attr_init(&attribute);
+#if HAVE(PTHREAD_NP_H) || OS(NETBSD)
+    // e.g. on FreeBSD 5.4, neundorf@kde.org
+    pthread_attr_get_np(m_handle, &attribute);
+#else
+    // FIXME: this function is non-portable; other POSIX systems may have different np alternatives
+    pthread_getattr_np(m_handle, &attribute);
+#endif
+
+    void* stackBase = 0;
+    size_t stackSize = 0;
+    int rc = pthread_attr_getstack(&attribute, &stackBase, &stackSize);
+    ASSERT_UNUSED(rc, !rc);
+    ASSERT(stackBase);
+    registers.stackPointer = static_cast<char*>(stackBase) + stackSize;
+
+    pthread_attr_destroy(&attribute);
+
+    return 0;
+#endif
+}
+
+void Thread::establish(pthread_t handle)
+{
+    std::unique_lock<std::mutex> locker(m_mutex);
+    m_handle = handle;
+    if (!m_id) {
+        static std::atomic<ThreadIdentifier> provider { 0 };
+        m_id = ++provider;
+#if OS(DARWIN)
+        m_platformThread = pthread_mach_thread_np(handle);
+#endif
+    }
 }
 
 Mutex::Mutex()

@@ -349,7 +349,7 @@ void Heap::lastChanceToFinalize()
             m_shouldStopCollectingContinuously = true;
             m_collectContinuouslyCondition.notifyOne();
         }
-        waitForThreadCompletion(m_collectContinuouslyThread);
+        m_collectContinuouslyThread->waitForCompletion();
     }
     
     if (Options::logGC())
@@ -2681,7 +2681,7 @@ void Heap::notifyIsSafeToCollect()
     m_isSafeToCollect = true;
     
     if (Options::collectContinuously()) {
-        m_collectContinuouslyThread = createThread(
+        m_collectContinuouslyThread = WTF::Thread::create(
             "JSC DEBUG Continuous GC",
             [this] () {
                 MonotonicTime initialTime = MonotonicTime::now();

@@ -62,7 +62,7 @@ struct Benchmark {
     {
         LockType lock;
         std::unique_ptr<unsigned[]> counts = std::make_unique<unsigned[]>(numThreads);
-        std::unique_ptr<ThreadIdentifier[]> threads = std::make_unique<ThreadIdentifier[]>(numThreads);
+        std::unique_ptr<RefPtr<Thread>[]> threads = std::make_unique<RefPtr<Thread>[]>(numThreads);
     
         volatile bool keepGoing = true;
     
@@ -70,7 +70,7 @@ struct Benchmark {
     
         for (unsigned threadIndex = numThreads; threadIndex--;) {
             counts[threadIndex] = 0;
-            threads[threadIndex] = createThread(
+            threads[threadIndex] = Thread::create(
                 "Benchmark Thread",
                 [&, threadIndex] () {
                     if (!microsecondsInCriticalSection) {
@@ -107,7 +107,7 @@ struct Benchmark {
     
         lock.unlock();
         for (unsigned threadIndex = numThreads; threadIndex--;)
-            waitForThreadCompletion(threads[threadIndex]);
+            threads[threadIndex]->waitForCompletion();
     }
 };
 

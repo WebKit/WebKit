@@ -51,7 +51,7 @@ static Lock& javaScriptThreadsMutex()
     return staticMutex;
 }
 
-typedef HashSet<ThreadIdentifier> ThreadSet;
+typedef HashSet<RefPtr<Thread>> ThreadSet;
 static ThreadSet& javaScriptThreads()
 {
     DEPRECATED_DEFINE_STATIC_LOCAL(ThreadSet, staticJavaScriptThreads, ());
@@ -108,10 +108,10 @@ void runJavaScriptThread(void*)
             continue;
 
         LockHolder locker(javaScriptThreadsMutex());
-        ThreadIdentifier thread = currentThread();
-        detachThread(thread);
-        javaScriptThreads().remove(thread);
-        javaScriptThreads().add(createThread(&runJavaScriptThread, 0, 0));
+        Thread& thread = Thread::current();
+        thread.detach();
+        javaScriptThreads().remove(&thread);
+        javaScriptThreads().add(Thread::create(&runJavaScriptThread, 0, 0));
         break;
     }
 
@@ -128,7 +128,7 @@ void startJavaScriptThreads()
     LockHolder locker(javaScriptThreadsMutex());
 
     for (size_t i = 0; i < javaScriptThreadsCount; ++i)
-        javaScriptThreads().add(createThread(&runJavaScriptThread, 0, 0));
+        javaScriptThreads().add(Thread::create(&runJavaScriptThread, 0, 0));
 }
 
 void stopJavaScriptThreads()
@@ -138,7 +138,7 @@ void stopJavaScriptThreads()
         javaScriptThreadsShouldTerminate = true;
     }
 
-    Vector<ThreadIdentifier, javaScriptThreadsCount> threads;
+    Vector<RefPtr<Thread>, javaScriptThreadsCount> threads;
     {
         LockHolder locker(javaScriptThreadsMutex());
         copyToVector(javaScriptThreads(), threads);
@@ -146,7 +146,7 @@ void stopJavaScriptThreads()
     }
 
     for (size_t i = 0; i < javaScriptThreadsCount; ++i)
-        waitForThreadCompletion(threads[i]);
+        threads[i]->waitForCompletion();
 
     {
         LockHolder locker(javaScriptThreadsMutex());

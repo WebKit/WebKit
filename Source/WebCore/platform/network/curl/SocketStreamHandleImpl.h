@@ -92,7 +92,7 @@ private:
         size_t size { 0 };
     };
 
-    ThreadIdentifier m_workerThread { 0 };
+    RefPtr<Thread> m_workerThread;
     std::atomic<bool> m_stopThread { false };
     Lock m_mutexSend;
     Lock m_mutexReceive;

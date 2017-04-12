@@ -79,14 +79,14 @@ void runTest(
     ConditionType emptyCondition;
     ConditionType fullCondition;
 
-    Vector<ThreadIdentifier> consumerThreads;
-    Vector<ThreadIdentifier> producerThreads;
+    Vector<RefPtr<Thread>> consumerThreads;
+    Vector<RefPtr<Thread>> producerThreads;
 
     Vector<unsigned> received;
     LockType receivedLock;
     
     for (unsigned i = numConsumers; i--;) {
-        ThreadIdentifier threadIdentifier = createThread(
+        RefPtr<Thread> thread = Thread::create(
             "Consumer thread",
             [&] () {
                 for (;;) {
@@ -98,7 +98,7 @@ void runTest(
                             emptyCondition, lock,
                             [&] () {
                                 if (verbose)
-                                    dataLog(toString(currentThread(), ": Checking consumption predicate with shouldContinue = ", shouldContinue, ", queue.size() == ", queue.size(), "\n"));
+                                    dataLog(toString(Thread::current(), ": Checking consumption predicate with shouldContinue = ", shouldContinue, ", queue.size() == ", queue.size(), "\n"));
                                 return !shouldContinue || !queue.isEmpty();
                             });
                         if (!shouldContinue && queue.isEmpty())
@@ -114,11 +114,11 @@ void runTest(
                     }
                 }
             });
-        consumerThreads.append(threadIdentifier);
+        consumerThreads.append(thread);
     }
 
     for (unsigned i = numProducers; i--;) {
-        ThreadIdentifier threadIdentifier = createThread(
+        RefPtr<Thread> thread = Thread::create(
             "Producer Thread",
             [&] () {
                 for (unsigned i = 0; i < numMessagesPerProducer; ++i) {
@@ -129,7 +129,7 @@ void runTest(
                             fullCondition, lock,
                             [&] () {
                                 if (verbose)
-                                    dataLog(toString(currentThread(), ": Checking production predicate with shouldContinue = ", shouldContinue, ", queue.size() == ", queue.size(), "\n"));
+                                    dataLog(toString(Thread::current(), ": Checking production predicate with shouldContinue = ", shouldContinue, ", queue.size() == ", queue.size(), "\n"));
                                 return queue.size() < maxQueueSize;
                             });
                         mustNotify = queue.isEmpty();
@@ -138,11 +138,11 @@ void runTest(
                     notify(emptyCondition, mustNotify);
                 }
             });
-        producerThreads.append(threadIdentifier);
+        producerThreads.append(thread);
     }
 
-    for (ThreadIdentifier threadIdentifier : producerThreads)
-        waitForThreadCompletion(threadIdentifier);
+    for (RefPtr<Thread>& thread : producerThreads)
+        thread->waitForCompletion();
 
     {
         std::lock_guard<LockType> locker(lock);

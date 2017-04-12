@@ -94,10 +94,10 @@ int CurlDownloadManager::getPendingDownloadCount() const
 void CurlDownloadManager::startThreadIfNeeded()
 {
     if (!runThread()) {
-        if (m_threadId)
-            waitForThreadCompletion(m_threadId);
+        if (m_thread)
+            m_thread->waitForCompletion();
         setRunThread(true);
-        m_threadId = createThread(downloadThread, this, "downloadThread");
+        m_thread = Thread::create(downloadThread, this, "downloadThread");
     }
 }
 
@@ -105,9 +105,9 @@ void CurlDownloadManager::stopThread()
 {
     setRunThread(false);
 
-    if (m_threadId) {
-        waitForThreadCompletion(m_threadId);
-        m_threadId = 0;
+    if (m_thread) {
+        m_thread->waitForCompletion();
+        m_thread = nullptr;
     }
 }
 

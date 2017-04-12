@@ -179,7 +179,7 @@ public:
 private:
 
     Spectrum<ICEvent, uint64_t> m_spectrum;
-    ThreadIdentifier m_thread;
+    RefPtr<Thread> m_thread;
     Lock m_lock;
     Condition m_condition;
     bool m_shouldStop { false };

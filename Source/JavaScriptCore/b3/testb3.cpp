@@ -16850,10 +16850,10 @@ void run(const char* filter)
 
     Lock lock;
 
-    Vector<ThreadIdentifier> threads;
+    Vector<RefPtr<Thread>> threads;
     for (unsigned i = filter ? 1 : WTF::numberOfProcessorCores(); i--;) {
         threads.append(
-            createThread(
+            Thread::create(
                 "testb3 thread",
                 [&] () {
                     for (;;) {
@@ -16870,8 +16870,8 @@ void run(const char* filter)
                 }));
     }
 
-    for (ThreadIdentifier thread : threads)
-        waitForThreadCompletion(thread);
+    for (RefPtr<Thread> thread : threads)
+        thread->waitForCompletion();
     crashLock.lock();
 }
 

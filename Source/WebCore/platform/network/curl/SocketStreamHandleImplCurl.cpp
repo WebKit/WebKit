@@ -199,7 +199,7 @@ void SocketStreamHandleImpl::startThread()
 
     ref(); // stopThread() will call deref().
 
-    m_workerThread = createThread("WebSocket thread", [this] {
+    m_workerThread = Thread::create("WebSocket thread", [this] {
 
         ASSERT(!isMainThread());
 
@@ -249,8 +249,8 @@ void SocketStreamHandleImpl::stopThread()
         return;
 
     m_stopThread = true;
-    waitForThreadCompletion(m_workerThread);
-    m_workerThread = 0;
+    m_workerThread->waitForCompletion();
+    m_workerThread = nullptr;
     deref();
 }
 

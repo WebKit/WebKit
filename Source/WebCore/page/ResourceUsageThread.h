@@ -62,7 +62,7 @@ private:
     void threadBody();
     void platformThreadBody(JSC::VM*, ResourceUsageData&);
 
-    ThreadIdentifier m_threadIdentifier { 0 };
+    RefPtr<Thread> m_thread;
     Lock m_lock;
     Condition m_condition;
     HashMap<void*, std::function<void (const ResourceUsageData&)>> m_observers;

@@ -144,7 +144,7 @@ protected:
             dataLog(m_worklist, ": Thread started\n");
         
         if (m_relativePriority)
-            changeThreadPriority(currentThread(), m_relativePriority);
+            Thread::current().changePriority(m_relativePriority);
         
         m_compilationScope = std::make_unique<CompilationScope>();
         m_longLivedState = std::make_unique<LongLivedState>();

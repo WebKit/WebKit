@@ -60,7 +60,7 @@ public:
     bool start();
     void stop();
 
-    ThreadIdentifier threadID() const { return m_threadID; }
+    ThreadIdentifier threadID() const { return m_thread ? m_thread->id() : 0; }
     WorkerRunLoop& runLoop() { return m_runLoop; }
     WorkerLoaderProxy& workerLoaderProxy() const { return m_workerLoaderProxy; }
     WorkerReportingProxy& workerReportingProxy() const { return m_workerReportingProxy; }
@@ -98,7 +98,7 @@ private:
     static void workerThreadStart(void*);
     void workerThread();
 
-    ThreadIdentifier m_threadID;
+    RefPtr<Thread> m_thread;
     WorkerRunLoop m_runLoop;
     WorkerLoaderProxy& m_workerLoaderProxy;
     WorkerReportingProxy& m_workerReportingProxy;

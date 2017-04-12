@@ -173,7 +173,7 @@ private:
 #if USE(GLIB)
         GRefPtr<GSource> m_source;
 #else
-        ThreadIdentifier m_threadID;
+        RefPtr<Thread> m_thread;
 #endif
     };
 #endif

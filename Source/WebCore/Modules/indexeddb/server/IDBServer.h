@@ -125,7 +125,7 @@ private:
     HashMap<uint64_t, RefPtr<IDBConnectionToClient>> m_connectionMap;
     HashMap<IDBDatabaseIdentifier, RefPtr<UniqueIDBDatabase>> m_uniqueIDBDatabaseMap;
 
-    ThreadIdentifier m_threadID { 0 };
+    RefPtr<Thread> m_thread { nullptr };
     Lock m_databaseThreadCreationLock;
     Lock m_mainThreadReplyLock;
     bool m_mainThreadReplyScheduled { false };

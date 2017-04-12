@@ -69,7 +69,7 @@ private:
 
     static void downloadThread(void* data);
 
-    ThreadIdentifier m_threadId;
+    RefPtr<Thread> m_thread;
     CURLM* m_curlMultiHandle;
     Vector<CURL*> m_pendingHandleList;
     Vector<CURL*> m_activeHandleList;

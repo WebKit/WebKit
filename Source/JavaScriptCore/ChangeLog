@@ -1,3 +1,96 @@
+2017-04-12  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Introduce Thread class and use RefPtr<Thread> and align Windows Threading implementation semantics to Pthread one
+        https://bugs.webkit.org/show_bug.cgi?id=170502
+
+        Reviewed by Mark Lam.
+
+        * API/tests/CompareAndSwapTest.cpp:
+        (testCompareAndSwap):
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * b3/air/testair.cpp:
+        * b3/testb3.cpp:
+        (JSC::B3::run):
+        * bytecode/SuperSampler.cpp:
+        (JSC::initializeSuperSampler):
+        * dfg/DFGWorklist.cpp:
+        * disassembler/Disassembler.cpp:
+        * heap/Heap.cpp:
+        (JSC::Heap::lastChanceToFinalize):
+        (JSC::Heap::notifyIsSafeToCollect):
+        * heap/Heap.h:
+        * heap/MachineStackMarker.cpp:
+        (JSC::MachineThreads::~MachineThreads):
+        (JSC::MachineThreads::addCurrentThread):
+        (JSC::MachineThreads::removeThread):
+        (JSC::MachineThreads::removeThreadIfFound):
+        (JSC::MachineThreads::MachineThread::MachineThread):
+        (JSC::MachineThreads::MachineThread::getRegisters):
+        (JSC::MachineThreads::MachineThread::Registers::stackPointer):
+        (JSC::MachineThreads::MachineThread::Registers::framePointer):
+        (JSC::MachineThreads::MachineThread::Registers::instructionPointer):
+        (JSC::MachineThreads::MachineThread::Registers::llintPC):
+        (JSC::MachineThreads::MachineThread::captureStack):
+        (JSC::MachineThreads::tryCopyOtherThreadStack):
+        (JSC::MachineThreads::tryCopyOtherThreadStacks):
+        (pthreadSignalHandlerSuspendResume): Deleted.
+        (JSC::threadData): Deleted.
+        (JSC::MachineThreads::Thread::Thread): Deleted.
+        (JSC::MachineThreads::Thread::createForCurrentThread): Deleted.
+        (JSC::MachineThreads::Thread::operator==): Deleted.
+        (JSC::MachineThreads::machineThreadForCurrentThread): Deleted.
+        (JSC::MachineThreads::ThreadData::ThreadData): Deleted.
+        (JSC::MachineThreads::ThreadData::~ThreadData): Deleted.
+        (JSC::MachineThreads::ThreadData::suspend): Deleted.
+        (JSC::MachineThreads::ThreadData::resume): Deleted.
+        (JSC::MachineThreads::ThreadData::getRegisters): Deleted.
+        (JSC::MachineThreads::ThreadData::Registers::stackPointer): Deleted.
+        (JSC::MachineThreads::ThreadData::Registers::framePointer): Deleted.
+        (JSC::MachineThreads::ThreadData::Registers::instructionPointer): Deleted.
+        (JSC::MachineThreads::ThreadData::Registers::llintPC): Deleted.
+        (JSC::MachineThreads::ThreadData::freeRegisters): Deleted.
+        (JSC::MachineThreads::ThreadData::captureStack): Deleted.
+        * heap/MachineStackMarker.h:
+        (JSC::MachineThreads::MachineThread::suspend):
+        (JSC::MachineThreads::MachineThread::resume):
+        (JSC::MachineThreads::MachineThread::threadID):
+        (JSC::MachineThreads::MachineThread::stackBase):
+        (JSC::MachineThreads::MachineThread::stackEnd):
+        (JSC::MachineThreads::threadsListHead):
+        (JSC::MachineThreads::Thread::operator!=): Deleted.
+        (JSC::MachineThreads::Thread::suspend): Deleted.
+        (JSC::MachineThreads::Thread::resume): Deleted.
+        (JSC::MachineThreads::Thread::getRegisters): Deleted.
+        (JSC::MachineThreads::Thread::freeRegisters): Deleted.
+        (JSC::MachineThreads::Thread::captureStack): Deleted.
+        (JSC::MachineThreads::Thread::platformThread): Deleted.
+        (JSC::MachineThreads::Thread::stackBase): Deleted.
+        (JSC::MachineThreads::Thread::stackEnd): Deleted.
+        * jit/ICStats.cpp:
+        (JSC::ICStats::ICStats):
+        (JSC::ICStats::~ICStats):
+        * jit/ICStats.h:
+        * jsc.cpp:
+        (functionDollarAgentStart):
+        (startTimeoutThreadIfNeeded):
+        * runtime/JSLock.cpp:
+        (JSC::JSLock::lock):
+        * runtime/JSLock.h:
+        (JSC::JSLock::ownerThread):
+        (JSC::JSLock::currentThreadIsHoldingLock):
+        * runtime/SamplingProfiler.cpp:
+        (JSC::FrameWalker::isValidFramePointer):
+        (JSC::SamplingProfiler::SamplingProfiler):
+        (JSC::SamplingProfiler::createThreadIfNecessary):
+        (JSC::SamplingProfiler::takeSample):
+        * runtime/SamplingProfiler.h:
+        * runtime/VM.h:
+        (JSC::VM::ownerThread):
+        * runtime/VMTraps.cpp:
+        (JSC::findActiveVMAndStackBounds):
+        (JSC::VMTraps::SignalSender::send):
+        (JSC::VMTraps::fireTrap):
+
 2017-04-11  Dean Jackson  <dino@apple.com>
 
         Disable outdated WritableStream API

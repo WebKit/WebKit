@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2017 Yusuke Suzuki <utatane.tea@gmail.com>.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,51 +29,51 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ThreadIdentifierDataPthreads_h
-#define ThreadIdentifierDataPthreads_h
+#pragma once
 
+#include <wtf/ThreadSpecific.h>
 #include <wtf/Threading.h>
 
 namespace WTF {
 
-// Holds ThreadIdentifier in the thread-specific storage and employs pthreads-specific 2-pass destruction to reliably remove
-// ThreadIdentifier from threadMap. It assumes regular ThreadSpecific types don't use multiple-pass destruction.
-class ThreadIdentifierData {
-    WTF_MAKE_NONCOPYABLE(ThreadIdentifierData);
+// Holds Thread in the thread-specific storage. The destructor of this holder reliably destroy Thread.
+// For pthread, it employs pthreads-specific 2-pass destruction to reliably remove Thread.
+// For Windows, we use thread_local to defer thread holder destruction. It assumes regular ThreadSpecific
+// types don't use multiple-pass destruction.
+class ThreadHolder {
+    WTF_MAKE_NONCOPYABLE(ThreadHolder);
 public:
-    ~ThreadIdentifierData();
+    ~ThreadHolder();
 
     // One time initialization for this class as a whole.
     // This method must be called before initialize() and it is not thread-safe.
     static void initializeOnce();
 
-    // Creates and puts an instance of ThreadIdentifierData into thread-specific storage.
-    static void initialize(ThreadIdentifier identifier);
+    // Creates and puts an instance of ThreadHolder into thread-specific storage.
+    static void initialize(Thread&);
 
     // Returns 0 if thread-specific storage was not initialized.
-    static ThreadIdentifier identifier();
+    static ThreadHolder* current();
+
+    Thread& thread() { return m_thread.get(); }
 
 private:
-    ThreadIdentifierData(ThreadIdentifier identifier)
-        : m_identifier(identifier)
+    ThreadHolder(Thread& thread)
+        : m_thread(thread)
         , m_isDestroyedOnce(false)
     {
     }
 
     // This thread-specific destructor is called 2 times when thread terminates:
     // - first, when all the other thread-specific destructors are called, it simply remembers it was 'destroyed once'
-    // and re-sets itself into the thread-specific slot to make Pthreads to call it again later.
+    // and (1) re-sets itself into the thread-specific slot or (2) constructs thread local value to call it again later.
     // - second, after all thread-specific destructors were invoked, it gets called again - this time, we remove the
-    // ThreadIdentifier from the threadMap, completing the cleanup.
-    static void destruct(void* data);
+    // Thread from the threadMap, completing the cleanup.
+    static void THREAD_SPECIFIC_CALL destruct(void* data);
 
-    ThreadIdentifier m_identifier;
+    Ref<Thread> m_thread;
     bool m_isDestroyedOnce;
-    static pthread_key_t m_key;
+    static ThreadSpecificKey m_key;
 };
 
 } // namespace WTF
-
-#endif // ThreadIdentifierDataPthreads_h
-
-

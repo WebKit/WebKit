@@ -74,7 +74,7 @@ void WorkQueue::concurrentApply(size_t iterations, const std::function<void (siz
 
             m_workers.reserveInitialCapacity(threadCount);
             for (unsigned i = 0; i < threadCount; ++i) {
-                m_workers.append(createThread(String::format("ThreadPool Worker %u", i).utf8().data(), [this] {
+                m_workers.append(Thread::create(String::format("ThreadPool Worker %u", i).utf8().data(), [this] {
                     threadBody();
                 }));
             }
@@ -114,7 +114,7 @@ void WorkQueue::concurrentApply(size_t iterations, const std::function<void (siz
         Condition m_condition;
         Deque<const std::function<void ()>*> m_queue;
 
-        Vector<ThreadIdentifier> m_workers;
+        Vector<RefPtr<Thread>> m_workers;
     };
 
     static LazyNeverDestroyed<ThreadPool> threadPool;

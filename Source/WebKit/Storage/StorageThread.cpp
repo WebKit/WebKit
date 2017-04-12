@@ -40,7 +40,6 @@ static HashSet<StorageThread*>& activeStorageThreads()
 }
 
 StorageThread::StorageThread()
-    : m_threadID(0)
 {
     ASSERT(isMainThread());
 }
@@ -48,16 +47,16 @@ StorageThread::StorageThread()
 StorageThread::~StorageThread()
 {
     ASSERT(isMainThread());
-    ASSERT(!m_threadID);
+    ASSERT(!m_thread);
 }
 
 bool StorageThread::start()
 {
     ASSERT(isMainThread());
-    if (!m_threadID)
-        m_threadID = createThread(StorageThread::threadEntryPointCallback, this, "WebCore: LocalStorage");
+    if (!m_thread)
+        m_thread = Thread::create(StorageThread::threadEntryPointCallback, this, "WebCore: LocalStorage");
     activeStorageThreads().add(this);
-    return m_threadID;
+    return m_thread;
 }
 
 void StorageThread::threadEntryPointCallback(void* thread)
@@ -78,25 +77,25 @@ void StorageThread::threadEntryPoint()
 void StorageThread::dispatch(Function<void ()>&& function)
 {
     ASSERT(isMainThread());
-    ASSERT(!m_queue.killed() && m_threadID);
+    ASSERT(!m_queue.killed() && m_thread);
     m_queue.append(std::make_unique<Function<void ()>>(WTFMove(function)));
 }
 
 void StorageThread::terminate()
 {
     ASSERT(isMainThread());
-    ASSERT(!m_queue.killed() && m_threadID);
+    ASSERT(!m_queue.killed() && m_thread);
     activeStorageThreads().remove(this);
     // Even in weird, exceptional cases, don't wait on a nonexistent thread to terminate.
-    if (!m_threadID)
+    if (!m_thread)
         return;
 
     m_queue.append(std::make_unique<Function<void ()>>([this] {
         performTerminate();
     }));
-    waitForThreadCompletion(m_threadID);
+    m_thread->waitForCompletion();
     ASSERT(m_queue.killed());
-    m_threadID = 0;
+    m_thread = nullptr;
 }
 
 void StorageThread::performTerminate()

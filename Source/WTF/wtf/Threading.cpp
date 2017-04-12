@@ -26,9 +26,15 @@
 #include "config.h"
 #include "Threading.h"
 
+#include "dtoa.h"
+#include "dtoa/cached-powers.h"
 #include <algorithm>
 #include <cmath>
 #include <cstring>
+#include <wtf/DateMath.h>
+#include <wtf/RandomNumberSeed.h>
+#include <wtf/ThreadHolder.h>
+#include <wtf/WTFThreadData.h>
 #include <wtf/text/StringView.h>
 
 #if HAVE(QOS_CLASSES)
@@ -45,7 +51,7 @@ public:
     Mutex creationMutex;
 };
 
-const char* normalizeThreadName(const char* threadName)
+const char* Thread::normalizeThreadName(const char* threadName)
 {
 #if HAVE(PTHREAD_SETNAME_NP)
     return threadName;
@@ -82,7 +88,7 @@ static void threadEntryPoint(void* contextData)
         MutexLocker locker(context->creationMutex);
     }
 
-    initializeCurrentThreadInternal(context->name);
+    Thread::initializeCurrentThreadInternal(context->name);
 
     auto entryPoint = WTFMove(context->entryPoint);
 
@@ -92,24 +98,30 @@ static void threadEntryPoint(void* contextData)
     entryPoint();
 }
 
-ThreadIdentifier createThread(const char* name, std::function<void()> entryPoint)
+RefPtr<Thread> Thread::create(const char* name, std::function<void()> entryPoint)
 {
     NewThreadContext* context = new NewThreadContext { name, WTFMove(entryPoint), { } };
 
     // Prevent the thread body from executing until we've established the thread identifier.
     MutexLocker locker(context->creationMutex);
 
-    return createThreadInternal(threadEntryPoint, context, name);
+    return Thread::createInternal(threadEntryPoint, context, name);
 }
 
-ThreadIdentifier createThread(ThreadFunction entryPoint, void* data, const char* name)
+RefPtr<Thread> Thread::create(ThreadFunction entryPoint, void* data, const char* name)
 {
-    return createThread(name, [entryPoint, data] {
+    return Thread::create(name, [entryPoint, data] {
         entryPoint(data);
     });
 }
 
-void setCurrentThreadIsUserInteractive(int relativePriority)
+void Thread::didExit()
+{
+    std::unique_lock<std::mutex> locker(m_mutex);
+    m_didExit = true;
+}
+
+void Thread::setCurrentThreadIsUserInteractive(int relativePriority)
 {
 #if HAVE(QOS_CLASSES)
     ASSERT(relativePriority <= 0);
@@ -120,7 +132,7 @@ void setCurrentThreadIsUserInteractive(int relativePriority)
 #endif
 }
 
-void setCurrentThreadIsUserInitiated(int relativePriority)
+void Thread::setCurrentThreadIsUserInitiated(int relativePriority)
 {
 #if HAVE(QOS_CLASSES)
     ASSERT(relativePriority <= 0);
@@ -134,18 +146,39 @@ void setCurrentThreadIsUserInitiated(int relativePriority)
 #if HAVE(QOS_CLASSES)
 static qos_class_t globalMaxQOSclass { QOS_CLASS_UNSPECIFIED };
 
-void setGlobalMaxQOSClass(qos_class_t maxClass)
+void Thread::setGlobalMaxQOSClass(qos_class_t maxClass)
 {
     bmalloc::api::setScavengerThreadQOSClass(maxClass);
     globalMaxQOSclass = maxClass;
 }
 
-qos_class_t adjustedQOSClass(qos_class_t originalClass)
+qos_class_t Thread::adjustedQOSClass(qos_class_t originalClass)
 {
     if (globalMaxQOSclass != QOS_CLASS_UNSPECIFIED)
         return std::min(originalClass, globalMaxQOSclass);
     return originalClass;
 }
 #endif
+
+void Thread::dump(PrintStream& out) const
+{
+    out.print(m_id);
+}
+
+void initializeThreading()
+{
+    static std::once_flag initializeKey;
+    std::call_once(initializeKey, [] {
+        WTF::double_conversion::initialize();
+        ThreadHolder::initializeOnce();
+        // StringImpl::empty() does not construct its static string in a threadsafe fashion,
+        // so ensure it has been initialized from here.
+        StringImpl::empty();
+        initializeRandomNumberGenerator();
+        wtfThreadData();
+        initializeDates();
+        Thread::initializePlatformThreading();
+    });
+}
 
 } // namespace WTF

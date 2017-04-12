@@ -46,7 +46,7 @@ void initializeSuperSampler()
     if (!Options::useSuperSampler())
         return;
 
-    createThread(
+    Thread::create(
         "JSC Super Sampler",
         [] () {
             const int sleepQuantum = 10;

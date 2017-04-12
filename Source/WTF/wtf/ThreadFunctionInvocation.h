@@ -29,6 +29,8 @@
 #ifndef ThreadFunctionInvocation_h
 #define ThreadFunctionInvocation_h
 
+#include "Threading.h"
+
 namespace WTF {
 
 typedef void (*ThreadFunction)(void* argument);
@@ -36,13 +38,15 @@ typedef void (*ThreadFunction)(void* argument);
 struct ThreadFunctionInvocation {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    ThreadFunctionInvocation(ThreadFunction function, void* data)
+    ThreadFunctionInvocation(ThreadFunction function, RefPtr<Thread>&& thread, void* data)
         : function(function)
+        , thread(WTFMove(thread))
         , data(data)
     {
     }
 
     ThreadFunction function;
+    RefPtr<Thread> thread;
     void* data;
 };
 

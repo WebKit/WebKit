@@ -109,7 +109,7 @@ void JSLock::lock(intptr_t lockCount)
         m_lock.lock();
     }
 
-    m_ownerThread = currentThread();
+    m_ownerThread = &Thread::current();
     WTF::storeStoreFence();
     m_hasOwnerThread = true;
     ASSERT(!m_lockCount);

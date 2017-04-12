@@ -47,7 +47,7 @@
 #define ASSERT_NOT_SYNC_THREAD() ASSERT(!m_syncThreadRunning || !IS_ICON_SYNC_THREAD())
 
 // For methods that are meant to support the sync thread ONLY
-#define IS_ICON_SYNC_THREAD() (m_syncThread == currentThread())
+#define IS_ICON_SYNC_THREAD() (m_syncThread->id() == currentThread())
 #define ASSERT_ICON_SYNC_THREAD() ASSERT(IS_ICON_SYNC_THREAD())
 
 #if PLATFORM(GTK)
@@ -141,7 +141,7 @@ bool IconDatabase::open(const String& directory, const String& filename)
     // Lock here as well as first thing in the thread so the thread doesn't actually commence until the createThread() call 
     // completes and m_syncThreadRunning is properly set
     m_syncLock.lock();
-    m_syncThread = createThread(IconDatabase::iconDatabaseSyncThreadStart, this, "WebCore: IconDatabase");
+    m_syncThread = Thread::create(IconDatabase::iconDatabaseSyncThreadStart, this, "WebCore: IconDatabase");
     m_syncThreadRunning = m_syncThread;
     m_syncLock.unlock();
     if (!m_syncThread)
@@ -161,7 +161,7 @@ void IconDatabase::close()
         wakeSyncThread();
         
         // Wait for the sync thread to terminate
-        waitForThreadCompletion(m_syncThread);
+        m_syncThread->waitForCompletion();
     }
 
     m_syncThreadRunning = false;    

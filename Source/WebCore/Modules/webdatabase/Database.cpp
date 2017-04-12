@@ -770,8 +770,7 @@ SecurityOriginData Database::securityOrigin()
 {
     if (m_scriptExecutionContext->isContextThread())
         return SecurityOriginData::fromSecurityOrigin(m_contextThreadSecurityOrigin.get());
-    auto& thread = databaseThread();
-    if (currentThread() == thread.getThreadID())
+    if (currentThread() == databaseThread().getThreadID())
         return SecurityOriginData::fromSecurityOrigin(m_databaseThreadSecurityOrigin.get());
     RELEASE_ASSERT_NOT_REACHED();
 }

@@ -119,7 +119,7 @@ private:
     void syncTimerFired();
     
     Timer m_syncTimer;
-    ThreadIdentifier m_syncThread;
+    RefPtr<Thread> m_syncThread;
     bool m_syncThreadRunning;
     
     HashSet<RefPtr<DocumentLoader>> m_loadersPendingDecision;

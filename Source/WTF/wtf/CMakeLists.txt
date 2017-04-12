@@ -95,6 +95,7 @@ set(WTF_HEADERS
     ParkingLot.h
     PassRefPtr.h
     Platform.h
+    PlatformRegisters.h
     PrintStream.h
     ProcessID.h
     RAMSize.h
@@ -128,7 +129,7 @@ set(WTF_HEADERS
     StringExtras.h
     StringPrintStream.h
     SystemTracing.h
-    ThreadIdentifierDataPthreads.h
+    ThreadHolder.cpp
     ThreadSafeRefCounted.h
     ThreadSpecific.h
     Threading.h
@@ -329,16 +330,14 @@ list(APPEND WTF_LIBRARIES
 if (WIN32)
     list(APPEND WTF_SOURCES
         OSAllocatorWin.cpp
+        ThreadHolderWin.cpp
         ThreadSpecificWin.cpp
         ThreadingWin.cpp
     )
 else ()
-    list(APPEND WTF_HEADERS
-        ThreadIdentifierDataPthreads.h
-    )
     list(APPEND WTF_SOURCES
         OSAllocatorPosix.cpp
-        ThreadIdentifierDataPthreads.cpp
+        ThreadHolderPthreads.cpp
         ThreadingPthreads.cpp
     )
 endif ()

@@ -158,7 +158,7 @@ public:
     template<typename Func>
     static void forEach(const Func& func)
     {
-        forEachImpl(scopedLambdaRef<void(ThreadIdentifier, const void*)>(func));
+        forEachImpl(scopedLambdaRef<void(Thread&, const void*)>(func));
     }
 
 private:
@@ -171,7 +171,7 @@ private:
     WTF_EXPORT_PRIVATE static void unparkOneImpl(
         const void* address, const ScopedLambda<intptr_t(UnparkResult)>& callback);
 
-    WTF_EXPORT_PRIVATE static void forEachImpl(const ScopedLambda<void(ThreadIdentifier, const void*)>&);
+    WTF_EXPORT_PRIVATE static void forEachImpl(const ScopedLambda<void(Thread&, const void*)>&);
 };
 
 } // namespace WTF

@@ -101,14 +101,14 @@ void GCController::garbageCollectNowIfNotDoneRecently()
 
 void GCController::garbageCollectOnAlternateThreadForDebugging(bool waitUntilDone)
 {
-    ThreadIdentifier threadID = createThread(collect, 0, "WebCore: GCController");
+    RefPtr<Thread> thread = Thread::create(collect, 0, "WebCore: GCController");
 
     if (waitUntilDone) {
-        waitForThreadCompletion(threadID);
+        thread->waitForCompletion();
         return;
     }
 
-    detachThread(threadID);
+    thread->detach();
 }
 
 void GCController::setJavaScriptGarbageCollectorTimerEnabled(bool enable)

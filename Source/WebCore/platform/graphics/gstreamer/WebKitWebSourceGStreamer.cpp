@@ -108,7 +108,7 @@ class ResourceHandleStreamingClient : public ResourceHandleClient, public Stream
         void wasBlocked(ResourceHandle*) override;
         void cannotShowURL(ResourceHandle*) override;
 
-        ThreadIdentifier m_thread { 0 };
+        RefPtr<Thread> m_thread;
         Lock m_initializeRunLoopConditionMutex;
         Condition m_initializeRunLoopCondition;
         RunLoop* m_runLoop { nullptr };
@@ -1077,7 +1077,7 @@ ResourceHandleStreamingClient::ResourceHandleStreamingClient(WebKitWebSrc* src, 
     : StreamingClient(src)
 {
     LockHolder locker(m_initializeRunLoopConditionMutex);
-    m_thread = createThread("ResourceHandleStreamingClient", [this, request = WTFMove(request)] {
+    m_thread = Thread::create("ResourceHandleStreamingClient", [this, request = WTFMove(request)] {
         {
             LockHolder locker(m_initializeRunLoopConditionMutex);
             m_runLoop = &RunLoop::current();
@@ -1113,8 +1113,8 @@ ResourceHandleStreamingClient::ResourceHandleStreamingClient(WebKitWebSrc* src, 
 ResourceHandleStreamingClient::~ResourceHandleStreamingClient()
 {
     if (m_thread) {
-        detachThread(m_thread);
-        m_thread = 0;
+        m_thread->detach();
+        m_thread = nullptr;
     }
 
     if (m_runLoop == &RunLoop::current())

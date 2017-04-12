@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Yusuke Suzuki <utatane.tea@gmail.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -10,7 +10,7 @@
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * THIS SOFTWARE IS PROVIDED BY GOOGLE, INC. ``AS IS'' AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
  * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
@@ -25,39 +25,50 @@
 
 #pragma once
 
-#if OS(DARWIN) || OS(UNIX)
-#include <pthread.h>
-#endif
-
-#if USE(PTHREADS) && !OS(WINDOWS) && !OS(DARWIN)
-#include <signal.h>
-#endif
+#include <wtf/Platform.h>
 
 #if OS(DARWIN)
 #include <mach/thread_act.h>
 #elif OS(WINDOWS)
 #include <windows.h>
+#else
+#include <ucontext.h>
 #endif
 
-namespace JSC {
+namespace WTF {
 
 #if OS(DARWIN)
-typedef mach_port_t PlatformThread;
-#elif OS(WINDOWS)
-typedef DWORD PlatformThread;
-#elif USE(PTHREADS)
-typedef pthread_t PlatformThread;
-#endif // OS(DARWIN)
-    
-inline PlatformThread currentPlatformThread()
-{
-#if OS(DARWIN)
-    return pthread_mach_thread_np(pthread_self());
-#elif OS(WINDOWS)
-    return GetCurrentThreadId();
-#elif USE(PTHREADS)
-    return pthread_self();
+
+#if CPU(X86)
+typedef i386_thread_state_t PlatformRegisters;
+#elif CPU(X86_64)
+typedef x86_thread_state64_t PlatformRegisters;
+#elif CPU(PPC)
+typedef ppc_thread_state_t PlatformRegisters;
+#elif CPU(PPC64)
+typedef ppc_thread_state64_t PlatformRegisters;
+#elif CPU(ARM)
+typedef arm_thread_state_t PlatformRegisters;
+#elif CPU(ARM64)
+typedef arm_thread_state64_t PlatformRegisters;
+#else
+#error Unknown Architecture
 #endif
-}
 
-} // namespace JSC
+#elif OS(WINDOWS)
+
+using PlatformRegisters = CONTEXT;
+
+#elif (OS(FREEBSD) || defined(__GLIBC__)) && (CPU(X86) || CPU(X86_64) || CPU(ARM) || CPU(ARM64) || CPU(MIPS))
+
+using PlatformRegisters = mcontext_t;
+
+#else
+
+struct PlatformRegisters {
+    void* stackPointer;
+};
+
+#endif
+
+} // namespace WTF

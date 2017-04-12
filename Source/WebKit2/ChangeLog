@@ -1,3 +1,25 @@
+2017-04-12  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Introduce Thread class and use RefPtr<Thread> and align Windows Threading implementation semantics to Pthread one
+        https://bugs.webkit.org/show_bug.cgi?id=170502
+
+        Reviewed by Mark Lam.
+
+        Mechanical change. Use Thread:: APIs.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::initializeNetworkProcess):
+        * NetworkProcess/cache/NetworkCacheIOChannelSoup.cpp:
+        (WebKit::NetworkCache::IOChannel::readSyncInThread):
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::processIncomingMessage):
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceEntryPoint.h:
+        (WebKit::XPCServiceInitializer):
+        * UIProcess/linux/MemoryPressureMonitor.cpp:
+        (WebKit::MemoryPressureMonitor::MemoryPressureMonitor):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+
 2017-04-10  Antti Koivisto  <antti@apple.com>
 
         Cache small media resources in disk cache

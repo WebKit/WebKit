@@ -2544,7 +2544,7 @@ EncodedJSValue JSC_HOST_CALL functionDollarAgentStart(ExecState* exec)
     Condition didStartCondition;
     bool didStart = false;
     
-    ThreadIdentifier thread = createThread(
+    RefPtr<Thread> thread = Thread::create(
         "JSC Agent",
         [sourceCode, &didStartLock, &didStartCondition, &didStart] () {
             CommandLine commandLine(0, nullptr);
@@ -2571,7 +2571,7 @@ EncodedJSValue JSC_HOST_CALL functionDollarAgentStart(ExecState* exec)
                     return success;
                 });
         });
-    detachThread(thread);
+    thread->detach();
     
     {
         auto locker = holdLock(didStartLock);
@@ -3311,7 +3311,7 @@ static void startTimeoutThreadIfNeeded()
             dataLog("WARNING: timeout string is malformed, got ", timeoutString,
                 " but expected a number. Not using a timeout.\n");
         } else
-            createThread(timeoutThreadMain, 0, "jsc Timeout Thread");
+            Thread::create(timeoutThreadMain, 0, "jsc Timeout Thread");
     }
 }
 

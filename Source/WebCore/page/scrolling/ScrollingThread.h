@@ -73,7 +73,7 @@ private:
     void threadRunLoopSourceCallback();
 #endif
 
-    ThreadIdentifier m_threadIdentifier;
+    RefPtr<Thread> m_thread;
 
     Condition m_initializeRunLoopConditionVariable;
     Lock m_initializeRunLoopMutex;

@@ -34,12 +34,11 @@
 #include <stdint.h>
 #include <wtf/Function.h>
 #include <wtf/Optional.h>
+#include <wtf/Threading.h>
 
 namespace WTF {
 
 class PrintStream;
-
-typedef uint32_t ThreadIdentifier;
 
 // Must be called from the main thread.
 WTF_EXPORT_PRIVATE void initializeMainThread();

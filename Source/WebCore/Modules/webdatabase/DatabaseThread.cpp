@@ -60,12 +60,12 @@ bool DatabaseThread::start()
 {
     LockHolder lock(m_threadCreationMutex);
 
-    if (m_threadID)
+    if (m_thread)
         return true;
 
-    m_threadID = createThread(DatabaseThread::databaseThreadStart, this, "WebCore: Database");
+    m_thread = Thread::create(DatabaseThread::databaseThreadStart, this, "WebCore: Database");
 
-    return m_threadID;
+    return m_thread;
 }
 
 void DatabaseThread::requestTermination(DatabaseTaskSynchronizer* cleanupSync)
@@ -110,7 +110,7 @@ void DatabaseThread::databaseThread()
     // Clean up the list of all pending transactions on this database thread
     m_transactionCoordinator->shutdown();
 
-    LOG(StorageAPI, "About to detach thread %i and clear the ref to DatabaseThread %p, which currently has %i ref(s)", m_threadID, this, refCount());
+    LOG(StorageAPI, "About to detach thread %i and clear the ref to DatabaseThread %p, which currently has %i ref(s)", m_thread->id(), this, refCount());
 
     // Close the databases that we ran transactions on. This ensures that if any transactions are still open, they are rolled back and we don't leave the database in an
     // inconsistent or locked state.
@@ -127,7 +127,7 @@ void DatabaseThread::databaseThread()
         openDatabase->performClose();
 
     // Detach the thread so its resources are no longer of any concern to anyone else
-    detachThread(m_threadID);
+    m_thread->detach();
 
     DatabaseTaskSynchronizer* cleanupSync = m_cleanupSync;
 
@@ -142,7 +142,7 @@ void DatabaseThread::recordDatabaseOpen(Database& database)
 {
     LockHolder lock(m_openDatabaseSetMutex);
 
-    ASSERT(currentThread() == m_threadID);
+    ASSERT(currentThread() == m_thread->id());
     ASSERT(!m_openDatabaseSet.contains(&database));
     m_openDatabaseSet.add(&database);
 }
@@ -151,7 +151,7 @@ void DatabaseThread::recordDatabaseClosed(Database& database)
 {
     LockHolder lock(m_openDatabaseSetMutex);
 
-    ASSERT(currentThread() == m_threadID);
+    ASSERT(currentThread() == m_thread->id());
     ASSERT(m_queue.killed() || m_openDatabaseSet.contains(&database));
     m_openDatabaseSet.remove(&database);
 }

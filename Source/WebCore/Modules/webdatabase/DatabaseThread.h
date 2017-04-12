@@ -58,7 +58,7 @@ public:
 
     void recordDatabaseOpen(Database&);
     void recordDatabaseClosed(Database&);
-    ThreadIdentifier getThreadID() { return m_threadID; }
+    ThreadIdentifier getThreadID() { return m_thread ? m_thread->id() : 0; }
 
     SQLTransactionCoordinator* transactionCoordinator() { return m_transactionCoordinator.get(); }
 
@@ -69,7 +69,7 @@ private:
     void databaseThread();
 
     Lock m_threadCreationMutex;
-    ThreadIdentifier m_threadID { 0 };
+    RefPtr<Thread> m_thread;
     RefPtr<DatabaseThread> m_selfRef;
 
     MessageQueue<DatabaseTask> m_queue;

@@ -103,7 +103,7 @@ void XPCServiceInitializer(OSObjectPtr<xpc_connection_t> connection, xpc_object_
 
 #if HAVE(QOS_CLASSES)
     if (parameters.extraInitializationData.contains(ASCIILiteral("always-runs-at-background-priority")))
-        setGlobalMaxQOSClass(QOS_CLASS_UTILITY);
+        Thread::setGlobalMaxQOSClass(QOS_CLASS_UTILITY);
 #endif
 
     XPCServiceType::singleton().initialize(parameters);

@@ -167,7 +167,7 @@ protected:
     bool isValidFramePointer(void* exec)
     {
         uint8_t* fpCast = bitwise_cast<uint8_t*>(exec);
-        for (MachineThreads::Thread* thread = m_vm.heap.machineThreads().threadsListHead(m_machineThreadsLocker); thread; thread = thread->next) {
+        for (MachineThreads::MachineThread* thread = m_vm.heap.machineThreads().threadsListHead(m_machineThreadsLocker); thread; thread = thread->next) {
             uint8_t* stackBase = static_cast<uint8_t*>(thread->stackBase());
             uint8_t* stackLimit = static_cast<uint8_t*>(thread->stackEnd());
             RELEASE_ASSERT(stackBase);
@@ -279,7 +279,6 @@ SamplingProfiler::SamplingProfiler(VM& vm, RefPtr<Stopwatch>&& stopwatch)
     , m_weakRandom()
     , m_stopwatch(WTFMove(stopwatch))
     , m_timingInterval(std::chrono::microseconds(Options::sampleInterval()))
-    , m_threadIdentifier(0)
     , m_jscExecutionThread(nullptr)
     , m_isPaused(false)
     , m_isShutDown(false)
@@ -300,11 +299,11 @@ void SamplingProfiler::createThreadIfNecessary(const AbstractLocker&)
 {
     ASSERT(m_lock.isLocked());
 
-    if (m_threadIdentifier)
+    if (m_thread)
         return;
 
     RefPtr<SamplingProfiler> profiler = this;
-    m_threadIdentifier = createThread("jsc.sampling-profiler.thread", [profiler] {
+    m_thread = Thread::create("jsc.sampling-profiler.thread", [profiler] {
         profiler->timerLoop();
     });
 }
@@ -344,7 +343,7 @@ void SamplingProfiler::takeSample(const AbstractLocker&, std::chrono::microsecon
         LockHolder codeBlockSetLocker(m_vm.heap.codeBlockSet().getLock());
         LockHolder executableAllocatorLocker(ExecutableAllocator::singleton().getLock());
 
-        bool didSuspend = m_jscExecutionThread->suspend();
+        auto didSuspend = m_jscExecutionThread->suspend();
         if (didSuspend) {
             // While the JSC thread is suspended, we can't do things like malloc because the JSC thread
             // may be holding the malloc lock.
@@ -354,13 +353,12 @@ void SamplingProfiler::takeSample(const AbstractLocker&, std::chrono::microsecon
             bool topFrameIsLLInt = false;
             void* llintPC;
             {
-                MachineThreads::Thread::Registers registers;
+                MachineThreads::MachineThread::Registers registers;
                 m_jscExecutionThread->getRegisters(registers);
                 machineFrame = registers.framePointer();
                 callFrame = static_cast<ExecState*>(machineFrame);
                 machinePC = registers.instructionPointer();
                 llintPC = registers.llintPC();
-                m_jscExecutionThread->freeRegisters(registers);
             }
             // FIXME: Lets have a way of detecting when we're parsing code.
             // https://bugs.webkit.org/show_bug.cgi?id=152761

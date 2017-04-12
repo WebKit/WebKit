@@ -48,6 +48,14 @@
 
 #if USE(PTHREADS)
 #include <pthread.h>
+
+#if OS(HURD)
+// PTHREAD_KEYS_MAX is not defined in bionic nor in Hurd, so explicitly define it here.
+#define PTHREAD_KEYS_MAX 1024
+#else
+#include <limits.h>
+#endif
+
 #elif OS(WINDOWS)
 #include <windows.h>
 #endif
@@ -108,6 +116,8 @@ private:
 #if USE(PTHREADS)
 
 typedef pthread_key_t ThreadSpecificKey;
+
+static const constexpr ThreadSpecificKey InvalidThreadSpecificKey = PTHREAD_KEYS_MAX;
 
 inline void threadSpecificKeyCreate(ThreadSpecificKey* key, void (*destructor)(void *))
 {
@@ -170,6 +180,8 @@ WTF_EXPORT_PRIVATE long& flsKeyCount();
 WTF_EXPORT_PRIVATE DWORD* flsKeys();
 
 typedef DWORD ThreadSpecificKey;
+
+static const constexpr ThreadSpecificKey InvalidThreadSpecificKey = FLS_OUT_OF_INDEXES;
 
 inline void threadSpecificKeyCreate(ThreadSpecificKey* key, void (THREAD_SPECIFIC_CALL *destructor)(void *))
 {

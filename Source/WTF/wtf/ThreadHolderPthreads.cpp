@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009, 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2017 Yusuke Suzuki <utatane.tea@gmail.com>.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -29,59 +30,26 @@
  */
 
 #include "config.h"
+#include "ThreadHolder.h"
 
-#if USE(PTHREADS)
-
-#include "ThreadIdentifierDataPthreads.h"
-
-#include "Threading.h"
-
-#if OS(HURD)
-// PTHREAD_KEYS_MAX is not defined in bionic nor in Hurd, so explicitly define it here.
-#define PTHREAD_KEYS_MAX 1024
-#else
-#include <limits.h>
-#endif
+#include <wtf/Threading.h>
 
 namespace WTF {
 
-pthread_key_t ThreadIdentifierData::m_key = PTHREAD_KEYS_MAX;
-
-void threadDidExit(ThreadIdentifier);
-
-ThreadIdentifierData::~ThreadIdentifierData()
+void ThreadHolder::initializeOnce()
 {
-    threadDidExit(m_identifier);
+    threadSpecificKeyCreate(&m_key, destruct);
 }
 
-void ThreadIdentifierData::initializeOnce()
+ThreadHolder* ThreadHolder::current()
 {
-    int error = pthread_key_create(&m_key, destruct);
-    if (error)
-        CRASH();
+    ASSERT(m_key != InvalidThreadSpecificKey);
+    return static_cast<ThreadHolder*>(threadSpecificGet(m_key));
 }
 
-ThreadIdentifier ThreadIdentifierData::identifier()
+void ThreadHolder::destruct(void* data)
 {
-    ASSERT(m_key != PTHREAD_KEYS_MAX);
-    ThreadIdentifierData* threadIdentifierData = static_cast<ThreadIdentifierData*>(pthread_getspecific(m_key));
-
-    return threadIdentifierData ? threadIdentifierData->m_identifier : 0;
-}
-
-void ThreadIdentifierData::initialize(ThreadIdentifier id)
-{
-    ASSERT(!identifier());
-    // Ideally we'd have this as a release assert everywhere, but that would hurt performane.
-    // Having this release assert here means that we will catch "didn't call
-    // WTF::initializeThreading() soon enough" bugs in release mode.
-    RELEASE_ASSERT(m_key != PTHREAD_KEYS_MAX);
-    pthread_setspecific(m_key, new ThreadIdentifierData(id));
-}
-
-void ThreadIdentifierData::destruct(void* data)
-{
-    ThreadIdentifierData* threadIdentifierData = static_cast<ThreadIdentifierData*>(data);
+    ThreadHolder* threadIdentifierData = static_cast<ThreadHolder*>(data);
     ASSERT(threadIdentifierData);
 
     if (threadIdentifierData->m_isDestroyedOnce) {
@@ -91,9 +59,7 @@ void ThreadIdentifierData::destruct(void* data)
 
     threadIdentifierData->m_isDestroyedOnce = true;
     // Re-setting the value for key causes another destruct() call after all other thread-specific destructors were called.
-    pthread_setspecific(m_key, threadIdentifierData);
+    threadSpecificSet(m_key, threadIdentifierData);
 }
 
 } // namespace WTF
-
-#endif // USE(PTHREADS)

@@ -1072,8 +1072,8 @@ static void testThreadIdentifierMap()
     pthread_join(pthread, 0);
 
     // Now create another thread using WTF. On OSX, it will have the same pthread handle
-    // but should get a different ThreadIdentifier.
-    createThread(runThread, 0, "DumpRenderTree: test");
+    // but should get a different RefPtr<Thread>.
+    Thread::create(runThread, 0, "DumpRenderTree: test");
 }
 
 static void allocateGlobalControllers()

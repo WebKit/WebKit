@@ -183,7 +183,7 @@ void IOChannel::readSyncInThread(size_t offset, size_t size, WorkQueue* queue, s
     ASSERT(!isMainThread());
 
     RefPtr<IOChannel> channel(this);
-    detachThread(createThread("IOChannel::readSync", [channel, size, queue, completionHandler] {
+    Thread::create("IOChannel::readSync", [channel, size, queue, completionHandler] {
         size_t bufferSize = std::min(size, gDefaultReadBufferSize);
         uint8_t* bufferData = static_cast<uint8_t*>(fastMalloc(bufferSize));
         GRefPtr<SoupBuffer> readBuffer = adoptGRef(soup_buffer_new_with_owner(bufferData, bufferSize, bufferData, fastFree));
@@ -217,7 +217,7 @@ void IOChannel::readSyncInThread(size_t offset, size_t size, WorkQueue* queue, s
             Data data = { WTFMove(buffer) };
             completionHandler(data, 0);
         }, queue);
-    }));
+    })->detach();
 }
 
 struct WriteAsyncData {

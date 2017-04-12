@@ -53,13 +53,6 @@ public:
 
     class ThreadPrivate : public RefCounted<ThreadPrivate> {
     public:
-        ThreadPrivate()
-            : m_threadID(0)
-            , m_running(false)
-            , m_parent(0)
-        {
-        }
-
         bool tryLockFor(ParallelEnvironment*);
 
         void execute(ThreadFunction, void*);
@@ -74,9 +67,9 @@ public:
         static void workerThread(void*);
 
     private:
-        ThreadIdentifier m_threadID;
-        bool m_running;
-        ParallelEnvironment* m_parent;
+        RefPtr<Thread> m_thread;
+        bool m_running { false };
+        ParallelEnvironment* m_parent { nullptr };
 
         mutable Lock m_mutex;
         Condition m_threadCondition;

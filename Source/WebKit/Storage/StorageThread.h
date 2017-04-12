@@ -56,7 +56,7 @@ private:
     // Background thread part of the terminate procedure.
     void performTerminate();
 
-    ThreadIdentifier m_threadID;
+    RefPtr<Thread> m_thread;
     MessageQueue<Function<void ()>> m_queue;
 };
 

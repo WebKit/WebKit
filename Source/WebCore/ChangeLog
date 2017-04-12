@@ -1,3 +1,83 @@
+2017-04-12  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Introduce Thread class and use RefPtr<Thread> and align Windows Threading implementation semantics to Pthread one
+        https://bugs.webkit.org/show_bug.cgi?id=170502
+
+        Reviewed by Mark Lam.
+
+        Mechanical change. Use Thread:: APIs.
+
+        * Modules/indexeddb/server/IDBServer.cpp:
+        (WebCore::IDBServer::IDBServer::IDBServer):
+        * Modules/indexeddb/server/IDBServer.h:
+        * Modules/webaudio/AsyncAudioDecoder.cpp:
+        (WebCore::AsyncAudioDecoder::AsyncAudioDecoder):
+        (WebCore::AsyncAudioDecoder::~AsyncAudioDecoder):
+        (WebCore::AsyncAudioDecoder::runLoop):
+        * Modules/webaudio/AsyncAudioDecoder.h:
+        * Modules/webaudio/OfflineAudioDestinationNode.cpp:
+        (WebCore::OfflineAudioDestinationNode::OfflineAudioDestinationNode):
+        (WebCore::OfflineAudioDestinationNode::uninitialize):
+        (WebCore::OfflineAudioDestinationNode::startRendering):
+        * Modules/webaudio/OfflineAudioDestinationNode.h:
+        * Modules/webdatabase/Database.cpp:
+        (WebCore::Database::securityOrigin):
+        * Modules/webdatabase/DatabaseThread.cpp:
+        (WebCore::DatabaseThread::start):
+        (WebCore::DatabaseThread::databaseThread):
+        (WebCore::DatabaseThread::recordDatabaseOpen):
+        (WebCore::DatabaseThread::recordDatabaseClosed):
+        * Modules/webdatabase/DatabaseThread.h:
+        (WebCore::DatabaseThread::getThreadID):
+        * bindings/js/GCController.cpp:
+        (WebCore::GCController::garbageCollectOnAlternateThreadForDebugging):
+        * fileapi/AsyncFileStream.cpp:
+        (WebCore::callOnFileThread):
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::open):
+        (WebCore::IconDatabase::close):
+        * loader/icon/IconDatabase.h:
+        * page/ResourceUsageThread.cpp:
+        (WebCore::ResourceUsageThread::createThreadIfNeeded):
+        * page/ResourceUsageThread.h:
+        * page/scrolling/ScrollingThread.cpp:
+        (WebCore::ScrollingThread::ScrollingThread):
+        (WebCore::ScrollingThread::isCurrentThread):
+        (WebCore::ScrollingThread::createThreadIfNeeded):
+        (WebCore::ScrollingThread::threadCallback):
+        * page/scrolling/ScrollingThread.h:
+        * platform/audio/HRTFDatabaseLoader.cpp:
+        (WebCore::HRTFDatabaseLoader::HRTFDatabaseLoader):
+        (WebCore::HRTFDatabaseLoader::loadAsynchronously):
+        (WebCore::HRTFDatabaseLoader::waitForLoaderThreadCompletion):
+        * platform/audio/HRTFDatabaseLoader.h:
+        * platform/audio/ReverbConvolver.cpp:
+        (WebCore::ReverbConvolver::ReverbConvolver):
+        (WebCore::ReverbConvolver::~ReverbConvolver):
+        * platform/audio/ReverbConvolver.h:
+        * platform/audio/gstreamer/AudioFileReaderGStreamer.cpp:
+        (WebCore::createBusFromAudioFile):
+        (WebCore::createBusFromInMemoryAudioFile):
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (ResourceHandleStreamingClient::ResourceHandleStreamingClient):
+        (ResourceHandleStreamingClient::~ResourceHandleStreamingClient):
+        * platform/network/cf/LoaderRunLoopCF.cpp:
+        (WebCore::loaderRunLoop):
+        * platform/network/curl/CurlDownload.cpp:
+        (WebCore::CurlDownloadManager::startThreadIfNeeded):
+        (WebCore::CurlDownloadManager::stopThread):
+        * platform/network/curl/CurlDownload.h:
+        * platform/network/curl/SocketStreamHandleImpl.h:
+        * platform/network/curl/SocketStreamHandleImplCurl.cpp:
+        (WebCore::SocketStreamHandleImpl::startThread):
+        (WebCore::SocketStreamHandleImpl::stopThread):
+        * workers/WorkerThread.cpp:
+        (WebCore::WorkerThread::WorkerThread):
+        (WebCore::WorkerThread::start):
+        (WebCore::WorkerThread::workerThread):
+        * workers/WorkerThread.h:
+        (WebCore::WorkerThread::threadID):
+
 2017-04-10  Antti Koivisto  <antti@apple.com>
 
         Cache small media resources in disk cache

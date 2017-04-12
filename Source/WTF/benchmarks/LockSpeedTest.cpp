@@ -77,7 +77,7 @@ struct Benchmark {
     {
         std::unique_ptr<WithPadding<LockType>[]> locks = std::make_unique<WithPadding<LockType>[]>(numThreadGroups);
         std::unique_ptr<WithPadding<double>[]> words = std::make_unique<WithPadding<double>[]>(numThreadGroups);
-        std::unique_ptr<ThreadIdentifier[]> threads = std::make_unique<ThreadIdentifier[]>(numThreadGroups * numThreadsPerGroup);
+        std::unique_ptr<RefPtr<Thread>[]> threads = std::make_unique<Refptr<Thread>[]>(numThreadGroups * numThreadsPerGroup);
 
         volatile bool keepGoing = true;
 
@@ -90,7 +90,7 @@ struct Benchmark {
             words[threadGroupIndex].value = 0;
 
             for (unsigned threadIndex = numThreadsPerGroup; threadIndex--;) {
-                threads[threadGroupIndex * numThreadsPerGroup + threadIndex] = createThread(
+                threads[threadGroupIndex * numThreadsPerGroup + threadIndex] = Thread::create(
                     "Benchmark thread",
                     [threadGroupIndex, &locks, &words, &keepGoing, &numIterationsLock, &numIterations] () {
                         double localWord = 0;
@@ -121,7 +121,7 @@ struct Benchmark {
         keepGoing = false;
     
         for (unsigned threadIndex = numThreadGroups * numThreadsPerGroup; threadIndex--;)
-            waitForThreadCompletion(threads[threadIndex]);
+            threads[threadIndex]->waitForCompletion();
 
         double after = monotonicallyIncreasingTime();
     

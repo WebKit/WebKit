@@ -195,8 +195,8 @@ private:
     std::chrono::microseconds m_timingInterval;
     double m_lastTime;
     Lock m_lock;
-    ThreadIdentifier m_threadIdentifier;
-    MachineThreads::Thread* m_jscExecutionThread;
+    RefPtr<Thread> m_thread;
+    MachineThreads::MachineThread* m_jscExecutionThread;
     bool m_isPaused;
     bool m_isShutDown;
     bool m_needsReportAtExit { false };

@@ -39,7 +39,7 @@ AsyncAudioDecoder::AsyncAudioDecoder()
 {
     // Start worker thread.
     LockHolder lock(m_threadCreationMutex);
-    m_threadID = createThread(AsyncAudioDecoder::threadEntry, this, "Audio Decoder");
+    m_thread = Thread::create(AsyncAudioDecoder::threadEntry, this, "Audio Decoder");
 }
 
 AsyncAudioDecoder::~AsyncAudioDecoder()
@@ -47,8 +47,8 @@ AsyncAudioDecoder::~AsyncAudioDecoder()
     m_queue.kill();
     
     // Stop thread.
-    waitForThreadCompletion(m_threadID);
-    m_threadID = 0;
+    m_thread->waitForCompletion();
+    m_thread = nullptr;
 }
 
 void AsyncAudioDecoder::decodeAsync(Ref<ArrayBuffer>&& audioData, float sampleRate, RefPtr<AudioBufferCallback>&& successCallback, RefPtr<AudioBufferCallback>&& errorCallback)
@@ -72,7 +72,7 @@ void AsyncAudioDecoder::runLoop()
     ASSERT(!isMainThread());
 
     {
-        // Wait for until we have m_threadID established before starting the run loop.
+        // Wait for until we have m_thread established before starting the run loop.
         LockHolder lock(m_threadCreationMutex);
     }
 

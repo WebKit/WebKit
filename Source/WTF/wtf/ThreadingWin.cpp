@@ -88,26 +88,32 @@
 
 #if OS(WINDOWS)
 
-#include "DateMath.h"
-#include "dtoa.h"
-#include "dtoa/cached-powers.h"
-
-#include "MainThread.h"
-#include "ThreadFunctionInvocation.h"
 #include <process.h>
 #include <windows.h>
 #include <wtf/CurrentTime.h>
-#include <wtf/HashMap.h>
+#include <wtf/MainThread.h>
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/RandomNumberSeed.h>
-#include <wtf/WTFThreadData.h>
+#include <wtf/ThreadFunctionInvocation.h>
+#include <wtf/ThreadHolder.h>
 
 #if HAVE(ERRNO_H)
 #include <errno.h>
 #endif
 
 namespace WTF {
+
+Thread::Thread()
+{
+}
+
+Thread::~Thread()
+{
+    // It is OK because FLSAlloc's callback will be called even before there are some open handles.
+    // This easily ensures that all the thread resources are automatically closed.
+    if (m_handle != INVALID_HANDLE_VALUE)
+        CloseHandle(m_handle);
+}
 
 // MS_VC_EXCEPTION, THREADNAME_INFO, and setThreadNameInternal all come from <http://msdn.microsoft.com/en-us/library/xcb2z8hs.aspx>.
 static const DWORD MS_VC_EXCEPTION = 0x406D1388;
@@ -121,7 +127,7 @@ typedef struct tagTHREADNAME_INFO {
 } THREADNAME_INFO;
 #pragma pack(pop)
 
-void initializeCurrentThreadInternal(const char* szThreadName)
+void Thread::initializeCurrentThreadInternal(const char* szThreadName)
 {
 #if COMPILER(MINGW)
     // FIXME: Implement thread name setting with MingW.
@@ -129,7 +135,7 @@ void initializeCurrentThreadInternal(const char* szThreadName)
 #else
     THREADNAME_INFO info;
     info.dwType = 0x1000;
-    info.szName = normalizeThreadName(szThreadName);
+    info.szName = Thread::normalizeThreadName(szThreadName);
     info.dwThreadID = GetCurrentThreadId();
     info.dwFlags = 0;
 
@@ -140,70 +146,28 @@ void initializeCurrentThreadInternal(const char* szThreadName)
 #endif
 }
 
-static Mutex& threadMapMutex()
+void Thread::initializePlatformThreading()
 {
-    static NeverDestroyed<Mutex> mutex;
-    return mutex;
-}
-
-void initializeThreading()
-{
-    static bool isInitialized;
-    
-    if (isInitialized)
-        return;
-
-    isInitialized = true;
-
-    WTF::double_conversion::initialize();
-    // StringImpl::empty() does not construct its static string in a threadsafe fashion,
-    // so ensure it has been initialized from here.
-    StringImpl::empty();
-    threadMapMutex();
-    initializeRandomNumberGenerator();
-    wtfThreadData();
-    initializeDates();
-}
-
-static HashMap<DWORD, HANDLE>& threadMap()
-{
-    static NeverDestroyed<HashMap<DWORD, HANDLE>> map;
-    return map;
-}
-
-static void storeThreadHandleByIdentifier(DWORD threadID, HANDLE threadHandle)
-{
-    MutexLocker locker(threadMapMutex());
-    ASSERT(!threadMap().contains(threadID));
-    threadMap().add(threadID, threadHandle);
-}
-
-static HANDLE threadHandleForIdentifier(ThreadIdentifier id)
-{
-    MutexLocker locker(threadMapMutex());
-    return threadMap().get(id);
-}
-
-static void clearThreadHandleForIdentifier(ThreadIdentifier id)
-{
-    MutexLocker locker(threadMapMutex());
-    ASSERT(threadMap().contains(id));
-    threadMap().remove(id);
 }
 
 static unsigned __stdcall wtfThreadEntryPoint(void* param)
 {
-    std::unique_ptr<ThreadFunctionInvocation> invocation(static_cast<ThreadFunctionInvocation*>(param));
-    invocation->function(invocation->data);
+    // Balanced by .leakPtr() in Thread::createInternal.
+    auto invocation = std::unique_ptr<ThreadFunctionInvocation>(static_cast<ThreadFunctionInvocation*>(param));
 
+    ThreadHolder::initialize(*invocation->thread);
+    invocation->thread = nullptr;
+
+    invocation->function(invocation->data);
     return 0;
 }
 
-ThreadIdentifier createThreadInternal(ThreadFunction entryPoint, void* data, const char* threadName)
+RefPtr<Thread> Thread::createInternal(ThreadFunction entryPoint, void* data, const char* threadName)
 {
+    Ref<Thread> thread = adoptRef(*new Thread());
     unsigned threadIdentifier = 0;
     ThreadIdentifier threadID = 0;
-    auto invocation = std::make_unique<ThreadFunctionInvocation>(entryPoint, data);
+    auto invocation = std::make_unique<ThreadFunctionInvocation>(entryPoint, thread.ptr(), data);
     HANDLE threadHandle = reinterpret_cast<HANDLE>(_beginthreadex(0, 0, wtfThreadEntryPoint, invocation.get(), 0, &threadIdentifier));
     if (!threadHandle) {
 #if !HAVE(ERRNO_H)
@@ -219,53 +183,109 @@ ThreadIdentifier createThreadInternal(ThreadFunction entryPoint, void* data, con
     UNUSED_PARAM(leakedInvocation);
 
     threadID = static_cast<ThreadIdentifier>(threadIdentifier);
-    storeThreadHandleByIdentifier(threadIdentifier, threadHandle);
 
-    return threadID;
+    thread->establish(threadHandle, threadIdentifier);
+    return thread;
 }
 
-void changeThreadPriority(ThreadIdentifier threadID, int delta)
+void Thread::changePriority(int delta)
 {
-    ASSERT(threadID);
-
-    HANDLE threadHandle = threadHandleForIdentifier(threadID);
-    if (!threadHandle)
-        LOG_ERROR("ThreadIdentifier %u does not correspond to an active thread", threadID);
-
-    SetThreadPriority(threadHandle, THREAD_PRIORITY_NORMAL + delta);
+    std::unique_lock<std::mutex> locker(m_mutex);
+    SetThreadPriority(m_handle, THREAD_PRIORITY_NORMAL + delta);
 }
 
-int waitForThreadCompletion(ThreadIdentifier threadID)
+int Thread::waitForCompletion()
 {
-    ASSERT(threadID);
-    
-    HANDLE threadHandle = threadHandleForIdentifier(threadID);
-    if (!threadHandle)
-        LOG_ERROR("ThreadIdentifier %u did not correspond to an active thread when trying to quit", threadID);
- 
-    DWORD joinResult = WaitForSingleObject(threadHandle, INFINITE);
+    HANDLE handle;
+    {
+        std::unique_lock<std::mutex> locker(m_mutex);
+        handle = m_handle;
+    }
+
+    DWORD joinResult = WaitForSingleObject(handle, INFINITE);
     if (joinResult == WAIT_FAILED)
-        LOG_ERROR("ThreadIdentifier %u was found to be deadlocked trying to quit", threadID);
+        LOG_ERROR("ThreadIdentifier %u was found to be deadlocked trying to quit", m_id);
 
-    CloseHandle(threadHandle);
-    clearThreadHandleForIdentifier(threadID);
+    std::unique_lock<std::mutex> locker(m_mutex);
+    ASSERT(joinableState() == Joinable);
+
+    // The thread has already exited, do nothing.
+    // The thread hasn't exited yet, so don't clean anything up. Just signal that we've already joined on it so that it will clean up after itself.
+    if (!hasExited())
+        didJoin();
 
     return joinResult;
 }
 
-void detachThread(ThreadIdentifier threadID)
+void Thread::detach()
 {
-    ASSERT(threadID);
-
-    HANDLE threadHandle = threadHandleForIdentifier(threadID);
-    if (threadHandle)
-        CloseHandle(threadHandle);
-    clearThreadHandleForIdentifier(threadID);
+    // We follow the pthread semantics: even after the detach is called,
+    // we can still perform various operations onto the thread. For example,
+    // we can do pthread_kill for the detached thread. The problem in Windows
+    // is that closing HANDLE loses the way to do such operations.
+    // To do so, we do nothing here in Windows. Original detach's purpose,
+    // releasing thread resource when the thread exits, will be achieved by
+    // FlsCallback automatically. FlsCallback will call CloseHandle to clean up
+    // resource. So in this function, we just mark the thread as detached to
+    // avoid calling waitForCompletion for this thread.
+    std::unique_lock<std::mutex> locker(m_mutex);
+    if (!hasExited())
+        didBecomeDetached();
 }
 
-ThreadIdentifier currentThread()
+auto Thread::suspend() -> Expected<void, PlatformSuspendError>
+{
+    RELEASE_ASSERT_WITH_MESSAGE(id() != currentThread(), "We do not support suspending the current thread itself.");
+    std::unique_lock<std::mutex> locker(m_mutex);
+    DWORD result = SuspendThread(m_handle);
+    if (result != (DWORD)-1)
+        return { };
+    return makeUnexpected(result);
+}
+
+// During resume, suspend or resume should not be executed from the other threads.
+void Thread::resume()
+{
+    std::unique_lock<std::mutex> locker(m_mutex);
+    ResumeThread(m_handle);
+}
+
+size_t Thread::getRegisters(PlatformRegisters& registers)
+{
+    std::unique_lock<std::mutex> locker(m_mutex);
+    registers.ContextFlags = CONTEXT_INTEGER | CONTEXT_CONTROL;
+    GetThreadContext(m_handle, &registers);
+    return sizeof(CONTEXT);
+}
+
+Thread& Thread::current()
+{
+    ThreadHolder* data = ThreadHolder::current();
+    if (data)
+        return data->thread();
+
+    // Not a WTF-created thread, ThreadIdentifier is not established yet.
+    Ref<Thread> thread = adoptRef(*new Thread());
+
+    HANDLE handle;
+    bool isSuccessful = DuplicateHandle(GetCurrentProcess(), GetCurrentThread(), GetCurrentProcess(), &handle, 0, FALSE, DUPLICATE_SAME_ACCESS);
+    RELEASE_ASSERT(isSuccessful);
+
+    thread->establish(handle, currentID());
+    ThreadHolder::initialize(thread.get());
+    return thread.get();
+}
+
+ThreadIdentifier Thread::currentID()
 {
     return static_cast<ThreadIdentifier>(GetCurrentThreadId());
+}
+
+void Thread::establish(HANDLE handle, ThreadIdentifier threadID)
+{
+    std::unique_lock<std::mutex> locker(m_mutex);
+    m_handle = handle;
+    m_id = threadID;
 }
 
 Mutex::Mutex()

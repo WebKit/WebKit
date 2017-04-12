@@ -99,8 +99,7 @@ WorkerThreadStartupData::WorkerThreadStartupData(const URL& scriptURL, const Str
 }
 
 WorkerThread::WorkerThread(const URL& scriptURL, const String& identifier, const String& userAgent, const String& sourceCode, WorkerLoaderProxy& workerLoaderProxy, WorkerReportingProxy& workerReportingProxy, WorkerThreadStartMode startMode, const ContentSecurityPolicyResponseHeaders& contentSecurityPolicyResponseHeaders, bool shouldBypassMainWorldContentSecurityPolicy, const SecurityOrigin& topOrigin, MonotonicTime timeOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider, JSC::RuntimeFlags runtimeFlags)
-    : m_threadID(0)
-    , m_workerLoaderProxy(workerLoaderProxy)
+    : m_workerLoaderProxy(workerLoaderProxy)
     , m_workerReportingProxy(workerReportingProxy)
     , m_runtimeFlags(runtimeFlags)
     , m_startupData(std::make_unique<WorkerThreadStartupData>(scriptURL, identifier, userAgent, sourceCode, startMode, contentSecurityPolicyResponseHeaders, shouldBypassMainWorldContentSecurityPolicy, topOrigin, timeOrigin))
@@ -133,15 +132,15 @@ WorkerThread::~WorkerThread()
 
 bool WorkerThread::start()
 {
-    // Mutex protection is necessary to ensure that m_threadID is initialized when the thread starts.
+    // Mutex protection is necessary to ensure that m_thread is initialized when the thread starts.
     LockHolder lock(m_threadCreationMutex);
 
-    if (m_threadID)
+    if (m_thread)
         return true;
 
-    m_threadID = createThread(WorkerThread::workerThreadStart, this, "WebCore: Worker");
+    m_thread = Thread::create(WorkerThread::workerThreadStart, this, "WebCore: Worker");
 
-    return m_threadID;
+    return m_thread;
 }
 
 void WorkerThread::workerThreadStart(void* thread)
@@ -193,7 +192,7 @@ void WorkerThread::workerThread()
     g_main_context_pop_thread_default(mainContext.get());
 #endif
 
-    ThreadIdentifier threadID = m_threadID;
+    RefPtr<Thread> protector = m_thread;
 
     ASSERT(m_workerGlobalScope->hasOneRef());
 
@@ -205,7 +204,7 @@ void WorkerThread::workerThread()
     threadGlobalData().destroy();
 
     // The thread object may be already destroyed from notification now, don't try to access "this".
-    detachThread(threadID);
+    protector->detach();
 }
 
 void WorkerThread::startRunningDebuggerTasks()

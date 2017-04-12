@@ -52,7 +52,7 @@ public:
     ThreadData();
     ~ThreadData();
 
-    ThreadIdentifier threadIdentifier;
+    Ref<Thread> thread;
     
     Mutex parkingLock;
     ThreadCondition parkingCondition;
@@ -423,7 +423,7 @@ void ensureHashtableSize(unsigned numThreads)
 }
 
 ThreadData::ThreadData()
-    : threadIdentifier(currentThread())
+    : thread(Thread::current())
 {
     unsigned currentNumThreads;
     for (;;) {
@@ -793,7 +793,7 @@ NEVER_INLINE void ParkingLot::unparkAll(const void* address)
     unparkCount(address, UINT_MAX);
 }
 
-NEVER_INLINE void ParkingLot::forEachImpl(const ScopedLambda<void(ThreadIdentifier, const void*)>& callback)
+NEVER_INLINE void ParkingLot::forEachImpl(const ScopedLambda<void(Thread&, const void*)>& callback)
 {
     Vector<Bucket*> bucketsToUnlock = lockHashtable();
 
@@ -803,7 +803,7 @@ NEVER_INLINE void ParkingLot::forEachImpl(const ScopedLambda<void(ThreadIdentifi
         if (!bucket)
             continue;
         for (ThreadData* currentThreadData = bucket->queueHead; currentThreadData; currentThreadData = currentThreadData->nextInQueue)
-            callback(currentThreadData->threadIdentifier, currentThreadData->address);
+            callback(currentThreadData->thread.get(), currentThreadData->address);
     }
     
     unlockHashtable(bucketsToUnlock);

@@ -204,7 +204,7 @@ void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&&
 {
     platformInitializeNetworkProcess(parameters);
 
-    WTF::setCurrentThreadIsUserInitiated();
+    WTF::Thread::setCurrentThreadIsUserInitiated();
 
     m_suppressMemoryPressureHandler = parameters.shouldSuppressMemoryPressureHandler;
     m_loadThrottleLatency = parameters.loadThrottleLatency;

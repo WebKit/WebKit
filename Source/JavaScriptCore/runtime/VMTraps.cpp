@@ -110,7 +110,7 @@ static Expected<std::pair<VM*, StackBounds>, VMTraps::Error> findActiveVMAndStac
             return VMInspector::FunctorStatus::Continue; // Try next VM.
         }
 
-        for (MachineThreads::Thread* thread = machineThreads.threadsListHead(machineThreadsLocker); thread; thread = thread->next) {
+        for (MachineThreads::MachineThread* thread = machineThreads.threadsListHead(machineThreadsLocker); thread; thread = thread->next) {
             RELEASE_ASSERT(thread->stackBase());
             RELEASE_ASSERT(thread->stackEnd());
             if (stackPointer <= thread->stackBase() && stackPointer >= thread->stackEnd()) {
@@ -455,7 +455,7 @@ void VMTraps::SignalSender::send()
             VM& vm = *m_vm;
             auto optionalOwnerThread = vm.ownerThread();
             if (optionalOwnerThread) {
-                signalThread(optionalOwnerThread.value(), SIGUSR1);
+                optionalOwnerThread.value()->signal(SIGUSR1);
                 break;
             }
 
@@ -493,7 +493,7 @@ void VMTraps::fireTrap(VMTraps::EventType eventType)
         // fireTrap() does not block.
         RefPtr<SignalSender> sender = adoptRef(new SignalSender(vm(), eventType));
         addSignalSender(sender.get());
-        createThread("jsc.vmtraps.signalling.thread", [sender] {
+        Thread::create("jsc.vmtraps.signalling.thread", [sender] {
             sender->send();
         });
     }

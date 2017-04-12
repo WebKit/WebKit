@@ -119,7 +119,10 @@ MemoryPressureHandler::EventFDPoller::EventFDPoller(int fd, std::function<void (
     }, this, nullptr);
     g_source_attach(m_source.get(), nullptr);
 #else
-    m_threadID = createThread("WTF: MemoryPressureHandler", [this] { readAndNotify(); }
+    m_thread = Thread::create("WTF: MemoryPressureHandler",
+        [this] {
+            readAndNotify();
+        });
 #endif
 }
 
@@ -129,7 +132,7 @@ MemoryPressureHandler::EventFDPoller::~EventFDPoller()
 #if USE(GLIB)
     g_source_destroy(m_source.get());
 #else
-    detachThread(m_threadID);
+    m_thread->detach();
 #endif
 }
 

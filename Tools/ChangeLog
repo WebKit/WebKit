@@ -1,3 +1,23 @@
+2017-04-12  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Introduce Thread class and use RefPtr<Thread> and align Windows Threading implementation semantics to Pthread one
+        https://bugs.webkit.org/show_bug.cgi?id=170502
+
+        Reviewed by Mark Lam.
+
+        Mechanical change. Use Thread:: APIs.
+
+        * DumpRenderTree/JavaScriptThreading.cpp:
+        (runJavaScriptThread):
+        (startJavaScriptThreads):
+        (stopJavaScriptThreads):
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (testThreadIdentifierMap):
+        * TestWebKitAPI/Tests/WTF/Condition.cpp:
+        * TestWebKitAPI/Tests/WTF/Lock.cpp:
+        (TestWebKitAPI::runLockTest):
+        * TestWebKitAPI/Tests/WTF/ParkingLot.cpp:
+
 2017-04-12  Alex Christensen  <achristensen@webkit.org>
 
         Modernize vector adoption

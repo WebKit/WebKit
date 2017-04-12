@@ -92,13 +92,13 @@ public:
 
     VM* vm() { return m_vm; }
 
-    std::optional<ThreadIdentifier> ownerThread() const
+    std::optional<RefPtr<Thread>> ownerThread() const
     {
         if (m_hasOwnerThread)
             return m_ownerThread;
         return std::nullopt;
     }
-    bool currentThreadIsHoldingLock() { return m_hasOwnerThread && m_ownerThread == currentThread(); }
+    bool currentThreadIsHoldingLock() { return m_hasOwnerThread && m_ownerThread->id() == currentThread(); }
 
     void willDestroyVM(VM*);
 
@@ -135,7 +135,7 @@ private:
     // different thread, and an optional is vulnerable to races.
     // See https://bugs.webkit.org/show_bug.cgi?id=169042#c6
     bool m_hasOwnerThread { false };
-    ThreadIdentifier m_ownerThread;
+    RefPtr<Thread> m_ownerThread;
     intptr_t m_lockCount;
     unsigned m_lockDropDepth;
     bool m_shouldReleaseHeapAccess;

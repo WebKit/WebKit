@@ -1,3 +1,192 @@
+2017-04-12  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Introduce Thread class and use RefPtr<Thread> and align Windows Threading implementation semantics to Pthread one
+        https://bugs.webkit.org/show_bug.cgi?id=170502
+
+        Reviewed by Mark Lam.
+
+        This patch is refactoring of WTF Threading mechanism to merge JavaScriptCore's threading extension to WTF Threading.
+        Previously, JavaScriptCore requires richer threading features (such as suspending and resuming threads), and they
+        are implemented for PlatformThread in JavaScriptCore. But these features should be implemented in WTF Threading side
+        instead of maintaining JSC's own threading features too. This patch removes these features from JSC and move it to
+        WTF Threading.
+
+        However, current WTF Threading has one problem: Windows version of WTF Threading has different semantics from Pthreads
+        one. In Windows WTF Threading, we cannot perform any operation after the target thread is detached: WTF Threading stop
+        tracking the state of the thread once the thread is detached. But this is not the same to Pthreads one. In Pthreads,
+        pthread_detach just means that the resource of the thread will be destroyed automatically. While some operations like
+        pthread_join will be rejected, some operations like pthread_kill will be accepted.
+
+        The problem is that detached thread can be suspended and resumed in JSC. For example, in jsc.cpp, we start the worker
+        thread and detach it immediately. In worker thread, we will create VM and thus concurrent GC will suspend and resume
+        the detached thread. However, in Windows WTF Threading, we have no reference to the detached thread. Thus we cannot
+        perform suspend and resume operations onto the detached thread.
+
+        To solve the problem, we change Windows Threading mechanism drastically to align it to the Pthread semantics. In the
+        new Threading, we have RefPtr<Thread> class. It holds a handle to a platform thread. We can perform threading operations
+        with this class. For example, Thread::suspend is offered. And we use destructor of the thread local variable to release
+        the resources held by RefPtr<Thread>. In Windows, Thread::detach does nothing because the resource will be destroyed
+        automatically by RefPtr<Thread>.
+
+        To do so, we introduce ThreadHolder for Windows. This is similar to the previous ThreadIdentifierData for Pthreads.
+        It holds RefPtr<Thread> in the thread local storage (technically, it is Fiber Local Storage in Windows). Thread::current()
+        will return this reference.
+
+        The problematic situation is that the order of the deallocation of the thread local storage is not defined. So we should
+        not touch thread local storage in the destructor of the thread local storage. To avoid such edge cases, we have
+        currentThread() / Thread::currentID() APIs. They are safe to be called even in the destructor of the other thread local
+        storage. And in Windows, in the FLS destructor, we will create the thread_local variable to defer the destruction of
+        the ThreadHolder. We ensure that this destructor is called after the other FLS destructors are called in Windows 10.
+
+        This patch is performance neutral.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * benchmarks/ConditionSpeedTest.cpp:
+        * benchmarks/LockFairnessTest.cpp:
+        * benchmarks/LockSpeedTest.cpp:
+        * wtf/AutomaticThread.cpp:
+        (WTF::AutomaticThread::start):
+        * wtf/CMakeLists.txt:
+        * wtf/MainThread.h:
+        * wtf/MemoryPressureHandler.h:
+        * wtf/ParallelJobsGeneric.cpp:
+        (WTF::ParallelEnvironment::ThreadPrivate::tryLockFor):
+        (WTF::ParallelEnvironment::ThreadPrivate::workerThread):
+        * wtf/ParallelJobsGeneric.h:
+        (WTF::ParallelEnvironment::ThreadPrivate::ThreadPrivate): Deleted.
+        * wtf/ParkingLot.cpp:
+        (WTF::ParkingLot::forEachImpl):
+        * wtf/ParkingLot.h:
+        (WTF::ParkingLot::forEach):
+        * wtf/PlatformRegisters.h: Renamed from Source/JavaScriptCore/runtime/PlatformThread.h.
+        * wtf/RefPtr.h:
+        (WTF::RefPtr::RefPtr):
+        * wtf/ThreadFunctionInvocation.h:
+        (WTF::ThreadFunctionInvocation::ThreadFunctionInvocation):
+        * wtf/ThreadHolder.cpp: Added.
+        (WTF::ThreadHolder::~ThreadHolder):
+        (WTF::ThreadHolder::initialize):
+        * wtf/ThreadHolder.h: Renamed from Source/WTF/wtf/ThreadIdentifierDataPthreads.h.
+        (WTF::ThreadHolder::thread):
+        (WTF::ThreadHolder::ThreadHolder):
+        * wtf/ThreadHolderPthreads.cpp: Renamed from Source/WTF/wtf/ThreadIdentifierDataPthreads.cpp.
+        (WTF::ThreadHolder::initializeOnce):
+        (WTF::ThreadHolder::current):
+        (WTF::ThreadHolder::destruct):
+        * wtf/ThreadHolderWin.cpp: Added.
+        (WTF::threadMapMutex):
+        (WTF::threadMap):
+        (WTF::ThreadHolder::initializeOnce):
+        (WTF::ThreadHolder::current):
+        (WTF::ThreadHolder::destruct):
+        * wtf/ThreadSpecific.h:
+        * wtf/Threading.cpp:
+        (WTF::Thread::normalizeThreadName):
+        (WTF::threadEntryPoint):
+        (WTF::Thread::create):
+        (WTF::Thread::setCurrentThreadIsUserInteractive):
+        (WTF::Thread::setCurrentThreadIsUserInitiated):
+        (WTF::Thread::setGlobalMaxQOSClass):
+        (WTF::Thread::adjustedQOSClass):
+        (WTF::Thread::dump):
+        (WTF::initializeThreading):
+        (WTF::normalizeThreadName): Deleted.
+        (WTF::createThread): Deleted.
+        (WTF::setCurrentThreadIsUserInteractive): Deleted.
+        (WTF::setCurrentThreadIsUserInitiated): Deleted.
+        (WTF::setGlobalMaxQOSClass): Deleted.
+        (WTF::adjustedQOSClass): Deleted.
+        * wtf/Threading.h:
+        (WTF::Thread::id):
+        (WTF::Thread::operator==):
+        (WTF::Thread::operator!=):
+        (WTF::Thread::joinableState):
+        (WTF::Thread::didBecomeDetached):
+        (WTF::Thread::didJoin):
+        (WTF::Thread::hasExited):
+        (WTF::currentThread):
+        * wtf/ThreadingPthreads.cpp:
+        (WTF::Thread::Thread):
+        (WTF::Thread::~Thread):
+        (WTF::Thread::signalHandlerSuspendResume):
+        (WTF::Thread::initializePlatformThreading):
+        (WTF::initializeCurrentThreadEvenIfNonWTFCreated):
+        (WTF::wtfThreadEntryPoint):
+        (WTF::Thread::createInternal):
+        (WTF::Thread::initializeCurrentThreadInternal):
+        (WTF::Thread::changePriority):
+        (WTF::Thread::waitForCompletion):
+        (WTF::Thread::detach):
+        (WTF::Thread::current):
+        (WTF::Thread::currentID):
+        (WTF::Thread::signal):
+        (WTF::Thread::resume):
+        (WTF::Thread::getRegisters):
+        (WTF::Thread::didExit):
+        (WTF::Thread::establish):
+        (WTF::PthreadState::PthreadState): Deleted.
+        (WTF::PthreadState::joinableState): Deleted.
+        (WTF::PthreadState::pthreadHandle): Deleted.
+        (WTF::PthreadState::didBecomeDetached): Deleted.
+        (WTF::PthreadState::didExit): Deleted.
+        (WTF::PthreadState::didJoin): Deleted.
+        (WTF::PthreadState::hasExited): Deleted.
+        (WTF::threadMapMutex): Deleted.
+        (WTF::initializeThreading): Deleted.
+        (WTF::threadMap): Deleted.
+        (WTF::identifierByPthreadHandle): Deleted.
+        (WTF::establishIdentifierForPthreadHandle): Deleted.
+        (WTF::pthreadHandleForIdentifierWithLockAlreadyHeld): Deleted.
+        (WTF::createThreadInternal): Deleted.
+        (WTF::initializeCurrentThreadInternal): Deleted.
+        (WTF::changeThreadPriority): Deleted.
+        (WTF::waitForThreadCompletion): Deleted.
+        (WTF::detachThread): Deleted.
+        (WTF::threadDidExit): Deleted.
+        (WTF::currentThread): Deleted.
+        (WTF::signalThread): Deleted.
+        * wtf/ThreadingWin.cpp:
+        (WTF::Thread::Thread):
+        (WTF::Thread::~Thread):
+        (WTF::Thread::initializeCurrentThreadInternal):
+        (WTF::Thread::initializePlatformThreading):
+        (WTF::wtfThreadEntryPoint):
+        (WTF::Thread::createInternal):
+        (WTF::Thread::changePriority):
+        (WTF::Thread::waitForCompletion):
+        (WTF::Thread::detach):
+        (WTF::Thread::resume):
+        (WTF::Thread::getRegisters):
+        (WTF::Thread::current):
+        (WTF::Thread::currentID):
+        (WTF::Thread::didExit):
+        (WTF::Thread::establish):
+        (WTF::initializeCurrentThreadInternal): Deleted.
+        (WTF::threadMapMutex): Deleted.
+        (WTF::initializeThreading): Deleted.
+        (WTF::threadMap): Deleted.
+        (WTF::storeThreadHandleByIdentifier): Deleted.
+        (WTF::threadHandleForIdentifier): Deleted.
+        (WTF::clearThreadHandleForIdentifier): Deleted.
+        (WTF::createThreadInternal): Deleted.
+        (WTF::changeThreadPriority): Deleted.
+        (WTF::waitForThreadCompletion): Deleted.
+        (WTF::detachThread): Deleted.
+        (WTF::currentThread): Deleted.
+        * wtf/WorkQueue.cpp:
+        (WTF::WorkQueue::concurrentApply):
+        * wtf/WorkQueue.h:
+        * wtf/cocoa/WorkQueueCocoa.cpp:
+        (WTF::dispatchQOSClass):
+        * wtf/generic/WorkQueueGeneric.cpp:
+        (WorkQueue::platformInitialize):
+        (WorkQueue::platformInvalidate):
+        * wtf/linux/MemoryPressureHandlerLinux.cpp:
+        (WTF::MemoryPressureHandler::EventFDPoller::EventFDPoller):
+        (WTF::MemoryPressureHandler::EventFDPoller::~EventFDPoller):
+        * wtf/win/MainThreadWin.cpp:
+        (WTF::initializeMainThreadPlatform):
+
 2017-04-11  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Use the DisplayRefreshMonitor facilities

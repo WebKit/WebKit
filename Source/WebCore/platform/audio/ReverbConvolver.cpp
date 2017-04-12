@@ -130,7 +130,7 @@ ReverbConvolver::ReverbConvolver(AudioChannel* impulseResponse, size_t renderSli
     // Start up background thread
     // FIXME: would be better to up the thread priority here.  It doesn't need to be real-time, but higher than the default...
     if (this->useBackgroundThreads() && m_backgroundStages.size() > 0)
-        m_backgroundThread = createThread(WebCore::backgroundThreadEntry, this, "convolution background thread");
+        m_backgroundThread = Thread::create(WebCore::backgroundThreadEntry, this, "convolution background thread");
 }
 
 ReverbConvolver::~ReverbConvolver()
@@ -146,7 +146,7 @@ ReverbConvolver::~ReverbConvolver()
             m_backgroundThreadConditionVariable.notifyOne();
         }
 
-        waitForThreadCompletion(m_backgroundThread);
+        m_backgroundThread->waitForCompletion();
     }
 }
 

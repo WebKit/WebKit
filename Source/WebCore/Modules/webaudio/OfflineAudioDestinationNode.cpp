@@ -41,7 +41,6 @@ const size_t renderQuantumSize = 128;
 OfflineAudioDestinationNode::OfflineAudioDestinationNode(AudioContext& context, AudioBuffer* renderTarget)
     : AudioDestinationNode(context, renderTarget->sampleRate())
     , m_renderTarget(renderTarget)
-    , m_renderThread(0)
     , m_startedRendering(false)
 {
     m_renderBus = AudioBus::create(renderTarget->numberOfChannels(), renderQuantumSize);
@@ -66,8 +65,8 @@ void OfflineAudioDestinationNode::uninitialize()
         return;
 
     if (m_renderThread) {
-        waitForThreadCompletion(m_renderThread);
-        m_renderThread = 0;
+        m_renderThread->waitForCompletion();
+        m_renderThread = nullptr;
     }
 
     AudioNode::uninitialize();
@@ -83,7 +82,7 @@ void OfflineAudioDestinationNode::startRendering()
     if (!m_startedRendering) {
         m_startedRendering = true;
         ref(); // See corresponding deref() call in notifyCompleteDispatch().
-        m_renderThread = createThread(OfflineAudioDestinationNode::offlineRenderEntry, this, "offline renderer");
+        m_renderThread = Thread::create(OfflineAudioDestinationNode::offlineRenderEntry, this, "offline renderer");
     }
 }
 

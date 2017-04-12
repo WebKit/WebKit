@@ -58,7 +58,7 @@ Atomic<ICStats*> ICStats::s_instance;
 
 ICStats::ICStats()
 {
-    m_thread = createThread(
+    m_thread = Thread::create(
         "JSC ICStats",
         [this] () {
             LockHolder locker(m_lock);
@@ -84,7 +84,7 @@ ICStats::~ICStats()
         m_condition.notifyAll();
     }
     
-    waitForThreadCompletion(m_thread);
+    m_thread->waitForCompletion();
 }
 
 void ICStats::add(const ICEvent& event)

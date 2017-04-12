@@ -370,20 +370,20 @@ PassRefPtr<AudioBus> AudioFileReader::createBus(float sampleRate, bool mixToMono
 PassRefPtr<AudioBus> createBusFromAudioFile(const char* filePath, bool mixToMono, float sampleRate)
 {
     RefPtr<AudioBus> returnValue;
-    auto threadID = createThread("AudioFileReader", [&returnValue, filePath, mixToMono, sampleRate] {
+    auto thread = Thread::create("AudioFileReader", [&returnValue, filePath, mixToMono, sampleRate] {
         returnValue = AudioFileReader(filePath).createBus(sampleRate, mixToMono);
     });
-    waitForThreadCompletion(threadID);
+    thread->waitForCompletion();
     return returnValue;
 }
 
 PassRefPtr<AudioBus> createBusFromInMemoryAudioFile(const void* data, size_t dataSize, bool mixToMono, float sampleRate)
 {
     RefPtr<AudioBus> returnValue;
-    auto threadID = createThread("AudioFileReader", [&returnValue, data, dataSize, mixToMono, sampleRate] {
+    auto thread = Thread::create("AudioFileReader", [&returnValue, data, dataSize, mixToMono, sampleRate] {
         returnValue = AudioFileReader(data, dataSize).createBus(sampleRate, mixToMono);
     });
-    waitForThreadCompletion(threadID);
+    thread->waitForCompletion();
     return returnValue;
 }
 

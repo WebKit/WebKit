@@ -49,6 +49,7 @@
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashSet.h>
 #include <wtf/ParallelHelperPool.h>
+#include <wtf/Threading.h>
 
 namespace JSC {
 
@@ -666,7 +667,7 @@ private:
     Lock m_collectContinuouslyLock;
     Condition m_collectContinuouslyCondition;
     bool m_shouldStopCollectingContinuously { false };
-    ThreadIdentifier m_collectContinuouslyThread { 0 };
+    RefPtr<WTF::Thread> m_collectContinuouslyThread { nullptr };
     
     MonotonicTime m_lastGCStartTime;
     MonotonicTime m_lastGCEndTime;
