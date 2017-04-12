@@ -1,3 +1,25 @@
+2017-04-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Retrying an A/B testing does not set the repetition count in some cases
+        https://bugs.webkit.org/show_bug.cgi?id=170695
+
+        Reviewed by Joseph Pecoraro.
+
+        When selecting an existing A/B test group, the analysis task page automatically sets the repetition count
+        of its retry to be that of the original test group. However, this information wasn't being passed correctly
+        to the code that actually created a test group. As a result, the retried test group's repetition count does
+        not match that of the original group or the number shown to the user on UI.
+
+        Fixed the bug by updating this._repetitionCount in setRepetitionCount.
+
+        * browser-tests/index.html:
+        * browser-tests/test-group-form-tests.js: Added. Added tests.
+        (.createTestGroupFormWithContext): Added.
+        * public/v3/components/test-group-form.js:
+        (TestGroupForm.prototype.setRepetitionCount):
+        (TestGroupForm.formContent):
+        (TestGroupForm):
+
 2017-04-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add the UI for scheduling a A/B testing with a custom root

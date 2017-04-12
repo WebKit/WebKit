@@ -10,6 +10,7 @@ class TestGroupForm extends ComponentBase {
     setRepetitionCount(count)
     {
         this.content('repetition-count').value = count;
+        this._repetitionCount = count;
     }
 
     didConstructShadowTree()
@@ -39,7 +40,7 @@ class TestGroupForm extends ComponentBase {
                 <option>1</option>
                 <option>2</option>
                 <option>3</option>
-                <option>4</option>
+                <option selected>4</option>
                 <option>5</option>
                 <option>6</option>
                 <option>7</option>
