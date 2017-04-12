@@ -1,3 +1,29 @@
+2017-04-12  Beth Dakin  <bdakin@apple.com>
+
+        Adopt AVKit name change from AVFunctionBar* to AVTouchBar*
+        https://bugs.webkit.org/show_bug.cgi?id=170693
+        -and corresponding-
+        rdar://problem/31230018
+
+        Reviewed by Sam Weinig.
+
+        Since the new names only apply to some versions of macOS, this patch uses typedefs 
+        for the older OS’s. SO:
+
+        AVFunctionBarScrubber is now AVTouchBarScrubber
+
+        AVFunctionBarPlaybackControlsProvider is now AVTouchBarPlaybackControlsProvider
+
+        AVFunctionBarMediaSelectionOption is now AVTouchBarMediaSelectionOption
+
+        And the protocol AVFunctionBarPlaybackControlsControlling is now 
+        AVTouchBarPlaybackControlsControlling
+
+        Soft links and allocations cannot use the typedefs.
+        * WebView/WebView.mm:
+        (-[WebView updateMediaTouchBar]):
+        * WebView/WebViewData.h:
+
 2017-04-11  Dean Jackson  <dino@apple.com>
 
         Disable outdated WritableStream API

@@ -36,7 +36,11 @@
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wnullability-completeness"
 SOFT_LINK_FRAMEWORK(AVKit)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
+SOFT_LINK_CLASS_OPTIONAL(AVKit, AVTouchBarMediaSelectionOption)
+#else
 SOFT_LINK_CLASS_OPTIONAL(AVKit, AVFunctionBarMediaSelectionOption)
+#endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
 
 @implementation WebPlaybackControlsManager
 
@@ -121,22 +125,22 @@ SOFT_LINK_CLASS_OPTIONAL(AVKit, AVFunctionBarMediaSelectionOption)
     _webPlaybackSessionInterfaceMac->endScrubbing();
 }
 
-- (NSArray<AVFunctionBarMediaSelectionOption *> *)audioFunctionBarMediaSelectionOptions
+- (NSArray<AVTouchBarMediaSelectionOption *> *)audioFunctionBarMediaSelectionOptions
 {
     return _audioFunctionBarMediaSelectionOptions.get();
 }
 
-- (void)setAudioFunctionBarMediaSelectionOptions:(NSArray<AVFunctionBarMediaSelectionOption *> *)audioOptions
+- (void)setAudioFunctionBarMediaSelectionOptions:(NSArray<AVTouchBarMediaSelectionOption *> *)audioOptions
 {
     _audioFunctionBarMediaSelectionOptions = audioOptions;
 }
 
-- (AVFunctionBarMediaSelectionOption *)currentAudioFunctionBarMediaSelectionOption
+- (AVTouchBarMediaSelectionOption *)currentAudioFunctionBarMediaSelectionOption
 {
     return _currentAudioFunctionBarMediaSelectionOption.get();
 }
 
-- (void)setCurrentAudioFunctionBarMediaSelectionOption:(AVFunctionBarMediaSelectionOption *)audioMediaSelectionOption
+- (void)setCurrentAudioFunctionBarMediaSelectionOption:(AVTouchBarMediaSelectionOption *)audioMediaSelectionOption
 {
     if (audioMediaSelectionOption == _currentAudioFunctionBarMediaSelectionOption)
         return;
@@ -151,22 +155,22 @@ SOFT_LINK_CLASS_OPTIONAL(AVKit, AVFunctionBarMediaSelectionOption)
     _webPlaybackSessionInterfaceMac->webPlaybackSessionModel()->selectAudioMediaOption(index != NSNotFound ? index : UINT64_MAX);
 }
 
-- (NSArray<AVFunctionBarMediaSelectionOption *> *)legibleFunctionBarMediaSelectionOptions
+- (NSArray<AVTouchBarMediaSelectionOption *> *)legibleFunctionBarMediaSelectionOptions
 {
     return _legibleFunctionBarMediaSelectionOptions.get();
 }
 
-- (void)setLegibleFunctionBarMediaSelectionOptions:(NSArray<AVFunctionBarMediaSelectionOption *> *)legibleOptions
+- (void)setLegibleFunctionBarMediaSelectionOptions:(NSArray<AVTouchBarMediaSelectionOption *> *)legibleOptions
 {
     _legibleFunctionBarMediaSelectionOptions = legibleOptions;
 }
 
-- (AVFunctionBarMediaSelectionOption *)currentLegibleFunctionBarMediaSelectionOption
+- (AVTouchBarMediaSelectionOption *)currentLegibleFunctionBarMediaSelectionOption
 {
     return _currentLegibleFunctionBarMediaSelectionOption.get();
 }
 
-- (void)setCurrentLegibleFunctionBarMediaSelectionOption:(AVFunctionBarMediaSelectionOption *)legibleMediaSelectionOption
+- (void)setCurrentLegibleFunctionBarMediaSelectionOption:(AVTouchBarMediaSelectionOption *)legibleMediaSelectionOption
 {
     if (legibleMediaSelectionOption == _currentLegibleFunctionBarMediaSelectionOption)
         return;
@@ -185,7 +189,11 @@ static RetainPtr<NSMutableArray> mediaSelectionOptions(const Vector<String>& opt
 {
     RetainPtr<NSMutableArray> webOptions = adoptNS([[NSMutableArray alloc] initWithCapacity:options.size()]);
     for (auto& name : options) {
-        if (RetainPtr<AVFunctionBarMediaSelectionOption> webOption = adoptNS([allocAVFunctionBarMediaSelectionOptionInstance() initWithTitle:name]))
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
+        if (RetainPtr<AVTouchBarMediaSelectionOption> webOption = adoptNS([allocAVTouchBarMediaSelectionOptionInstance() initWithTitle:name type:AVTouchBarMediaSelectionOptionTypeRegular]))
+#else
+        if (RetainPtr<AVTouchBarMediaSelectionOption> webOption = adoptNS([allocAVFunctionBarMediaSelectionOptionInstance() initWithTitle:name]))
+#endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
             [webOptions addObject:webOption.get()];
     }
     return webOptions;

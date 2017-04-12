@@ -33,6 +33,7 @@
 #include "WKLayoutMode.h"
 #include "WebPageProxy.h"
 #include "_WKOverlayScrollbarStyle.h"
+#include <WebCore/AVKitSPI.h>
 #include <WebCore/TextIndicatorWindow.h>
 #include <WebCore/UserInterfaceLayoutDirection.h>
 #include <functional>
@@ -55,8 +56,6 @@ OBJC_CLASS WKWindowVisibilityObserver;
 OBJC_CLASS _WKThumbnailView;
 
 #if HAVE(TOUCH_BAR)
-OBJC_CLASS AVFunctionBarPlaybackControlsProvider;
-OBJC_CLASS AVFunctionBarScrubber;
 OBJC_CLASS NSCandidateListTouchBarItem;
 OBJC_CLASS NSCustomTouchBarItem;
 OBJC_CLASS NSTouchBar;
@@ -516,7 +515,7 @@ public:
     void updateTouchBar();
     NSTouchBar *currentTouchBar() const { return m_currentTouchBar.get(); }
     NSCandidateListTouchBarItem *candidateListTouchBarItem() const;
-    AVFunctionBarScrubber *mediaPlaybackControlsView() const;
+    AVTouchBarScrubber *mediaPlaybackControlsView() const;
     NSTouchBar *textTouchBar() const;
     void dismissTextTouchBarPopoverItemWithIdentifier(NSString *);
 
@@ -554,8 +553,8 @@ private:
     RetainPtr<NSCustomTouchBarItem> m_exitFullScreenButton;
 
 #if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
-    RetainPtr<AVFunctionBarPlaybackControlsProvider> m_mediaTouchBarProvider;
-    RetainPtr<AVFunctionBarScrubber> m_mediaPlaybackControlsView;
+    RetainPtr<AVTouchBarPlaybackControlsProvider> m_mediaTouchBarProvider;
+    RetainPtr<AVTouchBarScrubber> m_mediaPlaybackControlsView;
 #endif // ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
 #endif // HAVE(TOUCH_BAR)
 

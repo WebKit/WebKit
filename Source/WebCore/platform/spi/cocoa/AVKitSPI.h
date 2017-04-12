@@ -153,14 +153,30 @@ NS_ASSUME_NONNULL_END
 
 #if PLATFORM(MAC) && ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
 
+OBJC_CLASS AVFunctionBarPlaybackControlsProvider;
+OBJC_CLASS AVFunctionBarScrubber;
+OBJC_CLASS AVFunctionBarMediaSelectionOption;
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101300
+typedef AVFunctionBarMediaSelectionOption AVTouchBarMediaSelectionOption;
+typedef AVFunctionBarPlaybackControlsProvider AVTouchBarPlaybackControlsProvider;
+typedef AVFunctionBarScrubber AVTouchBarScrubber;
+#define AVTouchBarPlaybackControlsControlling AVFunctionBarPlaybackControlsControlling
+#endif // __MAC_OS_X_VERSION_MIN_REQUIRED < 101300
+
 #if USE(APPLE_INTERNAL_SDK)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
+#import <AVKit/AVTouchBarPlaybackControlsProvider.h>
+#import <AVKit/AVTouchBarScrubber.h>
+#else
 #import <AVKit/AVFunctionBarPlaybackControlsProvider.h>
 #import <AVKit/AVFunctionBarScrubber.h>
+#endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
 #else
 
 NS_ASSUME_NONNULL_BEGIN
 
-@protocol AVFunctionBarPlaybackControlsControlling <NSObject>
+@protocol AVTouchBarPlaybackControlsControlling <NSObject>
 @property (readonly) NSTimeInterval contentDuration;
 @property (readonly, nullable) AVValueTiming *timing;
 @property (readonly, getter=isSeeking) BOOL seeking;
@@ -170,16 +186,15 @@ NS_ASSUME_NONNULL_BEGIN
 @property (readonly) BOOL hasEnabledVideo;
 @end
 
-@interface AVFunctionBarPlaybackControlsProvider : NSResponder
+@interface AVTouchBarPlaybackControlsProvider : NSResponder
 @property (strong, readonly, nullable) NSTouchBar *touchBar;
-@property (assign, nullable) id<AVFunctionBarPlaybackControlsControlling> playbackControlsController;
+@property (assign, nullable) id<AVTouchBarPlaybackControlsControlling> playbackControlsController;
 @end
 
-@interface AVFunctionBarScrubber : NSView
-@property (assign, nullable) id<AVFunctionBarPlaybackControlsControlling> playbackControlsController;
+@interface AVTouchBarScrubber : NSView
+@property (assign, nullable) id<AVTouchBarPlaybackControlsControlling> playbackControlsController;
 @end
 
-@class AVFunctionBarMediaSelectionOption;
 @class AVThumbnail;
 
 NS_ASSUME_NONNULL_END

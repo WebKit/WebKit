@@ -39,17 +39,17 @@ class WebPlaybackSessionInterfaceMac;
 #if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
 
 WEBCORE_EXPORT
-@interface WebPlaybackControlsManager : NSObject <AVFunctionBarPlaybackControlsControlling> {
+@interface WebPlaybackControlsManager : NSObject <AVTouchBarPlaybackControlsControlling> {
     NSTimeInterval _contentDuration;
     RetainPtr<AVValueTiming> _timing;
     NSTimeInterval _seekToTime;
     RetainPtr<NSArray> _seekableTimeRanges;
     BOOL _hasEnabledAudio;
     BOOL _hasEnabledVideo;
-    RetainPtr<NSArray<AVFunctionBarMediaSelectionOption *>> _audioFunctionBarMediaSelectionOptions;
-    RetainPtr<AVFunctionBarMediaSelectionOption> _currentAudioFunctionBarMediaSelectionOption;
-    RetainPtr<NSArray<AVFunctionBarMediaSelectionOption *>> _legibleFunctionBarMediaSelectionOptions;
-    RetainPtr<AVFunctionBarMediaSelectionOption> _currentLegibleFunctionBarMediaSelectionOption;
+    RetainPtr<NSArray<AVTouchBarMediaSelectionOption *>> _audioFunctionBarMediaSelectionOptions;
+    RetainPtr<AVTouchBarMediaSelectionOption> _currentAudioFunctionBarMediaSelectionOption;
+    RetainPtr<NSArray<AVTouchBarMediaSelectionOption *>> _legibleFunctionBarMediaSelectionOptions;
+    RetainPtr<AVTouchBarMediaSelectionOption> _currentLegibleFunctionBarMediaSelectionOption;
     float _rate;
     BOOL _canTogglePlayback;
 
@@ -69,10 +69,10 @@ WEBCORE_EXPORT
 
 @property (nonatomic) float rate;
 
-- (AVFunctionBarMediaSelectionOption *)currentAudioFunctionBarMediaSelectionOption;
-- (void)setCurrentAudioFunctionBarMediaSelectionOption:(AVFunctionBarMediaSelectionOption *)option;
-- (AVFunctionBarMediaSelectionOption *)currentLegibleFunctionBarMediaSelectionOption;
-- (void)setCurrentLegibleFunctionBarMediaSelectionOption:(AVFunctionBarMediaSelectionOption *)option;
+- (AVTouchBarMediaSelectionOption *)currentAudioFunctionBarMediaSelectionOption;
+- (void)setCurrentAudioFunctionBarMediaSelectionOption:(AVTouchBarMediaSelectionOption *)option;
+- (AVTouchBarMediaSelectionOption *)currentLegibleFunctionBarMediaSelectionOption;
+- (void)setCurrentLegibleFunctionBarMediaSelectionOption:(AVTouchBarMediaSelectionOption *)option;
 - (void)setAudioMediaSelectionOptions:(const Vector<WTF::String>&)options withSelectedIndex:(NSUInteger)selectedIndex;
 - (void)setLegibleMediaSelectionOptions:(const Vector<WTF::String>&)options withSelectedIndex:(NSUInteger)selectedIndex;
 @end
