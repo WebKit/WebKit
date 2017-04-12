@@ -100,7 +100,6 @@ public:
     unsigned platformDataSize() const;
 
 #if USE(NETWORK_CFDATA_ARRAY_CALLBACK)
-    WEBCORE_EXPORT static Ref<SharedBuffer> wrapCFDataArray(CFArrayRef);
     WEBCORE_EXPORT void append(CFDataRef);
 #endif
 
@@ -159,7 +158,6 @@ private:
     mutable Ref<DataBuffer> m_buffer;
 
 #if USE(NETWORK_CFDATA_ARRAY_CALLBACK)
-    explicit SharedBuffer(CFArrayRef);
     mutable Vector<RetainPtr<CFDataRef>> m_dataArray;
     unsigned copySomeDataFromDataArray(const char*& someData, unsigned position) const;
     const char *singleDataArrayBuffer() const;

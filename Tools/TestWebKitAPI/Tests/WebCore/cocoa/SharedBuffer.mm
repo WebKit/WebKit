@@ -62,14 +62,6 @@ TEST_F(SharedBufferTest, createNSDataArray)
         expectDataArraysEqual(@[ helloData ], SharedBuffer::wrapNSData(helloData)->createNSDataArray().get());
         expectDataArraysEqual(@[ worldData ], SharedBuffer::wrapCFData((CFDataRef)worldData)->createNSDataArray().get());
 
-        NSArray<NSData *> *dataArray = @[ [NSData dataWithBytes:"one" length:3], [NSData dataWithBytes:"two" length:3], [NSData dataWithBytes:"three" length:5] ];
-        auto wrappedDataArray = SharedBuffer::wrapCFDataArray((CFArrayRef)dataArray);
-        expectDataArraysEqual(dataArray, wrappedDataArray->createNSDataArray().get());
-
-        NSArray<NSData *> *secondDataArray = @[ [NSData dataWithBytes:"four" length:4], [NSData dataWithBytes:"five" length:4], [NSData dataWithBytes:"six" length:3] ];
-        wrappedDataArray->append(SharedBuffer::wrapCFDataArray((CFArrayRef)secondDataArray).get());
-        expectDataArraysEqual([dataArray arrayByAddingObjectsFromArray:secondDataArray], wrappedDataArray->createNSDataArray().get());
-
         expectDataArraysEqual(@[ [NSData dataWithContentsOfFile:tempFilePath()] ], SharedBuffer::createWithContentsOfFile(tempFilePath())->createNSDataArray().get());
     }
 }

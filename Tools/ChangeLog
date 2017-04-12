@@ -1,3 +1,13 @@
+2017-04-12  Alex Christensen  <achristensen@webkit.org>
+
+        Remove unused SharedBuffer::wrapCFDataArray
+        https://bugs.webkit.org/show_bug.cgi?id=170794
+
+        Reviewed by Brady Eidson.
+
+        * TestWebKitAPI/Tests/WebCore/cocoa/SharedBuffer.mm:
+        (TestWebKitAPI::TEST_F):
+
 2017-04-12  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [WTF] Introduce Thread class and use RefPtr<Thread> and align Windows Threading implementation semantics to Pthread one

@@ -118,20 +118,6 @@ bool SharedBuffer::maybeAppendPlatformData(SharedBuffer& newContents)
 }
 
 #if USE(NETWORK_CFDATA_ARRAY_CALLBACK)
-Ref<SharedBuffer> SharedBuffer::wrapCFDataArray(CFArrayRef cfDataArray)
-{
-    return adoptRef(*new SharedBuffer(cfDataArray));
-}
-
-SharedBuffer::SharedBuffer(CFArrayRef cfDataArray)
-    : m_buffer(adoptRef(*new DataBuffer))
-    , m_cfData(nullptr)
-{
-    CFIndex dataArrayCount = CFArrayGetCount(cfDataArray);
-    for (CFIndex index = 0; index < dataArrayCount; ++index)
-        append(checked_cf_cast<CFDataRef>(CFArrayGetValueAtIndex(cfDataArray, index)));
-}
-
 void SharedBuffer::append(CFDataRef data)
 {
     ASSERT(data);
