@@ -81,7 +81,7 @@ PlatformMediaSession::PlatformMediaSession(PlatformMediaSessionClient& client)
     , m_stateToRestore(Idle)
     , m_notifyingClient(false)
 {
-    ASSERT(m_client.mediaType() >= None && m_client.mediaType() <= WebAudio);
+    ASSERT(m_client.mediaType() >= None && m_client.mediaType() <= MediaStreamCapturingAudio);
     PlatformMediaSessionManager::sharedManager().addSession(*this);
 }
 

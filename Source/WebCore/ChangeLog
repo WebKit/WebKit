@@ -1,3 +1,14 @@
+2017-04-12  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Set correct audio session category when capturing audio
+        https://bugs.webkit.org/show_bug.cgi?id=170736
+        <rdar://problem/31559405>
+
+        Unreviewed, update an assertion I missed in r215242.
+
+        * platform/audio/PlatformMediaSession.cpp:
+        (WebCore::PlatformMediaSession::PlatformMediaSession):
+
 2017-04-12  Alex Christensen  <achristensen@webkit.org>
 
         Remove unused SharedBuffer::wrapCFDataArray
