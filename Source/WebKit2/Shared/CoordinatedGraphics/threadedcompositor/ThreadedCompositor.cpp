@@ -29,6 +29,7 @@
 #if USE(COORDINATED_GRAPHICS_THREADED)
 
 #include "CompositingRunLoop.h"
+#include "ThreadedDisplayRefreshMonitor.h"
 #include <WebCore/PlatformDisplay.h>
 #include <WebCore/TransformationMatrix.h>
 
@@ -56,7 +57,13 @@ ThreadedCompositor::ThreadedCompositor(Client& client, const IntSize& viewportSi
     , m_paintFlags(paintFlags)
     , m_needsResize(!viewportSize.isEmpty())
     , m_compositingRunLoop(std::make_unique<CompositingRunLoop>([this] { renderLayerTree(); }))
+#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
+    , m_displayRefreshMonitor(ThreadedDisplayRefreshMonitor::create(*this))
+#endif
 {
+    m_clientRendersNextFrame.store(false);
+    m_coordinateUpdateCompletionWithClient.store(false);
+
     m_compositingRunLoop->performTaskSync([this, protectedThis = makeRef(*this)] {
         m_scene = adoptRef(new CoordinatedGraphicsScene(this));
         if (m_nativeSurfaceHandle) {
@@ -89,18 +96,21 @@ void ThreadedCompositor::createGLContext()
 void ThreadedCompositor::invalidate()
 {
     m_scene->detach();
-    m_compositingRunLoop->stopUpdateTimer();
+    m_compositingRunLoop->stopUpdates();
     m_compositingRunLoop->performTaskSync([this, protectedThis = makeRef(*this)] {
         m_scene->purgeGLResources();
         m_context = nullptr;
         m_scene = nullptr;
     });
+#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
+    m_displayRefreshMonitor->invalidate();
+#endif
     m_compositingRunLoop = nullptr;
 }
 
 void ThreadedCompositor::setNativeSurfaceHandleForCompositing(uint64_t handle)
 {
-    m_compositingRunLoop->stopUpdateTimer();
+    m_compositingRunLoop->stopUpdates();
     m_compositingRunLoop->performTaskSync([this, protectedThis = makeRef(*this), handle] {
         // A new native handle can't be set without destroying the previous one first if any.
         ASSERT(!!handle ^ !!m_nativeSurfaceHandle);
@@ -119,7 +129,7 @@ void ThreadedCompositor::setScaleFactor(float scale)
 {
     m_compositingRunLoop->performTask([this, protectedThis = makeRef(*this), scale] {
         m_scaleFactor = scale;
-        scheduleDisplayImmediately();
+        m_compositingRunLoop->scheduleUpdate();
     });
 }
 
@@ -128,7 +138,7 @@ void ThreadedCompositor::setScrollPosition(const IntPoint& scrollPosition, float
     m_compositingRunLoop->performTask([this, protectedThis = makeRef(*this), scrollPosition, scale] {
         m_scrollPosition = scrollPosition;
         m_scaleFactor = scale;
-        scheduleDisplayImmediately();
+        m_compositingRunLoop->scheduleUpdate();
     });
 }
 
@@ -138,7 +148,7 @@ void ThreadedCompositor::setViewportSize(const IntSize& viewportSize, float scal
         m_viewportSize = viewportSize;
         m_scaleFactor = scale;
         m_needsResize = true;
-        scheduleDisplayImmediately();
+        m_compositingRunLoop->scheduleUpdate();
     });
 }
 
@@ -146,7 +156,7 @@ void ThreadedCompositor::setDrawsBackground(bool drawsBackground)
 {
     m_compositingRunLoop->performTask([this, protectedThis = Ref<ThreadedCompositor>(*this), drawsBackground] {
         m_drawsBackground = drawsBackground;
-        scheduleDisplayImmediately();
+        m_compositingRunLoop->scheduleUpdate();
     });
 }
 
@@ -164,12 +174,7 @@ void ThreadedCompositor::commitScrollOffset(uint32_t layerID, const IntSize& off
 
 void ThreadedCompositor::updateViewport()
 {
-    m_compositingRunLoop->startUpdateTimer(CompositingRunLoop::WaitUntilNextFrame);
-}
-
-void ThreadedCompositor::scheduleDisplayImmediately()
-{
-    m_compositingRunLoop->startUpdateTimer(CompositingRunLoop::Immediate);
+    m_compositingRunLoop->scheduleUpdate();
 }
 
 void ThreadedCompositor::forceRepaint()
@@ -205,18 +210,65 @@ void ThreadedCompositor::renderLayerTree()
     m_scene->paintToCurrentGLContext(viewportTransform, 1, clipRect, Color::transparent, !m_drawsBackground, m_scrollPosition, m_paintFlags);
 
     m_context->swapBuffers();
+
+    sceneUpdateFinished();
+}
+
+void ThreadedCompositor::sceneUpdateFinished()
+{
+    bool shouldDispatchDisplayRefreshCallback = m_clientRendersNextFrame.load()
+        || m_displayRefreshMonitor->requiresDisplayRefreshCallback();
+    bool shouldCoordinateUpdateCompletionWithClient = m_coordinateUpdateCompletionWithClient.load();
+
+    if (shouldDispatchDisplayRefreshCallback)
+        m_displayRefreshMonitor->dispatchDisplayRefreshCallback();
+    if (!shouldCoordinateUpdateCompletionWithClient)
+        m_compositingRunLoop->updateCompleted();
 }
 
 void ThreadedCompositor::updateSceneState(const CoordinatedGraphicsState& state)
 {
     ASSERT(isMainThread());
     RefPtr<CoordinatedGraphicsScene> scene = m_scene;
-    m_scene->appendUpdate([scene, state] {
+    m_scene->appendUpdate([this, scene, state] {
         scene->commitSceneState(state);
+
+        m_clientRendersNextFrame.store(true);
+        bool coordinateUpdate = std::any_of(state.layersToUpdate.begin(), state.layersToUpdate.end(),
+            [](const std::pair<CoordinatedLayerID, CoordinatedGraphicsLayerState>& it) {
+                return it.second.platformLayerChanged || it.second.platformLayerUpdated;
+            });
+        m_coordinateUpdateCompletionWithClient.store(coordinateUpdate);
     });
 
-    scheduleDisplayImmediately();
+    m_compositingRunLoop->scheduleUpdate();
 }
+
+#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
+RefPtr<WebCore::DisplayRefreshMonitor> ThreadedCompositor::displayRefreshMonitor(PlatformDisplayID)
+{
+    return m_displayRefreshMonitor.copyRef();
+}
+
+void ThreadedCompositor::renderNextFrameIfNeeded()
+{
+    if (m_clientRendersNextFrame.compareExchangeStrong(true, false))
+        m_scene->renderNextFrame();
+}
+
+void ThreadedCompositor::completeCoordinatedUpdateIfNeeded()
+{
+    if (m_coordinateUpdateCompletionWithClient.compareExchangeStrong(true, false))
+        m_compositingRunLoop->updateCompleted();
+}
+
+void ThreadedCompositor::coordinateUpdateCompletionWithClient()
+{
+    m_coordinateUpdateCompletionWithClient.store(true);
+    if (!m_compositingRunLoop->isActive())
+        m_compositingRunLoop->scheduleUpdate();
+}
+#endif
 
 }
 #endif // USE(COORDINATED_GRAPHICS_THREADED)

@@ -86,6 +86,7 @@ struct CoordinatedGraphicsLayerState {
             bool childrenChanged: 1;
             bool repaintCountChanged : 1;
             bool platformLayerChanged: 1;
+            bool platformLayerUpdated: 1;
             bool platformLayerShouldSwapBuffers: 1;
             bool isScrollableChanged: 1;
             bool committedScrollOffsetChanged: 1;

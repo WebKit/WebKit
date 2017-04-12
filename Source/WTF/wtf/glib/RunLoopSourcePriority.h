@@ -64,6 +64,9 @@ enum RunLoopSourcePriority {
     // Layer flush.
     LayerFlushTimer = -100,
 
+    // DisplayRefreshMonitor timer, should have the same value as the LayerFlushTimer.
+    DisplayRefreshMonitorTimer = -100,
+
     // Rendering timer in the main thread when accelerated compositing is not used.
     NonAcceleratedDrawingTimer = 100
 };

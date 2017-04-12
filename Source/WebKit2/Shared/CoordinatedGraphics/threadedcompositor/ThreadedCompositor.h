@@ -33,9 +33,14 @@
 #include <WebCore/GLContext.h>
 #include <WebCore/IntSize.h>
 #include <WebCore/TextureMapper.h>
+#include <wtf/Atomics.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/ThreadSafeRefCounted.h>
+
+#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
+#include <WebCore/DisplayRefreshMonitor.h>
+#endif
 
 namespace WebCore {
 struct CoordinatedGraphicsState;
@@ -45,6 +50,7 @@ namespace WebKit {
 
 class CoordinatedGraphicsScene;
 class CoordinatedGraphicsSceneClient;
+class ThreadedDisplayRefreshMonitor;
 
 class ThreadedCompositor : public CoordinatedGraphicsSceneClient, public ThreadSafeRefCounted<ThreadedCompositor> {
     WTF_MAKE_NONCOPYABLE(ThreadedCompositor);
@@ -73,6 +79,13 @@ public:
 
     void forceRepaint();
 
+#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
+    RefPtr<WebCore::DisplayRefreshMonitor> displayRefreshMonitor(WebCore::PlatformDisplayID);
+    void renderNextFrameIfNeeded();
+    void completeCoordinatedUpdateIfNeeded();
+    void coordinateUpdateCompletionWithClient();
+#endif
+
 private:
     ThreadedCompositor(Client&, const WebCore::IntSize&, float scaleFactor, uint64_t nativeSurfaceHandle, ShouldDoFrameSync, WebCore::TextureMapper::PaintFlags);
 
@@ -82,7 +95,7 @@ private:
     void commitScrollOffset(uint32_t layerID, const WebCore::IntSize& offset) override;
 
     void renderLayerTree();
-    void scheduleDisplayImmediately();
+    void sceneUpdateFinished();
 
     void createGLContext();
 
@@ -100,6 +113,13 @@ private:
     bool m_needsResize { false };
 
     std::unique_ptr<CompositingRunLoop> m_compositingRunLoop;
+
+#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
+    Ref<ThreadedDisplayRefreshMonitor> m_displayRefreshMonitor;
+#endif
+
+    Atomic<bool> m_clientRendersNextFrame;
+    Atomic<bool> m_coordinateUpdateCompletionWithClient;
 };
 
 } // namespace WebKit

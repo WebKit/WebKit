@@ -23,62 +23,39 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CompositingRunLoop_h
-#define CompositingRunLoop_h
+#pragma once
 
-#if USE(COORDINATED_GRAPHICS_THREADED)
+#if USE(COORDINATED_GRAPHICS_THREADED) && USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
 
-#include <wtf/Atomics.h>
-#include <wtf/Condition.h>
-#include <wtf/FastMalloc.h>
-#include <wtf/Function.h>
-#include <wtf/NeverDestroyed.h>
-#include <wtf/Noncopyable.h>
+#include <WebCore/DisplayRefreshMonitor.h>
 #include <wtf/RunLoop.h>
 
 namespace WebKit {
 
-class CompositingRunLoop {
-    WTF_MAKE_NONCOPYABLE(CompositingRunLoop);
-    WTF_MAKE_FAST_ALLOCATED;
+class ThreadedCompositor;
+
+class ThreadedDisplayRefreshMonitor : public WebCore::DisplayRefreshMonitor {
 public:
-    CompositingRunLoop(std::function<void ()>&&);
-    ~CompositingRunLoop();
+    static Ref<ThreadedDisplayRefreshMonitor> create(ThreadedCompositor& compositor)
+    {
+        return adoptRef(*new ThreadedDisplayRefreshMonitor(compositor));
+    }
+    virtual ~ThreadedDisplayRefreshMonitor() = default;
 
-    void performTask(Function<void ()>&&);
-    void performTaskSync(Function<void ()>&&);
+    bool requestRefreshCallback() override;
 
-    bool isActive();
-    void scheduleUpdate();
-    void stopUpdates();
-
-    void updateCompleted();
-
-#ifndef NDEBUG
-    bool isCurrent();
-#endif
+    bool requiresDisplayRefreshCallback();
+    void dispatchDisplayRefreshCallback();
+    void invalidate();
 
 private:
-    enum class UpdateState {
-        Completed,
-        InProgress,
-        PendingAfterCompletion,
-    };
+    ThreadedDisplayRefreshMonitor(ThreadedCompositor&);
 
-    void updateTimerFired();
-
-    RunLoop::Timer<CompositingRunLoop> m_updateTimer;
-#ifndef NDEBUG
-    RunLoop& m_runLoop;
-#endif
-    std::function<void ()> m_updateFunction;
-    Atomic<UpdateState> m_updateState;
-    Lock m_dispatchSyncConditionMutex;
-    Condition m_dispatchSyncCondition;
+    void displayRefreshCallback();
+    RunLoop::Timer<ThreadedDisplayRefreshMonitor> m_displayRefreshTimer;
+    ThreadedCompositor* m_compositor;
 };
 
 } // namespace WebKit
 
-#endif // USE(COORDINATED_GRAPHICS_THREADED)
-
-#endif // CompositingRunLoop_h
+#endif // USE(COORDINATED_GRAPHICS_THREADED) && USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)

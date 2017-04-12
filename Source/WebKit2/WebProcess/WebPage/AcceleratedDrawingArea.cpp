@@ -223,6 +223,15 @@ void AcceleratedDrawingArea::scheduleCompositingLayerFlushImmediately()
     scheduleCompositingLayerFlush();
 }
 
+#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
+RefPtr<WebCore::DisplayRefreshMonitor> AcceleratedDrawingArea::createDisplayRefreshMonitor(WebCore::PlatformDisplayID displayID)
+{
+    if (!m_layerTreeHost || m_wantsToExitAcceleratedCompositingMode || exitAcceleratedCompositingModePending())
+        return nullptr;
+    return m_layerTreeHost->createDisplayRefreshMonitor(displayID);
+}
+#endif
+
 void AcceleratedDrawingArea::updateBackingStoreState(uint64_t stateID, bool respondImmediately, float deviceScaleFactor, const IntSize& size, const IntSize& scrollOffset)
 {
     ASSERT(!m_inUpdateBackingStoreState);

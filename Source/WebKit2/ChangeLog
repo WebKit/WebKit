@@ -1,3 +1,88 @@
+2017-04-11  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Use the DisplayRefreshMonitor facilities
+        https://bugs.webkit.org/show_bug.cgi?id=170599
+
+        Reviewed by Carlos Garcia Campos.
+
+        ThreadedCompositor gains a DisplayRefreshMonitor member that it can use
+        to better coordinate display refresh callbacks on the main thread. Still,
+        because currently the GTK+ port doesn't have a reliable way of notifying
+        the ThreadedCompositor of a vsync event, a timer targeting 60FPS is used
+        in order to keep the updates at a reasonable rate. When the timer is fired,
+        the ThreadedCompositor decides how to proceed based on state changes that
+        might have occurred during composition or whether there's any display
+        refresh callbacks that require handling on the main thread.
+
+        CompositingRunLoop now stores its state in an atomic variable that's then
+        inspected whenever a new update is scheduled or completed. When scheduled,
+        if there's no update in progress, a new update is requested through the
+        timer. If there's already an update in progress, a new update is marked
+        as pending after the current one completes. In that case, when the update
+        is completed, a new update is requested through the timer.
+
+        ThreadedDisplayRefreshMonitor is used to coordinate updates between the
+        main and the composition thread whenever the CoordinatedGraphics state
+        demands it, or whenever there are clients registered to that monitor that
+        require an update (e.g. a requestAnimationFrame() callback). After the
+        update on the composition thread is finished, and the DisplayRefreshMonitor
+        object requires an update, a callback at the same priority as the layer
+        flush timer is scheduled on the main thread. In that callback we handle
+        any clients registered for this DisplayRefreshMonitor before proceeding
+        to handle any changes to the CoordinatedGraphics scene. In case the
+        DisplayRefreshMonitor clients or the layer flushes already queued up
+        any changes to the state, we immediately ask the ThreadedCompositor for
+        an update.
+
+        * PlatformGTK.cmake:
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsScene.cpp:
+        (WebKit::CoordinatedGraphicsScene::updateViewport):
+        (WebKit::CoordinatedGraphicsScene::commitSceneState):
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsScene.h:
+        * Shared/CoordinatedGraphics/threadedcompositor/CompositingRunLoop.cpp:
+        (WebKit::CompositingRunLoop::CompositingRunLoop):
+        (WebKit::CompositingRunLoop::isActive):
+        (WebKit::CompositingRunLoop::scheduleUpdate):
+        (WebKit::CompositingRunLoop::stopUpdates):
+        (WebKit::CompositingRunLoop::updateCompleted):
+        (WebKit::CompositingRunLoop::updateTimerFired):
+        (WebKit::CompositingRunLoop::isCurrent):
+        (WebKit::CompositingRunLoop::startUpdateTimer): Deleted.
+        (WebKit::CompositingRunLoop::stopUpdateTimer): Deleted.
+        * Shared/CoordinatedGraphics/threadedcompositor/CompositingRunLoop.h:
+        (): Deleted.
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp:
+        (WebKit::m_displayRefreshMonitor):
+        (WebKit::ThreadedCompositor::invalidate):
+        (WebKit::ThreadedCompositor::setNativeSurfaceHandleForCompositing):
+        (WebKit::ThreadedCompositor::updateViewport):
+        (WebKit::ThreadedCompositor::scheduleDisplayImmediately):
+        (WebKit::ThreadedCompositor::renderLayerTree):
+        (WebKit::ThreadedCompositor::sceneUpdateFinished):
+        (WebKit::ThreadedCompositor::updateSceneState):
+        (WebKit::ThreadedCompositor::displayRefreshMonitor):
+        (WebKit::ThreadedCompositor::renderNextFrameIfNeeded):
+        (WebKit::ThreadedCompositor::completeCoordinatedUpdateIfNeeded):
+        (WebKit::ThreadedCompositor::coordinateUpdateCompletionWithClient):
+        (WebKit::ThreadedCompositor::performFrameCompletion):
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.h:
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedDisplayRefreshMonitor.cpp: Added.
+        (WebKit::ThreadedDisplayRefreshMonitor::ThreadedDisplayRefreshMonitor):
+        (WebKit::ThreadedDisplayRefreshMonitor::requestRefreshCallback):
+        (WebKit::ThreadedDisplayRefreshMonitor::requiresDisplayRefreshCallback):
+        (WebKit::ThreadedDisplayRefreshMonitor::dispatchDisplayRefreshCallback):
+        (WebKit::ThreadedDisplayRefreshMonitor::invalidate):
+        (WebKit::ThreadedDisplayRefreshMonitor::displayRefreshCallback):
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedDisplayRefreshMonitor.h: Copied from Source/WebKit2/Shared/CoordinatedGraphics/threadedcompositor/CompositingRunLoop.h.
+        * WebProcess/WebPage/AcceleratedDrawingArea.cpp:
+        (WebKit::AcceleratedDrawingArea::createDisplayRefreshMonitor):
+        * WebProcess/WebPage/AcceleratedDrawingArea.h:
+        * WebProcess/WebPage/CoordinatedGraphics/ThreadedCoordinatedLayerTreeHost.cpp:
+        (WebKit::ThreadedCoordinatedLayerTreeHost::createDisplayRefreshMonitor):
+        * WebProcess/WebPage/CoordinatedGraphics/ThreadedCoordinatedLayerTreeHost.h:
+        * WebProcess/WebPage/LayerTreeHost.h:
+        (WebKit::LayerTreeHost::createDisplayRefreshMonitor):
+
 2017-04-11  Alex Christensen  <achristensen@webkit.org>
 
         Modernize and clean up code

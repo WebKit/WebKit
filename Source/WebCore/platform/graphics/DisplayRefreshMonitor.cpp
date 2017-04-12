@@ -33,7 +33,7 @@
 
 #if PLATFORM(IOS)
 #include "DisplayRefreshMonitorIOS.h"
-#else
+#elif PLATFORM(MAC)
 #include "DisplayRefreshMonitorMac.h"
 #endif
 
@@ -47,6 +47,7 @@ RefPtr<DisplayRefreshMonitor> DisplayRefreshMonitor::createDefaultDisplayRefresh
 #if PLATFORM(IOS)
     return DisplayRefreshMonitorIOS::create(displayID);
 #endif
+    UNUSED_PARAM(displayID);
     return nullptr;
 }
 

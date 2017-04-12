@@ -714,6 +714,7 @@ void CoordinatedGraphicsLayer::updatePlatformLayer()
         return;
 
     m_shouldUpdatePlatformLayer = false;
+    m_layerState.platformLayerUpdated = true;
     if (m_platformLayer)
         m_platformLayer->swapBuffersIfNeeded();
 #endif

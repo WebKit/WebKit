@@ -127,12 +127,8 @@ void CoordinatedGraphicsScene::paintToCurrentGLContext(const TransformationMatri
 
 void CoordinatedGraphicsScene::updateViewport()
 {
-    if (!m_client)
-        return;
-    dispatchOnClientRunLoop([this] {
-        if (m_client)
-            m_client->updateViewport();
-    });
+    if (m_client)
+        m_client->updateViewport();
 }
 
 void CoordinatedGraphicsScene::adjustPositionForFixedLayers(const FloatPoint& contentPosition)
@@ -547,9 +543,6 @@ void CoordinatedGraphicsScene::commitSceneState(const CoordinatedGraphicsState& 
 
     commitPendingBackingStoreOperations();
     removeReleasedImageBackingsIfNeeded();
-
-    // The pending tiles state is on its way for the screen, tell the web process to render the next one.
-    renderNextFrame();
 }
 
 void CoordinatedGraphicsScene::renderNextFrame()

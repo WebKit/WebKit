@@ -2253,7 +2253,9 @@ set(WebCore_SOURCES
     platform/graphics/Color.cpp
     platform/graphics/ComplexTextController.cpp
     platform/graphics/CrossfadeGeneratedImage.cpp
+    platform/graphics/DisplayRefreshMonitor.cpp
     platform/graphics/DisplayRefreshMonitorClient.cpp
+    platform/graphics/DisplayRefreshMonitorManager.cpp
     platform/graphics/ExtendedColor.cpp
     platform/graphics/FloatPoint.cpp
     platform/graphics/FloatPoint3D.cpp
