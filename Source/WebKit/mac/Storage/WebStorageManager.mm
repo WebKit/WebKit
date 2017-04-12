@@ -52,7 +52,6 @@ static pthread_once_t registerLocalStoragePath = PTHREAD_ONCE_INIT;
     return sharedManager;
 }
 
-#if PLATFORM(IOS)
 - (id)init
 {
     if (!(self = [super init]))
@@ -62,7 +61,6 @@ static pthread_once_t registerLocalStoragePath = PTHREAD_ONCE_INIT;
     
     return self;
 }
-#endif
 
 - (NSArray *)origins
 {

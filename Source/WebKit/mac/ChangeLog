@@ -1,3 +1,15 @@
+2017-04-12  Brian Weinstein  <bweinstein@apple.com>
+
+        Should always override -[WebStorageManager init].
+        https://bugs.webkit.org/show_bug.cgi?id=170787
+        -and corresponding-
+        rdar://problem/31371835
+
+        Reviewed by Anders Carlsson.
+
+        * Storage/WebStorageManager.mm:
+        (-[WebStorageManager init]):
+
 2017-04-12  Beth Dakin  <bdakin@apple.com>
 
         Speculative build fix. 
