@@ -29,7 +29,9 @@
 
 #import "WebTypesInternal.h"
 #import "WebDelegateImplementationCaching.h"
+#if HAVE(TOUCH_BAR)
 #import <WebCore/AVKitSPI.h>
+#endif
 #import <WebCore/AlternativeTextClient.h>
 #import <WebCore/LayerFlushScheduler.h>
 #import <WebCore/LayerFlushSchedulerClient.h>

@@ -1,3 +1,9 @@
+2017-04-12  Beth Dakin  <bdakin@apple.com>
+
+        Build fix.
+
+        * WebView/WebViewData.h:
+
 2017-04-12  Brian Weinstein  <bweinstein@apple.com>
 
         Should always override -[WebStorageManager init].
