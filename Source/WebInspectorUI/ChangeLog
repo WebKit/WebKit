@@ -1,3 +1,142 @@
+2017-04-11  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: checkboxes in Settings screen use inappropriate layout
+        https://bugs.webkit.org/show_bug.cgi?id=166993
+        <rdar://problem/30002272>
+
+        Reviewed by Devin Rousso.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        New checkbox setting strings.
+
+        * UserInterface/Main.html:
+        New settings view classes.
+
+        * UserInterface/Views/GeneralSettingsView.js: Added.
+        (WebInspector.GeneralSettingsView):
+        (WebInspector.GeneralSettingsView.prototype.initialLayout):
+        Move settings UI creation from SettingsTabContentView.
+
+        * UserInterface/Views/SettingEditor.js: Added.
+        Basic setting editor UI for the following input types: checkbox,
+        number, and select. In the future it may be useful to include
+        additional types, such as radio buttons.
+
+        (WebInspector.SettingEditor):
+        (WebInspector.SettingEditor.createForSetting):
+        (WebInspector.SettingEditor.prototype.get element):
+        (WebInspector.SettingEditor.prototype.get type):
+        (WebInspector.SettingEditor.prototype.get label):
+        (WebInspector.SettingEditor.prototype.get value):
+        (WebInspector.SettingEditor.prototype.set value):
+        (WebInspector.SettingEditor.prototype._createEditorElement):
+
+        * UserInterface/Views/SettingsGroup.js: Added.
+        A container holding editors for one or more WebInspector.Settings.
+        Every editor belongs to a group. SettingsView provides convenience
+        methods for adding settings and groups, so create instances directly
+        shouldn't normally be necessary.
+
+        (WebInspector.SettingsGroup):
+        (WebInspector.SettingsGroup.prototype.get element):
+        (WebInspector.SettingsGroup.prototype.addSetting):
+        (WebInspector.SettingsGroup.prototype.addCustomSetting):
+
+        * UserInterface/Views/SettingsTabContentView.css:
+        Refactored styles to more closely match Xcode settings UI.
+        Eliminated redundant use of "setting" from CSS class names.
+
+        (.content-view.settings):
+        (.content-view.settings .navigation-bar .item.radio.button.text-only):
+        (.content-view.settings .navigation-bar .item.radio.button.text-only.selected):
+        (.content-view.settings > .settings-view > .separator):
+        (.content-view.settings > .settings-view > .container):
+        (.content-view.settings > .settings-view > .container > .title):
+        (body[dir=ltr] .content-view.settings > .settings-view > .container > .title):
+        (body[dir=rtl] .content-view.settings > .settings-view > .container > .title):
+        (.content-view.settings > .settings-view > .container > .editor-group):
+        (.content-view.settings > .settings-view > .container > .editor-group > .editor input):
+        (.content-view.settings > .settings-view > .container > .editor-group > .editor input[type="checkbox"]):
+        (body[dir=ltr] .content-view.settings > .settings-view > .container > .editor-group > .editor input[type="checkbox"]):
+        (body[dir=rtl] .content-view.settings > .settings-view > .container > .editor-group > .editor input[type="checkbox"]):
+        (.content-view.settings > .settings-view > .container > .editor-group > .editor select):
+        (.content-view.settings > .settings-view > .container > .editor-group > .editor input[type="number"]):
+        (body[dir=ltr] .content-view.settings > .settings-view > .container > .editor-group > .editor input[type="number"]):
+        (body[dir=rtl] .content-view.settings > .settings-view > .container > .editor-group > .editor input[type="number"]):
+        (.content-view.settings > .header): Deleted.
+        (.content-view.settings > .separator): Deleted.
+        (.content-view.settings > .setting-container): Deleted.
+        (.content-view.settings > .setting-container.combined): Deleted.
+        (.content-view.settings > .setting-container > .setting-name): Deleted.
+        (body[dir=ltr] .content-view.settings > .setting-container > .setting-name): Deleted.
+        (body[dir=rtl] .content-view.settings > .setting-container > .setting-name): Deleted.
+        (.content-view.settings > .setting-container > .setting-value-controller): Deleted.
+        (.content-view.settings > .setting-container > .setting-value-controller input): Deleted.
+        (.content-view.settings > .setting-container > .setting-value-controller input[type="checkbox"]): Deleted.
+        (body[dir=ltr] .content-view.settings > .setting-container > .setting-value-controller input[type="checkbox"]): Deleted.
+        (body[dir=rtl] .content-view.settings > .setting-container > .setting-value-controller input[type="checkbox"]): Deleted.
+        (.content-view.settings > .setting-container > .setting-value-controller select): Deleted.
+        (.content-view.settings > .setting-container > .setting-value-controller input[type="number"]): Deleted.
+        (body[dir=ltr] .content-view.settings > .setting-container > .setting-value-controller input[type="number"]): Deleted.
+        (body[dir=rtl] .content-view.settings > .setting-container > .setting-value-controller input[type="number"]): Deleted.
+
+        * UserInterface/Views/SettingsTabContentView.js:
+        To better organize the growing number of settings, multiple settings views
+        are now supported, with a navigation bar for switching between them. For
+        now there is a single "General" setting view, and and the navigation bar
+        is hidden. Adding a second view will cause the bar to be shown.
+
+        (WebInspector.SettingsTabContentView):
+        (WebInspector.SettingsTabContentView.prototype.get type):
+        (WebInspector.SettingsTabContentView.prototype.get selectedSettingsView):
+        (WebInspector.SettingsTabContentView.prototype.set selectedSettingsView):
+        (WebInspector.SettingsTabContentView.prototype.addSettingsView):
+        (WebInspector.SettingsTabContentView.prototype._navigationItemSelected):
+        (WebInspector.SettingsTabContentView.prototype.layout): Deleted.
+        No longer needed.
+
+        * UserInterface/Views/SettingsView.js: Added.
+        Base class for displaying editing UI for a collection of related
+        WebInspector.Setting objects.
+
+        (WebInspector.SettingsView):
+        (WebInspector.SettingsView.prototype.get identifier):
+        (WebInspector.SettingsView.prototype.get displayName):
+        A string suitable for display in a NavigationBar showing a list of
+        SettingsViews (e.g. "General", "Text Editing", "Fonts & Colors", etc).
+
+        (WebInspector.SettingsView.prototype.addSetting):
+        Add UI for a setting, consisting of a title, an editor appropriate for
+        the setting's value type, and optional label and formatting options.
+        For example:
+
+            addSetting("Setting 1:", new WebInspector.Setting(…, true), "Item one")
+            addSetting("Setting 2:", new WebInspector.Setting(…, 1), "units")
+
+        will create a checkbox and number input field:
+
+            Setting 1: [x] Item one
+            Setting 2: [  1] units
+
+        (WebInspector.SettingsView.prototype.addCustomSetting):
+        Add UI for a specific editor type, with optional formatting options.
+        A setting can be updated in response to changes in the editor's value.
+
+        (WebInspector.SettingsView.prototype.addGroup):
+        Add a group, for listing multiple settings under one title. For example:
+
+           group = addGroup("Title:")
+           group.addSetting(new WebInspector.Setting(…, true), "Item one")
+           group.addSetting(new WebInspector.Setting(…, false), "Item two")
+
+        will create two checkboxes under the same title:
+
+           Title: [x] Item one
+                  [ ] Item two
+
+        (WebInspector.SettingsView.prototype.addSeparator):
+        Add vertical space between two settings or groups.
+
 2017-04-10  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: WebSockets: Don't clip data in the data grid

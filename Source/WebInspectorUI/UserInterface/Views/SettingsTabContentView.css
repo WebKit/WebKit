@@ -27,97 +27,95 @@
 .content-view.settings {
     padding: 6vh 0;
     overflow-y: auto;
-    background-color: hsl(0, 0%, 93%);
 }
 
-.content-view.settings > .header {
-    margin: 0 auto 4vh;
-    text-align: center;
-    font-size: 32px;
-    font-weight: lighter;
+.content-view.settings .navigation-bar .item.radio.button.text-only {
+    color: inherit;
+    background-color: inherit;
 }
 
-.content-view.settings > .separator {
-    height: 2em;
+.content-view.settings .navigation-bar .item.radio.button.text-only.selected {
+    color: var(--selected-background-color)
 }
 
-.content-view.settings > .setting-container {
+.content-view.settings > .settings-view > .separator {
+    height: 1em;
+}
+
+.content-view.settings > .settings-view > .container {
     display: flex;
-    align-items: center;
     margin-top: 1em;
     font-size: 13px;
 }
 
-.content-view.settings > .setting-container.combined {
-    margin-top: 0;
-}
-
-.content-view.settings > .setting-container > .setting-name {
+.content-view.settings > .settings-view > .container > .title {
+    margin-top: 2px;
     width: 50%;
     text-align: end;
 
     --setting-name-margin-end: 6px;
 }
 
-body[dir=ltr] .content-view.settings > .setting-container > .setting-name {
+body[dir=ltr] .content-view.settings > .settings-view > .container > .title {
     margin-right: var(--setting-name-margin-end);
 }
 
-body[dir=rtl] .content-view.settings > .setting-container > .setting-name {
+body[dir=rtl] .content-view.settings > .settings-view > .container > .title {
     margin-left: var(--setting-name-margin-end);
 }
 
-.content-view.settings > .setting-container > .setting-value-controller {
+.content-view.settings > .settings-view > .container > .editor-group {
     display: flex;
-    align-items: center;
-    width: 50%;
+    flex-direction: column;
 }
 
-.content-view.settings > .setting-container > .setting-value-controller input {
+.content-view.settings > .settings-view > .container > .editor-group > .editor input {
     font-size: inherit;
 }
 
-.content-view.settings > .setting-container > .setting-value-controller input[type="checkbox"] {
+.content-view.settings > .settings-view > .container > .editor-group > .editor input[type="checkbox"] {
+    /* Vertically align <select> with the group title text. */
     font-size: 16px;
 
     --settings-input-checkbox-margin-end: 4px;
 }
 
-body[dir=ltr] .content-view.settings > .setting-container > .setting-value-controller input[type="checkbox"] {
+body[dir=ltr] .content-view.settings > .settings-view > .container > .editor-group > .editor input[type="checkbox"] {
     margin-right: var(--settings-input-checkbox-margin-end);
 }
 
-body[dir=rtl] .content-view.settings > .setting-container > .setting-value-controller input[type="checkbox"] {
+body[dir=rtl] .content-view.settings > .settings-view > .container > .editor-group > .editor input[type="checkbox"] {
     margin-left: var(--settings-input-checkbox-margin-end);
 }
 
-.content-view.settings > .setting-container > .setting-value-controller select {
+.content-view.settings > .settings-view > .container > .editor-group > .editor select {
     /*
     To set the font-size of <select> to be exactly 13px, it needs to be set to 16px.
     Setting the font-size to 13px actually sets it to 11px.
     */
     font-size: 16px;
 
-    /* Vertically align <select> with its label text. */
-    position: relative;
-    top: 0.5px;
+    /* Vertically align <select> with the group title text. */
+    margin-top: 0;
 }
 
-.content-view.settings > .setting-container > .setting-value-controller input[type="number"] {
+.content-view.settings > .settings-view > .container > .editor-group > .editor input[type="number"] {
+    /* Vertically align <input> with the group title text. */
+    margin-top: -1px;
+
     max-width: 48px;
-    margin: 0;
     text-align: end;
 
     --settings-input-number-margin-start: 2px;
     --settings-input-number-margin-end: 5px;
 }
 
-body[dir=ltr] .content-view.settings > .setting-container > .setting-value-controller input[type="number"] {
+body[dir=ltr] .content-view.settings > .settings-view > .container > .editor-group > .editor input[type="number"] {
     margin-left: var(--settings-input-number-margin-start);
     margin-right: var(--settings-input-number-margin-end);
 }
 
-body[dir=rtl] .content-view.settings > .setting-container > .setting-value-controller input[type="number"] {
+body[dir=rtl] .content-view.settings > .settings-view > .container > .editor-group > .editor input[type="number"] {
     margin-left: var(--settings-input-number-margin-end);
     margin-right: var(--settings-input-number-margin-start);
 }
