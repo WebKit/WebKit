@@ -60,7 +60,6 @@ typedef NS_ENUM(NSInteger, _WKImmediateActionType) {
 
 #endif
 
-@class AVTouchBarScrubber;
 @class WKBrowsingContextHandle;
 @class _WKFrameHandle;
 @class _WKHitTestResult;
@@ -223,8 +222,8 @@ typedef NS_ENUM(NSInteger, _WKImmediateActionType) {
 
 // FIXME: This SPI should become a part of the WKUIDelegate. rdar://problem/26561537
 @property (nonatomic, readwrite, setter=_setWantsMediaPlaybackControlsView:) BOOL _wantsMediaPlaybackControlsView WK_API_AVAILABLE(macosx(WK_MAC_TBA));
-@property (nonatomic, readonly) AVTouchBarScrubber *_mediaPlaybackControlsView WK_API_AVAILABLE(macosx(WK_MAC_TBA));
-- (void)_addMediaPlaybackControlsView:(AVTouchBarScrubber *)mediaPlaybackControlsView WK_API_AVAILABLE(macosx(WK_MAC_TBA));
+@property (nonatomic, readonly) id _mediaPlaybackControlsView WK_API_AVAILABLE(macosx(WK_MAC_TBA));
+- (void)_addMediaPlaybackControlsView:(id)mediaPlaybackControlsView WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 - (void)_removeMediaPlaybackControlsView WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 
 - (void)_prepareForMoveToWindow:(NSWindow *)targetWindow completionHandler:(void(^)(void))completionHandler;
