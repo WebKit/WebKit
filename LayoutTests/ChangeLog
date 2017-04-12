@@ -1,3 +1,13 @@
+2017-04-12  Youenn Fablet  <youenn@apple.com>
+
+        REGRESSION: LayoutTest webrtc/negotiatedneeded-event-addStream.html is frequently crashing
+        https://bugs.webkit.org/show_bug.cgi?id=170754
+        <rdar://problem/31573169>
+
+        Unreviewed.
+
+        * TestExpectations: Marking test as crashing.
+
 2017-04-12  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Replaced elements don't properly resolve percentage heights
