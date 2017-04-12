@@ -176,7 +176,7 @@ typedef AVFunctionBarScrubber AVTouchBarScrubber;
 
 NS_ASSUME_NONNULL_BEGIN
 
-@protocol AVTouchBarPlaybackControlsControlling <NSObject>
+@protocol AVFunctionBarPlaybackControlsControlling <NSObject>
 @property (readonly) NSTimeInterval contentDuration;
 @property (readonly, nullable) AVValueTiming *timing;
 @property (readonly, getter=isSeeking) BOOL seeking;
@@ -186,13 +186,13 @@ NS_ASSUME_NONNULL_BEGIN
 @property (readonly) BOOL hasEnabledVideo;
 @end
 
-@interface AVTouchBarPlaybackControlsProvider : NSResponder
+@interface AVFunctionBarPlaybackControlsProvider : NSResponder
 @property (strong, readonly, nullable) NSTouchBar *touchBar;
-@property (assign, nullable) id<AVTouchBarPlaybackControlsControlling> playbackControlsController;
+@property (assign, nullable) id<AVFunctionBarPlaybackControlsControlling> playbackControlsController;
 @end
 
-@interface AVTouchBarScrubber : NSView
-@property (assign, nullable) id<AVTouchBarPlaybackControlsControlling> playbackControlsController;
+@interface AVFunctionBarScrubber : NSView
+@property (assign, nullable) id<AVFunctionBarPlaybackControlsControlling> playbackControlsController;
 @end
 
 @class AVThumbnail;
