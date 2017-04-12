@@ -96,6 +96,11 @@ function _assertPixel(canvas, x,y, r,g,b,a, pos, colour)
         _fail('Failed assertion: got pixel [' + c + '] at ('+x+','+y+'), expected ['+r+','+g+','+b+','+a+']');
 }
 
+function _assertPixelWithGradientNoise(canvas, x,y, r,g,b,a, pos, colour)
+{
+    _assertPixelApprox(canvas, x, y, r, g, b, a, pos, colour, 3);
+}
+
 function _assertPixelApprox(canvas, x,y, r,g,b,a, pos, colour, tolerance)
 {
     _asserted = true;

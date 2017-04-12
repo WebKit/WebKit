@@ -1,3 +1,35 @@
+2017-04-11  Dean Jackson  <dino@apple.com>
+
+        canvas/2d.gradient.* LayoutTests failing
+        https://bugs.webkit.org/show_bug.cgi?id=170757
+        <rdar://problem/31177990>
+
+        Reviewed by Antoine Quint.
+
+        Add a fudge factor to the gradient tests, since we can
+        now produce noisy (nicer looking) gradients. There might
+        be 1 or 2 bits of difference per pixel.
+
+        * canvas/philip/tests.js:
+        (_assertPixelWithGradientNoise):
+        * canvas/philip/tests/2d.gradient.linear.transform.1.html:
+        * canvas/philip/tests/2d.gradient.linear.transform.2.html:
+        * canvas/philip/tests/2d.gradient.linear.transform.3.html:
+        * canvas/philip/tests/2d.gradient.radial.cone.bottom.html:
+        * canvas/philip/tests/2d.gradient.radial.cone.cylinder.html:
+        * canvas/philip/tests/2d.gradient.radial.cone.front.html:
+        * canvas/philip/tests/2d.gradient.radial.cone.shape1.html:
+        * canvas/philip/tests/2d.gradient.radial.cone.top.html:
+        * canvas/philip/tests/2d.gradient.radial.inside1.html:
+        * canvas/philip/tests/2d.gradient.radial.inside2.html:
+        * canvas/philip/tests/2d.gradient.radial.inside3.html:
+        * canvas/philip/tests/2d.gradient.radial.outside1.html:
+        * canvas/philip/tests/2d.gradient.radial.outside2.html:
+        * canvas/philip/tests/2d.gradient.radial.outside3.html:
+        * canvas/philip/tests/2d.gradient.radial.touch2.html:
+        * fast/canvas/script-tests/canvas-gradient-on-compositing.js:
+        * fast/canvas/canvas-gradient-on-compositing-expected.html:
+
 2017-04-12  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Well-known variations should clamp to the values listed in the @font-face block
