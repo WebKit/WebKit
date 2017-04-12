@@ -114,7 +114,7 @@ std::unique_ptr<FontCustomPlatformData> CachedFont::createCustomFontData(SharedB
         if (!convertWOFFToSfnt(bytes, convertedFont))
             return nullptr;
 
-        auto buffer = SharedBuffer::adoptVector(convertedFont);
+        auto buffer = SharedBuffer::create(WTFMove(convertedFont));
         return createFontCustomPlatformData(buffer);
     }
 #endif

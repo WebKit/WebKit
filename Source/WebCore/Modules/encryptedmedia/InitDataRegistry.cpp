@@ -66,7 +66,7 @@ static Vector<Ref<SharedBuffer>> extractKeyIDsKeyids(const SharedBuffer& buffer)
         if (!WTF::base64URLDecode(keyID, { keyIDData }))
             continue;
 
-        Ref<SharedBuffer> keyIDBuffer = SharedBuffer::adoptVector(keyIDData);
+        Ref<SharedBuffer> keyIDBuffer = SharedBuffer::create(WTFMove(keyIDData));
         keyIDs.append(WTFMove(keyIDBuffer));
     }
 

@@ -1,3 +1,55 @@
+2017-04-12  Alex Christensen  <achristensen@webkit.org>
+
+        Modernize vector adoption
+        https://bugs.webkit.org/show_bug.cgi?id=170758
+
+        Reviewed by Geoffrey Garen.
+
+        * Modules/encryptedmedia/InitDataRegistry.cpp:
+        (WebCore::extractKeyIDsKeyids):
+        * Modules/indexeddb/IDBGetResult.cpp:
+        (WebCore::IDBGetResult::dataFromBuffer):
+        * Modules/indexeddb/IDBKeyData.cpp:
+        (WebCore::IDBKeyData::decode):
+        * Modules/indexeddb/server/IDBSerialization.cpp:
+        (WebCore::serializeIDBKeyData):
+        (WebCore::decodeKey):
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::SQLiteIDBBackingStore::getRecord):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::getAllObjectStoreRecords):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::uncheckedGetIndexRecordForOneKey):
+        * Modules/indexeddb/server/SQLiteIDBCursor.cpp:
+        (WebCore::IDBServer::SQLiteIDBCursor::internalFetchNextRecord):
+        * css/CSSFontFaceSource.cpp:
+        (WebCore::CSSFontFaceSource::font):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadResourceSynchronously):
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::ApplicationCacheStorage::loadCache):
+        * loader/archive/mhtml/MHTMLParser.cpp:
+        (WebCore::MHTMLParser::parseNextPart):
+        * loader/cache/CachedFont.cpp:
+        (WebCore::CachedFont::createCustomFontData):
+        * loader/cache/CachedSVGFont.cpp:
+        (WebCore::CachedSVGFont::ensureCustomFontData):
+        * platform/SharedBuffer.cpp:
+        (WebCore::SharedBuffer::create):
+        (WebCore::utf8Buffer):
+        (WebCore::SharedBuffer::adoptVector): Deleted.
+        * platform/SharedBuffer.h:
+        * platform/ThreadSafeDataBuffer.h:
+        (WebCore::ThreadSafeDataBufferImpl::ThreadSafeDataBufferImpl):
+        (WebCore::ThreadSafeDataBuffer::create):
+        (WebCore::ThreadSafeDataBuffer::ThreadSafeDataBuffer):
+        (WebCore::ThreadSafeDataBuffer::decode):
+        (): Deleted.
+        (WebCore::ThreadSafeDataBuffer::adoptVector): Deleted.
+        * platform/network/BlobRegistryImpl.cpp:
+        (WebCore::BlobRegistryImpl::registerBlobURL):
+        * platform/network/DataURLDecoder.cpp:
+        (WebCore::DataURLDecoder::decodeBase64):
+        (WebCore::DataURLDecoder::decodeEscaped):
+
 2017-04-12  Per Arne Vollan  <pvollan@apple.com>
 
         Implement stroke-color CSS property.

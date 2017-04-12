@@ -58,7 +58,7 @@ public:
 
     WEBCORE_EXPORT static RefPtr<SharedBuffer> createWithContentsOfFile(const String& filePath);
 
-    WEBCORE_EXPORT static Ref<SharedBuffer> adoptVector(Vector<char>&);
+    WEBCORE_EXPORT static Ref<SharedBuffer> create(Vector<char>&&);
     
     WEBCORE_EXPORT ~SharedBuffer();
     

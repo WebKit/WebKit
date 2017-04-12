@@ -211,7 +211,7 @@ RefPtr<ArchiveResource> MHTMLParser::parseNextPart(const MIMEHeader& mimeHeader,
         LOG_ERROR("Invalid encoding for MHTML part.");
         return nullptr;
     }
-    RefPtr<SharedBuffer> contentBuffer = SharedBuffer::adoptVector(data);
+    RefPtr<SharedBuffer> contentBuffer = SharedBuffer::create(WTFMove(data));
     // FIXME: the URL in the MIME header could be relative, we should resolve it if it is.
     // The specs mentions 5 ways to resolve a URL: http://tools.ietf.org/html/rfc2557#section-5
     // IE and Firefox (UNMht) seem to generate only absolute URLs.

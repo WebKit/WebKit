@@ -1,3 +1,15 @@
+2017-04-12  Alex Christensen  <achristensen@webkit.org>
+
+        Modernize vector adoption
+        https://bugs.webkit.org/show_bug.cgi?id=170758
+
+        Reviewed by Geoffrey Garen.
+
+        * NetworkProcess/capture/NetworkCaptureEvent.cpp:
+        (WebKit::NetworkCapture::JSONCoder<WebCore::SharedBuffer>::decode):
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::bufferForType):
+
 2017-04-12  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed GTK+ debug build fix. Drop an unused debug-only member

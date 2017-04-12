@@ -107,7 +107,7 @@ TEST_F(SharedBufferTest, createArrayBufferLargeSegments)
     Vector<char> vector1(0x4000, 'b');
     Vector<char> vector2(0x4000, 'c');
 
-    RefPtr<SharedBuffer> sharedBuffer = SharedBuffer::adoptVector(vector0);
+    RefPtr<SharedBuffer> sharedBuffer = SharedBuffer::create(WTFMove(vector0));
     sharedBuffer->append(vector1);
     sharedBuffer->append(vector2);
     RefPtr<ArrayBuffer> arrayBuffer = sharedBuffer->createArrayBuffer();

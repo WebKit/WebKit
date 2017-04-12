@@ -106,10 +106,10 @@ RefPtr<SharedBuffer> SharedBuffer::createWithContentsOfFile(const String& filePa
     return adoptRef(new SharedBuffer(WTFMove(mappedFileData)));
 }
 
-Ref<SharedBuffer> SharedBuffer::adoptVector(Vector<char>& vector)
+Ref<SharedBuffer> SharedBuffer::create(Vector<char>&& vector)
 {
     auto buffer = create();
-    buffer->m_buffer->data.swap(vector);
+    buffer->m_buffer->data = WTFMove(vector);
     buffer->m_size = buffer->m_buffer->data.size();
     return buffer;
 }
@@ -452,7 +452,7 @@ RefPtr<SharedBuffer> utf8Buffer(const String& string)
     }
 
     buffer.shrink(p - buffer.data());
-    return SharedBuffer::adoptVector(buffer);
+    return SharedBuffer::create(WTFMove(buffer));
 }
 
 } // namespace WebCore

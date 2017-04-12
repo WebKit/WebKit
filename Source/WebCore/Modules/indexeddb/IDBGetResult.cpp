@@ -35,7 +35,7 @@ void IDBGetResult::dataFromBuffer(SharedBuffer& buffer)
     Vector<uint8_t> data(buffer.size());
     memcpy(data.data(), buffer.data(), buffer.size());
 
-    m_value = ThreadSafeDataBuffer::adoptVector(data);
+    m_value = ThreadSafeDataBuffer::create(WTFMove(data));
 }
 
 IDBGetResult::IDBGetResult(const IDBGetResult& that, IsolatedCopyTag)

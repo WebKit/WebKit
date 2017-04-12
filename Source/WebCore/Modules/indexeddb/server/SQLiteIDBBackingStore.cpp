@@ -1961,7 +1961,7 @@ IDBError SQLiteIDBBackingStore::getRecord(const IDBResourceIdentifier& transacti
 
         Vector<uint8_t> buffer;
         sql->getColumnBlobAsVector(0, buffer);
-        resultBuffer = ThreadSafeDataBuffer::adoptVector(buffer);
+        resultBuffer = ThreadSafeDataBuffer::create(WTFMove(buffer));
 
         if (type == IDBGetRecordDataType::KeyAndValue)
             recordID = sql->getColumnInt64(1);
@@ -2090,7 +2090,7 @@ IDBError SQLiteIDBBackingStore::getAllObjectStoreRecords(const IDBResourceIdenti
         if (getAllRecordsData.getAllType == IndexedDB::GetAllType::Values) {
             Vector<uint8_t> buffer;
             sql->getColumnBlobAsVector(0, buffer);
-            ThreadSafeDataBuffer resultBuffer = ThreadSafeDataBuffer::adoptVector(buffer);
+            ThreadSafeDataBuffer resultBuffer = ThreadSafeDataBuffer::create(WTFMove(buffer));
 
             auto recordID = sql->getColumnInt64(1);
 
@@ -2272,7 +2272,7 @@ IDBError SQLiteIDBBackingStore::uncheckedGetIndexRecordForOneKey(int64_t indexID
     if (!error.isNull())
         return error;
 
-    getResult = { { ThreadSafeDataBuffer::adoptVector(keyVector), WTFMove(blobURLs), WTFMove(blobFilePaths) }, objectStoreKey };
+    getResult = { { ThreadSafeDataBuffer::create(WTFMove(keyVector)), WTFMove(blobURLs), WTFMove(blobFilePaths) }, objectStoreKey };
     return { };
 }
 

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ThreadSafeDataBuffer_h
-#define ThreadSafeDataBuffer_h
+#pragma once
 
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Vector.h>
@@ -36,10 +35,9 @@ class ThreadSafeDataBuffer;
 class ThreadSafeDataBufferImpl : public ThreadSafeRefCounted<ThreadSafeDataBufferImpl> {
 friend class ThreadSafeDataBuffer;
 private:
-    enum AdoptVectorTag { AdoptVector };
-    ThreadSafeDataBufferImpl(Vector<uint8_t>& data, AdoptVectorTag)
+    ThreadSafeDataBufferImpl(Vector<uint8_t>&& data)
     {
-        m_data.swap(data);
+        m_data = WTFMove(data);
     }
 
     ThreadSafeDataBufferImpl(const Vector<uint8_t>& data)
@@ -58,9 +56,9 @@ private:
 
 class ThreadSafeDataBuffer {
 public:
-    static ThreadSafeDataBuffer adoptVector(Vector<uint8_t>& data)
+    static ThreadSafeDataBuffer create(Vector<uint8_t>&& data)
     {
-        return ThreadSafeDataBuffer(data, ThreadSafeDataBufferImpl::AdoptVector);
+        return ThreadSafeDataBuffer(WTFMove(data));
     }
     
     static ThreadSafeDataBuffer copyVector(const Vector<uint8_t>& data)
@@ -99,9 +97,9 @@ public:
     template<class Decoder> static bool decode(Decoder&, ThreadSafeDataBuffer&);
 
 private:
-    explicit ThreadSafeDataBuffer(Vector<uint8_t>& data, ThreadSafeDataBufferImpl::AdoptVectorTag tag)
+    explicit ThreadSafeDataBuffer(Vector<uint8_t>&& data)
     {
-        m_impl = adoptRef(new ThreadSafeDataBufferImpl(data, tag));
+        m_impl = adoptRef(new ThreadSafeDataBufferImpl(WTFMove(data)));
     }
 
     explicit ThreadSafeDataBuffer(const Vector<uint8_t>& data)
@@ -139,12 +137,10 @@ bool ThreadSafeDataBuffer::decode(Decoder& decoder, ThreadSafeDataBuffer& result
         if (!decoder.decode(data))
             return false;
 
-        result = ThreadSafeDataBuffer::adoptVector(data);
+        result = ThreadSafeDataBuffer::create(WTFMove(data));
     }
 
     return true;
 }
 
 } // namespace WebCore
-
-#endif // ThreadSafeDataBuffer_h

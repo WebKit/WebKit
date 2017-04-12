@@ -346,7 +346,7 @@ struct JSONCoder<WebCore::SharedBuffer> {
         const auto& str = jData.get_ref<const std::string&>();
         auto result = base64Decode(str.c_str(), str.size(), data);
         ASSERT_UNUSED(result, result);
-        return WebCore::SharedBuffer::adoptVector(data);
+        return WebCore::SharedBuffer::create(WTFMove(data));
     }
 };
 

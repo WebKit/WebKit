@@ -89,7 +89,7 @@ bool CachedSVGFont::ensureCustomFontData(const AtomicString& remoteURI)
         if (!m_externalSVGFontElement)
             return false;
         if (auto convertedFont = convertSVGToOTFFont(*m_externalSVGFontElement))
-            m_convertedFont = SharedBuffer::adoptVector(convertedFont.value());
+            m_convertedFont = SharedBuffer::create(WTFMove(convertedFont.value()));
         else {
             m_externalSVGDocument = nullptr;
             m_externalSVGFontElement = nullptr;

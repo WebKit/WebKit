@@ -137,7 +137,7 @@ void BlobRegistryImpl::registerBlobURL(const URL& url, Vector<BlobPart>&& blobPa
         switch (part.type()) {
         case BlobPart::Data: {
             auto movedData = part.moveData();
-            auto data = ThreadSafeDataBuffer::adoptVector(movedData);
+            auto data = ThreadSafeDataBuffer::create(WTFMove(movedData));
             blobData->appendData(data);
             break;
         }

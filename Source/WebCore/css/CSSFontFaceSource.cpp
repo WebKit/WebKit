@@ -179,7 +179,7 @@ RefPtr<Font> CSSFontFaceSource::font(const FontDescription& fontDescription, boo
     if (!m_inDocumentCustomPlatformData) {
         SVGFontElement& fontElement = downcast<SVGFontElement>(*m_svgFontFaceElement->parentNode());
         if (auto otfFont = convertSVGToOTFFont(fontElement))
-            m_generatedOTFBuffer = SharedBuffer::adoptVector(otfFont.value());
+            m_generatedOTFBuffer = SharedBuffer::create(WTFMove(otfFont.value()));
         if (!m_generatedOTFBuffer)
             return nullptr;
         m_inDocumentCustomPlatformData = createFontCustomPlatformData(*m_generatedOTFBuffer);
