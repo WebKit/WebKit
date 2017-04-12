@@ -1,3 +1,13 @@
+2017-04-12  Brent Fulgham  <bfulgham@apple.com>
+
+        [WK2][Mac] Stop allowing access to disk arbitration process
+        https://bugs.webkit.org/show_bug.cgi?id=170517
+        <rdar://problem/31071151>
+
+        Reviewed by Alex Christensen.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2017-04-12  Beth Dakin  <bdakin@apple.com>
 
         32-bit build fix.

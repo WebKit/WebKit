@@ -287,7 +287,6 @@
 
 ;; Various services required by AppKit and other frameworks
 (allow mach-lookup
-       (global-name "com.apple.DiskArbitration.diskarbitrationd")
        (global-name "com.apple.FileCoordination")
        (global-name "com.apple.FontObjectsServer")
 #if __MAC_OS_X_VERSION_MIN_REQUIRED < 101200
