@@ -37,7 +37,7 @@ namespace MachineContext {
 void*& stackPointer(PlatformRegisters&);
 void* stackPointer(const PlatformRegisters&);
 
-#if OS(WINDOWS) || USE(MACHINE_CONTEXT)
+#if OS(WINDOWS) || HAVE(MACHINE_CONTEXT)
 void*& framePointer(PlatformRegisters&);
 void* framePointer(const PlatformRegisters&);
 void*& instructionPointer(PlatformRegisters&);
@@ -48,7 +48,7 @@ template<size_t N> void* argumentPointer(const PlatformRegisters&);
 void*& llintInstructionPointer(PlatformRegisters&);
 void* llintInstructionPointer(const PlatformRegisters&);
 #endif // ENABLE(JIT)
-#if USE(MACHINE_CONTEXT)
+#if HAVE(MACHINE_CONTEXT)
 void*& stackPointer(mcontext_t&);
 void* stackPointer(const mcontext_t&);
 void*& framePointer(mcontext_t&);
@@ -61,8 +61,8 @@ template<size_t N> void* argumentPointer(const mcontext_t&);
 void*& llintInstructionPointer(mcontext_t&);
 void* llintInstructionPointer(const mcontext_t&);
 #endif // ENABLE(JIT)
-#endif // USE(MACHINE_CONTEXT)
-#endif // OS(WINDOWS) || USE(MACHINE_CONTEXT)
+#endif // HAVE(MACHINE_CONTEXT)
+#endif // OS(WINDOWS) || HAVE(MACHINE_CONTEXT)
 
 inline void*& stackPointer(PlatformRegisters& regs)
 {
@@ -109,7 +109,7 @@ inline void*& stackPointer(PlatformRegisters& regs)
 #error Unknown Architecture
 #endif
 
-#elif USE(MACHINE_CONTEXT)
+#elif HAVE(MACHINE_CONTEXT)
     return stackPointer(regs.machineContext);
 #else
     return regs.stackPointer;
@@ -122,7 +122,7 @@ inline void* stackPointer(const PlatformRegisters& regs)
 }
 
 
-#if USE(MACHINE_CONTEXT)
+#if HAVE(MACHINE_CONTEXT)
 inline void*& stackPointer(mcontext_t& machineContext)
 {
 #if OS(DARWIN)
@@ -165,10 +165,10 @@ inline void* stackPointer(const mcontext_t& machineContext)
 {
     return stackPointer(const_cast<mcontext_t&>(machineContext));
 }
-#endif // USE(MACHINE_CONTEXT)
+#endif // HAVE(MACHINE_CONTEXT)
 
 
-#if OS(WINDOWS) || USE(MACHINE_CONTEXT)
+#if OS(WINDOWS) || HAVE(MACHINE_CONTEXT)
 inline void*& framePointer(PlatformRegisters& regs)
 {
 #if OS(DARWIN)
@@ -215,7 +215,7 @@ inline void*& framePointer(PlatformRegisters& regs)
 #error Unknown Architecture
 #endif
 
-#elif USE(MACHINE_CONTEXT)
+#elif HAVE(MACHINE_CONTEXT)
     return framePointer(regs.machineContext);
 #endif
 }
@@ -224,10 +224,10 @@ inline void* framePointer(const PlatformRegisters& regs)
 {
     return framePointer(const_cast<PlatformRegisters&>(regs));
 }
-#endif // OS(WINDOWS) || USE(MACHINE_CONTEXT)
+#endif // OS(WINDOWS) || HAVE(MACHINE_CONTEXT)
 
 
-#if USE(MACHINE_CONTEXT)
+#if HAVE(MACHINE_CONTEXT)
 inline void*& framePointer(mcontext_t& machineContext)
 {
 #if OS(DARWIN)
@@ -274,10 +274,10 @@ inline void* framePointer(const mcontext_t& machineContext)
 {
     return framePointer(const_cast<mcontext_t&>(machineContext));
 }
-#endif // USE(MACHINE_CONTEXT)
+#endif // HAVE(MACHINE_CONTEXT)
 
 
-#if OS(WINDOWS) || USE(MACHINE_CONTEXT)
+#if OS(WINDOWS) || HAVE(MACHINE_CONTEXT)
 inline void*& instructionPointer(PlatformRegisters& regs)
 {
 #if OS(DARWIN)
@@ -318,7 +318,7 @@ inline void*& instructionPointer(PlatformRegisters& regs)
 #error Unknown Architecture
 #endif
 
-#elif USE(MACHINE_CONTEXT)
+#elif HAVE(MACHINE_CONTEXT)
     return instructionPointer(regs.machineContext);
 #endif
 }
@@ -327,10 +327,10 @@ inline void* instructionPointer(const PlatformRegisters& regs)
 {
     return instructionPointer(const_cast<PlatformRegisters&>(regs));
 }
-#endif // OS(WINDOWS) || USE(MACHINE_CONTEXT)
+#endif // OS(WINDOWS) || HAVE(MACHINE_CONTEXT)
 
 
-#if USE(MACHINE_CONTEXT)
+#if HAVE(MACHINE_CONTEXT)
 inline void*& instructionPointer(mcontext_t& machineContext)
 {
 #if OS(DARWIN)
@@ -377,11 +377,11 @@ inline void* instructionPointer(const mcontext_t& machineContext)
 {
     return instructionPointer(const_cast<mcontext_t&>(machineContext));
 }
-#endif // USE(MACHINE_CONTEXT)
+#endif // HAVE(MACHINE_CONTEXT)
 
 
-#if OS(WINDOWS) || USE(MACHINE_CONTEXT)
-#if USE(MACHINE_CONTEXT)
+#if OS(WINDOWS) || HAVE(MACHINE_CONTEXT)
+#if HAVE(MACHINE_CONTEXT)
 template<> void*& argumentPointer<1>(mcontext_t&);
 #endif
 
@@ -429,7 +429,7 @@ inline void*& argumentPointer<1>(PlatformRegisters& regs)
 #error Unknown Architecture
 #endif
 
-#elif USE(MACHINE_CONTEXT)
+#elif HAVE(MACHINE_CONTEXT)
     return argumentPointer<1>(regs.machineContext);
 #endif
 }
@@ -439,9 +439,9 @@ inline void* argumentPointer(const PlatformRegisters& regs)
 {
     return argumentPointer<N>(const_cast<PlatformRegisters&>(regs));
 }
-#endif // OS(WINDOWS) || USE(MACHINE_CONTEXT)
+#endif // OS(WINDOWS) || HAVE(MACHINE_CONTEXT)
 
-#if USE(MACHINE_CONTEXT)
+#if HAVE(MACHINE_CONTEXT)
 template<>
 inline void*& argumentPointer<1>(mcontext_t& machineContext)
 {
@@ -490,10 +490,10 @@ inline void* argumentPointer(const mcontext_t& machineContext)
 {
     return argumentPointer<N>(const_cast<mcontext_t&>(machineContext));
 }
-#endif // USE(MACHINE_CONTEXT)
+#endif // HAVE(MACHINE_CONTEXT)
 
 #if ENABLE(JIT)
-#if OS(WINDOWS) || USE(MACHINE_CONTEXT)
+#if OS(WINDOWS) || HAVE(MACHINE_CONTEXT)
 inline void*& llintInstructionPointer(PlatformRegisters& regs)
 {
     // LLInt uses regT4 as PC.
@@ -546,7 +546,7 @@ inline void*& llintInstructionPointer(PlatformRegisters& regs)
 #error Unknown Architecture
 #endif
 
-#elif USE(MACHINE_CONTEXT)
+#elif HAVE(MACHINE_CONTEXT)
     return llintInstructionPointer(regs.machineContext);
 #endif
 }
@@ -555,10 +555,10 @@ inline void* llintInstructionPointer(const PlatformRegisters& regs)
 {
     return llintInstructionPointer(const_cast<PlatformRegisters&>(regs));
 }
-#endif // OS(WINDOWS) || USE(MACHINE_CONTEXT)
+#endif // OS(WINDOWS) || HAVE(MACHINE_CONTEXT)
 
 
-#if USE(MACHINE_CONTEXT)
+#if HAVE(MACHINE_CONTEXT)
 inline void*& llintInstructionPointer(mcontext_t& machineContext)
 {
     // LLInt uses regT4 as PC.
@@ -606,7 +606,7 @@ inline void* llintInstructionPointer(const mcontext_t& machineContext)
 {
     return llintInstructionPointer(const_cast<mcontext_t&>(machineContext));
 }
-#endif // USE(MACHINE_CONTEXT)
+#endif // HAVE(MACHINE_CONTEXT)
 #endif // ENABLE(JIT)
 
 }

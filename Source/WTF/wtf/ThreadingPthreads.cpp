@@ -387,7 +387,7 @@ size_t Thread::getRegisters(PlatformRegisters& registers)
         CRASH();
     }
     return userCount * sizeof(uintptr_t);
-#elif USE(MACHINE_CONTEXT)
+#elif HAVE(MACHINE_CONTEXT)
     registers.machineContext = m_suspendedMachineContext;
     return sizeof(PlatformRegisters);
 #elif OS(OPENBSD)

@@ -59,7 +59,7 @@ typedef arm_thread_state64_t PlatformRegisters;
 
 using PlatformRegisters = CONTEXT;
 
-#elif USE(MACHINE_CONTEXT)
+#elif HAVE(MACHINE_CONTEXT)
 
 struct PlatformRegisters {
     mcontext_t machineContext;

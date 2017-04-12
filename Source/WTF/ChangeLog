@@ -1,5 +1,17 @@
 2017-04-12  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        Use HAVE(MACHINE_CONTEXT) instead of USE(MACHINE_CONTEXT)
+        https://bugs.webkit.org/show_bug.cgi?id=170770
+
+        Rubber stamped by Mark Lam.
+
+        * wtf/Platform.h:
+        * wtf/PlatformRegisters.h:
+        * wtf/ThreadingPthreads.cpp:
+        (WTF::Thread::getRegisters):
+
+2017-04-12  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [JSC] Clean up heap/MachineStackMarker by introducing USE(MACHINE_CONTEXT)
         https://bugs.webkit.org/show_bug.cgi?id=170770
 

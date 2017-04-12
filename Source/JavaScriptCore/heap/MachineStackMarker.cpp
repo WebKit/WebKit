@@ -232,7 +232,7 @@ void* MachineThreads::MachineThread::Registers::stackPointer() const
 #if ENABLE(SAMPLING_PROFILER)
 void* MachineThreads::MachineThread::Registers::framePointer() const
 {
-#if OS(WINDOWS) || USE(MACHINE_CONTEXT)
+#if OS(WINDOWS) || HAVE(MACHINE_CONTEXT)
     return MachineContext::framePointer(regs);
 #else
 #error Need a way to get the frame pointer for another thread on this platform
@@ -241,7 +241,7 @@ void* MachineThreads::MachineThread::Registers::framePointer() const
 
 void* MachineThreads::MachineThread::Registers::instructionPointer() const
 {
-#if OS(WINDOWS) || USE(MACHINE_CONTEXT)
+#if OS(WINDOWS) || HAVE(MACHINE_CONTEXT)
     return MachineContext::instructionPointer(regs);
 #else
 #error Need a way to get the instruction pointer for another thread on this platform
@@ -251,7 +251,7 @@ void* MachineThreads::MachineThread::Registers::instructionPointer() const
 void* MachineThreads::MachineThread::Registers::llintPC() const
 {
     // LLInt uses regT4 as PC.
-#if OS(WINDOWS) || USE(MACHINE_CONTEXT)
+#if OS(WINDOWS) || HAVE(MACHINE_CONTEXT)
     return MachineContext::llintInstructionPointer(regs);
 #else
 #error Need a way to get the LLIntPC for another thread on this platform
