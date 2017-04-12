@@ -1,3 +1,11 @@
+2017-04-12  Jonathan Bedard  <jbedard@apple.com>
+
+        Remove two passing canvas tests from ios expectations
+
+        Unreviewed test gardening.
+
+        * platform/ios/TestExpectations:
+
 2017-04-12  Youenn Fablet  <youenn@apple.com>
 
         REGRESSION: LayoutTest webrtc/negotiatedneeded-event-addStream.html is frequently crashing
