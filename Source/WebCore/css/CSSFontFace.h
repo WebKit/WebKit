@@ -80,10 +80,10 @@ public:
     enum class Status;
     struct UnicodeRange;
     const CSSValueList* families() const { return m_families.get(); }
-    FontSelectionRange weight() const { return m_fontSelectionCapabilities.weight; }
-    FontSelectionRange stretch() const { return m_fontSelectionCapabilities.width; }
-    FontSelectionRange italic() const { return m_fontSelectionCapabilities.slope; }
-    FontSelectionCapabilities fontSelectionCapabilities() const { return m_fontSelectionCapabilities; }
+    FontSelectionRange weight() const { return m_fontSelectionCapabilities.computeWeight(); }
+    FontSelectionRange stretch() const { return m_fontSelectionCapabilities.computeWidth(); }
+    FontSelectionRange italic() const { return m_fontSelectionCapabilities.computeSlope(); }
+    FontSelectionCapabilities fontSelectionCapabilities() const { return m_fontSelectionCapabilities.computeFontSelectionCapabilities(); }
     const Vector<UnicodeRange>& ranges() const { return m_ranges; }
     const FontFeatureSettings& featureSettings() const { return m_featureSettings; }
     const FontVariantSettings& variantSettings() const { return m_variantSettings; }
@@ -177,7 +177,7 @@ private:
     RefPtr<StyleRuleFontFace> m_cssConnection;
     HashSet<Client*> m_clients;
     WeakPtr<FontFace> m_wrapper;
-    FontSelectionCapabilities m_fontSelectionCapabilities;
+    FontSelectionSpecifiedCapabilities m_fontSelectionCapabilities;
     Status m_status { Status::Pending };
     bool m_isLocalFallback { false };
     bool m_sourcesPopulated { false };

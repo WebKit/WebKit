@@ -125,7 +125,7 @@ Ref<Font> FontCache::lastResortFallbackFont(const FontDescription& fontDescripti
     // the user doesn't have it, we fall back on Lucida Grande because that's
     // guaranteed to be there, according to Nathan Taylor. This is good enough
     // to avoid a crash at least.
-    return *fontForFamily(fontDescription, AtomicString("Lucida Grande", AtomicString::ConstructFromLiteral), nullptr, nullptr, false);
+    return *fontForFamily(fontDescription, AtomicString("Lucida Grande", AtomicString::ConstructFromLiteral), nullptr, nullptr, { }, false);
 }
 
 #endif // PLATFORM(MAC)

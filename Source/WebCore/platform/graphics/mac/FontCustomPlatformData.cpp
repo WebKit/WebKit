@@ -34,13 +34,13 @@ FontCustomPlatformData::~FontCustomPlatformData()
 {
 }
 
-FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription& fontDescription, bool bold, bool italic, const FontFeatureSettings& fontFaceFeatures, const FontVariantSettings& fontFaceVariantSettings)
+FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription& fontDescription, bool bold, bool italic, const FontFeatureSettings& fontFaceFeatures, const FontVariantSettings& fontFaceVariantSettings, FontSelectionSpecifiedCapabilities fontFaceCapabilities)
 {
     int size = fontDescription.computedPixelSize();
     FontOrientation orientation = fontDescription.orientation();
     FontWidthVariant widthVariant = fontDescription.widthVariant();
     RetainPtr<CTFontRef> font = adoptCF(CTFontCreateWithFontDescriptor(m_fontDescriptor.get(), size, nullptr));
-    font = preparePlatformFont(font.get(), fontDescription.textRenderingMode(), &fontFaceFeatures, &fontFaceVariantSettings, fontDescription.featureSettings(), fontDescription.variantSettings(), fontDescription.fontSelectionRequest(), fontDescription.variationSettings(), fontDescription.opticalSizing(), fontDescription.computedSize());
+    font = preparePlatformFont(font.get(), fontDescription.textRenderingMode(), &fontFaceFeatures, &fontFaceVariantSettings, fontFaceCapabilities, fontDescription.featureSettings(), fontDescription.variantSettings(), fontDescription.fontSelectionRequest(), fontDescription.variationSettings(), fontDescription.opticalSizing(), fontDescription.computedSize());
     ASSERT(font);
     return FontPlatformData(font.get(), size, bold, italic, orientation, widthVariant, fontDescription.textRenderingMode());
 }

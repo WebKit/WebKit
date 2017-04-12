@@ -164,15 +164,6 @@ void CSSFontSelector::addFontFaceRule(StyleRuleFontFace& fontFaceRule, bool isIn
     if (!familyList.length())
         return;
 
-    if (!fontStyle)
-        fontStyle = CSSFontStyleRangeValue::create(CSSValuePool::singleton().createIdentifierValue(CSSValueNormal));
-
-    if (!fontWeight)
-        fontWeight = CSSValuePool::singleton().createIdentifierValue(CSSValueNormal);
-
-    if (!fontStretch)
-        fontStretch = CSSValuePool::singleton().createIdentifierValue(CSSValueNormal);
-
     CSSValueList* rangeList = downcast<CSSValueList>(unicodeRange.get());
 
     CSSValueList& srcList = downcast<CSSValueList>(*src);
@@ -184,9 +175,12 @@ void CSSFontSelector::addFontFaceRule(StyleRuleFontFace& fontFaceRule, bool isIn
 
     if (!fontFace->setFamilies(*fontFamily))
         return;
-    fontFace->setStyle(*fontStyle);
-    fontFace->setWeight(*fontWeight);
-    fontFace->setStretch(*fontStretch);
+    if (fontStyle)
+        fontFace->setStyle(*fontStyle);
+    if (fontWeight)
+        fontFace->setWeight(*fontWeight);
+    if (fontStretch)
+        fontFace->setStretch(*fontStretch);
     if (rangeList && !fontFace->setUnicodeRange(*rangeList))
         return;
     if (variantLigatures && !fontFace->setVariantLigatures(*variantLigatures))

@@ -312,6 +312,11 @@ struct FontSelectionRange {
         return target >= minimum && target <= maximum;
     }
 
+    uint32_t uniqueValue() const
+    {
+        return minimum.rawValue() << 16 | maximum.rawValue();
+    }
+
     FontSelectionValue minimum { FontSelectionValue(1) };
     FontSelectionValue maximum { FontSelectionValue(0) };
 };
@@ -394,6 +399,17 @@ struct FontSelectionRequestKeyHash {
 };
 
 struct FontSelectionCapabilities {
+    FontSelectionCapabilities()
+    {
+    }
+
+    FontSelectionCapabilities(FontSelectionRange weight, FontSelectionRange width, FontSelectionRange slope)
+        : weight(weight)
+        , width(width)
+        , slope(slope)
+    {
+    }
+
     void expand(const FontSelectionCapabilities& capabilities)
     {
         weight.expand(capabilities.weight);
@@ -401,9 +417,67 @@ struct FontSelectionCapabilities {
         slope.expand(capabilities.slope);
     }
 
+    bool operator==(const FontSelectionCapabilities& other) const
+    {
+        return weight == other.weight
+            && width == other.width
+            && slope == other.slope;
+    }
+
+    bool operator!=(const FontSelectionCapabilities& other) const
+    {
+        return !(*this == other);
+    }
+
     FontSelectionRange weight { normalWeightValue(), normalWeightValue() };
     FontSelectionRange width { normalStretchValue(), normalStretchValue() };
     FontSelectionRange slope { normalItalicValue(), normalItalicValue() };
+};
+
+struct FontSelectionSpecifiedCapabilities {
+    FontSelectionCapabilities computeFontSelectionCapabilities() const
+    {
+        return FontSelectionCapabilities(computeWeight(), computeWidth(), computeSlope());
+    }
+
+    bool operator==(const FontSelectionSpecifiedCapabilities& other) const
+    {
+        return weight == other.weight
+            && width == other.width
+            && slope == other.slope;
+    }
+
+    bool operator!=(const FontSelectionSpecifiedCapabilities& other) const
+    {
+        return !(*this == other);
+    }
+
+    FontSelectionSpecifiedCapabilities& operator=(const FontSelectionCapabilities& other)
+    {
+        weight = other.weight;
+        width = other.width;
+        slope = other.slope;
+        return *this;
+    }
+
+    FontSelectionRange computeWeight() const
+    {
+        return weight.value_or(FontSelectionRange({ normalWeightValue(), normalWeightValue() }));
+    }
+
+    FontSelectionRange computeWidth() const
+    {
+        return width.value_or(FontSelectionRange({ normalStretchValue(), normalStretchValue() }));
+    }
+
+    FontSelectionRange computeSlope() const
+    {
+        return slope.value_or(FontSelectionRange({ normalItalicValue(), normalItalicValue() }));
+    }
+
+    std::optional<FontSelectionRange> weight;
+    std::optional<FontSelectionRange> width;
+    std::optional<FontSelectionRange> slope;
 };
 
 class FontSelectionAlgorithm {

@@ -34,6 +34,7 @@ namespace WebCore {
 
 class FontDescription;
 class FontPlatformData;
+struct FontSelectionSpecifiedCapabilities;
 class SharedBuffer;
 
 template <typename T> class FontTaggedSettings;
@@ -49,7 +50,7 @@ public:
 
     ~FontCustomPlatformData();
 
-    FontPlatformData fontPlatformData(const FontDescription&, bool bold, bool italic, const FontFeatureSettings& fontFaceFeatures, const FontVariantSettings& fontFaceVariantSettings);
+    FontPlatformData fontPlatformData(const FontDescription&, bool bold, bool italic, const FontFeatureSettings& fontFaceFeatures, const FontVariantSettings& fontFaceVariantSettings, FontSelectionSpecifiedCapabilities fontFaceCapabilities);
 
     static bool supportsFormat(const String&);
 

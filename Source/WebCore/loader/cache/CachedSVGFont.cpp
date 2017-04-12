@@ -52,18 +52,18 @@ CachedSVGFont::CachedSVGFont(CachedResourceRequest&& request, SessionID sessionI
 {
 }
 
-RefPtr<Font> CachedSVGFont::createFont(const FontDescription& fontDescription, const AtomicString& remoteURI, bool syntheticBold, bool syntheticItalic, const FontFeatureSettings& fontFaceFeatures, const FontVariantSettings& fontFaceVariantSettings)
+RefPtr<Font> CachedSVGFont::createFont(const FontDescription& fontDescription, const AtomicString& remoteURI, bool syntheticBold, bool syntheticItalic, const FontFeatureSettings& fontFaceFeatures, const FontVariantSettings& fontFaceVariantSettings, FontSelectionSpecifiedCapabilities fontFaceCapabilities)
 {
     if (firstFontFace(remoteURI))
-        return CachedFont::createFont(fontDescription, remoteURI, syntheticBold, syntheticItalic, fontFaceFeatures, fontFaceVariantSettings);
+        return CachedFont::createFont(fontDescription, remoteURI, syntheticBold, syntheticItalic, fontFaceFeatures, fontFaceVariantSettings, fontFaceCapabilities);
     return nullptr;
 }
 
-FontPlatformData CachedSVGFont::platformDataFromCustomData(const FontDescription& fontDescription, bool bold, bool italic, const FontFeatureSettings& fontFaceFeatures, const FontVariantSettings& fontFaceVariantSettings)
+FontPlatformData CachedSVGFont::platformDataFromCustomData(const FontDescription& fontDescription, bool bold, bool italic, const FontFeatureSettings& fontFaceFeatures, const FontVariantSettings& fontFaceVariantSettings, FontSelectionSpecifiedCapabilities fontFaceCapabilities)
 {
     if (m_externalSVGDocument)
         return FontPlatformData(fontDescription.computedPixelSize(), bold, italic);
-    return CachedFont::platformDataFromCustomData(fontDescription, bold, italic, fontFaceFeatures, fontFaceVariantSettings);
+    return CachedFont::platformDataFromCustomData(fontDescription, bold, italic, fontFaceFeatures, fontFaceVariantSettings, fontFaceCapabilities);
 }
 
 bool CachedSVGFont::ensureCustomFontData(const AtomicString& remoteURI)

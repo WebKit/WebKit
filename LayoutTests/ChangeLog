@@ -1,3 +1,13 @@
+2017-04-12  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Well-known variations should clamp to the values listed in the @font-face block
+        https://bugs.webkit.org/show_bug.cgi?id=169260
+
+        Reviewed by Dean Jackson.
+
+        * fast/text/variations/font-face-clamp-expected.html: Added.
+        * fast/text/variations/font-face-clamp.html: Added.
+
 2017-04-12  Jonathan Bedard  <jbedard@apple.com>
 
         Remove two passing canvas tests from ios expectations

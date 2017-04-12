@@ -1,3 +1,72 @@
+2017-04-12  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Well-known variations should clamp to the values listed in the @font-face block
+        https://bugs.webkit.org/show_bug.cgi?id=169260
+
+        Reviewed by Dean Jackson.
+
+        Most of this patch is plumbing the variation ranges from the CSSFontFace object
+        to preparePlatformFont() where variation values get applied.
+
+        Beyond that, there is one other piece of this patch - a nonspecified value in an
+        @font-face block shouldn't perform any clamping, but a specified value should be
+        clamped. This means that we need to retain whether or not a value is specified.
+        This patch does this by migrating CSSFontFace from using FontSelectionCapabilities
+        to using FontSelectionSpecifiedCapabilities, which has its internals behind
+        std::optionals which represent whether or not the value was specified. For the
+        purposes of font selection, these unspecified values are replaced with default
+        values.
+
+        Test: fast/text/variations/font-face-clamp.html
+
+        * css/CSSFontFace.cpp:
+        (WebCore::CSSFontFace::font):
+        * css/CSSFontFace.h:
+        * css/CSSFontFaceSource.cpp:
+        (WebCore::CSSFontFaceSource::font):
+        * css/CSSFontFaceSource.h:
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::addFontFaceRule):
+        * loader/cache/CachedFont.cpp:
+        (WebCore::CachedFont::createFont):
+        (WebCore::CachedFont::platformDataFromCustomData):
+        * loader/cache/CachedFont.h:
+        * loader/cache/CachedSVGFont.cpp:
+        (WebCore::CachedSVGFont::createFont):
+        (WebCore::CachedSVGFont::platformDataFromCustomData):
+        * loader/cache/CachedSVGFont.h:
+        * platform/graphics/FontCache.cpp:
+        (WebCore::FontPlatformDataCacheKey::FontPlatformDataCacheKey):
+        (WebCore::FontPlatformDataCacheKey::operator==):
+        (WebCore::FontPlatformDataCacheKeyHash::hash):
+        (WebCore::FontCache::getCachedFontPlatformData):
+        (WebCore::FontCache::fontForFamily):
+        * platform/graphics/FontCache.h:
+        (WebCore::FontCache::fontForFamily):
+        (WebCore::FontCache::getCachedFontPlatformData):
+        (WebCore::FontCache::createFontPlatformDataForTesting):
+        * platform/graphics/FontSelectionAlgorithm.h:
+        (WebCore::FontSelectionRange::uniqueValue):
+        (WebCore::FontSelectionCapabilities::operator==):
+        (WebCore::FontSelectionCapabilities::operator!=):
+        (WebCore::FontSelectionSpecifiedCapabilities::computeFontSelectionCapabilities):
+        (WebCore::FontSelectionSpecifiedCapabilities::operator==):
+        (WebCore::FontSelectionSpecifiedCapabilities::operator!=):
+        (WebCore::FontSelectionSpecifiedCapabilities::operator=):
+        (WebCore::FontSelectionSpecifiedCapabilities::computeWeight):
+        (WebCore::FontSelectionSpecifiedCapabilities::computeWidth):
+        (WebCore::FontSelectionSpecifiedCapabilities::computeSlope):
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::preparePlatformFont):
+        (WebCore::fontWithFamily):
+        (WebCore::FontCache::createFontPlatformData):
+        (WebCore::FontCache::systemFallbackForCharacters):
+        * platform/graphics/mac/FontCacheMac.mm:
+        (WebCore::FontCache::lastResortFallbackFont):
+        * platform/graphics/mac/FontCustomPlatformData.cpp:
+        (WebCore::FontCustomPlatformData::fontPlatformData):
+        * platform/graphics/mac/FontCustomPlatformData.h:
+
 2017-04-12  Beth Dakin  <bdakin@apple.com>
 
         Speculative open source build fix.

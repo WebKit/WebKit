@@ -39,10 +39,10 @@ public:
 
     bool ensureCustomFontData(const AtomicString& remoteURI) override;
 
-    RefPtr<Font> createFont(const FontDescription&, const AtomicString& remoteURI, bool syntheticBold, bool syntheticItalic, const FontFeatureSettings&, const FontVariantSettings&) override;
+    RefPtr<Font> createFont(const FontDescription&, const AtomicString& remoteURI, bool syntheticBold, bool syntheticItalic, const FontFeatureSettings&, const FontVariantSettings&, FontSelectionSpecifiedCapabilities) override;
 
 private:
-    FontPlatformData platformDataFromCustomData(const FontDescription&, bool bold, bool italic, const FontFeatureSettings&, const FontVariantSettings&);
+    FontPlatformData platformDataFromCustomData(const FontDescription&, bool bold, bool italic, const FontFeatureSettings&, const FontVariantSettings&, FontSelectionSpecifiedCapabilities);
 
     SVGFontElement* getSVGFontById(const String&) const;
 
