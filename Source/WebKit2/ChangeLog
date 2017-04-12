@@ -1,3 +1,16 @@
+2017-04-12  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] rename -[WKWebView _stopMediaCapture]
+        https://bugs.webkit.org/show_bug.cgi?id=170791
+        <rdar://problem/31589204>
+
+        Reviewed by Youenn Fablet.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _muteMediaCapture]):
+        (-[WKWebView _stopMediaCapture]): Deleted.
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+
 2017-04-12  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed build fix.
