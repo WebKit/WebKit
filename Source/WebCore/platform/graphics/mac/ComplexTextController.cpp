@@ -661,7 +661,6 @@ static inline std::pair<bool, bool> expansionLocation(bool ideograph, bool treat
 void ComplexTextController::adjustGlyphsAndAdvances()
 {
     bool afterExpansion = (m_run.expansionBehavior() & LeadingExpansionMask) == ForbidLeadingExpansion;
-    CGFloat widthSinceLastCommit = 0;
     size_t runCount = m_complexTextRuns.size();
     bool hasExtraSpacing = (m_font.letterSpacing() || m_font.wordSpacing() || m_expansion) && !m_run.spacingDisabled();
     bool runForcesLeadingExpansion = (m_run.expansionBehavior() & LeadingExpansionMask) == ForceLeadingExpansion;
@@ -712,7 +711,7 @@ void ComplexTextController::adjustGlyphsAndAdvances()
             CGSize advance = treatAsSpace ? CGSizeMake(spaceWidth, advances[i].height) : advances[i];
 
             if (ch == '\t' && m_run.allowTabs())
-                advance.width = m_font.tabWidth(font, m_run.tabSize(), m_run.xPos() + m_totalWidth + widthSinceLastCommit);
+                advance.width = m_font.tabWidth(font, m_run.tabSize(), m_run.xPos() + m_totalWidth);
             else if (FontCascade::treatAsZeroWidthSpace(ch) && !treatAsSpace) {
                 advance.width = 0;
                 glyph = font.spaceGlyph();
@@ -758,17 +757,22 @@ void ComplexTextController::adjustGlyphsAndAdvances()
                     if (m_expansion) {
                         bool expandLeft, expandRight;
                         std::tie(expandLeft, expandRight) = expansionLocation(ideograph, treatAsSpace, m_run.ltr(), afterExpansion, forbidLeadingExpansion, forbidTrailingExpansion, forceLeadingExpansion, forceTrailingExpansion);
-                        m_expansion -= m_expansionPerOpportunity;
-                        advance.width += m_expansionPerOpportunity;
                         if (expandLeft) {
+                            m_expansion -= m_expansionPerOpportunity;
                             // Increase previous width
-                            if (m_adjustedBaseAdvances.isEmpty())
+                            if (m_adjustedBaseAdvances.isEmpty()) {
+                                advance.width += m_expansionPerOpportunity;
                                 complexTextRun.growInitialAdvanceHorizontally(m_expansionPerOpportunity);
-                            else
+                            } else {
                                 m_adjustedBaseAdvances.last().width += m_expansionPerOpportunity;
+                                m_totalWidth += m_expansionPerOpportunity;
+                            }
                         }
-                        if (expandRight)
+                        if (expandRight) {
+                            m_expansion -= m_expansionPerOpportunity;
+                            advance.width += m_expansionPerOpportunity;
                             afterExpansion = true;
+                        }
                     } else
                         afterExpansion = false;
 
@@ -779,7 +783,7 @@ void ComplexTextController::adjustGlyphsAndAdvances()
                     afterExpansion = false;
             }
 
-            widthSinceLastCommit += advance.width; 
+            m_totalWidth += advance.width; 
 
             // FIXME: Combining marks should receive a text emphasis mark if they are combine with a space.
             if (m_forTextEmphasis && (!FontCascade::canReceiveTextEmphasis(ch) || (U_GET_GC_MASK(ch) & U_GC_M_MASK)))
@@ -808,8 +812,6 @@ void ComplexTextController::adjustGlyphsAndAdvances()
         if (!isMonotonic)
             complexTextRun.setIsNonMonotonic();
     }
-
-    m_totalWidth += widthSinceLastCommit;
 }
 
 } // namespace WebCore
