@@ -2682,7 +2682,6 @@ webkit.org/b/113946 compositing/filters/sw-shadow-overlaps-hw-layer.html [ Failu
 webkit.org/b/113946 compositing/filters/sw-shadow-overlaps-hw-shadow.html [ Failure ]
 webkit.org/b/112867 compositing/geometry/limit-layer-bounds-fixed.html [ Failure ]
 compositing/iframes/fixed-position-iframe.html [ Failure ]
-compositing/iframes/iframe-size-from-zero.html [ Failure ]
 compositing/iframes/invisible-nested-iframe-show.html [ Failure ]
 webkit.org/b/116564 compositing/layer-creation/animation-overlap-with-children.html [ Failure ]
 compositing/iframes/overlapped-iframe-iframe.html [ Failure ]

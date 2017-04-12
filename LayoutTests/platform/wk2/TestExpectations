@@ -54,9 +54,6 @@ webkit.org/b/71298 accessibility/mac/iframe-with-title-correct-hierarchy.html
 # This test has been skipped for a long time. Temporarily marking as flaky to see what bots think.
 webkit.org/b/48354 compositing/iframes/iframe-src-change.html [ Pass Failure ]
 
-# Perhaps this test just needs new expectations?
-webkit.org/b/48354 compositing/iframes/iframe-size-from-zero.html [ Failure ]
-
 # This test has been skipped for a long time. Temporarily marking as flaky to see what bots think.
 webkit.org/b/58183 editing/execCommand/convert-style-elements-to-spans.html [ Pass Failure ]
 

@@ -1253,3 +1253,5 @@ compositing/tiling/non-visible-window-tile-coverage.html [ Skip ]
 webkit.org/b/170698 [ Debug ] imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors.html [ Failure ]
 
 webkit.org/b/170699 [ Debug ] imported/w3c/web-platform-tests/html/webappapis/timers/negative-settimeout.html [ Failure ]
+
+webkit.org/b/90724 compositing/iframes/iframe-size-from-zero.html [ Failure Pass ]
