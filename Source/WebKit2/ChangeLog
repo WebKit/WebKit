@@ -1,5 +1,13 @@
 2017-04-12  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        Unreviewed, build fix for GTK port after r215262
+        https://bugs.webkit.org/show_bug.cgi?id=170758
+
+        * NetworkProcess/soup/NetworkDataTaskSoup.cpp:
+        (WebKit::NetworkDataTaskSoup::didRead):
+
+2017-04-12  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [WTF] Introduce Thread class and use RefPtr<Thread> and align Windows Threading implementation semantics to Pthread one
         https://bugs.webkit.org/show_bug.cgi?id=170502
 

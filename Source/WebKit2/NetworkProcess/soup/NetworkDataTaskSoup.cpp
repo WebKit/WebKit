@@ -744,7 +744,7 @@ void NetworkDataTaskSoup::didRead(gssize bytesRead)
         writeDownload();
     } else {
         ASSERT(m_client);
-        m_client->didReceiveData(SharedBuffer::adoptVector(m_readBuffer));
+        m_client->didReceiveData(SharedBuffer::create(WTFMove(m_readBuffer)));
         read();
     }
 }
