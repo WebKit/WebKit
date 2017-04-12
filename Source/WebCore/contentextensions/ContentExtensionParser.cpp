@@ -184,8 +184,9 @@ static std::error_code loadTrigger(ExecState& exec, const JSObject& ruleObject, 
     return { };
 }
 
-static bool isValidSelector(const String& selector)
+bool isValidCSSSelector(const String& selector)
 {
+    AtomicString::init();
     CSSParserContext context(HTMLQuirksMode);
     CSSParser parser(context);
     CSSSelectorList selectorList;
@@ -221,7 +222,7 @@ static std::error_code loadAction(ExecState& exec, const JSObject& ruleObject, A
             return ContentExtensionError::JSONInvalidCSSDisplayNoneActionType;
 
         String selectorString = asString(selector)->value(&exec);
-        if (!isValidSelector(selectorString)) {
+        if (!isValidCSSSelector(selectorString)) {
             // Skip rules with invalid selectors to be backwards-compatible.
             validSelector = false;
             return { };
