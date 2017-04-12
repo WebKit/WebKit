@@ -105,9 +105,6 @@ public:
     virtual void didReceiveBuffer(Ref<SharedBuffer>&&, long long encodedDataLength, DataPayloadType);
     virtual void didFinishLoading(const NetworkLoadMetrics&);
     virtual void didFail(const ResourceError&);
-#if USE(NETWORK_CFDATA_ARRAY_CALLBACK)
-    virtual void didReceiveDataArray(CFArrayRef dataArray);
-#endif
     virtual void didRetrieveDerivedDataFromCache(const String& type, SharedBuffer&);
 
     virtual bool shouldUseCredentialStorage();
@@ -196,9 +193,6 @@ private:
     void didFail(ResourceHandle*, const ResourceError&) override;
     void wasBlocked(ResourceHandle*) override;
     void cannotShowURL(ResourceHandle*) override;
-#if USE(NETWORK_CFDATA_ARRAY_CALLBACK)
-    void didReceiveDataArray(ResourceHandle*, CFArrayRef dataArray) override;
-#endif
     bool shouldUseCredentialStorage(ResourceHandle*) override { return shouldUseCredentialStorage(); }
     void didReceiveAuthenticationChallenge(ResourceHandle*, const AuthenticationChallenge& challenge) override { didReceiveAuthenticationChallenge(challenge); } 
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)

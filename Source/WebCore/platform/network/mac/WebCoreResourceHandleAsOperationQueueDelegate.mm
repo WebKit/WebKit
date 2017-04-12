@@ -205,27 +205,6 @@ using namespace WebCore;
     dispatch_semaphore_wait(m_semaphore, DISPATCH_TIME_FOREVER);
 }
 
-#if USE(NETWORK_CFDATA_ARRAY_CALLBACK)
-- (void)connection:(NSURLConnection *)connection didReceiveDataArray:(NSArray *)dataArray
-{
-    ASSERT(!isMainThread());
-    UNUSED_PARAM(connection);
-
-    LOG(Network, "Handle %p delegate connection:%p didReceiveDataArray:%p arraySize:%d", m_handle, connection, dataArray, [dataArray count]);
-
-    dispatch_async(dispatch_get_main_queue(), ^{
-        if (!dataArray)
-            return;
-
-        if (!m_handle || !m_handle->client())
-            return;
-
-        m_handle->client()->didReceiveBuffer(m_handle, SharedBuffer::wrapCFDataArray(reinterpret_cast<CFArrayRef>(dataArray)), -1);
-        // The call to didReceiveData above can cancel a load, and if so, the delegate (self) could have been deallocated by this point.
-    });
-}
-#endif
-
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data lengthReceived:(long long)lengthReceived
 {
     ASSERT(!isMainThread());

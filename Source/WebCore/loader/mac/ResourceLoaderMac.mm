@@ -58,45 +58,4 @@ NSCachedURLResponse* ResourceLoader::willCacheResponse(ResourceHandle*, NSCached
 
 #endif
 
-#if USE(NETWORK_CFDATA_ARRAY_CALLBACK)
-
-void ResourceLoader::didReceiveDataArray(CFArrayRef dataArray)
-{
-    // Protect this in this delegate method since the additional processing can do
-    // anything including possibly derefing this; one example of this is Radar 3266216.
-    Ref<ResourceLoader> protectedThis(*this);
-
-    CFIndex arrayCount = CFArrayGetCount(dataArray);
-    for (CFIndex i = 0; i < arrayCount; ++i) {
-        CFDataRef data = static_cast<CFDataRef>(CFArrayGetValueAtIndex(dataArray, i));
-        unsigned dataLen = static_cast<unsigned>(CFDataGetLength(data));
-
-        if (m_options.dataBufferingPolicy == BufferData) {
-            if (!m_resourceData)
-                m_resourceData = SharedBuffer::create();
-            m_resourceData->append(data);
-        }
-
-        // FIXME: If we get a resource with more than 2B bytes, this code won't do the right thing.
-        // However, with today's computers and networking speeds, this won't happen in practice.
-        // Could be an issue with a giant local file.
-        if (m_options.sendLoadCallbacks == SendCallbacks && m_frame)
-            frameLoader()->notifier().didReceiveData(this, reinterpret_cast<const char*>(CFDataGetBytePtr(data)), dataLen, dataLen);
-    }
-}
-
-void ResourceLoader::didReceiveDataArray(ResourceHandle*, CFArrayRef dataArray)
-{
-    CFIndex arrayCount = CFArrayGetCount(dataArray);
-    CFIndex dataLength = 0;
-    for (CFIndex i = 0; i < arrayCount; ++i) {
-        CFDataRef data = static_cast<CFDataRef>(CFArrayGetValueAtIndex(dataArray, i));
-        dataLength += CFDataGetLength(data);
-    }
-
-    didReceiveDataArray(dataArray);
-}
-
-#endif
-
 }

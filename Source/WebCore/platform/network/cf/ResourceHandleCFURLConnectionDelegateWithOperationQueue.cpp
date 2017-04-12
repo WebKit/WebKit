@@ -303,24 +303,6 @@ Boolean ResourceHandleCFURLConnectionDelegateWithOperationQueue::canRespondToPro
 }
 #endif // USE(PROTECTION_SPACE_AUTH_CALLBACK)
 
-#if USE(NETWORK_CFDATA_ARRAY_CALLBACK)
-void ResourceHandleCFURLConnectionDelegateWithOperationQueue::didReceiveDataArray(CFArrayRef dataArray)
-{
-    // FIXME: The block implicitly copies protector object, which is wasteful. We should just call ref(),
-    // capture "this" by pointer value, and use a C++ lambda to prevent other unintentional capturing.
-    RefPtr<ResourceHandleCFURLConnectionDelegateWithOperationQueue> protectedThis(this);
-    CFRetain(dataArray);
-    dispatch_async(dispatch_get_main_queue(), ^{
-        if (protectedThis->hasHandle() && m_handle->client()) {
-            LOG(Network, "CFNet - ResourceHandleCFURLConnectionDelegateWithOperationQueue::didSendBodyData(handle=%p) (%s)", m_handle, m_handle->firstRequest().url().string().utf8().data());
-
-            m_handle->client()->didReceiveBuffer(m_handle, SharedBuffer::wrapCFDataArray(dataArray), -1);
-        }
-        CFRelease(dataArray);
-    });
-}
-#endif // USE(NETWORK_CFDATA_ARRAY_CALLBACK)
-
 void ResourceHandleCFURLConnectionDelegateWithOperationQueue::continueWillSendRequest(CFURLRequestRef request)
 {
     m_requestResult = request;

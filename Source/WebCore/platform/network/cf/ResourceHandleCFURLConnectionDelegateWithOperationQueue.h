@@ -58,9 +58,6 @@ private:
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
     Boolean canRespondToProtectionSpace(CFURLProtectionSpaceRef) override;
 #endif // USE(PROTECTION_SPACE_AUTH_CALLBACK)
-#if USE(NETWORK_CFDATA_ARRAY_CALLBACK)
-    void didReceiveDataArray(CFArrayRef dataArray) override;
-#endif // USE(NETWORK_CFDATA_ARRAY_CALLBACK)
 
     void continueWillSendRequest(CFURLRequestRef) override;
     void continueDidReceiveResponse() override;

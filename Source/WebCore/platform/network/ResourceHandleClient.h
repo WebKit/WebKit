@@ -42,90 +42,85 @@ OBJC_CLASS NSCachedURLResponse;
 #endif
 
 namespace WebCore {
-    class AuthenticationChallenge;
-    class Credential;
-    class URL;
-    class ProtectionSpace;
-    class ResourceHandle;
-    class ResourceError;
-    class ResourceRequest;
-    class ResourceResponse;
-    class SharedBuffer;
+class AuthenticationChallenge;
+class Credential;
+class URL;
+class ProtectionSpace;
+class ResourceHandle;
+class ResourceError;
+class ResourceRequest;
+class ResourceResponse;
+class SharedBuffer;
 
-    enum CacheStoragePolicy {
-        StorageAllowed,
-        StorageAllowedInMemoryOnly,
-        StorageNotAllowed
-    };
+enum CacheStoragePolicy {
+    StorageAllowed,
+    StorageAllowedInMemoryOnly,
+    StorageNotAllowed
+};
+
+class ResourceHandleClient {
+public:
+    WEBCORE_EXPORT ResourceHandleClient();
+    WEBCORE_EXPORT virtual ~ResourceHandleClient();
+
+    WEBCORE_EXPORT virtual ResourceRequest willSendRequest(ResourceHandle*, ResourceRequest&&, ResourceResponse&&);
+    virtual void didSendData(ResourceHandle*, unsigned long long /*bytesSent*/, unsigned long long /*totalBytesToBeSent*/) { }
+
+    virtual void didReceiveResponse(ResourceHandle*, ResourceResponse&&) { }
     
-    class ResourceHandleClient {
-    public:
-        WEBCORE_EXPORT ResourceHandleClient();
-        WEBCORE_EXPORT virtual ~ResourceHandleClient();
+    virtual void didReceiveData(ResourceHandle*, const char*, unsigned, int /*encodedDataLength*/) { }
+    WEBCORE_EXPORT virtual void didReceiveBuffer(ResourceHandle*, Ref<SharedBuffer>&&, int encodedDataLength);
+    
+    virtual void didFinishLoading(ResourceHandle*) { }
+    virtual void didFail(ResourceHandle*, const ResourceError&) { }
+    virtual void wasBlocked(ResourceHandle*) { }
+    virtual void cannotShowURL(ResourceHandle*) { }
 
-        WEBCORE_EXPORT virtual ResourceRequest willSendRequest(ResourceHandle*, ResourceRequest&&, ResourceResponse&&);
-        virtual void didSendData(ResourceHandle*, unsigned long long /*bytesSent*/, unsigned long long /*totalBytesToBeSent*/) { }
+    virtual bool usesAsyncCallbacks() { return false; }
 
-        virtual void didReceiveResponse(ResourceHandle*, ResourceResponse&&) { }
-        
-        virtual void didReceiveData(ResourceHandle*, const char*, unsigned, int /*encodedDataLength*/) { }
-        WEBCORE_EXPORT virtual void didReceiveBuffer(ResourceHandle*, Ref<SharedBuffer>&&, int encodedDataLength);
-        
-        virtual void didFinishLoading(ResourceHandle*) { }
-        virtual void didFail(ResourceHandle*, const ResourceError&) { }
-        virtual void wasBlocked(ResourceHandle*) { }
-        virtual void cannotShowURL(ResourceHandle*) { }
+    virtual bool loadingSynchronousXHR() { return false; }
 
-        virtual bool usesAsyncCallbacks() { return false; }
+    // Client will pass an updated request using ResourceHandle::continueWillSendRequest() when ready.
+    WEBCORE_EXPORT virtual void willSendRequestAsync(ResourceHandle*, ResourceRequest&&, ResourceResponse&&);
 
-        virtual bool loadingSynchronousXHR() { return false; }
-
-        // Client will pass an updated request using ResourceHandle::continueWillSendRequest() when ready.
-        WEBCORE_EXPORT virtual void willSendRequestAsync(ResourceHandle*, ResourceRequest&&, ResourceResponse&&);
-
-        // Client will call ResourceHandle::continueDidReceiveResponse() when ready.
-        WEBCORE_EXPORT virtual void didReceiveResponseAsync(ResourceHandle*, ResourceResponse&&);
+    // Client will call ResourceHandle::continueDidReceiveResponse() when ready.
+    WEBCORE_EXPORT virtual void didReceiveResponseAsync(ResourceHandle*, ResourceResponse&&);
 
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
-        // Client will pass an updated request using ResourceHandle::continueCanAuthenticateAgainstProtectionSpace() when ready.
-        WEBCORE_EXPORT virtual void canAuthenticateAgainstProtectionSpaceAsync(ResourceHandle*, const ProtectionSpace&);
+    // Client will pass an updated request using ResourceHandle::continueCanAuthenticateAgainstProtectionSpace() when ready.
+    WEBCORE_EXPORT virtual void canAuthenticateAgainstProtectionSpaceAsync(ResourceHandle*, const ProtectionSpace&);
 #endif
-        // Client will pass an updated request using ResourceHandle::continueWillCacheResponse() when ready.
+    // Client will pass an updated request using ResourceHandle::continueWillCacheResponse() when ready.
 #if USE(CFURLCONNECTION)
-        WEBCORE_EXPORT virtual void willCacheResponseAsync(ResourceHandle*, CFCachedURLResponseRef);
+    WEBCORE_EXPORT virtual void willCacheResponseAsync(ResourceHandle*, CFCachedURLResponseRef);
 #elif PLATFORM(COCOA)
-        WEBCORE_EXPORT virtual void willCacheResponseAsync(ResourceHandle*, NSCachedURLResponse *);
-#endif
-
-#if USE(NETWORK_CFDATA_ARRAY_CALLBACK)
-        virtual bool supportsDataArray() { return false; }
-        virtual void didReceiveDataArray(ResourceHandle*, CFArrayRef) { }
+    WEBCORE_EXPORT virtual void willCacheResponseAsync(ResourceHandle*, NSCachedURLResponse *);
 #endif
 
 #if USE(SOUP)
-        virtual char* getOrCreateReadBuffer(size_t /*requestedLength*/, size_t& /*actualLength*/) { return 0; }
+    virtual char* getOrCreateReadBuffer(size_t /*requestedLength*/, size_t& /*actualLength*/) { return 0; }
 #endif
 
-        virtual bool shouldUseCredentialStorage(ResourceHandle*) { return false; }
-        virtual void didReceiveAuthenticationChallenge(ResourceHandle*, const AuthenticationChallenge&) { }
+    virtual bool shouldUseCredentialStorage(ResourceHandle*) { return false; }
+    virtual void didReceiveAuthenticationChallenge(ResourceHandle*, const AuthenticationChallenge&) { }
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
-        virtual bool canAuthenticateAgainstProtectionSpace(ResourceHandle*, const ProtectionSpace&) { return false; }
+    virtual bool canAuthenticateAgainstProtectionSpace(ResourceHandle*, const ProtectionSpace&) { return false; }
 #endif
-        virtual void receivedCancellation(ResourceHandle*, const AuthenticationChallenge&) { }
+    virtual void receivedCancellation(ResourceHandle*, const AuthenticationChallenge&) { }
 
 #if PLATFORM(IOS) || USE(CFURLCONNECTION)
-        virtual RetainPtr<CFDictionaryRef> connectionProperties(ResourceHandle*) { return nullptr; }
+    virtual RetainPtr<CFDictionaryRef> connectionProperties(ResourceHandle*) { return nullptr; }
 #endif
 
 #if USE(CFURLCONNECTION)
-        virtual CFCachedURLResponseRef willCacheResponse(ResourceHandle*, CFCachedURLResponseRef response) { return response; }
+    virtual CFCachedURLResponseRef willCacheResponse(ResourceHandle*, CFCachedURLResponseRef response) { return response; }
 #if PLATFORM(WIN)
-        virtual bool shouldCacheResponse(ResourceHandle*, CFCachedURLResponseRef) { return true; }
+    virtual bool shouldCacheResponse(ResourceHandle*, CFCachedURLResponseRef) { return true; }
 #endif // PLATFORM(WIN)
 
 #elif PLATFORM(COCOA)
-        virtual NSCachedURLResponse *willCacheResponse(ResourceHandle*, NSCachedURLResponse *response) { return response; }
+    virtual NSCachedURLResponse *willCacheResponse(ResourceHandle*, NSCachedURLResponse *response) { return response; }
 #endif
-    };
+};
 
 }

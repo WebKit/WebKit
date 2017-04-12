@@ -83,10 +83,6 @@ private:
     CFCachedURLResponseRef willCacheResponse(ResourceHandle*, CFCachedURLResponseRef) override;
 #endif
 
-#if USE(NETWORK_CFDATA_ARRAY_CALLBACK)
-    bool supportsDataArray() override { return true; }
-    void didReceiveDataArray(CFArrayRef) override;
-#endif
     void releaseResources() override;
 
 #if USE(SOUP)

@@ -272,19 +272,6 @@ Boolean SynchronousResourceHandleCFURLConnectionDelegate::canRespondToProtection
 }
 #endif // USE(PROTECTION_SPACE_AUTH_CALLBACK)
 
-#if USE(NETWORK_CFDATA_ARRAY_CALLBACK)
-void SynchronousResourceHandleCFURLConnectionDelegate::didReceiveDataArray(CFArrayRef dataArray)
-{
-    if (!m_handle->client())
-        return;
-
-    LOG(Network, "CFNet - SynchronousResourceHandleCFURLConnectionDelegate::didReceiveDataArray(handle=%p, arrayLength=%ld) (%s)", m_handle, CFArrayGetCount(dataArray), m_handle->firstRequest().url().string().utf8().data());
-
-    if (ResourceHandleClient* client = m_handle->client())
-        client->didReceiveBuffer(m_handle, SharedBuffer::wrapCFDataArray(dataArray), -1);
-}
-#endif // USE(NETWORK_CFDATA_ARRAY_CALLBACK)
-
 void SynchronousResourceHandleCFURLConnectionDelegate::continueWillSendRequest(CFURLRequestRef)
 {
     ASSERT_NOT_REACHED();

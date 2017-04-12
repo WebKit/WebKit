@@ -524,20 +524,6 @@ void NetworkLoad::continueCanAuthenticateAgainstProtectionSpace(bool result)
 }
 #endif
 
-#if USE(NETWORK_CFDATA_ARRAY_CALLBACK)
-bool NetworkLoad::supportsDataArray()
-{
-    notImplemented();
-    return false;
-}
-
-void NetworkLoad::didReceiveDataArray(ResourceHandle*, CFArrayRef)
-{
-    ASSERT_NOT_REACHED();
-    notImplemented();
-}
-#endif
-
 void NetworkLoad::didSendData(ResourceHandle* handle, unsigned long long bytesSent, unsigned long long totalBytesToBeSent)
 {
     ASSERT_UNUSED(handle, handle == m_handle);

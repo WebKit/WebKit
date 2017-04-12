@@ -38,9 +38,6 @@ public:
     void didReceiveData(CFDataRef, CFIndex originalLength) override;
     void didFinishLoading() override;
     void didFail(CFErrorRef) override;
-#if USE(NETWORK_CFDATA_ARRAY_CALLBACK)
-    void didReceiveDataArray(CFArrayRef dataArray) override;
-#endif // USE(NETWORK_CFDATA_ARRAY_CALLBACK)
 
 private:
     void setupRequest(CFMutableURLRequestRef) override;

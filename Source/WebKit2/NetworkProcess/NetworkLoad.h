@@ -84,10 +84,6 @@ public:
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
     void canAuthenticateAgainstProtectionSpaceAsync(WebCore::ResourceHandle*, const WebCore::ProtectionSpace&) override;
 #endif
-#if USE(NETWORK_CFDATA_ARRAY_CALLBACK)
-    bool supportsDataArray() override;
-    void didReceiveDataArray(WebCore::ResourceHandle*, CFArrayRef) override;
-#endif
 #if PLATFORM(COCOA)
 #if USE(CFURLCONNECTION)
     void willCacheResponseAsync(WebCore::ResourceHandle*, CFCachedURLResponseRef) override;

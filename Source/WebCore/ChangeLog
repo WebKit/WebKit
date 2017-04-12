@@ -1,3 +1,38 @@
+2017-04-12  Alex Christensen  <achristensen@webkit.org>
+
+        Stop using didReceiveDataArray callback on El Capitan
+        https://bugs.webkit.org/show_bug.cgi?id=170780
+
+        Reviewed by Brady Eidson.
+
+        didReceiveDataArray was an optimization that improved performance on iOS but is not needed any more.
+        The only platform where this is used is El Capitan, and didReceiveData works fine on that platform.
+        I've left some cleanup still to be done in SharedBuffer, and doing that is the motivation for this change.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/ResourceLoader.h:
+        * loader/SubresourceLoader.h:
+        * loader/cf/SubresourceLoaderCF.cpp: Removed.
+        * loader/mac/ResourceLoaderMac.mm:
+        (WebCore::ResourceLoader::didReceiveDataArray): Deleted.
+        * platform/network/ResourceHandleClient.h:
+        (WebCore::ResourceHandleClient::supportsDataArray): Deleted.
+        (WebCore::ResourceHandleClient::didReceiveDataArray): Deleted.
+        * platform/network/cf/ResourceHandleCFURLConnectionDelegate.cpp:
+        (WebCore::ResourceHandleCFURLConnectionDelegate::makeConnectionClient):
+        (WebCore::ResourceHandleCFURLConnectionDelegate::didReceiveDataArrayCallback): Deleted.
+        * platform/network/cf/ResourceHandleCFURLConnectionDelegate.h:
+        * platform/network/cf/ResourceHandleCFURLConnectionDelegateWithOperationQueue.cpp:
+        (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::didReceiveDataArray): Deleted.
+        * platform/network/cf/ResourceHandleCFURLConnectionDelegateWithOperationQueue.h:
+        * platform/network/cf/SynchronousResourceHandleCFURLConnectionDelegate.cpp:
+        (WebCore::SynchronousResourceHandleCFURLConnectionDelegate::didReceiveDataArray): Deleted.
+        * platform/network/cf/SynchronousResourceHandleCFURLConnectionDelegate.h:
+        * platform/network/mac/WebCoreResourceHandleAsDelegate.mm:
+        (-[WebCoreResourceHandleAsDelegate connection:didReceiveDataArray:]): Deleted.
+        * platform/network/mac/WebCoreResourceHandleAsOperationQueueDelegate.mm:
+        (-[WebCoreResourceHandleAsOperationQueueDelegate connection:didReceiveDataArray:]): Deleted.
+
 2017-04-12  Beth Dakin  <bdakin@apple.com>
 
         Attempted build fix.
