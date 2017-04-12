@@ -1,3 +1,20 @@
+2017-04-12  Keith Rollin  <krollin@apple.com>
+
+        Add some missing NetworkResourceLoader logging
+        https://bugs.webkit.org/show_bug.cgi?id=170139
+
+        Reviewed by Alex Christensen.
+
+        Once execution enters the lambda in
+        NetworkResourceLoader::retrieveCacheEntry, there is little indication
+        of which exit point was taken. If flow enters into startNetworkLoad,
+        we'll get some logging from that function, but not from the others.
+        Add some logging so that we know what the result was from looking up
+        the resource in the cache.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::retrieveCacheEntry):
+
 2017-04-12  Anders Carlsson  <andersca@apple.com>
 
         Tweak WebCore::setMetadataURL function
