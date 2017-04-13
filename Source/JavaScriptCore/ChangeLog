@@ -1,3 +1,45 @@
+2017-04-13  Oliver Hunt  <oliver@apple.com>
+
+        allocationSize should use safe arithmetic by default
+        https://bugs.webkit.org/show_bug.cgi?id=170804
+
+        Reviewed by JF Bastien.
+
+        Make all allocationSize() functions work in terms
+        of Checked<size_t>
+
+        * runtime/DirectArguments.h:
+        (JSC::DirectArguments::offsetOfSlot):
+        (JSC::DirectArguments::allocationSize):
+        * runtime/HashMapImpl.h:
+        (JSC::HashMapBuffer::allocationSize):
+        * runtime/JSArray.h:
+        (JSC::JSArray::allocationSize):
+        * runtime/JSArrayBufferView.h:
+        (JSC::JSArrayBufferView::allocationSize):
+        * runtime/JSAsyncFunction.h:
+        (JSC::JSAsyncFunction::allocationSize):
+        * runtime/JSFixedArray.h:
+        (JSC::JSFixedArray::allocationSize):
+        * runtime/JSFunction.h:
+        (JSC::JSFunction::allocationSize):
+        * runtime/JSGeneratorFunction.h:
+        (JSC::JSGeneratorFunction::allocationSize):
+        * runtime/JSModuleNamespaceObject.h:
+        * runtime/JSObject.h:
+        (JSC::JSFinalObject::allocationSize):
+        * runtime/JSWrapperObject.h:
+        (JSC::JSWrapperObject::allocationSize):
+        * runtime/ScopedArguments.h:
+        (JSC::ScopedArguments::allocationSize):
+        * runtime/VM.h:
+        (JSC::ScratchBuffer::allocationSize):
+        * wasm/js/JSWebAssemblyCodeBlock.h:
+        (JSC::JSWebAssemblyCodeBlock::offsetOfImportStubs):
+        (JSC::JSWebAssemblyCodeBlock::allocationSize):
+        * wasm/js/JSWebAssemblyInstance.h:
+        (JSC::JSWebAssemblyInstance::allocationSize):
+
 2017-04-13  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly: manage memory better

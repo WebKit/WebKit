@@ -131,9 +131,9 @@ private:
     }
 
 
-    static size_t allocationSize(unsigned numItems)
+    static size_t allocationSize(Checked<size_t> numItems)
     {
-        return offsetOfData() + numItems * sizeof(WriteBarrier<Unknown>);
+        return (offsetOfData() + numItems * sizeof(WriteBarrier<Unknown>)).unsafeGet();
     }
 };
 

@@ -84,9 +84,9 @@ protected:
     static void destroy(JSCell*);
     static void visitChildren(JSCell*, SlotVisitor&);
 
-    static size_t allocationSize(unsigned numImportFunctions)
+    static size_t allocationSize(Checked<size_t> numImportFunctions)
     {
-        return offsetOfImportFunctions() + sizeof(WriteBarrier<JSCell>) * numImportFunctions;
+        return (offsetOfImportFunctions() + sizeof(WriteBarrier<JSCell>) * numImportFunctions).unsafeGet();
     }
 
 private:

@@ -145,9 +145,9 @@ public:
         return WTF::roundUpToMultipleOf<sizeof(WriteBarrier<Unknown>)>(sizeof(ScopedArguments));
     }
     
-    static size_t allocationSize(unsigned overflowArgumentsLength)
+    static size_t allocationSize(Checked<size_t> overflowArgumentsLength)
     {
-        return overflowStorageOffset() + sizeof(WriteBarrier<Unknown>) * overflowArgumentsLength;
+        return (overflowStorageOffset() + sizeof(WriteBarrier<Unknown>) * overflowArgumentsLength).unsafeGet();
     }
 
 private:

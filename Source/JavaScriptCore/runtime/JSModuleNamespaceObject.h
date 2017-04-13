@@ -88,9 +88,9 @@ private:
         return WTF::roundUpToMultipleOf<sizeof(WriteBarrier<AbstractModuleRecord>)>(sizeof(JSModuleNamespaceObject));
     }
 
-    static size_t allocationSize(unsigned moduleRecords)
+    static size_t allocationSize(Checked<size_t> moduleRecords)
     {
-        return offsetOfModuleRecords() + moduleRecords * sizeof(WriteBarrier<AbstractModuleRecord>);
+        return (offsetOfModuleRecords() + moduleRecords * sizeof(WriteBarrier<AbstractModuleRecord>)).unsafeGet();
     }
 
     struct ExportEntry {

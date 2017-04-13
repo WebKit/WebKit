@@ -1080,9 +1080,9 @@ public:
     typedef JSObject Base;
     static const unsigned StructureFlags = Base::StructureFlags;
 
-    static size_t allocationSize(size_t inlineCapacity)
+    static size_t allocationSize(Checked<size_t> inlineCapacity)
     {
-        return sizeof(JSObject) + inlineCapacity * sizeof(WriteBarrierBase<Unknown>);
+        return (sizeof(JSObject) + inlineCapacity * sizeof(WriteBarrierBase<Unknown>)).unsafeGet();
     }
 
     static inline const TypeInfo typeInfo() { return TypeInfo(FinalObjectType, StructureFlags); }

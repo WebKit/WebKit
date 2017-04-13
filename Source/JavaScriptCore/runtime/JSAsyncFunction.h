@@ -43,7 +43,7 @@ public:
     static JSAsyncFunction* create(VM&, FunctionExecutable*, JSScope*, Structure*);
     static JSAsyncFunction* createWithInvalidatedReallocationWatchpoint(VM&, FunctionExecutable*, JSScope*);
 
-    static size_t allocationSize(size_t inlineCapacity)
+    static size_t allocationSize(Checked<size_t> inlineCapacity)
     {
         ASSERT_UNUSED(inlineCapacity, !inlineCapacity);
         return sizeof(JSAsyncFunction);

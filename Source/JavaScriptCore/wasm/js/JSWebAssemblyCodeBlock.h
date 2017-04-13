@@ -96,14 +96,14 @@ private:
     static void destroy(JSCell*);
     static void visitChildren(JSCell*, SlotVisitor&);
 
-    static ptrdiff_t offsetOfImportStubs()
+    static size_t offsetOfImportStubs()
     {
         return WTF::roundUpToMultipleOf<sizeof(void*)>(sizeof(JSWebAssemblyCodeBlock));
     }
 
-    static size_t allocationSize(unsigned functionImportCount)
+    static size_t allocationSize(Checked<size_t> functionImportCount)
     {
-        return offsetOfImportStubs() + sizeof(void*) * functionImportCount;
+        return (offsetOfImportStubs() + sizeof(void*) * functionImportCount).unsafeGet();
     }
 
     void*& importWasmToJSStub(unsigned importIndex)
