@@ -342,8 +342,13 @@ private:
                 }
 
                 restoreState(state);
+
+                if (m_isUnicode) {
+                    m_err = YarrPattern::InvalidBackreference;
+                    return false;
+                }
             }
-            
+
             // Not a backreference, and not octal. Just a number.
             if (peek() >= '8') {
                 delegate.atomPatternCharacter(consume());

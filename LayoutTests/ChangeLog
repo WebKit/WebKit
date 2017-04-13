@@ -1,3 +1,14 @@
+2017-04-12  Joseph Pecoraro  <pecoraro@apple.com>
+
+        test262: test262/test/language/literals/regexp/u-dec-esc.js
+        https://bugs.webkit.org/show_bug.cgi?id=170687
+
+        Reviewed by Michael Saboff.
+
+        * js/regexp-unicode-expected.txt:
+        * js/script-tests/regexp-unicode.js:
+        Extend test to test invalid backreferences.
+
 2017-04-12  Jonathan Bedard  <jbedard@apple.com>
 
         Move expectation for compositing/iframes/iframe-size-from-zero.htm to top level

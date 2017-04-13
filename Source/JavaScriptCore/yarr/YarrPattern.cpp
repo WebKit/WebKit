@@ -895,22 +895,23 @@ const char* YarrPattern::errorMessage(YarrPattern::ErrorCode error)
 #define REGEXP_ERROR_PREFIX "Invalid regular expression: "
     // The order of this array must match the ErrorCode enum.
     static const char* errorMessages[NumberOfErrorCodes] = {
-        nullptr, // NoError
-        REGEXP_ERROR_PREFIX "regular expression too large",
-        REGEXP_ERROR_PREFIX "numbers out of order in {} quantifier",
-        REGEXP_ERROR_PREFIX "nothing to repeat",
-        REGEXP_ERROR_PREFIX "number too large in {} quantifier",
-        REGEXP_ERROR_PREFIX "missing )",
-        REGEXP_ERROR_PREFIX "unmatched parentheses",
-        REGEXP_ERROR_PREFIX "unrecognized character after (?",
-        REGEXP_ERROR_PREFIX "missing terminating ] for character class",
-        REGEXP_ERROR_PREFIX "range out of order in character class",
-        REGEXP_ERROR_PREFIX "\\ at end of pattern",
-        REGEXP_ERROR_PREFIX "invalid unicode {} escape",
-        REGEXP_ERROR_PREFIX "invalid escaped character for unicode pattern",
-        REGEXP_ERROR_PREFIX "too many nested disjunctions",
-        REGEXP_ERROR_PREFIX "pattern exceeds string length limits",
-        REGEXP_ERROR_PREFIX "invalid flags"
+        nullptr,                                                              // NoError
+        REGEXP_ERROR_PREFIX "regular expression too large",                   // PatternTooLarge     
+        REGEXP_ERROR_PREFIX "numbers out of order in {} quantifier",          // QuantifierOutOfOrder
+        REGEXP_ERROR_PREFIX "nothing to repeat",                              // QuantifierWithoutAtom
+        REGEXP_ERROR_PREFIX "number too large in {} quantifier",              // QuantifierTooLarge
+        REGEXP_ERROR_PREFIX "missing )",                                      // MissingParentheses
+        REGEXP_ERROR_PREFIX "unmatched parentheses",                          // ParenthesesUnmatched
+        REGEXP_ERROR_PREFIX "unrecognized character after (?",                // ParenthesesTypeInvalid
+        REGEXP_ERROR_PREFIX "missing terminating ] for character class",      // CharacterClassUnmatched
+        REGEXP_ERROR_PREFIX "range out of order in character class",          // CharacterClassOutOfOrder
+        REGEXP_ERROR_PREFIX "\\ at end of pattern",                           // EscapeUnterminated
+        REGEXP_ERROR_PREFIX "invalid unicode {} escape",                      // InvalidUnicodeEscape
+        REGEXP_ERROR_PREFIX "invalid backreference for unicode pattern",      // InvalidBackreference
+        REGEXP_ERROR_PREFIX "invalid escaped character for unicode pattern",  // InvalidIdentityEscape
+        REGEXP_ERROR_PREFIX "too many nested disjunctions",                   // TooManyDisjunctions
+        REGEXP_ERROR_PREFIX "pattern exceeds string length limits",           // OffsetTooLarge
+        REGEXP_ERROR_PREFIX "invalid flags"                                   // InvalidRegularExpressionFlags
     };
 
     return errorMessages[error];
@@ -931,6 +932,9 @@ const char* YarrPattern::compile(const String& patternString, void* stackLimit)
     //      "Note: if the number of left parentheses is less than the number specified
     //       in \#, the \# is taken as an octal escape as described in the next row."
     if (containsIllegalBackReference()) {
+        if (unicode())
+            return errorMessage(InvalidBackreference);
+
         unsigned numSubpatterns = m_numSubpatterns;
 
         constructor.reset();

@@ -329,6 +329,7 @@ struct YarrPattern {
         CharacterClassOutOfOrder,
         EscapeUnterminated,
         InvalidUnicodeEscape,
+        InvalidBackreference,
         InvalidIdentityEscape,
         TooManyDisjunctions,
         OffsetTooLarge,

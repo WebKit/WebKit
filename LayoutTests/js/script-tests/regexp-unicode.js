@@ -220,3 +220,28 @@ shouldThrowInvalidEscape("[\\\\u]");
 
 shouldThrowInvalidEscape("\\\\u{", '"SyntaxError: Invalid regular expression: invalid unicode {} escape"');
 shouldThrowInvalidEscape("\\\\u{\\udead", '"SyntaxError: Invalid regular expression: invalid unicode {} escape"');
+
+// Check that invalid backreferences in unicode patterns throw exceptions.
+shouldThrow(`/\\1/u`);
+shouldThrow(`/\\2/u`);
+shouldThrow(`/\\3/u`);
+shouldThrow(`/\\4/u`);
+shouldThrow(`/\\5/u`);
+shouldThrow(`/\\6/u`);
+shouldThrow(`/\\7/u`);
+shouldThrow(`/\\8/u`);
+shouldThrow(`/\\9/u`);
+shouldNotThrow(`/(.)\\1/u`);
+shouldNotThrow(`/(.)(.)\\2/u`);
+shouldThrow(`/(.)(.)\\3/u`);
+
+// Invalid backreferences are okay in non-unicode patterns.
+shouldNotThrow(`/\\1/`);
+shouldNotThrow(`/\\2/`);
+shouldNotThrow(`/\\3/`);
+shouldNotThrow(`/\\4/`);
+shouldNotThrow(`/\\5/`);
+shouldNotThrow(`/\\6/`);
+shouldNotThrow(`/\\7/`);
+shouldNotThrow(`/\\8/`);
+shouldNotThrow(`/\\9/`);

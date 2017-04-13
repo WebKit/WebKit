@@ -1,3 +1,18 @@
+2017-04-12  Joseph Pecoraro  <pecoraro@apple.com>
+
+        test262: test262/test/language/literals/regexp/u-dec-esc.js
+        https://bugs.webkit.org/show_bug.cgi?id=170687
+
+        Reviewed by Michael Saboff.
+
+        * yarr/YarrParser.h:
+        (JSC::Yarr::Parser::parseEscape):
+        * yarr/YarrPattern.cpp:
+        (JSC::Yarr::YarrPattern::errorMessage):
+        (JSC::Yarr::YarrPattern::compile):
+        * yarr/YarrPattern.h:
+        In unicoe patterns, invalid backreferences are an error.
+
 2017-04-12  Filip Pizlo  <fpizlo@apple.com>
 
         Move common stack allocation utilities out of AirAllocateStackByGraphColoring.cpp
