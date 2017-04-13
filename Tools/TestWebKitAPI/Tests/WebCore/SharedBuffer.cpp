@@ -108,8 +108,8 @@ TEST_F(SharedBufferTest, createArrayBufferLargeSegments)
     Vector<char> vector2(0x4000, 'c');
 
     RefPtr<SharedBuffer> sharedBuffer = SharedBuffer::create(WTFMove(vector0));
-    sharedBuffer->append(vector1);
-    sharedBuffer->append(vector2);
+    sharedBuffer->append(WTFMove(vector1));
+    sharedBuffer->append(WTFMove(vector2));
     RefPtr<ArrayBuffer> arrayBuffer = sharedBuffer->createArrayBuffer();
     ASSERT_EQ(0x4000U + 0x4000U + 0x4000U, arrayBuffer->byteLength());
     int position = 0;

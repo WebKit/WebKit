@@ -69,8 +69,8 @@ public:
 #endif
 #if USE(CF)
     WEBCORE_EXPORT RetainPtr<CFDataRef> createCFData();
-    WEBCORE_EXPORT CFDataRef existingCFData();
     WEBCORE_EXPORT static Ref<SharedBuffer> wrapCFData(CFDataRef);
+    WEBCORE_EXPORT void append(CFDataRef);
 #endif
 
 #if USE(SOUP)
@@ -88,20 +88,13 @@ public:
 
     WEBCORE_EXPORT unsigned size() const;
 
-
     bool isEmpty() const { return !size(); }
 
     WEBCORE_EXPORT void append(SharedBuffer&);
     WEBCORE_EXPORT void append(const char*, unsigned);
-    WEBCORE_EXPORT void append(const Vector<char>&);
+    WEBCORE_EXPORT void append(Vector<char>&&);
 
     WEBCORE_EXPORT void clear();
-    const char* platformData() const;
-    unsigned platformDataSize() const;
-
-#if USE(NETWORK_CFDATA_ARRAY_CALLBACK)
-    WEBCORE_EXPORT void append(CFDataRef);
-#endif
 
     WEBCORE_EXPORT Ref<SharedBuffer> copy() const;
     
@@ -166,9 +159,13 @@ private:
     mutable Vector<char*> m_segments;
 #endif
 
+    unsigned platformDataSize() const;
+    const char* platformData() const;
+
 #if USE(CF)
     explicit SharedBuffer(CFDataRef);
     RetainPtr<CFDataRef> m_cfData;
+    CFDataRef existingCFData();
 #endif
 
 #if USE(SOUP)

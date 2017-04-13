@@ -231,7 +231,7 @@ void SharedBuffer::append(const char* data, unsigned length)
 #endif
 }
 
-void SharedBuffer::append(const Vector<char>& data)
+void SharedBuffer::append(Vector<char>&& data)
 {
     append(data.data(), data.size());
 }
@@ -414,13 +414,6 @@ inline const char* SharedBuffer::platformData() const
     ASSERT_NOT_REACHED();
 
     return nullptr;
-}
-
-inline unsigned SharedBuffer::platformDataSize() const
-{
-    ASSERT_NOT_REACHED();
-    
-    return 0;
 }
 
 inline bool SharedBuffer::maybeAppendPlatformData(SharedBuffer&)

@@ -1,3 +1,17 @@
+2017-04-12  Alex Christensen  <achristensen@webkit.org>
+
+        Clean up SharedBuffer public functions
+        https://bugs.webkit.org/show_bug.cgi?id=170795
+
+        Reviewed by Andreas Kling.
+
+        Make some member functions that are now only used internally private.
+
+        * platform/SharedBuffer.cpp:
+        (WebCore::SharedBuffer::append):
+        (WebCore::SharedBuffer::platformDataSize): Deleted.
+        * platform/SharedBuffer.h:
+
 2017-04-12  Dan Bernstein  <mitz@apple.com>
 
         [Mac] Future-proof .xcconfig files
