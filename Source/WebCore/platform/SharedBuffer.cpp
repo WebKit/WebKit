@@ -66,12 +66,6 @@ SharedBuffer::SharedBuffer()
 {
 }
 
-SharedBuffer::SharedBuffer(unsigned size)
-    : m_size(size)
-    , m_buffer(adoptRef(*new DataBuffer))
-{
-}
-
 SharedBuffer::SharedBuffer(const char* data, unsigned size)
     : m_buffer(adoptRef(*new DataBuffer))
 {
@@ -233,6 +227,7 @@ void SharedBuffer::append(const char* data, unsigned length)
 
 void SharedBuffer::append(Vector<char>&& data)
 {
+    // This copies data unnecessarily right now. We should just use the Vector instead of always copying it.
     append(data.data(), data.size());
 }
 

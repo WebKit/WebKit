@@ -362,16 +362,13 @@ RefPtr<SharedBuffer> FontPlatformData::openTypeTable(uint32_t table) const
     if (FT_Load_Sfnt_Table(freeTypeFace, tag, 0, 0, &tableSize))
         return nullptr;
 
-    RefPtr<SharedBuffer> buffer = SharedBuffer::create(tableSize);
-    if (buffer->size() != tableSize)
-        return nullptr;
-
+    Vector<char> data(tableSize);
     FT_ULong expectedTableSize = tableSize;
-    FT_Error error = FT_Load_Sfnt_Table(freeTypeFace, tag, 0, reinterpret_cast<FT_Byte*>(const_cast<char*>(buffer->data())), &tableSize);
+    FT_Error error = FT_Load_Sfnt_Table(freeTypeFace, tag, 0, reinterpret_cast<FT_Byte*>(data.data()), &tableSize);
     if (error || tableSize != expectedTableSize)
         return nullptr;
 
-    return buffer;
+    return SharedBuffer::create(WTFMove(data));
 }
 
 } // namespace WebCore

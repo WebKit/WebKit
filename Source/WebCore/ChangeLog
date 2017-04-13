@@ -1,3 +1,15 @@
+2017-04-13  Alex Christensen  <achristensen@webkit.org>
+
+        Remove unused SharedBuffer constructor
+        https://bugs.webkit.org/show_bug.cgi?id=170828
+
+        Reviewed by Brady Eidson.
+
+        * platform/SharedBuffer.cpp:
+        (WebCore::SharedBuffer::append):
+        * platform/SharedBuffer.h:
+        (WebCore::SharedBuffer::create):
+
 2017-04-13  Antti Koivisto  <antti@apple.com>
 
         Don't invalidate composition for style changes in non-composited layers
