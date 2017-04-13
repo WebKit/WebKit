@@ -31,24 +31,24 @@ enum UnionType { "node", "sequence", "dictionary" };
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
 ] interface TypeConversions {
     attribute long testLong;
-    [EnforceRange] attribute long testEnforceRangeLong;
+    attribute [EnforceRange] long testEnforceRangeLong;
     attribute unsigned long testUnsignedLong;
-    [EnforceRange] attribute unsigned long testEnforceRangeUnsignedLong;
+    attribute [EnforceRange] unsigned long testEnforceRangeUnsignedLong;
 
     attribute long long testLongLong;
-    [EnforceRange] attribute long long testEnforceRangeLongLong;
+    attribute [EnforceRange] long long testEnforceRangeLongLong;
     attribute unsigned long long testUnsignedLongLong;
-    [EnforceRange] attribute unsigned long long testEnforceRangeUnsignedLongLong;
+    attribute [EnforceRange] unsigned long long testEnforceRangeUnsignedLongLong;
 
     attribute byte testByte;
-    [EnforceRange] attribute byte testEnforceRangeByte;
+    attribute [EnforceRange] byte testEnforceRangeByte;
     attribute octet testOctet;
-    [EnforceRange] attribute octet testEnforceRangeOctet;
+    attribute [EnforceRange] octet testEnforceRangeOctet;
 
     attribute short testShort;
-    [EnforceRange] attribute short testEnforceRangeShort;
+    attribute [EnforceRange] short testEnforceRangeShort;
     attribute unsigned short testUnsignedShort;
-    [EnforceRange] attribute unsigned short testEnforceRangeUnsignedShort;
+    attribute [EnforceRange] unsigned short testEnforceRangeUnsignedShort;
 
     attribute DOMString testString;
     attribute ByteString testByteString;

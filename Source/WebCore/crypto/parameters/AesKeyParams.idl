@@ -31,5 +31,5 @@
     ImplementedAs=CryptoAlgorithmAesKeyParams
 ] dictionary AesKeyParams : CryptoAlgorithmParameters {
     // The length, in bits, of the key.
-    [EnforceRange] required unsigned short length;
+    required [EnforceRange] unsigned short length;
 };

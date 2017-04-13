@@ -53,7 +53,11 @@
 
     void unionArg(UNION_STRING_LONG unionArg);
 
-    void funcWithClamp([Clamp] ULONGLONG arg1, [Clamp] optional ULONGLONG arg2);
+    void funcWithClamp([Clamp] ULONGLONG arg1, optional [Clamp] ULONGLONG arg2);
+    void funcWithClampInTypedef(CLAMPED_LONG arg);
+
+    attribute [Clamp] ULONGLONG attributeWithClamp;
+    attribute CLAMPED_LONG attributeWithClampInTypedef;
 
     [Immutable] SVGPOINT immutablePointFunction();
 
@@ -75,6 +79,7 @@ typedef unsigned long long         ULONGLONG;
 typedef SerializedScriptValue      SCRIPT_VALUE;
 typedef sequence<long>             SEQUENCE_OF_LONGS;
 typedef long?                      NULLABLE_LONG;
+typedef [Clamp] long               CLAMPED_LONG;
 typedef SVGPoint                   SVGPOINT;
 typedef DOMString                  STRING;
 typedef sequence<DOMString>        SEQUENCE_OF_STRINGS;

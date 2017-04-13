@@ -1418,7 +1418,7 @@ sub GenerateDefaultValue
     my ($typeScope, $context, $type, $defaultValue) = @_;
 
     if ($codeGenerator->IsStringType($type)) {
-        my $useAtomicString = $context->extendedAttributes->{AtomicString};
+        my $useAtomicString = $type->extendedAttributes->{AtomicString};
         if ($defaultValue eq "null") {
             return $useAtomicString ? "nullAtom" : "String()";
         } elsif ($defaultValue eq "\"\"") {
@@ -5368,10 +5368,10 @@ sub GetIDLUnionMemberTypes
 
 sub GetBaseIDLType
 {
-    my ($interface, $type, $context) = @_;
+    my ($interface, $type) = @_;
 
-    if ($context && $context->extendedAttributes->{OverrideIDLType}) {
-        return $context->extendedAttributes->{OverrideIDLType};
+    if ($type->extendedAttributes->{OverrideIDLType}) {
+        return $type->extendedAttributes->{OverrideIDLType};
     }
 
     my %IDLTypes = (
@@ -5421,9 +5421,9 @@ sub GetBaseIDLType
 
 sub GetIDLType
 {
-    my ($interface, $type, $context) = @_;
+    my ($interface, $type) = @_;
 
-    my $baseIDLType = GetBaseIDLType($interface, $type, $context);
+    my $baseIDLType = GetBaseIDLType($interface, $type);
     return "IDLNullable<" . $baseIDLType . ">" if $type->isNullable;
     return $baseIDLType;
 }
@@ -5487,18 +5487,18 @@ sub ShouldPassArgumentByReference
 
 sub GetIntegerConversionConfiguration
 {
-    my $context = shift;
+    my $type = shift;
 
-    return "IntegerConversionConfiguration::EnforceRange" if $context->extendedAttributes->{EnforceRange};
-    return "IntegerConversionConfiguration::Clamp" if $context->extendedAttributes->{Clamp};
+    return "IntegerConversionConfiguration::EnforceRange" if $type->extendedAttributes->{EnforceRange};
+    return "IntegerConversionConfiguration::Clamp" if $type->extendedAttributes->{Clamp};
     return "IntegerConversionConfiguration::Normal";
 }
 
 sub GetStringConversionConfiguration
 {
-    my $context = shift;
+    my $type = shift;
 
-    return "StringConversionConfiguration::TreatNullAsEmptyString" if $context->extendedAttributes->{TreatNullAs} && $context->extendedAttributes->{TreatNullAs} eq "EmptyString";
+    return "StringConversionConfiguration::TreatNullAsEmptyString" if $type->extendedAttributes->{TreatNullAs} && $type->extendedAttributes->{TreatNullAs} eq "EmptyString";
     return "StringConversionConfiguration::Normal";
 }
 
@@ -5543,8 +5543,8 @@ sub JSValueToNative
     AddToImplIncludesForIDLType($type, $conditional);
 
     if ($type->name eq "DOMString") {
-        return ("AtomicString($value.toString($statePointer)->toExistingAtomicString($statePointer))", 1) if $context->extendedAttributes->{RequiresExistingAtomicString};
-        return ("$value.toString($statePointer)->toAtomicString($statePointer)", 1) if $context->extendedAttributes->{AtomicString};
+        return ("AtomicString($value.toString($statePointer)->toExistingAtomicString($statePointer))", 1) if $type->extendedAttributes->{RequiresExistingAtomicString};
+        return ("$value.toString($statePointer)->toAtomicString($statePointer)", 1) if $type->extendedAttributes->{AtomicString};
     }
 
     # parseEnumeration<> returns a std::optional. For dictionary members we need convert<IDLEnumeration>() which guarantee
@@ -5562,8 +5562,8 @@ sub JSValueToNative
     push(@conversionArguments, $value);
     push(@conversionArguments, $thisObjectReference) if JSValueToNativeDOMConvertNeedsThisObject($type);
     push(@conversionArguments, $globalObjectReference) if JSValueToNativeDOMConvertNeedsGlobalObject($type);
-    push(@conversionArguments, GetIntegerConversionConfiguration($context)) if $codeGenerator->IsIntegerType($type);
-    push(@conversionArguments, GetStringConversionConfiguration($context)) if $codeGenerator->IsStringType($type);
+    push(@conversionArguments, GetIntegerConversionConfiguration($type)) if $codeGenerator->IsIntegerType($type);
+    push(@conversionArguments, GetStringConversionConfiguration($type)) if $codeGenerator->IsStringType($type);
     push(@conversionArguments, $exceptionThrower) if $exceptionThrower;
 
     return ("convert<$IDLType>(" . join(", ", @conversionArguments) . ")", 1);
@@ -5587,8 +5587,8 @@ sub UnsafeToNative
     # FIXME: Support more types.
 
     if ($type->name eq "DOMString") {
-        return ("AtomicString($value->toExistingAtomicString($statePointer))", 1) if $context->extendedAttributes->{RequiresExistingAtomicString};
-        return ("$value->toAtomicString($statePointer)", 1) if $context->extendedAttributes->{AtomicString};
+        return ("AtomicString($value->toExistingAtomicString($statePointer))", 1) if $type->extendedAttributes->{RequiresExistingAtomicString};
+        return ("$value->toAtomicString($statePointer)", 1) if $type->extendedAttributes->{AtomicString};
     }
 
     AddToImplIncludes("DOMJITIDLConvert.h");
@@ -5600,8 +5600,8 @@ sub UnsafeToNative
     push(@conversionArguments, "$value");
 
     my @conversionStaticArguments = ();
-    push(@conversionStaticArguments, GetIntegerConversionConfiguration($context)) if $codeGenerator->IsIntegerType($type);
-    push(@conversionStaticArguments, GetStringConversionConfiguration($context)) if $codeGenerator->IsStringType($type);
+    push(@conversionStaticArguments, GetIntegerConversionConfiguration($type)) if $codeGenerator->IsIntegerType($type);
+    push(@conversionStaticArguments, GetStringConversionConfiguration($type)) if $codeGenerator->IsStringType($type);
 
     if (scalar(@conversionStaticArguments) > 0) {
         return ("DOMJIT::DirectConverter<$IDLType>::directConvert<" . join(", ", @conversionStaticArguments) . ">(" . join(", ", @conversionArguments) . ")", 1);
@@ -5611,13 +5611,13 @@ sub UnsafeToNative
 
 sub NativeToJSValueDOMConvertNeedsState
 {
-    my ($type, $context) = @_;
+    my ($type) = @_;
 
     # FIXME: We need a more robust way to specify this requirement so as not
     # to require specializing each type. Perhaps just requiring all override
     # types to take both state and the global object would work?
-    if ($context->extendedAttributes->{OverrideIDLType}) {
-        my $overrideTypeName = $context->extendedAttributes->{OverrideIDLType};
+    if ($type->extendedAttributes->{OverrideIDLType}) {
+        my $overrideTypeName = $type->extendedAttributes->{OverrideIDLType};
         return 1 if $overrideTypeName eq "IDLIDBKey";
         return 1 if $overrideTypeName eq "IDLWebGLAny";
 
@@ -5643,13 +5643,13 @@ sub NativeToJSValueDOMConvertNeedsState
 
 sub NativeToJSValueDOMConvertNeedsGlobalObject
 {
-    my ($type, $context) = @_;
+    my ($type) = @_;
     
     # FIXME: We need a more robust way to specify this requirement so as not
     # to require specializing each type. Perhaps just requiring all override
     # types to take both state and the global object would work?
-    if ($context->extendedAttributes->{OverrideIDLType}) {
-        my $overrideTypeName = $context->extendedAttributes->{OverrideIDLType};
+    if ($type->extendedAttributes->{OverrideIDLType}) {
+        my $overrideTypeName = $type->extendedAttributes->{OverrideIDLType};
         return 1 if $overrideTypeName eq "IDLIDBKey";
         return 1 if $overrideTypeName eq "IDLWebGLAny";
 
@@ -5722,11 +5722,11 @@ sub NativeToJSValue
         $value = "BindingSecurity::checkSecurityForNode($stateReference, $value)";
     }
 
-    my $IDLType = GetIDLType($interface, $type, $context);
+    my $IDLType = GetIDLType($interface, $type);
 
     my @conversionArguments = ();
-    push(@conversionArguments, $stateReference) if NativeToJSValueDOMConvertNeedsState($type, $context) || $mayThrowException;
-    push(@conversionArguments, $globalObjectReference) if NativeToJSValueDOMConvertNeedsGlobalObject($type, $context);
+    push(@conversionArguments, $stateReference) if NativeToJSValueDOMConvertNeedsState($type) || $mayThrowException;
+    push(@conversionArguments, $globalObjectReference) if NativeToJSValueDOMConvertNeedsGlobalObject($type);
     push(@conversionArguments, "throwScope") if $mayThrowException;
     push(@conversionArguments, $value);
 

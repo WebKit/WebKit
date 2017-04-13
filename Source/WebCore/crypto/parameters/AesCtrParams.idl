@@ -36,5 +36,5 @@
     required BufferSource counter;
     // The length, in bits, of the rightmost part of the counter block
     // that is incremented.
-    [EnforceRange] required octet length;
+    required [EnforceRange] octet length;
 };

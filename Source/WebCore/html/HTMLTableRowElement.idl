@@ -23,7 +23,7 @@ interface HTMLTableRowElement : HTMLElement {
     readonly attribute long sectionRowIndex;
     readonly attribute HTMLCollection cells;
     [Reflect] attribute DOMString align;
-    [Reflect, TreatNullAs=EmptyString] attribute DOMString bgColor;
+    [Reflect] attribute [TreatNullAs=EmptyString] DOMString bgColor;
     [Reflect=char] attribute DOMString ch;
     [Reflect=charoff] attribute DOMString chOff;
     [Reflect] attribute DOMString vAlign;

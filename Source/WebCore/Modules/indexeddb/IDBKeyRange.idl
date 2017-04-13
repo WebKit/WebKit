@@ -27,8 +27,8 @@
     Conditional=INDEXED_DATABASE,
     ImplementationLacksVTable,
 ] interface IDBKeyRange {
-    [OverrideIDLType=IDLIDBKey] readonly attribute any lower;
-    [OverrideIDLType=IDLIDBKey] readonly attribute any upper;
+    readonly attribute [OverrideIDLType=IDLIDBKey] any lower;
+    readonly attribute [OverrideIDLType=IDLIDBKey] any upper;
     readonly attribute boolean lowerOpen;
     readonly attribute boolean upperOpen;
 

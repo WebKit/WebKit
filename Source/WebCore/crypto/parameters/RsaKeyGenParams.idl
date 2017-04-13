@@ -28,7 +28,7 @@
     ImplementedAs=CryptoAlgorithmRsaKeyGenParams
 ] dictionary RsaKeyGenParams : CryptoAlgorithmParameters {
     // The length, in bits, of the RSA modulus
-    [EnforceRange] required unsigned long modulusLength;
+    required [EnforceRange] unsigned long modulusLength;
     // The RSA public exponent
     required Uint8Array publicExponent;
 };

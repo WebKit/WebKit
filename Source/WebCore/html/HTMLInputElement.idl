@@ -59,7 +59,7 @@
     attribute DOMString type; // readonly dropped as part of DOM level 2
     attribute DOMString defaultValue;
     // See the discussion in https://bugs.webkit.org/show_bug.cgi?id=100085
-    [TreatNullAs=EmptyString, SetterMayThrowException] attribute DOMString value;
+    [SetterMayThrowException] attribute [TreatNullAs=EmptyString] DOMString value;
     [SetterMayThrowException] attribute Date? valueAsDate;
     [SetterMayThrowException] attribute unrestricted double valueAsNumber;
 

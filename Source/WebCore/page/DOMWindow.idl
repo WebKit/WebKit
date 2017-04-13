@@ -70,7 +70,7 @@
     void print();
     void stop();
 
-    [Custom] DOMWindow open(optional USVString url = "about:blank", optional DOMString target = "_blank", [TreatNullAs=EmptyString] optional DOMString features = "");
+    [Custom] DOMWindow open(optional USVString url = "about:blank", optional DOMString target = "_blank", optional [TreatNullAs=EmptyString] DOMString features = "");
 
     [Custom] any showModalDialog(DOMString url, optional any dialogArgs, optional DOMString featureArgs);
 

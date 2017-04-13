@@ -28,8 +28,8 @@ interface HTMLFrameElement : HTMLElement {
     [CheckSecurityForNode] readonly attribute Document contentDocument;
     readonly attribute DOMWindow contentWindow;
 
-    [Reflect, TreatNullAs=EmptyString] attribute DOMString marginHeight;
-    [Reflect, TreatNullAs=EmptyString] attribute DOMString marginWidth;
+    [Reflect] attribute [TreatNullAs=EmptyString] DOMString marginHeight;
+    [Reflect] attribute [TreatNullAs=EmptyString] DOMString marginWidth;
 
     [CheckSecurityForNode, MayThrowException] Document getSVGDocument();
 

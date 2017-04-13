@@ -26,10 +26,10 @@ interface HTMLTableElement : HTMLElement {
     readonly attribute HTMLCollection rows;
     readonly attribute HTMLCollection tBodies;
     [Reflect] attribute DOMString align;
-    [Reflect, TreatNullAs=EmptyString] attribute DOMString bgColor;
+    [Reflect] attribute [TreatNullAs=EmptyString] DOMString bgColor;
     [Reflect] attribute DOMString border;
-    [Reflect, TreatNullAs=EmptyString] attribute DOMString cellPadding;
-    [Reflect, TreatNullAs=EmptyString] attribute DOMString cellSpacing;
+    [Reflect] attribute [TreatNullAs=EmptyString] DOMString cellPadding;
+    [Reflect] attribute [TreatNullAs=EmptyString] DOMString cellSpacing;
 
     [Reflect] attribute DOMString frame;
 

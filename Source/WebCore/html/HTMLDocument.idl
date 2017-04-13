@@ -38,9 +38,9 @@
     void releaseEvents();
 
     // Deprecated attributes.
-    [TreatNullAs=EmptyString] attribute DOMString bgColor;
-    [TreatNullAs=EmptyString] attribute DOMString fgColor;
-    [TreatNullAs=EmptyString] attribute DOMString alinkColor;
-    [TreatNullAs=EmptyString] attribute DOMString linkColor;
-    [TreatNullAs=EmptyString] attribute DOMString vlinkColor;
+    attribute [TreatNullAs=EmptyString] DOMString bgColor;
+    attribute [TreatNullAs=EmptyString] DOMString fgColor;
+    attribute [TreatNullAs=EmptyString] DOMString alinkColor;
+    attribute [TreatNullAs=EmptyString] DOMString linkColor;
+    attribute [TreatNullAs=EmptyString] DOMString vlinkColor;
 };

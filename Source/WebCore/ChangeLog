@@ -1,3 +1,100 @@
+2017-04-13  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Add support for extended attributes on types in WebIDL
+        https://bugs.webkit.org/show_bug.cgi?id=170759
+
+        Reviewed by Alex Christensen.
+
+        - Update parsing for WebIDL grammar changes.
+        - Adds an extended attributes hash to IDLType that is filled according
+          to the WebIDL annotated type rules.
+        - Updates code generation to take advantage of IDLType's extended attribute
+          simplifying some existing code.
+        - Update IDLs in the project to adhere to the new grammar.
+          
+        * Modules/indexeddb/IDBFactory.idl:
+        * Modules/indexeddb/IDBIndex.idl:
+        * Modules/indexeddb/IDBKeyRange.idl:
+        * Modules/indexeddb/IDBObjectStore.idl:
+        * Modules/websockets/WebSocket.idl:
+        * crypto/parameters/AesCtrParams.idl:
+        * crypto/parameters/AesKeyParams.idl:
+        * crypto/parameters/Pbkdf2Params.idl:
+        * crypto/parameters/RsaKeyGenParams.idl:
+        * testing/TypeConversions.idl:
+        Update for grammar change.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateDefaultValue):
+        (GetBaseIDLType):
+        (GetIDLType):
+        (GetIntegerConversionConfiguration):
+        (GetStringConversionConfiguration):
+        (JSValueToNative):
+        (UnsafeToNative):
+        (NativeToJSValueDOMConvertNeedsState):
+        (NativeToJSValueDOMConvertNeedsGlobalObject):
+        (NativeToJSValue):
+        Remove the need for the type's context in many places since type
+        associated extended attributes are now on the type itself.
+
+        * bindings/scripts/IDLParser.pm:
+        (copyExtendedAttributes):
+        Move up so it can be reused.
+
+        (isExtendedAttributeApplicableToTypes):
+        Add temporary predicated to indicate which attributes should be moved to types. This
+        logic should be moved to IDLAttributes.txt.
+
+        (moveExtendedAttributesApplicableToTypes):
+        Add helper to move attributes to the type's extended attributes hash if applicable.
+
+        (makeSimpleType):
+        Use initializer syntax to simplify.
+
+        (cloneType):
+        Support cloning types with extended attributes.
+
+        (typeByApplyingTypedefs):
+        When constructing the clone for a typedef application, move any applicable attributes
+        to the clone from the original type.
+
+        (parseDictionaryMember):
+        (parseTypedef):
+        (parseAttributeOrOperationRest):
+        (parseAttributeRest):
+        (parseOperationOrIterator):
+        (parseSpecialOperation):
+        (parseOptionalIterableInterface):
+        (parseMapLikeProperties):
+        (parseOptionalOrRequiredArgument):
+        (parseType):
+        (parseTypeWithExtendedAttributes):
+        (parseUnionMemberType):
+        (parseNonAnyType):
+        Update for new grammar, moving applicable attributes eagerly.
+
+        (assertNoExtendedAttributesInTypedef): Deleted.
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::jsTestObjPrototypeFunctionClassMethodWithClampOnOptional):
+        (WebCore::jsTestObjPrototypeFunctionClassMethodWithClampOnOptionalCaller):
+        (WebCore::jsTestObjPrototypeFunctionClassMethodWithEnforceRangeOnOptional):
+        (WebCore::jsTestObjPrototypeFunctionClassMethodWithEnforceRangeOnOptionalCaller):
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        (WebCore::jsTestTypedefsAttributeWithClamp):
+        (WebCore::jsTestTypedefsAttributeWithClampGetter):
+        (WebCore::jsTestTypedefsAttributeWithClampInTypedef):
+        (WebCore::jsTestTypedefsAttributeWithClampInTypedefGetter):
+        (WebCore::setJSTestTypedefsAttributeWithClamp):
+        (WebCore::setJSTestTypedefsAttributeWithClampFunction):
+        (WebCore::setJSTestTypedefsAttributeWithClampInTypedef):
+        (WebCore::setJSTestTypedefsAttributeWithClampInTypedefFunction):
+        (WebCore::jsTestTypedefsPrototypeFunctionFuncWithClampInTypedef):
+        (WebCore::jsTestTypedefsPrototypeFunctionFuncWithClampInTypedefCaller):
+        * bindings/scripts/test/TestObj.idl:
+        * bindings/scripts/test/TestTypedefs.idl:
+        Update for new grammar. Add some new tests for uncovered cases.
+
 2017-04-13  Alex Christensen  <achristensen@webkit.org>
 
         Fix CMake build

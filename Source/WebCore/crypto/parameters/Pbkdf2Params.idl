@@ -28,6 +28,6 @@
     ImplementedAs=CryptoAlgorithmPbkdf2Params,
 ] dictionary Pbkdf2Params : CryptoAlgorithmParameters {
     required BufferSource salt;
-    [EnforceRange] required unsigned long iterations;
+    required [EnforceRange] unsigned long iterations;
     required any hash;
 };

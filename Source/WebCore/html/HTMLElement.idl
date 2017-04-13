@@ -38,8 +38,8 @@
     [CEReactions, Reflect] attribute boolean hidden;
     [CEReactions, Reflect] attribute DOMString accessKey;
 
-    [CEReactions, SetterMayThrowException, TreatNullAs=EmptyString] attribute DOMString innerText;
-    [CEReactions, SetterMayThrowException, TreatNullAs=EmptyString] attribute DOMString outerText;
+    [CEReactions, SetterMayThrowException] attribute [TreatNullAs=EmptyString] DOMString innerText;
+    [CEReactions, SetterMayThrowException] attribute [TreatNullAs=EmptyString] DOMString outerText;
 
     [CEReactions, SetterMayThrowException] attribute DOMString contentEditable;
     readonly attribute boolean isContentEditable;
@@ -47,7 +47,7 @@
     [CEReactions] attribute boolean spellcheck;
 
     [Conditional=IOS_AUTOCORRECT_AND_AUTOCAPITALIZE] attribute boolean autocorrect;
-    [Conditional=IOS_AUTOCORRECT_AND_AUTOCAPITALIZE, TreatNullAs=EmptyString] attribute DOMString autocapitalize;
+    [Conditional=IOS_AUTOCORRECT_AND_AUTOCAPITALIZE] attribute [TreatNullAs=EmptyString] DOMString autocapitalize;
 
     void click();
 

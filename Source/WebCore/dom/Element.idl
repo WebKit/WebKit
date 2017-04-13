@@ -97,8 +97,8 @@
     sequence<DOMString> getAttributeNames();
 
     HTMLCollection getElementsByClassName(DOMString name);
-    [CEReactions, TreatNullAs=EmptyString, SetterMayThrowException] attribute DOMString innerHTML;
-    [CEReactions, TreatNullAs=EmptyString, SetterMayThrowException] attribute DOMString outerHTML;
+    [CEReactions, SetterMayThrowException] attribute [TreatNullAs=EmptyString] DOMString innerHTML;
+    [CEReactions, SetterMayThrowException] attribute [TreatNullAs=EmptyString] DOMString outerHTML;
 
     [CEReactions, Reflect=class] attribute DOMString className;
     [PutForwards=value] readonly attribute DOMTokenList classList;

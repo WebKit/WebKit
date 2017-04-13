@@ -27,7 +27,7 @@
     [Reflect] attribute DOMString name;
     [Reflect] attribute DOMString align;
     [Reflect] attribute DOMString alt;
-    [Reflect, TreatNullAs=EmptyString] attribute DOMString border;
+    [Reflect] attribute [TreatNullAs=EmptyString] DOMString border;
     attribute DOMString? crossOrigin;
     attribute unsigned long height;
     [Reflect] attribute unsigned long hspace;
