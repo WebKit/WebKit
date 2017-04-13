@@ -1,5 +1,20 @@
 2017-04-13  Jonathan Bedard  <jbedard@apple.com>
 
+        webkitpy: Ignore previously launched pid when system is under stress
+        https://bugs.webkit.org/show_bug.cgi?id=170741
+
+        Reviewed by David Kilzer.
+
+        We have seen cases where xcrun simctl launch will return a pid of a previous
+        process and the process will appear to be running even though it is crashing.
+        Ensure that the PID that simulator_process is receiving is not the pid of the
+        previously run process.
+
+        * Scripts/webkitpy/port/simulator_process.py:
+        (SimulatorProcess._start): Check to make sure we aren't receiving an old PID.
+
+2017-04-13  Jonathan Bedard  <jbedard@apple.com>
+
         Build ImageDiff with host SDK
         https://bugs.webkit.org/show_bug.cgi?id=168531
 

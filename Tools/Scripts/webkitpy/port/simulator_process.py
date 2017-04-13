@@ -90,11 +90,27 @@ class SimulatorProcess(ServerProcess):
         # Each device has a listening socket intitilaized during the port's setup_test_run.
         # 3 client connections will be accepted for stdin, stdout and stderr in that order.
         self._target_host.listening_socket.listen(3)
-        self._pid = self._target_host.launch_app(self._bundle_id, self._cmd[1:], env=self._env)
+
+        try:
+
+            def launch_failure_handler(signum, frame):
+                assert signum == signal.SIGALRM
+                raise RuntimeError('Faild to launch {}, kept receiving old PID'.format(os.path.basename(self._cmd[0])))
+
+            signal.signal(signal.SIGALRM, launch_failure_handler)
+            signal.alarm(300)  # In seconds
+            pid = self._pid
+            while pid == self._pid:
+                if pid:
+                    self._target_host.executive.kill_process(pid)
+                pid = self._target_host.launch_app(self._bundle_id, self._cmd[1:], env=self._env)
+            self._pid = pid
+        finally:
+            signal.alarm(0)
 
         def handler(signum, frame):
             assert signum == signal.SIGALRM
-            raise Exception('Timed out waiting for pid {} to connect at port {}'.format(self._pid, self._target_host.listening_port()))
+            raise RuntimeError('Timed out waiting for pid {} to connect at port {}'.format(self._pid, self._target_host.listening_port()))
         signal.signal(signal.SIGALRM, handler)
         signal.alarm(6)  # In seconds
 
