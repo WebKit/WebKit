@@ -1584,3 +1584,5 @@ webkit.org/b/168390 fast/images/slower-animation-than-decoding-image.html [ Pass
 webkit.org/b/170493 [ ElCapitan ] imported/w3c/web-platform-tests/fetch/api/response/response-trailer.html [ Pass Failure ]
 
 webkit.org/b/170831 media/track/track-cue-rendering-rtl.html [ Pass Timeout ]
+
+webkit.org/b/165553 media/media-controls-timeline-updates-when-hovered.html [ Pass Failure ]
