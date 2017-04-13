@@ -45,7 +45,7 @@ static EncodedJSValue JSC_HOST_CALL IntlCollatorPrototypeFuncResolvedOptions(Exe
 
 namespace JSC {
 
-const ClassInfo IntlCollatorPrototype::s_info = { "Object", &IntlCollator::s_info, &collatorPrototypeTable, CREATE_METHOD_TABLE(IntlCollatorPrototype) };
+const ClassInfo IntlCollatorPrototype::s_info = { "Object", &Base::s_info, &collatorPrototypeTable, CREATE_METHOD_TABLE(IntlCollatorPrototype) };
 
 /* Source for IntlCollatorPrototype.lut.h
 @begin collatorPrototypeTable
@@ -67,7 +67,7 @@ Structure* IntlCollatorPrototype::createStructure(VM& vm, JSGlobalObject* global
 }
 
 IntlCollatorPrototype::IntlCollatorPrototype(VM& vm, Structure* structure)
-    : IntlCollator(vm, structure)
+    : Base(vm, structure)
 {
 }
 

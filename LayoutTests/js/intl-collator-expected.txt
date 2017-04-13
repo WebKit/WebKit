@@ -125,28 +125,27 @@ PASS Intl.Collator.supportedLocalesOf('x-12345-12345-en-US') did not throw excep
 PASS Intl.Collator.supportedLocalesOf('x-en-US-12345-12345') did not throw exception.
 PASS Intl.Collator.supportedLocalesOf('x-en-u-foo') did not throw exception.
 PASS Intl.Collator.supportedLocalesOf('x-en-u-foo-u-bar') did not throw exception.
-PASS Intl.Collator.prototype.constructor is Intl.Collator
-PASS Intl.Collator.prototype.compare is an instance of Function
+PASS Intl.Collator.prototype.constructor is Object
+PASS Object.getPrototypeOf(Intl.Collator.prototype) is Object.prototype
+PASS Object.prototype.toString.call(Intl.Collator.prototype) is '[object Object]'
+PASS defaultCollator.compare is an instance of Function
 PASS Object.getOwnPropertyDescriptor(Intl.Collator.prototype, 'compare').get is an instance of Function
 PASS Object.getOwnPropertyDescriptor(Intl.Collator.prototype, 'compare').set is undefined
 PASS Object.getOwnPropertyDescriptor(Intl.Collator.prototype, 'compare').enumerable is false
 PASS Object.getOwnPropertyDescriptor(Intl.Collator.prototype, 'compare').configurable is true
-PASS Intl.Collator.prototype.compare.length is 2
+PASS Intl.Collator().compare.length is 2
+PASS Intl.Collator.prototype.compare threw exception TypeError: Intl.Collator.prototype.compare called on value that's not an object initialized as a Collator.
 PASS Object.defineProperty({}, 'compare', Object.getOwnPropertyDescriptor(Intl.Collator.prototype, 'compare')).compare threw exception TypeError: Intl.Collator.prototype.compare called on value that's not an object initialized as a Collator.
-PASS Intl.Collator.prototype.compare !== Intl.Collator().compare is true
 PASS new Intl.Collator().compare !== new Intl.Collator().compare is true
-PASS Intl.Collator.prototype.compare({ toString() { throw Error('6') } }, { toString() { ++badCalls; return ''; } }) threw exception Error: 6.
+PASS defaultCollator.compare({ toString() { throw Error('6') } }, { toString() { ++badCalls; return ''; } }) threw exception Error: 6.
 PASS badCalls is 0
-PASS Intl.Collator.prototype.compare('a', { toString() { throw Error('8') } }) threw exception Error: 8.
-PASS Intl.Collator.prototype.compare.call(null, 'a', 'b') is -1
-PASS Intl.Collator.prototype.compare.call(Intl.Collator('en', { sensitivity:'base' }), 'A', 'a') is 1
-PASS Intl.Collator.prototype.compare.call(5, 'a', 'b') is -1
-PASS new Intl.Collator().compare.call(null, 'a', 'b') is -1
-PASS new Intl.Collator().compare.call(Intl.Collator('en', { sensitivity:'base' }), 'A', 'a') is 1
-PASS new Intl.Collator().compare.call(5, 'a', 'b') is -1
-PASS Intl.Collator.prototype.compare() is 0
-PASS Intl.Collator.prototype.compare('undefinec') is -1
-PASS Intl.Collator.prototype.compare('undefinee') is 1
+PASS defaultCollator.compare('a', { toString() { throw Error('8') } }) threw exception Error: 8.
+PASS defaultCollator.compare.call(null, 'a', 'b') is -1
+PASS defaultCollator.compare.call(Intl.Collator('en', { sensitivity:'base' }), 'A', 'a') is 1
+PASS defaultCollator.compare.call(5, 'a', 'b') is -1
+PASS defaultCollator.compare() is 0
+PASS defaultCollator.compare('undefinec') is -1
+PASS defaultCollator.compare('undefinee') is 1
 PASS Intl.Collator('en').compare('ä', 'z') is -1
 PASS Intl.Collator('sv').compare('ä', 'z') is 1
 PASS Intl.Collator('de').compare('ö', 'od') is -1
@@ -242,10 +241,10 @@ PASS ignorePunctuationCompare('ab', 'a b') is 0
 PASS Intl.Collator('en').compare('Ä', 'Ä') is 0
 PASS Intl.Collator('en').compare('Å̧', 'Å̧') is 0
 PASS Intl.Collator.prototype.resolvedOptions.length is 0
-PASS Intl.Collator.prototype.resolvedOptions() is an instance of Object
-PASS Intl.Collator.prototype.resolvedOptions() === Intl.Collator.prototype.resolvedOptions() is false
+PASS defaultCollator.resolvedOptions() is an instance of Object
+PASS defaultCollator.resolvedOptions() === defaultCollator.resolvedOptions() is false
 PASS Intl.Collator.prototype.resolvedOptions.call(5) threw exception TypeError: Intl.Collator.prototype.resolvedOptions called on value that's not an object initialized as a Collator.
-PASS var options = Intl.Collator.prototype.resolvedOptions(); delete options['locale']; JSON.stringify(options) is '{"usage":"sort","sensitivity":"variant","ignorePunctuation":false,"collation":"default","numeric":false}'
+PASS var options = defaultCollator.resolvedOptions(); delete options['locale']; JSON.stringify(options) is '{"usage":"sort","sensitivity":"variant","ignorePunctuation":false,"collation":"default","numeric":false}'
 PASS successfullyParsed is true
 
 TEST COMPLETE

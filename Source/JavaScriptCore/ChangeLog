@@ -1,3 +1,24 @@
+2017-04-13  Andy VanWagoner  <thetalecrafter@gmail.com>
+
+        Change Intl prototypes to plain objects
+        https://bugs.webkit.org/show_bug.cgi?id=168178
+
+        Reviewed by JF Bastien.
+
+        * builtins/StringPrototype.js:
+        (localeCompare): Create default Collator once instead of using prototype.
+        * runtime/IntlCollatorPrototype.cpp:
+        (JSC::IntlCollatorPrototype::IntlCollatorPrototype):
+        * runtime/IntlCollatorPrototype.h:
+        * runtime/IntlDateTimeFormatPrototype.cpp:
+        (JSC::IntlDateTimeFormatPrototype::IntlDateTimeFormatPrototype):
+        * runtime/IntlDateTimeFormatPrototype.h:
+        * runtime/IntlNumberFormatPrototype.cpp:
+        (JSC::IntlNumberFormatPrototype::IntlNumberFormatPrototype):
+        * runtime/IntlNumberFormatPrototype.h:
+        * runtime/IntlObject.cpp:
+        (JSC::IntlObject::finishCreation): Don't set constructor on each prototype.
+
 2017-04-13  Oliver Hunt  <oliver@apple.com>
 
         allocationSize should use safe arithmetic by default

@@ -101,13 +101,16 @@ for (var validLanguageTag of validLanguageTags) {
 
 // 12.3 Properties of the Intl.DateTimeFormat Prototype Object
 
-// The value of Intl.DateTimeFormat.prototype.constructor is %DateTimeFormat%.
-shouldBe("Intl.DateTimeFormat.prototype.constructor", "Intl.DateTimeFormat");
+// is a plain object
+shouldBe("Intl.DateTimeFormat.prototype.constructor", "Object");
+shouldBe("Object.getPrototypeOf(Intl.DateTimeFormat.prototype)", "Object.prototype");
+shouldBe("Object.prototype.toString.call(Intl.DateTimeFormat.prototype)", "'[object Object]'");
 
 // 12.3.3 Intl.DateTimeFormat.prototype.format
 
 // This named accessor property returns a function that formats a date according to the effective locale and the formatting options of this DateTimeFormat object.
-shouldBeType("Intl.DateTimeFormat.prototype.format", "Function");
+var defaultDTFormat = Intl.DateTimeFormat();
+shouldBeType("defaultDTFormat.format", "Function");
 
 // The value of the [[Get]] attribute is a function
 shouldBeType("Object.getOwnPropertyDescriptor(Intl.DateTimeFormat.prototype, 'format').get", "Function");
@@ -120,13 +123,13 @@ shouldBeFalse("Object.getOwnPropertyDescriptor(Intl.DateTimeFormat.prototype, 'f
 shouldBeTrue("Object.getOwnPropertyDescriptor(Intl.DateTimeFormat.prototype, 'format').configurable");
 
 // The value of F’s length property is 1.
-shouldBe("Intl.DateTimeFormat.prototype.format.length", "1");
+shouldBe("defaultDTFormat.format.length", "1");
 
 // Throws on non-DateTimeFormat this.
+shouldThrow("Intl.DateTimeFormat.prototype.format", "'TypeError: Intl.DateTimeFormat.prototype.format called on value that\\'s not an object initialized as a DateTimeFormat'");
 shouldThrow("Object.defineProperty({}, 'format', Object.getOwnPropertyDescriptor(Intl.DateTimeFormat.prototype, 'format')).format", "'TypeError: Intl.DateTimeFormat.prototype.format called on value that\\'s not an object initialized as a DateTimeFormat'");
 
 // The format function is unique per instance.
-shouldBeTrue("Intl.DateTimeFormat.prototype.format !== Intl.DateTimeFormat().format");
 shouldBeTrue("new Intl.DateTimeFormat().format !== new Intl.DateTimeFormat().format");
 
 // 12.3.4 DateTime Format Functions
@@ -140,22 +143,19 @@ shouldBeTrue("new Intl.DateTimeFormat().format !== new Intl.DateTimeFormat().for
 // 4. Else
 // a. Let x be ToNumber(date).
 // b. ReturnIfAbrupt(x).
-shouldThrow("Intl.DateTimeFormat.prototype.format({ valueOf() { throw Error('4b') } })", "'Error: 4b'");
+shouldThrow("defaultDTFormat.format({ valueOf() { throw Error('4b') } })", "'Error: 4b'");
 
 // 12.3.4 FormatDateTime abstract operation
 
 // 1. If x is not a finite Number, then throw a RangeError exception.
-shouldThrow("Intl.DateTimeFormat.prototype.format(Infinity)", "'RangeError: date value is not finite in DateTimeFormat format()'");
+shouldThrow("defaultDTFormat.format(Infinity)", "'RangeError: date value is not finite in DateTimeFormat format()'");
 
 // Format is bound, so calling with alternate "this" has no effect.
-shouldBe("Intl.DateTimeFormat.prototype.format.call(null, 0)", "Intl.DateTimeFormat().format(0)");
-shouldBe("Intl.DateTimeFormat.prototype.format.call(Intl.DateTimeFormat('ar'), 0)", "Intl.DateTimeFormat().format(0)");
-shouldBe("Intl.DateTimeFormat.prototype.format.call(5, 0)", "Intl.DateTimeFormat().format(0)");
-shouldBe("new Intl.DateTimeFormat().format.call(null, 0)", "Intl.DateTimeFormat().format(0)");
-shouldBe("new Intl.DateTimeFormat().format.call(Intl.DateTimeFormat('ar'), 0)", "Intl.DateTimeFormat().format(0)");
-shouldBe("new Intl.DateTimeFormat().format.call(5, 0)", "Intl.DateTimeFormat().format(0)");
+shouldBe("defaultDTFormat.format.call(null, 0)", "Intl.DateTimeFormat().format(0)");
+shouldBe("defaultDTFormat.format.call(Intl.DateTimeFormat('ar'), 0)", "Intl.DateTimeFormat().format(0)");
+shouldBe("defaultDTFormat.format.call(5, 0)", "Intl.DateTimeFormat().format(0)");
 
-shouldBeTrue("typeof Intl.DateTimeFormat.prototype.format() === 'string'");
+shouldBeTrue("typeof defaultDTFormat.format() === 'string'");
 shouldBe("Intl.DateTimeFormat('en', { timeZone: 'America/Denver' }).format(new Date(1451099872641))", "'12/25/2015'");
 
 // 12.3.5 Intl.DateTimeFormat.prototype.resolvedOptions ()
@@ -163,28 +163,13 @@ shouldBe("Intl.DateTimeFormat('en', { timeZone: 'America/Denver' }).format(new D
 shouldBe("Intl.DateTimeFormat.prototype.resolvedOptions.length", "0");
 
 // Returns a new object whose properties and attributes are set as if constructed by an object literal.
-shouldBeType("Intl.DateTimeFormat.prototype.resolvedOptions()", "Object");
-
-// The Intl.DateTimeFormat prototype object is itself an %DateTimeFormat% instance, whose internal slots are set as if it had been constructed by the expression Construct(%DateTimeFormat%).
-shouldBe("Intl.DateTimeFormat.prototype.resolvedOptions().locale", "new Intl.DateTimeFormat().resolvedOptions().locale");
-shouldBe("Intl.DateTimeFormat.prototype.resolvedOptions().timeZone", "new Intl.DateTimeFormat().resolvedOptions().timeZone");
-shouldBe("Intl.DateTimeFormat.prototype.resolvedOptions().calendar", "new Intl.DateTimeFormat().resolvedOptions().calendar");
-shouldBe("Intl.DateTimeFormat.prototype.resolvedOptions().numberingSystem", "new Intl.DateTimeFormat().resolvedOptions().numberingSystem");
-shouldBe("Intl.DateTimeFormat.prototype.resolvedOptions().weekday", "new Intl.DateTimeFormat().resolvedOptions().weekday");
-shouldBe("Intl.DateTimeFormat.prototype.resolvedOptions().era", "new Intl.DateTimeFormat().resolvedOptions().era");
-shouldBe("Intl.DateTimeFormat.prototype.resolvedOptions().year", "new Intl.DateTimeFormat().resolvedOptions().year");
-shouldBe("Intl.DateTimeFormat.prototype.resolvedOptions().month", "new Intl.DateTimeFormat().resolvedOptions().month");
-shouldBe("Intl.DateTimeFormat.prototype.resolvedOptions().day", "new Intl.DateTimeFormat().resolvedOptions().day");
-shouldBe("Intl.DateTimeFormat.prototype.resolvedOptions().hour", "new Intl.DateTimeFormat().resolvedOptions().hour");
-shouldBe("Intl.DateTimeFormat.prototype.resolvedOptions().hour12", "new Intl.DateTimeFormat().resolvedOptions().hour12");
-shouldBe("Intl.DateTimeFormat.prototype.resolvedOptions().minute", "new Intl.DateTimeFormat().resolvedOptions().minute");
-shouldBe("Intl.DateTimeFormat.prototype.resolvedOptions().second", "new Intl.DateTimeFormat().resolvedOptions().second");
-shouldBe("Intl.DateTimeFormat.prototype.resolvedOptions().timeZoneName", "new Intl.DateTimeFormat().resolvedOptions().timeZoneName");
+shouldBeType("defaultDTFormat.resolvedOptions()", "Object");
 
 // Returns a new object each time.
-shouldBeFalse("Intl.DateTimeFormat.prototype.resolvedOptions() === Intl.DateTimeFormat.prototype.resolvedOptions()");
+shouldBeFalse("defaultDTFormat.resolvedOptions() === defaultDTFormat.resolvedOptions()");
 
 // Throws on non-DateTimeFormat this.
+shouldThrow("Intl.DateTimeFormat.prototype.resolvedOptions()", "'TypeError: Intl.DateTimeFormat.prototype.resolvedOptions called on value that\\'s not an object initialized as a DateTimeFormat'");
 shouldThrow("Intl.DateTimeFormat.prototype.resolvedOptions.call(5)", "'TypeError: Intl.DateTimeFormat.prototype.resolvedOptions called on value that\\'s not an object initialized as a DateTimeFormat'");
 
 shouldThrow("Intl.DateTimeFormat('$')", "'RangeError: invalid language tag: $'");

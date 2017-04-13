@@ -232,6 +232,12 @@ function replace(search, replace)
     return thisString.@replaceUsingStringSearch(searchString, replace);
 }
     
+@globalPrivate
+function getDefaultCollator()
+{
+    return @getDefaultCollator.collator || (@getDefaultCollator.collator = new @Collator());
+}
+    
 function localeCompare(that/*, locales, options */)
 {
     "use strict";
@@ -251,11 +257,11 @@ function localeCompare(that/*, locales, options */)
     // 5. ReturnIfAbrupt(That).
     var thatString = @toString(that);
 
-    // Avoid creating a collator for defaults.
+    // Avoid creating a new collator every time for defaults.
     var locales = @argument(1);
     var options = @argument(2);
     if (locales === @undefined && options === @undefined)
-        return @Collator.prototype.compare(thisString, thatString);
+        return @getDefaultCollator().compare(thisString, thatString);
 
     // 6. Let collator be Construct(%Collator%, «locales, options»).
     // 7. ReturnIfAbrupt(collator).

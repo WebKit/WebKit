@@ -47,7 +47,7 @@ static EncodedJSValue JSC_HOST_CALL IntlNumberFormatPrototypeFuncResolvedOptions
 
 namespace JSC {
 
-const ClassInfo IntlNumberFormatPrototype::s_info = { "Object", &IntlNumberFormat::s_info, &numberFormatPrototypeTable, CREATE_METHOD_TABLE(IntlNumberFormatPrototype) };
+const ClassInfo IntlNumberFormatPrototype::s_info = { "Object", &Base::s_info, &numberFormatPrototypeTable, CREATE_METHOD_TABLE(IntlNumberFormatPrototype) };
 
 /* Source for IntlNumberFormatPrototype.lut.h
 @begin numberFormatPrototypeTable
@@ -69,7 +69,7 @@ Structure* IntlNumberFormatPrototype::createStructure(VM& vm, JSGlobalObject* gl
 }
 
 IntlNumberFormatPrototype::IntlNumberFormatPrototype(VM& vm, Structure* structure)
-    : IntlNumberFormat(vm, structure)
+    : Base(vm, structure)
 {
 }
 

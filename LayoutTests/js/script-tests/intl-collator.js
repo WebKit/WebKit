@@ -207,13 +207,16 @@ for (var validLanguageTag of validLanguageTags) {
 
 // 10.3 Properties of the Intl.Collator Prototype Object
 
-// The value of Intl.Collator.prototype.constructor is %Collator%.
-shouldBe("Intl.Collator.prototype.constructor", "Intl.Collator");
+// is a plain object
+shouldBe("Intl.Collator.prototype.constructor", "Object");
+shouldBe("Object.getPrototypeOf(Intl.Collator.prototype)", "Object.prototype");
+shouldBe("Object.prototype.toString.call(Intl.Collator.prototype)", "'[object Object]'");
 
 // 10.3.3 Intl.Collator.prototype.compare
 
 // This named accessor property returns a function that compares two strings according to the sort order of this Collator object.
-shouldBeType("Intl.Collator.prototype.compare", "Function");
+var defaultCollator = Intl.Collator();
+shouldBeType("defaultCollator.compare", "Function");
 
 // The value of the [[Get]] attribute is a function
 shouldBeType("Object.getOwnPropertyDescriptor(Intl.Collator.prototype, 'compare').get", "Function");
@@ -226,13 +229,13 @@ shouldBeFalse("Object.getOwnPropertyDescriptor(Intl.Collator.prototype, 'compare
 shouldBeTrue("Object.getOwnPropertyDescriptor(Intl.Collator.prototype, 'compare').configurable");
 
 // The value of F’s length property is 2.
-shouldBe("Intl.Collator.prototype.compare.length", "2");
+shouldBe("Intl.Collator().compare.length", "2");
 
 // Throws on non-Collator this.
+shouldThrow("Intl.Collator.prototype.compare", "'TypeError: Intl.Collator.prototype.compare called on value that\\'s not an object initialized as a Collator'");
 shouldThrow("Object.defineProperty({}, 'compare', Object.getOwnPropertyDescriptor(Intl.Collator.prototype, 'compare')).compare", "'TypeError: Intl.Collator.prototype.compare called on value that\\'s not an object initialized as a Collator'");
 
 // The compare function is unique per instance.
-shouldBeTrue("Intl.Collator.prototype.compare !== Intl.Collator().compare");
 shouldBeTrue("new Intl.Collator().compare !== new Intl.Collator().compare");
 
 // 10.3.4 Collator Compare Functions
@@ -246,25 +249,22 @@ shouldBeTrue("new Intl.Collator().compare !== new Intl.Collator().compare");
 // 5. Let X be ToString(x).
 // 6. ReturnIfAbrupt(X).
 var badCalls = 0;
-shouldThrow("Intl.Collator.prototype.compare({ toString() { throw Error('6') } }, { toString() { ++badCalls; return ''; } })", "'Error: 6'");
+shouldThrow("defaultCollator.compare({ toString() { throw Error('6') } }, { toString() { ++badCalls; return ''; } })", "'Error: 6'");
 shouldBe("badCalls", "0");
 
 // 7. Let Y be ToString(y).
 // 8. ReturnIfAbrupt(Y).
-shouldThrow("Intl.Collator.prototype.compare('a', { toString() { throw Error('8') } })", "'Error: 8'");
+shouldThrow("defaultCollator.compare('a', { toString() { throw Error('8') } })", "'Error: 8'");
 
 // Compare is bound, so calling with alternate "this" has no effect.
-shouldBe("Intl.Collator.prototype.compare.call(null, 'a', 'b')", "-1");
-shouldBe("Intl.Collator.prototype.compare.call(Intl.Collator('en', { sensitivity:'base' }), 'A', 'a')", "1");
-shouldBe("Intl.Collator.prototype.compare.call(5, 'a', 'b')", "-1");
-shouldBe("new Intl.Collator().compare.call(null, 'a', 'b')", "-1");
-shouldBe("new Intl.Collator().compare.call(Intl.Collator('en', { sensitivity:'base' }), 'A', 'a')", "1");
-shouldBe("new Intl.Collator().compare.call(5, 'a', 'b')", "-1");
+shouldBe("defaultCollator.compare.call(null, 'a', 'b')", "-1");
+shouldBe("defaultCollator.compare.call(Intl.Collator('en', { sensitivity:'base' }), 'A', 'a')", "1");
+shouldBe("defaultCollator.compare.call(5, 'a', 'b')", "-1");
 
 // Test comparing undefineds.
-shouldBe("Intl.Collator.prototype.compare()", "0");
-shouldBe("Intl.Collator.prototype.compare('undefinec')", "-1");
-shouldBe("Intl.Collator.prototype.compare('undefinee')", "1");
+shouldBe("defaultCollator.compare()", "0");
+shouldBe("defaultCollator.compare('undefinec')", "-1");
+shouldBe("defaultCollator.compare('undefinee')", "1");
 
 // Test locales.
 shouldBe("Intl.Collator('en').compare('ä', 'z')", "-1");
@@ -355,13 +355,13 @@ shouldBe("Intl.Collator('en').compare('A\u0327\u030a', '\u212b\u0327')", "0"); /
 shouldBe("Intl.Collator.prototype.resolvedOptions.length", "0");
 
 // Returns a new object whose properties and attributes are set as if constructed by an object literal.
-shouldBeType("Intl.Collator.prototype.resolvedOptions()", "Object");
+shouldBeType("defaultCollator.resolvedOptions()", "Object");
 
 // Returns a new object each time.
-shouldBeFalse("Intl.Collator.prototype.resolvedOptions() === Intl.Collator.prototype.resolvedOptions()");
+shouldBeFalse("defaultCollator.resolvedOptions() === defaultCollator.resolvedOptions()");
 
 // Throws on non-Collator this.
 shouldThrow("Intl.Collator.prototype.resolvedOptions.call(5)", "'TypeError: Intl.Collator.prototype.resolvedOptions called on value that\\'s not an object initialized as a Collator'");
 
 // Returns the default options.
-shouldBe("var options = Intl.Collator.prototype.resolvedOptions(); delete options['locale']; JSON.stringify(options)", '\'{"usage":"sort","sensitivity":"variant","ignorePunctuation":false,"collation":"default","numeric":false}\'');
+shouldBe("var options = defaultCollator.resolvedOptions(); delete options['locale']; JSON.stringify(options)", '\'{"usage":"sort","sensitivity":"variant","ignorePunctuation":false,"collation":"default","numeric":false}\'');

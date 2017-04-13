@@ -62,43 +62,29 @@ PASS Intl.DateTimeFormat.supportedLocalesOf('x-12345-12345-en-US') did not throw
 PASS Intl.DateTimeFormat.supportedLocalesOf('x-en-US-12345-12345') did not throw exception.
 PASS Intl.DateTimeFormat.supportedLocalesOf('x-en-u-foo') did not throw exception.
 PASS Intl.DateTimeFormat.supportedLocalesOf('x-en-u-foo-u-bar') did not throw exception.
-PASS Intl.DateTimeFormat.prototype.constructor is Intl.DateTimeFormat
-PASS Intl.DateTimeFormat.prototype.format is an instance of Function
+PASS Intl.DateTimeFormat.prototype.constructor is Object
+PASS Object.getPrototypeOf(Intl.DateTimeFormat.prototype) is Object.prototype
+PASS Object.prototype.toString.call(Intl.DateTimeFormat.prototype) is '[object Object]'
+PASS defaultDTFormat.format is an instance of Function
 PASS Object.getOwnPropertyDescriptor(Intl.DateTimeFormat.prototype, 'format').get is an instance of Function
 PASS Object.getOwnPropertyDescriptor(Intl.DateTimeFormat.prototype, 'format').set is undefined
 PASS Object.getOwnPropertyDescriptor(Intl.DateTimeFormat.prototype, 'format').enumerable is false
 PASS Object.getOwnPropertyDescriptor(Intl.DateTimeFormat.prototype, 'format').configurable is true
-PASS Intl.DateTimeFormat.prototype.format.length is 1
+PASS defaultDTFormat.format.length is 1
+PASS Intl.DateTimeFormat.prototype.format threw exception TypeError: Intl.DateTimeFormat.prototype.format called on value that's not an object initialized as a DateTimeFormat.
 PASS Object.defineProperty({}, 'format', Object.getOwnPropertyDescriptor(Intl.DateTimeFormat.prototype, 'format')).format threw exception TypeError: Intl.DateTimeFormat.prototype.format called on value that's not an object initialized as a DateTimeFormat.
-PASS Intl.DateTimeFormat.prototype.format !== Intl.DateTimeFormat().format is true
 PASS new Intl.DateTimeFormat().format !== new Intl.DateTimeFormat().format is true
-PASS Intl.DateTimeFormat.prototype.format({ valueOf() { throw Error('4b') } }) threw exception Error: 4b.
-PASS Intl.DateTimeFormat.prototype.format(Infinity) threw exception RangeError: date value is not finite in DateTimeFormat format().
-PASS Intl.DateTimeFormat.prototype.format.call(null, 0) is Intl.DateTimeFormat().format(0)
-PASS Intl.DateTimeFormat.prototype.format.call(Intl.DateTimeFormat('ar'), 0) is Intl.DateTimeFormat().format(0)
-PASS Intl.DateTimeFormat.prototype.format.call(5, 0) is Intl.DateTimeFormat().format(0)
-PASS new Intl.DateTimeFormat().format.call(null, 0) is Intl.DateTimeFormat().format(0)
-PASS new Intl.DateTimeFormat().format.call(Intl.DateTimeFormat('ar'), 0) is Intl.DateTimeFormat().format(0)
-PASS new Intl.DateTimeFormat().format.call(5, 0) is Intl.DateTimeFormat().format(0)
-PASS typeof Intl.DateTimeFormat.prototype.format() === 'string' is true
+PASS defaultDTFormat.format({ valueOf() { throw Error('4b') } }) threw exception Error: 4b.
+PASS defaultDTFormat.format(Infinity) threw exception RangeError: date value is not finite in DateTimeFormat format().
+PASS defaultDTFormat.format.call(null, 0) is Intl.DateTimeFormat().format(0)
+PASS defaultDTFormat.format.call(Intl.DateTimeFormat('ar'), 0) is Intl.DateTimeFormat().format(0)
+PASS defaultDTFormat.format.call(5, 0) is Intl.DateTimeFormat().format(0)
+PASS typeof defaultDTFormat.format() === 'string' is true
 PASS Intl.DateTimeFormat('en', { timeZone: 'America/Denver' }).format(new Date(1451099872641)) is '12/25/2015'
 PASS Intl.DateTimeFormat.prototype.resolvedOptions.length is 0
-PASS Intl.DateTimeFormat.prototype.resolvedOptions() is an instance of Object
-PASS Intl.DateTimeFormat.prototype.resolvedOptions().locale is new Intl.DateTimeFormat().resolvedOptions().locale
-PASS Intl.DateTimeFormat.prototype.resolvedOptions().timeZone is new Intl.DateTimeFormat().resolvedOptions().timeZone
-PASS Intl.DateTimeFormat.prototype.resolvedOptions().calendar is new Intl.DateTimeFormat().resolvedOptions().calendar
-PASS Intl.DateTimeFormat.prototype.resolvedOptions().numberingSystem is new Intl.DateTimeFormat().resolvedOptions().numberingSystem
-PASS Intl.DateTimeFormat.prototype.resolvedOptions().weekday is new Intl.DateTimeFormat().resolvedOptions().weekday
-PASS Intl.DateTimeFormat.prototype.resolvedOptions().era is new Intl.DateTimeFormat().resolvedOptions().era
-PASS Intl.DateTimeFormat.prototype.resolvedOptions().year is new Intl.DateTimeFormat().resolvedOptions().year
-PASS Intl.DateTimeFormat.prototype.resolvedOptions().month is new Intl.DateTimeFormat().resolvedOptions().month
-PASS Intl.DateTimeFormat.prototype.resolvedOptions().day is new Intl.DateTimeFormat().resolvedOptions().day
-PASS Intl.DateTimeFormat.prototype.resolvedOptions().hour is new Intl.DateTimeFormat().resolvedOptions().hour
-PASS Intl.DateTimeFormat.prototype.resolvedOptions().hour12 is new Intl.DateTimeFormat().resolvedOptions().hour12
-PASS Intl.DateTimeFormat.prototype.resolvedOptions().minute is new Intl.DateTimeFormat().resolvedOptions().minute
-PASS Intl.DateTimeFormat.prototype.resolvedOptions().second is new Intl.DateTimeFormat().resolvedOptions().second
-PASS Intl.DateTimeFormat.prototype.resolvedOptions().timeZoneName is new Intl.DateTimeFormat().resolvedOptions().timeZoneName
-PASS Intl.DateTimeFormat.prototype.resolvedOptions() === Intl.DateTimeFormat.prototype.resolvedOptions() is false
+PASS defaultDTFormat.resolvedOptions() is an instance of Object
+PASS defaultDTFormat.resolvedOptions() === defaultDTFormat.resolvedOptions() is false
+PASS Intl.DateTimeFormat.prototype.resolvedOptions() threw exception TypeError: Intl.DateTimeFormat.prototype.resolvedOptions called on value that's not an object initialized as a DateTimeFormat.
 PASS Intl.DateTimeFormat.prototype.resolvedOptions.call(5) threw exception TypeError: Intl.DateTimeFormat.prototype.resolvedOptions called on value that's not an object initialized as a DateTimeFormat.
 PASS Intl.DateTimeFormat('$') threw exception RangeError: invalid language tag: $.
 PASS Intl.DateTimeFormat('en', null) threw exception TypeError: null is not an object (evaluating 'Intl.DateTimeFormat('en', null)').
