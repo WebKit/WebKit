@@ -1,5 +1,14 @@
 2017-04-13  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Mark webrtc/video-mute.html as flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=170704
+
+        Unreviewed test gardening.
+
+        * TestExpectations:
+
+2017-04-13  Ryan Haddad  <ryanhaddad@apple.com>
+
         Mark media/media-controls-timeline-updates-when-hovered.html as flaky.
         https://bugs.webkit.org/show_bug.cgi?id=165553
 
