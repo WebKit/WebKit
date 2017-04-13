@@ -648,3 +648,5 @@ webkit.org/b/170410 fast/images/animated-gif-webkit-transform.html [ Pass Failur
 [ ElCapitan ] http/tests/cache/disk-cache/disk-cache-media-small.html [ Failure ]
 
 compositing/tiling/non-visible-window-tile-coverage.html [ Pass ]
+
+webkit.org/b/170702 [ Sierra ] http/tests/inspector/network/resource-request-headers.html [ Pass Failure ]
