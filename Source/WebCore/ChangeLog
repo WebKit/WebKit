@@ -1,3 +1,15 @@
+2017-04-12  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Suppress font download dialog in new matching algorithm
+        https://bugs.webkit.org/show_bug.cgi?id=169015
+
+        Reviewed by Alexey Proskuryakov.
+
+        Not testable.
+
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::FontDatabase::lookupPostScriptName):
+
 2017-04-12  Eric Carlson  <eric.carlson@apple.com>
 
         REGRESSION (r215242-215243): [ios-simulator] API test WebKit1.AudioSessionCategoryIOS is failing
