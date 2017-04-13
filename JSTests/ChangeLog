@@ -1,5 +1,18 @@
 2017-04-12  Joseph Pecoraro  <pecoraro@apple.com>
 
+        test262: test262/test/built-ins/NativeErrors/EvalError/proto.js
+        https://bugs.webkit.org/show_bug.cgi?id=170668
+
+        Reviewed by Keith Miller.
+
+        * ChakraCore.yaml:
+        * ChakraCore/test/Lib/error.baseline-jsc: Added.
+        This test does not match the spec.
+
+        * test262.yaml:
+
+2017-04-12  Joseph Pecoraro  <pecoraro@apple.com>
+
         test262: test262/test/language/literals/regexp/u-dec-esc.js
         https://bugs.webkit.org/show_bug.cgi?id=170687
 

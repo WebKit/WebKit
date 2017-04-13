@@ -876,7 +876,7 @@
 - path: ChakraCore/test/Lib/uri.js
   cmd: runChakra :baseline, "NoException", "uri.baseline-jsc", []
 - path: ChakraCore/test/Lib/error.js
-  cmd: runChakra :baseline, "NoException", "error.baseline", []
+  cmd: runChakra :baseline, "NoException", "error.baseline-jsc", []
 - path: ChakraCore/test/Lib/workingset.js
   # WScript.GetWorkingSet is not implemented in jsc-lib.js polyfill.
   cmd: runChakra :skip, "NoException", "", []

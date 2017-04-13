@@ -1,5 +1,20 @@
 2017-04-12  Joseph Pecoraro  <pecoraro@apple.com>
 
+        test262: test262/test/built-ins/NativeErrors/EvalError/proto.js
+        https://bugs.webkit.org/show_bug.cgi?id=170668
+
+        Reviewed by Keith Miller.
+
+        * ietestcenter/Javascript/15.2.3.2-2-12-expected.txt:
+        * ietestcenter/Javascript/15.2.3.2-2-13-expected.txt:
+        * ietestcenter/Javascript/15.2.3.2-2-14-expected.txt:
+        * ietestcenter/Javascript/15.2.3.2-2-15-expected.txt:
+        * ietestcenter/Javascript/15.2.3.2-2-16-expected.txt:
+        * ietestcenter/Javascript/15.2.3.2-2-17-expected.txt:
+        These tests are now out of date.
+
+2017-04-12  Joseph Pecoraro  <pecoraro@apple.com>
+
         test262: test262/test/language/literals/regexp/u-dec-esc.js
         https://bugs.webkit.org/show_bug.cgi?id=170687
 
