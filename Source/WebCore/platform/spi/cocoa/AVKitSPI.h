@@ -172,7 +172,8 @@ typedef AVFunctionBarScrubber AVTouchBarScrubber;
 #import <AVKit/AVFunctionBarPlaybackControlsProvider.h>
 #import <AVKit/AVFunctionBarScrubber.h>
 #endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
-#else
+
+#elif __MAC_OS_X_VERSION_MAX_ALLOWED < 101300
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -194,6 +195,33 @@ NS_ASSUME_NONNULL_BEGIN
 @interface AVFunctionBarScrubber : NSView
 @property (assign, nullable) id<AVFunctionBarPlaybackControlsControlling> playbackControlsController;
 @end
+
+@class AVThumbnail;
+
+NS_ASSUME_NONNULL_END
+
+#else
+
+NS_ASSUME_NONNULL_BEGIN
+
+@protocol AVTouchBarPlaybackControlsControlling <NSObject>
+    @property (readonly) NSTimeInterval contentDuration;
+    @property (readonly, nullable) AVValueTiming *timing;
+    @property (readonly, getter = isSeeking) BOOL seeking;
+    @property (readonly) NSTimeInterval seekToTime;
+- (void)seekToTime:(NSTimeInterval)time toleranceBefore:(NSTimeInterval)toleranceBefore toleranceAfter:(NSTimeInterval)toleranceAfter;
+    @property (readonly) BOOL hasEnabledAudio;
+    @property (readonly) BOOL hasEnabledVideo;
+    @end
+
+@interface AVTouchBarPlaybackControlsProvider : NSResponder
+    @property (strong, readonly, nullable) NSTouchBar *touchBar;
+    @property (assign, nullable) id<AVTouchBarPlaybackControlsControlling> playbackControlsController;
+    @end
+
+@interface AVTouchBarScrubber : NSView
+    @property (assign, nullable) id<AVTouchBarPlaybackControlsControlling> playbackControlsController;
+    @end
 
 @class AVThumbnail;
 

@@ -1,3 +1,13 @@
+2017-04-13  Alex Christensen  <achristensen@webkit.org>
+
+        Fix CMake build
+        https://bugs.webkit.org/show_bug.cgi?id=170815
+
+        Reviewed by Beth Dakin.
+
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration _setShouldCaptureAudioInUIProcess:]):
+
 2017-04-12  Dan Bernstein  <mitz@apple.com>
 
         [Mac] Future-proof .xcconfig files

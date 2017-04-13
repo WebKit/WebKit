@@ -757,11 +757,8 @@ static NSString *defaultApplicationNameForUserAgent()
 {
 #if ENABLE(MEDIA_STREAM)
     _shouldCaptureAudioInUIProcess = value;
-#else
-    return NO;
 #endif
 }
-
 
 #if PLATFORM(MAC)
 - (BOOL)_showsURLsInToolTips
