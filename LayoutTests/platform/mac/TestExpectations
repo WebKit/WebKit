@@ -1582,3 +1582,5 @@ webkit.org/b/170177 fast/images/reset-image-animation.html [ Pass Failure ]
 webkit.org/b/168390 fast/images/slower-animation-than-decoding-image.html [ Pass Failure ]
 
 webkit.org/b/170493 [ ElCapitan ] imported/w3c/web-platform-tests/fetch/api/response/response-trailer.html [ Pass Failure ]
+
+webkit.org/b/170831 media/track/track-cue-rendering-rtl.html [ Pass Timeout ]
