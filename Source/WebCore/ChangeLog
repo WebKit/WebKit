@@ -1,5 +1,18 @@
 2017-04-12  Eric Carlson  <eric.carlson@apple.com>
 
+        REGRESSION (r215242-215243): [ios-simulator] API test WebKit1.AudioSessionCategoryIOS is failing
+        https://bugs.webkit.org/show_bug.cgi?id=170777
+        <rdar://problem/31592877>
+
+        Reviewed by Jer Noble.
+
+        No new tests, fixes an existing test.
+
+        * platform/audio/cocoa/MediaSessionManagerCocoa.cpp:
+        (PlatformMediaSessionManager::updateSessionState): Pass parameters to lambda by reference.
+
+2017-04-12  Eric Carlson  <eric.carlson@apple.com>
+
         [MediaStream] Set correct audio session category when capturing audio
         https://bugs.webkit.org/show_bug.cgi?id=170736
         <rdar://problem/31559405>
