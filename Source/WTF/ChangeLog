@@ -1,3 +1,13 @@
+2017-04-12  Dan Bernstein  <mitz@apple.com>
+
+        [Mac] Future-proof .xcconfig files
+        https://bugs.webkit.org/show_bug.cgi?id=170802
+
+        Reviewed by Tim Horton.
+
+        * Configurations/Base.xcconfig:
+        * Configurations/DebugRelease.xcconfig:
+
 2017-04-12  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Use HAVE(MACHINE_CONTEXT) instead of USE(MACHINE_CONTEXT)
