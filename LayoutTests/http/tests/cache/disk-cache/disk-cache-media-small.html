@@ -27,7 +27,7 @@ function logResponses(media)
 {
     const ranges = internals.mediaResponseContentRanges(media);
     const sources = internals.mediaResponseSources(media);
-    for (i = 0; i < ranges.length; ++i)
+    for (i = 0; i < Math.min(2, ranges.length); ++i)
         logdiv.innerHTML += `Content range: ${ranges[i]}, Response source: ${sources[i]}<br>`;
 }
 
