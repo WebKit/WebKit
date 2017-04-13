@@ -1,3 +1,31 @@
+2017-04-13  Romain Bellessort  <romain.bellessort@crf.canon.fr>
+
+        [Readable Streams API] Implement cloneArrayBuffer in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=170008
+
+        Reviewed by Youenn Fablet.
+
+        Implemented cloneArrayBuffer based on existing structuredCloneArrayBuffer
+        implementation. The code has been factorized so that both cloneArrayBuffer
+        and structuredCloneArrayBuffer rely on the same code (which is basically
+        the previous implementation of structuredCloneArrayBuffer + the ability
+        to clone only a part of considered buffer).
+
+        Test: streams/clone-array-buffer.html
+
+        * Modules/streams/ReadableByteStreamInternals.js: Deleted cloneArrayBuffer JS implementation.
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::JSDOMGlobalObject::addBuiltinGlobals): Add cloneArrayBuffer private declaration.
+        * bindings/js/StructuredClone.cpp:
+        (WebCore::cloneArrayBufferImpl): Added (mostly based on previous structuredCloneArrayBuffer).
+        (WebCore::cloneArrayBuffer): Added.
+        (WebCore::structuredCloneArrayBuffer): Updated.
+        * bindings/js/StructuredClone.h: Added cloneArrayBuffer declaration.
+        * bindings/js/WebCoreBuiltinNames.h: Added cloneArrayBuffer declaration.
+        * testing/Internals.cpp: Added support for testing cloneArrayBuffer.
+        * testing/Internals.h: Added support for testing cloneArrayBuffer.
+        * testing/Internals.idl: Added support for testing cloneArrayBuffer.
+
 2017-04-13  Youenn Fablet  <youenn@apple.com>
 
         onnegotiationneeded should only be called once

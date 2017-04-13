@@ -142,6 +142,8 @@ void JSDOMGlobalObject::addBuiltinGlobals(VM& vm)
             JSFunction::create(vm, this, 2, String(), makeThisTypeErrorForBuiltins), DontDelete | ReadOnly),
         JSDOMGlobalObject::GlobalPropertyInfo(clientData.builtinNames().makeGetterTypeErrorPrivateName(),
             JSFunction::create(vm, this, 2, String(), makeGetterTypeErrorForBuiltins), DontDelete | ReadOnly),
+        JSDOMGlobalObject::GlobalPropertyInfo(clientData.builtinNames().cloneArrayBufferPrivateName(),
+            JSFunction::create(vm, this, 3, String(), cloneArrayBuffer), DontDelete | ReadOnly),
         JSDOMGlobalObject::GlobalPropertyInfo(clientData.builtinNames().structuredCloneArrayBufferPrivateName(),
             JSFunction::create(vm, this, 1, String(), structuredCloneArrayBuffer), DontDelete | ReadOnly),
         JSDOMGlobalObject::GlobalPropertyInfo(clientData.builtinNames().structuredCloneArrayBufferViewPrivateName(),

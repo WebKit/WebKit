@@ -35,7 +35,14 @@ using namespace JSC;
 
 namespace WebCore {
 
-EncodedJSValue JSC_HOST_CALL structuredCloneArrayBuffer(ExecState* state)
+enum class CloneMode {
+    Full,
+    Partial,
+};
+
+EncodedJSValue JSC_HOST_CALL cloneArrayBufferImpl(ExecState*, CloneMode);
+
+EncodedJSValue JSC_HOST_CALL cloneArrayBufferImpl(ExecState* state, CloneMode mode)
 {
     ASSERT(state);
     ASSERT(state->argumentCount());
@@ -48,7 +55,23 @@ EncodedJSValue JSC_HOST_CALL structuredCloneArrayBuffer(ExecState* state)
         throwDataCloneError(*state, scope);
         return { };
     }
+    if (mode == CloneMode::Partial) {
+        ASSERT(state->argumentCount() == 3);
+        int srcByteOffset = static_cast<int>(state->uncheckedArgument(1).toNumber(state));
+        int srcLength = static_cast<int>(state->uncheckedArgument(2).toNumber(state));
+        return JSValue::encode(JSArrayBuffer::create(state->vm(), state->lexicalGlobalObject()->arrayBufferStructure(ArrayBufferSharingMode::Default), buffer->slice(srcByteOffset, srcByteOffset + srcLength)));
+    }
     return JSValue::encode(JSArrayBuffer::create(state->vm(), state->lexicalGlobalObject()->arrayBufferStructure(ArrayBufferSharingMode::Default), ArrayBuffer::tryCreate(buffer->data(), buffer->byteLength())));
+}
+
+EncodedJSValue JSC_HOST_CALL cloneArrayBuffer(ExecState* state)
+{
+    return cloneArrayBufferImpl(state, CloneMode::Partial);
+}
+
+EncodedJSValue JSC_HOST_CALL structuredCloneArrayBuffer(ExecState* state)
+{
+    return cloneArrayBufferImpl(state, CloneMode::Full);
 }
 
 EncodedJSValue JSC_HOST_CALL structuredCloneArrayBufferView(ExecState* state)
