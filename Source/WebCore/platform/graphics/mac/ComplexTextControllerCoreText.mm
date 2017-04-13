@@ -111,21 +111,20 @@ ComplexTextController::ComplexTextRun::ComplexTextRun(CTRunRef ctRun, const Font
     , m_font(font)
     , m_characters(characters)
     , m_stringLength(stringLength)
+    , m_coreTextIndices(CTRunGetStringIndicesPtr(ctRun))
+    , m_glyphs(CTRunGetGlyphsPtr(ctRun))
     , m_indexBegin(runRange.location)
     , m_indexEnd(runRange.location + runRange.length)
+    , m_glyphCount(CTRunGetGlyphCount(ctRun))
     , m_stringLocation(stringLocation)
     , m_isLTR(!(CTRunGetStatus(ctRun) & kCTRunStatusRightToLeft))
-    , m_isMonotonic(true)
 {
-    m_glyphCount = CTRunGetGlyphCount(ctRun);
-    m_coreTextIndices = CTRunGetStringIndicesPtr(ctRun);
     if (!m_coreTextIndices) {
         m_coreTextIndicesVector.grow(m_glyphCount);
         CTRunGetStringIndices(ctRun, CFRangeMake(0, 0), m_coreTextIndicesVector.data());
         m_coreTextIndices = m_coreTextIndicesVector.data();
     }
 
-    m_glyphs = CTRunGetGlyphsPtr(ctRun);
     if (!m_glyphs) {
         m_glyphsVector.grow(m_glyphCount);
         CTRunGetGlyphs(ctRun, CFRangeMake(0, 0), m_glyphsVector.data());
@@ -161,7 +160,6 @@ ComplexTextController::ComplexTextRun::ComplexTextRun(const Font& font, const UC
     , m_indexEnd(stringLength)
     , m_stringLocation(stringLocation)
     , m_isLTR(ltr)
-    , m_isMonotonic(true)
 {
     m_coreTextIndicesVector.reserveInitialCapacity(m_stringLength);
     unsigned r = 0;
@@ -182,6 +180,27 @@ ComplexTextController::ComplexTextRun::ComplexTextRun(const Font& font, const UC
     m_glyphs = m_glyphsVector.data();
     m_baseAdvancesVector.fill(CGSizeMake(m_font.widthForGlyph(0), 0), m_glyphCount);
     m_baseAdvances = m_baseAdvancesVector.data();
+}
+
+
+ComplexTextController::ComplexTextRun::ComplexTextRun(Vector<CGSize> advances, Vector<CGPoint> origins, Vector<CGGlyph> glyphs, Vector<CFIndex> stringIndices, CGSize initialAdvance, const Font& font, const UChar* characters, unsigned stringLocation, size_t stringLength, CFRange runRange, bool ltr)
+    : m_baseAdvancesVector(advances)
+    , m_glyphOrigins(origins)
+    , m_glyphsVector(glyphs)
+    , m_coreTextIndicesVector(stringIndices)
+    , m_initialAdvance(initialAdvance)
+    , m_font(font)
+    , m_characters(characters)
+    , m_stringLength(stringLength)
+    , m_coreTextIndices(m_coreTextIndicesVector.data())
+    , m_glyphs(m_glyphsVector.data())
+    , m_baseAdvances(m_baseAdvancesVector.data())
+    , m_indexBegin(runRange.location)
+    , m_indexEnd(runRange.location + runRange.length)
+    , m_glyphCount(glyphs.size())
+    , m_stringLocation(stringLocation)
+    , m_isLTR(ltr)
+{
 }
 
 struct ProviderInfo {
