@@ -101,6 +101,11 @@ RefPtr<StorageNamespace> WebStorageNamespaceProvider::createSessionStorageNamesp
     return StorageNamespaceImpl::createSessionStorageNamespace(quota);
 }
 
+RefPtr<StorageNamespace> WebStorageNamespaceProvider::createEphemeralLocalStorageNamespace(Page&, unsigned quota)
+{
+    return StorageNamespaceImpl::createEphemeralLocalStorageNamespace(quota);
+}
+
 RefPtr<StorageNamespace> WebStorageNamespaceProvider::createLocalStorageNamespace(unsigned quota)
 {
     return StorageNamespaceImpl::getOrCreateLocalStorageNamespace(m_localStorageDatabasePath, quota);

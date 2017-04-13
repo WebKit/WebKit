@@ -2,49 +2,36 @@
 <head>
 <script>
 
-if (window.testRunner)
+if (window.testRunner) {
     testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
 
 function log(a)
 {
-    document.getElementById("logger").innerHTML += a + "<br>";
+    alert(a + "");
 }
 
 function runTest()
 {
-    if (!window.localStorage) {
-        log("window.localStorage DOES NOT exist");
-        return;
-    }
     if (!window.testRunner) {
-        log("Test only designed to be run under DumpRenderTree");
+        log("Test only designed to be run under DumpRenderTree or WebKitTestRunner");
         return;
     }
-    localStorage.clear();
+
+    localStorage.setItem("testItem", "Persistent item!");
+    log("Persistent localStorage testItem is: " + localStorage.getItem("testItem"));
     
-    localStorage.setItem("testItem", "InitialValue");    
     testRunner.setPrivateBrowsingEnabled(true);
-    log("Initial value of testItem is: " + localStorage.getItem("testItem"));
-
-    try {
-        localStorage.setItem("testItem", "ChangedValue");
-    } catch(e) {
-        log("Caught exception trying to change item: " + e);
-    }
-
-    log("After change attempt, testItem is: " + localStorage.getItem("testItem"));
+    testRunner.setCanOpenWindows();
     
-    localStorage.removeItem("testItem");
-    log("After remove attempt, testItem is: " + localStorage.getItem("testItem"));
-
-    localStorage.clear();
-    log("After clear attempt, testItem is: " + localStorage.getItem("testItem"));
+    window.location.href = "resources/private-browsing-1.html"
 }
 
 </script>
 </head>
 <body onload="runTest();">
-This is a test to make sure that when private browsing is on any attempt to change the localStorage area fail.
+This is a test to make sure that when private browsing is on changes to local storage are not persistent.
 <div id="logger"></div>
 </body>
 </html>

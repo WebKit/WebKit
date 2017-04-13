@@ -1,3 +1,48 @@
+2017-04-12  Brady Eidson  <beidson@apple.com>
+
+        QuotaExceededError when saving to localStorage in private mode.
+        https://bugs.webkit.org/show_bug.cgi?id=157010
+
+        Reviewed by Alex Christensen.
+
+        No new tests (Covered by changes to existing test).
+        
+        LocalStorage in private browsing is now effectively SessionStorage.
+        It's ephemeral, per-tab, and copied over to tabs window.open()'ed from the current.
+
+        * loader/EmptyClients.cpp:
+        (WebCore::EmptyStorageNamespaceProvider::createEphemeralLocalStorageNamespace):
+
+        * page/Chrome.cpp:
+        (WebCore::Chrome::createWindow):
+
+        * page/Page.cpp:
+        (WebCore::Page::ephemeralLocalStorage):
+        (WebCore::Page::setEphemeralLocalStorage):
+        * page/Page.h:
+
+        * page/SecurityOriginData.h:
+
+        * storage/Storage.cpp:
+        (WebCore::Storage::length):
+        (WebCore::Storage::key):
+        (WebCore::Storage::getItem):
+        (WebCore::Storage::setItem):
+        (WebCore::Storage::removeItem):
+        (WebCore::Storage::clear):
+        (WebCore::Storage::contains):
+        (WebCore::Storage::isDisabledByPrivateBrowsing): Deleted.
+
+        * storage/StorageMap.h:
+
+        * storage/StorageNamespaceProvider.cpp:
+        (WebCore::StorageNamespaceProvider::localStorageArea):
+        * storage/StorageNamespaceProvider.h:
+
+        * storage/StorageType.h:
+        (WebCore::isLocalStorage):
+        (WebCore::isPersistentLocalStorage):
+
 2017-04-12  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Suppress font download dialog in new matching algorithm

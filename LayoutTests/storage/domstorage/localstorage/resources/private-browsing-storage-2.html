@@ -1,0 +1,29 @@
+<html>
+<head>
+<script>
+
+function log(a)
+{
+    opener.logger(a);
+}
+
+function runTest()
+{
+    if (!window.testRunner) {
+        log("Test only designed to be run under DumpRenderTree or WebKitTestRunner");
+        return;
+    }
+    
+    log("localStorage's length is: " + localStorage.length);
+    log("The item in new window starts out as: " + localStorage.getItem("testItem"));
+    localStorage.setItem("testItem", "NewWindowValue");
+    log("The item in new window is now: " + localStorage.getItem("testItem"));
+
+    opener.allDone();
+}
+
+</script>
+</head>
+<body onload="runTest();">
+</body>
+</html>

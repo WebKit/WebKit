@@ -1,7 +1,14 @@
-This is a test to make sure that when private browsing is on any attempt to change the localStorage area fail.
-Initial value of testItem is: null
-Caught exception trying to change item: QuotaExceededError (DOM Exception 22): The quota has been exceeded.
-After change attempt, testItem is: null
-After remove attempt, testItem is: null
-After clear attempt, testItem is: null
+ALERT: Persistent localStorage testItem is: Persistent item!
+ALERT: Start of private browsing test, testItem is: null
+ALERT: localStorage's length is: 0
+ALERT: After set attempt, testItem is: FirstValue
+ALERT: After second set attempt, testItem is: ChangedValue
+ALERT: Opening window...
+ALERT: localStorage's length is: 1
+ALERT: The item in new window starts out as: ChangedValue
+ALERT: The item in new window is now: NewWindowValue
+ALERT: Back in parent window, localStorage's length is: 1
+ALERT: Back in parent window, testItem is: ChangedValue
+ALERT: Final window, localStorage's length is: 1
+ALERT: Final window, item is: Persistent item!
 

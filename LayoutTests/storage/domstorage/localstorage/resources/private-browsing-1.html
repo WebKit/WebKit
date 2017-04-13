@@ -1,0 +1,56 @@
+<html>
+<head>
+<script>
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function log(a)
+{
+    alert(a + "");
+}
+
+function runTest()
+{
+    window.logger = log;
+    window.allDone = function() {
+        log("Back in parent window, localStorage's length is: " + localStorage.length);
+        log("Back in parent window, testItem is: " + localStorage.getItem("testItem"));
+        
+        testRunner.setPrivateBrowsingEnabled(false);
+
+        window.location.href = "private-browsing-3.html";
+    }
+
+    log("Start of private browsing test, testItem is: " + localStorage.getItem("testItem"));
+    log("localStorage's length is: " + localStorage.length);
+
+    try {
+        localStorage.setItem("testItem", "FirstValue");
+    } catch(e) {
+        log("Caught exception trying to change item: " + e);
+    }
+
+    log("After set attempt, testItem is: " + localStorage.getItem("testItem"));
+    
+    try {
+        localStorage.setItem("testItem", "ChangedValue");
+    } catch(e) {
+        log("Caught exception trying to change item: " + e);
+    }
+
+    log("After second set attempt, testItem is: " + localStorage.getItem("testItem"));
+    log("Opening window...");
+
+    window.open("private-browsing-2.html", "_blank");
+}
+
+</script>
+</head>
+<body onload="runTest();">
+This is a test to make sure that when private browsing is on changes to local storage are not persistent.
+<div id="logger"></div>
+</body>
+</html>

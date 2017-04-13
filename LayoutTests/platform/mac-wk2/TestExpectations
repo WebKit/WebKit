@@ -424,8 +424,6 @@ http/tests/security/storage-blocking-loosened-private-browsing-plugin.html [ Ski
 http/tests/security/storage-blocking-strengthened-private-browsing-plugin.html [ Skip ]
 plugins/private-browsing-mode-2.html [ Skip ]
 plugins/private-browsing-mode.html [ Skip ]
-storage/domstorage/localstorage/private-browsing-affects-storage.html [ Skip ]
-storage/domstorage/sessionstorage/private-browsing-affects-storage.html [ Skip ]
 storage/websql/private-browsing-noread-nowrite.html [ Skip ]
 
 # There is no network load scheduling or prioritization with NetworkProcess.

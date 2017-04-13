@@ -562,6 +562,7 @@ class EmptyStorageNamespaceProvider final : public StorageNamespaceProvider {
 
     RefPtr<StorageNamespace> createSessionStorageNamespace(Page&, unsigned) final;
     RefPtr<StorageNamespace> createLocalStorageNamespace(unsigned) final;
+    RefPtr<StorageNamespace> createEphemeralLocalStorageNamespace(Page&, unsigned) final;
     RefPtr<StorageNamespace> createTransientLocalStorageNamespace(SecurityOrigin&, unsigned) final;
 };
 
@@ -672,6 +673,11 @@ RefPtr<StorageNamespace> EmptyStorageNamespaceProvider::createSessionStorageName
 }
 
 RefPtr<StorageNamespace> EmptyStorageNamespaceProvider::createLocalStorageNamespace(unsigned)
+{
+    return adoptRef(*new EmptyStorageNamespace);
+}
+
+RefPtr<StorageNamespace> EmptyStorageNamespaceProvider::createEphemeralLocalStorageNamespace(Page&, unsigned)
 {
     return adoptRef(*new EmptyStorageNamespace);
 }

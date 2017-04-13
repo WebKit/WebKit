@@ -50,6 +50,7 @@ private:
     explicit WebStorageNamespaceProvider(const String& localStorageDatabasePath);
 
     RefPtr<WebCore::StorageNamespace> createSessionStorageNamespace(WebCore::Page&, unsigned quota) override;
+    RefPtr<WebCore::StorageNamespace> createEphemeralLocalStorageNamespace(WebCore::Page&, unsigned quota) override;
     RefPtr<WebCore::StorageNamespace> createLocalStorageNamespace(unsigned quota) override;
     RefPtr<WebCore::StorageNamespace> createTransientLocalStorageNamespace(WebCore::SecurityOrigin&, unsigned quota) override;
 

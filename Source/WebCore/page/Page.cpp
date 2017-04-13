@@ -1311,6 +1311,19 @@ void Page::setSessionStorage(RefPtr<StorageNamespace>&& newStorage)
     m_sessionStorage = WTFMove(newStorage);
 }
 
+StorageNamespace* Page::ephemeralLocalStorage(bool optionalCreate)
+{
+    if (!m_ephemeralLocalStorage && optionalCreate)
+        m_ephemeralLocalStorage = m_storageNamespaceProvider->createEphemeralLocalStorageNamespace(*this, m_settings->sessionStorageQuota());
+
+    return m_ephemeralLocalStorage.get();
+}
+
+void Page::setEphemeralLocalStorage(RefPtr<StorageNamespace>&& newStorage)
+{
+    m_ephemeralLocalStorage = WTFMove(newStorage);
+}
+
 bool Page::hasCustomHTMLTokenizerTimeDelay() const
 {
     return m_settings->maxParseDuration() != -1;

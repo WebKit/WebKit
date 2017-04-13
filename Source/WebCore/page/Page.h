@@ -414,6 +414,9 @@ public:
     StorageNamespace* sessionStorage(bool optionalCreate = true);
     void setSessionStorage(RefPtr<StorageNamespace>&&);
 
+    StorageNamespace* ephemeralLocalStorage(bool optionalCreate = true);
+    void setEphemeralLocalStorage(RefPtr<StorageNamespace>&&);
+
     bool hasCustomHTMLTokenizerTimeDelay() const;
     double customHTMLTokenizerTimeDelay() const;
 
@@ -716,6 +719,7 @@ private:
     bool m_canStartMedia;
 
     RefPtr<StorageNamespace> m_sessionStorage;
+    RefPtr<StorageNamespace> m_ephemeralLocalStorage;
 
 #if ENABLE(VIEW_MODE_CSS_MEDIA)
     ViewMode m_viewMode;

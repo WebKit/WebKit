@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/SecurityOriginHash.h>
 #include <WebCore/StorageArea.h>
+#include <WebCore/StorageMap.h>
 #include <WebCore/StorageNamespace.h>
 #include <wtf/HashMap.h>
 
@@ -39,6 +40,7 @@ class WebPage;
 class StorageNamespaceImpl : public WebCore::StorageNamespace {
 public:
     static RefPtr<StorageNamespaceImpl> createSessionStorageNamespace(uint64_t identifier, unsigned quotaInBytes);
+    static RefPtr<StorageNamespaceImpl> createEphemeralLocalStorageNamespace(uint64_t identifier, unsigned quotaInBytes);
     static RefPtr<StorageNamespaceImpl> createLocalStorageNamespace(uint64_t identifier, unsigned quotaInBytes);
     static RefPtr<StorageNamespaceImpl> createTransientLocalStorageNamespace(uint64_t identifier, WebCore::SecurityOrigin& topLevelOrigin, uint64_t quotaInBytes);
 
@@ -57,6 +59,8 @@ private:
     RefPtr<WebCore::StorageArea> storageArea(const WebCore::SecurityOriginData&) override;
     RefPtr<WebCore::StorageNamespace> copy(WebCore::Page*) override;
 
+    RefPtr<WebCore::StorageArea> ephemeralLocalStorageArea(const WebCore::SecurityOriginData&);
+
     const WebCore::StorageType m_storageType;
     const uint64_t m_storageNamespaceID;
 
@@ -66,6 +70,9 @@ private:
     const unsigned m_quotaInBytes;
 
     HashMap<WebCore::SecurityOriginData, StorageAreaMap*> m_storageAreaMaps;
+
+    class EphemeralStorageArea;
+    HashMap<WebCore::SecurityOriginData, RefPtr<EphemeralStorageArea>> m_ephemeralLocalStorageAreas;
 };
 
 } // namespace WebKit

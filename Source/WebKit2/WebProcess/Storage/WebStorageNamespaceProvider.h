@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,6 +39,7 @@ private:
     explicit WebStorageNamespaceProvider(uint64_t identifier);
 
     RefPtr<WebCore::StorageNamespace> createSessionStorageNamespace(WebCore::Page&, unsigned quota) override;
+    RefPtr<WebCore::StorageNamespace> createEphemeralLocalStorageNamespace(WebCore::Page&, unsigned quota) override;
     RefPtr<WebCore::StorageNamespace> createLocalStorageNamespace(unsigned quota) override;
     RefPtr<WebCore::StorageNamespace> createTransientLocalStorageNamespace(WebCore::SecurityOrigin&, unsigned quota) override;
 
