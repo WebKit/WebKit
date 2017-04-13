@@ -1936,3 +1936,5 @@ webkit.org/b/169558 fast/history/ios/history-scroll-restoration.html [ Pass Fail
 
 webkit.org/b/170153 fast/scrolling/ios/touch-scroll-pointer-events-none.html [ Failure ]
 webkit.org/b/170153 fast/scrolling/ios/touch-scroll-visibility-hidden.html [ Failure ]
+
+webkit.org/b/169719 fast/mediacapturefromelement/CanvasCaptureMediaStream-request-frame-events.html [ Pass Failure ]

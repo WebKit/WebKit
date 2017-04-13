@@ -1,3 +1,12 @@
+2017-04-13  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Mark fast/mediacapturefromelement/CanvasCaptureMediaStream-request-frame-events.html as flaky on iOS.
+        https://bugs.webkit.org/show_bug.cgi?id=169719
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
 2017-04-13  Antti Koivisto  <antti@apple.com>
 
         Don't invalidate composition for style changes in non-composited layers
