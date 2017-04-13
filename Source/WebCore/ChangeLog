@@ -1,3 +1,30 @@
+2017-04-13  Antti Koivisto  <antti@apple.com>
+
+        Don't invalidate composition for style changes in non-composited layers
+        https://bugs.webkit.org/show_bug.cgi?id=170805
+        <rdar://problem/31606185>
+
+        Reviewed by Simon Fraser.
+
+        Test: compositing/updates/animation-non-composited.html
+
+        In most cases they can't affect composition. Composition updates are expensive, this can
+        save a lot of work (tumblr.com animations hit this at the moment).
+
+        * rendering/RenderElement.h:
+        (WebCore::RenderElement::createsGroup):
+        (WebCore::RenderElement::createsGroupForStyle):
+
+            Factor to a static function so we can test style directly.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::layerStyleChanged):
+        (WebCore::RenderLayerCompositor::styleChangeMayAffectIndirectCompositingReasons):
+
+            Test if style change might cause compositing change that can't be determined without compositing update.
+
+        * rendering/RenderLayerCompositor.h:
+
 2017-04-13  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly: manage memory better

@@ -1,3 +1,14 @@
+2017-04-13  Antti Koivisto  <antti@apple.com>
+
+        Don't invalidate composition for style changes in non-composited layers
+        https://bugs.webkit.org/show_bug.cgi?id=170805
+        <rdar://problem/31606185>
+
+        Reviewed by Simon Fraser.
+
+        * compositing/updates/animation-non-composited-expected.txt: Added.
+        * compositing/updates/animation-non-composited.html: Added.
+
 2017-04-13  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark webrtc/video-mute.html as flaky.

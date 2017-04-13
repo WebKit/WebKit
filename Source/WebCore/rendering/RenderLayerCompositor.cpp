@@ -924,15 +924,30 @@ void RenderLayerCompositor::layerStyleChanged(StyleDifference diff, RenderLayer&
     if (diff == StyleDifferenceEqual)
         return;
 
-    m_layerNeedsCompositingUpdate = true;
-
     const RenderStyle& newStyle = layer.renderer().style();
-    if (updateLayerCompositingState(layer) || (oldStyle && styleChangeRequiresLayerRebuild(layer, *oldStyle, newStyle)))
+    if (updateLayerCompositingState(layer) || (oldStyle && styleChangeRequiresLayerRebuild(layer, *oldStyle, newStyle))) {
         setCompositingLayersNeedRebuild();
-    else if (layer.isComposited()) {
+        m_layerNeedsCompositingUpdate = true;
+        return;
+    }
+
+    if (layer.isComposited()) {
         // FIXME: updating geometry here is potentially harmful, because layout is not up-to-date.
         layer.backing()->updateGeometry();
         layer.backing()->updateAfterDescendants();
+        m_layerNeedsCompositingUpdate = true;
+        return;
+    }
+
+    // We don't have any direct reasons for this style change to affect layer composition. Test if it might affect things indirectly.
+    if (oldStyle && styleChangeMayAffectIndirectCompositingReasons(layer.renderer(), *oldStyle)) {
+        m_layerNeedsCompositingUpdate = true;
+        return;
+    }
+
+    if (layer.isRootLayer()) {
+        // Needed for scroll bars.
+        m_layerNeedsCompositingUpdate = true;
     }
 }
 
@@ -2597,6 +2612,28 @@ bool RenderLayerCompositor::requiresCompositingForIndirectReason(RenderLayerMode
     }
 
     reason = RenderLayer::IndirectCompositingReason::None;
+    return false;
+}
+
+bool RenderLayerCompositor::styleChangeMayAffectIndirectCompositingReasons(const RenderLayerModelObject& renderer, const RenderStyle& oldStyle)
+{
+    if (renderer.isRenderNamedFlowFragmentContainer())
+        return true;
+
+    auto& style = renderer.style();
+    if (RenderElement::createsGroupForStyle(style) != RenderElement::createsGroupForStyle(oldStyle))
+        return true;
+    if (style.isolation() != oldStyle.isolation())
+        return true;
+    if (style.hasTransform() != oldStyle.hasTransform())
+        return true;
+    if (style.boxReflect() != oldStyle.boxReflect())
+        return true;
+    if (style.transformStyle3D() != oldStyle.transformStyle3D())
+        return true;
+    if (style.hasPerspective() != oldStyle.hasPerspective())
+        return true;
+
     return false;
 }
 
