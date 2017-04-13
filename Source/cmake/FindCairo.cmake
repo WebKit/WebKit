@@ -35,7 +35,6 @@ find_path(CAIRO_INCLUDE_DIRS
     NAMES cairo.h
     HINTS ${PC_CAIRO_INCLUDEDIR}
           ${PC_CAIRO_INCLUDE_DIRS}
-          ${WEBKIT_LIBRARIES_INCLUDE_DIR}/cairo
     PATH_SUFFIXES cairo
 )
 
@@ -43,7 +42,6 @@ find_library(CAIRO_LIBRARIES
     NAMES cairo
     HINTS ${PC_CAIRO_LIBDIR}
           ${PC_CAIRO_LIBRARY_DIRS}
-          ${WEBKIT_LIBRARIES_LINK_DIR}
 )
 
 if (CAIRO_INCLUDE_DIRS)
