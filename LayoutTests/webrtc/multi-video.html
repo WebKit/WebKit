@@ -1,0 +1,94 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Testing basic video exchange from offerer to receiver</title>
+        <script src="../resources/testharness.js"></script>
+        <script src="../resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <video id="video1" autoplay=""></video>
+        <video id="video2" autoplay=""></video>
+        <video id="video3" autoplay=""></video>
+        <video id="video4" autoplay=""></video>
+        <video id="video5" autoplay=""></video>
+        <video id="video6" autoplay=""></video>
+        <canvas id="canvas" width="640" height="480"></canvas>
+        <script src ="routines.js"></script>
+        <script>
+function testImage(video)
+{
+    var id= video.id;
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    imageData = canvas.getContext('2d').getImageData(10, 325, 250, 1);
+    data = imageData.data;
+
+    var index = 20;
+    assert_true(data[index] < 100, "test 1 for " + id);
+    assert_true(data[index + 1] < 100, "test 2 for " + id);
+    assert_true(data[index + 2] < 100, "test 3 for " + id);
+
+    index = 80;
+    assert_true(data[index] > 200, "test 4 for " + id);
+    assert_true(data[index + 1] > 200, "test 5 for " + id);
+    assert_true(data[index + 2] > 200, "test 6 for " + id);
+
+    index += 80;
+    assert_true(data[index] > 200, "test 7 for " + id);
+    assert_true(data[index + 1] > 200, "test 8 for " + id);
+    assert_true(data[index + 2] < 100, "test 9 for " + id);
+}
+
+promise_test((test) => {
+    if (window.testRunner)
+        testRunner.setUserMediaPermission(true);
+
+    return navigator.mediaDevices.getUserMedia({ video: true}).then((stream) => {
+        return new Promise((resolve, reject) => {
+            createConnections((firstConnection) => {
+                var track = stream.getVideoTracks()[0];
+                var track1 = track.clone();
+                var track2 = track.clone();
+                var track3 = track.clone();
+                var track4 = track.clone();
+                var track5 = track.clone();
+                var track6 = track.clone();
+                var newStream = new MediaStream([track1, track2, track3, track4, track5, track6]);
+                firstConnection.addTrack(track1, newStream);
+                firstConnection.addTrack(track2, newStream);
+                firstConnection.addTrack(track3, newStream);
+                firstConnection.addTrack(track4, newStream);
+                firstConnection.addTrack(track5, newStream);
+                firstConnection.addTrack(track6, newStream);
+            }, (secondConnection) => {
+                secondConnection.ontrack = (trackEvent) => {
+                    resolve(trackEvent.streams[0]);
+                };
+            });
+            setTimeout(() => reject("Test timed out"), 5000);
+        });
+    }).then((stream) => {
+        video1.srcObject = new MediaStream(stream.getVideoTracks([0]));
+        video2.srcObject = new MediaStream(stream.getVideoTracks([1]));
+        video3.srcObject = new MediaStream(stream.getVideoTracks([2]));
+        video4.srcObject = new MediaStream(stream.getVideoTracks([3]));
+        video5.srcObject = new MediaStream(stream.getVideoTracks([4]));
+        video6.srcObject = new MediaStream(stream.getVideoTracks([5]));
+        return Promise.all([video1.play(), video2.play(), video3.play(), video4.play(), video5.play(), video6.play()]);
+    }).then(() => {
+        return waitFor(100);
+    }).then(() => {
+        testImage(video1);
+        testImage(video2);
+        testImage(video3);
+        testImage(video4);
+        testImage(video5);
+        testImage(video6);
+    });
+}, "Basic video exchange");
+        </script>
+    </body>
+</html>

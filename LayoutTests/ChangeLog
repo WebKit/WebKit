@@ -1,3 +1,15 @@
+2017-04-13  Youenn Fablet  <youenn@apple.com>
+
+        Add some more WebRTC tests
+        https://bugs.webkit.org/show_bug.cgi?id=170796
+
+        Reviewed by Eric Carlson.
+
+        * webrtc/multi-video-expected.txt: Added.
+        * webrtc/multi-video.html: Added.
+        * webrtc/video-with-data-channel-expected.txt: Added.
+        * webrtc/video-with-data-channel.html: Added.
+
 2017-04-13  Romain Bellessort  <romain.bellessort@crf.canon.fr>
 
         [Readable Streams API] Implement cloneArrayBuffer in WebCore
