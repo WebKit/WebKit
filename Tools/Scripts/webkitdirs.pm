@@ -68,6 +68,7 @@ BEGIN {
        &currentSVNRevision
        &debugSafari
        &executableProductDir
+       &extractNonHostConfiguration
        &findOrCreateSimulatorForIOSDevice
        &iosSimulatorDeviceByName
        &nmPath
@@ -449,6 +450,26 @@ sub argumentsForConfiguration()
     push(@args, '--jsc-only') if isJSCOnly();
     push(@args, '--wincairo') if isWinCairo();
     push(@args, '--inspector-frontend') if isInspectorFrontend();
+    return @args;
+}
+
+sub extractNonMacOSHostConfiguration
+{
+    my @args = ();
+    my @extract = ('--device', '--efl', '--gtk', '--ios', '--platform', '--sdk', '--simulator', '--wincairo', 'SDKROOT', 'ARCHS');
+    foreach (@{$_[0]}) {
+        my $line = $_;
+        my $flag = 0;
+        foreach (@extract) {
+            if (length($line) >= length($_) && substr($line, 0, length($_)) eq $_
+                && index($line, 'i386') == -1 && index($line, 'x86_64') == -1) {
+                $flag = 1;
+            }
+        }
+        if (!$flag) {
+            push @args, $_;
+        }
+    }
     return @args;
 }
 

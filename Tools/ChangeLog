@@ -1,3 +1,26 @@
+2017-04-13  Jonathan Bedard  <jbedard@apple.com>
+
+        Build ImageDiff with host SDK
+        https://bugs.webkit.org/show_bug.cgi?id=168531
+
+        Reviewed by David Kilzer.
+
+        ImageDiff should be built and run with the host SDK, not the target SDK.
+        Build ImageDiff twice, once for the target SDK and once for the host
+        as an intermediate step towards building for only the host SDK.
+
+        * ImageDiff/Makefile: Added.
+        * Makefile: Add ImageDiff to list of targets.
+        * Scripts/build-imagediff: Build bmalloc and WTF for the host.
+        * Scripts/build-webkit: Build ImageDiff for host.
+        * Scripts/webkitdirs.pm: Export extractNonMacOSHostConfiguration.
+        (extractNonMacOSHostConfiguration): Remove non-host configuration data from the array.
+        * Scripts/webkitperl/webkitdirs_unittest/extractNonMacOSHostConfiguration.pl: Added.
+        * Scripts/webkitpy/port/base.py:
+        (Port.check_build): Attempt to build image diff if not found.
+        (Port.check_image_diff): Enable logging flag.
+        (Port._build_image_diff): Allow webkitpy to build image-diff during testing.
+
 2017-04-12  Alex Christensen  <achristensen@webkit.org>
 
         Clean up SharedBuffer public functions

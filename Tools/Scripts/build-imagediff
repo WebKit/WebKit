@@ -58,6 +58,22 @@ checkRequiredSystemConfig();
 setConfiguration();
 chdirWebKit();
 
+# Build bmalloc
+chdir "Source/bmalloc" or die;
+$result = buildXCodeProject("bmalloc", $clean, XcodeOptions(), @ARGV);
+if (exitStatus($result)) {
+    exit exitStatus($result);
+}
+chdirWebKit();
+ 
+# Build WTF
+chdir "Source/WTF" or die;
+$result = buildXCodeProject("WTF", $clean, XcodeOptions(), @ARGV);
+if (exitStatus($result)) {
+    exit exitStatus($result);
+}
+chdirWebKit();
+
 my @xcodeOptions = ("-target", "ImageDiff");
 push @xcodeOptions, XcodeOptions();
 

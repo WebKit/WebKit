@@ -229,11 +229,13 @@ class Port(object):
             return False
         if self.get_option('install') and not self._check_driver():
             return False
-        if self.get_option('pixel_tests'):
-            if not self.check_image_diff():
-                return False
         if self.get_option('install') and not self._check_port_build():
             return False
+        if not self.check_image_diff():
+            if self.get_option('build'):
+                return self._build_image_diff()
+            else:
+                return False
         return True
 
     def _check_driver(self):
@@ -261,7 +263,8 @@ class Port(object):
         """This routine is used to check whether image_diff binary exists."""
         image_diff_path = self._path_to_image_diff()
         if not self._filesystem.exists(image_diff_path):
-            _log.error("ImageDiff was not found at %s" % image_diff_path)
+            if logging:
+                _log.error("ImageDiff was not found at %s" % image_diff_path)
             return False
         return True
 
@@ -1421,6 +1424,17 @@ class Port(object):
             self._run_script("build-dumprendertree", args=self._build_driver_flags(), env=env)
             if self.get_option('webkit_test_runner'):
                 self._run_script("build-webkittestrunner", args=self._build_driver_flags(), env=env)
+        except ScriptError, e:
+            _log.error(e.message_with_output(output_limit=None))
+            return False
+        return True
+
+    def _build_image_diff(self):
+        environment = self.host.copy_current_environment()
+        environment.disable_gcc_smartquotes()
+        env = environment.to_dictionary()
+        try:
+            self._run_script("build-imagediff", env=env)
         except ScriptError, e:
             _log.error(e.message_with_output(output_limit=None))
             return False
