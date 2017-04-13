@@ -193,6 +193,14 @@ void LibWebRTCMediaEndpoint::addTrack(RTCRtpSender& sender, MediaStreamTrack& tr
     }
 }
 
+void LibWebRTCMediaEndpoint::removeTrack(RTCRtpSender& sender)
+{
+    auto rtcSender = m_senders.get(&sender);
+    if (!rtcSender)
+        return;
+    m_backend->RemoveTrack(rtcSender.get());
+}
+
 void LibWebRTCMediaEndpoint::doCreateOffer()
 {
     m_isInitiator = true;

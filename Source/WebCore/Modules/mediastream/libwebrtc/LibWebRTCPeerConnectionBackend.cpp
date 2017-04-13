@@ -311,6 +311,11 @@ void LibWebRTCPeerConnectionBackend::notifyAddedTrack(RTCRtpSender& sender)
     m_endpoint->addTrack(sender, *sender.track(), sender.mediaStreamIds());
 }
 
+void LibWebRTCPeerConnectionBackend::notifyRemovedTrack(RTCRtpSender& sender)
+{
+    m_endpoint->removeTrack(sender);
+}
+
 void LibWebRTCPeerConnectionBackend::removeRemoteStream(MediaStream* mediaStream)
 {
     m_remoteStreams.removeFirstMatching([mediaStream](const auto& item) {

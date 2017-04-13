@@ -148,7 +148,9 @@ ExceptionOr<Ref<RTCRtpSender>> RTCPeerConnection::addTrack(Ref<MediaStreamTrack>
         m_transceiverSet->append(WTFMove(transceiver));
     }
 
+#if !USE(LIBWEBRTC)
     m_backend->markAsNeedingNegotiation();
+#endif
 
     m_backend->notifyAddedTrack(*sender);
     return Ref<RTCRtpSender> { *sender };
@@ -171,7 +173,10 @@ ExceptionOr<void> RTCPeerConnection::removeTrack(RTCRtpSender& sender)
 
     sender.stop();
 
+    m_backend->notifyRemovedTrack(sender);
+#if !USE(LIBWEBRTC)
     m_backend->markAsNeedingNegotiation();
+#endif
     return { };
 }
 
@@ -203,8 +208,9 @@ Ref<RTCRtpTransceiver> RTCPeerConnection::completeAddTransceiver(Ref<RTCRtpSende
     transceiver->setDirection(init.direction);
 
     m_transceiverSet->append(transceiver.copyRef());
+#if !USE(LIBWEBRTC)
     m_backend->markAsNeedingNegotiation();
-
+#endif
     return transceiver;
 }
 

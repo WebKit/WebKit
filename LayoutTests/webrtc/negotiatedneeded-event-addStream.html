@@ -19,7 +19,11 @@ promise_test((test) => {
     return navigator.mediaDevices.getUserMedia({ video: true}).then((stream) => {
         return new Promise((resolve, reject) => {
             var pc = new RTCPeerConnection();
-            pc.onnegotiationneeded = () => { resolve(); };
+            var count = 0;
+            pc.onnegotiationneeded = () => {
+                assert_equals(count++, 0, "Should only be called once");
+                setTimeout(resolve, 500);
+            };
             pc.addTrack(stream.getVideoTracks()[0], stream);
         });
     });
