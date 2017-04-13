@@ -457,6 +457,8 @@
 		0F5CF9811E96F17F00C18692 /* AirTmpMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F5CF9801E96F17D00C18692 /* AirTmpMap.h */; };
 		0F5CF9841E9D537700C18692 /* AirLowerStackArgs.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F5CF9831E9D537500C18692 /* AirLowerStackArgs.h */; };
 		0F5CF9851E9D537A00C18692 /* AirLowerStackArgs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F5CF9821E9D537500C18692 /* AirLowerStackArgs.cpp */; };
+		0F5CF9881E9ED65000C18692 /* AirStackAllocation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F5CF9861E9ED64E00C18692 /* AirStackAllocation.cpp */; };
+		0F5CF9891E9ED65200C18692 /* AirStackAllocation.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F5CF9871E9ED64E00C18692 /* AirStackAllocation.h */; };
 		0F5D085D1B8CF99D001143B4 /* DFGNodeOrigin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F5D085C1B8CF99D001143B4 /* DFGNodeOrigin.cpp */; };
 		0F5EF91E16878F7A003E5C25 /* JITThunks.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F5EF91B16878F78003E5C25 /* JITThunks.cpp */; };
 		0F5EF91F16878F7D003E5C25 /* JITThunks.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F5EF91C16878F78003E5C25 /* JITThunks.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2996,6 +2998,8 @@
 		0F5CF9801E96F17D00C18692 /* AirTmpMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirTmpMap.h; path = b3/air/AirTmpMap.h; sourceTree = "<group>"; };
 		0F5CF9821E9D537500C18692 /* AirLowerStackArgs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AirLowerStackArgs.cpp; path = b3/air/AirLowerStackArgs.cpp; sourceTree = "<group>"; };
 		0F5CF9831E9D537500C18692 /* AirLowerStackArgs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirLowerStackArgs.h; path = b3/air/AirLowerStackArgs.h; sourceTree = "<group>"; };
+		0F5CF9861E9ED64E00C18692 /* AirStackAllocation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AirStackAllocation.cpp; path = b3/air/AirStackAllocation.cpp; sourceTree = "<group>"; };
+		0F5CF9871E9ED64E00C18692 /* AirStackAllocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirStackAllocation.h; path = b3/air/AirStackAllocation.h; sourceTree = "<group>"; };
 		0F5D085C1B8CF99D001143B4 /* DFGNodeOrigin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGNodeOrigin.cpp; path = dfg/DFGNodeOrigin.cpp; sourceTree = "<group>"; };
 		0F5EF91B16878F78003E5C25 /* JITThunks.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITThunks.cpp; sourceTree = "<group>"; };
 		0F5EF91C16878F78003E5C25 /* JITThunks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITThunks.h; sourceTree = "<group>"; };
@@ -5656,6 +5660,8 @@
 				0F338DFC1BED51270013C88F /* AirSimplifyCFG.h */,
 				0FEC85621BDACDC70080FF74 /* AirSpecial.cpp */,
 				0FEC85631BDACDC70080FF74 /* AirSpecial.h */,
+				0F5CF9861E9ED64E00C18692 /* AirStackAllocation.cpp */,
+				0F5CF9871E9ED64E00C18692 /* AirStackAllocation.h */,
 				0FEC85661BDACDC70080FF74 /* AirStackSlot.cpp */,
 				0FEC85671BDACDC70080FF74 /* AirStackSlot.h */,
 				0F2BBD9B1C5FF4050023EF23 /* AirStackSlotKind.cpp */,
@@ -8613,6 +8619,7 @@
 				E3C79CAB1DB9A4DC00D1ECA4 /* DOMJITEffect.h in Headers */,
 				E3FF75331D9CEA1800C7E16D /* DOMJITGetterSetter.h in Headers */,
 				E35CA1541DBC3A5C00F83516 /* DOMJITHeapRange.h in Headers */,
+				0F5CF9891E9ED65200C18692 /* AirStackAllocation.h in Headers */,
 				E3C08E3C1DA41B810039478F /* DOMJITPatchpoint.h in Headers */,
 				534638711E70CF3D00F12AC1 /* JSRunLoopTimer.h in Headers */,
 				FE6F56DE1E64EAD600D17801 /* VMTraps.h in Headers */,
@@ -10906,6 +10913,7 @@
 				AD2FCBF41DB58DAD00B3E736 /* WebAssemblyMemoryConstructor.cpp in Sources */,
 				AD2FCBF61DB58DAD00B3E736 /* WebAssemblyMemoryPrototype.cpp in Sources */,
 				AD2FCC001DB58DAD00B3E736 /* WebAssemblyModuleConstructor.cpp in Sources */,
+				0F5CF9881E9ED65000C18692 /* AirStackAllocation.cpp in Sources */,
 				AD2FCC021DB58DAD00B3E736 /* WebAssemblyModulePrototype.cpp in Sources */,
 				AD4937C71DDD0AAE0077C807 /* WebAssemblyModuleRecord.cpp in Sources */,
 				AD2FCC2C1DB838FD00B3E736 /* WebAssemblyPrototype.cpp in Sources */,

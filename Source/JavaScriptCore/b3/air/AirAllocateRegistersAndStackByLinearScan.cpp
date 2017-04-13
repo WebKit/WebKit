@@ -28,7 +28,6 @@
 
 #if ENABLE(B3_JIT)
 
-#include "AirAllocateStackByGraphColoring.h"
 #include "AirArgInlines.h"
 #include "AirCode.h"
 #include "AirFixSpillsAfterTerminals.h"
@@ -39,6 +38,7 @@
 #include "AirPadInterference.h"
 #include "AirPhaseScope.h"
 #include "AirRegLiveness.h"
+#include "AirStackAllocation.h"
 #include "AirTmpInlines.h"
 #include "AirTmpMap.h"
 #include <wtf/ListDump.h>

@@ -41,10 +41,6 @@ class Code;
 
 void allocateStackByGraphColoring(Code&);
 
-// These are utilities shared by this phase and allocateRegistersAndStackByLinearScan().
-void allocateEscapedStackSlots(Code&);
-void updateFrameSizeBasedOnStackSlots(Code&);
-
 } } } // namespace JSC::B3::Air
 
 #endif // ENABLE(B3_JIT)

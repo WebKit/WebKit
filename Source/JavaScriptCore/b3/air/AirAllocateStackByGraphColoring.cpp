@@ -34,6 +34,7 @@
 #include "AirInstInlines.h"
 #include "AirLiveness.h"
 #include "AirPhaseScope.h"
+#include "AirStackAllocation.h"
 #include "StackAlignment.h"
 #include <wtf/ListDump.h>
 
@@ -42,53 +43,6 @@ namespace JSC { namespace B3 { namespace Air {
 namespace {
 
 const bool verbose = false;
-
-bool attemptAssignment(
-    StackSlot* slot, intptr_t offsetFromFP, const Vector<StackSlot*>& otherSlots)
-{
-    if (verbose)
-        dataLog("Attempting to assign ", pointerDump(slot), " to ", offsetFromFP, " with interference ", pointerListDump(otherSlots), "\n");
-
-    // Need to align it to the slot's desired alignment.
-    offsetFromFP = -WTF::roundUpToMultipleOf(slot->alignment(), -offsetFromFP);
-    
-    for (StackSlot* otherSlot : otherSlots) {
-        if (!otherSlot->offsetFromFP())
-            continue;
-        bool overlap = WTF::rangesOverlap(
-            offsetFromFP,
-            offsetFromFP + static_cast<intptr_t>(slot->byteSize()),
-            otherSlot->offsetFromFP(),
-            otherSlot->offsetFromFP() + static_cast<intptr_t>(otherSlot->byteSize()));
-        if (overlap)
-            return false;
-    }
-
-    if (verbose)
-        dataLog("Assigned ", pointerDump(slot), " to ", offsetFromFP, "\n");
-    slot->setOffsetFromFP(offsetFromFP);
-    return true;
-}
-
-void assign(StackSlot* slot, const Vector<StackSlot*>& otherSlots)
-{
-    if (verbose)
-        dataLog("Attempting to assign ", pointerDump(slot), " with interference ", pointerListDump(otherSlots), "\n");
-    
-    if (attemptAssignment(slot, -static_cast<intptr_t>(slot->byteSize()), otherSlots))
-        return;
-
-    for (StackSlot* otherSlot : otherSlots) {
-        if (!otherSlot->offsetFromFP())
-            continue;
-        bool didAssign = attemptAssignment(
-            slot, otherSlot->offsetFromFP() - static_cast<intptr_t>(slot->byteSize()), otherSlots);
-        if (didAssign)
-            return;
-    }
-
-    RELEASE_ASSERT_NOT_REACHED();
-}
 
 struct CoalescableMove {
     CoalescableMove()
@@ -129,54 +83,7 @@ struct CoalescableMove {
     double frequency { PNaN };
 };
 
-Vector<StackSlot*> allocateEscapedStackSlotsImpl(Code& code)
-{
-    // Allocate all of the escaped slots in order. This is kind of a crazy algorithm to allow for
-    // the possibility of stack slots being assigned frame offsets before we even get here.
-    RELEASE_ASSERT(!code.frameSize());
-    Vector<StackSlot*> assignedEscapedStackSlots;
-    Vector<StackSlot*> escapedStackSlotsWorklist;
-    for (StackSlot* slot : code.stackSlots()) {
-        if (slot->isLocked()) {
-            if (slot->offsetFromFP())
-                assignedEscapedStackSlots.append(slot);
-            else
-                escapedStackSlotsWorklist.append(slot);
-        } else {
-            // It would be super strange to have an unlocked stack slot that has an offset already.
-            ASSERT(!slot->offsetFromFP());
-        }
-    }
-    // This is a fairly expensive loop, but it's OK because we'll usually only have a handful of
-    // escaped stack slots.
-    while (!escapedStackSlotsWorklist.isEmpty()) {
-        StackSlot* slot = escapedStackSlotsWorklist.takeLast();
-        assign(slot, assignedEscapedStackSlots);
-        assignedEscapedStackSlots.append(slot);
-    }
-    return assignedEscapedStackSlots;
-}
-
-template<typename Collection>
-void updateFrameSizeBasedOnStackSlotsImpl(Code& code, const Collection& collection)
-{
-    unsigned frameSize = 0;
-    for (StackSlot* slot : collection)
-        frameSize = std::max(frameSize, static_cast<unsigned>(-slot->offsetFromFP()));
-    code.setFrameSize(WTF::roundUpToMultipleOf(stackAlignmentBytes(), frameSize));
-}
-
 } // anonymous namespace
-
-void allocateEscapedStackSlots(Code& code)
-{
-    updateFrameSizeBasedOnStackSlotsImpl(code, allocateEscapedStackSlotsImpl(code));
-}
-
-void updateFrameSizeBasedOnStackSlots(Code& code)
-{
-    updateFrameSizeBasedOnStackSlotsImpl(code, code.stackSlots());
-}
 
 void allocateStackByGraphColoring(Code& code)
 {
@@ -184,7 +91,8 @@ void allocateStackByGraphColoring(Code& code)
     
     handleCalleeSaves(code);
     
-    Vector<StackSlot*> assignedEscapedStackSlots = allocateEscapedStackSlotsImpl(code);
+    Vector<StackSlot*> assignedEscapedStackSlots =
+        allocateAndGetEscapedStackSlotsWithoutChangingFrameSize(code);
 
     // Now we handle the spill slots.
     StackSlotLiveness liveness(code);

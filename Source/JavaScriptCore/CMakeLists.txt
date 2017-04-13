@@ -109,6 +109,7 @@ set(JavaScriptCore_SOURCES
     b3/air/AirReportUsedRegisters.cpp
     b3/air/AirSimplifyCFG.cpp
     b3/air/AirSpecial.cpp
+    b3/air/AirStackAllocation.cpp
     b3/air/AirStackSlot.cpp
     b3/air/AirStackSlotKind.cpp
     b3/air/AirTmp.cpp

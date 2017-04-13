@@ -1,5 +1,46 @@
 2017-04-12  Filip Pizlo  <fpizlo@apple.com>
 
+        Move common stack allocation utilities out of AirAllocateStackByGraphColoring.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=170799
+
+        Reviewed by Michael Saboff and Keith Miller.
+        
+        When I added stack allocation to allocateRegistersByLinearScan, I reused a handful of
+        utility functions from AirAllocateStackByGraphColoring.cpp. I accomplished this by
+        putting their declarations in AirAllocateStackByGraphColoring.h.
+        
+        That was pretty weird.
+        
+        This patch moves a family of stack allocation helper functions out of
+        AirAllocateStackByGraphColoring.cpp and into the new AirStackAllocation.h|cpp. The
+        linear scan stack allocator no longer has to include the other stack allocator's
+        header, which addresses my OCD.
+        
+        I moved the functions transitively reachable from the two functions that the linear
+        scan allocator needed. This forced me to give them better names (i.e. no "fooBarImpl")
+        and short descriptive comments. I think that such comments are useful in code that is
+        doing a convoluted version of some theoretical concept.
+        
+        No behavior change.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * b3/air/AirAllocateRegistersAndStackByLinearScan.cpp:
+        * b3/air/AirAllocateStackByGraphColoring.cpp:
+        (JSC::B3::Air::allocateStackByGraphColoring):
+        (JSC::B3::Air::allocateEscapedStackSlots): Deleted.
+        (JSC::B3::Air::updateFrameSizeBasedOnStackSlots): Deleted.
+        * b3/air/AirAllocateStackByGraphColoring.h:
+        * b3/air/AirStackAllocation.cpp: Added.
+        (JSC::B3::Air::attemptAssignment):
+        (JSC::B3::Air::assign):
+        (JSC::B3::Air::allocateAndGetEscapedStackSlotsWithoutChangingFrameSize):
+        (JSC::B3::Air::allocateEscapedStackSlots):
+        (JSC::B3::Air::updateFrameSizeBasedOnStackSlots):
+        * b3/air/AirStackAllocation.h: Added.
+
+2017-04-12  Filip Pizlo  <fpizlo@apple.com>
+
         B3 -O1 should not allocateStackByGraphColoring
         https://bugs.webkit.org/show_bug.cgi?id=170742
 
