@@ -9,10 +9,8 @@ jsTestIsAsync = true;
 onload = function() {
     image = document.querySelector("img");
 
-    setTimeout(function() {
-        debug("Initially outside the viewport");
-        shouldBeFalse("internals.isImageAnimating(image)");
-
+    debug("Initially outside the viewport");
+    shouldBecomeEqual("internals.isImageAnimating(image)", "false", function() {
         debug("Scrolling animation into view");
         internals.scrollElementToRect(image, 0, 0, 300, 300);
         shouldBecomeEqual("internals.isImageAnimating(image)", "true", function() {
@@ -20,7 +18,7 @@ onload = function() {
             scroll(0, 0);
             shouldBecomeEqual("internals.isImageAnimating(image)", "false", finishJSTest);
         });
-    }, 30);
+    });
 }
 </script>
 <div style="position: relative; width: 1600px; height: 2400px;">
