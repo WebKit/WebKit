@@ -3,3 +3,5 @@
 # See http://trac.webkit.org/wiki/TestExpectations for more information on this file.
 #
 
+fast/multicol/flexbox-rows.html [ Skip ]
+
