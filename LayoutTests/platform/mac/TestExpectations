@@ -1497,6 +1497,8 @@ webkit.org/b/169679 [ Debug ] media/modern-media-controls/time-label/time-label-
 
 webkit.org/b/169158 media/modern-media-controls/tracks-support/tracks-support-show-panel-after-dragging-controls.html [ Pass Failure ]
 
+webkit.org/b/164229 [ Debug ] media/modern-media-controls/volume-support/volume-support-click.html [ Pass Timeout ]
+
 webkit.org/b/169568 media/modern-media-controls/volume-down-support/volume-down-support.html [ Pass Failure ]
 
 webkit.org/b/165874 streams/pipe-to.html [ Pass Failure ]
