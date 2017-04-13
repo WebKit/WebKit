@@ -69,10 +69,10 @@ promise_test((test) => {
     return new Promise((resolve, reject) => {
         var pc = new RTCPeerConnection();
         pc.onconnectionstatechange = () => {
-            assert_equals(pc.connectionState, "closed");
-            resolve();
+            assert_unreached();
         };
         pc.close();
+        setTimeout(resolve, 200);
     })
 }, "Checking connection state event when closing peer connetion");
         </script>

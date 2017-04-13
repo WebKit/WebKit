@@ -332,7 +332,7 @@ void MediaEndpointPeerConnection::doSetLocalDescription(RTCSessionDescription& d
 
 void MediaEndpointPeerConnection::setLocalDescriptionTask(RefPtr<RTCSessionDescription>&& description)
 {
-    if (m_peerConnection.signalingState() == RTCSignalingState::Closed)
+    if (m_peerConnection.isClosed())
         return;
 
     auto result = MediaEndpointSessionDescription::create(WTFMove(description), *m_sdpProcessor);
@@ -718,7 +718,7 @@ void MediaEndpointPeerConnection::replaceTrack(RTCRtpSender& sender, Ref<MediaSt
 
 void MediaEndpointPeerConnection::replaceTrackTask(RTCRtpSender& sender, const String& mid, Ref<MediaStreamTrack>&& withTrack, DOMPromise<void>& promise)
 {
-    if (m_peerConnection.signalingState() == RTCSignalingState::Closed)
+    if (m_peerConnection.isClosed())
         return;
 
     m_mediaEndpoint->replaceSendSource(withTrack->source(), mid);

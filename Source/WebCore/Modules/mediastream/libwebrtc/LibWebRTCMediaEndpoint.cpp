@@ -428,7 +428,7 @@ static RTCSignalingState signalingState(webrtc::PeerConnectionInterface::Signali
     case webrtc::PeerConnectionInterface::kHaveRemotePrAnswer:
         return RTCSignalingState::HaveRemotePranswer;
     case webrtc::PeerConnectionInterface::kClosed:
-        return RTCSignalingState::Closed;
+        return RTCSignalingState::Stable;
     }
 }
 

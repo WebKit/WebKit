@@ -34,7 +34,6 @@ enum class RTCSignalingState {
     HaveRemoteOffer,
     HaveLocalPranswer,
     HaveRemotePranswer,
-    Closed
 };
 
 }; // namespace WebCore

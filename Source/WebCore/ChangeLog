@@ -1,3 +1,56 @@
+2017-04-13  Youenn Fablet  <youenn@apple.com>
+
+        Remove RTCSignalingState::Closed
+        https://bugs.webkit.org/show_bug.cgi?id=170811
+
+        Reviewed by Eric Carlson.
+
+        Covered by existing and rebased tests.
+
+        Adding RTCPeerConnection::isClosed to better match the isClosed internal slot in webrtc specification.
+        Using isClosed instead of checking signalingState value.
+        Implementing isClosed in terms of m_connectionState which has a Closed value.
+
+        * Modules/mediastream/MediaEndpointPeerConnection.cpp:
+        (WebCore::MediaEndpointPeerConnection::setLocalDescriptionTask):
+        (WebCore::MediaEndpointPeerConnection::replaceTrackTask):
+        * Modules/mediastream/PeerConnectionBackend.cpp:
+        (WebCore::PeerConnectionBackend::createOffer):
+        (WebCore::PeerConnectionBackend::createOfferSucceeded):
+        (WebCore::PeerConnectionBackend::createOfferFailed):
+        (WebCore::PeerConnectionBackend::createAnswer):
+        (WebCore::PeerConnectionBackend::createAnswerSucceeded):
+        (WebCore::PeerConnectionBackend::createAnswerFailed):
+        (WebCore::PeerConnectionBackend::setLocalDescription):
+        (WebCore::PeerConnectionBackend::setLocalDescriptionSucceeded):
+        (WebCore::PeerConnectionBackend::setLocalDescriptionFailed):
+        (WebCore::PeerConnectionBackend::setRemoteDescription):
+        (WebCore::PeerConnectionBackend::setRemoteDescriptionSucceeded):
+        (WebCore::PeerConnectionBackend::setRemoteDescriptionFailed):
+        (WebCore::PeerConnectionBackend::addIceCandidate):
+        (WebCore::PeerConnectionBackend::addIceCandidateSucceeded):
+        (WebCore::PeerConnectionBackend::addIceCandidateFailed):
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::create):
+        (WebCore::RTCPeerConnection::RTCPeerConnection):
+        (WebCore::RTCPeerConnection::addTrack):
+        (WebCore::RTCPeerConnection::removeTrack):
+        (WebCore::RTCPeerConnection::queuedCreateOffer):
+        (WebCore::RTCPeerConnection::queuedCreateAnswer):
+        (WebCore::RTCPeerConnection::queuedSetLocalDescription):
+        (WebCore::RTCPeerConnection::queuedSetRemoteDescription):
+        (WebCore::RTCPeerConnection::queuedAddIceCandidate):
+        (WebCore::RTCPeerConnection::setConfiguration):
+        (WebCore::RTCPeerConnection::createDataChannel):
+        (WebCore::RTCPeerConnection::doClose):
+        (WebCore::RTCPeerConnection::updateIceGatheringState):
+        (WebCore::RTCPeerConnection::updateIceConnectionState):
+        (WebCore::RTCPeerConnection::scheduleNegotiationNeededEvent):
+        * Modules/mediastream/RTCPeerConnection.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        (WebCore::signalingState):
+        * platform/mediastream/RTCSignalingState.h:
+
 2017-04-13  Zalan Bujtas  <zalan@apple.com>
 
         BreakingContext::WordTrailingSpace cleanup.
