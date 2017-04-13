@@ -1919,7 +1919,7 @@ private:
 #endif
         unsigned direction : 1; // TextDirection
         unsigned whiteSpace : 3; // EWhiteSpace
-        // 32 bits
+        // 35 bits
         unsigned borderCollapse : 1; // EBorderCollapse
         unsigned boxDirection : 1; // EBoxDirection (CSS3 box_direction property, flexible box layout module)
 
@@ -1929,11 +1929,11 @@ private:
         unsigned pointerEvents : 4; // EPointerEvents
         unsigned insideLink : 2; // EInsideLink
         unsigned insideDefaultButton : 1;
-        // 44 bits
+        // 46 bits
 
         // CSS Text Layout Module Level 3: Vertical writing support
         unsigned writingMode : 2; // WritingMode
-        // 46 bits
+        // 48 bits
     };
 
     // This constructor is used to implement the replace operation.
