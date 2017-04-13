@@ -657,6 +657,10 @@
 #define HAVE_CFNETWORK_STORAGE_PARTITIONING 1
 #endif
 
+#if OS(DARWIN) || ((OS(FREEBSD) || defined(__GLIBC__)) && (CPU(X86) || CPU(X86_64) || CPU(ARM) || CPU(ARM64) || CPU(MIPS)))
+#define HAVE_MACHINE_CONTEXT 1
+#endif
+
 /* ENABLE macro defaults */
 
 /* FIXME: move out all ENABLE() defines from here to FeatureDefines.h */
@@ -789,11 +793,15 @@
  * In configurations other than Windows and Darwin, because layout of mcontext_t depends on standard libraries (like glibc),
  * sampling profiler is enabled if WebKit uses pthreads and glibc. */
 #if !defined(ENABLE_SAMPLING_PROFILER)
-#if (OS(DARWIN) || OS(WINDOWS) || PLATFORM(GTK)) && ENABLE(JIT)
+#if ENABLE(JIT) && (OS(WINDOWS) || HAVE(MACHINE_CONTEXT))
 #define ENABLE_SAMPLING_PROFILER 1
 #else
 #define ENABLE_SAMPLING_PROFILER 0
 #endif
+#endif
+
+#if ENABLE(WEBASSEMBLY) && HAVE(MACHINE_CONTEXT)
+#define ENABLE_WEBASSEMBLY_FAST_MEMORY 1
 #endif
 
 /* Counts uses of write barriers using sampling counters. Be sure to also
@@ -921,7 +929,7 @@
 #endif
 #endif
 
-#if (OS(DARWIN) || OS(LINUX) || OS(FREEBSD)) && ENABLE(JIT)
+#if ENABLE(JIT) && HAVE(MACHINE_CONTEXT)
 #define ENABLE_SIGNAL_BASED_VM_TRAPS 1
 #endif
 
@@ -1212,10 +1220,6 @@
 
 #if PLATFORM(COCOA) && ENABLE(WEB_RTC)
 #define USE_LIBWEBRTC 1
-#endif
-
-#if OS(DARWIN) || ((OS(FREEBSD) || defined(__GLIBC__)) && (CPU(X86) || CPU(X86_64) || CPU(ARM) || CPU(ARM64) || CPU(MIPS)))
-#define HAVE_MACHINE_CONTEXT 1
 #endif
 
 #endif /* WTF_Platform_h */

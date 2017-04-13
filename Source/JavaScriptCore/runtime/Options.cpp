@@ -346,6 +346,10 @@ static void overrideDefaults()
 #if !ENABLE(SIGNAL_BASED_VM_TRAPS)
     Options::usePollingTraps() = true;
 #endif
+
+#if !ENABLE(WEBASSEMBLY_FAST_MEMORY)
+    Options::useWebAssemblyFastMemory() = false;
+#endif
 }
 
 static void recomputeDependentOptions()

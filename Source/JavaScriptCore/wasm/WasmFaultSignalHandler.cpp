@@ -41,16 +41,18 @@
 
 namespace JSC { namespace Wasm {
 
-
 namespace {
 static const bool verbose = false;
 }
 
+static StaticLock codeLocationsLock;
+static LazyNeverDestroyed<HashSet<std::tuple<void*, void*>>> codeLocations; // (start, end)
+
+#if ENABLE(WEBASSEMBLY_FAST_MEMORY)
+
 static struct sigaction oldSigBusHandler;
 static struct sigaction oldSigSegvHandler;
 static bool fastHandlerInstalled { false };
-static StaticLock codeLocationsLock;
-static LazyNeverDestroyed<HashSet<std::tuple<void*, void*>>> codeLocations; // (start, end)
 
 static void trapHandler(int signal, siginfo_t* sigInfo, void* ucontext)
 {
@@ -108,6 +110,8 @@ static void trapHandler(int signal, siginfo_t* sigInfo, void* ucontext)
         sigaction(signal, &oldSigSegvHandler, nullptr);
 }
 
+#endif // ENABLE(WEBASSEMBLY_FAST_MEMORY)
+
 void registerCode(void* start, void* end)
 {
     if (!fastMemoryEnabled())
@@ -136,6 +140,7 @@ void enableFastMemory()
         if (!Options::useWebAssemblyFastMemory())
             return;
 
+#if ENABLE(WEBASSEMBLY_FAST_MEMORY)
         struct sigaction action;
 
         action.sa_sigaction = trapHandler;
@@ -155,6 +160,7 @@ void enableFastMemory()
 
         codeLocations.construct();
         fastHandlerInstalled = true;
+#endif // ENABLE(WEBASSEMBLY_FAST_MEMORY)
     });
 }
     
