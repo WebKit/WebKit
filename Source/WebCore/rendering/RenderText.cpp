@@ -820,8 +820,6 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Fo
     std::optional<unsigned> nextBreakable;
     unsigned lastWordBoundary = 0;
 
-    // Non-zero only when kerning is enabled, in which case we measure words with their trailing
-    // space, then subtract its width.
     WordTrailingSpace wordTrailingSpace(style);
     // If automatic hyphenation is allowed, we keep track of the width of the widest word (or word
     // fragment) encountered so far, and only try hyphenating words that are wider.

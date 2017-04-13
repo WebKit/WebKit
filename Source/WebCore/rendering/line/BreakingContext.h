@@ -64,30 +64,29 @@ struct WordMeasurement {
 };
 
 struct WordTrailingSpace {
-    WordTrailingSpace(const RenderStyle& style, TextLayout* textLayout = nullptr)
+    WordTrailingSpace(const RenderStyle& style, bool measuringWithTrailingWhitespaceEnabled = true)
         : m_style(style)
-        , m_textLayout(textLayout)
     {
+        if (!measuringWithTrailingWhitespaceEnabled || !m_style.fontCascade().enableKerning())
+            m_state = WordTrailingSpaceState::Initialized;
     }
 
     std::optional<float> width(HashSet<const Font*>& fallbackFonts)
     {
-        if (m_state == WordTrailingSpaceState::Computed)
+        if (m_state == WordTrailingSpaceState::Initialized)
             return m_width;
 
-        const FontCascade& font = m_style.fontCascade();
-        if (font.enableKerning() && !m_textLayout)
-            m_width = font.width(RenderBlock::constructTextRun(&space, 1, m_style), &fallbackFonts) + font.wordSpacing();
-        m_state = WordTrailingSpaceState::Computed;
+        auto& font = m_style.fontCascade();
+        m_width = font.width(RenderBlock::constructTextRun(&space, 1, m_style), &fallbackFonts) + font.wordSpacing();
+        m_state = WordTrailingSpaceState::Initialized;
         return m_width;
     }
 
 private:
-    enum class WordTrailingSpaceState { Uninitialized, Computed };
+    enum class WordTrailingSpaceState { Uninitialized, Initialized };
+    const RenderStyle& m_style;
     WordTrailingSpaceState m_state { WordTrailingSpaceState::Uninitialized };
     std::optional<float> m_width;
-    const RenderStyle& m_style;
-    TextLayout* m_textLayout { nullptr };
 };
 
 class BreakingContext {
@@ -825,15 +824,14 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
         m_renderTextInfo.layout = font.createLayout(renderText, m_width.currentWidth(), m_collapseWhiteSpace);
     }
 
-    TextLayout* textLayout = m_renderTextInfo.layout.get();
-
-    // Non-zero only when kerning is enabled and TextLayout isn't used, in which case we measure
-    // words with their trailing space, then subtract its width.
     HashSet<const Font*> fallbackFonts;
     UChar lastCharacterFromPreviousRenderText = m_renderTextInfo.lineBreakIterator.lastCharacter();
     UChar lastCharacter = m_renderTextInfo.lineBreakIterator.lastCharacter();
     UChar secondToLastCharacter = m_renderTextInfo.lineBreakIterator.secondToLastCharacter();
-    WordTrailingSpace wordTrailingSpace(style, textLayout);
+    // Non-zero only when kerning is enabled and TextLayout isn't used, in which case we measure
+    // words with their trailing space, then subtract its width.
+    TextLayout* textLayout = m_renderTextInfo.layout.get();
+    WordTrailingSpace wordTrailingSpace(style, !textLayout);
     for (; m_current.offset() < renderText.textLength(); m_current.fastIncrementInTextNode()) {
         bool previousCharacterIsSpace = m_currentCharacterIsSpace;
         bool previousCharacterIsWS = m_currentCharacterIsWS;
