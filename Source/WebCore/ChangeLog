@@ -1,3 +1,12 @@
+2017-04-13  JF Bastien  <jfbastien@apple.com>
+
+        cmake build fix
+
+        Unreviewed build fix. A file was removed but left in the cmake
+        build.
+
+        * PlatformMac.cmake:
+
 2017-04-13  Youenn Fablet  <youenn@apple.com>
 
         Remove RTCSignalingState::Closed

@@ -263,7 +263,6 @@ list(APPEND WebCore_SOURCES
     loader/cocoa/SubresourceLoaderCocoa.mm
 
     loader/cf/ResourceLoaderCFNet.cpp
-    loader/cf/SubresourceLoaderCF.cpp
 
     loader/mac/DocumentLoaderMac.cpp
     loader/mac/LoaderNSURLExtras.mm
