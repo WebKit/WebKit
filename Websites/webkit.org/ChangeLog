@@ -1,3 +1,12 @@
+2017-04-13  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly: manage memory better
+        https://bugs.webkit.org/show_bug.cgi?id=170628
+
+        Reviewed by Keith Miller, Michael Saboff.
+
+        * docs/b3/intermediate-representation.html: typos
+
 2017-04-08  Simon Fraser  <simon.fraser@apple.com>
 
         Update the css-status page to handle changes in CSSProperties.json.

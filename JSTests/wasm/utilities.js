@@ -79,6 +79,12 @@ const _dump = (what, name, pad = '    ') => {
     return s;
 };
 
+export const toJavaScriptName = name => {
+    const camelCase = name.replace(/([^a-z0-9].)/g, c => c[1].toUpperCase());
+    const CamelCase = camelCase.charAt(0).toUpperCase() + camelCase.slice(1);
+    return CamelCase;
+};
+
 // Use underscore names to avoid clashing with builtin names.
 export {
     _dump as dump,

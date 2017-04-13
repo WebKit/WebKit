@@ -62,6 +62,7 @@
 #include "TypeProfilerLog.h"
 #include "UnlinkedCodeBlock.h"
 #include "VM.h"
+#include "WasmMemory.h"
 #include "WeakSetInlines.h"
 #include <algorithm>
 #include <wtf/CurrentTime.h>
@@ -250,6 +251,7 @@ Heap::Heap(VM* vm, HeapType heapType)
     , m_sizeAfterLastEdenCollect(0)
     , m_sizeBeforeLastEdenCollect(0)
     , m_bytesAllocatedThisCycle(0)
+    , m_webAssemblyFastMemoriesAllocatedThisCycle(0)
     , m_bytesAbandonedSinceLastFullCollect(0)
     , m_maxEdenSize(m_minBytesPerCycle)
     , m_maxHeapSize(m_minBytesPerCycle)
@@ -464,6 +466,23 @@ void Heap::deprecatedReportExtraMemorySlowCase(size_t size)
     checkedNewSize += size;
     m_deprecatedExtraMemorySize = UNLIKELY(checkedNewSize.hasOverflowed()) ? std::numeric_limits<size_t>::max() : checkedNewSize.unsafeGet();
     reportExtraMemoryAllocatedSlowCase(size);
+}
+
+void Heap::reportWebAssemblyFastMemoriesAllocated(size_t count)
+{
+    didAllocateWebAssemblyFastMemories(count);
+    collectIfNecessaryOrDefer();
+}
+
+bool Heap::webAssemblyFastMemoriesThisCycleAtThreshold() const
+{
+    // WebAssembly fast memories use large amounts of virtual memory and we
+    // don't know how many can exist in this process. We keep track of the most
+    // fast memories that have existed at any point in time. The GC uses this
+    // top watermark as an indication of whether recent allocations should cause
+    // a collection: get too close and we may be close to the actual limit.
+    size_t fastMemoryThreshold = std::max<size_t>(1, Wasm::Memory::maxFastMemoryCount() / 2);
+    return m_webAssemblyFastMemoriesAllocatedThisCycle > fastMemoryThreshold;
 }
 
 void Heap::reportAbandonedObjectGraph()
@@ -2103,6 +2122,7 @@ void Heap::updateAllocationLimits()
     if (verbose) {
         dataLog("\n");
         dataLog("bytesAllocatedThisCycle = ", m_bytesAllocatedThisCycle, "\n");
+        dataLog("webAssemblyFastMemoriesAllocatedThisCycle = ", m_webAssemblyFastMemoriesAllocatedThisCycle, "\n");
     }
     
     // Calculate our current heap size threshold for the purpose of figuring out when we should
@@ -2180,6 +2200,7 @@ void Heap::updateAllocationLimits()
     if (verbose)
         dataLog("sizeAfterLastCollect = ", m_sizeAfterLastCollect, "\n");
     m_bytesAllocatedThisCycle = 0;
+    m_webAssemblyFastMemoriesAllocatedThisCycle = 0;
 
     if (Options::logGC())
         dataLog("=> ", currentHeapSize / 1024, "kb, ");
@@ -2253,6 +2274,11 @@ void Heap::didAllocate(size_t bytes)
     performIncrement(bytes);
 }
 
+void Heap::didAllocateWebAssemblyFastMemories(size_t count)
+{
+    m_webAssemblyFastMemoriesAllocatedThisCycle += count;
+}
+
 bool Heap::isValidAllocation(size_t)
 {
     if (!isValidThreadState(m_vm))
@@ -2305,7 +2331,7 @@ bool Heap::shouldDoFullCollection(std::optional<CollectionScope> scope) const
         return true;
 
     if (!scope)
-        return m_shouldDoFullCollection;
+        return m_shouldDoFullCollection || webAssemblyFastMemoriesThisCycleAtThreshold();
     return *scope == CollectionScope::Full;
 }
 
@@ -2456,7 +2482,8 @@ void Heap::collectIfNecessaryOrDefer(GCDeferralContext* deferralContext)
         if (m_bytesAllocatedThisCycle <= Options::gcMaxHeapSize())
             return;
     } else {
-        if (m_bytesAllocatedThisCycle <= m_maxEdenSize)
+        if (!webAssemblyFastMemoriesThisCycleAtThreshold()
+            && m_bytesAllocatedThisCycle <= m_maxEdenSize)
             return;
     }
 

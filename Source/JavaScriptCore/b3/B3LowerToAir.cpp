@@ -3144,22 +3144,46 @@ private:
         }
 
         case B3::WasmBoundsCheck: {
+#if ENABLE(WEBASSEMBLY)
             WasmBoundsCheckValue* value = m_value->as<WasmBoundsCheckValue>();
 
             Value* ptr = value->child(0);
 
-            Arg temp = m_code.newTmp(GP);
-            append(Inst(Move32, value, tmp(ptr), temp));
+            Arg ptrPlusImm = m_code.newTmp(GP);
+            append(Inst(Move32, value, tmp(ptr), ptrPlusImm));
             if (value->offset()) {
                 if (imm(value->offset()))
-                    append(Add64, imm(value->offset()), temp);
+                    append(Add64, imm(value->offset()), ptrPlusImm);
                 else {
                     Arg bigImm = m_code.newTmp(GP);
                     append(Move, Arg::bigImm(value->offset()), bigImm);
-                    append(Add64, bigImm, temp);
+                    append(Add64, bigImm, ptrPlusImm);
                 }
             }
-            append(Inst(Air::WasmBoundsCheck, value, temp, Arg(value->pinnedGPR())));
+
+            Arg limit;
+            if (value->pinnedGPR() != InvalidGPRReg)
+                limit = Arg(value->pinnedGPR());
+            else {
+                // Signaling memories don't pin a register because only the accesses whose reg+imm could ever overflow 4GiB+redzone need to be checked,
+                // and we don't think these will be frequent. All other accesses will trap due to PROT_NONE pages.
+                //
+                // If we got here it's because a memory access had a very large offset. We could check that it doesn't exceed 4GiB+redzone since that's
+                // technically the limit we need to avoid overflowing, but it's better if we use a smaller immediate which codegens more easily.
+                // We know that anything above the declared 'maximum' will trap, so we can compare against that number. If there was no declared
+                // 'maximum' then we still know that any access above 4GiB will trap, no need to add the redzone.
+                limit = m_code.newTmp(GP);
+                size_t limitValue = value->maximum() ? value->maximum().bytes() : std::numeric_limits<uint32_t>::max();
+                ASSERT(limitValue <= value->redzoneLimit());
+                if (imm(limitValue))
+                    append(Move, imm(limitValue), limit);
+                else
+                    append(Move, Arg::bigImm(limitValue), limit);
+            }
+            append(Inst(Air::WasmBoundsCheck, value, ptrPlusImm, limit));
+#else
+            append(Air::Oops);
+#endif // ENABLE(WEBASSEMBLY)
             return;
         }
 

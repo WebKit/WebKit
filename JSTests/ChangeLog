@@ -1,3 +1,33 @@
+2017-04-13  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly: manage memory better
+        https://bugs.webkit.org/show_bug.cgi?id=170628
+
+        Reviewed by Keith Miller, Michael Saboff.
+
+        * wasm/Builder.js: move a helper out so tests can use it
+        (export.default.Builder.prototype._registerSectionBuilders.const.section.in.WASM.description.section.switch.section.case.string_appeared_here.this.section):
+        * wasm/WASM.js: add utilities to classify opcodes
+        (export.opcodes):
+        (export.const.memoryAccessInfo.op.const.sign):
+        * wasm/function-tests/memory-access-past-4gib.js: Added. This test
+        fails before this patch.
+        (const.op.of.WASM.opcodes):
+        * wasm/function-tests/memory-many.js: Added. This simple tests
+        just shouldn't crash. In verbose mode it's useful at determining
+        if the GC falls behind or not.
+        * wasm/function-tests/memory-multiagent.js: Added. Emulate postMessage.
+        (const.startAgents.numAgentsToStart.a.agent.receiveBroadcast):
+        (const.startAgents.numAgentsToStart.a.write.const.idx.Math.random):
+        (const.broadcastToAgents):
+        * wasm/js-api/extension-MemoryMode.js: verbose logging.
+        (testMemoryNoMax):
+        (testMemory):
+        (testInstanceNoMemory):
+        (testInstanceNoMax):
+        (testInstance):
+        * wasm/utilities.js: move a utility here.
+
 2017-04-12  Joseph Pecoraro  <pecoraro@apple.com>
 
         test262: test262/test/built-ins/NativeErrors/EvalError/proto.js

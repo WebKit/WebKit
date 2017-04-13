@@ -436,9 +436,11 @@ typedef const char* optionString;
     v(size, webAssemblyPartialCompileLimit, 5000, Normal, "Limit on the number of bytes a Wasm::Plan::compile should attempt before checking for other work.") \
     v(unsigned, webAssemblyB3OptimizationLevel, Options::defaultB3OptLevel(), Normal, "B3 Optimization level for Web Assembly modules.") \
     \
-    v(bool, simulateWebAssemblyLowMemory, false, Normal, "If true, the Memory object won't mmap the full 'maximum' range and instead will allocate the minimum required amount.") \
-    v(bool, useWebAssemblyFastMemory, true, Normal, "If true, we will try to use a 32-bit address space with a signal handler to bounds check wasm memory.") \
+    /* FIXME: enable fast memories on iOS and pre-allocate them. https://bugs.webkit.org/show_bug.cgi?id=170774 */ \
+    v(bool, useWebAssemblyFastMemory, !isIOS(), Normal, "If true, we will try to use a 32-bit address space with a signal handler to bounds check wasm memory.") \
+    v(unsigned, webAssemblyFastMemoryRedzonePages, 128, Normal, "WebAssembly fast memories use 4GiB virtual allocations, plus a redzone (counted as multiple of 64KiB WebAssembly pages) at the end to catch reg+imm accesses which exceed 32-bit, anything beyond the redzone is explicitly bounds-checked") \
     v(bool, crashIfWebAssemblyCantFastMemory, false, Normal, "If true, we will crash if we can't obtain fast memory for wasm.") \
+    v(unsigned, webAssemblyFastMemoryPreallocateCount, 0, Normal, "WebAssembly fast memories can be pre-allocated at program startup and remain cached to avoid fragmentation leading to bounds-checked memory. This number is an upper bound on initial allocation as well as total count of fast memories. Zero means no pre-allocation, no caching, and no limit to the number of runtime allocations.") \
     v(bool, useWebAssemblyFastTLS, true, Normal, "If true, we will try to use fast thread-local storage if available on the current platform.")
 
 

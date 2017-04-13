@@ -70,15 +70,7 @@ static void trapHandler(int signal, siginfo_t* sigInfo, void* ucontext)
         {
             void* faultingAddress = sigInfo->si_addr;
             dataLogLnIf(verbose, "checking faulting address: ", RawPointer(faultingAddress), " is in an active fast memory");
-            LockHolder locker(memoryLock);
-            auto& activeFastMemories = viewActiveFastMemories(locker);
-            for (void* activeMemory : activeFastMemories) {
-                dataLogLnIf(verbose, "checking fast memory at: ", RawPointer(activeMemory));
-                if (activeMemory <= faultingAddress && faultingAddress < static_cast<char*>(activeMemory) + fastMemoryMappedBytes) {
-                    faultedInActiveFastMemory = true;
-                    break;
-                }
-            }
+            faultedInActiveFastMemory = Wasm::Memory::addressIsInActiveFastMemory(faultingAddress);
         }
         if (faultedInActiveFastMemory) {
             dataLogLnIf(verbose, "found active fast memory for faulting address");

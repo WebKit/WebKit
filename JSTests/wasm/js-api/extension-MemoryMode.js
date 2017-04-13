@@ -2,6 +2,7 @@ import Builder from '../Builder.js';
 import * as assert from '../assert.js';
 
 const iterations = 32;
+const verbose = false;
 
 // This API isn't part of WebAssembly's official spec. It is use for testing within the shell.
 
@@ -21,6 +22,8 @@ assert.throws(() => WebAssemblyMemoryMode(new WebAssembly.Table({initial: 1, ele
 
 const validateMode = what => {
     const mode = WebAssemblyMemoryMode(what);
+    if (verbose)
+        print(`    ${mode}`);
     switch (mode) {
     case "Signaling":
         break;
@@ -39,6 +42,8 @@ const instantiate = builder => {
 };
 
 (function testMemoryNoMax() {
+    if (verbose)
+        print(`testMemoryNoMax`);
     let memories = [];
     for (let i = 0; i != iterations; ++i)
         memories.push(validateMode(new WebAssembly.Memory({ initial: i })));
@@ -48,6 +53,8 @@ const instantiate = builder => {
 fullGC();
 
 (function testMemory() {
+    if (verbose)
+        print(`testMemory`);
     let memories = [];
     for (let i = 0; i != iterations; ++i)
         memories.push(validateMode(new WebAssembly.Memory({ initial: i, maximum: i })));
@@ -57,6 +64,8 @@ fullGC();
 fullGC();
 
 (function testInstanceNoMemory() {
+    if (verbose)
+        print(`testInstanceNoMemory`);
     let instances = [];
     for (let i = 0; i != iterations; ++i) {
         const builder = (new Builder())
@@ -66,6 +75,8 @@ fullGC();
         const instance = instantiate(builder);
         // No-memory instances should never be Signaling: it would be wasteful.
         assert.eq(WebAssemblyMemoryMode(instance), "BoundsChecking");
+        if (verbose)
+            print(`    ${WebAssemblyMemoryMode(instance)}`);
         instances.push(instance);
     }
     return instances;
@@ -74,6 +85,8 @@ fullGC();
 fullGC();
 
 (function testInstanceNoMax() {
+    if (verbose)
+        print(`testInstanceNoMax`);
     let instances = [];
     for (let i = 0; i != iterations; ++i) {
         // Note: not exported! The internal API can still access.
@@ -89,6 +102,8 @@ fullGC();
 fullGC();
 
 (function testInstance() {
+    if (verbose)
+        print(`testInstance`);
     let instances = [];
     for (let i = 0; i != iterations; ++i) {
         // Note: not exported! The internal API can still access.

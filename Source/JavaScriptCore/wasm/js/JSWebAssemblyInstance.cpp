@@ -63,7 +63,7 @@ void JSWebAssemblyInstance::finishCreation(VM& vm, JSWebAssemblyModule* module, 
     ASSERT(inherits(vm, info()));
 
     m_module.set(vm, this, module);
-    const size_t extraMemorySize = module->moduleInformation().globals.size() * sizeof(Register);
+    const size_t extraMemorySize = globalMemoryByteSize();
     m_globals = MallocPtr<uint64_t>::malloc(extraMemorySize);
     heap()->reportExtraMemoryAllocated(extraMemorySize);
 
@@ -89,7 +89,7 @@ void JSWebAssemblyInstance::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(thisObject->m_memory);
     visitor.append(thisObject->m_table);
     visitor.append(thisObject->m_callee);
-    visitor.reportExtraMemoryVisited(thisObject->module()->moduleInformation().globals.size());
+    visitor.reportExtraMemoryVisited(thisObject->globalMemoryByteSize());
     for (unsigned i = 0; i < thisObject->m_numImportFunctions; ++i)
         visitor.append(thisObject->importFunctions()[i]);
 }
@@ -350,6 +350,10 @@ JSWebAssemblyInstance* JSWebAssemblyInstance::create(VM& vm, ExecState* exec, JS
     return instance;
 }
 
+size_t JSWebAssemblyInstance::globalMemoryByteSize() const
+{
+    return m_module->moduleInformation().globals.size() * sizeof(Register);
+}
 
 } // namespace JSC
 

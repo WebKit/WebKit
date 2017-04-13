@@ -27,12 +27,7 @@ import * as assert from 'assert.js';
 import * as BuildWebAssembly from 'Builder_WebAssemblyBinary.js';
 import * as LLB from 'LowLevelBinary.js';
 import * as WASM from 'WASM.js';
-
-const _toJavaScriptName = name => {
-    const camelCase = name.replace(/([^a-z0-9].)/g, c => c[1].toUpperCase());
-    const CamelCase = camelCase.charAt(0).toUpperCase() + camelCase.slice(1);
-    return CamelCase;
-};
+import * as util from 'utilities.js';
 
 const _isValidValue = (value, type) => {
     switch (type) {
@@ -225,7 +220,7 @@ const _importGlobalContinuation = (builder, section, nextBuilder) => {
             End: () => nextBuilder
         };
         for (let op of WASM.description.value_type) {
-            globalBuilder[_toJavaScriptName(op)] = (module, field, mutability) => {
+            globalBuilder[util.toJavaScriptName(op)] = (module, field, mutability) => {
                 assert.isString(module, `Import global module should be a string, got "${module}"`);
                 assert.isString(field, `Import global field should be a string, got "${field}"`);
                 assert.isString(mutability, `Import global mutability should be a string, got "${mutability}"`);
@@ -318,7 +313,7 @@ const _checkImms = (op, imms, expectedImms, ret) => {
 const _createFunctionBuilder = (func, builder, previousBuilder) => {
     let functionBuilder = {};
     for (const op in WASM.description.opcode) {
-        const name = _toJavaScriptName(op);
+        const name = util.toJavaScriptName(op);
         const value = WASM.description.opcode[op].value;
         const ret = WASM.description.opcode[op]["return"];
         const param = WASM.description.opcode[op].parameter;
@@ -542,7 +537,7 @@ export default class Builder {
                         }
                     };
                     for (let op of WASM.description.value_type) {
-                        globalBuilder[_toJavaScriptName(op)] = (initValue, mutability) => {
+                        globalBuilder[util.toJavaScriptName(op)] = (initValue, mutability) => {
                             s.data.push({ type: op, op: op + ".const", mutability: _normalizeMutability(mutability), initValue });
                             return _errorHandlingProxyFor(globalBuilder);
                         };

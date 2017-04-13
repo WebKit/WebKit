@@ -1,3 +1,29 @@
+2017-04-13  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly: manage memory better
+        https://bugs.webkit.org/show_bug.cgi?id=170628
+
+        Reviewed by Keith Miller, Michael Saboff.
+
+        Re-use a VM tag which was intended for JavaScript core, was then
+        used by our GC, and is now unused. If I don't do this then
+        WebAssembly fast memories will make vmmap look super weird because
+        it'll look like multi-gigabyte of virtual memory are allocated as
+        part of our process' regular memory!
+
+        Separately I need to update vmmap and other tools to print the
+        right name. Right now this tag gets identified as "JS garbage
+        collector".
+
+        * page/ResourceUsageData.cpp:
+        (WebCore::ResourceUsageData::ResourceUsageData):
+        * page/ResourceUsageData.h:
+        * page/cocoa/ResourceUsageOverlayCocoa.mm:
+        (WebCore::HistoricResourceUsageData::HistoricResourceUsageData):
+        * page/cocoa/ResourceUsageThreadCocoa.mm:
+        (WebCore::displayNameForVMTag):
+        (WebCore::categoryForVMTag):
+
 2017-04-13  Ryosuke Niwa  <rniwa@webkit.org>
 
         Update the comments for the number of bits in RenderStyle::InheritedFlags.

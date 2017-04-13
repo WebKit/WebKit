@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -51,15 +51,15 @@
 #endif // defined(VM_MEMORY_JAVASCRIPT_JIT_REGISTER_FILE)
 
 #if defined(VM_MEMORY_JAVASCRIPT_CORE)
-#define VM_TAG_FOR_COLLECTOR_MEMORY VM_MAKE_TAG(VM_MEMORY_JAVASCRIPT_CORE)
+#define VM_TAG_FOR_WEBASSEMBLY_MEMORY VM_MAKE_TAG(VM_MEMORY_JAVASCRIPT_CORE)
 #else
-#define VM_TAG_FOR_COLLECTOR_MEMORY VM_MAKE_TAG(63)
+#define VM_TAG_FOR_WEBASSEMBLY_MEMORY VM_MAKE_TAG(63)
 #endif // defined(VM_MEMORY_JAVASCRIPT_CORE)
 
 #else // OS(DARWIN)
 
 #define VM_TAG_FOR_TCMALLOC_MEMORY -1
-#define VM_TAG_FOR_COLLECTOR_MEMORY -1
+#define VM_TAG_FOR_WEBASSEMBLY_MEMORY -1
 #define VM_TAG_FOR_EXECUTABLEALLOCATOR_MEMORY -1
 #define VM_TAG_FOR_REGISTERFILE_MEMORY -1
 

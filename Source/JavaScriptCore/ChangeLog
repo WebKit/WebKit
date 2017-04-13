@@ -1,3 +1,148 @@
+2017-04-13  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly: manage memory better
+        https://bugs.webkit.org/show_bug.cgi?id=170628
+
+        Reviewed by Keith Miller, Michael Saboff.
+
+        WebAssembly fast memories weren't managed very well. This patch
+        refactors it and puts us in a good position to further improve our
+        fast memory handling in the future.
+
+        We now cache fast memories at a process granularity, but make sure
+        that they don't consume dirty pages. We add a cap to the total
+        number of allocated fast memories to avoid ASLR degradation.
+
+        We teach the GC about memories as a kind of resource it should
+        care about because it didn't have visibility into the amount of
+        memory each represented. This allows benchmarks which allocate
+        memories back-to-back to reliably get fast memories 100% of the
+        time, even on a system under load, which wasn't the case
+        before. This reliability yields roughly 8% perf bump on x86-64
+        WasmBench.
+
+        The GC heuristic is as follows: each time we allocate a fast
+        memory we notify the GC, which then keeps track of the total
+        number of fast memories allocated since it last GC'd. We
+        separately keep track of the total number of fast memories which
+        have ever existed at any point in time (cached + allocated). This
+        is a monotonically-increasing high watermark. The GC will force a
+        full collection if, since it last ran, half or more of the high
+        watermark of fast memories was allocated.
+
+        At the same time, if we fail obtaining a fast memory from the
+        cache we do a GC to try to find one. If that fails we'll allocate
+        a new one (this can also fail, then we go to slow memory). This
+        can also be improved, but it's a good start.
+
+        This currently disables fast memories on iOS because getting fast
+        memories isn't a guaranteed thing. Rather, we get quite a few of
+        them and achieve significant speedups, but benchmarks which
+        allocate memories back-to-back end up falling behind because the
+        GC can conservatively hold onto memories, which then yields a perf
+        cliff. That cliff isn't reliable, WasmBench gets roughly 10 of 18
+        fast memories when in theory it should get all of them fast (as
+        MacOS does). The patch significantly improves the state of iOS
+        though, and in a follow-up we could re-enable fast memories.
+
+        Part of this good positioning is a facility to pre-allocate fast
+        memories very early at startup, before any fragmentation
+        occurs. This is currently disabled but worked extremely reliably
+        on iOS. Once we fix the above issues we'll want to re-visit and
+        turn on pre-allocation.
+
+        We also avoid locking for fast memory identification when
+        performing signal handling. I'm very nervous about acquiring locks
+        in a signal handler because in general signals can happen when
+        we've messed up. This isn't the case with fast memories: we're
+        raising a signal on purpose and handling it. However this doesn't
+        mean we won't mess up elsewhere! This will get more complicated
+        once we add support for multiple threads sharing memories and
+        being able to grow their memories. One example: the code calls
+        CRASH(), which executes the following code in release:
+
+            *(int *)(uintptr_t)0xbbadbeef = 0;
+
+        This is a segfault, which our fast memory signal handler tries to
+        handle. It does so by first figuring out whether 0xbbadbeef is in
+        a fast memory region, reqiring a lock. If we CRASH() while holding
+        the lock then our thread self-deadlocks, giving us no crash report
+        and a bad user experience.
+
+        Avoiding a lock therefore it's not about speed or reduced
+        contention. In fact, I'd use something else than a FIFO if these
+        were a concern. We're also doing syscalls, which dwarf any locking
+        cost.
+
+        We now only allocate 4GiB + redzone of 64k * 128 for fast memories
+        instead of 8GiB. This patch reuses the logic from
+        B3::WasmBoundsCheck to perform bounds checks when accesses could
+        exceed the redzone. We'll therefore benefit from CSE goodness when
+        it reaches WasmBoundsCheck. See bug #163469.
+
+        * b3/B3LowerToAir.cpp: fix a baaaaddd bug where unsigned->signed
+        conversion allowed out-of-bounds reads by -2GiB. I'll follow-up in
+        bug #170692 to prevent this type of bug once and for all.
+        (JSC::B3::Air::LowerToAir::lower):
+        * b3/B3Validate.cpp: update WasmBoundsCheck validation.
+        * b3/B3Value.cpp:
+        (JSC::B3::Value::effects): update WasmBoundsCheck effects.
+        * b3/B3WasmBoundsCheckValue.cpp:
+        (JSC::B3::WasmBoundsCheckValue::WasmBoundsCheckValue):
+        (JSC::B3::WasmBoundsCheckValue::redzoneLimit):
+        (JSC::B3::WasmBoundsCheckValue::dumpMeta):
+        * b3/B3WasmBoundsCheckValue.h:
+        (JSC::B3::WasmBoundsCheckValue::maximum):
+        * b3/air/AirCustom.cpp:
+        (JSC::B3::Air::WasmBoundsCheckCustom::isValidForm):
+        * b3/testb3.cpp:
+        (JSC::B3::testWasmBoundsCheck):
+        * heap/Heap.cpp:
+        (JSC::Heap::Heap):
+        (JSC::Heap::reportWebAssemblyFastMemoriesAllocated):
+        (JSC::Heap::webAssemblyFastMemoriesThisCycleAtThreshold):
+        (JSC::Heap::updateAllocationLimits):
+        (JSC::Heap::didAllocateWebAssemblyFastMemories):
+        (JSC::Heap::shouldDoFullCollection):
+        (JSC::Heap::collectIfNecessaryOrDefer):
+        * heap/Heap.h:
+        * runtime/InitializeThreading.cpp:
+        (JSC::initializeThreading):
+        * runtime/Options.cpp:
+        * runtime/Options.h:
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::fixupPointerPlusOffset):
+        (JSC::Wasm::B3IRGenerator::B3IRGenerator):
+        (JSC::Wasm::B3IRGenerator::emitCheckAndPreparePointer):
+        (JSC::Wasm::B3IRGenerator::emitLoadOp):
+        (JSC::Wasm::B3IRGenerator::emitStoreOp):
+        (JSC::Wasm::createJSToWasmWrapper):
+        * wasm/WasmFaultSignalHandler.cpp:
+        (JSC::Wasm::trapHandler):
+        * wasm/WasmMemory.cpp: Rewrite.
+        (JSC::Wasm::makeString):
+        (JSC::Wasm::Memory::initializePreallocations):
+        (JSC::Wasm::Memory::createImpl):
+        (JSC::Wasm::Memory::create):
+        (JSC::Wasm::Memory::~Memory):
+        (JSC::Wasm::Memory::fastMappedRedzoneBytes):
+        (JSC::Wasm::Memory::fastMappedBytes):
+        (JSC::Wasm::Memory::maxFastMemoryCount):
+        (JSC::Wasm::Memory::addressIsInActiveFastMemory):
+        (JSC::Wasm::Memory::grow):
+        * wasm/WasmMemory.h:
+        (Memory::maxFastMemoryCount):
+        (Memory::addressIsInActiveFastMemory):
+        * wasm/js/JSWebAssemblyInstance.cpp:
+        (JSC::JSWebAssemblyInstance::finishCreation):
+        (JSC::JSWebAssemblyInstance::visitChildren):
+        (JSC::JSWebAssemblyInstance::globalMemoryByteSize):
+        * wasm/js/JSWebAssemblyInstance.h:
+        * wasm/js/JSWebAssemblyMemory.cpp:
+        (JSC::JSWebAssemblyMemory::grow):
+        (JSC::JSWebAssemblyMemory::finishCreation):
+        (JSC::JSWebAssemblyMemory::visitChildren):
+
 2017-04-13  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Use proper ifdef guard for code using MachineContext

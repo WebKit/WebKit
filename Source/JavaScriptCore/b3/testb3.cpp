@@ -15185,7 +15185,8 @@ void testWasmBoundsCheck(unsigned offset)
     Value* left = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
     if (pointerType() != Int32)
         left = root->appendNew<Value>(proc, Trunc, Origin(), left);
-    root->appendNew<WasmBoundsCheckValue>(proc, Origin(), left, pinned, offset);
+    Wasm::PageCount maximum;
+    root->appendNew<WasmBoundsCheckValue>(proc, Origin(), left, pinned, offset, maximum);
     Value* result = root->appendNew<Const32Value>(proc, Origin(), 0x42);
     root->appendNewControlValue(proc, Return, Origin(), result);
 

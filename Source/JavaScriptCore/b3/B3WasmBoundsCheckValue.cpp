@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "B3WasmBoundsCheckValue.h"
+#include "WasmMemory.h"
 
 #if ENABLE(B3_JIT)
 
@@ -34,10 +35,11 @@ WasmBoundsCheckValue::~WasmBoundsCheckValue()
 {
 }
 
-WasmBoundsCheckValue::WasmBoundsCheckValue(Origin origin, Value* ptr, GPRReg pinnedGPR, unsigned offset)
+WasmBoundsCheckValue::WasmBoundsCheckValue(Origin origin, Value* ptr, GPRReg pinnedGPR, unsigned offset, PageCount maximum)
     : Value(CheckedOpcode, WasmBoundsCheck, origin, ptr)
     , m_pinnedGPR(pinnedGPR)
     , m_offset(offset)
+    , m_maximum(maximum)
 {
 }
 
@@ -46,9 +48,22 @@ Value* WasmBoundsCheckValue::cloneImpl() const
     return new WasmBoundsCheckValue(*this);
 }
 
+size_t WasmBoundsCheckValue::redzoneLimit() const
+{
+    ASSERT(m_pinnedGPR == InvalidGPRReg);
+#if ENABLE(WEBASSEMBLY)
+    return static_cast<uint64_t>(std::numeric_limits<uint32_t>::max()) + Wasm::Memory::fastMappedRedzoneBytes();
+#else
+    RELEASE_ASSERT_NOT_REACHED();
+#endif
+}
+
 void WasmBoundsCheckValue::dumpMeta(CommaPrinter& comma, PrintStream& out) const
 {
-    out.print(comma, "sizeRegister = ", m_pinnedGPR, ", offset = ", m_offset);
+    if (m_pinnedGPR == InvalidGPRReg)
+        out.print(comma, "redzoneLimit = ", redzoneLimit(), ", offset = ", m_offset);
+    else
+        out.print(comma, "sizeRegister = ", m_pinnedGPR, ", offset = ", m_offset);
 }
 
 } } // namespace JSC::B3

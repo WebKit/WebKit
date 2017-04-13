@@ -59,6 +59,15 @@ bool restrictedOptionsEnabled = false;
 #else
 bool restrictedOptionsEnabled = true;
 #endif
+
+ALWAYS_INLINE bool isIOS()
+{
+#if PLATFORM(IOS)
+    return true;
+#else
+    return false;
+#endif
+}
 }
 
 void Options::enableRestrictedOptions(bool enableOrNot)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,6 +39,7 @@
 #include "Options.h"
 #include "StructureIDTable.h"
 #include "SuperSampler.h"
+#include "WasmMemory.h"
 #include "WasmThunks.h"
 #include "WriteBarrier.h"
 #include <mutex>
@@ -58,6 +59,9 @@ void initializeThreading()
     std::call_once(initializeThreadingOnceFlag, []{
         WTF::initializeThreading();
         Options::initialize();
+#if ENABLE(WEBASSEMBLY)
+        Wasm::Memory::initializePreallocations();
+#endif
 #if ENABLE(WRITE_BARRIER_PROFILING)
         WriteBarrierCounters::initialize();
 #endif

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 
 #include "B3Value.h"
 #include "CCallHelpers.h"
+#include "WasmPageCount.h"
 
 namespace JSC { namespace B3 {
 
@@ -46,8 +47,16 @@ public:
     
     ~WasmBoundsCheckValue();
 
+#if ENABLE(WEBASSEMBLY)
+    typedef Wasm::PageCount PageCount;
+#else
+    typedef char PageCount;
+#endif
+
     GPRReg pinnedGPR() const { return m_pinnedGPR; }
     unsigned offset() const { return m_offset; }
+    size_t redzoneLimit() const;
+    PageCount maximum() const { return m_maximum; }
 
 protected:
     void dumpMeta(CommaPrinter&, PrintStream&) const override;
@@ -57,10 +66,11 @@ protected:
 private:
     friend class Procedure;
 
-    JS_EXPORT_PRIVATE WasmBoundsCheckValue(Origin, Value* ptr, GPRReg pinnedGPR, unsigned offset);
+    JS_EXPORT_PRIVATE WasmBoundsCheckValue(Origin, Value* ptr, GPRReg pinnedGPR, unsigned offset, PageCount maximum);
 
     GPRReg m_pinnedGPR;
     unsigned m_offset;
+    PageCount m_maximum;
 };
 
 } } // namespace JSC::B3

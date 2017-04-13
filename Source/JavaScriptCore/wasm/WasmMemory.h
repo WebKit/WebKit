@@ -29,8 +29,6 @@
 
 #include "WasmPageCount.h"
 
-#include <wtf/HashSet.h>
-#include <wtf/Optional.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
@@ -61,10 +59,16 @@ public:
 
     explicit operator bool() const { return !!m_memory; }
 
-    static RefPtr<Memory> create(VM&, PageCount initial, PageCount maximum, std::optional<MemoryMode> requiredMode = std::nullopt);
+    static void initializePreallocations();
+    static RefPtr<Memory> create(VM&, PageCount initial, PageCount maximum);
 
     Memory() = default;
     ~Memory();
+
+    static size_t fastMappedRedzoneBytes();
+    static size_t fastMappedBytes(); // Includes redzone.
+    static size_t maxFastMemoryCount();
+    static bool addressIsInActiveFastMemory(void*);
 
     void* memory() const { return m_memory; }
     size_t size() const { return m_size; }
@@ -81,7 +85,6 @@ public:
 
     void check() {  ASSERT(!deletionHasBegun()); }
 private:
-    static RefPtr<Memory> createImpl(VM&, PageCount initial, PageCount maximum, std::optional<MemoryMode> requiredMode = std::nullopt);
     Memory(void* memory, PageCount initial, PageCount maximum, size_t mappedCapacity, MemoryMode);
     Memory(PageCount initial, PageCount maximum);
 
@@ -94,11 +97,17 @@ private:
     MemoryMode m_mode { MemoryMode::BoundsChecking };
 };
 
-static_assert(sizeof(uint64_t) == sizeof(size_t), "We rely on allowing the maximum size of Memory we map to be 2^33 which is larger than fits in a 32-bit integer that we'd pass to mprotect if this didn't hold.");
+} } // namespace JSC::Wasm
 
-const size_t fastMemoryMappedBytes = (static_cast<size_t>(std::numeric_limits<uint32_t>::max()) + 1) * 2; // pointer max + offset max. This is all we need since a load straddling readable memory will trap.
-extern StaticLock memoryLock;
-const HashSet<void*>& viewActiveFastMemories(const AbstractLocker&);
+#else
+
+namespace JSC { namespace Wasm {
+
+class Memory {
+public:
+    static size_t maxFastMemoryCount() { return 0; }
+    static bool addressIsInActiveFastMemory(void*) { return false; }
+};
 
 } } // namespace JSC::Wasm
 

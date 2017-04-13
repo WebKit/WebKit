@@ -92,6 +92,7 @@ protected:
 private:
     VM* m_vm;
     WriteBarrier<JSObject>* importFunctions() { return bitwise_cast<WriteBarrier<JSObject>*>(bitwise_cast<char*>(this) + offsetOfImportFunctions()); }
+    size_t globalMemoryByteSize() const;
 
     WriteBarrier<JSWebAssemblyModule> m_module;
     WriteBarrier<JSWebAssemblyCodeBlock> m_codeBlock;

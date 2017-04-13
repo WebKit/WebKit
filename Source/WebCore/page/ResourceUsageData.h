@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,12 +36,13 @@ namespace MemoryCategory {
 static const unsigned bmalloc = 0;
 static const unsigned LibcMalloc = 1;
 static const unsigned JSJIT = 2;
-static const unsigned Images = 3;
-static const unsigned GCHeap = 4;
-static const unsigned GCOwned = 5;
-static const unsigned Other = 6;
-static const unsigned Layers = 7;
-static const unsigned NumberOfCategories = 8;
+static const unsigned WebAssembly = 3;
+static const unsigned Images = 4;
+static const unsigned GCHeap = 5;
+static const unsigned GCOwned = 6;
+static const unsigned Other = 7;
+static const unsigned Layers = 8;
+static const unsigned NumberOfCategories = 9;
 }
 
 struct MemoryCategoryInfo {

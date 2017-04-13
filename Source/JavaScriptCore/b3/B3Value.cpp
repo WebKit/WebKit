@@ -43,6 +43,7 @@
 #include "B3ValueInlines.h"
 #include "B3ValueKeyInlines.h"
 #include "B3VariableValue.h"
+#include "B3WasmBoundsCheckValue.h"
 #include <wtf/CommaPrinter.h>
 #include <wtf/ListDump.h>
 #include <wtf/StringPrintStream.h>
@@ -664,7 +665,8 @@ Effects Value::effects() const
         result = Effects::forCheck();
         break;
     case WasmBoundsCheck:
-        result.readsPinned = true;
+        if (as<WasmBoundsCheckValue>()->pinnedGPR() != InvalidGPRReg)
+            result.readsPinned = true;
         result.exitsSideways = true;
         break;
     case Upsilon:

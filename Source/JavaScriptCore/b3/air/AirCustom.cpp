@@ -185,7 +185,7 @@ bool WasmBoundsCheckCustom::isValidForm(Inst& inst)
     if (!inst.args[0].isTmp() && !inst.args[0].isSomeImm())
         return false;
 
-    return inst.args[1].isReg();
+    return inst.args[1].isReg() || inst.args[1].isTmp() || inst.args[1].isSomeImm();
 }
 
 

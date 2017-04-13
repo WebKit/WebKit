@@ -470,7 +470,8 @@ public:
                 VALIDATE(!value->kind().hasExtraBits(), ("At ", *value));
                 VALIDATE(value->numChildren() == 1, ("At ", *value));
                 VALIDATE(value->child(0)->type() == Int32, ("At ", *value));
-                VALIDATE(m_procedure.code().isPinned(value->as<WasmBoundsCheckValue>()->pinnedGPR()), ("At ", *value));
+                if (value->as<WasmBoundsCheckValue>()->pinnedGPR() != InvalidGPRReg)
+                    VALIDATE(m_procedure.code().isPinned(value->as<WasmBoundsCheckValue>()->pinnedGPR()), ("At ", *value));
                 VALIDATE(m_procedure.code().wasmBoundsCheckGenerator(), ("At ", *value));
                 break;
             case Upsilon:
