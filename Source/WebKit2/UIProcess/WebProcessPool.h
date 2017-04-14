@@ -611,6 +611,8 @@ private:
         String containerCachesDirectory;
         String containerTemporaryDirectory;
 #endif
+
+        Vector<String> additionalWebProcessSandboxExtensionPaths;
     };
     Paths m_resolvedPaths;
 };

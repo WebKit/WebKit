@@ -1,3 +1,48 @@
+2017-04-13  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Allow clients to specify in _WKProcessPoolConfiguration additional directory sandbox extensions
+        https://bugs.webkit.org/show_bug.cgi?id=170387
+
+        Reviewed by Sam Weinig.
+
+        Test: TestWebKitAPI/Tests/WebKit2Cocoa/AdditionalReadAccessAllowedURLs.mm
+
+        Added an additionalReadAccessAllowedURLs property to _WKProcessPoolConfiguration.
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode): Encode the new
+          additionalSandboxExtensionHandles member.
+        (WebKit::WebProcessCreationParameters::decode): Decode it.
+        * Shared/WebProcessCreationParameters.h: Added additionalSandboxExtensionHandles member.
+
+        * UIProcess/API/APIProcessPoolConfiguration.cpp:
+        (API::ProcessPoolConfiguration::copy): Copy new m_additionalReadAccessAllowedPaths member.
+        * UIProcess/API/APIProcessPoolConfiguration.h: Added m_additionalReadAccessAllowedPaths
+          member and accessor functions.
+
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.h: Declared new
+          additionalReadAccessAllowedURLs property whose value is an array of URLs to which the Web
+          Content process will be given read access.
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.mm:
+        (-[_WKProcessPoolConfiguration additionalReadAccessAllowedURLs]): New getter that returns
+          an array of file URLs from the ProcessPoolConfiguration’s additionalReadAccessAllowedPaths().
+        (-[_WKProcessPoolConfiguration setAdditionalReadAccessAllowedURLs:]): New setter that checks
+          that the given URLs are file URLs and populates the ProcessPoolConfiguration’s
+          additionalReadAccessAllowedPaths with their paths.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::resolvePathsForSandboxExtensions): Populate the new
+          m_resolvedPaths.additionalWebProcessSandboxExtensionPaths with resolved paths from the
+          ProcessPoolConfiguration’s additionalReadAccessAllowedPaths.
+        (WebKit::WebProcessPool::createNewWebProcess): Populate the WebProcessCreationParameters’s
+          additionalSandboxExtensionHandles member with read-only sandbox extensions created from
+          the resolved paths.
+        * UIProcess/WebProcessPool.h: Added additionalWebProcessSandboxExtensionPaths member to
+          the Paths struct.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess): Consume the additional sandbox extensions.
+
 2017-04-13  Alex Christensen  <achristensen@webkit.org>
 
         Fix CMake build

@@ -1,3 +1,19 @@
+2017-04-13  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Allow clients to specify in _WKProcessPoolConfiguration additional directory sandbox extensions
+        https://bugs.webkit.org/show_bug.cgi?id=170387
+
+        Reviewed by Sam Weinig.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/AdditionalReadAccessAllowedURLs.mm: Added.
+        (TEST):
+        * TestWebKitAPI/Tests/WebKit2Cocoa/AdditionalReadAccessAllowedURLsPlugin.mm: Added.
+        (-[AdditionalReadAccessAllowedURLsPlugIn webProcessPlugIn:didCreateBrowserContextController:]):
+        (-[AdditionalReadAccessAllowedURLsPlugIn dealloc]):
+        (-[AdditionalReadAccessAllowedURLsPlugIn readStringFromURL:completionHandler:]):
+        * TestWebKitAPI/Tests/WebKit2Cocoa/AdditionalReadAccessAllowedURLsProtocol.h: Added.
+
 2017-04-13  Jonathan Bedard  <jbedard@apple.com>
 
         webkitpy: Ignore previously launched pid when system is under stress

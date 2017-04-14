@@ -65,6 +65,7 @@ struct WebProcessCreationParameters {
 
     String injectedBundlePath;
     SandboxExtension::Handle injectedBundlePathExtensionHandle;
+    SandboxExtension::HandleArray additionalSandboxExtensionHandles;
 
     UserData initializationUserData;
 
