@@ -36,7 +36,29 @@ namespace JSC { namespace B3 { namespace Air {
 RegLiveness::RegLiveness(Code& code)
     : m_liveAtHead(code.size())
     , m_liveAtTail(code.size())
+    , m_actions(code.size())
 {
+    // Compute constraints.
+    for (BasicBlock* block : code) {
+        ActionsForBoundary& actionsForBoundary = m_actions[block];
+        actionsForBoundary.resize(block->size() + 1);
+        
+        for (size_t instIndex = block->size(); instIndex--;) {
+            Inst& inst = block->at(instIndex);
+            inst.forEach<Reg>(
+                [&] (Reg& reg, Arg::Role role, Bank, Width) {
+                    if (Arg::isEarlyUse(role))
+                        actionsForBoundary[instIndex].use.add(reg);
+                    if (Arg::isEarlyDef(role))
+                        actionsForBoundary[instIndex].def.add(reg);
+                    if (Arg::isLateUse(role))
+                        actionsForBoundary[instIndex + 1].use.add(reg);
+                    if (Arg::isLateDef(role))
+                        actionsForBoundary[instIndex + 1].def.add(reg);
+                });
+        }
+    }
+    
     // The liveAtTail of each block automatically contains the LateUse's of the terminal.
     for (BasicBlock* block : code) {
         RegisterSet& liveAtTail = m_liveAtTail[block];
@@ -98,42 +120,28 @@ RegLiveness::~RegLiveness()
 {
 }
 
-void RegLiveness::LocalCalc::execute(unsigned instIndex)
+RegLiveness::LocalCalcForUnifiedTmpLiveness::LocalCalcForUnifiedTmpLiveness(UnifiedTmpLiveness& liveness, BasicBlock* block)
+    : LocalCalcBase(block)
+    , m_code(liveness.code)
+    , m_actions(liveness.actions[block])
 {
-    Inst& inst = m_block->at(instIndex);
-            
-    // First handle the early def's of the next instruction.
-    if (instIndex + 1 < m_block->size()) {
-        Inst& nextInst = m_block->at(instIndex + 1);
-        nextInst.forEach<Reg>(
-            [&] (Reg& reg, Arg::Role role, Bank, Width) {
-                if (Arg::isEarlyDef(role))
-                    m_workset.remove(reg);
-            });
+    for (Tmp tmp : liveness.liveAtTail(block)) {
+        if (tmp.isReg())
+            m_workset.add(tmp.reg());
     }
-            
-    // Then handle def's.
-    inst.forEach<Reg>(
-        [&] (Reg& reg, Arg::Role role, Bank, Width) {
-            if (Arg::isLateDef(role))
-                m_workset.remove(reg);
-        });
-            
-    // Then handle use's.
-    inst.forEach<Reg>(
-        [&] (Reg& reg, Arg::Role role, Bank, Width) {
-            if (Arg::isEarlyUse(role))
-                m_workset.add(reg);
-        });
-            
-    // And finally, handle the late use's of the previous instruction.
-    if (instIndex) {
-        Inst& prevInst = m_block->at(instIndex - 1);
-        prevInst.forEach<Reg>(
-            [&] (Reg& reg, Arg::Role role, Bank, Width) {
-                if (Arg::isLateUse(role))
-                    m_workset.add(reg);
-            });
+}
+
+void RegLiveness::LocalCalcForUnifiedTmpLiveness::execute(unsigned instIndex)
+{
+    for (unsigned index : m_actions[instIndex + 1].def) {
+        Tmp tmp = Tmp::tmpForLinearIndex(m_code, index);
+        if (tmp.isReg())
+            m_workset.remove(tmp.reg());
+    }
+    for (unsigned index : m_actions[instIndex].use) {
+        Tmp tmp = Tmp::tmpForLinearIndex(m_code, index);
+        if (tmp.isReg())
+            m_workset.add(tmp.reg());
     }
 }
 

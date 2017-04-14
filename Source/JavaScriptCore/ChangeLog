@@ -1,3 +1,36 @@
+2017-04-13  Filip Pizlo  <fpizlo@apple.com>
+
+        Air::RegLiveness should be constraint-based
+        https://bugs.webkit.org/show_bug.cgi?id=170817
+
+        Reviewed by Saam Barati.
+        
+        Previously, I changed the Air liveness analyses based on Air::Liveness<> to be
+        constraint-based and this was a significant speed-up. Now I'm adding the same
+        functionality to RegLiveness.
+        
+        This is a 1% speed-up on wasm B3 -O1 compile times.
+        
+        * b3/air/AirAllocateRegistersAndStackByLinearScan.cpp:
+        * b3/air/AirLivenessAdapter.h:
+        (JSC::B3::Air::LivenessAdapter::LivenessAdapter):
+        (JSC::B3::Air::LivenessAdapter::prepareToCompute):
+        (JSC::B3::Air::LivenessAdapter::actionsAt):
+        * b3/air/AirRegLiveness.cpp:
+        (JSC::B3::Air::RegLiveness::RegLiveness):
+        (JSC::B3::Air::RegLiveness::LocalCalcForUnifiedTmpLiveness::LocalCalcForUnifiedTmpLiveness):
+        (JSC::B3::Air::RegLiveness::LocalCalcForUnifiedTmpLiveness::execute):
+        (JSC::B3::Air::RegLiveness::LocalCalc::execute): Deleted.
+        * b3/air/AirRegLiveness.h:
+        (JSC::B3::Air::RegLiveness::Actions::Actions):
+        (JSC::B3::Air::RegLiveness::LocalCalcBase::LocalCalcBase):
+        (JSC::B3::Air::RegLiveness::LocalCalcBase::live):
+        (JSC::B3::Air::RegLiveness::LocalCalcBase::isLive):
+        (JSC::B3::Air::RegLiveness::LocalCalc::LocalCalc):
+        (JSC::B3::Air::RegLiveness::LocalCalc::execute):
+        (JSC::B3::Air::RegLiveness::LocalCalc::live): Deleted.
+        (JSC::B3::Air::RegLiveness::LocalCalc::isLive): Deleted.
+
 2017-04-13  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly: fix windows build

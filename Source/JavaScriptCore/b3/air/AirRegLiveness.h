@@ -32,6 +32,7 @@
 #include "AirInst.h"
 #include "AirLiveness.h"
 #include "RegisterSet.h"
+#include <wtf/IndexMap.h>
 
 namespace JSC { namespace B3 { namespace Air {
 
@@ -40,41 +41,26 @@ namespace JSC { namespace B3 { namespace Air {
 // register liveness. This is a specialization of Liveness<> that uses bitvectors directly.
 // This makes the code sufficiently different that it didn't make sense to try to share code.
 class RegLiveness {
+    struct Actions {
+        Actions() { }
+        
+        RegisterSet use;
+        RegisterSet def;
+    };
+    
+    typedef Vector<Actions, 0, UnsafeVectorOverflow> ActionsForBoundary;
+    
 public:
     typedef Reg Thing;
     
     RegLiveness(Code& code);
     ~RegLiveness();
     
-    // This calculator has to be run in reverse.
-    class LocalCalc {
+    class LocalCalcBase {
     public:
-        LocalCalc(RegLiveness& liveness, BasicBlock* block)
-            : m_block(block)
-            , m_workset(liveness.m_liveAtTail[block])
-        {
-        }
-        
-        // If you computed Tmp liveness for some bank, you can use reg liveness to fill in the blanks.
-        // Note that what happens to the registers not belonging to the bank is arbitrary - they may get
-        // set or not.
-        template<Bank bank>
-        LocalCalc(TmpLiveness<bank>& liveness, BasicBlock* block)
+        LocalCalcBase(BasicBlock* block)
             : m_block(block)
         {
-            for (Tmp tmp : liveness.liveAtTail(block)) {
-                if (tmp.isReg())
-                    m_workset.set(tmp.reg());
-            }
-        }
-        
-        LocalCalc(UnifiedTmpLiveness& liveness, BasicBlock* block)
-            : m_block(block)
-        {
-            for (Tmp tmp : liveness.liveAtTail(block)) {
-                if (tmp.isReg())
-                    m_workset.set(tmp.reg());
-            }
         }
         
         const RegisterSet& live() const
@@ -87,13 +73,42 @@ public:
             return m_workset.contains(reg);
         }
         
-        void execute(unsigned instIndex);
+    protected:
+        BasicBlock* m_block;
+        RegisterSet m_workset;
+    };
+    
+    // This calculator has to be run in reverse.
+    class LocalCalc : public LocalCalcBase {
+    public:
+        LocalCalc(RegLiveness& liveness, BasicBlock* block)
+            : LocalCalcBase(block)
+            , m_actions(liveness.m_actions[block])
+        {
+            m_workset = liveness.m_liveAtTail[block];
+        }
+        
+        void execute(unsigned instIndex)
+        {
+            m_workset.exclude(m_actions[instIndex + 1].def);
+            m_workset.merge(m_actions[instIndex].use);
+        }
         
     private:
         friend class RegLiveness;
         
-        BasicBlock* m_block;
-        RegisterSet m_workset;
+        ActionsForBoundary& m_actions;
+    };
+    
+    class LocalCalcForUnifiedTmpLiveness : public LocalCalcBase {
+    public:
+        LocalCalcForUnifiedTmpLiveness(UnifiedTmpLiveness& liveness, BasicBlock* block);
+        
+        void execute(unsigned instIndex);
+        
+    private:
+        Code& m_code;
+        UnifiedTmpLiveness::ActionsForBoundary& m_actions;
     };
     
     const RegisterSet& liveAtHead(BasicBlock* block) const
@@ -109,6 +124,7 @@ public:
 private:
     IndexMap<BasicBlock*, RegisterSet> m_liveAtHead;
     IndexMap<BasicBlock*, RegisterSet> m_liveAtTail;
+    IndexMap<BasicBlock*, ActionsForBoundary> m_actions;
 };
 
 } } } // namespace JSC::B3::Air

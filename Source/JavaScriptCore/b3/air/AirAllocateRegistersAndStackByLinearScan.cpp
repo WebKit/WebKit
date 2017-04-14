@@ -221,6 +221,10 @@ private:
             for (unsigned instIndex = 0; instIndex < block->size(); ++instIndex) {
                 Inst& inst = block->at(instIndex);
                 size_t indexOfEarly = indexOfHead + instIndex * 2;
+                // FIXME: We can get this information from the liveness constraints. Except of
+                // course we want to separate the earlies of one instruction from the lates of
+                // the next.
+                // https://bugs.webkit.org/show_bug.cgi?id=170850
                 inst.forEachTmp(
                     [&] (Tmp& tmp, Arg::Role role, Bank, Width) {
                         if (tmp.isReg())
@@ -229,10 +233,15 @@ private:
                     });
             }
 
-            RegLiveness::LocalCalc localCalc(liveness, block);
+            RegLiveness::LocalCalcForUnifiedTmpLiveness localCalc(liveness, block);
             
             auto record = [&] (unsigned instIndex) {
-                RegisterSet regs = localCalc.live();
+                // FIXME: This could get the register sets from somewhere else, like the
+                // liveness constraints. Except we want those constraints to be laid out like
+                // how they would have been by RegLiveness, since we want to separate the lates
+                // of one inst from the earlies of the next.
+                // https://bugs.webkit.org/show_bug.cgi?id=170850
+                const RegisterSet& regs = localCalc.live();
                 if (Inst* prev = block->get(instIndex - 1)) {
                     RegisterSet prevRegs = regs;
                     prev->forEach<Reg>(

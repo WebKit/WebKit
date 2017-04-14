@@ -33,6 +33,7 @@
 #include "AirInstInlines.h"
 #include "AirStackSlot.h"
 #include "AirTmpInlines.h"
+#include <wtf/IndexMap.h>
 
 namespace JSC { namespace B3 { namespace Air {
 
@@ -53,7 +54,7 @@ struct LivenessAdapter {
     
     LivenessAdapter(Code& code)
         : code(code)
-        , m_actions(code.size())
+        , actions(code.size())
     {
     }
     
@@ -65,7 +66,7 @@ struct LivenessAdapter {
     void prepareToCompute()
     {
         for (BasicBlock* block : code) {
-            ActionsForBoundary& actionsForBoundary = m_actions[block];
+            ActionsForBoundary& actionsForBoundary = actions[block];
             actionsForBoundary.resize(block->size() + 1);
             
             for (size_t instIndex = block->size(); instIndex--;) {
@@ -92,7 +93,7 @@ struct LivenessAdapter {
     
     Actions& actionsAt(BasicBlock* block, unsigned instBoundaryIndex)
     {
-        return m_actions[block][instBoundaryIndex];
+        return actions[block][instBoundaryIndex];
     }
     
     unsigned blockSize(BasicBlock* block)
@@ -115,7 +116,7 @@ struct LivenessAdapter {
     }
 
     Code& code;
-    IndexMap<BasicBlock*, ActionsForBoundary> m_actions;
+    IndexMap<BasicBlock*, ActionsForBoundary> actions;
 };
 
 template<Bank adapterBank, Arg::Temperature minimumTemperature = Arg::Cold>
