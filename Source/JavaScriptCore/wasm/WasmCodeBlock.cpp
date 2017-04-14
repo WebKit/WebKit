@@ -39,11 +39,8 @@ CodeBlock::CodeBlock(VM& vm, MemoryMode mode, ModuleInformation& moduleInformati
     : m_calleeCount(moduleInformation.internalFunctionCount())
     , m_mode(mode)
 {
-    m_plan = adoptRef(*new Plan(vm, makeRef(moduleInformation), Plan::FullCompile, createSharedTask<Plan::CallbackType>([this] (VM&, Plan&) {
-        // It's safe to use |this| here because our Module owns us, and a Module
-        // can't be destroyed until it has finished compiling its various Wasm bits.
-        // The JS API ensures this invariant by keeping alive the module as it has
-        // a pending promise.
+    RefPtr<CodeBlock> protectedThis = this;
+    m_plan = adoptRef(*new Plan(vm, makeRef(moduleInformation), Plan::FullCompile, createSharedTask<Plan::CallbackType>([this, protectedThis = WTFMove(protectedThis)] (VM&, Plan&) {
         auto locker = holdLock(m_lock);
         if (m_plan->failed()) {
             m_errorMessage = m_plan->errorMessage();
@@ -94,9 +91,10 @@ void CodeBlock::compileAsync(VM& vm, AsyncCompilationCallback&& task)
     }
 
     if (plan) {
-        // Our lifetime is guaranteed by the JS code by having it
-        // keep alive the JS objects that ensure our lifetime.
-        plan->addCompletionTask(vm, createSharedTask<Plan::CallbackType>([this, task = WTFMove(task)] (VM& vm, Plan&) {
+        // We don't need to keep a RefPtr on the Plan because the worklist will keep
+        // a RefPtr on the Plan until the plan finishes notifying all of its callbacks.
+        RefPtr<CodeBlock> protectedThis = this;
+        plan->addCompletionTask(vm, createSharedTask<Plan::CallbackType>([this, task = WTFMove(task), protectedThis = WTFMove(protectedThis)] (VM& vm, Plan&) {
             task->run(vm, makeRef(*this));
         }));
     } else

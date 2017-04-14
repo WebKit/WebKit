@@ -325,6 +325,7 @@ void Plan::complete(const AbstractLocker&)
         moveToState(State::Completed);
         for (auto& task : m_completionTasks)
             task.second->run(*task.first, *this);
+        m_completionTasks.clear();
         m_completed.notifyAll();
     }
 }
