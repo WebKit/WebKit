@@ -844,9 +844,11 @@ void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& par
                 style.setFloating(NoFloat);
             }
 
-            // FIXME: We shouldn't be overriding start/-webkit-auto like this. Do it in html.css instead.
-            // Table headers with a text-align of -webkit-auto will change the text-align to center.
-            if (element->hasTagName(thTag) && style.textAlign() == TASTART)
+            // User agents are expected to have a rule in their user agent stylesheet that matches th elements that have a parent
+            // node whose computed value for the 'text-align' property is its initial value, whose declaration block consists of
+            // just a single declaration that sets the 'text-align' property to the value 'center'.
+            // https://html.spec.whatwg.org/multipage/rendering.html#rendering
+            if (element->hasTagName(thTag) && !style.hasExplicitlySetTextAlign() && parentStyle.textAlign() == RenderStyle::initialTextAlign())
                 style.setTextAlign(CENTER);
 
             if (element->hasTagName(legendTag))

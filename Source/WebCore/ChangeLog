@@ -1,3 +1,29 @@
+2017-04-14  Zalan Bujtas  <zalan@apple.com>
+
+        text-align start / end failure in table cells
+        https://bugs.webkit.org/show_bug.cgi?id=141417
+        <rdar://problem/31051672>
+
+        Reviewed by Antti Koivisto.
+
+        Apply "text-align: center" on th elements when parent's computed value for the 'text-align' property
+        is its initial value, unless it is explicitly set.
+
+        Test: fast/table/center-th-when-parent-has-initial-text-align.html
+
+        * css/CSSProperties.json:
+        * css/StyleBuilderCustom.h:
+        (WebCore::StyleBuilderCustom::applyInitialTextAlign):
+        (WebCore::StyleBuilderCustom::applyValueTextAlign):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::adjustRenderStyle):
+        (WebCore::StyleResolver::applyProperty):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::hasExplicitlySetTextAlign):
+        (WebCore::RenderStyle::setHasExplicitlySetTextAlign):
+        (WebCore::RenderStyle::NonInheritedFlags::hasExplicitlySetTextAlign):
+        (WebCore::RenderStyle::NonInheritedFlags::setHasExplicitlySetTextAlign):
+
 2017-04-14  Andy Estes  <aestes@apple.com>
 
         [ios-simulator] API test WebKit2.DataDetectionReferenceDate timing out

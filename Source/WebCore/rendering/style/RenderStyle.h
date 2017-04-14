@@ -1393,6 +1393,9 @@ public:
     bool hasExplicitlySetWritingMode() const { return m_nonInheritedFlags.hasExplicitlySetWritingMode(); }
     void setHasExplicitlySetWritingMode(bool v) { m_nonInheritedFlags.setHasExplicitlySetWritingMode(v); }
 
+    bool hasExplicitlySetTextAlign() const { return m_nonInheritedFlags.hasExplicitlySetTextAlign(); }
+    void setHasExplicitlySetTextAlign(bool value) { m_nonInheritedFlags.setHasExplicitlySetTextAlign(value); }
+
     // A unique style is one that has matches something that makes it impossible to share.
     bool unique() const { return m_nonInheritedFlags.isUnique(); }
     void setUnique() { m_nonInheritedFlags.setIsUnique(); }
@@ -1806,6 +1809,9 @@ private:
         bool hasExplicitlySetWritingMode() const { return getBoolean(hasExplicitlySetWritingModeOffset); }
         void setHasExplicitlySetWritingMode(bool value) { updateBoolean(value, hasExplicitlySetWritingModeOffset); }
 
+        bool hasExplicitlySetTextAlign() const { return getBoolean(hasExplicitlySetTextAlignOffset); }
+        void setHasExplicitlySetTextAlign(bool value) { updateBoolean(value, hasExplicitlySetTextAlignOffset); }
+
         static ptrdiff_t flagsMemoryOffset() { return OBJECT_OFFSETOF(NonInheritedFlags, m_flags); }
         static uint64_t flagIsaffectedByActive() { return oneBitMask << affectedByActiveOffset; }
         static uint64_t flagIsaffectedByHover() { return oneBitMask << affectedByHoverOffset; }
@@ -1880,11 +1886,13 @@ private:
         static const unsigned hasViewportUnitsOffset = pseudoBitsOffset + pseudoBitsBitCount;
 
         // Byte 7.
+        static const unsigned hasExplicitlySetTextAlignBitCount = 1;
+        static const unsigned hasExplicitlySetTextAlignOffset = hasViewportUnitsOffset + hasViewportUnitsBitCount;
         static const unsigned styleTypeBitCount = 6;
-        static const unsigned styleTypePadding = 2;
+        static const unsigned styleTypePadding = 1;
         static const unsigned styleTypeAndPaddingBitCount = styleTypeBitCount + styleTypePadding;
         static const uint64_t styleTypeMask = (oneBitMask << styleTypeAndPaddingBitCount) - 1;
-        static const unsigned styleTypeOffset = hasViewportUnitsBitCount + hasViewportUnitsOffset;
+        static const unsigned styleTypeOffset = hasExplicitlySetTextAlignOffset + hasExplicitlySetTextAlignBitCount;
 
         // Byte 8.
         static const unsigned isUniqueOffset = styleTypeOffset + styleTypeAndPaddingBitCount;
