@@ -1,3 +1,9 @@
+2017-04-13  Dan Bernstein  <mitz@apple.com>
+
+        WTF installs an extra copy of a header outside /usr/local/include/wtf
+
+        * WTF.xcodeproj/project.pbxproj: Demoted PriorityQueue.h from Private to Project.
+
 2017-04-13  Oliver Hunt  <oliver@apple.com>
 
         allocationSize should use safe arithmetic by default
