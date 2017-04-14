@@ -4,6 +4,7 @@ const assert = require('assert');
 
 require('../tools/js/v3-models.js');
 const MockModels = require('./resources/mock-v3-models.js').MockModels;
+const MockRemoteAPI = require('../unit-tests/resources/mock-remote-api.js').MockRemoteAPI;
 
 function webkitCommit()
 {
@@ -55,6 +56,36 @@ function oldOSXCommit()
     return new CommitLog(6, {
         repository: MockModels.osx,
         revision: '10.11.3 15D21',
+        time: null,
+    });
+}
+
+function commitWithoutSubCommits()
+{
+    return new CommitLog(6, {
+        repository: MockModels.ownerRepository,
+        revision: '10.11.4 15E66',
+        ownsSubCommits: false,
+        time: null,
+    });
+}
+
+function ownerCommit()
+{
+    return new CommitLog(5, {
+        repository: MockModels.ownerRepository,
+        revision: '10.11.4 15E65',
+        ownsSubCommits: true,
+        time: null,
+    });
+}
+
+function otherOwnerCommit()
+{
+    return new CommitLog(5, {
+        repository: MockModels.ownerRepository,
+        revision: '10.11.4 15E66',
+        ownsSubCommits: true,
         time: null,
     });
 }
@@ -133,6 +164,134 @@ describe('CommitLog', function () {
                 url: '',
                 repository: MockModels.osx
             });
+        });
+    });
+
+    describe('fetchSubCommits', () => {
+        beforeEach(() => {
+            MockRemoteAPI.inject();
+        });
+
+        it('should reject if repository of the commit does not own other repositories', () => {
+            const commit = osxCommit();
+            return commit.fetchSubCommits().then(() => {
+               assert(false, 'Should not execute this line.');
+            }, (error) => {
+                assert.equal(error, undefined);
+            });
+        });
+
+        it('should reject if commit does not own other sub-commits', () => {
+            const commit = commitWithoutSubCommits();
+            return commit.fetchSubCommits().then(() => {
+                assert(false, 'Should not execute this line.');
+            }, (error) => {
+                assert.equal(error, undefined);
+            });
+        });
+
+        it('should return sub-commit for a valid commit revision', () => {
+            const fetchingPromise = ownerCommit().fetchSubCommits();
+            const requests = MockRemoteAPI.requests;
+            assert.equal(requests.length, 1);
+            assert.equal(requests[0].url, '../api/commits/111/sub-commits?owner-revision=10.11.4%2015E65');
+            assert.equal(requests[0].method, 'GET');
+
+            requests[0].resolve({commits: [{
+                id: 233,
+                repository: MockModels.ownedRepository.id(),
+                revision: '6f8b0dbbda95a440503b88db1dd03dad3a7b07fb',
+                time: +(new Date('2016-05-13T00:55:57.841344Z')),
+            }]});
+            return fetchingPromise.then((subCommits) => {
+                assert.equal(subCommits.length, 1);
+                assert.equal(subCommits[0].repository(), MockModels.ownedRepository);
+                assert.equal(subCommits[0].revision(), '6f8b0dbbda95a440503b88db1dd03dad3a7b07fb');
+                assert.equal(subCommits[0].id(), 233);
+            });
+        });
+
+        it('should only fetch sub-commits exactly once', () => {
+            const commit = ownerCommit();
+            const fetchingPromise = commit.fetchSubCommits();
+            const requests = MockRemoteAPI.requests;
+            let existingSubCommits = null;
+            assert.equal(requests.length, 1);
+            assert.equal(requests[0].url, '../api/commits/111/sub-commits?owner-revision=10.11.4%2015E65');
+            assert.equal(requests[0].method, 'GET');
+
+            MockRemoteAPI.requests[0].resolve({commits: [{
+                id: 233,
+                repository: MockModels.ownedRepository.id(),
+                revision: '6f8b0dbbda95a440503b88db1dd03dad3a7b07fb',
+                time: +(new Date('2016-05-13T00:55:57.841344Z')),
+            }]});
+
+            return fetchingPromise.then((subCommits) => {
+                existingSubCommits = subCommits;
+                assert.equal(subCommits.length, 1);
+                assert.equal(subCommits[0].repository(), MockModels.ownedRepository);
+                assert.equal(subCommits[0].revision(), '6f8b0dbbda95a440503b88db1dd03dad3a7b07fb');
+                assert.equal(subCommits[0].id(), 233);
+                return commit.fetchSubCommits();
+            }).then((subCommits) => {
+                assert.equal(requests.length, 1);
+                assert.equal(existingSubCommits, subCommits);
+            });
+        });
+    });
+
+    describe('diffSubCommits', () => {
+        beforeEach(() => {
+            MockRemoteAPI.reset();
+        });
+
+        it('should return difference between 2 sub-commits', () => {
+            const oneCommit = ownerCommit();
+            const otherCommit = otherOwnerCommit();
+            const fetchingPromise = oneCommit.fetchSubCommits();
+            const requests = MockRemoteAPI.requests;
+            assert.equal(requests.length, 1);
+            assert.equal(requests[0].url, '../api/commits/111/sub-commits?owner-revision=10.11.4%2015E65');
+            assert.equal(requests[0].method, 'GET');
+
+            requests[0].resolve({commits: [{
+                id: 233,
+                repository: MockModels.ownedRepository.id(),
+                revision: '6f8b0dbbda95a440503b88db1dd03dad3a7b07fb',
+                time: +(new Date('2016-05-13T00:55:57.841344Z')),
+            }, {
+                id: 299,
+                repository: MockModels.webkitGit.id(),
+                revision: '04a6c72038f0b771a19248ca2549e1258617b5fc',
+                time: +(new Date('2016-05-13T00:55:57.841344Z')),
+            }]});
+
+            return fetchingPromise.then(() => {
+                const otherFetchingPromise = otherCommit.fetchSubCommits();
+                assert.equal(requests.length, 2);
+                assert.equal(requests[1].url, '../api/commits/111/sub-commits?owner-revision=10.11.4%2015E66');
+                assert.equal(requests[1].method, 'GET');
+
+                requests[1].resolve({commits: [{
+                    id: 234,
+                    repository: MockModels.ownedRepository.id(),
+                    revision: 'd5099e03b482abdd77f6c4dcb875afd05bda5ab8',
+                    time: +(new Date('2016-05-13T00:55:57.841344Z')),
+                }, {
+                    id: 299,
+                    repository: MockModels.webkitGit.id(),
+                    revision: '04a6c72038f0b771a19248ca2549e1258617b5fc',
+                    time: +(new Date('2016-05-13T00:55:57.841344Z')),
+                }]});
+
+                return otherFetchingPromise;
+            }).then(() => {
+                const difference = CommitLog.diffSubCommits(oneCommit, otherCommit);
+                assert.equal(difference.size, 1);
+                assert.equal(difference.keys().next().value, MockModels.ownedRepository);
+            });
+
         });
     });
 });

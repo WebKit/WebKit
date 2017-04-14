@@ -21,7 +21,9 @@ describe('CommitLogViewer', () => {
     const webkitCommit210949 = {
         "id": "185334",
         "revision": "210949",
+        "repository": 1,
         "previousCommit": null,
+        "ownsSubCommits": false,
         "time": +new Date("2017-01-20T03:23:50.645Z"),
         "authorName": "Chris Dumez",
         "authorEmail": "cdumez@apple.com",
@@ -31,7 +33,9 @@ describe('CommitLogViewer', () => {
     const webkitCommit210950 = {
         "id": "185338",
         "revision": "210950",
+        "repository": 1,
         "previousCommit": null,
+        "ownsSubCommits": false,
         "time": +new Date("2017-01-20T03:49:37.887Z"),
         "authorName": "Commit Queue",
         "authorEmail": "commit-queue@webkit.org",

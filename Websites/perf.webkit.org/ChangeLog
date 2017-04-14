@@ -1,3 +1,58 @@
+2017-04-14  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Add sub-commit UI in commit log viewer.
+        https://bugs.webkit.org/show_bug.cgi?id=170379
+
+        Reviewed by Ryosuke Niwa.
+
+        Add an API to return sub-commits for a given commit.
+        Add sub-commit difference viewer into commit log viewer to show changed sub-commits between two commits.
+        Add 'ownsSubCommits' info in 'api/commits' return values.
+        Extend 'api/manifest' to include whether a repositories owns other repositories.
+        Only show this sub-commit difference viewer when a repository owns other repositories and both commits owns sub-commits.
+        Add unit tests for those new features.
+
+        * browser-tests/commit-log-viewer-tests.js: Updated test cases.
+        * public/api/commits.php: Added 'sub-commits' to provide sub-commit for a given commit.
+        * public/include/commit-log-fetcher.php: Added function to query sub-commit from database. Added 'repository' and 'ownsSubCommits' fields in returning commits.
+        * public/v3/components/expand-collapse-button.js: Added.
+        (ExpandCollapseButton):
+        (ExpandCollapseButton.prototype.didConstructShadowTree): Changes state on click and dispatches 'toggle' event.
+        (ExpandCollapseButton.sizeFactor):
+        (ExpandCollapseButton.buttonContent):
+        (ExpandCollapseButton.cssTemplate):
+        * public/v3/components/commit-log-viewer.js:
+        (CommitLogViewer.prototype._renderCommitList): Added sub-commit viewer if two adjacent commits both have sub-commits.
+        (CommitLogViewer.cssTemplate):
+        * public/v3/components/sub-commit-viewer.js: Added.
+        (SubCommitViewer): Added 'SubCommitViewer' class to represent the sub-commit differences between two given commits.`
+        (SubCommitViewer.prototype.didConstructShadowTree): Makes 'expand-collapse' button listen to 'toggle' event.
+        (SubCommitViewer.prototype._toggleVisibility): Updates UI once 'expand-collapse' button is clicked.
+        (SubCommitViewer.prototype.render): Render sub-commit view based on the state.
+        (SubCommitViewer.prototype._renderSubcommitTable): Generates sub-commits difference table entries.
+        (SubCommitViewer.htmlTemplate):
+        (SubCommitViewer.cssTemplate):
+        * public/v3/index.html: Added 'sub-commit-viewer.js' and 'expand-collapse-button.js'.
+        * public/v3/models/commit-log.js:
+        (CommitLog): Added '_subCommits'.
+        (CommitLog.prototype.updateSingleton): Updates 'rawData.ownsSubCommits' as well.
+        (CommitLog.prototype.ownsSubCommits):
+        (CommitLog.prototype.subCommits): Added. Returns sub-commits.
+        (CommitLog.prototype.fetchSubCommits): Added. Fetches sub-commits if haven't fetched them before.
+        (CommitLog.prototype._buildSubCommitMap): Added. Creates a map which maps repositories to commits.
+        (CommitLog.diffSubCommits): Added. Finds difference between two given commits.
+        (CommitLog.fetchBetweenRevisions): Updated due to '_constructFromRawData' change.
+        (CommitLog.fetchForSingleRevision): Updated due to '_constructFromRawData' change.
+        (CommitLog._constructFromRawData): Removed first argument 'repository' as it can be determined by calling 'Repository.findById'.
+        * public/v3/models/repository.js:
+        (Repository):
+        (Repository.prototype.owner): Returns the owner id.
+        (Repository.prototype.ownedRepositories): Returns a list of repositories owned by this repository.
+        * server-tests/api-commits-tests.js: Added tests for 'sub-commits' filter.
+        * server-tests/api-manifest-tests.js: Added a test.
+        * unit-tests/commit-log-tests.js: Added tests for 'fetchSubCommits' and 'diffSubCommits'.
+        * unit-tests/resources/mock-v3-models.js: Added 'ownerRepository' and 'ownedRepository'.
+
 2017-04-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Retrying an A/B testing does not set the repetition count in some cases

@@ -65,13 +65,18 @@ class CommitLogViewer extends ComponentBase {
     {
         const element = ComponentBase.createElement;
         const link = ComponentBase.createLink;
+        let previousCommit = null;
 
         this.renderReplace(this.content('commits-list'), (commits || []).map((commit) => {
             const label = commit.label();
             const url = commit.url();
-            return element('tr', [
-                element('th', [element('h4', {class: 'revision'}, url ? link(label, commit.title(), url) : label), commit.author() || '']),
-                element('td', commit.message() ? commit.message().substring(0, 80) : '')]);
+            const ownsSubCommits = previousCommit && previousCommit.ownsSubCommits() && commit.ownsSubCommits();
+            const subCommitDifferenceRow = ownsSubCommits ? element('tr', element('td', {colspan: 2}, new SubCommitViewer(previousCommit, commit))) : [];
+            previousCommit = commit;
+            return [subCommitDifferenceRow,
+                element('tr', [
+                    element('th', [element('h4', {class: 'revision'}, url ? link(label, commit.title(), url) : label), commit.author() || '']),
+                    element('td', commit.message() ? commit.message().substring(0, 80) : '')])];
         }));
     }
 
@@ -96,7 +101,7 @@ class CommitLogViewer extends ComponentBase {
                 height: calc(100% - 2px);
                 overflow-y: scroll;
             }
-            
+
             #commits-viewer-table {
                 width: 100%;
                 border-collapse: collapse;

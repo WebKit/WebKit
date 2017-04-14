@@ -394,6 +394,76 @@ describe("/api/commits/", function () {
             });
         });
 
+        it("should handle commit revision with space", () => {
+            const db = TestServer.database();
+            return Promise.all([
+                db.insert('repositories', {'id': 1, 'name': 'OS X'}),
+                db.insert('commits', {'repository': 1, 'revision': '10.11.10 Sierra16C67', 'order': 367, 'reported': true}),
+            ]).then(() => {
+                return TestServer.remoteAPI().getJSON('/api/commits/OS%20X/10.11.10%20Sierra16C67');
+            }).then((results) => {
+                assert.equal(results.status, 'OK');
+                assert.equal(results.commits.length, 1);
+
+                const commit = results.commits[0];
+                assert.equal(commit.id, 1);
+                assert.equal(commit.revision, '10.11.10 Sierra16C67');
+            });
+        });
+
+    });
+
+    describe('/api/commits/<repository>/sub-commits?owner-revision=<commit>', () => {
+        it("should return sub commits for a given commit", () => {
+            const db = TestServer.database();
+            return Promise.all([
+                db.insert('repositories', {'id': 1, 'name': 'macOS'}),
+                db.insert('repositories', {'id': 2, 'name': 'WebKit', 'owner': 1}),
+                db.insert('commits', {'id': 1, 'repository': 1, 'revision': '10.12 16A323', order: 1, 'reported': true}),
+                db.insert('commits', {'id': 2, 'repository': 2, 'revision': '210950', 'reported': true}),
+                db.insert('commit_ownerships', {'owner': 1, 'owned': 2})
+            ]).then(() => {
+                return TestServer.remoteAPI().getJSON('/api/commits/1/sub-commits?owner-revision=10.12%2016A323')
+            }).then((results) => {
+                assert.equal(results.status, 'OK');
+                assert.equal(results.commits.length, 1);
+
+                const subCommit = results.commits[0];
+                assert.equal(subCommit.repository, 2);
+                assert.equal(subCommit.revision, '210950');
+                assert.equal(subCommit.id, 2);
+            });
+        });
+
+        it("should return an empty list of commits if no sub-commits is associated with given commit", () => {
+            const db = TestServer.database();
+            return Promise.all([
+                db.insert('repositories', {'id': 1, 'name': 'macOS'}),
+                db.insert('repositories', {'id': 2, 'name': 'WebKit'}),
+                db.insert('commits', {'id': 1, 'repository': 1, 'revision': '10.12 16A323', order: 1, 'reported': true}),
+                db.insert('commits', {'id': 2, 'repository': 2, 'revision': '210950', 'reported': true})
+            ]).then(() => {
+                return TestServer.remoteAPI().getJSON('/api/commits/1/sub-commits?owner-revision=10.12%2016A323')
+            }).then((results) => {
+                assert.equal(results.status, 'OK');
+                assert.deepEqual(results.commits, []);
+            });
+        });
+
+        it("should return an empty list if commit revision is invalid", () => {
+            const db = TestServer.database();
+            return Promise.all([
+                db.insert('repositories', {'id': 1, 'name': 'macOS'}),
+                db.insert('repositories', {'id': 2, 'name': 'WebKit'}),
+                db.insert('commits', {'id': 1, 'repository': 1, 'revision': '10.12 16A323', order: 1, 'reported': true}),
+                db.insert('commits', {'id': 2, 'repository': 2, 'revision': '210950', 'reported': true})
+            ]).then(() => {
+                return TestServer.remoteAPI().getJSON('/api/commits/1/sub-commits?owner-revision=10.12%2016A324')
+            }).then((results) => {
+                assert.equal(results.status, 'OK');
+                assert.equal(results.commits.length, 0);
+            });
+        })
     });
 
     describe('/api/commits/<repository>/?precedingRevision=<commit-1>&lastRevision=<commit-2>', () => {

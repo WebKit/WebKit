@@ -17,7 +17,8 @@ class CommitLogFetcher {
         $commits = array();
         foreach ($commit_rows as &$commit_row) {
             $associated_task = &$task_by_id[$commit_row['taskcommit_task']];
-            $commit = $this->format_commit($commit_row, $commit_row);
+            # FIXME: The last parameter should be determined based on commit_ownerships.
+            $commit = $this->format_commit($commit_row, $commit_row, /* owns_sub_commits */ FALSE);
             $commit['repository'] = $commit_row['commit_repository'];
             array_push($commits, $commit);
             array_push($associated_task[Database::is_true($commit_row['taskcommit_is_fix']) ? 'fixes' : 'causes'], $commit_row['commit_id']);
@@ -41,7 +42,9 @@ class CommitLogFetcher {
             commit_time as "time",
             committer_name as "authorName",
             committer_account as "authorEmail",
-            commit_message as "message"
+            commit_repository as "repository",
+            commit_message as "message",
+            EXISTS(SELECT * FROM commit_ownerships WHERE commit_owner = commit_id) as "ownsSubCommits"
             FROM commits LEFT OUTER JOIN committers ON commit_committer = committer_id
             WHERE commit_repository = $1 AND commit_reported = true';
         $values = array($repository_id);
@@ -85,10 +88,22 @@ class CommitLogFetcher {
         if (!is_array($commits))
             return NULL;
 
-        foreach ($commits as &$commit)
+        foreach ($commits as &$commit) {
             $commit['time'] = Database::to_js_time($commit['time']);
+            $commit['ownsSubCommits'] = Database::is_true($commit['ownsSubCommits']);
+        }
 
         return $commits;
+    }
+
+    function fetch_subcommits_for_revision($repository_id, $commit_revision) {
+        return $this->db->query_and_fetch_all('SELECT owned.commit_repository as "repository",
+            owned.commit_revision as "revision",
+            owned.commit_time as "time",
+            owned.commit_id as "id"
+            FROM commits AS owned, commit_ownerships, commits AS owner
+            WHERE owned.commit_id = commit_owned AND owner.commit_id = commit_owner AND owner.commit_revision = $1 AND owner.commit_repository = $2',
+            array($commit_revision, $repository_id));
     }
 
     # FIXME: this is not DRY. Ideally, $db should provide the ability to search with criteria that specifies a range.
@@ -163,19 +178,22 @@ class CommitLogFetcher {
         if (!$commit_row)
             return array();
         $committer = $this->db->select_first_row('committers', 'committer', array('id' => $commit_row['commit_committer']));
-        return array($this->format_commit($commit_row, $committer));
+        $owns_sub_commits = !!$this->db->select_first_row('commit_ownerships', 'commit', array('owner' => $commit_row['commit_id']));
+        return array($this->format_commit($commit_row, $committer, $owns_sub_commits));
     }
 
-    private function format_commit($commit_row, $committer_row) {
+    private function format_commit($commit_row, $committer_row, $owns_sub_commits) {
         return array(
             'id' => $commit_row['commit_id'],
             'revision' => $commit_row['commit_revision'],
+            'repository' => $commit_row['commit_repository'],
             'previousCommit' => $commit_row['commit_previous_commit'],
             'time' => Database::to_js_time($commit_row['commit_time']),
             'order' => $commit_row['commit_order'],
             'authorName' => $committer_row ? $committer_row['committer_name'] : null,
             'authorEmail' => $committer_row ? $committer_row['committer_account'] : null,
-            'message' => $commit_row['commit_message']
+            'message' => $commit_row['commit_message'],
+            'ownsSubCommits' => $owns_sub_commits
         );
     }
 }

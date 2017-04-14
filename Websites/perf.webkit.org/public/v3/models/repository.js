@@ -7,10 +7,17 @@ class Repository extends LabeledObject {
         this._url = object.url;
         this._blameUrl = object.blameUrl;
         this._hasReportedCommits = object.hasReportedCommits;
-        this._owner = object.owner;
+        this._ownerId = object.owner;
 
-        if (!object.owner)
+        if (!this._ownerId)
             this.ensureNamedStaticMap('topLevelName')[this.name()] = this;
+        else {
+            const ownerships = this.ensureNamedStaticMap('repositoryOwnerships');
+            if (!(this._ownerId in ownerships))
+                ownerships[this._ownerId] = [this];
+            else
+                ownerships[this._ownerId].push(this);
+        }
     }
 
     static findTopLevelByName(name)
@@ -33,7 +40,13 @@ class Repository extends LabeledObject {
 
     owner()
     {
-        return this._owner;
+        return this._ownerId;
+    }
+
+    ownedRepositories()
+    {
+        const ownerships = this.namedStaticMap('repositoryOwnerships');
+        return ownerships ? ownerships[this.id()] : null;
     }
 
     static sortByNamePreferringOnesWithURL(repositories)

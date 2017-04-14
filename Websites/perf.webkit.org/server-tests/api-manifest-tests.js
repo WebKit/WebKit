@@ -99,6 +99,36 @@ describe('/api/manifest', function () {
         });
     });
 
+    it("should generate manifest with repositories and each repository should know its owned repositories", () => {
+        const db = TestServer.database();
+        return Promise.all([
+            db.insert('repositories', {id: 11, name: 'WebKit', url: 'https://trac.webkit.org/$1'}),
+            db.insert('repositories', {id: 9, name: 'OS X'}),
+            db.insert('repositories', {id: 22, name: 'iOS'}),
+            db.insert('repositories', {id: 35, name: 'JavaScriptCore', owner: 9}),
+        ]).then(() => {
+            return TestServer.remoteAPI().getJSON('/api/manifest');
+        }).then((content) => {
+            let manifest = Manifest._didFetchManifest(content);
+
+            let webkit = Repository.findById(11);
+            assert(webkit);
+            assert.equal(webkit.name(), 'WebKit');
+            assert.equal(webkit.urlForRevision(123), 'https://trac.webkit.org/123');
+            assert.equal(webkit.ownedRepositories(), null);
+
+            let osx = Repository.findById(9);
+            assert(osx);
+            assert.equal(osx.name(), 'OS X');
+            assert.deepEqual(osx.ownedRepositories(), [Repository.findById(35)]);
+
+            let ios = Repository.findById(22);
+            assert(ios);
+            assert.equal(ios.name(), 'iOS');
+            assert.equal(ios.ownedRepositories(), null);
+        });
+    });
+
     it("should generate manifest with builders", () => {
         let db = TestServer.database();
         return Promise.all([
