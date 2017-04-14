@@ -3555,6 +3555,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseAwaitExpress
     JSTextPosition divotStart = tokenStartPosition();
     next();
     JSTextPosition argumentStart = tokenStartPosition();
+    ExpressionErrorClassifier classifier(this);
     TreeExpression argument = parseUnaryExpression(context);
     failIfFalse(argument, "Failed to parse await expression");
     return context.createAwait(location, argument, divotStart, argumentStart, lastTokenEndPosition());

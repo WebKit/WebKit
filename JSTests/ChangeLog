@@ -1,3 +1,12 @@
+2017-04-14  Caitlin Potter  <caitp@igalia.com>
+
+        [JSC] use ExpressionErrorClassifier for AwaitExpression operand
+        https://bugs.webkit.org/show_bug.cgi?id=170844
+
+        Reviewed by Saam Barati.
+
+        * stress/regress-170732.js: Added.
+
 2017-04-14  Oleksandr Skachkov  <gskachkov@gmail.com>
 
         Safari 10.1 JSON.parse returns incorrect object for numeric keys with decimal values
