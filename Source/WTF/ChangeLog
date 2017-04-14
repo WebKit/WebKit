@@ -1,3 +1,24 @@
+2017-04-13  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Date.parse should accept wider range of representation
+        https://bugs.webkit.org/show_bug.cgi?id=170720
+
+        Reviewed by Darin Adler.
+
+        We would like to relax Date.parse to accept the representation "May 8".
+        At that time, we choose `2000` as a default year. This is because of
+        the following reason.
+
+        1. According to the V8, this default value is compatible to the old KJS. While current V8 uses 2001,
+           SpiderMonkey does not have such a fallback path. So this reason is not big deal.
+
+        2. It is a leap year. When using `new Date("Feb 29")`, we assume that people want to save month and day.
+           Leap year can save user inputs if they is valid. If we use the current year instead, the current year
+           may not be a leap year. In that case, `new Date("Feb 29").getMonth()` becomes 2 (March).
+
+        * wtf/DateMath.cpp:
+        (WTF::parseDateFromNullTerminatedCharacters):
+
 2017-04-13  Dan Bernstein  <mitz@apple.com>
 
         WTF installs an extra copy of a header outside /usr/local/include/wtf

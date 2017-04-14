@@ -891,13 +891,10 @@ double parseDateFromNullTerminatedCharacters(const char* dateString, bool& haveT
         return std::numeric_limits<double>::quiet_NaN();
     dateString = newPosStr;
 
-    if (!*dateString)
-        return std::numeric_limits<double>::quiet_NaN();
-
     if (day < 0)
         return std::numeric_limits<double>::quiet_NaN();
 
-    int year = 0;
+    std::optional<int> year;
     if (day > 31) {
         // ### where is the boundary and what happens below?
         if (*dateString != '/')
@@ -961,9 +958,11 @@ double parseDateFromNullTerminatedCharacters(const char* dateString, bool& haveT
         return std::numeric_limits<double>::quiet_NaN();
 
     // '99 23:12:40 GMT'
-    if (year <= 0 && *dateString) {
-        if (!parseInt(dateString, &newPosStr, 10, &year))
+    if (*dateString && !year) {
+        int result = 0;
+        if (!parseInt(dateString, &newPosStr, 10, &result))
             return std::numeric_limits<double>::quiet_NaN();
+        year = result;
     }
 
     // Don't fail if the time is missing.
@@ -978,7 +977,7 @@ double parseDateFromNullTerminatedCharacters(const char* dateString, bool& haveT
             if (*newPosStr != ':')
                 return std::numeric_limits<double>::quiet_NaN();
             // There was no year; the number was the hour.
-            year = -1;
+            year = std::nullopt;
         } else {
             // in the normal case (we parsed the year), advance to the next number
             dateString = ++newPosStr;
@@ -1048,9 +1047,11 @@ double parseDateFromNullTerminatedCharacters(const char* dateString, bool& haveT
     }
     
     // The year may be after the time but before the time zone.
-    if (isASCIIDigit(*dateString) && year == -1) {
-        if (!parseInt(dateString, &newPosStr, 10, &year))
+    if (isASCIIDigit(*dateString) && !year) {
+        int result = 0;
+        if (!parseInt(dateString, &newPosStr, 10, &result))
             return std::numeric_limits<double>::quiet_NaN();
+        year = result;
         dateString = newPosStr;
         skipSpacesAndComments(dateString);
     }
@@ -1102,9 +1103,11 @@ double parseDateFromNullTerminatedCharacters(const char* dateString, bool& haveT
 
     skipSpacesAndComments(dateString);
 
-    if (*dateString && year == -1) {
-        if (!parseInt(dateString, &newPosStr, 10, &year))
+    if (*dateString && !year) {
+        int result = 0;
+        if (!parseInt(dateString, &newPosStr, 10, &result))
             return std::numeric_limits<double>::quiet_NaN();
+        year = result;
         dateString = newPosStr;
         skipSpacesAndComments(dateString);
     }
@@ -1114,14 +1117,28 @@ double parseDateFromNullTerminatedCharacters(const char* dateString, bool& haveT
         return std::numeric_limits<double>::quiet_NaN();
 
     // Y2K: Handle 2 digit years.
-    if (year >= 0 && year < 100) {
-        if (year < 50)
-            year += 2000;
-        else
-            year += 1900;
+    if (year) {
+        int yearValue = year.value();
+        if (yearValue >= 0 && yearValue < 100) {
+            if (yearValue < 50)
+                yearValue += 2000;
+            else
+                yearValue += 1900;
+        }
+        year = yearValue;
+    } else {
+        // We select 2000 as default value. This is because of the following reasons.
+        // 1. Year 2000 was used for the initial value of the variable `year`. While it won't be posed to users in WebKit,
+        //    V8 used this 2000 as its default value. (As of April 2017, V8 is using the year 2001 and Spider Monkey is
+        //    not doing this kind of fallback.)
+        // 2. It is a leap year. When using `new Date("Feb 29")`, we assume that people want to save month and day.
+        //    Leap year can save user inputs if they is valid. If we use the current year instead, the current year
+        //    may not be a leap year. In that case, `new Date("Feb 29").getMonth()` becomes 2 (March).
+        year = 2000;
     }
+    ASSERT(year);
     
-    return ymdhmsToSeconds(year, month + 1, day, hour, minute, second) * msPerSecond;
+    return ymdhmsToSeconds(year.value(), month + 1, day, hour, minute, second) * msPerSecond;
 }
 
 double parseDateFromNullTerminatedCharacters(const char* dateString)

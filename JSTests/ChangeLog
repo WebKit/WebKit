@@ -1,3 +1,14 @@
+2017-04-13  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Date.parse should accept wider range of representation
+        https://bugs.webkit.org/show_bug.cgi?id=170720
+
+        Reviewed by Darin Adler.
+
+        * stress/date-relaxed.js: Added.
+        (shouldBe):
+        (throw.new.Error):
+
 2017-04-13  Mark Lam  <mark.lam@apple.com>
 
         Should use flushDirect() when flushing the scopeRegister due to needsScopeRegister().
