@@ -34,6 +34,7 @@
 #include "JSCInlines.h"
 #include "JSWebAssemblyModule.h"
 #include "ObjectConstructor.h"
+#include "WasmModuleInformation.h"
 
 namespace JSC {
 static EncodedJSValue JSC_HOST_CALL webAssemblyModuleProtoCustomSections(ExecState*);

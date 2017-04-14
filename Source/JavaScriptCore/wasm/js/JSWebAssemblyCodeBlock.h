@@ -51,13 +51,7 @@ public:
     typedef JSCell Base;
     static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
 
-    static JSWebAssemblyCodeBlock* create(VM& vm, Ref<Wasm::CodeBlock> codeBlock, const Wasm::ModuleInformation& moduleInformation)
-    {
-        auto* result = new (NotNull, allocateCell<JSWebAssemblyCodeBlock>(vm.heap, allocationSize(moduleInformation.importFunctionCount()))) JSWebAssemblyCodeBlock(vm, WTFMove(codeBlock), moduleInformation);
-        result->finishCreation(vm);
-        return result;
-    }
-
+    static JSWebAssemblyCodeBlock* create(VM&, Ref<Wasm::CodeBlock>, const Wasm::ModuleInformation&);
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
         return Structure::create(vm, globalObject, prototype, TypeInfo(CellType, StructureFlags), info());
@@ -89,6 +83,7 @@ public:
         return offsetOfImportStubs() + sizeof(void*) * importIndex;
     }
 
+    Ref<Wasm::CodeBlock> m_codeBlock;
 private:
     JSWebAssemblyCodeBlock(VM&, Ref<Wasm::CodeBlock>&&, const Wasm::ModuleInformation&);
     DECLARE_EXPORT_INFO;
@@ -116,7 +111,6 @@ private:
     };
 
     WriteBarrier<JSWebAssemblyModule> m_module;
-    Ref<Wasm::CodeBlock> m_codeBlock;
     Vector<MacroAssemblerCodeRef> m_wasmToJSExitStubs;
     UnconditionalFinalizer m_unconditionalFinalizer;
     Bag<CallLinkInfo> m_callLinkInfos;

@@ -1,3 +1,49 @@
+2017-04-13  Saam Barati  <sbarati@apple.com>
+
+        WebAssembly: We should be able to postMessage a JSWebAssemblyModule
+        https://bugs.webkit.org/show_bug.cgi?id=170573
+
+        Reviewed by Filip Pizlo.
+
+        This patch adds a callback to JSRunLoopTimer to notify
+        clients that a timer has been set. This is used inside
+        WorkerRunLoop in WebCore so that its RunLoop can perform
+        an iteration when it sees that a timer got set.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * runtime/JSRunLoopTimer.cpp:
+        (JSC::JSRunLoopTimer::scheduleTimer):
+        (JSC::JSRunLoopTimer::addTimerSetNotification):
+        (JSC::JSRunLoopTimer::removeTimerSetNotification):
+        * runtime/JSRunLoopTimer.h:
+        * wasm/WasmCodeBlock.cpp:
+        (JSC::Wasm::CodeBlock::~CodeBlock):
+        * wasm/WasmCodeBlock.h:
+        * wasm/WasmModule.cpp:
+        (JSC::Wasm::Module::~Module):
+        (JSC::Wasm::Module::signatureIndexFromFunctionIndexSpace):
+        (JSC::Wasm::makeValidationCallback):
+        (JSC::Wasm::Module::validateSync):
+        (JSC::Wasm::Module::validateAsync):
+        (JSC::Wasm::Module::validateSyncImpl): Deleted.
+        (JSC::Wasm::Module::makeValidationCallback): Deleted.
+        * wasm/WasmModule.h:
+        (JSC::Wasm::Module::validateSync): Deleted.
+        (JSC::Wasm::Module::validateAsync): Deleted.
+        (JSC::Wasm::Module::signatureIndexFromFunctionIndexSpace): Deleted.
+        (JSC::Wasm::Module::nonNullCodeBlock): Deleted.
+        * wasm/js/JSWebAssemblyCodeBlock.cpp:
+        (JSC::JSWebAssemblyCodeBlock::create):
+        * wasm/js/JSWebAssemblyCodeBlock.h:
+        (JSC::JSWebAssemblyCodeBlock::create): Deleted.
+        * wasm/js/JSWebAssemblyModule.cpp:
+        (JSC::JSWebAssemblyModule::source):
+        * wasm/js/JSWebAssemblyModule.h:
+        (JSC::JSWebAssemblyModule::source): Deleted.
+        * wasm/js/WebAssemblyFunction.cpp:
+        (JSC::callWebAssemblyFunction):
+        * wasm/js/WebAssemblyModulePrototype.cpp:
+
 2017-04-13  Mark Lam  <mark.lam@apple.com>
 
         Should use flushDirect() when flushing the scopeRegister due to needsScopeRegister().

@@ -25,10 +25,12 @@
 
 #pragma once
 
+#include <wtf/HashSet.h>
 #include <wtf/Lock.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/RunLoop.h>
+#include <wtf/SharedTask.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Threading.h>
 
@@ -43,6 +45,9 @@ class VM;
 
 class JSRunLoopTimer : public ThreadSafeRefCounted<JSRunLoopTimer> {
 public:
+    typedef void TimerNotificationType();
+    using TimerNotificationCallback = RefPtr<WTF::SharedTask<TimerNotificationType>>;
+
     JSRunLoopTimer(VM*);
 #if USE(CF)
     static void timerDidFireCallback(CFRunLoopTimerRef, void*);
@@ -56,6 +61,9 @@ public:
     void scheduleTimer(Seconds intervalInSeconds);
     void cancelTimer();
     bool isScheduled() const { return m_isScheduled; }
+
+    JS_EXPORT_PRIVATE void addTimerSetNotification(TimerNotificationCallback);
+    JS_EXPORT_PRIVATE void removeTimerSetNotification(TimerNotificationCallback);
 
 #if USE(CF)
     JS_EXPORT_PRIVATE void setRunLoop(CFRunLoopRef);
@@ -78,6 +86,8 @@ protected:
 #else
     RunLoop::Timer<JSRunLoopTimer> m_timer;
 #endif
+
+    HashSet<TimerNotificationCallback> m_timerSetCallbacks;
     
 private:
     void timerDidFire();

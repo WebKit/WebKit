@@ -28,6 +28,7 @@
 
 #include <debugger/Debugger.h>
 #include <heap/Strong.h>
+#include <runtime/JSRunLoopTimer.h>
 #include <wtf/Forward.h>
 #include <wtf/Lock.h>
 #include <wtf/NakedPtr.h>
@@ -79,6 +80,9 @@ namespace WebCore {
         
         void releaseHeapAccess();
         void acquireHeapAccess();
+
+        void addTimerSetNotification(JSC::JSRunLoopTimer::TimerNotificationCallback);
+        void removeTimerSetNotification(JSC::JSRunLoopTimer::TimerNotificationCallback);
 
         void attachDebugger(JSC::Debugger*);
         void detachDebugger(JSC::Debugger*);

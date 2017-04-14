@@ -27,14 +27,23 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "WasmCallee.h"
-#include "WasmModuleInformation.h"
-#include "WasmPlan.h"
+#include "MacroAssemblerCodeRef.h"
 #include <wtf/Lock.h>
+#include <wtf/RefPtr.h>
 #include <wtf/SharedTask.h>
 #include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/text/WTFString.h>
 
-namespace JSC { namespace Wasm {
+namespace JSC {
+
+class VM;
+
+namespace Wasm {
+
+class Callee;
+class Plan;
+struct ModuleInformation;
+enum class MemoryMode : uint8_t;
     
 class CodeBlock : public ThreadSafeRefCounted<CodeBlock> {
 public:
@@ -82,6 +91,7 @@ public:
     }
     bool isSafeToRun(MemoryMode);
 
+    ~CodeBlock();
 private:
     CodeBlock(VM&, MemoryMode, ModuleInformation&);
     unsigned m_calleeCount;

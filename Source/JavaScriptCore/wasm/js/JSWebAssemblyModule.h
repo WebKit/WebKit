@@ -29,20 +29,20 @@
 
 #include "JSDestructibleObject.h"
 #include "JSObject.h"
-#include "JSWebAssemblyCodeBlock.h"
 #include "UnconditionalFinalizer.h"
 #include "WasmModule.h"
-#include "WasmModuleInformation.h"
 #include <wtf/Bag.h>
 #include <wtf/Vector.h>
 
 namespace JSC {
 
 namespace Wasm {
+class Module;
 class Plan;
 }
 
 class SymbolTable;
+class JSWebAssemblyCodeBlock;
 class JSWebAssemblyMemory;
 class WebAssemblyToJSCallee;
 
@@ -50,9 +50,9 @@ class JSWebAssemblyModule : public JSDestructibleObject {
 public:
     typedef JSDestructibleObject Base;
 
-    DECLARE_INFO;
+    DECLARE_EXPORT_INFO;
 
-    static JSWebAssemblyModule* createStub(VM&, ExecState*, Structure*, Wasm::Module::ValidationResult&&);
+    JS_EXPORT_PRIVATE static JSWebAssemblyModule* createStub(VM&, ExecState*, Structure*, Wasm::Module::ValidationResult&&);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     const Wasm::ModuleInformation& moduleInformation() const { return m_module->moduleInformation(); }
@@ -65,7 +65,7 @@ public:
 
     JSWebAssemblyCodeBlock* codeBlock(Wasm::MemoryMode mode) { return m_codeBlocks[static_cast<size_t>(mode)].get(); }
 
-    const Vector<uint8_t>& source() const { return moduleInformation().source; }
+    const Vector<uint8_t>& source() const;
 
     Wasm::Module& module() { return m_module.get(); }
 

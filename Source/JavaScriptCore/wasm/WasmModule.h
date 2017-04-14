@@ -27,17 +27,19 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "WasmCallee.h"
 #include "WasmCodeBlock.h"
-#include "WasmModuleInformation.h"
-#include "WasmPlan.h"
-#include "WasmWorklist.h"
+#include "WasmMemory.h"
 #include <wtf/Expected.h>
 #include <wtf/Lock.h>
 #include <wtf/SharedTask.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace JSC { namespace Wasm {
+
+struct ModuleInformation;
+class Plan;
+
+using SignatureIndex = uint32_t;
     
 class Module : public ThreadSafeRefCounted<Module> {
 public:
@@ -45,45 +47,23 @@ public:
     typedef void CallbackType(VM&, ValidationResult&&);
     using AsyncValidationCallback = RefPtr<SharedTask<CallbackType>>;
 
+    static ValidationResult validateSync(VM&, Vector<uint8_t>&& source);
+    static void validateAsync(VM&, Vector<uint8_t>&& source, Module::AsyncValidationCallback&&);
+
     static Ref<Module> create(Ref<ModuleInformation>&& moduleInformation)
     {
         return adoptRef(*new Module(WTFMove(moduleInformation)));
     }
 
-    static ValidationResult validateSync(VM& vm, Vector<uint8_t>&& source)
-    {
-        Ref<Plan> plan = adoptRef(*new Plan(vm, WTFMove(source), Plan::Validation, Plan::dontFinalize()));
-        return validateSyncImpl(WTFMove(plan));
-    }
-
-    static void validateAsync(VM& vm, Vector<uint8_t>&& source, AsyncValidationCallback&& callback)
-    {
-        Ref<Plan> plan = adoptRef(*new Plan(vm, WTFMove(source), Plan::Validation, makeValidationCallback(WTFMove(callback))));
-        Wasm::ensureWorklist().enqueue(WTFMove(plan));
-    }
-
-    Wasm::SignatureIndex signatureIndexFromFunctionIndexSpace(unsigned functionIndexSpace) const
-    {
-        return m_moduleInformation->signatureIndexFromFunctionIndexSpace(functionIndexSpace);
-    }
-
+    Wasm::SignatureIndex signatureIndexFromFunctionIndexSpace(unsigned functionIndexSpace) const;
     const Wasm::ModuleInformation& moduleInformation() const { return m_moduleInformation.get(); }
 
     Ref<CodeBlock> compileSync(VM&, MemoryMode);
     void compileAsync(VM&, MemoryMode, CodeBlock::AsyncCompilationCallback&&);
 
-    Ref<CodeBlock> nonNullCodeBlock(Wasm::MemoryMode mode)
-    {
-        CodeBlock* codeBlock = m_codeBlocks[static_cast<uint8_t>(mode)].get();
-        RELEASE_ASSERT(!!codeBlock);
-        return makeRef(*codeBlock);
-    }
-
+    JS_EXPORT_PRIVATE ~Module();
 private:
     Ref<CodeBlock> getOrCreateCodeBlock(VM&, MemoryMode);
-
-    static ValidationResult validateSyncImpl(Ref<Plan>&&);
-    static Plan::CompletionTask makeValidationCallback(AsyncValidationCallback&&);
 
     Module(Ref<ModuleInformation>&&);
     Ref<ModuleInformation> m_moduleInformation;

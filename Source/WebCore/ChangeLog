@@ -1,3 +1,66 @@
+2017-04-13  Saam Barati  <sbarati@apple.com>
+
+        WebAssembly: We should be able to postMessage a JSWebAssemblyModule
+        https://bugs.webkit.org/show_bug.cgi?id=170573
+
+        Reviewed by Filip Pizlo.
+
+        This patch's main purpose is to implement postMessage of JSWebAssemblyModule.
+        The spec text describing the behavior is: https://github.com/WebAssembly/design/blob/master/JS.md#structured-clone-of-a-webassemblymodule
+        We only allow for JSWebAssemblyModule to be serialized in the postMessage
+        context. More work needs to be done to make it valid to store a module in
+        IndexDB.
+        
+        All that is needed to serialize a JSWebAssemblyModule is grab a Ref
+        to its underlying Wasm::Module. So, when doing a postMessage, all we
+        do is grab this Ref, and then re-create the JSWebAssemblyModule from
+        the Wasm::Module in the new VM/global object. Because the code for
+        Wasm::Module is VM-independent, this is all that's needed. This turned
+        out nicely, because it requires little knowledge from WebCore about
+        what it means to clone a JSWebAssemblyModule.
+        
+        
+        The second significant part of this patch is teaching WorkerRunLoop about
+        the various timers inside JSC. Before, the WorkerRunLoop wouldn't always
+        wake up to address JSC timers. I noticed this bug when I was writing
+        tests to make sure that Wasm was running concurrently in different
+        workers. The bug is that the WorkerRunLoop's message queue has no insight
+        into a timer being scheduled. This effected the PromiseDeferredTimer that
+        Wasm uses, as well as the various GC timers that Heap uses. Now, WorkerRunLoop
+        will set itself up to be notified when timers are set. When a timer is
+        set, the WorkerRunLoop will perform an iteration to to reset its top
+        level MessageQueue timeout to be no longer than the next timer fire date.
+
+        Tests: storage/indexeddb/wasm-exceptions.html
+               workers/wasm-hashset-many.html
+               workers/wasm-hashset.html
+               workers/wasm-long-compile-many.html
+               workers/wasm-long-compile.html
+
+        * ForwardingHeaders/heap/GCActivityCallback.h: Added.
+        * ForwardingHeaders/runtime/JSRunLoopTimer.h: Added.
+        * ForwardingHeaders/runtime/PromiseDeferredTimer.h: Added.
+        * ForwardingHeaders/wasm: Added.
+        * ForwardingHeaders/wasm/js: Added.
+        * ForwardingHeaders/wasm/js/JSWebAssemblyModule.h: Added.
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneSerializer::serialize):
+        (WebCore::CloneSerializer::CloneSerializer):
+        (WebCore::CloneSerializer::dumpIfTerminal):
+        (WebCore::CloneDeserializer::deserialize):
+        (WebCore::CloneDeserializer::CloneDeserializer):
+        (WebCore::CloneDeserializer::readTerminal):
+        (WebCore::SerializedScriptValue::SerializedScriptValue):
+        (WebCore::SerializedScriptValue::create):
+        (WebCore::SerializedScriptValue::deserialize):
+        * bindings/js/SerializedScriptValue.h:
+        * bindings/js/WorkerScriptController.cpp:
+        (WebCore::WorkerScriptController::addTimerSetNotification):
+        (WebCore::WorkerScriptController::removeTimerSetNotification):
+        * bindings/js/WorkerScriptController.h:
+        * workers/WorkerRunLoop.cpp:
+        (WebCore::WorkerRunLoop::runInMode):
+
 2017-04-13  Dean Jackson  <dino@apple.com>
 
         Large negative animation-delays may not work depending on machine uptime

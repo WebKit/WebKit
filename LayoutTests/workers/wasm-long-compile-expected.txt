@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: line 28: Good result
+CONSOLE MESSAGE: line 4: Finished test
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

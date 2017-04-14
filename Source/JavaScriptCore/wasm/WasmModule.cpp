@@ -28,13 +28,22 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "WasmModuleInformation.h"
 #include "WasmPlanInlines.h"
+#include "WasmWorklist.h"
 
 namespace JSC { namespace Wasm {
 
 Module::Module(Ref<ModuleInformation>&& moduleInformation)
     : m_moduleInformation(WTFMove(moduleInformation))
 {
+}
+
+Module::~Module() { }
+
+Wasm::SignatureIndex Module::signatureIndexFromFunctionIndexSpace(unsigned functionIndexSpace) const
+{
+    return m_moduleInformation->signatureIndexFromFunctionIndexSpace(functionIndexSpace);
 }
 
 static Module::ValidationResult makeValidationResult(Plan& plan)
@@ -45,10 +54,25 @@ static Module::ValidationResult makeValidationResult(Plan& plan)
     return Module::ValidationResult(Module::create(plan.takeModuleInformation()));
 }
 
-Module::ValidationResult Module::validateSyncImpl(Ref<Plan>&& plan)
+static Plan::CompletionTask makeValidationCallback(Module::AsyncValidationCallback&& callback)
 {
+    return createSharedTask<Plan::CallbackType>([callback = WTFMove(callback)] (VM& vm, Plan& plan) {
+        ASSERT(!plan.hasWork());
+        callback->run(vm, makeValidationResult(plan));
+    });
+}
+
+Module::ValidationResult Module::validateSync(VM& vm, Vector<uint8_t>&& source)
+{
+    Ref<Plan> plan = adoptRef(*new Plan(vm, WTFMove(source), Plan::Validation, Plan::dontFinalize()));
     plan->parseAndValidateModule();
     return makeValidationResult(plan.get());
+}
+
+void Module::validateAsync(VM& vm, Vector<uint8_t>&& source, Module::AsyncValidationCallback&& callback)
+{
+    Ref<Plan> plan = adoptRef(*new Plan(vm, WTFMove(source), Plan::Validation, makeValidationCallback(WTFMove(callback))));
+    Wasm::ensureWorklist().enqueue(WTFMove(plan));
 }
 
 Ref<CodeBlock> Module::getOrCreateCodeBlock(VM& vm, MemoryMode mode)
@@ -73,14 +97,6 @@ Ref<CodeBlock> Module::compileSync(VM& vm, MemoryMode mode)
     Ref<CodeBlock> codeBlock = getOrCreateCodeBlock(vm, mode);
     codeBlock->waitUntilFinished();
     return codeBlock;
-}
-
-Plan::CompletionTask Module::makeValidationCallback(AsyncValidationCallback&& callback)
-{
-    return createSharedTask<Plan::CallbackType>([callback = WTFMove(callback)] (VM& vm, Plan& plan) {
-        ASSERT(!plan.hasWork());
-        callback->run(vm, makeValidationResult(plan));
-    });
 }
 
 void Module::compileAsync(VM& vm, MemoryMode mode, CodeBlock::AsyncCompilationCallback&& task)

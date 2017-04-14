@@ -38,6 +38,7 @@
 #include "WorkerRunLoop.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerThread.h"
+#include <JavaScriptCore/PromiseDeferredTimer.h>
 #include <wtf/CurrentTime.h>
 
 #if USE(GLIB)
@@ -152,6 +153,12 @@ MessageQueueWaitResult WorkerRunLoop::runInMode(WorkerGlobalScope* context, cons
     ASSERT(context);
     ASSERT(context->thread().threadID() == currentThread());
 
+    JSC::JSRunLoopTimer::TimerNotificationCallback timerAddedTask = WTF::createSharedTask<JSC::JSRunLoopTimer::TimerNotificationType>([this] {
+        // We don't actually do anything here, we just want to loop around runInMode
+        // to both recalculate our deadline and to potentially run the run loop.
+        this->postTask([](ScriptExecutionContext&) { }); 
+    });
+
 #if USE(GLIB)
     GMainContext* mainContext = g_main_context_get_thread_default();
     if (g_main_context_pending(mainContext))
@@ -173,12 +180,17 @@ MessageQueueWaitResult WorkerRunLoop::runInMode(WorkerGlobalScope* context, cons
         else
             absoluteTime = deadline;
     }
-    MessageQueueWaitResult result;
-    if (WorkerScriptController* script = context->script())
+
+    if (WorkerScriptController* script = context->script()) {
         script->releaseHeapAccess();
+        script->addTimerSetNotification(timerAddedTask);
+    }
+    MessageQueueWaitResult result;
     auto task = m_messageQueue.waitForMessageFilteredWithTimeout(result, predicate, absoluteTime);
-    if (WorkerScriptController* script = context->script())
+    if (WorkerScriptController* script = context->script()) {
         script->acquireHeapAccess();
+        script->removeTimerSetNotification(timerAddedTask);
+    }
 
     // If the context is closing, don't execute any further JavaScript tasks (per section 4.1.1 of the Web Workers spec).  However, there may be implementation cleanup tasks in the queue, so keep running through it.
 
@@ -193,12 +205,15 @@ MessageQueueWaitResult WorkerRunLoop::runInMode(WorkerGlobalScope* context, cons
     case MessageQueueTimeout:
         if (!context->isClosing() && !isNested())
             m_sharedTimer->fire();
-#if USE(CF)
-        if (nextCFRunLoopTimerFireDate <= CFAbsoluteTimeGetCurrent())
-            CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, /*returnAfterSourceHandled*/ false);
-#endif
         break;
     }
+
+#if USE(CF)
+    if (result != MessageQueueTerminated) {
+        if (nextCFRunLoopTimerFireDate <= CFAbsoluteTimeGetCurrent())
+            CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, /*returnAfterSourceHandled*/ false);
+    }
+#endif
 
     return result;
 }

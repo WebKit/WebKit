@@ -29,6 +29,7 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "WasmCallee.h"
 #include "WasmPlanInlines.h"
 #include "WasmWorklist.h"
 
@@ -66,6 +67,8 @@ CodeBlock::CodeBlock(VM& vm, MemoryMode mode, ModuleInformation& moduleInformati
     // Note, immediately after we enqueue the plan, there is a chance the above callback will be called.
     worklist.enqueue(makeRef(*m_plan.get()));
 }
+
+CodeBlock::~CodeBlock() { }
 
 void CodeBlock::waitUntilFinished()
 {

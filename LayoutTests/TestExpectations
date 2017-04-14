@@ -981,6 +981,13 @@ webkit.org/b/159370 [ Debug ] fast/history/page-cache-destroy-document.html [ Sk
 # This test is just way too slow.
 workers/bomb-with-v8.html [ Skip ]
 
+# These tests are slow by design.
+workers/wasm-hashset-many.html [ Slow ]
+workers/wasm-hashset-many-2.html [ Slow ]
+workers/wasm-hashset.html [ Slow ]
+workers/wasm-long-compile-many.html [ Slow ]
+workers/wasm-long-compile.html [ Slow ]
+
 # WebCryptoAPI tests that take too long to complete
 imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/hkdf.worker.html [ Skip ]
 imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.worker.html [ Slow ]

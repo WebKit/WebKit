@@ -108,6 +108,11 @@ void JSWebAssemblyModule::visitChildren(JSCell* cell, SlotVisitor& visitor)
         visitor.append(thisObject->m_codeBlocks[i]);
 }
 
+const Vector<uint8_t>& JSWebAssemblyModule::source() const
+{
+    return moduleInformation().source;
+}
+
 } // namespace JSC
 
 #endif // ENABLE(WEBASSEMBLY)

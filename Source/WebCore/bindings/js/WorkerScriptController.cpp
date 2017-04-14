@@ -35,11 +35,13 @@
 #include "WorkerConsoleClient.h"
 #include "WorkerGlobalScope.h"
 #include <bindings/ScriptValue.h>
+#include <heap/GCActivityCallback.h>
 #include <heap/StrongInlines.h>
 #include <runtime/Completion.h>
 #include <runtime/Exception.h>
 #include <runtime/ExceptionHelpers.h>
 #include <runtime/JSLock.h>
+#include <runtime/PromiseDeferredTimer.h>
 
 using namespace JSC;
 
@@ -195,6 +197,32 @@ void WorkerScriptController::releaseHeapAccess()
 void WorkerScriptController::acquireHeapAccess()
 {
     m_vm->heap.acquireAccess();
+}
+
+void WorkerScriptController::addTimerSetNotification(JSC::JSRunLoopTimer::TimerNotificationCallback callback)
+{
+    auto processTimer = [&] (JSRunLoopTimer* timer) {
+        if (!timer)
+            return;
+        timer->addTimerSetNotification(callback);
+    };
+
+    processTimer(m_vm->heap.fullActivityCallback());
+    processTimer(m_vm->heap.edenActivityCallback());
+    processTimer(m_vm->promiseDeferredTimer.get());
+}
+
+void WorkerScriptController::removeTimerSetNotification(JSC::JSRunLoopTimer::TimerNotificationCallback callback)
+{
+    auto processTimer = [&] (JSRunLoopTimer* timer) {
+        if (!timer)
+            return;
+        timer->removeTimerSetNotification(callback);
+    };
+
+    processTimer(m_vm->heap.fullActivityCallback());
+    processTimer(m_vm->heap.edenActivityCallback());
+    processTimer(m_vm->promiseDeferredTimer.get());
 }
 
 void WorkerScriptController::attachDebugger(JSC::Debugger* debugger)
