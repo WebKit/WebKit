@@ -229,17 +229,17 @@ RealtimeMediaSourceSupportedConstraints& AVMediaCaptureSource::supportedConstrai
 
 void AVMediaCaptureSource::initializeCapabilities()
 {
-    m_capabilities = RealtimeMediaSourceCapabilities::create(supportedConstraints());
+    m_capabilities = std::make_unique<RealtimeMediaSourceCapabilities>(supportedConstraints());
     m_capabilities->setDeviceId(id());
 
     initializeCapabilities(*m_capabilities.get());
 }
 
-RefPtr<RealtimeMediaSourceCapabilities> AVMediaCaptureSource::capabilities() const
+const RealtimeMediaSourceCapabilities& AVMediaCaptureSource::capabilities() const
 {
     if (!m_capabilities)
         const_cast<AVMediaCaptureSource&>(*this).initializeCapabilities();
-    return m_capabilities;
+    return *m_capabilities;
 }
 
 void AVMediaCaptureSource::setupSession()

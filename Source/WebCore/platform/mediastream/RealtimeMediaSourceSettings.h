@@ -29,6 +29,7 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "RealtimeMediaSourceSupportedConstraints.h"
+#include <wtf/EnumTraits.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 #include <wtf/text/AtomicString.h>
@@ -149,6 +150,21 @@ bool RealtimeMediaSourceSettings::decode(Decoder& decoder, RealtimeMediaSourceSe
 }
 
 } // namespace WebCore
+
+namespace WTF {
+
+template <> struct EnumTraits<WebCore::RealtimeMediaSourceSettings::VideoFacingMode> {
+    using values = EnumValues<
+        WebCore::RealtimeMediaSourceSettings::VideoFacingMode,
+        WebCore::RealtimeMediaSourceSettings::VideoFacingMode::Unknown,
+        WebCore::RealtimeMediaSourceSettings::VideoFacingMode::User,
+        WebCore::RealtimeMediaSourceSettings::VideoFacingMode::Environment,
+        WebCore::RealtimeMediaSourceSettings::VideoFacingMode::Left,
+        WebCore::RealtimeMediaSourceSettings::VideoFacingMode::Right
+    >;
+};
+
+}
 
 #endif // RealtimeMediaSourceSettings_h
 

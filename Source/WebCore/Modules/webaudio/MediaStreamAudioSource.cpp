@@ -44,12 +44,12 @@ MediaStreamAudioSource::MediaStreamAudioSource()
 {
 }
 
-RefPtr<RealtimeMediaSourceCapabilities> MediaStreamAudioSource::capabilities() const
+const RealtimeMediaSourceCapabilities& MediaStreamAudioSource::capabilities() const
 {
     // FIXME: implement this.
     // https://bugs.webkit.org/show_bug.cgi?id=122430
     notImplemented();
-    return nullptr;
+    return RealtimeMediaSourceCapabilities::emptyCapabilities();
 }
 
 const RealtimeMediaSourceSettings& MediaStreamAudioSource::settings() const

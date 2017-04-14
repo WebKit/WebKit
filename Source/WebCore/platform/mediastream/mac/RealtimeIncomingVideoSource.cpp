@@ -207,9 +207,9 @@ void RealtimeIncomingVideoSource::processNewSample(CMSampleBufferRef sample, uns
     videoSampleAvailable(MediaSampleAVFObjC::create(sample, rotation));
 }
 
-RefPtr<RealtimeMediaSourceCapabilities> RealtimeIncomingVideoSource::capabilities() const
+const RealtimeMediaSourceCapabilities& RealtimeIncomingVideoSource::capabilities() const
 {
-    return m_capabilities;
+    return RealtimeMediaSourceCapabilities::emptyCapabilities();
 }
 
 const RealtimeMediaSourceSettings& RealtimeIncomingVideoSource::settings() const

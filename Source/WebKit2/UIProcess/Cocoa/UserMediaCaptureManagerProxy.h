@@ -52,6 +52,7 @@ private:
     void createMediaSourceForCaptureDeviceWithConstraints(uint64_t id, const WebCore::CaptureDevice&, const WebCore::MediaConstraintsData&, bool& succeeded, String& invalidConstraints);
     void startProducingData(uint64_t);
     void stopProducingData(uint64_t);
+    void capabilities(uint64_t, WebCore::RealtimeMediaSourceCapabilities&);
 
     class SourceProxy;
     friend class SourceProxy;

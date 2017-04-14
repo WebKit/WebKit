@@ -216,28 +216,28 @@ MediaStreamTrack::TrackCapabilities MediaStreamTrack::getCapabilities() const
 {
     auto capabilities = m_private->capabilities();
     TrackCapabilities result;
-    if (capabilities->supportsWidth())
-        result.width = capabilityIntRange(capabilities->width());
-    if (capabilities->supportsHeight())
-        result.height = capabilityIntRange(capabilities->height());
-    if (capabilities->supportsAspectRatio())
-        result.aspectRatio = capabilityDoubleRange(capabilities->aspectRatio());
-    if (capabilities->supportsFrameRate())
-        result.frameRate = capabilityDoubleRange(capabilities->frameRate());
-    if (capabilities->supportsFacingMode())
-        result.facingMode = capabilityStringVector(capabilities->facingMode());
-    if (capabilities->supportsVolume())
-        result.volume = capabilityDoubleRange(capabilities->volume());
-    if (capabilities->supportsSampleRate())
-        result.sampleRate = capabilityIntRange(capabilities->sampleRate());
-    if (capabilities->supportsSampleSize())
-        result.sampleSize = capabilityIntRange(capabilities->sampleSize());
-    if (capabilities->supportsEchoCancellation())
-        result.echoCancellation = capabilityBooleanVector(capabilities->echoCancellation());
-    if (capabilities->supportsDeviceId())
-        result.deviceId = capabilities->deviceId();
-    if (capabilities->supportsGroupId())
-        result.groupId = capabilities->groupId();
+    if (capabilities.supportsWidth())
+        result.width = capabilityIntRange(capabilities.width());
+    if (capabilities.supportsHeight())
+        result.height = capabilityIntRange(capabilities.height());
+    if (capabilities.supportsAspectRatio())
+        result.aspectRatio = capabilityDoubleRange(capabilities.aspectRatio());
+    if (capabilities.supportsFrameRate())
+        result.frameRate = capabilityDoubleRange(capabilities.frameRate());
+    if (capabilities.supportsFacingMode())
+        result.facingMode = capabilityStringVector(capabilities.facingMode());
+    if (capabilities.supportsVolume())
+        result.volume = capabilityDoubleRange(capabilities.volume());
+    if (capabilities.supportsSampleRate())
+        result.sampleRate = capabilityIntRange(capabilities.sampleRate());
+    if (capabilities.supportsSampleSize())
+        result.sampleSize = capabilityIntRange(capabilities.sampleSize());
+    if (capabilities.supportsEchoCancellation())
+        result.echoCancellation = capabilityBooleanVector(capabilities.echoCancellation());
+    if (capabilities.supportsDeviceId())
+        result.deviceId = capabilities.deviceId();
+    if (capabilities.supportsGroupId())
+        result.groupId = capabilities.groupId();
     return result;
 }
 

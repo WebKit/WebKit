@@ -84,7 +84,7 @@ protected:
     AVCaptureDevice *device() const { return m_device.get(); }
 
     RealtimeMediaSourceSupportedConstraints& supportedConstraints();
-    RefPtr<RealtimeMediaSourceCapabilities> capabilities() const final;
+    const RealtimeMediaSourceCapabilities& capabilities() const final;
 
     void setVideoSampleBufferDelegate(AVCaptureVideoDataOutput*);
     void setAudioSampleBufferDelegate(AVCaptureAudioDataOutput*);
@@ -104,7 +104,7 @@ private:
     RealtimeMediaSourceSettings m_currentSettings;
     RealtimeMediaSourceSupportedConstraints m_supportedConstraints;
     RetainPtr<WebCoreAVMediaCaptureSourceObserver> m_objcObserver;
-    RefPtr<RealtimeMediaSourceCapabilities> m_capabilities;
+    std::unique_ptr<RealtimeMediaSourceCapabilities> m_capabilities;
     RetainPtr<AVCaptureSession> m_session;
     RetainPtr<AVCaptureDevice> m_device;
     InterruptionReason m_interruption { InterruptionReason::None };

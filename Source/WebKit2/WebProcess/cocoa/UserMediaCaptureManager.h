@@ -70,6 +70,7 @@ private:
 
     void startProducingData(uint64_t);
     void stopProducingData(uint64_t);
+    WebCore::RealtimeMediaSourceCapabilities&& capabilities(uint64_t);
 
     class Source;
     friend class Source;

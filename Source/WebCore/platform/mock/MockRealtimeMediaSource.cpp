@@ -83,16 +83,16 @@ MockRealtimeMediaSource::MockRealtimeMediaSource(const String& id, RealtimeMedia
 
 void MockRealtimeMediaSource::initializeCapabilities()
 {
-    m_capabilities = RealtimeMediaSourceCapabilities::create(supportedConstraints());
+    m_capabilities = std::make_unique<RealtimeMediaSourceCapabilities>(supportedConstraints());
     m_capabilities->setDeviceId(id());
     initializeCapabilities(*m_capabilities.get());
 }
 
-RefPtr<RealtimeMediaSourceCapabilities> MockRealtimeMediaSource::capabilities() const
+const RealtimeMediaSourceCapabilities& MockRealtimeMediaSource::capabilities() const
 {
     if (!m_capabilities)
         const_cast<MockRealtimeMediaSource&>(*this).initializeCapabilities();
-    return m_capabilities;
+    return *m_capabilities;
 }
 
 void MockRealtimeMediaSource::initializeSettings()

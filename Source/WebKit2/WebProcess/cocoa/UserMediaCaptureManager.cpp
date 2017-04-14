@@ -66,8 +66,11 @@ public:
     }
 
     SharedRingBufferStorage& storage() { return static_cast<SharedRingBufferStorage&>(m_ringBuffer.storage()); }
-    RefPtr<RealtimeMediaSourceCapabilities> capabilities() const final { return m_capabilities; }
-    void setCapabilities(RefPtr<RealtimeMediaSourceCapabilities> capabilities) { m_capabilities = capabilities; }
+    const RealtimeMediaSourceCapabilities& capabilities() const final {
+        if (!m_capabilities)
+            m_capabilities = m_manager.capabilities(m_id);
+        return m_capabilities.value();
+    }
 
     const RealtimeMediaSourceSettings& settings() const final { return m_settings; }
     void setSettings(const RealtimeMediaSourceSettings& settings)
@@ -131,7 +134,7 @@ private:
 
     uint64_t m_id;
     UserMediaCaptureManager& m_manager;
-    RefPtr<RealtimeMediaSourceCapabilities> m_capabilities;
+    mutable std::optional<RealtimeMediaSourceCapabilities> m_capabilities;
     RealtimeMediaSourceSettings m_settings;
     CAAudioStreamDescription m_description;
     CARingBuffer m_ringBuffer;
@@ -232,6 +235,13 @@ void UserMediaCaptureManager::startProducingData(uint64_t id)
 void UserMediaCaptureManager::stopProducingData(uint64_t id)
 {
     m_process.send(Messages::UserMediaCaptureManagerProxy::StopProducingData(id), 0);
+}
+
+WebCore::RealtimeMediaSourceCapabilities&& UserMediaCaptureManager::capabilities(uint64_t id)
+{
+    WebCore::RealtimeMediaSourceCapabilities capabilities;
+    m_process.sendSync(Messages::UserMediaCaptureManagerProxy::Capabilities(id), Messages::UserMediaCaptureManagerProxy::Capabilities::Reply(capabilities), 0);
+    return WTFMove(capabilities);
 }
 
 }

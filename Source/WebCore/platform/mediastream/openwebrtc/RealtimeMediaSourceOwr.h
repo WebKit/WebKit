@@ -72,7 +72,7 @@ RealtimeMediaSourceOwr(const String& id, RealtimeMediaSource::Type type, const S
         setMuted(false);
     }
 
-    RefPtr<RealtimeMediaSourceCapabilities> capabilities() const override { return m_capabilities; }
+    const RealtimeMediaSourceCapabilities& capabilities() const override { return m_capabilities; }
     const RealtimeMediaSourceSettings& settings() const override;
 
     OwrMediaSource* mediaSource() const { return m_mediaSource; }
@@ -86,7 +86,7 @@ protected:
 
 private:
     RealtimeMediaSourceSupportedConstraints m_supportedConstraints;
-    RefPtr<RealtimeMediaSourceCapabilities> m_capabilities;
+    RealtimeMediaSourceCapabilities m_capabilities;
     OwrMediaSource* m_mediaSource;
 };
 

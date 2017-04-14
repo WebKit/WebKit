@@ -87,7 +87,7 @@ public:
     void removeObserver(Observer&);
 
     const RealtimeMediaSourceSettings& settings() const;
-    RefPtr<RealtimeMediaSourceCapabilities> capabilities() const;
+    const RealtimeMediaSourceCapabilities& capabilities() const;
 
     void applyConstraints(const MediaConstraints&, RealtimeMediaSource::SuccessHandler, RealtimeMediaSource::FailureHandler);
 

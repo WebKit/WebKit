@@ -58,7 +58,7 @@ private:
     void startProducingData() final;
     void stopProducingData()  final;
 
-    RefPtr<RealtimeMediaSourceCapabilities> capabilities() const final;
+    const RealtimeMediaSourceCapabilities& capabilities() const final;
     const RealtimeMediaSourceSettings& settings() const final;
 
     MediaConstraints& constraints() { return *m_constraints.get(); }
@@ -77,7 +77,6 @@ private:
     RefPtr<Image> m_currentImage;
     RealtimeMediaSourceSettings m_currentSettings;
     RealtimeMediaSourceSupportedConstraints m_supportedConstraints;
-    RefPtr<RealtimeMediaSourceCapabilities> m_capabilities;
     RefPtr<MediaConstraints> m_constraints;
     bool m_isProducingData { false };
     rtc::scoped_refptr<webrtc::VideoTrackInterface> m_videoTrack;

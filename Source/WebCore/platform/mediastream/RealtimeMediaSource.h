@@ -107,7 +107,7 @@ public:
     
     virtual unsigned fitnessScore() const { return m_fitnessScore; }
 
-    virtual RefPtr<RealtimeMediaSourceCapabilities> capabilities() const = 0;
+    virtual const RealtimeMediaSourceCapabilities& capabilities() const = 0;
     virtual const RealtimeMediaSourceSettings& settings() const = 0;
 
     using SuccessHandler = std::function<void()>;

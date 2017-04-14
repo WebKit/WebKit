@@ -78,7 +78,7 @@ private:
     OSStatus suspend();
     OSStatus resume();
 
-    RefPtr<RealtimeMediaSourceCapabilities> capabilities() const final;
+    const RealtimeMediaSourceCapabilities& capabilities() const final;
     const RealtimeMediaSourceSettings& settings() const final;
 
     OSStatus setupAudioUnits();
@@ -129,7 +129,7 @@ private:
     Lock m_pendingSourceQueueLock;
     Lock m_internalStateLock;
 
-    mutable RefPtr<RealtimeMediaSourceCapabilities> m_capabilities;
+    mutable std::unique_ptr<RealtimeMediaSourceCapabilities> m_capabilities;
     mutable RealtimeMediaSourceSupportedConstraints m_supportedConstraints;
     RealtimeMediaSourceSettings m_currentSettings;
 };

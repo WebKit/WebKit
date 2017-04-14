@@ -130,7 +130,7 @@ void UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstrai
     auto constraints = MediaConstraintsImpl::create(constraintsData);
     auto source = RealtimeMediaSourceCenter::singleton().audioFactory()->createMediaSourceForCaptureDeviceWithConstraints(device, constraints.ptr(), invalidConstraints);
     succeeded = !!source;
-    
+
     if (source)
         m_proxies.set(id, std::make_unique<SourceProxy>(id, *this, source.releaseNonNull()));
 }
@@ -149,6 +149,13 @@ void UserMediaCaptureManagerProxy::stopProducingData(uint64_t id)
         iter->value->source().stopProducingData();
 }
 
+void UserMediaCaptureManagerProxy::capabilities(uint64_t id, WebCore::RealtimeMediaSourceCapabilities& capabilities)
+{
+    auto iter = m_proxies.find(id);
+    if (iter != m_proxies.end())
+        capabilities = iter->value->source().capabilities();
+}
+    
 }
 
 #endif

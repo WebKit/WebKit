@@ -1,3 +1,52 @@
+2017-04-14  Jer Noble  <jer.noble@apple.com>
+
+        [MediaSource] Push capabilities across process boundary during UIProcess capture.
+        https://bugs.webkit.org/show_bug.cgi?id=170814
+
+        Reviewed by Eric Carlson.
+
+        There's no real reason for RealtimeMediaSourceCapabilities to be RefCounted nor to keep them from
+        being created on the stack. So in addition to making that class coder-compliant, change all the
+        classes that vend capabilities to use a unique_ptr<> instead of a RefPtr<>.
+
+        * Modules/mediastream/CanvasCaptureMediaStreamTrack.h:
+        * Modules/webaudio/MediaStreamAudioSource.cpp:
+        (WebCore::MediaStreamAudioSource::capabilities):
+        * Modules/webaudio/MediaStreamAudioSource.h:
+        * platform/mediastream/MediaEndpoint.cpp:
+        * platform/mediastream/MediaStreamTrackPrivate.cpp:
+        (WebCore::MediaStreamTrackPrivate::capabilities):
+        * platform/mediastream/MediaStreamTrackPrivate.h:
+        * platform/mediastream/RealtimeMediaSource.h:
+        * platform/mediastream/RealtimeMediaSourceCapabilities.h:
+        (WebCore::CapabilityValueOrRange::encode):
+        (WebCore::CapabilityValueOrRange::decode):
+        (WebCore::RealtimeMediaSourceCapabilities::RealtimeMediaSourceCapabilities):
+        (WebCore::RealtimeMediaSourceCapabilities::supportedConstraints):
+        (WebCore::RealtimeMediaSourceCapabilities::setSupportedConstraints):
+        (WebCore::RealtimeMediaSourceCapabilities::encode):
+        (WebCore::RealtimeMediaSourceCapabilities::decode):
+        (WebCore::RealtimeMediaSourceCapabilities::create): Deleted.
+        * platform/mediastream/RealtimeMediaSourceSettings.h:
+        * platform/mediastream/mac/AVMediaCaptureSource.h:
+        * platform/mediastream/mac/AVMediaCaptureSource.mm:
+        (WebCore::AVMediaCaptureSource::initializeCapabilities):
+        (WebCore::AVMediaCaptureSource::capabilities):
+        * platform/mediastream/mac/CoreAudioCaptureSource.cpp:
+        (WebCore::CoreAudioCaptureSource::capabilities):
+        * platform/mediastream/mac/CoreAudioCaptureSource.h:
+        * platform/mediastream/mac/RealtimeIncomingAudioSource.cpp:
+        (WebCore::RealtimeIncomingAudioSource::capabilities):
+        * platform/mediastream/mac/RealtimeIncomingAudioSource.h:
+        * platform/mediastream/mac/RealtimeIncomingVideoSource.cpp:
+        (WebCore::RealtimeIncomingVideoSource::capabilities):
+        * platform/mediastream/mac/RealtimeIncomingVideoSource.h:
+        * platform/mock/MockRealtimeMediaSource.cpp:
+        (WebCore::MockRealtimeMediaSource::initializeCapabilities):
+        (WebCore::MockRealtimeMediaSource::capabilities):
+        * platform/mock/MockRealtimeMediaSource.h:
+        * platform/mediastream/openwebrtc/RealtimeMediaSourceOwr.h:
+
 2017-04-13  Saam Barati  <sbarati@apple.com>
 
         WebAssembly: We should be able to postMessage a JSWebAssemblyModule

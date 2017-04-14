@@ -136,7 +136,7 @@ const RealtimeMediaSourceSettings& MediaStreamTrackPrivate::settings() const
     return m_source->settings();
 }
 
-RefPtr<RealtimeMediaSourceCapabilities> MediaStreamTrackPrivate::capabilities() const
+const RealtimeMediaSourceCapabilities& MediaStreamTrackPrivate::capabilities() const
 {
     return m_source->capabilities();
 }

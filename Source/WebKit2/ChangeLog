@@ -1,3 +1,23 @@
+2017-04-14  Jer Noble  <jer.noble@apple.com>
+
+        [MediaSource] Push capabilities across process boundary during UIProcess capture.
+        https://bugs.webkit.org/show_bug.cgi?id=170814
+
+        Reviewed by Eric Carlson.
+
+        Make a new synchronous getter for capabilities(), moderated by only requesting the capabilities() cross-process
+        the first time called.
+
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.cpp:
+        (WebKit::UserMediaCaptureManagerProxy::capabilities):
+        (WebKit::UserMediaCaptureManagerProxy::supportedConstraints):
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.h:
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.messages.in:
+        * WebProcess/cocoa/UserMediaCaptureManager.cpp:
+        (WebKit::UserMediaCaptureManager::Source::setCapabilities):
+        (WebKit::UserMediaCaptureManager::capabilities):
+        * WebProcess/cocoa/UserMediaCaptureManager.h:
+
 2017-04-13  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Allow clients to specify in _WKProcessPoolConfiguration additional directory sandbox extensions

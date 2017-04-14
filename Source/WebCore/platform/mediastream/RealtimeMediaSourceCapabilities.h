@@ -29,6 +29,7 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "RealtimeMediaSourceSettings.h"
+#include <wtf/NeverDestroyed.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 #include <wtf/text/AtomicString.h>
@@ -101,51 +102,77 @@ public:
         return m_minOrValue;
     }
 
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static bool decode(Decoder&, CapabilityValueOrRange&);
+
 private:
     ValueUnion m_minOrValue;
     ValueUnion m_max;
     Type m_type;
 };
 
-class RealtimeMediaSourceCapabilities : public RefCounted<RealtimeMediaSourceCapabilities> {
+template<class Encoder>
+void CapabilityValueOrRange::encode(Encoder& encoder) const
+{
+    encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(&m_minOrValue), sizeof(ValueUnion), alignof(ValueUnion));
+    encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(&m_max), sizeof(ValueUnion), alignof(ValueUnion));
+    encoder.encodeEnum(m_type);
+}
+
+template<class Decoder>
+bool CapabilityValueOrRange::decode(Decoder& decoder, CapabilityValueOrRange& valueOrRange)
+{
+    return decoder.decodeFixedLengthData(reinterpret_cast<uint8_t*>(&valueOrRange.m_minOrValue), sizeof(ValueUnion), alignof(ValueUnion))
+        && decoder.decodeFixedLengthData(reinterpret_cast<uint8_t*>(&valueOrRange.m_max), sizeof(ValueUnion), alignof(ValueUnion))
+        && decoder.decodeEnum(valueOrRange.m_type);
+}
+
+class RealtimeMediaSourceCapabilities {
 public:
-    static PassRefPtr<RealtimeMediaSourceCapabilities> create(const RealtimeMediaSourceSupportedConstraints& supportedConstraints)
+    RealtimeMediaSourceCapabilities() = default;
+    RealtimeMediaSourceCapabilities(const RealtimeMediaSourceSupportedConstraints& supportedConstraints)
+        : m_supportedConstraints(supportedConstraints)
     {
-        return adoptRef(new RealtimeMediaSourceCapabilities(supportedConstraints));
     }
 
-    ~RealtimeMediaSourceCapabilities() { }
+    ~RealtimeMediaSourceCapabilities() = default;
+
+    static const RealtimeMediaSourceCapabilities& emptyCapabilities()
+    {
+        static NeverDestroyed<RealtimeMediaSourceCapabilities> emptyCapabilities;
+        return emptyCapabilities;
+    }
 
     bool supportsWidth() const { return m_supportedConstraints.supportsWidth(); }
-    const CapabilityValueOrRange& width() { return m_width; }
+    const CapabilityValueOrRange& width() const { return m_width; }
     void setWidth(const CapabilityValueOrRange& width) { m_width = width; }
 
     bool supportsHeight() const { return m_supportedConstraints.supportsHeight(); }
-    const CapabilityValueOrRange& height() { return m_height; }
+    const CapabilityValueOrRange& height() const { return m_height; }
     void setHeight(const CapabilityValueOrRange& height) { m_height = height; }
 
     bool supportsFrameRate() const { return m_supportedConstraints.supportsFrameRate(); }
-    const CapabilityValueOrRange& frameRate() { return m_frameRate; }
+    const CapabilityValueOrRange& frameRate() const { return m_frameRate; }
     void setFrameRate(const CapabilityValueOrRange& frameRate) { m_frameRate = frameRate; }
 
     bool supportsFacingMode() const { return m_supportedConstraints.supportsFacingMode(); }
-    const Vector<RealtimeMediaSourceSettings::VideoFacingMode>& facingMode() { return m_facingMode; }
+    const Vector<RealtimeMediaSourceSettings::VideoFacingMode>& facingMode() const { return m_facingMode; }
     void addFacingMode(RealtimeMediaSourceSettings::VideoFacingMode mode) { m_facingMode.append(mode); }
 
     bool supportsAspectRatio() const { return m_supportedConstraints.supportsAspectRatio(); }
-    const CapabilityValueOrRange& aspectRatio() { return m_aspectRatio; }
+    const CapabilityValueOrRange& aspectRatio() const { return m_aspectRatio; }
     void setAspectRatio(const CapabilityValueOrRange& aspectRatio) { m_aspectRatio = aspectRatio; }
 
     bool supportsVolume() const { return m_supportedConstraints.supportsVolume(); }
-    const CapabilityValueOrRange& volume() { return m_volume; }
+    const CapabilityValueOrRange& volume() const { return m_volume; }
     void setVolume(const CapabilityValueOrRange& volume) { m_volume = volume; }
 
     bool supportsSampleRate() const { return m_supportedConstraints.supportsSampleRate(); }
-    const CapabilityValueOrRange& sampleRate() { return m_sampleRate; }
+    const CapabilityValueOrRange& sampleRate() const { return m_sampleRate; }
     void setSampleRate(const CapabilityValueOrRange& sampleRate) { m_sampleRate = sampleRate; }
 
     bool supportsSampleSize() const { return m_supportedConstraints.supportsSampleSize(); }
-    const CapabilityValueOrRange& sampleSize() { return m_sampleSize; }
+    const CapabilityValueOrRange& sampleSize() const { return m_sampleSize; }
     void setSampleSize(const CapabilityValueOrRange& sampleSize) { m_sampleSize = sampleSize; }
 
     enum class EchoCancellation {
@@ -153,23 +180,24 @@ public:
         ReadWrite = 1,
     };
     bool supportsEchoCancellation() const { return m_supportedConstraints.supportsEchoCancellation(); }
-    EchoCancellation echoCancellation() { return m_echoCancellation; }
+    EchoCancellation echoCancellation() const { return m_echoCancellation; }
     void setEchoCancellation(EchoCancellation echoCancellation) { m_echoCancellation = echoCancellation; }
 
     bool supportsDeviceId() const { return m_supportedConstraints.supportsDeviceId(); }
-    const AtomicString& deviceId() { return m_deviceId; }
+    const AtomicString& deviceId() const { return m_deviceId; }
     void setDeviceId(const AtomicString& id)  { m_deviceId = id; }
 
     bool supportsGroupId() const { return m_supportedConstraints.supportsGroupId(); }
-    const AtomicString& groupId() { return m_groupId; }
+    const AtomicString& groupId() const { return m_groupId; }
     void setGroupId(const AtomicString& id)  { m_groupId = id; }
     
-private:
-    RealtimeMediaSourceCapabilities(const RealtimeMediaSourceSupportedConstraints& supportedConstraints)
-        : m_supportedConstraints(supportedConstraints)
-    {
-    }
+    const RealtimeMediaSourceSupportedConstraints& supportedConstraints() const { return m_supportedConstraints; }
+    void setSupportedConstraints(const RealtimeMediaSourceSupportedConstraints& constraints) { m_supportedConstraints = constraints; }
 
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static bool decode(Decoder&, RealtimeMediaSourceCapabilities&);
+
+private:
     CapabilityValueOrRange m_width;
     CapabilityValueOrRange m_height;
     CapabilityValueOrRange m_aspectRatio;
@@ -182,8 +210,42 @@ private:
     AtomicString m_deviceId;
     AtomicString m_groupId;
 
-    const RealtimeMediaSourceSupportedConstraints& m_supportedConstraints;
+    RealtimeMediaSourceSupportedConstraints m_supportedConstraints;
 };
+
+template<class Encoder>
+void RealtimeMediaSourceCapabilities::encode(Encoder& encoder) const
+{
+    encoder << m_width
+        << m_height
+        << m_aspectRatio
+        << m_frameRate
+        << m_facingMode
+        << m_volume
+        << m_sampleRate
+        << m_sampleSize
+        << m_deviceId
+        << m_groupId
+        << m_supportedConstraints;
+    encoder.encodeEnum(m_echoCancellation);
+}
+
+template<class Decoder>
+bool RealtimeMediaSourceCapabilities::decode(Decoder& decoder, RealtimeMediaSourceCapabilities& capabilities)
+{
+    return decoder.decode(capabilities.m_width)
+        && decoder.decode(capabilities.m_height)
+        && decoder.decode(capabilities.m_aspectRatio)
+        && decoder.decode(capabilities.m_frameRate)
+        && decoder.decode(capabilities.m_facingMode)
+        && decoder.decode(capabilities.m_volume)
+        && decoder.decode(capabilities.m_sampleRate)
+        && decoder.decode(capabilities.m_sampleSize)
+        && decoder.decode(capabilities.m_deviceId)
+        && decoder.decode(capabilities.m_groupId)
+        && decoder.decode(capabilities.m_supportedConstraints)
+        && decoder.decodeEnum(capabilities.m_echoCancellation);
+}
 
 } // namespace WebCore
 

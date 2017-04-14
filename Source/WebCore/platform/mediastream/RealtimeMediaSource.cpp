@@ -184,8 +184,7 @@ bool RealtimeMediaSource::supportsSizeAndFrameRate(std::optional<IntConstraint> 
     if (!widthConstraint && !heightConstraint && !frameRateConstraint)
         return true;
 
-    ASSERT(this->capabilities());
-    RealtimeMediaSourceCapabilities& capabilities = *this->capabilities();
+    auto& capabilities = this->capabilities();
 
     distance = std::numeric_limits<double>::infinity();
 
@@ -244,8 +243,7 @@ bool RealtimeMediaSource::supportsSizeAndFrameRate(std::optional<IntConstraint> 
 
 double RealtimeMediaSource::fitnessDistance(const MediaConstraint& constraint)
 {
-    ASSERT(this->capabilities());
-    RealtimeMediaSourceCapabilities& capabilities = *this->capabilities();
+    auto& capabilities = this->capabilities();
 
     switch (constraint.constraintType()) {
     case MediaConstraintType::Width: {
@@ -388,7 +386,7 @@ void RealtimeMediaSource::applySizeAndFrameRate(std::optional<int> width, std::o
 
 void RealtimeMediaSource::applyConstraint(const MediaConstraint& constraint)
 {
-    RealtimeMediaSourceCapabilities& capabilities = *this->capabilities();
+    auto& capabilities = this->capabilities();
     switch (constraint.constraintType()) {
     case MediaConstraintType::Width: {
         ASSERT(constraint.isInt());
@@ -612,8 +610,7 @@ bool RealtimeMediaSource::selectSettings(const MediaConstraints& constraints, Fl
 
 bool RealtimeMediaSource::supportsConstraint(const MediaConstraint& constraint) const
 {
-    ASSERT(this->capabilities());
-    RealtimeMediaSourceCapabilities& capabilities = *this->capabilities();
+    auto& capabilities = this->capabilities();
 
     switch (constraint.constraintType()) {
     case MediaConstraintType::Width:
@@ -697,7 +694,7 @@ void RealtimeMediaSource::applyConstraints(const FlattenedConstraint& constraint
 
     beginConfiguration();
 
-    RealtimeMediaSourceCapabilities& capabilities = *this->capabilities();
+    auto& capabilities = this->capabilities();
 
     std::optional<int> width;
     if (const MediaConstraint* constraint = constraints.find(MediaConstraintType::Width)) {

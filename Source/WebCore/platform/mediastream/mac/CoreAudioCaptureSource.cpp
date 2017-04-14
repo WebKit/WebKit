@@ -488,22 +488,22 @@ OSStatus CoreAudioCaptureSource::resume()
     return err;
 }
 
-RefPtr<RealtimeMediaSourceCapabilities> CoreAudioCaptureSource::capabilities() const
+const RealtimeMediaSourceCapabilities& CoreAudioCaptureSource::capabilities() const
 {
     if (m_capabilities)
-        return m_capabilities;
+        return *m_capabilities;
 
     m_supportedConstraints.setSupportsDeviceId(true);
     m_supportedConstraints.setSupportsEchoCancellation(true);
     m_supportedConstraints.setSupportsVolume(true);
 
     // FIXME: finish this.
-    m_capabilities = RealtimeMediaSourceCapabilities::create(m_supportedConstraints);
+    m_capabilities = std::make_unique<RealtimeMediaSourceCapabilities>(m_supportedConstraints);
     m_capabilities->setDeviceId(id());
     m_capabilities->setEchoCancellation(RealtimeMediaSourceCapabilities::EchoCancellation::ReadWrite);
     m_capabilities->setVolume(CapabilityValueOrRange(0.0, 1.0));
 
-    return m_capabilities;
+    return *m_capabilities;
 }
 
 const RealtimeMediaSourceSettings& CoreAudioCaptureSource::settings() const

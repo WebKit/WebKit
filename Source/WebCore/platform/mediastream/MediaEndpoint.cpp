@@ -46,7 +46,7 @@ public:
 private:
     EmptyRealtimeMediaSource() : RealtimeMediaSource(emptyString(), Type::None, emptyString()) { }
 
-    RefPtr<RealtimeMediaSourceCapabilities> capabilities() const final { return nullptr; }
+    const RealtimeMediaSourceCapabilities& capabilities() const final { return RealtimeMediaSourceCapabilities::emptyCapabilities(); }
     const RealtimeMediaSourceSettings& settings() const final { return m_sourceSettings; }
 
     RealtimeMediaSourceSettings m_sourceSettings;
