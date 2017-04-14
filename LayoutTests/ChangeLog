@@ -1,3 +1,14 @@
+2017-04-13  Dean Jackson  <dino@apple.com>
+
+        Large negative animation-delays may not work depending on machine uptime
+        https://bugs.webkit.org/show_bug.cgi?id=166962
+        <rdar://problem/30091526>
+
+        Reviewed by Tim Horton.
+
+        * animations/large-negative-delay-expected.txt: Added.
+        * animations/large-negative-delay.html: Added.
+
 2017-04-13  Andy VanWagoner  <thetalecrafter@gmail.com>
 
         Change Intl prototypes to plain objects

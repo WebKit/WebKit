@@ -1,3 +1,32 @@
+2017-04-13  Dean Jackson  <dino@apple.com>
+
+        Large negative animation-delays may not work depending on machine uptime
+        https://bugs.webkit.org/show_bug.cgi?id=166962
+        <rdar://problem/30091526>
+
+        Reviewed by Tim Horton.
+
+        If you set a really negative animation delay, it would cause
+        AnimationBase::m_startTime to become negative, because the delay
+        value was "bigger" than monotonicallyIncreasingTime.
+
+        However, the state machine was using -1 to mean that the start time
+        hadn't yet been set. Classic cmarrin!
+
+        Replace all the special values with std::optional, and use nullopt
+        to mean the value doesn't exist yet.
+
+        Test: animations/large-negative-delay.html
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::updateStateMachine):
+        (WebCore::AnimationBase::fireAnimationEventsIfNeeded):
+        (WebCore::AnimationBase::getTimeToNextEvent):
+        (WebCore::AnimationBase::freezeAtTime):
+        (WebCore::AnimationBase::getElapsedTime):
+        * page/animation/AnimationBase.h: Use std::optional.
+        (WebCore::AnimationBase::paused):
+
 2017-04-13  Alex Christensen  <achristensen@webkit.org>
 
         Remove unused SharedBuffer constructor
