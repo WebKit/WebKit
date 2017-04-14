@@ -1,3 +1,23 @@
+2017-04-14  Keith Miller  <keith_miller@apple.com>
+
+        WebAssembly: B3IRGenerator should use phis for result types
+        https://bugs.webkit.org/show_bug.cgi?id=170863
+
+        Reviewed by Filip Pizlo.
+
+        Currently, we use variables for the result types of control flow in
+        Wasm. We did this originally since we weren't sure that the phis we
+        generated would be optimal. Since then, we have verified that the edges
+        in wasm control flow ensure that each upsilon will dominate its phi
+        so we don't need to use variables.
+
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::ControlData::ControlData):
+        (JSC::Wasm::B3IRGenerator::addTopLevel):
+        (JSC::Wasm::B3IRGenerator::addBlock):
+        (JSC::Wasm::B3IRGenerator::addLoop):
+        (JSC::Wasm::B3IRGenerator::unify):
+
 2017-04-14  Alex Christensen  <achristensen@webkit.org>
 
         Fix Windows build after r215368.
