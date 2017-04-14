@@ -1,3 +1,15 @@
+2017-04-14  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r215350.
+
+        This change broke the Windows build.
+
+        Reverted changeset:
+
+        "Remove unused SharedBuffer constructor"
+        https://bugs.webkit.org/show_bug.cgi?id=170828
+        http://trac.webkit.org/changeset/215350
+
 2017-04-14  Jer Noble  <jer.noble@apple.com>
 
         [MediaSource] Push capabilities across process boundary during UIProcess capture.

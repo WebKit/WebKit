@@ -52,6 +52,7 @@ namespace WebCore {
 class SharedBuffer : public RefCounted<SharedBuffer> {
 public:
     static Ref<SharedBuffer> create() { return adoptRef(*new SharedBuffer); }
+    static Ref<SharedBuffer> create(unsigned size) { return adoptRef(*new SharedBuffer(size)); }
     static Ref<SharedBuffer> create(const char* c, unsigned i) { return adoptRef(*new SharedBuffer(c, i)); }
     static Ref<SharedBuffer> create(const unsigned char* data, unsigned size) { return adoptRef(*new SharedBuffer(data, size)); }
 
@@ -122,6 +123,7 @@ public:
 
 private:
     WEBCORE_EXPORT SharedBuffer();
+    explicit SharedBuffer(unsigned);
     WEBCORE_EXPORT SharedBuffer(const char*, unsigned);
     WEBCORE_EXPORT SharedBuffer(const unsigned char*, unsigned);
     explicit SharedBuffer(MappedFileData&&);
