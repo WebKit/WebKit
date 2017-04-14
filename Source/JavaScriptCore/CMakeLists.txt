@@ -1270,6 +1270,8 @@ set(JavaScriptCore_FORWARDING_HEADERS_DIRECTORIES
     inspector/agents
     inspector/augmentable
     inspector/remote
+
+    wasm/js
 )
 
 # GENERATOR 1-B: particular LUT creator (for 1 file only)
