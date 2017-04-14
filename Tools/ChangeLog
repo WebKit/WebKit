@@ -1,3 +1,16 @@
+2017-04-14  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r215363.
+
+        This change causes LayoutTests to exit early with crashes.
+
+        Reverted changeset:
+
+        "webkitpy: Ignore previously launched pid when system is under
+        stress"
+        https://bugs.webkit.org/show_bug.cgi?id=170741
+        http://trac.webkit.org/changeset/215363
+
 2017-04-14  Jonathan Bedard  <jbedard@apple.com>
 
         webkitpy: Ignore previously launched pid when system is under stress
