@@ -80,3 +80,69 @@ assert(Object.keys(baz).length, 2);
 assert(Object.values(baz).length, 2);
 assert(baz[250], "A");
 assert(baz[1001], "B");
+
+var bar = JSON.parse('{"0":97.1,"1000":96.5,"2000":96.1,"3000":97.4,"4000":90.4}');
+
+assert(Object.keys(bar).length, 5);
+assert(bar[0], 97.1);
+assert(bar[1000], 96.5);
+assert(bar[2000], 96.1);
+assert(bar[3000], 97.4);
+assert(bar[4000], 90.4);
+
+bar = JSON.parse('{"0":97.1, "250": 65.3, "1000":96.5,"2000":96.1,"3000":97.4,"4000":90.4}');
+
+assert(Object.keys(bar).length, 6);
+
+assert(bar[0], 97.1);
+assert(bar[250], 65.3);
+assert(bar[1000], 96.5);
+assert(bar[2000], 96.1);
+assert(bar[3000], 97.4);
+assert(bar[4000], 90.4);
+
+bar = JSON.parse('{"0":97.1, "250": null, "1000":96.5,"2000":96.1,"3000":97.4,"4000":90.4}');
+
+assert(Object.keys(bar).length, 6);
+
+assert(bar[0], 97.1);
+assert(bar[250], null);
+assert(bar[1000], 96.5);
+assert(bar[2000], 96.1);
+assert(bar[3000], 97.4);
+assert(bar[4000], 90.4);
+
+
+bar = eval('(()=>({"0":97.1, "250": 65.3, "1000":96.5,"2000":96.1,"3000":97.4,"4000":90.4}))();');
+
+assert(Object.keys(bar).length, 6);
+
+assert(bar[0], 97.1);
+assert(bar[250], 65.3);
+assert(bar[1000], 96.5);
+assert(bar[2000], 96.1);
+assert(bar[3000], 97.4);
+assert(bar[4000], 90.4);
+
+bar = eval('(()=>({"0":97.1, "250": null, "1000":96.5,"2000":96.1,"3000":97.4,"4000":90.4}))();');
+
+assert(Object.keys(bar).length, 6);
+
+assert(bar[0], 97.1);
+assert(bar[250], null);
+assert(bar[1000], 96.5);
+assert(bar[2000], 96.1);
+assert(bar[3000], 97.4);
+assert(bar[4000], 90.4);
+
+
+bar = eval('(()=>({"0":97.1, "250": NaN, "1000":96.5,"2000":96.1,"3000":97.4,"4000":90.4}))();');
+
+assert(Object.keys(bar).length, 6);
+
+assert(bar[0], 97.1);
+assert(isNaN(bar[250]), true);
+assert(bar[1000], 96.5);
+assert(bar[2000], 96.1);
+assert(bar[3000], 97.4);
+assert(bar[4000], 90.4);
