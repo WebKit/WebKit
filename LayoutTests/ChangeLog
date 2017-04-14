@@ -1,3 +1,11 @@
+2017-04-14  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Skip workers/wasm-* LayoutTests on ios-simulator.
+
+        Unreviewed test gardening.
+
+        * platform/ios/TestExpectations:
+
 2017-04-14  Zalan Bujtas  <zalan@apple.com>
 
         text-align start / end failure in table cells
