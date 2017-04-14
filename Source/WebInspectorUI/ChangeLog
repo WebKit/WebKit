@@ -1,3 +1,62 @@
+2017-04-13  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Web Inspector: No context menu available via ENABLE_INSPECTOR_SERVER
+        https://bugs.webkit.org/show_bug.cgi?id=170705
+
+        Reviewed by Joseph Pecoraro.
+
+        Reintroduce old SoftContextMenu class (removed in r157278) and apply various fixes:
+        - Remove legacy globals and prototype extensions.
+        - Align JS/CSS style with current front-end code.
+        - Update UI and fix UX to replicate the macOS native context menu.
+
+        * Scripts/copy-user-interface-resources.pl:
+        Add copyright line for Sony Interactive Entertainment.
+        
+        * UserInterface/Base/InspectorFrontendHostStub.js:
+        (WebInspector.InspectorFrontendHostStub.prototype.showContextMenu):
+        Use SoftContextMenu.
+        
+        * UserInterface/Main.html:
+        Include SoftContextMenu.
+
+        * UserInterface/Views/SoftContextMenu.css: Added.
+        (.soft-context-menu-glass-pane):
+        (.soft-context-menu):
+        (.soft-context-menu > .item):
+        (.soft-context-menu > .item.disabled):
+        (.soft-context-menu > .item.highlighted):
+        (.soft-context-menu > .item > .checkmark):
+        (.soft-context-menu > .item > .label):
+        (.soft-context-menu > .item > .submenu-arrow):
+        (.soft-context-menu > .separator):
+        (.soft-context-menu > .separator > .line):
+
+        * UserInterface/Views/SoftContextMenu.js: Added.
+        (WebInspector.SoftContextMenu):
+        (WebInspector.SoftContextMenu.prototype.show):
+        (WebInspector.SoftContextMenu.prototype._consumeEvent):
+        (WebInspector.SoftContextMenu.prototype._parentGlassPaneElement):
+        (WebInspector.SoftContextMenu.prototype._createMenuItem):
+        (WebInspector.SoftContextMenu.prototype._createSeparator):
+        (WebInspector.SoftContextMenu.prototype._repositionMenuOnScreen):
+        (WebInspector.SoftContextMenu.prototype._showSubMenu):
+        (WebInspector.SoftContextMenu.prototype._hideSubMenu):
+        (WebInspector.SoftContextMenu.prototype._menuItemContextMenu):
+        (WebInspector.SoftContextMenu.prototype._menuItemMouseDown):
+        (WebInspector.SoftContextMenu.prototype._menuItemMouseUp):
+        (WebInspector.SoftContextMenu.prototype._menuItemMouseOver):
+        (WebInspector.SoftContextMenu.prototype._menuItemMouseOut):
+        (WebInspector.SoftContextMenu.prototype._menuKeyDown):
+        (WebInspector.SoftContextMenu.prototype._glassPaneMouseDown):
+        (WebInspector.SoftContextMenu.prototype._focus):
+        (WebInspector.SoftContextMenu.prototype._triggerAction):
+        (WebInspector.SoftContextMenu.prototype._highlightMenuItem):
+        (WebInspector.SoftContextMenu.prototype._highlightPrevious):
+        (WebInspector.SoftContextMenu.prototype._highlightNext):
+        (WebInspector.SoftContextMenu.prototype._discardMenu):
+        (WebInspector.SoftContextMenu.prototype._discardSubMenus):
+
 2017-04-13  Brian Burg  <bburg@apple.com>
 
         Web Inspector: RTL: goto arrow is floated to the wrong side

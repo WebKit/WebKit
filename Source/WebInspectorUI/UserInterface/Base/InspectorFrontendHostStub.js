@@ -164,6 +164,7 @@ if (!window.InspectorFrontendHost) {
 
         showContextMenu: function(event, menuObject)
         {
+            new WebInspector.SoftContextMenu(menuObject).show(event);
         },
 
         unbufferedLog: function()
