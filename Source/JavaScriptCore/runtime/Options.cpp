@@ -26,6 +26,7 @@
 #include "config.h"
 #include "Options.h"
 
+#include "AssemblerCommon.h"
 #include "LLIntCommon.h"
 #include "LLIntData.h"
 #include "SigillCrashAnalyzer.h"
@@ -59,15 +60,6 @@ bool restrictedOptionsEnabled = false;
 #else
 bool restrictedOptionsEnabled = true;
 #endif
-
-ALWAYS_INLINE bool isIOS()
-{
-#if PLATFORM(IOS)
-    return true;
-#else
-    return false;
-#endif
-}
 }
 
 void Options::enableRestrictedOptions(bool enableOrNot)

@@ -1,3 +1,15 @@
+2017-04-13  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly: fix windows build
+        https://bugs.webkit.org/show_bug.cgi?id=170832
+
+        Reviewed by Mark Lam.
+
+        My previous patch re-declared isIOS which AssemblerCommon.h
+        already provided, and which was already included by Options.cpp.
+
+        * runtime/Options.cpp:
+
 2017-04-13  Saam Barati  <sbarati@apple.com>
 
         WebAssembly: We should be able to postMessage a JSWebAssemblyModule
