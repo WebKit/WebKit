@@ -394,6 +394,12 @@ class Driver(object):
             self._target_host.filesystem.rmtree(self._driver_user_cache_directory)
             self._driver_user_cache_directory = None
 
+        self._crashed_process_name = None
+        self._crashed_pid = None
+        self._driver_timed_out = False
+        self.error_from_test = str()
+        self.err_seen_eof = False
+
     def cmd_line(self, pixel_tests, per_test_args):
         cmd = self._command_wrapper()
         cmd.append(self._port._path_to_driver())

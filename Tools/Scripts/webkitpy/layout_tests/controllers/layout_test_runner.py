@@ -314,11 +314,9 @@ class Worker(object):
     def _kill_driver(self):
         # Be careful about how and when we kill the driver; if driver.stop()
         # raises an exception, this routine may get re-entered via __del__.
-        driver = self._driver
-        self._driver = None
-        if driver:
+        if self._driver:
             _log.debug("%s killing driver" % self._name)
-            driver.stop()
+            self._driver.stop()
 
     def _run_test_with_or_without_timeout(self, test_input, timeout, stop_when_done):
         if self._options.run_singly:
