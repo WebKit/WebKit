@@ -1,3 +1,12 @@
+2017-04-14  Dan Bernstein  <mitz@apple.com>
+
+        [ios-simulator] API test WebKit2.AdditionalReadAccessAllowedURLs is failing
+        https://bugs.webkit.org/show_bug.cgi?id=170856
+
+        Disabled the newly-added test in the Simulator, which doesn’t enforce sandboxing.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/AdditionalReadAccessAllowedURLs.mm:
+
 2017-04-14  Jonathan Bedard  <jbedard@apple.com>
 
         webkitpy: Ignore previously launched pid when system is under stress

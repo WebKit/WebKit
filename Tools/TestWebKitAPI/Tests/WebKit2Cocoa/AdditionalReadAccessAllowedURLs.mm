@@ -26,7 +26,7 @@
 #import "config.h"
 #import <WebKit/WKFoundation.h>
 
-#if WK_API_ENABLED
+#if WK_API_ENABLED && !PLATFORM(IOS_SIMULATOR)
 
 #import "AdditionalReadAccessAllowedURLsProtocol.h"
 #import "PlatformUtilities.h"
