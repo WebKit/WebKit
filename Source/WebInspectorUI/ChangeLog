@@ -1,3 +1,15 @@
+2017-04-13  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: Implement autocompletion for CSS variables
+        https://bugs.webkit.org/show_bug.cgi?id=154441
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.js:
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype.completionControllerCompletionsNeeded):
+        Add CSS variables to the list of matching completions based on those defined in the current
+        node's computed style.
+
 2017-04-13  Ross Kirsling  <ross.kirsling@sony.com>
 
         Web Inspector: No context menu available via ENABLE_INSPECTOR_SERVER

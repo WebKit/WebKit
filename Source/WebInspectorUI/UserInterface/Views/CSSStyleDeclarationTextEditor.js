@@ -386,6 +386,14 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
             this._propertiesChanged();
     }
 
+    completionControllerCompletionsNeeded(completionController, prefix, defaultCompletions, base, suffix, forced)
+    {
+        let properties = this._style.nodeStyles.computedStyle.properties;
+        let variables = properties.filter((property) => property.variable && property.name.startsWith(prefix));
+        let variableNames = variables.map((property) => property.name);
+        completionController.updateCompletions(defaultCompletions.concat(variableNames));
+    }
+
     layout()
     {
         this._codeMirror.refresh();
