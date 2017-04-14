@@ -1,3 +1,16 @@
+2017-04-14  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Add performance test for asking the platform for a font for U+2060 WORD JOINER
+        https://bugs.webkit.org/show_bug.cgi?id=170842
+
+        Reviewed by Tim Horton.
+
+        No new tests because there is no behavior change.
+
+        * platform/graphics/WidthCache.h:
+        (WebCore::WidthCache::add):
+        (WebCore::WidthCache::addSlowCase):
+
 2017-04-14  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r215350.
