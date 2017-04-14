@@ -1,3 +1,18 @@
+2017-04-14  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Ignore previously launched pid when system is under stress
+        https://bugs.webkit.org/show_bug.cgi?id=170741
+
+        Unreviewed infrastructure fix.
+
+        Server processes are destroyed in the driver, which is not necessary and prevents
+        the work-around implemented in https://bugs.webkit.org/show_bug.cgi?id=170741.
+
+        * Scripts/webkitpy/port/driver.py:
+        (Driver.run_test): Do not destroy server process.
+        (Driver._start): Only create the server process if it is None.
+        (Driver.stop): Do not destroy server process.
+
 2017-04-13  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Allow clients to specify in _WKProcessPoolConfiguration additional directory sandbox extensions

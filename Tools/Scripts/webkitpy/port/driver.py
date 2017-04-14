@@ -218,7 +218,6 @@ class Driver(object):
                 text += out
             if err:
                 self.error_from_test += err
-            self._server_process = None
 
         crash_log = None
         if self._crash_report_from_driver:
@@ -369,7 +368,8 @@ class Driver(object):
         environment = self._setup_environ_for_test()
         self._crashed_process_name = None
         self._crashed_pid = None
-        self._server_process = self._port._test_runner_process_constructor(self._port, self._server_name, self.cmd_line(pixel_tests, per_test_args), environment, target_host=self._target_host)
+        if self._server_process is None:
+            self._server_process = self._port._test_runner_process_constructor(self._port, self._server_name, self.cmd_line(pixel_tests, per_test_args), environment, target_host=self._target_host)
         self._server_process.start()
 
     def _run_post_start_tasks(self):
@@ -384,7 +384,6 @@ class Driver(object):
     def stop(self):
         if self._server_process:
             self._server_process.stop(self._port.driver_stop_timeout())
-            self._server_process = None
             if self._profiler:
                 self._profiler.profile_after_exit()
 
