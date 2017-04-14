@@ -1,3 +1,14 @@
+2017-04-14  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Removed unused and unimplemented methods from MediaPlayer
+        https://bugs.webkit.org/show_bug.cgi?id=170848
+
+        Reviewed by Jer Noble.
+
+        No new tests needed.
+
+        * platform/graphics/MediaPlayer.h:
+
 2017-04-14  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Add performance test for asking the platform for a font for U+2060 WORD JOINER

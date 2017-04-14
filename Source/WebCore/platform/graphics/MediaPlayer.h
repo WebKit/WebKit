@@ -398,9 +398,6 @@ public:
     bool hasClosedCaptions() const;
     void setClosedCaptionsVisible(bool closedCaptionsVisible);
 
-    bool autoplay() const;
-    void setAutoplay(bool);
-
     void paint(GraphicsContext&, const FloatRect&);
     void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&);
 
@@ -595,8 +592,6 @@ private:
     const MediaPlayerFactory* nextBestMediaEngine(const MediaPlayerFactory*) const;
     void loadWithNextMediaEngine(const MediaPlayerFactory*);
     void reloadTimerFired();
-
-    static void initializeMediaEngines();
 
     MediaPlayerClient* m_client;
     Timer m_reloadTimer;
