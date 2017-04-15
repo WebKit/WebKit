@@ -31,6 +31,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+typedef void (^WebItemProviderFileLoadBlock)(NSArray<NSURL *> *);
+
 WEBCORE_EXPORT @interface WebItemProviderPasteboard : NSObject<AbstractPasteboard>
 
 + (instancetype)sharedInstance;
@@ -46,6 +48,9 @@ WEBCORE_EXPORT @interface WebItemProviderPasteboard : NSObject<AbstractPasteboar
 - (void)decrementPendingOperationCount;
 
 - (void)enumerateItemProvidersWithBlock:(void (^)(UIItemProvider *itemProvider, NSUInteger index, BOOL *stop))block;
+
+// The given completion block is always dispatched on the main thread.
+- (void)doAfterLoadingProvidedContentIntoFileURLs:(WebItemProviderFileLoadBlock)action;
 
 @end
 

@@ -1,3 +1,26 @@
+2017-04-14  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Implement a way in WebItemProviderPasteboard to perform actions after file loading completes
+        https://bugs.webkit.org/show_bug.cgi?id=170839
+        <rdar://problem/31286130>
+
+        Reviewed by Tim Horton, Andy Estes, and Dan Bernstein.
+
+        Introduces -[WebItemProviderPasteboard doAfterLoadingProvidedContentIntoFileURLs:], which performs an action
+        after all item providers which are able to provide content are done loading their content into temporary file
+        URLs. If no item providers have available data, we will immediately invoke the action with an empty URL array.
+
+        For each item provider with data, we save the local URL returned in the load completion block to a randomly
+        generated path in the container's temporary directory. When all files are finished loading, we then invoke the
+        action with all file URLs that successfully loaded.
+
+        No new tests, since there is no change in behavior.
+
+        * platform/ios/WebItemProviderPasteboard.h:
+        * platform/ios/WebItemProviderPasteboard.mm:
+        (temporaryFileURLForDataInteractionContent):
+        (-[WebItemProviderPasteboard doAfterLoadingProvidedContentIntoFileURLs:]):
+
 2017-04-14  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: WebSockets: messages with non-latin letters are displayed incorrectly
