@@ -59,6 +59,7 @@ public:
     virtual String uniqueName() = 0;
     virtual Color color(const String& pasteboardName) = 0;
     virtual URL url(const String& pasteboardName) = 0;
+    virtual int getNumberOfFiles(const String& pasteboardName) = 0;
 
     virtual long addTypes(const Vector<String>& pasteboardTypes, const String& pasteboardName) = 0;
     virtual long setTypes(const Vector<String>& pasteboardTypes, const String& pasteboardName) = 0;

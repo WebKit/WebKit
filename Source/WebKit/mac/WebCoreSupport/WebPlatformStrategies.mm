@@ -180,6 +180,11 @@ long WebPlatformStrategies::setStringForType(const String& string, const String&
     return PlatformPasteboard(pasteboardName).setStringForType(string, pasteboardType);
 }
 
+int WebPlatformStrategies::getNumberOfFiles(const String& pasteboardName)
+{
+    return PlatformPasteboard(pasteboardName).numberOfFiles();
+}
+
 #if PLATFORM(IOS)
 void WebPlatformStrategies::writeToPasteboard(const WebCore::PasteboardWebContent& content, const String& pasteboardName)
 {

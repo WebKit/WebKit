@@ -1219,8 +1219,6 @@ void ArgumentCoder<DragData>::encode(Encoder& encoder, const DragData& dragData)
     encoder.encodeEnum(dragData.flags());
 #if PLATFORM(COCOA)
     encoder << dragData.pasteboardName();
-#endif
-#if PLATFORM(MAC)
     encoder << dragData.fileNames();
 #endif
     encoder.encodeEnum(dragData.dragDestinationAction());
@@ -1245,12 +1243,11 @@ bool ArgumentCoder<DragData>::decode(Decoder& decoder, DragData& dragData)
         return false;
 
     String pasteboardName;
+    Vector<String> fileNames;
 #if PLATFORM(COCOA)
     if (!decoder.decode(pasteboardName))
         return false;
-#endif
-    Vector<String> fileNames;
-#if PLATFORM(MAC)
+
     if (!decoder.decode(fileNames))
         return false;
 #endif

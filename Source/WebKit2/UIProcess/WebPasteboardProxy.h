@@ -77,6 +77,7 @@ private:
     void getPasteboardItemsCount(const String& pasteboardName, uint64_t& itemsCount);
 #endif
 #if PLATFORM(COCOA)
+    void getNumberOfFiles(const String& pasteboardName, uint64_t& numberOfFiles);
     void getPasteboardTypes(const String& pasteboardName, Vector<String>& pasteboardTypes);
     void getPasteboardPathnamesForType(const String& pasteboardName, const String& pasteboardType, Vector<String>& pathnames);
     void getPasteboardStringForType(const String& pasteboardName, const String& pasteboardType, String&);

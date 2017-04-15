@@ -123,30 +123,31 @@ bool DragData::containsColor() const
 
 bool DragData::containsFiles() const
 {
-#if PLATFORM(MAC)
     Vector<String> types;
     platformStrategies()->pasteboardStrategy()->getTypes(types, m_pasteboardName);
-    return types.contains(String(NSFilenamesPboardType)) || types.contains(String(NSFilesPromisePboardType));
+    for (auto& type : types) {
+#if PLATFORM(MAC)
+        if (type == String(NSFilesPromisePboardType) || type == String(NSFilenamesPboardType))
+            return true;
 #else
-    return false;
+        if (UTTypeConformsTo(type.createCFString().autorelease(), kUTTypeContent))
+            return true;
 #endif
+    }
+    return false;
 }
 
 unsigned DragData::numberOfFiles() const
 {
-    Vector<String> files;
-#if PLATFORM(MAC)
-    platformStrategies()->pasteboardStrategy()->getPathnamesForType(files, String(NSFilenamesPboardType), m_pasteboardName);
-    if (!files.size())
-        platformStrategies()->pasteboardStrategy()->getPathnamesForType(files, String(NSFilesPromisePboardType), m_pasteboardName);
-#endif
-    return files.size();
+    return platformStrategies()->pasteboardStrategy()->getNumberOfFiles(m_pasteboardName);
 }
 
 void DragData::asFilenames(Vector<String>& result) const
 {
 #if PLATFORM(MAC)
     platformStrategies()->pasteboardStrategy()->getPathnamesForType(result, String(NSFilenamesPboardType), m_pasteboardName);
+#endif
+#if PLATFORM(MAC) || ENABLE(DATA_INTERACTION)
     if (!result.size())
         result = fileNames();
 #else

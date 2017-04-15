@@ -68,6 +68,7 @@ private:
     WebCore::URL readURLFromPasteboard(int index, const String& pasteboardType, const String& pasteboardName) override;
 #endif
 #if PLATFORM(COCOA)
+    int getNumberOfFiles(const String& pasteboardName) override;
     void getTypes(Vector<String>& types, const String& pasteboardName) override;
     RefPtr<WebCore::SharedBuffer> bufferForType(const String& pasteboardType, const String& pasteboardName) override;
     void getPathnamesForType(Vector<String>& pathnames, const String& pasteboardType, const String& pasteboardName) override;

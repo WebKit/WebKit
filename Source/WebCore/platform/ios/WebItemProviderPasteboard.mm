@@ -254,6 +254,20 @@ static BOOL isImageType(NSString *type)
     return _changeCount;
 }
 
+- (NSInteger)numberOfFiles
+{
+    NSInteger numberOfFiles = 0;
+    for (UIItemProvider *itemProvider in _itemProviders.get()) {
+        for (NSString *identifier in itemProvider.registeredTypeIdentifiers) {
+            if (!UTTypeConformsTo((__bridge CFStringRef)identifier, kUTTypeContent))
+                continue;
+            ++numberOfFiles;
+            break;
+        }
+    }
+    return numberOfFiles;
+}
+
 static NSURL *temporaryFileURLForDataInteractionContent(NSString *fileExtension, NSString *suggestedName)
 {
     static NSString *defaultDataInteractionFileName = @"file";

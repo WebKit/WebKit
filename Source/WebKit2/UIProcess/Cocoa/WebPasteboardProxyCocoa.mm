@@ -134,6 +134,11 @@ void WebPasteboardProxy::setPasteboardBufferForType(const String& pasteboardName
     newChangeCount = PlatformPasteboard(pasteboardName).setBufferForType(buffer.get(), pasteboardType);
 }
 
+void WebPasteboardProxy::getNumberOfFiles(const String& pasteboardName, uint64_t& numberOfFiles)
+{
+    numberOfFiles = PlatformPasteboard(pasteboardName).numberOfFiles();
+}
+
 #if PLATFORM(IOS)
 void WebPasteboardProxy::writeWebContentToPasteboard(const WebCore::PasteboardWebContent& content, const String& pasteboardName)
 {

@@ -81,6 +81,7 @@ public:
     WEBCORE_EXPORT String readString(int index, const String& pasteboardType);
     WEBCORE_EXPORT URL readURL(int index, const String& pasteboardType);
     WEBCORE_EXPORT int count();
+    WEBCORE_EXPORT int numberOfFiles();
 
 #if PLATFORM(GTK)
     WEBCORE_EXPORT void writeToClipboard(const SelectionData&, std::function<void()>&& primarySelectionCleared);

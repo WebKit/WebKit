@@ -1,5 +1,49 @@
 2017-04-15  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        [WK2] Support data interaction of files into file inputs
+        https://bugs.webkit.org/show_bug.cgi?id=170803
+        <rdar://problem/31286130>
+
+        Reviewed by Tim Horton.
+
+        Adds remaining support to allow data interaction of files onto inputs of type file. See per-change annotations
+        for more details. Unit tests to be added in the next patch.
+
+        * platform/PasteboardStrategy.h:
+        * platform/PlatformPasteboard.h:
+        * platform/ios/AbstractPasteboard.h:
+        * platform/ios/PlatformPasteboardIOS.mm:
+        (WebCore::PlatformPasteboard::numberOfFiles):
+        * platform/ios/WebItemProviderPasteboard.mm:
+
+        Implements numberOfFiles by counting the number of item providers that may be represented as a file, which
+        includes all item providers that contain at least one content UTI type.
+
+        (-[WebItemProviderPasteboard numberOfFiles]):
+
+        Adds boilerplate plumbing to fetch the number of files available on the pasteboard. On Mac, logic that
+        previously existed in DragData::numberOfFiles to query the number of files available in the pasteboard is now
+        on PlatformPasteboard instead, which both makes the implementation of DragData::numberOfFiles platform-invariant,
+        and also saves us one synchronous IPC call to the UI process in the WebKit2 implementation.
+
+        * platform/mac/DragDataMac.mm:
+        (WebCore::DragData::containsFiles):
+        (WebCore::DragData::numberOfFiles):
+        (WebCore::DragData::asFilenames):
+
+        Add support for recognizing objects in the pasteboard that may be represented by files, and therefore may be
+        uploaded via file input. Following suit with behavior elsewhere on the platform, we consider item providers able
+        to be represented by a file if they contain at least one content UTI type.
+
+        * platform/mac/PlatformPasteboardMac.mm:
+
+        Logic previously in DragData::numberOfFiles to get and then count all file path names in the pasteboard has been
+        moved here instead, and no longer needs to go through the pasteboard proxy.
+
+        (WebCore::PlatformPasteboard::numberOfFiles):
+
+2017-04-15  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         Unreviewed, fix the build after r215389
 
         Use WebCore::createTemporaryDirectory instead of -_webkit_createTemporaryDirectoryWithTemplatePrefix:.

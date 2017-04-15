@@ -80,4 +80,26 @@ void WebPageProxy::addPlatformLoadParameters(LoadParameters& loadParameters)
     loadParameters.dataDetectionContext = m_uiClient->dataDetectionContext();
 }
 
+void WebPageProxy::createSandboxExtensionsIfNeeded(const Vector<String>& files, SandboxExtension::Handle& fileReadHandle, SandboxExtension::HandleArray& fileUploadHandles)
+{
+    if (!files.size())
+        return;
+
+    if (files.size() == 1) {
+        BOOL isDirectory;
+        if ([[NSFileManager defaultManager] fileExistsAtPath:files[0] isDirectory:&isDirectory] && !isDirectory) {
+            SandboxExtension::createHandle("/", SandboxExtension::ReadOnly, fileReadHandle);
+            process().willAcquireUniversalFileReadSandboxExtension();
+        }
+    }
+
+    fileUploadHandles.allocate(files.size());
+    for (size_t i = 0; i< files.size(); i++) {
+        NSString *file = files[i];
+        if (![[NSFileManager defaultManager] fileExistsAtPath:file])
+            continue;
+        SandboxExtension::createHandle(file, SandboxExtension::ReadOnly, fileUploadHandles[i]);
+    }
+}
+
 }

@@ -53,6 +53,15 @@ RefPtr<SharedBuffer> PlatformPasteboard::bufferForType(const String& pasteboardT
     return SharedBuffer::wrapNSData([[data copy] autorelease]);
 }
 
+int PlatformPasteboard::numberOfFiles()
+{
+    Vector<String> files;
+    getPathnamesForType(files, String(NSFilenamesPboardType));
+    if (!files.size())
+        getPathnamesForType(files, String(NSFilesPromisePboardType));
+    return files.size();
+}
+
 void PlatformPasteboard::getPathnamesForType(Vector<String>& pathnames, const String& pasteboardType)
 {
     NSArray* paths = [m_pasteboard.get() propertyListForType:pasteboardType];

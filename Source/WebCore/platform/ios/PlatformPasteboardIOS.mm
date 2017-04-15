@@ -86,6 +86,11 @@ void PlatformPasteboard::getPathnamesForType(Vector<String>&, const String&)
 {
 }
 
+int PlatformPasteboard::numberOfFiles()
+{
+    return [m_pasteboard respondsToSelector:@selector(numberOfFiles)] ? [m_pasteboard numberOfFiles] : 0;
+}
+
 String PlatformPasteboard::stringForType(const String& type)
 {
     NSArray *values = [m_pasteboard valuesForPasteboardType:type inItemSet:[NSIndexSet indexSetWithIndex:0]];

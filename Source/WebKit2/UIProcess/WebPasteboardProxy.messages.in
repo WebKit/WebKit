@@ -33,6 +33,7 @@ messages -> WebPasteboardProxy {
 
 #if PLATFORM(COCOA)
     # Pasteboard messages.
+    GetNumberOfFiles(String pasteboardName) -> (uint64_t numberOfFiles)
     GetPasteboardTypes(String pasteboardName) -> (Vector<String> types)
     GetPasteboardPathnamesForType(String pasteboardName, String pasteboardType) -> (Vector<String> pathnames)
     GetPasteboardStringForType(String pasteboardName, String pasteboardType) -> (String string)
