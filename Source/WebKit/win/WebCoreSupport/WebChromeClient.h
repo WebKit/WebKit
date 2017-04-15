@@ -169,6 +169,8 @@ public:
 
     bool shouldUseTiledBackingForFrameView(const WebCore::FrameView&) const final;
 
+    RefPtr<WebCore::Icon> createIconForFiles(const Vector<String>&) final;
+
 private:
     COMPtr<IWebUIDelegate> uiDelegate();
 

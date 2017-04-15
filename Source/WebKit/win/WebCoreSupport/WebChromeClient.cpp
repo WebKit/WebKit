@@ -683,6 +683,11 @@ void WebChromeClient::loadIconForFiles(const Vector<WTF::String>& filenames, Web
     loader.iconLoaded(Icon::createIconForFiles(filenames));
 }
 
+RefPtr<Icon> WebChromeClient::createIconForFiles(const Vector<String>& filenames)
+{
+    return Icon::createIconForFiles(filenames);
+}
+
 void WebChromeClient::setCursor(const Cursor& cursor)
 {
     if (!cursor.platformCursor())

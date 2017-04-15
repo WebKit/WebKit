@@ -1,3 +1,14 @@
+2017-04-15  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, fix the Windows build after r215385
+
+        r215385 introduced a new virtual method on ChromeClient that needs to be implemented in WebChromeClient for
+        Windows in WebKit1.
+
+        * WebCoreSupport/WebChromeClient.cpp:
+        (WebChromeClient::createIconForFiles):
+        * WebCoreSupport/WebChromeClient.h:
+
 2017-04-10  Chris Dumez  <cdumez@apple.com>
 
         Drop Timer::startOneShot() overload taking a double
