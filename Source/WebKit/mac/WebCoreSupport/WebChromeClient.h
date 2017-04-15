@@ -128,6 +128,7 @@ private:
 
     void runOpenPanel(WebCore::Frame&, WebCore::FileChooser&) override;
     void loadIconForFiles(const Vector<String>&, WebCore::FileIconLoader&) final;
+    RefPtr<WebCore::Icon> createIconForFiles(const Vector<String>& filenames) override;
 
 #if !PLATFORM(IOS)
     void setCursor(const WebCore::Cursor&) final;

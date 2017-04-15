@@ -762,7 +762,12 @@ void WebChromeClient::runOpenPanel(Frame&, FileChooser& chooser)
 
 void WebChromeClient::loadIconForFiles(const Vector<String>& filenames, FileIconLoader& iconLoader)
 {
-    iconLoader.iconLoaded(Icon::createIconForFiles(filenames));
+    iconLoader.iconLoaded(createIconForFiles(filenames));
+}
+
+RefPtr<Icon> WebChromeClient::createIconForFiles(const Vector<String>& filenames)
+{
+    return Icon::createIconForFiles(filenames);
 }
 
 #if !PLATFORM(IOS)

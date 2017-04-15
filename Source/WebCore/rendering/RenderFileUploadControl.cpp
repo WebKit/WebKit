@@ -33,13 +33,10 @@
 #include "RenderText.h"
 #include "RenderTheme.h"
 #include "ShadowRoot.h"
+#include "StringTruncator.h"
 #include "TextRun.h"
 #include "VisiblePosition.h"
 #include <math.h>
-
-#if PLATFORM(IOS)
-#include "StringTruncator.h"
-#endif
 
 namespace WebCore {
 
@@ -266,12 +263,11 @@ String RenderFileUploadControl::buttonValue()
 
 String RenderFileUploadControl::fileTextValue() const
 {
+    auto& input = inputElement();
     ASSERT(inputElement().files());
-#if PLATFORM(IOS)
-    if (inputElement().files()->length())
-        return StringTruncator::rightTruncate(inputElement().displayString(), maxFilenameWidth(), style().fontCascade());
-#endif
-    return theme().fileListNameForWidth(inputElement().files(), style().fontCascade(), maxFilenameWidth(), inputElement().multiple());
+    if (input.files()->length() && !input.displayString().isEmpty())
+        return StringTruncator::rightTruncate(input.displayString(), maxFilenameWidth(), style().fontCascade());
+    return theme().fileListNameForWidth(input.files(), style().fontCascade(), maxFilenameWidth(), input.multiple());
 }
     
 } // namespace WebCore

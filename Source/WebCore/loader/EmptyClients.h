@@ -204,6 +204,8 @@ class EmptyChromeClient : public ChromeClient {
 
     void didAssociateFormControls(const Vector<RefPtr<Element>>&) final { }
     bool shouldNotifyOnFormChanges() final { return false; }
+
+    RefPtr<Icon> createIconForFiles(const Vector<String>& /* filenames */) final { return nullptr; }
 };
 
 void fillWithEmptyClients(PageConfiguration&);

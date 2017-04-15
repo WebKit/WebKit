@@ -782,7 +782,7 @@ void WebChromeClient::runOpenPanel(Frame& frame, FileChooser& fileChooser)
 
 void WebChromeClient::loadIconForFiles(const Vector<String>& filenames, FileIconLoader& loader)
 {
-    loader.iconLoaded(Icon::createIconForFiles(filenames));
+    loader.iconLoaded(createIconForFiles(filenames));
 }
 
 #if !PLATFORM(IOS)
@@ -795,6 +795,11 @@ void WebChromeClient::setCursor(const Cursor& cursor)
 void WebChromeClient::setCursorHiddenUntilMouseMoves(bool hiddenUntilMouseMoves)
 {
     m_page.send(Messages::WebPageProxy::SetCursorHiddenUntilMouseMoves(hiddenUntilMouseMoves));
+}
+
+RefPtr<Icon> WebChromeClient::createIconForFiles(const Vector<String>& filenames)
+{
+    return Icon::createIconForFiles(filenames);
 }
 
 #endif

@@ -355,6 +355,11 @@ void WebChromeClientIOS::showPlaybackTargetPicker(bool hasVideo)
     [[webView() _UIKitDelegateForwarder] showPlaybackTargetPicker:hasVideo fromRect:elementRect];
 }
 
+RefPtr<Icon> WebChromeClientIOS::createIconForFiles(const Vector<String>& filenames)
+{
+    return Icon::createIconForFiles(filenames);
+}
+
 #if ENABLE(ORIENTATION_EVENTS)
 
 int WebChromeClientIOS::deviceOrientation() const

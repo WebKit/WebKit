@@ -61,9 +61,9 @@ private:
     bool canSetStringValue() const final;
     FileList* files() final;
     void setFiles(RefPtr<FileList>&&) final;
-#if PLATFORM(IOS)
+    enum class RequestIcon { Yes, No };
+    void setFiles(RefPtr<FileList>&&, RequestIcon);
     String displayString() const final;
-#endif
     bool canSetValue(const String&) final;
     bool getTypeSpecificValue(String&) final; // Checked first, before internal storage or the value attribute.
     void setValue(const String&, bool valueChanged, TextFieldEventBehavior) final;
@@ -79,11 +79,7 @@ private:
     void multipleAttributeChanged() final;
     String defaultToolTip() const final;
 
-    // FileChooserClient implementation.
-    void filesChosen(const Vector<FileChooserFileInfo>&) final;
-#if PLATFORM(IOS)
-    void filesChosen(const Vector<FileChooserFileInfo>&, const String& displayString, Icon*) final;
-#endif
+    void filesChosen(const Vector<FileChooserFileInfo>&, const String& displayString = { }, Icon* = nullptr) final;
 
     // FileIconLoaderClient implementation.
     void iconLoaded(RefPtr<Icon>&&) final;
@@ -94,15 +90,11 @@ private:
     void applyFileChooserSettings(const FileChooserSettings&);
 
     RefPtr<FileChooser> m_fileChooser;
-#if !PLATFORM(IOS)
     std::unique_ptr<FileIconLoader> m_fileIconLoader;
-#endif
 
     Ref<FileList> m_fileList;
     RefPtr<Icon> m_icon;
-#if PLATFORM(IOS)
     String m_displayString;
-#endif
 };
 
 } // namespace WebCore

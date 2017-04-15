@@ -1,3 +1,51 @@
+2017-04-14  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [WK2] Support Icon creation from file URLs on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=170809
+        <rdar://problem/31286130>
+
+        Reviewed by Tim Horton.
+
+        Minor tweaks and refactoring to support displaying a WebCore::Icon from a list of filepaths on iOS. Please see
+        below annotations for more details. No new tests yet, as behavior on Mac should not have changed, and behavior
+        on iOS will not change until later patches land. Tests will be added in a later patch.
+
+        Most of the changes here remove platform special-casing in FileInputType for iOS and Mac, refactoring the code
+        such that it works for both platforms while preserving behavior.
+
+        * html/FileInputType.cpp:
+        (WebCore::FileInputType::~FileInputType):
+        (WebCore::FileInputType::setFiles):
+        (WebCore::FileInputType::filesChosen):
+        * html/FileInputType.h:
+
+        Un-guard m_fileIconLoader on iOS, and un-guard m_displayString for Mac. Consolidate logic in both version of
+        filesChosen and remove the iOS-specific version. Behavior when passing in an empty display string and null Icon
+        will be the same as that of the existing filesChosen method on Mac. Also, introduce a version of setFiles that
+        takes an additional RequestIcon enum that indicates whether or not to additionally use the new filepaths to
+        request an Icon update. filesChosen invokes this with RequestIcon::No if a non-null Icon was specified, as is
+        the case when uploading a file via the image picker on iOS.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::displayString):
+        * html/HTMLInputElement.h:
+        * html/InputType.cpp:
+        * html/InputType.h:
+        * loader/EmptyClients.h:
+        * page/ChromeClient.h:
+
+        Introduce ChromeClient::createIconForFiles, which generates an icon representing the content at a list of file
+        paths. See WebKit and WebKit2 ChangeLogs for more details.
+
+        * platform/FileChooser.h:
+        (WebCore::FileChooserClient::filesChosen):
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::fileTextValue):
+
+        Remove platform special-casing when generating the text to display when uploading a file. If a displayString
+        is specified, then we use the contents of the displayString; otherwise, fall back to using the input element's
+        FileList to compute the display string.
+
 2017-04-14  Brady Eidson  <beidson@apple.com>
 
         Fix basic WKURLSchemeHandler bugs.

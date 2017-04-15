@@ -303,8 +303,8 @@ public:
 
 #if PLATFORM(IOS)
     virtual DateComponents::Type dateType() const;
-    virtual String displayString() const;
 #endif
+    virtual String displayString() const;
 
 protected:
     explicit InputType(HTMLInputElement& element) : m_element(element) { }

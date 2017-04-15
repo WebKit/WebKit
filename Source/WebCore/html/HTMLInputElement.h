@@ -246,9 +246,8 @@ public:
 #endif
 
     Icon* icon() const;
-#if PLATFORM(IOS)
     String displayString() const;
-#endif
+
     // These functions are used for rendering the input active during a
     // drag-and-drop operation.
     bool canReceiveDroppedFiles() const;

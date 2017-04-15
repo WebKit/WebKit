@@ -100,11 +100,8 @@ FileInputType::~FileInputType()
     if (m_fileChooser)
         m_fileChooser->invalidate();
 
-#if !PLATFORM(IOS)
-    // FIXME: Is this correct? Why don't we do this on iOS?
     if (m_fileIconLoader)
         m_fileIconLoader->invalidate();
-#endif
 }
 
 Vector<FileChooserFileInfo> FileInputType::filesFromFormControlState(const FormControlState& state)
@@ -301,8 +298,6 @@ void FileInputType::multipleAttributeChanged()
         button->setValue(element().multiple() ? fileButtonChooseMultipleFilesLabel() : fileButtonChooseFileLabel());
 }
 
-#if !PLATFORM(IOS)
-
 void FileInputType::requestIcon(const Vector<String>& paths)
 {
     if (!paths.size()) {
@@ -325,8 +320,6 @@ void FileInputType::requestIcon(const Vector<String>& paths)
     chrome->loadIconForFiles(paths, *m_fileIconLoader);
 }
 
-#endif
-
 void FileInputType::applyFileChooserSettings(const FileChooserSettings& settings)
 {
     if (m_fileChooser)
@@ -336,6 +329,11 @@ void FileInputType::applyFileChooserSettings(const FileChooserSettings& settings
 }
 
 void FileInputType::setFiles(RefPtr<FileList>&& files)
+{
+    setFiles(WTFMove(files), RequestIcon::Yes);
+}
+
+void FileInputType::setFiles(RefPtr<FileList>&& files, RequestIcon shouldRequestIcon)
 {
     if (!files)
         return;
@@ -361,13 +359,13 @@ void FileInputType::setFiles(RefPtr<FileList>&& files)
     input->setFormControlValueMatchesRenderer(true);
     input->updateValidity();
 
-#if !PLATFORM(IOS)
-    Vector<String> paths;
-    paths.reserveInitialCapacity(length);
-    for (unsigned i = 0; i < length; ++i)
-        paths.uncheckedAppend(m_fileList->item(i)->path());
-    requestIcon(paths);
-#endif
+    if (shouldRequestIcon == RequestIcon::Yes) {
+        Vector<String> paths;
+        paths.reserveInitialCapacity(length);
+        for (unsigned i = 0; i < length; ++i)
+            paths.uncheckedAppend(m_fileList->item(i)->path());
+        requestIcon(paths);
+    }
 
     if (input->renderer())
         input->renderer()->repaint();
@@ -380,25 +378,20 @@ void FileInputType::setFiles(RefPtr<FileList>&& files)
     input->setChangedSinceLastFormControlChangeEvent(false);
 }
 
-#if PLATFORM(IOS)
-
 void FileInputType::filesChosen(const Vector<FileChooserFileInfo>& paths, const String& displayString, Icon* icon)
 {
-    m_displayString = displayString;
-    filesChosen(paths);
-    iconLoaded(icon);
+    if (!displayString.isEmpty())
+        m_displayString = displayString;
+
+    setFiles(createFileList(paths), icon ? RequestIcon::No : RequestIcon::Yes);
+
+    if (icon)
+        iconLoaded(icon);
 }
 
 String FileInputType::displayString() const
 {
     return m_displayString;
-}
-
-#endif
-
-void FileInputType::filesChosen(const Vector<FileChooserFileInfo>& files)
-{
-    setFiles(createFileList(files));
 }
 
 void FileInputType::iconLoaded(RefPtr<Icon>&& icon)

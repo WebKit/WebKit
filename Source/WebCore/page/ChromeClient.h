@@ -31,6 +31,7 @@
 #include "GraphicsContext.h"
 #include "HTMLMediaElementEnums.h"
 #include "HostWindow.h"
+#include "Icon.h"
 #include "LayerFlushThrottleState.h"
 #include "MediaProducer.h"
 #include "PopupMenu.h"
@@ -465,6 +466,7 @@ public:
     virtual void didInvalidateDocumentMarkerRects() { }
 
     virtual void reportProcessCPUTime(int64_t, ActivityStateForCPUSampling) { }
+    virtual RefPtr<Icon> createIconForFiles(const Vector<String>& /* filenames */) = 0;
 
 protected:
     virtual ~ChromeClient() { }

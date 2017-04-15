@@ -741,15 +741,11 @@ Icon* InputType::icon() const
     return nullptr;
 }
 
-#if PLATFORM(IOS)
-
 String InputType::displayString() const
 {
     ASSERT_NOT_REACHED();
     return String();
 }
-
-#endif
 
 bool InputType::shouldResetOnDocumentActivation()
 {

@@ -334,6 +334,8 @@ private:
 
     void imageOrMediaDocumentSizeChanged(const WebCore::IntSize&) final;
 
+    RefPtr<WebCore::Icon> createIconForFiles(const Vector<String>& filenames) final;
+
 #if ENABLE(VIDEO) && USE(GSTREAMER)
     void requestInstallMissingMediaPlugins(const String& /*details*/, const String& /*description*/, WebCore::MediaPlayerRequestInstallMissingPluginsCallback&) final;
 #endif

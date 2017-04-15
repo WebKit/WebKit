@@ -73,12 +73,7 @@ class FileChooserClient {
 public:
     virtual ~FileChooserClient() { }
 
-    virtual void filesChosen(const Vector<FileChooserFileInfo>&) = 0;
-#if PLATFORM(IOS)
-    // FIXME: This function is almost identical to FileChooser::filesChosen(). We should merge this
-    // function with FileChooser::filesChosen() and hence remove the PLATFORM(IOS)-guard.
-    virtual void filesChosen(const Vector<FileChooserFileInfo>&, const String& displayString, Icon*) = 0;
-#endif
+    virtual void filesChosen(const Vector<FileChooserFileInfo>&, const String& displayString = { }, Icon* = nullptr) = 0;
 };
 
 class FileChooser : public RefCounted<FileChooser> {

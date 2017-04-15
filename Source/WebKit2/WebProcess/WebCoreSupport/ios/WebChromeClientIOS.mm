@@ -29,11 +29,17 @@
 #if PLATFORM(IOS)
 
 #import "DrawingArea.h"
+#import "UIKitSPI.h"
 #import "WebCoreArgumentCoders.h"
 #import "WebFrame.h"
+#import "WebIconUtilities.h"
 #import "WebPage.h"
 #import "WebPageProxyMessages.h"
+#import <WebCore/Icon.h>
 #import <WebCore/NotImplemented.h>
+#import <wtf/RefPtr.h>
+
+using namespace WebCore;
 
 namespace WebKit {
 
@@ -141,6 +147,16 @@ Seconds WebChromeClient::eventThrottlingDelay()
 int WebChromeClient::deviceOrientation() const
 {
     return m_page.deviceOrientation();
+}
+
+RefPtr<Icon> WebChromeClient::createIconForFiles(const Vector<String>& filenames)
+{
+    if (!filenames.size())
+        return nullptr;
+
+    // FIXME: We should generate an icon showing multiple files here, if applicable. Currently, if there are multiple
+    // files, we only use the first URL to generate an icon.
+    return Icon::createIconForImage(iconForFile([NSURL fileURLWithPath:filenames[0]]).CGImage);
 }
 
 } // namespace WebKit

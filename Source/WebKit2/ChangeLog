@@ -1,3 +1,52 @@
+2017-04-14  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [WK2] Support Icon creation from file URLs on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=170809
+        <rdar://problem/31286130>
+
+        Reviewed by Tim Horton.
+
+        Refactors file icon generation logic to support showing an Icon representing the content at a list of file paths
+        on iOS. Pulls out logic in WKFileUploadPanel responsible for generating the thumbnail image for a file input into
+        separate helpers in WebIconUtilities, and then uses these utilities in both WKFileUploadPanel and
+        WebChromeClientIOS.
+
+        * Shared/ios/WebIconUtilities.h: Added.
+        * Shared/ios/WebIconUtilities.mm: Added.
+        (WebKit::squareCropRectForSize):
+        (WebKit::squareImage):
+        (WebKit::thumbnailSizedImageForImage):
+        (WebKit::fallbackIconForFile):
+        (WebKit::iconForImageFile):
+        (WebKit::iconForVideoFile):
+        (WebKit::iconForFile):
+
+        Add logic for generating thumbnail icons, moved from WKFileUploadPanel.mm.
+
+        * UIProcess/ios/forms/WKFileUploadPanel.mm:
+        (squareCropRectForSize): Deleted.
+        (squareImage): Deleted.
+        (thumbnailSizedImageForImage): Deleted.
+        (fallbackIconForFile): Deleted.
+        (iconForImageFile): Deleted.
+        (iconForVideoFile): Deleted.
+        (iconForFile): Deleted.
+
+        Remove logic for generating thumbnail icons.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::loadIconForFiles):
+        (WebKit::WebChromeClient::createIconForFiles):
+
+        Rather than call Icon::createIconForFiles directly, loadIconForFiles now consults ChromeClient::createIconForFiles
+        instead. On other platforms, this just turns around and calls Icon::createIconForFiles, but on iOS, we use the
+        utilities introduced in WebIconUtilities to generate a file icon.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebCoreSupport/ios/WebChromeClientIOS.mm:
+        (WebKit::WebChromeClient::createIconForFiles):
+
 2017-04-14  Brady Eidson  <beidson@apple.com>
 
         Fix basic WKURLSchemeHandler bugs.
