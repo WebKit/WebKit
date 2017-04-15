@@ -1,4 +1,4 @@
-// Copyright (C) 2009, 2010, 2014, 2015, 2016, 2017 Apple Inc. All rights reserved.
+// Copyright (C) 2009-2017 Apple Inc. All rights reserved.
 // Copyright (C) 2009 Google Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -179,7 +179,7 @@ ENABLE_SVG_FONTS = ENABLE_SVG_FONTS;
 ENABLE_WEB_RTC[sdk=watch*] = ;
 ENABLE_WEB_RTC[sdk=appletv*] = ;
 ENABLE_WEB_RTC[sdk=iphone*] = $(ENABLE_WEB_RTC_ios);
-ENABLE_WEB_RTC_ios[arch=arm64] = $(ENABLE_WEB_RTC_ios_$(IPHONEOS_DEPLOYMENT_TARGET:base)_$(CONFIGURATION))
+ENABLE_WEB_RTC_ios[arch=arm64*] = $(ENABLE_WEB_RTC_ios_$(IPHONEOS_DEPLOYMENT_TARGET:base)_$(CONFIGURATION))
 ENABLE_WEB_RTC_ios[arch=x86_64] = $(ENABLE_WEB_RTC_ios_$(IPHONEOS_DEPLOYMENT_TARGET:base)_$(CONFIGURATION))
 ENABLE_WEB_RTC_ios_10_Production = ;
 ENABLE_WEB_RTC_ios_10_Debug = ENABLE_WEB_RTC;
@@ -239,7 +239,7 @@ ENABLE_FTL_JIT[sdk=iphoneos*] = ENABLE_FTL_JIT;
 ENABLE_FAST_JIT_PERMISSIONS[sdk=iphone*] = $(ENABLE_FAST_JIT_PERMISSIONS_ios);
 ENABLE_FAST_JIT_PERMISSIONS[sdk=iphoneos10*] = ;
 ENABLE_FAST_JIT_PERMISSIONS[sdk=iphonesimulator10*] = ;
-ENABLE_FAST_JIT_PERMISSIONS_ios[arch=arm64] = $(ENABLE_FAST_JIT_PERMISSIONS_ios_$(USE_INTERNAL_SDK))
+ENABLE_FAST_JIT_PERMISSIONS_ios[arch=arm64*] = $(ENABLE_FAST_JIT_PERMISSIONS_ios_$(USE_INTERNAL_SDK))
 ENABLE_FAST_JIT_PERMISSIONS_ios_YES = ENABLE_FAST_JIT_PERMISSIONS;
 
 ENABLE_VARIATION_FONTS[sdk=iphone*] = $(ENABLE_VARIATION_FONTS_$(PLATFORM_NAME));

@@ -1,4 +1,4 @@
-// Copyright (C) 2009, 2014 Apple Inc. All rights reserved.
+// Copyright (C) 2009-2017 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
@@ -30,6 +30,7 @@ JSVALUE_MODEL_armv7 = 32_64;
 JSVALUE_MODEL_armv7k = 32_64;
 JSVALUE_MODEL_armv7s = 32_64;
 JSVALUE_MODEL_arm64 = 64;
+JSVALUE_MODEL_arm64e = 64;
 JSVALUE_MODEL_i386 = 32_64;
 JSVALUE_MODEL_x86_64 = 64;
 

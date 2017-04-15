@@ -1,3 +1,16 @@
+2017-04-14  Mark Lam  <mark.lam@apple.com>
+
+        Update architectures in xcconfig files.
+        https://bugs.webkit.org/show_bug.cgi?id=170867
+        <rdar://problem/31628104>
+
+        Reviewed by Joseph Pecoraro.
+
+        No new tests needed.  Only updating xcconfig files.
+
+        * Configurations/Base.xcconfig:
+        * Configurations/FeatureDefines.xcconfig:
+
 2017-04-12  Dan Bernstein  <mitz@apple.com>
 
         [Mac] Future-proof .xcconfig files

@@ -1,4 +1,4 @@
-// Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
+// Copyright (C) 2011-2017 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
@@ -48,6 +48,7 @@ CLANG_ENABLE_OBJC_ARC_armv7 = YES;
 CLANG_ENABLE_OBJC_ARC_armv7k = YES;
 CLANG_ENABLE_OBJC_ARC_armv7s = YES;
 CLANG_ENABLE_OBJC_ARC_arm64 = YES;
+CLANG_ENABLE_OBJC_ARC_arm64e = YES;
 
 OTHER_CFLAGS = $(ASAN_OTHER_CFLAGS) -isystem icu;
 OTHER_LDFLAGS = $(ASAN_OTHER_LDFLAGS);
