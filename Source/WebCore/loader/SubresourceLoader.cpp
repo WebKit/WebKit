@@ -390,6 +390,8 @@ void SubresourceLoader::didReceiveBuffer(Ref<SharedBuffer>&& buffer, long long e
 
 void SubresourceLoader::didReceiveDataOrBuffer(const char* data, int length, RefPtr<SharedBuffer>&& buffer, long long encodedDataLength, DataPayloadType dataPayloadType)
 {
+    ASSERT(m_resource);
+
     if (m_resource->response().httpStatusCode() >= 400 && !m_resource->shouldIgnoreHTTPStatusCodeErrors())
         return;
     ASSERT(!m_resource->resourceToRevalidate());

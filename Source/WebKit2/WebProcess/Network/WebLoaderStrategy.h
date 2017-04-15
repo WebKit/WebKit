@@ -66,6 +66,9 @@ public:
 
     void networkProcessCrashed();
 
+    void addURLSchemeHandlerTaskProxy(WebURLSchemeHandlerTaskProxy&);
+    void removeURLSchemeHandlerTaskProxy(WebURLSchemeHandlerTaskProxy&);
+
 private:
     void scheduleLoad(WebCore::ResourceLoader&, WebCore::CachedResource*, bool shouldClearReferrerOnHTTPSToHTTPRedirect);
     void scheduleInternallyFailedLoad(WebCore::ResourceLoader&);
@@ -76,7 +79,7 @@ private:
     RunLoop::Timer<WebLoaderStrategy> m_internallyFailedLoadTimer;
     
     HashMap<unsigned long, RefPtr<WebResourceLoader>> m_webResourceLoaders;
-    HashMap<unsigned long, std::unique_ptr<WebURLSchemeHandlerTaskProxy>> m_urlSchemeHandlerTasks;
+    HashMap<unsigned long, WebURLSchemeHandlerTaskProxy*> m_urlSchemeHandlerTasks;
 };
 
 } // namespace WebKit

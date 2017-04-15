@@ -154,6 +154,7 @@
 		51B1EE971C80FAEF0064FB98 /* IndexedDBPersistence-2.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 51B1EE951C80FADD0064FB98 /* IndexedDBPersistence-2.html */; };
 		51BCEE4E1C84F53B0042C82E /* IndexedDBMultiProcess-1.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 51BCEE4C1C84F52C0042C82E /* IndexedDBMultiProcess-1.html */; };
 		51BCEE4F1C84F53B0042C82E /* IndexedDBMultiProcess-2.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 51BCEE4D1C84F52C0042C82E /* IndexedDBMultiProcess-2.html */; };
+		51C683DE1EA134E800650183 /* WKURLSchemeHandler-1.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51C683DD1EA134DB00650183 /* WKURLSchemeHandler-1.mm */; };
 		51CD1C6C1B38CE4300142CA5 /* ModalAlerts.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51CD1C6A1B38CE3600142CA5 /* ModalAlerts.mm */; };
 		51CD1C721B38D48400142CA5 /* modal-alerts-in-new-about-blank-window.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 51CD1C711B38D48400142CA5 /* modal-alerts-in-new-about-blank-window.html */; };
 		51D124981E763B02002B2820 /* WKHTTPCookieStore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51D124971E763AF8002B2820 /* WKHTTPCookieStore.mm */; };
@@ -1076,6 +1077,7 @@
 		51BCEE491C84F4AF0042C82E /* IndexedDBMultiProcess.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IndexedDBMultiProcess.mm; sourceTree = "<group>"; };
 		51BCEE4C1C84F52C0042C82E /* IndexedDBMultiProcess-1.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "IndexedDBMultiProcess-1.html"; sourceTree = "<group>"; };
 		51BCEE4D1C84F52C0042C82E /* IndexedDBMultiProcess-2.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "IndexedDBMultiProcess-2.html"; sourceTree = "<group>"; };
+		51C683DD1EA134DB00650183 /* WKURLSchemeHandler-1.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "WKURLSchemeHandler-1.mm"; sourceTree = "<group>"; };
 		51CB4AD71B3A079C00C1B1C6 /* ModalAlertsSPI.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ModalAlertsSPI.cpp; sourceTree = "<group>"; };
 		51CD1C6A1B38CE3600142CA5 /* ModalAlerts.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ModalAlerts.mm; sourceTree = "<group>"; };
 		51CD1C711B38D48400142CA5 /* modal-alerts-in-new-about-blank-window.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "modal-alerts-in-new-about-blank-window.html"; sourceTree = "<group>"; };
@@ -1713,6 +1715,7 @@
 				A14AAB611E78D7DE00C1ADC2 /* WKPDFView.mm */,
 				2D00065D1C1F58940088E6A7 /* WKPDFViewResizeCrash.mm */,
 				5E4B1D2C1D404C6100053621 /* WKScrollViewDelegateCrash.mm */,
+				51C683DD1EA134DB00650183 /* WKURLSchemeHandler-1.mm */,
 				5CE354D81E70D9C300BEFE3B /* WKUserContentExtensionStore.mm */,
 				2EFF06D61D8AF34A0004BB30 /* WKWebViewCandidateTests.mm */,
 				7C417F311D19E14800B8EF53 /* WKWebViewDefaultNavigationDelegate.mm */,
@@ -2920,6 +2923,7 @@
 				CE06DF9B1E1851F200E570C9 /* SecurityOrigin.cpp in Sources */,
 				5769C50B1D9B0002000847FB /* SerializedCryptoKeyWrap.mm in Sources */,
 				7CCE7ECB1A411A7E00447C4C /* SetAndUpdateCacheModel.mm in Sources */,
+				51C683DE1EA134E800650183 /* WKURLSchemeHandler-1.mm in Sources */,
 				7CCE7ECC1A411A7E00447C4C /* SetDocumentURI.mm in Sources */,
 				7C83E0521D0A641800FEBCF3 /* SharedBuffer.cpp in Sources */,
 				A17991881E1C994E00A505ED /* SharedBuffer.mm in Sources */,

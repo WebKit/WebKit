@@ -264,18 +264,30 @@ void WebLoaderStrategy::startLocalLoad(WebCore::ResourceLoader& resourceLoader)
     m_webResourceLoaders.set(resourceLoader.identifier(), WebResourceLoader::create(resourceLoader, { }));
 }
 
+void WebLoaderStrategy::addURLSchemeHandlerTaskProxy(WebURLSchemeHandlerTaskProxy& task)
+{
+    auto result = m_urlSchemeHandlerTasks.add(task.identifier(), &task);
+    ASSERT_UNUSED(result, result.isNewEntry);
+}
+
+void WebLoaderStrategy::removeURLSchemeHandlerTaskProxy(WebURLSchemeHandlerTaskProxy& task)
+{
+    m_urlSchemeHandlerTasks.remove(task.identifier());
+}
+
 void WebLoaderStrategy::remove(ResourceLoader* resourceLoader)
 {
     ASSERT(resourceLoader);
     LOG(NetworkScheduling, "(WebProcess) WebLoaderStrategy::remove, url '%s'", resourceLoader->url().string().utf8().data());
 
-    if (m_internallyFailedResourceLoaders.contains(resourceLoader)) {
-        m_internallyFailedResourceLoaders.remove(resourceLoader);
+    if (auto task = m_urlSchemeHandlerTasks.take(resourceLoader->identifier())) {
+        ASSERT(!m_internallyFailedResourceLoaders.contains(resourceLoader));
+        task->stopLoading();
         return;
     }
 
-    if (auto task = m_urlSchemeHandlerTasks.take(resourceLoader->identifier())) {
-        task->stopLoading();
+    if (m_internallyFailedResourceLoaders.contains(resourceLoader)) {
+        m_internallyFailedResourceLoaders.remove(resourceLoader);
         return;
     }
     

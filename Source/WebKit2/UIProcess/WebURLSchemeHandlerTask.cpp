@@ -60,6 +60,8 @@ WebURLSchemeHandlerTask::ExceptionType WebURLSchemeHandlerTask::didReceiveRespon
         return WebURLSchemeHandlerTask::ExceptionType::DataAlreadySent;
 
     m_responseSent = true;
+
+    response.includeCertificateInfo();
     m_page->send(Messages::WebPage::URLSchemeHandlerTaskDidReceiveResponse(m_urlSchemeHandler->identifier(), m_identifier, response));
     return WebURLSchemeHandlerTask::ExceptionType::None;
 }

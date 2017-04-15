@@ -42,6 +42,7 @@ WebURLSchemeHandlerTaskProxy::WebURLSchemeHandlerTaskProxy(WebURLSchemeHandlerPr
     : m_urlSchemeHandler(handler)
     , m_coreLoader(&loader)
     , m_request(loader.request())
+    , m_identifier(loader.identifier())
 {
 }
 
@@ -53,16 +54,17 @@ void WebURLSchemeHandlerTaskProxy::startLoading()
 
 void WebURLSchemeHandlerTaskProxy::stopLoading()
 {
-    if (!m_coreLoader)
-        return;
-
+    ASSERT(m_coreLoader);
     m_urlSchemeHandler.page().send(Messages::WebPageProxy::StopURLSchemeHandlerTask(m_urlSchemeHandler.identifier(), m_coreLoader->identifier()));
     m_coreLoader = nullptr;
+
+    // This line will result in this being deleted.
+    m_urlSchemeHandler.taskDidStopLoading(*this);
 }
 
 void WebURLSchemeHandlerTaskProxy::didReceiveResponse(const ResourceResponse& response)
 {
-    if (!m_coreLoader)
+    if (!hasLoader())
         return;
 
     m_coreLoader->didReceiveResponse(response);
@@ -70,7 +72,7 @@ void WebURLSchemeHandlerTaskProxy::didReceiveResponse(const ResourceResponse& re
 
 void WebURLSchemeHandlerTaskProxy::didReceiveData(size_t size, const uint8_t* data)
 {
-    if (!m_coreLoader)
+    if (!hasLoader())
         return;
 
     m_coreLoader->didReceiveData(reinterpret_cast<const char*>(data), size, 0, DataPayloadType::DataPayloadBytes);
@@ -78,7 +80,7 @@ void WebURLSchemeHandlerTaskProxy::didReceiveData(size_t size, const uint8_t* da
 
 void WebURLSchemeHandlerTaskProxy::didComplete(const ResourceError& error)
 {
-    if (!m_coreLoader)
+    if (!hasLoader())
         return;
 
     if (error.isNull())
@@ -87,6 +89,14 @@ void WebURLSchemeHandlerTaskProxy::didComplete(const ResourceError& error)
         m_coreLoader->didFail(error);
 
     m_coreLoader = nullptr;
+}
+
+bool WebURLSchemeHandlerTaskProxy::hasLoader()
+{
+    if (m_coreLoader && m_coreLoader->reachedTerminalState())
+        m_coreLoader = nullptr;
+
+    return m_coreLoader;
 }
 
 } // namespace WebKit

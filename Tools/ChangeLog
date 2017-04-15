@@ -1,3 +1,18 @@
+2017-04-14  Brady Eidson  <beidson@apple.com>
+
+        Fix basic WKURLSchemeHandler bugs.
+        <rdar://problem/30647559> and https://bugs.webkit.org/show_bug.cgi?id=170862
+
+        Reviewed by Andy Estes.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/WKURLSchemeHandler-1.mm: Added.
+        (-[SchemeHandler initWithData:mimeType:]):
+        (-[SchemeHandler dealloc]):
+        (-[SchemeHandler webView:startTask:]):
+        (-[SchemeHandler webView:stopTask:]):
+        (TEST):
+
 2017-04-14  Bill Ming  <mbbill@gmail.com>
 
         webkit-patch failed to detect git repository

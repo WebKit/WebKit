@@ -1,3 +1,38 @@
+2017-04-14  Brady Eidson  <beidson@apple.com>
+
+        Fix basic WKURLSchemeHandler bugs.
+        <rdar://problem/30647559> and https://bugs.webkit.org/show_bug.cgi?id=170862
+
+        Reviewed by Andy Estes.
+
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::NavigationClient::decidePolicyForNavigationAction):
+
+        * UIProcess/WebURLSchemeHandlerTask.cpp:
+        (WebKit::WebURLSchemeHandlerTask::didReceiveResponse):
+
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::addURLSchemeHandlerTaskProxy):
+        (WebKit::WebLoaderStrategy::removeURLSchemeHandlerTaskProxy):
+        (WebKit::WebLoaderStrategy::remove):
+        * WebProcess/Network/WebLoaderStrategy.h:
+
+        * WebProcess/WebPage/WebURLSchemeHandlerProxy.cpp:
+        (WebKit::WebURLSchemeHandlerProxy::startNewTask):
+        (WebKit::WebURLSchemeHandlerProxy::taskDidComplete):
+        (WebKit::WebURLSchemeHandlerProxy::taskDidStopLoading):
+        * WebProcess/WebPage/WebURLSchemeHandlerProxy.h:
+
+        * WebProcess/WebPage/WebURLSchemeHandlerTaskProxy.cpp:
+        (WebKit::WebURLSchemeHandlerTaskProxy::WebURLSchemeHandlerTaskProxy):
+        (WebKit::WebURLSchemeHandlerTaskProxy::stopLoading):
+        (WebKit::WebURLSchemeHandlerTaskProxy::didReceiveResponse):
+        (WebKit::WebURLSchemeHandlerTaskProxy::didReceiveData):
+        (WebKit::WebURLSchemeHandlerTaskProxy::didComplete):
+        (WebKit::WebURLSchemeHandlerTaskProxy::hasLoader):
+        * WebProcess/WebPage/WebURLSchemeHandlerTaskProxy.h:
+        (WebKit::WebURLSchemeHandlerTaskProxy::identifier):
+
 2017-04-14  Jer Noble  <jer.noble@apple.com>
 
         [MediaSource] Push capabilities across process boundary during UIProcess capture.

@@ -51,11 +51,15 @@ public:
     void didReceiveData(size_t, const uint8_t* data);
     void didComplete(const WebCore::ResourceError&);
 
+    unsigned long identifier() const { return m_identifier; }
+
 private:
+    bool hasLoader();
+
     WebURLSchemeHandlerProxy& m_urlSchemeHandler;
     RefPtr<WebCore::ResourceLoader> m_coreLoader;
     WebCore::ResourceRequest m_request;
-
+    unsigned long m_identifier;
 };
 
 } // namespace WebKit

@@ -52,6 +52,7 @@ public:
     void taskDidReceiveResponse(uint64_t taskIdentifier, const WebCore::ResourceResponse&);
     void taskDidReceiveData(uint64_t taskIdentifier, size_t, const uint8_t* data);
     void taskDidComplete(uint64_t taskIdentifier, const WebCore::ResourceError&);
+    void taskDidStopLoading(WebURLSchemeHandlerTaskProxy&);
 
 private:
     WebPage& m_webPage;
