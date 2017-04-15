@@ -1756,8 +1756,7 @@ void RenderLayerCompositor::frameViewDidScroll()
     // If there's a scrolling coordinator that manages scrolling for this frame view,
     // it will also manage updating the scroll layer position.
     if (hasCoordinatedScrolling()) {
-        // We have to schedule a flush in order for the main TiledBacking to update its tile coverage.
-        scheduleLayerFlushNow();
+        m_scrollLayer->setScrollPositionChanged();
         return;
     }
 

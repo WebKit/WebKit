@@ -152,6 +152,7 @@ public:
 
     struct CommitState {
         int treeDepth { 0 };
+        bool ancestorHadChanges { false };
         bool ancestorHasTransformAnimation { false };
         bool ancestorIsViewportConstrained { false };
     };
@@ -163,6 +164,8 @@ public:
     WEBCORE_EXPORT bool visibleRectChangeRequiresFlush(const FloatRect& visibleRect) const override;
 
     WEBCORE_EXPORT TiledBacking* tiledBacking() const override;
+
+    WEBCORE_EXPORT void setScrollPositionChanged() override;
 
 protected:
     WEBCORE_EXPORT void setOpacityInternal(float) override;
@@ -494,8 +497,12 @@ private:
         ShapeChanged                            = 1LLU << 36,
         WindRuleChanged                         = 1LLU << 37,
         UserInteractionEnabledChanged           = 1LLU << 38,
+        ScrollPositionChanged                   = 1LLU << 39,
     };
     typedef uint64_t LayerChangeFlags;
+    void addUncommittedChanges(LayerChangeFlags);
+    bool hasDescendantsWithUncommittedChanges() const { return m_hasDescendantsWithUncommittedChanges; }
+    void setHasDescendantsWithUncommittedChanges(bool);
     enum ScheduleFlushOrNot { ScheduleFlush, DontScheduleFlush };
     void noteLayerPropertyChanged(LayerChangeFlags, ScheduleFlushOrNot = ScheduleFlush);
     void noteSublayersChanged(ScheduleFlushOrNot = ScheduleFlush);
@@ -596,6 +603,7 @@ private:
 #else
     LayerChangeFlags m_uncommittedChanges { CoverageRectChanged };
 #endif
+    bool m_hasDescendantsWithUncommittedChanges { false };
 
     bool m_isCommittingChanges { false };
 };
