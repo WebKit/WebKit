@@ -173,18 +173,25 @@ ALWAYS_INLINE bool isArrowFunctionParseMode(SourceParseMode parseMode)
         SourceParseMode::AsyncArrowFunctionBodyMode).contains(parseMode);
 }
 
-
 ALWAYS_INLINE bool isModuleParseMode(SourceParseMode parseMode) 
 { 
     return SourceParseModeSet( 
         SourceParseMode::ModuleAnalyzeMode, 
         SourceParseMode::ModuleEvaluateMode).contains(parseMode); 
-} 
+}
 
 ALWAYS_INLINE bool isProgramParseMode(SourceParseMode parseMode) 
 { 
     return SourceParseModeSet(SourceParseMode::ProgramMode).contains(parseMode); 
-} 
+}
+
+ALWAYS_INLINE bool isProgramOrModuleParseMode(SourceParseMode parseMode)
+{
+    return SourceParseModeSet(
+        SourceParseMode::ProgramMode, 
+        SourceParseMode::ModuleAnalyzeMode, 
+        SourceParseMode::ModuleEvaluateMode).contains(parseMode); 
+}
 
 ALWAYS_INLINE ConstructAbility constructAbilityForParseMode(SourceParseMode parseMode) 
 { 

@@ -1,3 +1,30 @@
+2017-04-15  Joseph Pecoraro  <pecoraro@apple.com>
+
+        test262: test262/test/language/global-code/new.target-arrow.js
+        https://bugs.webkit.org/show_bug.cgi?id=170872
+
+        Reviewed by Saam Barati.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::Parser):
+        Mark the global code scope.
+
+        (JSC::Parser<LexerType>::parseMemberExpression):
+        If new.target is detected in an arrow function defined in global scope
+        throw a SyntaxError.
+
+        * parser/Parser.h:
+        (JSC::Scope::Scope):
+        (JSC::Scope::setIsGlobalCodeScope):
+        (JSC::Scope::isGlobalCodeScope):
+        Marker for a global code scope.
+
+        * parser/ParserModes.h:
+        (JSC::isModuleParseMode):
+        (JSC::isProgramParseMode):
+        (JSC::isProgramOrModuleParseMode):
+        Helper for detecting global code based on parse mode.
+
 2017-04-14  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: WebSockets: messages with non-latin letters are displayed incorrectly

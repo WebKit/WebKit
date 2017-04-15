@@ -172,6 +172,7 @@ public:
         , m_isAsyncFunction(isAsyncFunction)
         , m_isAsyncFunctionBoundary(false)
         , m_isLexicalScope(false)
+        , m_isGlobalCodeScope(false)
         , m_isFunctionBoundary(false)
         , m_isValidStrictMode(true)
         , m_hasArguments(false)
@@ -205,6 +206,7 @@ public:
         , m_isAsyncFunction(other.m_isAsyncFunction)
         , m_isAsyncFunctionBoundary(other.m_isAsyncFunctionBoundary)
         , m_isLexicalScope(other.m_isLexicalScope)
+        , m_isGlobalCodeScope(other.m_isGlobalCodeScope)
         , m_isFunctionBoundary(other.m_isFunctionBoundary)
         , m_isValidStrictMode(other.m_isValidStrictMode)
         , m_hasArguments(other.m_hasArguments)
@@ -312,6 +314,9 @@ public:
     bool isAsyncFunctionBoundary() const { return m_isAsyncFunctionBoundary; }
 
     bool hasArguments() const { return m_hasArguments; }
+
+    void setIsGlobalCodeScope() { m_isGlobalCodeScope = true; }
+    bool isGlobalCodeScope() const { return m_isGlobalCodeScope; }
 
     void setIsLexicalScope() 
     { 
@@ -800,6 +805,7 @@ private:
     bool m_isAsyncFunction;
     bool m_isAsyncFunctionBoundary;
     bool m_isLexicalScope;
+    bool m_isGlobalCodeScope;
     bool m_isFunctionBoundary;
     bool m_isValidStrictMode;
     bool m_hasArguments;

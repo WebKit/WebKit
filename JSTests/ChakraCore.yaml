@@ -1856,7 +1856,7 @@
   # On line 254, JSC throws error during parsing while Chakra throws at runtime.
   cmd: runChakra :skip, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
 - path: ChakraCore/test/es6/globalLambdaNewTargetSyntaxError.js
-  cmd: runChakra :baseline, "ReferenceError", "globalLambdaNewTargetSyntaxError.baseline-jsc", []
+  cmd: runChakra :baseline, "SyntaxError", "globalLambdaNewTargetSyntaxError.baseline-jsc", []
 - path: ChakraCore/test/es6/globalNewTargetSyntaxError.js
   cmd: runChakra :baseline, "SyntaxError", "globalNewTargetSyntaxError.baseline-jsc", []
 - path: ChakraCore/test/es6/globalCatchNewTargetSyntaxError.js

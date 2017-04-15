@@ -1,3 +1,2 @@
-Exception: ReferenceError: Can't find private variable: @newTargetLocal
-f@globalLambdaNewTargetSyntaxError.js:6:9
-global code@globalLambdaNewTargetSyntaxError.js:7:2
+Exception: SyntaxError: new.target is not valid inside arrow functions in global code.
+at globalLambdaNewTargetSyntaxError.js:6

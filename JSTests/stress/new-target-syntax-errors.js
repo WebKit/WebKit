@@ -1,3 +1,8 @@
+function assert(b) {
+    if (!b)
+        throw new Error("Bad assertion")
+}
+
 function shouldBeSyntaxError(str) {
     let failed = true;
     try {
@@ -84,3 +89,88 @@ for (let operator of prePostFixOperators) {
 }
 
 shouldBeSyntaxError(`({foo: new.target} = {foo:20})`);
+
+// Scripts - 15.1.1 Static Semantics: Early Errors
+// https://tc39.github.io/ecma262/#sec-scripts-static-semantics-early-errors
+//
+// Modules - 15.2.1.1 Static Semantics: Early Errors
+// https://tc39.github.io/ecma262/#sec-module-semantics-static-semantics-early-errors
+//
+// new.target is not allowed in arrow functions in global scope.
+
+let sawSyntaxError;
+
+sawSyntaxError = false;
+try {
+    eval(`() => new.target`);
+} catch(e) {
+    sawSyntaxError = e instanceof SyntaxError;
+}
+assert(sawSyntaxError);
+
+sawSyntaxError = false;
+try {
+    eval(`() => { new.target }`);
+} catch(e) {
+    sawSyntaxError = e instanceof SyntaxError;
+}
+assert(sawSyntaxError);
+
+sawSyntaxError = false;
+try {
+    eval(`async () => new.target`);
+} catch(e) {
+    sawSyntaxError = e instanceof SyntaxError;
+}
+assert(sawSyntaxError);
+
+sawSyntaxError = false;
+try {
+    eval(`async () => { new.target }`);
+} catch(e) {
+    sawSyntaxError = e instanceof SyntaxError;
+}
+assert(sawSyntaxError);
+
+sawSyntaxError = false;
+try {
+    eval(`async () => await new.target`);
+} catch(e) {
+    sawSyntaxError = e instanceof SyntaxError;
+}
+assert(sawSyntaxError);
+
+sawSyntaxError = false;
+try {
+    eval(`async () => { await new.target }`);
+} catch(e) {
+    sawSyntaxError = e instanceof SyntaxError;
+}
+assert(sawSyntaxError);
+
+let sawError = false;
+try {
+    new Function(`() => new.target`);
+    new Function(`() => { new.target }`);
+    new Function(`async () => new.target`);
+    new Function(`async () => { new.target }`);
+    new Function(`async () => await new.target`);
+    new Function(`async () => { await new.target }`);
+
+    function f() { () => new.target };
+    function f() { () => { new.target } };
+    function f() { async () => new.target };
+    function f() { async () => { new.target } };
+    function f() { async () => await new.target };
+    function f() { async () => { await new.target } };
+
+    (function() { eval(`() => new.target`) })();
+    (function() { eval(`() => { new.target }`) })();
+    (function() { eval(`async () => new.target`) })();
+    (function() { eval(`async () => { new.target }`) })();
+    (function() { eval(`async () => await new.target`) })();
+    (function() { eval(`async () => { await new.target }`) })();
+} catch (e) {
+    sawError = true;
+}
+assert(!sawError);

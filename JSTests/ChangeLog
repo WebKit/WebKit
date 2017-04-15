@@ -1,3 +1,25 @@
+2017-04-15  Joseph Pecoraro  <pecoraro@apple.com>
+
+        test262: test262/test/language/global-code/new.target-arrow.js
+        https://bugs.webkit.org/show_bug.cgi?id=170872
+
+        Reviewed by Saam Barati.
+
+        * stress/async-arrow-functions-lexical-new.target-binding.js:
+        (shouldThrowAsync): Deleted.
+        (shouldThrowAsync.async): Deleted.
+        This code should have thrown a SyntaxError. Instead it was throwing
+        a ReferenceError for the internal @newTargetLocal variable.
+
+        * stress/new-target-syntax-errors.js:
+        Cover the arrow function in global code cases.
+
+        * ChakraCore.yaml:
+        * ChakraCore/test/es6/globalLambdaNewTargetSyntaxError.baseline-jsc:
+        We now pass with an expected SyntaxError. Our error message is different.
+
+        * test262.yaml:
+
 2017-04-14  Saam Barati  <sbarati@apple.com>
 
         ParseInt intrinsic in DFG backend doesn't properly flush its operands
