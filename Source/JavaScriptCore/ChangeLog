@@ -1,3 +1,17 @@
+2017-04-14  Saam Barati  <sbarati@apple.com>
+
+        ParseInt intrinsic in DFG backend doesn't properly flush its operands
+        https://bugs.webkit.org/show_bug.cgi?id=170865
+
+        Reviewed by Mark Lam and Geoffrey Garen.
+
+        The DFG backend code needed to first call .gpr()/.jsValueRegs()
+        before calling flushRegisters(), or the input JSValueOperand would
+        not be flushed.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileParseInt):
+
 2017-04-14  Mark Lam  <mark.lam@apple.com>
 
         Update architectures in xcconfig files.

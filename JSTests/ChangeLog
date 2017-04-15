@@ -1,3 +1,14 @@
+2017-04-14  Saam Barati  <sbarati@apple.com>
+
+        ParseInt intrinsic in DFG backend doesn't properly flush its operands
+        https://bugs.webkit.org/show_bug.cgi?id=170865
+
+        Reviewed by Mark Lam and Geoffrey Garen.
+
+        * stress/parse-int-intrinsic-dfg-backend-flush.js: Added.
+        (assert):
+        (foo):
+
 2017-04-14  Caitlin Potter  <caitp@igalia.com>
 
         [JSC] use ExpressionErrorClassifier for AwaitExpression operand
