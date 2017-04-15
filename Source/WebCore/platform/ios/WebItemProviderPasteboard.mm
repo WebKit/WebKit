@@ -35,7 +35,7 @@
 #import <UIKit/UIColor.h>
 #import <UIKit/UIImage.h>
 #import <UIKit/UIItemProviderWriting.h>
-#import <WebKit/WebNSFileManagerExtras.h>
+#import <WebCore/FileSystemIOS.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/OSObjectPtr.h>
 #import <wtf/RetainPtr.h>
@@ -261,7 +261,7 @@ static NSURL *temporaryFileURLForDataInteractionContent(NSString *fileExtension,
     if (!fileExtension.length)
         return nil;
 
-    NSString *temporaryDataInteractionDirectory = [[NSFileManager defaultManager] _webkit_createTemporaryDirectoryWithTemplatePrefix:dataInteractionDirectoryPrefix];
+    NSString *temporaryDataInteractionDirectory = WebCore::createTemporaryDirectory(dataInteractionDirectoryPrefix);
     if (!temporaryDataInteractionDirectory)
         return nil;
 

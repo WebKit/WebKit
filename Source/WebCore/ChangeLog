@@ -1,3 +1,12 @@
+2017-04-15  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, fix the build after r215389
+
+        Use WebCore::createTemporaryDirectory instead of -_webkit_createTemporaryDirectoryWithTemplatePrefix:.
+
+        * platform/ios/WebItemProviderPasteboard.mm:
+        (temporaryFileURLForDataInteractionContent):
+
 2017-04-14  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Implement a way in WebItemProviderPasteboard to perform actions after file loading completes
