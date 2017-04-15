@@ -548,13 +548,15 @@ Vector<String> canonicalizeLocaleList(ExecState& state, JSValue locales)
     JSObject* localesObject;
     if (locales.isString()) {
         //  a. Let aLocales be CreateArrayFromList(«locales»).
-        JSArray* localesArray = JSArray::tryCreate(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous), 1);
+        JSArray* localesArray = JSArray::tryCreate(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous));
         if (!localesArray) {
             throwOutOfMemoryError(&state, scope);
             RETURN_IF_EXCEPTION(scope, Vector<String>());
         }
 
-        localesArray->initializeIndex(vm, 0, locales);
+        localesArray->push(&state, locales);
+        RETURN_IF_EXCEPTION(scope, Vector<String>());
+
         // 4. Let O be ToObject(aLocales).
         localesObject = localesArray;
     } else {
@@ -1036,7 +1038,7 @@ EncodedJSValue JSC_HOST_CALL intlObjectFuncGetCanonicalLocales(ExecState* state)
 
     // 2. Return CreateArrayFromList(ll).
     JSGlobalObject* globalObject = state->jsCallee()->globalObject();
-    JSArray* localeArray = JSArray::tryCreate(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous), localeList.size());
+    JSArray* localeArray = JSArray::tryCreate(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous));
     if (!localeArray) {
         throwOutOfMemoryError(state, scope);
         return encodedJSValue();
@@ -1044,7 +1046,7 @@ EncodedJSValue JSC_HOST_CALL intlObjectFuncGetCanonicalLocales(ExecState* state)
 
     auto length = localeList.size();
     for (size_t i = 0; i < length; ++i) {
-        localeArray->initializeIndex(vm, i, jsString(state, localeList[i]));
+        localeArray->push(state, jsString(state, localeList[i]));
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
     }
     return JSValue::encode(localeArray);
