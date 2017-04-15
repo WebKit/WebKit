@@ -1,3 +1,24 @@
+2017-04-14  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: WebSockets: messages with non-latin letters are displayed incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=170760
+
+        Reviewed by Joseph Pecoraro.
+
+        Test sending and receiving text and binary (blob and array buffer) data.
+
+        * http/tests/websocket/tests/hybi/inspector/binary-expected.txt: Added.
+        * http/tests/websocket/tests/hybi/inspector/binary.html: Added.
+        * http/tests/websocket/tests/hybi/inspector/binary_wsh.py: Added.
+        (web_socket_do_extra_handshake):
+        (web_socket_transfer_data):
+        (all_distinct_bytes):
+        * http/tests/websocket/tests/hybi/inspector/send-and-receive-expected.txt: Added.
+        * http/tests/websocket/tests/hybi/inspector/send-and-receive.html: Added.
+        * http/tests/websocket/tests/hybi/inspector/send-and-receive_wsh.py: Added.
+        (web_socket_do_extra_handshake):
+        (web_socket_transfer_data):
+
 2017-04-14  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebCrypto] Support HKDF

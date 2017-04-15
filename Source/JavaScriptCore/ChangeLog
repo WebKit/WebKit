@@ -1,3 +1,17 @@
+2017-04-14  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: WebSockets: messages with non-latin letters are displayed incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=170760
+
+        Reviewed by Joseph Pecoraro.
+
+        Add payloadLength property, which is used to display size. When payloadLength is unavailable,
+        it is calculated from payloadData by Web Inspector frontend.
+
+        This fixes <webkit.org/b/170609> Web Inspector: WebSockets: Transferred size is incorrect.
+
+        * inspector/protocol/Network.json:
+
 2017-04-14  Saam Barati  <sbarati@apple.com>
 
         ParseInt intrinsic in DFG backend doesn't properly flush its operands

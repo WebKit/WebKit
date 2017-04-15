@@ -290,12 +290,10 @@ WebInspector.FrameResourceManager = class FrameResourceManager extends WebInspec
         // Data going from the client to the server is always masked.
         let isOutgoing = !!response.mask;
 
-        let data = response.payloadData;
-        let opcode = response.opcode;
-
+        let {payloadData, payloadLength, opcode} = response;
         let elapsedTime = WebInspector.timelineManager.computeElapsedTime(timestamp);
 
-        resource.addFrame(data, isOutgoing, opcode, timestamp, elapsedTime);
+        resource.addFrame(payloadData, payloadLength, isOutgoing, opcode, timestamp, elapsedTime);
     }
 
     markResourceRequestAsServedFromMemoryCache(requestIdentifier)

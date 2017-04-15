@@ -1,0 +1,98 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../../../inspector/resources/inspector-test.js"></script>
+<script>
+// Global variable to keep it alive.
+let webSocket = null;
+
+function createWebSocketConnection()
+{
+    webSocket = new WebSocket("ws://127.0.0.1:8880/websocket/tests/hybi/inspector/send-and-receive");
+
+    webSocket.onopen = function()
+    {
+        webSocket.send("Hello World! Привет Мир!");
+    };
+
+    webSocket.onmessage = function()
+    {
+        webSocket.close();
+    };
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("WebSocket.SendAndReceive");
+
+    suite.addTestCase({
+        name: "SendAndReceive",
+        description: "Should send and receive text frames.",
+        test(resolve, reject) {
+            WebInspector.Frame.singleFireEventListener(WebInspector.Frame.Event.ResourceWasAdded, function(event) {
+
+                let frameAddedCount = 0;
+                let lastMessageWalltime;
+                let resource = event.data.resource;
+
+                resource.addEventListener(WebInspector.WebSocketResource.Event.FrameAdded, function(event) {
+                    let frame = event.data;
+                    frameAddedCount++;
+
+                    if (frameAddedCount === 1) {
+
+                        InspectorTest.expectEqual(frame.data, "Hello World! Привет Мир!", "Frame data should be 'Hello World! Привет Мир!'");
+                        InspectorTest.expectEqual(frame.opcode, WebInspector.WebSocketResource.OpCodes.TextFrame, "Frame should be text.");
+                        InspectorTest.expectThat(frame.isOutgoing, "Frame should be outgoing.");
+                        InspectorTest.expectThat(typeof frame.walltime === "number", "Message is walltime.");
+
+                    } else if (frameAddedCount === 2) {
+
+                        InspectorTest.expectEqual(frame.data, "Hello World! Привет Мир!", "Frame data should be 'Hello World! Привет Мир!'");
+                        InspectorTest.expectEqual(frame.opcode, WebInspector.WebSocketResource.OpCodes.TextFrame, "Frame should be text.");
+                        InspectorTest.expectThat(!frame.isOutgoing, "Frame should be incoming.");
+                        InspectorTest.expectThat(frame.walltime > lastMessageWalltime, "Frame walltime should be greater than the previous one.");
+
+                    } else if (frameAddedCount === 3) {
+
+                        InspectorTest.expectEqual(frame.opcode, WebInspector.WebSocketResource.OpCodes.ConnectionCloseFrame, "Frame should close connection.");
+                        InspectorTest.expectThat(frame.isOutgoing, "Frame should be outgoing.");
+                        InspectorTest.expectThat(frame.walltime > lastMessageWalltime, "Frame walltime should be greater than the previous one.");
+
+                    } else if (frameAddedCount === 4) {
+
+                        InspectorTest.expectEqual(frame.opcode, WebInspector.WebSocketResource.OpCodes.ConnectionCloseFrame, "Frame should close connection.");
+                        InspectorTest.expectThat(!frame.isOutgoing, "Frame should be incoming.");
+                        InspectorTest.expectThat(frame.walltime > lastMessageWalltime, "Frame walltime should be greater than the previous one.");
+                        resolve();
+                    }
+
+                    lastMessageWalltime = frame.walltime;
+                });
+
+                let sizeDidChangeCount = 0;
+
+                resource.addEventListener(WebInspector.Resource.Event.SizeDidChange, function(event) {
+                    sizeDidChangeCount++;
+
+                    if (sizeDidChangeCount === 1)
+                        InspectorTest.expectEqual(this.size, 33, "Resource size should be 33 bytes.");
+                    else if (sizeDidChangeCount === 2)
+                        InspectorTest.expectEqual(this.size, 33 * 2, "Resource size should double.");
+
+                }, resource);
+            });
+
+            InspectorTest.evaluateInPage(`createWebSocketConnection()`);
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests sending and receiving WebSocket messages.</p>
+</body>
+</html>

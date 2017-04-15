@@ -611,7 +611,8 @@ void InspectorNetworkAgent::didReceiveWebSocketFrame(unsigned long identifier, c
     auto frameObject = Inspector::Protocol::Network::WebSocketFrame::create()
         .setOpcode(frame.opCode)
         .setMask(frame.masked)
-        .setPayloadData(String(frame.payload, frame.payloadLength))
+        .setPayloadData(String::fromUTF8WithLatin1Fallback(frame.payload, frame.payloadLength))
+        .setPayloadLength(frame.payloadLength)
         .release();
     m_frontendDispatcher->webSocketFrameReceived(IdentifiersFactory::requestId(identifier), timestamp(), WTFMove(frameObject));
 }
@@ -621,7 +622,8 @@ void InspectorNetworkAgent::didSendWebSocketFrame(unsigned long identifier, cons
     auto frameObject = Inspector::Protocol::Network::WebSocketFrame::create()
         .setOpcode(frame.opCode)
         .setMask(frame.masked)
-        .setPayloadData(String(frame.payload, frame.payloadLength))
+        .setPayloadData(String::fromUTF8WithLatin1Fallback(frame.payload, frame.payloadLength))
+        .setPayloadLength(frame.payloadLength)
         .release();
     m_frontendDispatcher->webSocketFrameSent(IdentifiersFactory::requestId(identifier), timestamp(), WTFMove(frameObject));
 }

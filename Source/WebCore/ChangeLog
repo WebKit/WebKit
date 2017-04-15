@@ -1,3 +1,22 @@
+2017-04-14  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: WebSockets: messages with non-latin letters are displayed incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=170760
+
+        Reviewed by Joseph Pecoraro.
+
+        Add payloadLength property, which is used to display size. When payloadLength is unavailable,
+        it is calculated from payloadData by Web Inspector frontend.
+
+        This fixes <webkit.org/b/170609> Web Inspector: WebSockets: Transferred size is incorrect.
+
+        Tests: http/tests/websocket/tests/hybi/inspector/binary.html
+               http/tests/websocket/tests/hybi/inspector/send-and-receive.html
+
+        * inspector/InspectorNetworkAgent.cpp:
+        (WebCore::InspectorNetworkAgent::didReceiveWebSocketFrame):
+        (WebCore::InspectorNetworkAgent::didSendWebSocketFrame):
+
 2017-04-14  Mark Lam  <mark.lam@apple.com>
 
         Update architectures in xcconfig files.

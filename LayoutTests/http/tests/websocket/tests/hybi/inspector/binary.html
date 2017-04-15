@@ -1,0 +1,119 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../../../inspector/resources/inspector-test.js"></script>
+<script>
+// Global variable to keep it alive.
+let webSocket = null;
+
+function createArrayBufferContainingHelloWorld()
+{
+    let hello = "Hello, world!";
+    let array = new Uint8Array(hello.length);
+    for (let i = 0; i < hello.length; ++i)
+        array[i] = hello.charCodeAt(i);
+
+    return array.buffer;
+}
+
+function createWebSocketConnection(binaryType)
+{
+    closeWebSocketConnection();
+    webSocket = new WebSocket("ws://127.0.0.1:8880/websocket/tests/hybi/inspector/binary");
+    webSocket.binaryType = binaryType;
+
+    webSocket.onopen = function()
+    {
+        webSocket.send(createArrayBufferContainingHelloWorld());
+    };
+}
+
+function closeWebSocketConnection()
+{
+    if (!webSocket)
+        return;
+
+    webSocket.close();
+    webSocket = null;
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("WebSocket.Binary");
+
+    function resourceWasAdded(resolve, reject, event) {
+        let frameAddedCount = 0;
+        let lastMessageWalltime;
+        let resource = event.data.resource;
+
+        resource.addEventListener(WebInspector.WebSocketResource.Event.FrameAdded, function(event) {
+            let frame = event.data;
+            frameAddedCount++;
+
+            if (frameAddedCount <= 5) {
+                InspectorTest.expectEqual(frame.data, null, "Frame should not have data.");
+                InspectorTest.expectEqual(frame.opcode, WebInspector.WebSocketResource.OpCodes.BinaryFrame, "Frame should be binary.");
+
+                if (frameAddedCount === 1) {
+                    InspectorTest.expectThat(frame.isOutgoing, "Frame should be outgoing.");
+                    InspectorTest.expectThat(typeof frame.walltime === "number", "Frame should have walltime.");
+                } else {
+                    InspectorTest.expectThat(!frame.isOutgoing, "Frame should be incoming.");
+                    InspectorTest.expectThat(frame.walltime > lastMessageWalltime, "Frame walltime should be greater than the previous one.");
+                }
+
+                lastMessageWalltime = frame.walltime;
+            }
+
+            if (frameAddedCount === 5) {
+                InspectorTest.evaluateInPage(`closeWebSocketConnection()`);
+                resolve();
+            }
+        });
+
+        let sizeDidChangeCount = 0;
+
+        resource.addEventListener(WebInspector.Resource.Event.SizeDidChange, function(event) {
+            sizeDidChangeCount++;
+
+            if (sizeDidChangeCount === 1)
+                InspectorTest.expectEqual(this.size, 13, "Resource size should be 13 bytes.");
+            else if (sizeDidChangeCount === 2)
+                InspectorTest.expectEqual(this.size, 13 + 13, "Resource size should increase by 13 bytes.");
+            else if (sizeDidChangeCount === 3)
+                InspectorTest.expectEqual(this.size, 13 + 13 + 21, "Resource size should increase by 21 bytes.");
+            else if (sizeDidChangeCount === 4)
+                InspectorTest.expectEqual(this.size, 13 + 13 + 21, "Resource size should not increase.");
+            else if (sizeDidChangeCount === 5)
+                InspectorTest.expectEqual(this.size, 13 + 13 + 21 + 256, "Resource size should increase by 256 bytes.");
+
+        }, resource);
+    }
+
+    suite.addTestCase({
+        name: "WebSocket.BinaryBlob",
+        description: "Should receive binary blob WebSocket messages.",
+        test(resolve, reject) {
+            WebInspector.Frame.singleFireEventListener(WebInspector.Frame.Event.ResourceWasAdded, resourceWasAdded.bind(null, resolve, reject));
+            InspectorTest.evaluateInPage(`createWebSocketConnection("blob")`);
+        }
+    });
+
+    suite.addTestCase({
+        name: "WebSocket.ArrayBuffer",
+        description: "Should receive ArrayBuffer WebSocket messages.",
+        test(resolve, reject) {
+            WebInspector.Frame.singleFireEventListener(WebInspector.Frame.Event.ResourceWasAdded, resourceWasAdded.bind(null, resolve, reject));
+            InspectorTest.evaluateInPage(`createWebSocketConnection("arraybuffer")`);
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests sending and receiving binary data.</p>
+</body>
+</html>

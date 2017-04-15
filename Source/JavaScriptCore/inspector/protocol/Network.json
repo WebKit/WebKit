@@ -113,7 +113,8 @@
             "properties": [
                 { "name": "opcode", "type": "number", "description": "WebSocket frame opcode." },
                 { "name": "mask", "type": "boolean", "description": "WebSocket frame mask." },
-                { "name": "payloadData", "type": "string", "description": "WebSocket frame payload data." }
+                { "name": "payloadData", "type": "string", "description": "WebSocket frame payload data." },
+                { "name": "payloadLength", "type": "number", "description": "WebSocket frame payload length in bytes." }
             ]
         },
         {
