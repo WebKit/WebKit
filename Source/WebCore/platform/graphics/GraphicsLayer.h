@@ -565,8 +565,6 @@ public:
     virtual bool isGraphicsLayerTextureMapper() const { return false; }
     virtual bool isCoordinatedGraphicsLayer() const { return false; }
 
-    virtual void setScrollPositionChanged() { }
-
     static void traverse(GraphicsLayer&, std::function<void (GraphicsLayer&)>);
 
 protected:

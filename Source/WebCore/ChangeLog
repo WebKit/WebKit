@@ -1,3 +1,18 @@
+2017-04-15  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r215393.
+        https://bugs.webkit.org/show_bug.cgi?id=170876
+
+        breaks scrollable iframes on ios (Requested by anttik on
+        #webkit).
+
+        Reverted changeset:
+
+        "GraphicsLayerCA::recursiveCommitChanges should not descend
+        into subtrees without changes"
+        https://bugs.webkit.org/show_bug.cgi?id=170851
+        http://trac.webkit.org/changeset/215393
+
 2017-04-14  Antti Koivisto  <antti@apple.com>
 
         GraphicsLayerCA::recursiveCommitChanges should not descend into subtrees without changes
