@@ -989,7 +989,6 @@ workers/wasm-long-compile-many.html [ Slow ]
 workers/wasm-long-compile.html [ Slow ]
 
 # WebCryptoAPI tests that take too long to complete
-imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/hkdf.worker.html [ Skip ]
 imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.worker.html [ Slow ]
 imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/test_pbkdf2.html [ Slow ]
 imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-OAEP.worker.html [ Skip ]

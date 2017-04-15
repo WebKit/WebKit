@@ -2554,6 +2554,12 @@
 		57777E391E71217D00EE1A8D /* CryptoAlgorithmPBKDF2.h in Headers */ = {isa = PBXBuildFile; fileRef = 57777E371E71217D00EE1A8D /* CryptoAlgorithmPBKDF2.h */; };
 		5778BD821DA4806C009E3009 /* SubtleCrypto.h in Headers */ = {isa = PBXBuildFile; fileRef = 5778BD811DA4802C009E3009 /* SubtleCrypto.h */; };
 		5778BD841DA4817B009E3009 /* SubtleCrypto.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5778BD831DA4817B009E3009 /* SubtleCrypto.cpp */; };
+		57957CA81E971DE0008072AB /* CryptoAlgorithmHKDF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57957CA61E971DE0008072AB /* CryptoAlgorithmHKDF.cpp */; };
+		57957CA91E971DE0008072AB /* CryptoAlgorithmHKDF.h in Headers */ = {isa = PBXBuildFile; fileRef = 57957CA71E971DE0008072AB /* CryptoAlgorithmHKDF.h */; };
+		57957CAC1E97247B008072AB /* CryptoAlgorithmHKDFMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57957CAA1E97247B008072AB /* CryptoAlgorithmHKDFMac.cpp */; };
+		57957CB21E972645008072AB /* CryptoAlgorithmHkdfParams.h in Headers */ = {isa = PBXBuildFile; fileRef = 57957CAF1E972645008072AB /* CryptoAlgorithmHkdfParams.h */; };
+		57957CB61E972C78008072AB /* JSHkdfParams.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57957CB41E972C78008072AB /* JSHkdfParams.cpp */; };
+		57957CB71E972C78008072AB /* JSHkdfParams.h in Headers */ = {isa = PBXBuildFile; fileRef = 57957CB51E972C78008072AB /* JSHkdfParams.h */; };
 		57A9C88E1DA70BF800BC7305 /* JSSubtleCryptoCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57A9C88D1DA70BF800BC7305 /* JSSubtleCryptoCustom.cpp */; };
 		57B5F7D41E57CF6800F34F90 /* SiteBoundCredential.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57B5F7D21E57CF6800F34F90 /* SiteBoundCredential.cpp */; };
 		57B5F7D51E57CF6800F34F90 /* SiteBoundCredential.h in Headers */ = {isa = PBXBuildFile; fileRef = 57B5F7D31E57CF6800F34F90 /* SiteBoundCredential.h */; };
@@ -10266,6 +10272,13 @@
 		5778BD801DA4733E009E3009 /* SubtleCrypto.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SubtleCrypto.idl; sourceTree = "<group>"; };
 		5778BD811DA4802C009E3009 /* SubtleCrypto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SubtleCrypto.h; sourceTree = "<group>"; };
 		5778BD831DA4817B009E3009 /* SubtleCrypto.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SubtleCrypto.cpp; sourceTree = "<group>"; };
+		57957CA61E971DE0008072AB /* CryptoAlgorithmHKDF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CryptoAlgorithmHKDF.cpp; sourceTree = "<group>"; };
+		57957CA71E971DE0008072AB /* CryptoAlgorithmHKDF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoAlgorithmHKDF.h; sourceTree = "<group>"; };
+		57957CAA1E97247B008072AB /* CryptoAlgorithmHKDFMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CryptoAlgorithmHKDFMac.cpp; sourceTree = "<group>"; };
+		57957CAF1E972645008072AB /* CryptoAlgorithmHkdfParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoAlgorithmHkdfParams.h; sourceTree = "<group>"; };
+		57957CB01E972645008072AB /* HkdfParams.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HkdfParams.idl; sourceTree = "<group>"; };
+		57957CB41E972C78008072AB /* JSHkdfParams.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHkdfParams.cpp; sourceTree = "<group>"; };
+		57957CB51E972C78008072AB /* JSHkdfParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSHkdfParams.h; sourceTree = "<group>"; };
 		57A9C88D1DA70BF800BC7305 /* JSSubtleCryptoCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSubtleCryptoCustom.cpp; sourceTree = "<group>"; };
 		57B5F7D11E57CF0E00F34F90 /* SiteBoundCredential.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = SiteBoundCredential.idl; sourceTree = "<group>"; };
 		57B5F7D21E57CF6800F34F90 /* SiteBoundCredential.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SiteBoundCredential.cpp; sourceTree = "<group>"; };
@@ -24316,6 +24329,7 @@
 				57B5F80D1E5D2F2D00F34F90 /* CryptoAlgorithmAES_GCMMac.cpp */,
 				E1FE137C184D270200892F13 /* CryptoAlgorithmAES_KWMac.cpp */,
 				576814341E6FE3E800E77754 /* CryptoAlgorithmECDHMac.cpp */,
+				57957CAA1E97247B008072AB /* CryptoAlgorithmHKDFMac.cpp */,
 				E125F8371822F1EB00D84CD9 /* CryptoAlgorithmHMACMac.cpp */,
 				57E657E81E714D1A00F941CA /* CryptoAlgorithmPBKDF2Mac.cpp */,
 				E1BB84AC1822CA7400525043 /* CryptoAlgorithmRegistryMac.cpp */,
@@ -24345,6 +24359,8 @@
 				E1FE1379184D21BB00892F13 /* CryptoAlgorithmAES_KW.h */,
 				5750A9841E6A216800705C4A /* CryptoAlgorithmECDH.cpp */,
 				5750A9851E6A216800705C4A /* CryptoAlgorithmECDH.h */,
+				57957CA61E971DE0008072AB /* CryptoAlgorithmHKDF.cpp */,
+				57957CA71E971DE0008072AB /* CryptoAlgorithmHKDF.h */,
 				E125F82F1822F11B00D84CD9 /* CryptoAlgorithmHMAC.cpp */,
 				E125F8301822F11B00D84CD9 /* CryptoAlgorithmHMAC.h */,
 				57777E361E71217D00EE1A8D /* CryptoAlgorithmPBKDF2.cpp */,
@@ -24407,6 +24423,7 @@
 				577483111DADC55D00716EF9 /* CryptoAlgorithmAesKeyParams.h */,
 				576814291E6F99C100E77754 /* CryptoAlgorithmEcdhKeyDeriveParams.h */,
 				5750A97D1E6A13EF00705C4A /* CryptoAlgorithmEcKeyParams.h */,
+				57957CAF1E972645008072AB /* CryptoAlgorithmHkdfParams.h */,
 				577483181DB4491F00716EF9 /* CryptoAlgorithmHmacKeyParams.h */,
 				E19DA29B18189ADD00088BC8 /* CryptoAlgorithmHmacKeyParamsDeprecated.h */,
 				E1C6571E1816E50300256CDD /* CryptoAlgorithmHmacParamsDeprecated.h */,
@@ -24421,6 +24438,7 @@
 				E1BD331B182D8EE900C05D9F /* CryptoAlgorithmRsaSsaParamsDeprecated.h */,
 				576814281E6F98AD00E77754 /* EcdhKeyDeriveParams.idl */,
 				5750A97C1E6A12B400705C4A /* EcKeyParams.idl */,
+				57957CB01E972645008072AB /* HkdfParams.idl */,
 				577483171DB1FE8900716EF9 /* HmacKeyParams.idl */,
 				57E657EA1E715F0500F941CA /* Pbkdf2Params.idl */,
 				57E2336C1DCD437000F28D01 /* RsaHashedImportParams.idl */,
@@ -24602,6 +24620,8 @@
 				5768143E1E709C3600E77754 /* JSEcdhKeyDeriveParams.h */,
 				5750A97F1E6A150800705C4A /* JSEcKeyParams.cpp */,
 				5750A9801E6A150800705C4A /* JSEcKeyParams.h */,
+				57957CB41E972C78008072AB /* JSHkdfParams.cpp */,
+				57957CB51E972C78008072AB /* JSHkdfParams.h */,
 				57E233681DCAB24300F28D01 /* JSHmacKeyParams.cpp */,
 				57E233661DCAB21C00F28D01 /* JSHmacKeyParams.h */,
 				57E2335E1DC7D67B00F28D01 /* JSJsonWebKey.cpp */,
@@ -27517,6 +27537,7 @@
 				7C65231A1E00DBB500677F22 /* JSApplePayPaymentPass.h in Headers */,
 				7C6579F21E00856600E3A27A /* JSApplePayPaymentRequest.h in Headers */,
 				1AE96A8F1D1A0DDD00B86768 /* JSApplePaySession.h in Headers */,
+				57957CB21E972645008072AB /* CryptoAlgorithmHkdfParams.h in Headers */,
 				1AE96A911D1A0DDD00B86768 /* JSApplePayShippingContactSelectedEvent.h in Headers */,
 				7C6579F41E00856600E3A27A /* JSApplePayShippingMethod.h in Headers */,
 				1AE96A931D1A0DDD00B86768 /* JSApplePayShippingMethodSelectedEvent.h in Headers */,
@@ -27717,6 +27738,7 @@
 				FDA15EAC12B03EE1003A583A /* JSGainNode.h in Headers */,
 				518F5002194CAC3A0081BAAE /* JSGamepad.h in Headers */,
 				518F5004194CAC3A0081BAAE /* JSGamepadButton.h in Headers */,
+				57957CA91E971DE0008072AB /* CryptoAlgorithmHKDF.h in Headers */,
 				FE80DA640E9C4703000D6F75 /* JSGeolocation.h in Headers */,
 				FE80DA660E9C4703000D6F75 /* JSGeoposition.h in Headers */,
 				0FDA7C1F188322FC00C954B5 /* JSGestureEvent.h in Headers */,
@@ -29041,6 +29063,7 @@
 				FD31603612B0267600C1A359 /* ScriptProcessorNode.h in Headers */,
 				8A413AE01207BBA50082016E /* ScriptRunner.h in Headers */,
 				934CC10A0EDB223900A658F2 /* ScriptSourceCode.h in Headers */,
+				57957CB71E972C78008072AB /* JSHkdfParams.h in Headers */,
 				41C760B10EDE03D300C1655F /* ScriptState.h in Headers */,
 				228C284510D82500009D0D0E /* ScriptWrappable.h in Headers */,
 				1400D7A817136EA70077CE05 /* ScriptWrappableInlines.h in Headers */,
@@ -30977,6 +31000,7 @@
 				84730D841248F0B300D3A9C9 /* FEMorphology.cpp in Sources */,
 				84730D861248F0B300D3A9C9 /* FEOffset.cpp in Sources */,
 				84730D881248F0B300D3A9C9 /* FESpecularLighting.cpp in Sources */,
+				57957CB61E972C78008072AB /* JSHkdfParams.cpp in Sources */,
 				41F54F8B1C50C50300338488 /* FetchBody.cpp in Sources */,
 				41CF8BE71D46226700707DC9 /* FetchBodyConsumer.cpp in Sources */,
 				4147E2B81C89912F00A7E715 /* FetchBodyOwner.cpp in Sources */,
@@ -31575,6 +31599,7 @@
 				7C33F3621B4A050400502CAF /* JSDocumentFragmentCustom.cpp in Sources */,
 				1221E05F1C02B444006A1A00 /* JSDocumentTimeline.cpp in Sources */,
 				65DF31F509D1CC60000BE325 /* JSDocumentType.cpp in Sources */,
+				57957CA81E971DE0008072AB /* CryptoAlgorithmHKDF.cpp in Sources */,
 				1AC2260C0DB69F190089B669 /* JSDOMApplicationCache.cpp in Sources */,
 				7C45C9CF1E3EFDF700AAB558 /* JSDOMBindingSecurity.cpp in Sources */,
 				7CC01D0A1E4A7B0400E529CC /* JSDOMBuiltinConstructorBase.cpp in Sources */,
@@ -32927,6 +32952,7 @@
 				7AAFE8CF19CB8672000F56D8 /* ScrollLatchingState.cpp in Sources */,
 				F478755519983AFF0024A287 /* ScrollSnapAnimatorState.mm in Sources */,
 				BC2441C40E8B65D00055320F /* ScrollView.cpp in Sources */,
+				57957CAC1E97247B008072AB /* CryptoAlgorithmHKDFMac.cpp in Sources */,
 				E45390450EAFD637003695C8 /* ScrollViewIOS.mm in Sources */,
 				9353676B09AED88B00D35CD6 /* ScrollViewMac.mm in Sources */,
 				5EA3D6E31C859DC100300BBB /* SDPProcessor.cpp in Sources */,

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,35 +25,50 @@
 
 #pragma once
 
+#include "BufferSource.h"
+#include "CryptoAlgorithmParameters.h"
+#include <runtime/JSCJSValue.h>
+#include <wtf/Vector.h>
+
 #if ENABLE(SUBTLE_CRYPTO)
 
 namespace WebCore {
 
-enum class CryptoAlgorithmIdentifier {
-    RSAES_PKCS1_v1_5 = 1,
-    RSASSA_PKCS1_v1_5,
-    RSA_PSS,
-    RSA_OAEP,
-    ECDSA,
-    ECDH,
-    AES_CTR,
-    AES_CBC,
-    AES_CMAC,
-    AES_GCM,
-    AES_CFB,
-    AES_KW,
-    HMAC,
-    DH,
-    SHA_1,
-    SHA_224,
-    SHA_256,
-    SHA_384,
-    SHA_512,
-    CONCAT,
-    HKDF,
-    PBKDF2
+class CryptoAlgorithmHkdfParams final : public CryptoAlgorithmParameters {
+public:
+    // FIXME: Consider merging hash and hashIdentifier.
+    JSC::JSValue hash;
+    CryptoAlgorithmIdentifier hashIdentifier;
+    BufferSource salt;
+    BufferSource info;
+
+    const Vector<uint8_t>& saltVector()
+    {
+        if (!m_saltVector.isEmpty() || !salt.length())
+            return m_saltVector;
+
+        m_saltVector.append(salt.data(), salt.length());
+        return m_saltVector;
+    }
+
+    const Vector<uint8_t>& infoVector()
+    {
+        if (!m_infoVector.isEmpty() || !info.length())
+            return m_infoVector;
+
+        m_infoVector.append(info.data(), info.length());
+        return m_infoVector;
+    }
+
+    Class parametersClass() const final { return Class::HkdfParams; }
+
+private:
+    Vector<uint8_t> m_saltVector;
+    Vector<uint8_t> m_infoVector;
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_CRYPTO_ALGORITHM_PARAMETERS(HkdfParams)
 
 #endif // ENABLE(SUBTLE_CRYPTO)

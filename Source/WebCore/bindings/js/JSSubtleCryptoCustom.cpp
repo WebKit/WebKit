@@ -41,6 +41,7 @@
 #include "JSDOMWrapper.h"
 #include "JSEcKeyParams.h"
 #include "JSEcdhKeyDeriveParams.h"
+#include "JSHkdfParams.h"
 #include "JSHmacKeyParams.h"
 #include "JSJsonWebKey.h"
 #include "JSPbkdf2Params.h"
@@ -232,6 +233,14 @@ static std::unique_ptr<CryptoAlgorithmParameters> normalizeCryptoAlgorithmParame
                 result = std::make_unique<CryptoAlgorithmEcdhKeyDeriveParams>(params);
                 break;
             }
+            case CryptoAlgorithmIdentifier::HKDF: {
+                auto params = convertDictionary<CryptoAlgorithmHkdfParams>(state, value);
+                RETURN_IF_EXCEPTION(scope, nullptr);
+                params.hashIdentifier = toHashIdentifier(state, params.hash);
+                RETURN_IF_EXCEPTION(scope, nullptr);
+                result = std::make_unique<CryptoAlgorithmHkdfParams>(params);
+                break;
+            }
             case CryptoAlgorithmIdentifier::PBKDF2: {
                 auto params = convertDictionary<CryptoAlgorithmPbkdf2Params>(state, value);
                 RETURN_IF_EXCEPTION(scope, nullptr);
@@ -248,7 +257,6 @@ static std::unique_ptr<CryptoAlgorithmParameters> normalizeCryptoAlgorithmParame
         case Operations::ImportKey:
             switch (*identifier) {
             case CryptoAlgorithmIdentifier::RSAES_PKCS1_v1_5:
-            case CryptoAlgorithmIdentifier::PBKDF2:
                 result = std::make_unique<CryptoAlgorithmParameters>(params);
                 break;
             case CryptoAlgorithmIdentifier::RSASSA_PKCS1_v1_5:
@@ -284,6 +292,10 @@ static std::unique_ptr<CryptoAlgorithmParameters> normalizeCryptoAlgorithmParame
                 result = std::make_unique<CryptoAlgorithmEcKeyParams>(params);
                 break;
             }
+            case CryptoAlgorithmIdentifier::HKDF:
+            case CryptoAlgorithmIdentifier::PBKDF2:
+                result = std::make_unique<CryptoAlgorithmParameters>(params);
+                break;
             default:
                 throwNotSupportedError(state, scope);
                 return nullptr;
@@ -321,6 +333,7 @@ static std::unique_ptr<CryptoAlgorithmParameters> normalizeCryptoAlgorithmParame
                 result = std::make_unique<CryptoAlgorithmHmacKeyParams>(params);
                 break;
             }
+            case CryptoAlgorithmIdentifier::HKDF:
             case CryptoAlgorithmIdentifier::PBKDF2:
                 result = std::make_unique<CryptoAlgorithmParameters>(params);
                 break;

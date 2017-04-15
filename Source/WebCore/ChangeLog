@@ -1,3 +1,66 @@
+2017-04-14  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebCrypto] Support HKDF
+        https://bugs.webkit.org/show_bug.cgi?id=170636
+        <rdar://problem/23539827>
+
+        Reviewed by Brent Fulgham.
+
+        This patch implements HKDF according to the spec: https://www.w3.org/TR/WebCryptoAPI/#hkdf.
+        Supported operations include deriveKey, deriveBits, importKey and getKeyLength.
+
+        Tests: crypto/subtle/ecdh-import-key-derive-hkdf-key.html
+               crypto/subtle/hkdf-derive-bits-malformed-parametrs.html
+               crypto/subtle/hkdf-import-key-derive-bits.html
+               crypto/subtle/hkdf-import-key-derive-hmac-key.html
+               crypto/subtle/hkdf-import-key-malformed-parameters.html
+               crypto/subtle/hkdf-import-key.html
+               crypto/workers/subtle/hkdf-import-key-derive-bits.html
+               crypto/workers/subtle/hkdf-import-key-derive-hmac-key.html
+               crypto/workers/subtle/hkdf-import-key.html
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * PlatformGTK.cmake:
+        * PlatformMac.cmake:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSCryptoAlgorithmDictionary.cpp:
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForEncrypt):
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForDecrypt):
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForSign):
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForVerify):
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForDigest):
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForGenerateKey):
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForDeriveKey):
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForDeriveBits):
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForImportKey):
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForExportKey):
+        Rename HKDF_CTR to HKDF.
+        * bindings/js/JSSubtleCryptoCustom.cpp:
+        (WebCore::normalizeCryptoAlgorithmParameters):
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneSerializer::write):
+        (WebCore::CloneDeserializer::read):
+        Rename HKDF_CTR to HKDF.
+        * crypto/CommonCryptoUtilities.h:
+        * crypto/CryptoAlgorithmIdentifier.h:
+        * crypto/CryptoAlgorithmParameters.h:
+        * crypto/algorithms/CryptoAlgorithmHKDF.cpp: Added.
+        (WebCore::CryptoAlgorithmHKDF::create):
+        (WebCore::CryptoAlgorithmHKDF::identifier):
+        (WebCore::CryptoAlgorithmHKDF::deriveBits):
+        (WebCore::CryptoAlgorithmHKDF::importKey):
+        (WebCore::CryptoAlgorithmHKDF::getKeyLength):
+        * crypto/algorithms/CryptoAlgorithmHKDF.h: Added.
+        * crypto/gcrypt/CryptoAlgorithmHKDFGCrypt.cpp: Added.
+        (WebCore::CryptoAlgorithmHKDF::platformDeriveBits):
+        * crypto/mac/CryptoAlgorithmHKDFMac.cpp: Added.
+        (WebCore::CryptoAlgorithmHKDF::platformDeriveBits):
+        * crypto/mac/CryptoAlgorithmRegistryMac.cpp:
+        (WebCore::CryptoAlgorithmRegistry::platformRegisterAlgorithms):
+        * crypto/parameters/CryptoAlgorithmHkdfParams.h: Added.
+        * crypto/parameters/HkdfParams.idl: Added.
+
 2017-04-14  Zalan Bujtas  <zalan@apple.com>
 
         text-align start / end failure in table cells

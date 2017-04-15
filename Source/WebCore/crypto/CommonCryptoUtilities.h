@@ -34,6 +34,8 @@
 #if USE(APPLE_INTERNAL_SDK)
 #include <CommonCrypto/CommonCryptorSPI.h>
 #include <CommonCrypto/CommonECCryptor.h>
+// FIXME: <rdar://problem/31508959>
+// #include <CommonCrypto/CommonKeyDerivationSPI.h>
 #include <CommonCrypto/CommonRSACryptor.h>
 #include <CommonCrypto/CommonRandomSPI.h>
 #endif
@@ -107,6 +109,15 @@ extern "C" int CCECGetKeySize(CCECCryptorRef key);
 extern "C" CCCryptorStatus CCECCryptorCreateFromData(size_t keySize, uint8_t *qX, size_t qXLength, uint8_t *qY, size_t qYLength, CCECCryptorRef *ref);
 extern "C" CCCryptorStatus CCECCryptorGetKeyComponents(CCECCryptorRef ecKey, size_t *keySize, uint8_t *qX, size_t *qXLength, uint8_t *qY, size_t *qYLength, uint8_t *d, size_t *dLength);
 extern "C" CCCryptorStatus CCECCryptorComputeSharedSecret(CCECCryptorRef privateKey, CCECCryptorRef publicKey, void *out, size_t *outLen);
+
+#ifndef CommonCrypto_CommonNistKeyDerivation_h
+enum {
+    kCCKDFAlgorithmHKDF = 6
+};
+typedef uint32_t CCKDFAlgorithm;
+#endif
+
+extern "C" CCStatus CCKeyDerivationHMac(CCKDFAlgorithm algorithm, CCDigestAlgorithm digest, unsigned rounds, const void *keyDerivationKey, size_t keyDerivationKeyLen, const void *label, size_t labelLen, const void *context, size_t contextLen, const void *iv, size_t ivLen, const void *salt, size_t saltLen, void *derivedKey, size_t derivedKeyLen);
 
 #if !USE(APPLE_INTERNAL_SDK)
 extern "C" CCCryptorStatus CCCryptorGCM(CCOperation op, CCAlgorithm alg, const void* key, size_t keyLength, const void* iv, size_t ivLen, const void* aData, size_t aDataLen, const void* dataIn, size_t dataInLength, void* dataOut, void* tag, size_t* tagLength);

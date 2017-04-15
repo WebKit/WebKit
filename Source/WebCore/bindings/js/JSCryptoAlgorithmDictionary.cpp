@@ -331,7 +331,7 @@ RefPtr<CryptoAlgorithmParametersDeprecated> JSCryptoAlgorithmDictionary::createP
     case CryptoAlgorithmIdentifier::SHA_384:
     case CryptoAlgorithmIdentifier::SHA_512:
     case CryptoAlgorithmIdentifier::CONCAT:
-    case CryptoAlgorithmIdentifier::HKDF_CTR:
+    case CryptoAlgorithmIdentifier::HKDF:
     case CryptoAlgorithmIdentifier::PBKDF2:
         throwNotSupportedError(state, scope);
         return nullptr;
@@ -373,7 +373,7 @@ RefPtr<CryptoAlgorithmParametersDeprecated> JSCryptoAlgorithmDictionary::createP
     case CryptoAlgorithmIdentifier::SHA_384:
     case CryptoAlgorithmIdentifier::SHA_512:
     case CryptoAlgorithmIdentifier::CONCAT:
-    case CryptoAlgorithmIdentifier::HKDF_CTR:
+    case CryptoAlgorithmIdentifier::HKDF:
     case CryptoAlgorithmIdentifier::PBKDF2:
         throwNotSupportedError(state, scope);
         return nullptr;
@@ -411,7 +411,7 @@ RefPtr<CryptoAlgorithmParametersDeprecated> JSCryptoAlgorithmDictionary::createP
     case CryptoAlgorithmIdentifier::SHA_384:
     case CryptoAlgorithmIdentifier::SHA_512:
     case CryptoAlgorithmIdentifier::CONCAT:
-    case CryptoAlgorithmIdentifier::HKDF_CTR:
+    case CryptoAlgorithmIdentifier::HKDF:
     case CryptoAlgorithmIdentifier::PBKDF2:
         throwNotSupportedError(state, scope);
         return nullptr;
@@ -449,7 +449,7 @@ RefPtr<CryptoAlgorithmParametersDeprecated> JSCryptoAlgorithmDictionary::createP
     case CryptoAlgorithmIdentifier::SHA_384:
     case CryptoAlgorithmIdentifier::SHA_512:
     case CryptoAlgorithmIdentifier::CONCAT:
-    case CryptoAlgorithmIdentifier::HKDF_CTR:
+    case CryptoAlgorithmIdentifier::HKDF:
     case CryptoAlgorithmIdentifier::PBKDF2:
         throwNotSupportedError(state, scope);
         return nullptr;
@@ -484,7 +484,7 @@ RefPtr<CryptoAlgorithmParametersDeprecated> JSCryptoAlgorithmDictionary::createP
     case CryptoAlgorithmIdentifier::SHA_512:
         return adoptRef(*new CryptoAlgorithmParametersDeprecated);
     case CryptoAlgorithmIdentifier::CONCAT:
-    case CryptoAlgorithmIdentifier::HKDF_CTR:
+    case CryptoAlgorithmIdentifier::HKDF:
     case CryptoAlgorithmIdentifier::PBKDF2:
         throwNotSupportedError(state, scope);
         return nullptr;
@@ -521,7 +521,7 @@ RefPtr<CryptoAlgorithmParametersDeprecated> JSCryptoAlgorithmDictionary::createP
     case CryptoAlgorithmIdentifier::SHA_384:
     case CryptoAlgorithmIdentifier::SHA_512:
     case CryptoAlgorithmIdentifier::CONCAT:
-    case CryptoAlgorithmIdentifier::HKDF_CTR:
+    case CryptoAlgorithmIdentifier::HKDF:
     case CryptoAlgorithmIdentifier::PBKDF2:
         throwNotSupportedError(state, scope);
         return nullptr;
@@ -553,7 +553,7 @@ RefPtr<CryptoAlgorithmParametersDeprecated> JSCryptoAlgorithmDictionary::createP
     case CryptoAlgorithmIdentifier::SHA_384:
     case CryptoAlgorithmIdentifier::SHA_512:
     case CryptoAlgorithmIdentifier::CONCAT:
-    case CryptoAlgorithmIdentifier::HKDF_CTR:
+    case CryptoAlgorithmIdentifier::HKDF:
     case CryptoAlgorithmIdentifier::PBKDF2:
         throwNotSupportedError(state, scope);
         return nullptr;
@@ -585,7 +585,7 @@ RefPtr<CryptoAlgorithmParametersDeprecated> JSCryptoAlgorithmDictionary::createP
     case CryptoAlgorithmIdentifier::SHA_384:
     case CryptoAlgorithmIdentifier::SHA_512:
     case CryptoAlgorithmIdentifier::CONCAT:
-    case CryptoAlgorithmIdentifier::HKDF_CTR:
+    case CryptoAlgorithmIdentifier::HKDF:
     case CryptoAlgorithmIdentifier::PBKDF2:
         throwNotSupportedError(state, scope);
         return nullptr;
@@ -621,7 +621,7 @@ RefPtr<CryptoAlgorithmParametersDeprecated> JSCryptoAlgorithmDictionary::createP
     case CryptoAlgorithmIdentifier::SHA_384:
     case CryptoAlgorithmIdentifier::SHA_512:
     case CryptoAlgorithmIdentifier::CONCAT:
-    case CryptoAlgorithmIdentifier::HKDF_CTR:
+    case CryptoAlgorithmIdentifier::HKDF:
     case CryptoAlgorithmIdentifier::PBKDF2:
         throwNotSupportedError(state, scope);
         return nullptr;
@@ -654,7 +654,7 @@ RefPtr<CryptoAlgorithmParametersDeprecated> JSCryptoAlgorithmDictionary::createP
     case CryptoAlgorithmIdentifier::SHA_384:
     case CryptoAlgorithmIdentifier::SHA_512:
     case CryptoAlgorithmIdentifier::CONCAT:
-    case CryptoAlgorithmIdentifier::HKDF_CTR:
+    case CryptoAlgorithmIdentifier::HKDF:
     case CryptoAlgorithmIdentifier::PBKDF2:
         throwNotSupportedError(state, scope);
         return nullptr;

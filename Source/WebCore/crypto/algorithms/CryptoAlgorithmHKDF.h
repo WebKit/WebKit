@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,33 +25,27 @@
 
 #pragma once
 
+#include "CryptoAlgorithm.h"
+
 #if ENABLE(SUBTLE_CRYPTO)
 
 namespace WebCore {
 
-enum class CryptoAlgorithmIdentifier {
-    RSAES_PKCS1_v1_5 = 1,
-    RSASSA_PKCS1_v1_5,
-    RSA_PSS,
-    RSA_OAEP,
-    ECDSA,
-    ECDH,
-    AES_CTR,
-    AES_CBC,
-    AES_CMAC,
-    AES_GCM,
-    AES_CFB,
-    AES_KW,
-    HMAC,
-    DH,
-    SHA_1,
-    SHA_224,
-    SHA_256,
-    SHA_384,
-    SHA_512,
-    CONCAT,
-    HKDF,
-    PBKDF2
+class CryptoAlgorithmHKDF final : public CryptoAlgorithm {
+public:
+    static constexpr const char* s_name = "HKDF";
+    static constexpr CryptoAlgorithmIdentifier s_identifier = CryptoAlgorithmIdentifier::HKDF;
+    static Ref<CryptoAlgorithm> create();
+
+private:
+    CryptoAlgorithmHKDF() = default;
+    CryptoAlgorithmIdentifier identifier() const final;
+
+    void deriveBits(std::unique_ptr<CryptoAlgorithmParameters>&&, Ref<CryptoKey>&&, size_t length, VectorCallback&&, ExceptionCallback&&, ScriptExecutionContext&, WorkQueue&) final;
+    void importKey(SubtleCrypto::KeyFormat, KeyData&&, const std::unique_ptr<CryptoAlgorithmParameters>&&, bool extractable, CryptoKeyUsageBitmap, KeyCallback&&, ExceptionCallback&&) final;
+    ExceptionOr<size_t> getKeyLength(const CryptoAlgorithmParameters&) final;
+
+    void platformDeriveBits(std::unique_ptr<CryptoAlgorithmParameters>&&, Ref<CryptoKey>&&, size_t length, VectorCallback&&, ExceptionCallback&&, ScriptExecutionContext&, WorkQueue&);
 };
 
 } // namespace WebCore

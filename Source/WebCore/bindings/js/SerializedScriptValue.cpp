@@ -242,7 +242,7 @@ enum class CryptoAlgorithmIdentifierTag {
     SHA_384 = 17,
     SHA_512 = 18,
     CONCAT = 19,
-    HKDF_CTR = 20,
+    HKDF = 20,
     PBKDF2 = 21,
 };
 const uint8_t cryptoAlgorithmIdentifierTagMaximumValue = 21;
@@ -1173,8 +1173,8 @@ private:
         case CryptoAlgorithmIdentifier::CONCAT:
             write(CryptoAlgorithmIdentifierTag::CONCAT);
             break;
-        case CryptoAlgorithmIdentifier::HKDF_CTR:
-            write(CryptoAlgorithmIdentifierTag::HKDF_CTR);
+        case CryptoAlgorithmIdentifier::HKDF:
+            write(CryptoAlgorithmIdentifierTag::HKDF);
             break;
         case CryptoAlgorithmIdentifier::PBKDF2:
             write(CryptoAlgorithmIdentifierTag::PBKDF2);
@@ -2075,8 +2075,8 @@ private:
         case CryptoAlgorithmIdentifierTag::CONCAT:
             result = CryptoAlgorithmIdentifier::CONCAT;
             break;
-        case CryptoAlgorithmIdentifierTag::HKDF_CTR:
-            result = CryptoAlgorithmIdentifier::HKDF_CTR;
+        case CryptoAlgorithmIdentifierTag::HKDF:
+            result = CryptoAlgorithmIdentifier::HKDF;
             break;
         case CryptoAlgorithmIdentifierTag::PBKDF2:
             result = CryptoAlgorithmIdentifier::PBKDF2;

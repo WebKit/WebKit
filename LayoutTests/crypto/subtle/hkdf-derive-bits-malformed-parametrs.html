@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script type="text/javascript">
+description("Test HKDF deriveBits operation with malformed parameters");
+
+jsTestIsAsync = true;
+
+var nonExtractable = false;
+var rawKey = asciiToUint8Array("jnOw99oOZFLIEPMr");
+var info = asciiToUint8Array("jnOw99oO");
+var salt = asciiToUint8Array("jnOw99oO");
+
+crypto.subtle.importKey("raw", rawKey, "HKDF", nonExtractable, ["deriveBits"]).then(function(result) {
+    baseKey = result;
+
+    // Malformed AlgorithmIdentifiers
+    shouldReject('crypto.subtle.deriveBits("HKDF", baseKey, null)');
+    shouldReject('crypto.subtle.deriveBits({name: "HKDF"}, baseKey, null)');
+    shouldReject('crypto.subtle.deriveBits({name: "HKDF", salt: true, info: info, hash: "sha-1"}, baseKey, 128)');
+    shouldReject('crypto.subtle.deriveBits({name: "HKDF", salt: null, info: info, hash: "sha-1"}, baseKey, 128)');
+    shouldReject('crypto.subtle.deriveBits({name: "HKDF", salt: undefined, info: info, hash: "sha-1"}, baseKey, 128)');
+    shouldReject('crypto.subtle.deriveBits({name: "HKDF", salt: Symbol(), info: info, hash: "sha-1"}, baseKey, 128)');
+    shouldReject('crypto.subtle.deriveBits({name: "HKDF", salt: { }, info: info, hash: "sha-1"}, baseKey, 128)');
+    shouldReject('crypto.subtle.deriveBits({name: "HKDF", salt: 1, info: info, hash: "sha-1"}, baseKey, 128)');
+    shouldReject('crypto.subtle.deriveBits({name: "HKDF", info: true, salt: salt, hash: "sha-1"}, baseKey, 128)');
+    shouldReject('crypto.subtle.deriveBits({name: "HKDF", info: null, salt: salt, hash: "sha-1"}, baseKey, 128)');
+    shouldReject('crypto.subtle.deriveBits({name: "HKDF", info: undefined, salt: salt, hash: "sha-1"}, baseKey, 128)');
+    shouldReject('crypto.subtle.deriveBits({name: "HKDF", info: Symbol(), salt: salt, hash: "sha-1"}, baseKey, 128)');
+    shouldReject('crypto.subtle.deriveBits({name: "HKDF", info: { }, salt: salt, hash: "sha-1"}, baseKey, 128)');
+    shouldReject('crypto.subtle.deriveBits({name: "HKDF", info: 1, salt: salt, hash: "sha-1"}, baseKey, 128)');
+    // Wrong length
+    shouldReject('crypto.subtle.deriveBits({name: "HKDF", salt: salt, info: info, hash: "sha-1"}, baseKey, null)');
+    shouldReject('crypto.subtle.deriveBits({name: "HKDF", salt: salt, info: info, hash: "sha-1"}, baseKey, 0)');
+    shouldReject('crypto.subtle.deriveBits({name: "HKDF", salt: salt, info: info, hash: "sha-1"}, baseKey, 5)');
+    // Large length
+    return shouldReject('crypto.subtle.deriveBits({name: "HKDF", salt: salt, info: info, hash: "sha-1"}, baseKey, 100000)');
+}).then(finishJSTest, finishJSTest);
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

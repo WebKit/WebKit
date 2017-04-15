@@ -1,0 +1,15 @@
+[Worker] Test importing a HKDF raw key in workers
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Starting worker: resources/hkdf-import-key.js
+PASS [Worker] publicKey.toString() is '[object CryptoKey]'
+PASS [Worker] publicKey.type is 'secret'
+PASS [Worker] publicKey.extractable is false
+PASS [Worker] publicKey.algorithm.name is 'HKDF'
+PASS [Worker] publicKey.usages is ['deriveBits', 'deriveKey']
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
