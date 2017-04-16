@@ -63,8 +63,10 @@ void FunctionPrototype::addFunctionProperties(ExecState* exec, JSGlobalObject* g
 
     *applyFunction = putDirectBuiltinFunctionWithoutTransition(vm, globalObject, vm.propertyNames->builtinNames().applyPublicName(), functionPrototypeApplyCodeGenerator(vm), DontEnum);
     *callFunction = putDirectBuiltinFunctionWithoutTransition(vm, globalObject, vm.propertyNames->builtinNames().callPublicName(), functionPrototypeCallCodeGenerator(vm), DontEnum);
-    *hasInstanceSymbolFunction = putDirectBuiltinFunction(vm, globalObject, vm.propertyNames->hasInstanceSymbol, functionPrototypeSymbolHasInstanceCodeGenerator(vm), DontDelete | ReadOnly | DontEnum);
     putDirectBuiltinFunctionWithoutTransition(vm, globalObject, vm.propertyNames->bind, functionPrototypeBindCodeGenerator(vm), DontEnum);
+
+    *hasInstanceSymbolFunction = JSFunction::createBuiltinFunction(vm, functionPrototypeSymbolHasInstanceCodeGenerator(vm), globalObject, ASCIILiteral("[Symbol.hasInstance]"));
+    putDirectWithoutTransition(vm, vm.propertyNames->hasInstanceSymbol, *hasInstanceSymbolFunction, DontDelete | ReadOnly | DontEnum);
 }
     
 void FunctionPrototype::initRestrictedProperties(ExecState* exec, JSGlobalObject* globalObject)

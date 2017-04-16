@@ -1,3 +1,21 @@
+2017-04-16  Joseph Pecoraro  <pecoraro@apple.com>
+
+        test262: test262/test/built-ins/Date/prototype/Symbol.toPrimitive/name.js
+        https://bugs.webkit.org/show_bug.cgi?id=170884
+
+        Reviewed by Yusuke Suzuki.
+
+        * runtime/DatePrototype.cpp:
+        (JSC::DatePrototype::finishCreation):
+        * runtime/FunctionPrototype.cpp:
+        (JSC::FunctionPrototype::addFunctionProperties):
+        * runtime/RegExpPrototype.cpp:
+        (JSC::RegExpPrototype::finishCreation):
+        * runtime/SymbolPrototype.cpp:
+        (JSC::SymbolPrototype::finishCreation):
+        Give symbol property functions proper function names.
+        This addresses function.name but not function.toString().
+
 2017-04-15  Joseph Pecoraro  <pecoraro@apple.com>
 
         test262: test262/test/language/global-code/new.target-arrow.js

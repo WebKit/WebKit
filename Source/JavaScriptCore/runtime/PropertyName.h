@@ -52,7 +52,7 @@ public:
 
     bool isNull() const { return !m_impl; }
 
-    bool isSymbol()
+    bool isSymbol() const
     {
         return m_impl && m_impl->isSymbol();
     }
