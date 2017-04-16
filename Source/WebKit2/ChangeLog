@@ -1,3 +1,29 @@
+2017-04-15  Keith Rollin  <krollin@apple.com>
+
+        Include resource size in some existing logging
+        https://bugs.webkit.org/show_bug.cgi?id=170866
+
+        Reviewed by Alex Christensen.
+
+        In order to correlate resource load times with resource size, we log
+        when the resource is starting to be loaded and when the resource is
+        finished loading. In NetworkResourceLoader::didReceiveResponse, we
+        also log the expected resource length. However, we can only log the
+        length if it is provided in Content-Length, which is not always the
+        case. If it's not provided, we end up logging "length = -1". To make
+        up for this, change NetworkResourceLoader::didFinishLoading and
+        WebResourceLoader:: didFinishLoading to log the length once we know
+        it.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::didReceiveBuffer):
+        (WebKit::NetworkResourceLoader::didFinishLoading):
+        * NetworkProcess/NetworkResourceLoader.h:
+        * WebProcess/Network/WebResourceLoader.cpp:
+        (WebKit::WebResourceLoader::didReceiveData):
+        (WebKit::WebResourceLoader::didFinishResourceLoad):
+        * WebProcess/Network/WebResourceLoader.h:
+
 2017-04-15  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [WK2] Support data interaction of files into file inputs

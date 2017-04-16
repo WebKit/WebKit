@@ -127,10 +127,10 @@ void WebResourceLoader::didReceiveData(const IPC::DataReference& data, int64_t e
 {
     LOG(Network, "(WebProcess) WebResourceLoader::didReceiveData of size %lu for '%s'", data.size(), m_coreLoader->url().string().latin1().data());
 
-    if (!m_hasReceivedData) {
+    if (!m_numBytesReceived) {
         RELEASE_LOG_IF_ALLOWED("didReceiveData: Started receiving data (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ")", m_trackingParameters.pageID, m_trackingParameters.frameID, m_trackingParameters.resourceID);
-        m_hasReceivedData = true;
     }
+    m_numBytesReceived += data.size();
 
     m_coreLoader->didReceiveData(reinterpret_cast<const char*>(data.data()), data.size(), encodedDataLength, DataPayloadBytes);
 }
@@ -146,7 +146,7 @@ void WebResourceLoader::didRetrieveDerivedData(const String& type, const IPC::Da
 void WebResourceLoader::didFinishResourceLoad(const NetworkLoadMetrics& networkLoadMetrics)
 {
     LOG(Network, "(WebProcess) WebResourceLoader::didFinishResourceLoad for '%s'", m_coreLoader->url().string().latin1().data());
-    RELEASE_LOG_IF_ALLOWED("didFinishResourceLoad: (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ")", m_trackingParameters.pageID, m_trackingParameters.frameID, m_trackingParameters.resourceID);
+    RELEASE_LOG_IF_ALLOWED("didFinishResourceLoad: (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ", length = %zd)", m_trackingParameters.pageID, m_trackingParameters.frameID, m_trackingParameters.resourceID, m_numBytesReceived);
 
     m_coreLoader->didFinishLoading(networkLoadMetrics);
 }

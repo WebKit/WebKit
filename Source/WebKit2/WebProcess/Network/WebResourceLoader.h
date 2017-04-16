@@ -87,7 +87,7 @@ private:
 
     RefPtr<WebCore::ResourceLoader> m_coreLoader;
     TrackingParameters m_trackingParameters;
-    bool m_hasReceivedData { false };
+    size_t m_numBytesReceived { 0 };
 };
 
 } // namespace WebKit

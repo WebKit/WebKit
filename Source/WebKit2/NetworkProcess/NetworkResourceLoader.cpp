@@ -366,10 +366,10 @@ auto NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedRespon
 
 void NetworkResourceLoader::didReceiveBuffer(Ref<SharedBuffer>&& buffer, int reportedEncodedDataLength)
 {
-    if (!m_hasReceivedData) {
+    if (!m_numBytesReceived) {
         RELEASE_LOG_IF_ALLOWED("didReceiveBuffer: Started receiving data (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ")", m_parameters.webPageID, m_parameters.webFrameID, m_parameters.identifier);
-        m_hasReceivedData = true;
     }
+    m_numBytesReceived += buffer->size();
 
 #if ENABLE(NETWORK_CACHE)
     ASSERT(!m_cacheEntryForValidation);
@@ -398,7 +398,7 @@ void NetworkResourceLoader::didReceiveBuffer(Ref<SharedBuffer>&& buffer, int rep
 
 void NetworkResourceLoader::didFinishLoading(const NetworkLoadMetrics& networkLoadMetrics)
 {
-    RELEASE_LOG_IF_ALLOWED("didFinishLoading: (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ")", m_parameters.webPageID, m_parameters.webFrameID, m_parameters.identifier);
+    RELEASE_LOG_IF_ALLOWED("didFinishLoading: (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ", length = %zd)", m_parameters.webPageID, m_parameters.webFrameID, m_parameters.identifier, m_numBytesReceived);
 
 #if ENABLE(NETWORK_CACHE)
     if (m_cacheEntryForValidation) {

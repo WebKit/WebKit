@@ -153,7 +153,7 @@ private:
 
     bool m_didConsumeSandboxExtensions { false };
     bool m_defersLoading { false };
-    bool m_hasReceivedData { false };
+    size_t m_numBytesReceived { 0 };
 
     unsigned m_retrievedDerivedDataCount { 0 };
 
