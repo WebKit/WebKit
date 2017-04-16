@@ -49,7 +49,7 @@ JSObject* createNotAnObjectError(ExecState*, JSValue);
 JSObject* createInvalidFunctionApplyParameterError(ExecState*, JSValue);
 JSObject* createInvalidInParameterError(ExecState*, JSValue);
 JSObject* createInvalidInstanceofParameterErrorNotFunction(ExecState*, JSValue);
-JSObject* createInvalidInstanceofParameterErrorhasInstanceValueNotFunction(ExecState*, JSValue);
+JSObject* createInvalidInstanceofParameterErrorHasInstanceValueNotFunction(ExecState*, JSValue);
 JSObject* createNotAConstructorError(ExecState*, JSValue);
 JSObject* createNotAFunctionError(ExecState*, JSValue);
 JSObject* createErrorForInvalidGlobalAssignment(ExecState*, const String&);

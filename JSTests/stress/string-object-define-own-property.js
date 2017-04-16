@@ -3,19 +3,6 @@ function shouldBe(actual, expected) {
         throw new Error('bad value: ' + actual);
 }
 
-function shouldThrow(func, message) {
-    var error = null;
-    try {
-        func();
-    } catch (e) {
-        error = e;
-    }
-    if (!error)
-        throw new Error("not thrown.");
-    if (String(error) !== message)
-        throw new Error("bad error: " + String(error));
-}
-
 var string = new String("Cocoa");
 shouldBe(Reflect.defineProperty(string, 0, {
 }), true);

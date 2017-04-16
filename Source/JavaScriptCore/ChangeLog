@@ -1,5 +1,25 @@
 2017-04-16  Joseph Pecoraro  <pecoraro@apple.com>
 
+        test262: test262/test/built-ins/isNaN/toprimitive-not-callable-throws.js
+        https://bugs.webkit.org/show_bug.cgi?id=170888
+
+        Reviewed by Saam Barati.
+
+        * runtime/ExceptionHelpers.h:
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::createInvalidInstanceofParameterErrorHasInstanceValueNotFunction):
+        Fix up this function name.
+
+        * runtime/JSObject.cpp:
+        (JSC::callToPrimitiveFunction):
+        When called with @@isPrimitive, bail on undefined or null and
+        throw a type error if the value is not callable.
+
+        (JSC::JSObject::toPrimitive):
+        Use throw scope to check for exception.
+
+2017-04-16  Joseph Pecoraro  <pecoraro@apple.com>
+
         test262: test262/test/language/expressions/tagged-template/template-object.js
         https://bugs.webkit.org/show_bug.cgi?id=170878
 

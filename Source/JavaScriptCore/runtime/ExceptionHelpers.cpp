@@ -269,7 +269,7 @@ JSObject* createInvalidInstanceofParameterErrorNotFunction(ExecState* exec, JSVa
     return createError(exec, value, makeString(" is not a function"), invalidParameterInstanceofNotFunctionSourceAppender);
 }
 
-JSObject* createInvalidInstanceofParameterErrorhasInstanceValueNotFunction(ExecState* exec, JSValue value)
+JSObject* createInvalidInstanceofParameterErrorHasInstanceValueNotFunction(ExecState* exec, JSValue value)
 {
     return createError(exec, value, makeString("[Symbol.hasInstance] is not a function, undefined, or null"), invalidParameterInstanceofhasInstanceValueNotFunctionSourceAppender);
 }

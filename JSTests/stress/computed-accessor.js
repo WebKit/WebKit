@@ -3,20 +3,6 @@ function shouldBe(actual, expected) {
         throw new Error(`bad value: ${String(actual)}`);
 }
 
-function shouldThrow(func, errorMessage) {
-    var errorThrown = false;
-    var error = null;
-    try {
-        func();
-    } catch (e) {
-        errorThrown = true;
-        error = e;
-    }
-    if (!errorThrown)
-        throw new Error('not thrown');
-    shouldBe(String(error), errorMessage);
-}
-
 // Class.
 (function () {
     {
