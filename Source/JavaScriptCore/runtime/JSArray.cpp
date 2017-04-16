@@ -258,6 +258,8 @@ bool JSArray::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSVa
     }
 
     if (propertyName == exec->propertyNames().length) {
+        if (!thisObject->isLengthWritable())
+            return false;
         unsigned newLength = value.toUInt32(exec);
         RETURN_IF_EXCEPTION(scope, false);
         if (value.toNumber(exec) != static_cast<double>(newLength)) {

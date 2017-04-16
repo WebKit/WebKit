@@ -1,5 +1,16 @@
 2017-04-16  Joseph Pecoraro  <pecoraro@apple.com>
 
+        test262: test262/test/language/expressions/tagged-template/template-object.js
+        https://bugs.webkit.org/show_bug.cgi?id=170878
+
+        Reviewed by Saam Barati.
+
+        * stress/array-length-not-writable.js: Added.
+        (assert):
+        * test262.yaml:
+
+2017-04-16  Joseph Pecoraro  <pecoraro@apple.com>
+
         test262: test262/test/built-ins/Object/getOwnPropertyNames/15.2.3.4-4-44.js
         https://bugs.webkit.org/show_bug.cgi?id=170879
 
