@@ -1,5 +1,20 @@
 2017-04-16  Joseph Pecoraro  <pecoraro@apple.com>
 
+        test262: test262/test/built-ins/Object/getOwnPropertyNames/15.2.3.4-4-44.js
+        https://bugs.webkit.org/show_bug.cgi?id=170879
+
+        Reviewed by Saam Barati.
+
+        * runtime/StringObject.h:
+        * runtime/StringObject.cpp:
+        (JSC::StringObject::getOwnPropertyNames):
+        (JSC::StringObject::getOwnNonIndexPropertyNames):
+        Ensure 'length' comes after all indexed properties by moving
+        it out to the getOwnNonIndexPropertyNames method which is called
+        inside of getOwnPropertyNames after JSObject handles indices.
+
+2017-04-16  Joseph Pecoraro  <pecoraro@apple.com>
+
         test262: test262/test/built-ins/Date/prototype/Symbol.toPrimitive/name.js
         https://bugs.webkit.org/show_bug.cgi?id=170884
 

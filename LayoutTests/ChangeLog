@@ -1,3 +1,13 @@
+2017-04-16  Joseph Pecoraro  <pecoraro@apple.com>
+
+        test262: test262/test/built-ins/Object/getOwnPropertyNames/15.2.3.4-4-44.js
+        https://bugs.webkit.org/show_bug.cgi?id=170879
+
+        Reviewed by Saam Barati.
+
+        * js/Object-getOwnPropertyNames-expected.txt:
+        * js/script-tests/Object-getOwnPropertyNames.js:
+
 2017-04-14  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: WebSockets: messages with non-latin letters are displayed incorrectly

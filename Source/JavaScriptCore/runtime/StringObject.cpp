@@ -157,9 +157,15 @@ void StringObject::getOwnPropertyNames(JSObject* object, ExecState* exec, Proper
         for (int i = 0; i < size; ++i)
             propertyNames.add(Identifier::from(exec, i));
     }
+    return JSObject::getOwnPropertyNames(thisObject, exec, propertyNames, mode);
+}
+
+void StringObject::getOwnNonIndexPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
+{
+    StringObject* thisObject = jsCast<StringObject*>(object);
     if (mode.includeDontEnumProperties())
         propertyNames.add(exec->propertyNames().length);
-    return JSObject::getOwnPropertyNames(thisObject, exec, propertyNames, mode);
+    return JSObject::getOwnNonIndexPropertyNames(thisObject, exec, propertyNames, mode);
 }
 
 StringObject* constructString(VM& vm, JSGlobalObject* globalObject, JSValue string)

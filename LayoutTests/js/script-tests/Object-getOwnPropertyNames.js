@@ -19,6 +19,7 @@ var expectedPropertyNamesSet = {
     "new String('a')": "['0', 'length']",
     "new String('abc')": "['0', '1', '2', 'length']",
     "(function(){var x=new String('');x.__proto__=[1,2,3];return x;})()": "['length']",
+    "(function(){var x=new String('abc');x.bar='baz';x[999]='d';return x;})()": "['0', '1', '2', '999', 'bar', 'length']",
 // Array objects
     "[]": "['length']",
     "[null]": "['0', 'length']",

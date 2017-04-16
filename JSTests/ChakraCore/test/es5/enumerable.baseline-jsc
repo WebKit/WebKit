@@ -169,9 +169,9 @@ TypeError : Attempting to change access mechanism for an unconfigurable property
   1: b enumerable
   2: c enumerable
   3: d enumerable
-  length: 4
   6: 6 enumerable configurable writable
   7: 7 enumerable
+  length: 4
   --- Enumerate ---
   0: a
   1: b
