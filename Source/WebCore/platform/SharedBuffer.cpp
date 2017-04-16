@@ -66,12 +66,6 @@ SharedBuffer::SharedBuffer()
 {
 }
 
-SharedBuffer::SharedBuffer(unsigned size)
-    : m_size(size)
-    , m_buffer(adoptRef(*new DataBuffer))
-{
-}
-
 SharedBuffer::SharedBuffer(const char* data, unsigned size)
     : m_buffer(adoptRef(*new DataBuffer))
 {
@@ -233,6 +227,8 @@ void SharedBuffer::append(const char* data, unsigned length)
 
 void SharedBuffer::append(Vector<char>&& data)
 {
+    // This takes its argument as a rvalue reference because we intend to have a future
+    // version take ownership of the vector rather than copying.
     append(data.data(), data.size());
 }
 

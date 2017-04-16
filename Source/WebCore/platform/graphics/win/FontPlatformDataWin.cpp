@@ -78,13 +78,14 @@ RefPtr<SharedBuffer> FontPlatformData::openTypeTable(uint32_t table) const
     DWORD size = GetFontData(hdc, table, 0, 0, 0);
     RefPtr<SharedBuffer> buffer;
     if (size != GDI_ERROR) {
-        buffer = SharedBuffer::create(size);
-        DWORD result = GetFontData(hdc, table, 0, (PVOID)buffer->data(), size);
+        Vector<char> data(size);
+        DWORD result = GetFontData(hdc, table, 0, (PVOID)data->data(), size);
         ASSERT(result == size);
+        buffer = SharedBuffer::create(WTFMove(data));
     }
 
     SelectObject(hdc, oldFont);
-    return buffer.release();
+    return buffer;
 }
 
 #ifndef NDEBUG
