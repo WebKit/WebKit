@@ -210,6 +210,7 @@ list(APPEND WebCore_SOURCES
     crypto/keys/CryptoKeyRaw.cpp
     crypto/keys/CryptoKeySerializationRaw.cpp
 
+    crypto/mac/CommonCryptoDERUtilities.cpp
     crypto/mac/CryptoAlgorithmAES_CBCMac.cpp
     crypto/mac/CryptoAlgorithmAES_CFBMac.cpp
     crypto/mac/CryptoAlgorithmAES_CTRMac.cpp
