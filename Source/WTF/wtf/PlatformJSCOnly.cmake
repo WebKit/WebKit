@@ -38,3 +38,9 @@ endif ()
 list(APPEND WTF_LIBRARIES
     ${CMAKE_THREAD_LIBS_INIT}
 )
+
+if (APPLE)
+    list(APPEND WTF_INCLUDE_DIRECTORIES
+        "${WTF_DIR}/icu"
+    )
+endif ()

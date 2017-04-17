@@ -1,3 +1,14 @@
+2017-04-17  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSCOnly] Fix build failures in macOS
+        https://bugs.webkit.org/show_bug.cgi?id=170887
+
+        Reviewed by Alex Christensen.
+
+        Align ICU header configuration to MacCMake port.
+
+        * Source/cmake/OptionsJSCOnly.cmake:
+
 2017-04-16  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Switch IDLAttributes.txt over to a more structured format so that more information can be added for each attribute
