@@ -132,7 +132,7 @@ WebInspector.NetworkGridContentView = class NetworkGridContentView extends WebIn
         if (window.NetworkAgent && NetworkAgent.setResourceCachingDisabled) {
             let toolTipForDisableResourceCache = WebInspector.UIString("Ignore the resource cache when loading resources");
             let activatedToolTipForDisableResourceCache = WebInspector.UIString("Use the resource cache when loading resources");
-            this._disableResourceCacheNavigationItem = new WebInspector.ActivateButtonNavigationItem("disable-resource-cache", toolTipForDisableResourceCache, activatedToolTipForDisableResourceCache, "Images/StepOver.svg", 16, 16);
+            this._disableResourceCacheNavigationItem = new WebInspector.ActivateButtonNavigationItem("disable-resource-cache", toolTipForDisableResourceCache, activatedToolTipForDisableResourceCache, "Images/IgnoreCaches.svg", 16, 16);
             this._disableResourceCacheNavigationItem.activated = WebInspector.resourceCachingDisabledSetting.value;
 
             this._disableResourceCacheNavigationItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._toggleDisableResourceCache, this);

@@ -1,3 +1,23 @@
+2017-04-17  Jon Davis  <jond@apple.com>
+
+        Web Inspector: new icon for Disable Caches button in Network Tab
+        https://bugs.webkit.org/show_bug.cgi?id=170196
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Images/IgnoreCaches.svg: Added.
+        Added new art for the Disable Caches button. 
+
+        * UserInterface/Images/gtk/IgnoreCaches.svg: Added.
+        Used GTK's StepOver.svg for fallback art for GTK.
+        
+        * UserInterface/Images/NavigationItemClear.svg:
+        Improved artwork for Clear Console button icon to match the weight and 
+        style of the Disable Caches button icon.
+        
+        * UserInterface/Views/NetworkGridContentView.js:
+        (WebInspector.NetworkGridContentView):
+        
 2017-04-17  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Enabled state of "All Requests" XHR breakpoint not restored correctly
