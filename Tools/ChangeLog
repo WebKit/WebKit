@@ -1,3 +1,7 @@
+2017-04-16  Jason Marcell  <jmarcell@apple.com>
+
+        Roll out r211294 vi 215335. rdar://problem/31512298
+
 2017-04-12  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Prepare ComplexTextController for unit testing

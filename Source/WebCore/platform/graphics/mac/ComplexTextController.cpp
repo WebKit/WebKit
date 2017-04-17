@@ -133,23 +133,6 @@ ComplexTextController::ComplexTextController(const FontCascade& font, const Text
     computeExpansionOpportunity();
 
     collectComplexTextRuns();
-
-    finishConstruction();
-}
-
-ComplexTextController::ComplexTextController(const FontCascade& font, const TextRun& run, Vector<Ref<ComplexTextRun>>& runs)
-    : m_font(font)
-    , m_run(run)
-    , m_end(run.length())
-{
-    for (auto& run : runs)
-        m_complexTextRuns.append(run.ptr());
-
-    finishConstruction();
-}
-
-void ComplexTextController::finishConstruction()
-{
     adjustGlyphsAndAdvances();
 
     if (!m_isLTROnly) {
