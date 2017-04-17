@@ -345,9 +345,7 @@ enum TestConfidence { "high", "kinda-low" };
     void convert4(DOMString? value);
 
     attribute SVGPoint mutablePoint;
-    [Immutable] attribute SVGPoint immutablePoint;
     SVGPoint mutablePointFunction();
-    [Immutable] SVGPoint immutablePointFunction();
 
     [ImplementedAs=banana] void orange();
     [ImplementedAs=blueberry] attribute long strawberry;

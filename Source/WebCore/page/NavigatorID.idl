@@ -29,13 +29,13 @@
 [
     NoInterfaceObject
 ] interface NavigatorID {
-    [Nondeterministic] readonly attribute DOMString appCodeName;
-    [Nondeterministic] readonly attribute DOMString appName;
-    [Nondeterministic] readonly attribute DOMString appVersion;
-    [Nondeterministic] readonly attribute DOMString platform;
-    [Nondeterministic] readonly attribute DOMString product;
-    [Nondeterministic, Exposed=Window] readonly attribute DOMString productSub;
-    [Nondeterministic] readonly attribute DOMString userAgent;
-    [Nondeterministic, Exposed=Window] readonly attribute DOMString vendor;
-    [Nondeterministic, Exposed=Window] readonly attribute DOMString vendorSub;
+    readonly attribute DOMString appCodeName;
+    readonly attribute DOMString appName;
+    readonly attribute DOMString appVersion;
+    readonly attribute DOMString platform;
+    readonly attribute DOMString product;
+    [Exposed=Window] readonly attribute DOMString productSub;
+    readonly attribute DOMString userAgent;
+    [Exposed=Window] readonly attribute DOMString vendor;
+    [Exposed=Window] readonly attribute DOMString vendorSub;
 };

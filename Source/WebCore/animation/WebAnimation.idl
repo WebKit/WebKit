@@ -31,7 +31,7 @@
     EnabledAtRuntime=WebAnimations,
     InterfaceName=Animation,
     ImplementationLacksVTable,
-    Constructor([Default=Undefined] AnimationEffect? effect, [Default=Undefined] AnimationTimeline? timeline)
+    Constructor(AnimationEffect? effect, AnimationTimeline? timeline)
 ] interface WebAnimation { // FIXME: Inherit from EventTarget.
     // FIXME: Incomplete interface.
     readonly attribute AnimationEffect? effect;

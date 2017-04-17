@@ -30,7 +30,7 @@
     Conditional=WEB_ANIMATIONS,
     EnabledAtRuntime=WebAnimations,
     // FIXME: Constructor stub only at the moment (should accept PseudoElement target, frames and options).
-    Constructor([Default=Undefined] Element? target)
+    Constructor(Element? target)
     // FIXME: Add interface for and inherit from KeyframeEffectReadOnly.
 ] interface KeyframeEffect : AnimationEffect {
     // FIXME: Stub only at the moment.

@@ -1,3 +1,93 @@
+2017-04-16  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Switch IDLAttributes.txt over to a more structured format so that more information can be added for each attribute
+        https://bugs.webkit.org/show_bug.cgi?id=170843
+
+        Reviewed by Chris Dumez.
+
+        - Converts IDLAttributes.txt to IDLAttributes.json, and adds additional
+          information for each attribute about what contexts they are valid in 
+          which is checked by the parser.
+        - Removes CustomSetPrototype which was unused, and Immutable which did 
+          nothing. 
+
+        * DerivedSources.make:
+        Update extension of IDLAttributes to .json
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Update project file for new file name and add some missing IDL files.
+
+        * bindings/scripts/CodeGenerator.pm:
+        Store the processed IDLAttributes in the code generator, so it can
+        be used for any additional Parser instantiations.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        Remove support for CustomSetPrototype. Nobody is using it.
+
+        * bindings/scripts/IDLAttributes.json: Copied from Source/WebCore/bindings/scripts/IDLAttributes.txt.
+        * bindings/scripts/IDLAttributes.txt: Removed.
+        Rename IDLAttributes.txt -> IDLAttributes.json and move the data
+        into a more structured format. For now each extended attribute can
+        have the following fields:
+            Required:
+                'contextsAllowed' -> Non-empty array of strings from the contexts array.
+
+            Optional:
+                'values' -> Non-empty array of strings allowed after the equal (=) sign in 
+                   the extended attribute. Like before, an empty string indicates it is 
+                   ok to not have a value and a star (*) indicates any string is allowed.
+                   Not providing a values property at all indicates that no value is
+                   allowed.
+
+                'standard' -> An object with information about the standard this attribute
+                   comes from. Should only be added to attributes that come from standards.
+
+                'unsupported' -> A boolean with value true, indicating this property is not
+                   yet supported. Should only be used for standard attributes.
+
+                'notes' -> A string with notes explaining something about this attribute.
+        
+        * bindings/scripts/IDLParser.pm:
+        Pass and store the processed extended attribute map to the parser, and use it
+        validate that extended attributes being added to things are appropriate for the
+        context. Fix FIXME in isExtendedAttributeApplicableToTypes by using the map to 
+        implement the predicate, rather than hard coding the list.
+
+        * bindings/scripts/generate-bindings.pl:
+        (generateEmptyHeaderAndCpp):
+        (loadIDLAttributes): Deleted.
+        (checkIDLAttributes): Deleted.
+        (checkIfIDLAttributesExists): Deleted.
+        Make specifying an IDL attributes file required. Switch to processing it
+        as a JSON file, and having the parser validate attributes.
+
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        * bindings/scripts/test/TestImplements.idl:
+        * bindings/scripts/test/TestObj.idl:
+        * bindings/scripts/test/TestSupplemental.idl:
+        * bindings/scripts/test/TestTypedefs.idl:
+        - Remove use of Immutable extended attribute in the tests, as it does nothing.
+        - Remove use of the made up ReadOnly attribute, as the tests now use the IDLAttributes
+          file to validate that the attributes are supported, so this would otherwise fail.
+
+        * css/WebKitCSSMatrix.idl:
+        * svg/SVGZoomEvent.idl:
+        - Remove use of the Immutable extended attribute, as it does nothing.
+
+        * page/NavigatorID.idl:
+        * page/NavigatorLanguage.idl:
+        - Remove use of the Nondeterministic extended attribute, as it does nothing.
+
+        * Modules/mediasource/SourceBufferList.idl:
+        Remove use of CallWith on the interface. It is illegal, and does nothing.
+
+        * animation/KeyframeEffect.idl:
+        * animation/WebAnimation.idl:
+        Remove use of [Default=Undefined]. This construct does nothing and now
+        correctly fails to parse. 
+
 2017-04-15  Alex Christensen  <achristensen@webkit.org>
 
         Fix Windows build after r215396.

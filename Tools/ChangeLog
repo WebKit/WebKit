@@ -1,3 +1,16 @@
+2017-04-16  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Switch IDLAttributes.txt over to a more structured format so that more information can be added for each attribute
+        https://bugs.webkit.org/show_bug.cgi?id=170843
+
+        Reviewed by Chris Dumez.
+
+        * DumpRenderTree/DerivedSources.make:
+        * WebKitTestRunner/DerivedSources.make:
+        * Scripts/webkitpy/bindings/main.py:
+        (BindingsTests.generate_from_idl):
+        Pass IDLAttributes.json, as it is now mandatory to have one.
+
 2017-04-14  Mark Lam  <mark.lam@apple.com>
 
         Update architectures in xcconfig files.

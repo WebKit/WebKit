@@ -65,7 +65,7 @@ function(GENERATE_BINDINGS target)
     set(multiValueArgs INPUT_FILES IDL_INCLUDES PP_EXTRA_OUTPUT PP_EXTRA_ARGS)
     cmake_parse_arguments(arg "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
     set(binding_generator ${WEBCORE_DIR}/bindings/scripts/generate-bindings-all.pl)
-    set(idl_attributes_file ${WEBCORE_DIR}/bindings/scripts/IDLAttributes.txt)
+    set(idl_attributes_file ${WEBCORE_DIR}/bindings/scripts/IDLAttributes.json)
     set(idl_files_list ${CMAKE_CURRENT_BINARY_DIR}/idl_files_${target}.tmp)
     set(_supplemental_dependency)
 

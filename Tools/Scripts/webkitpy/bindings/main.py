@@ -57,6 +57,7 @@ class BindingsTests:
                '--generator', generator,
                '--outputDir', output_directory,
                '--supplementalDependencyFile', supplemental_dependency_file,
+               '--idlAttributesFile', 'WebCore/bindings/scripts/IDLAttributes.json',
                idl_file]
 
         exit_code = 0

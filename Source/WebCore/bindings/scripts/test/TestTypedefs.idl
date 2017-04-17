@@ -36,7 +36,7 @@
 ] interface TestTypedefs {
     attribute ULONGLONG unsignedLongLongAttr;
 
-    [Immutable] attribute SCRIPT_VALUE immutableSerializedScriptValue;
+    attribute SCRIPT_VALUE serializedScriptValue;
     
     static readonly attribute T TestSubObj;
 
@@ -59,7 +59,7 @@
     attribute [Clamp] ULONGLONG attributeWithClamp;
     attribute CLAMPED_LONG attributeWithClampInTypedef;
 
-    [Immutable] SVGPOINT immutablePointFunction();
+    SVGPOINT pointFunction();
 
     [MayThrowException] SEQUENCE_OF_STRINGS stringSequenceFunction(SEQUENCE_OF_STRINGS values);
     [MayThrowException] sequence<STRING> stringSequenceFunction2(sequence<STRING> values);

@@ -202,7 +202,8 @@ sub new {
         NextToken => $emptyToken,
         Token => $emptyToken,
         Line => "",
-        LineNumber => 1
+        LineNumber => 1,
+        ExtendedAttributeMap => ""
     };
     return bless $self, $class;
 }
@@ -253,18 +254,65 @@ sub assertUnexpectedToken
     assert $msg;
 }
 
+sub assertExtendedAttributesValidForContext
+{
+    my $self = shift;
+    my $extendedAttributeList = shift;
+    my @contexts = @_;
+
+    for my $extendedAttribute (keys %{$extendedAttributeList}) {
+        # FIXME: Should this be done here, or when parsing the exteded attribute itself?
+        # Either way, we should add validation of the values, if any, at the same place.
+
+        # Extended attribute parsing collapses multiple 'Constructor' or 'CustomConstructor'
+        # attributes into a single plural version. Eventually, it would be nice if that conversion
+        # hapened later, and the parser kept things relatively simply, but for now, we just undo
+        # this transformation for the type check.
+        if ($extendedAttribute eq "Constructors") {
+            $extendedAttribute = "Constructor";
+        } elsif ($extendedAttribute eq "CustomConstructors") {
+            $extendedAttribute = "CustomConstructor";
+        }
+
+        if (!exists $self->{ExtendedAttributeMap}->{$extendedAttribute}) {
+            assert "Unknown extended attribute: '${extendedAttribute}'";
+        }
+
+        my $foundAllowedContext = 0;
+        for my $contextAllowed (@{$self->{ExtendedAttributeMap}->{$extendedAttribute}->{"contextsAllowed"}}) {
+            for my $context (@contexts) {
+                if ($contextAllowed eq $context) {
+                    $foundAllowedContext = 1;
+                    last;
+                }
+            }
+        }
+
+        if (!$foundAllowedContext) {
+            if (scalar(@contexts) == 1) {
+                assert "Extended attribute '${extendedAttribute}' used in invalid context '" . $contexts[0] . "'";
+            } else {
+                # FIXME: Improved this error message a bit.
+                assert "Extended attribute '${extendedAttribute}' used in invalid context";
+            }
+        }
+    }
+}
+
 sub Parse
 {
     my $self = shift;
     my $fileName = shift;
     my $defines = shift;
     my $preprocessor = shift;
+    my $idlAttributes = shift;
 
     my @definitions = ();
 
     my @lines = applyPreprocessor($fileName, $defines, $preprocessor);
     $self->{Line} = $lines[0];
     $self->{DocumentContent} = join(' ', @lines);
+    $self->{ExtendedAttributeMap} = $idlAttributes;
 
     $self->getToken();
     eval {
@@ -411,37 +459,35 @@ sub copyExtendedAttributes
     }
 }
 
-
 sub isExtendedAttributeApplicableToTypes
 {
+    my $self = shift;
     my $extendedAttribute = shift;
 
-    # FIXME: This should be derived from IDLAttributes.in
-    my %types = (
-        "Clamp" => 1,
-        "EnforceRange" => 1,
-        "TreatNullAs" => 1,
+    if (!exists $self->{ExtendedAttributeMap}->{$extendedAttribute}) {
+        assert "Unknown extended attribute: '${extendedAttribute}'";
+    }
 
-        # Non-standard additions
-        "AtomicString" => 1,
-        "RequiresExistingAtomicString" => 1,
-        "OverrideIDLType" => 1,
-    );
+    for my $contextAllowed (@{$self->{ExtendedAttributeMap}->{$extendedAttribute}->{"contextsAllowed"}}) {
+        if ($contextAllowed eq "type") {
+            return 1;
+        }
+    }
 
-    return $types{$extendedAttribute};
+    return 0;
 }
 
 sub moveExtendedAttributesApplicableToTypes
 {
+    my $self = shift;
     my $type = shift;
     my $extendedAttributeList = shift;
 
     for my $key (keys %{$extendedAttributeList}) {
-        if (isExtendedAttributeApplicableToTypes($key)) {
+        if ($self->isExtendedAttributeApplicableToTypes($key)) {
             if (!defined $type->extendedAttributes->{$key}) {
                 $type->extendedAttributes->{$key} = $extendedAttributeList->{$key};
             }
-            
             delete $extendedAttributeList->{$key};
         }
     }
@@ -601,7 +647,7 @@ sub typeByApplyingTypedefs
 
         my $clonedType = $self->cloneType($typedef->type);
         $clonedType->isNullable($clonedType->isNullable || $type->isNullable);
-        moveExtendedAttributesApplicableToTypes($clonedType, $type->extendedAttributes);
+        $self->moveExtendedAttributesApplicableToTypes($clonedType, $type->extendedAttributes);
 
         return $self->typeByApplyingTypedefs($clonedType);
     }
@@ -698,7 +744,10 @@ sub parseInterface
         $self->assertTokenValue($self->getToken(), "}", __LINE__);
         $self->assertTokenValue($self->getToken(), ";", __LINE__);
         applyMemberList($interface, $interfaceMembers);
+
+        $self->assertExtendedAttributesValidForContext($extendedAttributeList, "interface");
         applyExtendedAttributeList($interface, $extendedAttributeList);
+
         return $interface;
     }
     $self->assertUnexpectedToken($next->value(), __LINE__);
@@ -796,9 +845,12 @@ sub parseDictionary
 
     my $next = $self->nextToken();
     if ($next->value() eq "dictionary") {
-        my $dictionary = IDLDictionary->new();
-        $dictionary->extendedAttributes($extendedAttributeList);
         $self->assertTokenValue($self->getToken(), "dictionary", __LINE__);
+
+        my $dictionary = IDLDictionary->new();
+
+        $self->assertExtendedAttributesValidForContext($extendedAttributeList, "dictionary");
+        $dictionary->extendedAttributes($extendedAttributeList);
 
         my $nameToken = $self->getToken();
         $self->assertTokenType($nameToken, IdentifierToken);
@@ -848,7 +900,6 @@ sub parseDictionaryMember
     my $next = $self->nextToken();
     if ($next->type() == IdentifierToken || $next->value() =~ /$nextExceptionField_1/) {
         my $member = IDLDictionaryMember->new();
-        $member->extendedAttributes($extendedAttributeList);
 
         if ($next->value eq "required") {
             $self->assertTokenValue($self->getToken(), "required", __LINE__);
@@ -860,10 +911,13 @@ sub parseDictionaryMember
             $member->isRequired(0);
 
             my $type = $self->parseType();
-            moveExtendedAttributesApplicableToTypes($type, $extendedAttributeList);
+            $self->moveExtendedAttributesApplicableToTypes($type, $extendedAttributeList);
             
             $member->type($type);
         }
+
+        $self->assertExtendedAttributesValidForContext($extendedAttributeList, "dictionary-member");
+        $member->extendedAttributes($extendedAttributeList);
 
         my $nameToken = $self->getToken();
         $self->assertTokenType($nameToken, IdentifierToken);
@@ -947,7 +1001,10 @@ sub parseException
         $self->assertTokenValue($self->getToken(), "}", __LINE__);
         $self->assertTokenValue($self->getToken(), ";", __LINE__);
         applyMemberList($interface, $exceptionMembers);
+        
+        $self->assertExtendedAttributesValidForContext($extendedAttributeList, "interface");
         applyExtendedAttributeList($interface, $extendedAttributeList);
+
         return $interface;
     }
     $self->assertUnexpectedToken($next->value(), __LINE__);
@@ -1004,6 +1061,8 @@ sub parseEnum
         push(@{$enum->values}, @{$self->parseEnumValueList()});
         $self->assertTokenValue($self->getToken(), "}", __LINE__);
         $self->assertTokenValue($self->getToken(), ";", __LINE__);
+        
+        $self->assertExtendedAttributesValidForContext($extendedAttributeList, "enum");
         $enum->extendedAttributes($extendedAttributeList);
         return $enum;
     }
@@ -1062,6 +1121,8 @@ sub parseCallbackRest
 
         my $operation = IDLOperation->new();
         $operation->type($self->parseReturnType());
+        
+        $self->assertExtendedAttributesValidForContext($extendedAttributeList, "callback-function", "operation");
         $operation->extendedAttributes($extendedAttributeList);
 
         $self->assertTokenValue($self->getToken(), "(", __LINE__);
@@ -1137,7 +1198,10 @@ sub parseConst
         $self->assertTokenValue($self->getToken(), "=", __LINE__);
         $newDataNode->value($self->parseConstValue());
         $self->assertTokenValue($self->getToken(), ";", __LINE__);
+
+        $self->assertExtendedAttributesValidForContext($extendedAttributeList, "constant");
         $newDataNode->extendedAttributes($extendedAttributeList);
+
         return $newDataNode;
     }
     $self->assertUnexpectedToken($next->value(), __LINE__);
@@ -1251,6 +1315,8 @@ sub parseSerializer
 
         my $toJSONFunction = IDLOperation->new();
         $toJSONFunction->name("toJSON");
+
+        $self->assertExtendedAttributesValidForContext($extendedAttributeList, "operation");
         $toJSONFunction->extendedAttributes($extendedAttributeList);
         $toJSONFunction->isSerializer(1);
         push(@{$newDataNode->functions}, $toJSONFunction);
@@ -1405,7 +1471,7 @@ sub parseAttributeOrOperationRest
 
         # NOTE: This is a non-standard addition. In WebIDL, there is no way to associate
         # extended attributes with a return type.
-        moveExtendedAttributesApplicableToTypes($returnType, $extendedAttributeList);
+        $self->moveExtendedAttributesApplicableToTypes($returnType, $extendedAttributeList);
 
         my $operation = $self->parseOperationRest($extendedAttributeList);
         if (defined ($operation)) {
@@ -1442,6 +1508,7 @@ sub parseAttributeRest
 
         my $attribute = IDLAttribute->new();
         
+        $self->assertExtendedAttributesValidForContext($extendedAttributeList, "attribute");
         $attribute->extendedAttributes($extendedAttributeList);
         $attribute->isReadOnly($isReadOnly);
 
@@ -1500,7 +1567,7 @@ sub parseOperationOrIterator
         my $returnType = $self->parseReturnType();
         # NOTE: This is a non-standard addition. In WebIDL, there is no way to associate
         # extended attributes with a return type.
-        moveExtendedAttributesApplicableToTypes($returnType, $extendedAttributeList);
+        $self->moveExtendedAttributesApplicableToTypes($returnType, $extendedAttributeList);
 
         my $next = $self->nextToken();
         if ($next->type() == IdentifierToken || $next->value() eq "(") {
@@ -1525,7 +1592,7 @@ sub parseSpecialOperation
 
         # NOTE: This is a non-standard addition. In WebIDL, there is no way to associate
         # extended attributes with a return type.
-        moveExtendedAttributesApplicableToTypes($returnType, $extendedAttributeList);
+        $self->moveExtendedAttributesApplicableToTypes($returnType, $extendedAttributeList);
 
         my $operation = $self->parseOperationRest($extendedAttributeList);
         if (defined ($operation)) {
@@ -1601,6 +1668,8 @@ sub parseOptionalIterableInterface
     my $extendedAttributeList = shift;
 
     my $newDataNode = IDLIterable->new();
+
+    $self->assertExtendedAttributesValidForContext($extendedAttributeList, "iterable");
     $newDataNode->extendedAttributes($extendedAttributeList);
 
     $self->assertTokenValue($self->getToken(), "<", __LINE__);
@@ -1815,6 +1884,7 @@ sub parseOperationRest
         $self->assertTokenValue($self->getToken(), ")", __LINE__);
         $self->assertTokenValue($self->getToken(), ";", __LINE__);
 
+        $self->assertExtendedAttributesValidForContext($extendedAttributeList, "operation");
         $newDataNode->extendedAttributes($extendedAttributeList);
         return $newDataNode;
     }
@@ -1880,7 +1950,6 @@ sub parseOptionalOrRequiredArgument
     my $extendedAttributeList = shift;
 
     my $argument = IDLArgument->new();
-    $argument->extendedAttributes($extendedAttributeList);
 
     my $next = $self->nextToken();
     if ($next->value() eq "optional") {
@@ -1891,16 +1960,24 @@ sub parseOptionalOrRequiredArgument
         $argument->isOptional(1);
         $argument->name($self->parseArgumentName());
         $argument->default($self->parseDefault());
+
+        $self->assertExtendedAttributesValidForContext($extendedAttributeList, "argument");
+        $argument->extendedAttributes($extendedAttributeList);
+
         return $argument;
     }
     if ($next->type() == IdentifierToken || $next->value() =~ /$nextExceptionField_1/) {
         my $type = $self->parseType();
-        moveExtendedAttributesApplicableToTypes($type, $extendedAttributeList);
+        $self->moveExtendedAttributesApplicableToTypes($type, $extendedAttributeList);
 
         $argument->type($type);
         $argument->isOptional(0);
         $argument->isVariadic($self->parseEllipsis());
         $argument->name($self->parseArgumentName());
+
+        $self->assertExtendedAttributesValidForContext($extendedAttributeList, "argument");
+        $argument->extendedAttributes($extendedAttributeList);
+
         return $argument;
     }
     $self->assertUnexpectedToken($next->value(), __LINE__);
@@ -2210,6 +2287,7 @@ sub parseTypeWithExtendedAttributes
     my $self = shift;
     
     my $extendedAttributeList = $self->parseExtendedAttributeListAllowEmpty();
+    $self->assertExtendedAttributesValidForContext($extendedAttributeList, "type");
 
     my $next = $self->nextToken();
     if ($next->value() eq "(") {
@@ -2271,6 +2349,7 @@ sub parseUnionMemberType
 {
     my $self = shift;
     my $next = $self->nextToken();
+
     if ($next->value() eq "(") {
         my $unionType = $self->parseUnionType();
         $unionType->isNullable($self->parseNull());
@@ -2278,6 +2357,7 @@ sub parseUnionMemberType
     }
 
     my $extendedAttributeList = $self->parseExtendedAttributeListAllowEmpty();
+    $self->assertExtendedAttributesValidForContext($extendedAttributeList, "type");
 
     if ($next->type() == IdentifierToken || $next->value() =~ /$nextSingleType_1/) {
         my $nonAnyType = $self->parseNonAnyType();
@@ -2710,6 +2790,7 @@ sub applyExtendedAttributeList
         delete $extendedAttributeList->{"CustomConstructors"};
         $extendedAttributeList->{"CustomConstructor"} = "VALUE_IS_MISSING";
     }
+    
     $interface->extendedAttributes($extendedAttributeList);
 }
 

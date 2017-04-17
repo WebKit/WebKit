@@ -55,7 +55,7 @@ JSC::EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionNullableSequenc
 JSC::EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionUnionArg(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionFuncWithClamp(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionFuncWithClampInTypedef(JSC::ExecState*);
-JSC::EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionImmutablePointFunction(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionPointFunction(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionStringSequenceFunction(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionStringSequenceFunction2(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionCallWithSequenceThatRequiresInclude(JSC::ExecState*);
@@ -65,8 +65,8 @@ JSC::EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionMethodWithExcep
 
 JSC::EncodedJSValue jsTestTypedefsUnsignedLongLongAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestTypedefsUnsignedLongLongAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue jsTestTypedefsImmutableSerializedScriptValue(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestTypedefsImmutableSerializedScriptValue(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue jsTestTypedefsSerializedScriptValue(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
+bool setJSTestTypedefsSerializedScriptValue(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestTypedefsConstructorTestSubObj(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 JSC::EncodedJSValue jsTestTypedefsAttributeWithClamp(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestTypedefsAttributeWithClamp(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
@@ -172,7 +172,7 @@ static const HashTableValue JSTestTypedefsPrototypeTableValues[] =
 {
     { "constructor", DontEnum, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestTypedefsConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestTypedefsConstructor) } },
     { "unsignedLongLongAttr", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestTypedefsUnsignedLongLongAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestTypedefsUnsignedLongLongAttr) } },
-    { "immutableSerializedScriptValue", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestTypedefsImmutableSerializedScriptValue), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestTypedefsImmutableSerializedScriptValue) } },
+    { "serializedScriptValue", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestTypedefsSerializedScriptValue), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestTypedefsSerializedScriptValue) } },
     { "attributeWithClamp", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestTypedefsAttributeWithClamp), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestTypedefsAttributeWithClamp) } },
     { "attributeWithClampInTypedef", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestTypedefsAttributeWithClampInTypedef), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestTypedefsAttributeWithClampInTypedef) } },
     { "attrWithGetterException", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestTypedefsAttrWithGetterException), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestTypedefsAttrWithGetterException) } },
@@ -189,7 +189,7 @@ static const HashTableValue JSTestTypedefsPrototypeTableValues[] =
     { "unionArg", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestTypedefsPrototypeFunctionUnionArg), (intptr_t) (1) } },
     { "funcWithClamp", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestTypedefsPrototypeFunctionFuncWithClamp), (intptr_t) (1) } },
     { "funcWithClampInTypedef", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestTypedefsPrototypeFunctionFuncWithClampInTypedef), (intptr_t) (1) } },
-    { "immutablePointFunction", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestTypedefsPrototypeFunctionImmutablePointFunction), (intptr_t) (0) } },
+    { "pointFunction", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestTypedefsPrototypeFunctionPointFunction), (intptr_t) (0) } },
     { "stringSequenceFunction", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestTypedefsPrototypeFunctionStringSequenceFunction), (intptr_t) (1) } },
     { "stringSequenceFunction2", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestTypedefsPrototypeFunctionStringSequenceFunction2), (intptr_t) (1) } },
     { "callWithSequenceThatRequiresInclude", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestTypedefsPrototypeFunctionCallWithSequenceThatRequiresInclude), (intptr_t) (1) } },
@@ -260,19 +260,19 @@ static inline JSValue jsTestTypedefsUnsignedLongLongAttrGetter(ExecState& state,
     return result;
 }
 
-static inline JSValue jsTestTypedefsImmutableSerializedScriptValueGetter(ExecState&, JSTestTypedefs&, ThrowScope& throwScope);
+static inline JSValue jsTestTypedefsSerializedScriptValueGetter(ExecState&, JSTestTypedefs&, ThrowScope& throwScope);
 
-EncodedJSValue jsTestTypedefsImmutableSerializedScriptValue(ExecState* state, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestTypedefsSerializedScriptValue(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
-    return BindingCaller<JSTestTypedefs>::attribute<jsTestTypedefsImmutableSerializedScriptValueGetter>(state, thisValue, "immutableSerializedScriptValue");
+    return BindingCaller<JSTestTypedefs>::attribute<jsTestTypedefsSerializedScriptValueGetter>(state, thisValue, "serializedScriptValue");
 }
 
-static inline JSValue jsTestTypedefsImmutableSerializedScriptValueGetter(ExecState& state, JSTestTypedefs& thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestTypedefsSerializedScriptValueGetter(ExecState& state, JSTestTypedefs& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLSerializedScriptValue<SerializedScriptValue>>(state, *thisObject.globalObject(), impl.immutableSerializedScriptValue());
+    JSValue result = toJS<IDLSerializedScriptValue<SerializedScriptValue>>(state, *thisObject.globalObject(), impl.serializedScriptValue());
     return result;
 }
 
@@ -429,21 +429,21 @@ static inline bool setJSTestTypedefsUnsignedLongLongAttrFunction(ExecState& stat
 }
 
 
-static inline bool setJSTestTypedefsImmutableSerializedScriptValueFunction(ExecState&, JSTestTypedefs&, JSValue, ThrowScope&);
+static inline bool setJSTestTypedefsSerializedScriptValueFunction(ExecState&, JSTestTypedefs&, JSValue, ThrowScope&);
 
-bool setJSTestTypedefsImmutableSerializedScriptValue(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestTypedefsSerializedScriptValue(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
-    return BindingCaller<JSTestTypedefs>::setAttribute<setJSTestTypedefsImmutableSerializedScriptValueFunction>(state, thisValue, encodedValue, "immutableSerializedScriptValue");
+    return BindingCaller<JSTestTypedefs>::setAttribute<setJSTestTypedefsSerializedScriptValueFunction>(state, thisValue, encodedValue, "serializedScriptValue");
 }
 
-static inline bool setJSTestTypedefsImmutableSerializedScriptValueFunction(ExecState& state, JSTestTypedefs& thisObject, JSValue value, ThrowScope& throwScope)
+static inline bool setJSTestTypedefsSerializedScriptValueFunction(ExecState& state, JSTestTypedefs& thisObject, JSValue value, ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLSerializedScriptValue<SerializedScriptValue>>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    impl.setImmutableSerializedScriptValue(WTFMove(nativeValue));
+    impl.setSerializedScriptValue(WTFMove(nativeValue));
     return true;
 }
 
@@ -774,19 +774,19 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionFuncWithClampIn
     return JSValue::encode(jsUndefined());
 }
 
-static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionImmutablePointFunctionCaller(JSC::ExecState*, JSTestTypedefs*, JSC::ThrowScope&);
+static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionPointFunctionCaller(JSC::ExecState*, JSTestTypedefs*, JSC::ThrowScope&);
 
-EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionImmutablePointFunction(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionPointFunction(ExecState* state)
 {
-    return BindingCaller<JSTestTypedefs>::callOperation<jsTestTypedefsPrototypeFunctionImmutablePointFunctionCaller>(state, "immutablePointFunction");
+    return BindingCaller<JSTestTypedefs>::callOperation<jsTestTypedefsPrototypeFunctionPointFunctionCaller>(state, "pointFunction");
 }
 
-static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionImmutablePointFunctionCaller(JSC::ExecState* state, JSTestTypedefs* castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionPointFunctionCaller(JSC::ExecState* state, JSTestTypedefs* castedThis, JSC::ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = castedThis->wrapped();
-    return JSValue::encode(toJS<IDLInterface<SVGPoint>>(*state, *castedThis->globalObject(), impl.immutablePointFunction()));
+    return JSValue::encode(toJS<IDLInterface<SVGPoint>>(*state, *castedThis->globalObject(), impl.pointFunction()));
 }
 
 static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionStringSequenceFunctionCaller(JSC::ExecState*, JSTestTypedefs*, JSC::ThrowScope&);

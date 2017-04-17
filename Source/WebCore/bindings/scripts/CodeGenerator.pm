@@ -39,6 +39,7 @@ my $useOutputDir = "";
 my $useOutputHeadersDir = "";
 my $useDirectories = "";
 my $preprocessor;
+my $idlAttributes;
 my $writeDependencies = 0;
 my $defines = "";
 my $targetIdlFilePath = "";
@@ -144,6 +145,7 @@ sub new
     $writeDependencies = shift;
     $verbose = shift;
     $targetIdlFilePath = shift;
+    $idlAttributes = shift;
 
     bless($reference, $object);
     return $reference;
@@ -355,7 +357,7 @@ sub ParseInterface
 
     # Step #2: Parse the found IDL file (in quiet mode).
     my $parser = IDLParser->new(1);
-    my $document = $parser->Parse($filename, $defines, $preprocessor);
+    my $document = $parser->Parse($filename, $defines, $preprocessor, $idlAttributes);
 
     foreach my $interface (@{$document->interfaces}) {
         if ($interface->type->name eq $interfaceName) {
@@ -466,7 +468,7 @@ sub GetEnumByType
     if ($fileContents =~ /\benum\s+$name/gs) {
         # Parse the IDL.
         my $parser = IDLParser->new(1);
-        my $document = $parser->Parse($filename, $defines, $preprocessor);
+        my $document = $parser->Parse($filename, $defines, $preprocessor, $idlAttributes);
 
         foreach my $enumeration (@{$document->enumerations}) {
             next unless $enumeration->type->name eq $name;
@@ -534,7 +536,7 @@ sub GetDictionaryByType
     if ($fileContents =~ /\bdictionary\s+$name/gs) {
         # Parse the IDL.
         my $parser = IDLParser->new(1);
-        my $document = $parser->Parse($filename, $defines, $preprocessor);
+        my $document = $parser->Parse($filename, $defines, $preprocessor, $idlAttributes);
 
         foreach my $dictionary (@{$document->dictionaries}) {
             next unless $dictionary->type->name eq $name;

@@ -1,3 +1,13 @@
+2017-04-16  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Switch IDLAttributes.txt over to a more structured format so that more information can be added for each attribute
+        https://bugs.webkit.org/show_bug.cgi?id=170843
+
+        Reviewed by Chris Dumez.
+
+        * Source/cmake/WebKitMacros.cmake:
+        Update extension of IDLAttributes to .json
+
 2017-04-13  Don Olmstead  <don.olmstead@am.sony.com>
 
         [WinCairo] Assign WEBKIT_LIBRARIES_DIR to CMAKE_PREFIX_PATH

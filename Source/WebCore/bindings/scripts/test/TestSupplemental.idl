@@ -27,7 +27,7 @@
  */
 
 // This IDL file is for testing the bindings code generator and for tracking
-// changes in its ouput.
+// changes in its output.
 [
     Conditional=Condition11|Condition12,
 ] partial interface TestInterface {
@@ -47,5 +47,5 @@
     [Reflect=CONST_IMPL] const unsigned short SUPPLEMENTALCONSTANT2 = 2;
 
     [JSBuiltin] void builtinFunction();
-    [JSBuiltin, ReadOnly] attribute unsigned short builtinAttribute;
+    [JSBuiltin] attribute unsigned short builtinAttribute;
 };

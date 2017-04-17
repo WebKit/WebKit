@@ -28,7 +28,7 @@
  */
 
 // This IDL file is for testing the bindings code generator and for tracking
-// changes in its ouput.
+// changes in its output.
 [
     Conditional=Condition22|Condition23,
     NoInterfaceObject
