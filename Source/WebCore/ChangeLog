@@ -1,3 +1,33 @@
+2017-04-16  Chris Dumez  <cdumez@apple.com>
+
+        CMD+R / CMD+Q is considered as user interaction and beforeunload alert is shown
+        https://bugs.webkit.org/show_bug.cgi?id=169995
+        <rdar://problem/23798897>
+
+        Reviewed by Sam Weinig.
+
+        Any key event was considered as user interaction with the page, which meant that they
+        would allow beforeunload alerts to be shown even when they do not represent actual
+        user interaction (e.g CMD+R / CMD+Q / CMD+T keyboard shortcuts).
+
+        To address the issue, we now only treat as user interaction with the page key events
+        that are actually handled by the page (i.e. handled by JS, typed into a field, ...).
+
+        Tests: fast/events/beforeunload-alert-handled-keydown.html
+               fast/events/beforeunload-alert-unhandled-keydown.html
+
+        * dom/Document.h:
+        (WebCore::Document::setUserDidInteractWithPage):
+        (WebCore::Document::userDidInteractWithPage):
+        * dom/UserGestureIndicator.cpp:
+        (WebCore::UserGestureIndicator::UserGestureIndicator):
+        * loader/FrameLoader.cpp:
+        (WebCore::shouldAskForNavigationConfirmation):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::keyEvent):
+        (WebCore::EventHandler::internalKeyEvent):
+        * page/EventHandler.h:
+
 2017-04-16  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Switch IDLAttributes.txt over to a more structured format so that more information can be added for each attribute

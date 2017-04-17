@@ -1,3 +1,18 @@
+2017-04-16  Chris Dumez  <cdumez@apple.com>
+
+        CMD+R / CMD+Q is considered as user interaction and beforeunload alert is shown
+        https://bugs.webkit.org/show_bug.cgi?id=169995
+        <rdar://problem/23798897>
+
+        Reviewed by Sam Weinig.
+
+        Add layout test coverage.
+
+        * fast/events/beforeunload-alert-handled-keydown-expected.txt: Added.
+        * fast/events/beforeunload-alert-handled-keydown.html: Added.
+        * fast/events/beforeunload-alert-unhandled-keydown-expected.txt: Added.
+        * fast/events/beforeunload-alert-unhandled-keydown.html: Added.
+
 2017-04-16  Joseph Pecoraro  <pecoraro@apple.com>
 
         test262: test262/test/built-ins/Object/getOwnPropertyNames/15.2.3.4-4-44.js

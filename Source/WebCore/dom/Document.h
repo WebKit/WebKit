@@ -1147,6 +1147,9 @@ public:
     bool hasHadUserInteraction() const { return static_cast<bool>(m_lastHandledUserGestureTimestamp); }
     void updateLastHandledUserGestureTimestamp(MonotonicTime);
 
+    void setUserDidInteractWithPage(bool userDidInteractWithPage) { ASSERT(&topDocument() == this); m_userDidInteractWithPage = userDidInteractWithPage; }
+    bool userDidInteractWithPage() const { ASSERT(&topDocument() == this); return m_userDidInteractWithPage; }
+
     // Used for testing. Count handlers in the main document, and one per frame which contains handlers.
     WEBCORE_EXPORT unsigned wheelEventHandlerCount() const;
     WEBCORE_EXPORT unsigned touchEventHandlerCount() const;
@@ -1734,6 +1737,7 @@ private:
     bool m_visualUpdatesAllowed { true };
 
     bool m_areDeviceMotionAndOrientationUpdatesSuspended { false };
+    bool m_userDidInteractWithPage { false };
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION)
     bool m_isTelephoneNumberParsingAllowed { true };

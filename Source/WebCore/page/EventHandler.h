@@ -347,6 +347,8 @@ private:
 
     WEBCORE_EXPORT bool handleMouseReleaseEvent(const MouseEventWithHitTestResults&);
 
+    bool internalKeyEvent(const PlatformKeyboardEvent&);
+
     std::optional<Cursor> selectCursor(const HitTestResult&, bool shiftKey);
     void updateCursor(FrameView&, const HitTestResult&, bool shiftKey);
 

@@ -1,0 +1,10 @@
+Tests that the beforeunload alert is not shown in case of unhandled keypress. This test passes if you do NOT see a 'CONFIRM NAVIGATION' message at the top.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Simulate an unhandled user key press.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

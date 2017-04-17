@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description("Tests that the beforeunload alert is shown when the user has typed a character into a field. This test passes if you see a 'CONFIRM NAVIGATION' message at the top.");
+jsTestIsAsync = true;
+
+onload = function() {
+    const testFrame = document.getElementById("testFrame");
+    testFrame.contentWindow.onbeforeunload = function(e) {
+        return "PASS: a beforeunload alert was shown.";
+    };
+
+    debug("Simulate user typing letter 'a' into the field.");
+    testInput = document.getElementById("testInput");
+    testInput.focus();
+    if (window.eventSender)
+        eventSender.keyDown("a");
+
+    setTimeout(function() {
+        shouldBeEqualToString("testInput.value", "a");
+        testFrame.src = "about:blank";
+        setTimeout(finishJSTest, 0);
+    }, 0);
+};
+</script>
+<iframe id="testFrame" src="resources/onclick.html"></iframe>
+<input id="testInput" type="text"></input>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

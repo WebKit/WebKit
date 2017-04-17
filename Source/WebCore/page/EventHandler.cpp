@@ -3093,7 +3093,20 @@ bool EventHandler::isKeyEventAllowedInFullScreen(const PlatformKeyboardEvent& ke
 }
 #endif
 
-bool EventHandler::keyEvent(const PlatformKeyboardEvent& initialKeyEvent)
+bool EventHandler::keyEvent(const PlatformKeyboardEvent& keyEvent)
+{
+    Document* topDocument = m_frame.document() ? &m_frame.document()->topDocument() : nullptr;
+    bool savedUserDidInteractWithPage = topDocument ? topDocument->userDidInteractWithPage() : false;
+    bool wasHandled = internalKeyEvent(keyEvent);
+
+    // If the key event was not handled, do not treat it as user interaction with the page.
+    if (topDocument && !wasHandled)
+        topDocument->setUserDidInteractWithPage(savedUserDidInteractWithPage);
+
+    return wasHandled;
+}
+
+bool EventHandler::internalKeyEvent(const PlatformKeyboardEvent& initialKeyEvent)
 {
     Ref<Frame> protectedFrame(m_frame);
     RefPtr<FrameView> protector(m_frame.view());
