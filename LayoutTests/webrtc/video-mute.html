@@ -7,7 +7,7 @@
         <script src="../resources/testharnessreport.js"></script>
     </head>
     <body>
-        <video id="video" autoplay=""></video>
+        <video id="video" autoplay width="640" height="480"></video>
         <canvas id="canvas" width="640" height="480"></canvas>
         <script src ="routines.js"></script>
         <script>
@@ -30,12 +30,28 @@ function isVideoBlack()
     return true;
 }
 
+function pollVideoBlackCheck(expected, resolve)
+{
+    if (isVideoBlack() === expected)
+         resolve();
+
+    setTimeout(() => pollVideoBlackCheck(expected, resolve), 50);
+}
+
+function checkVideoBlack(expected, message)
+{
+    return new Promise((resolve, reject) => {
+       pollVideoBlackCheck(expected, resolve);
+        setTimeout(() => reject(message), 5000);
+    });
+}
+
 var track;
 promise_test((test) => {
     if (window.testRunner)
         testRunner.setUserMediaPermission(true);
 
-    return navigator.mediaDevices.getUserMedia({ video: true}).then((localStream) => {
+    return navigator.mediaDevices.getUserMedia({ video: {width: 640, height: 480}}).then((localStream) => {
         return new Promise((resolve, reject) => {
             track = localStream.getVideoTracks()[0];
 
@@ -50,18 +66,13 @@ promise_test((test) => {
         video.srcObject = remoteStream;
         return video.play();
     }).then(() => {
-        return waitFor(100);
-    }).then(() => {
-         assert_false(isVideoBlack(), "track is enabled, video is not black");
+        return checkVideoBlack(false, "track is enabled, video should not be black");
     }).then(() => {
         track.enabled = false;
-        return waitFor(500);
+        return checkVideoBlack(true, "track is disabled, video should be black");
     }).then(() => {
-        assert_true(isVideoBlack(), "track is disabled, video is black");
         track.enabled = true;
-        return waitFor(500);
-    }).then(() => {
-        assert_false(isVideoBlack(), "track is reenabled, video is not black");
+        return checkVideoBlack(false, "track is reenabled, video should not be black");
     });
 }, "Outgoing muted/unmuted video track");
         </script>
