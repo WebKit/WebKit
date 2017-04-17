@@ -1,3 +1,15 @@
+2017-04-17  Eric Carlson  <eric.carlson@apple.com>
+
+        Provide a way for clients to unmute a media stream.
+        https://bugs.webkit.org/show_bug.cgi?id=170855
+        <rdar://problem/31656855>
+
+        Reviewed by Jon Lee.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _setPageMuted:]): New.
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+
 2017-04-17  Jeremy Jones  <jeremyj@apple.com>
 
         Refactor enumerateDevices to allow separate CaptureDeviceManagers for audio and video.
