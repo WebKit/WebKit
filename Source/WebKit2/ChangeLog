@@ -1,3 +1,43 @@
+2017-04-17  Keith Rollin  <krollin@apple.com>
+
+        Move and update WebLoaderStrategy logging statement
+        https://bugs.webkit.org/show_bug.cgi?id=170140
+
+        Reviewed by Alex Christensen.
+
+        WebLoaderStrategy::scheduleLoad has a logging statement that says, in
+        part: "Resource has been queued for scheduling with the
+        NetworkProcess". This statement is emitted after the
+        ScheduleResourceLoad message has been successfully sent to the
+        NetworkProcess. The logging statement was added at this location to
+        indicate that the resource-load had been successfully handed off; it
+        pairs a similar logging statement that is emitted if the sending of
+        the ScheduleResourceLoad message fails.
+
+        I think it would be better to move this logging statement before the
+        ScheduleResourceLoad message is sent to the NetworkProcess (and change
+        its wording to "Resource is being scheduled with the NetworkProcess").
+        The reason for this change is to help make sure that the sequence of
+        logging statements is more deterministic. In the current form, the
+        message "Resource has been queued for scheduling with the
+        NetworkProcess" normally appears before any NetworkProcess logging
+        statements that indicate that the resource-loading is continuing
+        there, but in rare occasions the logging statements can be reversed.
+        This change in the ordering of the statements has caused a problem in
+        a script I've written that examines the resource-loading process and
+        looks for errors. By ensuring that the WebLoaderStrategy statement
+        always appears before the NetworkResourceLoader statement, the flow
+        makes better sense and the script can be more robust.
+
+        In making this change, we are probably not giving up any assurance
+        that the ScheduleResourceLoad message has been sent to the
+        NetworkResourceLoader. If the message is successfully sent, we'll see
+        logging in the NetworkProcess. If the message has not been sent, we'll
+        see WebLoaderStrategy logging an error.
+
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::scheduleLoad):
+
 2017-04-17  Anders Carlsson  <andersca@apple.com>
 
         Stop using deprecated APIs, part 1
