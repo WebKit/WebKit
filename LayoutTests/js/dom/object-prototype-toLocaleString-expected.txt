@@ -7,6 +7,8 @@ PASS o.toLocaleString() is o.toString()
 PASS o.toLocaleString() is "Dynamic toLocaleString()"
 PASS Object.prototype.toLocaleString.call('Hello, world!') is "Hello, world!"
 PASS Object.prototype.toLocaleString.call('Hello, world!') is "stringPrototypeToString"
+PASS obj.toLocaleString() is obj.toString()
+PASS obj.toLocaleString() threw exception TypeError: Type error.
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -281,23 +281,30 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncToLocaleString(ExecState* exec)
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    // 1. Let O be the result of calling ToObject passing the this value as the argument.
-    JSObject* object = exec->thisValue().toThis(exec, StrictMode).toObject(exec);
+    // 1. Let V be the this value.
+    JSValue thisValue = exec->thisValue();
+
+    // 2. Invoke(V, "toString")
+
+    // Let O be the result of calling ToObject passing the this value as the argument.
+    JSObject* object = thisValue.toThis(exec, StrictMode).toObject(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    // 2. Let toString be the result of calling the [[Get]] internal method of O passing "toString" as the argument.
-    JSValue toString = object->get(exec, vm.propertyNames->toString);
+    // Let toString be the O.[[Get]]("toString", V)
+    PropertySlot slot(thisValue, PropertySlot::InternalMethodType::Get);
+    bool hasProperty = object->getPropertySlot(exec, vm.propertyNames->toString, slot);
+    JSValue toString = hasProperty ? slot.getValue(exec, vm.propertyNames->toString) : jsUndefined();
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    // 3. If IsCallable(toString) is false, throw a TypeError exception.
+    // If IsCallable(toString) is false, throw a TypeError exception.
     CallData callData;
     CallType callType = getCallData(toString, callData);
     if (callType == CallType::None)
-        return JSValue::encode(jsUndefined());
+        return throwVMTypeError(exec, scope);
 
-    // 4. Return the result of calling the [[Call]] internal method of toString passing O as the this value and no arguments.
+    // Return the result of calling the [[Call]] internal method of toString passing the this value and no arguments.
     scope.release();
-    return JSValue::encode(call(exec, toString, callType, callData, object, exec->emptyList()));
+    return JSValue::encode(call(exec, toString, callType, callData, thisValue, exec->emptyList()));
 }
 
 EncodedJSValue JSC_HOST_CALL objectProtoFuncToString(ExecState* exec)

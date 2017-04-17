@@ -1,5 +1,14 @@
 2017-04-16  Joseph Pecoraro  <pecoraro@apple.com>
 
+        test262: test262/test/built-ins/Object/prototype/toLocaleString/primitive_this_value.js
+        https://bugs.webkit.org/show_bug.cgi?id=170882
+
+        Reviewed by Saam Barati.
+
+        * test262.yaml:
+
+2017-04-16  Joseph Pecoraro  <pecoraro@apple.com>
+
         test262: test262/test/built-ins/isNaN/toprimitive-not-callable-throws.js
         https://bugs.webkit.org/show_bug.cgi?id=170888
 

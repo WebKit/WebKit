@@ -13,3 +13,8 @@ var stringPrototypeToString = String.prototype.toString;
 String.prototype.toString = (function(){ return "stringPrototypeToString"; });
 shouldBe("Object.prototype.toLocaleString.call('Hello, world!')", '"stringPrototypeToString"');
 String.prototype.toString = stringPrototypeToString;
+
+var obj = {};
+shouldBe("obj.toLocaleString()", "obj.toString()");
+delete Object.prototype.toString;
+shouldThrow("obj.toLocaleString()");
