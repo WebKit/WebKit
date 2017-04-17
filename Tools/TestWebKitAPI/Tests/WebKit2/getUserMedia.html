@@ -1,14 +1,16 @@
 <script>
-function gotUserMedia(mediaStream)
-{
-    console.log("Got user media");
-}
+    function gotUserMedia(mediaStream)
+    {
+        console.log("Got user media");
+    }
 
-function userMediaError(error)
-{
-    console.log(error);
-}
+    function userMediaError(error)
+    {
+        console.log(error);
+    }
 
-var options = { audio: false, video: true};
-navigator.webkitGetUserMedia(options, gotUserMedia, userMediaError);
+    var constraints = { audio: false, video: true};
+    navigator.mediaDevices.getUserMedia(constraints)
+        .then(gotUserMedia).
+        catch(userMediaError);
 </script>
