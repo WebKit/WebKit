@@ -1,3 +1,13 @@
+2017-04-17  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Fix typo in UIDelegate::mediaCaptureStateDidChange
+        https://bugs.webkit.org/show_bug.cgi?id=170911
+
+        Reviewed by Youenn Fablet.
+
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::UIClient::mediaCaptureStateDidChange): Fix typo.
+
 2017-04-17  Keith Rollin  <krollin@apple.com>
 
         Move and update WebLoaderStrategy logging statement

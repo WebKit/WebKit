@@ -446,7 +446,7 @@ void UIDelegate::UIClient::mediaCaptureStateDidChange(WebCore::MediaProducer::Me
         mediaCaptureState |= _WKMediaCaptureStateActiveMicrophone;
     if (state & WebCore::MediaProducer::HasActiveVideoCaptureDevice)
         mediaCaptureState |= _WKMediaCaptureStateActiveCamera;
-    if (state & WebCore::MediaProducer::HasActiveAudioCaptureDevice)
+    if (state & WebCore::MediaProducer::HasMutedAudioCaptureDevice)
         mediaCaptureState |= _WKMediaCaptureStateMutedMicrophone;
     if (state & WebCore::MediaProducer::HasMutedVideoCaptureDevice)
         mediaCaptureState |= _WKMediaCaptureStateMutedCamera;
