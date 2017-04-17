@@ -197,6 +197,11 @@ private:
     _treatsSHA1SignedCertificatesAsInsecure = YES;
     _needsStorageAccessFromFileURLsQuirk = YES;
 
+#if PLATFORM(IOS)
+    BOOL defaultToSelectionGranularityCharacter = [[NSUserDefaults standardUserDefaults] boolForKey:@"WebKitDebugDefaultSelectionGranularityCharacter"] && WebKit::linkedOnOrAfter(WebKit::SDKVersion::FirstToUseSelectionGranularityCharacterByDefault);
+    _selectionGranularity = defaultToSelectionGranularityCharacter ? WKSelectionGranularityCharacter : WKSelectionGranularityDynamic;
+#endif
+
     return self;
 }
 
