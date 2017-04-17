@@ -1,5 +1,20 @@
 2017-04-17  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Merge r211155.
+
+    2017-01-25  Ryan Haddad  <ryanhaddad@apple.com>
+
+            Test result gardening for ios-simulator.
+
+            Unreviewed test gardening.
+
+            * fast/events/touch/ios/block-without-overflow-scroll-and-passive-observer-on-block-scrolling-state-expected.txt:
+            * fast/events/touch/ios/block-without-overflow-scroll-and-passive-observer-on-document-scrolling-state-expected.txt:
+            * fast/events/touch/ios/block-without-overflow-scroll-scrolling-state-expected.txt:
+            * fast/events/touch/ios/tap-with-active-touch-end-listener-expected.txt:
+
+2017-04-17  Ryan Haddad  <ryanhaddad@apple.com>
+
         Update expected results for rdar://problem/31636583.
 
         * platform/mac/fast/text/complex-text-opacity-expected.txt:
