@@ -1,3 +1,13 @@
+2017-04-17  Xan Lopez  <xan@igalia.com>
+
+        [GTK] Update the Fedora dependencies for WebKitGTK+
+        https://bugs.webkit.org/show_bug.cgi?id=170590
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * gtk/install-dependencies: add a bunch of modules necessary to
+        get a proper set of GStreamer codecs for WebRTC.
+
 2017-04-16  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Switch IDLAttributes.txt over to a more structured format so that more information can be added for each attribute
