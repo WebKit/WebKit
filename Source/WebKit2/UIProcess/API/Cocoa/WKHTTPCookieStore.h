@@ -49,7 +49,7 @@ WK_CLASS_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA))
 /*! @abstract Fetches all stored cookies.
  @param completionHandler A block to invoke with the fetched cookies.
  */
-- (void)allCookies:(void (^)(NSArray<NSHTTPCookie *> *))completionHandler;
+- (void)getAllCookies:(void (^)(NSArray<NSHTTPCookie *> *))completionHandler;
 
 /*! @abstract Set a cookie.
  @param cookie The cookie to set.

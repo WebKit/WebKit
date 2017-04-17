@@ -195,7 +195,7 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     _websiteDataStore->websiteDataStore().setResourceLoadStatisticsEnabled(enabled);
 }
 
-- (WKHTTPCookieStore *)_httpCookieStore
+- (WKHTTPCookieStore *)httpCookieStore
 {
     return WebKit::wrapper(_websiteDataStore->httpCookieStore());
 }

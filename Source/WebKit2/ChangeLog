@@ -1,3 +1,23 @@
+2017-04-17  Brady Eidson  <beidson@apple.com>
+
+        Make WKHTTPCookieStore public.
+        <rdar://problem/31024691> and https://bugs.webkit.org/show_bug.cgi?id=170920
+
+        Reviewed by Geoffrey Garen.
+
+        * UIProcess/API/Cocoa/WKHTTPCookieStore.h:
+        * UIProcess/API/Cocoa/WKHTTPCookieStore.mm:
+        (-[WKHTTPCookieStore getAllCookies:]):
+        (-[WKHTTPCookieStore allCookies:]): Deleted.
+
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.h:
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore httpCookieStore]):
+        (-[WKWebsiteDataStore _httpCookieStore]): Deleted.
+        * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h:
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2017-04-17  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Fix typo in UIDelegate::mediaCaptureStateDidChange

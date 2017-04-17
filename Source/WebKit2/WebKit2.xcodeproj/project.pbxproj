@@ -1064,7 +1064,7 @@
 		51D1243A1E6E0AAB002B2820 /* APIURLSchemeHandlerTask.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51D124381E6DFDB9002B2820 /* APIURLSchemeHandlerTask.cpp */; };
 		51D124911E74BF3C002B2820 /* APIHTTPCookieStore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51D124821E734AC8002B2820 /* APIHTTPCookieStore.cpp */; };
 		51D124921E74BF48002B2820 /* WKHTTPCookieStore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51D124851E734AE3002B2820 /* WKHTTPCookieStore.mm */; };
-		51D124991E763C01002B2820 /* WKHTTPCookieStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D124841E734AE3002B2820 /* WKHTTPCookieStore.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		51D124991E763C01002B2820 /* WKHTTPCookieStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D124841E734AE3002B2820 /* WKHTTPCookieStore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		51D130531382EAC000351EDD /* SecItemRequestData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51D1304F1382EAC000351EDD /* SecItemRequestData.cpp */; };
 		51D130541382EAC000351EDD /* SecItemRequestData.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D130501382EAC000351EDD /* SecItemRequestData.h */; };
 		51D130551382EAC000351EDD /* SecItemResponseData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51D130511382EAC000351EDD /* SecItemResponseData.cpp */; };

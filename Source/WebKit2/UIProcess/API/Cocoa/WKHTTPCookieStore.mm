@@ -76,7 +76,7 @@ private:
     [super dealloc];
 }
 
-- (void)allCookies:(void (^)(NSArray<NSHTTPCookie *> *))completionHandler
+- (void)getAllCookies:(void (^)(NSArray<NSHTTPCookie *> *))completionHandler
 {
     _cookieStore->cookies([handler = adoptNS([completionHandler copy])](const Vector<WebCore::Cookie>& cookies) {
         auto rawHandler = (void (^)(NSArray<NSHTTPCookie *> *))handler.get();

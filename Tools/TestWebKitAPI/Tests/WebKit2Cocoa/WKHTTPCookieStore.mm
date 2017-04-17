@@ -56,14 +56,14 @@ TEST(WebKit2, WKHTTPCookieStore)
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     [webView loadHTMLString:@"Oh hello" baseURL:[NSURL URLWithString:@"http://webkit.org"]];
 
-    globalCookieStore = [WKWebsiteDataStore defaultDataStore]._httpCookieStore;
+    globalCookieStore = [WKWebsiteDataStore defaultDataStore].httpCookieStore;
     RetainPtr<CookieObserver> observer1 = adoptNS([[CookieObserver alloc] init]);
     RetainPtr<CookieObserver> observer2 = adoptNS([[CookieObserver alloc] init]);
     [globalCookieStore addObserver:observer1.get()];
     [globalCookieStore addObserver:observer2.get()];
 
     NSArray<NSHTTPCookie *> *cookies = nil;
-    [globalCookieStore allCookies:[cookiesPtr = &cookies](NSArray<NSHTTPCookie *> *nsCookies) {
+    [globalCookieStore getAllCookies:[cookiesPtr = &cookies](NSArray<NSHTTPCookie *> *nsCookies) {
         *cookiesPtr = [nsCookies retain];
         gotFlag = true;
     }];
@@ -107,7 +107,7 @@ TEST(WebKit2, WKHTTPCookieStore)
     TestWebKitAPI::Util::run(&gotFlag);
     gotFlag = false;
 
-    [globalCookieStore allCookies:[cookiesPtr = &cookies](NSArray<NSHTTPCookie *> *nsCookies) {
+    [globalCookieStore getAllCookies:[cookiesPtr = &cookies](NSArray<NSHTTPCookie *> *nsCookies) {
         *cookiesPtr = [nsCookies retain];
         gotFlag = true;
     }];
@@ -143,7 +143,7 @@ TEST(WebKit2, WKHTTPCookieStore)
     TestWebKitAPI::Util::run(&gotFlag);
     gotFlag = false;
 
-    [globalCookieStore allCookies:[cookiesPtr = &cookies](NSArray<NSHTTPCookie *> *nsCookies) {
+    [globalCookieStore getAllCookies:[cookiesPtr = &cookies](NSArray<NSHTTPCookie *> *nsCookies) {
         *cookiesPtr = [nsCookies retain];
         gotFlag = true;
     }];
