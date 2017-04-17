@@ -66,6 +66,9 @@ WebInspector.DOMDebuggerManager = class DOMDebuggerManager extends WebInspector.
 
             this._restoringBreakpoints = false;
             this._speculativelyResolveBreakpoints();
+
+            if (!this._allRequestsBreakpoint.disabled)
+                this._updateXHRBreakpoint(this._allRequestsBreakpoint);
         }
     }
 

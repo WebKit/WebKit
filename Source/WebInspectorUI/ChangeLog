@@ -1,5 +1,16 @@
 2017-04-17  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: Enabled state of "All Requests" XHR breakpoint not restored correctly
+        https://bugs.webkit.org/show_bug.cgi?id=170916
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Controllers/DOMDebuggerManager.js:
+        (WebInspector.DOMDebuggerManager):
+        Set breakpoint with backend agent, if enabled.
+
+2017-04-17  Matt Baker  <mattbaker@apple.com>
+
         Web Inspector: Show pause reason for "All Requests" XHR breakpoint
         https://bugs.webkit.org/show_bug.cgi?id=170895
 
