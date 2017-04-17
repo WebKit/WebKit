@@ -32,8 +32,6 @@
 namespace WebCore {
 
 struct ApplePayPaymentMethodUpdate {
-    unsigned short status;
-
     ApplePayLineItem newTotal;
     Vector<ApplePayLineItem> newLineItems;
 };

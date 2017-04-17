@@ -222,14 +222,11 @@ bool ArgumentCoder<WebCore::PaymentMethod>::decode(Decoder& decoder, WebCore::Pa
 
 void ArgumentCoder<WebCore::PaymentMethodUpdate>::encode(Encoder& encoder, const WebCore::PaymentMethodUpdate& update)
 {
-    encoder << update.status;
     encoder << update.newTotalAndLineItems;
 }
 
 bool ArgumentCoder<WebCore::PaymentMethodUpdate>::decode(Decoder& decoder, WebCore::PaymentMethodUpdate& update)
 {
-    if (!decoder.decode(update.status))
-        return false;
     if (!decoder.decode(update.newTotalAndLineItems))
         return false;
 

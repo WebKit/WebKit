@@ -181,7 +181,6 @@ struct PaymentAuthorizationResult {
 };
 
 struct PaymentMethodUpdate {
-    PaymentAuthorizationStatus status;
     PaymentRequest::TotalAndLineItems newTotalAndLineItems;
 };
 

@@ -1,3 +1,20 @@
+2017-04-17  Anders Carlsson  <andersca@apple.com>
+
+        Stop using deprecated APIs, part 1
+        https://bugs.webkit.org/show_bug.cgi?id=170915
+        rdar://problem/31589635
+
+        Reviewed by Tim Horton.
+
+        Get rid of the status parameter from ApplePayPaymentMethodUpdate.
+
+        * Modules/applepay/ApplePayPaymentMethodUpdate.h:
+        * Modules/applepay/ApplePayPaymentMethodUpdate.idl:
+        * Modules/applepay/ApplePaySession.cpp:
+        (WebCore::convertAndValidate):
+        (WebCore::ApplePaySession::completePaymentMethodSelection):
+        * Modules/applepay/PaymentRequest.h:
+
 2017-04-17  Youenn Fablet  <youenn@apple.com>
 
         Disable outdated WritableStream API

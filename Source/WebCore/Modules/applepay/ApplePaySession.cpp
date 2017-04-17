@@ -444,11 +444,6 @@ static ExceptionOr<PaymentMethodUpdate> convertAndValidate(ApplePayPaymentMethod
 {
     PaymentMethodUpdate convertedUpdate;
 
-    auto authorizationStatus = toPaymentAuthorizationStatus(update.status);
-    if (!authorizationStatus)
-        return Exception { INVALID_ACCESS_ERR };
-    convertedUpdate.status = *authorizationStatus;
-
     auto convertedNewTotal = convertAndValidateTotal(WTFMove(update.newTotal));
     if (convertedNewTotal.hasException())
         return convertedNewTotal.releaseException();
@@ -846,7 +841,6 @@ ExceptionOr<void> ApplePaySession::completePaymentMethodSelection(ApplePayLineIt
 {
     ApplePayPaymentMethodUpdate update;
 
-    update.status = STATUS_SUCCESS;
     update.newTotal = WTFMove(newTotal);
     update.newLineItems = WTFMove(newLineItems);
 

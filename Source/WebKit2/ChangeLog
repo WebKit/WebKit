@@ -1,3 +1,20 @@
+2017-04-17  Anders Carlsson  <andersca@apple.com>
+
+        Stop using deprecated APIs, part 1
+        https://bugs.webkit.org/show_bug.cgi?id=170915
+        rdar://problem/31589635
+
+        Reviewed by Tim Horton.
+
+        Stop using the PKPaymentRequestPaymentMethodUpdate initializer that takes a status, it's been deprecated
+        and we always passed PKPaymentAuthorizationStatusSuccess anyway.
+
+        * Shared/Cocoa/WebCoreArgumentCodersCocoa.mm:
+        (IPC::ArgumentCoder<WebCore::PaymentMethodUpdate>::encode):
+        (IPC::ArgumentCoder<WebCore::PaymentMethodUpdate>::decode):
+        * UIProcess/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.mm:
+        (WebKit::WebPaymentCoordinatorProxy::platformCompletePaymentMethodSelection):
+
 2017-04-17  Youenn Fablet  <youenn@apple.com>
 
         Disable outdated WritableStream API
