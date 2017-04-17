@@ -1,3 +1,18 @@
+2017-04-17  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: XHR breakpoints restored from settings do not appear in the sidebar
+        https://bugs.webkit.org/show_bug.cgi?id=170890
+
+        Reviewed by Joseph Pecoraro.
+
+        Need to check for existing breakpoints when XHRBreakpointTreeController
+        is constructed, instead of just listening for added breakpoints.
+
+        * UserInterface/Controllers/XHRBreakpointTreeController.js:
+        (WebInspector.XHRBreakpointTreeController):
+        (WebInspector.XHRBreakpointTreeController.prototype._xhrBreakpointAdded):
+        (WebInspector.XHRBreakpointTreeController.prototype._addTreeElement):
+
 2017-04-14  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: WebSockets: messages with non-latin letters are displayed incorrectly
