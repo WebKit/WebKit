@@ -1,3 +1,13 @@
+2017-04-17  Youenn Fablet  <youenn@apple.com>
+
+        RTCPeerConnection addTrack does not require a stream parameter
+        https://bugs.webkit.org/show_bug.cgi?id=170894
+
+        Reviewed by Alex Christensen.
+
+        * webrtc/video-addTrack-expected.txt: Added.
+        * webrtc/video-addTrack.html: Added.
+
 2017-04-16  Joseph Pecoraro  <pecoraro@apple.com>
 
         test262: test262/test/built-ins/Object/prototype/toLocaleString/primitive_this_value.js

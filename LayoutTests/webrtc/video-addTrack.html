@@ -1,0 +1,82 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Testing basic video exchange from offerer to receiver</title>
+        <script src="../resources/testharness.js"></script>
+        <script src="../resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <video id="video" autoplay=""></video>
+        <canvas id="canvas" width="640" height="480"></canvas>
+        <script src ="routines.js"></script>
+        <script>
+video = document.getElementById("video");
+canvas = document.getElementById("canvas");
+
+function testImage(wait)
+{
+  test(() => {
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    imageData = canvas.getContext('2d').getImageData(10, 325, 250, 1);
+    data = imageData.data;
+
+    var index = 20;
+    assert_true(data[index] < 100);
+    assert_true(data[index + 1] < 100);
+    assert_true(data[index + 2] < 100);
+
+    index = 80;
+    assert_true(data[index] > 200);
+    assert_true(data[index + 1] > 200);
+    assert_true(data[index + 2] > 200);
+
+    index += 80;
+    assert_true(data[index] > 200);
+    assert_true(data[index + 1] > 200);
+    assert_true(data[index + 2] < 100);
+  }, "Testing image result, wait = " + wait);
+}
+
+function testBasicVideoExchangeWithAddTrack(waitForSecondTrack)
+{
+  promise_test((test) => {
+    if (window.testRunner)
+        testRunner.setUserMediaPermission(true);
+
+    return navigator.mediaDevices.getUserMedia({audio: true, video: true}).then((stream) => {
+        return new Promise((resolve, reject) => {
+            createConnections((firstConnection) => {
+                assert_equals(stream.getTracks().length, 2);
+                stream.getTracks().forEach(track => firstConnection.addTrack(track));
+            }, (secondConnection) => {
+                var count = 0;
+                secondConnection.ontrack = (trackEvent) => {
+                    window.test(function() {
+                        if (trackEvent.track.kind === "video")
+                            assert_equals(trackEvent.track.id, stream.getVideoTracks()[0].id);
+                        else
+                            assert_equals(trackEvent.track.id, stream.getAudioTracks()[0].id);
+                    }, " track " + count + ", wait = " + waitForSecondTrack);
+                    if (count++ === (waitForSecondTrack ? 1 : 0))
+                        resolve(trackEvent.streams[0]);
+                };
+            });
+            setTimeout(() => reject("Test timed out"), 5000);
+        });
+    }).then((stream) => {
+        video.srcObject = stream;
+        return video.play();
+    }).then(() => {
+        testImage(waitForSecondTrack);
+    });
+  }, "Basic video exchange with addTrack - " + (waitForSecondTrack ? "waiting for second track before playing" : "not waiting for second track to play"));
+}
+testBasicVideoExchangeWithAddTrack(true);
+testBasicVideoExchangeWithAddTrack(false);
+        </script>
+    </body>
+</html>

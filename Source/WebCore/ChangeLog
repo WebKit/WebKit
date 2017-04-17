@@ -1,5 +1,17 @@
 2017-04-17  Youenn Fablet  <youenn@apple.com>
 
+        RTCPeerConnection addTrack does not require a stream parameter
+        https://bugs.webkit.org/show_bug.cgi?id=170894
+
+        Reviewed by Alex Christensen.
+
+        Test: webrtc/video-addTrack.html
+
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::addTrack): Removing obsolete error throwing.
+
+2017-04-17  Youenn Fablet  <youenn@apple.com>
+
         Add an external libwebrtc encoder factory in WebCore
         https://bugs.webkit.org/show_bug.cgi?id=170883
 

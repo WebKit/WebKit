@@ -101,10 +101,6 @@ ExceptionOr<Ref<RTCRtpSender>> RTCPeerConnection::addTrack(Ref<MediaStreamTrack>
     if (isClosed())
         return Exception { INVALID_STATE_ERR };
 
-    // Require at least one stream until https://github.com/w3c/webrtc-pc/issues/288 is resolved
-    if (!streams.size())
-        return Exception { NOT_SUPPORTED_ERR };
-
     for (RTCRtpSender& sender : m_transceiverSet->senders()) {
         if (sender.trackId() == track->id())
             return Exception { INVALID_ACCESS_ERR };
