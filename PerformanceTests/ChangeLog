@@ -1,3 +1,16 @@
+2017-04-17  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r215366.
+
+        This test is failing on performance bots.
+
+        Reverted changeset:
+
+        "Add performance test for asking the platform for a font for
+        U+2060 WORD JOINER"
+        https://bugs.webkit.org/show_bug.cgi?id=170842
+        http://trac.webkit.org/changeset/215366
+
 2017-04-14  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Add performance test for asking the platform for a font for U+2060 WORD JOINER

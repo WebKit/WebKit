@@ -140,22 +140,22 @@ public:
             return nullptr;
         // The width cache is not really profitable unless we're doing expensive glyph transformations.
         if (!hasKerningOrLigatures)
-            return nullptr;
+            return 0;
         // Word spacing and letter spacing can change the width of a word.
         if (hasWordSpacingOrLetterSpacing)
-            return nullptr;
+            return 0;
         // Since this is just a width cache, we don't have enough information to satisfy glyph queries.
         if (glyphOverflow)
-            return nullptr;
+            return 0;
         // If we allow tabs and a tab occurs inside a word, the width of the word varies based on its position on the line.
         if (run.allowTabs())
-            return nullptr;
+            return 0;
         if (static_cast<unsigned>(run.length()) > SmallStringKey::capacity())
-            return nullptr;
+            return 0;
 
         if (m_countdown > 0) {
             --m_countdown;
-            return nullptr;
+            return 0;
         }
 
         return addSlowCase(run.text(), entry);
@@ -207,7 +207,7 @@ private:
         // No need to be fancy: we're just trying to avoid pathological growth.
         m_singleCharMap.clear();
         m_map.clear();
-        return nullptr;
+        return 0;
     }
 
     typedef HashMap<SmallStringKey, float, SmallStringKeyHash, SmallStringKeyHashTraits> Map;
