@@ -58,7 +58,7 @@ public:
     void text(FetchBodyOwner&, Ref<DeferredPromise>&&);
     void formData(FetchBodyOwner&, Ref<DeferredPromise>&& promise) { promise.get().reject(0); }
 
-#if ENABLE(READABLE_STREAM_API)
+#if ENABLE(STREAMS_API)
     void consumeAsStream(FetchBodyOwner&, FetchResponseSource&);
 #endif
 

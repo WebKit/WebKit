@@ -64,9 +64,9 @@ enum ResponseType { "basic", "cors", "default", "error", "opaque", "opaqueredire
 
     [NewObject, PrivateIdentifier] FetchResponse cloneForJS();
 
-    [Conditional=READABLE_STREAM_API, PrivateIdentifier] void startConsumingStream(unsigned short type);
-    [Conditional=READABLE_STREAM_API, PrivateIdentifier] void consumeChunk(Uint8Array chunk);
-    [Conditional=READABLE_STREAM_API, PrivateIdentifier] Promise<any> finishConsumingStream();
+    [Conditional=STREAMS_API, PrivateIdentifier] void startConsumingStream(unsigned short type);
+    [Conditional=STREAMS_API, PrivateIdentifier] void consumeChunk(Uint8Array chunk);
+    [Conditional=STREAMS_API, PrivateIdentifier] Promise<any> finishConsumingStream();
 
     [PrivateIdentifier] Promise<any> consume(unsigned short type);
     [PrivateIdentifier] boolean isLoading();

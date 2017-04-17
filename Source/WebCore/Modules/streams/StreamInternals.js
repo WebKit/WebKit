@@ -25,7 +25,7 @@
  */
 
 
-// @conditional=ENABLE(READABLE_STREAM_API) || ENABLE(WRITABLE_STREAM_API)
+// @conditional=ENABLE(STREAMS_API)
 // @internal
 
 function shieldingPromiseResolve(result)

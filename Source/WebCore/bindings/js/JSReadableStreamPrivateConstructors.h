@@ -18,7 +18,7 @@
 
 #pragma once
 
-#if ENABLE(READABLE_STREAM_API)
+#if ENABLE(STREAMS_API)
 
 namespace JSC {
 class JSObject;
@@ -32,11 +32,9 @@ class JSDOMGlobalObject;
 JSC::JSObject* createReadableStreamDefaultReaderPrivateConstructor(JSC::VM&, JSDOMGlobalObject&);
 JSC::JSObject* createReadableStreamDefaultControllerPrivateConstructor(JSC::VM&, JSDOMGlobalObject&);
 
-#if ENABLE(READABLE_BYTE_STREAM_API)
 JSC::JSObject* createReadableByteStreamControllerPrivateConstructor(JSC::VM&, JSDOMGlobalObject&);
 JSC::JSObject* createReadableStreamBYOBRequestPrivateConstructor(JSC::VM&, JSDOMGlobalObject&);
-#endif
 
 } // namespace WebCore
 
-#endif // ENABLE(READABLE_STREAM_API)
+#endif // ENABLE(STREAMS_API)

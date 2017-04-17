@@ -28,7 +28,7 @@
  */
 
 [
-    Conditional=READABLE_STREAM_API,
+    Conditional=STREAMS_API,
     Constructor(optional any underlyingSource, optional any options),
     Exposed=(Window,Worker),
     JSBuiltin,

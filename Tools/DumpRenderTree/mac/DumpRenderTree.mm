@@ -852,6 +852,8 @@ static void enableExperimentalFeatures(WebPreferences* preferences)
     [preferences setPeerConnectionEnabled:YES];
     [preferences setWebRTCLegacyAPIEnabled:YES];
     [preferences setCredentialManagementEnabled:YES];
+    [preferences setReadableByteStreamAPIEnabled:YES];
+    [preferences setWritableStreamAPIEnabled:YES];
 }
 
 // Called before each test.

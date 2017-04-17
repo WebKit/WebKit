@@ -152,6 +152,7 @@
     macro(WebGPUTexture) \
     macro(WebGPUTextureDescriptor) \
     macro(WebSocket) \
+    macro(WritableStream) \
     macro(__defineGetter__) \
     macro(__defineSetter__) \
     macro(__lookupGetter__) \

@@ -24,7 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// @conditional=ENABLE(READABLE_STREAM_API)
+// @conditional=ENABLE(STREAMS_API)
 
 function initializeReadableStream(underlyingSource, strategy)
 {
@@ -52,16 +52,13 @@ function initializeReadableStream(underlyingSource, strategy)
     const typeString = @String(type);
 
     if (typeString === "bytes") {
+        if (!@readableByteStreamAPIEnabled())
+            @throwTypeError("ReadableByteStreamController is not implemented");
+
         if (strategy.highWaterMark === @undefined)
             strategy.highWaterMark = 0;
-        // FIXME: When ReadableByteStreamController is no more dependent on a compile flag, specific error handling can be removed.
-        // Constructor is not necessarily available if the byteStream part of Readeable Stream API is not activated. Therefore, a
-        // specific handling of error is done.
-        try {
-            let readableByteStreamControllerConstructor = @ReadableByteStreamController;
-        } catch (e) {
-            @throwTypeError("ReadableByteStreamController is not implemented");
-        }
+
+        let readableByteStreamControllerConstructor = @ReadableByteStreamController;
         this.@readableStreamController = new @ReadableByteStreamController(this, underlyingSource, strategy.highWaterMark);
     } else if (type === @undefined) {
         if (strategy.highWaterMark === @undefined)

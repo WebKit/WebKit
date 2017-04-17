@@ -20,7 +20,7 @@
 #include "config.h"
 #include "JSReadableStreamPrivateConstructors.h"
 
-#if ENABLE(READABLE_STREAM_API)
+#if ENABLE(STREAMS_API)
 
 #include "JSDOMBuiltinConstructor.h"
 #include "JSReadableByteStreamController.h"
@@ -61,7 +61,6 @@ EncodedJSValue JSC_HOST_CALL constructJSReadableStreamDefaultReader(ExecState& e
     return JSValue::encode(JSC::construct(&exec, constructor, constructType, constructData, args));
 }
 
-#if ENABLE(READABLE_BYTE_STREAM_API)
 // Public JS ReadableByteStreamController and ReadableStreamBYOBRequest constructor callback.
 EncodedJSValue JSC_HOST_CALL constructJSReadableByteStreamController(ExecState& exec)
 {
@@ -76,30 +75,23 @@ EncodedJSValue JSC_HOST_CALL constructJSReadableStreamBYOBRequest(ExecState& exe
     auto scope = DECLARE_THROW_SCOPE(vm);
     return throwVMTypeError(&exec, scope, ASCIILiteral("ReadableStreamBYOBRequest constructor should not be called directly"));
 }
-#endif
 
 // Private JS ReadableStreamDefaultReader and ReadableStreamDefaultController constructors.
 using JSBuiltinReadableStreamDefaultReaderPrivateConstructor = JSDOMBuiltinConstructor<JSReadableStreamDefaultReader>;
 using JSBuiltinReadableStreamDefaultControllerPrivateConstructor = JSDOMBuiltinConstructor<JSReadableStreamDefaultController>;
-#if ENABLE(READABLE_BYTE_STREAM_API)
 // Private JS ReadableByteStreamController constructor.
 using JSBuiltinReadableByteStreamControllerPrivateConstructor = JSDOMBuiltinConstructor<JSReadableByteStreamController>;
 using JSBuiltinReadableStreamBYOBRequestPrivateConstructor = JSDOMBuiltinConstructor<JSReadableStreamBYOBRequest>;
-#endif
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSBuiltinReadableStreamDefaultReaderPrivateConstructor);
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSBuiltinReadableStreamDefaultControllerPrivateConstructor);
-#if ENABLE(READABLE_BYTE_STREAM_API)
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSBuiltinReadableByteStreamControllerPrivateConstructor);
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSBuiltinReadableStreamBYOBRequestPrivateConstructor);
-#endif
 
 template<> const ClassInfo JSBuiltinReadableStreamDefaultReaderPrivateConstructor::s_info = { "ReadableStreamDefaultReaderPrivateConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSBuiltinReadableStreamDefaultReaderPrivateConstructor) };
 template<> const ClassInfo JSBuiltinReadableStreamDefaultControllerPrivateConstructor::s_info = { "ReadableStreamDefaultControllerPrivateConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSBuiltinReadableStreamDefaultControllerPrivateConstructor) };
-#if ENABLE(READABLE_BYTE_STREAM_API)
 template<> const ClassInfo JSBuiltinReadableByteStreamControllerPrivateConstructor::s_info = { "ReadableByteStreamControllerPrivateConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSBuiltinReadableByteStreamControllerPrivateConstructor) };
 template<> const ClassInfo JSBuiltinReadableStreamBYOBRequestPrivateConstructor::s_info = { "ReadableStreamBYOBRequestPrivateConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSBuiltinReadableStreamBYOBRequestPrivateConstructor) };
-#endif
 
 template<> FunctionExecutable* JSBuiltinReadableStreamDefaultReaderPrivateConstructor::initializeExecutable(JSC::VM& vm)
 {
@@ -111,7 +103,6 @@ template<> FunctionExecutable* JSBuiltinReadableStreamDefaultControllerPrivateCo
     return readableStreamInternalsPrivateInitializeReadableStreamDefaultControllerCodeGenerator(vm);
 }
 
-#if ENABLE(READABLE_BYTE_STREAM_API)
 template<> FunctionExecutable* JSBuiltinReadableByteStreamControllerPrivateConstructor::initializeExecutable(JSC::VM& vm)
 {
     return readableByteStreamInternalsPrivateInitializeReadableByteStreamControllerCodeGenerator(vm);
@@ -121,7 +112,6 @@ template<> FunctionExecutable* JSBuiltinReadableStreamBYOBRequestPrivateConstruc
 {
     return readableByteStreamInternalsPrivateInitializeReadableStreamBYOBRequestCodeGenerator(vm);
 }
-#endif
 
 JSObject* createReadableStreamDefaultReaderPrivateConstructor(VM& vm, JSDOMGlobalObject& globalObject)
 {
@@ -133,7 +123,6 @@ JSObject* createReadableStreamDefaultControllerPrivateConstructor(VM& vm, JSDOMG
     return JSBuiltinReadableStreamDefaultControllerPrivateConstructor::create(vm, JSBuiltinReadableStreamDefaultControllerPrivateConstructor::createStructure(vm, globalObject, globalObject.objectPrototype()), globalObject);
 }
 
-#if ENABLE(READABLE_BYTE_STREAM_API)
 JSObject* createReadableByteStreamControllerPrivateConstructor(VM& vm, JSDOMGlobalObject& globalObject)
 {
     return JSBuiltinReadableByteStreamControllerPrivateConstructor::create(vm, JSBuiltinReadableByteStreamControllerPrivateConstructor::createStructure(vm, globalObject, globalObject.objectPrototype()), globalObject);
@@ -143,7 +132,6 @@ JSObject* createReadableStreamBYOBRequestPrivateConstructor(VM& vm, JSDOMGlobalO
 {
     return JSBuiltinReadableStreamBYOBRequestPrivateConstructor::create(vm, JSBuiltinReadableStreamBYOBRequestPrivateConstructor::createStructure(vm, globalObject, globalObject.objectPrototype()), globalObject);
 }
-#endif
 
 } // namespace WebCore
 

@@ -3769,7 +3769,7 @@ void Internals::setShowAllPlugins(bool show)
     page->setShowAllPlugins(show);
 }
 
-#if ENABLE(READABLE_STREAM_API)
+#if ENABLE(STREAMS_API)
 
 bool Internals::isReadableStreamDisturbed(JSC::ExecState& state, JSValue stream)
 {
@@ -3794,8 +3794,6 @@ bool Internals::isReadableStreamDisturbed(JSC::ExecState& state, JSValue stream)
     return returnedValue.asBoolean();
 }
 
-#if ENABLE(READABLE_BYTE_STREAM_API)
-
 JSValue Internals::cloneArrayBuffer(JSC::ExecState& state, JSValue buffer, JSValue srcByteOffset, JSValue srcLength)
 {
     JSGlobalObject* globalObject = state.vmEntryGlobalObject();
@@ -3819,7 +3817,6 @@ JSValue Internals::cloneArrayBuffer(JSC::ExecState& state, JSValue buffer, JSVal
     return JSC::call(&state, function, callType, callData, JSC::jsUndefined(), arguments);
 }
 
-#endif
 #endif
 
 String Internals::resourceLoadStatisticsForOrigin(const String& origin)

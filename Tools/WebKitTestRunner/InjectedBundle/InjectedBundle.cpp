@@ -332,6 +332,9 @@ void InjectedBundle::beginTesting(WKDictionaryRef settings)
 
     m_testRunner->setFetchAPIEnabled(true);
 
+    m_testRunner->setWritableStreamAPIEnabled(true);
+    m_testRunner->setReadableByteStreamAPIEnabled(true);
+
     m_testRunner->setDownloadAttributeEnabled(true);
 
     m_testRunner->setEncryptedMediaAPIEnabled(true);

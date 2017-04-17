@@ -28,7 +28,7 @@
  */
 
 [
-    Conditional=READABLE_STREAM_API,
+    Conditional=STREAMS_API,
     CustomConstructor(ReadableStream stream, any underlyingSource, unsigned long size, unsigned long highWaterMark),
     Exposed=(Window,Worker),
     JSBuiltin,

@@ -1,3 +1,77 @@
+2017-04-17  Youenn Fablet  <youenn@apple.com>
+
+        Disable outdated WritableStream API
+        https://bugs.webkit.org/show_bug.cgi?id=170749
+        <rdar://problem/31446233>
+
+        Reviewed by Alex Christensen.
+
+        No change of behavior.
+        Replacing READABLE_STREAM_API, READABLE_BYTE_STREAM_API and WRITABLE_STREAM_API compilation flag by:
+        - A STREAMS_API compilation flag.
+        - A ReadableByteStreamAPI and WritableStreamAPI runtime flags, turned off except for RWT and DRT.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * Modules/fetch/FetchBody.cpp:
+        * Modules/fetch/FetchBody.h:
+        * Modules/fetch/FetchBodyOwner.cpp:
+        (WebCore::FetchBodyOwner::isDisturbedOrLocked):
+        (WebCore::FetchBodyOwner::blobLoadingSucceeded):
+        (WebCore::FetchBodyOwner::blobLoadingFailed):
+        (WebCore::FetchBodyOwner::blobChunk):
+        * Modules/fetch/FetchBodyOwner.h:
+        * Modules/fetch/FetchResponse.cpp:
+        (WebCore::FetchResponse::BodyLoader::didSucceed):
+        (WebCore::FetchResponse::BodyLoader::didFail):
+        (WebCore::FetchResponse::BodyLoader::didReceiveData):
+        * Modules/fetch/FetchResponse.h:
+        * Modules/fetch/FetchResponse.idl:
+        * Modules/fetch/FetchResponseSource.cpp:
+        * Modules/fetch/FetchResponseSource.h:
+        * Modules/streams/ByteLengthQueuingStrategy.idl:
+        * Modules/streams/ByteLengthQueuingStrategy.js:
+        * Modules/streams/CountQueuingStrategy.idl:
+        * Modules/streams/CountQueuingStrategy.js:
+        * Modules/streams/ReadableByteStreamController.idl:
+        * Modules/streams/ReadableByteStreamController.js:
+        * Modules/streams/ReadableByteStreamInternals.js:
+        * Modules/streams/ReadableStream.idl:
+        * Modules/streams/ReadableStream.js:
+        (initializeReadableStream): Using readableByteStreamAPI runtime flag directly.
+        * Modules/streams/ReadableStreamBYOBRequest.idl:
+        * Modules/streams/ReadableStreamBYOBRequest.js:
+        * Modules/streams/ReadableStreamDefaultController.idl:
+        * Modules/streams/ReadableStreamDefaultController.js:
+        * Modules/streams/ReadableStreamDefaultReader.idl:
+        * Modules/streams/ReadableStreamDefaultReader.js:
+        * Modules/streams/ReadableStreamInternals.js:
+        * Modules/streams/ReadableStreamSource.h:
+        * Modules/streams/ReadableStreamSource.idl:
+        * Modules/streams/StreamInternals.js:
+        * Modules/streams/WritableStream.idl:
+        * Modules/streams/WritableStream.js:
+        * Modules/streams/WritableStreamInternals.js:
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::isReadableByteStreamAPIEnabled):
+        (WebCore::JSDOMGlobalObject::addBuiltinGlobals):
+        * bindings/js/JSReadableStreamPrivateConstructors.cpp:
+        (WebCore::constructJSReadableStreamBYOBRequest):
+        (WebCore::JSBuiltinReadableStreamBYOBRequestPrivateConstructor::initializeExecutable):
+        (WebCore::createReadableStreamBYOBRequestPrivateConstructor):
+        * bindings/js/JSReadableStreamPrivateConstructors.h:
+        * bindings/js/JSReadableStreamSourceCustom.cpp:
+        * bindings/js/ReadableStreamDefaultController.cpp:
+        * bindings/js/ReadableStreamDefaultController.h:
+        * bindings/js/WebCoreBuiltinNames.h:
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setReadableByteStreamAPIEnabled):
+        (WebCore::RuntimeEnabledFeatures::readableByteStreamAPIEnabled):
+        (WebCore::RuntimeEnabledFeatures::setWritableStreamAPIEnabled):
+        (WebCore::RuntimeEnabledFeatures::writableStreamAPIEnabled):
+        * testing/Internals.cpp:
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2017-04-17  Tim Horton  <timothy_horton@apple.com>
 
         Provide a viewport parameter to disable clipping to the safe area

@@ -80,6 +80,7 @@ namespace WebCore {
     macro(reader) \
     macro(readIntoRequests) \
     macro(readRequests) \
+    macro(readableByteStreamAPIEnabled) \
     macro(readableStreamController) \
     macro(readyPromiseCapability) \
     macro(removeTrack) \

@@ -29,7 +29,7 @@
 #include "config.h"
 #include "FetchResponseSource.h"
 
-#if ENABLE(FETCH_API) && ENABLE(READABLE_STREAM_API)
+#if ENABLE(FETCH_API) && ENABLE(STREAMS_API)
 
 #include "FetchResponse.h"
 
@@ -84,4 +84,4 @@ void FetchResponseSource::error(const String& value)
 
 } // namespace WebCore
 
-#endif // ENABLE(FETCH_API) && ENABLE(READABLE_STREAM_API)
+#endif // ENABLE(FETCH_API) && ENABLE(STREAMS_API)
