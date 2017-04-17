@@ -1,3 +1,44 @@
+2017-04-17  Tim Horton  <timothy_horton@apple.com>
+
+        Provide a viewport parameter to disable clipping to the safe area
+        https://bugs.webkit.org/show_bug.cgi?id=170766
+        <rdar://problem/31564634>
+
+        Reviewed by Beth Dakin.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::resetState):
+        (WebKit::WebPageProxy::setClipToSafeArea):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::clipToSafeArea):
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::didChangeClipToSafeArea):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * UIProcess/API/gtk/PageClientImpl.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::didChangeClipToSafeArea):
+        * UIProcess/mac/PageClientImpl.h:
+        Forward clip-to-safe-area changes from ChromeClient to WKWebView.
+        Update visible content rects when it changes, which will
+        result in a call to updateFixedClippingView, as below.
+        Keep track of the current state in the UI process.
+
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _contentMayDrawInObscuredInsets]):
+        Expose the current state of the clip-to-safe-area bit as SPI.
+
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView updateFixedClippingView:]):
+        Disable fixed clipping when clip-to-safe-area is disabled.
+        
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::viewportConfigurationChanged):
+        Push the viewport's clip-to-safe-area bit onto the main frame's FrameView.
+
 2017-04-17  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Move isNullFunctionPointer down into WTF

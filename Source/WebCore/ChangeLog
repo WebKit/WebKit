@@ -1,3 +1,56 @@
+2017-04-17  Tim Horton  <timothy_horton@apple.com>
+
+        Provide a viewport parameter to disable clipping to the safe area
+        https://bugs.webkit.org/show_bug.cgi?id=170766
+        <rdar://problem/31564634>
+
+        Reviewed by Beth Dakin.
+
+        Tests: tiled-drawing/ios/viewport-clip-to-safe-area-no-gets-margin-tiles.html,
+               tiled-drawing/ios/viewport-clip-to-safe-area-yes-gets-no-margin-tiles.html,
+
+        * dom/ViewportArguments.cpp:
+        (WebCore::ViewportArguments::resolve):
+        (WebCore::setViewportFeature):
+        * dom/ViewportArguments.h:
+        (WebCore::ViewportArguments::operator==):
+        * page/ViewportConfiguration.cpp:
+        (WebCore::ViewportConfiguration::updateConfiguration):
+        (WebCore::operator<<):
+        (WebCore::ViewportConfiguration::description):
+        * page/ViewportConfiguration.h:
+        (WebCore::ViewportConfiguration::Parameters::Parameters):
+        (WebCore::ViewportConfiguration::clipToSafeArea):
+        Add viewport parameter.
+
+        * page/ChromeClient.h:
+        * page/FrameView.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::enableSpeculativeTilingIfNeeded):
+        If not clipping to the safe area, enable "speculative" tiling immediately,
+        because the margin tiles can be visible immediately.
+
+        (WebCore::FrameView::hasExtendedBackgroundRectForPainting):
+        (WebCore::FrameView::updateTilesForExtendedBackgroundMode):
+        Don't check the setting here; just respect the mode that is computed
+        by calculateExtendedBackgroundMode.
+
+        (WebCore::FrameView::calculateExtendedBackgroundMode):
+        If the viewport parameter was set, add margin tiles on both axes.
+
+        (WebCore::FrameView::setClipToSafeArea):
+        Notify ChromeClient of the change, and re-compute the margin tile mode.
+
+        * rendering/RenderLayerCompositor.h:
+        * rendering/RenderLayerCompositor.cpp:
+        Factor out code that decides whether the content layer clips to bounds,
+        and make it take the new viewport parameter into account.
+
+        * rendering/RenderObject.cpp:
+        Don't clip RenderView repaints to RenderView's GraphicsLayer bounds if
+        clip-to-safe-area is off, just like we do for slow-repaint objects in
+        extended background mode.
+
 2017-04-17  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Move isNullFunctionPointer down into WTF

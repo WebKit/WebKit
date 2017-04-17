@@ -251,6 +251,8 @@ private:
 
     void didRestoreScrollPosition() override;
     bool windowIsFrontWindowUnderMouse(const NativeWebMouseEvent&) override;
+
+    void didChangeClipToSafeArea(bool clipToSafeArea) override { }
 };
 
 } // namespace WebKit

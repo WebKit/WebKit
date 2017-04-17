@@ -386,6 +386,8 @@ public:
     virtual void didConcludeEditDataInteraction(std::optional<WebCore::TextIndicatorData>) = 0;
     virtual void didChangeDataInteractionCaretRect(const WebCore::IntRect& previousCaretRect, const WebCore::IntRect& caretRect) = 0;
 #endif
+
+    virtual void didChangeClipToSafeArea(bool clipToSafeArea) = 0;
 };
 
 } // namespace WebKit

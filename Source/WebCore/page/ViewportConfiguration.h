@@ -50,6 +50,7 @@ public:
             , maximumScale(0)
             , allowsUserScaling(false)
             , allowsShrinkToFit(false)
+            , clipToSafeArea(true)
             , widthIsSet(false)
             , heightIsSet(false)
             , initialScaleIsSet(false)
@@ -63,6 +64,7 @@ public:
         double maximumScale;
         bool allowsUserScaling;
         bool allowsShrinkToFit;
+        bool clipToSafeArea;
 
         bool widthIsSet;
         bool heightIsSet;
@@ -95,6 +97,7 @@ public:
     WEBCORE_EXPORT bool allowsUserScaling() const;
     WEBCORE_EXPORT bool allowsUserScalingIgnoringAlwaysScalable() const;
     bool allowsShrinkToFit() const;
+    bool clipToSafeArea() const { return m_configuration.clipToSafeArea; }
 
     WEBCORE_EXPORT static Parameters webpageParameters();
     WEBCORE_EXPORT static Parameters textDocumentParameters();

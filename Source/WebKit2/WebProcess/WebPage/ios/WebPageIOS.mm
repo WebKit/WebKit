@@ -3045,6 +3045,8 @@ void WebPage::viewportConfigurationChanged()
     updateViewportSizeForCSSViewportUnits();
 
     FrameView& frameView = *mainFrameView();
+    frameView.setClipToSafeArea(m_viewportConfiguration.clipToSafeArea());
+
     IntPoint scrollPosition = frameView.scrollPosition();
     if (!m_hasReceivedVisibleContentRectsAfterDidCommitLoad) {
         FloatSize minimumLayoutSizeInScrollViewCoordinates = m_viewportConfiguration.minimumLayoutSize();

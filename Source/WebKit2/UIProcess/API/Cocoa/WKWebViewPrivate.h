@@ -150,6 +150,8 @@ typedef NS_ENUM(NSInteger, _WKImmediateActionType) {
 // Define the inset of the scrollview unusable by the web page.
 @property (nonatomic, setter=_setObscuredInsets:) UIEdgeInsets _obscuredInsets;
 
+@property (nonatomic, readonly) BOOL _contentMayDrawInObscuredInsets;
+
 // Override the interface orientation. Clients using _beginAnimatedResizeWithUpdates: must update the interface orientation
 // in the update block.
 @property (nonatomic, setter=_setInterfaceOrientationOverride:) UIInterfaceOrientation _interfaceOrientationOverride;

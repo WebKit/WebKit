@@ -399,6 +399,10 @@ JSRetainPtr<JSStringRef> UIScriptController::accessibilitySpeakSelectionContent(
     return nullptr;
 }
 
+void UIScriptController::setObscuredInsets(double top, double right, double bottom, double left)
+{
+}
+
 #endif
 
 #if !PLATFORM(COCOA)

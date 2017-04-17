@@ -4260,6 +4260,11 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     return _page->isShowingNavigationGestureSnapshot();
 }
 
+- (BOOL)_contentMayDrawInObscuredInsets
+{
+    return !_page->clipToSafeArea();
+}
+
 - (_WKLayoutMode)_layoutMode
 {
 #if PLATFORM(MAC)

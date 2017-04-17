@@ -360,6 +360,7 @@ private:
 
     [_fixedClippingView setCenter:clippingBounds.location()]; // Not really the center since we set an anchor point.
     [_fixedClippingView setBounds:clippingBounds];
+    [_fixedClippingView layer].masksToBounds = _page->clipToSafeArea();
 }
 
 - (void)_didExitStableState

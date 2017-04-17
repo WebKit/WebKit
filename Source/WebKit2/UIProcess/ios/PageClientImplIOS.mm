@@ -821,6 +821,11 @@ void PageClientImpl::requestPasswordForQuickLookDocument(const String& fileName,
 }
 #endif
 
+void PageClientImpl::didChangeClipToSafeArea(bool clipToSafeArea)
+{
+    [m_webView _scheduleVisibleContentRectUpdate];
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(IOS)

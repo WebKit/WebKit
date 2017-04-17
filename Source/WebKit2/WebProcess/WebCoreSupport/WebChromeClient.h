@@ -342,6 +342,8 @@ private:
 
     void didInvalidateDocumentMarkerRects() final;
 
+    void didChangeClipToSafeArea(bool) final;
+
     String m_cachedToolTip;
     mutable RefPtr<WebFrame> m_cachedFrameSetLargestFrame;
     mutable bool m_cachedMainFrameHasHorizontalScrollbar { false };

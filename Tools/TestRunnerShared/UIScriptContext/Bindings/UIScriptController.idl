@@ -232,4 +232,6 @@ interface UIScriptController {
     void addViewToWindow(object callback);
 
     void overridePreference(DOMString preference, DOMString value);
+
+    void setObscuredInsets(double top, double right, double bottom, double left);
 };

@@ -2929,6 +2929,10 @@ void FrameView::enableSpeculativeTilingIfNeeded()
         m_speculativeTilingEnabled = true;
         return;
     }
+    if (!m_clipToSafeArea) {
+        m_speculativeTilingEnabled = true;
+        return;
+    }
     if (!shouldEnableSpeculativeTilingDuringLoading(*this))
         return;
 
@@ -3238,9 +3242,6 @@ void FrameView::updateBackgroundRecursively(const Color& backgroundColor, bool t
 
 bool FrameView::hasExtendedBackgroundRectForPainting() const
 {
-    if (!frame().settings().backgroundShouldExtendBeyondPage())
-        return false;
-
     TiledBacking* tiledBacking = this->tiledBacking();
     if (!tiledBacking)
         return false;
@@ -3259,11 +3260,8 @@ void FrameView::updateExtendBackgroundIfNecessary()
 
 FrameView::ExtendedBackgroundMode FrameView::calculateExtendedBackgroundMode() const
 {
-    // Just because Settings::backgroundShouldExtendBeyondPage() is true does not necessarily mean
-    // that the background rect needs to be extended for painting. Simple backgrounds can be extended
-    // just with RenderLayerCompositor::setRootExtendedBackgroundColor(). More complicated backgrounds,
-    // such as images, require extending the background rect to continue painting into the extended
-    // region. This function finds out if it is necessary to extend the background rect for painting.
+    if (!m_clipToSafeArea)
+        return ExtendedBackgroundModeAll;
 
 #if PLATFORM(IOS)
     // <rdar://problem/16201373>
@@ -3271,6 +3269,12 @@ FrameView::ExtendedBackgroundMode FrameView::calculateExtendedBackgroundMode() c
 #else
     if (!frame().settings().backgroundShouldExtendBeyondPage())
         return ExtendedBackgroundModeNone;
+
+    // Just because Settings::backgroundShouldExtendBeyondPage() is true does not necessarily mean
+    // that the background rect needs to be extended for painting. Simple backgrounds can be extended
+    // just with RenderLayerCompositor::setRootExtendedBackgroundColor(). More complicated backgrounds,
+    // such as images, require extending the background rect to continue painting into the extended
+    // region. This function finds out if it is necessary to extend the background rect for painting.
 
     if (!frame().isMainFrame())
         return ExtendedBackgroundModeNone;
@@ -3301,9 +3305,6 @@ FrameView::ExtendedBackgroundMode FrameView::calculateExtendedBackgroundMode() c
 
 void FrameView::updateTilesForExtendedBackgroundMode(ExtendedBackgroundMode mode)
 {
-    if (!frame().settings().backgroundShouldExtendBeyondPage())
-        return;
-
     RenderView* renderView = this->renderView();
     if (!renderView)
         return;
@@ -3346,6 +3347,30 @@ IntRect FrameView::extendedBackgroundRectForPainting() const
     extendedRect.moveBy(LayoutPoint(-tiledBacking->leftMarginWidth(), -tiledBacking->topMarginHeight()));
     extendedRect.expand(LayoutSize(tiledBacking->leftMarginWidth() + tiledBacking->rightMarginWidth(), tiledBacking->topMarginHeight() + tiledBacking->bottomMarginHeight()));
     return snappedIntRect(extendedRect);
+}
+
+void FrameView::setClipToSafeArea(bool clipToSafeArea)
+{
+    if (!frame().isMainFrame())
+        return;
+
+    if (m_clipToSafeArea == clipToSafeArea)
+        return;
+
+    m_clipToSafeArea = clipToSafeArea;
+
+    if (Page* page = frame().page())
+        page->chrome().client().didChangeClipToSafeArea(clipToSafeArea);
+
+    updateExtendBackgroundIfNecessary();
+    adjustTiledBackingCoverage();
+
+    RenderView* renderView = this->renderView();
+    if (!renderView)
+        return;
+
+    RenderLayerCompositor& compositor = renderView->compositor();
+    compositor.updateRootContentLayerClipping();
 }
 
 bool FrameView::shouldUpdateWhileOffscreen() const

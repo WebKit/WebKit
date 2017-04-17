@@ -897,6 +897,9 @@ void RenderObject::repaintUsingContainer(const RenderLayerModelObject* repaintCo
             view.repaintViewRectangle(rect);
             return;
         }
+
+        if (!view.frameView().clipToSafeArea())
+            shouldClipToLayer = false;
     }
 
     if (view().usesCompositing()) {

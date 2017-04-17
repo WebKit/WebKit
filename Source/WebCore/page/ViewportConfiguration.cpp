@@ -336,6 +336,9 @@ void ViewportConfiguration::updateConfiguration()
 
     if (booleanViewportArgumentIsSet(m_viewportArguments.shrinkToFit))
         m_configuration.allowsShrinkToFit = m_viewportArguments.shrinkToFit != 0.;
+
+    if (booleanViewportArgumentIsSet(m_viewportArguments.clipToSafeArea))
+        m_configuration.clipToSafeArea = m_viewportArguments.clipToSafeArea;
 }
 
 double ViewportConfiguration::viewportArgumentsLength(double length) const
@@ -439,6 +442,7 @@ TextStream& operator<<(TextStream& ts, const ViewportConfiguration::Parameters& 
     ts.dumpProperty("maximumScale", parameters.maximumScale);
     ts.dumpProperty("allowsUserScaling", parameters.allowsUserScaling);
     ts.dumpProperty("allowsShrinkToFit", parameters.allowsShrinkToFit);
+    ts.dumpProperty("clipToSafeArea", parameters.clipToSafeArea);
 
     return ts;
 }
@@ -472,6 +476,7 @@ CString ViewportConfiguration::description() const
     ts.dumpProperty("computed layout size", layoutSize());
     ts.dumpProperty("ignoring horizontal scaling constraints", shouldIgnoreHorizontalScalingConstraints() ? "true" : "false");
     ts.dumpProperty("ignoring vertical scaling constraints", shouldIgnoreVerticalScalingConstraints() ? "true" : "false");
+    ts.dumpProperty("clip to safe area", clipToSafeArea() ? "true" : "false");
     
     ts.endGroup();
 

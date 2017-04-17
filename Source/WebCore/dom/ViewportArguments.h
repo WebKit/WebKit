@@ -51,6 +51,7 @@ struct ViewportAttributes {
     float userScalable;
     float orientation;
     float shrinkToFit;
+    bool clipToSafeArea;
 };
 
 struct ViewportArguments {
@@ -94,6 +95,7 @@ struct ViewportArguments {
     float userZoom { ValueAuto };
     float orientation { ValueAuto };
     float shrinkToFit { ValueAuto };
+    bool clipToSafeArea { true };
     bool widthWasExplicit { false };
 
     bool operator==(const ViewportArguments& other) const
@@ -112,6 +114,7 @@ struct ViewportArguments {
             && userZoom == other.userZoom
             && orientation == other.orientation
             && shrinkToFit == other.shrinkToFit
+            && clipToSafeArea == other.clipToSafeArea
             && widthWasExplicit == other.widthWasExplicit;
     }
 

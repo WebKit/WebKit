@@ -1,0 +1,23 @@
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 320.00 548.00)
+  (visible rect 0.00, 0.00 280.00 x 538.00)
+  (coverage rect 0.00, 0.00 280.00 x 538.00)
+  (intersects coverage rect 1)
+  (contentsScale 2.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 320.00 548.00)
+      (contentsOpaque 1)
+      (visible rect 0.00, 0.00 280.00 x 538.00)
+      (coverage rect 0.00, 0.00 280.00 x 538.00)
+      (intersects coverage rect 1)
+      (contentsScale 2.00)
+      (tile cache coverage 0, 0 320 x 548)
+      (tile size 512 x 548)
+      (top left tile 0, 0 tiles grid 1 x 1)
+      (in window 1)
+    )
+  )
+)
+

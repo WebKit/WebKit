@@ -1195,6 +1195,9 @@ public:
     void createSandboxExtensionsIfNeeded(const Vector<String>& files, SandboxExtension::Handle& fileReadHandle, SandboxExtension::HandleArray& fileUploadHandles);
 #endif
 
+    void setClipToSafeArea(bool);
+    bool clipToSafeArea() const { return m_clipToSafeArea; }
+
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, uint64_t pageID, Ref<API::PageConfiguration>&&);
     void platformInitialize();
@@ -1980,7 +1983,9 @@ private:
 #endif
 
     bool m_isUsingHighPerformanceWebGL { false };
-        
+
+    bool m_clipToSafeArea { true };
+
     WeakPtrFactory<WebPageProxy> m_weakPtrFactory;
 
     HashMap<String, Ref<WebURLSchemeHandler>> m_urlSchemeHandlersByScheme;

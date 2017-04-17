@@ -246,6 +246,7 @@ ViewportAttributes ViewportArguments::resolve(const FloatSize& initialViewportSi
     result.userScalable = userZoom;
     result.orientation = orientation;
     result.shrinkToFit = shrinkToFit;
+    result.clipToSafeArea = clipToSafeArea;
 
     return result;
 }
@@ -363,22 +364,21 @@ static float findScaleValue(Document& document, StringView key, StringView value
     return numericValue;
 }
 
-// FIXME: It's kind of bizarre to use floating point values of 1 and 0 to represent true and false.
-static float findBooleanValue(Document& document, StringView key, StringView value)
+static bool findBooleanValue(Document& document, StringView key, StringView value)
 {
     // yes and no are used as keywords.
     // Numbers >= 1, numbers <= -1, device-width and device-height are mapped to yes.
     // Numbers in the range <-1, 1>, and unknown values, are mapped to no.
 
     if (equalLettersIgnoringASCIICase(value, "yes"))
-        return 1;
+        return true;
     if (equalLettersIgnoringASCIICase(value, "no"))
-        return 0;
+        return false;
     if (equalLettersIgnoringASCIICase(value, "device-width"))
-        return 1;
+        return true;
     if (equalLettersIgnoringASCIICase(value, "device-height"))
-        return 1;
-    return std::abs(numericPrefix(document, key, value)) >= 1 ? 1 : 0;
+        return true;
+    return std::abs(numericPrefix(document, key, value)) >= 1;
 }
 
 void setViewportFeature(ViewportArguments& arguments, Document& document, StringView key, StringView value)
@@ -403,6 +403,8 @@ void setViewportFeature(ViewportArguments& arguments, Document& document, String
 #endif
     else if (equalLettersIgnoringASCIICase(key, "shrink-to-fit"))
         arguments.shrinkToFit = findBooleanValue(document, key, value);
+    else if (equalLettersIgnoringASCIICase(key, "clip-to-safe-area"))
+        arguments.clipToSafeArea = findBooleanValue(document, key, value);
     else
         reportViewportWarning(document, UnrecognizedViewportArgumentKeyError, key);
 }

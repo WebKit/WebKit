@@ -85,6 +85,9 @@ void TestController::platformResetStateToConsistentValues()
         [scrollView _removeAllAnimations:YES];
         [scrollView setZoomScale:1 animated:NO];
         [scrollView setContentOffset:CGPointZero];
+
+        scrollView.contentInset = UIEdgeInsetsZero;
+        webView->platformView()._obscuredInsets = UIEdgeInsetsZero;
     }
 }
 

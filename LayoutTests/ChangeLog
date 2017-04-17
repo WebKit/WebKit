@@ -1,3 +1,16 @@
+2017-04-17  Tim Horton  <timothy_horton@apple.com>
+
+        Provide a viewport parameter to disable clipping to the safe area
+        https://bugs.webkit.org/show_bug.cgi?id=170766
+        <rdar://problem/31564634>
+
+        Reviewed by Beth Dakin.
+
+        * tiled-drawing/ios/viewport-clip-to-safe-area-no-gets-margin-tiles-expected.txt: Added.
+        * tiled-drawing/ios/viewport-clip-to-safe-area-no-gets-margin-tiles.html: Added.
+        * tiled-drawing/ios/viewport-clip-to-safe-area-yes-gets-no-margin-tiles-expected.txt: Added.
+        * tiled-drawing/ios/viewport-clip-to-safe-area-yes-gets-no-margin-tiles.html: Added.
+
 2017-04-14  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebCrypto] Add support for ECDSA

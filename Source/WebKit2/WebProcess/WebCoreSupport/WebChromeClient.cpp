@@ -1227,4 +1227,9 @@ void WebChromeClient::didInvalidateDocumentMarkerRects()
     m_page.findController().didInvalidateDocumentMarkerRects();
 }
 
+void WebChromeClient::didChangeClipToSafeArea(bool clipToSafeArea)
+{
+    m_page.send(Messages::WebPageProxy::SetClipToSafeArea(clipToSafeArea));
+}
+
 } // namespace WebKit
