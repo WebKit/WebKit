@@ -1,3 +1,22 @@
+2017-04-14  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebCrypto] Add support for ECDSA
+        https://bugs.webkit.org/show_bug.cgi?id=170789
+        <rdar://problem/31588604>
+
+        Reviewed by Brent Fulgham.
+
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_ECDSA.worker-expected.txt:
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_ECDSA.worker-expected.txt:
+        * web-platform-tests/WebCryptoAPI/generateKey/test_failures_ECDSA-expected.txt:
+        * web-platform-tests/WebCryptoAPI/generateKey/test_successes_ECDSA-expected.txt:
+        * web-platform-tests/WebCryptoAPI/import_export/ec_importKey.worker-expected.txt:
+        * web-platform-tests/WebCryptoAPI/import_export/test_ec_importKey-expected.txt:
+        * web-platform-tests/WebCryptoAPI/sign_verify/ecdsa.worker-expected.txt:
+        * web-platform-tests/WebCryptoAPI/sign_verify/hmac.worker-expected.txt:
+        * web-platform-tests/WebCryptoAPI/sign_verify/test_ecdsa-expected.txt:
+        * web-platform-tests/WebCryptoAPI/sign_verify/test_hmac-expected.txt:
+
 2017-04-17  Tim Horton  <timothy_horton@apple.com>
 
         Remove some accidentally-added .orig files

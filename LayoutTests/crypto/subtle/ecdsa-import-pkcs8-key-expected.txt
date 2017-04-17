@@ -1,0 +1,16 @@
+Test importing a PKCS8 ECDSA key
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Importing a key...
+PASS publicKey.toString() is '[object CryptoKey]'
+PASS publicKey.type is 'private'
+PASS publicKey.extractable is true
+PASS publicKey.algorithm.name is 'ECDSA'
+PASS publicKey.algorithm.namedCurve is 'P-256'
+PASS publicKey.usages is [ 'sign' ]
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

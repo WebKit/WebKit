@@ -17,6 +17,12 @@ PASS crypto.subtle.generateKey({name: "ecdh", namedCurve: "P-256"}, extractable,
 PASS crypto.subtle.generateKey({name: "ecdh", namedCurve: "P-256"}, extractable, ["verify"]) rejected promise  with SyntaxError (DOM Exception 12): A required parameter was missing or out-of-range.
 PASS crypto.subtle.generateKey({name: "ecdh", namedCurve: "P-256"}, extractable, ["wrapKey"]) rejected promise  with SyntaxError (DOM Exception 12): A required parameter was missing or out-of-range.
 PASS crypto.subtle.generateKey({name: "ecdh", namedCurve: "P-256"}, extractable, ["unwrapKey"]) rejected promise  with SyntaxError (DOM Exception 12): A required parameter was missing or out-of-range.
+PASS crypto.subtle.generateKey({name: "ecdsa", namedCurve: "P-256"}, extractable, ["encrypt"]) rejected promise  with SyntaxError (DOM Exception 12): A required parameter was missing or out-of-range.
+PASS crypto.subtle.generateKey({name: "ecdsa", namedCurve: "P-256"}, extractable, ["decrypt"]) rejected promise  with SyntaxError (DOM Exception 12): A required parameter was missing or out-of-range.
+PASS crypto.subtle.generateKey({name: "ecdsa", namedCurve: "P-256"}, extractable, ["deriveKey"]) rejected promise  with SyntaxError (DOM Exception 12): A required parameter was missing or out-of-range.
+PASS crypto.subtle.generateKey({name: "ecdsa", namedCurve: "P-256"}, extractable, ["deriveBits"]) rejected promise  with SyntaxError (DOM Exception 12): A required parameter was missing or out-of-range.
+PASS crypto.subtle.generateKey({name: "ecdsa", namedCurve: "P-256"}, extractable, ["wrapKey"]) rejected promise  with SyntaxError (DOM Exception 12): A required parameter was missing or out-of-range.
+PASS crypto.subtle.generateKey({name: "ecdsa", namedCurve: "P-256"}, extractable, ["unwrapKey"]) rejected promise  with SyntaxError (DOM Exception 12): A required parameter was missing or out-of-range.
 PASS crypto.subtle.generateKey({name: "ecdh", namedCurve: "P-521"}, extractable, ["deriveKey"]) rejected promise  with NotSupportedError (DOM Exception 9): The algorithm is not supported.
 PASS successfullyParsed is true
 

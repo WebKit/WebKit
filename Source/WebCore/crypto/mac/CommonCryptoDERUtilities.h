@@ -25,12 +25,19 @@
 
 #pragma once
 
+#include <wtf/Vector.h>
+
 #if ENABLE(SUBTLE_CRYPTO)
 
+// FIXME: <rdar://problem/31618371>
+// The following constants and functions are for customized DER implementations.
+// They are not intended to be used outside Crypto codes, and should be removed
+// once the above bug is fixed.
 namespace WebCore {
 
 // Per X.690 08/2015: https://www.itu.int/rec/T-REC-X.680-X.693/en
 static const unsigned char BitStringMark = 0x03;
+static const unsigned char IntegerMark = 0x02;
 static const unsigned char OctetStringMark = 0x04;
 static const unsigned char SequenceMark = 0x30;
 // Version 0. Per https://tools.ietf.org/html/rfc5208#section-5
@@ -39,47 +46,10 @@ static const unsigned char Version[] = {0x02, 0x01, 0x00};
 static const unsigned char InitialOctet = 0x00;
 static const size_t MaxLengthInOneByte = 128;
 
-static size_t bytesUsedToEncodedLength(uint8_t octet)
-{
-    if (octet < MaxLengthInOneByte)
-        return 1;
-    return octet - MaxLengthInOneByte + 1;
-}
-
-static size_t extraBytesNeededForEncodedLength(size_t length)
-{
-    if (!length)
-        return 0;
-    size_t result = 1;
-    while (result < sizeof(length) && length >= (1 << (result * 8)))
-        result += 1;
-    return result;
-}
-
-static void addEncodedASN1Length(Vector<uint8_t>& in, size_t length)
-{
-    if (length < MaxLengthInOneByte) {
-        in.append(length);
-        return;
-    }
-
-    size_t extraBytes = extraBytesNeededForEncodedLength(length);
-    in.append(128 + extraBytes); // 128 is used to set the first bit of this byte.
-
-    size_t lastPosition = in.size() + extraBytes - 1;
-    in.grow(in.size() + extraBytes);
-    for (size_t i = 0; i < extraBytes; i++) {
-        in[lastPosition - i] = length & 0xff;
-        length = length >> 8;
-    }
-}
-
-static size_t bytesNeededForEncodedLength(size_t length)
-{
-    if (length < MaxLengthInOneByte)
-        return 1;
-    return 1 + extraBytesNeededForEncodedLength(length);
-}
+size_t bytesUsedToEncodedLength(uint8_t);
+size_t extraBytesNeededForEncodedLength(size_t);
+void addEncodedASN1Length(Vector<uint8_t>&, size_t);
+size_t bytesNeededForEncodedLength(size_t);
 
 } // namespace WebCore
 

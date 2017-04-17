@@ -41,6 +41,7 @@
 #include "JSDOMWrapper.h"
 #include "JSEcKeyParams.h"
 #include "JSEcdhKeyDeriveParams.h"
+#include "JSEcdsaParams.h"
 #include "JSHkdfParams.h"
 #include "JSHmacKeyParams.h"
 #include "JSJsonWebKey.h"
@@ -150,6 +151,15 @@ static std::unique_ptr<CryptoAlgorithmParameters> normalizeCryptoAlgorithmParame
             case CryptoAlgorithmIdentifier::HMAC:
                 result = std::make_unique<CryptoAlgorithmParameters>(params);
                 break;
+            case CryptoAlgorithmIdentifier::ECDSA: {
+                auto params = convertDictionary<CryptoAlgorithmEcdsaParams>(state, value);
+                RETURN_IF_EXCEPTION(scope, nullptr);
+                params.hashIdentifier = toHashIdentifier(state, params.hash);
+                RETURN_IF_EXCEPTION(scope, nullptr);
+                result = std::make_unique<CryptoAlgorithmEcdsaParams>(params);
+                break;
+
+            }
             default:
                 throwNotSupportedError(state, scope);
                 return nullptr;
@@ -644,7 +654,7 @@ static void jsSubtleCryptoFunctionSignPromise(ExecState& state, Ref<DeferredProm
 
     JSSubtleCrypto* subtle = jsDynamicDowncast<JSSubtleCrypto*>(vm, state.thisValue());
     ASSERT(subtle);
-    algorithm->sign(key.releaseNonNull(), WTFMove(data), WTFMove(callback), WTFMove(exceptionCallback), *scriptExecutionContextFromExecState(&state), subtle->wrapped().workQueue());
+    algorithm->sign(WTFMove(params), key.releaseNonNull(), WTFMove(data), WTFMove(callback), WTFMove(exceptionCallback), *scriptExecutionContextFromExecState(&state), subtle->wrapped().workQueue());
 }
 
 static void jsSubtleCryptoFunctionVerifyPromise(ExecState& state, Ref<DeferredPromise>&& promise)
@@ -694,7 +704,7 @@ static void jsSubtleCryptoFunctionVerifyPromise(ExecState& state, Ref<DeferredPr
 
     auto subtle = jsDynamicDowncast<JSSubtleCrypto*>(vm, state.thisValue());
     ASSERT(subtle);
-    algorithm->verify(key.releaseNonNull(), WTFMove(signature), WTFMove(data), WTFMove(callback), WTFMove(exceptionCallback), *scriptExecutionContextFromExecState(&state), subtle->wrapped().workQueue());
+    algorithm->verify(WTFMove(params), key.releaseNonNull(), WTFMove(signature), WTFMove(data), WTFMove(callback), WTFMove(exceptionCallback), *scriptExecutionContextFromExecState(&state), subtle->wrapped().workQueue());
 }
 
 static void jsSubtleCryptoFunctionDigestPromise(ExecState& state, Ref<DeferredPromise>&& promise)

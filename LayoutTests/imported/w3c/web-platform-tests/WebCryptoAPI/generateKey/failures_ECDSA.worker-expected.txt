@@ -323,78 +323,78 @@ PASS Bad algorithm: generateKey({name: EC, namedCurve: P521}, false, [decrypt, s
 PASS Bad algorithm: generateKey({name: EC, namedCurve: P521}, true, [decrypt, sign, deriveBits, decrypt, sign, deriveBits]) 
 PASS Bad algorithm: generateKey({name: EC, namedCurve: P521}, RED, [decrypt, sign, deriveBits, decrypt, sign, deriveBits]) 
 PASS Bad algorithm: generateKey({name: EC, namedCurve: P521}, 7, [decrypt, sign, deriveBits, decrypt, sign, deriveBits]) 
-FAIL Bad usages: generateKey({name: ECDSA, namedCurve: P-256}, true, [encrypt]) assert_equals: Bad usages not supported expected "SyntaxError" but got "NotSupportedError"
-FAIL Bad usages: generateKey({name: ECDSA, namedCurve: P-256}, true, [sign, encrypt]) assert_equals: Bad usages not supported expected "SyntaxError" but got "NotSupportedError"
-FAIL Bad usages: generateKey({name: ECDSA, namedCurve: P-256}, true, [verify, sign, encrypt]) assert_equals: Bad usages not supported expected "SyntaxError" but got "NotSupportedError"
-FAIL Bad usages: generateKey({name: ECDSA, namedCurve: P-256}, true, [sign, verify, sign, sign, verify, encrypt]) assert_equals: Bad usages not supported expected "SyntaxError" but got "NotSupportedError"
-FAIL Bad usages: generateKey({name: ECDSA, namedCurve: P-256}, true, [decrypt]) assert_equals: Bad usages not supported expected "SyntaxError" but got "NotSupportedError"
-FAIL Bad usages: generateKey({name: ECDSA, namedCurve: P-256}, true, [sign, decrypt]) assert_equals: Bad usages not supported expected "SyntaxError" but got "NotSupportedError"
-FAIL Bad usages: generateKey({name: ECDSA, namedCurve: P-256}, true, [verify, sign, decrypt]) assert_equals: Bad usages not supported expected "SyntaxError" but got "NotSupportedError"
-FAIL Bad usages: generateKey({name: ECDSA, namedCurve: P-256}, true, [sign, verify, sign, sign, verify, decrypt]) assert_equals: Bad usages not supported expected "SyntaxError" but got "NotSupportedError"
-FAIL Bad usages: generateKey({name: ECDSA, namedCurve: P-256}, true, [wrapKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "NotSupportedError"
-FAIL Bad usages: generateKey({name: ECDSA, namedCurve: P-256}, true, [sign, wrapKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "NotSupportedError"
-FAIL Bad usages: generateKey({name: ECDSA, namedCurve: P-256}, true, [verify, sign, wrapKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "NotSupportedError"
-FAIL Bad usages: generateKey({name: ECDSA, namedCurve: P-256}, true, [sign, verify, sign, sign, verify, wrapKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "NotSupportedError"
-FAIL Bad usages: generateKey({name: ECDSA, namedCurve: P-256}, true, [unwrapKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "NotSupportedError"
-FAIL Bad usages: generateKey({name: ECDSA, namedCurve: P-256}, true, [sign, unwrapKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "NotSupportedError"
-FAIL Bad usages: generateKey({name: ECDSA, namedCurve: P-256}, true, [verify, sign, unwrapKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "NotSupportedError"
-FAIL Bad usages: generateKey({name: ECDSA, namedCurve: P-256}, true, [sign, verify, sign, sign, verify, unwrapKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "NotSupportedError"
-FAIL Bad usages: generateKey({name: ECDSA, namedCurve: P-256}, true, [deriveKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "NotSupportedError"
-FAIL Bad usages: generateKey({name: ECDSA, namedCurve: P-256}, true, [sign, deriveKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "NotSupportedError"
-FAIL Bad usages: generateKey({name: ECDSA, namedCurve: P-256}, true, [verify, sign, deriveKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "NotSupportedError"
-FAIL Bad usages: generateKey({name: ECDSA, namedCurve: P-256}, true, [sign, verify, sign, sign, verify, deriveKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "NotSupportedError"
-FAIL Bad usages: generateKey({name: ECDSA, namedCurve: P-256}, true, [deriveBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "NotSupportedError"
-FAIL Bad usages: generateKey({name: ECDSA, namedCurve: P-256}, true, [sign, deriveBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "NotSupportedError"
-FAIL Bad usages: generateKey({name: ECDSA, namedCurve: P-256}, true, [verify, sign, deriveBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "NotSupportedError"
-FAIL Bad usages: generateKey({name: ECDSA, namedCurve: P-256}, true, [sign, verify, sign, sign, verify, deriveBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "NotSupportedError"
-FAIL Bad usages: generateKey({name: ECDSA, namedCurve: P-384}, true, [encrypt]) assert_equals: Bad usages not supported expected "SyntaxError" but got "NotSupportedError"
-FAIL Bad usages: generateKey({name: ECDSA, namedCurve: P-384}, true, [sign, encrypt]) assert_equals: Bad usages not supported expected "SyntaxError" but got "NotSupportedError"
-FAIL Bad usages: generateKey({name: ECDSA, namedCurve: P-384}, true, [verify, sign, encrypt]) assert_equals: Bad usages not supported expected "SyntaxError" but got "NotSupportedError"
-FAIL Bad usages: generateKey({name: ECDSA, namedCurve: P-384}, true, [sign, verify, sign, sign, verify, encrypt]) assert_equals: Bad usages not supported expected "SyntaxError" but got "NotSupportedError"
-FAIL Bad usages: generateKey({name: ECDSA, namedCurve: P-384}, true, [decrypt]) assert_equals: Bad usages not supported expected "SyntaxError" but got "NotSupportedError"
-FAIL Bad usages: generateKey({name: ECDSA, namedCurve: P-384}, true, [sign, decrypt]) assert_equals: Bad usages not supported expected "SyntaxError" but got "NotSupportedError"
-FAIL Bad usages: generateKey({name: ECDSA, namedCurve: P-384}, true, [verify, sign, decrypt]) assert_equals: Bad usages not supported expected "SyntaxError" but got "NotSupportedError"
-FAIL Bad usages: generateKey({name: ECDSA, namedCurve: P-384}, true, [sign, verify, sign, sign, verify, decrypt]) assert_equals: Bad usages not supported expected "SyntaxError" but got "NotSupportedError"
-FAIL Bad usages: generateKey({name: ECDSA, namedCurve: P-384}, true, [wrapKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "NotSupportedError"
-FAIL Bad usages: generateKey({name: ECDSA, namedCurve: P-384}, true, [sign, wrapKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "NotSupportedError"
-FAIL Bad usages: generateKey({name: ECDSA, namedCurve: P-384}, true, [verify, sign, wrapKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "NotSupportedError"
-FAIL Bad usages: generateKey({name: ECDSA, namedCurve: P-384}, true, [sign, verify, sign, sign, verify, wrapKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "NotSupportedError"
-FAIL Bad usages: generateKey({name: ECDSA, namedCurve: P-384}, true, [unwrapKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "NotSupportedError"
-FAIL Bad usages: generateKey({name: ECDSA, namedCurve: P-384}, true, [sign, unwrapKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "NotSupportedError"
-FAIL Bad usages: generateKey({name: ECDSA, namedCurve: P-384}, true, [verify, sign, unwrapKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "NotSupportedError"
-FAIL Bad usages: generateKey({name: ECDSA, namedCurve: P-384}, true, [sign, verify, sign, sign, verify, unwrapKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "NotSupportedError"
-FAIL Bad usages: generateKey({name: ECDSA, namedCurve: P-384}, true, [deriveKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "NotSupportedError"
-FAIL Bad usages: generateKey({name: ECDSA, namedCurve: P-384}, true, [sign, deriveKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "NotSupportedError"
-FAIL Bad usages: generateKey({name: ECDSA, namedCurve: P-384}, true, [verify, sign, deriveKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "NotSupportedError"
-FAIL Bad usages: generateKey({name: ECDSA, namedCurve: P-384}, true, [sign, verify, sign, sign, verify, deriveKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "NotSupportedError"
-FAIL Bad usages: generateKey({name: ECDSA, namedCurve: P-384}, true, [deriveBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "NotSupportedError"
-FAIL Bad usages: generateKey({name: ECDSA, namedCurve: P-384}, true, [sign, deriveBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "NotSupportedError"
-FAIL Bad usages: generateKey({name: ECDSA, namedCurve: P-384}, true, [verify, sign, deriveBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "NotSupportedError"
-FAIL Bad usages: generateKey({name: ECDSA, namedCurve: P-384}, true, [sign, verify, sign, sign, verify, deriveBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "NotSupportedError"
-FAIL Bad usages: generateKey({name: ECDSA, namedCurve: P-521}, true, [encrypt]) assert_equals: Bad usages not supported expected "SyntaxError" but got "NotSupportedError"
-FAIL Bad usages: generateKey({name: ECDSA, namedCurve: P-521}, true, [sign, encrypt]) assert_equals: Bad usages not supported expected "SyntaxError" but got "NotSupportedError"
-FAIL Bad usages: generateKey({name: ECDSA, namedCurve: P-521}, true, [verify, sign, encrypt]) assert_equals: Bad usages not supported expected "SyntaxError" but got "NotSupportedError"
-FAIL Bad usages: generateKey({name: ECDSA, namedCurve: P-521}, true, [sign, verify, sign, sign, verify, encrypt]) assert_equals: Bad usages not supported expected "SyntaxError" but got "NotSupportedError"
-FAIL Bad usages: generateKey({name: ECDSA, namedCurve: P-521}, true, [decrypt]) assert_equals: Bad usages not supported expected "SyntaxError" but got "NotSupportedError"
-FAIL Bad usages: generateKey({name: ECDSA, namedCurve: P-521}, true, [sign, decrypt]) assert_equals: Bad usages not supported expected "SyntaxError" but got "NotSupportedError"
-FAIL Bad usages: generateKey({name: ECDSA, namedCurve: P-521}, true, [verify, sign, decrypt]) assert_equals: Bad usages not supported expected "SyntaxError" but got "NotSupportedError"
-FAIL Bad usages: generateKey({name: ECDSA, namedCurve: P-521}, true, [sign, verify, sign, sign, verify, decrypt]) assert_equals: Bad usages not supported expected "SyntaxError" but got "NotSupportedError"
-FAIL Bad usages: generateKey({name: ECDSA, namedCurve: P-521}, true, [wrapKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "NotSupportedError"
-FAIL Bad usages: generateKey({name: ECDSA, namedCurve: P-521}, true, [sign, wrapKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "NotSupportedError"
-FAIL Bad usages: generateKey({name: ECDSA, namedCurve: P-521}, true, [verify, sign, wrapKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "NotSupportedError"
-FAIL Bad usages: generateKey({name: ECDSA, namedCurve: P-521}, true, [sign, verify, sign, sign, verify, wrapKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "NotSupportedError"
-FAIL Bad usages: generateKey({name: ECDSA, namedCurve: P-521}, true, [unwrapKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "NotSupportedError"
-FAIL Bad usages: generateKey({name: ECDSA, namedCurve: P-521}, true, [sign, unwrapKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "NotSupportedError"
-FAIL Bad usages: generateKey({name: ECDSA, namedCurve: P-521}, true, [verify, sign, unwrapKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "NotSupportedError"
-FAIL Bad usages: generateKey({name: ECDSA, namedCurve: P-521}, true, [sign, verify, sign, sign, verify, unwrapKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "NotSupportedError"
-FAIL Bad usages: generateKey({name: ECDSA, namedCurve: P-521}, true, [deriveKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "NotSupportedError"
-FAIL Bad usages: generateKey({name: ECDSA, namedCurve: P-521}, true, [sign, deriveKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "NotSupportedError"
-FAIL Bad usages: generateKey({name: ECDSA, namedCurve: P-521}, true, [verify, sign, deriveKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "NotSupportedError"
-FAIL Bad usages: generateKey({name: ECDSA, namedCurve: P-521}, true, [sign, verify, sign, sign, verify, deriveKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "NotSupportedError"
-FAIL Bad usages: generateKey({name: ECDSA, namedCurve: P-521}, true, [deriveBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "NotSupportedError"
-FAIL Bad usages: generateKey({name: ECDSA, namedCurve: P-521}, true, [sign, deriveBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "NotSupportedError"
-FAIL Bad usages: generateKey({name: ECDSA, namedCurve: P-521}, true, [verify, sign, deriveBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "NotSupportedError"
-FAIL Bad usages: generateKey({name: ECDSA, namedCurve: P-521}, true, [sign, verify, sign, sign, verify, deriveBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "NotSupportedError"
+PASS Bad usages: generateKey({name: ECDSA, namedCurve: P-256}, true, [encrypt]) 
+PASS Bad usages: generateKey({name: ECDSA, namedCurve: P-256}, true, [sign, encrypt]) 
+PASS Bad usages: generateKey({name: ECDSA, namedCurve: P-256}, true, [verify, sign, encrypt]) 
+PASS Bad usages: generateKey({name: ECDSA, namedCurve: P-256}, true, [sign, verify, sign, sign, verify, encrypt]) 
+PASS Bad usages: generateKey({name: ECDSA, namedCurve: P-256}, true, [decrypt]) 
+PASS Bad usages: generateKey({name: ECDSA, namedCurve: P-256}, true, [sign, decrypt]) 
+PASS Bad usages: generateKey({name: ECDSA, namedCurve: P-256}, true, [verify, sign, decrypt]) 
+PASS Bad usages: generateKey({name: ECDSA, namedCurve: P-256}, true, [sign, verify, sign, sign, verify, decrypt]) 
+PASS Bad usages: generateKey({name: ECDSA, namedCurve: P-256}, true, [wrapKey]) 
+PASS Bad usages: generateKey({name: ECDSA, namedCurve: P-256}, true, [sign, wrapKey]) 
+PASS Bad usages: generateKey({name: ECDSA, namedCurve: P-256}, true, [verify, sign, wrapKey]) 
+PASS Bad usages: generateKey({name: ECDSA, namedCurve: P-256}, true, [sign, verify, sign, sign, verify, wrapKey]) 
+PASS Bad usages: generateKey({name: ECDSA, namedCurve: P-256}, true, [unwrapKey]) 
+PASS Bad usages: generateKey({name: ECDSA, namedCurve: P-256}, true, [sign, unwrapKey]) 
+PASS Bad usages: generateKey({name: ECDSA, namedCurve: P-256}, true, [verify, sign, unwrapKey]) 
+PASS Bad usages: generateKey({name: ECDSA, namedCurve: P-256}, true, [sign, verify, sign, sign, verify, unwrapKey]) 
+PASS Bad usages: generateKey({name: ECDSA, namedCurve: P-256}, true, [deriveKey]) 
+PASS Bad usages: generateKey({name: ECDSA, namedCurve: P-256}, true, [sign, deriveKey]) 
+PASS Bad usages: generateKey({name: ECDSA, namedCurve: P-256}, true, [verify, sign, deriveKey]) 
+PASS Bad usages: generateKey({name: ECDSA, namedCurve: P-256}, true, [sign, verify, sign, sign, verify, deriveKey]) 
+PASS Bad usages: generateKey({name: ECDSA, namedCurve: P-256}, true, [deriveBits]) 
+PASS Bad usages: generateKey({name: ECDSA, namedCurve: P-256}, true, [sign, deriveBits]) 
+PASS Bad usages: generateKey({name: ECDSA, namedCurve: P-256}, true, [verify, sign, deriveBits]) 
+PASS Bad usages: generateKey({name: ECDSA, namedCurve: P-256}, true, [sign, verify, sign, sign, verify, deriveBits]) 
+PASS Bad usages: generateKey({name: ECDSA, namedCurve: P-384}, true, [encrypt]) 
+PASS Bad usages: generateKey({name: ECDSA, namedCurve: P-384}, true, [sign, encrypt]) 
+PASS Bad usages: generateKey({name: ECDSA, namedCurve: P-384}, true, [verify, sign, encrypt]) 
+PASS Bad usages: generateKey({name: ECDSA, namedCurve: P-384}, true, [sign, verify, sign, sign, verify, encrypt]) 
+PASS Bad usages: generateKey({name: ECDSA, namedCurve: P-384}, true, [decrypt]) 
+PASS Bad usages: generateKey({name: ECDSA, namedCurve: P-384}, true, [sign, decrypt]) 
+PASS Bad usages: generateKey({name: ECDSA, namedCurve: P-384}, true, [verify, sign, decrypt]) 
+PASS Bad usages: generateKey({name: ECDSA, namedCurve: P-384}, true, [sign, verify, sign, sign, verify, decrypt]) 
+PASS Bad usages: generateKey({name: ECDSA, namedCurve: P-384}, true, [wrapKey]) 
+PASS Bad usages: generateKey({name: ECDSA, namedCurve: P-384}, true, [sign, wrapKey]) 
+PASS Bad usages: generateKey({name: ECDSA, namedCurve: P-384}, true, [verify, sign, wrapKey]) 
+PASS Bad usages: generateKey({name: ECDSA, namedCurve: P-384}, true, [sign, verify, sign, sign, verify, wrapKey]) 
+PASS Bad usages: generateKey({name: ECDSA, namedCurve: P-384}, true, [unwrapKey]) 
+PASS Bad usages: generateKey({name: ECDSA, namedCurve: P-384}, true, [sign, unwrapKey]) 
+PASS Bad usages: generateKey({name: ECDSA, namedCurve: P-384}, true, [verify, sign, unwrapKey]) 
+PASS Bad usages: generateKey({name: ECDSA, namedCurve: P-384}, true, [sign, verify, sign, sign, verify, unwrapKey]) 
+PASS Bad usages: generateKey({name: ECDSA, namedCurve: P-384}, true, [deriveKey]) 
+PASS Bad usages: generateKey({name: ECDSA, namedCurve: P-384}, true, [sign, deriveKey]) 
+PASS Bad usages: generateKey({name: ECDSA, namedCurve: P-384}, true, [verify, sign, deriveKey]) 
+PASS Bad usages: generateKey({name: ECDSA, namedCurve: P-384}, true, [sign, verify, sign, sign, verify, deriveKey]) 
+PASS Bad usages: generateKey({name: ECDSA, namedCurve: P-384}, true, [deriveBits]) 
+PASS Bad usages: generateKey({name: ECDSA, namedCurve: P-384}, true, [sign, deriveBits]) 
+PASS Bad usages: generateKey({name: ECDSA, namedCurve: P-384}, true, [verify, sign, deriveBits]) 
+PASS Bad usages: generateKey({name: ECDSA, namedCurve: P-384}, true, [sign, verify, sign, sign, verify, deriveBits]) 
+PASS Bad usages: generateKey({name: ECDSA, namedCurve: P-521}, true, [encrypt]) 
+PASS Bad usages: generateKey({name: ECDSA, namedCurve: P-521}, true, [sign, encrypt]) 
+PASS Bad usages: generateKey({name: ECDSA, namedCurve: P-521}, true, [verify, sign, encrypt]) 
+PASS Bad usages: generateKey({name: ECDSA, namedCurve: P-521}, true, [sign, verify, sign, sign, verify, encrypt]) 
+PASS Bad usages: generateKey({name: ECDSA, namedCurve: P-521}, true, [decrypt]) 
+PASS Bad usages: generateKey({name: ECDSA, namedCurve: P-521}, true, [sign, decrypt]) 
+PASS Bad usages: generateKey({name: ECDSA, namedCurve: P-521}, true, [verify, sign, decrypt]) 
+PASS Bad usages: generateKey({name: ECDSA, namedCurve: P-521}, true, [sign, verify, sign, sign, verify, decrypt]) 
+PASS Bad usages: generateKey({name: ECDSA, namedCurve: P-521}, true, [wrapKey]) 
+PASS Bad usages: generateKey({name: ECDSA, namedCurve: P-521}, true, [sign, wrapKey]) 
+PASS Bad usages: generateKey({name: ECDSA, namedCurve: P-521}, true, [verify, sign, wrapKey]) 
+PASS Bad usages: generateKey({name: ECDSA, namedCurve: P-521}, true, [sign, verify, sign, sign, verify, wrapKey]) 
+PASS Bad usages: generateKey({name: ECDSA, namedCurve: P-521}, true, [unwrapKey]) 
+PASS Bad usages: generateKey({name: ECDSA, namedCurve: P-521}, true, [sign, unwrapKey]) 
+PASS Bad usages: generateKey({name: ECDSA, namedCurve: P-521}, true, [verify, sign, unwrapKey]) 
+PASS Bad usages: generateKey({name: ECDSA, namedCurve: P-521}, true, [sign, verify, sign, sign, verify, unwrapKey]) 
+PASS Bad usages: generateKey({name: ECDSA, namedCurve: P-521}, true, [deriveKey]) 
+PASS Bad usages: generateKey({name: ECDSA, namedCurve: P-521}, true, [sign, deriveKey]) 
+PASS Bad usages: generateKey({name: ECDSA, namedCurve: P-521}, true, [verify, sign, deriveKey]) 
+PASS Bad usages: generateKey({name: ECDSA, namedCurve: P-521}, true, [sign, verify, sign, sign, verify, deriveKey]) 
+PASS Bad usages: generateKey({name: ECDSA, namedCurve: P-521}, true, [deriveBits]) 
+PASS Bad usages: generateKey({name: ECDSA, namedCurve: P-521}, true, [sign, deriveBits]) 
+PASS Bad usages: generateKey({name: ECDSA, namedCurve: P-521}, true, [verify, sign, deriveBits]) 
+PASS Bad usages: generateKey({name: ECDSA, namedCurve: P-521}, true, [sign, verify, sign, sign, verify, deriveBits]) 
 PASS Bad algorithm property: generateKey({name: ECDSA, namedCurve: P-512}, false, [sign]) 
 PASS Bad algorithm property: generateKey({name: ECDSA, namedCurve: P-512}, true, [sign]) 
 PASS Bad algorithm property: generateKey({name: ECDSA, namedCurve: P-512}, false, [verify, sign]) 
@@ -411,10 +411,10 @@ PASS Bad algorithm property: generateKey({name: ECDSA, namedCurve: Curve25519}, 
 PASS Bad algorithm property: generateKey({name: ECDSA, namedCurve: Curve25519}, true, []) 
 PASS Bad algorithm property: generateKey({name: ECDSA, namedCurve: Curve25519}, false, [sign, verify, sign, sign, verify]) 
 PASS Bad algorithm property: generateKey({name: ECDSA, namedCurve: Curve25519}, true, [sign, verify, sign, sign, verify]) 
-FAIL Empty usages: generateKey({name: ECDSA, namedCurve: P-256}, false, []) assert_equals: Empty usages not supported expected "SyntaxError" but got "NotSupportedError"
-FAIL Empty usages: generateKey({name: ECDSA, namedCurve: P-256}, true, []) assert_equals: Empty usages not supported expected "SyntaxError" but got "NotSupportedError"
-FAIL Empty usages: generateKey({name: ECDSA, namedCurve: P-384}, false, []) assert_equals: Empty usages not supported expected "SyntaxError" but got "NotSupportedError"
-FAIL Empty usages: generateKey({name: ECDSA, namedCurve: P-384}, true, []) assert_equals: Empty usages not supported expected "SyntaxError" but got "NotSupportedError"
+PASS Empty usages: generateKey({name: ECDSA, namedCurve: P-256}, false, []) 
+PASS Empty usages: generateKey({name: ECDSA, namedCurve: P-256}, true, []) 
+PASS Empty usages: generateKey({name: ECDSA, namedCurve: P-384}, false, []) 
+PASS Empty usages: generateKey({name: ECDSA, namedCurve: P-384}, true, []) 
 FAIL Empty usages: generateKey({name: ECDSA, namedCurve: P-521}, false, []) assert_equals: Empty usages not supported expected "SyntaxError" but got "NotSupportedError"
 FAIL Empty usages: generateKey({name: ECDSA, namedCurve: P-521}, true, []) assert_equals: Empty usages not supported expected "SyntaxError" but got "NotSupportedError"
 

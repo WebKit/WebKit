@@ -1,3 +1,64 @@
+2017-04-14  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebCrypto] Add support for ECDSA
+        https://bugs.webkit.org/show_bug.cgi?id=170789
+        <rdar://problem/31588604>
+
+        Reviewed by Brent Fulgham.
+
+        * crypto/subtle/ec-generate-key-malformed-parameters-expected.txt:
+        * crypto/subtle/ec-generate-key-malformed-parameters.html:
+        * crypto/subtle/ec-import-key-malformed-parameters-expected.txt:
+        * crypto/subtle/ec-import-key-malformed-parameters.html:
+        * crypto/subtle/ecdh-generate-export-key-pkcs8-p256-expected.txt: Renamed from LayoutTests/crypto/subtle/ecdh-generate-export-pkcs8-p256-expected.txt.
+        * crypto/subtle/ecdh-generate-export-key-pkcs8-p256.html: Renamed from LayoutTests/crypto/subtle/ecdh-generate-export-pkcs8-p256.html.
+        * crypto/subtle/ecdh-generate-export-key-pkcs8-p384-expected.txt: Renamed from LayoutTests/crypto/subtle/ecdh-generate-export-pkcs8-p384-expected.txt.
+        * crypto/subtle/ecdh-generate-export-key-pkcs8-p384.html: Renamed from LayoutTests/crypto/subtle/ecdh-generate-export-pkcs8-p384.html.
+        * crypto/subtle/ecdsa-generate-export-jwk-key-expected.txt: Added.
+        * crypto/subtle/ecdsa-generate-export-jwk-key.html: Added.
+        * crypto/subtle/ecdsa-generate-export-key-pkcs8-expected.txt: Added.
+        * crypto/subtle/ecdsa-generate-export-key-pkcs8.html: Added.
+        * crypto/subtle/ecdsa-generate-export-key-raw-expected.txt: Added.
+        * crypto/subtle/ecdsa-generate-export-key-raw.html: Added.
+        * crypto/subtle/ecdsa-generate-export-key-spki-expected.txt: Added.
+        * crypto/subtle/ecdsa-generate-export-key-spki.html: Added.
+        * crypto/subtle/ecdsa-generate-key-expected.txt: Added.
+        * crypto/subtle/ecdsa-generate-key-sign-verify-p256-expected.txt: Added.
+        * crypto/subtle/ecdsa-generate-key-sign-verify-p256.html: Added.
+        * crypto/subtle/ecdsa-generate-key-sign-verify-p384-expected.txt: Added.
+        * crypto/subtle/ecdsa-generate-key-sign-verify-p384.html: Added.
+        * crypto/subtle/ecdsa-generate-key.html: Added.
+        * crypto/subtle/ecdsa-import-jwk-private-key-expected.txt: Added.
+        * crypto/subtle/ecdsa-import-jwk-private-key.html: Added.
+        * crypto/subtle/ecdsa-import-jwk-public-key-alg-256-expected.txt: Added.
+        * crypto/subtle/ecdsa-import-jwk-public-key-alg-256.html: Added.
+        * crypto/subtle/ecdsa-import-jwk-public-key-alg-384-expected.txt: Added.
+        * crypto/subtle/ecdsa-import-jwk-public-key-alg-384.html: Added.
+        * crypto/subtle/ecdsa-import-jwk-public-key-expected.txt: Added.
+        * crypto/subtle/ecdsa-import-jwk-public-key.html: Added.
+        * crypto/subtle/ecdsa-import-key-sign-p256-expected.txt: Added.
+        * crypto/subtle/ecdsa-import-key-sign-p256.html: Added.
+        * crypto/subtle/ecdsa-import-key-sign-p384-expected.txt: Added.
+        * crypto/subtle/ecdsa-import-key-sign-p384.html: Added.
+        * crypto/subtle/ecdsa-import-key-verify-p256-expected.txt: Added.
+        * crypto/subtle/ecdsa-import-key-verify-p256.html: Added.
+        * crypto/subtle/ecdsa-import-key-verify-p384-expected.txt: Added.
+        * crypto/subtle/ecdsa-import-key-verify-p384.html: Added.
+        * crypto/subtle/ecdsa-import-pkcs8-key-expected.txt: Added.
+        * crypto/subtle/ecdsa-import-pkcs8-key.html: Added.
+        * crypto/subtle/ecdsa-import-raw-key-expected.txt: Added.
+        * crypto/subtle/ecdsa-import-raw-key.html: Added.
+        * crypto/subtle/ecdsa-import-spki-key-expected.txt: Added.
+        * crypto/subtle/ecdsa-import-spki-key.html: Added.
+        * crypto/subtle/ecdsa-verify-malformed-parameters-expected.txt: Added.
+        * crypto/subtle/ecdsa-verify-malformed-parameters.html: Added.
+        * crypto/workers/subtle/ecdsa-import-key-sign-expected.txt: Added.
+        * crypto/workers/subtle/ecdsa-import-key-sign.html: Added.
+        * crypto/workers/subtle/ecdsa-import-key-verify-expected.txt: Added.
+        * crypto/workers/subtle/ecdsa-import-key-verify.html: Added.
+        * crypto/workers/subtle/resources/ecdsa-import-key-sign.js: Added.
+        * crypto/workers/subtle/resources/ecdsa-import-key-verify.js: Added.
+
 2017-04-17  Youenn Fablet  <youenn@apple.com>
 
         LayoutTestwebrtc/audio-replace-track.html is a flaky failure

@@ -1,3 +1,99 @@
+2017-04-14  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebCrypto] Add support for ECDSA
+        https://bugs.webkit.org/show_bug.cgi?id=170789
+        <rdar://problem/31588604>
+
+        Reviewed by Brent Fulgham.
+
+        This patch implements ECDSA according to the spec: https://www.w3.org/TR/WebCryptoAPI/#ecdsa.
+        Supported operations include sign, verify, generateKey, importKey and exportKey.
+
+        Tests: crypto/subtle/ecdh-generate-export-key-pkcs8-p256.html
+               crypto/subtle/ecdh-generate-export-key-pkcs8-p384.html
+               crypto/subtle/ecdsa-generate-export-jwk-key.html
+               crypto/subtle/ecdsa-generate-export-key-pkcs8.html
+               crypto/subtle/ecdsa-generate-export-key-raw.html
+               crypto/subtle/ecdsa-generate-export-key-spki.html
+               crypto/subtle/ecdsa-generate-key-sign-verify-p256.html
+               crypto/subtle/ecdsa-generate-key-sign-verify-p384.html
+               crypto/subtle/ecdsa-generate-key.html
+               crypto/subtle/ecdsa-import-jwk-private-key.html
+               crypto/subtle/ecdsa-import-jwk-public-key-alg-256.html
+               crypto/subtle/ecdsa-import-jwk-public-key-alg-384.html
+               crypto/subtle/ecdsa-import-jwk-public-key.html
+               crypto/subtle/ecdsa-import-key-sign-p256.html
+               crypto/subtle/ecdsa-import-key-sign-p384.html
+               crypto/subtle/ecdsa-import-key-verify-p256.html
+               crypto/subtle/ecdsa-import-key-verify-p384.html
+               crypto/subtle/ecdsa-import-pkcs8-key.html
+               crypto/subtle/ecdsa-import-raw-key.html
+               crypto/subtle/ecdsa-import-spki-key.html
+               crypto/subtle/ecdsa-verify-malformed-parameters.html
+               crypto/workers/subtle/ecdsa-import-key-sign.html
+               crypto/workers/subtle/ecdsa-import-key-verify.html
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * PlatformGTK.cmake:
+        * PlatformMac.cmake:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSSubtleCryptoCustom.cpp:
+        (WebCore::normalizeCryptoAlgorithmParameters):
+        (WebCore::jsSubtleCryptoFunctionSignPromise):
+        (WebCore::jsSubtleCryptoFunctionVerifyPromise):
+        Add missing parameters.
+        * crypto/CommonCryptoUtilities.h:
+        * crypto/CryptoAlgorithm.cpp:
+        (WebCore::CryptoAlgorithm::sign):
+        (WebCore::CryptoAlgorithm::verify):
+        * crypto/CryptoAlgorithm.h:
+        Add missing parameters.
+        * crypto/CryptoAlgorithmParameters.h:
+        * crypto/algorithms/CryptoAlgorithmECDSA.cpp: Added.
+        (WebCore::CryptoAlgorithmECDSA::create):
+        (WebCore::CryptoAlgorithmECDSA::identifier):
+        (WebCore::CryptoAlgorithmECDSA::sign):
+        (WebCore::CryptoAlgorithmECDSA::verify):
+        (WebCore::CryptoAlgorithmECDSA::generateKey):
+        (WebCore::CryptoAlgorithmECDSA::importKey):
+        (WebCore::CryptoAlgorithmECDSA::exportKey):
+        * crypto/algorithms/CryptoAlgorithmECDSA.h: Added.
+        * crypto/algorithms/CryptoAlgorithmHMAC.cpp:
+        (WebCore::CryptoAlgorithmHMAC::sign):
+        (WebCore::CryptoAlgorithmHMAC::verify):
+        * crypto/algorithms/CryptoAlgorithmHMAC.h:
+        Add missing parameters.
+        * crypto/algorithms/CryptoAlgorithmRSASSA_PKCS1_v1_5.cpp:
+        (WebCore::CryptoAlgorithmRSASSA_PKCS1_v1_5::sign):
+        (WebCore::CryptoAlgorithmRSASSA_PKCS1_v1_5::verify):
+        * crypto/algorithms/CryptoAlgorithmRSASSA_PKCS1_v1_5.h:
+        Add missing parameters.
+        * crypto/gcrypt/CryptoAlgorithmECDSAGCrypt.cpp: Added.
+        (WebCore::CryptoAlgorithmECDSA::platformSign):
+        (WebCore::CryptoAlgorithmECDSA::platformVerify):
+        * crypto/mac/CommonCryptoDERUtilities.cpp: Added.
+        (WebCore::bytesUsedToEncodedLength):
+        (WebCore::extraBytesNeededForEncodedLength):
+        (WebCore::addEncodedASN1Length):
+        (WebCore::bytesNeededForEncodedLength):
+        * crypto/mac/CommonCryptoDERUtilities.h:
+        (WebCore::bytesUsedToEncodedLength): Deleted.
+        (WebCore::extraBytesNeededForEncodedLength): Deleted.
+        (WebCore::addEncodedASN1Length): Deleted.
+        (WebCore::bytesNeededForEncodedLength): Deleted.
+        Move implementations to a .cpp file.
+        * crypto/mac/CryptoAlgorithmECDSAMac.cpp: Added.
+        (WebCore::cryptoDigestAlgorithm):
+        (WebCore::signECDSA):
+        (WebCore::verifyECDSA):
+        (WebCore::CryptoAlgorithmECDSA::platformSign):
+        (WebCore::CryptoAlgorithmECDSA::platformVerify):
+        * crypto/mac/CryptoAlgorithmRegistryMac.cpp:
+        (WebCore::CryptoAlgorithmRegistry::platformRegisterAlgorithms):
+        * crypto/parameters/CryptoAlgorithmEcdsaParams.h: Added.
+        * crypto/parameters/EcdsaParams.idl: Added.
+
 2017-04-17  Jeremy Jones  <jeremyj@apple.com>
 
         Refactor enumerateDevices to allow separate CaptureDeviceManagers for audio and video.

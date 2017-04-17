@@ -8,7 +8,7 @@
 <p id="description"></p>
 <div id="console"></div>
 
-<script>
+<script type="text/javascript">
 description("Test generating an EC key pair with malformed-paramters.");
 
 var extractable = true;
@@ -29,6 +29,12 @@ shouldReject('crypto.subtle.generateKey({name: "ecdh", namedCurve: "P-256"}, ext
 shouldReject('crypto.subtle.generateKey({name: "ecdh", namedCurve: "P-256"}, extractable, ["verify"])');
 shouldReject('crypto.subtle.generateKey({name: "ecdh", namedCurve: "P-256"}, extractable, ["wrapKey"])');
 shouldReject('crypto.subtle.generateKey({name: "ecdh", namedCurve: "P-256"}, extractable, ["unwrapKey"])');
+shouldReject('crypto.subtle.generateKey({name: "ecdsa", namedCurve: "P-256"}, extractable, ["encrypt"])');
+shouldReject('crypto.subtle.generateKey({name: "ecdsa", namedCurve: "P-256"}, extractable, ["decrypt"])');
+shouldReject('crypto.subtle.generateKey({name: "ecdsa", namedCurve: "P-256"}, extractable, ["deriveKey"])');
+shouldReject('crypto.subtle.generateKey({name: "ecdsa", namedCurve: "P-256"}, extractable, ["deriveBits"])');
+shouldReject('crypto.subtle.generateKey({name: "ecdsa", namedCurve: "P-256"}, extractable, ["wrapKey"])');
+shouldReject('crypto.subtle.generateKey({name: "ecdsa", namedCurve: "P-256"}, extractable, ["unwrapKey"])');
 // Not supported NamedCurve
 shouldReject('crypto.subtle.generateKey({name: "ecdh", namedCurve: "P-521"}, extractable, ["deriveKey"])');
 </script>

@@ -293,6 +293,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/crypto/parameters/AesKeyParams.idl \
     $(WebCore)/crypto/parameters/EcKeyParams.idl \
     $(WebCore)/crypto/parameters/EcdhKeyDeriveParams.idl \
+    $(WebCore)/crypto/parameters/EcdsaParams.idl \
     $(WebCore)/crypto/parameters/HkdfParams.idl \
     $(WebCore)/crypto/parameters/HmacKeyParams.idl \
     $(WebCore)/crypto/parameters/Pbkdf2Params.idl \

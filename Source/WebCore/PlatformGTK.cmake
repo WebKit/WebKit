@@ -387,6 +387,7 @@ if (ENABLE_SUBTLE_CRYPTO)
         crypto/algorithms/CryptoAlgorithmAES_GCM.cpp
         crypto/algorithms/CryptoAlgorithmAES_KW.cpp
         crypto/algorithms/CryptoAlgorithmECDH.cpp
+        crypto/algorithms/CryptoAlgorithmECDSA.cpp
         crypto/algorithms/CryptoAlgorithmHKDF.cpp
         crypto/algorithms/CryptoAlgorithmHMAC.cpp
         crypto/algorithms/CryptoAlgorithmPBKDF2.cpp
@@ -405,6 +406,7 @@ if (ENABLE_SUBTLE_CRYPTO)
         crypto/gcrypt/CryptoAlgorithmAES_GCMGCrypt.cpp
         crypto/gcrypt/CryptoAlgorithmAES_KWGCrypt.cpp
         crypto/gcrypt/CryptoAlgorithmECDHGCrypt.cpp
+        crypto/gcrypt/CryptoAlgorithmECDSAGCrypt.cpp
         crypto/gcrypt/CryptoAlgorithmHKDFGCrypt.cpp
         crypto/gcrypt/CryptoAlgorithmHMACGCrypt.cpp
         crypto/gcrypt/CryptoAlgorithmPBKDF2GCrypt.cpp
