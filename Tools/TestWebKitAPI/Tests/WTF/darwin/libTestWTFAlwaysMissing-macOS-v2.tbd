@@ -1,0 +1,10 @@
+--- !tapi-tbd-v2
+archs: [ i386, x86_64 ]
+uuids: [ 'i386: 6EA81A0A-D83F-4081-B3EA-90419C1573BA87', 'x86_64: 28E81E11-2794-4192-A46A-06C73C9BAFB9' ]
+platform: macosx
+install-name: /usr/local/lib/libTestWTFAlwaysMissing.dylib
+objc-constraint: none
+exports:
+  - archs: [ i386, x86_64 ]
+    symbols: [ _TestWTFAlwaysMissing ]
+...

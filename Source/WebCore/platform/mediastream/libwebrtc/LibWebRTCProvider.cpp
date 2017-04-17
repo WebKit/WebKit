@@ -38,6 +38,7 @@
 #include <webrtc/sdk/objc/Framework/Classes/videotoolboxvideocodecfactory.h>
 #include <wtf/Function.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/darwin/WeakLinking.h>
 #endif
 
 namespace WebCore {
@@ -204,26 +205,12 @@ rtc::scoped_refptr<webrtc::PeerConnectionInterface> LibWebRTCProvider::createPee
     return createActualPeerConnection(observer, WTFMove(portAllocator));
 }
 
-static inline bool isNullFunctionPointer(void* functionPointer)
-{
-    void* result;
-    asm(
-        "mov %1, %0"
-        : "=r" (result)
-        : "r" (functionPointer)
-    );
-    return !result;
-}
-
 #endif // USE(LIBWEBRTC)
 
 bool LibWebRTCProvider::webRTCAvailable()
 {
 #if USE(LIBWEBRTC)
-    static bool available = [] {
-        return !isNullFunctionPointer(reinterpret_cast<void*>(rtc::LogMessage::LogToDebug));
-    }();
-    return available;
+    return !isNullFunctionPointer(rtc::LogMessage::LogToDebug);
 #else
     return true;
 #endif

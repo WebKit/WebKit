@@ -140,6 +140,7 @@
 		2CDED0EF18115C38004DBA70 /* RunLoopCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2CDED0EE18115C38004DBA70 /* RunLoopCF.cpp */; };
 		2CDED0F318115C85004DBA70 /* RunLoop.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2CDED0F118115C85004DBA70 /* RunLoop.cpp */; };
 		2CDED0F418115C85004DBA70 /* RunLoop.h in Headers */ = {isa = PBXBuildFile; fileRef = 2CDED0F218115C85004DBA70 /* RunLoop.h */; };
+		37C7CC2A1EA40A73007BD956 /* WeakLinking.h in Headers */ = {isa = PBXBuildFile; fileRef = 37C7CC291EA40A73007BD956 /* WeakLinking.h */; };
 		430B47891AAAAC1A001223DA /* StringCommon.h in Headers */ = {isa = PBXBuildFile; fileRef = 430B47871AAAAC1A001223DA /* StringCommon.h */; };
 		4B2680DD9B974402899ED572 /* IndexedContainerIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = 9C67C542589348E285B49699 /* IndexedContainerIterator.h */; };
 		513E170B1CD7D5BF00E3650B /* LoggingAccumulator.h in Headers */ = {isa = PBXBuildFile; fileRef = 513E170A1CD7D5BF00E3650B /* LoggingAccumulator.h */; };
@@ -539,6 +540,7 @@
 		2CDED0F118115C85004DBA70 /* RunLoop.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RunLoop.cpp; sourceTree = "<group>"; };
 		2CDED0F218115C85004DBA70 /* RunLoop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RunLoop.h; sourceTree = "<group>"; };
 		3137E1D7DBD84AC38FAE4D34 /* IndexSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IndexSet.h; sourceTree = "<group>"; };
+		37C7CC291EA40A73007BD956 /* WeakLinking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakLinking.h; sourceTree = "<group>"; };
 		430B47871AAAAC1A001223DA /* StringCommon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringCommon.h; sourceTree = "<group>"; };
 		513E170A1CD7D5BF00E3650B /* LoggingAccumulator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoggingAccumulator.h; sourceTree = "<group>"; };
 		515F794B1CFC9F4A00CCED93 /* CrossThreadCopier.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CrossThreadCopier.cpp; sourceTree = "<group>"; };
@@ -862,6 +864,14 @@
 			path = cf;
 			sourceTree = "<group>";
 		};
+		37C7CC281EA40A54007BD956 /* darwin */ = {
+			isa = PBXGroup;
+			children = (
+				37C7CC291EA40A73007BD956 /* WeakLinking.h */,
+			);
+			path = darwin;
+			sourceTree = "<group>";
+		};
 		5D247B5714689B8600E78B76 = {
 			isa = PBXGroup;
 			children = (
@@ -932,6 +942,7 @@
 			children = (
 				2CDED0F018115C3F004DBA70 /* cf */,
 				E4A0AD3B1A96251900536DF6 /* cocoa */,
+				37C7CC281EA40A54007BD956 /* darwin */,
 				A8A47281151A825A004123FF /* dtoa */,
 				1FA47C87152502DA00568D1B /* ios */,
 				A8A472C4151A825A004123FF /* mac */,
@@ -1466,6 +1477,7 @@
 				A8A473A5151A825B004123FF /* Deque.h in Headers */,
 				A8A473A6151A825B004123FF /* DisallowCType.h in Headers */,
 				A8A473AF151A825B004123FF /* diy-fp.h in Headers */,
+				37C7CC2A1EA40A73007BD956 /* WeakLinking.h in Headers */,
 				0F4570431BE5B58F0062A629 /* Dominators.h in Headers */,
 				A8A473B1151A825B004123FF /* double-conversion.h in Headers */,
 				A8A473B2151A825B004123FF /* double.h in Headers */,

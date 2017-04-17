@@ -1,3 +1,19 @@
+2017-04-17  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Move isNullFunctionPointer down into WTF
+        https://bugs.webkit.org/show_bug.cgi?id=170892
+
+        Reviewed by Sam Weinig.
+
+        * TestWebKitAPI/Configurations/TestWTF.xcconfig:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WTF/darwin/WeakLinking.cpp: Added.
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WTF/darwin/libTestWTFAlwaysMissing-iOS-v2.tbd: Added.
+        * TestWebKitAPI/Tests/WTF/darwin/libTestWTFAlwaysMissing-iOS.tbd: Added.
+        * TestWebKitAPI/Tests/WTF/darwin/libTestWTFAlwaysMissing-macOS-v2.tbd: Added.
+        * TestWebKitAPI/Tests/WTF/darwin/libTestWTFAlwaysMissing-macOS.tbd: Added.
+
 2017-04-17  Jonathan Bedard  <jbedard@apple.com>
 
         webkitpy: Correct poll when killing ServerProcess

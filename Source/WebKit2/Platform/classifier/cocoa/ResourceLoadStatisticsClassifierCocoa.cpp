@@ -31,6 +31,7 @@
 #include "CorePredictionSPI.h"
 #include "Logging.h"
 #include <wtf/NeverDestroyed.h>
+#include <wtf/darwin/WeakLinking.h>
 
 namespace WebKit {
 
@@ -72,20 +73,6 @@ String ResourceLoadStatisticsClassifierCocoa::storagePath()
     return String(resourceUrlString.get());
 }
 
-static inline bool isNullFunctionPointer(void* functionPointer)
-{
-    void* result;
-    // The C compiler may take advantage of the fact that by definition, function pointers cannot be
-    // null. When weak-linking a library, function pointers can be null. We use non-C code to
-    // prevent the C compiler from using the definition to optimize out the null check.
-    asm(
-        "mov %1, %0"
-        : "=r" (result)
-        : "r" (functionPointer)
-    );
-    return !result;
-}
-
 bool ResourceLoadStatisticsClassifierCocoa::canUseCorePrediction()
 {
     if (m_haveLoadedModel)
@@ -94,7 +81,7 @@ bool ResourceLoadStatisticsClassifierCocoa::canUseCorePrediction()
     if (!m_useCorePrediction)
         return false;
 
-    if (isNullFunctionPointer(reinterpret_cast<void*>(svm_load_model))) {
+    if (isNullFunctionPointer(svm_load_model)) {
         m_useCorePrediction = false;
         return false;
     }
