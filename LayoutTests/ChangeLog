@@ -1,5 +1,14 @@
 2017-04-17  Youenn Fablet  <youenn@apple.com>
 
+        LayoutTestwebrtc/audio-replace-track.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=170837
+
+        Reviewed by Eric Carlson.
+
+        * webrtc/audio-replace-track.html: Updating the test to be less flaky.
+
+2017-04-17  Youenn Fablet  <youenn@apple.com>
+
         RTCPeerConnection addTrack does not require a stream parameter
         https://bugs.webkit.org/show_bug.cgi?id=170894
 
