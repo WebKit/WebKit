@@ -32,7 +32,7 @@
 #include <WebCore/SecurityOriginData.h>
 
 #if ENABLE(MEDIA_STREAM) && USE(AVFOUNDATION)
-#include <WebCore/AVCaptureDeviceManager.h>
+#include <WebCore/RealtimeMediaSourceCenterMac.h>
 #endif
 
 using namespace WebCore;
@@ -336,7 +336,7 @@ void UserMediaPermissionRequestManagerProxy::syncWithWebCorePrefs() const
 
 #if USE(AVFOUNDATION)
     bool useAVFoundationAudioCapture = m_page.preferences().useAVFoundationAudioCapture();
-    WebCore::AVCaptureDeviceManager::setUseAVFoundationAudioCapture(useAVFoundationAudioCapture);
+    WebCore::RealtimeMediaSourceCenterMac::setUseAVFoundationAudioCapture(useAVFoundationAudioCapture);
 #endif
 #endif
 }

@@ -44,11 +44,24 @@ CaptureDeviceManager::~CaptureDeviceManager()
 {
 }
 
-Vector<CaptureDevice> CaptureDeviceManager::getSourcesInfo()
+Vector<CaptureDevice> CaptureDeviceManager::getAudioSourcesInfo()
 {
     Vector<CaptureDevice> sourcesInfo;
-    for (auto captureDevice : captureDevices()) {
-        if (!captureDevice.enabled() || captureDevice.type() == CaptureDevice::DeviceType::Unknown)
+    for (auto& captureDevice : captureDevices()) {
+        if (!captureDevice.enabled() || captureDevice.type() != CaptureDevice::DeviceType::Audio)
+            continue;
+
+        sourcesInfo.append(captureDevice);
+    }
+    LOG(Media, "CaptureDeviceManager::getSourcesInfo(%p), found %zu active devices", this, sourcesInfo.size());
+    return sourcesInfo;
+}
+
+Vector<CaptureDevice> CaptureDeviceManager::getVideoSourcesInfo()
+{
+    Vector<CaptureDevice> sourcesInfo;
+    for (auto& captureDevice : captureDevices()) {
+        if (!captureDevice.enabled() || captureDevice.type() != CaptureDevice::DeviceType::Video)
             continue;
 
         sourcesInfo.append(captureDevice);

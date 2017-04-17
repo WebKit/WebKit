@@ -1,3 +1,15 @@
+2017-04-17  Jeremy Jones  <jeremyj@apple.com>
+
+        Refactor enumerateDevices to allow separate CaptureDeviceManagers for audio and video.
+        https://bugs.webkit.org/show_bug.cgi?id=170778
+
+        Reviewed by Tim Horton.
+
+        setUseAVFoundationAudioCapture is moved from AVCaptureDeviceManager to RealtimeMediaSourceCenterMac.
+
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::UserMediaPermissionRequestManagerProxy::syncWithWebCorePrefs):
+
 2017-04-15  Keith Rollin  <krollin@apple.com>
 
         Include resource size in some existing logging

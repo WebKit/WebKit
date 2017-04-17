@@ -49,7 +49,7 @@
 #include <wtf/StdLibExtras.h>
 
 #if ENABLE(MEDIA_STREAM) && USE(AVFOUNDATION)
-#include "AVCaptureDeviceManager.h"
+#include "RealtimeMediaSourceCenterMac.h"
 #endif
 
 #if ENABLE(MEDIA_STREAM)
@@ -630,7 +630,7 @@ void Settings::setUseAVFoundationAudioCapture(bool useAVFoundationAudioCapture)
 {
     gUseAVFoundationAudioCapture = useAVFoundationAudioCapture;
 #if USE(AVFOUNDATION)
-    AVCaptureDeviceManager::setUseAVFoundationAudioCapture(useAVFoundationAudioCapture);
+    RealtimeMediaSourceCenterMac::setUseAVFoundationAudioCapture(useAVFoundationAudioCapture);
 #endif
 }
 #endif

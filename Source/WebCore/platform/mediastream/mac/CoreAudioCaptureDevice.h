@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,26 +25,35 @@
 
 #pragma once
 
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(MEDIA_STREAM) && PLATFORM(MAC)
 
 #include "CaptureDevice.h"
-#include "RealtimeMediaSource.h"
+#include <wtf/RefPtr.h>
+#include <wtf/text/WTFString.h>
+
+typedef struct OpaqueCMClock* CMClockRef;
 
 namespace WebCore {
 
-class CaptureDeviceManager {
+class CoreAudioCaptureDevice : public CaptureDevice, public RefCounted<CoreAudioCaptureDevice> {
 public:
-    virtual Vector<CaptureDevice>& captureDevices() = 0;
-    virtual void refreshCaptureDevices() { }
-    virtual Vector<CaptureDevice> getAudioSourcesInfo();
-    virtual Vector<CaptureDevice> getVideoSourcesInfo();
-    virtual std::optional<CaptureDevice> deviceWithUID(const String&, RealtimeMediaSource::Type);
 
-protected:
-    virtual ~CaptureDeviceManager();
-    bool captureDeviceFromDeviceID(const String& captureDeviceID, CaptureDevice& source);
+    static RefPtr<CoreAudioCaptureDevice> create(uint32_t);
+    virtual ~CoreAudioCaptureDevice() = default;
+
+    uint32_t deviceID();
+    RetainPtr<CMClockRef> deviceClock();
+    bool isAlive();
+
+private:
+    CoreAudioCaptureDevice(uint32_t, const String& persistentID, const String& label);
+
+    uint32_t m_deviceID { 0 };
+    RetainPtr<CMClockRef> m_deviceClock;
 };
+
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_STREAM)
+#endif // ENABLE(MEDIA_STREAM) && PLATFORM(MAC)
+

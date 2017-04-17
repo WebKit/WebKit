@@ -88,6 +88,28 @@ void RealtimeMediaSourceCenter::unsetVideoFactory(RealtimeMediaSource::CaptureFa
         m_videoFactory = nullptr;
 }
 
+void RealtimeMediaSourceCenter::setAudioCaptureDeviceManager(CaptureDeviceManager& deviceManager)
+{
+    m_audioCaptureDeviceManager = &deviceManager;
+}
+
+void RealtimeMediaSourceCenter::unsetAudioCaptureDeviceManager(CaptureDeviceManager& deviceManager)
+{
+    if (m_audioCaptureDeviceManager == &deviceManager)
+        m_audioCaptureDeviceManager = nullptr;
+}
+
+void RealtimeMediaSourceCenter::setVideoCaptureDeviceManager(CaptureDeviceManager& deviceManager)
+{
+    m_videoCaptureDeviceManager = &deviceManager;
+}
+
+void RealtimeMediaSourceCenter::unsetVideoCaptureDeviceManager(CaptureDeviceManager& deviceManager)
+{
+    if (m_videoCaptureDeviceManager == &deviceManager)
+        m_videoCaptureDeviceManager = nullptr;
+}
+    
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)

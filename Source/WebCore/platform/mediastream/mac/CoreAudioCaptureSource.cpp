@@ -30,6 +30,8 @@
 
 #include "AudioSampleBufferList.h"
 #include "AudioSampleDataSource.h"
+#include "CoreAudioCaptureDevice.h"
+#include "CoreAudioCaptureDeviceManager.h"
 #include "Logging.h"
 #include "MediaTimeAVFoundation.h"
 #include <AudioToolbox/AudioConverter.h>
@@ -78,7 +80,15 @@ CoreAudioCaptureSource::CoreAudioCaptureSource(const CaptureDevice& deviceInfo)
     : RealtimeMediaSource(emptyString(), RealtimeMediaSource::Type::Audio, deviceInfo.label())
     , m_captureDeviceID(0)
 {
-    // FIXME: use deviceInfo to set the m_captureDeviceID
+#if PLATFORM(MAC)
+    for (auto& platformDevice : CoreAudioCaptureDeviceManager::singleton().coreAudioCaptureDevices()) {
+        if (platformDevice->persistentId() == deviceInfo.persistentId()) {
+            m_captureDeviceID = platformDevice->deviceID();
+            break;
+        }
+    }
+    ASSERT(m_captureDeviceID);
+#endif
 
     setPersistentID(deviceInfo.persistentId());
     setMuted(true);
@@ -408,24 +418,26 @@ OSStatus CoreAudioCaptureSource::setupAudioUnits()
 
 void CoreAudioCaptureSource::startProducingData()
 {
-    std::lock_guard<Lock> lock(m_internalStateLock);
-    if (m_ioUnitStarted)
-        return;
-
-    OSStatus err;
-    if (!m_ioUnit) {
-        err = setupAudioUnits();
-        if (err)
+    {
+        std::lock_guard<Lock> lock(m_internalStateLock);
+        if (m_ioUnitStarted)
             return;
-    }
 
-    err = AudioOutputUnitStart(m_ioUnit);
-    if (err) {
-        LOG(Media, "CoreAudioCaptureSource::start(%p) AudioOutputUnitStart failed with error %d (%.4s)", this, (int)err, (char*)&err);
-        return;
-    }
+        OSStatus err;
+        if (!m_ioUnit) {
+            err = setupAudioUnits();
+            if (err)
+                return;
+        }
 
-    m_ioUnitStarted = true;
+        err = AudioOutputUnitStart(m_ioUnit);
+        if (err) {
+            LOG(Media, "CoreAudioCaptureSource::start(%p) AudioOutputUnitStart failed with error %d (%.4s)", this, (int)err, (char*)&err);
+            return;
+        }
+
+        m_ioUnitStarted = true;
+    }
     setMuted(false);
 }
 
@@ -433,14 +445,14 @@ void CoreAudioCaptureSource::stopProducingData()
 {
     std::lock_guard<Lock> lock(m_internalStateLock);
 
-    ASSERT(m_ioUnit);
-
-    auto err = AudioOutputUnitStop(m_ioUnit);
-    if (err) {
-        LOG(Media, "CoreAudioCaptureSource::stop(%p) AudioOutputUnitStop failed with error %d (%.4s)", this, (int)err, (char*)&err);
-        return;
+    if (m_ioUnit) {
+        auto err = AudioOutputUnitStop(m_ioUnit);
+        if (err) {
+            LOG(Media, "CoreAudioCaptureSource::stop(%p) AudioOutputUnitStop failed with error %d (%.4s)", this, (int)err, (char*)&err);
+            return;
+        }
+        m_ioUnitStarted = false;
     }
-    m_ioUnitStarted = false;
     setMuted(true);
 }
 

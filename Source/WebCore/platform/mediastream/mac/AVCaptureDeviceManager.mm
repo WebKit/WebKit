@@ -32,7 +32,6 @@
 #import "AVMediaCaptureSource.h"
 #import "AVVideoCaptureSource.h"
 #import "AudioSourceProvider.h"
-#import "CoreAudioCaptureSource.h"
 #import "Logging.h"
 #import "MediaConstraints.h"
 #import "RealtimeMediaSource.h"
@@ -93,19 +92,6 @@ using namespace WebCore;
 
 namespace WebCore {
 
-void AVCaptureDeviceManager::setUseAVFoundationAudioCapture(bool enabled)
-{
-    static bool active = false;
-    if (active == enabled)
-        return;
-
-    active = enabled;
-    if (active)
-        RealtimeMediaSourceCenter::singleton().setAudioFactory(AVAudioCaptureSource::factory());
-    else
-        RealtimeMediaSourceCenter::singleton().setAudioFactory(CoreAudioCaptureSource::factory());
-}
-
 Vector<CaptureDevice>& AVCaptureDeviceManager::captureDevices()
 {
     if (!isAvailable())
@@ -134,30 +120,32 @@ inline static bool deviceIsAvailable(AVCaptureDeviceTypedef *device)
     return true;
 }
 
-void AVCaptureDeviceManager::refreshCaptureDevices()
+void AVCaptureDeviceManager::refreshAVCaptureDevicesOfType(CaptureDevice::DeviceType type)
 {
+    ASSERT(type == CaptureDevice::DeviceType::Video || type == CaptureDevice::DeviceType::Audio);
+
+    NSString *platformType = (type == CaptureDevice::DeviceType::Video) ? AVMediaTypeVideo : AVMediaTypeAudio;
+
     for (AVCaptureDeviceTypedef *platformDevice in [getAVCaptureDeviceClass() devices]) {
 
-        CaptureDevice captureDevice;
-        if (!captureDeviceFromDeviceID(platformDevice.uniqueID, captureDevice)) {
-            bool hasAudio = [platformDevice hasMediaType:AVMediaTypeAudio] || [platformDevice hasMediaType:AVMediaTypeMuxed];
-            bool hasVideo = [platformDevice hasMediaType:AVMediaTypeVideo] || [platformDevice hasMediaType:AVMediaTypeMuxed];
-            if (!hasAudio && !hasVideo)
-                continue;
+        bool hasMatchingType = [platformDevice hasMediaType:platformType] || [platformDevice hasMediaType:AVMediaTypeMuxed];
+        if (!hasMatchingType)
+            continue;
 
-            CaptureDevice::DeviceType type = hasVideo ? CaptureDevice::DeviceType::Video : CaptureDevice::DeviceType::Audio;
-            CaptureDevice captureDevice(platformDevice.uniqueID, type, platformDevice.localizedName);
-            captureDevice.setEnabled(deviceIsAvailable(platformDevice));
-            m_devices.append(captureDevice);
+        CaptureDevice existingCaptureDevice;
+        if (captureDeviceFromDeviceID(platformDevice.uniqueID, existingCaptureDevice) && existingCaptureDevice.type() == type)
+            continue;
 
-            if (hasVideo && hasAudio) {
-                // Add the audio component as a separate device.
-                CaptureDevice audioCaptureDevice(platformDevice.uniqueID, CaptureDevice::DeviceType::Audio, platformDevice.localizedName);
-                captureDevice.setEnabled(deviceIsAvailable(platformDevice));
-                m_devices.append(audioCaptureDevice);
-            }
-        }
+        CaptureDevice captureDevice(platformDevice.uniqueID, type, platformDevice.localizedName);
+        captureDevice.setEnabled(deviceIsAvailable(platformDevice));
+        m_devices.append(captureDevice);
     }
+}
+
+void AVCaptureDeviceManager::refreshCaptureDevices()
+{
+    refreshAVCaptureDevicesOfType(CaptureDevice::DeviceType::Video);
+    refreshAVCaptureDevicesOfType(CaptureDevice::DeviceType::Audio);
 }
 
 bool AVCaptureDeviceManager::isAvailable()
@@ -182,12 +170,20 @@ AVCaptureDeviceManager::~AVCaptureDeviceManager()
     [m_objcObserver disconnect];
 }
 
-Vector<CaptureDevice> AVCaptureDeviceManager::getSourcesInfo()
+Vector<CaptureDevice> AVCaptureDeviceManager::getAudioSourcesInfo()
 {
     if (!isAvailable())
         return Vector<CaptureDevice>();
 
-    return CaptureDeviceManager::getSourcesInfo();
+    return CaptureDeviceManager::getAudioSourcesInfo();
+}
+
+Vector<CaptureDevice> AVCaptureDeviceManager::getVideoSourcesInfo()
+{
+    if (!isAvailable())
+        return Vector<CaptureDevice>();
+
+    return CaptureDeviceManager::getVideoSourcesInfo();
 }
 
 void AVCaptureDeviceManager::registerForDeviceNotifications()

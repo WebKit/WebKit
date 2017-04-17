@@ -44,6 +44,7 @@ class RealtimeMediaSourceCenterMac final : public RealtimeMediaSourceCenter {
 public:
     RealtimeMediaSourceCenterMac();
 
+    WEBCORE_EXPORT static void setUseAVFoundationAudioCapture(bool enabled);
 private:
     ~RealtimeMediaSourceCenterMac();
 

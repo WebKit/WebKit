@@ -42,6 +42,7 @@
 namespace WebCore {
 
 class CaptureDevice;
+class CaptureDeviceManager;
 class MediaConstraints;
 class RealtimeMediaSourceSettings;
 class RealtimeMediaSourceSupportedConstraints;
@@ -76,6 +77,17 @@ public:
     WEBCORE_EXPORT void unsetVideoFactory(RealtimeMediaSource::CaptureFactory&);
     RealtimeMediaSource::CaptureFactory* videoFactory() const { return m_videoFactory; }
 
+    virtual CaptureDeviceManager* defaultAudioCaptureDeviceManager() { return nullptr; }
+    virtual CaptureDeviceManager* defaultVideoCaptureDeviceManager() { return nullptr; }
+
+    WEBCORE_EXPORT void setAudioCaptureDeviceManager(CaptureDeviceManager&);
+    WEBCORE_EXPORT void unsetAudioCaptureDeviceManager(CaptureDeviceManager&);
+    CaptureDeviceManager* audioCaptureDeviceManager() const { return m_audioCaptureDeviceManager; }
+
+    WEBCORE_EXPORT void setVideoCaptureDeviceManager(CaptureDeviceManager&);
+    WEBCORE_EXPORT void unsetVideoCaptureDeviceManager(CaptureDeviceManager&);
+    CaptureDeviceManager* videoCaptureDeviceManager() const { return m_videoCaptureDeviceManager; }
+
 protected:
     RealtimeMediaSourceCenter();
 
@@ -84,6 +96,9 @@ protected:
 
     RealtimeMediaSource::CaptureFactory* m_audioFactory { nullptr };
     RealtimeMediaSource::CaptureFactory* m_videoFactory { nullptr };
+
+    CaptureDeviceManager* m_audioCaptureDeviceManager { nullptr };
+    CaptureDeviceManager* m_videoCaptureDeviceManager { nullptr };
 };
 
 } // namespace WebCore

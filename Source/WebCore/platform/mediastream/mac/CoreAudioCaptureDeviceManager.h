@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,56 +23,42 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AVCaptureDeviceManager_h
-#define AVCaptureDeviceManager_h
+#pragma once
 
-#if ENABLE(MEDIA_STREAM) && USE(AVFOUNDATION)
+#if ENABLE(MEDIA_STREAM) && PLATFORM(MAC)
 
+#include "CaptureDevice.h"
 #include "CaptureDeviceManager.h"
-#include "RealtimeMediaSource.h"
-#include "RealtimeMediaSourceSupportedConstraints.h"
-#include <wtf/NeverDestroyed.h>
-#include <wtf/RetainPtr.h>
+#include <CoreAudio/CoreAudio.h>
+#include <wtf/HashMap.h>
+#include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
-
-OBJC_CLASS AVCaptureDevice;
-OBJC_CLASS AVCaptureSession;
-OBJC_CLASS NSString;
-OBJC_CLASS WebCoreAVCaptureDeviceManagerObserver;
 
 namespace WebCore {
 
-class AVCaptureDeviceManager final : public CaptureDeviceManager {
-    friend class NeverDestroyed<AVCaptureDeviceManager>;
+class CoreAudioCaptureDevice;
+
+class CoreAudioCaptureDeviceManager final : public CaptureDeviceManager {
+    friend class NeverDestroyed<CoreAudioCaptureDeviceManager>;
 public:
-    WEBCORE_EXPORT static void setUseAVFoundationAudioCapture(bool);
+    static CoreAudioCaptureDeviceManager& singleton();
 
     Vector<CaptureDevice>& captureDevices() final;
 
-    static AVCaptureDeviceManager& singleton();
+    Vector<Ref<CoreAudioCaptureDevice>>& coreAudioCaptureDevices();
 
-    void deviceConnected();
-    void deviceDisconnected(AVCaptureDevice*);
+private:
+    CoreAudioCaptureDeviceManager() = default;
+    ~CoreAudioCaptureDeviceManager() = default;
+    
+    static OSStatus devicesChanged(AudioObjectID, UInt32, const AudioObjectPropertyAddress*, void*);
 
-    Vector<CaptureDevice> getAudioSourcesInfo() final;
-    Vector<CaptureDevice> getVideoSourcesInfo() final;
+    void refreshAudioCaptureDevices();
 
-protected:
-    static bool isAvailable();
-
-    AVCaptureDeviceManager();
-    ~AVCaptureDeviceManager() final;
-
-    void refreshCaptureDevices() final;
-    void registerForDeviceNotifications();
-    void refreshAVCaptureDevicesOfType(CaptureDevice::DeviceType);
-
-    RetainPtr<WebCoreAVCaptureDeviceManagerObserver> m_objcObserver;
     Vector<CaptureDevice> m_devices;
+    Vector<Ref<CoreAudioCaptureDevice>> m_coreAudioCaptureDevices;
 };
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_STREAM)
-
-#endif // AVCaptureDeviceManager_h
+#endif // ENABLE(MEDIA_STREAM && PLATFORM(MAC)
