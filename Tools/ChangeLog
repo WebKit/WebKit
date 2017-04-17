@@ -1,3 +1,12 @@
+2017-04-17  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Correct poll when killing ServerProcess
+
+        Unreviewed infrastructure fix.
+
+        * Scripts/webkitpy/port/server_process.py:
+        (ServerProcess._kill): A polled process equaling 'None' means the process is running.
+
 2017-04-17  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Enable getUserMedia API test
