@@ -1777,6 +1777,7 @@
 		41BF700F0FE86F61005E8DEC /* PlatformMessagePortChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41BF700D0FE86F61005E8DEC /* PlatformMessagePortChannel.cpp */; };
 		41BF70100FE86F61005E8DEC /* PlatformMessagePortChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 41BF700E0FE86F61005E8DEC /* PlatformMessagePortChannel.h */; };
 		41C760B10EDE03D300C1655F /* ScriptState.h in Headers */ = {isa = PBXBuildFile; fileRef = 41C760B00EDE03D300C1655F /* ScriptState.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		41CAD71E1EA090A100178164 /* VideoToolBoxEncoderFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41CAD71C1EA0905700178164 /* VideoToolBoxEncoderFactory.cpp */; };
 		41CF8BE71D46226700707DC9 /* FetchBodyConsumer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41CF8BE41D46222000707DC9 /* FetchBodyConsumer.cpp */; };
 		41D015CA0F4B5C71004A662F /* ContentType.h in Headers */ = {isa = PBXBuildFile; fileRef = 41D015C80F4B5C71004A662F /* ContentType.h */; };
 		41D015CB0F4B5C71004A662F /* ContentType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41D015C90F4B5C71004A662F /* ContentType.cpp */; };
@@ -9394,6 +9395,8 @@
 		41C7E1051E6A54360027B4DE /* CanvasCaptureMediaStreamTrack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CanvasCaptureMediaStreamTrack.cpp; sourceTree = "<group>"; };
 		41C7E1061E6A54360027B4DE /* CanvasCaptureMediaStreamTrack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CanvasCaptureMediaStreamTrack.h; sourceTree = "<group>"; };
 		41C7E1081E6AA37C0027B4DE /* CanvasCaptureMediaStreamTrack.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CanvasCaptureMediaStreamTrack.idl; sourceTree = "<group>"; };
+		41CAD71C1EA0905700178164 /* VideoToolBoxEncoderFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VideoToolBoxEncoderFactory.cpp; path = libwebrtc/VideoToolBoxEncoderFactory.cpp; sourceTree = "<group>"; };
+		41CAD71D1EA0905700178164 /* VideoToolBoxEncoderFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VideoToolBoxEncoderFactory.h; path = libwebrtc/VideoToolBoxEncoderFactory.h; sourceTree = "<group>"; };
 		41CF8BE41D46222000707DC9 /* FetchBodyConsumer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FetchBodyConsumer.cpp; sourceTree = "<group>"; };
 		41CF8BE51D46222000707DC9 /* FetchBodyConsumer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FetchBodyConsumer.h; sourceTree = "<group>"; };
 		41CF8BE61D46222C00707DC9 /* FetchInternals.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = FetchInternals.js; sourceTree = "<group>"; };
@@ -17551,6 +17554,8 @@
 				415747431E38699E00E914D8 /* LibWebRTCMacros.h */,
 				41A1B00D1E52656E007F3769 /* LibWebRTCProvider.cpp */,
 				415747441E38699E00E914D8 /* LibWebRTCProvider.h */,
+				41CAD71C1EA0905700178164 /* VideoToolBoxEncoderFactory.cpp */,
+				41CAD71D1EA0905700178164 /* VideoToolBoxEncoderFactory.h */,
 			);
 			name = libwebrtc;
 			sourceTree = "<group>";
@@ -30434,6 +30439,7 @@
 				512DD8FA0D91E6AF000F89EE /* ArchiveFactory.cpp in Sources */,
 				512DD8FB0D91E6AF000F89EE /* ArchiveResource.cpp in Sources */,
 				512DD8F70D91E6AF000F89EE /* ArchiveResourceCollection.cpp in Sources */,
+				41CAD71E1EA090A100178164 /* VideoToolBoxEncoderFactory.cpp in Sources */,
 				FD5686C913AC180200B69C68 /* AsyncAudioDecoder.cpp in Sources */,
 				E1CDE92015018ED000862CC5 /* AsyncFileStream.cpp in Sources */,
 				0FFD4D6018651FA300512F6E /* AsyncScrollingCoordinator.cpp in Sources */,

@@ -29,6 +29,7 @@
 #if USE(LIBWEBRTC)
 #include "LibWebRTCAudioModule.h"
 #include "Logging.h"
+#include "VideoToolBoxEncoderFactory.h"
 #include <dlfcn.h>
 #include <webrtc/api/peerconnectionfactoryproxy.h>
 #include <webrtc/base/physicalsocketserver.h>
@@ -59,7 +60,7 @@ static inline PeerConnectionFactoryAndThreads& staticFactoryAndThreads()
 {
     static NeverDestroyed<PeerConnectionFactoryAndThreads> factoryAndThreads;
 #if PLATFORM(COCOA)
-    factoryAndThreads.get().encoderFactoryGetter = []() -> std::unique_ptr<cricket::WebRtcVideoEncoderFactory> { return std::make_unique<webrtc::VideoToolboxVideoEncoderFactory>(); };
+    factoryAndThreads.get().encoderFactoryGetter = []() -> std::unique_ptr<cricket::WebRtcVideoEncoderFactory> { return std::make_unique<VideoToolboxVideoEncoderFactory>(); };
     factoryAndThreads.get().decoderFactoryGetter = []() -> std::unique_ptr<cricket::WebRtcVideoDecoderFactory> { return std::make_unique<webrtc::VideoToolboxVideoDecoderFactory>(); };
 #endif
     return factoryAndThreads.get();

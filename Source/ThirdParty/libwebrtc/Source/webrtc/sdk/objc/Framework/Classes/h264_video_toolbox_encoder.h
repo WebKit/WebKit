@@ -30,7 +30,7 @@
 
 namespace webrtc {
 
-class H264VideoToolboxEncoder : public H264Encoder {
+class WEBRTC_DYLIB_EXPORT H264VideoToolboxEncoder : public H264Encoder {
  public:
   explicit H264VideoToolboxEncoder(const cricket::VideoCodec& codec);
 

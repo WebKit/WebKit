@@ -1,3 +1,20 @@
+2017-04-17  Youenn Fablet  <youenn@apple.com>
+
+        Add an external libwebrtc encoder factory in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=170883
+
+        Reviewed by Alex Christensen.
+
+        Exporting some symbols.
+        Allowing to customize the creation of the H264 encoder.
+
+        * Source/webrtc/media/base/codec.h:
+        * Source/webrtc/media/engine/webrtcvideoencoderfactory.h
+        * Source/webrtc/sdk/objc/Framework/Classes/videotoolboxvideocodecfactory.cc:
+        * Source/webrtc/sdk/objc/Framework/Classes/videotoolboxvideocodecfactory.h:
+        * Source/webrtc/video_decoder.h
+        * Source/webrtc/video_encoder.h
+
 2017-04-14  Mark Lam  <mark.lam@apple.com>
 
         Update architectures in xcconfig files.

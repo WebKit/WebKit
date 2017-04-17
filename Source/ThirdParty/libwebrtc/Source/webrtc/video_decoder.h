@@ -35,7 +35,7 @@ class DecodedImageCallback {
   // decode time excluding waiting time for any previous pending frame to
   // return. This is necessary for breaking positive feedback in the delay
   // estimation when the decoder has a single output buffer.
-  virtual int32_t Decoded(VideoFrame& decodedImage, int64_t decode_time_ms) {
+  virtual int32_t Decoded(VideoFrame& decodedImage, int64_t /* decode_time_ms */) {
     // The default implementation ignores custom decode time value.
     return Decoded(decodedImage);
   }
@@ -43,16 +43,16 @@ class DecodedImageCallback {
   // updated.
   virtual void Decoded(VideoFrame& decodedImage,
                        rtc::Optional<int32_t> decode_time_ms,
-                       rtc::Optional<uint8_t> qp) {
+                       rtc::Optional<uint8_t> /* qp */) {
     Decoded(decodedImage,
             decode_time_ms ? static_cast<int32_t>(*decode_time_ms) : -1);
   }
 
-  virtual int32_t ReceivedDecodedReferenceFrame(const uint64_t pictureId) {
+  virtual int32_t ReceivedDecodedReferenceFrame(const uint64_t /* pictureId */) {
     return -1;
   }
 
-  virtual int32_t ReceivedDecodedFrame(const uint64_t pictureId) { return -1; }
+  virtual int32_t ReceivedDecodedFrame(const uint64_t /* pictureId */) { return -1; }
 };
 
 class VideoDecoder {

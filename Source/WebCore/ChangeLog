@@ -1,3 +1,20 @@
+2017-04-17  Youenn Fablet  <youenn@apple.com>
+
+        Add an external libwebrtc encoder factory in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=170883
+
+        Reviewed by Alex Christensen.
+
+        No change of behavior, WebCore factory instantiating the default libwebrtc H264 encoder.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/mediastream/libwebrtc/LibWebRTCProvider.cpp:
+        (WebCore::staticFactoryAndThreads):
+        * platform/mediastream/libwebrtc/VideoToolBoxEncoderFactory.cpp: Added.
+        (WebCore::VideoToolboxVideoEncoderFactory::CreateVideoEncoder):
+        (WebCore::VideoToolboxVideoEncoderFactory::DestroyVideoEncoder):
+        * platform/mediastream/libwebrtc/VideoToolBoxEncoderFactory.h: Added.
+
 2017-04-17  Antti Koivisto  <antti@apple.com>
 
         GraphicsLayerCA::recursiveCommitChanges should not descend into subtrees without changes

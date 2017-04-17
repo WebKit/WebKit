@@ -43,6 +43,10 @@ VideoEncoder* VideoToolboxVideoEncoderFactory::CreateVideoEncoder(
   return nullptr;
 }
 
+VideoEncoder* VideoToolboxVideoEncoderFactory::CreateSupportedVideoEncoder(const cricket::VideoCodec& codec) {
+  return new H264VideoToolboxEncoder(codec);
+}
+
 void VideoToolboxVideoEncoderFactory::DestroyVideoEncoder(
     VideoEncoder* encoder) {
   delete encoder;

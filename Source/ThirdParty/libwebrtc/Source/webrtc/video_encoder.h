@@ -165,7 +165,7 @@ class VideoEncoder {
   //          - framerate       : The target frame rate
   //
   // Return value                : WEBRTC_VIDEO_CODEC_OK if OK, < 0 otherwise.
-  virtual int32_t SetRates(uint32_t bitrate, uint32_t framerate) {
+  virtual int32_t SetRates(uint32_t /* bitrate */, uint32_t /* framerate */) {
     RTC_NOTREACHED() << "SetRate(uint32_t, uint32_t) is deprecated.";
     return -1;
   }
@@ -183,7 +183,7 @@ class VideoEncoder {
     return ScalingSettings(false);
   }
 
-  virtual int32_t SetPeriodicKeyFrames(bool enable) { return -1; }
+  virtual int32_t SetPeriodicKeyFrames(bool /* enable */) { return -1; }
   virtual bool SupportsNativeHandle() const { return false; }
   virtual const char* ImplementationName() const { return "unknown"; }
 };
