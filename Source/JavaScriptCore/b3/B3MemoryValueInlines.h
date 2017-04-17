@@ -32,7 +32,7 @@
 
 namespace JSC { namespace B3 {
 
-inline bool MemoryValue::isLegalOffset(int32_t offset) const
+inline bool MemoryValue::isLegalOffsetImpl(int32_t offset) const
 {
     // NOTE: This is inline because it constant-folds to true on x86!
     

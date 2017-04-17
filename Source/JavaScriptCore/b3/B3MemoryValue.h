@@ -31,6 +31,7 @@
 #include "B3Bank.h"
 #include "B3HeapRange.h"
 #include "B3Value.h"
+#include <type_traits>
 
 namespace JSC { namespace B3 {
 
@@ -43,13 +44,17 @@ public:
 
     ~MemoryValue();
 
-    int32_t offset() const { return m_offset; }
-    void setOffset(int32_t offset) { m_offset = offset; }
-    
+    OffsetType offset() const { return m_offset; }
+    template<typename Int, typename = IsLegalOffset<Int>>
+    void setOffset(Int offset) { m_offset = offset; }
+
     // You don't have to worry about using legal offsets unless you've entered quirks mode.
-    bool isLegalOffset(int32_t offset) const;
-    bool isLegalOffset(int64_t offset) const;
-    
+    template<typename Int,
+        typename = typename std::enable_if<std::is_integral<Int>::value>::type,
+        typename = typename std::enable_if<std::is_signed<Int>::value>::type
+    >
+    bool isLegalOffset(Int offset) const { return isLegalOffsetImpl(offset); }
+
     // A necessary consequence of MemoryValue having an offset is that it participates in instruction
     // selection. This tells you if this will get lowered to something that requires an offsetless
     // address.
@@ -84,8 +89,8 @@ protected:
 
     Value* cloneImpl() const override;
 
-    template<typename... Arguments>
-    MemoryValue(CheckedOpcodeTag, Kind kind, Type type, Origin origin, int32_t offset, HeapRange range, HeapRange fenceRange, Arguments... arguments)
+    template<typename Int, typename = IsLegalOffset<Int>, typename... Arguments>
+    MemoryValue(CheckedOpcodeTag, Kind kind, Type type, Origin origin, Int offset, HeapRange range, HeapRange fenceRange, Arguments... arguments)
         : Value(CheckedOpcode, kind, type, origin, arguments...)
         , m_offset(offset)
         , m_range(range)
@@ -95,18 +100,54 @@ protected:
     
 private:
     friend class Procedure;
-    
+
+    bool isLegalOffsetImpl(int32_t offset) const;
+    bool isLegalOffsetImpl(int64_t offset) const;
+
+    enum MemoryValueLoad { MemoryValueLoadTag };
+    enum MemoryValueLoadImplied { MemoryValueLoadImpliedTag };
+    enum MemoryValueStore { MemoryValueStoreTag };
+
     // Use this form for Load (but not Load8Z, Load8S, or any of the Loads that have a suffix that
     // describes the returned type).
-    MemoryValue(Kind, Type, Origin, Value* pointer, int32_t offset = 0, HeapRange range = HeapRange::top(), HeapRange fenceRange = HeapRange());
+    MemoryValue(Kind kind, Type type, Origin origin, Value* pointer)
+        : MemoryValue(MemoryValueLoadTag, kind, type, origin, pointer)
+    {
+    }
+    template<typename Int, typename = IsLegalOffset<Int>>
+    MemoryValue(Kind kind, Type type, Origin origin, Value* pointer, Int offset, HeapRange range = HeapRange::top(), HeapRange fenceRange = HeapRange())
+        : MemoryValue(MemoryValueLoadTag, kind, type, origin, pointer, offset, range, fenceRange)
+    {
+    }
 
     // Use this form for loads where the return type is implied.
-    MemoryValue(Kind, Origin, Value* pointer, int32_t offset = 0, HeapRange range = HeapRange::top(), HeapRange fenceRange = HeapRange());
+    MemoryValue(Kind kind, Origin origin, Value* pointer)
+        : MemoryValue(MemoryValueLoadImpliedTag, kind, origin, pointer)
+    {
+    }
+    template<typename Int, typename = IsLegalOffset<Int>>
+    MemoryValue(Kind kind, Origin origin, Value* pointer, Int offset, HeapRange range = HeapRange::top(), HeapRange fenceRange = HeapRange())
+        : MemoryValue(MemoryValueLoadImpliedTag, kind, origin, pointer, offset, range, fenceRange)
+    {
+    }
 
     // Use this form for stores.
-    MemoryValue(Kind, Origin, Value* value, Value* pointer, int32_t offset = 0, HeapRange range = HeapRange::top(), HeapRange fenceRange = HeapRange());
-    
-    int32_t m_offset { 0 };
+    MemoryValue(Kind kind, Origin origin, Value* value, Value* pointer)
+        : MemoryValue(MemoryValueStoreTag, kind, origin, value, pointer)
+    {
+    }
+    template<typename Int, typename = IsLegalOffset<Int>>
+    MemoryValue(Kind kind, Origin origin, Value* value, Value* pointer, Int offset, HeapRange range = HeapRange::top(), HeapRange fenceRange = HeapRange())
+        : MemoryValue(MemoryValueStoreTag, kind, origin, value, pointer, offset, range, fenceRange)
+    {
+    }
+
+    // The above templates forward to these implementations.
+    MemoryValue(MemoryValueLoad, Kind, Type, Origin, Value* pointer, OffsetType = 0, HeapRange = HeapRange::top(), HeapRange fenceRange = HeapRange());
+    MemoryValue(MemoryValueLoadImplied, Kind, Origin, Value* pointer, OffsetType = 0, HeapRange = HeapRange::top(), HeapRange fenceRange = HeapRange());
+    MemoryValue(MemoryValueStore, Kind, Origin, Value*, Value* pointer, OffsetType = 0, HeapRange = HeapRange::top(), HeapRange fenceRange = HeapRange());
+
+    OffsetType m_offset { 0 };
     HeapRange m_range { HeapRange::top() };
     HeapRange m_fenceRange { HeapRange() };
 };

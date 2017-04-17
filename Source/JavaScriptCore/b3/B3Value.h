@@ -39,6 +39,7 @@
 #include <wtf/CommaPrinter.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/TriState.h>
 
 namespace JSC { namespace B3 {
@@ -282,6 +283,22 @@ public:
     };
     template<typename Functor>
     void walk(const Functor& functor, PhiChildren* = nullptr);
+
+    // B3 purposefully only represents signed 32-bit offsets because that's what x86 can encode, and
+    // ARM64 cannot encode anything bigger. The IsLegalOffset type trait is then used on B3 Value
+    // methods to prevent implicit conversions by C++ from invalid offset types: these cause compilation
+    // to fail, instead of causing implementation-defined behavior (which often turns to exploit).
+    // OffsetType isn't sufficient to determine offset validity! Each Value opcode further has an
+    // isLegalOffset runtime method used to determine value legality at runtime. This is exposed to users
+    // of B3 to force them to reason about the target's offset.
+    typedef int32_t OffsetType;
+    template<typename Int>
+    struct IsLegalOffset : std::conjunction<
+        typename std::enable_if<std::is_integral<Int>::value>::type,
+        typename std::enable_if<std::is_signed<Int>::value>::type,
+        typename std::enable_if<sizeof(Int) <= sizeof(OffsetType)>::type
+    > { };
+
 
 protected:
     virtual Value* cloneImpl() const;

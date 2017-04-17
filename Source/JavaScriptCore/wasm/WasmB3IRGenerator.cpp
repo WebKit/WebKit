@@ -60,6 +60,7 @@
 #include "WasmOpcodeOrigin.h"
 #include "WasmThunks.h"
 #include <wtf/Optional.h>
+#include <wtf/StdLibExtras.h>
 
 void dumpProcedure(void* ptr)
 {
@@ -237,7 +238,7 @@ private:
 
     void emitChecksForModOrDiv(B3::Opcode, ExpressionType left, ExpressionType right);
 
-    void fixupPointerPlusOffset(ExpressionType&, uint32_t&);
+    int32_t WARN_UNUSED_RETURN fixupPointerPlusOffset(ExpressionType&, uint32_t);
 
     Value* materializeWasmContext(Procedure&, BasicBlock*);
     void restoreWasmContext(Procedure&, BasicBlock*, Value*);
@@ -261,12 +262,13 @@ private:
 };
 
 // Memory accesses in WebAssembly have unsigned 32-bit offsets, whereas they have signed 32-bit offsets in B3.
-void B3IRGenerator::fixupPointerPlusOffset(ExpressionType& ptr, uint32_t& offset)
+int32_t B3IRGenerator::fixupPointerPlusOffset(ExpressionType& ptr, uint32_t offset)
 {
     if (static_cast<uint64_t>(offset) > static_cast<uint64_t>(std::numeric_limits<int32_t>::max())) {
         ptr = m_currentBlock->appendNew<Value>(m_proc, Add, origin(), ptr, m_currentBlock->appendNew<Const64Value>(m_proc, origin(), offset));
-        offset = 0;
+        return 0;
     }
+    return offset;
 }
 
 Value* B3IRGenerator::materializeWasmContext(Procedure& proc, BasicBlock* block)
@@ -507,10 +509,10 @@ auto B3IRGenerator::addGrowMemory(ExpressionType delta, ExpressionType& result) 
 
 auto B3IRGenerator::addCurrentMemory(ExpressionType& result) -> PartialResult
 {
-    Value* memoryObject = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), m_instanceValue, JSWebAssemblyInstance::offsetOfMemory());
+    Value* memoryObject = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), m_instanceValue, safeCast<int32_t>(JSWebAssemblyInstance::offsetOfMemory()));
 
     static_assert(sizeof(decltype(static_cast<JSWebAssemblyInstance*>(nullptr)->memory()->memory().size())) == sizeof(uint64_t), "codegen relies on this size");
-    Value* size = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Int64, origin(), memoryObject, JSWebAssemblyMemory::offsetOfSize());
+    Value* size = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Int64, origin(), memoryObject, safeCast<int32_t>(JSWebAssemblyMemory::offsetOfSize()));
     
     constexpr uint32_t shiftValue = 16;
     static_assert(PageCount::pageSize == 1 << shiftValue, "This must hold for the code below to be correct.");
@@ -531,16 +533,16 @@ auto B3IRGenerator::setLocal(uint32_t index, ExpressionType value) -> PartialRes
 
 auto B3IRGenerator::getGlobal(uint32_t index, ExpressionType& result) -> PartialResult
 {
-    Value* globalsArray = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), m_instanceValue, JSWebAssemblyInstance::offsetOfGlobals());
-    result = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, toB3Type(m_info.globals[index].type), origin(), globalsArray, index * sizeof(Register));
+    Value* globalsArray = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), m_instanceValue, safeCast<int32_t>(JSWebAssemblyInstance::offsetOfGlobals()));
+    result = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, toB3Type(m_info.globals[index].type), origin(), globalsArray, safeCast<int32_t>(index * sizeof(Register)));
     return { };
 }
 
 auto B3IRGenerator::setGlobal(uint32_t index, ExpressionType value) -> PartialResult
 {
     ASSERT(toB3Type(m_info.globals[index].type) == value->type());
-    Value* globalsArray = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), m_instanceValue, JSWebAssemblyInstance::offsetOfGlobals());
-    m_currentBlock->appendNew<MemoryValue>(m_proc, Store, origin(), value, globalsArray, index * sizeof(Register));
+    Value* globalsArray = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), m_instanceValue, safeCast<int32_t>(JSWebAssemblyInstance::offsetOfGlobals()));
+    m_currentBlock->appendNew<MemoryValue>(m_proc, Store, origin(), value, globalsArray, safeCast<int32_t>(index * sizeof(Register)));
     return { };
 }
 
@@ -555,7 +557,7 @@ inline Value* B3IRGenerator::emitCheckAndPreparePointer(ExpressionType pointer, 
         m_currentBlock->appendNew<WasmBoundsCheckValue>(m_proc, origin(), pointer, m_memorySizeGPR, sizeOfOperation + offset - 1, m_info.memory.maximum());
         break;
     case MemoryMode::Signaling:
-        // We've virtually mapped 4GiB+redzone fo this memory. Only the user-allocated pages are addressable, contiguously in range [0, current], and everything above is mapped PROT_NONE. We don't need to perform any explicit bounds check in the 4GiB range because WebAssembly register memory accesses are 32-bit. However WebAssembly register+immediate accesses perform the addition in 64-bit which can push an access above the 32-bit limit. The redzone will catch most small immediates, and we'll explicitly bounds check any register + large immediate access.
+        // We've virtually mapped 4GiB+redzone for this memory. Only the user-allocated pages are addressable, contiguously in range [0, current], and everything above is mapped PROT_NONE. We don't need to perform any explicit bounds check in the 4GiB range because WebAssembly register memory accesses are 32-bit. However WebAssembly register+immediate accesses perform the addition in 64-bit which can push an access above the 32-bit limit. The redzone will catch most small immediates, and we'll explicitly bounds check any register + large immediate access.
         if (offset >= Memory::fastMappedRedzoneBytes())
             m_currentBlock->appendNew<WasmBoundsCheckValue>(m_proc, origin(), pointer, InvalidGPRReg, sizeOfOperation + offset - 1, m_info.memory.maximum());
         break;
@@ -598,9 +600,9 @@ inline B3::Kind B3IRGenerator::memoryKind(B3::Opcode memoryOp)
     return memoryOp;
 }
 
-inline Value* B3IRGenerator::emitLoadOp(LoadOpType op, ExpressionType pointer, uint32_t offset)
+inline Value* B3IRGenerator::emitLoadOp(LoadOpType op, ExpressionType pointer, uint32_t uoffset)
 {
-    fixupPointerPlusOffset(pointer, offset);
+    int32_t offset = fixupPointerPlusOffset(pointer, uoffset);
 
     switch (op) {
     case LoadOpType::I32Load8S: {
@@ -737,9 +739,9 @@ inline uint32_t sizeOfStoreOp(StoreOpType op)
 }
 
 
-inline void B3IRGenerator::emitStoreOp(StoreOpType op, ExpressionType pointer, ExpressionType value, uint32_t offset)
+inline void B3IRGenerator::emitStoreOp(StoreOpType op, ExpressionType pointer, ExpressionType value, uint32_t uoffset)
 {
-    fixupPointerPlusOffset(pointer, offset);
+    int32_t offset = fixupPointerPlusOffset(pointer, uoffset);
 
     switch (op) {
     case StoreOpType::I64Store8:
@@ -940,8 +942,8 @@ auto B3IRGenerator::addCall(uint32_t functionIndex, const Signature& signature, 
 
     if (m_info.isImportedFunctionFromFunctionIndexSpace(functionIndex)) {
         // FIXME imports can be linked here, instead of generating a patchpoint, because all import stubs are generated before B3 compilation starts. https://bugs.webkit.org/show_bug.cgi?id=166462
-        Value* functionImport = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), m_instanceValue, JSWebAssemblyInstance::offsetOfImportFunction(functionIndex));
-        Value* jsTypeOfImport = m_currentBlock->appendNew<MemoryValue>(m_proc, Load8Z, origin(), functionImport, JSCell::typeInfoTypeOffset());
+        Value* functionImport = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), m_instanceValue, safeCast<int32_t>(JSWebAssemblyInstance::offsetOfImportFunction(functionIndex)));
+        Value* jsTypeOfImport = m_currentBlock->appendNew<MemoryValue>(m_proc, Load8Z, origin(), functionImport, safeCast<int32_t>(JSCell::typeInfoTypeOffset()));
         Value* isWasmCall = m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), jsTypeOfImport, m_currentBlock->appendNew<Const32Value>(m_proc, origin(), WebAssemblyFunctionType));
 
         BasicBlock* isWasmBlock = m_proc.addBlock();
@@ -971,9 +973,9 @@ auto B3IRGenerator::addCall(uint32_t functionIndex, const Signature& signature, 
         // implement the IC to be over Wasm::Context*.
         // https://bugs.webkit.org/show_bug.cgi?id=170375
         Value* codeBlock = isJSBlock->appendNew<MemoryValue>(m_proc,
-            Load, pointerType(), origin(), m_instanceValue, JSWebAssemblyInstance::offsetOfCodeBlock());
+            Load, pointerType(), origin(), m_instanceValue, safeCast<int32_t>(JSWebAssemblyInstance::offsetOfCodeBlock()));
         Value* jumpDestination = isJSBlock->appendNew<MemoryValue>(m_proc,
-            Load, pointerType(), origin(), codeBlock, JSWebAssemblyCodeBlock::offsetOfImportWasmToJSStub(functionIndex));
+            Load, pointerType(), origin(), codeBlock, safeCast<int32_t>(JSWebAssemblyCodeBlock::offsetOfImportWasmToJSStub(functionIndex)));
         Value* jsCallResult = wasmCallingConvention().setupCall(m_proc, isJSBlock, origin(), args, toB3Type(returnType),
             [&] (PatchpointValue* patchpoint) {
                 patchpoint->effects.writesPinned = true;
@@ -1029,11 +1031,11 @@ auto B3IRGenerator::addCallIndirect(const Signature& signature, Vector<Expressio
     ExpressionType callableFunctionBufferSize;
     {
         ExpressionType table = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(),
-            m_instanceValue, JSWebAssemblyInstance::offsetOfTable());
+            m_instanceValue, safeCast<int32_t>(JSWebAssemblyInstance::offsetOfTable()));
         callableFunctionBuffer = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(),
-            table, JSWebAssemblyTable::offsetOfFunctions());
+            table, safeCast<int32_t>(JSWebAssemblyTable::offsetOfFunctions()));
         callableFunctionBufferSize = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Int32, origin(),
-            table, JSWebAssemblyTable::offsetOfSize());
+            table, safeCast<int32_t>(JSWebAssemblyTable::offsetOfSize()));
     }
 
     // Check the index we are looking for is valid.
@@ -1054,7 +1056,7 @@ auto B3IRGenerator::addCallIndirect(const Signature& signature, Vector<Expressio
 
     // Check that the CallableFunction is initialized. We trap if it isn't. An "invalid" SignatureIndex indicates it's not initialized.
     static_assert(sizeof(CallableFunction::signatureIndex) == sizeof(uint32_t), "Load codegen assumes i32");
-    ExpressionType calleeSignatureIndex = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Int32, origin(), callableFunction, OBJECT_OFFSETOF(CallableFunction, signatureIndex));
+    ExpressionType calleeSignatureIndex = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Int32, origin(), callableFunction, safeCast<int32_t>(OBJECT_OFFSETOF(CallableFunction, signatureIndex)));
     {
         CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
             m_currentBlock->appendNew<Value>(m_proc, Equal, origin(),
@@ -1077,7 +1079,7 @@ auto B3IRGenerator::addCallIndirect(const Signature& signature, Vector<Expressio
         });
     }
 
-    ExpressionType calleeCode = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), callableFunction, OBJECT_OFFSETOF(CallableFunction, code));
+    ExpressionType calleeCode = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), callableFunction, safeCast<int32_t>(OBJECT_OFFSETOF(CallableFunction, code)));
 
     Type returnType = signature.returnType();
     result = wasmCallingConvention().setupCall(m_proc, m_currentBlock, origin(), args, toB3Type(returnType),

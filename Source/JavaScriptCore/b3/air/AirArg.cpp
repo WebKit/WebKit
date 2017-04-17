@@ -41,7 +41,7 @@
 
 namespace JSC { namespace B3 { namespace Air {
 
-Arg Arg::stackAddr(int32_t offsetFromFP, unsigned frameSize, Width width)
+Arg Arg::stackAddrImpl(int32_t offsetFromFP, unsigned frameSize, Width width)
 {
     Arg result = Arg::addr(Air::Tmp(GPRInfo::callFrameRegister), offsetFromFP);
     if (!result.isValidForm(width)) {

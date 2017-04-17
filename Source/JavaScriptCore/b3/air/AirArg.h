@@ -31,6 +31,7 @@
 #include "B3Bank.h"
 #include "B3Common.h"
 #include "B3Type.h"
+#include "B3Value.h"
 #include "B3Width.h"
 #include <wtf/Optional.h>
 
@@ -534,7 +535,8 @@ public:
         return result;
     }
 
-    static Arg addr(Air::Tmp base, int32_t offset = 0)
+    template<typename Int, typename = Value::IsLegalOffset<Int>>
+    static Arg addr(Air::Tmp base, Int offset)
     {
         ASSERT(base.isGP());
         Arg result;
@@ -544,7 +546,13 @@ public:
         return result;
     }
 
-    static Arg stack(StackSlot* value, int32_t offset = 0)
+    static Arg addr(Air::Tmp base)
+    {
+        return addr(base, 0);
+    }
+
+    template<typename Int, typename = Value::IsLegalOffset<Int>>
+    static Arg stack(StackSlot* value, Int offset)
     {
         Arg result;
         result.m_kind = Stack;
@@ -553,15 +561,25 @@ public:
         return result;
     }
 
-    static Arg callArg(int32_t offset)
+    static Arg stack(StackSlot* value)
+    {
+        return stack(value, 0);
+    }
+
+    template<typename Int, typename = Value::IsLegalOffset<Int>>
+    static Arg callArg(Int offset)
     {
         Arg result;
         result.m_kind = CallArg;
         result.m_offset = offset;
         return result;
     }
-    
-    static Arg stackAddr(int32_t offsetFromFP, unsigned frameSize, Width);
+
+    template<typename Int, typename = Value::IsLegalOffset<Int>>
+    static Arg stackAddr(Int offsetFromFP, unsigned frameSize, Width width)
+    {
+        return stackAddrImpl(offsetFromFP, frameSize, width);
+    }
 
     // If you don't pass a Width, this optimistically assumes that you're using the right width.
     static bool isValidScale(unsigned scale, std::optional<Width> width = std::nullopt)
@@ -604,7 +622,8 @@ public:
         }
     }
 
-    static Arg index(Air::Tmp base, Air::Tmp index, unsigned scale = 1, int32_t offset = 0)
+    template<typename Int, typename = Value::IsLegalOffset<Int>>
+    static Arg index(Air::Tmp base, Air::Tmp index, unsigned scale, Int offset)
     {
         ASSERT(base.isGP());
         ASSERT(index.isGP());
@@ -616,6 +635,11 @@ public:
         result.m_scale = static_cast<int32_t>(scale);
         result.m_offset = offset;
         return result;
+    }
+
+    static Arg index(Air::Tmp base, Air::Tmp index, unsigned scale = 1)
+    {
+        return Arg::index(base, index, scale, 0);
     }
 
     static Arg relCond(MacroAssembler::RelationalCondition condition)
@@ -925,12 +949,12 @@ public:
 
     bool hasOffset() const { return isMemory(); }
     
-    int32_t offset() const
+    Value::OffsetType offset() const
     {
         if (kind() == Stack)
-            return static_cast<int32_t>(m_scale);
+            return static_cast<Value::OffsetType>(m_scale);
         ASSERT(kind() == Addr || kind() == CallArg || kind() == Index);
-        return static_cast<int32_t>(m_offset);
+        return static_cast<Value::OffsetType>(m_offset);
     }
 
     StackSlot* stackSlot() const
@@ -1141,7 +1165,8 @@ public:
         return false;
     }
 
-    static bool isValidAddrForm(int32_t offset, std::optional<Width> width = std::nullopt)
+    template<typename Int, typename = Value::IsLegalOffset<Int>>
+    static bool isValidAddrForm(Int offset, std::optional<Width> width = std::nullopt)
     {
         if (isX86())
             return true;
@@ -1166,7 +1191,8 @@ public:
         return false;
     }
 
-    static bool isValidIndexForm(unsigned scale, int32_t offset, std::optional<Width> width = std::nullopt)
+    template<typename Int, typename = Value::IsLegalOffset<Int>>
+    static bool isValidIndexForm(unsigned scale, Int offset, std::optional<Width> width = std::nullopt)
     {
         if (!isValidScale(scale, width))
             return false;
@@ -1276,7 +1302,7 @@ public:
     MacroAssembler::TrustedImm32 asTrustedImm32() const
     {
         ASSERT(isImm() || isBitImm());
-        return MacroAssembler::TrustedImm32(static_cast<int32_t>(m_offset));
+        return MacroAssembler::TrustedImm32(static_cast<Value::OffsetType>(m_offset));
     }
 
 #if USE(JSVALUE64)
@@ -1301,7 +1327,7 @@ public:
         if (isSimpleAddr())
             return MacroAssembler::Address(m_base.gpr());
         ASSERT(isAddr());
-        return MacroAssembler::Address(m_base.gpr(), static_cast<int32_t>(m_offset));
+        return MacroAssembler::Address(m_base.gpr(), static_cast<Value::OffsetType>(m_offset));
     }
 
     MacroAssembler::BaseIndex asBaseIndex() const
@@ -1309,7 +1335,7 @@ public:
         ASSERT(isIndex());
         return MacroAssembler::BaseIndex(
             m_base.gpr(), m_index.gpr(), static_cast<MacroAssembler::Scale>(logScale()),
-            static_cast<int32_t>(m_offset));
+            static_cast<Value::OffsetType>(m_offset));
     }
 
     MacroAssembler::RelationalCondition asRelationalCondition() const
@@ -1412,6 +1438,8 @@ public:
     }
 
 private:
+    static Arg stackAddrImpl(int32_t, unsigned, Width);
+
     int64_t m_offset { 0 };
     Kind m_kind { Invalid };
     int32_t m_scale { 1 };

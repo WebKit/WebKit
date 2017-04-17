@@ -209,7 +209,7 @@ private:
                         
                         if (bestPointer) {
                             memoryValue->lastChild() = bestPointer;
-                            memoryValue->setOffset(desiredOffset(bestPointer));
+                            memoryValue->setOffset(static_cast<int32_t>(desiredOffset(bestPointer)));
                         }
                     }
                 } else {
@@ -308,12 +308,16 @@ private:
                 if (offLimits.contains(value))
                     continue;
 
+                auto offset = sizeof(int64_t) * m_constTable.get(key);
+                if (!isRepresentableAs<Value::OffsetType>(offset))
+                    continue;
+
                 Value* tableBase = m_insertionSet.insertIntConstant(
                     valueIndex, value->origin(), pointerType(),
                     bitwise_cast<intptr_t>(m_dataSection));
                 Value* result = m_insertionSet.insert<MemoryValue>(
                     valueIndex, Load, value->type(), value->origin(), tableBase,
-                    sizeof(int64_t) * m_constTable.get(key));
+                    static_cast<Value::OffsetType>(offset));
                 value->replaceWithIdentity(result);
             }
 

@@ -1,3 +1,94 @@
+2017-04-17  JF Bastien  <jfbastien@apple.com>
+
+        B3: don't allow unsigned offsets in Value
+        https://bugs.webkit.org/show_bug.cgi?id=170692
+
+        Reviewed by Filip Pizlo.
+
+        MemoryValue and similar B3 opcode classes always expects a signed
+        offset. Giving it an out-of-bounds unsigned offset causes
+        implementation-defined behavior, which can cause badness as I just
+        fixed in WebAssembly.  This patch makes it impossible to create a
+        Value opcodes with an unsigned value, or with an overly-large
+        value.
+
+        * b3/B3AtomicValue.cpp:
+        (JSC::B3::AtomicValue::AtomicValue):
+        * b3/B3AtomicValue.h:
+        * b3/B3Common.h:
+        (JSC::B3::isRepresentableAs):
+        * b3/B3EliminateCommonSubexpressions.cpp:
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::scaleForShl):
+        (JSC::B3::Air::LowerToAir::effectiveAddr):
+        (JSC::B3::Air::LowerToAir::addr):
+        (JSC::B3::Air::LowerToAir::tryAppendLea):
+        * b3/B3MemoryValue.cpp:
+        (JSC::B3::MemoryValue::isLegalOffsetImpl):
+        (JSC::B3::MemoryValue::MemoryValue):
+        * b3/B3MemoryValue.h:
+        * b3/B3MemoryValueInlines.h:
+        (JSC::B3::MemoryValue::isLegalOffsetImpl):
+        * b3/B3MoveConstants.cpp:
+        * b3/B3ReduceStrength.cpp:
+        * b3/B3StackmapSpecial.cpp:
+        (JSC::B3::StackmapSpecial::repForArg):
+        * b3/B3Value.h:
+        * b3/air/AirArg.cpp:
+        (JSC::B3::Air::Arg::stackAddrImpl):
+        * b3/air/AirArg.h:
+        (JSC::B3::Air::Arg::addr):
+        (JSC::B3::Air::Arg::stack):
+        (JSC::B3::Air::Arg::callArg):
+        (JSC::B3::Air::Arg::stackAddr):
+        (JSC::B3::Air::Arg::index):
+        (JSC::B3::Air::Arg::offset):
+        (JSC::B3::Air::Arg::isValidAddrForm):
+        (JSC::B3::Air::Arg::isValidIndexForm):
+        (JSC::B3::Air::Arg::asTrustedImm32):
+        (JSC::B3::Air::Arg::asAddress):
+        (JSC::B3::Air::Arg::asBaseIndex):
+        * b3/air/AirLowerStackArgs.cpp:
+        (JSC::B3::Air::lowerStackArgs):
+        * b3/testb3.cpp:
+        (JSC::B3::testMulArgStore):
+        (JSC::B3::testStore32):
+        (JSC::B3::testStoreConstant):
+        (JSC::B3::testStoreConstantPtr):
+        (JSC::B3::testStoreAddLoad32):
+        (JSC::B3::testStoreAddLoadImm32):
+        (JSC::B3::testStoreAddLoad8):
+        (JSC::B3::testStoreAddLoadImm8):
+        (JSC::B3::testStoreAddLoad16):
+        (JSC::B3::testStoreAddLoadImm16):
+        (JSC::B3::testStoreAddLoad64):
+        (JSC::B3::testStoreAddLoadImm64):
+        (JSC::B3::testStoreAddLoad32Index):
+        (JSC::B3::testStoreAddLoadImm32Index):
+        (JSC::B3::testStoreAddLoad64Index):
+        (JSC::B3::testStoreAddLoadImm64Index):
+        (JSC::B3::testStoreSubLoad):
+        (JSC::B3::testStoreAddLoadInterference):
+        (JSC::B3::testStoreAddAndLoad):
+        (JSC::B3::testStoreNegLoad32):
+        (JSC::B3::testStoreNegLoadPtr):
+        (JSC::B3::testLoadOffset):
+        (JSC::B3::testLoadOffsetNotConstant):
+        (JSC::B3::testLoadOffsetUsingAdd):
+        (JSC::B3::testLoadOffsetUsingAddInterference):
+        (JSC::B3::testLoadOffsetUsingAddNotConstant):
+        (JSC::B3::testStoreLoadStackSlot):
+        (JSC::B3::testLoad):
+        (JSC::B3::testInterpreter):
+        (JSC::B3::testTrappingStore):
+        (JSC::B3::testTrappingLoadAddStore):
+        (JSC::B3::testWasmAddress):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::fixupPointerPlusOffset):
+        (JSC::Wasm::B3IRGenerator::emitCheckAndPreparePointer):
+        (JSC::Wasm::B3IRGenerator::emitLoadOp):
+        (JSC::Wasm::B3IRGenerator::emitStoreOp):
+
 2017-04-16  Joseph Pecoraro  <pecoraro@apple.com>
 
         test262: test262/test/built-ins/Object/prototype/toLocaleString/primitive_this_value.js

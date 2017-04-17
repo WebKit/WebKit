@@ -38,9 +38,9 @@ MemoryValue::~MemoryValue()
 {
 }
 
-bool MemoryValue::isLegalOffset(int64_t offset) const
+bool MemoryValue::isLegalOffsetImpl(int64_t offset) const
 {
-    return B3::isRepresentableAs<int32_t>(offset) && isLegalOffset(static_cast<int32_t>(offset));
+    return B3::isRepresentableAs<OffsetType>(offset) && isLegalOffset(static_cast<OffsetType>(offset));
 }
 
 Type MemoryValue::accessType() const
@@ -80,7 +80,7 @@ Value* MemoryValue::cloneImpl() const
 
 // Use this form for Load (but not Load8Z, Load8S, or any of the Loads that have a suffix that
 // describes the returned type).
-MemoryValue::MemoryValue(Kind kind, Type type, Origin origin, Value* pointer, int32_t offset, HeapRange range, HeapRange fenceRange)
+MemoryValue::MemoryValue(MemoryValue::MemoryValueLoad, Kind kind, Type type, Origin origin, Value* pointer, MemoryValue::OffsetType offset, HeapRange range, HeapRange fenceRange)
     : Value(CheckedOpcode, kind, type, origin, pointer)
     , m_offset(offset)
     , m_range(range)
@@ -108,7 +108,7 @@ MemoryValue::MemoryValue(Kind kind, Type type, Origin origin, Value* pointer, in
 }
 
 // Use this form for loads where the return type is implied.
-MemoryValue::MemoryValue(Kind kind, Origin origin, Value* pointer, int32_t offset, HeapRange range, HeapRange fenceRange)
+MemoryValue::MemoryValue(MemoryValue::MemoryValueLoadImplied, Kind kind, Origin origin, Value* pointer, MemoryValue::OffsetType offset, HeapRange range, HeapRange fenceRange)
     : MemoryValue(kind, Int32, origin, pointer, offset, range, fenceRange)
 {
     if (!ASSERT_DISABLED) {
@@ -125,7 +125,7 @@ MemoryValue::MemoryValue(Kind kind, Origin origin, Value* pointer, int32_t offse
 }
 
 // Use this form for stores.
-MemoryValue::MemoryValue(Kind kind, Origin origin, Value* value, Value* pointer, int32_t offset, HeapRange range, HeapRange fenceRange)
+MemoryValue::MemoryValue(MemoryValue::MemoryValueStore, Kind kind, Origin origin, Value* value, Value* pointer, MemoryValue::OffsetType offset, HeapRange range, HeapRange fenceRange)
     : Value(CheckedOpcode, kind, Void, origin, value, pointer)
     , m_offset(offset)
     , m_range(range)

@@ -46,7 +46,7 @@ Value* AtomicValue::cloneImpl() const
     return new AtomicValue(*this);
 }
 
-AtomicValue::AtomicValue(Kind kind, Origin origin, Width width, Value* operand, Value* pointer, int32_t offset, HeapRange range, HeapRange fenceRange)
+AtomicValue::AtomicValue(AtomicValue::AtomicValueRMW, Kind kind, Origin origin, Width width, Value* operand, Value* pointer, MemoryValue::OffsetType offset, HeapRange range, HeapRange fenceRange)
     : MemoryValue(CheckedOpcode, kind, operand->type(), origin, offset, range, fenceRange, operand, pointer)
     , m_width(width)
 {
@@ -65,7 +65,7 @@ AtomicValue::AtomicValue(Kind kind, Origin origin, Width width, Value* operand, 
     }
 }
 
-AtomicValue::AtomicValue(Kind kind, Origin origin, Width width, Value* expectedValue, Value* newValue, Value* pointer, int32_t offset, HeapRange range, HeapRange fenceRange)
+AtomicValue::AtomicValue(AtomicValue::AtomicValueCAS, Kind kind, Origin origin, Width width, Value* expectedValue, Value* newValue, Value* pointer, MemoryValue::OffsetType offset, HeapRange range, HeapRange fenceRange)
     : MemoryValue(CheckedOpcode, kind, kind.opcode() == AtomicWeakCAS ? Int32 : expectedValue->type(), origin, offset, range, fenceRange, expectedValue, newValue, pointer)
     , m_width(width)
 {

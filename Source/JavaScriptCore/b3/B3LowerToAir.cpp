@@ -439,8 +439,9 @@ private:
         ASSERT_NOT_REACHED();
         return true;
     }
-    
-    std::optional<unsigned> scaleForShl(Value* shl, int32_t offset, std::optional<Width> width = std::nullopt)
+
+    template<typename Int, typename = Value::IsLegalOffset<Int>>
+    std::optional<unsigned> scaleForShl(Value* shl, Int offset, std::optional<Width> width = std::nullopt)
     {
         if (shl->opcode() != Shl)
             return std::nullopt;
@@ -463,7 +464,8 @@ private:
     }
     
     // This turns the given operand into an address.
-    Arg effectiveAddr(Value* address, int32_t offset, Width width)
+    template<typename Int, typename = Value::IsLegalOffset<Int>>
+    Arg effectiveAddr(Value* address, Int offset, Width width)
     {
         ASSERT(Arg::isValidAddrForm(offset, width));
         
@@ -552,7 +554,7 @@ private:
         if (value->requiresSimpleAddr())
             return Arg::simpleAddr(tmp(value->lastChild()));
 
-        int32_t offset = value->offset();
+        Value::OffsetType offset = value->offset();
         Width width = value->accessWidth();
 
         Arg result = effectiveAddr(value->lastChild(), offset, width);
@@ -2023,12 +2025,12 @@ private:
         // Add(Shl(@x, $c), @y)
         // Add(@x, Shl(@y, $c))
         // Add(@x, @y) (only if offset != 0)
-        int32_t offset = 0;
-        if (value->child(1)->isRepresentableAs<int32_t>()
+        Value::OffsetType offset = 0;
+        if (value->child(1)->isRepresentableAs<Value::OffsetType>()
             && canBeInternal(value->child(0))
             && value->child(0)->opcode() == Add) {
             innerAdd = value->child(0);
-            offset = static_cast<int32_t>(value->child(1)->asInt());
+            offset = static_cast<Value::OffsetType>(value->child(1)->asInt());
             value = value->child(0);
         }
         

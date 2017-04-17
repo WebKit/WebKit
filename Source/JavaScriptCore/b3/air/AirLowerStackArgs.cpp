@@ -74,7 +74,7 @@ void lowerStackArgs(Code& code)
             Inst& inst = block->at(instIndex);
             inst.forEachArg(
                 [&] (Arg& arg, Arg::Role role, Bank, Width width) {
-                    auto stackAddr = [&] (int32_t offset) -> Arg {
+                    auto stackAddr = [&] (Value::OffsetType offset) -> Arg {
                         Arg result = Arg::stackAddr(offset, code.frameSize(), width);
                         if (!result) {
                             dataLog("FATAL: Could not create stack reference for offset = ", offset, " and width = ", width, "\n");

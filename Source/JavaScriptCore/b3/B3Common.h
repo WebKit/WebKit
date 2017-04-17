@@ -102,6 +102,12 @@ inline bool isRepresentableAs(int64_t value)
 }
 
 template<typename ResultType>
+inline bool isRepresentableAs(size_t value)
+{
+    return isRepresentableAsImpl<ResultType, size_t, size_t>(value);
+}
+
+template<typename ResultType>
 inline bool isRepresentableAs(double value)
 {
     return isRepresentableAsImpl<ResultType, double, int64_t>(value);

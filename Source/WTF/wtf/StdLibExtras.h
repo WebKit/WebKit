@@ -30,6 +30,7 @@
 #include <chrono>
 #include <cstring>
 #include <memory>
+#include <type_traits>
 #include <wtf/Assertions.h>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/Compiler.h>
@@ -509,6 +510,15 @@ ALWAYS_INLINE constexpr typename remove_reference<T>::type&& move(T&& value)
 
     return move(forward<T>(value));
 }
+
+#if __cplusplus < 201703L && (!defined(_MSC_FULL_VER) || _MSC_FULL_VER < 190023918)
+template<class...> struct wtf_conjunction_impl;
+template<> struct wtf_conjunction_impl<> : true_type { };
+template<class B0> struct wtf_conjunction_impl<B0> : B0 { };
+template<class B0, class B1> struct wtf_conjunction_impl<B0, B1> : conditional<B0::value, B1, B0>::type { };
+template<class B0, class B1, class B2, class... Bn> struct wtf_conjunction_impl<B0, B1, B2, Bn...> : conditional<B0::value, wtf_conjunction_impl<B1, B2, Bn...>, B0>::type { };
+template<class... _Args> struct conjunction : wtf_conjunction_impl<_Args...> { };
+#endif
 
 } // namespace std
 

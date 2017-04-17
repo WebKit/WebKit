@@ -1,3 +1,17 @@
+2017-04-17  JF Bastien  <jfbastien@apple.com>
+
+        B3: don't allow unsigned offsets in Value
+        https://bugs.webkit.org/show_bug.cgi?id=170692
+
+        Reviewed by Filip Pizlo.
+
+        Add C++17's std::conjunction type trait, except for Microsoft VS
+        2015 update 2 and later because it adds the logical operator type
+        traits, event when C++ is pre-2017:
+        https://blogs.msdn.microsoft.com/vcblog/2016/01/22/vs-2015-update-2s-stl-is-c17-so-far-feature-complete/
+
+        * wtf/StdLibExtras.h:
+
 2017-04-14  Mark Lam  <mark.lam@apple.com>
 
         Update architectures in xcconfig files.

@@ -1555,7 +1555,7 @@ private:
                 intptr_t offset = address->child(1)->asIntPtr();
                 if (!sumOverflows<intptr_t>(offset, memory->offset())) {
                     offset += memory->offset();
-                    int32_t smallOffset = static_cast<int32_t>(offset);
+                    Value::OffsetType smallOffset = static_cast<Value::OffsetType>(offset);
                     if (smallOffset == offset) {
                         address = address->child(0);
                         memory->lastChild() = address;

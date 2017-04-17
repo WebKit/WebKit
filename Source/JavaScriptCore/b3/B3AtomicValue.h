@@ -52,15 +52,45 @@ protected:
     
 private:
     friend class Procedure;
-    
-    AtomicValue(Kind, Origin, Width, Value* operand, Value* pointer, int32_t offset = 0, HeapRange range = HeapRange::top(), HeapRange fenceRange = HeapRange::top());
-    
-    AtomicValue(Kind, Origin, Width, Value* expectedValue, Value* newValue, Value* pointer, int32_t offset = 0, HeapRange range = HeapRange::top(), HeapRange fenceRange = HeapRange::top());
-    
+
+    enum AtomicValueRMW { AtomicValueRMWTag };
+    enum AtomicValueCAS { AtomicValueCASTag };
+
+    AtomicValue(Kind kind, Origin origin, Width width, Value* operand, Value* pointer)
+        : AtomicValue(kind, origin, width, operand, pointer, 0)
+    {
+    }
+    template<typename Int,
+        typename = typename std::enable_if<std::is_integral<Int>::value>::type,
+        typename = typename std::enable_if<std::is_signed<Int>::value>::type,
+        typename = typename std::enable_if<sizeof(Int) <= sizeof(OffsetType)>::type
+    >
+    AtomicValue(Kind kind, Origin origin, Width width, Value* operand, Value* pointer, Int offset, HeapRange range = HeapRange::top(), HeapRange fenceRange = HeapRange::top())
+        : AtomicValue(AtomicValueRMWTag, kind, origin, width, operand, pointer, offset, range, fenceRange)
+    {
+    }
+
+    AtomicValue(Kind kind, Origin origin, Width width, Value* expectedValue, Value* newValue, Value* pointer)
+        : AtomicValue(kind, origin, width, expectedValue, newValue, pointer, 0)
+    {
+    }
+    template<typename Int,
+        typename = typename std::enable_if<std::is_integral<Int>::value>::type,
+        typename = typename std::enable_if<std::is_signed<Int>::value>::type,
+        typename = typename std::enable_if<sizeof(Int) <= sizeof(OffsetType)>::type
+    >
+    AtomicValue(Kind kind, Origin origin, Width width, Value* expectedValue, Value* newValue, Value* pointer, Int offset, HeapRange range = HeapRange::top(), HeapRange fenceRange = HeapRange::top())
+        : AtomicValue(AtomicValueCASTag, kind, origin, width, expectedValue, newValue, pointer, offset, range, fenceRange)
+    {
+    }
+
+    // The above templates forward to these implementations.
+    AtomicValue(AtomicValueRMW, Kind, Origin, Width, Value* operand, Value* pointer, OffsetType, HeapRange = HeapRange::top(), HeapRange fenceRange = HeapRange::top());
+    AtomicValue(AtomicValueCAS, Kind, Origin, Width, Value* expectedValue, Value* newValue, Value* pointer, OffsetType, HeapRange = HeapRange::top(), HeapRange fenceRange = HeapRange::top());
+
     Width m_width;
 };
 
 } } // namespace JSC::B3
 
 #endif // ENABLE(B3_JIT)
-

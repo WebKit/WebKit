@@ -879,10 +879,10 @@ void testMulArgStore(int a)
 
     root->appendNew<MemoryValue>(
         proc, Store, Origin(), value,
-        root->appendNew<ConstPtrValue>(proc, Origin(), &valueSlot));
+        root->appendNew<ConstPtrValue>(proc, Origin(), &valueSlot), 0);
     root->appendNew<MemoryValue>(
         proc, Store, Origin(), mul,
-        root->appendNew<ConstPtrValue>(proc, Origin(), &mulSlot));
+        root->appendNew<ConstPtrValue>(proc, Origin(), &mulSlot), 0);
 
     root->appendNewControlValue(
         proc, Return, Origin(), root->appendNew<Const32Value>(proc, Origin(), 0));
@@ -5421,7 +5421,7 @@ void testStore32(int value)
         root->appendNew<Value>(
             proc, Trunc, Origin(),
             root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)),
-        root->appendNew<ConstPtrValue>(proc, Origin(), &slot));
+        root->appendNew<ConstPtrValue>(proc, Origin(), &slot), 0);
     root->appendNewControlValue(
         proc, Return, Origin(), root->appendNew<Const32Value>(proc, Origin(), 0));
 
@@ -5437,7 +5437,7 @@ void testStoreConstant(int value)
     root->appendNew<MemoryValue>(
         proc, Store, Origin(),
         root->appendNew<Const32Value>(proc, Origin(), value),
-        root->appendNew<ConstPtrValue>(proc, Origin(), &slot));
+        root->appendNew<ConstPtrValue>(proc, Origin(), &slot), 0);
     root->appendNewControlValue(
         proc, Return, Origin(), root->appendNew<Const32Value>(proc, Origin(), 0));
 
@@ -5457,7 +5457,7 @@ void testStoreConstantPtr(intptr_t value)
     root->appendNew<MemoryValue>(
         proc, Store, Origin(),
         root->appendNew<ConstPtrValue>(proc, Origin(), value),
-        root->appendNew<ConstPtrValue>(proc, Origin(), &slot));
+        root->appendNew<ConstPtrValue>(proc, Origin(), &slot), 0);
     root->appendNewControlValue(
         proc, Return, Origin(), root->appendNew<Const32Value>(proc, Origin(), 0));
 
@@ -5759,7 +5759,7 @@ void testStoreAddLoad32(int amount)
             root->appendNew<Value>(
                 proc, Trunc, Origin(),
                 root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0))),
-        slotPtr);
+        slotPtr, 0);
     root->appendNewControlValue(
         proc, Return, Origin(),
         root->appendNew<Const32Value>(proc, Origin(), 0));
@@ -5809,7 +5809,7 @@ void testStoreAddLoadImm32(int amount)
             proc, Add, Origin(),
             root->appendNew<MemoryValue>(proc, Load, Int32, Origin(), slotPtr),
             root->appendNew<Const32Value>(proc, Origin(), amount)),
-        slotPtr);
+        slotPtr, 0);
     root->appendNewControlValue(
         proc, Return, Origin(),
         root->appendNew<Const32Value>(proc, Origin(), 0));
@@ -5832,7 +5832,7 @@ void testStoreAddLoad8(int amount, B3::Opcode loadOpcode)
             root->appendNew<Value>(
                 proc, Trunc, Origin(),
                 root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0))),
-        slotPtr);
+        slotPtr, 0);
     root->appendNewControlValue(
         proc, Return, Origin(),
         root->appendNew<Const32Value>(proc, Origin(), 0));
@@ -5921,7 +5921,7 @@ void testStoreAddLoadImm8(int amount, B3::Opcode loadOpcode)
             proc, Add, Origin(),
             root->appendNew<MemoryValue>(proc, loadOpcode, Origin(), slotPtr),
             root->appendNew<Const32Value>(proc, Origin(), amount)),
-        slotPtr);
+        slotPtr, 0);
     root->appendNewControlValue(
         proc, Return, Origin(),
         root->appendNew<Const32Value>(proc, Origin(), 0));
@@ -5944,7 +5944,7 @@ void testStoreAddLoad16(int amount, B3::Opcode loadOpcode)
             root->appendNew<Value>(
                 proc, Trunc, Origin(),
                 root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0))),
-        slotPtr);
+        slotPtr, 0);
     root->appendNewControlValue(
         proc, Return, Origin(),
         root->appendNew<Const32Value>(proc, Origin(), 0));
@@ -5994,7 +5994,7 @@ void testStoreAddLoadImm16(int amount, B3::Opcode loadOpcode)
             proc, Add, Origin(),
             root->appendNew<MemoryValue>(proc, loadOpcode, Origin(), slotPtr),
             root->appendNew<Const32Value>(proc, Origin(), amount)),
-        slotPtr);
+        slotPtr, 0);
     root->appendNewControlValue(
         proc, Return, Origin(),
         root->appendNew<Const32Value>(proc, Origin(), 0));
@@ -6015,7 +6015,7 @@ void testStoreAddLoad64(int amount)
             proc, Add, Origin(),
             root->appendNew<MemoryValue>(proc, Load, Int64, Origin(), slotPtr),
             root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)),
-        slotPtr);
+        slotPtr, 0);
     root->appendNewControlValue(
         proc, Return, Origin(),
         root->appendNew<Const32Value>(proc, Origin(), 0));
@@ -6063,7 +6063,7 @@ void testStoreAddLoadImm64(int64_t amount)
             proc, Add, Origin(),
             root->appendNew<MemoryValue>(proc, Load, Int64, Origin(), slotPtr),
             root->appendNew<Const64Value>(proc, Origin(), amount)),
-        slotPtr);
+        slotPtr, 0);
     root->appendNewControlValue(
         proc, Return, Origin(),
         root->appendNew<Const32Value>(proc, Origin(), 0));
@@ -6095,7 +6095,7 @@ void testStoreAddLoad32Index(int amount)
             root->appendNew<Value>(
                 proc, Trunc, Origin(),
                 root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0))),
-        slotPtr);
+        slotPtr, 0);
     root->appendNewControlValue(
         proc, Return, Origin(),
         root->appendNew<Const32Value>(proc, Origin(), 0));
@@ -6125,7 +6125,7 @@ void testStoreAddLoadImm32Index(int amount)
             proc, Add, Origin(),
             root->appendNew<MemoryValue>(proc, Load, Int32, Origin(), slotPtr),
             root->appendNew<Const32Value>(proc, Origin(), amount)),
-        slotPtr);
+        slotPtr, 0);
     root->appendNewControlValue(
         proc, Return, Origin(),
         root->appendNew<Const32Value>(proc, Origin(), 0));
@@ -6279,7 +6279,7 @@ void testStoreAddLoad64Index(int amount)
             proc, Add, Origin(),
             root->appendNew<MemoryValue>(proc, Load, Int64, Origin(), slotPtr),
             root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)),
-        slotPtr);
+        slotPtr, 0);
     root->appendNewControlValue(
         proc, Return, Origin(),
         root->appendNew<Const32Value>(proc, Origin(), 0));
@@ -6309,7 +6309,7 @@ void testStoreAddLoadImm64Index(int64_t amount)
             proc, Add, Origin(),
             root->appendNew<MemoryValue>(proc, Load, Int64, Origin(), slotPtr),
             root->appendNew<Const64Value>(proc, Origin(), amount)),
-        slotPtr);
+        slotPtr, 0);
     root->appendNewControlValue(
         proc, Return, Origin(),
         root->appendNew<Const32Value>(proc, Origin(), 0));
@@ -6333,7 +6333,7 @@ void testStoreSubLoad(int amount)
             root->appendNew<Value>(
                 proc, Trunc, Origin(),
                 root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0))),
-        slotPtr);
+        slotPtr, 0);
     root->appendNewControlValue(
         proc, Return, Origin(),
         root->appendNew<Const32Value>(proc, Origin(), 0));
@@ -6354,13 +6354,13 @@ void testStoreAddLoadInterference(int amount)
     root->appendNew<MemoryValue>(
         proc, Store, Origin(),
         root->appendNew<Const32Value>(proc, Origin(), 666),
-        otherSlotPtr);
+        otherSlotPtr, 0);
     root->appendNew<MemoryValue>(
         proc, Store, Origin(),
         root->appendNew<Value>(
             proc, Add, Origin(),
             load, root->appendNew<Const32Value>(proc, Origin(), amount)),
-        slotPtr);
+        slotPtr, 0);
     root->appendNewControlValue(
         proc, Return, Origin(),
         root->appendNew<Const32Value>(proc, Origin(), 0));
@@ -6384,7 +6384,7 @@ void testStoreAddAndLoad(int amount, int mask)
                 root->appendNew<MemoryValue>(proc, Load, Int32, Origin(), slotPtr),
                 root->appendNew<Const32Value>(proc, Origin(), amount)),
             root->appendNew<Const32Value>(proc, Origin(), mask)),
-        slotPtr);
+        slotPtr, 0);
     root->appendNewControlValue(
         proc, Return, Origin(),
         root->appendNew<Const32Value>(proc, Origin(), 0));
@@ -6408,7 +6408,7 @@ void testStoreNegLoad32(int32_t value)
             proc, Sub, Origin(),
             root->appendNew<Const32Value>(proc, Origin(), 0),
             root->appendNew<MemoryValue>(proc, Load, Int32, Origin(), slotPtr)),
-        slotPtr);
+        slotPtr, 0);
     
     root->appendNewControlValue(
         proc, Return, Origin(), root->appendNew<Const32Value>(proc, Origin(), 0));
@@ -6432,7 +6432,7 @@ void testStoreNegLoadPtr(intptr_t value)
             proc, Sub, Origin(),
             root->appendNew<ConstPtrValue>(proc, Origin(), 0),
             root->appendNew<MemoryValue>(proc, Load, pointerType(), Origin(), slotPtr)),
-        slotPtr);
+        slotPtr, 0);
     
     root->appendNewControlValue(
         proc, Return, Origin(), root->appendNew<Const32Value>(proc, Origin(), 0));
@@ -6468,7 +6468,7 @@ void testLoadOffset()
         root->appendNew<Value>(
             proc, Add, Origin(),
             root->appendNew<MemoryValue>(proc, Load, Int32, Origin(), arrayPtr, 0),
-            root->appendNew<MemoryValue>(proc, Load, Int32, Origin(), arrayPtr, sizeof(int))));
+            root->appendNew<MemoryValue>(proc, Load, Int32, Origin(), arrayPtr, static_cast<int32_t>(sizeof(int)))));
 
     CHECK(compileAndRun<int>(proc) == array[0] + array[1]);
 }
@@ -6484,7 +6484,7 @@ void testLoadOffsetNotConstant()
         root->appendNew<Value>(
             proc, Add, Origin(),
             root->appendNew<MemoryValue>(proc, Load, Int32, Origin(), arrayPtr, 0),
-            root->appendNew<MemoryValue>(proc, Load, Int32, Origin(), arrayPtr, sizeof(int))));
+            root->appendNew<MemoryValue>(proc, Load, Int32, Origin(), arrayPtr, static_cast<int32_t>(sizeof(int)))));
 
     CHECK(compileAndRun<int>(proc, &array[0]) == array[0] + array[1]);
 }
@@ -6508,7 +6508,7 @@ void testLoadOffsetUsingAdd()
                 proc, Load, Int32, Origin(),
                 root->appendNew<Value>(
                     proc, Add, Origin(), arrayPtr,
-                    root->appendNew<ConstPtrValue>(proc, Origin(), sizeof(int))))));
+                    root->appendNew<ConstPtrValue>(proc, Origin(), static_cast<int32_t>(sizeof(int)))))));
     
     CHECK(compileAndRun<int>(proc) == array[0] + array[1]);
 }
@@ -6531,11 +6531,11 @@ void testLoadOffsetUsingAddInterference()
         proc, Load, Int32, Origin(),
         root->appendNew<Value>(
             proc, Add, Origin(), arrayPtr,
-            root->appendNew<ConstPtrValue>(proc, Origin(), sizeof(int))));
+            root->appendNew<ConstPtrValue>(proc, Origin(), static_cast<int32_t>(sizeof(int)))));
     root->appendNew<MemoryValue>(
         proc, Store, Origin(), theNumberOfTheBeast, otherArrayPtr, 0);
     root->appendNew<MemoryValue>(
-        proc, Store, Origin(), theNumberOfTheBeast, otherArrayPtr, sizeof(int));
+        proc, Store, Origin(), theNumberOfTheBeast, otherArrayPtr, static_cast<int32_t>(sizeof(int)));
     root->appendNewControlValue(
         proc, Return, Origin(),
         root->appendNew<Value>(
@@ -6565,7 +6565,7 @@ void testLoadOffsetUsingAddNotConstant()
                 proc, Load, Int32, Origin(),
                 root->appendNew<Value>(
                     proc, Add, Origin(), arrayPtr,
-                    root->appendNew<ConstPtrValue>(proc, Origin(), sizeof(int))))));
+                    root->appendNew<ConstPtrValue>(proc, Origin(), static_cast<int32_t>(sizeof(int)))))));
     
     CHECK(compileAndRun<int>(proc, &array[0]) == array[0] + array[1]);
 }
@@ -6690,7 +6690,7 @@ void testStoreLoadStackSlot(int value)
         root->appendNew<Value>(
             proc, Trunc, Origin(),
             root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)),
-        stack);
+        stack, 0);
     
     root->appendNewControlValue(
         proc, Return, Origin(),
@@ -6760,7 +6760,7 @@ void testLoad(B3::Opcode opcode, InputType value)
             root->appendNew<MemoryValue>(
                 proc, opcode, type, Origin(),
                 root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
-                sizeof(InputType)));
+                static_cast<int32_t>(sizeof(InputType))));
 
         CHECK(isIdentical(compileAndRun<CType>(proc, &value - 1), modelLoad<CType>(value)));
     }
@@ -12902,7 +12902,7 @@ void testInterpreter()
             addToDataPointer->appendNew<Value>(
                 proc, Mul, Origin(),
                 addToDataPointer->appendNew<MemoryValue>(
-                    proc, Load, pointerType(), Origin(), codePointerValue, sizeof(intptr_t)),
+                    proc, Load, pointerType(), Origin(), codePointerValue, static_cast<int32_t>(sizeof(intptr_t))),
                 addToDataPointer->appendIntConstant(
                     proc, Origin(), pointerType(), sizeof(intptr_t)))));
     addToDataPointer->appendNew<VariableValue>(
@@ -12931,7 +12931,7 @@ void testInterpreter()
             addToCodePointerTaken->appendNew<Value>(
                 proc, Mul, Origin(),
                 addToCodePointerTaken->appendNew<MemoryValue>(
-                    proc, Load, pointerType(), Origin(), codePointerValue, sizeof(intptr_t)),
+                    proc, Load, pointerType(), Origin(), codePointerValue, static_cast<int32_t>(sizeof(intptr_t))),
                 addToCodePointerTaken->appendIntConstant(
                     proc, Origin(), pointerType(), sizeof(intptr_t)))));
     addToCodePointerTaken->appendNewControlValue(proc, Jump, Origin(), FrequentedBlock(dispatch));
@@ -12954,7 +12954,7 @@ void testInterpreter()
             addToData->appendNew<MemoryValue>(
                 proc, Load, pointerType(), Origin(), dataPointerValue),
             addToData->appendNew<MemoryValue>(
-                proc, Load, pointerType(), Origin(), codePointerValue, sizeof(intptr_t))),
+                proc, Load, pointerType(), Origin(), codePointerValue, static_cast<int32_t>(sizeof(intptr_t)))),
         dataPointerValue);
     addToData->appendNew<VariableValue>(
         proc, Set, Origin(), codePointer,
@@ -13875,7 +13875,7 @@ void testTrappingStore()
     MemoryValue* value = root->appendNew<MemoryValue>(
         proc, trapping(Store), Origin(),
         root->appendNew<Const32Value>(proc, Origin(), 111),
-        root->appendNew<ConstPtrValue>(proc, Origin(), &x));
+        root->appendNew<ConstPtrValue>(proc, Origin(), &x), 0);
     Effects expectedEffects;
     expectedEffects.exitsSideways = true;
     expectedEffects.controlDependent= true;
@@ -13912,7 +13912,7 @@ void testTrappingLoadAddStore()
             proc, Add, Origin(),
             root->appendNew<MemoryValue>(proc, trapping(Load), Int32, Origin(), ptr),
             root->appendNew<Const32Value>(proc, Origin(), 3)),
-        ptr);
+        ptr, 0);
     root->appendNew<Value>(proc, Return, Origin());
     compileAndRun<int>(proc);
     CHECK_EQ(x, 45);
@@ -15228,7 +15228,7 @@ void testWasmAddress()
         body->appendNew<Const32Value>(proc, Origin(), sizeof(unsigned)));
     pointer = body->appendNew<Value>(proc, ZExt32, Origin(), pointer);
     body->appendNew<MemoryValue>(proc, Store, Origin(), valueToStore,
-        body->appendNew<WasmAddressValue>(proc, Origin(), pointer, pinnedGPR));
+        body->appendNew<WasmAddressValue>(proc, Origin(), pointer, pinnedGPR), 0);
     UpsilonValue* incUpsilon = body->appendNew<UpsilonValue>(proc, Origin(),
         body->appendNew<Value>(proc, Add, Origin(), indexPhi,
             body->appendNew<Const32Value>(proc, Origin(), 1)));
