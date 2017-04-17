@@ -100,7 +100,7 @@ public:
     void setNeedsDisplayInRect(const FloatRect&, ShouldClipToLayer = ClipToLayer) override;
     void setContentsNeedsDisplay() override;
     void deviceOrPageScaleFactorChanged() override;
-    void flushCompositingState(const FloatRect&) override;
+    void flushCompositingState(const FloatRect&, FlushScope) override;
     void flushCompositingStateForThisLayerOnly() override;
     bool setFilters(const FilterOperations&) override;
     bool addAnimation(const KeyframeValueList&, const FloatSize&, const Animation*, const String&, double) override;

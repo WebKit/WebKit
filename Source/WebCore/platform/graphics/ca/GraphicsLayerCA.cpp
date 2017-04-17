@@ -581,6 +581,16 @@ void GraphicsLayerCA::setPosition(const FloatPoint& point)
     noteLayerPropertyChanged(GeometryChanged);
 }
 
+void GraphicsLayerCA::syncPosition(const FloatPoint& point)
+{
+    if (point == m_position)
+        return;
+
+    GraphicsLayer::syncPosition(point);
+    // Ensure future flushes will recompute the coverage rect and update tiling.
+    noteLayerPropertyChanged(PositionChanged, DontScheduleFlush);
+}
+
 void GraphicsLayerCA::setAnchorPoint(const FloatPoint3D& point)
 {
     if (point == m_anchorPoint)
@@ -1164,12 +1174,17 @@ FloatPoint GraphicsLayerCA::computePositionRelativeToBase(float& pageScale) cons
     return FloatPoint();
 }
 
-void GraphicsLayerCA::flushCompositingState(const FloatRect& clipRect)
+void GraphicsLayerCA::flushCompositingState(const FloatRect& visibleRect, FlushScope flushScope)
 {
-    TransformState state(TransformState::UnapplyInverseTransformDirection, FloatQuad(clipRect));
-    FloatQuad coverageQuad(clipRect);
+    TransformState state(TransformState::UnapplyInverseTransformDirection, FloatQuad(visibleRect));
+    FloatQuad coverageQuad(visibleRect);
     state.setSecondaryQuad(&coverageQuad);
-    recursiveCommitChanges(CommitState(), state);
+
+    CommitState commitState;
+    commitState.ancestorHadChanges = visibleRect != m_previousCommittedVisibleRect || flushScope == FlushScope::All;
+    m_previousCommittedVisibleRect = visibleRect;
+
+    recursiveCommitChanges(commitState, state);
 }
 
 void GraphicsLayerCA::flushCompositingStateForThisLayerOnly()
@@ -1354,17 +1369,17 @@ void GraphicsLayerCA::setVisibleAndCoverageRects(const VisibleAndCoverageRects& 
     // FIXME: we need to take reflections into account when determining whether this layer intersects the coverage rect.
     bool intersectsCoverageRect = isViewportConstrained || rects.coverageRect.intersects(FloatRect(m_boundsOrigin, size()));
     if (intersectsCoverageRect != m_intersectsCoverageRect) {
-        m_uncommittedChanges |= CoverageRectChanged;
+        addUncommittedChanges(CoverageRectChanged);
         m_intersectsCoverageRect = intersectsCoverageRect;
     }
 
     if (visibleRectChanged) {
-        m_uncommittedChanges |= CoverageRectChanged;
+        addUncommittedChanges(CoverageRectChanged);
         m_visibleRect = rects.visibleRect;
     }
 
     if (coverageRectChanged) {
-        m_uncommittedChanges |= CoverageRectChanged;
+        addUncommittedChanges(CoverageRectChanged);
         m_coverageRect = rects.coverageRect;
     }
 }
@@ -1373,8 +1388,12 @@ void GraphicsLayerCA::setVisibleAndCoverageRects(const VisibleAndCoverageRects& 
 // animation that contributes maximally to the scale (on every layer with animations down the hierarchy).
 void GraphicsLayerCA::recursiveCommitChanges(const CommitState& commitState, const TransformState& state, float pageScaleFactor, const FloatPoint& positionRelativeToBase, bool affectedByPageScale)
 {
+    if (!commitState.ancestorHadChanges && !m_uncommittedChanges && !hasDescendantsWithUncommittedChanges())
+        return;
+
     TransformState localState = state;
     CommitState childCommitState = commitState;
+
     bool affectedByTransformAnimation = commitState.ancestorHasTransformAnimation;
 
     bool accumulateTransform = accumulatesTransform(*this);
@@ -1411,7 +1430,11 @@ void GraphicsLayerCA::recursiveCommitChanges(const CommitState& commitState, con
 #endif
 
     bool hadChanges = m_uncommittedChanges;
-    
+
+    // FIXME: This could be more fine-grained. Only some types of changes have impact on sublayers.
+    if (!childCommitState.ancestorHadChanges)
+        childCommitState.ancestorHadChanges = hadChanges;
+
     if (appliesPageScale()) {
         pageScaleFactor = this->pageScaleFactor();
         affectedByPageScale = true;
@@ -1449,6 +1472,8 @@ void GraphicsLayerCA::recursiveCommitChanges(const CommitState& commitState, con
 
     if (GraphicsLayerCA* maskLayer = downcast<GraphicsLayerCA>(m_maskLayer))
         maskLayer->commitLayerChangesAfterSublayers(childCommitState);
+
+    setHasDescendantsWithUncommittedChanges(false);
 
     bool hadDirtyRects = m_uncommittedChanges & DirtyRectsChanged;
     commitLayerChangesAfterSublayers(childCommitState);
@@ -1564,7 +1589,7 @@ void GraphicsLayerCA::commitLayerChangesBeforeSublayers(CommitState& commitState
     if (!m_uncommittedChanges) {
         // Ensure that we cap layer depth in commitLayerChangesAfterSublayers().
         if (commitState.treeDepth > cMaxLayerTreeDepth)
-            m_uncommittedChanges |= ChildrenChanged;
+            addUncommittedChanges(ChildrenChanged);
     }
 
     bool needTiledLayer = requiresTiledLayer(pageScaleFactor);
@@ -1706,7 +1731,7 @@ void GraphicsLayerCA::commitLayerChangesBeforeSublayers(CommitState& commitState
 
     // Ensure that we cap layer depth in commitLayerChangesAfterSublayers().
     if (commitState.treeDepth > cMaxLayerTreeDepth)
-        m_uncommittedChanges |= ChildrenChanged;
+        addUncommittedChanges(ChildrenChanged);
 }
 
 void GraphicsLayerCA::commitLayerChangesAfterSublayers(CommitState& commitState)
@@ -2116,7 +2141,7 @@ void GraphicsLayerCA::ensureStructuralLayer(StructuralLayerPurpose purpose)
             // Release the structural layer.
             m_structuralLayer = nullptr;
 
-            m_uncommittedChanges |= structuralLayerChangeFlags;
+            addUncommittedChanges(structuralLayerChangeFlags);
         }
         return;
     }
@@ -2144,7 +2169,7 @@ void GraphicsLayerCA::ensureStructuralLayer(StructuralLayerPurpose purpose)
     if (!structuralLayerChanged)
         return;
     
-    m_uncommittedChanges |= structuralLayerChangeFlags;
+    addUncommittedChanges(structuralLayerChangeFlags);
 
     // We've changed the layer that our parent added to its sublayer list, so tell it to update
     // sublayers again in its commitLayerChangesAfterSublayers().
@@ -3615,7 +3640,7 @@ void GraphicsLayerCA::changeLayerTypeTo(PlatformCALayer::LayerType newLayerType)
         oldLayer->superlayer()->replaceSublayer(*oldLayer, *m_layer);
     }
 
-    m_uncommittedChanges |= ChildrenChanged
+    addUncommittedChanges(ChildrenChanged
         | GeometryChanged
         | TransformChanged
         | ChildrenTransformChanged
@@ -3631,10 +3656,10 @@ void GraphicsLayerCA::changeLayerTypeTo(PlatformCALayer::LayerType newLayerType)
         | MaskLayerChanged
         | OpacityChanged
         | NameChanged
-        | DebugIndicatorsChanged;
+        | DebugIndicatorsChanged);
     
     if (isTiledLayer)
-        m_uncommittedChanges |= CoverageRectChanged;
+        addUncommittedChanges(CoverageRectChanged);
 
     moveAnimations(oldLayer.get(), m_layer.get());
     
@@ -4008,12 +4033,33 @@ bool GraphicsLayerCA::canThrottleLayerFlush() const
     return !(m_uncommittedChanges & TilesAdded);
 }
 
+void GraphicsLayerCA::addUncommittedChanges(LayerChangeFlags flags)
+{
+    m_uncommittedChanges |= flags;
+
+    if (m_isCommittingChanges)
+        return;
+
+    for (auto* ancestor = parent(); ancestor; ancestor = ancestor->parent()) {
+        auto& ancestorCA = static_cast<GraphicsLayerCA&>(*ancestor);
+        ASSERT(!ancestorCA.m_isCommittingChanges);
+        if (ancestorCA.hasDescendantsWithUncommittedChanges())
+            return;
+        ancestorCA.setHasDescendantsWithUncommittedChanges(true);
+    }
+}
+
+void GraphicsLayerCA::setHasDescendantsWithUncommittedChanges(bool value)
+{
+    m_hasDescendantsWithUncommittedChanges = value;
+}
+
 void GraphicsLayerCA::noteLayerPropertyChanged(LayerChangeFlags flags, ScheduleFlushOrNot scheduleFlush)
 {
     bool hadUncommittedChanges = !!m_uncommittedChanges;
     bool oldCanThrottleLayerFlush = canThrottleLayerFlush();
 
-    m_uncommittedChanges |= flags;
+    addUncommittedChanges(flags);
 
     if (scheduleFlush == ScheduleFlush) {
         bool needsFlush = !hadUncommittedChanges || oldCanThrottleLayerFlush != canThrottleLayerFlush();

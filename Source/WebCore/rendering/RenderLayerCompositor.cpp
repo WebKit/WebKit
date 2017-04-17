@@ -441,6 +441,8 @@ void RenderLayerCompositor::flushPendingLayerChanges(bool isFlushRoot)
 #if PLATFORM(IOS)
         FloatRect exposedRect = frameView.exposedContentRect();
         LOG_WITH_STREAM(Compositing, stream << "\nRenderLayerCompositor " << this << " flushPendingLayerChanges (root " << isFlushRoot << ") exposedRect " << exposedRect);
+
+        // FIXME: Use optimized flushes.
         rootLayer->flushCompositingState(exposedRect);
 #else
         // Having a m_clipLayer indicates that we're doing scrolling via GraphicsLayers.
@@ -450,7 +452,7 @@ void RenderLayerCompositor::flushPendingLayerChanges(bool isFlushRoot)
             visibleRect.intersect(frameView.viewExposedRect().value());
 
         LOG_WITH_STREAM(Compositing,  stream << "\nRenderLayerCompositor " << this << " flushPendingLayerChanges(" << isFlushRoot << ") " << visibleRect);
-        rootLayer->flushCompositingState(visibleRect);
+        rootLayer->flushCompositingState(visibleRect, GraphicsLayer::FlushScope::Uncommitted);
         LOG_WITH_STREAM(Compositing,  stream << "RenderLayerCompositor " << this << " flush complete\n");
 #endif
     }

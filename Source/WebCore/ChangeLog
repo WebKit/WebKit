@@ -1,3 +1,47 @@
+2017-04-17  Antti Koivisto  <antti@apple.com>
+
+        GraphicsLayerCA::recursiveCommitChanges should not descend into subtrees without changes
+        https://bugs.webkit.org/show_bug.cgi?id=170851
+
+        Reviewed by Simon Fraser.
+
+        With lots of layers this can be very slow as it always traverses the entire layer tree.
+        For example GIF animations on tumblr.com trigger expensive commits where almost nothing changes.
+
+        This patch adds m_hasDescendantsWithUncommittedChanges bit to GraphicsLayerCA. With this
+        we can avoid descending to branches without changes when committing.
+
+        This patch enabled the optimization on Mac.
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::GraphicsLayerCA::syncPosition):
+
+            Set PositionChanged flag when syncing layer position. This flag does nothing except makes
+            next commit to update the coverage rect (so tiling gets updated).
+
+        (WebCore::GraphicsLayerCA::setVisibleAndCoverageRects):
+
+            Do all setting of m_uncommittedChanges bits via addUncommittedChanges function.
+
+        (WebCore::GraphicsLayerCA::recursiveCommitChanges):
+
+            Bail out if neither the current layer nor any of its descendants have any uncommited changes
+            and none of the ancestors had changes.
+
+        (WebCore::GraphicsLayerCA::commitLayerChangesBeforeSublayers):
+        (WebCore::GraphicsLayerCA::ensureStructuralLayer):
+        (WebCore::GraphicsLayerCA::changeLayerTypeTo):
+        (WebCore::GraphicsLayerCA::addUncommittedChanges):
+
+            Set m_hasDescendantsWithUncommittedChanges bit in ancestors when mutating m_uncommittedChanges.
+
+        (WebCore::GraphicsLayerCA::noteLayerPropertyChanged):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        (WebCore::RenderLayerCompositor::frameViewDidScroll):
+
+            Tell the scrolling layer that it needs to recompute coverage.
+            This also schedules a layer flush so no need to do that separately.
+
 2017-04-16  Chris Dumez  <cdumez@apple.com>
 
         CMD+R / CMD+Q is considered as user interaction and beforeunload alert is shown
