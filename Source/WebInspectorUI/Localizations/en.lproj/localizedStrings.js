@@ -671,6 +671,7 @@ localizedStrings["Request"] = "Request";
 localizedStrings["Request & Response"] = "Request & Response";
 localizedStrings["Request Data"] = "Request Data";
 localizedStrings["Request Headers"] = "Request Headers";
+localizedStrings["Requesting: %s"] = "Requesting: %s";
 localizedStrings["Required"] = "Required";
 localizedStrings["Reset"] = "Reset";
 localizedStrings["Resource"] = "Resource";

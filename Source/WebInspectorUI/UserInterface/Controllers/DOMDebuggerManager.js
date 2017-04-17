@@ -172,6 +172,11 @@ WebInspector.DOMDebuggerManager = class DOMDebuggerManager extends WebInspector.
         this._saveDOMBreakpoints();
     }
 
+    xhrBreakpointForURL(url)
+    {
+        return this._xhrBreakpoints.find((breakpoint) => breakpoint.url === url) || null;
+    }
+
     addXHRBreakpoint(breakpoint)
     {
         console.assert(breakpoint instanceof WebInspector.XHRBreakpoint);

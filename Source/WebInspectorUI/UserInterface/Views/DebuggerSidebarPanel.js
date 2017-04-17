@@ -1035,29 +1035,26 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
         case WebInspector.DebuggerManager.PauseReason.XHR:
             console.assert(WebInspector.domDebuggerManager.supported);
             console.assert(pauseData, "Expected XHR breakpoint data, but found none.");
-            if (pauseData && pauseData.breakpointURL) {
-                let xhrBreakpoints = WebInspector.domDebuggerManager.xhrBreakpoints;
-                let xhrBreakpoint;
-                for (let breakpoint of xhrBreakpoints) {
-                    if (breakpoint.url === pauseData.breakpointURL) {
-                        xhrBreakpoint = breakpoint;
-                        break;
-                    }
+            if (pauseData) {
+                if (pauseData.breakpointURL) {
+                    let xhrBreakpoint = WebInspector.domDebuggerManager.xhrBreakpointForURL(pauseData.breakpointURL);
+                    console.assert(xhrBreakpoint, "Expected XHR breakpoint for URL.", pauseData.breakpointURL);
+
+                    this._pauseReasonTreeOutline = this.createContentTreeOutline(true);
+
+                    let xhrBreakpointTreeElement = new WebInspector.XHRBreakpointTreeElement(xhrBreakpoint, WebInspector.DebuggerSidebarPanel.PausedBreakpointIconStyleClassName, WebInspector.UIString("Triggered XHR Breakpoint"));
+                    let xhrBreakpointRow = new WebInspector.DetailsSectionRow;
+                    this._pauseReasonTreeOutline.appendChild(xhrBreakpointTreeElement);
+                    xhrBreakpointRow.element.appendChild(this._pauseReasonTreeOutline.element);
+
+                    this._pauseReasonTextRow.text = pauseData.url;
+                    this._pauseReasonGroup.rows = [xhrBreakpointRow, this._pauseReasonTextRow];
+                } else {
+                    console.assert(pauseData.breakpointURL === "", "Should be the All Requests breakpoint which has an empty URL");
+                    this._pauseReasonTextRow.text = WebInspector.UIString("Requesting: %s").format(pauseData.url);
+                    this._pauseReasonGroup.rows = [this._pauseReasonTextRow];
                 }
-
-                if (!xhrBreakpoint)
-                    return;
-
-                this._pauseReasonTreeOutline = this.createContentTreeOutline(true, true);
-
-                let xhrBreakpointTreeElement = new WebInspector.XHRBreakpointTreeElement(xhrBreakpoint, WebInspector.DebuggerSidebarPanel.PausedBreakpointIconStyleClassName, WebInspector.UIString("Triggered XHR Breakpoint"));
-                let xhrBreakpointRow = new WebInspector.DetailsSectionRow;
-                this._pauseReasonTreeOutline.appendChild(xhrBreakpointTreeElement);
-                xhrBreakpointRow.element.appendChild(this._pauseReasonTreeOutline.element);
-
-                this._pauseReasonTextRow.text = pauseData.url;
-                this._pauseReasonGroup.rows = [xhrBreakpointRow, this._pauseReasonTextRow];
-
+                this._pauseReasonTextRow.element.title = pauseData.url;
                 return true;
             }
             break;
