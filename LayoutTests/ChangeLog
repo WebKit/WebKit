@@ -1,3 +1,9 @@
+2017-04-17  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Update expected results for rdar://problem/31636583.
+
+        * platform/mac/fast/text/complex-text-opacity-expected.txt:
+
 2017-04-03  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r214819. rdar://problem/31407633
