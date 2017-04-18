@@ -20,7 +20,7 @@ disabled=true
 PASS input.value is "0"
 PASS lastInputEventCounter is inputEventCounter
 
-PASS changeEventCounter is 1
+PASS changeEventCounter is 0
 
 PASS successfullyParsed is true
 
