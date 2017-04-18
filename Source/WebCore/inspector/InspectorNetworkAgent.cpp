@@ -226,6 +226,17 @@ Ref<Inspector::Protocol::Network::Metrics> InspectorNetworkAgent::buildObjectFor
     if (networkLoadMetrics.requestHeaders)
         metrics->setRequestHeaders(buildObjectForHeaders(*networkLoadMetrics.requestHeaders));
 
+    if (networkLoadMetrics.requestHeaderBytesSent)
+        metrics->setRequestHeaderBytesSent(*networkLoadMetrics.requestHeaderBytesSent);
+    if (networkLoadMetrics.requestBodyBytesSent)
+        metrics->setRequestBodyBytesSent(*networkLoadMetrics.requestBodyBytesSent);
+    if (networkLoadMetrics.responseHeaderBytesReceived)
+        metrics->setResponseHeaderBytesReceived(*networkLoadMetrics.responseHeaderBytesReceived);
+    if (networkLoadMetrics.responseBodyBytesReceived)
+        metrics->setResponseBodyBytesReceived(*networkLoadMetrics.responseBodyBytesReceived);
+    if (networkLoadMetrics.responseBodyDecodedSize)
+        metrics->setResponseBodyDecodedSize(*networkLoadMetrics.responseBodyDecodedSize);
+
     return metrics;
 }
 

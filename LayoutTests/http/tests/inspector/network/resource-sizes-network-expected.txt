@@ -1,0 +1,89 @@
+Test for Resource size values (transfer size, decoded size, header size, request and response) for resources served over the network.
+
+
+== Running test suite: Resource.Size.Network
+-- Running test case: Resource.Size.Network.text
+PASS: statusCode should be 200.
+PASS: compressed should be false.
+PASS: responseSource should be Symbol(network).
+PASS: estimatedNetworkEncodedSize should be exactly 2955 bytes.
+PASS: estimatedTotalTransferSize should be >= (encoded body size + headers).
+PASS: size should be exactly 2955 bytes.
+PASS: networkEncodedSize should be exactly 2955 bytes.
+PASS: networkTotalTransferSize should be >= (encoded body size + headers).
+PASS: requestBodyTransferSize should be exactly 0 bytes.
+PASS: responseBodyTransferSize should be exactly 2955 bytes.
+PASS: requestHeadersTransferSize should be non-empty.
+PASS: responseHeadersTransferSize should be non-empty.
+
+-- Running test case: Resource.Size.Network.text.gzipped
+PASS: statusCode should be 200.
+PASS: compressed should be true.
+PASS: responseSource should be Symbol(network).
+PASS: estimatedNetworkEncodedSize should be exactly 1229 bytes.
+PASS: estimatedTotalTransferSize should be >= (encoded body size + headers).
+PASS: size should be exactly 2955 bytes.
+PASS: networkEncodedSize should be exactly 1229 bytes.
+PASS: networkTotalTransferSize should be >= (encoded body size + headers).
+PASS: requestBodyTransferSize should be exactly 0 bytes.
+PASS: responseBodyTransferSize should be exactly 1229 bytes.
+PASS: requestHeadersTransferSize should be non-empty.
+PASS: responseHeadersTransferSize should be non-empty.
+
+-- Running test case: Resource.Size.Network.text.gzipped.no-content-length
+PASS: statusCode should be 200.
+PASS: compressed should be true.
+PASS: responseSource should be Symbol(network).
+PASS: estimatedNetworkEncodedSize should be exactly 1229 bytes.
+PASS: estimatedTotalTransferSize should be >= (encoded body size + headers).
+PASS: size should be exactly 2955 bytes.
+PASS: networkEncodedSize should be exactly 1229 bytes.
+PASS: networkTotalTransferSize should be >= (encoded body size + headers).
+PASS: requestBodyTransferSize should be exactly 0 bytes.
+PASS: responseBodyTransferSize should be exactly 1229 bytes.
+PASS: requestHeadersTransferSize should be non-empty.
+PASS: responseHeadersTransferSize should be non-empty.
+
+-- Running test case: Resource.Size.Network.image
+PASS: statusCode should be 200.
+PASS: compressed should be false.
+PASS: responseSource should be Symbol(network).
+PASS: estimatedNetworkEncodedSize should be exactly 12940 bytes.
+PASS: estimatedTotalTransferSize should be >= (encoded body size + headers).
+PASS: size should be exactly 12940 bytes.
+PASS: networkEncodedSize should be exactly 12940 bytes.
+PASS: networkTotalTransferSize should be >= (encoded body size + headers).
+PASS: requestBodyTransferSize should be exactly 0 bytes.
+PASS: responseBodyTransferSize should be exactly 12940 bytes.
+PASS: requestHeadersTransferSize should be non-empty.
+PASS: responseHeadersTransferSize should be non-empty.
+
+-- Running test case: Resource.Size.Network.404
+PASS: statusCode should be 404.
+PASS: compressed should be false.
+PASS: responseSource should be Symbol(network).
+PASS: estimatedNetworkEncodedSize should be exactly 512 bytes.
+PASS: estimatedTotalTransferSize should be >= (encoded body size + headers).
+PASS: size should be exactly 512 bytes.
+PASS: networkEncodedSize should be exactly 512 bytes.
+PASS: networkTotalTransferSize should be >= (encoded body size + headers).
+PASS: requestBodyTransferSize should be exactly 0 bytes.
+PASS: responseBodyTransferSize should be exactly 512 bytes.
+PASS: requestHeadersTransferSize should be non-empty.
+PASS: responseHeadersTransferSize should be non-empty.
+
+-- Running test case: Resource.Size.Network.requestData
+PASS: statusCode should be 200.
+PASS: compressed should be false.
+PASS: responseSource should be Symbol(network).
+PASS: estimatedNetworkEncodedSize should be exactly 28 bytes.
+PASS: estimatedTotalTransferSize should be >= (encoded body size + headers).
+PASS: size should be exactly 28 bytes.
+PASS: networkEncodedSize should be exactly 28 bytes.
+PASS: networkTotalTransferSize should be >= (encoded body size + headers).
+PASS: requestBodyTransferSize should be exactly 1027 bytes.
+PASS: responseBodyTransferSize should be exactly 28 bytes.
+PASS: requestHeadersTransferSize should be non-empty.
+PASS: responseHeadersTransferSize should be non-empty.
+PASS: requestHeadersTransferSize should be > 1060 bytes.
+

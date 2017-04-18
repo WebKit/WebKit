@@ -620,6 +620,11 @@ void NetworkResourceLoader::sendResultForCacheEntry(std::unique_ptr<NetworkCache
 
     WebCore::NetworkLoadMetrics networkLoadMetrics;
     networkLoadMetrics.markComplete();
+    networkLoadMetrics.requestHeaderBytesSent = 0;
+    networkLoadMetrics.requestBodyBytesSent = 0;
+    networkLoadMetrics.responseHeaderBytesReceived = 0;
+    networkLoadMetrics.responseBodyBytesReceived = 0;
+    networkLoadMetrics.responseBodyDecodedSize = 0;
 
     sendBuffer(*entry->buffer(), entry->buffer()->size());
     send(Messages::WebResourceLoader::DidFinishResourceLoad(networkLoadMetrics));

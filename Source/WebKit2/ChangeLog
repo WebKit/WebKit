@@ -1,3 +1,17 @@
+2017-04-17  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Doesn't show size of compressed content correctly
+        https://bugs.webkit.org/show_bug.cgi?id=155112
+        <rdar://problem/25006728>
+
+        Reviewed by Alex Christensen and Timothy Hatcher.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::sendResultForCacheEntry):
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:task:didFinishCollectingMetrics:]):
+        Include size information in network load metrics.
+
 2017-04-17  Youenn Fablet  <youenn@apple.com>
 
         com.apple.WebKit.Networking.Development crashed in com.apple.WebKit: WebKit::NetworkRTCProvider::resolvedName

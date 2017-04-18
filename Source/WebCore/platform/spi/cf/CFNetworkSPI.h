@@ -125,6 +125,10 @@ typedef void (^CFCachedURLResponseCallBackBlock)(CFCachedURLResponseRef);
 @interface NSURLSessionTaskTransactionMetrics ()
 @property (copy, readonly) NSString* _remoteAddressAndPort;
 @property (copy, readonly) NSUUID* _connectionIdentifier;
+@property (assign, readonly) NSInteger _requestHeaderBytesSent;
+@property (assign, readonly) NSInteger _responseHeaderBytesReceived;
+@property (assign, readonly) int64_t _responseBodyBytesReceived;
+@property (assign, readonly) int64_t _responseBodyBytesDecoded;
 @end
 #endif
 

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="resources/cached-script.js"></script>
+<script src="../resources/inspector-test.js"></script>
+<script src="resources/resource-size-test.js"></script>
+<script>
+TestPage.dispatchEventToFrontend("LoadComplete");
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Resource.Size.MemoryCache");
+
+    addResourceSizeTest(suite, {
+        name: "Resource.Size.MemoryCache.Basic",
+        description: "Sizes of a cached script resource with a validation request",
+        statusCode: 304,
+        compressed: false,
+        responseSource: WebInspector.Resource.ResponseSource.MemoryCache,
+        headers: true,
+        requestBodyTransferSize: 0,
+        responseBodyTransferSize: 0,
+        size: 27,
+        resourceLoader() {
+            const ignoreCache = false;
+            const pattern = /cached-script\.js$/;
+            InspectorTest.reloadPage(ignoreCache);
+            return InspectorTest.awaitEvent("LoadComplete").then((event) => {
+                let resource = null;
+                for (let item of WebInspector.frameResourceManager.mainFrame.resourceCollection.items) {
+                    if (pattern.test(item.url)) {
+                        resource = item;
+                        break;
+                    }
+                }
+                if (!resource) {
+                    InspectorTest.fail("Failed to find specific resource.");
+                    throw "Fail";
+                }
+                return resource;
+            });
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test for Resource size values (transfer size, decoded size, header size, request and response) for resources served from the memory cache.</p>
+</body>
+</html>

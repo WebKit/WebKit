@@ -306,8 +306,7 @@ static WebCore::NetworkLoadPriority toNetworkLoadPriority(float priority)
 
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
             networkLoadMetrics.remoteAddress = String(m._remoteAddressAndPort);
-            if ([m respondsToSelector:@selector(_connectionIdentifier)])
-                networkLoadMetrics.connectionIdentifier = String([m._connectionIdentifier UUIDString]);
+            networkLoadMetrics.connectionIdentifier = String([m._connectionIdentifier UUIDString]);
 #endif
 
             __block WebCore::HTTPHeaderMap requestHeaders;
@@ -315,6 +314,26 @@ static WebCore::NetworkLoadPriority toNetworkLoadPriority(float priority)
                 requestHeaders.set(String(name), String(value));
             }];
             networkLoadMetrics.requestHeaders = WTFMove(requestHeaders);
+
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
+            uint64_t requestHeaderBytesSent = 0;
+            uint64_t responseHeaderBytesReceived = 0;
+            uint64_t responseBodyBytesReceived = 0;
+            uint64_t responseBodyDecodedSize = 0;
+
+            for (NSURLSessionTaskTransactionMetrics *transactionMetrics in metrics.transactionMetrics) {
+                requestHeaderBytesSent += transactionMetrics._requestHeaderBytesSent;
+                responseHeaderBytesReceived += transactionMetrics._responseHeaderBytesReceived;
+                responseBodyBytesReceived += transactionMetrics._responseBodyBytesReceived;
+                responseBodyDecodedSize += transactionMetrics._responseBodyBytesDecoded ? transactionMetrics._responseBodyBytesDecoded : transactionMetrics._responseBodyBytesReceived;
+            }
+
+            networkLoadMetrics.requestHeaderBytesSent = requestHeaderBytesSent;
+            networkLoadMetrics.requestBodyBytesSent = task.countOfBytesSent;
+            networkLoadMetrics.responseHeaderBytesReceived = responseHeaderBytesReceived;
+            networkLoadMetrics.responseBodyBytesReceived = responseBodyBytesReceived;
+            networkLoadMetrics.responseBodyDecodedSize = responseBodyDecodedSize;
+#endif
         }
     }
 }

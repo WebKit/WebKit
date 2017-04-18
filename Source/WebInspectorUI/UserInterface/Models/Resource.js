@@ -58,9 +58,8 @@ WebInspector.Resource = class Resource extends WebInspector.SourceCode
         this._finishThenRequestContentPromise = null;
         this._statusCode = NaN;
         this._statusText = null;
-        this._size = NaN;
-        this._transferSize = NaN;
         this._cached = false;
+        this._receivedNetworkLoadMetrics = false;
         this._responseSource = WebInspector.Resource.ResponseSource.Unknown;
         this._timingData = new WebInspector.ResourceTimingData(this);
         this._protocol = null;
@@ -68,6 +67,19 @@ WebInspector.Resource = class Resource extends WebInspector.SourceCode
         this._remoteAddress = null;
         this._connectionIdentifier = null;
         this._target = targetId ? WebInspector.targetManager.targetForIdentifier(targetId) : WebInspector.mainTarget;
+
+        // Exact sizes if loaded over the network or cache.
+        this._requestHeadersTransferSize = NaN;
+        this._requestBodyTransferSize = NaN;
+        this._responseHeadersTransferSize = NaN;
+        this._responseBodyTransferSize = NaN;
+        this._responseBodySize = NaN;
+        this._cachedResponseBodySize = NaN;
+
+        // Estimated sizes (if backend does not provide metrics).
+        this._estimatedSize = NaN;
+        this._estimatedTransferSize = NaN;
+        this._estimatedResponseHeadersSize = NaN;
 
         if (this._initiatorSourceCodeLocation && this._initiatorSourceCodeLocation.sourceCode instanceof WebInspector.Resource)
             this._initiatorSourceCodeLocation.sourceCode.addInitiatedResource(this);
@@ -432,15 +444,59 @@ WebInspector.Resource = class Resource extends WebInspector.SourceCode
         return this._cached;
     }
 
+    get requestHeadersTransferSize() { return this._requestHeadersTransferSize; }
+    get requestBodyTransferSize() { return this._requestBodyTransferSize; }
+    get responseHeadersTransferSize() { return this._responseHeadersTransferSize; }
+    get responseBodyTransferSize() { return this._responseBodyTransferSize; }
+    get cachedResponseBodySize() { return this._cachedResponseBodySize; }
+
     get size()
     {
-        return this._size;
+        if (!isNaN(this._cachedResponseBodySize))
+            return this._cachedResponseBodySize;
+
+        if (!isNaN(this._responseBodySize) && this._responseBodySize !== 0)
+            return this._responseBodySize;
+
+        return this._estimatedSize;
     }
 
-    get encodedSize()
+    get networkEncodedSize()
     {
-        if (!isNaN(this._transferSize))
-            return this._transferSize;
+        return this._responseBodyTransferSize;
+    }
+
+    get networkDecodedSize()
+    {
+        return this._responseBodySize;
+    }
+
+    get networkTotalTransferSize()
+    {
+        return this._responseHeadersTransferSize + this._responseBodyTransferSize;
+    }
+
+    get estimatedNetworkEncodedSize()
+    {
+        let exact = this.networkEncodedSize; 
+        if (!isNaN(exact))
+            return exact;
+
+        if (this._cached)
+            return 0;
+
+        // FIXME: <https://webkit.org/b/158463> Network: Correctly report encoded data length (transfer size) from CFNetwork to NetworkResourceLoader
+        // macOS provides the decoded transfer size instead of the encoded size
+        // for estimatedTransferSize. So prefer the "Content-Length" property
+        // on mac if it is available.
+        if (WebInspector.Platform.name === "mac") {
+            let contentLength = Number(this._responseHeaders.valueForCaseInsensitiveKey("Content-Length"));
+            if (!isNaN(contentLength))
+                return contentLength;
+        }
+
+        if (!isNaN(this._estimatedTransferSize))
+            return this._estimatedTransferSize;
 
         // If we did not receive actual transfer size from network
         // stack, we prefer using Content-Length over resourceSize as
@@ -453,24 +509,28 @@ WebInspector.Resource = class Resource extends WebInspector.SourceCode
         // work for chunks with non-trivial encodings. We need a way to
         // get actual transfer size from the network stack.
 
-        return Number(this._responseHeaders.valueForCaseInsensitiveKey("Content-Length") || this._size);
+        return Number(this._responseHeaders.valueForCaseInsensitiveKey("Content-Length") || this._estimatedSize);
     }
 
-    get transferSize()
+    get estimatedTotalTransferSize()
     {
+        let exact = this.networkTotalTransferSize;
+        if (!isNaN(exact))
+            return exact;
+
         if (this.statusCode === 304) // Not modified
-            return this._responseHeadersSize;
+            return this._estimatedResponseHeadersSize;
 
         if (this._cached)
             return 0;
 
-        return this._responseHeadersSize + this.encodedSize;
+        return this._estimatedResponseHeadersSize + this.estimatedNetworkEncodedSize;
     }
 
     get compressed()
     {
-        var contentEncoding = this._responseHeaders.valueForCaseInsensitiveKey("Content-Encoding");
-        return contentEncoding && /\b(?:gzip|deflate)\b/.test(contentEncoding);
+        let contentEncoding = this._responseHeaders.valueForCaseInsensitiveKey("Content-Encoding");
+        return !!(contentEncoding && /\b(?:gzip|deflate)\b/.test(contentEncoding));
     }
 
     get scripts()
@@ -554,9 +614,11 @@ WebInspector.Resource = class Resource extends WebInspector.SourceCode
         if (source)
             this._responseSource = WebInspector.Resource.responseSourceFromPayload(source);
 
-        this._responseHeadersSize = String(this._statusCode).length + this._statusText.length + 12; // Extra length is for "HTTP/1.1 ", " ", and "\r\n".
+        const headerBaseSize = 12; // Length of "HTTP/1.1 ", " ", and "\r\n".
+        const headerPad = 4; // Length of ": " and "\r\n".
+        this._estimatedResponseHeadersSize = String(this._statusCode).length + this._statusText.length + headerBaseSize;
         for (let name in this._responseHeaders)
-            this._responseHeadersSize += name.length + this._responseHeaders[name].length + 4; // Extra length is for ": ", and "\r\n".
+            this._estimatedResponseHeadersSize += name.length + this._responseHeaders[name].length + headerPad;
 
         if (!this._cached) {
             if (statusCode === 304 || (this._responseSource === WebInspector.Resource.ResponseSource.MemoryCache || this._responseSource === WebInspector.Resource.ResponseSource.DiskCache))
@@ -580,8 +642,8 @@ WebInspector.Resource = class Resource extends WebInspector.SourceCode
         if (oldType !== type)
             this.dispatchEventToListeners(WebInspector.Resource.Event.TypeDidChange, {oldType});
 
-        console.assert(isNaN(this._size));
-        console.assert(isNaN(this._transferSize));
+        console.assert(isNaN(this._estimatedSize));
+        console.assert(isNaN(this._estimatedTransferSize));
 
         // The transferSize becomes 0 when status is 304 or Content-Length is available, so
         // notify listeners of that change.
@@ -594,6 +656,8 @@ WebInspector.Resource = class Resource extends WebInspector.SourceCode
 
     updateWithMetrics(metrics)
     {
+        this._receivedNetworkLoadMetrics = true;
+
         if (metrics.protocol)
             this._protocol = metrics.protocol;
         if (metrics.priority)
@@ -606,6 +670,32 @@ WebInspector.Resource = class Resource extends WebInspector.SourceCode
             this._requestHeaders = metrics.requestHeaders;
             this.dispatchEventToListeners(WebInspector.Resource.Event.RequestHeadersDidChange);
         }
+
+        if ("requestHeaderBytesSent" in metrics) {
+            this._requestHeadersTransferSize = metrics.requestHeaderBytesSent;
+            this._requestBodyTransferSize = metrics.requestBodyBytesSent;
+            this._responseHeadersTransferSize = metrics.responseHeaderBytesReceived;
+            this._responseBodyTransferSize = metrics.responseBodyBytesReceived;
+            this._responseBodySize = metrics.responseBodyDecodedSize;
+
+            console.assert(this._requestHeadersTransferSize >= 0);
+            console.assert(this._requestBodyTransferSize >= 0);
+            console.assert(this._responseHeadersTransferSize >= 0);
+            console.assert(this._responseBodyTransferSize >= 0);
+            console.assert(this._responseBodySize >= 0);
+
+            this.dispatchEventToListeners(WebInspector.Resource.Event.SizeDidChange, {previousSize: this._estimatedSize});
+            this.dispatchEventToListeners(WebInspector.Resource.Event.TransferSizeDidChange);
+        }
+    }
+
+    setCachedResponseBodySize(size)
+    {
+        console.assert(!isNaN(size), "Size should be a valid number.")
+        console.assert(isNaN(this._cachedResponseBodySize), "This should only be set once.");
+        console.assert(this._estimatedSize === size, "The legacy path was updated already and matches.");
+
+        this._cachedResponseBodySize = size;
     }
 
     requestContentFromBackend()
@@ -625,30 +715,32 @@ WebInspector.Resource = class Resource extends WebInspector.SourceCode
     increaseSize(dataLength, elapsedTime)
     {
         console.assert(dataLength >= 0);
+        console.assert(!this._receivedNetworkLoadMetrics, "If we received metrics we don't need to change the estimated size.");
 
-        if (isNaN(this._size))
-            this._size = 0;
+        if (isNaN(this._estimatedSize))
+            this._estimatedSize = 0;
 
-        var previousSize = this._size;
+        let previousSize = this._estimatedSize;
 
-        this._size += dataLength;
+        this._estimatedSize += dataLength;
 
         this._lastDataReceivedTimestamp = elapsedTime || NaN;
 
         this.dispatchEventToListeners(WebInspector.Resource.Event.SizeDidChange, {previousSize});
 
-        // The transferSize is based off of size when status is not 304 or Content-Length is missing.
-        if (isNaN(this._transferSize) && this._statusCode !== 304 && !this._responseHeaders.valueForCaseInsensitiveKey("Content-Length"))
+        // The estimatedTransferSize is based off of size when status is not 304 or Content-Length is missing.
+        if (isNaN(this._estimatedTransferSize) && this._statusCode !== 304 && !this._responseHeaders.valueForCaseInsensitiveKey("Content-Length"))
             this.dispatchEventToListeners(WebInspector.Resource.Event.TransferSizeDidChange);
     }
 
     increaseTransferSize(encodedDataLength)
     {
         console.assert(encodedDataLength >= 0);
+        console.assert(!this._receivedNetworkLoadMetrics, "If we received metrics we don't need to change the estimated transfer size.");
 
-        if (isNaN(this._transferSize))
-            this._transferSize = 0;
-        this._transferSize += encodedDataLength;
+        if (isNaN(this._estimatedTransferSize))
+            this._estimatedTransferSize = 0;
+        this._estimatedTransferSize += encodedDataLength;
 
         this.dispatchEventToListeners(WebInspector.Resource.Event.TransferSizeDidChange);
     }

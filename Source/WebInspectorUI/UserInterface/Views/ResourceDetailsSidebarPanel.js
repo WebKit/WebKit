@@ -342,8 +342,18 @@ WebInspector.ResourceDetailsSidebarPanel = class ResourceDetailsSidebarPanel ext
 
     _refreshCompressed()
     {
-        this._compressedRow.value = this._resource.compressed ? WebInspector.UIString("Yes") : WebInspector.UIString("No");
-        this._compressionRow.value = this._resource.compressed ? WebInspector.UIString("%.2f\u00d7").format(this._resource.size / this._resource.encodedSize) : null;
+        if (this._resource.compressed) {
+            this._compressedRow.value = WebInspector.UIString("Yes");
+            if (!this._resource.size)
+                this._compressionRow.value = emDash;
+            else if (!isNaN(this._resource.networkEncodedSize))
+                this._compressionRow.value = this._resource.networkEncodedSize ? WebInspector.UIString("%.2f\u00d7").format(this._resource.size / this._resource.networkEncodedSize) : emDash;
+            else
+                this._compressionRow.value = this._resource.estimatedNetworkEncodedSize ? WebInspector.UIString("%.2f\u00d7").format(this._resource.size / this._resource.estimatedNetworkEncodedSize) : emDash;
+        } else {
+            this._compressedRow.value = WebInspector.UIString("No");
+            this._compressionRow.value = null;
+        }
     }
 
     _refreshDecodedSize()
@@ -351,8 +361,11 @@ WebInspector.ResourceDetailsSidebarPanel = class ResourceDetailsSidebarPanel ext
         if (!this._resource)
             return;
 
-        this._encodedSizeRow.value = this._valueForSize(this._resource.encodedSize);
-        this._decodedSizeRow.value = this._valueForSize(this._resource.size);
+        let encodedSize = !isNaN(this._resource.networkEncodedSize) ? this._resource.networkEncodedSize : this._resource.estimatedNetworkEncodedSize;
+        let decodedSize = !isNaN(this._resource.networkDecodedSize) ? this._resource.networkDecodedSize : this._resource.size;
+
+        this._encodedSizeRow.value = this._valueForSize(encodedSize);
+        this._decodedSizeRow.value = this._valueForSize(decodedSize);
 
         this._refreshCompressed();
     }
@@ -362,8 +375,11 @@ WebInspector.ResourceDetailsSidebarPanel = class ResourceDetailsSidebarPanel ext
         if (!this._resource)
             return;
 
-        this._encodedSizeRow.value = this._valueForSize(this._resource.encodedSize);
-        this._transferSizeRow.value = this._valueForSize(this._resource.transferSize);
+        let encodedSize = !isNaN(this._resource.networkEncodedSize) ? this._resource.networkEncodedSize : this._resource.estimatedNetworkEncodedSize;
+        let transferSize = !isNaN(this._resource.networkTotalTransferSize) ? this._resource.networkTotalTransferSize : this._resource.estimatedTotalTransferSize;
+
+        this._encodedSizeRow.value = this._valueForSize(encodedSize);
+        this._transferSizeRow.value = this._valueForSize(transferSize);
 
         this._refreshCompressed();
     }

@@ -152,6 +152,7 @@ compositing/iframes/overlapped-nested-iframes.html [ Pass Failure ]
 # Disk cache is WK2 only
 http/tests/cache/disk-cache
 http/tests/inspector/network/resource-response-source-disk-cache.html
+http/tests/inspector/network/resource-sizes-disk-cache.html
 
 [ Yosemite+ ] fast/ruby/ruby-expansion-cjk-2.html [ ImageOnlyFailure ]
 
@@ -306,11 +307,9 @@ webkit.org/b/163361 imported/w3c/web-platform-tests/html/webappapis/animation-fr
 webkit.org/b/163361 imported/w3c/web-platform-tests/html/webappapis/animation-frames/callback-invoked.html [ Pass Failure ]
 webkit.org/b/163361 imported/w3c/web-platform-tests/html/webappapis/animation-frames/callback-multicalls.html [ Pass Failure ]
 
-# Resource Timing networking data not yet available in WebKit1.
+# Resource Metrics data not available in WebKit1.
 imported/w3c/web-platform-tests/resource-timing/rt-nextHopProtocol.html [ Failure ]
 imported/w3c/web-platform-tests/resource-timing/rt-nextHopProtocol.worker.html [ Failure ]
-
-# Request Header information only available in WebKit2
 http/tests/inspector/network/resource-request-headers.html [ Failure ]
 
 webkit.org/b/164491 [ Yosemite ElCapitan ] fast/visual-viewport/rtl-zoomed-rects.html [ Failure ]

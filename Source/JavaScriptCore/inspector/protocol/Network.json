@@ -85,7 +85,12 @@
                 { "name": "priority", "type": "string", "enum": ["low", "medium", "high"], "optional": true, "description": "Network priority." },
                 { "name": "connectionIdentifier", "type": "string", "optional": true, "description": "Connection identifier." },
                 { "name": "remoteAddress", "type": "string", "optional": true, "description": "Remote IP address." },
-                { "name": "requestHeaders", "$ref": "Headers", "optional": true, "description": "Refined HTTP request headers that were actually transmitted over the network." }
+                { "name": "requestHeaders", "$ref": "Headers", "optional": true, "description": "Refined HTTP request headers that were actually transmitted over the network." },
+                { "name": "requestHeaderBytesSent", "type": "number", "optional": true, "description": "Total HTTP request header bytes sent over the network." },
+                { "name": "requestBodyBytesSent", "type": "number", "optional": true, "description": "Total HTTP request body bytes sent over the network." },
+                { "name": "responseHeaderBytesReceived", "type": "number", "optional": true, "description": "Total HTTP response header bytes received over the network." },
+                { "name": "responseBodyBytesReceived", "type": "number", "optional": true, "description": "Total HTTP response body bytes received over the network." },
+                { "name": "responseBodyDecodedSize", "type": "number", "optional": true, "description": "Total decoded response body size in bytes." }
             ]
         },
         {

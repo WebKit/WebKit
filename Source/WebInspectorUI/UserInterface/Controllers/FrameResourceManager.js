@@ -334,6 +334,7 @@ WebInspector.FrameResourceManager = class FrameResourceManager extends WebInspec
         resource.updateForResponse(cachedResourcePayload.url, response.mimeType, cachedResourcePayload.type, response.headers, response.status, response.statusText, elapsedTime, response.timing, responseSource);
         resource.increaseSize(cachedResourcePayload.bodySize, elapsedTime);
         resource.increaseTransferSize(cachedResourcePayload.bodySize);
+        resource.setCachedResponseBodySize(cachedResourcePayload.bodySize);
         resource.markAsFinished(elapsedTime);
 
         console.assert(resource.cached, "This resource should be classified as cached since it was served from the MemoryCache", resource);
