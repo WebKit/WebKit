@@ -157,7 +157,7 @@ void WebLoaderStrategy::scheduleLoad(ResourceLoader& resourceLoader, CachedResou
     // then we should remember the ResourceLoader in our records but not schedule it in the NetworkProcess.
     if (resourceLoader.documentLoader()->scheduleArchiveLoad(resourceLoader, resourceLoader.request())) {
         LOG(NetworkScheduling, "(WebProcess) WebLoaderStrategy::scheduleLoad, url '%s' will be handled as an archive resource.", resourceLoader.url().string().utf8().data());
-        RELEASE_LOG_IF_ALLOWED(resourceLoader, "scheduleLoad: URL will be handled as an archive resource (frame = %p, resourceID = %" PRIu64 ")", resourceLoader.frame(), identifier);
+        RELEASE_LOG_IF_ALLOWED(resourceLoader, "scheduleLoad: URL will be handled as an archive resource (frame = %p, pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ")", resourceLoader.frame(), trackingParameters.pageID, trackingParameters.frameID, identifier);
         m_webResourceLoaders.set(identifier, WebResourceLoader::create(resourceLoader, trackingParameters));
         return;
     }
@@ -165,14 +165,14 @@ void WebLoaderStrategy::scheduleLoad(ResourceLoader& resourceLoader, CachedResou
 
     if (resourceLoader.documentLoader()->applicationCacheHost().maybeLoadResource(resourceLoader, resourceLoader.request(), resourceLoader.request().url())) {
         LOG(NetworkScheduling, "(WebProcess) WebLoaderStrategy::scheduleLoad, url '%s' will be loaded from application cache.", resourceLoader.url().string().utf8().data());
-        RELEASE_LOG_IF_ALLOWED(resourceLoader, "scheduleLoad: URL will be loaded from application cache (frame = %p, resourceID = %" PRIu64 ")", resourceLoader.frame(), identifier);
+        RELEASE_LOG_IF_ALLOWED(resourceLoader, "scheduleLoad: URL will be loaded from application cache (frame = %p, pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ")", resourceLoader.frame(), trackingParameters.pageID, trackingParameters.frameID, identifier);
         m_webResourceLoaders.set(identifier, WebResourceLoader::create(resourceLoader, trackingParameters));
         return;
     }
 
     if (resourceLoader.request().url().protocolIsData()) {
         LOG(NetworkScheduling, "(WebProcess) WebLoaderStrategy::scheduleLoad, url '%s' will be loaded as data.", resourceLoader.url().string().utf8().data());
-        RELEASE_LOG_IF_ALLOWED(resourceLoader, "scheduleLoad: URL will be loaded as data (frame = %p, resourceID = %" PRIu64 ")", resourceLoader.frame(), identifier);
+        RELEASE_LOG_IF_ALLOWED(resourceLoader, "scheduleLoad: URL will be loaded as data (frame = %p, pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ")", resourceLoader.frame(), trackingParameters.pageID, trackingParameters.frameID, identifier);
         startLocalLoad(resourceLoader);
         return;
     }
@@ -180,7 +180,7 @@ void WebLoaderStrategy::scheduleLoad(ResourceLoader& resourceLoader, CachedResou
 #if USE(QUICK_LOOK)
     if (isQuickLookPreviewURL(resourceLoader.request().url())) {
         LOG(NetworkScheduling, "(WebProcess) WebLoaderStrategy::scheduleLoad, url '%s' will be handled as a QuickLook resource.", resourceLoader.url().string().utf8().data());
-        RELEASE_LOG_IF_ALLOWED(resourceLoader, "scheduleLoad: URL will be handled as a QuickLook resource (frame = %p, resourceID = %" PRIu64 ")", resourceLoader.frame(), identifier);
+        RELEASE_LOG_IF_ALLOWED(resourceLoader, "scheduleLoad: URL will be handled as a QuickLook resource (frame = %p, pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ")", resourceLoader.frame(), trackingParameters.pageID, trackingParameters.frameID, identifier);
         startLocalLoad(resourceLoader);
         return;
     }
@@ -191,7 +191,7 @@ void WebLoaderStrategy::scheduleLoad(ResourceLoader& resourceLoader, CachedResou
     // https://blogs.gnome.org/alexl/2012/01/26/resources-in-glib/
     if (resourceLoader.request().url().protocolIs("resource")) {
         LOG(NetworkScheduling, "(WebProcess) WebLoaderStrategy::scheduleLoad, url '%s' will be handled as a GResource.", resourceLoader.url().string().utf8().data());
-        RELEASE_LOG_IF_ALLOWED(resourceLoader, "scheduleLoad: URL will be handled as a GResource (frame = %p, resourceID = %" PRIu64 ")", resourceLoader.frame(), identifier);
+        RELEASE_LOG_IF_ALLOWED(resourceLoader, "scheduleLoad: URL will be handled as a GResource (frame = %p, pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ")", resourceLoader.frame(), trackingParameters.pageID, trackingParameters.frameID, identifier);
         startLocalLoad(resourceLoader);
         return;
     }

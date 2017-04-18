@@ -1,3 +1,20 @@
+2017-04-18  Keith Rollin  <krollin@apple.com>
+
+        Add additional information when logging URL disposition in WebLoaderStrategy::scheduleLoad
+        https://bugs.webkit.org/show_bug.cgi?id=170813
+
+        Reviewed by Alex Christensen.
+
+        There are a few logging statements in WebLoaderStrategy::scheduleLoad
+        that report, for example, "URL will be loaded as data". These
+        statements also log the address of the frame doing the loading and the
+        identifier of the resource. For consistency with other logging and to
+        make scripted analysis of the logs more robust, also include the
+        pageID and frameID in the logging.
+
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::scheduleLoad):
+
 2017-04-18  Anders Carlsson  <andersca@apple.com>
 
         Stop using deprecated APIs, part 2
