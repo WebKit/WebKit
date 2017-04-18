@@ -1173,6 +1173,7 @@ article figure > img {
     max-width: 100%;
     max-height: 540px;
     height: auto;
+    width: auto;
 }
 
 figure.widescreen {

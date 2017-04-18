@@ -1,3 +1,13 @@
+2017-04-18  Jon Davis  <jond@apple.com>
+
+        Images in WebKit.org blog article are stretched out
+        https://bugs.webkit.org/show_bug.cgi?id=169208
+
+        Reviewed by Michael Catanzaro.
+
+        * wp-content/themes/webkit/style.css:
+        (article figure > img):
+
 2017-04-13  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly: manage memory better
