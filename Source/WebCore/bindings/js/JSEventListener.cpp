@@ -47,7 +47,7 @@ JSEventListener::JSEventListener(JSObject* function, JSObject* wrapper, bool isA
     : EventListener(JSEventListenerType)
     , m_wrapper(wrapper)
     , m_isAttribute(isAttribute)
-    , m_isolatedWorld(&isolatedWorld)
+    , m_isolatedWorld(isolatedWorld)
 {
     if (wrapper) {
         JSC::Heap::heap(wrapper)->writeBarrier(wrapper, function);
@@ -101,7 +101,7 @@ void JSEventListener::handleEvent(ScriptExecutionContext* scriptExecutionContext
     if (!jsFunction)
         return;
 
-    JSDOMGlobalObject* globalObject = toJSDOMGlobalObject(scriptExecutionContext, *m_isolatedWorld);
+    JSDOMGlobalObject* globalObject = toJSDOMGlobalObject(scriptExecutionContext, m_isolatedWorld);
     if (!globalObject)
         return;
 
