@@ -312,6 +312,8 @@ imported/w3c/web-platform-tests/resource-timing/rt-nextHopProtocol.html [ Failur
 imported/w3c/web-platform-tests/resource-timing/rt-nextHopProtocol.worker.html [ Failure ]
 http/tests/inspector/network/resource-request-headers.html [ Failure ]
 
+webkit.org/b/170953 http/tests/inspector/network/resource-sizes-network.html [ Pass Failure ]
+
 webkit.org/b/164491 [ Yosemite ElCapitan ] fast/visual-viewport/rtl-zoomed-rects.html [ Failure ]
 
 webkit.org/b/164933 http/tests/misc/link-rel-icon-beforeload.html [ Failure ]
