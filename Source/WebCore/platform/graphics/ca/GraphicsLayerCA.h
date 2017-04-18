@@ -76,9 +76,11 @@ public:
 
     WEBCORE_EXPORT void setPosition(const FloatPoint&) override;
     WEBCORE_EXPORT void syncPosition(const FloatPoint&) override;
+    WEBCORE_EXPORT void setApproximatePosition(const FloatPoint&) override;
     WEBCORE_EXPORT void setAnchorPoint(const FloatPoint3D&) override;
     WEBCORE_EXPORT void setSize(const FloatSize&) override;
     WEBCORE_EXPORT void setBoundsOrigin(const FloatPoint&) override;
+    WEBCORE_EXPORT void syncBoundsOrigin(const FloatPoint&) override;
 
     WEBCORE_EXPORT void setTransform(const TransformationMatrix&) override;
 
@@ -159,7 +161,7 @@ public:
     };
     void recursiveCommitChanges(const CommitState&, const TransformState&, float pageScaleFactor = 1, const FloatPoint& positionRelativeToBase = FloatPoint(), bool affectedByPageScale = false);
 
-    WEBCORE_EXPORT void flushCompositingState(const FloatRect&, FlushScope) override;
+    WEBCORE_EXPORT void flushCompositingState(const FloatRect&) override;
     WEBCORE_EXPORT void flushCompositingStateForThisLayerOnly() override;
 
     WEBCORE_EXPORT bool visibleRectChangeRequiresFlush(const FloatRect& visibleRect) const override;
@@ -496,7 +498,7 @@ private:
         ShapeChanged                            = 1LLU << 36,
         WindRuleChanged                         = 1LLU << 37,
         UserInteractionEnabledChanged           = 1LLU << 38,
-        PositionChanged                         = 1LLU << 39,
+        NeedsComputeVisibleAndCoverageRect      = 1LLU << 39,
     };
     typedef uint64_t LayerChangeFlags;
     void addUncommittedChanges(LayerChangeFlags);

@@ -1,3 +1,40 @@
+2017-04-18  Antti Koivisto  <antti@apple.com>
+
+        Enable optimized layer flushes on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=170938
+        <rdar://problem/31677395>
+
+        Reviewed by Simon Fraser.
+
+        Test: compositing/ios/overflow-scroll-touch-tiles.html
+
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::setApproximatePosition):
+
+            Make virtual.
+
+        (WebCore::GraphicsLayer::flushCompositingState):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::syncPosition):
+
+            Rename PositionChanged enum value to more descriptive NeedsComputeVisibleAndCoverageRect.
+
+        (WebCore::GraphicsLayerCA::setApproximatePosition):
+        (WebCore::GraphicsLayerCA::syncBoundsOrigin):
+
+            Like syncPosition make these invalidate the geometry without scheduling a flush. This is needed
+            so when flush happens we don't just optimize it away. Tile coverage depends on position and bounds.
+
+        (WebCore::GraphicsLayerCA::flushCompositingState):
+
+            Remove FlushScope argument.
+            Disable optimization on WK1 due to some UIKit interactions.
+
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.cpp:
+        (WebCore::GraphicsLayerTextureMapper::flushCompositingState):
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.h:
+
 2017-04-18  Tim Horton  <timothy_horton@apple.com>
 
         Try to fix the iOS Debug build

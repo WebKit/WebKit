@@ -452,7 +452,7 @@ void RenderLayerCompositor::flushPendingLayerChanges(bool isFlushRoot)
             visibleRect.intersect(frameView.viewExposedRect().value());
 
         LOG_WITH_STREAM(Compositing,  stream << "\nRenderLayerCompositor " << this << " flushPendingLayerChanges(" << isFlushRoot << ") " << visibleRect);
-        rootLayer->flushCompositingState(visibleRect, GraphicsLayer::FlushScope::Uncommitted);
+        rootLayer->flushCompositingState(visibleRect);
         LOG_WITH_STREAM(Compositing,  stream << "RenderLayerCompositor " << this << " flush complete\n");
 #endif
     }

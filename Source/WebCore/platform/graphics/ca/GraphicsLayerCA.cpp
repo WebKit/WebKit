@@ -588,7 +588,17 @@ void GraphicsLayerCA::syncPosition(const FloatPoint& point)
 
     GraphicsLayer::syncPosition(point);
     // Ensure future flushes will recompute the coverage rect and update tiling.
-    noteLayerPropertyChanged(PositionChanged, DontScheduleFlush);
+    noteLayerPropertyChanged(NeedsComputeVisibleAndCoverageRect, DontScheduleFlush);
+}
+
+void GraphicsLayerCA::setApproximatePosition(const FloatPoint& point)
+{
+    if (point == m_approximatePosition)
+        return;
+
+    GraphicsLayer::setApproximatePosition(point);
+    // Ensure future flushes will recompute the coverage rect and update tiling.
+    noteLayerPropertyChanged(NeedsComputeVisibleAndCoverageRect, DontScheduleFlush);
 }
 
 void GraphicsLayerCA::setAnchorPoint(const FloatPoint3D& point)
@@ -616,6 +626,15 @@ void GraphicsLayerCA::setBoundsOrigin(const FloatPoint& origin)
 
     GraphicsLayer::setBoundsOrigin(origin);
     noteLayerPropertyChanged(GeometryChanged);
+}
+
+void GraphicsLayerCA::syncBoundsOrigin(const FloatPoint& origin)
+{
+    if (origin == m_boundsOrigin)
+        return;
+
+    GraphicsLayer::syncBoundsOrigin(origin);
+    noteLayerPropertyChanged(NeedsComputeVisibleAndCoverageRect, DontScheduleFlush);
 }
 
 void GraphicsLayerCA::setTransform(const TransformationMatrix& t)
@@ -1174,15 +1193,22 @@ FloatPoint GraphicsLayerCA::computePositionRelativeToBase(float& pageScale) cons
     return FloatPoint();
 }
 
-void GraphicsLayerCA::flushCompositingState(const FloatRect& visibleRect, FlushScope flushScope)
+void GraphicsLayerCA::flushCompositingState(const FloatRect& visibleRect)
 {
     TransformState state(TransformState::UnapplyInverseTransformDirection, FloatQuad(visibleRect));
     FloatQuad coverageQuad(visibleRect);
     state.setSecondaryQuad(&coverageQuad);
 
     CommitState commitState;
-    commitState.ancestorHadChanges = visibleRect != m_previousCommittedVisibleRect || flushScope == FlushScope::All;
+    commitState.ancestorHadChanges = visibleRect != m_previousCommittedVisibleRect;
     m_previousCommittedVisibleRect = visibleRect;
+
+#if PLATFORM(IOS)
+    // In WK1, UIKit may be changing layer bounds behind our back in overflow-scroll layers, so disable the optimization.
+    // See the similar test in computeVisibleAndCoverageRect().
+    if (m_layer->isPlatformCALayerCocoa())
+        commitState.ancestorHadChanges = true;
+#endif
 
     recursiveCommitChanges(commitState, state);
 }

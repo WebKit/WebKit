@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        .scroll {
+            height: 300px;
+            width: 400px;
+            border: 2px solid black;
+            overflow: scroll;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .box {
+            width: 300px;
+            height: 2000px;
+            border: 1px solid black;
+            background-image: repeating-linear-gradient(180deg,rgb(26,198,204),rgb(26,198,204) 7%, rgb(100,100,100) 100%);
+        }
+
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+        
+        function getUIScript()
+        {
+            return `
+            (function() {
+                uiController.touchDownAtPoint(50, 300, 1, () => {
+                    uiController.dragFromPointToPoint(50, 300, 50, 50, 0.1, () => {
+                        uiController.liftUpAtPoint(50, 50, 1, () => {
+                            uiController.uiScriptComplete('');
+                        });
+                    });
+                });
+            })();`
+        }
+
+        function dumpTiles(outputId)
+        {
+            if (window.internals)
+                document.getElementById(outputId).innerText = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_TILE_CACHES);
+        }
+        function doTest()
+        {
+            if (!testRunner.runUIScript)
+                return;
+
+            dumpTiles('before-layers');
+
+            testRunner.runUIScript(getUIScript(), function(result) {
+                dumpTiles('after-layers');
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            });
+        }
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+    <div class="scroll">
+        <div class="box"></div>
+    </div>
+
+<pre id="before-layers">Layer tree goes here</pre>
+<pre id="after-layers">Layer tree goes here</pre>
+</body>
+</html>

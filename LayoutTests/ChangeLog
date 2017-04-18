@@ -1,3 +1,16 @@
+2017-04-18  Antti Koivisto  <antti@apple.com>
+
+        Enable optimized layer flushes on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=170938
+        <rdar://problem/31677395>
+
+        Reviewed by Simon Fraser.
+
+        Add test verifying that tiles get created for touch overflow scrolling.
+
+        * compositing/ios/overflow-scroll-touch-tiles-expected.txt: Added.
+        * compositing/ios/overflow-scroll-touch-tiles.html: Added.
+
 2017-04-18  Ryan Haddad  <ryanhaddad@apple.com>
 
         Update TestExpectations for "selectors4" tests on mac-wk1.

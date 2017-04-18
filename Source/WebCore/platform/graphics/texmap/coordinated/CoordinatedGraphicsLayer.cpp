@@ -572,7 +572,7 @@ void CoordinatedGraphicsLayer::setFixedToViewport(bool isFixed)
     didChangeLayerState();
 }
 
-void CoordinatedGraphicsLayer::flushCompositingState(const FloatRect& rect, FlushScope)
+void CoordinatedGraphicsLayer::flushCompositingState(const FloatRect& rect)
 {
     if (CoordinatedGraphicsLayer* mask = downcast<CoordinatedGraphicsLayer>(maskLayer()))
         mask->flushCompositingStateForThisLayerOnly();
