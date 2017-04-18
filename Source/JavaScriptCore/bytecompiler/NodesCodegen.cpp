@@ -1189,21 +1189,36 @@ RegisterID* FunctionCallDotNode::emitBytecode(BytecodeGenerator& generator, Regi
 
 RegisterID* CallFunctionCallDotNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
-    Ref<Label> realCall = generator.newLabel();
-    Ref<Label> end = generator.newLabel();
     RefPtr<RegisterID> base = generator.emitNode(m_base);
     generator.emitExpressionInfo(subexpressionDivot(), subexpressionStart(), subexpressionEnd());
     RefPtr<RegisterID> function;
-    bool emitCallCheck = !generator.isBuiltinFunction();
-    if (emitCallCheck) {
+    RefPtr<RegisterID> returnValue = generator.finalDestination(dst);
+
+    auto makeFunction = [&] {
         if (m_base->isSuperNode()) {
             RefPtr<RegisterID> thisValue = generator.ensureThis();
             function = generator.emitGetById(generator.tempDestination(dst), base.get(), thisValue.get(), generator.propertyNames().builtinNames().callPublicName());
         } else
             function = generator.emitGetById(generator.tempDestination(dst), base.get(), generator.propertyNames().builtinNames().callPublicName());
+    };
+
+    bool emitCallCheck = !generator.isBuiltinFunction();
+    if (m_callOrApplyChildDepth > 4 && emitCallCheck) {
+        makeFunction();
+        CallArguments callArguments(generator, m_args);
+        generator.emitMove(callArguments.thisRegister(), base.get());
+        generator.emitCallInTailPosition(returnValue.get(), function.get(), NoExpectedFunction, callArguments, divot(), divotStart(), divotEnd(), DebuggableCall::Yes);
+        generator.moveToDestinationIfNeeded(dst, returnValue.get());
+        return returnValue.get();
+    }
+
+    Ref<Label> realCall = generator.newLabel();
+    Ref<Label> end = generator.newLabel();
+
+    if (emitCallCheck) {
+        makeFunction();
         generator.emitJumpIfNotFunctionCall(function.get(), realCall.get());
     }
-    RefPtr<RegisterID> returnValue = generator.finalDestination(dst);
     {
         if (m_args->m_listNode && m_args->m_listNode->m_expr && m_args->m_listNode->m_expr->isSpreadExpression()) {
             SpreadExpressionNode* spread = static_cast<SpreadExpressionNode*>(m_args->m_listNode->m_expr);
@@ -1256,19 +1271,32 @@ RegisterID* ApplyFunctionCallDotNode::emitBytecode(BytecodeGenerator& generator,
     // function.apply(thisArg, [arg0, arg1, ...]) -> can be trivially coerced into function.call(thisArg, arg0, arg1, ...) and saves object allocation
     bool mayBeCall = areTrivialApplyArguments(m_args);
 
-    Ref<Label> realCall = generator.newLabel();
-    Ref<Label> end = generator.newLabel();
-    RefPtr<RegisterID> base = generator.emitNode(m_base);
-    generator.emitExpressionInfo(subexpressionDivot(), subexpressionStart(), subexpressionEnd());
     RefPtr<RegisterID> function;
-    RefPtr<RegisterID> returnValue = generator.finalDestination(dst, function.get());
-    bool emitCallCheck = !generator.isBuiltinFunction();
-    if (emitCallCheck) {
+    RefPtr<RegisterID> base = generator.emitNode(m_base);
+    RefPtr<RegisterID> returnValue = generator.finalDestination(dst);
+    auto makeFunction = [&] {
         if (m_base->isSuperNode()) {
             RefPtr<RegisterID> thisValue = generator.ensureThis();
             function = generator.emitGetById(generator.tempDestination(dst), base.get(), thisValue.get(), generator.propertyNames().builtinNames().applyPublicName());
         } else
             function = generator.emitGetById(generator.tempDestination(dst), base.get(), generator.propertyNames().builtinNames().applyPublicName());
+    };
+
+    bool emitCallCheck = !generator.isBuiltinFunction();
+    if (m_callOrApplyChildDepth > 4 && emitCallCheck) {
+        makeFunction();
+        CallArguments callArguments(generator, m_args);
+        generator.emitMove(callArguments.thisRegister(), base.get());
+        generator.emitCallInTailPosition(returnValue.get(), function.get(), NoExpectedFunction, callArguments, divot(), divotStart(), divotEnd(), DebuggableCall::Yes);
+        generator.moveToDestinationIfNeeded(dst, returnValue.get());
+        return returnValue.get();
+    }
+
+    Ref<Label> realCall = generator.newLabel();
+    Ref<Label> end = generator.newLabel();
+    generator.emitExpressionInfo(subexpressionDivot(), subexpressionStart(), subexpressionEnd());
+    if (emitCallCheck) {
+        makeFunction();
         generator.emitJumpIfNotFunctionApply(function.get(), realCall.get());
     }
     if (mayBeCall) {

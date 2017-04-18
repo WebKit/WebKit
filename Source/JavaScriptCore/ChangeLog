@@ -1,3 +1,47 @@
+2017-04-17  Saam Barati  <sbarati@apple.com>
+
+        BytecodeGenerator ".call" and ".apply" is exponential in nesting depth
+        https://bugs.webkit.org/show_bug.cgi?id=139847
+        <rdar://problem/19321122>
+
+        Reviewed by Oliver Hunt.
+
+        The BytecodeGenerator's .apply(...) and .call(...) code would
+        emit bytecode for the evaluation of its arguments twice. This
+        is exponential, specifically, 2^n, where n is the nesting depth of
+        .call(...) or .apply(...) inside other .call(...) or .apply(...).
+        
+        The reason we emit code for the arguments twice is that we try
+        to emit efficient code for when .call or .apply is Function.prototype.call
+        or Function.prototype.apply. Because of this, we compare .call/.apply to
+        Function.prototype.call/.apply, and if they're the same, we emit a specialized
+        function call in bytecode. Otherwise, we emit the generalized version.
+        
+        This patch makes it so that each .call(...) and .apply(...) records
+        its max inner nesting depth. Then, we only perform the optimization
+        for the bottom k (where k = 6) layers of the nesting tree. The reason we
+        apply the optimization to the bottom k layers instead of top k layers
+        is that we'll produce less code this way.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::CallFunctionCallDotNode::emitBytecode):
+        (JSC::ApplyFunctionCallDotNode::emitBytecode):
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::makeFunctionCallNode):
+        * parser/NodeConstructors.h:
+        (JSC::CallFunctionCallDotNode::CallFunctionCallDotNode):
+        (JSC::ApplyFunctionCallDotNode::ApplyFunctionCallDotNode):
+        * parser/Nodes.h:
+        * parser/Parser.cpp:
+        (JSC::recordCallOrApplyDepth):
+        (JSC::Parser<LexerType>::parseMemberExpression):
+        * parser/Parser.h:
+        (JSC::Parser::CallOrApplyDepth::CallOrApplyDepth):
+        (JSC::Parser::CallOrApplyDepth::maxChildDepth):
+        (JSC::Parser::CallOrApplyDepth::~CallOrApplyDepth):
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::makeFunctionCallNode):
+
 2017-04-17  Mark Lam  <mark.lam@apple.com>
 
         JSArray::appendMemcpy() needs to handle copying from Undecided indexing type too.

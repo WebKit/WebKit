@@ -403,13 +403,15 @@ namespace JSC {
     {
     }
 
-    inline CallFunctionCallDotNode::CallFunctionCallDotNode(const JSTokenLocation& location, ExpressionNode* base, const Identifier& ident, ArgumentsNode* args, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd)
+    inline CallFunctionCallDotNode::CallFunctionCallDotNode(const JSTokenLocation& location, ExpressionNode* base, const Identifier& ident, ArgumentsNode* args, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd, size_t callOrApplyChildDepth)
         : FunctionCallDotNode(location, base, ident, args, divot, divotStart, divotEnd)
+        , m_callOrApplyChildDepth(callOrApplyChildDepth)
     {
     }
 
-    inline ApplyFunctionCallDotNode::ApplyFunctionCallDotNode(const JSTokenLocation& location, ExpressionNode* base, const Identifier& ident, ArgumentsNode* args, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd)
+    inline ApplyFunctionCallDotNode::ApplyFunctionCallDotNode(const JSTokenLocation& location, ExpressionNode* base, const Identifier& ident, ArgumentsNode* args, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd, size_t callOrApplyChildDepth)
         : FunctionCallDotNode(location, base, ident, args, divot, divotStart, divotEnd)
+        , m_callOrApplyChildDepth(callOrApplyChildDepth)
     {
     }
 

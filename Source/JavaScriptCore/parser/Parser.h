@@ -887,6 +887,37 @@ public:
     JSTextPosition positionBeforeLastNewline() const { return m_lexer->positionBeforeLastNewline(); }
     JSTokenLocation locationBeforeLastToken() const { return m_lexer->lastTokenLocation(); }
 
+    struct CallOrApplyDepth {
+        CallOrApplyDepth(Parser* parser)
+            : m_parser(parser)
+            , m_parent(parser->m_callOrApplyDepth)
+            , m_depth(m_parent ? m_parent->m_depth + 1 : 0)
+            , m_childDepth(m_depth)
+        {
+            parser->m_callOrApplyDepth = this;
+        }
+
+        size_t maxChildDepth() const
+        {
+            ASSERT(m_childDepth >= m_depth);
+            return m_childDepth - m_depth;
+        }
+
+        ~CallOrApplyDepth()
+        {
+            if (m_parent)
+                m_parent->m_childDepth = std::max(m_childDepth, m_parent->m_childDepth);
+            m_parser->m_callOrApplyDepth = m_parent;
+        }
+
+    private:
+
+        Parser* m_parser;
+        CallOrApplyDepth* m_parent;
+        size_t m_depth;
+        size_t m_childDepth;
+    };
+
 private:
     struct AllowInOverride {
         AllowInOverride(Parser* parser)
@@ -1780,6 +1811,7 @@ private:
     bool m_immediateParentAllowsFunctionDeclarationInStatement;
     RefPtr<ModuleScopeData> m_moduleScopeData;
     DebuggerParseData* m_debuggerParseData;
+    CallOrApplyDepth* m_callOrApplyDepth { nullptr };
 
     struct DepthManager {
         DepthManager(int* depth)

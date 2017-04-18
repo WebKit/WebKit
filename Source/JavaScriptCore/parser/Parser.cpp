@@ -4384,6 +4384,22 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseArgument(Tre
     return parseAssignmentExpression(context);
 }
 
+template <typename TreeBuilder, typename ParserType, typename = typename std::enable_if<std::is_same<TreeBuilder, ASTBuilder>::value>::type>
+static inline void recordCallOrApplyDepth(ParserType* parser, VM& vm, std::optional<typename ParserType::CallOrApplyDepth>& callOrApplyDepth, ExpressionNode* expression)
+{
+    if (expression->isDotAccessorNode()) {
+        DotAccessorNode* dot = static_cast<DotAccessorNode*>(expression);
+        bool isCallOrApply = dot->identifier() == vm.propertyNames->builtinNames().callPublicName() || dot->identifier() == vm.propertyNames->builtinNames().applyPublicName();
+        if (isCallOrApply)
+            callOrApplyDepth.emplace(parser);
+    }
+}
+
+template <typename TreeBuilder, typename ParserType, typename = typename std::enable_if<std::is_same<TreeBuilder, SyntaxChecker>::value>::type>
+static inline void recordCallOrApplyDepth(ParserType*, VM&, std::optional<typename ParserType::CallOrApplyDepth>&, SyntaxChecker::Expression)
+{
+}
+
 template <typename LexerType>
 template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpression(TreeBuilder& context)
 {
@@ -4498,6 +4514,9 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
             } else {
                 size_t usedVariablesSize = currentScope()->currentUsedVariablesSize();
                 JSTextPosition expressionEnd = lastTokenEndPosition();
+                std::optional<CallOrApplyDepth> callOrApplyDepth;
+                recordCallOrApplyDepth<TreeBuilder>(this, *m_vm, callOrApplyDepth, base);
+
                 TreeArguments arguments = parseArguments(context);
 
                 if (baseIsAsyncKeyword && (!arguments || match(ARROWFUNCTION))) {
@@ -4525,7 +4544,8 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
                     if (currentScope()->isArrowFunction())
                         functionScope->setInnerArrowFunctionUsesSuperCall();
                 }
-                base = context.makeFunctionCallNode(startLocation, base, arguments, expressionStart, expressionEnd, lastTokenEndPosition());
+                base = context.makeFunctionCallNode(startLocation, base, arguments, expressionStart,
+                    expressionEnd, lastTokenEndPosition(), callOrApplyDepth ? callOrApplyDepth->maxChildDepth() : 0);
             }
             m_parserState.nonLHSCount = nonLHSCount;
             break;
