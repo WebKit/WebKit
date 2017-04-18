@@ -1,3 +1,38 @@
+2017-04-18  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Add support for percentage gaps
+        https://bugs.webkit.org/show_bug.cgi?id=170764
+
+        Reviewed by Sergio Villar Senin.
+
+        Part of the code to support percentage gaps was already imported
+        from Blink in r213149 (bug #168657). However parsing was not enabled yet,
+        so some pieces were missing.
+
+        This patch accepts percentages in the parsing of grid-column-gap and
+        grid-row-gap properties, and the grid-gap shorthand.
+        On top of that it gets rid of GridTrackSizingAlgorithm::sizingOperation()
+        method as it's not needed. And instead it passes the specific operation
+        to each call to RenderGrid::guttersSize(), otherwise we would be getting
+        wrong results.
+
+        Test: fast/css-grid-layout/grid-gutters-as-percentage.html
+
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::CSSPropertyParser::parseSingleValue): Add support for
+        percentage values.
+        (WebCore::CSSPropertyParser::parseShorthand): Ditto.
+        * rendering/GridTrackSizingAlgorithm.cpp:
+        (WebCore::IndefiniteSizeStrategy::recomputeUsedFlexFractionIfNeeded):
+        Pass the specific sizing operation.
+        * rendering/GridTrackSizingAlgorithm.h: Remove sizingOperation().
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::computeTrackBasedLogicalHeight): Pass the specific
+        sizing operation.
+        (WebCore::RenderGrid::computeTrackSizesForDefiniteSize): Ditto.
+        (WebCore::RenderGrid::computeTrackSizesForIndefiniteSize): Ditto.
+        (WebCore::RenderGrid::populateGridPositionsForDirection): Ditto.
+
 2017-04-18  Per Arne Vollan  <pvollan@apple.com>
 
         Add fallback fonts to video captions stylesheet.

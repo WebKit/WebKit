@@ -128,14 +128,14 @@ LayoutUnit RenderGrid::computeTrackBasedLogicalHeight() const
     for (const auto& row : allRows)
         logicalHeight += row.baseSize();
 
-    logicalHeight += guttersSize(m_grid, ForRows, 0, allRows.size(), m_trackSizingAlgorithm.sizingOperation());
+    logicalHeight += guttersSize(m_grid, ForRows, 0, allRows.size(), TrackSizing);
 
     return logicalHeight;
 }
 
 void RenderGrid::computeTrackSizesForDefiniteSize(GridTrackSizingDirection direction, LayoutUnit availableSpace)
 {
-    LayoutUnit totalGuttersSize = guttersSize(m_grid, direction, 0, m_grid.numTracks(direction), m_trackSizingAlgorithm.sizingOperation());
+    LayoutUnit totalGuttersSize = guttersSize(m_grid, direction, 0, m_grid.numTracks(direction), TrackSizing);
     LayoutUnit freeSpace = availableSpace - totalGuttersSize;
 
     m_trackSizingAlgorithm.setup(direction, numTracks(direction, m_grid), TrackSizing, availableSpace, freeSpace);
@@ -383,7 +383,7 @@ void RenderGrid::computeTrackSizesForIndefiniteSize(GridTrackSizingAlgorithm& al
     algorithm.run();
 
     size_t numberOfTracks = algorithm.tracks(direction).size();
-    LayoutUnit totalGuttersSize = guttersSize(grid, direction, 0, numberOfTracks, algorithm.sizingOperation());
+    LayoutUnit totalGuttersSize = guttersSize(grid, direction, 0, numberOfTracks, IntrinsicSizeComputation);
 
     minIntrinsicSize = algorithm.minContentSize() + totalGuttersSize;
     maxIntrinsicSize = algorithm.maxContentSize() + totalGuttersSize;
@@ -1077,7 +1077,7 @@ void RenderGrid::populateGridPositionsForDirection(GridTrackSizingDirection dire
         // If we have collapsed tracks we just ignore gaps here and add them later as we might not
         // compute the gap between two consecutive tracks without examining the surrounding ones.
         bool hasCollapsedTracks = m_grid.hasAutoRepeatEmptyTracks(direction);
-        LayoutUnit gap = !hasCollapsedTracks ? gridGapForDirection(direction, m_trackSizingAlgorithm.sizingOperation()) : LayoutUnit();
+        LayoutUnit gap = !hasCollapsedTracks ? gridGapForDirection(direction, TrackSizing) : LayoutUnit();
         unsigned nextToLastLine = numberOfLines - 2;
         for (unsigned i = 0; i < nextToLastLine; ++i)
             positions[i + 1] = positions[i] + offset.distributionOffset + tracks[i].baseSize() + gap;
@@ -1086,7 +1086,7 @@ void RenderGrid::populateGridPositionsForDirection(GridTrackSizingDirection dire
         // Adjust collapsed gaps. Collapsed tracks cause the surrounding gutters to collapse (they
         // coincide exactly) except on the edges of the grid where they become 0.
         if (hasCollapsedTracks) {
-            gap = gridGapForDirection(direction, m_trackSizingAlgorithm.sizingOperation());
+            gap = gridGapForDirection(direction, TrackSizing);
             unsigned remainingEmptyTracks = m_grid.autoRepeatEmptyTracks(direction)->size();
             LayoutUnit gapAccumulator;
             for (unsigned i = 1; i < lastLine; ++i) {

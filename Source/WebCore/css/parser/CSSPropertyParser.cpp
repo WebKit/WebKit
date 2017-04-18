@@ -3989,7 +3989,7 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
         return consumeAnimationPropertyList(property, m_range, m_context);
     case CSSPropertyGridColumnGap:
     case CSSPropertyGridRowGap:
-        return consumeLength(m_range, m_context.mode, ValueRangeNonNegative);
+        return consumeLengthOrPercent(m_range, m_context.mode, ValueRangeNonNegative);
     case CSSPropertyShapeMargin:
         return consumeLengthOrPercent(m_range, m_context.mode, ValueRangeNonNegative);
     case CSSPropertyShapeImageThreshold:
@@ -5707,8 +5707,8 @@ bool CSSPropertyParser::parseShorthand(CSSPropertyID property, bool important)
     case CSSPropertyPerspectiveOrigin:
         return consumePerspectiveOrigin(important);
     case CSSPropertyGridGap: {
-        RefPtr<CSSValue> rowGap = consumeLength(m_range, m_context.mode, ValueRangeNonNegative);
-        RefPtr<CSSValue> columnGap = consumeLength(m_range, m_context.mode, ValueRangeNonNegative);
+        RefPtr<CSSValue> rowGap = consumeLengthOrPercent(m_range, m_context.mode, ValueRangeNonNegative);
+        RefPtr<CSSValue> columnGap = consumeLengthOrPercent(m_range, m_context.mode, ValueRangeNonNegative);
         if (!rowGap || !m_range.atEnd())
             return false;
         if (!columnGap)
