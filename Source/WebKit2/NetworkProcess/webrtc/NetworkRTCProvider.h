@@ -91,11 +91,11 @@ private:
             : identifier(identifier)
             , rtcProvider(rtcProvider)
             , host(WTFMove(host)) { }
-        ~Resolver() { CFRelease(host); }
+        ~Resolver();
 
         uint64_t identifier;
         NetworkRTCProvider& rtcProvider;
-        CFHostRef host;
+        RetainPtr<CFHostRef> host;
     };
 
     HashMap<uint64_t, std::unique_ptr<Resolver>> m_resolvers;

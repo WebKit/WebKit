@@ -159,11 +159,17 @@ void NetworkRTCProvider::createResolver(uint64_t identifier, const String& addre
     m_resolvers.add(identifier, WTFMove(resolver));
 }
 
+NetworkRTCProvider::Resolver::~Resolver()
+{
+    CFHostUnscheduleFromRunLoop(host.get(), CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
+    CFHostSetClient(host.get(), nullptr, nullptr);
+}
+
 void NetworkRTCProvider::stopResolver(uint64_t identifier)
 {
     auto resolver = m_resolvers.take(identifier);
     if (resolver)
-        CFHostCancelInfoResolution(resolver->host, CFHostInfoType::kCFHostAddresses);
+        CFHostCancelInfoResolution(resolver->host.get(), CFHostInfoType::kCFHostAddresses);
 }
 
 void NetworkRTCProvider::resolvedName(CFHostRef hostRef, CFHostInfoType typeInfo, const CFStreamError *error, void *info)
