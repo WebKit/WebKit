@@ -49,6 +49,8 @@ public:
     };
     typedef unsigned MediaStateFlags;
 
+    static bool isCapturing(MediaStateFlags state) { return (state & HasActiveAudioCaptureDevice) || (state & HasActiveVideoCaptureDevice) || (state & HasMutedAudioCaptureDevice) || (state & HasMutedVideoCaptureDevice); }
+
     virtual MediaStateFlags mediaState() const = 0;
 
     enum MutedState {

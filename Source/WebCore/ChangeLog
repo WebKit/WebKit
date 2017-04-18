@@ -1,3 +1,22 @@
+2017-04-17  Youenn Fablet  <youenn@apple.com>
+
+        Enable video autoplay when getUserMedia is on
+        https://bugs.webkit.org/show_bug.cgi?id=170919
+
+        Reviewed by Geoffrey Garen.
+
+        Test: webrtc/video-autoplay.html
+
+        * dom/Document.h:
+        (WebCore::Document::isCapturing):
+        * html/HTMLMediaElement.h:
+        (WebCore::HTMLMediaElement::hasMediaStreamSrcObject):
+        * html/MediaElementSession.cpp:
+        (WebCore::MediaElementSession::playbackPermitted): Allowing playback if getUserMedia is capturing audio or video
+        on the document and if element is rendering MediaStream based content.
+        * page/MediaProducer.h:
+        (WebCore::MediaProducer::isCapturing):
+
 2017-04-17  Alex Christensen  <achristensen@webkit.org>
 
         Fix CMake build.

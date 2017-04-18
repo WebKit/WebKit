@@ -505,6 +505,10 @@ public:
 
     WEBCORE_EXPORT const MediaResourceLoader* lastMediaResourceLoaderForTesting() const;
 
+#if ENABLE(MEDIA_STREAM)
+    bool hasMediaStreamSrcObject() const { return !!m_mediaStreamSrcObject; }
+#endif
+
 protected:
     HTMLMediaElement(const QualifiedName&, Document&, bool createdByParser);
     virtual ~HTMLMediaElement();
