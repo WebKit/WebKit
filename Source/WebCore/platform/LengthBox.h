@@ -30,7 +30,7 @@ namespace WebCore {
 template<typename T> class BoxExtent {
 public:
     BoxExtent()
-        : m_sides({ { { 0 }, { 0 }, { 0 }, { 0 } } })
+        : m_sides({ { 0, 0, 0, 0 } })
     {
     }
 
@@ -158,5 +158,6 @@ using LayoutBoxExtent = BoxExtent<LayoutUnit>;
 using FloatBoxExtent = BoxExtent<float>;
 
 TextStream& operator<<(TextStream&, const LengthBox&);
+TextStream& operator<<(TextStream&, const FloatBoxExtent&);
 
 } // namespace WebCore

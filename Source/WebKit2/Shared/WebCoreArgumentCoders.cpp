@@ -48,6 +48,7 @@
 #include <WebCore/Image.h>
 #include <WebCore/JSDOMExceptionHandling.h>
 #include <WebCore/Length.h>
+#include <WebCore/LengthBox.h>
 #include <WebCore/Path.h>
 #include <WebCore/PluginData.h>
 #include <WebCore/ProtectionSpace.h>
@@ -388,6 +389,17 @@ bool ArgumentCoder<FloatRect>::decode(Decoder& decoder, FloatRect& floatRect)
     return SimpleArgumentCoder<FloatRect>::decode(decoder, floatRect);
 }
 
+
+void ArgumentCoder<FloatBoxExtent>::encode(Encoder& encoder, const FloatBoxExtent& floatBoxExtent)
+{
+    SimpleArgumentCoder<FloatBoxExtent>::encode(encoder, floatBoxExtent);
+}
+    
+bool ArgumentCoder<FloatBoxExtent>::decode(Decoder& decoder, FloatBoxExtent& floatBoxExtent)
+{
+    return SimpleArgumentCoder<FloatBoxExtent>::decode(decoder, floatBoxExtent);
+}
+    
 
 void ArgumentCoder<FloatSize>::encode(Encoder& encoder, const FloatSize& floatSize)
 {

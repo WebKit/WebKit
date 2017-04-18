@@ -101,6 +101,9 @@ struct TextCheckingResult;
 struct TextIndicatorData;
 struct ViewportAttributes;
 struct WindowFeatures;
+    
+template <typename> class BoxExtent;
+using FloatBoxExtent = BoxExtent<float>;
 }
 
 #if PLATFORM(COCOA)
@@ -223,6 +226,11 @@ template<> struct ArgumentCoder<WebCore::FloatPoint3D> {
 template<> struct ArgumentCoder<WebCore::FloatRect> {
     static void encode(Encoder&, const WebCore::FloatRect&);
     static bool decode(Decoder&, WebCore::FloatRect&);
+};
+    
+template<> struct ArgumentCoder<WebCore::FloatBoxExtent> {
+    static void encode(Encoder&, const WebCore::FloatBoxExtent&);
+    static bool decode(Decoder&, WebCore::FloatBoxExtent&);
 };
 
 template<> struct ArgumentCoder<WebCore::FloatSize> {

@@ -109,7 +109,7 @@ inline HistoryItem::HistoryItem(const HistoryItem& item)
     , m_formContentType(item.m_formContentType)
     , m_pruningReason(PruningReason::None)
 #if PLATFORM(IOS)
-    , m_obscuredInset(item.m_obscuredInset)
+    , m_obscuredInsets(item.m_obscuredInsets)
     , m_scale(item.m_scale)
     , m_scaleIsInitial(item.m_scaleIsInitial)
 #endif

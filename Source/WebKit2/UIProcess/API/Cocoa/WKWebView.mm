@@ -258,7 +258,7 @@ WKWebView* fromWebPageProxy(WebKit::WebPageProxy& page)
 
     BOOL _commitDidRestoreScrollPosition;
     std::optional<WebCore::FloatPoint> _scrollOffsetToRestore;
-    WebCore::FloatSize _obscuredInsetWhenSaved;
+    WebCore::FloatBoxExtent _obscuredInsetsWhenSaved;
 
     std::optional<WebCore::FloatPoint> _unobscuredCenterToRestore;
     uint64_t _firstTransactionIDAfterPageRestore;
@@ -1504,7 +1504,7 @@ static inline bool areEssentiallyEqualAsFloat(float a, float b)
 
             if (areEssentiallyEqualAsFloat(contentZoomScale(self), _scaleToRestore)) {
                 scaledScrollOffset.scale(_scaleToRestore);
-                WebCore::FloatPoint contentOffsetInScrollViewCoordinates = scaledScrollOffset - _obscuredInsetWhenSaved;
+                WebCore::FloatPoint contentOffsetInScrollViewCoordinates = scaledScrollOffset - WebCore::FloatSize(_obscuredInsetsWhenSaved.left(), _obscuredInsetsWhenSaved.top());
 
                 changeContentOffsetBoundedInValidRange(_scrollView.get(), contentOffsetInScrollViewCoordinates);
                 _commitDidRestoreScrollPosition = YES;
@@ -1572,7 +1572,7 @@ static inline bool areEssentiallyEqualAsFloat(float a, float b)
         _gestureController->didRestoreScrollPosition();
 }
 
-- (void)_restorePageScrollPosition:(std::optional<WebCore::FloatPoint>)scrollPosition scrollOrigin:(WebCore::FloatPoint)scrollOrigin previousObscuredInset:(WebCore::FloatSize)obscuredInset scale:(double)scale
+- (void)_restorePageScrollPosition:(std::optional<WebCore::FloatPoint>)scrollPosition scrollOrigin:(WebCore::FloatPoint)scrollOrigin previousObscuredInset:(WebCore::FloatBoxExtent)obscuredInsets scale:(double)scale
 {
     if (_dynamicViewportUpdateMode != DynamicViewportUpdateMode::NotResizing)
         return;
@@ -1586,7 +1586,7 @@ static inline bool areEssentiallyEqualAsFloat(float a, float b)
     else
         _scrollOffsetToRestore = std::nullopt;
 
-    _obscuredInsetWhenSaved = obscuredInset;
+    _obscuredInsetsWhenSaved = obscuredInsets;
     _scaleToRestore = scale;
 }
 
@@ -2403,7 +2403,7 @@ static bool scrollViewCanScroll(UIScrollView *scrollView)
     [_contentView didUpdateVisibleRect:visibleRectInContentCoordinates
         unobscuredRect:unobscuredRectInContentCoordinates
         unobscuredRectInScrollViewCoordinates:unobscuredRect
-        obscuredInset:CGSizeMake(_obscuredInsets.left, _obscuredInsets.top)
+        obscuredInsets:_obscuredInsets
         inputViewBounds:_inputViewBounds
         scale:scaleFactor minimumScale:[_scrollView minimumZoomScale]
         inStableState:inStableState

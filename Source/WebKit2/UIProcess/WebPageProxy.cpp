@@ -121,6 +121,7 @@
 #include <WebCore/FocusDirection.h>
 #include <WebCore/JSDOMBinding.h>
 #include <WebCore/JSDOMExceptionHandling.h>
+#include <WebCore/LengthBox.h>
 #include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/PublicSuffix.h>
 #include <WebCore/RenderEmbeddedObject.h>

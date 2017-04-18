@@ -1,3 +1,32 @@
+2017-04-17  Timothy Horton  <timothy_horton@apple.com>
+
+        Plumb all four obscured insets to WebCore, instead of just top/left
+        https://bugs.webkit.org/show_bug.cgi?id=170913
+
+        Reviewed by Wenson Hsieh.
+
+        No new tests, no observable behavior change yet.
+
+        In preparation for a future patch (for rdar://problem/31564652), plumb
+        all four obscured insets to WebCore/the Web Content process, instead of
+        just the top and left insets.
+
+        * history/HistoryItem.cpp:
+        (WebCore::HistoryItem::HistoryItem):
+        * history/HistoryItem.h:
+        (WebCore::HistoryItem::obscuredInsets):
+        (WebCore::HistoryItem::setObscuredInsets):
+        (WebCore::HistoryItem::obscuredInset): Deleted.
+        (WebCore::HistoryItem::setObscuredInset): Deleted.
+        * loader/HistoryController.cpp:
+        (WebCore::HistoryController::saveScrollPositionAndViewStateToItem):
+        * page/Page.h:
+        (WebCore::Page::obscuredInsets):
+        (WebCore::Page::setObscuredInsets):
+        (WebCore::Page::obscuredInset): Deleted.
+        (WebCore::Page::setObscuredInset): Deleted.
+        Adopt FloatBoxExtent for obscuredInsets (and adjust pluralization).
+
 2017-04-17  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Doesn't show size of compressed content correctly

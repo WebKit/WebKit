@@ -26,6 +26,7 @@
 #pragma once
 
 #include <WebCore/FloatRect.h>
+#include <WebCore/LengthBox.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/text/WTFString.h>
 
@@ -46,14 +47,14 @@ public:
 
     VisibleContentRectUpdateInfo(const WebCore::FloatRect& exposedContentRect, const WebCore::FloatRect& unobscuredContentRect,
         const WebCore::FloatRect& unobscuredRectInScrollViewCoordinates, const WebCore::FloatRect& unobscuredContentRectRespectingInputViewBounds, const WebCore::FloatRect& customFixedPositionRect,
-        const WebCore::FloatSize& obscuredInset, double scale, bool inStableState, bool isFirstUpdateForNewViewSize, bool isChangingObscuredInsetsInteractively, bool allowShrinkToFit, bool enclosedInScrollableAncestorView,
+        const WebCore::FloatBoxExtent& obscuredInsets, double scale, bool inStableState, bool isFirstUpdateForNewViewSize, bool isChangingObscuredInsetsInteractively, bool allowShrinkToFit, bool enclosedInScrollableAncestorView,
         MonotonicTime timestamp, double horizontalVelocity, double verticalVelocity, double scaleChangeRate, uint64_t lastLayerTreeTransactionId)
         : m_exposedContentRect(exposedContentRect)
         , m_unobscuredContentRect(unobscuredContentRect)
         , m_unobscuredRectInScrollViewCoordinates(unobscuredRectInScrollViewCoordinates)
         , m_unobscuredContentRectRespectingInputViewBounds(unobscuredContentRectRespectingInputViewBounds)
         , m_customFixedPositionRect(customFixedPositionRect)
-        , m_obscuredInset(obscuredInset)
+        , m_obscuredInsets(obscuredInsets)
         , m_lastLayerTreeTransactionID(lastLayerTreeTransactionId)
         , m_scale(scale)
         , m_timestamp(timestamp)
@@ -73,7 +74,7 @@ public:
     const WebCore::FloatRect& unobscuredRectInScrollViewCoordinates() const { return m_unobscuredRectInScrollViewCoordinates; }
     const WebCore::FloatRect& unobscuredContentRectRespectingInputViewBounds() const { return m_unobscuredContentRectRespectingInputViewBounds; }
     const WebCore::FloatRect& customFixedPositionRect() const { return m_customFixedPositionRect; }
-    const WebCore::FloatSize obscuredInset() const { return m_obscuredInset; }
+    const WebCore::FloatBoxExtent& obscuredInsets() const { return m_obscuredInsets; }
 
     double scale() const { return m_scale; }
     bool inStableState() const { return m_inStableState; }
@@ -100,7 +101,7 @@ private:
     WebCore::FloatRect m_unobscuredRectInScrollViewCoordinates;
     WebCore::FloatRect m_unobscuredContentRectRespectingInputViewBounds;
     WebCore::FloatRect m_customFixedPositionRect; // When visual viewports are enabled, this is the layout viewport.
-    WebCore::FloatSize m_obscuredInset;
+    WebCore::FloatBoxExtent m_obscuredInsets;
     uint64_t m_lastLayerTreeTransactionID { 0 };
     double m_scale { -1 };
     MonotonicTime m_timestamp;
@@ -121,7 +122,7 @@ inline bool operator==(const VisibleContentRectUpdateInfo& a, const VisibleConte
         && a.exposedContentRect() == b.exposedContentRect()
         && a.unobscuredContentRect() == b.unobscuredContentRect()
         && a.customFixedPositionRect() == b.customFixedPositionRect()
-        && a.obscuredInset() == b.obscuredInset()
+        && a.obscuredInsets() == b.obscuredInsets()
         && a.horizontalVelocity() == b.horizontalVelocity()
         && a.verticalVelocity() == b.verticalVelocity()
         && a.scaleChangeRate() == b.scaleChangeRate()

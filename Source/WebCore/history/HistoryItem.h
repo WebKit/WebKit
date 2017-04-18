@@ -30,6 +30,7 @@
 #include "FrameLoaderTypes.h"
 #include "IntPoint.h"
 #include "IntRect.h"
+#include "LengthBox.h"
 #include "SerializedScriptValue.h"
 #include <memory>
 #include <wtf/RefCounted.h>
@@ -174,8 +175,8 @@ public:
     IntRect unobscuredContentRect() const { return m_unobscuredContentRect; }
     void setUnobscuredContentRect(IntRect unobscuredContentRect) { m_unobscuredContentRect = unobscuredContentRect; }
 
-    FloatSize obscuredInset() const { return m_obscuredInset; }
-    void setObscuredInset(const FloatSize& inset) { m_obscuredInset = inset; }
+    const FloatBoxExtent& obscuredInsets() const { return m_obscuredInsets; }
+    void setObscuredInsets(const FloatBoxExtent& insets) { m_obscuredInsets = insets; }
 
     FloatSize minimumLayoutSizeInScrollViewCoordinates() const { return m_minimumLayoutSizeInScrollViewCoordinates; }
     void setMinimumLayoutSizeInScrollViewCoordinates(FloatSize minimumLayoutSizeInScrollViewCoordinates) { m_minimumLayoutSizeInScrollViewCoordinates = minimumLayoutSizeInScrollViewCoordinates; }
@@ -257,7 +258,7 @@ private:
     IntRect m_unobscuredContentRect;
     FloatSize m_minimumLayoutSizeInScrollViewCoordinates;
     IntSize m_contentSize;
-    FloatSize m_obscuredInset;
+    FloatBoxExtent m_obscuredInsets;
     float m_scale { 0 }; // Note that UIWebView looks for a non-zero value, so this has to start as 0.
     bool m_scaleIsInitial { false };
     ViewportArguments m_viewportArguments;

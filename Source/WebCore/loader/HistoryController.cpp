@@ -89,7 +89,7 @@ void HistoryController::saveScrollPositionAndViewStateToItem(HistoryItem* item)
     if (page && m_frame.isMainFrame()) {
         item->setPageScaleFactor(page->pageScaleFactor() / page->viewScaleFactor());
 #if PLATFORM(IOS)
-        item->setObscuredInset(page->obscuredInset());
+        item->setObscuredInsets(page->obscuredInsets());
 #endif
     }
 
