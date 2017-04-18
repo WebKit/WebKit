@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "CPU.h"
 #include <cmath>
 #include <wtf/Optional.h>
 
@@ -33,7 +34,6 @@ namespace JSC {
 const int32_t maxExponentForIntegerMathPow = 1000;
 double JIT_OPERATION operationMathPow(double x, double y) WTF_INTERNAL;
 int32_t JIT_OPERATION operationToInt32(double) WTF_INTERNAL;
-int32_t JIT_OPERATION operationToInt32SensibleSlow(double) WTF_INTERNAL;
 
 inline constexpr double maxSafeInteger()
 {
@@ -83,7 +83,14 @@ ALWAYS_INLINE int32_t toInt32(double number)
     // left in the low 32-bit range of the result (IEEE-754 doubles have 52 bits
     // of fractional precision).
     // Note this case handles 0, -0, and all infinite, NaN, & denormal value.
-    if (exp < 0 || exp > 83)
+
+    // We need to check exp > 83 because:
+    // 1. exp may be used as a left shift value below in (exp - 52), and
+    // 2. Left shift amounts that exceed 31 results in undefined behavior. See:
+    //    http://en.cppreference.com/w/cpp/language/operator_arithmetic#Bitwise_shift_operators
+    //
+    // Using an unsigned comparison here also gives us a exp < 0 check for free.
+    if (static_cast<uint32_t>(exp) > 83u)
         return 0;
 
     // Select the appropriate 32-bits from the floating point mantissa. If the
@@ -100,7 +107,33 @@ ALWAYS_INLINE int32_t toInt32(double number)
     // the decimal point; we need to reinsert this now. We may also the shifted
     // invalid bits into the result that are not a part of the mantissa (the sign
     // and exponent bits from the floatingpoint representation); mask these out.
-    if (exp < 32) {
+    if (hasSensibleDoubleToInt() && (exp == 31)) {
+        // This is an optimization for when toInt32() is called in the slow path
+        // of a JIT operation. Currently, this optimization is only applicable for
+        // x86 ports.
+        //
+        // On x86, the fast path does a sensible double-to-int32 conversion, by
+        // first attempting to truncate the double value to int32 using the
+        // cvttsd2si_rr instruction. According to Intel's manual, cvttsd2si performs
+        // the following truncate operation:
+        //
+        //     If src = NaN, +-Inf, or |(src)rz| > 0x7fffffff and (src)rz != 0x80000000,
+        //     then the result becomes 0x80000000. Otherwise, the operation succeeds.
+        //
+        // Note that the ()rz notation means rounding towards zero.
+        // We'll call the slow case function only when the above cvttsd2si fails. The
+        // JIT code checks for fast path failure by checking if result == 0x80000000.
+        // Hence, the slow path will only see the following possible set of numbers:
+        //
+        //     NaN, +-Inf, or |(src)rz| > 0x7fffffff.
+        //
+        // As a result, the exp of the double is always >= 31. We can take advantage
+        // of this by specifically checking for (exp == 31) and give the compiler a
+        // chance to constant fold the operations below.
+        const int32_t missingOne = 1 << exp;
+        result &= missingOne - 1;
+        result += missingOne;
+    } else if (exp < 32) {
         int32_t missingOne = 1 << exp;
         result &= missingOne - 1;
         result += missingOne;
