@@ -1383,9 +1383,9 @@ void ByteCodeParser::emitFunctionChecks(CallVariant callee, Node* callTarget, Vi
     }
     
     ASSERT(calleeCell);
+    addToGraph(CheckCell, OpInfo(m_graph.freeze(calleeCell)), callTargetForCheck);
     if (thisArgument)
         addToGraph(Phantom, thisArgument);
-    addToGraph(CheckCell, OpInfo(m_graph.freeze(calleeCell)), callTargetForCheck);
 }
 
 Node* ByteCodeParser::getArgumentCount()
@@ -3614,8 +3614,8 @@ void ByteCodeParser::handleGetById(
 
     if (handleIntrinsicGetter(destinationOperand, variant, base,
             [&] () {
-                addToGraph(Phantom, base);
                 addToGraph(CheckCell, OpInfo(m_graph.freeze(variant.intrinsicFunction())), getter);
+                addToGraph(Phantom, base);
             })) {
         addToGraph(Phantom, getter);
         return;
