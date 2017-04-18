@@ -1,3 +1,18 @@
+2017-04-18  Miguel Gomez  <magomez@igalia.com>
+
+        [GTK+] Crash in WebCore::ImageFrame::ImageFrame()
+        https://bugs.webkit.org/show_bug.cgi?id=170332
+
+        Reviewed by Carlos Garcia Campos.
+
+        When decoding a PNG image, don't reset the number of frames to 1 when there's a decoding error. Doing
+        so causes a crash if the number of frames we reported before is bigger than 1.
+
+        Test: fast/images/bad-png-missing-fdat.html
+
+        * platform/image-decoders/png/PNGImageDecoder.cpp:
+        (WebCore::PNGImageDecoder::fallbackNotAnimated):
+
 2017-04-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GLIB] Define priorities also for async network IO tasks

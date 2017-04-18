@@ -943,10 +943,8 @@ int PNGImageDecoder::processingFinish()
 void PNGImageDecoder::fallbackNotAnimated()
 {
     m_isAnimated = false;
-    m_frameCount = 1;
     m_playCount = 0;
     m_currentFrame = 0;
-    m_frameBufferCache.resize(1);
 }
 #endif
 

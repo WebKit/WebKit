@@ -1,3 +1,17 @@
+2017-04-18  Miguel Gomez  <magomez@igalia.com>
+
+        [GTK+] Crash in WebCore::ImageFrame::ImageFrame()
+        https://bugs.webkit.org/show_bug.cgi?id=170332
+
+        Reviewed by Carlos Garcia Campos.
+
+        Added a test to ensure that the browser doesn't crash when loading a PNG image which
+        reports a wrong number of frames.
+
+        * fast/images/bad-png-missing-fdat-expected.txt: Added.
+        * fast/images/bad-png-missing-fdat.html: Added.
+        * fast/images/resources/bad-png-missing-fdAT.png: Added.
+
 2017-04-18  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [selectors4] Import W3C Test Suite
