@@ -1,3 +1,83 @@
+2017-04-18  Oleksandr Skachkov  <gskachkov@gmail.com>
+
+        [ES6]. Implement Annex B.3.3 function hoisting rules for eval
+        https://bugs.webkit.org/show_bug.cgi?id=163208
+
+        Reviewed by Saam Barati.
+
+        * stress/eval-func-decl-block-scoping-reassign.js: Added.
+        (assert):
+        (throw.new.Error.f):
+        (throw.new.Error):
+        * stress/eval-func-decl-block-with-remove.js: Added.
+        (assert):
+        (foo.boo):
+        (foo):
+        * stress/eval-func-decl-block-with-var-and-remove.js: Added.
+        (assert):
+        (assertThrow):
+        (foo):
+        (boo):
+        (joo):
+        (koo):
+        * stress/eval-func-decl-block-with-var-sinthesize.js: Added.
+        (assert):
+        (assertThrow):
+        (foo):
+        (boo):
+        (hoo):
+        (joo):
+        (koo):
+        * stress/eval-func-decl-in-block-scope-and-bind-to-top-eval-scope.js: Added.
+        * stress/eval-func-decl-in-eval-within-block-with-let.js: Added.
+        (assert):
+        (assertThrow):
+        (foo):
+        (boo):
+        (goo):
+        * stress/eval-func-decl-in-eval-within-with-scope.js: Added.
+        (assert):
+        (assertThrow):
+        (foo):
+        (boo):
+        (boo.let.val2):
+        (boo.let.val3):
+        * stress/eval-func-decl-in-frozen-global.js: Added.
+        (assert):
+        (assertThrow):
+        (throw.new.Error):
+        (Object.freeze):
+        * stress/eval-func-decl-in-global-of-eval.js: Added.
+        (assert):
+        (assertThrow):
+        (bar):
+        (baz):
+        (foobar):
+        * stress/eval-func-decl-in-global.js: Added.
+        (assert):
+        (assertThrow):
+        * stress/eval-func-decl-in-if.js: Added.
+        (assert):
+        * stress/eval-func-decl-within-eval-with-reassign-to-var.js: Added.
+        (assert):
+        (assertThrow):
+        (foo):
+        (boo):
+        (foobar):
+        (hoo):
+        (joo):
+        (koo):
+        (loo):
+        * stress/eval-func-decl-within-eval-without-reassign-to-let.js: Added.
+        (assert):
+        (assertThrow):
+        (foo):
+        (boo):
+        (goo):
+        * stress/variable-under-tdz-eval-tricky.js:
+        (assert):
+        * test262.yaml:
+
 2017-04-18  Filip Pizlo  <fpizlo@apple.com>
 
         wasm/function-tests/memory-multiagent times out sometimes

@@ -51,6 +51,13 @@ public:
         m_variables.swap(variables);
     }
 
+    const Identifier& functionHoistingCandidate(unsigned index) { return m_functionHoistingCandidates[index]; }
+    unsigned numFunctionHoistingCandidates() { return m_functionHoistingCandidates.size(); }
+    void adoptFunctionHoistingCandidates(Vector<Identifier, 0, UnsafeVectorOverflow>&& functionHoistingCandidates)
+    {
+        ASSERT(m_functionHoistingCandidates.isEmpty());
+        m_functionHoistingCandidates = WTFMove(functionHoistingCandidates);
+    }
 private:
     UnlinkedEvalCodeBlock(VM* vm, Structure* structure, const ExecutableInfo& info, DebuggerMode debuggerMode)
         : Base(vm, structure, EvalCode, info, debuggerMode)
@@ -58,6 +65,7 @@ private:
     }
 
     Vector<Identifier, 0, UnsafeVectorOverflow> m_variables;
+    Vector<Identifier, 0, UnsafeVectorOverflow> m_functionHoistingCandidates;
 
 public:
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto)

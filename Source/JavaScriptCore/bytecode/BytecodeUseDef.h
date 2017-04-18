@@ -170,6 +170,7 @@ void computeUsesForBytecodeOffset(Block* codeBlock, OpcodeID opcodeID, Instructi
     case op_to_index_string:
     case op_create_lexical_environment:
     case op_resolve_scope:
+    case op_resolve_scope_for_hoisting_func_decl_in_eval:
     case op_get_from_scope:
     case op_to_primitive:
     case op_try_get_by_id:
@@ -382,6 +383,7 @@ void computeDefsForBytecodeOffset(Block* codeBlock, OpcodeID opcodeID, Instructi
     case op_push_with_scope:
     case op_create_lexical_environment:
     case op_resolve_scope:
+    case op_resolve_scope_for_hoisting_func_decl_in_eval:
     case op_strcat:
     case op_to_primitive:
     case op_create_this:

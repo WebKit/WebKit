@@ -376,6 +376,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case RecordRegExpCachedResult:
     case GetDynamicVar:
     case PutDynamicVar:
+    case ResolveScopeForHoistingFuncDeclInEval:
     case ResolveScope:
     case MapHash:
     case ToLowerCase:

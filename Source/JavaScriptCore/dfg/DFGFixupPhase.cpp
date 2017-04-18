@@ -1661,6 +1661,10 @@ private:
             break;
         }
 
+        case ResolveScopeForHoistingFuncDeclInEval: {
+            fixEdge<KnownCellUse>(node->child1());
+            break;
+        }
         case ResolveScope:
         case GetDynamicVar:
         case PutDynamicVar: {

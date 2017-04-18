@@ -6,6 +6,7 @@
 var varGlobalVariable = 1;
 let letGlobalVariable = 2;
 const constGlobalVariable = 3;
+var varGlobalFunctionVariable = 4;
 
 function test()
 {
@@ -165,6 +166,27 @@ function test()
                 InspectorTest.expectThat(resultValue === "[object HTMLDivElement]", "`values` should be `window.values` and not shadowed by CommandLineAPI `values` function.");
                 resolve();
             });
+        }
+    });
+
+    suite.addTestCase({
+        name: "NonStrictEvalHoistEvaluations",
+        description: "Test CommandLineAPI does not shadow global object variable that hoisted from eval.",
+        test(resolve, reject) {
+            testEvaluate("varGlobalFunctionVariable", (resultValue) => {
+                InspectorTest.expectThat(resultValue === 4, "Should be able to access var in global scope.");
+            });            
+            testEvaluate(`
+                let noError = varGlobalFunctionVariable === 4;
+                eval('eval(" { function varGlobalFunctionVariable() { }; } ")');
+                typeof varGlobalFunctionVariable === 'function' && noError;
+            `, (resultValue) => {
+                InspectorTest.expectThat(resultValue, "Should be able to hoist function to var in global scope.");
+            });
+            testEvaluate("varGlobalFunctionVariable", (resultValue) => {
+                InspectorTest.expectThat(typeof resultValue, "Should be able to hoist function to var in global scope and keep it.");
+                resolve();
+            });    
         }
     });
 

@@ -1569,6 +1569,14 @@ void BytecodeDumper<Block>::dumpBytecode(PrintStream& out, const typename Block:
         printLocationOpAndRegisterOperand(out, location, it, "end", r0);
         break;
     }
+    case op_resolve_scope_for_hoisting_func_decl_in_eval: {
+        int r0 = (++it)->u.operand;
+        int scope = (++it)->u.operand;
+        int id0 = (++it)->u.operand;
+        printLocationAndOp(out, location, it, "resolve_scope_for_hoisting_func_decl_in_eval");
+        out.printf("%s, %s, %s", registerName(r0).data(), registerName(scope).data(), idName(id0, identifier(id0)).data());
+        break;
+    }
     case op_resolve_scope: {
         int r0 = (++it)->u.operand;
         int scope = (++it)->u.operand;

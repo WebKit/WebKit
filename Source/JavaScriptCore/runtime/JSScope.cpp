@@ -211,7 +211,8 @@ static inline bool isUnscopable(ExecState* exec, JSScope* scope, JSObject* objec
     return blocked.toBoolean(exec);
 }
 
-JSObject* JSScope::resolve(ExecState* exec, JSScope* scope, const Identifier& ident)
+template<typename ReturnPredicateFunctor, typename SkipPredicateFunctor>
+ALWAYS_INLINE JSObject* JSScope::resolve(ExecState* exec, JSScope* scope, const Identifier& ident, ReturnPredicateFunctor returnPredicate, SkipPredicateFunctor skipPredicate)
 {
     VM& vm = exec->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -238,6 +239,9 @@ JSObject* JSScope::resolve(ExecState* exec, JSScope* scope, const Identifier& id
             return object;
         }
 
+        if (skipPredicate(scope))
+            continue;
+
         bool hasProperty = object->hasProperty(exec, ident);
         RETURN_IF_EXCEPTION(throwScope, nullptr);
         if (hasProperty) {
@@ -246,7 +250,43 @@ JSObject* JSScope::resolve(ExecState* exec, JSScope* scope, const Identifier& id
             if (!unscopable)
                 return object;
         }
+
+        if (returnPredicate(scope))
+            return object;
     }
+}
+
+JSValue JSScope::resolveScopeForHoistingFuncDeclInEval(ExecState* exec, JSScope* scope, const Identifier& ident)
+{
+    auto returnPredicate = [&] (JSScope* scope) -> bool {
+        return scope->isVarScope();
+    };
+    auto skipPredicate = [&] (JSScope* scope) -> bool {
+        return scope->isWithScope();
+    };
+    JSObject* object = resolve(exec, scope, ident, returnPredicate, skipPredicate);
+    
+    bool result = false;
+    if (JSScope* scope = jsDynamicCast<JSScope*>(exec->vm(), object)) {
+        if (SymbolTable* scopeSymbolTable = scope->symbolTable(exec->vm())) {
+            result = scope->isGlobalObject()
+                ? JSObject::isExtensible(object, exec)
+                : scopeSymbolTable->scopeType() == SymbolTable::ScopeType::VarScope;
+        }
+    }
+
+    return result ? JSValue(object) : jsUndefined();
+}
+
+JSObject* JSScope::resolve(ExecState* exec, JSScope* scope, const Identifier& ident)
+{
+    auto predicate1 = [&] (JSScope*) -> bool {
+        return false;
+    };
+    auto predicate2 = [&] (JSScope*) -> bool {
+        return false;
+    };
+    return resolve(exec, scope, ident, predicate1, predicate2);
 }
 
 ResolveOp JSScope::abstractResolve(ExecState* exec, size_t depthOffset, JSScope* scope, const Identifier& ident, GetOrPut getOrPut, ResolveType unlinkedType, InitializationMode initializationMode)

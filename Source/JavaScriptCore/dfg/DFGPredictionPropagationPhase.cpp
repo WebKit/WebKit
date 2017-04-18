@@ -717,6 +717,7 @@ private:
             break;
         }
 
+        case ResolveScopeForHoistingFuncDeclInEval:
         case GetDynamicVar: {
             setPrediction(SpecBytecodeTop);
             break;

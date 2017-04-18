@@ -34,3 +34,8 @@ PASS: Global `keys` variable should not be shadowed by CommandLineAPI function.
 -- Running test case: CommandLineAPIDoesNotShadowGlobalObjectProperties
 PASS: `values` should be `window.values` and not shadowed by CommandLineAPI `values` function.
 
+-- Running test case: NonStrictEvalHoistEvaluations
+PASS: Should be able to access var in global scope.
+PASS: Should be able to hoist function to var in global scope.
+PASS: Should be able to hoist function to var in global scope and keep it.
+
