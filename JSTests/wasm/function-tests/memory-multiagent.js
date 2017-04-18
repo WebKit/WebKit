@@ -1,3 +1,7 @@
+// This test times out, probably because of the while loop in the agent.
+// https://bugs.webkit.org/show_bug.cgi?id=170958
+//@ skip
+
 const pageSize = 64 * 1024;
 
 const verbose = false;
@@ -43,6 +47,10 @@ const startAgents = numAgentsToStart => {
         if (${verbose})
             print("Agent ${a} waits");
         $.agent.report("Agent ${a} waits");
+        // FIXME: How can this work? The state variable is in the JS heap and the while loop
+        // prevents any JS-heap-modifying things from happening because JS is a synchronous
+        // language
+        // https://bugs.webkit.org/show_bug.cgi?id=170958
         while (state === ${stateWait}) ;
         $.agent.report("Agent ${a} received SAB");
         // Use it for faster state change so all agents are more likely to execute at the same time.

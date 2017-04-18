@@ -22,13 +22,13 @@
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 - path: wasm/self-test/
-  cmd: runWebAssembly
+  cmd: runWebAssembly unless parseRunCommands
 - path: wasm/js-api/
-  cmd: runWebAssembly
+  cmd: runWebAssembly unless parseRunCommands
 - path: wasm/function-tests
-  cmd: runWebAssembly
+  cmd: runWebAssembly unless parseRunCommands
 - path: wasm/fuzz
-  cmd: runWebAssembly
+  cmd: runWebAssembly unless parseRunCommands
 
 - path: wasm/spec-tests/address.wast.js
   cmd: runWebAssemblySpecTest :normal
