@@ -98,12 +98,13 @@ typedef NSUInteger DDHighlightStyle;
 @end
 
 SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(DataDetectors)
+SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(DataDetectorsCore)
 
 SOFT_LINK_CLASS_OPTIONAL(DataDetectors, DDAction)
 SOFT_LINK_CLASS_OPTIONAL(DataDetectors, DDActionContext)
 SOFT_LINK_CLASS_OPTIONAL(DataDetectors, DDActionsManager)
 
-SOFT_LINK_CONSTANT(DataDetectors, DDBinderPhoneNumberKey, CFStringRef)
+SOFT_LINK_CONSTANT(DataDetectorsCore, DDBinderPhoneNumberKey, CFStringRef)
 
 SOFT_LINK(DataDetectors, DDHighlightCreateWithRectsInVisibleRectWithStyleAndDirection, DDHighlightRef, (CFAllocatorRef allocator, CGRect* rects, CFIndex count, CGRect globalVisibleRect, DDHighlightStyle style, Boolean withArrow, NSWritingDirection writingDirection, Boolean endsWithEOL, Boolean flipped), (allocator, rects, count, globalVisibleRect, style, withArrow, writingDirection, endsWithEOL, flipped))
 SOFT_LINK(DataDetectors, DDHighlightGetLayerWithContext, CGLayerRef, (DDHighlightRef highlight, CGContextRef context), (highlight, context))

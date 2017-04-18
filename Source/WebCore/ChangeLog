@@ -1,3 +1,14 @@
+2017-04-18  Tim Horton  <timothy_horton@apple.com>
+
+        Safari crash when clicking phone number data detector popover button
+        https://bugs.webkit.org/show_bug.cgi?id=170936
+        <rdar://problem/31416570>
+
+        Reviewed by Wenson Hsieh.
+
+        * platform/spi/mac/DataDetectorsSPI.h:
+        Soft-link the phone number key from the correct framework.
+
 2017-04-17  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Make annotated types first class allowing them to be used in sequences and unions
