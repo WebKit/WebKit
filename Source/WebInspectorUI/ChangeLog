@@ -1,3 +1,18 @@
+2017-04-17  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Use `text-align: start` for DataGrid headers
+        https://bugs.webkit.org/show_bug.cgi?id=170871
+
+        Reviewed by Matt Baker.
+
+        `text-align: start` didn't work for th elements.
+        It was fixed in <webkit.org/b/141417>.
+
+        * UserInterface/Views/DataGrid.css:
+        (.data-grid th):
+        (body[dir=ltr] .data-grid th): Deleted.
+        (body[dir=rtl] .data-grid th): Deleted.
+
 2017-04-17  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Doesn't show size of compressed content correctly
