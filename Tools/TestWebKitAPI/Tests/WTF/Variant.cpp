@@ -109,6 +109,34 @@ TEST(WTF_Variant, BasicVisitor)
     EXPECT_TRUE(Type::String == type);
 }
 
+#if USE(CF)
+TEST(WTF_Variant, RetainPtr)
+{
+    enum class Type {
+        None,
+        RefPtr,
+        RetainPtr,
+    };
+    
+    Type type = Type::None;
+    
+    auto visitor = WTF::makeVisitor(
+        [&](const RefPtr<RefLogger>&) { type = Type::RefPtr; },
+        [&](const RetainPtr<CFDataRef>&) { type = Type::RetainPtr; }
+    );
+    
+    RefPtr<RefLogger> refPtr;
+    RetainPtr<CFDataRef> retainPtr;
+    Variant<RefPtr<RefLogger>, RetainPtr<CFDataRef>> variant(WTFMove(refPtr));
+    WTF::visit(visitor, variant);
+    EXPECT_TRUE(Type::RefPtr == type);
+    
+    variant = WTFMove(retainPtr);
+    WTF::visit(visitor, variant);
+    EXPECT_TRUE(Type::RetainPtr == type);
+}
+#endif
+
 TEST(WTF_Variant, VisitorUsingMakeVisitor)
 {
     enum class Type {
@@ -223,6 +251,25 @@ TEST(WTF_Variant, Ref)
     }
 
     ASSERT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
+}
+
+template<class T>
+class Holder {
+public:
+    T data;
+
+    Holder(T data) : data(data) { }
+
+    T* operator&() { return &data; }
+};
+
+TEST(WTF_Variant, OperatorAmpersand)
+{
+    Variant<Holder<int>, int> v = Holder<int>(10);
+    EXPECT_TRUE(WTF::get<Holder<int>>(v).data == 10);
+
+    v = 20;
+    EXPECT_TRUE(WTF::get<int>(v) == 20);
 }
 
 }

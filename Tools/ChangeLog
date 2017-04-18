@@ -1,3 +1,15 @@
+2017-04-17  Alex Christensen  <achristensen@webkit.org>
+
+        Allow Variants of RetainPtrs
+        https://bugs.webkit.org/show_bug.cgi?id=170923
+
+        Reviewed by Tim Horton and Sam Weinig.
+
+        * TestWebKitAPI/Tests/WTF/Variant.cpp:
+        (TestWebKitAPI::TEST):
+        Add tests for RetainPtr and for another class with overloaded operator& to verify such classes can
+        work in Variants.
+
 2017-04-17  Brady Eidson  <beidson@apple.com>
 
         Make WKHTTPCookieStore public.

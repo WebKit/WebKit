@@ -88,18 +88,6 @@ public:
 
     bool operator!() const { return !m_ptr; }
 
-#if !(defined (__OBJC__) && __has_feature(objc_arc))
-    // This function is useful for passing RetainPtrs to functions that return
-    // CF types as out parameters.
-    PtrType* operator&()
-    {
-        // Require that the pointer is null, to prevent leaks.
-        ASSERT(!m_ptr);
-
-        return (PtrType*)&m_ptr;
-    }
-#endif
-
     // This conversion operator allows implicit conversion to bool but not to other integer types.
     typedef StorageType RetainPtr::*UnspecifiedBoolType;
     operator UnspecifiedBoolType() const { return m_ptr ? &RetainPtr::m_ptr : nullptr; }

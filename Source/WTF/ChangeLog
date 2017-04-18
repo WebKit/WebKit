@@ -1,3 +1,19 @@
+2017-04-17  Alex Christensen  <achristensen@webkit.org>
+
+        Allow Variants of RetainPtrs
+        https://bugs.webkit.org/show_bug.cgi?id=170923
+
+        Reviewed by Tim Horton and Sam Weinig.
+
+        * wtf/RetainPtr.h:
+        (WTF::RetainPtr::operator&): Deleted.
+        Operator& was causing a compile error when making Variant<RetainPtr<T>, ...>
+        and because it is strange and only used once, let's just remove it.
+        * wtf/Variant.h:
+        (WTF::get):
+        (WTF::get_if):
+        Use std::addressof instead of operator& which could be overloaded to return any type with any meaning.
+
 2017-04-17  Youenn Fablet  <youenn@apple.com>
 
         Disable outdated WritableStream API

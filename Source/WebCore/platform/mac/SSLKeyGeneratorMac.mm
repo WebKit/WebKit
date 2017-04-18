@@ -128,20 +128,23 @@ static String signedPublicKeyAndChallengeString(unsigned keySize, const CString&
 
     SignedPublicKeyAndChallenge signedPublicKeyAndChallenge { };
 
-    RetainPtr<SecAccessRef> access;
-    if (SecAccessCreate(keyDescription.createCFString().get(), nullptr, &access) != noErr)
+    SecAccessRef accessRef { nullptr };
+    if (SecAccessCreate(keyDescription.createCFString().get(), nullptr, &accessRef) != noErr)
         return String();
+    RetainPtr<SecAccessRef> access = adoptCF(accessRef);
 
-    RetainPtr<CFArrayRef> acls;
-    if (SecAccessCopySelectedACLList(access.get(), CSSM_ACL_AUTHORIZATION_DECRYPT, &acls) != noErr)
+    CFArrayRef aclsRef { nullptr };
+    if (SecAccessCopySelectedACLList(access.get(), CSSM_ACL_AUTHORIZATION_DECRYPT, &aclsRef) != noErr)
         return String();
+    RetainPtr<CFArrayRef> acls = adoptCF(aclsRef);
 
     SecACLRef acl = (SecACLRef)(CFArrayGetValueAtIndex(acls.get(), 0));
 
     // Passing nullptr to SecTrustedApplicationCreateFromPath tells that function to assume the application bundle.
-    RetainPtr<SecTrustedApplicationRef> trustedApp;
-    if (SecTrustedApplicationCreateFromPath(nullptr, &trustedApp) != noErr)
+    SecTrustedApplicationRef trustedAppRef { nullptr };
+    if (SecTrustedApplicationCreateFromPath(nullptr, &trustedAppRef) != noErr)
         return String();
+    RetainPtr<SecTrustedApplicationRef> trustedApp = adoptCF(trustedAppRef);
 
     const CSSM_ACL_KEYCHAIN_PROMPT_SELECTOR defaultSelector = {
         CSSM_ACL_KEYCHAIN_PROMPT_CURRENT_VERSION, 0
@@ -149,10 +152,12 @@ static String signedPublicKeyAndChallengeString(unsigned keySize, const CString&
     if (SecACLSetSimpleContents(acl, (__bridge CFArrayRef)@[ (__bridge id)trustedApp.get() ], keyDescription.createCFString().get(), &defaultSelector) != noErr)
         return String();
 
-    RetainPtr<SecKeyRef> publicKey;
-    RetainPtr<SecKeyRef> privateKey;
-    if (SecKeyCreatePair(nullptr, CSSM_ALGID_RSA, keySize, 0, CSSM_KEYUSE_ANY, CSSM_KEYATTR_PERMANENT | CSSM_KEYATTR_EXTRACTABLE | CSSM_KEYATTR_RETURN_REF, CSSM_KEYUSE_ANY, CSSM_KEYATTR_SENSITIVE | CSSM_KEYATTR_RETURN_REF | CSSM_KEYATTR_PERMANENT | CSSM_KEYATTR_EXTRACTABLE, access.get(), &publicKey, &privateKey) != noErr)
+    SecKeyRef publicKeyRef { nullptr };
+    SecKeyRef privateKeyRef { nullptr };
+    if (SecKeyCreatePair(nullptr, CSSM_ALGID_RSA, keySize, 0, CSSM_KEYUSE_ANY, CSSM_KEYATTR_PERMANENT | CSSM_KEYATTR_EXTRACTABLE | CSSM_KEYATTR_RETURN_REF, CSSM_KEYUSE_ANY, CSSM_KEYATTR_SENSITIVE | CSSM_KEYATTR_RETURN_REF | CSSM_KEYATTR_PERMANENT | CSSM_KEYATTR_EXTRACTABLE, access.get(), &publicKeyRef, &privateKeyRef) != noErr)
         return String();
+    RetainPtr<SecKeyRef> publicKey = adoptCF(publicKeyRef);
+    RetainPtr<SecKeyRef> privateKey = adoptCF(privateKeyRef);
 
     CSSM_CSP_HANDLE cspHandle;
     if (SecKeyGetCSPHandle(privateKey.get(), &cspHandle) != noErr)

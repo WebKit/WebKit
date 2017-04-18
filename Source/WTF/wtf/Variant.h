@@ -1788,8 +1788,8 @@ template<ptrdiff_t _Index,typename ... _Types>
 constexpr typename __indexed_type<_Index,_Types...>::__type const& get(Variant<_Types...> const& __v){
     return *(
         (_Index!=__v.index())
-            ? &__throw_bad_variant_access<typename __indexed_type<_Index,_Types...>::__type const&>("Bad Variant index in get")
-            : &__variant_accessor<_Index,_Types...>::get(__v)
+            ? std::addressof(__throw_bad_variant_access<typename __indexed_type<_Index,_Types...>::__type const&>("Bad Variant index in get"))
+            : std::addressof(__variant_accessor<_Index,_Types...>::get(__v))
     );
 }
 
@@ -1797,8 +1797,8 @@ template<ptrdiff_t _Index,typename ... _Types>
 constexpr typename __indexed_type<_Index,_Types...>::__type& get(Variant<_Types...>& __v){
     return *(
         (_Index!=__v.index())
-            ? &__throw_bad_variant_access<typename __indexed_type<_Index,_Types...>::__type&>("Bad Variant index in get")
-            : &__variant_accessor<_Index,_Types...>::get(__v)
+            ? std::addressof(__throw_bad_variant_access<typename __indexed_type<_Index,_Types...>::__type&>("Bad Variant index in get"))
+            : std::addressof(__variant_accessor<_Index,_Types...>::get(__v))
     );
 }
 
@@ -1818,25 +1818,25 @@ constexpr const typename __indexed_type<_Index,_Types...>::__type&& get(Variant<
 
 template<typename _Type,typename ... _Types>
 constexpr std::add_pointer_t<_Type> get_if(Variant<_Types...>& __v){
-    return (__type_index<_Type,_Types...>::__value!=__v.index())?nullptr:&get<_Type>(__v);
+    return (__type_index<_Type,_Types...>::__value!=__v.index())?nullptr:std::addressof(get<_Type>(__v));
 }
 
 template<typename _Type,typename ... _Types>
 constexpr std::add_pointer_t<_Type const> get_if(Variant<_Types...> const& __v){
-    return (__type_index<_Type,_Types...>::__value!=__v.index())?nullptr:&get<_Type>(__v);
+    return (__type_index<_Type,_Types...>::__value!=__v.index())?nullptr:std::addressof(get<_Type>(__v));
 }
 
 template<ptrdiff_t _Index,typename ... _Types>
 constexpr std::add_pointer_t<typename __indexed_type<_Index,_Types...>::__type> get_if(Variant<_Types...>& __v){
     return ((_Index!=__v.index())?nullptr:
-        &__variant_accessor<_Index,_Types...>::get(__v));
+        std::addressof(__variant_accessor<_Index,_Types...>::get(__v)));
 }
 
 template<ptrdiff_t _Index,typename ... _Types>
 constexpr std::add_pointer_t<typename __indexed_type<_Index,_Types...>::__type const> get_if(
     Variant<_Types...> const& __v){
     return ((_Index!=__v.index())?nullptr:
-        &__variant_accessor<_Index,_Types...>::get(__v));
+        std::addressof(__variant_accessor<_Index,_Types...>::get(__v)));
 }
 
 template<typename _Type,typename ... _Types>
