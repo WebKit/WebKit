@@ -1,3 +1,9 @@
+2017-04-18  Tim Horton  <timothy_horton@apple.com>
+
+        Try to fix the iOS Debug build
+
+        * platform/LengthBox.h:
+
 2017-04-18  Andreas Kling  <akling@apple.com>
 
         Break Document::m_associatedFormControls reference cycle.

@@ -158,6 +158,6 @@ using LayoutBoxExtent = BoxExtent<LayoutUnit>;
 using FloatBoxExtent = BoxExtent<float>;
 
 TextStream& operator<<(TextStream&, const LengthBox&);
-TextStream& operator<<(TextStream&, const FloatBoxExtent&);
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const FloatBoxExtent&);
 
 } // namespace WebCore
