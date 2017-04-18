@@ -1,3 +1,11 @@
+2017-04-17  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed build fix for !ENABLE(MEDIA_STREAM) configurations.
+
+        * html/MediaElementSession.cpp:
+        (WebCore::MediaElementSession::playbackPermitted): Guard the use of
+        HTMLMediaElement::hasMediaStreamSrcObject() with ENABLE(MEDIA_STREAM).
+
 2017-04-17  Alex Christensen  <achristensen@webkit.org>
 
         Allow Variants of RetainPtrs
