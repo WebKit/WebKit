@@ -1,3 +1,16 @@
+2017-04-17  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] 'WebCore::GraphicsLayerTextureMapper::flushCompositingStated': method with override specifier 'override' did not override any base class methods
+        https://bugs.webkit.org/show_bug.cgi?id=170928
+
+        Reviewed by Simon Fraser.
+
+        Apply the same change of CoordinatedGraphicsLayer.{cpp,h} of r215410 to GraphicsLayerTextureMapper.{cpp,h}.
+
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.cpp:
+        (WebCore::GraphicsLayerTextureMapper::flushCompositingState): Added the second argument.
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.h: Ditto.
+
 2017-04-17  Timothy Horton  <timothy_horton@apple.com>
 
         Plumb all four obscured insets to WebCore, instead of just top/left

@@ -497,7 +497,7 @@ void GraphicsLayerTextureMapper::commitLayerChanges()
     m_changeMask = NoChanges;
 }
 
-void GraphicsLayerTextureMapper::flushCompositingState(const FloatRect& rect)
+void GraphicsLayerTextureMapper::flushCompositingState(const FloatRect& rect, FlushScope)
 {
     if (!m_layer.textureMapper())
         return;
