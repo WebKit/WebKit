@@ -32,6 +32,7 @@
 #include <wtf/MainThread.h>
 #include <wtf/RunLoop.h>
 #include <wtf/glib/GUniquePtr.h>
+#include <wtf/glib/RunLoopSourcePriority.h>
 
 namespace WebKit {
 namespace NetworkCache {
@@ -148,7 +149,7 @@ static void inputStreamReadReadyCallback(GInputStream* stream, GAsyncResult* res
     size_t bytesToRead = std::min(pendingBytesToRead, asyncData->buffer->length);
     // Use a local variable for the data buffer to pass it to g_input_stream_read_async(), because ReadAsyncData is released.
     auto data = const_cast<char*>(asyncData->buffer->data);
-    g_input_stream_read_async(stream, data, bytesToRead, G_PRIORITY_DEFAULT, nullptr,
+    g_input_stream_read_async(stream, data, bytesToRead, RunLoopSourcePriority::DiskCacheRead, nullptr,
         reinterpret_cast<GAsyncReadyCallback>(inputStreamReadReadyCallback), asyncData.release());
 }
 
@@ -174,7 +175,7 @@ void IOChannel::read(size_t offset, size_t size, WorkQueue* queue, std::function
     ReadAsyncData* asyncData = new ReadAsyncData { this, buffer.get(), queue, size, completionHandler, { } };
 
     // FIXME: implement offset.
-    g_input_stream_read_async(m_inputStream.get(), const_cast<char*>(buffer->data), bufferSize, G_PRIORITY_DEFAULT, nullptr,
+    g_input_stream_read_async(m_inputStream.get(), const_cast<char*>(buffer->data), bufferSize, RunLoopSourcePriority::DiskCacheRead, nullptr,
         reinterpret_cast<GAsyncReadyCallback>(inputStreamReadReadyCallback), asyncData);
 }
 
@@ -251,7 +252,7 @@ static void outputStreamWriteReadyCallback(GOutputStream* stream, GAsyncResult* 
     asyncData->buffer = adoptGRef(soup_buffer_new_subbuffer(asyncData->buffer.get(), bytesWritten, pendingBytesToWrite));
     // Use a local variable for the data buffer to pass it to g_output_stream_write_async(), because WriteAsyncData is released.
     auto data = asyncData->buffer->data;
-    g_output_stream_write_async(stream, data, pendingBytesToWrite, G_PRIORITY_DEFAULT_IDLE, nullptr,
+    g_output_stream_write_async(stream, data, pendingBytesToWrite, RunLoopSourcePriority::DiskCacheWrite, nullptr,
         reinterpret_cast<GAsyncReadyCallback>(outputStreamWriteReadyCallback), asyncData.release());
 }
 
@@ -275,7 +276,7 @@ void IOChannel::write(size_t offset, const Data& data, WorkQueue* queue, std::fu
 
     WriteAsyncData* asyncData = new WriteAsyncData { this, data.soupBuffer(), queue, completionHandler };
     // FIXME: implement offset.
-    g_output_stream_write_async(stream, asyncData->buffer->data, data.size(), G_PRIORITY_DEFAULT_IDLE, nullptr,
+    g_output_stream_write_async(stream, asyncData->buffer->data, data.size(), RunLoopSourcePriority::DiskCacheWrite, nullptr,
         reinterpret_cast<GAsyncReadyCallback>(outputStreamWriteReadyCallback), asyncData);
 }
 

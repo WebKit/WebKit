@@ -41,6 +41,7 @@
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/SoupNetworkSession.h>
 #include <wtf/MainThread.h>
+#include <wtf/glib/RunLoopSourcePriority.h>
 
 using namespace WebCore;
 
@@ -577,7 +578,7 @@ void NetworkDataTaskSoup::skipInputStreamForRedirection()
 {
     ASSERT(m_inputStream);
     RefPtr<NetworkDataTaskSoup> protectedThis(this);
-    g_input_stream_skip_async(m_inputStream.get(), gDefaultReadBufferSize, G_PRIORITY_DEFAULT, m_cancellable.get(),
+    g_input_stream_skip_async(m_inputStream.get(), gDefaultReadBufferSize, RunLoopSourcePriority::AsyncIONetwork, m_cancellable.get(),
         reinterpret_cast<GAsyncReadyCallback>(skipInputStreamForRedirectionCallback), protectedThis.leakRef());
 }
 
@@ -732,7 +733,7 @@ void NetworkDataTaskSoup::read()
     RefPtr<NetworkDataTaskSoup> protectedThis(this);
     ASSERT(m_inputStream);
     m_readBuffer.grow(gDefaultReadBufferSize);
-    g_input_stream_read_async(m_inputStream.get(), m_readBuffer.data(), m_readBuffer.size(), G_PRIORITY_DEFAULT, m_cancellable.get(),
+    g_input_stream_read_async(m_inputStream.get(), m_readBuffer.data(), m_readBuffer.size(), RunLoopSourcePriority::AsyncIONetwork, m_cancellable.get(),
         reinterpret_cast<GAsyncReadyCallback>(readCallback), protectedThis.leakRef());
 }
 
@@ -799,7 +800,7 @@ void NetworkDataTaskSoup::requestNextPart()
     RefPtr<NetworkDataTaskSoup> protectedThis(this);
     ASSERT(m_multipartInputStream);
     ASSERT(!m_inputStream);
-    soup_multipart_input_stream_next_part_async(m_multipartInputStream.get(), G_PRIORITY_DEFAULT, m_cancellable.get(),
+    soup_multipart_input_stream_next_part_async(m_multipartInputStream.get(), RunLoopSourcePriority::AsyncIONetwork, m_cancellable.get(),
         reinterpret_cast<GAsyncReadyCallback>(requestNextPartCallback), protectedThis.leakRef());
 }
 
@@ -936,7 +937,7 @@ void NetworkDataTaskSoup::writeDownload()
 {
     RefPtr<NetworkDataTaskSoup> protectedThis(this);
 #if GLIB_CHECK_VERSION(2, 44, 0)
-    g_output_stream_write_all_async(m_downloadOutputStream.get(), m_readBuffer.data(), m_readBuffer.size(), G_PRIORITY_DEFAULT, m_cancellable.get(),
+    g_output_stream_write_all_async(m_downloadOutputStream.get(), m_readBuffer.data(), m_readBuffer.size(), RunLoopSourcePriority::AsyncIONetwork, m_cancellable.get(),
         reinterpret_cast<GAsyncReadyCallback>(writeDownloadCallback), protectedThis.leakRef());
 #else
     GRefPtr<GTask> writeTask = adoptGRef(g_task_new(m_downloadOutputStream.get(), m_cancellable.get(),
@@ -990,7 +991,7 @@ void NetworkDataTaskSoup::didFinishDownload()
     CString uri = m_response.url().string().utf8();
     g_file_info_set_attribute_string(info.get(), "metadata::download-uri", uri.data());
     g_file_info_set_attribute_string(info.get(), "xattr::xdg.origin.url", uri.data());
-    g_file_set_attributes_async(m_downloadDestinationFile.get(), info.get(), G_FILE_QUERY_INFO_NONE, G_PRIORITY_DEFAULT, nullptr, nullptr, nullptr);
+    g_file_set_attributes_async(m_downloadDestinationFile.get(), info.get(), G_FILE_QUERY_INFO_NONE, RunLoopSourcePriority::AsyncIONetwork, nullptr, nullptr, nullptr);
 
     clearRequest();
     auto* download = NetworkProcess::singleton().downloadManager().download(m_pendingDownloadID);

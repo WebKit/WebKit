@@ -1,3 +1,14 @@
+2017-04-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GLIB] Define priorities also for async network IO tasks
+        https://bugs.webkit.org/show_bug.cgi?id=170905
+
+        Reviewed by Žan Doberšek.
+
+        Add AsyncIONetwork, DiskCacheRead and DiskCacheWrite priorities.
+
+        * wtf/glib/RunLoopSourcePriority.h:
+
 2017-04-18  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC][GTK] glib RunLoop does not accept negative start interval

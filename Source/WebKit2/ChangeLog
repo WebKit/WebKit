@@ -1,3 +1,25 @@
+2017-04-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GLIB] Define priorities also for async network IO tasks
+        https://bugs.webkit.org/show_bug.cgi?id=170905
+
+        Reviewed by Žan Doberšek.
+
+        * NetworkProcess/cache/NetworkCacheIOChannelSoup.cpp:
+        (WebKit::NetworkCache::inputStreamReadReadyCallback):
+        (WebKit::NetworkCache::IOChannel::read):
+        (WebKit::NetworkCache::outputStreamWriteReadyCallback):
+        (WebKit::NetworkCache::IOChannel::write):
+        * NetworkProcess/soup/NetworkDataTaskSoup.cpp:
+        (WebKit::NetworkDataTaskSoup::skipInputStreamForRedirection):
+        (WebKit::NetworkDataTaskSoup::read):
+        (WebKit::NetworkDataTaskSoup::requestNextPart):
+        (WebKit::NetworkDataTaskSoup::writeDownload):
+        (WebKit::NetworkDataTaskSoup::didFinishDownload):
+        * UIProcess/API/gtk/WebKitURISchemeRequest.cpp:
+        (webkitURISchemeRequestReadCallback):
+        (webkit_uri_scheme_request_finish):
+
 2017-04-17  Timothy Horton  <timothy_horton@apple.com>
 
         Plumb all four obscured insets to WebCore, instead of just top/left

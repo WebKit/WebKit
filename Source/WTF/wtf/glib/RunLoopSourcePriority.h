@@ -68,7 +68,16 @@ enum RunLoopSourcePriority {
     DisplayRefreshMonitorTimer = -100,
 
     // Rendering timer in the main thread when accelerated compositing is not used.
-    NonAcceleratedDrawingTimer = 100
+    NonAcceleratedDrawingTimer = 100,
+
+    // Async IO network callbacks.
+    AsyncIONetwork = 100,
+
+    // Disk cache read callbacks.
+    DiskCacheRead = 100,
+
+    // Disk cache write callbacks.
+    DiskCacheWrite = 200,
 };
 
 } // namespace WTF
