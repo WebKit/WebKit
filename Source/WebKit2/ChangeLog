@@ -1,3 +1,22 @@
+2017-04-18  Anders Carlsson  <andersca@apple.com>
+
+        Stop using deprecated APIs, part 2
+        https://bugs.webkit.org/show_bug.cgi?id=170965
+
+        Reviewed by Tim Horton.
+
+        * Shared/Cocoa/WebCoreArgumentCodersCocoa.mm:
+        (IPC::ArgumentCoder<WebCore::ShippingContactUpdate>::encode):
+        (IPC::ArgumentCoder<WebCore::ShippingContactUpdate>::decode):
+        Remove the status member variable.
+
+        * UIProcess/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.mm:
+        (WebKit::status):
+        New function to be used by older OSes. This will recreate a PKPaymentAuthorizationStatus given a ShippingContactUpdate.
+
+        (WebKit::WebPaymentCoordinatorProxy::platformCompleteShippingContactSelection):
+        Stop using the deprecated API.
+
 2017-04-18  Timothy Horton  <timothy_horton@apple.com>
 
         Force scroll view insets to be respected regardless of rubber-banding state

@@ -185,7 +185,6 @@ struct PaymentMethodUpdate {
 };
 
 struct ShippingContactUpdate {
-    PaymentAuthorizationStatus status;
     Vector<PaymentError> errors;
 
     Vector<PaymentRequest::ShippingMethod> newShippingMethods;

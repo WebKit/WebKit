@@ -1,3 +1,24 @@
+2017-04-18  Anders Carlsson  <andersca@apple.com>
+
+        Stop using deprecated APIs, part 2
+        https://bugs.webkit.org/show_bug.cgi?id=170965
+        rdar://problem/31589635
+
+        Reviewed by Tim Horton.
+
+        * Modules/applepay/ApplePaySession.cpp:
+        (WebCore::convertAndValidate):
+        No need to convert the status anymore.
+
+        (WebCore::ApplePaySession::completeShippingContactSelection):
+        Create an ApplePayError given the status.
+
+        * Modules/applepay/ApplePayShippingContactUpdate.h:
+        Remove the status member variable.
+
+        * Modules/applepay/PaymentRequest.h:
+        Remove the status member variable.
+
 2017-04-18  Tim Horton  <timothy_horton@apple.com>
 
         Safari crash when clicking phone number data detector popover button

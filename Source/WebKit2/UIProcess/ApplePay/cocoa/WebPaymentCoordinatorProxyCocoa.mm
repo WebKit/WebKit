@@ -724,12 +724,38 @@ void WebPaymentCoordinatorProxy::platformCompleteShippingMethodSelection(const s
     m_paymentAuthorizationViewControllerDelegate->_didSelectShippingMethodCompletion = nullptr;
 }
 
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED < 110000)
+static PKPaymentAuthorizationStatus status(const std::optional<WebCore::ShippingContactUpdate>& update)
+{
+    if (!update)
+        return PKPaymentAuthorizationStatusSuccess;
+
+    if (update->errors.size() == 1) {
+        auto& error = update->errors[0];
+        switch (error.code) {
+        case WebCore::PaymentError::Code::Unknown:
+        case WebCore::PaymentError::Code::AddressUnservicable:
+            return PKPaymentAuthorizationStatusFailure;
+
+        case WebCore::PaymentError::Code::BillingContactInvalid:
+            return PKPaymentAuthorizationStatusInvalidBillingPostalAddress;
+
+        case WebCore::PaymentError::Code::ShippingContactInvalid:
+            if (error.contactField && error.contactField == WebCore::PaymentError::ContactField::PostalAddress)
+                return PKPaymentAuthorizationStatusInvalidShippingPostalAddress;
+
+            return PKPaymentAuthorizationStatusInvalidShippingContact;
+        }
+    }
+
+    return PKPaymentAuthorizationStatusFailure;
+}
+#endif
+
 void WebPaymentCoordinatorProxy::platformCompleteShippingContactSelection(const std::optional<WebCore::ShippingContactUpdate>& update)
 {
     ASSERT(m_paymentAuthorizationViewController);
     ASSERT(m_paymentAuthorizationViewControllerDelegate);
-
-    auto status = update ? update->status : WebCore::PaymentAuthorizationStatus::Success;
 
     if (update) {
         m_paymentAuthorizationViewControllerDelegate->_paymentSummaryItems = toPKPaymentSummaryItems(update->newTotalAndLineItems);
@@ -742,13 +768,12 @@ void WebPaymentCoordinatorProxy::platformCompleteShippingContactSelection(const 
     }
 
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    auto pkShippingContactUpdate = adoptNS([allocPKPaymentRequestShippingContactUpdateInstance() initWithStatus:toPKPaymentAuthorizationStatus(status) errors:update ? toNSErrors(update->errors).get() : @[ ] paymentSummaryItems:m_paymentAuthorizationViewControllerDelegate->_paymentSummaryItems.get() shippingMethods:m_paymentAuthorizationViewControllerDelegate->_shippingMethods.get()]);
-#pragma clang diagnostic pop
+    auto pkShippingContactUpdate = adoptNS([allocPKPaymentRequestShippingContactUpdateInstance() initWithErrors:update ? toNSErrors(update->errors).get() : @[ ] paymentSummaryItems:m_paymentAuthorizationViewControllerDelegate->_paymentSummaryItems.get() shippingMethods:m_paymentAuthorizationViewControllerDelegate->_shippingMethods.get()]);
+    if ([pkShippingContactUpdate errors].count)
+        [pkShippingContactUpdate setStatus:PKPaymentAuthorizationStatusFailure];
     m_paymentAuthorizationViewControllerDelegate->_didSelectShippingContactCompletion(pkShippingContactUpdate.get());
 #else
-    m_paymentAuthorizationViewControllerDelegate->_didSelectShippingContactCompletion(toPKPaymentAuthorizationStatus(status), m_paymentAuthorizationViewControllerDelegate->_shippingMethods.get(), m_paymentAuthorizationViewControllerDelegate->_paymentSummaryItems.get());
+    m_paymentAuthorizationViewControllerDelegate->_didSelectShippingContactCompletion(status(update), m_paymentAuthorizationViewControllerDelegate->_shippingMethods.get(), m_paymentAuthorizationViewControllerDelegate->_paymentSummaryItems.get());
 #endif
     m_paymentAuthorizationViewControllerDelegate->_didSelectShippingContactCompletion = nullptr;
 }
