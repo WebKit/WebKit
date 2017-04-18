@@ -1107,24 +1107,45 @@ converter.testUnion = { }
 PASS typeof converter.testUnion is 'string'
 PASS converter.testUnion is '[object Object]'
 PASS converter.testUnion = { toString: function() { throw Error(); } } threw exception Error.
-converter.setTypeConversionsDictionary({ longValue: 1 })
-PASS converter.typeConversionsDictionaryLongValue is 1
-converter.setTypeConversionsDictionary({ stringValue: 'hello' })
-PASS converter.typeConversionsDictionaryStringValue is 'hello'
-converter.setTypeConversionsDictionary({ sequenceValue: ['hi', 'there'] })
-PASS converter.typeConversionsDictionarySequenceValue is ['hi', 'there']
-converter.setTypeConversionsDictionary({ unionValue: document })
-PASS converter.typeConversionsDictionaryUnionType is 'node'
-converter.setTypeConversionsDictionary({ unionValue: ['a', 'sequence'] })
-PASS converter.typeConversionsDictionaryUnionType is 'sequence'
-converter.setTypeConversionsDictionary({ unionValue: { longValue: 1 } })
-PASS converter.typeConversionsDictionaryUnionType is 'dictionary'
-converter.setTypeConversionsDictionary({ unionValue: null })
-PASS converter.typeConversionsDictionaryUnionType is 'dictionary'
-converter.setTypeConversionsDictionary({ unionValue: undefined })
-PASS converter.typeConversionsDictionaryUnionType is 'dictionary'
-converter.setTypeConversionsDictionary({ })
-PASS converter.typeConversionsDictionaryUnionType is 'dictionary'
+converter.testDictionary = { longValue: 1 }
+PASS converter.testDictionary.longValue is 1
+converter.testDictionary = { stringValue: 'hello' }
+PASS converter.testDictionary.stringValue is 'hello'
+converter.testDictionary = { sequenceValue: ['hi', 'there'] }
+PASS converter.testDictionary.sequenceValue is ['hi', 'there']
+converter.testDictionary = { unionValue: document }
+PASS converter.testDictionary.unionValue is an instance of Document
+PASS converter.testDictionary.unionValue is document
+converter.testDictionary = { unionValue: ['a', 'sequence'] }
+PASS converter.testDictionary.unionValue is an instance of Array
+PASS converter.testDictionary.unionValue is ['a', 'sequence']
+converter.testDictionary = { unionValue: { longValue: 1 } }
+PASS converter.testDictionary.unionValue is an instance of Object
+PASS converter.testDictionary.unionValue.longValue is 1
+converter.testDictionary = { unionValue: null }
+PASS converter.testDictionary.unionValue is an instance of Object
+PASS converter.testDictionary.unionValue.longValue is 0
+converter.testDictionary = { unionValue: undefined }
+PASS converter.testDictionary.unionValue is an instance of Object
+PASS converter.testDictionary.unionValue.longValue is 0
+converter.testDictionary = { }
+PASS converter.testDictionary.unionValue is an instance of Object
+PASS converter.testDictionary.unionValue.longValue is 0
+converter.testDictionary = { stringValue: null }
+PASS converter.testDictionary.stringValue is 'null'
+converter.testDictionary = { treatNullAsEmptyStringValue: null }
+PASS converter.testDictionary.treatNullAsEmptyStringValue is ''
+converter.testDictionary = { longValue: 0x7FFFFFFF }
+PASS converter.testDictionary.longValue is 0x7FFFFFFF
+converter.testDictionary = { longValue: 0x80000000 }
+PASS converter.testDictionary.longValue is -0x80000000
+converter.testDictionary = { enforceRangeLongValue: 0x7FFFFFFF }
+PASS converter.testDictionary.enforceRangeLongValue is 0x7FFFFFFF
+PASS converter.testDictionary = { enforceRangeLongValue: 0x80000000 } threw exception TypeError: Value 2147483648 is outside the range [-2147483648, 2147483647].
+converter.testDictionary = { clampLongValue: 0x7FFFFFFF }
+PASS converter.testDictionary.clampLongValue is 0x7FFFFFFF
+converter.testDictionary = { clampLongValue: 0x80000000 }
+PASS converter.testDictionary.clampLongValue is 0x7FFFFFFF
 
 Testing record conversion
 converter.setTestLongRecord({ key: 1, key2: 2 })

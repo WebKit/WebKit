@@ -5359,10 +5359,32 @@ sub GetIDLUnionMemberTypes
     push(@idlUnionMemberTypes, "IDLNull") if $numberOfNullableMembers == 1;
 
     foreach my $memberType (GetFlattenedMemberTypes($idlUnionType)) {
-        push(@idlUnionMemberTypes, GetBaseIDLType($interface, $memberType));
+        push(@idlUnionMemberTypes, GetIDLTypeExcludingNullability($interface, $memberType));
     }
 
     return @idlUnionMemberTypes;
+}
+
+sub IsAnnotatedType
+{
+    my ($type) = @_;
+
+    return 1 if $type->extendedAttributes->{Clamp};
+    return 1 if $type->extendedAttributes->{EnforceRange};
+    return 1 if $type->extendedAttributes->{TreatNullAs} && $type->extendedAttributes->{TreatNullAs} eq "EmptyString";
+    return 1 if $type->extendedAttributes->{AtomicString};
+    return 1 if $type->extendedAttributes->{RequiresExistingAtomicString};
+}
+
+sub GetAnnotatedIDLType
+{
+    my ($type) = @_;
+
+    return "IDLClampAdaptor" if $type->extendedAttributes->{Clamp};
+    return "IDLEnforceRangeAdaptor" if $type->extendedAttributes->{EnforceRange};
+    return "IDLTreatNullAsEmptyAdaptor" if $type->extendedAttributes->{TreatNullAs} && $type->extendedAttributes->{TreatNullAs} eq "EmptyString";
+    return "IDLAtomicStringAdaptor" if $type->extendedAttributes->{AtomicString};
+    return "IDLRequiresExistingAtomicStringAdaptor" if $type->extendedAttributes->{RequiresExistingAtomicString};
 }
 
 sub GetBaseIDLType
@@ -5418,12 +5440,21 @@ sub GetBaseIDLType
     return "IDLInterface<" . $type->name . ">";
 }
 
-sub GetIDLType
+sub GetIDLTypeExcludingNullability
 {
     my ($interface, $type) = @_;
 
     my $baseIDLType = GetBaseIDLType($interface, $type);
-    return "IDLNullable<" . $baseIDLType . ">" if $type->isNullable;
+    $baseIDLType = GetAnnotatedIDLType($type) . "<" . $baseIDLType . ">" if IsAnnotatedType($type);
+    return $baseIDLType;
+}
+
+sub GetIDLType
+{
+    my ($interface, $type) = @_;
+
+    my $baseIDLType = GetIDLTypeExcludingNullability($interface, $type);
+    $baseIDLType = "IDLNullable<" . $baseIDLType . ">" if $type->isNullable;
     return $baseIDLType;
 }
 
@@ -5484,23 +5515,6 @@ sub ShouldPassArgumentByReference
     return 1;
 }
 
-sub GetIntegerConversionConfiguration
-{
-    my $type = shift;
-
-    return "IntegerConversionConfiguration::EnforceRange" if $type->extendedAttributes->{EnforceRange};
-    return "IntegerConversionConfiguration::Clamp" if $type->extendedAttributes->{Clamp};
-    return "IntegerConversionConfiguration::Normal";
-}
-
-sub GetStringConversionConfiguration
-{
-    my $type = shift;
-
-    return "StringConversionConfiguration::TreatNullAsEmptyString" if $type->extendedAttributes->{TreatNullAs} && $type->extendedAttributes->{TreatNullAs} eq "EmptyString";
-    return "StringConversionConfiguration::Normal";
-}
-
 sub JSValueToNativeDOMConvertNeedsThisObject
 {
     my $type = shift;
@@ -5541,11 +5555,6 @@ sub JSValueToNative
 
     AddToImplIncludesForIDLType($type, $conditional);
 
-    if ($type->name eq "DOMString") {
-        return ("AtomicString($value.toString($statePointer)->toExistingAtomicString($statePointer))", 1) if $type->extendedAttributes->{RequiresExistingAtomicString};
-        return ("$value.toString($statePointer)->toAtomicString($statePointer)", 1) if $type->extendedAttributes->{AtomicString};
-    }
-
     # parseEnumeration<> returns a std::optional. For dictionary members we need convert<IDLEnumeration>() which guarantee
     # the enum, or throws a TypeError. Bypass this check for IDLDictionaryMembers.
     if ($codeGenerator->IsEnumType($type) && ref($context) ne "IDLDictionaryMember") {
@@ -5561,8 +5570,6 @@ sub JSValueToNative
     push(@conversionArguments, $value);
     push(@conversionArguments, $thisObjectReference) if JSValueToNativeDOMConvertNeedsThisObject($type);
     push(@conversionArguments, $globalObjectReference) if JSValueToNativeDOMConvertNeedsGlobalObject($type);
-    push(@conversionArguments, GetIntegerConversionConfiguration($type)) if $codeGenerator->IsIntegerType($type);
-    push(@conversionArguments, GetStringConversionConfiguration($type)) if $codeGenerator->IsStringType($type);
     push(@conversionArguments, $exceptionThrower) if $exceptionThrower;
 
     return ("convert<$IDLType>(" . join(", ", @conversionArguments) . ")", 1);
@@ -5585,11 +5592,6 @@ sub UnsafeToNative
 
     # FIXME: Support more types.
 
-    if ($type->name eq "DOMString") {
-        return ("AtomicString($value->toExistingAtomicString($statePointer))", 1) if $type->extendedAttributes->{RequiresExistingAtomicString};
-        return ("$value->toAtomicString($statePointer)", 1) if $type->extendedAttributes->{AtomicString};
-    }
-
     AddToImplIncludes("DOMJITIDLConvert.h");
 
     my $IDLType = GetIDLType($interface, $type);
@@ -5598,13 +5600,6 @@ sub UnsafeToNative
     push(@conversionArguments, "$stateReference");
     push(@conversionArguments, "$value");
 
-    my @conversionStaticArguments = ();
-    push(@conversionStaticArguments, GetIntegerConversionConfiguration($type)) if $codeGenerator->IsIntegerType($type);
-    push(@conversionStaticArguments, GetStringConversionConfiguration($type)) if $codeGenerator->IsStringType($type);
-
-    if (scalar(@conversionStaticArguments) > 0) {
-        return ("DOMJIT::DirectConverter<$IDLType>::directConvert<" . join(", ", @conversionStaticArguments) . ">(" . join(", ", @conversionArguments) . ")", 1);
-    }
     return ("DOMJIT::DirectConverter<$IDLType>::directConvert(" . join(", ", @conversionArguments) . ")", 1);
 }
 

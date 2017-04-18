@@ -236,7 +236,7 @@ static inline bool setJSTestNodeNameFunction(ExecState& state, JSTestNode& thisO
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLDOMString>(state, value, StringConversionConfiguration::Normal);
+    auto nativeValue = convert<IDLDOMString>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
     impl.setName(WTFMove(nativeValue));
     return true;

@@ -208,7 +208,7 @@ static inline bool setJSTestSerializationInheritFinalFinalLongAttributeFooFuncti
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLLong>(state, value, IntegerConversionConfiguration::Normal);
+    auto nativeValue = convert<IDLLong>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
     impl.setFinalLongAttributeFoo(WTFMove(nativeValue));
     return true;
@@ -227,7 +227,7 @@ static inline bool setJSTestSerializationInheritFinalFinalLongAttributeBarFuncti
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLLong>(state, value, IntegerConversionConfiguration::Normal);
+    auto nativeValue = convert<IDLLong>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
     impl.setFinalLongAttributeBar(WTFMove(nativeValue));
     return true;

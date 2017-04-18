@@ -39,6 +39,8 @@ template<> struct IDLArgumentTypeFilter<IDLShort> { static const constexpr JSC::
 template<> struct IDLArgumentTypeFilter<IDLUnsignedShort> { static const constexpr JSC::SpeculatedType value = JSC::SpecInt32Only; };
 template<> struct IDLArgumentTypeFilter<IDLLong> { static const constexpr JSC::SpeculatedType value = JSC::SpecInt32Only; };
 template<> struct IDLArgumentTypeFilter<IDLDOMString> { static const constexpr JSC::SpeculatedType value = JSC::SpecString; };
+template<> struct IDLArgumentTypeFilter<IDLAtomicStringAdaptor<IDLDOMString>> { static const constexpr JSC::SpeculatedType value = JSC::SpecString; };
+template<> struct IDLArgumentTypeFilter<IDLRequiresExistingAtomicStringAdaptor<IDLDOMString>> { static const constexpr JSC::SpeculatedType value = JSC::SpecString; };
 
 template<typename IDLType>
 struct IDLResultTypeFilter {
@@ -62,6 +64,8 @@ template<> struct IDLResultTypeFilter<IDLUnrestrictedDouble> { static const cons
 template<> struct IDLResultTypeFilter<IDLDOMString> { static const constexpr JSC::SpeculatedType value = JSC::SpecString; };
 template<> struct IDLResultTypeFilter<IDLByteString> { static const constexpr JSC::SpeculatedType value = JSC::SpecString; };
 template<> struct IDLResultTypeFilter<IDLUSVString> { static const constexpr JSC::SpeculatedType value = JSC::SpecString; };
+template<> struct IDLResultTypeFilter<IDLAtomicStringAdaptor<IDLDOMString>> { static const constexpr JSC::SpeculatedType value = JSC::SpecString; };
+template<> struct IDLResultTypeFilter<IDLRequiresExistingAtomicStringAdaptor<IDLDOMString>> { static const constexpr JSC::SpeculatedType value = JSC::SpecString; };
 
 template<typename T>
 struct IDLResultTypeFilter<IDLNullable<T>> {

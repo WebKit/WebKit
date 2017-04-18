@@ -93,11 +93,11 @@ template<> EncodedJSValue JSC_HOST_CALL JSTestNamedConstructorNamedConstructor::
     ASSERT(castedThis);
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
-    auto str1 = convert<IDLDOMString>(*state, state->uncheckedArgument(0), StringConversionConfiguration::Normal);
+    auto str1 = convert<IDLDOMString>(*state, state->uncheckedArgument(0));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    auto str2 = state->argument(1).isUndefined() ? ASCIILiteral("defaultString") : convert<IDLDOMString>(*state, state->uncheckedArgument(1), StringConversionConfiguration::Normal);
+    auto str2 = state->argument(1).isUndefined() ? ASCIILiteral("defaultString") : convert<IDLDOMString>(*state, state->uncheckedArgument(1));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    auto str3 = state->argument(2).isUndefined() ? String() : convert<IDLDOMString>(*state, state->uncheckedArgument(2), StringConversionConfiguration::Normal);
+    auto str3 = state->argument(2).isUndefined() ? String() : convert<IDLDOMString>(*state, state->uncheckedArgument(2));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     auto object = TestNamedConstructor::createForJSConstructor(WTFMove(str1), WTFMove(str2), WTFMove(str3));
     return JSValue::encode(toJSNewlyCreated<IDLInterface<TestNamedConstructor>>(*state, *castedThis->globalObject(), throwScope, WTFMove(object)));

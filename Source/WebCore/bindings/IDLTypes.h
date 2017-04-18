@@ -90,23 +90,43 @@ struct IDLUnsignedLong : IDLInteger<uint32_t> { };
 struct IDLLongLong : IDLInteger<int64_t> { };
 struct IDLUnsignedLongLong : IDLInteger<uint64_t> { };
 
+template<typename T> struct IDLClampAdaptor : IDLInteger<typename T::ImplementationType> {
+    using InnerType = T;
+};
+
+template<typename T> struct IDLEnforceRangeAdaptor : IDLInteger<typename T::ImplementationType> {
+    using InnerType = T;
+};
+
 template<typename FloatingPointType> struct IDLFloatingPoint : IDLNumber<FloatingPointType> { };
 struct IDLFloat : IDLFloatingPoint<float> { };
 struct IDLUnrestrictedFloat : IDLFloatingPoint<float> { };
 struct IDLDouble : IDLFloatingPoint<double> { };
 struct IDLUnrestrictedDouble : IDLFloatingPoint<double> { };
 
-struct IDLString : IDLType<String> {
-    using ParameterType = const String&;
+template<typename StringType> struct IDLString : IDLType<StringType> {
+    using ParameterType = const StringType&;
 
-    using NullableType = String;
-    static String nullValue() { return String(); }
-    static bool isNullValue(const String& value) { return value.isNull(); }
+    using NullableType = StringType;
+    static StringType nullValue() { return StringType(); }
+    static bool isNullValue(const StringType& value) { return value.isNull(); }
     template <typename U> static U&& extractValueFromNullable(U&& value) { return std::forward<U>(value); }
 };
-struct IDLDOMString : IDLString { };
-struct IDLByteString : IDLString { };
-struct IDLUSVString : IDLString { };
+struct IDLDOMString : IDLString<String> { };
+struct IDLByteString : IDLString<String> { };
+struct IDLUSVString : IDLString<String> { };
+
+template<typename T> struct IDLTreatNullAsEmptyAdaptor : IDLString<String> {
+    using InnerType = T;
+};
+
+template<typename T> struct IDLAtomicStringAdaptor : IDLString<AtomicString> {
+    using InnerType = T;
+};
+
+template<typename T> struct IDLRequiresExistingAtomicStringAdaptor : IDLString<AtomicString> {
+    using InnerType = T;
+};
 
 struct IDLObject : IDLType<JSC::Strong<JSC::JSObject>> {
     using NullableType = JSC::Strong<JSC::JSObject>;
@@ -233,6 +253,12 @@ struct IsIDLFrozenArray : public std::integral_constant<bool, WTF::IsTemplate<T,
 
 template<typename T>
 struct IsIDLRecord : public std::integral_constant<bool, WTF::IsTemplate<T, IDLRecord>::value> { };
+
+template<typename T>
+struct IsIDLString : public std::integral_constant<bool, WTF::IsBaseOfTemplate<IDLString, T>::value> { };
+
+template<typename T>
+struct IsIDLStringOrEnumeration : public std::integral_constant<bool, WTF::IsBaseOfTemplate<IDLString, T>::value || WTF::IsTemplate<T, IDLEnumeration>::value> { };
 
 template<typename T>
 struct IsIDLNumber : public std::integral_constant<bool, WTF::IsBaseOfTemplate<IDLNumber, T>::value> { };

@@ -171,7 +171,7 @@ void JSEventListener::handleEvent(ScriptExecutionContext* scriptExecutionContext
             reportException(exec, exception);
         } else {
             if (is<BeforeUnloadEvent>(*event))
-                handleBeforeUnloadEventReturnValue(downcast<BeforeUnloadEvent>(*event), convert<IDLNullable<IDLDOMString>>(*exec, retval, StringConversionConfiguration::Normal));
+                handleBeforeUnloadEventReturnValue(downcast<BeforeUnloadEvent>(*event), convert<IDLNullable<IDLDOMString>>(*exec, retval));
 
             if (m_isAttribute) {
                 if (retval.isFalse())

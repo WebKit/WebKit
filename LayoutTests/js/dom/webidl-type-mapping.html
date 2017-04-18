@@ -631,25 +631,50 @@ shouldBe("typeof converter.testUnion", "'string'");
 shouldBe("converter.testUnion", "'[object Object]'");
 shouldThrow("converter.testUnion = { toString: function() { throw Error(); } }");
 
-evalAndLog("converter.setTypeConversionsDictionary({ longValue: 1 })");
-shouldBe("converter.typeConversionsDictionaryLongValue", "1");
-evalAndLog("converter.setTypeConversionsDictionary({ stringValue: 'hello' })");
-shouldBe("converter.typeConversionsDictionaryStringValue", "'hello'");
-evalAndLog("converter.setTypeConversionsDictionary({ sequenceValue: ['hi', 'there'] })");
-shouldBe("converter.typeConversionsDictionarySequenceValue", "['hi', 'there']");
+evalAndLog("converter.testDictionary = { longValue: 1 }");
+shouldBe("converter.testDictionary.longValue", "1");
+evalAndLog("converter.testDictionary = { stringValue: 'hello' }");
+shouldBe("converter.testDictionary.stringValue", "'hello'");
+evalAndLog("converter.testDictionary = { sequenceValue: ['hi', 'there'] }");
+shouldBe("converter.testDictionary.sequenceValue", "['hi', 'there']");
 
-evalAndLog("converter.setTypeConversionsDictionary({ unionValue: document })");
-shouldBe("converter.typeConversionsDictionaryUnionType", "'node'");
-evalAndLog("converter.setTypeConversionsDictionary({ unionValue: ['a', 'sequence'] })");
-shouldBe("converter.typeConversionsDictionaryUnionType", "'sequence'");
-evalAndLog("converter.setTypeConversionsDictionary({ unionValue: { longValue: 1 } })");
-shouldBe("converter.typeConversionsDictionaryUnionType", "'dictionary'");
-evalAndLog("converter.setTypeConversionsDictionary({ unionValue: null })");
-shouldBe("converter.typeConversionsDictionaryUnionType", "'dictionary'");
-evalAndLog("converter.setTypeConversionsDictionary({ unionValue: undefined })");
-shouldBe("converter.typeConversionsDictionaryUnionType", "'dictionary'");
-evalAndLog("converter.setTypeConversionsDictionary({ })");
-shouldBe("converter.typeConversionsDictionaryUnionType", "'dictionary'");
+evalAndLog("converter.testDictionary = { unionValue: document }");
+shouldBeType("converter.testDictionary.unionValue", "Document");
+shouldBe("converter.testDictionary.unionValue", "document");
+evalAndLog("converter.testDictionary = { unionValue: ['a', 'sequence'] }");
+shouldBeType("converter.testDictionary.unionValue", "Array");
+shouldBe("converter.testDictionary.unionValue",  "['a', 'sequence']");
+evalAndLog("converter.testDictionary = { unionValue: { longValue: 1 } }");
+shouldBeType("converter.testDictionary.unionValue", "Object");
+shouldBe("converter.testDictionary.unionValue.longValue", "1");
+evalAndLog("converter.testDictionary = { unionValue: null }");
+shouldBeType("converter.testDictionary.unionValue", "Object");
+shouldBe("converter.testDictionary.unionValue.longValue", "0");
+evalAndLog("converter.testDictionary = { unionValue: undefined }");
+shouldBeType("converter.testDictionary.unionValue", "Object");
+shouldBe("converter.testDictionary.unionValue.longValue", "0");
+evalAndLog("converter.testDictionary = { }");
+shouldBeType("converter.testDictionary.unionValue", "Object");
+shouldBe("converter.testDictionary.unionValue.longValue", "0");
+
+evalAndLog("converter.testDictionary = { stringValue: null }");
+shouldBe("converter.testDictionary.stringValue", "'null'");
+evalAndLog("converter.testDictionary = { treatNullAsEmptyStringValue: null }");
+shouldBe("converter.testDictionary.treatNullAsEmptyStringValue", "''");
+
+evalAndLog("converter.testDictionary = { longValue: 0x7FFFFFFF }");
+shouldBe("converter.testDictionary.longValue", "0x7FFFFFFF");
+evalAndLog("converter.testDictionary = { longValue: 0x80000000 }");
+shouldBe("converter.testDictionary.longValue", "-0x80000000");
+
+evalAndLog("converter.testDictionary = { enforceRangeLongValue: 0x7FFFFFFF }");
+shouldBe("converter.testDictionary.enforceRangeLongValue", "0x7FFFFFFF");
+shouldThrow("converter.testDictionary = { enforceRangeLongValue: 0x80000000 }");
+
+evalAndLog("converter.testDictionary = { clampLongValue: 0x7FFFFFFF }");
+shouldBe("converter.testDictionary.clampLongValue", "0x7FFFFFFF");
+evalAndLog("converter.testDictionary = { clampLongValue: 0x80000000 }");
+shouldBe("converter.testDictionary.clampLongValue", "0x7FFFFFFF");
 
 
 debug("");

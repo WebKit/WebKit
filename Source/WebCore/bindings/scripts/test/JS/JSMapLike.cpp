@@ -220,7 +220,7 @@ static inline JSC::EncodedJSValue jsMapLikePrototypeFunctionGetCaller(JSC::ExecS
     UNUSED_PARAM(throwScope);
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
-    auto key = convert<IDLDOMString>(*state, state->uncheckedArgument(0), StringConversionConfiguration::Normal);
+    auto key = convert<IDLDOMString>(*state, state->uncheckedArgument(0));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     return JSValue::encode(toJS<IDLAny>(forwardGetToMapLike(*state, *castedThis, WTFMove(key))));
 }
@@ -238,7 +238,7 @@ static inline JSC::EncodedJSValue jsMapLikePrototypeFunctionHasCaller(JSC::ExecS
     UNUSED_PARAM(throwScope);
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
-    auto key = convert<IDLDOMString>(*state, state->uncheckedArgument(0), StringConversionConfiguration::Normal);
+    auto key = convert<IDLDOMString>(*state, state->uncheckedArgument(0));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     return JSValue::encode(toJS<IDLAny>(forwardHasToMapLike(*state, *castedThis, WTFMove(key))));
 }
@@ -316,7 +316,7 @@ static inline JSC::EncodedJSValue jsMapLikePrototypeFunctionAddCaller(JSC::ExecS
     UNUSED_PARAM(throwScope);
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
-    auto key = convert<IDLDOMString>(*state, state->uncheckedArgument(0), StringConversionConfiguration::Normal);
+    auto key = convert<IDLDOMString>(*state, state->uncheckedArgument(0));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     return JSValue::encode(toJS<IDLAny>(forwardAddToMapLike(*state, *castedThis, WTFMove(key))));
 }
@@ -349,7 +349,7 @@ static inline JSC::EncodedJSValue jsMapLikePrototypeFunctionDeleteCaller(JSC::Ex
     UNUSED_PARAM(throwScope);
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
-    auto key = convert<IDLDOMString>(*state, state->uncheckedArgument(0), StringConversionConfiguration::Normal);
+    auto key = convert<IDLDOMString>(*state, state->uncheckedArgument(0));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     return JSValue::encode(toJS<IDLAny>(forwardDeleteToMapLike(*state, *castedThis, WTFMove(key))));
 }

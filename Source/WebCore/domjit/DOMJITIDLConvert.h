@@ -36,14 +36,26 @@ struct DirectConverter;
 
 template<>
 struct DirectConverter<IDLDOMString> {
-    template<StringConversionConfiguration>
-    static String directConvert(JSC::ExecState&, JSC::JSString*);
+    static String directConvert(JSC::ExecState& state, JSC::JSString* string)
+    {
+        return string->value(&state);
+    }
 };
 
 template<>
-inline String DirectConverter<IDLDOMString>::directConvert<StringConversionConfiguration::Normal>(JSC::ExecState& state, JSC::JSString* string)
-{
-    return string->value(&state);
-}
+struct DirectConverter<IDLAtomicStringAdaptor<IDLDOMString>> {
+    static String directConvert(JSC::ExecState& state, JSC::JSString* string)
+    {
+        return string->toAtomicString(&state);
+    }
+};
+
+template<>
+struct DirectConverter<IDLRequiresExistingAtomicStringAdaptor<IDLDOMString>> {
+    static String directConvert(JSC::ExecState& state, JSC::JSString* string)
+    {
+        return string->toExistingAtomicString(&state);
+    }
+};
 
 } }

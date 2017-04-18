@@ -86,18 +86,6 @@ template<typename T> struct Converter<IDLNullable<T>> : DefaultConverter<IDLNull
             return T::nullValue();
         return Converter<T>::convert(state, value, globalObject);
     }
-    static ReturnType convert(JSC::ExecState& state, JSC::JSValue value, IntegerConversionConfiguration configuration)
-    {
-        if (value.isUndefinedOrNull())
-            return T::nullValue();
-        return Converter<T>::convert(state, value, configuration);
-    }
-    static ReturnType convert(JSC::ExecState& state, JSC::JSValue value, StringConversionConfiguration configuration)
-    {
-        if (value.isUndefinedOrNull())
-            return T::nullValue();
-        return Converter<T>::convert(state, value, configuration);
-    }
     template<typename ExceptionThrower = DefaultExceptionThrower>
     static ReturnType convert(JSC::ExecState& state, JSC::JSValue value, ExceptionThrower&& exceptionThrower)
     {

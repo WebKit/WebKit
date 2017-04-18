@@ -53,7 +53,7 @@ JSValue JSHTMLCanvasElement::getContext(ExecState& state)
     if (UNLIKELY(state.argumentCount() < 1))
         return throwException(&state, scope, createNotEnoughArgumentsError(&state));
 
-    auto contextId = convert<IDLDOMString>(state, state.uncheckedArgument(0), StringConversionConfiguration::Normal);
+    auto contextId = convert<IDLDOMString>(state, state.uncheckedArgument(0));
     RETURN_IF_EXCEPTION(scope, JSValue());
 
     if (HTMLCanvasElement::is2dType(contextId))

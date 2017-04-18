@@ -81,8 +81,7 @@ template<typename... T> struct Converter<IDLUnion<T...>> : DefaultConverter<IDLU
     static_assert(numberOfNumericTypes == 0 || numberOfNumericTypes == 1, "There can be 0 or 1 numeric types in an IDLUnion.");
     using NumericType = ConditionalFront<NumericTypeList, numberOfNumericTypes != 0>;
 
-    // FIXME: This should also check for IDLEnumeration<T>.
-    using StringTypeList = brigand::filter<TypeList, std::is_base_of<IDLString, brigand::_1>>;
+    using StringTypeList = brigand::filter<TypeList, IsIDLStringOrEnumeration<brigand::_1>>;
     static constexpr size_t numberOfStringTypes = brigand::size<StringTypeList>::value;
     static_assert(numberOfStringTypes == 0 || numberOfStringTypes == 1, "There can be 0 or 1 string types in an IDLUnion.");
     using StringType = ConditionalFront<StringTypeList, numberOfStringTypes != 0>;

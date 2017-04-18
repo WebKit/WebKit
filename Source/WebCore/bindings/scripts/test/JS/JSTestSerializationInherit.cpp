@@ -189,7 +189,7 @@ static inline bool setJSTestSerializationInheritInheritLongAttributeFunction(Exe
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLLong>(state, value, IntegerConversionConfiguration::Normal);
+    auto nativeValue = convert<IDLLong>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
     impl.setInheritLongAttribute(WTFMove(nativeValue));
     return true;

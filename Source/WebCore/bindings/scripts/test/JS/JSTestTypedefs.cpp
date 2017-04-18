@@ -140,7 +140,7 @@ template<> EncodedJSValue JSC_HOST_CALL JSTestTypedefsConstructor::construct(Exe
     ASSERT(castedThis);
     if (UNLIKELY(state->argumentCount() < 3))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
-    auto hello = convert<IDLDOMString>(*state, state->uncheckedArgument(0), StringConversionConfiguration::Normal);
+    auto hello = convert<IDLDOMString>(*state, state->uncheckedArgument(0));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     auto testCallbackFunction = convert<IDLCallbackFunction<JSTestCallbackFunction>>(*state, state->uncheckedArgument(1), *castedThis->globalObject(), [](JSC::ExecState& state, JSC::ThrowScope& scope) { throwArgumentMustBeFunctionError(state, scope, 1, "testCallbackFunction", "TestTypedefs", nullptr); });
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
@@ -302,7 +302,7 @@ static inline JSValue jsTestTypedefsAttributeWithClampGetter(ExecState& state, J
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLUnsignedLongLong>(impl.attributeWithClamp());
+    JSValue result = toJS<IDLClampAdaptor<IDLUnsignedLongLong>>(impl.attributeWithClamp());
     return result;
 }
 
@@ -318,7 +318,7 @@ static inline JSValue jsTestTypedefsAttributeWithClampInTypedefGetter(ExecState&
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLLong>(impl.attributeWithClampInTypedef());
+    JSValue result = toJS<IDLClampAdaptor<IDLLong>>(impl.attributeWithClampInTypedef());
     return result;
 }
 
@@ -422,7 +422,7 @@ static inline bool setJSTestTypedefsUnsignedLongLongAttrFunction(ExecState& stat
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLUnsignedLongLong>(state, value, IntegerConversionConfiguration::Normal);
+    auto nativeValue = convert<IDLUnsignedLongLong>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
     impl.setUnsignedLongLongAttr(WTFMove(nativeValue));
     return true;
@@ -460,7 +460,7 @@ static inline bool setJSTestTypedefsAttributeWithClampFunction(ExecState& state,
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLUnsignedLongLong>(state, value, IntegerConversionConfiguration::Clamp);
+    auto nativeValue = convert<IDLClampAdaptor<IDLUnsignedLongLong>>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
     impl.setAttributeWithClamp(WTFMove(nativeValue));
     return true;
@@ -479,7 +479,7 @@ static inline bool setJSTestTypedefsAttributeWithClampInTypedefFunction(ExecStat
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLLong>(state, value, IntegerConversionConfiguration::Clamp);
+    auto nativeValue = convert<IDLClampAdaptor<IDLLong>>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
     impl.setAttributeWithClampInTypedef(WTFMove(nativeValue));
     return true;
@@ -498,7 +498,7 @@ static inline bool setJSTestTypedefsAttrWithGetterExceptionFunction(ExecState& s
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLLong>(state, value, IntegerConversionConfiguration::Normal);
+    auto nativeValue = convert<IDLLong>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
     impl.setAttrWithGetterException(WTFMove(nativeValue));
     return true;
@@ -517,7 +517,7 @@ static inline bool setJSTestTypedefsAttrWithSetterExceptionFunction(ExecState& s
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLLong>(state, value, IntegerConversionConfiguration::Normal);
+    auto nativeValue = convert<IDLLong>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
     propagateException(state, throwScope, impl.setAttrWithSetterException(WTFMove(nativeValue)));
     return true;
@@ -536,7 +536,7 @@ static inline bool setJSTestTypedefsStringAttrWithGetterExceptionFunction(ExecSt
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLDOMString>(state, value, StringConversionConfiguration::Normal);
+    auto nativeValue = convert<IDLDOMString>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
     impl.setStringAttrWithGetterException(WTFMove(nativeValue));
     return true;
@@ -555,7 +555,7 @@ static inline bool setJSTestTypedefsStringAttrWithSetterExceptionFunction(ExecSt
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLDOMString>(state, value, StringConversionConfiguration::Normal);
+    auto nativeValue = convert<IDLDOMString>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
     propagateException(state, throwScope, impl.setStringAttrWithSetterException(WTFMove(nativeValue)));
     return true;
@@ -605,7 +605,7 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionSetShadowCaller
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     auto blur = convert<IDLUnrestrictedFloat>(*state, state->uncheckedArgument(2));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    auto color = state->argument(3).isUndefined() ? String() : convert<IDLDOMString>(*state, state->uncheckedArgument(3), StringConversionConfiguration::Normal);
+    auto color = state->argument(3).isUndefined() ? String() : convert<IDLDOMString>(*state, state->uncheckedArgument(3));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     auto alpha = state->argument(4).isUndefined() ? std::optional<float>() : convert<IDLUnrestrictedFloat>(*state, state->uncheckedArgument(4));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
@@ -746,9 +746,9 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionFuncWithClampCa
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
-    auto arg1 = convert<IDLUnsignedLongLong>(*state, state->uncheckedArgument(0), IntegerConversionConfiguration::Clamp);
+    auto arg1 = convert<IDLClampAdaptor<IDLUnsignedLongLong>>(*state, state->uncheckedArgument(0));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    auto arg2 = state->argument(1).isUndefined() ? std::optional<uint64_t>() : convert<IDLUnsignedLongLong>(*state, state->uncheckedArgument(1), IntegerConversionConfiguration::Clamp);
+    auto arg2 = state->argument(1).isUndefined() ? std::optional<uint64_t>() : convert<IDLClampAdaptor<IDLUnsignedLongLong>>(*state, state->uncheckedArgument(1));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     impl.funcWithClamp(WTFMove(arg1), WTFMove(arg2));
     return JSValue::encode(jsUndefined());
@@ -768,7 +768,7 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionFuncWithClampIn
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
-    auto arg = convert<IDLLong>(*state, state->uncheckedArgument(0), IntegerConversionConfiguration::Clamp);
+    auto arg = convert<IDLClampAdaptor<IDLLong>>(*state, state->uncheckedArgument(0));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     impl.funcWithClampInTypedef(WTFMove(arg));
     return JSValue::encode(jsUndefined());

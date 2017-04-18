@@ -232,9 +232,9 @@ template<> EncodedJSValue JSC_HOST_CALL JSTestInterfaceConstructor::construct(Ex
     auto* context = castedThis->scriptExecutionContext();
     if (UNLIKELY(!context))
         return throwConstructorScriptExecutionContextUnavailableError(*state, throwScope, "TestInterface");
-    auto str1 = convert<IDLDOMString>(*state, state->uncheckedArgument(0), StringConversionConfiguration::Normal);
+    auto str1 = convert<IDLDOMString>(*state, state->uncheckedArgument(0));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    auto str2 = state->argument(1).isUndefined() ? ASCIILiteral("defaultString") : convert<IDLDOMString>(*state, state->uncheckedArgument(1), StringConversionConfiguration::Normal);
+    auto str2 = state->argument(1).isUndefined() ? ASCIILiteral("defaultString") : convert<IDLDOMString>(*state, state->uncheckedArgument(1));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     auto object = TestInterface::create(*context, WTFMove(str1), WTFMove(str2));
     return JSValue::encode(toJSNewlyCreated<IDLInterface<TestInterface>>(*state, *castedThis->globalObject(), throwScope, WTFMove(object)));
@@ -684,7 +684,7 @@ bool setJSTestInterfaceConstructorImplementsStaticAttr(ExecState* statePointer, 
     auto& state = *statePointer;
     UNUSED_PARAM(state);
     auto value = JSValue::decode(encodedValue);
-    auto nativeValue = convert<IDLDOMString>(state, value, StringConversionConfiguration::Normal);
+    auto nativeValue = convert<IDLDOMString>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
     TestInterface::setImplementsStaticAttr(WTFMove(nativeValue));
     return true;
@@ -705,7 +705,7 @@ static inline bool setJSTestInterfaceImplementsStr2Function(ExecState& state, JS
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLDOMString>(state, value, StringConversionConfiguration::Normal);
+    auto nativeValue = convert<IDLDOMString>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
     impl.setImplementsStr2(WTFMove(nativeValue));
     return true;
@@ -759,7 +759,7 @@ bool setJSTestInterfaceConstructorSupplementalStaticAttr(ExecState* statePointer
     auto& state = *statePointer;
     UNUSED_PARAM(state);
     auto value = JSValue::decode(encodedValue);
-    auto nativeValue = convert<IDLDOMString>(state, value, StringConversionConfiguration::Normal);
+    auto nativeValue = convert<IDLDOMString>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
     WebCore::TestSupplemental::setSupplementalStaticAttr(WTFMove(nativeValue));
     return true;
@@ -780,7 +780,7 @@ static inline bool setJSTestInterfaceSupplementalStr2Function(ExecState& state, 
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLDOMString>(state, value, StringConversionConfiguration::Normal);
+    auto nativeValue = convert<IDLDOMString>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
     WebCore::TestSupplemental::setSupplementalStr2(impl, WTFMove(nativeValue));
     return true;
@@ -869,7 +869,7 @@ static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunctionImplementsMeth
     auto* context = jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject())->scriptExecutionContext();
     if (UNLIKELY(!context))
         return JSValue::encode(jsUndefined());
-    auto strArg = convert<IDLDOMString>(*state, state->uncheckedArgument(0), StringConversionConfiguration::Normal);
+    auto strArg = convert<IDLDOMString>(*state, state->uncheckedArgument(0));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     auto objArg = convert<IDLInterface<TestObj>>(*state, state->uncheckedArgument(1), [](JSC::ExecState& state, JSC::ThrowScope& scope) { throwArgumentTypeError(state, scope, 1, "objArg", "TestInterface", "implementsMethod2", "TestObj"); });
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
@@ -944,7 +944,7 @@ static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunctionSupplementalMe
     auto* context = jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject())->scriptExecutionContext();
     if (UNLIKELY(!context))
         return JSValue::encode(jsUndefined());
-    auto strArg = convert<IDLDOMString>(*state, state->uncheckedArgument(0), StringConversionConfiguration::Normal);
+    auto strArg = convert<IDLDOMString>(*state, state->uncheckedArgument(0));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     auto objArg = convert<IDLInterface<TestObj>>(*state, state->uncheckedArgument(1), [](JSC::ExecState& state, JSC::ThrowScope& scope) { throwArgumentTypeError(state, scope, 1, "objArg", "TestInterface", "supplementalMethod2", "TestObj"); });
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());

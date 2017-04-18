@@ -141,9 +141,9 @@ JSValue JSDocument::getCSSCanvasContext(JSC::ExecState& state)
     RETURN_IF_EXCEPTION(scope, JSValue());
     auto name = state.uncheckedArgument(1).toWTFString(&state);
     RETURN_IF_EXCEPTION(scope, JSValue());
-    auto width = convert<IDLLong>(state, state.uncheckedArgument(2), IntegerConversionConfiguration::Normal);
+    auto width = convert<IDLLong>(state, state.uncheckedArgument(2));
     RETURN_IF_EXCEPTION(scope, JSValue());
-    auto height = convert<IDLLong>(state, state.uncheckedArgument(3), IntegerConversionConfiguration::Normal);
+    auto height = convert<IDLLong>(state, state.uncheckedArgument(3));
     RETURN_IF_EXCEPTION(scope, JSValue());
 
     auto* context = wrapped().getCSSCanvasContext(WTFMove(contextId), WTFMove(name), WTFMove(width), WTFMove(height));

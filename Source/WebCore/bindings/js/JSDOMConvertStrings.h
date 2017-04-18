@@ -31,15 +31,6 @@
 
 namespace WebCore {
 
-enum class StringConversionConfiguration { Normal, TreatNullAsEmptyString };
-
-template<typename T> typename Converter<T>::ReturnType convert(JSC::ExecState&, JSC::JSValue, StringConversionConfiguration);
-
-template<typename T> inline typename Converter<T>::ReturnType convert(JSC::ExecState& state, JSC::JSValue value, StringConversionConfiguration configuration)
-{
-    return Converter<T>::convert(state, value, configuration);
-}
-
 WEBCORE_EXPORT String identifierToByteString(JSC::ExecState&, const JSC::Identifier&);
 WEBCORE_EXPORT String valueToByteString(JSC::ExecState&, JSC::JSValue);
 WEBCORE_EXPORT String identifierToUSVString(JSC::ExecState&, const JSC::Identifier&);
@@ -60,10 +51,8 @@ inline AtomicString propertyNameToAtomicString(JSC::PropertyName propertyName)
 // MARK: String types
 
 template<> struct Converter<IDLDOMString> : DefaultConverter<IDLDOMString> {
-    static String convert(JSC::ExecState& state, JSC::JSValue value, StringConversionConfiguration configuration = StringConversionConfiguration::Normal)
+    static String convert(JSC::ExecState& state, JSC::JSValue value)
     {
-        if (configuration == StringConversionConfiguration::TreatNullAsEmptyString && value.isNull())
-            return emptyString();
         return value.toWTFString(&state);
     }
 };
@@ -79,10 +68,8 @@ template<> struct JSConverter<IDLDOMString> {
 };
 
 template<> struct Converter<IDLByteString> : DefaultConverter<IDLByteString> {
-    static String convert(JSC::ExecState& state, JSC::JSValue value, StringConversionConfiguration configuration = StringConversionConfiguration::Normal)
+    static String convert(JSC::ExecState& state, JSC::JSValue value)
     {
-        if (configuration == StringConversionConfiguration::TreatNullAsEmptyString && value.isNull())
-            return emptyString();
         return valueToByteString(state, value);
     }
 };
@@ -98,10 +85,8 @@ template<> struct JSConverter<IDLByteString> {
 };
 
 template<> struct Converter<IDLUSVString> : DefaultConverter<IDLUSVString> {
-    static String convert(JSC::ExecState& state, JSC::JSValue value, StringConversionConfiguration configuration = StringConversionConfiguration::Normal)
+    static String convert(JSC::ExecState& state, JSC::JSValue value)
     {
-        if (configuration == StringConversionConfiguration::TreatNullAsEmptyString && value.isNull())
-            return emptyString();
         return valueToUSVString(state, value);
     }
 };
@@ -115,5 +100,70 @@ template<> struct JSConverter<IDLUSVString> {
         return JSC::jsStringWithCache(&state, value);
     }
 };
+
+// MARK: -
+// MARK: String type adaptors
+
+template<typename T> struct Converter<IDLTreatNullAsEmptyAdaptor<T>> : DefaultConverter<IDLTreatNullAsEmptyAdaptor<T>> {
+    static String convert(JSC::ExecState& state, JSC::JSValue value)
+    {
+        if (value.isNull())
+            return emptyString();
+        return Converter<T>::convert(state, value);
+    }
+};
+
+template<typename T>  struct JSConverter<IDLTreatNullAsEmptyAdaptor<T>> {
+    static constexpr bool needsState = true;
+    static constexpr bool needsGlobalObject = false;
+
+    static JSC::JSValue convert(JSC::ExecState& state, const String& value)
+    {
+        return JSConverter<T>::convert(state, value);
+    }
+};
+
+template<typename T> struct Converter<IDLAtomicStringAdaptor<T>> : DefaultConverter<IDLAtomicStringAdaptor<T>> {
+    static AtomicString convert(JSC::ExecState& state, JSC::JSValue value)
+    {
+        static_assert(std::is_same<T, IDLDOMString>::value, "This adaptor is only supported for IDLDOMString at the moment.");
+
+        return value.toString(&state)->toAtomicString(&state);
+    }
+};
+
+template<typename T>  struct JSConverter<IDLAtomicStringAdaptor<T>> {
+    static constexpr bool needsState = true;
+    static constexpr bool needsGlobalObject = false;
+
+    static JSC::JSValue convert(JSC::ExecState& state, const AtomicString& value)
+    {
+        static_assert(std::is_same<T, IDLDOMString>::value, "This adaptor is only supported for IDLDOMString at the moment.");
+
+        return JSConverter<T>::convert(state, value);
+    }
+};
+
+template<typename T> struct Converter<IDLRequiresExistingAtomicStringAdaptor<T>> : DefaultConverter<IDLRequiresExistingAtomicStringAdaptor<T>> {
+    static AtomicString convert(JSC::ExecState& state, JSC::JSValue value)
+    {
+        static_assert(std::is_same<T, IDLDOMString>::value, "This adaptor is only supported for IDLDOMString at the moment.");
+    
+        return AtomicString(value.toString(&state)->toExistingAtomicString(&state));
+    }
+};
+
+template<typename T>  struct JSConverter<IDLRequiresExistingAtomicStringAdaptor<T>> {
+    static constexpr bool needsState = true;
+    static constexpr bool needsGlobalObject = false;
+
+    static JSC::JSValue convert(JSC::ExecState& state, const AtomicString& value)
+    {
+        static_assert(std::is_same<T, IDLDOMString>::value, "This adaptor is only supported for IDLDOMString at the moment.");
+
+        return JSConverter<T>::convert(state, value);
+    }
+};
+
 
 } // namespace WebCore

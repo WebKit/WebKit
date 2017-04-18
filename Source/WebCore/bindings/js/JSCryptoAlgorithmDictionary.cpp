@@ -162,7 +162,7 @@ static RefPtr<CryptoAlgorithmParametersDeprecated> createAesKeyGenParams(ExecSta
     auto lengthValue = getProperty(state, asObject(value), "length");
     RETURN_IF_EXCEPTION(scope, nullptr);
 
-    result->length = convert<IDLUnsignedShort>(state, lengthValue, IntegerConversionConfiguration::EnforceRange);
+    result->length = convert<IDLEnforceRangeAdaptor<IDLUnsignedShort>>(state, lengthValue);
 
     return WTFMove(result);
 }
@@ -201,7 +201,7 @@ static RefPtr<CryptoAlgorithmParametersDeprecated> createHmacKeyParams(ExecState
     auto lengthValue = getProperty(state, asObject(value), "length");
     RETURN_IF_EXCEPTION(scope, nullptr);
 
-    result->length = convert<IDLUnsignedShort>(state, lengthValue, IntegerConversionConfiguration::Normal);
+    result->length = convert<IDLUnsignedShort>(state, lengthValue);
     RETURN_IF_EXCEPTION(scope, nullptr);
 
     result->hasLength = true;
@@ -225,7 +225,7 @@ static RefPtr<CryptoAlgorithmParametersDeprecated> createRsaKeyGenParams(ExecSta
     RETURN_IF_EXCEPTION(scope, nullptr);
 
     // FIXME: Why no EnforceRange? Filed as <https://www.w3.org/Bugs/Public/show_bug.cgi?id=23779>.
-    result->modulusLength = convert<IDLUnsignedLong>(state, modulusLengthValue, IntegerConversionConfiguration::Normal);
+    result->modulusLength = convert<IDLUnsignedLong>(state, modulusLengthValue);
     RETURN_IF_EXCEPTION(scope, nullptr);
 
     auto publicExponentValue = getProperty(state, asObject(value), "publicExponent");

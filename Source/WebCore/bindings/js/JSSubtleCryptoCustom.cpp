@@ -897,7 +897,7 @@ static void jsSubtleCryptoFunctionDeriveBitsPromise(ExecState& state, Ref<Deferr
     auto baseKey = toCryptoKey(state, state.uncheckedArgument(1));
     RETURN_IF_EXCEPTION(scope, void());
 
-    auto length = convert<IDLUnsignedLong>(state, state.uncheckedArgument(2), IntegerConversionConfiguration::Normal);
+    auto length = convert<IDLUnsignedLong>(state, state.uncheckedArgument(2));
     RETURN_IF_EXCEPTION(scope, void());
 
     if (params->identifier != baseKey->algorithmIdentifier()) {

@@ -68,13 +68,13 @@ template<> TestEventConstructor::Init convertDictionary<TestEventConstructor::In
         result.composed = false;
     JSValue attr2Value = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "attr2"));
     if (!attr2Value.isUndefined()) {
-        result.attr2 = convert<IDLDOMString>(state, attr2Value, StringConversionConfiguration::Normal);
+        result.attr2 = convert<IDLDOMString>(state, attr2Value);
         RETURN_IF_EXCEPTION(throwScope, { });
     } else
         result.attr2 = emptyString();
     JSValue attr3Value = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "attr3"));
     if (!attr3Value.isUndefined()) {
-        result.attr3 = convert<IDLDOMString>(state, attr3Value, StringConversionConfiguration::Normal);
+        result.attr3 = convert<IDLDOMString>(state, attr3Value);
         RETURN_IF_EXCEPTION(throwScope, { });
     } else
         result.attr3 = emptyString();
@@ -127,7 +127,7 @@ template<> EncodedJSValue JSC_HOST_CALL JSTestEventConstructorConstructor::const
     ASSERT(castedThis);
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
-    auto type = convert<IDLDOMString>(*state, state->uncheckedArgument(0), StringConversionConfiguration::Normal);
+    auto type = convert<IDLDOMString>(*state, state->uncheckedArgument(0));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     auto eventInitDict = convert<IDLDictionary<TestEventConstructor::Init>>(*state, state->argument(1));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());

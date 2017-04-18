@@ -239,7 +239,7 @@ static inline bool setJSTestCEReactionsAttributeWithCEReactionsFunction(ExecStat
     UNUSED_PARAM(throwScope);
     CustomElementReactionStack customElementReactionStack;
     auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLDOMString>(state, value, StringConversionConfiguration::Normal);
+    auto nativeValue = convert<IDLDOMString>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
     impl.setAttributeWithCEReactions(WTFMove(nativeValue));
     return true;
@@ -259,7 +259,7 @@ static inline bool setJSTestCEReactionsReflectAttributeWithCEReactionsFunction(E
     UNUSED_PARAM(throwScope);
     CustomElementReactionStack customElementReactionStack;
     auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLDOMString>(state, value, StringConversionConfiguration::Normal);
+    auto nativeValue = convert<IDLDOMString>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
     impl.setAttributeWithoutSynchronization(WebCore::HTMLNames::reflectattributewithcereactionsAttr, WTFMove(nativeValue));
     return true;
@@ -280,7 +280,7 @@ static inline bool setJSTestCEReactionsStringifierAttributeFunction(ExecState& s
     CustomElementReactionStack customElementReactionStack;
     Ref<TestCEReactionsStringifier> forwardedImpl = thisObject.wrapped().stringifierAttribute();
     auto& impl = forwardedImpl.get();
-    auto nativeValue = convert<IDLDOMString>(state, value, StringConversionConfiguration::Normal);
+    auto nativeValue = convert<IDLDOMString>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
     impl.setValue(WTFMove(nativeValue));
     return true;

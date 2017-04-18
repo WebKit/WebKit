@@ -221,7 +221,7 @@ static inline JSC::EncodedJSValue jsTestOverrideBuiltinsPrototypeFunctionNamedIt
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
-    auto name = convert<IDLDOMString>(*state, state->uncheckedArgument(0), StringConversionConfiguration::Normal);
+    auto name = convert<IDLDOMString>(*state, state->uncheckedArgument(0));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     return JSValue::encode(toJS<IDLInterface<Node>>(*state, *castedThis->globalObject(), impl.namedItem(WTFMove(name))));
 }

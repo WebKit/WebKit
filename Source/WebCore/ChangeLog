@@ -1,3 +1,142 @@
+2017-04-17  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Make annotated types first class allowing them to be used in sequences and unions
+        https://bugs.webkit.org/show_bug.cgi?id=170926
+
+        Reviewed by Chris Dumez.
+
+        - Adds IDL types for WebIDL annotated types:
+            [Clamp] T -> IDLClampAdaptor<T>
+            [EnforceRange] T -> IDLEnforceRangeAdaptor<T>
+            [TreatNullAs=EmptyString] T -> IDLTreatNullAsEmptyAdaptor<T>
+        - Adds additional adaptors for existing specializations
+            [AtomicString] T -> IDLAtomicStringAdaptor<T>
+            [RequiresExistingAtomicString] T -> IDLRequiresExistingAtomicStringAdaptor<T>
+        - Removes the need for IntegerConversionConfiguration and StringConversionConfiguration
+          overloads of convert().
+        - Allows the use of annotated types as subtypes, such as in sequences and unions.
+
+        * bindings/IDLTypes.h:
+        Add new types:
+            - IDLClampAdaptor
+            - IDLEnforceRangeAdaptor
+            - IDLTreatNullAsEmptyAdaptor
+            - IDLAtomicStringAdaptor
+            - IDLRequiresExistingAtomicStringAdaptor
+        Add new predicates for matching strings and strings/enumerations.
+
+        * bindings/js/JSDOMConvertNullable.h:
+        Remove now unnecessary overloads of convert that took IntegerConversionConfiguration
+        and StringConversionConfiguration.
+
+        * bindings/js/JSDOMConvertNumbers.cpp:
+        * bindings/js/JSDOMConvertNumbers.h:
+        Replace individually named conversion functions with explicit template specializations
+        based on type.
+        (WebCore::Converter<IDLByte>::convert):
+        (WebCore::Converter<IDLOctet>::convert):
+        (WebCore::Converter<IDLShort>::convert):
+        (WebCore::Converter<IDLUnsignedShort>::convert):
+        (WebCore::Converter<IDLLong>::convert):
+        (WebCore::Converter<IDLUnsignedLong>::convert):
+        (WebCore::Converter<IDLLongLong>::convert):
+        (WebCore::Converter<IDLUnsignedLongLong>::convert):
+        Simplify convert functions for normal integer converters to only handle
+        the normal case. 
+
+        (WebCore::Converter<IDLClampAdaptor<T>>::convert):
+        (WebCore::JSConverter<IDLClampAdaptor<T>>::convert):
+        (WebCore::Converter<IDLEnforceRangeAdaptor<T>>::convert):
+        (WebCore::JSConverter<IDLEnforceRangeAdaptor<T>>::convert):
+        Add converters for the new annotated types that call into the new
+        template specialized conversion functions.
+
+        * bindings/js/JSDOMConvertStrings.h:
+        (WebCore::Converter<IDLDOMString>::convert):
+        (WebCore::Converter<IDLByteString>::convert):
+        (WebCore::Converter<IDLUSVString>::convert):
+        Remove no longer needed StringConversionConfiguration parameter.
+
+        (WebCore::Converter<IDLTreatNullAsEmptyAdaptor<T>>::convert):
+        (WebCore::JSConverter<IDLTreatNullAsEmptyAdaptor<T>>::convert):
+        (WebCore::Converter<IDLAtomicStringAdaptor<T>>::convert):
+        (WebCore::JSConverter<IDLAtomicStringAdaptor<T>>::convert):
+        (WebCore::Converter<IDLRequiresExistingAtomicStringAdaptor<T>>::convert):
+        (WebCore::JSConverter<IDLRequiresExistingAtomicStringAdaptor<T>>::convert):
+        Add converters for new annotated types. Statically assert that the atomic string
+        adaptors only work for DOMString at present.
+
+        * bindings/js/JSDOMConvertUnion.h:
+        Update union code to fix a long standing FIXME, treating enumerations as strings
+        for the purposes of the union algorithm, and using the new predicate that works
+        with the slightly more complicated IDLString type (e.g. it can now either be a String
+        or an AtomicString).
+
+        * bindings/js/JSCSSStyleDeclarationCustom.cpp:
+        * bindings/js/JSCryptoAlgorithmDictionary.cpp:
+        * bindings/js/JSDocumentCustom.cpp:
+        * bindings/js/JSEventListener.cpp:
+        * bindings/js/JSHTMLCanvasElementCustom.cpp:
+        * bindings/js/JSMockContentFilterSettingsCustom.cpp:
+        * bindings/js/JSNodeFilterCustom.cpp:
+        * bindings/js/JSSubtleCryptoCustom.cpp:
+        Remove explicit passing of Normal for the conversion configuration
+        and use new adaptors where appropriate.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (IsAnnotatedType):
+        (GetAnnotatedIDLType):
+        (GetIDLType):
+        (JSValueToNative):
+        (UnsafeToNative):
+        (GetIntegerConversionConfiguration): Deleted.
+        (GetStringConversionConfiguration): Deleted.
+        Replace passing conversion configuration and specializing for atomic string
+        with annotated types.
+
+        * bindings/scripts/IDLParser.pm:
+        (parseUnionMemberType):
+        Fix parser error where we weren't parsing extended attributes for a union correctly.
+
+        * bindings/scripts/test/JS/JSMapLike.cpp:
+        * bindings/scripts/test/JS/JSReadOnlyMapLike.cpp:
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.cpp:
+        * bindings/scripts/test/JS/JSTestCEReactions.cpp:
+        * bindings/scripts/test/JS/JSTestCEReactionsStringifier.cpp:
+        * bindings/scripts/test/JS/JSTestCustomNamedGetter.cpp:
+        * bindings/scripts/test/JS/JSTestDOMJIT.cpp:
+        * bindings/scripts/test/JS/JSTestEventConstructor.cpp:
+        * bindings/scripts/test/JS/JSTestEventTarget.cpp:
+        * bindings/scripts/test/JS/JSTestGlobalObject.cpp:
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        * bindings/scripts/test/JS/JSTestNamedConstructor.cpp:
+        * bindings/scripts/test/JS/JSTestNode.cpp:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.cpp:
+        * bindings/scripts/test/JS/JSTestOverloadedConstructorsWithSequence.cpp:
+        * bindings/scripts/test/JS/JSTestOverrideBuiltins.cpp:
+        * bindings/scripts/test/JS/JSTestSerialization.cpp:
+        * bindings/scripts/test/JS/JSTestSerializationInherit.cpp:
+        * bindings/scripts/test/JS/JSTestSerializationInheritFinal.cpp:
+        * bindings/scripts/test/JS/JSTestStandaloneDictionary.cpp:
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        Update tests for changes to integer and string conversion.
+
+        * domjit/DOMJITIDLConvert.h:
+        * domjit/DOMJITIDLType.h:
+        * domjit/DOMJITIDLTypeFilter.h:
+        Add specializations for AtomicString related adaptors.
+
+        * testing/TypeConversions.h:
+        * testing/TypeConversions.idl:
+        - Re-arrange integer attributes to be in size order, and add [Clamp] variants. 
+        - Replace function taking a dictionary + attributes to inspect it
+          with a dictionary attribute. This has been supported for a while
+          and makes the test much clearer (this includes the enum used for
+          inspecting the union in the dictionary).
+        - Add additional test unions that exercise annotated types as subtypes.
+        - Add additional dictionary items that exercise annotated types as subtypes.
+
 2017-04-18  Antti Koivisto  <antti@apple.com>
 
         Enable optimized layer flushes on iOS

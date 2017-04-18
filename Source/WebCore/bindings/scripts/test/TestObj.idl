@@ -84,6 +84,8 @@ enum TestConfidence { "high", "kinda-low" };
     attribute record<DOMString, TestObj?> stringNullableObjRecordAttr;
     attribute TestDictionary dictionaryAttr;
     attribute TestDictionary? nullableDictionaryAttr;
+    attribute (DOMString or [Clamp] long) annotatedTypeInUnionAttr;
+    attribute sequence<[Clamp] long> annotatedTypeInSequenceAttr;
 
     attribute TestEnumTypeWithAlternateImplementationName implementationEnumAttr;
 
@@ -478,6 +480,8 @@ typedef any AnyTypedef;
     (long or Node) unionMember;
     (long or Node)? nullableUnionMember = null;
     BufferSource bufferSourceValue;
+    (DOMString or [Clamp] long) annotatedTypeInUnionMember;
+    sequence<[Clamp] long> annotatedTypeInSequenceMember;
 };
 
 dictionary TestDictionaryThatShouldNotTolerateNull {

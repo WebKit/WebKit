@@ -32,6 +32,8 @@ using namespace JSC;
 
 namespace WebCore {
 
+enum class IntegerConversionConfiguration { Normal, EnforceRange, Clamp };
+
 static const int32_t kMaxInt32 = 0x7fffffff;
 static const int32_t kMinInt32 = -kMaxInt32 - 1;
 static const uint32_t kMaxUInt32 = 0xffffffffU;
@@ -58,6 +60,8 @@ static double enforceRange(ExecState& state, double x, double minimum, double ma
     }
     return x;
 }
+
+namespace {
 
 template <typename T>
 struct IntTypeLimits {
@@ -89,8 +93,10 @@ struct IntTypeLimits<uint16_t> {
     static const unsigned numberOfValues = 65536; // 2^16
 };
 
-template <typename T>
-static inline T toSmallerInt(ExecState& state, JSValue value, IntegerConversionConfiguration configuration)
+}
+
+template <typename T, IntegerConversionConfiguration configuration>
+static inline T toSmallerInt(ExecState& state, JSValue value)
 {
     VM& vm = state.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -137,8 +143,8 @@ static inline T toSmallerInt(ExecState& state, JSValue value, IntegerConversionC
     return static_cast<T>(x > LimitsTrait::maxValue ? x - LimitsTrait::numberOfValues : x);
 }
 
-template <typename T>
-static inline T toSmallerUInt(ExecState& state, JSValue value, IntegerConversionConfiguration configuration)
+template <typename T, IntegerConversionConfiguration configuration>
+static inline T toSmallerUInt(ExecState& state, JSValue value)
 {
     VM& vm = state.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -181,85 +187,93 @@ static inline T toSmallerUInt(ExecState& state, JSValue value, IntegerConversion
     return static_cast<T>(fmod(x, LimitsTrait::numberOfValues));
 }
 
-int8_t toInt8EnforceRange(JSC::ExecState& state, JSValue value)
+template<> int8_t convertToIntegerEnforceRange<int8_t>(JSC::ExecState& state, JSC::JSValue value)
 {
-    return toSmallerInt<int8_t>(state, value, IntegerConversionConfiguration::EnforceRange);
+    return toSmallerInt<int8_t, IntegerConversionConfiguration::EnforceRange>(state, value);
 }
 
-uint8_t toUInt8EnforceRange(JSC::ExecState& state, JSValue value)
+template<> uint8_t convertToIntegerEnforceRange<uint8_t>(JSC::ExecState& state, JSC::JSValue value)
 {
-    return toSmallerUInt<uint8_t>(state, value, IntegerConversionConfiguration::EnforceRange);
+    return toSmallerUInt<uint8_t, IntegerConversionConfiguration::EnforceRange>(state, value);
 }
 
-int8_t toInt8Clamp(JSC::ExecState& state, JSValue value)
+template<> int8_t convertToIntegerClamp<int8_t>(JSC::ExecState& state, JSC::JSValue value)
 {
-    return toSmallerInt<int8_t>(state, value, IntegerConversionConfiguration::Clamp);
+    return toSmallerInt<int8_t, IntegerConversionConfiguration::Clamp>(state, value);
 }
 
-uint8_t toUInt8Clamp(JSC::ExecState& state, JSValue value)
+template<> uint8_t convertToIntegerClamp<uint8_t>(JSC::ExecState& state, JSC::JSValue value)
 {
-    return toSmallerUInt<uint8_t>(state, value, IntegerConversionConfiguration::Clamp);
+    return toSmallerUInt<uint8_t, IntegerConversionConfiguration::Clamp>(state, value);
 }
 
-// http://www.w3.org/TR/WebIDL/#es-byte
-int8_t toInt8(ExecState& state, JSValue value)
+template<> int8_t convertToInteger<int8_t>(JSC::ExecState& state, JSC::JSValue value)
 {
-    return toSmallerInt<int8_t>(state, value, IntegerConversionConfiguration::Normal);
+    return toSmallerInt<int8_t, IntegerConversionConfiguration::Normal>(state, value);
 }
 
-// http://www.w3.org/TR/WebIDL/#es-octet
-uint8_t toUInt8(ExecState& state, JSValue value)
+template<> uint8_t convertToInteger<uint8_t>(JSC::ExecState& state, JSC::JSValue value)
 {
-    return toSmallerUInt<uint8_t>(state, value, IntegerConversionConfiguration::Normal);
+    return toSmallerUInt<uint8_t, IntegerConversionConfiguration::Normal>(state, value);
 }
 
-int16_t toInt16EnforceRange(ExecState& state, JSValue value)
+template<> int16_t convertToIntegerEnforceRange<int16_t>(JSC::ExecState& state, JSC::JSValue value)
 {
-    return toSmallerInt<int16_t>(state, value, IntegerConversionConfiguration::EnforceRange);
+    return toSmallerInt<int16_t, IntegerConversionConfiguration::EnforceRange>(state, value);
 }
 
-uint16_t toUInt16EnforceRange(ExecState& state, JSValue value)
+template<> uint16_t convertToIntegerEnforceRange<uint16_t>(JSC::ExecState& state, JSC::JSValue value)
 {
-    return toSmallerUInt<uint16_t>(state, value, IntegerConversionConfiguration::EnforceRange);
+    return toSmallerUInt<uint16_t, IntegerConversionConfiguration::EnforceRange>(state, value);
 }
 
-int16_t toInt16Clamp(ExecState& state, JSValue value)
+template<> int16_t convertToIntegerClamp<int16_t>(JSC::ExecState& state, JSC::JSValue value)
 {
-    return toSmallerInt<int16_t>(state, value, IntegerConversionConfiguration::Clamp);
+    return toSmallerInt<int16_t, IntegerConversionConfiguration::Clamp>(state, value);
 }
 
-uint16_t toUInt16Clamp(ExecState& state, JSValue value)
+template<> uint16_t convertToIntegerClamp<uint16_t>(JSC::ExecState& state, JSC::JSValue value)
 {
-    return toSmallerUInt<uint16_t>(state, value, IntegerConversionConfiguration::Clamp);
+    return toSmallerUInt<uint16_t, IntegerConversionConfiguration::Clamp>(state, value);
 }
 
-// http://www.w3.org/TR/WebIDL/#es-short
-int16_t toInt16(ExecState& state, JSValue value)
+template<> int16_t convertToInteger<int16_t>(JSC::ExecState& state, JSC::JSValue value)
 {
-    return toSmallerInt<int16_t>(state, value, IntegerConversionConfiguration::Normal);
+    return toSmallerInt<int16_t, IntegerConversionConfiguration::Normal>(state, value);
 }
 
-// http://www.w3.org/TR/WebIDL/#es-unsigned-short
-uint16_t toUInt16(ExecState& state, JSValue value)
+template<> uint16_t convertToInteger<uint16_t>(JSC::ExecState& state, JSC::JSValue value)
 {
-    return toSmallerUInt<uint16_t>(state, value, IntegerConversionConfiguration::Normal);
+    return toSmallerUInt<uint16_t, IntegerConversionConfiguration::Normal>(state, value);
 }
 
-// http://www.w3.org/TR/WebIDL/#es-long
-int32_t toInt32EnforceRange(ExecState& state, JSValue value)
+template<> int32_t convertToIntegerEnforceRange<int32_t>(JSC::ExecState& state, JSC::JSValue value)
 {
-    VM& vm = state.vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
     if (value.isInt32())
         return value.asInt32();
+
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
 
     double x = value.toNumber(&state);
     RETURN_IF_EXCEPTION(scope, 0);
     return enforceRange(state, x, kMinInt32, kMaxInt32);
 }
 
-int32_t toInt32Clamp(ExecState& state, JSValue value)
+template<> uint32_t convertToIntegerEnforceRange<uint32_t>(JSC::ExecState& state, JSC::JSValue value)
+{
+    if (value.isUInt32())
+        return value.asUInt32();
+
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    double x = value.toNumber(&state);
+    RETURN_IF_EXCEPTION(scope, 0);
+    return enforceRange(state, x, 0, kMaxUInt32);
+}
+
+template<> int32_t convertToIntegerClamp<int32_t>(JSC::ExecState& state, JSC::JSValue value)
 {
     if (value.isInt32())
         return value.asInt32();
@@ -268,7 +282,7 @@ int32_t toInt32Clamp(ExecState& state, JSValue value)
     return std::isnan(x) ? 0 : clampTo<int32_t>(x);
 }
 
-uint32_t toUInt32Clamp(ExecState& state, JSValue value)
+template<> uint32_t convertToIntegerClamp<uint32_t>(JSC::ExecState& state, JSC::JSValue value)
 {
     if (value.isUInt32())
         return value.asUInt32();
@@ -277,22 +291,21 @@ uint32_t toUInt32Clamp(ExecState& state, JSValue value)
     return std::isnan(x) ? 0 : clampTo<uint32_t>(x);
 }
 
-// http://www.w3.org/TR/WebIDL/#es-unsigned-long
-uint32_t toUInt32EnforceRange(ExecState& state, JSValue value)
+template<> int32_t convertToInteger<int32_t>(JSC::ExecState& state, JSC::JSValue value)
 {
-    VM& vm = state.vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    if (value.isUInt32())
-        return value.asUInt32();
-
-    double x = value.toNumber(&state);
-    RETURN_IF_EXCEPTION(scope, 0);
-    return enforceRange(state, x, 0, kMaxUInt32);
+    return value.toInt32(&state);
 }
 
-int64_t toInt64EnforceRange(ExecState& state, JSC::JSValue value)
+template<> uint32_t convertToInteger<uint32_t>(JSC::ExecState& state, JSC::JSValue value)
 {
+    return value.toUInt32(&state);
+}
+
+template<> int64_t convertToIntegerEnforceRange<int64_t>(JSC::ExecState& state, JSC::JSValue value)
+{
+    if (value.isInt32())
+        return value.asInt32();
+
     VM& vm = state.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
@@ -301,8 +314,11 @@ int64_t toInt64EnforceRange(ExecState& state, JSC::JSValue value)
     return enforceRange(state, x, -kJSMaxInteger, kJSMaxInteger);
 }
 
-uint64_t toUInt64EnforceRange(ExecState& state, JSC::JSValue value)
+template<> uint64_t convertToIntegerEnforceRange<uint64_t>(JSC::ExecState& state, JSC::JSValue value)
 {
+    if (value.isUInt32())
+        return value.asUInt32();
+
     VM& vm = state.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
@@ -311,21 +327,29 @@ uint64_t toUInt64EnforceRange(ExecState& state, JSC::JSValue value)
     return enforceRange(state, x, 0, kJSMaxInteger);
 }
 
-int64_t toInt64Clamp(ExecState& state, JSC::JSValue value)
+template<> int64_t convertToIntegerClamp<int64_t>(JSC::ExecState& state, JSC::JSValue value)
 {
+    if (value.isInt32())
+        return value.asInt32();
+
     double x = value.toNumber(&state);
     return std::isnan(x) ? 0 : static_cast<int64_t>(std::min<double>(std::max<double>(x, -kJSMaxInteger), kJSMaxInteger));
 }
 
-uint64_t toUInt64Clamp(ExecState& state, JSC::JSValue value)
+template<> uint64_t convertToIntegerClamp<uint64_t>(JSC::ExecState& state, JSC::JSValue value)
 {
+    if (value.isUInt32())
+        return value.asUInt32();
+
     double x = value.toNumber(&state);
     return std::isnan(x) ? 0 : static_cast<uint64_t>(std::min<double>(std::max<double>(x, 0), kJSMaxInteger));
 }
 
-// http://www.w3.org/TR/WebIDL/#es-long-long
-int64_t toInt64(ExecState& state, JSValue value)
+template<> int64_t convertToInteger<int64_t>(JSC::ExecState& state, JSC::JSValue value)
 {
+    if (value.isInt32())
+        return value.asInt32();
+
     double x = value.toNumber(&state);
 
     // Map NaNs and +/-Infinity to 0; convert finite values modulo 2^64.
@@ -334,9 +358,11 @@ int64_t toInt64(ExecState& state, JSValue value)
     return n;
 }
 
-// http://www.w3.org/TR/WebIDL/#es-unsigned-long-long
-uint64_t toUInt64(ExecState& state, JSValue value)
+template<> uint64_t convertToInteger<uint64_t>(JSC::ExecState& state, JSC::JSValue value)
 {
+    if (value.isUInt32())
+        return value.asUInt32();
+
     double x = value.toNumber(&state);
 
     // Map NaNs and +/-Infinity to 0; convert finite values modulo 2^64.

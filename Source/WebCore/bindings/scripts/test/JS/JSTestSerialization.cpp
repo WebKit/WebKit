@@ -293,7 +293,7 @@ static inline bool setJSTestSerializationFirstStringAttributeFunction(ExecState&
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLDOMString>(state, value, StringConversionConfiguration::Normal);
+    auto nativeValue = convert<IDLDOMString>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
     impl.setFirstStringAttribute(WTFMove(nativeValue));
     return true;
@@ -312,7 +312,7 @@ static inline bool setJSTestSerializationSecondLongAttributeFunction(ExecState& 
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLLong>(state, value, IntegerConversionConfiguration::Normal);
+    auto nativeValue = convert<IDLLong>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
     impl.setSecondLongAttribute(WTFMove(nativeValue));
     return true;
@@ -369,7 +369,7 @@ static inline bool setJSTestSerializationFifthLongAttributeFunction(ExecState& s
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLLong>(state, value, IntegerConversionConfiguration::Normal);
+    auto nativeValue = convert<IDLLong>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
     impl.setFifthLongAttribute(WTFMove(nativeValue));
     return true;

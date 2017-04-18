@@ -2348,16 +2348,18 @@ sub parseUnionType
 sub parseUnionMemberType
 {
     my $self = shift;
+
+    my $extendedAttributeList = $self->parseExtendedAttributeListAllowEmpty();
+    $self->assertExtendedAttributesValidForContext($extendedAttributeList, "type");
+
     my $next = $self->nextToken();
 
     if ($next->value() eq "(") {
         my $unionType = $self->parseUnionType();
         $unionType->isNullable($self->parseNull());
+        $unionType->extendedAttributes($extendedAttributeList);
         return $unionType;
     }
-
-    my $extendedAttributeList = $self->parseExtendedAttributeListAllowEmpty();
-    $self->assertExtendedAttributesValidForContext($extendedAttributeList, "type");
 
     if ($next->type() == IdentifierToken || $next->value() =~ /$nextSingleType_1/) {
         my $nonAnyType = $self->parseNonAnyType();

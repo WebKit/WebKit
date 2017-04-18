@@ -1,3 +1,15 @@
+2017-04-17  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Make annotated types first class allowing them to be used in sequences and unions
+        https://bugs.webkit.org/show_bug.cgi?id=170926
+
+        Reviewed by Chris Dumez.
+
+        * js/dom/webidl-type-mapping-expected.txt:
+        * js/dom/webidl-type-mapping.html:
+        Update test to account for testDictionary now being an attribute,
+        and test that the annotated type members behave correctly.
+
 2017-04-18  Oleksandr Skachkov  <gskachkov@gmail.com>
 
         [ES6]. Implement Annex B.3.3 function hoisting rules for eval

@@ -215,7 +215,7 @@ static inline JSC::EncodedJSValue jsTestCustomNamedGetterPrototypeFunctionAnothe
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
-    auto str = convert<IDLDOMString>(*state, state->uncheckedArgument(0), StringConversionConfiguration::Normal);
+    auto str = convert<IDLDOMString>(*state, state->uncheckedArgument(0));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     impl.anotherFunction(WTFMove(str));
     return JSValue::encode(jsUndefined());
