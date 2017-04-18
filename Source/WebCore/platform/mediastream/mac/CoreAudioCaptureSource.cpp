@@ -91,7 +91,7 @@ CoreAudioCaptureSource::CoreAudioCaptureSource(const CaptureDevice& deviceInfo)
 #endif
 
     setPersistentID(deviceInfo.persistentId());
-    setMuted(true);
+    m_muted = true;
 
     m_currentSettings.setVolume(1.0);
     m_currentSettings.setSampleRate(preferredSampleRate());
@@ -328,6 +328,26 @@ OSStatus CoreAudioCaptureSource::microphoneCallback(void *inRefCon, AudioUnitRen
     return dataSource->processMicrophoneSamples(*ioActionFlags, *inTimeStamp, inBusNumber, inNumberFrames, ioData);
 }
 
+void CoreAudioCaptureSource::cleanupAudioUnits()
+{
+    if (m_ioUnitInitialized) {
+        ASSERT(m_ioUnit);
+        auto err = AudioUnitUninitialize(m_ioUnit);
+        if (err)
+            LOG(Media, "CoreAudioCaptureSource::cleanupAudioUnits(%p) AudioUnitUninitialize failed with error %d (%.4s)", this, (int)err, (char*)&err);
+        m_ioUnitInitialized = false;
+    }
+
+    if (m_ioUnit) {
+        AudioComponentInstanceDispose(m_ioUnit);
+        m_ioUnit = nullptr;
+    }
+
+    m_ioUnitName = emptyString();
+    m_microphoneSampleBuffer = nullptr;
+    m_speakerSampleBuffer = nullptr;
+}
+
 OSStatus CoreAudioCaptureSource::defaultInputDevice(uint32_t* deviceID)
 {
     ASSERT(m_ioUnit);
@@ -426,8 +446,12 @@ void CoreAudioCaptureSource::startProducingData()
         OSStatus err;
         if (!m_ioUnit) {
             err = setupAudioUnits();
-            if (err)
+            if (err) {
+                cleanupAudioUnits();
+                ASSERT(!m_ioUnit);
                 return;
+            }
+            ASSERT(m_ioUnit);
         }
 
         err = AudioOutputUnitStart(m_ioUnit);
@@ -445,14 +469,15 @@ void CoreAudioCaptureSource::stopProducingData()
 {
     std::lock_guard<Lock> lock(m_internalStateLock);
 
-    if (m_ioUnit) {
-        auto err = AudioOutputUnitStop(m_ioUnit);
-        if (err) {
-            LOG(Media, "CoreAudioCaptureSource::stop(%p) AudioOutputUnitStop failed with error %d (%.4s)", this, (int)err, (char*)&err);
-            return;
-        }
-        m_ioUnitStarted = false;
+    if (!m_ioUnit)
+        return;
+
+    auto err = AudioOutputUnitStop(m_ioUnit);
+    if (err) {
+        LOG(Media, "CoreAudioCaptureSource::stop(%p) AudioOutputUnitStop failed with error %d (%.4s)", this, (int)err, (char*)&err);
+        return;
     }
+    m_ioUnitStarted = false;
     setMuted(true);
 }
 

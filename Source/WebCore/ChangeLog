@@ -1,3 +1,17 @@
+2017-04-18  Jeremy Jones  <jeremyj@apple.com>
+
+        Deadlock in CoreAudioCaptureSource
+        https://bugs.webkit.org/show_bug.cgi?id=170771
+        rdar://problem/31578919
+
+        Reviewed by Eric Carlson.
+
+        Fixes a regression introduced by r215201.
+
+        * platform/mediastream/mac/CoreAudioCaptureSource.cpp:
+        (WebCore::CoreAudioCaptureSource::startProducingData):
+        (WebCore::CoreAudioCaptureSource::stopProducingData):
+
 2017-04-18  Anders Carlsson  <andersca@apple.com>
 
         Stop using deprecated APIs, part 2

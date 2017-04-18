@@ -82,6 +82,7 @@ private:
     const RealtimeMediaSourceSettings& settings() const final;
 
     OSStatus setupAudioUnits();
+    void cleanupAudioUnits();
     OSStatus configureSpeakerProc();
     OSStatus configureMicrophoneProc();
     OSStatus defaultOutputDevice(uint32_t*);
