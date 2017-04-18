@@ -3615,9 +3615,8 @@ void ByteCodeParser::handleGetById(
     if (handleIntrinsicGetter(destinationOperand, variant, base,
             [&] () {
                 addToGraph(CheckCell, OpInfo(m_graph.freeze(variant.intrinsicFunction())), getter);
-                addToGraph(Phantom, base);
             })) {
-        addToGraph(Phantom, getter);
+        addToGraph(Phantom, base);
         return;
     }
 

@@ -1,5 +1,17 @@
 2017-04-18  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [DFG] Use Phantom for base instead of getter when inlining intrinsic getter
+        https://bugs.webkit.org/show_bug.cgi?id=170947
+
+        Reviewed by Saam Barati.
+
+        getter does not need to be live after OSR Exit.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleGetById):
+
+2017-04-18  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         Unreviewed, follow-up patch after r215459
         https://bugs.webkit.org/show_bug.cgi?id=170940
 
