@@ -1,3 +1,13 @@
+2017-04-18  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC][GTK] glib RunLoop does not accept negative start interval
+        https://bugs.webkit.org/show_bug.cgi?id=170775
+
+        Reviewed by Saam Barati.
+
+        * heap/GCActivityCallback.cpp:
+        (JSC::GCActivityCallback::scheduleTimer):
+
 2017-04-17  Saam Barati  <sbarati@apple.com>
 
         BytecodeGenerator ".call" and ".apply" is exponential in nesting depth

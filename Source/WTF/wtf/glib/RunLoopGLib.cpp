@@ -218,7 +218,10 @@ bool RunLoop::TimerBase::isActive() const
 
 Seconds RunLoop::TimerBase::secondsUntilFire() const
 {
-    return std::max<Seconds>(Seconds::fromMicroseconds(g_source_get_ready_time(m_source.get()) - g_get_monotonic_time()), 0_s);
+    gint64 time = g_source_get_ready_time(m_source.get());
+    if (time != -1)
+        return std::max<Seconds>(Seconds::fromMicroseconds(time - g_get_monotonic_time()), 0_s);
+    return 0_s;
 }
 
 } // namespace WTF

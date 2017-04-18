@@ -89,7 +89,7 @@ void GCActivityCallback::scheduleTimer(Seconds newDelay)
     m_delay = newDelay;
 
     Seconds secondsUntilFire = m_timer.secondsUntilFire();
-    m_timer.startOneShot(secondsUntilFire - delta);
+    m_timer.startOneShot(std::max<Seconds>(secondsUntilFire - delta, 0_s));
 }
 
 void GCActivityCallback::cancelTimer()
