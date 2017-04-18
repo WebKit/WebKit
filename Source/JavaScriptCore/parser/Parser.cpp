@@ -4385,18 +4385,18 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseArgument(Tre
 }
 
 template <typename TreeBuilder, typename ParserType, typename = typename std::enable_if<std::is_same<TreeBuilder, ASTBuilder>::value>::type>
-static inline void recordCallOrApplyDepth(ParserType* parser, VM& vm, std::optional<typename ParserType::CallOrApplyDepth>& callOrApplyDepth, ExpressionNode* expression)
+static inline void recordCallOrApplyDepth(ParserType* parser, VM& vm, std::optional<typename ParserType::CallOrApplyDepthScope>& callOrApplyDepthScope, ExpressionNode* expression)
 {
     if (expression->isDotAccessorNode()) {
         DotAccessorNode* dot = static_cast<DotAccessorNode*>(expression);
         bool isCallOrApply = dot->identifier() == vm.propertyNames->builtinNames().callPublicName() || dot->identifier() == vm.propertyNames->builtinNames().applyPublicName();
         if (isCallOrApply)
-            callOrApplyDepth.emplace(parser);
+            callOrApplyDepthScope.emplace(parser);
     }
 }
 
 template <typename TreeBuilder, typename ParserType, typename = typename std::enable_if<std::is_same<TreeBuilder, SyntaxChecker>::value>::type>
-static inline void recordCallOrApplyDepth(ParserType*, VM&, std::optional<typename ParserType::CallOrApplyDepth>&, SyntaxChecker::Expression)
+static inline void recordCallOrApplyDepth(ParserType*, VM&, std::optional<typename ParserType::CallOrApplyDepthScope>&, SyntaxChecker::Expression)
 {
 }
 
@@ -4514,8 +4514,8 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
             } else {
                 size_t usedVariablesSize = currentScope()->currentUsedVariablesSize();
                 JSTextPosition expressionEnd = lastTokenEndPosition();
-                std::optional<CallOrApplyDepth> callOrApplyDepth;
-                recordCallOrApplyDepth<TreeBuilder>(this, *m_vm, callOrApplyDepth, base);
+                std::optional<CallOrApplyDepthScope> callOrApplyDepthScope;
+                recordCallOrApplyDepth<TreeBuilder>(this, *m_vm, callOrApplyDepthScope, base);
 
                 TreeArguments arguments = parseArguments(context);
 
@@ -4545,7 +4545,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
                         functionScope->setInnerArrowFunctionUsesSuperCall();
                 }
                 base = context.makeFunctionCallNode(startLocation, base, arguments, expressionStart,
-                    expressionEnd, lastTokenEndPosition(), callOrApplyDepth ? callOrApplyDepth->maxChildDepth() : 0);
+                    expressionEnd, lastTokenEndPosition(), callOrApplyDepthScope ? callOrApplyDepthScope->distanceToInnermostChild() : 0);
             }
             m_parserState.nonLHSCount = nonLHSCount;
             break;

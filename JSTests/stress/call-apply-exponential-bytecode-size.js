@@ -40,13 +40,14 @@ function randomApplyOrCall(bias, size, dontSpreadBias = 0) {
     return eval(cur);
 }
 
-assert(randomApplyOrCall(0, 250) === 251);
-assert(randomApplyOrCall(1, 250) === 251);
-assert(randomApplyOrCall(0, 250, 0) === 251);
-assert(randomApplyOrCall(1, 250, 1) === 251);
+const depth = 100;
+assert(randomApplyOrCall(0, depth) === depth + 1);
+assert(randomApplyOrCall(1, depth) === depth + 1);
+assert(randomApplyOrCall(0, depth, 0) === depth + 1);
+assert(randomApplyOrCall(1, depth, 1) === depth + 1);
 for (let i = 0; i < 1000; ++i) {
-    assert(randomApplyOrCall(Math.random(), 250) === 251);
-    assert(randomApplyOrCall(Math.random(), 252, Math.random()) === 253);
+    assert(randomApplyOrCall(Math.random(), depth) === depth + 1);
+    assert(randomApplyOrCall(Math.random(), depth + 1, Math.random()) === depth + 2);
 }
 
 function baz() {

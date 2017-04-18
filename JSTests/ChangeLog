@@ -1,3 +1,12 @@
+2017-04-18  Saam Barati  <sbarati@apple.com>
+
+        Follow up to debug build stack overflow in test after r215453
+
+        Rubber stamped by Mark Lam.
+
+        * stress/call-apply-exponential-bytecode-size.js: Decrease the call
+        size to prevent stack overflow errors on debug builds.
+
 2017-04-18  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DFG] Convert ValueAdd(Int32, String) => MakeRope(ToString(Int32), String)

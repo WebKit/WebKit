@@ -1,3 +1,30 @@
+2017-04-18  Saam Barati  <sbarati@apple.com>
+
+        Follow up to address Mark's comments after r215453
+
+        Rubber stamped by Mark Lam.
+
+        This patch chooses better names for things, adhering to Mark's suggestions
+        in https://bugs.webkit.org/show_bug.cgi?id=139847
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::CallFunctionCallDotNode::emitBytecode):
+        (JSC::ApplyFunctionCallDotNode::emitBytecode):
+        * parser/NodeConstructors.h:
+        (JSC::CallFunctionCallDotNode::CallFunctionCallDotNode):
+        (JSC::ApplyFunctionCallDotNode::ApplyFunctionCallDotNode):
+        * parser/Nodes.h:
+        * parser/Parser.cpp:
+        (JSC::recordCallOrApplyDepth):
+        (JSC::Parser<LexerType>::parseMemberExpression):
+        * parser/Parser.h:
+        (JSC::Parser::CallOrApplyDepthScope::CallOrApplyDepthScope):
+        (JSC::Parser::CallOrApplyDepthScope::distanceToInnermostChild):
+        (JSC::Parser::CallOrApplyDepthScope::~CallOrApplyDepthScope):
+        (JSC::Parser::CallOrApplyDepth::CallOrApplyDepth): Deleted.
+        (JSC::Parser::CallOrApplyDepth::maxChildDepth): Deleted.
+        (JSC::Parser::CallOrApplyDepth::~CallOrApplyDepth): Deleted.
+
 2017-04-18  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DFG] Convert ValueAdd(Int32, String) => MakeRope(ToString(Int32), String)

@@ -1187,6 +1187,8 @@ RegisterID* FunctionCallDotNode::emitBytecode(BytecodeGenerator& generator, Regi
     return ret;
 }
 
+static constexpr size_t maxDistanceToInnermostCallOrApply = 4;
+
 RegisterID* CallFunctionCallDotNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
     RefPtr<RegisterID> base = generator.emitNode(m_base);
@@ -1203,7 +1205,7 @@ RegisterID* CallFunctionCallDotNode::emitBytecode(BytecodeGenerator& generator, 
     };
 
     bool emitCallCheck = !generator.isBuiltinFunction();
-    if (m_callOrApplyChildDepth > 4 && emitCallCheck) {
+    if (m_distanceToInnermostCallOrApply > maxDistanceToInnermostCallOrApply && emitCallCheck) {
         makeFunction();
         CallArguments callArguments(generator, m_args);
         generator.emitMove(callArguments.thisRegister(), base.get());
@@ -1283,7 +1285,7 @@ RegisterID* ApplyFunctionCallDotNode::emitBytecode(BytecodeGenerator& generator,
     };
 
     bool emitCallCheck = !generator.isBuiltinFunction();
-    if (m_callOrApplyChildDepth > 4 && emitCallCheck) {
+    if (m_distanceToInnermostCallOrApply > maxDistanceToInnermostCallOrApply && emitCallCheck) {
         makeFunction();
         CallArguments callArguments(generator, m_args);
         generator.emitMove(callArguments.thisRegister(), base.get());
