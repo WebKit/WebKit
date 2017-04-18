@@ -353,8 +353,8 @@ http/tests/websocket/tests/hybi/network-process-crash-error.html [ Skip ]
 webkit.org/b/170830 inspector/sampling-profiler/named-function-expression.html [ Pass Failure ]
 
 # selectors4
-webkit.org/b/170935 imported/w3c/web-platform-tests/css/selectors4/focus-within-shadow-001.html [ Failure ]
-webkit.org/b/170935 imported/w3c/web-platform-tests/css/selectors4/focus-within-shadow-002.html [ Failure ]
-webkit.org/b/170935 imported/w3c/web-platform-tests/css/selectors4/focus-within-shadow-003.html [ Failure ]
-webkit.org/b/170935 imported/w3c/web-platform-tests/css/selectors4/focus-within-shadow-004.html [ Failure ]
-webkit.org/b/170935 imported/w3c/web-platform-tests/css/selectors4/focus-within-shadow-005.html [ Failure ]
+webkit.org/b/170935 imported/w3c/web-platform-tests/css/selectors4/focus-within-shadow-001.html [ ImageOnlyFailure ]
+webkit.org/b/170935 imported/w3c/web-platform-tests/css/selectors4/focus-within-shadow-002.html [ ImageOnlyFailure ]
+webkit.org/b/170935 imported/w3c/web-platform-tests/css/selectors4/focus-within-shadow-003.html [ ImageOnlyFailure ]
+webkit.org/b/170935 imported/w3c/web-platform-tests/css/selectors4/focus-within-shadow-004.html [ ImageOnlyFailure ]
+webkit.org/b/170935 imported/w3c/web-platform-tests/css/selectors4/focus-within-shadow-005.html [ ImageOnlyFailure ]

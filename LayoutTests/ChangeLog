@@ -1,3 +1,12 @@
+2017-04-18  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Update TestExpectations for "selectors4" tests on mac-wk1.
+        https://trac.webkit.org/changeset/215457/webkit
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2017-04-18  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Add support for percentage gaps
