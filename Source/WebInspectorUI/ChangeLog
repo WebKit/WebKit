@@ -1,3 +1,18 @@
+2017-04-17  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Network columns don't get saved when Web Inspector is closed
+        https://bugs.webkit.org/show_bug.cgi?id=170373
+        <rdar://problem/31386336>
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/DataGrid.js:
+        (WebInspector.DataGrid.prototype.setColumnVisible):
+        (WebInspector.DataGrid.prototype._contextMenuInHeader):
+        The context menu was often passing `undefined` as the visible value
+        which would cause the setting to not be saved appropriately. Ensure
+        we always get an explicit boolean.
+
 2017-04-17  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Use `text-align: start` for DataGrid headers

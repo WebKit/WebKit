@@ -922,6 +922,7 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
     {
         let column = this.columns.get(columnIdentifier);
         console.assert(column, "Missing column info for identifier: " + columnIdentifier);
+        console.assert(typeof visible === "boolean", "New visible state should be explicit boolean", typeof visible);
 
         if (!column || visible === !column.hidden)
             return;
@@ -1641,7 +1642,9 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
                     didAddSeparator = true;
                 }
 
-                contextMenu.appendCheckboxItem(columnInfo.title, () => { this.setColumnVisible(identifier, columnInfo.hidden); }, !columnInfo.hidden);
+                contextMenu.appendCheckboxItem(columnInfo.title, () => {
+                    this.setColumnVisible(identifier, !!columnInfo.hidden);
+                }, !columnInfo.hidden);
             }
         }
     }
