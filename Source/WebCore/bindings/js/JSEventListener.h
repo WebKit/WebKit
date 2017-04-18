@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003, 2008, 2009 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2017 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -25,6 +25,7 @@
 #include <heap/Weak.h>
 #include <heap/WeakInlines.h>
 #include <wtf/Ref.h>
+#include <wtf/TypeCasts.h>
 #include <wtf/text/TextPosition.h>
 #include <wtf/text/WTFString.h>
 
@@ -91,19 +92,19 @@ private:
 };
 
 // For "onxxx" attributes that automatically set up JavaScript event listeners.
-JSC::JSValue eventHandlerAttribute(EventTarget&, const AtomicString& eventType);
+JSC::JSValue eventHandlerAttribute(EventTarget&, const AtomicString& eventType, DOMWrapperWorld&);
 void setEventHandlerAttribute(JSC::ExecState&, JSC::JSObject&, EventTarget&, const AtomicString& eventType, JSC::JSValue);
 
 // Like the functions above, but for attributes that forward event handlers to the window object rather than setting them on the target.
-JSC::JSValue windowEventHandlerAttribute(HTMLElement&, const AtomicString& eventType);
+JSC::JSValue windowEventHandlerAttribute(HTMLElement&, const AtomicString& eventType, DOMWrapperWorld&);
 void setWindowEventHandlerAttribute(JSC::ExecState&, JSC::JSObject&, HTMLElement&, const AtomicString& eventType, JSC::JSValue);
-JSC::JSValue windowEventHandlerAttribute(DOMWindow&, const AtomicString& eventType);
+JSC::JSValue windowEventHandlerAttribute(DOMWindow&, const AtomicString& eventType, DOMWrapperWorld&);
 void setWindowEventHandlerAttribute(JSC::ExecState&, JSC::JSObject&, DOMWindow&, const AtomicString& eventType, JSC::JSValue);
 
 // Like the functions above, but for attributes that forward event handlers to the document rather than setting them on the target.
-JSC::JSValue documentEventHandlerAttribute(HTMLElement&, const AtomicString& eventType);
+JSC::JSValue documentEventHandlerAttribute(HTMLElement&, const AtomicString& eventType, DOMWrapperWorld&);
 void setDocumentEventHandlerAttribute(JSC::ExecState&, JSC::JSObject&, HTMLElement&, const AtomicString& eventType, JSC::JSValue);
-JSC::JSValue documentEventHandlerAttribute(Document&, const AtomicString& eventType);
+JSC::JSValue documentEventHandlerAttribute(Document&, const AtomicString& eventType, DOMWrapperWorld&);
 void setDocumentEventHandlerAttribute(JSC::ExecState&, JSC::JSObject&, Document&, const AtomicString& eventType, JSC::JSValue);
 
 inline JSC::JSObject* JSEventListener::jsFunction(ScriptExecutionContext* scriptExecutionContext) const
@@ -138,3 +139,7 @@ inline JSC::JSObject* JSEventListener::jsFunction(ScriptExecutionContext* script
 }
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::JSEventListener)
+static bool isType(const WebCore::EventListener& input) { return input.type() == WebCore::JSEventListener::JSEventListenerType; }
+SPECIALIZE_TYPE_TRAITS_END()

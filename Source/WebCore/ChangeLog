@@ -1,3 +1,51 @@
+2017-04-18  Brent Fulgham  <bfulgham@apple.com>
+
+        Correct handling of isolatedWorld in event handling
+        https://bugs.webkit.org/show_bug.cgi?id=65589
+        <rdar://problem/24097804>
+
+        Reviewed by Geoffrey Garen.
+
+        This patch was inspired by Adam's original patch as well as the
+        following Blink change:
+        https://src.chromium.org/viewvc/blink?revision=152377&view=revision
+
+        Thread isolatedWorld state through event handling logic.
+
+        Tests: fast/dom/event-attrs-isolated-world.html
+               http/tests/security/isolatedWorld/onclick-attribute.html
+
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSEventListener::initializeJSFunction):
+        (WebCore::JSEventListener::world):
+        (WebCore::eventHandlerAttribute):
+        (WebCore::setEventHandlerAttribute):
+        (WebCore::windowEventHandlerAttribute):
+        (WebCore::setWindowEventHandlerAttribute):
+        (WebCore::documentEventHandlerAttribute):
+        (WebCore::setDocumentEventHandlerAttribute):
+        * bindings/js/JSEventListener.h:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+        * dom/Document.cpp:
+        (WebCore::Document::setWindowAttributeEventListener):
+        (WebCore::Document::getWindowAttributeEventListener):
+        * dom/Document.h:
+        * dom/Element.cpp:
+        (WebCore::Element::setAttributeEventListener):
+        * dom/EventTarget.cpp:
+        (WebCore::EventTarget::setAttributeEventListener):
+        (WebCore::EventTarget::attributeEventListener):
+        * dom/EventTarget.h:
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplacementFragment::ReplacementFragment):
+        * html/HTMLBodyElement.cpp:
+        (WebCore::HTMLBodyElement::parseAttribute):
+        * html/HTMLFrameSetElement.cpp:
+        (WebCore::HTMLFrameSetElement::parseAttribute):
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::parseAttribute):
+
 2017-04-18  Jeremy Jones  <jeremyj@apple.com>
 
         Deadlock in CoreAudioCaptureSource

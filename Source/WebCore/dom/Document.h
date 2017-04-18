@@ -758,9 +758,9 @@ public:
     void setContextDocument(Document& document) { m_contextDocument = document.createWeakPtr(); }
 
     // Helper functions for forwarding DOMWindow event related tasks to the DOMWindow if it exists.
-    void setWindowAttributeEventListener(const AtomicString& eventType, const QualifiedName& attributeName, const AtomicString& value);
-    void setWindowAttributeEventListener(const AtomicString& eventType, RefPtr<EventListener>&&);
-    EventListener* getWindowAttributeEventListener(const AtomicString& eventType);
+    void setWindowAttributeEventListener(const AtomicString& eventType, const QualifiedName& attributeName, const AtomicString& value, DOMWrapperWorld&);
+    void setWindowAttributeEventListener(const AtomicString& eventType, RefPtr<EventListener>&&, DOMWrapperWorld&);
+    EventListener* getWindowAttributeEventListener(const AtomicString& eventType, DOMWrapperWorld&);
     WEBCORE_EXPORT void dispatchWindowEvent(Event&, EventTarget* = nullptr);
     void dispatchWindowLoadEvent();
 
@@ -1288,7 +1288,7 @@ public:
 #endif
 
     using ContainerNode::setAttributeEventListener;
-    void setAttributeEventListener(const AtomicString& eventType, const QualifiedName& attributeName, const AtomicString& value);
+    void setAttributeEventListener(const AtomicString& eventType, const QualifiedName& attributeName, const AtomicString& value, DOMWrapperWorld& isolatedWorld);
 
     DOMSelection* getSelection();
 

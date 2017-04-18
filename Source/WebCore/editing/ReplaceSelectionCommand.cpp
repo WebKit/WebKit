@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2009, 2010, 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -32,6 +32,7 @@
 #include "BeforeTextInsertedEvent.h"
 #include "BreakBlockquoteCommand.h"
 #include "CSSStyleDeclaration.h"
+#include "DOMWrapperWorld.h"
 #include "DataTransfer.h"
 #include "Document.h"
 #include "DocumentFragment.h"
@@ -167,7 +168,7 @@ ReplacementFragment::ReplacementFragment(Document& document, DocumentFragment* f
     
     Node* shadowAncestorNode = editableRoot->deprecatedShadowAncestorNode();
     
-    if (!editableRoot->attributeEventListener(eventNames().webkitBeforeTextInsertedEvent)
+    if (!editableRoot->attributeEventListener(eventNames().webkitBeforeTextInsertedEvent, mainThreadNormalWorld())
         && !(shadowAncestorNode && shadowAncestorNode->renderer() && shadowAncestorNode->renderer()->isTextControl())
         && editableRoot->hasRichlyEditableStyle()) {
         removeInterchangeNodes(m_fragment.get());

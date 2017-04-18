@@ -1,3 +1,19 @@
+2017-04-18  Brent Fulgham  <bfulgham@apple.com>
+
+        Correct handling of isolatedWorld in event handling
+        https://bugs.webkit.org/show_bug.cgi?id=65589
+        <rdar://problem/24097804>
+
+        Reviewed by Geoffrey Garen.
+
+        This following test cases are from the following Blink change:
+        https://src.chromium.org/viewvc/blink?revision=152377&view=revision
+
+        * fast/dom/event-attrs-isolated-world-expected.txt: Added.
+        * fast/dom/event-attrs-isolated-world.html: Added.
+        * http/tests/security/isolatedWorld/onclick-attribute-expected.txt: Added.
+        * http/tests/security/isolatedWorld/onclick-attribute.html: Added.
+
 2017-04-18  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [WK2] Cannot select text on nytimes.com when the selection granularity is WKSelectionGranularityCharacter

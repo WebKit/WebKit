@@ -3,7 +3,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Simon Hausmann (hausmann@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2006-2010, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -28,6 +28,7 @@
 #include "CSSParser.h"
 #include "CSSValueKeywords.h"
 #include "DOMWindow.h"
+#include "DOMWrapperWorld.h"
 #include "EventNames.h"
 #include "Frame.h"
 #include "FrameView.h"
@@ -173,13 +174,13 @@ void HTMLBodyElement::parseAttribute(const QualifiedName& name, const AtomicStri
     }
 
     if (name == onselectionchangeAttr) {
-        document().setAttributeEventListener(eventNames().selectionchangeEvent, name, value);
+        document().setAttributeEventListener(eventNames().selectionchangeEvent, name, value, mainThreadNormalWorld());
         return;
     }
 
     auto& eventName = eventNameForWindowEventHandlerAttribute(name);
     if (!eventName.isNull()) {
-        document().setWindowAttributeEventListener(eventName, name, value);
+        document().setWindowAttributeEventListener(eventName, name, value, mainThreadNormalWorld());
         return;
     }
 

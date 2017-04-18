@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Alexey Proskuryakov (ap@webkit.org)
  *           (C) 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  *
@@ -32,9 +32,11 @@
 #include "config.h"
 #include "EventTarget.h"
 
+#include "DOMWrapperWorld.h"
 #include "EventNames.h"
 #include "ExceptionCode.h"
 #include "InspectorInstrumentation.h"
+#include "JSEventListener.h"
 #include "NoEventDispatchAssertion.h"
 #include "ScriptController.h"
 #include "WebKitAnimationEvent.h"
@@ -104,9 +106,9 @@ bool EventTarget::removeEventListener(const AtomicString& eventType, EventListen
     return data && data->eventListenerMap.remove(eventType, listener, options.capture);
 }
 
-bool EventTarget::setAttributeEventListener(const AtomicString& eventType, RefPtr<EventListener>&& listener)
+bool EventTarget::setAttributeEventListener(const AtomicString& eventType, RefPtr<EventListener>&& listener, DOMWrapperWorld& isolatedWorld)
 {
-    auto* existingListener = attributeEventListener(eventType);
+    auto* existingListener = attributeEventListener(eventType, isolatedWorld);
     if (!listener) {
         if (existingListener)
             removeEventListener(eventType, *existingListener, false);
@@ -119,12 +121,18 @@ bool EventTarget::setAttributeEventListener(const AtomicString& eventType, RefPt
     return addEventListener(eventType, listener.releaseNonNull());
 }
 
-EventListener* EventTarget::attributeEventListener(const AtomicString& eventType)
+EventListener* EventTarget::attributeEventListener(const AtomicString& eventType, DOMWrapperWorld& isolatedWorld)
 {
     for (auto& eventListener : eventListeners(eventType)) {
-        if (eventListener->callback().isAttribute())
-            return &eventListener->callback();
+        auto& listener = eventListener->callback();
+        if (!listener.isAttribute())
+            continue;
+
+        auto& listenerWorld = downcast<JSEventListener>(listener).isolatedWorld();
+        if (&listenerWorld == &isolatedWorld)
+            return &listener;
     }
+
     return nullptr;
 }
 

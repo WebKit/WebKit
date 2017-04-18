@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2013 Apple Inc. All Rights Reserved.
+ *  Copyright (C) 2003-2017 Apple Inc. All Rights Reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -62,7 +62,7 @@ JSEventListener::~JSEventListener()
 
 JSObject* JSEventListener::initializeJSFunction(ScriptExecutionContext*) const
 {
-    return 0;
+    return nullptr;
 }
 
 void JSEventListener::visitJSFunction(SlotVisitor& visitor)
@@ -216,31 +216,31 @@ static inline RefPtr<JSEventListener> createEventListenerForEventHandlerAttribut
     return JSEventListener::create(asObject(listener), &wrapper, true, currentWorld(&state));
 }
 
-JSC::JSValue eventHandlerAttribute(EventTarget& target, const AtomicString& eventType)
+JSC::JSValue eventHandlerAttribute(EventTarget& target, const AtomicString& eventType, DOMWrapperWorld& isolatedWorld)
 {
-    return eventHandlerAttribute(target.attributeEventListener(eventType), *target.scriptExecutionContext());
+    return eventHandlerAttribute(target.attributeEventListener(eventType, isolatedWorld), *target.scriptExecutionContext());
 }
 
 void setEventHandlerAttribute(JSC::ExecState& state, JSC::JSObject& wrapper, EventTarget& target, const AtomicString& eventType, JSC::JSValue value)
 {
-    target.setAttributeEventListener(eventType, createEventListenerForEventHandlerAttribute(state, value, wrapper));
+    target.setAttributeEventListener(eventType, createEventListenerForEventHandlerAttribute(state, value, wrapper), currentWorld(&state));
 }
 
-JSC::JSValue windowEventHandlerAttribute(HTMLElement& element, const AtomicString& eventType)
+JSC::JSValue windowEventHandlerAttribute(HTMLElement& element, const AtomicString& eventType, DOMWrapperWorld& isolatedWorld)
 {
     auto& document = element.document();
-    return eventHandlerAttribute(document.getWindowAttributeEventListener(eventType), document);
+    return eventHandlerAttribute(document.getWindowAttributeEventListener(eventType, isolatedWorld), document);
 }
 
 void setWindowEventHandlerAttribute(JSC::ExecState& state, JSC::JSObject& wrapper, HTMLElement& element, const AtomicString& eventType, JSC::JSValue value)
 {
     ASSERT(wrapper.globalObject());
-    element.document().setWindowAttributeEventListener(eventType, createEventListenerForEventHandlerAttribute(state, value, *wrapper.globalObject()));
+    element.document().setWindowAttributeEventListener(eventType, createEventListenerForEventHandlerAttribute(state, value, *wrapper.globalObject()), currentWorld(&state));
 }
 
-JSC::JSValue windowEventHandlerAttribute(DOMWindow& window, const AtomicString& eventType)
+JSC::JSValue windowEventHandlerAttribute(DOMWindow& window, const AtomicString& eventType, DOMWrapperWorld& isolatedWorld)
 {
-    return eventHandlerAttribute(window, eventType);
+    return eventHandlerAttribute(window, eventType, isolatedWorld);
 }
 
 void setWindowEventHandlerAttribute(JSC::ExecState& state, JSC::JSObject& wrapper, DOMWindow& window, const AtomicString& eventType, JSC::JSValue value)
@@ -248,10 +248,10 @@ void setWindowEventHandlerAttribute(JSC::ExecState& state, JSC::JSObject& wrappe
     setEventHandlerAttribute(state, wrapper, window, eventType, value);
 }
 
-JSC::JSValue documentEventHandlerAttribute(HTMLElement& element, const AtomicString& eventType)
+JSC::JSValue documentEventHandlerAttribute(HTMLElement& element, const AtomicString& eventType, DOMWrapperWorld& isolatedWorld)
 {
     auto& document = element.document();
-    return eventHandlerAttribute(document.attributeEventListener(eventType), document);
+    return eventHandlerAttribute(document.attributeEventListener(eventType, isolatedWorld), document);
 }
 
 void setDocumentEventHandlerAttribute(JSC::ExecState& state, JSC::JSObject& wrapper, HTMLElement& element, const AtomicString& eventType, JSC::JSValue value)
@@ -260,12 +260,12 @@ void setDocumentEventHandlerAttribute(JSC::ExecState& state, JSC::JSObject& wrap
     auto& document = element.document();
     auto* documentWrapper = JSC::jsCast<JSDocument*>(toJS(&state, JSC::jsCast<JSDOMGlobalObject*>(wrapper.globalObject()), document));
     ASSERT(documentWrapper);
-    document.setAttributeEventListener(eventType, createEventListenerForEventHandlerAttribute(state, value, *documentWrapper));
+    document.setAttributeEventListener(eventType, createEventListenerForEventHandlerAttribute(state, value, *documentWrapper), currentWorld(&state));
 }
 
-JSC::JSValue documentEventHandlerAttribute(Document& document, const AtomicString& eventType)
+JSC::JSValue documentEventHandlerAttribute(Document& document, const AtomicString& eventType, DOMWrapperWorld& isolatedWorld)
 {
-    return eventHandlerAttribute(document, eventType);
+    return eventHandlerAttribute(document, eventType, isolatedWorld);
 }
 
 void setDocumentEventHandlerAttribute(JSC::ExecState& state, JSC::JSObject& wrapper, Document& document, const AtomicString& eventType, JSC::JSValue value)

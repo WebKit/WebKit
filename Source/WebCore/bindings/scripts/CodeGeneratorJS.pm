@@ -3686,7 +3686,7 @@ sub GenerateImplementation
                     : $attribute->extendedAttributes->{DocumentEventHandler} ? "documentEventHandlerAttribute"
                     : "eventHandlerAttribute";
                 my $eventName = EventHandlerAttributeEventName($attribute);
-                push(@implContent, "    return $getter(thisObject.wrapped(), $eventName);\n");
+                push(@implContent, "    return $getter(thisObject.wrapped(), $eventName, worldForDOMObject(&thisObject));\n");
             } elsif ($codeGenerator->IsConstructorType($attribute->type)) {
                 my $constructorType = $attribute->type->name;
                 $constructorType =~ s/Constructor$//;
@@ -3863,7 +3863,7 @@ sub GenerateImplementation
                 # FIXME: Find a way to do this special case without hardcoding the class and attribute names here.
                 if ((($interfaceName eq "DOMWindow") or ($interfaceName eq "WorkerGlobalScope")) and $name eq "onerror") {
                     $implIncludes{"JSErrorHandler.h"} = 1;
-                    push(@implContent, "    thisObject.wrapped().setAttributeEventListener($eventName, createJSErrorHandler(&state, value, &thisObject));\n");
+                    push(@implContent, "    thisObject.wrapped().setAttributeEventListener($eventName, createJSErrorHandler(&state, value, &thisObject), worldForDOMObject(&thisObject));\n");
                 } else {
                     $implIncludes{"JSEventListener.h"} = 1;
                     my $setter = $attribute->extendedAttributes->{WindowEventHandler} ? "setWindowEventHandlerAttribute"

@@ -3993,30 +3993,30 @@ Document& Document::contextDocument() const
     return const_cast<Document&>(*this);
 }
 
-void Document::setAttributeEventListener(const AtomicString& eventType, const QualifiedName& attributeName, const AtomicString& attributeValue)
+void Document::setAttributeEventListener(const AtomicString& eventType, const QualifiedName& attributeName, const AtomicString& attributeValue, DOMWrapperWorld& isolatedWorld)
 {
-    setAttributeEventListener(eventType, JSLazyEventListener::create(*this, attributeName, attributeValue));
+    setAttributeEventListener(eventType, JSLazyEventListener::create(*this, attributeName, attributeValue), isolatedWorld);
 }
 
-void Document::setWindowAttributeEventListener(const AtomicString& eventType, RefPtr<EventListener>&& listener)
-{
-    if (!m_domWindow)
-        return;
-    m_domWindow->setAttributeEventListener(eventType, WTFMove(listener));
-}
-
-void Document::setWindowAttributeEventListener(const AtomicString& eventType, const QualifiedName& attributeName, const AtomicString& attributeValue)
+void Document::setWindowAttributeEventListener(const AtomicString& eventType, RefPtr<EventListener>&& listener, DOMWrapperWorld& isolatedWorld)
 {
     if (!m_domWindow)
         return;
-    setWindowAttributeEventListener(eventType, JSLazyEventListener::create(*m_domWindow, attributeName, attributeValue));
+    m_domWindow->setAttributeEventListener(eventType, WTFMove(listener), isolatedWorld);
 }
 
-EventListener* Document::getWindowAttributeEventListener(const AtomicString& eventType)
+void Document::setWindowAttributeEventListener(const AtomicString& eventType, const QualifiedName& attributeName, const AtomicString& attributeValue, DOMWrapperWorld& isolatedWorld)
+{
+    if (!m_domWindow)
+        return;
+    setWindowAttributeEventListener(eventType, JSLazyEventListener::create(*m_domWindow, attributeName, attributeValue), isolatedWorld);
+}
+
+EventListener* Document::getWindowAttributeEventListener(const AtomicString& eventType, DOMWrapperWorld& isolatedWorld)
 {
     if (!m_domWindow)
         return nullptr;
-    return m_domWindow->attributeEventListener(eventType);
+    return m_domWindow->attributeEventListener(eventType, isolatedWorld);
 }
 
 void Document::dispatchWindowEvent(Event& event, EventTarget* target)
