@@ -1529,7 +1529,13 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     }
 #endif
 
-    return _positionInformation.nodeAtPositionIsAssistedNode;
+    // If we're currently editing an assisted node, only allow the selection to move within that assisted node.
+    if (self.isAssistingNode)
+        return _positionInformation.nodeAtPositionIsAssistedNode;
+
+    // Otherwise, if we're using a text interaction assistant outside of editing purposes (e.g. the selection mode
+    // is character granularity) then allow text selection.
+    return YES;
 }
 
 - (NSArray *)webSelectionRectsForSelectionRects:(const Vector<WebCore::SelectionRect>&)selectionRects

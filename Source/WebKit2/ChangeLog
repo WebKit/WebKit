@@ -1,3 +1,31 @@
+2017-04-18  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [WK2] Cannot select text on nytimes.com when the selection granularity is WKSelectionGranularityCharacter
+        https://bugs.webkit.org/show_bug.cgi?id=170968
+        <rdar://problem/31692560>
+
+        Reviewed by Dan Bernstein.
+
+        Makes a small adjustment to textInteractionGesture:shouldBeginAtPoint:. When determining whether to allow the
+        text interaction assistant to recognize at a given point, instead of depending on whether or not the hit node is
+        the same as the assisted node, only enforce this restriction when editing an assisted node. Otherwise, default
+        to allowing the selection gesture.
+
+        Note that character granularity selection was working on most pages before, due to the fact that
+        nodeAtPositionIsAssistedNode was true in many cases when there is no assisted node at all. This is because, in
+        WebPage.mm, we compute the hit-tested node responding to click events to be null, and then set
+        nodeAtPositionIsAssistedNode to be equal to hitNode == m_assistedNode, which ends up being true because both of
+        these values are null.
+
+        This allowed text selection to work in the simple case when selection granularity character is used, but not
+        when the node containing the selected point actually does respond to click events, since the comparison returns
+        false.
+
+        New layout test: LayoutTests/editing/selection/character-granularity-select-text-with-click-handler.html.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView textInteractionGesture:shouldBeginAtPoint:]):
+
 2017-04-18  Keith Rollin  <krollin@apple.com>
 
         Add additional information when logging URL disposition in WebLoaderStrategy::scheduleLoad
