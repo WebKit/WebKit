@@ -1370,7 +1370,7 @@ void ByteCodeParser::emitFunctionChecks(CallVariant callee, Node* callTarget, Vi
     if (thisArgumentReg.isValid())
         thisArgument = get(thisArgumentReg);
     else
-        thisArgument = 0;
+        thisArgument = nullptr;
 
     JSCell* calleeCell;
     Node* callTargetForCheck;
@@ -1383,7 +1383,9 @@ void ByteCodeParser::emitFunctionChecks(CallVariant callee, Node* callTarget, Vi
     }
     
     ASSERT(calleeCell);
-    addToGraph(CheckCell, OpInfo(m_graph.freeze(calleeCell)), callTargetForCheck, thisArgument);
+    if (thisArgument)
+        addToGraph(Phantom, thisArgument);
+    addToGraph(CheckCell, OpInfo(m_graph.freeze(calleeCell)), callTargetForCheck);
 }
 
 Node* ByteCodeParser::getArgumentCount()
@@ -3612,7 +3614,8 @@ void ByteCodeParser::handleGetById(
 
     if (handleIntrinsicGetter(destinationOperand, variant, base,
             [&] () {
-                addToGraph(CheckCell, OpInfo(m_graph.freeze(variant.intrinsicFunction())), getter, base);
+                addToGraph(Phantom, base);
+                addToGraph(CheckCell, OpInfo(m_graph.freeze(variant.intrinsicFunction())), getter);
             })) {
         addToGraph(Phantom, getter);
         return;

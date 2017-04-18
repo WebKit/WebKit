@@ -1,5 +1,28 @@
 2017-04-18  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [DFG] Drop unknown use of CheckCell's child2 to work ObjectAllocationSinking for Array iterator object
+        https://bugs.webkit.org/show_bug.cgi?id=170940
+
+        Reviewed by Filip Pizlo.
+
+        The second argument of CheckCell is not used in meaningful way. It is just *use* the node.
+        The problem is that it effectively *use* the child2 in ObjectAllocationSinking phase, and
+        prevent us from eliminating object allocations. Actually, it materializes Array iterator
+        when inlining `next()`. Instead, we should use Phantom in such a case.
+
+        It improves destructuring.es6 in SixSpeed 2.5x.
+
+        destructuring.es6      308.5184+-25.3490    ^    119.5680+-15.0520       ^ definitely 2.5803x faster
+
+        Note that SixSpeed tested in arewefastyet executes all the tests in one process while our SixSpeed
+        tests each one in isolated way.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::emitFunctionChecks):
+        (JSC::DFG::ByteCodeParser::handleGetById):
+
+2017-04-18  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [JSC][GTK] glib RunLoop does not accept negative start interval
         https://bugs.webkit.org/show_bug.cgi?id=170775
 
