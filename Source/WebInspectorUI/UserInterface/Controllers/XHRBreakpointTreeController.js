@@ -31,8 +31,6 @@ WebInspector.XHRBreakpointTreeController = class XHRBreakpointsTreeController ex
 
         this._treeOutline = treeOutline;
 
-        WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
-
         WebInspector.domDebuggerManager.addEventListener(WebInspector.DOMDebuggerManager.Event.XHRBreakpointAdded, this._xhrBreakpointAdded, this);
         WebInspector.domDebuggerManager.addEventListener(WebInspector.DOMDebuggerManager.Event.XHRBreakpointRemoved, this._xhrBreakpointRemoved, this);
 
@@ -76,15 +74,6 @@ WebInspector.XHRBreakpointTreeController = class XHRBreakpointsTreeController ex
             return;
 
         this._treeOutline.removeChild(treeElement);
-    }
-
-    _mainResourceDidChange(event)
-    {
-        if (!event.target.isMainFrame())
-            return;
-
-        while (this._treeOutline.children.length > 1)
-            this._treeOutline.removeChild(this._treeOutline.children.lastValue);
     }
 
     _addTreeElement(breakpoint)

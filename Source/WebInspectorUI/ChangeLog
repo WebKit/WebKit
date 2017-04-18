@@ -1,3 +1,19 @@
+2017-04-18  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: XHR breakpoints shouldn't be cleared from the sidebar on reload
+        https://bugs.webkit.org/show_bug.cgi?id=170930
+
+        Reviewed by Joseph Pecoraro.
+
+        XHR breakpoints aren't associated with the main resource, and shouldn't
+        be cleared from the manager or sidebar UI When the main resource changes.
+
+        * UserInterface/Controllers/DOMDebuggerManager.js:
+        (WebInspector.DOMDebuggerManager.prototype._mainResourceDidChange):
+        * UserInterface/Controllers/XHRBreakpointTreeController.js:
+        (WebInspector.XHRBreakpointTreeController):
+        (WebInspector.XHRBreakpointTreeController.prototype._mainResourceDidChange): Deleted.
+
 2017-04-17  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Network columns don't get saved when Web Inspector is closed

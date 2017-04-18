@@ -429,9 +429,6 @@ WebInspector.DOMDebuggerManager = class DOMDebuggerManager extends WebInspector.
                 breakpoints.forEach((breakpoint) => { breakpoint.domNodeIdentifier = null; });
 
             this._domBreakpointFrameIdentifierMap.clear();
-
-            for (let breakpoint of this._xhrBreakpoints)
-                this._detachXHRBreakpoint(breakpoint);
         } else
             this._detachBreakpointsForFrame(frame);
 
