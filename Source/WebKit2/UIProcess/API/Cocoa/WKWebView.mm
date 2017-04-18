@@ -504,6 +504,11 @@ static uint32_t convertSystemLayoutDirection(NSUserInterfaceLayoutDirection dire
     _scrollView = adoptNS([[WKScrollView alloc] initWithFrame:bounds]);
     [_scrollView setInternalDelegate:self];
     [_scrollView setBouncesZoom:YES];
+    
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
+    if ([_scrollView _contentInsetAdjustmentBehavior] == UIScrollViewContentInsetAdjustmentAutomatic)
+        [_scrollView _setContentInsetAdjustmentBehavior:UIScrollViewContentInsetAdjustmentAlways];
+#endif
 
     [self addSubview:_scrollView.get()];
 
