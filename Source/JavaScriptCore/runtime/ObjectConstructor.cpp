@@ -608,6 +608,11 @@ EncodedJSValue JSC_HOST_CALL objectConstructorSeal(ExecState* exec)
         return JSValue::encode(obj);
     JSObject* object = asObject(obj);
 
+    if (isJSFinalObject(object) && !hasIndexedProperties(object->indexingType())) {
+        object->seal(vm);
+        return JSValue::encode(obj);
+    }
+
     bool success = setIntegrityLevel<IntegrityLevel::Sealed>(exec, vm, object);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     if (UNLIKELY(!success)) {
@@ -622,6 +627,11 @@ JSObject* objectConstructorFreeze(ExecState* exec, JSObject* object)
 {
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (isJSFinalObject(object) && !hasIndexedProperties(object->indexingType())) {
+        object->freeze(vm);
+        return object;
+    }
 
     bool success = setIntegrityLevel<IntegrityLevel::Frozen>(exec, vm, object);
     RETURN_IF_EXCEPTION(scope, nullptr);
@@ -664,6 +674,10 @@ EncodedJSValue JSC_HOST_CALL objectConstructorIsSealed(ExecState* exec)
         return JSValue::encode(jsBoolean(true));
     JSObject* object = asObject(obj);
 
+    // Quick check for final objects.
+    if (isJSFinalObject(object) && !hasIndexedProperties(object->indexingType()))
+        return JSValue::encode(jsBoolean(object->isSealed(vm)));
+
     // 2. Return ? TestIntegrityLevel(O, "sealed").
     return JSValue::encode(jsBoolean(testIntegrityLevel<IntegrityLevel::Sealed>(exec, vm, object)));
 }
@@ -677,6 +691,10 @@ EncodedJSValue JSC_HOST_CALL objectConstructorIsFrozen(ExecState* exec)
     if (!obj.isObject())
         return JSValue::encode(jsBoolean(true));
     JSObject* object = asObject(obj);
+
+    // Quick check for final objects.
+    if (isJSFinalObject(object) && !hasIndexedProperties(object->indexingType()))
+        return JSValue::encode(jsBoolean(object->isFrozen(vm)));
 
     // 2. Return ? TestIntegrityLevel(O, "frozen").
     return JSValue::encode(jsBoolean(testIntegrityLevel<IntegrityLevel::Frozen>(exec, vm, object)));

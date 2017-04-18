@@ -1,3 +1,15 @@
+2017-04-18  Michael Saboff  <msaboff@apple.com>
+
+        REGRESSION(215272): microbenchmark/seal-and-do-work and microbenchmark/freeze-and-do-work are 27x slower
+        https://bugs.webkit.org/show_bug.cgi?id=170881
+
+        Reviewed by Saam Barati.
+
+        * runtime/ObjectConstructor.cpp:
+        (JSC::objectConstructorSeal):
+        (JSC::objectConstructorFreeze):
+        Restored fast paths for final objects that don't have indexed properties.
+
 2017-04-18  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DFG] Use Phantom for base instead of getter when inlining intrinsic getter
