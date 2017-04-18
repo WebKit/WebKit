@@ -278,6 +278,12 @@ webkit.org/b/165062 fast/css-grid-layout/grid-baseline-margins.html [ ImageOnlyF
 webkit.org/b/149891 imported/w3c/web-platform-tests/css/css-grid-1/grid-layout-properties.html [ Failure ]
 webkit.org/b/169271 imported/w3c/web-platform-tests/css/css-grid-1/grid-items/grid-items-sizing-alignment-001.html [ ImageOnlyFailure ]
 
+# selectors4
+webkit.org/b/170900 imported/w3c/web-platform-tests/css/selectors4/focus-within-006.html [ ImageOnlyFailure ]
+webkit.org/b/170899 imported/w3c/web-platform-tests/css/selectors4/focus-within-shadow-006.html [ ImageOnlyFailure ]
+webkit.org/b/64861 imported/w3c/web-platform-tests/css/selectors4/selectors-dir-selector-ltr-001.html [ ImageOnlyFailure ]
+webkit.org/b/64861 imported/w3c/web-platform-tests/css/selectors4/selectors-dir-selector-rtl-001.html [ ImageOnlyFailure ]
+
 # nth-child tests takes long time and Debug build sometimes timeouts because there are many test cases.
 webkit.org/b/137149 fast/selectors/nth-child-of-basics.html [ Slow ]
 

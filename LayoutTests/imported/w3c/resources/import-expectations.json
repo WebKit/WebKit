@@ -53,6 +53,7 @@
     "web-platform-tests/css/": "skip", 
     "web-platform-tests/css/css-grid-1/": "import", 
     "web-platform-tests/css/css-scoping1": "import", 
+    "web-platform-tests/css/selectors4/": "import", 
     "web-platform-tests/cssom": "skip", 
     "web-platform-tests/cssom-view": "skip", 
     "web-platform-tests/custom-elements": "import", 

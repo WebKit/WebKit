@@ -1,3 +1,13 @@
+2017-04-18  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [selectors4] Import W3C Test Suite
+        https://bugs.webkit.org/show_bug.cgi?id=170898
+
+        Reviewed by Youenn Fablet.
+
+        * TestExpectations: Mark a few tests as failure linking to the related bugs.
+        * platform/mac-wk1/TestExpectations: Marking some tests that have issues on WK1.
+
 2017-04-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed GTK+ gardening. Add several test expectations.

@@ -1,3 +1,55 @@
+2017-04-18  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [selectors4] Import W3C Test Suite
+        https://bugs.webkit.org/show_bug.cgi?id=170898
+
+        Reviewed by Youenn Fablet.
+
+        This patch imports "selectors4" test suite from WPT repo:
+        https://github.com/w3c/web-platform-tests/tree/master/css/selectors4
+
+        * resources/import-expectations.json:
+        * web-platform-tests/css/selectors4/OWNERS: Added.
+        * web-platform-tests/css/selectors4/focus-within-001-expected.html: Added.
+        * web-platform-tests/css/selectors4/focus-within-001.html: Added.
+        * web-platform-tests/css/selectors4/focus-within-002-expected.html: Added.
+        * web-platform-tests/css/selectors4/focus-within-002.html: Added.
+        * web-platform-tests/css/selectors4/focus-within-003-expected.html: Added.
+        * web-platform-tests/css/selectors4/focus-within-003.html: Added.
+        * web-platform-tests/css/selectors4/focus-within-004-expected.html: Added.
+        * web-platform-tests/css/selectors4/focus-within-004.html: Added.
+        * web-platform-tests/css/selectors4/focus-within-005-expected.html: Added.
+        * web-platform-tests/css/selectors4/focus-within-005.html: Added.
+        * web-platform-tests/css/selectors4/focus-within-006-expected.html: Added.
+        * web-platform-tests/css/selectors4/focus-within-006.html: Added.
+        * web-platform-tests/css/selectors4/focus-within-007-expected.html: Added.
+        * web-platform-tests/css/selectors4/focus-within-007.html: Added.
+        * web-platform-tests/css/selectors4/focus-within-008-expected.html: Added.
+        * web-platform-tests/css/selectors4/focus-within-008.html: Added.
+        * web-platform-tests/css/selectors4/focus-within-009-expected.txt: Added.
+        * web-platform-tests/css/selectors4/focus-within-009.html: Added.
+        * web-platform-tests/css/selectors4/focus-within-shadow-001-expected.html: Added.
+        * web-platform-tests/css/selectors4/focus-within-shadow-001.html: Added.
+        * web-platform-tests/css/selectors4/focus-within-shadow-002-expected.html: Added.
+        * web-platform-tests/css/selectors4/focus-within-shadow-002.html: Added.
+        * web-platform-tests/css/selectors4/focus-within-shadow-003-expected.html: Added.
+        * web-platform-tests/css/selectors4/focus-within-shadow-003.html: Added.
+        * web-platform-tests/css/selectors4/focus-within-shadow-004-expected.html: Added.
+        * web-platform-tests/css/selectors4/focus-within-shadow-004.html: Added.
+        * web-platform-tests/css/selectors4/focus-within-shadow-005-expected.html: Added.
+        * web-platform-tests/css/selectors4/focus-within-shadow-005.html: Added.
+        * web-platform-tests/css/selectors4/focus-within-shadow-006-expected.html: Added.
+        * web-platform-tests/css/selectors4/focus-within-shadow-006.html: Added.
+        * web-platform-tests/css/selectors4/of-type-selectors-expected.xhtml: Added.
+        * web-platform-tests/css/selectors4/of-type-selectors.xhtml: Added.
+        * web-platform-tests/css/selectors4/selector-required-expected.html: Added.
+        * web-platform-tests/css/selectors4/selector-required.html: Added.
+        * web-platform-tests/css/selectors4/selectors-dir-selector-ltr-001-expected.xht: Added.
+        * web-platform-tests/css/selectors4/selectors-dir-selector-ltr-001.html: Added.
+        * web-platform-tests/css/selectors4/selectors-dir-selector-rtl-001-expected.xht: Added.
+        * web-platform-tests/css/selectors4/selectors-dir-selector-rtl-001.html: Added.
+        * web-platform-tests/css/selectors4/w3c-import.log: Added.
+
 2017-04-14  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebCrypto] Add support for ECDSA
