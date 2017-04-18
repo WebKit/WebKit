@@ -625,6 +625,7 @@ void Document::removedLastRef()
         m_fullScreenElement = nullptr;
         m_fullScreenElementStack.clear();
 #endif
+        m_associatedFormControls.clear();
 
         detachParser();
 

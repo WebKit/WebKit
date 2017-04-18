@@ -1,3 +1,20 @@
+2017-04-18  Andreas Kling  <akling@apple.com>
+
+        Break Document::m_associatedFormControls reference cycle.
+        <https://webkit.org/b/170946>
+
+        Reviewed by Antti Koivisto.
+
+        There was a race between didAssociateFormControls() and didAssociateFormControlsTimerFired()
+        where detaching Document from its frame between the two would lead to an unbreakable reference
+        cycle between Document and its form elements.
+
+        Solve this by clearing the set of associated form elements in removedLastRef(), where we clear
+        all the other strong smart pointers to elements.
+
+        * dom/Document.cpp:
+        (WebCore::Document::removedLastRef):
+
 2017-04-18  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Add support for percentage gaps
