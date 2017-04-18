@@ -32,6 +32,9 @@
 #include "CaptionUserPreferencesMediaAF.h"
 
 #include "AudioTrackList.h"
+#if PLATFORM(WIN)
+#include "CoreTextSPIWin.h"
+#endif
 #include "FloatConversion.h"
 #include "HTMLMediaElement.h"
 #include "URL.h"
@@ -77,14 +80,6 @@
 #define SOFT_LINK_AVF_POINTER(Lib, Name, Type) SOFT_LINK_VARIABLE_DLL_IMPORT_OPTIONAL(Lib, Name, Type)
 #define SOFT_LINK_AVF_FRAMEWORK_IMPORT(Lib, Fun, ReturnType, Arguments, Signature) SOFT_LINK_DLL_IMPORT(Lib, Fun, ReturnType, __cdecl, Arguments, Signature)
 #define SOFT_LINK_AVF_FRAMEWORK_IMPORT_OPTIONAL(Lib, Fun, ReturnType, Arguments) SOFT_LINK_DLL_IMPORT_OPTIONAL(Lib, Fun, ReturnType, __cdecl, Arguments)
-
-// CoreText only needs to be soft-linked on Windows.
-SOFT_LINK_AVF_FRAMEWORK(CoreText)
-SOFT_LINK_AVF_FRAMEWORK_IMPORT(CoreText, CTFontDescriptorCopyAttribute,  CFTypeRef, (CTFontDescriptorRef descriptor, CFStringRef attribute), (descriptor, attribute));
-SOFT_LINK_AVF_POINTER(CoreText, kCTFontNameAttribute, CFStringRef)
-#define kCTFontNameAttribute getkCTFontNameAttribute()
-
-#define CTFontDescriptorCopyAttribute softLink_CTFontDescriptorCopyAttribute
 
 SOFT_LINK_AVF_FRAMEWORK(CoreMedia)
 SOFT_LINK_AVF_FRAMEWORK_IMPORT_OPTIONAL(CoreMedia, MTEnableCaption2015Behavior, Boolean, ())
@@ -424,13 +419,30 @@ String CaptionUserPreferencesMediaAF::captionsDefaultFontCSS() const
     RetainPtr<CFTypeRef> name = adoptCF(CTFontDescriptorCopyAttribute(font.get(), kCTFontNameAttribute));
     if (!name)
         return emptyString();
-    
+
     StringBuilder builder;
     
     builder.append(getPropertyNameString(CSSPropertyFontFamily));
     builder.appendLiteral(": \"");
     builder.append(static_cast<CFStringRef>(name.get()));
     builder.append('"');
+
+    auto cascadeList = adoptCF(static_cast<CFArrayRef>(CTFontDescriptorCopyAttribute(font.get(), kCTFontCascadeListAttribute)));
+
+    if (cascadeList) {
+        for (CFIndex i = 0; i < CFArrayGetCount(cascadeList.get()); i++) {
+            auto fontCascade = static_cast<CTFontDescriptorRef>(CFArrayGetValueAtIndex(cascadeList.get(), i));
+            if (!fontCascade)
+                continue;
+            auto fontCascadeName = adoptCF(CTFontDescriptorCopyAttribute(fontCascade, kCTFontNameAttribute));
+            if (!fontCascadeName)
+                continue;
+            builder.append(", \"");
+            builder.append(static_cast<CFStringRef>(fontCascadeName.get()));
+            builder.append('"');
+        }
+    }
+    
     if (behavior == kMACaptionAppearanceBehaviorUseValue)
         builder.appendLiteral(" !important");
     builder.append(';');

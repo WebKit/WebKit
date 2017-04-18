@@ -1,3 +1,19 @@
+2017-04-18  Per Arne Vollan  <pvollan@apple.com>
+
+        Add fallback fonts to video captions stylesheet.
+        https://bugs.webkit.org/show_bug.cgi?id=170495
+
+        Reviewed by Eric Carlson.
+
+        The kCTFontCascadeListAttribute key is used to obtain the cascade list for a font reference.
+
+        I have not added a test, since CaptionUserPreferences::testingMode() returns true when running tests,
+        preventing this code path from being executed.
+
+        * page/CaptionUserPreferencesMediaAF.cpp:
+        (WebCore::CaptionUserPreferencesMediaAF::captionsDefaultFontCSS):
+        * platform/spi/win/CoreTextSPIWin.h:
+
 2017-04-18  Miguel Gomez  <magomez@igalia.com>
 
         [GTK+] Crash in WebCore::ImageFrame::ImageFrame()
