@@ -191,7 +191,7 @@ private:
                         changed |= mergePrediction(SpecInt52Only);
                     else
                         changed |= mergePrediction(speculatedDoubleTypeForPredictions(left, right));
-                } else if (isStringOrStringObjectSpeculation(left) && isStringOrStringObjectSpeculation(right)) {
+                } else if (isStringOrStringObjectSpeculation(left) || isStringOrStringObjectSpeculation(right)) {
                     // left or right is definitely something other than a number.
                     changed |= mergePrediction(SpecString);
                 } else {

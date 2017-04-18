@@ -1,5 +1,27 @@
 2017-04-18  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [DFG] Convert ValueAdd(Int32, String) => MakeRope(ToString(Int32), String)
+        https://bugs.webkit.org/show_bug.cgi?id=170943
+
+        Reviewed by Geoffrey Garen.
+
+        * microbenchmarks/number-to-string-with-add-empty.js: Added.
+        (toStringLeft):
+        (toStringRight):
+        * microbenchmarks/number-to-string-with-add-in-loop.js: Added.
+        (toStringLeft):
+        (toStringRight):
+        * microbenchmarks/number-to-string-with-add.js: Added.
+        (toStringLeft):
+        (toStringRight):
+        * stress/number-to-string-with-add.js: Added.
+        (shouldBe):
+        (toStringRight):
+        (toStringLeftEmpty):
+        (toStringRightEmpty):
+
+2017-04-18  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [DFG] Drop unknown use of CheckCell's child2 to work ObjectAllocationSinking for Array iterator object
         https://bugs.webkit.org/show_bug.cgi?id=170940
 

@@ -164,8 +164,27 @@ private:
             if (attemptToMakeFastStringAdd(node))
                 break;
 
-            fixEdge<UntypedUse>(node->child1());
-            fixEdge<UntypedUse>(node->child2());
+            Edge& child1 = node->child1();
+            Edge& child2 = node->child2();
+            if (child1->shouldSpeculateString() || child2->shouldSpeculateString()) {
+                if (child1->shouldSpeculateInt32() || child2->shouldSpeculateInt32()) {
+                    auto convertString = [&](Node* node, Edge& edge) {
+                        if (edge->shouldSpeculateInt32())
+                            convertStringAddUse<Int32Use>(node, edge);
+                        else {
+                            ASSERT(edge->shouldSpeculateString());
+                            convertStringAddUse<StringUse>(node, edge);
+                        }
+                    };
+                    convertString(node, child1);
+                    convertString(node, child2);
+                    convertToMakeRope(node);
+                    break;
+                }
+            }
+
+            fixEdge<UntypedUse>(child1);
+            fixEdge<UntypedUse>(child2);
             node->setResult(NodeResultJS);
             break;
         }
@@ -1927,9 +1946,20 @@ private:
     template<UseKind useKind>
     void createToString(Node* node, Edge& edge)
     {
-        edge.setNode(m_insertionSet.insertNode(
+        Node* toString = m_insertionSet.insertNode(
             m_indexInBlock, SpecString, ToString, node->origin,
-            Edge(edge.node(), useKind)));
+            Edge(edge.node(), useKind));
+        switch (useKind) {
+        case Int32Use:
+        case Int52RepUse:
+        case DoubleRepUse:
+        case NotCellUse:
+            toString->clearFlags(NodeMustGenerate);
+            break;
+        default:
+            break;
+        }
+        edge.setNode(toString);
     }
     
     template<UseKind useKind>

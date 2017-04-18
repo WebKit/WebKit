@@ -1,3 +1,47 @@
+2017-04-18  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DFG] Convert ValueAdd(Int32, String) => MakeRope(ToString(Int32), String)
+        https://bugs.webkit.org/show_bug.cgi?id=170943
+
+        Reviewed by Geoffrey Garen.
+
+        This patch converts ValueAdd(Int32, String) to MakeRope(ToString(Int32), String).
+        This has 2 great features.
+
+        1. MakeRope(ToString(Int32), String) is less clobbering.
+
+        While ValueAdd ends up calling functions, VM knows much about MakeRope(ToString(Int32), String)
+        and VM knows it is less clobbering. It encourages LICM and other operations that is conservatively
+        executed because of ValueAdd's clobbering.
+
+        2. Simply, MakeRope(ToString(Int32), String) is faster than ValueAdd.
+
+        While ValueAdd ends up calling a generic function, our ToString(Int32) calls well-optimized toString
+        operation. And later, MakeRope can fall into the fast path that just takes a string from a free list.
+        It is simply faster than ValueAdd.
+
+        We ensure that this patch shows performance improvement in attached benchmarks.
+
+                                                        baseline                  patched
+
+            number-to-string-with-add-empty         16.2763+-3.3930     ^     10.3142+-1.0967        ^ definitely 1.5780x faster
+            number-to-string-with-add-in-loop      168.7621+-10.9738    ^     15.5307+-3.3179        ^ definitely 10.8664x faster
+            number-to-string-with-add               18.8557+-4.8292           11.6901+-2.5650          might be 1.6130x faster
+
+        In SixSpeed,
+
+                                               baseline                  patched
+
+            template_string_tag.es5       200.1027+-20.6871    ^     25.7925+-11.4052       ^ definitely 7.7582x faster
+            template_string_tag.es6       331.3913+-12.1750    ^    286.6958+-26.0441       ^ definitely 1.1559x faster
+            for-of-array.es5              412.4344+-23.2517    ^    272.8707+-47.2118       ^ definitely 1.5115x faster
+            for-of-array.es6              504.0082+-65.5045    ^    300.3277+-12.8193       ^ definitely 1.6782x faster
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::createToString):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+
 2017-04-18  Michael Saboff  <msaboff@apple.com>
 
         REGRESSION(215272): microbenchmark/seal-and-do-work and microbenchmark/freeze-and-do-work are 27x slower
