@@ -122,7 +122,7 @@ public:
     virtual ~MockLibWebRTCPeerConnectionReleasedInNetworkThreadWhileCreatingOffer() = default;
 
 private:
-    void CreateOffer(webrtc::CreateSessionDescriptionObserver* observer, const webrtc::MediaConstraintsInterface*) final { releaseInNetworkThread(*this, *observer); }
+    void CreateOffer(webrtc::CreateSessionDescriptionObserver* observer, const webrtc::PeerConnectionInterface::RTCOfferAnswerOptions&) final { releaseInNetworkThread(*this, *observer); }
 };
 
 class MockLibWebRTCPeerConnectionReleasedInNetworkThreadWhileGettingStats : public MockLibWebRTCPeerConnection {
@@ -267,7 +267,7 @@ bool MockLibWebRTCPeerConnection::RemoveTrack(webrtc::RtpSenderInterface* sender
     });
 }
 
-void MockLibWebRTCPeerConnection::CreateOffer(webrtc::CreateSessionDescriptionObserver* observer, const webrtc::MediaConstraintsInterface*)
+void MockLibWebRTCPeerConnection::CreateOffer(webrtc::CreateSessionDescriptionObserver* observer, const webrtc::PeerConnectionInterface::RTCOfferAnswerOptions&)
 {
     LibWebRTCProvider::callOnWebRTCSignalingThread([this, observer] {
         std::ostringstream sdp;

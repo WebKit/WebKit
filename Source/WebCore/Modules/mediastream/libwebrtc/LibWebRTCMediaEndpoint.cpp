@@ -38,6 +38,7 @@
 #include "PlatformStrategies.h"
 #include "RTCDataChannel.h"
 #include "RTCDataChannelEvent.h"
+#include "RTCOfferOptions.h"
 #include "RTCPeerConnection.h"
 #include "RTCSessionDescription.h"
 #include "RTCStatsReport.h"
@@ -201,10 +202,13 @@ void LibWebRTCMediaEndpoint::removeTrack(RTCRtpSender& sender)
     m_backend->RemoveTrack(rtcSender.get());
 }
 
-void LibWebRTCMediaEndpoint::doCreateOffer()
+void LibWebRTCMediaEndpoint::doCreateOffer(const RTCOfferOptions& options)
 {
     m_isInitiator = true;
-    m_backend->CreateOffer(&m_createSessionDescriptionObserver, nullptr);
+    webrtc::PeerConnectionInterface::RTCOfferAnswerOptions rtcOptions;
+    rtcOptions.ice_restart = options.iceRestart;
+    rtcOptions.voice_activity_detection = options.voiceActivityDetection;
+    m_backend->CreateOffer(&m_createSessionDescriptionObserver, rtcOptions);
 }
 
 void LibWebRTCMediaEndpoint::doCreateAnswer()

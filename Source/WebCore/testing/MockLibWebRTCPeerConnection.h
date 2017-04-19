@@ -71,7 +71,7 @@ protected:
 
     void SetLocalDescription(webrtc::SetSessionDescriptionObserver*, webrtc::SessionDescriptionInterface*) override;
     bool GetStats(webrtc::StatsObserver*, webrtc::MediaStreamTrackInterface*, StatsOutputLevel) override { return false; }
-    void CreateOffer(webrtc::CreateSessionDescriptionObserver*, const webrtc::MediaConstraintsInterface*) override;
+    void CreateOffer(webrtc::CreateSessionDescriptionObserver*, const webrtc::PeerConnectionInterface::RTCOfferAnswerOptions&) override;
 
     virtual void gotLocalDescription() { }
 

@@ -151,9 +151,9 @@ void LibWebRTCPeerConnectionBackend::doSetRemoteDescription(RTCSessionDescriptio
     }
 }
 
-void LibWebRTCPeerConnectionBackend::doCreateOffer(RTCOfferOptions&&)
+void LibWebRTCPeerConnectionBackend::doCreateOffer(RTCOfferOptions&& options)
 {
-    m_endpoint->doCreateOffer();
+    m_endpoint->doCreateOffer(options);
 }
 
 void LibWebRTCPeerConnectionBackend::doCreateAnswer(RTCAnswerOptions&&)
