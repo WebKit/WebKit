@@ -1,3 +1,14 @@
+2017-04-19  Antti Koivisto  <antti@apple.com>
+
+        Avoid repaints for invisible animations on tumblr.com/search/aww
+        https://bugs.webkit.org/show_bug.cgi?id=170986
+        <rdar://problem/28644580>
+
+        Reviewed by Andreas Kling.
+
+        * fast/repaint/mutate-non-visible-expected.txt: Added.
+        * fast/repaint/mutate-non-visible.html: Added.
+
 2017-04-18  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Check both origins and cookieHostNames for domain matches in data removal

@@ -1,3 +1,19 @@
+2017-04-19  Antti Koivisto  <antti@apple.com>
+
+        Avoid repaints for invisible animations on tumblr.com/search/aww
+        https://bugs.webkit.org/show_bug.cgi?id=170986
+        <rdar://problem/28644580>
+
+        Reviewed by Andreas Kling.
+
+        Test: fast/repaint/mutate-non-visible.html
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::requiresPainting):
+        (WebCore::RenderStyle::changeRequiresRepaint):
+
+            If an element is invisible it does not require repaint even if something else changes.
+
 2017-04-19  Dean Jackson  <dino@apple.com>
 
         Non-muxable GPUs shouldn't allow offline rendering

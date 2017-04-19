@@ -843,8 +843,20 @@ bool RenderStyle::changeRequiresLayerRepaint(const RenderStyle& other, unsigned&
     return false;
 }
 
+static bool requiresPainting(const RenderStyle& style)
+{
+    if (style.visibility() == HIDDEN)
+        return false;
+    if (!style.opacity())
+        return false;
+    return true;
+}
+
 bool RenderStyle::changeRequiresRepaint(const RenderStyle& other, unsigned& changedContextSensitiveProperties) const
 {
+    if (!requiresPainting(*this) && !requiresPainting(other))
+        return false;
+
     if (m_inheritedFlags.visibility != other.m_inheritedFlags.visibility
         || m_inheritedFlags.printColorAdjust != other.m_inheritedFlags.printColorAdjust
         || m_inheritedFlags.insideLink != other.m_inheritedFlags.insideLink
