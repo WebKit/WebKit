@@ -126,6 +126,13 @@ void PaymentCoordinator::abortPaymentSession()
     m_activeSession = nullptr;
 }
 
+void PaymentCoordinator::cancelPaymentSession()
+{
+    ASSERT(m_activeSession);
+
+    m_client.cancelPaymentSession();
+}
+
 void PaymentCoordinator::validateMerchant(const URL& validationURL)
 {
     if (!m_activeSession) {

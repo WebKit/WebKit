@@ -137,6 +137,7 @@ private:
         ShippingMethodSelected,
         ShippingContactSelected,
         PaymentMethodSelected,
+        CancelRequested,
         Authorized,
         Completed,
 

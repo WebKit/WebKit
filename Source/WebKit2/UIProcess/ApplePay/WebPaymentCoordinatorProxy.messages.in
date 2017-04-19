@@ -37,6 +37,7 @@ messages -> WebPaymentCoordinatorProxy {
     CompletePaymentMethodSelection(std::optional<WebCore::PaymentMethodUpdate> update)
     CompletePaymentSession(std::optional<WebCore::PaymentAuthorizationResult> result)
     AbortPaymentSession()
+    CancelPaymentSession()
 }
 
 #endif

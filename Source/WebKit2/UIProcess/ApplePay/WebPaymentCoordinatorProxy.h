@@ -85,6 +85,7 @@ private:
     void completePaymentMethodSelection(const std::optional<WebCore::PaymentMethodUpdate>&);
     void completePaymentSession(const std::optional<WebCore::PaymentAuthorizationResult>&);
     void abortPaymentSession();
+    void cancelPaymentSession();
 
     bool canBegin() const;
     bool canCancel() const;

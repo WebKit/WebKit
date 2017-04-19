@@ -91,6 +91,10 @@ void WebPaymentCoordinatorClient::abortPaymentSession()
 {
 }
 
+void WebPaymentCoordinatorClient::cancelPaymentSession()
+{
+}
+
 void WebPaymentCoordinatorClient::paymentCoordinatorDestroyed()
 {
     delete this;

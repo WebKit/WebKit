@@ -440,14 +440,11 @@ bool ArgumentCoder<WebCore::ShippingContactUpdate>::decode(Decoder& decoder, Web
 
 void ArgumentCoder<WebCore::ShippingMethodUpdate>::encode(Encoder& encoder, const WebCore::ShippingMethodUpdate& update)
 {
-    encoder << update.status;
     encoder << update.newTotalAndLineItems;
 }
 
 bool ArgumentCoder<WebCore::ShippingMethodUpdate>::decode(Decoder& decoder, WebCore::ShippingMethodUpdate& update)
 {
-    if (!decoder.decode(update.status))
-        return false;
     if (!decoder.decode(update.newTotalAndLineItems))
         return false;
 
@@ -455,5 +452,4 @@ bool ArgumentCoder<WebCore::ShippingMethodUpdate>::decode(Decoder& decoder, WebC
 }
 
 }
-
 #endif

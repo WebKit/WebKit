@@ -1,3 +1,48 @@
+2017-04-19  Anders Carlsson  <andersca@apple.com>
+
+        Stop using deprecated APIs, part 3
+        https://bugs.webkit.org/show_bug.cgi?id=171003
+        rdar://problem/31589635
+        rdar://problem/31589635
+
+        Reviewed by Tim Horton.
+
+        * Modules/applepay/ApplePaySession.cpp:
+        (WebCore::convertAndValidate):
+        The status member variable has been removed from ApplePayShippingMethodUpdate.
+
+        (WebCore::ApplePaySession::completeShippingMethodSelection):
+        If status is not STATUS_SUCCESS, cancel the payment session.
+
+        (WebCore::ApplePaySession::canSuspendForDocumentSuspension):
+        (WebCore::ApplePaySession::canBegin):
+        (WebCore::ApplePaySession::canAbort):
+        (WebCore::ApplePaySession::canCancel):
+        (WebCore::ApplePaySession::canCompleteShippingMethodSelection):
+        (WebCore::ApplePaySession::canCompleteShippingContactSelection):
+        (WebCore::ApplePaySession::canCompletePaymentMethodSelection):
+        (WebCore::ApplePaySession::canCompletePayment):
+        (WebCore::ApplePaySession::isFinalState):
+        Add State::CancelRequested.
+
+        * Modules/applepay/ApplePayShippingMethodUpdate.h:
+        * Modules/applepay/ApplePayShippingMethodUpdate.idl:
+        Remove status.
+
+        * Modules/applepay/PaymentCoordinator.cpp:
+        (WebCore::PaymentCoordinator::cancelPaymentSession):
+        Call through to the client.
+
+        * Modules/applepay/PaymentCoordinator.h:
+        * Modules/applepay/PaymentCoordinatorClient.h:
+        Add cancelPaymentSession().
+
+        * Modules/applepay/PaymentRequest.h:
+        Remove status.
+
+        * loader/EmptyClients.cpp:
+        Add new client member function.
+
 2017-04-19  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Limit capture to one tab at a time

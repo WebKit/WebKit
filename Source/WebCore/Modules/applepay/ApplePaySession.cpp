@@ -496,11 +496,6 @@ static ExceptionOr<ShippingMethodUpdate> convertAndValidate(ApplePayShippingMeth
 {
     ShippingMethodUpdate convertedUpdate;
 
-    auto authorizationStatus = toPaymentAuthorizationStatus(update.status);
-    if (!authorizationStatus)
-        return Exception { INVALID_ACCESS_ERR };
-    convertedUpdate.status = *authorizationStatus;
-
     auto convertedNewTotal = convertAndValidateTotal(WTFMove(update.newTotal));
     if (convertedNewTotal.hasException())
         return convertedNewTotal.releaseException();
@@ -804,7 +799,17 @@ ExceptionOr<void> ApplePaySession::completeShippingMethodSelection(unsigned shor
 {
     ApplePayShippingMethodUpdate update;
 
-    update.status = status;
+    auto authorizationStatus = toPaymentAuthorizationStatus(status);
+    if (!authorizationStatus)
+        return Exception { INVALID_ACCESS_ERR };
+
+    if (*authorizationStatus != PaymentAuthorizationStatus::Success) {
+        // This is a fatal error. Cancel the request.
+        m_state = State::CancelRequested;
+        paymentCoordinator().cancelPaymentSession();
+        return { };
+    }
+
     update.newTotal = WTFMove(newTotal);
     update.newLineItems = WTFMove(newLineItems);
 
@@ -980,6 +985,7 @@ bool ApplePaySession::canSuspendForDocumentSuspension() const
     case State::ShippingMethodSelected:
     case State::ShippingContactSelected:
     case State::PaymentMethodSelected:
+    case State::CancelRequested:
         return false;
     }
 }
@@ -1014,6 +1020,7 @@ bool ApplePaySession::canBegin() const
     case State::ShippingMethodSelected:
     case State::ShippingContactSelected:
     case State::PaymentMethodSelected:
+    case State::CancelRequested:
         return false;
     }
 }
@@ -1032,6 +1039,7 @@ bool ApplePaySession::canAbort() const
     case State::ShippingMethodSelected:
     case State::ShippingContactSelected:
     case State::PaymentMethodSelected:
+    case State::CancelRequested:
         return true;
     }
 }
@@ -1050,6 +1058,7 @@ bool ApplePaySession::canCancel() const
     case State::ShippingMethodSelected:
     case State::ShippingContactSelected:
     case State::PaymentMethodSelected:
+    case State::CancelRequested:
         return true;
     }
 }
@@ -1076,6 +1085,7 @@ bool ApplePaySession::canCompleteShippingMethodSelection() const
     case State::Authorized:
     case State::PaymentMethodSelected:
     case State::ShippingContactSelected:
+    case State::CancelRequested:
         return false;
 
     case State::ShippingMethodSelected:
@@ -1094,6 +1104,7 @@ bool ApplePaySession::canCompleteShippingContactSelection() const
     case State::Authorized:
     case State::PaymentMethodSelected:
     case State::ShippingMethodSelected:
+    case State::CancelRequested:
         return false;
 
     case State::ShippingContactSelected:
@@ -1112,6 +1123,7 @@ bool ApplePaySession::canCompletePaymentMethodSelection() const
     case State::Authorized:
     case State::ShippingMethodSelected:
     case State::ShippingContactSelected:
+    case State::CancelRequested:
         return false;
 
     case State::PaymentMethodSelected:
@@ -1130,6 +1142,7 @@ bool ApplePaySession::canCompletePayment() const
     case State::ShippingMethodSelected:
     case State::ShippingContactSelected:
     case State::PaymentMethodSelected:
+    case State::CancelRequested:
         return false;
 
     case State::Authorized:
@@ -1146,6 +1159,7 @@ bool ApplePaySession::isFinalState() const
     case State::ShippingContactSelected:
     case State::PaymentMethodSelected:
     case State::Authorized:
+    case State::CancelRequested:
         return false;
 
     case State::Completed:

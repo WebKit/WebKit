@@ -192,7 +192,6 @@ struct ShippingContactUpdate {
 };
 
 struct ShippingMethodUpdate {
-    PaymentAuthorizationStatus status;
     PaymentRequest::TotalAndLineItems newTotalAndLineItems;
 };
 

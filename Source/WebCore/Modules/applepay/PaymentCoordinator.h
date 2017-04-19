@@ -64,6 +64,7 @@ public:
     void completePaymentMethodSelection(std::optional<PaymentMethodUpdate>&&);
     void completePaymentSession(std::optional<PaymentAuthorizationResult>&&);
     void abortPaymentSession();
+    void cancelPaymentSession();
 
     WEBCORE_EXPORT void validateMerchant(const URL& validationURL);
     WEBCORE_EXPORT void didAuthorizePayment(const Payment&);

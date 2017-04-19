@@ -142,6 +142,11 @@ void WebPaymentCoordinator::abortPaymentSession()
     m_webPage.send(Messages::WebPaymentCoordinatorProxy::AbortPaymentSession());
 }
 
+void WebPaymentCoordinator::cancelPaymentSession()
+{
+    m_webPage.send(Messages::WebPaymentCoordinatorProxy::CancelPaymentSession());
+}
+
 void WebPaymentCoordinator::paymentCoordinatorDestroyed()
 {
     delete this;

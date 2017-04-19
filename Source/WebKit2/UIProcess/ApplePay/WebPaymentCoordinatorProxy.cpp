@@ -200,6 +200,15 @@ void WebPaymentCoordinatorProxy::abortPaymentSession()
     didReachFinalState();
 }
 
+void WebPaymentCoordinatorProxy::cancelPaymentSession()
+{
+    if (!canCancel())
+        return;
+
+    hidePaymentUI();
+    didCancelPaymentSession();
+}
+
 void WebPaymentCoordinatorProxy::didCancelPaymentSession()
 {
     ASSERT(canCancel());

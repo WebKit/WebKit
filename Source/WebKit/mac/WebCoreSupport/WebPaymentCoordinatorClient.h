@@ -47,6 +47,7 @@ private:
     void completePaymentMethodSelection(std::optional<WebCore::PaymentMethodUpdate>&&) override;
     void completePaymentSession(std::optional<WebCore::PaymentAuthorizationResult>&&) override;
     void abortPaymentSession() override;
+    void cancelPaymentSession() override;
     void paymentCoordinatorDestroyed() override;
 };
 

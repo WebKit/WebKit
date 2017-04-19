@@ -54,6 +54,7 @@ public:
     virtual void completePaymentMethodSelection(std::optional<PaymentMethodUpdate>&&) = 0;
     virtual void completePaymentSession(std::optional<PaymentAuthorizationResult>&&) = 0;
     virtual void abortPaymentSession() = 0;
+    virtual void cancelPaymentSession() = 0;
     virtual void paymentCoordinatorDestroyed() = 0;
 
 protected:

@@ -1,3 +1,37 @@
+2017-04-19  Anders Carlsson  <andersca@apple.com>
+
+        Stop using deprecated APIs, part 3
+        https://bugs.webkit.org/show_bug.cgi?id=171003
+        rdar://problem/31589635
+
+        Reviewed by Tim Horton.
+
+        * Shared/Cocoa/WebCoreArgumentCodersCocoa.mm:
+        (IPC::ArgumentCoder<WebCore::ShippingMethodUpdate>::encode):
+        (IPC::ArgumentCoder<WebCore::ShippingMethodUpdate>::decode):
+        Don't encode/decode status.
+
+        * UIProcess/ApplePay/WebPaymentCoordinatorProxy.cpp:
+        (WebKit::WebPaymentCoordinatorProxy::cancelPaymentSession):
+        Hide the UI and report back.
+
+        * UIProcess/ApplePay/WebPaymentCoordinatorProxy.h:
+        Add new member.
+
+        * UIProcess/ApplePay/WebPaymentCoordinatorProxy.messages.in:
+        Add new message.
+
+        * UIProcess/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.mm:
+        (WebKit::WebPaymentCoordinatorProxy::platformCompleteShippingMethodSelection):
+        Always pass success in the old code path. Stop using the deprecated method.
+
+        * WebProcess/ApplePay/WebPaymentCoordinator.cpp:
+        (WebKit::WebPaymentCoordinator::cancelPaymentSession):
+        Send a message to the UI process.
+
+        * WebProcess/ApplePay/WebPaymentCoordinator.h:
+        Add new member.
+
 2017-04-19  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Limit capture to one tab at a time

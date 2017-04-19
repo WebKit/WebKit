@@ -494,6 +494,7 @@ class EmptyPaymentCoordinatorClient final : public PaymentCoordinatorClient {
     void completeShippingContactSelection(std::optional<ShippingContactUpdate>&&) final { }
     void completePaymentMethodSelection(std::optional<PaymentMethodUpdate>&&) final { }
     void completePaymentSession(std::optional<PaymentAuthorizationResult>&&) final { }
+    void cancelPaymentSession() final { }
     void abortPaymentSession() final { }
     void paymentCoordinatorDestroyed() final { }
 };
