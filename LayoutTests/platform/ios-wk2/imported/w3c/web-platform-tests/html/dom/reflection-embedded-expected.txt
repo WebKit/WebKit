@@ -19,19 +19,19 @@ CONSOLE MESSAGE: line 707: The language contains a null character and is not a v
 CONSOLE MESSAGE: line 707: The language 'null' is not a valid BCP 47 language tag.
 CONSOLE MESSAGE: line 707: The language 'test-toString' is not a valid BCP 47 language tag.
 CONSOLE MESSAGE: line 707: The language 'test-valueOf' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 1409: The language contains a null character and is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 1409: The language 'undefined' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 1409: The language '7' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 1409: The language '1.5' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 1409: The language 'true' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 1409: The language 'false' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 1409: The language '[object Object]' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 1409: The language 'Infinity' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 1409: The language '-Infinity' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 1409: The language contains a null character and is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 1409: The language 'null' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 1409: The language 'test-toString' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 1409: The language 'test-valueOf' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 1406: The language contains a null character and is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 1406: The language 'undefined' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 1406: The language '7' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 1406: The language '1.5' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 1406: The language 'true' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 1406: The language 'false' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 1406: The language '[object Object]' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 1406: The language 'Infinity' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 1406: The language '-Infinity' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 1406: The language contains a null character and is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 1406: The language 'null' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 1406: The language 'test-toString' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 1406: The language 'test-valueOf' is not a valid BCP 47 language tag.
 Implementers looking to fix bugs might want to use the original version of this suite's test framework, which conveniently aggregates similar errors and only reports failures. This file is (part of) the authoritative conformance test suite, and is suitable for incorporation into automated test suites.
 
 
@@ -755,7 +755,7 @@ PASS img.hspace: setAttribute() to "\t7"
 PASS img.hspace: setAttribute() to "\v7" 
 PASS img.hspace: setAttribute() to "\f7" 
 PASS img.hspace: setAttribute() to " 7" 
-PASS img.hspace: setAttribute() to " 7" 
+PASS img.hspace: setAttribute() to " 7" 
 PASS img.hspace: setAttribute() to "﻿7" 
 PASS img.hspace: setAttribute() to "\n7" 
 PASS img.hspace: setAttribute() to "\r7" 
@@ -817,7 +817,7 @@ PASS img.vspace: setAttribute() to "\t7"
 PASS img.vspace: setAttribute() to "\v7" 
 PASS img.vspace: setAttribute() to "\f7" 
 PASS img.vspace: setAttribute() to " 7" 
-PASS img.vspace: setAttribute() to " 7" 
+PASS img.vspace: setAttribute() to " 7" 
 PASS img.vspace: setAttribute() to "﻿7" 
 PASS img.vspace: setAttribute() to "\n7" 
 PASS img.vspace: setAttribute() to "\r7" 
@@ -2823,7 +2823,7 @@ PASS object.hspace: setAttribute() to "\t7"
 PASS object.hspace: setAttribute() to "\v7" 
 PASS object.hspace: setAttribute() to "\f7" 
 PASS object.hspace: setAttribute() to " 7" 
-PASS object.hspace: setAttribute() to " 7" 
+PASS object.hspace: setAttribute() to " 7" 
 PASS object.hspace: setAttribute() to "﻿7" 
 PASS object.hspace: setAttribute() to "\n7" 
 PASS object.hspace: setAttribute() to "\r7" 
@@ -2917,7 +2917,7 @@ PASS object.vspace: setAttribute() to "\t7"
 PASS object.vspace: setAttribute() to "\v7" 
 PASS object.vspace: setAttribute() to "\f7" 
 PASS object.vspace: setAttribute() to " 7" 
-PASS object.vspace: setAttribute() to " 7" 
+PASS object.vspace: setAttribute() to " 7" 
 PASS object.vspace: setAttribute() to "﻿7" 
 PASS object.vspace: setAttribute() to "\n7" 
 PASS object.vspace: setAttribute() to "\r7" 
@@ -3994,7 +3994,7 @@ PASS video.width: setAttribute() to "\t7"
 PASS video.width: setAttribute() to "\v7" 
 PASS video.width: setAttribute() to "\f7" 
 PASS video.width: setAttribute() to " 7" 
-PASS video.width: setAttribute() to " 7" 
+PASS video.width: setAttribute() to " 7" 
 PASS video.width: setAttribute() to "﻿7" 
 PASS video.width: setAttribute() to "\n7" 
 PASS video.width: setAttribute() to "\r7" 
@@ -4056,7 +4056,7 @@ PASS video.height: setAttribute() to "\t7"
 PASS video.height: setAttribute() to "\v7" 
 PASS video.height: setAttribute() to "\f7" 
 PASS video.height: setAttribute() to " 7" 
-PASS video.height: setAttribute() to " 7" 
+PASS video.height: setAttribute() to " 7" 
 PASS video.height: setAttribute() to "﻿7" 
 PASS video.height: setAttribute() to "\n7" 
 PASS video.height: setAttribute() to "\r7" 
@@ -5753,7 +5753,7 @@ PASS canvas.width: setAttribute() to "\t7"
 PASS canvas.width: setAttribute() to "\v7" 
 PASS canvas.width: setAttribute() to "\f7" 
 PASS canvas.width: setAttribute() to " 7" 
-PASS canvas.width: setAttribute() to " 7" 
+PASS canvas.width: setAttribute() to " 7" 
 PASS canvas.width: setAttribute() to "﻿7" 
 PASS canvas.width: setAttribute() to "\n7" 
 PASS canvas.width: setAttribute() to "\r7" 
@@ -5813,7 +5813,7 @@ PASS canvas.height: setAttribute() to "\t7"
 PASS canvas.height: setAttribute() to "\v7" 
 PASS canvas.height: setAttribute() to "\f7" 
 PASS canvas.height: setAttribute() to " 7" 
-PASS canvas.height: setAttribute() to " 7" 
+PASS canvas.height: setAttribute() to " 7" 
 PASS canvas.height: setAttribute() to "﻿7" 
 PASS canvas.height: setAttribute() to "\n7" 
 PASS canvas.height: setAttribute() to "\r7" 

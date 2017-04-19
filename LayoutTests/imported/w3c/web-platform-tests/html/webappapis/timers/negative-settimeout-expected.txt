@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: line 2448: Error: assert_unreached: Reached unreachable code
 
 PASS Negative timeout in setTimeout 
 
