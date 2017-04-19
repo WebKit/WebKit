@@ -1,3 +1,23 @@
+2017-04-19  Joseph Pecoraro  <pecoraro@apple.com>
+
+        ASAN Crash running LayoutTests/inspector/worker tests
+        https://bugs.webkit.org/show_bug.cgi?id=170967
+        <rdar://problem/31256437>
+
+        Reviewed by Alex Christensen.
+
+        * workers/WorkerMessagingProxy.h:
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::WorkerMessagingProxy::WorkerMessagingProxy):
+        (WebCore::WorkerMessagingProxy::workerGlobalScopeDestroyedInternal):
+        Make the MessagingProxy thread safe ref counted. Since it used to
+        delete itself, turn this into a ref (implicit on construction)
+        and deref (replacing delete this).
+
+        (WebCore::WorkerMessagingProxy::postMessageToPageInspector):
+        When dispatching have the lambda implicitly ref/deref with the
+        lambda to keep the proxy alive while a lambda is queued.
+
 2017-04-19  Brent Fulgham  <bfulgham@apple.com>
 
         [iOS, macOS] Guard against passing nullptr to vImagePremultiplyData
