@@ -1,5 +1,13 @@
 2017-04-18  Dean Jackson  <dino@apple.com>
 
+        Add the actual content to the files, now that
+        SVN knows they can have tabs.
+
+        * src/third_party/murmurhash/MurmurHash3.cpp:
+        * src/third_party/murmurhash/MurmurHash3.h:
+
+2017-04-18  Dean Jackson  <dino@apple.com>
+
         WinCairo needs these files I recently removed
         from our copy of ANGLE.
 
