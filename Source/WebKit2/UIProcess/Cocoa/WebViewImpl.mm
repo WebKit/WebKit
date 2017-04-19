@@ -3600,6 +3600,7 @@ NSDragOperation WebViewImpl::draggingEntered(id <NSDraggingInfo> draggingInfo)
 
     m_page->resetCurrentDragInformation();
     m_page->dragEntered(dragData, draggingInfo.draggingPasteboard.name);
+    m_initialNumberOfValidItemsForDrop = draggingInfo.numberOfValidItemsForDrop;
     return NSDragOperationCopy;
 }
 
@@ -3616,6 +3617,10 @@ NSDragOperation WebViewImpl::draggingUpdated(id <NSDraggingInfo> draggingInfo)
     m_page->dragUpdated(dragData, draggingInfo.draggingPasteboard.name);
 
     NSInteger numberOfValidItemsForDrop = m_page->currentDragNumberOfFilesToBeAccepted();
+
+    if (m_page->currentDragOperation() == WebCore::DragOperationNone)
+        numberOfValidItemsForDrop = m_initialNumberOfValidItemsForDrop;
+
     NSDraggingFormation draggingFormation = NSDraggingFormationNone;
     if (m_page->currentDragIsOverFileInput() && numberOfValidItemsForDrop > 0)
         draggingFormation = NSDraggingFormationList;
@@ -3635,6 +3640,8 @@ void WebViewImpl::draggingExited(id <NSDraggingInfo> draggingInfo)
     WebCore::DragData dragData(draggingInfo, client, global, static_cast<WebCore::DragOperation>(draggingInfo.draggingSourceOperationMask), applicationFlagsForDrag(m_view, draggingInfo));
     m_page->dragExited(dragData, draggingInfo.draggingPasteboard.name);
     m_page->resetCurrentDragInformation();
+    draggingInfo.numberOfValidItemsForDrop = m_initialNumberOfValidItemsForDrop;
+    m_initialNumberOfValidItemsForDrop = 0;
 }
 
 bool WebViewImpl::prepareForDragOperation(id <NSDraggingInfo>)

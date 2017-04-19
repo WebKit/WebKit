@@ -1,3 +1,20 @@
+2017-04-18  Per Arne Vollan  <pvollan@apple.com>
+
+        Dragging a few items over MiniBrowser has 0 in the red indicator.
+        https://bugs.webkit.org/show_bug.cgi?id=170874
+
+        Reviewed by Tim Horton.
+
+        When WebKit does not accept the drag items, the drag count badge should not be updated.
+        Also, if WebKit changes the drag count badge, it should be restored to its original
+        value when the drag exits.
+
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::draggingEntered):
+        (WebKit::WebViewImpl::draggingUpdated):
+        (WebKit::WebViewImpl::draggingExited):
+
 2017-04-18  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [WK2] Add infrastructure and unit tests for file uploads using data interaction

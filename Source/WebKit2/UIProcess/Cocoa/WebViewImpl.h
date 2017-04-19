@@ -713,6 +713,11 @@ private:
     bool m_requiresUserActionForEditingControlsManager { false };
     bool m_editableElementIsFocused { false };
     bool m_isTextInsertionReplacingSoftSpace { false };
+    
+#if ENABLE(DRAG_SUPPORT)
+    NSInteger m_initialNumberOfValidItemsForDrop { 0 };
+#endif
+
 };
     
 } // namespace WebKit
