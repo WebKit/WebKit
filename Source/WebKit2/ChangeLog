@@ -1,3 +1,12 @@
+2017-04-19  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK] WebKitAutocleanups.h regression in v2.16.1 release
+        https://bugs.webkit.org/show_bug.cgi?id=170987
+
+        Reviewed by Carlos Garcia Campos.
+
+        * UIProcess/API/gtk/WebKitAutocleanups.h: Remove stray semicolon.
+
 2017-04-18  Per Arne Vollan  <pvollan@apple.com>
 
         Dragging a few items over MiniBrowser has 0 in the red indicator.
