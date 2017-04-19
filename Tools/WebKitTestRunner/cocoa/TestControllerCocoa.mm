@@ -32,6 +32,7 @@
 #import "TestRunnerWKWebView.h"
 #import <Foundation/Foundation.h>
 #import <WebKit/WKContextConfigurationRef.h>
+#import <WebKit/WKCookieManager.h>
 #import <WebKit/WKPreferencesRefPrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKStringCF.h>
@@ -40,6 +41,7 @@
 #import <WebKit/WKWebViewConfiguration.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
+#import <WebKit/WKWebsiteDataStoreRef.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKit/_WKUserContentExtensionStore.h>
 #import <WebKit/_WKUserContentExtensionStorePrivate.h>
@@ -62,6 +64,12 @@ void initializeWebViewConfiguration(const char* libraryPath, WKStringRef injecte
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000)
     globalWebViewConfiguration._applePayEnabled = YES;
 #endif
+
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000)
+    WKCookieManagerSetCookieStoragePartitioningEnabled(WKContextGetCookieManager(context), true);
+#endif
+
+    WKWebsiteDataStoreSetResourceLoadStatisticsEnabled(WKContextGetWebsiteDataStore(context), true);
 
 #if PLATFORM(IOS)
     globalWebViewConfiguration.allowsInlineMediaPlayback = YES;
