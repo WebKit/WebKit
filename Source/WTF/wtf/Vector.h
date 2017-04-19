@@ -1522,10 +1522,10 @@ size_t removeRepeatedElements(VectorType& vector, const Func& func)
     return newSize;
 }
 
-template<typename VectorType>
-size_t removeRepeatedElements(VectorType& vector)
+template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity>
+size_t removeRepeatedElements(Vector<T, inlineCapacity, OverflowHandler, minCapacity>& vector)
 {
-    return removeRepeatedElements(vector, [] (auto& a, auto& b) { return a == b; });
+    return removeRepeatedElements(vector, [] (T& a, T& b) { return a == b; });
 }
 
 } // namespace WTF

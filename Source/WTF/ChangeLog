@@ -1,3 +1,15 @@
+2017-04-19  David Kilzer  <ddkilzer@apple.com>
+
+        Vector.h: error: 'auto' not allowed in lambda parameter
+        <https://webkit.org/b/171010>
+        <rdar://problem/31716076>
+
+        Reviewed by Saam Barati.
+
+        * wtf/Vector.h:
+        (WTF::removeRepeatedElements): Replace 'auto' with a specific
+        type, 'T', based on a Vector<> template type.
+
 2017-04-19  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r215518.
