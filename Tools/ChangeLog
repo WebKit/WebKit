@@ -1,3 +1,13 @@
+2017-04-19  Bill Ming  <mbbill@gmail.com>
+
+        close_fds should be set to False on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=170838
+
+        Reviewed by Brent Fulgham.
+
+        * Scripts/webkitpy/common/system/executive.py:
+        (Executive._should_close_fds):
+
 2017-04-19  David Kilzer  <ddkilzer@apple.com>
 
         Stop using strcpy() in WebKit::EnvironmentUtilities::stripValuesEndingWithString()

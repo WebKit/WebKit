@@ -92,7 +92,12 @@ class Executive(object):
         # (otherwise we can hang when we kill DumpRenderTree when we are running
         # multiple threads). See http://bugs.python.org/issue2320 .
         # In Python 2.7.10, close_fds is also supported on Windows.
-        return True
+        # However, "you cannot set close_fds to true and also redirect the standard
+        # handles by setting stdin, stdout or stderr.".
+        if sys.platform.startswith('win'):
+            return False
+        else:
+            return True
 
     def _run_command_with_teed_output(self, args, teed_output, **kwargs):
         child_process = self.popen(args,
