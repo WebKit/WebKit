@@ -1,3 +1,15 @@
+2017-04-19  JF Bastien  <jfbastien@apple.com>
+
+        Unreviewed, rolling out r215520.
+
+        Broke Debian 8
+
+        Reverted changeset:
+
+        "[INTL] Implement Intl.DateTimeFormat.prototype.formatToParts"
+        https://bugs.webkit.org/show_bug.cgi?id=169458
+        http://trac.webkit.org/changeset/215520
+
 2017-04-19  Andy VanWagoner  <thetalecrafter@gmail.com>
 
         [INTL] Implement Intl.DateTimeFormat.prototype.formatToParts
