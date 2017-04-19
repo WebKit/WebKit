@@ -514,3 +514,84 @@ let legacyInit = "var legacy = Object.create(Intl.DateTimeFormat.prototype);";
 shouldBe(legacyInit + "Intl.DateTimeFormat.apply(legacy)", "legacy");
 shouldBe(legacyInit + "Intl.DateTimeFormat.call(legacy, 'en-u-nu-arab', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'١٢/٢٥/٢٠١٥'");
 shouldNotBe("var incompat = {};Intl.DateTimeFormat.apply(incompat)", "incompat");
+
+// ECMA-402 4th edition 15.4 Intl.DateTimeFormat.prototype.formatToParts
+shouldBeType("Intl.DateTimeFormat.prototype.formatToParts", "Function");
+shouldBe("Intl.DateTimeFormat.prototype.formatToParts.length", "0");
+shouldBeTrue("Object.getOwnPropertyDescriptor(Intl.DateTimeFormat.prototype, 'formatToParts').writable");
+shouldBeFalse("Object.getOwnPropertyDescriptor(Intl.DateTimeFormat.prototype, 'formatToParts').enumerable");
+shouldBeTrue("Object.getOwnPropertyDescriptor(Intl.DateTimeFormat.prototype, 'formatToParts').configurable");
+shouldBe("Object.getOwnPropertyDescriptor(Intl.DateTimeFormat.prototype, 'formatToParts').get", "undefined");
+shouldBe("Object.getOwnPropertyDescriptor(Intl.DateTimeFormat.prototype, 'formatToParts').set", "undefined");
+
+// Throws on non-finite or non-number
+shouldThrow("new Intl.DateTimeFormat().formatToParts({})", "'RangeError: date value is not finite in DateTimeFormat formatToParts()'");
+shouldThrow("new Intl.DateTimeFormat().formatToParts(NaN)", "'RangeError: date value is not finite in DateTimeFormat formatToParts()'");
+shouldThrow("new Intl.DateTimeFormat().formatToParts(Infinity)", "'RangeError: date value is not finite in DateTimeFormat formatToParts()'");
+shouldThrow("new Intl.DateTimeFormat().formatToParts(-Infinity)", "'RangeError: date value is not finite in DateTimeFormat formatToParts()'");
+shouldThrow("new Intl.DateTimeFormat().formatToParts(new Date(NaN))", "'RangeError: date value is not finite in DateTimeFormat formatToParts()'");
+
+shouldBe(`JSON.stringify(
+  Intl.DateTimeFormat("pt-BR", {
+    hour: "numeric", minute: "numeric", second: "numeric",
+    year: "numeric", month: "numeric", day: "numeric",
+    timeZoneName: "short", era: "short", timeZone: "UTC"
+  }).formatToParts(0).filter((part) => (part.type !== "literal"))
+)`, `JSON.stringify([
+  {"type":"day","value":"1"},
+  {"type":"month","value":"1"},
+  {"type":"year","value":"1970"},
+  {"type":"era","value":"d.C."},
+  {"type":"hour","value":"00"},
+  {"type":"minute","value":"00"},
+  {"type":"second","value":"00"},
+  {"type":"timeZoneName","value":"GMT"}
+])`);
+
+for (let locale of localesSample) {
+  // The following subsets must be available for each locale:
+  // weekday, year, month, day, hour, minute, second
+  shouldBeType(`Intl.DateTimeFormat("${locale}", { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" }).formatToParts()`, "Array");
+  // weekday, year, month, day
+  shouldBeType(`Intl.DateTimeFormat("${locale}", { weekday: "short", year: "numeric", month: "short", day: "numeric" }).formatToParts()`, "Array");
+  // year, month, day
+  shouldBeType(`Intl.DateTimeFormat("${locale}", { year: "numeric", month: "long", day: "numeric" }).formatToParts()`, "Array");
+  // year, month
+  shouldBeType(`Intl.DateTimeFormat("${locale}", { year: "numeric", month: "long" }).formatToParts()`, "Array");
+  // month, day
+  shouldBeType(`Intl.DateTimeFormat("${locale}", { month: "long", day: "numeric" }).formatToParts()`, "Array");
+  // hour, minute, second
+  shouldBeType(`Intl.DateTimeFormat("${locale}", { hour: "numeric", minute: "numeric", second: "numeric" }).formatToParts()`, "Array");
+  // hour, minute
+  shouldBeType(`Intl.DateTimeFormat("${locale}", { hour: "numeric", minute: "numeric" }).formatToParts()`, "Array");
+}
+
+// Exceed the 32 character default buffer size
+shouldBe(`JSON.stringify(
+  Intl.DateTimeFormat('en-US', {
+    hour: "numeric", minute: "numeric", second: "numeric",
+    year: "numeric", month: "long", day: "numeric", weekday: "long",
+    timeZoneName: "long", era: "long", timeZone: "UTC"
+  }).formatToParts(0)
+)`, `JSON.stringify([
+  {"type":"weekday","value":"Thursday"},
+  {"type":"literal","value":", "},
+  {"type":"month","value":"January"},
+  {"type":"literal","value":" "},
+  {"type":"day","value":"1"},
+  {"type":"literal","value":", "},
+  {"type":"year","value":"1970"},
+  {"type":"literal","value":" "},
+  {"type":"era","value":"Anno Domini"},
+  {"type":"literal","value":", "},
+  {"type":"hour","value":"12"},
+  {"type":"literal","value":":"},
+  {"type":"minute","value":"00"},
+  {"type":"literal","value":":"},
+  {"type":"second","value":"00"},
+  {"type":"literal","value":" "},
+  {"type":"dayPeriod","value":"AM"},
+  {"type":"literal","value":" "},
+  {"type":"timeZoneName","value":"GMT"}
+])`)
+

@@ -46,6 +46,7 @@ public:
 
     void initializeDateTimeFormat(ExecState&, JSValue locales, JSValue options);
     JSValue format(ExecState&, double value);
+    JSValue formatToParts(ExecState&, double value);
     JSObject* resolvedOptions(ExecState&);
 
     JSBoundFunction* boundFormat() const { return m_boundFormat.get(); }
@@ -71,6 +72,9 @@ private:
     struct UDateFormatDeleter {
         void operator()(UDateFormat*) const;
     };
+    struct UFieldPositionIteratorDeleter {
+        void operator()(UFieldPositionIterator*) const;
+    };
 
     void setFormatsFromPattern(const StringView&);
     static const char* weekdayString(Weekday);
@@ -82,9 +86,11 @@ private:
     static const char* minuteString(Minute);
     static const char* secondString(Second);
     static const char* timeZoneNameString(TimeZoneName);
+    static const char* partTypeString(UDateFormatField);
 
     bool m_initializedDateTimeFormat { false };
     WriteBarrier<JSBoundFunction> m_boundFormat;
+    WriteBarrier<JSBoundFunction> m_boundFormatToParts;
     std::unique_ptr<UDateFormat, UDateFormatDeleter> m_dateFormat;
 
     String m_locale;

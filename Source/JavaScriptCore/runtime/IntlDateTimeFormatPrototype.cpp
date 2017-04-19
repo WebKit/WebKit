@@ -41,6 +41,7 @@
 namespace JSC {
 
 static EncodedJSValue JSC_HOST_CALL IntlDateTimeFormatPrototypeGetterFormat(ExecState*);
+static EncodedJSValue JSC_HOST_CALL IntlDateTimeFormatPrototypeFuncFormatToParts(ExecState*);
 static EncodedJSValue JSC_HOST_CALL IntlDateTimeFormatPrototypeFuncResolvedOptions(ExecState*);
 
 }
@@ -54,6 +55,7 @@ const ClassInfo IntlDateTimeFormatPrototype::s_info = { "Object", &Base::s_info,
 /* Source for IntlDateTimeFormatPrototype.lut.h
 @begin dateTimeFormatPrototypeTable
   format           IntlDateTimeFormatPrototypeGetterFormat         DontEnum|Accessor
+  formatToParts    IntlDateTimeFormatPrototypeFuncFormatToParts    DontEnum|Function 0
   resolvedOptions  IntlDateTimeFormatPrototypeFuncResolvedOptions  DontEnum|Function 0
 @end
 */
@@ -145,6 +147,32 @@ EncodedJSValue JSC_HOST_CALL IntlDateTimeFormatPrototypeGetterFormat(ExecState* 
     }
     // 4. Return dtf.[[boundFormat]].
     return JSValue::encode(boundFormat);
+}
+
+EncodedJSValue JSC_HOST_CALL IntlDateTimeFormatPrototypeFuncFormatToParts(ExecState* state)
+{
+    VM& vm = state->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    // 15.4 Intl.DateTimeFormat.prototype.formatToParts (ECMA-402 4.0)
+    // https://tc39.github.io/ecma402/#sec-Intl.DateTimeFormat.prototype.formatToParts
+
+    IntlDateTimeFormat* dateTimeFormat = jsDynamicCast<IntlDateTimeFormat*>(vm, state->thisValue());
+    if (!dateTimeFormat)
+        return JSValue::encode(throwTypeError(state, scope, ASCIILiteral("Intl.DateTimeFormat.prototype.formatToParts called on value that's not an object initialized as a DateTimeFormat")));
+
+    JSValue date = state->argument(0);
+    double value;
+
+    if (date.isUndefined())
+        value = JSValue::decode(dateNow(state)).toNumber(state);
+    else {
+        value = date.toNumber(state);
+        RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    }
+
+    scope.release();
+    return JSValue::encode(dateTimeFormat->formatToParts(*state, value));
 }
 
 EncodedJSValue JSC_HOST_CALL IntlDateTimeFormatPrototypeFuncResolvedOptions(ExecState* state)
