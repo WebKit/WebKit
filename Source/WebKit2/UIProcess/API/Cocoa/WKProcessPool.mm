@@ -292,6 +292,11 @@ static WebKit::HTTPCookieAcceptPolicy toHTTPCookieAcceptPolicy(NSHTTPCookieAccep
     _processPool->terminateDatabaseProcess();
 }
 
+- (size_t)_webProcessCount
+{
+    return _processPool->processes().size();
+}
+
 + (void)_forceGameControllerFramework
 {
 #if ENABLE(GAMEPAD)

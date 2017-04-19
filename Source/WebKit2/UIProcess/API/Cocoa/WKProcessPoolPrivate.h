@@ -69,6 +69,9 @@
 // Test only. Should be called only while no web content processes are running.
 - (void)_terminateDatabaseProcess;
 
+// Test only.
+- (size_t)_webProcessCount;
+
 // Test only. Should be called before any web content processes are launched.
 + (void)_forceGameControllerFramework;
 

@@ -907,15 +907,14 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
     if (!pageConfiguration->visitedLinkStore())
         pageConfiguration->setVisitedLinkStore(m_visitedLinkStore.ptr());
 
-    bool pageHasWebsiteDataStore = pageConfiguration->websiteDataStore();
-    if (!pageHasWebsiteDataStore) {
+    if (!pageConfiguration->websiteDataStore()) {
         ASSERT(!pageConfiguration->sessionID().isValid());
         pageConfiguration->setWebsiteDataStore(m_websiteDataStore.get());
         pageConfiguration->setSessionID(pageConfiguration->preferences()->privateBrowsingEnabled() ? SessionID::legacyPrivateSessionID() : SessionID::defaultSessionID());
     }
 
     RefPtr<WebProcessProxy> process;
-    if (m_haveInitialEmptyProcess && !pageHasWebsiteDataStore) {
+    if (m_haveInitialEmptyProcess) {
         process = m_processes.last();
         m_haveInitialEmptyProcess = false;
     } else if (pageConfiguration->relatedPage()) {

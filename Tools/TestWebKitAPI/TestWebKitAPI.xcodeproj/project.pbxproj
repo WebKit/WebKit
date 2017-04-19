@@ -150,6 +150,7 @@
 		51714EB51CF8C78C004723C4 /* WebProcessKillIDBCleanup-2.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 51714EB31CF8C761004723C4 /* WebProcessKillIDBCleanup-2.html */; };
 		51714EB81CF8CA17004723C4 /* WebProcessKillIDBCleanup.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51714EB61CF8C7A4004723C4 /* WebProcessKillIDBCleanup.mm */; };
 		517E7E04151119C100D0B008 /* MemoryCachePruneWithinResourceLoadDelegate.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 517E7E031511187500D0B008 /* MemoryCachePruneWithinResourceLoadDelegate.html */; };
+		5198A2401EA7E59F008910B7 /* InitialWarmedProcessUsed.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5198A23F1EA7E595008910B7 /* InitialWarmedProcessUsed.mm */; };
 		51A5877D1D1B49CD004BA9AF /* IndexedDBMultiProcess-3.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 51A5877C1D1B3D8D004BA9AF /* IndexedDBMultiProcess-3.html */; };
 		51A587851D2739E3004BA9AF /* IndexedDBDatabaseProcessKill-1.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 51A587821D272EB5004BA9AF /* IndexedDBDatabaseProcessKill-1.html */; };
 		51A587861D273AA9004BA9AF /* IndexedDBDatabaseProcessKill.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51A587841D272EF3004BA9AF /* IndexedDBDatabaseProcessKill.mm */; };
@@ -1077,6 +1078,7 @@
 		51714EB91D087416004723C4 /* CrossThreadTask.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CrossThreadTask.cpp; sourceTree = "<group>"; };
 		517E7DFB15110EA600D0B008 /* MemoryCachePruneWithinResourceLoadDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MemoryCachePruneWithinResourceLoadDelegate.mm; sourceTree = "<group>"; };
 		517E7E031511187500D0B008 /* MemoryCachePruneWithinResourceLoadDelegate.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = MemoryCachePruneWithinResourceLoadDelegate.html; sourceTree = "<group>"; };
+		5198A23F1EA7E595008910B7 /* InitialWarmedProcessUsed.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = InitialWarmedProcessUsed.mm; sourceTree = "<group>"; };
 		51A5877C1D1B3D8D004BA9AF /* IndexedDBMultiProcess-3.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "IndexedDBMultiProcess-3.html"; sourceTree = "<group>"; };
 		51A587821D272EB5004BA9AF /* IndexedDBDatabaseProcessKill-1.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "IndexedDBDatabaseProcessKill-1.html"; sourceTree = "<group>"; };
 		51A587841D272EF3004BA9AF /* IndexedDBDatabaseProcessKill.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IndexedDBDatabaseProcessKill.mm; sourceTree = "<group>"; };
@@ -1679,6 +1681,7 @@
 				51A587841D272EF3004BA9AF /* IndexedDBDatabaseProcessKill.mm */,
 				51BCEE491C84F4AF0042C82E /* IndexedDBMultiProcess.mm */,
 				51B1EE8D1C80F5880064FB98 /* IndexedDBPersistence.mm */,
+				5198A23F1EA7E595008910B7 /* InitialWarmedProcessUsed.mm */,
 				2DB0232E1E4E871800707123 /* InteractionDeadlockAfterCrash.mm */,
 				C25CCA051E51380B0026CB8A /* LineBreaking.mm */,
 				37D36ED61AF42ECD00BAF5D9 /* LoadAlternateHTMLString.mm */,
@@ -2799,6 +2802,7 @@
 				7CCE7EBB1A411A7E00447C4C /* DOMHTMLTableCellCellAbove.mm in Sources */,
 				2D51A0C71C8BF00C00765C45 /* DOMHTMLVideoElementWrapper.mm in Sources */,
 				46397B951DC2C850009A78AE /* DOMNode.mm in Sources */,
+				5198A2401EA7E59F008910B7 /* InitialWarmedProcessUsed.mm in Sources */,
 				7CCE7EBC1A411A7E00447C4C /* DOMNodeFromJSObject.mm in Sources */,
 				7CCE7EBD1A411A7E00447C4C /* DOMRangeOfString.mm in Sources */,
 				37E7DD641EA06FF2009B396D /* AdditionalReadAccessAllowedURLs.mm in Sources */,

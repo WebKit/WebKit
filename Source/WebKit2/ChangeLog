@@ -1,3 +1,22 @@
+2017-04-19  Brady Eidson  <beidson@apple.com>
+
+        REGRESSION (r213168): An extra Web Content process is spun up on launch and is never closed.
+        <rdar://problem/30774839> and https://bugs.webkit.org/show_bug.cgi?id=171002
+
+        Reviewed by Alex Christensen.
+
+        The original change unnecessarily avoided using the initial warmed process if an explicit
+        data store was set on the new WKWebView.
+        
+        Fixing that fixes the regression.
+        
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool _webProcessCount]):
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::createWebPage):
+
 2017-04-19  Anders Carlsson  <andersca@apple.com>
 
         Rename cancelPayment to cancelPaymentSession
