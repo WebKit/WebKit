@@ -366,7 +366,7 @@ class TestImporter(object):
             return
         if (orig_filepath.endswith('.any.js')):
             self.filesystem.write_text_file(new_filepath.replace('.any.js', '.any.html'), content)
-            self.filesystem.write_text_file(new_filepath.replace('.any.js', '.worker.html'), content)
+            self.filesystem.write_text_file(new_filepath.replace('.any.js', '.any.worker.html'), content)
             return
 
     def import_tests(self):

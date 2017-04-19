@@ -1,0 +1,10 @@
+
+PASS CORS that succeeds with credentials: false; method: GET (allowed: get); header: X-Test,1 (allowed: x-test) 
+FAIL CORS that succeeds with credentials: false; method: SUPER (allowed: *); header: X-Test,1 (allowed: x-test) promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL CORS that succeeds with credentials: false; method: OK (allowed: *); header: X-Test,1 (allowed: *) promise_test: Unhandled rejection with value: object "TypeError: Type error"
+PASS CORS that fails with credentials: true; method: OK (allowed: *); header: X-Test,1 (allowed: *) 
+PASS CORS that fails with credentials: true; method: PUT (allowed: *); header: undefined (allowed: ) 
+PASS CORS that fails with credentials: true; method: PUT (allowed: put); header: undefined (allowed: *) 
+PASS CORS that fails with credentials: true; method: GET (allowed: get); header: X-Test,1 (allowed: *) 
+PASS CORS that fails with credentials: true; method: GET (allowed: *); header: X-Test,1 (allowed: *) 
+

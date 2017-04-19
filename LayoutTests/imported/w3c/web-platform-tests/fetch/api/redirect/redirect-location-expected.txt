@@ -11,31 +11,31 @@ CONSOLE MESSAGE: Fetch API cannot load http://localhost:8800/fetch/api/resources
 
 PASS Redirect 301 in "follow" mode without location 
 PASS Redirect 301 in "manual" mode without location 
-PASS Redirect 301 in "follow" mode with invalid location 
+FAIL Redirect 301 in "follow" mode with invalid location assert_unreached: Should have rejected: undefined Reached unreachable code
 PASS Redirect 301 in "manual" mode with invalid location 
 PASS Redirect 301 in "follow" mode with data location 
 PASS Redirect 301 in "manual" mode with data location 
 PASS Redirect 302 in "follow" mode without location 
 PASS Redirect 302 in "manual" mode without location 
-PASS Redirect 302 in "follow" mode with invalid location 
+FAIL Redirect 302 in "follow" mode with invalid location assert_unreached: Should have rejected: undefined Reached unreachable code
 PASS Redirect 302 in "manual" mode with invalid location 
 PASS Redirect 302 in "follow" mode with data location 
 PASS Redirect 302 in "manual" mode with data location 
 PASS Redirect 303 in "follow" mode without location 
 PASS Redirect 303 in "manual" mode without location 
-PASS Redirect 303 in "follow" mode with invalid location 
+FAIL Redirect 303 in "follow" mode with invalid location assert_unreached: Should have rejected: undefined Reached unreachable code
 PASS Redirect 303 in "manual" mode with invalid location 
 PASS Redirect 303 in "follow" mode with data location 
 PASS Redirect 303 in "manual" mode with data location 
 PASS Redirect 307 in "follow" mode without location 
 PASS Redirect 307 in "manual" mode without location 
-PASS Redirect 307 in "follow" mode with invalid location 
+FAIL Redirect 307 in "follow" mode with invalid location assert_unreached: Should have rejected: undefined Reached unreachable code
 PASS Redirect 307 in "manual" mode with invalid location 
 PASS Redirect 307 in "follow" mode with data location 
 PASS Redirect 307 in "manual" mode with data location 
 PASS Redirect 308 in "follow" mode without location 
 PASS Redirect 308 in "manual" mode without location 
-PASS Redirect 308 in "follow" mode with invalid location 
+FAIL Redirect 308 in "follow" mode with invalid location assert_unreached: Should have rejected: undefined Reached unreachable code
 PASS Redirect 308 in "manual" mode with invalid location 
 PASS Redirect 308 in "follow" mode with data location 
 PASS Redirect 308 in "manual" mode with data location 

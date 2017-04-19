@@ -337,6 +337,12 @@ imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect-to-non-cors.htm [ S
 # Failing assertion with dynamic message
 imported/w3c/web-platform-tests/XMLHttpRequest/responsexml-document-properties.htm [ Failure ]
 
+imported/w3c/web-platform-tests/fetch/api/cors/cors-origin.any.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/fetch/api/cors/cors-preflight-status.any.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/fetch/api/cors/cors-preflight.any.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/fetch/api/cors/cors-redirect-preflight.any.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/fetch/api/request/request-cache-only-if-cached.html [ DumpJSConsoleLogInStdErr ]
+
 webkit.org/b/161088 imported/w3c/web-platform-tests/resource-timing/resource-timing.html [ Pass Failure ]
 webkit.org/b/168357 imported/w3c/web-platform-tests/resource-timing/rt-initiatorType-media.html [ Failure ]
 webkit.org/b/168448 imported/w3c/web-platform-tests/resource-timing/rt-shared-resource-in-frames.html [ Pass Failure ]
@@ -782,6 +788,11 @@ webkit.org/b/148823 imported/w3c/css/css-multicol-1/multicol-span-all-margin-nes
 
 # Causes the following test to be flaky.
 webkit.org/b/148950 imported/w3c/web-platform-tests/html/semantics/document-metadata/the-base-element/base_href_specified.sub.html [ Skip ]
+
+imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/test_ecdsa.html [ Pass Failure ]
+imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-a-element/a-download-click.html [ Pass Failure ]
+imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_go_zero.html [ Pass Failure ]
+imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_go_zero.html [ Pass Failure ]
 
 # FIXME: The following failures need individual bugs.
 webkit.org/b/148805 imported/w3c/css/css-multicol-1/multicol-inherit-003.xht [ ImageOnlyFailure ]

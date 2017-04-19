@@ -1,3 +1,143 @@
+2017-04-19  Youenn Fablet  <youenn@apple.com>
+
+        Adding wpt tools
+
+        Import web-platform-tests/tools
+        https://bugs.webkit.org/show_bug.cgi?id=170718
+
+        Reviewed by Alex Christensen.
+
+        * resources/TestRepositories:
+        * resources/import-expectations.json:
+        * resources/resource-files.json:
+        * resources/web-platform-tests-modules.json: Removed.
+        * web-platform-tests/.gitignore:
+        * web-platform-tests/XMLHttpRequest/XMLHttpRequest-withCredentials.any.worker-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/XMLHttpRequest-withCredentials.any.worker.html: Copied from LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/XMLHttpRequest-withCredentials.worker.html.
+        * web-platform-tests/XMLHttpRequest/XMLHttpRequest-withCredentials.worker-expected.txt: Removed.
+        * web-platform-tests/XMLHttpRequest/getallresponseheaders-cl-expected.txt:
+        * web-platform-tests/XMLHttpRequest/responsetype-expected.txt:
+        * web-platform-tests/XMLHttpRequest/send-usp.any.worker-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/send-usp.worker-expected.txt.
+        * web-platform-tests/XMLHttpRequest/send-usp.any.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/send-usp.worker.html.
+        * web-platform-tests/XMLHttpRequest/send-usp.worker.js: Removed.
+        * web-platform-tests/XMLHttpRequest/timeout-sync-expected.txt:
+        * web-platform-tests/dom/nodes/Document-contentType/contentType/contenttype_datauri_01-expected.txt:
+        * web-platform-tests/dom/nodes/Document-contentType/contentType/contenttype_datauri_02-expected.txt:
+        * web-platform-tests/fetch/api/basic/accept-header.any-expected.txt:
+        * web-platform-tests/fetch/api/basic/accept-header.any.worker-expected.txt: Added.
+        * web-platform-tests/fetch/api/basic/accept-header.any.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/accept-header.worker.html.
+        * web-platform-tests/fetch/api/basic/accept-header.worker-expected.txt: Removed.
+        * web-platform-tests/fetch/api/basic/mode-same-origin.any-expected.txt:
+        * web-platform-tests/fetch/api/basic/mode-same-origin.any.worker-expected.txt: Added.
+        * web-platform-tests/fetch/api/basic/mode-same-origin.any.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/mode-same-origin.worker.html.
+        * web-platform-tests/fetch/api/basic/mode-same-origin.worker-expected.txt: Removed.
+        * web-platform-tests/fetch/api/basic/referrer.any-expected.txt:
+        * web-platform-tests/fetch/api/basic/referrer.any.worker-expected.txt: Added.
+        * web-platform-tests/fetch/api/basic/referrer.any.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/referrer.worker.html.
+        * web-platform-tests/fetch/api/basic/referrer.worker-expected.txt: Removed.
+        * web-platform-tests/fetch/api/basic/request-forbidden-headers.any-expected.txt:
+        * web-platform-tests/fetch/api/basic/request-forbidden-headers.any.worker-expected.txt: Added.
+        * web-platform-tests/fetch/api/basic/request-forbidden-headers.any.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/request-forbidden-headers.worker.html.
+        * web-platform-tests/fetch/api/basic/request-forbidden-headers.worker-expected.txt: Removed.
+        * web-platform-tests/fetch/api/basic/request-head.any.worker-expected.txt: Added.
+        * web-platform-tests/fetch/api/basic/request-head.any.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/request-head.worker.html.
+        * web-platform-tests/fetch/api/basic/request-head.worker-expected.txt: Removed.
+        * web-platform-tests/fetch/api/basic/request-headers.any-expected.txt:
+        * web-platform-tests/fetch/api/basic/request-headers.any.worker-expected.txt: Added.
+        * web-platform-tests/fetch/api/basic/request-headers.any.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/request-headers.worker.html.
+        * web-platform-tests/fetch/api/basic/request-headers.worker-expected.txt: Removed.
+        * web-platform-tests/fetch/api/basic/request-referrer-redirected-worker-expected.txt:
+        * web-platform-tests/fetch/api/basic/request-referrer.any-expected.txt:
+        * web-platform-tests/fetch/api/basic/request-referrer.any.worker-expected.txt: Added.
+        * web-platform-tests/fetch/api/basic/request-referrer.any.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/request-referrer.worker.html.
+        * web-platform-tests/fetch/api/basic/request-referrer.worker-expected.txt: Removed.
+        * web-platform-tests/fetch/api/basic/request-upload.any-expected.txt:
+        * web-platform-tests/fetch/api/basic/request-upload.any.worker-expected.txt: Added.
+        * web-platform-tests/fetch/api/basic/request-upload.any.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/request-upload.worker.html.
+        * web-platform-tests/fetch/api/basic/request-upload.worker-expected.txt: Removed.
+        * web-platform-tests/fetch/api/basic/scheme-about.any.worker-expected.txt: Added.
+        * web-platform-tests/fetch/api/basic/scheme-about.any.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/scheme-data.worker.html.
+        * web-platform-tests/fetch/api/basic/scheme-about.worker-expected.txt:
+        * web-platform-tests/fetch/api/basic/scheme-data.any.worker-expected.txt: Added.
+        * web-platform-tests/fetch/api/basic/scheme-data.any.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/stream-response.worker.html.
+        * web-platform-tests/fetch/api/basic/scheme-data.worker-expected.txt: Removed.
+        * web-platform-tests/fetch/api/basic/stream-response.any-expected.txt:
+        * web-platform-tests/fetch/api/basic/stream-response.any.worker-expected.txt: Added.
+        * web-platform-tests/fetch/api/basic/stream-response.any.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/cors-basic.worker.html.
+        * web-platform-tests/fetch/api/basic/stream-response.worker-expected.txt: Removed.
+        * web-platform-tests/fetch/api/cors/cors-basic.any-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-basic.any.worker-expected.txt: Added.
+        * web-platform-tests/fetch/api/cors/cors-basic.any.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/cors-cookies.worker.html.
+        * web-platform-tests/fetch/api/cors/cors-basic.worker-expected.txt: Removed.
+        * web-platform-tests/fetch/api/cors/cors-cookies.any-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-cookies.any.worker-expected.txt: Added.
+        * web-platform-tests/fetch/api/cors/cors-cookies.any.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/cors-no-preflight.worker.html.
+        * web-platform-tests/fetch/api/cors/cors-cookies.worker-expected.txt: Removed.
+        * web-platform-tests/fetch/api/cors/cors-no-preflight.any-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-no-preflight.any.worker-expected.txt: Added.
+        * web-platform-tests/fetch/api/cors/cors-no-preflight.any.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/cors-origin.worker.html.
+        * web-platform-tests/fetch/api/cors/cors-no-preflight.worker-expected.txt: Removed.
+        * web-platform-tests/fetch/api/cors/cors-origin.any-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-origin.any.worker-expected.txt: Added.
+        * web-platform-tests/fetch/api/cors/cors-origin.any.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/cors-preflight-redirect.worker.html.
+        * web-platform-tests/fetch/api/cors/cors-origin.worker-expected.txt: Removed.
+        * web-platform-tests/fetch/api/cors/cors-preflight-redirect.any-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-preflight-redirect.any.worker-expected.txt: Added.
+        * web-platform-tests/fetch/api/cors/cors-preflight-redirect.any.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/cors-preflight-referrer.worker.html.
+        * web-platform-tests/fetch/api/cors/cors-preflight-redirect.worker-expected.txt: Removed.
+        * web-platform-tests/fetch/api/cors/cors-preflight-referrer.any-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-preflight-referrer.any.worker-expected.txt: Added.
+        * web-platform-tests/fetch/api/cors/cors-preflight-referrer.any.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/cors-preflight-star.worker.html.
+        * web-platform-tests/fetch/api/cors/cors-preflight-referrer.worker-expected.txt: Removed.
+        * web-platform-tests/fetch/api/cors/cors-preflight-star.any-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-preflight-star.any.worker-expected.txt: Added.
+        * web-platform-tests/fetch/api/cors/cors-preflight-star.any.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/cors-preflight-status.worker.html.
+        * web-platform-tests/fetch/api/cors/cors-preflight-star.worker-expected.txt: Removed.
+        * web-platform-tests/fetch/api/cors/cors-preflight-status.any-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-preflight-status.any.worker-expected.txt: Added.
+        * web-platform-tests/fetch/api/cors/cors-preflight-status.any.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/cors-preflight.worker.html.
+        * web-platform-tests/fetch/api/cors/cors-preflight-status.worker-expected.txt: Removed.
+        * web-platform-tests/fetch/api/cors/cors-preflight.any-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-preflight.any.worker-expected.txt: Added.
+        * web-platform-tests/fetch/api/cors/cors-preflight.any.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/cors-redirect-credentials.worker.html.
+        * web-platform-tests/fetch/api/cors/cors-preflight.worker-expected.txt: Removed.
+        * web-platform-tests/fetch/api/cors/cors-redirect-credentials.any-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-redirect-credentials.any.worker-expected.txt: Added.
+        * web-platform-tests/fetch/api/cors/cors-redirect-credentials.any.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/cors-redirect-preflight.worker.html.
+        * web-platform-tests/fetch/api/cors/cors-redirect-credentials.worker-expected.txt: Removed.
+        * web-platform-tests/fetch/api/cors/cors-redirect-preflight.any-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-redirect-preflight.any.worker-expected.txt: Added.
+        * web-platform-tests/fetch/api/cors/cors-redirect-preflight.any.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/cors-redirect.worker.html.
+        * web-platform-tests/fetch/api/cors/cors-redirect-preflight.worker-expected.txt: Removed.
+        * web-platform-tests/fetch/api/cors/cors-redirect.any-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-redirect.any.worker-expected.txt: Added.
+        * web-platform-tests/fetch/api/cors/cors-redirect.any.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/fetch/api/credentials/authentication-basic.worker.html.
+        * web-platform-tests/fetch/api/cors/cors-redirect.worker-expected.txt: Removed.
+        * web-platform-tests/fetch/api/credentials/authentication-basic.any-expected.txt:
+        * web-platform-tests/fetch/api/credentials/authentication-basic.any.worker-expected.txt: Added.
+        * web-platform-tests/fetch/api/credentials/authentication-basic.any.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/fetch/api/credentials/cookies.worker.html.
+        * web-platform-tests/fetch/api/credentials/authentication-basic.worker-expected.txt: Removed.
+        * web-platform-tests/fetch/api/credentials/cookies.any-expected.txt:
+        * web-platform-tests/fetch/api/credentials/cookies.any.worker-expected.txt: Added.
+        * web-platform-tests/fetch/api/credentials/cookies.any.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/fetch/api/headers/historical.worker.html.
+        * web-platform-tests/fetch/api/credentials/cookies.worker-expected.txt: Removed.
+        * web-platform-tests/fetch/api/headers/historical.any.worker-expected.txt: Added.
+        * web-platform-tests/fetch/api/headers/historical.any.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/hr-time/basic.worker.html.
+        * web-platform-tests/fetch/api/headers/historical.worker-expected.txt: Removed.
+        * web-platform-tests/fetch/api/redirect/redirect-count-expected.txt:
+        * web-platform-tests/fetch/api/redirect/redirect-count-worker-expected.txt:
+        * web-platform-tests/fetch/api/redirect/redirect-location-expected.txt:
+        * web-platform-tests/fetch/api/redirect/redirect-location-worker-expected.txt:
+        * web-platform-tests/fetch/api/request/request-cache-only-if-cached-expected.txt: Copied from LayoutTests/platform/mac/imported/w3c/web-platform-tests/fetch/api/request/request-cache-only-if-cached-expected.txt.
+        * web-platform-tests/fetch/http-cache/partial-expected.txt:
+        * web-platform-tests/hr-time/basic.any.worker-expected.txt: Added.
+        * web-platform-tests/hr-time/basic.any.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/hr-time/monotonic-clock.worker.html.
+        * web-platform-tests/hr-time/basic.worker-expected.txt: Removed.
+        * web-platform-tests/hr-time/basic.worker.js: Removed.
+        * web-platform-tests/hr-time/monotonic-clock.any.worker-expected.txt: Added.
+        * web-platform-tests/hr-time/monotonic-clock.any.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/dom/self-origin.worker.html.
+        * web-platform-tests/hr-time/monotonic-clock.worker-expected.txt: Removed.
+
 2017-04-18  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [selectors4] Import W3C Test Suite

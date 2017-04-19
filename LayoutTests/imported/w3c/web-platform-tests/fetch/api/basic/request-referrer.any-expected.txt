@@ -1,4 +1,4 @@
 
-FAIL about:client referrer Can't find variable: RESOURCES_DIR
-FAIL url referrer Can't find variable: RESOURCES_DIR
+PASS about:client referrer 
+PASS url referrer 
 

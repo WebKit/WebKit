@@ -722,6 +722,12 @@
     "imported/w3c/web-platform-tests/html/syntax/parsing/html5lib_webkit02.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/html/tools/html5lib_test.xml": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/tools/html5lib_test_fragment.xml": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/media-source/SourceBuffer-abort-readyState.html": [
         "slow"
     ],

@@ -1,3 +1,20 @@
+2017-04-19  Youenn Fablet  <youenn@apple.com>
+
+        Import web-platform-tests/tools
+        https://bugs.webkit.org/show_bug.cgi?id=170718
+
+        Reviewed by Alex Christensen.
+
+        * TestExpectations:
+        * platform/mac-wk1/imported/w3c/web-platform-tests/fetch/api/cors/cors-basic.any-expected.txt: Added.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/fetch/api/cors/cors-basic.any.worker-expected.txt: Added.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/fetch/api/cors/cors-no-preflight.any-expected.txt: Added.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/fetch/api/cors/cors-no-preflight.any.worker-expected.txt: Added.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/fetch/api/cors/cors-origin.any-expected.txt: Added.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/fetch/api/cors/cors-origin.any.worker-expected.txt: Added.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/fetch/api/request/request-cache-only-if-cached-expected.txt: Renamed from LayoutTests/platform/mac/imported/w3c/web-platform-tests/fetch/api/request/request-cache-only-if-cached-expected.txt.
+        * tests-options.json:
+
 2017-04-19  Antti Koivisto  <antti@apple.com>
 
         Avoid repaints for invisible animations on tumblr.com/search/aww

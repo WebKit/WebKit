@@ -23,11 +23,8 @@
 
 import json
 import logging
-import sys
 import time
-import urllib
 
-from webkitpy.common.system.autoinstall import AutoInstaller
 from webkitpy.layout_tests.servers import http_server_base
 
 _log = logging.getLogger(__name__)
@@ -100,20 +97,6 @@ class WebPlatformTestServer(http_server_base.HttpServerBase):
     def ports_to_forward(self):
         return [mapping['port'] for mapping in self._mappings]
 
-    def _install_modules(self):
-        modules_file_path = self._filesystem.join(self._doc_root_path, "..", "resources", "web-platform-tests-modules.json")
-        if not self._filesystem.isfile(modules_file_path):
-            _log.warning("Cannot read " + modules_file_path)
-            return
-        modules = json.loads(self._filesystem.read_text_file(modules_file_path))
-        for module in modules:
-            path = module["path"]
-            name = path.pop()
-            resolved_url = module["url"]
-            if not resolved_url.startswith("http"):
-                resolved_url = "file://" + urllib.pathname2url(self._filesystem.join(self._doc_root_path, "..", "resources", resolved_url))
-            AutoInstaller(target_dir=self._filesystem.join(self._doc_root, self._filesystem.sep.join(path))).install(url=resolved_url, url_subpath=module["url_subpath"], target_name=name)
-
     def _copy_webkit_test_files(self):
         _log.debug('Copying WebKit resources files')
         for f in self._resources_files_to_copy:
@@ -146,7 +129,6 @@ class WebPlatformTestServer(http_server_base.HttpServerBase):
         if self._filesystem.exists(self._output_dir):
             self._output_log_path = self._filesystem.join(self._output_dir, self._log_file_name)
             self._wsout = self._filesystem.open_text_file_for_writing(self._output_log_path)
-        self._install_modules()
         self._copy_webkit_test_files()
 
     def _spawn_process(self):

@@ -32,7 +32,7 @@ def main(argv, stdout, stderr):
 
     with stash.StashServer((config["host"], WebPlatformTestServer.get_port()), authkey=str(uuid.uuid4())):
         with WebPlatformTestServer.get_ssl_environment(config) as ssl_env:
-            config_, started_servers = WebPlatformTestServer.start(config, ssl_env, WebPlatformTestServer.default_routes())
+            config_, started_servers = WebPlatformTestServer.start(config, ssl_env, WebPlatformTestServer.build_routes(config["aliases"]))
 
             for protocol, servers in started_servers.items():
                 for port, process in servers:

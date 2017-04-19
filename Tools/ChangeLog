@@ -1,3 +1,19 @@
+2017-04-19  Youenn Fablet  <youenn@apple.com>
+
+        Import web-platform-tests/tools
+        https://bugs.webkit.org/show_bug.cgi?id=170718
+
+        Reviewed by Alex Christensen.
+
+        * Scripts/webkitpy/layout_tests/servers/web_platform_test_launcher.py:
+        (main):
+        * Scripts/webkitpy/layout_tests/servers/web_platform_test_server.py:
+        (WebPlatformTestServer.ports_to_forward):
+        (WebPlatformTestServer._prepare_config):
+        (WebPlatformTestServer._install_modules): Deleted.
+        * Scripts/webkitpy/w3c/test_importer.py:
+        (TestImporter.write_html_files_for_templated_js_tests):
+
 2017-04-18  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [WK2] Add infrastructure and unit tests for file uploads using data interaction

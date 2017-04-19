@@ -13,7 +13,6 @@
             "fonts",
             "images",
             "resources",
-            "tools",
             "config.default.json",
             "serve.py"
         ],
