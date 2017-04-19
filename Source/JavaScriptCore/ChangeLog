@@ -1,3 +1,15 @@
+2017-04-19  Michael Saboff  <msaboff@apple.com>
+
+        Tune GC related JSC options for iOS
+        https://bugs.webkit.org/show_bug.cgi?id=171019
+
+        Reviewed by Mark Lam.
+
+        Always set these GC options on iOS.
+
+        * runtime/Options.cpp:
+        (JSC::overrideDefaults):
+
 2017-04-19  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly: fast memory cleanups

@@ -329,7 +329,10 @@ static void scaleJITPolicy()
 
 static void overrideDefaults()
 {
-    if (WTF::numberOfProcessorCores() < 4) {
+#if !PLATFORM(IOS)
+    if (WTF::numberOfProcessorCores() < 4)
+#endif
+    {
         Options::maximumMutatorUtilization() = 0.6;
         Options::concurrentGCMaxHeadroom() = 1.4;
         Options::minimumGCPauseMS() = 1;
