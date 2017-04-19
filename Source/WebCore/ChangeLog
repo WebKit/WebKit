@@ -1,3 +1,17 @@
+2017-04-19  Brent Fulgham  <bfulgham@apple.com>
+
+        [iOS, macOS] Guard against passing nullptr to vImagePremultiplyData
+        https://bugs.webkit.org/show_bug.cgi?id=170912
+        <rdar://problem/30565800>
+
+        Reviewed by Brady Eidson.
+
+        * platform/graphics/cg/ImageBufferDataCG.cpp:
+        (WebCore::affineWarpBufferData): Assert if we passed nullptr buffers.
+        (WebCore::transferData): Ditto.
+        (WebCore::ImageBufferData::getData): Check for nullptr data member and avoid passing to vImage routines.
+        (WebCore::ImageBufferData::putData): Ditto.
+
 2017-04-19  Dave Hyatt  <hyatt@apple.com>
 
         Remove bogus assert for :not.

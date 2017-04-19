@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -83,6 +83,9 @@ static void premultiplyBufferData(const vImage_Buffer& src, const vImage_Buffer&
 #if !PLATFORM(IOS_SIMULATOR)
 static void affineWarpBufferData(const vImage_Buffer& src, const vImage_Buffer& dest, float scale)
 {
+    ASSERT(src.data);
+    ASSERT(dest.data);
+
     vImage_AffineTransform scaleTransform = { scale, 0, 0, scale, 0, 0 }; // FIXME: Add subpixel translation.
     Pixel_8888 backgroundColor;
     vImageAffineWarp_ARGB8888(&src, &dest, 0, &scaleTransform, backgroundColor, kvImageEdgeExtend);
@@ -93,6 +96,9 @@ static void affineWarpBufferData(const vImage_Buffer& src, const vImage_Buffer& 
 static inline void transferData(void* output, void* input, int width, int height, size_t inputBytesPerRow)
 {
 #if USE(ACCELERATE)
+    ASSERT(input);
+    ASSERT(output);
+
     vImage_Buffer src;
     src.width = width;
     src.height = height;
@@ -194,6 +200,9 @@ RefPtr<Uint8ClampedArray> ImageBufferData::getData(const IntRect& rect, const In
     unsigned char* srcRows;
     
     if (!accelerateRendering) {
+        if (!data)
+            return result;
+
         srcBytesPerRow = bytesPerRow.unsafeGet();
         srcRows = reinterpret_cast<unsigned char*>(data) + originy * srcBytesPerRow + originx * 4;
 
@@ -437,6 +446,9 @@ void ImageBufferData::putData(Uint8ClampedArray*& source, const IntSize& sourceS
     unsigned char* destRows;
     
     if (!accelerateRendering) {
+        if (!data)
+            return;
+
         destBytesPerRow = bytesPerRow.unsafeGet();
         destRows = reinterpret_cast<unsigned char*>(data) + (desty * destBytesPerRow + destx * 4).unsafeGet();
 
