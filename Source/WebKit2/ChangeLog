@@ -1,3 +1,14 @@
+2017-04-19  Eric Carlson  <eric.carlson@apple.com>
+
+        Provide a way for clients to unmute a media stream.
+        https://bugs.webkit.org/show_bug.cgi?id=170855
+        <rdar://problem/31656855>
+
+        Unreviewed, fix a typo missed in the review of r215420.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _setPageMuted:]):
+
 2017-04-19  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK] WebKitAutocleanups.h regression in v2.16.1 release

@@ -4421,7 +4421,7 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 
     if (mutedState & _WKMediaAudioMuted)
         coreState |= WebCore::MediaProducer::AudioIsMuted;
-    if (coreState & _WKMediaCaptureDevicesMuted)
+    if (mutedState & _WKMediaCaptureDevicesMuted)
         coreState |= WebCore::MediaProducer::CaptureDevicesAreMuted;
 
     _page->setMuted(coreState);
