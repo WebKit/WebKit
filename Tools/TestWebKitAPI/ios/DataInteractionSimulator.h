@@ -54,12 +54,13 @@ typedef NS_ENUM(NSInteger, DataInteractionPhase) {
     RetainPtr<MockDataInteractionSession> _dataInteractionSession;
     RetainPtr<MockDataOperationSession> _dataOperationSession;
     RetainPtr<NSMutableArray> _observedEventNames;
-    RetainPtr<UIItemProvider> _externalItemProvider;
+    RetainPtr<NSArray> _externalItemProviders;
     RetainPtr<NSArray *> _sourceItemProviders;
     RetainPtr<NSArray *> _finalSelectionRects;
     CGPoint _startLocation;
     CGPoint _endLocation;
 
+    BOOL _shouldPerformOperation;
     double _currentProgress;
     bool _isDoneWithCurrentRun;
     DataInteractionPhase _phase;
@@ -71,7 +72,7 @@ typedef NS_ENUM(NSInteger, DataInteractionPhase) {
 @property (nonatomic) BOOL shouldEnsureUIApplication;
 @property (nonatomic) BlockPtr<BOOL(_WKActivatedElementInfo *)> showCustomActionSheetBlock;
 @property (nonatomic) BlockPtr<NSArray *(NSArray *)> convertItemProvidersBlock;
-@property (nonatomic, strong) UIItemProvider *externalItemProvider;
+@property (nonatomic, strong) NSArray *externalItemProviders;
 @property (nonatomic, readonly) NSArray *sourceItemProviders;
 @property (nonatomic, readonly) NSArray *observedEventNames;
 @property (nonatomic, readonly) NSArray *finalSelectionRects;

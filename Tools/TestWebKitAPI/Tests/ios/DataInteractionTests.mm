@@ -37,6 +37,47 @@
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 
+typedef void (^FileLoadCompletionBlock)(NSURL *, BOOL, NSError *);
+
+static UIImage *testIconImage()
+{
+    return [UIImage imageNamed:@"TestWebKitAPI.resources/icon.png"];
+}
+
+static NSURL *temporaryURLForDataInteractionFileLoad(NSString *temporaryFileName)
+{
+    NSString *temporaryDirectoryPath = [NSTemporaryDirectory() stringByAppendingPathComponent:@"data-interaction"];
+    if (![[NSFileManager defaultManager] fileExistsAtPath:temporaryDirectoryPath])
+        [[NSFileManager defaultManager] createDirectoryAtPath:temporaryDirectoryPath withIntermediateDirectories:YES attributes:nil error:nil];
+    return [NSURL fileURLWithPath:[temporaryDirectoryPath stringByAppendingPathComponent:temporaryFileName]];
+}
+
+static void cleanUpDataInteractionTemporaryPath()
+{
+    NSArray *temporaryDirectoryContents = [[NSFileManager defaultManager] contentsOfDirectoryAtURL:[NSURL fileURLWithPath:NSTemporaryDirectory()] includingPropertiesForKeys:nil options:0 error:nil];
+    for (NSURL *url in temporaryDirectoryContents) {
+        if ([url.lastPathComponent rangeOfString:@"data-interaction"].location != NSNotFound)
+            [[NSFileManager defaultManager] removeItemAtURL:url error:nil];
+    }
+}
+
+@implementation UIItemProvider (DataInteractionTests)
+
+- (void)registerFileRepresentationForTypeIdentifier:(NSString *)typeIdentifier withData:(NSData *)data filename:(NSString *)filename
+{
+    RetainPtr<NSData> retainedData = data;
+    RetainPtr<NSURL> retainedTemporaryURL = temporaryURLForDataInteractionFileLoad(filename);
+    [self registerFileRepresentationForTypeIdentifier:typeIdentifier fileOptions:0 visibility:NSItemProviderRepresentationVisibilityAll loadHandler: [retainedData, retainedTemporaryURL] (FileLoadCompletionBlock block) -> NSProgress * {
+        [retainedData writeToFile:[retainedTemporaryURL path] atomically:YES];
+        dispatch_async(dispatch_get_main_queue(), [retainedTemporaryURL, capturedBlock = makeBlockPtr(block)] {
+            capturedBlock(retainedTemporaryURL.get(), NO, nil);
+        });
+        return nil;
+    }];
+}
+
+@end
+
 @implementation TestWKWebView (DataInteractionTests)
 
 - (BOOL)editorContainsImageElement
@@ -273,6 +314,118 @@ TEST(DataInteractionTests, EnterAndLeaveEvents)
     checkSelectionRectsWithLogging(@[ ], [dataInteractionSimulator finalSelectionRects]);
 }
 
+TEST(DataInteractionTests, ExternalSourceImageToFileInput)
+{
+    RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView synchronouslyLoadTestPageNamed:@"file-uploading"];
+
+    RetainPtr<UIItemProvider> simulatedImageItemProvider = adoptNS([[UIItemProvider alloc] init]);
+    NSData *imageData = UIImageJPEGRepresentation(testIconImage(), 0.5);
+    [simulatedImageItemProvider registerFileRepresentationForTypeIdentifier:(NSString *)kUTTypeJPEG withData:imageData filename:@"image.png"];
+
+    RetainPtr<DataInteractionSimulator> dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    [dataInteractionSimulator setExternalItemProviders:@[ simulatedImageItemProvider.get() ]];
+    [dataInteractionSimulator runFrom:CGPointMake(200, 100) to:CGPointMake(100, 100)];
+
+    NSString *outputValue = [webView stringByEvaluatingJavaScript:@"output.value"];
+    EXPECT_WK_STREQ("image/jpeg", outputValue.UTF8String);
+
+    cleanUpDataInteractionTemporaryPath();
+}
+
+TEST(DataInteractionTests, ExternalSourceHTMLToUploadArea)
+{
+    RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView synchronouslyLoadTestPageNamed:@"file-uploading"];
+
+    RetainPtr<UIItemProvider> simulatedHTMLItemProvider = adoptNS([[UIItemProvider alloc] init]);
+    NSData *htmlData = [@"<body contenteditable></body>" dataUsingEncoding:NSUTF8StringEncoding];
+    [simulatedHTMLItemProvider registerFileRepresentationForTypeIdentifier:(NSString *)kUTTypeHTML withData:htmlData filename:@"index.html"];
+
+    RetainPtr<DataInteractionSimulator> dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    [dataInteractionSimulator setExternalItemProviders:@[ simulatedHTMLItemProvider.get() ]];
+    [dataInteractionSimulator runFrom:CGPointMake(200, 300) to:CGPointMake(100, 300)];
+
+    NSString *outputValue = [webView stringByEvaluatingJavaScript:@"output.value"];
+    EXPECT_WK_STREQ("text/html", outputValue.UTF8String);
+
+    cleanUpDataInteractionTemporaryPath();
+}
+
+TEST(DataInteractionTests, ExternalSourceImageAndHTMLToSingleFileInput)
+{
+    RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView synchronouslyLoadTestPageNamed:@"file-uploading"];
+
+    RetainPtr<UIItemProvider> simulatedImageItemProvider = adoptNS([[UIItemProvider alloc] init]);
+    NSData *imageData = UIImageJPEGRepresentation(testIconImage(), 0.5);
+    [simulatedImageItemProvider registerFileRepresentationForTypeIdentifier:(NSString *)kUTTypeJPEG withData:imageData filename:@"image.png"];
+
+    RetainPtr<UIItemProvider> simulatedHTMLItemProvider = adoptNS([[UIItemProvider alloc] init]);
+    NSData *htmlData = [@"<body contenteditable></body>" dataUsingEncoding:NSUTF8StringEncoding];
+    [simulatedHTMLItemProvider registerFileRepresentationForTypeIdentifier:(NSString *)kUTTypeHTML withData:htmlData filename:@"index.html"];
+
+    RetainPtr<DataInteractionSimulator> dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    [dataInteractionSimulator setExternalItemProviders:@[ simulatedHTMLItemProvider.get(), simulatedImageItemProvider.get() ]];
+    [dataInteractionSimulator runFrom:CGPointMake(200, 100) to:CGPointMake(100, 100)];
+
+    NSString *outputValue = [webView stringByEvaluatingJavaScript:@"output.value"];
+    EXPECT_WK_STREQ("", outputValue.UTF8String);
+
+    cleanUpDataInteractionTemporaryPath();
+}
+
+TEST(DataInteractionTests, ExternalSourceImageAndHTMLToMultipleFileInput)
+{
+    RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView synchronouslyLoadTestPageNamed:@"file-uploading"];
+    [webView stringByEvaluatingJavaScript:@"input.setAttribute('multiple', '')"];
+
+    RetainPtr<UIItemProvider> simulatedImageItemProvider = adoptNS([[UIItemProvider alloc] init]);
+    NSData *imageData = UIImageJPEGRepresentation(testIconImage(), 0.5);
+    [simulatedImageItemProvider registerFileRepresentationForTypeIdentifier:(NSString *)kUTTypeJPEG withData:imageData filename:@"image.png"];
+
+    RetainPtr<UIItemProvider> simulatedHTMLItemProvider = adoptNS([[UIItemProvider alloc] init]);
+    NSData *htmlData = [@"<body contenteditable></body>" dataUsingEncoding:NSUTF8StringEncoding];
+    [simulatedHTMLItemProvider registerFileRepresentationForTypeIdentifier:(NSString *)kUTTypeHTML withData:htmlData filename:@"index.html"];
+
+    RetainPtr<DataInteractionSimulator> dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    [dataInteractionSimulator setExternalItemProviders:@[ simulatedHTMLItemProvider.get(), simulatedImageItemProvider.get() ]];
+    [dataInteractionSimulator runFrom:CGPointMake(200, 100) to:CGPointMake(100, 100)];
+
+    NSString *outputValue = [webView stringByEvaluatingJavaScript:@"output.value"];
+    EXPECT_WK_STREQ("image/jpeg, text/html", outputValue.UTF8String);
+
+    cleanUpDataInteractionTemporaryPath();
+}
+
+TEST(DataInteractionTests, ExternalSourceImageAndHTMLToUploadArea)
+{
+    RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView synchronouslyLoadTestPageNamed:@"file-uploading"];
+
+    RetainPtr<UIItemProvider> simulatedImageItemProvider = adoptNS([[UIItemProvider alloc] init]);
+    NSData *imageData = UIImageJPEGRepresentation(testIconImage(), 0.5);
+    [simulatedImageItemProvider registerFileRepresentationForTypeIdentifier:(NSString *)kUTTypeJPEG withData:imageData filename:@"image.png"];
+
+    RetainPtr<UIItemProvider> firstSimulatedHTMLItemProvider = adoptNS([[UIItemProvider alloc] init]);
+    NSData *firstHTMLData = [@"<body contenteditable></body>" dataUsingEncoding:NSUTF8StringEncoding];
+    [firstSimulatedHTMLItemProvider registerFileRepresentationForTypeIdentifier:(NSString *)kUTTypeHTML withData:firstHTMLData filename:@"index.html"];
+
+    RetainPtr<UIItemProvider> secondSimulatedHTMLItemProvider = adoptNS([[UIItemProvider alloc] init]);
+    NSData *secondHTMLData = [@"<html><body>hello world</body></html>" dataUsingEncoding:NSUTF8StringEncoding];
+    [secondSimulatedHTMLItemProvider registerFileRepresentationForTypeIdentifier:(NSString *)kUTTypeHTML withData:secondHTMLData filename:@"index.html"];
+
+    RetainPtr<DataInteractionSimulator> dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    [dataInteractionSimulator setExternalItemProviders:@[ simulatedImageItemProvider.get(), firstSimulatedHTMLItemProvider.get(), secondSimulatedHTMLItemProvider.get() ]];
+    [dataInteractionSimulator runFrom:CGPointMake(200, 300) to:CGPointMake(100, 300)];
+
+    NSString *outputValue = [webView stringByEvaluatingJavaScript:@"output.value"];
+    EXPECT_WK_STREQ("image/jpeg, text/html, text/html", outputValue.UTF8String);
+
+    cleanUpDataInteractionTemporaryPath();
+}
+
 TEST(DataInteractionTests, ExternalSourceUTF8PlainTextOnly)
 {
     RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
@@ -286,7 +439,7 @@ TEST(DataInteractionTests, ExternalSourceUTF8PlainTextOnly)
         completionBlock([textPayload dataUsingEncoding:NSUTF8StringEncoding], nil);
         return [NSProgress discreteProgressWithTotalUnitCount:100];
     }];
-    [dataInteractionSimulator setExternalItemProvider:simulatedItemProvider.get()];
+    [dataInteractionSimulator setExternalItemProviders:@[ simulatedItemProvider.get() ]];
     [dataInteractionSimulator runFrom:CGPointMake(300, 400) to:CGPointMake(100, 300)];
     EXPECT_WK_STREQ(textPayload.UTF8String, [webView stringByEvaluatingJavaScript:@"editor.textContent"].UTF8String);
     checkSelectionRectsWithLogging(@[ makeCGRectValue(1, 201, 1936, 227) ], [dataInteractionSimulator finalSelectionRects]);
@@ -297,15 +450,14 @@ TEST(DataInteractionTests, ExternalSourceJPEGOnly)
     RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"autofocus-contenteditable"];
 
-    UIImage *testImage = [UIImage imageNamed:@"TestWebKitAPI.resources/icon.png"];
     RetainPtr<DataInteractionSimulator> dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
     RetainPtr<UIItemProvider> simulatedItemProvider = adoptNS([[UIItemProvider alloc] init]);
     [simulatedItemProvider registerDataRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypeJPEG options:nil loadHandler:^NSProgress *(UIItemProviderDataLoadCompletionBlock completionBlock)
     {
-        completionBlock(UIImageJPEGRepresentation(testImage, 0.5), nil);
+        completionBlock(UIImageJPEGRepresentation(testIconImage(), 0.5), nil);
         return [NSProgress discreteProgressWithTotalUnitCount:100];
     }];
-    [dataInteractionSimulator setExternalItemProvider:simulatedItemProvider.get()];
+    [dataInteractionSimulator setExternalItemProviders:@[ simulatedItemProvider.get() ]];
     [dataInteractionSimulator runFrom:CGPointMake(300, 400) to:CGPointMake(100, 300)];
     EXPECT_TRUE([webView editorContainsImageElement]);
     checkSelectionRectsWithLogging(@[ makeCGRectValue(1, 201, 215, 174) ], [dataInteractionSimulator finalSelectionRects]);

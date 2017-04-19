@@ -1,3 +1,56 @@
+2017-04-18  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [WK2] Add infrastructure and unit tests for file uploads using data interaction
+        https://bugs.webkit.org/show_bug.cgi?id=170903
+        <rdar://problem/31314689>
+
+        Reviewed by Tim Horton.
+
+        Adds 5 new unit tests covering different cases of uploading files through data interaction, as well as
+        infrastructure for simulating UIItemProviders that load file data. Makes a few adjustments to the
+        DataInteractionSimulator along the way, detailed in the per-method annotations below. See
+        <https://bugs.webkit.org/show_bug.cgi?id=170880> for more details about the change this patch is testing.
+
+        New tests:
+        DataInteractionTests.ExternalSourceImageToFileInput
+        DataInteractionTests.ExternalSourceHTMLToUploadArea
+        DataInteractionTests.ExternalSourceImageAndHTMLToSingleFileInput
+        DataInteractionTests.ExternalSourceImageAndHTMLToMultipleFileInput
+        DataInteractionTests.ExternalSourceImageAndHTMLToUploadArea
+
+        * TestWebKitAPI/Tests/ios/DataInteractionTests.mm:
+        (testIconImage):
+        (temporaryURLForDataInteractionFileLoad):
+        (cleanUpDataInteractionTemporaryPath):
+
+        Creates and tears down temporary file directories for testing data interaction.
+
+        (-[UIItemProvider registerFileRepresentationForTypeIdentifier:withData:filename:]):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/ios/DataInteractionSimulator.h:
+        * TestWebKitAPI/ios/DataInteractionSimulator.mm:
+
+        Make necessary changes to be able to test what happens when data interaction ends over an element with no
+        operation. Previously, we would always simulate performing a data interaction operation when ending the
+        simulation, but this causes us to wait indefinitely for a data operation response to arrive in the UI process.
+        Instead, we need to note whether or not the content view is allowing data interaction, and only perform an
+        operation and wait for the -didPerform call if the operation was allowed. Otherwise, we immediately transition
+        the phase to Cancelled and end the run.
+
+        (-[DataInteractionSimulator _resetSimulatedState]):
+        (-[DataInteractionSimulator runFrom:to:]):
+        (-[DataInteractionSimulator _concludeDataInteractionAndPerformOperationIfNecessary]):
+        (-[DataInteractionSimulator _advanceProgress]):
+        (-[DataInteractionSimulator externalItemProviders]):
+        (-[DataInteractionSimulator setExternalItemProviders:]):
+
+        Previously, we hard-coded DataInteractionSimulator to only support a single external item provider. In order to
+        test the scenario where multiple files are being "data interacted" into a file-type input, we generalize this to
+        take multiple item providers.
+
+        (-[DataInteractionSimulator externalItemProvider]): Deleted.
+        (-[DataInteractionSimulator setExternalItemProvider:]): Deleted.
+
 2017-04-18  John Wilander  <wilander@apple.com>
 
         Make WebCore::topPrivatelyControlledDomain() return "localhost" for localhost

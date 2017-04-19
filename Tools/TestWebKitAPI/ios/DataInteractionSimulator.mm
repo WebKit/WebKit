@@ -101,6 +101,7 @@ static NSArray *dataInteractionEventNames()
     _finalSelectionRects = @[ ];
     _dataInteractionSession = nil;
     _dataOperationSession = nil;
+    _shouldPerformOperation = NO;
 }
 
 - (NSArray *)observedEventNames
@@ -139,8 +140,8 @@ static NSArray *dataInteractionEventNames()
     _startLocation = startLocation;
     _endLocation = endLocation;
 
-    if (self.externalItemProvider) {
-        _dataOperationSession = adoptNS([[MockDataOperationSession alloc] initWithProvider:self.externalItemProvider location:_startLocation window:[_webView window]]);
+    if (self.externalItemProviders.count) {
+        _dataOperationSession = adoptNS([[MockDataOperationSession alloc] initWithProviders:self.externalItemProviders location:_startLocation window:[_webView window]]);
         _phase = DataInteractionBegan;
         [self _advanceProgress];
     } else {
@@ -168,6 +169,22 @@ static NSArray *dataInteractionEventNames()
     return _finalSelectionRects.get();
 }
 
+- (void)_concludeDataInteractionAndPerformOperationIfNecessary
+{
+    if (_shouldPerformOperation) {
+        [_webView _simulateDataInteractionPerformOperation:_dataOperationSession.get()];
+        _phase = DataInteractionPerforming;
+    } else {
+        _isDoneWithCurrentRun = YES;
+        _phase = DataInteractionCancelled;
+    }
+
+    [_webView _simulateDataInteractionEnded:_dataOperationSession.get()];
+
+    if (_dataInteractionSession)
+        [_webView _simulateDataInteractionSessionDidEnd:_dataInteractionSession.get()];
+}
+
 - (void)_advanceProgress
 {
     _currentProgress += progressIncrementStep;
@@ -176,13 +193,8 @@ static NSArray *dataInteractionEventNames()
     [_dataOperationSession setMockLocationInWindow:locationInWindow];
 
     if (_currentProgress >= 1) {
-        [_webView _simulateDataInteractionPerformOperation:_dataOperationSession.get()];
-        [_webView _simulateDataInteractionEnded:_dataOperationSession.get()];
-        if (_dataInteractionSession)
-            [_webView _simulateDataInteractionSessionDidEnd:_dataInteractionSession.get()];
-
-        _phase = DataInteractionPerforming;
         _currentProgress = 1;
+        [self _concludeDataInteractionAndPerformOperationIfNecessary];
         return;
     }
 
@@ -200,7 +212,7 @@ static NSArray *dataInteractionEventNames()
         for (WKDataInteractionItem *item in items)
             [itemProviders addObject:item.itemProvider];
 
-        _dataOperationSession = adoptNS([[MockDataOperationSession alloc] initWithProvider:itemProviders.firstObject location:self._currentLocation window:[_webView window]]);
+        _dataOperationSession = adoptNS([[MockDataOperationSession alloc] initWithProviders:itemProviders location:self._currentLocation window:[_webView window]]);
         [_dataInteractionSession setItems:items];
         _sourceItemProviders = itemProviders;
         if (self.showCustomActionSheetBlock) {
@@ -217,7 +229,7 @@ static NSArray *dataInteractionEventNames()
         _phase = DataInteractionEntered;
         break;
     case DataInteractionEntered:
-        [_webView _simulateDataInteractionUpdated:_dataOperationSession.get()];
+        _shouldPerformOperation = [_webView _simulateDataInteractionUpdated:_dataOperationSession.get()];
         break;
     default:
         break;
@@ -244,14 +256,14 @@ static NSArray *dataInteractionEventNames()
     return _sourceItemProviders.get();
 }
 
-- (UIItemProvider *)externalItemProvider
+- (NSArray *)externalItemProviders
 {
-    return _externalItemProvider.get();
+    return _externalItemProviders.get();
 }
 
-- (void)setExternalItemProvider:(UIItemProvider *)externalItemProvider
+- (void)setExternalItemProviders:(NSArray *)externalItemProviders
 {
-    _externalItemProvider = externalItemProvider;
+    _externalItemProviders = adoptNS([externalItemProviders copy]);
 }
 
 - (DataInteractionPhase)phase

@@ -5409,10 +5409,12 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 #endif
 }
 
-- (void)_simulateDataInteractionUpdated:(id)info
+- (BOOL)_simulateDataInteractionUpdated:(id)info
 {
 #if ENABLE(DATA_INTERACTION)
-    [_contentView _simulateDataInteractionUpdated:info];
+    return [_contentView _simulateDataInteractionUpdated:info];
+#else
+    return NO;
 #endif
 }
 

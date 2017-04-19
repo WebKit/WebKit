@@ -295,7 +295,7 @@ struct WKAutoCorrectionData {
 - (void)_didChangeDataInteractionCaretRect:(CGRect)previousRect currentRect:(CGRect)rect;
 
 - (void)_simulateDataInteractionEntered:(id)info;
-- (void)_simulateDataInteractionUpdated:(id)info;
+- (BOOL)_simulateDataInteractionUpdated:(id)info;
 - (void)_simulateDataInteractionPerformOperation:(id)info;
 - (void)_simulateDataInteractionEnded:(id)info;
 - (void)_simulateDataInteractionSessionDidEnd:(id)session;
