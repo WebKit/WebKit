@@ -23,11 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef StringCommon_h
-#define StringCommon_h
+#pragma once
 
 #include <unicode/uchar.h>
 #include <wtf/ASCIICType.h>
+#include <wtf/NotFound.h>
 
 namespace WTF {
 
@@ -652,5 +652,3 @@ template<typename StringClass, unsigned length> inline bool startsWithLettersIgn
 
 using WTF::equalIgnoringASCIICase;
 using WTF::equalLettersIgnoringASCIICase;
-
-#endif // StringCommon_h
