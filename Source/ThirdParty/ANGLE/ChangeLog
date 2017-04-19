@@ -1,5 +1,14 @@
 2017-04-18  Dean Jackson  <dino@apple.com>
 
+        WinCairo needs these files I recently removed
+        from our copy of ANGLE.
+
+        * src/third_party/murmurhash/LICENSE: Added.
+        * src/third_party/murmurhash/MurmurHash3.cpp: Added.
+        * src/third_party/murmurhash/MurmurHash3.h: Added.
+
+2017-04-18  Dean Jackson  <dino@apple.com>
+
         Still trying to fix Windows.
 
         * PlatformWin.cmake:
