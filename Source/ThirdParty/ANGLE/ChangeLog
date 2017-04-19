@@ -1,3 +1,9 @@
+2017-04-19  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Remove executable property from a header file.
+
+        * include/KHR/khrplatform.h: Removed property svn:executable.
+
 2017-04-18  Dean Jackson  <dino@apple.com>
 
         Add the actual content to the files, now that
