@@ -1,0 +1,13 @@
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+var x = '<root>';
+for (var i = 0; i < 25000; ++i)
+    x += '<node id = "' + i + '"><payload>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</payload></node>';
+x += '</root>';
+var d = (new DOMParser).parseFromString(x, "text/xml");
+if (d.getElementsByTagName("parsererror").length)
+    alert("error while parsing");
+else
+    alert("parsed successfully");
+</script>
