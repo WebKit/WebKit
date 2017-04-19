@@ -1,3 +1,13 @@
+2017-04-18  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline bindings tests after r215486.
+
+        Unreviewed test gardening.
+
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::jsTestObjOnfooGetter):
+        (WebCore::jsTestObjOnwebkitfooGetter):
+
 2017-04-18  Dean Jackson  <dino@apple.com>
 
         Attempted build fix. Add/remove some files from ANGLE.

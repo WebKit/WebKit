@@ -2943,7 +2943,7 @@ static inline JSValue jsTestObjOnfooGetter(ExecState& state, JSTestObj& thisObje
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    return eventHandlerAttribute(thisObject.wrapped(), eventNames().fooEvent);
+    return eventHandlerAttribute(thisObject.wrapped(), eventNames().fooEvent, worldForDOMObject(&thisObject));
 }
 
 static inline JSValue jsTestObjOnwebkitfooGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
@@ -2957,7 +2957,7 @@ static inline JSValue jsTestObjOnwebkitfooGetter(ExecState& state, JSTestObj& th
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    return eventHandlerAttribute(thisObject.wrapped(), eventNames().fooEvent);
+    return eventHandlerAttribute(thisObject.wrapped(), eventNames().fooEvent, worldForDOMObject(&thisObject));
 }
 
 static inline JSValue jsTestObjWithScriptStateAttributeGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
