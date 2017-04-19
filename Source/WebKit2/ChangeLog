@@ -1,3 +1,39 @@
+2017-04-18  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Check both origins and cookieHostNames for domain matches in data removal
+        https://bugs.webkit.org/show_bug.cgi?id=170763
+        <rdar://problem/31573091>
+
+        Reviewed by Alex Christensen.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::deleteWebsiteDataForTopPrivatelyControlledDomainsInAllPersistentDataStores):
+            Move semantics for topPrivatelyControlledDomains vector.
+        (WebKit::WebProcessProxy::deleteWebsiteDataForTopPrivatelyOwnedDomainsInAllPersistentDataStores): Deleted.
+            Renamed 'PrivatelyControlled' instead of 'PrivatelyOwned.'
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::removeDataRecords):
+            Move semantics for prevalentResourceDomains vector.
+        * UIProcess/WebsiteData/WebsiteDataRecord.cpp:
+        (WebKit::hostIsInDomain):
+            Static convenience function.
+        (WebKit::WebsiteDataRecord::matchesTopPrivatelyControlledDomain):
+            Checks for matching cookieHostNames if types contains WebsiteDataType::Cookies.
+            Also checks origins.
+        * UIProcess/WebsiteData/WebsiteDataRecord.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::fetchDataForTopPrivatelyControlledDomains):
+            Now makes use of the new function
+            WebKit::WebsiteDataRecord::validForTopPrivatelyControlledDomain().
+        (WebKit::WebsiteDataStore::removeDataForTopPrivatelyControlledDomains):
+            Move semantics for topPrivatelyControlledDomains vector.
+        (WebKit::WebsiteDataStore::fetchDataForTopPrivatelyOwnedDomains): Deleted.
+            Renamed 'PrivatelyControlled' instead of 'PrivatelyOwned.'
+        (WebKit::WebsiteDataStore::removeDataForTopPrivatelyOwnedDomains): Deleted.
+            Renamed 'PrivatelyControlled' instead of 'PrivatelyOwned.'
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
 2017-04-18  Brent Fulgham  <bfulgham@apple.com>
 
         [iOS][WK2] Prevent ephemeral files from being backed up

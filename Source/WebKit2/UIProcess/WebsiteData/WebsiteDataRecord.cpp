@@ -107,4 +107,34 @@ void WebsiteDataRecord::addPluginDataHostName(const String& hostName)
 }
 #endif
 
+static inline bool hostIsInDomain(StringView host, StringView domain)
+{
+    if (!host.endsWithIgnoringASCIICase(domain))
+        return false;
+    
+    ASSERT(host.length() >= domain.length());
+    unsigned suffixOffset = host.length() - domain.length();
+    return !suffixOffset || host[suffixOffset - 1] == '.';
+}
+
+bool WebsiteDataRecord::matchesTopPrivatelyControlledDomain(const String& topPrivatelyControlledDomain) const
+{
+    if (topPrivatelyControlledDomain.isEmpty())
+        return false;
+
+    if (types.contains(WebsiteDataType::Cookies)) {
+        for (const auto& hostName : cookieHostNames) {
+            if (hostIsInDomain(hostName, topPrivatelyControlledDomain))
+                return true;
+        }
+    }
+
+    for (const auto& dataRecordOriginData : origins) {
+        if (hostIsInDomain(dataRecordOriginData.securityOrigin().get().host(), topPrivatelyControlledDomain))
+            return true;
+    }
+
+    return false;
+}
+
 }

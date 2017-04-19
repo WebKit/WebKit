@@ -496,32 +496,21 @@ void WebsiteDataStore::fetchData(OptionSet<WebsiteDataType> dataTypes, OptionSet
     callbackAggregator->callIfNeeded();
 }
 
-void WebsiteDataStore::fetchDataForTopPrivatelyOwnedDomains(OptionSet<WebsiteDataType> dataTypes, OptionSet<WebsiteDataFetchOption> fetchOptions, const Vector<String>& topPrivatelyOwnedDomains, std::function<void(Vector<WebsiteDataRecord>&&, Vector<String>&&)> completionHandler)
+void WebsiteDataStore::fetchDataForTopPrivatelyControlledDomains(OptionSet<WebsiteDataType> dataTypes, OptionSet<WebsiteDataFetchOption> fetchOptions, Vector<String>&& topPrivatelyControlledDomains, std::function<void(Vector<WebsiteDataRecord>&&, Vector<String>&&)> completionHandler)
 {
-    fetchData(dataTypes, fetchOptions, [topPrivatelyOwnedDomains, completionHandler, this](auto existingDataRecords) {
+    fetchData(dataTypes, fetchOptions, [topPrivatelyControlledDomains = WTFMove(topPrivatelyControlledDomains), completionHandler, this](auto&& existingDataRecords) {
         Vector<WebsiteDataRecord> matchingDataRecords;
-        Vector<String> domainsWithDataRecords;
-        for (auto& dataRecord : existingDataRecords) {
-            bool dataRecordAdded;
-            for (auto& dataRecordOriginData : dataRecord.origins) {
-                dataRecordAdded = false;
-                String dataRecordHost = dataRecordOriginData.securityOrigin().get().host();
-                for (auto& topPrivatelyOwnedDomain : topPrivatelyOwnedDomains) {
-                    if (dataRecordHost.endsWithIgnoringASCIICase(topPrivatelyOwnedDomain)) {
-                        auto suffixStart = dataRecordHost.length() - topPrivatelyOwnedDomain.length();
-                        if (!suffixStart || dataRecordHost[suffixStart - 1] == '.') {
-                            matchingDataRecords.append(dataRecord);
-                            domainsWithDataRecords.append(topPrivatelyOwnedDomain);
-                            dataRecordAdded = true;
-                            break;
-                        }
-                    }
-                }
-                if (dataRecordAdded)
+        Vector<String> domainsWithMatchingDataRecords;
+        for (auto&& dataRecord : existingDataRecords) {
+            for (auto&& topPrivatelyControlledDomain : topPrivatelyControlledDomains) {
+                if (dataRecord.matchesTopPrivatelyControlledDomain(topPrivatelyControlledDomain)) {
+                    matchingDataRecords.append(WTFMove(dataRecord));
+                    domainsWithMatchingDataRecords.append(topPrivatelyControlledDomain);
                     break;
+                }
             }
         }
-        completionHandler(WTFMove(matchingDataRecords), WTFMove(domainsWithDataRecords));
+        completionHandler(WTFMove(matchingDataRecords), WTFMove(domainsWithMatchingDataRecords));
     });
 }
     
@@ -1056,9 +1045,9 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, const Ve
     callbackAggregator->callIfNeeded();
 }
 
-void WebsiteDataStore::removeDataForTopPrivatelyOwnedDomains(OptionSet<WebsiteDataType> dataTypes, OptionSet<WebsiteDataFetchOption> fetchOptions, const Vector<String>& topPrivatelyOwnedDomains, std::function<void(Vector<String>)> completionHandler)
+void WebsiteDataStore::removeDataForTopPrivatelyControlledDomains(OptionSet<WebsiteDataType> dataTypes, OptionSet<WebsiteDataFetchOption> fetchOptions, Vector<String>&& topPrivatelyControlledDomains, std::function<void(Vector<String>)> completionHandler)
 {
-    fetchDataForTopPrivatelyOwnedDomains(dataTypes, fetchOptions, topPrivatelyOwnedDomains, [dataTypes, completionHandler, this](auto websiteDataRecords, auto domainsWithDataRecords) {
+    fetchDataForTopPrivatelyControlledDomains(dataTypes, fetchOptions, WTFMove(topPrivatelyControlledDomains), [dataTypes, completionHandler, this](auto websiteDataRecords, auto domainsWithDataRecords) {
         this->removeData(dataTypes, websiteDataRecords, [domainsWithDataRecords, completionHandler]() {
             completionHandler(domainsWithDataRecords);
         });

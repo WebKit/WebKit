@@ -68,6 +68,8 @@ struct WebsiteDataRecord {
 #if ENABLE(NETSCAPE_PLUGIN_API)
     HashSet<String> pluginDataHostNames;
 #endif
+    
+    bool matchesTopPrivatelyControlledDomain(const String&) const;
 };
 
 }

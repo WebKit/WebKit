@@ -1,3 +1,14 @@
+2017-04-18  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Check both origins and cookieHostNames for domain matches in data removal
+        https://bugs.webkit.org/show_bug.cgi?id=170763
+        <rdar://problem/31573091>
+
+        Reviewed by Alex Christensen.
+
+        * http/tests/loading/resourceLoadStatistics/partitioned-and-unpartitioned-cookie-deletion-expected.txt: Added.
+        * http/tests/loading/resourceLoadStatistics/partitioned-and-unpartitioned-cookie-deletion.html: Added.
+
 2017-04-18  Dean Jackson  <dino@apple.com>
 
         Update ANGLE
