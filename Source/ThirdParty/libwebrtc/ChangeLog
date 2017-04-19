@@ -1,3 +1,21 @@
+2017-04-18  Youenn Fablet  <youenn@apple.com>
+
+        Add NDEBUG and CodeStripping to libwebrtc build system
+        https://bugs.webkit.org/show_bug.cgi?id=170954
+
+        Reviewed by Alex Christensen.
+
+        This optimizes libwebrtc library size and efficiency.
+        This allows allocating libwebrtc objects in WebCore without issues.
+
+        * Configurations/Base.xcconfig:
+        * Configurations/boringssl.xcconfig:
+        * Configurations/libsrtp.xcconfig:
+        * Configurations/libwebrtc.xcconfig:
+        * Configurations/libwebrtcpcrtc.xcconfig:
+        * Configurations/opus.xcconfig:
+        * Configurations/usrsctp.xcconfig:
+
 2017-04-17  Youenn Fablet  <youenn@apple.com>
 
         Add an external libwebrtc encoder factory in WebCore
