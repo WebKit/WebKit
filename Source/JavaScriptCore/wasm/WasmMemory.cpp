@@ -93,6 +93,12 @@ std::atomic<void*> fastMemoryCache[fastMemoryCacheHardLimit] = { ATOMIC_VAR_INIT
 std::atomic<void*> currentlyActiveFastMemories[fastMemoryAllocationSoftLimit] = { ATOMIC_VAR_INIT(nullptr) };
 std::atomic<size_t> currentlyAllocatedFastMemories = ATOMIC_VAR_INIT(0);
 std::atomic<size_t> observedMaximumFastMemory = ATOMIC_VAR_INIT(0);
+std::atomic<size_t> currentSlowMemoryCapacity = ATOMIC_VAR_INIT(0);
+
+size_t fastMemoryAllocatedBytesSoftLimit()
+{
+    return fastMemoryAllocationSoftLimit * Memory::fastMappedBytes();
+}
 
 void* tryGetCachedFastMemory()
 {
@@ -194,9 +200,27 @@ void* tryGetFastMemory(VM& vm)
     return memory;
 }
 
+bool slowMemoryCapacitySoftMaximumExceeded()
+{
+    // The limit on slow memory capacity is arbitrary. Its purpose is to limit
+    // virtual memory allocation. We choose to set the limit at the same virtual
+    // memory limit imposed on fast memories.
+    size_t maximum = fastMemoryAllocatedBytesSoftLimit();
+    size_t currentCapacity = currentSlowMemoryCapacity.load(std::memory_order_acquire);
+    if (UNLIKELY(currentCapacity > maximum)) {
+        dataLogLnIf(verbose, "Slow memory capacity limit reached");
+        return true;
+    }
+    return false;
+}
+
 void* tryGetSlowMemory(size_t bytes)
 {
+    if (slowMemoryCapacitySoftMaximumExceeded())
+        return nullptr;
     void* memory = mmapBytes(bytes);
+    if (memory)
+        currentSlowMemoryCapacity.fetch_add(bytes, std::memory_order_acq_rel);
     dataLogLnIf(memory && verbose, "Obtained slow memory ", RawPointer(memory), " with capacity ", bytes);
     dataLogLnIf(!memory && verbose, "Failed obtaining slow memory with capacity ", bytes);
     return memory;
@@ -228,6 +252,7 @@ void relinquishMemory(void* memory, size_t writableSize, size_t mappedCapacity, 
     case MemoryMode::BoundsChecking:
         dataLogLnIf(verbose, "relinquishFastMemory freeing slow memory ", RawPointer(memory));
         munmapBytes(memory, mappedCapacity);
+        currentSlowMemoryCapacity.fetch_sub(mappedCapacity, std::memory_order_acq_rel);
         return;
 
     case MemoryMode::NumberOfMemoryModes:

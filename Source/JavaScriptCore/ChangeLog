@@ -1,5 +1,27 @@
 2017-04-19  JF Bastien  <jfbastien@apple.com>
 
+        WebAssembly: limit slow memories
+        https://bugs.webkit.org/show_bug.cgi?id=170825
+
+        Reviewed by Saam Barati.
+
+        We limits the number of fast memories, partly because ASLR. The
+        code then falls back to slow memories. It first tries to virtually
+        allocated any declared maximum (and in there, physically the
+        initial), and if that fails it tries to physically allocate the
+        initial without any extra.
+
+        This can still be used to cause a bunch of virtual
+        allocation. This patch imposes soft limit on slow memories as
+        well. The total virtual maximum for slow memories is set at the
+        same (theoretical) value as that for fast memories.
+
+        Anything exceeding that limit causes allocation/grow to fail.
+
+        * wasm/WasmMemory.cpp:
+
+2017-04-19  JF Bastien  <jfbastien@apple.com>
+
         Cannot compile JavaScriptCore/runtime/VMTraps.cpp on FreeBSD because std::pair has a non-trivial copy constructor
         https://bugs.webkit.org/show_bug.cgi?id=170875
 

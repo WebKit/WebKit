@@ -31,6 +31,8 @@
   cmd: runWebAssembly unless parseRunCommands
 - path: wasm/fuzz
   cmd: runWebAssembly unless parseRunCommands
+- path: wasm/stress
+  cmd: runWebAssembly unless parseRunCommands
 
 - path: wasm/spec-tests/address.wast.js
   cmd: runWebAssemblySpecTest :normal
