@@ -1,3 +1,14 @@
+2017-04-19  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: <hr> should use a different role description than interactive separators
+        https://bugs.webkit.org/show_bug.cgi?id=170317
+        <rdar://problem/31363024>
+
+        Reviewed by Joanmarie Diggs.
+
+        * accessibility/mac/hr-element-expected.txt:
+        * accessibility/mac/hr-element.html:
+
 2017-04-19  JF Bastien  <jfbastien@apple.com>
 
         Unreviewed, rolling out r215520.

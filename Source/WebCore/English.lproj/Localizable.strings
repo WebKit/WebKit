@@ -1115,7 +1115,7 @@
 "select" = "select";
 
 /* accessibility role description for a horizontal rule [<hr>] */
-"separator" = "separator";
+"rule" = "rule";
 
 /* HTTP result code string */
 "server error" = "server error";

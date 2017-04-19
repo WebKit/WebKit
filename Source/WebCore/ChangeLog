@@ -1,3 +1,22 @@
+2017-04-19  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: <hr> should use a different role description than interactive separators
+        https://bugs.webkit.org/show_bug.cgi?id=170317
+        <rdar://problem/31363024>
+
+        Reviewed by Joanmarie Diggs.
+
+        Users are confused with WebKit's accessibility description of separators. 
+        We should call these what they are, horizontal rules.
+
+        Updated test: accessibility/mac/hr-element-expected.txt
+
+        * English.lproj/Localizable.strings:
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::orientation):
+        * platform/cocoa/LocalizedStringsCocoa.mm:
+        (WebCore::AXHorizontalRuleDescriptionText):
+
 2017-04-19  Anders Carlsson  <andersca@apple.com>
 
         Rename cancelPayment to cancelPaymentSession
