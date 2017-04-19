@@ -341,16 +341,6 @@ void UserMediaPermissionRequestManagerProxy::syncWithWebCorePrefs() const
 #endif
 }
 
-void UserMediaPermissionRequestManagerProxy::stopCapture()
-{
-    if (!m_page.isValid())
-        return;
-
-#if ENABLE(MEDIA_STREAM)
-    m_page.setMuted(WebCore::MediaProducer::CaptureDevicesAreMuted);
-#endif
-}
-
 void UserMediaPermissionRequestManagerProxy::startedCaptureSession()
 {
     if (!m_page.isValid())

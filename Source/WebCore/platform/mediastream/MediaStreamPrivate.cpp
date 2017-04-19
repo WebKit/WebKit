@@ -222,7 +222,7 @@ bool MediaStreamPrivate::hasCaptureAudioSource() const
 bool MediaStreamPrivate::muted() const
 {
     for (auto& track : m_trackSet.values()) {
-        if (!track->muted())
+        if (!track->muted() && !track->ended())
             return false;
     }
     return true;

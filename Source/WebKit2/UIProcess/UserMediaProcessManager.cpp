@@ -109,12 +109,35 @@ void UserMediaProcessManager::removeUserMediaPermissionRequestManagerProxy(UserM
     }
 }
 
+void UserMediaProcessManager::willEnableMediaStreamInPage(WebPageProxy& pageStartingCapture)
+{
+#if PLATFORM(COCOA)
+    for (auto& state : stateMap()) {
+        for (auto& manager : state.value->managers()) {
+
+#if !PLATFORM(IOS)
+            if (&manager->page() == &pageStartingCapture)
+                continue;
+#endif
+
+            manager->page().setMuted(WebCore::MediaProducer::CaptureDevicesAreMuted);
+        }
+    }
+#else
+    UNUSED_PARAM(pageStartingCapture);
+#endif
+}
+
 void UserMediaProcessManager::willCreateMediaStream(UserMediaPermissionRequestManagerProxy& proxy, bool withAudio, bool withVideo)
 {
 #if ENABLE(SANDBOX_EXTENSIONS)
-    ASSERT(stateMap().contains(&proxy.page().process()));
+    auto& processStartingCapture = proxy.page().process();
 
-    auto& state = processState(proxy.page().process());
+    ASSERT(stateMap().contains(&processStartingCapture));
+
+    willEnableMediaStreamInPage(proxy.page());
+
+    auto& state = processState(processStartingCapture);
     size_t extensionCount = 0;
     unsigned requiredExtensions = ProcessState::SandboxExtensionsGranted::None;
 
@@ -131,7 +154,7 @@ void UserMediaProcessManager::willCreateMediaStream(UserMediaPermissionRequestMa
 
 #if ENABLE(WEB_RTC) && USE(LIBWEBRTC)
     if (currentExtensions == ProcessState::SandboxExtensionsGranted::None && (withAudio || withVideo))
-        proxy.page().process().send(Messages::WebPage::DisableICECandidateFiltering(), proxy.page().pageID());
+        processStartingCapture.send(Messages::WebPage::DisableICECandidateFiltering(), proxy.page().pageID());
 #endif
 
     if (!(requiredExtensions & currentExtensions)) {
@@ -156,7 +179,7 @@ void UserMediaProcessManager::willCreateMediaStream(UserMediaPermissionRequestMa
         }
 
         state.setSandboxExtensionsGranted(currentExtensions);
-        proxy.page().process().send(Messages::WebPage::GrantUserMediaDeviceSandboxExtensions(MediaDeviceSandboxExtensions(ids, WTFMove(handles))), proxy.page().pageID());
+        processStartingCapture.send(Messages::WebPage::GrantUserMediaDeviceSandboxExtensions(MediaDeviceSandboxExtensions(ids, WTFMove(handles))), proxy.page().pageID());
     }
 #endif
 }

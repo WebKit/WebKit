@@ -35,6 +35,7 @@ public:
     void removeUserMediaPermissionRequestManagerProxy(UserMediaPermissionRequestManagerProxy&);
 
     void willCreateMediaStream(UserMediaPermissionRequestManagerProxy&, bool withAudio, bool withVideo);
+    void willEnableMediaStreamInPage(WebPageProxy&);
 
     void startedCaptureSession(UserMediaPermissionRequestManagerProxy&);
     void endedCaptureSession(UserMediaPermissionRequestManagerProxy&);

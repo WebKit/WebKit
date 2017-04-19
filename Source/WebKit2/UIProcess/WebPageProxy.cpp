@@ -74,6 +74,7 @@
 #include "TextChecker.h"
 #include "TextCheckerState.h"
 #include "UserMediaPermissionRequestProxy.h"
+#include "UserMediaProcessManager.h"
 #include "WKContextPrivate.h"
 #include "WebAutomationSession.h"
 #include "WebBackForwardList.h"
@@ -4192,6 +4193,11 @@ void WebPageProxy::setMuted(WebCore::MediaProducer::MutedStateFlags state)
 
     if (!isValid())
         return;
+
+#if ENABLE(MEDIA_STREAM)
+    if (!(state & WebCore::MediaProducer::CaptureDevicesAreMuted))
+        UserMediaProcessManager::singleton().willEnableMediaStreamInPage(*this);
+#endif
 
     m_process->send(Messages::WebPage::SetMuted(state), m_pageID);
 

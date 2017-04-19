@@ -71,7 +71,7 @@ public:
     bool ended() const;
 
     Ref<MediaStreamTrack> clone();
-    void stopProducingData();
+    void stopTrack();
 
     bool isCaptureTrack() const;
 

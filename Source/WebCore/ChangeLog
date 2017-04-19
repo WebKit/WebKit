@@ -1,3 +1,27 @@
+2017-04-19  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Limit capture to one tab at a time
+        https://bugs.webkit.org/show_bug.cgi?id=171009
+
+        Reviewed by Jon Lee.
+
+        No new tests yet, filed bug 171011.
+
+        * Modules/mediastream/MediaStreamTrack.cpp:
+        (WebCore::MediaStreamTrack::stopTrack): Drive-by fix: renamed from stopProducingData
+        because stopProducingData is a method in RealtimeMediaSource that does something different.
+        (WebCore::MediaStreamTrack::stop): Call stopTrack.
+        (WebCore::MediaStreamTrack::stopProducingData): Deleted.
+        * Modules/mediastream/MediaStreamTrack.h:
+        * Modules/mediastream/MediaStreamTrack.idl:
+
+        * Modules/mediastream/RTCRtpSender.cpp:
+        (WebCore::RTCRtpSender::replaceTrack): Update for rename.
+
+        * platform/mediastream/MediaStreamPrivate.cpp:
+        (WebCore::MediaStreamPrivate::muted): Drive-by fix: a track that has ended but 
+        which is not muted will never produce data.
+
 2017-04-19  Alex Christensen  <achristensen@webkit.org>
 
         Parsing large XML strings fails

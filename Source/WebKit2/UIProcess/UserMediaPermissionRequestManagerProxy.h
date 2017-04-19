@@ -73,7 +73,6 @@ public:
 
     void startedCaptureSession();
     void endedCaptureSession();
-    void stopCapture();
 
 private:
     Ref<UserMediaPermissionRequestProxy> createRequest(uint64_t userMediaID, uint64_t frameID, const String&userMediaDocumentOriginIdentifier, const String& topLevelDocumentOriginIdentifier, const Vector<String>& audioDeviceUIDs, const Vector<String>& videoDeviceUIDs);

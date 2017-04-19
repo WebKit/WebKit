@@ -45,7 +45,7 @@ enum MediaStreamTrackState { "live", "ended" };
     attribute EventHandler onended;
 
     MediaStreamTrack clone();
-    [ImplementedAs=stopProducingData] void stop();
+    [ImplementedAs=stopTrack] void stop();
 
     MediaTrackCapabilities getCapabilities();
     MediaTrackConstraints getConstraints();

@@ -113,7 +113,7 @@ Ref<MediaStreamTrack> MediaStreamTrack::clone()
     return MediaStreamTrack::create(*scriptExecutionContext(), m_private->clone());
 }
 
-void MediaStreamTrack::stopProducingData()
+void MediaStreamTrack::stopTrack()
 {
     // NOTE: this method is called when the "stop" method is called from JS, using the "ImplementedAs" IDL attribute.
     // This is done because ActiveDOMObject requires a "stop" method.
@@ -330,7 +330,7 @@ void MediaStreamTrack::configureTrackRendering()
 
 void MediaStreamTrack::stop()
 {
-    stopProducingData();
+    stopTrack();
 }
 
 const char* MediaStreamTrack::activeDOMObjectName() const
