@@ -1,3 +1,69 @@
+2017-04-18  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [WK2] Support DataTransfer::files() when performing a DHTML data interaction
+        https://bugs.webkit.org/show_bug.cgi?id=170880
+        <rdar://problem/31314689>
+
+        Reviewed by Tim Horton.
+
+        Adds support for fetching files from the DataTransfer when performing a data interaction operation handled by
+        JavaScript. There are two changes we make here to achieve this:
+
+        First, we teach the Pasteboard on iOS to know what file paths hold the item provider contents used in the
+        current data interaction operation. On iOS, Pasteboard::readFilenames is currently hard-coded to return an empty
+        vector. To fix this, we add logic to the iOS Pasteboard to remember what the paths of all files that were
+        successfully loaded from item providers as the data interaction is taking place. This ensures that at the
+        WebCore layer, the implementation of Pasteboard::readFilenames on Mac and iOS is similar -- they both call out
+        to the client layer in order to read file paths off of their respective pasteboards. Once in the client layer
+        (WebKit1 or WebKit2) we then call into PlatformPasteboard::filenamesForDataInteraction, which then calls into
+        WebItemProviderPasteboard if applicable.
+
+        The second tweak is to propagate information about whether the document is preventing default data interaction
+        behavior to the client layer. This prevents us from having to save pasteboard content when performing data
+        interaction in cases where file information is not needed (i.e. the default behavior is being performed, and
+        the target is not a file input). This also avoids compatibility issues with insertion animations when performing
+        data interaction in editable areas, due to the extra time spent loading item provider data into a temporary
+        file.
+
+        Unit tests in <https://bugs.webkit.org/show_bug.cgi?id=170903>.
+
+        * page/DragController.cpp:
+        (WebCore::DragController::DragController):
+        (WebCore::DragController::performDragOperation):
+        (WebCore::DragController::dragEnteredOrUpdated):
+        (WebCore::DragController::tryDocumentDrag):
+
+        Refactor DragController::tryDocumentDrag to return a DragHandlingMethod. This method currently returns either
+        true or false; this patch changes it to return a DragHandlingMethod, which is either None (the equivalent of
+        returning false before the patch), Default (indicating that the drop destination is allowing default handling),
+        or NonDefault, which indicates that the drop destination has explicitly prevented default.
+
+        * page/DragController.h:
+        (WebCore::DragController::documentIsHandlingNonDefaultDrag):
+
+        Used by WebPage when sending an IPC response after handling dragentered or dragupdated.
+
+        * platform/PasteboardStrategy.h:
+        * platform/PlatformPasteboard.h:
+        * platform/ios/AbstractPasteboard.h:
+        * platform/ios/PasteboardIOS.mm:
+        (WebCore::Pasteboard::readFilenames):
+        * platform/ios/PlatformPasteboardIOS.mm:
+        (WebCore::PlatformPasteboard::filenamesForDataInteraction):
+        * platform/ios/WebItemProviderPasteboard.h:
+        * platform/ios/WebItemProviderPasteboard.mm:
+
+        WebItemProviderPasteboard now remembers the file URLs of successfully loaded item provider content when a data
+        interaction is being performed. The new filenamesForDataInteraction property returns the array of data
+        interaction file URLs which have been propagated to the web process along with sandbox extensions. This state
+        is cleaned up when list of item providers change (i.e. when the data interaction operation is finished, or if
+        the web content process crashes, etc.)
+
+        (-[WebItemProviderPasteboard init]):
+        (-[WebItemProviderPasteboard setItemProviders:]):
+        (-[WebItemProviderPasteboard filenamesForDataInteraction]):
+        (-[WebItemProviderPasteboard doAfterLoadingProvidedContentIntoFileURLs:]):
+
 2017-04-18  Dean Jackson  <dino@apple.com>
 
         Cairo build fix.

@@ -84,6 +84,7 @@ static BOOL isImageType(NSString *type)
 @implementation WebItemProviderPasteboard {
     RetainPtr<NSArray> _itemProviders;
     RetainPtr<NSArray> _cachedTypeIdentifiers;
+    RetainPtr<NSArray> _filenamesForDataInteraction;
 }
 
 + (instancetype)sharedInstance
@@ -102,6 +103,7 @@ static BOOL isImageType(NSString *type)
         _itemProviders = adoptNS([[NSArray alloc] init]);
         _changeCount = 0;
         _pendingOperationCount = 0;
+        _filenamesForDataInteraction = @[ ];
     }
     return self;
 }
@@ -140,6 +142,7 @@ static BOOL isImageType(NSString *type)
     _itemProviders = itemProviders;
     _changeCount++;
     _cachedTypeIdentifiers = nil;
+    _filenamesForDataInteraction = @[ ];
 }
 
 - (NSInteger)numberOfItems
@@ -254,6 +257,11 @@ static BOOL isImageType(NSString *type)
     return _changeCount;
 }
 
+- (NSArray<NSURL *> *)filenamesForDataInteraction
+{
+    return _filenamesForDataInteraction.get();
+}
+
 - (NSInteger)numberOfFiles
 {
     NSInteger numberOfFiles = 0;
@@ -285,6 +293,8 @@ static NSURL *temporaryFileURLForDataInteractionContent(NSString *fileExtension,
 
 - (void)doAfterLoadingProvidedContentIntoFileURLs:(WebItemProviderFileLoadBlock)action
 {
+    auto changeCountBeforeLoading = _changeCount;
+
     auto itemProvidersWithFiles = adoptNS([[NSMutableArray alloc] init]);
     auto contentTypeIdentifiersToLoad = adoptNS([[NSMutableArray alloc] init]);
     auto loadedFileURLs = adoptNS([[NSMutableArray alloc] init]);
@@ -328,7 +338,11 @@ static NSURL *temporaryFileURLForDataInteractionContent(NSString *fileExtension,
         });
     }
 
-    dispatch_group_notify(fileLoadingGroup.get(), dispatch_get_main_queue(), [fileLoadingGroup, loadedFileURLs, completionBlock = makeBlockPtr(action)] {
+    RetainPtr<WebItemProviderPasteboard> retainedSelf = self;
+    dispatch_group_notify(fileLoadingGroup.get(), dispatch_get_main_queue(), [retainedSelf, fileLoadingGroup, loadedFileURLs, completionBlock = makeBlockPtr(action), changeCountBeforeLoading] {
+        if (changeCountBeforeLoading == retainedSelf->_changeCount)
+            retainedSelf->_filenamesForDataInteraction = adoptNS([loadedFileURLs copy]);
+
         completionBlock(loadedFileURLs.get());
     });
 }

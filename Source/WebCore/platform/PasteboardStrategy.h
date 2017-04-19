@@ -49,6 +49,7 @@ public:
     virtual String readStringFromPasteboard(int index, const String& pasteboardType, const String& pasteboardName) = 0;
     virtual RefPtr<SharedBuffer> readBufferFromPasteboard(int index, const String& pasteboardType, const String& pasteboardName) = 0;
     virtual URL readURLFromPasteboard(int index, const String& pasteboardType, const String& pasteboardName) = 0;
+    virtual void getFilenamesForDataInteraction(Vector<String>& filenames, const String& pasteboardName) = 0;
 #endif // PLATFORM(IOS)
 #if PLATFORM(COCOA)
     virtual void getTypes(Vector<String>& types, const String& pasteboardName) = 0;

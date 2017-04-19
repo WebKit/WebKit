@@ -183,6 +183,11 @@ void WebPasteboardProxy::getPasteboardItemsCount(const String& pasteboardName, u
     itemsCount = PlatformPasteboard(pasteboardName).count();
 }
 
+void WebPasteboardProxy::getFilenamesForDataInteraction(const String& pasteboardName, Vector<String>& filenames)
+{
+    filenames = PlatformPasteboard(pasteboardName).filenamesForDataInteraction();
+}
+
 #endif
 
 } // namespace WebKit

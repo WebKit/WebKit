@@ -54,6 +54,7 @@ public:
     WEBCORE_EXPORT explicit PlatformPasteboard(const String& pasteboardName);
 #if PLATFORM(IOS)
     WEBCORE_EXPORT PlatformPasteboard();
+    WEBCORE_EXPORT Vector<String> filenamesForDataInteraction();
 #endif
     WEBCORE_EXPORT static String uniqueName();
 

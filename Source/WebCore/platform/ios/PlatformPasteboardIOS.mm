@@ -91,6 +91,18 @@ int PlatformPasteboard::numberOfFiles()
     return [m_pasteboard respondsToSelector:@selector(numberOfFiles)] ? [m_pasteboard numberOfFiles] : 0;
 }
 
+Vector<String> PlatformPasteboard::filenamesForDataInteraction()
+{
+    if (![m_pasteboard respondsToSelector:@selector(filenamesForDataInteraction)])
+        return { };
+
+    Vector<String> filenames;
+    for (NSURL *fileURL in [m_pasteboard filenamesForDataInteraction])
+        filenames.append(fileURL.path);
+
+    return filenames;
+}
+
 String PlatformPasteboard::stringForType(const String& type)
 {
     NSArray *values = [m_pasteboard valuesForPasteboardType:type inItemSet:[NSIndexSet indexSetWithIndex:0]];

@@ -309,6 +309,11 @@ int WebPlatformStrategies::getPasteboardItemsCount(const String& pasteboardName)
     return itemsCount;
 }
 
+void WebPlatformStrategies::getFilenamesForDataInteraction(Vector<String>& filenames, const String& pasteboardName)
+{
+    WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::GetFilenamesForDataInteraction(pasteboardName), Messages::WebPasteboardProxy::GetFilenamesForDataInteraction::Reply(filenames), 0);
+}
+
 RefPtr<WebCore::SharedBuffer> WebPlatformStrategies::readBufferFromPasteboard(int index, const String& pasteboardType, const String& pasteboardName)
 {
     SharedMemory::Handle handle;

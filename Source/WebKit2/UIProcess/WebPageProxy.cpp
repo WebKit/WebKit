@@ -408,6 +408,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     , m_currentDragOperation(DragOperationNone)
     , m_currentDragIsOverFileInput(false)
     , m_currentDragNumberOfFilesToBeAccepted(0)
+    , m_documentIsHandlingNonDefaultDrag(false)
 #endif
     , m_pageLoadState(*this)
     , m_delegatesScrolling(false)
@@ -1800,13 +1801,14 @@ void WebPageProxy::performDragControllerAction(DragControllerAction action, Drag
 #endif
 }
 
-void WebPageProxy::didPerformDragControllerAction(uint64_t dragOperation, bool mouseIsOverFileInput, unsigned numberOfItemsToBeAccepted, const IntRect& insertionRect)
+void WebPageProxy::didPerformDragControllerAction(uint64_t dragOperation, bool mouseIsOverFileInput, unsigned numberOfItemsToBeAccepted, const IntRect& insertionRect, bool isHandlingNonDefaultDrag)
 {
     MESSAGE_CHECK(dragOperation <= DragOperationDelete);
 
     m_currentDragOperation = static_cast<DragOperation>(dragOperation);
     m_currentDragIsOverFileInput = mouseIsOverFileInput;
     m_currentDragNumberOfFilesToBeAccepted = numberOfItemsToBeAccepted;
+    m_documentIsHandlingNonDefaultDrag = isHandlingNonDefaultDrag;
     setDragCaretRect(insertionRect);
 }
 
@@ -1843,6 +1845,7 @@ void WebPageProxy::resetCurrentDragInformation()
 {
     m_currentDragOperation = WebCore::DragOperationNone;
     m_currentDragIsOverFileInput = false;
+    m_documentIsHandlingNonDefaultDrag = false;
     m_currentDragNumberOfFilesToBeAccepted = 0;
     setDragCaretRect({ });
 }

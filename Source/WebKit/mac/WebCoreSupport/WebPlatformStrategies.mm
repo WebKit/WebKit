@@ -220,4 +220,9 @@ String WebPlatformStrategies::readStringFromPasteboard(int index, const String& 
 {
     return PlatformPasteboard(pasteboardName).readString(index, type);
 }
+
+void WebPlatformStrategies::getFilenamesForDataInteraction(Vector<String>& filenames, const String& pasteboardName)
+{
+    filenames = PlatformPasteboard(pasteboardName).filenamesForDataInteraction();
+}
 #endif // PLATFORM(IOS)

@@ -119,7 +119,7 @@ DragController::DragController(Page& page, DragClient& client)
     : m_page(page)
     , m_client(client)
     , m_numberOfItemsToBeAccepted(0)
-    , m_documentIsHandlingDrag(false)
+    , m_documentDragHandlingMethod(DragHandlingMethod::None)
     , m_dragDestinationAction(DragDestinationActionNone)
     , m_dragSourceAction(DragSourceActionNone)
     , m_didInitiateDrag(false)
@@ -228,7 +228,7 @@ bool DragController::performDragOperation(const DragData& dragData)
     if (m_documentUnderMouse)
         shouldOpenExternalURLsPolicy = m_documentUnderMouse->shouldOpenExternalURLsPolicyToPropagate();
 
-    if ((m_dragDestinationAction & DragDestinationActionDHTML) && m_documentIsHandlingDrag) {
+    if ((m_dragDestinationAction & DragDestinationActionDHTML) && m_documentDragHandlingMethod != DragHandlingMethod::None) {
         m_client.willPerformDragDestinationAction(DragDestinationActionDHTML, dragData);
         Ref<MainFrame> mainFrame(m_page.mainFrame());
         bool preventedDefault = false;
@@ -288,8 +288,8 @@ DragOperation DragController::dragEnteredOrUpdated(const DragData& dragData)
     }
 
     DragOperation dragOperation = DragOperationNone;
-    m_documentIsHandlingDrag = tryDocumentDrag(dragData, m_dragDestinationAction, dragOperation);
-    if (!m_documentIsHandlingDrag && (m_dragDestinationAction & DragDestinationActionLoad))
+    m_documentDragHandlingMethod = tryDocumentDrag(dragData, m_dragDestinationAction, dragOperation);
+    if (m_documentDragHandlingMethod == DragHandlingMethod::None && (m_dragDestinationAction & DragDestinationActionLoad))
         dragOperation = operationForLoad(dragData);
     return dragOperation;
 }
@@ -329,13 +329,13 @@ static Element* elementUnderMouse(Document* documentUnderMouse, const IntPoint& 
     return downcast<Element>(node);
 }
 
-bool DragController::tryDocumentDrag(const DragData& dragData, DragDestinationAction actionMask, DragOperation& dragOperation)
+DragController::DragHandlingMethod DragController::tryDocumentDrag(const DragData& dragData, DragDestinationAction actionMask, DragOperation& dragOperation)
 {
     if (!m_documentUnderMouse)
-        return false;
+        return DragHandlingMethod::None;
 
     if (m_dragInitiator && !m_documentUnderMouse->securityOrigin().canReceiveDragData(m_dragInitiator->securityOrigin()))
-        return false;
+        return DragHandlingMethod::None;
 
     bool isHandlingDrag = false;
     if (actionMask & DragDestinationActionDHTML) {
@@ -346,30 +346,30 @@ bool DragController::tryDocumentDrag(const DragData& dragData, DragDestinationAc
         // which could process dragleave event and reset m_documentUnderMouse in
         // dragExited.
         if (!m_documentUnderMouse)
-            return false;
+            return DragHandlingMethod::None;
     }
 
     // It's unclear why this check is after tryDHTMLDrag.
     // We send drag events in tryDHTMLDrag and that may be the reason.
     RefPtr<FrameView> frameView = m_documentUnderMouse->view();
     if (!frameView)
-        return false;
+        return DragHandlingMethod::None;
 
     if (isHandlingDrag) {
         clearDragCaret();
-        return true;
+        return DragHandlingMethod::NonDefault;
     }
 
     if ((actionMask & DragDestinationActionEdit) && canProcessDrag(dragData)) {
         if (dragData.containsColor()) {
             dragOperation = DragOperationGeneric;
-            return true;
+            return DragHandlingMethod::Default;
         }
 
         IntPoint point = frameView->windowToContents(dragData.clientPosition());
         Element* element = elementUnderMouse(m_documentUnderMouse.get(), point);
         if (!element)
-            return false;
+            return DragHandlingMethod::None;
         
         HTMLInputElement* elementAsFileInput = asFileInput(*element);
         if (m_fileInputElementUnderMouse != elementAsFileInput) {
@@ -407,7 +407,7 @@ bool DragController::tryDocumentDrag(const DragData& dragData, DragDestinationAc
             m_numberOfItemsToBeAccepted = numberOfFiles != 1 ? 0 : 1;
         }
         
-        return true;
+        return DragHandlingMethod::Default;
     }
     
     // We are not over an editable region. Make sure we're clearing any prior drag cursor.
@@ -415,7 +415,7 @@ bool DragController::tryDocumentDrag(const DragData& dragData, DragDestinationAc
     if (m_fileInputElementUnderMouse)
         m_fileInputElementUnderMouse->setCanReceiveDroppedFiles(false);
     m_fileInputElementUnderMouse = nullptr;
-    return false;
+    return DragHandlingMethod::None;
 }
 
 DragSourceAction DragController::delegateDragSourceAction(const IntPoint& rootViewPoint)

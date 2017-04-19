@@ -50,6 +50,7 @@ WEBCORE_EXPORT @interface WebPasteboardItemData : NSObject
 - (void)setItemsFromObjectRepresentations:(NSArray<WebPasteboardItemData *> *)itemData;
 - (void)setItems:(NSArray<NSDictionary *> *)items;
 @property (readonly, nonatomic) NSInteger numberOfFiles;
+@property (readonly, nonatomic) NSArray<NSURL *> *filenamesForDataInteraction;
 
 @end
 

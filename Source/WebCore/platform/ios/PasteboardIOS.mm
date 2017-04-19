@@ -377,7 +377,10 @@ Vector<String> Pasteboard::types()
 
 Vector<String> Pasteboard::readFilenames()
 {
-    return Vector<String>();
+    Vector<String> filenames;
+    // Currently, data interaction is the only case on iOS where the pasteboard may contain relevant filenames.
+    platformStrategies()->pasteboardStrategy()->getFilenamesForDataInteraction(filenames, m_pasteboardName);
+    return filenames;
 }
 
 }

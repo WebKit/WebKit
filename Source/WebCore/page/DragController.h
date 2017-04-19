@@ -79,6 +79,8 @@ struct DragState;
         const IntPoint& dragOffset() const { return m_dragOffset; }
         DragSourceAction dragSourceAction() const { return m_dragSourceAction; }
 
+        enum class DragHandlingMethod { None, Default, NonDefault };
+        bool documentIsHandlingNonDefaultDrag() const { return m_documentDragHandlingMethod == DragHandlingMethod::NonDefault; }
         Document* documentUnderMouse() const { return m_documentUnderMouse.get(); }
         DragDestinationAction dragDestinationAction() const { return m_dragDestinationAction; }
         DragSourceAction delegateDragSourceAction(const IntPoint& rootViewPoint);
@@ -103,7 +105,7 @@ struct DragState;
         bool concludeEditDrag(const DragData&);
         DragOperation dragEnteredOrUpdated(const DragData&);
         DragOperation operationForLoad(const DragData&);
-        bool tryDocumentDrag(const DragData&, DragDestinationAction, DragOperation&);
+        DragHandlingMethod tryDocumentDrag(const DragData&, DragDestinationAction, DragOperation&);
         bool tryDHTMLDrag(const DragData&, DragOperation&);
         DragOperation dragOperation(const DragData&);
         void clearDragCaret();
@@ -130,7 +132,7 @@ struct DragState;
         RefPtr<Document> m_dragInitiator; // The Document (if any) that initiated the drag.
         RefPtr<HTMLInputElement> m_fileInputElementUnderMouse;
         unsigned m_numberOfItemsToBeAccepted;
-        bool m_documentIsHandlingDrag;
+        DragHandlingMethod m_documentDragHandlingMethod;
 
         DragDestinationAction m_dragDestinationAction;
         DragSourceAction m_dragSourceAction;
