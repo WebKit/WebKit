@@ -1,3 +1,21 @@
+2017-04-19  David Kilzer  <ddkilzer@apple.com>
+
+        Stop using strcpy() in WebKit::EnvironmentUtilities::stripValuesEndingWithString()
+        <https://webkit.org/b/170994>
+        <rdar://problem/29889932>
+
+        Reviewed by Brent Fulgham.
+
+        * Platform/unix/EnvironmentUtilities.cpp:
+        (WebKit::EnvironmentUtilities::stripValuesEndingWithString):
+        Switch from using strcpy() to strlcpy().  Also switch from using
+        strstr() to strnstr().
+        * Platform/unix/EnvironmentUtilities.h: Switch to #pragma once.
+        (WebKit::EnvironmentUtilities::stripValuesEndingWithString):
+        Export function for testing.
+        * WebKit2.xcodeproj/project.pbxproj:
+        (EnvironmentUtilitiesTest.h): Make header private for testing.
+
 2017-04-19  Eric Carlson  <eric.carlson@apple.com>
 
         Provide a way for clients to unmute a media stream.

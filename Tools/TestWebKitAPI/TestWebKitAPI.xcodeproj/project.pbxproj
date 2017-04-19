@@ -123,6 +123,7 @@
 		37E7DD671EA071F3009B396D /* AdditionalReadAccessAllowedURLsPlugin.mm in Sources */ = {isa = PBXBuildFile; fileRef = 37E7DD661EA071F3009B396D /* AdditionalReadAccessAllowedURLsPlugin.mm */; };
 		37FB72971DB2E82F00E41BE4 /* ContextMenuDefaultItemsHaveTags.mm in Sources */ = {isa = PBXBuildFile; fileRef = 37FB72951DB2E82F00E41BE4 /* ContextMenuDefaultItemsHaveTags.mm */; };
 		3FBD1B4A1D3D66AB00E6D6FA /* FullscreenLayoutConstraints.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 3FBD1B491D39D1DB00E6D6FA /* FullscreenLayoutConstraints.html */; };
+		448D7E471EA6C55500ECC756 /* EnvironmentUtilitiesTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 448D7E451EA6C55500ECC756 /* EnvironmentUtilitiesTest.cpp */; };
 		46397B951DC2C850009A78AE /* DOMNode.mm in Sources */ = {isa = PBXBuildFile; fileRef = 46397B941DC2C850009A78AE /* DOMNode.mm */; };
 		46C519DA1D355AB200DAA51A /* LocalStorageNullEntries.mm in Sources */ = {isa = PBXBuildFile; fileRef = 46C519D81D355A7300DAA51A /* LocalStorageNullEntries.mm */; };
 		46C519E61D3563FD00DAA51A /* LocalStorageNullEntries.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 46C519E21D35629600DAA51A /* LocalStorageNullEntries.html */; };
@@ -1039,6 +1040,7 @@
 		41973B5C1AF22875006C7B36 /* SharedBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SharedBuffer.cpp; sourceTree = "<group>"; };
 		440A1D3814A0103A008A66F2 /* URL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = URL.cpp; sourceTree = "<group>"; };
 		442BBF681C91CAD90017087F /* RefLogger.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RefLogger.cpp; sourceTree = "<group>"; };
+		448D7E451EA6C55500ECC756 /* EnvironmentUtilitiesTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EnvironmentUtilitiesTest.cpp; sourceTree = "<group>"; };
 		44A622C114A0E2B60048515B /* WTFStringUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WTFStringUtilities.h; sourceTree = "<group>"; };
 		46397B941DC2C850009A78AE /* DOMNode.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMNode.mm; sourceTree = "<group>"; };
 		46C519D81D355A7300DAA51A /* LocalStorageNullEntries.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LocalStorageNullEntries.mm; sourceTree = "<group>"; };
@@ -2021,6 +2023,7 @@
 				F6F49C6615545C8D0007F39D /* DOMWindowExtensionNoCache_Bundle.cpp */,
 				C045F9441385C2E900C0F3CD /* DownloadDecideDestinationCrash.cpp */,
 				07492B3A1DF8AE2D00633DE1 /* EnumerateMediaDevices.cpp */,
+				448D7E451EA6C55500ECC756 /* EnvironmentUtilitiesTest.cpp */,
 				75F3133F18C171B70041CAEC /* EphemeralSessionPushStateNoHistoryCallback.cpp */,
 				1A5FEFDC1270E2A3000E2921 /* EvaluateJavaScript.cpp */,
 				BCC8B95A12611F4700DE46A4 /* FailedLoad.cpp */,
@@ -2810,6 +2813,7 @@
 				7CCE7EE01A411A9A00447C4C /* EditorCommands.mm in Sources */,
 				7CCE7EBF1A411A7E00447C4C /* ElementAtPointInWebFrame.mm in Sources */,
 				07492B3B1DF8B14C00633DE1 /* EnumerateMediaDevices.cpp in Sources */,
+				448D7E471EA6C55500ECC756 /* EnvironmentUtilitiesTest.cpp in Sources */,
 				7CCE7EEF1A411AE600447C4C /* EphemeralSessionPushStateNoHistoryCallback.cpp in Sources */,
 				7CCE7EF01A411AE600447C4C /* EvaluateJavaScript.cpp in Sources */,
 				315118101DB1AE4000176304 /* ExtendedColor.cpp in Sources */,

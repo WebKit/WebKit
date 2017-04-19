@@ -39,9 +39,12 @@ void stripValuesEndingWithString(const char* environmentVariable, const char* se
     
     // Grab the current value of the environment variable.
     char* environmentValue = getenv(environmentVariable);
-        
+
     if (!environmentValue || environmentValue[0] == '\0')
         return;
+
+    const size_t environmentValueLength = strlen(environmentValue);
+    const size_t environmentValueBufferLength = environmentValueLength + 1;
 
     // Set up the strings we'll be searching for.
     size_t searchLength = strlen(searchValue);
@@ -59,45 +62,49 @@ void stripValuesEndingWithString(const char* environmentVariable, const char* se
     
     // Loop over environmentValueBuffer, removing any components that match the search value ending with a colon.
     char* componentStart = environmentValue;
-    char* match = strstr(componentStart, searchValueWithColon);
+    char* match = strnstr(componentStart, searchValueWithColon, environmentValueLength - static_cast<size_t>(componentStart - environmentValue));
     bool foundAnyMatches = match != NULL;
     while (match != NULL) {
         // Update componentStart to point to the colon immediately preceding the match.
-        char* nextColon = strstr(componentStart, ":");
+        char* nextColon = strnstr(componentStart, ":", environmentValueLength - static_cast<size_t>(componentStart - environmentValue));
         while (nextColon && nextColon < match) {
             componentStart = nextColon;
-            nextColon = strstr(componentStart + 1, ":");
+            nextColon = strnstr(componentStart + 1, ":", environmentValueLength - static_cast<size_t>(componentStart + 1 - environmentValue));
         }
-                
+
+        RELEASE_ASSERT(componentStart >= environmentValue);
+        size_t environmentValueOffset = static_cast<size_t>(componentStart - environmentValue);
+        RELEASE_ASSERT(environmentValueOffset < environmentValueBufferLength);
+
         // Copy over everything right of the match to the current component start, and search from there again.
         if (componentStart[0] == ':') {
             // If componentStart points to a colon, copy the colon over.
-            strcpy(componentStart, match + searchLength);
+            strlcpy(componentStart, match + searchLength, environmentValueBufferLength - environmentValueOffset);
         } else {
             // Otherwise, componentStart still points to the beginning of environmentValueBuffer, so don't copy over the colon.
             // The edge case is if the colon is the last character in the string, so "match + searchLengthWithoutColon + 1" is the
             // null terminator of the original input, in which case this is still safe.
-            strcpy(componentStart, match + searchLengthWithColon);
+            strlcpy(componentStart, match + searchLengthWithColon, environmentValueBufferLength - environmentValueOffset);
         }
         
-        match = strstr(componentStart, searchValueWithColon);
+        match = strnstr(componentStart, searchValueWithColon, environmentValueLength - static_cast<size_t>(componentStart - environmentValue));
     }
     
     // Search for the value without a trailing colon, seeing if the original input ends with it.
-    match = strstr(componentStart, searchValue);
+    match = strnstr(componentStart, searchValue, environmentValueLength - static_cast<size_t>(componentStart - environmentValue));
     while (match != NULL) {
         if (match[searchLength] == '\0')
             break;
-        match = strstr(match + 1, searchValue);
+        match = strnstr(match + 1, searchValue, environmentValueLength - static_cast<size_t>(match + 1 - environmentValue));
     }
     
     // Since the original input ends with the search, strip out the last component.
     if (match) {
         // Update componentStart to point to the colon immediately preceding the match.
-        char* nextColon = strstr(componentStart, ":");
+        char* nextColon = strnstr(componentStart, ":", environmentValueLength - static_cast<size_t>(componentStart - environmentValue));
         while (nextColon && nextColon < match) {
             componentStart = nextColon;
-            nextColon = strstr(componentStart + 1, ":");
+            nextColon = strnstr(componentStart + 1, ":", environmentValueLength - static_cast<size_t>(componentStart + 1 - environmentValue));
         }
         
         // Whether componentStart points to the original string or the last colon, putting the null terminator there will get us the desired result.

@@ -1042,7 +1042,7 @@
 		51ACBBA0127A8F2C00D203B9 /* WebContextMenuProxyMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 51ACBB9E127A8F2C00D203B9 /* WebContextMenuProxyMac.h */; };
 		51ACBBA1127A8F2C00D203B9 /* WebContextMenuProxyMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51ACBB9F127A8F2C00D203B9 /* WebContextMenuProxyMac.mm */; };
 		51B15A8413843A3900321AD8 /* EnvironmentUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51B15A8213843A3900321AD8 /* EnvironmentUtilities.cpp */; };
-		51B15A8513843A3900321AD8 /* EnvironmentUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 51B15A8313843A3900321AD8 /* EnvironmentUtilities.h */; };
+		51B15A8513843A3900321AD8 /* EnvironmentUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 51B15A8313843A3900321AD8 /* EnvironmentUtilities.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51C0C9741DDD76000032CAD3 /* IconLoadingDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 51C0C9721DDD74F00032CAD3 /* IconLoadingDelegate.h */; };
 		51C0C9751DDD76030032CAD3 /* IconLoadingDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51C0C9731DDD74F00032CAD3 /* IconLoadingDelegate.mm */; };
 		51CD1C5D1B3493AF00142CA5 /* WKSecurityOriginRef.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51CD1C591B3493A900142CA5 /* WKSecurityOriginRef.cpp */; };

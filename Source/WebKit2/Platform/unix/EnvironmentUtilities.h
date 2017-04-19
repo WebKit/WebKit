@@ -23,20 +23,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef EnvironmentUtilities_h
-#define EnvironmentUtilities_h
+#pragma once
 
+#include "WKDeclarationSpecifiers.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
 
 namespace EnvironmentUtilities {
 
-void stripValuesEndingWithString(const char* environmentVariable, const char* search);
+WK_EXPORT void stripValuesEndingWithString(const char* environmentVariable, const char* search);
 
 } // namespace EnvironmentUtilities
 
 } // namespace WebKit
-
-#endif // #define EnvironmentUtilities_h
-

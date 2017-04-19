@@ -1,3 +1,20 @@
+2017-04-19  David Kilzer  <ddkilzer@apple.com>
+
+        Stop using strcpy() in WebKit::EnvironmentUtilities::stripValuesEndingWithString()
+        <https://webkit.org/b/170994>
+        <rdar://problem/29889932>
+
+        Reviewed by Brent Fulgham.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        (EnvironmentUtilitiesTest.cpp): Add to TestWebKitAPILibrary
+        target.
+        * TestWebKitAPI/Tests/WebKit2/EnvironmentUtilitiesTest.cpp: Add.
+        (TestWebKitAPI::strip): Helper method to set/get environment
+        variable for testing.
+        (TestWebKitAPI::WebKit2_StripValuesEndingWithString_Test): Add
+        tests.
+
 2017-04-19  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly: add script which can import GCC torture tests
