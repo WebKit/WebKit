@@ -1,5 +1,11 @@
 2017-04-18  Dean Jackson  <dino@apple.com>
 
+        Still trying to fix Windows.
+
+        * PlatformWin.cmake:
+
+2017-04-18  Dean Jackson  <dino@apple.com>
+
         Attempt to fix the Windows build.
 
         * PlatformWin.cmake:
