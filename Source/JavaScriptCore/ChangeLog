@@ -1,3 +1,22 @@
+2017-04-19  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly: don't expose any WebAssembly JS object if JIT is off
+        https://bugs.webkit.org/show_bug.cgi?id=170782
+
+        Reviewed by Saam Barati.
+
+        It's unexpected that we expose the global WebAssembly object if no
+        JIT is present because it can't be used to compile or
+        instantiate. Other APIs such as Memory should also be Inaccessible
+        in those circumstances.
+
+        Also ensure that we don't pre-allocate fast memories if
+        WebAssembly won't be used, and don't mark our intention to use a
+        fast TLS slot for WebAssembly.
+
+        * runtime/Options.cpp:
+        (JSC::recomputeDependentOptions):
+
 2017-04-19  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         r211670 broke double to int conversion.
