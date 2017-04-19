@@ -1,3 +1,27 @@
+2017-04-19  JF Bastien  <jfbastien@apple.com>
+
+        Cannot compile JavaScriptCore/runtime/VMTraps.cpp on FreeBSD because std::pair has a non-trivial copy constructor
+        https://bugs.webkit.org/show_bug.cgi?id=170875
+
+        Reviewed by Mark Lam.
+
+        WTF::ExpectedDetail::ConstexprBase doesn't have a user-defined
+        copy constructor, and its implicitly-defined copy constructor is
+        deleted because the default std::pair implementation on FreeBSD
+        has a non-trivial copy constructor. /usr/include/c++/v1/__config
+        says _LIBCPP_TRIVIAL_PAIR_COPY_CTOR is disabled in order to keep
+        ABI compatibility:
+        https://svnweb.freebsd.org/changeset/base/261801.
+
+        That's a huge bummer, and I'm not a fan of broken stdlibs, but in
+        this case it's pretty nice to have a custom named type anyways and
+        costs nothing.
+
+        * runtime/VMTraps.cpp:
+        (JSC::findActiveVMAndStackBounds):
+        (JSC::handleSigusr1):
+        (JSC::handleSigtrap):
+
 2017-04-19  Andy VanWagoner  <thetalecrafter@gmail.com>
 
         [INTL] Implement Intl.DateTimeFormat.prototype.formatToParts

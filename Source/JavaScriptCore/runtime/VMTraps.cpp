@@ -88,7 +88,12 @@ inline static bool vmIsInactive(VM& vm)
     return !vm.entryScope && !vm.ownerThread();
 }
 
-static Expected<std::pair<VM*, StackBounds>, VMTraps::Error> findActiveVMAndStackBounds(SignalContext& context)
+struct VMAndStackBounds {
+    VM* vm;
+    StackBounds stackBounds;
+};
+
+static Expected<VMAndStackBounds, VMTraps::Error> findActiveVMAndStackBounds(SignalContext& context)
 {
     VMInspector& inspector = VMInspector::instance();
     auto locker = tryHoldLock(inspector.getLock());
@@ -124,7 +129,7 @@ static Expected<std::pair<VM*, StackBounds>, VMTraps::Error> findActiveVMAndStac
 
     if (!activeVM && unableToAcquireMachineThreadsLock)
         return makeUnexpected(VMTraps::Error::LockUnavailable);
-    return std::make_pair(activeVM, stackBounds);
+    return VMAndStackBounds { activeVM, stackBounds };
 }
 
 static void handleSigusr1(int signalNumber, siginfo_t* info, void* uap)
@@ -132,9 +137,9 @@ static void handleSigusr1(int signalNumber, siginfo_t* info, void* uap)
     SignalContext context(static_cast<ucontext_t*>(uap)->uc_mcontext);
     auto activeVMAndStackBounds = findActiveVMAndStackBounds(context);
     if (activeVMAndStackBounds) {
-        VM* vm = activeVMAndStackBounds.value().first;
+        VM* vm = activeVMAndStackBounds.value().vm;
         if (vm) {
-            StackBounds stackBounds = activeVMAndStackBounds.value().second;
+            StackBounds stackBounds = activeVMAndStackBounds.value().stackBounds;
             VMTraps& traps = vm->traps();
             if (traps.needTrapHandling())
                 traps.tryInstallTrapBreakpoints(context, stackBounds);
@@ -153,7 +158,7 @@ static void handleSigtrap(int signalNumber, siginfo_t* info, void* uap)
     if (!activeVMAndStackBounds)
         return; // Let the SignalSender try again later.
 
-    VM* vm = activeVMAndStackBounds.value().first;
+    VM* vm = activeVMAndStackBounds.value().vm;
     if (vm) {
         VMTraps& traps = vm->traps();
         if (!traps.needTrapHandling())
