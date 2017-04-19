@@ -954,10 +954,10 @@ describe('BuildbotTriggerable', function () {
                 assert.deepEqual(groups[0].repositories(), [webkit, macos]);
 
                 const config = MockData.mockTestSyncConfigWithSingleBuilder();
-                config.repositoryGroups = [
-                    {name: 'system-only', repositories: ['macOS'], properties: {'os': '<macOS>'}},
-                    {name: 'system-and-webkit', repositories: ['WebKit', 'macOS'], properties: {'os': '<macOS>', 'wk': '<WebKit>'}},
-                ]
+                config.repositoryGroups = {
+                    'system-only': {repositories: ['macOS'], properties: {'os': '<macOS>'}},
+                    'system-and-webkit': {repositories: ['WebKit', 'macOS'], properties: {'os': '<macOS>', 'wk': '<WebKit>'}}
+                }
 
                 const logger = new MockLogger;
                 const slaveInfo = {name: 'sync-slave', password: 'password'};

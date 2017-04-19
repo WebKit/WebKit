@@ -1,3 +1,17 @@
+2017-04-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fix after r215061.
+
+        There was a mismatch between the format updateTriggerable and /api/update-triggerable were using.
+        Namely, each repository group was assumed to contain a name field in /api/update-triggerable
+        but updateTriggerable was not including that at all.
+
+        We didn't catch this because the test for updateTriggerable also used the wrong format :(
+
+        * server-tests/tools-buildbot-triggerable-tests.js:
+        * tools/js/buildbot-triggerable.js:
+        (BuildbotTriggerable.prototype.updateTriggerable):
+
 2017-04-14  Dewei Zhu  <dewei_zhu@apple.com>
 
         Add sub-commit UI in commit log viewer.

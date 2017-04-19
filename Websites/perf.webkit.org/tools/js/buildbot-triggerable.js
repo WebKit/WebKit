@@ -44,7 +44,9 @@ class BuildbotTriggerable {
             'slavePassword': this._slaveInfo.password,
             'triggerable': this._name,
             'configurations': Array.from(map.values()),
-            'repositoryGroups': Object.keys(repositoryGroups).map((groupName) => repositoryGroups[groupName])});
+            'repositoryGroups': Object.keys(repositoryGroups).map((groupName) => {
+                return {name: groupName, repositories: repositoryGroups[groupName].repositories};
+            })});
     }
 
     syncOnce()
