@@ -70,7 +70,7 @@ const iconService = new class IconService {
         image = this.images[path] = new Image;
 
         if (this.mediaControlsHost)
-            image.src = "data:image/png;base64," + this.mediaControlsHost.base64StringForIconAndPlatform(fileName, platform);
+            image.src = "data:image/png;base64," + this.mediaControlsHost.base64StringForIconNameAndType(fileName, "png");
         else
             image.src = `${this.directoryPath}/${path}`;
 

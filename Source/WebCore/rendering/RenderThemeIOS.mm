@@ -1372,15 +1372,15 @@ String RenderThemeIOS::mediaControlsScript()
 #endif
 }
 
-String RenderThemeIOS::mediaControlsBase64StringForIconAndPlatform(const String& iconName, const String& platform)
+String RenderThemeIOS::mediaControlsBase64StringForIconNameAndType(const String& iconName, const String& iconType)
 {
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)
     if (!RuntimeEnabledFeatures::sharedFeatures().modernMediaControlsEnabled())
         return emptyString();
 
-    String directory = "modern-media-controls/images/" + platform;
+    String directory = "modern-media-controls/images";
     NSBundle *bundle = [NSBundle bundleForClass:[WebCoreRenderThemeBundle class]];
-    return [[NSData dataWithContentsOfFile:[bundle pathForResource:iconName ofType:@"png" inDirectory:directory]] base64EncodedStringWithOptions:0];
+    return [[NSData dataWithContentsOfFile:[bundle pathForResource:iconName ofType:iconType inDirectory:directory]] base64EncodedStringWithOptions:0];
 #else
     return emptyString();
 #endif

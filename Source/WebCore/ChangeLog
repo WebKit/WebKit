@@ -1,3 +1,37 @@
+2017-04-19  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Allow non-PNG resources
+        https://bugs.webkit.org/show_bug.cgi?id=170992
+        <rdar://problem/31706590>
+
+        Reviewed by Dean Jackson.
+
+        Instead of passing in a name and a platform to MediaControlsHost::base64StringForIconAndPlatform(),
+        we now pass in a name and a type to MediaControlsHost::base64StringForIconNameAndType(). We've removed
+        the need to provide a platform by copying the resources directly under "Resources/modern-media-controls"
+        insted of "Resources/modern-media-controls/platform-name-here", and now we provide a type so that it
+        may be passed down to -[NSBundle pathForResource:ofType:inDirectory:].
+
+        * Modules/mediacontrols/MediaControlsHost.cpp:
+        (WebCore::MediaControlsHost::base64StringForIconNameAndType):
+        (WebCore::MediaControlsHost::base64StringForIconAndPlatform): Deleted.
+        * Modules/mediacontrols/MediaControlsHost.h:
+        * Modules/mediacontrols/MediaControlsHost.idl:
+        * Modules/modern-media-controls/controls/icon-service.js:
+        (const.iconService.new.IconService.prototype.imageForIconNameAndLayoutTraits):
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/RenderTheme.h:
+        (WebCore::RenderTheme::mediaControlsBase64StringForIconNameAndType):
+        (WebCore::RenderTheme::mediaControlsBase64StringForIconAndPlatform): Deleted.
+        * rendering/RenderThemeIOS.h:
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::mediaControlsBase64StringForIconNameAndType):
+        (WebCore::RenderThemeIOS::mediaControlsBase64StringForIconAndPlatform): Deleted.
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::mediaControlsBase64StringForIconNameAndType):
+        (WebCore::RenderThemeMac::mediaControlsBase64StringForIconAndPlatform): Deleted.
+
 2017-04-19  Antti Koivisto  <antti@apple.com>
 
         Avoid repaints for invisible animations on tumblr.com/search/aww

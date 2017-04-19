@@ -101,7 +101,7 @@ public:
     virtual String modernMediaControlsStyleSheet() { return String(); }
     virtual String extraMediaControlsStyleSheet() { return String(); }
     virtual String mediaControlsScript() { return String(); }
-    virtual String mediaControlsBase64StringForIconAndPlatform(const String&, const String&) { return String(); }
+    virtual String mediaControlsBase64StringForIconNameAndType(const String&, const String&) { return String(); }
 #endif
 #if ENABLE(FULLSCREEN_API)
     virtual String extraFullScreenStyleSheet() { return String(); }
