@@ -1,3 +1,13 @@
+2017-04-19  Mark Lam  <mark.lam@apple.com>
+
+        B3StackmapSpecial should handle when stackmap values are not recoverable from a Def'ed arg.
+        https://bugs.webkit.org/show_bug.cgi?id=170973
+        <rdar://problem/30318657>
+
+        Reviewed by Filip Pizlo.
+
+        * stress/regress-170973.js: Added.
+
 2017-04-19  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly: limit slow memories

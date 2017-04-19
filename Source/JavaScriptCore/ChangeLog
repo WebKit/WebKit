@@ -1,3 +1,39 @@
+2017-04-19  Mark Lam  <mark.lam@apple.com>
+
+        B3StackmapSpecial should handle when stackmap values are not recoverable from a Def'ed arg.
+        https://bugs.webkit.org/show_bug.cgi?id=170973
+        <rdar://problem/30318657>
+
+        Reviewed by Filip Pizlo.
+
+        In the event of an arithmetic overflow on a binary sub instruction (where the
+        result register is same as one of the operand registers), the CheckSub FTL
+        operation will try to recover the original value in the clobbered result register.
+
+        This recover is done by adding the other operand value to the result register.
+        However, this recovery method only works if the width of the original value in
+        the result register is less or equal to the width of the expected result.  If the
+        width of the original operand value (e.g. a JSInt32) is wider than the result
+        (e.g. a machine Int32), then the sub operation would have zero extended the
+        result and cleared the upper 32-bits of the result register.  Recovery by adding
+        back the other operand will not restore the JSValue tag in the upper word.
+
+        This poses a problem if the stackmap value for the operand relies on that same
+        clobbered register.
+
+        The fix is to detect this potential scenario (i.e. width of the Def's arg < width
+        of a stackmap value).  If this condition is detected, we'll declare the stackmap
+        value to be LateColdUse to ensure that the register allocator gives it a
+        different register if needed so that it's not dependent on the clobbered register.
+
+        * b3/B3CheckSpecial.cpp:
+        (JSC::B3::CheckSpecial::forEachArg):
+        * b3/B3PatchpointSpecial.cpp:
+        (JSC::B3::PatchpointSpecial::forEachArg):
+        * b3/B3StackmapSpecial.cpp:
+        (JSC::B3::StackmapSpecial::forEachArgImpl):
+        * b3/B3StackmapSpecial.h:
+
 2017-04-19  JF Bastien  <jfbastien@apple.com>
 
         Unreviewed, rolling out r215520.

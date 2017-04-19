@@ -74,7 +74,7 @@ RegisterSet StackmapSpecial::extraEarlyClobberedRegs(Inst& inst)
 void StackmapSpecial::forEachArgImpl(
     unsigned numIgnoredB3Args, unsigned numIgnoredAirArgs,
     Inst& inst, RoleMode roleMode, std::optional<unsigned> firstRecoverableIndex,
-    const ScopedLambda<Inst::EachArgCallback>& callback)
+    const ScopedLambda<Inst::EachArgCallback>& callback, std::optional<Width> optionalDefArgWidth)
 {
     StackmapValue* value = inst.origin->as<StackmapValue>();
     ASSERT(value);
@@ -83,7 +83,8 @@ void StackmapSpecial::forEachArgImpl(
     ASSERT(inst.args.size() >= numIgnoredAirArgs);
     ASSERT(value->children().size() >= numIgnoredB3Args);
     ASSERT(inst.args.size() - numIgnoredAirArgs >= value->children().size() - numIgnoredB3Args);
-    
+    ASSERT(inst.args[0].kind() == Arg::Kind::Special);
+
     for (unsigned i = 0; i < value->children().size() - numIgnoredB3Args; ++i) {
         Arg& arg = inst.args[i + numIgnoredAirArgs];
         ConstrainedValue child = value->constrainedChild(i + numIgnoredB3Args);
@@ -119,6 +120,16 @@ void StackmapSpecial::forEachArgImpl(
             default:
                 RELEASE_ASSERT_NOT_REACHED();
                 break;
+            }
+
+            // If the Def'ed arg has a smaller width than the a stackmap value, then we may not
+            // be able to recover the stackmap value. So, force LateColdUse to preserve the
+            // original stackmap value across the Special operation.
+            if (!Arg::isLateUse(role) && optionalDefArgWidth && *optionalDefArgWidth < child.value()->resultWidth()) {
+                if (Arg::isWarmUse(role))
+                    role = Arg::LateUse;
+                else
+                    role = Arg::LateColdUse;
             }
             break;
         case ForceLateUse:

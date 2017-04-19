@@ -108,9 +108,14 @@ Inst CheckSpecial::hiddenBranch(const Inst& inst) const
 
 void CheckSpecial::forEachArg(Inst& inst, const ScopedLambda<Inst::EachArgCallback>& callback)
 {
+    std::optional<Width> optionalDefArgWidth;
     Inst hidden = hiddenBranch(inst);
     hidden.forEachArg(
         [&] (Arg& arg, Arg::Role role, Bank bank, Width width) {
+            if (Arg::isAnyDef(role)) {
+                ASSERT(!optionalDefArgWidth); // There can only be one Def'ed arg.
+                optionalDefArgWidth = width;
+            }
             unsigned index = &arg - &hidden.args[0];
             callback(inst.args[1 + index], role, bank, width);
         });
@@ -118,7 +123,7 @@ void CheckSpecial::forEachArg(Inst& inst, const ScopedLambda<Inst::EachArgCallba
     std::optional<unsigned> firstRecoverableIndex;
     if (m_checkKind.opcode == BranchAdd32 || m_checkKind.opcode == BranchAdd64)
         firstRecoverableIndex = 1;
-    forEachArgImpl(numB3Args(inst), m_numCheckArgs + 1, inst, m_stackmapRole, firstRecoverableIndex, callback);
+    forEachArgImpl(numB3Args(inst), m_numCheckArgs + 1, inst, m_stackmapRole, firstRecoverableIndex, callback, optionalDefArgWidth);
 }
 
 bool CheckSpecial::isValid(Inst& inst)
