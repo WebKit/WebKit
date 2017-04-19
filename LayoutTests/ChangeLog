@@ -1,5 +1,14 @@
 2017-04-19  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Remove two tests after r215515.
+        https://bugs.webkit.org/show_bug.cgi?id=171014
+
+        Unreviewed test gardening.
+
+        * TestExpectations:
+
+2017-04-19  Ryan Haddad  <ryanhaddad@apple.com>
+
         Rebaseline tests after r215515.
         https://bugs.webkit.org/show_bug.cgi?id=171014
 

@@ -1,5 +1,17 @@
 2017-04-19  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Remove two tests after r215515.
+        https://bugs.webkit.org/show_bug.cgi?id=171014
+
+        Unreviewed test gardening.
+
+        * web-platform-tests/fetch/api/basic/scheme-about.worker-expected.txt: Removed.
+        * web-platform-tests/fetch/api/basic/scheme-about.worker.html: Removed.
+        * web-platform-tests/user-timing/clear_one_measure.worker-expected.txt: Removed.
+        * web-platform-tests/user-timing/clear_one_measure.worker.html: Removed.
+
+2017-04-19  Ryan Haddad  <ryanhaddad@apple.com>
+
         Rebaseline tests after r215515.
         https://bugs.webkit.org/show_bug.cgi?id=171014
 
