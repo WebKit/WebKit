@@ -266,7 +266,7 @@ static WebCore::PaymentRequest::ShippingMethod toShippingMethod(PKShippingMethod
         return;
 
     if (!_didReachFinalState)
-        _webPaymentCoordinatorProxy->didCancelPayment();
+        _webPaymentCoordinatorProxy->didCancelPaymentSession();
 
     _webPaymentCoordinatorProxy->hidePaymentUI();
 }

@@ -949,7 +949,7 @@ void ApplePaySession::didSelectPaymentMethod(const PaymentMethod& paymentMethod)
     dispatchEvent(event.get());
 }
 
-void ApplePaySession::didCancelPayment()
+void ApplePaySession::didCancelPaymentSession()
 {
     ASSERT(canCancel());
 

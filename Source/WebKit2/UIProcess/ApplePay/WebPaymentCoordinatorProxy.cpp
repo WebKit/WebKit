@@ -94,7 +94,7 @@ void WebPaymentCoordinatorProxy::showPaymentUI(const String& originatingURLStrin
 
     if (activePaymentCoordinatorProxy) {
         activePaymentCoordinatorProxy->hidePaymentUI();
-        activePaymentCoordinatorProxy->didCancelPayment();
+        activePaymentCoordinatorProxy->didCancelPaymentSession();
     }
 
     activePaymentCoordinatorProxy = this;
@@ -110,7 +110,7 @@ void WebPaymentCoordinatorProxy::showPaymentUI(const String& originatingURLStrin
     platformShowPaymentUI(originatingURL, linkIconURLs, paymentRequest, [this](bool result) {
         ASSERT(m_state == State::Activating);
         if (!result) {
-            didCancelPayment();
+            didCancelPaymentSession();
             return;
         }
 
@@ -200,11 +200,11 @@ void WebPaymentCoordinatorProxy::abortPaymentSession()
     didReachFinalState();
 }
 
-void WebPaymentCoordinatorProxy::didCancelPayment()
+void WebPaymentCoordinatorProxy::didCancelPaymentSession()
 {
     ASSERT(canCancel());
 
-    m_webPageProxy.send(Messages::WebPaymentCoordinator::DidCancelPayment());
+    m_webPageProxy.send(Messages::WebPaymentCoordinator::DidCancelPaymentSession());
 
     didReachFinalState();
 }

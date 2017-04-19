@@ -31,7 +31,7 @@ messages -> WebPaymentCoordinator {
     DidSelectShippingMethod(WebCore::PaymentRequest::ShippingMethod shippingMethod)
     DidSelectShippingContact(WebCore::PaymentContact shippingContact)
     DidSelectPaymentMethod(WebCore::PaymentMethod paymentMethod)
-    DidCancelPayment()
+    DidCancelPaymentSession()
     CanMakePaymentsWithActiveCardReply(uint64_t requestID, bool canMakePayments)
     OpenPaymentSetupReply(uint64_t requestID, bool result)
 }

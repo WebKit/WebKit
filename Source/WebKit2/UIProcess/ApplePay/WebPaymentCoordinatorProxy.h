@@ -60,7 +60,7 @@ public:
     explicit WebPaymentCoordinatorProxy(WebPageProxy&);
     ~WebPaymentCoordinatorProxy();
 
-    void didCancelPayment();
+    void didCancelPaymentSession();
     void validateMerchant(const WebCore::URL&);
     void didAuthorizePayment(const WebCore::Payment&);
     void didSelectShippingMethod(const WebCore::PaymentRequest::ShippingMethod&);

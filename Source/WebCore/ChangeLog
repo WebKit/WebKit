@@ -1,3 +1,19 @@
+2017-04-19  Anders Carlsson  <andersca@apple.com>
+
+        Rename cancelPayment to cancelPaymentSession
+        https://bugs.webkit.org/show_bug.cgi?id=171007
+
+        Reviewed by Tim Horton.
+
+        * Modules/applepay/ApplePaySession.cpp:
+        (WebCore::ApplePaySession::didCancelPaymentSession):
+        (WebCore::ApplePaySession::didCancelPayment): Deleted.
+        * Modules/applepay/ApplePaySession.h:
+        * Modules/applepay/PaymentCoordinator.cpp:
+        (WebCore::PaymentCoordinator::didCancelPaymentSession):
+        (WebCore::PaymentCoordinator::didCancelPayment): Deleted.
+        * Modules/applepay/PaymentCoordinator.h:
+
 2017-04-19  Joseph Pecoraro  <pecoraro@apple.com>
 
         ASAN Crash running LayoutTests/inspector/worker tests

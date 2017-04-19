@@ -1,3 +1,23 @@
+2017-04-19  Anders Carlsson  <andersca@apple.com>
+
+        Rename cancelPayment to cancelPaymentSession
+        https://bugs.webkit.org/show_bug.cgi?id=171007
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/ApplePay/WebPaymentCoordinatorProxy.cpp:
+        (WebKit::WebPaymentCoordinatorProxy::showPaymentUI):
+        (WebKit::WebPaymentCoordinatorProxy::didCancelPaymentSession):
+        (WebKit::WebPaymentCoordinatorProxy::didCancelPayment): Deleted.
+        * UIProcess/ApplePay/WebPaymentCoordinatorProxy.h:
+        * UIProcess/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.mm:
+        (-[WKPaymentAuthorizationViewControllerDelegate paymentAuthorizationViewControllerDidFinish:]):
+        * WebProcess/ApplePay/WebPaymentCoordinator.cpp:
+        (WebKit::WebPaymentCoordinator::didCancelPaymentSession):
+        (WebKit::WebPaymentCoordinator::didCancelPayment): Deleted.
+        * WebProcess/ApplePay/WebPaymentCoordinator.h:
+        * WebProcess/ApplePay/WebPaymentCoordinator.messages.in:
+
 2017-04-19  David Kilzer  <ddkilzer@apple.com>
 
         Stop using strcpy() in WebKit::EnvironmentUtilities::stripValuesEndingWithString()

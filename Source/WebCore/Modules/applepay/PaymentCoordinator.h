@@ -70,7 +70,7 @@ public:
     WEBCORE_EXPORT void didSelectPaymentMethod(const PaymentMethod&);
     WEBCORE_EXPORT void didSelectShippingMethod(const PaymentRequest::ShippingMethod&);
     WEBCORE_EXPORT void didSelectShippingContact(const PaymentContact&);
-    WEBCORE_EXPORT void didCancelPayment();
+    WEBCORE_EXPORT void didCancelPaymentSession();
 
 private:
     PaymentCoordinatorClient& m_client;

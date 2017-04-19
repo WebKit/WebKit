@@ -172,9 +172,9 @@ void WebPaymentCoordinator::didSelectPaymentMethod(const WebCore::PaymentMethod&
     paymentCoordinator().didSelectPaymentMethod(paymentMethod);
 }
 
-void WebPaymentCoordinator::didCancelPayment()
+void WebPaymentCoordinator::didCancelPaymentSession()
 {
-    paymentCoordinator().didCancelPayment();
+    paymentCoordinator().didCancelPaymentSession();
 }
 
 void WebPaymentCoordinator::canMakePaymentsWithActiveCardReply(uint64_t requestID, bool canMakePayments)

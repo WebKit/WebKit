@@ -77,7 +77,7 @@ private:
     void didSelectShippingMethod(const WebCore::PaymentRequest::ShippingMethod&);
     void didSelectShippingContact(const WebCore::PaymentContact&);
     void didSelectPaymentMethod(const WebCore::PaymentMethod&);
-    void didCancelPayment();
+    void didCancelPaymentSession();
     void canMakePaymentsWithActiveCardReply(uint64_t requestID, bool canMakePayments);
     void openPaymentSetupReply(uint64_t requestID, bool result);
 

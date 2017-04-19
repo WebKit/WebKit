@@ -176,14 +176,14 @@ void PaymentCoordinator::didSelectShippingContact(const PaymentContact& shipping
     m_activeSession->didSelectShippingContact(shippingContact);
 }
 
-void PaymentCoordinator::didCancelPayment()
+void PaymentCoordinator::didCancelPaymentSession()
 {
     if (!m_activeSession) {
         // It's possible that the payment has been aborted already.
         return;
     }
 
-    m_activeSession->didCancelPayment();
+    m_activeSession->didCancelPaymentSession();
     m_activeSession = nullptr;
 }
 
