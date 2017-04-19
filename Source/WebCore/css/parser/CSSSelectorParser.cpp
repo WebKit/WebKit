@@ -257,7 +257,6 @@ bool isSimpleSelectorValidAfterPseudoElement(const CSSParserSelector& simpleSele
     if (pseudo == CSSSelector::PseudoClassNot) {
         ASSERT(simpleSelector.selectorList());
         ASSERT(simpleSelector.selectorList()->first());
-        ASSERT(!simpleSelector.selectorList()->first()->tagHistory());
         pseudo = simpleSelector.selectorList()->first()->pseudoClassType();
     }
     return isPseudoClassValidAfterPseudoElement(pseudo, compoundPseudoElement);

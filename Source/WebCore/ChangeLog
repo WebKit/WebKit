@@ -1,3 +1,13 @@
+2017-04-19  Dave Hyatt  <hyatt@apple.com>
+
+        Remove bogus assert for :not.
+        https://bugs.webkit.org/show_bug.cgi?id=170995
+        <rdar://problem/29693115>
+
+        Reviewed by Zalan Bujtas.
+
+        * css/parser/CSSSelectorParser.cpp:
+
 2017-04-19  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Allow non-PNG resources
