@@ -48,10 +48,17 @@ String topPrivatelyControlledDomain(const String& domain)
     if ([domain _web_looksLikeIPAddress])
         return domain;
 
+    if (!domain.containsOnlyASCII())
+        return domain;
+    
+    const auto& lowercaseDomain = domain.convertToASCIILowercase();
+    if (lowercaseDomain == "localhost")
+        return lowercaseDomain;
+
     size_t separatorPosition;
-    for (unsigned labelStart = 0; (separatorPosition = domain.find('.', labelStart)) != notFound; labelStart = separatorPosition + 1) {
-        if (isPublicSuffix(domain.substring(separatorPosition + 1)))
-            return domain.substring(labelStart);
+    for (unsigned labelStart = 0; (separatorPosition = lowercaseDomain.find('.', labelStart)) != notFound; labelStart = separatorPosition + 1) {
+        if (isPublicSuffix(lowercaseDomain.substring(separatorPosition + 1)))
+            return lowercaseDomain.substring(labelStart);
     }
     return String();
 }

@@ -1,3 +1,18 @@
+2017-04-18  John Wilander  <wilander@apple.com>
+
+        Make WebCore::topPrivatelyControlledDomain() return "localhost" for localhost
+        https://bugs.webkit.org/show_bug.cgi?id=170798
+        <rdar://problem/31595108>
+
+        Reviewed by Alex Christensen.
+
+        API test augmented.
+
+        * platform/mac/PublicSuffixMac.mm:
+        (WebCore::topPrivatelyControlledDomain):
+            Now returns the lowercase top privately controlled
+            domain including "localhost" for the host localhost.
+
 2017-04-18  Brent Fulgham  <bfulgham@apple.com>
 
         JSEventListener::m_isolatedWorld should be a Ref

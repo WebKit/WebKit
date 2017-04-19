@@ -60,6 +60,8 @@ TEST_F(PublicSuffix, IsPublicSuffix)
     EXPECT_FALSE(isPublicSuffix("r4---asdf.test.com"));
     EXPECT_FALSE(isPublicSuffix(utf16String(bidirectionalDomain)));
     EXPECT_TRUE(isPublicSuffix(utf16String(u"\u6803\u6728.jp")));
+    EXPECT_FALSE(isPublicSuffix(""));
+    EXPECT_FALSE(isPublicSuffix("åäö"));
 }
 
 TEST_F(PublicSuffix, TopPrivatelyControlledDomain)
@@ -85,7 +87,12 @@ TEST_F(PublicSuffix, TopPrivatelyControlledDomain)
     EXPECT_EQ(String("r4---asdf.com"), topPrivatelyControlledDomain("r4---asdf.com"));
     EXPECT_EQ(String(), topPrivatelyControlledDomain("r4---asdf"));
     EXPECT_EQ(utf16String(bidirectionalDomain), utf16String(bidirectionalDomain));
-    
+    EXPECT_EQ(String("example.com"), topPrivatelyControlledDomain("ExamPle.com"));
+    EXPECT_EQ(String("example.com"), topPrivatelyControlledDomain("SUB.dOmain.ExamPle.com"));
+    EXPECT_EQ(String("localhost"), topPrivatelyControlledDomain("localhost"));
+    EXPECT_EQ(String("localhost"), topPrivatelyControlledDomain("LocalHost"));
+    EXPECT_EQ(String("åäö"), topPrivatelyControlledDomain("åäö"));
+    EXPECT_EQ(String("ÅÄÖ"), topPrivatelyControlledDomain("ÅÄÖ"));
 }
 
 }
