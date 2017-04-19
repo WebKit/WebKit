@@ -314,7 +314,15 @@ struct WasmBoundsCheckCustom : public CommonCustomBase<WasmBoundsCheckCustom> {
         context.latePaths.append(createSharedTask<GenerationContext::LatePathFunction>(
             [outOfBounds, value] (CCallHelpers& jit, Air::GenerationContext& context) {
                 outOfBounds.link(&jit);
-                context.code->wasmBoundsCheckGenerator()->run(jit, value->pinnedGPR(), value->offset());
+                switch (value->boundsType()) {
+                case WasmBoundsCheckValue::Type::Pinned:
+                    context.code->wasmBoundsCheckGenerator()->run(jit, value->bounds().pinned);
+                    break;
+
+                case WasmBoundsCheckValue::Type::Maximum:
+                    context.code->wasmBoundsCheckGenerator()->run(jit, InvalidGPRReg);
+                    break;
+                }
             }));
 
         // We said we were not a terminal.

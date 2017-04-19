@@ -29,7 +29,6 @@
 
 #include "B3Value.h"
 #include "CCallHelpers.h"
-#include "WasmPageCount.h"
 
 namespace JSC { namespace B3 {
 
@@ -47,16 +46,19 @@ public:
     
     ~WasmBoundsCheckValue();
 
-#if ENABLE(WEBASSEMBLY)
-    typedef Wasm::PageCount PageCount;
-#else
-    typedef char PageCount;
-#endif
+    enum class Type {
+        Pinned,
+        Maximum,
+    };
 
-    GPRReg pinnedGPR() const { return m_pinnedGPR; }
+    union Bounds {
+        GPRReg pinned;
+        size_t maximum;
+    };
+
     unsigned offset() const { return m_offset; }
-    size_t redzoneLimit() const;
-    PageCount maximum() const { return m_maximum; }
+    Type boundsType() const { return m_boundsType; }
+    Bounds bounds() const { return m_bounds; }
 
 protected:
     void dumpMeta(CommaPrinter&, PrintStream&) const override;
@@ -66,11 +68,12 @@ protected:
 private:
     friend class Procedure;
 
-    JS_EXPORT_PRIVATE WasmBoundsCheckValue(Origin, Value* ptr, GPRReg pinnedGPR, unsigned offset, PageCount maximum);
+    JS_EXPORT_PRIVATE WasmBoundsCheckValue(Origin, Value* ptr, unsigned offset, GPRReg pinnedGPR);
+    JS_EXPORT_PRIVATE WasmBoundsCheckValue(Origin, Value* ptr, unsigned offset, size_t maximum);
 
-    GPRReg m_pinnedGPR;
     unsigned m_offset;
-    PageCount m_maximum;
+    Type m_boundsType;
+    Bounds m_bounds;
 };
 
 } } // namespace JSC::B3

@@ -35,12 +35,24 @@ WasmBoundsCheckValue::~WasmBoundsCheckValue()
 {
 }
 
-WasmBoundsCheckValue::WasmBoundsCheckValue(Origin origin, Value* ptr, GPRReg pinnedGPR, unsigned offset, PageCount maximum)
+WasmBoundsCheckValue::WasmBoundsCheckValue(Origin origin, Value* ptr, unsigned offset, GPRReg pinnedGPR)
     : Value(CheckedOpcode, WasmBoundsCheck, origin, ptr)
-    , m_pinnedGPR(pinnedGPR)
     , m_offset(offset)
-    , m_maximum(maximum)
+    , m_boundsType(Type::Pinned)
 {
+    m_bounds.pinned = pinnedGPR;
+}
+
+WasmBoundsCheckValue::WasmBoundsCheckValue(Origin origin, Value* ptr, unsigned offset, size_t maximum)
+    : Value(CheckedOpcode, WasmBoundsCheck, origin, ptr)
+    , m_offset(offset)
+    , m_boundsType(Type::Maximum)
+{
+#if ENABLE(WEBASSEMBLY)
+    size_t redzoneLimit = static_cast<uint64_t>(std::numeric_limits<uint32_t>::max()) + Wasm::Memory::fastMappedRedzoneBytes();
+    ASSERT_UNUSED(redzoneLimit, maximum <= redzoneLimit);
+#endif
+    m_bounds.maximum = maximum;
 }
 
 Value* WasmBoundsCheckValue::cloneImpl() const
@@ -48,22 +60,16 @@ Value* WasmBoundsCheckValue::cloneImpl() const
     return new WasmBoundsCheckValue(*this);
 }
 
-size_t WasmBoundsCheckValue::redzoneLimit() const
-{
-    ASSERT(m_pinnedGPR == InvalidGPRReg);
-#if ENABLE(WEBASSEMBLY)
-    return static_cast<uint64_t>(std::numeric_limits<uint32_t>::max()) + Wasm::Memory::fastMappedRedzoneBytes();
-#else
-    RELEASE_ASSERT_NOT_REACHED();
-#endif
-}
-
 void WasmBoundsCheckValue::dumpMeta(CommaPrinter& comma, PrintStream& out) const
 {
-    if (m_pinnedGPR == InvalidGPRReg)
-        out.print(comma, "redzoneLimit = ", redzoneLimit(), ", offset = ", m_offset);
-    else
-        out.print(comma, "sizeRegister = ", m_pinnedGPR, ", offset = ", m_offset);
+    switch (m_boundsType) {
+    case Type::Pinned:
+        out.print(comma, "offset = ", m_offset, ", pinned = ", m_bounds.pinned);
+        break;
+    case Type::Maximum:
+        out.print(comma, "offset = ", m_offset, ", maximum = ", m_bounds.maximum);
+        break;
+    }
 }
 
 } } // namespace JSC::B3

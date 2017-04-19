@@ -15170,9 +15170,8 @@ void testWasmBoundsCheck(unsigned offset)
     GPRReg pinned = GPRInfo::argumentGPR1;
     proc.pinRegister(pinned);
 
-    proc.setWasmBoundsCheckGenerator([=] (CCallHelpers& jit, GPRReg pinnedGPR, unsigned actualOffset) {
+    proc.setWasmBoundsCheckGenerator([=] (CCallHelpers& jit, GPRReg pinnedGPR) {
         CHECK_EQ(pinnedGPR, pinned);
-        CHECK_EQ(actualOffset, offset);
 
         // This should always work because a function this simple should never have callee
         // saves.
@@ -15185,8 +15184,7 @@ void testWasmBoundsCheck(unsigned offset)
     Value* left = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
     if (pointerType() != Int32)
         left = root->appendNew<Value>(proc, Trunc, Origin(), left);
-    Wasm::PageCount maximum;
-    root->appendNew<WasmBoundsCheckValue>(proc, Origin(), left, pinned, offset, maximum);
+    root->appendNew<WasmBoundsCheckValue>(proc, Origin(), left, pinned, offset);
     Value* result = root->appendNew<Const32Value>(proc, Origin(), 0x42);
     root->appendNewControlValue(proc, Return, Origin(), result);
 

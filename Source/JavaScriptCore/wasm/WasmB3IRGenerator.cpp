@@ -59,6 +59,7 @@
 #include "WasmMemory.h"
 #include "WasmOpcodeOrigin.h"
 #include "WasmThunks.h"
+#include <limits>
 #include <wtf/Optional.h>
 #include <wtf/StdLibExtras.h>
 
@@ -352,7 +353,7 @@ B3IRGenerator::B3IRGenerator(const ModuleInformation& info, Procedure& procedure
     }
 
     if (info.memory) {
-        m_proc.setWasmBoundsCheckGenerator([=] (CCallHelpers& jit, GPRReg pinnedGPR, unsigned) {
+        m_proc.setWasmBoundsCheckGenerator([=] (CCallHelpers& jit, GPRReg pinnedGPR) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
             switch (m_mode) {
             case MemoryMode::BoundsChecking:
@@ -549,18 +550,32 @@ auto B3IRGenerator::setGlobal(uint32_t index, ExpressionType value) -> PartialRe
 inline Value* B3IRGenerator::emitCheckAndPreparePointer(ExpressionType pointer, uint32_t offset, uint32_t sizeOfOperation)
 {
     ASSERT(m_memoryBaseGPR);
+
     switch (m_mode) {
     case MemoryMode::BoundsChecking:
         // We're not using signal handling at all, we must therefore check that no memory access exceeds the current memory size.
         ASSERT(m_memorySizeGPR);
         ASSERT(sizeOfOperation + offset > offset);
-        m_currentBlock->appendNew<WasmBoundsCheckValue>(m_proc, origin(), pointer, m_memorySizeGPR, sizeOfOperation + offset - 1, m_info.memory.maximum());
+        m_currentBlock->appendNew<WasmBoundsCheckValue>(m_proc, origin(), pointer, sizeOfOperation + offset - 1, m_memorySizeGPR);
         break;
+
     case MemoryMode::Signaling:
-        // We've virtually mapped 4GiB+redzone for this memory. Only the user-allocated pages are addressable, contiguously in range [0, current], and everything above is mapped PROT_NONE. We don't need to perform any explicit bounds check in the 4GiB range because WebAssembly register memory accesses are 32-bit. However WebAssembly register+immediate accesses perform the addition in 64-bit which can push an access above the 32-bit limit. The redzone will catch most small immediates, and we'll explicitly bounds check any register + large immediate access.
-        if (offset >= Memory::fastMappedRedzoneBytes())
-            m_currentBlock->appendNew<WasmBoundsCheckValue>(m_proc, origin(), pointer, InvalidGPRReg, sizeOfOperation + offset - 1, m_info.memory.maximum());
+        // We've virtually mapped 4GiB+redzone for this memory. Only the user-allocated pages are addressable, contiguously in range [0, current],
+        // and everything above is mapped PROT_NONE. We don't need to perform any explicit bounds check in the 4GiB range because WebAssembly register
+        // memory accesses are 32-bit. However WebAssembly register + offset accesses perform the addition in 64-bit which can push an access above
+        // the 32-bit limit (the offset is unsigned 32-bit). The redzone will catch most small offsets, and we'll explicitly bounds check any
+        // register + large offset access. We don't think this will be generated frequently.
+        //
+        // We could check that register + large offset doesn't exceed 4GiB+redzone since that's technically the limit we need to avoid overflowing the
+        // PROT_NONE region, but it's better if we use a smaller immediate because it can codegens better. We know that anything equal to or greater
+        // than the declared 'maximum' will trap, so we can compare against that number. If there was no declared 'maximum' then we still know that
+        // any access equal to or greater than 4GiB will trap, no need to add the redzone.
+        if (offset >= Memory::fastMappedRedzoneBytes()) {
+            size_t maximum = m_info.memory.maximum() ? m_info.memory.maximum().bytes() : std::numeric_limits<uint32_t>::max();
+            m_currentBlock->appendNew<WasmBoundsCheckValue>(m_proc, origin(), pointer, sizeOfOperation + offset - 1, maximum);
+        }
         break;
+
     case MemoryMode::NumberOfMemoryModes:
         RELEASE_ASSERT_NOT_REACHED();
     }
@@ -1299,12 +1314,6 @@ static void createJSToWasmWrapper(CompilationContext& compilationContext, WasmIn
     }
 
     compilationContext.jsEntrypointToWasmEntrypointCall = jit.call();
-
-    if (!!info.memory) {
-        // Resetting the register prevents the GC from mistakenly thinking that the context is still live.
-        GPRReg baseMemory = pinnedRegs.baseMemoryPointer;
-        jit.move(CCallHelpers::TrustedImm32(0), baseMemory);
-    }
 
     for (const RegisterAtOffset& regAtOffset : registersToSpill) {
         GPRReg reg = regAtOffset.reg().gpr();

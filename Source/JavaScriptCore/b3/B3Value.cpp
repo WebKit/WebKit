@@ -665,8 +665,13 @@ Effects Value::effects() const
         result = Effects::forCheck();
         break;
     case WasmBoundsCheck:
-        if (as<WasmBoundsCheckValue>()->pinnedGPR() != InvalidGPRReg)
+        switch (as<WasmBoundsCheckValue>()->boundsType()) {
+        case WasmBoundsCheckValue::Type::Pinned:
             result.readsPinned = true;
+            break;
+        case WasmBoundsCheckValue::Type::Maximum:
+            break;
+        }
         result.exitsSideways = true;
         break;
     case Upsilon:
