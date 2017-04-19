@@ -1198,7 +1198,19 @@ def runWebAssembly
     modules = Dir[WASMTESTS_PATH + "*.js"].map { |f| File.basename(f) }
     prepareExtraAbsoluteFiles(WASMTESTS_PATH, ["wasm.json"])
     prepareExtraRelativeFiles(modules.map { |f| "../" + f }, $collection)
-    run("default-wasm", "-m", "--useWebAssembly=1")
+    run("default-wasm", "-m")
+end
+
+def runWebAssemblyEmscripten(mode)
+    case mode
+    when :skip
+        return
+    end
+    return if !$jitTests
+    return if !$isFTLPlatform
+    wasm = $benchmark.to_s.sub! '.js', '.wasm'
+    prepareExtraRelativeFiles([Pathname('..') + wasm], $collection)
+    run("default-wasm")
 end
 
 def runWebAssemblySpecTest(mode)
@@ -1217,7 +1229,7 @@ def runWebAssemblySpecTest(mode)
     harness = Dir[WASMTESTS_PATH + "spec-harness/" + "*.js"].map { |f| File.basename(f) }
     prepareExtraRelativeFiles(harness.map { |f| "../../spec-harness/" + f }, $collection)
 
-    runWithOutputHandler("default-wasm", noisyOutputHandler, "--useWebAssembly=1", "../spec-harness.js")
+    runWithOutputHandler("default-wasm", noisyOutputHandler, "../spec-harness.js")
 end
 
 def runChakra(mode, exception, baselineFile, extraFiles)
