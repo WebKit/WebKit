@@ -1,3 +1,20 @@
+2017-04-19  Dean Jackson  <dino@apple.com>
+
+        Non-muxable GPUs shouldn't allow offline rendering
+        https://bugs.webkit.org/show_bug.cgi?id=170984
+        <rdar://problem/31614406>
+
+        Reviewed by Myles Maxfield.
+
+        Setting the kCGLPFAAllowOfflineRenderers flag doesn't do any
+        harm on devices that only have one GPU. It's also what we
+        want on devices that can mux between GPUs. However, we were
+        also setting it unconditionally on devices with multiple
+        GPUs that have issues muxing.
+
+        * platform/graphics/mac/GraphicsContext3DMac.mm:
+        (WebCore::setPixelFormat): Add a test for hasMuxableGPU.
+
 2017-04-18  Youenn Fablet  <youenn@apple.com>
 
         RTCOfferOptions iceRestart should be supported

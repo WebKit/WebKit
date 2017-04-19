@@ -331,7 +331,8 @@ static void setPixelFormat(Vector<CGLPixelFormatAttribute>& attribs, int colorBi
     // allowing us to request the integrated graphics on a dual GPU
     // system, and not force the discrete GPU.
     // See https://developer.apple.com/library/mac/technotes/tn2229/_index.html
-    attribs.append(kCGLPFAAllowOfflineRenderers);
+    if (hasMuxableGPU())
+        attribs.append(kCGLPFAAllowOfflineRenderers);
 
     if (accelerated)
         attribs.append(kCGLPFAAccelerated);
