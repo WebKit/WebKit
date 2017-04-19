@@ -22,93 +22,84 @@ ProgramNULL::~ProgramNULL()
 {
 }
 
-LinkResult ProgramNULL::load(gl::InfoLog &infoLog, gl::BinaryInputStream *stream)
+LinkResult ProgramNULL::load(const ContextImpl *contextImpl,
+                             gl::InfoLog &infoLog,
+                             gl::BinaryInputStream *stream)
 {
-    UNIMPLEMENTED();
-    return LinkResult(false, gl::Error(GL_INVALID_OPERATION));
+    return true;
 }
 
 gl::Error ProgramNULL::save(gl::BinaryOutputStream *stream)
 {
-    UNIMPLEMENTED();
-    return gl::Error(GL_INVALID_OPERATION);
+    return gl::NoError();
 }
 
 void ProgramNULL::setBinaryRetrievableHint(bool retrievable)
 {
-    UNIMPLEMENTED();
 }
 
-LinkResult ProgramNULL::link(const gl::ContextState &data, gl::InfoLog &infoLog)
+void ProgramNULL::setSeparable(bool separable)
 {
-    UNIMPLEMENTED();
-    return LinkResult(false, gl::Error(GL_INVALID_OPERATION));
+}
+
+LinkResult ProgramNULL::link(ContextImpl *contextImpl,
+                             const gl::VaryingPacking &packing,
+                             gl::InfoLog &infoLog)
+{
+    return true;
 }
 
 GLboolean ProgramNULL::validate(const gl::Caps &caps, gl::InfoLog *infoLog)
 {
-    UNIMPLEMENTED();
-    return GLboolean();
+    return GL_TRUE;
 }
 
 void ProgramNULL::setUniform1fv(GLint location, GLsizei count, const GLfloat *v)
 {
-    UNIMPLEMENTED();
 }
 
 void ProgramNULL::setUniform2fv(GLint location, GLsizei count, const GLfloat *v)
 {
-    UNIMPLEMENTED();
 }
 
 void ProgramNULL::setUniform3fv(GLint location, GLsizei count, const GLfloat *v)
 {
-    UNIMPLEMENTED();
 }
 
 void ProgramNULL::setUniform4fv(GLint location, GLsizei count, const GLfloat *v)
 {
-    UNIMPLEMENTED();
 }
 
 void ProgramNULL::setUniform1iv(GLint location, GLsizei count, const GLint *v)
 {
-    UNIMPLEMENTED();
 }
 
 void ProgramNULL::setUniform2iv(GLint location, GLsizei count, const GLint *v)
 {
-    UNIMPLEMENTED();
 }
 
 void ProgramNULL::setUniform3iv(GLint location, GLsizei count, const GLint *v)
 {
-    UNIMPLEMENTED();
 }
 
 void ProgramNULL::setUniform4iv(GLint location, GLsizei count, const GLint *v)
 {
-    UNIMPLEMENTED();
 }
 
 void ProgramNULL::setUniform1uiv(GLint location, GLsizei count, const GLuint *v)
 {
-    UNIMPLEMENTED();
 }
 
 void ProgramNULL::setUniform2uiv(GLint location, GLsizei count, const GLuint *v)
 {
-    UNIMPLEMENTED();
 }
 
 void ProgramNULL::setUniform3uiv(GLint location, GLsizei count, const GLuint *v)
 {
-    UNIMPLEMENTED();
 }
 
 void ProgramNULL::setUniform4uiv(GLint location, GLsizei count, const GLuint *v)
 {
-    UNIMPLEMENTED();
 }
 
 void ProgramNULL::setUniformMatrix2fv(GLint location,
@@ -116,7 +107,6 @@ void ProgramNULL::setUniformMatrix2fv(GLint location,
                                       GLboolean transpose,
                                       const GLfloat *value)
 {
-    UNIMPLEMENTED();
 }
 
 void ProgramNULL::setUniformMatrix3fv(GLint location,
@@ -124,7 +114,6 @@ void ProgramNULL::setUniformMatrix3fv(GLint location,
                                       GLboolean transpose,
                                       const GLfloat *value)
 {
-    UNIMPLEMENTED();
 }
 
 void ProgramNULL::setUniformMatrix4fv(GLint location,
@@ -132,7 +121,6 @@ void ProgramNULL::setUniformMatrix4fv(GLint location,
                                       GLboolean transpose,
                                       const GLfloat *value)
 {
-    UNIMPLEMENTED();
 }
 
 void ProgramNULL::setUniformMatrix2x3fv(GLint location,
@@ -140,7 +128,6 @@ void ProgramNULL::setUniformMatrix2x3fv(GLint location,
                                         GLboolean transpose,
                                         const GLfloat *value)
 {
-    UNIMPLEMENTED();
 }
 
 void ProgramNULL::setUniformMatrix3x2fv(GLint location,
@@ -148,7 +135,6 @@ void ProgramNULL::setUniformMatrix3x2fv(GLint location,
                                         GLboolean transpose,
                                         const GLfloat *value)
 {
-    UNIMPLEMENTED();
 }
 
 void ProgramNULL::setUniformMatrix2x4fv(GLint location,
@@ -156,7 +142,6 @@ void ProgramNULL::setUniformMatrix2x4fv(GLint location,
                                         GLboolean transpose,
                                         const GLfloat *value)
 {
-    UNIMPLEMENTED();
 }
 
 void ProgramNULL::setUniformMatrix4x2fv(GLint location,
@@ -164,7 +149,6 @@ void ProgramNULL::setUniformMatrix4x2fv(GLint location,
                                         GLboolean transpose,
                                         const GLfloat *value)
 {
-    UNIMPLEMENTED();
 }
 
 void ProgramNULL::setUniformMatrix3x4fv(GLint location,
@@ -172,7 +156,6 @@ void ProgramNULL::setUniformMatrix3x4fv(GLint location,
                                         GLboolean transpose,
                                         const GLfloat *value)
 {
-    UNIMPLEMENTED();
 }
 
 void ProgramNULL::setUniformMatrix4x3fv(GLint location,
@@ -180,25 +163,24 @@ void ProgramNULL::setUniformMatrix4x3fv(GLint location,
                                         GLboolean transpose,
                                         const GLfloat *value)
 {
-    UNIMPLEMENTED();
 }
 
 void ProgramNULL::setUniformBlockBinding(GLuint uniformBlockIndex, GLuint uniformBlockBinding)
 {
-    UNIMPLEMENTED();
 }
 
 bool ProgramNULL::getUniformBlockSize(const std::string &blockName, size_t *sizeOut) const
 {
-    UNIMPLEMENTED();
-    return bool();
+    // TODO(geofflang): Compute reasonable sizes?
+    *sizeOut = 0;
+    return true;
 }
 
 bool ProgramNULL::getUniformBlockMemberInfo(const std::string &memberUniformName,
                                             sh::BlockMemberInfo *memberInfoOut) const
 {
-    UNIMPLEMENTED();
-    return bool();
+    // TODO(geofflang): Compute reasonable values?
+    return true;
 }
 
 void ProgramNULL::setPathFragmentInputGen(const std::string &inputName,
@@ -206,7 +188,6 @@ void ProgramNULL::setPathFragmentInputGen(const std::string &inputName,
                                           GLint components,
                                           const GLfloat *coeffs)
 {
-    UNIMPLEMENTED();
 }
 
 }  // namespace rx

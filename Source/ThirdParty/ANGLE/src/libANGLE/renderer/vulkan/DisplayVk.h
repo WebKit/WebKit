@@ -19,7 +19,7 @@ class RendererVk;
 class DisplayVk : public DisplayImpl
 {
   public:
-    DisplayVk();
+    DisplayVk(const egl::DisplayState &state);
     ~DisplayVk() override;
 
     egl::Error initialize(egl::Display *display) override;
@@ -46,18 +46,15 @@ class DisplayVk : public DisplayImpl
                           egl::Surface *readSurface) const override;
 
     SurfaceImpl *createWindowSurface(const egl::SurfaceState &state,
-                                     const egl::Config *configuration,
                                      EGLNativeWindowType window,
                                      const egl::AttributeMap &attribs) override;
     SurfaceImpl *createPbufferSurface(const egl::SurfaceState &state,
-                                      const egl::Config *configuration,
                                       const egl::AttributeMap &attribs) override;
     SurfaceImpl *createPbufferFromClientBuffer(const egl::SurfaceState &state,
-                                               const egl::Config *configuration,
-                                               EGLClientBuffer shareHandle,
+                                               EGLenum buftype,
+                                               EGLClientBuffer clientBuffer,
                                                const egl::AttributeMap &attribs) override;
     SurfaceImpl *createPixmapSurface(const egl::SurfaceState &state,
-                                     const egl::Config *configuration,
                                      NativePixmapType nativePixmap,
                                      const egl::AttributeMap &attribs) override;
 
@@ -72,11 +69,13 @@ class DisplayVk : public DisplayImpl
         const egl::AttributeMap &attribs) override;
     gl::Version getMaxSupportedESVersion() const override;
 
+    RendererVk *getRenderer() const { return mRenderer.get(); }
+
   private:
     void generateExtensions(egl::DisplayExtensions *outExtensions) const override;
     void generateCaps(egl::Caps *outCaps) const override;
 
-    RendererVk *mRenderer;
+    std::unique_ptr<RendererVk> mRenderer;
 };
 
 }  // namespace rx

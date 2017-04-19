@@ -26,6 +26,7 @@ class SurfaceGL : public SurfaceImpl
     egl::Error getSyncValues(EGLuint64KHR *ust, EGLuint64KHR *msc, EGLuint64KHR *sbc) override;
 
     virtual egl::Error makeCurrent() = 0;
+    virtual egl::Error unMakeCurrent();
 
   private:
     RendererGL *mRenderer;

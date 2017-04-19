@@ -39,9 +39,10 @@ struct Config;
 
 struct SurfaceState final : angle::NonCopyable
 {
-    SurfaceState();
+    SurfaceState(const egl::Config *configIn);
 
     gl::Framebuffer *defaultFramebuffer;
+    const egl::Config *config;
 };
 
 class Surface : public gl::FramebufferAttachmentObject
@@ -53,8 +54,9 @@ class Surface : public gl::FramebufferAttachmentObject
 
     EGLint getType() const;
 
-    Error initialize();
-    Error swap();
+    Error initialize(const Display &display);
+    Error swap(const Display &display);
+    Error swapWithDamage(EGLint *rects, EGLint n_rects);
     Error postSubBuffer(EGLint x, EGLint y, EGLint width, EGLint height);
     Error querySurfacePointerANGLE(EGLint attribute, void **value);
     Error bindTexImage(gl::Texture *texture, EGLint buffer);
@@ -65,8 +67,8 @@ class Surface : public gl::FramebufferAttachmentObject
     EGLint isPostSubBufferSupported() const;
 
     void setSwapInterval(EGLint interval);
-    void setIsCurrent(bool isCurrent);
-    void onDestroy();
+    void setIsCurrent(Display *display, bool isCurrent);
+    void onDestroy(Display *display);
 
     const Config *getConfig() const;
 
@@ -119,8 +121,6 @@ class Surface : public gl::FramebufferAttachmentObject
 
     EGLint mType;
 
-    const egl::Config *mConfig;
-
     bool mPostSubBufferRequested;
     bool mFlexibleSurfaceCompatibilityRequested;
 
@@ -143,6 +143,9 @@ class Surface : public gl::FramebufferAttachmentObject
 
     gl::Format mBackFormat;
     gl::Format mDSFormat;
+
+  private:
+    void destroy(const egl::Display *display);
 };
 
 class WindowSurface final : public Surface
@@ -163,7 +166,8 @@ class PbufferSurface final : public Surface
                    const AttributeMap &attribs);
     PbufferSurface(rx::EGLImplFactory *implFactory,
                    const Config *config,
-                   EGLClientBuffer shareHandle,
+                   EGLenum buftype,
+                   EGLClientBuffer clientBuffer,
                    const AttributeMap &attribs);
     ~PbufferSurface() override;
 };

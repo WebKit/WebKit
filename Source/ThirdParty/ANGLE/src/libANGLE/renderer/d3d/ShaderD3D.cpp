@@ -29,6 +29,9 @@ const char *GetShaderTypeString(GLenum type)
         case GL_FRAGMENT_SHADER:
             return "FRAGMENT";
 
+        case GL_COMPUTE_SHADER:
+            return "COMPUTE";
+
         default:
             UNREACHABLE();
             return "";
@@ -40,7 +43,7 @@ const char *GetShaderTypeString(GLenum type)
 namespace rx
 {
 
-ShaderD3D::ShaderD3D(const gl::ShaderState &data, const WorkaroundsD3D &workarounds)
+ShaderD3D::ShaderD3D(const gl::ShaderState &data, const angle::WorkaroundsD3D &workarounds)
     : ShaderImpl(data), mAdditionalOptions(0)
 {
     uncompile();
@@ -101,7 +104,7 @@ void ShaderD3D::uncompile()
     mDebugInfo.clear();
 }
 
-void ShaderD3D::generateWorkarounds(D3DCompilerWorkarounds *workarounds) const
+void ShaderD3D::generateWorkarounds(angle::CompilerWorkaroundsD3D *workarounds) const
 {
     if (mUsesDiscardRewriting)
     {
@@ -192,7 +195,7 @@ bool ShaderD3D::postTranslateCompile(gl::Compiler *compiler, std::string *infoLo
     mUsesPointSize             = translatedSource.find("GL_USES_POINT_SIZE") != std::string::npos;
     mUsesPointCoord            = translatedSource.find("GL_USES_POINT_COORD") != std::string::npos;
     mUsesDepthRange            = translatedSource.find("GL_USES_DEPTH_RANGE") != std::string::npos;
-    mUsesFragDepth = translatedSource.find("GL_USES_FRAG_DEPTH") != std::string::npos;
+    mUsesFragDepth             = translatedSource.find("GL_USES_FRAG_DEPTH") != std::string::npos;
     mUsesDiscardRewriting =
         translatedSource.find("ANGLE_USES_DISCARD_REWRITING") != std::string::npos;
     mUsesNestedBreak  = translatedSource.find("ANGLE_USES_NESTED_BREAK") != std::string::npos;
@@ -201,7 +204,7 @@ bool ShaderD3D::postTranslateCompile(gl::Compiler *compiler, std::string *infoLo
 
     ShHandle compilerHandle = compiler->getCompilerHandle(mData.getShaderType());
 
-    mUniformRegisterMap = GetUniformRegisterMap(ShGetUniformRegisterMap(compilerHandle));
+    mUniformRegisterMap = GetUniformRegisterMap(sh::GetUniformRegisterMap(compilerHandle));
 
     for (const sh::InterfaceBlock &interfaceBlock : mData.getInterfaceBlocks())
     {
@@ -209,8 +212,7 @@ bool ShaderD3D::postTranslateCompile(gl::Compiler *compiler, std::string *infoLo
         {
             unsigned int index = static_cast<unsigned int>(-1);
             bool blockRegisterResult =
-                ShGetInterfaceBlockRegister(compilerHandle, interfaceBlock.name, &index);
-            UNUSED_ASSERTION_VARIABLE(blockRegisterResult);
+                sh::GetInterfaceBlockRegister(compilerHandle, interfaceBlock.name, &index);
             ASSERT(blockRegisterResult);
 
             mInterfaceBlockRegisterMap[interfaceBlock.name] = index;

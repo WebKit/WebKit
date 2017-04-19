@@ -63,7 +63,7 @@ WindowSurfaceGLX::~WindowSurfaceGLX()
     mGLXDisplay->syncXCommands();
 }
 
-egl::Error WindowSurfaceGLX::initialize()
+egl::Error WindowSurfaceGLX::initialize(const DisplayImpl *displayImpl)
 {
     // Check that the window's visual ID is valid, as part of the AMGLE_x11_visual
     // extension.
@@ -141,7 +141,7 @@ egl::Error WindowSurfaceGLX::makeCurrent()
     return egl::Error(EGL_SUCCESS);
 }
 
-egl::Error WindowSurfaceGLX::swap()
+egl::Error WindowSurfaceGLX::swap(const DisplayImpl *displayImpl)
 {
     // We need to swap before resizing as some drivers clobber the back buffer
     // when the window is resized.
@@ -241,4 +241,4 @@ bool WindowSurfaceGLX::getWindowDimensions(Window window, unsigned int *width, u
     return XGetGeometry(mDisplay, window, &root, &x, &y, width, height, &border, &depth) != 0;
 }
 
-}
+}  // namespace rx

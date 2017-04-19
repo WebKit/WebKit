@@ -42,6 +42,9 @@ set(ANGLE_SOURCES
     src/common/mathutil.cpp
     src/common/MemoryBuffer.cpp
     src/common/string_utils.cpp
+    src/common/system_utils_linux.cpp
+    src/common/system_utils_mac.cpp
+    src/common/system_utils_win.cpp
     src/common/tls.cpp
     src/common/utilities.cpp
     src/compiler/preprocessor/DiagnosticsBase.cpp
@@ -74,36 +77,38 @@ set(ANGLE_SOURCES
     src/compiler/translator/EmulatePrecision.cpp
     src/compiler/translator/ExpandIntegerPowExpressions.cpp
     src/compiler/translator/ExtensionGLSL.cpp
+    src/compiler/translator/FindSymbolNode.cpp
     src/compiler/translator/FlagStd140Structs.cpp
-    src/compiler/translator/ForLoopUnroll.cpp
     src/compiler/translator/glslang_lex.cpp
     src/compiler/translator/glslang_tab.cpp
     src/compiler/translator/InfoSink.cpp
     src/compiler/translator/Initialize.cpp
     src/compiler/translator/InitializeDll.cpp
-    src/compiler/translator/InitializeParseContext.cpp
     src/compiler/translator/InitializeVariables.cpp
     src/compiler/translator/Intermediate.cpp
     src/compiler/translator/IntermNode.cpp
     src/compiler/translator/IntermNodePatternMatcher.cpp
     src/compiler/translator/intermOut.cpp
     src/compiler/translator/IntermTraverse.cpp
-    src/compiler/translator/LoopInfo.cpp
     src/compiler/translator/Operator.cpp
     src/compiler/translator/OutputESSL.cpp
     src/compiler/translator/OutputGLSL.cpp
     src/compiler/translator/OutputGLSLBase.cpp
+    src/compiler/translator/OutputVulkanGLSL.cpp
     src/compiler/translator/ParseContext.cpp
     src/compiler/translator/PoolAlloc.cpp
     src/compiler/translator/PruneEmptyDeclarations.cpp
+    src/compiler/translator/PrunePureLiteralStatements.cpp
     src/compiler/translator/QualifierTypes.cpp
     src/compiler/translator/RecordConstantPrecision.cpp
     src/compiler/translator/RegenerateStructNames.cpp
     src/compiler/translator/RemoveDynamicIndexing.cpp
+    src/compiler/translator/RemoveInvariantDeclaration.cpp
     src/compiler/translator/RemovePow.cpp
     src/compiler/translator/RemoveSwitchFallThrough.cpp
     src/compiler/translator/RewriteDoWhile.cpp
     src/compiler/translator/RewriteElseBlocks.cpp
+    src/compiler/translator/RewriteUnaryMinusOperatorFloat.cpp
     src/compiler/translator/RewriteTexelFetchOffset.cpp
     src/compiler/translator/RewriteUnaryMinusOperatorInt.cpp
     src/compiler/translator/ScalarizeVecAndMatConstructorArgs.cpp
@@ -119,6 +124,7 @@ set(ANGLE_SOURCES
     src/compiler/translator/SymbolTable.cpp
     src/compiler/translator/TranslatorESSL.cpp
     src/compiler/translator/TranslatorGLSL.cpp
+    src/compiler/translator/TranslatorVulkan.cpp
     src/compiler/translator/Types.cpp
     src/compiler/translator/UnfoldShortCircuitAST.cpp
     src/compiler/translator/UnfoldShortCircuitToIf.cpp
@@ -127,6 +133,7 @@ set(ANGLE_SOURCES
     src/compiler/translator/ValidateGlobalInitializer.cpp
     src/compiler/translator/ValidateLimitations.cpp
     src/compiler/translator/ValidateMaxParameters.cpp
+    src/compiler/translator/ValidateMultiviewWebGL.cpp
     src/compiler/translator/ValidateOutputs.cpp
     src/compiler/translator/ValidateSwitch.cpp
     src/compiler/translator/VariableInfo.cpp
@@ -169,8 +176,6 @@ set(ANGLE_SOURCES
     src/libANGLE/renderer/ContextImpl.cpp
     src/libANGLE/renderer/DeviceImpl.cpp
     src/libANGLE/renderer/DisplayImpl.cpp
-    src/libANGLE/renderer/Format_autogen.cpp
-    src/libANGLE/renderer/Format.cpp
     src/libANGLE/renderer/load_functions_table_autogen.cpp
     src/libANGLE/renderer/renderer_utils.cpp
     src/libANGLE/renderer/SurfaceImpl.cpp
@@ -178,7 +183,6 @@ set(ANGLE_SOURCES
     src/libANGLE/ResourceManager.cpp
     src/libANGLE/Sampler.cpp
     src/libANGLE/Shader.cpp
-    src/libANGLE/signal_utils.cpp
     src/libANGLE/State.cpp
     src/libANGLE/Stream.cpp
     src/libANGLE/Surface.cpp
@@ -193,7 +197,6 @@ set(ANGLE_SOURCES
     src/libANGLE/VertexArray.cpp
     src/libANGLE/VertexAttribute.cpp
     src/third_party/compiler/ArrayBoundsClamper.cpp
-    src/third_party/murmurhash/MurmurHash3.cpp
 )
 
 set(ANGLE_COMPILE_DEFINITIONS

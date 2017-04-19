@@ -24,10 +24,44 @@ float4 luminanceps(float4 texcoord : TEXCOORD0) : COLOR
     return (tex2D(tex, texcoord.xy).xw * mult.xw + add.xw).xxxy;
 };
 
+float4 luminancepremultps(float4 texcoord : TEXCOORD0) : COLOR
+{
+    float4 luma = (tex2D(tex, texcoord.xy).xw * mult.xw + add.xw).xxxy;
+    luma.rgb *= luma.a;
+    return luma;
+};
+
+float4 luminanceunmultps(float4 texcoord : TEXCOORD0) : COLOR
+{
+    float4 luma = (tex2D(tex, texcoord.xy).xw * mult.xw + add.xw).xxxy;
+    if (luma.a > 0.0f)
+    {
+        luma.rgb /= luma.a;
+    }
+    return luma;
+};
+
 // RGB/A Component Mask Pixel Shader
 // Performs a mad operation using the texture's RGBA data with mult.xyzw and add.xyzw.
 // Returns data in the form of rgba
 float4 componentmaskps(float4 texcoord : TEXCOORD0) : COLOR
 {
     return tex2D(tex, texcoord.xy) * mult + add;
+};
+
+float4 componentmaskpremultps(float4 texcoord : TEXCOORD0) : COLOR
+{
+    float4 color = tex2D(tex, texcoord.xy) * mult + add;
+    color.rgb *= color.a;
+    return color;
+};
+
+float4 componentmaskunmultps(float4 texcoord : TEXCOORD0) : COLOR
+{
+    float4 color =  tex2D(tex, texcoord.xy) * mult + add;
+    if (color.a > 0.0f)
+    {
+        color.rgb /= color.a;
+    }
+    return color;
 };

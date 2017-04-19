@@ -40,28 +40,28 @@ gl::Error FenceSyncGL::set(GLenum condition, GLbitfield flags)
         return gl::Error(GL_OUT_OF_MEMORY, "glFenceSync failed to create a GLsync object.");
     }
 
-    return gl::Error(GL_NO_ERROR);
+    return gl::NoError();
 }
 
 gl::Error FenceSyncGL::clientWait(GLbitfield flags, GLuint64 timeout, GLenum *outResult)
 {
     ASSERT(mSyncObject != 0);
     *outResult = mFunctions->clientWaitSync(mSyncObject, flags, timeout);
-    return gl::Error(GL_NO_ERROR);
+    return gl::NoError();
 }
 
 gl::Error FenceSyncGL::serverWait(GLbitfield flags, GLuint64 timeout)
 {
     ASSERT(mSyncObject != 0);
     mFunctions->waitSync(mSyncObject, flags, timeout);
-    return gl::Error(GL_NO_ERROR);
+    return gl::NoError();
 }
 
 gl::Error FenceSyncGL::getStatus(GLint *outResult)
 {
     ASSERT(mSyncObject != 0);
     mFunctions->getSynciv(mSyncObject, GL_SYNC_STATUS, 1, nullptr, outResult);
-    return gl::Error(GL_NO_ERROR);
+    return gl::NoError();
 }
 
 }

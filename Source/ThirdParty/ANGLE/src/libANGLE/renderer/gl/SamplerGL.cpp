@@ -62,6 +62,7 @@ void SamplerGL::syncState(const gl::SamplerState &samplerState) const
     SyncSamplerStateMember(mFunctions, mSamplerID, samplerState, mAppliedSamplerState, GL_TEXTURE_MAX_LOD, &gl::SamplerState::maxLod);
     SyncSamplerStateMember(mFunctions, mSamplerID, samplerState, mAppliedSamplerState, GL_TEXTURE_COMPARE_MODE, &gl::SamplerState::compareMode);
     SyncSamplerStateMember(mFunctions, mSamplerID, samplerState, mAppliedSamplerState, GL_TEXTURE_COMPARE_FUNC, &gl::SamplerState::compareFunc);
+    SyncSamplerStateMember(mFunctions, mSamplerID, samplerState, mAppliedSamplerState, GL_TEXTURE_SRGB_DECODE_EXT, &gl::SamplerState::sRGBDecode);
     // clang-format on
 }
 

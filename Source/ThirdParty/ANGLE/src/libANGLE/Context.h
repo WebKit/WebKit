@@ -14,13 +14,14 @@
 #include <string>
 
 #include "angle_gl.h"
+#include "common/MemoryBuffer.h"
 #include "common/angleutils.h"
-#include "libANGLE/RefCountObject.h"
 #include "libANGLE/Caps.h"
 #include "libANGLE/Constants.h"
 #include "libANGLE/ContextState.h"
 #include "libANGLE/Error.h"
 #include "libANGLE/HandleAllocator.h"
+#include "libANGLE/RefCountObject.h"
 #include "libANGLE/VertexAttribute.h"
 #include "libANGLE/Workarounds.h"
 #include "libANGLE/angletypes.h"
@@ -49,7 +50,6 @@ class Renderbuffer;
 class FenceNV;
 class FenceSync;
 class Query;
-class ResourceManager;
 class Buffer;
 struct VertexAttribute;
 class VertexArray;
@@ -62,12 +62,15 @@ class Context final : public ValidationContext
     Context(rx::EGLImplFactory *implFactory,
             const egl::Config *config,
             const Context *shareContext,
-            const egl::AttributeMap &attribs);
+            TextureManager *shareTextures,
+            const egl::AttributeMap &attribs,
+            const egl::DisplayExtensions &displayExtensions);
 
-    virtual ~Context();
+    void destroy(egl::Display *display);
+    ~Context() override;
 
-    void makeCurrent(egl::Surface *surface);
-    void releaseSurface();
+    void makeCurrent(egl::Display *display, egl::Surface *surface);
+    void releaseSurface(egl::Display *display);
 
     // These create  and destroy methods are merely pass-throughs to
     // ResourceManager, which owns these object types
@@ -125,8 +128,11 @@ class Context final : public ValidationContext
     void bindTexture(GLenum target, GLuint handle);
     void bindReadFramebuffer(GLuint framebufferHandle);
     void bindDrawFramebuffer(GLuint framebufferHandle);
-    void bindRenderbuffer(GLuint renderbufferHandle);
     void bindVertexArray(GLuint vertexArrayHandle);
+    void bindVertexBuffer(GLuint bindingIndex,
+                          GLuint bufferHandle,
+                          GLintptr offset,
+                          GLsizei stride);
     void bindSampler(GLuint textureUnit, GLuint samplerHandle);
     void bindGenericUniformBuffer(GLuint bufferHandle);
     void bindIndexedUniformBuffer(GLuint bufferHandle,
@@ -138,12 +144,23 @@ class Context final : public ValidationContext
                                             GLuint index,
                                             GLintptr offset,
                                             GLsizeiptr size);
+    void bindGenericAtomicCounterBuffer(GLuint bufferHandle);
+    void bindIndexedAtomicCounterBuffer(GLuint bufferHandle,
+                                        GLuint index,
+                                        GLintptr offset,
+                                        GLsizeiptr size);
+    void bindGenericShaderStorageBuffer(GLuint bufferHandle);
+    void bindIndexedShaderStorageBuffer(GLuint bufferHandle,
+                                        GLuint index,
+                                        GLintptr offset,
+                                        GLsizeiptr size);
     void bindCopyReadBuffer(GLuint bufferHandle);
     void bindCopyWriteBuffer(GLuint bufferHandle);
     void bindPixelPackBuffer(GLuint bufferHandle);
     void bindPixelUnpackBuffer(GLuint bufferHandle);
     void useProgram(GLuint program);
     void bindTransformFeedback(GLuint transformFeedbackHandle);
+    void bindDrawIndirectBuffer(GLuint bufferHandle);
 
     Error beginQuery(GLenum target, GLuint query);
     Error endQuery(GLenum target);
@@ -155,6 +172,21 @@ class Context final : public ValidationContext
     void getQueryObjectui64v(GLuint id, GLenum pname, GLuint64 *params);
 
     void setVertexAttribDivisor(GLuint index, GLuint divisor);
+    void setVertexBindingDivisor(GLuint bindingIndex, GLuint divisor);
+
+    void getBufferParameteriv(GLenum target, GLenum pname, GLint *params);
+    void getFramebufferAttachmentParameteriv(GLenum target,
+                                             GLenum attachment,
+                                             GLenum pname,
+                                             GLint *params);
+    void getRenderbufferParameteriv(GLenum target, GLenum pname, GLint *params);
+
+    void getTexParameterfv(GLenum target, GLenum pname, GLfloat *params);
+    void getTexParameteriv(GLenum target, GLenum pname, GLint *params);
+    void texParameterf(GLenum target, GLenum pname, GLfloat param);
+    void texParameterfv(GLenum target, GLenum pname, const GLfloat *params);
+    void texParameteri(GLenum target, GLenum pname, GLint param);
+    void texParameteriv(GLenum target, GLenum pname, const GLint *params);
 
     void samplerParameteri(GLuint sampler, GLenum pname, GLint param);
     void samplerParameteriv(GLuint sampler, GLenum pname, const GLint *param);
@@ -165,6 +197,14 @@ class Context final : public ValidationContext
     void getSamplerParameterfv(GLuint sampler, GLenum pname, GLfloat *params);
 
     void programParameteri(GLuint program, GLenum pname, GLint value);
+
+    GLuint getProgramResourceIndex(GLuint program, GLenum programInterface, const GLchar *name);
+    void getProgramResourceName(GLuint program,
+                                GLenum programInterface,
+                                GLuint index,
+                                GLsizei bufSize,
+                                GLsizei *length,
+                                GLchar *name);
 
     Buffer *getBuffer(GLuint handle) const;
     FenceNV *getFenceNV(GLuint handle);
@@ -193,16 +233,15 @@ class Context final : public ValidationContext
 
     bool isSampler(GLuint samplerName) const;
 
-    bool isTextureGenerated(GLuint texture) const;
-    bool isBufferGenerated(GLuint buffer) const;
-    bool isRenderbufferGenerated(GLuint renderbuffer) const;
-    bool isFramebufferGenerated(GLuint framebuffer) const;
     bool isVertexArrayGenerated(GLuint vertexArray);
     bool isTransformFeedbackGenerated(GLuint vertexArray);
 
     void getBooleanv(GLenum pname, GLboolean *params);
+    void getBooleanvImpl(GLenum pname, GLboolean *params);
     void getFloatv(GLenum pname, GLfloat *params);
+    void getFloatvImpl(GLenum pname, GLfloat *params);
     void getIntegerv(GLenum pname, GLint *params);
+    void getIntegervImpl(GLenum pname, GLint *params);
     void getInteger64v(GLenum pname, GLint64 *params);
     void getPointerv(GLenum pname, void **params) const;
     void getBooleani_v(GLenum target, GLuint index, GLboolean *data);
@@ -211,7 +250,9 @@ class Context final : public ValidationContext
 
     void activeTexture(GLenum texture);
     void blendColor(GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha);
+    void blendEquation(GLenum mode);
     void blendEquationSeparate(GLenum modeRGB, GLenum modeAlpha);
+    void blendFunc(GLenum sfactor, GLenum dfactor);
     void blendFuncSeparate(GLenum srcRGB, GLenum dstRGB, GLenum srcAlpha, GLenum dstAlpha);
     void clearColor(GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha);
     void clearDepthf(GLclampf depth);
@@ -243,23 +284,35 @@ class Context final : public ValidationContext
     void vertexAttrib3fv(GLuint index, const GLfloat *values);
     void vertexAttrib4f(GLuint index, GLfloat x, GLfloat y, GLfloat z, GLfloat w);
     void vertexAttrib4fv(GLuint index, const GLfloat *values);
+    void vertexAttribFormat(GLuint attribIndex,
+                            GLint size,
+                            GLenum type,
+                            GLboolean normalized,
+                            GLuint relativeOffset);
+    void vertexAttribIFormat(GLuint attribIndex, GLint size, GLenum type, GLuint relativeOffset);
+    void vertexAttribBinding(GLuint attribIndex, GLuint bindingIndex);
     void vertexAttribPointer(GLuint index,
                              GLint size,
                              GLenum type,
                              GLboolean normalized,
                              GLsizei stride,
                              const GLvoid *ptr);
-    void viewport(GLint x, GLint y, GLsizei width, GLsizei height);
-
     void vertexAttribIPointer(GLuint index,
                               GLint size,
                               GLenum type,
                               GLsizei stride,
                               const GLvoid *pointer);
+    void viewport(GLint x, GLint y, GLsizei width, GLsizei height);
+
     void vertexAttribI4i(GLuint index, GLint x, GLint y, GLint z, GLint w);
     void vertexAttribI4ui(GLuint index, GLuint x, GLuint y, GLuint z, GLuint w);
     void vertexAttribI4iv(GLuint index, const GLint *v);
     void vertexAttribI4uiv(GLuint index, const GLuint *v);
+    void getVertexAttribiv(GLuint index, GLenum pname, GLint *params);
+    void getVertexAttribfv(GLuint index, GLenum pname, GLfloat *params);
+    void getVertexAttribIiv(GLuint index, GLenum pname, GLint *params);
+    void getVertexAttribIuiv(GLuint index, GLenum pname, GLuint *params);
+    void getVertexAttribPointerv(GLuint index, GLenum pname, GLvoid **pointer);
 
     void debugMessageControl(GLenum source,
                              GLenum type,
@@ -291,27 +344,29 @@ class Context final : public ValidationContext
     void clearBufferiv(GLenum buffer, GLint drawbuffer, const GLint *values);
     void clearBufferfi(GLenum buffer, GLint drawbuffer, GLfloat depth, GLint stencil);
 
-    Error drawArrays(GLenum mode, GLint first, GLsizei count);
-    Error drawArraysInstanced(GLenum mode, GLint first, GLsizei count, GLsizei instanceCount);
+    void drawArrays(GLenum mode, GLint first, GLsizei count);
+    void drawArraysInstanced(GLenum mode, GLint first, GLsizei count, GLsizei instanceCount);
 
-    Error drawElements(GLenum mode,
-                       GLsizei count,
-                       GLenum type,
-                       const GLvoid *indices,
-                       const IndexRange &indexRange);
-    Error drawElementsInstanced(GLenum mode,
-                                GLsizei count,
-                                GLenum type,
-                                const GLvoid *indices,
-                                GLsizei instances,
-                                const IndexRange &indexRange);
-    Error drawRangeElements(GLenum mode,
-                            GLuint start,
-                            GLuint end,
-                            GLsizei count,
-                            GLenum type,
-                            const GLvoid *indices,
-                            const IndexRange &indexRange);
+    void drawElements(GLenum mode,
+                      GLsizei count,
+                      GLenum type,
+                      const GLvoid *indices,
+                      const IndexRange &indexRange);
+    void drawElementsInstanced(GLenum mode,
+                               GLsizei count,
+                               GLenum type,
+                               const GLvoid *indices,
+                               GLsizei instances,
+                               const IndexRange &indexRange);
+    void drawRangeElements(GLenum mode,
+                           GLuint start,
+                           GLuint end,
+                           GLsizei count,
+                           GLenum type,
+                           const GLvoid *indices,
+                           const IndexRange &indexRange);
+    void drawArraysIndirect(GLenum mode, const GLvoid *indirect);
+    void drawElementsIndirect(GLenum mode, GLenum type, const GLvoid *indirect);
 
     void blitFramebuffer(GLint srcX0,
                          GLint srcY0,
@@ -467,14 +522,20 @@ class Context final : public ValidationContext
                                  GLsizei imageSize,
                                  const GLvoid *data);
     void copyTextureCHROMIUM(GLuint sourceId,
+                             GLint sourceLevel,
+                             GLenum destTarget,
                              GLuint destId,
+                             GLint destLevel,
                              GLint internalFormat,
                              GLenum destType,
                              GLboolean unpackFlipY,
                              GLboolean unpackPremultiplyAlpha,
                              GLboolean unpackUnmultiplyAlpha);
     void copySubTextureCHROMIUM(GLuint sourceId,
+                                GLint sourceLevel,
+                                GLenum destTarget,
                                 GLuint destId,
+                                GLint destLevel,
                                 GLint xoffset,
                                 GLint yoffset,
                                 GLint x,
@@ -488,10 +549,8 @@ class Context final : public ValidationContext
 
     void generateMipmap(GLenum target);
 
-    GLboolean enableExtension(const char *name);
-
-    Error flush();
-    Error finish();
+    void flush();
+    void finish();
 
     void getBufferPointerv(GLenum target, GLenum pname, void **params);
     GLvoid *mapBuffer(GLenum target, GLenum access);
@@ -508,6 +567,14 @@ class Context final : public ValidationContext
     void popGroupMarker();
 
     void bindUniformLocation(GLuint program, GLint location, const GLchar *name);
+    void renderbufferStorage(GLenum target, GLenum internalformat, GLsizei width, GLsizei height);
+    void renderbufferStorageMultisample(GLenum target,
+                                        GLsizei samples,
+                                        GLenum internalformat,
+                                        GLsizei width,
+                                        GLsizei height);
+
+    void getSynciv(GLsync sync, GLenum pname, GLsizei bufSize, GLsizei *length, GLint *values);
 
     // CHROMIUM_framebuffer_mixed_samples
     void setCoverageModulation(GLenum components);
@@ -579,6 +646,112 @@ class Context final : public ValidationContext
     void bufferData(GLenum target, GLsizeiptr size, const GLvoid *data, GLenum usage);
     void bufferSubData(GLenum target, GLintptr offset, GLsizeiptr size, const GLvoid *data);
     void attachShader(GLuint program, GLuint shader);
+    void bindAttribLocation(GLuint program, GLuint index, const GLchar *name);
+    void bindBuffer(GLenum target, GLuint buffer);
+    void bindBufferBase(GLenum target, GLuint index, GLuint buffer);
+    void bindBufferRange(GLenum target,
+                         GLuint index,
+                         GLuint buffer,
+                         GLintptr offset,
+                         GLsizeiptr size);
+    void bindFramebuffer(GLenum target, GLuint framebuffer);
+    void bindRenderbuffer(GLenum target, GLuint renderbuffer);
+
+    void texStorage2DMultisample(GLenum target,
+                                 GLsizei samples,
+                                 GLenum internalformat,
+                                 GLsizei width,
+                                 GLsizei height,
+                                 GLboolean fixedsamplelocations);
+
+    void getMultisamplefv(GLenum pname, GLuint index, GLfloat *val);
+
+    void copyBufferSubData(GLenum readTarget,
+                           GLenum writeTarget,
+                           GLintptr readOffset,
+                           GLintptr writeOffset,
+                           GLsizeiptr size);
+
+    GLenum checkFramebufferStatus(GLenum target);
+    void compileShader(GLuint shader);
+    void deleteBuffers(GLsizei n, const GLuint *buffers);
+    void deleteFramebuffers(GLsizei n, const GLuint *framebuffers);
+    void deleteRenderbuffers(GLsizei n, const GLuint *renderbuffers);
+    void deleteTextures(GLsizei n, const GLuint *textures);
+    void detachShader(GLuint program, GLuint shader);
+    void genBuffers(GLsizei n, GLuint *buffers);
+    void genFramebuffers(GLsizei n, GLuint *framebuffers);
+    void genRenderbuffers(GLsizei n, GLuint *renderbuffers);
+    void genTextures(GLsizei n, GLuint *textures);
+    void getActiveAttrib(GLuint program,
+                         GLuint index,
+                         GLsizei bufsize,
+                         GLsizei *length,
+                         GLint *size,
+                         GLenum *type,
+                         GLchar *name);
+    void getActiveUniform(GLuint program,
+                          GLuint index,
+                          GLsizei bufsize,
+                          GLsizei *length,
+                          GLint *size,
+                          GLenum *type,
+                          GLchar *name);
+    void getAttachedShaders(GLuint program, GLsizei maxcount, GLsizei *count, GLuint *shaders);
+    GLint getAttribLocation(GLuint program, const GLchar *name);
+    void getProgramiv(GLuint program, GLenum pname, GLint *params);
+    void getInfoLog(GLuint program, GLsizei bufsize, GLsizei *length, GLchar *infolog);
+    void getShaderiv(GLuint shader, GLenum pname, GLint *params);
+    void getShaderInfoLog(GLuint shader, GLsizei bufsize, GLsizei *length, GLchar *infolog);
+    void getShaderPrecisionFormat(GLenum shadertype,
+                                  GLenum precisiontype,
+                                  GLint *range,
+                                  GLint *precision);
+    void getShaderSource(GLuint shader, GLsizei bufsize, GLsizei *length, GLchar *source);
+    void getUniformfv(GLuint program, GLint location, GLfloat *params);
+    void getUniformiv(GLuint program, GLint location, GLint *params);
+    GLint getUniformLocation(GLuint program, const GLchar *name);
+    GLboolean isBuffer(GLuint buffer);
+    GLboolean isEnabled(GLenum cap);
+    GLboolean isFramebuffer(GLuint framebuffer);
+    GLboolean isProgram(GLuint program);
+    GLboolean isRenderbuffer(GLuint renderbuffer);
+    GLboolean isShader(GLuint shader);
+    GLboolean isTexture(GLuint texture);
+    void linkProgram(GLuint program);
+    void releaseShaderCompiler();
+    void shaderBinary(GLsizei n,
+                      const GLuint *shaders,
+                      GLenum binaryformat,
+                      const GLvoid *binary,
+                      GLsizei length);
+    void shaderSource(GLuint shader,
+                      GLsizei count,
+                      const GLchar *const *string,
+                      const GLint *length);
+    void stencilFunc(GLenum func, GLint ref, GLuint mask);
+    void stencilMask(GLuint mask);
+    void stencilOp(GLenum fail, GLenum zfail, GLenum zpass);
+    void uniform1f(GLint location, GLfloat x);
+    void uniform1fv(GLint location, GLsizei count, const GLfloat *v);
+    void uniform1i(GLint location, GLint x);
+    void uniform1iv(GLint location, GLsizei count, const GLint *v);
+    void uniform2f(GLint location, GLfloat x, GLfloat y);
+    void uniform2fv(GLint location, GLsizei count, const GLfloat *v);
+    void uniform2i(GLint location, GLint x, GLint y);
+    void uniform2iv(GLint location, GLsizei count, const GLint *v);
+    void uniform3f(GLint location, GLfloat x, GLfloat y, GLfloat z);
+    void uniform3fv(GLint location, GLsizei count, const GLfloat *v);
+    void uniform3i(GLint location, GLint x, GLint y, GLint z);
+    void uniform3iv(GLint location, GLsizei count, const GLint *v);
+    void uniform4f(GLint location, GLfloat x, GLfloat y, GLfloat z, GLfloat w);
+    void uniform4fv(GLint location, GLsizei count, const GLfloat *v);
+    void uniform4i(GLint location, GLint x, GLint y, GLint z, GLint w);
+    void uniform4iv(GLint location, GLsizei count, const GLint *v);
+    void uniformMatrix2fv(GLint location, GLsizei count, GLboolean transpose, const GLfloat *value);
+    void uniformMatrix3fv(GLint location, GLsizei count, GLboolean transpose, const GLfloat *value);
+    void uniformMatrix4fv(GLint location, GLsizei count, GLboolean transpose, const GLfloat *value);
+    void validateProgram(GLuint program);
 
     void handleError(const Error &error) override;
 
@@ -592,14 +765,23 @@ class Context final : public ValidationContext
     EGLenum getClientType() const;
     EGLenum getRenderBuffer() const;
 
-    const char *getRendererString() const;
+    const GLubyte *getString(GLenum name) const;
+    const GLubyte *getStringi(GLenum name, GLuint index) const;
 
-    const char *getExtensionString() const;
-    const char *getExtensionString(size_t idx) const;
     size_t getExtensionStringCount() const;
+
+    void requestExtension(const char *name);
+    size_t getRequestableExtensionStringCount() const;
 
     rx::ContextImpl *getImplementation() const { return mImplementation.get(); }
     const Workarounds &getWorkarounds() const;
+
+    void getFramebufferParameteriv(GLenum target, GLenum pname, GLint *params);
+    void setFramebufferParameteri(GLenum target, GLenum pname, GLint param);
+
+    Error getScratchBuffer(size_t requestedSize, angle::MemoryBuffer **scratchBufferOut) const;
+
+    void dispatchCompute(GLuint numGroupsX, GLuint numGroupsY, GLuint numGroupsZ);
 
   private:
     void syncRendererState();
@@ -610,7 +792,6 @@ class Context final : public ValidationContext
     void syncStateForBlit();
     VertexArray *checkVertexArrayAllocation(GLuint vertexArrayHandle);
     TransformFeedback *checkTransformFeedbackAllocation(GLuint transformFeedback);
-    Framebuffer *checkFramebufferAllocation(GLuint framebufferHandle);
 
     void detachBuffer(GLuint buffer);
     void detachTexture(GLuint texture);
@@ -621,9 +802,10 @@ class Context final : public ValidationContext
     void detachSampler(GLuint sampler);
 
     void initRendererString();
+    void initVersionStrings();
     void initExtensionStrings();
 
-    void initCaps(bool webGLContext);
+    void initCaps(const egl::DisplayExtensions &displayExtensions);
     void updateCaps();
     void initWorkarounds();
 
@@ -643,16 +825,10 @@ class Context final : public ValidationContext
 
     State mGLState;
 
-    int mClientMajorVersion;
-    int mClientMinorVersion;
-
     const egl::Config *mConfig;
     EGLenum mClientType;
 
     TextureMap mZeroTextures;
-
-    ResourceMap<Framebuffer> mFramebufferMap;
-    HandleAllocator mFramebufferHandleAllocator;
 
     ResourceMap<FenceNV> mFenceNVMap;
     HandleAllocator mFenceNVHandleAllocator;
@@ -666,9 +842,13 @@ class Context final : public ValidationContext
     ResourceMap<TransformFeedback> mTransformFeedbackMap;
     HandleAllocator mTransformFeedbackAllocator;
 
+    const char *mVersionString;
+    const char *mShadingLanguageString;
     const char *mRendererString;
     const char *mExtensionString;
     std::vector<const char *> mExtensionStrings;
+    const char *mRequestableExtensionString;
+    std::vector<const char *> mRequestableExtensionStrings;
 
     // Recorded errors
     typedef std::set<GLenum> ErrorSet;
@@ -682,8 +862,8 @@ class Context final : public ValidationContext
     GLenum mResetStrategy;
     bool mRobustAccess;
     egl::Surface *mCurrentSurface;
-
-    ResourceManager *mResourceManager;
+    Framebuffer *mSurfacelessFramebuffer;
+    bool mWebGLContext;
 
     State::DirtyBits mTexImageDirtyBits;
     State::DirtyObjects mTexImageDirtyObjects;
@@ -695,6 +875,9 @@ class Context final : public ValidationContext
     State::DirtyObjects mBlitDirtyObjects;
 
     Workarounds mWorkarounds;
+
+    // Not really a property of context state. The size and contexts change per-api-call.
+    mutable angle::ScratchBuffer mScratchBuffer;
 };
 
 }  // namespace gl

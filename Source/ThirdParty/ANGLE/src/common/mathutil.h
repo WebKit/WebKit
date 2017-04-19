@@ -33,28 +33,10 @@ namespace gl
 const unsigned int Float32One = 0x3F800000;
 const unsigned short Float16One = 0x3C00;
 
-struct Vector4
+template<typename T>
+inline bool isPow2(T x)
 {
-    Vector4() {}
-    Vector4(float x, float y, float z, float w) : x(x), y(y), z(z), w(w) {}
-
-    float x;
-    float y;
-    float z;
-    float w;
-};
-
-struct Vector2
-{
-    Vector2() {}
-    Vector2(float x, float y) : x(x), y(y) {}
-
-    float x;
-    float y;
-};
-
-inline bool isPow2(int x)
-{
+    static_assert(std::is_integral<T>::value, "isPow2 must be called on an integer type.");
     return (x & (x - 1)) == 0 && (x != 0);
 }
 
@@ -632,6 +614,22 @@ struct IndexRange
     size_t vertexIndexCount;
 };
 
+// Combine a floating-point value representing a mantissa (x) and an integer exponent (exp) into a
+// floating-point value. As in GLSL ldexp() built-in.
+inline float Ldexp(float x, int exp)
+{
+    if (exp > 128)
+    {
+        return std::numeric_limits<float>::infinity();
+    }
+    if (exp < -126)
+    {
+        return 0.0f;
+    }
+    double result = static_cast<double>(x) * std::pow(2.0, static_cast<double>(exp));
+    return static_cast<float>(result);
+}
+
 // First, both normalized floating-point values are converted into 16-bit integer values.
 // Then, the results are packed into the returned 32-bit unsigned integer.
 // The first float value will be written to the least significant bits of the output;
@@ -687,6 +685,86 @@ inline void unpackUnorm2x16(uint32_t u, float *f1, float *f2)
     *f2 = static_cast<float>(mostSignificantBits) / 65535.0f;
 }
 
+// Helper functions intended to be used only here.
+namespace priv
+{
+
+inline uint8_t ToPackedUnorm8(float f)
+{
+    return static_cast<uint8_t>(roundf(clamp(f, 0.0f, 1.0f) * 255.0f));
+}
+
+inline int8_t ToPackedSnorm8(float f)
+{
+    return static_cast<int8_t>(roundf(clamp(f, -1.0f, 1.0f) * 127.0f));
+}
+
+}  // namespace priv
+
+// Packs 4 normalized unsigned floating-point values to a single 32-bit unsigned integer. Works
+// similarly to packUnorm2x16. The floats are clamped to the range 0.0 to 1.0, and written to the
+// unsigned integer starting from the least significant bits.
+inline uint32_t PackUnorm4x8(float f1, float f2, float f3, float f4)
+{
+    uint8_t bits[4];
+    bits[0]         = priv::ToPackedUnorm8(f1);
+    bits[1]         = priv::ToPackedUnorm8(f2);
+    bits[2]         = priv::ToPackedUnorm8(f3);
+    bits[3]         = priv::ToPackedUnorm8(f4);
+    uint32_t result = 0u;
+    for (int i = 0; i < 4; ++i)
+    {
+        int shift = i * 8;
+        result |= (static_cast<uint32_t>(bits[i]) << shift);
+    }
+    return result;
+}
+
+// Unpacks 4 normalized unsigned floating-point values from a single 32-bit unsigned integer into f.
+// Works similarly to unpackUnorm2x16. The floats are unpacked starting from the least significant
+// bits.
+inline void UnpackUnorm4x8(uint32_t u, float *f)
+{
+    for (int i = 0; i < 4; ++i)
+    {
+        int shift    = i * 8;
+        uint8_t bits = static_cast<uint8_t>((u >> shift) & 0xFF);
+        f[i]         = static_cast<float>(bits) / 255.0f;
+    }
+}
+
+// Packs 4 normalized signed floating-point values to a single 32-bit unsigned integer. The floats
+// are clamped to the range -1.0 to 1.0, and written to the unsigned integer starting from the least
+// significant bits.
+inline uint32_t PackSnorm4x8(float f1, float f2, float f3, float f4)
+{
+    int8_t bits[4];
+    bits[0]         = priv::ToPackedSnorm8(f1);
+    bits[1]         = priv::ToPackedSnorm8(f2);
+    bits[2]         = priv::ToPackedSnorm8(f3);
+    bits[3]         = priv::ToPackedSnorm8(f4);
+    uint32_t result = 0u;
+    for (int i = 0; i < 4; ++i)
+    {
+        int shift = i * 8;
+        result |= ((static_cast<uint32_t>(bits[i]) & 0xFF) << shift);
+    }
+    return result;
+}
+
+// Unpacks 4 normalized signed floating-point values from a single 32-bit unsigned integer into f.
+// Works similarly to unpackSnorm2x16. The floats are unpacked starting from the least significant
+// bits, and clamped to the range -1.0 to 1.0.
+inline void UnpackSnorm4x8(uint32_t u, float *f)
+{
+    for (int i = 0; i < 4; ++i)
+    {
+        int shift   = i * 8;
+        int8_t bits = static_cast<int8_t>((u >> shift) & 0xFF);
+        f[i]        = clamp(static_cast<float>(bits) / 127.0f, -1.0f, 1.0f);
+    }
+}
+
 // Returns an unsigned integer obtained by converting the two floating-point values to the 16-bit
 // floating-point representation found in the OpenGL ES Specification, and then packing these
 // two 16-bit integers into a 32-bit unsigned integer.
@@ -711,6 +789,91 @@ inline void unpackHalf2x16(uint32_t u, float *f1, float *f2)
 
     *f1 = float16ToFloat32(leastSignificantBits);
     *f2 = float16ToFloat32(mostSignificantBits);
+}
+
+// Reverse the order of the bits.
+inline uint32_t BitfieldReverse(uint32_t value)
+{
+    // TODO(oetuaho@nvidia.com): Optimize this if needed. There don't seem to be compiler intrinsics
+    // for this, and right now it's not used in performance-critical paths.
+    uint32_t result = 0u;
+    for (size_t j = 0u; j < 32u; ++j)
+    {
+        result |= (((value >> j) & 1u) << (31u - j));
+    }
+    return result;
+}
+
+// Count the 1 bits.
+inline int BitCount(unsigned int bits)
+{
+#if defined(_MSC_VER)
+    return static_cast<int>(__popcnt(bits));
+#elif defined(__GNUC__)
+    return __builtin_popcount(bits);
+#else
+#error Please implement bit count for your platform!
+#endif
+}
+
+// Return the index of the least significant bit set. Indexing is such that bit 0 is the least
+// significant bit.
+inline unsigned long ScanForward(unsigned long bits)
+{
+    ASSERT(bits != 0u);
+#if defined(ANGLE_PLATFORM_WINDOWS)
+    unsigned long firstBitIndex = 0ul;
+    unsigned char ret           = _BitScanForward(&firstBitIndex, bits);
+    ASSERT(ret != 0u);
+    return firstBitIndex;
+#elif defined(ANGLE_PLATFORM_POSIX)
+    return static_cast<unsigned long>(__builtin_ctzl(bits));
+#else
+#error Please implement bit-scan-forward for your platform!
+#endif
+}
+
+// Return the index of the most significant bit set. Indexing is such that bit 0 is the least
+// significant bit.
+inline unsigned long ScanReverse(unsigned long bits)
+{
+    ASSERT(bits != 0u);
+#if defined(ANGLE_PLATFORM_WINDOWS)
+    unsigned long lastBitIndex = 0ul;
+    unsigned char ret          = _BitScanReverse(&lastBitIndex, bits);
+    ASSERT(ret != 0u);
+    return lastBitIndex;
+#elif defined(ANGLE_PLATFORM_POSIX)
+    return static_cast<unsigned long>(sizeof(unsigned long) * CHAR_BIT - 1 - __builtin_clzl(bits));
+#else
+#error Please implement bit-scan-reverse for your platform!
+#endif
+}
+
+// Returns -1 on 0, otherwise the index of the least significant 1 bit as in GLSL.
+inline int FindLSB(uint32_t bits)
+{
+    if (bits == 0u)
+    {
+        return -1;
+    }
+    else
+    {
+        return static_cast<int>(ScanForward(bits));
+    }
+}
+
+// Returns -1 on 0, otherwise the index of the most significant 1 bit as in GLSL.
+inline int FindMSB(uint32_t bits)
+{
+    if (bits == 0u)
+    {
+        return -1;
+    }
+    else
+    {
+        return static_cast<int>(ScanReverse(bits));
+    }
 }
 
 // Returns whether the argument is Not a Number.

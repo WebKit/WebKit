@@ -6,6 +6,9 @@
 
 #include "compiler/translator/UnfoldShortCircuitAST.h"
 
+namespace sh
+{
+
 namespace
 {
 
@@ -14,8 +17,8 @@ TIntermTernary *UnfoldOR(TIntermTyped *x, TIntermTyped *y)
 {
     TConstantUnion *u = new TConstantUnion;
     u->setBConst(true);
-    TIntermConstantUnion *trueNode = new TIntermConstantUnion(
-        u, TType(EbtBool, EbpUndefined, EvqConst, 1));
+    TIntermConstantUnion *trueNode =
+        new TIntermConstantUnion(u, TType(EbtBool, EbpUndefined, EvqConst, 1));
     return new TIntermTernary(x, trueNode, y);
 }
 
@@ -24,8 +27,8 @@ TIntermTernary *UnfoldAND(TIntermTyped *x, TIntermTyped *y)
 {
     TConstantUnion *u = new TConstantUnion;
     u->setBConst(false);
-    TIntermConstantUnion *falseNode = new TIntermConstantUnion(
-        u, TType(EbtBool, EbpUndefined, EvqConst, 1));
+    TIntermConstantUnion *falseNode =
+        new TIntermConstantUnion(u, TType(EbtBool, EbpUndefined, EvqConst, 1));
     return new TIntermTernary(x, y, falseNode);
 }
 
@@ -37,14 +40,14 @@ bool UnfoldShortCircuitAST::visitBinary(Visit visit, TIntermBinary *node)
 
     switch (node->getOp())
     {
-      case EOpLogicalOr:
-        replacement = UnfoldOR(node->getLeft(), node->getRight());
-        break;
-      case EOpLogicalAnd:
-        replacement = UnfoldAND(node->getLeft(), node->getRight());
-        break;
-      default:
-        break;
+        case EOpLogicalOr:
+            replacement = UnfoldOR(node->getLeft(), node->getRight());
+            break;
+        case EOpLogicalAnd:
+            replacement = UnfoldAND(node->getLeft(), node->getRight());
+            break;
+        default:
+            break;
     }
     if (replacement)
     {
@@ -52,3 +55,5 @@ bool UnfoldShortCircuitAST::visitBinary(Visit visit, TIntermBinary *node)
     }
     return true;
 }
+
+}  // namespace sh

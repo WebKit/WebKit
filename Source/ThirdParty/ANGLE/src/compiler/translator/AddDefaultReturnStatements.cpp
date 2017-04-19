@@ -33,8 +33,8 @@ class AddDefaultReturnStatementsTraverser : private TIntermTraverser
 
     static bool IsFunctionWithoutReturnStatement(TIntermFunctionDefinition *node, TType *returnType)
     {
-        *returnType = node->getType();
-        if (node->getType().getBasicType() == EbtVoid)
+        *returnType = node->getFunctionPrototype()->getType();
+        if (returnType->getBasicType() == EbtVoid)
         {
             return false;
         }

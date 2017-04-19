@@ -24,6 +24,7 @@ class SwapChain11 final : public SwapChainD3D
     SwapChain11(Renderer11 *renderer,
                 NativeWindow11 *nativeWindow,
                 HANDLE shareHandle,
+                IUnknown *d3dTexture,
                 GLenum backBufferFormat,
                 GLenum depthBufferFormat,
                 EGLint orientation);

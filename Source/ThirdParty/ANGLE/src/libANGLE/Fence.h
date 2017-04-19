@@ -54,6 +54,8 @@ class FenceSync final : public RefCountObject, public LabeledObject
     FenceSync(rx::FenceSyncImpl *impl, GLuint id);
     virtual ~FenceSync();
 
+    void destroy(const Context *context) override {}
+
     void setLabel(const std::string &label) override;
     const std::string &getLabel() const override;
 

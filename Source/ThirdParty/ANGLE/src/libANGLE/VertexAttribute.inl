@@ -9,6 +9,19 @@
 namespace gl
 {
 
+inline bool operator==(const VertexBinding &a, const VertexBinding &b)
+{
+    return a.stride == b.stride &&
+           a.divisor == b.divisor &&
+           a.offset == b.offset &&
+           a.buffer.get() == b.buffer.get();
+}
+
+inline bool operator!=(const VertexBinding &a, const VertexBinding &b)
+{
+    return !(a == b);
+}
+
 inline bool operator==(const VertexAttribute &a, const VertexAttribute &b)
 {
     return a.enabled == b.enabled &&
@@ -16,10 +29,10 @@ inline bool operator==(const VertexAttribute &a, const VertexAttribute &b)
            a.size == b.size &&
            a.normalized == b.normalized &&
            a.pureInteger == b.pureInteger &&
-           a.stride == b.stride &&
            a.pointer == b.pointer &&
-           a.buffer.get() == b.buffer.get() &&
-           a.divisor == b.divisor;
+           a.relativeOffset == b.relativeOffset &&
+           a.vertexAttribArrayStride == b.vertexAttribArrayStride &&
+           a.bindingIndex == b.bindingIndex;
 }
 
 inline bool operator!=(const VertexAttribute &a, const VertexAttribute &b)
@@ -73,4 +86,4 @@ inline bool operator!=(const VertexAttribCurrentValueData &a, const VertexAttrib
     return !(a == b);
 }
 
-}
+}  // namespace gl

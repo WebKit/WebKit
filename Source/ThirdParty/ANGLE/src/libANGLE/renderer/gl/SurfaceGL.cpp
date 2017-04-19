@@ -34,4 +34,9 @@ egl::Error SurfaceGL::getSyncValues(EGLuint64KHR *ust, EGLuint64KHR *msc, EGLuin
     UNREACHABLE();
     return egl::Error(EGL_BAD_SURFACE);
 }
+
+egl::Error SurfaceGL::unMakeCurrent()
+{
+    return egl::Error(EGL_SUCCESS);
+}
 }

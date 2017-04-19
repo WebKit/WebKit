@@ -13,9 +13,7 @@
 #include "libANGLE/angletypes.h"
 #include "libANGLE/Error.h"
 
-#if !defined(ANGLE_ENABLE_WINDOWS_STORE)
-typedef void* EventRegistrationToken;
-#else
+#if defined(ANGLE_ENABLE_WINDOWS_STORE)
 #include <EventToken.h>
 #endif
 

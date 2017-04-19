@@ -25,20 +25,18 @@ ShaderNULL::~ShaderNULL()
 ShCompileOptions ShaderNULL::prepareSourceAndReturnOptions(std::stringstream *sourceStream,
                                                            std::string *sourcePath)
 {
-    UNIMPLEMENTED();
-    return ShCompileOptions();
+    *sourceStream << mData.getSource();
+    return 0;
 }
 
 bool ShaderNULL::postTranslateCompile(gl::Compiler *compiler, std::string *infoLog)
 {
-    UNIMPLEMENTED();
-    return bool();
+    return true;
 }
 
 std::string ShaderNULL::getDebugInfo() const
 {
-    UNIMPLEMENTED();
-    return std::string();
+    return "";
 }
 
 }  // namespace rx

@@ -9,8 +9,8 @@
 #ifndef LIBGLESV2_ENTRYPOINTSEGL_H_
 #define LIBGLESV2_ENTRYPOINTSEGL_H_
 
-#include <ANGLE/egl.h>
-#include <ANGLE/export.h>
+#include <EGL/egl.h>
+#include <export.h>
 
 namespace egl
 {

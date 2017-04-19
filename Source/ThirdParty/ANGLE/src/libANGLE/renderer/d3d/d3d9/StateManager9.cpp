@@ -7,7 +7,7 @@
 // StateManager9.cpp: Defines a class for caching D3D9 state
 #include "libANGLE/renderer/d3d/d3d9/StateManager9.h"
 
-#include "common/BitSetIterator.h"
+#include "common/bitset_utils.h"
 #include "common/utilities.h"
 #include "libANGLE/formatutils.h"
 #include "libANGLE/renderer/d3d/d3d9/renderer9_utils.h"
@@ -70,7 +70,7 @@ StateManager9::~StateManager9()
 
 void StateManager9::initialize()
 {
-    mUsingZeroColorMaskWorkaround = mRenderer9->getVendorId() == VENDOR_ID_AMD;
+    mUsingZeroColorMaskWorkaround = IsAMD(mRenderer9->getVendorId());
 }
 
 void StateManager9::forceSetBlendState()
@@ -470,7 +470,7 @@ gl::Error StateManager9::setBlendDepthRasterStates(const gl::State &glState,
         setSampleMask(sampleMask);
     }
 
-    return gl::Error(GL_NO_ERROR);
+    return gl::NoError();
 }
 
 void StateManager9::setViewportState(const gl::Rectangle &viewport,
@@ -750,7 +750,7 @@ void StateManager9::setSampleAlphaToCoverage(bool enabled)
 {
     if (enabled)
     {
-        FIXME("Sample alpha to coverage is unimplemented.");
+        UNREACHABLE();
     }
 }
 

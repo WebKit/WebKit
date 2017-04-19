@@ -14,11 +14,13 @@
 #include <string>
 #include <vector>
 
-// Assume ShaderLang.h is included before ShaderVars.h, for sh::GLenum
-// Note: make sure to increment ANGLE_SH_VERSION when changing ShaderVars.h
+// This type is defined here to simplify ANGLE's integration with glslang for SPIRv.
+using ShCompileOptions = uint64_t;
 
 namespace sh
 {
+// GLenum alias
+typedef unsigned int GLenum;
 
 // Varying interpolation qualifier, see section 4.3.9 of the ESSL 3.00.4 spec
 enum InterpolationType
@@ -29,7 +31,7 @@ enum InterpolationType
 };
 
 // Validate link & SSO consistency of interpolation qualifiers
-COMPILER_EXPORT bool InterpolationTypesMatch(InterpolationType a, InterpolationType b);
+bool InterpolationTypesMatch(InterpolationType a, InterpolationType b);
 
 // Uniform block layout qualifier, see section 4.3.8.3 of the ESSL 3.00.4 spec
 enum BlockLayoutType
@@ -43,7 +45,7 @@ enum BlockLayoutType
 // Note: we must override the copy constructor and assignment operator so we can
 // work around excessive GCC binary bloating:
 // See https://code.google.com/p/angleproject/issues/detail?id=697
-struct COMPILER_EXPORT ShaderVariable
+struct ShaderVariable
 {
     ShaderVariable();
     ShaderVariable(GLenum typeIn, unsigned int arraySizeIn);
@@ -92,7 +94,21 @@ struct COMPILER_EXPORT ShaderVariable
     }
 };
 
-struct COMPILER_EXPORT Uniform : public ShaderVariable
+// A variable with an integer location to pass back to the GL API: either uniform (can have location
+// in GLES3.1+), vertex shader input or fragment shader output.
+struct VariableWithLocation : public ShaderVariable
+{
+    VariableWithLocation();
+    ~VariableWithLocation();
+    VariableWithLocation(const VariableWithLocation &other);
+    VariableWithLocation &operator=(const VariableWithLocation &other);
+    bool operator==(const VariableWithLocation &other) const;
+    bool operator!=(const VariableWithLocation &other) const { return !operator==(other); }
+
+    int location;
+};
+
+struct Uniform : public VariableWithLocation
 {
     Uniform();
     ~Uniform();
@@ -104,28 +120,16 @@ struct COMPILER_EXPORT Uniform : public ShaderVariable
         return !operator==(other);
     }
 
+    int binding;
+
     // Decide whether two uniforms are the same at shader link time,
     // assuming one from vertex shader and the other from fragment shader.
-    // See GLSL ES Spec 3.00.3, sec 4.3.5.
+    // GLSL ES Spec 3.00.3, section 4.3.5.
+    // GLSL ES Spec 3.10.4, section 4.4.5
     bool isSameUniformAtLinkTime(const Uniform &other) const;
 };
 
-// An interface variable is a variable which passes data between the GL data structures and the
-// shader execution: either vertex shader inputs or fragment shader outputs. These variables can
-// have integer locations to pass back to the GL API.
-struct COMPILER_EXPORT InterfaceVariable : public ShaderVariable
-{
-    InterfaceVariable();
-    ~InterfaceVariable();
-    InterfaceVariable(const InterfaceVariable &other);
-    InterfaceVariable &operator=(const InterfaceVariable &other);
-    bool operator==(const InterfaceVariable &other) const;
-    bool operator!=(const InterfaceVariable &other) const { return !operator==(other); }
-
-    int location;
-};
-
-struct COMPILER_EXPORT Attribute : public InterfaceVariable
+struct Attribute : public VariableWithLocation
 {
     Attribute();
     ~Attribute();
@@ -135,7 +139,7 @@ struct COMPILER_EXPORT Attribute : public InterfaceVariable
     bool operator!=(const Attribute &other) const { return !operator==(other); }
 };
 
-struct COMPILER_EXPORT OutputVariable : public InterfaceVariable
+struct OutputVariable : public VariableWithLocation
 {
     OutputVariable();
     ~OutputVariable();
@@ -145,7 +149,7 @@ struct COMPILER_EXPORT OutputVariable : public InterfaceVariable
     bool operator!=(const OutputVariable &other) const { return !operator==(other); }
 };
 
-struct COMPILER_EXPORT InterfaceBlockField : public ShaderVariable
+struct InterfaceBlockField : public ShaderVariable
 {
     InterfaceBlockField();
     ~InterfaceBlockField();
@@ -167,7 +171,7 @@ struct COMPILER_EXPORT InterfaceBlockField : public ShaderVariable
     bool isRowMajorLayout;
 };
 
-struct COMPILER_EXPORT Varying : public ShaderVariable
+struct Varying : public ShaderVariable
 {
     Varying();
     ~Varying();
@@ -193,7 +197,7 @@ struct COMPILER_EXPORT Varying : public ShaderVariable
     bool isInvariant;
 };
 
-struct COMPILER_EXPORT InterfaceBlock
+struct InterfaceBlock
 {
     InterfaceBlock();
     ~InterfaceBlock();
@@ -216,7 +220,7 @@ struct COMPILER_EXPORT InterfaceBlock
     std::vector<InterfaceBlockField> fields;
 };
 
-struct COMPILER_EXPORT WorkGroupSize
+struct WorkGroupSize
 {
     void fill(int fillValue);
     void setLocalSize(int localSizeX, int localSizeY, int localSizeZ);

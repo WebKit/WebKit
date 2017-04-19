@@ -65,6 +65,10 @@ class IndexDataManager : angle::NonCopyable
     explicit IndexDataManager(BufferFactoryD3D *factory, RendererClass rendererClass);
     virtual ~IndexDataManager();
 
+    bool usePrimitiveRestartWorkaround(bool primitiveRestartFixedIndexEnabled, GLenum type);
+    bool isStreamingIndexData(bool primitiveRestartWorkaround,
+                              GLenum srcType,
+                              gl::Buffer *glBuffer);
     gl::Error prepareIndexData(GLenum srcType,
                                GLsizei count,
                                gl::Buffer *glBuffer,

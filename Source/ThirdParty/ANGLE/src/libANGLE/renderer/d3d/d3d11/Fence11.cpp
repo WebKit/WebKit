@@ -4,7 +4,8 @@
 // found in the LICENSE file.
 //
 
-// Fence11.cpp: Defines the rx::FenceNV11 and rx::FenceSync11 classes which implement rx::FenceNVImpl and rx::FenceSyncImpl.
+// Fence11.cpp: Defines the rx::FenceNV11 and rx::FenceSync11 classes which implement
+// rx::FenceNVImpl and rx::FenceSyncImpl.
 
 #include "libANGLE/renderer/d3d/d3d11/Fence11.h"
 #include "libANGLE/renderer/d3d/d3d11/Renderer11.h"
@@ -20,24 +21,25 @@ static const int kDeviceLostCheckPeriod = 64;
 // Template helpers for set and test operations.
 //
 
-template<class FenceClass>
+template <class FenceClass>
 gl::Error FenceSetHelper(FenceClass *fence)
 {
     if (!fence->mQuery)
     {
         D3D11_QUERY_DESC queryDesc;
-        queryDesc.Query = D3D11_QUERY_EVENT;
+        queryDesc.Query     = D3D11_QUERY_EVENT;
         queryDesc.MiscFlags = 0;
 
         HRESULT result = fence->mRenderer->getDevice()->CreateQuery(&queryDesc, &fence->mQuery);
         if (FAILED(result))
         {
-            return gl::Error(GL_OUT_OF_MEMORY, "Failed to create event query, result: 0x%X.", result);
+            return gl::Error(GL_OUT_OF_MEMORY, "Failed to create event query, result: 0x%X.",
+                             result);
         }
     }
 
     fence->mRenderer->getDeviceContext()->End(fence->mQuery);
-    return gl::Error(GL_NO_ERROR);
+    return gl::NoError();
 }
 
 template <class FenceClass>
@@ -46,7 +48,8 @@ gl::Error FenceTestHelper(FenceClass *fence, bool flushCommandBuffer, GLboolean 
     ASSERT(fence->mQuery);
 
     UINT getDataFlags = (flushCommandBuffer ? 0 : D3D11_ASYNC_GETDATA_DONOTFLUSH);
-    HRESULT result = fence->mRenderer->getDeviceContext()->GetData(fence->mQuery, NULL, 0, getDataFlags);
+    HRESULT result =
+        fence->mRenderer->getDeviceContext()->GetData(fence->mQuery, NULL, 0, getDataFlags);
 
     if (FAILED(result))
     {
@@ -55,17 +58,14 @@ gl::Error FenceTestHelper(FenceClass *fence, bool flushCommandBuffer, GLboolean 
 
     ASSERT(result == S_OK || result == S_FALSE);
     *outFinished = ((result == S_OK) ? GL_TRUE : GL_FALSE);
-    return gl::Error(GL_NO_ERROR);
+    return gl::NoError();
 }
 
 //
 // FenceNV11
 //
 
-FenceNV11::FenceNV11(Renderer11 *renderer)
-    : FenceNVImpl(),
-      mRenderer(renderer),
-      mQuery(NULL)
+FenceNV11::FenceNV11(Renderer11 *renderer) : FenceNVImpl(), mRenderer(renderer), mQuery(NULL)
 {
 }
 
@@ -121,14 +121,10 @@ gl::Error FenceNV11::finish()
 // We still opt to use QPC. In the present and moving forward, most newer systems will not suffer
 // from buggy implementations.
 
-FenceSync11::FenceSync11(Renderer11 *renderer)
-    : FenceSyncImpl(),
-      mRenderer(renderer),
-      mQuery(NULL)
+FenceSync11::FenceSync11(Renderer11 *renderer) : FenceSyncImpl(), mRenderer(renderer), mQuery(NULL)
 {
     LARGE_INTEGER counterFreqency = {};
-    BOOL success = QueryPerformanceFrequency(&counterFreqency);
-    UNUSED_ASSERTION_VARIABLE(success);
+    BOOL success                  = QueryPerformanceFrequency(&counterFreqency);
     ASSERT(success);
 
     mCounterFrequency = counterFreqency.QuadPart;
@@ -152,7 +148,7 @@ gl::Error FenceSync11::clientWait(GLbitfield flags, GLuint64 timeout, GLenum *ou
     bool flushCommandBuffer = ((flags & GL_SYNC_FLUSH_COMMANDS_BIT) != 0);
 
     GLboolean result = GL_FALSE;
-    gl::Error error = FenceTestHelper(this, flushCommandBuffer, &result);
+    gl::Error error  = FenceTestHelper(this, flushCommandBuffer, &result);
     if (error.isError())
     {
         *outResult = GL_WAIT_FAILED;
@@ -162,22 +158,21 @@ gl::Error FenceSync11::clientWait(GLbitfield flags, GLuint64 timeout, GLenum *ou
     if (result == GL_TRUE)
     {
         *outResult = GL_ALREADY_SIGNALED;
-        return gl::Error(GL_NO_ERROR);
+        return gl::NoError();
     }
 
     if (timeout == 0)
     {
         *outResult = GL_TIMEOUT_EXPIRED;
-        return gl::Error(GL_NO_ERROR);
+        return gl::NoError();
     }
 
     LARGE_INTEGER currentCounter = {};
-    BOOL success = QueryPerformanceCounter(&currentCounter);
-    UNUSED_ASSERTION_VARIABLE(success);
+    BOOL success                 = QueryPerformanceCounter(&currentCounter);
     ASSERT(success);
 
     LONGLONG timeoutInSeconds = static_cast<LONGLONG>(timeout) * static_cast<LONGLONG>(1000000ll);
-    LONGLONG endCounter = currentCounter.QuadPart + mCounterFrequency * timeoutInSeconds;
+    LONGLONG endCounter       = currentCounter.QuadPart + mCounterFrequency * timeoutInSeconds;
 
     int loopCount = 0;
     while (currentCounter.QuadPart < endCounter && !result)
@@ -185,7 +180,6 @@ gl::Error FenceSync11::clientWait(GLbitfield flags, GLuint64 timeout, GLenum *ou
         loopCount++;
         ScheduleYield();
         success = QueryPerformanceCounter(&currentCounter);
-        UNUSED_ASSERTION_VARIABLE(success);
         ASSERT(success);
 
         error = FenceTestHelper(this, flushCommandBuffer, &result);
@@ -212,32 +206,32 @@ gl::Error FenceSync11::clientWait(GLbitfield flags, GLuint64 timeout, GLenum *ou
         *outResult = GL_CONDITION_SATISFIED;
     }
 
-    return gl::Error(GL_NO_ERROR);
+    return gl::NoError();
 }
 
 gl::Error FenceSync11::serverWait(GLbitfield flags, GLuint64 timeout)
 {
     // Because our API is currently designed to be called from a single thread, we don't need to do
-    // extra work for a server-side fence. GPU commands issued after the fence is created will always
-    // be processed after the fence is signaled.
-    return gl::Error(GL_NO_ERROR);
+    // extra work for a server-side fence. GPU commands issued after the fence is created will
+    // always be processed after the fence is signaled.
+    return gl::NoError();
 }
 
 gl::Error FenceSync11::getStatus(GLint *outResult)
 {
     GLboolean result = GL_FALSE;
-    gl::Error error = FenceTestHelper(this, false, &result);
+    gl::Error error  = FenceTestHelper(this, false, &result);
     if (error.isError())
     {
-        // The spec does not specify any way to report errors during the status test (e.g. device lost)
-        // so we report the fence is unblocked in case of error or signaled.
+        // The spec does not specify any way to report errors during the status test (e.g. device
+        // lost) so we report the fence is unblocked in case of error or signaled.
         *outResult = GL_SIGNALED;
 
         return error;
     }
 
     *outResult = (result ? GL_SIGNALED : GL_UNSIGNALED);
-    return gl::Error(GL_NO_ERROR);
+    return gl::NoError();
 }
 
-} // namespace rx
+}  // namespace rx

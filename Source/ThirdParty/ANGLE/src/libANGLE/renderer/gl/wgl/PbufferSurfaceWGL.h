@@ -34,10 +34,10 @@ class PbufferSurfaceWGL : public SurfaceGL
                       const FunctionsWGL *functions);
     ~PbufferSurfaceWGL() override;
 
-    egl::Error initialize() override;
+    egl::Error initialize(const DisplayImpl *displayImpl) override;
     egl::Error makeCurrent() override;
 
-    egl::Error swap() override;
+    egl::Error swap(const DisplayImpl *displayImpl) override;
     egl::Error postSubBuffer(EGLint x, EGLint y, EGLint width, EGLint height) override;
     egl::Error querySurfacePointerANGLE(EGLint attribute, void **value) override;
     egl::Error bindTexImage(gl::Texture *texture, EGLint buffer) override;

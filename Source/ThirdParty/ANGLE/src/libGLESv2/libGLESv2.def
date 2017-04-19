@@ -408,6 +408,5 @@ EXPORTS
     glVertexBindingDivisor          @412
 
     ; ANGLE Platform Implementation
-    ANGLEPlatformCurrent            @290
-    ANGLEPlatformInitialize         @291
-    ANGLEPlatformShutdown           @292
+    ANGLEGetDisplayPlatform         @290
+    ANGLEResetDisplayPlatform       @291

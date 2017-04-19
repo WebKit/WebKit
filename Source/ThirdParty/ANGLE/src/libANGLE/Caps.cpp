@@ -5,8 +5,11 @@
 //
 
 #include "libANGLE/Caps.h"
+
 #include "common/debug.h"
 #include "common/angleutils.h"
+
+#include "libANGLE/formatutils.h"
 
 #include "angle_gl.h"
 
@@ -56,6 +59,22 @@ GLuint TextureCaps::getNearestSamples(GLuint requestedSamples) const
     return 0;
 }
 
+TextureCaps GenerateMinimumTextureCaps(GLenum internalFormat,
+                                       const Version &clientVersion,
+                                       const Extensions &extensions)
+{
+    TextureCaps caps;
+
+    const InternalFormat &internalFormatInfo = GetInternalFormatInfo(internalFormat);
+    caps.texturable = internalFormatInfo.textureSupport(clientVersion, extensions);
+    caps.renderable = internalFormatInfo.renderSupport(clientVersion, extensions);
+    caps.filterable = internalFormatInfo.filterSupport(clientVersion, extensions);
+
+    caps.sampleCounts.insert(0);
+
+    return caps;
+}
+
 void TextureCapsMap::insert(GLenum internalFormat, const TextureCaps &caps)
 {
     mCapsMap[internalFormat] = caps;
@@ -77,10 +96,8 @@ void TextureCapsMap::clear()
 
 const TextureCaps &TextureCapsMap::get(GLenum internalFormat) const
 {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wexit-time-destructors"
     static TextureCaps defaultUnsupportedTexture;
-#pragma clang diagnostic pop
+
     InternalFormatToCapsMap::const_iterator iter = mCapsMap.find(internalFormat);
     return (iter != mCapsMap.end()) ? iter->second : defaultUnsupportedTexture;
 }
@@ -98,6 +115,20 @@ TextureCapsMap::const_iterator TextureCapsMap::end() const
 size_t TextureCapsMap::size() const
 {
     return mCapsMap.size();
+}
+
+TextureCapsMap GenerateMinimumTextureCapsMap(const Version &clientVersion,
+                                             const Extensions &extensions)
+{
+    TextureCapsMap capsMap;
+
+    for (GLenum internalFormat : GetAllSizedInternalFormats())
+    {
+        capsMap.insert(internalFormat,
+                       GenerateMinimumTextureCaps(internalFormat, clientVersion, extensions));
+    }
+
+    return capsMap;
 }
 
 Extensions::Extensions()
@@ -119,16 +150,18 @@ Extensions::Extensions()
       textureCompressionDXT1(false),
       textureCompressionDXT3(false),
       textureCompressionDXT5(false),
+      textureCompressionS3TCsRGB(false),
       textureCompressionASTCHDR(false),
       textureCompressionASTCLDR(false),
       compressedETC1RGB8Texture(false),
+      sRGB(false),
       depthTextures(false),
       depth32(false),
       textureStorage(false),
       textureNPOT(false),
       drawBuffers(false),
       textureFilterAnisotropic(false),
-      maxTextureAnisotropy(false),
+      maxTextureAnisotropy(0.0f),
       occlusionQueryBoolean(false),
       fence(false),
       timerQuery(false),
@@ -171,13 +204,19 @@ Extensions::Extensions()
       copyTexture(false),
       copyCompressedTexture(false),
       webglCompatibility(false),
+      requestExtension(false),
       bindGeneratesResource(false),
       robustClientMemory(false),
+      textureSRGBDecode(false),
+      sRGBWriteControl(false),
       colorBufferFloat(false),
       multisampleCompatibility(false),
       framebufferMixedSamples(false),
       textureNorm16(false),
-      pathRendering(false)
+      pathRendering(false),
+      surfacelessContext(false),
+      clientArrays(false),
+      robustResourceInitialization(false)
 {
 }
 
@@ -362,6 +401,18 @@ static bool DetermineDXT5TextureSupport(const TextureCapsMap &textureCaps)
     return GetFormatSupport(textureCaps, requiredFormats, true, true, false);
 }
 
+// Check for GL_EXT_texture_compression_s3tc_srgb
+static bool DetermineS3TCsRGBTextureSupport(const TextureCapsMap &textureCaps)
+{
+    std::vector<GLenum> requiredFormats;
+    requiredFormats.push_back(GL_COMPRESSED_SRGB_S3TC_DXT1_EXT);
+    requiredFormats.push_back(GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT);
+    requiredFormats.push_back(GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT);
+    requiredFormats.push_back(GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT);
+
+    return GetFormatSupport(textureCaps, requiredFormats, true, true, false);
+}
+
 // Check for GL_KHR_texture_compression_astc_hdr and GL_KHR_texture_compression_astc_ldr
 static bool DetermineASTCTextureSupport(const TextureCapsMap &textureCaps)
 {
@@ -492,6 +543,7 @@ void Extensions::setTextureExtensionSupport(const TextureCapsMap &textureCaps)
     textureCompressionDXT1 = DetermineDXT1TextureSupport(textureCaps);
     textureCompressionDXT3 = DetermineDXT3TextureSupport(textureCaps);
     textureCompressionDXT5 = DetermineDXT5TextureSupport(textureCaps);
+    textureCompressionS3TCsRGB = DetermineS3TCsRGBTextureSupport(textureCaps);
     textureCompressionASTCHDR = DetermineASTCTextureSupport(textureCaps);
     textureCompressionASTCLDR = textureCompressionASTCHDR;
     compressedETC1RGB8Texture = DetermineETC1RGB8TextureSupport(textureCaps);
@@ -507,7 +559,7 @@ const ExtensionInfoMap &GetExtensionInfoMap()
     auto buildExtensionInfoMap = []() {
         auto enableableExtension = [](ExtensionInfo::ExtensionBool member) {
             ExtensionInfo info;
-            info.Enableable       = true;
+            info.Requestable      = true;
             info.ExtensionsMember = member;
             return info;
         };
@@ -538,6 +590,7 @@ const ExtensionInfoMap &GetExtensionInfoMap()
         map["GL_EXT_texture_compression_dxt1"] = esOnlyExtension(&Extensions::textureCompressionDXT1);
         map["GL_ANGLE_texture_compression_dxt3"] = esOnlyExtension(&Extensions::textureCompressionDXT3);
         map["GL_ANGLE_texture_compression_dxt5"] = esOnlyExtension(&Extensions::textureCompressionDXT5);
+        map["GL_EXT_texture_compression_s3tc_srgb"] = esOnlyExtension(&Extensions::textureCompressionS3TCsRGB);
         map["GL_KHR_texture_compression_astc_hdr"] = esOnlyExtension(&Extensions::textureCompressionASTCHDR);
         map["GL_KHR_texture_compression_astc_ldr"] = esOnlyExtension(&Extensions::textureCompressionASTCLDR);
         map["GL_OES_compressed_ETC1_RGB8_texture"] = esOnlyExtension(&Extensions::compressedETC1RGB8Texture);
@@ -545,9 +598,9 @@ const ExtensionInfoMap &GetExtensionInfoMap()
         map["GL_ANGLE_depth_texture"] = esOnlyExtension(&Extensions::depthTextures);
         map["GL_OES_depth32"] = esOnlyExtension(&Extensions::depth32);
         map["GL_EXT_texture_storage"] = esOnlyExtension(&Extensions::textureStorage);
-        map["GL_OES_texture_npot"] = esOnlyExtension(&Extensions::textureNPOT);
-        map["GL_EXT_draw_buffers"] = esOnlyExtension(&Extensions::drawBuffers);
-        map["GL_EXT_texture_filter_anisotropic"] = esOnlyExtension(&Extensions::textureFilterAnisotropic);
+        map["GL_OES_texture_npot"] = enableableExtension(&Extensions::textureNPOT);
+        map["GL_EXT_draw_buffers"] = enableableExtension(&Extensions::drawBuffers);
+        map["GL_EXT_texture_filter_anisotropic"] = enableableExtension(&Extensions::textureFilterAnisotropic);
         map["GL_EXT_occlusion_query_boolean"] = esOnlyExtension(&Extensions::occlusionQueryBoolean);
         map["GL_NV_fence"] = esOnlyExtension(&Extensions::fence);
         map["GL_ANGLE_timer_query"] = esOnlyExtension(&Extensions::timerQuery);
@@ -586,56 +639,58 @@ const ExtensionInfoMap &GetExtensionInfoMap()
         map["GL_CHROMIUM_copy_texture"] = esOnlyExtension(&Extensions::copyTexture);
         map["GL_CHROMIUM_copy_compressed_texture"] = esOnlyExtension(&Extensions::copyCompressedTexture);
         map["GL_ANGLE_webgl_compatibility"] = esOnlyExtension(&Extensions::webglCompatibility);
+        map["GL_ANGLE_request_extension"] = esOnlyExtension(&Extensions::requestExtension);
         map["GL_CHROMIUM_bind_generates_resource"] = esOnlyExtension(&Extensions::bindGeneratesResource);
         map["GL_ANGLE_robust_client_memory"] = esOnlyExtension(&Extensions::robustClientMemory);
+        map["GL_EXT_texture_sRGB_decode"] = esOnlyExtension(&Extensions::textureSRGBDecode);
+        map["GL_EXT_sRGB_write_control"] = esOnlyExtension(&Extensions::sRGBWriteControl);
         map["GL_EXT_multisample_compatibility"] = esOnlyExtension(&Extensions::multisampleCompatibility);
         map["GL_CHROMIUM_framebuffer_mixed_samples"] = esOnlyExtension(&Extensions::framebufferMixedSamples);
         map["GL_EXT_texture_norm16"] = esOnlyExtension(&Extensions::textureNorm16);
         map["GL_CHROMIUM_path_rendering"] = esOnlyExtension(&Extensions::pathRendering);
+        map["GL_OES_surfaceless_context"] = esOnlyExtension(&Extensions::surfacelessContext);
+        map["GL_ANGLE_client_arrays"] = esOnlyExtension(&Extensions::clientArrays);
+        map["GL_ANGLE_robust_resource_initialization"] = esOnlyExtension(&Extensions::robustResourceInitialization);
         // clang-format on
 
         return map;
     };
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wexit-time-destructors"
     static const ExtensionInfoMap extensionInfo = buildExtensionInfoMap();
-#pragma clang diagnostic pop
     return extensionInfo;
 }
 
-TypePrecision::TypePrecision()
+TypePrecision::TypePrecision() : range({{0, 0}}), precision(0)
 {
-    range[0] = 0;
-    range[1] = 0;
-    precision = 0;
 }
 
 void TypePrecision::setIEEEFloat()
 {
-    range[0] = 127;
-    range[1] = 127;
+    range     = {{127, 127}};
     precision = 23;
 }
 
 void TypePrecision::setTwosComplementInt(unsigned int bits)
 {
-    range[0] = GLint(bits) - 1;
-    range[1] = GLint(bits) - 2;
+    range     = {{static_cast<GLint>(bits) - 1, static_cast<GLint>(bits) - 2}};
     precision = 0;
+}
+
+void TypePrecision::setSimulatedFloat(unsigned int r, unsigned int p)
+{
+    range     = {{static_cast<GLint>(r), static_cast<GLint>(r)}};
+    precision = static_cast<GLint>(p);
 }
 
 void TypePrecision::setSimulatedInt(unsigned int r)
 {
-    range[0] = GLint(r);
-    range[1] = GLint(r);
+    range     = {{static_cast<GLint>(r), static_cast<GLint>(r)}};
     precision = 0;
 }
 
 void TypePrecision::get(GLint *returnRange, GLint *returnPrecision) const
 {
-    returnRange[0] = range[0];
-    returnRange[1] = range[1];
+    std::copy(range.begin(), range.end(), returnRange);
     *returnPrecision = precision;
 }
 
@@ -753,6 +808,195 @@ Caps::Caps()
     }
 }
 
+Caps GenerateMinimumCaps(const Version &clientVersion)
+{
+    Caps caps;
+
+    if (clientVersion >= Version(2, 0))
+    {
+        // Table 6.18
+        caps.max2DTextureSize      = 64;
+        caps.maxCubeMapTextureSize = 16;
+        caps.maxViewportWidth      = caps.max2DTextureSize;
+        caps.maxViewportHeight     = caps.max2DTextureSize;
+        caps.minAliasedPointSize   = 1;
+        caps.maxAliasedPointSize   = 1;
+        caps.minAliasedLineWidth   = 1;
+        caps.maxAliasedLineWidth   = 1;
+
+        // Table 6.19
+        caps.vertexHighpFloat.setSimulatedFloat(62, 16);
+        caps.vertexMediumpFloat.setSimulatedFloat(14, 10);
+        caps.vertexLowpFloat.setSimulatedFloat(1, 8);
+        caps.vertexHighpInt.setSimulatedInt(16);
+        caps.vertexMediumpInt.setSimulatedInt(10);
+        caps.vertexLowpInt.setSimulatedInt(8);
+        caps.fragmentHighpFloat.setSimulatedFloat(62, 16);
+        caps.fragmentMediumpFloat.setSimulatedFloat(14, 10);
+        caps.fragmentLowpFloat.setSimulatedFloat(1, 8);
+        caps.fragmentHighpInt.setSimulatedInt(16);
+        caps.fragmentMediumpInt.setSimulatedInt(10);
+        caps.fragmentLowpInt.setSimulatedInt(8);
+
+        // Table 6.20
+        caps.maxVertexAttributes          = 8;
+        caps.maxVertexUniformVectors      = 128;
+        caps.maxVaryingVectors            = 8;
+        caps.maxCombinedTextureImageUnits = 8;
+        caps.maxTextureImageUnits         = 8;
+        caps.maxFragmentUniformVectors    = 16;
+        caps.maxRenderbufferSize          = 1;
+    }
+
+    if (clientVersion >= Version(3, 0))
+    {
+        // Table 6.28
+        caps.maxElementIndex       = (1 << 24) - 1;
+        caps.max3DTextureSize      = 256;
+        caps.max2DTextureSize      = 2048;
+        caps.maxArrayTextureLayers = 256;
+        caps.maxLODBias            = 2.0f;
+        caps.maxCubeMapTextureSize = 2048;
+        caps.maxRenderbufferSize   = 2048;
+        caps.maxDrawBuffers        = 4;
+        caps.maxColorAttachments   = 4;
+        caps.maxViewportWidth      = caps.max2DTextureSize;
+        caps.maxViewportHeight     = caps.max2DTextureSize;
+
+        // Table 6.29
+        caps.compressedTextureFormats.push_back(GL_COMPRESSED_R11_EAC);
+        caps.compressedTextureFormats.push_back(GL_COMPRESSED_SIGNED_R11_EAC);
+        caps.compressedTextureFormats.push_back(GL_COMPRESSED_RG11_EAC);
+        caps.compressedTextureFormats.push_back(GL_COMPRESSED_SIGNED_RG11_EAC);
+        caps.compressedTextureFormats.push_back(GL_COMPRESSED_RGB8_ETC2);
+        caps.compressedTextureFormats.push_back(GL_COMPRESSED_SRGB8_ETC2);
+        caps.compressedTextureFormats.push_back(GL_COMPRESSED_RGB8_PUNCHTHROUGH_ALPHA1_ETC2);
+        caps.compressedTextureFormats.push_back(GL_COMPRESSED_SRGB8_PUNCHTHROUGH_ALPHA1_ETC2);
+        caps.compressedTextureFormats.push_back(GL_COMPRESSED_RGBA8_ETC2_EAC);
+        caps.compressedTextureFormats.push_back(GL_COMPRESSED_SRGB8_ALPHA8_ETC2_EAC);
+        caps.vertexHighpFloat.setIEEEFloat();
+        caps.vertexHighpInt.setTwosComplementInt(32);
+        caps.vertexMediumpInt.setTwosComplementInt(16);
+        caps.vertexLowpInt.setTwosComplementInt(8);
+        caps.fragmentHighpFloat.setIEEEFloat();
+        caps.fragmentHighpInt.setSimulatedInt(32);
+        caps.fragmentMediumpInt.setTwosComplementInt(16);
+        caps.fragmentLowpInt.setTwosComplementInt(8);
+        caps.maxServerWaitTimeout = 0;
+
+        // Table 6.31
+        caps.maxVertexAttributes        = 16;
+        caps.maxVertexUniformComponents = 1024;
+        caps.maxVertexUniformVectors    = 256;
+        caps.maxVertexUniformBlocks     = 12;
+        caps.maxVertexOutputComponents  = 64;
+        caps.maxVertexTextureImageUnits = 16;
+
+        // Table 6.32
+        caps.maxFragmentUniformComponents = 896;
+        caps.maxFragmentUniformVectors    = 224;
+        caps.maxFragmentUniformBlocks     = 12;
+        caps.maxFragmentInputComponents   = 60;
+        caps.maxTextureImageUnits         = 16;
+        caps.minProgramTexelOffset        = -8;
+        caps.maxProgramTexelOffset        = 7;
+
+        // Table 6.33
+        caps.maxUniformBufferBindings     = 24;
+        caps.maxUniformBlockSize          = 16384;
+        caps.uniformBufferOffsetAlignment = 256;
+        caps.maxCombinedUniformBlocks     = 24;
+        caps.maxCombinedVertexUniformComponents =
+            caps.maxVertexUniformBlocks * (caps.maxUniformBlockSize / 4) +
+            caps.maxVertexUniformComponents;
+        caps.maxCombinedFragmentUniformComponents =
+            caps.maxFragmentUniformBlocks * (caps.maxUniformBlockSize / 4) +
+            caps.maxFragmentUniformComponents;
+        caps.maxVaryingComponents         = 60;
+        caps.maxVaryingVectors            = 15;
+        caps.maxCombinedTextureImageUnits = 32;
+
+        // Table 6.34
+        caps.maxTransformFeedbackInterleavedComponents = 64;
+        caps.maxTransformFeedbackSeparateAttributes    = 4;
+        caps.maxTransformFeedbackSeparateComponents    = 4;
+
+        // Table 3.35
+        caps.maxSamples = 4;
+    }
+
+    if (clientVersion >= Version(3, 1))
+    {
+        // Table 20.40
+        caps.maxFramebufferWidth    = 2048;
+        caps.maxFramebufferHeight   = 2048;
+        caps.maxFramebufferSamples  = 4;
+        caps.maxSampleMaskWords     = 1;
+        caps.maxColorTextureSamples = 1;
+        caps.maxDepthTextureSamples = 1;
+        caps.maxIntegerSamples      = 1;
+
+        // Table 20.41
+        caps.maxVertexAttribRelativeOffset = 2047;
+        caps.maxVertexAttribBindings       = 16;
+        caps.maxVertexAttribStride         = 2048;
+
+        // Table 20.43
+        caps.maxVertexAtomicCounterBuffers = 0;
+        caps.maxVertexAtomicCounters       = 0;
+        caps.maxVertexImageUniforms        = 0;
+        caps.maxVertexShaderStorageBlocks  = 0;
+
+        // Table 20.44
+        caps.maxFragmentUniformComponents    = 1024;
+        caps.maxFragmentUniformVectors       = 256;
+        caps.maxFragmentAtomicCounterBuffers = 0;
+        caps.maxFragmentAtomicCounters       = 0;
+        caps.maxFragmentImageUniforms        = 0;
+        caps.maxFragmentShaderStorageBlocks  = 0;
+        caps.minProgramTextureGatherOffset   = 0;
+        caps.maxProgramTextureGatherOffset   = 0;
+
+        // Table 20.45
+        caps.maxComputeWorkGroupCount       = {{65535, 65535, 65535}};
+        caps.maxComputeWorkGroupSize        = {{128, 128, 64}};
+        caps.maxComputeWorkGroupInvocations = 12;
+        caps.maxComputeUniformBlocks        = 12;
+        caps.maxComputeTextureImageUnits    = 16;
+        caps.maxComputeSharedMemorySize     = 16384;
+        caps.maxComputeUniformComponents    = 1024;
+        caps.maxComputeAtomicCounterBuffers = 1;
+        caps.maxComputeAtomicCounters       = 8;
+        caps.maxComputeImageUniforms        = 4;
+        caps.maxCombinedComputeUniformComponents =
+            caps.maxComputeUniformBlocks * static_cast<GLuint>(caps.maxUniformBlockSize / 4) +
+            caps.maxComputeUniformComponents;
+        caps.maxComputeShaderStorageBlocks = 4;
+
+        // Table 20.46
+        caps.maxUniformBufferBindings = 36;
+        caps.maxCombinedFragmentUniformComponents =
+            caps.maxFragmentUniformBlocks * (caps.maxUniformBlockSize / 4) +
+            caps.maxFragmentUniformComponents;
+        caps.maxCombinedTextureImageUnits     = 48;
+        caps.maxCombinedShaderOutputResources = 4;
+
+        // Table 20.47
+        caps.maxUniformLocations                = 1024;
+        caps.maxAtomicCounterBufferBindings     = 1;
+        caps.maxAtomicCounterBufferSize         = 32;
+        caps.maxCombinedAtomicCounterBuffers    = 1;
+        caps.maxCombinedAtomicCounters          = 8;
+        caps.maxImageUnits                      = 4;
+        caps.maxCombinedImageUniforms           = 4;
+        caps.maxShaderStorageBufferBindings     = 4;
+        caps.maxShaderStorageBlockSize          = 1 << 27;
+        caps.maxCombinedShaderStorageBlocks     = 4;
+        caps.shaderStorageBufferOffsetAlignment = 256;
+    }
+
+    return caps;
+}
 }
 
 namespace egl
@@ -766,6 +1010,7 @@ Caps::Caps()
 DisplayExtensions::DisplayExtensions()
     : createContextRobustness(false),
       d3dShareHandleClientBuffer(false),
+      d3dTextureClientBuffer(false),
       surfaceD3DTexture2DShareHandle(false),
       querySurfacePointer(false),
       windowFixedSize(false),
@@ -791,7 +1036,13 @@ DisplayExtensions::DisplayExtensions()
       streamProducerD3DTextureNV12(false),
       createContextWebGLCompatibility(false),
       createContextBindGeneratesResource(false),
-      getSyncValues(false)
+      getSyncValues(false),
+      swapBuffersWithDamage(false),
+      pixelFormatFloat(false),
+      surfacelessContext(false),
+      displayTextureShareGroup(false),
+      createContextClientArrays(false),
+      createContextRobustResourceInitialization(false)
 {
 }
 
@@ -803,6 +1054,7 @@ std::vector<std::string> DisplayExtensions::getStrings() const
     //                   | Extension name                                       | Supported flag                    | Output vector   |
     InsertExtensionString("EGL_EXT_create_context_robustness",                   createContextRobustness,            &extensionStrings);
     InsertExtensionString("EGL_ANGLE_d3d_share_handle_client_buffer",            d3dShareHandleClientBuffer,         &extensionStrings);
+    InsertExtensionString("EGL_ANGLE_d3d_texture_client_buffer",                 d3dTextureClientBuffer,             &extensionStrings);
     InsertExtensionString("EGL_ANGLE_surface_d3d_texture_2d_share_handle",       surfaceD3DTexture2DShareHandle,     &extensionStrings);
     InsertExtensionString("EGL_ANGLE_query_surface_pointer",                     querySurfacePointer,                &extensionStrings);
     InsertExtensionString("EGL_ANGLE_window_fixed_size",                         windowFixedSize,                    &extensionStrings);
@@ -828,6 +1080,12 @@ std::vector<std::string> DisplayExtensions::getStrings() const
     InsertExtensionString("EGL_ANGLE_create_context_webgl_compatibility",        createContextWebGLCompatibility,    &extensionStrings);
     InsertExtensionString("EGL_CHROMIUM_create_context_bind_generates_resource", createContextBindGeneratesResource, &extensionStrings);
     InsertExtensionString("EGL_CHROMIUM_sync_control",                           getSyncValues,                      &extensionStrings);
+    InsertExtensionString("EGL_EXT_swap_buffers_with_damage",                    swapBuffersWithDamage,              &extensionStrings);
+    InsertExtensionString("EGL_EXT_pixel_format_float",                          pixelFormatFloat,                   &extensionStrings);
+    InsertExtensionString("EGL_KHR_surfaceless_context",                         surfacelessContext,                 &extensionStrings);
+    InsertExtensionString("EGL_ANGLE_display_texture_share_group",               displayTextureShareGroup,           &extensionStrings);
+    InsertExtensionString("EGL_ANGLE_create_context_client_arrays",              createContextClientArrays,          &extensionStrings);
+    InsertExtensionString("EGL_ANGLE_create_context_robust_resource_initialization", createContextRobustResourceInitialization, &extensionStrings);
     // TODO(jmadill): Enable this when complete.
     //InsertExtensionString("KHR_create_context_no_error",                       createContextNoError,               &extensionStrings);
     // clang-format on
@@ -857,6 +1115,7 @@ ClientExtensions::ClientExtensions()
       platformANGLE(false),
       platformANGLED3D(false),
       platformANGLEOpenGL(false),
+      platformANGLEVulkan(false),
       deviceCreation(false),
       deviceCreationD3D11(false),
       x11Visual(false),
@@ -878,6 +1137,7 @@ std::vector<std::string> ClientExtensions::getStrings() const
     InsertExtensionString("EGL_ANGLE_platform_angle_d3d",          platformANGLED3D,          &extensionStrings);
     InsertExtensionString("EGL_ANGLE_platform_angle_opengl",       platformANGLEOpenGL,       &extensionStrings);
     InsertExtensionString("EGL_ANGLE_platform_angle_null",         platformANGLENULL,         &extensionStrings);
+    InsertExtensionString("EGL_ANGLE_platform_angle_vulkan",       platformANGLEVulkan,       &extensionStrings);
     InsertExtensionString("EGL_ANGLE_device_creation",             deviceCreation,            &extensionStrings);
     InsertExtensionString("EGL_ANGLE_device_creation_d3d11",       deviceCreationD3D11,       &extensionStrings);
     InsertExtensionString("EGL_ANGLE_x11_visual",                  x11Visual,                 &extensionStrings);

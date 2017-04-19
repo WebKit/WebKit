@@ -10,10 +10,37 @@
 #define LIBANGLE_ERROR_H_
 
 #include "angle_gl.h"
+#include "common/angleutils.h"
 #include <EGL/egl.h>
 
-#include <string>
 #include <memory>
+#include <ostream>
+#include <string>
+
+namespace angle
+{
+template <typename ErrorT, typename ResultT, typename ErrorBaseT, ErrorBaseT NoErrorVal>
+class ErrorOrResultBase
+{
+  public:
+    ErrorOrResultBase(const ErrorT &error) : mError(error) {}
+    ErrorOrResultBase(ErrorT &&error) : mError(std::move(error)) {}
+
+    ErrorOrResultBase(ResultT &&result) : mError(NoErrorVal), mResult(std::forward<ResultT>(result))
+    {
+    }
+
+    ErrorOrResultBase(const ResultT &result) : mError(NoErrorVal), mResult(result) {}
+
+    bool isError() const { return mError.isError(); }
+    const ErrorT &getError() const { return mError; }
+    ResultT &&getResult() { return std::move(mResult); }
+
+  private:
+    ErrorT mError;
+    ResultT mResult;
+};
+}  // namespace angle
 
 namespace gl
 {
@@ -22,6 +49,7 @@ class Error final
 {
   public:
     explicit inline Error(GLenum errorCode);
+    Error(GLenum errorCode, std::string &&msg);
     Error(GLenum errorCode, const char *msg, ...);
     Error(GLenum errorCode, GLuint id, const char *msg, ...);
     inline Error(const Error &other);
@@ -43,36 +71,72 @@ class Error final
   private:
     void createMessageString() const;
 
+    friend std::ostream &operator<<(std::ostream &os, const Error &err);
+
     GLenum mCode;
     GLuint mID;
     mutable std::unique_ptr<std::string> mMessage;
 };
 
-template <typename T>
-class ErrorOrResult
+template <typename ResultT>
+using ErrorOrResult = angle::ErrorOrResultBase<Error, ResultT, GLenum, GL_NO_ERROR>;
+
+namespace priv
+{
+template <GLenum EnumT>
+class ErrorStream : angle::NonCopyable
 {
   public:
-    ErrorOrResult(const gl::Error &error) : mError(error) {}
-    ErrorOrResult(gl::Error &&error) : mError(std::move(error)) {}
+    ErrorStream();
 
-    ErrorOrResult(T &&result)
-        : mError(GL_NO_ERROR), mResult(std::forward<T>(result))
+    template <typename T>
+    ErrorStream &operator<<(T value);
+
+    operator Error();
+
+    template <typename T>
+    operator ErrorOrResult<T>()
     {
+        return static_cast<Error>(*this);
     }
-
-    ErrorOrResult(const T &result)
-        : mError(GL_NO_ERROR), mResult(result)
-    {
-    }
-
-    bool isError() const { return mError.isError(); }
-    const gl::Error &getError() const { return mError; }
-    T &&getResult() { return std::move(mResult); }
 
   private:
-    Error mError;
-    T mResult;
+    std::ostringstream mErrorStream;
 };
+
+// These convience methods for HRESULTS (really long) are used all over the place in the D3D
+// back-ends.
+#if defined(ANGLE_PLATFORM_WINDOWS)
+template <>
+template <>
+inline ErrorStream<GL_OUT_OF_MEMORY> &ErrorStream<GL_OUT_OF_MEMORY>::operator<<(HRESULT hresult)
+{
+    mErrorStream << "HRESULT: 0x" << std::ios::hex << hresult;
+    return *this;
+}
+
+template <>
+template <>
+inline ErrorStream<GL_INVALID_OPERATION> &ErrorStream<GL_INVALID_OPERATION>::operator<<(
+    HRESULT hresult)
+{
+    mErrorStream << "HRESULT: 0x" << std::ios::hex << hresult;
+    return *this;
+}
+#endif  // defined(ANGLE_PLATFORM_WINDOWS)
+
+template <GLenum EnumT>
+template <typename T>
+ErrorStream<EnumT> &ErrorStream<EnumT>::operator<<(T value)
+{
+    mErrorStream << value;
+    return *this;
+}
+
+}  // namespace priv
+
+using OutOfMemory   = priv::ErrorStream<GL_OUT_OF_MEMORY>;
+using InternalError = priv::ErrorStream<GL_INVALID_OPERATION>;
 
 inline Error NoError()
 {
@@ -90,6 +154,7 @@ class Error final
     explicit inline Error(EGLint errorCode);
     Error(EGLint errorCode, const char *msg, ...);
     Error(EGLint errorCode, EGLint id, const char *msg, ...);
+    Error(EGLint errorCode, EGLint id, const std::string &msg);
     inline Error(const Error &other);
     inline Error(Error &&other);
 
@@ -105,10 +170,20 @@ class Error final
   private:
     void createMessageString() const;
 
+    friend std::ostream &operator<<(std::ostream &os, const Error &err);
+
     EGLint mCode;
     EGLint mID;
     mutable std::unique_ptr<std::string> mMessage;
 };
+
+inline Error NoError()
+{
+    return Error(EGL_SUCCESS);
+}
+
+template <typename ResultT>
+using ErrorOrResult = angle::ErrorOrResultBase<Error, ResultT, EGLint, EGL_SUCCESS>;
 
 }  // namespace egl
 

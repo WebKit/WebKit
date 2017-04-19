@@ -48,7 +48,7 @@ gl::Error RenderbufferGL::setStorage(GLenum internalformat, size_t width, size_t
     mFunctions->renderbufferStorage(GL_RENDERBUFFER, renderbufferFormat.internalFormat,
                                     static_cast<GLsizei>(width), static_cast<GLsizei>(height));
 
-    return gl::Error(GL_NO_ERROR);
+    return gl::NoError();
 }
 
 gl::Error RenderbufferGL::setStorageMultisample(size_t samples, GLenum internalformat, size_t width, size_t height)
@@ -79,7 +79,7 @@ gl::Error RenderbufferGL::setStorageMultisample(size_t samples, GLenum internalf
         } while (error != GL_NO_ERROR);
     }
 
-    return gl::Error(GL_NO_ERROR);
+    return gl::NoError();
 }
 
 gl::Error RenderbufferGL::setStorageEGLImageTarget(egl::Image *image)

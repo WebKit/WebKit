@@ -93,8 +93,25 @@ static void INTERNAL_GL_APIENTRY LogGLDebugMessage(GLenum source, GLenum type, G
       default:                             severityText = "UNKNOWN";      break;
     }
 
-    ERR("\n\tSource: %s\n\tType: %s\n\tID: %d\n\tSeverity: %s\n\tMessage: %s", sourceText.c_str(), typeText.c_str(), id,
-        severityText.c_str(), message);
+    if (type == GL_DEBUG_TYPE_ERROR)
+    {
+        ERR() << std::endl
+              << "\tSource: " << sourceText << std::endl
+              << "\tType: " << typeText << std::endl
+              << "\tID: " << gl::Error(id) << std::endl
+              << "\tSeverity: " << severityText << std::endl
+              << "\tMessage: " << message;
+    }
+    else
+    {
+        // TODO(ynovikov): filter into WARN and INFO if INFO is ever implemented
+        WARN() << std::endl
+               << "\tSource: " << sourceText << std::endl
+               << "\tType: " << typeText << std::endl
+               << "\tID: " << gl::Error(id) << std::endl
+               << "\tSeverity: " << severityText << std::endl
+               << "\tMessage: " << message;
+    }
 }
 #endif
 
@@ -111,8 +128,8 @@ RendererGL::RendererGL(const FunctionsGL *functions, const egl::AttributeMap &at
       mCapsInitialized(false)
 {
     ASSERT(mFunctions);
-    mStateManager = new StateManagerGL(mFunctions, getNativeCaps());
     nativegl_gl::GenerateWorkarounds(mFunctions, &mWorkarounds);
+    mStateManager = new StateManagerGL(mFunctions, getNativeCaps());
     mBlitter = new BlitGL(functions, mWorkarounds, mStateManager);
 
     mHasDebugOutput = mFunctions->isAtLeastGL(gl::Version(4, 3)) ||
@@ -160,7 +177,7 @@ RendererGL::~RendererGL()
 gl::Error RendererGL::flush()
 {
     mFunctions->flush();
-    return gl::Error(GL_NO_ERROR);
+    return gl::NoError();
 }
 
 gl::Error RendererGL::finish()
@@ -181,7 +198,7 @@ gl::Error RendererGL::finish()
     }
 #endif
 
-    return gl::Error(GL_NO_ERROR);
+    return gl::NoError();
 }
 
 gl::Error RendererGL::drawArrays(const gl::ContextState &data,
@@ -271,7 +288,34 @@ gl::Error RendererGL::drawRangeElements(const gl::ContextState &data,
         mFunctions->drawRangeElements(mode, start, end, count, type, drawIndexPointer);
     }
 
-    return gl::Error(GL_NO_ERROR);
+    return gl::NoError();
+}
+
+gl::Error RendererGL::drawArraysIndirect(const gl::ContextState &data,
+                                         GLenum mode,
+                                         const GLvoid *indirect)
+{
+    ANGLE_TRY(mStateManager->setDrawIndirectState(data, GL_NONE));
+
+    if (!mSkipDrawCalls)
+    {
+        mFunctions->drawArraysIndirect(mode, indirect);
+    }
+    return gl::NoError();
+}
+
+gl::Error RendererGL::drawElementsIndirect(const gl::ContextState &data,
+                                           GLenum mode,
+                                           GLenum type,
+                                           const GLvoid *indirect)
+{
+    ANGLE_TRY(mStateManager->setDrawIndirectState(data, type));
+
+    if (!mSkipDrawCalls)
+    {
+        mFunctions->drawElementsIndirect(mode, type, indirect);
+    }
+    return gl::NoError();
 }
 
 void RendererGL::stencilFillPath(const gl::ContextState &state,
@@ -509,7 +553,8 @@ void RendererGL::generateCaps(gl::Caps *outCaps, gl::TextureCapsMap* outTextureC
                               gl::Extensions *outExtensions,
                               gl::Limitations * /* outLimitations */) const
 {
-    nativegl_gl::GenerateCaps(mFunctions, outCaps, outTextureCaps, outExtensions, &mMaxSupportedESVersion);
+    nativegl_gl::GenerateCaps(mFunctions, mWorkarounds, outCaps, outTextureCaps, outExtensions,
+                              &mMaxSupportedESVersion);
 }
 
 GLint RendererGL::getGPUDisjoint()
@@ -556,6 +601,16 @@ const gl::Limitations &RendererGL::getNativeLimitations() const
 {
     ensureCapsInitialized();
     return mNativeLimitations;
+}
+
+gl::Error RendererGL::dispatchCompute(const gl::ContextState &data,
+                                      GLuint numGroupsX,
+                                      GLuint numGroupsY,
+                                      GLuint numGroupsZ)
+{
+    ANGLE_TRY(mStateManager->setDispatchComputeState(data));
+    mFunctions->dispatchCompute(numGroupsX, numGroupsY, numGroupsZ);
+    return gl::NoError();
 }
 
 }  // namespace rx

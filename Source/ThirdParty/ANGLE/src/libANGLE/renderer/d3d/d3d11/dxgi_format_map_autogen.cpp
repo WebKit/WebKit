@@ -304,19 +304,19 @@ const Format &GetFormat(DXGI_FORMAT dxgiFormat)
         case DXGI_FORMAT_BC1_UNORM:
             return Format::Get(Format::ID::BC1_RGBA_UNORM_BLOCK);
         case DXGI_FORMAT_BC1_UNORM_SRGB:
-            break;
+            return Format::Get(Format::ID::BC1_RGBA_UNORM_SRGB_BLOCK);
         case DXGI_FORMAT_BC2_TYPELESS:
             break;
         case DXGI_FORMAT_BC2_UNORM:
             return Format::Get(Format::ID::BC2_RGBA_UNORM_BLOCK);
         case DXGI_FORMAT_BC2_UNORM_SRGB:
-            break;
+            return Format::Get(Format::ID::BC2_RGBA_UNORM_SRGB_BLOCK);
         case DXGI_FORMAT_BC3_TYPELESS:
             break;
         case DXGI_FORMAT_BC3_UNORM:
             return Format::Get(Format::ID::BC3_RGBA_UNORM_BLOCK);
         case DXGI_FORMAT_BC3_UNORM_SRGB:
-            break;
+            return Format::Get(Format::ID::BC3_RGBA_UNORM_SRGB_BLOCK);
         case DXGI_FORMAT_BC4_SNORM:
             break;
         case DXGI_FORMAT_BC4_TYPELESS:

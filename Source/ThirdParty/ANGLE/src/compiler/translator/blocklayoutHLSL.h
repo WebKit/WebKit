@@ -24,7 +24,7 @@ namespace sh
 // The strategy should be ENCODE_LOOSE for D3D9 constant blocks, and ENCODE_PACKED
 // for everything else (D3D10+ constant blocks and all attributes/varyings).
 
-class COMPILER_EXPORT HLSLBlockEncoder : public BlockLayoutEncoder
+class HLSLBlockEncoder : public BlockLayoutEncoder
 {
   public:
     enum HLSLBlockEncoderStrategy
@@ -33,30 +33,36 @@ class COMPILER_EXPORT HLSLBlockEncoder : public BlockLayoutEncoder
         ENCODE_LOOSE
     };
 
-    HLSLBlockEncoder(HLSLBlockEncoderStrategy strategy);
+    HLSLBlockEncoder(HLSLBlockEncoderStrategy strategy, bool transposeMatrices);
 
     virtual void enterAggregateType();
     virtual void exitAggregateType();
     void skipRegisters(unsigned int numRegisters);
 
     bool isPacked() const { return mEncoderStrategy == ENCODE_PACKED; }
-    void setTransposeMatrices(bool enabled) { mTransposeMatrices = enabled; }
 
     static HLSLBlockEncoderStrategy GetStrategyFor(ShShaderOutput outputType);
 
   protected:
-    virtual void getBlockLayoutInfo(GLenum type, unsigned int arraySize, bool isRowMajorMatrix, int *arrayStrideOut, int *matrixStrideOut);
-    virtual void advanceOffset(GLenum type, unsigned int arraySize, bool isRowMajorMatrix, int arrayStride, int matrixStride);
+    virtual void getBlockLayoutInfo(GLenum type,
+                                    unsigned int arraySize,
+                                    bool isRowMajorMatrix,
+                                    int *arrayStrideOut,
+                                    int *matrixStrideOut);
+    virtual void advanceOffset(GLenum type,
+                               unsigned int arraySize,
+                               bool isRowMajorMatrix,
+                               int arrayStride,
+                               int matrixStride);
 
     HLSLBlockEncoderStrategy mEncoderStrategy;
     bool mTransposeMatrices;
 };
 
-// This method returns the number of used registers for a ShaderVariable. It is dependent on the HLSLBlockEncoder
-// class to count the number of used registers in a struct (which are individually packed according to the same rules).
-COMPILER_EXPORT unsigned int HLSLVariableRegisterCount(const Varying &variable, bool transposeMatrices);
-COMPILER_EXPORT unsigned int HLSLVariableRegisterCount(const Uniform &variable, ShShaderOutput outputType);
-
+// This method returns the number of used registers for a ShaderVariable. It is dependent on the
+// HLSLBlockEncoder class to count the number of used registers in a struct (which are individually
+// packed according to the same rules).
+unsigned int HLSLVariableRegisterCount(const Uniform &variable, ShShaderOutput outputType);
 }
 
-#endif // COMMON_BLOCKLAYOUTHLSL_H_
+#endif  // COMMON_BLOCKLAYOUTHLSL_H_

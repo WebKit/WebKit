@@ -9,7 +9,7 @@
 #include "libANGLE/renderer/d3d/d3d11/Framebuffer11.h"
 
 #include "common/debug.h"
-#include "common/BitSetIterator.h"
+#include "common/bitset_utils.h"
 #include "libANGLE/renderer/d3d/d3d11/Buffer11.h"
 #include "libANGLE/renderer/d3d/d3d11/Clear11.h"
 #include "libANGLE/renderer/d3d/d3d11/TextureStorage11.h"
@@ -54,7 +54,7 @@ gl::Error MarkAttachmentsDirty(const gl::FramebufferAttachment *attachment)
 
 void UpdateCachedRenderTarget(const gl::FramebufferAttachment *attachment,
                               RenderTarget11 *&cachedRenderTarget,
-                              ChannelBinding *channelBinding)
+                              gl::OnAttachmentDirtyBinding *channelBinding)
 {
     RenderTarget11 *newRenderTarget = nullptr;
     if (attachment)
@@ -78,10 +78,10 @@ Framebuffer11::Framebuffer11(const gl::FramebufferState &data, Renderer11 *rende
 {
     ASSERT(mRenderer != nullptr);
     mCachedColorRenderTargets.fill(nullptr);
-    for (size_t colorIndex = 0; colorIndex < data.getColorAttachments().size(); ++colorIndex)
+    for (uint32_t colorIndex = 0;
+         colorIndex < static_cast<uint32_t>(data.getColorAttachments().size()); ++colorIndex)
     {
-        mColorRenderTargetsDirty.push_back(
-            ChannelBinding(this, static_cast<SignalToken>(colorIndex)));
+        mColorRenderTargetsDirty.emplace_back(this, colorIndex);
     }
 }
 
@@ -182,7 +182,10 @@ gl::Error Framebuffer11::invalidateBase(size_t count, const GLenum *attachments,
                 size_t colorIndex =
                     (attachments[i] == GL_COLOR ? 0u : (attachments[i] - GL_COLOR_ATTACHMENT0));
                 auto colorAttachment = mState.getColorAttachment(colorIndex);
-                ANGLE_TRY(invalidateAttachment(colorAttachment));
+                if (colorAttachment)
+                {
+                    ANGLE_TRY(invalidateAttachment(colorAttachment));
+                }
                 break;
             }
         }
@@ -358,7 +361,7 @@ gl::Error Framebuffer11::blitImpl(const gl::Rectangle &sourceArea,
 GLenum Framebuffer11::getRenderTargetImplementationFormat(RenderTargetD3D *renderTarget) const
 {
     RenderTarget11 *renderTarget11 = GetAs<RenderTarget11>(renderTarget);
-    return renderTarget11->getFormatSet().format.fboImplementationInternalFormat;
+    return renderTarget11->getFormatSet().format().fboImplementationInternalFormat;
 }
 
 void Framebuffer11::updateColorRenderTarget(size_t colorIndex)
@@ -374,7 +377,7 @@ void Framebuffer11::updateDepthStencilRenderTarget()
                              &mDepthStencilRenderTargetDirty);
 }
 
-void Framebuffer11::syncState(const gl::Framebuffer::DirtyBits &dirtyBits)
+void Framebuffer11::syncState(ContextImpl *contextImpl, const gl::Framebuffer::DirtyBits &dirtyBits)
 {
     mRenderer->getStateManager()->invalidateRenderTarget();
 
@@ -407,12 +410,12 @@ void Framebuffer11::syncState(const gl::Framebuffer::DirtyBits &dirtyBits)
     // We should not have dirtied any additional state during our sync.
     ASSERT(!mInternalDirtyBits.any());
 
-    FramebufferD3D::syncState(dirtyBits);
+    FramebufferD3D::syncState(contextImpl, dirtyBits);
 }
 
-void Framebuffer11::signal(SignalToken token)
+void Framebuffer11::signal(uint32_t channelID)
 {
-    if (token == gl::IMPLEMENTATION_MAX_FRAMEBUFFER_ATTACHMENTS)
+    if (channelID == gl::IMPLEMENTATION_MAX_FRAMEBUFFER_ATTACHMENTS)
     {
         // Stencil is redundant in this case.
         mInternalDirtyBits.set(gl::Framebuffer::DIRTY_BIT_DEPTH_ATTACHMENT);
@@ -420,9 +423,15 @@ void Framebuffer11::signal(SignalToken token)
     }
     else
     {
-        mInternalDirtyBits.set(gl::Framebuffer::DIRTY_BIT_COLOR_ATTACHMENT_0 + token);
-        mCachedColorRenderTargets[token] = nullptr;
+        mInternalDirtyBits.set(gl::Framebuffer::DIRTY_BIT_COLOR_ATTACHMENT_0 + channelID);
+        mCachedColorRenderTargets[channelID] = nullptr;
     }
+}
+
+gl::Error Framebuffer11::getSamplePosition(size_t index, GLfloat *xy) const
+{
+    UNIMPLEMENTED();
+    return gl::InternalError() << "getSamplePosition is unimplemented.";
 }
 
 bool Framebuffer11::hasAnyInternalDirtyBit() const
@@ -430,9 +439,9 @@ bool Framebuffer11::hasAnyInternalDirtyBit() const
     return mInternalDirtyBits.any();
 }
 
-void Framebuffer11::syncInternalState()
+void Framebuffer11::syncInternalState(ContextImpl *contextImpl)
 {
-    syncState(gl::Framebuffer::DirtyBits());
+    syncState(contextImpl, gl::Framebuffer::DirtyBits());
 }
 
 }  // namespace rx

@@ -62,7 +62,7 @@ gl::Error IndexBuffer9::initialize(unsigned int bufferSize, GLenum indexType, bo
     mIndexType = indexType;
     mDynamic = dynamic;
 
-    return gl::Error(GL_NO_ERROR);
+    return gl::NoError();
 }
 
 gl::Error IndexBuffer9::mapBuffer(unsigned int offset, unsigned int size, void** outMappedMemory)
@@ -82,7 +82,7 @@ gl::Error IndexBuffer9::mapBuffer(unsigned int offset, unsigned int size, void**
     }
 
     *outMappedMemory = mapPtr;
-    return gl::Error(GL_NO_ERROR);
+    return gl::NoError();
 }
 
 gl::Error IndexBuffer9::unmapBuffer()
@@ -98,7 +98,7 @@ gl::Error IndexBuffer9::unmapBuffer()
         return gl::Error(GL_OUT_OF_MEMORY, "Failed to unlock internal index buffer, HRESULT: 0x%08x.", result);
     }
 
-    return gl::Error(GL_NO_ERROR);
+    return gl::NoError();
 }
 
 GLenum IndexBuffer9::getIndexType() const
@@ -119,7 +119,7 @@ gl::Error IndexBuffer9::setSize(unsigned int bufferSize, GLenum indexType)
     }
     else
     {
-        return gl::Error(GL_NO_ERROR);
+        return gl::NoError();
     }
 }
 
@@ -145,7 +145,7 @@ gl::Error IndexBuffer9::discard()
         return gl::Error(GL_OUT_OF_MEMORY, "Failed to unlock internal index buffer, HRESULT: 0x%08x.", result);
     }
 
-    return gl::Error(GL_NO_ERROR);
+    return gl::NoError();
 }
 
 D3DFORMAT IndexBuffer9::getIndexFormat() const

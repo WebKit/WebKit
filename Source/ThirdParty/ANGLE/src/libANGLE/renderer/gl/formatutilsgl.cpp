@@ -257,10 +257,7 @@ static InternalFormatInfoMap BuildInternalFormatInfoMap()
 
 static const InternalFormatInfoMap &GetInternalFormatMap()
 {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wexit-time-destructors"
     static const InternalFormatInfoMap formatMap = BuildInternalFormatInfoMap();
-#pragma clang diagnostic pop
     return formatMap;
 }
 
@@ -279,10 +276,7 @@ const InternalFormat &GetInternalFormatInfo(GLenum internalFormat, StandardGL st
         }
     }
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wexit-time-destructors"
     static const InternalFormat defaultInternalFormat;
-#pragma clang diagnostic pop
     return defaultInternalFormat;
 }
 

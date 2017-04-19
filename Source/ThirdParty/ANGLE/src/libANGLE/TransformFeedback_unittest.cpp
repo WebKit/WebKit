@@ -72,11 +72,11 @@ TEST_F(TransformFeedbackTest, SideEffectsOfStartAndStop)
 
     EXPECT_FALSE(mFeedback->isActive());
     EXPECT_CALL(*mImpl, begin(GL_TRIANGLES));
-    mFeedback->begin(GL_TRIANGLES, nullptr);
+    mFeedback->begin(nullptr, GL_TRIANGLES, nullptr);
     EXPECT_TRUE(mFeedback->isActive());
     EXPECT_EQ(static_cast<GLenum>(GL_TRIANGLES), mFeedback->getPrimitiveMode());
     EXPECT_CALL(*mImpl, end());
-    mFeedback->end();
+    mFeedback->end(nullptr);
     EXPECT_FALSE(mFeedback->isActive());
 }
 
@@ -86,7 +86,7 @@ TEST_F(TransformFeedbackTest, SideEffectsOfPauseAndResume)
 
     EXPECT_FALSE(mFeedback->isActive());
     EXPECT_CALL(*mImpl, begin(GL_TRIANGLES));
-    mFeedback->begin(GL_TRIANGLES, nullptr);
+    mFeedback->begin(nullptr, GL_TRIANGLES, nullptr);
     EXPECT_FALSE(mFeedback->isPaused());
     EXPECT_CALL(*mImpl, pause());
     mFeedback->pause();
@@ -95,14 +95,21 @@ TEST_F(TransformFeedbackTest, SideEffectsOfPauseAndResume)
     mFeedback->resume();
     EXPECT_FALSE(mFeedback->isPaused());
     EXPECT_CALL(*mImpl, end());
-    mFeedback->end();
+    mFeedback->end(nullptr);
 }
 
 TEST_F(TransformFeedbackTest, BufferBinding)
 {
     rx::MockBufferImpl *bufferImpl = new rx::MockBufferImpl;
-    gl::Buffer *buffer = new gl::Buffer(bufferImpl, 1);
     EXPECT_CALL(*bufferImpl, destructor()).Times(1).RetiresOnSaturation();
+
+    rx::MockGLFactory mockGLFactory;
+    EXPECT_CALL(mockGLFactory, createBuffer(_))
+        .Times(1)
+        .WillOnce(Return(bufferImpl))
+        .RetiresOnSaturation();
+
+    gl::Buffer *buffer = new gl::Buffer(&mockGLFactory, 1);
 
     static const size_t bindIndex = 0;
 

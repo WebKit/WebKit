@@ -41,17 +41,18 @@ struct DXGIFormatSize
 };
 const DXGIFormatSize &GetDXGIFormatSizeInfo(DXGI_FORMAT format);
 
-struct VertexFormat
+struct VertexFormat : angle::NonCopyable
 {
-    VertexFormat();
-    VertexFormat(VertexConversionType conversionType,
-                 DXGI_FORMAT nativeFormat,
-                 VertexCopyFunction copyFunction);
+    constexpr VertexFormat();
+    constexpr VertexFormat(VertexConversionType conversionType,
+                           DXGI_FORMAT nativeFormat,
+                           VertexCopyFunction copyFunction);
 
     VertexConversionType conversionType;
     DXGI_FORMAT nativeFormat;
     VertexCopyFunction copyFunction;
 };
+
 const VertexFormat &GetVertexFormatInfo(gl::VertexFormatType vertexFormatType,
                                         D3D_FEATURE_LEVEL featureLevel);
 
@@ -59,6 +60,11 @@ const VertexFormat &GetVertexFormatInfo(gl::VertexFormatType vertexFormatType,
 GLenum GetComponentType(DXGI_FORMAT dxgiFormat);
 
 }  // namespace d3d11
+
+namespace d3d11_angle
+{
+const angle::Format &GetFormat(DXGI_FORMAT dxgiFormat);
+}
 
 }  // namespace rx
 

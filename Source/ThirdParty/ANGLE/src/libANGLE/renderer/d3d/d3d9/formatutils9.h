@@ -29,7 +29,20 @@ namespace d3d9
 
 struct D3DFormat
 {
-    D3DFormat();
+    constexpr D3DFormat();
+    constexpr D3DFormat(GLuint pixelBytes,
+                        GLuint blockWidth,
+                        GLuint blockHeight,
+                        GLuint redBits,
+                        GLuint greenBits,
+                        GLuint blueBits,
+                        GLuint alphaBits,
+                        GLuint luminanceBits,
+                        GLuint depthBits,
+                        GLuint stencilBits,
+                        angle::Format::ID formatID);
+
+    const angle::Format &info() const { return angle::Format::Get(formatID); }
 
     GLuint pixelBytes;
     GLuint blockWidth;
@@ -44,7 +57,7 @@ struct D3DFormat
     GLuint depthBits;
     GLuint stencilBits;
 
-    const angle::Format *info;
+    angle::Format::ID formatID;
 };
 
 const D3DFormat &GetD3DFormatInfo(D3DFORMAT format);

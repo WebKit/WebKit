@@ -16,18 +16,18 @@ using namespace testing;
 namespace
 {
 
-struct SignalThing : public SignalReceiver
+struct SignalThing : public SignalReceiver<>
 {
-    void signal(SignalToken token) override { wasSignaled = true; }
+    void signal(uint32_t channelID) override { wasSignaled = true; }
     bool wasSignaled = false;
 };
 
 // Test that broadcast signals work.
 TEST(SignalTest, BroadcastSignals)
 {
-    BroadcastChannel channel;
+    BroadcastChannel<> channel;
     SignalThing thing;
-    ChannelBinding binding(&thing, 0u);
+    ChannelBinding<> binding(&thing, 0u);
 
     binding.bind(&channel);
     ASSERT_FALSE(thing.wasSignaled);

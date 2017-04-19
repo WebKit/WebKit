@@ -6,20 +6,27 @@
 
 #include "compiler/translator/OutputGLSL.h"
 
-TOutputGLSL::TOutputGLSL(TInfoSinkBase& objSink,
+namespace sh
+{
+
+TOutputGLSL::TOutputGLSL(TInfoSinkBase &objSink,
                          ShArrayIndexClampingStrategy clampingStrategy,
                          ShHashFunction64 hashFunction,
-                         NameMap& nameMap,
-                         TSymbolTable& symbolTable,
+                         NameMap &nameMap,
+                         TSymbolTable &symbolTable,
+                         sh::GLenum shaderType,
                          int shaderVersion,
-                         ShShaderOutput output)
+                         ShShaderOutput output,
+                         ShCompileOptions compileOptions)
     : TOutputGLSLBase(objSink,
                       clampingStrategy,
                       hashFunction,
                       nameMap,
                       symbolTable,
+                      shaderType,
                       shaderVersion,
-                      output)
+                      output,
+                      compileOptions)
 {
 }
 
@@ -30,18 +37,18 @@ bool TOutputGLSL::writeVariablePrecision(TPrecision)
 
 void TOutputGLSL::visitSymbol(TIntermSymbol *node)
 {
-    TInfoSinkBase& out = objSink();
+    TInfoSinkBase &out = objSink();
 
     const TString &symbol = node->getSymbol();
     if (symbol == "gl_FragDepthEXT")
     {
         out << "gl_FragDepth";
     }
-    else if (symbol == "gl_FragColor" && IsGLSL130OrNewer(getShaderOutput()))
+    else if (symbol == "gl_FragColor" && sh::IsGLSL130OrNewer(getShaderOutput()))
     {
         out << "webgl_FragColor";
     }
-    else if (symbol == "gl_FragData" && IsGLSL130OrNewer(getShaderOutput()))
+    else if (symbol == "gl_FragData" && sh::IsGLSL130OrNewer(getShaderOutput()))
     {
         out << "webgl_FragData";
     }
@@ -59,44 +66,42 @@ void TOutputGLSL::visitSymbol(TIntermSymbol *node)
     }
 }
 
-TString TOutputGLSL::translateTextureFunction(TString &name)
+TString TOutputGLSL::translateTextureFunction(const TString &name)
 {
-    static const char *simpleRename[] = {
-        "texture2DLodEXT", "texture2DLod",
-        "texture2DProjLodEXT", "texture2DProjLod",
-        "textureCubeLodEXT", "textureCubeLod",
-        "texture2DGradEXT", "texture2DGradARB",
-        "texture2DProjGradEXT", "texture2DProjGradARB",
-        "textureCubeGradEXT", "textureCubeGradARB",
-        NULL, NULL
-    };
+    static const char *simpleRename[] = {"texture2DLodEXT",
+                                         "texture2DLod",
+                                         "texture2DProjLodEXT",
+                                         "texture2DProjLod",
+                                         "textureCubeLodEXT",
+                                         "textureCubeLod",
+                                         "texture2DGradEXT",
+                                         "texture2DGradARB",
+                                         "texture2DProjGradEXT",
+                                         "texture2DProjGradARB",
+                                         "textureCubeGradEXT",
+                                         "textureCubeGradARB",
+                                         NULL,
+                                         NULL};
     static const char *legacyToCoreRename[] = {
-        "texture2D", "texture",
-        "texture2DProj", "textureProj",
-        "texture2DLod", "textureLod",
-        "texture2DProjLod", "textureProjLod",
-        "texture2DRect", "texture",
-        "textureCube", "texture",
+        "texture2D", "texture", "texture2DProj", "textureProj", "texture2DLod", "textureLod",
+        "texture2DProjLod", "textureProjLod", "texture2DRect", "texture", "textureCube", "texture",
         "textureCubeLod", "textureLod",
         // Extensions
-        "texture2DLodEXT", "textureLod",
-        "texture2DProjLodEXT", "textureProjLod",
-        "textureCubeLodEXT", "textureLod",
-        "texture2DGradEXT", "textureGrad",
-        "texture2DProjGradEXT", "textureProjGrad",
-        "textureCubeGradEXT", "textureGrad",
-        NULL, NULL
-    };
-    const char **mapping = (IsGLSL130OrNewer(getShaderOutput())) ?
-        legacyToCoreRename : simpleRename;
+        "texture2DLodEXT", "textureLod", "texture2DProjLodEXT", "textureProjLod",
+        "textureCubeLodEXT", "textureLod", "texture2DGradEXT", "textureGrad",
+        "texture2DProjGradEXT", "textureProjGrad", "textureCubeGradEXT", "textureGrad", NULL, NULL};
+    const char **mapping =
+        (sh::IsGLSL130OrNewer(getShaderOutput())) ? legacyToCoreRename : simpleRename;
 
     for (int i = 0; mapping[i] != NULL; i += 2)
     {
         if (name == mapping[i])
         {
-            return mapping[i+1];
+            return mapping[i + 1];
         }
     }
 
     return name;
 }
+
+}  // namespace sh

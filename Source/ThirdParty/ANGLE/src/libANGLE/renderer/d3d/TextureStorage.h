@@ -50,7 +50,10 @@ class TextureStorage : angle::NonCopyable
                               const gl::PixelUnpackState &unpack, const uint8_t *pixelData) = 0;
 
     // This is a no-op for most implementations of TextureStorage. Some (e.g. TextureStorage11_2D) might override it.
-    virtual gl::Error useLevelZeroWorkaroundTexture(bool useLevelZeroTexture) { return gl::Error(GL_NO_ERROR); }
+    virtual gl::Error useLevelZeroWorkaroundTexture(bool useLevelZeroTexture)
+    {
+        return gl::NoError();
+    }
 };
 
 }

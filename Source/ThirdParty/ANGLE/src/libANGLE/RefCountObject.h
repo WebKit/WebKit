@@ -18,10 +18,15 @@
 
 #include <cstddef>
 
-class RefCountObject : angle::NonCopyable
+namespace gl
+{
+class Context;
+}
+
+class RefCountObjectNoID : angle::NonCopyable
 {
   public:
-    explicit RefCountObject(GLuint id) : mId(id), mRefCount(0) {}
+    RefCountObjectNoID() : mRefCount(0) {}
 
     void addRef() const { ++mRefCount; }
 
@@ -35,17 +40,39 @@ class RefCountObject : angle::NonCopyable
         }
     }
 
-    GLuint id() const { return mId; }
+    // A specialized release method for objects which need a destroy context.
+    void release(const gl::Context *context)
+    {
+        ASSERT(mRefCount > 0);
+        if (--mRefCount == 0)
+        {
+            destroy(context);
+            delete this;
+        }
+    }
 
     size_t getRefCount() const { return mRefCount; }
 
   protected:
-    virtual ~RefCountObject() { ASSERT(mRefCount == 0); }
+    virtual ~RefCountObjectNoID() { ASSERT(mRefCount == 0); }
+    virtual void destroy(const gl::Context *context) {}
+
+  private:
+    mutable std::size_t mRefCount;
+};
+
+class RefCountObject : public RefCountObjectNoID
+{
+  public:
+    explicit RefCountObject(GLuint id) : mId(id) {}
+
+    GLuint id() const { return mId; }
+
+  protected:
+    ~RefCountObject() override {}
 
   private:
     GLuint mId;
-
-    mutable std::size_t mRefCount;
 };
 
 template <class ObjectType>

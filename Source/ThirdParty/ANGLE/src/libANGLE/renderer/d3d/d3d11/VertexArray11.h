@@ -9,6 +9,7 @@
 #ifndef LIBANGLE_RENDERER_D3D_D3D11_VERTEXARRAY11_H_
 #define LIBANGLE_RENDERER_D3D_D3D11_VERTEXARRAY11_H_
 
+#include "libANGLE/Framebuffer.h"
 #include "libANGLE/renderer/VertexArrayImpl.h"
 #include "libANGLE/renderer/d3d/d3d11/Renderer11.h"
 #include "libANGLE/signal_utils.h"
@@ -17,13 +18,15 @@ namespace rx
 {
 class Renderer11;
 
-class VertexArray11 : public VertexArrayImpl, public angle::SignalReceiver
+class VertexArray11 : public VertexArrayImpl, public angle::SignalReceiver<>
 {
   public:
     VertexArray11(const gl::VertexArrayState &data);
     ~VertexArray11() override;
 
-    void syncState(const gl::VertexArray::DirtyBits &dirtyBits) override;
+    void syncState(ContextImpl *contextImpl, const gl::VertexArray::DirtyBits &dirtyBits) override;
+    // This will flush any pending attrib updates and then check the dynamic attribs mask.
+    bool hasDynamicAttrib(const gl::State &state);
     gl::Error updateDirtyAndDynamicAttribs(VertexDataManager *vertexDataManager,
                                            const gl::State &state,
                                            GLint start,
@@ -34,10 +37,11 @@ class VertexArray11 : public VertexArrayImpl, public angle::SignalReceiver
     const std::vector<TranslatedAttribute> &getTranslatedAttribs() const;
 
     // SignalReceiver implementation
-    void signal(angle::SignalToken token) override;
+    void signal(uint32_t channelID) override;
 
   private:
     void updateVertexAttribStorage(size_t attribIndex);
+    void flushAttribUpdates(const gl::State &state);
 
     std::vector<VertexStorageType> mAttributeStorageTypes;
     std::vector<TranslatedAttribute> mTranslatedAttribs;
@@ -54,7 +58,7 @@ class VertexArray11 : public VertexArrayImpl, public angle::SignalReceiver
     // We need to keep a safe pointer to the Buffer so we can attach the correct dirty callbacks.
     std::vector<BindingPointer<gl::Buffer>> mCurrentBuffers;
 
-    std::vector<angle::ChannelBinding> mOnBufferDataDirty;
+    std::vector<gl::OnAttachmentDirtyBinding> mOnBufferDataDirty;
 };
 
 }  // namespace rx

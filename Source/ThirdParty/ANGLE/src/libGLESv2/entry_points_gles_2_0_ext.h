@@ -9,9 +9,9 @@
 #ifndef LIBGLESV2_ENTRYPOINTGLES20EXT_H_
 #define LIBGLESV2_ENTRYPOINTGLES20EXT_H_
 
-#include <ANGLE/gl2.h>
-#include <ANGLE/gl2ext.h>
-#include <ANGLE/export.h>
+#include <GLES2/gl2.h>
+#include <GLES2/gl2ext.h>
+#include <export.h>
 
 namespace gl
 {
@@ -240,7 +240,10 @@ ANGLE_EXPORT void GL_APIENTRY ProgramPathFragmentInputGenCHROMIUM(GLuint program
 
 // GL_CHROMIUM_copy_texture
 ANGLE_EXPORT void GL_APIENTRY CopyTextureCHROMIUM(GLuint sourceId,
+                                                  GLint sourceLevel,
+                                                  GLenum destTarget,
                                                   GLuint destId,
+                                                  GLint destLevel,
                                                   GLint internalFormat,
                                                   GLenum destType,
                                                   GLboolean unpackFlipY,
@@ -248,7 +251,10 @@ ANGLE_EXPORT void GL_APIENTRY CopyTextureCHROMIUM(GLuint sourceId,
                                                   GLboolean unpackUnmultiplyAlpha);
 
 ANGLE_EXPORT void GL_APIENTRY CopySubTextureCHROMIUM(GLuint sourceId,
+                                                     GLint sourceLevel,
+                                                     GLenum destTarget,
                                                      GLuint destId,
+                                                     GLint destLevel,
                                                      GLint xoffset,
                                                      GLint yoffset,
                                                      GLint x,
@@ -262,8 +268,8 @@ ANGLE_EXPORT void GL_APIENTRY CopySubTextureCHROMIUM(GLuint sourceId,
 // GL_CHROMIUM_copy_compressed_texture
 ANGLE_EXPORT void GL_APIENTRY CompressedCopyTextureCHROMIUM(GLuint sourceId, GLuint destId);
 
-// GL_ANGLE_webgl_compatibility
-GL_APICALL GLboolean GL_APIENTRY EnableExtensionANGLE(const GLchar *name);
+// GL_ANGLE_request_extension
+ANGLE_EXPORT void GL_APIENTRY RequestExtensionANGLE(const GLchar *name);
 
 // GL_ANGLE_robust_client_memory
 ANGLE_EXPORT void GL_APIENTRY GetBooleanvRobustANGLE(GLenum pname,
@@ -347,6 +353,8 @@ ANGLE_EXPORT void GL_APIENTRY ReadPixelsRobustANGLE(GLint x,
                                                     GLenum type,
                                                     GLsizei bufSize,
                                                     GLsizei *length,
+                                                    GLsizei *columns,
+                                                    GLsizei *rows,
                                                     void *pixels);
 ANGLE_EXPORT void GL_APIENTRY TexImage2DRobustANGLE(GLenum target,
                                                     GLint level,
@@ -523,6 +531,8 @@ ANGLE_EXPORT void GL_APIENTRY ReadnPixelsRobustANGLE(GLint x,
                                                      GLenum type,
                                                      GLsizei bufSize,
                                                      GLsizei *length,
+                                                     GLsizei *columns,
+                                                     GLsizei *rows,
                                                      void *data);
 ANGLE_EXPORT void GL_APIENTRY GetnUniformfvRobustANGLE(GLuint program,
                                                        GLint location,

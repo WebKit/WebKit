@@ -9,8 +9,6 @@
 #ifndef LIBGLESV2_GLOBALSTATE_H_
 #define LIBGLESV2_GLOBALSTATE_H_
 
-#include <EGL/egl.h>
-
 namespace gl
 {
 class Context;
@@ -18,32 +16,14 @@ class Context;
 Context *GetGlobalContext();
 Context *GetValidGlobalContext();
 
-}
+}  // namespace gl
 
 namespace egl
 {
-class Error;
-class Display;
-class Surface;
+class Thread;
 
-void SetGlobalError(const Error &error);
-EGLint GetGlobalError();
+Thread *GetCurrentThread();
 
-void SetGlobalAPI(EGLenum API);
-EGLenum GetGlobalAPI();
-
-void SetGlobalDisplay(Display *dpy);
-Display *GetGlobalDisplay();
-
-void SetGlobalDrawSurface(Surface *surface);
-Surface *GetGlobalDrawSurface();
-
-void SetGlobalReadSurface(Surface *surface);
-Surface *GetGlobalReadSurface();
-
-void SetGlobalContext(gl::Context *context);
-gl::Context *GetGlobalContext();
-
-}
+}  // namespace egl
 
 #endif // LIBGLESV2_GLOBALSTATE_H_

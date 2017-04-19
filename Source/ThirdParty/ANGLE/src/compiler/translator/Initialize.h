@@ -11,14 +11,21 @@
 #include "compiler/translator/Compiler.h"
 #include "compiler/translator/SymbolTable.h"
 
-void InsertBuiltInFunctions(sh::GLenum type, ShShaderSpec spec, const ShBuiltInResources &resources, TSymbolTable &table);
+namespace sh
+{
 
-void IdentifyBuiltIns(sh::GLenum type, ShShaderSpec spec,
-                      const ShBuiltInResources& resources,
-                      TSymbolTable& symbolTable);
+void InsertBuiltInFunctions(sh::GLenum type,
+                            ShShaderSpec spec,
+                            const ShBuiltInResources &resources,
+                            TSymbolTable &table);
 
-void InitExtensionBehavior(const ShBuiltInResources& resources,
-                           TExtensionBehavior& extensionBehavior);
+void IdentifyBuiltIns(sh::GLenum type,
+                      ShShaderSpec spec,
+                      const ShBuiltInResources &resources,
+                      TSymbolTable &symbolTable);
+
+void InitExtensionBehavior(const ShBuiltInResources &resources,
+                           TExtensionBehavior &extensionBehavior);
 
 // Resets the behavior of the extensions listed in |extensionBehavior| to the
 // undefined state. These extensions will only be those initially supported in
@@ -26,4 +33,6 @@ void InitExtensionBehavior(const ShBuiltInResources& resources,
 // extensions will remain unsupported.
 void ResetExtensionBehavior(TExtensionBehavior &extensionBehavior);
 
-#endif // COMPILER_TRANSLATOR_INITIALIZE_H_
+}  // namespace sh
+
+#endif  // COMPILER_TRANSLATOR_INITIALIZE_H_

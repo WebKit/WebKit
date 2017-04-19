@@ -258,7 +258,7 @@ TextureRenderTarget11::TextureRenderTarget11(ID3D11RenderTargetView *rtv,
     {
         mSubresourceIndex = GetRTVSubresourceIndex(mTexture, mRenderTarget);
     }
-    ASSERT(mFormatSet.format.id != angle::Format::ID::NONE || mWidth == 0 || mHeight == 0);
+    ASSERT(mFormatSet.formatID != angle::Format::ID::NONE || mWidth == 0 || mHeight == 0);
 }
 
 TextureRenderTarget11::TextureRenderTarget11(ID3D11DepthStencilView *dsv,
@@ -302,7 +302,7 @@ TextureRenderTarget11::TextureRenderTarget11(ID3D11DepthStencilView *dsv,
     {
         mSubresourceIndex = GetDSVSubresourceIndex(mTexture, mDepthStencil);
     }
-    ASSERT(mFormatSet.format.id != angle::Format::ID::NONE || mWidth == 0 || mHeight == 0);
+    ASSERT(mFormatSet.formatID != angle::Format::ID::NONE || mWidth == 0 || mHeight == 0);
 }
 
 TextureRenderTarget11::~TextureRenderTarget11()

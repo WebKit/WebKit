@@ -62,7 +62,9 @@ class FramebufferNULL : public FramebufferImpl
 
     bool checkStatus() const override;
 
-    void syncState(const gl::Framebuffer::DirtyBits &dirtyBits) override;
+    void syncState(ContextImpl *contextImpl, const gl::Framebuffer::DirtyBits &dirtyBits) override;
+
+    gl::Error getSamplePosition(size_t index, GLfloat *xy) const override;
 };
 
 }  // namespace rx

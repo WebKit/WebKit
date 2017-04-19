@@ -519,6 +519,26 @@
       "GL_UNSIGNED_BYTE": "LoadETC1RGB8ToBC1"
     }
   },
+  "GL_COMPRESSED_RGB8_LOSSY_DECODE_ETC2_ANGLE": {
+    "BC1_RGB_UNORM_BLOCK": {
+      "GL_UNSIGNED_BYTE": "LoadETC2RGB8ToBC1"
+    }
+  },
+  "GL_COMPRESSED_SRGB8_LOSSY_DECODE_ETC2_ANGLE": {
+    "BC1_RGB_UNORM_SRGB_BLOCK": {
+      "GL_UNSIGNED_BYTE": "LoadETC2SRGB8ToBC1"
+    }
+  },
+  "GL_COMPRESSED_RGB8_PUNCHTHROUGH_ALPHA1_LOSSY_DECODE_ETC2_ANGLE": {
+    "BC1_RGBA_UNORM_BLOCK": {
+      "GL_UNSIGNED_BYTE": "LoadETC2RGB8A1ToBC1"
+    }
+  },
+  "GL_COMPRESSED_SRGB8_PUNCHTHROUGH_ALPHA1_LOSSY_DECODE_ETC2_ANGLE": {
+    "BC1_RGBA_UNORM_SRGB_BLOCK": {
+      "GL_UNSIGNED_BYTE": "LoadETC2SRGB8A1ToBC1"
+    }
+  },
   "GL_R16_EXT": {
     "R16_UNORM": {
       "GL_UNSIGNED_SHORT": "LoadToNative<GLushort, 1>"
@@ -557,6 +577,26 @@
   "GL_RGBA16_SNORM_EXT": {
     "R16G16B16A16_SNORM": {
       "GL_SHORT": "LoadToNative<GLushort, 4>"
+    }
+  },
+  "GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT": {
+    "NONE": {
+      "GL_UNSIGNED_BYTE": "LoadCompressedToNative<4, 4, 16>"
+    }
+  },
+  "GL_COMPRESSED_SRGB_S3TC_DXT1_EXT": {
+    "NONE": {
+      "GL_UNSIGNED_BYTE": "LoadCompressedToNative<4, 4, 8>"
+    }
+  },
+  "GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT": {
+    "NONE": {
+      "GL_UNSIGNED_BYTE": "LoadCompressedToNative<4, 4, 8>"
+    }
+  },
+  "GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT": {
+    "NONE": {
+      "GL_UNSIGNED_BYTE": "LoadCompressedToNative<4, 4, 16>"
     }
   }
 }

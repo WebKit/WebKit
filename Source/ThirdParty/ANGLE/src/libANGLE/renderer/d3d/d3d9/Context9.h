@@ -39,7 +39,7 @@ class Context9 : public ContextImpl
     RenderbufferImpl *createRenderbuffer() override;
 
     // Buffer creation
-    BufferImpl *createBuffer() override;
+    BufferImpl *createBuffer(const gl::BufferState &state) override;
 
     // Vertex Array creation
     VertexArrayImpl *createVertexArray(const gl::VertexArrayState &data) override;
@@ -88,6 +88,8 @@ class Context9 : public ContextImpl
                                 GLenum type,
                                 const GLvoid *indices,
                                 const gl::IndexRange &indexRange) override;
+    gl::Error drawArraysIndirect(GLenum mode, const GLvoid *indirect) override;
+    gl::Error drawElementsIndirect(GLenum mode, GLenum type, const GLvoid *indirect) override;
 
     // Device loss
     GLenum getResetStatus() override;
@@ -102,7 +104,7 @@ class Context9 : public ContextImpl
     void popGroupMarker() override;
 
     // State sync with dirty bits.
-    void syncState(const gl::State &state, const gl::State::DirtyBits &dirtyBits) override;
+    void syncState(const gl::State::DirtyBits &dirtyBits) override;
 
     // Disjoint timer queries
     GLint getGPUDisjoint() override;
@@ -116,6 +118,8 @@ class Context9 : public ContextImpl
     const gl::TextureCapsMap &getNativeTextureCaps() const override;
     const gl::Extensions &getNativeExtensions() const override;
     const gl::Limitations &getNativeLimitations() const override;
+
+    gl::Error dispatchCompute(GLuint numGroupsX, GLuint numGroupsY, GLuint numGroupsZ) override;
 
   private:
     Renderer9 *mRenderer;

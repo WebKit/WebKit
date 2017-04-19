@@ -24,7 +24,10 @@ class VertexBuffer11 : public VertexBuffer
 
     gl::Error initialize(unsigned int size, bool dynamicUsage) override;
 
+    // Warning: you should ensure binding really matches attrib.bindingIndex before using this
+    // function.
     gl::Error storeVertexAttributes(const gl::VertexAttribute &attrib,
+                                    const gl::VertexBinding &binding,
                                     GLenum currentValueType,
                                     GLint start,
                                     GLsizei count,

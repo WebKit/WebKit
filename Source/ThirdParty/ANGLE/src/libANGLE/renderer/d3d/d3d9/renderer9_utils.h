@@ -13,6 +13,7 @@
 #include "common/Color.h"
 #include "libANGLE/Caps.h"
 #include "libANGLE/Error.h"
+#include "platform/WorkaroundsD3D.h"
 
 namespace gl
 {
@@ -22,7 +23,6 @@ class FramebufferAttachment;
 namespace rx
 {
 class RenderTarget9;
-struct WorkaroundsD3D;
 
 namespace gl_d3d9
 {
@@ -87,9 +87,9 @@ inline bool isDeviceLostError(HRESULT errorCode)
     }
 }
 
-WorkaroundsD3D GenerateWorkarounds();
+angle::WorkaroundsD3D GenerateWorkarounds();
 }
 
-}
+}  // namespace d3d9
 
 #endif // LIBANGLE_RENDERER_D3D_D3D9_RENDERER9UTILS_H_

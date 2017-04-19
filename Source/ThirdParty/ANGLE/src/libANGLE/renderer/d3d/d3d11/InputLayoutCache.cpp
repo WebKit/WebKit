@@ -9,7 +9,7 @@
 
 #include "libANGLE/renderer/d3d/d3d11/InputLayoutCache.h"
 
-#include "common/BitSetIterator.h"
+#include "common/bitset_utils.h"
 #include "common/utilities.h"
 #include "libANGLE/Program.h"
 #include "libANGLE/VertexAttribute.h"
@@ -41,7 +41,7 @@ gl::InputLayout GetInputLayout(const std::vector<const TranslatedAttribute *> &t
     for (size_t attributeIndex = 0; attributeIndex < translatedAttributes.size(); ++attributeIndex)
     {
         const TranslatedAttribute *translatedAttribute = translatedAttributes[attributeIndex];
-        inputLayout[attributeIndex] = gl::GetVertexFormatType(
+        inputLayout[attributeIndex]                    = gl::GetVertexFormatType(
             *translatedAttribute->attribute, translatedAttribute->currentValueType);
     }
     return inputLayout;
@@ -482,6 +482,7 @@ gl::Error InputLayoutCache::updateInputLayout(const gl::State &state,
     }
 
     const auto &attribs            = state.getVertexArray()->getVertexAttributes();
+    const auto &bindings           = state.getVertexArray()->getVertexBindings();
     const auto &locationToSemantic = programD3D->getAttribLocationToD3DSemantics();
 
     for (unsigned long attribIndex : angle::IterateBitSet(program->getActiveAttribLocationsMask()))
@@ -491,12 +492,13 @@ gl::Error InputLayoutCache::updateInputLayout(const gl::State &state,
         GLenum glslElementType = GetGLSLAttributeType(shaderAttributes, attribIndex);
 
         const auto &attrib = attribs[attribIndex];
+        const auto &binding = bindings[attrib.bindingIndex];
         int d3dSemantic    = locationToSemantic[attribIndex];
 
         const auto &currentValue              = state.getVertexAttribCurrentValue(attribIndex);
         gl::VertexFormatType vertexFormatType = gl::GetVertexFormatType(attrib, currentValue.Type);
 
-        layout.addAttributeData(glslElementType, d3dSemantic, vertexFormatType, attrib.divisor);
+        layout.addAttributeData(glslElementType, d3dSemantic, vertexFormatType, binding.divisor);
     }
 
     ID3D11InputLayout *inputLayout = nullptr;
@@ -513,8 +515,8 @@ gl::Error InputLayoutCache::updateInputLayout(const gl::State &state,
                                         &inputLayout));
             if (mLayoutMap.size() >= mCacheSize)
             {
-                TRACE("Overflowed the limit of %u input layouts, purging half the cache.",
-                      mCacheSize);
+                WARN() << "Overflowed the limit of " << mCacheSize
+                       << " input layouts, purging half the cache.";
 
                 // Randomly release every second element
                 auto it = mLayoutMap.begin();

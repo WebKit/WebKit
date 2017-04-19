@@ -123,9 +123,17 @@ class Renderer11 : public RendererD3D
 
     SwapChainD3D *createSwapChain(NativeWindowD3D *nativeWindow,
                                   HANDLE shareHandle,
+                                  IUnknown *d3dTexture,
                                   GLenum backBufferFormat,
                                   GLenum depthBufferFormat,
                                   EGLint orientation) override;
+    egl::Error getD3DTextureInfo(IUnknown *d3dTexture,
+                                 EGLint *width,
+                                 EGLint *height,
+                                 GLenum *fboFormat) const override;
+    egl::Error validateShareHandle(const egl::Config *config,
+                                   HANDLE shareHandle,
+                                   const egl::AttributeMap &attribs) const override;
 
     gl::Error setSamplerState(gl::SamplerType type,
                               int index,
@@ -137,10 +145,9 @@ class Renderer11 : public RendererD3D
                                 const std::vector<GLint> &vertexUniformBuffers,
                                 const std::vector<GLint> &fragmentUniformBuffers) override;
 
-    gl::Error updateState(const gl::ContextState &data, GLenum drawMode);
+    gl::Error updateState(ContextImpl *contextImpl, GLenum drawMode);
 
     bool applyPrimitiveType(GLenum mode, GLsizei count, bool usesPointSize);
-    gl::Error applyRenderTarget(gl::Framebuffer *frameBuffer);
     gl::Error applyUniforms(const ProgramD3D &programD3D,
                             GLenum drawMode,
                             const std::vector<D3DUniform *> &uniformArray) override;
@@ -211,6 +218,7 @@ class Renderer11 : public RendererD3D
                           GLenum destFormat,
                           const gl::Offset &destOffset,
                           TextureStorage *storage,
+                          GLenum destTarget,
                           GLint destLevel,
                           bool unpackFlipY,
                           bool unpackPremultiplyAlpha,
@@ -240,8 +248,10 @@ class Renderer11 : public RendererD3D
                                   ShaderType type,
                                   const std::vector<D3DVarying> &streamOutVaryings,
                                   bool separatedOutputBuffers,
-                                  const D3DCompilerWorkarounds &workarounds,
+                                  const angle::CompilerWorkaroundsD3D &workarounds,
                                   ShaderExecutableD3D **outExectuable) override;
+    gl::Error ensureHLSLCompilerInitialized() override;
+
     UniformStorageD3D *createUniformStorage(size_t storageSize) override;
 
     // Image operations
@@ -317,7 +327,11 @@ class Renderer11 : public RendererD3D
     bool getLUID(LUID *adapterLuid) const override;
     VertexConversionType getVertexConversionType(gl::VertexFormatType vertexFormatType) const override;
     GLenum getVertexComponentType(gl::VertexFormatType vertexFormatType) const override;
+
+    // Warning: you should ensure binding really matches attrib.bindingIndex before using this
+    // function.
     gl::ErrorOrResult<unsigned int> getVertexSpaceRequired(const gl::VertexAttribute &attrib,
+                                                           const gl::VertexBinding &binding,
                                                            GLsizei count,
                                                            GLsizei instances) const override;
 
@@ -334,7 +348,7 @@ class Renderer11 : public RendererD3D
                                    bool colorBlit, bool depthBlit, bool stencilBlit);
 
     bool isES3Capable() const;
-    const Renderer11DeviceCaps &getRenderer11DeviceCaps() { return mRenderer11DeviceCaps; };
+    const Renderer11DeviceCaps &getRenderer11DeviceCaps() const { return mRenderer11DeviceCaps; };
 
     RendererClass getRendererClass() const override { return RENDERER_D3D11; }
     InputLayoutCache *getInputLayoutCache() { return &mInputLayoutCache; }
@@ -360,10 +374,15 @@ class Renderer11 : public RendererD3D
                                   GLsizei instances,
                                   const gl::IndexRange &indexRange);
 
+    gl::Error genericDrawIndirect(Context11 *context,
+                                  GLenum mode,
+                                  GLenum type,
+                                  const GLvoid *indirect);
+
     // Necessary hack for default framebuffers in D3D.
     FramebufferImpl *createDefaultFramebuffer(const gl::FramebufferState &state) override;
 
-    gl::Error getScratchMemoryBuffer(size_t requestedSize, MemoryBuffer **bufferOut);
+    gl::Error getScratchMemoryBuffer(size_t requestedSize, angle::MemoryBuffer **bufferOut);
 
     gl::Version getMaxSupportedESVersion() const override;
 
@@ -383,24 +402,35 @@ class Renderer11 : public RendererD3D
                                GLenum type,
                                const GLvoid *indices,
                                GLsizei instances);
+    gl::Error drawArraysIndirectImpl(const gl::ContextState &data,
+                                     GLenum mode,
+                                     const GLvoid *indirect);
+    gl::Error drawElementsIndirectImpl(const gl::ContextState &data,
+                                       GLenum mode,
+                                       GLenum type,
+                                       const GLvoid *indirect);
 
-    void generateCaps(gl::Caps *outCaps, gl::TextureCapsMap *outTextureCaps,
+    // Support directly using indirect draw buffer.
+    bool supportsFastIndirectDraw(const gl::State &state, GLenum mode, GLenum type);
+
+    void generateCaps(gl::Caps *outCaps,
+                      gl::TextureCapsMap *outTextureCaps,
                       gl::Extensions *outExtensions,
                       gl::Limitations *outLimitations) const override;
 
-    WorkaroundsD3D generateWorkarounds() const override;
+    angle::WorkaroundsD3D generateWorkarounds() const override;
 
     gl::Error drawLineLoop(const gl::ContextState &data,
                            GLsizei count,
                            GLenum type,
                            const GLvoid *indices,
-                           const TranslatedIndexData *indexInfo,
+                           int baseVertex,
                            int instances);
     gl::Error drawTriangleFan(const gl::ContextState &data,
                               GLsizei count,
                               GLenum type,
                               const GLvoid *indices,
-                              int minIndex,
+                              int baseVertex,
                               int instances);
 
     gl::Error applyShaders(const gl::ContextState &data, GLenum drawMode);
@@ -559,8 +589,7 @@ class Renderer11 : public RendererD3D
 
     std::vector<GLuint> mScratchIndexDataBuffer;
 
-    MemoryBuffer mScratchMemoryBuffer;
-    unsigned int mScratchMemoryBufferResetCounter;
+    angle::ScratchBuffer mScratchMemoryBuffer;
 
     gl::DebugAnnotator *mAnnotator;
 

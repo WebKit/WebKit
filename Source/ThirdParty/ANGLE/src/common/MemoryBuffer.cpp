@@ -11,19 +11,18 @@
 
 #include "common/debug.h"
 
-namespace rx
+namespace angle
 {
 
-MemoryBuffer::MemoryBuffer()
-    : mSize(0),
-      mData(NULL)
+// MemoryBuffer implementation.
+MemoryBuffer::MemoryBuffer() : mSize(0), mData(nullptr)
 {
 }
 
 MemoryBuffer::~MemoryBuffer()
 {
     free(mData);
-    mData = NULL;
+    mData = nullptr;
 }
 
 bool MemoryBuffer::resize(size_t size)
@@ -31,7 +30,7 @@ bool MemoryBuffer::resize(size_t size)
     if (size == 0)
     {
         free(mData);
-        mData = NULL;
+        mData = nullptr;
         mSize = 0;
         return true;
     }
@@ -43,7 +42,7 @@ bool MemoryBuffer::resize(size_t size)
 
     // Only reallocate if the size has changed.
     uint8_t *newMemory = reinterpret_cast<uint8_t*>(malloc(sizeof(uint8_t) * size));
-    if (newMemory == NULL)
+    if (newMemory == nullptr)
     {
         return false;
     }
@@ -77,4 +76,58 @@ uint8_t *MemoryBuffer::data()
     return mData;
 }
 
+// ScratchBuffer implementation.
+
+ScratchBuffer::ScratchBuffer(uint32_t lifetime) : mLifetime(lifetime), mResetCounter(lifetime)
+{
 }
+
+ScratchBuffer::~ScratchBuffer()
+{
+}
+
+bool ScratchBuffer::get(size_t requestedSize, MemoryBuffer **memoryBufferOut)
+{
+    if (mScratchMemory.size() == requestedSize)
+    {
+        mResetCounter    = mLifetime;
+        *memoryBufferOut = &mScratchMemory;
+        return true;
+    }
+
+    if (mScratchMemory.size() > requestedSize)
+    {
+        tick();
+    }
+
+    if (mResetCounter == 0 || mScratchMemory.size() < requestedSize)
+    {
+        mScratchMemory.resize(0);
+        if (!mScratchMemory.resize(requestedSize))
+        {
+            return false;
+        }
+        mResetCounter = mLifetime;
+    }
+
+    ASSERT(mScratchMemory.size() >= requestedSize);
+
+    *memoryBufferOut = &mScratchMemory;
+    return true;
+}
+
+void ScratchBuffer::tick()
+{
+    if (mResetCounter > 0)
+    {
+        --mResetCounter;
+    }
+}
+
+void ScratchBuffer::clear()
+{
+    mResetCounter = mLifetime;
+    mScratchMemory.resize(0);
+}
+
+}  // namespace angle

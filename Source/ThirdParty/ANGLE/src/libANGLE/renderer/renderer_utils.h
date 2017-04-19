@@ -44,7 +44,27 @@ typedef void (*ColorReadFunction)(const uint8_t *source, uint8_t *dest);
 typedef void (*ColorWriteFunction)(const uint8_t *source, uint8_t *dest);
 typedef void (*ColorCopyFunction)(const uint8_t *source, uint8_t *dest);
 
-typedef std::map<gl::FormatType, ColorCopyFunction> FastCopyFunctionMap;
+class FastCopyFunctionMap
+{
+  public:
+    struct Entry
+    {
+        GLenum format;
+        GLenum type;
+        ColorCopyFunction func;
+    };
+
+    constexpr FastCopyFunctionMap() : FastCopyFunctionMap(nullptr, 0) {}
+
+    constexpr FastCopyFunctionMap(const Entry *data, size_t size) : mSize(size), mData(data) {}
+
+    bool has(const gl::FormatType &formatType) const;
+    ColorCopyFunction get(const gl::FormatType &formatType) const;
+
+  private:
+    size_t mSize;
+    const Entry *mData;
+};
 
 struct PackPixelsParams
 {
@@ -74,6 +94,13 @@ void PackPixels(const PackPixelsParams &params,
 ColorWriteFunction GetColorWriteFunction(const gl::FormatType &formatType);
 ColorCopyFunction GetFastCopyFunction(const FastCopyFunctionMap &fastCopyFunctions,
                                       const gl::FormatType &formatType);
+
+using InitializeTextureDataFunction = void (*)(size_t width,
+                                               size_t height,
+                                               size_t depth,
+                                               uint8_t *output,
+                                               size_t outputRowPitch,
+                                               size_t outputDepthPitch);
 
 using LoadImageFunction = void (*)(size_t width,
                                    size_t height,

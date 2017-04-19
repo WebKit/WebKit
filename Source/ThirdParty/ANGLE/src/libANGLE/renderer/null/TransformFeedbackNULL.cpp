@@ -25,33 +25,27 @@ TransformFeedbackNULL::~TransformFeedbackNULL()
 
 void TransformFeedbackNULL::begin(GLenum primitiveMode)
 {
-    UNIMPLEMENTED();
 }
 
 void TransformFeedbackNULL::end()
 {
-    UNIMPLEMENTED();
 }
 
 void TransformFeedbackNULL::pause()
 {
-    UNIMPLEMENTED();
 }
 
 void TransformFeedbackNULL::resume()
 {
-    UNIMPLEMENTED();
 }
 
 void TransformFeedbackNULL::bindGenericBuffer(const BindingPointer<gl::Buffer> &binding)
 {
-    UNIMPLEMENTED();
 }
 
 void TransformFeedbackNULL::bindIndexedBuffer(size_t index,
                                               const OffsetBindingPointer<gl::Buffer> &binding)
 {
-    UNIMPLEMENTED();
 }
 
 }  // namespace rx

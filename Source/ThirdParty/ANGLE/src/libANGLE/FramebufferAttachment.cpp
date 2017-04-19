@@ -99,17 +99,21 @@ void FramebufferAttachment::attach(GLenum type,
                                    const ImageIndex &textureIndex,
                                    FramebufferAttachmentObject *resource)
 {
+    if (resource == nullptr)
+    {
+        detach();
+        return;
+    }
+
     mType = type;
     mTarget = Target(binding, textureIndex);
+    resource->onAttach();
 
-    if (resource)
-    {
-        resource->onAttach();
-    }
     if (mResource != nullptr)
     {
         mResource->onDetach();
     }
+
     mResource = resource;
 }
 
@@ -206,6 +210,11 @@ const egl::Surface *FramebufferAttachment::getSurface() const
     return rx::GetAs<egl::Surface>(mResource);
 }
 
+FramebufferAttachmentObject *FramebufferAttachment::getResource() const
+{
+    return mResource;
+}
+
 bool FramebufferAttachment::operator==(const FramebufferAttachment &other) const
 {
     if (mResource != other.mResource || mType != other.mType)
@@ -233,7 +242,7 @@ Error FramebufferAttachmentObject::getAttachmentRenderTarget(
     return getAttachmentImpl()->getAttachmentRenderTarget(target, rtOut);
 }
 
-angle::BroadcastChannel *FramebufferAttachmentObject::getDirtyChannel()
+angle::BroadcastChannel<> *FramebufferAttachmentObject::getDirtyChannel()
 {
     return &mDirtyChannel;
 }

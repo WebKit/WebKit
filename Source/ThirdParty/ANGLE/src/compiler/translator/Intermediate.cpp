@@ -15,6 +15,9 @@
 #include "compiler/translator/Intermediate.h"
 #include "compiler/translator/SymbolTable.h"
 
+namespace sh
+{
+
 ////////////////////////////////////////////////////////////////////////////
 //
 // First set of functions are to help build the intermediate representation.
@@ -28,8 +31,10 @@
 //
 // Returns the added node.
 //
-TIntermSymbol *TIntermediate::addSymbol(
-    int id, const TString &name, const TType &type, const TSourceLoc &line)
+TIntermSymbol *TIntermediate::addSymbol(int id,
+                                        const TString &name,
+                                        const TType &type,
+                                        const TSourceLoc &line)
 {
     TIntermSymbol *node = new TIntermSymbol(id, name, type);
     node->setLine(line);
@@ -60,95 +65,6 @@ TIntermTyped *TIntermediate::addIndex(TOperator op,
     }
 
     return node;
-}
-
-// This is the safe way to change the operator on an aggregate, as it
-// does lots of error checking and fixing.  Especially for establishing
-// a function call's operation on it's set of parameters.
-//
-// Returns an aggregate node, which could be the one passed in if
-// it was already an aggregate but no operator was set.
-TIntermAggregate *TIntermediate::setAggregateOperator(
-    TIntermNode *node, TOperator op, const TSourceLoc &line)
-{
-    TIntermAggregate *aggNode;
-
-    //
-    // Make sure we have an aggregate.  If not turn it into one.
-    //
-    if (node)
-    {
-        aggNode = node->getAsAggregate();
-        if (aggNode == NULL || aggNode->getOp() != EOpNull)
-        {
-            //
-            // Make an aggregate containing this node.
-            //
-            aggNode = new TIntermAggregate();
-            aggNode->getSequence()->push_back(node);
-        }
-    }
-    else
-    {
-        aggNode = new TIntermAggregate();
-    }
-
-    //
-    // Set the operator.
-    //
-    aggNode->setOp(op);
-    aggNode->setLine(line);
-
-    return aggNode;
-}
-
-//
-// Safe way to combine two nodes into an aggregate.  Works with null pointers,
-// a node that's not a aggregate yet, etc.
-//
-// Returns the resulting aggregate, unless 0 was passed in for
-// both existing nodes.
-//
-TIntermAggregate *TIntermediate::growAggregate(
-    TIntermNode *left, TIntermNode *right, const TSourceLoc &line)
-{
-    if (left == NULL && right == NULL)
-        return NULL;
-
-    TIntermAggregate *aggNode = NULL;
-    if (left)
-        aggNode = left->getAsAggregate();
-    if (!aggNode || aggNode->getOp() != EOpNull)
-    {
-        aggNode = new TIntermAggregate;
-        if (left)
-            aggNode->getSequence()->push_back(left);
-    }
-
-    if (right)
-        aggNode->getSequence()->push_back(right);
-
-    aggNode->setLine(line);
-
-    return aggNode;
-}
-
-//
-// Turn an existing node into an aggregate.
-//
-// Returns an aggregate, unless NULL was passed in for the existing node.
-//
-TIntermAggregate *TIntermediate::MakeAggregate(TIntermNode *node, const TSourceLoc &line)
-{
-    if (node == nullptr)
-        return nullptr;
-
-    TIntermAggregate *aggNode = new TIntermAggregate;
-    aggNode->getSequence()->push_back(node);
-
-    aggNode->setLine(line);
-
-    return aggNode;
 }
 
 // If the input node is nullptr, return nullptr.
@@ -264,8 +180,7 @@ TIntermSwitch *TIntermediate::addSwitch(TIntermTyped *init,
     return node;
 }
 
-TIntermCase *TIntermediate::addCase(
-    TIntermTyped *condition, const TSourceLoc &line)
+TIntermCase *TIntermediate::addCase(TIntermTyped *condition, const TSourceLoc &line)
 {
     TIntermCase *node = new TIntermCase(condition);
     node->setLine(line);
@@ -313,9 +228,12 @@ TIntermTyped *TIntermediate::AddSwizzle(TIntermTyped *baseExpression,
 //
 // Create loop nodes.
 //
-TIntermNode *TIntermediate::addLoop(
-    TLoopType type, TIntermNode *init, TIntermTyped *cond, TIntermTyped *expr,
-    TIntermNode *body, const TSourceLoc &line)
+TIntermNode *TIntermediate::addLoop(TLoopType type,
+                                    TIntermNode *init,
+                                    TIntermTyped *cond,
+                                    TIntermTyped *expr,
+                                    TIntermNode *body,
+                                    const TSourceLoc &line)
 {
     TIntermNode *node = new TIntermLoop(type, init, cond, expr, EnsureBlock(body));
     node->setLine(line);
@@ -326,14 +244,14 @@ TIntermNode *TIntermediate::addLoop(
 //
 // Add branches.
 //
-TIntermBranch* TIntermediate::addBranch(
-    TOperator branchOp, const TSourceLoc &line)
+TIntermBranch *TIntermediate::addBranch(TOperator branchOp, const TSourceLoc &line)
 {
     return addBranch(branchOp, 0, line);
 }
 
-TIntermBranch* TIntermediate::addBranch(
-    TOperator branchOp, TIntermTyped *expression, const TSourceLoc &line)
+TIntermBranch *TIntermediate::addBranch(TOperator branchOp,
+                                        TIntermTyped *expression,
+                                        const TSourceLoc &line)
 {
     TIntermBranch *node = new TIntermBranch(branchOp, expression);
     node->setLine(line);
@@ -355,20 +273,23 @@ TIntermTyped *TIntermediate::foldAggregateBuiltIn(TIntermAggregate *aggregate,
         case EOpMix:
         case EOpStep:
         case EOpSmoothStep:
-        case EOpMul:
+        case EOpLdexp:
+        case EOpMulMatrixComponentWise:
         case EOpOuterProduct:
-        case EOpLessThan:
-        case EOpLessThanEqual:
-        case EOpGreaterThan:
-        case EOpGreaterThanEqual:
-        case EOpVectorEqual:
-        case EOpVectorNotEqual:
+        case EOpEqualComponentWise:
+        case EOpNotEqualComponentWise:
+        case EOpLessThanComponentWise:
+        case EOpLessThanEqualComponentWise:
+        case EOpGreaterThanComponentWise:
+        case EOpGreaterThanEqualComponentWise:
         case EOpDistance:
         case EOpDot:
         case EOpCross:
         case EOpFaceForward:
         case EOpReflect:
         case EOpRefract:
+        case EOpBitfieldExtract:
+        case EOpBitfieldInsert:
             return aggregate->fold(diagnostics);
         default:
             // TODO: Add support for folding array constructors
@@ -380,3 +301,5 @@ TIntermTyped *TIntermediate::foldAggregateBuiltIn(TIntermAggregate *aggregate,
             return nullptr;
     }
 }
+
+}  // namespace sh

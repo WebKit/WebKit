@@ -38,10 +38,7 @@ static std::string GenerateExtensionsString(const T &extensions)
 typedef std::set<egl::Device *> DeviceSet;
 static DeviceSet *GetDeviceSet()
 {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wexit-time-destructors"
     static DeviceSet devices;
-#pragma clang diagnostic pop
     return &devices;
 }
 

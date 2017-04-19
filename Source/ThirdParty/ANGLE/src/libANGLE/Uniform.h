@@ -23,7 +23,14 @@ namespace gl
 struct LinkedUniform : public sh::Uniform
 {
     LinkedUniform();
-    LinkedUniform(GLenum type, GLenum precision, const std::string &name, unsigned int arraySize, const int blockIndex, const sh::BlockMemberInfo &blockInfo);
+    LinkedUniform(GLenum type,
+                  GLenum precision,
+                  const std::string &name,
+                  unsigned int arraySize,
+                  const int binding,
+                  const int location,
+                  const int blockIndex,
+                  const sh::BlockMemberInfo &blockInfo);
     LinkedUniform(const sh::Uniform &uniform);
     LinkedUniform(const LinkedUniform &uniform);
     LinkedUniform &operator=(const LinkedUniform &uniform);
@@ -33,9 +40,11 @@ struct LinkedUniform : public sh::Uniform
     uint8_t *data();
     const uint8_t *data() const;
     bool isSampler() const;
+    bool isImage() const;
     bool isInDefaultBlock() const;
     bool isField() const;
     size_t getElementSize() const;
+    size_t getElementComponents() const;
     uint8_t *getDataPtrToElement(size_t elementIndex);
     const uint8_t *getDataPtrToElement(size_t elementIndex) const;
 
@@ -43,7 +52,7 @@ struct LinkedUniform : public sh::Uniform
     sh::BlockMemberInfo blockInfo;
 
   private:
-    mutable rx::MemoryBuffer mLazyData;
+    mutable angle::MemoryBuffer mLazyData;
 };
 
 // Helper struct representing a single shader uniform block

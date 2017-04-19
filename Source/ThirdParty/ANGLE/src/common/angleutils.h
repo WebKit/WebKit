@@ -23,6 +23,10 @@
 namespace angle
 {
 
+#if defined(ANGLE_ENABLE_D3D9) || defined(ANGLE_ENABLE_D3D11)
+using Microsoft::WRL::ComPtr;
+#endif  // defined(ANGLE_ENABLE_D3D9) || defined(ANGLE_ENABLE_D3D11)
+
 class NonCopyable
 {
   public:
@@ -116,10 +120,8 @@ inline bool IsMaskFlagSet(T mask, T flag)
 
 inline const char* MakeStaticString(const std::string &str)
 {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wexit-time-destructors"
     static std::set<std::string> strings;
-#pragma clang diagnostic pop
+
     std::set<std::string>::iterator it = strings.find(str);
     if (it != strings.end())
     {

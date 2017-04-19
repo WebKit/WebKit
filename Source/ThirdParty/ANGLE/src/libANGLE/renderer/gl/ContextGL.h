@@ -47,7 +47,7 @@ class ContextGL : public ContextImpl
     RenderbufferImpl *createRenderbuffer() override;
 
     // Buffer creation
-    BufferImpl *createBuffer() override;
+    BufferImpl *createBuffer(const gl::BufferState &state) override;
 
     // Vertex Array creation
     VertexArrayImpl *createVertexArray(const gl::VertexArrayState &data) override;
@@ -96,6 +96,8 @@ class ContextGL : public ContextImpl
                                 GLenum type,
                                 const GLvoid *indices,
                                 const gl::IndexRange &indexRange) override;
+    gl::Error drawArraysIndirect(GLenum mode, const GLvoid *indirect) override;
+    gl::Error drawElementsIndirect(GLenum mode, GLenum type, const GLvoid *indirect) override;
 
     // CHROMIUM_path_rendering implementation
     void stencilFillPath(const gl::Path *path, GLenum fillMode, GLuint mask) override;
@@ -154,7 +156,7 @@ class ContextGL : public ContextImpl
     void popGroupMarker() override;
 
     // State sync with dirty bits.
-    void syncState(const gl::State &state, const gl::State::DirtyBits &dirtyBits) override;
+    void syncState(const gl::State::DirtyBits &dirtyBits) override;
 
     // Disjoint timer queries
     GLint getGPUDisjoint() override;
@@ -172,7 +174,9 @@ class ContextGL : public ContextImpl
     // Handle helpers
     const FunctionsGL *getFunctions() const;
     StateManagerGL *getStateManager();
-    const WorkaroundsGL &getWorkaroundsGL();
+    const WorkaroundsGL &getWorkaroundsGL() const;
+
+    gl::Error dispatchCompute(GLuint numGroupsX, GLuint numGroupsY, GLuint numGroupsZ) override;
 
   private:
     RendererGL *mRenderer;

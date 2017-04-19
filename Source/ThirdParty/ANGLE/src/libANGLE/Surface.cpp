@@ -15,6 +15,7 @@
 #include <iostream>
 
 #include "libANGLE/Config.h"
+#include "libANGLE/Display.h"
 #include "libANGLE/Framebuffer.h"
 #include "libANGLE/Texture.h"
 #include "libANGLE/formatutils.h"
@@ -23,17 +24,18 @@
 namespace egl
 {
 
-SurfaceState::SurfaceState() : defaultFramebuffer(nullptr)
+SurfaceState::SurfaceState(const egl::Config *configIn)
+    : defaultFramebuffer(nullptr), config(configIn)
 {
 }
 
 Surface::Surface(EGLint surfaceType, const egl::Config *config, const AttributeMap &attributes)
     : FramebufferAttachmentObject(),
+      mState(config),
       mImplementation(nullptr),
       mCurrentCount(0),
       mDestroyed(false),
       mType(surfaceType),
-      mConfig(config),
       mPostSubBufferRequested(false),
       mFixedSize(false),
       mFixedWidth(0),
@@ -87,9 +89,22 @@ Surface::~Surface()
     SafeDelete(mImplementation);
 }
 
-Error Surface::initialize()
+void Surface::destroy(const Display *display)
 {
-    ANGLE_TRY(mImplementation->initialize());
+    if (mState.defaultFramebuffer)
+    {
+        mState.defaultFramebuffer->destroyDefault(display);
+    }
+    if (mImplementation)
+    {
+        mImplementation->destroy(rx::SafeGetImpl(display));
+    }
+    delete this;
+}
+
+Error Surface::initialize(const Display &display)
+{
+    ANGLE_TRY(mImplementation->initialize(display.getImplementation()));
 
     // Initialized here since impl is nullptr in the constructor.
     // Must happen after implementation initialize for Android.
@@ -102,29 +117,28 @@ Error Surface::initialize()
     return Error(EGL_SUCCESS);
 }
 
-void Surface::setIsCurrent(bool isCurrent)
+void Surface::setIsCurrent(Display *display, bool isCurrent)
 {
     if (isCurrent)
     {
         mCurrentCount++;
+        return;
     }
-    else
+
+    ASSERT(mCurrentCount > 0);
+    mCurrentCount--;
+    if (mCurrentCount == 0 && mDestroyed)
     {
-        ASSERT(mCurrentCount > 0);
-        mCurrentCount--;
-        if (mCurrentCount == 0 && mDestroyed)
-        {
-            delete this;
-        }
+        destroy(display);
     }
 }
 
-void Surface::onDestroy()
+void Surface::onDestroy(Display *display)
 {
     mDestroyed = true;
     if (mCurrentCount == 0)
     {
-        delete this;
+        destroy(display);
     }
 }
 
@@ -133,9 +147,14 @@ EGLint Surface::getType() const
     return mType;
 }
 
-Error Surface::swap()
+Error Surface::swap(const Display &display)
 {
-    return mImplementation->swap();
+    return mImplementation->swap(display.getImplementation());
+}
+
+Error Surface::swapWithDamage(EGLint *rects, EGLint n_rects)
+{
+    return mImplementation->swapWithDamage(rects, n_rects);
 }
 
 Error Surface::postSubBuffer(EGLint x, EGLint y, EGLint width, EGLint height)
@@ -160,7 +179,7 @@ void Surface::setSwapInterval(EGLint interval)
 
 const Config *Surface::getConfig() const
 {
-    return mConfig;
+    return mState.config;
 }
 
 EGLint Surface::getPixelAspectRatio() const
@@ -206,19 +225,23 @@ EGLint Surface::getHeight() const
 Error Surface::bindTexImage(gl::Texture *texture, EGLint buffer)
 {
     ASSERT(!mTexture.get());
+    ANGLE_TRY(mImplementation->bindTexImage(texture, buffer));
 
     texture->bindTexImageFromSurface(this);
     mTexture.set(texture);
-    return mImplementation->bindTexImage(texture, buffer);
+
+    return Error(EGL_SUCCESS);
 }
 
 Error Surface::releaseTexImage(EGLint buffer)
 {
+    ANGLE_TRY(mImplementation->releaseTexImage(buffer));
+
     ASSERT(mTexture.get());
     mTexture->releaseTexImageFromSurface();
     mTexture.set(nullptr);
 
-    return mImplementation->releaseTexImage(buffer);
+    return Error(EGL_SUCCESS);
 }
 
 Error Surface::getSyncValues(EGLuint64KHR *ust, EGLuint64KHR *msc, EGLuint64KHR *sbc)
@@ -256,28 +279,7 @@ GLuint Surface::getId() const
 
 gl::Framebuffer *Surface::createDefaultFramebuffer()
 {
-    gl::Framebuffer *framebuffer = new gl::Framebuffer(mImplementation);
-
-    GLenum drawBufferState = GL_BACK;
-    framebuffer->setDrawBuffers(1, &drawBufferState);
-    framebuffer->setReadBuffer(GL_BACK);
-
-    framebuffer->setAttachment(GL_FRAMEBUFFER_DEFAULT, GL_BACK, gl::ImageIndex::MakeInvalid(),
-                               this);
-
-    if (mConfig->depthSize > 0)
-    {
-        framebuffer->setAttachment(GL_FRAMEBUFFER_DEFAULT, GL_DEPTH, gl::ImageIndex::MakeInvalid(),
-                                   this);
-    }
-
-    if (mConfig->stencilSize > 0)
-    {
-        framebuffer->setAttachment(GL_FRAMEBUFFER_DEFAULT, GL_STENCIL,
-                                   gl::ImageIndex::MakeInvalid(), this);
-    }
-
-    return framebuffer;
+    return new gl::Framebuffer(this);
 }
 
 WindowSurface::WindowSurface(rx::EGLImplFactory *implFactory,
@@ -286,7 +288,7 @@ WindowSurface::WindowSurface(rx::EGLImplFactory *implFactory,
                              const AttributeMap &attribs)
     : Surface(EGL_WINDOW_BIT, config, attribs)
 {
-    mImplementation = implFactory->createWindowSurface(mState, config, window, attribs);
+    mImplementation = implFactory->createWindowSurface(mState, window, attribs);
 }
 
 WindowSurface::~WindowSurface()
@@ -298,17 +300,18 @@ PbufferSurface::PbufferSurface(rx::EGLImplFactory *implFactory,
                                const AttributeMap &attribs)
     : Surface(EGL_PBUFFER_BIT, config, attribs)
 {
-    mImplementation = implFactory->createPbufferSurface(mState, config, attribs);
+    mImplementation = implFactory->createPbufferSurface(mState, attribs);
 }
 
 PbufferSurface::PbufferSurface(rx::EGLImplFactory *implFactory,
                                const Config *config,
-                               EGLClientBuffer shareHandle,
+                               EGLenum buftype,
+                               EGLClientBuffer clientBuffer,
                                const AttributeMap &attribs)
     : Surface(EGL_PBUFFER_BIT, config, attribs)
 {
     mImplementation =
-        implFactory->createPbufferFromClientBuffer(mState, config, shareHandle, attribs);
+        implFactory->createPbufferFromClientBuffer(mState, buftype, clientBuffer, attribs);
 }
 
 PbufferSurface::~PbufferSurface()
@@ -321,7 +324,7 @@ PixmapSurface::PixmapSurface(rx::EGLImplFactory *implFactory,
                              const AttributeMap &attribs)
     : Surface(EGL_PIXMAP_BIT, config, attribs)
 {
-    mImplementation = implFactory->createPixmapSurface(mState, config, nativePixmap, attribs);
+    mImplementation = implFactory->createPixmapSurface(mState, nativePixmap, attribs);
 }
 
 PixmapSurface::~PixmapSurface()

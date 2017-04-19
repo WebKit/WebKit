@@ -8,6 +8,7 @@
 #define COMPILER_PREPROCESSOR_MACRO_H_
 
 #include <map>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -39,7 +40,7 @@ struct Macro
     Replacements replacements;
 };
 
-typedef std::map<std::string, Macro> MacroSet;
+typedef std::map<std::string, std::shared_ptr<Macro>> MacroSet;
 
 void PredefineMacro(MacroSet *macroSet, const char *name, int value);
 

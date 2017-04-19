@@ -24,6 +24,7 @@ namespace gl
 {
 class Buffer;
 struct Caps;
+class Context;
 class Program;
 
 class TransformFeedbackState final : public angle::NonCopyable
@@ -55,12 +56,13 @@ class TransformFeedback final : public RefCountObject, public LabeledObject
   public:
     TransformFeedback(rx::GLImplFactory *implFactory, GLuint id, const Caps &caps);
     virtual ~TransformFeedback();
+    void destroy(const Context *context) override;
 
     void setLabel(const std::string &label) override;
     const std::string &getLabel() const override;
 
-    void begin(GLenum primitiveMode, Program *program);
-    void end();
+    void begin(const Context *context, GLenum primitiveMode, Program *program);
+    void end(const Context *context);
     void pause();
     void resume();
 
@@ -83,7 +85,7 @@ class TransformFeedback final : public RefCountObject, public LabeledObject
     const rx::TransformFeedbackImpl *getImplementation() const;
 
   private:
-    void bindProgram(Program *program);
+    void bindProgram(const Context *context, Program *program);
 
     TransformFeedbackState mState;
     rx::TransformFeedbackImpl* mImplementation;

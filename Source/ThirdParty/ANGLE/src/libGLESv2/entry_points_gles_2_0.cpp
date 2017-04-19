@@ -21,7 +21,6 @@
 #include "libANGLE/Program.h"
 #include "libANGLE/Texture.h"
 #include "libANGLE/VertexArray.h"
-#include "libANGLE/VertexAttribute.h"
 #include "libANGLE/FramebufferAttachment.h"
 
 #include "libANGLE/validationES.h"
@@ -32,7 +31,6 @@
 
 #include "common/debug.h"
 #include "common/utilities.h"
-#include "common/version.h"
 
 namespace gl
 {
@@ -76,26 +74,13 @@ void GL_APIENTRY BindAttribLocation(GLuint program, GLuint index, const GLchar* 
     Context *context = GetValidGlobalContext();
     if (context)
     {
-        if (index >= MAX_VERTEX_ATTRIBS)
-        {
-            context->handleError(Error(GL_INVALID_VALUE));
-            return;
-        }
-
-        Program *programObject = GetValidProgram(context, program);
-
-        if (!programObject)
+        if (!context->skipValidation() &&
+            !ValidateBindAttribLocation(context, program, index, name))
         {
             return;
         }
 
-        if (strncmp(name, "gl_", 3) == 0)
-        {
-            context->handleError(Error(GL_INVALID_OPERATION));
-            return;
-        }
-
-        programObject->bindAttributeLocation(index, name);
+        context->bindAttribLocation(program, index, name);
     }
 }
 
@@ -106,50 +91,12 @@ void GL_APIENTRY BindBuffer(GLenum target, GLuint buffer)
     Context *context = GetValidGlobalContext();
     if (context)
     {
-        if (!ValidBufferTarget(context, target))
+        if (!context->skipValidation() && !ValidateBindBuffer(context, target, buffer))
         {
-            context->handleError(Error(GL_INVALID_ENUM));
             return;
         }
 
-        if (!context->getGLState().isBindGeneratesResourceEnabled() &&
-            !context->isBufferGenerated(buffer))
-        {
-            context->handleError(Error(GL_INVALID_OPERATION, "Buffer was not generated"));
-            return;
-        }
-
-        switch (target)
-        {
-          case GL_ARRAY_BUFFER:
-            context->bindArrayBuffer(buffer);
-            return;
-          case GL_ELEMENT_ARRAY_BUFFER:
-            context->bindElementArrayBuffer(buffer);
-            return;
-          case GL_COPY_READ_BUFFER:
-            context->bindCopyReadBuffer(buffer);
-            return;
-          case GL_COPY_WRITE_BUFFER:
-            context->bindCopyWriteBuffer(buffer);
-            return;
-          case GL_PIXEL_PACK_BUFFER:
-            context->bindPixelPackBuffer(buffer);
-            return;
-          case GL_PIXEL_UNPACK_BUFFER:
-            context->bindPixelUnpackBuffer(buffer);
-            return;
-          case GL_UNIFORM_BUFFER:
-            context->bindGenericUniformBuffer(buffer);
-            return;
-          case GL_TRANSFORM_FEEDBACK_BUFFER:
-            context->bindGenericTransformFeedbackBuffer(buffer);
-            return;
-
-          default:
-              context->handleError(Error(GL_INVALID_ENUM));
-            return;
-        }
+        context->bindBuffer(target, buffer);
     }
 }
 
@@ -160,28 +107,12 @@ void GL_APIENTRY BindFramebuffer(GLenum target, GLuint framebuffer)
     Context *context = GetValidGlobalContext();
     if (context)
     {
-        if (!ValidFramebufferTarget(target))
+        if (!context->skipValidation() && !ValidateBindFramebuffer(context, target, framebuffer))
         {
-            context->handleError(Error(GL_INVALID_ENUM));
             return;
         }
 
-        if (!context->getGLState().isBindGeneratesResourceEnabled() &&
-            !context->isFramebufferGenerated(framebuffer))
-        {
-            context->handleError(Error(GL_INVALID_OPERATION, "Framebuffer was not generated"));
-            return;
-        }
-
-        if (target == GL_READ_FRAMEBUFFER_ANGLE || target == GL_FRAMEBUFFER)
-        {
-            context->bindReadFramebuffer(framebuffer);
-        }
-
-        if (target == GL_DRAW_FRAMEBUFFER_ANGLE || target == GL_FRAMEBUFFER)
-        {
-            context->bindDrawFramebuffer(framebuffer);
-        }
+        context->bindFramebuffer(target, framebuffer);
     }
 }
 
@@ -192,20 +123,12 @@ void GL_APIENTRY BindRenderbuffer(GLenum target, GLuint renderbuffer)
     Context *context = GetValidGlobalContext();
     if (context)
     {
-        if (target != GL_RENDERBUFFER)
+        if (!context->skipValidation() && !ValidateBindRenderbuffer(context, target, renderbuffer))
         {
-            context->handleError(Error(GL_INVALID_ENUM));
             return;
         }
 
-        if (!context->getGLState().isBindGeneratesResourceEnabled() &&
-            !context->isRenderbufferGenerated(renderbuffer))
-        {
-            context->handleError(Error(GL_INVALID_OPERATION, "Renderbuffer was not generated"));
-            return;
-        }
-
-        context->bindRenderbuffer(renderbuffer);
+        context->bindRenderbuffer(target, renderbuffer);
     }
 }
 
@@ -216,7 +139,7 @@ void GL_APIENTRY BindTexture(GLenum target, GLuint texture)
     Context *context = GetValidGlobalContext();
     if (context)
     {
-        if (!ValidateBindTexture(context, target, texture))
+        if (!context->skipValidation() && !ValidateBindTexture(context, target, texture))
         {
             return;
         }
@@ -233,13 +156,29 @@ void GL_APIENTRY BlendColor(GLclampf red, GLclampf green, GLclampf blue, GLclamp
     Context *context = GetValidGlobalContext();
     if (context)
     {
+        if (!context->skipValidation() && !ValidateBlendColor(context, red, green, blue, alpha))
+        {
+            return;
+        }
+
         context->blendColor(red, green, blue, alpha);
     }
 }
 
 void GL_APIENTRY BlendEquation(GLenum mode)
 {
-    BlendEquationSeparate(mode, mode);
+    EVENT("(GLenum mode = 0x%X)", mode);
+
+    Context *context = GetValidGlobalContext();
+    if (context)
+    {
+        if (!context->skipValidation() && !ValidateBlendEquation(context, mode))
+        {
+            return;
+        }
+
+        context->blendEquation(mode);
+    }
 }
 
 void GL_APIENTRY BlendEquationSeparate(GLenum modeRGB, GLenum modeAlpha)
@@ -249,31 +188,9 @@ void GL_APIENTRY BlendEquationSeparate(GLenum modeRGB, GLenum modeAlpha)
     Context *context = GetValidGlobalContext();
     if (context)
     {
-        switch (modeRGB)
+        if (!context->skipValidation() &&
+            !ValidateBlendEquationSeparate(context, modeRGB, modeAlpha))
         {
-          case GL_FUNC_ADD:
-          case GL_FUNC_SUBTRACT:
-          case GL_FUNC_REVERSE_SUBTRACT:
-          case GL_MIN:
-          case GL_MAX:
-            break;
-
-          default:
-              context->handleError(Error(GL_INVALID_ENUM));
-            return;
-        }
-
-        switch (modeAlpha)
-        {
-          case GL_FUNC_ADD:
-          case GL_FUNC_SUBTRACT:
-          case GL_FUNC_REVERSE_SUBTRACT:
-          case GL_MIN:
-          case GL_MAX:
-            break;
-
-          default:
-              context->handleError(Error(GL_INVALID_ENUM));
             return;
         }
 
@@ -283,7 +200,18 @@ void GL_APIENTRY BlendEquationSeparate(GLenum modeRGB, GLenum modeAlpha)
 
 void GL_APIENTRY BlendFunc(GLenum sfactor, GLenum dfactor)
 {
-    BlendFuncSeparate(sfactor, dfactor, sfactor, dfactor);
+    EVENT("(GLenum sfactor = 0x%X, GLenum dfactor = 0x%X)", sfactor, dfactor);
+
+    Context *context = GetValidGlobalContext();
+    if (context)
+    {
+        if (!context->skipValidation() && !ValidateBlendFunc(context, sfactor, dfactor))
+        {
+            return;
+        }
+
+        context->blendFunc(sfactor, dfactor);
+    }
 }
 
 void GL_APIENTRY BlendFuncSeparate(GLenum srcRGB, GLenum dstRGB, GLenum srcAlpha, GLenum dstAlpha)
@@ -294,135 +222,10 @@ void GL_APIENTRY BlendFuncSeparate(GLenum srcRGB, GLenum dstRGB, GLenum srcAlpha
     Context *context = GetValidGlobalContext();
     if (context)
     {
-        switch (srcRGB)
+        if (!context->skipValidation() &&
+            !ValidateBlendFuncSeparate(context, srcRGB, dstRGB, srcAlpha, dstAlpha))
         {
-          case GL_ZERO:
-          case GL_ONE:
-          case GL_SRC_COLOR:
-          case GL_ONE_MINUS_SRC_COLOR:
-          case GL_DST_COLOR:
-          case GL_ONE_MINUS_DST_COLOR:
-          case GL_SRC_ALPHA:
-          case GL_ONE_MINUS_SRC_ALPHA:
-          case GL_DST_ALPHA:
-          case GL_ONE_MINUS_DST_ALPHA:
-          case GL_CONSTANT_COLOR:
-          case GL_ONE_MINUS_CONSTANT_COLOR:
-          case GL_CONSTANT_ALPHA:
-          case GL_ONE_MINUS_CONSTANT_ALPHA:
-          case GL_SRC_ALPHA_SATURATE:
-            break;
-
-          default:
-              context->handleError(Error(GL_INVALID_ENUM));
-              return;
-        }
-
-        switch (dstRGB)
-        {
-            case GL_ZERO:
-            case GL_ONE:
-            case GL_SRC_COLOR:
-            case GL_ONE_MINUS_SRC_COLOR:
-            case GL_DST_COLOR:
-            case GL_ONE_MINUS_DST_COLOR:
-            case GL_SRC_ALPHA:
-            case GL_ONE_MINUS_SRC_ALPHA:
-            case GL_DST_ALPHA:
-            case GL_ONE_MINUS_DST_ALPHA:
-            case GL_CONSTANT_COLOR:
-            case GL_ONE_MINUS_CONSTANT_COLOR:
-            case GL_CONSTANT_ALPHA:
-            case GL_ONE_MINUS_CONSTANT_ALPHA:
-                break;
-
-            case GL_SRC_ALPHA_SATURATE:
-                if (context->getClientMajorVersion() < 3)
-                {
-                    context->handleError(Error(GL_INVALID_ENUM));
-                    return;
-                }
-                break;
-
-            default:
-                context->handleError(Error(GL_INVALID_ENUM));
-                return;
-        }
-
-        switch (srcAlpha)
-        {
-          case GL_ZERO:
-          case GL_ONE:
-          case GL_SRC_COLOR:
-          case GL_ONE_MINUS_SRC_COLOR:
-          case GL_DST_COLOR:
-          case GL_ONE_MINUS_DST_COLOR:
-          case GL_SRC_ALPHA:
-          case GL_ONE_MINUS_SRC_ALPHA:
-          case GL_DST_ALPHA:
-          case GL_ONE_MINUS_DST_ALPHA:
-          case GL_CONSTANT_COLOR:
-          case GL_ONE_MINUS_CONSTANT_COLOR:
-          case GL_CONSTANT_ALPHA:
-          case GL_ONE_MINUS_CONSTANT_ALPHA:
-          case GL_SRC_ALPHA_SATURATE:
-            break;
-
-          default:
-              context->handleError(Error(GL_INVALID_ENUM));
-              return;
-        }
-
-        switch (dstAlpha)
-        {
-            case GL_ZERO:
-            case GL_ONE:
-            case GL_SRC_COLOR:
-            case GL_ONE_MINUS_SRC_COLOR:
-            case GL_DST_COLOR:
-            case GL_ONE_MINUS_DST_COLOR:
-            case GL_SRC_ALPHA:
-            case GL_ONE_MINUS_SRC_ALPHA:
-            case GL_DST_ALPHA:
-            case GL_ONE_MINUS_DST_ALPHA:
-            case GL_CONSTANT_COLOR:
-            case GL_ONE_MINUS_CONSTANT_COLOR:
-            case GL_CONSTANT_ALPHA:
-            case GL_ONE_MINUS_CONSTANT_ALPHA:
-                break;
-
-            case GL_SRC_ALPHA_SATURATE:
-                if (context->getClientMajorVersion() < 3)
-                {
-                    context->handleError(Error(GL_INVALID_ENUM));
-                    return;
-                }
-                break;
-
-            default:
-                context->handleError(Error(GL_INVALID_ENUM));
-                return;
-        }
-
-        if (context->getLimitations().noSimultaneousConstantColorAndAlphaBlendFunc)
-        {
-            bool constantColorUsed =
-                (srcRGB == GL_CONSTANT_COLOR || srcRGB == GL_ONE_MINUS_CONSTANT_COLOR ||
-                 dstRGB == GL_CONSTANT_COLOR || dstRGB == GL_ONE_MINUS_CONSTANT_COLOR);
-
-            bool constantAlphaUsed =
-                (srcRGB == GL_CONSTANT_ALPHA || srcRGB == GL_ONE_MINUS_CONSTANT_ALPHA ||
-                 dstRGB == GL_CONSTANT_ALPHA || dstRGB == GL_ONE_MINUS_CONSTANT_ALPHA);
-
-            if (constantColorUsed && constantAlphaUsed)
-            {
-                ERR(
-                    "Simultaneous use of GL_CONSTANT_ALPHA/GL_ONE_MINUS_CONSTANT_ALPHA and "
-                    "GL_CONSTANT_COLOR/GL_ONE_MINUS_CONSTANT_COLOR not supported by this "
-                    "implementation.");
-                context->handleError(Error(GL_INVALID_OPERATION));
-                return;
-            }
+            return;
         }
 
         context->blendFuncSeparate(srcRGB, dstRGB, srcAlpha, dstAlpha);
@@ -471,16 +274,12 @@ GLenum GL_APIENTRY CheckFramebufferStatus(GLenum target)
     Context *context = GetValidGlobalContext();
     if (context)
     {
-        if (!ValidFramebufferTarget(target))
+        if (!context->skipValidation() && !ValidateCheckFramebufferStatus(context, target))
         {
-            context->handleError(Error(GL_INVALID_ENUM));
             return 0;
         }
 
-        Framebuffer *framebuffer = context->getGLState().getTargetFramebuffer(target);
-        ASSERT(framebuffer);
-
-        return framebuffer->checkStatus(context->getContextState());
+        return context->checkFramebufferStatus(target);
     }
 
     return 0;
@@ -510,6 +309,11 @@ void GL_APIENTRY ClearColor(GLclampf red, GLclampf green, GLclampf blue, GLclamp
     Context *context = GetValidGlobalContext();
     if (context)
     {
+        if (!context->skipValidation() && !ValidateClearColor(context, red, green, blue, alpha))
+        {
+            return;
+        }
+
         context->clearColor(red, green, blue, alpha);
     }
 }
@@ -521,6 +325,11 @@ void GL_APIENTRY ClearDepthf(GLclampf depth)
     Context *context = GetValidGlobalContext();
     if (context)
     {
+        if (!context->skipValidation() && !ValidateClearDepthf(context, depth))
+        {
+            return;
+        }
+
         context->clearDepthf(depth);
     }
 }
@@ -532,6 +341,11 @@ void GL_APIENTRY ClearStencil(GLint s)
     Context *context = GetValidGlobalContext();
     if (context)
     {
+        if (!context->skipValidation() && !ValidateClearStencil(context, s))
+        {
+            return;
+        }
+
         context->clearStencil(s);
     }
 }
@@ -544,6 +358,11 @@ void GL_APIENTRY ColorMask(GLboolean red, GLboolean green, GLboolean blue, GLboo
     Context *context = GetValidGlobalContext();
     if (context)
     {
+        if (!context->skipValidation() && !ValidateColorMask(context, red, green, blue, alpha))
+        {
+            return;
+        }
+
         context->colorMask(red, green, blue, alpha);
     }
 }
@@ -555,12 +374,12 @@ void GL_APIENTRY CompileShader(GLuint shader)
     Context *context = GetValidGlobalContext();
     if (context)
     {
-        Shader *shaderObject = GetValidShader(context, shader);
-        if (!shaderObject)
+        if (!context->skipValidation() && !ValidateCompileShader(context, shader))
         {
             return;
         }
-        shaderObject->compile(context->getCompiler());
+
+        context->compileShader(shader);
     }
 }
 
@@ -655,6 +474,11 @@ GLuint GL_APIENTRY CreateProgram(void)
     Context *context = GetValidGlobalContext();
     if (context)
     {
+        if (!context->skipValidation() && !ValidateCreateProgram(context))
+        {
+            return 0;
+        }
+
         return context->createProgram();
     }
 
@@ -668,7 +492,6 @@ GLuint GL_APIENTRY CreateShader(GLenum type)
     Context *context = GetValidGlobalContext();
     if (context)
     {
-
         if (!context->skipValidation() && !ValidateCreateShader(context, type))
         {
             return 0;
@@ -685,15 +508,8 @@ void GL_APIENTRY CullFace(GLenum mode)
     Context *context = GetValidGlobalContext();
     if (context)
     {
-        switch (mode)
+        if (!context->skipValidation() && !ValidateCullFace(context, mode))
         {
-          case GL_FRONT:
-          case GL_BACK:
-          case GL_FRONT_AND_BACK:
-            break;
-
-          default:
-              context->handleError(Error(GL_INVALID_ENUM));
             return;
         }
 
@@ -713,10 +529,7 @@ void GL_APIENTRY DeleteBuffers(GLsizei n, const GLuint* buffers)
             return;
         }
 
-        for (int i = 0; i < n; i++)
-        {
-            context->deleteBuffer(buffers[i]);
-        }
+        context->deleteBuffers(n, buffers);
     }
 }
 
@@ -732,13 +545,7 @@ void GL_APIENTRY DeleteFramebuffers(GLsizei n, const GLuint* framebuffers)
             return;
         }
 
-        for (int i = 0; i < n; i++)
-        {
-            if (framebuffers[i] != 0)
-            {
-                context->deleteFramebuffer(framebuffers[i]);
-            }
-        }
+        context->deleteFramebuffers(n, framebuffers);
     }
 }
 
@@ -749,23 +556,9 @@ void GL_APIENTRY DeleteProgram(GLuint program)
     Context *context = GetValidGlobalContext();
     if (context)
     {
-        if (program == 0)
+        if (!context->skipValidation() && !ValidateDeleteProgram(context, program))
         {
             return;
-        }
-
-        if (!context->getProgram(program))
-        {
-            if(context->getShader(program))
-            {
-                context->handleError(Error(GL_INVALID_OPERATION));
-                return;
-            }
-            else
-            {
-                context->handleError(Error(GL_INVALID_VALUE));
-                return;
-            }
         }
 
         context->deleteProgram(program);
@@ -784,10 +577,7 @@ void GL_APIENTRY DeleteRenderbuffers(GLsizei n, const GLuint* renderbuffers)
             return;
         }
 
-        for (int i = 0; i < n; i++)
-        {
-            context->deleteRenderbuffer(renderbuffers[i]);
-        }
+        context->deleteRenderbuffers(n, renderbuffers);
     }
 }
 
@@ -798,23 +588,9 @@ void GL_APIENTRY DeleteShader(GLuint shader)
     Context *context = GetValidGlobalContext();
     if (context)
     {
-        if (shader == 0)
+        if (!context->skipValidation() && !ValidateDeleteShader(context, shader))
         {
             return;
-        }
-
-        if (!context->getShader(shader))
-        {
-            if(context->getProgram(shader))
-            {
-                context->handleError(Error(GL_INVALID_OPERATION));
-                return;
-            }
-            else
-            {
-                context->handleError(Error(GL_INVALID_VALUE));
-                return;
-            }
         }
 
         context->deleteShader(shader);
@@ -833,13 +609,7 @@ void GL_APIENTRY DeleteTextures(GLsizei n, const GLuint* textures)
             return;
         }
 
-        for (int i = 0; i < n; i++)
-        {
-            if (textures[i] != 0)
-            {
-                context->deleteTexture(textures[i]);
-            }
-        }
+        context->deleteTextures(n, textures);
     }
 }
 
@@ -850,20 +620,8 @@ void GL_APIENTRY DepthFunc(GLenum func)
     Context *context = GetValidGlobalContext();
     if (context)
     {
-        switch (func)
+        if (!context->skipValidation() && !ValidateDepthFunc(context, func))
         {
-          case GL_NEVER:
-          case GL_ALWAYS:
-          case GL_LESS:
-          case GL_LEQUAL:
-          case GL_EQUAL:
-          case GL_GREATER:
-          case GL_GEQUAL:
-          case GL_NOTEQUAL:
-              break;
-
-          default:
-              context->handleError(Error(GL_INVALID_ENUM));
             return;
         }
 
@@ -878,6 +636,11 @@ void GL_APIENTRY DepthMask(GLboolean flag)
     Context *context = GetValidGlobalContext();
     if (context)
     {
+        if (!context->skipValidation() && !ValidateDepthMask(context, flag))
+        {
+            return;
+        }
+
         context->depthMask(flag);
     }
 }
@@ -889,6 +652,11 @@ void GL_APIENTRY DepthRangef(GLclampf zNear, GLclampf zFar)
     Context *context = GetValidGlobalContext();
     if (context)
     {
+        if (!context->skipValidation() && !ValidateDepthRangef(context, zNear, zFar))
+        {
+            return;
+        }
+
         context->depthRangef(zNear, zFar);
     }
 }
@@ -900,23 +668,12 @@ void GL_APIENTRY DetachShader(GLuint program, GLuint shader)
     Context *context = GetValidGlobalContext();
     if (context)
     {
-        Program *programObject = GetValidProgram(context, program);
-        if (!programObject)
+        if (!context->skipValidation() && !ValidateDetachShader(context, program, shader))
         {
             return;
         }
 
-        Shader *shaderObject = GetValidShader(context, shader);
-        if (!shaderObject)
-        {
-            return;
-        }
-
-        if (!programObject->detachShader(shaderObject))
-        {
-            context->handleError(Error(GL_INVALID_OPERATION));
-            return;
-        }
+        context->detachShader(program, shader);
     }
 }
 
@@ -943,9 +700,8 @@ void GL_APIENTRY DisableVertexAttribArray(GLuint index)
     Context *context = GetValidGlobalContext();
     if (context)
     {
-        if (index >= MAX_VERTEX_ATTRIBS)
+        if (!context->skipValidation() && !ValidateDisableVertexAttribArray(context, index))
         {
-            context->handleError(Error(GL_INVALID_VALUE));
             return;
         }
 
@@ -960,17 +716,12 @@ void GL_APIENTRY DrawArrays(GLenum mode, GLint first, GLsizei count)
     Context *context = GetValidGlobalContext();
     if (context)
     {
-        if (!ValidateDrawArrays(context, mode, first, count, 0))
+        if (!context->skipValidation() && !ValidateDrawArrays(context, mode, first, count))
         {
             return;
         }
 
-        Error error = context->drawArrays(mode, first, count);
-        if (error.isError())
-        {
-            context->handleError(error);
-            return;
-        }
+        context->drawArrays(mode, first, count);
     }
 }
 
@@ -982,18 +733,14 @@ void GL_APIENTRY DrawElements(GLenum mode, GLsizei count, GLenum type, const GLv
     Context *context = GetValidGlobalContext();
     if (context)
     {
+        // TODO(jmadill): Cache index range in the context.
         IndexRange indexRange;
-        if (!ValidateDrawElements(context, mode, count, type, indices, 0, &indexRange))
+        if (!ValidateDrawElements(context, mode, count, type, indices, 1, &indexRange))
         {
             return;
         }
 
-        Error error = context->drawElements(mode, count, type, indices, indexRange);
-        if (error.isError())
-        {
-            context->handleError(error);
-            return;
-        }
+        context->drawElements(mode, count, type, indices, indexRange);
     }
 }
 
@@ -1020,9 +767,8 @@ void GL_APIENTRY EnableVertexAttribArray(GLuint index)
     Context *context = GetValidGlobalContext();
     if (context)
     {
-        if (index >= MAX_VERTEX_ATTRIBS)
+        if (!context->skipValidation() && !ValidateEnableVertexAttribArray(context, index))
         {
-            context->handleError(Error(GL_INVALID_VALUE));
             return;
         }
 
@@ -1037,12 +783,12 @@ void GL_APIENTRY Finish(void)
     Context *context = GetValidGlobalContext();
     if (context)
     {
-        Error error = context->finish();
-        if (error.isError())
+        if (!context->skipValidation() && !ValidateFinish(context))
         {
-            context->handleError(error);
             return;
         }
+
+        context->finish();
     }
 }
 
@@ -1053,12 +799,12 @@ void GL_APIENTRY Flush(void)
     Context *context = GetValidGlobalContext();
     if (context)
     {
-        Error error = context->flush();
-        if (error.isError())
+        if (!context->skipValidation() && !ValidateFlush(context))
         {
-            context->handleError(error);
             return;
         }
+
+        context->flush();
     }
 }
 
@@ -1106,13 +852,8 @@ void GL_APIENTRY FrontFace(GLenum mode)
     Context *context = GetValidGlobalContext();
     if (context)
     {
-        switch (mode)
+        if (!context->skipValidation() && !ValidateFrontFace(context, mode))
         {
-          case GL_CW:
-          case GL_CCW:
-              break;
-          default:
-              context->handleError(Error(GL_INVALID_ENUM));
             return;
         }
 
@@ -1132,10 +873,7 @@ void GL_APIENTRY GenBuffers(GLsizei n, GLuint* buffers)
             return;
         }
 
-        for (int i = 0; i < n; i++)
-        {
-            buffers[i] = context->createBuffer();
-        }
+        context->genBuffers(n, buffers);
     }
 }
 
@@ -1167,10 +905,7 @@ void GL_APIENTRY GenFramebuffers(GLsizei n, GLuint* framebuffers)
             return;
         }
 
-        for (int i = 0; i < n; i++)
-        {
-            framebuffers[i] = context->createFramebuffer();
-        }
+        context->genFramebuffers(n, framebuffers);
     }
 }
 
@@ -1186,10 +921,7 @@ void GL_APIENTRY GenRenderbuffers(GLsizei n, GLuint* renderbuffers)
             return;
         }
 
-        for (int i = 0; i < n; i++)
-        {
-            renderbuffers[i] = context->createRenderbuffer();
-        }
+        context->genRenderbuffers(n, renderbuffers);
     }
 }
 
@@ -1205,10 +937,7 @@ void GL_APIENTRY GenTextures(GLsizei n, GLuint* textures)
             return;
         }
 
-        for (int i = 0; i < n; i++)
-        {
-            textures[i] = context->createTexture();
-        }
+        context->genTextures(n, textures);
     }
 }
 
@@ -1221,26 +950,13 @@ void GL_APIENTRY GetActiveAttrib(GLuint program, GLuint index, GLsizei bufsize, 
     Context *context = GetValidGlobalContext();
     if (context)
     {
-        if (bufsize < 0)
-        {
-            context->handleError(Error(GL_INVALID_VALUE));
-            return;
-        }
-
-        Program *programObject = GetValidProgram(context, program);
-
-        if (!programObject)
+        if (!context->skipValidation() &&
+            !ValidateGetActiveAttrib(context, program, index, bufsize, length, size, type, name))
         {
             return;
         }
 
-        if (index >= (GLuint)programObject->getActiveAttributeCount())
-        {
-            context->handleError(Error(GL_INVALID_VALUE));
-            return;
-        }
-
-        programObject->getActiveAttribute(index, bufsize, length, size, type, name);
+        context->getActiveAttrib(program, index, bufsize, length, size, type, name);
     }
 }
 
@@ -1250,30 +966,16 @@ void GL_APIENTRY GetActiveUniform(GLuint program, GLuint index, GLsizei bufsize,
           "GLsizei* length = 0x%0.8p, GLint* size = 0x%0.8p, GLenum* type = 0x%0.8p, GLchar* name = 0x%0.8p)",
           program, index, bufsize, length, size, type, name);
 
-
     Context *context = GetValidGlobalContext();
     if (context)
     {
-        if (bufsize < 0)
-        {
-            context->handleError(Error(GL_INVALID_VALUE));
-            return;
-        }
-
-        Program *programObject = GetValidProgram(context, program);
-
-        if (!programObject)
+        if (!context->skipValidation() &&
+            !ValidateGetActiveUniform(context, program, index, bufsize, length, size, type, name))
         {
             return;
         }
 
-        if (index >= (GLuint)programObject->getActiveUniformCount())
-        {
-            context->handleError(Error(GL_INVALID_VALUE));
-            return;
-        }
-
-        programObject->getActiveUniform(index, bufsize, length, size, type, name);
+        context->getActiveUniform(program, index, bufsize, length, size, type, name);
     }
 }
 
@@ -1285,20 +987,13 @@ void GL_APIENTRY GetAttachedShaders(GLuint program, GLsizei maxcount, GLsizei* c
     Context *context = GetValidGlobalContext();
     if (context)
     {
-        if (maxcount < 0)
-        {
-            context->handleError(Error(GL_INVALID_VALUE));
-            return;
-        }
-
-        Program *programObject = GetValidProgram(context, program);
-
-        if (!programObject)
+        if (!context->skipValidation() &&
+            !ValidateGetAttachedShaders(context, program, maxcount, count, shaders))
         {
             return;
         }
 
-        return programObject->getAttachedShaders(maxcount, count, shaders);
+        context->getAttachedShaders(program, maxcount, count, shaders);
     }
 }
 
@@ -1309,20 +1004,12 @@ GLint GL_APIENTRY GetAttribLocation(GLuint program, const GLchar* name)
     Context *context = GetValidGlobalContext();
     if (context)
     {
-        Program *programObject = GetValidProgram(context, program);
-
-        if (!programObject)
+        if (!context->skipValidation() && !ValidateGetAttribLocation(context, program, name))
         {
             return -1;
         }
 
-        if (!programObject->isLinked())
-        {
-            context->handleError(Error(GL_INVALID_OPERATION));
-            return -1;
-        }
-
-        return programObject->getAttributeLocation(name);
+        return context->getAttribLocation(program, name);
     }
 
     return -1;
@@ -1335,21 +1022,12 @@ void GL_APIENTRY GetBooleanv(GLenum pname, GLboolean* params)
     Context *context = GetValidGlobalContext();
     if (context)
     {
-        GLenum nativeType;
-        unsigned int numParams = 0;
-        if (!ValidateStateQuery(context, pname, &nativeType, &numParams))
+        if (!context->skipValidation() && !ValidateGetBooleanv(context, pname, params))
         {
             return;
         }
 
-        if (nativeType == GL_BOOL)
-        {
-            context->getBooleanv(pname, params);
-        }
-        else
-        {
-            CastStateValues(context, nativeType, pname, numParams, params);
-        }
+        context->getBooleanv(pname, params);
     }
 }
 
@@ -1366,8 +1044,7 @@ void GL_APIENTRY GetBufferParameteriv(GLenum target, GLenum pname, GLint* params
             return;
         }
 
-        Buffer *buffer = context->getGLState().getTargetBuffer(target);
-        QueryBufferParameteriv(buffer, pname, params);
+        context->getBufferParameteriv(target, pname, params);
     }
 }
 
@@ -1379,6 +1056,11 @@ GLenum GL_APIENTRY GetError(void)
 
     if (context)
     {
+        if (!context->skipValidation() && !ValidateGetError(context))
+        {
+            return GL_NO_ERROR;
+        }
+
         return context->getError();
     }
 
@@ -1392,21 +1074,12 @@ void GL_APIENTRY GetFloatv(GLenum pname, GLfloat* params)
     Context *context = GetValidGlobalContext();
     if (context)
     {
-        GLenum nativeType;
-        unsigned int numParams = 0;
-        if (!ValidateStateQuery(context, pname, &nativeType, &numParams))
+        if (!context->skipValidation() && !ValidateGetFloatv(context, pname, params))
         {
             return;
         }
 
-        if (nativeType == GL_FLOAT)
-        {
-            context->getFloatv(pname, params);
-        }
-        else
-        {
-            CastStateValues(context, nativeType, pname, numParams, params);
-        }
+        context->getFloatv(pname, params);
     }
 }
 
@@ -1426,8 +1099,7 @@ void GL_APIENTRY GetFramebufferAttachmentParameteriv(GLenum target, GLenum attac
             return;
         }
 
-        const Framebuffer *framebuffer = context->getGLState().getTargetFramebuffer(target);
-        QueryFramebufferAttachmentParameteriv(framebuffer, attachment, pname, params);
+        context->getFramebufferAttachmentParameteriv(target, attachment, pname, params);
     }
 }
 
@@ -1438,22 +1110,12 @@ void GL_APIENTRY GetIntegerv(GLenum pname, GLint* params)
     Context *context = GetValidGlobalContext();
     if (context)
     {
-        GLenum nativeType;
-        unsigned int numParams = 0;
-
-        if (!ValidateStateQuery(context, pname, &nativeType, &numParams))
+        if (!context->skipValidation() && !ValidateGetIntegerv(context, pname, params))
         {
             return;
         }
 
-        if (nativeType == GL_INT)
-        {
-            context->getIntegerv(pname, params);
-        }
-        else
-        {
-            CastStateValues(context, nativeType, pname, numParams, params);
-        }
+        context->getIntegerv(pname, params);
     }
 }
 
@@ -1471,8 +1133,7 @@ void GL_APIENTRY GetProgramiv(GLuint program, GLenum pname, GLint* params)
             return;
         }
 
-        Program *programObject = context->getProgram(program);
-        QueryProgramiv(programObject, pname, params);
+        context->getProgramiv(program, pname, params);
     }
 }
 
@@ -1484,19 +1145,13 @@ void GL_APIENTRY GetProgramInfoLog(GLuint program, GLsizei bufsize, GLsizei* len
     Context *context = GetValidGlobalContext();
     if (context)
     {
-        if (bufsize < 0)
-        {
-            context->handleError(Error(GL_INVALID_VALUE));
-            return;
-        }
-
-        Program *programObject = GetValidProgram(context, program);
-        if (!programObject)
+        if (!context->skipValidation() &&
+            !ValidateGetProgramInfoLog(context, program, bufsize, length, infolog))
         {
             return;
         }
 
-        programObject->getInfoLog(bufsize, length, infolog);
+        context->getInfoLog(program, bufsize, length, infolog);
     }
 }
 
@@ -1513,8 +1168,7 @@ void GL_APIENTRY GetRenderbufferParameteriv(GLenum target, GLenum pname, GLint* 
             return;
         }
 
-        Renderbuffer *renderbuffer = context->getGLState().getCurrentRenderbuffer();
-        QueryRenderbufferiv(renderbuffer, pname, params);
+        context->getRenderbufferParameteriv(target, pname, params);
     }
 }
 
@@ -1530,8 +1184,7 @@ void GL_APIENTRY GetShaderiv(GLuint shader, GLenum pname, GLint* params)
             return;
         }
 
-        Shader *shaderObject = context->getShader(shader);
-        QueryShaderiv(shaderObject, pname, params);
+        context->getShaderiv(shader, pname, params);
     }
 }
 
@@ -1543,19 +1196,13 @@ void GL_APIENTRY GetShaderInfoLog(GLuint shader, GLsizei bufsize, GLsizei* lengt
     Context *context = GetValidGlobalContext();
     if (context)
     {
-        if (bufsize < 0)
-        {
-            context->handleError(Error(GL_INVALID_VALUE));
-            return;
-        }
-
-        Shader *shaderObject = GetValidShader(context, shader);
-        if (!shaderObject)
+        if (!context->skipValidation() &&
+            !ValidateGetShaderInfoLog(context, shader, bufsize, length, infolog))
         {
             return;
         }
 
-        shaderObject->getInfoLog(bufsize, length, infolog);
+        context->getShaderInfoLog(shader, bufsize, length, infolog);
     }
 }
 
@@ -1567,69 +1214,13 @@ void GL_APIENTRY GetShaderPrecisionFormat(GLenum shadertype, GLenum precisiontyp
     Context *context = GetValidGlobalContext();
     if (context)
     {
-        switch (shadertype)
+        if (!context->skipValidation() &&
+            !ValidateGetShaderPrecisionFormat(context, shadertype, precisiontype, range, precision))
         {
-          case GL_VERTEX_SHADER:
-            switch (precisiontype)
-            {
-              case GL_LOW_FLOAT:
-                context->getCaps().vertexLowpFloat.get(range, precision);
-                break;
-              case GL_MEDIUM_FLOAT:
-                context->getCaps().vertexMediumpFloat.get(range, precision);
-                break;
-              case GL_HIGH_FLOAT:
-                context->getCaps().vertexHighpFloat.get(range, precision);
-                break;
-
-              case GL_LOW_INT:
-                context->getCaps().vertexLowpInt.get(range, precision);
-                break;
-              case GL_MEDIUM_INT:
-                context->getCaps().vertexMediumpInt.get(range, precision);
-                break;
-              case GL_HIGH_INT:
-                context->getCaps().vertexHighpInt.get(range, precision);
-                break;
-
-              default:
-                  context->handleError(Error(GL_INVALID_ENUM));
-                return;
-            }
-            break;
-          case GL_FRAGMENT_SHADER:
-            switch (precisiontype)
-            {
-              case GL_LOW_FLOAT:
-                context->getCaps().fragmentLowpFloat.get(range, precision);
-                break;
-              case GL_MEDIUM_FLOAT:
-                context->getCaps().fragmentMediumpFloat.get(range, precision);
-                break;
-              case GL_HIGH_FLOAT:
-                context->getCaps().fragmentHighpFloat.get(range, precision);
-                break;
-
-              case GL_LOW_INT:
-                context->getCaps().fragmentLowpInt.get(range, precision);
-                break;
-              case GL_MEDIUM_INT:
-                context->getCaps().fragmentMediumpInt.get(range, precision);
-                break;
-              case GL_HIGH_INT:
-                context->getCaps().fragmentHighpInt.get(range, precision);
-                break;
-
-              default:
-                  context->handleError(Error(GL_INVALID_ENUM));
-                return;
-            }
-            break;
-          default:
-              context->handleError(Error(GL_INVALID_ENUM));
             return;
         }
 
+        context->getShaderPrecisionFormat(shadertype, precisiontype, range, precision);
     }
 }
 
@@ -1641,19 +1232,13 @@ void GL_APIENTRY GetShaderSource(GLuint shader, GLsizei bufsize, GLsizei* length
     Context *context = GetValidGlobalContext();
     if (context)
     {
-        if (bufsize < 0)
-        {
-            context->handleError(Error(GL_INVALID_VALUE));
-            return;
-        }
-
-        Shader *shaderObject = GetValidShader(context, shader);
-        if (!shaderObject)
+        if (!context->skipValidation() &&
+            !ValidateGetShaderSource(context, shader, bufsize, length, source))
         {
             return;
         }
 
-        shaderObject->getSource(bufsize, length, source);
+        context->getShaderSource(shader, bufsize, length, source);
     }
 }
 
@@ -1665,45 +1250,12 @@ const GLubyte *GL_APIENTRY GetString(GLenum name)
 
     if (context)
     {
-        switch (name)
+        if (!context->skipValidation() && !ValidateGetString(context, name))
         {
-            case GL_VENDOR:
-                return reinterpret_cast<const GLubyte *>("Google Inc.");
-
-            case GL_RENDERER:
-                return reinterpret_cast<const GLubyte *>(context->getRendererString());
-
-            case GL_VERSION:
-                if (context->getClientMajorVersion() == 2)
-                {
-                    return reinterpret_cast<const GLubyte *>(
-                        "OpenGL ES 2.0 (ANGLE " ANGLE_VERSION_STRING ")");
-                }
-                else
-                {
-                    return reinterpret_cast<const GLubyte *>(
-                        "OpenGL ES 3.0 (ANGLE " ANGLE_VERSION_STRING ")");
-                }
-
-            case GL_SHADING_LANGUAGE_VERSION:
-                if (context->getClientMajorVersion() == 2)
-                {
-                    return reinterpret_cast<const GLubyte *>(
-                        "OpenGL ES GLSL ES 1.00 (ANGLE " ANGLE_VERSION_STRING ")");
-                }
-                else
-                {
-                    return reinterpret_cast<const GLubyte *>(
-                        "OpenGL ES GLSL ES 3.00 (ANGLE " ANGLE_VERSION_STRING ")");
-                }
-
-            case GL_EXTENSIONS:
-                return reinterpret_cast<const GLubyte *>(context->getExtensionString());
-
-            default:
-                context->handleError(Error(GL_INVALID_ENUM));
             return nullptr;
         }
+
+        return context->getString(name);
     }
 
     return nullptr;
@@ -1722,8 +1274,7 @@ void GL_APIENTRY GetTexParameterfv(GLenum target, GLenum pname, GLfloat* params)
             return;
         }
 
-        Texture *texture = context->getTargetTexture(target);
-        QueryTexParameterfv(texture, pname, params);
+        context->getTexParameterfv(target, pname, params);
     }
 }
 
@@ -1740,8 +1291,7 @@ void GL_APIENTRY GetTexParameteriv(GLenum target, GLenum pname, GLint* params)
             return;
         }
 
-        Texture *texture = context->getTargetTexture(target);
-        QueryTexParameteriv(texture, pname, params);
+        context->getTexParameteriv(target, pname, params);
     }
 }
 
@@ -1752,15 +1302,12 @@ void GL_APIENTRY GetUniformfv(GLuint program, GLint location, GLfloat* params)
     Context *context = GetValidGlobalContext();
     if (context)
     {
-        if (!ValidateGetUniformfv(context, program, location, params))
+        if (!context->skipValidation() && !ValidateGetUniformfv(context, program, location, params))
         {
             return;
         }
 
-        Program *programObject = context->getProgram(program);
-        ASSERT(programObject);
-
-        programObject->getUniformfv(location, params);
+        context->getUniformfv(program, location, params);
     }
 }
 
@@ -1771,15 +1318,12 @@ void GL_APIENTRY GetUniformiv(GLuint program, GLint location, GLint* params)
     Context *context = GetValidGlobalContext();
     if (context)
     {
-        if (!ValidateGetUniformiv(context, program, location, params))
+        if (!context->skipValidation() && !ValidateGetUniformiv(context, program, location, params))
         {
             return;
         }
 
-        Program *programObject = context->getProgram(program);
-        ASSERT(programObject);
-
-        programObject->getUniformiv(location, params);
+        context->getUniformiv(program, location, params);
     }
 }
 
@@ -1790,25 +1334,12 @@ GLint GL_APIENTRY GetUniformLocation(GLuint program, const GLchar* name)
     Context *context = GetValidGlobalContext();
     if (context)
     {
-        if (strstr(name, "gl_") == name)
+        if (!context->skipValidation() && !ValidateGetUniformLocation(context, program, name))
         {
             return -1;
         }
 
-        Program *programObject = GetValidProgram(context, program);
-
-        if (!programObject)
-        {
-            return -1;
-        }
-
-        if (!programObject->isLinked())
-        {
-            context->handleError(Error(GL_INVALID_OPERATION));
-            return -1;
-        }
-
-        return programObject->getUniformLocation(name);
+        return context->getUniformLocation(program, name);
     }
 
     return -1;
@@ -1826,11 +1357,7 @@ void GL_APIENTRY GetVertexAttribfv(GLuint index, GLenum pname, GLfloat* params)
             return;
         }
 
-        const VertexAttribCurrentValueData &currentValues =
-            context->getGLState().getVertexAttribCurrentValue(index);
-        const VertexAttribute &attrib =
-            context->getGLState().getVertexArray()->getVertexAttribute(index);
-        QueryVertexAttribfv(attrib, currentValues, pname, params);
+        context->getVertexAttribfv(index, pname, params);
     }
 }
 
@@ -1846,11 +1373,7 @@ void GL_APIENTRY GetVertexAttribiv(GLuint index, GLenum pname, GLint* params)
             return;
         }
 
-        const VertexAttribCurrentValueData &currentValues =
-            context->getGLState().getVertexAttribCurrentValue(index);
-        const VertexAttribute &attrib =
-            context->getGLState().getVertexArray()->getVertexAttribute(index);
-        QueryVertexAttribiv(attrib, currentValues, pname, params);
+        context->getVertexAttribiv(index, pname, params);
     }
 }
 
@@ -1867,9 +1390,7 @@ void GL_APIENTRY GetVertexAttribPointerv(GLuint index, GLenum pname, GLvoid** po
             return;
         }
 
-        const VertexAttribute &attrib =
-            context->getGLState().getVertexArray()->getVertexAttribute(index);
-        QueryVertexAttribPointerv(attrib, pname, pointer);
+        context->getVertexAttribPointerv(index, pname, pointer);
     }
 }
 
@@ -1880,26 +1401,8 @@ void GL_APIENTRY Hint(GLenum target, GLenum mode)
     Context *context = GetValidGlobalContext();
     if (context)
     {
-        switch (mode)
+        if (!context->skipValidation() && !ValidateHint(context, target, mode))
         {
-          case GL_FASTEST:
-          case GL_NICEST:
-          case GL_DONT_CARE:
-            break;
-
-          default:
-              context->handleError(Error(GL_INVALID_ENUM));
-            return;
-        }
-
-        switch (target)
-        {
-          case GL_GENERATE_MIPMAP_HINT:
-          case GL_FRAGMENT_SHADER_DERIVATIVE_HINT_OES:
-              break;
-
-          default:
-              context->handleError(Error(GL_INVALID_ENUM));
             return;
         }
 
@@ -1912,14 +1415,14 @@ GLboolean GL_APIENTRY IsBuffer(GLuint buffer)
     EVENT("(GLuint buffer = %d)", buffer);
 
     Context *context = GetValidGlobalContext();
-    if (context && buffer)
+    if (context)
     {
-        Buffer *bufferObject = context->getBuffer(buffer);
-
-        if (bufferObject)
+        if (!context->skipValidation() && !ValidateIsBuffer(context, buffer))
         {
-            return GL_TRUE;
+            return GL_FALSE;
         }
+
+        return context->isBuffer(buffer);
     }
 
     return GL_FALSE;
@@ -1937,10 +1440,10 @@ GLboolean GL_APIENTRY IsEnabled(GLenum cap)
             return GL_FALSE;
         }
 
-        return context->getGLState().getEnableFeature(cap);
+        return context->isEnabled(cap);
     }
 
-    return false;
+    return GL_FALSE;
 }
 
 GLboolean GL_APIENTRY IsFramebuffer(GLuint framebuffer)
@@ -1948,14 +1451,14 @@ GLboolean GL_APIENTRY IsFramebuffer(GLuint framebuffer)
     EVENT("(GLuint framebuffer = %d)", framebuffer);
 
     Context *context = GetValidGlobalContext();
-    if (context && framebuffer)
+    if (context)
     {
-        Framebuffer *framebufferObject = context->getFramebuffer(framebuffer);
-
-        if (framebufferObject)
+        if (!context->skipValidation() && !ValidateIsFramebuffer(context, framebuffer))
         {
-            return GL_TRUE;
+            return GL_FALSE;
         }
+
+        return context->isFramebuffer(framebuffer);
     }
 
     return GL_FALSE;
@@ -1966,14 +1469,14 @@ GLboolean GL_APIENTRY IsProgram(GLuint program)
     EVENT("(GLuint program = %d)", program);
 
     Context *context = GetValidGlobalContext();
-    if (context && program)
+    if (context)
     {
-        Program *programObject = context->getProgram(program);
-
-        if (programObject)
+        if (!context->skipValidation() && !ValidateIsProgram(context, program))
         {
-            return GL_TRUE;
+            return GL_FALSE;
         }
+
+        return context->isProgram(program);
     }
 
     return GL_FALSE;
@@ -1984,14 +1487,14 @@ GLboolean GL_APIENTRY IsRenderbuffer(GLuint renderbuffer)
     EVENT("(GLuint renderbuffer = %d)", renderbuffer);
 
     Context *context = GetValidGlobalContext();
-    if (context && renderbuffer)
+    if (context)
     {
-        Renderbuffer *renderbufferObject = context->getRenderbuffer(renderbuffer);
-
-        if (renderbufferObject)
+        if (!context->skipValidation() && !ValidateIsRenderbuffer(context, renderbuffer))
         {
-            return GL_TRUE;
+            return GL_FALSE;
         }
+
+        return context->isRenderbuffer(renderbuffer);
     }
 
     return GL_FALSE;
@@ -2002,14 +1505,14 @@ GLboolean GL_APIENTRY IsShader(GLuint shader)
     EVENT("(GLuint shader = %d)", shader);
 
     Context *context = GetValidGlobalContext();
-    if (context && shader)
+    if (context)
     {
-        Shader *shaderObject = context->getShader(shader);
-
-        if (shaderObject)
+        if (!context->skipValidation() && !ValidateIsShader(context, shader))
         {
-            return GL_TRUE;
+            return GL_FALSE;
         }
+
+        return context->isShader(shader);
     }
 
     return GL_FALSE;
@@ -2020,14 +1523,14 @@ GLboolean GL_APIENTRY IsTexture(GLuint texture)
     EVENT("(GLuint texture = %d)", texture);
 
     Context *context = GetValidGlobalContext();
-    if (context && texture)
+    if (context)
     {
-        Texture *textureObject = context->getTexture(texture);
-
-        if (textureObject)
+        if (!context->skipValidation() && !ValidateIsTexture(context, texture))
         {
-            return GL_TRUE;
+            return GL_FALSE;
         }
+
+        return context->isTexture(texture);
     }
 
     return GL_FALSE;
@@ -2040,9 +1543,8 @@ void GL_APIENTRY LineWidth(GLfloat width)
     Context *context = GetValidGlobalContext();
     if (context)
     {
-        if (width <= 0.0f)
+        if (!context->skipValidation() && !ValidateLineWidth(context, width))
         {
-            context->handleError(Error(GL_INVALID_VALUE));
             return;
         }
 
@@ -2062,18 +1564,7 @@ void GL_APIENTRY LinkProgram(GLuint program)
             return;
         }
 
-        Program *programObject = GetValidProgram(context, program);
-        if (!programObject)
-        {
-            return;
-        }
-
-        Error error = programObject->link(context->getContextState());
-        if (error.isError())
-        {
-            context->handleError(error);
-            return;
-        }
+        context->linkProgram(program);
     }
 }
 
@@ -2084,75 +1575,8 @@ void GL_APIENTRY PixelStorei(GLenum pname, GLint param)
     Context *context = GetValidGlobalContext();
     if (context)
     {
-        if (context->getClientMajorVersion() < 3)
+        if (!context->skipValidation() && !ValidatePixelStorei(context, pname, param))
         {
-            switch (pname)
-            {
-              case GL_UNPACK_IMAGE_HEIGHT:
-              case GL_UNPACK_SKIP_IMAGES:
-                  context->handleError(Error(GL_INVALID_ENUM));
-                  return;
-
-              case GL_UNPACK_ROW_LENGTH:
-              case GL_UNPACK_SKIP_ROWS:
-              case GL_UNPACK_SKIP_PIXELS:
-                  if (!context->getExtensions().unpackSubimage)
-                  {
-                      context->handleError(Error(GL_INVALID_ENUM));
-                      return;
-                  }
-                  break;
-
-              case GL_PACK_ROW_LENGTH:
-              case GL_PACK_SKIP_ROWS:
-              case GL_PACK_SKIP_PIXELS:
-                  if (!context->getExtensions().packSubimage)
-                  {
-                      context->handleError(Error(GL_INVALID_ENUM));
-                      return;
-                  }
-                  break;
-            }
-        }
-
-        if (param < 0)
-        {
-            context->handleError(
-                Error(GL_INVALID_VALUE, "Cannot use negative values in PixelStorei"));
-            return;
-        }
-
-        switch (pname)
-        {
-          case GL_UNPACK_ALIGNMENT:
-            if (param != 1 && param != 2 && param != 4 && param != 8)
-            {
-                context->handleError(Error(GL_INVALID_VALUE));
-                return;
-            }
-            break;
-
-          case GL_PACK_ALIGNMENT:
-            if (param != 1 && param != 2 && param != 4 && param != 8)
-            {
-                context->handleError(Error(GL_INVALID_VALUE));
-                return;
-            }
-            break;
-
-          case GL_PACK_REVERSE_ROW_ORDER_ANGLE:
-          case GL_UNPACK_ROW_LENGTH:
-          case GL_UNPACK_IMAGE_HEIGHT:
-          case GL_UNPACK_SKIP_IMAGES:
-          case GL_UNPACK_SKIP_ROWS:
-          case GL_UNPACK_SKIP_PIXELS:
-          case GL_PACK_ROW_LENGTH:
-          case GL_PACK_SKIP_ROWS:
-          case GL_PACK_SKIP_PIXELS:
-            break;
-
-          default:
-              context->handleError(Error(GL_INVALID_ENUM));
             return;
         }
 
@@ -2167,6 +1591,11 @@ void GL_APIENTRY PolygonOffset(GLfloat factor, GLfloat units)
     Context *context = GetValidGlobalContext();
     if (context)
     {
+        if (!context->skipValidation() && !ValidatePolygonOffset(context, factor, units))
+        {
+            return;
+        }
+
         context->polygonOffset(factor, units);
     }
 }
@@ -2199,13 +1628,12 @@ void GL_APIENTRY ReleaseShaderCompiler(void)
 
     if (context)
     {
-        Compiler *compiler = context->getCompiler();
-        Error error = compiler->release();
-        if (error.isError())
+        if (!context->skipValidation() && !ValidateReleaseShaderCompiler(context))
         {
-            context->handleError(error);
             return;
         }
+
+        context->releaseShaderCompiler();
     }
 }
 
@@ -2217,19 +1645,13 @@ void GL_APIENTRY RenderbufferStorage(GLenum target, GLenum internalformat, GLsiz
     Context *context = GetValidGlobalContext();
     if (context)
     {
-        if (!ValidateRenderbufferStorageParametersANGLE(context, target, 0, internalformat,
-                                                        width, height))
+        if (!context->skipValidation() &&
+            !ValidateRenderbufferStorage(context, target, internalformat, width, height))
         {
             return;
         }
 
-        Renderbuffer *renderbuffer = context->getGLState().getCurrentRenderbuffer();
-        Error error = renderbuffer->setStorage(internalformat, width, height);
-        if (error.isError())
-        {
-            context->handleError(error);
-            return;
-        }
+        context->renderbufferStorage(target, internalformat, width, height);
     }
 }
 
@@ -2241,6 +1663,11 @@ void GL_APIENTRY SampleCoverage(GLclampf value, GLboolean invert)
 
     if (context)
     {
+        if (!context->skipValidation() && !ValidateSampleCoverage(context, value, invert))
+        {
+            return;
+        }
+
         context->sampleCoverage(value, invert);
     }
 }
@@ -2252,9 +1679,8 @@ void GL_APIENTRY Scissor(GLint x, GLint y, GLsizei width, GLsizei height)
     Context* context = GetValidGlobalContext();
     if (context)
     {
-        if (width < 0 || height < 0)
+        if (!context->skipValidation() && !ValidateScissor(context, x, y, width, height))
         {
-            context->handleError(Error(GL_INVALID_VALUE));
             return;
         }
 
@@ -2271,15 +1697,13 @@ void GL_APIENTRY ShaderBinary(GLsizei n, const GLuint* shaders, GLenum binaryfor
     Context* context = GetValidGlobalContext();
     if (context)
     {
-        const std::vector<GLenum> &shaderBinaryFormats = context->getCaps().shaderBinaryFormats;
-        if (std::find(shaderBinaryFormats.begin(), shaderBinaryFormats.end(), binaryformat) == shaderBinaryFormats.end())
+        if (!context->skipValidation() &&
+            !ValidateShaderBinary(context, n, shaders, binaryformat, binary, length))
         {
-            context->handleError(Error(GL_INVALID_ENUM));
             return;
         }
 
-        // No binary shader formats are supported.
-        UNIMPLEMENTED();
+        context->shaderBinary(n, shaders, binaryformat, binary, length);
     }
 }
 
@@ -2291,24 +1715,30 @@ void GL_APIENTRY ShaderSource(GLuint shader, GLsizei count, const GLchar* const*
     Context *context = GetValidGlobalContext();
     if (context)
     {
-        if (count < 0)
+        if (!context->skipValidation() &&
+            !ValidateShaderSource(context, shader, count, string, length))
         {
-            context->handleError(Error(GL_INVALID_VALUE));
             return;
         }
 
-        Shader *shaderObject = GetValidShader(context, shader);
-        if (!shaderObject)
-        {
-            return;
-        }
-        shaderObject->setSource(count, string, length);
+        context->shaderSource(shader, count, string, length);
     }
 }
 
 void GL_APIENTRY StencilFunc(GLenum func, GLint ref, GLuint mask)
 {
-    StencilFuncSeparate(GL_FRONT_AND_BACK, func, ref, mask);
+    EVENT("(GLenum func = 0x%X, GLint ref = %d, GLuint mask = %d)", func, ref, mask);
+
+    Context *context = GetValidGlobalContext();
+    if (context)
+    {
+        if (!context->skipValidation() && !ValidateStencilFunc(context, func, ref, mask))
+        {
+            return;
+        }
+
+        context->stencilFunc(func, ref, mask);
+    }
 }
 
 void GL_APIENTRY StencilFuncSeparate(GLenum face, GLenum func, GLint ref, GLuint mask)
@@ -2318,32 +1748,9 @@ void GL_APIENTRY StencilFuncSeparate(GLenum face, GLenum func, GLint ref, GLuint
     Context *context = GetValidGlobalContext();
     if (context)
     {
-        switch (face)
+        if (!context->skipValidation() &&
+            !ValidateStencilFuncSeparate(context, face, func, ref, mask))
         {
-          case GL_FRONT:
-          case GL_BACK:
-          case GL_FRONT_AND_BACK:
-            break;
-
-          default:
-              context->handleError(Error(GL_INVALID_ENUM));
-            return;
-        }
-
-        switch (func)
-        {
-          case GL_NEVER:
-          case GL_ALWAYS:
-          case GL_LESS:
-          case GL_LEQUAL:
-          case GL_EQUAL:
-          case GL_GEQUAL:
-          case GL_GREATER:
-          case GL_NOTEQUAL:
-            break;
-
-          default:
-              context->handleError(Error(GL_INVALID_ENUM));
             return;
         }
 
@@ -2353,7 +1760,18 @@ void GL_APIENTRY StencilFuncSeparate(GLenum face, GLenum func, GLint ref, GLuint
 
 void GL_APIENTRY StencilMask(GLuint mask)
 {
-    StencilMaskSeparate(GL_FRONT_AND_BACK, mask);
+    EVENT("(GLuint mask = %d)", mask);
+
+    Context *context = GetValidGlobalContext();
+    if (context)
+    {
+        if (!context->skipValidation() && !ValidateStencilMask(context, mask))
+        {
+            return;
+        }
+
+        context->stencilMask(mask);
+    }
 }
 
 void GL_APIENTRY StencilMaskSeparate(GLenum face, GLuint mask)
@@ -2363,15 +1781,8 @@ void GL_APIENTRY StencilMaskSeparate(GLenum face, GLuint mask)
     Context *context = GetValidGlobalContext();
     if (context)
     {
-        switch (face)
+        if (!context->skipValidation() && !ValidateStencilMaskSeparate(context, face, mask))
         {
-          case GL_FRONT:
-          case GL_BACK:
-          case GL_FRONT_AND_BACK:
-            break;
-
-          default:
-              context->handleError(Error(GL_INVALID_ENUM));
             return;
         }
 
@@ -2381,7 +1792,18 @@ void GL_APIENTRY StencilMaskSeparate(GLenum face, GLuint mask)
 
 void GL_APIENTRY StencilOp(GLenum fail, GLenum zfail, GLenum zpass)
 {
-    StencilOpSeparate(GL_FRONT_AND_BACK, fail, zfail, zpass);
+    EVENT("(GLenum fail = 0x%X, GLenum zfail = 0x%X, GLenum zpas = 0x%Xs)", fail, zfail, zpass);
+
+    Context *context = GetValidGlobalContext();
+    if (context)
+    {
+        if (!context->skipValidation() && !ValidateStencilOp(context, fail, zfail, zpass))
+        {
+            return;
+        }
+
+        context->stencilOp(fail, zfail, zpass);
+    }
 }
 
 void GL_APIENTRY StencilOpSeparate(GLenum face, GLenum fail, GLenum zfail, GLenum zpass)
@@ -2392,66 +1814,9 @@ void GL_APIENTRY StencilOpSeparate(GLenum face, GLenum fail, GLenum zfail, GLenu
     Context *context = GetValidGlobalContext();
     if (context)
     {
-        switch (face)
+        if (!context->skipValidation() &&
+            !ValidateStencilOpSeparate(context, face, fail, zfail, zpass))
         {
-          case GL_FRONT:
-          case GL_BACK:
-          case GL_FRONT_AND_BACK:
-            break;
-
-          default:
-              context->handleError(Error(GL_INVALID_ENUM));
-            return;
-        }
-
-        switch (fail)
-        {
-          case GL_ZERO:
-          case GL_KEEP:
-          case GL_REPLACE:
-          case GL_INCR:
-          case GL_DECR:
-          case GL_INVERT:
-          case GL_INCR_WRAP:
-          case GL_DECR_WRAP:
-            break;
-
-          default:
-              context->handleError(Error(GL_INVALID_ENUM));
-            return;
-        }
-
-        switch (zfail)
-        {
-          case GL_ZERO:
-          case GL_KEEP:
-          case GL_REPLACE:
-          case GL_INCR:
-          case GL_DECR:
-          case GL_INVERT:
-          case GL_INCR_WRAP:
-          case GL_DECR_WRAP:
-            break;
-
-          default:
-              context->handleError(Error(GL_INVALID_ENUM));
-            return;
-        }
-
-        switch (zpass)
-        {
-          case GL_ZERO:
-          case GL_KEEP:
-          case GL_REPLACE:
-          case GL_INCR:
-          case GL_DECR:
-          case GL_INVERT:
-          case GL_INCR_WRAP:
-          case GL_DECR_WRAP:
-            break;
-
-          default:
-              context->handleError(Error(GL_INVALID_ENUM));
             return;
         }
 
@@ -2493,8 +1858,7 @@ void GL_APIENTRY TexParameterf(GLenum target, GLenum pname, GLfloat param)
             return;
         }
 
-        Texture *texture = context->getTargetTexture(target);
-        SetTexParameterf(texture, pname, param);
+        context->texParameterf(target, pname, param);
     }
 }
 
@@ -2511,8 +1875,7 @@ void GL_APIENTRY TexParameterfv(GLenum target, GLenum pname, const GLfloat *para
             return;
         }
 
-        Texture *texture = context->getTargetTexture(target);
-        SetTexParameterfv(texture, pname, params);
+        context->texParameterfv(target, pname, params);
     }
 }
 
@@ -2528,8 +1891,7 @@ void GL_APIENTRY TexParameteri(GLenum target, GLenum pname, GLint param)
             return;
         }
 
-        Texture *texture = context->getTargetTexture(target);
-        SetTexParameteri(texture, pname, param);
+        context->texParameteri(target, pname, param);
     }
 }
 
@@ -2546,8 +1908,7 @@ void GL_APIENTRY TexParameteriv(GLenum target, GLenum pname, const GLint *params
             return;
         }
 
-        Texture *texture = context->getTargetTexture(target);
-        SetTexParameteriv(texture, pname, params);
+        context->texParameteriv(target, pname, params);
     }
 }
 
@@ -2576,7 +1937,18 @@ void GL_APIENTRY TexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint 
 
 void GL_APIENTRY Uniform1f(GLint location, GLfloat x)
 {
-    Uniform1fv(location, 1, &x);
+    EVENT("(GLint location = %d, GLfloat x = %f)", location, x);
+
+    Context *context = GetValidGlobalContext();
+    if (context)
+    {
+        if (!context->skipValidation() && !ValidateUniform1f(context, location, x))
+        {
+            return;
+        }
+
+        context->uniform1f(location, x);
+    }
 }
 
 void GL_APIENTRY Uniform1fv(GLint location, GLsizei count, const GLfloat* v)
@@ -2586,19 +1958,29 @@ void GL_APIENTRY Uniform1fv(GLint location, GLsizei count, const GLfloat* v)
     Context *context = GetValidGlobalContext();
     if (context)
     {
-        if (!ValidateUniform(context, GL_FLOAT, location, count))
+        if (!context->skipValidation() && !ValidateUniform1fv(context, location, count, v))
         {
             return;
         }
 
-        Program *program = context->getGLState().getProgram();
-        program->setUniform1fv(location, count, v);
+        context->uniform1fv(location, count, v);
     }
 }
 
 void GL_APIENTRY Uniform1i(GLint location, GLint x)
 {
-    Uniform1iv(location, 1, &x);
+    EVENT("(GLint location = %d, GLint x = %d)", location, x);
+
+    Context *context = GetValidGlobalContext();
+    if (context)
+    {
+        if (!context->skipValidation() && !ValidateUniform1iv(context, location, 1, &x))
+        {
+            return;
+        }
+
+        context->uniform1i(location, x);
+    }
 }
 
 void GL_APIENTRY Uniform1iv(GLint location, GLsizei count, const GLint* v)
@@ -2608,21 +1990,29 @@ void GL_APIENTRY Uniform1iv(GLint location, GLsizei count, const GLint* v)
     Context *context = GetValidGlobalContext();
     if (context)
     {
-        if (!ValidateUniform(context, GL_INT, location, count))
+        if (!context->skipValidation() && !ValidateUniform1iv(context, location, count, v))
         {
             return;
         }
 
-        Program *program = context->getGLState().getProgram();
-        program->setUniform1iv(location, count, v);
+        context->uniform1iv(location, count, v);
     }
 }
 
 void GL_APIENTRY Uniform2f(GLint location, GLfloat x, GLfloat y)
 {
-    GLfloat xy[2] = {x, y};
+    EVENT("(GLint location = %d, GLfloat x = %f, GLfloat y = %f)", location, x, y);
 
-    Uniform2fv(location, 1, xy);
+    Context *context = GetValidGlobalContext();
+    if (context)
+    {
+        if (!context->skipValidation() && !ValidateUniform2f(context, location, x, y))
+        {
+            return;
+        }
+
+        context->uniform2f(location, x, y);
+    }
 }
 
 void GL_APIENTRY Uniform2fv(GLint location, GLsizei count, const GLfloat* v)
@@ -2632,21 +2022,29 @@ void GL_APIENTRY Uniform2fv(GLint location, GLsizei count, const GLfloat* v)
     Context *context = GetValidGlobalContext();
     if (context)
     {
-        if (!ValidateUniform(context, GL_FLOAT_VEC2, location, count))
+        if (!context->skipValidation() && !ValidateUniform2fv(context, location, count, v))
         {
             return;
         }
 
-        Program *program = context->getGLState().getProgram();
-        program->setUniform2fv(location, count, v);
+        context->uniform2fv(location, count, v);
     }
 }
 
 void GL_APIENTRY Uniform2i(GLint location, GLint x, GLint y)
 {
-    GLint xy[2] = {x, y};
+    EVENT("(GLint location = %d, GLint x = %d, GLint y = %d)", location, x, y);
 
-    Uniform2iv(location, 1, xy);
+    Context *context = GetValidGlobalContext();
+    if (context)
+    {
+        if (!context->skipValidation() && !ValidateUniform2i(context, location, x, y))
+        {
+            return;
+        }
+
+        context->uniform2i(location, x, y);
+    }
 }
 
 void GL_APIENTRY Uniform2iv(GLint location, GLsizei count, const GLint* v)
@@ -2656,21 +2054,30 @@ void GL_APIENTRY Uniform2iv(GLint location, GLsizei count, const GLint* v)
     Context *context = GetValidGlobalContext();
     if (context)
     {
-        if (!ValidateUniform(context, GL_INT_VEC2, location, count))
+        if (!context->skipValidation() && !ValidateUniform2iv(context, location, count, v))
         {
             return;
         }
 
-        Program *program = context->getGLState().getProgram();
-        program->setUniform2iv(location, count, v);
+        context->uniform2iv(location, count, v);
     }
 }
 
 void GL_APIENTRY Uniform3f(GLint location, GLfloat x, GLfloat y, GLfloat z)
 {
-    GLfloat xyz[3] = {x, y, z};
+    EVENT("(GLint location = %d, GLfloat x = %f, GLfloat y = %f, GLfloat z = %f)", location, x, y,
+          z);
 
-    Uniform3fv(location, 1, xyz);
+    Context *context = GetValidGlobalContext();
+    if (context)
+    {
+        if (!context->skipValidation() && !ValidateUniform3f(context, location, x, y, z))
+        {
+            return;
+        }
+
+        context->uniform3f(location, x, y, z);
+    }
 }
 
 void GL_APIENTRY Uniform3fv(GLint location, GLsizei count, const GLfloat* v)
@@ -2680,21 +2087,29 @@ void GL_APIENTRY Uniform3fv(GLint location, GLsizei count, const GLfloat* v)
     Context *context = GetValidGlobalContext();
     if (context)
     {
-        if (!ValidateUniform(context, GL_FLOAT_VEC3, location, count))
+        if (!context->skipValidation() && !ValidateUniform3fv(context, location, count, v))
         {
             return;
         }
 
-        Program *program = context->getGLState().getProgram();
-        program->setUniform3fv(location, count, v);
+        context->uniform3fv(location, count, v);
     }
 }
 
 void GL_APIENTRY Uniform3i(GLint location, GLint x, GLint y, GLint z)
 {
-    GLint xyz[3] = {x, y, z};
+    EVENT("(GLint location = %d, GLint x = %d, GLint y = %d, GLint z = %d)", location, x, y, z);
 
-    Uniform3iv(location, 1, xyz);
+    Context *context = GetValidGlobalContext();
+    if (context)
+    {
+        if (!context->skipValidation() && !ValidateUniform3i(context, location, x, y, z))
+        {
+            return;
+        }
+
+        context->uniform3i(location, x, y, z);
+    }
 }
 
 void GL_APIENTRY Uniform3iv(GLint location, GLsizei count, const GLint* v)
@@ -2704,21 +2119,30 @@ void GL_APIENTRY Uniform3iv(GLint location, GLsizei count, const GLint* v)
     Context *context = GetValidGlobalContext();
     if (context)
     {
-        if (!ValidateUniform(context, GL_INT_VEC3, location, count))
+        if (!context->skipValidation() && !ValidateUniform3iv(context, location, count, v))
         {
             return;
         }
 
-        Program *program = context->getGLState().getProgram();
-        program->setUniform3iv(location, count, v);
+        context->uniform3iv(location, count, v);
     }
 }
 
 void GL_APIENTRY Uniform4f(GLint location, GLfloat x, GLfloat y, GLfloat z, GLfloat w)
 {
-    GLfloat xyzw[4] = {x, y, z, w};
+    EVENT("(GLint location = %d, GLfloat x = %f, GLfloat y = %f, GLfloat z = %f, GLfloat w = %f)",
+          location, x, y, z, w);
 
-    Uniform4fv(location, 1, xyzw);
+    Context *context = GetValidGlobalContext();
+    if (context)
+    {
+        if (!context->skipValidation() && !ValidateUniform4f(context, location, x, y, z, w))
+        {
+            return;
+        }
+
+        context->uniform4f(location, x, y, z, w);
+    }
 }
 
 void GL_APIENTRY Uniform4fv(GLint location, GLsizei count, const GLfloat* v)
@@ -2728,21 +2152,30 @@ void GL_APIENTRY Uniform4fv(GLint location, GLsizei count, const GLfloat* v)
     Context *context = GetValidGlobalContext();
     if (context)
     {
-        if (!ValidateUniform(context, GL_FLOAT_VEC4, location, count))
+        if (!context->skipValidation() && !ValidateUniform4fv(context, location, count, v))
         {
             return;
         }
 
-        Program *program = context->getGLState().getProgram();
-        program->setUniform4fv(location, count, v);
+        context->uniform4fv(location, count, v);
     }
 }
 
 void GL_APIENTRY Uniform4i(GLint location, GLint x, GLint y, GLint z, GLint w)
 {
-    GLint xyzw[4] = {x, y, z, w};
+    EVENT("(GLint location = %d, GLint x = %d, GLint y = %d, GLint z = %d, GLint w = %d)", location,
+          x, y, z, w);
 
-    Uniform4iv(location, 1, xyzw);
+    Context *context = GetValidGlobalContext();
+    if (context)
+    {
+        if (!context->skipValidation() && !ValidateUniform4i(context, location, x, y, z, w))
+        {
+            return;
+        }
+
+        context->uniform4i(location, x, y, z, w);
+    }
 }
 
 void GL_APIENTRY Uniform4iv(GLint location, GLsizei count, const GLint* v)
@@ -2752,13 +2185,12 @@ void GL_APIENTRY Uniform4iv(GLint location, GLsizei count, const GLint* v)
     Context *context = GetValidGlobalContext();
     if (context)
     {
-        if (!ValidateUniform(context, GL_INT_VEC4, location, count))
+        if (!context->skipValidation() && !ValidateUniform4iv(context, location, count, v))
         {
             return;
         }
 
-        Program *program = context->getGLState().getProgram();
-        program->setUniform4iv(location, count, v);
+        context->uniform4iv(location, count, v);
     }
 }
 
@@ -2770,13 +2202,13 @@ void GL_APIENTRY UniformMatrix2fv(GLint location, GLsizei count, GLboolean trans
     Context *context = GetValidGlobalContext();
     if (context)
     {
-        if (!ValidateUniformMatrix(context, GL_FLOAT_MAT2, location, count, transpose))
+        if (!context->skipValidation() &&
+            !ValidateUniformMatrix2fv(context, location, count, transpose, value))
         {
             return;
         }
 
-        Program *program = context->getGLState().getProgram();
-        program->setUniformMatrix2fv(location, count, transpose, value);
+        context->uniformMatrix2fv(location, count, transpose, value);
     }
 }
 
@@ -2788,13 +2220,13 @@ void GL_APIENTRY UniformMatrix3fv(GLint location, GLsizei count, GLboolean trans
     Context *context = GetValidGlobalContext();
     if (context)
     {
-        if (!ValidateUniformMatrix(context, GL_FLOAT_MAT3, location, count, transpose))
+        if (!context->skipValidation() &&
+            !ValidateUniformMatrix3fv(context, location, count, transpose, value))
         {
             return;
         }
 
-        Program *program = context->getGLState().getProgram();
-        program->setUniformMatrix3fv(location, count, transpose, value);
+        context->uniformMatrix3fv(location, count, transpose, value);
     }
 }
 
@@ -2806,13 +2238,13 @@ void GL_APIENTRY UniformMatrix4fv(GLint location, GLsizei count, GLboolean trans
     Context *context = GetValidGlobalContext();
     if (context)
     {
-        if (!ValidateUniformMatrix(context, GL_FLOAT_MAT4, location, count, transpose))
+        if (!context->skipValidation() &&
+            !ValidateUniformMatrix4fv(context, location, count, transpose, value))
         {
             return;
         }
 
-        Program *program = context->getGLState().getProgram();
-        program->setUniformMatrix4fv(location, count, transpose, value);
+        context->uniformMatrix4fv(location, count, transpose, value);
     }
 }
 
@@ -2839,14 +2271,12 @@ void GL_APIENTRY ValidateProgram(GLuint program)
     Context *context = GetValidGlobalContext();
     if (context)
     {
-        Program *programObject = GetValidProgram(context, program);
-
-        if (!programObject)
+        if (!context->skipValidation() && !ValidateValidateProgram(context, program))
         {
             return;
         }
 
-        programObject->validate(context->getCaps());
+        context->validateProgram(program);
     }
 }
 
@@ -2857,9 +2287,8 @@ void GL_APIENTRY VertexAttrib1f(GLuint index, GLfloat x)
     Context *context = GetValidGlobalContext();
     if (context)
     {
-        if (index >= MAX_VERTEX_ATTRIBS)
+        if (!context->skipValidation() && !ValidateVertexAttrib1f(context, index, x))
         {
-            context->handleError(Error(GL_INVALID_VALUE));
             return;
         }
 
@@ -2874,9 +2303,8 @@ void GL_APIENTRY VertexAttrib1fv(GLuint index, const GLfloat* values)
     Context *context = GetValidGlobalContext();
     if (context)
     {
-        if (index >= MAX_VERTEX_ATTRIBS)
+        if (!context->skipValidation() && !ValidateVertexAttrib1fv(context, index, values))
         {
-            context->handleError(Error(GL_INVALID_VALUE));
             return;
         }
 
@@ -2891,9 +2319,8 @@ void GL_APIENTRY VertexAttrib2f(GLuint index, GLfloat x, GLfloat y)
     Context *context = GetValidGlobalContext();
     if (context)
     {
-        if (index >= MAX_VERTEX_ATTRIBS)
+        if (!context->skipValidation() && !ValidateVertexAttrib2f(context, index, x, y))
         {
-            context->handleError(Error(GL_INVALID_VALUE));
             return;
         }
 
@@ -2908,9 +2335,8 @@ void GL_APIENTRY VertexAttrib2fv(GLuint index, const GLfloat* values)
     Context *context = GetValidGlobalContext();
     if (context)
     {
-        if (index >= MAX_VERTEX_ATTRIBS)
+        if (!context->skipValidation() && !ValidateVertexAttrib2fv(context, index, values))
         {
-            context->handleError(Error(GL_INVALID_VALUE));
             return;
         }
 
@@ -2925,9 +2351,8 @@ void GL_APIENTRY VertexAttrib3f(GLuint index, GLfloat x, GLfloat y, GLfloat z)
     Context *context = GetValidGlobalContext();
     if (context)
     {
-        if (index >= MAX_VERTEX_ATTRIBS)
+        if (!context->skipValidation() && !ValidateVertexAttrib3f(context, index, x, y, z))
         {
-            context->handleError(Error(GL_INVALID_VALUE));
             return;
         }
 
@@ -2942,9 +2367,8 @@ void GL_APIENTRY VertexAttrib3fv(GLuint index, const GLfloat* values)
     Context *context = GetValidGlobalContext();
     if (context)
     {
-        if (index >= MAX_VERTEX_ATTRIBS)
+        if (!context->skipValidation() && !ValidateVertexAttrib3fv(context, index, values))
         {
-            context->handleError(Error(GL_INVALID_VALUE));
             return;
         }
 
@@ -2959,9 +2383,8 @@ void GL_APIENTRY VertexAttrib4f(GLuint index, GLfloat x, GLfloat y, GLfloat z, G
     Context *context = GetValidGlobalContext();
     if (context)
     {
-        if (index >= MAX_VERTEX_ATTRIBS)
+        if (!context->skipValidation() && !ValidateVertexAttrib4f(context, index, x, y, z, w))
         {
-            context->handleError(Error(GL_INVALID_VALUE));
             return;
         }
 
@@ -2976,9 +2399,8 @@ void GL_APIENTRY VertexAttrib4fv(GLuint index, const GLfloat* values)
     Context *context = GetValidGlobalContext();
     if (context)
     {
-        if (index >= MAX_VERTEX_ATTRIBS)
+        if (!context->skipValidation() && !ValidateVertexAttrib4fv(context, index, values))
         {
-            context->handleError(Error(GL_INVALID_VALUE));
             return;
         }
 
@@ -2995,65 +2417,9 @@ void GL_APIENTRY VertexAttribPointer(GLuint index, GLint size, GLenum type, GLbo
     Context *context = GetValidGlobalContext();
     if (context)
     {
-        if (index >= MAX_VERTEX_ATTRIBS)
+        if (!context->skipValidation() &&
+            !ValidateVertexAttribPointer(context, index, size, type, normalized, stride, ptr))
         {
-            context->handleError(Error(GL_INVALID_VALUE));
-            return;
-        }
-
-        if (size < 1 || size > 4)
-        {
-            context->handleError(Error(GL_INVALID_VALUE));
-            return;
-        }
-
-        switch (type)
-        {
-            case GL_BYTE:
-            case GL_UNSIGNED_BYTE:
-            case GL_SHORT:
-            case GL_UNSIGNED_SHORT:
-            case GL_FIXED:
-            case GL_FLOAT:
-                break;
-
-            case GL_HALF_FLOAT:
-            case GL_INT:
-            case GL_UNSIGNED_INT:
-            case GL_INT_2_10_10_10_REV:
-            case GL_UNSIGNED_INT_2_10_10_10_REV:
-                if (context->getClientMajorVersion() < 3)
-                {
-                    context->handleError(Error(GL_INVALID_ENUM));
-                    return;
-                }
-                break;
-
-            default:
-                context->handleError(Error(GL_INVALID_ENUM));
-                return;
-        }
-
-        if (stride < 0)
-        {
-            context->handleError(Error(GL_INVALID_VALUE));
-            return;
-        }
-
-        if ((type == GL_INT_2_10_10_10_REV || type == GL_UNSIGNED_INT_2_10_10_10_REV) && size != 4)
-        {
-            context->handleError(Error(GL_INVALID_OPERATION));
-            return;
-        }
-
-        // [OpenGL ES 3.0.2] Section 2.8 page 24:
-        // An INVALID_OPERATION error is generated when a non-zero vertex array object
-        // is bound, zero is bound to the ARRAY_BUFFER buffer object binding point,
-        // and the pointer argument is not NULL.
-        if (context->getGLState().getVertexArray()->id() != 0 &&
-            context->getGLState().getArrayBufferId() == 0 && ptr != NULL)
-        {
-            context->handleError(Error(GL_INVALID_OPERATION));
             return;
         }
 
@@ -3068,9 +2434,8 @@ void GL_APIENTRY Viewport(GLint x, GLint y, GLsizei width, GLsizei height)
     Context *context = GetValidGlobalContext();
     if (context)
     {
-        if (width < 0 || height < 0)
+        if (!context->skipValidation() && !ValidateViewport(context, x, y, width, height))
         {
-            context->handleError(Error(GL_INVALID_VALUE));
             return;
         }
 

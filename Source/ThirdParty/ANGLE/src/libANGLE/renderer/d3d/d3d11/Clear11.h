@@ -60,37 +60,20 @@ class Clear11 : angle::NonCopyable
         d3d11::LazyShader<ID3D11PixelShader> pixelShader;
     };
 
-    template <unsigned int vsSize, unsigned int psSize>
-    static ClearShader CreateClearShader(ID3D11Device *device, DXGI_FORMAT colorType, const BYTE(&vsByteCode)[vsSize], const BYTE(&psByteCode)[psSize]);
-
-    struct ClearBlendInfo
-    {
-        bool maskChannels[D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT][4];
-    };
-    typedef bool(*ClearBlendInfoComparisonFunction)(const ClearBlendInfo&, const ClearBlendInfo &);
-    typedef std::map<ClearBlendInfo, ID3D11BlendState*, ClearBlendInfoComparisonFunction> ClearBlendStateMap;
-
-    struct ClearDepthStencilInfo
-    {
-        bool clearDepth;
-        bool clearStencil;
-        UINT8 stencilWriteMask;
-    };
-    typedef bool(*ClearDepthStencilInfoComparisonFunction)(const ClearDepthStencilInfo&, const ClearDepthStencilInfo &);
-    typedef std::map<ClearDepthStencilInfo, ID3D11DepthStencilState*, ClearDepthStencilInfoComparisonFunction> ClearDepthStencilStateMap;
 
     Renderer11 *mRenderer;
 
-    ClearBlendStateMap mClearBlendStates;
+    // States
+    angle::ComPtr<ID3D11RasterizerState> mScissorEnabledRasterizerState;
+    angle::ComPtr<ID3D11RasterizerState> mScissorDisabledRasterizerState;
+    gl::DepthStencilState mDepthStencilStateKey;
+    d3d11::BlendStateKey mBlendStateKey;
 
+    // Shaders and Shader Resources
     ClearShader *mFloatClearShader;
     ClearShader *mUintClearShader;
     ClearShader *mIntClearShader;
-
-    ClearDepthStencilStateMap mClearDepthStencilStates;
-
-    ID3D11Buffer *mVertexBuffer;
-    ID3D11RasterizerState *mRasterizerState;
+    angle::ComPtr<ID3D11Buffer> mVertexBuffer;
 };
 
 }

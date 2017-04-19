@@ -14,6 +14,9 @@
 
 #include "compiler/translator/IntermNode.h"
 
+namespace sh
+{
+
 // Traverses the intermediate tree to determine which GLSL extensions are required
 // to support the shader.
 class TExtensionGLSL : public TIntermTraverser
@@ -35,5 +38,7 @@ class TExtensionGLSL : public TIntermTraverser
     std::set<std::string> mEnabledExtensions;
     std::set<std::string> mRequiredExtensions;
 };
+
+}  // namespace sh
 
 #endif  // COMPILER_TRANSLATOR_EXTENSIONGLSL_H_

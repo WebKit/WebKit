@@ -26,7 +26,7 @@ WindowSurfaceEGL::~WindowSurfaceEGL()
 {
 }
 
-egl::Error WindowSurfaceEGL::initialize()
+egl::Error WindowSurfaceEGL::initialize(const DisplayImpl *displayImpl)
 {
     mSurface = mEGL->createWindowSurface(mConfig, mWindow, mAttribList.data());
     if (mSurface == EGL_NO_SURFACE)

@@ -21,9 +21,7 @@ class TSymbolTable;
 namespace sh
 {
 
-void RewriteTexelFetchOffset(TIntermNode *root,
-                             const TSymbolTable &symbolTable,
-                             int shaderVersion);
+void RewriteTexelFetchOffset(TIntermNode *root, const TSymbolTable &symbolTable, int shaderVersion);
 
 }  // namespace sh
 

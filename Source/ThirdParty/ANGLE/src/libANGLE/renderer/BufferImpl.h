@@ -15,29 +15,53 @@
 
 #include <stdint.h>
 
+namespace gl
+{
+class BufferState;
+}
+
 namespace rx
 {
+class ContextImpl;
 
 class BufferImpl : angle::NonCopyable
 {
   public:
+    BufferImpl(const gl::BufferState &state) : mState(state) {}
     virtual ~BufferImpl() { }
+    virtual void destroy(ContextImpl *contextImpl) {}
 
-    virtual gl::Error setData(GLenum target, const void *data, size_t size, GLenum usage)     = 0;
-    virtual gl::Error setSubData(GLenum target, const void *data, size_t size, size_t offset) = 0;
-    virtual gl::Error copySubData(BufferImpl *source,
+    virtual gl::Error setData(ContextImpl *context,
+                              GLenum target,
+                              const void *data,
+                              size_t size,
+                              GLenum usage) = 0;
+    virtual gl::Error setSubData(ContextImpl *context,
+                                 GLenum target,
+                                 const void *data,
+                                 size_t size,
+                                 size_t offset) = 0;
+    virtual gl::Error copySubData(ContextImpl *contextImpl,
+                                  BufferImpl *source,
                                   GLintptr sourceOffset,
                                   GLintptr destOffset,
                                   GLsizeiptr size) = 0;
-    virtual gl::Error map(GLenum access, GLvoid **mapPtr) = 0;
-    virtual gl::Error mapRange(size_t offset, size_t length, GLbitfield access, GLvoid **mapPtr) = 0;
-    virtual gl::Error unmap(GLboolean *result) = 0;
+    virtual gl::Error map(ContextImpl *contextImpl, GLenum access, GLvoid **mapPtr) = 0;
+    virtual gl::Error mapRange(ContextImpl *contextImpl,
+                               size_t offset,
+                               size_t length,
+                               GLbitfield access,
+                               GLvoid **mapPtr) = 0;
+    virtual gl::Error unmap(ContextImpl *contextImpl, GLboolean *result) = 0;
 
     virtual gl::Error getIndexRange(GLenum type,
                                     size_t offset,
                                     size_t count,
                                     bool primitiveRestartEnabled,
                                     gl::IndexRange *outRange) = 0;
+
+  protected:
+    const gl::BufferState &mState;
 };
 
 }

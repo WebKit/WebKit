@@ -3,47 +3,24 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
+// Scalarize vector and matrix constructor args, so that vectors built from components don't have
+// matrix arguments, and matrices built from components don't have vector arguments. This avoids
+// driver bugs around vector and matrix constructors.
+//
 
 #ifndef COMPILER_TRANSLATOR_SCALARIZEVECANDMATCONSTRUCTORARGS_H_
 #define COMPILER_TRANSLATOR_SCALARIZEVECANDMATCONSTRUCTORARGS_H_
 
-#include "compiler/translator/IntermNode.h"
+#include "GLSLANG/ShaderLang.h"
 
-class ScalarizeVecAndMatConstructorArgs : public TIntermTraverser
+namespace sh
 {
-  public:
-    ScalarizeVecAndMatConstructorArgs(sh::GLenum shaderType,
-                                      bool fragmentPrecisionHigh)
-        : TIntermTraverser(true, false, false),
-          mTempVarCount(0),
-          mShaderType(shaderType),
-          mFragmentPrecisionHigh(fragmentPrecisionHigh) {}
+class TIntermBlock;
 
-  protected:
-    bool visitAggregate(Visit visit, TIntermAggregate *node) override;
-    bool visitBlock(Visit visit, TIntermBlock *node) override;
-
-  private:
-    void scalarizeArgs(TIntermAggregate *aggregate,
-                       bool scalarizeVector, bool scalarizeMatrix);
-
-    // If we have the following code:
-    //   mat4 m(0);
-    //   vec4 v(1, m);
-    // We will rewrite to:
-    //   mat4 m(0);
-    //   mat4 _webgl_tmp_mat_0 = m;
-    //   vec4 v(1, _webgl_tmp_mat_0[0][0], _webgl_tmp_mat_0[0][1], _webgl_tmp_mat_0[0][2]);
-    // This function is to create nodes for "mat4 _webgl_tmp_mat_0 = m;" and insert it to
-    // the code sequence.
-    // Return the temporary variable name.
-    TString createTempVariable(TIntermTyped *original);
-
-    std::vector<TIntermSequence> mBlockStack;
-    int mTempVarCount;
-
-    sh::GLenum mShaderType;
-    bool mFragmentPrecisionHigh;
-};
+void ScalarizeVecAndMatConstructorArgs(TIntermBlock *root,
+                                       sh::GLenum shaderType,
+                                       bool fragmentPrecisionHigh,
+                                       unsigned int *temporaryIndex);
+}  // namespace sh
 
 #endif  // COMPILER_TRANSLATOR_SCALARIZEVECANDMATCONSTRUCTORARGS_H_

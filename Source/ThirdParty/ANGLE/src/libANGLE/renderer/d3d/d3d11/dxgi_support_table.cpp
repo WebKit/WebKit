@@ -129,7 +129,7 @@ const DXGISupport &GetDXGISupport_9_3(DXGI_FORMAT dxgiFormat)
         }
         case DXGI_FORMAT_BC1_UNORM_SRGB:
         {
-            static const DXGISupport info(F_2D | F_3D | F_CUBE, F_DS | F_MIPGEN | F_MS | F_RT, 0);
+            static const DXGISupport info(F_2D | F_3D | F_CUBE | F_SAMPLE, F_DS | F_MIPGEN | F_MS | F_RT, 0);
             return info;
         }
         case DXGI_FORMAT_BC2_TYPELESS:
@@ -144,7 +144,7 @@ const DXGISupport &GetDXGISupport_9_3(DXGI_FORMAT dxgiFormat)
         }
         case DXGI_FORMAT_BC2_UNORM_SRGB:
         {
-            static const DXGISupport info(F_2D | F_3D | F_CUBE, F_DS | F_MIPGEN | F_MS | F_RT, 0);
+            static const DXGISupport info(F_2D | F_3D | F_CUBE | F_SAMPLE, F_DS | F_MIPGEN | F_MS | F_RT, 0);
             return info;
         }
         case DXGI_FORMAT_BC3_TYPELESS:
@@ -159,7 +159,7 @@ const DXGISupport &GetDXGISupport_9_3(DXGI_FORMAT dxgiFormat)
         }
         case DXGI_FORMAT_BC3_UNORM_SRGB:
         {
-            static const DXGISupport info(F_2D | F_3D | F_CUBE, F_DS | F_MIPGEN | F_MS | F_RT, 0);
+            static const DXGISupport info(F_2D | F_3D | F_CUBE | F_SAMPLE, F_DS | F_MIPGEN | F_MS | F_RT, 0);
             return info;
         }
         case DXGI_FORMAT_BC4_SNORM:

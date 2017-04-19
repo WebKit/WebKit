@@ -19,11 +19,6 @@ struct SourceLocation;
 class Diagnostics
 {
   public:
-    enum Severity
-    {
-        PP_ERROR,
-        PP_WARNING
-    };
     enum ID
     {
         PP_ERROR_BEGIN,
@@ -48,6 +43,7 @@ class Diagnostics
         PP_MACRO_TOO_FEW_ARGS,
         PP_MACRO_TOO_MANY_ARGS,
         PP_MACRO_DUPLICATE_PARAMETER_NAMES,
+        PP_MACRO_INVOCATION_CHAIN_TOO_DEEP,
         PP_CONDITIONAL_ENDIF_WITHOUT_IF,
         PP_CONDITIONAL_ELSE_WITHOUT_IF,
         PP_CONDITIONAL_ELSE_AFTER_ELSE,
@@ -82,12 +78,10 @@ class Diagnostics
     void report(ID id, const SourceLocation &loc, const std::string &text);
 
   protected:
-    Severity severity(ID id);
-    std::string message(ID id);
+    bool isError(ID id);
+    const char *message(ID id);
 
-    virtual void print(ID id,
-                       const SourceLocation &loc,
-                       const std::string &text) = 0;
+    virtual void print(ID id, const SourceLocation &loc, const std::string &text) = 0;
 };
 
 }  // namespace pp

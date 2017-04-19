@@ -21,10 +21,13 @@ if "%1" == "release" (
 
 ::              | Input file          | Entry point           | Type | Output file                        | Debug |
 call:BuildShader Blit.vs               standardvs              vs_2_0 compiled\standardvs.h                %debug%
-call:BuildShader Blit.vs               flipyvs                 vs_2_0 compiled\flipyvs.h                   %debug%
 call:BuildShader Blit.ps               passthroughps           ps_2_0 compiled\passthroughps.h             %debug%
 call:BuildShader Blit.ps               luminanceps             ps_2_0 compiled\luminanceps.h               %debug%
+call:BuildShader Blit.ps               luminancepremultps      ps_2_0 compiled\luminancepremultps.h        %debug%
+call:BuildShader Blit.ps               luminanceunmultps       ps_2_0 compiled\luminanceunmultps.h         %debug%
 call:BuildShader Blit.ps               componentmaskps         ps_2_0 compiled\componentmaskps.h           %debug%
+call:BuildShader Blit.ps               componentmaskpremultps  ps_2_0 compiled\componentmaskpremultps.h    %debug%
+call:BuildShader Blit.ps               componentmaskunmultps   ps_2_0 compiled\componentmaskunmultps.h     %debug%
 
 echo.
 

@@ -24,6 +24,7 @@ class SwapChain9 : public SwapChainD3D
     SwapChain9(Renderer9 *renderer,
                NativeWindow9 *nativeWindow,
                HANDLE shareHandle,
+               IUnknown *d3dTexture,
                GLenum backBufferFormat,
                GLenum depthBufferFormat,
                EGLint orientation);

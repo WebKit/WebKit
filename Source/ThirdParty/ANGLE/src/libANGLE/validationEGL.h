@@ -23,6 +23,7 @@ namespace egl
 {
 
 class AttributeMap;
+struct ClientExtensions;
 struct Config;
 class Device;
 class Display;
@@ -32,9 +33,9 @@ class Surface;
 
 // Object validation
 Error ValidateDisplay(const Display *display);
-Error ValidateSurface(const Display *display, Surface *surface);
+Error ValidateSurface(const Display *display, const Surface *surface);
 Error ValidateConfig(const Display *display, const Config *config);
-Error ValidateContext(const Display *display, gl::Context *context);
+Error ValidateContext(const Display *display, const gl::Context *context);
 Error ValidateImage(const Display *display, const Image *image);
 
 // Entry point validation
@@ -47,6 +48,8 @@ Error ValidateCreateWindowSurface(Display *display, Config *config, EGLNativeWin
 Error ValidateCreatePbufferSurface(Display *display, Config *config, const AttributeMap& attributes);
 Error ValidateCreatePbufferFromClientBuffer(Display *display, EGLenum buftype, EGLClientBuffer buffer,
                                             Config *config, const AttributeMap& attributes);
+
+Error ValidateMakeCurrent(Display *display, EGLSurface draw, EGLSurface read, gl::Context *context);
 
 Error ValidateCreateImageKHR(const Display *display,
                              gl::Context *context,
@@ -94,11 +97,24 @@ Error ValidateStreamPostD3DTextureNV12ANGLE(const Display *display,
                                             const Stream *stream,
                                             void *texture,
                                             const AttributeMap &attribs);
+
 Error ValidateGetSyncValuesCHROMIUM(const Display *display,
                                     const Surface *surface,
                                     const EGLuint64KHR *ust,
                                     const EGLuint64KHR *msc,
                                     const EGLuint64KHR *sbc);
+
+Error ValidateSwapBuffersWithDamageEXT(const Display *display,
+                                       const Surface *surface,
+                                       EGLint *rects,
+                                       EGLint n_rects);
+
+Error ValidateGetConfigAttrib(const Display *display, const Config *config, EGLint attribute);
+Error ValidateChooseConfig(const Display *display,
+                           const AttributeMap &attribs,
+                           EGLint configSize,
+                           EGLint *numConfig);
+Error ValidateGetConfigs(const Display *display, EGLint configSize, EGLint *numConfig);
 
 // Other validation
 Error ValidateCompatibleConfigs(const Display *display,
@@ -106,6 +122,8 @@ Error ValidateCompatibleConfigs(const Display *display,
                                 const Surface *surface,
                                 const Config *config2,
                                 EGLint surfaceType);
-}
+
+Error ValidatePlatformType(const ClientExtensions &clientExtensions, EGLint platformType);
+}  // namespace gl
 
 #endif // LIBANGLE_VALIDATIONEGL_H_

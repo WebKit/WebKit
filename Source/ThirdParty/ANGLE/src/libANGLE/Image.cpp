@@ -65,7 +65,7 @@ gl::Error ImageSibling::orphanImages()
         mSourcesOf.clear();
     }
 
-    return gl::Error(GL_NO_ERROR);
+    return gl::NoError();
 }
 
 void ImageSibling::addImageSource(egl::Image *imageSource)

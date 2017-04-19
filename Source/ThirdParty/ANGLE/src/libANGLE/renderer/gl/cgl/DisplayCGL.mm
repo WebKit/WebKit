@@ -44,7 +44,8 @@ class FunctionsGLCGL : public FunctionsGL
     void *mDylibHandle;
 };
 
-DisplayCGL::DisplayCGL() : DisplayGL(), mEGLDisplay(nullptr), mFunctions(nullptr), mContext(nullptr)
+DisplayCGL::DisplayCGL(const egl::DisplayState &state)
+    : DisplayGL(state), mEGLDisplay(nullptr), mFunctions(nullptr), mContext(nullptr)
 {
 }
 
@@ -110,7 +111,6 @@ void DisplayCGL::terminate()
 }
 
 SurfaceImpl *DisplayCGL::createWindowSurface(const egl::SurfaceState &state,
-                                             const egl::Config *configuration,
                                              EGLNativeWindowType window,
                                              const egl::AttributeMap &attribs)
 {
@@ -118,7 +118,6 @@ SurfaceImpl *DisplayCGL::createWindowSurface(const egl::SurfaceState &state,
 }
 
 SurfaceImpl *DisplayCGL::createPbufferSurface(const egl::SurfaceState &state,
-                                              const egl::Config *configuration,
                                               const egl::AttributeMap &attribs)
 {
     EGLint width  = static_cast<EGLint>(attribs.get(EGL_WIDTH, 0));
@@ -127,8 +126,8 @@ SurfaceImpl *DisplayCGL::createPbufferSurface(const egl::SurfaceState &state,
 }
 
 SurfaceImpl *DisplayCGL::createPbufferFromClientBuffer(const egl::SurfaceState &state,
-                                                       const egl::Config *configuration,
-                                                       EGLClientBuffer shareHandle,
+                                                       EGLenum buftype,
+                                                       EGLClientBuffer clientBuffer,
                                                        const egl::AttributeMap &attribs)
 {
     UNIMPLEMENTED();
@@ -136,7 +135,6 @@ SurfaceImpl *DisplayCGL::createPbufferFromClientBuffer(const egl::SurfaceState &
 }
 
 SurfaceImpl *DisplayCGL::createPixmapSurface(const egl::SurfaceState &state,
-                                             const egl::Config *configuration,
                                              NativePixmapType nativePixmap,
                                              const egl::AttributeMap &attribs)
 {
@@ -210,6 +208,8 @@ egl::ConfigSet DisplayCGL::generateConfigs()
 
     config.matchNativePixmap = EGL_NONE;
 
+    config.colorComponentType = EGL_COLOR_COMPONENT_TYPE_FIXED_EXT;
+
     configs.add(config);
     return configs;
 }
@@ -228,8 +228,8 @@ egl::Error DisplayCGL::restoreLostDevice()
 
 bool DisplayCGL::isValidNativeWindow(EGLNativeWindowType window) const
 {
-    // TODO(cwallez) investigate implementing this
-    return true;
+    NSObject *layer = reinterpret_cast<NSObject *>(window);
+    return [layer isKindOfClass:[CALayer class]];
 }
 
 std::string DisplayCGL::getVendorString() const
@@ -245,6 +245,10 @@ const FunctionsGL *DisplayCGL::getFunctionsGL() const
 
 void DisplayCGL::generateExtensions(egl::DisplayExtensions *outExtensions) const
 {
+    outExtensions->surfacelessContext = true;
+
+    // Contexts are virtualized so textures can be shared globally
+    outExtensions->displayTextureShareGroup = true;
 }
 
 void DisplayCGL::generateCaps(egl::Caps *outCaps) const
@@ -266,9 +270,10 @@ egl::Error DisplayCGL::waitNative(EGLint engine,
     return egl::Error(EGL_SUCCESS);
 }
 
-egl::Error DisplayCGL::getDriverVersion(std::string *version) const
+egl::Error DisplayCGL::makeCurrentSurfaceless(gl::Context *context)
 {
-    *version = "";
-    return egl::Error(EGL_SUCCESS);
+    // We have nothing to do as mContext is always current, and that CGL is surfaceless by
+    // default.
+    return egl::NoError();
 }
 }

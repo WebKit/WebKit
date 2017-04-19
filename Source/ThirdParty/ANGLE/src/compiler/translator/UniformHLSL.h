@@ -20,7 +20,9 @@ class StructureHLSL;
 class UniformHLSL : angle::NonCopyable
 {
   public:
-    UniformHLSL(StructureHLSL *structureHLSL, ShShaderOutput outputType, const std::vector<Uniform> &uniforms);
+    UniformHLSL(StructureHLSL *structureHLSL,
+                ShShaderOutput outputType,
+                const std::vector<Uniform> &uniforms);
 
     void reserveUniformRegisters(unsigned int registerCount);
     void reserveInterfaceBlockRegisters(unsigned int registerCount);
@@ -34,7 +36,8 @@ class UniformHLSL : angle::NonCopyable
     TString interfaceBlocksHeader(const ReferencedSymbols &referencedInterfaceBlocks);
 
     // Used for direct index references
-    static TString interfaceBlockInstanceString(const TInterfaceBlock& interfaceBlock, unsigned int arrayIndex);
+    static TString interfaceBlockInstanceString(const TInterfaceBlock &interfaceBlock,
+                                                unsigned int arrayIndex);
 
     const std::map<std::string, unsigned int> &getInterfaceBlockRegisterMap() const
     {
@@ -46,8 +49,11 @@ class UniformHLSL : angle::NonCopyable
     }
 
   private:
-    TString interfaceBlockString(const TInterfaceBlock &interfaceBlock, unsigned int registerIndex, unsigned int arrayIndex);
-    TString interfaceBlockMembersString(const TInterfaceBlock &interfaceBlock, TLayoutBlockStorage blockStorage);
+    TString interfaceBlockString(const TInterfaceBlock &interfaceBlock,
+                                 unsigned int registerIndex,
+                                 unsigned int arrayIndex);
+    TString interfaceBlockMembersString(const TInterfaceBlock &interfaceBlock,
+                                        TLayoutBlockStorage blockStorage);
     TString interfaceBlockStructString(const TInterfaceBlock &interfaceBlock);
     const Uniform *findUniformByName(const TString &name) const;
 
@@ -86,7 +92,6 @@ class UniformHLSL : angle::NonCopyable
     std::map<std::string, unsigned int> mInterfaceBlockRegisterMap;
     std::map<std::string, unsigned int> mUniformRegisterMap;
 };
-
 }
 
-#endif // COMPILER_TRANSLATOR_UNIFORMHLSL_H_
+#endif  // COMPILER_TRANSLATOR_UNIFORMHLSL_H_

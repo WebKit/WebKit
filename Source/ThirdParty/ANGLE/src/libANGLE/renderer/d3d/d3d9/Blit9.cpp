@@ -7,6 +7,8 @@
 // Blit9.cpp: Surface copy utility class.
 
 #include "libANGLE/renderer/d3d/d3d9/Blit9.h"
+
+#include "libANGLE/renderer/d3d/TextureD3D.h"
 #include "libANGLE/renderer/d3d/d3d9/renderer9_utils.h"
 #include "libANGLE/renderer/d3d/d3d9/formatutils9.h"
 #include "libANGLE/renderer/d3d/d3d9/TextureStorage9.h"
@@ -20,27 +22,34 @@ namespace
 {
 // Precompiled shaders
 #include "libANGLE/renderer/d3d/d3d9/shaders/compiled/standardvs.h"
-#include "libANGLE/renderer/d3d/d3d9/shaders/compiled/flipyvs.h"
 #include "libANGLE/renderer/d3d/d3d9/shaders/compiled/passthroughps.h"
 #include "libANGLE/renderer/d3d/d3d9/shaders/compiled/luminanceps.h"
+#include "libANGLE/renderer/d3d/d3d9/shaders/compiled/luminancepremultps.h"
+#include "libANGLE/renderer/d3d/d3d9/shaders/compiled/luminanceunmultps.h"
 #include "libANGLE/renderer/d3d/d3d9/shaders/compiled/componentmaskps.h"
+#include "libANGLE/renderer/d3d/d3d9/shaders/compiled/componentmaskpremultps.h"
+#include "libANGLE/renderer/d3d/d3d9/shaders/compiled/componentmaskunmultps.h"
 
-const BYTE* const g_shaderCode[] =
-{
+const BYTE *const g_shaderCode[] = {
     g_vs20_standardvs,
-    g_vs20_flipyvs,
     g_ps20_passthroughps,
     g_ps20_luminanceps,
-    g_ps20_componentmaskps
+    g_ps20_luminancepremultps,
+    g_ps20_luminanceunmultps,
+    g_ps20_componentmaskps,
+    g_ps20_componentmaskpremultps,
+    g_ps20_componentmaskunmultps,
 };
 
-const size_t g_shaderSize[] =
-{
+const size_t g_shaderSize[] = {
     sizeof(g_vs20_standardvs),
-    sizeof(g_vs20_flipyvs),
     sizeof(g_ps20_passthroughps),
     sizeof(g_ps20_luminanceps),
-    sizeof(g_ps20_componentmaskps)
+    sizeof(g_ps20_luminancepremultps),
+    sizeof(g_ps20_luminanceunmultps),
+    sizeof(g_ps20_componentmaskps),
+    sizeof(g_ps20_componentmaskpremultps),
+    sizeof(g_ps20_componentmaskunmultps),
 };
 }
 
@@ -75,7 +84,7 @@ gl::Error Blit9::initialize()
 {
     if (mGeometryLoaded)
     {
-        return gl::Error(GL_NO_ERROR);
+        return gl::NoError();
     }
 
     static const float quad[] =
@@ -125,7 +134,7 @@ gl::Error Blit9::initialize()
     }
 
     mGeometryLoaded = true;
-    return gl::Error(GL_NO_ERROR);
+    return gl::NoError();
 }
 
 template <class D3DShaderType>
@@ -155,7 +164,7 @@ gl::Error Blit9::setShader(ShaderId source, const char *profile,
         return gl::Error(GL_OUT_OF_MEMORY, "Failed to set shader for blit operation, result: 0x%X.", hr);
     }
 
-    return gl::Error(GL_NO_ERROR);
+    return gl::NoError();
 }
 
 gl::Error Blit9::setVertexShader(ShaderId shader)
@@ -182,11 +191,19 @@ RECT Blit9::getSurfaceRect(IDirect3DSurface9 *surface) const
     return rect;
 }
 
+gl::Extents Blit9::getSurfaceSize(IDirect3DSurface9 *surface) const
+{
+    D3DSURFACE_DESC desc;
+    surface->GetDesc(&desc);
+
+    return gl::Extents(desc.Width, desc.Height, 1);
+}
+
 gl::Error Blit9::boxFilter(IDirect3DSurface9 *source, IDirect3DSurface9 *dest)
 {
     ANGLE_TRY(initialize());
 
-    IDirect3DTexture9 *texture = NULL;
+    IDirect3DBaseTexture9 *texture = NULL;
     ANGLE_TRY(copySurfaceToTexture(source, getSurfaceRect(source), &texture));
 
     IDirect3DDevice9 *device = mRenderer->getDevice();
@@ -203,7 +220,8 @@ gl::Error Blit9::boxFilter(IDirect3DSurface9 *source, IDirect3DSurface9 *dest)
     device->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
     device->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
 
-    setViewport(getSurfaceRect(dest), gl::Offset(0, 0, 0));
+    setViewportAndShaderConstants(getSurfaceRect(source), getSurfaceSize(source),
+                                  getSurfaceRect(dest), false);
 
     render();
 
@@ -211,7 +229,7 @@ gl::Error Blit9::boxFilter(IDirect3DSurface9 *source, IDirect3DSurface9 *dest)
 
     restoreState();
 
-    return gl::Error(GL_NO_ERROR);
+    return gl::NoError();
 }
 
 gl::Error Blit9::copy2D(const gl::Framebuffer *framebuffer, const RECT &sourceRect, GLenum destFormat, const gl::Offset &destOffset, TextureStorage *storage, GLint level)
@@ -238,7 +256,8 @@ gl::Error Blit9::copy2D(const gl::Framebuffer *framebuffer, const RECT &sourceRe
     }
     ASSERT(destSurface);
 
-    gl::Error result = copy(source, sourceRect, destFormat, destOffset, destSurface);
+    gl::Error result =
+        copy(source, nullptr, sourceRect, destFormat, destOffset, destSurface, false, false, false);
 
     SafeRelease(destSurface);
     SafeRelease(source);
@@ -278,7 +297,8 @@ gl::Error Blit9::copyCube(const gl::Framebuffer *framebuffer, const RECT &source
     }
     ASSERT(destSurface);
 
-    gl::Error result = copy(source, sourceRect, destFormat, destOffset, destSurface);
+    gl::Error result =
+        copy(source, nullptr, sourceRect, destFormat, destOffset, destSurface, false, false, false);
 
     SafeRelease(destSurface);
     SafeRelease(source);
@@ -286,7 +306,63 @@ gl::Error Blit9::copyCube(const gl::Framebuffer *framebuffer, const RECT &source
     return result;
 }
 
-gl::Error Blit9::copy(IDirect3DSurface9 *source, const RECT &sourceRect, GLenum destFormat, const gl::Offset &destOffset, IDirect3DSurface9 *dest)
+gl::Error Blit9::copyTexture2D(const gl::Texture *source,
+                               GLint sourceLevel,
+                               const RECT &sourceRect,
+                               GLenum destFormat,
+                               const gl::Offset &destOffset,
+                               TextureStorage *storage,
+                               GLint destLevel,
+                               bool flipY,
+                               bool premultiplyAlpha,
+                               bool unmultiplyAlpha)
+{
+    ANGLE_TRY(initialize());
+
+    const TextureD3D *sourceD3D = GetImplAs<TextureD3D>(source);
+
+    TextureStorage *sourceStorage = nullptr;
+    ANGLE_TRY(const_cast<TextureD3D *>(sourceD3D)->getNativeTexture(&sourceStorage));
+
+    TextureStorage9_2D *sourceStorage9 = GetAs<TextureStorage9_2D>(sourceStorage);
+    ASSERT(sourceStorage9);
+
+    TextureStorage9_2D *destStorage9 = GetAs<TextureStorage9_2D>(storage);
+    ASSERT(destStorage9);
+
+    ASSERT(sourceLevel == 0);
+    IDirect3DBaseTexture9 *sourceTexture = nullptr;
+    ANGLE_TRY(sourceStorage9->getBaseTexture(&sourceTexture));
+
+    IDirect3DSurface9 *sourceSurface = nullptr;
+    ANGLE_TRY(sourceStorage9->getSurfaceLevel(GL_TEXTURE_2D, sourceLevel, true, &sourceSurface));
+
+    IDirect3DSurface9 *destSurface = nullptr;
+    gl::Error error = destStorage9->getSurfaceLevel(GL_TEXTURE_2D, destLevel, true, &destSurface);
+    if (error.isError())
+    {
+        SafeRelease(sourceSurface);
+        return error;
+    }
+
+    error = copy(sourceSurface, sourceTexture, sourceRect, destFormat, destOffset, destSurface,
+                 flipY, premultiplyAlpha, unmultiplyAlpha);
+
+    SafeRelease(sourceSurface);
+    SafeRelease(destSurface);
+
+    return error;
+}
+
+gl::Error Blit9::copy(IDirect3DSurface9 *source,
+                      IDirect3DBaseTexture9 *sourceTexture,
+                      const RECT &sourceRect,
+                      GLenum destFormat,
+                      const gl::Offset &destOffset,
+                      IDirect3DSurface9 *dest,
+                      bool flipY,
+                      bool premultiplyAlpha,
+                      bool unmultiplyAlpha)
 {
     ASSERT(source != NULL && dest != NULL);
 
@@ -297,8 +373,10 @@ gl::Error Blit9::copy(IDirect3DSurface9 *source, const RECT &sourceRect, GLenum 
     source->GetDesc(&sourceDesc);
     dest->GetDesc(&destDesc);
 
-    if (sourceDesc.Format == destDesc.Format && destDesc.Usage & D3DUSAGE_RENDERTARGET &&
-        d3d9_gl::IsFormatChannelEquivalent(destDesc.Format, destFormat))   // Can use StretchRect
+    // Check if it's possible to use StetchRect
+    if (sourceDesc.Format == destDesc.Format && (destDesc.Usage & D3DUSAGE_RENDERTARGET) &&
+        d3d9_gl::IsFormatChannelEquivalent(destDesc.Format, destFormat) && !flipY &&
+        premultiplyAlpha == unmultiplyAlpha)
     {
         RECT destRect = { destOffset.x, destOffset.y, destOffset.x + (sourceRect.right - sourceRect.left), destOffset.y + (sourceRect.bottom - sourceRect.top)};
         HRESULT result = device->StretchRect(source, &sourceRect, dest, &destRect, D3DTEXF_POINT);
@@ -309,82 +387,131 @@ gl::Error Blit9::copy(IDirect3DSurface9 *source, const RECT &sourceRect, GLenum 
             return gl::Error(GL_OUT_OF_MEMORY, "Failed to blit between textures, StretchRect result: 0x%X.", result);
         }
 
-        return gl::Error(GL_NO_ERROR);
+        return gl::NoError();
     }
     else
     {
-        return formatConvert(source, sourceRect, destFormat, destOffset, dest);
+        IDirect3DBaseTexture9 *texture = sourceTexture;
+        RECT adjustedSourceRect        = sourceRect;
+        gl::Extents sourceSize(sourceDesc.Width, sourceDesc.Height, 1);
+
+        if (texture == nullptr)
+        {
+            ANGLE_TRY(copySurfaceToTexture(source, sourceRect, &texture));
+
+            // copySurfaceToTexture only copies in the sourceRect area of the source surface.
+            // Adjust sourceRect so that it is now covering the entire source texture
+            adjustedSourceRect.left   = 0;
+            adjustedSourceRect.right  = sourceRect.right - sourceRect.left;
+            adjustedSourceRect.top    = 0;
+            adjustedSourceRect.bottom = sourceRect.bottom - sourceRect.top;
+
+            sourceSize.width  = sourceRect.right - sourceRect.left;
+            sourceSize.height = sourceRect.bottom - sourceRect.top;
+        }
+        else
+        {
+            texture->AddRef();
+        }
+
+        gl::Error error = formatConvert(texture, adjustedSourceRect, sourceSize, destFormat,
+                                        destOffset, dest, flipY, premultiplyAlpha, unmultiplyAlpha);
+
+        SafeRelease(texture);
+
+        return error;
     }
 }
 
-gl::Error Blit9::formatConvert(IDirect3DSurface9 *source, const RECT &sourceRect, GLenum destFormat, const gl::Offset &destOffset, IDirect3DSurface9 *dest)
+gl::Error Blit9::formatConvert(IDirect3DBaseTexture9 *source,
+                               const RECT &sourceRect,
+                               const gl::Extents &sourceSize,
+                               GLenum destFormat,
+                               const gl::Offset &destOffset,
+                               IDirect3DSurface9 *dest,
+                               bool flipY,
+                               bool premultiplyAlpha,
+                               bool unmultiplyAlpha)
 {
-    gl::Error error = initialize();
-    if (error.isError())
-    {
-        return error;
-    }
-
-    IDirect3DTexture9 *texture = NULL;
-    error = copySurfaceToTexture(source, sourceRect, &texture);
-    if (error.isError())
-    {
-        return error;
-    }
+    ANGLE_TRY(initialize());
 
     IDirect3DDevice9 *device = mRenderer->getDevice();
 
     saveState();
 
-    device->SetTexture(0, texture);
+    device->SetTexture(0, source);
     device->SetRenderTarget(0, dest);
 
-    setViewport(sourceRect, destOffset);
+    RECT destRect;
+    destRect.left   = destOffset.x;
+    destRect.right  = destOffset.x + (sourceRect.right - sourceRect.left);
+    destRect.top    = destOffset.y;
+    destRect.bottom = destOffset.y + (sourceRect.bottom - sourceRect.top);
+
+    setViewportAndShaderConstants(sourceRect, sourceSize, destRect, flipY);
 
     setCommonBlitState();
 
-    error = setFormatConvertShaders(destFormat);
+    gl::Error error = setFormatConvertShaders(destFormat, flipY, premultiplyAlpha, unmultiplyAlpha);
     if (!error.isError())
     {
         render();
     }
-
-    SafeRelease(texture);
 
     restoreState();
 
     return error;
 }
 
-gl::Error Blit9::setFormatConvertShaders(GLenum destFormat)
+gl::Error Blit9::setFormatConvertShaders(GLenum destFormat,
+                                         bool flipY,
+                                         bool premultiplyAlpha,
+                                         bool unmultiplyAlpha)
 {
-    gl::Error error = setVertexShader(SHADER_VS_STANDARD);
-    if (error.isError())
-    {
-        return error;
-    }
+    ANGLE_TRY(setVertexShader(SHADER_VS_STANDARD));
 
     switch (destFormat)
     {
-      default: UNREACHABLE();
       case GL_RGBA:
       case GL_BGRA_EXT:
       case GL_RGB:
       case GL_RG_EXT:
       case GL_RED_EXT:
       case GL_ALPHA:
-        error = setPixelShader(SHADER_PS_COMPONENTMASK);
-        break;
+          if (premultiplyAlpha == unmultiplyAlpha)
+          {
+              ANGLE_TRY(setPixelShader(SHADER_PS_COMPONENTMASK));
+          }
+          else if (premultiplyAlpha)
+          {
+              ANGLE_TRY(setPixelShader(SHADER_PS_COMPONENTMASK_PREMULTIPLY_ALPHA));
+          }
+          else
+          {
+              ASSERT(unmultiplyAlpha);
+              ANGLE_TRY(setPixelShader(SHADER_PS_COMPONENTMASK_UNMULTIPLY_ALPHA));
+          }
+          break;
 
       case GL_LUMINANCE:
       case GL_LUMINANCE_ALPHA:
-        error = setPixelShader(SHADER_PS_LUMINANCE);
-        break;
-    }
+          if (premultiplyAlpha == unmultiplyAlpha)
+          {
+              ANGLE_TRY(setPixelShader(SHADER_PS_LUMINANCE));
+          }
+          else if (premultiplyAlpha)
+          {
+              ANGLE_TRY(setPixelShader(SHADER_PS_LUMINANCE_PREMULTIPLY_ALPHA));
+          }
+          else
+          {
+              ASSERT(unmultiplyAlpha);
+              ANGLE_TRY(setPixelShader(SHADER_PS_LUMINANCE_UNMULTIPLY_ALPHA));
+          }
+          break;
 
-    if (error.isError())
-    {
-        return error;
+      default:
+          UNREACHABLE();
     }
 
     enum { X = 0, Y = 1, Z = 2, W = 3 };
@@ -480,10 +607,12 @@ gl::Error Blit9::setFormatConvertShaders(GLenum destFormat)
 
     mRenderer->getDevice()->SetPixelShaderConstantF(0, psConst, 2);
 
-    return gl::Error(GL_NO_ERROR);
+    return gl::NoError();
 }
 
-gl::Error Blit9::copySurfaceToTexture(IDirect3DSurface9 *surface, const RECT &sourceRect, IDirect3DTexture9 **outTexture)
+gl::Error Blit9::copySurfaceToTexture(IDirect3DSurface9 *surface,
+                                      const RECT &sourceRect,
+                                      IDirect3DBaseTexture9 **outTexture)
 {
     ASSERT(surface);
 
@@ -525,24 +654,38 @@ gl::Error Blit9::copySurfaceToTexture(IDirect3DSurface9 *surface, const RECT &so
     }
 
     *outTexture = texture;
-    return gl::Error(GL_NO_ERROR);
+    return gl::NoError();
 }
 
-void Blit9::setViewport(const RECT &sourceRect, const gl::Offset &offset)
+void Blit9::setViewportAndShaderConstants(const RECT &sourceRect,
+                                          const gl::Extents &sourceSize,
+                                          const RECT &destRect,
+                                          bool flipY)
 {
     IDirect3DDevice9 *device = mRenderer->getDevice();
 
     D3DVIEWPORT9 vp;
-    vp.X      = offset.x;
-    vp.Y      = offset.y;
-    vp.Width  = sourceRect.right - sourceRect.left;
-    vp.Height = sourceRect.bottom - sourceRect.top;
+    vp.X      = destRect.left;
+    vp.Y      = destRect.top;
+    vp.Width  = destRect.right - destRect.left;
+    vp.Height = destRect.bottom - destRect.top;
     vp.MinZ   = 0.0f;
     vp.MaxZ   = 1.0f;
     device->SetViewport(&vp);
 
-    float halfPixelAdjust[4] = { -1.0f/vp.Width, 1.0f/vp.Height, 0, 0 };
-    device->SetVertexShaderConstantF(0, halfPixelAdjust, 1);
+    float vertexConstants[8] = {
+        // halfPixelAdjust
+        -1.0f / vp.Width, 1.0f / vp.Height, 0, 0,
+        // texcoordOffset
+        static_cast<float>(sourceRect.left) / sourceSize.width,
+        static_cast<float>(flipY ? sourceRect.bottom : sourceRect.top) / sourceSize.height,
+        static_cast<float>(sourceRect.right - sourceRect.left) / sourceSize.width,
+        static_cast<float>(flipY ? sourceRect.top - sourceRect.bottom
+                                 : sourceRect.bottom - sourceRect.top) /
+            sourceSize.height,
+    };
+
+    device->SetVertexShaderConstantF(0, vertexConstants, 2);
 }
 
 void Blit9::setCommonBlitState()

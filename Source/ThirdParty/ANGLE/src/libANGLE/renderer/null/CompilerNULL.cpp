@@ -24,14 +24,12 @@ CompilerNULL::~CompilerNULL()
 
 gl::Error CompilerNULL::release()
 {
-    UNIMPLEMENTED();
-    return gl::Error(GL_INVALID_OPERATION);
+    return gl::NoError();
 }
 
 ShShaderOutput CompilerNULL::getTranslatorOutputType() const
 {
-    UNIMPLEMENTED();
-    return ShShaderOutput();
+    return SH_ESSL_OUTPUT;
 }
 
 }  // namespace rx

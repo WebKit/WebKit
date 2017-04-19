@@ -77,16 +77,16 @@ class StateManager11 final : angle::NonCopyable
                            ID3D11ShaderResourceView *srv);
     gl::Error clearTextures(gl::SamplerType samplerType, size_t rangeStart, size_t rangeEnd);
 
-    gl::Error syncFramebuffer(gl::Framebuffer *framebuffer);
+    gl::Error syncFramebuffer(ContextImpl *contextImpl, gl::Framebuffer *framebuffer);
 
     void invalidateRenderTarget();
     void invalidateBoundViews();
     void invalidateEverything();
 
-    void setOneTimeRenderTarget(ID3D11RenderTargetView *renderTarget,
-                                ID3D11DepthStencilView *depthStencil);
-    void setOneTimeRenderTargets(const std::vector<ID3D11RenderTargetView *> &renderTargets,
-                                 ID3D11DepthStencilView *depthStencil);
+    void setOneTimeRenderTarget(ID3D11RenderTargetView *rtv, ID3D11DepthStencilView *dsv);
+    void setOneTimeRenderTargets(ID3D11RenderTargetView **rtvs,
+                                 UINT numRtvs,
+                                 ID3D11DepthStencilView *dsv);
 
     void onBeginQuery(Query11 *query);
     void onDeleteQueryObject(Query11 *query);

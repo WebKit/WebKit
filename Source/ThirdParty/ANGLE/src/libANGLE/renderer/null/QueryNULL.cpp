@@ -24,50 +24,47 @@ QueryNULL::~QueryNULL()
 
 gl::Error QueryNULL::begin()
 {
-    UNIMPLEMENTED();
-    return gl::Error(GL_INVALID_OPERATION);
+    return gl::NoError();
 }
 
 gl::Error QueryNULL::end()
 {
-    UNIMPLEMENTED();
-    return gl::Error(GL_INVALID_OPERATION);
+    return gl::NoError();
 }
 
 gl::Error QueryNULL::queryCounter()
 {
-    UNIMPLEMENTED();
-    return gl::Error(GL_INVALID_OPERATION);
+    return gl::NoError();
 }
 
 gl::Error QueryNULL::getResult(GLint *params)
 {
-    UNIMPLEMENTED();
-    return gl::Error(GL_INVALID_OPERATION);
+    *params = 0;
+    return gl::NoError();
 }
 
 gl::Error QueryNULL::getResult(GLuint *params)
 {
-    UNIMPLEMENTED();
-    return gl::Error(GL_INVALID_OPERATION);
+    *params = 0;
+    return gl::NoError();
 }
 
 gl::Error QueryNULL::getResult(GLint64 *params)
 {
-    UNIMPLEMENTED();
-    return gl::Error(GL_INVALID_OPERATION);
+    *params = 0;
+    return gl::NoError();
 }
 
 gl::Error QueryNULL::getResult(GLuint64 *params)
 {
-    UNIMPLEMENTED();
-    return gl::Error(GL_INVALID_OPERATION);
+    *params = 0;
+    return gl::NoError();
 }
 
 gl::Error QueryNULL::isResultAvailable(bool *available)
 {
-    UNIMPLEMENTED();
-    return gl::Error(GL_INVALID_OPERATION);
+    *available = true;
+    return gl::NoError();
 }
 
 }  // namespace rx

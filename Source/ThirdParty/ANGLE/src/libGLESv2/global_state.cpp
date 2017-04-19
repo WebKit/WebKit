@@ -8,229 +8,141 @@
 
 #include "libGLESv2/global_state.h"
 
-#include "libANGLE/Context.h"
-#include "libANGLE/Error.h"
-
 #include "common/debug.h"
 #include "common/platform.h"
 #include "common/tls.h"
 
-namespace
-{
-
-static TLSIndex currentTLS = TLS_INVALID_INDEX;
-
-struct Current
-{
-    EGLint error;
-    EGLenum API;
-    egl::Display *display;
-    egl::Surface *drawSurface;
-    egl::Surface *readSurface;
-    gl::Context *context;
-};
-
-Current *AllocateCurrent()
-{
-    ASSERT(currentTLS != TLS_INVALID_INDEX);
-    if (currentTLS == TLS_INVALID_INDEX)
-    {
-        return NULL;
-    }
-
-    Current *current = new Current();
-    current->error = EGL_SUCCESS;
-    current->API = EGL_OPENGL_ES_API;
-    current->display = reinterpret_cast<egl::Display*>(EGL_NO_DISPLAY);
-    current->drawSurface = reinterpret_cast<egl::Surface*>(EGL_NO_SURFACE);
-    current->readSurface = reinterpret_cast<egl::Surface*>(EGL_NO_SURFACE);
-    current->context = reinterpret_cast<gl::Context*>(EGL_NO_CONTEXT);
-
-    if (!SetTLSValue(currentTLS, current))
-    {
-        ERR("Could not set thread local storage.");
-        return NULL;
-    }
-
-    return current;
-}
-
-Current *GetCurrentData()
-{
-    // Create a TLS index if one has not been created for this DLL
-    if (currentTLS == TLS_INVALID_INDEX)
-    {
-        currentTLS = CreateTLSIndex();
-    }
-
-    Current *current = reinterpret_cast<Current*>(GetTLSValue(currentTLS));
-
-    // ANGLE issue 488: when the dll is loaded after thread initialization,
-    // thread local storage (current) might not exist yet.
-    return (current ? current : AllocateCurrent());
-}
-
-#ifdef ANGLE_PLATFORM_WINDOWS
-
-void DeallocateCurrent()
-{
-    Current *current = reinterpret_cast<Current*>(GetTLSValue(currentTLS));
-    SafeDelete(current);
-    SetTLSValue(currentTLS, NULL);
-}
-
-extern "C" BOOL WINAPI DllMain(HINSTANCE, DWORD reason, LPVOID)
-{
-    switch (reason)
-    {
-      case DLL_PROCESS_ATTACH:
-        currentTLS = CreateTLSIndex();
-        if (currentTLS == TLS_INVALID_INDEX)
-        {
-            return FALSE;
-        }
-        AllocateCurrent();
-        break;
-
-      case DLL_THREAD_ATTACH:
-        AllocateCurrent();
-        break;
-
-      case DLL_THREAD_DETACH:
-        DeallocateCurrent();
-        break;
-
-      case DLL_PROCESS_DETACH:
-        DeallocateCurrent();
-        if (currentTLS != TLS_INVALID_INDEX)
-        {
-            DestroyTLSIndex(currentTLS);
-            currentTLS = TLS_INVALID_INDEX;
-        }
-        break;
-    }
-
-    return TRUE;
-}
-#endif
-
-}
+#include "libANGLE/Thread.h"
 
 namespace gl
 {
 
 Context *GetGlobalContext()
 {
-    Current *current = GetCurrentData();
-
-    return current->context;
+    egl::Thread *thread = egl::GetCurrentThread();
+    return thread->getContext();
 }
 
 Context *GetValidGlobalContext()
 {
-    gl::Context *context = GetGlobalContext();
-    if (context)
-    {
-        if (context->isContextLost())
-        {
-            context->handleError(gl::Error(GL_OUT_OF_MEMORY, "Context has been lost."));
-            return nullptr;
-        }
-        else
-        {
-            return context;
-        }
-    }
-    return nullptr;
+    egl::Thread *thread = egl::GetCurrentThread();
+    return thread->getValidContext();
 }
 
-}
+}  // namespace gl
 
 namespace egl
 {
 
-void SetGlobalError(const Error &error)
+namespace
 {
-    Current *current = GetCurrentData();
 
-    current->error = error.getCode();
-}
+static TLSIndex threadTLS = TLS_INVALID_INDEX;
 
-EGLint GetGlobalError()
+Thread *AllocateCurrentThread()
 {
-    Current *current = GetCurrentData();
+    ASSERT(threadTLS != TLS_INVALID_INDEX);
+    if (threadTLS == TLS_INVALID_INDEX)
+    {
+        return nullptr;
+    }
 
-    return current->error;
+    Thread *thread = new Thread();
+    if (!SetTLSValue(threadTLS, thread))
+    {
+        ERR() << "Could not set thread local storage.";
+        return nullptr;
+    }
+
+    return thread;
 }
 
-EGLenum GetGlobalAPI()
+}  // anonymous namespace
+
+Thread *GetCurrentThread()
 {
-    Current *current = GetCurrentData();
+    // Create a TLS index if one has not been created for this DLL
+    if (threadTLS == TLS_INVALID_INDEX)
+    {
+        threadTLS = CreateTLSIndex();
+    }
 
-    return current->API;
+    Thread *current = static_cast<Thread *>(GetTLSValue(threadTLS));
+
+    // ANGLE issue 488: when the dll is loaded after thread initialization,
+    // thread local storage (current) might not exist yet.
+    return (current ? current : AllocateCurrentThread());
 }
 
-void SetGlobalAPI(EGLenum API)
+}  // namespace egl
+
+#ifdef ANGLE_PLATFORM_WINDOWS
+namespace egl
 {
-    Current *current = GetCurrentData();
 
-    current->API = API;
-}
-
-void SetGlobalDisplay(Display *dpy)
+namespace
 {
-    Current *current = GetCurrentData();
 
-    current->display = dpy;
-}
-
-Display *GetGlobalDisplay()
+bool DeallocateCurrentThread()
 {
-    Current *current = GetCurrentData();
-
-    return current->display;
+    Thread *thread = static_cast<Thread *>(GetTLSValue(threadTLS));
+    SafeDelete(thread);
+    return SetTLSValue(threadTLS, nullptr);
 }
 
-void SetGlobalDrawSurface(Surface *surface)
+bool InitializeProcess()
 {
-    Current *current = GetCurrentData();
+    threadTLS = CreateTLSIndex();
+    if (threadTLS == TLS_INVALID_INDEX)
+    {
+        return false;
+    }
 
-    current->drawSurface = surface;
+    return AllocateCurrentThread() != nullptr;
 }
 
-Surface *GetGlobalDrawSurface()
+bool TerminateProcess()
 {
-    Current *current = GetCurrentData();
+    if (!DeallocateCurrentThread())
+    {
+        return false;
+    }
 
-    return current->drawSurface;
+    if (threadTLS != TLS_INVALID_INDEX)
+    {
+        TLSIndex tlsCopy = threadTLS;
+        threadTLS        = TLS_INVALID_INDEX;
+
+        if (!DestroyTLSIndex(tlsCopy))
+        {
+            return false;
+        }
+    }
+
+    return true;
 }
 
-void SetGlobalReadSurface(Surface *surface)
+}  // anonymous namespace
+
+}  // namespace egl
+
+extern "C" BOOL WINAPI DllMain(HINSTANCE, DWORD reason, LPVOID)
 {
-    Current *current = GetCurrentData();
+    switch (reason)
+    {
+        case DLL_PROCESS_ATTACH:
+            return static_cast<BOOL>(egl::InitializeProcess());
 
-    current->readSurface = surface;
+        case DLL_THREAD_ATTACH:
+            return static_cast<BOOL>(egl::AllocateCurrentThread() != nullptr);
+
+        case DLL_THREAD_DETACH:
+            return static_cast<BOOL>(egl::DeallocateCurrentThread());
+
+        case DLL_PROCESS_DETACH:
+            return static_cast<BOOL>(egl::TerminateProcess());
+    }
+
+    return TRUE;
 }
-
-Surface *GetGlobalReadSurface()
-{
-    Current *current = GetCurrentData();
-
-    return current->readSurface;
-}
-
-void SetGlobalContext(gl::Context *context)
-{
-    Current *current = GetCurrentData();
-
-    current->context = context;
-}
-
-gl::Context *GetGlobalContext()
-{
-    Current *current = GetCurrentData();
-
-    return current->context;
-}
-
-}
+#endif  // ANGLE_PLATFORM_WINDOWS

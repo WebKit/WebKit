@@ -9,6 +9,9 @@
 
 #include "GLSLANG/ShaderLang.h"
 
+namespace sh
+{
+
 class BuiltInFunctionEmulator;
 
 void InitBuiltInFunctionEmulatorForHLSL(BuiltInFunctionEmulator *emu);
@@ -18,5 +21,7 @@ void InitBuiltInFunctionEmulatorForHLSL(BuiltInFunctionEmulator *emu);
 //
 void InitBuiltInIsnanFunctionEmulatorForHLSLWorkarounds(BuiltInFunctionEmulator *emu,
                                                         int targetGLSLVersion);
+
+}  // namespace sh
 
 #endif  // COMPILER_TRANSLATOR_BUILTINFUNCTIONEMULATORHLSL_H_

@@ -9,6 +9,9 @@
 
 #include "compiler/translator/Compiler.h"
 
+namespace sh
+{
+
 class TranslatorGLSL : public TCompiler
 {
   public:
@@ -20,11 +23,14 @@ class TranslatorGLSL : public TCompiler
 
     void translate(TIntermNode *root, ShCompileOptions compileOptions) override;
     bool shouldFlattenPragmaStdglInvariantAll() override;
+    bool shouldCollectVariables(ShCompileOptions compileOptions) override;
 
   private:
     void writeVersion(TIntermNode *root);
     void writeExtensionBehavior(TIntermNode *root);
     void conditionallyOutputInvariantDeclaration(const char *builtinVaryingName);
 };
+
+}  // namespace sh
 
 #endif  // COMPILER_TRANSLATOR_TRANSLATORGLSL_H_

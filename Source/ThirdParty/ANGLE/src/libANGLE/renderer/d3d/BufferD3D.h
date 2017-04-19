@@ -15,6 +15,12 @@
 #include <stdint.h>
 #include <vector>
 
+namespace gl
+{
+struct VertexAttribute;
+struct VertexBinding;
+}
+
 namespace rx
 {
 class BufferFactoryD3D;
@@ -30,7 +36,7 @@ enum class D3DBufferUsage
 class BufferD3D : public BufferImpl
 {
   public:
-    BufferD3D(BufferFactoryD3D *factory);
+    BufferD3D(const gl::BufferState &state, BufferFactoryD3D *factory);
     virtual ~BufferD3D();
 
     unsigned int getSerial() const { return mSerial; }
@@ -40,7 +46,10 @@ class BufferD3D : public BufferImpl
     virtual gl::Error markTransformFeedbackUsage() = 0;
     virtual gl::Error getData(const uint8_t **outData) = 0;
 
-    StaticVertexBufferInterface *getStaticVertexBuffer(const gl::VertexAttribute &attribute);
+    // Warning: you should ensure binding really matches attrib.bindingIndex before using this
+    // function.
+    StaticVertexBufferInterface *getStaticVertexBuffer(const gl::VertexAttribute &attribute,
+                                                       const gl::VertexBinding &binding);
     StaticIndexBufferInterface *getStaticIndexBuffer();
 
     virtual void initializeStaticData();

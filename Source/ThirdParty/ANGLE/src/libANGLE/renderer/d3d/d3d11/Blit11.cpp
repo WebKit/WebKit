@@ -589,8 +589,6 @@ Blit11::Blit11(Renderer11 *renderer)
 
 Blit11::~Blit11()
 {
-    freeResources();
-
     mQuad2DIL.release();
     mQuad2DVS.release();
     mDepthPS.release();
@@ -607,7 +605,7 @@ gl::Error Blit11::initResources()
 {
     if (mResourcesInitialized)
     {
-        return gl::Error(GL_NO_ERROR);
+        return gl::NoError();
     }
 
     TRACE_EVENT0("gpu.angle", "Blit11::initResources");
@@ -626,13 +624,11 @@ gl::Error Blit11::initResources()
     vbDesc.MiscFlags           = 0;
     vbDesc.StructureByteStride = 0;
 
-    result = device->CreateBuffer(&vbDesc, nullptr, &mVertexBuffer);
+    result = device->CreateBuffer(&vbDesc, nullptr, mVertexBuffer.GetAddressOf());
     ASSERT(SUCCEEDED(result));
     if (FAILED(result))
     {
-        freeResources();
-        return gl::Error(GL_OUT_OF_MEMORY, "Failed to create blit vertex buffer, HRESULT: 0x%X",
-                         result);
+        return gl::OutOfMemory() << "Failed to create blit vertex buffer, " << result;
     }
     d3d11::SetDebugName(mVertexBuffer, "Blit11 vertex buffer");
 
@@ -651,13 +647,11 @@ gl::Error Blit11::initResources()
     pointSamplerDesc.MinLOD         = 0.0f;
     pointSamplerDesc.MaxLOD         = FLT_MAX;
 
-    result = device->CreateSamplerState(&pointSamplerDesc, &mPointSampler);
+    result = device->CreateSamplerState(&pointSamplerDesc, mPointSampler.GetAddressOf());
     ASSERT(SUCCEEDED(result));
     if (FAILED(result))
     {
-        freeResources();
-        return gl::Error(GL_OUT_OF_MEMORY,
-                         "Failed to create blit point sampler state, HRESULT: 0x%X", result);
+        return gl::OutOfMemory() << "Failed to create blit point sampler state, " << result;
     }
     d3d11::SetDebugName(mPointSampler, "Blit11 point sampler");
 
@@ -676,13 +670,11 @@ gl::Error Blit11::initResources()
     linearSamplerDesc.MinLOD         = 0.0f;
     linearSamplerDesc.MaxLOD         = FLT_MAX;
 
-    result = device->CreateSamplerState(&linearSamplerDesc, &mLinearSampler);
+    result = device->CreateSamplerState(&linearSamplerDesc, mLinearSampler.GetAddressOf());
     ASSERT(SUCCEEDED(result));
     if (FAILED(result))
     {
-        freeResources();
-        return gl::Error(GL_OUT_OF_MEMORY,
-                         "Failed to create blit linear sampler state, HRESULT: 0x%X", result);
+        return gl::OutOfMemory() << "Failed to create blit linear sampler state, " << result;
     }
     d3d11::SetDebugName(mLinearSampler, "Blit11 linear sampler");
 
@@ -699,31 +691,28 @@ gl::Error Blit11::initResources()
     rasterDesc.AntialiasedLineEnable = FALSE;
 
     rasterDesc.ScissorEnable = TRUE;
-    result = device->CreateRasterizerState(&rasterDesc, &mScissorEnabledRasterizerState);
+    result =
+        device->CreateRasterizerState(&rasterDesc, mScissorEnabledRasterizerState.GetAddressOf());
     ASSERT(SUCCEEDED(result));
     if (FAILED(result))
     {
-        freeResources();
-        return gl::Error(GL_OUT_OF_MEMORY,
-                         "Failed to create blit scissoring rasterizer state, HRESULT: 0x%X",
-                         result);
+        return gl::OutOfMemory() << "Failed to create blit scissoring rasterizer state, " << result;
     }
     d3d11::SetDebugName(mScissorEnabledRasterizerState, "Blit11 scissoring rasterizer state");
 
     rasterDesc.ScissorEnable = FALSE;
-    result = device->CreateRasterizerState(&rasterDesc, &mScissorDisabledRasterizerState);
+    result =
+        device->CreateRasterizerState(&rasterDesc, mScissorDisabledRasterizerState.GetAddressOf());
     ASSERT(SUCCEEDED(result));
     if (FAILED(result))
     {
-        freeResources();
-        return gl::Error(GL_OUT_OF_MEMORY,
-                         "Failed to create blit no scissoring rasterizer state, HRESULT: 0x%X",
-                         result);
+        return gl::OutOfMemory() << "Failed to create blit no scissoring rasterizer state, "
+                                 << result;
     }
     d3d11::SetDebugName(mScissorDisabledRasterizerState, "Blit11 no scissoring rasterizer state");
 
     D3D11_DEPTH_STENCIL_DESC depthStencilDesc;
-    depthStencilDesc.DepthEnable                  = true;
+    depthStencilDesc.DepthEnable                  = TRUE;
     depthStencilDesc.DepthWriteMask               = D3D11_DEPTH_WRITE_MASK_ALL;
     depthStencilDesc.DepthFunc                    = D3D11_COMPARISON_ALWAYS;
     depthStencilDesc.StencilEnable                = FALSE;
@@ -738,13 +727,11 @@ gl::Error Blit11::initResources()
     depthStencilDesc.BackFace.StencilPassOp       = D3D11_STENCIL_OP_KEEP;
     depthStencilDesc.BackFace.StencilFunc         = D3D11_COMPARISON_ALWAYS;
 
-    result = device->CreateDepthStencilState(&depthStencilDesc, &mDepthStencilState);
+    result = device->CreateDepthStencilState(&depthStencilDesc, mDepthStencilState.GetAddressOf());
     ASSERT(SUCCEEDED(result));
     if (FAILED(result))
     {
-        freeResources();
-        return gl::Error(GL_OUT_OF_MEMORY,
-                         "Failed to create blit depth stencil state, HRESULT: 0x%X", result);
+        return gl::OutOfMemory() << "Failed to create blit depth stencil state, " << result;
     }
     d3d11::SetDebugName(mDepthStencilState, "Blit11 depth stencil state");
 
@@ -756,32 +743,17 @@ gl::Error Blit11::initResources()
     swizzleBufferDesc.MiscFlags           = 0;
     swizzleBufferDesc.StructureByteStride = 0;
 
-    result = device->CreateBuffer(&swizzleBufferDesc, nullptr, &mSwizzleCB);
+    result = device->CreateBuffer(&swizzleBufferDesc, nullptr, mSwizzleCB.GetAddressOf());
     ASSERT(SUCCEEDED(result));
     if (FAILED(result))
     {
-        freeResources();
-        return gl::Error(GL_OUT_OF_MEMORY, "Failed to create blit swizzle buffer, HRESULT: 0x%X",
-                         result);
+        return gl::OutOfMemory() << "Failed to create blit swizzle buffer, " << result;
     }
     d3d11::SetDebugName(mSwizzleCB, "Blit11 swizzle constant buffer");
 
     mResourcesInitialized = true;
 
-    return gl::Error(GL_NO_ERROR);
-}
-
-void Blit11::freeResources()
-{
-    SafeRelease(mVertexBuffer);
-    SafeRelease(mPointSampler);
-    SafeRelease(mLinearSampler);
-    SafeRelease(mScissorEnabledRasterizerState);
-    SafeRelease(mScissorDisabledRasterizerState);
-    SafeRelease(mDepthStencilState);
-    SafeRelease(mSwizzleCB);
-
-    mResourcesInitialized = false;
+    return gl::NoError();
 }
 
 // static
@@ -1064,12 +1036,11 @@ gl::Error Blit11::swizzleTexture(ID3D11ShaderResourceView *source,
 
     // Set vertices
     D3D11_MAPPED_SUBRESOURCE mappedResource;
-    result = deviceContext->Map(mVertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+    result =
+        deviceContext->Map(mVertexBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
     if (FAILED(result))
     {
-        return gl::Error(GL_OUT_OF_MEMORY,
-                         "Failed to map internal vertex buffer for swizzle, HRESULT: 0x%X.",
-                         result);
+        return gl::OutOfMemory() << "Failed to map internal vertex buffer for swizzle, " << result;
     }
 
     const ShaderSupport &support = getShaderSupport(*shader);
@@ -1083,15 +1054,14 @@ gl::Error Blit11::swizzleTexture(ID3D11ShaderResourceView *source,
     support.vertexWriteFunction(area, size, area, size, mappedResource.pData, &stride, &drawCount,
                                 &topology);
 
-    deviceContext->Unmap(mVertexBuffer, 0);
+    deviceContext->Unmap(mVertexBuffer.Get(), 0);
 
     // Set constant buffer
-    result = deviceContext->Map(mSwizzleCB, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+    result = deviceContext->Map(mSwizzleCB.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
     if (FAILED(result))
     {
-        return gl::Error(GL_OUT_OF_MEMORY,
-                         "Failed to map internal constant buffer for swizzle, HRESULT: 0x%X.",
-                         result);
+        return gl::OutOfMemory() << "Failed to map internal constant buffer for swizzle, "
+                                 << result;
     }
 
     unsigned int *swizzleIndices = reinterpret_cast<unsigned int *>(mappedResource.pData);
@@ -1100,18 +1070,18 @@ gl::Error Blit11::swizzleTexture(ID3D11ShaderResourceView *source,
     swizzleIndices[2]            = GetSwizzleIndex(swizzleTarget.swizzleBlue);
     swizzleIndices[3]            = GetSwizzleIndex(swizzleTarget.swizzleAlpha);
 
-    deviceContext->Unmap(mSwizzleCB, 0);
+    deviceContext->Unmap(mSwizzleCB.Get(), 0);
 
     // Apply vertex buffer
-    deviceContext->IASetVertexBuffers(0, 1, &mVertexBuffer, &stride, &startIdx);
+    deviceContext->IASetVertexBuffers(0, 1, mVertexBuffer.GetAddressOf(), &stride, &startIdx);
 
     // Apply constant buffer
-    deviceContext->PSSetConstantBuffers(0, 1, &mSwizzleCB);
+    deviceContext->PSSetConstantBuffers(0, 1, mSwizzleCB.GetAddressOf());
 
     // Apply state
     deviceContext->OMSetBlendState(nullptr, nullptr, 0xFFFFFFF);
     deviceContext->OMSetDepthStencilState(nullptr, 0xFFFFFFFF);
-    deviceContext->RSSetState(mScissorDisabledRasterizerState);
+    deviceContext->RSSetState(mScissorDisabledRasterizerState.Get());
 
     // Apply shaders
     deviceContext->IASetInputLayout(support.inputLayout);
@@ -1142,7 +1112,7 @@ gl::Error Blit11::swizzleTexture(ID3D11ShaderResourceView *source,
     stateManager->setShaderResource(gl::SAMPLER_PIXEL, 0, source);
 
     // Apply samplers
-    deviceContext->PSSetSamplers(0, 1, &mPointSampler);
+    deviceContext->PSSetSamplers(0, 1, mPointSampler.GetAddressOf());
 
     // Draw the quad
     deviceContext->Draw(drawCount, 0);
@@ -1156,7 +1126,7 @@ gl::Error Blit11::swizzleTexture(ID3D11ShaderResourceView *source,
 
     mRenderer->markAllStateDirty();
 
-    return gl::Error(GL_NO_ERROR);
+    return gl::NoError();
 }
 
 gl::Error Blit11::copyTexture(ID3D11ShaderResourceView *source,
@@ -1199,12 +1169,12 @@ gl::Error Blit11::copyTexture(ID3D11ShaderResourceView *source,
 
     // Set vertices
     D3D11_MAPPED_SUBRESOURCE mappedResource;
-    result = deviceContext->Map(mVertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+    result =
+        deviceContext->Map(mVertexBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
     if (FAILED(result))
     {
-        return gl::Error(GL_OUT_OF_MEMORY,
-                         "Failed to map internal vertex buffer for texture copy, HRESULT: 0x%X.",
-                         result);
+        return gl::OutOfMemory() << "Failed to map internal vertex buffer for texture copy, "
+                                 << result;
     }
 
     UINT stride    = 0;
@@ -1215,10 +1185,10 @@ gl::Error Blit11::copyTexture(ID3D11ShaderResourceView *source,
     support.vertexWriteFunction(sourceArea, sourceSize, destArea, destSize, mappedResource.pData,
                                 &stride, &drawCount, &topology);
 
-    deviceContext->Unmap(mVertexBuffer, 0);
+    deviceContext->Unmap(mVertexBuffer.Get(), 0);
 
     // Apply vertex buffer
-    deviceContext->IASetVertexBuffers(0, 1, &mVertexBuffer, &stride, &startIdx);
+    deviceContext->IASetVertexBuffers(0, 1, mVertexBuffer.GetAddressOf(), &stride, &startIdx);
 
     // Apply state
     if (maskOffAlpha)
@@ -1242,11 +1212,11 @@ gl::Error Blit11::copyTexture(ID3D11ShaderResourceView *source,
         scissorRect.bottom = scissor->y + scissor->height;
 
         deviceContext->RSSetScissorRects(1, &scissorRect);
-        deviceContext->RSSetState(mScissorEnabledRasterizerState);
+        deviceContext->RSSetState(mScissorEnabledRasterizerState.Get());
     }
     else
     {
-        deviceContext->RSSetState(mScissorDisabledRasterizerState);
+        deviceContext->RSSetState(mScissorDisabledRasterizerState.Get());
     }
 
     // Apply shaders
@@ -1282,15 +1252,15 @@ gl::Error Blit11::copyTexture(ID3D11ShaderResourceView *source,
     switch (filter)
     {
         case GL_NEAREST:
-            sampler = mPointSampler;
+            sampler = mPointSampler.Get();
             break;
         case GL_LINEAR:
-            sampler = mLinearSampler;
+            sampler = mLinearSampler.Get();
             break;
 
         default:
             UNREACHABLE();
-            return gl::Error(GL_OUT_OF_MEMORY, "Internal error, unknown blit filter mode.");
+            return gl::InternalError() << "Internal error, unknown blit filter mode.";
     }
     deviceContext->PSSetSamplers(0, 1, &sampler);
 
@@ -1338,12 +1308,12 @@ gl::Error Blit11::copyDepth(ID3D11ShaderResourceView *source,
 
     // Set vertices
     D3D11_MAPPED_SUBRESOURCE mappedResource;
-    result = deviceContext->Map(mVertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+    result =
+        deviceContext->Map(mVertexBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
     if (FAILED(result))
     {
-        return gl::Error(GL_OUT_OF_MEMORY,
-                         "Failed to map internal vertex buffer for texture copy, HRESULT: 0x%X.",
-                         result);
+        return gl::OutOfMemory() << "Failed to map internal vertex buffer for texture copy, "
+                                 << result;
     }
 
     UINT stride    = 0;
@@ -1354,14 +1324,14 @@ gl::Error Blit11::copyDepth(ID3D11ShaderResourceView *source,
     Write2DVertices(sourceArea, sourceSize, destArea, destSize, mappedResource.pData, &stride,
                     &drawCount, &topology);
 
-    deviceContext->Unmap(mVertexBuffer, 0);
+    deviceContext->Unmap(mVertexBuffer.Get(), 0);
 
     // Apply vertex buffer
-    deviceContext->IASetVertexBuffers(0, 1, &mVertexBuffer, &stride, &startIdx);
+    deviceContext->IASetVertexBuffers(0, 1, mVertexBuffer.GetAddressOf(), &stride, &startIdx);
 
     // Apply state
     deviceContext->OMSetBlendState(nullptr, nullptr, 0xFFFFFFF);
-    deviceContext->OMSetDepthStencilState(mDepthStencilState, 0xFFFFFFFF);
+    deviceContext->OMSetDepthStencilState(mDepthStencilState.Get(), 0xFFFFFFFF);
 
     if (scissor)
     {
@@ -1372,18 +1342,18 @@ gl::Error Blit11::copyDepth(ID3D11ShaderResourceView *source,
         scissorRect.bottom = scissor->y + scissor->height;
 
         deviceContext->RSSetScissorRects(1, &scissorRect);
-        deviceContext->RSSetState(mScissorEnabledRasterizerState);
+        deviceContext->RSSetState(mScissorEnabledRasterizerState.Get());
     }
     else
     {
-        deviceContext->RSSetState(mScissorDisabledRasterizerState);
+        deviceContext->RSSetState(mScissorDisabledRasterizerState.Get());
     }
 
     ID3D11Device *device         = mRenderer->getDevice();
     ID3D11VertexShader *quad2DVS = mQuad2DVS.resolve(device);
     if (quad2DVS == nullptr)
     {
-        return gl::Error(GL_INVALID_OPERATION, "Error compiling internal 2D blit vertex shader");
+        return gl::InternalError() << "Error compiling internal 2D blit vertex shader";
     }
 
     // Apply shaders
@@ -1415,7 +1385,7 @@ gl::Error Blit11::copyDepth(ID3D11ShaderResourceView *source,
     stateManager->setShaderResource(gl::SAMPLER_PIXEL, 0, source);
 
     // Apply samplers
-    deviceContext->PSSetSamplers(0, 1, &mPointSampler);
+    deviceContext->PSSetSamplers(0, 1, mPointSampler.GetAddressOf());
 
     // Draw the quad
     deviceContext->Draw(drawCount, 0);
@@ -1429,7 +1399,7 @@ gl::Error Blit11::copyDepth(ID3D11ShaderResourceView *source,
 
     mRenderer->markAllStateDirty();
 
-    return gl::Error(GL_NO_ERROR);
+    return gl::NoError();
 }
 
 gl::Error Blit11::copyDepthStencil(const TextureHelper11 &source,
@@ -1470,7 +1440,7 @@ gl::Error Blit11::copyDepthStencilImpl(const TextureHelper11 &source,
 
     if (stencilOnly)
     {
-        const auto &srcFormat = source.getFormatSet().format;
+        const auto &srcFormat = source.getFormatSet().format();
 
         // Stencil channel should be right after the depth channel. Some views to depth/stencil
         // resources have red channel for depth, in which case the depth channel bit width is in
@@ -1539,10 +1509,9 @@ gl::Error Blit11::copyAndConvertImpl(const TextureHelper11 &source,
         deviceContext->Map(sourceStaging.getResource(), 0, D3D11_MAP_READ, 0, &sourceMapping);
     if (FAILED(result))
     {
-        return gl::Error(
-            GL_OUT_OF_MEMORY,
-            "Failed to map internal source staging texture for depth stencil blit, HRESULT: 0x%X.",
-            result);
+        return gl::OutOfMemory()
+               << "Failed to map internal source staging texture for depth stencil blit, "
+               << result;
     }
 
     D3D11_MAPPED_SUBRESOURCE destMapping;
@@ -1550,10 +1519,9 @@ gl::Error Blit11::copyAndConvertImpl(const TextureHelper11 &source,
     if (FAILED(result))
     {
         deviceContext->Unmap(sourceStaging.getResource(), 0);
-        return gl::Error(GL_OUT_OF_MEMORY,
-                         "Failed to map internal destination staging texture for depth stencil "
-                         "blit, HRESULT: 0x%X.",
-                         result);
+        return gl::OutOfMemory()
+               << "Failed to map internal destination staging texture for depth stencil blit, "
+               << result;
     }
 
     // Clip dest area to the destination size
@@ -1685,14 +1653,14 @@ gl::Error Blit11::getBlitShader(GLenum destFormat,
 
     if (blitShaderType == BLITSHADER_INVALID)
     {
-        return gl::Error(GL_INVALID_OPERATION, "Internal blit shader type mismatch");
+        return gl::InternalError() << "Internal blit shader type mismatch";
     }
 
     auto blitShaderIt = mBlitShaderMap.find(blitShaderType);
     if (blitShaderIt != mBlitShaderMap.end())
     {
         *shader = &blitShaderIt->second;
-        return gl::Error(GL_NO_ERROR);
+        return gl::NoError();
     }
 
     ASSERT(dimension == SHADER_2D || mRenderer->isES3Capable());
@@ -1893,13 +1861,13 @@ gl::Error Blit11::getBlitShader(GLenum destFormat,
             break;
         default:
             UNREACHABLE();
-            return gl::Error(GL_INVALID_OPERATION, "Internal error");
+            return gl::InternalError() << "Internal error";
     }
 
     blitShaderIt = mBlitShaderMap.find(blitShaderType);
     ASSERT(blitShaderIt != mBlitShaderMap.end());
     *shader = &blitShaderIt->second;
-    return gl::Error(GL_NO_ERROR);
+    return gl::NoError();
 }
 
 gl::Error Blit11::getSwizzleShader(GLenum type,
@@ -1910,14 +1878,14 @@ gl::Error Blit11::getSwizzleShader(GLenum type,
 
     if (swizzleShaderType == SWIZZLESHADER_INVALID)
     {
-        return gl::Error(GL_INVALID_OPERATION, "Swizzle shader type not found");
+        return gl::InternalError() << "Swizzle shader type not found";
     }
 
     auto swizzleShaderIt = mSwizzleShaderMap.find(swizzleShaderType);
     if (swizzleShaderIt != mSwizzleShaderMap.end())
     {
         *shader = &swizzleShaderIt->second;
-        return gl::Error(GL_NO_ERROR);
+        return gl::NoError();
     }
 
     // Swizzling shaders (OpenGL ES 3+)
@@ -1989,7 +1957,7 @@ gl::Error Blit11::getSwizzleShader(GLenum type,
             break;
         default:
             UNREACHABLE();
-            return gl::Error(GL_INVALID_OPERATION, "Internal error");
+            return gl::InternalError() << "Internal error";
     }
 
     swizzleShaderIt = mSwizzleShaderMap.find(swizzleShaderType);
@@ -2000,11 +1968,14 @@ gl::Error Blit11::getSwizzleShader(GLenum type,
 
 gl::ErrorOrResult<TextureHelper11> Blit11::resolveDepth(RenderTarget11 *depth)
 {
+    // Multisampled depth stencil SRVs are not available in feature level 10.0
+    ASSERT(mRenderer->getRenderer11DeviceCaps().featureLevel > D3D_FEATURE_LEVEL_10_0);
+
     const auto &extents          = depth->getExtents();
     ID3D11Device *device         = mRenderer->getDevice();
     ID3D11DeviceContext *context = mRenderer->getDeviceContext();
 
-    ANGLE_TRY(initResolveDepthStencil(extents));
+    ANGLE_TRY(initResolveDepthOnly(depth->getFormatSet(), extents));
 
     // Notify the Renderer that all state should be invalidated.
     mRenderer->markAllStateDirty();
@@ -2015,8 +1986,8 @@ gl::ErrorOrResult<TextureHelper11> Blit11::resolveDepth(RenderTarget11 *depth)
     context->VSSetShader(mResolveDepthStencilVS.resolve(device), nullptr, 0);
     context->GSSetShader(nullptr, nullptr, 0);
     context->RSSetState(nullptr);
-    context->OMSetDepthStencilState(nullptr, 0xFFFFFFFF);
-    context->OMSetRenderTargets(1, &mResolvedDepthStencilRTView, nullptr);
+    context->OMSetDepthStencilState(mDepthStencilState.Get(), 0xFFFFFFFF);
+    context->OMSetRenderTargets(0, nullptr, mResolvedDepthDSView.Get());
     context->OMSetBlendState(nullptr, nullptr, 0xFFFFFFF);
 
     // Set the viewport
@@ -2038,38 +2009,63 @@ gl::ErrorOrResult<TextureHelper11> Blit11::resolveDepth(RenderTarget11 *depth)
     // Trigger the blit on the GPU.
     context->Draw(6, 0);
 
-    gl::Box copyBox(0, 0, 0, extents.width, extents.height, 1);
+    return TextureHelper11::MakeAndReference(mResolvedDepth.getResource(),
+                                             mResolvedDepth.getFormatSet());
+}
 
-    const auto &copyFunction = GetCopyDepthStencilFunction(depth->getInternalFormat());
-    const auto &dsFormatSet  = depth->getFormatSet();
-    const auto &dsDxgiInfo   = d3d11::GetDXGIFormatSizeInfo(dsFormatSet.texFormat);
+gl::Error Blit11::initResolveDepthOnly(const d3d11::Format &format, const gl::Extents &extents)
+{
+    if (mResolvedDepth.valid() && extents == mResolvedDepth.getExtents() &&
+        format.texFormat == mResolvedDepth.getFormat())
+    {
+        return gl::NoError();
+    }
 
-    ID3D11Texture2D *destTex = nullptr;
+    ID3D11Device *device = mRenderer->getDevice();
 
-    D3D11_TEXTURE2D_DESC destDesc;
-    destDesc.Width              = extents.width;
-    destDesc.Height             = extents.height;
-    destDesc.MipLevels          = 1;
-    destDesc.ArraySize          = 1;
-    destDesc.Format             = dsFormatSet.texFormat;
-    destDesc.SampleDesc.Count   = 1;
-    destDesc.SampleDesc.Quality = 0;
-    destDesc.Usage              = D3D11_USAGE_DEFAULT;
-    destDesc.BindFlags          = D3D11_BIND_SHADER_RESOURCE;
-    destDesc.CPUAccessFlags     = 0;
-    destDesc.MiscFlags          = 0;
+    D3D11_TEXTURE2D_DESC textureDesc;
+    textureDesc.Width              = extents.width;
+    textureDesc.Height             = extents.height;
+    textureDesc.MipLevels          = 1;
+    textureDesc.ArraySize          = 1;
+    textureDesc.Format             = format.texFormat;
+    textureDesc.SampleDesc.Count   = 1;
+    textureDesc.SampleDesc.Quality = 0;
+    textureDesc.Usage              = D3D11_USAGE_DEFAULT;
+    textureDesc.BindFlags          = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
+    textureDesc.CPUAccessFlags     = 0;
+    textureDesc.MiscFlags          = 0;
 
-    HRESULT hr = device->CreateTexture2D(&destDesc, nullptr, &destTex);
+    ID3D11Texture2D *resolvedDepth = nullptr;
+    HRESULT hr                     = device->CreateTexture2D(&textureDesc, nullptr, &resolvedDepth);
     if (FAILED(hr))
     {
-        return gl::Error(GL_OUT_OF_MEMORY, "Error creating depth resolve dest texture.");
+        return gl::OutOfMemory() << "Failed to allocate resolved depth texture, " << hr;
     }
-    d3d11::SetDebugName(destTex, "resolveDepthDest");
+    d3d11::SetDebugName(resolvedDepth, "Blit11::mResolvedDepth");
 
-    TextureHelper11 dest = TextureHelper11::MakeAndPossess2D(destTex, depth->getFormatSet());
-    ANGLE_TRY(copyAndConvert(mResolvedDepthStencil, 0, copyBox, extents, dest, 0, copyBox, extents,
-                             nullptr, 0, 0, 0, 8, dsDxgiInfo.pixelBytes, copyFunction));
-    return dest;
+    mResolvedDepth = TextureHelper11::MakeAndPossess2D(resolvedDepth, format);
+
+    D3D11_DEPTH_STENCIL_VIEW_DESC dsvDesc;
+    dsvDesc.Flags              = 0;
+    dsvDesc.Format             = format.dsvFormat;
+    dsvDesc.Texture2D.MipSlice = 0;
+    dsvDesc.ViewDimension      = D3D11_DSV_DIMENSION_TEXTURE2D;
+
+    hr = device->CreateDepthStencilView(mResolvedDepth.getResource(), &dsvDesc,
+                                        mResolvedDepthDSView.ReleaseAndGetAddressOf());
+    if (FAILED(hr))
+    {
+        return gl::OutOfMemory() << "Failed to allocate Blit11::mResolvedDepthDSView, " << hr;
+    }
+    d3d11::SetDebugName(mResolvedDepthDSView, "Blit11::mResolvedDepthDSView");
+
+    // Possibly D3D11 bug or undefined behaviour: Clear the DSV so that our first render
+    // works as expected. Otherwise the results of the first use seem to be incorrect.
+    auto context = mRenderer->getDeviceContext();
+    context->ClearDepthStencilView(mResolvedDepthDSView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
+
+    return gl::NoError();
 }
 
 gl::Error Blit11::initResolveDepthStencil(const gl::Extents &extents)
@@ -2077,6 +2073,7 @@ gl::Error Blit11::initResolveDepthStencil(const gl::Extents &extents)
     // Check if we need to recreate depth stencil view
     if (mResolvedDepthStencil.valid() && extents == mResolvedDepthStencil.getExtents())
     {
+        ASSERT(mResolvedDepthStencil.getFormat() == DXGI_FORMAT_R32G32_FLOAT);
         return gl::NoError();
     }
 
@@ -2106,17 +2103,17 @@ gl::Error Blit11::initResolveDepthStencil(const gl::Extents &extents)
     HRESULT hr = device->CreateTexture2D(&textureDesc, nullptr, &resolvedDepthStencil);
     if (FAILED(hr))
     {
-        return gl::Error(GL_OUT_OF_MEMORY, "Failed to allocate resolved depth stencil texture");
+        return gl::OutOfMemory() << "Failed to allocate resolved depth stencil texture, " << hr;
     }
     d3d11::SetDebugName(resolvedDepthStencil, "Blit11::mResolvedDepthStencil");
 
     ASSERT(mResolvedDepthStencilRTView == nullptr);
-    hr =
-        device->CreateRenderTargetView(resolvedDepthStencil, nullptr, &mResolvedDepthStencilRTView);
+    hr = device->CreateRenderTargetView(resolvedDepthStencil, nullptr,
+                                        mResolvedDepthStencilRTView.GetAddressOf());
     if (FAILED(hr))
     {
-        return gl::Error(GL_OUT_OF_MEMORY,
-                         "Failed to allocate Blit11::mResolvedDepthStencilRTView");
+        return gl::OutOfMemory() << "Failed to allocate Blit11::mResolvedDepthStencilRTView, "
+                                 << hr;
     }
     d3d11::SetDebugName(mResolvedDepthStencilRTView, "Blit11::mResolvedDepthStencilRTView");
 
@@ -2128,6 +2125,9 @@ gl::Error Blit11::initResolveDepthStencil(const gl::Extents &extents)
 gl::ErrorOrResult<TextureHelper11> Blit11::resolveStencil(RenderTarget11 *depthStencil,
                                                           bool alsoDepth)
 {
+    // Multisampled depth stencil SRVs are not available in feature level 10.0
+    ASSERT(mRenderer->getRenderer11DeviceCaps().featureLevel > D3D_FEATURE_LEVEL_10_0);
+
     const auto &extents = depthStencil->getExtents();
 
     ANGLE_TRY(initResolveDepthStencil(extents));
@@ -2145,20 +2145,23 @@ gl::ErrorOrResult<TextureHelper11> Blit11::resolveStencil(RenderTarget11 *depthS
 
         if (stencilResource != priorResource)
         {
-            SafeRelease(mStencilSRV);
+            mStencilSRV.Reset();
         }
+
+        SafeRelease(priorResource);
     }
 
-    if (!mStencilSRV)
+    if (mStencilSRV == nullptr)
     {
         D3D11_SHADER_RESOURCE_VIEW_DESC srViewDesc;
         srViewDesc.Format        = GetStencilSRVFormat(depthStencil->getFormatSet());
         srViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2DMS;
 
-        HRESULT hr = device->CreateShaderResourceView(stencilResource, &srViewDesc, &mStencilSRV);
+        HRESULT hr = device->CreateShaderResourceView(stencilResource, &srViewDesc,
+                                                      mStencilSRV.GetAddressOf());
         if (FAILED(hr))
         {
-            return gl::Error(GL_OUT_OF_MEMORY, "Error creating Blit11 stencil SRV");
+            return gl::OutOfMemory() << "Error creating Blit11 stencil SRV, " << hr;
         }
         d3d11::SetDebugName(mStencilSRV, "Blit11::mStencilSRV");
     }
@@ -2173,7 +2176,7 @@ gl::ErrorOrResult<TextureHelper11> Blit11::resolveStencil(RenderTarget11 *depthS
     context->GSSetShader(nullptr, nullptr, 0);
     context->RSSetState(nullptr);
     context->OMSetDepthStencilState(nullptr, 0xFFFFFFFF);
-    context->OMSetRenderTargets(1, &mResolvedDepthStencilRTView, nullptr);
+    context->OMSetRenderTargets(1, mResolvedDepthStencilRTView.GetAddressOf(), nullptr);
     context->OMSetBlendState(nullptr, nullptr, 0xFFFFFFF);
 
     // Set the viewport
@@ -2187,7 +2190,7 @@ gl::ErrorOrResult<TextureHelper11> Blit11::resolveStencil(RenderTarget11 *depthS
     context->RSSetViewports(1, &viewport);
 
     ID3D11ShaderResourceView *pixelViews[] = {
-        depthStencil->getShaderResourceView(), mStencilSRV,
+        depthStencil->getShaderResourceView(), mStencilSRV.Get(),
     };
 
     context->PSSetShaderResources(0, 2, pixelViews);
@@ -2227,8 +2230,8 @@ gl::ErrorOrResult<TextureHelper11> Blit11::resolveStencil(RenderTarget11 *depthS
 
 void Blit11::releaseResolveDepthStencilResources()
 {
-    SafeRelease(mStencilSRV);
-    SafeRelease(mResolvedDepthStencilRTView);
+    mStencilSRV.Reset();
+    mResolvedDepthStencilRTView.Reset();
 }
 
 }  // namespace rx

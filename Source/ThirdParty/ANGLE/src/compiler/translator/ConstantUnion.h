@@ -12,6 +12,9 @@
 #include "compiler/translator/Common.h"
 #include "compiler/translator/BaseTypes.h"
 
+namespace sh
+{
+
 class TDiagnostics;
 
 class TConstantUnion
@@ -22,25 +25,50 @@ class TConstantUnion
 
     bool cast(TBasicType newType, const TConstantUnion &constant);
 
-    void setIConst(int i) {iConst = i; type = EbtInt; }
-    void setUConst(unsigned int u) { uConst = u; type = EbtUInt; }
-    void setFConst(float f) {fConst = f; type = EbtFloat; }
-    void setBConst(bool b) {bConst = b; type = EbtBool; }
+    void setIConst(int i)
+    {
+        iConst = i;
+        type   = EbtInt;
+    }
+    void setUConst(unsigned int u)
+    {
+        uConst = u;
+        type   = EbtUInt;
+    }
+    void setFConst(float f)
+    {
+        fConst = f;
+        type   = EbtFloat;
+    }
+    void setBConst(bool b)
+    {
+        bConst = b;
+        type   = EbtBool;
+    }
+
+    void setYuvCscStandardEXTConst(TYuvCscStandardEXT s)
+    {
+        yuvCscStandardEXTConst = s;
+        type                   = EbtYuvCscStandardEXT;
+    }
 
     int getIConst() const { return iConst; }
     unsigned int getUConst() const { return uConst; }
     float getFConst() const { return fConst; }
     bool getBConst() const { return bConst; }
+    TYuvCscStandardEXT getYuvCscStandardEXTConst() const { return yuvCscStandardEXTConst; }
 
     bool operator==(const int i) const;
     bool operator==(const unsigned int u) const;
     bool operator==(const float f) const;
     bool operator==(const bool b) const;
+    bool operator==(const TYuvCscStandardEXT s) const;
     bool operator==(const TConstantUnion &constant) const;
     bool operator!=(const int i) const;
     bool operator!=(const unsigned int u) const;
     bool operator!=(const float f) const;
     bool operator!=(const bool b) const;
+    bool operator!=(const TYuvCscStandardEXT s) const;
     bool operator!=(const TConstantUnion &constant) const;
     bool operator>(const TConstantUnion &constant) const;
     bool operator<(const TConstantUnion &constant) const;
@@ -78,9 +106,12 @@ class TConstantUnion
         unsigned int uConst;  // used for uvec, scalar uints
         bool bConst;          // used for bvec, scalar bools
         float fConst;         // used for vec, mat, scalar floats
+        TYuvCscStandardEXT yuvCscStandardEXTConst;
     };
 
     TBasicType type;
 };
 
-#endif // COMPILER_TRANSLATOR_CONSTANTUNION_H_
+}  // namespace sh
+
+#endif  // COMPILER_TRANSLATOR_CONSTANTUNION_H_

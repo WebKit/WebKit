@@ -17,9 +17,14 @@ class TIntermNode;
 namespace sh
 {
 
+class TSymbolTable;
+
 using InterfaceBlockList = std::vector<sh::InterfaceBlock>;
 
-void UseInterfaceBlockFields(TIntermNode *root, const InterfaceBlockList &blocks);
+void UseInterfaceBlockFields(TIntermNode *root,
+                             const InterfaceBlockList &blocks,
+                             const TSymbolTable &symbolTable);
+
 }  // namespace sh
 
 #endif  // COMPILER_TRANSLATOR_USEINTERFACEBLOCKFIELDS_H_

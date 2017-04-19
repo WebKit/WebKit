@@ -8,6 +8,9 @@
 
 #include "libANGLE/validationES3.h"
 
+#include "base/numerics/safe_conversions.h"
+#include "common/mathutil.h"
+#include "common/utilities.h"
 #include "libANGLE/validationES.h"
 #include "libANGLE/Context.h"
 #include "libANGLE/Texture.h"
@@ -16,22 +19,22 @@
 #include "libANGLE/formatutils.h"
 #include "libANGLE/FramebufferAttachment.h"
 
-#include "common/mathutil.h"
-#include "common/utilities.h"
-
 using namespace angle;
 
 namespace gl
 {
 
-static bool ValidateTexImageFormatCombination(gl::Context *context, GLenum internalFormat, GLenum format, GLenum type)
+static bool ValidateTexImageFormatCombination(gl::Context *context,
+                                              GLenum internalFormat,
+                                              GLenum format,
+                                              GLenum type)
 {
     // For historical reasons, glTexImage2D and glTexImage3D pass in their internal format as a
     // GLint instead of a GLenum. Therefor an invalid internal format gives a GL_INVALID_VALUE
     // error instead of a GL_INVALID_ENUM error. As this validation function is only called in
     // the validation codepaths for glTexImage2D/3D, we record a GL_INVALID_VALUE error.
     const gl::InternalFormat &formatInfo = gl::GetInternalFormatInfo(internalFormat);
-    if (!formatInfo.textureSupport(context->getClientMajorVersion(), context->getExtensions()))
+    if (!formatInfo.textureSupport(context->getClientVersion(), context->getExtensions()))
     {
         context->handleError(Error(GL_INVALID_VALUE));
         return false;
@@ -99,60 +102,61 @@ bool ValidateES3TexImageParametersBase(Context *context,
 
     switch (target)
     {
-      case GL_TEXTURE_2D:
-        if (static_cast<GLuint>(width) > (caps.max2DTextureSize >> level) ||
-            static_cast<GLuint>(height) > (caps.max2DTextureSize >> level))
-        {
-            context->handleError(Error(GL_INVALID_VALUE));
-            return false;
-        }
-        break;
+        case GL_TEXTURE_2D:
+            if (static_cast<GLuint>(width) > (caps.max2DTextureSize >> level) ||
+                static_cast<GLuint>(height) > (caps.max2DTextureSize >> level))
+            {
+                context->handleError(Error(GL_INVALID_VALUE));
+                return false;
+            }
+            break;
 
-      case GL_TEXTURE_CUBE_MAP_POSITIVE_X:
-      case GL_TEXTURE_CUBE_MAP_NEGATIVE_X:
-      case GL_TEXTURE_CUBE_MAP_POSITIVE_Y:
-      case GL_TEXTURE_CUBE_MAP_NEGATIVE_Y:
-      case GL_TEXTURE_CUBE_MAP_POSITIVE_Z:
-      case GL_TEXTURE_CUBE_MAP_NEGATIVE_Z:
-        if (!isSubImage && width != height)
-        {
-            context->handleError(Error(GL_INVALID_VALUE));
-            return false;
-        }
+        case GL_TEXTURE_CUBE_MAP_POSITIVE_X:
+        case GL_TEXTURE_CUBE_MAP_NEGATIVE_X:
+        case GL_TEXTURE_CUBE_MAP_POSITIVE_Y:
+        case GL_TEXTURE_CUBE_MAP_NEGATIVE_Y:
+        case GL_TEXTURE_CUBE_MAP_POSITIVE_Z:
+        case GL_TEXTURE_CUBE_MAP_NEGATIVE_Z:
+            if (!isSubImage && width != height)
+            {
+                context->handleError(Error(GL_INVALID_VALUE));
+                return false;
+            }
 
-        if (static_cast<GLuint>(width) > (caps.maxCubeMapTextureSize >> level))
-        {
-            context->handleError(Error(GL_INVALID_VALUE));
-            return false;
-        }
-        break;
+            if (static_cast<GLuint>(width) > (caps.maxCubeMapTextureSize >> level))
+            {
+                context->handleError(Error(GL_INVALID_VALUE));
+                return false;
+            }
+            break;
 
-      case GL_TEXTURE_3D:
-        if (static_cast<GLuint>(width) > (caps.max3DTextureSize >> level) ||
-            static_cast<GLuint>(height) > (caps.max3DTextureSize >> level) ||
-            static_cast<GLuint>(depth) > (caps.max3DTextureSize >> level))
-        {
-            context->handleError(Error(GL_INVALID_VALUE));
-            return false;
-        }
-        break;
+        case GL_TEXTURE_3D:
+            if (static_cast<GLuint>(width) > (caps.max3DTextureSize >> level) ||
+                static_cast<GLuint>(height) > (caps.max3DTextureSize >> level) ||
+                static_cast<GLuint>(depth) > (caps.max3DTextureSize >> level))
+            {
+                context->handleError(Error(GL_INVALID_VALUE));
+                return false;
+            }
+            break;
 
-      case GL_TEXTURE_2D_ARRAY:
-        if (static_cast<GLuint>(width) > (caps.max2DTextureSize >> level) ||
-            static_cast<GLuint>(height) > (caps.max2DTextureSize >> level) ||
-            static_cast<GLuint>(depth) > caps.maxArrayTextureLayers)
-        {
-            context->handleError(Error(GL_INVALID_VALUE));
-            return false;
-        }
-        break;
+        case GL_TEXTURE_2D_ARRAY:
+            if (static_cast<GLuint>(width) > (caps.max2DTextureSize >> level) ||
+                static_cast<GLuint>(height) > (caps.max2DTextureSize >> level) ||
+                static_cast<GLuint>(depth) > caps.maxArrayTextureLayers)
+            {
+                context->handleError(Error(GL_INVALID_VALUE));
+                return false;
+            }
+            break;
 
-      default:
-          context->handleError(Error(GL_INVALID_ENUM));
-        return false;
+        default:
+            context->handleError(Error(GL_INVALID_ENUM));
+            return false;
     }
 
-    gl::Texture *texture = context->getTargetTexture(IsCubeMapTextureTarget(target) ? GL_TEXTURE_CUBE_MAP : target);
+    gl::Texture *texture =
+        context->getTargetTexture(IsCubeMapTextureTarget(target) ? GL_TEXTURE_CUBE_MAP : target);
     if (!texture)
     {
         context->handleError(Error(GL_INVALID_OPERATION));
@@ -168,6 +172,12 @@ bool ValidateES3TexImageParametersBase(Context *context,
     // Validate texture formats
     GLenum actualInternalFormat =
         isSubImage ? texture->getFormat(target, level).asSized() : internalformat;
+    if (isSubImage && actualInternalFormat == GL_NONE)
+    {
+        context->handleError(Error(GL_INVALID_OPERATION, "Texture level does not exist."));
+        return false;
+    }
+
     const gl::InternalFormat &actualFormatInfo = gl::GetInternalFormatInfo(actualInternalFormat);
     if (isCompressed)
     {
@@ -178,14 +188,14 @@ bool ValidateES3TexImageParametersBase(Context *context,
             return false;
         }
 
-        if (!ValidCompressedImageSize(context, actualInternalFormat, width, height))
+        if (!ValidCompressedImageSize(context, actualInternalFormat, xoffset, yoffset, width,
+                                      height))
         {
             context->handleError(Error(GL_INVALID_OPERATION));
             return false;
         }
 
-        if (!actualFormatInfo.textureSupport(context->getClientMajorVersion(),
-                                             context->getExtensions()))
+        if (!actualFormatInfo.textureSupport(context->getClientVersion(), context->getExtensions()))
         {
             context->handleError(Error(GL_INVALID_ENUM));
             return false;
@@ -258,7 +268,8 @@ bool ValidateES3TexImageParametersBase(Context *context,
     gl::Buffer *pixelUnpackBuffer = context->getGLState().getTargetBuffer(GL_PIXEL_UNPACK_BUFFER);
     if (pixelUnpackBuffer != nullptr)
     {
-        // ...data is not evenly divisible into the number of bytes needed to store in memory a datum
+        // ...data is not evenly divisible into the number of bytes needed to store in memory a
+        // datum
         // indicated by type.
         if (!isCompressed)
         {
@@ -437,7 +448,8 @@ bool GetUnsizedEffectiveInternalFormatInfo(const InternalFormat &srcFormat,
                                     outEffectiveFormat);
 }
 
-static bool GetEffectiveInternalFormat(const InternalFormat &srcFormat, const InternalFormat &destFormat,
+static bool GetEffectiveInternalFormat(const InternalFormat &srcFormat,
+                                       const InternalFormat &destFormat,
                                        GLenum *outEffectiveFormat)
 {
     if (destFormat.pixelBytes > 0)
@@ -448,68 +460,6 @@ static bool GetEffectiveInternalFormat(const InternalFormat &srcFormat, const In
     {
         return GetUnsizedEffectiveInternalFormatInfo(srcFormat, destFormat, outEffectiveFormat);
     }
-}
-
-struct CopyConversion
-{
-    GLenum mTextureFormat;
-    GLenum mFramebufferFormat;
-
-    CopyConversion(GLenum textureFormat, GLenum framebufferFormat)
-        : mTextureFormat(textureFormat), mFramebufferFormat(framebufferFormat) { }
-
-    bool operator<(const CopyConversion& other) const
-    {
-        return memcmp(this, &other, sizeof(CopyConversion)) < 0;
-    }
-};
-
-typedef std::set<CopyConversion> CopyConversionSet;
-
-static CopyConversionSet BuildValidES3CopyTexImageCombinations()
-{
-    CopyConversionSet set;
-
-    // From ES 3.0.1 spec, table 3.15
-    set.insert(CopyConversion(GL_ALPHA, GL_RGBA));
-    set.insert(CopyConversion(GL_LUMINANCE, GL_RED));
-    set.insert(CopyConversion(GL_LUMINANCE, GL_RG));
-    set.insert(CopyConversion(GL_LUMINANCE, GL_RGB));
-    set.insert(CopyConversion(GL_LUMINANCE, GL_RGBA));
-    set.insert(CopyConversion(GL_LUMINANCE_ALPHA, GL_RGBA));
-    set.insert(CopyConversion(GL_RED, GL_RED));
-    set.insert(CopyConversion(GL_RED, GL_RG));
-    set.insert(CopyConversion(GL_RED, GL_RGB));
-    set.insert(CopyConversion(GL_RED, GL_RGBA));
-    set.insert(CopyConversion(GL_RG, GL_RG));
-    set.insert(CopyConversion(GL_RG, GL_RGB));
-    set.insert(CopyConversion(GL_RG, GL_RGBA));
-    set.insert(CopyConversion(GL_RGB, GL_RGB));
-    set.insert(CopyConversion(GL_RGB, GL_RGBA));
-    set.insert(CopyConversion(GL_RGBA, GL_RGBA));
-
-    // Necessary for ANGLE back-buffers
-    set.insert(CopyConversion(GL_ALPHA, GL_BGRA_EXT));
-    set.insert(CopyConversion(GL_LUMINANCE, GL_BGRA_EXT));
-    set.insert(CopyConversion(GL_LUMINANCE_ALPHA, GL_BGRA_EXT));
-    set.insert(CopyConversion(GL_RED, GL_BGRA_EXT));
-    set.insert(CopyConversion(GL_RG, GL_BGRA_EXT));
-    set.insert(CopyConversion(GL_RGB, GL_BGRA_EXT));
-    set.insert(CopyConversion(GL_RGBA, GL_BGRA_EXT));
-    set.insert(CopyConversion(GL_BGRA_EXT, GL_BGRA_EXT));
-
-    set.insert(CopyConversion(GL_RED_INTEGER, GL_RED_INTEGER));
-    set.insert(CopyConversion(GL_RED_INTEGER, GL_RG_INTEGER));
-    set.insert(CopyConversion(GL_RED_INTEGER, GL_RGB_INTEGER));
-    set.insert(CopyConversion(GL_RED_INTEGER, GL_RGBA_INTEGER));
-    set.insert(CopyConversion(GL_RG_INTEGER, GL_RG_INTEGER));
-    set.insert(CopyConversion(GL_RG_INTEGER, GL_RGB_INTEGER));
-    set.insert(CopyConversion(GL_RG_INTEGER, GL_RGBA_INTEGER));
-    set.insert(CopyConversion(GL_RGB_INTEGER, GL_RGB_INTEGER));
-    set.insert(CopyConversion(GL_RGB_INTEGER, GL_RGBA_INTEGER));
-    set.insert(CopyConversion(GL_RGBA_INTEGER, GL_RGBA_INTEGER));
-
-    return set;
 }
 
 static bool EqualOrFirstZero(GLuint first, GLuint second)
@@ -524,132 +474,129 @@ static bool IsValidES3CopyTexImageCombination(const Format &textureFormat,
     const auto &textureFormatInfo     = *textureFormat.info;
     const auto &framebufferFormatInfo = *framebufferFormat.info;
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wexit-time-destructors"
-    static const CopyConversionSet conversionSet = BuildValidES3CopyTexImageCombinations();
-#pragma clang diagnostic pop
-    if (conversionSet.find(CopyConversion(textureFormatInfo.format,
-                                          framebufferFormatInfo.format)) != conversionSet.end())
+    if (!ValidES3CopyConversion(textureFormatInfo.format, framebufferFormatInfo.format))
     {
-        // Section 3.8.5 of the GLES 3.0.3 spec states that source and destination formats
-        // must both be signed, unsigned, or fixed point and both source and destinations
-        // must be either both SRGB or both not SRGB. EXT_color_buffer_float adds allowed
-        // conversion between fixed and floating point.
+        return false;
+    }
 
-        if ((textureFormatInfo.colorEncoding == GL_SRGB) !=
-            (framebufferFormatInfo.colorEncoding == GL_SRGB))
+    // Section 3.8.5 of the GLES 3.0.3 spec states that source and destination formats
+    // must both be signed, unsigned, or fixed point and both source and destinations
+    // must be either both SRGB or both not SRGB. EXT_color_buffer_float adds allowed
+    // conversion between fixed and floating point.
+
+    if ((textureFormatInfo.colorEncoding == GL_SRGB) !=
+        (framebufferFormatInfo.colorEncoding == GL_SRGB))
+    {
+        return false;
+    }
+
+    if (((textureFormatInfo.componentType == GL_INT) !=
+         (framebufferFormatInfo.componentType == GL_INT)) ||
+        ((textureFormatInfo.componentType == GL_UNSIGNED_INT) !=
+         (framebufferFormatInfo.componentType == GL_UNSIGNED_INT)))
+    {
+        return false;
+    }
+
+    if ((textureFormatInfo.componentType == GL_UNSIGNED_NORMALIZED ||
+         textureFormatInfo.componentType == GL_SIGNED_NORMALIZED ||
+         textureFormatInfo.componentType == GL_FLOAT) &&
+        !(framebufferFormatInfo.componentType == GL_UNSIGNED_NORMALIZED ||
+          framebufferFormatInfo.componentType == GL_SIGNED_NORMALIZED ||
+          framebufferFormatInfo.componentType == GL_FLOAT))
+    {
+        return false;
+    }
+
+    // GLES specification 3.0.3, sec 3.8.5, pg 139-140:
+    // The effective internal format of the source buffer is determined with the following rules
+    // applied in order:
+    //    * If the source buffer is a texture or renderbuffer that was created with a sized internal
+    //      format then the effective internal format is the source buffer's sized internal format.
+    //    * If the source buffer is a texture that was created with an unsized base internal format,
+    //      then the effective internal format is the source image array's effective internal
+    //      format, as specified by table 3.12, which is determined from the <format> and <type>
+    //      that were used when the source image array was specified by TexImage*.
+    //    * Otherwise the effective internal format is determined by the row in table 3.17 or 3.18
+    //      where Destination Internal Format matches internalformat and where the [source channel
+    //      sizes] are consistent with the values of the source buffer's [channel sizes]. Table 3.17
+    //      is used if the FRAMEBUFFER_ATTACHMENT_ENCODING is LINEAR and table 3.18 is used if the
+    //      FRAMEBUFFER_ATTACHMENT_ENCODING is SRGB.
+    const InternalFormat *sourceEffectiveFormat = NULL;
+    if (readBufferHandle != 0)
+    {
+        // Not the default framebuffer, therefore the read buffer must be a user-created texture or
+        // renderbuffer
+        if (framebufferFormat.sized)
         {
-            return false;
+            sourceEffectiveFormat = &framebufferFormatInfo;
         }
-
-        if (((textureFormatInfo.componentType == GL_INT) !=
-             (framebufferFormatInfo.componentType == GL_INT)) ||
-            ((textureFormatInfo.componentType == GL_UNSIGNED_INT) !=
-             (framebufferFormatInfo.componentType == GL_UNSIGNED_INT)))
+        else
         {
-            return false;
+            // Renderbuffers cannot be created with an unsized internal format, so this must be an
+            // unsized-format texture. We can use the same table we use when creating textures to
+            // get its effective sized format.
+            GLenum sizedInternalFormat =
+                GetSizedInternalFormat(framebufferFormatInfo.format, framebufferFormatInfo.type);
+            sourceEffectiveFormat = &GetInternalFormatInfo(sizedInternalFormat);
         }
-
-        if ((textureFormatInfo.componentType == GL_UNSIGNED_NORMALIZED ||
-             textureFormatInfo.componentType == GL_SIGNED_NORMALIZED ||
-             textureFormatInfo.componentType == GL_FLOAT) &&
-            !(framebufferFormatInfo.componentType == GL_UNSIGNED_NORMALIZED ||
-              framebufferFormatInfo.componentType == GL_SIGNED_NORMALIZED ||
-              framebufferFormatInfo.componentType == GL_FLOAT))
+    }
+    else
+    {
+        // The effective internal format must be derived from the source framebuffer's channel
+        // sizes. This is done in GetEffectiveInternalFormat for linear buffers (table 3.17)
+        if (framebufferFormatInfo.colorEncoding == GL_LINEAR)
         {
-            return false;
-        }
-
-        // GLES specification 3.0.3, sec 3.8.5, pg 139-140:
-        // The effective internal format of the source buffer is determined with the following rules applied in order:
-        //    * If the source buffer is a texture or renderbuffer that was created with a sized internal format then the
-        //      effective internal format is the source buffer's sized internal format.
-        //    * If the source buffer is a texture that was created with an unsized base internal format, then the
-        //      effective internal format is the source image array's effective internal format, as specified by table
-        //      3.12, which is determined from the <format> and <type> that were used when the source image array was
-        //      specified by TexImage*.
-        //    * Otherwise the effective internal format is determined by the row in table 3.17 or 3.18 where
-        //      Destination Internal Format matches internalformat and where the [source channel sizes] are consistent
-        //      with the values of the source buffer's [channel sizes]. Table 3.17 is used if the
-        //      FRAMEBUFFER_ATTACHMENT_ENCODING is LINEAR and table 3.18 is used if the FRAMEBUFFER_ATTACHMENT_ENCODING
-        //      is SRGB.
-        const InternalFormat *sourceEffectiveFormat = NULL;
-        if (readBufferHandle != 0)
-        {
-            // Not the default framebuffer, therefore the read buffer must be a user-created texture or renderbuffer
-            if (framebufferFormat.sized)
+            GLenum effectiveFormat;
+            if (GetEffectiveInternalFormat(framebufferFormatInfo, textureFormatInfo,
+                                           &effectiveFormat))
             {
-                sourceEffectiveFormat = &framebufferFormatInfo;
+                sourceEffectiveFormat = &GetInternalFormatInfo(effectiveFormat);
             }
             else
             {
-                // Renderbuffers cannot be created with an unsized internal format, so this must be an unsized-format
-                // texture. We can use the same table we use when creating textures to get its effective sized format.
-                GLenum sizedInternalFormat = GetSizedInternalFormat(framebufferFormatInfo.format,
-                                                                    framebufferFormatInfo.type);
-                sourceEffectiveFormat = &GetInternalFormatInfo(sizedInternalFormat);
+                return false;
+            }
+        }
+        else if (framebufferFormatInfo.colorEncoding == GL_SRGB)
+        {
+            // SRGB buffers can only be copied to sized format destinations according to table 3.18
+            if (textureFormat.sized &&
+                (framebufferFormatInfo.redBits >= 1 && framebufferFormatInfo.redBits <= 8) &&
+                (framebufferFormatInfo.greenBits >= 1 && framebufferFormatInfo.greenBits <= 8) &&
+                (framebufferFormatInfo.blueBits >= 1 && framebufferFormatInfo.blueBits <= 8) &&
+                (framebufferFormatInfo.alphaBits >= 1 && framebufferFormatInfo.alphaBits <= 8))
+            {
+                sourceEffectiveFormat = &GetInternalFormatInfo(GL_SRGB8_ALPHA8);
+            }
+            else
+            {
+                return false;
             }
         }
         else
         {
-            // The effective internal format must be derived from the source framebuffer's channel sizes.
-            // This is done in GetEffectiveInternalFormat for linear buffers (table 3.17)
-            if (framebufferFormatInfo.colorEncoding == GL_LINEAR)
-            {
-                GLenum effectiveFormat;
-                if (GetEffectiveInternalFormat(framebufferFormatInfo, textureFormatInfo,
-                                               &effectiveFormat))
-                {
-                    sourceEffectiveFormat = &GetInternalFormatInfo(effectiveFormat);
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            else if (framebufferFormatInfo.colorEncoding == GL_SRGB)
-            {
-                // SRGB buffers can only be copied to sized format destinations according to table 3.18
-                if (textureFormat.sized &&
-                    (framebufferFormatInfo.redBits >= 1 && framebufferFormatInfo.redBits <= 8) &&
-                    (framebufferFormatInfo.greenBits >= 1 &&
-                     framebufferFormatInfo.greenBits <= 8) &&
-                    (framebufferFormatInfo.blueBits >= 1 && framebufferFormatInfo.blueBits <= 8) &&
-                    (framebufferFormatInfo.alphaBits >= 1 && framebufferFormatInfo.alphaBits <= 8))
-                {
-                    sourceEffectiveFormat = &GetInternalFormatInfo(GL_SRGB8_ALPHA8);
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            else
-            {
-                UNREACHABLE();
-                return false;
-            }
+            UNREACHABLE();
+            return false;
         }
-
-        if (textureFormat.sized)
-        {
-            // Section 3.8.5 of the GLES 3.0.3 spec, pg 139, requires that, if the destination
-            // format is sized, component sizes of the source and destination formats must exactly
-            // match if the destination format exists.
-            if (!EqualOrFirstZero(textureFormatInfo.redBits, sourceEffectiveFormat->redBits) ||
-                !EqualOrFirstZero(textureFormatInfo.greenBits, sourceEffectiveFormat->greenBits) ||
-                !EqualOrFirstZero(textureFormatInfo.blueBits, sourceEffectiveFormat->blueBits) ||
-                !EqualOrFirstZero(textureFormatInfo.alphaBits, sourceEffectiveFormat->alphaBits))
-            {
-                return false;
-            }
-        }
-
-        return true; // A conversion function exists, and no rule in the specification has precluded conversion
-                     // between these formats.
     }
 
-    return false;
+    if (textureFormat.sized)
+    {
+        // Section 3.8.5 of the GLES 3.0.3 spec, pg 139, requires that, if the destination format is
+        // sized, component sizes of the source and destination formats must exactly match if the
+        // destination format exists.
+        if (!EqualOrFirstZero(textureFormatInfo.redBits, sourceEffectiveFormat->redBits) ||
+            !EqualOrFirstZero(textureFormatInfo.greenBits, sourceEffectiveFormat->greenBits) ||
+            !EqualOrFirstZero(textureFormatInfo.blueBits, sourceEffectiveFormat->blueBits) ||
+            !EqualOrFirstZero(textureFormatInfo.alphaBits, sourceEffectiveFormat->alphaBits))
+        {
+            return false;
+        }
+    }
+
+    return true;  // A conversion function exists, and no rule in the specification has precluded
+                  // conversion between these formats.
 }
 
 bool ValidateES3CopyTexImageParametersBase(ValidationContext *context,
@@ -679,13 +626,13 @@ bool ValidateES3CopyTexImageParametersBase(ValidationContext *context,
     gl::Framebuffer *framebuffer = state.getReadFramebuffer();
     GLuint readFramebufferID     = framebuffer->id();
 
-    if (framebuffer->checkStatus(context->getContextState()) != GL_FRAMEBUFFER_COMPLETE)
+    if (framebuffer->checkStatus(context) != GL_FRAMEBUFFER_COMPLETE)
     {
         context->handleError(Error(GL_INVALID_FRAMEBUFFER_OPERATION));
         return false;
     }
 
-    if (readFramebufferID != 0 && framebuffer->getSamples(context->getContextState()) != 0)
+    if (readFramebufferID != 0 && framebuffer->getSamples(context) != 0)
     {
         context->handleError(Error(GL_INVALID_OPERATION));
         return false;
@@ -798,7 +745,7 @@ bool ValidateES3TexStorageParametersBase(Context *context,
 
     switch (target)
     {
-      case GL_TEXTURE_2D:
+        case GL_TEXTURE_2D:
         {
             if (static_cast<GLuint>(width) > caps.max2DTextureSize ||
                 static_cast<GLuint>(height) > caps.max2DTextureSize)
@@ -809,7 +756,7 @@ bool ValidateES3TexStorageParametersBase(Context *context,
         }
         break;
 
-      case GL_TEXTURE_CUBE_MAP:
+        case GL_TEXTURE_CUBE_MAP:
         {
             if (width != height)
             {
@@ -825,7 +772,7 @@ bool ValidateES3TexStorageParametersBase(Context *context,
         }
         break;
 
-      case GL_TEXTURE_3D:
+        case GL_TEXTURE_3D:
         {
             if (static_cast<GLuint>(width) > caps.max3DTextureSize ||
                 static_cast<GLuint>(height) > caps.max3DTextureSize ||
@@ -837,7 +784,7 @@ bool ValidateES3TexStorageParametersBase(Context *context,
         }
         break;
 
-      case GL_TEXTURE_2D_ARRAY:
+        case GL_TEXTURE_2D_ARRAY:
         {
             if (static_cast<GLuint>(width) > caps.max2DTextureSize ||
                 static_cast<GLuint>(height) > caps.max2DTextureSize ||
@@ -849,9 +796,9 @@ bool ValidateES3TexStorageParametersBase(Context *context,
         }
         break;
 
-      default:
-          UNREACHABLE();
-        return false;
+        default:
+            UNREACHABLE();
+            return false;
     }
 
     gl::Texture *texture = context->getTargetTexture(target);
@@ -868,7 +815,7 @@ bool ValidateES3TexStorageParametersBase(Context *context,
     }
 
     const gl::InternalFormat &formatInfo = gl::GetInternalFormatInfo(internalformat);
-    if (!formatInfo.textureSupport(context->getClientMajorVersion(), context->getExtensions()))
+    if (!formatInfo.textureSupport(context->getClientVersion(), context->getExtensions()))
     {
         context->handleError(Error(GL_INVALID_ENUM));
         return false;
@@ -963,8 +910,12 @@ bool ValidateGetQueryObjectuiv(Context *context, GLuint id, GLenum pname, GLuint
     return ValidateGetQueryObjectValueBase(context, id, pname, nullptr);
 }
 
-bool ValidateFramebufferTextureLayer(Context *context, GLenum target, GLenum attachment,
-                                     GLuint texture, GLint level, GLint layer)
+bool ValidateFramebufferTextureLayer(Context *context,
+                                     GLenum target,
+                                     GLenum attachment,
+                                     GLuint texture,
+                                     GLint level,
+                                     GLint layer)
 {
     if (context->getClientMajorVersion() < 3)
     {
@@ -991,7 +942,7 @@ bool ValidateFramebufferTextureLayer(Context *context, GLenum target, GLenum att
 
         switch (tex->getTarget())
         {
-          case GL_TEXTURE_2D_ARRAY:
+            case GL_TEXTURE_2D_ARRAY:
             {
                 if (level > gl::log2(caps.max2DTextureSize))
                 {
@@ -1007,7 +958,7 @@ bool ValidateFramebufferTextureLayer(Context *context, GLenum target, GLenum att
             }
             break;
 
-          case GL_TEXTURE_3D:
+            case GL_TEXTURE_3D:
             {
                 if (level > gl::log2(caps.max3DTextureSize))
                 {
@@ -1023,9 +974,9 @@ bool ValidateFramebufferTextureLayer(Context *context, GLenum target, GLenum att
             }
             break;
 
-          default:
-              context->handleError(Error(GL_INVALID_OPERATION));
-            return false;
+            default:
+                context->handleError(Error(GL_INVALID_OPERATION));
+                return false;
         }
 
         const auto &format = tex->getFormat(tex->getTarget(), level);
@@ -1039,36 +990,9 @@ bool ValidateFramebufferTextureLayer(Context *context, GLenum target, GLenum att
     return true;
 }
 
-bool ValidateES3RenderbufferStorageParameters(gl::Context *context, GLenum target, GLsizei samples,
-                                              GLenum internalformat, GLsizei width, GLsizei height)
-{
-    if (!ValidateRenderbufferStorageParametersBase(context, target, samples, internalformat, width, height))
-    {
-        return false;
-    }
-
-    //The ES3 spec(section 4.4.2) states that the internal format must be sized and not an integer format if samples is greater than zero.
-    const gl::InternalFormat &formatInfo = gl::GetInternalFormatInfo(internalformat);
-    if ((formatInfo.componentType == GL_UNSIGNED_INT || formatInfo.componentType == GL_INT) && samples > 0)
-    {
-        context->handleError(Error(GL_INVALID_OPERATION));
-        return false;
-    }
-
-    // The behavior is different than the ANGLE version, which would generate a GL_OUT_OF_MEMORY.
-    const TextureCaps &formatCaps = context->getTextureCaps().get(internalformat);
-    if (static_cast<GLuint>(samples) > formatCaps.getMaxSamples())
-    {
-        context->handleError(
-            Error(GL_INVALID_OPERATION,
-                  "Samples must not be greater than maximum supported value for the format."));
-        return false;
-    }
-
-    return true;
-}
-
-bool ValidateInvalidateFramebuffer(Context *context, GLenum target, GLsizei numAttachments,
+bool ValidateInvalidateFramebuffer(Context *context,
+                                   GLenum target,
+                                   GLsizei numAttachments,
                                    const GLenum *attachments)
 {
     if (context->getClientMajorVersion() < 3)
@@ -1082,19 +1006,20 @@ bool ValidateInvalidateFramebuffer(Context *context, GLenum target, GLsizei numA
 
     switch (target)
     {
-      case GL_DRAW_FRAMEBUFFER:
-      case GL_FRAMEBUFFER:
-          defaultFramebuffer = context->getGLState().getDrawFramebuffer()->id() == 0;
-          break;
-      case GL_READ_FRAMEBUFFER:
-          defaultFramebuffer = context->getGLState().getReadFramebuffer()->id() == 0;
-          break;
-      default:
-          context->handleError(Error(GL_INVALID_ENUM, "Invalid framebuffer target"));
-        return false;
+        case GL_DRAW_FRAMEBUFFER:
+        case GL_FRAMEBUFFER:
+            defaultFramebuffer = context->getGLState().getDrawFramebuffer()->id() == 0;
+            break;
+        case GL_READ_FRAMEBUFFER:
+            defaultFramebuffer = context->getGLState().getReadFramebuffer()->id() == 0;
+            break;
+        default:
+            context->handleError(Error(GL_INVALID_ENUM, "Invalid framebuffer target"));
+            return false;
     }
 
-    return ValidateDiscardFramebufferBase(context, target, numAttachments, attachments, defaultFramebuffer);
+    return ValidateDiscardFramebufferBase(context, target, numAttachments, attachments,
+                                          defaultFramebuffer);
 }
 
 bool ValidateClearBuffer(ValidationContext *context)
@@ -1105,8 +1030,7 @@ bool ValidateClearBuffer(ValidationContext *context)
         return false;
     }
 
-    if (context->getGLState().getDrawFramebuffer()->checkStatus(context->getContextState()) !=
-        GL_FRAMEBUFFER_COMPLETE)
+    if (context->getGLState().getDrawFramebuffer()->checkStatus(context) != GL_FRAMEBUFFER_COMPLETE)
     {
         context->handleError(Error(GL_INVALID_FRAMEBUFFER_OPERATION));
         return false;
@@ -1151,7 +1075,7 @@ bool ValidateDrawRangeElements(Context *context,
     return true;
 }
 
-bool ValidateGetUniformuiv(Context *context, GLuint program, GLint location, GLuint* params)
+bool ValidateGetUniformuiv(Context *context, GLuint program, GLint location, GLuint *params)
 {
     if (context->getClientMajorVersion() < 3)
     {
@@ -1193,7 +1117,8 @@ bool ValidateReadBuffer(Context *context, GLenum src)
     {
         if (src != GL_BACK)
         {
-            const char *errorMsg = "'src' must be GL_NONE or GL_BACK when reading from the default framebuffer.";
+            const char *errorMsg =
+                "'src' must be GL_NONE or GL_BACK when reading from the default framebuffer.";
             context->handleError(gl::Error(GL_INVALID_OPERATION, errorMsg));
             return false;
         }
@@ -1304,6 +1229,156 @@ bool ValidateIsVertexArray(Context *context)
     return true;
 }
 
+static bool ValidateBindBufferCommon(Context *context,
+                                     GLenum target,
+                                     GLuint index,
+                                     GLuint buffer,
+                                     GLintptr offset,
+                                     GLsizeiptr size)
+{
+    if (context->getClientMajorVersion() < 3)
+    {
+        context->handleError(Error(GL_INVALID_OPERATION));
+        return false;
+    }
+
+    if (buffer != 0 && offset < 0)
+    {
+        context->handleError(Error(GL_INVALID_VALUE, "buffer is non-zero and offset is negative."));
+        return false;
+    }
+
+    if (!context->getGLState().isBindGeneratesResourceEnabled() &&
+        !context->isBufferGenerated(buffer))
+    {
+        context->handleError(Error(GL_INVALID_OPERATION, "Buffer was not generated."));
+        return false;
+    }
+
+    const Caps &caps = context->getCaps();
+    switch (target)
+    {
+        case GL_TRANSFORM_FEEDBACK_BUFFER:
+        {
+            if (index >= caps.maxTransformFeedbackSeparateAttributes)
+            {
+                context->handleError(Error(GL_INVALID_VALUE,
+                                           "index is greater than or equal to the number of "
+                                           "TRANSFORM_FEEDBACK_BUFFER indexed binding points."));
+                return false;
+            }
+            if (buffer != 0 && ((offset % 4) != 0 || (size % 4) != 0))
+            {
+                context->handleError(
+                    Error(GL_INVALID_VALUE, "offset and size must be multiple of 4."));
+                return false;
+            }
+
+            TransformFeedback *curTransformFeedback =
+                context->getGLState().getCurrentTransformFeedback();
+            if (curTransformFeedback && curTransformFeedback->isActive())
+            {
+                context->handleError(Error(GL_INVALID_OPERATION,
+                                           "target is TRANSFORM_FEEDBACK_BUFFER and transform "
+                                           "feedback is currently active."));
+                return false;
+            }
+            break;
+        }
+        case GL_UNIFORM_BUFFER:
+        {
+            if (index >= caps.maxUniformBufferBindings)
+            {
+                context->handleError(Error(GL_INVALID_VALUE,
+                                           "index is greater than or equal to the number of "
+                                           "UNIFORM_BUFFER indexed binding points."));
+                return false;
+            }
+
+            if (buffer != 0 && (offset % caps.uniformBufferOffsetAlignment) != 0)
+            {
+                context->handleError(
+                    Error(GL_INVALID_VALUE,
+                          "offset must be multiple of value of UNIFORM_BUFFER_OFFSET_ALIGNMENT."));
+                return false;
+            }
+            break;
+        }
+        case GL_ATOMIC_COUNTER_BUFFER:
+        {
+            if (context->getClientVersion() < ES_3_1)
+            {
+                context->handleError(Error(
+                    GL_INVALID_ENUM, "ATOMIC_COUNTER_BUFFER is not supported before GLES 3.1"));
+                return false;
+            }
+            if (index >= caps.maxAtomicCounterBufferBindings)
+            {
+                context->handleError(Error(GL_INVALID_VALUE,
+                                           "index is greater than or equal to the number of "
+                                           "ATOMIC_COUNTER_BUFFER indexed binding points."));
+                return false;
+            }
+            if (buffer != 0 && (offset % 4) != 0)
+            {
+                context->handleError(Error(GL_INVALID_VALUE, "offset must be a multiple of 4."));
+                return false;
+            }
+            break;
+        }
+        case GL_SHADER_STORAGE_BUFFER:
+        {
+            if (context->getClientVersion() < ES_3_1)
+            {
+                context->handleError(
+                    Error(GL_INVALID_ENUM, "SHADER_STORAGE_BUFFER is not supported in GLES3."));
+                return false;
+            }
+            if (index >= caps.maxShaderStorageBufferBindings)
+            {
+                context->handleError(Error(GL_INVALID_VALUE,
+                                           "index is greater than or equal to the number of "
+                                           "SHADER_STORAGE_BUFFER indexed binding points."));
+                return false;
+            }
+            if (buffer != 0 && (offset % caps.shaderStorageBufferOffsetAlignment) != 0)
+            {
+                context->handleError(Error(
+                    GL_INVALID_VALUE,
+                    "offset must be multiple of value of SHADER_STORAGE_BUFFER_OFFSET_ALIGNMENT."));
+                return false;
+            }
+            break;
+        }
+        default:
+            context->handleError(Error(GL_INVALID_ENUM, "the target is not supported."));
+            return false;
+    }
+
+    return true;
+}
+
+bool ValidateBindBufferBase(Context *context, GLenum target, GLuint index, GLuint buffer)
+{
+    return ValidateBindBufferCommon(context, target, index, buffer, 0, 0);
+}
+
+bool ValidateBindBufferRange(Context *context,
+                             GLenum target,
+                             GLuint index,
+                             GLuint buffer,
+                             GLintptr offset,
+                             GLsizeiptr size)
+{
+    if (buffer != 0 && size <= 0)
+    {
+        context->handleError(
+            Error(GL_INVALID_VALUE, "buffer is non-zero and size is less than or equal to zero."));
+        return false;
+    }
+    return ValidateBindBufferCommon(context, target, index, buffer, offset, size);
+}
+
 bool ValidateProgramBinary(Context *context,
                            GLuint program,
                            GLenum binaryFormat,
@@ -1359,6 +1434,22 @@ bool ValidateProgramParameteri(Context *context, GLuint program, GLenum pname, G
             }
             break;
 
+        case GL_PROGRAM_SEPARABLE:
+            if (context->getClientVersion() < ES_3_1)
+            {
+                context->handleError(
+                    Error(GL_INVALID_ENUM, "PROGRAM_SEPARABLE is not supported before GLES 3.1"));
+                return false;
+            }
+
+            if (value != GL_FALSE && value != GL_TRUE)
+            {
+                context->handleError(Error(
+                    GL_INVALID_VALUE, "Invalid value, expected GL_FALSE or GL_TRUE: %i", value));
+                return false;
+            }
+            break;
+
         default:
             context->handleError(Error(GL_INVALID_ENUM, "Invalid pname: 0x%X", pname));
             return false;
@@ -1403,6 +1494,15 @@ bool ValidateClearBufferiv(ValidationContext *context,
                 context->handleError(Error(GL_INVALID_VALUE));
                 return false;
             }
+            if (context->getExtensions().webglCompatibility)
+            {
+                constexpr GLenum validComponentTypes[] = {GL_INT};
+                if (ValidateWebGLFramebufferAttachmentClearType(
+                        context, drawbuffer, validComponentTypes, ArraySize(validComponentTypes)))
+                {
+                    return false;
+                }
+            }
             break;
 
         case GL_STENCIL:
@@ -1435,6 +1535,15 @@ bool ValidateClearBufferuiv(ValidationContext *context,
                 context->handleError(Error(GL_INVALID_VALUE));
                 return false;
             }
+            if (context->getExtensions().webglCompatibility)
+            {
+                constexpr GLenum validComponentTypes[] = {GL_UNSIGNED_INT};
+                if (ValidateWebGLFramebufferAttachmentClearType(
+                        context, drawbuffer, validComponentTypes, ArraySize(validComponentTypes)))
+                {
+                    return false;
+                }
+            }
             break;
 
         default:
@@ -1458,6 +1567,16 @@ bool ValidateClearBufferfv(ValidationContext *context,
             {
                 context->handleError(Error(GL_INVALID_VALUE));
                 return false;
+            }
+            if (context->getExtensions().webglCompatibility)
+            {
+                constexpr GLenum validComponentTypes[] = {GL_FLOAT, GL_UNSIGNED_NORMALIZED,
+                                                          GL_SIGNED_NORMALIZED};
+                if (ValidateWebGLFramebufferAttachmentClearType(
+                        context, drawbuffer, validComponentTypes, ArraySize(validComponentTypes)))
+                {
+                    return false;
+                }
             }
             break;
 
@@ -1659,6 +1778,12 @@ bool ValidateCompressedTexSubImage3D(Context *context,
     }
 
     const InternalFormat &formatInfo = GetInternalFormatInfo(format);
+    if (!formatInfo.compressed)
+    {
+        context->handleError(Error(GL_INVALID_ENUM, "Not a valid compressed texture format"));
+        return false;
+    }
+
     auto blockSizeOrErr =
         formatInfo.computeCompressedImageSize(GL_UNSIGNED_BYTE, gl::Extents(width, height, depth));
     if (blockSizeOrErr.isError())
@@ -1902,11 +2027,70 @@ bool ValidateIndexedStateQuery(ValidationContext *context,
                 return false;
             }
             break;
+
         case GL_MAX_COMPUTE_WORK_GROUP_SIZE:
         case GL_MAX_COMPUTE_WORK_GROUP_COUNT:
             if (index >= 3u)
             {
                 context->handleError(Error(GL_INVALID_VALUE));
+                return false;
+            }
+            break;
+
+        case GL_ATOMIC_COUNTER_BUFFER_START:
+        case GL_ATOMIC_COUNTER_BUFFER_SIZE:
+        case GL_ATOMIC_COUNTER_BUFFER_BINDING:
+            if (context->getClientVersion() < ES_3_1)
+            {
+                context->handleError(
+                    Error(GL_INVALID_ENUM,
+                          "Atomic Counter buffers are not supported in this version of GL"));
+                return false;
+            }
+            if (index >= caps.maxAtomicCounterBufferBindings)
+            {
+                context->handleError(
+                    Error(GL_INVALID_VALUE,
+                          "index is outside the valid range for GL_ATOMIC_COUNTER_BUFFER_BINDING"));
+                return false;
+            }
+            break;
+
+        case GL_SHADER_STORAGE_BUFFER_START:
+        case GL_SHADER_STORAGE_BUFFER_SIZE:
+        case GL_SHADER_STORAGE_BUFFER_BINDING:
+            if (context->getClientVersion() < ES_3_1)
+            {
+                context->handleError(
+                    Error(GL_INVALID_ENUM,
+                          "Shader storage buffers are not supported in this version of GL"));
+                return false;
+            }
+            if (index >= caps.maxShaderStorageBufferBindings)
+            {
+                context->handleError(
+                    Error(GL_INVALID_VALUE,
+                          "index is outside the valid range for GL_SHADER_STORAGE_BUFFER_BINDING"));
+                return false;
+            }
+            break;
+
+        case GL_VERTEX_BINDING_BUFFER:
+        case GL_VERTEX_BINDING_DIVISOR:
+        case GL_VERTEX_BINDING_OFFSET:
+        case GL_VERTEX_BINDING_STRIDE:
+            if (context->getClientVersion() < ES_3_1)
+            {
+                context->handleError(
+                    Error(GL_INVALID_ENUM,
+                          "Vertex Attrib Bindings are not supported in this version of GL"));
+                return false;
+            }
+            if (index >= caps.maxVertexAttribBindings)
+            {
+                context->handleError(
+                    Error(GL_INVALID_VALUE,
+                          "bindingindex must be smaller than MAX_VERTEX_ATTRIB_BINDINGS."));
                 return false;
             }
             break;
@@ -1925,7 +2109,7 @@ bool ValidateIndexedStateQuery(ValidationContext *context,
 
 bool ValidateGetIntegeri_v(ValidationContext *context, GLenum target, GLuint index, GLint *data)
 {
-    if (!context->getGLVersion().isES3OrGreater())
+    if (context->getClientVersion() < ES_3_0)
     {
         context->handleError(Error(GL_INVALID_OPERATION, "Context does not support GLES3.0"));
         return false;
@@ -1940,7 +2124,7 @@ bool ValidateGetIntegeri_vRobustANGLE(ValidationContext *context,
                                       GLsizei *length,
                                       GLint *data)
 {
-    if (!context->getGLVersion().isES3OrGreater())
+    if (context->getClientVersion() < ES_3_0)
     {
         context->handleError(Error(GL_INVALID_OPERATION, "Context does not support GLES3.0"));
         return false;
@@ -1966,7 +2150,7 @@ bool ValidateGetIntegeri_vRobustANGLE(ValidationContext *context,
 
 bool ValidateGetInteger64i_v(ValidationContext *context, GLenum target, GLuint index, GLint64 *data)
 {
-    if (!context->getGLVersion().isES3OrGreater())
+    if (context->getClientVersion() < ES_3_0)
     {
         context->handleError(Error(GL_INVALID_OPERATION, "Context does not support GLES3.0"));
         return false;
@@ -1981,7 +2165,7 @@ bool ValidateGetInteger64i_vRobustANGLE(ValidationContext *context,
                                         GLsizei *length,
                                         GLint64 *data)
 {
-    if (!context->getGLVersion().isES3OrGreater())
+    if (context->getClientVersion() < ES_3_0)
     {
         context->handleError(Error(GL_INVALID_OPERATION, "Context does not support GLES3.0"));
         return false;
@@ -2000,6 +2184,294 @@ bool ValidateGetInteger64i_vRobustANGLE(ValidationContext *context,
     if (!ValidateRobustBufferSize(context, bufSize, *length))
     {
         return false;
+    }
+
+    return true;
+}
+
+bool ValidateCopyBufferSubData(ValidationContext *context,
+                               GLenum readTarget,
+                               GLenum writeTarget,
+                               GLintptr readOffset,
+                               GLintptr writeOffset,
+                               GLsizeiptr size)
+{
+    if (context->getClientMajorVersion() < 3)
+    {
+        context->handleError(
+            Error(GL_INVALID_OPERATION, "CopyBufferSubData requires ES 3 or greater"));
+        return false;
+    }
+
+    if (!ValidBufferTarget(context, readTarget) || !ValidBufferTarget(context, writeTarget))
+    {
+        context->handleError(Error(GL_INVALID_ENUM, "Invalid buffer target"));
+        return false;
+    }
+
+    Buffer *readBuffer  = context->getGLState().getTargetBuffer(readTarget);
+    Buffer *writeBuffer = context->getGLState().getTargetBuffer(writeTarget);
+
+    if (!readBuffer || !writeBuffer)
+    {
+        context->handleError(Error(GL_INVALID_OPERATION, "No buffer bound to target"));
+        return false;
+    }
+
+    // Verify that readBuffer and writeBuffer are not currently mapped
+    if (readBuffer->isMapped() || writeBuffer->isMapped())
+    {
+        context->handleError(
+            Error(GL_INVALID_OPERATION, "Cannot call CopyBufferSubData on a mapped buffer"));
+        return false;
+    }
+
+    CheckedNumeric<GLintptr> checkedReadOffset(readOffset);
+    CheckedNumeric<GLintptr> checkedWriteOffset(writeOffset);
+    CheckedNumeric<GLintptr> checkedSize(size);
+
+    auto checkedReadSum  = checkedReadOffset + checkedSize;
+    auto checkedWriteSum = checkedWriteOffset + checkedSize;
+
+    if (!checkedReadSum.IsValid() || !checkedWriteSum.IsValid() ||
+        !IsValueInRangeForNumericType<GLintptr>(readBuffer->getSize()) ||
+        !IsValueInRangeForNumericType<GLintptr>(writeBuffer->getSize()))
+    {
+        context->handleError(
+            Error(GL_INVALID_VALUE, "Integer overflow when validating copy offsets."));
+        return false;
+    }
+
+    if (readOffset < 0 || writeOffset < 0 || size < 0)
+    {
+        context->handleError(
+            Error(GL_INVALID_VALUE, "readOffset, writeOffset and size must all be non-negative"));
+        return false;
+    }
+
+    if (checkedReadSum.ValueOrDie() > readBuffer->getSize() ||
+        checkedWriteSum.ValueOrDie() > writeBuffer->getSize())
+    {
+        context->handleError(
+            Error(GL_INVALID_VALUE, "Buffer offset overflow in CopyBufferSubData"));
+        return false;
+    }
+
+    if (readBuffer == writeBuffer)
+    {
+        auto checkedOffsetDiff = (checkedReadOffset - checkedWriteOffset).Abs();
+        if (!checkedOffsetDiff.IsValid())
+        {
+            // This shold not be possible.
+            UNREACHABLE();
+            context->handleError(
+                Error(GL_INVALID_VALUE, "Integer overflow when validating same buffer copy."));
+            return false;
+        }
+
+        if (checkedOffsetDiff.ValueOrDie() < size)
+        {
+            context->handleError(Error(GL_INVALID_VALUE));
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool ValidateGetStringi(Context *context, GLenum name, GLuint index)
+{
+    if (context->getClientMajorVersion() < 3)
+    {
+        context->handleError(
+            Error(GL_INVALID_OPERATION, "glGetStringi requires OpenGL ES 3.0 or higher."));
+        return false;
+    }
+
+    switch (name)
+    {
+        case GL_EXTENSIONS:
+            if (index >= context->getExtensionStringCount())
+            {
+                context->handleError(Error(
+                    GL_INVALID_VALUE, "index must be less than the number of extension strings."));
+                return false;
+            }
+            break;
+
+        case GL_REQUESTABLE_EXTENSIONS_ANGLE:
+            if (!context->getExtensions().requestExtension)
+            {
+                context->handleError(Error(GL_INVALID_ENUM, "Invalid name."));
+                return false;
+            }
+            if (index >= context->getRequestableExtensionStringCount())
+            {
+                context->handleError(
+                    Error(GL_INVALID_VALUE,
+                          "index must be less than the number of requestable extension strings."));
+                return false;
+            }
+            break;
+
+        default:
+            context->handleError(Error(GL_INVALID_ENUM, "Invalid name."));
+            return false;
+    }
+
+    return true;
+}
+
+bool ValidateRenderbufferStorageMultisample(ValidationContext *context,
+                                            GLenum target,
+                                            GLsizei samples,
+                                            GLenum internalformat,
+                                            GLsizei width,
+                                            GLsizei height)
+{
+    if (context->getClientMajorVersion() < 3)
+    {
+        context->handleError(Error(GL_INVALID_OPERATION));
+        return false;
+    }
+
+    if (!ValidateRenderbufferStorageParametersBase(context, target, samples, internalformat, width,
+                                                   height))
+    {
+        return false;
+    }
+
+    // The ES3 spec(section 4.4.2) states that the internal format must be sized and not an integer
+    // format if samples is greater than zero.
+    const gl::InternalFormat &formatInfo = gl::GetInternalFormatInfo(internalformat);
+    if ((formatInfo.componentType == GL_UNSIGNED_INT || formatInfo.componentType == GL_INT) &&
+        samples > 0)
+    {
+        context->handleError(Error(GL_INVALID_OPERATION));
+        return false;
+    }
+
+    // The behavior is different than the ANGLE version, which would generate a GL_OUT_OF_MEMORY.
+    const TextureCaps &formatCaps = context->getTextureCaps().get(internalformat);
+    if (static_cast<GLuint>(samples) > formatCaps.getMaxSamples())
+    {
+        context->handleError(
+            Error(GL_INVALID_OPERATION,
+                  "Samples must not be greater than maximum supported value for the format."));
+        return false;
+    }
+
+    return true;
+}
+
+bool ValidateVertexAttribIPointer(ValidationContext *context,
+                                  GLuint index,
+                                  GLint size,
+                                  GLenum type,
+                                  GLsizei stride,
+                                  const GLvoid *pointer)
+{
+    if (context->getClientMajorVersion() < 3)
+    {
+        context->handleError(
+            Error(GL_INVALID_OPERATION, "VertexAttribIPointer requires OpenGL ES 3.0 or higher."));
+        return false;
+    }
+
+    if (!ValidateVertexFormatBase(context, index, size, type, true))
+    {
+        return false;
+    }
+
+    if (stride < 0)
+    {
+        context->handleError(Error(GL_INVALID_VALUE, "stride cannot be negative."));
+        return false;
+    }
+
+    const Caps &caps = context->getCaps();
+    if (context->getClientVersion() >= ES_3_1)
+    {
+        if (stride > caps.maxVertexAttribStride)
+        {
+            context->handleError(
+                Error(GL_INVALID_VALUE, "stride cannot be greater than MAX_VERTEX_ATTRIB_STRIDE."));
+            return false;
+        }
+
+        // [OpenGL ES 3.1] Section 10.3.1 page 245:
+        // glVertexAttribBinding is part of the equivalent code of VertexAttribIPointer, so its
+        // validation should be inherited.
+        if (index >= caps.maxVertexAttribBindings)
+        {
+            context->handleError(
+                Error(GL_INVALID_VALUE, "index must be smaller than MAX_VERTEX_ATTRIB_BINDINGS."));
+            return false;
+        }
+    }
+
+    // [OpenGL ES 3.0.2] Section 2.8 page 24:
+    // An INVALID_OPERATION error is generated when a non-zero vertex array object
+    // is bound, zero is bound to the ARRAY_BUFFER buffer object binding point,
+    // and the pointer argument is not NULL.
+    if (context->getGLState().getVertexArrayId() != 0 &&
+        context->getGLState().getArrayBufferId() == 0 && pointer != nullptr)
+    {
+        context->handleError(
+            Error(GL_INVALID_OPERATION,
+                  "Client data cannot be used with a non-default vertex array object."));
+        return false;
+    }
+
+    if (context->getExtensions().webglCompatibility)
+    {
+        if (!ValidateWebGLVertexAttribPointer(context, type, false, stride, pointer, true))
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool ValidateGetSynciv(Context *context,
+                       GLsync sync,
+                       GLenum pname,
+                       GLsizei bufSize,
+                       GLsizei *length,
+                       GLint *values)
+{
+    if (context->getClientMajorVersion() < 3)
+    {
+        context->handleError(
+            Error(GL_INVALID_OPERATION, "GetSynciv requires OpenGL ES 3.0 or higher."));
+        return false;
+    }
+
+    if (bufSize < 0)
+    {
+        context->handleError(Error(GL_INVALID_VALUE, "bufSize cannot be negative."));
+        return false;
+    }
+
+    FenceSync *fenceSync = context->getFenceSync(sync);
+    if (!fenceSync)
+    {
+        context->handleError(Error(GL_INVALID_VALUE, "Invalid sync object."));
+        return false;
+    }
+
+    switch (pname)
+    {
+        case GL_OBJECT_TYPE:
+        case GL_SYNC_CONDITION:
+        case GL_SYNC_FLAGS:
+        case GL_SYNC_STATUS:
+            break;
+
+        default:
+            context->handleError(Error(GL_INVALID_ENUM, "Invalid pname."));
+            return false;
     }
 
     return true;

@@ -44,7 +44,7 @@ gl::Error FenceNV9::set(GLenum condition)
         return gl::Error(GL_OUT_OF_MEMORY, "Failed to end event query, result: 0x%X.", result);
     }
 
-    return gl::Error(GL_NO_ERROR);
+    return gl::NoError();
 }
 
 gl::Error FenceNV9::test(GLboolean *outFinished)
@@ -66,7 +66,7 @@ gl::Error FenceNV9::finish()
         Sleep(0);
     }
 
-    return gl::Error(GL_NO_ERROR);
+    return gl::NoError();
 }
 
 gl::Error FenceNV9::testHelper(bool flushCommandBuffer, GLboolean *outFinished)
@@ -88,7 +88,7 @@ gl::Error FenceNV9::testHelper(bool flushCommandBuffer, GLboolean *outFinished)
 
     ASSERT(result == S_OK || result == S_FALSE);
     *outFinished = ((result == S_OK) ? GL_TRUE : GL_FALSE);
-    return gl::Error(GL_NO_ERROR);
+    return gl::NoError();
 }
 
 }

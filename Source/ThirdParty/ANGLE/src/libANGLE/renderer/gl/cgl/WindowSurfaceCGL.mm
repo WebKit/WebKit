@@ -18,7 +18,7 @@
 #include "libANGLE/renderer/gl/RendererGL.h"
 #include "libANGLE/renderer/gl/StateManagerGL.h"
 
-@interface WebSwapLayer : CAOpenGLLayer
+@interface SwapLayer : CAOpenGLLayer
 {
     CGLContextObj mDisplayContext;
 
@@ -33,7 +33,7 @@
             withFunctions:(const rx::FunctionsGL *)functions;
 @end
 
-@implementation WebSwapLayer
+@implementation SwapLayer
 - (id)initWithSharedState:(rx::SharedSwapState *)swapState
               withContext:(CGLContextObj)displayContext
             withFunctions:(const rx::FunctionsGL *)functions
@@ -144,13 +144,13 @@
 
     WindowSurfaceCGL::WindowSurfaceCGL(const egl::SurfaceState &state,
                                        RendererGL *renderer,
-                                       CALayer *layer,
+                                       EGLNativeWindowType layer,
                                        const FunctionsGL *functions,
                                        CGLContextObj context)
         : SurfaceGL(state, renderer),
           mSwapLayer(nil),
           mCurrentSwapId(0),
-          mLayer(layer),
+          mLayer(reinterpret_cast<CALayer *>(layer)),
           mContext(context),
           mFunctions(functions),
           mStateManager(renderer->getStateManager()),
@@ -194,7 +194,7 @@ WindowSurfaceCGL::~WindowSurfaceCGL()
     }
 }
 
-egl::Error WindowSurfaceCGL::initialize()
+egl::Error WindowSurfaceCGL::initialize(const DisplayImpl *displayImpl)
 {
     unsigned width  = getWidth();
     unsigned height = getHeight();
@@ -213,7 +213,7 @@ egl::Error WindowSurfaceCGL::initialize()
     mSwapState.lastRendered   = &mSwapState.textures[1];
     mSwapState.beingPresented = &mSwapState.textures[2];
 
-    mSwapLayer = [[WebSwapLayer alloc] initWithSharedState:&mSwapState
+    mSwapLayer = [[SwapLayer alloc] initWithSharedState:&mSwapState
                                             withContext:mContext
                                           withFunctions:mFunctions];
     [mLayer addSublayer:mSwapLayer];
@@ -237,7 +237,7 @@ egl::Error WindowSurfaceCGL::makeCurrent()
     return egl::Error(EGL_SUCCESS);
 }
 
-egl::Error WindowSurfaceCGL::swap()
+egl::Error WindowSurfaceCGL::swap(const DisplayImpl *displayImpl)
 {
     mFunctions->flush();
     mSwapState.beingRendered->swapId = ++mCurrentSwapId;
@@ -329,4 +329,4 @@ FramebufferImpl *WindowSurfaceCGL::createDefaultFramebuffer(const gl::Framebuffe
                              mStateManager);
 }
 
-}
+}  // namespace rx

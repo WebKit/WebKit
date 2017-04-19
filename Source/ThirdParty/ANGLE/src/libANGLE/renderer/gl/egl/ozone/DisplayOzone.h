@@ -107,25 +107,22 @@ class DisplayOzone final : public DisplayEGL
         GLuint mTexture;
     };
 
-    DisplayOzone();
+    DisplayOzone(const egl::DisplayState &state);
     ~DisplayOzone() override;
 
     egl::Error initialize(egl::Display *display) override;
     void terminate() override;
 
     SurfaceImpl *createWindowSurface(const egl::SurfaceState &state,
-                                     const egl::Config *configuration,
                                      EGLNativeWindowType window,
                                      const egl::AttributeMap &attribs) override;
     SurfaceImpl *createPbufferSurface(const egl::SurfaceState &state,
-                                      const egl::Config *configuration,
                                       const egl::AttributeMap &attribs) override;
     SurfaceImpl *createPbufferFromClientBuffer(const egl::SurfaceState &state,
-                                               const egl::Config *configuration,
-                                               EGLClientBuffer shareHandle,
+                                               EGLenum buftype,
+                                               EGLClientBuffer clientBuffer,
                                                const egl::AttributeMap &attribs) override;
     SurfaceImpl *createPixmapSurface(const egl::SurfaceState &state,
-                                     const egl::Config *configuration,
                                      NativePixmapType nativePixmap,
                                      const egl::AttributeMap &attribs) override;
 
@@ -149,14 +146,13 @@ class DisplayOzone final : public DisplayEGL
     // one required so that the subsequent swapBuffers acts as expected.
     void setSwapInterval(EGLSurface drawable, SwapControlData *data);
 
-    egl::Error getDriverVersion(std::string *version) const override;
-
   private:
     GLuint makeShader(GLuint type, const char *src);
     void drawBuffer(Buffer *buffer);
     void drawWithBlit(Buffer *buffer);
     void drawWithTexture(Buffer *buffer);
     void flushGL();
+    bool hasUsableScreen(int fd);
     void presentScreen();
     static void pageFlipHandler(int fd,
                                 unsigned int sequence,

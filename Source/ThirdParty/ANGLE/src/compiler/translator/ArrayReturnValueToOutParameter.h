@@ -3,14 +3,18 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
-// The ArrayReturnValueToOutParameter function changes return values of an array type to out parameters in
+// The ArrayReturnValueToOutParameter function changes return values of an array type to out
+// parameters in
 // function definitions, prototypes and call sites.
 
 #ifndef COMPILER_TRANSLATOR_ARRAYRETURNVALUETOOUTPARAMETER_H_
 #define COMPILER_TRANSLATOR_ARRAYRETURNVALUETOOUTPARAMETER_H_
 
+namespace sh
+{
 class TIntermNode;
 
 void ArrayReturnValueToOutParameter(TIntermNode *root, unsigned int *temporaryIndex);
+}  // namespace sh
 
 #endif  // COMPILER_TRANSLATOR_ARRAYRETURNVALUETOOUTPARAMETER_H_

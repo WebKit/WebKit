@@ -7,6 +7,8 @@
 #ifndef LIBANGLE_FEATURES_H_
 #define LIBANGLE_FEATURES_H_
 
+#include "common/platform.h"
+
 #define ANGLE_DISABLED 0
 #define ANGLE_ENABLED 1
 
@@ -49,5 +51,15 @@
 #if !defined(ANGLE_PROGRAM_LINK_VALIDATE_UNIFORM_PRECISION)
 #define ANGLE_PROGRAM_LINK_VALIDATE_UNIFORM_PRECISION ANGLE_ENABLED
 #endif
+
+// Controls if our threading code uses std::async or falls back to single-threaded operations.
+// TODO(jmadill): Enable on Linux once STL chrono headers are updated.
+#if !defined(ANGLE_STD_ASYNC_WORKERS)
+#if defined(ANGLE_PLATFORM_WINDOWS)
+#define ANGLE_STD_ASYNC_WORKERS ANGLE_ENABLED
+#else
+#define ANGLE_STD_ASYNC_WORKERS ANGLE_DISABLED
+#endif  // defined(ANGLE_PLATFORM_WINDOWS)
+#endif  // !defined(ANGLE_STD_ASYNC_WORKERS)
 
 #endif // LIBANGLE_FEATURES_H_

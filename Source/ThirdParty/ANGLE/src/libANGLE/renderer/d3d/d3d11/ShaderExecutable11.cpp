@@ -17,27 +17,42 @@ ShaderExecutable11::ShaderExecutable11(const void *function, size_t length, ID3D
     : ShaderExecutableD3D(function, length)
 {
     mPixelExecutable = executable;
-    mVertexExecutable = NULL;
-    mGeometryExecutable = NULL;
-    mStreamOutExecutable = NULL;
+    mVertexExecutable    = nullptr;
+    mGeometryExecutable  = nullptr;
+    mStreamOutExecutable = nullptr;
+    mComputeExecutable   = nullptr;
 }
 
 ShaderExecutable11::ShaderExecutable11(const void *function, size_t length, ID3D11VertexShader *executable, ID3D11GeometryShader *streamOut)
     : ShaderExecutableD3D(function, length)
 {
     mVertexExecutable = executable;
-    mPixelExecutable = NULL;
-    mGeometryExecutable = NULL;
+    mPixelExecutable     = nullptr;
+    mGeometryExecutable  = nullptr;
     mStreamOutExecutable = streamOut;
+    mComputeExecutable   = nullptr;
 }
 
 ShaderExecutable11::ShaderExecutable11(const void *function, size_t length, ID3D11GeometryShader *executable)
     : ShaderExecutableD3D(function, length)
 {
     mGeometryExecutable = executable;
-    mVertexExecutable = NULL;
-    mPixelExecutable = NULL;
-    mStreamOutExecutable = NULL;
+    mVertexExecutable    = nullptr;
+    mPixelExecutable     = nullptr;
+    mStreamOutExecutable = nullptr;
+    mComputeExecutable   = nullptr;
+}
+
+ShaderExecutable11::ShaderExecutable11(const void *function,
+                                       size_t length,
+                                       ID3D11ComputeShader *executable)
+    : ShaderExecutableD3D(function, length)
+{
+    mComputeExecutable   = executable;
+    mPixelExecutable     = nullptr;
+    mVertexExecutable    = nullptr;
+    mGeometryExecutable  = nullptr;
+    mStreamOutExecutable = nullptr;
 }
 
 ShaderExecutable11::~ShaderExecutable11()
@@ -46,6 +61,7 @@ ShaderExecutable11::~ShaderExecutable11()
     SafeRelease(mPixelExecutable);
     SafeRelease(mGeometryExecutable);
     SafeRelease(mStreamOutExecutable);
+    SafeRelease(mComputeExecutable);
 }
 
 ID3D11VertexShader *ShaderExecutable11::getVertexShader() const
@@ -68,6 +84,11 @@ ID3D11GeometryShader *ShaderExecutable11::getStreamOutShader() const
     return mStreamOutExecutable;
 }
 
+ID3D11ComputeShader *ShaderExecutable11::getComputeShader() const
+{
+    return mComputeExecutable;
+}
+
 UniformStorage11::UniformStorage11(Renderer11 *renderer, size_t initialSize)
     : UniformStorageD3D(initialSize),
       mConstantBuffer(NULL)
@@ -85,7 +106,6 @@ UniformStorage11::UniformStorage11(Renderer11 *renderer, size_t initialSize)
         constantBufferDescription.StructureByteStride = 0;
 
         HRESULT result = d3d11Device->CreateBuffer(&constantBufferDescription, NULL, &mConstantBuffer);
-        UNUSED_ASSERTION_VARIABLE(result);
         ASSERT(SUCCEEDED(result));
     }
 }

@@ -11,10 +11,14 @@
 #ifndef COMPILER_TRANSLATOR_INTERMNODEPATTERNMATCHER_H_
 #define COMPILER_TRANSLATOR_INTERMNODEPATTERNMATCHER_H_
 
+namespace sh
+{
+
 class TIntermAggregate;
 class TIntermBinary;
 class TIntermNode;
 class TIntermTernary;
+class TIntermDeclaration;
 
 class IntermNodePatternMatcher
 {
@@ -31,7 +35,10 @@ class IntermNodePatternMatcher
         kExpressionReturningArray = 0x0002,
 
         // Matches dynamic indexing of vectors or matrices in l-values.
-        kDynamicIndexingOfVectorOrMatrixInLValue = 0x0004
+        kDynamicIndexingOfVectorOrMatrixInLValue = 0x0004,
+
+        // Matches declarations with more than one declared variables
+        kMultiDeclaration = 0x0008,
     };
     IntermNodePatternMatcher(const unsigned int mask);
 
@@ -43,11 +50,14 @@ class IntermNodePatternMatcher
 
     bool match(TIntermAggregate *node, TIntermNode *parentNode);
     bool match(TIntermTernary *node);
+    bool match(TIntermDeclaration *node);
 
   private:
     const unsigned int mMask;
 
     bool matchInternal(TIntermBinary *node, TIntermNode *parentNode);
 };
+
+}  // namespace sh
 
 #endif

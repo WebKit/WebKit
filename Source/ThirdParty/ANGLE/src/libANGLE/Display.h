@@ -18,11 +18,13 @@
 #include "libANGLE/Caps.h"
 #include "libANGLE/Config.h"
 #include "libANGLE/Error.h"
+#include "libANGLE/LoggingAnnotator.h"
 #include "libANGLE/Version.h"
 
 namespace gl
 {
 class Context;
+class TextureManager;
 }
 
 namespace rx
@@ -37,6 +39,13 @@ class Image;
 class Surface;
 class Stream;
 
+using SurfaceSet = std::set<Surface *>;
+
+struct DisplayState final : angle::NonCopyable
+{
+    SurfaceSet surfaceSet;
+};
+
 class Display final : angle::NonCopyable
 {
   public:
@@ -45,19 +54,22 @@ class Display final : angle::NonCopyable
     Error initialize();
     void terminate();
 
-    static egl::Display *GetDisplayFromDevice(void *native_display);
-    static egl::Display *GetDisplayFromAttribs(void *native_display, const AttributeMap &attribMap);
+    static egl::Display *GetDisplayFromDevice(Device *device);
+    static egl::Display *GetDisplayFromNativeDisplay(EGLNativeDisplayType nativeDisplay,
+                                                     const AttributeMap &attribMap);
 
     static const ClientExtensions &getClientExtensions();
     static const std::string &getClientExtensionString();
 
     std::vector<const Config*> getConfigs(const egl::AttributeMap &attribs) const;
-    bool getConfigAttrib(const Config *configuration, EGLint attribute, EGLint *value);
 
     Error createWindowSurface(const Config *configuration, EGLNativeWindowType window, const AttributeMap &attribs,
                               Surface **outSurface);
     Error createPbufferSurface(const Config *configuration, const AttributeMap &attribs, Surface **outSurface);
-    Error createPbufferFromClientBuffer(const Config *configuration, EGLClientBuffer shareHandle, const AttributeMap &attribs,
+    Error createPbufferFromClientBuffer(const Config *configuration,
+                                        EGLenum buftype,
+                                        EGLClientBuffer clientBuffer,
+                                        const AttributeMap &attribs,
                                         Surface **outSurface);
     Error createPixmapSurface(const Config *configuration, NativePixmapType nativePixmap, const AttributeMap &attribs,
                               Surface **outSurface);
@@ -82,11 +94,16 @@ class Display final : angle::NonCopyable
 
     bool isInitialized() const;
     bool isValidConfig(const Config *config) const;
-    bool isValidContext(gl::Context *context) const;
-    bool isValidSurface(egl::Surface *surface) const;
+    bool isValidContext(const gl::Context *context) const;
+    bool isValidSurface(const egl::Surface *surface) const;
     bool isValidImage(const Image *image) const;
     bool isValidStream(const Stream *stream) const;
     bool isValidNativeWindow(EGLNativeWindowType window) const;
+
+    Error validateClientBuffer(const Config *configuration,
+                               EGLenum buftype,
+                               EGLClientBuffer clientBuffer,
+                               const AttributeMap &attribs);
 
     static bool isValidDisplay(const egl::Display *display);
     static bool isValidNativeDisplay(EGLNativeDisplayType display);
@@ -108,11 +125,13 @@ class Display final : angle::NonCopyable
     const AttributeMap &getAttributeMap() const { return mAttributeMap; }
     EGLNativeDisplayType getNativeDisplayId() const { return mDisplayId; }
 
-    rx::DisplayImpl *getImplementation() { return mImplementation; }
+    rx::DisplayImpl *getImplementation() const { return mImplementation; }
     Device *getDevice() const;
     EGLenum getPlatform() const { return mPlatform; }
 
     gl::Version getMaxSupportedESVersion() const;
+
+    const DisplayState &getState() const { return mState; }
 
   private:
     Display(EGLenum platform, EGLNativeDisplayType displayId, Device *eglDevice);
@@ -124,6 +143,7 @@ class Display final : angle::NonCopyable
     void initDisplayExtensions();
     void initVendorString();
 
+    DisplayState mState;
     rx::DisplayImpl *mImplementation;
 
     EGLNativeDisplayType mDisplayId;
@@ -152,8 +172,12 @@ class Display final : angle::NonCopyable
 
     Device *mDevice;
     EGLenum mPlatform;
+    angle::LoggingAnnotator mAnnotator;
+
+    gl::TextureManager *mTextureManager;
+    size_t mGlobalTextureShareGroupUsers;
 };
 
-}
+}  // namespace egl
 
 #endif   // LIBANGLE_DISPLAY_H_

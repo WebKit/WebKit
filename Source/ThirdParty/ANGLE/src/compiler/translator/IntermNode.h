@@ -27,11 +27,17 @@
 #include "compiler/translator/Operator.h"
 #include "compiler/translator/Types.h"
 
+namespace sh
+{
+
 class TDiagnostics;
 
 class TIntermTraverser;
 class TIntermAggregate;
 class TIntermBlock;
+class TIntermInvariantDeclaration;
+class TIntermDeclaration;
+class TIntermFunctionPrototype;
 class TIntermFunctionDefinition;
 class TIntermSwizzle;
 class TIntermBinary;
@@ -50,6 +56,7 @@ class TIntermRaw;
 class TIntermBranch;
 
 class TSymbolTable;
+class TSymbolUniqueId;
 class TFunction;
 
 // Encapsulate an identifier string and track whether it is coming from the original shader code
@@ -87,7 +94,7 @@ class TIntermNode : angle::NonCopyable
         mLine.first_file = mLine.last_file = 0;
         mLine.first_line = mLine.last_line = 0;
     }
-    virtual ~TIntermNode() { }
+    virtual ~TIntermNode() {}
 
     const TSourceLoc &getLine() const { return mLine; }
     void setLine(const TSourceLoc &l) { mLine = l; }
@@ -98,6 +105,8 @@ class TIntermNode : angle::NonCopyable
     virtual TIntermFunctionDefinition *getAsFunctionDefinition() { return nullptr; }
     virtual TIntermAggregate *getAsAggregate() { return 0; }
     virtual TIntermBlock *getAsBlock() { return nullptr; }
+    virtual TIntermFunctionPrototype *getAsFunctionPrototypeNode() { return nullptr; }
+    virtual TIntermDeclaration *getAsDeclarationNode() { return nullptr; }
     virtual TIntermSwizzle *getAsSwizzleNode() { return nullptr; }
     virtual TIntermBinary *getAsBinaryNode() { return 0; }
     virtual TIntermUnary *getAsUnaryNode() { return 0; }
@@ -112,8 +121,7 @@ class TIntermNode : angle::NonCopyable
 
     // Replace a child node. Return true if |original| is a child
     // node and it is replaced; otherwise, return false.
-    virtual bool replaceChildNode(
-        TIntermNode *original, TIntermNode *replacement) = 0;
+    virtual bool replaceChildNode(TIntermNode *original, TIntermNode *replacement) = 0;
 
   protected:
     TSourceLoc mLine;
@@ -134,7 +142,7 @@ struct TIntermNodePair
 class TIntermTyped : public TIntermNode
 {
   public:
-    TIntermTyped(const TType &t) : mType(t)  { }
+    TIntermTyped(const TType &t) : mType(t) {}
 
     virtual TIntermTyped *deepCopy() const = 0;
 
@@ -150,6 +158,7 @@ class TIntermTyped : public TIntermNode
     TBasicType getBasicType() const { return mType.getBasicType(); }
     TQualifier getQualifier() const { return mType.getQualifier(); }
     TPrecision getPrecision() const { return mType.getPrecision(); }
+    TMemoryQualifier getMemoryQualifier() const { return mType.getMemoryQualifier(); }
     int getCols() const { return mType.getCols(); }
     int getRows() const { return mType.getRows(); }
     int getNominalSize() const { return mType.getNominalSize(); }
@@ -157,7 +166,7 @@ class TIntermTyped : public TIntermNode
 
     bool isInterfaceBlock() const { return mType.isInterfaceBlock(); }
     bool isMatrix() const { return mType.isMatrix(); }
-    bool isArray()  const { return mType.isArray(); }
+    bool isArray() const { return mType.isArray(); }
     bool isVector() const { return mType.isVector(); }
     bool isScalar() const { return mType.isScalar(); }
     bool isScalarInt() const { return mType.isScalarInt(); }
@@ -170,6 +179,7 @@ class TIntermTyped : public TIntermNode
 
     static TIntermTyped *CreateIndexNode(int index);
     static TIntermTyped *CreateZero(const TType &type);
+    static TIntermTyped *CreateBool(bool value);
 
   protected:
     TType mType;
@@ -195,7 +205,7 @@ class TIntermLoop : public TIntermNode
                 TIntermTyped *cond,
                 TIntermTyped *expr,
                 TIntermBlock *body)
-        : mType(type), mInit(init), mCond(cond), mExpr(expr), mBody(body), mUnrollFlag(false)
+        : mType(type), mInit(init), mCond(cond), mExpr(expr), mBody(body)
     {
     }
 
@@ -213,17 +223,12 @@ class TIntermLoop : public TIntermNode
     void setExpression(TIntermTyped *expression) { mExpr = expression; }
     void setBody(TIntermBlock *body) { mBody = body; }
 
-    void setUnrollFlag(bool flag) { mUnrollFlag = flag; }
-    bool getUnrollFlag() const { return mUnrollFlag; }
-
   protected:
     TLoopType mType;
-    TIntermNode *mInit;  // for-loop initialization
-    TIntermTyped *mCond; // loop exit condition
-    TIntermTyped *mExpr; // for-loop expression
+    TIntermNode *mInit;   // for-loop initialization
+    TIntermTyped *mCond;  // loop exit condition
+    TIntermTyped *mExpr;  // for-loop expression
     TIntermBlock *mBody;  // loop body
-
-    bool mUnrollFlag; // Whether the loop should be unrolled or not.
 };
 
 //
@@ -232,18 +237,16 @@ class TIntermLoop : public TIntermNode
 class TIntermBranch : public TIntermNode
 {
   public:
-    TIntermBranch(TOperator op, TIntermTyped *e)
-        : mFlowOp(op),
-          mExpression(e) { }
+    TIntermBranch(TOperator op, TIntermTyped *e) : mFlowOp(op), mExpression(e) {}
 
     void traverse(TIntermTraverser *it) override;
     TIntermBranch *getAsBranchNode() override { return this; }
     bool replaceChildNode(TIntermNode *original, TIntermNode *replacement) override;
 
     TOperator getFlowOp() { return mFlowOp; }
-    TIntermTyped* getExpression() { return mExpression; }
+    TIntermTyped *getExpression() { return mExpression; }
 
-protected:
+  protected:
     TOperator mFlowOp;
     TIntermTyped *mExpression;  // non-zero except for "return exp;" statements
 };
@@ -292,9 +295,7 @@ class TIntermSymbol : public TIntermTyped
 class TIntermRaw : public TIntermTyped
 {
   public:
-    TIntermRaw(const TType &type, const TString &rawText)
-        : TIntermTyped(type),
-          mRawText(rawText) { }
+    TIntermRaw(const TType &type, const TString &rawText) : TIntermTyped(type), mRawText(rawText) {}
     TIntermRaw(const TIntermRaw &) = delete;
 
     TIntermTyped *deepCopy() const override
@@ -382,7 +383,7 @@ class TIntermConstantUnion : public TIntermTyped
     const TConstantUnion *mUnionArrayPointer;
 
   private:
-    typedef float(*FloatTypeUnaryFunc) (float);
+    typedef float (*FloatTypeUnaryFunc)(float);
     void foldFloatTypeUnary(const TConstantUnion &parameter,
                             FloatTypeUnaryFunc builtinFunc,
                             TConstantUnion *result) const;
@@ -402,19 +403,19 @@ class TIntermOperator : public TIntermTyped
     bool isMultiplication() const;
     bool isConstructor() const;
 
+    // Returns true for calls mapped to EOpCall*, false for built-ins that have their own specific
+    // ops.
+    bool isFunctionCall() const;
+
     bool hasSideEffects() const override { return isAssignment(); }
 
   protected:
-    TIntermOperator(TOperator op)
-        : TIntermTyped(TType(EbtFloat, EbpUndefined)),
-          mOp(op) {}
-    TIntermOperator(TOperator op, const TType &type)
-        : TIntermTyped(type),
-          mOp(op) {}
+    TIntermOperator(TOperator op) : TIntermTyped(TType(EbtFloat, EbpUndefined)), mOp(op) {}
+    TIntermOperator(TOperator op, const TType &type) : TIntermTyped(type), mOp(op) {}
 
     TIntermOperator(const TIntermOperator &) = default;
 
-    TOperator mOp;
+    const TOperator mOp;
 };
 
 // Node for vector swizzles.
@@ -436,6 +437,7 @@ class TIntermSwizzle : public TIntermTyped
     void writeOffsetsAsXYZW(TInfoSinkBase *out) const;
 
     bool hasDuplicateOffsets() const;
+    bool offsetsMatch(int offset) const;
 
     TIntermTyped *fold();
 
@@ -483,8 +485,8 @@ class TIntermBinary : public TIntermOperator
     bool getAddIndexClamp() { return mAddIndexClamp; }
 
   protected:
-    TIntermTyped* mLeft;
-    TIntermTyped* mRight;
+    TIntermTyped *mLeft;
+    TIntermTyped *mRight;
 
     // If set to true, wrap any EOpIndexIndirect with a clamp to bounds.
     bool mAddIndexClamp;
@@ -534,10 +536,11 @@ class TFunctionSymbolInfo
 {
   public:
     POOL_ALLOCATOR_NEW_DELETE();
-    TFunctionSymbolInfo() : mId(0) {}
+    TFunctionSymbolInfo(const TSymbolUniqueId &id);
+    TFunctionSymbolInfo() : mId(nullptr) {}
 
-    TFunctionSymbolInfo(const TFunctionSymbolInfo &) = default;
-    TFunctionSymbolInfo &operator=(const TFunctionSymbolInfo &) = default;
+    TFunctionSymbolInfo(const TFunctionSymbolInfo &info);
+    TFunctionSymbolInfo &operator=(const TFunctionSymbolInfo &info);
 
     void setFromFunction(const TFunction &function);
 
@@ -546,58 +549,27 @@ class TFunctionSymbolInfo
 
     const TString &getName() const { return mName.getString(); }
     void setName(const TString &name) { mName.setString(name); }
-    bool isMain() const { return mName.getString() == "main("; }
+    bool isMain() const { return mName.getString() == "main"; }
 
-    void setId(int functionId) { mId = functionId; }
-    int getId() const { return mId; }
+    void setId(const TSymbolUniqueId &functionId);
+    const TSymbolUniqueId &getId() const;
+
   private:
     TName mName;
-    int mId;
-};
-
-// Node for function definitions.
-class TIntermFunctionDefinition : public TIntermTyped
-{
-  public:
-    // TODO(oetuaho@nvidia.com): See if TFunctionSymbolInfo could be added to constructor
-    // parameters.
-    TIntermFunctionDefinition(const TType &type, TIntermAggregate *parameters, TIntermBlock *body)
-        : TIntermTyped(type), mParameters(parameters), mBody(body)
-    {
-        ASSERT(parameters != nullptr);
-        ASSERT(body != nullptr);
-    }
-
-    TIntermFunctionDefinition *getAsFunctionDefinition() override { return this; }
-    void traverse(TIntermTraverser *it) override;
-    bool replaceChildNode(TIntermNode *original, TIntermNode *replacement) override;
-
-    TIntermTyped *deepCopy() const override
-    {
-        UNREACHABLE();
-        return nullptr;
-    }
-    bool hasSideEffects() const override
-    {
-        UNREACHABLE();
-        return true;
-    }
-
-    TIntermAggregate *getFunctionParameters() const { return mParameters; }
-    TIntermBlock *getBody() const { return mBody; }
-
-    TFunctionSymbolInfo *getFunctionSymbolInfo() { return &mFunctionInfo; }
-    const TFunctionSymbolInfo *getFunctionSymbolInfo() const { return &mFunctionInfo; }
-
-  private:
-    TIntermAggregate *mParameters;
-    TIntermBlock *mBody;
-
-    TFunctionSymbolInfo mFunctionInfo;
+    TSymbolUniqueId *mId;
 };
 
 typedef TVector<TIntermNode *> TIntermSequence;
 typedef TVector<int> TQualifierList;
+
+//
+// This is just to help yacc.
+//
+struct TIntermFunctionCallOrMethod
+{
+    TIntermSequence *arguments;
+    TIntermNode *thisNode;
+};
 
 // Interface for node classes that have an arbitrarily sized set of children.
 class TIntermAggregateBase
@@ -623,26 +595,27 @@ class TIntermAggregateBase
 class TIntermAggregate : public TIntermOperator, public TIntermAggregateBase
 {
   public:
-    TIntermAggregate()
-        : TIntermOperator(EOpNull),
-          mUserDefined(false),
-          mUseEmulatedFunction(false),
-          mGotPrecisionFromChildren(false)
-    {
-    }
-    TIntermAggregate(TOperator op)
-        : TIntermOperator(op),
-          mUserDefined(false),
-          mUseEmulatedFunction(false),
-          mGotPrecisionFromChildren(false)
-    {
-    }
-    ~TIntermAggregate() { }
+    static TIntermAggregate *CreateFunctionCall(const TFunction &func, TIntermSequence *arguments);
+
+    // If using this, ensure that there's a consistent function definition with the same symbol id
+    // added to the AST.
+    static TIntermAggregate *CreateFunctionCall(const TType &type,
+                                                const TSymbolUniqueId &id,
+                                                const TName &name,
+                                                TIntermSequence *arguments);
+
+    static TIntermAggregate *CreateBuiltInFunctionCall(const TFunction &func,
+                                                       TIntermSequence *arguments);
+    static TIntermAggregate *CreateConstructor(const TType &type,
+                                               TOperator op,
+                                               TIntermSequence *arguments);
+    static TIntermAggregate *Create(const TType &type, TOperator op, TIntermSequence *arguments);
+    ~TIntermAggregate() {}
 
     // Note: only supported for nodes that can be a part of an expression.
     TIntermTyped *deepCopy() const override { return new TIntermAggregate(*this); }
 
-    void setOp(TOperator op) { mOp = op; }
+    TIntermAggregate *shallowCopy() const;
 
     TIntermAggregate *getAsAggregate() override { return this; }
     void traverse(TIntermTraverser *it) override;
@@ -652,18 +625,13 @@ class TIntermAggregate : public TIntermOperator, public TIntermAggregateBase
     bool hasSideEffects() const override { return true; }
     TIntermTyped *fold(TDiagnostics *diagnostics);
 
-    TIntermSequence *getSequence() override { return &mSequence; }
-    const TIntermSequence *getSequence() const override { return &mSequence; }
+    TIntermSequence *getSequence() override { return &mArguments; }
+    const TIntermSequence *getSequence() const override { return &mArguments; }
 
-    void setUserDefined() { mUserDefined = true; }
-    bool isUserDefined() const { return mUserDefined; }
+    TString getSymbolTableMangledName() const;
 
     void setUseEmulatedFunction() { mUseEmulatedFunction = true; }
     bool getUseEmulatedFunction() { return mUseEmulatedFunction; }
-
-    bool areChildrenConstQualified();
-    void setPrecisionFromChildren();
-    void setBuiltInFunctionPrecision();
 
     // Returns true if changing parameter precision may affect the return value.
     bool gotPrecisionFromChildren() const { return mGotPrecisionFromChildren; }
@@ -672,11 +640,10 @@ class TIntermAggregate : public TIntermOperator, public TIntermAggregateBase
     const TFunctionSymbolInfo *getFunctionSymbolInfo() const { return &mFunctionInfo; }
 
   protected:
-    TIntermSequence mSequence;
-    bool mUserDefined; // used for user defined function names
+    TIntermSequence mArguments;
 
     // If set to true, replace the built-in function call with an emulated one
-    // to work around driver bugs.
+    // to work around driver bugs. Only for calls mapped to ops other than EOpCall*.
     bool mUseEmulatedFunction;
 
     bool mGotPrecisionFromChildren;
@@ -684,7 +651,24 @@ class TIntermAggregate : public TIntermOperator, public TIntermAggregateBase
     TFunctionSymbolInfo mFunctionInfo;
 
   private:
+    TIntermAggregate(const TType &type, TOperator op, TIntermSequence *arguments);
+
     TIntermAggregate(const TIntermAggregate &node);  // note: not deleted, just private!
+
+    void setTypePrecisionAndQualifier(const TType &type);
+
+    bool areChildrenConstQualified();
+
+    void setPrecisionFromChildren();
+
+    void setPrecisionForBuiltInOp();
+
+    // Returns true if precision was set according to special rules for this built-in.
+    bool setPrecisionForSpecialBuiltInOp();
+
+    // Used for built-in functions under EOpCallBuiltInFunction. The function name in the symbol
+    // info needs to be set before calling this.
+    void setBuiltInFunctionPrecision();
 };
 
 // A list of statements. Either the root node which contains declarations and function definitions,
@@ -707,6 +691,115 @@ class TIntermBlock : public TIntermNode, public TIntermAggregateBase
 
   protected:
     TIntermSequence mStatements;
+};
+
+// Function prototype. May be in the AST either as a function prototype declaration or as a part of
+// a function definition. The type of the node is the function return type.
+class TIntermFunctionPrototype : public TIntermTyped, public TIntermAggregateBase
+{
+  public:
+    // TODO(oetuaho@nvidia.com): See if TFunctionSymbolInfo could be added to constructor
+    // parameters.
+    TIntermFunctionPrototype(const TType &type, const TSymbolUniqueId &id)
+        : TIntermTyped(type), mFunctionInfo(id)
+    {
+    }
+    ~TIntermFunctionPrototype() {}
+
+    TIntermFunctionPrototype *getAsFunctionPrototypeNode() override { return this; }
+    void traverse(TIntermTraverser *it) override;
+    bool replaceChildNode(TIntermNode *original, TIntermNode *replacement) override;
+
+    TIntermTyped *deepCopy() const override
+    {
+        UNREACHABLE();
+        return nullptr;
+    }
+    bool hasSideEffects() const override
+    {
+        UNREACHABLE();
+        return true;
+    }
+
+    // Only intended for initially building the declaration.
+    void appendParameter(TIntermSymbol *parameter);
+
+    TIntermSequence *getSequence() override { return &mParameters; }
+    const TIntermSequence *getSequence() const override { return &mParameters; }
+
+    TFunctionSymbolInfo *getFunctionSymbolInfo() { return &mFunctionInfo; }
+    const TFunctionSymbolInfo *getFunctionSymbolInfo() const { return &mFunctionInfo; }
+
+  protected:
+    TIntermSequence mParameters;
+
+    TFunctionSymbolInfo mFunctionInfo;
+};
+
+// Node for function definitions. The prototype child node stores the function header including
+// parameters, and the body child node stores the function body.
+class TIntermFunctionDefinition : public TIntermNode
+{
+  public:
+    TIntermFunctionDefinition(TIntermFunctionPrototype *prototype, TIntermBlock *body)
+        : TIntermNode(), mPrototype(prototype), mBody(body)
+    {
+        ASSERT(prototype != nullptr);
+        ASSERT(body != nullptr);
+    }
+
+    TIntermFunctionDefinition *getAsFunctionDefinition() override { return this; }
+    void traverse(TIntermTraverser *it) override;
+    bool replaceChildNode(TIntermNode *original, TIntermNode *replacement) override;
+
+    TIntermFunctionPrototype *getFunctionPrototype() const { return mPrototype; }
+    TIntermBlock *getBody() const { return mBody; }
+
+    const TFunctionSymbolInfo *getFunctionSymbolInfo() const
+    {
+        return mPrototype->getFunctionSymbolInfo();
+    }
+
+  private:
+    TIntermFunctionPrototype *mPrototype;
+    TIntermBlock *mBody;
+};
+
+// Struct, interface block or variable declaration. Can contain multiple variable declarators.
+class TIntermDeclaration : public TIntermNode, public TIntermAggregateBase
+{
+  public:
+    TIntermDeclaration() : TIntermNode() {}
+    ~TIntermDeclaration() {}
+
+    TIntermDeclaration *getAsDeclarationNode() override { return this; }
+    void traverse(TIntermTraverser *it) override;
+    bool replaceChildNode(TIntermNode *original, TIntermNode *replacement) override;
+
+    // Only intended for initially building the declaration.
+    // The declarator node should be either TIntermSymbol or TIntermBinary with op set to
+    // EOpInitialize.
+    void appendDeclarator(TIntermTyped *declarator);
+
+    TIntermSequence *getSequence() override { return &mDeclarators; }
+    const TIntermSequence *getSequence() const override { return &mDeclarators; }
+  protected:
+    TIntermSequence mDeclarators;
+};
+
+// Specialized declarations for attributing invariance.
+class TIntermInvariantDeclaration : public TIntermNode
+{
+  public:
+    TIntermInvariantDeclaration(TIntermSymbol *symbol, const TSourceLoc &line);
+
+    TIntermSymbol *getSymbol() { return mSymbol; }
+
+    void traverse(TIntermTraverser *it) override;
+    bool replaceChildNode(TIntermNode *original, TIntermNode *replacement) override;
+
+  private:
+    TIntermSymbol *mSymbol;
 };
 
 // For ternary operators like a ? b : c.
@@ -777,8 +870,7 @@ class TIntermSwitch : public TIntermNode
     }
 
     void traverse(TIntermTraverser *it) override;
-    bool replaceChildNode(
-        TIntermNode *original, TIntermNode *replacement) override;
+    bool replaceChildNode(TIntermNode *original, TIntermNode *replacement) override;
 
     TIntermSwitch *getAsSwitchNode() override { return this; }
 
@@ -797,15 +889,10 @@ class TIntermSwitch : public TIntermNode
 class TIntermCase : public TIntermNode
 {
   public:
-    TIntermCase(TIntermTyped *condition)
-        : TIntermNode(),
-          mCondition(condition)
-    {
-    }
+    TIntermCase(TIntermTyped *condition) : TIntermNode(), mCondition(condition) {}
 
     void traverse(TIntermTraverser *it) override;
-    bool replaceChildNode(
-        TIntermNode *original, TIntermNode *replacement) override;
+    bool replaceChildNode(TIntermNode *original, TIntermNode *replacement) override;
 
     TIntermCase *getAsCaseNode() override { return this; }
 
@@ -851,12 +938,21 @@ class TIntermTraverser : angle::NonCopyable
     virtual bool visitIfElse(Visit visit, TIntermIfElse *node) { return true; }
     virtual bool visitSwitch(Visit visit, TIntermSwitch *node) { return true; }
     virtual bool visitCase(Visit visit, TIntermCase *node) { return true; }
+    virtual bool visitFunctionPrototype(Visit visit, TIntermFunctionPrototype *node)
+    {
+        return true;
+    }
     virtual bool visitFunctionDefinition(Visit visit, TIntermFunctionDefinition *node)
     {
         return true;
     }
     virtual bool visitAggregate(Visit visit, TIntermAggregate *node) { return true; }
     virtual bool visitBlock(Visit visit, TIntermBlock *node) { return true; }
+    virtual bool visitInvariantDeclaration(Visit visit, TIntermInvariantDeclaration *node)
+    {
+        return true;
+    }
+    virtual bool visitDeclaration(Visit visit, TIntermDeclaration *node) { return true; }
     virtual bool visitLoop(Visit visit, TIntermLoop *node) { return true; }
     virtual bool visitBranch(Visit visit, TIntermBranch *node) { return true; }
 
@@ -873,9 +969,12 @@ class TIntermTraverser : angle::NonCopyable
     virtual void traverseIfElse(TIntermIfElse *node);
     virtual void traverseSwitch(TIntermSwitch *node);
     virtual void traverseCase(TIntermCase *node);
+    virtual void traverseFunctionPrototype(TIntermFunctionPrototype *node);
     virtual void traverseFunctionDefinition(TIntermFunctionDefinition *node);
     virtual void traverseAggregate(TIntermAggregate *node);
     virtual void traverseBlock(TIntermBlock *node);
+    virtual void traverseInvariantDeclaration(TIntermInvariantDeclaration *node);
+    virtual void traverseDeclaration(TIntermDeclaration *node);
     virtual void traverseLoop(TIntermLoop *node);
     virtual void traverseBranch(TIntermBranch *node);
 
@@ -893,7 +992,22 @@ class TIntermTraverser : angle::NonCopyable
     // Start creating temporary symbols from the given temporary symbol index + 1.
     void useTemporaryIndex(unsigned int *temporaryIndex);
 
+    static TIntermFunctionPrototype *CreateInternalFunctionPrototypeNode(
+        const TType &returnType,
+        const char *name,
+        const TSymbolUniqueId &functionId);
+    static TIntermFunctionDefinition *CreateInternalFunctionDefinitionNode(
+        const TType &returnType,
+        const char *name,
+        TIntermBlock *functionBody,
+        const TSymbolUniqueId &functionId);
+    static TIntermAggregate *CreateInternalFunctionCallNode(const TType &returnType,
+                                                            const char *name,
+                                                            const TSymbolUniqueId &functionId,
+                                                            TIntermSequence *arguments);
+
   protected:
+    // Should only be called from traverse*() functions
     void incrementDepth(TIntermNode *current)
     {
         mDepth++;
@@ -901,23 +1015,35 @@ class TIntermTraverser : angle::NonCopyable
         mPath.push_back(current);
     }
 
+    // Should only be called from traverse*() functions
     void decrementDepth()
     {
         mDepth--;
         mPath.pop_back();
     }
 
-    TIntermNode *getParentNode()
+    // RAII helper for incrementDepth/decrementDepth
+    class ScopedNodeInTraversalPath
     {
-        return mPath.size() == 0 ? NULL : mPath.back();
-    }
+      public:
+        ScopedNodeInTraversalPath(TIntermTraverser *traverser, TIntermNode *current)
+            : mTraverser(traverser)
+        {
+            mTraverser->incrementDepth(current);
+        }
+        ~ScopedNodeInTraversalPath() { mTraverser->decrementDepth(); }
+      private:
+        TIntermTraverser *mTraverser;
+    };
+
+    TIntermNode *getParentNode() { return mPath.size() <= 1 ? nullptr : mPath[mPath.size() - 2u]; }
 
     // Return the nth ancestor of the node being traversed. getAncestorNode(0) == getParentNode()
     TIntermNode *getAncestorNode(unsigned int n)
     {
-        if (mPath.size() > n)
+        if (mPath.size() > n + 1u)
         {
-            return mPath[mPath.size() - n - 1u];
+            return mPath[mPath.size() - n - 2u];
         }
         return nullptr;
     }
@@ -925,11 +1051,6 @@ class TIntermTraverser : angle::NonCopyable
     void pushParentBlock(TIntermBlock *node);
     void incrementParentBlockPos();
     void popParentBlock();
-
-    bool parentNodeIsBlock()
-    {
-        return !mParentBlockStack.empty() && getParentNode() == mParentBlockStack.back().node;
-    }
 
     // To replace a single node with multiple nodes on the parent aggregate node
     struct NodeReplaceWithMultipleEntry
@@ -966,10 +1087,12 @@ class TIntermTraverser : angle::NonCopyable
         TIntermSequence insertionsAfter;
     };
 
-    // Helper to insert statements in the parent block (sequence) of the node currently being traversed.
+    // Helper to insert statements in the parent block (sequence) of the node currently being
+    // traversed.
     // The statements will be inserted before the node being traversed once updateTree is called.
     // Should only be called during PreVisit or PostVisit from sequence nodes.
-    // Note that inserting more than one set of nodes to the same parent node on a single updateTree call is not
+    // Note that inserting more than one set of nodes to the same parent node on a single updateTree
+    // call is not
     // supported.
     void insertStatementsInParentBlock(const TIntermSequence &insertions);
 
@@ -986,11 +1109,12 @@ class TIntermTraverser : angle::NonCopyable
     // Helper to create a temporary symbol node.
     TIntermSymbol *createTempSymbol(const TType &type);
     // Create a node that declares but doesn't initialize a temporary symbol.
-    TIntermAggregate *createTempDeclaration(const TType &type);
-    // Create a node that initializes the current temporary symbol with initializer having the given qualifier.
-    TIntermAggregate *createTempInitDeclaration(TIntermTyped *initializer, TQualifier qualifier);
+    TIntermDeclaration *createTempDeclaration(const TType &type);
+    // Create a node that initializes the current temporary symbol with initializer having the given
+    // qualifier.
+    TIntermDeclaration *createTempInitDeclaration(TIntermTyped *initializer, TQualifier qualifier);
     // Create a node that initializes the current temporary symbol with initializer.
-    TIntermAggregate *createTempInitDeclaration(TIntermTyped *initializer);
+    TIntermDeclaration *createTempInitDeclaration(TIntermTyped *initializer);
     // Create a node that assigns rightNode to the current temporary symbol.
     TIntermBinary *createTempAssignment(TIntermTyped *rightNode);
     // Increment temporary symbol index.
@@ -1018,9 +1142,6 @@ class TIntermTraverser : angle::NonCopyable
     int mDepth;
     int mMaxDepth;
 
-    // All the nodes from root to the current node's parent during traversing.
-    TVector<TIntermNode *> mPath;
-
     bool mInGlobalScope;
 
     // During traversing, save all the changes that need to happen into
@@ -1030,6 +1151,8 @@ class TIntermTraverser : angle::NonCopyable
     std::vector<NodeInsertMultipleEntry> mInsertions;
 
   private:
+    static TName GetInternalFunctionName(const char *name);
+
     // To replace a single node with another on the parent node
     struct NodeUpdateEntry
     {
@@ -1063,6 +1186,9 @@ class TIntermTraverser : angle::NonCopyable
 
     std::vector<NodeUpdateEntry> mReplacements;
 
+    // All the nodes from root to the current node during traversing.
+    TVector<TIntermNode *> mPath;
+
     // All the code blocks from the root to the current node's parent during traversal.
     std::vector<ParentBlock> mParentBlockStack;
 
@@ -1090,7 +1216,7 @@ class TLValueTrackingTraverser : public TIntermTraverser
 
     void traverseBinary(TIntermBinary *node) final;
     void traverseUnary(TIntermUnary *node) final;
-    void traverseFunctionDefinition(TIntermFunctionDefinition *node) final;
+    void traverseFunctionPrototype(TIntermFunctionPrototype *node) final;
     void traverseAggregate(TIntermAggregate *node) final;
 
   protected:
@@ -1098,10 +1224,6 @@ class TLValueTrackingTraverser : public TIntermTraverser
     {
         return mOperatorRequiresLValue || mInFunctionCallOutParameter;
     }
-
-    // Return true if the prototype or definition of the function being called has been encountered
-    // during traversal.
-    bool isInFunctionMap(const TIntermAggregate *callNode) const;
 
   private:
     // Track whether an l-value is required in the node that is currently being traversed by the
@@ -1114,7 +1236,11 @@ class TLValueTrackingTraverser : public TIntermTraverser
     bool operatorRequiresLValue() const { return mOperatorRequiresLValue; }
 
     // Add a function encountered during traversal to the function map.
-    void addToFunctionMap(const TName &name, TIntermSequence *paramSequence);
+    void addToFunctionMap(const TSymbolUniqueId &id, TIntermSequence *paramSequence);
+
+    // Return true if the prototype or definition of the function being called has been encountered
+    // during traversal.
+    bool isInFunctionMap(const TIntermAggregate *callNode) const;
 
     // Return the parameters sequence from the function definition or prototype.
     TIntermSequence *getFunctionParameters(const TIntermAggregate *callNode);
@@ -1126,20 +1252,8 @@ class TLValueTrackingTraverser : public TIntermTraverser
     bool mOperatorRequiresLValue;
     bool mInFunctionCallOutParameter;
 
-    struct TNameComparator
-    {
-        bool operator()(const TName &a, const TName &b) const
-        {
-            int compareResult = a.getString().compare(b.getString());
-            if (compareResult != 0)
-                return compareResult < 0;
-            // Internal functions may have same names as non-internal functions.
-            return !a.isInternal() && b.isInternal();
-        }
-    };
-
-    // Map from mangled function names to their parameter sequences
-    TMap<TName, TIntermSequence *, TNameComparator> mFunctionMap;
+    // Map from function symbol id values to their parameter sequences
+    TMap<int, TIntermSequence *> mFunctionMap;
 
     const TSymbolTable &mSymbolTable;
     const int mShaderVersion;
@@ -1154,8 +1268,9 @@ class TMaxDepthTraverser : public TIntermTraverser
   public:
     POOL_ALLOCATOR_NEW_DELETE();
     TMaxDepthTraverser(int depthLimit)
-        : TIntermTraverser(true, true, false),
-          mDepthLimit(depthLimit) { }
+        : TIntermTraverser(true, true, false), mDepthLimit(depthLimit)
+    {
+    }
 
     bool visitBinary(Visit, TIntermBinary *) override { return depthCheck(); }
     bool visitUnary(Visit, TIntermUnary *) override { return depthCheck(); }
@@ -1171,5 +1286,7 @@ class TMaxDepthTraverser : public TIntermTraverser
 
     int mDepthLimit;
 };
+
+}  // namespace sh
 
 #endif  // COMPILER_TRANSLATOR_INTERMNODE_H_

@@ -22,7 +22,7 @@ Texture2DMS<uint2> Stencil : register(t1);
 
 void PS_ResolveDepth(in float4 position : SV_Position,
                      in float2 texCoord : TEXCOORD0,
-                     out float depth : SV_Target0)
+                     out float depth : SV_Depth)
 {
     // MS samplers must use Load
     uint width, height, samples;

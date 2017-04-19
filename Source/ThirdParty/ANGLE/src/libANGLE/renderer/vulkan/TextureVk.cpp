@@ -22,7 +22,8 @@ TextureVk::~TextureVk()
 {
 }
 
-gl::Error TextureVk::setImage(GLenum target,
+gl::Error TextureVk::setImage(ContextImpl *contextImpl,
+                              GLenum target,
                               size_t level,
                               GLenum internalFormat,
                               const gl::Extents &size,
@@ -35,7 +36,8 @@ gl::Error TextureVk::setImage(GLenum target,
     return gl::Error(GL_INVALID_OPERATION);
 }
 
-gl::Error TextureVk::setSubImage(GLenum target,
+gl::Error TextureVk::setSubImage(ContextImpl *contextImpl,
+                                 GLenum target,
                                  size_t level,
                                  const gl::Box &area,
                                  GLenum format,
@@ -47,7 +49,8 @@ gl::Error TextureVk::setSubImage(GLenum target,
     return gl::Error(GL_INVALID_OPERATION);
 }
 
-gl::Error TextureVk::setCompressedImage(GLenum target,
+gl::Error TextureVk::setCompressedImage(ContextImpl *contextImpl,
+                                        GLenum target,
                                         size_t level,
                                         GLenum internalFormat,
                                         const gl::Extents &size,
@@ -59,7 +62,8 @@ gl::Error TextureVk::setCompressedImage(GLenum target,
     return gl::Error(GL_INVALID_OPERATION);
 }
 
-gl::Error TextureVk::setCompressedSubImage(GLenum target,
+gl::Error TextureVk::setCompressedSubImage(ContextImpl *contextImpl,
+                                           GLenum target,
                                            size_t level,
                                            const gl::Box &area,
                                            GLenum format,
@@ -71,7 +75,8 @@ gl::Error TextureVk::setCompressedSubImage(GLenum target,
     return gl::Error(GL_INVALID_OPERATION);
 }
 
-gl::Error TextureVk::copyImage(GLenum target,
+gl::Error TextureVk::copyImage(ContextImpl *contextImpl,
+                               GLenum target,
                                size_t level,
                                const gl::Rectangle &sourceArea,
                                GLenum internalFormat,
@@ -81,7 +86,8 @@ gl::Error TextureVk::copyImage(GLenum target,
     return gl::Error(GL_INVALID_OPERATION);
 }
 
-gl::Error TextureVk::copySubImage(GLenum target,
+gl::Error TextureVk::copySubImage(ContextImpl *contextImpl,
+                                  GLenum target,
                                   size_t level,
                                   const gl::Offset &destOffset,
                                   const gl::Rectangle &sourceArea,
@@ -91,7 +97,8 @@ gl::Error TextureVk::copySubImage(GLenum target,
     return gl::Error(GL_INVALID_OPERATION);
 }
 
-gl::Error TextureVk::setStorage(GLenum target,
+gl::Error TextureVk::setStorage(ContextImpl *contextImpl,
+                                GLenum target,
                                 size_t levels,
                                 GLenum internalFormat,
                                 const gl::Extents &size)
@@ -114,7 +121,7 @@ gl::Error TextureVk::setImageExternal(GLenum target,
     return gl::Error(GL_INVALID_OPERATION);
 }
 
-gl::Error TextureVk::generateMipmap()
+gl::Error TextureVk::generateMipmap(ContextImpl *contextImpl)
 {
     UNIMPLEMENTED();
     return gl::Error(GL_INVALID_OPERATION);
@@ -145,6 +152,17 @@ gl::Error TextureVk::getAttachmentRenderTarget(const gl::FramebufferAttachment::
 void TextureVk::syncState(const gl::Texture::DirtyBits &dirtyBits)
 {
     UNIMPLEMENTED();
+}
+
+gl::Error TextureVk::setStorageMultisample(ContextImpl *contextImpl,
+                                           GLenum target,
+                                           GLsizei samples,
+                                           GLint internalformat,
+                                           const gl::Extents &size,
+                                           GLboolean fixedSampleLocations)
+{
+    UNIMPLEMENTED();
+    return gl::InternalError() << "setStorageMultisample is unimplemented.";
 }
 
 }  // namespace rx

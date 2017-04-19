@@ -22,7 +22,10 @@ struct SourceLocation;
 class MacroExpander : public Lexer
 {
   public:
-    MacroExpander(Lexer *lexer, MacroSet *macroSet, Diagnostics *diagnostics);
+    MacroExpander(Lexer *lexer,
+                  MacroSet *macroSet,
+                  Diagnostics *diagnostics,
+                  int allowedMacroExpansionDepth);
     ~MacroExpander() override;
 
     void lex(Token *token) override;
@@ -32,12 +35,10 @@ class MacroExpander : public Lexer
     void ungetToken(const Token &token);
     bool isNextTokenLeftParen();
 
-    bool pushMacro(const Macro &macro, const Token &identifier);
+    bool pushMacro(std::shared_ptr<Macro> macro, const Token &identifier);
     void popMacro();
 
-    bool expandMacro(const Macro &macro,
-                     const Token &identifier,
-                     std::vector<Token> *replacements);
+    bool expandMacro(const Macro &macro, const Token &identifier, std::vector<Token> *replacements);
 
     typedef std::vector<Token> MacroArg;
     bool collectMacroArgs(const Macro &macro,
@@ -55,7 +56,7 @@ class MacroExpander : public Lexer
         const Token &get();
         void unget();
 
-        const Macro *macro;
+        std::shared_ptr<Macro> macro;
         std::size_t index;
         std::vector<Token> replacements;
     };
@@ -67,6 +68,13 @@ class MacroExpander : public Lexer
     std::unique_ptr<Token> mReserveToken;
     std::vector<MacroContext *> mContextStack;
     size_t mTotalTokensInContexts;
+
+    int mAllowedMacroExpansionDepth;
+
+    bool mDeferReenablingMacros;
+    std::vector<std::shared_ptr<Macro>> mMacrosToReenable;
+
+    class ScopedMacroReenabler;
 };
 
 }  // namespace pp

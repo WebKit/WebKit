@@ -6,17 +6,16 @@
 
 #include "compiler/translator/ValidateOutputs.h"
 #include "compiler/translator/InfoSink.h"
-#include "compiler/translator/InitializeParseContext.h"
 #include "compiler/translator/ParseContext.h"
+
+namespace sh
+{
 
 namespace
 {
-void error(int *errorCount, TInfoSinkBase &sink, const TIntermSymbol &symbol, const char *reason)
+void error(const TIntermSymbol &symbol, const char *reason, TDiagnostics *diagnostics)
 {
-    sink.prefix(EPrefixError);
-    sink.location(symbol.getLine());
-    sink << "'" << symbol.getSymbol() << "' : " << reason << "\n";
-    (*errorCount)++;
+    diagnostics->error(symbol.getLine(), reason, symbol.getSymbol().c_str());
 }
 
 }  // namespace
@@ -25,13 +24,14 @@ ValidateOutputs::ValidateOutputs(const TExtensionBehavior &extBehavior, int maxD
     : TIntermTraverser(true, false, false),
       mMaxDrawBuffers(maxDrawBuffers),
       mAllowUnspecifiedOutputLocationResolution(
-          IsExtensionEnabled(extBehavior, "GL_EXT_blend_func_extended"))
+          IsExtensionEnabled(extBehavior, "GL_EXT_blend_func_extended")),
+      mUsesFragDepth(false)
 {
 }
 
 void ValidateOutputs::visitSymbol(TIntermSymbol *symbol)
 {
-    TString name = symbol->getSymbol();
+    TString name         = symbol->getSymbol();
     TQualifier qualifier = symbol->getQualifier();
 
     if (mVisitedSymbols.count(name.c_str()) == 1)
@@ -41,21 +41,29 @@ void ValidateOutputs::visitSymbol(TIntermSymbol *symbol)
 
     if (qualifier == EvqFragmentOut)
     {
-        if (symbol->getType().getLayoutQualifier().location == -1)
-        {
-            mUnspecifiedLocationOutputs.push_back(symbol);
-        }
-        else
+        if (symbol->getType().getLayoutQualifier().location != -1)
         {
             mOutputs.push_back(symbol);
         }
+        else if (symbol->getType().getLayoutQualifier().yuv == true)
+        {
+            mYuvOutputs.push_back(symbol);
+        }
+        else
+        {
+            mUnspecifiedLocationOutputs.push_back(symbol);
+        }
+    }
+    else if (qualifier == EvqFragDepth || qualifier == EvqFragDepthEXT)
+    {
+        mUsesFragDepth = true;
     }
 }
 
-int ValidateOutputs::validateAndCountErrors(TInfoSinkBase &sink) const
+void ValidateOutputs::validate(TDiagnostics *diagnostics) const
 {
+    ASSERT(diagnostics);
     OutputVector validOutputs(mMaxDrawBuffers);
-    int errorCount = 0;
 
     for (const auto &symbol : mOutputs)
     {
@@ -75,7 +83,7 @@ int ValidateOutputs::validateAndCountErrors(TInfoSinkBase &sink) const
                     std::stringstream strstr;
                     strstr << "conflicting output locations with previously defined output '"
                            << validOutputs[offsetLocation]->getSymbol() << "'";
-                    error(&errorCount, sink, *symbol, strstr.str().c_str());
+                    error(*symbol, strstr.str().c_str(), diagnostics);
                 }
                 else
                 {
@@ -87,9 +95,10 @@ int ValidateOutputs::validateAndCountErrors(TInfoSinkBase &sink) const
         {
             if (elementCount > 0)
             {
-                error(&errorCount, sink, *symbol,
+                error(*symbol,
                       elementCount > 1 ? "output array locations would exceed MAX_DRAW_BUFFERS"
-                                       : "output location must be < MAX_DRAW_BUFFERS");
+                                       : "output location must be < MAX_DRAW_BUFFERS",
+                      diagnostics);
             }
         }
     }
@@ -100,9 +109,23 @@ int ValidateOutputs::validateAndCountErrors(TInfoSinkBase &sink) const
     {
         for (const auto &symbol : mUnspecifiedLocationOutputs)
         {
-            error(&errorCount, sink, *symbol,
-                  "must explicitly specify all locations when using multiple fragment outputs");
+            error(*symbol,
+                  "must explicitly specify all locations when using multiple fragment outputs",
+                  diagnostics);
         }
     }
-    return errorCount;
+
+    if (!mYuvOutputs.empty() && (mYuvOutputs.size() > 1 || mUsesFragDepth || !mOutputs.empty() ||
+                                 !mUnspecifiedLocationOutputs.empty()))
+    {
+        for (const auto &symbol : mYuvOutputs)
+        {
+            error(*symbol,
+                  "not allowed to specify yuv qualifier when using depth or multiple color "
+                  "fragment outputs",
+                  diagnostics);
+        }
+    }
 }
+
+}  // namespace sh

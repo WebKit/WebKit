@@ -22,7 +22,8 @@ TextureNULL::~TextureNULL()
 {
 }
 
-gl::Error TextureNULL::setImage(GLenum target,
+gl::Error TextureNULL::setImage(ContextImpl *contextImpl,
+                                GLenum target,
                                 size_t level,
                                 GLenum internalFormat,
                                 const gl::Extents &size,
@@ -31,11 +32,13 @@ gl::Error TextureNULL::setImage(GLenum target,
                                 const gl::PixelUnpackState &unpack,
                                 const uint8_t *pixels)
 {
-    UNIMPLEMENTED();
-    return gl::Error(GL_INVALID_OPERATION);
+    // TODO(geofflang): Read all incoming pixel data (maybe hash it?) to make sure we don't read out
+    // of bounds due to validation bugs.
+    return gl::NoError();
 }
 
-gl::Error TextureNULL::setSubImage(GLenum target,
+gl::Error TextureNULL::setSubImage(ContextImpl *contextImpl,
+                                   GLenum target,
                                    size_t level,
                                    const gl::Box &area,
                                    GLenum format,
@@ -43,11 +46,11 @@ gl::Error TextureNULL::setSubImage(GLenum target,
                                    const gl::PixelUnpackState &unpack,
                                    const uint8_t *pixels)
 {
-    UNIMPLEMENTED();
-    return gl::Error(GL_INVALID_OPERATION);
+    return gl::NoError();
 }
 
-gl::Error TextureNULL::setCompressedImage(GLenum target,
+gl::Error TextureNULL::setCompressedImage(ContextImpl *contextImpl,
+                                          GLenum target,
                                           size_t level,
                                           GLenum internalFormat,
                                           const gl::Extents &size,
@@ -55,11 +58,11 @@ gl::Error TextureNULL::setCompressedImage(GLenum target,
                                           size_t imageSize,
                                           const uint8_t *pixels)
 {
-    UNIMPLEMENTED();
-    return gl::Error(GL_INVALID_OPERATION);
+    return gl::NoError();
 }
 
-gl::Error TextureNULL::setCompressedSubImage(GLenum target,
+gl::Error TextureNULL::setCompressedSubImage(ContextImpl *contextImpl,
+                                             GLenum target,
                                              size_t level,
                                              const gl::Box &area,
                                              GLenum format,
@@ -67,77 +70,79 @@ gl::Error TextureNULL::setCompressedSubImage(GLenum target,
                                              size_t imageSize,
                                              const uint8_t *pixels)
 {
-    UNIMPLEMENTED();
-    return gl::Error(GL_INVALID_OPERATION);
+    return gl::NoError();
 }
 
-gl::Error TextureNULL::copyImage(GLenum target,
+gl::Error TextureNULL::copyImage(ContextImpl *contextImpl,
+                                 GLenum target,
                                  size_t level,
                                  const gl::Rectangle &sourceArea,
                                  GLenum internalFormat,
                                  const gl::Framebuffer *source)
 {
-    UNIMPLEMENTED();
-    return gl::Error(GL_INVALID_OPERATION);
+    return gl::NoError();
 }
 
-gl::Error TextureNULL::copySubImage(GLenum target,
+gl::Error TextureNULL::copySubImage(ContextImpl *contextImpl,
+                                    GLenum target,
                                     size_t level,
                                     const gl::Offset &destOffset,
                                     const gl::Rectangle &sourceArea,
                                     const gl::Framebuffer *source)
 {
-    UNIMPLEMENTED();
-    return gl::Error(GL_INVALID_OPERATION);
+    return gl::NoError();
 }
 
-gl::Error TextureNULL::setStorage(GLenum target,
+gl::Error TextureNULL::setStorage(ContextImpl *contextImpl,
+                                  GLenum target,
                                   size_t levels,
                                   GLenum internalFormat,
                                   const gl::Extents &size)
 {
-    UNIMPLEMENTED();
-    return gl::Error(GL_INVALID_OPERATION);
+    return gl::NoError();
 }
 
 gl::Error TextureNULL::setEGLImageTarget(GLenum target, egl::Image *image)
 {
-    UNIMPLEMENTED();
-    return gl::Error(GL_INVALID_OPERATION);
+    return gl::NoError();
 }
 
 gl::Error TextureNULL::setImageExternal(GLenum target,
                                         egl::Stream *stream,
                                         const egl::Stream::GLTextureDescription &desc)
 {
-    UNIMPLEMENTED();
-    return gl::Error(GL_INVALID_OPERATION);
+    return gl::NoError();
 }
 
-gl::Error TextureNULL::generateMipmap()
+gl::Error TextureNULL::generateMipmap(ContextImpl *contextImpl)
 {
-    UNIMPLEMENTED();
-    return gl::Error(GL_INVALID_OPERATION);
+    return gl::NoError();
 }
 
 void TextureNULL::setBaseLevel(GLuint baseLevel)
 {
-    UNIMPLEMENTED();
 }
 
 void TextureNULL::bindTexImage(egl::Surface *surface)
 {
-    UNIMPLEMENTED();
 }
 
 void TextureNULL::releaseTexImage()
 {
-    UNIMPLEMENTED();
 }
 
 void TextureNULL::syncState(const gl::Texture::DirtyBits &dirtyBits)
 {
-    UNIMPLEMENTED();
+}
+
+gl::Error TextureNULL::setStorageMultisample(ContextImpl *contextImpl,
+                                             GLenum target,
+                                             GLsizei samples,
+                                             GLint internalformat,
+                                             const gl::Extents &size,
+                                             GLboolean fixedSampleLocations)
+{
+    return gl::NoError();
 }
 
 }  // namespace rx

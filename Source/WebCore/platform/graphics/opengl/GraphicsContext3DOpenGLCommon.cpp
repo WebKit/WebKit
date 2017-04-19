@@ -405,7 +405,7 @@ bool GraphicsContext3D::checkVaryingsPacking(Platform3DObject vertexShader, Plat
 #else
     ::glGetIntegerv(MAX_VARYING_VECTORS, &maxVaryingVectors);
 #endif
-    return ShCheckVariablesWithinPackingLimits(maxVaryingVectors, variables);
+    return sh::CheckVariablesWithinPackingLimits(maxVaryingVectors, variables);
 }
 
 bool GraphicsContext3D::precisionsMatch(Platform3DObject vertexShader, Platform3DObject fragmentShader) const

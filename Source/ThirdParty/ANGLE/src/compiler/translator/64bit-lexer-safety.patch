@@ -1,6 +1,13 @@
---- a/src/compiler/glslang_lex.cpp
-+++ b/src/compiler/glslang_lex.cpp
-@@ -68,6 +68,7 @@ typedef int16_t flex_int16_t;
+diff --git a/src/compiler/translator/glslang_lex.cpp b/src/compiler/translator/glslang_lex.cpp
+index 1ba63df..2a206ab 100644
+--- a/src/compiler/translator/glslang_lex.cpp
++++ b/src/compiler/translator/glslang_lex.cpp
+@@ -1,4 +1,3 @@
+-#line 17 "./glslang.l"
+ //
+ // Copyright (c) 2012-2013 The ANGLE Project Authors. All rights reserved.
+ // Use of this source code is governed by a BSD-style license that can be
+@@ -149,6 +148,7 @@ typedef int16_t flex_int16_t;
  typedef uint16_t flex_uint16_t;
  typedef int32_t flex_int32_t;
  typedef uint32_t flex_uint32_t;
@@ -8,10 +15,10 @@
  #else
  typedef signed char flex_int8_t;
  typedef short int flex_int16_t;
-@@ -191,6 +192,11 @@ typedef void* yyscan_t;
- typedef struct yy_buffer_state *YY_BUFFER_STATE;
- #endif
-
+@@ -335,6 +335,11 @@ typedef size_t yy_size_t;
+ 
+ 
+ 
 +#ifndef YY_TYPEDEF_YY_SIZE_T
 +#define YY_TYPEDEF_YY_SIZE_T
 +typedef size_t yy_size_t;
@@ -20,21 +27,96 @@
  #define EOB_ACT_CONTINUE_SCAN 0
  #define EOB_ACT_END_OF_FILE 1
  #define EOB_ACT_LAST_MATCH 2
-@@ -204,7 +210,7 @@ typedef struct yy_buffer_state *YY_BUFFER_STATE;
+@@ -351,8 +356,8 @@ typedef size_t yy_size_t;
       */
      #define  YY_LESS_LINENO(n) \
              do { \
 -                int yyl;\
+-                for ( yyl = n; yyl < yyleng; ++yyl )\
 +                yy_size_t yyl;\
-                 for ( yyl = n; yyl < yyleng; ++yyl )\
++                for ( yyl = n; yyl < static_cast<yy_site_t>(yyleng); ++yyl )\
                      if ( yytext[yyl] == '\n' )\
                          --yylineno;\
-@@ -378,7 +379,7 @@ static void yy_fatal_error (yyconst char msg[] ,yyscan_t yyscanner );
-  */
- #define YY_DO_BEFORE_ACTION \
- 	yyg->yytext_ptr = yy_bp; \
--	yyleng = (size_t) (yy_cp - yy_bp); \
-+	yyleng = (yy_size_t) (yy_cp - yy_bp); \
- 	yyg->yy_hold_char = *yy_cp; \
- 	*yy_cp = '\0'; \
- 	yyg->yy_c_buf_p = yy_cp;
+             }while(0)
+@@ -1692,7 +1697,7 @@ yy_find_action:
+ 		if ( yy_act != YY_END_OF_BUFFER && yy_rule_can_match_eol[yy_act] )
+ 			{
+ 			yy_size_t yyl;
+-			for ( yyl = 0; yyl < yyleng; ++yyl )
++			for ( yyl = 0; yyl < static_cast<yy_size_t>(yyleng); ++yyl )
+ 				if ( yytext[yyl] == '\n' )
+ 					   
+     do{ yylineno++;
+@@ -2655,7 +2660,7 @@ static int yy_get_next_buffer (yyscan_t yyscanner)
+ 	else
+ 		{
+ 			int num_to_read =
+-			YY_CURRENT_BUFFER_LVALUE->yy_buf_size - number_to_move - 1;
++			YY_CURRENT_BUFFER_LVALUE->yy_buf_size - static_cast<int>(number_to_move) - 1;
+ 
+ 		while ( num_to_read <= 0 )
+ 			{ /* Not enough room in the buffer - grow it. */
+@@ -2690,7 +2695,7 @@ static int yy_get_next_buffer (yyscan_t yyscanner)
+ 			yyg->yy_c_buf_p = &b->yy_ch_buf[yy_c_buf_p_offset];
+ 
+ 			num_to_read = YY_CURRENT_BUFFER_LVALUE->yy_buf_size -
+-						number_to_move - 1;
++						static_cast<int>(number_to_move) - 1;
+ 
+ 			}
+ 
+@@ -2698,8 +2703,10 @@ static int yy_get_next_buffer (yyscan_t yyscanner)
+ 			num_to_read = YY_READ_BUF_SIZE;
+ 
+ 		/* Read in more data. */
++        size_t result = 0;
+ 		YY_INPUT( (&YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[number_to_move]),
+-			yyg->yy_n_chars, num_to_read );
++            result, num_to_read );
++        yyg->yy_n_chars = static_cast<int>(result);
+ 
+ 		YY_CURRENT_BUFFER_LVALUE->yy_n_chars = yyg->yy_n_chars;
+ 		}
+@@ -2725,13 +2732,13 @@ static int yy_get_next_buffer (yyscan_t yyscanner)
+ 
+ 	if ((int) (yyg->yy_n_chars + number_to_move) > YY_CURRENT_BUFFER_LVALUE->yy_buf_size) {
+ 		/* Extend the array by 50%, plus the number we really need. */
+-		int new_size = yyg->yy_n_chars + number_to_move + (yyg->yy_n_chars >> 1);
++		int new_size = yyg->yy_n_chars + static_cast<int>(number_to_move) + (yyg->yy_n_chars >> 1);
+ 		YY_CURRENT_BUFFER_LVALUE->yy_ch_buf = (char *) yyrealloc((void *) YY_CURRENT_BUFFER_LVALUE->yy_ch_buf,new_size ,yyscanner );
+ 		if ( ! YY_CURRENT_BUFFER_LVALUE->yy_ch_buf )
+ 			YY_FATAL_ERROR( "out of dynamic memory in yy_get_next_buffer()" );
+ 	}
+ 
+-	yyg->yy_n_chars += number_to_move;
++	yyg->yy_n_chars += static_cast<int>(number_to_move);
+ 	YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[yyg->yy_n_chars] = YY_END_OF_BUFFER_CHAR;
+ 	YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[yyg->yy_n_chars + 1] = YY_END_OF_BUFFER_CHAR;
+ 
+@@ -3158,7 +3165,7 @@ static void yyensure_buffer_stack (yyscan_t yyscanner)
+ 		/* Increase the buffer to prepare for a possible push. */
+ 		yy_size_t grow_size = 8 /* arbitrary grow size */;
+ 
+-		num_to_alloc = yyg->yy_buffer_stack_max + grow_size;
++		num_to_alloc = static_cast<int>(yyg->yy_buffer_stack_max + grow_size);
+ 		yyg->yy_buffer_stack = (struct yy_buffer_state**)yyrealloc
+ 								(yyg->yy_buffer_stack,
+ 								num_to_alloc * sizeof(struct yy_buffer_state*)
+@@ -3196,7 +3203,7 @@ YY_BUFFER_STATE yy_scan_buffer  (char * base, yy_size_t  size , yyscan_t yyscann
+ 	if ( ! b )
+ 		YY_FATAL_ERROR( "out of dynamic memory in yy_scan_buffer()" );
+ 
+-	b->yy_buf_size = size - 2;	/* "- 2" to take care of EOB's */
++	b->yy_buf_size = static_cast<int>(size) - 2;	/* "- 2" to take care of EOB's */
+ 	b->yy_buf_pos = b->yy_ch_buf = base;
+ 	b->yy_is_our_buffer = 0;
+ 	b->yy_input_file = NULL;
+@@ -3251,7 +3258,7 @@ YY_BUFFER_STATE yy_scan_bytes  (yyconst char * yybytes, int  _yybytes_len , yysc
+ 	if ( ! buf )
+ 		YY_FATAL_ERROR( "out of dynamic memory in yy_scan_bytes()" );
+ 
+-	for ( i = 0; i < _yybytes_len; ++i )
++	for ( i = 0; i < static_cast<yy_size_t>(_yybytes_len); ++i )
+ 		buf[i] = yybytes[i];
+ 
+ 	buf[_yybytes_len] = buf[_yybytes_len+1] = YY_END_OF_BUFFER_CHAR;

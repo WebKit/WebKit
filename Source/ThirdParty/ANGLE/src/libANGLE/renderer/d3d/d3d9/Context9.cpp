@@ -82,9 +82,9 @@ RenderbufferImpl *Context9::createRenderbuffer()
     return new RenderbufferD3D(mRenderer);
 }
 
-BufferImpl *Context9::createBuffer()
+BufferImpl *Context9::createBuffer(const gl::BufferState &state)
 {
-    return new Buffer9(mRenderer);
+    return new Buffer9(state, mRenderer);
 }
 
 VertexArrayImpl *Context9::createVertexArray(const gl::VertexArrayState &data)
@@ -178,6 +178,18 @@ gl::Error Context9::drawRangeElements(GLenum mode,
     return mRenderer->genericDrawElements(this, mode, count, type, indices, 0, indexRange);
 }
 
+gl::Error Context9::drawArraysIndirect(GLenum mode, const GLvoid *indirect)
+{
+    UNREACHABLE();
+    return gl::InternalError() << "D3D9 doesn't support ES 3.1 DrawArraysIndirect API";
+}
+
+gl::Error Context9::drawElementsIndirect(GLenum mode, GLenum type, const GLvoid *indirect)
+{
+    UNREACHABLE();
+    return gl::InternalError() << "D3D9 doesn't support ES 3.1 DrawElementsIndirect API";
+}
+
 GLenum Context9::getResetStatus()
 {
     return mRenderer->getResetStatus();
@@ -216,9 +228,9 @@ void Context9::popGroupMarker()
     mRenderer->getAnnotator()->endEvent();
 }
 
-void Context9::syncState(const gl::State &state, const gl::State::DirtyBits &dirtyBits)
+void Context9::syncState(const gl::State::DirtyBits &dirtyBits)
 {
-    mRenderer->getStateManager()->syncState(state, dirtyBits);
+    mRenderer->getStateManager()->syncState(mState.getState(), dirtyBits);
 }
 
 GLint Context9::getGPUDisjoint()
@@ -253,6 +265,12 @@ const gl::Extensions &Context9::getNativeExtensions() const
 const gl::Limitations &Context9::getNativeLimitations() const
 {
     return mRenderer->getNativeLimitations();
+}
+
+gl::Error Context9::dispatchCompute(GLuint numGroupsX, GLuint numGroupsY, GLuint numGroupsZ)
+{
+    UNREACHABLE();
+    return gl::InternalError() << "D3D9 doesn't support ES 3.1 DispatchCompute API";
 }
 
 }  // namespace rx

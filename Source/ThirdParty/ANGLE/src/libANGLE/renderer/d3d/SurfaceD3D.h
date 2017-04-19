@@ -28,10 +28,10 @@ class SurfaceD3D : public SurfaceImpl
     ~SurfaceD3D() override;
     void releaseSwapChain();
 
-    egl::Error initialize() override;
+    egl::Error initialize(const DisplayImpl *displayImpl) override;
     FramebufferImpl *createDefaultFramebuffer(const gl::FramebufferState &state) override;
 
-    egl::Error swap() override;
+    egl::Error swap(const DisplayImpl *displayImpl) override;
     egl::Error postSubBuffer(EGLint x, EGLint y, EGLint width, EGLint height) override;
     egl::Error querySurfacePointerANGLE(EGLint attribute, void **value) override;
     egl::Error bindTexImage(gl::Texture *texture, EGLint buffer) override;
@@ -60,9 +60,9 @@ class SurfaceD3D : public SurfaceImpl
     SurfaceD3D(const egl::SurfaceState &state,
                RendererD3D *renderer,
                egl::Display *display,
-               const egl::Config *config,
                EGLNativeWindowType window,
-               EGLClientBuffer shareHandle,
+               EGLenum buftype,
+               EGLClientBuffer clientBuffer,
                const egl::AttributeMap &attribs);
 
     egl::Error swapRect(EGLint x, EGLint y, EGLint width, EGLint height);
@@ -88,6 +88,7 @@ class SurfaceD3D : public SurfaceImpl
     EGLint mSwapInterval;
 
     HANDLE mShareHandle;
+    IUnknown *mD3DTexture;
 };
 
 class WindowSurfaceD3D : public SurfaceD3D
@@ -96,7 +97,6 @@ class WindowSurfaceD3D : public SurfaceD3D
     WindowSurfaceD3D(const egl::SurfaceState &state,
                      RendererD3D *renderer,
                      egl::Display *display,
-                     const egl::Config *config,
                      EGLNativeWindowType window,
                      const egl::AttributeMap &attribs);
     ~WindowSurfaceD3D() override;
@@ -108,8 +108,8 @@ class PbufferSurfaceD3D : public SurfaceD3D
     PbufferSurfaceD3D(const egl::SurfaceState &state,
                       RendererD3D *renderer,
                       egl::Display *display,
-                      const egl::Config *config,
-                      EGLClientBuffer shareHandle,
+                      EGLenum buftype,
+                      EGLClientBuffer clientBuffer,
                       const egl::AttributeMap &attribs);
     ~PbufferSurfaceD3D() override;
 };

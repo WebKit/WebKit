@@ -24,6 +24,7 @@ namespace egl
 {
 class AttributeMap;
 class Display;
+struct DisplayState;
 struct Config;
 class Surface;
 class ImageSibling;
@@ -45,7 +46,7 @@ class StreamProducerImpl;
 class DisplayImpl : public EGLImplFactory
 {
   public:
-    DisplayImpl();
+    DisplayImpl(const egl::DisplayState &state);
     virtual ~DisplayImpl();
 
     virtual egl::Error initialize(egl::Display *display) = 0;
@@ -59,6 +60,10 @@ class DisplayImpl : public EGLImplFactory
     virtual egl::Error restoreLostDevice() = 0;
 
     virtual bool isValidNativeWindow(EGLNativeWindowType window) const = 0;
+    virtual egl::Error validateClientBuffer(const egl::Config *configuration,
+                                            EGLenum buftype,
+                                            EGLClientBuffer clientBuffer,
+                                            const egl::AttributeMap &attribs) const;
 
     virtual std::string getVendorString() const = 0;
 
@@ -71,18 +76,10 @@ class DisplayImpl : public EGLImplFactory
     virtual gl::Version getMaxSupportedESVersion() const           = 0;
     const egl::Caps &getCaps() const;
 
-    typedef std::set<egl::Surface*> SurfaceSet;
-    const SurfaceSet &getSurfaceSet() const { return mSurfaceSet; }
-    SurfaceSet &getSurfaceSet() { return mSurfaceSet; }
-
-    void destroySurface(egl::Surface *surface);
-
     const egl::DisplayExtensions &getExtensions() const;
 
   protected:
-    // Place the surface set here so it can be accessible for handling
-    // context loss events. (It is shared between the Display and Impl.)
-    SurfaceSet mSurfaceSet;
+    const egl::DisplayState &mState;
 
   private:
     virtual void generateExtensions(egl::DisplayExtensions *outExtensions) const = 0;

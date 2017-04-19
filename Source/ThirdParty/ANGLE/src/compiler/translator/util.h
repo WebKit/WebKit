@@ -15,20 +15,23 @@
 #include "compiler/translator/Operator.h"
 #include "compiler/translator/Types.h"
 
-// strtof_clamp is like strtof but
-//   1. it forces C locale, i.e. forcing '.' as decimal point.
-//   2. it clamps the value to -FLT_MAX or FLT_MAX if overflow happens.
-// Return false if overflow happens.
-bool strtof_clamp(const std::string &str, float *value);
-
 // If overflow happens, clamp the value to UINT_MIN or UINT_MAX.
 // Return false if overflow happens.
 bool atoi_clamp(const char *str, unsigned int *value);
 
-class TSymbolTable;
-
 namespace sh
 {
+class TSymbolTable;
+
+float NumericLexFloat32OutOfRangeToInfinity(const std::string &str);
+
+// strtof_clamp is like strtof but
+//   1. it forces C locale, i.e. forcing '.' as decimal point.
+//   2. it sets the value to infinity if overflow happens.
+//   3. str should be guaranteed to be in the valid format for a floating point number as defined
+//      by the grammar in the ESSL 3.00.6 spec section 4.1.4.
+// Return false if overflow happens.
+bool strtof_clamp(const std::string &str, float *value);
 
 GLenum GLVariableType(const TType &type);
 GLenum GLVariablePrecision(const TType &type);
@@ -38,39 +41,14 @@ bool IsVarying(TQualifier qualifier);
 InterpolationType GetInterpolationType(TQualifier qualifier);
 TString ArrayString(const TType &type);
 
-TType GetInterfaceBlockType(const sh::InterfaceBlock &block);
 TType GetShaderVariableBasicType(const sh::ShaderVariable &var);
-TType GetShaderVariableType(const sh::ShaderVariable &var);
 
 TOperator TypeToConstructorOperator(const TType &type);
-
-class GetVariableTraverser : angle::NonCopyable
-{
-  public:
-    GetVariableTraverser(const TSymbolTable &symbolTable);
-    virtual ~GetVariableTraverser() {}
-
-    template <typename VarT>
-    void traverse(const TType &type, const TString &name, std::vector<VarT> *output);
-
-  protected:
-    // May be overloaded
-    virtual void visitVariable(ShaderVariable *newVar) {}
-
-  private:
-    // Helper function called by traverse() to fill specific fields
-    // for attributes/varyings/uniforms.
-    template <typename VarT>
-    void setTypeSpecificInfo(
-        const TType &type, const TString &name, VarT *variable) {}
-
-    const TSymbolTable &mSymbolTable;
-};
 
 bool IsBuiltinOutputVariable(TQualifier qualifier);
 bool IsBuiltinFragmentInputVariable(TQualifier qualifier);
 bool CanBeInvariantESSL1(TQualifier qualifier);
 bool CanBeInvariantESSL3OrGreater(TQualifier qualifier);
-}
+}  // namespace sh
 
-#endif // COMPILER_TRANSLATOR_UTIL_H_
+#endif  // COMPILER_TRANSLATOR_UTIL_H_

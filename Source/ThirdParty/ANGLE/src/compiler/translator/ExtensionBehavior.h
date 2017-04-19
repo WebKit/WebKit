@@ -10,24 +10,22 @@
 #include <map>
 #include <string>
 
-typedef enum
-{
-    EBhRequire,
-    EBhEnable,
-    EBhWarn,
-    EBhDisable,
-    EBhUndefined
-} TBehavior;
+typedef enum { EBhRequire, EBhEnable, EBhWarn, EBhDisable, EBhUndefined } TBehavior;
 
-inline const char* getBehaviorString(TBehavior b)
+inline const char *getBehaviorString(TBehavior b)
 {
-    switch(b)
+    switch (b)
     {
-      case EBhRequire: return "require";
-      case EBhEnable: return "enable";
-      case EBhWarn: return "warn";
-      case EBhDisable: return "disable";
-      default: return NULL;
+        case EBhRequire:
+            return "require";
+        case EBhEnable:
+            return "enable";
+        case EBhWarn:
+            return "warn";
+        case EBhDisable:
+            return "disable";
+        default:
+            return NULL;
     }
 }
 
@@ -40,4 +38,4 @@ inline bool IsExtensionEnabled(const TExtensionBehavior &extBehavior, const char
     return iter != extBehavior.end() && (iter->second == EBhEnable || iter->second == EBhRequire);
 }
 
-#endif // COMPILER_TRANSLATOR_EXTENSIONBEHAVIOR_H_
+#endif  // COMPILER_TRANSLATOR_EXTENSIONBEHAVIOR_H_

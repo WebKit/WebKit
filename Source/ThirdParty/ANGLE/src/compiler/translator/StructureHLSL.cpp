@@ -19,21 +19,21 @@ namespace sh
 
 Std140PaddingHelper::Std140PaddingHelper(const std::map<TString, int> &structElementIndexes,
                                          unsigned *uniqueCounter)
-    : mPaddingCounter(uniqueCounter),
-      mElementIndex(0),
-      mStructElementIndexes(&structElementIndexes)
-{}
+    : mPaddingCounter(uniqueCounter), mElementIndex(0), mStructElementIndexes(&structElementIndexes)
+{
+}
 
 Std140PaddingHelper::Std140PaddingHelper(const Std140PaddingHelper &other)
     : mPaddingCounter(other.mPaddingCounter),
       mElementIndex(other.mElementIndex),
       mStructElementIndexes(other.mStructElementIndexes)
-{}
+{
+}
 
 Std140PaddingHelper &Std140PaddingHelper::operator=(const Std140PaddingHelper &other)
 {
-    mPaddingCounter = other.mPaddingCounter;
-    mElementIndex = other.mElementIndex;
+    mPaddingCounter       = other.mPaddingCounter;
+    mElementIndex         = other.mElementIndex;
     mStructElementIndexes = other.mStructElementIndexes;
     return *this;
 }
@@ -53,7 +53,7 @@ int Std140PaddingHelper::prePadding(const TType &type)
         return 0;
     }
 
-    const GLenum glType = GLVariableType(type);
+    const GLenum glType     = GLVariableType(type);
     const int numComponents = gl::VariableComponentCount(glType);
 
     if (numComponents >= 4)
@@ -70,9 +70,9 @@ int Std140PaddingHelper::prePadding(const TType &type)
         return 0;
     }
 
-    const int alignment = numComponents == 3 ? 4 : numComponents;
+    const int alignment     = numComponents == 3 ? 4 : numComponents;
     const int paddingOffset = (mElementIndex % alignment);
-    const int paddingCount = (paddingOffset != 0 ? (alignment - paddingOffset) : 0);
+    const int paddingCount  = (paddingOffset != 0 ? (alignment - paddingOffset) : 0);
 
     mElementIndex += paddingCount;
     mElementIndex += numComponents;
@@ -102,25 +102,26 @@ TString Std140PaddingHelper::postPaddingString(const TType &type, bool useHLSLRo
         return "";
     }
 
-    int numComponents = 0;
+    int numComponents     = 0;
     TStructure *structure = type.getStruct();
 
     if (type.isMatrix())
     {
-        // This method can also be called from structureString, which does not use layout qualifiers.
+        // This method can also be called from structureString, which does not use layout
+        // qualifiers.
         // Thus, use the method parameter for determining the matrix packing.
         //
         // Note HLSL row major packing corresponds to GL API column-major, and vice-versa, since we
         // wish to always transpose GL matrices to play well with HLSL's matrix array indexing.
         //
         const bool isRowMajorMatrix = !useHLSLRowMajorPacking;
-        const GLenum glType = GLVariableType(type);
-        numComponents = gl::MatrixComponentCount(glType, isRowMajorMatrix);
+        const GLenum glType         = GLVariableType(type);
+        numComponents               = gl::MatrixComponentCount(glType, isRowMajorMatrix);
     }
     else if (structure)
     {
-        const TString &structName = QualifiedStructNameString(*structure,
-                                                              useHLSLRowMajorPacking, true);
+        const TString &structName =
+            QualifiedStructNameString(*structure, useHLSLRowMajorPacking, true);
         numComponents = mStructElementIndexes->find(structName)->second;
 
         if (numComponents == 0)
@@ -131,7 +132,7 @@ TString Std140PaddingHelper::postPaddingString(const TType &type, bool useHLSLRo
     else
     {
         const GLenum glType = GLVariableType(type);
-        numComponents = gl::VariableComponentCount(glType);
+        numComponents       = gl::VariableComponentCount(glType);
     }
 
     TString padding;
@@ -142,16 +143,18 @@ TString Std140PaddingHelper::postPaddingString(const TType &type, bool useHLSLRo
     return padding;
 }
 
-StructureHLSL::StructureHLSL()
-    : mUniquePaddingCounter(0)
-{}
+StructureHLSL::StructureHLSL() : mUniquePaddingCounter(0)
+{
+}
 
 Std140PaddingHelper StructureHLSL::getPaddingHelper()
 {
     return Std140PaddingHelper(mStd140StructElementIndexes, &mUniquePaddingCounter);
 }
 
-TString StructureHLSL::defineQualified(const TStructure &structure, bool useHLSLRowMajorPacking, bool useStd140Packing)
+TString StructureHLSL::defineQualified(const TStructure &structure,
+                                       bool useHLSLRowMajorPacking,
+                                       bool useStd140Packing)
 {
     if (useStd140Packing)
     {
@@ -169,17 +172,20 @@ TString StructureHLSL::defineNameless(const TStructure &structure)
     return define(structure, false, false, NULL);
 }
 
-TString StructureHLSL::define(const TStructure &structure, bool useHLSLRowMajorPacking,
-                              bool useStd140Packing, Std140PaddingHelper *padHelper)
+TString StructureHLSL::define(const TStructure &structure,
+                              bool useHLSLRowMajorPacking,
+                              bool useStd140Packing,
+                              Std140PaddingHelper *padHelper)
 {
     const TFieldList &fields = structure.fields();
-    const bool isNameless = (structure.name() == "");
-    const TString &structName = QualifiedStructNameString(structure, useHLSLRowMajorPacking,
-                                                          useStd140Packing);
+    const bool isNameless    = (structure.name() == "");
+    const TString &structName =
+        QualifiedStructNameString(structure, useHLSLRowMajorPacking, useStd140Packing);
     const TString declareString = (isNameless ? "struct" : "struct " + structName);
 
     TString string;
-    string += declareString + "\n"
+    string += declareString +
+              "\n"
               "{\n";
 
     for (const TField *field : fields)
@@ -208,7 +214,8 @@ TString StructureHLSL::define(const TStructure &structure, bool useHLSLRowMajorP
         }
     }
 
-    // Nameless structs do not finish with a semicolon and newline, to leave room for an instance variable
+    // Nameless structs do not finish with a semicolon and newline, to leave room for an instance
+    // variable
     string += (isNameless ? "} " : "};\n");
 
     return string;
@@ -238,7 +245,7 @@ TString StructureHLSL::addConstructor(const TType &type,
 
     TString constructorFunctionName;
 
-    const TStructure* structure = type.getStruct();
+    const TStructure *structure = type.getStruct();
     if (structure)
     {
         mStructNames.insert(name);
@@ -249,17 +256,18 @@ TString StructureHLSL::addConstructor(const TType &type,
 
         const TString &structString = defineQualified(*structure, false, false);
 
-        if (std::find(mStructDeclarations.begin(), mStructDeclarations.end(), structString) == mStructDeclarations.end())
+        if (std::find(mStructDeclarations.begin(), mStructDeclarations.end(), structString) ==
+            mStructDeclarations.end())
         {
             // Add row-major packed struct for interface blocks
             TString rowMajorString = "#pragma pack_matrix(row_major)\n" +
-                defineQualified(*structure, true, false) +
-                "#pragma pack_matrix(column_major)\n";
+                                     defineQualified(*structure, true, false) +
+                                     "#pragma pack_matrix(column_major)\n";
 
-            TString std140String = defineQualified(*structure, false, true);
+            TString std140String         = defineQualified(*structure, false, true);
             TString std140RowMajorString = "#pragma pack_matrix(row_major)\n" +
-                defineQualified(*structure, true, true) +
-                "#pragma pack_matrix(column_major)\n";
+                                           defineQualified(*structure, true, true) +
+                                           "#pragma pack_matrix(column_major)\n";
 
             mStructDeclarations.push_back(structString);
             mStructDeclarations.push_back(rowMajorString);
@@ -287,7 +295,8 @@ TString StructureHLSL::addConstructor(const TType &type,
         }
         constructorFunctionName = TString(name) + DisambiguateFunctionName(parameters);
     }
-    else UNREACHABLE();
+    else
+        UNREACHABLE();
 
     TString constructor;
 
@@ -295,7 +304,7 @@ TString StructureHLSL::addConstructor(const TType &type,
     {
         constructor += name + " " + name + "_ctor(";
     }
-    else   // Built-in type
+    else  // Built-in type
     {
         constructor += TypeString(ctorType) + " " + constructorFunctionName + "(";
     }
@@ -312,8 +321,9 @@ TString StructureHLSL::addConstructor(const TType &type,
         }
     }
 
-    constructor += ")\n"
-                   "{\n";
+    constructor +=
+        ")\n"
+        "{\n";
 
     if (ctorType.getStruct())
     {
@@ -334,8 +344,8 @@ TString StructureHLSL::addConstructor(const TType &type,
 
     if (ctorType.isMatrix() && ctorParameters.size() == 1)
     {
-        int rows = ctorType.getRows();
-        int cols = ctorType.getCols();
+        int rows               = ctorType.getRows();
+        int cols               = ctorType.getCols();
         const TType &parameter = ctorParameters[0];
 
         if (parameter.isScalar())
@@ -377,7 +387,8 @@ TString StructureHLSL::addConstructor(const TType &type,
         }
         else
         {
-            ASSERT(rows == 2 && cols == 2 && parameter.isVector() && parameter.getNominalSize() == 4);
+            ASSERT(rows == 2 && cols == 2 && parameter.isVector() &&
+                   parameter.getNominalSize() == 4);
 
             constructor += "x0";
         }
@@ -397,9 +408,9 @@ TString StructureHLSL::addConstructor(const TType &type,
 
         while (remainingComponents > 0)
         {
-            const TType &parameter = ctorParameters[parameterIndex];
+            const TType &parameter     = ctorParameters[parameterIndex];
             const size_t parameterSize = parameter.getObjectSize();
-            bool moreParameters = parameterIndex + 1 < ctorParameters.size();
+            bool moreParameters        = parameterIndex + 1 < ctorParameters.size();
 
             constructor += "x" + str(parameterIndex);
 
@@ -424,16 +435,26 @@ TString StructureHLSL::addConstructor(const TType &type,
                 {
                     switch (remainingComponents)
                     {
-                      case 1: constructor += ".x";    break;
-                      case 2: constructor += ".xy";   break;
-                      case 3: constructor += ".xyz";  break;
-                      case 4: constructor += ".xyzw"; break;
-                      default: UNREACHABLE();
+                        case 1:
+                            constructor += ".x";
+                            break;
+                        case 2:
+                            constructor += ".xy";
+                            break;
+                        case 3:
+                            constructor += ".xyz";
+                            break;
+                        case 4:
+                            constructor += ".xyzw";
+                            break;
+                        default:
+                            UNREACHABLE();
                     }
 
                     remainingComponents = 0;
                 }
-                else UNREACHABLE();
+                else
+                    UNREACHABLE();
             }
             else if (parameter.isMatrix())
             {
@@ -446,10 +467,17 @@ TString StructureHLSL::addConstructor(const TType &type,
                     {
                         switch (remainingComponents)
                         {
-                          case 1:  constructor += ".x";    break;
-                          case 2:  constructor += ".xy";   break;
-                          case 3:  constructor += ".xyz";  break;
-                          default: UNREACHABLE();
+                            case 1:
+                                constructor += ".x";
+                                break;
+                            case 2:
+                                constructor += ".xy";
+                                break;
+                            case 3:
+                                constructor += ".xyz";
+                                break;
+                            default:
+                                UNREACHABLE();
                         }
 
                         remainingComponents = 0;
@@ -467,7 +495,8 @@ TString StructureHLSL::addConstructor(const TType &type,
                     column++;
                 }
             }
-            else UNREACHABLE();
+            else
+                UNREACHABLE();
 
             if (moreParameters)
             {
@@ -493,8 +522,9 @@ TString StructureHLSL::addConstructor(const TType &type,
     }
     else
     {
-        constructor += ");\n"
-                       "}\n";
+        constructor +=
+            ");\n"
+            "}\n";
     }
 
     mConstructors.insert(constructor);
@@ -512,8 +542,7 @@ std::string StructureHLSL::structsHeader() const
     }
 
     for (Constructors::const_iterator constructor = mConstructors.begin();
-         constructor != mConstructors.end();
-         constructor++)
+         constructor != mConstructors.end(); constructor++)
     {
         out << *constructor;
     }
@@ -521,19 +550,20 @@ std::string StructureHLSL::structsHeader() const
     return out.str();
 }
 
-void StructureHLSL::storeStd140ElementIndex(const TStructure &structure, bool useHLSLRowMajorPacking)
+void StructureHLSL::storeStd140ElementIndex(const TStructure &structure,
+                                            bool useHLSLRowMajorPacking)
 {
     Std140PaddingHelper padHelper = getPaddingHelper();
-    const TFieldList &fields = structure.fields();
+    const TFieldList &fields      = structure.fields();
 
     for (unsigned int i = 0; i < fields.size(); i++)
     {
         padHelper.prePadding(*fields[i]->type());
     }
 
-    // Add remaining element index to the global map, for use with nested structs in standard layouts
+    // Add remaining element index to the global map, for use with nested structs in standard
+    // layouts
     const TString &structName = QualifiedStructNameString(structure, useHLSLRowMajorPacking, true);
     mStd140StructElementIndexes[structName] = padHelper.elementIndex();
 }
-
 }

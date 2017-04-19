@@ -78,9 +78,9 @@ RenderbufferImpl *ContextGL::createRenderbuffer()
                               getNativeTextureCaps());
 }
 
-BufferImpl *ContextGL::createBuffer()
+BufferImpl *ContextGL::createBuffer(const gl::BufferState &state)
 {
-    return new BufferGL(getFunctions(), getStateManager());
+    return new BufferGL(state, getFunctions(), getStateManager());
 }
 
 VertexArrayImpl *ContextGL::createVertexArray(const gl::VertexArrayState &data)
@@ -90,7 +90,14 @@ VertexArrayImpl *ContextGL::createVertexArray(const gl::VertexArrayState &data)
 
 QueryImpl *ContextGL::createQuery(GLenum type)
 {
-    return new QueryGL(type, getFunctions(), getStateManager());
+    switch (type)
+    {
+        case GL_COMMANDS_COMPLETED_CHROMIUM:
+            return new SyncQueryGL(type, getFunctions(), getStateManager());
+
+        default:
+            return new StandardQueryGL(type, getFunctions(), getStateManager());
+    }
 }
 
 FenceNVImpl *ContextGL::createFenceNV()
@@ -185,6 +192,16 @@ gl::Error ContextGL::drawRangeElements(GLenum mode,
                                        const gl::IndexRange &indexRange)
 {
     return mRenderer->drawRangeElements(mState, mode, start, end, count, type, indices, indexRange);
+}
+
+gl::Error ContextGL::drawArraysIndirect(GLenum mode, const GLvoid *indirect)
+{
+    return mRenderer->drawArraysIndirect(mState, mode, indirect);
+}
+
+gl::Error ContextGL::drawElementsIndirect(GLenum mode, GLenum type, const GLvoid *indirect)
+{
+    return mRenderer->drawElementsIndirect(mState, mode, type, indirect);
 }
 
 void ContextGL::stencilFillPath(const gl::Path *path, GLenum fillMode, GLuint mask)
@@ -311,9 +328,9 @@ void ContextGL::popGroupMarker()
     mRenderer->popGroupMarker();
 }
 
-void ContextGL::syncState(const gl::State &state, const gl::State::DirtyBits &dirtyBits)
+void ContextGL::syncState(const gl::State::DirtyBits &dirtyBits)
 {
-    mRenderer->getStateManager()->syncState(state, dirtyBits);
+    mRenderer->getStateManager()->syncState(mState, dirtyBits);
 }
 
 GLint ContextGL::getGPUDisjoint()
@@ -362,9 +379,14 @@ StateManagerGL *ContextGL::getStateManager()
     return mRenderer->getStateManager();
 }
 
-const WorkaroundsGL &ContextGL::getWorkaroundsGL()
+const WorkaroundsGL &ContextGL::getWorkaroundsGL() const
 {
     return mRenderer->getWorkarounds();
+}
+
+gl::Error ContextGL::dispatchCompute(GLuint numGroupsX, GLuint numGroupsY, GLuint numGroupsZ)
+{
+    return mRenderer->dispatchCompute(mState, numGroupsX, numGroupsY, numGroupsZ);
 }
 
 }  // namespace rx

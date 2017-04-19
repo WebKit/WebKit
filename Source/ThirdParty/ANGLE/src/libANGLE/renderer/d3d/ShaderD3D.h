@@ -13,18 +13,22 @@
 
 #include <map>
 
+namespace angle
+{
+struct CompilerWorkaroundsD3D;
+struct WorkaroundsD3D;
+}
+
 namespace rx
 {
 class DynamicHLSL;
 class RendererD3D;
-struct D3DCompilerWorkarounds;
 struct D3DUniform;
-struct WorkaroundsD3D;
 
 class ShaderD3D : public ShaderImpl
 {
   public:
-    ShaderD3D(const gl::ShaderState &data, const WorkaroundsD3D &workarounds);
+    ShaderD3D(const gl::ShaderState &data, const angle::WorkaroundsD3D &workarounds);
     virtual ~ShaderD3D();
 
     // ShaderImpl implementation
@@ -45,7 +49,7 @@ class ShaderD3D : public ShaderImpl
     unsigned int getInterfaceBlockRegister(const std::string &blockName) const;
     void appendDebugInfo(const std::string &info) const { mDebugInfo += info; }
 
-    void generateWorkarounds(D3DCompilerWorkarounds *workarounds) const;
+    void generateWorkarounds(angle::CompilerWorkaroundsD3D *workarounds) const;
 
     bool usesMultipleRenderTargets() const { return mUsesMultipleRenderTargets; }
     bool usesFragColor() const { return mUsesFragColor; }

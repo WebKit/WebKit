@@ -25,12 +25,14 @@ namespace
 class MockSurfaceImpl : public rx::SurfaceImpl
 {
   public:
-    MockSurfaceImpl() : SurfaceImpl(mockState) {}
-    virtual ~MockSurfaceImpl() { destroy(); }
+    MockSurfaceImpl() : SurfaceImpl(mockState), mockState(nullptr) {}
+    virtual ~MockSurfaceImpl() { destructor(); }
 
-    MOCK_METHOD0(initialize, egl::Error());
+    MOCK_METHOD1(destroy, void(const DisplayImpl *));
+    MOCK_METHOD1(initialize, egl::Error(const DisplayImpl *));
     MOCK_METHOD1(createDefaultFramebuffer, rx::FramebufferImpl *(const gl::FramebufferState &data));
-    MOCK_METHOD0(swap, egl::Error());
+    MOCK_METHOD1(swap, egl::Error(const DisplayImpl *));
+    MOCK_METHOD2(swapWithDamage, egl::Error(EGLint *, EGLint));
     MOCK_METHOD4(postSubBuffer, egl::Error(EGLint, EGLint, EGLint, EGLint));
     MOCK_METHOD2(querySurfacePointerANGLE, egl::Error(EGLint, void**));
     MOCK_METHOD2(bindTexImage, egl::Error(gl::Texture*, EGLint));
@@ -43,7 +45,7 @@ class MockSurfaceImpl : public rx::SurfaceImpl
     MOCK_CONST_METHOD0(getSwapBehavior, EGLint(void));
     MOCK_METHOD2(getAttachmentRenderTarget, gl::Error(const gl::FramebufferAttachment::Target &, rx::FramebufferAttachmentRenderTarget **));
 
-    MOCK_METHOD0(destroy, void());
+    MOCK_METHOD0(destructor, void());
 
     egl::SurfaceState mockState;
 };
@@ -53,15 +55,16 @@ TEST(SurfaceTest, DestructionDeletesImpl)
     NiceMock<MockEGLFactory> factory;
 
     MockSurfaceImpl *impl = new MockSurfaceImpl;
-    EXPECT_CALL(factory, createWindowSurface(_, _, _, _)).WillOnce(Return(impl));
+    EXPECT_CALL(factory, createWindowSurface(_, _, _)).WillOnce(Return(impl));
 
     egl::Config config;
     egl::Surface *surface = new egl::WindowSurface(
         &factory, &config, static_cast<EGLNativeWindowType>(0), egl::AttributeMap());
 
-    EXPECT_CALL(*impl, destroy()).Times(1).RetiresOnSaturation();
+    EXPECT_CALL(*impl, destroy(_)).Times(1).RetiresOnSaturation();
+    EXPECT_CALL(*impl, destructor()).Times(1).RetiresOnSaturation();
 
-    surface->onDestroy();
+    surface->onDestroy(nullptr);
 
     // Only needed because the mock is leaked if bugs are present,
     // which logs an error, but does not cause the test to fail.

@@ -14,6 +14,9 @@
 #include "compiler/translator/EmulateGLFragColorBroadcast.h"
 #include "compiler/translator/IntermNode.h"
 
+namespace sh
+{
+
 namespace
 {
 
@@ -130,3 +133,5 @@ void EmulateGLFragColorBroadcast(TIntermNode *root,
         }
     }
 }
+
+}  // namespace sh

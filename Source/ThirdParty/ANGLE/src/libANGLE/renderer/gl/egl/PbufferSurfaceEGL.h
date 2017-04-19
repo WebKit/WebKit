@@ -28,7 +28,7 @@ class PbufferSurfaceEGL : public SurfaceEGL
                       RendererGL *renderer);
     ~PbufferSurfaceEGL() override;
 
-    egl::Error initialize() override;
+    egl::Error initialize(const DisplayImpl *displayImpl) override;
 };
 
 }  // namespace rx

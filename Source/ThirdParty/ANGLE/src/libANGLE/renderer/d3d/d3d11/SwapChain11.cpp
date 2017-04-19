@@ -51,10 +51,11 @@ bool NeedsOffscreenTexture(Renderer11 *renderer, NativeWindow11 *nativeWindow, E
 SwapChain11::SwapChain11(Renderer11 *renderer,
                          NativeWindow11 *nativeWindow,
                          HANDLE shareHandle,
+                         IUnknown *d3dTexture,
                          GLenum backBufferFormat,
                          GLenum depthBufferFormat,
                          EGLint orientation)
-    : SwapChainD3D(shareHandle, backBufferFormat, depthBufferFormat),
+    : SwapChainD3D(shareHandle, d3dTexture, backBufferFormat, depthBufferFormat),
       mRenderer(renderer),
       mWidth(-1),
       mHeight(-1),
@@ -92,7 +93,6 @@ SwapChain11::SwapChain11(Renderer11 *renderer,
     // Get the performance counter
     LARGE_INTEGER counterFreqency = {};
     BOOL success                  = QueryPerformanceFrequency(&counterFreqency);
-    UNUSED_ASSERTION_VARIABLE(success);
     ASSERT(success);
 
     mQPCFrequency = counterFreqency.QuadPart;
@@ -193,51 +193,38 @@ EGLint SwapChain11::resetOffscreenColorBuffer(int backbufferWidth, int backbuffe
 
     const d3d11::Format &backbufferFormatInfo =
         d3d11::Format::Get(mOffscreenRenderTargetFormat, mRenderer->getRenderer11DeviceCaps());
+    D3D11_TEXTURE2D_DESC offscreenTextureDesc = {0};
 
-    // If the app passed in a share handle, open the resource
-    // See EGL_ANGLE_d3d_share_handle_client_buffer
-    if (mAppCreatedShareHandle)
+    // If the app passed in a share handle or D3D texture, open the resource
+    // See EGL_ANGLE_d3d_share_handle_client_buffer and EGL_ANGLE_d3d_texture_client_buffer
+    if (mAppCreatedShareHandle || mD3DTexture != nullptr)
     {
-        ID3D11Resource *tempResource11;
-        HRESULT result = device->OpenSharedResource(mShareHandle, __uuidof(ID3D11Resource), (void**)&tempResource11);
-
-        if (FAILED(result))
+        if (mAppCreatedShareHandle)
         {
-            ERR("Failed to open the swap chain pbuffer share handle: %08lX", result);
-            release();
-            return EGL_BAD_PARAMETER;
+            ID3D11Resource *tempResource11;
+            HRESULT result = device->OpenSharedResource(mShareHandle, __uuidof(ID3D11Resource),
+                                                        (void **)&tempResource11);
+            ASSERT(SUCCEEDED(result));
+
+            mOffscreenTexture = d3d11::DynamicCastComObject<ID3D11Texture2D>(tempResource11);
+            SafeRelease(tempResource11);
         }
-
-        result = tempResource11->QueryInterface(__uuidof(ID3D11Texture2D), (void**)&mOffscreenTexture);
-        SafeRelease(tempResource11);
-
-        if (FAILED(result))
+        else if (mD3DTexture != nullptr)
         {
-            ERR("Failed to query texture2d interface in pbuffer share handle: %08lX", result);
-            release();
-            return EGL_BAD_PARAMETER;
+            mOffscreenTexture = d3d11::DynamicCastComObject<ID3D11Texture2D>(mD3DTexture);
         }
-
-        // Validate offscreen texture parameters
-        D3D11_TEXTURE2D_DESC offscreenTextureDesc = {0};
+        else
+        {
+            UNREACHABLE();
+        }
+        ASSERT(mOffscreenTexture != nullptr);
         mOffscreenTexture->GetDesc(&offscreenTextureDesc);
-
-        if (offscreenTextureDesc.Width != (UINT)backbufferWidth ||
-            offscreenTextureDesc.Height != (UINT)backbufferHeight ||
-            offscreenTextureDesc.Format != backbufferFormatInfo.texFormat ||
-            offscreenTextureDesc.MipLevels != 1 || offscreenTextureDesc.ArraySize != 1)
-        {
-            ERR("Invalid texture parameters in the shared offscreen texture pbuffer");
-            release();
-            return EGL_BAD_PARAMETER;
-        }
     }
     else
     {
         const bool useSharedResource =
             !mNativeWindow->getNativeWindow() && mRenderer->getShareHandleSupport();
 
-        D3D11_TEXTURE2D_DESC offscreenTextureDesc = {0};
         offscreenTextureDesc.Width = backbufferWidth;
         offscreenTextureDesc.Height = backbufferHeight;
         offscreenTextureDesc.Format               = backbufferFormatInfo.texFormat;
@@ -254,7 +241,7 @@ EGLint SwapChain11::resetOffscreenColorBuffer(int backbufferWidth, int backbuffe
 
         if (FAILED(result))
         {
-            ERR("Could not create offscreen texture: %08lX", result);
+            ERR() << "Could not create offscreen texture, " << gl::FmtHR(result);
             release();
 
             if (d3d11::isDeviceLostError(result))
@@ -278,7 +265,7 @@ EGLint SwapChain11::resetOffscreenColorBuffer(int backbufferWidth, int backbuffe
             // Fall back to no share handle on failure
             if (FAILED(result))
             {
-                ERR("Could not query offscreen texture resource: %08lX", result);
+                ERR() << "Could not query offscreen texture resource, " << gl::FmtHR(result);
             }
             else
             {
@@ -288,7 +275,7 @@ EGLint SwapChain11::resetOffscreenColorBuffer(int backbufferWidth, int backbuffe
                 if (FAILED(result))
                 {
                     mShareHandle = NULL;
-                    ERR("Could not get offscreen texture shared handle: %08lX", result);
+                    ERR() << "Could not get offscreen texture shared handle, " << gl::FmtHR(result);
                 }
             }
         }
@@ -312,9 +299,13 @@ EGLint SwapChain11::resetOffscreenColorBuffer(int backbufferWidth, int backbuffe
     offscreenSRVDesc.Texture2D.MostDetailedMip = 0;
     offscreenSRVDesc.Texture2D.MipLevels = static_cast<UINT>(-1);
 
-    result = device->CreateShaderResourceView(mOffscreenTexture, &offscreenSRVDesc, &mOffscreenSRView);
-    ASSERT(SUCCEEDED(result));
-    d3d11::SetDebugName(mOffscreenSRView, "Offscreen back buffer shader resource");
+    if (offscreenTextureDesc.BindFlags & D3D11_BIND_SHADER_RESOURCE)
+    {
+        result = device->CreateShaderResourceView(mOffscreenTexture, &offscreenSRVDesc,
+                                                  &mOffscreenSRView);
+        ASSERT(SUCCEEDED(result));
+        d3d11::SetDebugName(mOffscreenSRView, "Offscreen back buffer shader resource");
+    }
 
     if (previousOffscreenTexture != nullptr)
     {
@@ -375,7 +366,8 @@ EGLint SwapChain11::resetOffscreenDepthBuffer(int backbufferWidth, int backbuffe
             device->CreateTexture2D(&depthStencilTextureDesc, NULL, &mDepthStencilTexture);
         if (FAILED(result))
         {
-            ERR("Could not create depthstencil surface for new swap chain: 0x%08X", result);
+            ERR() << "Could not create depthstencil surface for new swap chain, "
+                  << gl::FmtHR(result);
             release();
 
             if (d3d11::isDeviceLostError(result))
@@ -450,7 +442,7 @@ EGLint SwapChain11::resize(EGLint backbufferWidth, EGLint backbufferHeight)
     HRESULT result = mSwapChain->GetDesc(&desc);
     if (FAILED(result))
     {
-        ERR("Error reading swap chain description: 0x%08X", result);
+        ERR() << "Error reading swap chain description, " << gl::FmtHR(result);
         release();
         return EGL_BAD_ALLOC;
     }
@@ -459,7 +451,7 @@ EGLint SwapChain11::resize(EGLint backbufferWidth, EGLint backbufferHeight)
 
     if (FAILED(result))
     {
-        ERR("Error resizing swap chain buffers: 0x%08X", result);
+        ERR() << "Error resizing swap chain buffers, " << gl::FmtHR(result);
         release();
 
         if (d3d11::isDeviceLostError(result))
@@ -501,7 +493,28 @@ DXGI_FORMAT SwapChain11::getSwapChainNativeFormat() const
 {
     // Return a render target format for offscreen rendering is supported by IDXGISwapChain.
     // MSDN https://msdn.microsoft.com/en-us/library/windows/desktop/bb173064(v=vs.85).aspx
-    return (mOffscreenRenderTargetFormat == GL_BGRA8_EXT) ? DXGI_FORMAT_B8G8R8A8_UNORM : DXGI_FORMAT_R8G8B8A8_UNORM;
+    switch (mOffscreenRenderTargetFormat)
+    {
+        case GL_RGBA8:
+        case GL_RGBA4:
+        case GL_RGB5_A1:
+        case GL_RGB8:
+        case GL_RGB565:
+            return DXGI_FORMAT_R8G8B8A8_UNORM;
+
+        case GL_BGRA8_EXT:
+            return DXGI_FORMAT_B8G8R8A8_UNORM;
+
+        case GL_RGB10_A2:
+            return DXGI_FORMAT_R10G10B10A2_UNORM;
+
+        case GL_RGBA16F:
+            return DXGI_FORMAT_R16G16B16A16_FLOAT;
+
+        default:
+            UNREACHABLE();
+            return DXGI_FORMAT_UNKNOWN;
+    }
 }
 
 EGLint SwapChain11::reset(EGLint backbufferWidth, EGLint backbufferHeight, EGLint swapInterval)
@@ -550,7 +563,8 @@ EGLint SwapChain11::reset(EGLint backbufferWidth, EGLint backbufferHeight, EGLin
 
         if (FAILED(result))
         {
-            ERR("Could not create additional swap chains or offscreen surfaces: %08lX", result);
+            ERR() << "Could not create additional swap chains or offscreen surfaces, "
+                  << gl::FmtHR(result);
             release();
 
             if (d3d11::isDeviceLostError(result))
@@ -837,18 +851,18 @@ EGLint SwapChain11::present(EGLint x, EGLint y, EGLint width, EGLint height)
 
     if (result == DXGI_ERROR_DEVICE_REMOVED)
     {
-        ERR("Present failed: the D3D11 device was removed: 0x%08X",
-            mRenderer->getDevice()->GetDeviceRemovedReason());
+        ERR() << "Present failed: the D3D11 device was removed, "
+              << gl::FmtHR(mRenderer->getDevice()->GetDeviceRemovedReason());
         return EGL_CONTEXT_LOST;
     }
     else if (result == DXGI_ERROR_DEVICE_RESET)
     {
-        ERR("Present failed: the D3D11 device was reset from a bad command.");
+        ERR() << "Present failed: the D3D11 device was reset from a bad command.";
         return EGL_CONTEXT_LOST;
     }
     else if (FAILED(result))
     {
-        ERR("Present failed with error code 0x%08X", result);
+        ERR() << "Present failed with " << gl::FmtHR(result);
     }
 
     mNativeWindow->commitChange();
@@ -893,6 +907,11 @@ void SwapChain11::recreate()
 
 egl::Error SwapChain11::getSyncValues(EGLuint64KHR *ust, EGLuint64KHR *msc, EGLuint64KHR *sbc)
 {
+    if (!mSwapChain)
+    {
+        return egl::Error(EGL_NOT_INITIALIZED, "Swap chain uninitialized");
+    }
+
     DXGI_FRAME_STATISTICS stats = {};
     HRESULT result              = mSwapChain->GetFrameStatistics(&stats);
 

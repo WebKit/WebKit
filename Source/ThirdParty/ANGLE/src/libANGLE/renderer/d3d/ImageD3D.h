@@ -58,10 +58,22 @@ class ImageD3D : angle::NonCopyable
                                bool applySkipImages) = 0;
     virtual gl::Error loadCompressedData(const gl::Box &area, const void *input) = 0;
 
-    virtual gl::Error setManagedSurface2D(TextureStorage *storage, int level) { return gl::Error(GL_NO_ERROR); };
-    virtual gl::Error setManagedSurfaceCube(TextureStorage *storage, int face, int level) { return gl::Error(GL_NO_ERROR); };
-    virtual gl::Error setManagedSurface3D(TextureStorage *storage, int level) { return gl::Error(GL_NO_ERROR); };
-    virtual gl::Error setManagedSurface2DArray(TextureStorage *storage, int layer, int level) { return gl::Error(GL_NO_ERROR); };
+    virtual gl::Error setManagedSurface2D(TextureStorage *storage, int level)
+    {
+        return gl::NoError();
+    };
+    virtual gl::Error setManagedSurfaceCube(TextureStorage *storage, int face, int level)
+    {
+        return gl::NoError();
+    };
+    virtual gl::Error setManagedSurface3D(TextureStorage *storage, int level)
+    {
+        return gl::NoError();
+    };
+    virtual gl::Error setManagedSurface2DArray(TextureStorage *storage, int layer, int level)
+    {
+        return gl::NoError();
+    };
     virtual gl::Error copyToStorage(TextureStorage *storage, const gl::ImageIndex &index, const gl::Box &region) = 0;
 
     virtual gl::Error copyFromTexStorage(const gl::ImageIndex &imageIndex,

@@ -8,6 +8,7 @@
 #  are natively support in D3D10+.
 #
 # MSDN links:
+#  10Level9 9_3: https://msdn.microsoft.com/en-us/library/windows/desktop/mt790740.aspx
 #  10_0: https://msdn.microsoft.com/en-us/library/windows/desktop/cc627090.aspx
 #  10_1: https://msdn.microsoft.com/en-us/library/windows/desktop/cc627091.aspx
 #  11_0: https://msdn.microsoft.com/en-us/library/windows/desktop/ff471325.aspx

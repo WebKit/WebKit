@@ -13,6 +13,7 @@
 #include "libANGLE/angletypes.h"
 #include "libANGLE/Error.h"
 #include "common/angleutils.h"
+#include "libANGLE/renderer/d3d/d3d11/renderer11_utils.h"
 
 #include <unordered_map>
 
@@ -34,11 +35,11 @@ class RenderStateCache : angle::NonCopyable
     void initialize(ID3D11Device *device);
     void clear();
 
-    gl::Error getBlendState(const gl::Framebuffer *framebuffer, const gl::BlendState &blendState, ID3D11BlendState **outBlendState);
+    static d3d11::BlendStateKey GetBlendStateKey(const gl::Framebuffer *framebuffer,
+                                                 const gl::BlendState &blendState);
+    gl::Error getBlendState(const d3d11::BlendStateKey &key, ID3D11BlendState **outBlendState);
     gl::Error getRasterizerState(const gl::RasterizerState &rasterState, bool scissorEnabled, ID3D11RasterizerState **outRasterizerState);
     gl::Error getDepthStencilState(const gl::DepthStencilState &dsState,
-                                   bool disableDepth,
-                                   bool disableStencil,
                                    ID3D11DepthStencilState **outDSState);
     gl::Error getSamplerState(const gl::SamplerState &samplerState, ID3D11SamplerState **outSamplerState);
 
@@ -47,19 +48,19 @@ class RenderStateCache : angle::NonCopyable
     unsigned long long mCounter;
 
     // Blend state cache
-    struct BlendStateKey
-    {
-        gl::BlendState blendState;
-        bool rtChannels[D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT][4];
-    };
-    static std::size_t hashBlendState(const BlendStateKey &blendState);
-    static bool compareBlendStates(const BlendStateKey &a, const BlendStateKey &b);
+    static std::size_t HashBlendState(const d3d11::BlendStateKey &blendState);
+    static bool CompareBlendStates(const d3d11::BlendStateKey &a, const d3d11::BlendStateKey &b);
     static const unsigned int kMaxBlendStates;
 
-    typedef std::size_t (*BlendStateHashFunction)(const BlendStateKey &);
-    typedef bool (*BlendStateEqualityFunction)(const BlendStateKey &, const BlendStateKey &);
+    typedef std::size_t (*BlendStateHashFunction)(const d3d11::BlendStateKey &);
+    typedef bool (*BlendStateEqualityFunction)(const d3d11::BlendStateKey &,
+                                               const d3d11::BlendStateKey &);
     typedef std::pair<ID3D11BlendState*, unsigned long long> BlendStateCounterPair;
-    typedef std::unordered_map<BlendStateKey, BlendStateCounterPair, BlendStateHashFunction, BlendStateEqualityFunction> BlendStateMap;
+    typedef std::unordered_map<d3d11::BlendStateKey,
+                               BlendStateCounterPair,
+                               BlendStateHashFunction,
+                               BlendStateEqualityFunction>
+        BlendStateMap;
     BlendStateMap mBlendStateCache;
 
     // Rasterizer state cache
@@ -68,8 +69,8 @@ class RenderStateCache : angle::NonCopyable
         gl::RasterizerState rasterizerState;
         bool scissorEnabled;
     };
-    static std::size_t hashRasterizerState(const RasterizerStateKey &rasterState);
-    static bool compareRasterizerStates(const RasterizerStateKey &a, const RasterizerStateKey &b);
+    static std::size_t HashRasterizerState(const RasterizerStateKey &rasterState);
+    static bool CompareRasterizerStates(const RasterizerStateKey &a, const RasterizerStateKey &b);
     static const unsigned int kMaxRasterizerStates;
 
     typedef std::size_t (*RasterizerStateHashFunction)(const RasterizerStateKey &);
@@ -79,8 +80,8 @@ class RenderStateCache : angle::NonCopyable
     RasterizerStateMap mRasterizerStateCache;
 
     // Depth stencil state cache
-    static std::size_t hashDepthStencilState(const gl::DepthStencilState &dsState);
-    static bool compareDepthStencilStates(const gl::DepthStencilState &a, const gl::DepthStencilState &b);
+    static std::size_t HashDepthStencilState(const gl::DepthStencilState &dsState);
+    static bool CompareDepthStencilStates(const gl::DepthStencilState &a, const gl::DepthStencilState &b);
     static const unsigned int kMaxDepthStencilStates;
 
     typedef std::size_t (*DepthStencilStateHashFunction)(const gl::DepthStencilState &);
@@ -93,8 +94,8 @@ class RenderStateCache : angle::NonCopyable
     DepthStencilStateMap mDepthStencilStateCache;
 
     // Sample state cache
-    static std::size_t hashSamplerState(const gl::SamplerState &samplerState);
-    static bool compareSamplerStates(const gl::SamplerState &a, const gl::SamplerState &b);
+    static std::size_t HashSamplerState(const gl::SamplerState &samplerState);
+    static bool CompareSamplerStates(const gl::SamplerState &a, const gl::SamplerState &b);
     static const unsigned int kMaxSamplerStates;
 
     typedef std::size_t (*SamplerStateHashFunction)(const gl::SamplerState &);

@@ -35,6 +35,7 @@ struct ImageIndex
     static ImageIndex Make2DArray(GLint mipIndex, GLint layerIndex);
     static ImageIndex Make3D(GLint mipIndex, GLint layerIndex = ENTIRE_LEVEL);
     static ImageIndex MakeGeneric(GLenum target, GLint mipIndex);
+    static ImageIndex Make2DMultisample();
 
     static ImageIndex MakeInvalid();
 
@@ -57,6 +58,7 @@ class ImageIndexIterator
     static ImageIndexIterator MakeCube(GLint minMip, GLint maxMip);
     static ImageIndexIterator Make3D(GLint minMip, GLint maxMip, GLint minLayer, GLint maxLayer);
     static ImageIndexIterator Make2DArray(GLint minMip, GLint maxMip, const GLsizei *layerCounts);
+    static ImageIndexIterator Make2DMultisample();
 
     ImageIndex next();
     ImageIndex current() const;

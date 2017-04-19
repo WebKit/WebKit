@@ -252,10 +252,7 @@ void PackPixels(const PackPixelsParams &params,
 
 ColorWriteFunction GetColorWriteFunction(const gl::FormatType &formatType)
 {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wexit-time-destructors"
     static const FormatWriteFunctionMap formatTypeMap = BuildFormatWriteFunctionMap();
-#pragma clang diagnostic pop
     auto iter = formatTypeMap.find(formatType);
     ASSERT(iter != formatTypeMap.end());
     if (iter != formatTypeMap.end())
@@ -271,8 +268,25 @@ ColorWriteFunction GetColorWriteFunction(const gl::FormatType &formatType)
 ColorCopyFunction GetFastCopyFunction(const FastCopyFunctionMap &fastCopyFunctions,
                                       const gl::FormatType &formatType)
 {
-    auto iter = fastCopyFunctions.find(formatType);
-    return (iter != fastCopyFunctions.end()) ? iter->second : nullptr;
+    return fastCopyFunctions.get(formatType);
+}
+
+bool FastCopyFunctionMap::has(const gl::FormatType &formatType) const
+{
+    return (get(formatType) != nullptr);
+}
+
+ColorCopyFunction FastCopyFunctionMap::get(const gl::FormatType &formatType) const
+{
+    for (size_t index = 0; index < mSize; ++index)
+    {
+        if (mData[index].format == formatType.format && mData[index].type == formatType.type)
+        {
+            return mData[index].func;
+        }
+    }
+
+    return nullptr;
 }
 
 }  // namespace rx

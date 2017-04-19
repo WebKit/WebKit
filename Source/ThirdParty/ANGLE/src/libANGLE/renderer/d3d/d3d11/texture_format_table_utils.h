@@ -35,7 +35,7 @@ inline bool SupportsFormat(DXGI_FORMAT format, const Renderer11DeviceCaps &devic
                        D3D11_FORMAT_SUPPORT_SHADER_SAMPLE | D3D11_FORMAT_SUPPORT_MIP |
                        D3D11_FORMAT_SUPPORT_RENDER_TARGET;
 
-    if (d3d11_gl::GetMaximumClientVersion(deviceCaps.featureLevel) > 2)
+    if (d3d11_gl::GetMaximumClientVersion(deviceCaps.featureLevel).major > 2)
     {
         mustSupport |= D3D11_FORMAT_SUPPORT_TEXTURE3D;
     }

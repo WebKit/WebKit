@@ -20,6 +20,8 @@ class VertexArrayVk : public VertexArrayImpl
   public:
     VertexArrayVk(const gl::VertexArrayState &data);
     ~VertexArrayVk() override;
+
+    void syncState(ContextImpl *contextImpl, const gl::VertexArray::DirtyBits &dirtyBits) override;
 };
 
 }  // namespace rx

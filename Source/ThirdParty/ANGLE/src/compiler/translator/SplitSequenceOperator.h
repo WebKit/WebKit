@@ -12,6 +12,9 @@
 #ifndef COMPILER_TRANSLATOR_SPLITSEQUENCEOPERATOR_H_
 #define COMPILER_TRANSLATOR_SPLITSEQUENCEOPERATOR_H_
 
+namespace sh
+{
+
 class TIntermNode;
 class TSymbolTable;
 
@@ -20,5 +23,7 @@ void SplitSequenceOperator(TIntermNode *root,
                            unsigned int *temporaryIndex,
                            const TSymbolTable &symbolTable,
                            int shaderVersion);
+
+}  // namespace sh
 
 #endif  // COMPILER_TRANSLATOR_SPLITSEQUENCEOPERATOR_H_

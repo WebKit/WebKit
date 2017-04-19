@@ -11,8 +11,11 @@
 #ifndef COMPILER_TRANSLATOR_REMOVEPOW_H_
 #define COMPILER_TRANSLATOR_REMOVEPOW_H_
 
+namespace sh
+{
 class TIntermNode;
 
 void RemovePow(TIntermNode *root);
+}  // namespace sh
 
-#endif   // COMPILER_TRANSLATOR_REMOVEPOW_H_
+#endif  // COMPILER_TRANSLATOR_REMOVEPOW_H_

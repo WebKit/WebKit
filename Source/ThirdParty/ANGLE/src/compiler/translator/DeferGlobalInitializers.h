@@ -15,6 +15,9 @@
 
 class TIntermBlock;
 
+namespace sh
+{
 void DeferGlobalInitializers(TIntermBlock *root);
+}  // namespace sh
 
 #endif  // COMPILER_TRANSLATOR_DEFERGLOBALINITIALIZERS_H_

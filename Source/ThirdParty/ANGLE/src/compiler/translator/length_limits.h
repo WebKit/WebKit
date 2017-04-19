@@ -16,6 +16,11 @@
 // These constants are factored out from the rest of the headers to
 // make it easier to reference them from the compiler sources.
 
+namespace sh
+{
+
 size_t GetGlobalMaxTokenSize(ShShaderSpec spec);
 
-#endif // COMPILER_TRANSLATOR_LENGTHLIMITS_H_
+}  // namespace sh
+
+#endif  // COMPILER_TRANSLATOR_LENGTHLIMITS_H_

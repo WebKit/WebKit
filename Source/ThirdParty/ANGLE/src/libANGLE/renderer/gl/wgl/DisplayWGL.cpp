@@ -14,6 +14,7 @@
 #include "libANGLE/Surface.h"
 #include "libANGLE/renderer/gl/RendererGL.h"
 #include "libANGLE/renderer/gl/renderergl_utils.h"
+#include "libANGLE/renderer/gl/wgl/D3DTextureSurfaceWGL.h"
 #include "libANGLE/renderer/gl/wgl/DXGISwapChainWindowSurfaceWGL.h"
 #include "libANGLE/renderer/gl/wgl/FunctionsWGL.h"
 #include "libANGLE/renderer/gl/wgl/PbufferSurfaceWGL.h"
@@ -57,8 +58,8 @@ class FunctionsGLWindows : public FunctionsGL
     PFNWGLGETPROCADDRESSPROC mGetProcAddressWGL;
 };
 
-DisplayWGL::DisplayWGL()
-    : DisplayGL(),
+DisplayWGL::DisplayWGL(const egl::DisplayState &state)
+    : DisplayGL(state),
       mOpenGLModule(nullptr),
       mFunctionsWGL(nullptr),
       mFunctionsGL(nullptr),
@@ -345,14 +346,13 @@ egl::Error DisplayWGL::initialize(egl::Display *display)
     mHasRobustness = mFunctionsGL->getGraphicsResetStatus != nullptr;
     if (hasWGLCreateContextRobustness != mHasRobustness)
     {
-        ANGLEPlatformCurrent()->logWarning(
-            "WGL_ARB_create_context_robustness exists but unable to OpenGL context with "
-            "robustness.");
+        WARN() << "WGL_ARB_create_context_robustness exists but unable to OpenGL context with "
+                  "robustness.";
     }
 
     // Intel OpenGL ES drivers are not currently supported due to bugs in the driver and ANGLE
     VendorID vendor = GetVendorID(mFunctionsGL);
-    if (requestedDisplayType == EGL_PLATFORM_ANGLE_TYPE_OPENGLES_ANGLE && vendor == VENDOR_ID_INTEL)
+    if (requestedDisplayType == EGL_PLATFORM_ANGLE_TYPE_OPENGLES_ANGLE && IsIntel(vendor))
     {
         return egl::Error(EGL_NOT_INITIALIZED, "Intel OpenGL ES drivers are not supported.");
     }
@@ -368,20 +368,25 @@ egl::Error DisplayWGL::initialize(egl::Display *display)
         GetWindowThreadProcessId(nativeWindow, &windowProcessId);
 
         // AMD drivers advertise the WGL_NV_DX_interop and WGL_NV_DX_interop2 extensions but fail
-        mUseDXGISwapChains = vendor != VENDOR_ID_AMD && (currentProcessId != windowProcessId);
+        mUseDXGISwapChains = !IsAMD(vendor) && (currentProcessId != windowProcessId);
     }
     else
     {
         mUseDXGISwapChains = false;
     }
 
-    if (mUseDXGISwapChains)
+    if (mFunctionsWGL->hasExtension("WGL_NV_DX_interop2"))
     {
         egl::Error error = initializeD3DDevice();
         if (error.isError())
         {
             return error;
         }
+    }
+    else if (mUseDXGISwapChains)
+    {
+        // Want to use DXGI swap chains but WGL_NV_DX_interop2 is not present, fail initialization
+        return egl::Error(EGL_NOT_INITIALIZED, "WGL_NV_DX_interop2 is required but not present.");
     }
 
     return DisplayGL::initialize(display);
@@ -430,7 +435,6 @@ void DisplayWGL::terminate()
 }
 
 SurfaceImpl *DisplayWGL::createWindowSurface(const egl::SurfaceState &state,
-                                             const egl::Config *configuration,
                                              EGLNativeWindowType window,
                                              const egl::AttributeMap &attribs)
 {
@@ -449,7 +453,6 @@ SurfaceImpl *DisplayWGL::createWindowSurface(const egl::SurfaceState &state,
 }
 
 SurfaceImpl *DisplayWGL::createPbufferSurface(const egl::SurfaceState &state,
-                                              const egl::Config *configuration,
                                               const egl::AttributeMap &attribs)
 {
     EGLint width          = static_cast<EGLint>(attribs.get(EGL_WIDTH, 0));
@@ -463,16 +466,15 @@ SurfaceImpl *DisplayWGL::createPbufferSurface(const egl::SurfaceState &state,
 }
 
 SurfaceImpl *DisplayWGL::createPbufferFromClientBuffer(const egl::SurfaceState &state,
-                                                       const egl::Config *configuration,
-                                                       EGLClientBuffer shareHandle,
+                                                       EGLenum buftype,
+                                                       EGLClientBuffer clientBuffer,
                                                        const egl::AttributeMap &attribs)
 {
-    UNIMPLEMENTED();
-    return nullptr;
+    return new D3DTextureSurfaceWGL(state, getRenderer(), buftype, clientBuffer, this, mWGLContext,
+                                    mDeviceContext, mD3D11Device, mFunctionsGL, mFunctionsWGL);
 }
 
 SurfaceImpl *DisplayWGL::createPixmapSurface(const egl::SurfaceState &state,
-                                             const egl::Config *configuration,
                                              NativePixmapType nativePixmap,
                                              const egl::AttributeMap &attribs)
 {
@@ -550,6 +552,7 @@ egl::ConfigSet DisplayWGL::generateConfigs()
         ((getAttrib(WGL_SWAP_METHOD_ARB) == WGL_SWAP_COPY_ARB) ? EGL_SWAP_BEHAVIOR_PRESERVED_BIT
                                                                : 0);
     config.optimalOrientation = optimalSurfaceOrientation;
+    config.colorComponentType = EGL_COLOR_COMPONENT_TYPE_FIXED_EXT;
 
     config.transparentType = EGL_NONE;
     config.transparentRedValue = 0;
@@ -579,6 +582,23 @@ egl::Error DisplayWGL::restoreLostDevice()
 bool DisplayWGL::isValidNativeWindow(EGLNativeWindowType window) const
 {
     return (IsWindow(window) == TRUE);
+}
+
+egl::Error DisplayWGL::validateClientBuffer(const egl::Config *configuration,
+                                            EGLenum buftype,
+                                            EGLClientBuffer clientBuffer,
+                                            const egl::AttributeMap &attribs) const
+{
+    switch (buftype)
+    {
+        case EGL_D3D_TEXTURE_ANGLE:
+        case EGL_D3D_TEXTURE_2D_SHARE_HANDLE_ANGLE:
+            return D3DTextureSurfaceWGL::ValidateD3DTextureClientBuffer(buftype, clientBuffer,
+                                                                        mD3D11Device);
+
+        default:
+            return DisplayGL::validateClientBuffer(configuration, buftype, clientBuffer, attribs);
+    }
 }
 
 std::string DisplayWGL::getVendorString() const
@@ -644,6 +664,15 @@ void DisplayWGL::generateExtensions(egl::DisplayExtensions *outExtensions) const
     outExtensions->surfaceOrientation = mUseDXGISwapChains;
 
     outExtensions->createContextRobustness = mHasRobustness;
+
+    outExtensions->d3dTextureClientBuffer         = mD3D11Device != nullptr;
+    outExtensions->d3dShareHandleClientBuffer     = mD3D11Device != nullptr;
+    outExtensions->surfaceD3DTexture2DShareHandle = true;
+    outExtensions->querySurfacePointer            = true;
+    outExtensions->keyedMutex                     = true;
+
+    // Contexts are virtualized so textures can be shared globally
+    outExtensions->displayTextureShareGroup = true;
 }
 
 void DisplayWGL::generateCaps(egl::Caps *outCaps) const
@@ -662,12 +691,6 @@ egl::Error DisplayWGL::waitNative(EGLint engine,
                                   egl::Surface *readSurface) const
 {
     // Unimplemented as this is not needed for WGL
-    return egl::Error(EGL_SUCCESS);
-}
-
-egl::Error DisplayWGL::getDriverVersion(std::string *version) const
-{
-    *version = "";
     return egl::Error(EGL_SUCCESS);
 }
 

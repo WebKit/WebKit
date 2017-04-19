@@ -1,3 +1,13 @@
+2017-04-18  Dean Jackson  <dino@apple.com>
+
+        Update ANGLE
+        https://bugs.webkit.org/show_bug.cgi?id=170941
+        <rdar://problem/31633999>
+
+        Reviewed by Alex Christensen.
+
+        * fast/canvas/webgl/fragment-shader-assertion-expected.txt:
+
 2017-04-18  Brent Fulgham  <bfulgham@apple.com>
 
         Correct handling of isolatedWorld in event handling
@@ -185,7 +195,8 @@
 2017-04-17  Youenn Fablet  <youenn@apple.com>
 
         LayoutTest webrtc/video-mute.html is a flaky failure
-        https://bugs.webkit.org/show_bug.cgi?id=170704
+        https://bugs.webkit.or
+        g/show_bug.cgi?id=170704
 
         Reviewed by Eric Carlson.
 

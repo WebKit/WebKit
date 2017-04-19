@@ -17,7 +17,7 @@ typedef _CGLContextObject *CGLContextObj;
 struct __IOSurface;
 typedef __IOSurface *IOSurfaceRef;
 
-@class WebSwapLayer;
+@class SwapLayer;
 
 namespace rx
 {
@@ -56,15 +56,15 @@ class WindowSurfaceCGL : public SurfaceGL
   public:
     WindowSurfaceCGL(const egl::SurfaceState &state,
                      RendererGL *renderer,
-                     CALayer *layer,
+                     EGLNativeWindowType layer,
                      const FunctionsGL *functions,
                      CGLContextObj context);
     ~WindowSurfaceCGL() override;
 
-    egl::Error initialize() override;
+    egl::Error initialize(const DisplayImpl *displayImpl) override;
     egl::Error makeCurrent() override;
 
-    egl::Error swap() override;
+    egl::Error swap(const DisplayImpl *displayImpl) override;
     egl::Error postSubBuffer(EGLint x, EGLint y, EGLint width, EGLint height) override;
     egl::Error querySurfacePointerANGLE(EGLint attribute, void **value) override;
     egl::Error bindTexImage(gl::Texture *texture, EGLint buffer) override;
@@ -80,7 +80,7 @@ class WindowSurfaceCGL : public SurfaceGL
     FramebufferImpl *createDefaultFramebuffer(const gl::FramebufferState &state) override;
 
   private:
-    WebSwapLayer *mSwapLayer;
+    SwapLayer *mSwapLayer;
     SharedSwapState mSwapState;
     uint64_t mCurrentSwapId;
 
@@ -95,6 +95,6 @@ class WindowSurfaceCGL : public SurfaceGL
     GLuint mDSRenderbuffer;
 };
 
-}
+}  // namespace rx
 
 #endif // LIBANGLE_RENDERER_GL_CGL_WINDOWSURFACECGL_H_

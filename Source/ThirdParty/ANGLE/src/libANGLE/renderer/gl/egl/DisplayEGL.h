@@ -18,7 +18,7 @@ namespace rx
 class DisplayEGL : public DisplayGL
 {
   public:
-    DisplayEGL();
+    DisplayEGL(const egl::DisplayState &state);
     ~DisplayEGL() override;
 
     std::string getVendorString() const override;

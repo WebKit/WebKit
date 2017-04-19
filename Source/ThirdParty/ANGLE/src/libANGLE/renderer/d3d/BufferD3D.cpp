@@ -19,8 +19,8 @@ namespace rx
 
 unsigned int BufferD3D::mNextSerial = 1;
 
-BufferD3D::BufferD3D(BufferFactoryD3D *factory)
-    : BufferImpl(),
+BufferD3D::BufferD3D(const gl::BufferState &state, BufferFactoryD3D *factory)
+    : BufferImpl(state),
       mFactory(factory),
       mStaticIndexBuffer(nullptr),
       mStaticBufferCacheTotalSize(0),
@@ -90,7 +90,8 @@ StaticIndexBufferInterface *BufferD3D::getStaticIndexBuffer()
     return mStaticIndexBuffer;
 }
 
-StaticVertexBufferInterface *BufferD3D::getStaticVertexBuffer(const gl::VertexAttribute &attribute)
+StaticVertexBufferInterface *BufferD3D::getStaticVertexBuffer(const gl::VertexAttribute &attribute,
+                                                              const gl::VertexBinding &binding)
 {
     if (mStaticVertexBuffers.empty())
     {
@@ -111,7 +112,7 @@ StaticVertexBufferInterface *BufferD3D::getStaticVertexBuffer(const gl::VertexAt
     // If there is a cached static buffer that already contains the attribute, then return it
     for (const auto &staticBuffer : mStaticVertexBuffers)
     {
-        if (staticBuffer->matchesAttribute(attribute))
+        if (staticBuffer->matchesAttribute(attribute, binding))
         {
             return staticBuffer.get();
         }
@@ -134,7 +135,7 @@ StaticVertexBufferInterface *BufferD3D::getStaticVertexBuffer(const gl::VertexAt
 
     // At this point, we must create a new static buffer for the attribute data.
     auto newStaticBuffer = new StaticVertexBufferInterface(mFactory);
-    newStaticBuffer->setAttribute(attribute);
+    newStaticBuffer->setAttribute(attribute, binding);
     mStaticVertexBuffers.push_back(std::unique_ptr<StaticVertexBufferInterface>(newStaticBuffer));
     return newStaticBuffer;
 }
@@ -182,7 +183,7 @@ gl::Error BufferD3D::getIndexRange(GLenum type,
     ANGLE_TRY(getData(&data));
 
     *outRange = gl::ComputeIndexRange(type, data + offset, count, primitiveRestartEnabled);
-    return gl::Error(GL_NO_ERROR);
+    return gl::NoError();
 }
 
 }  // namespace rx

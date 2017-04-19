@@ -10,4 +10,4 @@
 bool InitializePoolIndex();
 void FreePoolIndex();
 
-#endif // COMPILER_TRANSLATOR_INITIALIZEGLOBALS_H_
+#endif  // COMPILER_TRANSLATOR_INITIALIZEGLOBALS_H_

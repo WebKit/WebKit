@@ -24,7 +24,7 @@ struct Uniform;
 struct Varying;
 struct InterfaceBlock;
 
-struct COMPILER_EXPORT BlockMemberInfo
+struct BlockMemberInfo
 {
     BlockMemberInfo() : offset(-1), arrayStride(-1), matrixStride(-1), isRowMajorMatrix(false) {}
 
@@ -33,12 +33,10 @@ struct COMPILER_EXPORT BlockMemberInfo
           arrayStride(arrayStride),
           matrixStride(matrixStride),
           isRowMajorMatrix(isRowMajorMatrix)
-    {}
-
-    static BlockMemberInfo getDefaultBlockInfo()
     {
-        return BlockMemberInfo(-1, -1, -1, false);
     }
+
+    static BlockMemberInfo getDefaultBlockInfo() { return BlockMemberInfo(-1, -1, -1, false); }
 
     int offset;
     int arrayStride;
@@ -46,7 +44,7 @@ struct COMPILER_EXPORT BlockMemberInfo
     bool isRowMajorMatrix;
 };
 
-class COMPILER_EXPORT BlockLayoutEncoder
+class BlockLayoutEncoder
 {
   public:
     BlockLayoutEncoder();
@@ -57,9 +55,9 @@ class COMPILER_EXPORT BlockLayoutEncoder
     size_t getBlockSize() const { return mCurrentOffset * BytesPerComponent; }
 
     virtual void enterAggregateType() = 0;
-    virtual void exitAggregateType() = 0;
+    virtual void exitAggregateType()  = 0;
 
-    static const size_t BytesPerComponent = 4u;
+    static const size_t BytesPerComponent           = 4u;
     static const unsigned int ComponentsPerRegister = 4u;
 
     static size_t getBlockRegister(const BlockMemberInfo &info);
@@ -70,14 +68,22 @@ class COMPILER_EXPORT BlockLayoutEncoder
 
     void nextRegister();
 
-    virtual void getBlockLayoutInfo(GLenum type, unsigned int arraySize, bool isRowMajorMatrix, int *arrayStrideOut, int *matrixStrideOut) = 0;
-    virtual void advanceOffset(GLenum type, unsigned int arraySize, bool isRowMajorMatrix, int arrayStride, int matrixStride) = 0;
+    virtual void getBlockLayoutInfo(GLenum type,
+                                    unsigned int arraySize,
+                                    bool isRowMajorMatrix,
+                                    int *arrayStrideOut,
+                                    int *matrixStrideOut) = 0;
+    virtual void advanceOffset(GLenum type,
+                               unsigned int arraySize,
+                               bool isRowMajorMatrix,
+                               int arrayStride,
+                               int matrixStride) = 0;
 };
 
 // Block layout according to the std140 block layout
 // See "Standard Uniform Block Layout" in Section 2.11.6 of the OpenGL ES 3.0 specification
 
-class COMPILER_EXPORT Std140BlockEncoder : public BlockLayoutEncoder
+class Std140BlockEncoder : public BlockLayoutEncoder
 {
   public:
     Std140BlockEncoder();
@@ -97,7 +103,6 @@ class COMPILER_EXPORT Std140BlockEncoder : public BlockLayoutEncoder
                        int arrayStride,
                        int matrixStride) override;
 };
-
 }
 
-#endif // COMMON_BLOCKLAYOUT_H_
+#endif  // COMMON_BLOCKLAYOUT_H_

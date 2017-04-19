@@ -41,7 +41,7 @@ WindowSurfaceWGL::~WindowSurfaceWGL()
     mDeviceContext = nullptr;
 }
 
-egl::Error WindowSurfaceWGL::initialize()
+egl::Error WindowSurfaceWGL::initialize(const DisplayImpl *displayImpl)
 {
     mDeviceContext = GetDC(mWindow);
     if (!mDeviceContext)
@@ -100,7 +100,7 @@ egl::Error WindowSurfaceWGL::makeCurrent()
     return egl::Error(EGL_SUCCESS);
 }
 
-egl::Error WindowSurfaceWGL::swap()
+egl::Error WindowSurfaceWGL::swap(const DisplayImpl *displayImpl)
 {
     if (!mFunctionsWGL->swapBuffers(mDeviceContext))
     {
@@ -119,7 +119,7 @@ egl::Error WindowSurfaceWGL::postSubBuffer(EGLint x, EGLint y, EGLint width, EGL
 
 egl::Error WindowSurfaceWGL::querySurfacePointerANGLE(EGLint attribute, void **value)
 {
-    UNIMPLEMENTED();
+    *value = nullptr;
     return egl::Error(EGL_SUCCESS);
 }
 

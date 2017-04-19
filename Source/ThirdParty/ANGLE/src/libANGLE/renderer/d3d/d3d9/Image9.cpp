@@ -61,7 +61,7 @@ gl::Error Image9::generateMip(IDirect3DSurface9 *destSurface, IDirect3DSurface9 
     ASSERT(sourceDesc.Height == 1 || sourceDesc.Height / 2 == destDesc.Height);
 
     const d3d9::D3DFormat &d3dFormatInfo = d3d9::GetD3DFormatInfo(sourceDesc.Format);
-    ASSERT(d3dFormatInfo.info->mipGenerationFunction != NULL);
+    ASSERT(d3dFormatInfo.info().mipGenerationFunction != NULL);
 
     D3DLOCKED_RECT sourceLocked = {0};
     result = sourceSurface->LockRect(&sourceLocked, NULL, D3DLOCK_READONLY);
@@ -85,13 +85,14 @@ gl::Error Image9::generateMip(IDirect3DSurface9 *destSurface, IDirect3DSurface9 
 
     ASSERT(sourceData && destData);
 
-    d3dFormatInfo.info->mipGenerationFunction(sourceDesc.Width, sourceDesc.Height, 1, sourceData,
-                                              sourceLocked.Pitch, 0, destData, destLocked.Pitch, 0);
+    d3dFormatInfo.info().mipGenerationFunction(sourceDesc.Width, sourceDesc.Height, 1, sourceData,
+                                               sourceLocked.Pitch, 0, destData, destLocked.Pitch,
+                                               0);
 
     destSurface->UnlockRect();
     sourceSurface->UnlockRect();
 
-    return gl::Error(GL_NO_ERROR);
+    return gl::NoError();
 }
 
 gl::Error Image9::generateMipmap(Image9 *dest, Image9 *source)
@@ -118,7 +119,7 @@ gl::Error Image9::generateMipmap(Image9 *dest, Image9 *source)
 
     dest->markDirty();
 
-    return gl::Error(GL_NO_ERROR);
+    return gl::NoError();
 }
 
 gl::Error Image9::copyLockableSurfaces(IDirect3DSurface9 *dest, IDirect3DSurface9 *source)
@@ -161,7 +162,7 @@ gl::Error Image9::copyLockableSurfaces(IDirect3DSurface9 *dest, IDirect3DSurface
     source->UnlockRect();
     dest->UnlockRect();
 
-    return gl::Error(GL_NO_ERROR);
+    return gl::NoError();
 }
 
 bool Image9::redefine(GLenum target, GLenum internalformat, const gl::Extents &size, bool forceRelease)
@@ -201,7 +202,7 @@ gl::Error Image9::createSurface()
 {
     if (mSurface)
     {
-        return gl::Error(GL_NO_ERROR);
+        return gl::NoError();
     }
 
     IDirect3DTexture9 *newTexture = NULL;
@@ -263,7 +264,7 @@ gl::Error Image9::createSurface()
     mDirty = false;
     mD3DPool = poolToUse;
 
-    return gl::Error(GL_NO_ERROR);
+    return gl::NoError();
 }
 
 gl::Error Image9::lock(D3DLOCKED_RECT *lockedRect, const RECT &rect)
@@ -286,7 +287,7 @@ gl::Error Image9::lock(D3DLOCKED_RECT *lockedRect, const RECT &rect)
         mDirty = true;
     }
 
-    return gl::Error(GL_NO_ERROR);
+    return gl::NoError();
 }
 
 void Image9::unlock()
@@ -294,7 +295,6 @@ void Image9::unlock()
     if (mSurface)
     {
         HRESULT result = mSurface->UnlockRect();
-        UNUSED_ASSERTION_VARIABLE(result);
         ASSERT(SUCCEEDED(result));
     }
 }
@@ -324,7 +324,7 @@ gl::Error Image9::getSurface(IDirect3DSurface9 **outSurface)
     }
 
     *outSurface = mSurface;
-    return gl::Error(GL_NO_ERROR);
+    return gl::NoError();
 }
 
 gl::Error Image9::setManagedSurface2D(TextureStorage *storage, int level)
@@ -374,7 +374,7 @@ gl::Error Image9::setManagedSurface(IDirect3DSurface9 *surface)
         mD3DPool = desc.Pool;
     }
 
-    return gl::Error(GL_NO_ERROR);
+    return gl::NoError();
 }
 
 gl::Error Image9::copyToStorage(TextureStorage *storage, const gl::ImageIndex &index, const gl::Box &region)
@@ -468,7 +468,7 @@ gl::Error Image9::copyToSurface(IDirect3DSurface9 *destSurface, const gl::Box &a
         }
     }
 
-    return gl::Error(GL_NO_ERROR);
+    return gl::NoError();
 }
 
 // Store the pixel rectangle designated by xoffset,yoffset,width,height with pixels stored as format/type at input
@@ -513,7 +513,7 @@ gl::Error Image9::loadData(const gl::Box &area,
 
     unlock();
 
-    return gl::Error(GL_NO_ERROR);
+    return gl::NoError();
 }
 
 gl::Error Image9::loadCompressedData(const gl::Box &area, const void *input)
@@ -554,7 +554,7 @@ gl::Error Image9::loadCompressedData(const gl::Box &area, const void *input)
 
     unlock();
 
-    return gl::Error(GL_NO_ERROR);
+    return gl::NoError();
 }
 
 // This implements glCopyTex[Sub]Image2D for non-renderable internal texture formats and incomplete textures
@@ -785,7 +785,7 @@ gl::Error Image9::copyFromRTInternal(const gl::Offset &destOffset,
     SafeRelease(surface);
 
     mDirty = true;
-    return gl::Error(GL_NO_ERROR);
+    return gl::NoError();
 }
 
 gl::Error Image9::copyFromTexStorage(const gl::ImageIndex &imageIndex, TextureStorage *source)

@@ -264,6 +264,12 @@ expression
             }
             $$ = static_cast<YYSTYPE>(0);
         }
+        else if (($1 == std::numeric_limits<YYSTYPE>::min()) && ($3 == -1))
+        {
+            // Check for the special case where the minimum representable number is
+            // divided by -1. If left alone this has undefined results.
+            $$ = 0;
+        }
         else
         {
             $$ = $1 % $3;
@@ -284,7 +290,7 @@ expression
             }
             $$ = static_cast<YYSTYPE>(0);
         }
-        else if ($1 == std::numeric_limits<YYSTYPE>::min() && $3 == -1)
+        else if (($1 == std::numeric_limits<YYSTYPE>::min()) && ($3 == -1))
         {
             // Check for the special case where the minimum representable number is
             // divided by -1. If left alone this leads to integer overflow in C++, which

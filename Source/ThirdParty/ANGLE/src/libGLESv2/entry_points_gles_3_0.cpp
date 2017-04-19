@@ -61,17 +61,7 @@ void GL_APIENTRY DrawRangeElements(GLenum mode, GLuint start, GLuint end, GLsize
             return;
         }
 
-        // As long as index validation is done, it doesn't matter whether the context receives a drawElements or
-        // a drawRangeElements call - the GL back-end is free to choose to call drawRangeElements based on the
-        // validated index range. If index validation is removed, adding drawRangeElements to the context interface
-        // should be reconsidered.
-        Error error =
-            context->drawRangeElements(mode, start, end, count, type, indices, indexRange);
-        if (error.isError())
-        {
-            context->handleError(error);
-            return;
-        }
+        context->drawRangeElements(mode, start, end, count, type, indices, indexRange);
     }
 }
 
@@ -500,19 +490,14 @@ void GL_APIENTRY RenderbufferStorageMultisample(GLenum target, GLsizei samples, 
     Context *context = GetValidGlobalContext();
     if (context)
     {
-        if (context->getClientMajorVersion() < 3)
-        {
-            context->handleError(Error(GL_INVALID_OPERATION));
-            return;
-        }
-
-        if (!ValidateES3RenderbufferStorageParameters(context, target, samples, internalformat, width, height))
+        if (!context->skipValidation() &&
+            !ValidateRenderbufferStorageMultisample(context, target, samples, internalformat, width,
+                                                    height))
         {
             return;
         }
 
-        Renderbuffer *renderbuffer = context->getGLState().getCurrentRenderbuffer();
-        renderbuffer->setStorageMultisample(samples, internalformat, width, height);
+        context->renderbufferStorageMultisample(target, samples, internalformat, width, height);
     }
 }
 
@@ -707,7 +692,7 @@ void GL_APIENTRY EndTransformFeedback(void)
             return;
         }
 
-        transformFeedback->end();
+        transformFeedback->end(context);
     }
 }
 
@@ -719,90 +704,12 @@ void GL_APIENTRY BindBufferRange(GLenum target, GLuint index, GLuint buffer, GLi
     Context *context = GetValidGlobalContext();
     if (context)
     {
-        if (context->getClientMajorVersion() < 3)
+        if (!context->skipValidation() &&
+            !ValidateBindBufferRange(context, target, index, buffer, offset, size))
         {
-            context->handleError(Error(GL_INVALID_OPERATION));
             return;
         }
-
-        const Caps &caps = context->getCaps();
-        switch (target)
-        {
-          case GL_TRANSFORM_FEEDBACK_BUFFER:
-            if (index >= caps.maxTransformFeedbackSeparateAttributes)
-            {
-                context->handleError(Error(GL_INVALID_VALUE));
-                return;
-            }
-            break;
-
-          case GL_UNIFORM_BUFFER:
-            if (index >= caps.maxUniformBufferBindings)
-            {
-                context->handleError(Error(GL_INVALID_VALUE));
-                return;
-            }
-            break;
-
-          default:
-              context->handleError(Error(GL_INVALID_ENUM));
-            return;
-        }
-
-        if (buffer != 0 && size <= 0)
-        {
-            context->handleError(Error(GL_INVALID_VALUE));
-            return;
-        }
-
-        if (!context->getGLState().isBindGeneratesResourceEnabled() &&
-            !context->isBufferGenerated(buffer))
-        {
-            context->handleError(Error(GL_INVALID_OPERATION, "Buffer was not generated"));
-            return;
-        }
-
-        switch (target)
-        {
-          case GL_TRANSFORM_FEEDBACK_BUFFER:
-            {
-                // size and offset must be a multiple of 4
-                if (buffer != 0 && ((offset % 4) != 0 || (size % 4) != 0))
-                {
-                    context->handleError(Error(GL_INVALID_VALUE));
-                    return;
-                }
-
-                // Cannot bind a transform feedback buffer if the current transform feedback is active (3.0.4 pg 91 section 2.15.2)
-                TransformFeedback *curTransformFeedback =
-                    context->getGLState().getCurrentTransformFeedback();
-                if (curTransformFeedback && curTransformFeedback->isActive())
-                {
-                    context->handleError(Error(GL_INVALID_OPERATION));
-                    return;
-                }
-
-                context->bindIndexedTransformFeedbackBuffer(buffer, index, offset, size);
-                context->bindGenericTransformFeedbackBuffer(buffer);
-                break;
-            }
-
-          case GL_UNIFORM_BUFFER:
-
-            // it is an error to bind an offset not a multiple of the alignment
-            if (buffer != 0 && (offset % caps.uniformBufferOffsetAlignment) != 0)
-            {
-                context->handleError(Error(GL_INVALID_VALUE));
-                return;
-            }
-
-            context->bindIndexedUniformBuffer(buffer, index, offset, size);
-            context->bindGenericUniformBuffer(buffer);
-            break;
-
-          default:
-            UNREACHABLE();
-        }
+        context->bindBufferRange(target, index, buffer, offset, size);
     }
 }
 
@@ -814,68 +721,11 @@ void GL_APIENTRY BindBufferBase(GLenum target, GLuint index, GLuint buffer)
     Context *context = GetValidGlobalContext();
     if (context)
     {
-        if (context->getClientMajorVersion() < 3)
+        if (!context->skipValidation() && !ValidateBindBufferBase(context, target, index, buffer))
         {
-            context->handleError(Error(GL_INVALID_OPERATION));
             return;
         }
-
-        const Caps &caps = context->getCaps();
-        switch (target)
-        {
-          case GL_TRANSFORM_FEEDBACK_BUFFER:
-            if (index >= caps.maxTransformFeedbackSeparateAttributes)
-            {
-                context->handleError(Error(GL_INVALID_VALUE));
-                return;
-            }
-            break;
-
-          case GL_UNIFORM_BUFFER:
-            if (index >= caps.maxUniformBufferBindings)
-            {
-                context->handleError(Error(GL_INVALID_VALUE));
-                return;
-            }
-            break;
-
-          default:
-              context->handleError(Error(GL_INVALID_ENUM));
-            return;
-        }
-
-        if (!context->getGLState().isBindGeneratesResourceEnabled() &&
-            !context->isBufferGenerated(buffer))
-        {
-            context->handleError(Error(GL_INVALID_OPERATION, "Buffer was not generated"));
-            return;
-        }
-
-        switch (target)
-        {
-          case GL_TRANSFORM_FEEDBACK_BUFFER:
-            {
-                // Cannot bind a transform feedback buffer if the current transform feedback is active (3.0.4 pg 91 section 2.15.2)
-                TransformFeedback *curTransformFeedback =
-                    context->getGLState().getCurrentTransformFeedback();
-                if (curTransformFeedback && curTransformFeedback->isActive())
-                {
-                    context->handleError(Error(GL_INVALID_OPERATION));
-                    return;
-                }
-
-                context->bindIndexedTransformFeedbackBuffer(buffer, index, 0, 0);
-                context->bindGenericTransformFeedbackBuffer(buffer);
-                break;
-            }
-          case GL_UNIFORM_BUFFER:
-            context->bindIndexedUniformBuffer(buffer, index, 0, 0);
-            context->bindGenericUniformBuffer(buffer);
-            break;
-
-          default:
-            UNREACHABLE();
-        }
+        context->bindBufferBase(target, index, buffer);
     }
 }
 
@@ -971,53 +821,9 @@ void GL_APIENTRY VertexAttribIPointer(GLuint index, GLint size, GLenum type, GLs
     Context *context = GetValidGlobalContext();
     if (context)
     {
-        if (context->getClientMajorVersion() < 3)
+        if (!context->skipValidation() &&
+            !ValidateVertexAttribIPointer(context, index, size, type, stride, pointer))
         {
-            context->handleError(Error(GL_INVALID_OPERATION));
-            return;
-        }
-
-        if (index >= MAX_VERTEX_ATTRIBS)
-        {
-            context->handleError(Error(GL_INVALID_VALUE));
-            return;
-        }
-
-        if (size < 1 || size > 4)
-        {
-            context->handleError(Error(GL_INVALID_VALUE));
-            return;
-        }
-
-        switch (type)
-        {
-          case GL_BYTE:
-          case GL_UNSIGNED_BYTE:
-          case GL_SHORT:
-          case GL_UNSIGNED_SHORT:
-          case GL_INT:
-          case GL_UNSIGNED_INT:
-            break;
-
-          default:
-              context->handleError(Error(GL_INVALID_ENUM));
-            return;
-        }
-
-        if (stride < 0)
-        {
-            context->handleError(Error(GL_INVALID_VALUE));
-            return;
-        }
-
-        // [OpenGL ES 3.0.2] Section 2.8 page 24:
-        // An INVALID_OPERATION error is generated when a non-zero vertex array object
-        // is bound, zero is bound to the ARRAY_BUFFER buffer object binding point,
-        // and the pointer argument is not NULL.
-        if (context->getGLState().getVertexArray()->id() != 0 &&
-            context->getGLState().getArrayBufferId() == 0 && pointer != NULL)
-        {
-            context->handleError(Error(GL_INVALID_OPERATION));
             return;
         }
 
@@ -1039,11 +845,7 @@ void GL_APIENTRY GetVertexAttribIiv(GLuint index, GLenum pname, GLint* params)
             return;
         }
 
-        const VertexAttribCurrentValueData &currentValues =
-            context->getGLState().getVertexAttribCurrentValue(index);
-        const VertexAttribute &attrib =
-            context->getGLState().getVertexArray()->getVertexAttribute(index);
-        QueryVertexAttribIiv(attrib, currentValues, pname, params);
+        context->getVertexAttribIiv(index, pname, params);
     }
 }
 
@@ -1061,11 +863,7 @@ void GL_APIENTRY GetVertexAttribIuiv(GLuint index, GLenum pname, GLuint* params)
             return;
         }
 
-        const VertexAttribCurrentValueData &currentValues =
-            context->getGLState().getVertexAttribCurrentValue(index);
-        const VertexAttribute &attrib =
-            context->getGLState().getVertexArray()->getVertexAttribute(index);
-        QueryVertexAttribIuiv(attrib, currentValues, pname, params);
+        context->getVertexAttribIuiv(index, pname, params);
     }
 }
 
@@ -1391,28 +1189,15 @@ const GLubyte *GL_APIENTRY GetStringi(GLenum name, GLuint index)
     Context *context = GetValidGlobalContext();
     if (context)
     {
-        if (context->getClientMajorVersion() < 3)
+        if (!context->skipValidation() && !ValidateGetStringi(context, name, index))
         {
-            context->handleError(Error(GL_INVALID_OPERATION));
-            return NULL;
+            return nullptr;
         }
 
-        if (name != GL_EXTENSIONS)
-        {
-            context->handleError(Error(GL_INVALID_ENUM));
-            return NULL;
-        }
-
-        if (index >= context->getExtensionStringCount())
-        {
-            context->handleError(Error(GL_INVALID_VALUE));
-            return NULL;
-        }
-
-        return reinterpret_cast<const GLubyte *>(context->getExtensionString(index));
+        return context->getStringi(name, index);
     }
 
-    return NULL;
+    return nullptr;
 }
 
 void GL_APIENTRY CopyBufferSubData(GLenum readTarget, GLenum writeTarget, GLintptr readOffset, GLintptr writeOffset, GLsizeiptr size)
@@ -1423,58 +1208,14 @@ void GL_APIENTRY CopyBufferSubData(GLenum readTarget, GLenum writeTarget, GLintp
     Context *context = GetValidGlobalContext();
     if (context)
     {
-        if (context->getClientMajorVersion() < 3)
+        if (!context->skipValidation() &&
+            !ValidateCopyBufferSubData(context, readTarget, writeTarget, readOffset, writeOffset,
+                                       size))
         {
-            context->handleError(Error(GL_INVALID_OPERATION));
             return;
         }
 
-        if (!ValidBufferTarget(context, readTarget) || !ValidBufferTarget(context, writeTarget))
-        {
-            context->handleError(Error(GL_INVALID_ENUM));
-            return;
-        }
-
-        Buffer *readBuffer  = context->getGLState().getTargetBuffer(readTarget);
-        Buffer *writeBuffer = context->getGLState().getTargetBuffer(writeTarget);
-
-        if (!readBuffer || !writeBuffer)
-        {
-            context->handleError(Error(GL_INVALID_OPERATION));
-            return;
-        }
-
-        // Verify that readBuffer and writeBuffer are not currently mapped
-        if (readBuffer->isMapped() || writeBuffer->isMapped())
-        {
-            context->handleError(Error(GL_INVALID_OPERATION));
-            return;
-        }
-
-        if (readOffset < 0 || writeOffset < 0 || size < 0 ||
-            static_cast<unsigned int>(readOffset + size) > readBuffer->getSize() ||
-            static_cast<unsigned int>(writeOffset + size) > writeBuffer->getSize())
-        {
-            context->handleError(Error(GL_INVALID_VALUE));
-            return;
-        }
-
-        if (readBuffer == writeBuffer && std::abs(readOffset - writeOffset) < size)
-        {
-            context->handleError(Error(GL_INVALID_VALUE));
-            return;
-        }
-
-        // if size is zero, the copy is a successful no-op
-        if (size > 0)
-        {
-            Error error = writeBuffer->copyBufferSubData(readBuffer, readOffset, writeOffset, size);
-            if (error.isError())
-            {
-                context->handleError(error);
-                return;
-            }
-        }
+        context->copyBufferSubData(readTarget, writeTarget, readOffset, writeOffset, size);
     }
 }
 
@@ -1723,12 +1464,7 @@ void GL_APIENTRY DrawArraysInstanced(GLenum mode, GLint first, GLsizei count, GL
             return;
         }
 
-        Error error = context->drawArraysInstanced(mode, first, count, instanceCount);
-        if (error.isError())
-        {
-            context->handleError(error);
-            return;
-        }
+        context->drawArraysInstanced(mode, first, count, instanceCount);
     }
 }
 
@@ -1752,13 +1488,7 @@ void GL_APIENTRY DrawElementsInstanced(GLenum mode, GLsizei count, GLenum type, 
             return;
         }
 
-        Error error =
-            context->drawElementsInstanced(mode, count, type, indices, instanceCount, indexRange);
-        if (error.isError())
-        {
-            context->handleError(error);
-            return;
-        }
+        context->drawElementsInstanced(mode, count, type, indices, instanceCount, indexRange);
     }
 }
 
@@ -1970,47 +1700,13 @@ void GL_APIENTRY GetSynciv(GLsync sync, GLenum pname, GLsizei bufSize, GLsizei* 
     Context *context = GetValidGlobalContext();
     if (context)
     {
-        if (context->getClientMajorVersion() < 3)
+        if (!context->skipValidation() &&
+            !ValidateGetSynciv(context, sync, pname, bufSize, length, values))
         {
-            context->handleError(Error(GL_INVALID_OPERATION));
             return;
         }
 
-        if (bufSize < 0)
-        {
-            context->handleError(Error(GL_INVALID_VALUE));
-            return;
-        }
-
-        FenceSync *fenceSync = context->getFenceSync(sync);
-
-        if (!fenceSync)
-        {
-            context->handleError(Error(GL_INVALID_VALUE));
-            return;
-        }
-
-        switch (pname)
-        {
-          case GL_OBJECT_TYPE:     values[0] = static_cast<GLint>(GL_SYNC_FENCE);              break;
-          case GL_SYNC_CONDITION:  values[0] = static_cast<GLint>(fenceSync->getCondition());  break;
-          case GL_SYNC_FLAGS:      values[0] = static_cast<GLint>(fenceSync->getFlags());      break;
-
-          case GL_SYNC_STATUS:
-            {
-                Error error = fenceSync->getStatus(values);
-                if (error.isError())
-                {
-                    context->handleError(error);
-                    return;
-                }
-                break;
-            }
-
-          default:
-              context->handleError(Error(GL_INVALID_ENUM));
-            return;
-        }
+        context->getSynciv(sync, pname, bufSize, length, values);
     }
 }
 
@@ -2444,7 +2140,7 @@ void GL_APIENTRY GetProgramBinary(GLuint program, GLsizei bufSize, GLsizei* leng
         Program *programObject = context->getProgram(program);
         ASSERT(programObject != nullptr);
 
-        Error error = programObject->saveBinary(binaryFormat, binary, bufSize, length);
+        Error error = programObject->saveBinary(context, binaryFormat, binary, bufSize, length);
         if (error.isError())
         {
             context->handleError(error);
@@ -2469,7 +2165,7 @@ void GL_APIENTRY ProgramBinary(GLuint program, GLenum binaryFormat, const GLvoid
         Program *programObject = context->getProgram(program);
         ASSERT(programObject != nullptr);
 
-        Error error = programObject->loadBinary(binaryFormat, binary, length);
+        Error error = programObject->loadBinary(context, binaryFormat, binary, length);
         if (error.isError())
         {
             context->handleError(error);
@@ -2555,7 +2251,7 @@ void GL_APIENTRY TexStorage2D(GLenum target, GLsizei levels, GLenum internalform
 
         Extents size(width, height, 1);
         Texture *texture = context->getTargetTexture(target);
-        Error error = texture->setStorage(target, levels, internalformat, size);
+        Error error      = texture->setStorage(context, target, levels, internalformat, size);
         if (error.isError())
         {
             context->handleError(error);
@@ -2587,7 +2283,7 @@ void GL_APIENTRY TexStorage3D(GLenum target, GLsizei levels, GLenum internalform
 
         Extents size(width, height, depth);
         Texture *texture = context->getTargetTexture(target);
-        Error error = texture->setStorage(target, levels, internalformat, size);
+        Error error      = texture->setStorage(context, target, levels, internalformat, size);
         if (error.isError())
         {
             context->handleError(error);

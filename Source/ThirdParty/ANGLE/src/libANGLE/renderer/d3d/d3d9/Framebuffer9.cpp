@@ -38,21 +38,21 @@ gl::Error Framebuffer9::discard(size_t, const GLenum *)
 {
     // Extension not implemented in D3D9 renderer
     UNREACHABLE();
-    return gl::Error(GL_NO_ERROR);
+    return gl::NoError();
 }
 
 gl::Error Framebuffer9::invalidate(size_t, const GLenum *)
 {
     // Shouldn't ever reach here in D3D9
     UNREACHABLE();
-    return gl::Error(GL_NO_ERROR);
+    return gl::NoError();
 }
 
 gl::Error Framebuffer9::invalidateSub(size_t, const GLenum *, const gl::Rectangle &)
 {
     // Shouldn't ever reach here in D3D9
     UNREACHABLE();
-    return gl::Error(GL_NO_ERROR);
+    return gl::NoError();
 }
 
 gl::Error Framebuffer9::clearImpl(ContextImpl *context, const ClearParameters &clearParams)
@@ -168,7 +168,7 @@ gl::Error Framebuffer9::readPixelsImpl(const gl::Rectangle &area,
     if (directToPixels)
     {
         SafeRelease(systemSurface);
-        return gl::Error(GL_NO_ERROR);
+        return gl::NoError();
     }
 
     RECT rect;
@@ -205,12 +205,12 @@ gl::Error Framebuffer9::readPixelsImpl(const gl::Rectangle &area,
     packParams.outputPitch = static_cast<GLuint>(outputPitch);
     packParams.pack        = pack;
 
-    PackPixels(packParams, *d3dFormatInfo.info, inputPitch, source, pixels);
+    PackPixels(packParams, d3dFormatInfo.info(), inputPitch, source, pixels);
 
     systemSurface->UnlockRect();
     SafeRelease(systemSurface);
 
-    return gl::Error(GL_NO_ERROR);
+    return gl::NoError();
 }
 
 gl::Error Framebuffer9::blitImpl(const gl::Rectangle &sourceArea,
@@ -397,14 +397,14 @@ gl::Error Framebuffer9::blitImpl(const gl::Rectangle &sourceArea,
         }
     }
 
-    return gl::Error(GL_NO_ERROR);
+    return gl::NoError();
 }
 
 GLenum Framebuffer9::getRenderTargetImplementationFormat(RenderTargetD3D *renderTarget) const
 {
     RenderTarget9 *renderTarget9 = GetAs<RenderTarget9>(renderTarget);
     const d3d9::D3DFormat &d3dFormatInfo = d3d9::GetD3DFormatInfo(renderTarget9->getD3DFormat());
-    return d3dFormatInfo.info->glInternalFormat;
+    return d3dFormatInfo.info().glInternalFormat;
 }
 
 }  // namespace rx

@@ -29,6 +29,8 @@ class Sampler final : public RefCountObject, public LabeledObject
     Sampler(rx::GLImplFactory *factory, GLuint id);
     ~Sampler() override;
 
+    void destroy(const Context *context) override {}
+
     void setLabel(const std::string &label) override;
     const std::string &getLabel() const override;
 
@@ -61,6 +63,9 @@ class Sampler final : public RefCountObject, public LabeledObject
 
     void setCompareFunc(GLenum compareFunc);
     GLenum getCompareFunc() const;
+
+    void setSRGBDecode(GLenum sRGBDecode);
+    GLenum getSRGBDecode() const;
 
     const SamplerState &getSamplerState() const;
 

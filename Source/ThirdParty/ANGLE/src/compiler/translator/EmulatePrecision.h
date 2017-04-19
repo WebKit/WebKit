@@ -18,6 +18,9 @@
 // need to write a huge number of variations of the emulated compound assignment
 // to every translated shader with emulation enabled.
 
+namespace sh
+{
+
 class EmulatePrecision : public TLValueTrackingTraverser
 {
   public:
@@ -27,6 +30,9 @@ class EmulatePrecision : public TLValueTrackingTraverser
     bool visitBinary(Visit visit, TIntermBinary *node) override;
     bool visitUnary(Visit visit, TIntermUnary *node) override;
     bool visitAggregate(Visit visit, TIntermAggregate *node) override;
+    bool visitInvariantDeclaration(Visit visit, TIntermInvariantDeclaration *node) override;
+    bool visitDeclaration(Visit visit, TIntermDeclaration *node) override;
+    bool visitFunctionPrototype(Visit visit, TIntermFunctionPrototype *node) override;
 
     void writeEmulationHelpers(TInfoSinkBase &sink,
                                const int shaderVersion,
@@ -37,8 +43,7 @@ class EmulatePrecision : public TLValueTrackingTraverser
   private:
     struct TypePair
     {
-        TypePair(const char *l, const char *r)
-            : lType(l), rType(r) { }
+        TypePair(const char *l, const char *r) : lType(l), rType(r) {}
 
         const char *lType;
         const char *rType;
@@ -46,7 +51,7 @@ class EmulatePrecision : public TLValueTrackingTraverser
 
     struct TypePairComparator
     {
-        bool operator() (const TypePair& l, const TypePair& r) const
+        bool operator()(const TypePair &l, const TypePair &r) const
         {
             if (l.lType == r.lType)
                 return l.rType < r.rType;
@@ -62,5 +67,7 @@ class EmulatePrecision : public TLValueTrackingTraverser
 
     bool mDeclaringVariables;
 };
+
+}  // namespace sh
 
 #endif  // COMPILER_TRANSLATOR_EMULATE_PRECISION_H_

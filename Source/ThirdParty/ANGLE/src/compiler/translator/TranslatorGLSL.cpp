@@ -12,12 +12,15 @@
 #include "compiler/translator/ExtensionGLSL.h"
 #include "compiler/translator/OutputGLSL.h"
 #include "compiler/translator/RewriteTexelFetchOffset.h"
+#include "compiler/translator/RewriteUnaryMinusOperatorFloat.h"
 #include "compiler/translator/VersionGLSL.h"
 
-TranslatorGLSL::TranslatorGLSL(sh::GLenum type,
-                               ShShaderSpec spec,
-                               ShShaderOutput output)
-    : TCompiler(type, spec, output) {
+namespace sh
+{
+
+TranslatorGLSL::TranslatorGLSL(sh::GLenum type, ShShaderSpec spec, ShShaderOutput output)
+    : TCompiler(type, spec, output)
+{
 }
 
 void TranslatorGLSL::initBuiltInFunctionEmulator(BuiltInFunctionEmulator *emu,
@@ -33,13 +36,18 @@ void TranslatorGLSL::initBuiltInFunctionEmulator(BuiltInFunctionEmulator *emu,
         InitBuiltInIsnanFunctionEmulatorForGLSLWorkarounds(emu, getShaderVersion());
     }
 
+    if (compileOptions & SH_EMULATE_ATAN2_FLOAT_FUNCTION)
+    {
+        InitBuiltInAtanFunctionEmulatorForGLSLWorkarounds(emu);
+    }
+
     int targetGLSLVersion = ShaderOutputTypeToGLSLVersion(getOutputType());
     InitBuiltInFunctionEmulatorForGLSLMissingFunctions(emu, getShaderType(), targetGLSLVersion);
 }
 
 void TranslatorGLSL::translate(TIntermNode *root, ShCompileOptions compileOptions)
 {
-    TInfoSinkBase& sink = getInfoSink().obj;
+    TInfoSinkBase &sink = getInfoSink().obj;
 
     // Write GLSL version.
     writeVersion(root);
@@ -55,9 +63,11 @@ void TranslatorGLSL::translate(TIntermNode *root, ShCompileOptions compileOption
     // variables. It should be harmless to do this twice in the case that the shader also explicitly
     // did this. However, it's important to emit invariant qualifiers only for those built-in
     // variables that are actually used, to avoid affecting the behavior of the shader.
-    if ((compileOptions & SH_FLATTEN_PRAGMA_STDGL_INVARIANT_ALL) && getPragma().stdgl.invariantAll)
+    if ((compileOptions & SH_FLATTEN_PRAGMA_STDGL_INVARIANT_ALL) != 0 &&
+        getPragma().stdgl.invariantAll &&
+        !sh::RemoveInvariant(getShaderType(), getShaderVersion(), getOutputType(), compileOptions))
     {
-        collectVariables(root);
+        ASSERT(wereVariablesCollected());
 
         switch (getShaderType())
         {
@@ -87,7 +97,13 @@ void TranslatorGLSL::translate(TIntermNode *root, ShCompileOptions compileOption
         sh::RewriteTexelFetchOffset(root, getSymbolTable(), getShaderVersion());
     }
 
-    bool precisionEmulation = getResources().WEBGL_debug_shader_precision && getPragma().debugShaderPrecision;
+    if ((compileOptions & SH_REWRITE_FLOAT_UNARY_MINUS_OPERATOR) != 0)
+    {
+        sh::RewriteUnaryMinusOperatorFloat(root);
+    }
+
+    bool precisionEmulation =
+        getResources().WEBGL_debug_shader_precision && getPragma().debugShaderPrecision;
 
     if (precisionEmulation)
     {
@@ -98,11 +114,11 @@ void TranslatorGLSL::translate(TIntermNode *root, ShCompileOptions compileOption
     }
 
     // Write emulated built-in functions if needed.
-    if (!getBuiltInFunctionEmulator().IsOutputEmpty())
+    if (!getBuiltInFunctionEmulator().isOutputEmpty())
     {
         sink << "// BEGIN: Generated code for built-in function emulation\n\n";
         sink << "#define webgl_emu_precision\n\n";
-        getBuiltInFunctionEmulator().OutputEmulatedFunctions(sink);
+        getBuiltInFunctionEmulator().outputEmulatedFunctions(sink);
         sink << "// END: Generated code for built-in function emulation\n\n";
     }
 
@@ -185,13 +201,17 @@ void TranslatorGLSL::translate(TIntermNode *root, ShCompileOptions compileOption
     }
 
     // Write translated shader.
-    TOutputGLSL outputGLSL(sink,
-                           getArrayIndexClampingStrategy(),
-                           getHashFunction(),
-                           getNameMap(),
-                           getSymbolTable(),
-                           getShaderVersion(),
-                           getOutputType());
+    TOutputGLSL outputGLSL(sink, getArrayIndexClampingStrategy(), getHashFunction(), getNameMap(),
+                           getSymbolTable(), getShaderType(), getShaderVersion(), getOutputType(),
+                           compileOptions);
+
+    if (compileOptions & SH_TRANSLATE_VIEWID_OVR_TO_UNIFORM)
+    {
+        TName uniformName(TString("ViewID_OVR"));
+        uniformName.setInternal(true);
+        sink << "uniform int " << outputGLSL.hashName(uniformName) << ";\n";
+    }
+
     root->traverse(&outputGLSL);
 }
 
@@ -200,6 +220,12 @@ bool TranslatorGLSL::shouldFlattenPragmaStdglInvariantAll()
     // Required when outputting to any GLSL version greater than 1.20, but since ANGLE doesn't
     // translate to that version, return true for the next higher version.
     return IsGLSL130OrNewer(getOutputType());
+}
+
+bool TranslatorGLSL::shouldCollectVariables(ShCompileOptions compileOptions)
+{
+    return (compileOptions & SH_FLATTEN_PRAGMA_STDGL_INVARIANT_ALL) ||
+           TCompiler::shouldCollectVariables(compileOptions);
 }
 
 void TranslatorGLSL::writeVersion(TIntermNode *root)
@@ -211,15 +237,15 @@ void TranslatorGLSL::writeVersion(TIntermNode *root)
     // If there is no version directive in the shader, 110 is implied.
     if (version > 110)
     {
-        TInfoSinkBase& sink = getInfoSink().obj;
+        TInfoSinkBase &sink = getInfoSink().obj;
         sink << "#version " << version << "\n";
     }
 }
 
 void TranslatorGLSL::writeExtensionBehavior(TIntermNode *root)
 {
-    TInfoSinkBase& sink = getInfoSink().obj;
-    const TExtensionBehavior& extBehavior = getExtensionBehavior();
+    TInfoSinkBase &sink                   = getInfoSink().obj;
+    const TExtensionBehavior &extBehavior = getExtensionBehavior();
     for (const auto &iter : extBehavior)
     {
         if (iter.second == EBhUndefined)
@@ -246,26 +272,21 @@ void TranslatorGLSL::writeExtensionBehavior(TIntermNode *root)
     }
 
     // GLSL ES 3 explicit location qualifiers need to use an extension before GLSL 330
-    if (getShaderVersion() >= 300 && getOutputType() < SH_GLSL_330_CORE_OUTPUT)
+    if (getShaderVersion() >= 300 && getOutputType() < SH_GLSL_330_CORE_OUTPUT &&
+        getShaderType() != GL_COMPUTE_SHADER)
     {
         sink << "#extension GL_ARB_explicit_attrib_location : require\n";
     }
 
     // Need to enable gpu_shader5 to have index constant sampler array indexing
-    if (getOutputType() != SH_ESSL_OUTPUT && getOutputType() < SH_GLSL_400_CORE_OUTPUT)
+    if (getOutputType() != SH_ESSL_OUTPUT && getOutputType() < SH_GLSL_400_CORE_OUTPUT &&
+        getShaderVersion() == 100)
     {
-        sink << "#extension GL_ARB_gpu_shader5 : ";
-
-        // Don't use "require" on WebGL 1 to avoid breaking WebGL on drivers that silently
-        // support index constant sampler array indexing, but don't have the extension.
-        if (getShaderVersion() >= 300)
-        {
-            sink << "require\n";
-        }
-        else
-        {
-            sink << "enable\n";
-        }
+        // Don't use "require" on to avoid breaking WebGL 1 on drivers that silently
+        // support index constant sampler array indexing, but don't have the extension or
+        // on drivers that don't have the extension at all as it would break WebGL 1 for
+        // some users.
+        sink << "#extension GL_ARB_gpu_shader5 : enable\n";
     }
 
     TExtensionGLSL extensionGLSL(getOutputType());
@@ -289,3 +310,5 @@ void TranslatorGLSL::conditionallyOutputInvariantDeclaration(const char *builtin
         sink << "invariant " << builtinVaryingName << ";\n";
     }
 }
+
+}  // namespace sh

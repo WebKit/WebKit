@@ -51,7 +51,7 @@ gl::Error Query9::begin()
         }
     }
 
-    return gl::Error(GL_NO_ERROR);
+    return gl::NoError();
 }
 
 gl::Error Query9::end()
@@ -68,7 +68,7 @@ gl::Error Query9::end()
     mQueryFinished = false;
     mResult = GL_FALSE;
 
-    return gl::Error(GL_NO_ERROR);
+    return gl::NoError();
 }
 
 gl::Error Query9::queryCounter()
@@ -96,7 +96,7 @@ gl::Error Query9::getResultBase(T *params)
 
     ASSERT(mQueryFinished);
     *params = static_cast<T>(mResult);
-    return gl::Error(GL_NO_ERROR);
+    return gl::NoError();
 }
 
 gl::Error Query9::getResult(GLint *params)
@@ -129,7 +129,7 @@ gl::Error Query9::isResultAvailable(bool *available)
 
     *available = mQueryFinished;
 
-    return gl::Error(GL_NO_ERROR);
+    return gl::NoError();
 }
 
 gl::Error Query9::testQuery()
@@ -183,7 +183,7 @@ gl::Error Query9::testQuery()
         }
     }
 
-    return gl::Error(GL_NO_ERROR);
+    return gl::NoError();
 }
 
 }

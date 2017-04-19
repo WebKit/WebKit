@@ -21,25 +21,22 @@ namespace rx
 class DisplayAndroid : public DisplayEGL
 {
   public:
-    DisplayAndroid();
+    DisplayAndroid(const egl::DisplayState &state);
     ~DisplayAndroid() override;
 
     egl::Error initialize(egl::Display *display) override;
     void terminate() override;
 
     SurfaceImpl *createWindowSurface(const egl::SurfaceState &state,
-                                     const egl::Config *configuration,
                                      EGLNativeWindowType window,
                                      const egl::AttributeMap &attribs) override;
     SurfaceImpl *createPbufferSurface(const egl::SurfaceState &state,
-                                      const egl::Config *configuration,
                                       const egl::AttributeMap &attribs) override;
     SurfaceImpl *createPbufferFromClientBuffer(const egl::SurfaceState &state,
-                                               const egl::Config *configuration,
-                                               EGLClientBuffer shareHandle,
+                                               EGLenum buftype,
+                                               EGLClientBuffer clientBuffer,
                                                const egl::AttributeMap &attribs) override;
     SurfaceImpl *createPixmapSurface(const egl::SurfaceState &state,
-                                     const egl::Config *configuration,
                                      NativePixmapType nativePixmap,
                                      const egl::AttributeMap &attribs) override;
 
@@ -61,11 +58,16 @@ class DisplayAndroid : public DisplayEGL
                           egl::Surface *drawSurface,
                           egl::Surface *readSurface) const override;
 
-    egl::Error getDriverVersion(std::string *version) const override;
-
   private:
     template <typename T>
     void getConfigAttrib(EGLConfig config, EGLint attribute, T *value) const;
+
+    template <typename T, typename U>
+    void getConfigAttribIfExtension(EGLConfig config,
+                                    EGLint attribute,
+                                    T *value,
+                                    const char *extension,
+                                    const U &defaultValue) const;
 
     std::vector<EGLint> mConfigAttribList;
     std::map<EGLint, EGLint> mConfigIds;

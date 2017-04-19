@@ -9,7 +9,11 @@
 #include "angle_gl.h"
 #include "common/debug.h"
 #include "compiler/translator/IntermNode.h"
+#include "compiler/translator/SymbolTable.h"
 #include "compiler/translator/util.h"
+
+namespace sh
+{
 
 namespace
 {
@@ -17,9 +21,13 @@ namespace
 class VariableInitializer : public TIntermTraverser
 {
   public:
-    VariableInitializer(const InitVariableList &vars)
-        : TIntermTraverser(true, false, false), mVariables(vars), mCodeInserted(false)
+    VariableInitializer(const InitVariableList &vars, const TSymbolTable &symbolTable)
+        : TIntermTraverser(true, false, false),
+          mVariables(vars),
+          mSymbolTable(symbolTable),
+          mCodeInserted(false)
     {
+        ASSERT(mSymbolTable.atGlobalLevel());
     }
 
   protected:
@@ -36,6 +44,7 @@ class VariableInitializer : public TIntermTraverser
     void insertInitCode(TIntermSequence *sequence);
 
     const InitVariableList &mVariables;
+    const TSymbolTable &mSymbolTable;
     bool mCodeInserted;
 };
 
@@ -59,25 +68,31 @@ void VariableInitializer::insertInitCode(TIntermSequence *sequence)
     for (const auto &var : mVariables)
     {
         TString name = TString(var.name.c_str());
-        TType type   = sh::GetShaderVariableType(var);
 
-        // Assign the array elements one by one to keep the AST compatible with ESSL 1.00 which
-        // doesn't have array assignment.
         if (var.isArray())
         {
+            // Assign the array elements one by one to keep the AST compatible with ESSL 1.00 which
+            // doesn't have array assignment.
             size_t pos = name.find_last_of('[');
             if (pos != TString::npos)
             {
                 name = name.substr(0, pos);
             }
-            TType elementType = type;
-            elementType.clearArrayness();
+            TType elementType = sh::GetShaderVariableBasicType(var);
+            TType arrayType   = elementType;
+            arrayType.setArraySize(var.elementCount());
 
-            for (unsigned int i = 0; i < var.arraySize; ++i)
+            // Workaround for http://crbug.com/709317
+            //   This loop is reversed to initialize elements in increasing
+            // order [0 1 2 ...]. Otherwise, they're initialized in
+            // decreasing order [... 2 1 0], due to
+            // `sequence->insert(sequence->begin(), ...)` below.
+            for (unsigned int i = var.arraySize; i > 0; --i)
             {
-                TIntermSymbol *arraySymbol = new TIntermSymbol(0, name, type);
+                unsigned int index = i - 1;
+                TIntermSymbol *arraySymbol = new TIntermSymbol(0, name, arrayType);
                 TIntermBinary *element     = new TIntermBinary(EOpIndexDirect, arraySymbol,
-                                                           TIntermTyped::CreateIndexNode(i));
+                                                           TIntermTyped::CreateIndexNode(index));
 
                 TIntermTyped *zero        = TIntermTyped::CreateZero(elementType);
                 TIntermBinary *assignment = new TIntermBinary(EOpAssign, element, zero);
@@ -85,8 +100,20 @@ void VariableInitializer::insertInitCode(TIntermSequence *sequence)
                 sequence->insert(sequence->begin(), assignment);
             }
         }
+        else if (var.isStruct())
+        {
+            TVariable *structInfo = reinterpret_cast<TVariable *>(mSymbolTable.findGlobal(name));
+            ASSERT(structInfo);
+
+            TIntermSymbol *symbol = new TIntermSymbol(0, name, structInfo->getType());
+            TIntermTyped *zero    = TIntermTyped::CreateZero(structInfo->getType());
+
+            TIntermBinary *assign = new TIntermBinary(EOpAssign, symbol, zero);
+            sequence->insert(sequence->begin(), assign);
+        }
         else
         {
+            TType type            = sh::GetShaderVariableBasicType(var);
             TIntermSymbol *symbol = new TIntermSymbol(0, name, type);
             TIntermTyped *zero    = TIntermTyped::CreateZero(type);
 
@@ -98,8 +125,12 @@ void VariableInitializer::insertInitCode(TIntermSequence *sequence)
 
 }  // namespace anonymous
 
-void InitializeVariables(TIntermNode *root, const InitVariableList &vars)
+void InitializeVariables(TIntermNode *root,
+                         const InitVariableList &vars,
+                         const TSymbolTable &symbolTable)
 {
-    VariableInitializer initializer(vars);
+    VariableInitializer initializer(vars, symbolTable);
     root->traverse(&initializer);
 }
+
+}  // namespace sh

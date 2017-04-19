@@ -15,12 +15,13 @@
 namespace sh
 {
 
-BlockLayoutEncoder::BlockLayoutEncoder()
-    : mCurrentOffset(0)
+BlockLayoutEncoder::BlockLayoutEncoder() : mCurrentOffset(0)
 {
 }
 
-BlockMemberInfo BlockLayoutEncoder::encodeType(GLenum type, unsigned int arraySize, bool isRowMajorMatrix)
+BlockMemberInfo BlockLayoutEncoder::encodeType(GLenum type,
+                                               unsigned int arraySize,
+                                               bool isRowMajorMatrix)
 {
     int arrayStride;
     int matrixStride;
@@ -68,44 +69,52 @@ void Std140BlockEncoder::exitAggregateType()
     nextRegister();
 }
 
-void Std140BlockEncoder::getBlockLayoutInfo(GLenum type, unsigned int arraySize, bool isRowMajorMatrix, int *arrayStrideOut, int *matrixStrideOut)
+void Std140BlockEncoder::getBlockLayoutInfo(GLenum type,
+                                            unsigned int arraySize,
+                                            bool isRowMajorMatrix,
+                                            int *arrayStrideOut,
+                                            int *matrixStrideOut)
 {
     // We assume we are only dealing with 4 byte components (no doubles or half-words currently)
     ASSERT(gl::VariableComponentSize(gl::VariableComponentType(type)) == BytesPerComponent);
 
     size_t baseAlignment = 0;
-    int matrixStride = 0;
-    int arrayStride = 0;
+    int matrixStride     = 0;
+    int arrayStride      = 0;
 
     if (gl::IsMatrixType(type))
     {
         baseAlignment = ComponentsPerRegister;
-        matrixStride = ComponentsPerRegister;
+        matrixStride  = ComponentsPerRegister;
 
         if (arraySize > 0)
         {
             const int numRegisters = gl::MatrixRegisterCount(type, isRowMajorMatrix);
-            arrayStride = ComponentsPerRegister * numRegisters;
+            arrayStride            = ComponentsPerRegister * numRegisters;
         }
     }
     else if (arraySize > 0)
     {
         baseAlignment = ComponentsPerRegister;
-        arrayStride = ComponentsPerRegister;
+        arrayStride   = ComponentsPerRegister;
     }
     else
     {
         const int numComponents = gl::VariableComponentCount(type);
-        baseAlignment = (numComponents == 3 ? 4u : static_cast<size_t>(numComponents));
+        baseAlignment           = (numComponents == 3 ? 4u : static_cast<size_t>(numComponents));
     }
 
     mCurrentOffset = rx::roundUp(mCurrentOffset, baseAlignment);
 
     *matrixStrideOut = matrixStride;
-    *arrayStrideOut = arrayStride;
+    *arrayStrideOut  = arrayStride;
 }
 
-void Std140BlockEncoder::advanceOffset(GLenum type, unsigned int arraySize, bool isRowMajorMatrix, int arrayStride, int matrixStride)
+void Std140BlockEncoder::advanceOffset(GLenum type,
+                                       unsigned int arraySize,
+                                       bool isRowMajorMatrix,
+                                       int arrayStride,
+                                       int matrixStride)
 {
     if (arraySize > 0)
     {
@@ -122,5 +131,4 @@ void Std140BlockEncoder::advanceOffset(GLenum type, unsigned int arraySize, bool
         mCurrentOffset += gl::VariableComponentCount(type);
     }
 }
-
 }

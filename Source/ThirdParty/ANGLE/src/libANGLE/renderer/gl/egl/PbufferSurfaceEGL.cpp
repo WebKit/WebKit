@@ -25,7 +25,7 @@ PbufferSurfaceEGL::~PbufferSurfaceEGL()
 {
 }
 
-egl::Error PbufferSurfaceEGL::initialize()
+egl::Error PbufferSurfaceEGL::initialize(const DisplayImpl *displayImpl)
 {
     mSurface = mEGL->createPbufferSurface(mConfig, mAttribList.data());
     if (mSurface == EGL_NO_SURFACE)

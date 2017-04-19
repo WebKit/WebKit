@@ -24,26 +24,24 @@ FenceSyncNULL::~FenceSyncNULL()
 
 gl::Error FenceSyncNULL::set(GLenum condition, GLbitfield flags)
 {
-    UNIMPLEMENTED();
-    return gl::Error(GL_INVALID_OPERATION);
+    return gl::NoError();
 }
 
 gl::Error FenceSyncNULL::clientWait(GLbitfield flags, GLuint64 timeout, GLenum *outResult)
 {
-    UNIMPLEMENTED();
-    return gl::Error(GL_INVALID_OPERATION);
+    *outResult = GL_ALREADY_SIGNALED;
+    return gl::NoError();
 }
 
 gl::Error FenceSyncNULL::serverWait(GLbitfield flags, GLuint64 timeout)
 {
-    UNIMPLEMENTED();
-    return gl::Error(GL_INVALID_OPERATION);
+    return gl::NoError();
 }
 
 gl::Error FenceSyncNULL::getStatus(GLint *outResult)
 {
-    UNIMPLEMENTED();
-    return gl::Error(GL_INVALID_OPERATION);
+    *outResult = GL_SIGNALED;
+    return gl::NoError();
 }
 
 }  // namespace rx

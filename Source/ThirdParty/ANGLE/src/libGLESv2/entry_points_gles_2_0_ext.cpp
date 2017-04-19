@@ -18,6 +18,7 @@
 #include "libANGLE/Query.h"
 #include "libANGLE/queryconversions.h"
 #include "libANGLE/queryutils.h"
+#include "libANGLE/Thread.h"
 #include "libANGLE/VertexArray.h"
 
 #include "libANGLE/validationES.h"
@@ -275,12 +276,7 @@ void GL_APIENTRY DrawArraysInstancedANGLE(GLenum mode,
             return;
         }
 
-        Error error = context->drawArraysInstanced(mode, first, count, primcount);
-        if (error.isError())
-        {
-            context->handleError(error);
-            return;
-        }
+        context->drawArraysInstanced(mode, first, count, primcount);
     }
 }
 
@@ -305,13 +301,7 @@ void GL_APIENTRY DrawElementsInstancedANGLE(GLenum mode,
             return;
         }
 
-        Error error =
-            context->drawElementsInstanced(mode, count, type, indices, primcount, indexRange);
-        if (error.isError())
-        {
-            context->handleError(error);
-            return;
-        }
+        context->drawElementsInstanced(mode, count, type, indices, primcount, indexRange);
     }
 }
 
@@ -548,19 +538,14 @@ void GL_APIENTRY RenderbufferStorageMultisampleANGLE(GLenum target, GLsizei samp
     Context *context = GetValidGlobalContext();
     if (context)
     {
-        if (!ValidateRenderbufferStorageParametersANGLE(context, target, samples, internalformat,
-            width, height))
+        if (!context->skipValidation() &&
+            !ValidateRenderbufferStorageMultisampleANGLE(context, target, samples, internalformat,
+                                                         width, height))
         {
             return;
         }
 
-        Renderbuffer *renderbuffer = context->getGLState().getCurrentRenderbuffer();
-        Error error = renderbuffer->setStorageMultisample(samples, internalformat, width, height);
-        if (error.isError())
-        {
-            context->handleError(error);
-            return;
-        }
+        context->renderbufferStorageMultisample(target, samples, internalformat, width, height);
     }
 }
 
@@ -659,7 +644,7 @@ void GL_APIENTRY TexStorage2DEXT(GLenum target, GLsizei levels, GLenum internalf
 
         Extents size(width, height, 1);
         Texture *texture = context->getTargetTexture(target);
-        Error error = texture->setStorage(target, levels, internalformat, size);
+        Error error      = texture->setStorage(context, target, levels, internalformat, size);
         if (error.isError())
         {
             context->handleError(error);
@@ -690,7 +675,7 @@ void GL_APIENTRY VertexAttribDivisorANGLE(GLuint index, GLuint divisor)
                 context->handleError(Error(GL_INVALID_OPERATION, errorMessage));
 
                 // We also output an error message to the debugger window if tracing is active, so that developers can see the error message.
-                ERR("%s", errorMessage);
+                ERR() << errorMessage;
 
                 return;
             }
@@ -767,7 +752,7 @@ void GL_APIENTRY GetProgramBinaryOES(GLuint program, GLsizei bufSize, GLsizei *l
         Program *programObject = context->getProgram(program);
         ASSERT(programObject != nullptr);
 
-        Error error = programObject->saveBinary(binaryFormat, binary, bufSize, length);
+        Error error = programObject->saveBinary(context, binaryFormat, binary, bufSize, length);
         if (error.isError())
         {
             context->handleError(error);
@@ -792,7 +777,7 @@ void GL_APIENTRY ProgramBinaryOES(GLuint program, GLenum binaryFormat, const voi
         Program *programObject = context->getProgram(program);
         ASSERT(programObject != nullptr);
 
-        Error error = programObject->loadBinary(binaryFormat, binary, length);
+        Error error = programObject->loadBinary(context, binaryFormat, binary, length);
         if (error.isError())
         {
             context->handleError(error);
@@ -990,10 +975,11 @@ ANGLE_EXPORT void GL_APIENTRY EGLImageTargetTexture2DOES(GLenum target, GLeglIma
 {
     EVENT("(GLenum target = 0x%X, GLeglImageOES image = 0x%0.8p)", target, image);
 
-    Context *context = GetValidGlobalContext();
+    egl::Thread *thread = egl::GetCurrentThread();
+    Context *context    = thread->getValidContext();
     if (context)
     {
-        egl::Display *display   = egl::GetGlobalDisplay();
+        egl::Display *display   = thread->getDisplay();
         egl::Image *imageObject = reinterpret_cast<egl::Image *>(image);
         if (!ValidateEGLImageTargetTexture2DOES(context, display, target, imageObject))
         {
@@ -1015,10 +1001,11 @@ ANGLE_EXPORT void GL_APIENTRY EGLImageTargetRenderbufferStorageOES(GLenum target
 {
     EVENT("(GLenum target = 0x%X, GLeglImageOES image = 0x%0.8p)", target, image);
 
-    Context *context = GetValidGlobalContext();
+    egl::Thread *thread = egl::GetCurrentThread();
+    Context *context    = thread->getValidContext();
     if (context)
     {
-        egl::Display *display   = egl::GetGlobalDisplay();
+        egl::Display *display   = thread->getDisplay();
         egl::Image *imageObject = reinterpret_cast<egl::Image *>(image);
         if (!ValidateEGLImageTargetRenderbufferStorageOES(context, display, target, imageObject))
         {
@@ -1867,7 +1854,10 @@ ANGLE_EXPORT void GL_APIENTRY ProgramPathFragmentInputGenCHROMIUM(GLuint program
 }
 
 ANGLE_EXPORT void GL_APIENTRY CopyTextureCHROMIUM(GLuint sourceId,
+                                                  GLint sourceLevel,
+                                                  GLenum destTarget,
                                                   GLuint destId,
+                                                  GLint destLevel,
                                                   GLint internalFormat,
                                                   GLenum destType,
                                                   GLboolean unpackFlipY,
@@ -1875,30 +1865,35 @@ ANGLE_EXPORT void GL_APIENTRY CopyTextureCHROMIUM(GLuint sourceId,
                                                   GLboolean unpackUnmultiplyAlpha)
 {
     EVENT(
-        "(GLuint sourceId = %u, GLuint destId = %u, GLint internalFormat = 0x%X, GLenum destType = "
+        "(GLuint sourceId = %u, GLint sourceLevel = %d, GLenum destTarget = 0x%X, GLuint destId = "
+        "%u, GLint destLevel = %d, GLint internalFormat = 0x%X, GLenum destType = "
         "0x%X, GLboolean unpackFlipY = %u, GLboolean unpackPremultiplyAlpha = %u, GLboolean "
         "unpackUnmultiplyAlpha = %u)",
-        sourceId, destId, internalFormat, destType, unpackFlipY, unpackPremultiplyAlpha,
-        unpackUnmultiplyAlpha);
+        sourceId, sourceLevel, destTarget, destId, destLevel, internalFormat, destType, unpackFlipY,
+        unpackPremultiplyAlpha, unpackUnmultiplyAlpha);
 
     Context *context = GetValidGlobalContext();
     if (context)
     {
         if (!context->skipValidation() &&
-            !ValidateCopyTextureCHROMIUM(context, sourceId, destId, internalFormat, destType,
-                                         unpackFlipY, unpackPremultiplyAlpha,
-                                         unpackUnmultiplyAlpha))
+            !ValidateCopyTextureCHROMIUM(context, sourceId, sourceLevel, destTarget, destId,
+                                         destLevel, internalFormat, destType, unpackFlipY,
+                                         unpackPremultiplyAlpha, unpackUnmultiplyAlpha))
         {
             return;
         }
 
-        context->copyTextureCHROMIUM(sourceId, destId, internalFormat, destType, unpackFlipY,
-                                     unpackPremultiplyAlpha, unpackUnmultiplyAlpha);
+        context->copyTextureCHROMIUM(sourceId, sourceLevel, destTarget, destId, destLevel,
+                                     internalFormat, destType, unpackFlipY, unpackPremultiplyAlpha,
+                                     unpackUnmultiplyAlpha);
     }
 }
 
 ANGLE_EXPORT void GL_APIENTRY CopySubTextureCHROMIUM(GLuint sourceId,
+                                                     GLint sourceLevel,
+                                                     GLenum destTarget,
                                                      GLuint destId,
+                                                     GLint destLevel,
                                                      GLint xoffset,
                                                      GLint yoffset,
                                                      GLint x,
@@ -1910,25 +1905,27 @@ ANGLE_EXPORT void GL_APIENTRY CopySubTextureCHROMIUM(GLuint sourceId,
                                                      GLboolean unpackUnmultiplyAlpha)
 {
     EVENT(
-        "(GLuint sourceId = %u, GLuint destId = %u, , GLboolean unpackFlipY = %u, GLint xoffset = "
+        "(GLuint sourceId = %u, GLint sourceLevel = %d, GLenum destTarget = 0x%X, GLuint destId = "
+        "%u, GLint destLevel = %d, GLint xoffset = "
         "%d, GLint yoffset = %d, GLint x = %d, GLint y = %d, GLsizei width = %d, GLsizei height = "
         "%d, GLboolean unpackPremultiplyAlpha = %u, GLboolean unpackUnmultiplyAlpha = %u)",
-        sourceId, destId, xoffset, yoffset, x, y, width, height, unpackFlipY,
-        unpackPremultiplyAlpha, unpackUnmultiplyAlpha);
+        sourceId, sourceLevel, destTarget, destId, destLevel, xoffset, yoffset, x, y, width, height,
+        unpackFlipY, unpackPremultiplyAlpha, unpackUnmultiplyAlpha);
 
     Context *context = GetValidGlobalContext();
     if (context)
     {
         if (!context->skipValidation() &&
-            !ValidateCopySubTextureCHROMIUM(context, sourceId, destId, xoffset, yoffset, x, y,
-                                            width, height, unpackFlipY, unpackPremultiplyAlpha,
-                                            unpackUnmultiplyAlpha))
+            !ValidateCopySubTextureCHROMIUM(
+                context, sourceId, sourceLevel, destTarget, destId, destLevel, xoffset, yoffset, x,
+                y, width, height, unpackFlipY, unpackPremultiplyAlpha, unpackUnmultiplyAlpha))
         {
             return;
         }
 
-        context->copySubTextureCHROMIUM(sourceId, destId, xoffset, yoffset, x, y, width, height,
-                                        unpackFlipY, unpackPremultiplyAlpha, unpackUnmultiplyAlpha);
+        context->copySubTextureCHROMIUM(sourceId, sourceLevel, destTarget, destId, destLevel,
+                                        xoffset, yoffset, x, y, width, height, unpackFlipY,
+                                        unpackPremultiplyAlpha, unpackUnmultiplyAlpha);
     }
 }
 
@@ -1949,22 +1946,20 @@ ANGLE_EXPORT void GL_APIENTRY CompressedCopyTextureCHROMIUM(GLuint sourceId, GLu
     }
 }
 
-GL_APICALL GLboolean GL_APIENTRY EnableExtensionANGLE(const GLchar *name)
+ANGLE_EXPORT void GL_APIENTRY RequestExtensionANGLE(const GLchar *name)
 {
     EVENT("(const GLchar *name = %p)", name);
 
     Context *context = GetValidGlobalContext();
     if (context)
     {
-        if (!context->skipValidation() && !ValidateEnableExtensionANGLE(context, name))
+        if (!context->skipValidation() && !ValidateRequestExtensionANGLE(context, name))
         {
-            return GL_FALSE;
+            return;
         }
 
-        return context->enableExtension(name) ? GL_TRUE : GL_FALSE;
+        context->requestExtension(name);
     }
-
-    return GL_FALSE;
 }
 
 ANGLE_EXPORT void GL_APIENTRY GetBooleanvRobustANGLE(GLenum pname,
@@ -1987,15 +1982,7 @@ ANGLE_EXPORT void GL_APIENTRY GetBooleanvRobustANGLE(GLenum pname,
             return;
         }
 
-        if (nativeType == GL_BOOL)
-        {
-            context->getBooleanv(pname, params);
-        }
-        else
-        {
-            CastStateValues(context, nativeType, pname, numParams, params);
-        }
-
+        context->getBooleanv(pname, params);
         SetRobustLengthParam(length, numParams);
     }
 }
@@ -2045,15 +2032,7 @@ ANGLE_EXPORT void GL_APIENTRY GetFloatvRobustANGLE(GLenum pname,
             return;
         }
 
-        if (nativeType == GL_FLOAT)
-        {
-            context->getFloatv(pname, params);
-        }
-        else
-        {
-            CastStateValues(context, nativeType, pname, numParams, params);
-        }
-
+        context->getFloatv(pname, params);
         SetRobustLengthParam(length, numParams);
     }
 }
@@ -2106,14 +2085,7 @@ ANGLE_EXPORT void GL_APIENTRY GetIntegervRobustANGLE(GLenum pname,
             return;
         }
 
-        if (nativeType == GL_INT)
-        {
-            context->getIntegerv(pname, data);
-        }
-        else
-        {
-            CastStateValues(context, nativeType, pname, numParams, data);
-        }
+        context->getIntegerv(pname, data);
         SetRobustLengthParam(length, numParams);
     }
 }
@@ -2166,7 +2138,7 @@ ANGLE_EXPORT void GL_APIENTRY GetRenderbufferParameterivRobustANGLE(GLenum targe
         }
 
         Renderbuffer *renderbuffer = context->getGLState().getCurrentRenderbuffer();
-        QueryRenderbufferiv(renderbuffer, pname, params);
+        QueryRenderbufferiv(context, renderbuffer, pname, params);
         SetRobustLengthParam(length, numParams);
     }
 }
@@ -2327,11 +2299,7 @@ ANGLE_EXPORT void GL_APIENTRY GetVertexAttribfvRobustANGLE(GLuint index,
             return;
         }
 
-        const VertexAttribCurrentValueData &currentValues =
-            context->getGLState().getVertexAttribCurrentValue(index);
-        const VertexAttribute &attrib =
-            context->getGLState().getVertexArray()->getVertexAttribute(index);
-        QueryVertexAttribfv(attrib, currentValues, pname, params);
+        context->getVertexAttribfv(index, pname, params);
         SetRobustLengthParam(length, writeLength);
     }
 }
@@ -2357,11 +2325,7 @@ ANGLE_EXPORT void GL_APIENTRY GetVertexAttribivRobustANGLE(GLuint index,
             return;
         }
 
-        const VertexAttribCurrentValueData &currentValues =
-            context->getGLState().getVertexAttribCurrentValue(index);
-        const VertexAttribute &attrib =
-            context->getGLState().getVertexArray()->getVertexAttribute(index);
-        QueryVertexAttribiv(attrib, currentValues, pname, params);
+        context->getVertexAttribiv(index, pname, params);
         SetRobustLengthParam(length, writeLength);
     }
 }
@@ -2387,9 +2351,7 @@ ANGLE_EXPORT void GL_APIENTRY GetVertexAttribPointervRobustANGLE(GLuint index,
             return;
         }
 
-        const VertexAttribute &attrib =
-            context->getGLState().getVertexArray()->getVertexAttribute(index);
-        QueryVertexAttribPointerv(attrib, pname, pointer);
+        context->getVertexAttribPointerv(index, pname, pointer);
         SetRobustLengthParam(length, writeLength);
     }
 }
@@ -2402,20 +2364,24 @@ ANGLE_EXPORT void GL_APIENTRY ReadPixelsRobustANGLE(GLint x,
                                                     GLenum type,
                                                     GLsizei bufSize,
                                                     GLsizei *length,
+                                                    GLsizei *columns,
+                                                    GLsizei *rows,
                                                     void *pixels)
 {
     EVENT(
         "(GLint x = %d, GLint y = %d, GLsizei width = %d, GLsizei height = %d, "
         "GLenum format = 0x%X, GLenum type = 0x%X, GLsizei bufsize = %d, GLsizei* length = "
-        "0x%0.8p, GLvoid* pixels = 0x%0.8p)",
-        x, y, width, height, format, type, bufSize, length, pixels);
+        "0x%0.8p, GLsizei* columns = 0x%0.8p, GLsizei* rows = 0x%0.8p, GLvoid* pixels = 0x%0.8p)",
+        x, y, width, height, format, type, bufSize, length, columns, rows, pixels);
 
     Context *context = GetValidGlobalContext();
     if (context)
     {
         GLsizei writeLength = 0;
+        GLsizei writeColumns = 0;
+        GLsizei writeRows    = 0;
         if (!ValidateReadPixelsRobustANGLE(context, x, y, width, height, format, type, bufSize,
-                                           &writeLength, pixels))
+                                           &writeLength, &writeColumns, &writeRows, pixels))
         {
             return;
         }
@@ -2423,6 +2389,8 @@ ANGLE_EXPORT void GL_APIENTRY ReadPixelsRobustANGLE(GLint x,
         context->readPixels(x, y, width, height, format, type, pixels);
 
         SetRobustLengthParam(length, writeLength);
+        SetRobustLengthParam(columns, writeColumns);
+        SetRobustLengthParam(rows, writeRows);
     }
 }
 
@@ -2745,11 +2713,7 @@ ANGLE_EXPORT void GL_APIENTRY GetVertexAttribIivRobustANGLE(GLuint index,
             return;
         }
 
-        const VertexAttribCurrentValueData &currentValues =
-            context->getGLState().getVertexAttribCurrentValue(index);
-        const VertexAttribute &attrib =
-            context->getGLState().getVertexArray()->getVertexAttribute(index);
-        QueryVertexAttribIiv(attrib, currentValues, pname, params);
+        context->getVertexAttribIiv(index, pname, params);
         SetRobustLengthParam(length, writeLength);
     }
 }
@@ -2775,11 +2739,7 @@ ANGLE_EXPORT void GL_APIENTRY GetVertexAttribIuivRobustANGLE(GLuint index,
             return;
         }
 
-        const VertexAttribCurrentValueData &currentValues =
-            context->getGLState().getVertexAttribCurrentValue(index);
-        const VertexAttribute &attrib =
-            context->getGLState().getVertexArray()->getVertexAttribute(index);
-        QueryVertexAttribIuiv(attrib, currentValues, pname, params);
+        context->getVertexAttribIuiv(index, pname, params);
         SetRobustLengthParam(length, writeLength);
     }
 }
@@ -3131,20 +3091,24 @@ ANGLE_EXPORT void GL_APIENTRY ReadnPixelsRobustANGLE(GLint x,
                                                      GLenum type,
                                                      GLsizei bufSize,
                                                      GLsizei *length,
+                                                     GLsizei *columns,
+                                                     GLsizei *rows,
                                                      void *data)
 {
     EVENT(
         "(GLint x = %d, GLint y = %d, GLsizei width = %d, GLsizei height = %d, "
         "GLenum format = 0x%X, GLenum type = 0x%X, GLsizei bufsize = %d, GLsizei* length = "
-        "0x%0.8p, GLvoid *data = 0x%0.8p)",
-        x, y, width, height, format, type, bufSize, length, data);
+        "0x%0.8p, GLsizei* columns = 0x%0.8p, GLsizei* rows = 0x%0.8p, GLvoid *data = 0x%0.8p)",
+        x, y, width, height, format, type, bufSize, length, columns, rows, data);
 
     Context *context = GetValidGlobalContext();
     if (context)
     {
         GLsizei writeLength = 0;
+        GLsizei writeColumns = 0;
+        GLsizei writeRows    = 0;
         if (!ValidateReadnPixelsRobustANGLE(context, x, y, width, height, format, type, bufSize,
-                                            &writeLength, data))
+                                            &writeLength, &writeColumns, &writeRows, data))
         {
             return;
         }
@@ -3152,6 +3116,8 @@ ANGLE_EXPORT void GL_APIENTRY ReadnPixelsRobustANGLE(GLint x,
         context->readPixels(x, y, width, height, format, type, data);
 
         SetRobustLengthParam(length, writeLength);
+        SetRobustLengthParam(columns, writeColumns);
+        SetRobustLengthParam(rows, writeRows);
     }
 }
 

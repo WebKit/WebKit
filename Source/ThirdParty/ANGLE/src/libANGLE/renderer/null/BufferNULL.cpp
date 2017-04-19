@@ -10,55 +10,91 @@
 #include "libANGLE/renderer/null/BufferNULL.h"
 
 #include "common/debug.h"
+#include "common/utilities.h"
+#include "libANGLE/angletypes.h"
+#include "libANGLE/renderer/null/ContextNULL.h"
 
 namespace rx
 {
 
-BufferNULL::BufferNULL() : BufferImpl()
+BufferNULL::BufferNULL(const gl::BufferState &state, AllocationTrackerNULL *allocationTracker)
+    : BufferImpl(state), mAllocationTracker(allocationTracker)
 {
+    ASSERT(mAllocationTracker != nullptr);
 }
 
 BufferNULL::~BufferNULL()
 {
+    bool memoryReleaseResult = mAllocationTracker->updateMemoryAllocation(mData.size(), 0);
+    ASSERT(memoryReleaseResult);
 }
 
-gl::Error BufferNULL::setData(GLenum target, const void *data, size_t size, GLenum usage)
+gl::Error BufferNULL::setData(ContextImpl *context,
+                              GLenum target,
+                              const void *data,
+                              size_t size,
+                              GLenum usage)
 {
-    UNIMPLEMENTED();
-    return gl::Error(GL_INVALID_OPERATION);
+    if (!mAllocationTracker->updateMemoryAllocation(mData.size(), size))
+    {
+        return gl::OutOfMemory() << "Unable to allocate internal buffer storage.";
+    }
+
+    mData.resize(size, 0);
+    if (size > 0 && data != nullptr)
+    {
+        memcpy(mData.data(), data, size);
+    }
+    return gl::NoError();
 }
 
-gl::Error BufferNULL::setSubData(GLenum target, const void *data, size_t size, size_t offset)
+gl::Error BufferNULL::setSubData(ContextImpl *context,
+                                 GLenum target,
+                                 const void *data,
+                                 size_t size,
+                                 size_t offset)
 {
-    UNIMPLEMENTED();
-    return gl::Error(GL_INVALID_OPERATION);
+    if (size > 0)
+    {
+        memcpy(mData.data() + offset, data, size);
+    }
+    return gl::NoError();
 }
 
-gl::Error BufferNULL::copySubData(BufferImpl *source,
+gl::Error BufferNULL::copySubData(ContextImpl *context,
+                                  BufferImpl *source,
                                   GLintptr sourceOffset,
                                   GLintptr destOffset,
                                   GLsizeiptr size)
 {
-    UNIMPLEMENTED();
-    return gl::Error(GL_INVALID_OPERATION);
+    BufferNULL *sourceNULL = GetAs<BufferNULL>(source);
+    if (size > 0)
+    {
+        memcpy(mData.data() + destOffset, sourceNULL->mData.data() + sourceOffset, size);
+    }
+    return gl::NoError();
 }
 
-gl::Error BufferNULL::map(GLenum access, GLvoid **mapPtr)
+gl::Error BufferNULL::map(ContextImpl *context, GLenum access, GLvoid **mapPtr)
 {
-    UNIMPLEMENTED();
-    return gl::Error(GL_INVALID_OPERATION);
+    *mapPtr = mData.data();
+    return gl::NoError();
 }
 
-gl::Error BufferNULL::mapRange(size_t offset, size_t length, GLbitfield access, GLvoid **mapPtr)
+gl::Error BufferNULL::mapRange(ContextImpl *context,
+                               size_t offset,
+                               size_t length,
+                               GLbitfield access,
+                               GLvoid **mapPtr)
 {
-    UNIMPLEMENTED();
-    return gl::Error(GL_INVALID_OPERATION);
+    *mapPtr = mData.data() + offset;
+    return gl::NoError();
 }
 
-gl::Error BufferNULL::unmap(GLboolean *result)
+gl::Error BufferNULL::unmap(ContextImpl *context, GLboolean *result)
 {
-    UNIMPLEMENTED();
-    return gl::Error(GL_INVALID_OPERATION);
+    *result = GL_TRUE;
+    return gl::NoError();
 }
 
 gl::Error BufferNULL::getIndexRange(GLenum type,
@@ -67,8 +103,8 @@ gl::Error BufferNULL::getIndexRange(GLenum type,
                                     bool primitiveRestartEnabled,
                                     gl::IndexRange *outRange)
 {
-    UNIMPLEMENTED();
-    return gl::Error(GL_INVALID_OPERATION);
+    *outRange = gl::ComputeIndexRange(type, mData.data() + offset, count, primitiveRestartEnabled);
+    return gl::NoError();
 }
 
 }  // namespace rx

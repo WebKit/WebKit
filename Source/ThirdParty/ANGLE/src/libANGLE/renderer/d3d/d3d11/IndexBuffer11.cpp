@@ -64,7 +64,7 @@ gl::Error IndexBuffer11::initialize(unsigned int bufferSize, GLenum indexType, b
     mIndexType = indexType;
     mDynamicUsage = dynamic;
 
-    return gl::Error(GL_NO_ERROR);
+    return gl::NoError();
 }
 
 gl::Error IndexBuffer11::mapBuffer(unsigned int offset, unsigned int size, void** outMappedMemory)
@@ -90,7 +90,7 @@ gl::Error IndexBuffer11::mapBuffer(unsigned int offset, unsigned int size, void*
     }
 
     *outMappedMemory = reinterpret_cast<char*>(mappedResource.pData) + offset;
-    return gl::Error(GL_NO_ERROR);
+    return gl::NoError();
 }
 
 gl::Error IndexBuffer11::unmapBuffer()
@@ -102,7 +102,7 @@ gl::Error IndexBuffer11::unmapBuffer()
 
     ID3D11DeviceContext *dxContext = mRenderer->getDeviceContext();
     dxContext->Unmap(mBuffer, 0);
-    return gl::Error(GL_NO_ERROR);
+    return gl::NoError();
 }
 
 GLenum IndexBuffer11::getIndexType() const
@@ -123,7 +123,7 @@ gl::Error IndexBuffer11::setSize(unsigned int bufferSize, GLenum indexType)
     }
     else
     {
-        return gl::Error(GL_NO_ERROR);
+        return gl::NoError();
     }
 }
 
@@ -145,7 +145,7 @@ gl::Error IndexBuffer11::discard()
 
     dxContext->Unmap(mBuffer, 0);
 
-    return gl::Error(GL_NO_ERROR);
+    return gl::NoError();
 }
 
 DXGI_FORMAT IndexBuffer11::getIndexFormat() const

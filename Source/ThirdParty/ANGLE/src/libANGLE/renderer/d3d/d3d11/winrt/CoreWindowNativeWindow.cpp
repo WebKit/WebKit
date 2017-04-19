@@ -64,7 +64,8 @@ bool CoreWindowNativeWindow::initialize(EGLNativeWindowType window, IPropertySet
         // A EGLRenderSurfaceSizeProperty and a EGLRenderResolutionScaleProperty can't both be specified
         if (mSwapChainScaleSpecified && mSwapChainSizeSpecified)
         {
-            ERR("It is invalid to specify both an EGLRenderSurfaceSizeProperty and a EGLRenderResolutionScaleProperty.");
+            ERR() << "It is invalid to specify both an EGLRenderSurfaceSizeProperty and a "
+                     "EGLRenderResolutionScaleProperty.";
             return false;
         }
     }

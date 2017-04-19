@@ -8,6 +8,7 @@
 
 #include "libANGLE/renderer/gl/BlitGL.h"
 
+#include "common/vector_utils.h"
 #include "libANGLE/formatutils.h"
 #include "libANGLE/Framebuffer.h"
 #include "libANGLE/renderer/gl/formatutilsgl.h"
@@ -17,6 +18,11 @@
 #include "libANGLE/renderer/gl/StateManagerGL.h"
 #include "libANGLE/renderer/gl/WorkaroundsGL.h"
 
+using angle::Vector2;
+
+namespace rx
+{
+
 namespace
 {
 
@@ -24,6 +30,7 @@ gl::Error CheckCompileStatus(const rx::FunctionsGL *functions, GLuint shader)
 {
     GLint compileStatus = GL_FALSE;
     functions->getShaderiv(shader, GL_COMPILE_STATUS, &compileStatus);
+
     ASSERT(compileStatus == GL_TRUE);
     if (compileStatus == GL_FALSE)
     {
@@ -46,10 +53,60 @@ gl::Error CheckLinkStatus(const rx::FunctionsGL *functions, GLuint program)
     return gl::NoError();
 }
 
-} // anonymous namespace
-
-namespace rx
+class ScopedGLState : public angle::NonCopyable
 {
+  public:
+    enum
+    {
+        KEEP_SCISSOR = 1,
+    };
+
+    ScopedGLState(StateManagerGL *stateManager,
+                  const FunctionsGL *functions,
+                  gl::Rectangle viewport,
+                  int keepState = 0)
+        : mStateManager(stateManager), mFunctions(functions)
+    {
+        if (!(keepState & KEEP_SCISSOR))
+        {
+            mStateManager->setScissorTestEnabled(false);
+        }
+        mStateManager->setViewport(viewport);
+        mStateManager->setDepthRange(0.0f, 1.0f);
+        mStateManager->setBlendEnabled(false);
+        mStateManager->setColorMask(true, true, true, true);
+        mStateManager->setSampleAlphaToCoverageEnabled(false);
+        mStateManager->setSampleCoverageEnabled(false);
+        mStateManager->setDepthTestEnabled(false);
+        mStateManager->setStencilTestEnabled(false);
+        mStateManager->setCullFaceEnabled(false);
+        mStateManager->setPolygonOffsetFillEnabled(false);
+        mStateManager->setRasterizerDiscardEnabled(false);
+
+        mStateManager->pauseTransformFeedback();
+        mStateManager->pauseAllQueries();
+    }
+
+    ~ScopedGLState()
+    {
+        // XFB resuming will be done automatically
+        mStateManager->resumeAllQueries();
+    }
+
+    void willUseTextureUnit(int unit)
+    {
+        if (mFunctions->bindSampler)
+        {
+            mStateManager->bindSampler(unit, 0);
+        }
+    }
+
+  private:
+    StateManagerGL *mStateManager;
+    const FunctionsGL *mFunctions;
+};
+
+}  // anonymous namespace
 
 BlitGL::BlitGL(const FunctionsGL *functions,
                const WorkaroundsGL &workarounds,
@@ -61,8 +118,11 @@ BlitGL::BlitGL(const FunctionsGL *functions,
       mSourceTextureLocation(-1),
       mScaleLocation(-1),
       mOffsetLocation(-1),
+      mMultiplyAlphaLocation(-1),
+      mUnMultiplyAlphaLocation(-1),
       mScratchFBO(0),
-      mVAO(0)
+      mVAO(0),
+      mVertexBuffer(0)
 {
     for (size_t i = 0; i < ArraySize(mScratchTextures); i++)
     {
@@ -116,6 +176,9 @@ gl::Error BlitGL::copyImageToLUMAWorkaroundTexture(GLuint texture,
 
     // Allocate the texture memory
     const gl::InternalFormat &internalFormatInfo = gl::GetInternalFormatInfo(internalFormat);
+
+    gl::PixelUnpackState unpack;
+    mStateManager->setPixelUnpackState(unpack);
     mFunctions->texImage2D(target, static_cast<GLint>(level), internalFormat, sourceArea.width,
                            sourceArea.height, 0, internalFormatInfo.format,
                            source->getImplementationColorReadType(), nullptr);
@@ -169,22 +232,13 @@ gl::Error BlitGL::copySubImageToLUMAWorkaroundTexture(GLuint texture,
                                      mScratchTextures[1], 0);
 
     // Render to the destination texture, sampling from the scratch texture
-    mStateManager->setViewport(gl::Rectangle(0, 0, sourceArea.width, sourceArea.height));
-    mStateManager->setScissorTestEnabled(false);
-    mStateManager->setDepthRange(0.0f, 1.0f);
-    mStateManager->setBlendEnabled(false);
-    mStateManager->setColorMask(true, true, true, true);
-    mStateManager->setSampleAlphaToCoverageEnabled(false);
-    mStateManager->setSampleCoverageEnabled(false);
-    mStateManager->setDepthTestEnabled(false);
-    mStateManager->setStencilTestEnabled(false);
-    mStateManager->setCullFaceEnabled(false);
-    mStateManager->setPolygonOffsetFillEnabled(false);
-    mStateManager->setRasterizerDiscardEnabled(false);
-    mStateManager->bindTexture(GL_TEXTURE_2D, mScratchTextures[0]);
+    ScopedGLState scopedState(mStateManager, mFunctions,
+                              gl::Rectangle(0, 0, sourceArea.width, sourceArea.height));
+    scopedState.willUseTextureUnit(0);
 
     setScratchTextureParameter(GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     setScratchTextureParameter(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
     mStateManager->activeTexture(0);
     mStateManager->bindTexture(GL_TEXTURE_2D, mScratchTextures[0]);
 
@@ -192,15 +246,25 @@ gl::Error BlitGL::copySubImageToLUMAWorkaroundTexture(GLuint texture,
     mFunctions->uniform1i(mSourceTextureLocation, 0);
     mFunctions->uniform2f(mScaleLocation, 1.0, 1.0);
     mFunctions->uniform2f(mOffsetLocation, 0.0, 0.0);
+    mFunctions->uniform1i(mMultiplyAlphaLocation, 0);
+    mFunctions->uniform1i(mUnMultiplyAlphaLocation, 0);
 
     mStateManager->bindVertexArray(mVAO, 0);
-
     mFunctions->drawArrays(GL_TRIANGLES, 0, 3);
 
     // Copy the swizzled texture to the destination texture
     mStateManager->bindTexture(textureType, texture);
-    mFunctions->copyTexSubImage2D(target, static_cast<GLint>(level), destOffset.x, destOffset.y, 0,
-                                  0, sourceArea.width, sourceArea.height);
+
+    if (target == GL_TEXTURE_3D || target == GL_TEXTURE_2D_ARRAY)
+    {
+        mFunctions->copyTexSubImage3D(target, static_cast<GLint>(level), destOffset.x, destOffset.y,
+                                      destOffset.z, 0, 0, sourceArea.width, sourceArea.height);
+    }
+    else
+    {
+        mFunctions->copyTexSubImage2D(target, static_cast<GLint>(level), destOffset.x, destOffset.y,
+                                      0, 0, sourceArea.width, sourceArea.height);
+    }
 
     // Finally orphan the scratch textures so they can be GCed by the driver.
     orphanScratchTextures();
@@ -275,24 +339,24 @@ gl::Error BlitGL::blitColorBufferWithShader(const gl::Framebuffer *source,
     //          = P * (T.size / D.size) + (T.offset - D.offset * T.size / D.size)
 
     GLuint textureId;
-    gl::Vector2 TOffset;
-    gl::Vector2 TSize;
+    Vector2 TOffset;
+    Vector2 TSize;
 
     // TODO(cwallez) once texture dirty bits are landed, reuse attached texture instead of using
     // CopyTexImage2D
     {
         textureId = mScratchTextures[0];
-        TOffset   = gl::Vector2(0.0, 0.0);
-        TSize     = gl::Vector2(1.0, 1.0);
+        TOffset   = Vector2(0.0);
+        TSize     = Vector2(1.0);
         if (sourceArea.width < 0)
         {
-            TOffset.x = 1.0;
-            TSize.x   = -1.0;
+            TOffset.x() = 1.0;
+            TSize.x()   = -1.0;
         }
         if (sourceArea.height < 0)
         {
-            TOffset.y = 1.0;
-            TSize.y   = -1.0;
+            TOffset.y() = 1.0;
+            TSize.y()   = -1.0;
         }
 
         GLenum format                 = readAttachment->getFormat().info->internalFormat;
@@ -302,12 +366,17 @@ gl::Error BlitGL::blitColorBufferWithShader(const gl::Framebuffer *source,
 
         mFunctions->copyTexImage2D(GL_TEXTURE_2D, 0, format, inBoundsSource.x, inBoundsSource.y,
                                    inBoundsSource.width, inBoundsSource.height, 0);
+
+        setScratchTextureParameter(GL_TEXTURE_MIN_FILTER, filter);
+        setScratchTextureParameter(GL_TEXTURE_MAG_FILTER, filter);
+        setScratchTextureParameter(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        setScratchTextureParameter(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     }
 
     // Compute normalized sampled draw quad region
     // It is the same as the region of the source rectangle that is in bounds.
-    gl::Vector2 DOffset;
-    gl::Vector2 DSize;
+    Vector2 DOffset;
+    Vector2 DSize;
     {
         ASSERT(sourceArea.width != 0 && sourceArea.height != 0);
         gl::Rectangle orientedInBounds = inBoundsSource;
@@ -323,50 +392,142 @@ gl::Error BlitGL::blitColorBufferWithShader(const gl::Framebuffer *source,
         }
 
         DOffset =
-            gl::Vector2(static_cast<float>(orientedInBounds.x - sourceArea.x) / sourceArea.width,
-                        static_cast<float>(orientedInBounds.y - sourceArea.y) / sourceArea.height);
-        DSize = gl::Vector2(static_cast<float>(orientedInBounds.width) / sourceArea.width,
-                            static_cast<float>(orientedInBounds.height) / sourceArea.height);
+            Vector2(static_cast<float>(orientedInBounds.x - sourceArea.x) / sourceArea.width,
+                    static_cast<float>(orientedInBounds.y - sourceArea.y) / sourceArea.height);
+        DSize = Vector2(static_cast<float>(orientedInBounds.width) / sourceArea.width,
+                        static_cast<float>(orientedInBounds.height) / sourceArea.height);
     }
 
-    ASSERT(DSize.x != 0.0 && DSize.y != 0.0);
-    gl::Vector2 texCoordScale  = gl::Vector2(TSize.x / DSize.x, TSize.y / DSize.y);
-    gl::Vector2 texCoordOffset = gl::Vector2(TOffset.x - DOffset.x * texCoordScale.x,
-                                             TOffset.y - DOffset.y * texCoordScale.y);
+    ASSERT(DSize.x() != 0.0 && DSize.y() != 0.0);
+    Vector2 texCoordScale  = TSize / DSize;
+    Vector2 texCoordOffset = TOffset - DOffset * texCoordScale;
 
-    // Reset all the state except scissor and viewport
-    mStateManager->setDepthRange(0.0f, 1.0f);
-    mStateManager->setBlendEnabled(false);
-    mStateManager->setColorMask(true, true, true, true);
-    mStateManager->setSampleAlphaToCoverageEnabled(false);
-    mStateManager->setSampleCoverageEnabled(false);
-    mStateManager->setDepthTestEnabled(false);
-    mStateManager->setStencilTestEnabled(false);
-    mStateManager->setCullFaceEnabled(false);
-    mStateManager->setPolygonOffsetFillEnabled(false);
-    mStateManager->setRasterizerDiscardEnabled(false);
-
-    // Use the viewport to draw exactly to the destination rectangle
-    mStateManager->setViewport(destArea);
+    // Reset all the state except scissor and use the viewport to draw exactly to the destination
+    // rectangle
+    ScopedGLState scopedState(mStateManager, mFunctions, destArea, ScopedGLState::KEEP_SCISSOR);
+    scopedState.willUseTextureUnit(0);
 
     // Set uniforms
-    setScratchTextureParameter(GL_TEXTURE_MIN_FILTER, filter);
-    setScratchTextureParameter(GL_TEXTURE_MAG_FILTER, filter);
-    setScratchTextureParameter(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    setScratchTextureParameter(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     mStateManager->activeTexture(0);
-    mStateManager->bindTexture(GL_TEXTURE_2D, mScratchTextures[0]);
+    mStateManager->bindTexture(GL_TEXTURE_2D, textureId);
 
     mStateManager->useProgram(mBlitProgram);
     mFunctions->uniform1i(mSourceTextureLocation, 0);
-    mFunctions->uniform2f(mScaleLocation, texCoordScale.x, texCoordScale.y);
-    mFunctions->uniform2f(mOffsetLocation, texCoordOffset.x, texCoordOffset.y);
+    mFunctions->uniform2f(mScaleLocation, texCoordScale.x(), texCoordScale.y());
+    mFunctions->uniform2f(mOffsetLocation, texCoordOffset.x(), texCoordOffset.y());
+    mFunctions->uniform1i(mMultiplyAlphaLocation, 0);
+    mFunctions->uniform1i(mUnMultiplyAlphaLocation, 0);
 
     const FramebufferGL *destGL = GetImplAs<FramebufferGL>(dest);
     mStateManager->bindFramebuffer(GL_DRAW_FRAMEBUFFER, destGL->getFramebufferID());
 
     mStateManager->bindVertexArray(mVAO, 0);
     mFunctions->drawArrays(GL_TRIANGLES, 0, 3);
+
+    return gl::NoError();
+}
+
+gl::Error BlitGL::copySubTexture(TextureGL *source,
+                                 size_t sourceLevel,
+                                 TextureGL *dest,
+                                 GLenum destTarget,
+                                 size_t destLevel,
+                                 const gl::Extents &sourceSize,
+                                 const gl::Rectangle &sourceArea,
+                                 const gl::Offset &destOffset,
+                                 bool needsLumaWorkaround,
+                                 GLenum lumaFormat,
+                                 bool unpackFlipY,
+                                 bool unpackPremultiplyAlpha,
+                                 bool unpackUnmultiplyAlpha)
+{
+    ANGLE_TRY(initializeResources());
+
+    // Setup the source texture
+    if (needsLumaWorkaround)
+    {
+        GLint luminance = (lumaFormat == GL_ALPHA) ? GL_ZERO : GL_RED;
+
+        GLint alpha = GL_RED;
+        if (lumaFormat == GL_LUMINANCE)
+        {
+            alpha = GL_ONE;
+        }
+        else if (lumaFormat == GL_LUMINANCE_ALPHA)
+        {
+            alpha = GL_GREEN;
+        }
+        else
+        {
+            ASSERT(lumaFormat == GL_ALPHA);
+        }
+
+        GLint swizzle[4] = {luminance, luminance, luminance, alpha};
+        source->setSwizzle(swizzle);
+    }
+    source->setMinFilter(GL_NEAREST);
+    source->setMagFilter(GL_NEAREST);
+    source->setBaseLevel(static_cast<GLuint>(sourceLevel));
+
+    // Render to the destination texture, sampling from the source texture
+    ScopedGLState scopedState(
+        mStateManager, mFunctions,
+        gl::Rectangle(destOffset.x, destOffset.y, sourceArea.width, sourceArea.height));
+    scopedState.willUseTextureUnit(0);
+
+    mStateManager->activeTexture(0);
+    mStateManager->bindTexture(GL_TEXTURE_2D, source->getTextureID());
+
+    Vector2 scale(sourceArea.width / static_cast<float>(sourceSize.width),
+                  sourceArea.height / static_cast<float>(sourceSize.height));
+    Vector2 offset(sourceArea.x / static_cast<float>(sourceSize.width),
+                   sourceArea.y / static_cast<float>(sourceSize.height));
+    if (unpackFlipY)
+    {
+        offset.y() += scale.y();
+        scale.y() = -scale.y();
+    }
+
+    mStateManager->useProgram(mBlitProgram);
+    mFunctions->uniform1i(mSourceTextureLocation, 0);
+    mFunctions->uniform2f(mScaleLocation, scale.x(), scale.y());
+    mFunctions->uniform2f(mOffsetLocation, offset.x(), offset.y());
+    if (unpackPremultiplyAlpha == unpackUnmultiplyAlpha)
+    {
+        mFunctions->uniform1i(mMultiplyAlphaLocation, 0);
+        mFunctions->uniform1i(mUnMultiplyAlphaLocation, 0);
+    }
+    else
+    {
+        mFunctions->uniform1i(mMultiplyAlphaLocation, unpackPremultiplyAlpha);
+        mFunctions->uniform1i(mUnMultiplyAlphaLocation, unpackUnmultiplyAlpha);
+    }
+
+    mStateManager->bindFramebuffer(GL_FRAMEBUFFER, mScratchFBO);
+    mFunctions->framebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, destTarget,
+                                     dest->getTextureID(), static_cast<GLint>(destLevel));
+
+    mStateManager->bindVertexArray(mVAO, 0);
+    mFunctions->drawArrays(GL_TRIANGLES, 0, 3);
+
+    return gl::NoError();
+}
+
+gl::Error BlitGL::copyTexSubImage(TextureGL *source,
+                                  TextureGL *dest,
+                                  const gl::Rectangle &sourceArea,
+                                  const gl::Offset &destOffset)
+{
+    ANGLE_TRY(initializeResources());
+
+    mStateManager->bindFramebuffer(GL_FRAMEBUFFER, mScratchFBO);
+    mFunctions->framebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
+                                     source->getTextureID(), 0);
+
+    mStateManager->bindTexture(dest->getTarget(), dest->getTextureID());
+
+    mFunctions->copyTexSubImage2D(dest->getTarget(), 0, destOffset.x, destOffset.y, sourceArea.x,
+                                  sourceArea.y, sourceArea.width, sourceArea.height);
 
     return gl::NoError();
 }
@@ -378,25 +539,17 @@ gl::Error BlitGL::initializeResources()
         mBlitProgram = mFunctions->createProgram();
 
         // Compile the fragment shader
-        // It uses a single, large triangle, to avoid arithmetic precision issues where fragments
-        // with the same Y coordinate don't get exactly the same interpolated texcoord Y.
         const char *vsSource =
-            "#version 150\n"
-            "out vec2 v_texcoord;\n"
+            "#version 100\n"
+            "varying vec2 v_texcoord;\n"
             "uniform vec2 u_scale;\n"
             "uniform vec2 u_offset;\n"
+            "attribute vec2 a_texcoord;\n"
             "\n"
             "void main()\n"
             "{\n"
-            "    const vec2 quad_positions[3] = vec2[3]\n"
-            "    (\n"
-            "        vec2(-0.5f, 0.0f),\n"
-            "        vec2( 1.5f, 0.0f),\n"
-            "        vec2( 0.5f, 2.0f)\n"
-            "    );\n"
-            "\n"
-            "    gl_Position = vec4((quad_positions[gl_VertexID] * 2.0) - 1.0, 0.0, 1.0);\n"
-            "    v_texcoord = quad_positions[gl_VertexID] * u_scale + u_offset;\n"
+            "    gl_Position = vec4((a_texcoord * 2.0) - 1.0, 0.0, 1.0);\n"
+            "    v_texcoord = a_texcoord * u_scale + u_offset;\n"
             "}\n";
 
         GLuint vs = mFunctions->createShader(GL_VERTEX_SHADER);
@@ -411,10 +564,12 @@ gl::Error BlitGL::initializeResources()
         // It discards if the texcoord is outside (0, 1)^2 so the blitframebuffer workaround
         // doesn't write when the point sampled is outside of the source framebuffer.
         const char *fsSource =
-            "#version 150\n"
+            "#version 100\n"
+            "precision highp float;"
             "uniform sampler2D u_source_texture;\n"
-            "in vec2 v_texcoord;\n"
-            "out vec4 output_color;\n"
+            "uniform bool u_multiply_alpha;\n"
+            "uniform bool u_unmultiply_alpha;\n"
+            "varying vec2 v_texcoord;\n"
             "\n"
             "void main()\n"
             "{\n"
@@ -422,7 +577,10 @@ gl::Error BlitGL::initializeResources()
             "    {\n"
             "        discard;\n"
             "    }\n"
-            "    output_color = texture(u_source_texture, v_texcoord);\n"
+            "    vec4 color = texture2D(u_source_texture, v_texcoord);\n"
+            "    if (u_multiply_alpha) {color.xyz = color.xyz * color.a;}"
+            "    if (u_unmultiply_alpha && color.a != 0.0) {color.xyz = color.xyz / color.a;}"
+            "    gl_FragColor = color;"
             "}\n";
 
         GLuint fs = mFunctions->createShader(GL_FRAGMENT_SHADER);
@@ -436,10 +594,13 @@ gl::Error BlitGL::initializeResources()
         mFunctions->linkProgram(mBlitProgram);
         ANGLE_TRY(CheckLinkStatus(mFunctions, mBlitProgram));
 
+        mTexCoordAttributeLocation = mFunctions->getAttribLocation(mBlitProgram, "a_texcoord");
         mSourceTextureLocation = mFunctions->getUniformLocation(mBlitProgram, "u_source_texture");
         mScaleLocation         = mFunctions->getUniformLocation(mBlitProgram, "u_scale");
         mOffsetLocation        = mFunctions->getUniformLocation(mBlitProgram, "u_offset");
-        mStateManager->useProgram(mBlitProgram);
+        mMultiplyAlphaLocation = mFunctions->getUniformLocation(mBlitProgram, "u_multiply_alpha");
+        mUnMultiplyAlphaLocation =
+            mFunctions->getUniformLocation(mBlitProgram, "u_unmultiply_alpha");
     }
 
     for (size_t i = 0; i < ArraySize(mScratchTextures); i++)
@@ -455,9 +616,29 @@ gl::Error BlitGL::initializeResources()
         mFunctions->genFramebuffers(1, &mScratchFBO);
     }
 
+    if (mVertexBuffer == 0)
+    {
+        mFunctions->genBuffers(1, &mVertexBuffer);
+        mStateManager->bindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
+
+        // Use a single, large triangle, to avoid arithmetic precision issues where fragments
+        // with the same Y coordinate don't get exactly the same interpolated texcoord Y.
+        float vertexData[] = {
+            -0.5f, 0.0f, 1.5f, 0.0f, 0.5f, 2.0f,
+        };
+
+        mFunctions->bufferData(GL_ARRAY_BUFFER, sizeof(float) * 6, vertexData, GL_STATIC_DRAW);
+    }
+
     if (mVAO == 0)
     {
         mFunctions->genVertexArrays(1, &mVAO);
+
+        mStateManager->bindVertexArray(mVAO, 0);
+        mStateManager->bindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
+        mFunctions->enableVertexAttribArray(mTexCoordAttributeLocation);
+        mFunctions->vertexAttribPointer(mTexCoordAttributeLocation, 2, GL_FLOAT, GL_FALSE, 0,
+                                        nullptr);
     }
 
     return gl::NoError();
@@ -468,6 +649,8 @@ void BlitGL::orphanScratchTextures()
     for (auto texture : mScratchTextures)
     {
         mStateManager->bindTexture(GL_TEXTURE_2D, texture);
+        gl::PixelUnpackState unpack;
+        mStateManager->setPixelUnpackState(unpack);
         mFunctions->texImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 0, 0, 0, GL_RGBA, GL_UNSIGNED_BYTE,
                                nullptr);
     }

@@ -367,4 +367,12 @@ EGLBoolean EGLAPIENTRY eglGetSyncValuesCHROMIUM(EGLDisplay dpy,
 {
     return egl::GetSyncValuesCHROMIUM(dpy, surface, ust, msc, sbc);
 }
+
+EGLBoolean EGLAPIENTRY eglSwapBuffersWithDamageEXT(EGLDisplay dpy,
+                                                   EGLSurface surface,
+                                                   EGLint *rects,
+                                                   EGLint n_rects)
+{
+    return egl::SwapBuffersWithDamageEXT(dpy, surface, rects, n_rects);
+}
 }

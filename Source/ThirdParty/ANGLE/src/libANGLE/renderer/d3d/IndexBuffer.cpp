@@ -90,7 +90,7 @@ gl::Error IndexBufferInterface::mapBuffer(unsigned int size, void **outMappedMem
     }
 
     mWritePosition += size;
-    return gl::Error(GL_NO_ERROR);
+    return gl::NoError();
 }
 
 gl::Error IndexBufferInterface::unmapBuffer()
@@ -162,7 +162,7 @@ gl::Error StreamingIndexBufferInterface::reserveBufferSpace(unsigned int size, G
         setWritePosition(0);
     }
 
-    return gl::Error(GL_NO_ERROR);
+    return gl::NoError();
 }
 
 
@@ -184,7 +184,7 @@ gl::Error StaticIndexBufferInterface::reserveBufferSpace(unsigned int size, GLen
     }
     else if (curSize >= size && indexType == getIndexType())
     {
-        return gl::Error(GL_NO_ERROR);
+        return gl::NoError();
     }
     else
     {

@@ -35,60 +35,56 @@ const Format &Format::Get(GLenum internalFormat, const Renderer11DeviceCaps &dev
     {
         case GL_ALPHA16F_EXT:
         {
-            static const Format info(GL_ALPHA16F_EXT,
-                                     angle::Format::ID::R16G16B16A16_FLOAT,
-                                     DXGI_FORMAT_R16G16B16A16_FLOAT,
-                                     DXGI_FORMAT_R16G16B16A16_FLOAT,
-                                     DXGI_FORMAT_R16G16B16A16_FLOAT,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_R16G16B16A16_FLOAT,
-                                     GL_RGBA16F,
-                                     nullptr,
-                                     deviceCaps);
+            static constexpr Format info(GL_ALPHA16F_EXT,
+                                         angle::Format::ID::R16G16B16A16_FLOAT,
+                                         DXGI_FORMAT_R16G16B16A16_FLOAT,
+                                         DXGI_FORMAT_R16G16B16A16_FLOAT,
+                                         DXGI_FORMAT_R16G16B16A16_FLOAT,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_R16G16B16A16_FLOAT,
+                                         GL_RGBA16F,
+                                         nullptr);
             return info;
         }
         case GL_ALPHA32F_EXT:
         {
-            static const Format info(GL_ALPHA32F_EXT,
-                                     angle::Format::ID::R32G32B32A32_FLOAT,
-                                     DXGI_FORMAT_R32G32B32A32_FLOAT,
-                                     DXGI_FORMAT_R32G32B32A32_FLOAT,
-                                     DXGI_FORMAT_R32G32B32A32_FLOAT,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_R32G32B32A32_FLOAT,
-                                     GL_RGBA32F,
-                                     nullptr,
-                                     deviceCaps);
+            static constexpr Format info(GL_ALPHA32F_EXT,
+                                         angle::Format::ID::R32G32B32A32_FLOAT,
+                                         DXGI_FORMAT_R32G32B32A32_FLOAT,
+                                         DXGI_FORMAT_R32G32B32A32_FLOAT,
+                                         DXGI_FORMAT_R32G32B32A32_FLOAT,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_R32G32B32A32_FLOAT,
+                                         GL_RGBA32F,
+                                         nullptr);
             return info;
         }
         case GL_ALPHA8_EXT:
         {
             if (OnlyFL10Plus(deviceCaps))
             {
-                static const Format info(GL_ALPHA8_EXT,
-                                         angle::Format::ID::A8_UNORM,
-                                         DXGI_FORMAT_A8_UNORM,
-                                         DXGI_FORMAT_A8_UNORM,
-                                         DXGI_FORMAT_A8_UNORM,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_A8_UNORM,
-                                         GL_RGBA8,
-                                         nullptr,
-                                         deviceCaps);
+                static constexpr Format info(GL_ALPHA8_EXT,
+                                             angle::Format::ID::A8_UNORM,
+                                             DXGI_FORMAT_A8_UNORM,
+                                             DXGI_FORMAT_A8_UNORM,
+                                             DXGI_FORMAT_A8_UNORM,
+                                             DXGI_FORMAT_UNKNOWN,
+                                             DXGI_FORMAT_A8_UNORM,
+                                             GL_RGBA8,
+                                             nullptr);
                 return info;
             }
             else
             {
-                static const Format info(GL_ALPHA8_EXT,
-                                         angle::Format::ID::R8G8B8A8_UNORM,
-                                         DXGI_FORMAT_R8G8B8A8_UNORM,
-                                         DXGI_FORMAT_R8G8B8A8_UNORM,
-                                         DXGI_FORMAT_R8G8B8A8_UNORM,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_R8G8B8A8_UNORM,
-                                         GL_RGBA8,
-                                         nullptr,
-                                         deviceCaps);
+                static constexpr Format info(GL_ALPHA8_EXT,
+                                             angle::Format::ID::R8G8B8A8_UNORM,
+                                             DXGI_FORMAT_R8G8B8A8_UNORM,
+                                             DXGI_FORMAT_R8G8B8A8_UNORM,
+                                             DXGI_FORMAT_R8G8B8A8_UNORM,
+                                             DXGI_FORMAT_UNKNOWN,
+                                             DXGI_FORMAT_R8G8B8A8_UNORM,
+                                             GL_RGBA8,
+                                             nullptr);
                 return info;
             }
         }
@@ -96,21 +92,99 @@ const Format &Format::Get(GLenum internalFormat, const Renderer11DeviceCaps &dev
         {
             if (SupportsFormat(DXGI_FORMAT_B5G6R5_UNORM, deviceCaps))
             {
-                static const Format info(GL_BGR565_ANGLEX,
-                                         angle::Format::ID::B5G6R5_UNORM,
-                                         DXGI_FORMAT_B5G6R5_UNORM,
-                                         DXGI_FORMAT_B5G6R5_UNORM,
-                                         DXGI_FORMAT_B5G6R5_UNORM,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_B5G6R5_UNORM,
-                                         GL_RGBA8,
-                                         nullptr,
-                                         deviceCaps);
+                static constexpr Format info(GL_BGR565_ANGLEX,
+                                             angle::Format::ID::B5G6R5_UNORM,
+                                             DXGI_FORMAT_B5G6R5_UNORM,
+                                             DXGI_FORMAT_B5G6R5_UNORM,
+                                             DXGI_FORMAT_B5G6R5_UNORM,
+                                             DXGI_FORMAT_UNKNOWN,
+                                             DXGI_FORMAT_B5G6R5_UNORM,
+                                             GL_RGBA8,
+                                             nullptr);
                 return info;
             }
             else
             {
-                static const Format info(GL_BGR565_ANGLEX,
+                static constexpr Format info(GL_BGR565_ANGLEX,
+                                             angle::Format::ID::R8G8B8A8_UNORM,
+                                             DXGI_FORMAT_R8G8B8A8_UNORM,
+                                             DXGI_FORMAT_R8G8B8A8_UNORM,
+                                             DXGI_FORMAT_R8G8B8A8_UNORM,
+                                             DXGI_FORMAT_UNKNOWN,
+                                             DXGI_FORMAT_R8G8B8A8_UNORM,
+                                             GL_RGBA8,
+                                             nullptr);
+                return info;
+            }
+        }
+        case GL_BGR5_A1_ANGLEX:
+        {
+            static constexpr Format info(GL_BGR5_A1_ANGLEX,
+                                         angle::Format::ID::B8G8R8A8_UNORM,
+                                         DXGI_FORMAT_B8G8R8A8_UNORM,
+                                         DXGI_FORMAT_B8G8R8A8_UNORM,
+                                         DXGI_FORMAT_B8G8R8A8_UNORM,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_B8G8R8A8_UNORM,
+                                         GL_BGRA8_EXT,
+                                         nullptr);
+            return info;
+        }
+        case GL_BGRA4_ANGLEX:
+        {
+            static constexpr Format info(GL_BGRA4_ANGLEX,
+                                         angle::Format::ID::B8G8R8A8_UNORM,
+                                         DXGI_FORMAT_B8G8R8A8_UNORM,
+                                         DXGI_FORMAT_B8G8R8A8_UNORM,
+                                         DXGI_FORMAT_B8G8R8A8_UNORM,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_B8G8R8A8_UNORM,
+                                         GL_BGRA8_EXT,
+                                         nullptr);
+            return info;
+        }
+        case GL_BGRA8_EXT:
+        {
+            static constexpr Format info(GL_BGRA8_EXT,
+                                         angle::Format::ID::B8G8R8A8_UNORM,
+                                         DXGI_FORMAT_B8G8R8A8_UNORM,
+                                         DXGI_FORMAT_B8G8R8A8_UNORM,
+                                         DXGI_FORMAT_B8G8R8A8_UNORM,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_B8G8R8A8_UNORM,
+                                         GL_BGRA8_EXT,
+                                         nullptr);
+            return info;
+        }
+        case GL_COMPRESSED_R11_EAC:
+        {
+            static constexpr Format info(GL_COMPRESSED_R11_EAC,
+                                         angle::Format::ID::R8_UNORM,
+                                         DXGI_FORMAT_R8_UNORM,
+                                         DXGI_FORMAT_R8_UNORM,
+                                         DXGI_FORMAT_R8_UNORM,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_R8_UNORM,
+                                         GL_RGBA8,
+                                         nullptr);
+            return info;
+        }
+        case GL_COMPRESSED_RG11_EAC:
+        {
+            static constexpr Format info(GL_COMPRESSED_RG11_EAC,
+                                         angle::Format::ID::R8G8_UNORM,
+                                         DXGI_FORMAT_R8G8_UNORM,
+                                         DXGI_FORMAT_R8G8_UNORM,
+                                         DXGI_FORMAT_R8G8_UNORM,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_R8G8_UNORM,
+                                         GL_RGBA8,
+                                         nullptr);
+            return info;
+        }
+        case GL_COMPRESSED_RGB8_ETC2:
+        {
+            static constexpr Format info(GL_COMPRESSED_RGB8_ETC2,
                                          angle::Format::ID::R8G8B8A8_UNORM,
                                          DXGI_FORMAT_R8G8B8A8_UNORM,
                                          DXGI_FORMAT_R8G8B8A8_UNORM,
@@ -118,714 +192,688 @@ const Format &Format::Get(GLenum internalFormat, const Renderer11DeviceCaps &dev
                                          DXGI_FORMAT_UNKNOWN,
                                          DXGI_FORMAT_R8G8B8A8_UNORM,
                                          GL_RGBA8,
-                                         nullptr,
-                                         deviceCaps);
-                return info;
-            }
-        }
-        case GL_BGR5_A1_ANGLEX:
-        {
-            static const Format info(GL_BGR5_A1_ANGLEX,
-                                     angle::Format::ID::B8G8R8A8_UNORM,
-                                     DXGI_FORMAT_B8G8R8A8_UNORM,
-                                     DXGI_FORMAT_B8G8R8A8_UNORM,
-                                     DXGI_FORMAT_B8G8R8A8_UNORM,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_B8G8R8A8_UNORM,
-                                     GL_BGRA8_EXT,
-                                     nullptr,
-                                     deviceCaps);
+                                         Initialize4ComponentData<GLubyte, 0x00, 0x00, 0x00, 0xFF>);
             return info;
         }
-        case GL_BGRA4_ANGLEX:
+        case GL_COMPRESSED_RGB8_LOSSY_DECODE_ETC2_ANGLE:
         {
-            static const Format info(GL_BGRA4_ANGLEX,
-                                     angle::Format::ID::B8G8R8A8_UNORM,
-                                     DXGI_FORMAT_B8G8R8A8_UNORM,
-                                     DXGI_FORMAT_B8G8R8A8_UNORM,
-                                     DXGI_FORMAT_B8G8R8A8_UNORM,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_B8G8R8A8_UNORM,
-                                     GL_BGRA8_EXT,
-                                     nullptr,
-                                     deviceCaps);
-            return info;
-        }
-        case GL_BGRA8_EXT:
-        {
-            static const Format info(GL_BGRA8_EXT,
-                                     angle::Format::ID::B8G8R8A8_UNORM,
-                                     DXGI_FORMAT_B8G8R8A8_UNORM,
-                                     DXGI_FORMAT_B8G8R8A8_UNORM,
-                                     DXGI_FORMAT_B8G8R8A8_UNORM,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_B8G8R8A8_UNORM,
-                                     GL_BGRA8_EXT,
-                                     nullptr,
-                                     deviceCaps);
-            return info;
-        }
-        case GL_COMPRESSED_R11_EAC:
-        {
-            static const Format info(GL_COMPRESSED_R11_EAC,
-                                     angle::Format::ID::R8_UNORM,
-                                     DXGI_FORMAT_R8_UNORM,
-                                     DXGI_FORMAT_R8_UNORM,
-                                     DXGI_FORMAT_R8_UNORM,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_R8_UNORM,
-                                     GL_RGBA8,
-                                     nullptr,
-                                     deviceCaps);
-            return info;
-        }
-        case GL_COMPRESSED_RG11_EAC:
-        {
-            static const Format info(GL_COMPRESSED_RG11_EAC,
-                                     angle::Format::ID::R8G8_UNORM,
-                                     DXGI_FORMAT_R8G8_UNORM,
-                                     DXGI_FORMAT_R8G8_UNORM,
-                                     DXGI_FORMAT_R8G8_UNORM,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_R8G8_UNORM,
-                                     GL_RGBA8,
-                                     nullptr,
-                                     deviceCaps);
-            return info;
-        }
-        case GL_COMPRESSED_RGB8_ETC2:
-        {
-            static const Format info(GL_COMPRESSED_RGB8_ETC2,
-                                     angle::Format::ID::R8G8B8A8_UNORM,
-                                     DXGI_FORMAT_R8G8B8A8_UNORM,
-                                     DXGI_FORMAT_R8G8B8A8_UNORM,
-                                     DXGI_FORMAT_R8G8B8A8_UNORM,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_R8G8B8A8_UNORM,
-                                     GL_RGBA8,
-                                     Initialize4ComponentData<GLubyte, 0x00, 0x00, 0x00, 0xFF>,
-                                     deviceCaps);
+            static constexpr Format info(GL_COMPRESSED_RGB8_LOSSY_DECODE_ETC2_ANGLE,
+                                         angle::Format::ID::BC1_RGB_UNORM_BLOCK,
+                                         DXGI_FORMAT_BC1_UNORM,
+                                         DXGI_FORMAT_BC1_UNORM,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_BC1_UNORM,
+                                         GL_RGBA8,
+                                         nullptr);
             return info;
         }
         case GL_COMPRESSED_RGB8_PUNCHTHROUGH_ALPHA1_ETC2:
         {
-            static const Format info(GL_COMPRESSED_RGB8_PUNCHTHROUGH_ALPHA1_ETC2,
-                                     angle::Format::ID::R8G8B8A8_UNORM,
-                                     DXGI_FORMAT_R8G8B8A8_UNORM,
-                                     DXGI_FORMAT_R8G8B8A8_UNORM,
-                                     DXGI_FORMAT_R8G8B8A8_UNORM,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_R8G8B8A8_UNORM,
-                                     GL_RGBA8,
-                                     Initialize4ComponentData<GLubyte, 0x00, 0x00, 0x00, 0xFF>,
-                                     deviceCaps);
+            static constexpr Format info(GL_COMPRESSED_RGB8_PUNCHTHROUGH_ALPHA1_ETC2,
+                                         angle::Format::ID::R8G8B8A8_UNORM,
+                                         DXGI_FORMAT_R8G8B8A8_UNORM,
+                                         DXGI_FORMAT_R8G8B8A8_UNORM,
+                                         DXGI_FORMAT_R8G8B8A8_UNORM,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_R8G8B8A8_UNORM,
+                                         GL_RGBA8,
+                                         Initialize4ComponentData<GLubyte, 0x00, 0x00, 0x00, 0xFF>);
+            return info;
+        }
+        case GL_COMPRESSED_RGB8_PUNCHTHROUGH_ALPHA1_LOSSY_DECODE_ETC2_ANGLE:
+        {
+            static constexpr Format info(GL_COMPRESSED_RGB8_PUNCHTHROUGH_ALPHA1_LOSSY_DECODE_ETC2_ANGLE,
+                                         angle::Format::ID::BC1_RGBA_UNORM_BLOCK,
+                                         DXGI_FORMAT_BC1_UNORM,
+                                         DXGI_FORMAT_BC1_UNORM,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_BC1_UNORM,
+                                         GL_RGBA8,
+                                         nullptr);
             return info;
         }
         case GL_COMPRESSED_RGBA8_ETC2_EAC:
         {
-            static const Format info(GL_COMPRESSED_RGBA8_ETC2_EAC,
-                                     angle::Format::ID::R8G8B8A8_UNORM,
-                                     DXGI_FORMAT_R8G8B8A8_UNORM,
-                                     DXGI_FORMAT_R8G8B8A8_UNORM,
-                                     DXGI_FORMAT_R8G8B8A8_UNORM,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_R8G8B8A8_UNORM,
-                                     GL_RGBA8,
-                                     nullptr,
-                                     deviceCaps);
+            static constexpr Format info(GL_COMPRESSED_RGBA8_ETC2_EAC,
+                                         angle::Format::ID::R8G8B8A8_UNORM,
+                                         DXGI_FORMAT_R8G8B8A8_UNORM,
+                                         DXGI_FORMAT_R8G8B8A8_UNORM,
+                                         DXGI_FORMAT_R8G8B8A8_UNORM,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_R8G8B8A8_UNORM,
+                                         GL_RGBA8,
+                                         nullptr);
             return info;
         }
         case GL_COMPRESSED_RGBA_ASTC_10x10_KHR:
         {
-            static const Format info(GL_COMPRESSED_RGBA_ASTC_10x10_KHR,
-                                     angle::Format::ID::NONE,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     GL_NONE,
-                                     nullptr,
-                                     deviceCaps);
+            static constexpr Format info(GL_COMPRESSED_RGBA_ASTC_10x10_KHR,
+                                         angle::Format::ID::NONE,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         GL_NONE,
+                                         nullptr);
             return info;
         }
         case GL_COMPRESSED_RGBA_ASTC_10x5_KHR:
         {
-            static const Format info(GL_COMPRESSED_RGBA_ASTC_10x5_KHR,
-                                     angle::Format::ID::NONE,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     GL_NONE,
-                                     nullptr,
-                                     deviceCaps);
+            static constexpr Format info(GL_COMPRESSED_RGBA_ASTC_10x5_KHR,
+                                         angle::Format::ID::NONE,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         GL_NONE,
+                                         nullptr);
             return info;
         }
         case GL_COMPRESSED_RGBA_ASTC_10x6_KHR:
         {
-            static const Format info(GL_COMPRESSED_RGBA_ASTC_10x6_KHR,
-                                     angle::Format::ID::NONE,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     GL_NONE,
-                                     nullptr,
-                                     deviceCaps);
+            static constexpr Format info(GL_COMPRESSED_RGBA_ASTC_10x6_KHR,
+                                         angle::Format::ID::NONE,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         GL_NONE,
+                                         nullptr);
             return info;
         }
         case GL_COMPRESSED_RGBA_ASTC_10x8_KHR:
         {
-            static const Format info(GL_COMPRESSED_RGBA_ASTC_10x8_KHR,
-                                     angle::Format::ID::NONE,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     GL_NONE,
-                                     nullptr,
-                                     deviceCaps);
+            static constexpr Format info(GL_COMPRESSED_RGBA_ASTC_10x8_KHR,
+                                         angle::Format::ID::NONE,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         GL_NONE,
+                                         nullptr);
             return info;
         }
         case GL_COMPRESSED_RGBA_ASTC_12x10_KHR:
         {
-            static const Format info(GL_COMPRESSED_RGBA_ASTC_12x10_KHR,
-                                     angle::Format::ID::NONE,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     GL_NONE,
-                                     nullptr,
-                                     deviceCaps);
+            static constexpr Format info(GL_COMPRESSED_RGBA_ASTC_12x10_KHR,
+                                         angle::Format::ID::NONE,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         GL_NONE,
+                                         nullptr);
             return info;
         }
         case GL_COMPRESSED_RGBA_ASTC_12x12_KHR:
         {
-            static const Format info(GL_COMPRESSED_RGBA_ASTC_12x12_KHR,
-                                     angle::Format::ID::NONE,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     GL_NONE,
-                                     nullptr,
-                                     deviceCaps);
+            static constexpr Format info(GL_COMPRESSED_RGBA_ASTC_12x12_KHR,
+                                         angle::Format::ID::NONE,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         GL_NONE,
+                                         nullptr);
             return info;
         }
         case GL_COMPRESSED_RGBA_ASTC_4x4_KHR:
         {
-            static const Format info(GL_COMPRESSED_RGBA_ASTC_4x4_KHR,
-                                     angle::Format::ID::NONE,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     GL_NONE,
-                                     nullptr,
-                                     deviceCaps);
+            static constexpr Format info(GL_COMPRESSED_RGBA_ASTC_4x4_KHR,
+                                         angle::Format::ID::NONE,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         GL_NONE,
+                                         nullptr);
             return info;
         }
         case GL_COMPRESSED_RGBA_ASTC_5x4_KHR:
         {
-            static const Format info(GL_COMPRESSED_RGBA_ASTC_5x4_KHR,
-                                     angle::Format::ID::NONE,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     GL_NONE,
-                                     nullptr,
-                                     deviceCaps);
+            static constexpr Format info(GL_COMPRESSED_RGBA_ASTC_5x4_KHR,
+                                         angle::Format::ID::NONE,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         GL_NONE,
+                                         nullptr);
             return info;
         }
         case GL_COMPRESSED_RGBA_ASTC_5x5_KHR:
         {
-            static const Format info(GL_COMPRESSED_RGBA_ASTC_5x5_KHR,
-                                     angle::Format::ID::NONE,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     GL_NONE,
-                                     nullptr,
-                                     deviceCaps);
+            static constexpr Format info(GL_COMPRESSED_RGBA_ASTC_5x5_KHR,
+                                         angle::Format::ID::NONE,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         GL_NONE,
+                                         nullptr);
             return info;
         }
         case GL_COMPRESSED_RGBA_ASTC_6x5_KHR:
         {
-            static const Format info(GL_COMPRESSED_RGBA_ASTC_6x5_KHR,
-                                     angle::Format::ID::NONE,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     GL_NONE,
-                                     nullptr,
-                                     deviceCaps);
+            static constexpr Format info(GL_COMPRESSED_RGBA_ASTC_6x5_KHR,
+                                         angle::Format::ID::NONE,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         GL_NONE,
+                                         nullptr);
             return info;
         }
         case GL_COMPRESSED_RGBA_ASTC_6x6_KHR:
         {
-            static const Format info(GL_COMPRESSED_RGBA_ASTC_6x6_KHR,
-                                     angle::Format::ID::NONE,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     GL_NONE,
-                                     nullptr,
-                                     deviceCaps);
+            static constexpr Format info(GL_COMPRESSED_RGBA_ASTC_6x6_KHR,
+                                         angle::Format::ID::NONE,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         GL_NONE,
+                                         nullptr);
             return info;
         }
         case GL_COMPRESSED_RGBA_ASTC_8x5_KHR:
         {
-            static const Format info(GL_COMPRESSED_RGBA_ASTC_8x5_KHR,
-                                     angle::Format::ID::NONE,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     GL_NONE,
-                                     nullptr,
-                                     deviceCaps);
+            static constexpr Format info(GL_COMPRESSED_RGBA_ASTC_8x5_KHR,
+                                         angle::Format::ID::NONE,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         GL_NONE,
+                                         nullptr);
             return info;
         }
         case GL_COMPRESSED_RGBA_ASTC_8x6_KHR:
         {
-            static const Format info(GL_COMPRESSED_RGBA_ASTC_8x6_KHR,
-                                     angle::Format::ID::NONE,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     GL_NONE,
-                                     nullptr,
-                                     deviceCaps);
+            static constexpr Format info(GL_COMPRESSED_RGBA_ASTC_8x6_KHR,
+                                         angle::Format::ID::NONE,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         GL_NONE,
+                                         nullptr);
             return info;
         }
         case GL_COMPRESSED_RGBA_ASTC_8x8_KHR:
         {
-            static const Format info(GL_COMPRESSED_RGBA_ASTC_8x8_KHR,
-                                     angle::Format::ID::NONE,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     GL_NONE,
-                                     nullptr,
-                                     deviceCaps);
+            static constexpr Format info(GL_COMPRESSED_RGBA_ASTC_8x8_KHR,
+                                         angle::Format::ID::NONE,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         GL_NONE,
+                                         nullptr);
             return info;
         }
         case GL_COMPRESSED_RGBA_S3TC_DXT1_EXT:
         {
-            static const Format info(GL_COMPRESSED_RGBA_S3TC_DXT1_EXT,
-                                     angle::Format::ID::BC1_RGBA_UNORM_BLOCK,
-                                     DXGI_FORMAT_BC1_UNORM,
-                                     DXGI_FORMAT_BC1_UNORM,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_BC1_UNORM,
-                                     GL_RGBA8,
-                                     nullptr,
-                                     deviceCaps);
+            static constexpr Format info(GL_COMPRESSED_RGBA_S3TC_DXT1_EXT,
+                                         angle::Format::ID::BC1_RGBA_UNORM_BLOCK,
+                                         DXGI_FORMAT_BC1_UNORM,
+                                         DXGI_FORMAT_BC1_UNORM,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_BC1_UNORM,
+                                         GL_RGBA8,
+                                         nullptr);
             return info;
         }
         case GL_COMPRESSED_RGBA_S3TC_DXT3_ANGLE:
         {
-            static const Format info(GL_COMPRESSED_RGBA_S3TC_DXT3_ANGLE,
-                                     angle::Format::ID::BC2_RGBA_UNORM_BLOCK,
-                                     DXGI_FORMAT_BC2_UNORM,
-                                     DXGI_FORMAT_BC2_UNORM,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_BC2_UNORM,
-                                     GL_RGBA8,
-                                     nullptr,
-                                     deviceCaps);
+            static constexpr Format info(GL_COMPRESSED_RGBA_S3TC_DXT3_ANGLE,
+                                         angle::Format::ID::BC2_RGBA_UNORM_BLOCK,
+                                         DXGI_FORMAT_BC2_UNORM,
+                                         DXGI_FORMAT_BC2_UNORM,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_BC2_UNORM,
+                                         GL_RGBA8,
+                                         nullptr);
             return info;
         }
         case GL_COMPRESSED_RGBA_S3TC_DXT5_ANGLE:
         {
-            static const Format info(GL_COMPRESSED_RGBA_S3TC_DXT5_ANGLE,
-                                     angle::Format::ID::BC3_RGBA_UNORM_BLOCK,
-                                     DXGI_FORMAT_BC3_UNORM,
-                                     DXGI_FORMAT_BC3_UNORM,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_BC3_UNORM,
-                                     GL_RGBA8,
-                                     nullptr,
-                                     deviceCaps);
+            static constexpr Format info(GL_COMPRESSED_RGBA_S3TC_DXT5_ANGLE,
+                                         angle::Format::ID::BC3_RGBA_UNORM_BLOCK,
+                                         DXGI_FORMAT_BC3_UNORM,
+                                         DXGI_FORMAT_BC3_UNORM,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_BC3_UNORM,
+                                         GL_RGBA8,
+                                         nullptr);
             return info;
         }
         case GL_COMPRESSED_RGB_S3TC_DXT1_EXT:
         {
-            static const Format info(GL_COMPRESSED_RGB_S3TC_DXT1_EXT,
-                                     angle::Format::ID::BC1_RGB_UNORM_BLOCK,
-                                     DXGI_FORMAT_BC1_UNORM,
-                                     DXGI_FORMAT_BC1_UNORM,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_BC1_UNORM,
-                                     GL_RGBA8,
-                                     nullptr,
-                                     deviceCaps);
+            static constexpr Format info(GL_COMPRESSED_RGB_S3TC_DXT1_EXT,
+                                         angle::Format::ID::BC1_RGB_UNORM_BLOCK,
+                                         DXGI_FORMAT_BC1_UNORM,
+                                         DXGI_FORMAT_BC1_UNORM,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_BC1_UNORM,
+                                         GL_RGBA8,
+                                         nullptr);
             return info;
         }
         case GL_COMPRESSED_SIGNED_R11_EAC:
         {
-            static const Format info(GL_COMPRESSED_SIGNED_R11_EAC,
-                                     angle::Format::ID::R8_SNORM,
-                                     DXGI_FORMAT_R8_SNORM,
-                                     DXGI_FORMAT_R8_SNORM,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_R8_SNORM,
-                                     GL_RGBA8_SNORM,
-                                     nullptr,
-                                     deviceCaps);
+            static constexpr Format info(GL_COMPRESSED_SIGNED_R11_EAC,
+                                         angle::Format::ID::R8_SNORM,
+                                         DXGI_FORMAT_R8_SNORM,
+                                         DXGI_FORMAT_R8_SNORM,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_R8_SNORM,
+                                         GL_RGBA8_SNORM,
+                                         nullptr);
             return info;
         }
         case GL_COMPRESSED_SIGNED_RG11_EAC:
         {
-            static const Format info(GL_COMPRESSED_SIGNED_RG11_EAC,
-                                     angle::Format::ID::R8G8_SNORM,
-                                     DXGI_FORMAT_R8G8_SNORM,
-                                     DXGI_FORMAT_R8G8_SNORM,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_R8G8_SNORM,
-                                     GL_RGBA8_SNORM,
-                                     nullptr,
-                                     deviceCaps);
+            static constexpr Format info(GL_COMPRESSED_SIGNED_RG11_EAC,
+                                         angle::Format::ID::R8G8_SNORM,
+                                         DXGI_FORMAT_R8G8_SNORM,
+                                         DXGI_FORMAT_R8G8_SNORM,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_R8G8_SNORM,
+                                         GL_RGBA8_SNORM,
+                                         nullptr);
             return info;
         }
         case GL_COMPRESSED_SRGB8_ALPHA8_ASTC_10x10_KHR:
         {
-            static const Format info(GL_COMPRESSED_SRGB8_ALPHA8_ASTC_10x10_KHR,
-                                     angle::Format::ID::NONE,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     GL_NONE,
-                                     nullptr,
-                                     deviceCaps);
+            static constexpr Format info(GL_COMPRESSED_SRGB8_ALPHA8_ASTC_10x10_KHR,
+                                         angle::Format::ID::NONE,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         GL_NONE,
+                                         nullptr);
             return info;
         }
         case GL_COMPRESSED_SRGB8_ALPHA8_ASTC_10x5_KHR:
         {
-            static const Format info(GL_COMPRESSED_SRGB8_ALPHA8_ASTC_10x5_KHR,
-                                     angle::Format::ID::NONE,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     GL_NONE,
-                                     nullptr,
-                                     deviceCaps);
+            static constexpr Format info(GL_COMPRESSED_SRGB8_ALPHA8_ASTC_10x5_KHR,
+                                         angle::Format::ID::NONE,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         GL_NONE,
+                                         nullptr);
             return info;
         }
         case GL_COMPRESSED_SRGB8_ALPHA8_ASTC_10x6_KHR:
         {
-            static const Format info(GL_COMPRESSED_SRGB8_ALPHA8_ASTC_10x6_KHR,
-                                     angle::Format::ID::NONE,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     GL_NONE,
-                                     nullptr,
-                                     deviceCaps);
+            static constexpr Format info(GL_COMPRESSED_SRGB8_ALPHA8_ASTC_10x6_KHR,
+                                         angle::Format::ID::NONE,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         GL_NONE,
+                                         nullptr);
             return info;
         }
         case GL_COMPRESSED_SRGB8_ALPHA8_ASTC_10x8_KHR:
         {
-            static const Format info(GL_COMPRESSED_SRGB8_ALPHA8_ASTC_10x8_KHR,
-                                     angle::Format::ID::NONE,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     GL_NONE,
-                                     nullptr,
-                                     deviceCaps);
+            static constexpr Format info(GL_COMPRESSED_SRGB8_ALPHA8_ASTC_10x8_KHR,
+                                         angle::Format::ID::NONE,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         GL_NONE,
+                                         nullptr);
             return info;
         }
         case GL_COMPRESSED_SRGB8_ALPHA8_ASTC_12x10_KHR:
         {
-            static const Format info(GL_COMPRESSED_SRGB8_ALPHA8_ASTC_12x10_KHR,
-                                     angle::Format::ID::NONE,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     GL_NONE,
-                                     nullptr,
-                                     deviceCaps);
+            static constexpr Format info(GL_COMPRESSED_SRGB8_ALPHA8_ASTC_12x10_KHR,
+                                         angle::Format::ID::NONE,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         GL_NONE,
+                                         nullptr);
             return info;
         }
         case GL_COMPRESSED_SRGB8_ALPHA8_ASTC_12x12_KHR:
         {
-            static const Format info(GL_COMPRESSED_SRGB8_ALPHA8_ASTC_12x12_KHR,
-                                     angle::Format::ID::NONE,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     GL_NONE,
-                                     nullptr,
-                                     deviceCaps);
+            static constexpr Format info(GL_COMPRESSED_SRGB8_ALPHA8_ASTC_12x12_KHR,
+                                         angle::Format::ID::NONE,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         GL_NONE,
+                                         nullptr);
             return info;
         }
         case GL_COMPRESSED_SRGB8_ALPHA8_ASTC_4x4_KHR:
         {
-            static const Format info(GL_COMPRESSED_SRGB8_ALPHA8_ASTC_4x4_KHR,
-                                     angle::Format::ID::NONE,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     GL_NONE,
-                                     nullptr,
-                                     deviceCaps);
+            static constexpr Format info(GL_COMPRESSED_SRGB8_ALPHA8_ASTC_4x4_KHR,
+                                         angle::Format::ID::NONE,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         GL_NONE,
+                                         nullptr);
             return info;
         }
         case GL_COMPRESSED_SRGB8_ALPHA8_ASTC_5x4_KHR:
         {
-            static const Format info(GL_COMPRESSED_SRGB8_ALPHA8_ASTC_5x4_KHR,
-                                     angle::Format::ID::NONE,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     GL_NONE,
-                                     nullptr,
-                                     deviceCaps);
+            static constexpr Format info(GL_COMPRESSED_SRGB8_ALPHA8_ASTC_5x4_KHR,
+                                         angle::Format::ID::NONE,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         GL_NONE,
+                                         nullptr);
             return info;
         }
         case GL_COMPRESSED_SRGB8_ALPHA8_ASTC_5x5_KHR:
         {
-            static const Format info(GL_COMPRESSED_SRGB8_ALPHA8_ASTC_5x5_KHR,
-                                     angle::Format::ID::NONE,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     GL_NONE,
-                                     nullptr,
-                                     deviceCaps);
+            static constexpr Format info(GL_COMPRESSED_SRGB8_ALPHA8_ASTC_5x5_KHR,
+                                         angle::Format::ID::NONE,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         GL_NONE,
+                                         nullptr);
             return info;
         }
         case GL_COMPRESSED_SRGB8_ALPHA8_ASTC_6x5_KHR:
         {
-            static const Format info(GL_COMPRESSED_SRGB8_ALPHA8_ASTC_6x5_KHR,
-                                     angle::Format::ID::NONE,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     GL_NONE,
-                                     nullptr,
-                                     deviceCaps);
+            static constexpr Format info(GL_COMPRESSED_SRGB8_ALPHA8_ASTC_6x5_KHR,
+                                         angle::Format::ID::NONE,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         GL_NONE,
+                                         nullptr);
             return info;
         }
         case GL_COMPRESSED_SRGB8_ALPHA8_ASTC_6x6_KHR:
         {
-            static const Format info(GL_COMPRESSED_SRGB8_ALPHA8_ASTC_6x6_KHR,
-                                     angle::Format::ID::NONE,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     GL_NONE,
-                                     nullptr,
-                                     deviceCaps);
+            static constexpr Format info(GL_COMPRESSED_SRGB8_ALPHA8_ASTC_6x6_KHR,
+                                         angle::Format::ID::NONE,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         GL_NONE,
+                                         nullptr);
             return info;
         }
         case GL_COMPRESSED_SRGB8_ALPHA8_ASTC_8x5_KHR:
         {
-            static const Format info(GL_COMPRESSED_SRGB8_ALPHA8_ASTC_8x5_KHR,
-                                     angle::Format::ID::NONE,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     GL_NONE,
-                                     nullptr,
-                                     deviceCaps);
+            static constexpr Format info(GL_COMPRESSED_SRGB8_ALPHA8_ASTC_8x5_KHR,
+                                         angle::Format::ID::NONE,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         GL_NONE,
+                                         nullptr);
             return info;
         }
         case GL_COMPRESSED_SRGB8_ALPHA8_ASTC_8x6_KHR:
         {
-            static const Format info(GL_COMPRESSED_SRGB8_ALPHA8_ASTC_8x6_KHR,
-                                     angle::Format::ID::NONE,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     GL_NONE,
-                                     nullptr,
-                                     deviceCaps);
+            static constexpr Format info(GL_COMPRESSED_SRGB8_ALPHA8_ASTC_8x6_KHR,
+                                         angle::Format::ID::NONE,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         GL_NONE,
+                                         nullptr);
             return info;
         }
         case GL_COMPRESSED_SRGB8_ALPHA8_ASTC_8x8_KHR:
         {
-            static const Format info(GL_COMPRESSED_SRGB8_ALPHA8_ASTC_8x8_KHR,
-                                     angle::Format::ID::NONE,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     GL_NONE,
-                                     nullptr,
-                                     deviceCaps);
+            static constexpr Format info(GL_COMPRESSED_SRGB8_ALPHA8_ASTC_8x8_KHR,
+                                         angle::Format::ID::NONE,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         GL_NONE,
+                                         nullptr);
             return info;
         }
         case GL_COMPRESSED_SRGB8_ALPHA8_ETC2_EAC:
         {
-            static const Format info(GL_COMPRESSED_SRGB8_ALPHA8_ETC2_EAC,
-                                     angle::Format::ID::R8G8B8A8_UNORM_SRGB,
-                                     DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
-                                     DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
-                                     DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
-                                     GL_SRGB8_ALPHA8,
-                                     nullptr,
-                                     deviceCaps);
+            static constexpr Format info(GL_COMPRESSED_SRGB8_ALPHA8_ETC2_EAC,
+                                         angle::Format::ID::R8G8B8A8_UNORM_SRGB,
+                                         DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
+                                         DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
+                                         DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
+                                         GL_SRGB8_ALPHA8,
+                                         nullptr);
             return info;
         }
         case GL_COMPRESSED_SRGB8_ETC2:
         {
-            static const Format info(GL_COMPRESSED_SRGB8_ETC2,
-                                     angle::Format::ID::R8G8B8A8_UNORM_SRGB,
-                                     DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
-                                     DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
-                                     DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
-                                     GL_SRGB8_ALPHA8,
-                                     Initialize4ComponentData<GLubyte, 0x00, 0x00, 0x00, 0xFF>,
-                                     deviceCaps);
+            static constexpr Format info(GL_COMPRESSED_SRGB8_ETC2,
+                                         angle::Format::ID::R8G8B8A8_UNORM_SRGB,
+                                         DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
+                                         DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
+                                         DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
+                                         GL_SRGB8_ALPHA8,
+                                         Initialize4ComponentData<GLubyte, 0x00, 0x00, 0x00, 0xFF>);
+            return info;
+        }
+        case GL_COMPRESSED_SRGB8_LOSSY_DECODE_ETC2_ANGLE:
+        {
+            static constexpr Format info(GL_COMPRESSED_SRGB8_LOSSY_DECODE_ETC2_ANGLE,
+                                         angle::Format::ID::BC1_RGB_UNORM_SRGB_BLOCK,
+                                         DXGI_FORMAT_BC1_UNORM_SRGB,
+                                         DXGI_FORMAT_BC1_UNORM_SRGB,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_BC1_UNORM_SRGB,
+                                         GL_RGBA8,
+                                         nullptr);
             return info;
         }
         case GL_COMPRESSED_SRGB8_PUNCHTHROUGH_ALPHA1_ETC2:
         {
-            static const Format info(GL_COMPRESSED_SRGB8_PUNCHTHROUGH_ALPHA1_ETC2,
-                                     angle::Format::ID::R8G8B8A8_UNORM_SRGB,
-                                     DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
-                                     DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
-                                     DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
-                                     GL_SRGB8_ALPHA8,
-                                     nullptr,
-                                     deviceCaps);
+            static constexpr Format info(GL_COMPRESSED_SRGB8_PUNCHTHROUGH_ALPHA1_ETC2,
+                                         angle::Format::ID::R8G8B8A8_UNORM_SRGB,
+                                         DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
+                                         DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
+                                         DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
+                                         GL_SRGB8_ALPHA8,
+                                         nullptr);
+            return info;
+        }
+        case GL_COMPRESSED_SRGB8_PUNCHTHROUGH_ALPHA1_LOSSY_DECODE_ETC2_ANGLE:
+        {
+            static constexpr Format info(GL_COMPRESSED_SRGB8_PUNCHTHROUGH_ALPHA1_LOSSY_DECODE_ETC2_ANGLE,
+                                         angle::Format::ID::BC1_RGBA_UNORM_SRGB_BLOCK,
+                                         DXGI_FORMAT_BC1_UNORM_SRGB,
+                                         DXGI_FORMAT_BC1_UNORM_SRGB,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_BC1_UNORM_SRGB,
+                                         GL_RGBA8,
+                                         nullptr);
+            return info;
+        }
+        case GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT:
+        {
+            static constexpr Format info(GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT,
+                                         angle::Format::ID::BC1_RGBA_UNORM_SRGB_BLOCK,
+                                         DXGI_FORMAT_BC1_UNORM_SRGB,
+                                         DXGI_FORMAT_BC1_UNORM_SRGB,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_BC1_UNORM_SRGB,
+                                         GL_RGBA8,
+                                         nullptr);
+            return info;
+        }
+        case GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT:
+        {
+            static constexpr Format info(GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT,
+                                         angle::Format::ID::BC2_RGBA_UNORM_SRGB_BLOCK,
+                                         DXGI_FORMAT_BC2_UNORM_SRGB,
+                                         DXGI_FORMAT_BC2_UNORM_SRGB,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_BC2_UNORM_SRGB,
+                                         GL_RGBA8,
+                                         nullptr);
+            return info;
+        }
+        case GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT:
+        {
+            static constexpr Format info(GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT,
+                                         angle::Format::ID::BC3_RGBA_UNORM_SRGB_BLOCK,
+                                         DXGI_FORMAT_BC3_UNORM_SRGB,
+                                         DXGI_FORMAT_BC3_UNORM_SRGB,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_BC3_UNORM_SRGB,
+                                         GL_RGBA8,
+                                         nullptr);
+            return info;
+        }
+        case GL_COMPRESSED_SRGB_S3TC_DXT1_EXT:
+        {
+            static constexpr Format info(GL_COMPRESSED_SRGB_S3TC_DXT1_EXT,
+                                         angle::Format::ID::BC1_RGB_UNORM_SRGB_BLOCK,
+                                         DXGI_FORMAT_BC1_UNORM_SRGB,
+                                         DXGI_FORMAT_BC1_UNORM_SRGB,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_BC1_UNORM_SRGB,
+                                         GL_RGBA8,
+                                         nullptr);
             return info;
         }
         case GL_DEPTH24_STENCIL8:
         {
             if (OnlyFL10Plus(deviceCaps))
             {
-                static const Format info(GL_DEPTH24_STENCIL8,
-                                         angle::Format::ID::D24_UNORM_S8_UINT,
-                                         DXGI_FORMAT_R24G8_TYPELESS,
-                                         DXGI_FORMAT_R24_UNORM_X8_TYPELESS,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_D24_UNORM_S8_UINT,
-                                         DXGI_FORMAT_R24_UNORM_X8_TYPELESS,
-                                         GL_RGBA32F,
-                                         nullptr,
-                                         deviceCaps);
+                static constexpr Format info(GL_DEPTH24_STENCIL8,
+                                             angle::Format::ID::D24_UNORM_S8_UINT,
+                                             DXGI_FORMAT_R24G8_TYPELESS,
+                                             DXGI_FORMAT_R24_UNORM_X8_TYPELESS,
+                                             DXGI_FORMAT_UNKNOWN,
+                                             DXGI_FORMAT_D24_UNORM_S8_UINT,
+                                             DXGI_FORMAT_R24_UNORM_X8_TYPELESS,
+                                             GL_RGBA32F,
+                                             nullptr);
                 return info;
             }
             else
             {
-                static const Format info(GL_DEPTH24_STENCIL8,
-                                         angle::Format::ID::D24_UNORM_S8_UINT,
-                                         DXGI_FORMAT_D24_UNORM_S8_UINT,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_D24_UNORM_S8_UINT,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         GL_RGBA32F,
-                                         nullptr,
-                                         deviceCaps);
+                static constexpr Format info(GL_DEPTH24_STENCIL8,
+                                             angle::Format::ID::D24_UNORM_S8_UINT,
+                                             DXGI_FORMAT_D24_UNORM_S8_UINT,
+                                             DXGI_FORMAT_UNKNOWN,
+                                             DXGI_FORMAT_UNKNOWN,
+                                             DXGI_FORMAT_D24_UNORM_S8_UINT,
+                                             DXGI_FORMAT_UNKNOWN,
+                                             GL_RGBA32F,
+                                             nullptr);
                 return info;
             }
         }
         case GL_DEPTH32F_STENCIL8:
         {
-            static const Format info(GL_DEPTH32F_STENCIL8,
-                                     angle::Format::ID::D32_FLOAT_S8X24_UINT,
-                                     DXGI_FORMAT_R32G8X24_TYPELESS,
-                                     DXGI_FORMAT_R32_FLOAT_X8X24_TYPELESS,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_D32_FLOAT_S8X24_UINT,
-                                     DXGI_FORMAT_R32_FLOAT_X8X24_TYPELESS,
-                                     GL_RGBA32F,
-                                     nullptr,
-                                     deviceCaps);
+            static constexpr Format info(GL_DEPTH32F_STENCIL8,
+                                         angle::Format::ID::D32_FLOAT_S8X24_UINT,
+                                         DXGI_FORMAT_R32G8X24_TYPELESS,
+                                         DXGI_FORMAT_R32_FLOAT_X8X24_TYPELESS,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_D32_FLOAT_S8X24_UINT,
+                                         DXGI_FORMAT_R32_FLOAT_X8X24_TYPELESS,
+                                         GL_RGBA32F,
+                                         nullptr);
             return info;
         }
         case GL_DEPTH_COMPONENT16:
         {
             if (OnlyFL10Plus(deviceCaps))
             {
-                static const Format info(GL_DEPTH_COMPONENT16,
-                                         angle::Format::ID::D16_UNORM,
-                                         DXGI_FORMAT_R16_TYPELESS,
-                                         DXGI_FORMAT_R16_UNORM,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_D16_UNORM,
-                                         DXGI_FORMAT_R16_UNORM,
-                                         GL_RGBA16_EXT,
-                                         nullptr,
-                                         deviceCaps);
+                static constexpr Format info(GL_DEPTH_COMPONENT16,
+                                             angle::Format::ID::D16_UNORM,
+                                             DXGI_FORMAT_R16_TYPELESS,
+                                             DXGI_FORMAT_R16_UNORM,
+                                             DXGI_FORMAT_UNKNOWN,
+                                             DXGI_FORMAT_D16_UNORM,
+                                             DXGI_FORMAT_R16_UNORM,
+                                             GL_RGBA16_EXT,
+                                             nullptr);
                 return info;
             }
             else
             {
-                static const Format info(GL_DEPTH_COMPONENT16,
-                                         angle::Format::ID::D16_UNORM,
-                                         DXGI_FORMAT_D16_UNORM,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_D16_UNORM,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         GL_RGBA16_EXT,
-                                         nullptr,
-                                         deviceCaps);
+                static constexpr Format info(GL_DEPTH_COMPONENT16,
+                                             angle::Format::ID::D16_UNORM,
+                                             DXGI_FORMAT_D16_UNORM,
+                                             DXGI_FORMAT_UNKNOWN,
+                                             DXGI_FORMAT_UNKNOWN,
+                                             DXGI_FORMAT_D16_UNORM,
+                                             DXGI_FORMAT_UNKNOWN,
+                                             GL_RGBA16_EXT,
+                                             nullptr);
                 return info;
             }
         }
@@ -833,727 +881,89 @@ const Format &Format::Get(GLenum internalFormat, const Renderer11DeviceCaps &dev
         {
             if (OnlyFL10Plus(deviceCaps))
             {
-                static const Format info(GL_DEPTH_COMPONENT24,
-                                         angle::Format::ID::D24_UNORM_S8_UINT,
-                                         DXGI_FORMAT_R24G8_TYPELESS,
-                                         DXGI_FORMAT_R24_UNORM_X8_TYPELESS,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_D24_UNORM_S8_UINT,
-                                         DXGI_FORMAT_R24_UNORM_X8_TYPELESS,
-                                         GL_RGBA32F,
-                                         nullptr,
-                                         deviceCaps);
+                static constexpr Format info(GL_DEPTH_COMPONENT24,
+                                             angle::Format::ID::D24_UNORM_S8_UINT,
+                                             DXGI_FORMAT_R24G8_TYPELESS,
+                                             DXGI_FORMAT_R24_UNORM_X8_TYPELESS,
+                                             DXGI_FORMAT_UNKNOWN,
+                                             DXGI_FORMAT_D24_UNORM_S8_UINT,
+                                             DXGI_FORMAT_R24_UNORM_X8_TYPELESS,
+                                             GL_RGBA32F,
+                                             nullptr);
                 return info;
             }
             else
             {
-                static const Format info(GL_DEPTH_COMPONENT24,
-                                         angle::Format::ID::D24_UNORM_S8_UINT,
-                                         DXGI_FORMAT_D24_UNORM_S8_UINT,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_D24_UNORM_S8_UINT,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         GL_RGBA32F,
-                                         nullptr,
-                                         deviceCaps);
+                static constexpr Format info(GL_DEPTH_COMPONENT24,
+                                             angle::Format::ID::D24_UNORM_S8_UINT,
+                                             DXGI_FORMAT_D24_UNORM_S8_UINT,
+                                             DXGI_FORMAT_UNKNOWN,
+                                             DXGI_FORMAT_UNKNOWN,
+                                             DXGI_FORMAT_D24_UNORM_S8_UINT,
+                                             DXGI_FORMAT_UNKNOWN,
+                                             GL_RGBA32F,
+                                             nullptr);
                 return info;
             }
         }
         case GL_DEPTH_COMPONENT32F:
         {
-            static const Format info(GL_DEPTH_COMPONENT32F,
-                                     angle::Format::ID::D32_FLOAT,
-                                     DXGI_FORMAT_R32_TYPELESS,
-                                     DXGI_FORMAT_R32_FLOAT,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_D32_FLOAT,
-                                     DXGI_FORMAT_R32_FLOAT,
-                                     GL_RGBA32F,
-                                     nullptr,
-                                     deviceCaps);
+            static constexpr Format info(GL_DEPTH_COMPONENT32F,
+                                         angle::Format::ID::D32_FLOAT,
+                                         DXGI_FORMAT_R32_TYPELESS,
+                                         DXGI_FORMAT_R32_FLOAT,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_D32_FLOAT,
+                                         DXGI_FORMAT_R32_FLOAT,
+                                         GL_RGBA32F,
+                                         nullptr);
             return info;
         }
         case GL_DEPTH_COMPONENT32_OES:
         {
             if (OnlyFL10Plus(deviceCaps))
             {
-                static const Format info(GL_DEPTH_COMPONENT32_OES,
-                                         angle::Format::ID::D24_UNORM_S8_UINT,
-                                         DXGI_FORMAT_R24G8_TYPELESS,
-                                         DXGI_FORMAT_R24_UNORM_X8_TYPELESS,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_D24_UNORM_S8_UINT,
-                                         DXGI_FORMAT_R24_UNORM_X8_TYPELESS,
-                                         GL_RGBA32F,
-                                         nullptr,
-                                         deviceCaps);
+                static constexpr Format info(GL_DEPTH_COMPONENT32_OES,
+                                             angle::Format::ID::D24_UNORM_S8_UINT,
+                                             DXGI_FORMAT_R24G8_TYPELESS,
+                                             DXGI_FORMAT_R24_UNORM_X8_TYPELESS,
+                                             DXGI_FORMAT_UNKNOWN,
+                                             DXGI_FORMAT_D24_UNORM_S8_UINT,
+                                             DXGI_FORMAT_R24_UNORM_X8_TYPELESS,
+                                             GL_RGBA32F,
+                                             nullptr);
                 return info;
             }
             else
             {
-                static const Format info(GL_DEPTH_COMPONENT32_OES,
-                                         angle::Format::ID::D24_UNORM_S8_UINT,
-                                         DXGI_FORMAT_D24_UNORM_S8_UINT,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_D24_UNORM_S8_UINT,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         GL_RGBA32F,
-                                         nullptr,
-                                         deviceCaps);
+                static constexpr Format info(GL_DEPTH_COMPONENT32_OES,
+                                             angle::Format::ID::D24_UNORM_S8_UINT,
+                                             DXGI_FORMAT_D24_UNORM_S8_UINT,
+                                             DXGI_FORMAT_UNKNOWN,
+                                             DXGI_FORMAT_UNKNOWN,
+                                             DXGI_FORMAT_D24_UNORM_S8_UINT,
+                                             DXGI_FORMAT_UNKNOWN,
+                                             GL_RGBA32F,
+                                             nullptr);
                 return info;
             }
         }
         case GL_ETC1_RGB8_LOSSY_DECODE_ANGLE:
         {
-            static const Format info(GL_ETC1_RGB8_LOSSY_DECODE_ANGLE,
-                                     angle::Format::ID::BC1_RGB_UNORM_BLOCK,
-                                     DXGI_FORMAT_BC1_UNORM,
-                                     DXGI_FORMAT_BC1_UNORM,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_BC1_UNORM,
-                                     GL_RGBA8,
-                                     nullptr,
-                                     deviceCaps);
+            static constexpr Format info(GL_ETC1_RGB8_LOSSY_DECODE_ANGLE,
+                                         angle::Format::ID::BC1_RGB_UNORM_BLOCK,
+                                         DXGI_FORMAT_BC1_UNORM,
+                                         DXGI_FORMAT_BC1_UNORM,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_BC1_UNORM,
+                                         GL_RGBA8,
+                                         nullptr);
             return info;
         }
         case GL_ETC1_RGB8_OES:
         {
-            static const Format info(GL_ETC1_RGB8_OES,
-                                     angle::Format::ID::R8G8B8A8_UNORM,
-                                     DXGI_FORMAT_R8G8B8A8_UNORM,
-                                     DXGI_FORMAT_R8G8B8A8_UNORM,
-                                     DXGI_FORMAT_R8G8B8A8_UNORM,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_R8G8B8A8_UNORM,
-                                     GL_RGBA8,
-                                     Initialize4ComponentData<GLubyte, 0x00, 0x00, 0x00, 0xFF>,
-                                     deviceCaps);
-            return info;
-        }
-        case GL_LUMINANCE16F_EXT:
-        {
-            static const Format info(GL_LUMINANCE16F_EXT,
-                                     angle::Format::ID::R16G16B16A16_FLOAT,
-                                     DXGI_FORMAT_R16G16B16A16_FLOAT,
-                                     DXGI_FORMAT_R16G16B16A16_FLOAT,
-                                     DXGI_FORMAT_R16G16B16A16_FLOAT,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_R16G16B16A16_FLOAT,
-                                     GL_RGBA16F,
-                                     Initialize4ComponentData<GLhalf, 0x0000, 0x0000, 0x0000, gl::Float16One>,
-                                     deviceCaps);
-            return info;
-        }
-        case GL_LUMINANCE32F_EXT:
-        {
-            static const Format info(GL_LUMINANCE32F_EXT,
-                                     angle::Format::ID::R32G32B32A32_FLOAT,
-                                     DXGI_FORMAT_R32G32B32A32_FLOAT,
-                                     DXGI_FORMAT_R32G32B32A32_FLOAT,
-                                     DXGI_FORMAT_R32G32B32A32_FLOAT,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_R32G32B32A32_FLOAT,
-                                     GL_RGBA32F,
-                                     Initialize4ComponentData<GLfloat, 0x00000000, 0x00000000, 0x00000000, gl::Float32One>,
-                                     deviceCaps);
-            return info;
-        }
-        case GL_LUMINANCE8_ALPHA8_EXT:
-        {
-            static const Format info(GL_LUMINANCE8_ALPHA8_EXT,
-                                     angle::Format::ID::R8G8B8A8_UNORM,
-                                     DXGI_FORMAT_R8G8B8A8_UNORM,
-                                     DXGI_FORMAT_R8G8B8A8_UNORM,
-                                     DXGI_FORMAT_R8G8B8A8_UNORM,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_R8G8B8A8_UNORM,
-                                     GL_RGBA8,
-                                     nullptr,
-                                     deviceCaps);
-            return info;
-        }
-        case GL_LUMINANCE8_EXT:
-        {
-            static const Format info(GL_LUMINANCE8_EXT,
-                                     angle::Format::ID::R8G8B8A8_UNORM,
-                                     DXGI_FORMAT_R8G8B8A8_UNORM,
-                                     DXGI_FORMAT_R8G8B8A8_UNORM,
-                                     DXGI_FORMAT_R8G8B8A8_UNORM,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_R8G8B8A8_UNORM,
-                                     GL_RGBA8,
-                                     Initialize4ComponentData<GLubyte, 0x00, 0x00, 0x00, 0xFF>,
-                                     deviceCaps);
-            return info;
-        }
-        case GL_LUMINANCE_ALPHA16F_EXT:
-        {
-            static const Format info(GL_LUMINANCE_ALPHA16F_EXT,
-                                     angle::Format::ID::R16G16B16A16_FLOAT,
-                                     DXGI_FORMAT_R16G16B16A16_FLOAT,
-                                     DXGI_FORMAT_R16G16B16A16_FLOAT,
-                                     DXGI_FORMAT_R16G16B16A16_FLOAT,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_R16G16B16A16_FLOAT,
-                                     GL_RGBA16F,
-                                     nullptr,
-                                     deviceCaps);
-            return info;
-        }
-        case GL_LUMINANCE_ALPHA32F_EXT:
-        {
-            static const Format info(GL_LUMINANCE_ALPHA32F_EXT,
-                                     angle::Format::ID::R32G32B32A32_FLOAT,
-                                     DXGI_FORMAT_R32G32B32A32_FLOAT,
-                                     DXGI_FORMAT_R32G32B32A32_FLOAT,
-                                     DXGI_FORMAT_R32G32B32A32_FLOAT,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_R32G32B32A32_FLOAT,
-                                     GL_RGBA32F,
-                                     nullptr,
-                                     deviceCaps);
-            return info;
-        }
-        case GL_NONE:
-        {
-            static const Format info(GL_NONE,
-                                     angle::Format::ID::NONE,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     GL_NONE,
-                                     nullptr,
-                                     deviceCaps);
-            return info;
-        }
-        case GL_R11F_G11F_B10F:
-        {
-            static const Format info(GL_R11F_G11F_B10F,
-                                     angle::Format::ID::R11G11B10_FLOAT,
-                                     DXGI_FORMAT_R11G11B10_FLOAT,
-                                     DXGI_FORMAT_R11G11B10_FLOAT,
-                                     DXGI_FORMAT_R11G11B10_FLOAT,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_R11G11B10_FLOAT,
-                                     GL_RGBA16F_EXT,
-                                     nullptr,
-                                     deviceCaps);
-            return info;
-        }
-        case GL_R16F:
-        {
-            static const Format info(GL_R16F,
-                                     angle::Format::ID::R16_FLOAT,
-                                     DXGI_FORMAT_R16_FLOAT,
-                                     DXGI_FORMAT_R16_FLOAT,
-                                     DXGI_FORMAT_R16_FLOAT,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_R16_FLOAT,
-                                     GL_RGBA16F_EXT,
-                                     nullptr,
-                                     deviceCaps);
-            return info;
-        }
-        case GL_R16I:
-        {
-            static const Format info(GL_R16I,
-                                     angle::Format::ID::R16_SINT,
-                                     DXGI_FORMAT_R16_SINT,
-                                     DXGI_FORMAT_R16_SINT,
-                                     DXGI_FORMAT_R16_SINT,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_R16_SINT,
-                                     GL_RGBA16I,
-                                     nullptr,
-                                     deviceCaps);
-            return info;
-        }
-        case GL_R16UI:
-        {
-            static const Format info(GL_R16UI,
-                                     angle::Format::ID::R16_UINT,
-                                     DXGI_FORMAT_R16_UINT,
-                                     DXGI_FORMAT_R16_UINT,
-                                     DXGI_FORMAT_R16_UINT,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_R16_UINT,
-                                     GL_RGBA16I,
-                                     nullptr,
-                                     deviceCaps);
-            return info;
-        }
-        case GL_R16_EXT:
-        {
-            static const Format info(GL_R16_EXT,
-                                     angle::Format::ID::R16_UNORM,
-                                     DXGI_FORMAT_R16_UNORM,
-                                     DXGI_FORMAT_R16_UNORM,
-                                     DXGI_FORMAT_R16_UNORM,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_R16_UNORM,
-                                     GL_RGBA16_EXT,
-                                     nullptr,
-                                     deviceCaps);
-            return info;
-        }
-        case GL_R16_SNORM_EXT:
-        {
-            static const Format info(GL_R16_SNORM_EXT,
-                                     angle::Format::ID::R16_SNORM,
-                                     DXGI_FORMAT_R16_SNORM,
-                                     DXGI_FORMAT_R16_SNORM,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_R16_SNORM,
-                                     GL_RGBA16_SNORM_EXT,
-                                     nullptr,
-                                     deviceCaps);
-            return info;
-        }
-        case GL_R32F:
-        {
-            static const Format info(GL_R32F,
-                                     angle::Format::ID::R32_FLOAT,
-                                     DXGI_FORMAT_R32_FLOAT,
-                                     DXGI_FORMAT_R32_FLOAT,
-                                     DXGI_FORMAT_R32_FLOAT,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_R32_FLOAT,
-                                     GL_RGBA32F,
-                                     nullptr,
-                                     deviceCaps);
-            return info;
-        }
-        case GL_R32I:
-        {
-            static const Format info(GL_R32I,
-                                     angle::Format::ID::R32_SINT,
-                                     DXGI_FORMAT_R32_SINT,
-                                     DXGI_FORMAT_R32_SINT,
-                                     DXGI_FORMAT_R32_SINT,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_R32_SINT,
-                                     GL_RGBA32I,
-                                     nullptr,
-                                     deviceCaps);
-            return info;
-        }
-        case GL_R32UI:
-        {
-            static const Format info(GL_R32UI,
-                                     angle::Format::ID::R32_UINT,
-                                     DXGI_FORMAT_R32_UINT,
-                                     DXGI_FORMAT_R32_UINT,
-                                     DXGI_FORMAT_R32_UINT,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_R32_UINT,
-                                     GL_RGBA32I,
-                                     nullptr,
-                                     deviceCaps);
-            return info;
-        }
-        case GL_R8:
-        {
-            static const Format info(GL_R8,
-                                     angle::Format::ID::R8_UNORM,
-                                     DXGI_FORMAT_R8_UNORM,
-                                     DXGI_FORMAT_R8_UNORM,
-                                     DXGI_FORMAT_R8_UNORM,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_R8_UNORM,
-                                     GL_RGBA8,
-                                     nullptr,
-                                     deviceCaps);
-            return info;
-        }
-        case GL_R8I:
-        {
-            static const Format info(GL_R8I,
-                                     angle::Format::ID::R8_SINT,
-                                     DXGI_FORMAT_R8_SINT,
-                                     DXGI_FORMAT_R8_SINT,
-                                     DXGI_FORMAT_R8_SINT,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_R8_SINT,
-                                     GL_RGBA8I,
-                                     nullptr,
-                                     deviceCaps);
-            return info;
-        }
-        case GL_R8UI:
-        {
-            static const Format info(GL_R8UI,
-                                     angle::Format::ID::R8_UINT,
-                                     DXGI_FORMAT_R8_UINT,
-                                     DXGI_FORMAT_R8_UINT,
-                                     DXGI_FORMAT_R8_UINT,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_R8_UINT,
-                                     GL_RGBA8I,
-                                     nullptr,
-                                     deviceCaps);
-            return info;
-        }
-        case GL_R8_SNORM:
-        {
-            static const Format info(GL_R8_SNORM,
-                                     angle::Format::ID::R8_SNORM,
-                                     DXGI_FORMAT_R8_SNORM,
-                                     DXGI_FORMAT_R8_SNORM,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_R8_SNORM,
-                                     GL_RGBA8_SNORM,
-                                     nullptr,
-                                     deviceCaps);
-            return info;
-        }
-        case GL_RG16F:
-        {
-            static const Format info(GL_RG16F,
-                                     angle::Format::ID::R16G16_FLOAT,
-                                     DXGI_FORMAT_R16G16_FLOAT,
-                                     DXGI_FORMAT_R16G16_FLOAT,
-                                     DXGI_FORMAT_R16G16_FLOAT,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_R16G16_FLOAT,
-                                     GL_RGBA16F_EXT,
-                                     nullptr,
-                                     deviceCaps);
-            return info;
-        }
-        case GL_RG16I:
-        {
-            static const Format info(GL_RG16I,
-                                     angle::Format::ID::R16G16_SINT,
-                                     DXGI_FORMAT_R16G16_SINT,
-                                     DXGI_FORMAT_R16G16_SINT,
-                                     DXGI_FORMAT_R16G16_SINT,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_R16G16_SINT,
-                                     GL_RGBA16I,
-                                     nullptr,
-                                     deviceCaps);
-            return info;
-        }
-        case GL_RG16UI:
-        {
-            static const Format info(GL_RG16UI,
-                                     angle::Format::ID::R16G16_UINT,
-                                     DXGI_FORMAT_R16G16_UINT,
-                                     DXGI_FORMAT_R16G16_UINT,
-                                     DXGI_FORMAT_R16G16_UINT,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_R16G16_UINT,
-                                     GL_RGBA16I,
-                                     nullptr,
-                                     deviceCaps);
-            return info;
-        }
-        case GL_RG16_EXT:
-        {
-            static const Format info(GL_RG16_EXT,
-                                     angle::Format::ID::R16G16_UNORM,
-                                     DXGI_FORMAT_R16G16_UNORM,
-                                     DXGI_FORMAT_R16G16_UNORM,
-                                     DXGI_FORMAT_R16G16_UNORM,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_R16G16_UNORM,
-                                     GL_RGBA16_EXT,
-                                     nullptr,
-                                     deviceCaps);
-            return info;
-        }
-        case GL_RG16_SNORM_EXT:
-        {
-            static const Format info(GL_RG16_SNORM_EXT,
-                                     angle::Format::ID::R16G16_SNORM,
-                                     DXGI_FORMAT_R16G16_SNORM,
-                                     DXGI_FORMAT_R16G16_SNORM,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_R16G16_SNORM,
-                                     GL_RGBA16_SNORM_EXT,
-                                     nullptr,
-                                     deviceCaps);
-            return info;
-        }
-        case GL_RG32F:
-        {
-            static const Format info(GL_RG32F,
-                                     angle::Format::ID::R32G32_FLOAT,
-                                     DXGI_FORMAT_R32G32_FLOAT,
-                                     DXGI_FORMAT_R32G32_FLOAT,
-                                     DXGI_FORMAT_R32G32_FLOAT,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_R32G32_FLOAT,
-                                     GL_RGBA32F,
-                                     nullptr,
-                                     deviceCaps);
-            return info;
-        }
-        case GL_RG32I:
-        {
-            static const Format info(GL_RG32I,
-                                     angle::Format::ID::R32G32_SINT,
-                                     DXGI_FORMAT_R32G32_SINT,
-                                     DXGI_FORMAT_R32G32_SINT,
-                                     DXGI_FORMAT_R32G32_SINT,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_R32G32_SINT,
-                                     GL_RGBA32I,
-                                     nullptr,
-                                     deviceCaps);
-            return info;
-        }
-        case GL_RG32UI:
-        {
-            static const Format info(GL_RG32UI,
-                                     angle::Format::ID::R32G32_UINT,
-                                     DXGI_FORMAT_R32G32_UINT,
-                                     DXGI_FORMAT_R32G32_UINT,
-                                     DXGI_FORMAT_R32G32_UINT,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_R32G32_UINT,
-                                     GL_RGBA32I,
-                                     nullptr,
-                                     deviceCaps);
-            return info;
-        }
-        case GL_RG8:
-        {
-            static const Format info(GL_RG8,
-                                     angle::Format::ID::R8G8_UNORM,
-                                     DXGI_FORMAT_R8G8_UNORM,
-                                     DXGI_FORMAT_R8G8_UNORM,
-                                     DXGI_FORMAT_R8G8_UNORM,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_R8G8_UNORM,
-                                     GL_RGBA8,
-                                     nullptr,
-                                     deviceCaps);
-            return info;
-        }
-        case GL_RG8I:
-        {
-            static const Format info(GL_RG8I,
-                                     angle::Format::ID::R8G8_SINT,
-                                     DXGI_FORMAT_R8G8_SINT,
-                                     DXGI_FORMAT_R8G8_SINT,
-                                     DXGI_FORMAT_R8G8_SINT,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_R8G8_SINT,
-                                     GL_RGBA8I,
-                                     nullptr,
-                                     deviceCaps);
-            return info;
-        }
-        case GL_RG8UI:
-        {
-            static const Format info(GL_RG8UI,
-                                     angle::Format::ID::R8G8_UINT,
-                                     DXGI_FORMAT_R8G8_UINT,
-                                     DXGI_FORMAT_R8G8_UINT,
-                                     DXGI_FORMAT_R8G8_UINT,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_R8G8_UINT,
-                                     GL_RGBA8I,
-                                     nullptr,
-                                     deviceCaps);
-            return info;
-        }
-        case GL_RG8_SNORM:
-        {
-            static const Format info(GL_RG8_SNORM,
-                                     angle::Format::ID::R8G8_SNORM,
-                                     DXGI_FORMAT_R8G8_SNORM,
-                                     DXGI_FORMAT_R8G8_SNORM,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_R8G8_SNORM,
-                                     GL_RGBA8_SNORM,
-                                     nullptr,
-                                     deviceCaps);
-            return info;
-        }
-        case GL_RGB:
-        {
-            static const Format info(GL_RGB,
-                                     angle::Format::ID::R8G8B8A8_UNORM,
-                                     DXGI_FORMAT_R8G8B8A8_UNORM,
-                                     DXGI_FORMAT_R8G8B8A8_UNORM,
-                                     DXGI_FORMAT_R8G8B8A8_UNORM,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_R8G8B8A8_UNORM,
-                                     GL_RGBA8,
-                                     Initialize4ComponentData<GLubyte, 0x00, 0x00, 0x00, 0xFF>,
-                                     deviceCaps);
-            return info;
-        }
-        case GL_RGB10_A2:
-        {
-            static const Format info(GL_RGB10_A2,
-                                     angle::Format::ID::R10G10B10A2_UNORM,
-                                     DXGI_FORMAT_R10G10B10A2_UNORM,
-                                     DXGI_FORMAT_R10G10B10A2_UNORM,
-                                     DXGI_FORMAT_R10G10B10A2_UNORM,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_R10G10B10A2_UNORM,
-                                     GL_RGBA16_EXT,
-                                     nullptr,
-                                     deviceCaps);
-            return info;
-        }
-        case GL_RGB10_A2UI:
-        {
-            static const Format info(GL_RGB10_A2UI,
-                                     angle::Format::ID::R10G10B10A2_UINT,
-                                     DXGI_FORMAT_R10G10B10A2_UINT,
-                                     DXGI_FORMAT_R10G10B10A2_UINT,
-                                     DXGI_FORMAT_R10G10B10A2_UINT,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_R10G10B10A2_UINT,
-                                     GL_RGBA16I,
-                                     nullptr,
-                                     deviceCaps);
-            return info;
-        }
-        case GL_RGB16F:
-        {
-            static const Format info(GL_RGB16F,
-                                     angle::Format::ID::R16G16B16A16_FLOAT,
-                                     DXGI_FORMAT_R16G16B16A16_FLOAT,
-                                     DXGI_FORMAT_R16G16B16A16_FLOAT,
-                                     DXGI_FORMAT_R16G16B16A16_FLOAT,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_R16G16B16A16_FLOAT,
-                                     GL_RGBA16F,
-                                     Initialize4ComponentData<GLhalf, 0x0000, 0x0000, 0x0000, gl::Float16One>,
-                                     deviceCaps);
-            return info;
-        }
-        case GL_RGB16I:
-        {
-            static const Format info(GL_RGB16I,
-                                     angle::Format::ID::R16G16B16A16_SINT,
-                                     DXGI_FORMAT_R16G16B16A16_SINT,
-                                     DXGI_FORMAT_R16G16B16A16_SINT,
-                                     DXGI_FORMAT_R16G16B16A16_SINT,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_R16G16B16A16_SINT,
-                                     GL_RGBA16I,
-                                     Initialize4ComponentData<GLshort, 0x0000, 0x0000, 0x0000, 0x0001>,
-                                     deviceCaps);
-            return info;
-        }
-        case GL_RGB16UI:
-        {
-            static const Format info(GL_RGB16UI,
-                                     angle::Format::ID::R16G16B16A16_UINT,
-                                     DXGI_FORMAT_R16G16B16A16_UINT,
-                                     DXGI_FORMAT_R16G16B16A16_UINT,
-                                     DXGI_FORMAT_R16G16B16A16_UINT,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_R16G16B16A16_UINT,
-                                     GL_RGBA16UI,
-                                     Initialize4ComponentData<GLushort, 0x0000, 0x0000, 0x0000, 0x0001>,
-                                     deviceCaps);
-            return info;
-        }
-        case GL_RGB16_EXT:
-        {
-            static const Format info(GL_RGB16_EXT,
-                                     angle::Format::ID::R16G16B16A16_UNORM,
-                                     DXGI_FORMAT_R16G16B16A16_UNORM,
-                                     DXGI_FORMAT_R16G16B16A16_UNORM,
-                                     DXGI_FORMAT_R16G16B16A16_UNORM,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_R16G16B16A16_UNORM,
-                                     GL_RGBA16_EXT,
-                                     Initialize4ComponentData<GLubyte, 0x0000, 0x0000, 0x0000, 0xFFFF>,
-                                     deviceCaps);
-            return info;
-        }
-        case GL_RGB16_SNORM_EXT:
-        {
-            static const Format info(GL_RGB16_SNORM_EXT,
-                                     angle::Format::ID::R16G16B16A16_SNORM,
-                                     DXGI_FORMAT_R16G16B16A16_SNORM,
-                                     DXGI_FORMAT_R16G16B16A16_SNORM,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_R16G16B16A16_SNORM,
-                                     GL_RGBA16_SNORM_EXT,
-                                     Initialize4ComponentData<GLushort, 0x0000, 0x0000, 0x0000, 0x7FFF>,
-                                     deviceCaps);
-            return info;
-        }
-        case GL_RGB32F:
-        {
-            static const Format info(GL_RGB32F,
-                                     angle::Format::ID::R32G32B32A32_FLOAT,
-                                     DXGI_FORMAT_R32G32B32A32_FLOAT,
-                                     DXGI_FORMAT_R32G32B32A32_FLOAT,
-                                     DXGI_FORMAT_R32G32B32A32_FLOAT,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_R32G32B32A32_FLOAT,
-                                     GL_RGBA32F,
-                                     Initialize4ComponentData<GLfloat, 0x00000000, 0x00000000, 0x00000000, gl::Float32One>,
-                                     deviceCaps);
-            return info;
-        }
-        case GL_RGB32I:
-        {
-            static const Format info(GL_RGB32I,
-                                     angle::Format::ID::R32G32B32A32_SINT,
-                                     DXGI_FORMAT_R32G32B32A32_SINT,
-                                     DXGI_FORMAT_R32G32B32A32_SINT,
-                                     DXGI_FORMAT_R32G32B32A32_SINT,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_R32G32B32A32_SINT,
-                                     GL_RGBA32I,
-                                     Initialize4ComponentData<GLint, 0x00000000, 0x00000000, 0x00000000, 0x00000001>,
-                                     deviceCaps);
-            return info;
-        }
-        case GL_RGB32UI:
-        {
-            static const Format info(GL_RGB32UI,
-                                     angle::Format::ID::R32G32B32A32_UINT,
-                                     DXGI_FORMAT_R32G32B32A32_UINT,
-                                     DXGI_FORMAT_R32G32B32A32_UINT,
-                                     DXGI_FORMAT_R32G32B32A32_UINT,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_R32G32B32A32_UINT,
-                                     GL_RGBA32UI,
-                                     Initialize4ComponentData<GLuint, 0x00000000, 0x00000000, 0x00000000, 0x00000001>,
-                                     deviceCaps);
-            return info;
-        }
-        case GL_RGB565:
-        {
-            if (SupportsFormat(DXGI_FORMAT_B5G6R5_UNORM, deviceCaps))
-            {
-                static const Format info(GL_RGB565,
-                                         angle::Format::ID::B5G6R5_UNORM,
-                                         DXGI_FORMAT_B5G6R5_UNORM,
-                                         DXGI_FORMAT_B5G6R5_UNORM,
-                                         DXGI_FORMAT_B5G6R5_UNORM,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_B5G6R5_UNORM,
-                                         GL_RGBA8,
-                                         nullptr,
-                                         deviceCaps);
-                return info;
-            }
-            else
-            {
-                static const Format info(GL_RGB565,
+            static constexpr Format info(GL_ETC1_RGB8_OES,
                                          angle::Format::ID::R8G8B8A8_UNORM,
                                          DXGI_FORMAT_R8G8B8A8_UNORM,
                                          DXGI_FORMAT_R8G8B8A8_UNORM,
@@ -1561,8 +971,594 @@ const Format &Format::Get(GLenum internalFormat, const Renderer11DeviceCaps &dev
                                          DXGI_FORMAT_UNKNOWN,
                                          DXGI_FORMAT_R8G8B8A8_UNORM,
                                          GL_RGBA8,
-                                         Initialize4ComponentData<GLubyte, 0x00, 0x00, 0x00, 0xFF>,
-                                         deviceCaps);
+                                         Initialize4ComponentData<GLubyte, 0x00, 0x00, 0x00, 0xFF>);
+            return info;
+        }
+        case GL_LUMINANCE16F_EXT:
+        {
+            static constexpr Format info(GL_LUMINANCE16F_EXT,
+                                         angle::Format::ID::R16G16B16A16_FLOAT,
+                                         DXGI_FORMAT_R16G16B16A16_FLOAT,
+                                         DXGI_FORMAT_R16G16B16A16_FLOAT,
+                                         DXGI_FORMAT_R16G16B16A16_FLOAT,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_R16G16B16A16_FLOAT,
+                                         GL_RGBA16F,
+                                         Initialize4ComponentData<GLhalf, 0x0000, 0x0000, 0x0000, gl::Float16One>);
+            return info;
+        }
+        case GL_LUMINANCE32F_EXT:
+        {
+            static constexpr Format info(GL_LUMINANCE32F_EXT,
+                                         angle::Format::ID::R32G32B32A32_FLOAT,
+                                         DXGI_FORMAT_R32G32B32A32_FLOAT,
+                                         DXGI_FORMAT_R32G32B32A32_FLOAT,
+                                         DXGI_FORMAT_R32G32B32A32_FLOAT,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_R32G32B32A32_FLOAT,
+                                         GL_RGBA32F,
+                                         Initialize4ComponentData<GLfloat, 0x00000000, 0x00000000, 0x00000000, gl::Float32One>);
+            return info;
+        }
+        case GL_LUMINANCE8_ALPHA8_EXT:
+        {
+            static constexpr Format info(GL_LUMINANCE8_ALPHA8_EXT,
+                                         angle::Format::ID::R8G8B8A8_UNORM,
+                                         DXGI_FORMAT_R8G8B8A8_UNORM,
+                                         DXGI_FORMAT_R8G8B8A8_UNORM,
+                                         DXGI_FORMAT_R8G8B8A8_UNORM,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_R8G8B8A8_UNORM,
+                                         GL_RGBA8,
+                                         nullptr);
+            return info;
+        }
+        case GL_LUMINANCE8_EXT:
+        {
+            static constexpr Format info(GL_LUMINANCE8_EXT,
+                                         angle::Format::ID::R8G8B8A8_UNORM,
+                                         DXGI_FORMAT_R8G8B8A8_UNORM,
+                                         DXGI_FORMAT_R8G8B8A8_UNORM,
+                                         DXGI_FORMAT_R8G8B8A8_UNORM,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_R8G8B8A8_UNORM,
+                                         GL_RGBA8,
+                                         Initialize4ComponentData<GLubyte, 0x00, 0x00, 0x00, 0xFF>);
+            return info;
+        }
+        case GL_LUMINANCE_ALPHA16F_EXT:
+        {
+            static constexpr Format info(GL_LUMINANCE_ALPHA16F_EXT,
+                                         angle::Format::ID::R16G16B16A16_FLOAT,
+                                         DXGI_FORMAT_R16G16B16A16_FLOAT,
+                                         DXGI_FORMAT_R16G16B16A16_FLOAT,
+                                         DXGI_FORMAT_R16G16B16A16_FLOAT,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_R16G16B16A16_FLOAT,
+                                         GL_RGBA16F,
+                                         nullptr);
+            return info;
+        }
+        case GL_LUMINANCE_ALPHA32F_EXT:
+        {
+            static constexpr Format info(GL_LUMINANCE_ALPHA32F_EXT,
+                                         angle::Format::ID::R32G32B32A32_FLOAT,
+                                         DXGI_FORMAT_R32G32B32A32_FLOAT,
+                                         DXGI_FORMAT_R32G32B32A32_FLOAT,
+                                         DXGI_FORMAT_R32G32B32A32_FLOAT,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_R32G32B32A32_FLOAT,
+                                         GL_RGBA32F,
+                                         nullptr);
+            return info;
+        }
+        case GL_NONE:
+        {
+            static constexpr Format info(GL_NONE,
+                                         angle::Format::ID::NONE,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         GL_NONE,
+                                         nullptr);
+            return info;
+        }
+        case GL_R11F_G11F_B10F:
+        {
+            static constexpr Format info(GL_R11F_G11F_B10F,
+                                         angle::Format::ID::R11G11B10_FLOAT,
+                                         DXGI_FORMAT_R11G11B10_FLOAT,
+                                         DXGI_FORMAT_R11G11B10_FLOAT,
+                                         DXGI_FORMAT_R11G11B10_FLOAT,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_R11G11B10_FLOAT,
+                                         GL_RGBA16F_EXT,
+                                         nullptr);
+            return info;
+        }
+        case GL_R16F:
+        {
+            static constexpr Format info(GL_R16F,
+                                         angle::Format::ID::R16_FLOAT,
+                                         DXGI_FORMAT_R16_FLOAT,
+                                         DXGI_FORMAT_R16_FLOAT,
+                                         DXGI_FORMAT_R16_FLOAT,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_R16_FLOAT,
+                                         GL_RGBA16F_EXT,
+                                         nullptr);
+            return info;
+        }
+        case GL_R16I:
+        {
+            static constexpr Format info(GL_R16I,
+                                         angle::Format::ID::R16_SINT,
+                                         DXGI_FORMAT_R16_SINT,
+                                         DXGI_FORMAT_R16_SINT,
+                                         DXGI_FORMAT_R16_SINT,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_R16_SINT,
+                                         GL_RGBA16I,
+                                         nullptr);
+            return info;
+        }
+        case GL_R16UI:
+        {
+            static constexpr Format info(GL_R16UI,
+                                         angle::Format::ID::R16_UINT,
+                                         DXGI_FORMAT_R16_UINT,
+                                         DXGI_FORMAT_R16_UINT,
+                                         DXGI_FORMAT_R16_UINT,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_R16_UINT,
+                                         GL_RGBA16I,
+                                         nullptr);
+            return info;
+        }
+        case GL_R16_EXT:
+        {
+            static constexpr Format info(GL_R16_EXT,
+                                         angle::Format::ID::R16_UNORM,
+                                         DXGI_FORMAT_R16_UNORM,
+                                         DXGI_FORMAT_R16_UNORM,
+                                         DXGI_FORMAT_R16_UNORM,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_R16_UNORM,
+                                         GL_RGBA16_EXT,
+                                         nullptr);
+            return info;
+        }
+        case GL_R16_SNORM_EXT:
+        {
+            static constexpr Format info(GL_R16_SNORM_EXT,
+                                         angle::Format::ID::R16_SNORM,
+                                         DXGI_FORMAT_R16_SNORM,
+                                         DXGI_FORMAT_R16_SNORM,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_R16_SNORM,
+                                         GL_RGBA16_SNORM_EXT,
+                                         nullptr);
+            return info;
+        }
+        case GL_R32F:
+        {
+            static constexpr Format info(GL_R32F,
+                                         angle::Format::ID::R32_FLOAT,
+                                         DXGI_FORMAT_R32_FLOAT,
+                                         DXGI_FORMAT_R32_FLOAT,
+                                         DXGI_FORMAT_R32_FLOAT,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_R32_FLOAT,
+                                         GL_RGBA32F,
+                                         nullptr);
+            return info;
+        }
+        case GL_R32I:
+        {
+            static constexpr Format info(GL_R32I,
+                                         angle::Format::ID::R32_SINT,
+                                         DXGI_FORMAT_R32_SINT,
+                                         DXGI_FORMAT_R32_SINT,
+                                         DXGI_FORMAT_R32_SINT,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_R32_SINT,
+                                         GL_RGBA32I,
+                                         nullptr);
+            return info;
+        }
+        case GL_R32UI:
+        {
+            static constexpr Format info(GL_R32UI,
+                                         angle::Format::ID::R32_UINT,
+                                         DXGI_FORMAT_R32_UINT,
+                                         DXGI_FORMAT_R32_UINT,
+                                         DXGI_FORMAT_R32_UINT,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_R32_UINT,
+                                         GL_RGBA32I,
+                                         nullptr);
+            return info;
+        }
+        case GL_R8:
+        {
+            static constexpr Format info(GL_R8,
+                                         angle::Format::ID::R8_UNORM,
+                                         DXGI_FORMAT_R8_UNORM,
+                                         DXGI_FORMAT_R8_UNORM,
+                                         DXGI_FORMAT_R8_UNORM,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_R8_UNORM,
+                                         GL_RGBA8,
+                                         nullptr);
+            return info;
+        }
+        case GL_R8I:
+        {
+            static constexpr Format info(GL_R8I,
+                                         angle::Format::ID::R8_SINT,
+                                         DXGI_FORMAT_R8_SINT,
+                                         DXGI_FORMAT_R8_SINT,
+                                         DXGI_FORMAT_R8_SINT,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_R8_SINT,
+                                         GL_RGBA8I,
+                                         nullptr);
+            return info;
+        }
+        case GL_R8UI:
+        {
+            static constexpr Format info(GL_R8UI,
+                                         angle::Format::ID::R8_UINT,
+                                         DXGI_FORMAT_R8_UINT,
+                                         DXGI_FORMAT_R8_UINT,
+                                         DXGI_FORMAT_R8_UINT,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_R8_UINT,
+                                         GL_RGBA8I,
+                                         nullptr);
+            return info;
+        }
+        case GL_R8_SNORM:
+        {
+            static constexpr Format info(GL_R8_SNORM,
+                                         angle::Format::ID::R8_SNORM,
+                                         DXGI_FORMAT_R8_SNORM,
+                                         DXGI_FORMAT_R8_SNORM,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_R8_SNORM,
+                                         GL_RGBA8_SNORM,
+                                         nullptr);
+            return info;
+        }
+        case GL_RG16F:
+        {
+            static constexpr Format info(GL_RG16F,
+                                         angle::Format::ID::R16G16_FLOAT,
+                                         DXGI_FORMAT_R16G16_FLOAT,
+                                         DXGI_FORMAT_R16G16_FLOAT,
+                                         DXGI_FORMAT_R16G16_FLOAT,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_R16G16_FLOAT,
+                                         GL_RGBA16F_EXT,
+                                         nullptr);
+            return info;
+        }
+        case GL_RG16I:
+        {
+            static constexpr Format info(GL_RG16I,
+                                         angle::Format::ID::R16G16_SINT,
+                                         DXGI_FORMAT_R16G16_SINT,
+                                         DXGI_FORMAT_R16G16_SINT,
+                                         DXGI_FORMAT_R16G16_SINT,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_R16G16_SINT,
+                                         GL_RGBA16I,
+                                         nullptr);
+            return info;
+        }
+        case GL_RG16UI:
+        {
+            static constexpr Format info(GL_RG16UI,
+                                         angle::Format::ID::R16G16_UINT,
+                                         DXGI_FORMAT_R16G16_UINT,
+                                         DXGI_FORMAT_R16G16_UINT,
+                                         DXGI_FORMAT_R16G16_UINT,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_R16G16_UINT,
+                                         GL_RGBA16I,
+                                         nullptr);
+            return info;
+        }
+        case GL_RG16_EXT:
+        {
+            static constexpr Format info(GL_RG16_EXT,
+                                         angle::Format::ID::R16G16_UNORM,
+                                         DXGI_FORMAT_R16G16_UNORM,
+                                         DXGI_FORMAT_R16G16_UNORM,
+                                         DXGI_FORMAT_R16G16_UNORM,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_R16G16_UNORM,
+                                         GL_RGBA16_EXT,
+                                         nullptr);
+            return info;
+        }
+        case GL_RG16_SNORM_EXT:
+        {
+            static constexpr Format info(GL_RG16_SNORM_EXT,
+                                         angle::Format::ID::R16G16_SNORM,
+                                         DXGI_FORMAT_R16G16_SNORM,
+                                         DXGI_FORMAT_R16G16_SNORM,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_R16G16_SNORM,
+                                         GL_RGBA16_SNORM_EXT,
+                                         nullptr);
+            return info;
+        }
+        case GL_RG32F:
+        {
+            static constexpr Format info(GL_RG32F,
+                                         angle::Format::ID::R32G32_FLOAT,
+                                         DXGI_FORMAT_R32G32_FLOAT,
+                                         DXGI_FORMAT_R32G32_FLOAT,
+                                         DXGI_FORMAT_R32G32_FLOAT,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_R32G32_FLOAT,
+                                         GL_RGBA32F,
+                                         nullptr);
+            return info;
+        }
+        case GL_RG32I:
+        {
+            static constexpr Format info(GL_RG32I,
+                                         angle::Format::ID::R32G32_SINT,
+                                         DXGI_FORMAT_R32G32_SINT,
+                                         DXGI_FORMAT_R32G32_SINT,
+                                         DXGI_FORMAT_R32G32_SINT,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_R32G32_SINT,
+                                         GL_RGBA32I,
+                                         nullptr);
+            return info;
+        }
+        case GL_RG32UI:
+        {
+            static constexpr Format info(GL_RG32UI,
+                                         angle::Format::ID::R32G32_UINT,
+                                         DXGI_FORMAT_R32G32_UINT,
+                                         DXGI_FORMAT_R32G32_UINT,
+                                         DXGI_FORMAT_R32G32_UINT,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_R32G32_UINT,
+                                         GL_RGBA32I,
+                                         nullptr);
+            return info;
+        }
+        case GL_RG8:
+        {
+            static constexpr Format info(GL_RG8,
+                                         angle::Format::ID::R8G8_UNORM,
+                                         DXGI_FORMAT_R8G8_UNORM,
+                                         DXGI_FORMAT_R8G8_UNORM,
+                                         DXGI_FORMAT_R8G8_UNORM,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_R8G8_UNORM,
+                                         GL_RGBA8,
+                                         nullptr);
+            return info;
+        }
+        case GL_RG8I:
+        {
+            static constexpr Format info(GL_RG8I,
+                                         angle::Format::ID::R8G8_SINT,
+                                         DXGI_FORMAT_R8G8_SINT,
+                                         DXGI_FORMAT_R8G8_SINT,
+                                         DXGI_FORMAT_R8G8_SINT,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_R8G8_SINT,
+                                         GL_RGBA8I,
+                                         nullptr);
+            return info;
+        }
+        case GL_RG8UI:
+        {
+            static constexpr Format info(GL_RG8UI,
+                                         angle::Format::ID::R8G8_UINT,
+                                         DXGI_FORMAT_R8G8_UINT,
+                                         DXGI_FORMAT_R8G8_UINT,
+                                         DXGI_FORMAT_R8G8_UINT,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_R8G8_UINT,
+                                         GL_RGBA8I,
+                                         nullptr);
+            return info;
+        }
+        case GL_RG8_SNORM:
+        {
+            static constexpr Format info(GL_RG8_SNORM,
+                                         angle::Format::ID::R8G8_SNORM,
+                                         DXGI_FORMAT_R8G8_SNORM,
+                                         DXGI_FORMAT_R8G8_SNORM,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_R8G8_SNORM,
+                                         GL_RGBA8_SNORM,
+                                         nullptr);
+            return info;
+        }
+        case GL_RGB:
+        {
+            static constexpr Format info(GL_RGB,
+                                         angle::Format::ID::R8G8B8A8_UNORM,
+                                         DXGI_FORMAT_R8G8B8A8_UNORM,
+                                         DXGI_FORMAT_R8G8B8A8_UNORM,
+                                         DXGI_FORMAT_R8G8B8A8_UNORM,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_R8G8B8A8_UNORM,
+                                         GL_RGBA8,
+                                         Initialize4ComponentData<GLubyte, 0x00, 0x00, 0x00, 0xFF>);
+            return info;
+        }
+        case GL_RGB10_A2:
+        {
+            static constexpr Format info(GL_RGB10_A2,
+                                         angle::Format::ID::R10G10B10A2_UNORM,
+                                         DXGI_FORMAT_R10G10B10A2_UNORM,
+                                         DXGI_FORMAT_R10G10B10A2_UNORM,
+                                         DXGI_FORMAT_R10G10B10A2_UNORM,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_R10G10B10A2_UNORM,
+                                         GL_RGBA16_EXT,
+                                         nullptr);
+            return info;
+        }
+        case GL_RGB10_A2UI:
+        {
+            static constexpr Format info(GL_RGB10_A2UI,
+                                         angle::Format::ID::R10G10B10A2_UINT,
+                                         DXGI_FORMAT_R10G10B10A2_UINT,
+                                         DXGI_FORMAT_R10G10B10A2_UINT,
+                                         DXGI_FORMAT_R10G10B10A2_UINT,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_R10G10B10A2_UINT,
+                                         GL_RGBA16I,
+                                         nullptr);
+            return info;
+        }
+        case GL_RGB16F:
+        {
+            static constexpr Format info(GL_RGB16F,
+                                         angle::Format::ID::R16G16B16A16_FLOAT,
+                                         DXGI_FORMAT_R16G16B16A16_FLOAT,
+                                         DXGI_FORMAT_R16G16B16A16_FLOAT,
+                                         DXGI_FORMAT_R16G16B16A16_FLOAT,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_R16G16B16A16_FLOAT,
+                                         GL_RGBA16F,
+                                         Initialize4ComponentData<GLhalf, 0x0000, 0x0000, 0x0000, gl::Float16One>);
+            return info;
+        }
+        case GL_RGB16I:
+        {
+            static constexpr Format info(GL_RGB16I,
+                                         angle::Format::ID::R16G16B16A16_SINT,
+                                         DXGI_FORMAT_R16G16B16A16_SINT,
+                                         DXGI_FORMAT_R16G16B16A16_SINT,
+                                         DXGI_FORMAT_R16G16B16A16_SINT,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_R16G16B16A16_SINT,
+                                         GL_RGBA16I,
+                                         Initialize4ComponentData<GLshort, 0x0000, 0x0000, 0x0000, 0x0001>);
+            return info;
+        }
+        case GL_RGB16UI:
+        {
+            static constexpr Format info(GL_RGB16UI,
+                                         angle::Format::ID::R16G16B16A16_UINT,
+                                         DXGI_FORMAT_R16G16B16A16_UINT,
+                                         DXGI_FORMAT_R16G16B16A16_UINT,
+                                         DXGI_FORMAT_R16G16B16A16_UINT,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_R16G16B16A16_UINT,
+                                         GL_RGBA16UI,
+                                         Initialize4ComponentData<GLushort, 0x0000, 0x0000, 0x0000, 0x0001>);
+            return info;
+        }
+        case GL_RGB16_EXT:
+        {
+            static constexpr Format info(GL_RGB16_EXT,
+                                         angle::Format::ID::R16G16B16A16_UNORM,
+                                         DXGI_FORMAT_R16G16B16A16_UNORM,
+                                         DXGI_FORMAT_R16G16B16A16_UNORM,
+                                         DXGI_FORMAT_R16G16B16A16_UNORM,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_R16G16B16A16_UNORM,
+                                         GL_RGBA16_EXT,
+                                         Initialize4ComponentData<GLubyte, 0x0000, 0x0000, 0x0000, 0xFFFF>);
+            return info;
+        }
+        case GL_RGB16_SNORM_EXT:
+        {
+            static constexpr Format info(GL_RGB16_SNORM_EXT,
+                                         angle::Format::ID::R16G16B16A16_SNORM,
+                                         DXGI_FORMAT_R16G16B16A16_SNORM,
+                                         DXGI_FORMAT_R16G16B16A16_SNORM,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_R16G16B16A16_SNORM,
+                                         GL_RGBA16_SNORM_EXT,
+                                         Initialize4ComponentData<GLushort, 0x0000, 0x0000, 0x0000, 0x7FFF>);
+            return info;
+        }
+        case GL_RGB32F:
+        {
+            static constexpr Format info(GL_RGB32F,
+                                         angle::Format::ID::R32G32B32A32_FLOAT,
+                                         DXGI_FORMAT_R32G32B32A32_FLOAT,
+                                         DXGI_FORMAT_R32G32B32A32_FLOAT,
+                                         DXGI_FORMAT_R32G32B32A32_FLOAT,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_R32G32B32A32_FLOAT,
+                                         GL_RGBA32F,
+                                         Initialize4ComponentData<GLfloat, 0x00000000, 0x00000000, 0x00000000, gl::Float32One>);
+            return info;
+        }
+        case GL_RGB32I:
+        {
+            static constexpr Format info(GL_RGB32I,
+                                         angle::Format::ID::R32G32B32A32_SINT,
+                                         DXGI_FORMAT_R32G32B32A32_SINT,
+                                         DXGI_FORMAT_R32G32B32A32_SINT,
+                                         DXGI_FORMAT_R32G32B32A32_SINT,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_R32G32B32A32_SINT,
+                                         GL_RGBA32I,
+                                         Initialize4ComponentData<GLint, 0x00000000, 0x00000000, 0x00000000, 0x00000001>);
+            return info;
+        }
+        case GL_RGB32UI:
+        {
+            static constexpr Format info(GL_RGB32UI,
+                                         angle::Format::ID::R32G32B32A32_UINT,
+                                         DXGI_FORMAT_R32G32B32A32_UINT,
+                                         DXGI_FORMAT_R32G32B32A32_UINT,
+                                         DXGI_FORMAT_R32G32B32A32_UINT,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_R32G32B32A32_UINT,
+                                         GL_RGBA32UI,
+                                         Initialize4ComponentData<GLuint, 0x00000000, 0x00000000, 0x00000000, 0x00000001>);
+            return info;
+        }
+        case GL_RGB565:
+        {
+            if (SupportsFormat(DXGI_FORMAT_B5G6R5_UNORM, deviceCaps))
+            {
+                static constexpr Format info(GL_RGB565,
+                                             angle::Format::ID::B5G6R5_UNORM,
+                                             DXGI_FORMAT_B5G6R5_UNORM,
+                                             DXGI_FORMAT_B5G6R5_UNORM,
+                                             DXGI_FORMAT_B5G6R5_UNORM,
+                                             DXGI_FORMAT_UNKNOWN,
+                                             DXGI_FORMAT_B5G6R5_UNORM,
+                                             GL_RGBA8,
+                                             nullptr);
+                return info;
+            }
+            else
+            {
+                static constexpr Format info(GL_RGB565,
+                                             angle::Format::ID::R8G8B8A8_UNORM,
+                                             DXGI_FORMAT_R8G8B8A8_UNORM,
+                                             DXGI_FORMAT_R8G8B8A8_UNORM,
+                                             DXGI_FORMAT_R8G8B8A8_UNORM,
+                                             DXGI_FORMAT_UNKNOWN,
+                                             DXGI_FORMAT_R8G8B8A8_UNORM,
+                                             GL_RGBA8,
+                                             Initialize4ComponentData<GLubyte, 0x00, 0x00, 0x00, 0xFF>);
                 return info;
             }
         }
@@ -1570,21 +1566,34 @@ const Format &Format::Get(GLenum internalFormat, const Renderer11DeviceCaps &dev
         {
             if (SupportsFormat(DXGI_FORMAT_B5G5R5A1_UNORM, deviceCaps))
             {
-                static const Format info(GL_RGB5_A1,
-                                         angle::Format::ID::B5G5R5A1_UNORM,
-                                         DXGI_FORMAT_B5G5R5A1_UNORM,
-                                         DXGI_FORMAT_B5G5R5A1_UNORM,
-                                         DXGI_FORMAT_B5G5R5A1_UNORM,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_B5G5R5A1_UNORM,
-                                         GL_RGBA8,
-                                         nullptr,
-                                         deviceCaps);
+                static constexpr Format info(GL_RGB5_A1,
+                                             angle::Format::ID::B5G5R5A1_UNORM,
+                                             DXGI_FORMAT_B5G5R5A1_UNORM,
+                                             DXGI_FORMAT_B5G5R5A1_UNORM,
+                                             DXGI_FORMAT_B5G5R5A1_UNORM,
+                                             DXGI_FORMAT_UNKNOWN,
+                                             DXGI_FORMAT_B5G5R5A1_UNORM,
+                                             GL_RGBA8,
+                                             nullptr);
                 return info;
             }
             else
             {
-                static const Format info(GL_RGB5_A1,
+                static constexpr Format info(GL_RGB5_A1,
+                                             angle::Format::ID::R8G8B8A8_UNORM,
+                                             DXGI_FORMAT_R8G8B8A8_UNORM,
+                                             DXGI_FORMAT_R8G8B8A8_UNORM,
+                                             DXGI_FORMAT_R8G8B8A8_UNORM,
+                                             DXGI_FORMAT_UNKNOWN,
+                                             DXGI_FORMAT_R8G8B8A8_UNORM,
+                                             GL_RGBA8,
+                                             nullptr);
+                return info;
+            }
+        }
+        case GL_RGB8:
+        {
+            static constexpr Format info(GL_RGB8,
                                          angle::Format::ID::R8G8B8A8_UNORM,
                                          DXGI_FORMAT_R8G8B8A8_UNORM,
                                          DXGI_FORMAT_R8G8B8A8_UNORM,
@@ -1592,226 +1601,210 @@ const Format &Format::Get(GLenum internalFormat, const Renderer11DeviceCaps &dev
                                          DXGI_FORMAT_UNKNOWN,
                                          DXGI_FORMAT_R8G8B8A8_UNORM,
                                          GL_RGBA8,
-                                         nullptr,
-                                         deviceCaps);
-                return info;
-            }
-        }
-        case GL_RGB8:
-        {
-            static const Format info(GL_RGB8,
-                                     angle::Format::ID::R8G8B8A8_UNORM,
-                                     DXGI_FORMAT_R8G8B8A8_UNORM,
-                                     DXGI_FORMAT_R8G8B8A8_UNORM,
-                                     DXGI_FORMAT_R8G8B8A8_UNORM,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_R8G8B8A8_UNORM,
-                                     GL_RGBA8,
-                                     Initialize4ComponentData<GLubyte, 0x00, 0x00, 0x00, 0xFF>,
-                                     deviceCaps);
+                                         Initialize4ComponentData<GLubyte, 0x00, 0x00, 0x00, 0xFF>);
             return info;
         }
         case GL_RGB8I:
         {
-            static const Format info(GL_RGB8I,
-                                     angle::Format::ID::R8G8B8A8_SINT,
-                                     DXGI_FORMAT_R8G8B8A8_SINT,
-                                     DXGI_FORMAT_R8G8B8A8_SINT,
-                                     DXGI_FORMAT_R8G8B8A8_SINT,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_R8G8B8A8_SINT,
-                                     GL_RGBA8I,
-                                     Initialize4ComponentData<GLbyte, 0x00, 0x00, 0x00, 0x01>,
-                                     deviceCaps);
+            static constexpr Format info(GL_RGB8I,
+                                         angle::Format::ID::R8G8B8A8_SINT,
+                                         DXGI_FORMAT_R8G8B8A8_SINT,
+                                         DXGI_FORMAT_R8G8B8A8_SINT,
+                                         DXGI_FORMAT_R8G8B8A8_SINT,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_R8G8B8A8_SINT,
+                                         GL_RGBA8I,
+                                         Initialize4ComponentData<GLbyte, 0x00, 0x00, 0x00, 0x01>);
             return info;
         }
         case GL_RGB8UI:
         {
-            static const Format info(GL_RGB8UI,
-                                     angle::Format::ID::R8G8B8A8_UINT,
-                                     DXGI_FORMAT_R8G8B8A8_UINT,
-                                     DXGI_FORMAT_R8G8B8A8_UINT,
-                                     DXGI_FORMAT_R8G8B8A8_UINT,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_R8G8B8A8_UINT,
-                                     GL_RGBA8UI,
-                                     Initialize4ComponentData<GLubyte, 0x00, 0x00, 0x00, 0x01>,
-                                     deviceCaps);
+            static constexpr Format info(GL_RGB8UI,
+                                         angle::Format::ID::R8G8B8A8_UINT,
+                                         DXGI_FORMAT_R8G8B8A8_UINT,
+                                         DXGI_FORMAT_R8G8B8A8_UINT,
+                                         DXGI_FORMAT_R8G8B8A8_UINT,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_R8G8B8A8_UINT,
+                                         GL_RGBA8UI,
+                                         Initialize4ComponentData<GLubyte, 0x00, 0x00, 0x00, 0x01>);
             return info;
         }
         case GL_RGB8_SNORM:
         {
-            static const Format info(GL_RGB8_SNORM,
-                                     angle::Format::ID::R8G8B8A8_SNORM,
-                                     DXGI_FORMAT_R8G8B8A8_SNORM,
-                                     DXGI_FORMAT_R8G8B8A8_SNORM,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_R8G8B8A8_SNORM,
-                                     GL_RGBA8_SNORM,
-                                     Initialize4ComponentData<GLbyte, 0x00, 0x00, 0x00, 0x7F>,
-                                     deviceCaps);
+            static constexpr Format info(GL_RGB8_SNORM,
+                                         angle::Format::ID::R8G8B8A8_SNORM,
+                                         DXGI_FORMAT_R8G8B8A8_SNORM,
+                                         DXGI_FORMAT_R8G8B8A8_SNORM,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_R8G8B8A8_SNORM,
+                                         GL_RGBA8_SNORM,
+                                         Initialize4ComponentData<GLbyte, 0x00, 0x00, 0x00, 0x7F>);
             return info;
         }
         case GL_RGB9_E5:
         {
-            static const Format info(GL_RGB9_E5,
-                                     angle::Format::ID::R9G9B9E5_SHAREDEXP,
-                                     DXGI_FORMAT_R9G9B9E5_SHAREDEXP,
-                                     DXGI_FORMAT_R9G9B9E5_SHAREDEXP,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_R9G9B9E5_SHAREDEXP,
-                                     GL_RGBA16F_EXT,
-                                     nullptr,
-                                     deviceCaps);
+            static constexpr Format info(GL_RGB9_E5,
+                                         angle::Format::ID::R9G9B9E5_SHAREDEXP,
+                                         DXGI_FORMAT_R9G9B9E5_SHAREDEXP,
+                                         DXGI_FORMAT_R9G9B9E5_SHAREDEXP,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_R9G9B9E5_SHAREDEXP,
+                                         GL_RGBA16F_EXT,
+                                         nullptr);
             return info;
         }
         case GL_RGBA:
         {
-            static const Format info(GL_RGBA,
-                                     angle::Format::ID::R8G8B8A8_UNORM,
-                                     DXGI_FORMAT_R8G8B8A8_UNORM,
-                                     DXGI_FORMAT_R8G8B8A8_UNORM,
-                                     DXGI_FORMAT_R8G8B8A8_UNORM,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_R8G8B8A8_UNORM,
-                                     GL_RGBA8,
-                                     nullptr,
-                                     deviceCaps);
+            static constexpr Format info(GL_RGBA,
+                                         angle::Format::ID::R8G8B8A8_UNORM,
+                                         DXGI_FORMAT_R8G8B8A8_UNORM,
+                                         DXGI_FORMAT_R8G8B8A8_UNORM,
+                                         DXGI_FORMAT_R8G8B8A8_UNORM,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_R8G8B8A8_UNORM,
+                                         GL_RGBA8,
+                                         nullptr);
             return info;
         }
         case GL_RGBA16F:
         {
-            static const Format info(GL_RGBA16F,
-                                     angle::Format::ID::R16G16B16A16_FLOAT,
-                                     DXGI_FORMAT_R16G16B16A16_FLOAT,
-                                     DXGI_FORMAT_R16G16B16A16_FLOAT,
-                                     DXGI_FORMAT_R16G16B16A16_FLOAT,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_R16G16B16A16_FLOAT,
-                                     GL_RGBA16F,
-                                     nullptr,
-                                     deviceCaps);
+            static constexpr Format info(GL_RGBA16F,
+                                         angle::Format::ID::R16G16B16A16_FLOAT,
+                                         DXGI_FORMAT_R16G16B16A16_FLOAT,
+                                         DXGI_FORMAT_R16G16B16A16_FLOAT,
+                                         DXGI_FORMAT_R16G16B16A16_FLOAT,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_R16G16B16A16_FLOAT,
+                                         GL_RGBA16F,
+                                         nullptr);
             return info;
         }
         case GL_RGBA16I:
         {
-            static const Format info(GL_RGBA16I,
-                                     angle::Format::ID::R16G16B16A16_SINT,
-                                     DXGI_FORMAT_R16G16B16A16_SINT,
-                                     DXGI_FORMAT_R16G16B16A16_SINT,
-                                     DXGI_FORMAT_R16G16B16A16_SINT,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_R16G16B16A16_SINT,
-                                     GL_RGBA16I,
-                                     nullptr,
-                                     deviceCaps);
+            static constexpr Format info(GL_RGBA16I,
+                                         angle::Format::ID::R16G16B16A16_SINT,
+                                         DXGI_FORMAT_R16G16B16A16_SINT,
+                                         DXGI_FORMAT_R16G16B16A16_SINT,
+                                         DXGI_FORMAT_R16G16B16A16_SINT,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_R16G16B16A16_SINT,
+                                         GL_RGBA16I,
+                                         nullptr);
             return info;
         }
         case GL_RGBA16UI:
         {
-            static const Format info(GL_RGBA16UI,
-                                     angle::Format::ID::R16G16B16A16_UINT,
-                                     DXGI_FORMAT_R16G16B16A16_UINT,
-                                     DXGI_FORMAT_R16G16B16A16_UINT,
-                                     DXGI_FORMAT_R16G16B16A16_UINT,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_R16G16B16A16_UINT,
-                                     GL_RGBA16UI,
-                                     nullptr,
-                                     deviceCaps);
+            static constexpr Format info(GL_RGBA16UI,
+                                         angle::Format::ID::R16G16B16A16_UINT,
+                                         DXGI_FORMAT_R16G16B16A16_UINT,
+                                         DXGI_FORMAT_R16G16B16A16_UINT,
+                                         DXGI_FORMAT_R16G16B16A16_UINT,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_R16G16B16A16_UINT,
+                                         GL_RGBA16UI,
+                                         nullptr);
             return info;
         }
         case GL_RGBA16_EXT:
         {
-            static const Format info(GL_RGBA16_EXT,
-                                     angle::Format::ID::R16G16B16A16_UNORM,
-                                     DXGI_FORMAT_R16G16B16A16_UNORM,
-                                     DXGI_FORMAT_R16G16B16A16_UNORM,
-                                     DXGI_FORMAT_R16G16B16A16_UNORM,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_R16G16B16A16_UNORM,
-                                     GL_RGBA16_EXT,
-                                     nullptr,
-                                     deviceCaps);
+            static constexpr Format info(GL_RGBA16_EXT,
+                                         angle::Format::ID::R16G16B16A16_UNORM,
+                                         DXGI_FORMAT_R16G16B16A16_UNORM,
+                                         DXGI_FORMAT_R16G16B16A16_UNORM,
+                                         DXGI_FORMAT_R16G16B16A16_UNORM,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_R16G16B16A16_UNORM,
+                                         GL_RGBA16_EXT,
+                                         nullptr);
             return info;
         }
         case GL_RGBA16_SNORM_EXT:
         {
-            static const Format info(GL_RGBA16_SNORM_EXT,
-                                     angle::Format::ID::R16G16B16A16_SNORM,
-                                     DXGI_FORMAT_R16G16B16A16_SNORM,
-                                     DXGI_FORMAT_R16G16B16A16_SNORM,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_R16G16B16A16_SNORM,
-                                     GL_RGBA16_SNORM_EXT,
-                                     nullptr,
-                                     deviceCaps);
+            static constexpr Format info(GL_RGBA16_SNORM_EXT,
+                                         angle::Format::ID::R16G16B16A16_SNORM,
+                                         DXGI_FORMAT_R16G16B16A16_SNORM,
+                                         DXGI_FORMAT_R16G16B16A16_SNORM,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_R16G16B16A16_SNORM,
+                                         GL_RGBA16_SNORM_EXT,
+                                         nullptr);
             return info;
         }
         case GL_RGBA32F:
         {
-            static const Format info(GL_RGBA32F,
-                                     angle::Format::ID::R32G32B32A32_FLOAT,
-                                     DXGI_FORMAT_R32G32B32A32_FLOAT,
-                                     DXGI_FORMAT_R32G32B32A32_FLOAT,
-                                     DXGI_FORMAT_R32G32B32A32_FLOAT,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_R32G32B32A32_FLOAT,
-                                     GL_RGBA32F,
-                                     nullptr,
-                                     deviceCaps);
+            static constexpr Format info(GL_RGBA32F,
+                                         angle::Format::ID::R32G32B32A32_FLOAT,
+                                         DXGI_FORMAT_R32G32B32A32_FLOAT,
+                                         DXGI_FORMAT_R32G32B32A32_FLOAT,
+                                         DXGI_FORMAT_R32G32B32A32_FLOAT,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_R32G32B32A32_FLOAT,
+                                         GL_RGBA32F,
+                                         nullptr);
             return info;
         }
         case GL_RGBA32I:
         {
-            static const Format info(GL_RGBA32I,
-                                     angle::Format::ID::R32G32B32A32_SINT,
-                                     DXGI_FORMAT_R32G32B32A32_SINT,
-                                     DXGI_FORMAT_R32G32B32A32_SINT,
-                                     DXGI_FORMAT_R32G32B32A32_SINT,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_R32G32B32A32_SINT,
-                                     GL_RGBA32I,
-                                     nullptr,
-                                     deviceCaps);
+            static constexpr Format info(GL_RGBA32I,
+                                         angle::Format::ID::R32G32B32A32_SINT,
+                                         DXGI_FORMAT_R32G32B32A32_SINT,
+                                         DXGI_FORMAT_R32G32B32A32_SINT,
+                                         DXGI_FORMAT_R32G32B32A32_SINT,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_R32G32B32A32_SINT,
+                                         GL_RGBA32I,
+                                         nullptr);
             return info;
         }
         case GL_RGBA32UI:
         {
-            static const Format info(GL_RGBA32UI,
-                                     angle::Format::ID::R32G32B32A32_UINT,
-                                     DXGI_FORMAT_R32G32B32A32_UINT,
-                                     DXGI_FORMAT_R32G32B32A32_UINT,
-                                     DXGI_FORMAT_R32G32B32A32_UINT,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_R32G32B32A32_UINT,
-                                     GL_RGBA32UI,
-                                     nullptr,
-                                     deviceCaps);
+            static constexpr Format info(GL_RGBA32UI,
+                                         angle::Format::ID::R32G32B32A32_UINT,
+                                         DXGI_FORMAT_R32G32B32A32_UINT,
+                                         DXGI_FORMAT_R32G32B32A32_UINT,
+                                         DXGI_FORMAT_R32G32B32A32_UINT,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_R32G32B32A32_UINT,
+                                         GL_RGBA32UI,
+                                         nullptr);
             return info;
         }
         case GL_RGBA4:
         {
             if (SupportsFormat(DXGI_FORMAT_B4G4R4A4_UNORM, deviceCaps))
             {
-                static const Format info(GL_RGBA4,
-                                         angle::Format::ID::B4G4R4A4_UNORM,
-                                         DXGI_FORMAT_B4G4R4A4_UNORM,
-                                         DXGI_FORMAT_B4G4R4A4_UNORM,
-                                         DXGI_FORMAT_B4G4R4A4_UNORM,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_B4G4R4A4_UNORM,
-                                         GL_RGBA4,
-                                         nullptr,
-                                         deviceCaps);
+                static constexpr Format info(GL_RGBA4,
+                                             angle::Format::ID::B4G4R4A4_UNORM,
+                                             DXGI_FORMAT_B4G4R4A4_UNORM,
+                                             DXGI_FORMAT_B4G4R4A4_UNORM,
+                                             DXGI_FORMAT_B4G4R4A4_UNORM,
+                                             DXGI_FORMAT_UNKNOWN,
+                                             DXGI_FORMAT_B4G4R4A4_UNORM,
+                                             GL_RGBA4,
+                                             nullptr);
                 return info;
             }
             else
             {
-                static const Format info(GL_RGBA4,
+                static constexpr Format info(GL_RGBA4,
+                                             angle::Format::ID::R8G8B8A8_UNORM,
+                                             DXGI_FORMAT_R8G8B8A8_UNORM,
+                                             DXGI_FORMAT_R8G8B8A8_UNORM,
+                                             DXGI_FORMAT_R8G8B8A8_UNORM,
+                                             DXGI_FORMAT_UNKNOWN,
+                                             DXGI_FORMAT_R8G8B8A8_UNORM,
+                                             GL_RGBA8,
+                                             nullptr);
+                return info;
+            }
+        }
+        case GL_RGBA8:
+        {
+            static constexpr Format info(GL_RGBA8,
                                          angle::Format::ID::R8G8B8A8_UNORM,
                                          DXGI_FORMAT_R8G8B8A8_UNORM,
                                          DXGI_FORMAT_R8G8B8A8_UNORM,
@@ -1819,123 +1812,100 @@ const Format &Format::Get(GLenum internalFormat, const Renderer11DeviceCaps &dev
                                          DXGI_FORMAT_UNKNOWN,
                                          DXGI_FORMAT_R8G8B8A8_UNORM,
                                          GL_RGBA8,
-                                         nullptr,
-                                         deviceCaps);
-                return info;
-            }
-        }
-        case GL_RGBA8:
-        {
-            static const Format info(GL_RGBA8,
-                                     angle::Format::ID::R8G8B8A8_UNORM,
-                                     DXGI_FORMAT_R8G8B8A8_UNORM,
-                                     DXGI_FORMAT_R8G8B8A8_UNORM,
-                                     DXGI_FORMAT_R8G8B8A8_UNORM,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_R8G8B8A8_UNORM,
-                                     GL_RGBA8,
-                                     nullptr,
-                                     deviceCaps);
+                                         nullptr);
             return info;
         }
         case GL_RGBA8I:
         {
-            static const Format info(GL_RGBA8I,
-                                     angle::Format::ID::R8G8B8A8_SINT,
-                                     DXGI_FORMAT_R8G8B8A8_SINT,
-                                     DXGI_FORMAT_R8G8B8A8_SINT,
-                                     DXGI_FORMAT_R8G8B8A8_SINT,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_R8G8B8A8_SINT,
-                                     GL_RGBA8I,
-                                     nullptr,
-                                     deviceCaps);
+            static constexpr Format info(GL_RGBA8I,
+                                         angle::Format::ID::R8G8B8A8_SINT,
+                                         DXGI_FORMAT_R8G8B8A8_SINT,
+                                         DXGI_FORMAT_R8G8B8A8_SINT,
+                                         DXGI_FORMAT_R8G8B8A8_SINT,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_R8G8B8A8_SINT,
+                                         GL_RGBA8I,
+                                         nullptr);
             return info;
         }
         case GL_RGBA8UI:
         {
-            static const Format info(GL_RGBA8UI,
-                                     angle::Format::ID::R8G8B8A8_UINT,
-                                     DXGI_FORMAT_R8G8B8A8_UINT,
-                                     DXGI_FORMAT_R8G8B8A8_UINT,
-                                     DXGI_FORMAT_R8G8B8A8_UINT,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_R8G8B8A8_UINT,
-                                     GL_RGBA8UI,
-                                     nullptr,
-                                     deviceCaps);
+            static constexpr Format info(GL_RGBA8UI,
+                                         angle::Format::ID::R8G8B8A8_UINT,
+                                         DXGI_FORMAT_R8G8B8A8_UINT,
+                                         DXGI_FORMAT_R8G8B8A8_UINT,
+                                         DXGI_FORMAT_R8G8B8A8_UINT,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_R8G8B8A8_UINT,
+                                         GL_RGBA8UI,
+                                         nullptr);
             return info;
         }
         case GL_RGBA8_SNORM:
         {
-            static const Format info(GL_RGBA8_SNORM,
-                                     angle::Format::ID::R8G8B8A8_SNORM,
-                                     DXGI_FORMAT_R8G8B8A8_SNORM,
-                                     DXGI_FORMAT_R8G8B8A8_SNORM,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_R8G8B8A8_SNORM,
-                                     GL_RGBA8_SNORM,
-                                     nullptr,
-                                     deviceCaps);
+            static constexpr Format info(GL_RGBA8_SNORM,
+                                         angle::Format::ID::R8G8B8A8_SNORM,
+                                         DXGI_FORMAT_R8G8B8A8_SNORM,
+                                         DXGI_FORMAT_R8G8B8A8_SNORM,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_R8G8B8A8_SNORM,
+                                         GL_RGBA8_SNORM,
+                                         nullptr);
             return info;
         }
         case GL_SRGB8:
         {
-            static const Format info(GL_SRGB8,
-                                     angle::Format::ID::R8G8B8A8_UNORM_SRGB,
-                                     DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
-                                     DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
-                                     DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
-                                     GL_SRGB8_ALPHA8,
-                                     Initialize4ComponentData<GLubyte, 0x00, 0x00, 0x00, 0xFF>,
-                                     deviceCaps);
+            static constexpr Format info(GL_SRGB8,
+                                         angle::Format::ID::R8G8B8A8_UNORM_SRGB,
+                                         DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
+                                         DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
+                                         DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
+                                         GL_SRGB8_ALPHA8,
+                                         Initialize4ComponentData<GLubyte, 0x00, 0x00, 0x00, 0xFF>);
             return info;
         }
         case GL_SRGB8_ALPHA8:
         {
-            static const Format info(GL_SRGB8_ALPHA8,
-                                     angle::Format::ID::R8G8B8A8_UNORM_SRGB,
-                                     DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
-                                     DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
-                                     DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
-                                     DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
-                                     GL_SRGB8_ALPHA8,
-                                     nullptr,
-                                     deviceCaps);
+            static constexpr Format info(GL_SRGB8_ALPHA8,
+                                         angle::Format::ID::R8G8B8A8_UNORM_SRGB,
+                                         DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
+                                         DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
+                                         DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
+                                         DXGI_FORMAT_UNKNOWN,
+                                         DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
+                                         GL_SRGB8_ALPHA8,
+                                         nullptr);
             return info;
         }
         case GL_STENCIL_INDEX8:
         {
             if (OnlyFL10Plus(deviceCaps))
             {
-                static const Format info(GL_STENCIL_INDEX8,
-                                         angle::Format::ID::D24_UNORM_S8_UINT,
-                                         DXGI_FORMAT_R24G8_TYPELESS,
-                                         DXGI_FORMAT_R24_UNORM_X8_TYPELESS,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_D24_UNORM_S8_UINT,
-                                         DXGI_FORMAT_R24_UNORM_X8_TYPELESS,
-                                         GL_RGBA32F,
-                                         nullptr,
-                                         deviceCaps);
+                static constexpr Format info(GL_STENCIL_INDEX8,
+                                             angle::Format::ID::D24_UNORM_S8_UINT,
+                                             DXGI_FORMAT_R24G8_TYPELESS,
+                                             DXGI_FORMAT_R24_UNORM_X8_TYPELESS,
+                                             DXGI_FORMAT_UNKNOWN,
+                                             DXGI_FORMAT_D24_UNORM_S8_UINT,
+                                             DXGI_FORMAT_R24_UNORM_X8_TYPELESS,
+                                             GL_RGBA32F,
+                                             nullptr);
                 return info;
             }
             else
             {
-                static const Format info(GL_STENCIL_INDEX8,
-                                         angle::Format::ID::D24_UNORM_S8_UINT,
-                                         DXGI_FORMAT_D24_UNORM_S8_UINT,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         DXGI_FORMAT_D24_UNORM_S8_UINT,
-                                         DXGI_FORMAT_UNKNOWN,
-                                         GL_RGBA32F,
-                                         nullptr,
-                                         deviceCaps);
+                static constexpr Format info(GL_STENCIL_INDEX8,
+                                             angle::Format::ID::D24_UNORM_S8_UINT,
+                                             DXGI_FORMAT_D24_UNORM_S8_UINT,
+                                             DXGI_FORMAT_UNKNOWN,
+                                             DXGI_FORMAT_UNKNOWN,
+                                             DXGI_FORMAT_D24_UNORM_S8_UINT,
+                                             DXGI_FORMAT_UNKNOWN,
+                                             GL_RGBA32F,
+                                             nullptr);
                 return info;
             }
         }
@@ -1946,7 +1916,7 @@ const Format &Format::Get(GLenum internalFormat, const Renderer11DeviceCaps &dev
     // clang-format on
 
     UNREACHABLE();
-    static const Format defaultInfo;
+    static constexpr Format defaultInfo;
     return defaultInfo;
 }
 

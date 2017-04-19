@@ -12,6 +12,9 @@
 
 #include "compiler/translator/IntermNode.h"
 
+namespace sh
+{
+
 IntermNodePatternMatcher::IntermNodePatternMatcher(const unsigned int mask) : mMask(mask)
 {
 }
@@ -84,8 +87,7 @@ bool IntermNodePatternMatcher::match(TIntermAggregate *node, TIntermNode *parent
                  (parentBinary->getOp() == EOpAssign || parentBinary->getOp() == EOpInitialize));
 
             if (node->getType().isArray() && !parentIsAssignment &&
-                (node->isConstructor() || node->getOp() == EOpFunctionCall) &&
-                !parentNode->getAsBlock())
+                (node->isConstructor() || node->isFunctionCall()) && !parentNode->getAsBlock())
             {
                 return true;
             }
@@ -102,3 +104,14 @@ bool IntermNodePatternMatcher::match(TIntermTernary *node)
     }
     return false;
 }
+
+bool IntermNodePatternMatcher::match(TIntermDeclaration *node)
+{
+    if ((mMask & kMultiDeclaration) != 0)
+    {
+        return node->getSequence()->size() > 1;
+    }
+    return false;
+}
+
+}  // namespace sh

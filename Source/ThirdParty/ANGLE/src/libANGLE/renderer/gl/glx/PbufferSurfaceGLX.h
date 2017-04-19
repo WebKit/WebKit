@@ -30,10 +30,10 @@ class PbufferSurfaceGLX : public SurfaceGLX
                       glx::FBConfig fbConfig);
     ~PbufferSurfaceGLX() override;
 
-    egl::Error initialize() override;
+    egl::Error initialize(const DisplayImpl *displayImpl) override;
     egl::Error makeCurrent() override;
 
-    egl::Error swap() override;
+    egl::Error swap(const DisplayImpl *displayImpl) override;
     egl::Error postSubBuffer(EGLint x, EGLint y, EGLint width, EGLint height) override;
     egl::Error querySurfacePointerANGLE(EGLint attribute, void **value) override;
     egl::Error bindTexImage(gl::Texture *texture, EGLint buffer) override;
@@ -59,6 +59,6 @@ class PbufferSurfaceGLX : public SurfaceGLX
     glx::Pbuffer mPbuffer;
 };
 
-}
+}  // namespace rx
 
 #endif // LIBANGLE_RENDERER_GL_GLX_PBUFFERSURFACEGLX_H_

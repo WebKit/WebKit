@@ -11,6 +11,9 @@
 
 #include "compiler/translator/IntermNode.h"
 
+namespace sh
+{
+
 namespace
 {
 
@@ -67,7 +70,7 @@ class DoWhileRewriter : public TIntermTraverser
             TType boolType = TType(EbtBool);
 
             // bool temp = false;
-            TIntermAggregate *tempDeclaration = nullptr;
+            TIntermDeclaration *tempDeclaration = nullptr;
             {
                 TConstantUnion *falseConstant = new TConstantUnion();
                 falseConstant->setBConst(false);
@@ -152,3 +155,5 @@ void RewriteDoWhile(TIntermNode *root, unsigned int *temporaryIndex)
 
     root->traverse(&rewriter);
 }
+
+}  // namespace sh

@@ -3,7 +3,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
-// The SeparateArrayInitialization function splits each array initialization into a declaration and an assignment.
+// The SeparateArrayInitialization function splits each array initialization into a declaration and
+// an assignment.
 // Example:
 //     type[n] a = initializer;
 // will effectively become
@@ -18,8 +19,11 @@
 #ifndef COMPILER_TRANSLATOR_SEPARATEARRAYINITIALIZATION_H_
 #define COMPILER_TRANSLATOR_SEPARATEARRAYINITIALIZATION_H_
 
+namespace sh
+{
 class TIntermNode;
 
 void SeparateArrayInitialization(TIntermNode *root);
+}  // namespace sh
 
 #endif  // COMPILER_TRANSLATOR_SEPARATEARRAYINITIALIZATION_H_

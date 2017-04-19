@@ -142,6 +142,56 @@ TEST(MathUtilTest, packAndUnpackHalf2x16)
     }
 }
 
+// Test the correctness of packUnorm4x8 and unpackUnorm4x8 functions.
+// For floats f1 to f4, unpackUnorm4x8(packUnorm4x8(f1, f2, f3, f4)) should be same as f1 to f4.
+TEST(MathUtilTest, packAndUnpackUnorm4x8)
+{
+    const float input[5][4] = {{0.0f, 0.0f, 0.0f, 0.0f},
+                               {1.0f, 1.0f, 1.0f, 1.0f},
+                               {-1.0f, 1.0f, -1.0f, 1.0f},
+                               {-1.0f, -1.0f, -1.0f, -1.0f},
+                               {64.0f / 255.0f, 128.0f / 255.0f, 32.0f / 255.0f, 16.0f / 255.0f}};
+
+    const float floatFaultTolerance = 0.005f;
+    float outputVals[4];
+
+    for (size_t i = 0; i < 5; i++)
+    {
+        UnpackUnorm4x8(PackUnorm4x8(input[i][0], input[i][1], input[i][2], input[i][3]),
+                       outputVals);
+        for (size_t j = 0; j < 4; j++)
+        {
+            float expected = input[i][j] < 0.0f ? 0.0f : input[i][j];
+            EXPECT_NEAR(expected, outputVals[j], floatFaultTolerance);
+        }
+    }
+}
+
+// Test the correctness of packSnorm4x8 and unpackSnorm4x8 functions.
+// For floats f1 to f4, unpackSnorm4x8(packSnorm4x8(f1, f2, f3, f4)) should be same as f1 to f4.
+TEST(MathUtilTest, packAndUnpackSnorm4x8)
+{
+    const float input[5][4] = {{0.0f, 0.0f, 0.0f, 0.0f},
+                               {1.0f, 1.0f, 1.0f, 1.0f},
+                               {-1.0f, 1.0f, -1.0f, 1.0f},
+                               {-1.0f, -1.0f, -1.0f, -1.0f},
+                               {64.0f / 127.0f, -8.0f / 127.0f, 32.0f / 127.0f, 16.0f / 127.0f}};
+
+    const float floatFaultTolerance = 0.01f;
+    float outputVals[4];
+
+    for (size_t i = 0; i < 5; i++)
+    {
+        UnpackSnorm4x8(PackSnorm4x8(input[i][0], input[i][1], input[i][2], input[i][3]),
+                       outputVals);
+        for (size_t j = 0; j < 4; j++)
+        {
+            float expected = input[i][j];
+            EXPECT_NEAR(expected, outputVals[j], floatFaultTolerance);
+        }
+    }
+}
+
 // Test the correctness of gl::isNaN function.
 TEST(MathUtilTest, isNaN)
 {
@@ -205,6 +255,68 @@ TEST(MathUtilTest, CheckedRoundUpInvalid)
     // Our implementation can't handle this query, despite the parameters being in range.
     auto checkedLimit = rx::CheckedRoundUp(limit - 1, limit);
     ASSERT_FALSE(checkedLimit.IsValid());
+}
+
+// Test BitfieldReverse which reverses the order of the bits in an integer.
+TEST(MathUtilTest, BitfieldReverse)
+{
+    EXPECT_EQ(0u, gl::BitfieldReverse(0u));
+    EXPECT_EQ(0x80000000u, gl::BitfieldReverse(1u));
+    EXPECT_EQ(0x1u, gl::BitfieldReverse(0x80000000u));
+    uint32_t bits     = (1u << 4u) | (1u << 7u);
+    uint32_t reversed = (1u << (31u - 4u)) | (1u << (31u - 7u));
+    EXPECT_EQ(reversed, gl::BitfieldReverse(bits));
+}
+
+// Test BitCount, which counts 1 bits in an integer.
+TEST(MathUtilTest, BitCount)
+{
+    EXPECT_EQ(0, gl::BitCount(0u));
+    EXPECT_EQ(32, gl::BitCount(0xFFFFFFFFu));
+    EXPECT_EQ(10, gl::BitCount(0x17103121u));
+}
+
+// Test ScanForward, which scans for the least significant 1 bit from a non-zero integer.
+TEST(MathUtilTest, ScanForward)
+{
+    EXPECT_EQ(0ul, gl::ScanForward(1ul));
+    EXPECT_EQ(16ul, gl::ScanForward(0x80010000ul));
+    EXPECT_EQ(31ul, gl::ScanForward(0x80000000ul));
+}
+
+// Test ScanReverse, which scans for the most significant 1 bit from a non-zero integer.
+TEST(MathUtilTest, ScanReverse)
+{
+    EXPECT_EQ(0ul, gl::ScanReverse(1ul));
+    EXPECT_EQ(16ul, gl::ScanReverse(0x00010030ul));
+    EXPECT_EQ(31ul, gl::ScanReverse(0x80000000ul));
+}
+
+// Test FindLSB, which finds the least significant 1 bit.
+TEST(MathUtilTest, FindLSB)
+{
+    EXPECT_EQ(-1, gl::FindLSB(0u));
+    EXPECT_EQ(0, gl::FindLSB(1u));
+    EXPECT_EQ(16, gl::FindLSB(0x80010000u));
+    EXPECT_EQ(31, gl::FindLSB(0x80000000u));
+}
+
+// Test FindMSB, which finds the most significant 1 bit.
+TEST(MathUtilTest, FindMSB)
+{
+    EXPECT_EQ(-1, gl::FindMSB(0u));
+    EXPECT_EQ(0, gl::FindMSB(1u));
+    EXPECT_EQ(16, gl::FindMSB(0x00010030u));
+    EXPECT_EQ(31, gl::FindMSB(0x80000000u));
+}
+
+// Test Ldexp, which combines mantissa and exponent into a floating-point number.
+TEST(MathUtilTest, Ldexp)
+{
+    EXPECT_EQ(2.5f, Ldexp(0.625f, 2));
+    EXPECT_EQ(-5.0f, Ldexp(-0.625f, 3));
+    EXPECT_EQ(std::numeric_limits<float>::infinity(), Ldexp(0.625f, 129));
+    EXPECT_EQ(0.0f, Ldexp(1.0f, -129));
 }
 
 }  // anonymous namespace

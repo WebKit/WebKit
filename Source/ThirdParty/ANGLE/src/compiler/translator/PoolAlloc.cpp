@@ -34,13 +34,13 @@ void FreePoolIndex()
     PoolIndex = TLS_INVALID_INDEX;
 }
 
-TPoolAllocator* GetGlobalPoolAllocator()
+TPoolAllocator *GetGlobalPoolAllocator()
 {
     assert(PoolIndex != TLS_INVALID_INDEX);
-    return static_cast<TPoolAllocator*>(GetTLSValue(PoolIndex));
+    return static_cast<TPoolAllocator *>(GetTLSValue(PoolIndex));
 }
 
-void SetGlobalPoolAllocator(TPoolAllocator* poolAllocator)
+void SetGlobalPoolAllocator(TPoolAllocator *poolAllocator)
 {
     assert(PoolIndex != TLS_INVALID_INDEX);
     SetTLSValue(PoolIndex, poolAllocator);
@@ -65,14 +65,14 @@ TPoolAllocator::TPoolAllocator(int growthIncrement, int allocationAlignment)
     // Adjust alignment to be at least pointer aligned and
     // power of 2.
     //
-    size_t minAlign = sizeof(void*);
+    size_t minAlign = sizeof(void *);
     alignment &= ~(minAlign - 1);
     if (alignment < minAlign)
         alignment = minAlign;
-    size_t a = 1;
+    size_t a      = 1;
     while (a < alignment)
         a <<= 1;
-    alignment = a;
+    alignment     = a;
     alignmentMask = a - 1;
 
 #if !defined(ANGLE_TRANSLATOR_DISABLE_POOL_ALLOC)
@@ -93,7 +93,8 @@ TPoolAllocator::TPoolAllocator(int growthIncrement, int allocationAlignment)
     // Align header skip
     //
     headerSkip = minAlign;
-    if (headerSkip < sizeof(tHeader)) {
+    if (headerSkip < sizeof(tHeader))
+    {
         headerSkip = (sizeof(tHeader) + alignmentMask) & ~alignmentMask;
     }
 #else  // !defined(ANGLE_TRANSLATOR_DISABLE_POOL_ALLOC)
@@ -104,10 +105,11 @@ TPoolAllocator::TPoolAllocator(int growthIncrement, int allocationAlignment)
 TPoolAllocator::~TPoolAllocator()
 {
 #if !defined(ANGLE_TRANSLATOR_DISABLE_POOL_ALLOC)
-    while (inUseList) {
-        tHeader* next = inUseList->nextPage;
+    while (inUseList)
+    {
+        tHeader *next = inUseList->nextPage;
         inUseList->~tHeader();
-        delete [] reinterpret_cast<char*>(inUseList);
+        delete[] reinterpret_cast<char *>(inUseList);
         inUseList = next;
     }
 
@@ -115,9 +117,10 @@ TPoolAllocator::~TPoolAllocator()
     // here, because we did it already when the block was
     // placed into the free list.
     //
-    while (freeList) {
-        tHeader* next = freeList->nextPage;
-        delete [] reinterpret_cast<char*>(freeList);
+    while (freeList)
+    {
+        tHeader *next = freeList->nextPage;
+        delete[] reinterpret_cast<char *>(freeList);
         freeList = next;
     }
 #else  // !defined(ANGLE_TRANSLATOR_DISABLE_POOL_ALLOC)
@@ -138,28 +141,32 @@ const unsigned char TAllocation::guardBlockEndVal   = 0xfe;
 const unsigned char TAllocation::userDataFill       = 0xcd;
 
 #ifdef GUARD_BLOCKS
-    const size_t TAllocation::guardBlockSize = 16;
+const size_t TAllocation::guardBlockSize = 16;
 #else
-    const size_t TAllocation::guardBlockSize = 0;
+const size_t TAllocation::guardBlockSize = 0;
 #endif
 
 //
 // Check a single guard block for damage
 //
-void TAllocation::checkGuardBlock(unsigned char* blockMem, unsigned char val, const char* locText) const
+void TAllocation::checkGuardBlock(unsigned char *blockMem,
+                                  unsigned char val,
+                                  const char *locText) const
 {
 #ifdef GUARD_BLOCKS
-    for (size_t x = 0; x < guardBlockSize; x++) {
-        if (blockMem[x] != val) {
+    for (size_t x = 0; x < guardBlockSize; x++)
+    {
+        if (blockMem[x] != val)
+        {
             char assertMsg[80];
 
-            // We don't print the assert message.  It's here just to be helpful.
+// We don't print the assert message.  It's here just to be helpful.
 #if defined(_MSC_VER)
-            snprintf(assertMsg, sizeof(assertMsg), "PoolAlloc: Damage %s %Iu byte allocation at 0x%p\n",
-                    locText, size, data());
+            snprintf(assertMsg, sizeof(assertMsg),
+                     "PoolAlloc: Damage %s %Iu byte allocation at 0x%p\n", locText, size, data());
 #else
-            snprintf(assertMsg, sizeof(assertMsg), "PoolAlloc: Damage %s %zu byte allocation at 0x%p\n",
-                    locText, size, data());
+            snprintf(assertMsg, sizeof(assertMsg),
+                     "PoolAlloc: Damage %s %zu byte allocation at 0x%p\n", locText, size, data());
 #endif
             assert(0 && "PoolAlloc: Damage in guard block");
         }
@@ -167,11 +174,10 @@ void TAllocation::checkGuardBlock(unsigned char* blockMem, unsigned char val, co
 #endif
 }
 
-
 void TPoolAllocator::push()
 {
 #if !defined(ANGLE_TRANSLATOR_DISABLE_POOL_ALLOC)
-    tAllocState state = { currentPageOffset, inUseList };
+    tAllocState state = {currentPageOffset, inUseList};
 
     mStack.push_back(state);
 
@@ -200,16 +206,18 @@ void TPoolAllocator::pop()
     tHeader *page     = mStack.back().page;
     currentPageOffset = mStack.back().offset;
 
-    while (inUseList != page) {
+    while (inUseList != page)
+    {
         // invoke destructor to free allocation list
         inUseList->~tHeader();
-        
-        tHeader* nextInUse = inUseList->nextPage;
+
+        tHeader *nextInUse = inUseList->nextPage;
         if (inUseList->pageCount > 1)
-            delete [] reinterpret_cast<char*>(inUseList);
-        else {
+            delete[] reinterpret_cast<char *>(inUseList);
+        else
+        {
             inUseList->nextPage = freeList;
-            freeList = inUseList;
+            freeList            = inUseList;
         }
         inUseList = nextInUse;
     }
@@ -234,7 +242,7 @@ void TPoolAllocator::popAll()
         pop();
 }
 
-void* TPoolAllocator::allocate(size_t numBytes)
+void *TPoolAllocator::allocate(size_t numBytes)
 {
     ASSERT(!mLocked);
 
@@ -259,18 +267,20 @@ void* TPoolAllocator::allocate(size_t numBytes)
     // Do the allocation, most likely case first, for efficiency.
     // This step could be moved to be inline sometime.
     //
-    if (allocationSize <= pageSize - currentPageOffset) {
+    if (allocationSize <= pageSize - currentPageOffset)
+    {
         //
         // Safe to allocate from currentPageOffset.
         //
-        unsigned char* memory = reinterpret_cast<unsigned char *>(inUseList) + currentPageOffset;
+        unsigned char *memory = reinterpret_cast<unsigned char *>(inUseList) + currentPageOffset;
         currentPageOffset += allocationSize;
         currentPageOffset = (currentPageOffset + alignmentMask) & ~alignmentMask;
 
         return initializeAllocation(inUseList, memory, numBytes);
     }
 
-    if (allocationSize > pageSize - headerSkip) {
+    if (allocationSize > pageSize - headerSkip)
+    {
         //
         // Do a multi-page allocation.  Don't mix these with the others.
         // The OS is efficient and allocating and free-ing multiple pages.
@@ -280,39 +290,42 @@ void* TPoolAllocator::allocate(size_t numBytes)
         if (numBytesToAlloc < allocationSize)
             return 0;
 
-        tHeader* memory = reinterpret_cast<tHeader*>(::new char[numBytesToAlloc]);
+        tHeader *memory = reinterpret_cast<tHeader *>(::new char[numBytesToAlloc]);
         if (memory == 0)
             return 0;
 
         // Use placement-new to initialize header
-        new(memory) tHeader(inUseList, (numBytesToAlloc + pageSize - 1) / pageSize);
+        new (memory) tHeader(inUseList, (numBytesToAlloc + pageSize - 1) / pageSize);
         inUseList = memory;
 
         currentPageOffset = pageSize;  // make next allocation come from a new page
 
         // No guard blocks for multi-page allocations (yet)
-        return reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(memory) + headerSkip);
+        return reinterpret_cast<void *>(reinterpret_cast<uintptr_t>(memory) + headerSkip);
     }
 
     //
     // Need a simple page to allocate from.
     //
-    tHeader* memory;
-    if (freeList) {
-        memory = freeList;
+    tHeader *memory;
+    if (freeList)
+    {
+        memory   = freeList;
         freeList = freeList->nextPage;
-    } else {
-        memory = reinterpret_cast<tHeader*>(::new char[pageSize]);
+    }
+    else
+    {
+        memory = reinterpret_cast<tHeader *>(::new char[pageSize]);
         if (memory == 0)
             return 0;
     }
 
     // Use placement-new to initialize header
-    new(memory) tHeader(inUseList, 1);
+    new (memory) tHeader(inUseList, 1);
     inUseList = memory;
-    
-    unsigned char* ret = reinterpret_cast<unsigned char *>(inUseList) + headerSkip;
-    currentPageOffset = (headerSkip + allocationSize + alignmentMask) & ~alignmentMask;
+
+    unsigned char *ret = reinterpret_cast<unsigned char *>(inUseList) + headerSkip;
+    currentPageOffset  = (headerSkip + allocationSize + alignmentMask) & ~alignmentMask;
 
     return initializeAllocation(inUseList, ret, numBytes);
 #else  // !defined(ANGLE_TRANSLATOR_DISABLE_POOL_ALLOC)
@@ -342,6 +355,6 @@ void TPoolAllocator::unlock()
 //
 void TAllocation::checkAllocList() const
 {
-    for (const TAllocation* alloc = this; alloc != 0; alloc = alloc->prevAlloc)
+    for (const TAllocation *alloc = this; alloc != 0; alloc = alloc->prevAlloc)
         alloc->check();
 }

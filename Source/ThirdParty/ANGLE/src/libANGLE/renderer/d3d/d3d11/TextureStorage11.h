@@ -95,7 +95,12 @@ class TextureStorage11 : public TextureStorage
     gl::Error getSRVLevel(int mipLevel, bool blitSRV, ID3D11ShaderResourceView **outSRV);
 
     // Get a version of a depth texture with only depth information, not stencil.
-    virtual gl::Error createDropStencilTexture();
+    enum DropStencil
+    {
+        CREATED,
+        ALREADY_EXISTS
+    };
+    virtual gl::ErrorOrResult<DropStencil> ensureDropStencilTexture();
     gl::Error initDropStencilTexture(const gl::ImageIndexIterator &it);
 
     // The baseLevel parameter should *not* have mTopLevel applied.
@@ -167,7 +172,7 @@ class TextureStorage11_2D : public TextureStorage11
     gl::Error getSwizzleTexture(ID3D11Resource **outTexture) override;
     gl::Error getSwizzleRenderTarget(int mipLevel, ID3D11RenderTargetView **outRTV) override;
 
-    gl::Error createDropStencilTexture() override;
+    gl::ErrorOrResult<DropStencil> ensureDropStencilTexture() override;
 
     gl::Error ensureTextureExists(int mipLevels);
 
@@ -312,7 +317,7 @@ class TextureStorage11_Cube : public TextureStorage11
     virtual gl::Error getSwizzleTexture(ID3D11Resource **outTexture);
     virtual gl::Error getSwizzleRenderTarget(int mipLevel, ID3D11RenderTargetView **outRTV);
 
-    gl::Error createDropStencilTexture() override;
+    gl::ErrorOrResult<DropStencil> ensureDropStencilTexture() override;
 
     gl::Error ensureTextureExists(int mipLevels);
 
@@ -397,7 +402,7 @@ class TextureStorage11_2DArray : public TextureStorage11
     virtual gl::Error getSwizzleTexture(ID3D11Resource **outTexture);
     virtual gl::Error getSwizzleRenderTarget(int mipLevel, ID3D11RenderTargetView **outRTV);
 
-    gl::Error createDropStencilTexture() override;
+    gl::ErrorOrResult<DropStencil> ensureDropStencilTexture() override;
 
   private:
     virtual gl::Error createSRV(int baseLevel, int mipLevels, DXGI_FORMAT format, ID3D11Resource *texture,

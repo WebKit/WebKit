@@ -65,6 +65,7 @@ struct Config
     EGLint transparentGreenValue;   // Transparent green value
     EGLint transparentBlueValue;    // Transparent blue value
     EGLint optimalOrientation;      // Optimal window surface orientation
+    EGLenum colorComponentType;     // Color component type
 };
 
 class ConfigSet

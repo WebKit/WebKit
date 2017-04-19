@@ -50,13 +50,18 @@ TransformFeedback::TransformFeedback(rx::GLImplFactory *implFactory, GLuint id, 
     ASSERT(mImplementation != nullptr);
 }
 
-TransformFeedback::~TransformFeedback()
+void TransformFeedback::destroy(const Context *context)
 {
     if (mState.mProgram)
     {
-        mState.mProgram->release();
+        mState.mProgram->release(context);
         mState.mProgram = nullptr;
     }
+}
+
+TransformFeedback::~TransformFeedback()
+{
+    ASSERT(!mState.mProgram);
     mState.mGenericBuffer.set(nullptr);
     for (size_t i = 0; i < mState.mIndexedBuffers.size(); i++)
     {
@@ -76,16 +81,16 @@ const std::string &TransformFeedback::getLabel() const
     return mState.mLabel;
 }
 
-void TransformFeedback::begin(GLenum primitiveMode, Program *program)
+void TransformFeedback::begin(const Context *context, GLenum primitiveMode, Program *program)
 {
     mState.mActive        = true;
     mState.mPrimitiveMode = primitiveMode;
     mState.mPaused        = false;
     mImplementation->begin(primitiveMode);
-    bindProgram(program);
+    bindProgram(context, program);
 }
 
-void TransformFeedback::end()
+void TransformFeedback::end(const Context *context)
 {
     mState.mActive        = false;
     mState.mPrimitiveMode = GL_NONE;
@@ -93,7 +98,7 @@ void TransformFeedback::end()
     mImplementation->end();
     if (mState.mProgram)
     {
-        mState.mProgram->release();
+        mState.mProgram->release(context);
         mState.mProgram = nullptr;
     }
 }
@@ -125,13 +130,13 @@ GLenum TransformFeedback::getPrimitiveMode() const
     return mState.mPrimitiveMode;
 }
 
-void TransformFeedback::bindProgram(Program *program)
+void TransformFeedback::bindProgram(const Context *context, Program *program)
 {
     if (mState.mProgram != program)
     {
         if (mState.mProgram != nullptr)
         {
-            mState.mProgram->release();
+            mState.mProgram->release(context);
         }
         mState.mProgram = program;
         if (mState.mProgram != nullptr)

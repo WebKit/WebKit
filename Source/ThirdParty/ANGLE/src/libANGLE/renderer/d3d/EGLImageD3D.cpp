@@ -85,7 +85,7 @@ gl::Error EGLImageD3D::orphan(egl::ImageSibling *sibling)
         }
     }
 
-    return gl::Error(GL_NO_ERROR);
+    return gl::NoError();
 }
 
 gl::Error EGLImageD3D::getRenderTarget(RenderTargetD3D **outRT) const
@@ -100,13 +100,13 @@ gl::Error EGLImageD3D::getRenderTarget(RenderTargetD3D **outRT) const
         }
 
         *outRT = static_cast<RenderTargetD3D *>(rt);
-        return gl::Error(GL_NO_ERROR);
+        return gl::NoError();
     }
     else
     {
         ASSERT(mRenderTarget);
         *outRT = mRenderTarget;
-        return gl::Error(GL_NO_ERROR);
+        return gl::NoError();
     }
 }
 

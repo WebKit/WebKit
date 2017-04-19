@@ -38,6 +38,7 @@ struct TextureState;
 
 namespace rx
 {
+class ContextImpl;
 
 class TextureImpl : public FramebufferAttachmentObjectImpl
 {
@@ -45,37 +46,89 @@ class TextureImpl : public FramebufferAttachmentObjectImpl
     TextureImpl(const gl::TextureState &state);
     virtual ~TextureImpl();
 
-    virtual gl::Error setImage(GLenum target, size_t level, GLenum internalFormat, const gl::Extents &size, GLenum format, GLenum type,
-                               const gl::PixelUnpackState &unpack, const uint8_t *pixels) = 0;
-    virtual gl::Error setSubImage(GLenum target, size_t level, const gl::Box &area, GLenum format, GLenum type,
-                                  const gl::PixelUnpackState &unpack, const uint8_t *pixels) = 0;
+    virtual gl::Error setImage(ContextImpl *contextImpl,
+                               GLenum target,
+                               size_t level,
+                               GLenum internalFormat,
+                               const gl::Extents &size,
+                               GLenum format,
+                               GLenum type,
+                               const gl::PixelUnpackState &unpack,
+                               const uint8_t *pixels) = 0;
+    virtual gl::Error setSubImage(ContextImpl *contextImpl,
+                                  GLenum target,
+                                  size_t level,
+                                  const gl::Box &area,
+                                  GLenum format,
+                                  GLenum type,
+                                  const gl::PixelUnpackState &unpack,
+                                  const uint8_t *pixels) = 0;
 
-    virtual gl::Error setCompressedImage(GLenum target, size_t level, GLenum internalFormat, const gl::Extents &size,
-                                         const gl::PixelUnpackState &unpack, size_t imageSize, const uint8_t *pixels) = 0;
-    virtual gl::Error setCompressedSubImage(GLenum target, size_t level, const gl::Box &area, GLenum format,
-                                            const gl::PixelUnpackState &unpack, size_t imageSize, const uint8_t *pixels) = 0;
+    virtual gl::Error setCompressedImage(ContextImpl *contextImpl,
+                                         GLenum target,
+                                         size_t level,
+                                         GLenum internalFormat,
+                                         const gl::Extents &size,
+                                         const gl::PixelUnpackState &unpack,
+                                         size_t imageSize,
+                                         const uint8_t *pixels) = 0;
+    virtual gl::Error setCompressedSubImage(ContextImpl *contextImpl,
+                                            GLenum target,
+                                            size_t level,
+                                            const gl::Box &area,
+                                            GLenum format,
+                                            const gl::PixelUnpackState &unpack,
+                                            size_t imageSize,
+                                            const uint8_t *pixels) = 0;
 
-    virtual gl::Error copyImage(GLenum target, size_t level, const gl::Rectangle &sourceArea, GLenum internalFormat,
+    virtual gl::Error copyImage(ContextImpl *contextImpl,
+                                GLenum target,
+                                size_t level,
+                                const gl::Rectangle &sourceArea,
+                                GLenum internalFormat,
                                 const gl::Framebuffer *source) = 0;
-    virtual gl::Error copySubImage(GLenum target, size_t level, const gl::Offset &destOffset, const gl::Rectangle &sourceArea,
+    virtual gl::Error copySubImage(ContextImpl *contextImpl,
+                                   GLenum target,
+                                   size_t level,
+                                   const gl::Offset &destOffset,
+                                   const gl::Rectangle &sourceArea,
                                    const gl::Framebuffer *source) = 0;
 
-    virtual gl::Error copyTexture(GLenum internalFormat,
+    virtual gl::Error copyTexture(ContextImpl *contextImpl,
+                                  GLenum target,
+                                  size_t level,
+                                  GLenum internalFormat,
                                   GLenum type,
+                                  size_t sourceLevel,
                                   bool unpackFlipY,
                                   bool unpackPremultiplyAlpha,
                                   bool unpackUnmultiplyAlpha,
                                   const gl::Texture *source);
-    virtual gl::Error copySubTexture(const gl::Offset &destOffset,
+    virtual gl::Error copySubTexture(ContextImpl *contextImpl,
+                                     GLenum target,
+                                     size_t level,
+                                     const gl::Offset &destOffset,
+                                     size_t sourceLevel,
                                      const gl::Rectangle &sourceArea,
                                      bool unpackFlipY,
                                      bool unpackPremultiplyAlpha,
                                      bool unpackUnmultiplyAlpha,
                                      const gl::Texture *source);
 
-    virtual gl::Error copyCompressedTexture(const gl::Texture *source);
+    virtual gl::Error copyCompressedTexture(ContextImpl *contextImpl, const gl::Texture *source);
 
-    virtual gl::Error setStorage(GLenum target, size_t levels, GLenum internalFormat, const gl::Extents &size) = 0;
+    virtual gl::Error setStorage(ContextImpl *contextImpl,
+                                 GLenum target,
+                                 size_t levels,
+                                 GLenum internalFormat,
+                                 const gl::Extents &size) = 0;
+
+    virtual gl::Error setStorageMultisample(ContextImpl *contextImpl,
+                                            GLenum target,
+                                            GLsizei samples,
+                                            GLint internalformat,
+                                            const gl::Extents &size,
+                                            GLboolean fixedSampleLocations) = 0;
 
     virtual gl::Error setEGLImageTarget(GLenum target, egl::Image *image) = 0;
 
@@ -83,7 +136,7 @@ class TextureImpl : public FramebufferAttachmentObjectImpl
                                        egl::Stream *stream,
                                        const egl::Stream::GLTextureDescription &desc) = 0;
 
-    virtual gl::Error generateMipmap() = 0;
+    virtual gl::Error generateMipmap(ContextImpl *contextImpl) = 0;
 
     virtual void setBaseLevel(GLuint baseLevel) = 0;
 

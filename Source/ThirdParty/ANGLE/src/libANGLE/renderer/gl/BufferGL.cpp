@@ -29,8 +29,10 @@ static const GLenum SourceBufferOperationTarget = GL_COPY_READ_BUFFER;
 // supported GL versions and doesn't affect any current state when it changes.
 static const GLenum DestBufferOperationTarget = GL_ARRAY_BUFFER;
 
-BufferGL::BufferGL(const FunctionsGL *functions, StateManagerGL *stateManager)
-    : BufferImpl(),
+BufferGL::BufferGL(const gl::BufferState &state,
+                   const FunctionsGL *functions,
+                   StateManagerGL *stateManager)
+    : BufferImpl(state),
       mIsMapped(false),
       mMapOffset(0),
       mMapSize(0),
@@ -53,7 +55,11 @@ BufferGL::~BufferGL()
     mBufferID = 0;
 }
 
-gl::Error BufferGL::setData(GLenum /*target*/, const void *data, size_t size, GLenum usage)
+gl::Error BufferGL::setData(ContextImpl * /*context*/,
+                            GLenum /*target*/,
+                            const void *data,
+                            size_t size,
+                            GLenum usage)
 {
     mStateManager->bindBuffer(DestBufferOperationTarget, mBufferID);
     mFunctions->bufferData(DestBufferOperationTarget, size, data, usage);
@@ -73,10 +79,14 @@ gl::Error BufferGL::setData(GLenum /*target*/, const void *data, size_t size, GL
 
     mBufferSize = size;
 
-    return gl::Error(GL_NO_ERROR);
+    return gl::NoError();
 }
 
-gl::Error BufferGL::setSubData(GLenum /*target*/, const void *data, size_t size, size_t offset)
+gl::Error BufferGL::setSubData(ContextImpl * /*context*/,
+                               GLenum /*target*/,
+                               const void *data,
+                               size_t size,
+                               size_t offset)
 {
     mStateManager->bindBuffer(DestBufferOperationTarget, mBufferID);
     mFunctions->bufferSubData(DestBufferOperationTarget, offset, size, data);
@@ -86,10 +96,14 @@ gl::Error BufferGL::setSubData(GLenum /*target*/, const void *data, size_t size,
         memcpy(mShadowCopy.data() + offset, data, size);
     }
 
-    return gl::Error(GL_NO_ERROR);
+    return gl::NoError();
 }
 
-gl::Error BufferGL::copySubData(BufferImpl* source, GLintptr sourceOffset, GLintptr destOffset, GLsizeiptr size)
+gl::Error BufferGL::copySubData(ContextImpl *context,
+                                BufferImpl *source,
+                                GLintptr sourceOffset,
+                                GLintptr destOffset,
+                                GLsizeiptr size)
 {
     BufferGL *sourceGL = GetAs<BufferGL>(source);
 
@@ -104,29 +118,40 @@ gl::Error BufferGL::copySubData(BufferImpl* source, GLintptr sourceOffset, GLint
         memcpy(mShadowCopy.data() + destOffset, sourceGL->mShadowCopy.data() + sourceOffset, size);
     }
 
-    return gl::Error(GL_NO_ERROR);
+    return gl::NoError();
 }
 
-gl::Error BufferGL::map(GLenum access, GLvoid **mapPtr)
+gl::Error BufferGL::map(ContextImpl *context, GLenum access, GLvoid **mapPtr)
 {
     if (mShadowBufferData)
     {
         *mapPtr = mShadowCopy.data();
     }
-    else
+    else if (mFunctions->mapBuffer)
     {
         mStateManager->bindBuffer(DestBufferOperationTarget, mBufferID);
         *mapPtr = mFunctions->mapBuffer(DestBufferOperationTarget, access);
+    }
+    else
+    {
+        ASSERT(mFunctions->mapBufferRange && access == GL_WRITE_ONLY_OES);
+        mStateManager->bindBuffer(DestBufferOperationTarget, mBufferID);
+        *mapPtr =
+            mFunctions->mapBufferRange(DestBufferOperationTarget, 0, mBufferSize, GL_MAP_WRITE_BIT);
     }
 
     mIsMapped = true;
     mMapOffset = 0;
     mMapSize   = mBufferSize;
 
-    return gl::Error(GL_NO_ERROR);
+    return gl::NoError();
 }
 
-gl::Error BufferGL::mapRange(size_t offset, size_t length, GLbitfield access, GLvoid **mapPtr)
+gl::Error BufferGL::mapRange(ContextImpl *context,
+                             size_t offset,
+                             size_t length,
+                             GLbitfield access,
+                             GLvoid **mapPtr)
 {
     if (mShadowBufferData)
     {
@@ -142,10 +167,10 @@ gl::Error BufferGL::mapRange(size_t offset, size_t length, GLbitfield access, GL
     mMapOffset = offset;
     mMapSize   = length;
 
-    return gl::Error(GL_NO_ERROR);
+    return gl::NoError();
 }
 
-gl::Error BufferGL::unmap(GLboolean *result)
+gl::Error BufferGL::unmap(ContextImpl *context, GLboolean *result)
 {
     ASSERT(result);
     ASSERT(mIsMapped);
@@ -164,7 +189,7 @@ gl::Error BufferGL::unmap(GLboolean *result)
     }
 
     mIsMapped = false;
-    return gl::Error(GL_NO_ERROR);
+    return gl::NoError();
 }
 
 gl::Error BufferGL::getIndexRange(GLenum type,
@@ -191,7 +216,7 @@ gl::Error BufferGL::getIndexRange(GLenum type,
         mFunctions->unmapBuffer(DestBufferOperationTarget);
     }
 
-    return gl::Error(GL_NO_ERROR);
+    return gl::NoError();
 }
 
 GLuint BufferGL::getBufferID() const

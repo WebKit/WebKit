@@ -20,6 +20,7 @@
 #include "libANGLE/renderer/GLImplFactory.h"
 #include "libANGLE/renderer/ShaderImpl.h"
 #include "libANGLE/ResourceManager.h"
+#include "libANGLE/Context.h"
 
 namespace gl
 {
@@ -82,7 +83,7 @@ ShaderState::~ShaderState()
 {
 }
 
-Shader::Shader(ResourceManager *manager,
+Shader::Shader(ShaderProgramManager *manager,
                rx::GLImplFactory *implFactory,
                const gl::Limitations &rendererLimitations,
                GLenum type,
@@ -227,7 +228,7 @@ void Shader::getTranslatedSourceWithDebugInfo(GLsizei bufSize, GLsizei *length, 
     getSourceImpl(debugInfo, bufSize, length, buffer);
 }
 
-void Shader::compile(Compiler *compiler)
+void Shader::compile(const Context *context)
 {
     mState.mTranslatedSource.clear();
     mInfoLog.clear();
@@ -238,6 +239,7 @@ void Shader::compile(Compiler *compiler)
     mState.mActiveAttributes.clear();
     mState.mActiveOutputVariables.clear();
 
+    Compiler *compiler = context->getCompiler();
     ShHandle compilerHandle = compiler->getCompilerHandle(mState.mShaderType);
 
     std::stringstream sourceStream;
@@ -246,6 +248,15 @@ void Shader::compile(Compiler *compiler)
     ShCompileOptions additionalOptions =
         mImplementation->prepareSourceAndReturnOptions(&sourceStream, &sourcePath);
     ShCompileOptions compileOptions = (SH_OBJECT_CODE | SH_VARIABLES | additionalOptions);
+
+    // Add default options to WebGL shaders to prevent unexpected behavior during compilation.
+    if (context->getExtensions().webglCompatibility)
+    {
+        compileOptions |= SH_INIT_GL_POSITION;
+        compileOptions |= SH_LIMIT_CALL_STACK_DEPTH;
+        compileOptions |= SH_LIMIT_EXPRESSION_COMPLEXITY;
+        compileOptions |= SH_ENFORCE_PACKING_RESTRICTIONS;
+    }
 
     // Some targets (eg D3D11 Feature Level 9_3 and below) do not support non-constant loop indexes
     // in fragment shaders. Shader compilation will fail. To provide a better error message we can
@@ -266,17 +277,17 @@ void Shader::compile(Compiler *compiler)
     sourceCStrings.push_back(sourceString.c_str());
 
     bool result =
-        ShCompile(compilerHandle, &sourceCStrings[0], sourceCStrings.size(), compileOptions);
+        sh::Compile(compilerHandle, &sourceCStrings[0], sourceCStrings.size(), compileOptions);
 
     if (!result)
     {
-        mInfoLog = ShGetInfoLog(compilerHandle);
-        TRACE("\n%s", mInfoLog.c_str());
+        mInfoLog = sh::GetInfoLog(compilerHandle);
+        WARN() << std::endl << mInfoLog;
         mCompiled = false;
         return;
     }
 
-    mState.mTranslatedSource = ShGetObjectCode(compilerHandle);
+    mState.mTranslatedSource = sh::GetObjectCode(compilerHandle);
 
 #ifndef NDEBUG
     // Prefix translated shader with commented out un-translated shader.
@@ -285,15 +296,14 @@ void Shader::compile(Compiler *compiler)
     shaderStream << "// GLSL\n";
     shaderStream << "//\n";
 
-    size_t curPos = 0;
-    while (curPos != std::string::npos)
+    std::istringstream inputSourceStream(mState.mSource);
+    std::string line;
+    while (std::getline(inputSourceStream, line))
     {
-        size_t nextLine = mState.mSource.find("\n", curPos);
-        size_t len      = (nextLine == std::string::npos) ? std::string::npos : (nextLine - curPos + 1);
+        // Remove null characters from the source line
+        line.erase(std::remove(line.begin(), line.end(), '\0'), line.end());
 
-        shaderStream << "// " << mState.mSource.substr(curPos, len);
-
-        curPos = (nextLine == std::string::npos) ? std::string::npos : (nextLine + 1);
+        shaderStream << "// " << line;
     }
     shaderStream << "\n\n";
     shaderStream << mState.mTranslatedSource;
@@ -301,22 +311,22 @@ void Shader::compile(Compiler *compiler)
 #endif
 
     // Gather the shader information
-    mState.mShaderVersion = ShGetShaderVersion(compilerHandle);
+    mState.mShaderVersion = sh::GetShaderVersion(compilerHandle);
 
-    mState.mVaryings        = GetShaderVariables(ShGetVaryings(compilerHandle));
-    mState.mUniforms        = GetShaderVariables(ShGetUniforms(compilerHandle));
-    mState.mInterfaceBlocks = GetShaderVariables(ShGetInterfaceBlocks(compilerHandle));
+    mState.mVaryings        = GetShaderVariables(sh::GetVaryings(compilerHandle));
+    mState.mUniforms        = GetShaderVariables(sh::GetUniforms(compilerHandle));
+    mState.mInterfaceBlocks = GetShaderVariables(sh::GetInterfaceBlocks(compilerHandle));
 
     switch (mState.mShaderType)
     {
         case GL_COMPUTE_SHADER:
         {
-            mState.mLocalSize = ShGetComputeShaderLocalGroupSize(compilerHandle);
+            mState.mLocalSize = sh::GetComputeShaderLocalGroupSize(compilerHandle);
             break;
         }
         case GL_VERTEX_SHADER:
         {
-            mState.mActiveAttributes = GetActiveShaderVariables(ShGetAttributes(compilerHandle));
+            mState.mActiveAttributes = GetActiveShaderVariables(sh::GetAttributes(compilerHandle));
             break;
         }
         case GL_FRAGMENT_SHADER:
@@ -324,7 +334,7 @@ void Shader::compile(Compiler *compiler)
             // TODO(jmadill): Figure out why we only sort in the FS, and if we need to.
             std::sort(mState.mVaryings.begin(), mState.mVaryings.end(), CompareShaderVar);
             mState.mActiveOutputVariables =
-                GetActiveShaderVariables(ShGetOutputVariables(compilerHandle));
+                GetActiveShaderVariables(sh::GetOutputVariables(compilerHandle));
             break;
         }
         default:
@@ -341,13 +351,13 @@ void Shader::addRef()
     mRefCount++;
 }
 
-void Shader::release()
+void Shader::release(const Context *context)
 {
     mRefCount--;
 
     if (mRefCount == 0 && mDeleteStatus)
     {
-        mResourceManager->deleteShader(mHandle);
+        mResourceManager->deleteShader(context, mHandle);
     }
 }
 

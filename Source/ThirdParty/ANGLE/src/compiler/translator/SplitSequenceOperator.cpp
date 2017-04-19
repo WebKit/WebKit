@@ -14,6 +14,9 @@
 #include "compiler/translator/IntermNode.h"
 #include "compiler/translator/IntermNodePatternMatcher.h"
 
+namespace sh
+{
+
 namespace
 {
 
@@ -151,3 +154,5 @@ void SplitSequenceOperator(TIntermNode *root,
             traverser.updateTree();
     } while (traverser.foundExpressionToSplit());
 }
+
+}  // namespace sh

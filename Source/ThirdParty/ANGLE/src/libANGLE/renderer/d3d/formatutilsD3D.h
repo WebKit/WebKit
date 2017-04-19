@@ -24,9 +24,6 @@ struct FormatType;
 
 namespace rx
 {
-typedef void (*InitializeTextureDataFunction)(size_t width, size_t height, size_t depth,
-                                              uint8_t *output, size_t outputRowPitch, size_t outputDepthPitch);
-
 typedef void (*VertexCopyFunction)(const uint8_t *input, size_t stride, size_t count, uint8_t *output);
 
 enum VertexConversionType

@@ -19,6 +19,7 @@ namespace gl
 {
 class State;
 struct VertexAttribute;
+struct VertexBinding;
 struct VertexAttribCurrentValueData;
 }
 
@@ -55,6 +56,7 @@ struct TranslatedAttribute
     bool active;
 
     const gl::VertexAttribute *attribute;
+    const gl::VertexBinding *binding;
     GLenum currentValueType;
     unsigned int baseOffset;
     bool usesFirstVertexOffset;
@@ -76,7 +78,8 @@ enum class VertexStorageType
 };
 
 // Given a vertex attribute, return the type of storage it will use.
-VertexStorageType ClassifyAttributeStorage(const gl::VertexAttribute &attrib);
+VertexStorageType ClassifyAttributeStorage(const gl::VertexAttribute &attrib,
+                                           const gl::VertexBinding &binding);
 
 class VertexDataManager : angle::NonCopyable
 {
@@ -92,9 +95,7 @@ class VertexDataManager : angle::NonCopyable
 
     static void StoreDirectAttrib(TranslatedAttribute *directAttrib);
 
-    static gl::Error StoreStaticAttrib(TranslatedAttribute *translated,
-                                       GLsizei count,
-                                       GLsizei instances);
+    static gl::Error StoreStaticAttrib(TranslatedAttribute *translated);
 
     gl::Error storeDynamicAttribs(std::vector<TranslatedAttribute> *translatedAttribs,
                                   const gl::AttributesMask &dynamicAttribsMask,

@@ -13,61 +13,164 @@
 #include <set>
 
 #include "common/angleutils.h"
+#include "common/debug.h"
 
 namespace angle
 {
 
-// Message token passed to the receiver;
-using SignalToken = uint32_t;
-
 // Interface that the depending class inherits from.
+template <typename ChannelID = uint32_t, typename... MessageT>
 class SignalReceiver
 {
   public:
     virtual ~SignalReceiver() = default;
-    virtual void signal(SignalToken token) = 0;
+    virtual void signal(ChannelID channelID, MessageT... message) = 0;
 };
 
+template <typename ChannelID, typename... MessageT>
 class ChannelBinding;
 
 // The host class owns the channel. It uses the channel to fire signals to the receiver.
+template <typename ChannelID = uint32_t, typename... MessageT>
 class BroadcastChannel final : NonCopyable
 {
   public:
     BroadcastChannel();
     ~BroadcastChannel();
 
-    void signal() const;
+    void signal(MessageT... message) const;
+
     void reset();
 
   private:
     // Only the ChannelBinding class should add or remove receivers.
-    friend class ChannelBinding;
-    void addReceiver(ChannelBinding *receiver);
-    void removeReceiver(ChannelBinding *receiver);
+    friend class ChannelBinding<ChannelID, MessageT...>;
+    void addReceiver(ChannelBinding<ChannelID, MessageT...> *receiver);
+    void removeReceiver(ChannelBinding<ChannelID, MessageT...> *receiver);
 
-    std::vector<ChannelBinding *> mReceivers;
+    std::vector<ChannelBinding<ChannelID, MessageT...> *> mReceivers;
 };
 
+template <typename ChannelID, typename... MessageT>
+BroadcastChannel<ChannelID, MessageT...>::BroadcastChannel()
+{
+}
+
+template <typename ChannelID, typename... MessageT>
+BroadcastChannel<ChannelID, MessageT...>::~BroadcastChannel()
+{
+    reset();
+}
+
+template <typename ChannelID, typename... MessageT>
+void BroadcastChannel<ChannelID, MessageT...>::addReceiver(
+    ChannelBinding<ChannelID, MessageT...> *receiver)
+{
+    ASSERT(std::find(mReceivers.begin(), mReceivers.end(), receiver) == mReceivers.end());
+    mReceivers.push_back(receiver);
+}
+
+template <typename ChannelID, typename... MessageT>
+void BroadcastChannel<ChannelID, MessageT...>::removeReceiver(
+    ChannelBinding<ChannelID, MessageT...> *receiver)
+{
+    auto iter = std::find(mReceivers.begin(), mReceivers.end(), receiver);
+    ASSERT(iter != mReceivers.end());
+    mReceivers.erase(iter);
+}
+
+template <typename ChannelID, typename... MessageT>
+void BroadcastChannel<ChannelID, MessageT...>::signal(MessageT... message) const
+{
+    if (mReceivers.empty())
+        return;
+
+    for (const auto *receiver : mReceivers)
+    {
+        receiver->signal(message...);
+    }
+}
+
+template <typename ChannelID, typename... MessageT>
+void BroadcastChannel<ChannelID, MessageT...>::reset()
+{
+    for (auto receiver : mReceivers)
+    {
+        receiver->onChannelClosed();
+    }
+    mReceivers.clear();
+}
+
 // The dependent class keeps bindings to the host's BroadcastChannel.
+template <typename ChannelID = uint32_t, typename... MessageT>
 class ChannelBinding final
 {
   public:
-    ChannelBinding(SignalReceiver *receiver, SignalToken token);
+    ChannelBinding(SignalReceiver<ChannelID, MessageT...> *receiver, ChannelID channelID);
     ~ChannelBinding();
     ChannelBinding(const ChannelBinding &other) = default;
     ChannelBinding &operator=(const ChannelBinding &other) = default;
 
-    void bind(BroadcastChannel *channel);
+    void bind(BroadcastChannel<ChannelID, MessageT...> *channel);
     void reset();
-    void signal() const;
+    void signal(MessageT... message) const;
     void onChannelClosed();
 
   private:
-    BroadcastChannel *mChannel;
-    SignalReceiver *mReceiver;
-    SignalToken mToken;
+    BroadcastChannel<ChannelID, MessageT...> *mChannel;
+    SignalReceiver<ChannelID, MessageT...> *mReceiver;
+    ChannelID mChannelID;
 };
+
+template <typename ChannelID, typename... MessageT>
+ChannelBinding<ChannelID, MessageT...>::ChannelBinding(
+    SignalReceiver<ChannelID, MessageT...> *receiver,
+    ChannelID channelID)
+    : mChannel(nullptr), mReceiver(receiver), mChannelID(channelID)
+{
+    ASSERT(receiver);
+}
+
+template <typename ChannelID, typename... MessageT>
+ChannelBinding<ChannelID, MessageT...>::~ChannelBinding()
+{
+    reset();
+}
+
+template <typename ChannelID, typename... MessageT>
+void ChannelBinding<ChannelID, MessageT...>::bind(BroadcastChannel<ChannelID, MessageT...> *channel)
+{
+    ASSERT(mReceiver);
+    if (mChannel)
+    {
+        mChannel->removeReceiver(this);
+    }
+
+    mChannel = channel;
+
+    if (mChannel)
+    {
+        mChannel->addReceiver(this);
+    }
+}
+
+template <typename ChannelID, typename... MessageT>
+void ChannelBinding<ChannelID, MessageT...>::reset()
+{
+    bind(nullptr);
+}
+
+template <typename ChannelID, typename... MessageT>
+void ChannelBinding<ChannelID, MessageT...>::signal(MessageT... message) const
+{
+    mReceiver->signal(mChannelID, message...);
+}
+
+template <typename ChannelID, typename... MessageT>
+void ChannelBinding<ChannelID, MessageT...>::onChannelClosed()
+{
+    mChannel = nullptr;
+}
 
 }  // namespace angle
 

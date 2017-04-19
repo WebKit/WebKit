@@ -61,32 +61,56 @@
     "srvFormat": "DXGI_FORMAT_BC1_UNORM",
     "channels": "rgba",
     "componentType": "unorm",
-    "swizzleFormat": "GL_RGBA8",
-    "glInternalFormat": "GL_COMPRESSED_RGBA_S3TC_DXT1_EXT"
+    "swizzleFormat": "GL_RGBA8"
   },
   "BC1_RGB_UNORM_BLOCK": {
     "texFormat": "DXGI_FORMAT_BC1_UNORM",
     "srvFormat": "DXGI_FORMAT_BC1_UNORM",
     "channels": "rgba",
     "componentType": "unorm",
-    "swizzleFormat": "GL_RGBA8",
-    "glInternalFormat": "GL_COMPRESSED_RGBA_S3TC_DXT1_EXT"
+    "swizzleFormat": "GL_RGBA8"
   },
   "BC2_RGBA_UNORM_BLOCK": {
     "texFormat": "DXGI_FORMAT_BC2_UNORM",
     "srvFormat": "DXGI_FORMAT_BC2_UNORM",
     "channels": "rgba",
     "componentType": "unorm",
-    "swizzleFormat": "GL_RGBA8",
-    "glInternalFormat": "GL_COMPRESSED_RGBA_S3TC_DXT3_ANGLE"
+    "swizzleFormat": "GL_RGBA8"
   },
   "BC3_RGBA_UNORM_BLOCK": {
     "texFormat": "DXGI_FORMAT_BC3_UNORM",
     "srvFormat": "DXGI_FORMAT_BC3_UNORM",
     "channels": "rgba",
     "componentType": "unorm",
-    "swizzleFormat": "GL_RGBA8",
-    "glInternalFormat": "GL_COMPRESSED_RGBA_S3TC_DXT5_ANGLE"
+    "swizzleFormat": "GL_RGBA8"
+  },
+  "BC1_RGBA_UNORM_SRGB_BLOCK": {
+    "texFormat": "DXGI_FORMAT_BC1_UNORM_SRGB",
+    "srvFormat": "DXGI_FORMAT_BC1_UNORM_SRGB",
+    "channels": "rgba",
+    "componentType": "unorm",
+    "swizzleFormat": "GL_RGBA8"
+  },
+  "BC1_RGB_UNORM_SRGB_BLOCK": {
+    "texFormat": "DXGI_FORMAT_BC1_UNORM_SRGB",
+    "srvFormat": "DXGI_FORMAT_BC1_UNORM_SRGB",
+    "channels": "rgba",
+    "componentType": "unorm",
+    "swizzleFormat": "GL_RGBA8"
+  },
+  "BC2_RGBA_UNORM_SRGB_BLOCK": {
+    "texFormat": "DXGI_FORMAT_BC2_UNORM_SRGB",
+    "srvFormat": "DXGI_FORMAT_BC2_UNORM_SRGB",
+    "channels": "rgba",
+    "componentType": "unorm",
+    "swizzleFormat": "GL_RGBA8"
+  },
+  "BC3_RGBA_UNORM_SRGB_BLOCK": {
+    "texFormat": "DXGI_FORMAT_BC3_UNORM_SRGB",
+    "srvFormat": "DXGI_FORMAT_BC3_UNORM_SRGB",
+    "channels": "rgba",
+    "componentType": "unorm",
+    "swizzleFormat": "GL_RGBA8"
   },
   "D24_UNORM_S8_UINT": {
     "FL10Plus": {

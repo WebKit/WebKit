@@ -21,7 +21,7 @@ class ShaderNULL : public ShaderImpl
     ShaderNULL(const gl::ShaderState &data);
     ~ShaderNULL() override;
 
-    // Returns additional ShCompile options.
+    // Returns additional sh::Compile options.
     ShCompileOptions prepareSourceAndReturnOptions(std::stringstream *sourceStream,
                                                    std::string *sourcePath) override;
     // Returns success for compiling on the driver. Returns success.

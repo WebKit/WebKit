@@ -9,12 +9,12 @@
 #ifndef LIBANGLE_RENDERER_D3D_D3D9_DEBUGANNOTATOR9_H_
 #define LIBANGLE_RENDERER_D3D_D3D9_DEBUGANNOTATOR9_H_
 
-#include "common/debug.h"
+#include "libANGLE/LoggingAnnotator.h"
 
 namespace rx
 {
 
-class DebugAnnotator9 : public gl::DebugAnnotator
+class DebugAnnotator9 : public angle::LoggingAnnotator
 {
   public:
     DebugAnnotator9() {}

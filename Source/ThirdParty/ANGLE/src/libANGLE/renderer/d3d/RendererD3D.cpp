@@ -35,7 +35,8 @@ RendererD3D::RendererD3D(egl::Display *display)
       mCapsInitialized(false),
       mWorkaroundsInitialized(false),
       mDisjoint(false),
-      mDeviceLost(false)
+      mDeviceLost(false),
+      mWorkerThreadPool(4)
 {
 }
 
@@ -105,6 +106,8 @@ gl::Error RendererD3D::applyTextures(GLImplFactory *implFactory,
     ProgramD3D *programD3D = GetImplAs<ProgramD3D>(glState.getProgram());
 
     ASSERT(!programD3D->isSamplerMappingDirty());
+
+    // TODO(jmadill): Use the Program's sampler bindings.
 
     unsigned int samplerRange = programD3D->getUsedSamplerRange(shaderType);
     for (unsigned int samplerIndex = 0; samplerIndex < samplerRange; samplerIndex++)
@@ -179,10 +182,8 @@ bool RendererD3D::skipDraw(const gl::ContextState &data, GLenum drawMode)
         // undefined when not written, just skip drawing to avoid unexpected results.
         if (!usesPointSize && !state.isTransformFeedbackActiveUnpaused())
         {
-            // This is stictly speaking not an error, but developers should be
-            // notified of risking undefined behavior.
-            ERR("Point rendering without writing to gl_PointSize.");
-
+            // Notify developers of risking undefined behavior.
+            WARN() << "Point rendering without writing to gl_PointSize.";
             return true;
         }
     }
@@ -255,19 +256,19 @@ gl::Texture *RendererD3D::getIncompleteTexture(GLImplFactory *implFactory, GLenu
         // Skip the API layer to avoid needing to pass the Context and mess with dirty bits.
         gl::Texture *t =
             new gl::Texture(implFactory, std::numeric_limits<GLuint>::max(), createType);
-        t->setStorage(createType, 1, GL_RGBA8, colorSize);
+        t->setStorage(nullptr, createType, 1, GL_RGBA8, colorSize);
         if (type == GL_TEXTURE_CUBE_MAP)
         {
             for (GLenum face = GL_TEXTURE_CUBE_MAP_POSITIVE_X; face <= GL_TEXTURE_CUBE_MAP_NEGATIVE_Z; face++)
             {
-                t->getImplementation()->setSubImage(face, 0, area, GL_RGBA8, GL_UNSIGNED_BYTE,
-                                                    unpack, color);
+                t->getImplementation()->setSubImage(nullptr, face, 0, area, GL_RGBA8,
+                                                    GL_UNSIGNED_BYTE, unpack, color);
             }
         }
         else
         {
-            t->getImplementation()->setSubImage(createType, 0, area, GL_RGBA8, GL_UNSIGNED_BYTE, unpack,
-                                                color);
+            t->getImplementation()->setSubImage(nullptr, createType, 0, area, GL_RGBA8,
+                                                GL_UNSIGNED_BYTE, unpack, color);
         }
         mIncompleteTextures[type].set(t);
     }
@@ -367,6 +368,11 @@ const gl::Limitations &RendererD3D::getNativeLimitations() const
 {
     ensureCapsInitialized();
     return mNativeLimitations;
+}
+
+angle::WorkerThreadPool *RendererD3D::getWorkerThreadPool()
+{
+    return &mWorkerThreadPool;
 }
 
 }  // namespace rx

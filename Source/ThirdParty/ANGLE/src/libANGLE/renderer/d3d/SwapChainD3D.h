@@ -29,14 +29,11 @@ class RenderTargetD3D;
 class SwapChainD3D : angle::NonCopyable
 {
   public:
-    SwapChainD3D(HANDLE shareHandle, GLenum backBufferFormat, GLenum depthBufferFormat)
-        : mOffscreenRenderTargetFormat(backBufferFormat),
-          mDepthBufferFormat(depthBufferFormat),
-          mShareHandle(shareHandle)
-    {
-    }
-
-    virtual ~SwapChainD3D() {};
+    SwapChainD3D(HANDLE shareHandle,
+                 IUnknown *d3dTexture,
+                 GLenum backBufferFormat,
+                 GLenum depthBufferFormat);
+    virtual ~SwapChainD3D();
 
     virtual EGLint resize(EGLint backbufferWidth, EGLint backbufferSize) = 0;
     virtual EGLint reset(EGLint backbufferWidth, EGLint backbufferHeight, EGLint swapInterval) = 0;
@@ -59,7 +56,8 @@ class SwapChainD3D : angle::NonCopyable
     const GLenum mDepthBufferFormat;
 
     HANDLE mShareHandle;
+    IUnknown *mD3DTexture;
 };
 
-}
+}  // namespace rx
 #endif // LIBANGLE_RENDERER_D3D_SWAPCHAIND3D_H_

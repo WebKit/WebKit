@@ -296,7 +296,10 @@ void OutputTextureFunctionArgumentList(TInfoSinkBase &out,
         else
         {
             ASSERT(outputType == SH_HLSL_4_1_OUTPUT);
-            out << "const uint samplerIndex";
+            // A bug in the D3D compiler causes some nested sampling operations to fail.
+            // See http://anglebug.com/1923
+            // TODO(jmadill): Reinstate the const keyword when possible.
+            out << /*"const"*/ "uint samplerIndex";
         }
     }
 
@@ -319,6 +322,8 @@ void OutputTextureFunctionArgumentList(TInfoSinkBase &out,
     {
         switch (textureFunction.coords)
         {
+            case 0:
+                break;  // textureSize(gSampler2DMS sampler)
             case 1:
                 out << ", int lod";
                 break;  // textureSize()
@@ -457,48 +462,56 @@ void OutputTextureSizeFunctionBody(TInfoSinkBase &out,
                                    const TString &textureReference,
                                    bool getDimensionsIgnoresBaseLevel)
 {
-    if (getDimensionsIgnoresBaseLevel)
+    if (IsSampler2DMS(textureFunction.sampler))
     {
-        out << "int baseLevel = samplerMetadata[samplerIndex].baseLevel;\n";
+        out << "    uint width; uint height; uint samples;\n"
+            << "    " << textureReference << ".GetDimensions(width, height, samples);\n";
     }
     else
     {
-        out << "int baseLevel = 0;\n";
-    }
-
-    if (IsSampler3D(textureFunction.sampler) || IsSamplerArray(textureFunction.sampler) ||
-        (IsIntegerSampler(textureFunction.sampler) && IsSamplerCube(textureFunction.sampler)))
-    {
-        // "depth" stores either the number of layers in an array texture or 3D depth
-        out << "    uint width; uint height; uint depth; uint numberOfLevels;\n"
-            << "    " << textureReference
-            << ".GetDimensions(baseLevel, width, height, depth, numberOfLevels);\n"
-            << "    width = max(width >> lod, 1);\n"
-            << "    height = max(height >> lod, 1);\n";
-
-        if (!IsSamplerArray(textureFunction.sampler))
+        if (getDimensionsIgnoresBaseLevel)
         {
-            out << "    depth = max(depth >> lod, 1);\n";
+            out << "    int baseLevel = samplerMetadata[samplerIndex].baseLevel;\n";
         }
+        else
+        {
+            out << "    int baseLevel = 0;\n";
+        }
+
+        if (IsSampler3D(textureFunction.sampler) || IsSamplerArray(textureFunction.sampler) ||
+            (IsIntegerSampler(textureFunction.sampler) && IsSamplerCube(textureFunction.sampler)))
+        {
+            // "depth" stores either the number of layers in an array texture or 3D depth
+            out << "    uint width; uint height; uint depth; uint numberOfLevels;\n"
+                << "    " << textureReference
+                << ".GetDimensions(baseLevel, width, height, depth, numberOfLevels);\n"
+                << "    width = max(width >> lod, 1);\n"
+                << "    height = max(height >> lod, 1);\n";
+
+            if (!IsSamplerArray(textureFunction.sampler))
+            {
+                out << "    depth = max(depth >> lod, 1);\n";
+            }
+        }
+        else if (IsSampler2D(textureFunction.sampler) || IsSamplerCube(textureFunction.sampler))
+        {
+            out << "    uint width; uint height; uint numberOfLevels;\n"
+                << "    " << textureReference
+                << ".GetDimensions(baseLevel, width, height, numberOfLevels);\n"
+                << "    width = max(width >> lod, 1);\n"
+                << "    height = max(height >> lod, 1);\n";
+        }
+        else
+            UNREACHABLE();
     }
-    else if (IsSampler2D(textureFunction.sampler) || IsSamplerCube(textureFunction.sampler))
-    {
-        out << "    uint width; uint height; uint numberOfLevels;\n"
-            << "    " << textureReference
-            << ".GetDimensions(baseLevel, width, height, numberOfLevels);\n"
-            << "    width = max(width >> lod, 1);\n"
-            << "    height = max(height >> lod, 1);\n";
-    }
-    else
-        UNREACHABLE();
 
     if (strcmp(textureFunction.getReturnType(), "int3") == 0)
     {
-        out << "    return int3(width, height, depth);";
+        out << "    return int3(width, height, depth);\n";
     }
     else
     {
-        out << "    return int2(width, height);";
+        out << "    return int2(width, height);\n";
     }
 }
 
@@ -1048,6 +1061,9 @@ const char *TextureFunctionHLSL::TextureFunction::getReturnType() const
             case EbtUSamplerCube:
             case EbtSamplerCubeShadow:
             case EbtSamplerExternalOES:
+            case EbtSampler2DMS:
+            case EbtISampler2DMS:
+            case EbtUSampler2DMS:
                 return "int2";
             case EbtSampler3D:
             case EbtISampler3D:

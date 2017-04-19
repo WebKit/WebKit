@@ -12,10 +12,10 @@
 #include <cstddef>
 #include <stdint.h>
 
-namespace rx
+namespace angle
 {
 
-class MemoryBuffer : angle::NonCopyable
+class MemoryBuffer final : NonCopyable
 {
   public:
     MemoryBuffer();
@@ -33,6 +33,29 @@ class MemoryBuffer : angle::NonCopyable
     uint8_t *mData;
 };
 
-}
+class ScratchBuffer final : NonCopyable
+{
+  public:
+    // If we request a scratch buffer requesting a smaller size this many times, release and
+    // recreate the scratch buffer. This ensures we don't have a degenerate case where we are stuck
+    // hogging memory.
+    ScratchBuffer(uint32_t lifetime);
+    ~ScratchBuffer();
+
+    // Returns true with a memory buffer of the requested size, or false on failure.
+    bool get(size_t requestedSize, MemoryBuffer **memoryBufferOut);
+
+    // Ticks the release counter for the scratch buffer. Also done implicitly in get().
+    void tick();
+
+    void clear();
+
+  private:
+    const uint32_t mLifetime;
+    uint32_t mResetCounter;
+    MemoryBuffer mScratchMemory;
+};
+
+}  // namespace angle
 
 #endif // COMMON_MEMORYBUFFER_H_

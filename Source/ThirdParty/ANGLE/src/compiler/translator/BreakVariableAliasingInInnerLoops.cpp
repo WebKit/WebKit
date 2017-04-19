@@ -25,6 +25,9 @@
 // the bug only shows up with swizzles, and ternary assignment, whole array or whole structure
 // assignment don't need a workaround.
 
+namespace sh
+{
+
 namespace
 {
 
@@ -93,9 +96,6 @@ class AliasingBreaker : public TIntermTraverser
 };
 
 }  // anonymous namespace
-
-namespace sh
-{
 
 void BreakVariableAliasingInInnerLoops(TIntermNode *root)
 {

@@ -12,21 +12,20 @@
 #include "common/debug.h"
 #include "compiler/translator/Cache.h"
 
+namespace sh
+{
+
 namespace
 {
 
 class TScopedAllocator : angle::NonCopyable
 {
   public:
-    TScopedAllocator(TPoolAllocator *allocator)
-        : mPreviousAllocator(GetGlobalPoolAllocator())
+    TScopedAllocator(TPoolAllocator *allocator) : mPreviousAllocator(GetGlobalPoolAllocator())
     {
         SetGlobalPoolAllocator(allocator);
     }
-    ~TScopedAllocator()
-    {
-        SetGlobalPoolAllocator(mPreviousAllocator);
-    }
+    ~TScopedAllocator() { SetGlobalPoolAllocator(mPreviousAllocator); }
 
   private:
     TPoolAllocator *mPreviousAllocator;
@@ -40,23 +39,19 @@ TCache::TypeKey::TypeKey(TBasicType basicType,
                          unsigned char primarySize,
                          unsigned char secondarySize)
 {
-    static_assert(sizeof(components) <= sizeof(value),
-                  "TypeKey::value is too small");
+    static_assert(sizeof(components) <= sizeof(value), "TypeKey::value is too small");
 
     const size_t MaxEnumValue = std::numeric_limits<EnumComponentType>::max();
-    UNUSED_ASSERTION_VARIABLE(MaxEnumValue);
 
     // TODO: change to static_assert() once we deprecate MSVC 2013 support
-    ASSERT(MaxEnumValue >= EbtLast &&
-           MaxEnumValue >= EbpLast &&
-           MaxEnumValue >= EvqLast &&
+    ASSERT(MaxEnumValue >= EbtLast && MaxEnumValue >= EbpLast && MaxEnumValue >= EvqLast &&
            "TypeKey::EnumComponentType is too small");
 
-    value = 0;
-    components.basicType = static_cast<EnumComponentType>(basicType);
-    components.precision = static_cast<EnumComponentType>(precision);
-    components.qualifier = static_cast<EnumComponentType>(qualifier);
-    components.primarySize = primarySize;
+    value                    = 0;
+    components.basicType     = static_cast<EnumComponentType>(basicType);
+    components.precision     = static_cast<EnumComponentType>(precision);
+    components.qualifier     = static_cast<EnumComponentType>(qualifier);
+    components.primarySize   = primarySize;
     components.secondarySize = secondarySize;
 }
 
@@ -81,8 +76,7 @@ const TType *TCache::getType(TBasicType basicType,
                              unsigned char primarySize,
                              unsigned char secondarySize)
 {
-    TypeKey key(basicType, precision, qualifier,
-                primarySize, secondarySize);
+    TypeKey key(basicType, precision, qualifier, primarySize, secondarySize);
     auto it = sCache->mTypes.find(key);
     if (it != sCache->mTypes.end())
     {
@@ -91,10 +85,11 @@ const TType *TCache::getType(TBasicType basicType,
 
     TScopedAllocator scopedAllocator(&sCache->mAllocator);
 
-    TType *type = new TType(basicType, precision, qualifier,
-                            primarySize, secondarySize);
+    TType *type = new TType(basicType, precision, qualifier, primarySize, secondarySize);
     type->realize();
     sCache->mTypes.insert(std::make_pair(key, type));
 
     return type;
 }
+
+}  // namespace sh

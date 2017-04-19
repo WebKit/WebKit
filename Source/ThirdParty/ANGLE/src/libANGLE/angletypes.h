@@ -20,10 +20,6 @@
 namespace gl
 {
 class Buffer;
-class State;
-class Program;
-struct VertexAttribute;
-struct VertexAttribCurrentValueData;
 
 enum PrimitiveType
 {
@@ -42,7 +38,8 @@ PrimitiveType GetPrimitiveType(GLenum drawMode);
 enum SamplerType
 {
     SAMPLER_PIXEL,
-    SAMPLER_VERTEX
+    SAMPLER_VERTEX,
+    SAMPLER_COMPUTE
 };
 
 struct Rectangle
@@ -171,6 +168,27 @@ struct DepthStencilState
     GLuint stencilBackWritemask;
 };
 
+struct DrawArraysIndirectCommand
+{
+    GLuint count;
+    GLuint instanceCount;
+    GLuint first;
+    GLuint baseInstance;
+};
+static_assert(sizeof(DrawArraysIndirectCommand) == 16,
+              "Unexpected size of DrawArraysIndirectCommand");
+
+struct DrawElementsIndirectCommand
+{
+    GLuint count;
+    GLuint primCount;
+    GLuint firstIndex;
+    GLint baseVertex;
+    GLuint baseInstance;
+};
+static_assert(sizeof(DrawElementsIndirectCommand) == 20,
+              "Unexpected size of DrawElementsIndirectCommand");
+
 // State from Table 6.10 (state per sampler object)
 struct SamplerState
 {
@@ -192,6 +210,8 @@ struct SamplerState
 
     GLenum compareMode;
     GLenum compareFunc;
+
+    GLenum sRGBDecode;
 };
 
 bool operator==(const SamplerState &a, const SamplerState &b);
@@ -242,21 +262,12 @@ typedef std::bitset<IMPLEMENTATION_MAX_COMBINED_SHADER_UNIFORM_BUFFERS> UniformB
 // Client code should treat it as a std::map.
 template <class ResourceT>
 using ResourceMap = std::unordered_map<GLuint, ResourceT *>;
+
+using ContextID = uintptr_t;
 }
 
 namespace rx
 {
-enum VendorID : uint32_t
-{
-    VENDOR_ID_UNKNOWN  = 0x0,
-    VENDOR_ID_AMD      = 0x1002,
-    VENDOR_ID_INTEL    = 0x8086,
-    VENDOR_ID_NVIDIA   = 0x10DE,
-    // This is Qualcomm PCI Vendor ID.
-    // Android doesn't have a PCI bus, but all we need is a unique id.
-    VENDOR_ID_QUALCOMM = 0x5143,
-};
-
 // A macro that determines whether an object has a given runtime type.
 #if defined(__clang__)
 #if __has_feature(cxx_rtti)
@@ -297,7 +308,20 @@ inline DestT *GetImplAs(SrcT *src)
     return GetAs<DestT>(src->getImplementation());
 }
 
+template <typename DestT, typename SrcT>
+inline DestT *SafeGetImplAs(SrcT *src)
+{
+    return src != nullptr ? GetAs<DestT>(src->getImplementation()) : nullptr;
 }
+
+// In some cases we want to retrieve an Impl object, while handling nullptr cases trivially.
+template <typename ObjT>
+auto SafeGetImpl(ObjT *src) -> decltype(src->getImplementation())
+{
+    return src ? src->getImplementation() : nullptr;
+}
+
+}  // namespace rx
 
 #include "angletypes.inl"
 
@@ -345,6 +369,11 @@ inline GLenum FramebufferBindingToEnum(FramebufferBinding binding)
             return GL_NONE;
     }
 }
-}
+}  // namespace angle
+
+namespace gl
+{
+class ContextState;
+}  // namespace gl
 
 #endif // LIBANGLE_ANGLETYPES_H_

@@ -6,22 +6,40 @@
 
 #include "compiler/translator/VersionGLSL.h"
 
+#include "angle_gl.h"
+
+namespace sh
+{
+
 int ShaderOutputTypeToGLSLVersion(ShShaderOutput output)
 {
     switch (output)
     {
-      case SH_GLSL_130_OUTPUT:           return GLSL_VERSION_130;
-      case SH_GLSL_140_OUTPUT:           return GLSL_VERSION_140;
-      case SH_GLSL_150_CORE_OUTPUT:      return GLSL_VERSION_150;
-      case SH_GLSL_330_CORE_OUTPUT:      return GLSL_VERSION_330;
-      case SH_GLSL_400_CORE_OUTPUT:      return GLSL_VERSION_400;
-      case SH_GLSL_410_CORE_OUTPUT:      return GLSL_VERSION_410;
-      case SH_GLSL_420_CORE_OUTPUT:      return GLSL_VERSION_420;
-      case SH_GLSL_430_CORE_OUTPUT:      return GLSL_VERSION_430;
-      case SH_GLSL_440_CORE_OUTPUT:      return GLSL_VERSION_440;
-      case SH_GLSL_450_CORE_OUTPUT:      return GLSL_VERSION_450;
-      case SH_GLSL_COMPATIBILITY_OUTPUT: return GLSL_VERSION_110;
-      default: UNREACHABLE();            return 0;
+        case SH_GLSL_130_OUTPUT:
+            return GLSL_VERSION_130;
+        case SH_GLSL_140_OUTPUT:
+            return GLSL_VERSION_140;
+        case SH_GLSL_150_CORE_OUTPUT:
+            return GLSL_VERSION_150;
+        case SH_GLSL_330_CORE_OUTPUT:
+            return GLSL_VERSION_330;
+        case SH_GLSL_400_CORE_OUTPUT:
+            return GLSL_VERSION_400;
+        case SH_GLSL_410_CORE_OUTPUT:
+            return GLSL_VERSION_410;
+        case SH_GLSL_420_CORE_OUTPUT:
+            return GLSL_VERSION_420;
+        case SH_GLSL_430_CORE_OUTPUT:
+            return GLSL_VERSION_430;
+        case SH_GLSL_440_CORE_OUTPUT:
+            return GLSL_VERSION_440;
+        case SH_GLSL_450_CORE_OUTPUT:
+            return GLSL_VERSION_450;
+        case SH_GLSL_COMPATIBILITY_OUTPUT:
+            return GLSL_VERSION_110;
+        default:
+            UNREACHABLE();
+            return 0;
     }
 }
 
@@ -42,15 +60,17 @@ int ShaderOutputTypeToGLSLVersion(ShShaderOutput output)
 //    GLSL 1.2 relaxed the restriction on arrays, section 5.8: "Variables that
 //    are built-in types, entire structures or arrays... are all l-values."
 //
-TVersionGLSL::TVersionGLSL(sh::GLenum type,
-                           const TPragma &pragma,
-                           ShShaderOutput output)
+TVersionGLSL::TVersionGLSL(sh::GLenum type, const TPragma &pragma, ShShaderOutput output)
     : TIntermTraverser(true, false, false)
 {
     mVersion = ShaderOutputTypeToGLSLVersion(output);
     if (pragma.stdgl.invariantAll)
     {
         ensureVersionIsAtLeast(GLSL_VERSION_120);
+    }
+    if (type == GL_COMPUTE_SHADER)
+    {
+        ensureVersionIsAtLeast(GLSL_VERSION_430);
     }
 }
 
@@ -62,54 +82,55 @@ void TVersionGLSL::visitSymbol(TIntermSymbol *node)
     }
 }
 
-bool TVersionGLSL::visitAggregate(Visit, TIntermAggregate *node)
+bool TVersionGLSL::visitDeclaration(Visit, TIntermDeclaration *node)
 {
-    bool visitChildren = true;
-
-    switch (node->getOp())
+    const TIntermSequence &sequence = *(node->getSequence());
+    if (sequence.front()->getAsTyped()->getType().isInvariant())
     {
-      case EOpDeclaration:
+        ensureVersionIsAtLeast(GLSL_VERSION_120);
+    }
+    return true;
+}
+
+bool TVersionGLSL::visitInvariantDeclaration(Visit, TIntermInvariantDeclaration *node)
+{
+    ensureVersionIsAtLeast(GLSL_VERSION_120);
+    return true;
+}
+
+bool TVersionGLSL::visitFunctionPrototype(Visit, TIntermFunctionPrototype *node)
+{
+    const TIntermSequence &params = *(node->getSequence());
+    for (TIntermSequence::const_iterator iter = params.begin(); iter != params.end(); ++iter)
+    {
+        const TIntermTyped *param = (*iter)->getAsTyped();
+        if (param->isArray())
         {
-            const TIntermSequence &sequence = *(node->getSequence());
-            if (sequence.front()->getAsTyped()->getType().isInvariant())
+            TQualifier qualifier = param->getQualifier();
+            if ((qualifier == EvqOut) || (qualifier == EvqInOut))
             {
                 ensureVersionIsAtLeast(GLSL_VERSION_120);
+                break;
             }
-            break;
         }
-      case EOpInvariantDeclaration:
-        ensureVersionIsAtLeast(GLSL_VERSION_120);
-        break;
-      case EOpParameters:
-        {
-            const TIntermSequence &params = *(node->getSequence());
-            for (TIntermSequence::const_iterator iter = params.begin();
-                 iter != params.end(); ++iter)
-            {
-                const TIntermTyped *param = (*iter)->getAsTyped();
-                if (param->isArray())
-                {
-                    TQualifier qualifier = param->getQualifier();
-                    if ((qualifier == EvqOut) || (qualifier ==  EvqInOut))
-                    {
-                        ensureVersionIsAtLeast(GLSL_VERSION_120);
-                        break;
-                    }
-                }
-            }
-            // Fully processed. No need to visit children.
-            visitChildren = false;
-            break;
-        }
-      case EOpConstructMat2:
-      case EOpConstructMat2x3:
-      case EOpConstructMat2x4:
-      case EOpConstructMat3x2:
-      case EOpConstructMat3:
-      case EOpConstructMat3x4:
-      case EOpConstructMat4x2:
-      case EOpConstructMat4x3:
-      case EOpConstructMat4:
+    }
+    // Fully processed. No need to visit children.
+    return false;
+}
+
+bool TVersionGLSL::visitAggregate(Visit, TIntermAggregate *node)
+{
+    switch (node->getOp())
+    {
+        case EOpConstructMat2:
+        case EOpConstructMat2x3:
+        case EOpConstructMat2x4:
+        case EOpConstructMat3x2:
+        case EOpConstructMat3:
+        case EOpConstructMat3x4:
+        case EOpConstructMat4x2:
+        case EOpConstructMat4x3:
+        case EOpConstructMat4:
         {
             const TIntermSequence &sequence = *(node->getSequence());
             if (sequence.size() == 1)
@@ -122,11 +143,10 @@ bool TVersionGLSL::visitAggregate(Visit, TIntermAggregate *node)
             }
             break;
         }
-      default:
-        break;
+        default:
+            break;
     }
-
-    return visitChildren;
+    return true;
 }
 
 void TVersionGLSL::ensureVersionIsAtLeast(int version)
@@ -134,3 +154,4 @@ void TVersionGLSL::ensureVersionIsAtLeast(int version)
     mVersion = std::max(version, mVersion);
 }
 
+}  // namespace sh

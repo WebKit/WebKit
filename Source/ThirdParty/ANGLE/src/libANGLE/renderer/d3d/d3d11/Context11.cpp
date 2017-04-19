@@ -82,6 +82,9 @@ TextureImpl *Context11::createTexture(const gl::TextureState &state)
             return new TextureD3D_2DArray(state, mRenderer);
         case GL_TEXTURE_EXTERNAL_OES:
             return new TextureD3D_External(state, mRenderer);
+        case GL_TEXTURE_2D_MULTISAMPLE:
+            return new TextureD3D_2DMultisample(state, mRenderer);
+            break;
         default:
             UNREACHABLE();
     }
@@ -94,9 +97,9 @@ RenderbufferImpl *Context11::createRenderbuffer()
     return new RenderbufferD3D(mRenderer);
 }
 
-BufferImpl *Context11::createBuffer()
+BufferImpl *Context11::createBuffer(const gl::BufferState &state)
 {
-    Buffer11 *buffer = new Buffer11(mRenderer);
+    Buffer11 *buffer = new Buffer11(state, mRenderer);
     mRenderer->onBufferCreate(buffer);
     return buffer;
 }
@@ -189,6 +192,16 @@ gl::Error Context11::drawRangeElements(GLenum mode,
     return mRenderer->genericDrawElements(this, mode, count, type, indices, 0, indexRange);
 }
 
+gl::Error Context11::drawArraysIndirect(GLenum mode, const GLvoid *indirect)
+{
+    return mRenderer->genericDrawIndirect(this, mode, GL_NONE, indirect);
+}
+
+gl::Error Context11::drawElementsIndirect(GLenum mode, GLenum type, const GLvoid *indirect)
+{
+    return mRenderer->genericDrawIndirect(this, mode, type, indirect);
+}
+
 GLenum Context11::getResetStatus()
 {
     return mRenderer->getResetStatus();
@@ -227,9 +240,9 @@ void Context11::popGroupMarker()
     mRenderer->getAnnotator()->endEvent();
 }
 
-void Context11::syncState(const gl::State &state, const gl::State::DirtyBits &dirtyBits)
+void Context11::syncState(const gl::State::DirtyBits &dirtyBits)
 {
-    mRenderer->getStateManager()->syncState(state, dirtyBits);
+    mRenderer->getStateManager()->syncState(mState.getState(), dirtyBits);
 }
 
 GLint Context11::getGPUDisjoint()
@@ -265,6 +278,12 @@ const gl::Extensions &Context11::getNativeExtensions() const
 const gl::Limitations &Context11::getNativeLimitations() const
 {
     return mRenderer->getNativeLimitations();
+}
+
+gl::Error Context11::dispatchCompute(GLuint numGroupsX, GLuint numGroupsY, GLuint numGroupsZ)
+{
+    UNIMPLEMENTED();
+    return gl::NoError();
 }
 
 }  // namespace rx

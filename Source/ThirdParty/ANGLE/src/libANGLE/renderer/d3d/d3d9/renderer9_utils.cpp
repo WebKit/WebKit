@@ -17,7 +17,9 @@
 #include "libANGLE/renderer/d3d/d3d9/formatutils9.h"
 #include "libANGLE/renderer/d3d/d3d9/RenderTarget9.h"
 #include "libANGLE/renderer/d3d/FramebufferD3D.h"
-#include "libANGLE/renderer/d3d/WorkaroundsD3D.h"
+#include "libANGLE/renderer/driver_utils.h"
+#include "platform/Platform.h"
+#include "platform/WorkaroundsD3D.h"
 
 #include "third_party/systeminfo/SystemInfo.h"
 
@@ -306,7 +308,7 @@ GLsizei GetSamplesCount(D3DMULTISAMPLE_TYPE type)
 
 bool IsFormatChannelEquivalent(D3DFORMAT d3dformat, GLenum format)
 {
-    GLenum internalFormat  = d3d9::GetD3DFormatInfo(d3dformat).info->glInternalFormat;
+    GLenum internalFormat  = d3d9::GetD3DFormatInfo(d3dformat).info().glInternalFormat;
     GLenum convertedFormat = gl::GetInternalFormatInfo(internalFormat).format;
     return convertedFormat == format;
 }
@@ -459,6 +461,8 @@ void GenerateCaps(IDirect3D9 *d3d9,
 
     // Vertex shader limits
     caps->maxVertexAttributes = 16;
+    // Vertex Attrib Binding not supported.
+    caps->maxVertexAttribBindings = caps->maxVertexAttributes;
 
     const size_t MAX_VERTEX_CONSTANT_VECTORS_D3D9 = 256;
     caps->maxVertexUniformVectors =
@@ -540,12 +544,12 @@ void GenerateCaps(IDirect3D9 *d3d9,
     {
         // ATI cards on XP have problems with non-power-of-two textures.
         extensions->textureNPOT = !(deviceCaps.TextureCaps & D3DPTEXTURECAPS_POW2) &&
-                                      !(deviceCaps.TextureCaps & D3DPTEXTURECAPS_CUBEMAP_POW2) &&
-                                      !(deviceCaps.TextureCaps & D3DPTEXTURECAPS_NONPOW2CONDITIONAL) &&
-                                      !(!isWindowsVistaOrGreater() && adapterId.VendorId == VENDOR_ID_AMD);
+                                  !(deviceCaps.TextureCaps & D3DPTEXTURECAPS_CUBEMAP_POW2) &&
+                                  !(deviceCaps.TextureCaps & D3DPTEXTURECAPS_NONPOW2CONDITIONAL) &&
+                                  !(!isWindowsVistaOrGreater() && IsAMD(adapterId.VendorId));
 
         // Disable depth texture support on AMD cards (See ANGLE issue 839)
-        if (adapterId.VendorId == VENDOR_ID_AMD)
+        if (IsAMD(adapterId.VendorId))
         {
             extensions->depthTextures = false;
         }
@@ -594,6 +598,7 @@ void GenerateCaps(IDirect3D9 *d3d9,
     extensions->unpackSubimage         = true;
     extensions->packSubimage           = true;
     extensions->syncQuery              = extensions->fence;
+    extensions->copyTexture            = true;
 
     // D3D9 has no concept of separate masks and refs for front and back faces in the depth stencil
     // state.
@@ -640,15 +645,19 @@ void MakeValidSize(bool isImage, D3DFORMAT format, GLsizei *requestWidth, GLsize
     *levelOffset = upsampleCount;
 }
 
-WorkaroundsD3D GenerateWorkarounds()
+angle::WorkaroundsD3D GenerateWorkarounds()
 {
-    WorkaroundsD3D workarounds;
+    angle::WorkaroundsD3D workarounds;
     workarounds.mrtPerfWorkaround = true;
     workarounds.setDataFasterThanImageUpload = false;
     workarounds.useInstancedPointSpriteEmulation = false;
 
     // TODO(jmadill): Disable workaround when we have a fixed compiler DLL.
     workarounds.expandIntegerPowExpressions = true;
+
+    // Call platform hooks for testing overrides.
+    auto *platform = ANGLEPlatformCurrent();
+    platform->overrideWorkaroundsD3D(platform, &workarounds);
 
     return workarounds;
 }

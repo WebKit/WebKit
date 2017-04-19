@@ -86,7 +86,7 @@ DXGISwapChainWindowSurfaceWGL::~DXGISwapChainWindowSurfaceWGL()
     SafeRelease(mSwapChain1);
 }
 
-egl::Error DXGISwapChainWindowSurfaceWGL::initialize()
+egl::Error DXGISwapChainWindowSurfaceWGL::initialize(const DisplayImpl *displayImpl)
 {
     if (mOrientation != EGL_SURFACE_ORIENTATION_INVERT_Y_ANGLE)
     {
@@ -128,7 +128,7 @@ egl::Error DXGISwapChainWindowSurfaceWGL::makeCurrent()
     return egl::Error(EGL_SUCCESS);
 }
 
-egl::Error DXGISwapChainWindowSurfaceWGL::swap()
+egl::Error DXGISwapChainWindowSurfaceWGL::swap(const DisplayImpl *displayImpl)
 {
     mFunctionsGL->flush();
 

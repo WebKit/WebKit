@@ -61,6 +61,9 @@ class ContextImpl : public GLImplFactory
                                         const GLvoid *indices,
                                         const gl::IndexRange &indexRange) = 0;
 
+    virtual gl::Error drawArraysIndirect(GLenum mode, const GLvoid *indirect) = 0;
+    virtual gl::Error drawElementsIndirect(GLenum mode, GLenum type, const GLvoid *indirect) = 0;
+
     // CHROMIUM_path_rendering path drawing methods.
     virtual void stencilFillPath(const gl::Path *path, GLenum fillMode, GLuint mask);
     virtual void stencilStrokePath(const gl::Path *path, GLint reference, GLuint mask);
@@ -120,7 +123,7 @@ class ContextImpl : public GLImplFactory
     virtual void popGroupMarker() = 0;
 
     // State sync with dirty bits.
-    virtual void syncState(const gl::State &state, const gl::State::DirtyBits &dirtyBits) = 0;
+    virtual void syncState(const gl::State::DirtyBits &dirtyBits) = 0;
 
     // Disjoint timer queries
     virtual GLint getGPUDisjoint() = 0;
@@ -134,6 +137,8 @@ class ContextImpl : public GLImplFactory
     virtual const gl::TextureCapsMap &getNativeTextureCaps() const = 0;
     virtual const gl::Extensions &getNativeExtensions() const = 0;
     virtual const gl::Limitations &getNativeLimitations() const = 0;
+
+    virtual gl::Error dispatchCompute(GLuint numGroupsX, GLuint numGroupsY, GLuint numGroupsZ) = 0;
 
     const gl::ContextState &getContextState() { return mState; }
     int getClientMajorVersion() const { return mState.getClientMajorVersion(); }

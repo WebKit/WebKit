@@ -25,7 +25,7 @@ class TextureFunctionHLSL;
 class UnfoldShortCircuit;
 class UniformHLSL;
 
-typedef std::map<TString, TIntermSymbol*> ReferencedSymbols;
+typedef std::map<TString, TIntermSymbol *> ReferencedSymbols;
 
 class OutputHLSL : public TIntermTraverser
 {
@@ -48,34 +48,47 @@ class OutputHLSL : public TIntermTraverser
 
     static TString initializer(const TType &type);
 
-    TInfoSinkBase &getInfoSink() { ASSERT(!mInfoSinkStack.empty()); return *mInfoSinkStack.top(); }
+    TInfoSinkBase &getInfoSink()
+    {
+        ASSERT(!mInfoSinkStack.empty());
+        return *mInfoSinkStack.top();
+    }
 
     static bool canWriteAsHLSLLiteral(TIntermTyped *expression);
 
   protected:
     void header(TInfoSinkBase &out, const BuiltInFunctionEmulator *builtInFunctionEmulator);
 
-    // Visit AST nodes and output their code to the body stream
-    void visitSymbol(TIntermSymbol*) override;
-    void visitRaw(TIntermRaw*) override;
-    void visitConstantUnion(TIntermConstantUnion*) override;
-    bool visitSwizzle(Visit visit, TIntermSwizzle *node) override;
-    bool visitBinary(Visit visit, TIntermBinary*) override;
-    bool visitUnary(Visit visit, TIntermUnary*) override;
-    bool visitTernary(Visit visit, TIntermTernary *) override;
-    bool visitIfElse(Visit visit, TIntermIfElse *) override;
-    bool visitSwitch(Visit visit, TIntermSwitch *) override;
-    bool visitCase(Visit visit, TIntermCase *) override;
-    bool visitFunctionDefinition(Visit visit, TIntermFunctionDefinition *node) override;
-    bool visitAggregate(Visit visit, TIntermAggregate*) override;
-    bool visitBlock(Visit visit, TIntermBlock *node) override;
-    bool visitLoop(Visit visit, TIntermLoop*) override;
-    bool visitBranch(Visit visit, TIntermBranch*) override;
+    void writeFloat(TInfoSinkBase &out, float f);
+    void writeSingleConstant(TInfoSinkBase &out, const TConstantUnion *const constUnion);
+    const TConstantUnion *writeConstantUnionArray(TInfoSinkBase &out,
+                                                  const TConstantUnion *const constUnion,
+                                                  const size_t size);
 
-    bool isSingleStatement(TIntermNode *node);
+    // Visit AST nodes and output their code to the body stream
+    void visitSymbol(TIntermSymbol *);
+    void visitRaw(TIntermRaw *);
+    void visitConstantUnion(TIntermConstantUnion *);
+    bool visitSwizzle(Visit visit, TIntermSwizzle *node) override;
+    bool visitBinary(Visit visit, TIntermBinary *);
+    bool visitUnary(Visit visit, TIntermUnary *);
+    bool visitTernary(Visit visit, TIntermTernary *);
+    bool visitIfElse(Visit visit, TIntermIfElse *);
+    bool visitSwitch(Visit visit, TIntermSwitch *);
+    bool visitCase(Visit visit, TIntermCase *);
+    bool visitFunctionPrototype(Visit visit, TIntermFunctionPrototype *node) override;
+    bool visitFunctionDefinition(Visit visit, TIntermFunctionDefinition *node) override;
+    bool visitAggregate(Visit visit, TIntermAggregate *);
+    bool visitBlock(Visit visit, TIntermBlock *node);
+    bool visitInvariantDeclaration(Visit visit, TIntermInvariantDeclaration *node);
+    bool visitDeclaration(Visit visit, TIntermDeclaration *node);
+    bool visitLoop(Visit visit, TIntermLoop *);
+    bool visitBranch(Visit visit, TIntermBranch *);
+
     bool handleExcessiveLoop(TInfoSinkBase &out, TIntermLoop *node);
 
-    // Emit one of three strings depending on traverse phase. Called with literal strings so using const char* instead of TString.
+    // Emit one of three strings depending on traverse phase. Called with literal strings so using
+    // const char* instead of TString.
     void outputTriplet(TInfoSinkBase &out,
                        Visit visit,
                        const char *preString,
@@ -97,17 +110,19 @@ class OutputHLSL : public TIntermTraverser
 
     void outputEqual(Visit visit, const TType &type, TOperator op, TInfoSinkBase &out);
 
-    void writeEmulatedFunctionTriplet(TInfoSinkBase &out, Visit visit, const char *preStr);
+    void writeEmulatedFunctionTriplet(TInfoSinkBase &out, Visit visit, TOperator op);
     void makeFlaggedStructMaps(const std::vector<TIntermTyped *> &flaggedStructs);
 
-    // Returns true if it found a 'same symbol' initializer (initializer that references the variable it's initting)
-    bool writeSameSymbolInitializer(TInfoSinkBase &out, TIntermSymbol *symbolNode, TIntermTyped *expression);
+    // Returns true if it found a 'same symbol' initializer (initializer that references the
+    // variable it's initting)
+    bool writeSameSymbolInitializer(TInfoSinkBase &out,
+                                    TIntermSymbol *symbolNode,
+                                    TIntermTyped *expression);
     // Returns true if variable initializer could be written using literal {} notation.
     bool writeConstantInitialization(TInfoSinkBase &out,
                                      TIntermSymbol *symbolNode,
                                      TIntermTyped *expression);
 
-    void writeDeferredGlobalInitializers(TInfoSinkBase &out);
     void writeIfElse(TInfoSinkBase &out, TIntermIfElse *node);
 
     // Returns the function name
@@ -133,8 +148,8 @@ class OutputHLSL : public TIntermTraverser
     TInfoSinkBase mBody;
     TInfoSinkBase mFooter;
 
-    // A stack is useful when we want to traverse in the header, or in helper functions, but not always
-    // write to the body. Instead use an InfoSink stack to keep our current state intact.
+    // A stack is useful when we want to traverse in the header, or in helper functions, but not
+    // always write to the body. Instead use an InfoSink stack to keep our current state intact.
     // TODO (jmadill): Just passing an InfoSink in function parameters would be simpler.
     std::stack<TInfoSinkBase *> mInfoSinkStack;
 
@@ -159,15 +174,19 @@ class OutputHLSL : public TIntermTraverser
     bool mUsesInstanceID;
     bool mUsesVertexID;
     bool mUsesFragDepth;
+    bool mUsesNumWorkGroups;
+    bool mUsesWorkGroupID;
+    bool mUsesLocalInvocationID;
+    bool mUsesGlobalInvocationID;
+    bool mUsesLocalInvocationIndex;
     bool mUsesXor;
     bool mUsesDiscardRewriting;
     bool mUsesNestedBreak;
     bool mRequiresIEEEStrictCompiling;
 
-
     int mNumRenderTargets;
 
-    int mUniqueIndex;   // For creating unique names
+    int mUniqueIndex;  // For creating unique names
 
     CallDAG mCallDag;
     MetadataList mASTMetadataList;
@@ -178,10 +197,12 @@ class OutputHLSL : public TIntermTraverser
 
     TIntermSymbol *mExcessiveLoopIndex;
 
-    TString structInitializerString(int indent, const TStructure &structure, const TString &rhsStructName);
+    TString structInitializerString(int indent,
+                                    const TStructure &structure,
+                                    const TString &rhsStructName);
 
-    std::map<TIntermTyped*, TString> mFlaggedStructMappedNames;
-    std::map<TIntermTyped*, TString> mFlaggedStructOriginalNames;
+    std::map<TIntermTyped *, TString> mFlaggedStructMappedNames;
+    std::map<TIntermTyped *, TString> mFlaggedStructOriginalNames;
 
     struct HelperFunction
     {
@@ -195,32 +216,31 @@ class OutputHLSL : public TIntermTraverser
     // which we add the functions, since nested structures call each other recursively, and
     // structure equality functions may need to call array equality functions and vice versa.
     // The ownership of the pointers is maintained by the type-specific arrays.
-    std::vector<HelperFunction*> mEqualityFunctions;
+    std::vector<HelperFunction *> mEqualityFunctions;
 
     struct StructEqualityFunction : public HelperFunction
     {
         const TStructure *structure;
     };
-    std::vector<StructEqualityFunction*> mStructEqualityFunctions;
+    std::vector<StructEqualityFunction *> mStructEqualityFunctions;
 
     struct ArrayHelperFunction : public HelperFunction
     {
         TType type;
     };
-    std::vector<ArrayHelperFunction*> mArrayEqualityFunctions;
+    std::vector<ArrayHelperFunction *> mArrayEqualityFunctions;
 
     std::vector<ArrayHelperFunction> mArrayAssignmentFunctions;
 
-    // The construct-into functions are functions that fill an N-element array passed as an out parameter
-    // with the other N parameters of the function. This is used to work around that arrays can't be
-    // return values in HLSL.
+    // The construct-into functions are functions that fill an N-element array passed as an out
+    // parameter with the other N parameters of the function. This is used to work around that
+    // arrays can't be return values in HLSL.
     std::vector<ArrayHelperFunction> mArrayConstructIntoFunctions;
 
   private:
     TString samplerNamePrefixFromStruct(TIntermTyped *node);
-    bool ancestorEvaluatesToSamplerInStruct(Visit visit);
+    bool ancestorEvaluatesToSamplerInStruct();
 };
-
 }
 
-#endif   // COMPILER_TRANSLATOR_OUTPUTHLSL_H_
+#endif  // COMPILER_TRANSLATOR_OUTPUTHLSL_H_

@@ -58,7 +58,8 @@ Config::Config()
       transparentRedValue(0),
       transparentGreenValue(0),
       transparentBlueValue(0),
-      optimalOrientation(0)
+      optimalOrientation(0),
+      colorComponentType(EGL_COLOR_COMPONENT_TYPE_FIXED_EXT)
 {
 }
 
@@ -133,6 +134,10 @@ class ConfigSorter
 
         static_assert(EGL_NONE < EGL_SLOW_CONFIG && EGL_SLOW_CONFIG < EGL_NON_CONFORMANT_CONFIG, "Unexpected EGL enum value.");
         SORT(configCaveat);
+
+        static_assert(EGL_COLOR_COMPONENT_TYPE_FIXED_EXT < EGL_COLOR_COMPONENT_TYPE_FLOAT_EXT,
+                      "Unexpected order of EGL enums.");
+        SORT(colorComponentType);
 
         static_assert(EGL_RGB_BUFFER < EGL_LUMINANCE_BUFFER, "Unexpected EGL enum value.");
         SORT(colorBufferType);
@@ -254,6 +259,9 @@ std::vector<const Config*> ConfigSet::filter(const AttributeMap &attributeMap) c
               case EGL_MAX_PBUFFER_PIXELS:        match = config.maxPBufferPixels >= attributeValue;                  break;
               case EGL_OPTIMAL_SURFACE_ORIENTATION_ANGLE:
                   match = config.optimalOrientation == attributeValue;
+                  break;
+              case EGL_COLOR_COMPONENT_TYPE_EXT:
+                  match = config.colorComponentType == static_cast<EGLenum>(attributeValue);
                   break;
               default: UNREACHABLE();
             }

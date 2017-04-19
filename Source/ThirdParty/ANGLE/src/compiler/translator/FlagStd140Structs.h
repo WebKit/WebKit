@@ -18,11 +18,7 @@ namespace sh
 class FlagStd140Structs : public TIntermTraverser
 {
   public:
-
-    FlagStd140Structs()
-        : TIntermTraverser(true, false, false)
-    {
-    }
+    FlagStd140Structs() : TIntermTraverser(true, false, false) {}
 
     const std::vector<TIntermTyped *> getFlaggedNodes() const { return mFlaggedNodes; }
 
@@ -37,7 +33,6 @@ class FlagStd140Structs : public TIntermTraverser
 };
 
 std::vector<TIntermTyped *> FlagStd140ValueStructs(TIntermNode *node);
-
 }
 
-#endif // COMPILER_TRANSLATOR_FLAGSTD140STRUCTS_H_
+#endif  // COMPILER_TRANSLATOR_FLAGSTD140STRUCTS_H_

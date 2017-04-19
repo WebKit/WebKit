@@ -21,7 +21,7 @@ class FunctionsWGL;
 class DisplayWGL : public DisplayGL
 {
   public:
-    DisplayWGL();
+    DisplayWGL(const egl::DisplayState &state);
     ~DisplayWGL() override;
 
     egl::Error initialize(egl::Display *display) override;
@@ -29,18 +29,15 @@ class DisplayWGL : public DisplayGL
 
     // Surface creation
     SurfaceImpl *createWindowSurface(const egl::SurfaceState &state,
-                                     const egl::Config *configuration,
                                      EGLNativeWindowType window,
                                      const egl::AttributeMap &attribs) override;
     SurfaceImpl *createPbufferSurface(const egl::SurfaceState &state,
-                                      const egl::Config *configuration,
                                       const egl::AttributeMap &attribs) override;
     SurfaceImpl *createPbufferFromClientBuffer(const egl::SurfaceState &state,
-                                               const egl::Config *configuration,
-                                               EGLClientBuffer shareHandle,
+                                               EGLenum buftype,
+                                               EGLClientBuffer clientBuffer,
                                                const egl::AttributeMap &attribs) override;
     SurfaceImpl *createPixmapSurface(const egl::SurfaceState &state,
-                                     const egl::Config *configuration,
                                      NativePixmapType nativePixmap,
                                      const egl::AttributeMap &attribs) override;
 
@@ -50,6 +47,10 @@ class DisplayWGL : public DisplayGL
     egl::Error restoreLostDevice() override;
 
     bool isValidNativeWindow(EGLNativeWindowType window) const override;
+    egl::Error validateClientBuffer(const egl::Config *configuration,
+                                    EGLenum buftype,
+                                    EGLClientBuffer clientBuffer,
+                                    const egl::AttributeMap &attribs) const override;
 
     egl::Error getDevice(DeviceImpl **device) override;
 
@@ -59,8 +60,6 @@ class DisplayWGL : public DisplayGL
     egl::Error waitNative(EGLint engine,
                           egl::Surface *drawSurface,
                           egl::Surface *readSurface) const override;
-
-    egl::Error getDriverVersion(std::string *version) const override;
 
     egl::Error registerD3DDevice(IUnknown *device, HANDLE *outHandle);
     void releaseD3DDevice(HANDLE handle);

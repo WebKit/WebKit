@@ -21,9 +21,7 @@ namespace
 class Traverser : public TIntermTraverser
 {
   public:
-    static void Apply(TIntermNode *root,
-                      const TSymbolTable &symbolTable,
-                      int shaderVersion);
+    static void Apply(TIntermNode *root, const TSymbolTable &symbolTable, int shaderVersion);
 
   private:
     Traverser(const TSymbolTable &symbolTable, int shaderVersion);
@@ -41,9 +39,7 @@ Traverser::Traverser(const TSymbolTable &symbolTable, int shaderVersion)
 }
 
 // static
-void Traverser::Apply(TIntermNode *root,
-                      const TSymbolTable &symbolTable,
-                      int shaderVersion)
+void Traverser::Apply(TIntermNode *root, const TSymbolTable &symbolTable, int shaderVersion)
 {
     Traverser traverser(symbolTable, shaderVersion);
     do
@@ -70,12 +66,12 @@ bool Traverser::visitAggregate(Visit visit, TIntermAggregate *node)
     }
 
     // Decide if the node represents the call of texelFetchOffset.
-    if (node->getOp() != EOpFunctionCall || node->isUserDefined())
+    if (node->getOp() != EOpCallBuiltInFunction)
     {
         return true;
     }
 
-    if (node->getFunctionSymbolInfo()->getName().compare(0, 16, "texelFetchOffset") != 0)
+    if (node->getFunctionSymbolInfo()->getName() != "texelFetchOffset")
     {
         return true;
     }
@@ -84,28 +80,18 @@ bool Traverser::visitAggregate(Visit visit, TIntermAggregate *node)
     const TIntermSequence *sequence = node->getSequence();
     ASSERT(sequence->size() == 4u);
 
-    // Decide if there is a 2DArray sampler.
-    bool is2DArray = node->getFunctionSymbolInfo()->getName().find("s2a1") != TString::npos;
-
-    // Create new argument list from node->getName().
-    // e.g. Get "(is2a1;vi3;i1;" from "texelFetchOffset(is2a1;vi3;i1;vi2;"
-    TString newArgs = node->getFunctionSymbolInfo()->getName().substr(
-        16, node->getFunctionSymbolInfo()->getName().length() - 20);
-    TString newName           = "texelFetch" + newArgs;
-    TSymbol *texelFetchSymbol = symbolTable->findBuiltIn(newName, shaderVersion);
-    ASSERT(texelFetchSymbol);
-    int uniqueId = texelFetchSymbol->getUniqueId();
+    // Decide if the sampler is a 2DArray sampler. In that case position is ivec3 and offset is
+    // ivec2.
+    bool is2DArray = sequence->at(1)->getAsTyped()->getNominalSize() == 3 &&
+                     sequence->at(3)->getAsTyped()->getNominalSize() == 2;
 
     // Create new node that represents the call of function texelFetch.
     // Its argument list will be: texelFetch(sampler, Position+offset, lod).
-    TIntermAggregate *texelFetchNode = new TIntermAggregate(EOpFunctionCall);
-    texelFetchNode->getFunctionSymbolInfo()->setName(newName);
-    texelFetchNode->getFunctionSymbolInfo()->setId(uniqueId);
-    texelFetchNode->setType(node->getType());
-    texelFetchNode->setLine(node->getLine());
+
+    TIntermSequence *texelFetchArguments = new TIntermSequence();
 
     // sampler
-    texelFetchNode->getSequence()->push_back(sequence->at(0));
+    texelFetchArguments->push_back(sequence->at(0));
 
     // Position
     TIntermTyped *texCoordNode = sequence->at(1)->getAsTyped();
@@ -118,20 +104,15 @@ bool Traverser::visitAggregate(Visit visit, TIntermAggregate *node)
     {
         // For 2DArray samplers, Position is ivec3 and offset is ivec2;
         // So offset must be converted into an ivec3 before being added to Position.
-        TIntermAggregate *constructIVec3Node = new TIntermAggregate(EOpConstructIVec3);
-        constructIVec3Node->setLine(texCoordNode->getLine());
-        constructIVec3Node->setType(texCoordNode->getType());
+        TIntermSequence *constructOffsetIvecArguments = new TIntermSequence();
+        constructOffsetIvecArguments->push_back(sequence->at(3)->getAsTyped());
 
-        constructIVec3Node->getSequence()->push_back(sequence->at(3)->getAsTyped());
+        TIntermTyped *zeroNode = TIntermTyped::CreateZero(TType(EbtInt));
+        constructOffsetIvecArguments->push_back(zeroNode);
 
-        TConstantUnion *zero = new TConstantUnion();
-        zero->setIConst(0);
-        TType *intType = new TType(EbtInt);
-
-        TIntermConstantUnion *zeroNode = new TIntermConstantUnion(zero, *intType);
-        constructIVec3Node->getSequence()->push_back(zeroNode);
-
-        offsetNode = constructIVec3Node;
+        offsetNode = TIntermAggregate::CreateConstructor(texCoordNode->getType(), EOpConstructIVec3,
+                                                         constructOffsetIvecArguments);
+        offsetNode->setLine(texCoordNode->getLine());
     }
     else
     {
@@ -141,12 +122,21 @@ bool Traverser::visitAggregate(Visit visit, TIntermAggregate *node)
     // Position+offset
     TIntermBinary *add = new TIntermBinary(EOpAdd, texCoordNode, offsetNode);
     add->setLine(texCoordNode->getLine());
-    texelFetchNode->getSequence()->push_back(add);
+    texelFetchArguments->push_back(add);
 
     // lod
-    texelFetchNode->getSequence()->push_back(sequence->at(2));
+    texelFetchArguments->push_back(sequence->at(2));
 
-    ASSERT(texelFetchNode->getSequence()->size() == 3u);
+    ASSERT(texelFetchArguments->size() == 3u);
+
+    // Get the symbol of the texel fetch function to use.
+    TString mangledName = TFunction::GetMangledNameFromCall("texelFetch", *texelFetchArguments);
+    TSymbol *texelFetchSymbol = symbolTable->findBuiltIn(mangledName, shaderVersion);
+    ASSERT(texelFetchSymbol && texelFetchSymbol->isFunction());
+
+    TIntermAggregate *texelFetchNode = TIntermAggregate::CreateBuiltInFunctionCall(
+        *static_cast<const TFunction *>(texelFetchSymbol), texelFetchArguments);
+    texelFetchNode->setLine(node->getLine());
 
     // Replace the old node by this new node.
     queueReplacement(node, texelFetchNode, OriginalNode::IS_DROPPED);
@@ -156,9 +146,7 @@ bool Traverser::visitAggregate(Visit visit, TIntermAggregate *node)
 
 }  // anonymous namespace
 
-void RewriteTexelFetchOffset(TIntermNode *root,
-                             const TSymbolTable &symbolTable,
-                             int shaderVersion)
+void RewriteTexelFetchOffset(TIntermNode *root, const TSymbolTable &symbolTable, int shaderVersion)
 {
     // texelFetchOffset is only valid in GLSL 3.0 and later.
     if (shaderVersion < 300)

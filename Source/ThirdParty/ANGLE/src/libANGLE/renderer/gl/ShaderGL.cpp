@@ -70,9 +70,29 @@ ShCompileOptions ShaderGL::prepareSourceAndReturnOptions(std::stringstream *sour
         options |= SH_EMULATE_ISNAN_FLOAT_FUNCTION;
     }
 
+    if (mWorkarounds.emulateAtan2Float)
+    {
+        options |= SH_EMULATE_ATAN2_FLOAT_FUNCTION;
+    }
+
     if (mWorkarounds.useUnusedBlocksWithStandardOrSharedLayout)
     {
         options |= SH_USE_UNUSED_STANDARD_SHARED_BLOCKS;
+    }
+
+    if (mWorkarounds.dontRemoveInvariantForFragmentInput)
+    {
+        options |= SH_DONT_REMOVE_INVARIANT_FOR_FRAGMENT_INPUT;
+    }
+
+    if (mWorkarounds.removeInvariantAndCentroidForESSL3)
+    {
+        options |= SH_REMOVE_INVARIANT_AND_CENTROID_FOR_ESSL3;
+    }
+
+    if (mWorkarounds.rewriteFloatUnaryMinusOperator)
+    {
+        options |= SH_REWRITE_FLOAT_UNARY_MINUS_OPERATOR;
     }
 
     return options;
@@ -108,11 +128,11 @@ bool ShaderGL::postTranslateCompile(gl::Compiler *compiler, std::string *infoLog
             mShaderID = 0;
 
             *infoLog = &buf[0];
-            TRACE("\n%s", infoLog->c_str());
+            WARN() << std::endl << *infoLog;
         }
         else
         {
-            TRACE("\nShader compilation failed with no info log.");
+            WARN() << std::endl << "Shader compilation failed with no info log.";
         }
         return false;
     }
@@ -122,7 +142,7 @@ bool ShaderGL::postTranslateCompile(gl::Compiler *compiler, std::string *infoLog
 
 std::string ShaderGL::getDebugInfo() const
 {
-    return std::string();
+    return mData.getTranslatedSource();
 }
 
 GLuint ShaderGL::getShaderID() const

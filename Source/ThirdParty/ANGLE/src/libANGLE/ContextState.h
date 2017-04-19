@@ -11,84 +11,89 @@
 
 #include "common/angleutils.h"
 #include "libANGLE/State.h"
+#include "libANGLE/Version.h"
 
 namespace gl
 {
-class ValidationContext;
+class BufferManager;
 class ContextState;
+class FenceSyncManager;
+class FramebufferManager;
+class PathManager;
+class RenderbufferManager;
+class SamplerManager;
+class ShaderProgramManager;
+class TextureManager;
+class ValidationContext;
 
-class GLVersion final : angle::NonCopyable
-{
-  public:
-    GLVersion(GLint clientMajorVersion, GLint clientMinorVersion)
-        : mClientMajorVersion(clientMajorVersion), mClientMinorVersion(clientMinorVersion)
-    {
-    }
+static constexpr Version ES_2_0 = Version(2, 0);
+static constexpr Version ES_3_0 = Version(3, 0);
+static constexpr Version ES_3_1 = Version(3, 1);
 
-    GLint getClientMajorVersion() const { return mClientMajorVersion; }
-    GLint getClientMinorVersion() const { return mClientMinorVersion; }
-
-    bool isES2() const { return mClientMajorVersion == 2; }
-    bool isES3() const { return mClientMajorVersion == 3 && mClientMinorVersion == 0; }
-    bool isES31() const { return mClientMajorVersion == 3 && mClientMinorVersion == 1; }
-    bool isES3OrGreater() const { return mClientMajorVersion >= 3; }
-
-  private:
-    GLint mClientMajorVersion;
-    GLint mClientMinorVersion;
-};
+using ContextID = uintptr_t;
 
 class ContextState final : public angle::NonCopyable
 {
   public:
-    ContextState(uintptr_t context,
-                 GLint clientMajorVersion,
-                 GLint clientMinorVersion,
+    ContextState(ContextID context,
+                 const ContextState *shareContextState,
+                 TextureManager *shareTextures,
+                 const Version &clientVersion,
                  State *state,
                  const Caps &caps,
                  const TextureCapsMap &textureCaps,
                  const Extensions &extensions,
-                 const ResourceManager *resourceManager,
                  const Limitations &limitations);
     ~ContextState();
 
-    uintptr_t getContext() const { return mContext; }
-    GLint getClientMajorVersion() const { return mGLVersion.getClientMajorVersion(); }
-    GLint getClientMinorVersion() const { return mGLVersion.getClientMinorVersion(); }
-    const GLVersion &getGLVersion() const { return mGLVersion; }
+    ContextID getContextID() const { return mContext; }
+    GLint getClientMajorVersion() const { return mClientVersion.major; }
+    GLint getClientMinorVersion() const { return mClientVersion.minor; }
+    const Version &getClientVersion() const { return mClientVersion; }
     const State &getState() const { return *mState; }
     const Caps &getCaps() const { return mCaps; }
     const TextureCapsMap &getTextureCaps() const { return mTextureCaps; }
     const Extensions &getExtensions() const { return mExtensions; }
-    const ResourceManager &getResourceManager() const { return *mResourceManager; }
     const Limitations &getLimitations() const { return mLimitations; }
 
     const TextureCaps &getTextureCap(GLenum internalFormat) const;
+
+    bool usingDisplayTextureShareGroup() const;
+
+    bool isWebGL1() const;
 
   private:
     friend class Context;
     friend class ValidationContext;
 
-    GLVersion mGLVersion;
-    uintptr_t mContext;
+    Version mClientVersion;
+    ContextID mContext;
     State *mState;
     const Caps &mCaps;
     const TextureCapsMap &mTextureCaps;
     const Extensions &mExtensions;
-    const ResourceManager *mResourceManager;
     const Limitations &mLimitations;
+
+    BufferManager *mBuffers;
+    ShaderProgramManager *mShaderPrograms;
+    TextureManager *mTextures;
+    RenderbufferManager *mRenderbuffers;
+    SamplerManager *mSamplers;
+    FenceSyncManager *mFenceSyncs;
+    PathManager *mPaths;
+    FramebufferManager *mFramebuffers;
 };
 
 class ValidationContext : angle::NonCopyable
 {
   public:
-    ValidationContext(GLint clientMajorVersion,
-                      GLint clientMinorVersion,
+    ValidationContext(const ValidationContext *shareContext,
+                      TextureManager *shareTextures,
+                      const Version &clientVersion,
                       State *state,
                       const Caps &caps,
                       const TextureCapsMap &textureCaps,
                       const Extensions &extensions,
-                      const ResourceManager *resourceManager,
                       const Limitations &limitations,
                       bool skipValidation);
     virtual ~ValidationContext() {}
@@ -96,9 +101,9 @@ class ValidationContext : angle::NonCopyable
     virtual void handleError(const Error &error) = 0;
 
     const ContextState &getContextState() const { return mState; }
-    int getClientMajorVersion() const { return mState.getClientMajorVersion(); }
-    int getClientMinorVersion() const { return mState.getClientMinorVersion(); }
-    const GLVersion &getGLVersion() const { return mState.mGLVersion; }
+    GLint getClientMajorVersion() const { return mState.getClientMajorVersion(); }
+    GLint getClientMinorVersion() const { return mState.getClientMinorVersion(); }
+    const Version &getClientVersion() const { return mState.getClientVersion(); }
     const State &getGLState() const { return mState.getState(); }
     const Caps &getCaps() const { return mState.getCaps(); }
     const TextureCapsMap &getTextureCaps() const { return mState.getTextureCaps(); }
@@ -113,9 +118,22 @@ class ValidationContext : angle::NonCopyable
     Program *getProgram(GLuint handle) const;
     Shader *getShader(GLuint handle) const;
 
+    bool isTextureGenerated(GLuint texture) const;
+    bool isBufferGenerated(GLuint buffer) const;
+    bool isRenderbufferGenerated(GLuint renderbuffer) const;
+    bool isFramebufferGenerated(GLuint framebuffer) const;
+
+    bool usingDisplayTextureShareGroup() const;
+
+    // Hack for the special WebGL 1 "DEPTH_STENCIL" internal format.
+    GLenum getConvertedRenderbufferFormat(GLenum internalformat) const;
+
+    bool isWebGL1() const { return mState.isWebGL1(); }
+
   protected:
     ContextState mState;
     bool mSkipValidation;
+    bool mDisplayTextureShareGroup;
 };
 }  // namespace gl
 

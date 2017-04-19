@@ -32,20 +32,20 @@ gl::Error FenceNVGL::set(GLenum condition)
 {
     ASSERT(condition == GL_ALL_COMPLETED_NV);
     mFunctions->setFenceNV(mFence, condition);
-    return gl::Error(GL_NO_ERROR);
+    return gl::NoError();
 }
 
 gl::Error FenceNVGL::test(GLboolean *outFinished)
 {
     ASSERT(outFinished);
     *outFinished = mFunctions->testFenceNV(mFence);
-    return gl::Error(GL_NO_ERROR);
+    return gl::NoError();
 }
 
 gl::Error FenceNVGL::finish()
 {
     mFunctions->finishFenceNV(mFence);
-    return gl::Error(GL_NO_ERROR);
+    return gl::NoError();
 }
 
 }

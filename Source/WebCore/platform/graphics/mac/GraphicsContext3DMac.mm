@@ -536,7 +536,7 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attrs, HostWind
     // ANGLE initialization.
 
     ShBuiltInResources ANGLEResources;
-    ShInitBuiltInResources(&ANGLEResources);
+    sh::InitBuiltInResources(&ANGLEResources);
 
     getIntegerv(GraphicsContext3D::MAX_VERTEX_ATTRIBS, &ANGLEResources.MaxVertexAttribs);
     getIntegerv(GraphicsContext3D::MAX_VERTEX_UNIFORM_VECTORS, &ANGLEResources.MaxVertexUniformVectors);

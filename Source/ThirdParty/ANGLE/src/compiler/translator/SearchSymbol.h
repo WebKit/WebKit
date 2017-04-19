@@ -30,4 +30,4 @@ class SearchSymbol : public TIntermTraverser
 };
 }
 
-#endif   // COMPILER_TRANSLATOR_SEARCHSYMBOL_H_
+#endif  // COMPILER_TRANSLATOR_SEARCHSYMBOL_H_

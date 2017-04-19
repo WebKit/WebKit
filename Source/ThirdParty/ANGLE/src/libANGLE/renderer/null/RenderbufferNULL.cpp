@@ -24,8 +24,7 @@ RenderbufferNULL::~RenderbufferNULL()
 
 gl::Error RenderbufferNULL::setStorage(GLenum internalformat, size_t width, size_t height)
 {
-    UNIMPLEMENTED();
-    return gl::Error(GL_INVALID_OPERATION);
+    return gl::NoError();
 }
 
 gl::Error RenderbufferNULL::setStorageMultisample(size_t samples,
@@ -33,14 +32,12 @@ gl::Error RenderbufferNULL::setStorageMultisample(size_t samples,
                                                   size_t width,
                                                   size_t height)
 {
-    UNIMPLEMENTED();
-    return gl::Error(GL_INVALID_OPERATION);
+    return gl::NoError();
 }
 
 gl::Error RenderbufferNULL::setStorageEGLImageTarget(egl::Image *image)
 {
-    UNIMPLEMENTED();
-    return gl::Error(GL_INVALID_OPERATION);
+    return gl::NoError();
 }
 
 }  // namespace rx

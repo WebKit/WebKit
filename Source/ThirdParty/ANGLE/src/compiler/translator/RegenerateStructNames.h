@@ -12,15 +12,19 @@
 
 #include <set>
 
+namespace sh
+{
+
 class RegenerateStructNames : public TIntermTraverser
 {
   public:
-    RegenerateStructNames(const TSymbolTable &symbolTable,
-                          int shaderVersion)
+    RegenerateStructNames(const TSymbolTable &symbolTable, int shaderVersion)
         : TIntermTraverser(true, false, false),
           mSymbolTable(symbolTable),
           mShaderVersion(shaderVersion),
-          mScopeDepth(0) {}
+          mScopeDepth(0)
+    {
+    }
 
   protected:
     void visitSymbol(TIntermSymbol *) override;
@@ -37,5 +41,7 @@ class RegenerateStructNames : public TIntermTraverser
     // If a struct's declared globally, push its ID in this set.
     std::set<int> mDeclaredGlobalStructs;
 };
+
+}  // namespace sh
 
 #endif  // COMPILER_TRANSLATOR_REGENERATESTRUCTNAMES_H_

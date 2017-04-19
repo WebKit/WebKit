@@ -53,6 +53,8 @@ HLSLTextureSamplerGroup TextureGroup(const TBasicType type)
             return HLSL_TEXTURE_2D_ARRAY;
         case EbtSampler3D:
             return HLSL_TEXTURE_3D;
+        case EbtSampler2DMS:
+            return HLSL_TEXTURE_2D_MS;
         case EbtISampler2D:
             return HLSL_TEXTURE_2D_INT4;
         case EbtISampler3D:
@@ -61,6 +63,8 @@ HLSLTextureSamplerGroup TextureGroup(const TBasicType type)
             return HLSL_TEXTURE_2D_ARRAY_INT4;
         case EbtISampler2DArray:
             return HLSL_TEXTURE_2D_ARRAY_INT4;
+        case EbtISampler2DMS:
+            return HLSL_TEXTURE_2D_MS_INT4;
         case EbtUSampler2D:
             return HLSL_TEXTURE_2D_UINT4;
         case EbtUSampler3D:
@@ -69,6 +73,8 @@ HLSLTextureSamplerGroup TextureGroup(const TBasicType type)
             return HLSL_TEXTURE_2D_ARRAY_UINT4;
         case EbtUSampler2DArray:
             return HLSL_TEXTURE_2D_ARRAY_UINT4;
+        case EbtUSampler2DMS:
+            return HLSL_TEXTURE_2D_MS_UINT4;
         case EbtSampler2DShadow:
             return HLSL_TEXTURE_2D_COMPARISON;
         case EbtSamplerCubeShadow:
@@ -93,18 +99,24 @@ TString TextureString(const HLSLTextureSamplerGroup type)
             return "Texture2DArray";
         case HLSL_TEXTURE_3D:
             return "Texture3D";
+        case HLSL_TEXTURE_2D_MS:
+            return "Texture2DMS<float4>";
         case HLSL_TEXTURE_2D_INT4:
             return "Texture2D<int4>";
         case HLSL_TEXTURE_3D_INT4:
             return "Texture3D<int4>";
         case HLSL_TEXTURE_2D_ARRAY_INT4:
             return "Texture2DArray<int4>";
+        case HLSL_TEXTURE_2D_MS_INT4:
+            return "Texture2DMS<int4>";
         case HLSL_TEXTURE_2D_UINT4:
             return "Texture2D<uint4>";
         case HLSL_TEXTURE_3D_UINT4:
             return "Texture3D<uint4>";
         case HLSL_TEXTURE_2D_ARRAY_UINT4:
             return "Texture2DArray<uint4>";
+        case HLSL_TEXTURE_2D_MS_UINT4:
+            return "Texture2DMS<uint4>";
         case HLSL_TEXTURE_2D_COMPARISON:
             return "Texture2D";
         case HLSL_TEXTURE_CUBE_COMPARISON:
@@ -135,18 +147,24 @@ TString TextureGroupSuffix(const HLSLTextureSamplerGroup type)
             return "2DArray";
         case HLSL_TEXTURE_3D:
             return "3D";
+        case HLSL_TEXTURE_2D_MS:
+            return "2DMS";
         case HLSL_TEXTURE_2D_INT4:
             return "2D_int4_";
         case HLSL_TEXTURE_3D_INT4:
             return "3D_int4_";
         case HLSL_TEXTURE_2D_ARRAY_INT4:
             return "2DArray_int4_";
+        case HLSL_TEXTURE_2D_MS_INT4:
+            return "2DMS_int4_";
         case HLSL_TEXTURE_2D_UINT4:
             return "2D_uint4_";
         case HLSL_TEXTURE_3D_UINT4:
             return "3D_uint4_";
         case HLSL_TEXTURE_2D_ARRAY_UINT4:
             return "2DArray_uint4_";
+        case HLSL_TEXTURE_2D_MS_UINT4:
+            return "2DMS_uint4_";
         case HLSL_TEXTURE_2D_COMPARISON:
             return "2D_comparison";
         case HLSL_TEXTURE_CUBE_COMPARISON:
@@ -223,29 +241,17 @@ TString DecorateIfNeeded(const TName &name)
     }
 }
 
-TString DecorateFunctionIfNeeded(const TName &name)
-{
-    if (name.isInternal())
-    {
-        return TFunction::unmangleName(name.getString());
-    }
-    else
-    {
-        return Decorate(TFunction::unmangleName(name.getString()));
-    }
-}
-
 TString TypeString(const TType &type)
 {
-    const TStructure* structure = type.getStruct();
+    const TStructure *structure = type.getStruct();
     if (structure)
     {
-        const TString& typeName = structure->name();
+        const TString &typeName = structure->name();
         if (typeName != "")
         {
             return StructNameString(*structure);
         }
-        else   // Nameless structure, define in place
+        else  // Nameless structure, define in place
         {
             return StructureHLSL::defineNameless(*structure);
         }
@@ -260,55 +266,71 @@ TString TypeString(const TType &type)
     {
         switch (type.getBasicType())
         {
-          case EbtFloat:
-            switch (type.getNominalSize())
-            {
-              case 1: return "float";
-              case 2: return "float2";
-              case 3: return "float3";
-              case 4: return "float4";
-            }
-          case EbtInt:
-            switch (type.getNominalSize())
-            {
-              case 1: return "int";
-              case 2: return "int2";
-              case 3: return "int3";
-              case 4: return "int4";
-            }
-          case EbtUInt:
-            switch (type.getNominalSize())
-            {
-              case 1: return "uint";
-              case 2: return "uint2";
-              case 3: return "uint3";
-              case 4: return "uint4";
-            }
-          case EbtBool:
-            switch (type.getNominalSize())
-            {
-              case 1: return "bool";
-              case 2: return "bool2";
-              case 3: return "bool3";
-              case 4: return "bool4";
-            }
-          case EbtVoid:
-            return "void";
-          case EbtSampler2D:
-          case EbtISampler2D:
-          case EbtUSampler2D:
-          case EbtSampler2DArray:
-          case EbtISampler2DArray:
-          case EbtUSampler2DArray:
-            return "sampler2D";
-          case EbtSamplerCube:
-          case EbtISamplerCube:
-          case EbtUSamplerCube:
-            return "samplerCUBE";
-          case EbtSamplerExternalOES:
-            return "sampler2D";
-          default:
-            break;
+            case EbtFloat:
+                switch (type.getNominalSize())
+                {
+                    case 1:
+                        return "float";
+                    case 2:
+                        return "float2";
+                    case 3:
+                        return "float3";
+                    case 4:
+                        return "float4";
+                }
+            case EbtInt:
+                switch (type.getNominalSize())
+                {
+                    case 1:
+                        return "int";
+                    case 2:
+                        return "int2";
+                    case 3:
+                        return "int3";
+                    case 4:
+                        return "int4";
+                }
+            case EbtUInt:
+                switch (type.getNominalSize())
+                {
+                    case 1:
+                        return "uint";
+                    case 2:
+                        return "uint2";
+                    case 3:
+                        return "uint3";
+                    case 4:
+                        return "uint4";
+                }
+            case EbtBool:
+                switch (type.getNominalSize())
+                {
+                    case 1:
+                        return "bool";
+                    case 2:
+                        return "bool2";
+                    case 3:
+                        return "bool3";
+                    case 4:
+                        return "bool4";
+                }
+            case EbtVoid:
+                return "void";
+            case EbtSampler2D:
+            case EbtISampler2D:
+            case EbtUSampler2D:
+            case EbtSampler2DArray:
+            case EbtISampler2DArray:
+            case EbtUSampler2DArray:
+                return "sampler2D";
+            case EbtSamplerCube:
+            case EbtISamplerCube:
+            case EbtUSamplerCube:
+                return "samplerCUBE";
+            case EbtSamplerExternalOES:
+                return "sampler2D";
+            default:
+                break;
         }
     }
 
@@ -333,7 +355,8 @@ TString StructNameString(const TStructure &structure)
     return "ss" + str(structure.uniqueId()) + "_" + structure.name();
 }
 
-TString QualifiedStructNameString(const TStructure &structure, bool useHLSLRowMajorPacking,
+TString QualifiedStructNameString(const TStructure &structure,
+                                  bool useHLSLRowMajorPacking,
                                   bool useStd140Packing)
 {
     if (structure.name() == "")
@@ -363,17 +386,28 @@ TString InterpolationString(TQualifier qualifier)
 {
     switch (qualifier)
     {
-      case EvqVaryingIn:           return "";
-      case EvqFragmentIn:          return "";
-      case EvqSmoothIn:            return "linear";
-      case EvqFlatIn:              return "nointerpolation";
-      case EvqCentroidIn:          return "centroid";
-      case EvqVaryingOut:          return "";
-      case EvqVertexOut:           return "";
-      case EvqSmoothOut:           return "linear";
-      case EvqFlatOut:             return "nointerpolation";
-      case EvqCentroidOut:         return "centroid";
-      default: UNREACHABLE();
+        case EvqVaryingIn:
+            return "";
+        case EvqFragmentIn:
+            return "";
+        case EvqSmoothIn:
+            return "linear";
+        case EvqFlatIn:
+            return "nointerpolation";
+        case EvqCentroidIn:
+            return "centroid";
+        case EvqVaryingOut:
+            return "";
+        case EvqVertexOut:
+            return "";
+        case EvqSmoothOut:
+            return "linear";
+        case EvqFlatOut:
+            return "nointerpolation";
+        case EvqCentroidOut:
+            return "centroid";
+        default:
+            UNREACHABLE();
     }
 
     return "";
@@ -383,11 +417,17 @@ TString QualifierString(TQualifier qualifier)
 {
     switch (qualifier)
     {
-      case EvqIn:            return "in";
-      case EvqOut:           return "inout"; // 'out' results in an HLSL error if not all fields are written, for GLSL it's undefined
-      case EvqInOut:         return "inout";
-      case EvqConstReadOnly: return "const";
-      default: UNREACHABLE();
+        case EvqIn:
+            return "in";
+        case EvqOut:
+            return "inout";  // 'out' results in an HLSL error if not all fields are written, for
+                             // GLSL it's undefined
+        case EvqInOut:
+            return "inout";
+        case EvqConstReadOnly:
+            return "const";
+        default:
+            UNREACHABLE();
     }
 
     return "";

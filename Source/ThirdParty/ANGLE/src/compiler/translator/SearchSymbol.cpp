@@ -13,8 +13,7 @@
 namespace sh
 {
 SearchSymbol::SearchSymbol(const TString &symbol)
-    : TIntermTraverser(true, false, false),
-      mSymbol(symbol)
+    : TIntermTraverser(true, false, false), mSymbol(symbol)
 {
     match = false;
 }

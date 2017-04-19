@@ -78,7 +78,8 @@ HRESULT RunOnUIThread(CODE &&code, const ComPtr<ICoreDispatcher> &dispatcher)
             // unrecoverable state (probably deadlocked). We therefore terminate the application
             // entirely. This also prevents stack corruption if the async operation is eventually
             // run.
-            ERR("Timeout waiting for async action on UI thread. The UI thread might be blocked.");
+            ERR()
+                << "Timeout waiting for async action on UI thread. The UI thread might be blocked.";
             std::terminate();
             return E_FAIL;
         }
@@ -132,7 +133,8 @@ bool SwapChainPanelNativeWindow::initialize(EGLNativeWindowType window, IPropert
         // A EGLRenderSurfaceSizeProperty and a EGLRenderResolutionScaleProperty can't both be specified
         if (mSwapChainScaleSpecified && mSwapChainSizeSpecified)
         {
-            ERR("It is invalid to specify both an EGLRenderSurfaceSizeProperty and a EGLRenderResolutionScaleProperty.");
+            ERR() << "It is invalid to specify both an EGLRenderSurfaceSizeProperty and a "
+                     "EGLRenderResolutionScaleProperty.";
             return false;
         }
     }

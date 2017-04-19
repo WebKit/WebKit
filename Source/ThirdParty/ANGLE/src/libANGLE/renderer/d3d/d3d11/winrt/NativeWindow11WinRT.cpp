@@ -62,9 +62,8 @@ bool NativeWindow11WinRT::initialize()
     }
     else
     {
-        ERR(
-            "Invalid IInspectable EGLNativeWindowType detected. Valid IInspectables include "
-            "ICoreWindow, ISwapChainPanel and IPropertySet");
+        ERR() << "Invalid IInspectable EGLNativeWindowType detected. Valid IInspectables include "
+                 "ICoreWindow, ISwapChainPanel and IPropertySet";
     }
 
     return false;

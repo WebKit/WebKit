@@ -1,3 +1,21 @@
+2017-04-18  Dean Jackson  <dino@apple.com>
+
+        Update ANGLE
+        https://bugs.webkit.org/show_bug.cgi?id=170941
+        <rdar://problem/31633999>
+
+        Reviewed by Alex Christensen.
+
+        * platform/graphics/ANGLEWebKitBridge.cpp:
+        (WebCore::getSymbolInfo):
+        (WebCore::ANGLEWebKitBridge::ANGLEWebKitBridge):
+        (WebCore::ANGLEWebKitBridge::cleanupCompilers):
+        (WebCore::ANGLEWebKitBridge::compileShaderSource):
+        * platform/graphics/mac/GraphicsContext3DMac.mm:
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        (WebCore::GraphicsContext3D::checkVaryingsPacking):
+
 2017-04-18  John Wilander  <wilander@apple.com>
 
         Make WebCore::topPrivatelyControlledDomain() return "localhost" for localhost

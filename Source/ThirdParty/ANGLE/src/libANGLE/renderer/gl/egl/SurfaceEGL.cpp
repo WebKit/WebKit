@@ -33,7 +33,6 @@ SurfaceEGL::~SurfaceEGL()
     if (mSurface != EGL_NO_SURFACE)
     {
         EGLBoolean success = mEGL->destroySurface(mSurface);
-        UNUSED_ASSERTION_VARIABLE(success);
         ASSERT(success == EGL_TRUE);
     }
 }
@@ -48,7 +47,7 @@ egl::Error SurfaceEGL::makeCurrent()
     return egl::Error(EGL_SUCCESS);
 }
 
-egl::Error SurfaceEGL::swap()
+egl::Error SurfaceEGL::swap(const DisplayImpl *displayImpl)
 {
     EGLBoolean success = mEGL->swapBuffers(mSurface);
     if (success == EGL_FALSE)
@@ -95,7 +94,7 @@ void SurfaceEGL::setSwapInterval(EGLint interval)
     EGLBoolean success = mEGL->swapInterval(interval);
     if (success == EGL_FALSE)
     {
-        ERR("eglSwapInterval error 0x%04x", mEGL->getError());
+        ERR() << "eglSwapInterval error " << egl::Error(mEGL->getError());
         ASSERT(false);
     }
 }
@@ -104,7 +103,6 @@ EGLint SurfaceEGL::getWidth() const
 {
     EGLint value;
     EGLBoolean success = mEGL->querySurface(mSurface, EGL_WIDTH, &value);
-    UNUSED_ASSERTION_VARIABLE(success);
     ASSERT(success == EGL_TRUE);
     return value;
 }
@@ -113,7 +111,6 @@ EGLint SurfaceEGL::getHeight() const
 {
     EGLint value;
     EGLBoolean success = mEGL->querySurface(mSurface, EGL_HEIGHT, &value);
-    UNUSED_ASSERTION_VARIABLE(success);
     ASSERT(success == EGL_TRUE);
     return value;
 }
@@ -128,7 +125,6 @@ EGLint SurfaceEGL::getSwapBehavior() const
 {
     EGLint value;
     EGLBoolean success = mEGL->querySurface(mSurface, EGL_SWAP_BEHAVIOR, &value);
-    UNUSED_ASSERTION_VARIABLE(success);
     ASSERT(success == EGL_TRUE);
     return value;
 }

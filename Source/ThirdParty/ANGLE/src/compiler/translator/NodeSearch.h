@@ -18,10 +18,7 @@ template <class Parent>
 class NodeSearchTraverser : public TIntermTraverser
 {
   public:
-    NodeSearchTraverser()
-        : TIntermTraverser(true, false, false),
-          mFound(false)
-    {}
+    NodeSearchTraverser() : TIntermTraverser(true, false, false), mFound(false) {}
 
     bool found() const { return mFound; }
 
@@ -43,17 +40,17 @@ class FindDiscard : public NodeSearchTraverser<FindDiscard>
     {
         switch (node->getFlowOp())
         {
-          case EOpKill:
-            mFound = true;
-            break;
+            case EOpKill:
+                mFound = true;
+                break;
 
-          default: break;
+            default:
+                break;
         }
 
         return !mFound;
     }
 };
-
 }
 
-#endif // COMPILER_TRANSLATOR_NODESEARCH_H_
+#endif  // COMPILER_TRANSLATOR_NODESEARCH_H_

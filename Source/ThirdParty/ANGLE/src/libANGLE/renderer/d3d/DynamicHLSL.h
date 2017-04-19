@@ -29,22 +29,78 @@ namespace gl
 {
 class InfoLog;
 struct VariableLocation;
+class VaryingPacking;
 struct VertexAttribute;
 }
 
 namespace rx
 {
-struct PackedVarying;
 class ProgramD3DMetadata;
 class ShaderD3D;
-class VaryingPacking;
 
 struct PixelShaderOutputVariable
 {
-    GLenum type;
+    PixelShaderOutputVariable() {}
+    PixelShaderOutputVariable(GLenum typeIn,
+                              const std::string &nameIn,
+                              const std::string &sourceIn,
+                              size_t outputIndexIn)
+        : type(typeIn), name(nameIn), source(sourceIn), outputIndex(outputIndexIn)
+    {
+    }
+
+    GLenum type = GL_NONE;
     std::string name;
     std::string source;
-    size_t outputIndex;
+    size_t outputIndex = 0;
+};
+
+struct BuiltinVarying final : angle::NonCopyable
+{
+    BuiltinVarying();
+
+    std::string str() const;
+    void enableSystem(const std::string &systemValueSemantic);
+    void enable(const std::string &semanticVal, unsigned int indexVal);
+
+    bool enabled;
+    std::string semantic;
+    unsigned int index;
+    bool systemValue;
+};
+
+struct BuiltinInfo
+{
+    BuiltinVarying dxPosition;
+    BuiltinVarying glPosition;
+    BuiltinVarying glFragCoord;
+    BuiltinVarying glPointCoord;
+    BuiltinVarying glPointSize;
+};
+
+inline std::string GetVaryingSemantic(int majorShaderModel, bool programUsesPointSize)
+{
+    // SM3 reserves the TEXCOORD semantic for point sprite texcoords (gl_PointCoord)
+    // In D3D11 we manually compute gl_PointCoord in the GS.
+    return ((programUsesPointSize && majorShaderModel < 4) ? "COLOR" : "TEXCOORD");
+}
+
+class BuiltinVaryingsD3D
+{
+  public:
+    BuiltinVaryingsD3D(const ProgramD3DMetadata &metadata, const gl::VaryingPacking &packing);
+
+    bool usesPointSize() const { return mBuiltinInfo[SHADER_VERTEX].glPointSize.enabled; }
+
+    const BuiltinInfo &operator[](ShaderType shaderType) const { return mBuiltinInfo[shaderType]; }
+    BuiltinInfo &operator[](ShaderType shaderType) { return mBuiltinInfo[shaderType]; }
+
+  private:
+    void updateBuiltins(ShaderType shaderType,
+                        const ProgramD3DMetadata &metadata,
+                        const gl::VaryingPacking &packing);
+
+    std::array<BuiltinInfo, SHADER_TYPE_MAX> mBuiltinInfo;
 };
 
 class DynamicHLSL : angle::NonCopyable
@@ -61,14 +117,17 @@ class DynamicHLSL : angle::NonCopyable
         const std::vector<PixelShaderOutputVariable> &outputVariables,
         bool usesFragDepth,
         const std::vector<GLenum> &outputLayout) const;
-    bool generateShaderLinkHLSL(const gl::ContextState &data,
+    void generateShaderLinkHLSL(const gl::ContextState &data,
                                 const gl::ProgramState &programData,
                                 const ProgramD3DMetadata &programMetadata,
-                                const VaryingPacking &varyingPacking,
+                                const gl::VaryingPacking &varyingPacking,
+                                const BuiltinVaryingsD3D &builtinsD3D,
                                 std::string *pixelHLSL,
                                 std::string *vertexHLSL) const;
+    std::string generateComputeShaderLinkHLSL(const gl::ProgramState &programData) const;
 
-    std::string generateGeometryShaderPreamble(const VaryingPacking &varyingPacking) const;
+    std::string generateGeometryShaderPreamble(const gl::VaryingPacking &varyingPacking,
+                                               const BuiltinVaryingsD3D &builtinsD3D) const;
 
     std::string generateGeometryShaderHLSL(gl::PrimitiveType primitiveType,
                                            const gl::ContextState &data,
@@ -84,11 +143,10 @@ class DynamicHLSL : angle::NonCopyable
   private:
     RendererD3D *const mRenderer;
 
-    void generateVaryingLinkHLSL(ShaderType shaderType,
-                                 const VaryingPacking &varyingPacking,
-                                 std::stringstream &linkStream) const;
-    void generateVaryingHLSL(const VaryingPacking &varyingPacking,
-                             std::stringstream &hlslStream) const;
+    void generateVaryingLinkHLSL(const gl::VaryingPacking &varyingPacking,
+                                 const BuiltinInfo &builtins,
+                                 bool programUsesPointSize,
+                                 std::stringstream &hlslStream) const;
 
     // Prepend an underscore
     static std::string decorateVariable(const std::string &name);
@@ -97,7 +155,6 @@ class DynamicHLSL : angle::NonCopyable
                                                 const sh::ShaderVariable &shaderAttrib) const;
 };
 
-std::string GetVaryingSemantic(int majorShaderModel, bool programUsesPointSize);
-}
+}  // namespace rx
 
 #endif  // LIBANGLE_RENDERER_D3D_DYNAMICHLSL_H_
