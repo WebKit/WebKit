@@ -1,3 +1,26 @@
+2017-04-19  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        r211670 broke double to int conversion.
+        https://bugs.webkit.org/show_bug.cgi?id=170961
+
+        Reviewed by Mark Lam.
+
+        In this patch, we take a template parameter way.
+        While it reduces duplicate code, it effectively produces
+        optimized code for operationToInt32SensibleSlow,
+        and fixes kraken pbkdf2 regression on Linux.
+
+        And this patch also fixes undefined behavior by changing
+        int32_t to uint32_t. If exp is 31, missingOne is 1 << 31,
+        INT32_MIN. Thus missingOne - 1 will cause int32_t overflow,
+        and it is an undefined behavior.
+
+        * runtime/MathCommon.cpp:
+        (JSC::operationToInt32SensibleSlow):
+        * runtime/MathCommon.h:
+        (JSC::toInt32Internal):
+        (JSC::toInt32):
+
 2017-04-18  Mark Lam  <mark.lam@apple.com>
 
         r211670 broke double to int conversion.

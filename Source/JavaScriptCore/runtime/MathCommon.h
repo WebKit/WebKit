@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "CPU.h"
 #include <cmath>
 #include <wtf/Optional.h>
 
@@ -34,6 +33,7 @@ namespace JSC {
 const int32_t maxExponentForIntegerMathPow = 1000;
 double JIT_OPERATION operationMathPow(double x, double y) WTF_INTERNAL;
 int32_t JIT_OPERATION operationToInt32(double) WTF_INTERNAL;
+int32_t JIT_OPERATION operationToInt32SensibleSlow(double) WTF_INTERNAL;
 
 inline constexpr double maxSafeInteger()
 {
@@ -73,9 +73,14 @@ inline int clz32(uint32_t number)
 //
 // The operation can be described as round towards zero, then select the 32 least
 // bits of the resulting value in 2s-complement representation.
-ALWAYS_INLINE int32_t toInt32(double number)
+enum ToInt32Mode {
+    Generic,
+    AfterSensibleConversionAttempt,
+};
+template<ToInt32Mode Mode>
+ALWAYS_INLINE int32_t toInt32Internal(double number)
 {
-    int64_t bits = WTF::bitwise_cast<int64_t>(number);
+    uint64_t bits = WTF::bitwise_cast<uint64_t>(number);
     int32_t exp = (static_cast<int32_t>(bits >> 52) & 0x7ff) - 0x3ff;
 
     // If exponent < 0 there will be no bits to the left of the decimal point
@@ -99,49 +104,61 @@ ALWAYS_INLINE int32_t toInt32(double number)
     // to shift. If the exponent is greater than 52 we need to shift the value
     // left by (exp - 52), if the value is less than 52 we need to shift right
     // accordingly.
-    int32_t result = (exp > 52)
-        ? static_cast<int32_t>(bits << (exp - 52))
-        : static_cast<int32_t>(bits >> (52 - exp));
+    uint32_t result = (exp > 52)
+        ? static_cast<uint32_t>(bits << (exp - 52))
+        : static_cast<uint32_t>(bits >> (52 - exp));
 
     // IEEE-754 double precision values are stored omitting an implicit 1 before
     // the decimal point; we need to reinsert this now. We may also the shifted
     // invalid bits into the result that are not a part of the mantissa (the sign
     // and exponent bits from the floatingpoint representation); mask these out.
-    if (hasSensibleDoubleToInt() && (exp == 31)) {
-        // This is an optimization for when toInt32() is called in the slow path
-        // of a JIT operation. Currently, this optimization is only applicable for
-        // x86 ports.
-        //
-        // On x86, the fast path does a sensible double-to-int32 conversion, by
-        // first attempting to truncate the double value to int32 using the
-        // cvttsd2si_rr instruction. According to Intel's manual, cvttsd2si performs
-        // the following truncate operation:
-        //
-        //     If src = NaN, +-Inf, or |(src)rz| > 0x7fffffff and (src)rz != 0x80000000,
-        //     then the result becomes 0x80000000. Otherwise, the operation succeeds.
-        //
-        // Note that the ()rz notation means rounding towards zero.
-        // We'll call the slow case function only when the above cvttsd2si fails. The
-        // JIT code checks for fast path failure by checking if result == 0x80000000.
-        // Hence, the slow path will only see the following possible set of numbers:
-        //
-        //     NaN, +-Inf, or |(src)rz| > 0x7fffffff.
-        //
-        // As a result, the exp of the double is always >= 31. We can take advantage
-        // of this by specifically checking for (exp == 31) and give the compiler a
-        // chance to constant fold the operations below.
-        const int32_t missingOne = 1 << exp;
-        result &= missingOne - 1;
-        result += missingOne;
-    } else if (exp < 32) {
-        int32_t missingOne = 1 << exp;
-        result &= missingOne - 1;
-        result += missingOne;
+    // Note that missingOne should be held as uint32_t since ((1 << 31) - 1) causes
+    // int32_t overflow.
+    if (Mode == ToInt32Mode::AfterSensibleConversionAttempt) {
+        if (exp == 31) {
+            // This is an optimization for when toInt32() is called in the slow path
+            // of a JIT operation. Currently, this optimization is only applicable for
+            // x86 ports. This optimization offers 5% performance improvement in
+            // kraken-crypto-pbkdf2.
+            //
+            // On x86, the fast path does a sensible double-to-int32 conversion, by
+            // first attempting to truncate the double value to int32 using the
+            // cvttsd2si_rr instruction. According to Intel's manual, cvttsd2si performs
+            // the following truncate operation:
+            //
+            //     If src = NaN, +-Inf, or |(src)rz| > 0x7fffffff and (src)rz != 0x80000000,
+            //     then the result becomes 0x80000000. Otherwise, the operation succeeds.
+            //
+            // Note that the ()rz notation means rounding towards zero.
+            // We'll call the slow case function only when the above cvttsd2si fails. The
+            // JIT code checks for fast path failure by checking if result == 0x80000000.
+            // Hence, the slow path will only see the following possible set of numbers:
+            //
+            //     NaN, +-Inf, or |(src)rz| > 0x7fffffff.
+            //
+            // As a result, the exp of the double is always >= 31. We can take advantage
+            // of this by specifically checking for (exp == 31) and give the compiler a
+            // chance to constant fold the operations below.
+            const constexpr uint32_t missingOne = 1U << 31;
+            result &= missingOne - 1;
+            result += missingOne;
+        }
+    } else {
+        if (exp < 32) {
+            const uint32_t missingOne = 1U << exp;
+            result &= missingOne - 1;
+            result += missingOne;
+        }
     }
 
     // If the input value was negative (we could test either 'number' or 'bits',
     // but testing 'bits' is likely faster) invert the result appropriately.
-    return bits < 0 ? -result : result;
+    return static_cast<int64_t>(bits) < 0 ? -static_cast<int32_t>(result) : static_cast<int32_t>(result);
+}
+
+ALWAYS_INLINE int32_t toInt32(double number)
+{
+    return toInt32Internal<ToInt32Mode::Generic>(number);
 }
 
 // This implements ToUInt32, defined in ECMA-262 9.6.
