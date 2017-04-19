@@ -921,6 +921,7 @@ WebInspector.LogContentView = class LogContentView extends WebInspector.ContentV
         this._searchMatches = [];
         this._selectedSearchMatchIsValid = false;
         this._selectedSearchMatch = null;
+        let numberOfResults = 0;
 
         if (this._currentSearchQuery === "") {
             this.element.classList.remove(WebInspector.LogContentView.SearchInProgressStyleClassName);
@@ -936,6 +937,7 @@ WebInspector.LogContentView = class LogContentView extends WebInspector.ContentV
             let text = message.textContent;
             let match = searchRegex.exec(text);
             while (match) {
+                numberOfResults++;
                 matchRanges.push({offset: match.index, length: match[0].length});
                 match = searchRegex.exec(text);
             }
@@ -951,6 +953,8 @@ WebInspector.LogContentView = class LogContentView extends WebInspector.ContentV
         }, this);
 
         this.dispatchEventToListeners(WebInspector.ContentView.Event.NumberOfSearchResultsDidChange);
+
+        this._findBanner.numberOfResults = numberOfResults;
 
         if (!this._selectedSearchMatchIsValid && this._selectedSearchMatch) {
             this._selectedSearchMatch.highlight.classList.remove(WebInspector.LogContentView.SelectedStyleClassName);
