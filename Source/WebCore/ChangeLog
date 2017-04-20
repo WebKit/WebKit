@@ -1,3 +1,22 @@
+2017-04-20  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream iOS] Hold process assertion while media capture is active
+        https://bugs.webkit.org/show_bug.cgi?id=171017
+        <rdar://problem/31719177>
+
+        Reviewed by Dean Jackson.
+
+        * page/ActivityState.h: Add IsCapturingMedia flag.
+
+        * page/Page.cpp:
+        (WebCore::Page::updateTimerThrottlingState): Enable timer throttling when capture is active
+        like we do when playing audio.
+        (WebCore::Page::setActivityState): Ditto.
+
+        * page/PerformanceMonitor.cpp:
+        (WebCore::PerformanceMonitor::updateProcessStateForMemoryPressure): A process is active when
+        capturing media, as it is when playing audio.
+
 2017-04-20  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Inline anchor elements cannot be dragged when starting the drag from a block descendant

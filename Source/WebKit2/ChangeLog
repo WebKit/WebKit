@@ -1,3 +1,22 @@
+2017-04-20  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream iOS] Hold process assertion while media capture is active
+        https://bugs.webkit.org/show_bug.cgi?id=171017
+        <rdar://problem/31719177>
+
+        Reviewed by Dean Jackson.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::updateActivityState): Update IsCapturingMedia when necessary.
+        (WebKit::WebPageProxy::updateThrottleState): Hold a token when capture is active.
+        (WebKit::WebPageProxy::setMuted): Capture state may change when the page is muted,
+        so pass IsCapturingMedia to activityStateDidChange.
+        (WebKit::WebPageProxy::isPlayingMediaDidChange): Ditto.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updateThrottleState): Don't allow page suppression when capture
+        is active. 
+
 2017-04-20  Anders Carlsson  <andersca@apple.com>
 
         Fix build.

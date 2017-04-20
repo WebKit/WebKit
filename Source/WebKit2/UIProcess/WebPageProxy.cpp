@@ -1470,6 +1470,8 @@ void WebPageProxy::updateActivityState(ActivityState::Flags flagsToUpdate)
         m_activityState |= ActivityState::IsAudible;
     if (flagsToUpdate & ActivityState::IsLoading && m_pageLoadState.isLoading())
         m_activityState |= ActivityState::IsLoading;
+    if (flagsToUpdate & ActivityState::IsCapturingMedia && m_mediaState & (MediaProducer::HasActiveAudioCaptureDevice | MediaProducer::HasActiveVideoCaptureDevice))
+        m_activityState |= ActivityState::IsCapturingMedia;
 }
 
 void WebPageProxy::activityStateDidChange(ActivityState::Flags mayHaveChanged, bool wantsSynchronousReply, ActivityStateChangeDispatchMode dispatchMode)
@@ -1612,7 +1614,8 @@ void WebPageProxy::updateThrottleState()
         m_pageIsUserObservableCount = m_process->processPool().userObservablePageCount();
 
 #if PLATFORM(IOS)
-    if (!isViewVisible() && !m_alwaysRunsAtForegroundPriority) {
+    bool isCapturingMedia = m_activityState & ActivityState::IsCapturingMedia;
+    if (!isViewVisible() && !m_alwaysRunsAtForegroundPriority && !isCapturingMedia) {
         if (m_activityToken) {
             RELEASE_LOG_IF_ALLOWED("%p - UIProcess is releasing a foreground assertion because the view is no longer visible", this);
             m_activityToken = nullptr;
@@ -1620,6 +1623,8 @@ void WebPageProxy::updateThrottleState()
     } else if (!m_activityToken) {
         if (isViewVisible())
             RELEASE_LOG_IF_ALLOWED("%p - UIProcess is taking a foreground assertion because the view is visible", this);
+        else if (isCapturingMedia)
+            RELEASE_LOG_IF_ALLOWED("%p - UIProcess is taking a foreground assertion because media capture is active", this);
         else
             RELEASE_LOG_IF_ALLOWED("%p - UIProcess is taking a foreground assertion even though the view is not visible because m_alwaysRunsAtForegroundPriority is true", this);
         m_activityToken = m_process->throttler().foregroundActivityToken();
@@ -4207,8 +4212,7 @@ void WebPageProxy::setMuted(WebCore::MediaProducer::MutedStateFlags state)
 #endif
 
     m_process->send(Messages::WebPage::SetMuted(state), m_pageID);
-
-    activityStateDidChange(ActivityState::IsAudible);
+    activityStateDidChange(ActivityState::IsAudible | ActivityState::IsCapturingMedia);
 }
 
 #if ENABLE(MEDIA_SESSION)
@@ -6484,11 +6488,12 @@ void WebPageProxy::isPlayingMediaDidChange(MediaProducer::MediaStateFlags state,
         userMediaPermissionRequestManager().endedCaptureSession();
 #endif
 
-    activityStateDidChange(ActivityState::IsAudible);
+    activityStateDidChange(ActivityState::IsAudible | ActivityState::IsCapturingMedia);
 
     playingMediaMask |= activeCaptureMask;
     if ((oldState & playingMediaMask) != (m_mediaState & playingMediaMask))
         m_uiClient->isPlayingAudioDidChange(*this);
+
 #if PLATFORM(MAC)
     if ((oldState & MediaProducer::HasAudioOrVideo) != (m_mediaState & MediaProducer::HasAudioOrVideo))
         videoControlsManagerDidChange();

@@ -37,12 +37,13 @@ struct ActivityState {
         IsVisuallyIdle = 1 << 5,
         IsAudible = 1 << 6,
         IsLoading = 1 << 7,
+        IsCapturingMedia = 1 << 8,
     };
 
     typedef unsigned Flags;
 
     static const Flags NoFlags = 0;
-    static const Flags AllFlags = WindowIsActive | IsFocused | IsVisible | IsVisibleOrOccluded | IsInWindow | IsVisuallyIdle | IsAudible | IsLoading;
+    static const Flags AllFlags = WindowIsActive | IsFocused | IsVisible | IsVisibleOrOccluded | IsInWindow | IsVisuallyIdle | IsAudible | IsLoading | IsCapturingMedia;
 };
 
 enum class ActivityStateForCPUSampling {
