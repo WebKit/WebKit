@@ -1,3 +1,15 @@
+2017-04-20  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        -Wformat warning on HistoryController.cpp:295:5
+        https://bugs.webkit.org/show_bug.cgi?id=171028
+
+        Reviewed by Daniel Bates.
+
+        Need to cast WebCore::FrameLoadType to int before using it in printf.
+
+        * loader/HistoryController.cpp:
+        (WebCore::HistoryController::goToItem):
+
 2017-04-20  Per Arne Vollan  <pvollan@apple.com>
 
         The toleranceBefore parameter in the AVPlayerItem method seekToTime should not be negative.
