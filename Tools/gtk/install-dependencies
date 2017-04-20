@@ -118,6 +118,7 @@ function installDependenciesWithApt {
         libgudev-1.0-dev \
         libhyphen-dev \
         libjpeg-dev \
+        libmount-dev \
         libmpg123-dev \
         libnotify-dev \
         libopus-dev \
@@ -288,6 +289,7 @@ function installDependenciesWithPacman {
         libxtst \
         ninja \
         ruby \
+        util-linux \
         xorg-font-utils \
         wayland"
 
@@ -395,6 +397,7 @@ function installDependenciesWithDnf {
         libgcrypt-devel \
         libgudev1-devel \
         libjpeg-turbo-devel \
+        libmount-devel \
         libnotify-devel \
         libpng-devel \
         libsecret-devel \

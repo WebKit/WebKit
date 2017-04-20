@@ -1,3 +1,18 @@
+2017-04-20  Xan Lopez  <xlopez@igalia.com>
+
+        [GTK][jhbuild] Update glib and glib-networking to the latest stable versions
+        https://bugs.webkit.org/show_bug.cgi?id=170942
+
+        Reviewed by Carlos Garcia Campos.
+
+        Update glib and glib-networking to the last stable releases. This
+        is needed to get working TLS certificate verification at all at
+        least in Fedora.
+
+        * gtk/install-dependencies: add libmount, needed for newer glib.
+        * gtk/jhbuild.modules: update glib and glib-networking to last
+        stable releases.
+
 2017-04-20  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [ATK] Implement support for DPub ARIA roles

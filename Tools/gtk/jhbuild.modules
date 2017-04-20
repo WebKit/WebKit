@@ -213,10 +213,9 @@
     <dependencies>
       <dep package="libffi"/>
     </dependencies>
-    <branch module="/pub/GNOME/sources/glib/2.44/glib-2.44.1.tar.xz" version="2.44.1"
+    <branch module="/pub/GNOME/sources/glib/2.52/glib-2.52.1.tar.xz" version="2.52.1"
             repo="ftp.gnome.org"
-            hash="sha256:8811deacaf8a503d0a9b701777ea079ca6a4277be10e3d730d2112735d5eca07">
-      <patch file="glib-warning-fix.patch" strip="1"/>
+            hash="sha256:948c26b817f2d77e2a6cdd5082c60a51bf5dea854890286a1d5d4ccde5ce586f">
       <patch file="gdate-suppress-string-format-literal-warning.patch" strip="1"/>
     </branch>
   </autotools>
@@ -228,10 +227,10 @@
     <dependencies>
       <dep package="glib"/>
     </dependencies>
-    <branch module="/pub/GNOME/sources/glib-networking/2.41/glib-networking-2.41.4.tar.xz" version="2.41.4"
+    <branch module="/pub/GNOME/sources/glib-networking/2.50/glib-networking-2.50.0.tar.xz" version="2.50.0"
             repo="ftp.gnome.org"
-            hash="sha256:930ad618865dcf81765d0f48cb6f13e22d76203efa59d30604aed0384ce80fd7"
-            md5sum="f88e163322c0834f9781d6224771ab2e"/>
+            hash="sha256:3f1a442f3c2a734946983532ce59ed49120319fdb10c938447c373d5e5286bee"
+            md5sum="4d06d0224646f274918b1cb6da9a07f6"/>
   </autotools>
 
   <autotools id="libsoup"
