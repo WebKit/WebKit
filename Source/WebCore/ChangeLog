@@ -1,3 +1,24 @@
+2017-04-20  Antti Koivisto  <antti@apple.com>
+
+        Increase large animation cutoff
+        https://bugs.webkit.org/show_bug.cgi?id=171051
+        <rdar://problem/31731532>
+
+        Reviewed by Andreas Kling.
+
+        We currently switch to per-frame decoding if the animation is larger than 5MB. This is very
+        power-inefficient and such animations are now common. The cutoff originates from 2007 (r20069),
+        it is time update it.
+
+        Note that the normal low memory handling will still kill animation frames as needed.
+
+        * platform/graphics/BitmapImage.h:
+
+            Increase cutoff to 30MB. This is enough (with some room to spare) for animations on current
+            tumblr.com/search/aww.
+
+            Also remove the separate cutoff value for iOS.
+
 2017-04-20  Zan Dobersek  <zdobersek@igalia.com>
 
         Register missing AES_CTR, ECDSA and HKDF algorithms in

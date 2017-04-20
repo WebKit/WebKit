@@ -195,11 +195,7 @@ private:
     void dump(TextStream&) const override;
 
     // Animated images over a certain size are considered large enough that we'll only hang on to one frame at a time.
-#if !PLATFORM(IOS)
-    static const unsigned LargeAnimationCutoff = 5242880;
-#else
-    static const unsigned LargeAnimationCutoff = 2097152;
-#endif
+    static const unsigned LargeAnimationCutoff = 30 * 1014 * 1024;
 
     mutable ImageSource m_source;
 
