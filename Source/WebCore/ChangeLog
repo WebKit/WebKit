@@ -1,3 +1,15 @@
+2017-04-20  Anders Carlsson  <andersca@apple.com>
+
+        Remove one use of toPaymentAuthorizationStatus
+        https://bugs.webkit.org/show_bug.cgi?id=171086
+
+        Reviewed by Tim Horton.
+
+        Just switch on the individual ApplePaySession::STATUS_ values.
+
+        * Modules/applepay/ApplePaySession.cpp:
+        (WebCore::ApplePaySession::completeShippingMethodSelection):
+
 2017-04-20  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] Fix build break after updating ANGLE

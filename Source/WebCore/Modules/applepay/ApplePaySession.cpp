@@ -799,15 +799,23 @@ ExceptionOr<void> ApplePaySession::completeShippingMethodSelection(unsigned shor
 {
     ApplePayShippingMethodUpdate update;
 
-    auto authorizationStatus = toPaymentAuthorizationStatus(status);
-    if (!authorizationStatus)
-        return Exception { INVALID_ACCESS_ERR };
-
-    if (*authorizationStatus != PaymentAuthorizationStatus::Success) {
+    switch (status) {
+    case ApplePaySession::STATUS_SUCCESS:
+        break;
+    case ApplePaySession::STATUS_FAILURE:
+    case ApplePaySession::STATUS_INVALID_BILLING_POSTAL_ADDRESS:
+    case ApplePaySession::STATUS_INVALID_SHIPPING_POSTAL_ADDRESS:
+    case ApplePaySession::STATUS_INVALID_SHIPPING_CONTACT:
+    case ApplePaySession::STATUS_PIN_REQUIRED:
+    case ApplePaySession::STATUS_PIN_INCORRECT:
+    case ApplePaySession::STATUS_PIN_LOCKOUT:
         // This is a fatal error. Cancel the request.
         m_state = State::CancelRequested;
         paymentCoordinator().cancelPaymentSession();
         return { };
+
+    default:
+        return Exception { INVALID_ACCESS_ERR };
     }
 
     update.newTotal = WTFMove(newTotal);
