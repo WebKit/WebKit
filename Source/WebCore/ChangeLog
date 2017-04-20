@@ -1,5 +1,40 @@
 2017-04-20  Eric Carlson  <eric.carlson@apple.com>
 
+        [MediaStream] Cleanup and simplify CoreAudioCaptureSource
+        https://bugs.webkit.org/show_bug.cgi?id=171064
+
+        There is no need for a mutex to guard against internal state changes because we
+        don't currently change configuration after the audio unit is allocated. Once
+        we do support reconfiguration on the fly, we can just stop the output unit before
+        changing configuration because the I/O proc isn't called if the output unit
+        is stopped, and AudioOutputUnitStop blocks until the audio device has stopped.
+        
+        Reviewed by Jer Noble.
+
+        * platform/mediastream/mac/CoreAudioCaptureSource.cpp:
+        (WebCore::CoreAudioCaptureSource::~CoreAudioCaptureSource): Call cleanupAudioUnits
+        instead of duplicating logic. 
+        (WebCore::CoreAudioCaptureSource::preferredIOBufferDuration): Change preferred
+        duration from 20ms to 40ms.
+        (WebCore::CoreAudioCaptureSource::configureMicrophoneProc): Set mSampleRate to the
+        preferred sample rate if it is 0.
+        (WebCore::CoreAudioCaptureSource::configureSpeakerProc): Ditto.
+        (WebCore::CoreAudioCaptureSource::provideSpeakerData): Only increment counter and
+        check timestamps in debug builds.
+        (WebCore::CoreAudioCaptureSource::processMicrophoneSamples): Ditto.
+        (WebCore::CoreAudioCaptureSource::cleanupAudioUnits): We only need the audio unit
+        name in debug builds.
+        (WebCore::CoreAudioCaptureSource::setupAudioUnits): Ditto. No more internal state
+        lock. Don't try to get the default input device on iOS.
+        (WebCore::CoreAudioCaptureSource::startProducingData): No more internal state lock.
+        Assert if not called on the main thread.
+        (WebCore::CoreAudioCaptureSource::stopProducingData): Ditto.
+        (WebCore::CoreAudioCaptureSource::suspend): Ditto.
+        (WebCore::CoreAudioCaptureSource::resume): Ditto.
+        * platform/mediastream/mac/CoreAudioCaptureSource.h:
+
+2017-04-20  Eric Carlson  <eric.carlson@apple.com>
+
         [MediaStream iOS] Hold process assertion while media capture is active
         https://bugs.webkit.org/show_bug.cgi?id=171017
         <rdar://problem/31719177>
