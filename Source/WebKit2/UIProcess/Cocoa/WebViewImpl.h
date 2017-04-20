@@ -140,6 +140,7 @@ public:
     bool drawsBackground() const;
     bool isOpaque() const;
 
+    void setShouldSuppressFirstResponderChanges(bool);
     bool acceptsFirstMouse(NSEvent *);
     bool acceptsFirstResponder();
     bool becomeFirstResponder();

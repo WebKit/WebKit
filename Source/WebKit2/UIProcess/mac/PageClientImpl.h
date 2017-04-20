@@ -154,7 +154,8 @@ private:
     void setPluginComplexTextInputState(uint64_t pluginComplexTextInputIdentifier, PluginComplexTextInputState) override;
 
     void makeFirstResponder() override;
-    
+    void setShouldSuppressFirstResponderChanges(bool shouldSuppress) override { m_shouldSuppressFirstResponderChanges = shouldSuppress; }
+
     void didPerformDictionaryLookup(const WebCore::DictionaryPopupInfo&) override;
     void dismissContentRelativeChildWindows(bool withAnimation = true) override;
 
@@ -241,6 +242,8 @@ private:
 #if USE(DICTATION_ALTERNATIVES)
     std::unique_ptr<WebCore::AlternativeTextUIController> m_alternativeTextUIController;
 #endif
+
+    bool m_shouldSuppressFirstResponderChanges { false };
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     WebCore::WebMediaSessionManager& mediaSessionManager() override;

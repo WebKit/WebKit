@@ -173,6 +173,9 @@ bool PageClientImpl::isViewFocused()
 
 void PageClientImpl::makeFirstResponder()
 {
+    if (m_shouldSuppressFirstResponderChanges)
+        return;
+
      [[m_view window] makeFirstResponder:m_view];
 }
     

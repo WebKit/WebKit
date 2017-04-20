@@ -3729,6 +3729,13 @@ WEBCORE_COMMAND(yankAndSelect)
     _page->terminateProcess();
 }
 
+#if PLATFORM(MAC)
+- (void)_setShouldSuppressFirstResponderChanges:(BOOL)shouldSuppress
+{
+    _impl->setShouldSuppressFirstResponderChanges(shouldSuppress);
+}
+#endif
+
 #if PLATFORM(IOS)
 static WebCore::FloatSize activeMaximumUnobscuredSize(WKWebView *webView, const CGRect& bounds)
 {

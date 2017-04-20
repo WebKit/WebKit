@@ -1365,6 +1365,11 @@ bool WebViewImpl::isOpaque() const
     return m_page->drawsBackground();
 }
 
+void WebViewImpl::setShouldSuppressFirstResponderChanges(bool shouldSuppress)
+{   
+    m_pageClient->setShouldSuppressFirstResponderChanges(shouldSuppress);
+}
+
 bool WebViewImpl::acceptsFirstResponder()
 {
     return true;

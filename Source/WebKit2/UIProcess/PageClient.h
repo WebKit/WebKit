@@ -262,6 +262,7 @@ public:
 
     virtual void startWindowDrag() = 0;
     virtual NSWindow *platformWindow() = 0;
+    virtual void setShouldSuppressFirstResponderChanges(bool) = 0;
 
 #if WK_API_ENABLED
     virtual NSView *inspectorAttachmentView() = 0;
