@@ -1,3 +1,19 @@
+2017-04-20  Per Arne Vollan  <pvollan@apple.com>
+
+        The toleranceBefore parameter in the AVPlayerItem method seekToTime should not be negative.
+        https://bugs.webkit.org/show_bug.cgi?id=171063
+
+        Reviewed by Eric Carlson.
+
+        The AVPlayerItem method seekToTime will throw an exception if toleranceBefore is negative.
+
+        No new tests since the change is a sanity check.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::seekTask):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::seekToTime):
+
 2017-04-20  Anders Carlsson  <andersca@apple.com>
 
         Replace isFinalStateStatus with isFinalStateResult
