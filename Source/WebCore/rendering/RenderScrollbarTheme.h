@@ -37,7 +37,7 @@ class RenderScrollbarTheme final : public ScrollbarThemeComposite {
 public:
     virtual ~RenderScrollbarTheme() { }
     
-    int scrollbarThickness(ScrollbarControlSize controlSize) override { return ScrollbarTheme::theme().scrollbarThickness(controlSize); }
+    int scrollbarThickness(ScrollbarControlSize controlSize, ScrollbarExpansionState expansionState = ScrollbarExpansionState::Expanded) override { return ScrollbarTheme::theme().scrollbarThickness(controlSize, expansionState); }
 
     ScrollbarButtonsPlacement buttonsPlacement() const override { return ScrollbarTheme::theme().buttonsPlacement(); }
 

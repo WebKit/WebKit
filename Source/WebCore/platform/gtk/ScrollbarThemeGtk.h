@@ -48,7 +48,7 @@ public:
 
     bool paint(Scrollbar&, GraphicsContext&, const IntRect& damageRect) override;
     ScrollbarButtonPressAction handleMousePressEvent(Scrollbar&, const PlatformMouseEvent&, ScrollbarPart) override;
-    int scrollbarThickness(ScrollbarControlSize) override;
+    int scrollbarThickness(ScrollbarControlSize, ScrollbarExpansionState = ScrollbarExpansionState::Expanded) override;
     int minimumThumbLength(Scrollbar&) override;
 
     // TODO: These are the default GTK+ values. At some point we should pull these from the theme itself.

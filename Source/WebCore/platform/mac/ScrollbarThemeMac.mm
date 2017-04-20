@@ -240,11 +240,11 @@ void ScrollbarThemeMac::preferencesChanged()
     usesOverlayScrollbarsChanged();
 }
 
-int ScrollbarThemeMac::scrollbarThickness(ScrollbarControlSize controlSize)
+int ScrollbarThemeMac::scrollbarThickness(ScrollbarControlSize controlSize, ScrollbarExpansionState expansionState)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     NSScrollerImp *scrollerImp = [NSScrollerImp scrollerImpWithStyle:recommendedScrollerStyle() controlSize:scrollbarControlSizeToNSControlSize(controlSize) horizontal:NO replacingScrollerImp:nil];
-    [scrollerImp setExpanded:YES];
+    [scrollerImp setExpanded:(expansionState == ScrollbarExpansionState::Expanded)];
     return [scrollerImp trackBoxWidth];
     END_BLOCK_OBJC_EXCEPTIONS;
 }

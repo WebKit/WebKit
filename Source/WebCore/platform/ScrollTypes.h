@@ -124,6 +124,8 @@ enum ScrollbarMode { ScrollbarAuto, ScrollbarAlwaysOff, ScrollbarAlwaysOn };
 
 enum ScrollbarControlSize { RegularScrollbar, SmallScrollbar };
 
+enum class ScrollbarExpansionState { Regular, Expanded };
+
 enum class ScrollEventAxis { Horizontal, Vertical };
 
 typedef unsigned ScrollbarControlState;

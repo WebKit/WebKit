@@ -1,3 +1,35 @@
+2017-04-20  Tim Horton  <timothy_horton@apple.com>
+
+        Make it possible to request the non-expanded scrollbar width from ScrollbarTheme
+        https://bugs.webkit.org/show_bug.cgi?id=171047
+
+        Reviewed by Sam Weinig.
+
+        No new tests, new behavior is not exposed in any way.
+
+        * platform/ScrollTypes.h:
+        * platform/ScrollbarTheme.h:
+        (WebCore::ScrollbarTheme::scrollbarThickness):
+        * platform/gtk/ScrollbarThemeGtk.cpp:
+        (WebCore::ScrollbarThemeGtk::scrollbarThickness):
+        * platform/gtk/ScrollbarThemeGtk.h:
+        * platform/ios/ScrollbarThemeIOS.h:
+        * platform/ios/ScrollbarThemeIOS.mm:
+        (WebCore::ScrollbarThemeIOS::scrollbarThickness):
+        * platform/mac/ScrollbarThemeMac.h:
+        * platform/mac/ScrollbarThemeMac.mm:
+        (WebCore::ScrollbarThemeMac::scrollbarThickness):
+        * platform/mock/ScrollbarThemeMock.cpp:
+        (WebCore::ScrollbarThemeMock::scrollbarThickness):
+        * platform/mock/ScrollbarThemeMock.h:
+        * platform/win/ScrollbarThemeWin.cpp:
+        (WebCore::ScrollbarThemeWin::scrollbarThickness):
+        * platform/win/ScrollbarThemeWin.h:
+        * rendering/RenderScrollbarTheme.h:
+        On Mac, when the scrollbar is hovered, it gets bigger.
+        Currently, scrollbarThickness always returns the big size.
+        It should be possible to request the smaller, "regular" scrollbar size as well.
+
 2017-04-20  Jon Lee  <jonlee@apple.com>
 
         Update pip placard to "picture in picture"

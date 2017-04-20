@@ -61,7 +61,7 @@ void ScrollbarThemeIOS::preferencesChanged()
 {
 }
 
-int ScrollbarThemeIOS::scrollbarThickness(ScrollbarControlSize)
+int ScrollbarThemeIOS::scrollbarThickness(ScrollbarControlSize, ScrollbarExpansionState)
 {
     return 0;
 }
