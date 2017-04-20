@@ -88,4 +88,8 @@ class TimeControl extends LayoutItem
         this.remainingTimeLabel.x = this.scrubber.x + this.scrubber.width + ScrubberMargin;
     }
 
+    updateScrubberLabel()
+    {
+        this.scrubber.inputAccessibleLabel = this.elapsedTimeLabel.value;
+    }
 }

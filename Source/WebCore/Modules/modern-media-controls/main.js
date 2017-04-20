@@ -45,3 +45,23 @@ function UIString(string)
     console.error(`Localization for "${string}" not found.`);
     return "LOCALIZED STRING NOT FOUND";
 }
+
+function formatTimeByUnit(value)
+{
+    const time = value || 0;
+    const absTime = Math.abs(time);
+    return {
+        "seconds": Math.floor(absTime % 60).toFixed(0),
+        "minutes": Math.floor((absTime / 60) % 60).toFixed(0),
+        "hours": Math.floor(absTime / (60 * 60)).toFixed(0)
+    };
+}
+
+function unitizeTime(value, unit)
+{
+    let returnedUnit = UIString(unit);
+    if (value > 1)
+        returnedUnit = UIString(`${unit}s`);
+
+    return `${value} ${returnedUnit}`;
+}

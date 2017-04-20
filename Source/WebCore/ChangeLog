@@ -1,3 +1,31 @@
+2017-04-20  Aaron Chu  <aaron_chu@apple.com>
+
+        AX: Modern Media Controls Timeline slider should be operable
+        https://bugs.webkit.org/show_bug.cgi?id=170250
+
+        Reviewed by Antoine Quint.
+
+        Added a "change" event listener and aria-valuetext to the slider so that when a
+        VoiceOver user operates the timeline control, VO speaks the updated timestamp
+
+        Test: media/modern-media-controls/scrubber/scrubber-has-correct-ax-label.html
+
+        * English.lproj/modern-media-controls-localized-strings.js:
+        * Modules/modern-media-controls/controls/scrubber.js:
+        (Scrubber.prototype.set inputAccessibleLabel):
+        (Scrubber.prototype._formatTime):
+        * Modules/modern-media-controls/controls/slider.js:
+        (Slider.prototype.handleEvent):
+        (Slider.prototype._handleInputEvent): Deleted.
+        * Modules/modern-media-controls/controls/time-control.js:
+        (TimeControl.prototype.updateScrubberLabel):
+        * Modules/modern-media-controls/controls/time-label.js:
+        (TimeLabel.prototype.commitProperty):
+        (TimeLabel.prototype._formattedTime):
+        * Modules/modern-media-controls/main.js:
+        (formatTimeByUnit):
+        (unitizeTime):
+
 2017-04-20  Andy Estes  <aestes@apple.com>
 
         Fix indentation in AVKitSPI.h

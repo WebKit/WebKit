@@ -58,12 +58,27 @@ class Scrubber extends Slider
         this.needsLayout = true;
     }
 
+    set inputAccessibleLabel(timeValue)
+    {
+        this._input.element.setAttribute("aria-valuetext", this._formatTime(timeValue));
+    }
+
     layoutTraitsDidChange()
     {
         this.height = (this.layoutTraits & LayoutTraits.Compact) ? 15 : 23; 
     }
 
     // Protected
+
+    _formatTime(timeInSeconds)
+    {
+        const time = formatTimeByUnit(timeInSeconds);
+        const timeStrings = [unitizeTime(time.minutes, "Minute"), unitizeTime(time.seconds, "Second")];
+        if (time.hours > 0)
+            timeStrings.unshift(unitizeTime(time.hours, "Hour"));
+
+        return timeStrings.join(" ");
+    }
 
     draw(ctx)
     {

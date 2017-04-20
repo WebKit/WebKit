@@ -1,0 +1,13 @@
+Testing for an accessibility text on the scrubber that correctly reflects the changes in media.currentTime.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS scrubberInput.getAttribute('aria-valuetext') is "0 Minute 0 Second"
+PASS media.currentTime is 2
+PASS scrubberInput.getAttribute('aria-valuetext') === '0 Minute 2 Seconds' became true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
