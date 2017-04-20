@@ -1495,6 +1495,7 @@ webkit.org/b/165386 media/modern-media-controls/seek-backward-support/seek-backw
 
 webkit.org/b/169679 [ Debug ] media/modern-media-controls/time-label/time-label-white-space-nowrap.html [ Pass Failure ]
 
+webkit.org/b/169109 media/modern-media-controls/tracks-support/tracks-support-click-track-in-panel.html [ Pass Timeout ]
 webkit.org/b/169158 media/modern-media-controls/tracks-support/tracks-support-show-panel-after-dragging-controls.html [ Pass Failure ]
 
 webkit.org/b/164229 [ Debug ] media/modern-media-controls/volume-support/volume-support-click.html [ Pass Timeout ]
