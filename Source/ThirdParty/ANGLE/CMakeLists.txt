@@ -42,9 +42,6 @@ set(ANGLE_SOURCES
     src/common/mathutil.cpp
     src/common/MemoryBuffer.cpp
     src/common/string_utils.cpp
-    src/common/system_utils_linux.cpp
-    src/common/system_utils_mac.cpp
-    src/common/system_utils_win.cpp
     src/common/tls.cpp
     src/common/utilities.cpp
     src/compiler/preprocessor/DiagnosticsBase.cpp
@@ -156,6 +153,7 @@ set(ANGLE_SOURCES
     src/libANGLE/Device.cpp
     src/libANGLE/Display.cpp
     src/libANGLE/Error.cpp
+    src/libANGLE/es3_copy_conversion_table_autogen.cpp
     src/libANGLE/Fence.cpp
     src/libANGLE/format_map_autogen.cpp
     src/libANGLE/formatutils.cpp
@@ -166,6 +164,7 @@ set(ANGLE_SOURCES
     src/libANGLE/Image.cpp
     src/libANGLE/ImageIndex.cpp
     src/libANGLE/IndexRangeCache.cpp
+    src/libANGLE/LoggingAnnotator.cpp
     src/libANGLE/Path.cpp
     src/libANGLE/Platform.cpp
     src/libANGLE/Program.cpp
@@ -176,10 +175,12 @@ set(ANGLE_SOURCES
     src/libANGLE/renderer/ContextImpl.cpp
     src/libANGLE/renderer/DeviceImpl.cpp
     src/libANGLE/renderer/DisplayImpl.cpp
-    src/libANGLE/renderer/load_functions_table_autogen.cpp
-    src/libANGLE/renderer/renderer_utils.cpp
+    src/libANGLE/renderer/Format_table_autogen.cpp
     src/libANGLE/renderer/SurfaceImpl.cpp
     src/libANGLE/renderer/TextureImpl.cpp
+    src/libANGLE/renderer/load_functions_table_autogen.cpp
+    src/libANGLE/renderer/renderer_utils.cpp
+    src/libANGLE/renderer/driver_utils.cpp
     src/libANGLE/ResourceManager.cpp
     src/libANGLE/Sampler.cpp
     src/libANGLE/Shader.cpp
@@ -187,15 +188,19 @@ set(ANGLE_SOURCES
     src/libANGLE/Stream.cpp
     src/libANGLE/Surface.cpp
     src/libANGLE/Texture.cpp
+    src/libANGLE/Thread.cpp
     src/libANGLE/TransformFeedback.cpp
     src/libANGLE/Uniform.cpp
+    src/libANGLE/UniformLinker.cpp
     src/libANGLE/validationEGL.cpp
     src/libANGLE/validationES.cpp
     src/libANGLE/validationES2.cpp
     src/libANGLE/validationES3.cpp
     src/libANGLE/validationES31.cpp
+    src/libANGLE/VaryingPacking.cpp
     src/libANGLE/VertexArray.cpp
     src/libANGLE/VertexAttribute.cpp
+    src/libANGLE/WorkerThread.cpp
     src/third_party/compiler/ArrayBoundsClamper.cpp
 )
 

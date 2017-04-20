@@ -1,4 +1,5 @@
 list(APPEND ANGLE_SOURCES
+    src/common/system_utils_mac.cpp
     src/libANGLE/renderer/gl/cgl/DisplayCGL.mm
     src/libANGLE/renderer/gl/cgl/PbufferSurfaceCGL.mm
     src/libANGLE/renderer/gl/cgl/WindowSurfaceCGL.mm

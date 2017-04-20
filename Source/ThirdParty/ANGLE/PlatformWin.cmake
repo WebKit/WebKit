@@ -18,7 +18,6 @@ list(APPEND ANGLEEGL_SOURCES
 )
 
 list(APPEND ANGLEEGL_COMPILE_DEFINITIONS
-    ANGLE_WEBKIT_WIN
     __STDC_CONSTANT_MACROS
 )
 
@@ -28,7 +27,6 @@ list(APPEND ANGLEGLESv2_SOURCES
 )
 
 list(APPEND ANGLEGLESv2_COMPILE_DEFINITIONS
-    ANGLE_WEBKIT_WIN
     __STDC_CONSTANT_MACROS
     __STDC_LIMIT_MACROS
 )
@@ -38,6 +36,7 @@ list(APPEND ANGLEGLESv2_LIBRARIES
 )
 
 list(APPEND ANGLE_SOURCES
+    src/common/system_utils_win.cpp
     src/compiler/translator/ASTMetadataHLSL.cpp
     src/compiler/translator/BuiltInFunctionEmulatorHLSL.cpp
     src/compiler/translator/OutputHLSL.cpp
@@ -50,6 +49,7 @@ list(APPEND ANGLE_SOURCES
     src/compiler/translator/blocklayoutHLSL.cpp
     src/libANGLE/renderer/d3d/BufferD3D.cpp
     src/libANGLE/renderer/d3d/CompilerD3D.cpp
+    src/libANGLE/renderer/d3d/SwapChainD3D.cpp
     src/libANGLE/renderer/d3d/d3d11/Blit11.cpp
     src/libANGLE/renderer/d3d/d3d11/Buffer11.cpp
     src/libANGLE/renderer/d3d/d3d11/Clear11.cpp
@@ -121,6 +121,8 @@ list(APPEND ANGLE_SOURCES
     src/libANGLE/renderer/d3d/TextureD3D.cpp
     src/libANGLE/renderer/d3d/VertexBuffer.cpp
     src/libANGLE/renderer/d3d/VertexDataManager.cpp
+    src/third_party/murmurhash/MurmurHash3.cpp
+    src/third_party/systeminfo/SystemInfo.cpp
 )
 
 list(APPEND ANGLE_COMPILE_DEFINITIONS
@@ -131,5 +133,4 @@ list(APPEND ANGLE_COMPILE_DEFINITIONS
     ANGLE_SKIP_DXGI_1_2_CHECK=1
     __STDC_CONSTANT_MACROS
     __STDC_LIMIT_MACROS
-    ANGLE_WEBKIT_WIN
 )

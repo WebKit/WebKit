@@ -184,12 +184,6 @@ void PlatformDisplay::initializeEGLDisplay()
     m_eglDisplayInitialized = true;
 
     if (m_eglDisplay == EGL_NO_DISPLAY) {
-        // EGL is optionally soft linked on Windows.
-#if PLATFORM(WIN)
-        auto eglGetDisplay = eglGetDisplayPtr();
-        if (!eglGetDisplay)
-            return;
-#endif
         m_eglDisplay = eglGetDisplay(EGL_DEFAULT_DISPLAY);
         if (m_eglDisplay == EGL_NO_DISPLAY)
             return;

@@ -1,3 +1,25 @@
+2017-04-20  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Fix build break after updating ANGLE
+        https://bugs.webkit.org/show_bug.cgi?id=170980
+
+        Reviewed by Brent Fulgham.
+
+        By stopping using SoftLinking for ANGLE, some changes are needed
+        for WebCore and WebKit.
+          - Define a macro 'GL_GLEXT_PROTOTYPES' before #include <GLES2/gl2.h> or <GLES2/gl2ext.h>.
+          - Link libEGL import library explicitly.
+
+        * PlatformWin.cmake: Link libEGL to WebCore.
+        * platform/graphics/PlatformDisplay.cpp:
+        (WebCore::PlatformDisplay::initializeEGLDisplay): Removed the code for SoftLinking.
+        * platform/graphics/GLContext.cpp: Define GL_GLEXT_PROTOTYPES.
+        * platform/graphics/egl/GLContextEGL.cpp: Ditto.
+        * platform/graphics/opengl/Extensions3DOpenGLCommon.cpp: Ditto.
+        * platform/graphics/opengl/Extensions3DOpenGLES.h: Ditto.
+        * platform/graphics/opengl/TemporaryOpenGLSetting.cpp: Ditto.
+        * platform/graphics/texmap/TextureMapperGC3DPlatformLayer.cpp: Ditto.
+
 2017-04-20  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Add regular expression support to XHR breakpoints
