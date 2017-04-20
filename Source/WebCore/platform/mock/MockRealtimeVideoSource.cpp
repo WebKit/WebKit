@@ -50,9 +50,15 @@ namespace WebCore {
 
 class MockRealtimeVideoSourceFactory : public RealtimeMediaSource::CaptureFactory {
 public:
-    RefPtr<RealtimeMediaSource> createMediaSourceForCaptureDeviceWithConstraints(const CaptureDevice& captureDevice, const MediaConstraints* constraints, String&) final {
-        if (captureDevice.type() == CaptureDevice::DeviceType::Video)
-            return MockRealtimeVideoSource::create(captureDevice.label(), constraints);
+    RefPtr<RealtimeMediaSource> createMediaSourceForCaptureDeviceWithConstraints(const String& deviceID, CaptureDevice::DeviceType type, const MediaConstraints* constraints, String&) final {
+        if (type != CaptureDevice::DeviceType::Video)
+            return nullptr;
+
+        for (auto& device : MockRealtimeMediaSource::videoDevices()) {
+            if (device.persistentId() == deviceID)
+                return MockRealtimeVideoSource::create(device.label(), constraints);
+        }
+
         return nullptr;
     }
 };

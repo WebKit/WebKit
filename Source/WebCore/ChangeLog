@@ -1,3 +1,27 @@
+2017-04-20  Jer Noble  <jer.noble@apple.com>
+
+        [MediaCapture] gUM() with CoreAudio fails if capturing audio in the UIProcess.
+        https://bugs.webkit.org/show_bug.cgi?id=171021
+
+        Reviewed by Eric Carlson.
+
+        Refactor the creation of RealtimeMediaSources to take a persistent device ID rather
+        than a CaptureDevice directly. This allows WebKit2 to iterate devices in the UIProcess
+        rather than the WebProcess.
+
+        * platform/mediastream/RealtimeMediaSource.h:
+        * platform/mediastream/mac/AVAudioCaptureSource.mm:
+        * platform/mediastream/mac/AVVideoCaptureSource.mm:
+        * platform/mediastream/mac/CoreAudioCaptureSource.cpp:
+        (WebCore::CoreAudioCaptureSource::create):
+        (WebCore::CoreAudioCaptureSource::CoreAudioCaptureSource):
+        * platform/mediastream/mac/CoreAudioCaptureSource.h:
+        * platform/mediastream/mac/RealtimeMediaSourceCenterMac.cpp:
+        (WebCore::RealtimeMediaSourceCenterMac::createMediaStream):
+        (WebCore::RealtimeMediaSourceCenterMac::bestSourcesForTypeAndConstraints):
+        * platform/mock/MockRealtimeAudioSource.cpp:
+        * platform/mock/MockRealtimeVideoSource.cpp:
+
 2017-04-20  Tim Horton  <timothy_horton@apple.com>
 
         Make it possible to request the non-expanded scrollbar width from ScrollbarTheme

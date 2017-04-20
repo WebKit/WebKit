@@ -43,9 +43,15 @@ namespace WebCore {
 
 class MockRealtimeAudioSourceFactory : public RealtimeMediaSource::CaptureFactory {
 public:
-    RefPtr<RealtimeMediaSource> createMediaSourceForCaptureDeviceWithConstraints(const CaptureDevice& captureDevice, const MediaConstraints* constraints, String&) final {
-        if (captureDevice.type() == CaptureDevice::DeviceType::Audio)
-            return MockRealtimeAudioSource::create(captureDevice.label(), constraints);
+    RefPtr<RealtimeMediaSource> createMediaSourceForCaptureDeviceWithConstraints(const String& deviceID, CaptureDevice::DeviceType type, const MediaConstraints* constraints, String&) final {
+        if (type != CaptureDevice::DeviceType::Audio)
+            return nullptr;
+
+        for (auto& device : MockRealtimeMediaSource::audioDevices()) {
+            if (device.persistentId() == deviceID)
+                return MockRealtimeAudioSource::create(device.label(), constraints);
+        }
+
         return nullptr;
     }
 };

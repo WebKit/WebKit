@@ -164,7 +164,7 @@ void UserMediaCaptureManager::initialize(const WebProcessCreationParameters& par
         RealtimeMediaSourceCenter::singleton().setAudioFactory(*this);
 }
 
-RefPtr<RealtimeMediaSource> UserMediaCaptureManager::createMediaSourceForCaptureDeviceWithConstraints(const CaptureDevice& device, const MediaConstraints* constraints, String& invalidConstraints)
+RefPtr<RealtimeMediaSource> UserMediaCaptureManager::createMediaSourceForCaptureDeviceWithConstraints(const String& deviceID, CaptureDevice::DeviceType type, const MediaConstraints* constraints, String& invalidConstraints)
 {
     if (!constraints)
         return nullptr;
@@ -176,9 +176,22 @@ RefPtr<RealtimeMediaSource> UserMediaCaptureManager::createMediaSourceForCapture
     constraintsData.isValid = constraints->isValid();
     bool succeeded;
 
-    m_process.sendSync(Messages::UserMediaCaptureManagerProxy::CreateMediaSourceForCaptureDeviceWithConstraints(id, device, constraintsData), Messages::UserMediaCaptureManagerProxy::CreateMediaSourceForCaptureDeviceWithConstraints::Reply(succeeded, invalidConstraints), 0);
+    m_process.sendSync(Messages::UserMediaCaptureManagerProxy::CreateMediaSourceForCaptureDeviceWithConstraints(id, deviceID, type, constraintsData), Messages::UserMediaCaptureManagerProxy::CreateMediaSourceForCaptureDeviceWithConstraints::Reply(succeeded, invalidConstraints), 0);
 
-    auto source = adoptRef(new Source(String::number(id), RealtimeMediaSource::Type::Audio, device.label(), id, *this));
+    RealtimeMediaSource::Type sourceType;
+    switch (type) {
+    case WebCore::CaptureDevice::DeviceType::Audio:
+        sourceType = WebCore::RealtimeMediaSource::Type::Audio;
+        break;
+    case WebCore::CaptureDevice::DeviceType::Video:
+        sourceType = WebCore::RealtimeMediaSource::Type::Video;
+        break;
+    case WebCore::CaptureDevice::DeviceType::Unknown:
+    default:
+        sourceType = WebCore::RealtimeMediaSource::Type::None;
+        break;
+    }
+    auto source = adoptRef(new Source(String::number(id), sourceType, emptyString(), id, *this));
     m_sources.set(id, source);
     return source;
 }

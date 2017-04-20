@@ -1,3 +1,21 @@
+2017-04-20  Jer Noble  <jer.noble@apple.com>
+
+        [MediaCapture] gUM() with CoreAudio fails if capturing audio in the UIProcess.
+        https://bugs.webkit.org/show_bug.cgi?id=171021
+
+        Reviewed by Eric Carlson.
+
+        Pass a deviceID rather than a CaptureDevice across the process boundary.
+
+        * Shared/WebCoreArgumentCoders.h:
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.cpp:
+        (WebKit::UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstraints):
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.h:
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.messages.in:
+        * WebProcess/cocoa/UserMediaCaptureManager.cpp:
+        (WebKit::UserMediaCaptureManager::createMediaSourceForCaptureDeviceWithConstraints):
+        * WebProcess/cocoa/UserMediaCaptureManager.h:
+
 2017-04-20  Alex Christensen  <achristensen@webkit.org>
 
         Fix assertions in webProcessProxyFromConnection

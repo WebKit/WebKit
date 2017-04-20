@@ -111,9 +111,9 @@ const OSType videoCaptureFormat = kCVPixelFormatType_420YpCbCr8BiPlanarFullRange
 
 class AVVideoCaptureSourceFactory : public RealtimeMediaSource::CaptureFactory {
 public:
-    RefPtr<RealtimeMediaSource> createMediaSourceForCaptureDeviceWithConstraints(const CaptureDevice& captureDevice, const MediaConstraints* constraints, String& invalidConstraint) final {
-        AVCaptureDeviceTypedef *device = [getAVCaptureDeviceClass() deviceWithUniqueID:captureDevice.persistentId()];
-        ASSERT(!device || (captureDevice.type() == CaptureDevice::DeviceType::Video));
+    RefPtr<RealtimeMediaSource> createMediaSourceForCaptureDeviceWithConstraints(const String& deviceID, CaptureDevice::DeviceType type, const MediaConstraints* constraints, String& invalidConstraint) final {
+        AVCaptureDeviceTypedef *device = [getAVCaptureDeviceClass() deviceWithUniqueID:deviceID];
+        ASSERT_UNUSED(type, !device || (type == CaptureDevice::DeviceType::Video));
         return device ? AVVideoCaptureSource::create(device, emptyString(), constraints, invalidConstraint) : nullptr;
     }
 };

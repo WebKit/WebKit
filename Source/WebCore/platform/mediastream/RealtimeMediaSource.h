@@ -37,6 +37,7 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "AudioSourceProvider.h"
+#include "CaptureDevice.h"
 #include "Image.h"
 #include "MediaConstraints.h"
 #include "MediaSample.h"
@@ -54,7 +55,6 @@ class MediaTime;
 namespace WebCore {
 
 class AudioStreamDescription;
-class CaptureDevice;
 class FloatRect;
 class GraphicsContext;
 class MediaStreamPrivate;
@@ -86,7 +86,7 @@ public:
     class CaptureFactory {
     public:
         virtual ~CaptureFactory() = default;
-        virtual RefPtr<RealtimeMediaSource> createMediaSourceForCaptureDeviceWithConstraints(const CaptureDevice&, const MediaConstraints*, String&) = 0;
+        virtual RefPtr<RealtimeMediaSource> createMediaSourceForCaptureDeviceWithConstraints(const String& audioDeviceID, CaptureDevice::DeviceType, const MediaConstraints*, String&) = 0;
 
     protected:
         CaptureFactory() = default;

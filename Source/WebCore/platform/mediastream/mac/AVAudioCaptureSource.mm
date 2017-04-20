@@ -79,9 +79,9 @@ namespace WebCore {
 
 class AVAudioCaptureSourceFactory : public RealtimeMediaSource::CaptureFactory {
 public:
-    RefPtr<RealtimeMediaSource> createMediaSourceForCaptureDeviceWithConstraints(const CaptureDevice& captureDevice, const MediaConstraints* constraints, String& invalidConstraint) final {
-        AVCaptureDeviceTypedef *device = [getAVCaptureDeviceClass() deviceWithUniqueID:captureDevice.persistentId()];
-        ASSERT(!device || (device && captureDevice.type() == CaptureDevice::DeviceType::Audio));
+    RefPtr<RealtimeMediaSource> createMediaSourceForCaptureDeviceWithConstraints(const String& deviceID, CaptureDevice::DeviceType type, const MediaConstraints* constraints, String& invalidConstraint) final {
+        AVCaptureDeviceTypedef *device = [getAVCaptureDeviceClass() deviceWithUniqueID:deviceID];
+        ASSERT_UNUSED(type, !device || (device && type == CaptureDevice::DeviceType::Audio));
         return device ? AVAudioCaptureSource::create(device, emptyString(), constraints, invalidConstraint) : nullptr;
     }
 };

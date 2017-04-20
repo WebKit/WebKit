@@ -53,7 +53,7 @@ class CaptureDeviceInfo;
 class CoreAudioCaptureSource : public RealtimeMediaSource {
 public:
 
-    static RefPtr<CoreAudioCaptureSource> create(const CaptureDevice&, const MediaConstraints*, String&);
+    static RefPtr<CoreAudioCaptureSource> create(const String& deviceID, CaptureDevice::DeviceType, const MediaConstraints*, String&);
 
     WEBCORE_EXPORT static CaptureFactory& factory();
 
@@ -68,7 +68,7 @@ public:
     CMClockRef timebaseClock();
 
 private:
-    CoreAudioCaptureSource(const CaptureDevice&);
+    CoreAudioCaptureSource(const String& deviceID);
     virtual ~CoreAudioCaptureSource();
 
     void startProducingData() final;

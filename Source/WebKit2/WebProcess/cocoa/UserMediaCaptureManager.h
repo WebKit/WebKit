@@ -54,7 +54,7 @@ private:
     void initialize(const WebProcessCreationParameters&) final;
 
     // WebCore::RealtimeMediaSource::Factory:
-    RefPtr<WebCore::RealtimeMediaSource> createMediaSourceForCaptureDeviceWithConstraints(const WebCore::CaptureDevice&, const WebCore::MediaConstraints*, String&) final;
+    RefPtr<WebCore::RealtimeMediaSource> createMediaSourceForCaptureDeviceWithConstraints(const String& deviceID, WebCore::CaptureDevice::DeviceType, const WebCore::MediaConstraints*, String&) final;
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;

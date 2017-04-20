@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ArgumentCoders.h"
+#include <WebCore/CaptureDevice.h>
 #include <WebCore/ColorSpace.h>
 #include <WebCore/DiagnosticLoggingClient.h>
 #include <WebCore/FrameLoaderTypes.h>
@@ -696,6 +697,17 @@ template<> struct EnumTraits<WebCore::IndexedDB::GetAllType> {
         WebCore::IndexedDB::GetAllType,
         WebCore::IndexedDB::GetAllType::Keys,
         WebCore::IndexedDB::GetAllType::Values
+    >;
+};
+#endif
+
+#if ENABLE(MEDIA_STREAM)
+template<> struct EnumTraits<WebCore::CaptureDevice::DeviceType> {
+    using values = EnumValues<
+        WebCore::CaptureDevice::DeviceType,
+        WebCore::CaptureDevice::DeviceType::Unknown,
+        WebCore::CaptureDevice::DeviceType::Audio,
+        WebCore::CaptureDevice::DeviceType::Video
     >;
 };
 #endif

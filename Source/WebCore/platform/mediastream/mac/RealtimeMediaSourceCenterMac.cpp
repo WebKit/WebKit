@@ -135,27 +135,21 @@ void RealtimeMediaSourceCenterMac::createMediaStream(NewMediaStreamHandler compl
     Vector<Ref<RealtimeMediaSource>> videoSources;
     String invalidConstraint;
 
-    if (!audioDeviceID.isEmpty()) {
-        auto audioDevice = m_audioCaptureDeviceManager->deviceWithUID(audioDeviceID, RealtimeMediaSource::Type::Audio);
-        if (audioDevice && m_audioFactory) {
-            if (auto audioSource = m_audioFactory->createMediaSourceForCaptureDeviceWithConstraints(audioDevice.value(), audioConstraints, invalidConstraint))
-                audioSources.append(audioSource.releaseNonNull());
+    if (!audioDeviceID.isEmpty() && m_audioFactory) {
+        if (auto audioSource = m_audioFactory->createMediaSourceForCaptureDeviceWithConstraints(audioDeviceID, CaptureDevice::DeviceType::Audio, audioConstraints, invalidConstraint))
+            audioSources.append(audioSource.releaseNonNull());
 #if !LOG_DISABLED
-            if (!invalidConstraint.isEmpty())
-                LOG(Media, "RealtimeMediaSourceCenterMac::createMediaStream(%p), audio constraints failed to apply: %s", this, invalidConstraint.utf8().data());
+        if (!invalidConstraint.isEmpty())
+            LOG(Media, "RealtimeMediaSourceCenterMac::createMediaStream(%p), audio constraints failed to apply: %s", this, invalidConstraint.utf8().data());
 #endif
-        }
     }
-    if (!videoDeviceID.isEmpty()) {
-        auto videoDevice = m_videoCaptureDeviceManager->deviceWithUID(videoDeviceID, RealtimeMediaSource::Type::Video);
-        if (videoDevice && m_videoFactory) {
-            if (auto videoSource = m_videoFactory->createMediaSourceForCaptureDeviceWithConstraints(videoDevice.value(), videoConstraints, invalidConstraint))
-                videoSources.append(videoSource.releaseNonNull());
+    if (!videoDeviceID.isEmpty() && m_videoFactory) {
+        if (auto videoSource = m_videoFactory->createMediaSourceForCaptureDeviceWithConstraints(videoDeviceID, CaptureDevice::DeviceType::Video, videoConstraints, invalidConstraint))
+            videoSources.append(videoSource.releaseNonNull());
 #if !LOG_DISABLED
         if (!invalidConstraint.isEmpty())
             LOG(Media, "RealtimeMediaSourceCenterMac::createMediaStream(%p), video constraints failed to apply: %s", this, invalidConstraint.utf8().data());
 #endif
-        }
     }
 
     if (videoSources.isEmpty() && audioSources.isEmpty())
@@ -197,7 +191,7 @@ Vector<String> RealtimeMediaSourceCenterMac::bestSourcesForTypeAndConstraints(Re
         if (!factory)
             continue;
 
-        if (auto captureSource = factory->createMediaSourceForCaptureDeviceWithConstraints(captureDevice, &constraints, invalidConstraint))
+        if (auto captureSource = factory->createMediaSourceForCaptureDeviceWithConstraints(captureDevice.persistentId(), deviceType, &constraints, invalidConstraint))
             bestSources.append(captureSource.leakRef());
     }
 

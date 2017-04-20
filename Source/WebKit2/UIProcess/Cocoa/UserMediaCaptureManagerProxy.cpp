@@ -125,10 +125,10 @@ UserMediaCaptureManagerProxy::~UserMediaCaptureManagerProxy()
     m_process.removeMessageReceiver(Messages::UserMediaCaptureManagerProxy::messageReceiverName());
 }
 
-void UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstraints(uint64_t id, const CaptureDevice& device, const MediaConstraintsData& constraintsData, bool& succeeded, String& invalidConstraints)
+void UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstraints(uint64_t id, const String& deviceID, WebCore::CaptureDevice::DeviceType type, const MediaConstraintsData& constraintsData, bool& succeeded, String& invalidConstraints)
 {
     auto constraints = MediaConstraintsImpl::create(constraintsData);
-    auto source = RealtimeMediaSourceCenter::singleton().audioFactory()->createMediaSourceForCaptureDeviceWithConstraints(device, constraints.ptr(), invalidConstraints);
+    auto source = RealtimeMediaSourceCenter::singleton().audioFactory()->createMediaSourceForCaptureDeviceWithConstraints(deviceID, type, constraints.ptr(), invalidConstraints);
     succeeded = !!source;
 
     if (source)
