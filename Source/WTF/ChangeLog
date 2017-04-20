@@ -1,3 +1,19 @@
+2017-04-20  Sam Weinig  <sam@webkit.org>
+
+        Move notFound into its own file
+        https://bugs.webkit.org/show_bug.cgi?id=170972
+
+        Reviewed by Zalan Bujtas.
+
+        It is odd to require including <wtf/Vector.h> just to use WTF::notFound.
+        This is not causing any current problems, but does in few changes I have
+        queued up.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/NotFound.h: Added.
+        * wtf/Vector.h:
+        * wtf/text/StringCommon.h:
+
 2017-04-20  Filip Pizlo  <fpizlo@apple.com>
 
         Optimize SharedArrayBuffer in the DFG+FTL

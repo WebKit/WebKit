@@ -28,6 +28,7 @@
 
 #include <unicode/uchar.h>
 #include <wtf/ASCIICType.h>
+#include <wtf/NotFound.h>
 
 namespace WTF {
 
