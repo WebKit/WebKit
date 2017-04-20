@@ -74,6 +74,7 @@ public:
     virtual ~UIClient() { }
 
     virtual RefPtr<WebKit::WebPageProxy> createNewPage(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, const WebCore::SecurityOriginData&, const WebCore::ResourceRequest&, const WebCore::WindowFeatures&, const WebKit::NavigationActionData&) { return nullptr; }
+    virtual bool createNewPageAsync(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, const WebCore::SecurityOriginData&, const WebCore::ResourceRequest&, const WebCore::WindowFeatures&, const WebKit::NavigationActionData&, std::function<void (RefPtr<WebKit::WebPageProxy>)> completionHandler) { return false; }
     virtual void showPage(WebKit::WebPageProxy*) { }
     virtual void fullscreenMayReturnToInline(WebKit::WebPageProxy*) { }
     virtual void didEnterFullscreen(WebKit::WebPageProxy*) { }

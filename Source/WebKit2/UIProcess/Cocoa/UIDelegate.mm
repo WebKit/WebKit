@@ -92,6 +92,7 @@ void UIDelegate::setDelegate(id <WKUIDelegate> delegate)
     m_delegate = delegate;
 
     m_delegateMethods.webViewCreateWebViewWithConfigurationForNavigationActionWindowFeatures = [delegate respondsToSelector:@selector(webView:createWebViewWithConfiguration:forNavigationAction:windowFeatures:)];
+    m_delegateMethods.webViewCreateWebViewWithConfigurationForNavigationActionWindowFeaturesAsync = [delegate respondsToSelector:@selector(_webView:createWebViewWithConfiguration:forNavigationAction:windowFeatures:completionHandler:)];
     m_delegateMethods.webViewRunJavaScriptAlertPanelWithMessageInitiatedByFrameCompletionHandler = [delegate respondsToSelector:@selector(webView:runJavaScriptAlertPanelWithMessage:initiatedByFrame:completionHandler:)];
     m_delegateMethods.webViewRunJavaScriptConfirmPanelWithMessageInitiatedByFrameCompletionHandler = [delegate respondsToSelector:@selector(webView:runJavaScriptConfirmPanelWithMessage:initiatedByFrame:completionHandler:)];
     m_delegateMethods.webViewRunJavaScriptTextInputPanelWithPromptDefaultTextInitiatedByFrameCompletionHandler = [delegate respondsToSelector:@selector(webView:runJavaScriptTextInputPanelWithPrompt:defaultText:initiatedByFrame:completionHandler:)];
@@ -169,14 +170,10 @@ UIDelegate::UIClient::~UIClient()
 {
 }
 
-RefPtr<WebKit::WebPageProxy> UIDelegate::UIClient::createNewPage(WebKit::WebPageProxy* page, WebKit::WebFrameProxy* initiatingFrame, const WebCore::SecurityOriginData& securityOriginData, const WebCore::ResourceRequest& request, const WebCore::WindowFeatures& windowFeatures, const WebKit::NavigationActionData& navigationActionData)
+RefPtr<WebKit::WebPageProxy> UIDelegate::UIClient::createNewPageCommon(WebKit::WebPageProxy* page, WebKit::WebFrameProxy* initiatingFrame, const WebCore::SecurityOriginData& securityOriginData, const WebCore::ResourceRequest& request, const WebCore::WindowFeatures& windowFeatures, const WebKit::NavigationActionData& navigationActionData, std::function<void (RefPtr<WebKit::WebPageProxy>)>* completionHandler)
 {
-    if (!m_uiDelegate.m_delegateMethods.webViewCreateWebViewWithConfigurationForNavigationActionWindowFeatures)
-        return nullptr;
-
     auto delegate = m_uiDelegate.m_delegate.get();
-    if (!delegate)
-        return nullptr;
+    ASSERT(delegate);
 
     auto configuration = adoptNS([m_uiDelegate.m_webView->_configuration copy]);
     [configuration _setRelatedWebView:m_uiDelegate.m_webView];
@@ -189,6 +186,22 @@ RefPtr<WebKit::WebPageProxy> UIDelegate::UIClient::createNewPage(WebKit::WebPage
 
     auto apiWindowFeatures = API::WindowFeatures::create(windowFeatures);
 
+    if (completionHandler) {
+        auto completionHandlerCopy = *completionHandler;
+
+        [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate.m_webView createWebViewWithConfiguration:configuration.get() forNavigationAction:wrapper(apiNavigationAction) windowFeatures:wrapper(apiWindowFeatures) completionHandler:^void(WKWebView *webView) {
+            if (!webView)
+                return;
+
+            if ([webView->_configuration _relatedWebView] != m_uiDelegate.m_webView)
+                [NSException raise:NSInternalInconsistencyException format:@"Returned WKWebView was not created with the given configuration."];
+
+            completionHandlerCopy(webView->_page.get());
+        }];
+
+        return nullptr;
+    }
+
     RetainPtr<WKWebView> webView = [delegate webView:m_uiDelegate.m_webView createWebViewWithConfiguration:configuration.get() forNavigationAction:wrapper(apiNavigationAction) windowFeatures:wrapper(apiWindowFeatures)];
 
     if (!webView)
@@ -198,6 +211,32 @@ RefPtr<WebKit::WebPageProxy> UIDelegate::UIClient::createNewPage(WebKit::WebPage
         [NSException raise:NSInternalInconsistencyException format:@"Returned WKWebView was not created with the given configuration."];
 
     return webView->_page.get();
+}
+
+RefPtr<WebKit::WebPageProxy> UIDelegate::UIClient::createNewPage(WebKit::WebPageProxy* page, WebKit::WebFrameProxy* initiatingFrame, const WebCore::SecurityOriginData& securityOriginData, const WebCore::ResourceRequest& request, const WebCore::WindowFeatures& windowFeatures, const WebKit::NavigationActionData& navigationActionData)
+{
+    if (!m_uiDelegate.m_delegateMethods.webViewCreateWebViewWithConfigurationForNavigationActionWindowFeatures)
+        return nullptr;
+
+    auto delegate = m_uiDelegate.m_delegate.get();
+    if (!delegate)
+        return nullptr;
+
+    return createNewPageCommon(page, initiatingFrame, securityOriginData, request, windowFeatures, navigationActionData, nullptr);
+}
+
+bool UIDelegate::UIClient::createNewPageAsync(WebKit::WebPageProxy* page, WebKit::WebFrameProxy* initiatingFrame, const WebCore::SecurityOriginData& securityOriginData, const WebCore::ResourceRequest& request, const WebCore::WindowFeatures& windowFeatures, const WebKit::NavigationActionData& navigationActionData, std::function<void (RefPtr<WebKit::WebPageProxy>)> completionHandler)
+{
+    if (!m_uiDelegate.m_delegateMethods.webViewCreateWebViewWithConfigurationForNavigationActionWindowFeaturesAsync)
+        return false;
+
+    auto delegate = m_uiDelegate.m_delegate.get();
+    if (!delegate)
+        return false;
+
+    createNewPageCommon(page, initiatingFrame, securityOriginData, request, windowFeatures, navigationActionData, &completionHandler);
+
+    return true;
 }
 
 void UIDelegate::UIClient::runJavaScriptAlert(WebKit::WebPageProxy*, const WTF::String& message, WebKit::WebFrameProxy* webFrameProxy, const WebCore::SecurityOriginData& securityOriginData, Function<void ()>&& completionHandler)

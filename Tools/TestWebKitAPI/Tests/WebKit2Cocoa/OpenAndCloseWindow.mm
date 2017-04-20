@@ -35,10 +35,12 @@
 #if WK_API_ENABLED
 
 @class OpenAndCloseWindowUIDelegate;
+@class OpenAndCloseWindowUIDelegateAsync;
 
 static bool isDone;
 static RetainPtr<WKWebView> openedWebView;
 static RetainPtr<OpenAndCloseWindowUIDelegate> sharedUIDelegate;
+static RetainPtr<OpenAndCloseWindowUIDelegateAsync> sharedUIDelegateAsync;
 
 @interface OpenAndCloseWindowUIDelegate : NSObject <WKUIDelegate>
 @end
@@ -62,10 +64,51 @@ static RetainPtr<OpenAndCloseWindowUIDelegate> sharedUIDelegate;
 
 TEST(WebKit2, OpenAndCloseWindow)
 {
+    openedWebView = nullptr;
+
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
 
     sharedUIDelegate = adoptNS([[OpenAndCloseWindowUIDelegate alloc] init]);
     [webView setUIDelegate:sharedUIDelegate.get()];
+
+    [webView configuration].preferences.javaScriptCanOpenWindowsAutomatically = YES;
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"open-and-close-window" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&isDone);
+}
+
+@interface OpenAndCloseWindowUIDelegateAsync : OpenAndCloseWindowUIDelegate
+@end
+
+@implementation OpenAndCloseWindowUIDelegateAsync
+
+- (WKWebView *)webView:(WKWebView *)webView createWebViewWithConfiguration:(WKWebViewConfiguration *)configuration forNavigationAction:(WKNavigationAction *)navigationAction windowFeatures:(WKWindowFeatures *)windowFeatures
+{
+    ASSERT_NOT_REACHED();
+    return nil;
+}
+
+- (void)_webView:(WKWebView *)webView createWebViewWithConfiguration:(WKWebViewConfiguration *)configuration forNavigationAction:(WKNavigationAction *)navigationAction windowFeatures:(WKWindowFeatures *)windowFeatures completionHandler:(void (^)(WKWebView *webView))completionHandler
+{
+    dispatch_async(dispatch_get_main_queue(), ^ {
+        openedWebView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration]);
+        [openedWebView setUIDelegate:sharedUIDelegateAsync.get()];
+        completionHandler(openedWebView.get());
+    });
+}
+
+@end
+
+TEST(WebKit2, OpenAndCloseWindowAsync)
+{
+    openedWebView = nullptr;
+
+    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+
+    sharedUIDelegateAsync = adoptNS([[OpenAndCloseWindowUIDelegateAsync alloc] init]);
+    [webView setUIDelegate:sharedUIDelegateAsync.get()];
 
     [webView configuration].preferences.javaScriptCanOpenWindowsAutomatically = YES;
 

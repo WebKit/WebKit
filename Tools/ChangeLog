@@ -1,5 +1,17 @@
 2017-04-19  Brady Eidson  <beidson@apple.com>
 
+        Add asynchronous equivalent of -[<WKUIDelegate> webView:createWebViewWithConfiguration:...].
+        <rdar://problem/30699851> and https://bugs.webkit.org/show_bug.cgi?id=171018
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/OpenAndCloseWindow.mm:
+        (TEST):
+        (-[OpenAndCloseWindowUIDelegateAsync webView:createWebViewWithConfiguration:forNavigationAction:windowFeatures:]):
+        (-[OpenAndCloseWindowUIDelegateAsync _webView:createWebViewWithConfiguration:forNavigationAction:windowFeatures:completionHandler:]):
+
+2017-04-19  Brady Eidson  <beidson@apple.com>
+
         REGRESSION (r213168): An extra Web Content process is spun up on launch and is never closed.
         <rdar://problem/30774839> and https://bugs.webkit.org/show_bug.cgi?id=171002
 
