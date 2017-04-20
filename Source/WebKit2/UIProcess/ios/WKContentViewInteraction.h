@@ -87,6 +87,7 @@ typedef void (^UIWKSelectionWithDirectionCompletionHandler)(BOOL selectionEndIsM
 typedef void (^UIWKKeyWebEventCompletionHandler)(::WebEvent *theEvent, BOOL wasHandled);
 
 typedef BlockPtr<void(WebKit::InteractionInformationAtPosition)> InteractionInformationCallback;
+typedef std::pair<WebKit::InteractionInformationRequest, InteractionInformationCallback> InteractionInformationRequestAndCallback;
 
 namespace WebKit {
 
@@ -174,7 +175,9 @@ struct WKAutoCorrectionData {
     WebKit::WKSelectionDrawingInfo _lastSelectionDrawingInfo;
 
     std::optional<WebKit::InteractionInformationRequest> _outstandingPositionInformationRequest;
-    Vector<std::pair<WebKit::InteractionInformationRequest, InteractionInformationCallback>> _pendingPositionInformationHandlers;
+
+    uint64_t _positionInformationCallbackDepth;
+    Vector<std::optional<InteractionInformationRequestAndCallback>> _pendingPositionInformationHandlers;
     
     std::unique_ptr<WebKit::InputViewUpdateDeferrer> _inputViewUpdateDeferrer;
 
@@ -286,6 +289,10 @@ struct WKAutoCorrectionData {
 - (void)accessibilityRetrieveSpeakSelectionContent;
 - (void)_accessibilityRetrieveRectsEnclosingSelectionOffset:(NSInteger)offset withGranularity:(UITextGranularity)granularity;
 - (void)_accessibilityRetrieveRectsAtSelectionOffset:(NSInteger)offset withText:(NSString *)text;
+
+@property (nonatomic, readonly) WebKit::InteractionInformationAtPosition currentPositionInformation;
+- (void)doAfterPositionInformationUpdate:(void (^)(WebKit::InteractionInformationAtPosition))action forRequest:(WebKit::InteractionInformationRequest)request;
+- (void)ensurePositionInformationIsUpToDate:(WebKit::InteractionInformationRequest)request;
 
 #if ENABLE(DATA_INTERACTION)
 - (void)_didPerformDataInteractionControllerOperation;

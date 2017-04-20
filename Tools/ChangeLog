@@ -1,3 +1,19 @@
+2017-04-20  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [WK2] -[WKContentView doAfterPositionInformationUpdate:atPosition:] should be robust against synchronous reentrancy
+        https://bugs.webkit.org/show_bug.cgi?id=170922
+        <rdar://problem/31634990>
+
+        Reviewed by Tim Horton.
+
+        Adds six new unit tests for retrieving interaction information at a given position in the UI process. See
+        WebKit2 ChangeLog for more details.
+
+        * TestWebKitAPI/Tests/ios/PositionInformationTests.mm:
+        (-[_WKDraggableElementInfo expectToBeLink:image:atPoint:]):
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::expectCGPointsToBeEqual): Deleted.
+
 2017-04-20  Xan Lopez  <xlopez@igalia.com>
 
         [GTK][jhbuild] Update glib and glib-networking to the latest stable versions

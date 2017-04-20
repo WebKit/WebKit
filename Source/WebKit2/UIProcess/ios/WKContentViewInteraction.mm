@@ -57,6 +57,7 @@
 #import "WebPageMessages.h"
 #import "WebProcessProxy.h"
 #import "_WKActivatedElementInfoInternal.h"
+#import "_WKDraggableElementInfoInternal.h"
 #import "_WKElementAction.h"
 #import "_WKFocusedElementInfo.h"
 #import "_WKFormInputSession.h"
@@ -1306,6 +1307,11 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     return [self _actionForLongPressFromPositionInformation:_positionInformation];
 }
 
+- (InteractionInformationAtPosition)currentPositionInformation
+{
+    return _positionInformation;
+}
+
 - (void)doAfterPositionInformationUpdate:(void (^)(InteractionInformationAtPosition))action forRequest:(InteractionInformationRequest)request
 {
     if ([self _currentPositionInformationIsValidForRequest:request]) {
@@ -1314,7 +1320,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
         return;
     }
 
-    _pendingPositionInformationHandlers.append({ request, action });
+    _pendingPositionInformationHandlers.append(InteractionInformationRequestAndCallback(request, action));
 
     if (![self _hasValidOutstandingPositionInformationRequest:request])
         [self requestAsynchronousPositionInformationUpdate:request];
@@ -1361,20 +1367,30 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 {
     ASSERT(_hasValidPositionInformation);
 
-    Vector<size_t> indicesOfHandledRequests;
+    ++_positionInformationCallbackDepth;
+    auto updatedPositionInformation = _positionInformation;
+
     for (size_t index = 0; index < _pendingPositionInformationHandlers.size(); ++index) {
-        auto& requestAndHandler = _pendingPositionInformationHandlers[index];
-        if (![self _currentPositionInformationIsValidForRequest:requestAndHandler.first])
+        auto requestAndHandler = _pendingPositionInformationHandlers[index];
+        if (!requestAndHandler)
             continue;
 
-        if (requestAndHandler.second)
-            requestAndHandler.second(_positionInformation);
+        if (![self _currentPositionInformationIsValidForRequest:requestAndHandler->first])
+            continue;
 
-        indicesOfHandledRequests.append(index);
+        _pendingPositionInformationHandlers[index] = std::nullopt;
+
+        if (requestAndHandler->second)
+            requestAndHandler->second(updatedPositionInformation);
     }
 
-    while (indicesOfHandledRequests.size())
-        _pendingPositionInformationHandlers.remove(indicesOfHandledRequests.takeLast());
+    if (--_positionInformationCallbackDepth)
+        return;
+
+    for (int index = _pendingPositionInformationHandlers.size() - 1; index >= 0; --index) {
+        if (!_pendingPositionInformationHandlers[index])
+            _pendingPositionInformationHandlers.remove(index);
+    }
 }
 
 #if ENABLE(DATA_DETECTION)
