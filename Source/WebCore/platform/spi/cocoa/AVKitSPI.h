@@ -205,23 +205,23 @@ NS_ASSUME_NONNULL_END
 NS_ASSUME_NONNULL_BEGIN
 
 @protocol AVTouchBarPlaybackControlsControlling <NSObject>
-    @property (readonly) NSTimeInterval contentDuration;
-    @property (readonly, nullable) AVValueTiming *timing;
-    @property (readonly, getter = isSeeking) BOOL seeking;
-    @property (readonly) NSTimeInterval seekToTime;
+@property (readonly) NSTimeInterval contentDuration;
+@property (readonly, nullable) AVValueTiming *timing;
+@property (readonly, getter = isSeeking) BOOL seeking;
+@property (readonly) NSTimeInterval seekToTime;
 - (void)seekToTime:(NSTimeInterval)time toleranceBefore:(NSTimeInterval)toleranceBefore toleranceAfter:(NSTimeInterval)toleranceAfter;
-    @property (readonly) BOOL hasEnabledAudio;
-    @property (readonly) BOOL hasEnabledVideo;
-    @end
+@property (readonly) BOOL hasEnabledAudio;
+@property (readonly) BOOL hasEnabledVideo;
+@end
 
 @interface AVTouchBarPlaybackControlsProvider : NSResponder
-    @property (strong, readonly, nullable) NSTouchBar *touchBar;
-    @property (assign, nullable) id<AVTouchBarPlaybackControlsControlling> playbackControlsController;
-    @end
+@property (strong, readonly, nullable) NSTouchBar *touchBar;
+@property (assign, nullable) id<AVTouchBarPlaybackControlsControlling> playbackControlsController;
+@end
 
 @interface AVTouchBarScrubber : NSView
-    @property (assign, nullable) id<AVTouchBarPlaybackControlsControlling> playbackControlsController;
-    @end
+@property (assign, nullable) id<AVTouchBarPlaybackControlsControlling> playbackControlsController;
+@end
 
 @class AVThumbnail;
 

@@ -1,3 +1,12 @@
+2017-04-20  Andy Estes  <aestes@apple.com>
+
+        Fix indentation in AVKitSPI.h
+        https://bugs.webkit.org/show_bug.cgi?id=171066
+
+        Reviewed by Jer Noble.
+
+        * platform/spi/cocoa/AVKitSPI.h:
+
 2017-04-20  Jer Noble  <jer.noble@apple.com>
 
         [MediaCapture] gUM() with CoreAudio fails if capturing audio in the UIProcess.
