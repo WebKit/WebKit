@@ -68,6 +68,9 @@ class WEBRTC_DYLIB_EXPORT H264VideoToolboxEncoder : public H264Encoder {
 
   ScalingSettings GetScalingSettings() const override;
 
+ protected:
+  virtual int CreateCompressionSession(VTCompressionSessionRef&, VTCompressionOutputCallback, int32_t width, int32_t height);
+
  private:
   int ResetCompressionSession();
   void ConfigureCompressionSession();

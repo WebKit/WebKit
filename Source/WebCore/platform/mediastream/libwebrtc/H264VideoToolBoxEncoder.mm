@@ -24,24 +24,23 @@
  */
 
 #include "config.h"
-#include "VideoToolBoxEncoderFactory.h"
+#include "H264VideoToolBoxEncoder.h"
 
 #if USE(LIBWEBRTC) && PLATFORM(COCOA)
 
-#include "H264VideoToolBoxEncoder.h"
+#if ENABLE(MAC_VIDEO_TOOLBOX)
+#import <WebKitAdditions/VideoToolBoxEncoderMac.mm>
+#endif
 
 namespace WebCore {
 
-webrtc::VideoEncoder* VideoToolboxVideoEncoderFactory::CreateSupportedVideoEncoder(const cricket::VideoCodec& codec)
+#if !ENABLE(MAC_VIDEO_TOOLBOX)
+int H264VideoToolboxEncoder::CreateCompressionSession(VTCompressionSessionRef& compressionSession, VTCompressionOutputCallback outputCallback, int32_t width, int32_t height)
 {
-    return new H264VideoToolboxEncoder(codec);
+    return webrtc::H264VideoToolboxEncoder::CreateCompressionSession(compressionSession, outputCallback, width, height);
 }
-
-void VideoToolboxVideoEncoderFactory::DestroyVideoEncoder(webrtc::VideoEncoder* encoder)
-{
-    delete encoder;
-    encoder = nullptr;
-}
+#endif
 
 }
+
 #endif

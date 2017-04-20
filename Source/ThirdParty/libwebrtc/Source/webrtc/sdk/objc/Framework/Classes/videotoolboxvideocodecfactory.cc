@@ -37,7 +37,7 @@ VideoEncoder* VideoToolboxVideoEncoderFactory::CreateVideoEncoder(
     const cricket::VideoCodec& codec) {
   if (FindMatchingCodec(supported_codecs_, codec)) {
     LOG(LS_INFO) << "Creating HW encoder for " << codec.name;
-    return new H264VideoToolboxEncoder(codec);
+    return CreateSupportedVideoEncoder(codec);
   }
   LOG(LS_INFO) << "No HW encoder found for codec " << codec.name;
   return nullptr;

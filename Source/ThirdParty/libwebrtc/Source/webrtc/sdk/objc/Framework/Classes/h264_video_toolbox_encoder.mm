@@ -524,7 +524,16 @@ int H264VideoToolboxEncoder::Release() {
 
 int H264VideoToolboxEncoder::ResetCompressionSession() {
   DestroyCompressionSession();
+  int status = CreateCompressionSession(compression_session_, internal::VTCompressionOutputCallback, width_, height_);
+  if (status != noErr) {
+    LOG(LS_ERROR) << "Failed to create compression session: " << status;
+    return WEBRTC_VIDEO_CODEC_ERROR;
+  }
+  ConfigureCompressionSession();
+  return WEBRTC_VIDEO_CODEC_OK;
+}
 
+int H264VideoToolboxEncoder::CreateCompressionSession(VTCompressionSessionRef& compressionSession, VTCompressionOutputCallback outputCallback, int32_t width, int32_t height) {
   // Set source image buffer attributes. These attributes will be present on
   // buffers retrieved from the encoder's pixel buffer pool.
   const size_t attributes_size = 3;
@@ -555,51 +564,32 @@ int H264VideoToolboxEncoder::ResetCompressionSession() {
     pixel_format = nullptr;
   }
 
-  // WEBKIT Changes: use hardware encoder if feasible.
 #if defined(WEBRTC_USE_VTB_HARDWARE_ENCODER)
   CFTypeRef sessionKeys[] = {kVTVideoEncoderSpecification_EnableHardwareAcceleratedVideoEncoder};
   CFTypeRef sessionValues[] = {kCFBooleanTrue};
   CFDictionaryRef encoderSpecification = internal::CreateCFDictionary(sessionKeys, sessionValues, 1);
+#else
+  CFDictionaryRef encoderSpecification = nullptr;
 #endif
-
   OSStatus status = VTCompressionSessionCreate(
       nullptr,  // use default allocator
-      width_, height_, kCMVideoCodecType_H264,
-#if defined(WEBRTC_USE_VTB_HARDWARE_ENCODER)
+      width, height, kCMVideoCodecType_H264,
       encoderSpecification,
-#else
-      nullptr,  // use default encoder
-#endif
       source_attributes,
       nullptr,  // use default compressed data allocator
-      internal::VTCompressionOutputCallback, this, &compression_session_);
-
-#if defined(WEBRTC_USE_VTB_HARDWARE_ENCODER)
-  CFNumberRef useHardwareEncoderValue = nullptr;
-  OSStatus statusGetter = VTSessionCopyProperty(compression_session_, kVTCompressionPropertyKey_UsingHardwareAcceleratedVideoEncoder, nullptr, &useHardwareEncoderValue);
-  if (statusGetter || !useHardwareEncoderValue) {
-    LOG(LS_WARNING) << "Cannot know whether using hardware H264 encoder, err: " << statusGetter;
-  } else {
-    int useHardwareEncoder = 0;
-    CFNumberGetValue(useHardwareEncoderValue, kCFNumberIntType, &useHardwareEncoder);
-    if (!useHardwareEncoder)
-      LOG(LS_WARNING) << "Using software H264 encoder instead of hardware H264 encoder";
-    else
-      LOG(LS_INFO) << "Using hardware H264 encoder";
-    CFRelease(useHardwareEncoderValue);
-  }
-#endif
+      outputCallback, this, &compression_session_);
 
   if (source_attributes) {
     CFRelease(source_attributes);
     source_attributes = nullptr;
   }
-  if (status != noErr) {
-    LOG(LS_ERROR) << "Failed to create compression session: " << status;
-    return WEBRTC_VIDEO_CODEC_ERROR;
+#if defined(WEBRTC_USE_VTB_HARDWARE_ENCODER)
+  if (encoderSpecification) {
+      CFRelease(encoderSpecification);
+      encoderSpecification = nullptr;
   }
-  ConfigureCompressionSession();
-  return WEBRTC_VIDEO_CODEC_OK;
+#endif
+  return status;
 }
 
 void H264VideoToolboxEncoder::ConfigureCompressionSession() {

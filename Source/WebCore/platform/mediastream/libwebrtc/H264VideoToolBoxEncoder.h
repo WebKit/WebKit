@@ -23,25 +23,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "VideoToolBoxEncoderFactory.h"
+#pragma once
 
 #if USE(LIBWEBRTC) && PLATFORM(COCOA)
 
-#include "H264VideoToolBoxEncoder.h"
+#include "LibWebRTCMacros.h"
+#include <webrtc/sdk/objc/Framework/Classes/h264_video_toolbox_encoder.h>
 
 namespace WebCore {
 
-webrtc::VideoEncoder* VideoToolboxVideoEncoderFactory::CreateSupportedVideoEncoder(const cricket::VideoCodec& codec)
-{
-    return new H264VideoToolboxEncoder(codec);
-}
+class H264VideoToolboxEncoder final : public webrtc::H264VideoToolboxEncoder {
+public:
+    explicit H264VideoToolboxEncoder(const cricket::VideoCodec& codec) : webrtc::H264VideoToolboxEncoder(codec) { }
 
-void VideoToolboxVideoEncoderFactory::DestroyVideoEncoder(webrtc::VideoEncoder* encoder)
-{
-    delete encoder;
-    encoder = nullptr;
-}
+private:
+    int CreateCompressionSession(VTCompressionSessionRef&, VTCompressionOutputCallback, int32_t width, int32_t height) final;
+};
 
 }
+
 #endif
