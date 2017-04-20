@@ -1,3 +1,11 @@
+2017-04-20  Dan Bernstein  <mitz@apple.com>
+
+        Disable header postprocessing when building for Sierra
+
+        Absolutely rubber-stamped by Anders Carlsson.
+
+        * Configurations/WebKit.xcconfig:
+
 2017-04-20  Matt Rajca  <mrajca@apple.com>
 
         Cocoa: add private API for suppressing first responder changes
