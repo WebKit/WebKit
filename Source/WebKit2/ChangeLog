@@ -1,3 +1,19 @@
+2017-04-20  Alex Christensen  <achristensen@webkit.org>
+
+        Fix assertions in webProcessProxyFromConnection
+        https://bugs.webkit.org/show_bug.cgi?id=171025
+        <rdar://problem/31184073>
+
+        Reviewed by Brady Eidson.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::webProcessProxyFromConnection):
+        If we have a Connection, then we have a valid process attached to that connection,
+        unless it's a Connection to a different type of child process.
+        Calling ChildProcessProxy::connection on other web processes that are in State::Launching,
+        then we get an assertion.  Luckily, ChildProcessProxy::hasConnection was introduced in r210861
+        for this reason.
+
 2017-04-20  Brent Fulgham  <bfulgham@apple.com>
 
         [WK2][macOS] Allow iokit-get-properties for IOAudioControlValue

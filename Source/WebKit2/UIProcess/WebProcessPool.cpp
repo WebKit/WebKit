@@ -1357,11 +1357,11 @@ void WebProcessPool::requestNetworkingStatistics(StatisticsRequest* request)
 static WebProcessProxy* webProcessProxyFromConnection(IPC::Connection& connection, const Vector<RefPtr<WebProcessProxy>>& processes)
 {
     for (auto& process : processes) {
-        if (process->connection() == &connection)
+        if (process->hasConnection(connection))
             return process.get();
     }
 
-    // FIXME: Can this ever return null?
+    ASSERT_NOT_REACHED();
     return nullptr;
 }
 
