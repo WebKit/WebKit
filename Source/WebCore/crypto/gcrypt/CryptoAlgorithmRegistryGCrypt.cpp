@@ -30,9 +30,12 @@
 
 #include "CryptoAlgorithmAES_CBC.h"
 #include "CryptoAlgorithmAES_CFB.h"
+#include "CryptoAlgorithmAES_CTR.h"
 #include "CryptoAlgorithmAES_GCM.h"
 #include "CryptoAlgorithmAES_KW.h"
 #include "CryptoAlgorithmECDH.h"
+#include "CryptoAlgorithmECDSA.h"
+#include "CryptoAlgorithmHKDF.h"
 #include "CryptoAlgorithmHMAC.h"
 #include "CryptoAlgorithmPBKDF2.h"
 #include "CryptoAlgorithmRSAES_PKCS1_v1_5.h"
@@ -50,9 +53,12 @@ void CryptoAlgorithmRegistry::platformRegisterAlgorithms()
 {
     registerAlgorithm<CryptoAlgorithmAES_CBC>();
     registerAlgorithm<CryptoAlgorithmAES_CFB>();
+    registerAlgorithm<CryptoAlgorithmAES_CTR>();
     registerAlgorithm<CryptoAlgorithmAES_GCM>();
     registerAlgorithm<CryptoAlgorithmAES_KW>();
     registerAlgorithm<CryptoAlgorithmECDH>();
+    registerAlgorithm<CryptoAlgorithmECDSA>();
+    registerAlgorithm<CryptoAlgorithmHKDF>();
     registerAlgorithm<CryptoAlgorithmHMAC>();
     registerAlgorithm<CryptoAlgorithmPBKDF2>();
     registerAlgorithm<CryptoAlgorithmRSAES_PKCS1_v1_5>();

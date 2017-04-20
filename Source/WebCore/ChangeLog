@@ -1,3 +1,13 @@
+2017-04-20  Zan Dobersek  <zdobersek@igalia.com>
+
+        Register missing AES_CTR, ECDSA and HKDF algorithms in
+        GCrypt's CryptoAlgorithmRegistry implementation.
+
+        Rubber-stamped by Carlos Alberto Lopez Perez.
+
+        * crypto/gcrypt/CryptoAlgorithmRegistryGCrypt.cpp:
+        (WebCore::CryptoAlgorithmRegistry::platformRegisterAlgorithms):
+
 2017-04-20  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [ATK] Implement support for DPub ARIA roles
