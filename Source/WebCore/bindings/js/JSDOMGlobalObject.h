@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2012 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2017 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 
 #include "PlatformExportMacros.h"
 #include "WebCoreJSBuiltinInternals.h"
+#include <heap/HeapInlines.h>
 #include <heap/LockDuringMarking.h>
 #include <runtime/JSGlobalObject.h>
 #include <runtime/StructureInlines.h>

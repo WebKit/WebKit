@@ -1,3 +1,16 @@
+2017-04-20  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] REGRESSION(r215486): Windows Release build is broken
+        https://bugs.webkit.org/show_bug.cgi?id=171024
+        <rdar://problem/31722618>
+
+        Reviewed by Mark Lam.
+
+        Add missing include needed for clean Release build on Windows (proper
+        fix found by Fujii Hironori).
+
+        * bindings/js/JSDOMGlobalObject.h:
+
 2017-04-20  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         CachedImage should cancel loading images for unsupported/unknown types
