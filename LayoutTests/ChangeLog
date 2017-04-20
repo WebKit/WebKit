@@ -1,3 +1,20 @@
+2017-04-18  Filip Pizlo  <fpizlo@apple.com>
+
+        Optimize SharedArrayBuffer in the DFG+FTL
+        https://bugs.webkit.org/show_bug.cgi?id=164108
+
+        Reviewed by Saam Barati.
+        
+        Add a test of futex performance.
+
+        * workers/sab/cascade_lock-worker.js: Added.
+        (onmessage):
+        * workers/sab/cascade_lock.html: Added.
+        * workers/sab/worker-resources.js:
+        (cascadeLockSlow):
+        (cascadeLock):
+        (cascadeUnlock):
+
 2017-04-20  Jon Lee  <jonlee@apple.com>
 
         Update pip placard to "picture in picture"

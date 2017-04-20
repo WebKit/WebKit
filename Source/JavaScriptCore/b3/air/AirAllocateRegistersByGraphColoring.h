@@ -36,6 +36,12 @@ class Code;
 
 inline bool useIRC()
 {
+    // FIXME: Currently, the Briggs allocator has bugs that our regression tests detect. Hence, it is
+    // unconditionally disabled.
+    // https://bugs.webkit.org/show_bug.cgi?id=170948
+    if (true)
+        return true;
+    
     return Options::airForceIRCAllocator()
         || (!isARM64() && !Options::airForceBriggsAllocator());
 }

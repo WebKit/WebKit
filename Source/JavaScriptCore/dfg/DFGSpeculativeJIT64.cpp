@@ -29,6 +29,7 @@
 #if ENABLE(DFG_JIT)
 
 #include "ArrayPrototype.h"
+#include "AtomicsObject.h"
 #include "CallFrameShuffler.h"
 #include "DFGAbstractInterpreterInlines.h"
 #include "DFGCallArrayAllocatorSlowPathGenerator.h"
@@ -3174,6 +3175,248 @@ void SpeculativeJIT::compile(Node* node)
                 compilePutByValForFloatTypedArray(base.gpr(), property.gpr(), node, type);
         } }
 
+        break;
+    }
+        
+    case AtomicsAdd:
+    case AtomicsAnd:
+    case AtomicsCompareExchange:
+    case AtomicsExchange:
+    case AtomicsLoad:
+    case AtomicsOr:
+    case AtomicsStore:
+    case AtomicsSub:
+    case AtomicsXor: {
+        unsigned numExtraArgs = numExtraAtomicsArgs(node->op());
+        Edge baseEdge = m_jit.graph().child(node, 0);
+        Edge indexEdge = m_jit.graph().child(node, 1);
+        Edge argEdges[maxNumExtraAtomicsArgs];
+        for (unsigned i = numExtraArgs; i--;)
+            argEdges[i] = m_jit.graph().child(node, 2 + i);
+        Edge storageEdge = m_jit.graph().child(node, 2 + numExtraArgs);
+
+        GPRReg baseGPR;
+        GPRReg indexGPR;
+        GPRReg argGPRs[2];
+        GPRReg resultGPR;
+
+        auto callSlowPath = [&] () {
+            switch (node->op()) {
+            case AtomicsAdd:
+                callOperation(operationAtomicsAdd, resultGPR, baseGPR, indexGPR, argGPRs[0]);
+                break;
+            case AtomicsAnd:
+                callOperation(operationAtomicsAnd, resultGPR, baseGPR, indexGPR, argGPRs[0]);
+                break;
+            case AtomicsCompareExchange:
+                callOperation(operationAtomicsCompareExchange, resultGPR, baseGPR, indexGPR, argGPRs[0], argGPRs[1]);
+                break;
+            case AtomicsExchange:
+                callOperation(operationAtomicsExchange, resultGPR, baseGPR, indexGPR, argGPRs[0]);
+                break;
+            case AtomicsLoad:
+                callOperation(operationAtomicsLoad, resultGPR, baseGPR, indexGPR);
+                break;
+            case AtomicsOr:
+                callOperation(operationAtomicsOr, resultGPR, baseGPR, indexGPR, argGPRs[0]);
+                break;
+            case AtomicsStore:
+                callOperation(operationAtomicsStore, resultGPR, baseGPR, indexGPR, argGPRs[0]);
+                break;
+            case AtomicsSub:
+                callOperation(operationAtomicsSub, resultGPR, baseGPR, indexGPR, argGPRs[0]);
+                break;
+            case AtomicsXor:
+                callOperation(operationAtomicsXor, resultGPR, baseGPR, indexGPR, argGPRs[0]);
+                break;
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+                break;
+            }
+        };
+        
+        if (!storageEdge) {
+            // We are in generic mode!
+            JSValueOperand base(this, baseEdge);
+            JSValueOperand index(this, indexEdge);
+            std::optional<JSValueOperand> args[2];
+            baseGPR = base.gpr();
+            indexGPR = index.gpr();
+            for (unsigned i = numExtraArgs; i--;) {
+                args[i].emplace(this, argEdges[i]);
+                argGPRs[i] = args[i]->gpr();
+            }
+            
+            GPRFlushedCallResult result(this);
+            resultGPR = result.gpr();
+            
+            flushRegisters();
+            callSlowPath();
+            m_jit.exceptionCheck();
+            
+            jsValueResult(resultGPR, node);
+            break;
+        }
+        
+        TypedArrayType type = node->arrayMode().typedArrayType();
+        
+        SpeculateCellOperand base(this, baseEdge);
+        SpeculateStrictInt32Operand index(this, indexEdge);
+
+        baseGPR = base.gpr();
+        indexGPR = index.gpr();
+        
+        emitTypedArrayBoundsCheck(node, baseGPR, indexGPR);
+        
+        GPRTemporary args[2];
+        
+        JITCompiler::JumpList slowPathCases;
+        
+        bool ok = true;
+        for (unsigned i = numExtraArgs; i--;) {
+            if (!getIntTypedArrayStoreOperand(args[i], indexGPR, argEdges[i], slowPathCases)) {
+                noResult(node);
+                ok = false;
+            }
+            argGPRs[i] = args[i].gpr();
+        }
+        if (!ok)
+            break;
+        
+        StorageOperand storage(this, storageEdge);
+        GPRTemporary oldValue(this);
+        GPRTemporary result(this);
+        GPRTemporary newValue(this);
+        GPRReg storageGPR = storage.gpr();
+        GPRReg oldValueGPR = oldValue.gpr();
+        resultGPR = result.gpr();
+        GPRReg newValueGPR = newValue.gpr();
+        
+        // FIXME: It shouldn't be necessary to nop-pad between register allocation and a jump label.
+        // https://bugs.webkit.org/show_bug.cgi?id=170974
+        m_jit.nop();
+        
+        JITCompiler::Label loop = m_jit.label();
+        
+        loadFromIntTypedArray(storageGPR, indexGPR, oldValueGPR, type);
+        m_jit.move(oldValueGPR, newValueGPR);
+        m_jit.move(oldValueGPR, resultGPR);
+        
+        switch (node->op()) {
+        case AtomicsAdd:
+            m_jit.add32(argGPRs[0], newValueGPR);
+            break;
+        case AtomicsAnd:
+            m_jit.and32(argGPRs[0], newValueGPR);
+            break;
+        case AtomicsCompareExchange: {
+            switch (elementSize(type)) {
+            case 1:
+                if (isSigned(type))
+                    m_jit.signExtend8To32(argGPRs[0], argGPRs[0]);
+                else
+                    m_jit.and32(TrustedImm32(0xff), argGPRs[0]);
+                break;
+            case 2:
+                if (isSigned(type))
+                    m_jit.signExtend16To32(argGPRs[0], argGPRs[0]);
+                else
+                    m_jit.and32(TrustedImm32(0xffff), argGPRs[0]);
+                break;
+            case 4:
+                break;
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+                break;
+            }
+            JITCompiler::Jump fail = m_jit.branch32(JITCompiler::NotEqual, oldValueGPR, argGPRs[0]);
+            m_jit.move(argGPRs[1], newValueGPR);
+            fail.link(&m_jit);
+            break;
+        }
+        case AtomicsExchange:
+            m_jit.move(argGPRs[0], newValueGPR);
+            break;
+        case AtomicsLoad:
+            break;
+        case AtomicsOr:
+            m_jit.or32(argGPRs[0], newValueGPR);
+            break;
+        case AtomicsStore:
+            m_jit.move(argGPRs[0], newValueGPR);
+            m_jit.move(argGPRs[0], resultGPR);
+            break;
+        case AtomicsSub:
+            m_jit.sub32(argGPRs[0], newValueGPR);
+            break;
+        case AtomicsXor:
+            m_jit.xor32(argGPRs[0], newValueGPR);
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        }
+        
+        JITCompiler::JumpList success;
+        switch (elementSize(type)) {
+        case 1:
+            success = m_jit.branchAtomicWeakCAS8(JITCompiler::Success, oldValueGPR, newValueGPR, JITCompiler::BaseIndex(storageGPR, indexGPR, MacroAssembler::TimesOne));
+            break;
+        case 2:
+            success = m_jit.branchAtomicWeakCAS16(JITCompiler::Success, oldValueGPR, newValueGPR, JITCompiler::BaseIndex(storageGPR, indexGPR, MacroAssembler::TimesTwo));
+            break;
+        case 4:
+            success = m_jit.branchAtomicWeakCAS32(JITCompiler::Success, oldValueGPR, newValueGPR, JITCompiler::BaseIndex(storageGPR, indexGPR, MacroAssembler::TimesFour));
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        }
+        m_jit.jump().linkTo(loop, &m_jit);
+        
+        if (!slowPathCases.empty()) {
+            slowPathCases.link(&m_jit);
+            silentSpillAllRegisters(resultGPR);
+            // Since we spilled, we can do things to registers.
+            m_jit.boxCell(baseGPR, JSValueRegs(baseGPR));
+            m_jit.boxInt32(indexGPR, JSValueRegs(indexGPR));
+            for (unsigned i = numExtraArgs; i--;)
+                m_jit.boxInt32(argGPRs[i], JSValueRegs(argGPRs[i]));
+            callSlowPath();
+            silentFillAllRegisters(resultGPR);
+            m_jit.exceptionCheck();
+        }
+        
+        success.link(&m_jit);
+        setIntTypedArrayLoadResult(node, resultGPR, type);
+        break;
+    }
+        
+    case AtomicsIsLockFree: {
+        if (node->child1().useKind() != Int32Use) {
+            JSValueOperand operand(this, node->child1());
+            GPRReg operandGPR = operand.gpr();
+            GPRFlushedCallResult result(this);
+            GPRReg resultGPR = result.gpr();
+            flushRegisters();
+            callOperation(operationAtomicsIsLockFree, resultGPR, operandGPR);
+            m_jit.exceptionCheck();
+            jsValueResult(resultGPR, node);
+            break;
+        }
+
+        SpeculateInt32Operand operand(this, node->child1());
+        GPRTemporary result(this);
+        GPRReg operandGPR = operand.gpr();
+        GPRReg resultGPR = result.gpr();
+        m_jit.move(TrustedImm32(ValueTrue), resultGPR);
+        JITCompiler::JumpList done;
+        done.append(m_jit.branch32(JITCompiler::Equal, operandGPR, TrustedImm32(4)));
+        done.append(m_jit.branch32(JITCompiler::Equal, operandGPR, TrustedImm32(1)));
+        done.append(m_jit.branch32(JITCompiler::Equal, operandGPR, TrustedImm32(2)));
+        m_jit.move(TrustedImm32(ValueFalse), resultGPR);
+        done.link(&m_jit);
+        jsValueResult(resultGPR, node);
         break;
     }
 

@@ -119,7 +119,7 @@ public:
             out.print("Top");
             return;
         }
-        if (m_begin == m_end + 1) {
+        if (m_begin + 1 == m_end) {
             out.print(m_begin);
             return;
         }

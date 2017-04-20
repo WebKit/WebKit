@@ -85,7 +85,7 @@ for (bad of [void 0, null, false, true, 1, 0.5, Symbol(), {}, "hello", dv, i8a, 
 for (idx of [-1, -1000000000000, 10000, 10000000000000, "hello"]) {
     for (a of [i8a, i16a, i32a, u8a, u16a, u32a]) {
         shouldFail(() => Atomics.add(a, idx, 0), RangeError);
-        shouldFail(() => Atomics.add(a, idx, 0), RangeError);
+        shouldFail(() => Atomics.and(a, idx, 0), RangeError);
         shouldFail(() => Atomics.compareExchange(a, idx, 0, 0), RangeError);
         shouldFail(() => Atomics.exchange(a, idx, 0), RangeError);
         shouldFail(() => Atomics.load(a, idx), RangeError);

@@ -69,8 +69,17 @@ private:
     {
         switch (m_node->op()) {
         case GetByVal:
+        case AtomicsAdd:
+        case AtomicsAnd:
+        case AtomicsCompareExchange:
+        case AtomicsExchange:
+        case AtomicsLoad:
+        case AtomicsOr:
+        case AtomicsStore:
+        case AtomicsSub:
+        case AtomicsXor:
         case HasIndexedProperty:
-            lowerBoundsCheck(m_node->child1(), m_node->child2(), m_node->child3());
+            lowerBoundsCheck(m_graph.child(m_node, 0), m_graph.child(m_node, 1), m_graph.child(m_node, 2));
             break;
             
         case PutByVal:

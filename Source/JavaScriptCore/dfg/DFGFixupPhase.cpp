@@ -909,6 +909,73 @@ private:
             break;
         }
             
+        case AtomicsAdd:
+        case AtomicsAnd:
+        case AtomicsCompareExchange:
+        case AtomicsExchange:
+        case AtomicsLoad:
+        case AtomicsOr:
+        case AtomicsStore:
+        case AtomicsSub:
+        case AtomicsXor: {
+            Edge& base = m_graph.child(node, 0);
+            Edge& index = m_graph.child(node, 1);
+            
+            bool badNews = false;
+            for (unsigned i = numExtraAtomicsArgs(node->op()); i--;) {
+                Edge& child = m_graph.child(node, 2 + i);
+                // NOTE: DFG is not smart enough to handle double->int conversions in atomics. So, we
+                // just call the function when that happens. But the FTL is totally cool with those
+                // conversions.
+                if (!child->shouldSpeculateInt32()
+                    && !child->shouldSpeculateAnyInt()
+                    && !(child->shouldSpeculateNumberOrBoolean() && isFTL(m_graph.m_plan.mode)))
+                    badNews = true;
+            }
+            
+            if (badNews) {
+                node->setArrayMode(ArrayMode(Array::Generic));
+                break;
+            }
+            
+            node->setArrayMode(
+                node->arrayMode().refine(
+                    m_graph, node, base->prediction(), index->prediction()));
+            
+            if (node->arrayMode().type() == Array::Generic)
+                break;
+            
+            for (unsigned i = numExtraAtomicsArgs(node->op()); i--;) {
+                Edge& child = m_graph.child(node, 2 + i);
+                if (child->shouldSpeculateInt32())
+                    fixIntOrBooleanEdge(child);
+                else if (child->shouldSpeculateAnyInt())
+                    fixEdge<Int52RepUse>(child);
+                else {
+                    RELEASE_ASSERT(child->shouldSpeculateNumberOrBoolean() && isFTL(m_graph.m_plan.mode));
+                    fixDoubleOrBooleanEdge(child);
+                }
+            }
+            
+            blessArrayOperation(base, index, m_graph.child(node, 2 + numExtraAtomicsArgs(node->op())));
+            fixEdge<CellUse>(base);
+            fixEdge<Int32Use>(index);
+            
+            if (node->arrayMode().type() == Array::Uint32Array) {
+                // NOTE: This means basically always doing Int52.
+                if (node->shouldSpeculateAnyInt() && enableInt52())
+                    node->setResult(NodeResultInt52);
+                else
+                    node->setResult(NodeResultDouble);
+            }
+            break;
+        }
+            
+        case AtomicsIsLockFree:
+            if (node->child1()->shouldSpeculateInt32())
+                fixIntOrBooleanEdge(node->child1());
+            break;
+            
         case ArrayPush: {
             // May need to refine the array mode in case the value prediction contravenes
             // the array prediction. For example, we may have evidence showing that the

@@ -1,3 +1,23 @@
+2017-04-15  Filip Pizlo  <fpizlo@apple.com>
+
+        Optimize SharedArrayBuffer in the DFG+FTL
+        https://bugs.webkit.org/show_bug.cgi?id=164108
+
+        Reviewed by Saam Barati.
+        
+        Added a fairly comprehensive test of the intrinsics. This creates a function for each possible
+        combination of type and operation, and then first uses it nicely and then tries a bunch of
+        erroneous conditions like OOB.
+
+        * stress/SharedArrayBuffer-opt.js: Added.
+        (string_appeared_here.switch):
+        (string_appeared_here.str):
+        (runAtomic):
+        (shouldFail):
+        (Symbol):
+        (string_appeared_here.a.of.arrays.m.of.atomics):
+        * stress/SharedArrayBuffer.js:
+
 2017-04-19  Mark Lam  <mark.lam@apple.com>
 
         B3StackmapSpecial should handle when stackmap values are not recoverable from a Def'ed arg.

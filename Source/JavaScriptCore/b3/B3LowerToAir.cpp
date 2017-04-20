@@ -1133,6 +1133,12 @@ private:
         m_insts.last().append(Inst(opcode, m_value, std::forward<Arguments>(arguments)...));
     }
     
+    template<typename... Arguments>
+    void appendTrapping(Air::Opcode opcode, Arguments&&... arguments)
+    {
+        m_insts.last().append(trappingInst(m_value, opcode, m_value, std::forward<Arguments>(arguments)...));
+    }
+    
     void append(Inst&& inst)
     {
         m_insts.last().append(WTFMove(inst));
@@ -2174,13 +2180,13 @@ private:
         if (isX86()) {
             append(relaxedMoveForType(atomic->accessType()), immOrTmp(atomic->child(0)), m_eax);
             if (returnsOldValue) {
-                append(OPCODE_FOR_WIDTH(AtomicStrongCAS, width), m_eax, newValueTmp, address);
+                appendTrapping(OPCODE_FOR_WIDTH(AtomicStrongCAS, width), m_eax, newValueTmp, address);
                 append(relaxedMoveForType(atomic->accessType()), m_eax, valueResultTmp);
             } else if (isBranch) {
-                append(OPCODE_FOR_WIDTH(BranchAtomicStrongCAS, width), Arg::statusCond(MacroAssembler::Success), m_eax, newValueTmp, address);
+                appendTrapping(OPCODE_FOR_WIDTH(BranchAtomicStrongCAS, width), Arg::statusCond(MacroAssembler::Success), m_eax, newValueTmp, address);
                 m_blockToBlock[m_block]->setSuccessors(success, failure);
             } else
-                append(OPCODE_FOR_WIDTH(AtomicStrongCAS, width), Arg::statusCond(invert ? MacroAssembler::Failure : MacroAssembler::Success), m_eax, tmp(atomic->child(1)), address, boolResultTmp);
+                appendTrapping(OPCODE_FOR_WIDTH(AtomicStrongCAS, width), Arg::statusCond(invert ? MacroAssembler::Failure : MacroAssembler::Success), m_eax, tmp(atomic->child(1)), address, boolResultTmp);
             return;
         }
         
@@ -2230,11 +2236,11 @@ private:
         append(Air::Jump);
         beginBlock->setSuccessors(reloopBlock);
         
-        reloopBlock->append(loadLinkOpcode(width, atomic->hasFence()), m_value, address, valueResultTmp);
+        reloopBlock->append(trappingInst(m_value, loadLinkOpcode(width, atomic->hasFence()), m_value, address, valueResultTmp));
         reloopBlock->append(OPCODE_FOR_CANONICAL_WIDTH(Branch, width), m_value, Arg::relCond(MacroAssembler::NotEqual), valueResultTmp, expectedValueTmp);
         reloopBlock->setSuccessors(comparisonFail, storeBlock);
         
-        storeBlock->append(storeCondOpcode(width, atomic->hasFence()), m_value, newValueTmp, address, successBoolResultTmp);
+        storeBlock->append(trappingInst(m_value, storeCondOpcode(width, atomic->hasFence()), m_value, newValueTmp, address, successBoolResultTmp));
         if (isBranch) {
             storeBlock->append(BranchTest32, m_value, Arg::resCond(MacroAssembler::Zero), boolResultTmp, boolResultTmp);
             storeBlock->setSuccessors(success, weakFail);
@@ -2264,7 +2270,7 @@ private:
         
         if (isStrong && hasFence) {
             Tmp tmp = m_code.newTmp(GP);
-            strongFailBlock->append(storeCondOpcode(width, atomic->hasFence()), m_value, valueResultTmp, address, tmp);
+            strongFailBlock->append(trappingInst(m_value, storeCondOpcode(width, atomic->hasFence()), m_value, valueResultTmp, address, tmp));
             strongFailBlock->append(BranchTest32, m_value, Arg::resCond(MacroAssembler::Zero), tmp, tmp);
             strongFailBlock->setSuccessors(failure, reloopBlock);
         }
@@ -2338,7 +2344,7 @@ private:
             RELEASE_ASSERT(isARM64());
             prepareOpcode = loadLinkOpcode(atomic->accessWidth(), atomic->hasFence());
         }
-        reloopBlock->append(prepareOpcode, m_value, address, oldValue);
+        reloopBlock->append(trappingInst(m_value, prepareOpcode, m_value, address, oldValue));
         
         if (opcode != Air::Nop) {
             // FIXME: If we ever have to write this again, we need to find a way to share the code with
@@ -2364,11 +2370,11 @@ private:
         if (isX86()) {
             Air::Opcode casOpcode = OPCODE_FOR_WIDTH(BranchAtomicStrongCAS, atomic->accessWidth());
             reloopBlock->append(relaxedMoveForType(atomic->type()), m_value, oldValue, m_eax);
-            reloopBlock->append(casOpcode, m_value, Arg::statusCond(MacroAssembler::Success), m_eax, newValue, address);
+            reloopBlock->append(trappingInst(m_value, casOpcode, m_value, Arg::statusCond(MacroAssembler::Success), m_eax, newValue, address));
         } else {
             RELEASE_ASSERT(isARM64());
             Tmp boolResult = m_code.newTmp(GP);
-            reloopBlock->append(storeCondOpcode(atomic->accessWidth(), atomic->hasFence()), m_value, newValue, address, boolResult);
+            reloopBlock->append(trappingInst(m_value, storeCondOpcode(atomic->accessWidth(), atomic->hasFence()), m_value, newValue, address, boolResult));
             reloopBlock->append(BranchTest32, m_value, Arg::resCond(MacroAssembler::Zero), boolResult, boolResult);
         }
         reloopBlock->setSuccessors(doneBlock, reloopBlock);

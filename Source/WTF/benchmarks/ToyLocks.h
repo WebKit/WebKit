@@ -432,7 +432,7 @@ private:
             
             if (m_state.compareExchangeWeak(state, state + parkedCountUnit)) {
                 bool result = ParkingLot::compareAndPark(&m_state, state + parkedCountUnit).wasUnparked;
-                m_state.exchangeAndAdd(-parkedCountUnit);
+                m_state.exchangeAdd(-parkedCountUnit);
                 if (result)
                     return;
             }

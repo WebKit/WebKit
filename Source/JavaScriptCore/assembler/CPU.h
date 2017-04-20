@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2012-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -63,6 +63,20 @@ inline bool isX86_64()
 #else
     return false;
 #endif
+}
+
+inline bool is64Bit()
+{
+#if USE(JSVALUE64)
+    return true;
+#else
+    return false;
+#endif
+}
+
+inline bool is32Bit()
+{
+    return !is64Bit();
 }
 
 inline bool isMIPS()

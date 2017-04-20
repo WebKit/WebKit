@@ -334,14 +334,25 @@ private:
             break;
         }
 
-        case GetByVal: {
-            if (!node->child1()->prediction())
+        case GetByVal:
+        case AtomicsAdd:
+        case AtomicsAnd:
+        case AtomicsCompareExchange:
+        case AtomicsExchange:
+        case AtomicsLoad:
+        case AtomicsOr:
+        case AtomicsStore:
+        case AtomicsSub:
+        case AtomicsXor: {
+            Edge child1 = m_graph.child(node, 0);
+            if (!child1->prediction())
                 break;
             
+            Edge child2 = m_graph.child(node, 1);
             ArrayMode arrayMode = node->arrayMode().refine(
                 m_graph, node,
-                node->child1()->prediction(),
-                node->child2()->prediction(),
+                child1->prediction(),
+                child2->prediction(),
                 SpecNone);
             
             switch (arrayMode.type()) {
@@ -364,7 +375,7 @@ private:
                 changed |= mergePrediction(SpecFullDouble);
                 break;
             case Array::Uint32Array:
-                if (isInt32SpeculationForArithmetic(node->getHeapPrediction()))
+                if (isInt32SpeculationForArithmetic(node->getHeapPrediction()) && node->op() == GetByVal)
                     changed |= mergePrediction(SpecInt32Only);
                 else if (enableInt52())
                     changed |= mergePrediction(SpecAnyInt);
@@ -384,7 +395,7 @@ private:
             }
             break;
         }
-
+            
         case ToThis: {
             // ToThis in methods for primitive types should speculate primitive types in strict mode.
             ECMAMode ecmaMode = m_graph.executableFor(node->origin.semantic)->isStrictMode() ? StrictMode : NotStrictMode;
@@ -994,8 +1005,22 @@ private:
         case ArithAbs:
         case GetByVal:
         case ToThis:
-        case ToPrimitive: {
+        case ToPrimitive: 
+        case AtomicsAdd:
+        case AtomicsAnd:
+        case AtomicsCompareExchange:
+        case AtomicsExchange:
+        case AtomicsLoad:
+        case AtomicsOr:
+        case AtomicsStore:
+        case AtomicsSub:
+        case AtomicsXor: {
             m_dependentNodes.append(m_currentNode);
+            break;
+        }
+            
+        case AtomicsIsLockFree: {
+            setPrediction(SpecBoolean);
             break;
         }
 

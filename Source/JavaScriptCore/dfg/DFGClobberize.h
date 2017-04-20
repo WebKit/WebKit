@@ -181,6 +181,15 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         def(PureValue(node));
         return;
 
+    case AtomicsIsLockFree:
+        if (node->child1().useKind() == Int32Use)
+            def(PureValue(node));
+        else {
+            read(World);
+            write(Heap);
+        }
+        return;
+        
     case ArithCos:
     case ArithFRound:
     case ArithLog:
@@ -569,6 +578,28 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         read(World);
         write(Heap);
         return;
+
+    case AtomicsAdd:
+    case AtomicsAnd:
+    case AtomicsCompareExchange:
+    case AtomicsExchange:
+    case AtomicsLoad:
+    case AtomicsOr:
+    case AtomicsStore:
+    case AtomicsSub:
+    case AtomicsXor: {
+        unsigned numExtraArgs = numExtraAtomicsArgs(node->op());
+        Edge storageEdge = graph.child(node, 2 + numExtraArgs);
+        if (!storageEdge) {
+            read(World);
+            write(Heap);
+            return;
+        }
+        read(TypedArrayProperties);
+        read(MiscFields);
+        write(TypedArrayProperties);
+        return;
+    }
 
     case CallEval:
         ASSERT(!node->origin.semantic.inlineCallFrame);

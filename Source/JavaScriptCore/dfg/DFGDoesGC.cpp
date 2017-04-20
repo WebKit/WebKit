@@ -270,6 +270,16 @@ bool doesGC(Graph& graph, Node* node)
     case ResolveScopeForHoistingFuncDeclInEval:
     case ResolveScope:
     case NukeStructureAndSetButterfly:
+    case AtomicsAdd:
+    case AtomicsAnd:
+    case AtomicsCompareExchange:
+    case AtomicsExchange:
+    case AtomicsLoad:
+    case AtomicsOr:
+    case AtomicsStore:
+    case AtomicsSub:
+    case AtomicsXor:
+    case AtomicsIsLockFree:
         return false;
 
     case CreateActivation:

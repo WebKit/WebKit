@@ -30,6 +30,7 @@
 
 #include "AirGenerationContext.h"
 #include "AllowMacroScratchRegisterUsage.h"
+#include "AtomicsObject.h"
 #include "B3CheckValue.h"
 #include "B3FenceValue.h"
 #include "B3PatchpointValue.h"
@@ -698,6 +699,20 @@ private:
             break;
         case PutByValWithThis:
             compilePutByValWithThis();
+            break;
+        case AtomicsAdd:
+        case AtomicsAnd:
+        case AtomicsCompareExchange:
+        case AtomicsExchange:
+        case AtomicsLoad:
+        case AtomicsOr:
+        case AtomicsStore:
+        case AtomicsSub:
+        case AtomicsXor:
+            compileAtomicsReadModifyWrite();
+            break;
+        case AtomicsIsLockFree:
+            compileAtomicsIsLockFree();
             break;
         case DefineDataProperty:
             compileDefineDataProperty();
@@ -2944,6 +2959,167 @@ private:
         vmCall(Void, m_out.operation(m_graph.isStrictModeFor(m_node->origin.semantic) ? operationPutByValWithThisStrict : operationPutByValWithThis),
             m_callFrame, base, thisValue, property, value);
     }
+    
+    void compileAtomicsReadModifyWrite()
+    {
+        TypedArrayType type = m_node->arrayMode().typedArrayType();
+        unsigned numExtraArgs = numExtraAtomicsArgs(m_node->op());
+        Edge baseEdge = m_graph.child(m_node, 0);
+        Edge indexEdge = m_graph.child(m_node, 1);
+        Edge argEdges[maxNumExtraAtomicsArgs];
+        for (unsigned i = numExtraArgs; i--;)
+            argEdges[i] = m_graph.child(m_node, 2 + i);
+        Edge storageEdge = m_graph.child(m_node, 2 + numExtraArgs);
+        
+        auto operation = [&] () -> LValue {
+            switch (m_node->op()) {
+            case AtomicsAdd:
+                return m_out.operation(operationAtomicsAdd);
+            case AtomicsAnd:
+                return m_out.operation(operationAtomicsAnd);
+            case AtomicsCompareExchange:
+                return m_out.operation(operationAtomicsCompareExchange);
+            case AtomicsExchange:
+                return m_out.operation(operationAtomicsExchange);
+            case AtomicsLoad:
+                return m_out.operation(operationAtomicsLoad);
+            case AtomicsOr:
+                return m_out.operation(operationAtomicsOr);
+            case AtomicsStore:
+                return m_out.operation(operationAtomicsStore);
+            case AtomicsSub:
+                return m_out.operation(operationAtomicsSub);
+            case AtomicsXor:
+                return m_out.operation(operationAtomicsXor);
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+                break;
+            }
+        };
+        
+        if (!storageEdge) {
+            Vector<LValue> args;
+            args.append(m_callFrame);
+            args.append(lowJSValue(baseEdge));
+            args.append(lowJSValue(indexEdge));
+            for (unsigned i = 0; i < numExtraArgs; ++i)
+                args.append(lowJSValue(argEdges[i]));
+            LValue result = vmCall(Int64, operation(), args);
+            setJSValue(result);
+            return;
+        }
+        
+        LValue index = lowInt32(indexEdge);
+        LValue args[2];
+        for (unsigned i = numExtraArgs; i--;)
+            args[i] = getIntTypedArrayStoreOperand(argEdges[i]);
+        LValue storage = lowStorage(storageEdge);
+        
+        TypedPointer pointer = pointerIntoTypedArray(storage, index, type);
+        Width width = widthForBytes(elementSize(type));
+        
+        LValue atomicValue;
+        LValue result;
+        
+        auto sanitizeResult = [&] (LValue value) -> LValue {
+            if (isSigned(type)) {
+                switch (elementSize(type)) {
+                case 1:
+                    value = m_out.bitAnd(value, m_out.constInt32(0xff));
+                    break;
+                case 2:
+                    value = m_out.bitAnd(value, m_out.constInt32(0xffff));
+                    break;
+                case 4:
+                    break;
+                default:
+                    RELEASE_ASSERT_NOT_REACHED();
+                    break;
+                }
+            }
+            return value;
+        };
+        
+        switch (m_node->op()) {
+        case AtomicsAdd:
+            atomicValue = m_out.atomicXchgAdd(args[0], pointer, width);
+            result = sanitizeResult(atomicValue);
+            break;
+        case AtomicsAnd:
+            atomicValue = m_out.atomicXchgAnd(args[0], pointer, width);
+            result = sanitizeResult(atomicValue);
+            break;
+        case AtomicsCompareExchange:
+            atomicValue = m_out.atomicStrongCAS(args[0], args[1], pointer, width);
+            result = sanitizeResult(atomicValue);
+            break;
+        case AtomicsExchange:
+            atomicValue = m_out.atomicXchg(args[0], pointer, width);
+            result = sanitizeResult(atomicValue);
+            break;
+        case AtomicsLoad:
+            atomicValue = loadFromIntTypedArray(pointer, type);
+            result = sanitizeResult(atomicValue);
+            break;
+        case AtomicsOr:
+            atomicValue = m_out.atomicXchgOr(args[0], pointer, width);
+            result = sanitizeResult(atomicValue);
+            break;
+        case AtomicsStore:
+            atomicValue = m_out.store(args[0], pointer, storeType(type));
+            result = args[0];
+            break;
+        case AtomicsSub:
+            atomicValue = m_out.atomicXchgSub(args[0], pointer, width);
+            result = sanitizeResult(atomicValue);
+            break;
+        case AtomicsXor:
+            atomicValue = m_out.atomicXchgXor(args[0], pointer, width);
+            result = sanitizeResult(atomicValue);
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        }
+        // Signify that the state against which the atomic operations are serialized is confined to just
+        // the typed array storage, since that's as precise of an abstraction as we can have of shared
+        // array buffer storage.
+        m_heaps.decorateFencedAccess(&m_heaps.typedArrayProperties, atomicValue);
+        
+        setIntTypedArrayLoadResult(result, type);
+    }
+    
+    void compileAtomicsIsLockFree()
+    {
+        if (m_node->child1().useKind() != Int32Use) {
+            setJSValue(vmCall(Int64, m_out.operation(operationAtomicsIsLockFree), m_callFrame, lowJSValue(m_node->child1())));
+            return;
+        }
+        
+        LValue bytes = lowInt32(m_node->child1());
+        
+        LBasicBlock trueCase = m_out.newBlock();
+        LBasicBlock falseCase = m_out.newBlock();
+        LBasicBlock continuation = m_out.newBlock();
+        
+        LBasicBlock lastNext = m_out.insertNewBlocksBefore(trueCase);
+        
+        Vector<SwitchCase> cases;
+        cases.append(SwitchCase(m_out.constInt32(1), trueCase, Weight()));
+        cases.append(SwitchCase(m_out.constInt32(2), trueCase, Weight()));
+        cases.append(SwitchCase(m_out.constInt32(4), trueCase, Weight()));
+        m_out.switchInstruction(bytes, cases, falseCase, Weight());
+        
+        m_out.appendTo(trueCase, falseCase);
+        ValueFromBlock trueValue = m_out.anchor(m_out.booleanTrue);
+        m_out.jump(continuation);
+        m_out.appendTo(falseCase, continuation);
+        ValueFromBlock falseValue = m_out.anchor(m_out.booleanFalse);
+        m_out.jump(continuation);
+        
+        m_out.appendTo(continuation, lastNext);
+        setBoolean(m_out.phi(Int32, trueValue, falseValue));
+    }
 
     void compileDefineDataProperty()
     {
@@ -3426,48 +3602,12 @@ private:
             TypedArrayType type = m_node->arrayMode().typedArrayType();
             
             if (isTypedView(type)) {
-                TypedPointer pointer = TypedPointer(
-                    m_heaps.typedArrayProperties,
-                    m_out.add(
-                        storage,
-                        m_out.shl(
-                            m_out.zeroExtPtr(index),
-                            m_out.constIntPtr(logElementSize(type)))));
+                TypedPointer pointer = pointerIntoTypedArray(storage, index, type);
                 
                 if (isInt(type)) {
-                    LValue result;
-                    switch (elementSize(type)) {
-                    case 1:
-                        result = isSigned(type) ? m_out.load8SignExt32(pointer) :  m_out.load8ZeroExt32(pointer);
-                        break;
-                    case 2:
-                        result = isSigned(type) ? m_out.load16SignExt32(pointer) :  m_out.load16ZeroExt32(pointer);
-                        break;
-                    case 4:
-                        result = m_out.load32(pointer);
-                        break;
-                    default:
-                        DFG_CRASH(m_graph, m_node, "Bad element size");
-                    }
-                    
-                    if (elementSize(type) < 4 || isSigned(type)) {
-                        setInt32(result);
-                        return;
-                    }
-
-                    if (m_node->shouldSpeculateInt32()) {
-                        speculate(
-                            Overflow, noValue(), 0, m_out.lessThan(result, m_out.int32Zero));
-                        setInt32(result);
-                        return;
-                    }
-                    
-                    if (m_node->shouldSpeculateAnyInt()) {
-                        setStrictInt52(m_out.zeroExt(result, Int64));
-                        return;
-                    }
-                    
-                    setDouble(m_out.unsignedToDouble(result));
+                    LValue result = loadFromIntTypedArray(pointer, type);
+                    bool canSpeculate = true;
+                    setIntTypedArrayLoadResult(result, type, canSpeculate);
                     return;
                 }
             
@@ -3670,106 +3810,20 @@ private:
                             m_out.zeroExt(index, pointerType()),
                             m_out.constIntPtr(logElementSize(type)))));
                 
-                Output::StoreType storeType;
                 LValue valueToStore;
                 
                 if (isInt(type)) {
-                    LValue intValue;
-                    switch (child3.useKind()) {
-                    case Int52RepUse:
-                    case Int32Use: {
-                        if (child3.useKind() == Int32Use)
-                            intValue = lowInt32(child3);
-                        else
-                            intValue = m_out.castToInt32(lowStrictInt52(child3));
-
-                        if (isClamped(type)) {
-                            ASSERT(elementSize(type) == 1);
-                            
-                            LBasicBlock atLeastZero = m_out.newBlock();
-                            LBasicBlock continuation = m_out.newBlock();
-                            
-                            Vector<ValueFromBlock, 2> intValues;
-                            intValues.append(m_out.anchor(m_out.int32Zero));
-                            m_out.branch(
-                                m_out.lessThan(intValue, m_out.int32Zero),
-                                unsure(continuation), unsure(atLeastZero));
-                            
-                            LBasicBlock lastNext = m_out.appendTo(atLeastZero, continuation);
-                            
-                            intValues.append(m_out.anchor(m_out.select(
-                                m_out.greaterThan(intValue, m_out.constInt32(255)),
-                                m_out.constInt32(255),
-                                intValue)));
-                            m_out.jump(continuation);
-                            
-                            m_out.appendTo(continuation, lastNext);
-                            intValue = m_out.phi(Int32, intValues);
-                        }
-                        break;
-                    }
-                        
-                    case DoubleRepUse: {
-                        LValue doubleValue = lowDouble(child3);
-                        
-                        if (isClamped(type)) {
-                            ASSERT(elementSize(type) == 1);
-                            
-                            LBasicBlock atLeastZero = m_out.newBlock();
-                            LBasicBlock withinRange = m_out.newBlock();
-                            LBasicBlock continuation = m_out.newBlock();
-                            
-                            Vector<ValueFromBlock, 3> intValues;
-                            intValues.append(m_out.anchor(m_out.int32Zero));
-                            m_out.branch(
-                                m_out.doubleLessThanOrUnordered(doubleValue, m_out.doubleZero),
-                                unsure(continuation), unsure(atLeastZero));
-                            
-                            LBasicBlock lastNext = m_out.appendTo(atLeastZero, withinRange);
-                            intValues.append(m_out.anchor(m_out.constInt32(255)));
-                            m_out.branch(
-                                m_out.doubleGreaterThan(doubleValue, m_out.constDouble(255)),
-                                unsure(continuation), unsure(withinRange));
-                            
-                            m_out.appendTo(withinRange, continuation);
-                            intValues.append(m_out.anchor(m_out.doubleToInt(doubleValue)));
-                            m_out.jump(continuation);
-                            
-                            m_out.appendTo(continuation, lastNext);
-                            intValue = m_out.phi(Int32, intValues);
-                        } else
-                            intValue = doubleToInt32(doubleValue);
-                        break;
-                    }
-                        
-                    default:
-                        DFG_CRASH(m_graph, m_node, "Bad use kind");
-                    }
+                    LValue intValue = getIntTypedArrayStoreOperand(child3, isClamped(type));
 
                     valueToStore = intValue;
-                    switch (elementSize(type)) {
-                    case 1:
-                        storeType = Output::Store32As8;
-                        break;
-                    case 2:
-                        storeType = Output::Store32As16;
-                        break;
-                    case 4:
-                        storeType = Output::Store32;
-                        break;
-                    default:
-                        DFG_CRASH(m_graph, m_node, "Bad element size");
-                    }
                 } else /* !isInt(type) */ {
                     LValue value = lowDouble(child3);
                     switch (type) {
                     case TypeFloat32:
                         valueToStore = m_out.doubleToFloat(value);
-                        storeType = Output::StoreFloat;
                         break;
                     case TypeFloat64:
                         valueToStore = value;
-                        storeType = Output::StoreDouble;
                         break;
                     default:
                         DFG_CRASH(m_graph, m_node, "Bad typed array type");
@@ -3777,7 +3831,7 @@ private:
                 }
 
                 if (m_node->arrayMode().isInBounds() || m_node->op() == PutByValAlias)
-                    m_out.store(valueToStore, pointer, storeType);
+                    m_out.store(valueToStore, pointer, storeType(type));
                 else {
                     LBasicBlock isInBounds = m_out.newBlock();
                     LBasicBlock isOutOfBounds = m_out.newBlock();
@@ -3788,7 +3842,7 @@ private:
                         unsure(isOutOfBounds), unsure(isInBounds));
                     
                     LBasicBlock lastNext = m_out.appendTo(isInBounds, isOutOfBounds);
-                    m_out.store(valueToStore, pointer, storeType);
+                    m_out.store(valueToStore, pointer, storeType(type));
                     m_out.jump(continuation);
 
                     m_out.appendTo(isOutOfBounds, continuation);
@@ -11752,6 +11806,151 @@ private:
         functor(TypeofType::Undefined);
     }
     
+    TypedPointer pointerIntoTypedArray(LValue storage, LValue index, TypedArrayType type)
+    {
+        return TypedPointer(
+            m_heaps.typedArrayProperties,
+            m_out.add(
+                storage,
+                m_out.shl(
+                    m_out.zeroExtPtr(index),
+                    m_out.constIntPtr(logElementSize(type)))));
+    }
+    
+    LValue loadFromIntTypedArray(TypedPointer pointer, TypedArrayType type)
+    {
+        switch (elementSize(type)) {
+        case 1:
+            return isSigned(type) ? m_out.load8SignExt32(pointer) : m_out.load8ZeroExt32(pointer);
+        case 2:
+            return isSigned(type) ? m_out.load16SignExt32(pointer) : m_out.load16ZeroExt32(pointer);
+        case 4:
+            return m_out.load32(pointer);
+        default:
+            DFG_CRASH(m_graph, m_node, "Bad element size");
+        }
+    }
+    
+    Output::StoreType storeType(TypedArrayType type)
+    {
+        if (isInt(type)) {
+            switch (elementSize(type)) {
+            case 1:
+                return Output::Store32As8;
+            case 2:
+                return Output::Store32As16;
+            case 4:
+                return Output::Store32;
+            default:
+                DFG_CRASH(m_graph, m_node, "Bad element size");
+                return Output::Store32;
+            }
+        }
+        switch (type) {
+        case TypeFloat32:
+            return Output::StoreFloat;
+        case TypeFloat64:
+            return Output::StoreDouble;
+        default:
+            DFG_CRASH(m_graph, m_node, "Bad typed array type");
+        }
+    }
+    
+    void setIntTypedArrayLoadResult(LValue result, TypedArrayType type, bool canSpeculate = false)
+    {
+        if (elementSize(type) < 4 || isSigned(type)) {
+            setInt32(result);
+            return;
+        }
+        
+        if (m_node->shouldSpeculateInt32() && canSpeculate) {
+            speculate(
+                Overflow, noValue(), 0, m_out.lessThan(result, m_out.int32Zero));
+            setInt32(result);
+            return;
+        }
+        
+        if (m_node->shouldSpeculateAnyInt()) {
+            setStrictInt52(m_out.zeroExt(result, Int64));
+            return;
+        }
+        
+        setDouble(m_out.unsignedToDouble(result));
+    }
+    
+    LValue getIntTypedArrayStoreOperand(Edge edge, bool isClamped = false)
+    {
+        LValue intValue;
+        switch (edge.useKind()) {
+        case Int52RepUse:
+        case Int32Use: {
+            if (edge.useKind() == Int32Use)
+                intValue = lowInt32(edge);
+            else
+                intValue = m_out.castToInt32(lowStrictInt52(edge));
+
+            if (isClamped) {
+                LBasicBlock atLeastZero = m_out.newBlock();
+                LBasicBlock continuation = m_out.newBlock();
+                            
+                Vector<ValueFromBlock, 2> intValues;
+                intValues.append(m_out.anchor(m_out.int32Zero));
+                m_out.branch(
+                    m_out.lessThan(intValue, m_out.int32Zero),
+                    unsure(continuation), unsure(atLeastZero));
+                            
+                LBasicBlock lastNext = m_out.appendTo(atLeastZero, continuation);
+                            
+                intValues.append(m_out.anchor(m_out.select(
+                    m_out.greaterThan(intValue, m_out.constInt32(255)),
+                    m_out.constInt32(255),
+                    intValue)));
+                m_out.jump(continuation);
+                            
+                m_out.appendTo(continuation, lastNext);
+                intValue = m_out.phi(Int32, intValues);
+            }
+            break;
+        }
+                        
+        case DoubleRepUse: {
+            LValue doubleValue = lowDouble(edge);
+                        
+            if (isClamped) {
+                LBasicBlock atLeastZero = m_out.newBlock();
+                LBasicBlock withinRange = m_out.newBlock();
+                LBasicBlock continuation = m_out.newBlock();
+                            
+                Vector<ValueFromBlock, 3> intValues;
+                intValues.append(m_out.anchor(m_out.int32Zero));
+                m_out.branch(
+                    m_out.doubleLessThanOrUnordered(doubleValue, m_out.doubleZero),
+                    unsure(continuation), unsure(atLeastZero));
+                            
+                LBasicBlock lastNext = m_out.appendTo(atLeastZero, withinRange);
+                intValues.append(m_out.anchor(m_out.constInt32(255)));
+                m_out.branch(
+                    m_out.doubleGreaterThan(doubleValue, m_out.constDouble(255)),
+                    unsure(continuation), unsure(withinRange));
+                            
+                m_out.appendTo(withinRange, continuation);
+                intValues.append(m_out.anchor(m_out.doubleToInt(doubleValue)));
+                m_out.jump(continuation);
+                            
+                m_out.appendTo(continuation, lastNext);
+                intValue = m_out.phi(Int32, intValues);
+            } else
+                intValue = doubleToInt32(doubleValue);
+            break;
+        }
+                        
+        default:
+            DFG_CRASH(m_graph, m_node, "Bad use kind");
+        }
+        
+        return intValue;
+    }
+    
     LValue doubleToInt32(LValue doubleValue, double low, double high, bool isSigned = true)
     {
         LBasicBlock greatEnough = m_out.newBlock();
@@ -13398,10 +13597,10 @@ private:
     }
 
     template<typename... Args>
-    LValue vmCall(LType type, LValue function, Args... args)
+    LValue vmCall(LType type, LValue function, Args&&... args)
     {
         callPreflight();
-        LValue result = m_out.call(type, function, args...);
+        LValue result = m_out.call(type, function, std::forward<Args>(args)...);
         callCheck();
         return result;
     }

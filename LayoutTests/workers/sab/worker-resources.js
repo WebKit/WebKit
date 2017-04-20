@@ -51,3 +51,36 @@ function checkBufferSharing(shouldShareBuffer)
     }
 }
 
+var cascadeLockUnlocked = 0;
+var cascadeLockLocked = 1;
+var cascadeLockLockedAndParked = 2;
+
+function cascadeLockSlow(memory, index)
+{
+    var desiredState = cascadeLockLocked;
+    for (;;) {
+        if (Atomics.compareExchange(memory, index, cascadeLockUnlocked, desiredState) == cascadeLockUnlocked)
+            return;
+        
+        desiredState = cascadeLockLockedAndParked;
+        Atomics.compareExchange(memory, index, cascadeLockLocked, cascadeLockLockedAndParked);
+        Atomics.wait(memory, index, cascadeLockLockedAndParked);
+    }
+}
+
+function cascadeLock(memory, index)
+{
+    if (Atomics.compareExchange(memory, index, cascadeLockUnlocked, cascadeLockLocked) == cascadeLockUnlocked)
+        return;
+    
+    cascadeLockSlow(memory, index);
+}
+
+function cascadeUnlock(memory, index)
+{
+    if (Atomics.exchange(memory, index, cascadeLockUnlocked) == cascadeLockLocked)
+        return;
+
+    Atomics.wake(memory, index, 1);
+}
+

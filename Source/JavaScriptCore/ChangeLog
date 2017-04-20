@@ -1,3 +1,144 @@
+2017-04-15  Filip Pizlo  <fpizlo@apple.com>
+
+        Optimize SharedArrayBuffer in the DFG+FTL
+        https://bugs.webkit.org/show_bug.cgi?id=164108
+
+        Reviewed by Saam Barati.
+        
+        This adds atomics intrinsics to the DFG and wires them through to the DFG and FTL backends. This
+        was super easy in the FTL since B3 already has comprehensive atomic intrinsics, which are more
+        powerful than what we need right now. In the DFG backend, I went with an easy-to-write
+        implementation that just reduces everything to a weak CAS loop. It's very inefficient with
+        registers (it needs ~8) but it's the DFG backend, so it's not obvious how much we care.
+        
+        To make the rare cases easy to handle, I refactored AtomicsObject.cpp so that the operations for
+        the slow paths can share code with the native functions.
+        
+        This also fixes register handling in the X86 implementations of CAS, in the case that
+        expectedAndResult is not %rax. This also fixes the ARM64 implementation of branchWeakCAS.
+        
+        I adapted the CascadeLock from WTF/benchmarks/ToyLocks.h as a microbenchmark of lock performance.
+        This benchmark performs 2.5x faster, in both the contended and uncontended case, thanks to this
+        change. It's still about 3x slower than native. I investigated this only a bit. I suspect that
+        the story will be different in asm.js code, which will get constant-folding of the typed array
+        backing store by virtue of how it uses lexically scoped variables as pointers to the heap arrays.
+        It's worth noting that the native lock I was comparing against, the very nicely-tuned
+        CascadeLock, is at the very high end of lock throughput under virtually all conditions
+        (uncontended, microcontended, held for a long time). I also compared to WTF::Lock and others, and
+        the only ones that performed better in this microbenchmark were spinlocks. I don't recommend
+        using those. So, when I say this is 3x slower than native, I really mean that it's 3x slower than
+        the fastest native lock that I have in my arsenal.
+        
+        Also worth noting is that I experimented with exposing Atomics.yield(), which uses sched_yield,
+        as a way of testing if adding a yield loop to the JS cascadeLock would help. It does not help. I
+        did not investigate why.
+
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::JumpList::append):
+        * assembler/CPU.h:
+        (JSC::is64Bit):
+        (JSC::is32Bit):
+        * b3/B3Common.h:
+        (JSC::B3::is64Bit): Deleted.
+        (JSC::B3::is32Bit): Deleted.
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::appendTrapping):
+        (JSC::B3::Air::LowerToAir::appendCAS):
+        (JSC::B3::Air::LowerToAir::appendGeneralAtomic):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasHeapPrediction):
+        (JSC::DFG::Node::hasArrayMode):
+        * dfg/DFGNodeType.h:
+        (JSC::DFG::isAtomicsIntrinsic):
+        (JSC::DFG::numExtraAtomicsArgs):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSSALoweringPhase.cpp:
+        (JSC::DFG::SSALoweringPhase::handleNode):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::loadFromIntTypedArray):
+        (JSC::DFG::SpeculativeJIT::setIntTypedArrayLoadResult):
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnIntTypedArray):
+        (JSC::DFG::SpeculativeJIT::getIntTypedArrayStoreOperand):
+        (JSC::DFG::SpeculativeJIT::compilePutByValForIntTypedArray):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLAbstractHeapRepository.cpp:
+        (JSC::FTL::AbstractHeapRepository::decorateFencedAccess):
+        (JSC::FTL::AbstractHeapRepository::computeRangesAndDecorateInstructions):
+        * ftl/FTLAbstractHeapRepository.h:
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileAtomicsReadModifyWrite):
+        (JSC::FTL::DFG::LowerDFGToB3::compileAtomicsIsLockFree):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetByVal):
+        (JSC::FTL::DFG::LowerDFGToB3::compilePutByVal):
+        (JSC::FTL::DFG::LowerDFGToB3::pointerIntoTypedArray):
+        (JSC::FTL::DFG::LowerDFGToB3::loadFromIntTypedArray):
+        (JSC::FTL::DFG::LowerDFGToB3::storeType):
+        (JSC::FTL::DFG::LowerDFGToB3::setIntTypedArrayLoadResult):
+        (JSC::FTL::DFG::LowerDFGToB3::getIntTypedArrayStoreOperand):
+        (JSC::FTL::DFG::LowerDFGToB3::vmCall):
+        * ftl/FTLOutput.cpp:
+        (JSC::FTL::Output::store):
+        (JSC::FTL::Output::store32As8):
+        (JSC::FTL::Output::store32As16):
+        (JSC::FTL::Output::atomicXchgAdd):
+        (JSC::FTL::Output::atomicXchgAnd):
+        (JSC::FTL::Output::atomicXchgOr):
+        (JSC::FTL::Output::atomicXchgSub):
+        (JSC::FTL::Output::atomicXchgXor):
+        (JSC::FTL::Output::atomicXchg):
+        (JSC::FTL::Output::atomicStrongCAS):
+        * ftl/FTLOutput.h:
+        (JSC::FTL::Output::store32):
+        (JSC::FTL::Output::store64):
+        (JSC::FTL::Output::storePtr):
+        (JSC::FTL::Output::storeFloat):
+        (JSC::FTL::Output::storeDouble):
+        * jit/JITOperations.h:
+        * runtime/AtomicsObject.cpp:
+        (JSC::atomicsFuncAdd):
+        (JSC::atomicsFuncAnd):
+        (JSC::atomicsFuncCompareExchange):
+        (JSC::atomicsFuncExchange):
+        (JSC::atomicsFuncIsLockFree):
+        (JSC::atomicsFuncLoad):
+        (JSC::atomicsFuncOr):
+        (JSC::atomicsFuncStore):
+        (JSC::atomicsFuncSub):
+        (JSC::atomicsFuncWait):
+        (JSC::atomicsFuncWake):
+        (JSC::atomicsFuncXor):
+        (JSC::operationAtomicsAdd):
+        (JSC::operationAtomicsAnd):
+        (JSC::operationAtomicsCompareExchange):
+        (JSC::operationAtomicsExchange):
+        (JSC::operationAtomicsIsLockFree):
+        (JSC::operationAtomicsLoad):
+        (JSC::operationAtomicsOr):
+        (JSC::operationAtomicsStore):
+        (JSC::operationAtomicsSub):
+        (JSC::operationAtomicsXor):
+        * runtime/AtomicsObject.h:
+
 2017-04-19  Youenn Fablet  <youenn@apple.com>
 
         [Mac] Allow customizing H264 encoder

@@ -2739,24 +2739,8 @@ JITCompiler::Jump SpeculativeJIT::jumpForTypedArrayIsNeuteredIfOutOfBounds(Node*
     return done;
 }
 
-void SpeculativeJIT::compileGetByValOnIntTypedArray(Node* node, TypedArrayType type)
+void SpeculativeJIT::loadFromIntTypedArray(GPRReg storageReg, GPRReg propertyReg, GPRReg resultReg, TypedArrayType type)
 {
-    ASSERT(isInt(type));
-    
-    SpeculateCellOperand base(this, node->child1());
-    SpeculateStrictInt32Operand property(this, node->child2());
-    StorageOperand storage(this, node->child3());
-
-    GPRReg baseReg = base.gpr();
-    GPRReg propertyReg = property.gpr();
-    GPRReg storageReg = storage.gpr();
-
-    GPRTemporary result(this);
-    GPRReg resultReg = result.gpr();
-
-    ASSERT(node->arrayMode().alreadyChecked(m_jit.graph(), node, m_state.forNode(node->child1())));
-
-    emitTypedArrayBoundsCheck(node, baseReg, propertyReg);
     switch (elementSize(type)) {
     case 1:
         if (isSigned(type))
@@ -2776,13 +2760,17 @@ void SpeculativeJIT::compileGetByValOnIntTypedArray(Node* node, TypedArrayType t
     default:
         CRASH();
     }
+}
+
+void SpeculativeJIT::setIntTypedArrayLoadResult(Node* node, GPRReg resultReg, TypedArrayType type, bool canSpeculate)
+{
     if (elementSize(type) < 4 || isSigned(type)) {
         int32Result(resultReg, node);
         return;
     }
     
     ASSERT(elementSize(type) == 4 && !isSigned(type));
-    if (node->shouldSpeculateInt32()) {
+    if (node->shouldSpeculateInt32() && canSpeculate) {
         speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branch32(MacroAssembler::LessThan, resultReg, TrustedImm32(0)));
         int32Result(resultReg, node);
         return;
@@ -2804,29 +2792,38 @@ void SpeculativeJIT::compileGetByValOnIntTypedArray(Node* node, TypedArrayType t
     doubleResult(fresult.fpr(), node);
 }
 
-void SpeculativeJIT::compilePutByValForIntTypedArray(GPRReg base, GPRReg property, Node* node, TypedArrayType type)
+void SpeculativeJIT::compileGetByValOnIntTypedArray(Node* node, TypedArrayType type)
 {
     ASSERT(isInt(type));
     
-    StorageOperand storage(this, m_jit.graph().varArgChild(node, 3));
+    SpeculateCellOperand base(this, node->child1());
+    SpeculateStrictInt32Operand property(this, node->child2());
+    StorageOperand storage(this, node->child3());
+
+    GPRReg baseReg = base.gpr();
+    GPRReg propertyReg = property.gpr();
     GPRReg storageReg = storage.gpr();
-    
-    Edge valueUse = m_jit.graph().varArgChild(node, 2);
-    
-    GPRTemporary value;
-#if USE(JSVALUE32_64)
-    GPRTemporary propertyTag;
-    GPRTemporary valueTag;
-#endif
 
-    GPRReg valueGPR = InvalidGPRReg;
-#if USE(JSVALUE32_64)
-    GPRReg propertyTagGPR = InvalidGPRReg;
-    GPRReg valueTagGPR = InvalidGPRReg;
-#endif
+    GPRTemporary result(this);
+    GPRReg resultReg = result.gpr();
 
-    JITCompiler::JumpList slowPathCases;
-    
+    ASSERT(node->arrayMode().alreadyChecked(m_jit.graph(), node, m_state.forNode(node->child1())));
+
+    emitTypedArrayBoundsCheck(node, baseReg, propertyReg);
+    loadFromIntTypedArray(storageReg, propertyReg, resultReg, type);
+    bool canSpeculate = true;
+    setIntTypedArrayLoadResult(node, resultReg, type, canSpeculate);
+}
+
+bool SpeculativeJIT::getIntTypedArrayStoreOperand(
+    GPRTemporary& value,
+    GPRReg property,
+#if USE(JSVALUE32_64)
+    GPRTemporary& propertyTag,
+    GPRTemporary& valueTag,
+#endif
+    Edge valueUse, JITCompiler::JumpList& slowPathCases, bool isClamped)
+{
     bool isAppropriateConstant = false;
     if (valueUse->isConstant()) {
         JSValue jsValue = valueUse->asJSValue();
@@ -2834,24 +2831,20 @@ void SpeculativeJIT::compilePutByValForIntTypedArray(GPRReg base, GPRReg propert
         SpeculatedType actualType = speculationFromValue(jsValue);
         isAppropriateConstant = (expectedType | actualType) == expectedType;
     }
-
+    
     if (isAppropriateConstant) {
         JSValue jsValue = valueUse->asJSValue();
         if (!jsValue.isNumber()) {
             terminateSpeculativeExecution(Uncountable, JSValueRegs(), 0);
-            noResult(node);
-            return;
+            return false;
         }
         double d = jsValue.asNumber();
-        if (isClamped(type)) {
-            ASSERT(elementSize(type) == 1);
+        if (isClamped)
             d = clampDoubleToByte(d);
-        }
         GPRTemporary scratch(this);
         GPRReg scratchReg = scratch.gpr();
         m_jit.move(Imm32(toInt32(d)), scratchReg);
         value.adopt(scratch);
-        valueGPR = scratchReg;
     } else {
         switch (valueUse.useKind()) {
         case Int32Use: {
@@ -2859,12 +2852,9 @@ void SpeculativeJIT::compilePutByValForIntTypedArray(GPRReg base, GPRReg propert
             GPRTemporary scratch(this);
             GPRReg scratchReg = scratch.gpr();
             m_jit.move(valueOp.gpr(), scratchReg);
-            if (isClamped(type)) {
-                ASSERT(elementSize(type) == 1);
+            if (isClamped)
                 compileClampIntegerToByte(m_jit, scratchReg);
-            }
             value.adopt(scratch);
-            valueGPR = scratchReg;
             break;
         }
             
@@ -2874,8 +2864,7 @@ void SpeculativeJIT::compilePutByValForIntTypedArray(GPRReg base, GPRReg propert
             GPRTemporary scratch(this);
             GPRReg scratchReg = scratch.gpr();
             m_jit.move(valueOp.gpr(), scratchReg);
-            if (isClamped(type)) {
-                ASSERT(elementSize(type) == 1);
+            if (isClamped) {
                 MacroAssembler::Jump inBounds = m_jit.branch64(
                     MacroAssembler::BelowOrEqual, scratchReg, JITCompiler::TrustedImm64(0xff));
                 MacroAssembler::Jump tooBig = m_jit.branch64(
@@ -2888,14 +2877,13 @@ void SpeculativeJIT::compilePutByValForIntTypedArray(GPRReg base, GPRReg propert
                 inBounds.link(&m_jit);
             }
             value.adopt(scratch);
-            valueGPR = scratchReg;
             break;
         }
 #endif // USE(JSVALUE64)
             
         case DoubleRepUse: {
-            if (isClamped(type)) {
-                ASSERT(elementSize(type) == 1);
+            RELEASE_ASSERT(!isAtomicsIntrinsic(m_currentNode->op()));
+            if (isClamped) {
                 SpeculateDoubleOperand valueOp(this, valueUse);
                 GPRTemporary result(this);
                 FPRTemporary floatScratch(this);
@@ -2903,16 +2891,15 @@ void SpeculativeJIT::compilePutByValForIntTypedArray(GPRReg base, GPRReg propert
                 GPRReg gpr = result.gpr();
                 compileClampDoubleToByte(m_jit, gpr, fpr, floatScratch.fpr());
                 value.adopt(result);
-                valueGPR = gpr;
             } else {
 #if USE(JSVALUE32_64)
                 GPRTemporary realPropertyTag(this);
                 propertyTag.adopt(realPropertyTag);
-                propertyTagGPR = propertyTag.gpr();
+                GPRReg propertyTagGPR = propertyTag.gpr();
 
                 GPRTemporary realValueTag(this);
                 valueTag.adopt(realValueTag);
-                valueTagGPR = valueTag.gpr();
+                GPRReg valueTagGPR = valueTag.gpr();
 #endif
                 SpeculateDoubleOperand valueOp(this, valueUse);
                 GPRTemporary result(this);
@@ -2930,6 +2917,7 @@ void SpeculativeJIT::compilePutByValForIntTypedArray(GPRReg base, GPRReg propert
                 m_jit.or64(GPRInfo::tagTypeNumberRegister, property);
                 boxDouble(fpr, gpr);
 #else
+                UNUSED_PARAM(property);
                 m_jit.move(TrustedImm32(JSValue::Int32Tag), propertyTagGPR);
                 boxDouble(fpr, valueTagGPR, gpr);
 #endif
@@ -2937,7 +2925,6 @@ void SpeculativeJIT::compilePutByValForIntTypedArray(GPRReg base, GPRReg propert
 
                 fixed.link(&m_jit);
                 value.adopt(result);
-                valueGPR = gpr;
             }
             break;
         }
@@ -2947,7 +2934,43 @@ void SpeculativeJIT::compilePutByValForIntTypedArray(GPRReg base, GPRReg propert
             break;
         }
     }
+    return true;
+}
+
+void SpeculativeJIT::compilePutByValForIntTypedArray(GPRReg base, GPRReg property, Node* node, TypedArrayType type)
+{
+    ASSERT(isInt(type));
     
+    StorageOperand storage(this, m_jit.graph().varArgChild(node, 3));
+    GPRReg storageReg = storage.gpr();
+    
+    Edge valueUse = m_jit.graph().varArgChild(node, 2);
+    
+    GPRTemporary value;
+#if USE(JSVALUE32_64)
+    GPRTemporary propertyTag;
+    GPRTemporary valueTag;
+#endif
+
+    JITCompiler::JumpList slowPathCases;
+    
+    bool result = getIntTypedArrayStoreOperand(
+        value, property,
+#if USE(JSVALUE32_64)
+        propertyTag, valueTag,
+#endif
+        valueUse, slowPathCases, isClamped(type));
+    if (!result) {
+        noResult(node);
+        return;
+    }
+
+    GPRReg valueGPR = value.gpr();
+#if USE(JSVALUE32_64)
+    GPRReg propertyTagGPR = propertyTag.gpr();
+    GPRReg valueTagGPR = valueTag.gpr();
+#endif
+
     ASSERT_UNUSED(valueGPR, valueGPR != property);
     ASSERT(valueGPR != base);
     ASSERT(valueGPR != storageReg);
@@ -2998,6 +3021,7 @@ void SpeculativeJIT::compilePutByValForIntTypedArray(GPRReg base, GPRReg propert
         }
 #endif
     }
+    
     noResult(node);
 }
 

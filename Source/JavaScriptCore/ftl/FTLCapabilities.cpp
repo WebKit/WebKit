@@ -286,6 +286,16 @@ inline CapabilityLevel canCompile(Node* node)
     case CallDOMGetter:
     case ArraySlice:
     case ParseInt:
+    case AtomicsAdd:
+    case AtomicsAnd:
+    case AtomicsCompareExchange:
+    case AtomicsExchange:
+    case AtomicsLoad:
+    case AtomicsOr:
+    case AtomicsStore:
+    case AtomicsSub:
+    case AtomicsXor:
+    case AtomicsIsLockFree:
         // These are OK.
         break;
 
