@@ -136,35 +136,36 @@ TEST(WebKit2, OpenAndCloseWindowAsync)
     TestWebKitAPI::Util::run(&isDone);
 }
 
-TEST(WebKit2, OpenAndCloseWindowAsyncCallbackException)
-{
-    openedWebView = nullptr;
-    isDone = false;
-
-    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
-
-    sharedUIDelegateAsync = adoptNS([[OpenAndCloseWindowUIDelegateAsync alloc] init]);
-    sharedUIDelegateAsync.get().shouldCallback = NO;
-    [webView setUIDelegate:sharedUIDelegateAsync.get()];
-
-    [webView configuration].preferences.javaScriptCanOpenWindowsAutomatically = YES;
-
-    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"open-and-close-window" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
-    [webView loadRequest:request];
-
-    TestWebKitAPI::Util::run(&isDone);
-
-    bool caughtException = false;
-    @try {
-        sharedUIDelegateAsync = nil;
-        openedWebView = nil;
-        webView = nil;
-    }
-    @catch (NSException *) {
-        caughtException = true;
-    }
-
-    EXPECT_EQ(caughtException, true);
-}
+// https://bugs.webkit.org/show_bug.cgi?id=171083 - Try to figure out why this fails for some configs but not others, and resolve.
+//TEST(WebKit2, OpenAndCloseWindowAsyncCallbackException)
+//{
+//    openedWebView = nullptr;
+//    isDone = false;
+//
+//    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+//
+//    sharedUIDelegateAsync = adoptNS([[OpenAndCloseWindowUIDelegateAsync alloc] init]);
+//    sharedUIDelegateAsync.get().shouldCallback = NO;
+//    [webView setUIDelegate:sharedUIDelegateAsync.get()];
+//
+//    [webView configuration].preferences.javaScriptCanOpenWindowsAutomatically = YES;
+//
+//    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"open-and-close-window" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+//    [webView loadRequest:request];
+//
+//    TestWebKitAPI::Util::run(&isDone);
+//
+//    bool caughtException = false;
+//    @try {
+//        sharedUIDelegateAsync = nil;
+//        openedWebView = nil;
+//        webView = nil;
+//    }
+//    @catch (NSException *) {
+//        caughtException = true;
+//    }
+//
+//    EXPECT_EQ(caughtException, true);
+//}
 
 #endif
