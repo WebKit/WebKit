@@ -38,7 +38,7 @@ var UIStringTable = {
     'Start Playback': 'Start Playback',
     'Subtitles': 'Subtitles',
     'Suspended': 'Suspended',
-    'This video is playing in Picture in Picture': 'This video is playing in Picture in Picture',
+    'This video is playing in picture in picture.': 'This video is playing in picture in picture.',
     'Unmute': 'Unmute',
     'Video Playback': 'Video Playback',
     'Video Playback Placeholder': 'Video Playback Placeholder',

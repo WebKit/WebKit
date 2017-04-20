@@ -20,7 +20,7 @@ const UIStrings = {
     "Scale to Fit": "Scale to Fit",
     "Subtitles": "Subtitles",
     "Start": "Start",
-    "This video is playing in Picture in Picture": "This video is playing in Picture in Picture",
+    "This video is playing in picture in picture.": "This video is playing in picture in picture.",
     "This video is playing on your Apple TV": "This video is playing on your Apple TV",
     "Unmute": "Unmute",
     "Volume": "Volume",

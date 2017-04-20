@@ -1,3 +1,14 @@
+2017-04-20  Jon Lee  <jonlee@apple.com>
+
+        Update pip placard to "picture in picture"
+        https://bugs.webkit.org/show_bug.cgi?id=171036
+        rdar://problem/30201536
+
+        Reviewed by Antoine Quint.
+
+        * media/modern-media-controls/pip-placard/pip-placard-expected.txt: Updated expected results.
+        * media/modern-media-controls/pip-placard/pip-placard.html:
+
 2017-04-20  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark two crypto/subtle/ecdsa LayoutTests as flaky.

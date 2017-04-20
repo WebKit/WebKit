@@ -30,7 +30,7 @@ class PiPPlacard extends Placard
     {
         super({
             iconName: Icons.PiPPlacard,
-            description: UIString("This video is playing in Picture in Picture"),
+            description: UIString("This video is playing in picture in picture."),
             layoutDelegate
         });
     }

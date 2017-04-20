@@ -1,3 +1,22 @@
+2017-04-20  Jon Lee  <jonlee@apple.com>
+
+        Update pip placard to "picture in picture"
+        https://bugs.webkit.org/show_bug.cgi?id=171036
+        rdar://problem/30201536
+
+        Reviewed by Antoine Quint.
+
+        Updated media/modern-media-controls/pip-placard/pip-placard.html
+
+        Update the text shown with the picture in picture placard.
+
+        * English.lproj/mediaControlsLocalizedStrings.js:
+        * English.lproj/modern-media-controls-localized-strings.js:
+        * Modules/mediacontrols/mediaControlsApple.js:
+        (Controller.prototype.updatePictureInPicturePlaceholder):
+        * Modules/modern-media-controls/controls/pip-placard.js:
+        (PiPPlacard):
+
 2017-04-20  Youenn Fablet  <youenn@apple.com>
 
         RTCPeerConnection is stopping its backend twice sometimes

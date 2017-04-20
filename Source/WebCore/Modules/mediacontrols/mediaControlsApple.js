@@ -936,7 +936,7 @@ Controller.prototype = {
                 this.controls.inlinePlaybackPlaceholder.classList.add(this.ClassNames.pictureInPicture);
                 this.showInlinePlaybackPlaceholderWhenSafe();
 
-                this.controls.inlinePlaybackPlaceholderTextTop.innerText = this.UIString('This video is playing in Picture in Picture');
+                this.controls.inlinePlaybackPlaceholderTextTop.innerText = this.UIString('This video is playing in picture in picture.');
                 this.controls.inlinePlaybackPlaceholderTextTop.classList.add(this.ClassNames.pictureInPicture);
                 this.controls.inlinePlaybackPlaceholderTextBottom.innerText = "";
                 this.controls.inlinePlaybackPlaceholderTextBottom.classList.add(this.ClassNames.pictureInPicture);
