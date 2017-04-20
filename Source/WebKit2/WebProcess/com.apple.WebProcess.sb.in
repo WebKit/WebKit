@@ -56,7 +56,7 @@
     (iokit-property "EnableLPVP")
     (iokit-property-regex #"^IOAccel(Index|Types|Revision)")
     (iokit-property-regex #"^IO(Class|MatchCategory|NameMatch)")
-    (iokit-property-regex #"^IOAudioControl(ChannelID|ID|SubType|Usage)")
+    (iokit-property-regex #"^IOAudioControl(ChannelID|ID|SubType|Usage|Value)")
     (iokit-property-regex #"^IOAudioDevice(CanBeDefaults|TransportType)")
     (iokit-property-regex #"^IOAudioEngine(ChannelNames|ClientDescription|CoreAudioPlugIn|(|Device)Description|Flavor|GlobalUniqueID|IsHidden|OutputChannelLayout|SampleOffset|State)")
     (iokit-property-regex #"^IOAudioEngineClock(Domain|IsStable)")

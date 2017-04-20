@@ -1,3 +1,13 @@
+2017-04-20  Brent Fulgham  <bfulgham@apple.com>
+
+        [WK2][macOS] Allow iokit-get-properties for IOAudioControlValue
+        https://bugs.webkit.org/show_bug.cgi?id=171020
+        <rdar://problem/30878974>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebProcess/com.apple.WebProcess.sb.in: Add missing property name.
+
 2017-04-19  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remove WebKitTestRunner code for enabling features that are already enabled by default
