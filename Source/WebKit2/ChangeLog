@@ -1,3 +1,10 @@
+2017-04-20  Anders Carlsson  <andersca@apple.com>
+
+        Fix build.
+
+        * UIProcess/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.mm:
+        (WebKit::WebPaymentCoordinatorProxy::platformCompletePaymentSession):
+
 2017-04-20  Brady Eidson  <beidson@apple.com>
 
         Add CompletionHandlerCallChecker to SPI added in r215545.
