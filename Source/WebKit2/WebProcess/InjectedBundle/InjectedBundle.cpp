@@ -184,11 +184,6 @@ void InjectedBundle::overrideBoolPreferenceForTestRunner(WebPageGroupProxy* page
         RuntimeEnabledFeatures::sharedFeatures().setWebAnimationsEnabled(enabled);
 #endif
 
-#if ENABLE(FETCH_API)
-    if (preference == "WebKitFetchAPIEnabled")
-        RuntimeEnabledFeatures::sharedFeatures().setFetchAPIEnabled(enabled);
-#endif
-
 #if ENABLE(STREAMS_API)
     if (preference == "WebKitReadableByteStreamAPIEnabled")
         RuntimeEnabledFeatures::sharedFeatures().setReadableByteStreamAPIEnabled(enabled);
@@ -196,19 +191,8 @@ void InjectedBundle::overrideBoolPreferenceForTestRunner(WebPageGroupProxy* page
         RuntimeEnabledFeatures::sharedFeatures().setWritableStreamAPIEnabled(enabled);
 #endif
 
-#if ENABLE(DOWNLOAD_ATTRIBUTE)
-    if (preference == "WebKitDownloadAttributeEnabled")
-        RuntimeEnabledFeatures::sharedFeatures().setDownloadAttributeEnabled(enabled);
-#endif
-
-    if (preference == "WebKitShadowDOMEnabled")
-        RuntimeEnabledFeatures::sharedFeatures().setShadowDOMEnabled(enabled);
-
     if (preference == "WebKitCSSGridLayoutEnabled")
         RuntimeEnabledFeatures::sharedFeatures().setCSSGridLayoutEnabled(enabled);
-
-    if (preference == "WebKitCustomElementsEnabled")
-        RuntimeEnabledFeatures::sharedFeatures().setCustomElementsEnabled(enabled);
 
     if (preference == "WebKitInteractiveFormValidationEnabled")
         RuntimeEnabledFeatures::sharedFeatures().setInteractiveFormValidationEnabled(enabled);

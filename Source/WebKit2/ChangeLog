@@ -1,3 +1,13 @@
+2017-04-19  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Remove WebKitTestRunner code for enabling features that are already enabled by default
+        https://bugs.webkit.org/show_bug.cgi?id=171033
+
+        Reviewed by Ryosuke Niwa.
+
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::overrideBoolPreferenceForTestRunner):
+
 2017-04-19  Youenn Fablet  <youenn@apple.com>
 
         [Mac] Allow customizing H264 encoder
