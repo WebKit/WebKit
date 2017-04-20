@@ -1,3 +1,20 @@
+2017-04-20  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        CachedImage should cancel loading images for unsupported/unknown types
+        https://bugs.webkit.org/show_bug.cgi?id=170697
+
+        Reviewed by Youenn Fablet.
+
+        Currently when the image decoder detects an error with the incoming encoded
+        data of an image, we mark the image to be a broken image. But the network
+        process keeps feeding the web process with the rest of the data. We should
+        cancel loading the rest of the data to save network bandwidth and CPU time
+        loading and processing useless data.
+
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::addIncrementalDataBuffer):
+        (WebCore::CachedImage::finishLoading):
+
 2017-04-20  Aaron Chu  <aaron_chu@apple.com>
 
         AX: Modern Media Controls Timeline slider should be operable

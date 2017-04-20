@@ -406,6 +406,8 @@ void CachedImage::addIncrementalDataBuffer(SharedBuffer& data)
     if (encodedDataStatus == EncodedDataStatus::Error || m_image->isNull()) {
         // Image decoding failed. Either we need more image data or the image data is malformed.
         error(errorOccurred() ? status() : DecodeError);
+        if (m_loader && encodedDataStatus == EncodedDataStatus::Error)
+            m_loader->cancel();
         if (inCache())
             MemoryCache::singleton().remove(*this);
         return;
@@ -440,10 +442,9 @@ void CachedImage::finishLoading(SharedBuffer* data)
     if (!m_image && data)
         createImage();
 
-    if (m_image)
-        m_image->setData(data, true);
+    EncodedDataStatus encodedDataStatus = m_image ? m_image->setData(data, true) : EncodedDataStatus::Error;
 
-    if (!m_image || m_image->isNull()) {
+    if (encodedDataStatus == EncodedDataStatus::Error || m_image->isNull()) {
         // Image decoding failed; the image data is malformed.
         error(errorOccurred() ? status() : DecodeError);
         if (inCache())
