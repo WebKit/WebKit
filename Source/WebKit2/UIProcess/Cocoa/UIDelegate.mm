@@ -187,17 +187,22 @@ RefPtr<WebKit::WebPageProxy> UIDelegate::UIClient::createNewPageCommon(WebKit::W
     auto apiWindowFeatures = API::WindowFeatures::create(windowFeatures);
 
     if (completionHandler) {
-        auto completionHandlerCopy = *completionHandler;
+        RefPtr<CompletionHandlerCallChecker> checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(_webView:createWebViewWithConfiguration:forNavigationAction:windowFeatures:completionHandler:));
 
-        [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate.m_webView createWebViewWithConfiguration:configuration.get() forNavigationAction:wrapper(apiNavigationAction) windowFeatures:wrapper(apiWindowFeatures) completionHandler:^void(WKWebView *webView) {
+        [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate.m_webView createWebViewWithConfiguration:configuration.get() forNavigationAction:wrapper(apiNavigationAction) windowFeatures:wrapper(apiWindowFeatures) completionHandler:BlockPtr<void (WKWebView *)>::fromCallable([completionHandler = *completionHandler, checker = WTFMove(checker), relatedWebView = RetainPtr<WKWebView>(m_uiDelegate.m_webView)](WKWebView *webView) {
+            if (checker->completionHandlerHasBeenCalled())
+                return;
+            checker->didCallCompletionHandler();
+
             if (!webView)
                 return;
 
-            if ([webView->_configuration _relatedWebView] != m_uiDelegate.m_webView)
+            if ([webView->_configuration _relatedWebView] != relatedWebView.get())
                 [NSException raise:NSInternalInconsistencyException format:@"Returned WKWebView was not created with the given configuration."];
 
-            completionHandlerCopy(webView->_page.get());
-        }];
+            completionHandler(webView->_page.get());
+
+        }).get()];
 
         return nullptr;
     }
