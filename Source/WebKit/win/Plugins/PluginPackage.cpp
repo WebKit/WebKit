@@ -32,6 +32,7 @@
 #include "PluginDebug.h"
 #include "PluginView.h"
 #include <JavaScriptCore/Completion.h>
+#include <JavaScriptCore/HeapInlines.h>
 #include <JavaScriptCore/JSGlobalObject.h>
 #include <WebCore/IdentifierRep.h>
 #include <WebCore/MIMETypeRegistry.h>

@@ -1,3 +1,19 @@
+2017-04-19  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] REGRESSION(r215486): Windows Release build is broken
+        https://bugs.webkit.org/show_bug.cgi?id=171024
+        <rdar://problem/31722618>
+
+        Reviewed by Mark Lam.
+
+        Windows WebKit refers to a handful of JSC methods that are always
+        inline. We need to include 'HeapInlines.h' to get the implementation
+        of these methods.
+
+        * Plugins/PluginPackage.cpp:
+        * WebFrame.cpp:
+        * WebView.cpp:
+
 2017-04-15  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, fix the Windows build after r215385
