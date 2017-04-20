@@ -170,6 +170,8 @@ OSStatus CoreAudioCaptureSource::configureMicrophoneProc()
 
 OSStatus CoreAudioCaptureSource::configureSpeakerProc()
 {
+    ASSERT(m_internalStateLock.isHeld());
+
     AURenderCallbackStruct callback = { speakerCallback, this };
     auto err = AudioUnitSetProperty(m_ioUnit, kAudioUnitProperty_SetRenderCallback, kAudioUnitScope_Global, outputBus, &callback, sizeof(callback));
     if (err) {
@@ -191,20 +193,6 @@ OSStatus CoreAudioCaptureSource::configureSpeakerProc()
 
     return err;
 }
-
-uint64_t CoreAudioCaptureSource::addMicrophoneDataConsumer(MicrophoneDataCallback&& callback)
-{
-    std::lock_guard<Lock> lock(m_pendingSourceQueueLock);
-    m_microphoneDataCallbacks.add(++m_nextMicrophoneDataCallbackID, callback);
-
-    return m_nextMicrophoneDataCallbackID;
-}
-
-void CoreAudioCaptureSource::removeMicrophoneDataConsumer(uint64_t callbackID)
-{
-    std::lock_guard<Lock> lock(m_pendingSourceQueueLock);
-    m_microphoneDataCallbacks.remove(callbackID);
-}    
 
 void CoreAudioCaptureSource::addEchoCancellationSource(AudioSampleDataSource& source)
 {
@@ -264,8 +252,6 @@ OSStatus CoreAudioCaptureSource::provideSpeakerData(AudioUnitRenderActionFlags& 
     double adjustedHostTime = m_DTSConversionRatio * timeStamp.mHostTime;
     uint64_t sampleTime = timeStamp.mSampleTime;
     checkTimestamps(timeStamp, sampleTime, adjustedHostTime);
-
-    m_speakerSampleBuffer->reset();
     m_speakerSampleBuffer->setTimes(adjustedHostTime, sampleTime);
 
     AudioBufferList& bufferList = m_speakerSampleBuffer->bufferList();
@@ -291,10 +277,11 @@ OSStatus CoreAudioCaptureSource::speakerCallback(void *inRefCon, AudioUnitRender
 
 OSStatus CoreAudioCaptureSource::processMicrophoneSamples(AudioUnitRenderActionFlags& ioActionFlags, const AudioTimeStamp& timeStamp, UInt32 inBusNumber, UInt32 inNumberFrames, AudioBufferList* /*ioData*/)
 {
+    std::lock_guard<Lock> lock(m_internalStateLock);
+
     ++m_microphoneProcsCalled;
 
     // Pull through the vpio unit to our mic buffer.
-    m_microphoneSampleBuffer->reset();
     AudioBufferList& bufferList = m_microphoneSampleBuffer->bufferList();
     auto err = AudioUnitRender(m_ioUnit, &ioActionFlags, &timeStamp, inBusNumber, inNumberFrames, &bufferList);
     if (err) {
@@ -306,16 +293,9 @@ OSStatus CoreAudioCaptureSource::processMicrophoneSamples(AudioUnitRenderActionF
     uint64_t sampleTime = timeStamp.mSampleTime;
     checkTimestamps(timeStamp, sampleTime, adjustedHostTime);
     m_latestMicTimeStamp = sampleTime;
-
     m_microphoneSampleBuffer->setTimes(adjustedHostTime, sampleTime);
 
     audioSamplesAvailable(MediaTime(sampleTime, m_microphoneProcFormat.sampleRate()), m_microphoneSampleBuffer->bufferList(), m_microphoneProcFormat, inNumberFrames);
-
-    if (m_microphoneDataCallbacks.isEmpty())
-        return 0;
-
-    for (auto& callback : m_microphoneDataCallbacks.values())
-        callback(MediaTime(sampleTime, m_microphoneProcFormat.sampleRate()), m_microphoneSampleBuffer->bufferList(), m_microphoneProcFormat, inNumberFrames);
 
     return noErr;
 }
@@ -467,17 +447,20 @@ void CoreAudioCaptureSource::startProducingData()
 
 void CoreAudioCaptureSource::stopProducingData()
 {
-    std::lock_guard<Lock> lock(m_internalStateLock);
-
-    if (!m_ioUnit)
+    if (!m_ioUnit || !m_ioUnitStarted)
         return;
 
-    auto err = AudioOutputUnitStop(m_ioUnit);
-    if (err) {
-        LOG(Media, "CoreAudioCaptureSource::stop(%p) AudioOutputUnitStop failed with error %d (%.4s)", this, (int)err, (char*)&err);
-        return;
+    {
+        std::lock_guard<Lock> lock(m_internalStateLock);
+
+        auto err = AudioOutputUnitStop(m_ioUnit);
+        if (err) {
+            LOG(Media, "CoreAudioCaptureSource::stop(%p) AudioOutputUnitStop failed with error %d (%.4s)", this, (int)err, (char*)&err);
+            return;
+        }
+        m_ioUnitStarted = false;
     }
-    m_ioUnitStarted = false;
+
     setMuted(true);
 }
 

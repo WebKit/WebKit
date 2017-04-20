@@ -115,9 +115,6 @@ private:
     uint64_t m_microphoneProcsCalled { 0 };
     uint64_t m_latestMicTimeStamp { 0 };
 
-    HashMap<uint64_t, MicrophoneDataCallback> m_microphoneDataCallbacks;
-    uint64_t m_nextMicrophoneDataCallbackID { 0 };
-
     CAAudioStreamDescription m_speakerProcFormat;
     RefPtr<AudioSampleBufferList> m_speakerSampleBuffer;
     uint64_t m_speakerProcsCalled { 0 };

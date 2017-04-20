@@ -1,3 +1,24 @@
+2017-04-19  Eric Carlson  <eric.carlson@apple.com>
+
+        Another deadlock in CoreAudioCaptureSource
+        https://bugs.webkit.org/show_bug.cgi?id=171001
+
+        Fix another regression introduced by r215201, plus make changes suggested
+        in the review of 170771.
+
+        Reviewed by Youenn Fablet.
+
+        * platform/mediastream/mac/CoreAudioCaptureSource.cpp:
+        (WebCore::CoreAudioCaptureSource::configureSpeakerProc): Assert if the lock is no held.
+        (WebCore::CoreAudioCaptureSource::provideSpeakerData): Don't reset the buffer.
+        (WebCore::CoreAudioCaptureSource::processMicrophoneSamples): Take the state lock. Don't
+        reset the buffer. No more microphone callbacks.
+        (WebCore::CoreAudioCaptureSource::stopProducingData): Return early if the io unit isn't
+        running. Drop the lock before calling setMuted to avoid another deadlock.
+        (WebCore::CoreAudioCaptureSource::addMicrophoneDataConsumer): Deleted.
+        (WebCore::CoreAudioCaptureSource::removeMicrophoneDataConsumer): Deleted.
+        * platform/mediastream/mac/CoreAudioCaptureSource.h:
+
 2017-04-19  Anders Carlsson  <andersca@apple.com>
 
         Stop using deprecated APIs, part 3
