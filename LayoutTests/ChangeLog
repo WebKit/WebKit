@@ -1,3 +1,21 @@
+2017-04-20  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Inline anchor elements cannot be dragged when starting the drag from a block descendant
+        https://bugs.webkit.org/show_bug.cgi?id=171062
+        <rdar://problem/31697835>
+
+        Reviewed by Tim Horton.
+
+        Adds a new test on WK1 Mac to verify that link dragging succeeds when the link's anchor element is inline and
+        the drag is started from a block element under the link.
+
+        * fast/events/drag-and-drop-link-containing-block-expected.txt: Added.
+        * fast/events/drag-and-drop-link-containing-block.html: Added.
+        * platform/ios/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
+        Skip the test on iOS and Mac WK2.
+
 2017-04-20  Aaron Chu  <aaron_chu@apple.com>
 
         AX: Modern Media Controls Timeline slider should be operable

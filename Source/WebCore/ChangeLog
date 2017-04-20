@@ -1,3 +1,24 @@
+2017-04-20  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Inline anchor elements cannot be dragged when starting the drag from a block descendant
+        https://bugs.webkit.org/show_bug.cgi?id=171062
+        <rdar://problem/31697835>
+
+        Reviewed by Tim Horton.
+
+        Tweaks DragController::draggableElement to traverse the DOM instead of the render tree when finding a draggable
+        element. This prevents us from skipping elements that are in the DOM ancestor chain, but appear as siblings to
+        the hit-tested node's renderer in the render tree.
+
+        There was also previously a check to ensure that we skip anonymous RenderObjects while traversing up the chain,
+        but this is no longer necessary fter this change, since all the elements we traverse in the DOM should have
+        renderers that are not anonymous.
+
+        Test: fast/events/drag-and-drop-link-containing-block.html
+
+        * page/DragController.cpp:
+        (WebCore::DragController::draggableElement):
+
 2017-04-20  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         -Wformat warning on HistoryController.cpp:295:5
