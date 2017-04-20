@@ -197,7 +197,7 @@ cache_magic_matchlet_compare_to_data (XdgMimeCache *cache,
 	}
       else
 	{
-	  valid_matchlet = memcmp(cache->buffer + data_offset, data + i, data_length) == 0;
+	  valid_matchlet = memcmp(cache->buffer + data_offset, (unsigned char *)data + i, data_length) == 0;
 	}
 
       if (valid_matchlet)

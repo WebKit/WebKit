@@ -1,3 +1,14 @@
+2017-04-19  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] ../../Source/ThirdParty/xdgmime/src/xdgmimecache.c:200:62: warning: pointer of type ‘void *’ used in arithmetic [-Wpointer-arith]
+        https://bugs.webkit.org/show_bug.cgi?id=171026
+
+        Reviewed by Carlos Garcia Campos.
+
+        * xdgmime/README.webkit:
+        * xdgmime/src/xdgmimecache.c:
+        (cache_magic_matchlet_compare_to_data):
+
 2017-03-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix the build after r214338.

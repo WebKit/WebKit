@@ -11,6 +11,7 @@ Changes for the WebKit project:
 
  - Add xdg_mime_get_simple_globs
  - s/^#include <config.h>/#include "cmakeconfig.h"/g
+ - Fix invalid pointer arithmetic: https://bugs.webkit.org/show_bug.cgi?id=171026
 
 Changes included from GLib sources:
 
