@@ -780,11 +780,11 @@ ExceptionOr<void> ApplePaySession::completePayment(ApplePayPaymentAuthorizationR
     if (convertedResult.hasException())
         return convertedResult.releaseException();
 
-    auto authorizationStatus = convertedResult.releaseReturnValue().status;
+    bool isFinalState = isFinalStateResult(convertedResult.releaseReturnValue());
 
     paymentCoordinator().completePaymentSession(convertedResult.releaseReturnValue());
 
-    if (!isFinalStateStatus(authorizationStatus)) {
+    if (!isFinalState) {
         m_state = State::Active;
         return { };
     }

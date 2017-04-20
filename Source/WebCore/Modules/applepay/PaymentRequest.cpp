@@ -28,6 +28,7 @@
 
 #if ENABLE(APPLE_PAY)
 
+#include "PaymentAuthorizationStatus.h"
 #include "SoftLinking.h"
 
 namespace WebCore {
@@ -67,6 +68,35 @@ bool PaymentRequest::isValidSupportedNetwork(unsigned version, const String& sup
         return true;
 
     return isAdditionalValidSupportedNetwork(version, supportedNetwork);
+}
+
+bool isFinalStateResult(const std::optional<PaymentAuthorizationResult>& result)
+{
+    if (!result)
+        return true;
+
+    switch (result->status) {
+    case PaymentAuthorizationStatus::Success:
+        return true;
+
+    case PaymentAuthorizationStatus::InvalidBillingPostalAddress:
+    case PaymentAuthorizationStatus::InvalidShippingPostalAddress:
+    case PaymentAuthorizationStatus::InvalidShippingContact:
+    case PaymentAuthorizationStatus::PINRequired:
+    case PaymentAuthorizationStatus::PINIncorrect:
+    case PaymentAuthorizationStatus::PINLockout:
+        return false;
+
+    case PaymentAuthorizationStatus::Failure:
+        if (result->errors.isEmpty())
+            return true;
+
+        for (auto& error : result->errors) {
+            if (error.code == PaymentError::Code::Unknown)
+                return true;
+        }
+        return false;
+    }
 }
 
 }

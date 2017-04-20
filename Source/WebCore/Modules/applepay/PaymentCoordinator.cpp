@@ -108,11 +108,11 @@ void PaymentCoordinator::completePaymentSession(std::optional<PaymentAuthorizati
 {
     ASSERT(m_activeSession);
 
-    auto status = result ? result->status : PaymentAuthorizationStatus::Success;
+    bool isFinalState = isFinalStateResult(result);
 
     m_client.completePaymentSession(WTFMove(result));
 
-    if (!isFinalStateStatus(status))
+    if (!isFinalState)
         return;
 
     m_activeSession = nullptr;

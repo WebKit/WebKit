@@ -179,9 +179,11 @@ void WebPaymentCoordinatorProxy::completePaymentSession(const std::optional<WebC
     if (!canCompletePayment())
         return;
 
+    bool isFinalStateResult = WebCore::isFinalStateResult(result);
+
     platformCompletePaymentSession(result);
 
-    if (!WebCore::isFinalStateStatus(result ? result->status : WebCore::PaymentAuthorizationStatus::Success)) {
+    if (!isFinalStateResult) {
         m_state = State::Active;
         return;
     }

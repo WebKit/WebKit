@@ -195,6 +195,8 @@ struct ShippingMethodUpdate {
     PaymentRequest::TotalAndLineItems newTotalAndLineItems;
 };
 
+WEBCORE_EXPORT bool isFinalStateResult(const std::optional<PaymentAuthorizationResult>&);
+
 }
 
 namespace WTF {

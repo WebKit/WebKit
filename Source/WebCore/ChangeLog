@@ -1,3 +1,23 @@
+2017-04-20  Anders Carlsson  <andersca@apple.com>
+
+        Replace isFinalStateStatus with isFinalStateResult
+        https://bugs.webkit.org/show_bug.cgi?id=171072
+        rdar://problem/31589635
+
+        Reviewed by Tim Horton.
+
+        This will let us get rid of some of the status enum declarations.
+
+        * Modules/applepay/ApplePaySession.cpp:
+        (WebCore::ApplePaySession::completePayment):
+        * Modules/applepay/PaymentAuthorizationStatus.h:
+        (WebCore::isFinalStateStatus): Deleted.
+        * Modules/applepay/PaymentCoordinator.cpp:
+        (WebCore::PaymentCoordinator::completePaymentSession):
+        * Modules/applepay/PaymentRequest.cpp:
+        (WebCore::isFinalStateResult):
+        * Modules/applepay/PaymentRequest.h:
+
 2017-04-20  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] REGRESSION(r215486): Windows Release build is broken
