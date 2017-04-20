@@ -1,3 +1,19 @@
+2017-04-20  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Add regular expression support to XHR breakpoints
+        https://bugs.webkit.org/show_bug.cgi?id=170099
+        <rdar://problem/31558082>
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/InspectorDOMDebuggerAgent.cpp:
+        (WebCore::InspectorDOMDebuggerAgent::setXHRBreakpoint):
+        (WebCore::InspectorDOMDebuggerAgent::willSendXMLHttpRequest):
+        Use ContentSearchUtilities for both Text and RegularExpression breakpoints.
+
+        * inspector/InspectorDOMDebuggerAgent.h:
+        Associate XHR breakpoint with a type.
+
 2017-04-20  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Cleanup and simplify CoreAudioCaptureSource

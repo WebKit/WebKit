@@ -13,9 +13,21 @@ CALL STACK:
 1: [P] Global Code
 -- Running test teardown.
 
--- Running test case: BreakOnXMLHttpRequestContainingURL
+-- Running test case: BreakOnXMLHttpRequestContainingText
 PASS: Breakpoint should not be disabled initially.
 PASS: Added breakpoint for URL: data
+Sending XMLHttpRequest.
+PAUSED:
+PASS: Pause reason should be XHR.
+PASS: Pause data URL should match breakpoint URL.
+CALL STACK:
+0: [F] loadResourceXHR
+1: [P] Global Code
+-- Running test teardown.
+
+-- Running test case: BreakOnXMLHttpRequestMatchingRegularExpression
+PASS: Breakpoint should not be disabled initially.
+PASS: Added breakpoint for URL: data[A-Z]*.(json|txt|png)
 Sending XMLHttpRequest.
 PAUSED:
 PASS: Pause reason should be XHR.

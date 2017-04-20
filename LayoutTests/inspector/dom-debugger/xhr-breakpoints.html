@@ -41,14 +41,14 @@ function test()
         });
     }
 
-    function addBreakpointForURL(url, disabled) {
+    function addBreakpoint(type, url, disabled) {
         return new Promise((resolve, reject) => {
             let mainFrame = WebInspector.frameResourceManager.mainFrame;
             InspectorTest.assert(mainFrame, "Missing main frame.");
             if (!mainFrame)
                 reject();
 
-            let breakpoint = new WebInspector.XHRBreakpoint(url);
+            let breakpoint = new WebInspector.XHRBreakpoint(type, url);
             WebInspector.domDebuggerManager.awaitEvent(WebInspector.DOMDebuggerManager.Event.XHRBreakpointAdded)
             .then(() => {
                 InspectorTest.expectFalse(breakpoint.disabled, "Breakpoint should not be disabled initially.");
@@ -93,12 +93,40 @@ function test()
     });
 
     suite.addTestCase({
-        name: "BreakOnXMLHttpRequestContainingURL",
-        description: "Check that debugger pauses for XMLHttpRequests.",
+        name: "BreakOnXMLHttpRequestContainingText",
+        description: "Check that debugger pauses on a URL containing text.",
         teardown,
         test(resolve, reject) {
             let expectedBreakpointURL;
-            addBreakpointForURL("data")
+            addBreakpoint(WebInspector.XHRBreakpoint.Type.Text, "data")
+            .then((breakpoint) => {
+                expectedBreakpointURL = breakpoint.url;
+
+                InspectorTest.log("Sending XMLHttpRequest.");
+                InspectorTest.evaluateInPage("loadResourceXHR()");
+                return WebInspector.debuggerManager.awaitEvent(WebInspector.DebuggerManager.Event.Paused);
+            })
+            .then(() => {
+                let targetData = WebInspector.debuggerManager.dataForTarget(WebInspector.debuggerManager.activeCallFrame.target);
+                InspectorTest.log("PAUSED:");
+                InspectorTest.expectEqual(targetData.pauseReason, WebInspector.DebuggerManager.PauseReason.XHR, "Pause reason should be XHR.");
+                InspectorTest.expectEqual(targetData.pauseData.breakpointURL, expectedBreakpointURL, "Pause data URL should match breakpoint URL.");
+
+                logActiveStackTrace();
+
+                return WebInspector.debuggerManager.resume();
+            })
+            .then(resolve, reject);
+        }
+    });
+
+    suite.addTestCase({
+        name: "BreakOnXMLHttpRequestMatchingRegularExpression",
+        description: "Check that debugger pauses based on a URL matching a regex pattern.",
+        teardown,
+        test(resolve, reject) {
+            let expectedBreakpointURL;
+            addBreakpoint(WebInspector.XHRBreakpoint.Type.RegularExpression, "data[A-Z]*\.(json|txt|png)")
             .then((breakpoint) => {
                 expectedBreakpointURL = breakpoint.url;
 
@@ -126,7 +154,7 @@ function test()
         teardown,
         test(resolve, reject) {
             const disabled = true;
-            addBreakpointForURL("data", disabled)
+            addBreakpoint(WebInspector.XHRBreakpoint.Type.Text, "data", disabled)
             .then((breakpoint) => {
                 InspectorTest.log("Sending XMLHttpRequest.");
                 return Promise.race([awaitEvaluateInPage("loadResourceXHR()"), rejectOnPause()]);
@@ -144,7 +172,7 @@ function test()
         description: "Check that debugger does not pause for breakpoint with different URL.",
         teardown,
         test(resolve, reject) {
-            addBreakpointForURL("nonexistant-url")
+            addBreakpoint(WebInspector.XHRBreakpoint.Type.Text, "nonexistant-url")
             .then((breakpoint) => {
                 InspectorTest.log("Sending XMLHttpRequest.");
                 return Promise.race([awaitEvaluateInPage("loadResourceXHR()"), rejectOnPause()]);
@@ -162,7 +190,7 @@ function test()
         description: "Check that debugger does not pause for removed breakpoint.",
         teardown,
         test(resolve, reject) {
-            addBreakpointForURL("data")
+            addBreakpoint(WebInspector.XHRBreakpoint.Type.Text, "data")
             .then((breakpoint) => {
                 let promise = WebInspector.domDebuggerManager.awaitEvent(WebInspector.DOMDebuggerManager.Event.XHRBreakpointRemoved);
 

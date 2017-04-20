@@ -35,7 +35,10 @@ WebInspector.XHRBreakpointTreeElement = class XHRBreakpointTreeElement extends W
         let subtitle;
         if (!title) {
             title = WebInspector.UIString("URL");
-            subtitle = doubleQuotedString(breakpoint.url);
+            if (breakpoint.type === WebInspector.XHRBreakpoint.Type.Text)
+                subtitle = doubleQuotedString(breakpoint.url);
+            else
+                subtitle = "/" + breakpoint.url + "/";
         }
 
         super(["breakpoint", className], title, subtitle, breakpoint);

@@ -58,7 +58,8 @@
         {
             "name": "setXHRBreakpoint",
             "parameters": [
-                { "name": "url", "type": "string", "description": "Resource URL substring. All XHRs having this substring in the URL will get stopped upon. An empty string will pause on all XHRs." }
+                { "name": "url", "type": "string", "description": "Resource URL substring or regular expression. All XHRs having this substring in the URL will get stopped upon. An empty string will pause on all XHRs." },
+                { "name": "isRegex", "type": "boolean", "optional": true, "descriprion": "Whether the URL string is a regular expression." }
             ],
             "description": "Sets breakpoint on XMLHttpRequest."
         },

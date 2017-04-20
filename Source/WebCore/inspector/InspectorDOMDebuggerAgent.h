@@ -57,7 +57,7 @@ public:
     virtual ~InspectorDOMDebuggerAgent();
 
     // DOMDebugger API
-    void setXHRBreakpoint(ErrorString&, const String& url) override;
+    void setXHRBreakpoint(ErrorString&, const String& url, const bool* const optionalIsRegex) override;
     void removeXHRBreakpoint(ErrorString&, const String& url) override;
     void setEventListenerBreakpoint(ErrorString&, const String& eventName) override;
     void removeEventListenerBreakpoint(ErrorString&, const String& eventName) override;
@@ -100,7 +100,10 @@ private:
 
     HashMap<Node*, uint32_t> m_domBreakpoints;
     HashSet<String> m_eventListenerBreakpoints;
-    HashSet<String> m_xhrBreakpoints;
+
+    enum class XHRBreakpointType { Text, RegularExpression };
+
+    HashMap<String, XHRBreakpointType> m_xhrBreakpoints;
     bool m_pauseOnAllXHRsEnabled { false };
 };
 

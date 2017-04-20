@@ -23,60 +23,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.XHRBreakpoint = class XHRBreakpoint extends WebInspector.Object
-{
-    constructor(type, url, disabled)
-    {
-        super();
+.cm-s-default .cm-regex-character-set {
+    color: var(--syntax-highlight-string-color);
+}
 
-        this._type = type || WebInspector.XHRBreakpoint.Type.Text;
-        this._url = url || "";
-        this._disabled = disabled || false;
-    }
+.cm-s-default .cm-regex-character-set-negate {
+    color: var(--syntax-highlight-number-color);
+}
 
-    // Public
+.cm-s-default :matches(.cm-regex-escape, .cm-regex-escape-2, .cm-regex-escape-3) {
+    color: var(--syntax-highlight-symbol-color);
+}
 
-    get type() { return this._type; }
-    get url() { return this._url; }
+.cm-s-default :matches(.cm-regex-group, .cm-regex-lookahead) {
+    color: var(--syntax-highlight-regex-group-color);
+}
 
-    get disabled()
-    {
-        return this._disabled;
-    }
+.cm-s-default .cm-regex-quantifier {
+    color: var(--syntax-highlight-number-color);
+}
 
-    set disabled(disabled)
-    {
-        if (this._disabled === disabled)
-            return;
-
-        this._disabled = disabled;
-
-        this.dispatchEventToListeners(WebInspector.XHRBreakpoint.Event.DisabledStateDidChange);
-    }
-
-    get serializableInfo()
-    {
-        let info = {type: this._type, url: this._url};
-        if (this._disabled)
-            info.disabled = true;
-
-        return info;
-    }
-
-    saveIdentityToCookie(cookie)
-    {
-        cookie[WebInspector.XHRBreakpoint.URLCookieKey] = this._url;
-    }
-};
-
-WebInspector.XHRBreakpoint.URLCookieKey = "xhr-breakpoint-url";
-
-WebInspector.XHRBreakpoint.Event = {
-    DisabledStateDidChange: "xhr-breakpoint-disabled-state-did-change",
-    ResolvedStateDidChange: "xhr-breakpoint-resolved-state-did-change",
-};
-
-WebInspector.XHRBreakpoint.Type = {
-    Text: "text",
-    RegularExpression: "regex",
-};
+.cm-s-default :matches(.cm-regex-literal, .cm-regex-special, .cm-regex-backreference) {
+    color: var(--syntax-highlight-boolean-color);
+}

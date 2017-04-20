@@ -1154,7 +1154,7 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
 
     _addXHRBreakpointButtonClicked(event)
     {
-        let popover = new WebInspector.InputPopover(WebInspector.UIString("Break when URL contains:"), this);
+        let popover = new WebInspector.XHRBreakpointPopover(this);
         popover.show(event.target.element, [WebInspector.RectEdge.MAX_Y, WebInspector.RectEdge.MIN_Y, WebInspector.RectEdge.MAX_X]);
     }
 
@@ -1169,7 +1169,7 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
         if (!url)
             return;
 
-        WebInspector.domDebuggerManager.addXHRBreakpoint(new WebInspector.XHRBreakpoint(url));
+        WebInspector.domDebuggerManager.addXHRBreakpoint(new WebInspector.XHRBreakpoint(popover.type, url));
     }
 };
 

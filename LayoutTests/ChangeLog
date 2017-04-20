@@ -1,3 +1,16 @@
+2017-04-20  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Add regular expression support to XHR breakpoints
+        https://bugs.webkit.org/show_bug.cgi?id=170099
+        <rdar://problem/31558082>
+
+        Reviewed by Joseph Pecoraro.
+
+        Update tests and expectations for new XHR breakpoint type.
+
+        * inspector/dom-debugger/xhr-breakpoints-expected.txt:
+        * inspector/dom-debugger/xhr-breakpoints.html:
+
 2017-04-20  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Inline anchor elements cannot be dragged when starting the drag from a block descendant

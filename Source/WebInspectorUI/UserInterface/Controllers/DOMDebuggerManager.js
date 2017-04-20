@@ -37,8 +37,7 @@ WebInspector.DOMDebuggerManager = class DOMDebuggerManager extends WebInspector.
         this._xhrBreakpoints = [];
         this._allRequestsBreakpointEnabledSetting = new WebInspector.Setting("break-on-all-requests", false);
 
-        const emptyURL = "";
-        this._allRequestsBreakpoint = new WebInspector.XHRBreakpoint(emptyURL, !this._allRequestsBreakpointEnabledSetting.value);
+        this._allRequestsBreakpoint = new WebInspector.XHRBreakpoint(null, null, !this._allRequestsBreakpointEnabledSetting.value);
 
         WebInspector.DOMBreakpoint.addEventListener(WebInspector.DOMBreakpoint.Event.DisabledStateDidChange, this._domBreakpointDisabledStateDidChange, this);
         WebInspector.XHRBreakpoint.addEventListener(WebInspector.XHRBreakpoint.Event.DisabledStateDidChange, this._xhrBreakpointDisabledStateDidChange, this);
@@ -60,7 +59,7 @@ WebInspector.DOMDebuggerManager = class DOMDebuggerManager extends WebInspector.
             }
 
             for (let cookie of this._xhrBreakpointsSetting.value) {
-                let breakpoint = new WebInspector.XHRBreakpoint(cookie.url, cookie.disabled);
+                let breakpoint = new WebInspector.XHRBreakpoint(cookie.type, cookie.url, cookie.disabled);
                 this.addXHRBreakpoint(breakpoint);
             }
 
@@ -190,7 +189,7 @@ WebInspector.DOMDebuggerManager = class DOMDebuggerManager extends WebInspector.
         if (this._xhrBreakpoints.includes(breakpoint))
             return;
 
-        if (this._xhrBreakpoints.some((entry) => entry.url === breakpoint.url))
+        if (this._xhrBreakpoints.some((entry) => entry.type === breakpoint.type && entry.url === breakpoint.url))
             return;
 
         this._xhrBreakpoints.push(breakpoint);
@@ -358,8 +357,10 @@ WebInspector.DOMDebuggerManager = class DOMDebuggerManager extends WebInspector.
 
         if (breakpoint.disabled)
             DOMDebuggerAgent.removeXHRBreakpoint(breakpoint.url, breakpointUpdated);
-        else
-            DOMDebuggerAgent.setXHRBreakpoint(breakpoint.url, breakpointUpdated);
+        else {
+            let isRegex = breakpoint.type === WebInspector.XHRBreakpoint.Type.RegularExpression;
+            DOMDebuggerAgent.setXHRBreakpoint(breakpoint.url, isRegex, breakpointUpdated);
+        }
     }
 
     _resolveXHRBreakpoint(breakpoint)

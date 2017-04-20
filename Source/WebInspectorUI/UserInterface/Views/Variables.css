@@ -76,6 +76,8 @@
     --syntax-highlight-regexp-color: hsl(20, 100%, 44%);
     --syntax-highlight-symbol-color: hsl(172, 45%, 45%);
 
+    --syntax-highlight-regex-group-color: var(--text-color-gray-medium);
+
     --memory-javascript-fill-color: hsl(269, 65%, 75%);
     --memory-javascript-stroke-color: hsl(269, 33%, 50%);
     --memory-images-fill-color: hsl(0, 65%, 75%);

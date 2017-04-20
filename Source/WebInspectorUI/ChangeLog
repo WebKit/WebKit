@@ -1,3 +1,83 @@
+2017-04-20  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Add regular expression support to XHR breakpoints
+        https://bugs.webkit.org/show_bug.cgi?id=170099
+        <rdar://problem/31558082>
+
+        Reviewed by Joseph Pecoraro.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        New strings for the Add XHR Breakpoint popover.
+
+        * UserInterface/Controllers/DOMDebuggerManager.js:
+        (WebInspector.DOMDebuggerManager):
+        (WebInspector.DOMDebuggerManager.prototype.addXHRBreakpoint):
+        Update for new XHRBreakpoint constructor.
+        (WebInspector.DOMDebuggerManager.prototype._updateXHRBreakpoint):
+        Set `isRegex` flag.
+
+        * UserInterface/Main.html:
+        New files for CodeMirror mode and breakpoint popover.
+
+        * UserInterface/Models/XHRBreakpoint.js:
+        Breakpoint can be of type Text or RegularExpression.
+        (WebInspector.XHRBreakpoint):
+        (WebInspector.XHRBreakpoint.prototype.get type):
+        (WebInspector.XHRBreakpoint.prototype.get serializableInfo):
+
+        * UserInterface/Views/CodeMirrorRegexMode.css: Added.
+        (.cm-s-default .cm-regex-character-set):
+        (.cm-s-default .cm-regex-character-set-negate):
+        (.cm-s-default :matches(.cm-regex-escape, .cm-regex-escape-2, .cm-regex-escape-3)):
+        (.cm-s-default :matches(.cm-regex-group, .cm-regex-lookahead)):
+        (.cm-s-default .cm-regex-quantifier):
+        (.cm-s-default :matches(.cm-regex-literal, .cm-regex-special, .cm-regex-backreference)):
+        Colors for regular expression syntax highlighting. The regex mode emits
+        more class names than we have separate colors for, allowing for further
+        customization in the future.
+
+        * UserInterface/Views/CodeMirrorRegexMode.js: Added.
+        (characterSetTokenizer):
+        (consumeEscapeSequence):
+        (tokenBase):
+        New CodeMirror mode for highlighting "text/x-regex" content.
+
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        Use new popover type for creating XHR breakpoints.
+        (WebInspector.DebuggerSidebarPanel.prototype._addXHRBreakpointButtonClicked):
+        (WebInspector.DebuggerSidebarPanel.prototype.willDismissPopover):
+        (WebInspector.DebuggerSidebarPanel):
+
+        * UserInterface/Views/XHRBreakpointPopover.css: Added.
+        (.popover .xhr-breakpoint-content):
+        (.popover .xhr-breakpoint-content > .editor-wrapper):
+        (.popover .xhr-breakpoint-content > .editor-wrapper > .editor):
+        (body[dir=ltr] .popover .xhr-breakpoint-content > .editor-wrapper > .editor):
+        (body[dir=rtl] .popover .xhr-breakpoint-content > .editor-wrapper > .editor):
+        (.popover .xhr-breakpoint-content > .editor-wrapper > .editor > .CodeMirror):
+        (.popover .xhr-breakpoint-content > .editor-wrapper > .editor > .CodeMirror-scroll):
+        Styles for new popover.
+
+        * UserInterface/Views/XHRBreakpointPopover.js: Added.
+        New popover class. Includes a picker for selecting breakpoint type
+        (Text or RegularExpression), and has an improved popover caption. Input
+        field style and placeholder text changes based on the breakpoint type.
+
+        (WebInspector.XHRBreakpointPopover):
+        (WebInspector.XHRBreakpointPopover.prototype.get result):
+        (WebInspector.XHRBreakpointPopover.prototype.get type):
+        (WebInspector.XHRBreakpointPopover.prototype.get value):
+        (WebInspector.XHRBreakpointPopover.prototype.show.addOption):
+        (WebInspector.XHRBreakpointPopover.prototype.show):
+        (WebInspector.XHRBreakpointPopover.prototype._createEditor):
+        (WebInspector.XHRBreakpointPopover.prototype._updateEditor):
+        (WebInspector.XHRBreakpointPopover.prototype._presentOverTargetElement):
+
+        * UserInterface/Views/XHRBreakpointTreeElement.js:
+        (WebInspector.XHRBreakpointTreeElement):
+        Differentiate breakpoint type by enclosing subtitle in either double quotes
+        or regex-literal delimiters, depending on the type of breakpoint.
+
 2017-04-19  Nikita Vasilyev  <nvasilyev@apple.com>
 
         REGRESSION (r209882): Web Inspector: Console's filter bar has text search field, but the next/previous buttons don't do anything

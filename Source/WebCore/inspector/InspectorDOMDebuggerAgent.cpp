@@ -35,8 +35,10 @@
 #include "HTMLElement.h"
 #include "InspectorDOMAgent.h"
 #include "InstrumentingAgents.h"
+#include <inspector/ContentSearchUtilities.h>
 #include <inspector/InspectorFrontendDispatchers.h>
 #include <inspector/InspectorValues.h>
+#include <yarr/RegularExpression.h>
 
 namespace {
 
@@ -372,14 +374,15 @@ void InspectorDOMDebuggerAgent::pauseOnNativeEventIfNeeded(bool isDOMEvent, cons
         m_debuggerAgent->schedulePauseOnNextStatement(Inspector::DebuggerFrontendDispatcher::Reason::EventListener, WTFMove(eventData));
 }
 
-void InspectorDOMDebuggerAgent::setXHRBreakpoint(ErrorString&, const String& url)
+void InspectorDOMDebuggerAgent::setXHRBreakpoint(ErrorString&, const String& url, const bool* const optionalIsRegex)
 {
     if (url.isEmpty()) {
         m_pauseOnAllXHRsEnabled = true;
         return;
     }
 
-    m_xhrBreakpoints.add(url);
+    bool isRegex = optionalIsRegex ? *optionalIsRegex : false;
+    m_xhrBreakpoints.set(url, isRegex ? XHRBreakpointType::RegularExpression : XHRBreakpointType::Text);
 }
 
 void InspectorDOMDebuggerAgent::removeXHRBreakpoint(ErrorString&, const String& url)
@@ -401,9 +404,12 @@ void InspectorDOMDebuggerAgent::willSendXMLHttpRequest(const String& url)
     if (m_pauseOnAllXHRsEnabled)
         breakpointURL = emptyString();
     else {
-        for (auto& breakpoint : m_xhrBreakpoints) {
-            if (url.contains(breakpoint)) {
-                breakpointURL = breakpoint;
+        for (auto& entry : m_xhrBreakpoints) {
+            const auto& query = entry.key;
+            bool isRegex = entry.value == XHRBreakpointType::RegularExpression;
+            auto regex = ContentSearchUtilities::createSearchRegex(query, false, isRegex);
+            if (regex.match(url) != -1) {
+                breakpointURL = query;
                 break;
             }
         }
