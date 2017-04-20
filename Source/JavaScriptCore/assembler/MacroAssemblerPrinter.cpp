@@ -175,7 +175,7 @@ void MacroAssemblerPrinter::printCallback(ProbeContext* context)
 {
     typedef PrintArg Arg;
     PrintArgsList& argsList =
-    *reinterpret_cast<PrintArgsList*>(context->arg1);
+    *reinterpret_cast<PrintArgsList*>(context->arg);
     for (size_t i = 0; i < argsList.size(); i++) {
         auto& arg = argsList[i];
         switch (arg.type) {

@@ -43,10 +43,9 @@ extern "C" void ctiMasmProbeTrampoline();
 
 #define PTR_SIZE 4
 #define PROBE_PROBE_FUNCTION_OFFSET (0 * PTR_SIZE)
-#define PROBE_ARG1_OFFSET (1 * PTR_SIZE)
-#define PROBE_ARG2_OFFSET (2 * PTR_SIZE)
+#define PROBE_ARG_OFFSET (1 * PTR_SIZE)
 
-#define PROBE_FIRST_GPREG_OFFSET (3 * PTR_SIZE)
+#define PROBE_FIRST_GPREG_OFFSET (2 * PTR_SIZE)
 
 #define GPREG_SIZE 4
 #define PROBE_CPU_R0_OFFSET (PROBE_FIRST_GPREG_OFFSET + (0 * GPREG_SIZE))
@@ -105,13 +104,15 @@ extern "C" void ctiMasmProbeTrampoline();
 #define PROBE_CPU_D30_OFFSET (PROBE_FIRST_FPREG_OFFSET + (30 * FPREG_SIZE))
 #define PROBE_CPU_D31_OFFSET (PROBE_FIRST_FPREG_OFFSET + (31 * FPREG_SIZE))
 #define PROBE_SIZE (PROBE_FIRST_FPREG_OFFSET + (32 * FPREG_SIZE))
+#define PROBE_ALIGNED_SIZE (PROBE_SIZE)
 
 // These ASSERTs remind you that if you change the layout of ProbeContext,
 // you need to change ctiMasmProbeTrampoline offsets above to match.
 #define PROBE_OFFSETOF(x) offsetof(struct ProbeContext, x)
 COMPILE_ASSERT(PROBE_OFFSETOF(probeFunction) == PROBE_PROBE_FUNCTION_OFFSET, ProbeContext_probeFunction_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(arg1) == PROBE_ARG1_OFFSET, ProbeContext_arg1_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(arg2) == PROBE_ARG2_OFFSET, ProbeContext_arg2_offset_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(PROBE_OFFSETOF(arg) == PROBE_ARG_OFFSET, ProbeContext_arg_offset_matches_ctiMasmProbeTrampoline);
+
+COMPILE_ASSERT(!(PROBE_CPU_R0_OFFSET & 0x3), ProbeContext_cpu_r0_offset_should_be_4_byte_aligned);
 
 COMPILE_ASSERT(PROBE_OFFSETOF(cpu.r0) == PROBE_CPU_R0_OFFSET, ProbeContext_cpu_r0_offset_matches_ctiMasmProbeTrampoline);
 COMPILE_ASSERT(PROBE_OFFSETOF(cpu.r1) == PROBE_CPU_R1_OFFSET, ProbeContext_cpu_r1_offset_matches_ctiMasmProbeTrampoline);
@@ -132,6 +133,8 @@ COMPILE_ASSERT(PROBE_OFFSETOF(cpu.pc) == PROBE_CPU_PC_OFFSET, ProbeContext_cpu_p
 
 COMPILE_ASSERT(PROBE_OFFSETOF(cpu.apsr) == PROBE_CPU_APSR_OFFSET, ProbeContext_cpu_apsr_offset_matches_ctiMasmProbeTrampoline);
 COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fpscr) == PROBE_CPU_FPSCR_OFFSET, ProbeContext_cpu_fpscr_offset_matches_ctiMasmProbeTrampoline);
+
+COMPILE_ASSERT(!(PROBE_CPU_D0_OFFSET & 0xf), ProbeContext_cpu_d0_offset_should_be_16_byte_aligned);
 
 COMPILE_ASSERT(PROBE_OFFSETOF(cpu.d0) == PROBE_CPU_D0_OFFSET, ProbeContext_cpu_d0_offset_matches_ctiMasmProbeTrampoline);
 COMPILE_ASSERT(PROBE_OFFSETOF(cpu.d1) == PROBE_CPU_D1_OFFSET, ProbeContext_cpu_d1_offset_matches_ctiMasmProbeTrampoline);
@@ -168,6 +171,7 @@ COMPILE_ASSERT(PROBE_OFFSETOF(cpu.d30) == PROBE_CPU_D30_OFFSET, ProbeContext_cpu
 COMPILE_ASSERT(PROBE_OFFSETOF(cpu.d31) == PROBE_CPU_D31_OFFSET, ProbeContext_cpu_d31_offset_matches_ctiMasmProbeTrampoline);
 
 COMPILE_ASSERT(sizeof(ProbeContext) == PROBE_SIZE, ProbeContext_size_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(!(PROBE_ALIGNED_SIZE & 0xf), ProbeContext_aligned_size_offset_should_be_16_byte_aligned);
 
 #undef PROBE_OFFSETOF
     
@@ -183,16 +187,15 @@ asm (
     // MacroAssemblerARMv7::probe() has already generated code to store some values.
     // The top of stack now looks like this:
     //     esp[0 * ptrSize]: probeFunction
-    //     esp[1 * ptrSize]: arg1
-    //     esp[2 * ptrSize]: arg2
-    //     esp[3 * ptrSize]: saved r0
-    //     esp[4 * ptrSize]: saved ip
-    //     esp[5 * ptrSize]: saved lr
-    //     esp[6 * ptrSize]: saved sp
+    //     esp[1 * ptrSize]: arg
+    //     esp[2 * ptrSize]: saved r0
+    //     esp[3 * ptrSize]: saved ip
+    //     esp[4 * ptrSize]: saved lr
+    //     esp[5 * ptrSize]: saved sp
 
     "mov       ip, sp" "\n"
     "mov       r0, sp" "\n"
-    "sub       r0, r0, #" STRINGIZE_VALUE_OF(PROBE_SIZE) "\n"
+    "sub       r0, r0, #" STRINGIZE_VALUE_OF(PROBE_ALIGNED_SIZE) "\n"
 
     // The ARM EABI specifies that the stack needs to be 16 byte aligned.
     "bic       r0, r0, #0xf" "\n"
@@ -209,16 +212,14 @@ asm (
     "ldr       lr, [ip, #0 * " STRINGIZE_VALUE_OF(PTR_SIZE) "]" "\n"
     "str       lr, [sp, #" STRINGIZE_VALUE_OF(PROBE_PROBE_FUNCTION_OFFSET) "]" "\n"
     "ldr       lr, [ip, #1 * " STRINGIZE_VALUE_OF(PTR_SIZE) "]" "\n"
-    "str       lr, [sp, #" STRINGIZE_VALUE_OF(PROBE_ARG1_OFFSET) "]" "\n"
+    "str       lr, [sp, #" STRINGIZE_VALUE_OF(PROBE_ARG_OFFSET) "]" "\n"
     "ldr       lr, [ip, #2 * " STRINGIZE_VALUE_OF(PTR_SIZE) "]" "\n"
-    "str       lr, [sp, #" STRINGIZE_VALUE_OF(PROBE_ARG2_OFFSET) "]" "\n"
-    "ldr       lr, [ip, #3 * " STRINGIZE_VALUE_OF(PTR_SIZE) "]" "\n"
     "str       lr, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_R0_OFFSET) "]" "\n"
-    "ldr       lr, [ip, #4 * " STRINGIZE_VALUE_OF(PTR_SIZE) "]" "\n"
+    "ldr       lr, [ip, #3 * " STRINGIZE_VALUE_OF(PTR_SIZE) "]" "\n"
     "str       lr, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_IP_OFFSET) "]" "\n"
-    "ldr       lr, [ip, #5 * " STRINGIZE_VALUE_OF(PTR_SIZE) "]" "\n"
+    "ldr       lr, [ip, #4 * " STRINGIZE_VALUE_OF(PTR_SIZE) "]" "\n"
     "str       lr, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_LR_OFFSET) "]" "\n"
-    "ldr       lr, [ip, #6 * " STRINGIZE_VALUE_OF(PTR_SIZE) "]" "\n"
+    "ldr       lr, [ip, #5 * " STRINGIZE_VALUE_OF(PTR_SIZE) "]" "\n"
     "str       lr, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_SP_OFFSET) "]" "\n"
 
     "ldr       lr, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_PC_OFFSET) "]" "\n"
@@ -324,7 +325,7 @@ asm (
 );
 #endif // COMPILER(GCC_OR_CLANG)
 
-void MacroAssemblerARMv7::probe(ProbeFunction function, void* arg1, void* arg2)
+void MacroAssemblerARMv7::probe(ProbeFunction function, void* arg)
 {
     push(RegisterID::lr);
     push(RegisterID::lr);
@@ -333,8 +334,7 @@ void MacroAssemblerARMv7::probe(ProbeFunction function, void* arg1, void* arg2)
     push(RegisterID::ip);
     push(RegisterID::r0);
     // The following uses RegisterID::ip. So, they must come after we push ip above.
-    push(trustedImm32FromPtr(arg2));
-    push(trustedImm32FromPtr(arg1));
+    push(trustedImm32FromPtr(arg));
     push(trustedImm32FromPtr(function));
 
     move(trustedImm32FromPtr(ctiMasmProbeTrampoline), RegisterID::ip);

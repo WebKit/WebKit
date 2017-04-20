@@ -3951,7 +3951,7 @@ public:
     }
 
 #if ENABLE(MASM_PROBE)
-    void probe(ProbeFunction, void* arg1, void* arg2);
+    void probe(ProbeFunction, void* arg);
 #endif // ENABLE(MASM_PROBE)
 
 protected:

@@ -1,3 +1,40 @@
+2017-04-20  Mark Lam  <mark.lam@apple.com>
+
+        Update the MASM probe to only take 1 arg instead of 2 (in addition to the callback function).
+        https://bugs.webkit.org/show_bug.cgi?id=171088
+
+        Reviewed by Michael Saboff and Saam Barati.
+
+        Experience shows that we never use the 2nd arg.  So, let's remove it to reduce
+        the footprint at each probe site.
+
+        Also fix the MacroAssembler::print() function so that it is a no-op when
+        !ENABLE(MASM_PROBE).  This will allow us to have print() statements in JIT code
+        without a lot of #if ENABLE(MASM_PROBE)s later.
+
+        * assembler/AbstractMacroAssembler.h:
+        * assembler/MacroAssembler.cpp:
+        (JSC::stdFunctionCallback):
+        (JSC::MacroAssembler::probe):
+        * assembler/MacroAssembler.h:
+        * assembler/MacroAssemblerARM.cpp:
+        (JSC::MacroAssemblerARM::probe):
+        * assembler/MacroAssemblerARM.h:
+        * assembler/MacroAssemblerARM64.cpp:
+        (JSC::MacroAssemblerARM64::probe):
+        * assembler/MacroAssemblerARM64.h:
+        * assembler/MacroAssemblerARMv7.cpp:
+        (JSC::MacroAssemblerARMv7::probe):
+        * assembler/MacroAssemblerARMv7.h:
+        * assembler/MacroAssemblerPrinter.cpp:
+        (JSC::MacroAssemblerPrinter::printCallback):
+        * assembler/MacroAssemblerPrinter.h:
+        (JSC::MacroAssemblerPrinter::print):
+        (JSC::MacroAssembler::print):
+        * assembler/MacroAssemblerX86Common.cpp:
+        (JSC::MacroAssemblerX86Common::probe):
+        * assembler/MacroAssemblerX86Common.h:
+
 2017-04-20  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Add regular expression support to XHR breakpoints

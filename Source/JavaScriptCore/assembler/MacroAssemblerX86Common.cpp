@@ -47,10 +47,9 @@ extern "C" void ctiMasmProbeTrampoline();
 #endif
 
 #define PROBE_PROBE_FUNCTION_OFFSET (0 * PTR_SIZE)
-#define PROBE_ARG1_OFFSET (1 * PTR_SIZE)
-#define PROBE_ARG2_OFFSET (2 * PTR_SIZE)
+#define PROBE_ARG_OFFSET (1 * PTR_SIZE)
 
-#define PROBE_FIRST_GPR_OFFSET (3 * PTR_SIZE)
+#define PROBE_FIRST_GPR_OFFSET (2 * PTR_SIZE)
 #define PROBE_CPU_EAX_OFFSET (PROBE_FIRST_GPR_OFFSET + (0 * PTR_SIZE))
 #define PROBE_CPU_ECX_OFFSET (PROBE_FIRST_GPR_OFFSET + (1 * PTR_SIZE))
 #define PROBE_CPU_EDX_OFFSET (PROBE_FIRST_GPR_OFFSET + (2 * PTR_SIZE))
@@ -90,6 +89,7 @@ extern "C" void ctiMasmProbeTrampoline();
 
 #if CPU(X86)
 #define PROBE_SIZE (PROBE_CPU_XMM7_OFFSET + XMM_SIZE)
+#define PROBE_ALIGNED_SIZE (PROBE_SIZE + (2 * XMM_SIZE))
 #else // CPU(X86_64)
 #define PROBE_CPU_XMM8_OFFSET (PROBE_FIRST_XMM_OFFSET + (8 * XMM_SIZE))
 #define PROBE_CPU_XMM9_OFFSET (PROBE_FIRST_XMM_OFFSET + (9 * XMM_SIZE))
@@ -100,14 +100,14 @@ extern "C" void ctiMasmProbeTrampoline();
 #define PROBE_CPU_XMM14_OFFSET (PROBE_FIRST_XMM_OFFSET + (14 * XMM_SIZE))
 #define PROBE_CPU_XMM15_OFFSET (PROBE_FIRST_XMM_OFFSET + (15 * XMM_SIZE))
 #define PROBE_SIZE (PROBE_CPU_XMM15_OFFSET + XMM_SIZE)
+#define PROBE_ALIGNED_SIZE (PROBE_SIZE + (4 * XMM_SIZE))
 #endif // CPU(X86_64)
 
 // These ASSERTs remind you that if you change the layout of ProbeContext,
 // you need to change ctiMasmProbeTrampoline offsets above to match.
 #define PROBE_OFFSETOF(x) offsetof(struct ProbeContext, x)
 COMPILE_ASSERT(PROBE_OFFSETOF(probeFunction) == PROBE_PROBE_FUNCTION_OFFSET, ProbeContext_probeFunction_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(arg1) == PROBE_ARG1_OFFSET, ProbeContext_arg1_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(arg2) == PROBE_ARG2_OFFSET, ProbeContext_arg2_offset_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(PROBE_OFFSETOF(arg) == PROBE_ARG_OFFSET, ProbeContext_arg_offset_matches_ctiMasmProbeTrampoline);
 
 COMPILE_ASSERT(PROBE_OFFSETOF(cpu.eax) == PROBE_CPU_EAX_OFFSET, ProbeContext_cpu_eax_offset_matches_ctiMasmProbeTrampoline);
 COMPILE_ASSERT(PROBE_OFFSETOF(cpu.ecx) == PROBE_CPU_ECX_OFFSET, ProbeContext_cpu_ecx_offset_matches_ctiMasmProbeTrampoline);
@@ -131,6 +131,8 @@ COMPILE_ASSERT(PROBE_OFFSETOF(cpu.r14) == PROBE_CPU_R14_OFFSET, ProbeContext_cpu
 COMPILE_ASSERT(PROBE_OFFSETOF(cpu.r15) == PROBE_CPU_R15_OFFSET, ProbeContext_cpu_r15_offset_matches_ctiMasmProbeTrampoline);
 #endif // CPU(X86_64)
 
+COMPILE_ASSERT(!(PROBE_CPU_XMM0_OFFSET & 0x7), ProbeContext_cpu_xmm0_offset_should_be_8_byte_aligned);
+
 COMPILE_ASSERT(PROBE_OFFSETOF(cpu.xmm0) == PROBE_CPU_XMM0_OFFSET, ProbeContext_cpu_xmm0_offset_matches_ctiMasmProbeTrampoline);
 COMPILE_ASSERT(PROBE_OFFSETOF(cpu.xmm1) == PROBE_CPU_XMM1_OFFSET, ProbeContext_cpu_xmm1_offset_matches_ctiMasmProbeTrampoline);
 COMPILE_ASSERT(PROBE_OFFSETOF(cpu.xmm2) == PROBE_CPU_XMM2_OFFSET, ProbeContext_cpu_xmm2_offset_matches_ctiMasmProbeTrampoline);
@@ -152,6 +154,7 @@ COMPILE_ASSERT(PROBE_OFFSETOF(cpu.xmm15) == PROBE_CPU_XMM15_OFFSET, ProbeContext
 #endif // CPU(X86_64)
 
 COMPILE_ASSERT(sizeof(ProbeContext) == PROBE_SIZE, ProbeContext_size_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(!(PROBE_ALIGNED_SIZE & 0x1f), ProbeContext_aligned_size_offset_should_be_32_byte_aligned);
 
 #undef PROBE_OFFSETOF
 
@@ -170,12 +173,11 @@ asm (
     //     esp[1 * ptrSize]: return address / saved eip
     //     esp[2 * ptrSize]: probeFunction
     //     esp[3 * ptrSize]: arg1
-    //     esp[4 * ptrSize]: arg2
-    //     esp[5 * ptrSize]: saved eax
-    //     esp[6 * ptrSize]: saved esp
+    //     esp[4 * ptrSize]: saved eax
+    //     esp[5 * ptrSize]: saved esp
 
     "movl %esp, %eax" "\n"
-    "subl $" STRINGIZE_VALUE_OF(PROBE_SIZE) ", %esp" "\n"
+    "subl $" STRINGIZE_VALUE_OF(PROBE_ALIGNED_SIZE) ", %esp" "\n"
 
     // The X86_64 ABI specifies that the worse case stack alignment requirement
     // is 32 bytes.
@@ -197,12 +199,10 @@ asm (
     "movl 2 * " STRINGIZE_VALUE_OF(PTR_SIZE) "(%eax), %ecx" "\n"
     "movl %ecx, " STRINGIZE_VALUE_OF(PROBE_PROBE_FUNCTION_OFFSET) "(%ebp)" "\n"
     "movl 3 * " STRINGIZE_VALUE_OF(PTR_SIZE) "(%eax), %ecx" "\n"
-    "movl %ecx, " STRINGIZE_VALUE_OF(PROBE_ARG1_OFFSET) "(%ebp)" "\n"
+    "movl %ecx, " STRINGIZE_VALUE_OF(PROBE_ARG_OFFSET) "(%ebp)" "\n"
     "movl 4 * " STRINGIZE_VALUE_OF(PTR_SIZE) "(%eax), %ecx" "\n"
-    "movl %ecx, " STRINGIZE_VALUE_OF(PROBE_ARG2_OFFSET) "(%ebp)" "\n"
-    "movl 5 * " STRINGIZE_VALUE_OF(PTR_SIZE) "(%eax), %ecx" "\n"
     "movl %ecx, " STRINGIZE_VALUE_OF(PROBE_CPU_EAX_OFFSET) "(%ebp)" "\n"
-    "movl 6 * " STRINGIZE_VALUE_OF(PTR_SIZE) "(%eax), %ecx" "\n"
+    "movl 5 * " STRINGIZE_VALUE_OF(PTR_SIZE) "(%eax), %ecx" "\n"
     "movl %ecx, " STRINGIZE_VALUE_OF(PROBE_CPU_ESP_OFFSET) "(%ebp)" "\n"
 
     "movq %xmm0, " STRINGIZE_VALUE_OF(PROBE_CPU_XMM0_OFFSET) "(%ebp)" "\n"
@@ -263,9 +263,9 @@ asm (
 
     // Locate the "safe area" at 2x sizeof(ProbeContext) below where the new
     // rsp will be. This time we don't have to 32-byte align it because we're
-    // not using to store any xmm regs.
+    // not using this area to store any xmm regs.
     "movl " STRINGIZE_VALUE_OF(PROBE_CPU_ESP_OFFSET) "(%ebp), %eax" "\n"
-    "subl $2 * " STRINGIZE_VALUE_OF(PROBE_SIZE) ", %eax" "\n"
+    "subl $2 * " STRINGIZE_VALUE_OF(PROBE_ALIGNED_SIZE) ", %eax" "\n"
     "movl %eax, %esp" "\n"
 
     "subl $" STRINGIZE_VALUE_OF(PROBE_CPU_EAX_OFFSET) ", %eax" "\n"
@@ -323,12 +323,11 @@ asm (
     //     esp[1 * ptrSize]: return address / saved rip
     //     esp[2 * ptrSize]: probeFunction
     //     esp[3 * ptrSize]: arg1
-    //     esp[4 * ptrSize]: arg2
-    //     esp[5 * ptrSize]: saved rax
-    //     esp[6 * ptrSize]: saved rsp
+    //     esp[4 * ptrSize]: saved rax
+    //     esp[5 * ptrSize]: saved rsp
 
     "movq %rsp, %rax" "\n"
-    "subq $" STRINGIZE_VALUE_OF(PROBE_SIZE) ", %rsp" "\n"
+    "subq $" STRINGIZE_VALUE_OF(PROBE_ALIGNED_SIZE) ", %rsp" "\n"
 
     // The X86_64 ABI specifies that the worse case stack alignment requirement
     // is 32 bytes.
@@ -350,12 +349,10 @@ asm (
     "movq 2 * " STRINGIZE_VALUE_OF(PTR_SIZE) "(%rax), %rcx" "\n"
     "movq %rcx, " STRINGIZE_VALUE_OF(PROBE_PROBE_FUNCTION_OFFSET) "(%rbp)" "\n"
     "movq 3 * " STRINGIZE_VALUE_OF(PTR_SIZE) "(%rax), %rcx" "\n"
-    "movq %rcx, " STRINGIZE_VALUE_OF(PROBE_ARG1_OFFSET) "(%rbp)" "\n"
+    "movq %rcx, " STRINGIZE_VALUE_OF(PROBE_ARG_OFFSET) "(%rbp)" "\n"
     "movq 4 * " STRINGIZE_VALUE_OF(PTR_SIZE) "(%rax), %rcx" "\n"
-    "movq %rcx, " STRINGIZE_VALUE_OF(PROBE_ARG2_OFFSET) "(%rbp)" "\n"
-    "movq 5 * " STRINGIZE_VALUE_OF(PTR_SIZE) "(%rax), %rcx" "\n"
     "movq %rcx, " STRINGIZE_VALUE_OF(PROBE_CPU_EAX_OFFSET) "(%rbp)" "\n"
-    "movq 6 * " STRINGIZE_VALUE_OF(PTR_SIZE) "(%rax), %rcx" "\n"
+    "movq 5 * " STRINGIZE_VALUE_OF(PTR_SIZE) "(%rax), %rcx" "\n"
     "movq %rcx, " STRINGIZE_VALUE_OF(PROBE_CPU_ESP_OFFSET) "(%rbp)" "\n"
 
     "movq %r8, " STRINGIZE_VALUE_OF(PROBE_CPU_R8_OFFSET) "(%rbp)" "\n"
@@ -448,7 +445,7 @@ asm (
     // rsp will be. This time we don't have to 32-byte align it because we're
     // not using to store any xmm regs.
     "movq " STRINGIZE_VALUE_OF(PROBE_CPU_ESP_OFFSET) "(%rbp), %rax" "\n"
-    "subq $2 * " STRINGIZE_VALUE_OF(PROBE_SIZE) ", %rax" "\n"
+    "subq $2 * " STRINGIZE_VALUE_OF(PROBE_ALIGNED_SIZE) ", %rax" "\n"
     "movq %rax, %rsp" "\n"
 
     "movq " STRINGIZE_VALUE_OF(PROBE_CPU_EAX_OFFSET) "(%rbp), %rcx" "\n"
@@ -531,13 +528,11 @@ asm (
 // position before we push the ProbeContext frame. The saved rip will point to
 // the address of the instruction immediately following the probe. 
 
-void MacroAssemblerX86Common::probe(ProbeFunction function, void* arg1, void* arg2)
+void MacroAssemblerX86Common::probe(ProbeFunction function, void* arg)
 {
     push(RegisterID::esp);
     push(RegisterID::eax);
-    move(TrustedImmPtr(arg2), RegisterID::eax);
-    push(RegisterID::eax);
-    move(TrustedImmPtr(arg1), RegisterID::eax);
+    move(TrustedImmPtr(arg), RegisterID::eax);
     push(RegisterID::eax);
     move(TrustedImmPtr(reinterpret_cast<void*>(function)), RegisterID::eax);
     push(RegisterID::eax);

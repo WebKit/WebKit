@@ -44,10 +44,9 @@ using namespace ARM64Registers;
 // by the ctiMasmProbeTrampoline stub.
 #define PTR_SIZE 8
 #define PROBE_PROBE_FUNCTION_OFFSET (0 * PTR_SIZE)
-#define PROBE_ARG1_OFFSET (1 * PTR_SIZE)
-#define PROBE_ARG2_OFFSET (2 * PTR_SIZE)
+#define PROBE_ARG_OFFSET (1 * PTR_SIZE)
 
-#define PROBE_FIRST_GPREG_OFFSET (3 * PTR_SIZE)
+#define PROBE_FIRST_GPREG_OFFSET (2 * PTR_SIZE)
 
 #define GPREG_SIZE 8
 #define PROBE_CPU_X0_OFFSET (PROBE_FIRST_GPREG_OFFSET + (0 * GPREG_SIZE))
@@ -125,13 +124,15 @@ using namespace ARM64Registers;
 #define PROBE_SIZE (PROBE_FIRST_FPREG_OFFSET + (32 * FPREG_SIZE))
 #define SAVED_CALLER_SP PROBE_SIZE
 #define PROBE_SIZE_PLUS_SAVED_CALLER_SP (SAVED_CALLER_SP + PTR_SIZE)
+#define PROBE_ALIGNED_SIZE (PROBE_SIZE_PLUS_SAVED_CALLER_SP)
 
 // These ASSERTs remind you that if you change the layout of ProbeContext,
 // you need to change ctiMasmProbeTrampoline offsets above to match.
 #define PROBE_OFFSETOF(x) offsetof(struct ProbeContext, x)
 COMPILE_ASSERT(PROBE_OFFSETOF(probeFunction) == PROBE_PROBE_FUNCTION_OFFSET, ProbeContext_probeFunction_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(arg1) == PROBE_ARG1_OFFSET, ProbeContext_arg1_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(arg2) == PROBE_ARG2_OFFSET, ProbeContext_arg2_offset_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(PROBE_OFFSETOF(arg) == PROBE_ARG_OFFSET, ProbeContext_arg_offset_matches_ctiMasmProbeTrampoline);
+
+COMPILE_ASSERT(!(PROBE_CPU_X0_OFFSET & 0x7), ProbeContext_cpu_r0_offset_should_be_8_byte_aligned);
 
 COMPILE_ASSERT(PROBE_OFFSETOF(cpu.x0) == PROBE_CPU_X0_OFFSET, ProbeContext_cpu_x0_offset_matches_ctiMasmProbeTrampoline);
 COMPILE_ASSERT(PROBE_OFFSETOF(cpu.x1) == PROBE_CPU_X1_OFFSET, ProbeContext_cpu_x1_offset_matches_ctiMasmProbeTrampoline);
@@ -171,6 +172,8 @@ COMPILE_ASSERT(PROBE_OFFSETOF(cpu.pc) == PROBE_CPU_PC_OFFSET, ProbeContext_cpu_p
 COMPILE_ASSERT(PROBE_OFFSETOF(cpu.nzcv) == PROBE_CPU_NZCV_OFFSET, ProbeContext_cpu_nzcv_offset_matches_ctiMasmProbeTrampoline);
 COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fpsr) == PROBE_CPU_FPSR_OFFSET, ProbeContext_cpu_fpsr_offset_matches_ctiMasmProbeTrampoline);
 
+COMPILE_ASSERT(!(PROBE_CPU_Q0_OFFSET & 0x7), ProbeContext_cpu_q0_offset_should_be_8_byte_aligned);
+
 COMPILE_ASSERT(PROBE_OFFSETOF(cpu.q0) == PROBE_CPU_Q0_OFFSET, ProbeContext_cpu_q0_offset_matches_ctiMasmProbeTrampoline);
 COMPILE_ASSERT(PROBE_OFFSETOF(cpu.q1) == PROBE_CPU_Q1_OFFSET, ProbeContext_cpu_q1_offset_matches_ctiMasmProbeTrampoline);
 COMPILE_ASSERT(PROBE_OFFSETOF(cpu.q2) == PROBE_CPU_Q2_OFFSET, ProbeContext_cpu_q2_offset_matches_ctiMasmProbeTrampoline);
@@ -206,6 +209,7 @@ COMPILE_ASSERT(PROBE_OFFSETOF(cpu.q30) == PROBE_CPU_Q30_OFFSET, ProbeContext_cpu
 COMPILE_ASSERT(PROBE_OFFSETOF(cpu.q31) == PROBE_CPU_Q31_OFFSET, ProbeContext_cpu_q31_offset_matches_ctiMasmProbeTrampoline);
 
 COMPILE_ASSERT(sizeof(ProbeContext) == PROBE_SIZE, ProbeContext_size_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(!(PROBE_ALIGNED_SIZE & 0xf), ProbeContext_aligned_size_offset_should_be_16_byte_aligned);
 
 #undef PROBE_OFFSETOF
 
@@ -220,17 +224,16 @@ asm (
     // The top of stack (the caller save buffer) now looks like this:
     //     sp[0 * ptrSize]: probeFunction
     //     sp[1 * ptrSize]: arg1
-    //     sp[2 * ptrSize]: arg2
-    //     sp[3 * ptrSize]: address of arm64ProbeTrampoline()
-    //     sp[4 * ptrSize]: saved x27
-    //     sp[5 * ptrSize]: saved x28
-    //     sp[6 * ptrSize]: saved lr
-    //     sp[7 * ptrSize]: saved sp
+    //     sp[2 * ptrSize]: address of arm64ProbeTrampoline()
+    //     sp[3 * ptrSize]: saved x27
+    //     sp[4 * ptrSize]: saved x28
+    //     sp[5 * ptrSize]: saved lr
+    //     sp[6 * ptrSize]: saved sp
 
     "mov       x27, sp" "\n"
     "mov       x28, sp" "\n"
 
-    "sub       x28, x28, #" STRINGIZE_VALUE_OF(PROBE_SIZE_PLUS_SAVED_CALLER_SP) "\n"
+    "sub       x28, x28, #" STRINGIZE_VALUE_OF(PROBE_ALIGNED_SIZE) "\n"
 
     // The ARM EABI specifies that the stack needs to be 16 byte aligned.
     "bic       x28, x28, #0xf" "\n"
@@ -266,16 +269,16 @@ asm (
     "str       x25, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_X25_OFFSET) "]" "\n"
     "str       x26, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_X26_OFFSET) "]" "\n"
 
-    "ldr       x0, [x27, #4 * " STRINGIZE_VALUE_OF(PTR_SIZE) "]" "\n"
+    "ldr       x0, [x27, #3 * " STRINGIZE_VALUE_OF(PTR_SIZE) "]" "\n"
     "str       x0, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_X27_OFFSET) "]" "\n"
-    "ldr       x0, [x27, #5 * " STRINGIZE_VALUE_OF(PTR_SIZE) "]" "\n"
+    "ldr       x0, [x27, #4 * " STRINGIZE_VALUE_OF(PTR_SIZE) "]" "\n"
     "str       x0, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_X28_OFFSET) "]" "\n"
 
     "str       fp, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_FP_OFFSET) "]" "\n"
 
-    "ldr       x0, [x27, #6 * " STRINGIZE_VALUE_OF(PTR_SIZE) "]" "\n"
+    "ldr       x0, [x27, #5 * " STRINGIZE_VALUE_OF(PTR_SIZE) "]" "\n"
     "str       x0, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_LR_OFFSET) "]" "\n"
-    "ldr       x0, [x27, #7 * " STRINGIZE_VALUE_OF(PTR_SIZE) "]" "\n"
+    "ldr       x0, [x27, #6 * " STRINGIZE_VALUE_OF(PTR_SIZE) "]" "\n"
     "str       x0, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_SP_OFFSET) "]" "\n"
 
     "str       lr, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_PC_OFFSET) "]" "\n"
@@ -288,9 +291,7 @@ asm (
     "ldr       x0, [x27, #0 * " STRINGIZE_VALUE_OF(PTR_SIZE) "]" "\n"
     "str       x0, [sp, #" STRINGIZE_VALUE_OF(PROBE_PROBE_FUNCTION_OFFSET) "]" "\n"
     "ldr       x0, [x27, #1 * " STRINGIZE_VALUE_OF(PTR_SIZE) "]" "\n"
-    "str       x0, [sp, #" STRINGIZE_VALUE_OF(PROBE_ARG1_OFFSET) "]" "\n"
-    "ldr       x0, [x27, #2 * " STRINGIZE_VALUE_OF(PTR_SIZE) "]" "\n"
-    "str       x0, [sp, #" STRINGIZE_VALUE_OF(PROBE_ARG2_OFFSET) "]" "\n"
+    "str       x0, [sp, #" STRINGIZE_VALUE_OF(PROBE_ARG_OFFSET) "]" "\n"
 
     "str       d0, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_Q0_OFFSET) "]" "\n"
     "str       d1, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_Q1_OFFSET) "]" "\n"
@@ -471,33 +472,31 @@ static void arm64ProbeTrampoline(ProbeContext* context)
     }
 }
 
-void MacroAssemblerARM64::probe(ProbeFunction function, void* arg1, void* arg2)
+void MacroAssemblerARM64::probe(ProbeFunction function, void* arg)
 {
-    sub64(TrustedImm32(8 * 8), sp);
+    sub64(TrustedImm32(7 * 8), sp);
 
-    store64(x27, Address(sp, 4 * 8));
-    store64(x28, Address(sp, 5 * 8));
-    store64(lr, Address(sp, 6 * 8));
+    store64(x27, Address(sp, 3 * 8));
+    store64(x28, Address(sp, 4 * 8));
+    store64(lr, Address(sp, 5 * 8));
 
-    add64(TrustedImm32(8 * 8), sp, x28);
-    store64(x28, Address(sp, 7 * 8)); // Save original sp value.
+    add64(TrustedImm32(7 * 8), sp, x28);
+    store64(x28, Address(sp, 6 * 8)); // Save original sp value.
 
     move(TrustedImmPtr(reinterpret_cast<void*>(function)), x28);
     store64(x28, Address(sp));
-    move(TrustedImmPtr(arg1), x28);
+    move(TrustedImmPtr(arg), x28);
     store64(x28, Address(sp, 1 * 8));
-    move(TrustedImmPtr(arg2), x28);
-    store64(x28, Address(sp, 2 * 8));
     move(TrustedImmPtr(reinterpret_cast<void*>(arm64ProbeTrampoline)), x28);
-    store64(x28, Address(sp, 3 * 8));
+    store64(x28, Address(sp, 2 * 8));
 
     move(TrustedImmPtr(reinterpret_cast<void*>(ctiMasmProbeTrampoline)), x28);
     m_assembler.blr(x28);
 
     // ctiMasmProbeTrampoline should have restored every register except for
     // lr and the sp.
-    load64(Address(sp, 6 * 8), lr);
-    add64(TrustedImm32(8 * 8), sp);
+    load64(Address(sp, 5 * 8), lr);
+    add64(TrustedImm32(7 * 8), sp);
 }
 #endif // ENABLE(MASM_PROBE)
 

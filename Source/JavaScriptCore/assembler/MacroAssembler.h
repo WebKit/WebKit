@@ -1813,13 +1813,14 @@ public:
 #if ENABLE(MASM_PROBE)
     using MacroAssemblerBase::probe;
 
+    void probe(std::function<void(ProbeContext*)>);
+#endif
+
     // Let's you print from your JIT generated code.
+    // This only works if ENABLE(MASM_PROBE). Otherwise, print() is a no-op.
     // See comments in MacroAssemblerPrinter.h for examples of how to use this.
     template<typename... Arguments>
     void print(Arguments... args);
-
-    void probe(std::function<void (ProbeContext*)>);
-#endif
 };
 
 #if ENABLE(MASM_PROBE)
@@ -1829,8 +1830,7 @@ struct ProbeContext {
     using FPRegisterID = MacroAssembler::FPRegisterID;
 
     ProbeFunction probeFunction;
-    void* arg1;
-    void* arg2;
+    void* arg;
     CPUState cpu;
 
     // Convenience methods:
