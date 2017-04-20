@@ -876,8 +876,8 @@ div[role=directory]
       
 div[role=doc-abstract]
       AXRole: AXGroup
-      AXSubrole: AXLandmarkRegion
-      AXRoleDescription: region
+      AXSubrole: AXApplicationGroup
+      AXRoleDescription: group
       
 div[role=doc-acknowledgments]
       AXRole: AXGroup
@@ -901,7 +901,7 @@ div[role=doc-backlink]
       
 div[role=doc-biblioentry]
       AXRole: AXGroup
-      AXSubrole: AXApplicationGroup
+      AXSubrole: 
       AXRoleDescription: group
       
 div[role=doc-bibliography]
@@ -951,7 +951,7 @@ div[role=doc-dedication]
       
 div[role=doc-endnote]
       AXRole: AXGroup
-      AXSubrole: AXApplicationGroup
+      AXSubrole: 
       AXRoleDescription: group
       
 div[role=doc-endnotes]
@@ -1016,13 +1016,13 @@ div[role=doc-noteref]
       
 div[role=doc-notice]
       AXRole: AXGroup
-      AXSubrole: AXApplicationGroup
-      AXRoleDescription: group
+      AXSubrole: AXDocumentNote
+      AXRoleDescription: note
       
 div[role=doc-pagebreak]
-      AXRole: AXGroup
-      AXSubrole: AXApplicationGroup
-      AXRoleDescription: group
+      AXRole: AXSplitter
+      AXSubrole: 
+      AXRoleDescription: splitter
       
 div[role=doc-pagelist]
       AXRole: AXGroup
@@ -1061,8 +1061,8 @@ div[role=doc-subtitle]
       
 div[role=doc-tip]
       AXRole: AXGroup
-      AXSubrole: AXApplicationGroup
-      AXRoleDescription: group
+      AXSubrole: AXDocumentNote
+      AXRoleDescription: note
       
 div[role=doc-toc]
       AXRole: AXGroup

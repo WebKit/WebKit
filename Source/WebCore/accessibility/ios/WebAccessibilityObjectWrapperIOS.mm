@@ -846,6 +846,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
         case ApplicationLogRole:
         case ApplicationMarqueeRole:
         case ApplicationStatusRole:
+        case ApplicationTextGroupRole:
         case ApplicationTimerRole:
         case AudioRole:
         case BlockquoteRole:
@@ -927,6 +928,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
         case TabPanelRole:
         case TableRole:
         case TableHeaderContainerRole:
+        case TextGroupRole:
         case TreeRole:
         case TreeItemRole:
         case TreeGridRole:
@@ -1573,7 +1575,7 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     
     for (unsigned i = 0; i < childrenSize; ++i) {
         AccessibilityRole role = children[i]->roleValue();
-        if (role != StaticTextRole && role != ImageRole && role != GroupRole)
+        if (role != StaticTextRole && role != ImageRole && role != GroupRole && role != TextGroupRole)
             return NO;
     }
     

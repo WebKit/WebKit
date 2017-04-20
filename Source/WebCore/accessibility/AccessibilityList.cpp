@@ -185,7 +185,7 @@ AccessibilityRole AccessibilityList::determineAccessibilityRole()
     // <ul>, <ol> lists need to have visible markers.
     if (ariaRoleAttribute() != UnknownRole) {
         if (!listItemCount)
-            role = GroupRole;
+            role = ApplicationGroupRole;
     } else if (!hasVisibleMarkers)
         role = GroupRole;
 

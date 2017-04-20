@@ -910,7 +910,8 @@ bool AccessibilityNodeObject::isFieldset() const
 
 bool AccessibilityNodeObject::isGroup() const
 {
-    return roleValue() == GroupRole;
+    AccessibilityRole role = roleValue();
+    return role == GroupRole || role == TextGroupRole || role == ApplicationGroupRole || role == ApplicationTextGroupRole;
 }
 
 AccessibilityObject* AccessibilityNodeObject::selectedRadioButton()
@@ -1603,10 +1604,8 @@ String AccessibilityNodeObject::helpText() const
         
         // Only take help text from an ancestor element if its a group or an unknown role. If help was 
         // added to those kinds of elements, it is likely it was meant for a child element.
-        AccessibilityObject* axObj = axObjectCache()->getOrCreate(ancestor);
-        if (axObj) {
-            AccessibilityRole role = axObj->roleValue();
-            if (role != ApplicationGroupRole && role != GroupRole && role != UnknownRole)
+        if (AccessibilityObject* axObj = axObjectCache()->getOrCreate(ancestor)) {
+            if (!axObj->isGroup() && axObj->roleValue() != UnknownRole)
                 break;
         }
     }

@@ -425,7 +425,7 @@ Total elements to be tested: 122.
 <div role="doc-tip">doc-tip</div>
     exists: true
     label: 
-    role: group
+    role: note
     childNodeIds.length: 1
     parentNodeId: exists
 
@@ -482,14 +482,14 @@ Total elements to be tested: 122.
 <div role="doc-pagebreak">doc-pagebreak</div>
     exists: true
     label: 
-    role: group
+    role: separator
     childNodeIds.length: 1
     parentNodeId: exists
 
 <div role="doc-notice">doc-notice</div>
     exists: true
     label: 
-    role: group
+    role: note
     childNodeIds.length: 1
     parentNodeId: exists
 
@@ -580,7 +580,7 @@ Total elements to be tested: 122.
 <div role="doc-endnote">doc-endnote</div>
     exists: true
     label: 
-    role: group
+    role: listitem
     childNodeIds.length: 1
     parentNodeId: exists
 
@@ -649,7 +649,7 @@ Total elements to be tested: 122.
 <div role="doc-biblioentry">doc-biblioentry</div>
     exists: true
     label: 
-    role: group
+    role: listitem
     childNodeIds.length: 1
     parentNodeId: exists
 
@@ -684,7 +684,7 @@ Total elements to be tested: 122.
 <div role="doc-abstract">doc-abstract</div>
     exists: true
     label: 
-    role: region
+    role: group
     childNodeIds.length: 1
     parentNodeId: exists
 

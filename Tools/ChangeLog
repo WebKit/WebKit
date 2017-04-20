@@ -1,3 +1,14 @@
+2017-04-20  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        [ATK] Implement support for DPub ARIA roles
+        https://bugs.webkit.org/show_bug.cgi?id=170679
+
+        Reviewed by Chris Fleizach.
+
+        Add DPub ARIA landmark roles to roleToString().
+
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+
 2017-04-19  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remove WebKitTestRunner code for enabling features that are already enabled by default

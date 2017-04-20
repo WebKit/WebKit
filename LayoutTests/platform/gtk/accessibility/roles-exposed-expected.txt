@@ -319,9 +319,6 @@ mtr
 mtd
       AXRole: AXCell
       
-meter
-      AXRole: AXProgressIndicator
-      
 nav
       AXRole: AXLandmarkNavigation
       
@@ -350,7 +347,7 @@ samp
       AXRole: AXStatic
       
 section:not([aria-label]:not([aria-labelledby])
-      AXRole: AXGroup
+      AXRole: AXSection
       
 section[aria-label]
       AXRole: AXLandmarkRegion
@@ -525,6 +522,123 @@ div[role=dialog]
       
 div[role=directory]
       AXRole: AXList
+      
+div[role=doc-abstract]
+      AXRole: AXSection
+      
+div[role=doc-acknowledgments]
+      AXRole: AXLandmarkRegion
+      
+div[role=doc-afterword]
+      AXRole: AXLandmarkRegion
+      
+div[role=doc-appendix]
+      AXRole: AXLandmarkRegion
+      
+div[role=doc-backlink]
+      AXRole: AXLink
+      
+div[role=doc-biblioentry]
+      AXRole: AXListItem
+      
+div[role=doc-bibliography]
+      AXRole: AXLandmarkRegion
+      
+div[role=doc-biblioref]
+      AXRole: AXLink
+      
+div[role=doc-chapter]
+      AXRole: AXLandmarkRegion
+      
+div[role=doc-colophon]
+      AXRole: AXSection
+      
+div[role=doc-conclusion]
+      AXRole: AXLandmarkRegion
+      
+div[role=doc-cover]
+      AXRole: AXImage
+      
+div[role=doc-credit]
+      AXRole: AXSection
+      
+div[role=doc-credits]
+      AXRole: AXLandmarkRegion
+      
+div[role=doc-dedication]
+      AXRole: AXSection
+      
+div[role=doc-endnote]
+      AXRole: AXListItem
+      
+div[role=doc-endnotes]
+      AXRole: AXLandmarkRegion
+      
+div[role=doc-epigraph]
+      AXRole: AXSection
+      
+div[role=doc-epilogue]
+      AXRole: AXLandmarkRegion
+      
+div[role=doc-errata]
+      AXRole: AXLandmarkRegion
+      
+div[role=doc-example]
+      AXRole: AXSection
+      
+div[role=doc-footnote]
+      AXRole: AXSection
+      
+div[role=doc-foreword]
+      AXRole: AXLandmarkRegion
+      
+div[role=doc-glossary]
+      AXRole: AXLandmarkRegion
+      
+div[role=doc-glossref]
+      AXRole: AXLink
+      
+div[role=doc-index]
+      AXRole: AXLandmarkRegion
+      
+div[role=doc-introduction]
+      AXRole: AXLandmarkRegion
+      
+div[role=doc-noteref]
+      AXRole: AXLink
+      
+div[role=doc-notice]
+      AXRole: AXComment
+      
+div[role=doc-pagebreak]
+      AXRole: AXSeparator
+      
+div[role=doc-pagelist]
+      AXRole: AXLandmarkRegion
+      
+div[role=doc-part]
+      AXRole: AXLandmarkRegion
+      
+div[role=doc-preface]
+      AXRole: AXLandmarkRegion
+      
+div[role=doc-prologue]
+      AXRole: AXLandmarkRegion
+      
+div[role=doc-pullquote]
+      AXRole: AXSection
+      
+div[role=doc-qna]
+      AXRole: AXSection
+      
+div[role=doc-subtitle]
+      AXRole: AXHeading
+      
+div[role=doc-tip]
+      AXRole: AXComment
+      
+div[role=doc-toc]
+      AXRole: AXLandmarkRegion
       
 div[role=document]
       AXRole: AXDocument

@@ -328,6 +328,46 @@ const gchar* roleToString(AtkObject* object)
             return landmarkStringComplementary;
         if (equalLettersIgnoringASCIICase(xmlRolesValue, "contentinfo"))
             return landmarkStringContentinfo;
+        if (equalLettersIgnoringASCIICase(xmlRolesValue, "doc-acknowledgments"))
+            return landmarkStringRegion;
+        if (equalLettersIgnoringASCIICase(xmlRolesValue, "doc-afterword"))
+            return landmarkStringRegion;
+        if (equalLettersIgnoringASCIICase(xmlRolesValue, "doc-appendix"))
+            return landmarkStringRegion;
+        if (equalLettersIgnoringASCIICase(xmlRolesValue, "doc-bibliography"))
+            return landmarkStringRegion;
+        if (equalLettersIgnoringASCIICase(xmlRolesValue, "doc-chapter"))
+            return landmarkStringRegion;
+        if (equalLettersIgnoringASCIICase(xmlRolesValue, "doc-conclusion"))
+            return landmarkStringRegion;
+        if (equalLettersIgnoringASCIICase(xmlRolesValue, "doc-credits"))
+            return landmarkStringRegion;
+        if (equalLettersIgnoringASCIICase(xmlRolesValue, "doc-endnotes"))
+            return landmarkStringRegion;
+        if (equalLettersIgnoringASCIICase(xmlRolesValue, "doc-epilogue"))
+            return landmarkStringRegion;
+        if (equalLettersIgnoringASCIICase(xmlRolesValue, "doc-errata"))
+            return landmarkStringRegion;
+        if (equalLettersIgnoringASCIICase(xmlRolesValue, "doc-foreword"))
+            return landmarkStringRegion;
+        if (equalLettersIgnoringASCIICase(xmlRolesValue, "doc-glossary"))
+            return landmarkStringRegion;
+        if (equalLettersIgnoringASCIICase(xmlRolesValue, "doc-glossref"))
+            return landmarkStringRegion;
+        if (equalLettersIgnoringASCIICase(xmlRolesValue, "doc-index"))
+            return landmarkStringRegion;
+        if (equalLettersIgnoringASCIICase(xmlRolesValue, "doc-introduction"))
+            return landmarkStringRegion;
+        if (equalLettersIgnoringASCIICase(xmlRolesValue, "doc-pagelist"))
+            return landmarkStringRegion;
+        if (equalLettersIgnoringASCIICase(xmlRolesValue, "doc-part"))
+            return landmarkStringRegion;
+        if (equalLettersIgnoringASCIICase(xmlRolesValue, "doc-preface"))
+            return landmarkStringRegion;
+        if (equalLettersIgnoringASCIICase(xmlRolesValue, "doc-prologue"))
+            return landmarkStringRegion;
+        if (equalLettersIgnoringASCIICase(xmlRolesValue, "doc-toc"))
+            return landmarkStringRegion;
         if (equalLettersIgnoringASCIICase(xmlRolesValue, "main"))
             return landmarkStringMain;
         if (equalLettersIgnoringASCIICase(xmlRolesValue, "navigation"))

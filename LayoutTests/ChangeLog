@@ -1,3 +1,21 @@
+2017-04-20  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        [ATK] Implement support for DPub ARIA roles
+        https://bugs.webkit.org/show_bug.cgi?id=170679
+
+        Reviewed by Chris Fleizach.
+
+        Update tests and expectations to reflect the modified WebCore Accessibility
+        role mappings, and the corresponding changes for the platforms.
+
+        * accessibility/gtk/xml-roles-exposed-expected.txt:
+        * accessibility/gtk/xml-roles-exposed.html:
+        * accessibility/roles-exposed.html:
+        * inspector/dom/getAccessibilityPropertiesForNode-expected.txt:
+        * platform/gtk/TestExpectations:
+        * platform/gtk/accessibility/roles-exposed-expected.txt:
+        * platform/mac/accessibility/roles-exposed-expected.txt:
+
 2017-04-19  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/hkdf.worker.html as flaky.
