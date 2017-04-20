@@ -124,5 +124,5 @@ WK_QUOTED_OVERRIDE_FRAMEWORKS_DIR_YES = "$(WK_OVERRIDE_FRAMEWORKS_DIR)";
 SUPPORTS_TEXT_BASED_API[sdk=iphone*] = $(USE_INTERNAL_SDK);
 SUPPORTS_TEXT_BASED_API[sdk=appletv*] = NO;
 SUPPORTS_TEXT_BASED_API[sdk=watch*] = NO;
-OTHER_TAPI_FLAGS[sdk=iphone*] = -x objective-c++ -std=c++11 -fno-rtti;
+OTHER_TAPI_FLAGS[sdk=iphone*] = -x objective-c++ -std=c++14 -fno-rtti;
 TAPI_VERIFY_MODE[sdk=iphone*] = Pedantic;
