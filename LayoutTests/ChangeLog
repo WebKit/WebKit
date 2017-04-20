@@ -1,5 +1,14 @@
 2017-04-19  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Mark imported/w3c/web-platform-tests/XMLHttpRequest/getallresponseheaders-cl.htm as failing.
+        https://bugs.webkit.org/show_bug.cgi?id=171031
+
+        Unreviewed test gardening.
+
+        * TestExpectations:
+
+2017-04-19  Ryan Haddad  <ryanhaddad@apple.com>
+
         Remove two tests after r215515.
         https://bugs.webkit.org/show_bug.cgi?id=171014
 
