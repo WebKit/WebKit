@@ -1230,6 +1230,21 @@ fast/animation/request-animation-frame-throttling-lowPowerMode.html [ Failure ]
 # WebGPU is not enabled on GTK+.
 fast/canvas/webgpu [ Skip ]
 
+# Failure to identify mime-type of empty (zero byte) resources.
+webkit.org/b/171058 fast/preloader/document-write-noscript.html [ Failure ]
+webkit.org/b/171058 fast/preloader/document-write.html [ Failure ]
+webkit.org/b/171058 fast/preloader/first-base-tag-scanned-wins.html [ Failure ]
+webkit.org/b/171058 fast/preloader/first-base-tag-wins.html [ Failure ]
+webkit.org/b/171058 fast/preloader/image-srcset.html [ Failure ]
+webkit.org/b/171058 fast/preloader/image.html [ Failure ]
+webkit.org/b/171058 fast/preloader/input.html [ Failure ]
+webkit.org/b/171058 fast/preloader/link.html [ Failure ]
+webkit.org/b/171058 fast/preloader/noscript.html [ Failure ]
+webkit.org/b/171058 fast/preloader/script.html [ Failure ]
+webkit.org/b/171058 fast/preloader/style.html [ Failure ]
+webkit.org/b/171058 fast/preloader/understands-base-tag.html [ Failure ]
+webkit.org/b/171058 tables/mozilla/core/col_widths_fix_autoFixPer.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
 #////////////////////////////////////////////////////////////////////////////////////////
