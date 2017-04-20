@@ -1311,6 +1311,12 @@ void Internals::setEnumeratingAllNetworkInterfacesEnabled(bool enabled)
 #endif
 }
 
+void Internals::stopPeerConnection(RTCPeerConnection& connection)
+{
+    ActiveDOMObject& object = connection;
+    object.stop();
+}
+
 #endif
 
 #if ENABLE(MEDIA_STREAM)

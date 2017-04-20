@@ -1,3 +1,24 @@
+2017-04-20  Youenn Fablet  <youenn@apple.com>
+
+        RTCPeerConnection is stopping its backend twice sometimes
+        https://bugs.webkit.org/show_bug.cgi?id=171043
+
+        Reviewed by Eric Carlson.
+
+        Test: webrtc/closing-peerconnection.html
+
+        Making sure we stop the backend only once.
+        Adding an internals API to close the peer connection so as to replicate frame disconnection.
+
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::doClose):
+        (WebCore::RTCPeerConnection::doStop):
+        * Modules/mediastream/RTCPeerConnection.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::stopPeerConnection):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2017-04-20  Antti Koivisto  <antti@apple.com>
 
         Increase large animation cutoff

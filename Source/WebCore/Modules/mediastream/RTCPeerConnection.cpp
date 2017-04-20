@@ -362,8 +362,6 @@ bool RTCPeerConnection::doClose()
     for (RTCRtpSender& sender : m_transceiverSet->senders())
         sender.stop();
 
-    m_backend->stop();
-
     return true;
 }
 
@@ -397,6 +395,9 @@ void RTCPeerConnection::doStop()
         return;
 
     m_isStopped = true;
+
+    m_backend->stop();
+
     unregisterFromController();
     unsetPendingActivity(this);
 }
@@ -468,6 +469,7 @@ void RTCPeerConnection::updateConnectionState()
 {
     RTCPeerConnectionState state;
 
+    // FIXME: In case m_iceGatheringState is RTCIceGatheringState::Gathering, and m_iceConnectionState is Closed, we should have the connection state be Closed.
     if (m_iceConnectionState == RTCIceConnectionState::New && m_iceGatheringState == RTCIceGatheringState::New)
         state = RTCPeerConnectionState::New;
     else if (m_iceConnectionState == RTCIceConnectionState::Checking || m_iceGatheringState == RTCIceGatheringState::Gathering)

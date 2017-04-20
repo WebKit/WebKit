@@ -427,6 +427,7 @@ public:
     void useMockRTCPeerConnectionFactory(const String&);
     void setICECandidateFiltering(bool);
     void setEnumeratingAllNetworkInterfacesEnabled(bool);
+    void stopPeerConnection(RTCPeerConnection&);
 #endif
 
     String getImageSourceURL(Element&);

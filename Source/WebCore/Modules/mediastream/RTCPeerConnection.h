@@ -159,7 +159,7 @@ private:
     void derefEventTarget() final { deref(); }
 
     // ActiveDOMObject
-    void stop() final;
+    WEBCORE_EXPORT void stop() final;
     const char* activeDOMObjectName() const final;
     bool canSuspendForDocumentSuspension() const final;
 

@@ -461,6 +461,7 @@ enum EventThrottlingBehavior {
     [Conditional=WEB_RTC] void useMockRTCPeerConnectionFactory(DOMString testCase);
     [Conditional=WEB_RTC] void setICECandidateFiltering(boolean enabled);
     [Conditional=WEB_RTC] void setEnumeratingAllNetworkInterfacesEnabled(boolean enabled);
+    [Conditional=WEB_RTC] void stopPeerConnection(RTCPeerConnection connection);
 
     [Conditional=VIDEO] void simulateSystemSleep();
     [Conditional=VIDEO] void simulateSystemWake();
