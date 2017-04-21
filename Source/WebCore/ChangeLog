@@ -1,3 +1,29 @@
+2017-04-21  Anders Carlsson  <andersca@apple.com>
+
+        Stop using deprecated APIs, part 5
+        https://bugs.webkit.org/show_bug.cgi?id=171134
+        rdar://problem/31589635
+
+        Reviewed by Tim Horton.
+
+        * Modules/applepay/ApplePaySession.cpp:
+        (WebCore::convertAndValidate):
+        Stop using the toPaymentAuthorizationStatus. Convert the passed in status results to the remaining
+        PaymentAuthorizationStatus values, and add errors if needed.
+
+        (WebCore::toPaymentAuthorizationStatus):
+        This function is no longer used.
+
+        * Modules/applepay/PaymentAuthorizationStatus.h:
+        Remove deprecated status values. We can achieve the same results with errors now.
+
+        * Modules/applepay/PaymentRequest.cpp:
+        (WebCore::isFinalStateResult):
+        Remove deprecated status values.
+
+        * Modules/applepay/PaymentRequest.h:
+        Remove deprecated status values.
+
 2017-04-21  Per Arne Vollan  <pvollan@apple.com>
 
         Validate vImage arguments

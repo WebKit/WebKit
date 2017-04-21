@@ -79,9 +79,6 @@ bool isFinalStateResult(const std::optional<PaymentAuthorizationResult>& result)
     case PaymentAuthorizationStatus::Success:
         return true;
 
-    case PaymentAuthorizationStatus::InvalidBillingPostalAddress:
-    case PaymentAuthorizationStatus::InvalidShippingPostalAddress:
-    case PaymentAuthorizationStatus::InvalidShippingContact:
     case PaymentAuthorizationStatus::PINRequired:
     case PaymentAuthorizationStatus::PINIncorrect:
     case PaymentAuthorizationStatus::PINLockout:

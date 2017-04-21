@@ -1,3 +1,26 @@
+2017-04-21  Anders Carlsson  <andersca@apple.com>
+
+        Stop using deprecated APIs, part 5
+        https://bugs.webkit.org/show_bug.cgi?id=171134
+        rdar://problem/31589635
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.mm:
+        (WebKit::toPKPaymentAuthorizationStatus):
+        Remove this and add a new version that doesn't use any deprecated values.
+
+        (WebKit::toPKPaymentAuthorizationStatus):
+        New function that takes a WebCore::PaymentAuthorizationResult and converts it to a status, for older OSes.
+
+        (WebKit::WebPaymentCoordinatorProxy::platformCompletePaymentSession):
+        Use the new toPKPaymentAuthorizationStatus versions.
+
+        (WebKit::WebPaymentCoordinatorProxy::platformCompleteShippingContactSelection):
+        Ditto.
+
+        (WebKit::status): Deleted.
+
 2017-04-21  David Kilzer  <ddkilzer@apple.com>
 
         Switch from -std=gnu++11 to -std=gnu++14 for consistency in DerivedSources.make

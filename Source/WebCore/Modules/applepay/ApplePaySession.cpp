@@ -378,38 +378,6 @@ static ExceptionOr<PaymentRequest> convertAndValidate(unsigned version, ApplePay
 }
 
 
-static std::optional<PaymentAuthorizationStatus> toPaymentAuthorizationStatus(unsigned short status)
-{
-    switch (status) {
-    case ApplePaySession::STATUS_SUCCESS:
-        return PaymentAuthorizationStatus::Success;
-
-    case ApplePaySession::STATUS_FAILURE:
-        return PaymentAuthorizationStatus::Failure;
-
-    case ApplePaySession::STATUS_INVALID_BILLING_POSTAL_ADDRESS:
-        return PaymentAuthorizationStatus::InvalidBillingPostalAddress;
-
-    case ApplePaySession::STATUS_INVALID_SHIPPING_POSTAL_ADDRESS:
-        return PaymentAuthorizationStatus::InvalidShippingPostalAddress;
-
-    case ApplePaySession::STATUS_INVALID_SHIPPING_CONTACT:
-        return PaymentAuthorizationStatus::InvalidShippingContact;
-
-    case ApplePaySession::STATUS_PIN_REQUIRED:
-        return PaymentAuthorizationStatus::PINRequired;
-
-    case ApplePaySession::STATUS_PIN_INCORRECT:
-        return PaymentAuthorizationStatus::PINIncorrect;
-
-    case ApplePaySession::STATUS_PIN_LOCKOUT:
-        return PaymentAuthorizationStatus::PINLockout;
-
-    default:
-        return std::nullopt;
-    }
-}
-
 static Vector<PaymentError> convert(const Vector<RefPtr<ApplePayError>>& errors)
 {
     Vector<PaymentError> convertedErrors;
@@ -431,11 +399,50 @@ static ExceptionOr<PaymentAuthorizationResult> convertAndValidate(ApplePayPaymen
 {
     PaymentAuthorizationResult convertedResult;
 
-    auto authorizationStatus = toPaymentAuthorizationStatus(result.status);
-    if (!authorizationStatus)
+    std::optional<ApplePayError::Code> errorCode;
+    std::optional<ApplePayError::ContactField> contactField;
+
+    switch (result.status) {
+    case ApplePaySession::STATUS_SUCCESS:
+        convertedResult.status = PaymentAuthorizationStatus::Success;
+        break;
+
+    case ApplePaySession::STATUS_FAILURE:
+        convertedResult.status = PaymentAuthorizationStatus::Failure;
+        break;
+
+    case ApplePaySession::STATUS_INVALID_BILLING_POSTAL_ADDRESS:
+        convertedResult.status = PaymentAuthorizationStatus::Failure;
+        convertedResult.errors.append({ PaymentError::Code::BillingContactInvalid, { }, std::nullopt });
+        break;
+
+    case ApplePaySession::STATUS_INVALID_SHIPPING_POSTAL_ADDRESS:
+        convertedResult.status = PaymentAuthorizationStatus::Failure;
+        convertedResult.errors.append({ PaymentError::Code::ShippingContactInvalid, { }, PaymentError::ContactField::PostalAddress });
+        break;
+
+    case ApplePaySession::STATUS_INVALID_SHIPPING_CONTACT:
+        convertedResult.status = PaymentAuthorizationStatus::Failure;
+        convertedResult.errors.append({ PaymentError::Code::ShippingContactInvalid, { }, std::nullopt });
+        break;
+
+    case ApplePaySession::STATUS_PIN_REQUIRED:
+        convertedResult.status = PaymentAuthorizationStatus::PINRequired;
+        break;
+
+    case ApplePaySession::STATUS_PIN_INCORRECT:
+        convertedResult.status = PaymentAuthorizationStatus::PINIncorrect;
+        break;
+
+    case ApplePaySession::STATUS_PIN_LOCKOUT:
+        convertedResult.status = PaymentAuthorizationStatus::PINLockout;
+        break;
+
+    default:
         return Exception { INVALID_ACCESS_ERR };
-    convertedResult.status = *authorizationStatus;
-    convertedResult.errors = convert(result.errors);
+    }
+
+    convertedResult.errors.appendVector(convert(result.errors));
 
     return WTFMove(convertedResult);
 }
@@ -802,6 +809,7 @@ ExceptionOr<void> ApplePaySession::completeShippingMethodSelection(unsigned shor
     switch (status) {
     case ApplePaySession::STATUS_SUCCESS:
         break;
+
     case ApplePaySession::STATUS_FAILURE:
     case ApplePaySession::STATUS_INVALID_BILLING_POSTAL_ADDRESS:
     case ApplePaySession::STATUS_INVALID_SHIPPING_POSTAL_ADDRESS:

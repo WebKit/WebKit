@@ -34,9 +34,6 @@ namespace WebCore {
 enum class PaymentAuthorizationStatus {
     Success,
     Failure,
-    InvalidBillingPostalAddress,
-    InvalidShippingPostalAddress,
-    InvalidShippingContact,
     PINRequired,
     PINIncorrect,
     PINLockout,
@@ -50,9 +47,6 @@ template<> struct EnumTraits<WebCore::PaymentAuthorizationStatus> {
         WebCore::PaymentAuthorizationStatus,
         WebCore::PaymentAuthorizationStatus::Success,
         WebCore::PaymentAuthorizationStatus::Failure,
-        WebCore::PaymentAuthorizationStatus::InvalidBillingPostalAddress,
-        WebCore::PaymentAuthorizationStatus::InvalidShippingPostalAddress,
-        WebCore::PaymentAuthorizationStatus::InvalidShippingContact,
         WebCore::PaymentAuthorizationStatus::PINRequired,
         WebCore::PaymentAuthorizationStatus::PINIncorrect,
         WebCore::PaymentAuthorizationStatus::PINLockout
