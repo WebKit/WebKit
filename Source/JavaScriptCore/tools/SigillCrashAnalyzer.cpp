@@ -37,9 +37,7 @@
 #include "A64DOpcode.h"
 #endif
 
-#if HAVE(SIGNAL_H)
-#include <signal.h>
-#endif
+#include <wtf/threads/Signals.h>
 
 namespace JSC {
 
@@ -141,60 +139,19 @@ struct SignalContext {
     void* framePointer;
 };
 
-struct sigaction originalSigIllAction;
-
-static void handleCrash(int signalNumber, siginfo_t* info, void* uap)
-{
-    SignalContext context(static_cast<ucontext_t*>(uap)->uc_mcontext);
-    SigillCrashAnalyzer& analyzer = SigillCrashAnalyzer::instance();
-    auto crashSource = analyzer.analyze(context);
-
-    auto originalAction = originalSigIllAction.sa_sigaction;
-    if (originalAction) {
-        // It is always safe to just invoke the original handler using the sa_sigaction form
-        // without checking for the SA_SIGINFO flag. If the original handler is of the
-        // sa_handler form, it will just ignore the 2nd and 3rd arguments since sa_handler is a
-        // subset of sa_sigaction. This is what the man pages says the OS does anyway.
-        originalAction(signalNumber, info, uap);
-    }
-
-    if (crashSource == SigillCrashAnalyzer::CrashSource::JavaScriptCore) {
-        // Restore the default handler so that we can get a core dump.
-        struct sigaction defaultAction;
-        defaultAction.sa_handler = SIG_DFL;
-        sigfillset(&defaultAction.sa_mask);
-        defaultAction.sa_flags = 0;
-        sigaction(SIGILL, &defaultAction, nullptr);
-    } else if (!originalAction) {
-        // Pre-emptively restore the default handler but we may roll it back below.
-        struct sigaction currentAction;
-        struct sigaction defaultAction;
-        defaultAction.sa_handler = SIG_DFL;
-        sigfillset(&defaultAction.sa_mask);
-        defaultAction.sa_flags = 0;
-        sigaction(SIGILL, &defaultAction, &currentAction);
-
-        if (currentAction.sa_sigaction != handleCrash) {
-            // This means that there's a client handler installed after us. This also means
-            // that the client handler thinks it was able to recover from the SIGILL, and
-            // did not uninstall itself. We can't argue with this because the crash isn't
-            // known to be from a JavaScriptCore source. Hence, restore the client handler
-            // and keep going.
-            sigaction(SIGILL, &currentAction, nullptr);
-        }
-    }
-}
-
 static void installCrashHandler()
 {
 #if CPU(X86_64) || CPU(ARM64)
-    struct sigaction action;
-    action.sa_sigaction = reinterpret_cast<void (*)(int, siginfo_t *, void *)>(handleCrash);
-    sigfillset(&action.sa_mask);
-    action.sa_flags = SA_SIGINFO;
-    sigaction(SIGILL, &action, &originalSigIllAction);
-#else
-    UNUSED_PARAM(handleCrash);
+    installSignalHandler(Signal::Ill, [] (int, siginfo_t*, void* uap) {
+        SignalContext context(static_cast<ucontext_t*>(uap)->uc_mcontext);
+
+        if (!isJITPC(context.machinePC))
+            return SignalAction::NotHandled;
+
+        SigillCrashAnalyzer& analyzer = SigillCrashAnalyzer::instance();
+        analyzer.analyze(context);
+        return SignalAction::NotHandled;
+    });
 #endif
 }
 

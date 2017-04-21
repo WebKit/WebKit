@@ -81,6 +81,12 @@ static const double executablePoolReservationFraction = 0.25;
 extern JS_EXPORTDATA uintptr_t startOfFixedExecutableMemoryPool;
 extern JS_EXPORTDATA uintptr_t endOfFixedExecutableMemoryPool;
 
+inline bool isJITPC(void* pc)
+{
+    return reinterpret_cast<void*>(startOfFixedExecutableMemoryPool) <= pc
+        && pc < reinterpret_cast<void*>(endOfFixedExecutableMemoryPool);
+}
+
 typedef void (*JITWriteSeparateHeapsFunction)(off_t, const void*, size_t);
 extern JS_EXPORTDATA JITWriteSeparateHeapsFunction jitWriteSeparateHeapsFunction;
 
@@ -143,6 +149,9 @@ private:
     ~ExecutableAllocator();
 };
 
+#else
+inline bool isJITPC(void*) { return false; }
 #endif // ENABLE(JIT) && ENABLE(ASSEMBLER)
+
 
 } // namespace JSC

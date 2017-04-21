@@ -62,6 +62,7 @@ set(WTF_HEADERS
     LockAlgorithm.h
     LockedPrintStream.h
     Locker.h
+    LocklessBag.h
     LoggingHashID.h
     LoggingHashMap.h
     LoggingHashSet.h
@@ -130,6 +131,7 @@ set(WTF_HEADERS
     StringPrintStream.h
     SystemTracing.h
     ThreadHolder.cpp
+    ThreadMessage.h
     ThreadSafeRefCounted.h
     ThreadSpecific.h
     Threading.h
@@ -185,6 +187,7 @@ set(WTF_HEADERS
     text/icu/UTextProviderUTF16.h
 
     threads/BinarySemaphore.h
+    threads/Signals.h
 
     unicode/CharacterNames.h
     unicode/Collator.h
@@ -239,6 +242,7 @@ set(WTF_SOURCES
     StackBounds.cpp
     StackStats.cpp
     StringPrintStream.cpp
+    ThreadMessage.cpp
     Threading.cpp
     TimeWithDynamicClockType.cpp
     WTFThreadData.cpp
@@ -279,6 +283,7 @@ set(WTF_SOURCES
     text/icu/UTextProviderUTF16.cpp
 
     threads/BinarySemaphore.cpp
+    threads/Signals.cpp
 
     unicode/UTF8.cpp
 )

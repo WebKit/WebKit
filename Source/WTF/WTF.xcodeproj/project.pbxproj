@@ -149,6 +149,11 @@
 		515F79501CFC9F4A00CCED93 /* CrossThreadTask.h in Headers */ = {isa = PBXBuildFile; fileRef = 515F794D1CFC9F4A00CCED93 /* CrossThreadTask.h */; };
 		515F79561CFD3A6900CCED93 /* CrossThreadQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 515F79551CFD3A6900CCED93 /* CrossThreadQueue.h */; };
 		52183012C99E476A84EEBEA8 /* SymbolImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F72BBDB107FA424886178B9E /* SymbolImpl.cpp */; };
+		5311BD531EA71CAD00525281 /* Signals.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5311BD511EA71CAD00525281 /* Signals.cpp */; };
+		5311BD561EA7E15A00525281 /* LocklessBag.h in Headers */ = {isa = PBXBuildFile; fileRef = 5311BD551EA7E15A00525281 /* LocklessBag.h */; };
+		5311BD581EA7E1A100525281 /* Signals.h in Headers */ = {isa = PBXBuildFile; fileRef = 5311BD571EA7E1A100525281 /* Signals.h */; };
+		5311BD5A1EA81A9600525281 /* ThreadMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = 5311BD591EA81A9600525281 /* ThreadMessage.h */; };
+		5311BD5C1EA822F900525281 /* ThreadMessage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5311BD5B1EA822F900525281 /* ThreadMessage.cpp */; };
 		539EB0631D55284200C82EF7 /* LEBDecoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 539EB0621D55284200C82EF7 /* LEBDecoder.h */; };
 		53EC253E1E95AD30000831B9 /* PriorityQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 53EC253C1E95AD30000831B9 /* PriorityQueue.h */; };
 		553071CA1C40427200384898 /* TinyLRUCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 553071C91C40427200384898 /* TinyLRUCache.h */; };
@@ -548,6 +553,11 @@
 		515F794C1CFC9F4A00CCED93 /* CrossThreadCopier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CrossThreadCopier.h; sourceTree = "<group>"; };
 		515F794D1CFC9F4A00CCED93 /* CrossThreadTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CrossThreadTask.h; sourceTree = "<group>"; };
 		515F79551CFD3A6900CCED93 /* CrossThreadQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CrossThreadQueue.h; sourceTree = "<group>"; };
+		5311BD511EA71CAD00525281 /* Signals.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Signals.cpp; sourceTree = "<group>"; };
+		5311BD551EA7E15A00525281 /* LocklessBag.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocklessBag.h; sourceTree = "<group>"; };
+		5311BD571EA7E1A100525281 /* Signals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Signals.h; sourceTree = "<group>"; };
+		5311BD591EA81A9600525281 /* ThreadMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreadMessage.h; sourceTree = "<group>"; };
+		5311BD5B1EA822F900525281 /* ThreadMessage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ThreadMessage.cpp; sourceTree = "<group>"; };
 		539EB0621D55284200C82EF7 /* LEBDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LEBDecoder.h; sourceTree = "<group>"; };
 		53EC253C1E95AD30000831B9 /* PriorityQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PriorityQueue.h; sourceTree = "<group>"; };
 		553071C91C40427200384898 /* TinyLRUCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TinyLRUCache.h; sourceTree = "<group>"; };
@@ -1064,6 +1074,7 @@
 				0F60F32D1DFCBD1B00416D6C /* LockedPrintStream.cpp */,
 				0F60F32E1DFCBD1B00416D6C /* LockedPrintStream.h */,
 				A8A472C3151A825A004123FF /* Locker.h */,
+				5311BD551EA7E15A00525281 /* LocklessBag.h */,
 				513E170A1CD7D5BF00E3650B /* LoggingAccumulator.h */,
 				0F30BA8C1E78708E002CA847 /* LoggingHashID.h */,
 				0F30BA8D1E78708E002CA847 /* LoggingHashMap.h */,
@@ -1189,6 +1200,8 @@
 				E3200AB51E9A536D003B59D2 /* ThreadHolder.cpp */,
 				E3200AB61E9A536D003B59D2 /* ThreadHolder.h */,
 				A8A47330151A825B004123FF /* ThreadHolderPthreads.cpp */,
+				5311BD5B1EA822F900525281 /* ThreadMessage.cpp */,
+				5311BD591EA81A9600525281 /* ThreadMessage.h */,
 				A8A47332151A825B004123FF /* Threading.cpp */,
 				A8A47333151A825B004123FF /* Threading.h */,
 				A8A47335151A825B004123FF /* ThreadingPrimitives.h */,
@@ -1316,6 +1329,8 @@
 			children = (
 				A8A4733A151A825B004123FF /* BinarySemaphore.cpp */,
 				A8A4733B151A825B004123FF /* BinarySemaphore.h */,
+				5311BD511EA71CAD00525281 /* Signals.cpp */,
+				5311BD571EA7E1A100525281 /* Signals.h */,
 			);
 			path = threads;
 			sourceTree = "<group>";
@@ -1461,6 +1476,7 @@
 				DE5A09FC1BA36992003D4424 /* CommonCryptoSPI.h in Headers */,
 				0F8F2B91172E00FC007DBDA5 /* CompilationThread.h in Headers */,
 				A8A47398151A825B004123FF /* Compiler.h in Headers */,
+				5311BD561EA7E15A00525281 /* LocklessBag.h in Headers */,
 				0FDB698E1B7C643A000C1078 /* Condition.h in Headers */,
 				A8A4748C151A8264004123FF /* config.h in Headers */,
 				0F8F2B9C172F2596007DBDA5 /* ConversionMode.h in Headers */,
@@ -1526,6 +1542,7 @@
 				A70DA0841799F04D00529A9B /* Insertion.h in Headers */,
 				26147B0A15DDCCDC00DDB907 /* IntegerToStringConversion.h in Headers */,
 				7CDD7FF8186D291E007433CD /* IteratorAdaptors.h in Headers */,
+				5311BD581EA7E1A100525281 /* Signals.h in Headers */,
 				7CDD7FFA186D2A54007433CD /* IteratorRange.h in Headers */,
 				93AC91A818942FC400244939 /* LChar.h in Headers */,
 				539EB0631D55284200C82EF7 /* LEBDecoder.h in Headers */,
@@ -1633,6 +1650,7 @@
 				A748745417A0BDAE00FA04CB /* StringHashDumpContext.h in Headers */,
 				A8A47441151A825B004123FF /* StringImpl.h in Headers */,
 				A8A47442151A825B004123FF /* StringOperators.h in Headers */,
+				5311BD5A1EA81A9600525281 /* ThreadMessage.h in Headers */,
 				0FDDBFA81666DFA300C55FEF /* StringPrintStream.h in Headers */,
 				1A6EB1E0187D0BD30030126F /* StringView.h in Headers */,
 				A8A473B8151A825B004123FF /* strtod.h in Headers */,
@@ -1857,8 +1875,10 @@
 				FEDACD3D1630F83F00C69634 /* StackStats.cpp in Sources */,
 				A8A4743C151A825B004123FF /* StringBuilder.cpp in Sources */,
 				A5BA15FB182435A600A82E69 /* StringCF.cpp in Sources */,
+				5311BD5C1EA822F900525281 /* ThreadMessage.cpp in Sources */,
 				A8A47440151A825B004123FF /* StringImpl.cpp in Sources */,
 				A5BA15FC182435A600A82E69 /* StringImplCF.cpp in Sources */,
+				5311BD531EA71CAD00525281 /* Signals.cpp in Sources */,
 				A5BA15F51824348000A82E69 /* StringImplMac.mm in Sources */,
 				A5BA15F3182433A900A82E69 /* StringMac.mm in Sources */,
 				0FDDBFA71666DFA300C55FEF /* StringPrintStream.cpp in Sources */,
