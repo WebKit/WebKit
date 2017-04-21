@@ -155,7 +155,21 @@ void UserMediaCaptureManagerProxy::capabilities(uint64_t id, WebCore::RealtimeMe
     if (iter != m_proxies.end())
         capabilities = iter->value->source().capabilities();
 }
-    
+
+void UserMediaCaptureManagerProxy::setMuted(uint64_t id, bool muted)
+{
+    auto iter = m_proxies.find(id);
+    if (iter != m_proxies.end())
+        iter->value->source().setMuted(muted);
+}
+
+void UserMediaCaptureManagerProxy::setEnabled(uint64_t id, bool enabled)
+{
+    auto iter = m_proxies.find(id);
+    if (iter != m_proxies.end())
+        iter->value->source().setEnabled(enabled);
+}
+
 }
 
 #endif

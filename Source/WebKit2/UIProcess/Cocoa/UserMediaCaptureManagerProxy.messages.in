@@ -26,4 +26,6 @@ messages -> UserMediaCaptureManagerProxy {
     StartProducingData(uint64_t id)
     StopProducingData(uint64_t id)
     Capabilities(uint64_t id) -> (WebCore::RealtimeMediaSourceCapabilities capabilities)
+    SetMuted(uint64_t id, bool muted)
+    SetEnabled(uint64_t id, bool enabled)
 }

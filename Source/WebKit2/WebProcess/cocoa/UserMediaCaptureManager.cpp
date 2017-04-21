@@ -114,6 +114,24 @@ public:
             observer->audioSamplesAvailable(time, audioData, m_description, numberOfFrames);
     }
 
+    virtual void setMuted(bool muted)
+    {
+        if (m_muted == muted)
+            return;
+
+        m_muted = muted;
+        m_manager.setMuted(m_id, m_muted);
+    }
+
+    virtual void setEnabled(bool enabled)
+    {
+        if (m_enabled == enabled)
+            return;
+
+        m_enabled = enabled;
+        m_manager.setEnabled(m_id, m_enabled);
+    }
+
     void startProducingData() final { m_manager.startProducingData(m_id); }
     void stopProducingData() final { m_manager.stopProducingData(m_id); }
     bool isCaptureSource() const final { return true; }
@@ -255,6 +273,16 @@ WebCore::RealtimeMediaSourceCapabilities&& UserMediaCaptureManager::capabilities
     WebCore::RealtimeMediaSourceCapabilities capabilities;
     m_process.sendSync(Messages::UserMediaCaptureManagerProxy::Capabilities(id), Messages::UserMediaCaptureManagerProxy::Capabilities::Reply(capabilities), 0);
     return WTFMove(capabilities);
+}
+
+void UserMediaCaptureManager::setMuted(uint64_t id, bool muted)
+{
+    m_process.send(Messages::UserMediaCaptureManagerProxy::SetMuted(id, muted), 0);
+}
+
+void UserMediaCaptureManager::setEnabled(uint64_t id, bool enabled)
+{
+    m_process.send(Messages::UserMediaCaptureManagerProxy::SetEnabled(id, enabled), 0);
 }
 
 }

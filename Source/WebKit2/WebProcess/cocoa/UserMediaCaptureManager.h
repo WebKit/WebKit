@@ -71,6 +71,8 @@ private:
     void startProducingData(uint64_t);
     void stopProducingData(uint64_t);
     WebCore::RealtimeMediaSourceCapabilities&& capabilities(uint64_t);
+    void setMuted(uint64_t, bool);
+    void setEnabled(uint64_t, bool);
 
     class Source;
     friend class Source;

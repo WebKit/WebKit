@@ -53,6 +53,8 @@ private:
     void startProducingData(uint64_t);
     void stopProducingData(uint64_t);
     void capabilities(uint64_t, WebCore::RealtimeMediaSourceCapabilities&);
+    void setMuted(uint64_t, bool);
+    void setEnabled(uint64_t, bool);
 
     class SourceProxy;
     friend class SourceProxy;
