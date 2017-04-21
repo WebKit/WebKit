@@ -1,5 +1,11 @@
 2017-04-21  Konstantin Tokarev  <annulen@yandex.ru>
 
+        Unreviewed, added missing file to PlatformMac.cmake
+
+        * PlatformMac.cmake:
+
+2017-04-21  Konstantin Tokarev  <annulen@yandex.ru>
+
         Unreviewed follow-up for r215609
 
         * UIProcess/API/Cocoa/WKWebView.mm: Move internal header include too.

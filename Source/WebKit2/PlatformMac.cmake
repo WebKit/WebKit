@@ -265,6 +265,7 @@ list(APPEND WebKit2_SOURCES
     UIProcess/Cocoa/WebPasteboardProxyCocoa.mm
     UIProcess/Cocoa/WebProcessPoolCocoa.mm
     UIProcess/Cocoa/WebProcessProxyCocoa.mm
+    UIProcess/Cocoa/WebResourceLoadStatisticsStoreCocoa.mm
     UIProcess/Cocoa/WebURLSchemeHandlerCocoa.mm
     UIProcess/Cocoa/WebViewImpl.mm
 
