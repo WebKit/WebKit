@@ -1,3 +1,16 @@
+2017-04-21  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r206240): XMLSerializer.serializeToString() does not properly escape '<' / '>' in attribute values
+        https://bugs.webkit.org/show_bug.cgi?id=171132
+        <rdar://problem/31426752>
+
+        Reviewed by Ryosuke Niwa.
+
+        Add layout test coverage. This test is passing in both Firefox and Chrome.
+
+        * fast/dom/XMLSerializer-serializeToString-entities-expected.txt: Added.
+        * fast/dom/XMLSerializer-serializeToString-entities.html: Added.
+
 2017-04-21  Youenn Fablet  <youenn@apple.com>
 
         [ios-simulator] LayoutTest webrtc/multi-video.html is a flaky crash

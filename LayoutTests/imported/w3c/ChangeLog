@@ -1,3 +1,33 @@
+2017-04-21  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r206240): XMLSerializer.serializeToString() does not properly escape '<' / '>' in attribute values
+        https://bugs.webkit.org/show_bug.cgi?id=171132
+        <rdar://problem/31426752>
+
+        Reviewed by Ryosuke Niwa.
+
+        Re-sync web-platform-tests/domparsing from upstream.
+
+        * web-platform-tests/domparsing/DOMParser-parseFromString-html.html:
+        * web-platform-tests/domparsing/DOMParser-parseFromString-xml-doctype.html:
+        * web-platform-tests/domparsing/DOMParser-parseFromString-xml.html:
+        * web-platform-tests/domparsing/XMLSerializer-serializeToString.html:
+        * web-platform-tests/domparsing/createContextualFragment.html:
+        * web-platform-tests/domparsing/innerhtml-01.xhtml:
+        * web-platform-tests/domparsing/innerhtml-03.xhtml:
+        * web-platform-tests/domparsing/innerhtml-04.html:
+        * web-platform-tests/domparsing/innerhtml-05.xhtml:
+        * web-platform-tests/domparsing/innerhtml-06.html:
+        * web-platform-tests/domparsing/innerhtml-07.html:
+        * web-platform-tests/domparsing/insert-adjacent.html:
+        * web-platform-tests/domparsing/insert_adjacent_html-xhtml.xhtml:
+        * web-platform-tests/domparsing/insert_adjacent_html.html:
+        * web-platform-tests/domparsing/outerhtml-01.html:
+        * web-platform-tests/domparsing/outerhtml-02.html:
+        * web-platform-tests/domparsing/style_attribute_html.html:
+        * web-platform-tests/domparsing/w3c-import.log:
+        * web-platform-tests/domparsing/xml-serialization.xhtml:
+
 2017-04-19  Ryan Haddad  <ryanhaddad@apple.com>
 
         Remove two tests after r215515.

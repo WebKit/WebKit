@@ -1,3 +1,24 @@
+2017-04-21  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r206240): XMLSerializer.serializeToString() does not properly escape '<' / '>' in attribute values
+        https://bugs.webkit.org/show_bug.cgi?id=171132
+        <rdar://problem/31426752>
+
+        Reviewed by Ryosuke Niwa.
+
+        Use XMLSerialization [1] in MarkupAccumulator::appendAttribute() when inXMLFragmentSerialization()
+        returns true, even if the node's associated document is an HTML document. When XMLSerializer.serializeToString()
+        is called on a Node, we want XML serialization, even if the node comes from an HTML document.
+
+        [1] https://w3c.github.io/DOM-Parsing/#dfn-xml-serialization
+
+        Test: fast/dom/XMLSerializer-serializeToString-entities.html
+
+        * editing/MarkupAccumulator.cpp:
+        (WebCore::MarkupAccumulator::appendAttributeValue):
+        (WebCore::MarkupAccumulator::appendAttribute):
+        * editing/MarkupAccumulator.h:
+
 2017-04-20  Sam Weinig  <sam@webkit.org>
 
         Split cryptographic digest computation and parsing out of CSP code so it can be reused
