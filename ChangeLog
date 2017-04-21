@@ -1,3 +1,23 @@
+2017-04-21  Konstantin Tokarev  <annulen@yandex.ru>
+
+        [cmake] WTF target should not have wtf and subdirectries in public interface
+        https://bugs.webkit.org/show_bug.cgi?id=171115
+
+        Reviewed by Michael Catanzaro.
+
+        In r209665 WEBCORE_FRAMEWORK macro started to export INCLUDE_DIRECTORIES of
+        targets as their public interface, so that linked targets can use them
+        implicitly without copying directory lists around. This matches existing
+        practice for all targets except WTF, headers from which are always included
+        with full path starting from "<wtf/...".
+
+        Since r209665 it became possible to include headers from wtf or its
+        subdirectories in CMake builds without using "<wtf/..." path. It should
+        not be allowed.
+
+        * Source/cmake/WebKitMacros.cmake: Support xxx_PRIVATE_HEADERS
+        CMake variables.
+
 2017-04-20  Konstantin Tokarev  <annulen@yandex.ru>
 
         [cmake] Define FORWARDING_HEADERS_DIR in WebKitFS and use it everywhere

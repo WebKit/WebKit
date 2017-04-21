@@ -22,9 +22,9 @@
 
 #if USE(COORDINATED_GRAPHICS)
 #include "GraphicsContext.h"
-#include "MemoryPressureHandler.h"
 #include "TiledBackingStoreClient.h"
 #include <wtf/CheckedArithmetic.h>
+#include <wtf/MemoryPressureHandler.h>
 
 namespace WebCore {
 
