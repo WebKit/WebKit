@@ -83,7 +83,6 @@
 #import "WebURLSchemeHandlerCocoa.h"
 #import "WebViewImpl.h"
 #import "_WKDiagnosticLoggingDelegate.h"
-#import "_WKDraggableElementInfoInternal.h"
 #import "_WKFindDelegate.h"
 #import "_WKFrameHandleInternal.h"
 #import "_WKFullscreenDelegate.h"
@@ -129,6 +128,7 @@
 #import "WKScrollView.h"
 #import "WKWebViewContentProviderRegistry.h"
 #import "WebVideoFullscreenManagerProxy.h"
+#import "_WKDraggableElementInfoInternal.h"
 #import "_WKWebViewPrintFormatter.h"
 #import <UIKit/UIApplication.h>
 #import <WebCore/CoreGraphicsSPI.h>

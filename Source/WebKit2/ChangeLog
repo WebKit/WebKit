@@ -1,5 +1,11 @@
 2017-04-21  Konstantin Tokarev  <annulen@yandex.ru>
 
+        Unreviewed follow-up for r215609
+
+        * UIProcess/API/Cocoa/WKWebView.mm: Move internal header include too.
+
+2017-04-21  Konstantin Tokarev  <annulen@yandex.ru>
+
         Include iOS-specific headers inside preprocessor guard
         https://bugs.webkit.org/show_bug.cgi?id=171104
 
