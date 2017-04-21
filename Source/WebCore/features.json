@@ -979,6 +979,16 @@
         "comment": "The implementation does not support ReadableStreamBYOBReader."
     },
     {
+        "name": "Scroll Anchoring",
+        "status": {
+            "status": "Under Consideration"
+        },
+        "url": "https://wicg.github.io/ScrollAnchoring/",
+        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=171099",
+        "keywords": ["scroll", "anchor"],
+        "category": "css"
+    },
+    {
         "name": "Shadow DOM",
         "status": {
             "status": "Supported",

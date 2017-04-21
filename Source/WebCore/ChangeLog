@@ -1,3 +1,9 @@
+2017-04-20  Dean Jackson  <dino@apple.com>
+
+        Add Scroll Anchoring to features under consideration.
+
+        * features.json:
+
 2017-04-20  Konstantin Tokarev  <annulen@yandex.ru>
 
         Remove unused lamda captures
