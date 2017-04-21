@@ -828,36 +828,35 @@ ExceptionOr<void> ApplePaySession::completeShippingContactSelection(unsigned sho
 {
     ApplePayShippingContactUpdate update;
 
-    auto authorizationStatus = toPaymentAuthorizationStatus(status);
-    if (!authorizationStatus)
-        return Exception { INVALID_ACCESS_ERR };
-
     std::optional<ApplePayError::Code> errorCode;
     std::optional<ApplePayError::ContactField> contactField;
 
-    switch (*authorizationStatus) {
-    case PaymentAuthorizationStatus::Success:
+    switch (status) {
+    case ApplePaySession::STATUS_SUCCESS:
         break;
 
-    case PaymentAuthorizationStatus::Failure:
-    case PaymentAuthorizationStatus::PINRequired:
-    case PaymentAuthorizationStatus::PINIncorrect:
-    case PaymentAuthorizationStatus::PINLockout:
+    case ApplePaySession::STATUS_FAILURE:
+    case ApplePaySession::STATUS_PIN_REQUIRED:
+    case ApplePaySession::STATUS_PIN_INCORRECT:
+    case ApplePaySession::STATUS_PIN_LOCKOUT:
         errorCode = ApplePayError::Code::Unknown;
         break;
 
-    case PaymentAuthorizationStatus::InvalidBillingPostalAddress:
+    case ApplePaySession::STATUS_INVALID_BILLING_POSTAL_ADDRESS:
         errorCode = ApplePayError::Code::BillingContactInvalid;
         break;
 
-    case PaymentAuthorizationStatus::InvalidShippingPostalAddress:
+    case ApplePaySession::STATUS_INVALID_SHIPPING_POSTAL_ADDRESS:
         errorCode = ApplePayError::Code::ShippingContactInvalid;
         contactField = ApplePayError::ContactField::PostalAddress;
         break;
 
-    case PaymentAuthorizationStatus::InvalidShippingContact:
+    case ApplePaySession::STATUS_INVALID_SHIPPING_CONTACT:
         errorCode = ApplePayError::Code::ShippingContactInvalid;
         break;
+
+    default:
+        return Exception { INVALID_ACCESS_ERR };
     }
 
     if (errorCode)
