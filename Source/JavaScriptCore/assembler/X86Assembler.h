@@ -2156,12 +2156,12 @@ public:
 
     void xchgb_rm(RegisterID src, int offset, RegisterID base)
     {
-        m_formatter.oneByteOp(OP_XCHG_EvGb, src, base, offset);
+        m_formatter.oneByteOp8(OP_XCHG_EvGb, src, base, offset);
     }
 
     void xchgb_rm(RegisterID src, int offset, RegisterID base, RegisterID index, int scale)
     {
-        m_formatter.oneByteOp(OP_XCHG_EvGb, src, base, index, scale, offset);
+        m_formatter.oneByteOp8(OP_XCHG_EvGb, src, base, index, scale, offset);
     }
 
     void xchgw_rm(RegisterID src, int offset, RegisterID base)

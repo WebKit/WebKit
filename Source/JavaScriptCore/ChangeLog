@@ -1,3 +1,13 @@
+2017-04-21  Michael Saboff  <msaboff@apple.com>
+
+        X86-64 Assembler doesn't handle xchg with byte register src
+        https://bugs.webkit.org/show_bug.cgi?id=171118
+
+        Reviewed by Saam Barati.
+
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::xchgb_rm): Use oneByteOp8() since these are 8 bit opcodes.
+
 2017-04-21  Andy VanWagoner  <thetalecrafter@gmail.com>
 
         [INTL] Implement Intl.DateTimeFormat.prototype.formatToParts
