@@ -86,6 +86,7 @@ BuildbotIteration.TestSteps = {
     "webkit-jsc-cloop-test": "javascript cloop test",
     "webkitperl-test": "webkitperl test",
     "webkitpy-test": "webkitpy test",
+    "test262-test": "test262 test",
 };
 
 BuildbotIteration.Event = {
