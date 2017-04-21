@@ -44,11 +44,6 @@ ALWAYS_INLINE bool hasFence(std::memory_order order)
 {
     return order != std::memory_order_relaxed;
 }
-
-enum class TransactionAbortLikelihood {
-    Unlikely,
-    Likely
-};
     
 // Atomic wraps around std::atomic with the sole purpose of making the compare_exchange
 // operations not alter the expected value. This is more in line with how we typically
@@ -116,131 +111,28 @@ struct Atomic {
     ALWAYS_INLINE T exchangeXor(U operand, std::memory_order order = std::memory_order_seq_cst) { return value.fetch_xor(operand, order); }
     
     ALWAYS_INLINE T exchange(T newValue, std::memory_order order = std::memory_order_seq_cst) { return value.exchange(newValue, order); }
-    
-#if HAVE(LL_SC)
-    ALWAYS_INLINE T loadLink(std::memory_order order = std::memory_order_seq_cst);
-    ALWAYS_INLINE bool storeCond(T value,  std::memory_order order = std::memory_order_seq_cst);
-#endif // HAVE(LL_SC)
-
-    ALWAYS_INLINE T prepare(std::memory_order order = std::memory_order_seq_cst)
-    {
-#if HAVE(LL_SC)
-        return loadLink(order);
-#else
-        UNUSED_PARAM(order);
-        return load(std::memory_order_relaxed);
-#endif
-    }
-    
-#if HAVE(LL_SC)
-    static const bool prepareIsFast = false;
-#else
-    static const bool prepareIsFast = true;
-#endif
-
-    ALWAYS_INLINE bool attempt(T oldValue, T newValue, std::memory_order order = std::memory_order_seq_cst)
-    {
-#if HAVE(LL_SC)
-        UNUSED_PARAM(oldValue);
-        return storeCond(newValue, order);
-#else
-        return compareExchangeWeak(oldValue, newValue, order);
-#endif
-    }
 
     template<typename Func>
-    ALWAYS_INLINE bool transaction(const Func& func, std::memory_order order = std::memory_order_seq_cst, TransactionAbortLikelihood abortLikelihood = TransactionAbortLikelihood::Likely)
+    ALWAYS_INLINE bool transaction(const Func& func, std::memory_order order = std::memory_order_seq_cst)
     {
-        // If preparing is not fast then we want to skip the loop when func would fail.
-        if (!prepareIsFast && abortLikelihood == TransactionAbortLikelihood::Likely) {
-            T oldValue = load(std::memory_order_relaxed);
-            // Note: many funcs will constant-fold to true, which will kill all of this code.
-            if (!func(oldValue))
-                return false;
-        }
         for (;;) {
-            T oldValue = prepare(order);
+            T oldValue = load(std::memory_order_relaxed);
             T newValue = oldValue;
             if (!func(newValue))
                 return false;
-            if (attempt(oldValue, newValue, order))
+            if (compareExchangeWeak(oldValue, newValue, order))
                 return true;
         }
     }
 
     template<typename Func>
-    ALWAYS_INLINE bool transactionRelaxed(const Func& func, TransactionAbortLikelihood abortLikelihood = TransactionAbortLikelihood::Likely)
+    ALWAYS_INLINE bool transactionRelaxed(const Func& func)
     {
-        return transaction(func, std::memory_order_relaxed, abortLikelihood);
+        return transaction(func, std::memory_order_relaxed);
     }
 
     std::atomic<T> value;
 };
-
-#if CPU(ARM64) && HAVE(LL_SC)
-#define DEFINE_LL_SC(width, modifier, suffix)   \
-    template<> \
-    ALWAYS_INLINE uint ## width ## _t Atomic<uint ## width ##_t>::loadLink(std::memory_order order) \
-    { \
-        int ## width ## _t result; \
-        if (hasFence(order)) { \
-            asm volatile ( \
-                "ldaxr" suffix " %" modifier "0, [%1]" \
-                : "=r"(result) \
-                : "r"(this) \
-                : "memory"); \
-        } else { \
-            asm volatile ( \
-                "ldxr" suffix " %" modifier "0, [%1]" \
-                : "=r"(result) \
-                : "r"(this) \
-                : "memory"); \
-        } \
-        return result; \
-    } \
-    \
-    template<> \
-    ALWAYS_INLINE bool Atomic<uint ## width ## _t>::storeCond(uint ## width ## _t value, std::memory_order order) \
-    { \
-        bool result; \
-        if (hasFence(order)) { \
-            asm volatile ( \
-                "stlxr" suffix " %w0, %" modifier "1, [%2]" \
-                : "=&r"(result) \
-                : "r"(value), "r"(this) \
-                : "memory"); \
-        } else { \
-            asm volatile ( \
-                "stxr" suffix " %w0, %" modifier "1, [%2]" \
-                : "=&r"(result) \
-                : "r"(value), "r"(this) \
-                : "memory"); \
-        } \
-        return !result; \
-    } \
-    \
-    template<> \
-    ALWAYS_INLINE int ## width ## _t Atomic<int ## width ## _t>::loadLink(std::memory_order order) \
-    { \
-        return bitwise_cast<Atomic<uint ## width ## _t>*>(this)->loadLink(order); \
-    } \
-    \
-    template<> \
-    ALWAYS_INLINE bool Atomic<int ## width ## _t>::storeCond(int ## width ## _t value, std::memory_order order) \
-    { \
-        return bitwise_cast<Atomic<uint ## width ## _t>*>(this)->storeCond(value, order); \
-    }
-
-DEFINE_LL_SC(8, "w", "b")
-DEFINE_LL_SC(16, "w", "h")
-DEFINE_LL_SC(32, "w", "")
-DEFINE_LL_SC(64, "", "")
-#if OS(DARWIN)
-DEFINE_LL_SC(ptr, "", "")
-#endif
-
-#undef DEFINE_LL_SC
-#endif // CPU(ARM64) && HAVE(LL_SC)
 
 template<typename T>
 inline T atomicLoad(T* location, std::memory_order order = std::memory_order_seq_cst)
@@ -541,7 +433,6 @@ ALWAYS_INLINE T& ensurePointer(Atomic<T*>& pointer, const Func& func)
 using WTF::Atomic;
 using WTF::Dependency;
 using WTF::DependencyWith;
-using WTF::TransactionAbortLikelihood;
 using WTF::consume;
 using WTF::dependency;
 using WTF::dependencyWith;

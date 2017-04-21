@@ -252,7 +252,7 @@ ALWAYS_INLINE void SlotVisitor::appendHiddenSlowImpl(JSCell* cell, Dependency de
 template<typename ContainerType>
 ALWAYS_INLINE void SlotVisitor::setMarkedAndAppendToMarkStack(ContainerType& container, JSCell* cell, Dependency dependency)
 {
-    if (container.testAndSetMarked(cell, dependency, TransactionAbortLikelihood::Unlikely))
+    if (container.testAndSetMarked(cell, dependency))
         return;
     
     ASSERT(cell->structure());

@@ -121,7 +121,7 @@ public:
             return true;
         return m_isMarked.compareExchangeStrong(false, true);
     }
-    ALWAYS_INLINE bool testAndSetMarked(HeapCell*, Dependency, TransactionAbortLikelihood = TransactionAbortLikelihood::Likely) { return testAndSetMarked(); }
+    ALWAYS_INLINE bool testAndSetMarked(HeapCell*, Dependency) { return testAndSetMarked(); }
     void clearMarked() { m_isMarked.store(false); }
     
     void noteMarked() { }

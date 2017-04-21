@@ -761,10 +761,6 @@
 #define ENABLE_CONCURRENT_JS 1
 #endif
 
-#if CPU(ARM64)
-#define HAVE_LL_SC 1
-#endif // CPU(ARM64) && OS(DARWIN)
-
 #if __has_include(<System/pthread_machdep.h>)
 #define HAVE_FAST_TLS 1
 #endif

@@ -1,3 +1,28 @@
+2017-04-21  Keith Miller  <keith_miller@apple.com>
+
+        Remove LL/SC from Atomics
+        https://bugs.webkit.org/show_bug.cgi?id=171141
+
+        Reviewed by Saam Barati.
+
+        Adding load link and store conditionally was not an actual progression
+        and the existing code is causing problems for users of Atomics. So let's
+        get rid of it.
+
+        * wtf/Atomics.h:
+        (WTF::hasFence):
+        (WTF::Atomic::exchange):
+        (WTF::Atomic::transaction):
+        (WTF::Atomic::transactionRelaxed):
+        (WTF::Atomic::prepare): Deleted.
+        (WTF::Atomic::attempt): Deleted.
+        * wtf/Bitmap.h:
+        (WTF::WordType>::concurrentTestAndSet):
+        (WTF::WordType>::concurrentTestAndClear):
+        * wtf/LockAlgorithm.h:
+        (WTF::LockAlgorithm::lockFast):
+        (WTF::LockAlgorithm::unlockFast):
+
 2017-04-21  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r215620 and r215623.

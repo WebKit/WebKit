@@ -16,6 +16,24 @@
 
 2017-04-21  Keith Miller  <keith_miller@apple.com>
 
+        Remove LL/SC from Atomics
+        https://bugs.webkit.org/show_bug.cgi?id=171141
+
+        Reviewed by Saam Barati.
+
+        Adding load link and store conditionally was not an actual progression
+        and the existing code is causing problems for users of Atomics. So let's
+        get rid of it.
+
+        * heap/LargeAllocation.h:
+        (JSC::LargeAllocation::testAndSetMarked):
+        * heap/MarkedBlock.h:
+        (JSC::MarkedBlock::testAndSetMarked):
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::setMarkedAndAppendToMarkStack):
+
+2017-04-21  Keith Miller  <keith_miller@apple.com>
+
         Unreviewed, fix Cloop build.
 
         * jit/ExecutableAllocator.h:

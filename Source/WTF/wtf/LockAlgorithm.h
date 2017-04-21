@@ -57,8 +57,7 @@ public:
                 value |= isHeldBit;
                 return true;
             },
-            std::memory_order_acquire,
-            TransactionAbortLikelihood::Unlikely);
+            std::memory_order_acquire);
     }
     
     static void lock(Atomic<LockType>& lock)
@@ -92,8 +91,7 @@ public:
                 value &= ~isHeldBit;
                 return true;
             },
-            std::memory_order_relaxed,
-            TransactionAbortLikelihood::Unlikely);
+            std::memory_order_relaxed);
     }
     
     static void unlock(Atomic<LockType>& lock)
