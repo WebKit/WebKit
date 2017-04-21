@@ -1,3 +1,35 @@
+2017-04-21  Saam Barati  <sbarati@apple.com>
+
+        SharedArrayBuffer-opt.js fails with Briggs
+        https://bugs.webkit.org/show_bug.cgi?id=170948
+        <rdar://problem/31740568>
+
+        Reviewed by Michael Saboff.
+
+        The bug was not actually with Briggs, but instead was with
+        our X86-64 MacroAssembler. Michael fixed the bug here:
+        https://trac.webkit.org/changeset/215618/webkit
+        
+        The issue was we weren't adding the REX byte for AtomicXchg8,
+        leading to the incorrect encoding for the result register depending
+        on which register it was. If you look at this code, you'll see the issue:
+
+          Int32 @38 = AtomicXchg(@59, @64, width = 8, range = 0, fenceRange = 0, ControlDependent|Fence|Writes:0|Reads:0, DFG:@49)
+              AtomicXchg8 %rsi, (%rax,%rdx), @38
+                  0x2dcb5bc0015e: lock xchg %dh, (%rax,%rdx)
+          Int32 @66 = Const32(255, DFG:@49)
+          Int32 @67 = BitAnd(@38, $255(@66), DFG:@49)
+              ZeroExtend8To32 %rsi, %rax, @67
+                  0x2dcb5bc00162: movzx %sil, %eax
+
+        Air thought the result was in the lower 8 bits of %rsi,
+        however, the code we emitted stored it in the [8-15] bits
+        of %rdx. Since this issue is fixed, I'm turning Briggs back
+        on.
+
+        * b3/air/AirAllocateRegistersByGraphColoring.h:
+        (JSC::B3::Air::useIRC):
+
 2017-04-20  Mark Lam  <mark.lam@apple.com>
 
         Refactor MASM probe to allow printing of custom types.
