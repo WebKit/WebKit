@@ -1,3 +1,13 @@
+2017-04-21  Youenn Fablet  <youenn@apple.com>
+
+        [ios-simulator] LayoutTest webrtc/multi-video.html is a flaky crash
+        https://bugs.webkit.org/show_bug.cgi?id=170823
+        <rdar://problem/31611583>
+
+        Unreviewed.
+
+        * TestExpectations: Reactivating test.
+
 2017-04-21  Daniel Bates  <dabates@apple.com>
 
         [iOS] Skip http/tests/security/contentSecurityPolicy/{audio, video}-redirect-allowed2.html

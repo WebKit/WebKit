@@ -1281,8 +1281,6 @@ webkit.org/b/170699 [ Debug ] imported/w3c/web-platform-tests/html/webappapis/ti
 
 webkit.org/b/90724 compositing/iframes/iframe-size-from-zero.html [ Failure Pass ]
 
-webkit.org/b/170823 webrtc/multi-video.html [ Skip ]
-
 webkit.org/b/170704 webrtc/video-mute.html [ Pass Failure ]
 
 webkit.org/b/171031 imported/w3c/web-platform-tests/XMLHttpRequest/getallresponseheaders-cl.htm [ Failure ]
