@@ -1,0 +1,13 @@
+Testing an IconButton has a blue background-color when focused.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Confirm inital icon button color.
+PASS window.getComputedStyle(iconButton.element).backgroundColor is "rgb(192, 192, 192)"
+Confirm icon button color changed after focus.
+PASS window.getComputedStyle(iconButton.element).backgroundColor is not "rgb(192, 192, 192)"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

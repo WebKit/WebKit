@@ -103,6 +103,9 @@ http/tests/ssl/applepay/ [ Skip ]
 fast/visual-viewport/rubberbanding-viewport-rects.html [ Skip ]
 fast/visual-viewport/rubberbanding-viewport-rects-header-footer.html  [ Skip ]
 
+# FKA focus ring only make sense on Mac
+media/modern-media-controls/icon-button/icon-button-focus-state.html [ Skip ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific tests.
 #//////////////////////////////////////////////////////////////////////////////////////////

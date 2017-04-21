@@ -31,3 +31,8 @@ button.icon:active,
 button.icon.on {
     background-color: white !important;
 }
+
+button.icon:focus {
+    background-color: -webkit-focus-ring-color !important;
+    mix-blend-mode: normal !important;
+}
