@@ -194,14 +194,15 @@ RefPtr<WebKit::WebPageProxy> UIDelegate::UIClient::createNewPageCommon(WebKit::W
                 return;
             checker->didCallCompletionHandler();
 
-            if (!webView)
+            if (!webView) {
+                completionHandler(nullptr);
                 return;
+            }
 
             if ([webView->_configuration _relatedWebView] != relatedWebView.get())
                 [NSException raise:NSInternalInconsistencyException format:@"Returned WKWebView was not created with the given configuration."];
 
             completionHandler(webView->_page.get());
-
         }).get()];
 
         return nullptr;

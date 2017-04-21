@@ -1,3 +1,13 @@
+2017-04-20  Brady Eidson  <beidson@apple.com>
+
+        WebContent process becomes unresponsive after returning nil from async version of -webView:createWebViewWithConfiguration:...
+        <rdar://problem/31739023> and https://bugs.webkit.org/show_bug.cgi?id=171090
+
+        Reviewed by Andy Estes.
+
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::UIClient::createNewPageCommon): Handle the perfectly valid "nil webView" case correctly.
+
 2017-04-20  Dan Bernstein  <mitz@apple.com>
 
         Disable header postprocessing when building for Sierra

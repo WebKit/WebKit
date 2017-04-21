@@ -1,3 +1,18 @@
+2017-04-20  Brady Eidson  <beidson@apple.com>
+
+        WebContent process becomes unresponsive after returning nil from async version of -webView:createWebViewWithConfiguration:...
+        <rdar://problem/31739023> and https://bugs.webkit.org/show_bug.cgi?id=171090
+
+        Reviewed by Andy Estes.
+
+        * TestWebKitAPI/Tests/WebKit2/open-and-close-window.html:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/OpenAndCloseWindow.mm:
+        (resetToConsistentState):
+        (-[OpenAndCloseWindowUIDelegate webViewDidClose:]):
+        (-[OpenAndCloseWindowUIDelegate webView:createWebViewWithConfiguration:forNavigationAction:windowFeatures:]):
+        (TEST):
+        (-[OpenAndCloseWindowUIDelegateAsync _webView:createWebViewWithConfiguration:forNavigationAction:windowFeatures:completionHandler:]):
+
 2017-04-20  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [ios-simulator] PositionInformationTests API tests are timing out

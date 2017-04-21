@@ -4,8 +4,10 @@
 <script>
 if (document.location.search === "?close-window")
     window.close();
-else
-    window.open("open-and-close-window.html?close-window");
+else {
+    if (!window.open("open-and-close-window.html?close-window"))
+        window.close();
+}
 </script>
 </head>
 </html>
