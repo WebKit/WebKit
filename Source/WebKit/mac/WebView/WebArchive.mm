@@ -200,7 +200,7 @@ static BOOL isArrayOfClass(id object, Class elementClass)
 #endif
 
     _private = [[WebArchivePrivate alloc] init];
-    auto coreArchive = LegacyWebArchive::create(SharedBuffer::wrapNSData(data));
+    auto coreArchive = LegacyWebArchive::create(SharedBuffer::create(data));
     if (!coreArchive) {
         [self release];
         return nil;

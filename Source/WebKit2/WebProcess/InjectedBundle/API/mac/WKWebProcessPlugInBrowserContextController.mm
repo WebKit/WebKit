@@ -646,7 +646,7 @@ static inline WKEditorInsertAction toWK(EditorInsertAction action)
             auto dataByType = [m_controller->_editingDelegate.get() _webProcessPlugInBrowserContextController:m_controller pasteboardDataForRange:wrapper(*InjectedBundleRangeHandle::getOrCreate(range).get())];
             for (NSString *type in dataByType) {
                 pasteboardTypes.append(type);
-                pasteboardData.append(SharedBuffer::wrapNSData(dataByType[type]));
+                pasteboardData.append(SharedBuffer::create(dataByType[type]));
             };
         }
 

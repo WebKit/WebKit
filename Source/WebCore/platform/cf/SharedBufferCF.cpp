@@ -33,10 +33,9 @@
 
 namespace WebCore {
 
-SharedBuffer::SharedBuffer(CFDataRef cfData)
-    : m_buffer(adoptRef(*new DataBuffer))
-    , m_cfData(cfData)
+SharedBuffer::SharedBuffer(CFDataRef data)
 {
+    append(data);
 }
 
 // Using Foundation allows for an even more efficient implementation of this function,
@@ -44,144 +43,34 @@ SharedBuffer::SharedBuffer(CFDataRef cfData)
 #if !USE(FOUNDATION)
 RetainPtr<CFDataRef> SharedBuffer::createCFData()
 {
-    if (m_cfData)
-        return m_cfData;
-
-    // Internal data in SharedBuffer can be segmented. We need to get the contiguous buffer.
-    const Vector<char>& contiguousBuffer = buffer();
-    return adoptCF(CFDataCreate(0, reinterpret_cast<const UInt8*>(contiguousBuffer.data()), contiguousBuffer.size()));
+    if (m_segments.size() == 1) {
+        if (auto data = WTF::get_if<RetainPtr<CFDataRef>>(m_segments[0]->m_immutableData))
+            return *data;
+    }
+    return adoptCF(CFDataCreate(nullptr, reinterpret_cast<const UInt8*>(data()), size()));
 }
 #endif
 
-Ref<SharedBuffer> SharedBuffer::wrapCFData(CFDataRef data)
+Ref<SharedBuffer> SharedBuffer::create(CFDataRef data)
 {
     return adoptRef(*new SharedBuffer(data));
 }
 
-bool SharedBuffer::hasPlatformData() const
-{
-    return m_cfData;
-}
-
-const char* SharedBuffer::platformData() const
-{
-    return reinterpret_cast<const char*>(CFDataGetBytePtr(m_cfData.get()));
-}
-
-unsigned SharedBuffer::platformDataSize() const
-{
-    return CFDataGetLength(m_cfData.get());
-}
-
 void SharedBuffer::hintMemoryNotNeededSoon()
 {
-    if (!hasPlatformData())
-        return;
-    OSAllocator::hintMemoryNotNeededSoon(const_cast<char*>(platformData()), platformDataSize());
+    for (const auto& segment : m_segments) {
+        if (segment->hasOneRef()) {
+            if (auto data = WTF::get_if<RetainPtr<CFDataRef>>(segment->m_immutableData))
+                OSAllocator::hintMemoryNotNeededSoon(const_cast<UInt8*>(CFDataGetBytePtr(data->get())), CFDataGetLength(data->get()));
+        }
+    }
 }
 
-void SharedBuffer::maybeTransferPlatformData()
-{
-    if (!m_cfData)
-        return;
-    
-    ASSERT(!m_size);
-    
-    // Hang on to the m_cfData pointer in a local pointer as append() will re-enter maybeTransferPlatformData()
-    // and we need to make sure to early return when it does.
-    RetainPtr<CFDataRef> cfData = adoptCF(m_cfData.leakRef());
-
-    append(reinterpret_cast<const char*>(CFDataGetBytePtr(cfData.get())), CFDataGetLength(cfData.get()));
-}
-
-void SharedBuffer::clearPlatformData()
-{
-    m_cfData = 0;
-}
-
-bool SharedBuffer::tryReplaceContentsWithPlatformBuffer(SharedBuffer& newContents)
-{
-    if (!newContents.m_cfData)
-        return false;
-
-    clear();
-    m_cfData = newContents.m_cfData;
-    return true;
-}
-
-bool SharedBuffer::maybeAppendPlatformData(SharedBuffer& newContents)
-{
-    if (size() || !newContents.m_cfData)
-        return false;
-    m_cfData = newContents.m_cfData;
-    return true;
-}
-
-#if USE(NETWORK_CFDATA_ARRAY_CALLBACK)
 void SharedBuffer::append(CFDataRef data)
 {
     ASSERT(data);
-    m_dataArray.append(data);
     m_size += CFDataGetLength(data);
+    m_segments.append(DataSegment::create(data));
 }
-
-void SharedBuffer::copyBufferAndClear(char* destination, unsigned bytesToCopy) const
-{
-    if (m_dataArray.isEmpty())
-        return;
-
-    CFIndex bytesLeft = bytesToCopy;
-    for (auto& cfData : m_dataArray) {
-        CFIndex dataLen = CFDataGetLength(cfData.get());
-        ASSERT(bytesLeft >= dataLen);
-        memcpy(destination, CFDataGetBytePtr(cfData.get()), dataLen);
-        destination += dataLen;
-        bytesLeft -= dataLen;
-    }
-    m_dataArray.clear();
-}
-
-unsigned SharedBuffer::copySomeDataFromDataArray(const char*& someData, unsigned position) const
-{
-    unsigned totalOffset = 0;
-    for (auto& cfData : m_dataArray) {
-        unsigned dataLen = static_cast<unsigned>(CFDataGetLength(cfData.get()));
-        ASSERT(totalOffset <= position);
-        unsigned localOffset = position - totalOffset;
-        if (localOffset < dataLen) {
-            someData = reinterpret_cast<const char *>(CFDataGetBytePtr(cfData.get())) + localOffset;
-            return dataLen - localOffset;
-        }
-        totalOffset += dataLen;
-    }
-    return 0;
-}
-
-const char *SharedBuffer::singleDataArrayBuffer() const
-{
-    // If we had previously copied data into m_buffer in copyDataArrayAndClear() or some other
-    // function, then we can't return a pointer to the CFDataRef buffer.
-    if (m_buffer->data.size())
-        return 0;
-
-    if (m_dataArray.size() != 1)
-        return 0;
-
-    return reinterpret_cast<const char*>(CFDataGetBytePtr(m_dataArray.at(0).get()));
-}
-
-bool SharedBuffer::maybeAppendDataArray(SharedBuffer& data)
-{
-    if (m_buffer->data.size() || m_cfData || !data.m_dataArray.size())
-        return false;
-#if !ASSERT_DISABLED
-    unsigned originalSize = size();
-#endif
-    for (auto& cfData : data.m_dataArray)
-        append(cfData.get());
-    ASSERT(size() == originalSize + data.size());
-    return true;
-}
-#endif
 
 }

@@ -31,6 +31,11 @@
 #include "config.h"
 #include "SharedBufferChunkReader.h"
 
+#if ENABLE(MHTML)
+
+// FIXME: This class is overkill. Remove this class and just iterate the segments of a SharedBuffer
+// using the cool new SharedBuffer::begin() and SharedBuffer::end() instead of using this class.
+
 #include "SharedBuffer.h"
 
 namespace WebCore {
@@ -100,7 +105,10 @@ bool SharedBufferChunkReader::nextChunk(Vector<char>& chunk, bool includeSeparat
         // Read the next segment.
         m_segmentIndex = 0;
         m_bufferPosition += m_segmentLength;
-        m_segmentLength = m_buffer->getSomeData(m_segment, m_bufferPosition);
+        // Let's pretend all the data is in one block.
+        // FIXME: This class should be removed in favor of just iterating the segments of the SharedBuffer.
+        m_segment = m_buffer->data() + m_bufferPosition;
+        m_segmentLength = m_buffer->size() - m_bufferPosition;
         if (!m_segmentLength) {
             m_reachedEndOfFile = true;
             if (m_separatorIndex > 0)
@@ -134,12 +142,14 @@ size_t SharedBufferChunkReader::peek(Vector<char>& data, size_t requestedSize)
 
     size_t bufferPosition = m_bufferPosition + m_segmentLength;
     const char* segment = 0;
-    while (size_t segmentLength = m_buffer->getSomeData(segment, bufferPosition)) {
-        if (requestedSize <= readBytesCount + segmentLength) {
-            data.append(segment, requestedSize - readBytesCount);
-            readBytesCount += (requestedSize - readBytesCount);
-            break;
-        }
+
+    // Let's pretend all the data is in one block.
+    // FIXME: This class should be removed in favor of just iterating the segments of the SharedBuffer.
+    if (bufferPosition != m_buffer->size()) {
+        segment = m_buffer->data() + bufferPosition;
+        size_t segmentLength = m_buffer->size() - bufferPosition;
+        if (segmentLength > requestedSize)
+            segmentLength = requestedSize;
         data.append(segment, segmentLength);
         readBytesCount += segmentLength;
         bufferPosition += segmentLength;
@@ -148,3 +158,5 @@ size_t SharedBufferChunkReader::peek(Vector<char>& data, size_t requestedSize)
 }
 
 }
+
+#endif

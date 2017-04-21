@@ -87,7 +87,7 @@ RefPtr<SharedBuffer> ShareableResource::wrapInSharedBuffer()
 #if USE(CF)
     RetainPtr<CFAllocatorRef> deallocator = adoptCF(createShareableResourceDeallocator(this));
     RetainPtr<CFDataRef> cfData = adoptCF(CFDataCreateWithBytesNoCopy(kCFAllocatorDefault, reinterpret_cast<const UInt8*>(data()), static_cast<CFIndex>(size()), deallocator.get()));
-    return SharedBuffer::wrapCFData(cfData.get());
+    return SharedBuffer::create(cfData.get());
 #elif USE(SOUP)
     return SharedBuffer::wrapSoupBuffer(soup_buffer_new_with_owner(data(), size(), this, [](void* data) { static_cast<ShareableResource*>(data)->deref(); }));
 #else

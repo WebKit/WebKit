@@ -145,7 +145,7 @@ RefPtr<SharedBuffer> KeyedEncoderCF::finishEncoding()
     auto data = adoptCF(CFPropertyListCreateData(kCFAllocatorDefault, m_rootDictionary.get(), kCFPropertyListBinaryFormat_v1_0, 0, nullptr));
     if (!data)
         return nullptr;
-    return SharedBuffer::wrapCFData(data.get());
+    return SharedBuffer::create(data.get());
 }
 
 } // namespace WebCore

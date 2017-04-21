@@ -1,3 +1,165 @@
+2017-04-21  Alex Christensen  <achristensen@webkit.org>
+
+        Reduce copies and allocations in SharedBuffer::append
+        https://bugs.webkit.org/show_bug.cgi?id=170956
+
+        Reviewed by Andreas Kling.
+
+        SharedBuffer was a mess of different data structures added over the years.
+        SharedBuffer::append would allocate large Vector<char>s and call memcpy, and that
+        is inefficient and causes crashes when large allocations fail, and the allocations
+        and copies aren't even necessary.  There were also const correctness problems in
+        ResourceLoader::addDataOrBuffer, and iterating a SharedBuffer was strange because
+        sometimes we don't want to add unnecessary copies.
+
+        These problems are solved by making SharedBuffer a Vector of read-only data segments,
+        which can be contained in various ways but we don't care because all we want to do is
+        read them.  Appending SharedBuffers is now const correct because we just add to a
+        Vector<Ref<DataSegment>> and neither SharedBuffer can write to the data.  Sometimes,
+        though, we want all the data to be in continuous memory, and if there are multiple
+        segments then the data needs to be copied once to a new segment.  We should audit the
+        call sites of SharedBuffer::data and see if this is really necessary.
+
+        No change in functional behavior.  Fewer copies of the data are made when buffering
+        data in the NetworkProcess.  No extra memory is allocated for bytes we think we might
+        need to append in the future.  Data is now only copied into one buffer lazily as needed,
+        which could slightly change when small delays from memcpy happen, but it's an overall
+        improvement.  We could have a performance hit if we were to call append() then data()
+        then append() then data() etc. but that doesn't happen in WebKit because we call append
+        repeatedly when buffering the data then call data() once when reading the data.
+
+        * editing/cocoa/EditorCocoa.mm:
+        (WebCore::archivedDataForAttributedString):
+        (WebCore::Editor::selectionInWebArchiveFormat):
+        (WebCore::Editor::dataInRTFDFormat):
+        (WebCore::Editor::dataInRTFFormat):
+        * editing/ios/EditorIOS.mm:
+        (WebCore::Editor::WebContentReader::readURL):
+        * editing/mac/EditorMac.mm:
+        (WebCore::Editor::imageInWebArchiveFormat):
+        * loader/TextTrackLoader.cpp:
+        (WebCore::TextTrackLoader::processNewCueData):
+        * loader/archive/cf/LegacyWebArchive.cpp:
+        (WebCore::LegacyWebArchive::createResource):
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::tryReplaceEncodedData):
+        * loader/cocoa/DiskCacheMonitorCocoa.mm:
+        (WebCore::DiskCacheMonitor::tryGetFileBackedSharedBufferFromCFURLCachedResponse):
+        * platform/SharedBuffer.cpp:
+        (WebCore::SharedBuffer::SharedBuffer):
+        (WebCore::SharedBuffer::create):
+        (WebCore::SharedBuffer::combineToOneSegment):
+        (WebCore::SharedBuffer::data):
+        (WebCore::SharedBuffer::createArrayBuffer):
+        (WebCore::SharedBuffer::append):
+        (WebCore::SharedBuffer::clear):
+        (WebCore::SharedBuffer::copy):
+        (WebCore::SharedBuffer::DataSegment::data):
+        (WebCore::SharedBuffer::DataSegment::size):
+        (WebCore::segmentIndex): Deleted.
+        (WebCore::offsetInSegment): Deleted.
+        (WebCore::allocateSegment): Deleted.
+        (WebCore::freeSegment): Deleted.
+        (WebCore::SharedBuffer::~SharedBuffer): Deleted.
+        (WebCore::SharedBuffer::size): Deleted.
+        (WebCore::SharedBuffer::duplicateDataBufferIfNecessary): Deleted.
+        (WebCore::SharedBuffer::appendToDataBuffer): Deleted.
+        (WebCore::SharedBuffer::clearDataBuffer): Deleted.
+        (WebCore::SharedBuffer::copyBufferAndClear): Deleted.
+        (WebCore::SharedBuffer::buffer): Deleted.
+        (WebCore::SharedBuffer::getSomeData): Deleted.
+        (WebCore::SharedBuffer::maybeTransferMappedFileData): Deleted.
+        (WebCore::SharedBuffer::clearPlatformData): Deleted.
+        (WebCore::SharedBuffer::maybeTransferPlatformData): Deleted.
+        (WebCore::SharedBuffer::hasPlatformData): Deleted.
+        (WebCore::SharedBuffer::platformData): Deleted.
+        (WebCore::SharedBuffer::maybeAppendPlatformData): Deleted.
+        * platform/SharedBuffer.h:
+        (WebCore::SharedBuffer::create): Deleted.
+        (WebCore::SharedBuffer::isEmpty): Deleted.
+        * platform/SharedBufferChunkReader.cpp:
+        (WebCore::SharedBufferChunkReader::nextChunk):
+        (WebCore::SharedBufferChunkReader::peek):
+        * platform/SharedBufferChunkReader.h:
+        * platform/URLParser.cpp:
+        (WebCore::URLParser::URLParser):
+        * platform/cf/KeyedEncoderCF.cpp:
+        (WebCore::KeyedEncoderCF::finishEncoding):
+        * platform/cf/SharedBufferCF.cpp:
+        (WebCore::SharedBuffer::SharedBuffer):
+        (WebCore::SharedBuffer::createCFData):
+        (WebCore::SharedBuffer::create):
+        (WebCore::SharedBuffer::hintMemoryNotNeededSoon):
+        (WebCore::SharedBuffer::append):
+        (WebCore::SharedBuffer::wrapCFData): Deleted.
+        (WebCore::SharedBuffer::hasPlatformData): Deleted.
+        (WebCore::SharedBuffer::platformData): Deleted.
+        (WebCore::SharedBuffer::platformDataSize): Deleted.
+        (WebCore::SharedBuffer::maybeTransferPlatformData): Deleted.
+        (WebCore::SharedBuffer::clearPlatformData): Deleted.
+        (WebCore::SharedBuffer::tryReplaceContentsWithPlatformBuffer): Deleted.
+        (WebCore::SharedBuffer::maybeAppendPlatformData): Deleted.
+        (WebCore::SharedBuffer::copyBufferAndClear): Deleted.
+        (WebCore::SharedBuffer::copySomeDataFromDataArray): Deleted.
+        (WebCore::SharedBuffer::singleDataArrayBuffer): Deleted.
+        (WebCore::SharedBuffer::maybeAppendDataArray): Deleted.
+        * platform/cocoa/NetworkExtensionContentFilter.mm:
+        (WebCore::NetworkExtensionContentFilter::replacementData):
+        * platform/cocoa/ParentalControlsContentFilter.mm:
+        (WebCore::ParentalControlsContentFilter::replacementData):
+        * platform/cocoa/SharedBufferCocoa.mm:
+        (-[WebCoreSharedBufferData initWithSharedBufferDataSegment:]):
+        (-[WebCoreSharedBufferData length]):
+        (-[WebCoreSharedBufferData bytes]):
+        (WebCore::SharedBuffer::create):
+        (WebCore::SharedBuffer::createCFData):
+        (WebCore::SharedBuffer::createFromReadingFile):
+        (WebCore::SharedBuffer::createNSDataArray):
+        (-[WebCoreSharedBufferData initWithSharedBufferDataBuffer:]): Deleted.
+        (WebCore::SharedBuffer::wrapNSData): Deleted.
+        (WebCore::SharedBuffer::existingCFData): Deleted.
+        * platform/graphics/avfoundation/objc/WebCoreAVFResourceLoader.mm:
+        (WebCore::WebCoreAVFResourceLoader::fulfillRequestWithResource):
+        * platform/graphics/cocoa/FontPlatformDataCocoa.mm:
+        (WebCore::FontPlatformData::openTypeTable):
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (ResourceHandleStreamingClient::didReceiveBuffer):
+        * platform/graphics/mac/ImageMac.mm:
+        (WebCore::Image::loadPlatformResource):
+        * platform/image-decoders/ImageDecoder.cpp:
+        (WebCore::ImageDecoder::create):
+        * platform/image-decoders/png/PNGImageDecoder.cpp:
+        (WebCore::PNGImageReader::decode):
+        * platform/ios/PlatformPasteboardIOS.mm:
+        (WebCore::PlatformPasteboard::readBuffer):
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::writeFileWrapperAsRTFDAttachment):
+        (WebCore::Pasteboard::write):
+        * platform/mac/PlatformPasteboardMac.mm:
+        (WebCore::PlatformPasteboard::bufferForType):
+        * platform/network/BlobResourceHandle.cpp:
+        (WebCore::BlobResourceHandle::notifyReceiveData):
+        * platform/network/MIMEHeader.cpp:
+        * platform/network/MIMEHeader.h:
+        * platform/network/cf/ResourceHandleCFURLConnectionDelegateWithOperationQueue.cpp:
+        (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::didReceiveData):
+        * platform/network/cf/SynchronousResourceHandleCFURLConnectionDelegate.cpp:
+        (WebCore::SynchronousResourceHandleCFURLConnectionDelegate::didReceiveData):
+        * platform/network/mac/WebCoreResourceHandleAsDelegate.mm:
+        (-[WebCoreResourceHandleAsDelegate connection:didReceiveData:lengthReceived:]):
+        * platform/network/mac/WebCoreResourceHandleAsOperationQueueDelegate.mm:
+        (-[WebCoreResourceHandleAsOperationQueueDelegate connection:didReceiveData:lengthReceived:]):
+        * platform/soup/SharedBufferSoup.cpp:
+        (WebCore::SharedBuffer::SharedBuffer):
+        (WebCore::SharedBuffer::createSoupBuffer):
+        (WebCore::SharedBuffer::clearPlatformData): Deleted.
+        (WebCore::SharedBuffer::maybeTransferPlatformData): Deleted.
+        (WebCore::SharedBuffer::hasPlatformData): Deleted.
+        (WebCore::SharedBuffer::platformData): Deleted.
+        (WebCore::SharedBuffer::platformDataSize): Deleted.
+        (WebCore::SharedBuffer::maybeAppendPlatformData): Deleted.
+        (WebCore::SharedBuffer::tryReplaceContentsWithPlatformBuffer): Deleted.
+
 2017-04-21  Timothy Horton  <timothy_horton@apple.com>
 
         Expose obscured insets to web content (as "safe area insets")

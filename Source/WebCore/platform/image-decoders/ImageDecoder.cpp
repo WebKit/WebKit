@@ -42,17 +42,19 @@ namespace WebCore {
 
 namespace {
 
-unsigned copyFromSharedBuffer(char* buffer, unsigned bufferLength, const SharedBuffer& sharedBuffer, unsigned offset)
+static unsigned copyFromSharedBuffer(char* buffer, unsigned bufferLength, const SharedBuffer& sharedBuffer)
 {
     unsigned bytesExtracted = 0;
-    const char* moreData;
-    while (unsigned moreDataLength = sharedBuffer.getSomeData(moreData, offset)) {
-        unsigned bytesToCopy = min(bufferLength - bytesExtracted, moreDataLength);
-        memcpy(buffer + bytesExtracted, moreData, bytesToCopy);
-        bytesExtracted += bytesToCopy;
-        if (bytesExtracted == bufferLength)
+    for (const auto& segment : sharedBuffer) {
+        if (bytesExtracted + segment->size() <= bufferLength) {
+            memcpy(buffer + bytesExtracted, segment->data(), segment->size());
+            bytesExtracted += segment->size();
+        } else {
+            ASSERT(bufferLength - bytesExtracted < segment->size());
+            memcpy(buffer + bytesExtracted, segment->data(), bufferLength - bytesExtracted);
+            bytesExtracted = bufferLength;
             break;
-        offset += bytesToCopy;
+        }
     }
     return bytesExtracted;
 }
@@ -100,7 +102,7 @@ RefPtr<ImageDecoder> ImageDecoder::create(const SharedBuffer& data, AlphaOption 
 {
     static const unsigned lengthOfLongestSignature = 14; // To wit: "RIFF????WEBPVP"
     char contents[lengthOfLongestSignature];
-    unsigned length = copyFromSharedBuffer(contents, lengthOfLongestSignature, data, 0);
+    unsigned length = copyFromSharedBuffer(contents, lengthOfLongestSignature, data);
     if (length < lengthOfLongestSignature)
         return nullptr;
 

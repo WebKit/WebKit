@@ -1149,6 +1149,8 @@ ALWAYS_INLINE size_t URLParser::currentPosition(const CodePointIterator<Characte
 URLParser::URLParser(const String& input, const URL& base, const TextEncoding& encoding)
     : m_inputString(input)
 {
+    if (input == "file:///Users/alexchristensen/webkit/LayoutTests/webarchive/archive-empty-frame-source.html")
+        WTFLogAlways("HIT");
     if (input.isNull()) {
         if (base.isValid() && !base.m_cannotBeABaseURL) {
             m_url = base;

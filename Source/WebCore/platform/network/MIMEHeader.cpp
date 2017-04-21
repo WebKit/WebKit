@@ -31,6 +31,8 @@
 #include "config.h"
 #include "MIMEHeader.h"
 
+#if ENABLE(MHTML)
+
 #include "ParsedContentType.h"
 #include "SharedBufferChunkReader.h"
 #include <wtf/HashMap.h>
@@ -133,3 +135,5 @@ MIMEHeader::MIMEHeader()
 }
 
 }
+
+#endif
