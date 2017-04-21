@@ -332,7 +332,7 @@ macro(WEBKIT_CREATE_FORWARDING_HEADERS _framework)
     if (NOT WIN32)
         set(_processing_directories 0)
         set(_processing_files 0)
-        set(_target_directory "${DERIVED_SOURCES_DIR}/ForwardingHeaders/${_framework}")
+        set(_target_directory "${FORWARDING_HEADERS_DIR}/${_framework}")
 
         file(GLOB _files "${_target_directory}/*.h")
         foreach (_file ${_files})

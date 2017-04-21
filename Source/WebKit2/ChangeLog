@@ -1,3 +1,17 @@
+2017-04-20  Konstantin Tokarev  <annulen@yandex.ru>
+
+        [cmake] Define FORWARDING_HEADERS_DIR in WebKitFS and use it everywhere
+        https://bugs.webkit.org/show_bug.cgi?id=171071
+
+        Reviewed by Michael Catanzaro.
+
+        "${DERIVED_SOURCES_DIR}/ForwardingHeaders" path occurs very often in the
+        build system files. GTK-specifc FORWARDING_HEADERS_DIR variable should
+        be available for all ports.
+
+        * CMakeLists.txt:
+        * PlatformMac.cmake:
+
 2017-04-20  Brady Eidson  <beidson@apple.com>
 
         WebContent process becomes unresponsive after returning nil from async version of -webView:createWebViewWithConfiguration:...

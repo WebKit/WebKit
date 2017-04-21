@@ -17,8 +17,8 @@ set(test_main_SOURCES
 
 include_directories(
     ${DERIVED_SOURCES_DIR}
-    ${DERIVED_SOURCES_DIR}/ForwardingHeaders
-    ${DERIVED_SOURCES_DIR}/ForwardingHeaders/JavaScriptCore
+    ${FORWARDING_HEADERS_DIR}
+    ${FORWARDING_HEADERS_DIR}/JavaScriptCore
     ${TESTWEBKITAPI_DIR}/win
     ${DERIVED_SOURCES_DIR}/WebKit/Interfaces
 )

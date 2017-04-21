@@ -42,10 +42,10 @@ list(APPEND DumpRenderTree_INCLUDE_DIRECTORIES
     mac
     mac/InternalHeaders/WebKit
     TestNetscapePlugIn
-    ${DERIVED_SOURCES_DIR}/ForwardingHeaders
-    ${DERIVED_SOURCES_DIR}/ForwardingHeaders/WebCore
-    ${DERIVED_SOURCES_DIR}/ForwardingHeaders/WebKit
-    ${DERIVED_SOURCES_DIR}/ForwardingHeaders/WebKitLegacy
+    ${FORWARDING_HEADERS_DIR}
+    ${FORWARDING_HEADERS_DIR}/WebCore
+    ${FORWARDING_HEADERS_DIR}/WebKit
+    ${FORWARDING_HEADERS_DIR}/WebKitLegacy
     ${WEBCORE_DIR}/testing/cocoa
 )
 

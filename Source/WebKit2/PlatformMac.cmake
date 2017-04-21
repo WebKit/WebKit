@@ -427,7 +427,7 @@ list(APPEND WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/WebProcess/WebPage/Cocoa"
     "${WEBKIT2_DIR}/WebProcess/WebPage/mac"
     "${WEBKIT2_DIR}/WebProcess/WebCoreSupport/mac"
-    "${DERIVED_SOURCES_DIR}/ForwardingHeaders/WebCore"
+    "${FORWARDING_HEADERS_DIR}/WebCore"
     "${DERIVED_SOURCES_WEBCORE_DIR}"
 )
 
@@ -522,8 +522,8 @@ WEBKIT_CREATE_FORWARDING_HEADERS(WebKit FILES ${WebKit2_FORWARDING_HEADERS_FILES
 file(GLOB ObjCHeaders UIProcess/API/Cocoa/*.h)
 foreach (_file ${ObjCHeaders})
     get_filename_component(_name ${_file} NAME)
-    if (NOT EXISTS ${DERIVED_SOURCES_DIR}/ForwardingHeaders/WebKit/${_name})
-        file(WRITE ${DERIVED_SOURCES_DIR}/ForwardingHeaders/WebKit/${_name} "#import <WebKit2/UIProcess/API/Cocoa/${_name}>")
+    if (NOT EXISTS ${FORWARDING_HEADERS_DIR}/WebKit/${_name})
+        file(WRITE ${FORWARDING_HEADERS_DIR}/WebKit/${_name} "#import <WebKit2/UIProcess/API/Cocoa/${_name}>")
     endif ()
 endforeach ()
 
@@ -583,7 +583,7 @@ set(WebKitLegacyForwardingHeaders
     WebViewPrivate.h
 )
 foreach (_file ${WebKitLegacyForwardingHeaders})
-    file(WRITE ${DERIVED_SOURCES_DIR}/ForwardingHeaders/WebKit/${_file} "#import <WebKitLegacy/${_file}>")
+    file(WRITE ${FORWARDING_HEADERS_DIR}/WebKit/${_file} "#import <WebKitLegacy/${_file}>")
 endforeach ()
 
 set(ObjCForwardingHeaders
@@ -727,7 +727,7 @@ set(ObjCForwardingHeaders
     DOMXPathResult.h
 )
 foreach (_file ${ObjCForwardingHeaders})
-    file(WRITE ${DERIVED_SOURCES_DIR}/ForwardingHeaders/WebKit/${_file} "#import <WebKitLegacy/${_file}>")
+    file(WRITE ${FORWARDING_HEADERS_DIR}/WebKit/${_file} "#import <WebKitLegacy/${_file}>")
 endforeach ()
 
 list(APPEND WebKit2_AUTOMATION_PROTOCOL_GENERATOR_EXTRA_FLAGS
@@ -735,9 +735,9 @@ list(APPEND WebKit2_AUTOMATION_PROTOCOL_GENERATOR_EXTRA_FLAGS
 )
 
 # FIXME: These should not be necessary.
-file(WRITE ${DERIVED_SOURCES_DIR}/ForwardingHeaders/WebKit/WKImageCG.h "#import <WebKit2/Shared/API/c/cg/WKImageCG.h>")
-file(WRITE ${DERIVED_SOURCES_DIR}/ForwardingHeaders/WebKit/WebStorageManagerPrivate.h "#import <WebKit/mac/Storage/WebStorageManagerPrivate.h>")
-file(WRITE ${DERIVED_SOURCES_DIR}/ForwardingHeaders/WebKit/WebDatabaseManagerPrivate.h "#import <WebKit/mac/Storage/WebDatabaseManagerPrivate.h>")
+file(WRITE ${FORWARDING_HEADERS_DIR}/WebKit/WKImageCG.h "#import <WebKit2/Shared/API/c/cg/WKImageCG.h>")
+file(WRITE ${FORWARDING_HEADERS_DIR}/WebKit/WebStorageManagerPrivate.h "#import <WebKit/mac/Storage/WebStorageManagerPrivate.h>")
+file(WRITE ${FORWARDING_HEADERS_DIR}/WebKit/WebDatabaseManagerPrivate.h "#import <WebKit/mac/Storage/WebDatabaseManagerPrivate.h>")
 
 set(CMAKE_SHARED_LINKER_FLAGS ${CMAKE_SHARED_LINKER_FLAGS} "-compatibility_version 1 -current_version ${WEBKIT_MAC_VERSION}")
 

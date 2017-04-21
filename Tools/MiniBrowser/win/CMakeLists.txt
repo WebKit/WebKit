@@ -1,6 +1,6 @@
 set(MiniBrowser_INCLUDE_DIRECTORIES
-    "${DERIVED_SOURCES_DIR}/ForwardingHeaders"
-    "${DERIVED_SOURCES_DIR}/ForwardingHeaders/WebKit"
+    "${FORWARDING_HEADERS_DIR}"
+    "${FORWARDING_HEADERS_DIR}/WebKit"
     "${CMAKE_SOURCE_DIR}"
     "${CMAKE_SOURCE_DIR}/Source"
 )

@@ -441,7 +441,7 @@ list(APPEND WebKit_SOURCES
 )
 
 WEBKIT_CREATE_FORWARDING_HEADERS(WebKitLegacy DIRECTORIES ${WebKitLegacy_FORWARDING_HEADERS_DIRECTORIES} FILES ${WebKitLegacy_FORWARDING_HEADERS_FILES})
-WEBKIT_CREATE_FORWARDING_HEADERS(WebKit DIRECTORIES ${DERIVED_SOURCES_DIR}/ForwardingHeaders/WebKitLegacy)
+WEBKIT_CREATE_FORWARDING_HEADERS(WebKit DIRECTORIES ${FORWARDING_HEADERS_DIR}/WebKitLegacy)
 
 # FIXME: Forwarding headers should be copies of actual headers.
 file(GLOB ObjCHeaders ${WEBCORE_DIR}/plugins/*.h)
@@ -451,8 +451,8 @@ list(APPEND ObjCHeaders
 )
 foreach (_file ${ObjCHeaders})
     get_filename_component(_name ${_file} NAME)
-    if (NOT EXISTS ${DERIVED_SOURCES_DIR}/ForwardingHeaders/WebKitLegacy/${_name})
-        file(WRITE ${DERIVED_SOURCES_DIR}/ForwardingHeaders/WebKitLegacy/${_name} "#import <WebCore/${_name}>")
+    if (NOT EXISTS ${FORWARDING_HEADERS_DIR}/WebKitLegacy/${_name})
+        file(WRITE ${FORWARDING_HEADERS_DIR}/WebKitLegacy/${_name} "#import <WebCore/${_name}>")
     endif ()
 endforeach ()
 
