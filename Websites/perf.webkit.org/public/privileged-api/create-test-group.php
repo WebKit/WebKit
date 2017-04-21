@@ -59,7 +59,8 @@ function main()
                     exit_with_error('InconsistentTest', array('groupTest' => $test_id, 'taskTest' => $triggerable['test']));
             }
         }
-    } else if ($platform_id && $test_id) {
+    }
+    if (!$triggerable_id && $platform_id && $test_id) {
         $triggerable_configuration = $db->select_first_row('triggerable_configurations', 'trigconfig',
             array('test' => $test_id, 'platform' => $platform_id));
         if ($triggerable_configuration)

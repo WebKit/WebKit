@@ -99,7 +99,8 @@ function addTriggerableAndCreateTask(name)
         'slavePassword': 'anotherPassword',
         'triggerable': 'build-webkit',
         'configurations': [
-            {test: MockData.someTestId(), platform: MockData.somePlatformId()}
+            {test: MockData.someTestId(), platform: MockData.somePlatformId()},
+            {test: MockData.someTestId(), platform: MockData.otherPlatformId()},
         ],
         'repositoryGroups': [
             {name: 'webkit-only', repositories: [MockData.webkitRepositoryId()]},
@@ -521,6 +522,63 @@ describe('/privileged-api/create-test-group', function () {
             assert.deepEqual(set1.customRoots(), []);
             assert.equal(set0.revisionForRepository(webkit), '191622');
             assert.equal(set1.revisionForRepository(webkit), '191623');
+        });
+    });
+
+    it('should create a custom test group for an existing custom analysis task', () => {
+        let firstResult;
+        let secondResult;
+        let webkit;
+        let test = MockData.someTestId();
+        return addTriggerableAndCreateTask('some task').then(() => {
+            webkit = Repository.all().filter((repository) => repository.name() == 'WebKit')[0];
+            const revisionSets = [{[webkit.id()]: '191622'}, {[webkit.id()]: '191623'}];
+            return PrivilegedAPI.sendRequest('create-test-group',
+                {name: 'test1', taskName: 'other task', platform: MockData.somePlatformId(), test, revisionSets});
+        }).then((result) => {
+            firstResult = result;
+            const revisionSets = [{[webkit.id()]: '191622'}, {[webkit.id()]: '192736'}];
+            return PrivilegedAPI.sendRequest('create-test-group',
+                {name: 'test2', task: result['taskId'], platform: MockData.otherPlatformId(), test, revisionSets, repetitionCount: 2});
+        }).then((result) => {
+            secondResult = result;
+            assert.equal(firstResult['taskId'], secondResult['taskId']);
+            return Promise.all([AnalysisTask.fetchById(result['taskId']), TestGroup.fetchByTask(result['taskId'])]);
+        }).then((result) => {
+            const [analysisTask, testGroups] = result;
+
+            assert.equal(analysisTask.name(), 'other task');
+
+            assert.equal(testGroups.length, 2);
+            TestGroup.sortByName(testGroups);
+
+            assert.equal(testGroups[0].name(), 'test1');
+            assert.equal(testGroups[0].repetitionCount(), 1);
+            let requests = testGroups[0].buildRequests();
+            assert.equal(requests.length, 2);
+            let set0 = requests[0].commitSet();
+            let set1 = requests[1].commitSet();
+            assert.deepEqual(set0.repositories(), [webkit]);
+            assert.deepEqual(set0.customRoots(), []);
+            assert.deepEqual(set1.repositories(), [webkit]);
+            assert.deepEqual(set1.customRoots(), []);
+            assert.equal(set0.revisionForRepository(webkit), '191622');
+            assert.equal(set1.revisionForRepository(webkit), '191623');
+
+            assert.equal(testGroups[1].name(), 'test2');
+            assert.equal(testGroups[1].repetitionCount(), 2);
+            requests = testGroups[1].buildRequests();
+            assert.equal(requests.length, 4);
+            set0 = requests[0].commitSet();
+            set1 = requests[1].commitSet();
+            assert.deepEqual(requests[2].commitSet(), set0);
+            assert.deepEqual(requests[3].commitSet(), set1);
+            assert.deepEqual(set0.repositories(), [webkit]);
+            assert.deepEqual(set0.customRoots(), []);
+            assert.deepEqual(set1.repositories(), [webkit]);
+            assert.deepEqual(set1.customRoots(), []);
+            assert.equal(set0.revisionForRepository(webkit), '191622');
+            assert.equal(set1.revisionForRepository(webkit), '192736');
         });
     });
 

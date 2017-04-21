@@ -32,6 +32,15 @@ class TestGroupForm extends ComponentBase {
         return `<form id="form"><button id="start-button" type="submit"><slot>Start A/B testing</slot></button>${this.formContent()}</form>`;
     }
 
+    static cssTemplate()
+    {
+        return `
+            :host {
+                display: block;
+            }
+        `;
+    }
+
     static formContent()
     {
         return `

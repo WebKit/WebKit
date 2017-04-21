@@ -1,5 +1,93 @@
 2017-04-21  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Add the support for creating a custom test group in the analysis task page
+
+        Make it possible to create more custom test groups in the analysis task page
+        https://bugs.webkit.org/show_bug.cgi?id=171138
+
+        Rubber-stamped by Chris Dumez.
+
+        Extracted CustomConfigurationTestGroupForm out of CreateAnalysisTaskPage and added it to AnalysisTaskPage inside
+        AnalysisTaskConfiguratorPane. This allows configuration of a new test group within a custom analysis task.
+
+        * public/privileged-api/create-test-group.php:
+        (main): Fixed the bug that the triggerable wasn't resolved when creating a test group in a custom analysis task.
+
+        * public/v3/components/custom-analysis-task-configurator.js:
+        (CustomAnalysisTaskConfigurator.prototype.selectTests): Added. Used by CustomConfigurationTestGroupForm's
+        setConfigurations.
+        (CustomAnalysisTaskConfigurator.prototype.selectPlatform): Ditto.
+        (CustomAnalysisTaskConfigurator.prototype.setCommitSets): Ditto. 
+        (CustomAnalysisTaskConfigurator.prototype._setUploadedFilesIfEmpty): Added.
+        (CustomAnalysisTaskConfigurator.prototype._revisionMapFromCommitSet): Added.
+        (CustomAnalysisTaskConfigurator.prototype.render): Update the currently selected platforms and tests now that
+        they can be set externally via selectTests and selectPlatform.
+        (CustomAnalysisTaskConfigurator.prototype._renderTriggerableTests): Return the result of _renderRadioButtonList
+        so that the caller can update the currently selected tests without having to reconstruct the list.
+        (CustomAnalysisTaskConfigurator.prototype._renderTriggerablePlatforms): Ditto.
+        (CustomAnalysisTaskConfigurator.prototype._renderRadioButtonList): Renamed from _buildCheckboxList. Now returns
+        a function which updates the currently selected items. We still pretend that multiple items can be selected to
+        make it future-proof.
+
+        * public/v3/components/custom-configuration-test-group-form.js: Added.
+        (CustomConfigurationTestGroupForm): Added. Inherits from TestGroupForm. Extracted from CreateAnalysisTaskPage.
+        (CustomConfigurationTestGroupForm.prototype.setHasTask): Added.
+        (CustomConfigurationTestGroupForm.prototype.hasCommitSets): Added.
+        (CustomConfigurationTestGroupForm.prototype.setConfigurations): Added. Used by AnalysisTaskConfiguratorPane to
+        set the default configuration to what the latest test group used.
+        (CustomConfigurationTestGroupForm.prototype.startTesting): Added. Dispatches "startTesting" action with
+        platform, test, taskName in addition to what CustomizedTestGroupForm emits.
+        (CustomConfigurationTestGroupForm.prototype.didConstructShadowTree): Added.
+        (CustomConfigurationTestGroupForm.prototype.render): Added.
+        (CustomConfigurationTestGroupForm.prototype._updateTestGroupName): Added.
+        (CustomConfigurationTestGroupForm.cssTemplate): Added.
+        (CustomConfigurationTestGroupForm.htmlTemplate): Added.
+
+        * public/v3/components/test-group-form.js:
+        (TestGroupForm.cssTemplate): Make the form display: block.
+
+        * public/v3/index.html:
+
+        * public/v3/models/test-group.js:
+        (TestGroup.prototype.test): Added.
+        (TestGroup.prototype.platform): Added.
+        (TestGroup.createWithCustomConfiguration): Added. Creates a custom test group with an existing analysis task.
+
+        * public/v3/models/uploaded-file.js:
+        (UploadedFile): Fixed a bug that _deletedAt was set to a Date object even when object.deletedAt is null.
+
+        * public/v3/pages/analysis-task-page.js:
+        (AnalysisTaskConfiguratorPane): Added.
+        (AnalysisTaskConfiguratorPane.prototype.didConstructShadowTree): Added. Dispatch createCustomTestGroup action
+        in turn when receiving startTesting from CustomConfigurationTestGroupForm.
+        (AnalysisTaskConfiguratorPane.prototype.setTestGroups): Added.
+        (AnalysisTaskConfiguratorPane.prototype.render): Added.
+        (AnalysisTaskConfiguratorPane.htmlTemplate): Added. We override this instead of formContent to display the
+        "Start" button at the end instead of at the beginnning.
+        (AnalysisTaskConfiguratorPane.cssTemplate): Added.
+        (AnalysisTaskPage.prototype.didConstructShadowTree): Listen to createCustomTestGroup.
+        (AnalysisTaskPage.prototype.render): Hide AnalysisTaskConfiguratorPane when the analysis task is not custom.
+        (AnalysisTaskPage.prototype._showTestGroup): Let AnalysisTaskConfiguratorPane know of the current test group
+        so that it can update the default configuration if the user hasn't modified yet.
+        (AnalysisTaskPage.prototype._createCustomTestGroup): Added. 
+
+        * public/v3/pages/create-analysis-task-page.js:
+        (CreateAnalysisTaskPage.prototype.didConstructShadowTree):
+        (CreateAnalysisTaskPage.prototype._createAnalysisTaskWithGroup):
+        (CreateAnalysisTaskPage.prototype.render):
+        (CreateAnalysisTaskPage.prototype._renderMessage):
+        (CreateAnalysisTaskPage.htmlTemplate):
+        (CreateAnalysisTaskPage.cssTemplate):
+
+        * server-tests/privileged-api-create-test-group-tests.js: Added a test case for creating a custom test group for
+        an existing analysis task.
+
+        * server-tests/resources/mock-data.js:
+        (MockData.otherPlatformId): Added.
+        (MockData.addMockData): Added a test configuration for otherPlatformId.
+
+2017-04-21  Ryosuke Niwa  <rniwa@webkit.org>
+
         Make it possible to view results for sub tests and metrics in A/B testing
         https://bugs.webkit.org/show_bug.cgi?id=170975
 

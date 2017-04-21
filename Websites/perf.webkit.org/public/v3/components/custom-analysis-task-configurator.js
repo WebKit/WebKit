@@ -32,6 +32,69 @@ class CustomAnalysisTaskConfigurator extends ComponentBase {
         return [map['Baseline'], map['Comparison']];
     }
 
+    selectTests(selectedTests)
+    {
+        this._selectedTests = selectedTests;
+
+        this._triggerablePlatforms = Triggerable.triggerablePlatformsForTests(this._selectedTests);
+        if (this._selectedTests.length && !this._triggerablePlatforms.includes(this._selectedPlatform))
+            this._selectedPlatform = null;
+
+        this.enqueueToRender();
+    }
+
+    selectPlatform(selectedPlatform)
+    {
+        this._selectedPlatform = selectedPlatform;
+
+        const [triggerable, error] = this._updateTriggerableLazily.evaluate(this._selectedTests, this._selectedPlatform);
+        this._updateRepositoryGroups(triggerable);
+        this._updateCommitSetMap();
+
+        this.enqueueToRender();
+    }
+
+    setCommitSets(baselineCommitSet, comparisonCommitSet)
+    {
+        const [triggerable, error] = this._updateTriggerableLazily.evaluate(this._selectedTests, this._selectedPlatform);
+
+        if (!triggerable)
+            return;
+
+        const baselineRepositoryGroup = triggerable.repositoryGroups().find((repositoryGroup) => repositoryGroup.accepts(baselineCommitSet));
+        if (baselineRepositoryGroup) {
+            this._repositoryGroupByConfiguration['Baseline'] = baselineRepositoryGroup;
+            this._setUploadedFilesIfEmpty(this._fileUploaders['Baseline'], baselineCommitSet);
+            this._specifiedRevisions['Baseline'] = this._revisionMapFromCommitSet(baselineCommitSet);
+        }
+
+        const comparisonRepositoryGroup = triggerable.repositoryGroups().find((repositoryGroup) => repositoryGroup.accepts(baselineCommitSet));
+        if (comparisonRepositoryGroup) {
+            this._repositoryGroupByConfiguration['Comparison'] = comparisonRepositoryGroup;
+            this._setUploadedFilesIfEmpty(this._fileUploaders['Comparison'], comparisonCommitSet);
+            this._specifiedRevisions['Comparison'] = this._revisionMapFromCommitSet(comparisonCommitSet);
+        }
+
+        this._showComparison = true;
+        this._updateCommitSetMap();
+    }
+
+    _setUploadedFilesIfEmpty(uploader, commitSet)
+    {
+        if (uploader.hasFileToUpload() || uploader.uploadedFiles().length)
+            return;
+        for (const uploadedFile of commitSet.customRoots())
+            uploader.addUploadedFile(uploadedFile);
+    }
+
+    _revisionMapFromCommitSet(commitSet)
+    {
+        const revisionMap = new Map;
+        for (const repository of commitSet.repositories())
+            revisionMap.set(repository, commitSet.revisionForRepository(repository));
+        return revisionMap;
+    }
+
     didConstructShadowTree()
     {
         this.content('specify-comparison-button').onclick = this.createEventHandler(() => this._configureComparison());
@@ -68,8 +131,11 @@ class CustomAnalysisTaskConfigurator extends ComponentBase {
     {
         super.render();
 
-        this._renderTriggerableTestsLazily.evaluate();
-        this._renderTriggerablePlatformsLazily.evaluate(this._selectedTests, this._triggerablePlatforms);
+        const updateSelectedTestsLazily = this._renderTriggerableTestsLazily.evaluate();
+        updateSelectedTestsLazily.evaluate(...this._selectedTests);
+        const updateSelectedPlatformsLazily = this._renderTriggerablePlatformsLazily.evaluate(this._selectedTests, this._triggerablePlatforms);
+        if (updateSelectedPlatformsLazily)
+            updateSelectedPlatformsLazily.evaluate(this._selectedPlatform);
 
         const [triggerable, error] = this._updateTriggerableLazily.evaluate(this._selectedTests, this._selectedPlatform);
 
@@ -81,52 +147,54 @@ class CustomAnalysisTaskConfigurator extends ComponentBase {
         const enabledTriggerables = Triggerable.all().filter((triggerable) => !triggerable.isDisabled());
 
         let tests = Test.topLevelTests().filter((test) => test.metrics().length && enabledTriggerables.some((triggerable) => triggerable.acceptsTest(test)));
-        this.renderReplace(this.content('test-list'), this._buildCheckboxList('test', tests, (selectedTests) => {
-            this._selectedTests = selectedTests;
-
-            this._triggerablePlatforms = Triggerable.triggerablePlatformsForTests(this._selectedTests);
-            if (this._selectedTests.length && !this._triggerablePlatforms.includes(this._selectedPlatform))
-                this._selectedPlatform = null;
-        }));
+        return this._renderRadioButtonList(this.content('test-list'), 'test', tests, this.selectTests.bind(this));
     }
 
     _renderTriggerablePlatforms(selectedTests, triggerablePlatforms)
     {
         if (!selectedTests.length) {
             this.content('platform-pane').style.display = 'none';
-            return;
+            return null;
         }
         this.content('platform-pane').style.display = null;
 
-        this.renderReplace(this.content('platform-list'), this._buildCheckboxList('platform', triggerablePlatforms, (selectedPlatforms) => {
-            this._selectedPlatform = selectedPlatforms.length ? selectedPlatforms[0] : null;
-
-            const [triggerable, error] = this._updateTriggerableLazily.evaluate(this._selectedTests, this._selectedPlatform);
-            this._updateRepositoryGroups(triggerable);
-            this._updateCommitSetMap();
-
-            this.enqueueToRender();
-        }));
+        return this._renderRadioButtonList(this.content('platform-list'), 'platform', triggerablePlatforms, (selectedPlatforms) => {
+            this.selectPlatform(selectedPlatforms.length ? selectedPlatforms[0] : null);
+        });
     }
 
-    _buildCheckboxList(name, objects, callback)
+    _renderRadioButtonList(listContainer, name, objects, callback)
     {
         const listItems = [];
         let selectedListItems = [];
-        const element = ComponentBase.createElement;
-        return objects.map((object) => {
-            const checkbox = element('input', {type: 'radio', name: name, onchange: () => {
-                selectedListItems.forEach((item) => item.label.classList.remove('selected'));
-                selectedListItems = listItems.filter((item) => item.checkbox.checked);
-                selectedListItems.forEach((item) => item.label.classList.add('selected'));
+        const checkSelectedRadioButtons = (newSelectedListItems) => {
+            selectedListItems.forEach((item) => {
+                item.label.classList.remove('selected');
+                item.radioButton.checked = false;
+            });
+            selectedListItems = newSelectedListItems;
+            selectedListItems.forEach((item) => {
+                item.label.classList.add('selected');
+                item.radioButton.checked = true;
+            });
+        }
 
+        const element = ComponentBase.createElement;
+        this.renderReplace(listContainer, objects.map((object) => {
+            const radioButton = element('input', {type: 'radio', name: name, onchange: () => {
+                checkSelectedRadioButtons(listItems.filter((item) => item.radioButton.checked));
                 callback(selectedListItems.map((item) => item.object));
                 this.enqueueToRender();
             }});
-            const label = element('label', [checkbox, object.label()]);
-            listItems.push({checkbox, label, object});
+            const label = element('label', [radioButton, object.label()]);
+            listItems.push({radioButton, label, object});
             return element('li', label);
-        })
+        }));
+
+        return new LazilyEvaluatedFunction((...selectedObjects) => {
+            const objects = new Set(selectedObjects);
+            checkSelectedRadioButtons(listItems.filter((item) => objects.has(item.object)));
+        });
     }
 
     _updateTriggerable(tests, platform)

@@ -5,7 +5,7 @@ class UploadedFile extends DataModelObject {
     {
         super(id, object);
         this._createdAt = new Date(object.createdAt);
-        this._deletedAt = new Date(object.deletedAt);
+        this._deletedAt = object.deletedAt ? new Date(object.deletedAt) : null;
         this._filename = object.filename;
         this._author = object.author;
         this._size = object.size;
