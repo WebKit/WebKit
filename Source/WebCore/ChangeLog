@@ -1,5 +1,36 @@
 2017-04-21  Jer Noble  <jer.noble@apple.com>
 
+        [MediaCapture][iOS] AVAudioSession must be active and the correct category before IO AudioUnits start producing data.
+        https://bugs.webkit.org/show_bug.cgi?id=171095
+
+        Reviewed by Youenn Fablet.
+
+        If an input audio unit is asked to start before the AVAudioSession is in a recording category and active,
+        CoreAudio will return an error stating that no input device is available.
+
+        The PlatformMediaSessionManager will automatically set the category of and activate the AVAudioSession when one
+        of its associated MediaStreams has a capturing RealtimeMediaSource and is currently producing data.  To solve
+        the chicken-or-egg problem of activating the AVAudioSession before the source produces data, move the state bit
+        of "producing data" directly into MediaStreams, and notify the PlatformMediaSessionManager that capturing is
+        occurring after flipping that bit, but before asking the constituent tracks to begin producing data.
+
+        In places (i.e. UserMediaRequest) where we previously told a stream's tracks to begin producing data, instead
+        allow the stream to handle that by telling it to produce data directly.
+
+        * Modules/mediastream/MediaStream.cpp:
+        (WebCore::MediaStream::startProducingData):
+        (WebCore::MediaStream::stopProducingData):
+        (WebCore::MediaStream::mediaState):
+        (WebCore::MediaStream::mediaType):
+        (WebCore::MediaStream::characteristics):
+        (WebCore::MediaStream::canProduceAudio):
+        * Modules/mediastream/MediaStream.h:
+        * Modules/mediastream/UserMediaRequest.cpp:
+        (WebCore::UserMediaRequest::allow):
+        * platform/mediastream/mac/CoreAudioCaptureSource.h:
+
+2017-04-21  Jer Noble  <jer.noble@apple.com>
+
         Add a method to retrieve the current I/O buffer size from AudioSession
         https://bugs.webkit.org/show_bug.cgi?id=171126
 

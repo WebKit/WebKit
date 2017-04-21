@@ -294,11 +294,23 @@ void MediaStream::startProducingData()
         return;
     }
 
+    if (m_isProducingData)
+        return;
+    m_isProducingData = true;
+
+    m_mediaSession->canProduceAudioChanged();
+
     m_private->startProducingData();
 }
 
 void MediaStream::stopProducingData()
 {
+    if (!m_isProducingData)
+        return;
+    m_isProducingData = false;
+
+    m_mediaSession->canProduceAudioChanged();
+
     m_private->stopProducingData();
 }
 
@@ -324,7 +336,7 @@ MediaProducer::MediaStateFlags MediaStream::mediaState() const
     if (m_private->hasAudio()) {
         state |= HasAudioOrVideo;
         if (m_private->hasCaptureAudioSource()) {
-            if (m_private->isProducingData())
+            if (m_isProducingData)
                 state |= HasActiveAudioCaptureDevice;
             else if (m_private->muted())
                 state |= HasMutedAudioCaptureDevice;
@@ -334,7 +346,7 @@ MediaProducer::MediaStateFlags MediaStream::mediaState() const
     if (m_private->hasVideo()) {
         state |= HasAudioOrVideo;
         if (m_private->hasCaptureVideoSource()) {
-            if (m_private->isProducingData())
+            if (m_isProducingData)
                 state |= HasActiveVideoCaptureDevice;
             else if (m_private->muted())
                 state |= HasMutedVideoCaptureDevice;
@@ -433,7 +445,7 @@ PlatformMediaSession::MediaType MediaStream::mediaType() const
 {
     // We only need to override the type when capturing audio, HTMLMediaElement and/or WebAudio
     // will do the right thing when a stream is attached to a media element or an audio context.
-    if (m_private->hasAudio() && m_private->isProducingData() && m_private->hasCaptureAudioSource())
+    if (m_private->hasAudio() && m_isProducingData && m_private->hasCaptureAudioSource())
         return PlatformMediaSession::MediaStreamCapturingAudio;
 
     return PlatformMediaSession::None;
@@ -448,7 +460,7 @@ PlatformMediaSession::CharacteristicsFlags MediaStream::characteristics() const
 {
     PlatformMediaSession::CharacteristicsFlags state = PlatformMediaSession::HasNothing;
 
-    if (!m_private->isProducingData())
+    if (!m_isProducingData)
         return state;
 
     if (m_private->hasAudio())
@@ -483,7 +495,7 @@ String MediaStream::sourceApplicationIdentifier() const
 
 bool MediaStream::canProduceAudio() const
 {
-    return !muted() && active() && m_private->hasAudio() && m_private->isProducingData();
+    return !muted() && active() && m_private->hasAudio() && m_isProducingData;
 }
 
 } // namespace WebCore

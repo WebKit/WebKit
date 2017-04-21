@@ -174,11 +174,7 @@ void UserMediaRequest::allow(const String& audioDeviceUID, const String& videoDe
             return;
         }
 
-        for (auto& track : stream->getAudioTracks())
-            track->source().startProducingData();
-
-        for (auto& track : stream->getVideoTracks())
-            track->source().startProducingData();
+        stream->startProducingData();
         
         m_promise.resolve(stream);
     };

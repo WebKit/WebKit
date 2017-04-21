@@ -174,6 +174,7 @@ private:
 
     bool m_isActive { false };
     bool m_isMuted { true };
+    bool m_isProducingData { false };
     bool m_isWaitingUntilMediaCanStart { false };
 };
 

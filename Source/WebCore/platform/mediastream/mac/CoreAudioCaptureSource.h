@@ -71,6 +71,7 @@ private:
     CoreAudioCaptureSource(const String& deviceID);
     virtual ~CoreAudioCaptureSource();
 
+    bool isCaptureSource() const final { return true; }
     void startProducingData() final;
     void stopProducingData() final;
     bool isProducingData() const final { return m_ioUnitStarted; }
