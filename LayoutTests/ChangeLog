@@ -1,3 +1,14 @@
+2017-04-21  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Skip http/tests/security/contentSecurityPolicy/{audio, video}-redirect-allowed2.html
+        <rdar://problem/31690952>
+
+        Rubber-stamped by Jer Noble.
+
+        We can enable these tests again once we fix <rdar://problem/25780035>.
+
+        * platform/ios/TestExpectations:
+
 2017-04-21  Per Arne Vollan  <pvollan@apple.com>
 
         Validate vImage arguments

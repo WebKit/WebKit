@@ -2941,3 +2941,7 @@ workers/wasm-hashset-many.html [ Skip ]
 workers/wasm-hashset.html [ Skip ]
 workers/wasm-long-compile-many.html [ Skip ]
 workers/wasm-long-compile.html [ Skip ]
+
+# <rdar://problem/25780035> CSP does not ignore paths for media redirects
+http/tests/security/contentSecurityPolicy/audio-redirect-allowed2.html [ Skip ]
+http/tests/security/contentSecurityPolicy/video-redirect-allowed2.html [ Skip ]
