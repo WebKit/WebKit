@@ -762,16 +762,10 @@ JITCompiler::JumpList SpeculativeJIT::jumpSlowForUnwantedArrayMode(GPRReg tempGP
     
     switch (arrayMode.type()) {
     case Array::Int32:
-        return jumpSlowForUnwantedArrayMode(tempGPR, arrayMode, Int32Shape);
-
     case Array::Double:
-        return jumpSlowForUnwantedArrayMode(tempGPR, arrayMode, DoubleShape);
-
     case Array::Contiguous:
-        return jumpSlowForUnwantedArrayMode(tempGPR, arrayMode, ContiguousShape);
-
     case Array::Undecided:
-        return jumpSlowForUnwantedArrayMode(tempGPR, arrayMode, UndecidedShape);
+        return jumpSlowForUnwantedArrayMode(tempGPR, arrayMode, arrayMode.shapeMask());
 
     case Array::ArrayStorage:
     case Array::SlowPutArrayStorage: {

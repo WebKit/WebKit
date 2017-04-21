@@ -623,8 +623,9 @@ private:
         case GetExecutable:
             compileGetExecutable();
             break;
+        case Arrayify:
         case ArrayifyToStructure:
-            compileArrayifyToStructure();
+            compileArrayify();
             break;
         case PutStructure:
             compilePutStructure();
@@ -2767,7 +2768,7 @@ private:
         setJSValue(m_out.loadPtr(cell, m_heaps.JSFunction_executable));
     }
     
-    void compileArrayifyToStructure()
+    void compileArrayify()
     {
         LValue cell = lowCell(m_node->child1());
         LValue property = !!m_node->child2() ? lowInt32(m_node->child2()) : 0;
@@ -2775,12 +2776,16 @@ private:
         LBasicBlock unexpectedStructure = m_out.newBlock();
         LBasicBlock continuation = m_out.newBlock();
         
-        LValue structureID = m_out.load32(cell, m_heaps.JSCell_structureID);
-        
-        m_out.branch(
-            m_out.notEqual(structureID, weakStructureID(m_node->structure())),
-            rarely(unexpectedStructure), usually(continuation));
-        
+        auto isUnexpectedArray = [&] (LValue cell) {
+            if (m_node->op() == Arrayify)
+                return m_out.logicalNot(isArrayTypeForArrayify(cell, m_node->arrayMode()));
+
+            ASSERT(m_node->op() == ArrayifyToStructure);
+            return m_out.notEqual(m_out.load32(cell, m_heaps.JSCell_structureID), weakStructureID(m_node->structure()));
+        };
+
+        m_out.branch(isUnexpectedArray(cell), rarely(unexpectedStructure), usually(continuation));
+
         LBasicBlock lastNext = m_out.appendTo(unexpectedStructure, continuation);
         
         if (property) {
@@ -2816,10 +2821,7 @@ private:
             break;
         }
         
-        structureID = m_out.load32(cell, m_heaps.JSCell_structureID);
-        speculate(
-            BadIndexingType, jsValueValue(cell), 0,
-            m_out.notEqual(structureID, weakStructureID(m_node->structure())));
+        speculate(BadIndexingType, jsValueValue(cell), 0, isUnexpectedArray(cell));
         m_out.jump(continuation);
         
         m_out.appendTo(continuation, lastNext);
@@ -3307,7 +3309,7 @@ private:
         
         speculate(
             BadIndexingType, jsValueValue(cell), 0,
-            m_out.logicalNot(isArrayType(cell, m_node->arrayMode())));
+            m_out.logicalNot(isArrayTypeForCheckArray(cell, m_node->arrayMode())));
     }
 
     void compileGetTypedArrayByteOffset()
@@ -13024,38 +13026,52 @@ private:
             m_out.constInt32(vm().symbolStructure->id()));
     }
 
-    LValue isArrayType(LValue cell, ArrayMode arrayMode)
+    LValue isArrayTypeForArrayify(LValue cell, ArrayMode arrayMode)
     {
         switch (arrayMode.type()) {
         case Array::Int32:
         case Array::Double:
         case Array::Contiguous: {
+            IndexingType shape = arrayMode.shapeMask();
             LValue indexingType = m_out.load8ZeroExt32(cell, m_heaps.JSCell_indexingTypeAndMisc);
-            
+
             switch (arrayMode.arrayClass()) {
             case Array::OriginalArray:
                 DFG_CRASH(m_graph, m_node, "Unexpected original array");
                 return 0;
-                
+
             case Array::Array:
                 return m_out.equal(
                     m_out.bitAnd(indexingType, m_out.constInt32(IsArray | IndexingShapeMask)),
-                    m_out.constInt32(IsArray | arrayMode.shapeMask()));
-                
+                    m_out.constInt32(IsArray | shape));
+
             case Array::NonArray:
             case Array::OriginalNonArray:
                 return m_out.equal(
                     m_out.bitAnd(indexingType, m_out.constInt32(IsArray | IndexingShapeMask)),
-                    m_out.constInt32(arrayMode.shapeMask()));
-                
+                    m_out.constInt32(shape));
+
             case Array::PossiblyArray:
                 return m_out.equal(
                     m_out.bitAnd(indexingType, m_out.constInt32(IndexingShapeMask)),
-                    m_out.constInt32(arrayMode.shapeMask()));
+                    m_out.constInt32(shape));
             }
-            
-            DFG_CRASH(m_graph, m_node, "Corrupt array class");
+            break;
         }
+
+        default:
+            break;
+        }
+        DFG_CRASH(m_graph, m_node, "Corrupt array class");
+    }
+
+    LValue isArrayTypeForCheckArray(LValue cell, ArrayMode arrayMode)
+    {
+        switch (arrayMode.type()) {
+        case Array::Int32:
+        case Array::Double:
+        case Array::Contiguous:
+            return isArrayTypeForArrayify(cell, arrayMode);
             
         case Array::DirectArguments:
             return m_out.equal(

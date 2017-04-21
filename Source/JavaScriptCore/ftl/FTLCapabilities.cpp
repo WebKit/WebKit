@@ -305,6 +305,16 @@ inline CapabilityLevel canCompile(Node* node)
         // case because it would prevent us from catching bugs where the FTL backend
         // pipeline failed to optimize out an Identity.
         break;
+    case Arrayify:
+        switch (node->arrayMode().type()) {
+        case Array::Int32:
+        case Array::Double:
+        case Array::Contiguous:
+            break;
+        default:
+            return CannotCompile;
+        }
+        break;
     case CheckArray:
         switch (node->arrayMode().type()) {
         case Array::Int32:

@@ -1,3 +1,31 @@
+2017-04-20  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC][FTL] FTL should support Arrayify
+        https://bugs.webkit.org/show_bug.cgi?id=169596
+
+        Reviewed by Saam Barati.
+
+        This patch simply expands the coverage of FTL by supporting Arrayify.
+        While ArrayifyToStructure is already supported, Arrayify is not supported
+        in FTL. While supporting Arrayify in FTL itself does not offer so much
+        performance difference from DFG's one, no FTL support for Arrayify
+        prevents us applying FTL to the code including Arrayify.
+
+        * dfg/DFGArrayMode.cpp:
+        (JSC::DFG::toIndexingShape):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::jumpSlowForUnwantedArrayMode):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileArrayify):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCheckArray):
+        (JSC::FTL::DFG::LowerDFGToB3::isArrayTypeForArrayify):
+        (JSC::FTL::DFG::LowerDFGToB3::isArrayTypeForCheckArray):
+        (JSC::FTL::DFG::LowerDFGToB3::compileArrayifyToStructure): Deleted.
+        (JSC::FTL::DFG::LowerDFGToB3::isArrayType): Deleted.
+
 2017-04-20  Mark Lam  <mark.lam@apple.com>
 
         virtualThunkFor() needs to materialize its of tagMaskRegister for tail calls.
