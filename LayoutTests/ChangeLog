@@ -1,3 +1,13 @@
+2017-04-21  Per Arne Vollan  <pvollan@apple.com>
+
+        Validate vImage arguments
+        https://bugs.webkit.org/show_bug.cgi?id=171109
+
+        Reviewed by Brent Fulgham.
+
+        * fast/canvas/canvas-crash-expected.txt: Added.
+        * fast/canvas/canvas-crash.html: Added.
+
 2017-04-21  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark webrtc/datachannel/bufferedAmountLowThreshold.html as flaky.
