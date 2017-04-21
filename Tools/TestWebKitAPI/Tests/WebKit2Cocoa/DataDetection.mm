@@ -69,7 +69,8 @@ void expectLinkCount(WKWebView *webView, NSString *HTMLString, unsigned linkCoun
     ranScript = false;
 }
 
-TEST(WebKit2, DataDetectionReferenceDate)
+// FIXME: Re-enable this test once webkit.org/b/161967 is fixed.
+TEST(WebKit2, DISABLED_DataDetectionReferenceDate)
 {
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [configuration setDataDetectorTypes:WKDataDetectorTypeCalendarEvent];
