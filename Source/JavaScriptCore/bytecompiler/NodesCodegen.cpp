@@ -415,7 +415,7 @@ RegisterID* ArrayNode::emitBytecode(BytecodeGenerator& generator, RegisterID* ds
     
 handleSpread:
     RefPtr<RegisterID> index = generator.emitLoad(generator.newTemporary(), jsNumber(length));
-    auto spreader = [this, array, index](BytecodeGenerator& generator, RegisterID* value)
+    auto spreader = [array, index](BytecodeGenerator& generator, RegisterID* value)
     {
         generator.emitDirectPutByVal(array.get(), index.get(), value);
         generator.emitInc(index.get());

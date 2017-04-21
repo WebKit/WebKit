@@ -77,7 +77,7 @@ std::unique_ptr<KeyedEncoder> ResourceLoadStatisticsStore::createEncoderFromData
     auto encoder = KeyedEncoder::encoder();
 
     encoder->encodeUInt32("version", statisticsModelVersion);
-    encoder->encodeObjects("browsingStatistics", m_resourceStatisticsMap.begin(), m_resourceStatisticsMap.end(), [this](KeyedEncoder& encoderInner, const StatisticsValue& origin) {
+    encoder->encodeObjects("browsingStatistics", m_resourceStatisticsMap.begin(), m_resourceStatisticsMap.end(), [](KeyedEncoder& encoderInner, const StatisticsValue& origin) {
         origin.value.encode(encoderInner);
     });
 
@@ -93,7 +93,7 @@ void ResourceLoadStatisticsStore::readDataFromDecoder(KeyedDecoder& decoder)
     if (!decoder.decodeUInt32("version", version))
         version = 1;
     Vector<ResourceLoadStatistics> loadedStatistics;
-    bool succeeded = decoder.decodeObjects("browsingStatistics", loadedStatistics, [this, version](KeyedDecoder& decoderInner, ResourceLoadStatistics& statistics) {
+    bool succeeded = decoder.decodeObjects("browsingStatistics", loadedStatistics, [version](KeyedDecoder& decoderInner, ResourceLoadStatistics& statistics) {
         return statistics.decode(decoderInner, version);
     });
 

@@ -1,3 +1,16 @@
+2017-04-20  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Remove unused lamda captures
+        https://bugs.webkit.org/show_bug.cgi?id=171098
+
+        Reviewed by Yusuke Suzuki.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ArrayNode::emitBytecode):
+        * ftl/FTLState.cpp:
+        (JSC::FTL::State::State):
+        * wasm/WasmB3IRGenerator.cpp:
+
 2017-04-20  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC][FTL] FTL should support Arrayify

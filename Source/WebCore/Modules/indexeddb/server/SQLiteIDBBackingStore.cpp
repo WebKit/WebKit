@@ -796,7 +796,7 @@ IDBError SQLiteIDBBackingStore::getOrEstablishDatabaseInfo(IDBDatabaseInfo& info
     if (!m_sqliteDB)
         return { IDBDatabaseException::UnknownError, ASCIILiteral("Unable to open database file on disk") };
 
-    m_sqliteDB->setCollationFunction("IDBKEY", [this](int aLength, const void* a, int bLength, const void* b) {
+    m_sqliteDB->setCollationFunction("IDBKEY", [](int aLength, const void* a, int bLength, const void* b) {
         return idbKeyCollate(aLength, a, bLength, b);
     });
 

@@ -998,7 +998,7 @@ auto B3IRGenerator::addCall(uint32_t functionIndex, const Signature& signature, 
                 patchpoint->append(jumpDestination, ValueRep::SomeRegister);
                 // We need to clobber all potential pinned registers since we might be leaving the instance.
                 patchpoint->clobberLate(PinnedRegisterInfo::get().toSave());
-                patchpoint->setGenerator([functionIndex, returnType] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
+                patchpoint->setGenerator([returnType] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
                     AllowMacroScratchRegisterUsage allowScratch(jit);
                     jit.call(params[returnType == Void ? 0 : 1].gpr());
                 });

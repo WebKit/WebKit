@@ -1570,7 +1570,7 @@ void UniqueIDBDatabase::activateTransactionInBackingStore(UniqueIDBDatabaseTrans
     RefPtr<UniqueIDBDatabase> protectedThis(this);
     RefPtr<UniqueIDBDatabaseTransaction> refTransaction(&transaction);
 
-    auto callback = [this, protectedThis, refTransaction](const IDBError& error) {
+    auto callback = [protectedThis, refTransaction](const IDBError& error) {
         refTransaction->didActivateInBackingStore(error);
     };
 

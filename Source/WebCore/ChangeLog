@@ -1,3 +1,18 @@
+2017-04-20  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Remove unused lamda captures
+        https://bugs.webkit.org/show_bug.cgi?id=171098
+
+        Reviewed by Yusuke Suzuki.
+
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::SQLiteIDBBackingStore::getOrEstablishDatabaseInfo):
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::activateTransactionInBackingStore):
+        * loader/ResourceLoadStatisticsStore.cpp:
+        (WebCore::ResourceLoadStatisticsStore::createEncoderFromData):
+        (WebCore::ResourceLoadStatisticsStore::readDataFromDecoder):
+
 2017-04-20  Timothy Horton  <timothy_horton@apple.com>
 
         Expose obscured insets to web content (as "safe area insets")
