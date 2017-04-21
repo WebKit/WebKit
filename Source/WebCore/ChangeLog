@@ -1,3 +1,32 @@
+2017-04-21  Gwang Yoon Hwang  <yoon@igalia.com>
+
+        Do not paint the border of the box if the dirty region does not intersect with border area
+        https://bugs.webkit.org/show_bug.cgi?id=170988
+
+        Reviewed by Simon Fraser.
+
+        No new tests, since there is no change in behavior.
+
+        * platform/graphics/GeometryUtilities.cpp:
+        (WebCore::ellipseContainsPoint):
+        Checks if a point is within an ellipse.
+
+        * platform/graphics/GeometryUtilities.h:
+        Replace header-guards with #pragma once.
+
+        * platform/graphics/RoundedRect.cpp:
+        (WebCore::RoundedRect::contains):
+        Implemented to know the dirty rectangle intersects with rounded rectangle or not.
+        * platform/graphics/RoundedRect.h:
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintBorder):
+        When typing in decorated text box, the dirty rect generated only for the
+        inside of the text box, not for the decorations.  So we can avoid the
+        calculations to draw borders if the inner border totally covers the
+        target surface. It will optimize the rendering process since we don't
+        have to render border decorations whenever we type somethings in side of
+        the text input element.
+
 2017-04-21  Anders Carlsson  <andersca@apple.com>
 
         Remove another use of toPaymentAuthorizationStatus

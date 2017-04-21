@@ -29,6 +29,7 @@
 #include "RoundedRect.h"
 
 #include "FloatRoundedRect.h"
+#include "GeometryUtilities.h"
 #include "LayoutRect.h"
 #include "LayoutUnit.h"
 
@@ -229,6 +230,50 @@ bool RoundedRect::intersectsQuad(const FloatQuad& quad) const
             FloatPoint center(m_rect.maxX() - bottomRight.width(), m_rect.maxY() - bottomRight.height());
             FloatSize size(bottomRight.width(), bottomRight.height());
             if (!quad.intersectsEllipse(center, size))
+                return false;
+        }
+    }
+
+    return true;
+}
+
+bool RoundedRect::contains(const LayoutRect& otherRect) const
+{
+    if (!rect().contains(otherRect))
+        return false;
+
+    const LayoutSize& topLeft = m_radii.topLeft();
+    if (!topLeft.isEmpty()) {
+        FloatPoint center = { m_rect.x() + topLeft.width(), m_rect.y() + topLeft.height() };
+        if (otherRect.x() <= center.x() && otherRect.y() <= center.y()) {
+            if (!ellipseContainsPoint(center, topLeft, otherRect.location()))
+                return false;
+        }
+    }
+
+    const LayoutSize& topRight = m_radii.topRight();
+    if (!topRight.isEmpty()) {
+        FloatPoint center = { m_rect.maxX() - topRight.width(), m_rect.y() + topRight.height() };
+        if (otherRect.maxX() >= center.x() && otherRect.y() <= center.y()) {
+            if (!ellipseContainsPoint(center, topRight, otherRect.location()))
+                return false;
+        }
+    }
+
+    const LayoutSize& bottomLeft = m_radii.bottomLeft();
+    if (!bottomLeft.isEmpty()) {
+        FloatPoint center = { m_rect.x() + bottomLeft.width(), m_rect.maxY() - bottomLeft.height() };
+        if (otherRect.maxX() >= center.x() && otherRect.maxY() >= center.y()) {
+            if (!ellipseContainsPoint(center, bottomLeft, otherRect.location()))
+                return false;
+        }
+    }
+
+    const LayoutSize& bottomRight = m_radii.bottomRight();
+    if (!bottomRight.isEmpty()) {
+        FloatPoint center = { m_rect.maxX() - bottomRight.width(), m_rect.maxY() - bottomRight.height() };
+        if (otherRect.x() <= center.x() && otherRect.maxY() >= center.y()) {
+            if (!ellipseContainsPoint(center, bottomRight, otherRect.location()))
                 return false;
         }
     }

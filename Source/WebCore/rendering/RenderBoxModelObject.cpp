@@ -1734,6 +1734,10 @@ void RenderBoxModelObject::paintBorder(const PaintInfo& info, const LayoutRect& 
     RoundedRect outerBorder = style.getRoundedBorderFor(rect, includeLogicalLeftEdge, includeLogicalRightEdge);
     RoundedRect innerBorder = style.getRoundedInnerBorderFor(borderInnerRectAdjustedForBleedAvoidance(graphicsContext, rect, bleedAvoidance), includeLogicalLeftEdge, includeLogicalRightEdge);
 
+    // If no borders intersects with the dirty area, we can skip the border painting.
+    if (innerBorder.contains(info.rect))
+        return;
+
     bool haveAlphaColor = false;
     bool haveAllSolidEdges = true;
     bool haveAllDoubleEdges = true;
