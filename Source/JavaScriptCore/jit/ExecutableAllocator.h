@@ -149,6 +149,9 @@ private:
     ~ExecutableAllocator();
 };
 
+#else
+inline bool isJITPC(void*) { return false; }
 #endif // ENABLE(JIT) && ENABLE(ASSEMBLER)
+
 
 } // namespace JSC
