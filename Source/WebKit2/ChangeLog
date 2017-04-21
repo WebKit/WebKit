@@ -1,3 +1,23 @@
+2017-04-21  Andrew Gold  <agold@apple.com>
+
+        -[WKUIDelegatePrivate _webView:requestUserMediaAuthorizationForMicrophone:camera:url:mainFrameURL:decisionHandler:] 
+        decision handler should only have one parameter.
+        https://bugs.webkit.org/show_bug.cgi?id=171081
+
+        Reviewed by Tim Horton.
+
+        Because user media authorization is all or nothing, we should not have separate booleans
+        to indicate authorization. Additionally, rather than passing two separate booleans to the
+        UIDelegate, we now pass an NS_OPTIONS parameter.
+
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h: Added _WKCaptureDevice NS_OPTIONS.
+
+        * UIProcess/Cocoa/UIDelegate.mm:
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::setDelegate): Uses new WKUIDelegatePrivate method.
+        (WebKit::UIDelegate::UIClient::decidePolicyForUserMediaPermissionRequest): Ditto.
+
 2017-04-21  Konstantin Tokarev  <annulen@yandex.ru>
 
         Unreviewed, added missing file to PlatformMac.cmake

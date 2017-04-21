@@ -53,6 +53,11 @@ typedef NS_OPTIONS(NSInteger, _WKMediaMutedState) {
     _WKMediaCaptureDevicesMuted = 1 << 1,
 } WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
+typedef NS_OPTIONS(NSUInteger, _WKCaptureDevices) {
+    _WKCaptureDeviceMicrophone = 1 << 0,
+    _WKCaptureDeviceCamera = 1 << 1,
+} WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+
 #if !TARGET_OS_IPHONE
 
 typedef NS_ENUM(NSInteger, _WKImmediateActionType) {

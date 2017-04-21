@@ -136,7 +136,7 @@ private:
         bool webViewFullscreenMayReturnToInline : 1;
         bool webViewDidEnterFullscreen : 1;
         bool webViewDidExitFullscreen : 1;
-        bool webViewRequestUserMediaAuthorizationForMicrophoneCameraURLMainFrameURLDecisionHandler : 1;
+        bool webViewRequestUserMediaAuthorizationForDevicesURLMainFrameURLDecisionHandler : 1;
         bool webViewCheckUserMediaPermissionForURLMainFrameURLFrameIdentifierDecisionHandler : 1;
         bool webViewMediaCaptureStateDidChange : 1;
 #if PLATFORM(IOS)

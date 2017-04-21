@@ -115,7 +115,7 @@ void UIDelegate::setDelegate(id <WKUIDelegate> delegate)
 #endif
     m_delegateMethods.webViewActionsForElementDefaultActions = [delegate respondsToSelector:@selector(_webView:actionsForElement:defaultActions:)];
     m_delegateMethods.webViewDidNotHandleTapAsClickAtPoint = [delegate respondsToSelector:@selector(_webView:didNotHandleTapAsClickAtPoint:)];
-    m_delegateMethods.webViewRequestUserMediaAuthorizationForMicrophoneCameraURLMainFrameURLDecisionHandler = [delegate respondsToSelector:@selector(_webView:requestUserMediaAuthorizationForMicrophone:camera:url:mainFrameURL:decisionHandler:)];
+    m_delegateMethods.webViewRequestUserMediaAuthorizationForDevicesURLMainFrameURLDecisionHandler = [delegate respondsToSelector:@selector(_webView:requestUserMediaAuthorizationForDevices:url:mainFrameURL:decisionHandler:)];
     m_delegateMethods.webViewCheckUserMediaPermissionForURLMainFrameURLFrameIdentifierDecisionHandler = [delegate respondsToSelector:@selector(_webView:checkUserMediaPermissionForURL:mainFrameURL:frameIdentifier:decisionHandler:)];
     m_delegateMethods.webViewMediaCaptureStateDidChange = [delegate respondsToSelector:@selector(_webView:mediaCaptureStateDidChange:)];
     m_delegateMethods.presentingViewControllerForWebView = [delegate respondsToSelector:@selector(_presentingViewControllerForWebView:)];
@@ -377,7 +377,7 @@ bool UIDelegate::UIClient::runOpenPanel(WebPageProxy*, WebFrameProxy* webFramePr
 bool UIDelegate::UIClient::decidePolicyForUserMediaPermissionRequest(WebKit::WebPageProxy& page, WebKit::WebFrameProxy& frame, API::SecurityOrigin& userMediaOrigin, API::SecurityOrigin& topLevelOrigin, WebKit::UserMediaPermissionRequestProxy& request)
 {
     auto delegate = m_uiDelegate.m_delegate.get();
-    if (!delegate || !m_uiDelegate.m_delegateMethods.webViewRequestUserMediaAuthorizationForMicrophoneCameraURLMainFrameURLDecisionHandler) {
+    if (!delegate || !m_uiDelegate.m_delegateMethods.webViewRequestUserMediaAuthorizationForDevicesURLMainFrameURLDecisionHandler) {
         request.deny(UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::UserMediaDisabled);
         return true;
     }
@@ -395,8 +395,14 @@ bool UIDelegate::UIClient::decidePolicyForUserMediaPermissionRequest(WebKit::Web
         WebCore::URL requestFrameURL(WebCore::URL(), frame.url());
         WebCore::URL mainFrameURL(WebCore::URL(), mainFrame->url());
 
-        [(id <WKUIDelegatePrivate>)delegate _webView:webView requestUserMediaAuthorizationForMicrophone:requiresAudio camera:requiresVideo url:requestFrameURL mainFrameURL:mainFrameURL decisionHandler:^(BOOL authorizedMicrophone, BOOL authorizedCamera) {
-            if ((requiresAudio != authorizedMicrophone) || (requiresVideo != authorizedCamera)) {
+        _WKCaptureDevices devices = 0;
+        if (requiresAudio)
+            devices |= _WKCaptureDeviceMicrophone;
+        if (requiresVideo)
+            devices |= _WKCaptureDeviceCamera;
+
+        [(id <WKUIDelegatePrivate>)delegate _webView:webView requestUserMediaAuthorizationForDevices:devices url:requestFrameURL mainFrameURL:mainFrameURL decisionHandler:^(BOOL authorized) {
+            if (!authorized) {
                 request.deny(UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::PermissionDenied);
                 return;
             }
