@@ -40,8 +40,10 @@
 #include "VMInspector.h"
 #include "Watchdog.h"
 #include <wtf/ProcessID.h>
-#include <wtf/ThreadMessage.h>
-#include <wtf/threads/Signals.h>
+
+#if OS(DARWIN)
+#include <signal.h>
+#endif
 
 namespace JSC {
 
@@ -51,6 +53,9 @@ ALWAYS_INLINE VM& VMTraps::vm() const
 }
 
 #if ENABLE(SIGNAL_BASED_VM_TRAPS)
+
+struct sigaction originalSigusr1Action;
+struct sigaction originalSigtrapAction;
 
 struct SignalContext {
     SignalContext(mcontext_t& mcontext)
@@ -127,35 +132,87 @@ static Expected<VMAndStackBounds, VMTraps::Error> findActiveVMAndStackBounds(Sig
     return VMAndStackBounds { activeVM, stackBounds };
 }
 
-static void installSignalHandler()
+static void handleSigusr1(int signalNumber, siginfo_t* info, void* uap)
 {
-    installSignalHandler(Signal::Trap, [] (int, siginfo_t*, void* uap) -> SignalAction {
-        SignalContext context(static_cast<ucontext_t*>(uap)->uc_mcontext);
-
-        if (!isJITPC(context.trapPC))
-            return SignalAction::NotHandled;
-
-        // FIXME: This currently eats all traps including jit asserts we should make sure this
-        // always works. https://bugs.webkit.org/show_bug.cgi?id=171039
-        auto activeVMAndStackBounds = findActiveVMAndStackBounds(context);
-        if (!activeVMAndStackBounds)
-            return SignalAction::Handled; // Let the SignalSender try again later.
-
+    SignalContext context(static_cast<ucontext_t*>(uap)->uc_mcontext);
+    auto activeVMAndStackBounds = findActiveVMAndStackBounds(context);
+    if (activeVMAndStackBounds) {
         VM* vm = activeVMAndStackBounds.value().vm;
         if (vm) {
+            StackBounds stackBounds = activeVMAndStackBounds.value().stackBounds;
             VMTraps& traps = vm->traps();
-            if (!traps.needTrapHandling())
-                return SignalAction::Handled; // The polling code beat us to handling the trap already.
-
-            auto expectedSuccess = traps.tryJettisonCodeBlocksOnStack(context);
-            if (!expectedSuccess)
-                return SignalAction::Handled; // Let the SignalSender try again later.
-            if (expectedSuccess.value())
-                return SignalAction::Handled; // We've success jettison the codeBlocks.
+            if (traps.needTrapHandling())
+                traps.tryInstallTrapBreakpoints(context, stackBounds);
         }
+    }
 
-        return SignalAction::Handled;
-    });
+    auto originalAction = originalSigusr1Action.sa_sigaction;
+    if (originalAction)
+        originalAction(signalNumber, info, uap);
+}
+
+static void handleSigtrap(int signalNumber, siginfo_t* info, void* uap)
+{
+    SignalContext context(static_cast<ucontext_t*>(uap)->uc_mcontext);
+    auto activeVMAndStackBounds = findActiveVMAndStackBounds(context);
+    if (!activeVMAndStackBounds)
+        return; // Let the SignalSender try again later.
+
+    VM* vm = activeVMAndStackBounds.value().vm;
+    if (vm) {
+        VMTraps& traps = vm->traps();
+        if (!traps.needTrapHandling())
+            return; // The polling code beat us to handling the trap already.
+
+        auto expectedSuccess = traps.tryJettisonCodeBlocksOnStack(context);
+        if (!expectedSuccess)
+            return; // Let the SignalSender try again later.
+        if (expectedSuccess.value())
+            return; // We've success jettison the codeBlocks.
+    }
+
+    // If we get here, then this SIGTRAP is not due to a VMTrap. Let's do the default action.
+    auto originalAction = originalSigtrapAction.sa_sigaction;
+    if (originalAction) {
+        // It is always safe to just invoke the original handler using the sa_sigaction form
+        // without checking for the SA_SIGINFO flag. If the original handler is of the
+        // sa_handler form, it will just ignore the 2nd and 3rd arguments since sa_handler is a
+        // subset of sa_sigaction. This is what the man pages says the OS does anyway.
+        originalAction(signalNumber, info, uap);
+    }
+    
+    // Pre-emptively restore the default handler but we may roll it back below.
+    struct sigaction currentAction;
+    struct sigaction defaultAction;
+    defaultAction.sa_handler = SIG_DFL;
+    sigfillset(&defaultAction.sa_mask);
+    defaultAction.sa_flags = 0;
+    sigaction(SIGTRAP, &defaultAction, &currentAction);
+    
+    if (currentAction.sa_sigaction != handleSigtrap) {
+        // This means that there's a client handler installed after us. This also means
+        // that the client handler thinks it was able to recover from the SIGTRAP, and
+        // did not uninstall itself. We can't argue with this because the signal isn't
+        // known to be from a VMTraps signal. Hence, restore the client handler
+        // and keep going.
+        sigaction(SIGTRAP, &currentAction, nullptr);
+    }
+}
+
+static void installSignalHandlers()
+{
+    typedef void (* SigactionHandler)(int, siginfo_t *, void *);
+    struct sigaction action;
+
+    action.sa_sigaction = reinterpret_cast<SigactionHandler>(handleSigusr1);
+    sigfillset(&action.sa_mask);
+    action.sa_flags = SA_SIGINFO;
+    sigaction(SIGUSR1, &action, &originalSigusr1Action);
+
+    action.sa_sigaction = reinterpret_cast<SigactionHandler>(handleSigtrap);
+    sigfillset(&action.sa_mask);
+    action.sa_flags = SA_SIGINFO;
+    sigaction(SIGTRAP, &action, &originalSigtrapAction);
 }
 
 ALWAYS_INLINE static CallFrame* sanitizedTopCallFrame(CallFrame* topCallFrame)
@@ -343,7 +400,7 @@ VMTraps::VMTraps()
     if (!Options::usePollingTraps()) {
         static std::once_flag once;
         std::call_once(once, [] {
-            installSignalHandler();
+            installSignalHandlers();
         });
     }
 #endif
@@ -403,19 +460,7 @@ void VMTraps::SignalSender::send()
             VM& vm = *m_vm;
             auto optionalOwnerThread = vm.ownerThread();
             if (optionalOwnerThread) {
-                sendMessage(*optionalOwnerThread.value().get(), [] (siginfo_t*, ucontext_t* ucontext) -> void {
-                    SignalContext context(ucontext->uc_mcontext);
-                    auto activeVMAndStackBounds = findActiveVMAndStackBounds(context);
-                    if (activeVMAndStackBounds) {
-                        VM* vm = activeVMAndStackBounds.value().vm;
-                        if (vm) {
-                            StackBounds stackBounds = activeVMAndStackBounds.value().stackBounds;
-                            VMTraps& traps = vm->traps();
-                            if (traps.needTrapHandling())
-                                traps.tryInstallTrapBreakpoints(context, stackBounds);
-                        }
-                    }
-                });
+                optionalOwnerThread.value()->signal(SIGUSR1);
                 break;
             }
 

@@ -264,18 +264,11 @@ void Thread::detach()
         didBecomeDetached();
 }
 
-Thread* Thread::currentMayBeNull()
+Thread& Thread::current()
 {
     ThreadHolder* data = ThreadHolder::current();
     if (data)
-        return &data->thread();
-    return nullptr;
-}
-
-Thread& Thread::current()
-{
-    if (Thread* current = currentMayBeNull())
-        return *current;
+        return data->thread();
 
     // Not a WTF-created thread, ThreadIdentifier is not established yet.
     RefPtr<Thread> thread = adoptRef(new Thread());
@@ -293,8 +286,6 @@ ThreadIdentifier Thread::currentID()
 bool Thread::signal(int signalNumber)
 {
     std::unique_lock<std::mutex> locker(m_mutex);
-    if (hasExited())
-        return false;
     int errNo = pthread_kill(m_handle, signalNumber);
     return !errNo; // A 0 errNo means success.
 }

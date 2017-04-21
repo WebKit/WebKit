@@ -42,8 +42,7 @@ class VMTraps {
 public:
     enum class Error {
         None,
-        LockUnavailable,
-        NotJITCode
+        LockUnavailable
     };
 
     enum EventType {

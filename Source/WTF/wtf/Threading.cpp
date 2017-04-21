@@ -34,7 +34,6 @@
 #include <wtf/DateMath.h>
 #include <wtf/RandomNumberSeed.h>
 #include <wtf/ThreadHolder.h>
-#include <wtf/ThreadMessage.h>
 #include <wtf/WTFThreadData.h>
 #include <wtf/text/StringView.h>
 
@@ -179,9 +178,6 @@ void initializeThreading()
         wtfThreadData();
         initializeDates();
         Thread::initializePlatformThreading();
-#if USE(PTHREADS)
-        initializeThreadMessages();
-#endif
     });
 }
 

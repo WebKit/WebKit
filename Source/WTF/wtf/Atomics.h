@@ -174,12 +174,6 @@ struct Atomic {
         return transaction(func, std::memory_order_relaxed, abortLikelihood);
     }
 
-    Atomic() = default;
-    constexpr Atomic(T initial)
-        : value(std::forward<T>(initial))
-    {
-    }
-
     std::atomic<T> value;
 };
 
