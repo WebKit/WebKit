@@ -47,6 +47,8 @@ WebAudioBufferList::WebAudioBufferList(const CAAudioStreamDescription& format)
     m_canonicalList->mNumberBuffers = bufferCount;
     for (uint32_t buffer = 0; buffer < bufferCount; ++buffer)
         m_canonicalList->mBuffers[buffer].mNumberChannels = channelCount;
+
+    reset();
 }
 
 WebAudioBufferList::WebAudioBufferList(const CAAudioStreamDescription& format, uint32_t sampleCount)

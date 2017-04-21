@@ -1,3 +1,12 @@
+2017-04-21  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed fix after r215624; null-deref crash.
+
+        Make sure to call reset() inside each constructor.
+
+        * platform/audio/WebAudioBufferList.cpp:
+        (WebCore::WebAudioBufferList::WebAudioBufferList):
+
 2017-04-21  Anders Carlsson  <andersca@apple.com>
 
         Stop using deprecated APIs, part 5
