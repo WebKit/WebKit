@@ -109,34 +109,53 @@ WebInspector.ResourceTimelineDataGridNode = class ResourceTimelineDataGridNode e
             return this._createNameCellDocumentFragment();
 
         case "type":
-            return WebInspector.Resource.displayNameForType(value);
+            var text = WebInspector.Resource.displayNameForType(value);
+            cell.title = text;
+            return text;
 
         case "statusCode":
             cell.title = resource.statusText || "";
             return value || emDash;
 
         case "cached":
-            return this._cachedCellContent();
-
-        case "domain":
-            return value || emDash;
+            var fragment = this._cachedCellContent();
+            cell.title = fragment.textContent;
+            return fragment;
 
         case "size":
         case "transferSize":
-            return isNaN(value) ? emDash : Number.bytesToString(value, true);
+            var text = emDash;
+            if (!isNaN(value)) {
+                text = Number.bytesToString(value, true);
+                cell.title = text;
+            }
+            return text;
 
         case "requestSent":
         case "latency":
         case "duration":
-            return isNaN(value) ? emDash : Number.secondsToString(value, true);
+            var text = emDash;
+            if (!isNaN(value)) {
+                text = Number.secondsToString(value, true);
+                cell.title = text;
+            }
+            return text;
 
+        case "domain":
+        case "method":
+        case "scheme":
         case "protocol":
         case "remoteAddress":
         case "connectionIdentifier":
+            if (value)
+                cell.title = value;
             return value || emDash;
 
         case "priority":
-            return WebInspector.Resource.displayNameForPriority(value) || emDash;
+            var title = WebInspector.Resource.displayNameForPriority(value);
+            if (title)
+                cell.title = title;
+            return title || emDash;
         }
 
         return super.createCellContent(columnIdentifier, cell);
@@ -247,7 +266,9 @@ WebInspector.ResourceTimelineDataGridNode = class ResourceTimelineDataGridNode e
             return span;
         }
 
-        return this._resource.cached ? WebInspector.UIString("Yes") : WebInspector.UIString("No");
+        let fragment = document.createDocumentFragment();
+        fragment.append(this._resource.cached ? WebInspector.UIString("Yes") : WebInspector.UIString("No"));
+        return fragment;
     }
 
     _needsRefresh()

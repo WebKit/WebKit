@@ -1,3 +1,17 @@
+2017-04-21  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: Add titles to Network grid items for easier reading when text overflows
+        https://bugs.webkit.org/show_bug.cgi?id=170792
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/NetworkGridContentView.js:
+        (WebInspector.NetworkGridContentView):
+        * UserInterface/Views/ResourceTimelineDataGridNode.js:
+        (WebInspector.ResourceTimelineDataGridNode.prototype.createCellContent):
+        (WebInspector.ResourceTimelineDataGridNode.prototype._cachedCellContent):
+        Do not add a title if the text is an em-dash, as that title will not convey any information.
+
 2017-04-21  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: Don't show the Search tab if it's open and matches the representedObject

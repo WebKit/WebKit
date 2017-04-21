@@ -41,58 +41,58 @@ WebInspector.NetworkGridContentView = class NetworkGridContentView extends WebIn
 
         let columns = {domain: {}, type: {}, method: {}, scheme: {}, statusCode: {}, cached: {}, protocol: {}, priority: {}, remoteAddress: {}, connectionIdentifier: {}, size: {}, transferSize: {}, requestSent: {}, latency: {}, duration: {}, graph: {}};
 
-        columns.domain.title = WebInspector.UIString("Domain");
+        columns.domain.title = columns.domain.tooltip = WebInspector.UIString("Domain");
         columns.domain.width = "10%";
 
-        columns.type.title = WebInspector.UIString("Type");
+        columns.type.title = columns.type.tooltip = WebInspector.UIString("Type");
         columns.type.width = "6%";
 
-        columns.method.title = WebInspector.UIString("Method");
+        columns.method.title = columns.method.tooltip = WebInspector.UIString("Method");
         columns.method.width = "5%";
 
-        columns.scheme.title = WebInspector.UIString("Scheme");
+        columns.scheme.title = columns.scheme.tooltip = WebInspector.UIString("Scheme");
         columns.scheme.width = "5%";
 
-        columns.statusCode.title = WebInspector.UIString("Status");
+        columns.statusCode.title = columns.statusCode.tooltip = WebInspector.UIString("Status");
         columns.statusCode.width = "5%";
 
-        columns.cached.title = WebInspector.UIString("Cached");
+        columns.cached.title = columns.cached.tooltip = WebInspector.UIString("Cached");
         columns.cached.width = "8%";
 
-        columns.protocol.title = WebInspector.UIString("Protocol");
+        columns.protocol.title = columns.protocol.tooltip = WebInspector.UIString("Protocol");
         columns.protocol.width = "5%";
         columns.protocol.hidden = true;
 
-        columns.priority.title = WebInspector.UIString("Priority");
+        columns.priority.title = columns.priority.tooltip = WebInspector.UIString("Priority");
         columns.priority.width = "5%";
         columns.priority.hidden = true;
 
-        columns.remoteAddress.title = WebInspector.UIString("IP Address");
+        columns.remoteAddress.title = columns.remoteAddress.tooltip = WebInspector.UIString("IP Address");
         columns.remoteAddress.width = "8%";
         columns.remoteAddress.hidden = true;
 
-        columns.connectionIdentifier.title = WebInspector.UIString("Connection ID");
+        columns.connectionIdentifier.title = columns.connectionIdentifier.tooltip = WebInspector.UIString("Connection ID");
         columns.connectionIdentifier.width = "5%";
         columns.connectionIdentifier.hidden = true;
         columns.connectionIdentifier.aligned = "right";
 
-        columns.size.title = WebInspector.UIString("Size");
+        columns.size.title = columns.size.tooltip = WebInspector.UIString("Size");
         columns.size.width = "6%";
         columns.size.aligned = "right";
 
-        columns.transferSize.title = WebInspector.UIString("Transferred");
+        columns.transferSize.title = columns.transferSize.tooltip = WebInspector.UIString("Transferred");
         columns.transferSize.width = "8%";
         columns.transferSize.aligned = "right";
 
-        columns.requestSent.title = WebInspector.UIString("Start Time");
+        columns.requestSent.title = columns.requestSent.tooltip = WebInspector.UIString("Start Time");
         columns.requestSent.width = "9%";
         columns.requestSent.aligned = "right";
 
-        columns.latency.title = WebInspector.UIString("Latency");
+        columns.latency.title = columns.latency.tooltip = WebInspector.UIString("Latency");
         columns.latency.width = "9%";
         columns.latency.aligned = "right";
 
-        columns.duration.title = WebInspector.UIString("Duration");
+        columns.duration.title = columns.duration.tooltip = WebInspector.UIString("Duration");
         columns.duration.width = "9%";
         columns.duration.aligned = "right";
 
