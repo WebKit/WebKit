@@ -60,7 +60,8 @@ public:
     OSStatus copyTo(AudioBufferList&, size_t count = SIZE_MAX);
 
     const AudioStreamBasicDescription& streamDescription() const { return m_internalFormat->streamDescription(); }
-    WebAudioBufferList& bufferList() const { return *m_bufferList; }
+    const WebAudioBufferList& bufferList() const { return m_bufferList; }
+    WebAudioBufferList& bufferList() { return m_bufferList; }
 
     uint32_t sampleCapacity() const { return m_sampleCapacity; }
     uint32_t sampleCount() const { return m_sampleCount; }
@@ -78,7 +79,7 @@ public:
 protected:
     AudioSampleBufferList(const CAAudioStreamDescription&, size_t);
 
-    std::unique_ptr<CAAudioStreamDescription> m_internalFormat;
+    UniqueRef<CAAudioStreamDescription> m_internalFormat;
 
     uint64_t m_timestamp { 0 };
     double m_hostTime { -1 };
@@ -86,7 +87,7 @@ protected:
     size_t m_sampleCapacity { 0 };
     size_t m_maxBufferSizePerChannel { 0 };
     size_t m_bufferListBaseSize { 0 };
-    std::unique_ptr<WebAudioBufferList> m_bufferList;
+    UniqueRef<WebAudioBufferList> m_bufferList;
 };
 
 inline size_t AudioSampleBufferList::audioBufferListSizeForStream(const CAAudioStreamDescription& description)

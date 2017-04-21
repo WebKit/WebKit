@@ -45,6 +45,8 @@ public:
     WEBCORE_EXPORT WebAudioBufferList(const CAAudioStreamDescription&, uint32_t sampleCount);
     WebAudioBufferList(const CAAudioStreamDescription&, CMSampleBufferRef);
 
+    void reset();
+
     AudioBufferList* list() const { return m_list.get(); }
     operator AudioBufferList&() const { return *m_list; }
 
@@ -56,6 +58,7 @@ private:
     Kind kind() const { return Kind::WebAudioBufferList; }
 
     size_t m_listBufferSize { 0 };
+    std::unique_ptr<AudioBufferList> m_canonicalList;
     std::unique_ptr<AudioBufferList> m_list;
     RetainPtr<CMBlockBufferRef> m_blockBuffer;
     Vector<uint8_t> m_flatBuffer;

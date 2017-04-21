@@ -44,21 +44,15 @@ Ref<AudioSampleBufferList> AudioSampleBufferList::create(const CAAudioStreamDesc
 }
 
 AudioSampleBufferList::AudioSampleBufferList(const CAAudioStreamDescription& format, size_t maximumSampleCount)
+    : m_internalFormat(makeUniqueRef<CAAudioStreamDescription>(format))
+    , m_sampleCapacity(maximumSampleCount)
+    , m_maxBufferSizePerChannel(maximumSampleCount * format.bytesPerFrame() / format.numberOfChannelStreams())
+    , m_bufferList(makeUniqueRef<WebAudioBufferList>(m_internalFormat, m_maxBufferSizePerChannel))
 {
-    m_internalFormat = std::make_unique<CAAudioStreamDescription>(format);
-
-    m_sampleCapacity = maximumSampleCount;
-    m_maxBufferSizePerChannel = maximumSampleCount * format.bytesPerFrame() / format.numberOfChannelStreams();
-
     ASSERT(format.sampleRate() >= 0);
-    reset();
 }
 
-AudioSampleBufferList::~AudioSampleBufferList()
-{
-    m_internalFormat = nullptr;
-    m_bufferList = nullptr;
-}
+AudioSampleBufferList::~AudioSampleBufferList() = default;
 
 void AudioSampleBufferList::setSampleCount(size_t count)
 {
@@ -106,7 +100,7 @@ void AudioSampleBufferList::applyGain(AudioBufferList& bufferList, float gain, A
 
 void AudioSampleBufferList::applyGain(float gain)
 {
-    applyGain(*m_bufferList, gain, m_internalFormat->format());
+    applyGain(m_bufferList.get(), gain, m_internalFormat->format());
 }
 
 OSStatus AudioSampleBufferList::mixFrom(const AudioSampleBufferList& source, size_t frameCount)
@@ -124,7 +118,7 @@ OSStatus AudioSampleBufferList::mixFrom(const AudioSampleBufferList& source, siz
 
     m_sampleCount = frameCount;
 
-    WebAudioBufferList& sourceBuffer = source.bufferList();
+    auto& sourceBuffer = source.bufferList();
     for (uint32_t i = 0; i < m_bufferList->bufferCount(); i++) {
         switch (m_internalFormat->format()) {
         case AudioStreamDescription::Int16: {
@@ -204,12 +198,12 @@ void AudioSampleBufferList::reset()
     m_timestamp = 0;
     m_hostTime = -1;
 
-    m_bufferList = std::make_unique<WebAudioBufferList>(*m_internalFormat, m_maxBufferSizePerChannel);
+    m_bufferList->reset();
 }
 
 void AudioSampleBufferList::zero()
 {
-    zeroABL(*m_bufferList, m_internalFormat->bytesPerPacket() * m_sampleCapacity);
+    zeroABL(m_bufferList.get(), m_internalFormat->bytesPerPacket() * m_sampleCapacity);
 }
 
 void AudioSampleBufferList::zeroABL(AudioBufferList& buffer, size_t byteCount)

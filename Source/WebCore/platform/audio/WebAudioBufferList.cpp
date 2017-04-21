@@ -42,11 +42,11 @@ WebAudioBufferList::WebAudioBufferList(const CAAudioStreamDescription& format)
     ASSERT(bufferListSize <= SIZE_MAX);
 
     m_listBufferSize = static_cast<size_t>(bufferListSize);
-    m_list = std::unique_ptr<AudioBufferList>(static_cast<AudioBufferList*>(::operator new (m_listBufferSize)));
-    memset(m_list.get(), 0, m_listBufferSize);
-    m_list->mNumberBuffers = bufferCount;
+    m_canonicalList = std::unique_ptr<AudioBufferList>(static_cast<AudioBufferList*>(::operator new (m_listBufferSize)));
+    memset(m_canonicalList.get(), 0, m_listBufferSize);
+    m_canonicalList->mNumberBuffers = bufferCount;
     for (uint32_t buffer = 0; buffer < bufferCount; ++buffer)
-        m_list->mBuffers[buffer].mNumberChannels = channelCount;
+        m_canonicalList->mBuffers[buffer].mNumberChannels = channelCount;
 }
 
 WebAudioBufferList::WebAudioBufferList(const CAAudioStreamDescription& format, uint32_t sampleCount)
@@ -62,11 +62,13 @@ WebAudioBufferList::WebAudioBufferList(const CAAudioStreamDescription& format, u
     m_flatBuffer.reserveInitialCapacity(bufferCount * bytesPerBuffer);
     auto data = m_flatBuffer.data();
 
-    for (uint32_t buffer = 0; buffer < m_list->mNumberBuffers; ++buffer) {
-        m_list->mBuffers[buffer].mData = data;
-        m_list->mBuffers[buffer].mDataByteSize = bytesPerBuffer;
+    for (uint32_t buffer = 0; buffer < m_canonicalList->mNumberBuffers; ++buffer) {
+        m_canonicalList->mBuffers[buffer].mData = data;
+        m_canonicalList->mBuffers[buffer].mDataByteSize = bytesPerBuffer;
         data += bytesPerBuffer;
     }
+
+    reset();
 }
 
 WebAudioBufferList::WebAudioBufferList(const CAAudioStreamDescription& format, CMSampleBufferRef sampleBuffer)
@@ -76,8 +78,17 @@ WebAudioBufferList::WebAudioBufferList(const CAAudioStreamDescription& format, C
         return;
 
     CMBlockBufferRef buffer = nullptr;
-    if (noErr == CMSampleBufferGetAudioBufferListWithRetainedBlockBuffer(sampleBuffer, nullptr, m_list.get(), m_listBufferSize, kCFAllocatorSystemDefault, kCFAllocatorSystemDefault, kCMSampleBufferFlag_AudioBufferList_Assure16ByteAlignment, &buffer))
+    if (noErr == CMSampleBufferGetAudioBufferListWithRetainedBlockBuffer(sampleBuffer, nullptr, m_canonicalList.get(), m_listBufferSize, kCFAllocatorSystemDefault, kCFAllocatorSystemDefault, kCMSampleBufferFlag_AudioBufferList_Assure16ByteAlignment, &buffer))
         m_blockBuffer = adoptCF(buffer);
+
+    reset();
+}
+
+void WebAudioBufferList::reset()
+{
+    if (!m_list)
+        m_list = std::unique_ptr<AudioBufferList>(static_cast<AudioBufferList*>(::operator new (m_listBufferSize)));
+    memcpy(m_list.get(), m_canonicalList.get(), m_listBufferSize);
 }
 
 WTF::IteratorRange<AudioBuffer*> WebAudioBufferList::buffers() const
