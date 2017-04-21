@@ -63,6 +63,13 @@ namespace JSC { typedef MacroAssemblerX86_64 MacroAssemblerBase; };
 
 namespace JSC {
 
+namespace Printer {
+
+struct PrintRecord;
+typedef Vector<PrintRecord> PrintRecordList;
+
+}
+
 class MacroAssembler : public MacroAssemblerBase {
 public:
 
@@ -1820,7 +1827,9 @@ public:
     // This only works if ENABLE(MASM_PROBE). Otherwise, print() is a no-op.
     // See comments in MacroAssemblerPrinter.h for examples of how to use this.
     template<typename... Arguments>
-    void print(Arguments... args);
+    void print(Arguments&&... args);
+
+    void print(Printer::PrintRecordList*);
 };
 
 #if ENABLE(MASM_PROBE)

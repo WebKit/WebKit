@@ -605,11 +605,7 @@ void VM::throwException(ExecState* exec, Exception* exception)
 {
     if (Options::breakOnThrow()) {
         CodeBlock* codeBlock = exec->codeBlock();
-        dataLog("Throwing exception in call frame ", RawPointer(exec), " for code block ");
-        if (codeBlock)
-            dataLog(*codeBlock, "\n");
-        else
-            dataLog("<nullptr>\n");
+        dataLog("Throwing exception in call frame ", RawPointer(exec), " for code block ", codeBlock, "\n");
         CRASH();
     }
 

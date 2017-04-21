@@ -33,6 +33,7 @@
 #include "AirCode.h"
 #include "AirInsertionSet.h"
 #include "AirInstInlines.h"
+#include "AirPrintSpecial.h"
 #include "AirStackSlot.h"
 #include "B3ArgumentRegValue.h"
 #include "B3AtomicValue.h"
@@ -1126,6 +1127,28 @@ private:
         RELEASE_ASSERT_NOT_REACHED();
         return Air::Oops;
     }
+
+#if ENABLE(MASM_PROBE)
+    template<typename... Arguments>
+    void print(Arguments&&... arguments)
+    {
+        Value* origin = m_value;
+        print(origin, std::forward<Arguments>(arguments)...);
+    }
+
+    template<typename... Arguments>
+    void print(Value* origin, Arguments&&... arguments)
+    {
+        auto printList = Printer::makePrintRecordList(arguments...);
+        auto printSpecial = static_cast<PrintSpecial*>(m_code.addSpecial(std::make_unique<PrintSpecial>(printList)));
+        Inst inst(Patch, origin, Arg::special(printSpecial));
+        Printer::appendAirArgs(inst, std::forward<Arguments>(arguments)...);
+        append(WTFMove(inst));
+    }
+#else
+    template<typename... Arguments>
+    void print(Arguments&&...) { }
+#endif // ENABLE(MASM_PROBE)
 
     template<typename... Arguments>
     void append(Air::Opcode opcode, Arguments&&... arguments)

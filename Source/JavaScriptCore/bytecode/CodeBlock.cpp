@@ -3111,5 +3111,22 @@ BytecodeLivenessAnalysis& CodeBlock::livenessAnalysisSlow()
     }
 }
 
+void setPrinter(Printer::PrintRecord& record, CodeBlock* codeBlock)
+{
+    Printer::setPrinter(record, toCString(codeBlock));
+}
 
 } // namespace JSC
+
+namespace WTF {
+    
+void printInternal(PrintStream& out, JSC::CodeBlock* codeBlock)
+{
+    if (UNLIKELY(!codeBlock)) {
+        out.print("<null codeBlock>");
+        return;
+    }
+    out.print(*codeBlock);
+}
+    
+} // namespace WTF

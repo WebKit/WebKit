@@ -72,6 +72,7 @@ set(JavaScriptCore_SOURCES
     assembler/MacroAssemblerCodeRef.cpp
     assembler/MacroAssemblerPrinter.cpp
     assembler/MacroAssemblerX86Common.cpp
+    assembler/Printer.cpp
 
     b3/air/AirAllocateRegistersAndStackByLinearScan.cpp
     b3/air/AirAllocateRegistersByGraphColoring.cpp
@@ -105,6 +106,7 @@ set(JavaScriptCore_SOURCES
     b3/air/AirPadInterference.cpp
     b3/air/AirPhaseInsertionSet.cpp
     b3/air/AirPhaseScope.cpp
+    b3/air/AirPrintSpecial.cpp
     b3/air/AirRegLiveness.cpp
     b3/air/AirReportUsedRegisters.cpp
     b3/air/AirSimplifyCFG.cpp

@@ -1,3 +1,127 @@
+2017-04-20  Mark Lam  <mark.lam@apple.com>
+
+        Refactor MASM probe to allow printing of custom types.
+        https://bugs.webkit.org/show_bug.cgi?id=171101
+
+        Reviewed by JF Bastien.
+
+        For example, this allows us to add MASM printing of CodeBlock* and Air::Args.
+
+        In general, MASM print can be used like dataLog, except that it generates JITted
+        code for doing the dataLogging later when the JITted code runs.  MASM print can
+        print any value type that a specialized Printer template or a setPrinter()
+        function implemented for that type.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/MacroAssembler.h:
+
+        * assembler/MacroAssemblerPrinter.cpp:
+        (JSC::Printer::printAllRegisters):
+        (JSC::Printer::printPCRegister):
+        (JSC::Printer::printRegisterID):
+        (JSC::Printer::printFPRegisterID):
+        (JSC::Printer::printAddress):
+        (JSC::Printer::printMemory):
+        (JSC::Printer::printCallback):
+        (JSC::printIndent): Deleted.
+        (JSC::printCPU): Deleted.
+        (JSC::printCPURegisters): Deleted.
+        (JSC::printPC): Deleted.
+        (JSC::printRegister): Deleted.
+        (JSC::printMemory): Deleted.
+        (JSC::MacroAssemblerPrinter::printCallback): Deleted.
+        * assembler/MacroAssemblerPrinter.h:
+        (JSC::AllRegisters::AllRegisters):
+        (JSC::Printer::Printer<AllRegisters>::Printer):
+        (JSC::Printer::Printer<PCRegister>::Printer):
+        (JSC::Printer::Printer<MacroAssembler::RegisterID>::Printer):
+        (JSC::Printer::Printer<MacroAssembler::FPRegisterID>::Printer):
+        (JSC::Printer::Printer<MacroAssembler::Address>::Printer):
+        (JSC::Printer::Printer<Memory>::Printer):
+        (JSC::Printer::Printer<MemWord<IntType>>::Printer):
+        (JSC::MacroAssembler::print):
+        (JSC::MacroAssemblerPrinter::print): Deleted.
+        (JSC::MacroAssemblerPrinter::PrintArg::PrintArg): Deleted.
+        (JSC::MacroAssemblerPrinter::appendPrintArg): Deleted.
+        - Refactored to move the underlying PrintRecord (and associated data structures)
+          out to Printer.cpp/h.
+        - MacroAssemblerPrinter.cpp/h now only add custom Printers for MASM types like
+          RegisterID and Memory.  It also defines the implementation of
+          MacroAssembler::print().
+
+          As before, JIT code that wishes to use MacroAssembler::print() needs to
+          #include "MacroAssemblerPrinter.h".
+
+        - Also added the ability to specify an optional indentation (in number of chars)
+          when MASM printing AllRegisters.  This is useful because AllRegisters prints
+          a block of data unlike other printers which print inline.
+
+        * assembler/Printer.cpp: Added.
+        (JSC::Printer::printConstCharString):
+        (JSC::Printer::printIntptr):
+        (JSC::Printer::printUintptr):
+        (JSC::Printer::printPointer):
+        (JSC::Printer::setPrinter):
+        * assembler/Printer.h: Added.
+        (JSC::Printer::Context::Context):
+        (JSC::Printer::PrintRecord::PrintRecord):
+        (JSC::Printer::appendPrinter):
+        (JSC::Printer::makePrintRecordList):
+        (JSC::Printer::Printer<RawPointer>::Printer):
+        (JSC::Printer::setPrinter):
+        (JSC::Printer::Printer::Printer):
+        - Data structures for creating a list of PrintRecords.  Classes which wish to
+          add custom support for MASM printing can #include "Printer.h" and implement
+          either:
+          1. a specialized Printer template, or
+          2. a setPrinter() function.
+
+          See Printer<Reg> and Printer<B3::Air::Tmp> in AirPrintSpecial.h for examples of
+          (1).  See CodeBlock's setPrinter() for an example of (2).
+
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::print):
+        * b3/air/AirPrintSpecial.cpp: Added.
+        (JSC::B3::Air::PrintSpecial::PrintSpecial):
+        (JSC::B3::Air::PrintSpecial::~PrintSpecial):
+        (JSC::B3::Air::PrintSpecial::forEachArg):
+        (JSC::B3::Air::PrintSpecial::isValid):
+        (JSC::B3::Air::PrintSpecial::admitsStack):
+        (JSC::B3::Air::PrintSpecial::reportUsedRegisters):
+        (JSC::B3::Air::PrintSpecial::generate):
+        (JSC::B3::Air::PrintSpecial::extraEarlyClobberedRegs):
+        (JSC::B3::Air::PrintSpecial::extraClobberedRegs):
+        (JSC::B3::Air::PrintSpecial::dumpImpl):
+        (JSC::B3::Air::PrintSpecial::deepDumpImpl):
+        (JSC::Printer::printAirArg):
+        * b3/air/AirPrintSpecial.h: Added.
+        (JSC::Printer::appendAirArg):
+        (JSC::Printer::appendAirArgs):
+        (JSC::Printer::Printer<B3::Air::Tmp>::Printer):
+        (JSC::Printer::Printer<Reg>::Printer):
+        - Add the print() operation for use in LowerToAir.  print() will emit a
+          PrintSpecial that will ultimately emit a MASM print to print what we want.
+        - LowerToAir's print() adds the ability to print Air::Args.
+        - Unlike in the baseline JIT and the DFG, LowerToAir's print() can perturb the
+          usage of registers.  This is because PrintSpecial is a patch point, and it
+          prevents certain optimizations.  If not used carefully, an attempt to print()
+          an Arg by taking a Tmp, can force the B3 Value into a Tmp earlier than it would
+          otherwise do so.  So, use LowerToAir's print() with care.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::setPrinter):
+        - Now we can MASM print CodeBlock*.
+        (WTF::printInternal):
+        - Now we can dataLog CodeBlock* (including null CodeBlock pointers).
+
+        * bytecode/CodeBlock.h:
+
+        * runtime/VM.cpp:
+        (JSC::VM::throwException):
+        - Use the new ability to dataLog CodeBlock*.  No need to do an explicit null
+          check before printing anymore.
+
 2017-04-21  Keith Miller  <keith_miller@apple.com>
 
         Unreviewed, rolling out r215634.
