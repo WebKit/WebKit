@@ -1,3 +1,13 @@
+2017-04-21  David Kilzer  <ddkilzer@apple.com>
+
+        Switch from -std=gnu++11 to -std=gnu++14 for consistency in DerivedSources.make
+        <https://webkit.org/b/171122>
+
+        Reviewed by Brent Fulgham.
+
+        * DerivedSources.make: Switch to -std=gnu++14 for preprocessing
+        headers to check for build settings.
+
 2017-04-21  Jer Noble  <jer.noble@apple.com>
 
         [WK2][MediaCapture] Pass muted and enabled state across process boundary when capturing in UIProcess

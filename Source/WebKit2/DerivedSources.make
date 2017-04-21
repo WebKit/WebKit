@@ -250,7 +250,7 @@ AUTOMATION_PROTOCOL_OUTPUT_FILES = \
 #
 
 ifeq ($(OS),MACOS)
-ifeq ($(shell $(CC) -std=gnu++11 -x c++ -E -P -dM $(SDK_FLAGS) $(FRAMEWORK_FLAGS) $(HEADER_FLAGS) -include "wtf/Platform.h" /dev/null | grep ' WTF_PLATFORM_IOS ' | cut -d' ' -f3), 1)
+ifeq ($(shell $(CC) -std=gnu++14 -x c++ -E -P -dM $(SDK_FLAGS) $(FRAMEWORK_FLAGS) $(HEADER_FLAGS) -include "wtf/Platform.h" /dev/null | grep ' WTF_PLATFORM_IOS ' | cut -d' ' -f3), 1)
 	AUTOMATION_BACKEND_PLATFORM_ARGUMENTS = --platform iOS
 else
 	AUTOMATION_BACKEND_PLATFORM_ARGUMENTS = --platform macOS
