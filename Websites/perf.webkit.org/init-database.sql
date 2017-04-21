@@ -29,7 +29,7 @@ DROP TABLE IF EXISTS uploaded_files CASCADE;
 DROP TABLE IF EXISTS bugs CASCADE;
 DROP TABLE IF EXISTS analysis_test_groups CASCADE;
 DROP TABLE IF EXISTS commit_sets CASCADE;
-DROP TABLE IF EXISTS commit_set_relationships CASCADE;
+DROP TABLE IF EXISTS commit_set_items CASCADE;
 DROP TABLE IF EXISTS build_requests CASCADE;
 DROP TYPE IF EXISTS build_request_status_type CASCADE;
 
@@ -283,11 +283,13 @@ CREATE INDEX testgroup_task_index ON analysis_test_groups(testgroup_task);
 CREATE TABLE commit_sets (
     commitset_id serial PRIMARY KEY);
 
-CREATE TABLE commit_set_relationships (
+CREATE TABLE commit_set_items (
     commitset_set integer REFERENCES commit_sets NOT NULL,
     commitset_commit integer REFERENCES commits,
+    commitset_patch_file integer REFERENCES uploaded_files,
     commitset_root_file integer REFERENCES uploaded_files,
-    CONSTRAINT commitset_must_have_commit_or_root CHECK (commitset_commit IS NOT NULL OR commitset_root_file IS NOT NULL));
+    CONSTRAINT commitset_must_have_commit_or_root CHECK (commitset_commit IS NOT NULL OR commitset_root_file IS NOT NULL),
+    CONSTRAINT commitset_with_patch_must_have_commit CHECK (commitset_patch_file IS NULL OR commitset_commit IS NOT NULL));
 
 CREATE TYPE build_request_status_type as ENUM ('pending', 'scheduled', 'running', 'failed', 'completed', 'canceled');
 CREATE TABLE build_requests (

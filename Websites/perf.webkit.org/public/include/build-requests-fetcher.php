@@ -95,7 +95,7 @@ class BuildRequestsFetcher {
             return;
 
         $commit_rows = $this->db->query_and_fetch_all('SELECT *
-            FROM commit_set_relationships LEFT OUTER JOIN  commits ON commitset_commit = commit_id
+            FROM commit_set_items LEFT OUTER JOIN  commits ON commitset_commit = commit_id
                 LEFT OUTER JOIN repositories ON repository_id = commit_repository
                 WHERE commitset_set = $1', array($commit_set_id));
 

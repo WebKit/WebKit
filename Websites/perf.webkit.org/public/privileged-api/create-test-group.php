@@ -85,7 +85,7 @@ function main()
         $commit_set_id = $db->insert_row('commit_sets', 'commitset', array());
         foreach ($commit_list['set'] as $commit_row) {
             $commit_row['set'] = $commit_set_id;
-            $db->insert_row('commit_set_relationships', 'commitset', $commit_row, 'commit');
+            $db->insert_row('commit_set_items', 'commitset', $commit_row, 'commit');
         }
         array_push($configuration_list, array('commit_set' => $commit_set_id, 'repository_group' => $commit_list['repository_group']));
     }

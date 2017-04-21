@@ -1,5 +1,32 @@
 2017-04-21  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Rename commit_set_relationships to commit_set_items
+        https://bugs.webkit.org/show_bug.cgi?id=171143
+
+        Reviewed by Joseph Pecoraro.
+
+        Renamed commit_set_relationships to commit_set_items. Also added commitset_patch_file in the preparation to add
+        the support for applying patches in custom test groups. To migrate an existing database, run:
+
+        ```sql
+        BEGIN;
+        ALTER TABLE commit_set_relationships RENAME TO commit_set_items;
+        ALTER TABLE commit_set_items ADD COLUMN commitset_patch_file integer REFERENCES uploaded_files;
+        ALTER TABLE commit_set_items ADD CONSTRAINT commitset_with_patch_must_have_commit
+            CHECK (commitset_patch_file IS NULL OR commitset_commit IS NOT NULL);
+        END;
+        ```
+
+        * init-database.sql:
+        * public/include/build-requests-fetcher.php:
+        * public/privileged-api/create-test-group.php:
+        * server-tests/resources/mock-data.js:
+        (MockData.addMockData):
+        (MockData.addMockTestGroupWithGitWebKit):
+        * tools/js/database.js:
+
+2017-04-21  Ryosuke Niwa  <rniwa@webkit.org>
+
         Add the support for creating a custom test group in the analysis task page
 
         Make it possible to create more custom test groups in the analysis task page

@@ -151,7 +151,7 @@ const tableToPrefixMap = {
     'reports': 'report',
     'repositories': 'repository',
     'commit_sets': 'commitset',
-    'commit_set_relationships': 'commitset',
+    'commit_set_items': 'commitset',
     'run_iterations': 'iteration',
     'uploaded_files': 'file',
 }
