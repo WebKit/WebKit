@@ -1,3 +1,25 @@
+2017-04-20  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Test262 bot does not go red with failures
+        https://bugs.webkit.org/show_bug.cgi?id=171044
+
+        Reviewed by Aakash Jain.
+
+        The piped output of run-jsc-stress-tests is different from
+        its non-piped output. Switch to parsing the correct output.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (RunTest262Tests.countFailures):
+        Just count the number of lines that start with "FAIL:".
+
+        * BuildSlaveSupport/build.webkit.org-config/mastercfg_unittest.py:
+        (RunTest262TestsTest.test_no_regressions_output):
+        (test_failure_output):
+        (test_failures_output):
+        Updated tests with new sample output produced partially from bots and
+        locally. In cases of failure the return code of run-jsc-stress-tests
+        is still 0 so update the expected return code in the tests.
+
 2017-04-20  Brady Eidson  <beidson@apple.com>
 
         WebContent process becomes unresponsive after returning nil from async version of -webView:createWebViewWithConfiguration:...

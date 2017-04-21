@@ -153,19 +153,30 @@ class RunTest262TestsTest(unittest.TestCase):
 
     def test_no_regressions_output(self):
         self.assertResults(SUCCESS, ["test262-test"], 0, """Using the following jsc path: /WebKitBuild/Release/jsc
-168/168         """)
+
+Running test262.yaml/test262/test/annexB/built-ins/Date/prototype/getYear/length.js.default
+Running test262.yaml/test262/test/annexB/built-ins/Date/prototype/getYear/length.js.default-strict
+""")
 
     def test_failure_output(self):
-        self.assertResults(FAILURE, ["1 Test262 test failed"], 1, """Using the following jsc path: /WebKitBuild/Release/jsc
-test262.yaml/test262/test/built-ins/Array/from/iter-set-elem-prop-err.js.default: ERROR: Unexpected exit code: 0
-test262.yaml/test262/test/built-ins/Array/from/iter-set-elem-prop-err.js.default-strict: ERROR: Unexpected exit code: 0
-...
-43768/43768 (failed 1)         """)
+        self.assertResults(FAILURE, ["1 Test262 test failed"], 0, """Using the following jsc path: /WebKitBuild/Release/jsc
+
+Running test262.yaml/test262/test/annexB/built-ins/Date/prototype/getYear/length.js.default
+Running test262.yaml/test262/test/annexB/built-ins/Date/prototype/getYear/length.js.default-strict
+test262.yaml/test262/test/annexB/built-ins/Date/prototype/getYear/length.js.default-strict: ERROR: Unexpected exit code: 0
+FAIL: test262.yaml/test262/test/annexB/built-ins/Date/prototype/getYear/length.js.default-strict
+""")
 
     def test_failures_output(self):
-        self.assertResults(FAILURE, ["75 Test262 tests failed"], 75, """Using the following jsc path: /WebKitBuild/Release/jsc
-...
-43768/43768 (failed 75)         """)
+        self.assertResults(FAILURE, ["2 Test262 tests failed"], 0, """Using the following jsc path: /WebKitBuild/Release/jsc
+
+Running test262.yaml/test262/test/annexB/built-ins/Date/prototype/getYear/length.js.default
+test262.yaml/test262/test/annexB/built-ins/Date/prototype/getYear/length.js.default: ERROR: Unexpected exit code: 0
+FAIL: test262.yaml/test262/test/annexB/built-ins/Date/prototype/getYear/length.js.default
+Running test262.yaml/test262/test/annexB/built-ins/Date/prototype/getYear/length.js.default-strict
+test262.yaml/test262/test/annexB/built-ins/Date/prototype/getYear/length.js.default-strict: ERROR: Unexpected exit code: 0
+FAIL: test262.yaml/test262/test/annexB/built-ins/Date/prototype/getYear/length.js.default-strict
+""")
 
 
 class RunLLINTCLoopTestsTest(unittest.TestCase):
