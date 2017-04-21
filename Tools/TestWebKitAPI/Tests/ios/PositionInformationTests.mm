@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if PLATFORM(IOS) && WK_API_ENABLED
+#if ENABLE(DATA_INTERACTION)
 
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"

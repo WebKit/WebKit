@@ -1,3 +1,15 @@
+2017-04-20  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [ios-simulator] PositionInformationTests API tests are timing out
+        https://bugs.webkit.org/show_bug.cgi?id=171089
+
+        Rubber-stamped by Tim Horton.
+
+        Addresses failures observed in the new position information tests added in r215573 by only running them if the
+        DATA_INTERACTION feature flag is enabled.
+
+        * TestWebKitAPI/Tests/ios/PositionInformationTests.mm:
+
 2017-04-20  Brady Eidson  <beidson@apple.com>
 
         Skip WebKit2.OpenAndCloseWindowAsyncCallbackException for now.
