@@ -1,3 +1,19 @@
+2017-04-21  Anders Carlsson  <andersca@apple.com>
+
+        Stop using deprecated APIs, part 4
+        https://bugs.webkit.org/show_bug.cgi?id=171125
+        rdar://problem/31589635
+
+        Reviewed by Tim Horton.
+
+        It doesn't really matter what we pass to these completion functions, since the sheet has already been dismissed at this point
+        so just remove the status parameter.
+
+        * UIProcess/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.mm:
+        (-[WKPaymentAuthorizationViewControllerDelegate paymentAuthorizationViewController:didSelectPaymentMethod:handler:]):
+        (-[WKPaymentAuthorizationViewControllerDelegate paymentAuthorizationViewController:didSelectShippingMethod:handler:]):
+        (-[WKPaymentAuthorizationViewControllerDelegate paymentAuthorizationViewController:didSelectShippingContact:handler:]):
+
 2017-04-21  Andrew Gold  <agold@apple.com>
 
         -[WKUIDelegatePrivate _webView:requestUserMediaAuthorizationForMicrophone:camera:url:mainFrameURL:decisionHandler:] 

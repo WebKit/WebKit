@@ -168,10 +168,7 @@ static WebCore::PaymentRequest::ShippingMethod toShippingMethod(PKShippingMethod
 - (void)paymentAuthorizationViewController:(PKPaymentAuthorizationViewController *)controller didSelectPaymentMethod:(PKPaymentMethod *)paymentMethod handler:(void (^)(PKPaymentRequestPaymentMethodUpdate *update))completion
 {
     if (!_webPaymentCoordinatorProxy) {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-        completion(adoptNS([allocPKPaymentRequestPaymentMethodUpdateInstance() initWithStatus:PKPaymentAuthorizationStatusFailure paymentSummaryItems:@[ ]]).get());
-#pragma clang diagnostic pop
+        completion(adoptNS([allocPKPaymentRequestPaymentMethodUpdateInstance() initWithPaymentSummaryItems:@[ ]]).get());
         return;
     }
 
@@ -182,10 +179,7 @@ static WebCore::PaymentRequest::ShippingMethod toShippingMethod(PKShippingMethod
 
 - (void)paymentAuthorizationViewController:(PKPaymentAuthorizationViewController *)controller didSelectShippingMethod:(PKShippingMethod *)shippingMethod handler:(void (^)(PKPaymentRequestShippingMethodUpdate *update))completion {
     if (!_webPaymentCoordinatorProxy) {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-        completion(adoptNS([allocPKPaymentRequestShippingMethodUpdateInstance() initWithStatus:PKPaymentAuthorizationStatusFailure paymentSummaryItems:@[ ]]).get());
-#pragma clang diagnostic pop
+        completion(adoptNS([allocPKPaymentRequestShippingMethodUpdateInstance() initWithPaymentSummaryItems:@[ ]]).get());
         return;
     }
 
@@ -197,10 +191,7 @@ static WebCore::PaymentRequest::ShippingMethod toShippingMethod(PKShippingMethod
 - (void)paymentAuthorizationViewController:(PKPaymentAuthorizationViewController *)controller didSelectShippingContact:(PKContact *)contact handler:(void (^)(PKPaymentRequestShippingContactUpdate *update))completion
 {
     if (!_webPaymentCoordinatorProxy) {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-        completion(adoptNS([allocPKPaymentRequestShippingContactUpdateInstance() initWithStatus:PKPaymentAuthorizationStatusFailure errors:@[ ] paymentSummaryItems:@[ ] shippingMethods:@[ ]]).get());
-#pragma clang diagnostic pop
+        completion(adoptNS([allocPKPaymentRequestShippingContactUpdateInstance() initWithErrors:@[ ] paymentSummaryItems:@[ ] shippingMethods:@[ ]]).get());
         return;
     }
 
