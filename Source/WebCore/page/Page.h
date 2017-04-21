@@ -329,10 +329,10 @@ public:
     float topContentInset() const { return m_topContentInset; }
     WEBCORE_EXPORT void setTopContentInset(float);
 
-    const FloatBoxExtent& obscuredInsets() const { return m_obscuredInsets; }
-    WEBCORE_EXPORT void setObscuredInsets(const FloatBoxExtent&);
-
 #if PLATFORM(IOS)
+    const FloatBoxExtent& obscuredInsets() const { return m_obscuredInsets; }
+    void setObscuredInsets(FloatBoxExtent insets) { m_obscuredInsets = insets; }
+    
     bool enclosedInScrollableAncestorView() const { return m_enclosedInScrollableAncestorView; }
     void setEnclosedInScrollableAncestorView(bool f) { m_enclosedInScrollableAncestorView = f; }
 #endif
@@ -686,9 +686,10 @@ private:
     float m_viewScaleFactor { 1 };
 
     float m_topContentInset;
-    FloatBoxExtent m_obscuredInsets;
 
 #if PLATFORM(IOS)
+    // This is only used for history scroll position restoration.
+    FloatBoxExtent m_obscuredInsets;
     bool m_enclosedInScrollableAncestorView { false };
 #endif
 

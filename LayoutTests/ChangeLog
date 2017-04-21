@@ -1,3 +1,18 @@
+2017-04-20  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r215597.
+        https://bugs.webkit.org/show_bug.cgi?id=171102
+
+        Made all tests crash under GuardMalloc (Requested by ap on
+        #webkit).
+
+        Reverted changeset:
+
+        "Expose obscured insets to web content (as "safe area
+        insets")"
+        https://bugs.webkit.org/show_bug.cgi?id=171013
+        http://trac.webkit.org/changeset/215597
+
 2017-04-20  Timothy Horton  <timothy_horton@apple.com>
 
         Expose obscured insets to web content (as "safe area insets")
