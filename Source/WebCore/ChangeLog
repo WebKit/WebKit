@@ -1,3 +1,28 @@
+2017-04-21  Jer Noble  <jer.noble@apple.com>
+
+        Fix some spurious ASSERTs when working with capturing media elements
+        https://bugs.webkit.org/show_bug.cgi?id=171096
+
+        Reviewed by Youenn Fablet.
+
+        Two related ASSERTS:
+
+        1) When we added a new PlatformMediaSession MediaType (MediaStreamCapturingAudio), we did not update all the
+        places that validated the enum. This would lead to spurious ASSERTs when an element capturing audio would
+        fail various checks to enusre it's type's validity.
+
+        2) Audio elements will ASSERT when they change page visibility, as they do not have a renderer which implements
+        visibleInViewportStateChanged(). So opt out of visibility-state checking for non-video media elements.
+
+        * html/MediaElementSession.cpp:
+        (WebCore::MediaElementSession::wantsToObserveViewportVisibilityForAutoplay):
+        * platform/audio/PlatformMediaSessionManager.cpp:
+        (WebCore::PlatformMediaSessionManager::resetRestrictions):
+        (WebCore::PlatformMediaSessionManager::addRestriction):
+        (WebCore::PlatformMediaSessionManager::removeRestriction):
+        (WebCore::PlatformMediaSessionManager::restrictions):
+        * platform/audio/PlatformMediaSessionManager.h:
+
 2017-04-21  Konstantin Tokarev  <annulen@yandex.ru>
 
         [cmake] WTF target should not have wtf and subdirectries in public interface

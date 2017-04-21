@@ -135,7 +135,7 @@ private:
     void systemWillSleep() override;
     void systemDidWake() override;
 
-    SessionRestrictions m_restrictions[PlatformMediaSession::WebAudio + 1];
+    SessionRestrictions m_restrictions[PlatformMediaSession::MediaStreamCapturingAudio + 1];
     mutable Vector<PlatformMediaSession*> m_sessions;
     std::unique_ptr<RemoteCommandListener> m_remoteCommandListener;
     std::unique_ptr<SystemSleepListener> m_systemSleepListener;

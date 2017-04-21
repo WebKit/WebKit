@@ -370,6 +370,8 @@ bool MediaElementSession::wantsToObserveViewportVisibilityForMediaControls() con
 
 bool MediaElementSession::wantsToObserveViewportVisibilityForAutoplay() const
 {
+    if (!m_element.isVideo())
+        return false;
     return hasBehaviorRestriction(InvisibleAutoplayNotPermitted) || hasBehaviorRestriction(OverrideUserGestureRequirementForMainContent);
 }
 
