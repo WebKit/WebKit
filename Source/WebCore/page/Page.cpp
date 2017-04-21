@@ -29,6 +29,7 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "ClientRectList.h"
+#include "ConstantPropertyMap.h"
 #include "ContextMenuClient.h"
 #include "ContextMenuController.h"
 #include "DatabaseProvider.h"
@@ -2287,6 +2288,20 @@ void Page::accessibilitySettingsDidChange()
 
     if (neededRecalc)
         LOG(Layout, "hasMediaQueriesAffectedByAccessibilitySettingsChange, enqueueing style recalc");
+}
+
+void Page::setObscuredInsets(const FloatBoxExtent& insets)
+{
+    if (m_obscuredInsets == insets)
+        return;
+
+    m_obscuredInsets = insets;
+
+    for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        if (!frame->document())
+            continue;
+        frame->document()->constantProperties().didChangeObscuredInsets();
+    }
 }
 
 #if ENABLE(DATA_INTERACTION)

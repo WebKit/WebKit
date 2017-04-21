@@ -844,6 +844,11 @@ var
 -internal-variable-value
 
 //
+// UA Constants
+//
+constant
+
+//
 // CSS_PROP_BREAK_BEFORE/AFTER/INSIDE
 //
 avoid-column

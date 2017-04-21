@@ -49,7 +49,13 @@ bool CSSVariableParser::isValidVariableName(const String& string)
     return string.length() >= 2 && string[0] == '-' && string[1] == '-';
 }
 
+static bool isValidConstantName(const CSSParserToken& token)
+{
+    return token.type() == IdentToken;
+}
+
 bool isValidVariableReference(CSSParserTokenRange, bool& hasAtApplyRule);
+bool isValidConstantReference(CSSParserTokenRange, bool& hasAtApplyRule);
 
 static bool classifyBlock(CSSParserTokenRange range, bool& hasReferences, bool& hasAtApplyRule, bool isTopLevelBlock = true)
 {
@@ -59,6 +65,12 @@ static bool classifyBlock(CSSParserTokenRange range, bool& hasReferences, bool& 
             CSSParserTokenRange block = range.consumeBlock();
             if (token.functionId() == CSSValueVar) {
                 if (!isValidVariableReference(block, hasAtApplyRule))
+                    return false; // Bail if any references are invalid
+                hasReferences = true;
+                continue;
+            }
+            if (token.functionId() == CSSValueConstant) {
+                if (!isValidConstantReference(block, hasAtApplyRule))
                     return false; // Bail if any references are invalid
                 hasReferences = true;
                 continue;
@@ -109,6 +121,23 @@ bool isValidVariableReference(CSSParserTokenRange range, bool& hasAtApplyRule)
 {
     range.consumeWhitespace();
     if (!CSSVariableParser::isValidVariableName(range.consumeIncludingWhitespace()))
+        return false;
+    if (range.atEnd())
+        return true;
+
+    if (range.consume().type() != CommaToken)
+        return false;
+    if (range.atEnd())
+        return false;
+
+    bool hasReferences = false;
+    return classifyBlock(range, hasReferences, hasAtApplyRule);
+}
+
+bool isValidConstantReference(CSSParserTokenRange range, bool& hasAtApplyRule)
+{
+    range.consumeWhitespace();
+    if (!isValidConstantName(range.consumeIncludingWhitespace()))
         return false;
     if (range.atEnd())
         return true;

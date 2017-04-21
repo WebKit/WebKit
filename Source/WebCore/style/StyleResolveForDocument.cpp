@@ -30,6 +30,7 @@
 #include "StyleResolveForDocument.h"
 
 #include "CSSFontSelector.h"
+#include "ConstantPropertyMap.h"
 #include "Document.h"
 #include "Frame.h"
 #include "FrameView.h"
@@ -123,6 +124,9 @@ RenderStyle resolveForDocument(const Document& document)
     documentStyle.setFontDescription(fontDescription);
 
     documentStyle.fontCascade().update(&const_cast<Document&>(document).fontSelector());
+
+    for (auto& it : document.constantProperties().values())
+        documentStyle.setCustomPropertyValue(it.key, makeRef(it.value.get()));
 
     return documentStyle;
 }

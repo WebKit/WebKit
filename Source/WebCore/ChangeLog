@@ -1,3 +1,65 @@
+2017-04-21  Timothy Horton  <timothy_horton@apple.com>
+
+        Expose obscured insets to web content (as "safe area insets")
+        https://bugs.webkit.org/show_bug.cgi?id=171013
+        <rdar://problem/31564652>
+
+        Reviewed by Wenson Hsieh and Dave Hyatt.
+
+        Tests: fast/css/variables/constants/invalid-constant-name-fallback.html
+               fast/css/variables/constants/ios/safe-area-inset-set.html
+               fast/css/variables/constants/safe-area-inset-cannot-override.html
+               fast/css/variables/constants/safe-area-inset-zero.html
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSValueKeywords.in:
+        * css/CSSVariableData.cpp:
+        (WebCore::CSSVariableData::checkVariablesForCyclesWithRange):
+        (WebCore::CSSVariableData::resolveTokenRange):
+        * css/parser/CSSVariableParser.cpp:
+        (WebCore::isValidConstantName):
+        (WebCore::classifyBlock):
+        (WebCore::isValidConstantReference):
+        Add a constant() function, which takes both custom properties and
+        arbitrary idents which are looked up in ConstantPropertyMap, allowing
+        fallback from the arbitrary, UA-defined idents to custom properties.
+
+        * dom/ConstantPropertyMap.cpp: Added.
+        (WebCore::ConstantPropertyMap::ConstantPropertyMap):
+        (WebCore::ConstantPropertyMap::values):
+        (WebCore::ConstantPropertyMap::nameForProperty):
+        (WebCore::ConstantPropertyMap::setValueForProperty):
+        (WebCore::ConstantPropertyMap::buildValues):
+        (WebCore::variableDataForSafeAreaInset):
+        (WebCore::ConstantPropertyMap::didChangeObscuredInsets):
+        * dom/ConstantPropertyMap.h: Added.
+        Keep a mapping of UA-defined "constants", which can be looked up
+        from CSS via the aforementioned function. For now, this mapping
+        includes only safe-area-inset-{top, right, bottom, left}, which
+        expose the obscured insets (now that they can be painted into via
+        the viewport parameter clip-to-safe-area-inset=no).
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::didChangeObscuredInsets):
+        * dom/Document.h:
+        (WebCore::Document::constantProperties):
+        * page/Page.cpp:
+        (WebCore::Page::setObscuredInsets):
+        * page/Page.h:
+        (WebCore::Page::setObscuredInsets): Deleted.
+        Make setObscuredInsets and related storage not iOS-specific, though
+        nothing from the other platforms yet calls this code.
+
+        * style/StyleResolveForDocument.cpp:
+        (WebCore::Style::resolveForDocument):
+        Grab the constant properties from ConstantPropertyMap and plop them into
+        the CustomPropertyValueMap. Constant properties aren't allowed to start
+        with --, and variable properties must, so there is no opportunity here
+        for exposing things to var() (or allowing custom properties to override
+        UA-defined constant properties).
+
 2017-04-20  Konstantin Tokarev  <annulen@yandex.ru>
 
         [cmake] Define FORWARDING_HEADERS_DIR in WebKitFS and use it everywhere

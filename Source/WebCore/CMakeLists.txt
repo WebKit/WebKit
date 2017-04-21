@@ -1453,6 +1453,7 @@ set(WebCore_SOURCES
     dom/Comment.cpp
     dom/ComposedTreeIterator.cpp
     dom/CompositionEvent.cpp
+    dom/ConstantPropertyMap.cpp
     dom/ContainerNode.cpp
     dom/ContainerNodeAlgorithms.cpp
     dom/ContextDestructionObserver.cpp

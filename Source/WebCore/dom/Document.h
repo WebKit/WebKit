@@ -73,6 +73,7 @@ namespace WebCore {
 class AXObjectCache;
 class Attr;
 class CDATASection;
+class CSSCustomPropertyValue;
 class CSSFontSelector;
 class CSSStyleDeclaration;
 class CSSStyleSheet;
@@ -83,6 +84,7 @@ class CachedScript;
 class CanvasRenderingContext;
 class CharacterData;
 class Comment;
+class ConstantPropertyMap;
 class DOMImplementation;
 class DOMNamedFlowCollection;
 class DOMSelection;
@@ -1206,6 +1208,8 @@ public:
 
     DocumentSharedObjectPool* sharedObjectPool() { return m_sharedObjectPool.get(); }
 
+    void invalidateMatchedPropertiesCacheAndForceStyleRecalc();
+
     void didRemoveAllPendingStylesheet();
     void didClearStyleResolver();
 
@@ -1298,6 +1302,8 @@ public:
 
     void attachToCachedFrame(CachedFrameBase&);
     void detachFromCachedFrame(CachedFrameBase&);
+
+    ConstantPropertyMap& constantProperties() const { return *m_constantPropertyMap; }
 
 protected:
     enum ConstructionFlags { Synthesized = 1, NonRenderedPlaceholder = 1 << 1 };
@@ -1534,6 +1540,8 @@ private:
     HashMap<StringImpl*, Element*, ASCIICaseInsensitiveHash> m_elementsByAccessKey;
 
     DocumentOrderedMap m_imagesByUsemap;
+
+    std::unique_ptr<ConstantPropertyMap> m_constantPropertyMap;
 
     std::unique_ptr<SelectorQueryCache> m_selectorQueryCache;
 
