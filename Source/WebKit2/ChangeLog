@@ -1,3 +1,14 @@
+2017-04-21  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Include iOS-specific headers inside preprocessor guard
+        https://bugs.webkit.org/show_bug.cgi?id=171104
+
+        Reviewed by Michael Catanzaro.
+
+        This patch should fix Mac cmake build.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+
 2017-04-21  Alex Christensen  <achristensen@webkit.org>
 
         Reduce copies and allocations in SharedBuffer::append

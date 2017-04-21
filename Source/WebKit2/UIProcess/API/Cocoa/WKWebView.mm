@@ -36,8 +36,6 @@
 #import "FindClient.h"
 #import "FullscreenClient.h"
 #import "IconLoadingDelegate.h"
-#import "InteractionInformationAtPosition.h"
-#import "InteractionInformationRequest.h"
 #import "LegacySessionStateCoding.h"
 #import "Logging.h"
 #import "NavigationState.h"
@@ -119,7 +117,8 @@
 #import <wtf/spi/darwin/dyldSPI.h>
 
 #if PLATFORM(IOS)
-#import "_WKWebViewPrintFormatter.h"
+#import "InteractionInformationAtPosition.h"
+#import "InteractionInformationRequest.h"
 #import "ProcessThrottler.h"
 #import "RemoteLayerTreeDrawingAreaProxy.h"
 #import "RemoteScrollingCoordinatorProxy.h"
@@ -130,6 +129,7 @@
 #import "WKScrollView.h"
 #import "WKWebViewContentProviderRegistry.h"
 #import "WebVideoFullscreenManagerProxy.h"
+#import "_WKWebViewPrintFormatter.h"
 #import <UIKit/UIApplication.h>
 #import <WebCore/CoreGraphicsSPI.h>
 #import <WebCore/FrameLoaderTypes.h>
