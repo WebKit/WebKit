@@ -59,6 +59,7 @@ public:
     CategoryType categoryOverride() const;
 
     float sampleRate() const;
+    size_t bufferSize() const;
     size_t numberOfOutputChannels() const;
 
     bool tryToSetActive(bool);

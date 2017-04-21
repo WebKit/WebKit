@@ -171,6 +171,11 @@ float AudioSession::sampleRate() const
     return [[AVAudioSession sharedInstance] sampleRate];
 }
 
+size_t AudioSession::bufferSize() const
+{
+    return [[AVAudioSession sharedInstance] IOBufferDuration] * sampleRate();
+}
+
 size_t AudioSession::numberOfOutputChannels() const
 {
     return [[AVAudioSession sharedInstance] outputNumberOfChannels];

@@ -81,6 +81,12 @@ float AudioSession::sampleRate() const
     return 0;
 }
 
+size_t AudioSession::bufferSize() const
+{
+    notImplemented();
+    return 0;
+}
+
 size_t AudioSession::numberOfOutputChannels() const
 {
     notImplemented();

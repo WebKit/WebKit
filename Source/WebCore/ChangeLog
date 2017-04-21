@@ -1,5 +1,23 @@
 2017-04-21  Jer Noble  <jer.noble@apple.com>
 
+        Add a method to retrieve the current I/O buffer size from AudioSession
+        https://bugs.webkit.org/show_bug.cgi?id=171126
+
+        Reviewed by Eric Carlson.
+
+        There is an existing method to get and set the preferred I/O buffer size; add a matching method to return
+        the acutal I/O buffer size.
+
+        * platform/audio/AudioSession.cpp:
+        (WebCore::AudioSession::bufferSize):
+        * platform/audio/AudioSession.h:
+        * platform/audio/ios/AudioSessionIOS.mm:
+        (WebCore::AudioSession::bufferSize):
+        * platform/audio/mac/AudioSessionMac.cpp:
+        (WebCore::AudioSession::bufferSize):
+
+2017-04-21  Jer Noble  <jer.noble@apple.com>
+
         Make AudioSampleBufferList::reset() less expensive.
         https://bugs.webkit.org/show_bug.cgi?id=171124
 

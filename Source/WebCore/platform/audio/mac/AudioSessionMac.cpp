@@ -101,6 +101,22 @@ float AudioSession::sampleRate() const
     return narrowPrecisionToFloat(nominalSampleRate);
 }
 
+size_t AudioSession::bufferSize() const
+{
+    UInt32 bufferSize;
+    UInt32 bufferSizeSize = sizeof(bufferSize);
+
+    AudioObjectPropertyAddress bufferSizeAddress = {
+        kAudioDevicePropertyBufferFrameSize,
+        kAudioObjectPropertyScopeGlobal,
+        kAudioObjectPropertyElementMaster };
+    OSStatus result = AudioObjectGetPropertyData(defaultDevice(), &bufferSizeAddress, 0, 0, &bufferSizeSize, &bufferSize);
+
+    if (result)
+        return 0;
+    return bufferSize;
+}
+
 size_t AudioSession::numberOfOutputChannels() const
 {
     notImplemented();
