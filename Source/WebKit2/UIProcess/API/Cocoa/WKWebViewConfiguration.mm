@@ -131,7 +131,6 @@ private:
     BOOL _controlledByAutomation;
 #if ENABLE(MEDIA_STREAM)
     BOOL _mediaStreamEnabled;
-    BOOL _shouldCaptureAudioInUIProcess;
 #endif
 
 #if ENABLE(APPLE_PAY)
@@ -304,7 +303,6 @@ private:
     configuration->_controlledByAutomation = self->_controlledByAutomation;
 #if ENABLE(MEDIA_STREAM)
     configuration->_mediaStreamEnabled = self->_mediaStreamEnabled;
-    configuration->_shouldCaptureAudioInUIProcess = self->_shouldCaptureAudioInUIProcess;
 #endif
 
 #if PLATFORM(IOS)
@@ -746,22 +744,6 @@ static NSString *defaultApplicationNameForUserAgent()
 {
 #if ENABLE(MEDIA_STREAM)
     _mediaStreamEnabled = enabled;
-#endif
-}
-
-- (BOOL)_shouldCaptureAudioInUIProcess
-{
-#if ENABLE(MEDIA_STREAM)
-    return _shouldCaptureAudioInUIProcess;
-#else
-    return NO;
-#endif
-}
-
-- (void)_setShouldCaptureAudioInUIProcess:(BOOL)value
-{
-#if ENABLE(MEDIA_STREAM)
-    _shouldCaptureAudioInUIProcess = value;
 #endif
 }
 

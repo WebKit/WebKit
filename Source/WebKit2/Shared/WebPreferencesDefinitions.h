@@ -264,7 +264,6 @@
     macro(GamepadsEnabled, gamepadsEnabled, Bool, bool, true, "Gamepads", "Web Gamepad API support") \
     macro(InputEventsEnabled, inputEventsEnabled, Bool, bool, true, "Input Events", "Enable InputEvents support") \
     macro(CredentialManagementEnabled, credentialManagementEnabled, Bool, bool, false, "Credential Management", "Enable Credential Management support") \
-    macro(ShouldCaptureAudioInUIProcess, shouldCaptureAudioInUIProcess, Bool, bool, DEFAULT_SHOULD_CAPTURE_AUDIO_IN_UIPROCESS, "Capture", "Capture Audio in UIProcess") \
     \
 
 #define FOR_EACH_WEBKIT_DOUBLE_PREFERENCE(macro) \
