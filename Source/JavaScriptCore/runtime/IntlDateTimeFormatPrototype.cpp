@@ -41,6 +41,9 @@
 namespace JSC {
 
 static EncodedJSValue JSC_HOST_CALL IntlDateTimeFormatPrototypeGetterFormat(ExecState*);
+#if JSC_ICU_HAS_UFIELDPOSITER
+static EncodedJSValue JSC_HOST_CALL IntlDateTimeFormatPrototypeFuncFormatToParts(ExecState*);
+#endif
 static EncodedJSValue JSC_HOST_CALL IntlDateTimeFormatPrototypeFuncResolvedOptions(ExecState*);
 
 }
@@ -58,10 +61,10 @@ const ClassInfo IntlDateTimeFormatPrototype::s_info = { "Object", &Base::s_info,
 @end
 */
 
-IntlDateTimeFormatPrototype* IntlDateTimeFormatPrototype::create(VM& vm, JSGlobalObject*, Structure* structure)
+IntlDateTimeFormatPrototype* IntlDateTimeFormatPrototype::create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
 {
     IntlDateTimeFormatPrototype* object = new (NotNull, allocateCell<IntlDateTimeFormatPrototype>(vm.heap)) IntlDateTimeFormatPrototype(vm, structure);
-    object->finishCreation(vm, structure);
+    object->finishCreation(vm, globalObject, structure);
     return object;
 }
 
@@ -75,9 +78,15 @@ IntlDateTimeFormatPrototype::IntlDateTimeFormatPrototype(VM& vm, Structure* stru
 {
 }
 
-void IntlDateTimeFormatPrototype::finishCreation(VM& vm, Structure*)
+void IntlDateTimeFormatPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject, Structure*)
 {
     Base::finishCreation(vm);
+#if JSC_ICU_HAS_UFIELDPOSITER
+    JSFunction* formatToPartsFunction = JSFunction::create(vm, globalObject, 0, vm.propertyNames->formatToParts.string(), IntlDateTimeFormatPrototypeFuncFormatToParts);
+    putDirectWithoutTransition(vm, vm.propertyNames->formatToParts, formatToPartsFunction, DontEnum);
+#else
+    UNUSED_PARAM(globalObject);
+#endif
 }
 
 static EncodedJSValue JSC_HOST_CALL IntlDateTimeFormatFuncFormatDateTime(ExecState* state)
@@ -146,6 +155,34 @@ EncodedJSValue JSC_HOST_CALL IntlDateTimeFormatPrototypeGetterFormat(ExecState* 
     // 4. Return dtf.[[boundFormat]].
     return JSValue::encode(boundFormat);
 }
+
+#if JSC_ICU_HAS_UFIELDPOSITER
+EncodedJSValue JSC_HOST_CALL IntlDateTimeFormatPrototypeFuncFormatToParts(ExecState* state)
+{
+    VM& vm = state->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    // 15.4 Intl.DateTimeFormat.prototype.formatToParts (ECMA-402 4.0)
+    // https://tc39.github.io/ecma402/#sec-Intl.DateTimeFormat.prototype.formatToParts
+
+    IntlDateTimeFormat* dateTimeFormat = jsDynamicCast<IntlDateTimeFormat*>(vm, state->thisValue());
+    if (!dateTimeFormat)
+        return JSValue::encode(throwTypeError(state, scope, ASCIILiteral("Intl.DateTimeFormat.prototype.formatToParts called on value that's not an object initialized as a DateTimeFormat")));
+
+    JSValue date = state->argument(0);
+    double value;
+
+    if (date.isUndefined())
+        value = JSValue::decode(dateNow(state)).toNumber(state);
+    else {
+        value = date.toNumber(state);
+        RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    }
+
+    scope.release();
+    return JSValue::encode(dateTimeFormat->formatToParts(*state, value));
+}
+#endif
 
 EncodedJSValue JSC_HOST_CALL IntlDateTimeFormatPrototypeFuncResolvedOptions(ExecState* state)
 {

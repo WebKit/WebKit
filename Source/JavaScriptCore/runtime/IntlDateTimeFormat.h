@@ -29,6 +29,11 @@
 
 #include "JSDestructibleObject.h"
 #include <unicode/udat.h>
+#include <unicode/uvernum.h>
+
+#if U_ICU_VERSION_MAJOR_NUM >= 55
+#define JSC_ICU_HAS_UFIELDPOSITER 1
+#endif
 
 namespace JSC {
 
@@ -46,6 +51,9 @@ public:
 
     void initializeDateTimeFormat(ExecState&, JSValue locales, JSValue options);
     JSValue format(ExecState&, double value);
+#if JSC_ICU_HAS_UFIELDPOSITER
+    JSValue formatToParts(ExecState&, double value);
+#endif
     JSObject* resolvedOptions(ExecState&);
 
     JSBoundFunction* boundFormat() const { return m_boundFormat.get(); }
@@ -101,6 +109,14 @@ private:
     Minute m_minute { Minute::None };
     Second m_second { Second::None };
     TimeZoneName m_timeZoneName { TimeZoneName::None };
+
+#if JSC_ICU_HAS_UFIELDPOSITER
+    struct UFieldPositionIteratorDeleter {
+        void operator()(UFieldPositionIterator*) const;
+    };
+
+    static const char* partTypeString(UDateFormatField);
+#endif
 };
 
 } // namespace JSC

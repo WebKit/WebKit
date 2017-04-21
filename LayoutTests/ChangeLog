@@ -1,3 +1,15 @@
+2017-04-21  Andy VanWagoner  <thetalecrafter@gmail.com>
+
+        [INTL] Implement Intl.DateTimeFormat.prototype.formatToParts
+        https://bugs.webkit.org/show_bug.cgi?id=169458
+
+        Reviewed by JF Bastien.
+
+        Add tests for formatToParts
+
+        * js/intl-datetimeformat-expected.txt:
+        * js/script-tests/intl-datetimeformat.js:
+
 2017-04-21  Timothy Horton  <timothy_horton@apple.com>
 
         Expose obscured insets to web content (as "safe area insets")

@@ -211,6 +211,7 @@
     macro(focus) \
     macro(forEach) \
     macro(formatMatcher) \
+    macro(formatToParts) \
     macro(forward) \
     macro(frames) \
     macro(from) \

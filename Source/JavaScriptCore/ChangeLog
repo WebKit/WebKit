@@ -1,3 +1,23 @@
+2017-04-21  Andy VanWagoner  <thetalecrafter@gmail.com>
+
+        [INTL] Implement Intl.DateTimeFormat.prototype.formatToParts
+        https://bugs.webkit.org/show_bug.cgi?id=169458
+
+        Reviewed by JF Bastien.
+
+        Use udat_formatForFields to iterate through the parts of a formatted date string.
+        Make formatToParts and related functions dependent on ICU version >= 55.
+
+        * icu/unicode/udat.h: Update to 55.1.
+        * icu/unicode/ufieldpositer.h: Added from 55.1.
+        * icu/unicode/uvernum.h: Update to 55.1
+        * runtime/IntlDateTimeFormat.cpp:
+        (JSC::IntlDateTimeFormat::partTypeString): Convert UDateFormatField to string.
+        (JSC::IntlDateTimeFormat::formatToParts): Return parts of formatted date string.
+        * runtime/IntlDateTimeFormat.h:
+        * runtime/IntlDateTimeFormatPrototype.cpp:
+        (JSC::IntlDateTimeFormatPrototypeFuncFormatToParts): Add prototype function formatToParts.
+
 2017-04-20  Konstantin Tokarev  <annulen@yandex.ru>
 
         [cmake] Define FORWARDING_HEADERS_DIR in WebKitFS and use it everywhere
