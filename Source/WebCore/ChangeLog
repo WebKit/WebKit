@@ -1,3 +1,27 @@
+2017-03-22  Matt Rajca  <mrajca@apple.com>
+
+        Consider muting audio hardware a form of autoplay interference.
+        https://bugs.webkit.org/show_bug.cgi?id=169971
+
+        Reviewed by Eric Carlson.
+
+        If the user mutes audio hardware and a media element is auto-playing, consider that
+        as a form of auto-play interference that we tell clients about.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement):
+        (WebCore::HTMLMediaElement::~HTMLMediaElement):
+        (WebCore::HTMLMediaElement::hardwareMutedStateDidChange):
+        * html/HTMLMediaElement.h:
+        * platform/audio/AudioSession.h:
+        (WebCore::AudioSession::MutedStateObserver::~MutedStateObserver):
+        * platform/audio/mac/AudioSessionMac.cpp:
+        (WebCore::AudioSession::isMuted):
+        (WebCore::muteProcess):
+        (WebCore::AudioSession::handleMutedStateChange):
+        (WebCore::AudioSession::addMutedStateObserver):
+        (WebCore::AudioSession::removeMutedStateObserver):
+
 2017-04-21  Chris Dumez  <cdumez@apple.com>
 
         Regression(r206240): XMLSerializer.serializeToString() does not properly escape '<' / '>' in attribute values

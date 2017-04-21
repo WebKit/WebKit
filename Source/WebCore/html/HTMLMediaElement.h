@@ -50,6 +50,10 @@
 #include "VideoTrack.h"
 #endif
 
+#if USE(AUDIO_SESSION) && PLATFORM(MAC)
+#include "AudioSession.h"
+#endif
+
 #ifndef NDEBUG
 #include <wtf/StringPrintStream.h>
 #endif
@@ -119,6 +123,9 @@ class HTMLMediaElement
     , private AudioTrackClient
     , private TextTrackClient
     , private VideoTrackClient
+#endif
+#if USE(AUDIO_SESSION) && PLATFORM(MAC)
+    , private AudioSession::MutedStateObserver
 #endif
 {
 public:
@@ -807,6 +814,10 @@ private:
     bool canProduceAudio() const final;
 
     void pageMutedStateDidChange() override;
+
+#if USE(AUDIO_SESSION) && PLATFORM(MAC)
+    void hardwareMutedStateDidChange(AudioSession*) final;
+#endif
 
     bool effectiveMuted() const;
 

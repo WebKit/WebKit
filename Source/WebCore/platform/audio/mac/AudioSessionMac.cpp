@@ -32,6 +32,7 @@
 #include "Logging.h"
 #include "NotImplemented.h"
 #include <CoreAudio/AudioHardware.h>
+#include <wtf/MainThread.h>
 
 namespace WebCore {
 
@@ -51,11 +52,14 @@ static AudioDeviceID defaultDevice()
 }
 
 class AudioSessionPrivate {
-public:    
+public:
+    AudioSessionPrivate(bool mutedState)
+        : lastMutedState(mutedState) { }
+    bool lastMutedState;
 };
 
 AudioSession::AudioSession()
-    : m_private(std::make_unique<AudioSessionPrivate>())
+    : m_private(std::make_unique<AudioSessionPrivate>(isMuted()))
 {
 }
 
@@ -177,6 +181,68 @@ void AudioSession::setPreferredBufferSize(size_t bufferSize)
     else
         LOG(Media, "AudioSession::setPreferredBufferSize(%zu)", bufferSize);
 #endif
+}
+
+bool AudioSession::isMuted() const
+{
+    UInt32 mute = 0;
+    UInt32 muteSize = sizeof(mute);
+    AudioObjectPropertyAddress muteAddress = { kAudioDevicePropertyMute, kAudioDevicePropertyScopeOutput, kAudioObjectPropertyElementMaster };
+    AudioObjectGetPropertyData(defaultDevice(), &muteAddress, 0, nullptr, &muteSize, &mute);
+    
+    switch (mute) {
+    case 0:
+        return false;
+    case 1:
+        return true;
+    default:
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+}
+
+static OSStatus handleMutePropertyChange(AudioObjectID, UInt32, const AudioObjectPropertyAddress*, void* inClientData)
+{
+    callOnMainThread([inClientData] {
+        reinterpret_cast<AudioSession*>(inClientData)->handleMutedStateChange();
+    });
+    return noErr;
+}
+
+void AudioSession::handleMutedStateChange()
+{
+    if (!m_private)
+        return;
+
+    bool isCurrentlyMuted = isMuted();
+    if (m_private->lastMutedState == isCurrentlyMuted)
+        return;
+
+    for (auto* observer : m_observers)
+        observer->hardwareMutedStateDidChange(this);
+
+    m_private->lastMutedState = isCurrentlyMuted;
+}
+
+void AudioSession::addMutedStateObserver(MutedStateObserver* observer)
+{
+    m_observers.add(observer);
+
+    if (m_observers.size() > 1)
+        return;
+
+    AudioObjectPropertyAddress muteAddress = { kAudioDevicePropertyMute, kAudioDevicePropertyScopeOutput, kAudioObjectPropertyElementMaster };
+    AudioObjectAddPropertyListener(defaultDevice(), &muteAddress, handleMutePropertyChange, this);
+}
+
+void AudioSession::removeMutedStateObserver(MutedStateObserver* observer)
+{
+    if (m_observers.size() == 1) {
+        AudioObjectPropertyAddress muteAddress = { kAudioDevicePropertyMute, kAudioDevicePropertyScopeOutput, kAudioObjectPropertyElementMaster };
+        AudioObjectRemovePropertyListener(defaultDevice(), &muteAddress, handleMutePropertyChange, this);
+    }
+
+    m_observers.remove(observer);
 }
 
 }

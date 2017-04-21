@@ -31,6 +31,7 @@
 #if USE(AUDIO_SESSION)
 
 #include <memory>
+#include <wtf/HashSet.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Noncopyable.h>
 
@@ -67,12 +68,26 @@ public:
     size_t preferredBufferSize() const;
     void setPreferredBufferSize(size_t);
 
+    class MutedStateObserver {
+    public:
+        virtual ~MutedStateObserver() { }
+
+        virtual void hardwareMutedStateDidChange(AudioSession*) = 0;
+    };
+
+    void addMutedStateObserver(MutedStateObserver*);
+    void removeMutedStateObserver(MutedStateObserver*);
+
+    bool isMuted() const;
+    void handleMutedStateChange();
+
 private:
     friend class NeverDestroyed<AudioSession>;
     AudioSession();
     ~AudioSession();
 
     std::unique_ptr<AudioSessionPrivate> m_private;
+    HashSet<MutedStateObserver*> m_observers;
 };
 
 }
