@@ -30,6 +30,8 @@
 
 #pragma once
 
+#include <wtf/text/StringCommon.h>
+
 namespace WebCore {
 
 template<typename CharType>
@@ -78,6 +80,18 @@ void reverseSkipWhile(const CharType*& position, const CharType* start)
 {
     while (position >= start && characterPredicate(*position))
         --position;
+}
+
+template<typename CharacterType, unsigned lowercaseLettersLength>
+bool skipExactlyIgnoringASCIICase(const CharacterType*& position, const CharacterType* end, const char (&lowercaseLetters)[lowercaseLettersLength])
+{
+    if (position + lowercaseLettersLength > end)
+        return false;
+
+    bool result = WTF::equalLettersIgnoringASCIICase(position, lowercaseLettersLength - 1, lowercaseLetters);
+    if (result)
+        position += (lowercaseLettersLength - 1);
+    return result;
 }
 
 } // namespace WebCore

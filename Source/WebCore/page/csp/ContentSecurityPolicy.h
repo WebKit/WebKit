@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include "ContentSecurityPolicyHash.h"
 #include "ContentSecurityPolicyResponseHeaders.h"
 #include "SecurityOrigin.h"
 #include "SecurityOriginHash.h"
@@ -55,8 +56,6 @@ class ScriptExecutionContext;
 class SecurityOrigin;
 class TextEncoding;
 class URL;
-
-enum class ContentSecurityPolicyHashAlgorithm;
 
 typedef Vector<std::unique_ptr<ContentSecurityPolicyDirectiveList>> CSPDirectiveListVector;
 typedef int SandboxFlags;

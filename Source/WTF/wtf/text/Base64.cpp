@@ -274,6 +274,14 @@ bool base64Decode(const String& in, SignedOrUnsignedCharVectorAdapter out, unsig
     return base64DecodeInternal(in.characters16(), length, out, options, base64DecMap);
 }
 
+bool base64Decode(StringView in, SignedOrUnsignedCharVectorAdapter out, unsigned options)
+{
+    unsigned length = in.length();
+    if (!length || in.is8Bit())
+        return base64DecodeInternal(in.characters8(), length, out, options, base64DecMap);
+    return base64DecodeInternal(in.characters16(), length, out, options, base64DecMap);
+}
+
 bool base64Decode(const Vector<char>& in, SignedOrUnsignedCharVectorAdapter out, unsigned options)
 {
     out.clear();
@@ -291,6 +299,14 @@ bool base64Decode(const char* data, unsigned len, SignedOrUnsignedCharVectorAdap
 }
 
 bool base64URLDecode(const String& in, SignedOrUnsignedCharVectorAdapter out)
+{
+    unsigned length = in.length();
+    if (!length || in.is8Bit())
+        return base64DecodeInternal(in.characters8(), length, out, Base64Default, base64URLDecMap);
+    return base64DecodeInternal(in.characters16(), length, out, Base64Default, base64URLDecMap);
+}
+
+bool base64URLDecode(StringView in, SignedOrUnsignedCharVectorAdapter out)
 {
     unsigned length = in.length();
     if (!length || in.is8Bit())

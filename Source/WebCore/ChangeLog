@@ -1,3 +1,65 @@
+2017-04-20  Sam Weinig  <sam@webkit.org>
+
+        Split cryptographic digest computation and parsing out of CSP code so it can be reused
+        https://bugs.webkit.org/show_bug.cgi?id=171076
+
+        Reviewed by Chris Dumez.
+
+        Factor out cryptographic digest parsing from Content Security Policy code
+        so that it can be reused for the Subresource Integrity implementation.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        Add new files.
+
+        * html/parser/ParsingUtilities.h:
+        (WebCore::skipExactlyIgnoringASCIICase):
+        Add parsing helper to match / skip over a constant string, using IgnoringASCIICase semantics.
+
+        * loader/ResourceCryptographicDigest.cpp: Added.
+        (WebCore::parseHashAlgorithmAdvancingPosition):
+        (WebCore::parseCryptographicDigestImpl):
+        (WebCore::parseCryptographicDigest):
+        Move parsing of cryptographic-digest strings from ContentSecurityPolicySourceList.cpp
+        and optimize it a little by avoiding String allocations and generalizing it so that it
+        can parse either UChars or LChars.
+
+        * loader/ResourceCryptographicDigest.h: Added.
+        (WebCore::ResourceCryptographicDigest::operator==):
+        (WebCore::ResourceCryptographicDigest::operator!=):
+        (WTF::DefaultHash<WebCore::ResourceCryptographicDigest>::Hash::hash):
+        (WTF::DefaultHash<WebCore::ResourceCryptographicDigest>::Hash::equal):
+        (WTF::HashTraits<WebCore::ResourceCryptographicDigest>::emptyValue):
+        (WTF::HashTraits<WebCore::ResourceCryptographicDigest>::constructDeletedValue):
+        (WTF::HashTraits<WebCore::ResourceCryptographicDigest>::isDeletedValue):
+        Add a struct (rather than using a std::pair) to represent the digest + algorithm. And add
+        HashTraits so it can be used as HashMap.
+        
+        * page/csp/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::findHashOfContentInPolicies):
+        (WebCore::toCryptoDigestAlgorithm): Deleted.
+        Move algorithm conversion to ResourceCryptographicDigest.cpp. Make use of new 
+        cryptographicDigestForBytes function to do hashing.
+
+        * page/csp/ContentSecurityPolicy.h:
+        * page/csp/ContentSecurityPolicyHash.h:
+        (WTF::DefaultHash<WebCore::ContentSecurityPolicyDigest>::Hash::hash): Deleted.
+        (WTF::DefaultHash<WebCore::ContentSecurityPolicyDigest>::Hash::equal): Deleted.
+        Remove HashTraits for the digest, this is now handled by ResourceCryptographicDigest. 
+        To keep things relatively straight-forward, redefine ContentSecurityPolicyHashAlgorithm
+        and ContentSecurityPolicyHash in terms of ResourceCryptographicDigest, so that less code
+        has to be changed all at once. In a later pass, if wanted, we can remove these using 
+        declarations.
+
+        * page/csp/ContentSecurityPolicySourceList.cpp:
+        (WebCore::isNonceCharacter):
+        Use renamed isBase64OrBase64URLCharacter predicate.
+
+        (WebCore::ContentSecurityPolicySourceList::parseHashSource):
+        Rework using ResourceCryptographicDigest parsing. Quotation and maximum digest
+        length have been kept here, as they are not applicable to other uses of 
+        the digest, specifically Subresource Integrity.
+
 2017-04-21  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed fix after r215624; null-deref crash.

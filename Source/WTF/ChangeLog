@@ -1,3 +1,20 @@
+2017-04-20  Sam Weinig  <sam@webkit.org>
+
+        Split cryptographic digest computation and parsing out of CSP code so it can be reused
+        https://bugs.webkit.org/show_bug.cgi?id=171076
+
+        Reviewed by Chris Dumez.
+
+        * wtf/text/Base64.cpp:
+        (WTF::base64Decode):
+        (WTF::base64URLDecode):
+        Add overloads for base64Decode and base64URLDecode that take a StringView, to avoid allocations
+        of Strings.
+
+        * wtf/text/Base64.h:
+        (WTF::isBase64OrBase64URLCharacter):
+        Move helper predicate used for parsing either type of Base64 encoded string from WebCore.
+
 2017-04-21  Keith Miller  <keith_miller@apple.com>
 
         Unreviewed, rolling out r215634.

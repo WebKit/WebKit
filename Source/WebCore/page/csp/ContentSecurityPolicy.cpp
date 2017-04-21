@@ -311,20 +311,6 @@ bool ContentSecurityPolicy::allPoliciesAllow(ViolatedDirectiveCallback&& callbac
     return isAllowed;
 }
 
-static PAL::CryptoDigest::Algorithm toCryptoDigestAlgorithm(ContentSecurityPolicyHashAlgorithm algorithm)
-{
-    switch (algorithm) {
-    case ContentSecurityPolicyHashAlgorithm::SHA_256:
-        return PAL::CryptoDigest::Algorithm::SHA_256;
-    case ContentSecurityPolicyHashAlgorithm::SHA_384:
-        return PAL::CryptoDigest::Algorithm::SHA_384;
-    case ContentSecurityPolicyHashAlgorithm::SHA_512:
-        return PAL::CryptoDigest::Algorithm::SHA_512;
-    }
-    ASSERT_NOT_REACHED();
-    return PAL::CryptoDigest::Algorithm::SHA_512;
-}
-
 template<typename Predicate>
 ContentSecurityPolicy::HashInEnforcedAndReportOnlyPoliciesPair ContentSecurityPolicy::findHashOfContentInPolicies(Predicate&& predicate, const String& content, OptionSet<ContentSecurityPolicyHashAlgorithm> algorithms) const
 {
@@ -343,9 +329,7 @@ ContentSecurityPolicy::HashInEnforcedAndReportOnlyPoliciesPair ContentSecurityPo
     bool foundHashInEnforcedPolicies = false;
     bool foundHashInReportOnlyPolicies = false;
     for (auto algorithm : algorithms) {
-        auto cryptoDigest = PAL::CryptoDigest::create(toCryptoDigestAlgorithm(algorithm));
-        cryptoDigest->addBytes(contentCString.data(), contentCString.length());
-        ContentSecurityPolicyHash hash = { algorithm, cryptoDigest->computeHash() };
+        ContentSecurityPolicyHash hash = cryptographicDigestForBytes(algorithm, contentCString.data(), contentCString.length());
         if (!foundHashInEnforcedPolicies && allPoliciesWithDispositionAllow(ContentSecurityPolicy::Disposition::Enforce, std::forward<Predicate>(predicate), hash))
             foundHashInEnforcedPolicies = true;
         if (!foundHashInReportOnlyPolicies && allPoliciesWithDispositionAllow(ContentSecurityPolicy::Disposition::ReportOnly, std::forward<Predicate>(predicate), hash))
