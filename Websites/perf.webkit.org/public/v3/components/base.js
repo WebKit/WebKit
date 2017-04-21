@@ -16,6 +16,7 @@ class ComponentBase {
         this._element = element;
         this._shadow = null;
         this._actionCallbacks = new Map;
+        this._oldSizeToCheckForResize = null;
 
         if (!ComponentBase.useNativeCustomElements)
             element.addEventListener('DOMNodeInsertedIntoDocument', () => this.enqueueToRender());
@@ -74,18 +75,55 @@ class ComponentBase {
     {
         Instrumentation.startMeasuringTime('ComponentBase', 'renderingTimerDidFire');
 
+        const componentsToRender = ComponentBase._componentsToRender;
+        this._renderLoop();
+        if (ComponentBase._componentsToRenderOnResize) {
+            const resizedComponents = this._resizedComponents(ComponentBase._componentsToRenderOnResize);
+            if (resizedComponents.length) {
+                ComponentBase._componentsToRender = new Set(resizedComponents);
+                this._renderLoop();
+            }
+        }
+
+        Instrumentation.endMeasuringTime('ComponentBase', 'renderingTimerDidFire');
+    }
+
+    static _renderLoop()
+    {
+        const componentsToRender = ComponentBase._componentsToRender;
         do {
-            const currentSet = [...ComponentBase._componentsToRender];
-            ComponentBase._componentsToRender.clear();
+            const currentSet = [...componentsToRender];
+            componentsToRender.clear();
+            const resizeSet = ComponentBase._componentsToRenderOnResize;
             for (let component of currentSet) {
                 Instrumentation.startMeasuringTime('ComponentBase', 'renderingTimerDidFire.render');
                 component.render();
+                if (resizeSet && resizeSet.has(component)) {
+                    const element = component.element();
+                    component._oldSizeToCheckForResize = {width: element.offsetWidth, height: element.offsetHeight};
+                }
                 Instrumentation.endMeasuringTime('ComponentBase', 'renderingTimerDidFire.render');
             }
-        } while (ComponentBase._componentsToRender.size);
+        } while (componentsToRender.size);
         ComponentBase._componentsToRender = null;
+    }
 
-        Instrumentation.endMeasuringTime('ComponentBase', 'renderingTimerDidFire');
+    static _resizedComponents(componentSet)
+    {
+        if (!componentSet)
+            return [];
+
+        const resizedList = [];
+        for (let component of componentSet) {
+            const element = component.element();
+            const width = element.offsetWidth;
+            const height = element.offsetHeight;
+            const oldSize = component._oldSizeToCheckForResize;
+            if (oldSize && oldSize.width == width && oldSize.height == height)
+                continue;
+            resizedList.push(component);
+        }
+        return resizedList;
     }
 
     static _connectedComponentToRenderOnResize(component)
@@ -93,7 +131,8 @@ class ComponentBase {
         if (!ComponentBase._componentsToRenderOnResize) {
             ComponentBase._componentsToRenderOnResize = new Set;
             window.addEventListener('resize', () => {
-                for (let component of ComponentBase._componentsToRenderOnResize)
+                const resized = this._resizedComponents(ComponentBase._componentsToRenderOnResize);
+                for (const component of resized)
                     component.enqueueToRender();
             });
         }

@@ -19,7 +19,8 @@ class ResultsTable extends ComponentBase {
 
         const [repositoryList, constantCommits] = this._computeRepositoryList(rowGroups);
 
-        const barGraphGroup = new BarGraphGroup(valueFormatter);
+        const barGraphGroup = new BarGraphGroup();
+        barGraphGroup.setShowLabels(true);
         const element = ComponentBase.createElement;
         let hasGroupHeading = false;
         const tableBodies = rowGroups.map((group) => {
@@ -37,7 +38,7 @@ class ResultsTable extends ComponentBase {
                 if (row.labelForWholeRow())
                     cells.push(element('td', {class: 'whole-row-label', colspan: repositoryList.length + 1}, row.labelForWholeRow()));
                 else {
-                    cells.push(element('td', row.resultContent(barGraphGroup)));
+                    cells.push(element('td', row.resultContent(valueFormatter, barGraphGroup)));
                     cells.push(this._createRevisionListCells(repositoryList, revisionSupressionCount, group, row.commitSet(), rowIndex));
                 }
 
@@ -57,8 +58,6 @@ class ResultsTable extends ComponentBase {
         ]);
 
         this.renderReplace(this.content('constant-commits'), constantCommits.map((commit) => element('li', commit.title())));
-
-        barGraphGroup.updateGroupRendering();
 
         Instrumentation.endMeasuringTime('ResultsTable', 'renderTable');
     }
@@ -201,10 +200,10 @@ class ResultsTable extends ComponentBase {
                 border-top: solid 1px #ccc;
             }
 
-            .results-table single-bar-graph {
+            .results-table bar-graph {
                 display: block;
                 width: 7rem;
-                height: 1.2rem;
+                height: 1rem;
             }
 
             #constant-commits {
@@ -252,9 +251,17 @@ class ResultsTableRow {
     setLabelForWholeRow(label) { this._labelForWholeRow = label; }
     labelForWholeRow() { return this._labelForWholeRow; }
 
-    resultContent(barGraphGroup)
+    resultContent(valueFormatter, barGraphGroup)
     {
-        var resultContent = this._result ? barGraphGroup.addBar(this._result.value, this._result.interval) : this._label;
+        let resultContent = this._label;
+        if (this._result) {
+            const value = this._result.value;
+            const interval = this._result.interval;
+            let label = valueFormatter(value);
+            if (interval)
+                label += ' \u00B1' + ((value - interval[0]) * 100 / value).toFixed(2) + '%';
+            resultContent = barGraphGroup.addBar([value], [label], null, null, '#ccc', null);
+        }
         return this._link ? ComponentBase.createLink(resultContent, this._label, this._link) : resultContent;
     }
 }

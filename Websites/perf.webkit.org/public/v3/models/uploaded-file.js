@@ -5,6 +5,7 @@ class UploadedFile extends DataModelObject {
     {
         super(id, object);
         this._createdAt = new Date(object.createdAt);
+        this._deletedAt = new Date(object.deletedAt);
         this._filename = object.filename;
         this._author = object.author;
         this._size = object.size;
@@ -13,9 +14,12 @@ class UploadedFile extends DataModelObject {
     }
 
     createdAt() { return this._createdAt; }
+    deletedAt() { return this._deletedAt; }
     filename() { return this._filename; }
     author() { return this._author; }
     size() { return this._size; }
+    label() { return this.filename(); }
+    url() { return `/api/uploaded-file/${this.id()}`; }
 
     static uploadFile(file, uploadProgressCallback = null)
     {

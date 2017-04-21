@@ -8,6 +8,7 @@ class Test extends LabeledObject {
         this._parentId = object.parentId;
         this._childTests = [];
         this._metrics = [];
+        this._computePathLazily = new LazilyEvaluatedFunction(this._computePath.bind(this));
 
         if (!this._parentId)
             this.ensureNamedStaticMap('topLevelTests')[id] = this;
@@ -43,10 +44,12 @@ class Test extends LabeledObject {
 
     parentTest() { return Test.findById(this._parentId); }
 
-    path()
+    path() { return this._computePathLazily.evaluate(); }
+
+    _computePath()
     {
-        var path = [];
-        var currentTest = this;
+        const path = [];
+        let currentTest = this;
         while (currentTest) {
             path.unshift(currentTest);
             currentTest = currentTest.parentTest();
@@ -54,7 +57,23 @@ class Test extends LabeledObject {
         return path;
     }
 
-    fullName() { return this.path().map(function (test) { return test.label(); }).join(' \u220B '); }
+    fullName() { return this.path().map((test) => test.label()).join(' \u220B '); }
+
+    relativeName(sharedPath)
+    {
+        const path = this.path();
+        const partialName = (index) => path.slice(index).map((test) => test.label()).join(' \u220B ');
+        if (!sharedPath || !sharedPath.length)
+            return partialName(0);
+        let i = 0;
+        for (; i < path.length && i < sharedPath.length; i++) {
+            if (sharedPath[i] != path[i])
+                return partialName(i);
+        }
+        if (i < path.length)
+            return partialName(i);
+        return null;
+    }
 
     onlyContainsSingleMetric() { return !this.childTests().length && this._metrics.length == 1; }
 

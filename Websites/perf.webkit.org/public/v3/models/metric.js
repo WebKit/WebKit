@@ -48,26 +48,33 @@ class Metric extends LabeledObject {
 
     fullName() { return this._test.fullName() + ' : ' + this.label(); }
 
+    relativeName(path)
+    {
+        const relativeTestName = this._test.relativeName(path);
+        if (relativeTestName == null)
+            return this.label();
+        return relativeTestName + ' : ' + this.label();
+    }
+
+    aggregatorLabel()
+    {
+        switch (this._aggregatorName) {
+        case 'Arithmetic':
+            return 'Arithmetic mean';
+        case 'Geometric':
+            return 'Geometric mean';
+        case 'Harmonic':
+            return 'Harmonic mean';
+        case 'Total':
+            return 'Total';
+        }
+        return null;
+    }
+
     label()
     {
-        var suffix = '';
-        switch (this._aggregatorName) {
-        case null:
-            break;
-        case 'Arithmetic':
-            suffix = ' : Arithmetic mean';
-            break;
-        case 'Geometric':
-            suffix = ' : Geometric mean';
-            break;
-        case 'Harmonic':
-            suffix = ' : Harmonic mean';
-            break;
-        case 'Total':
-        default:
-            suffix = ' : ' + this._aggregatorName;
-        }
-        return this.name() + suffix;
+        const aggregatorLabel = this.aggregatorLabel();
+        return this.name() + (aggregatorLabel ? ` : ${aggregatorLabel}` : '');
     }
 
     unit() { return this._unit; }
@@ -80,7 +87,7 @@ class Metric extends LabeledObject {
 
     makeFormatter(sigFig, alwaysShowSign) { return Metric.makeFormatter(this.unit(), sigFig, alwaysShowSign); }
 
-    static makeFormatter(unit, sigFig = 2, alwaysShowSign)
+    static makeFormatter(unit, sigFig = 2, alwaysShowSign = false)
     {
         let isMiliseconds = false;
         if (unit == 'ms') {

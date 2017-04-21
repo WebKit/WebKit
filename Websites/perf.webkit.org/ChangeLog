@@ -1,3 +1,145 @@
+2017-04-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Make it possible to view results for sub tests and metrics in A/B testing
+        https://bugs.webkit.org/show_bug.cgi?id=170975
+
+        Reviewed by Chris Dumez.
+
+        Replaced TestGroupResultsTable, which was a single table that presented the test results with a set of revisions
+        each build request used, with TestGroupResultsViewer and TestGroupRevisionTable. TestGroupResultsViewer provides
+        an UI to look the results of sub-tests and sub-metrics and TestGroupRevisionTable provides an UI to display
+        the set of revisions each build request used. TestGroupRevisionTable can also show the list of custom roots now
+        that we've added UI to schedule an analysis task with a custom test group.
+
+        This patch extends BarGraphGroup to show multiple bars per SingleBarGraph using a canvas with bars indicating
+        their mean and confidence interval.
+
+        * browser-tests/index.html:
+        (ChartTest.importChartScripts): Include lazily-evaluated-function.js now that Test model object uses
+        LazilyEvaluatedFunction.
+
+        * public/v3/components/analysis-results-viewer.js:
+        (AnalysisResultsViewer.TestGroupStackingBlock.prototype._valuesForCommitSet):
+        (AnalysisResultsViewer.TestGroupStackingBlock.prototype._computeTestGroupStatus):
+
+        * public/v3/components/bar-graph-group.js:
+        (BarGraphGroup): No longer takes formatter. Added _computeRangeLazily and _showLabels as instance variables.
+        (BarGraphGroup.prototype.addBar): Now takes a list of values, their labels, mean, confidence interval, and
+        the colors of bar graphs shown for each value and the mean indicator.
+        (BarGraphGroup.prototype.showLabels): Added.
+        (BarGraphGroup.prototype.setShowLabels): Added.
+        (BarGraphGroup.prototype.range): Added.
+        (BarGraphGroup.prototype._computeRange): Renamed from updateGroupRendering. Now returns the range instead off
+        setting it to each bar, and each SingleBarGraph's render function uses the value via BarGraphGroup's range.
+        (BarGraph): Renamed from SingleBarGraph. Added various arguments introduced in addBar, and now stores various
+        lazily evaluated functions used for rendering.
+        (BarGraph.prototype.render): Rewritten to use canvas to draw bar graphs and show a label when group's
+        showLabels() returns true.
+        (BarGraph.prototype._resizeCanvas): Added.
+        (BarGraph.prototype._renderCanvas): Added.
+        (BarGraph.prototype._renderLabels): Added. We align the top of each label to the middle of each bar and shift it
+        back up by half the height of the label (0.4rem) using margin-top in css.
+        (BarGraph.htmlTemplate): Uses a canvas now.
+        (BarGraph.cssTemplate):
+
+        * public/v3/components/results-table.js:
+        (ResultsTable.prototype.renderTable): Updated per code changes to BarGraphGroup.
+        (ResultsTableRow.prototype.resultContent): Ditto.
+
+        * public/v3/components/test-group-results-table.js: Removed.
+        * public/v3/components/test-group-results-viewer.js: Added.
+        (TestGroupResultsViewer): Added. Shows a list of test results with bar graphs with mean and confidence interval
+        indicators. The results of sub tests and metrics can be expanded via "(Breakdown)" link shown below each test. 
+        (TestGroupResultsViewer.prototype.setTestGroup): Added.
+        (TestGroupResultsViewer.prototype.setAnalysisResults): Added.
+        (TestGroupResultsViewer.prototype.render): Added.
+        (TestGroupResultsViewer.prototype._renderResultsTable): Compute the depth of the test tree we show, and construct
+        the header rows. Each sub test is "indented" by a new column.
+        (TestGroupResultsViewer.prototype._buildRowForTest): Added. Build rows for metrics of the given test. Expand the
+        list of its child tests if it's in expandedTests. Otherwise add a link to "Breakdown" if it has any child tests.
+        (TestGroupResultsViewer.prototype._buildRowForMetric): Added. Builds rows of table cells to show the results for
+        the given metric for each configuration.
+        (TestGroupResultsViewer.prototype._buildRowForMetric.createConfigurationRow): Added. A helper to build cells for
+        a given configuration represented by a requested commit set.
+        (TestGroupResultsViewer.prototype._buildValueMap): Added. Creates a mappting between a requested commit set, and
+        the list of values, mean, etc... associated with the results for the commit set.
+        (TestGroupResultsViewer.prototype._buildEmptyCells): Added. A helper to create empty cells to indent sub tests.
+        (TestGroupResultsViewer.prototype._expandCurrentMetrics): Added. Highlights the current metrics and renders the
+        label for each bar in the results.
+        (TestGroupResultsViewer.htmlTemplate): Added.
+        (TestGroupResultsViewer.cssTemplate): Added.
+
+        * public/v3/components/test-group-revision-table.js: Added.
+        (TestGroupRevisionTable): Added. Renders the list of revisions requested for each test configuration as well as
+        ones used in actual testing, and additional repositories being reported (e.g. repositories for helper scripts).
+        (TestGroupRevisionTable.prototype.setTestGroup): Added.
+        (TestGroupRevisionTable.prototype.setAnalysisResults): Added.
+        (TestGroupRevisionTable.prototype.render): Added.
+        (TestGroupRevisionTable.prototype._renderTable): Added. The basic algorithm here is to first create a row entry
+        object for each build request, merge cells that use the same revision of the same repository, and then render
+        the entire table.
+        (TestGroupRevisionTable.prototype._buildCommitCell): Added.
+        (TestGroupRevisionTable.prototype._buildCustomRootsCell): Added.
+        (TestGroupRevisionTable.prototype._mergeCellsWithSameCommitsAcrossRows): Added. Compute rowspan for each cell
+        by traversing the rows that use the same revision per repository, and store it in rowCountByRepository while
+        adding the repository to each succeeding row's repositoriesToSkip.
+        (TestGroupRevisionTable.htmlTemplate): Added.
+        (TestGroupRevisionTable.cssTemplate): Added.
+
+        * public/v3/index.html:
+        * public/v3/models/analysis-results.js:
+        (AnalysisResults): Added _metricIds and _lazilyComputedHighestTests as instance variables.
+        (AnalysisResults.prototype.findResult): Renamed from find.
+        (AnalysisResults.prototype.highestTests): Added.
+        (AnalysisResults.prototype._computeHighestTests): Added. Finds the root tests for this analysis result.
+        (AnalysisResults.prototype.add): Update _metricIds.
+        (AnalysisResults.prototype.commitSetForRequest): Added. Returns the reported commit set for the build request.
+        This commit set contains the set of revisions reported to /api/report by A/B testers.
+        (AnalysisResultsView.prototype.resultForRequest): Renamed from resultForBuildId.
+
+        * public/v3/models/metric.js:
+        (Metric.prototype.relativeName): Added. Computes the relative name given the test/metric path. This function is
+        used to determine the label for each test/metric in TestGroupResultsViewer.
+        (Metric.prototype.aggregatorLabel): Extracted from label.
+        (Metric.prototype.label):
+        (Metric.makeFormatter): Added the default value of false to alwaysShowSign.
+
+        * public/v3/models/test-group.js:
+        (TestGroup.prototype.compareTestResults): Now takes a metric instead of retrieving it from the analysis task
+        since a custom analysis task may not have a metric associated with it.
+
+        * public/v3/models/test.js:
+        (Test): Added _computePathLazily as an instance variable.
+        (Test.prototype.path): Lazily computes the path now that this function can be called on the same test for many
+        times in TestGroupResultsViewer while computing relative names of tests and metrics.
+        (Test.prototype._computePath): Extracted path.
+        (Test.prototype.fullName): Modernized the code.
+        (Test.prototype.relativeName): Added.
+
+        * public/v3/models/uploaded-file.js:
+        (UploadedFile):
+        (UploadedFile.prototype.deletedAt): Added.
+        (UploadedFile.prototype.label): Added.
+        (UploadedFile.prototype.url): Added.
+
+        * public/v3/pages/analysis-task-page.js:
+        (AnalysisTaskTestGroupPane.prototype.setTestGroups):
+        (AnalysisTaskTestGroupPane.prototype.setAnalysisResults): Replaced setAnalysisResultsView. Now takes an
+        analysisResults instead of its view.
+        (AnalysisTaskTestGroupPane.prototype.render): No longer enqueues the results table and the retry form to render
+        since the results table no longer exists, and the retry form re-renders itself as needed.
+        (AnalysisTaskTestGroupPane.htmlTemplate): Now uses test-group-results-viewer and test-group-revision-table
+        instead of test-group-results-table, which has been removed.
+        (AnalysisTaskTestGroupPane.cssTemplate):
+        (AnalysisTaskPage.prototype._assignTestResultsIfPossible):
+
+        * public/v3/pages/create-analysis-task-page.js:
+        (CreateAnalysisTaskPage.prototype._createAnalysisTaskWithGroup): Removed superflous console.log's.
+
+        * tools/js/v3-models.js: Import LazilyEvaluatedFunction now that it's used in the Test model.
+
+        * unit-tests/test-model-tests.js: Added.
+
 2017-04-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         Another build fix after r215061. Clear TriggerableRepositoryGroup's static map in each iteration.

@@ -487,7 +487,7 @@ AnalysisResultsViewer.TestGroupStackingBlock = class {
     _valuesForCommitSet(testGroup, commitSet)
     {
         return testGroup.requestsForCommitSet(commitSet).map((request) => {
-            return this._analysisResultsView.resultForBuildId(request.buildId());
+            return this._analysisResultsView.resultForRequest(request);
         }).filter((result) => !!result).map((result) => result.value);
     }
 
@@ -498,7 +498,7 @@ AnalysisResultsViewer.TestGroupStackingBlock = class {
         console.assert(this._commitSetIndexRowIndexMap.length <= 2); // FIXME: Support having more root sets.
         const startValues = this._valuesForCommitSet(this._testGroup, this._commitSetIndexRowIndexMap[0].commitSet);
         const endValues = this._valuesForCommitSet(this._testGroup, this._commitSetIndexRowIndexMap[1].commitSet);
-        const result = this._testGroup.compareTestResults(startValues, endValues);
+        const result = this._testGroup.compareTestResults(this._analysisResultsView.metric(), startValues, endValues);
         return {label: result.label, title: result.fullLabel, status: result.status};
     }
 }

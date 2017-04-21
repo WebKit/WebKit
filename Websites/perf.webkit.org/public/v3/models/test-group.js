@@ -109,13 +109,11 @@ class TestGroup extends LabeledObject {
         return this._buildRequests.some(function (request) { return request.isPending(); });
     }
 
-    compareTestResults(beforeValues, afterValues)
+    compareTestResults(metric, beforeValues, afterValues)
     {
+        console.assert(metric);
         const beforeMean = Statistics.sum(beforeValues) / beforeValues.length;
         const afterMean = Statistics.sum(afterValues) / afterValues.length;
-
-        var metric = AnalysisTask.findById(this._taskId).metric();
-        console.assert(metric);
 
         var result = {changeType: null, status: 'failed', label: 'Failed', fullLabel: 'Failed', isStatisticallySignificant: false};
 

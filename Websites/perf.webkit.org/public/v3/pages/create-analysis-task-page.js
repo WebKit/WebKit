@@ -45,9 +45,7 @@ class CreateAnalysisTaskPage extends PageWithHeading {
         const commitSets = configurator.commitSets();
 
         TestGroup.createWithTask(taskName, platform, tests[0], testGroupName, iterationCount, commitSets).then((task) => {
-            console.log('yay?', task);
             const url = this.router().url(`analysis/task/${task.id()}`);
-            console.log('moving to ' + url);
             location.href = this.router().url(`analysis/task/${task.id()}`);
         }, (error) => {
             alert('Failed to create a new test group: ' + error);

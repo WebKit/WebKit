@@ -161,13 +161,15 @@ class AnalysisTaskTestGroupPane extends ComponentBase {
         this._testGroups = testGroups;
         this._currentTestGroup = currentTestGroup;
         this._showHiddenGroups = showHiddenGroups;
-        this.part('results-table').setTestGroup(currentTestGroup);
+        this.part('revision-table').setTestGroup(currentTestGroup);
+        this.part('results-viewer').setTestGroup(currentTestGroup);
         this.enqueueToRender();
     }
 
-    setAnalysisResultsView(analysisResultsView)
+    setAnalysisResults(analysisResults, metric)
     {
-        this.part('results-table').setAnalysisResultsView(analysisResultsView);
+        this.part('revision-table').setAnalysisResults(analysisResults);
+        this.part('results-viewer').setAnalysisResults(analysisResults, metric);
         this.enqueueToRender();
     }
 
@@ -177,8 +179,6 @@ class AnalysisTaskTestGroupPane extends ComponentBase {
         this._renderTestGroupVisibilityLazily.evaluate(...this._testGroups.map((group) => group.isHidden() ? 'hidden' : 'visible'));
         this._renderTestGroupNamesLazily.evaluate(...this._testGroups.map((group) => group.label()));
         this._renderCurrentTestGroup(this._currentTestGroup);
-        this.part('results-table').enqueueToRender();
-        this.part('retry-form').enqueueToRender();
     }
 
     _renderTestGroups(showHiddenGroups, ...testGroups)
@@ -239,7 +239,8 @@ class AnalysisTaskTestGroupPane extends ComponentBase {
         return `
             <ul id="test-group-list"></ul>
             <div id="test-group-details">
-                <test-group-results-table id="results-table"></test-group-results-table>
+                <test-group-results-viewer id="results-viewer"></test-group-results-viewer>
+                <test-group-revision-table id="revision-table"></test-group-revision-table>
                 <test-group-form id="retry-form">Retry</test-group-form>
                 <button id="hide-button">Hide</button>
                 <span id="pending-request-cancel-warning">(cancels pending requests)</span>
@@ -251,6 +252,15 @@ class AnalysisTaskTestGroupPane extends ComponentBase {
         return `
             :host {
                 display: flex !important;
+                font-size: 0.9rem;
+            }
+
+            #new-container {
+                display: flex;
+            }
+
+            #new-container test-group-revision-table {
+                margin-left: 2rem;
             }
 
             #test-group-list {
@@ -490,7 +500,7 @@ class AnalysisTaskPage extends PageWithHeading {
             return false;
 
         const view = this._analysisResults.viewForMetric(this._metric);
-        this.part('group-pane').setAnalysisResultsView(view);
+        this.part('group-pane').setAnalysisResults(this._analysisResults, this._metric);
         this.part('results-pane').setAnalysisResultsView(view);
 
         return true;

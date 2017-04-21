@@ -3,9 +3,11 @@ class AnalysisResults {
     constructor()
     {
         this._metricToBuildMap = {};
+        this._metricIds = [];
+        this._lazilyComputedHighestTests = new LazilyEvaluatedFunction(this._computeHighestTests);
     }
 
-    find(buildId, metricId)
+    findResult(buildId, metricId)
     {
         const map = this._metricToBuildMap[metricId];
         if (!map)
@@ -13,15 +15,35 @@ class AnalysisResults {
         return map[buildId];
     }
 
+    highestTests() { return this._lazilyComputedHighestTests.evaluate(this._metricIds); }
+
+    _computeHighestTests(metricIds)
+    {
+        const testsInResults = new Set(metricIds.map((metricId) => Metric.findById(metricId).test()));
+        return [...testsInResults].filter((test) => !testsInResults.has(test.parentTest()));
+    }
+
     add(measurement)
     {
         console.assert(measurement.configType == 'current');
         const metricId = measurement.metricId;
-        if (!(metricId in this._metricToBuildMap))
+        if (!(metricId in this._metricToBuildMap)) {
             this._metricToBuildMap[metricId] = {};
-        var map = this._metricToBuildMap[metricId];
+            this._metricIds = Object.keys(this._metricToBuildMap);
+        }
+        const map = this._metricToBuildMap[metricId];
         console.assert(!map[measurement.buildId]);
         map[measurement.buildId] = measurement;
+    }
+
+    commitSetForRequest(buildRequest)
+    {
+        if (!this._metricIds.length)
+            return null;
+        const result = this.findResult(buildRequest.buildId(), this._metricIds[0]);
+        if (!result)
+            return null;
+        return result.commitSet();
     }
 
     viewForMetric(metric)
@@ -60,8 +82,8 @@ class AnalysisResultsView {
 
     metric() { return this._metric; }
 
-    resultForBuildId(buildId)
+    resultForRequest(buildRequest)
     {
-        return this._results.find(buildId, this._metric.id());
+        return this._results.findResult(buildRequest.buildId(), this._metric.id());
     }
 }
