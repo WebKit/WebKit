@@ -89,7 +89,14 @@ WebInspector.EventListenerSectionGroup = class EventListenerSectionGroup extends
             return functionName;
 
         var sourceCodeLocation = sourceCode.createSourceCodeLocation(this._eventListener.location.lineNumber, this._eventListener.location.columnNumber || 0);
-        var linkElement = WebInspector.createSourceCodeLocationLink(sourceCodeLocation, anonymous);
+
+        const options = {
+            dontFloat: anonymous,
+            ignoreNetworkTab: true,
+            ignoreSearchTab: true,
+        };
+        let linkElement = WebInspector.createSourceCodeLocationLink(sourceCodeLocation, options);
+
         if (anonymous)
             return linkElement;
 

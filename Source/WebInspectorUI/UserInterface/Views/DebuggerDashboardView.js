@@ -88,9 +88,12 @@ WebInspector.DebuggerDashboardView = class DebuggerDashboardView extends WebInsp
         nameElement.classList.add("function-name");
         this._locationElement.appendChild(nameElement);
 
-        var sourceCodeLocation = WebInspector.debuggerManager.activeCallFrame.sourceCodeLocation;
-        var shouldPreventLinkFloat = true;
-        var linkElement = WebInspector.createSourceCodeLocationLink(sourceCodeLocation, shouldPreventLinkFloat);
+        const options = {
+            dontFloat: true,
+            ignoreNetworkTab: true,
+            ignoreSearchTab: true,
+        };
+        let linkElement = WebInspector.createSourceCodeLocationLink(WebInspector.debuggerManager.activeCallFrame.sourceCodeLocation, options);
         this._locationElement.appendChild(linkElement);
     }
 

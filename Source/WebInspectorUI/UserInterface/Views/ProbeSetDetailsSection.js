@@ -93,15 +93,19 @@ WebInspector.ProbeSetDetailsSection = class ProbeSetDetailsSection extends WebIn
 
     _updateLinkElement()
     {
+        const options = {
+            ignoreNetworkTab: true,
+            ignoreSearchTab: true,
+        };
+
         var breakpoint = this._probeSet.breakpoint;
         if (breakpoint.sourceCodeLocation.sourceCode)
-            this.titleElement = WebInspector.createSourceCodeLocationLink(breakpoint.sourceCodeLocation);
+            this.titleElement = WebInspector.createSourceCodeLocationLink(breakpoint.sourceCodeLocation, options);
         else {
             // Fallback for when we can't create a live source link.
             console.assert(!breakpoint.resolved);
 
-            var location = breakpoint.sourceCodeLocation;
-            this.titleElement = WebInspector.linkifyLocation(breakpoint.contentIdentifier, location.displayLineNumber, location.displayColumnNumber);
+            this.titleElement = WebInspector.linkifyLocation(breakpoint.contentIdentifier, breakpoint.sourceCodeLocation.position, options);
         }
 
         this.titleElement.classList.add(WebInspector.ProbeSetDetailsSection.DontFloatLinkStyleClassName);

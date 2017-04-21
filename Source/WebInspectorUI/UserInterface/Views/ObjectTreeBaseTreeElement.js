@@ -228,7 +228,12 @@ WebInspector.ObjectTreeBaseTreeElement = class ObjectTreeBaseTreeElement extends
                             return;
 
                         let sourceCodeLocation = sourceCode.createSourceCodeLocation(location.lineNumber, location.columnNumber || 0);
-                        WebInspector.showSourceCodeLocation(sourceCodeLocation, {ignoreNetworkTab: true});
+
+                        const options = {
+                            ignoreNetworkTab: true,
+                            ignoreSearchTab: true,
+                        };
+                        WebInspector.showSourceCodeLocation(sourceCodeLocation, options);
                     });
                 });
             }

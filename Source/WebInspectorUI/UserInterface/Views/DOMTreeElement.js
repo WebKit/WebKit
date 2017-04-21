@@ -720,7 +720,12 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
                 if (WebInspector.frameResourceManager.resourceForURL(url)) {
                     contextMenu.appendItem(WebInspector.UIString("Reveal in Resources Tab"), () => {
                         let frame = WebInspector.frameResourceManager.frameForIdentifier(node.frameIdentifier);
-                        WebInspector.openURL(url, frame, {ignoreNetworkTab: true});
+
+                        const options = {
+                            ignoreNetworkTab: true,
+                            ignoreSearchTab: true,
+                        };
+                        WebInspector.openURL(url, frame, options);
                     });
                 }
 
@@ -1586,7 +1591,12 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
                         return;
 
                     let sourceCodeLocation = sourceCode.createSourceCodeLocation(location.lineNumber, location.columnNumber || 0);
-                    WebInspector.showSourceCodeLocation(sourceCodeLocation, {ignoreNetworkTab: true});
+
+                    const options = {
+                        ignoreNetworkTab: true,
+                        ignoreSearchTab: true,
+                    };
+                    WebInspector.showSourceCodeLocation(sourceCodeLocation, options);
                 });
                 result.release();
             });

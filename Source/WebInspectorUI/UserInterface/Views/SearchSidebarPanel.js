@@ -355,8 +355,13 @@ WebInspector.SearchSidebarPanel = class SearchSidebarPanel extends WebInspector.
         if (!treeElement || treeElement instanceof WebInspector.FolderTreeElement)
             return;
 
+        const options = {
+            ignoreNetworkTab: true,
+        };
+
         if (treeElement instanceof WebInspector.ResourceTreeElement || treeElement instanceof WebInspector.ScriptTreeElement) {
-            WebInspector.showRepresentedObject(treeElement.representedObject, null, {ignoreNetworkTab: true});
+            const cookie = null;
+            WebInspector.showRepresentedObject(treeElement.representedObject, cookie, options);
             return;
         }
 
@@ -367,7 +372,7 @@ WebInspector.SearchSidebarPanel = class SearchSidebarPanel extends WebInspector.
         if (treeElement.representedObject instanceof WebInspector.DOMSearchMatchObject)
             WebInspector.showMainFrameDOMTree(treeElement.representedObject.domNode);
         else if (treeElement.representedObject instanceof WebInspector.SourceCodeSearchMatchObject)
-            WebInspector.showOriginalOrFormattedSourceCodeTextRange(treeElement.representedObject.sourceCodeTextRange, {ignoreNetworkTab: true});
+            WebInspector.showOriginalOrFormattedSourceCodeTextRange(treeElement.representedObject.sourceCodeTextRange, options);
     }
 
     _treeElementDoubleClick(event)
@@ -376,9 +381,15 @@ WebInspector.SearchSidebarPanel = class SearchSidebarPanel extends WebInspector.
         if (!treeElement)
             return;
 
-        if (treeElement.representedObject instanceof WebInspector.DOMSearchMatchObject)
-            WebInspector.showMainFrameDOMTree(treeElement.representedObject.domNode, {ignoreSearchTab: true});
-        else if (treeElement.representedObject instanceof WebInspector.SourceCodeSearchMatchObject)
-            WebInspector.showOriginalOrFormattedSourceCodeTextRange(treeElement.representedObject.sourceCodeTextRange, {ignoreNetworkTab: true, ignoreSearchTab: true});
+        if (treeElement.representedObject instanceof WebInspector.DOMSearchMatchObject) {
+            WebInspector.showMainFrameDOMTree(treeElement.representedObject.domNode, {
+                ignoreSearchTab: true,
+            });
+        } else if (treeElement.representedObject instanceof WebInspector.SourceCodeSearchMatchObject) {
+            WebInspector.showOriginalOrFormattedSourceCodeTextRange(treeElement.representedObject.sourceCodeTextRange, {
+                ignoreNetworkTab: true,
+                ignoreSearchTab: true,
+            });
+        }
     }
 };

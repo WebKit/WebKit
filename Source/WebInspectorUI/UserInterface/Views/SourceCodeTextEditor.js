@@ -1667,11 +1667,16 @@ WebInspector.SourceCodeTextEditor = class SourceCodeTextEditor extends WebInspec
         if (/\blink\b/.test(this.tokenTrackingController.candidate.hoveredToken.type))
             return;
 
+        const options = {
+            ignoreNetworkTab: true,
+            ignoreSearchTab: true,
+        };
+
         var sourceCodeLocation = this._sourceCodeLocationForEditorPosition(this.tokenTrackingController.candidate.hoveredTokenRange.start);
         if (this.sourceCode instanceof WebInspector.SourceMapResource)
-            WebInspector.showOriginalOrFormattedSourceCodeLocation(sourceCodeLocation, {ignoreNetworkTab: true});
+            WebInspector.showOriginalOrFormattedSourceCodeLocation(sourceCodeLocation, options);
         else
-            WebInspector.showSourceCodeLocation(sourceCodeLocation, {ignoreNetworkTab: true});
+            WebInspector.showSourceCodeLocation(sourceCodeLocation, options);
     }
 
     tokenTrackingControllerNewHighlightCandidate(tokenTrackingController, candidate)

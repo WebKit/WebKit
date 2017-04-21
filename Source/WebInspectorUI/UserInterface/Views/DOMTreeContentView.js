@@ -486,8 +486,13 @@ WebInspector.DOMTreeContentView = class DOMTreeContentView extends WebInspector.
             // Since followLink is delayed, the call to WebInspector.openURL can't look at window.event
             // to see if the command key is down like it normally would. So we need to do that check
             // before calling WebInspector.openURL.
-            var alwaysOpenExternally = event ? event.metaKey : false;
-            WebInspector.openURL(anchorElement.href, this._frame, {alwaysOpenExternally, lineNumber: anchorElement.lineNumber});
+            const options = {
+                alwaysOpenExternally: event ? event.metaKey : false,
+                lineNumber: anchorElement.lineNumber,
+                ignoreNetworkTab: true,
+                ignoreSearchTab: true,
+            };
+            WebInspector.openURL(anchorElement.href, this._frame, options);
         }
 
         // Start a timeout since this is a single click, if the timeout is canceled before it fires,

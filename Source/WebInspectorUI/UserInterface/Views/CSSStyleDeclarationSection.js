@@ -247,7 +247,12 @@ WebInspector.CSSStyleDeclarationSection = class CSSStyleDeclarationSection exten
                 appendSelectorTextKnownToMatch.call(this, this._style.ownerRule.selectorText);
 
             if (this._style.ownerRule.sourceCodeLocation) {
-                let sourceCodeLink = WebInspector.createSourceCodeLocationLink(this._style.ownerRule.sourceCodeLocation, true);
+                const options = {
+                    dontFloat: true,
+                    ignoreNetworkTab: true,
+                    ignoreSearchTab: true,
+                };
+                let sourceCodeLink = WebInspector.createSourceCodeLocationLink(this._style.ownerRule.sourceCodeLocation, options);
                 this._originElement.appendChild(sourceCodeLink);
             } else {
                 let originString;

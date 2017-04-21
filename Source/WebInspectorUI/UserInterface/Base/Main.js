@@ -803,7 +803,7 @@ WebInspector.updateVisibilityState = function(visible)
     this.notifications.dispatchEventToListeners(WebInspector.Notification.VisibilityStateDidChange);
 };
 
-WebInspector.handlePossibleLinkClick = function(event, frame, alwaysOpenExternally)
+WebInspector.handlePossibleLinkClick = function(event, frame, options = {})
 {
     var anchorElement = event.target.enclosingNodeOrSelfWithNodeName("a");
     if (!anchorElement || !anchorElement.href)
@@ -818,7 +818,7 @@ WebInspector.handlePossibleLinkClick = function(event, frame, alwaysOpenExternal
     event.preventDefault();
     event.stopPropagation();
 
-    this.openURL(anchorElement.href, frame, {lineNumber: anchorElement.lineNumber});
+    this.openURL(anchorElement.href, frame, Object.shallowMerge(options, {lineNumber: anchorElement.lineNumber}));
 
     return true;
 };
@@ -1214,7 +1214,7 @@ WebInspector.showSourceCode = function(sourceCode, options = {})
 WebInspector.showSourceCodeLocation = function(sourceCodeLocation, options = {})
 {
     this.showSourceCode(sourceCodeLocation.displaySourceCode, Object.shallowMerge(options, {
-        positionToReveal: sourceCodeLocation.displayPosition()
+        positionToReveal: sourceCodeLocation.displayPosition(),
     }));
 };
 
@@ -1222,14 +1222,14 @@ WebInspector.showOriginalUnformattedSourceCodeLocation = function(sourceCodeLoca
 {
     this.showSourceCode(sourceCodeLocation.sourceCode, Object.shallowMerge(options, {
         positionToReveal: sourceCodeLocation.position(),
-        forceUnformatted: true
+        forceUnformatted: true,
     }));
 };
 
 WebInspector.showOriginalOrFormattedSourceCodeLocation = function(sourceCodeLocation, options = {})
 {
     this.showSourceCode(sourceCodeLocation.sourceCode, Object.shallowMerge(options, {
-        positionToReveal: sourceCodeLocation.formattedPosition()
+        positionToReveal: sourceCodeLocation.formattedPosition(),
     }));
 };
 
@@ -1238,7 +1238,7 @@ WebInspector.showOriginalOrFormattedSourceCodeTextRange = function(sourceCodeTex
     var textRangeToSelect = sourceCodeTextRange.formattedTextRange;
     this.showSourceCode(sourceCodeTextRange.sourceCode, Object.shallowMerge(options, {
         positionToReveal: textRangeToSelect.startPosition(),
-        textRangeToSelect
+        textRangeToSelect,
     }));
 };
 
@@ -1393,7 +1393,11 @@ WebInspector._frameWasAdded = function(event)
 
     function delayedWork()
     {
-        this.showSourceCodeForFrame(frame.id);
+        const options = {
+            ignoreNetworkTab: true,
+            ignoreSearchTab: true,
+        };
+        this.showSourceCodeForFrame(frame.id, options);
     }
 
     // Delay showing the frame since FrameWasAdded is called before MainFrameChanged.
@@ -2294,7 +2298,7 @@ WebInspector.createGoToArrowButton = function()
     return button;
 };
 
-WebInspector.createSourceCodeLocationLink = function(sourceCodeLocation, dontFloat, useGoToArrowButton)
+WebInspector.createSourceCodeLocationLink = function(sourceCodeLocation, options = {})
 {
     console.assert(sourceCodeLocation);
     if (!sourceCodeLocation)
@@ -2302,42 +2306,42 @@ WebInspector.createSourceCodeLocationLink = function(sourceCodeLocation, dontFlo
 
     var linkElement = document.createElement("a");
     linkElement.className = "go-to-link";
-    WebInspector.linkifyElement(linkElement, sourceCodeLocation);
+    WebInspector.linkifyElement(linkElement, sourceCodeLocation, options);
     sourceCodeLocation.populateLiveDisplayLocationTooltip(linkElement);
 
-    if (useGoToArrowButton)
+    if (options.useGoToArrowButton)
         linkElement.appendChild(WebInspector.createGoToArrowButton());
     else
         sourceCodeLocation.populateLiveDisplayLocationString(linkElement, "textContent");
 
-    if (dontFloat)
+    if (options.dontFloat)
         linkElement.classList.add("dont-float");
 
     return linkElement;
 };
 
-WebInspector.linkifyLocation = function(url, lineNumber, columnNumber, className)
+WebInspector.linkifyLocation = function(url, sourceCodePosition, options = {})
 {
     var sourceCode = WebInspector.sourceCodeForURL(url);
 
     if (!sourceCode) {
         var anchor = document.createElement("a");
         anchor.href = url;
-        anchor.lineNumber = lineNumber;
-        if (className)
-            anchor.className = className;
-        anchor.append(WebInspector.displayNameForURL(url) + ":" + lineNumber);
+        anchor.lineNumber = sourceCodePosition.lineNumber;
+        if (options.className)
+            anchor.className = options.className;
+        anchor.append(WebInspector.displayNameForURL(url) + ":" + sourceCodePosition.lineNumber);
         return anchor;
     }
 
-    var sourceCodeLocation = sourceCode.createSourceCodeLocation(lineNumber, columnNumber);
-    var linkElement = WebInspector.createSourceCodeLocationLink(sourceCodeLocation, true);
-    if (className)
-        linkElement.classList.add(className);
+    let sourceCodeLocation = sourceCode.createSourceCodeLocation(sourceCodePosition.lineNumber, sourceCodePosition.columnNumber);
+    let linkElement = WebInspector.createSourceCodeLocationLink(sourceCodeLocation, Object.shallowMerge(options, {dontFloat: true}));
+    if (options.className)
+        linkElement.classList.add(options.className);
     return linkElement;
 };
 
-WebInspector.linkifyElement = function(linkElement, sourceCodeLocation) {
+WebInspector.linkifyElement = function(linkElement, sourceCodeLocation, options = {}) {
     console.assert(sourceCodeLocation);
 
     function showSourceCodeLocation(event)
@@ -2346,9 +2350,9 @@ WebInspector.linkifyElement = function(linkElement, sourceCodeLocation) {
         event.preventDefault();
 
         if (event.metaKey)
-            this.showOriginalUnformattedSourceCodeLocation(sourceCodeLocation);
+            this.showOriginalUnformattedSourceCodeLocation(sourceCodeLocation, options);
         else
-            this.showSourceCodeLocation(sourceCodeLocation);
+            this.showSourceCodeLocation(sourceCodeLocation, options);
     }
 
     linkElement.addEventListener("click", showSourceCodeLocation.bind(this));

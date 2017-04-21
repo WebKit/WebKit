@@ -102,8 +102,12 @@ WebInspector.ComputedStyleDetailsPanel = class ComputedStyleDetailsPanel extends
 
         let sourceCode = ownerRule.sourceCodeLocation.sourceCode;
         let {startLine, startColumn} = effectiveProperty.styleSheetTextRange;
-        let sourceCodeLocation = sourceCode.createSourceCodeLocation(startLine, startColumn);
-        WebInspector.showSourceCodeLocation(sourceCodeLocation, {ignoreNetworkTab: true});
+
+        const options = {
+            ignoreNetworkTab: true,
+            ignoreSearchTab: true,
+        };
+        WebInspector.showSourceCodeLocation(sourceCode.createSourceCodeLocation(startLine, startColumn), options);
     }
 
     refresh(significantChange)

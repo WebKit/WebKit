@@ -702,7 +702,12 @@ WebInspector.ConsoleMessageView = class ConsoleMessageView extends WebInspector.
 
     _linkifyLocation(url, lineNumber, columnNumber)
     {
-        return WebInspector.linkifyLocation(url, lineNumber, columnNumber, "console-message-url");
+        const options = {
+            className: "console-message-url",
+            ignoreNetworkTab: true,
+            ignoreSearchTab: true,
+        };
+        return WebInspector.linkifyLocation(url, new WebInspector.SourceCodePosition(lineNumber, columnNumber), options);
     }
 
     _userProvidedColumnNames(columnNamesArgument)

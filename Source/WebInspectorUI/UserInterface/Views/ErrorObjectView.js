@@ -57,7 +57,11 @@ WebInspector.ErrorObjectView = class ErrorObjectView extends WebInspector.Object
         span.classList.add("error-object-link-container");
         span.textContent = " — ";
 
-        var a = WebInspector.linkifyLocation(sourceURL, parseInt(lineNumber) - 1, parseInt(columnNumber));
+        const options = {
+            ignoreNetworkTab: true,
+            ignoreSearchTab: true,
+        };
+        let a = WebInspector.linkifyLocation(sourceURL, new WebInspector.SourceCodePosition(parseInt(lineNumber) - 1, parseInt(columnNumber)), options);
         a.classList.add("error-object-link");
         span.appendChild(a);
 

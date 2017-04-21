@@ -422,7 +422,12 @@ WebInspector.ResourceSidebarPanel = class ResourceSidebarPanel extends WebInspec
             || treeElement instanceof WebInspector.ResourceTreeElement
             || treeElement instanceof WebInspector.ScriptTreeElement
             || treeElement instanceof WebInspector.ContentFlowTreeElement) {
-            WebInspector.showRepresentedObject(treeElement.representedObject, null, {ignoreNetworkTab: true});
+            const cookie = null;
+            const options = {
+                ignoreNetworkTab: true,
+                ignoreSearchTab: true,
+            };
+            WebInspector.showRepresentedObject(treeElement.representedObject, cookie, options);
             return;
         }
 

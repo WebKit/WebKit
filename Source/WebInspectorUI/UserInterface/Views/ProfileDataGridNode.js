@@ -241,10 +241,13 @@ WebInspector.ProfileDataGridNode = class ProfileDataGridNode extends WebInspecto
             locationElement.classList.add("location");
             sourceCodeLocation.populateLiveDisplayLocationString(locationElement, "textContent", WebInspector.SourceCodeLocation.ColumnStyle.Hidden, WebInspector.SourceCodeLocation.NameStyle.Short);
 
-            let dontFloat = true;
-            let useGoToArrowButton = true;
-            let goToArrowButtonLink = WebInspector.createSourceCodeLocationLink(sourceCodeLocation, dontFloat, useGoToArrowButton);
-            fragment.appendChild(goToArrowButtonLink);
+            const options = {
+                dontFloat: true,
+                useGoToArrowButton: true,
+                ignoreNetworkTab: true,
+                ignoreSearchTab: true,
+            };
+            fragment.appendChild(WebInspector.createSourceCodeLocationLink(sourceCodeLocation, options));
         }
 
         return fragment;

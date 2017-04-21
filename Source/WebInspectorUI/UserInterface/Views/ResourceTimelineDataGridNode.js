@@ -271,7 +271,11 @@ WebInspector.ResourceTimelineDataGridNode = class ResourceTimelineDataGridNode e
 
     _dataGridNodeGoToArrowClicked()
     {
-        WebInspector.showSourceCode(this._resource, {ignoreNetworkTab: true});
+        const options = {
+            ignoreNetworkTab: true,
+            ignoreSearchTab: true,
+        };
+        WebInspector.showSourceCode(this._resource, options);
     }
 
     _updateStatus(cell)

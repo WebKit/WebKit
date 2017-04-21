@@ -67,7 +67,11 @@ WebInspector.BreakpointPopoverController = class BreakpointPopoverController ext
         };
 
         const revealOriginalSourceCodeLocation = () => {
-            WebInspector.showOriginalOrFormattedSourceCodeLocation(breakpoint.sourceCodeLocation, {ignoreNetworkTab: true});
+            const options = {
+                ignoreNetworkTab: true,
+                ignoreSearchTab: true,
+            };
+            WebInspector.showOriginalOrFormattedSourceCodeLocation(breakpoint.sourceCodeLocation, options);
         };
 
         if (WebInspector.debuggerManager.isBreakpointEditable(breakpoint))

@@ -204,8 +204,14 @@ WebInspector.RulesStyleDetailsPanel = class RulesStyleDetailsPanel extends WebIn
                     mediaLabel.className = "label";
                     mediaLabel.append(prefixElement, media.text);
 
-                    if (media.sourceCodeLocation)
-                        mediaLabel.append(" \u2014 ", WebInspector.createSourceCodeLocationLink(media.sourceCodeLocation, true));
+                    if (media.sourceCodeLocation) {
+                        const options = {
+                            dontFloat: true,
+                            ignoreNetworkTab: true,
+                            ignoreSearchTab: true,
+                        };
+                        mediaLabel.append(" \u2014 ", WebInspector.createSourceCodeLocationLink(media.sourceCodeLocation, options));
+                    }
 
                     newDOMFragment.appendChild(mediaLabel);
 

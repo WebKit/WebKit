@@ -87,7 +87,12 @@ WebInspector.SourceCodeTimelineTimelineDataGridNode = class SourceCodeTimelineTi
             subtitleElement.classList.add("subtitle");
             sourceCodeLocation.populateLiveDisplayLocationString(subtitleElement, "textContent", null, WebInspector.SourceCodeLocation.NameStyle.None, WebInspector.UIString("line "));
 
-            let goToArrowButtonLink = WebInspector.createSourceCodeLocationLink(sourceCodeLocation, false, true);
+            const options = {
+                useGoToArrowButton: true,
+                ignoreNetworkTab: true,
+                ignoreSearchTab: true,
+            };
+            let goToArrowButtonLink = WebInspector.createSourceCodeLocationLink(sourceCodeLocation, options);
             fragment.append(goToArrowButtonLink, subtitleElement);
 
             // Give the whole cell a tooltip and keep it up to date.

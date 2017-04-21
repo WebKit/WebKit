@@ -1705,11 +1705,16 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
 
         let token = candidate.hoveredToken;
 
+        const options = {
+            ignoreNetworkTab: true,
+            ignoreSearchTab: true,
+        };
+
         // Special case option-clicking url(...) links.
         if (token && /\blink\b/.test(token.type)) {
             let url = token.string;
             let baseURL = sourceCodeLocation ? sourceCodeLocation.sourceCode.url : this._style.node.ownerDocument.documentURL;
-            WebInspector.openURL(absoluteURL(url, baseURL));
+            WebInspector.openURL(absoluteURL(url, baseURL), options);
             return;
         }
 
@@ -1726,7 +1731,7 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
             if (!sourceCode || !range)
                 return false;
 
-            WebInspector.showSourceCodeLocation(sourceCode.createSourceCodeLocation(range.startLine, range.startColumn), {ignoreNetworkTab: true});
+            WebInspector.showSourceCodeLocation(sourceCode.createSourceCodeLocation(range.startLine, range.startColumn), options);
             return true;
         }
 

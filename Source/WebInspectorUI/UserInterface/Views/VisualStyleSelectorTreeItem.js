@@ -137,10 +137,15 @@ WebInspector.VisualStyleSelectorTreeItem = class VisualStyleSelectorTreeItem ext
             return;
 
         contextMenu.appendItem(WebInspector.UIString("Show Source"), () => {
+            const options = {
+                ignoreNetworkTab: true,
+                ignoreSearchTab: true,
+            };
+
             if (event.metaKey)
-                WebInspector.showOriginalUnformattedSourceCodeLocation(this.representedObject.ownerRule.sourceCodeLocation, {ignoreNetworkTab: true});
+                WebInspector.showOriginalUnformattedSourceCodeLocation(this.representedObject.ownerRule.sourceCodeLocation, options);
             else
-                WebInspector.showSourceCodeLocation(this.representedObject.ownerRule.sourceCodeLocation, {ignoreNetworkTab: true});
+                WebInspector.showSourceCodeLocation(this.representedObject.ownerRule.sourceCodeLocation, options);
         });
 
         // Only used one colon temporarily since single-colon pseudo elements are valid CSS.

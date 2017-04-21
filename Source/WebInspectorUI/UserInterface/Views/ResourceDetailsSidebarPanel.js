@@ -275,7 +275,14 @@ WebInspector.ResourceDetailsSidebarPanel = class ResourceDetailsSidebarPanel ext
         }
 
         let initiatorLocation = this._resource.initiatorSourceCodeLocation;
-        this._initiatorRow.value = initiatorLocation ? WebInspector.createSourceCodeLocationLink(initiatorLocation, true) : null;
+        if (initiatorLocation) {
+            const options = {
+                dontFloat: true,
+                ignoreSearchTab: true,
+            };
+            this._initiatorRow.value = WebInspector.createSourceCodeLocationLink(initiatorLocation, options);
+        } else
+            this._initiatorRow.value = null;
 
         let initiatedResources = this._resource.initiatedResources;
         if (initiatedResources.length) {
@@ -497,7 +504,10 @@ WebInspector.ResourceDetailsSidebarPanel = class ResourceDetailsSidebarPanel ext
 
     _goToRequestDataClicked()
     {
-        WebInspector.showResourceRequest(this._resource);
+        const options = {
+            ignoreSearchTab: true,
+        };
+        WebInspector.showResourceRequest(this._resource, options);
     }
 
     _refreshRequestDataSection()

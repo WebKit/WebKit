@@ -825,8 +825,13 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
         if (!treeElement)
             return;
 
+        const options = {
+            ignoreNetworkTab: true,
+            ignoreSearchTab: true,
+        };
+
         if (treeElement instanceof WebInspector.ResourceTreeElement || treeElement instanceof WebInspector.ScriptTreeElement) {
-            WebInspector.showSourceCode(treeElement.representedObject, {ignoreNetworkTab: true});
+            WebInspector.showSourceCode(treeElement.representedObject, options);
             return;
         }
 
@@ -836,12 +841,13 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
                 WebInspector.debuggerManager.activeCallFrame = callFrame;
 
             if (callFrame.sourceCodeLocation)
-                WebInspector.showSourceCodeLocation(callFrame.sourceCodeLocation, {ignoreNetworkTab: true});
+                WebInspector.showSourceCodeLocation(callFrame.sourceCodeLocation, options);
+
             return;
         }
 
         if (treeElement instanceof WebInspector.IssueTreeElement) {
-            WebInspector.showSourceCodeLocation(treeElement.issueMessage.sourceCodeLocation, {ignoreNetworkTab: true});
+            WebInspector.showSourceCodeLocation(treeElement.issueMessage.sourceCodeLocation, options);
             return;
         }
 
@@ -850,7 +856,7 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
 
         let breakpoint = treeElement.breakpoint;
         if (treeElement.treeOutline === this._pauseReasonTreeOutline) {
-            WebInspector.showSourceCodeLocation(breakpoint.sourceCodeLocation, {ignoreNetworkTab: true});
+            WebInspector.showSourceCodeLocation(breakpoint.sourceCodeLocation, options);
             return;
         }
 
@@ -861,7 +867,7 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
         if (!(treeElement.parent.representedObject instanceof WebInspector.SourceCode))
             return;
 
-        WebInspector.showSourceCodeLocation(breakpoint.sourceCodeLocation, {ignoreNetworkTab: true});
+        WebInspector.showSourceCodeLocation(breakpoint.sourceCodeLocation, options);
     }
 
     _compareTopLevelTreeElements(a, b)
@@ -1079,7 +1085,12 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
         if (!sourceCodeLocation)
             return;
 
-        var linkElement = WebInspector.createSourceCodeLocationLink(sourceCodeLocation, false, true);
+        const options = {
+            useGoToArrowButton: true,
+            ignoreNetworkTab: true,
+            ignoreSearchTab: true,
+        };
+        let linkElement = WebInspector.createSourceCodeLocationLink(sourceCodeLocation, options);
         this._pauseReasonLinkContainerElement.appendChild(linkElement);
     }
 

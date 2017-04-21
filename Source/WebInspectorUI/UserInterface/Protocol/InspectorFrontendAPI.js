@@ -109,7 +109,11 @@ InspectorFrontendAPI = {
 
     showMainResourceForFrame: function(frameIdentifier)
     {
-        WebInspector.showSourceCodeForFrame(frameIdentifier, {ignoreNetworkTab: true});
+        const options = {
+            ignoreNetworkTab: true,
+            ignoreSearchTab: true,
+        };
+        WebInspector.showSourceCodeForFrame(frameIdentifier, options);
     },
 
     contextMenuItemSelected: function(id)

@@ -1,3 +1,101 @@
+2017-04-21  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: Don't show the Search tab if it's open and matches the representedObject
+        https://bugs.webkit.org/show_bug.cgi?id=168709
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.handlePossibleLinkClick):
+        (WebInspector.openURL):
+        (WebInspector.showSourceCode):
+        (WebInspector.showOriginalUnformattedSourceCodeLocation):
+        (WebInspector.showOriginalOrFormattedSourceCodeLocation):
+        (WebInspector.showOriginalOrFormattedSourceCodeTextRange):
+        (WebInspector._frameWasAdded):
+        (WebInspector.createSourceCodeLocationLink):
+        (WebInspector.linkifyLocation):
+        (WebInspector.linkifyElement):
+        Add `options` parameter to provide greater customization.  Also fix some style issues.
+
+        * UserInterface/Views/NetworkGridContentView.js:
+        (WebInspector.NetworkGridContentView.prototype.hasRepresentedObject): Deleted.
+        * UserInterface/Views/NetworkSidebarPanel.js:
+        (WebInspector.NetworkSidebarPanel.prototype.hasRepresentedObject): Deleted.
+        * UserInterface/Views/NetworkTabContentView.js:
+        (WebInspector.NetworkTabContentView.prototype.canShowRepresentedObject):
+        * UserInterface/Views/SearchTabContentView.js:
+        (WebInspector.SearchTabContentView.prototype.canShowRepresentedObject):
+        Ensure that the Search tab can only display resources that it has entries for in its view.
+        Also rework the way in which this is determined.
+
+        * UserInterface/Controllers/BreakpointPopoverController.js:
+        (WebInspector.BreakpointPopoverController.prototype.appendContextMenuItems):
+        * UserInterface/Protocol/InspectorFrontendAPI.js:
+        (InspectorFrontendAPI.showMainResourceForFrame):
+        * UserInterface/Views/CSSStyleDeclarationSection.js:
+        (WebInspector.CSSStyleDeclarationSection.prototype.refresh):
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.js:
+        (WebInspector.CSSStyleDeclarationTextEditor.tokenTrackingControllerHighlightedRangeWasClicked.showRangeInSourceCode):
+        (WebInspector.CSSStyleDeclarationTextEditor.tokenTrackingControllerHighlightedRangeWasClicked):
+        * UserInterface/Views/ComputedStyleDetailsPanel.js:
+        (WebInspector.ComputedStyleDetailsPanel.prototype.cssStyleDeclarationTextEditorShowProperty):
+        * UserInterface/Views/ConsoleMessageView.js:
+        (WebInspector.ConsoleMessageView.prototype._linkifyLocation):
+        * UserInterface/Views/DOMDetailsSidebarPanel.js:
+        (WebInspector.DOMDetailsSidebarPanel.prototype._mouseWasClicked):
+        * UserInterface/Views/DOMTreeContentView.js:
+        (WebInspector.DOMTreeContentView.prototype._mouseWasClicked.followLink):
+        * UserInterface/Views/DOMTreeElement.js:
+        (WebInspector.DOMTreeElement.prototype._showCustomElementDefinition):
+        * UserInterface/Views/DebuggerDashboardView.js:
+        (WebInspector.DebuggerDashboardView.prototype._rebuildLocation):
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WebInspector.DebuggerSidebarPanel.prototype._treeSelectionDidChange):
+        (WebInspector.DebuggerSidebarPanel.prototype._updatePauseReasonGotoArrow):
+        * UserInterface/Views/ErrorObjectView.js:
+        (WebInspector.ErrorObjectView.makeSourceLinkWithPrefix):
+        * UserInterface/Views/EventListenerSectionGroup.js:
+        (WebInspector.EventListenerSectionGroup.prototype._functionTextOrLink):
+        * UserInterface/Views/HeapSnapshotInstanceDataGridNode.js:
+        (WebInspector.HeapSnapshotInstanceDataGridNode.prototype._populatePreview):
+        (WebInspector.HeapSnapshotInstanceDataGridNode.prototype._mouseoverHandler.appendPathRow):
+        * UserInterface/Views/ObjectTreeBaseTreeElement.js:
+        (WebInspector.ObjectTreeBaseTreeElement.prototype._appendMenusItemsForObject):
+        (WebInspector.ObjectTreeBaseTreeElement):
+        * UserInterface/Views/ProbeSetDetailsSection.js:
+        (WebInspector.ProbeSetDetailsSection.prototype._updateLinkElement):
+        * UserInterface/Views/ProfileDataGridNode.js:
+        (WebInspector.ProfileDataGridNode.prototype._displayContent):
+        * UserInterface/Views/ResourceDetailsSidebarPanel.js:
+        (WebInspector.ResourceDetailsSidebarPanel.prototype._refreshRelatedResourcesSection):
+        (WebInspector.ResourceDetailsSidebarPanel.prototype._goToRequestDataClicked):
+        * UserInterface/Views/ResourceSidebarPanel.js:
+        (WebInspector.ResourceSidebarPanel.prototype._treeSelectionDidChange):
+        * UserInterface/Views/ResourceTimelineDataGridNode.js:
+        (WebInspector.ResourceTimelineDataGridNode.prototype._dataGridNodeGoToArrowClicked):
+        * UserInterface/Views/RulesStyleDetailsPanel.js:
+        (WebInspector.RulesStyleDetailsPanel.prototype.refresh.insertMediaOrInheritanceLabel):
+        * UserInterface/Views/SearchSidebarPanel.js:
+        (WebInspector.SearchSidebarPanel.prototype._treeElementDoubleClick):
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WebInspector.SourceCodeTextEditor.prototype.tokenTrackingControllerHighlightedRangeWasClicked):
+        * UserInterface/Views/SourceCodeTimelineTimelineDataGridNode.js:
+        (WebInspector.SourceCodeTimelineTimelineDataGridNode.prototype._createNameCellContent):
+        * UserInterface/Views/TimelineDataGrid.js:
+        (WebInspector.TimelineDataGrid.prototype._popoverCallStackTreeSelectionDidChange):
+        * UserInterface/Views/TimelineDataGridNode.js:
+        (WebInspector.TimelineDataGridNode.prototype.createCellContent):
+        * UserInterface/Views/VisualStyleSelectorTreeItem.js:
+        (WebInspector.VisualStyleSelectorTreeItem.prototype.populateContextMenu):
+        Ensure that the Search tab is never shown from links generated by these functions.
+        Also do the same for the Network tab in some cases.
+
+        * UserInterface/Views/NetworkTimelineView.js:
+        (WebInspector.NetworkTimelineView.prototype.canShowContentViewForTreeElement): Deleted.
+        (WebInspector.NetworkTimelineView.prototype.showContentViewForTreeElement): Deleted.
+        Drive-by cleanup: remove dead code.
+
 2017-04-20  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Add regular expression support to XHR breakpoints

@@ -312,9 +312,13 @@ WebInspector.HeapSnapshotInstanceDataGridNode = class HeapSnapshotInstanceDataGr
                     let sourceCodeLocation = sourceCode.createSourceCodeLocation(location.lineNumber, location.columnNumber);
                     sourceCodeLocation.populateLiveDisplayLocationString(locationElement, "textContent", WebInspector.SourceCodeLocation.ColumnStyle.Hidden, WebInspector.SourceCodeLocation.NameStyle.Short);
 
-                    const dontFloat = true;
-                    const useGoToArrowButton = true;
-                    let goToArrowButtonLink = WebInspector.createSourceCodeLocationLink(sourceCodeLocation, dontFloat, useGoToArrowButton);
+                    const options = {
+                        dontFloat: true,
+                        useGoToArrowButton: true,
+                        ignoreNetworkTab: true,
+                        ignoreSearchTab: true,
+                    };
+                    let goToArrowButtonLink = WebInspector.createSourceCodeLocationLink(sourceCodeLocation, options);
                     containerElement.appendChild(goToArrowButtonLink);
                 }
                 return;
@@ -426,10 +430,15 @@ WebInspector.HeapSnapshotInstanceDataGridNode = class HeapSnapshotInstanceDataGr
                         let location = functionDetails.location;
                         let sourceCode = WebInspector.debuggerManager.scriptForIdentifier(location.scriptId, WebInspector.assumingMainTarget());
                         if (sourceCode) {
-                            const dontFloat = true;
-                            const useGoToArrowButton = true;
                             let sourceCodeLocation = sourceCode.createSourceCodeLocation(location.lineNumber, location.columnNumber);
-                            let goToArrowButtonLink = WebInspector.createSourceCodeLocationLink(sourceCodeLocation, dontFloat, useGoToArrowButton);
+
+                            const options = {
+                                dontFloat: true,
+                                useGoToArrowButton: true,
+                                ignoreNetworkTab: true,
+                                ignoreSearchTab: true,
+                            };
+                            let goToArrowButtonLink = WebInspector.createSourceCodeLocationLink(sourceCodeLocation, options);
                             containerElement.replaceChild(goToArrowButtonLink, goToArrowPlaceHolderElement);
                         }
                     }

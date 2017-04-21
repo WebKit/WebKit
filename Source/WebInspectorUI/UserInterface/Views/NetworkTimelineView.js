@@ -203,23 +203,6 @@ WebInspector.NetworkTimelineView = class NetworkTimelineView extends WebInspecto
 
     // Protected
 
-    canShowContentViewForTreeElement(treeElement)
-    {
-        if (treeElement instanceof WebInspector.ResourceTreeElement || treeElement instanceof WebInspector.ScriptTreeElement)
-            return true;
-        return super.canShowContentViewForTreeElement(treeElement);
-    }
-
-    showContentViewForTreeElement(treeElement)
-    {
-        if (treeElement instanceof WebInspector.ResourceTreeElement || treeElement instanceof WebInspector.ScriptTreeElement) {
-            WebInspector.showSourceCode(treeElement.representedObject, {ignoreNetworkTab: true});
-            return;
-        }
-
-        console.error("Unknown tree element selected.", treeElement);
-    }
-
     dataGridNodePathComponentSelected(event)
     {
         let pathComponent = event.data.pathComponent;

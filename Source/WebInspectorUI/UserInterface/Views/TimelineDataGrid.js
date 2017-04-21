@@ -530,7 +530,10 @@ WebInspector.TimelineDataGrid = class TimelineDataGrid extends WebInspector.Data
         if (!callFrame.sourceCodeLocation)
             return;
 
-        WebInspector.showSourceCodeLocation(callFrame.sourceCodeLocation, {ignoreNetworkTab: true});
+        WebInspector.showSourceCodeLocation(callFrame.sourceCodeLocation, {
+            ignoreNetworkTab: true,
+            ignoreSearchTab: true,
+        });
     }
 };
 

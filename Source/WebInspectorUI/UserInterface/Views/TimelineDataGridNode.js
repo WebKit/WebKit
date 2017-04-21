@@ -108,6 +108,12 @@ WebInspector.TimelineDataGridNode = class TimelineDataGridNode extends WebInspec
         if (!value)
             return emDash;
 
+        const options = {
+            useGoToArrowButton: true,
+            ignoreNetworkTab: true,
+            ignoreSearchTab: true,
+        };
+
         if (value instanceof WebInspector.SourceCodeLocation) {
             if (value.sourceCode instanceof WebInspector.Resource) {
                 cell.classList.add(WebInspector.ResourceTreeElement.ResourceIconStyleClassName);
@@ -125,9 +131,7 @@ WebInspector.TimelineDataGridNode = class TimelineDataGridNode extends WebInspec
             value.populateLiveDisplayLocationTooltip(cell);
 
             var fragment = document.createDocumentFragment();
-
-            var goToArrowButtonLink = WebInspector.createSourceCodeLocationLink(value, false, true);
-            fragment.appendChild(goToArrowButtonLink);
+            fragment.appendChild(WebInspector.createSourceCodeLocationLink(value, options));
 
             var titleElement = document.createElement("span");
             value.populateLiveDisplayLocationString(titleElement, "textContent");
@@ -154,8 +158,7 @@ WebInspector.TimelineDataGridNode = class TimelineDataGridNode extends WebInspec
                 // Give the whole cell a tooltip and keep it up to date.
                 callFrame.sourceCodeLocation.populateLiveDisplayLocationTooltip(cell);
 
-                var goToArrowButtonLink = WebInspector.createSourceCodeLocationLink(callFrame.sourceCodeLocation, false, true);
-                fragment.appendChild(goToArrowButtonLink);
+                fragment.appendChild(WebInspector.createSourceCodeLocationLink(value, options));
 
                 if (isAnonymousFunction) {
                     // For anonymous functions we show the resource or script icon and name.
