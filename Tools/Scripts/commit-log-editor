@@ -90,7 +90,13 @@ if (!$log) {
 
 my $baseDir = baseProductDir();
 
-my $editor = $ENV{SVN_LOG_EDITOR};
+my $editor;
+if (isGit()) {
+    $editor = $ENV{GIT_LOG_EDITOR};
+    $editor = `git config --global --get core.editor` if !$editor;
+}
+
+$editor = $ENV{SVN_LOG_EDITOR} if !$editor;
 $editor = $ENV{CVS_LOG_EDITOR} if !$editor;
 $editor = "" if $editor && isCommitLogEditor($editor);
 
