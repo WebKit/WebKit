@@ -29,6 +29,8 @@
 
 namespace JSC {
 
+#if ENABLE(ASSEMBLER)
+
 #if ENABLE(MASM_PROBE)
     
 // What is MacroAssembler::print()?
@@ -302,5 +304,7 @@ template<typename... Arguments>
 void MacroAssembler::print(Arguments...) { }
 
 #endif // ENABLE(MASM_PROBE)
+
+#endif // ENABLE(ASSEMBLER)
 
 } // namespace JSC

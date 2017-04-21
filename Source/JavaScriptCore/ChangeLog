@@ -1,5 +1,14 @@
 2017-04-20  Mark Lam  <mark.lam@apple.com>
 
+        Build fix after r215592.
+        https://bugs.webkit.org/show_bug.cgi?id=171088
+
+        Not reviewed.
+
+        * assembler/MacroAssemblerPrinter.h:
+
+2017-04-20  Mark Lam  <mark.lam@apple.com>
+
         Update the MASM probe to only take 1 arg instead of 2 (in addition to the callback function).
         https://bugs.webkit.org/show_bug.cgi?id=171088
 
