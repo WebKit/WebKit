@@ -1,5 +1,11 @@
 2017-04-20  Dean Jackson  <dino@apple.com>
 
+        Add Web Sharing to the features under consideration.
+
+        * features.json:
+
+2017-04-20  Dean Jackson  <dino@apple.com>
+
         Add Scroll Anchoring to features under consideration.
 
         * features.json:
