@@ -1,3 +1,31 @@
+2017-04-20  Keith Miller  <keith_miller@apple.com>
+
+        Add signaling API
+        https://bugs.webkit.org/show_bug.cgi?id=170976
+
+        Reviewed by Filip Pizlo.
+
+        Update various uses of sigaction to use the new signaling API.
+        Also switch VMTraps to use the thread message system instead of
+        rolling it's own.
+
+        * jit/ExecutableAllocator.h:
+        (JSC::isJITPC):
+        * runtime/VMTraps.cpp:
+        (JSC::installSignalHandler):
+        (JSC::VMTraps::VMTraps):
+        (JSC::VMTraps::SignalSender::send):
+        (JSC::handleSigusr1): Deleted.
+        (JSC::handleSigtrap): Deleted.
+        (JSC::installSignalHandlers): Deleted.
+        * runtime/VMTraps.h:
+        * tools/SigillCrashAnalyzer.cpp:
+        (JSC::installCrashHandler):
+        (JSC::handleCrash): Deleted.
+        * wasm/WasmFaultSignalHandler.cpp:
+        (JSC::Wasm::trapHandler):
+        (JSC::Wasm::enableFastMemory):
+
 2017-04-21  Michael Saboff  <msaboff@apple.com>
 
         X86-64 Assembler doesn't handle xchg with byte register src

@@ -35,9 +35,9 @@
 #include "WasmMemory.h"
 #include "WasmThunks.h"
 
-#include <signal.h>
 #include <wtf/Lock.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/threads/Signals.h>
 
 namespace JSC { namespace Wasm {
 
@@ -50,11 +50,9 @@ static LazyNeverDestroyed<HashSet<std::tuple<void*, void*>>> codeLocations; // (
 
 #if ENABLE(WEBASSEMBLY_FAST_MEMORY)
 
-static struct sigaction oldSigBusHandler;
-static struct sigaction oldSigSegvHandler;
 static bool fastHandlerInstalled { false };
 
-static void trapHandler(int signal, siginfo_t* sigInfo, void* ucontext)
+static SignalAction trapHandler(int, siginfo_t* sigInfo, void* ucontext)
 {
     mcontext_t& context = static_cast<ucontext_t*>(ucontext)->uc_mcontext;
     void* faultingInstruction = MachineContext::instructionPointer(context);
@@ -63,9 +61,7 @@ static void trapHandler(int signal, siginfo_t* sigInfo, void* ucontext)
     dataLogLnIf(verbose, "JIT memory start: ", RawPointer(reinterpret_cast<void*>(startOfFixedExecutableMemoryPool)), " end: ", RawPointer(reinterpret_cast<void*>(endOfFixedExecutableMemoryPool)));
     // First we need to make sure we are in JIT code before we can aquire any locks. Otherwise,
     // we might have crashed in code that is already holding one of the locks we want to aquire.
-    if (reinterpret_cast<void*>(startOfFixedExecutableMemoryPool) <= faultingInstruction
-        && faultingInstruction < reinterpret_cast<void*>(endOfFixedExecutableMemoryPool)) {
-
+    if (isJITPC(faultingInstruction)) {
         bool faultedInActiveFastMemory = false;
         {
             void* faultingAddress = sigInfo->si_addr;
@@ -89,17 +85,12 @@ static void trapHandler(int signal, siginfo_t* sigInfo, void* ucontext)
                     dataLogLnIf(verbose, "found stub: ", RawPointer(exceptionStub.code().executableAddress()));
                     MachineContext::argumentPointer<1>(context) = reinterpret_cast<void*>(ExceptionType::OutOfBoundsMemoryAccess);
                     MachineContext::instructionPointer(context) = exceptionStub.code().executableAddress();
-                    return;
+                    return SignalAction::Handled;
                 }
             }
         }
     }
-
-    // Since we only use fast memory in processes we control, if we restore we will just fall back to the default handler.
-    if (signal == SIGBUS)
-        sigaction(signal, &oldSigBusHandler, nullptr);
-    else
-        sigaction(signal, &oldSigSegvHandler, nullptr);
+    return SignalAction::NotHandled;
 }
 
 #endif // ENABLE(WEBASSEMBLY_FAST_MEMORY)
@@ -133,22 +124,13 @@ void enableFastMemory()
             return;
 
 #if ENABLE(WEBASSEMBLY_FAST_MEMORY)
-        struct sigaction action;
+        installSignalHandler(Signal::Bus, [] (int signal, siginfo_t* sigInfo, void* ucontext) {
+            return trapHandler(signal, sigInfo, ucontext);
+        });
 
-        action.sa_sigaction = trapHandler;
-        sigfillset(&action.sa_mask);
-        action.sa_flags = SA_SIGINFO;
-        
-        // Installing signal handlers fails when
-        // 1. specificied sig is incorrect (invalid values or signal numbers which cannot be handled), or
-        // 2. second or third parameter points incorrect pointers.
-        // Thus, we must not fail in the following attempts.
-        int ret = 0;
-        ret = sigaction(SIGBUS, &action, &oldSigBusHandler);
-        RELEASE_ASSERT(!ret);
-
-        ret = sigaction(SIGSEGV, &action, &oldSigSegvHandler);
-        RELEASE_ASSERT(!ret);
+        installSignalHandler(Signal::SegV, [] (int signal, siginfo_t* sigInfo, void* ucontext) {
+            return trapHandler(signal, sigInfo, ucontext);
+        });
 
         codeLocations.construct();
         fastHandlerInstalled = true;

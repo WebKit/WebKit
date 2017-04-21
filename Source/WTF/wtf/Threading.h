@@ -42,6 +42,7 @@
 #include <wtf/Atomics.h>
 #include <wtf/Expected.h>
 #include <wtf/Locker.h>
+#include <wtf/LocklessBag.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/PlatformRegisters.h>
 #include <wtf/PrintStream.h>
@@ -55,6 +56,8 @@
 #endif
 
 namespace WTF {
+
+class ThreadMessageData;
 
 using ThreadIdentifier = uint32_t;
 typedef void (*ThreadFunction)(void* argument);
@@ -75,6 +78,7 @@ public:
 
     // Returns Thread object.
     WTF_EXPORT_PRIVATE static Thread& current();
+    WTF_EXPORT_PRIVATE static Thread* currentMayBeNull();
 
     // Returns ThreadIdentifier directly. It is useful if the user only cares about identity
     // of threads. At that time, users should know that holding this ThreadIdentifier does not ensure
@@ -132,7 +136,11 @@ public:
 
     static void initializePlatformThreading();
 
-private:
+#if USE(PTHREADS)
+    LocklessBag<ThreadMessageData*>& threadMessages() { return m_threadMessages; }
+#endif
+
+protected:
     Thread();
 
     // Internal platform-specific Thread::create implementation.
@@ -177,6 +185,8 @@ private:
     bool m_didExit { false };
 #if USE(PTHREADS)
     pthread_t m_handle;
+
+    LocklessBag<ThreadMessageData*> m_threadMessages;
 #if OS(DARWIN)
     mach_port_t m_platformThread;
 #else

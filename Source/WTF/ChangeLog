@@ -1,3 +1,76 @@
+2017-04-20  Keith Miller  <keith_miller@apple.com>
+
+        Add signaling API
+        https://bugs.webkit.org/show_bug.cgi?id=170976
+
+        Reviewed by Filip Pizlo.
+
+        This patch adds a bunch of new functionality to WTF. First, it add
+        a new data structure of a lockless bag. The LocklessBag class can
+        be used as either a multi-writer multi-reader lockless bag or a
+        multi-writer single consumer lockless bag.
+
+        Next, this patch adds an abstraction around sigaction in WTF.
+        Basically, you can add a handler, which can be an arbitrary
+        lambda. Although it should still be safe for the signal you are
+        handling.  the signal handler manager will then do all the
+        appropriate handling of chaining:
+
+        In the SIGUSR case we always forward the signal to any other
+        non-default handler installed before us. We need to do this,
+        otherwise, since it's not possible to tell if a SIGUSR was
+        intended exlusively for our handlers. Signal handlers don't record
+        how many times they were sent only that there is at least one
+        unhandled signal.
+
+        In the faulting cases we require that every handle be able to
+        recognise a fault they installed, vs crashes. If none of our
+        handlers claim to have handled the fault we will forward the
+        fault. If a handler was installed before the first fault handler
+        we simply call that handler and rely on them to take the
+        appropriate action. If no handler was installed before our first
+        handler we restore the default handler and allow the fault to
+        happen again.
+
+        Finally, this patch adds a signal based messaging system.  This
+        system allows the user to run an arbitrary lambda from the SIGUSR2
+        signal handler of any target WTF::Thread. This is already in use
+        for the VMTraps API which allows us to kill rogue VMs by sending
+        the VM's running WTF::Thread a SIGUSR and requesting it jetison
+        all optimized code and throw an uncatchable exception from all
+        function entries/loop backedges.  In the future, we will also use
+        this API for Wasm to reset the instruction caches in currently
+        executing Wasm threads.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/Atomics.h:
+        (WTF::Atomic::Atomic):
+        * wtf/LocklessBag.h: Added.
+        (WTF::LocklessBag::LocklessBag):
+        (WTF::LocklessBag::add):
+        (WTF::LocklessBag::iterate):
+        (WTF::LocklessBag::consumeAll):
+        * wtf/ThreadMessage.cpp: Added.
+        (WTF::ThreadMessageData::ThreadMessageData):
+        (WTF::initializeThreadMessages):
+        (WTF::sendMessageScoped):
+        * wtf/ThreadMessage.h: Added.
+        (WTF::sendMessage):
+        * wtf/Threading.cpp:
+        (WTF::initializeThreading):
+        * wtf/Threading.h:
+        (WTF::Thread::threadMessages):
+        * wtf/ThreadingPthreads.cpp:
+        (WTF::Thread::currentMayBeNull):
+        (WTF::Thread::current):
+        (WTF::Thread::signal):
+        * wtf/threads/Signals.cpp: Added.
+        (WTF::jscSignalHandler):
+        (WTF::installSignalHandler):
+        * wtf/threads/Signals.h: Added.
+        (WTF::toSystemSignal):
+        (WTF::fromSystemSignal):
+
 2017-04-21  Konstantin Tokarev  <annulen@yandex.ru>
 
         [cmake] WTF target should not have wtf and subdirectries in public interface
