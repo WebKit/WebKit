@@ -1258,6 +1258,8 @@
 		2D9BF7471DBFDC49007A7D99 /* MediaKeyMessageEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D9BF72F1DBFDC0F007A7D99 /* MediaKeyMessageEvent.cpp */; };
 		2D9BF74A1DBFDDFF007A7D99 /* JSMediaKeySessionCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D9BF7481DBFDDF8007A7D99 /* JSMediaKeySessionCustom.cpp */; };
 		2D9F0E1314FF1CBF00BA0FF7 /* linearSRGB.icc in Resources */ = {isa = PBXBuildFile; fileRef = 2D9F0E1214FF1CBF00BA0FF7 /* linearSRGB.icc */; };
+		2DAF343C1EA7E0F100382CD3 /* ConstantPropertyMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DAF343A1EA7E0F100382CD3 /* ConstantPropertyMap.cpp */; };
+		2DAF343D1EA7E0F100382CD3 /* ConstantPropertyMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DAF343B1EA7E0F100382CD3 /* ConstantPropertyMap.h */; };
 		2DB9C4AA1B3231F40070F27F /* NSEventSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DB9C4A91B3231F40070F27F /* NSEventSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2DC4CF791D2DD98900ECCC94 /* DataDetectorsUISPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DC4CF781D2DD98900ECCC94 /* DataDetectorsUISPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2DCB837919F99BBA00A7FBE4 /* NSSharingServicePickerSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DCB837719F99BBA00A7FBE4 /* NSSharingServicePickerSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -8800,6 +8802,8 @@
 		2D9F0E1214FF1CBF00BA0FF7 /* linearSRGB.icc */ = {isa = PBXFileReference; lastKnownFileType = file; path = linearSRGB.icc; sourceTree = "<group>"; };
 		2DAAE32C19DCAF6000E002D2 /* MockPageOverlayClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MockPageOverlayClient.cpp; sourceTree = "<group>"; };
 		2DAAE32D19DCAF6000E002D2 /* MockPageOverlayClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockPageOverlayClient.h; sourceTree = "<group>"; };
+		2DAF343A1EA7E0F100382CD3 /* ConstantPropertyMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConstantPropertyMap.cpp; sourceTree = "<group>"; };
+		2DAF343B1EA7E0F100382CD3 /* ConstantPropertyMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConstantPropertyMap.h; sourceTree = "<group>"; };
 		2DB9C4A91B3231F40070F27F /* NSEventSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSEventSPI.h; sourceTree = "<group>"; };
 		2DC4CF781D2DD98900ECCC94 /* DataDetectorsUISPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataDetectorsUISPI.h; sourceTree = "<group>"; };
 		2DCB837719F99BBA00A7FBE4 /* NSSharingServicePickerSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSSharingServicePickerSPI.h; sourceTree = "<group>"; };
@@ -25455,6 +25459,8 @@
 				79F2F59E1091939A000D87CB /* CompositionEvent.cpp */,
 				79F2F59F1091939A000D87CB /* CompositionEvent.h */,
 				79F2F5A01091939A000D87CB /* CompositionEvent.idl */,
+				2DAF343A1EA7E0F100382CD3 /* ConstantPropertyMap.cpp */,
+				2DAF343B1EA7E0F100382CD3 /* ConstantPropertyMap.h */,
 				A81872140977D3C0005826D9 /* ContainerNode.cpp */,
 				A81872110977D3C0005826D9 /* ContainerNode.h */,
 				A7A78CD41532BA62006C21E4 /* ContainerNodeAlgorithms.cpp */,
@@ -26487,6 +26493,7 @@
 				7C77C3D71DEF850A00A50BFA /* BlobLineEndings.h in Headers */,
 				E1C94AF9191303F000D5A893 /* BlobPart.h in Headers */,
 				7C77C3D11DEE472400A50BFA /* BlobPropertyBag.h in Headers */,
+				2DAF343D1EA7E0F100382CD3 /* ConstantPropertyMap.h in Headers */,
 				2EDEF1F5121B0EFC00726DB2 /* BlobRegistry.h in Headers */,
 				2EDEF1F7121B0EFC00726DB2 /* BlobRegistryImpl.h in Headers */,
 				2EB4BCD3121F03E300EC4885 /* BlobResourceHandle.h in Headers */,
@@ -31832,6 +31839,7 @@
 				E1E6EEA40B628DA8005F2F70 /* JSHTMLSelectElement.cpp in Sources */,
 				BC17F9660B64EBB8004A65CB /* JSHTMLSelectElementCustom.cpp in Sources */,
 				9B69D3B81B99100700E3512B /* JSHTMLSlotElement.cpp in Sources */,
+				2DAF343C1EA7E0F100382CD3 /* ConstantPropertyMap.cpp in Sources */,
 				E446143B0CD689CC00FADA75 /* JSHTMLSourceElement.cpp in Sources */,
 				9752D38D1413104B003305BD /* JSHTMLSpanElement.cpp in Sources */,
 				A80E7B0F0A19D606007FB8C5 /* JSHTMLStyleElement.cpp in Sources */,
