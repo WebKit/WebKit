@@ -1,4 +1,4 @@
-const verbose = true;
+const verbose = false;
 
 // Use a full 4GiB so that exhaustion is likely to occur faster. We're not
 // guaranteed that we'll get that much virtually allocated to the memory so we
