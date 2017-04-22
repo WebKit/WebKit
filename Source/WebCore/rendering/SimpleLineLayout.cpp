@@ -559,30 +559,6 @@ private:
     std::optional<Vector<TextFragmentIterator::TextFragment, 30>> m_fragments;
 };
 
-class FragmentForwardIterator : public std::iterator<std::forward_iterator_tag, unsigned> {
-public:
-    FragmentForwardIterator(unsigned fragmentIndex)
-        : m_fragmentIndex(fragmentIndex)
-    {
-    }
-
-    FragmentForwardIterator& operator++()
-    {
-        ++m_fragmentIndex;
-        return *this;
-    }
-
-    bool operator!=(const FragmentForwardIterator& other) const { return m_fragmentIndex != other.m_fragmentIndex; }
-    bool operator==(const FragmentForwardIterator& other) const { return m_fragmentIndex == other.m_fragmentIndex; }
-    unsigned operator*() const { return m_fragmentIndex; }
-
-private:
-    unsigned m_fragmentIndex { 0 };
-};
-
-static FragmentForwardIterator begin(const TextFragmentIterator::TextFragment& fragment)  { return FragmentForwardIterator(fragment.start()); }
-static FragmentForwardIterator end(const TextFragmentIterator::TextFragment& fragment)  { return FragmentForwardIterator(fragment.end()); }
-
 static bool preWrap(const TextFragmentIterator::Style& style)
 {
     return style.wrapLines && !style.collapseWhitespace;
@@ -618,7 +594,11 @@ static void updateLineConstrains(const RenderBlockFlow& flow, LineState& line, c
 
 }
 
-static std::optional<unsigned> hyphenPositionForFragment(unsigned splitPosition, TextFragmentIterator::TextFragment& fragmentToSplit,
+struct SplitFragmentData {
+    unsigned position;
+    float width;
+};
+static std::optional<unsigned> hyphenPositionForFragment(SplitFragmentData splitData, const TextFragmentIterator::TextFragment& fragmentToSplit,
     const LineState& line, const TextFragmentIterator& textFragmentIterator, float availableWidth)
 {
     auto& style = textFragmentIterator.style();
@@ -634,10 +614,10 @@ static std::optional<unsigned> hyphenPositionForFragment(unsigned splitPosition,
         return std::nullopt;
 
     // We might be able to fit the hyphen at the split position.
-    auto splitPositionWithHyphen = splitPosition;
+    auto splitPositionWithHyphen = splitData.position;
     // Find a splitting position where hyphen surely fits.
     unsigned start = fragmentToSplit.start();
-    auto leftSideWidth = textFragmentIterator.textWidth(start, splitPosition, 0);
+    auto leftSideWidth = splitData.width;
     while (leftSideWidth + style.hyphenStringWidth > availableWidth) {
         if (--splitPositionWithHyphen <= start)
             return std::nullopt; // No space for hyphen.
@@ -647,25 +627,60 @@ static std::optional<unsigned> hyphenPositionForFragment(unsigned splitPosition,
     return textFragmentIterator.lastHyphenPosition(fragmentToSplit, splitPositionWithHyphen + 1);
 }
 
+static SplitFragmentData split(const TextFragmentIterator::TextFragment& fragment, float availableWidth,
+    const TextFragmentIterator& textFragmentIterator)
+{
+    ASSERT(availableWidth >= 0);
+    auto left = fragment.start();
+    // Pathological case of (extremely)long string and narrow lines.
+    // Adjust the range so that we can pick a reasonable midpoint.
+    auto averageCharacterWidth = fragment.width() / fragment.length();
+    auto right = std::min<unsigned>(left + (2 * availableWidth / averageCharacterWidth), fragment.end() - 1);
+    // Preserve the left width for the final split position so that we don't need to remeasure the left side again.
+    float leftSideWidth = 0;
+    while (left < right) {
+        auto middle = (left + right) / 2;
+        auto width = textFragmentIterator.textWidth(fragment.start(), middle + 1, 0);
+        if (width < availableWidth) {
+            left = middle + 1;
+            leftSideWidth = width;
+        } else if (width > availableWidth)
+            right = middle;
+        else {
+            right = middle + 1;
+            leftSideWidth = width;
+            break;
+        }
+    }
+    return { right, leftSideWidth };
+}
+
 static TextFragmentIterator::TextFragment splitFragmentToFitLine(TextFragmentIterator::TextFragment& fragmentToSplit,
     const LineState& line, const TextFragmentIterator& textFragmentIterator)
 {
     auto availableWidth = line.availableWidth() - line.width();
-    // FIXME: add surrogate pair support.
-    unsigned start = fragmentToSplit.start();
-    auto it = std::upper_bound(begin(fragmentToSplit), end(fragmentToSplit), availableWidth, [&textFragmentIterator, start](float availableWidth, unsigned index) {
-        // FIXME: use the actual left position of the line (instead of 0) to calculated width. It might give false width for tab characters.
-        return availableWidth < textFragmentIterator.textWidth(start, index + 1, 0);
-    });
-    unsigned splitPosition = (*it);
+    auto splitFragmentData = split(fragmentToSplit, availableWidth, textFragmentIterator);
+    std::optional<unsigned> hyphenPosition = std::nullopt;
     // Does first character fit this line?
-    if (splitPosition == start) {
+    if (splitFragmentData.position == fragmentToSplit.start()) {
         // Keep at least one character on empty lines.
         if (line.isEmpty())
-            ++splitPosition;
-    } else if (auto hyphenPosition = hyphenPositionForFragment(splitPosition, fragmentToSplit, line, textFragmentIterator, availableWidth))
-        return fragmentToSplit.splitWithHyphen(*hyphenPosition, textFragmentIterator);
-    return fragmentToSplit.split(splitPosition, textFragmentIterator);
+            splitFragmentData.width = textFragmentIterator.textWidth(fragmentToSplit.start(), ++splitFragmentData.position, 0);
+    } else {
+        hyphenPosition = hyphenPositionForFragment(splitFragmentData, fragmentToSplit, line, textFragmentIterator, availableWidth);
+        if (hyphenPosition) {
+            splitFragmentData.position = *hyphenPosition;
+            splitFragmentData.width = textFragmentIterator.textWidth(fragmentToSplit.start(), splitFragmentData.position, 0);
+        }
+    }
+    // If the right side surely does not fit the (next)line, we don't need the width to be kerning/ligature adjusted.
+    // Part of it gets re-measured as the left side during next split.
+    // This saves measuring long chunk of text repeatedly (see pathological case at ::split).
+    auto rightSideWidth = fragmentToSplit.width() - splitFragmentData.width;
+    if (rightSideWidth < 2 * availableWidth)
+        rightSideWidth = textFragmentIterator.textWidth(splitFragmentData.position, fragmentToSplit.end(), 0);
+    return hyphenPosition ? fragmentToSplit.splitWithHyphen(splitFragmentData.position, splitFragmentData.width, rightSideWidth, textFragmentIterator) :
+        fragmentToSplit.split(splitFragmentData.position, splitFragmentData.width, rightSideWidth, textFragmentIterator);
 }
 
 enum PreWrapLineBreakRule { Preserve, Ignore };
