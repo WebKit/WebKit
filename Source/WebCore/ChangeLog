@@ -1,3 +1,19 @@
+2017-04-21  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream iOS] Release capture session when not producing data
+        https://bugs.webkit.org/show_bug.cgi?id=171148
+        <rdar://problem/29265868>
+
+        Reviewed by Jer Noble.
+
+        On iOS, only one AVCaptureSession can be active at a time, so release a session whenever
+        it is told to stop producing data. The session will recreated if the capture source if/when
+        told to produce data again.
+
+        * platform/mediastream/mac/AVMediaCaptureSource.mm:
+        (WebCore::AVMediaCaptureSource::stopProducingData): Clear m_session to release the session.
+        It will be re-allocated if startProducingData is called later.
+
 2017-04-21  Aaron Chu  <aaron_chu@apple.com>
 
         AX: FKA: Buttons need a visible focus indicator

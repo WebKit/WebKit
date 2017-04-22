@@ -187,6 +187,10 @@ void AVMediaCaptureSource::stopProducingData()
 
     [m_objcObserver removeNotificationObservers];
     [m_session stopRunning];
+#if PLATFORM(IOS)
+    m_session = nullptr;
+#endif
+
 }
 
 void AVMediaCaptureSource::beginConfiguration()
