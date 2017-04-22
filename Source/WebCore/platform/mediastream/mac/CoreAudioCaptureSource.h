@@ -68,7 +68,7 @@ public:
     CMClockRef timebaseClock();
 
 private:
-    CoreAudioCaptureSource(const String& deviceID);
+    CoreAudioCaptureSource(const String& deviceID, const String& label, uint32_t persistentID);
     virtual ~CoreAudioCaptureSource();
 
     bool isCaptureSource() const final { return true; }

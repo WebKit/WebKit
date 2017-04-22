@@ -60,13 +60,18 @@ RefPtr<CoreAudioCaptureSource> CoreAudioCaptureSource::create(const String& devi
     if (type != CaptureDevice::DeviceType::Audio)
         return nullptr;
 
+    String label;
+    uint32_t persistentID = 0;
 #if PLATFORM(MAC)
-    auto device = CoreAudioCaptureDeviceManager::singleton().deviceWithUID(deviceID, RealtimeMediaSource::Type::Audio);
+    auto device = CoreAudioCaptureDeviceManager::singleton().coreAudioDeviceWithUID(deviceID);
     if (!device)
         return nullptr;
-#endif
 
-    auto source = adoptRef(new CoreAudioCaptureSource(deviceID));
+    label = device->label();
+    persistentID = device->deviceID();
+#endif
+    auto source = adoptRef(new CoreAudioCaptureSource(deviceID, label, persistentID));
+
     if (constraints) {
         auto result = source->applyConstraints(*constraints);
         if (result) {
@@ -84,21 +89,10 @@ RealtimeMediaSource::CaptureFactory& CoreAudioCaptureSource::factory()
     return factory.get();
 }
 
-CoreAudioCaptureSource::CoreAudioCaptureSource(const String& deviceID)
-    : RealtimeMediaSource(emptyString(), RealtimeMediaSource::Type::Audio, emptyString())
-    , m_captureDeviceID(0)
+CoreAudioCaptureSource::CoreAudioCaptureSource(const String& deviceID, const String& label, uint32_t persistentID)
+    : RealtimeMediaSource(deviceID, RealtimeMediaSource::Type::Audio, label)
+    , m_captureDeviceID(persistentID)
 {
-#if PLATFORM(MAC)
-    for (auto& platformDevice : CoreAudioCaptureDeviceManager::singleton().coreAudioCaptureDevices()) {
-        if (platformDevice->persistentId() == deviceID) {
-            m_captureDeviceID = platformDevice->deviceID();
-            break;
-        }
-    }
-    ASSERT(m_captureDeviceID);
-#endif
-
-    setPersistentID(deviceID);
     m_muted = true;
 
     m_currentSettings.setVolume(1.0);

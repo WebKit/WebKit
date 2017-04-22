@@ -1,3 +1,31 @@
+2017-04-21  Jer Noble  <jer.noble@apple.com>
+
+        Make CoreAudioCaptureDevice stackable.
+        https://bugs.webkit.org/show_bug.cgi?id=171097
+
+        Reviewed by Eric Carlson.
+
+        There's no real reason to keep CoreAudioCaptureDevice from being created on the stack. 
+        Make it un-RefCounted, and have it's static factory method return an std::optional rather
+        than a RefPtr.
+
+        Drive-by fix: clean up the factory method of CoreAudioCaptureSource a bit.
+
+        * platform/mediastream/mac/CoreAudioCaptureDevice.cpp:
+        (WebCore::CoreAudioCaptureDevice::create):
+        (WebCore::CoreAudioCaptureDevice::deviceID): Deleted.
+        * platform/mediastream/mac/CoreAudioCaptureDevice.h:
+        (WebCore::CoreAudioCaptureDevice::deviceID):
+        * platform/mediastream/mac/CoreAudioCaptureDeviceManager.cpp:
+        (WebCore::CoreAudioCaptureDeviceManager::coreAudioCaptureDevices):
+        (WebCore::CoreAudioCaptureDeviceManager::coreAudioDeviceWithUID):
+        (WebCore::CoreAudioCaptureDeviceManager::refreshAudioCaptureDevices):
+        * platform/mediastream/mac/CoreAudioCaptureDeviceManager.h:
+        * platform/mediastream/mac/CoreAudioCaptureSource.cpp:
+        (WebCore::CoreAudioCaptureSource::create):
+        (WebCore::CoreAudioCaptureSource::CoreAudioCaptureSource):
+        * platform/mediastream/mac/CoreAudioCaptureSource.h:
+
 2017-04-21  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream iOS] Release capture session when not producing data

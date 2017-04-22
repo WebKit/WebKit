@@ -45,7 +45,8 @@ public:
 
     Vector<CaptureDevice>& captureDevices() final;
 
-    Vector<Ref<CoreAudioCaptureDevice>>& coreAudioCaptureDevices();
+    Vector<CoreAudioCaptureDevice>& coreAudioCaptureDevices();
+    std::optional<CoreAudioCaptureDevice> coreAudioDeviceWithUID(const String&);
 
 private:
     CoreAudioCaptureDeviceManager() = default;
@@ -56,7 +57,7 @@ private:
     void refreshAudioCaptureDevices();
 
     Vector<CaptureDevice> m_devices;
-    Vector<Ref<CoreAudioCaptureDevice>> m_coreAudioCaptureDevices;
+    Vector<CoreAudioCaptureDevice> m_coreAudioCaptureDevices;
 };
 
 } // namespace WebCore

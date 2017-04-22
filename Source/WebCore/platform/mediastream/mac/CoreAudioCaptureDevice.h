@@ -35,13 +35,13 @@ typedef struct OpaqueCMClock* CMClockRef;
 
 namespace WebCore {
 
-class CoreAudioCaptureDevice : public CaptureDevice, public RefCounted<CoreAudioCaptureDevice> {
+class CoreAudioCaptureDevice : public CaptureDevice {
 public:
 
-    static RefPtr<CoreAudioCaptureDevice> create(uint32_t);
+    static std::optional<CoreAudioCaptureDevice> create(uint32_t);
     virtual ~CoreAudioCaptureDevice() = default;
 
-    uint32_t deviceID();
+    uint32_t deviceID() const { return m_deviceID; }
     RetainPtr<CMClockRef> deviceClock();
     bool isAlive();
 

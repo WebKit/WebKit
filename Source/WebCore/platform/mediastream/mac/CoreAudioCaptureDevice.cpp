@@ -64,25 +64,20 @@ static bool getDeviceInfo(uint32_t deviceID, String& persistentID, String& label
     return true;
 }
 
-RefPtr<CoreAudioCaptureDevice> CoreAudioCaptureDevice::create(uint32_t deviceID)
+std::optional<CoreAudioCaptureDevice> CoreAudioCaptureDevice::create(uint32_t deviceID)
 {
     String persistentID;
     String label;
     if (!getDeviceInfo(deviceID, persistentID, label))
-        return nullptr;
+        return std::nullopt;
 
-    return adoptRef(new CoreAudioCaptureDevice(deviceID, persistentID, label));
+    return CoreAudioCaptureDevice(deviceID, persistentID, label);
 }
 
 CoreAudioCaptureDevice::CoreAudioCaptureDevice(uint32_t deviceID, const String& persistentID, const String& label)
     : CaptureDevice(persistentID, CaptureDevice::DeviceType::Audio, label)
     , m_deviceID(deviceID)
 {
-}
-
-uint32_t CoreAudioCaptureDevice::deviceID()
-{
-    return m_deviceID;
 }
 
 RetainPtr<CMClockRef> CoreAudioCaptureDevice::deviceClock()

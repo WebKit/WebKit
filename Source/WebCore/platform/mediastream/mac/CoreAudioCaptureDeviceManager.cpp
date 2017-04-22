@@ -59,7 +59,7 @@ static bool deviceHasInputStreams(AudioObjectID deviceID)
     return !err && dataSize;
 }
 
-Vector<Ref<CoreAudioCaptureDevice>>& CoreAudioCaptureDeviceManager::coreAudioCaptureDevices()
+Vector<CoreAudioCaptureDevice>& CoreAudioCaptureDeviceManager::coreAudioCaptureDevices()
 {
     static bool initialized;
     if (!initialized) {
@@ -74,6 +74,16 @@ Vector<Ref<CoreAudioCaptureDevice>>& CoreAudioCaptureDeviceManager::coreAudioCap
 
     return m_coreAudioCaptureDevices;
 }
+
+std::optional<CoreAudioCaptureDevice> CoreAudioCaptureDeviceManager::coreAudioDeviceWithUID(const String& deviceID)
+{
+    for (auto& device : coreAudioCaptureDevices()) {
+        if (device.persistentId() == deviceID)
+            return device;
+    }
+    return std::nullopt;
+}
+
 
 void CoreAudioCaptureDeviceManager::refreshAudioCaptureDevices()
 {
@@ -99,21 +109,21 @@ void CoreAudioCaptureDeviceManager::refreshAudioCaptureDevices()
         if (!deviceHasInputStreams(deviceID))
             continue;
 
-        if (std::any_of(m_coreAudioCaptureDevices.begin(), m_coreAudioCaptureDevices.end(), [deviceID](auto& device) { return device->deviceID() == deviceID; }))
+        if (std::any_of(m_coreAudioCaptureDevices.begin(), m_coreAudioCaptureDevices.end(), [deviceID](auto& device) { return device.deviceID() == deviceID; }))
             continue;
 
         auto device = CoreAudioCaptureDevice::create(deviceID);
         if (!device)
             continue;
-        m_coreAudioCaptureDevices.append(device.releaseNonNull());
+        m_coreAudioCaptureDevices.append(WTFMove(device.value()));
 
         haveDeviceChanges = true;
     }
 
     for (auto& device : m_coreAudioCaptureDevices) {
-        bool isAlive = device->isAlive();
-        if (device->enabled() != isAlive) {
-            device->setEnabled(isAlive);
+        bool isAlive = device.isAlive();
+        if (device.enabled() != isAlive) {
+            device.setEnabled(isAlive);
             haveDeviceChanges = true;
         }
     }
@@ -122,8 +132,8 @@ void CoreAudioCaptureDeviceManager::refreshAudioCaptureDevices()
         m_devices = Vector<CaptureDevice>();
 
         for (auto &device : m_coreAudioCaptureDevices) {
-            CaptureDevice captureDevice(device->persistentId(), CaptureDevice::DeviceType::Audio, device->label());
-            captureDevice.setEnabled(device->enabled());
+            CaptureDevice captureDevice(device.persistentId(), CaptureDevice::DeviceType::Audio, device.label());
+            captureDevice.setEnabled(device.enabled());
             m_devices.append(captureDevice);
         }
     }
