@@ -1,3 +1,17 @@
+2017-04-22  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Fix regression caused by r215626
+        https://bugs.webkit.org/show_bug.cgi?id=171168
+        <rdar://problem/31774787>
+
+        Reviewed by Antoine Quint.
+
+        No new tests, fixes fast/mediastream/MediaStream-page-muted.html
+
+        * Modules/mediastream/MediaStream.cpp:
+        (WebCore::MediaStream::mediaState): Test muted before m_isProducingData because if both are 
+        true we want to report that the stream is muted.
+
 2017-04-21  Zalan Bujtas  <zalan@apple.com>
 
         Do not measure large chunk of text repeatedly during mid-word breaking.

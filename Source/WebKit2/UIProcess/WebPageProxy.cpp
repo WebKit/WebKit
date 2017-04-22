@@ -4198,9 +4198,6 @@ void WebPageProxy::setMediaVolume(float volume)
 
 void WebPageProxy::setMuted(WebCore::MediaProducer::MutedStateFlags state)
 {
-    if (m_mutedState == state)
-        return;
-
     m_mutedState = state;
 
     if (!isValid())
