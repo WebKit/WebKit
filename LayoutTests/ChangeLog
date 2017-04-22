@@ -1,3 +1,16 @@
+2017-04-21  Zalan Bujtas  <zalan@apple.com>
+
+        REGRESSION(r205374): <li> content inside <ul> should mid-word wrap when word-break: break-word is present.
+        https://bugs.webkit.org/show_bug.cgi?id=171108
+        <rdar://problem/30271747>
+
+        Reviewed by Dan Bernstein.
+
+        * fast/replaced/ul-li-word-break-break-word-expected.html: Added.
+        * fast/replaced/ul-li-word-break-break-word.html: Added.
+        * fast/replaced/zero-width-image-force-linebreak-expected.html: Added.
+        * fast/replaced/zero-width-image-force-linebreak.html: Added.
+
 2017-04-21  Aaron Chu  <aaron_chu@apple.com>
 
         AX: FKA: Buttons need a visible focus indicator

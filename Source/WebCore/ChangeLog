@@ -1,3 +1,27 @@
+2017-04-21  Zalan Bujtas  <zalan@apple.com>
+
+        REGRESSION(r205374): <li> content inside <ul> should mid-word wrap when word-break: break-word is present.
+        https://bugs.webkit.org/show_bug.cgi?id=171108
+        <rdar://problem/30271747>
+
+        Reviewed by Dan Bernstein.
+
+        This patch ensures that we search for mid-word breaks when a zero sized element has been committed on the line
+        unless it's an image or some other replaced element with special properties (e.g. list-style: inside).  
+
+        Tests: fast/replaced/ul-li-word-break-break-word.html
+               fast/replaced/zero-width-image-force-linebreak.html
+
+        * rendering/line/BreakingContext.h:
+        (WebCore::BreakingContext::handleReplaced):
+        (WebCore::BreakingContext::handleText): This matches pre-r205374 behaviour, but it's explicit about whether a 
+        replaced width has already been committed on the current line.
+        * rendering/line/LineWidth.cpp:
+        (WebCore::LineWidth::commit):
+        * rendering/line/LineWidth.h:
+        (WebCore::LineWidth::hasCommittedReplaced):
+        (WebCore::LineWidth::addUncommittedReplacedWidth): These 2 last functions were removed with r205374 (and now I am adding them back). 
+
 2017-04-21  Jer Noble  <jer.noble@apple.com>
 
         [MediaCapture] Improvements to CoreAudioCaptureSource
