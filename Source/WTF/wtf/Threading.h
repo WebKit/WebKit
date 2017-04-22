@@ -191,7 +191,7 @@ protected:
     mach_port_t m_platformThread;
 #else
     sem_t m_semaphoreForSuspendResume;
-    mcontext_t m_suspendedMachineContext;
+    PlatformRegisters m_platformRegisters;
     unsigned m_suspendCount { 0 };
     std::atomic<bool> m_suspended { false };
 #endif

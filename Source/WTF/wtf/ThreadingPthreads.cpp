@@ -94,6 +94,29 @@ static constexpr const int SigThreadSuspendResume = SIGUSR1;
 static std::atomic<Thread*> targetThread { nullptr };
 static StaticWordLock globalSuspendLock;
 
+#if COMPILER(GCC)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wreturn-local-addr"
+#endif // COMPILER(GCC)
+
+static UNUSED_FUNCTION NEVER_INLINE void* getApproximateStackPointer()
+{
+    volatile void* stackLocation = nullptr;
+    return &stackLocation;
+}
+
+#if COMPILER(GCC)
+#pragma GCC diagnostic pop
+#endif // COMPILER(GCC)
+
+static UNUSED_FUNCTION bool isOnAlternativeSignalStack()
+{
+    stack_t stack { };
+    int ret = sigaltstack(nullptr, &stack);
+    RELEASE_ASSERT(!ret);
+    return stack.ss_flags == SS_ONSTACK;
+}
+
 void Thread::signalHandlerSuspendResume(int, siginfo_t*, void* ucontext)
 {
     // Touching thread local atomic types from signal handlers is allowed.
@@ -110,10 +133,16 @@ void Thread::signalHandlerSuspendResume(int, siginfo_t*, void* ucontext)
     }
 
     ucontext_t* userContext = static_cast<ucontext_t*>(ucontext);
+    ASSERT_WITH_MESSAGE(!isOnAlternativeSignalStack(), "Using an alternative signal stack is not supported. Consider disabling the concurrent GC.");
+
+#if HAVE(MACHINE_CONTEXT)
 #if CPU(PPC)
-    thread->m_suspendedMachineContext = *userContext->uc_mcontext.uc_regs;
+    thread->m_platformRegisters = PlatformRegisters { *userContext->uc_mcontext.uc_regs };
 #else
-    thread->m_suspendedMachineContext = userContext->uc_mcontext;
+    thread->m_platformRegisters = PlatformRegisters { userContext->uc_mcontext };
+#endif
+#else
+    thread->m_platformRegisters = PlatformRegisters { getApproximateStackPointer() };
 #endif
 
     // Allow suspend caller to see that this thread is suspended.
@@ -396,36 +425,10 @@ size_t Thread::getRegisters(PlatformRegisters& registers)
         CRASH();
     }
     return userCount * sizeof(uintptr_t);
-#elif HAVE(MACHINE_CONTEXT)
-    registers.machineContext = m_suspendedMachineContext;
+#else
+    ASSERT_WITH_MESSAGE(m_suspendCount, "We can get registers only if the thread is suspended.");
+    registers = m_platformRegisters;
     return sizeof(PlatformRegisters);
-#elif OS(OPENBSD)
-    // http://man.openbsd.org/pthread_stackseg_np.3
-    stack_t ss;
-    int rc = pthread_stackseg_np(m_handle, &ss);
-    registers.stackPointer = ss.ss_sp;
-    return 0;
-#else
-    pthread_attr_t attribute;
-    pthread_attr_init(&attribute);
-#if HAVE(PTHREAD_NP_H) || OS(NETBSD)
-    // e.g. on FreeBSD 5.4, neundorf@kde.org
-    pthread_attr_get_np(m_handle, &attribute);
-#else
-    // FIXME: this function is non-portable; other POSIX systems may have different np alternatives
-    pthread_getattr_np(m_handle, &attribute);
-#endif
-
-    void* stackBase = 0;
-    size_t stackSize = 0;
-    int rc = pthread_attr_getstack(&attribute, &stackBase, &stackSize);
-    ASSERT_UNUSED(rc, !rc);
-    ASSERT(stackBase);
-    registers.stackPointer = static_cast<char*>(stackBase) + stackSize;
-
-    pthread_attr_destroy(&attribute);
-
-    return 0;
 #endif
 }
 

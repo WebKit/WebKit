@@ -1,5 +1,30 @@
 2017-04-22  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [JSC] Get stack pointer without pthread attr
+        https://bugs.webkit.org/show_bug.cgi?id=171162
+
+        Reviewed by Mark Lam.
+
+        If HAVE(MACHINE_CONTEXT) is not enabled, we get stack base and boundary by using
+        pthread_attr functions. However, it is wrong since this function can be called
+        after the thread is suspended. In that case, we should not call any functions
+        that is not async signal safe. For example, pthread_getattr_np calls malloc.
+
+        Instead we use getApproximateStackPointer(), which returns approximate stack pointer.
+
+        * wtf/Threading.h:
+        * wtf/ThreadingPthreads.cpp:
+        (WTF::getApproximateStackPointer):
+        (WTF::isOnAlternativeSignalStack):
+        When gathering conservative roots, we should keep stack pointer pointing stack.
+        And if concurrent GC is enabled, we always need to keep the above invariant.
+        So, we do not support alternative signal stack.
+
+        (WTF::Thread::signalHandlerSuspendResume):
+        (WTF::Thread::getRegisters):
+
+2017-04-22  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         REGRESSION(r215638): [Linux] Several worker tests are crashing in Thread::signalHandlerSuspendResume after r215638
         https://bugs.webkit.org/show_bug.cgi?id=171159
 
