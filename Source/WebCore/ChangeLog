@@ -1,3 +1,15 @@
+2017-04-21  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, rolling out r215608.
+
+        Hundreds of test failures on GTK bot
+
+        Reverted changeset:
+
+        "Reduce copies and allocations in SharedBuffer::append"
+        https://bugs.webkit.org/show_bug.cgi?id=170956
+        http://trac.webkit.org/changeset/215608
+
 2017-04-21  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION(r205374): <li> content inside <ul> should mid-word wrap when word-break: break-word is present.

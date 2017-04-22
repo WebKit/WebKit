@@ -339,10 +339,10 @@ bool Editor::WebContentReader::readURL(const URL& url, const String&)
         RetainPtr<NSString> fileType = adoptNS((NSString *)UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, (CFStringRef)[localPath pathExtension], NULL));
         NSData *data = [NSData dataWithContentsOfFile:localPath];
         if (UTTypeConformsTo((CFStringRef)fileType.get(), kUTTypePNG)) {
-            addFragment(frame.editor().createFragmentForImageResourceAndAddResource(ArchiveResource::create(SharedBuffer::create([[data copy] autorelease]), URL::fakeURLWithRelativePart("image.png"), @"image/png", emptyString(), emptyString())));
+            addFragment(frame.editor().createFragmentForImageResourceAndAddResource(ArchiveResource::create(SharedBuffer::wrapNSData([[data copy] autorelease]), URL::fakeURLWithRelativePart("image.png"), @"image/png", emptyString(), emptyString())));
             return fragment;
         } else if (UTTypeConformsTo((CFStringRef)fileType.get(), kUTTypeJPEG)) {
-            addFragment(frame.editor().createFragmentForImageResourceAndAddResource(ArchiveResource::create(SharedBuffer::create([[data copy] autorelease]), URL::fakeURLWithRelativePart("image.jpg"), @"image/jpg", emptyString(), emptyString())));
+            addFragment(frame.editor().createFragmentForImageResourceAndAddResource(ArchiveResource::create(SharedBuffer::wrapNSData([[data copy] autorelease]), URL::fakeURLWithRelativePart("image.jpg"), @"image/jpg", emptyString(), emptyString())));
             return fragment;
         }
     } else {

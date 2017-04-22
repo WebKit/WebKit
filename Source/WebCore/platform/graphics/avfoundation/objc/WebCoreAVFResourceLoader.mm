@@ -173,38 +173,27 @@ void WebCoreAVFResourceLoader::fulfillRequestWithResource(CachedResource& resour
         responseOffset = static_cast<NSUInteger>(contentRange.firstBytePosition());
 
     // Check for possible unsigned overflow.
-    ASSERT(dataRequest.currentOffset >= dataRequest.requestedOffset);
-    ASSERT(dataRequest.requestedLength >= (dataRequest.currentOffset - dataRequest.requestedOffset));
+    ASSERT([dataRequest currentOffset] >= [dataRequest requestedOffset]);
+    ASSERT([dataRequest requestedLength] >= ([dataRequest currentOffset] - [dataRequest requestedOffset]));
 
-    NSUInteger remainingLength = dataRequest.requestedLength - static_cast<NSUInteger>(dataRequest.currentOffset - dataRequest.requestedOffset);
+    NSUInteger remainingLength = [dataRequest requestedLength] - static_cast<NSUInteger>([dataRequest currentOffset] - [dataRequest requestedOffset]);
+    do {
+        // Check to see if there is any data available in the buffer to fulfill the data request.
+        if (data->size() <= [dataRequest currentOffset] - responseOffset)
+            return;
 
-    auto bytesToSkip = dataRequest.currentOffset - responseOffset;
-    RetainPtr<NSArray> array = data->createNSDataArray();
-    for (size_t i = 0; i < [array count]; ++i) {
-        NSData *segment = [array objectAtIndex:i];
-        if (bytesToSkip) {
-            if (bytesToSkip > segment.length) {
-                bytesToSkip -= segment.length;
-                continue;
-            }
-            auto bytesToUse = segment.length - bytesToSkip;
-            [dataRequest respondWithData:[segment subdataWithRange:NSMakeRange(static_cast<NSUInteger>(bytesToSkip), static_cast<NSUInteger>(segment.length - bytesToSkip))]];
-            bytesToSkip = 0;
-            remainingLength -= bytesToUse;
-            continue;
-        }
-        if (segment.length <= remainingLength) {
-            [dataRequest respondWithData:segment];
-            remainingLength -= segment.length;
-            continue;
-        }
-        [dataRequest respondWithData:[segment subdataWithRange:NSMakeRange(0, remainingLength)]];
-        remainingLength = 0;
-        if (!remainingLength)
-            break;
-    }
+        const char* someData;
+        NSUInteger receivedLength = data->getSomeData(someData, static_cast<unsigned>([dataRequest currentOffset] - responseOffset));
 
-    if (dataRequest.currentOffset + dataRequest.requestedLength >= dataRequest.requestedOffset) {
+        // Create an NSData with only as much of the received data as necessary to fulfill the request.
+        NSUInteger length = MIN(receivedLength, remainingLength);
+        RetainPtr<NSData> nsData = adoptNS([[NSData alloc] initWithBytes:someData length:length]);
+
+        [dataRequest respondWithData:nsData.get()];
+        remainingLength -= length;
+    } while (remainingLength);
+
+    if ([dataRequest currentOffset] + [dataRequest requestedLength] >= [dataRequest requestedOffset]) {
         [m_avRequest.get() finishLoading];
         stopLoading();
     }

@@ -27,10 +27,10 @@
 namespace WebCore {
 
 SharedBuffer::SharedBuffer(SoupBuffer* soupBuffer)
+    : m_buffer(*new DataBuffer)
+    , m_soupBuffer(soupBuffer)
 {
     ASSERT(soupBuffer);
-    m_size = soupBuffer->length;
-    m_segments.append(DataSegment::create(GUniquePtr<SoupBuffer>(soupBuffer)));
 }
 
 Ref<SharedBuffer> SharedBuffer::wrapSoupBuffer(SoupBuffer* soupBuffer)
@@ -40,11 +40,67 @@ Ref<SharedBuffer> SharedBuffer::wrapSoupBuffer(SoupBuffer* soupBuffer)
 
 GUniquePtr<SoupBuffer> SharedBuffer::createSoupBuffer(unsigned offset, unsigned size)
 {
+    if (m_soupBuffer && !offset && !size) {
+        GUniquePtr<SoupBuffer> buffer(soup_buffer_copy(m_soupBuffer.get()));
+        return buffer;
+    }
+
     ref();
     GUniquePtr<SoupBuffer> buffer(soup_buffer_new_with_owner(data() + offset, size ? size : this->size(), this, [](void* data) {
         static_cast<SharedBuffer*>(data)->deref();
     }));
     return buffer;
+}
+
+void SharedBuffer::clearPlatformData()
+{
+    m_soupBuffer.reset();
+}
+
+void SharedBuffer::maybeTransferPlatformData()
+{
+    if (!m_soupBuffer)
+        return;
+
+    ASSERT(!m_size);
+
+    // Hang on to the m_soupBuffer pointer in a local pointer as append() will re-enter maybeTransferPlatformData()
+    // and we need to make sure to early return when it does.
+    GUniquePtr<SoupBuffer> soupBuffer;
+    soupBuffer.swap(m_soupBuffer);
+
+    append(soupBuffer->data, soupBuffer->length);
+}
+
+bool SharedBuffer::hasPlatformData() const
+{
+    return m_soupBuffer.get();
+}
+
+const char* SharedBuffer::platformData() const
+{
+    return m_soupBuffer->data;
+}
+
+unsigned SharedBuffer::platformDataSize() const
+{
+    return m_soupBuffer->length;
+}
+
+bool SharedBuffer::maybeAppendPlatformData(SharedBuffer&)
+{
+    return false;
+}
+
+bool SharedBuffer::tryReplaceContentsWithPlatformBuffer(SharedBuffer& newContents)
+{
+    if (!newContents.hasPlatformData())
+        return false;
+
+    clear();
+    // FIXME: Use GRefPtr instead of GUniquePtr for the SoupBuffer.
+    m_soupBuffer.swap(newContents.m_soupBuffer);
+    return true;
 }
 
 } // namespace WebCore

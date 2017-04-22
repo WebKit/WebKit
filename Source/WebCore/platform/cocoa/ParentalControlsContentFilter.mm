@@ -93,7 +93,7 @@ void ParentalControlsContentFilter::finishedAddingData()
 Ref<SharedBuffer> ParentalControlsContentFilter::replacementData() const
 {
     ASSERT(didBlockData());
-    return SharedBuffer::create(m_replacementData.get());
+    return SharedBuffer::wrapNSData(m_replacementData.get());
 }
 
 #if ENABLE(CONTENT_FILTERING)

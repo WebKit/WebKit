@@ -1311,8 +1311,14 @@ void PluginView::redeliverManualStream()
 
     // Deliver the data.
     if (m_manualStreamData) {
-        for (const auto& segment : *m_manualStreamData)
-            manualLoadDidReceiveData(segment->data(), segment->size());
+        const char* data;
+        unsigned position = 0;
+
+        while (unsigned length = m_manualStreamData->getSomeData(data, position)) {
+            manualLoadDidReceiveData(data, length);
+            position += length;
+        }
+
         m_manualStreamData = nullptr;
     }
 

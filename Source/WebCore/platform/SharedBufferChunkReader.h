@@ -28,9 +28,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-#if ENABLE(MHTML)
+#ifndef SharedBufferChunkReader_h
+#define SharedBufferChunkReader_h
 
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>

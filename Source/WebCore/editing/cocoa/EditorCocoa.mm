@@ -157,7 +157,7 @@ static RefPtr<SharedBuffer> archivedDataForAttributedString(NSAttributedString *
     if (!attributedString.length)
         return nullptr;
 
-    return SharedBuffer::create([NSKeyedArchiver archivedDataWithRootObject:attributedString]);
+    return SharedBuffer::wrapNSData([NSKeyedArchiver archivedDataWithRootObject:attributedString]);
 }
 
 void Editor::writeSelectionToPasteboard(Pasteboard& pasteboard)
@@ -205,7 +205,7 @@ RefPtr<SharedBuffer> Editor::selectionInWebArchiveFormat()
     RefPtr<LegacyWebArchive> archive = LegacyWebArchive::createFromSelection(&m_frame);
     if (!archive)
         return nullptr;
-    return SharedBuffer::create(archive->rawDataRepresentation().get());
+    return SharedBuffer::wrapCFData(archive->rawDataRepresentation().get());
 }
 
 // FIXME: Makes no sense that selectedTextForDataTransfer always includes alt text, but stringSelectionForPasteboard does not.
@@ -276,7 +276,7 @@ RefPtr<SharedBuffer> Editor::dataInRTFDFormat(NSAttributedString *string)
         return nullptr;
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return SharedBuffer::create([string RTFDFromRange:NSMakeRange(0, length) documentAttributes:@{ }]);
+    return SharedBuffer::wrapNSData([string RTFDFromRange:NSMakeRange(0, length) documentAttributes:@{ }]);
     END_BLOCK_OBJC_EXCEPTIONS;
 
     return nullptr;
@@ -289,7 +289,7 @@ RefPtr<SharedBuffer> Editor::dataInRTFFormat(NSAttributedString *string)
         return nullptr;
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return SharedBuffer::create([string RTFFromRange:NSMakeRange(0, length) documentAttributes:@{ }]);
+    return SharedBuffer::wrapNSData([string RTFFromRange:NSMakeRange(0, length) documentAttributes:@{ }]);
     END_BLOCK_OBJC_EXCEPTIONS;
 
     return nullptr;

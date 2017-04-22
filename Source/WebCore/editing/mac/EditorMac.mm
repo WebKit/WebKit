@@ -204,7 +204,7 @@ RefPtr<SharedBuffer> Editor::imageInWebArchiveFormat(Element& imageElement)
     RefPtr<LegacyWebArchive> archive = LegacyWebArchive::create(imageElement);
     if (!archive)
         return nullptr;
-    return SharedBuffer::create(archive->rawDataRepresentation().get());
+    return SharedBuffer::wrapCFData(archive->rawDataRepresentation().get());
 }
 
 RefPtr<SharedBuffer> Editor::dataSelectionForPasteboard(const String& pasteboardType)

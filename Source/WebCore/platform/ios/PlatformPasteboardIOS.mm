@@ -308,7 +308,7 @@ RefPtr<SharedBuffer> PlatformPasteboard::readBuffer(int index, const String& typ
 
     if (![pasteboardItem count])
         return nullptr;
-    return SharedBuffer::create([pasteboardItem.get() objectAtIndex:0]);
+    return SharedBuffer::wrapNSData([pasteboardItem.get() objectAtIndex:0]);
 }
 
 String PlatformPasteboard::readString(int index, const String& type)

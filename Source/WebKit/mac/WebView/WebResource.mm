@@ -149,7 +149,7 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
         return nil;
     }
 
-    auto coreResource = ArchiveResource::create(SharedBuffer::create(data), url, mimeType, textEncoding, frameName, response);
+    auto coreResource = ArchiveResource::create(SharedBuffer::wrapNSData(data), url, mimeType, textEncoding, frameName, response);
     if (!coreResource) {
         [self release];
         return nil;
@@ -301,7 +301,7 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
         return nil;
     }
 
-    auto coreResource = ArchiveResource::create(SharedBuffer::create(copyData ? [[data copy] autorelease] : data), URL, MIMEType, textEncodingName, frameName, response);
+    auto coreResource = ArchiveResource::create(SharedBuffer::wrapNSData(copyData ? [[data copy] autorelease] : data), URL, MIMEType, textEncodingName, frameName, response);
     if (!coreResource) {
         [self release];
         return nil;

@@ -177,7 +177,7 @@ void ResourceHandleCFURLConnectionDelegateWithOperationQueue::didReceiveData(CFD
         if (protectedThis->hasHandle() && m_handle->client()) {
             LOG(Network, "CFNet - ResourceHandleCFURLConnectionDelegateWithOperationQueue::didReceiveData(handle=%p) (%s)", m_handle, m_handle->firstRequest().url().string().utf8().data());
 
-            m_handle->client()->didReceiveBuffer(m_handle, SharedBuffer::create(data), originalLength);
+            m_handle->client()->didReceiveBuffer(m_handle, SharedBuffer::wrapCFData(data), originalLength);
         }
 
         CFRelease(data);

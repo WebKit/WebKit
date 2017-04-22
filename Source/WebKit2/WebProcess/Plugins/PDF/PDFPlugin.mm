@@ -916,7 +916,7 @@ void PDFPlugin::addArchiveResource()
     RetainPtr<NSURLResponse> response = adoptNS([[NSHTTPURLResponse alloc] initWithURL:m_sourceURL statusCode:200 HTTPVersion:(NSString*)kCFHTTPVersion1_1 headerFields:headers]);
     ResourceResponse synthesizedResponse(response.get());
 
-    RefPtr<ArchiveResource> resource = ArchiveResource::create(SharedBuffer::create(m_data.get()), m_sourceURL, "application/pdf", String(), String(), synthesizedResponse);
+    RefPtr<ArchiveResource> resource = ArchiveResource::create(SharedBuffer::wrapCFData(m_data.get()), m_sourceURL, "application/pdf", String(), String(), synthesizedResponse);
     pluginView()->frame()->document()->loader()->addArchiveResource(resource.releaseNonNull());
 }
 
@@ -1756,7 +1756,7 @@ RefPtr<SharedBuffer> PDFPlugin::liveResourceData() const
     if (!pdfData)
         return nullptr;
 
-    return SharedBuffer::create(pdfData);
+    return SharedBuffer::wrapNSData(pdfData);
 }
 
 bool PDFPlugin::pluginHandlesContentOffsetForAccessibilityHitTest() const
@@ -1827,7 +1827,7 @@ void PDFPlugin::writeItemsToPasteboard(NSString *pasteboardName, NSArray *items,
             RetainPtr<NSString> plainTextString = adoptNS([[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
             webProcess.parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::SetPasteboardStringForType(pasteboardName, type, plainTextString.get()), Messages::WebPasteboardProxy::SetPasteboardStringForType::Reply(newChangeCount), 0);
         } else {
-            RefPtr<SharedBuffer> buffer = SharedBuffer::create(data);
+            RefPtr<SharedBuffer> buffer = SharedBuffer::wrapNSData(data);
 
             if (!buffer)
                 continue;

@@ -28,9 +28,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-#if ENABLE(MHTML)
+#ifndef MIMEHeader_h
+#define MIMEHeader_h
 
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>

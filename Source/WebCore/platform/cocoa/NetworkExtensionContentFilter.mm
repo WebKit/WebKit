@@ -197,7 +197,7 @@ void NetworkExtensionContentFilter::finishedAddingData()
 Ref<SharedBuffer> NetworkExtensionContentFilter::replacementData() const
 {
     ASSERT(didBlockData());
-    return SharedBuffer::create(m_replacementData.get());
+    return SharedBuffer::wrapNSData(m_replacementData.get());
 }
 
 #if ENABLE(CONTENT_FILTERING)

@@ -157,10 +157,11 @@ public:
         if (setjmp(JMPBUF(m_png)))
             return decoder->setFailed();
 
-        for (const auto& segment : data) {
-            m_readOffset += segment->size();
+        const char* segment;
+        while (unsigned segmentLength = data.getSomeData(segment, m_readOffset)) {
+            m_readOffset += segmentLength;
             m_currentBufferSize = m_readOffset;
-            png_process_data(m_png, m_info, reinterpret_cast<png_bytep>(const_cast<char*>(segment->data())), segment->size());
+            png_process_data(m_png, m_info, reinterpret_cast<png_bytep>(const_cast<char*>(segment)), segmentLength);
             // We explicitly specify the superclass encodedDataStatus() because we
             // merely want to check if we've managed to set the size, not
             // (recursively) trigger additional decoding if we haven't.

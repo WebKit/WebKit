@@ -63,7 +63,7 @@ PassRefPtr<Image> Image::loadPlatformResource(const char *name)
     NSData *namedImageData = [NSData dataWithContentsOfFile:imagePath];
     if (namedImageData) {
         auto image = BitmapImage::create();
-        image->setData(SharedBuffer::create(namedImageData), true);
+        image->setData(SharedBuffer::wrapNSData(namedImageData), true);
         return WTFMove(image);
     }
 
