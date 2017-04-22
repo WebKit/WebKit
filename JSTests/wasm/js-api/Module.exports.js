@@ -1,13 +1,14 @@
 import Builder from '../Builder.js';
 import * as assert from '../assert.js';
 
-assert.throws(() => WebAssembly.Module.prototype.exports(undefined, ""), TypeError, `WebAssembly.Module.prototype.exports called with non WebAssembly.Module |this| value`);
+assert.throws(() => WebAssembly.Module.exports(undefined), TypeError, `WebAssembly.Module.exports called with non WebAssembly.Module argument`);
+assert.eq(WebAssembly.Module.exports.length, 1);
 
 {
     const m = new WebAssembly.Module((new Builder()).WebAssembly().get());
-    assert.isArray(m.exports);
-    assert.eq(m.exports.length, 0);
-    assert.truthy(m.exports !== m.exports);
+    assert.isArray(WebAssembly.Module.exports(m));
+    assert.eq(WebAssembly.Module.exports(m).length, 0);
+    assert.truthy(WebAssembly.Module.exports(m) !== WebAssembly.Module.exports(m));
 }
 
 {
@@ -30,13 +31,13 @@ assert.throws(() => WebAssembly.Module.prototype.exports(undefined, ""), TypeErr
                 .Function("func", { params: [] }).Return().End()
             .End()
             .WebAssembly().get());
-    assert.eq(m.exports.length, 4);
-    assert.eq(m.exports[0].name, "func");
-    assert.eq(m.exports[0].kind, "function");
-    assert.eq(m.exports[1].name, "tab");
-    assert.eq(m.exports[1].kind, "table");
-    assert.eq(m.exports[2].name, "mem");
-    assert.eq(m.exports[2].kind, "memory");
-    assert.eq(m.exports[3].name, "glob");
-    assert.eq(m.exports[3].kind, "global");
+    assert.eq(WebAssembly.Module.exports(m).length, 4);
+    assert.eq(WebAssembly.Module.exports(m)[0].name, "func");
+    assert.eq(WebAssembly.Module.exports(m)[0].kind, "function");
+    assert.eq(WebAssembly.Module.exports(m)[1].name, "tab");
+    assert.eq(WebAssembly.Module.exports(m)[1].kind, "table");
+    assert.eq(WebAssembly.Module.exports(m)[2].name, "mem");
+    assert.eq(WebAssembly.Module.exports(m)[2].kind, "memory");
+    assert.eq(WebAssembly.Module.exports(m)[3].name, "glob");
+    assert.eq(WebAssembly.Module.exports(m)[3].kind, "global");
 }

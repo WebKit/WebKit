@@ -1,3 +1,26 @@
+2017-04-22  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly: Module.exports, Module.imports, Module.customSections are wrong
+        https://bugs.webkit.org/show_bug.cgi?id=171078
+
+        Reviewed by Saam Barati.
+
+        They're static properties of Module, not instance properties of a module.
+        https://github.com/WebAssembly/design/blob/master/JS.md#webassemblymoduleexports
+
+        * wasm/js-api/Module.customSection.js:
+        (assert.throws.WebAssembly.Module.customSections):
+        (assert.eq):
+        (assert.throws.WebAssembly.Module.prototype.customSections): Deleted.
+        * wasm/js-api/Module.exports.js:
+        (assert.throws.WebAssembly.Module.exports):
+        (assert.truthy):
+        (assert.throws.WebAssembly.Module.prototype.exports): Deleted.
+        * wasm/js-api/Module.imports.js:
+        (assert.throws.WebAssembly.Module.imports):
+        (assert.truthy):
+        (assert.throws.WebAssembly.Module.prototype.imports): Deleted.
+
 2017-04-21  JF Bastien  <jfbastien@apple.com>
 
         Silence noisy test
