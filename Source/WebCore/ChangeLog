@@ -1,3 +1,48 @@
+2017-04-21  Andy Estes  <aestes@apple.com>
+
+        [macOS] Name WebPlaybackControlsManager delegate methods correctly depending on OS version
+        https://bugs.webkit.org/show_bug.cgi?id=171147
+        <rdar://problem/29875010>
+
+        Reviewed by Beth Dakin.
+
+        On macOS 10.12, WebPlaybackControlsManager conforms to
+        AVFunctionBarPlaybackControlsControlling, but on 10.13 it conforms to
+        AVTouchBarPlaybackControlsControlling. These protocols are near-identical, except for
+        instances of "FunctionBar" in method names are renamed to "TouchBar". This patch updates to
+        the new method names, and generally renames things with "FunctionBar" to "TouchBar".
+
+        * platform/mac/WebPlaybackControlsManager.h:
+        * platform/mac/WebPlaybackControlsManager.mm:
+        (-[WebPlaybackControlsManager generateTouchBarThumbnailsForTimes:tolerance:size:thumbnailHandler:]):
+        (-[WebPlaybackControlsManager generateTouchBarAudioAmplitudeSamples:completionHandler:]):
+        (-[WebPlaybackControlsManager canBeginTouchBarScrubbing]):
+        (-[WebPlaybackControlsManager beginTouchBarScrubbing]):
+        (-[WebPlaybackControlsManager endTouchBarScrubbing]):
+        (-[WebPlaybackControlsManager generateFunctionBarThumbnailsForTimes:size:completionHandler:]):
+        (-[WebPlaybackControlsManager generateFunctionBarAudioAmplitudeSamples:completionHandler:]):
+        (-[WebPlaybackControlsManager canBeginFunctionBarScrubbing]):
+        (-[WebPlaybackControlsManager beginFunctionBarScrubbing]):
+        (-[WebPlaybackControlsManager endFunctionBarScrubbing]):
+        (-[WebPlaybackControlsManager audioTouchBarMediaSelectionOptions]):
+        (-[WebPlaybackControlsManager setAudioTouchBarMediaSelectionOptions:]):
+        (-[WebPlaybackControlsManager currentAudioTouchBarMediaSelectionOption]):
+        (-[WebPlaybackControlsManager setCurrentAudioTouchBarMediaSelectionOption:]):
+        (-[WebPlaybackControlsManager legibleTouchBarMediaSelectionOptions]):
+        (-[WebPlaybackControlsManager setLegibleTouchBarMediaSelectionOptions:]):
+        (-[WebPlaybackControlsManager currentLegibleTouchBarMediaSelectionOption]):
+        (-[WebPlaybackControlsManager setCurrentLegibleTouchBarMediaSelectionOption:]):
+        (-[WebPlaybackControlsManager setAudioMediaSelectionOptions:withSelectedIndex:]):
+        (-[WebPlaybackControlsManager setLegibleMediaSelectionOptions:withSelectedIndex:]):
+        (-[WebPlaybackControlsManager audioFunctionBarMediaSelectionOptions]): Deleted.
+        (-[WebPlaybackControlsManager setAudioFunctionBarMediaSelectionOptions:]): Deleted.
+        (-[WebPlaybackControlsManager currentAudioFunctionBarMediaSelectionOption]): Deleted.
+        (-[WebPlaybackControlsManager setCurrentAudioFunctionBarMediaSelectionOption:]): Deleted.
+        (-[WebPlaybackControlsManager legibleFunctionBarMediaSelectionOptions]): Deleted.
+        (-[WebPlaybackControlsManager setLegibleFunctionBarMediaSelectionOptions:]): Deleted.
+        (-[WebPlaybackControlsManager currentLegibleFunctionBarMediaSelectionOption]): Deleted.
+        (-[WebPlaybackControlsManager setCurrentLegibleFunctionBarMediaSelectionOption:]): Deleted.
+
 2017-04-21  Jer Noble  <jer.noble@apple.com>
 
         Make CoreAudioCaptureDevice stackable.

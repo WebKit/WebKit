@@ -46,10 +46,10 @@ WEBCORE_EXPORT
     RetainPtr<NSArray> _seekableTimeRanges;
     BOOL _hasEnabledAudio;
     BOOL _hasEnabledVideo;
-    RetainPtr<NSArray<AVTouchBarMediaSelectionOption *>> _audioFunctionBarMediaSelectionOptions;
-    RetainPtr<AVTouchBarMediaSelectionOption> _currentAudioFunctionBarMediaSelectionOption;
-    RetainPtr<NSArray<AVTouchBarMediaSelectionOption *>> _legibleFunctionBarMediaSelectionOptions;
-    RetainPtr<AVTouchBarMediaSelectionOption> _currentLegibleFunctionBarMediaSelectionOption;
+    RetainPtr<NSArray<AVTouchBarMediaSelectionOption *>> _audioTouchBarMediaSelectionOptions;
+    RetainPtr<AVTouchBarMediaSelectionOption> _currentAudioTouchBarMediaSelectionOption;
+    RetainPtr<NSArray<AVTouchBarMediaSelectionOption *>> _legibleTouchBarMediaSelectionOptions;
+    RetainPtr<AVTouchBarMediaSelectionOption> _currentLegibleTouchBarMediaSelectionOption;
     float _rate;
     BOOL _canTogglePlayback;
 
@@ -69,10 +69,10 @@ WEBCORE_EXPORT
 
 @property (nonatomic) float rate;
 
-- (AVTouchBarMediaSelectionOption *)currentAudioFunctionBarMediaSelectionOption;
-- (void)setCurrentAudioFunctionBarMediaSelectionOption:(AVTouchBarMediaSelectionOption *)option;
-- (AVTouchBarMediaSelectionOption *)currentLegibleFunctionBarMediaSelectionOption;
-- (void)setCurrentLegibleFunctionBarMediaSelectionOption:(AVTouchBarMediaSelectionOption *)option;
+- (AVTouchBarMediaSelectionOption *)currentAudioTouchBarMediaSelectionOption;
+- (void)setCurrentAudioTouchBarMediaSelectionOption:(AVTouchBarMediaSelectionOption *)option;
+- (AVTouchBarMediaSelectionOption *)currentLegibleTouchBarMediaSelectionOption;
+- (void)setCurrentLegibleTouchBarMediaSelectionOption:(AVTouchBarMediaSelectionOption *)option;
 - (void)setAudioMediaSelectionOptions:(const Vector<WTF::String>&)options withSelectedIndex:(NSUInteger)selectedIndex;
 - (void)setLegibleMediaSelectionOptions:(const Vector<WTF::String>&)options withSelectedIndex:(NSUInteger)selectedIndex;
 @end

@@ -94,6 +94,40 @@ SOFT_LINK_CLASS_OPTIONAL(AVKit, AVFunctionBarMediaSelectionOption)
 {
 }
 
+- (void)generateTouchBarThumbnailsForTimes:(NSArray<NSNumber *> *)thumbnailTimes tolerance:(NSTimeInterval)tolerance size:(NSSize)size thumbnailHandler:(void (^)(NSArray<AVThumbnail *> *thumbnails, BOOL thumbnailGenerationFailed))thumbnailHandler
+{
+    UNUSED_PARAM(thumbnailTimes);
+    UNUSED_PARAM(tolerance);
+    UNUSED_PARAM(size);
+    thumbnailHandler(@[ ], YES);
+}
+
+- (void)generateTouchBarAudioAmplitudeSamples:(NSInteger)numberOfSamples completionHandler:(void (^)(NSArray<NSNumber *> *audioAmplitudeSamples))completionHandler
+{
+    UNUSED_PARAM(numberOfSamples);
+    completionHandler(@[ ]);
+}
+
+- (BOOL)canBeginTouchBarScrubbing
+{
+    // It's not ideal to return YES all the time here. The intent of the API is that we return NO when the
+    // media is being scrubbed via the on-screen scrubber. But we can only possibly get the right answer for
+    // media that uses the default controls.
+    return YES;
+}
+
+- (void)beginTouchBarScrubbing
+{
+    _webPlaybackSessionInterfaceMac->beginScrubbing();
+}
+
+- (void)endTouchBarScrubbing
+{
+    _webPlaybackSessionInterfaceMac->endScrubbing();
+}
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101300
+
 - (void)generateFunctionBarThumbnailsForTimes:(NSArray<NSNumber *> *)thumbnailTimes size:(NSSize)size completionHandler:(void (^)(NSArray<AVThumbnail *> *thumbnails, NSError *error))completionHandler
 {
     UNUSED_PARAM(thumbnailTimes);
@@ -107,80 +141,79 @@ SOFT_LINK_CLASS_OPTIONAL(AVKit, AVFunctionBarMediaSelectionOption)
     completionHandler(@[ ], nil);
 }
 
--(BOOL)canBeginFunctionBarScrubbing
+- (BOOL)canBeginFunctionBarScrubbing
 {
-    // It's not ideal to return YES all the time here. The intent of the API is that we return NO when the
-    // media is being scrubbed via the on-screen scrubber. But we can only possibly get the right answer for
-    // media that uses the default controls.
-    return YES;
+    return [self canBeginTouchBarScrubbing];
 }
 
 - (void)beginFunctionBarScrubbing
 {
-    _webPlaybackSessionInterfaceMac->beginScrubbing();
+    [self beginTouchBarScrubbing];
 }
 
 - (void)endFunctionBarScrubbing
 {
-    _webPlaybackSessionInterfaceMac->endScrubbing();
+    [self endTouchBarScrubbing];
 }
 
-- (NSArray<AVTouchBarMediaSelectionOption *> *)audioFunctionBarMediaSelectionOptions
+#endif
+
+- (NSArray<AVTouchBarMediaSelectionOption *> *)audioTouchBarMediaSelectionOptions
 {
-    return _audioFunctionBarMediaSelectionOptions.get();
+    return _audioTouchBarMediaSelectionOptions.get();
 }
 
-- (void)setAudioFunctionBarMediaSelectionOptions:(NSArray<AVTouchBarMediaSelectionOption *> *)audioOptions
+- (void)setAudioTouchBarMediaSelectionOptions:(NSArray<AVTouchBarMediaSelectionOption *> *)audioOptions
 {
-    _audioFunctionBarMediaSelectionOptions = audioOptions;
+    _audioTouchBarMediaSelectionOptions = audioOptions;
 }
 
-- (AVTouchBarMediaSelectionOption *)currentAudioFunctionBarMediaSelectionOption
+- (AVTouchBarMediaSelectionOption *)currentAudioTouchBarMediaSelectionOption
 {
-    return _currentAudioFunctionBarMediaSelectionOption.get();
+    return _currentAudioTouchBarMediaSelectionOption.get();
 }
 
-- (void)setCurrentAudioFunctionBarMediaSelectionOption:(AVTouchBarMediaSelectionOption *)audioMediaSelectionOption
+- (void)setCurrentAudioTouchBarMediaSelectionOption:(AVTouchBarMediaSelectionOption *)audioMediaSelectionOption
 {
-    if (audioMediaSelectionOption == _currentAudioFunctionBarMediaSelectionOption)
+    if (audioMediaSelectionOption == _currentAudioTouchBarMediaSelectionOption)
         return;
 
-    _currentAudioFunctionBarMediaSelectionOption = audioMediaSelectionOption;
+    _currentAudioTouchBarMediaSelectionOption = audioMediaSelectionOption;
 
     NSInteger index = NSNotFound;
 
-    if (audioMediaSelectionOption && _audioFunctionBarMediaSelectionOptions)
-        index = [_audioFunctionBarMediaSelectionOptions indexOfObject:audioMediaSelectionOption];
+    if (audioMediaSelectionOption && _audioTouchBarMediaSelectionOptions)
+        index = [_audioTouchBarMediaSelectionOptions indexOfObject:audioMediaSelectionOption];
 
     _webPlaybackSessionInterfaceMac->webPlaybackSessionModel()->selectAudioMediaOption(index != NSNotFound ? index : UINT64_MAX);
 }
 
-- (NSArray<AVTouchBarMediaSelectionOption *> *)legibleFunctionBarMediaSelectionOptions
+- (NSArray<AVTouchBarMediaSelectionOption *> *)legibleTouchBarMediaSelectionOptions
 {
-    return _legibleFunctionBarMediaSelectionOptions.get();
+    return _legibleTouchBarMediaSelectionOptions.get();
 }
 
-- (void)setLegibleFunctionBarMediaSelectionOptions:(NSArray<AVTouchBarMediaSelectionOption *> *)legibleOptions
+- (void)setLegibleTouchBarMediaSelectionOptions:(NSArray<AVTouchBarMediaSelectionOption *> *)legibleOptions
 {
-    _legibleFunctionBarMediaSelectionOptions = legibleOptions;
+    _legibleTouchBarMediaSelectionOptions = legibleOptions;
 }
 
-- (AVTouchBarMediaSelectionOption *)currentLegibleFunctionBarMediaSelectionOption
+- (AVTouchBarMediaSelectionOption *)currentLegibleTouchBarMediaSelectionOption
 {
-    return _currentLegibleFunctionBarMediaSelectionOption.get();
+    return _currentLegibleTouchBarMediaSelectionOption.get();
 }
 
-- (void)setCurrentLegibleFunctionBarMediaSelectionOption:(AVTouchBarMediaSelectionOption *)legibleMediaSelectionOption
+- (void)setCurrentLegibleTouchBarMediaSelectionOption:(AVTouchBarMediaSelectionOption *)legibleMediaSelectionOption
 {
-    if (legibleMediaSelectionOption == _currentLegibleFunctionBarMediaSelectionOption)
+    if (legibleMediaSelectionOption == _currentLegibleTouchBarMediaSelectionOption)
         return;
 
-    _currentLegibleFunctionBarMediaSelectionOption = legibleMediaSelectionOption;
+    _currentLegibleTouchBarMediaSelectionOption = legibleMediaSelectionOption;
 
     NSInteger index = NSNotFound;
 
-    if (legibleMediaSelectionOption && _legibleFunctionBarMediaSelectionOptions)
-        index = [_legibleFunctionBarMediaSelectionOptions indexOfObject:legibleMediaSelectionOption];
+    if (legibleMediaSelectionOption && _legibleTouchBarMediaSelectionOptions)
+        index = [_legibleTouchBarMediaSelectionOptions indexOfObject:legibleMediaSelectionOption];
 
     _webPlaybackSessionInterfaceMac->webPlaybackSessionModel()->selectLegibleMediaOption(index != NSNotFound ? index : UINT64_MAX);
 }
@@ -202,17 +235,17 @@ static RetainPtr<NSMutableArray> mediaSelectionOptions(const Vector<String>& opt
 - (void)setAudioMediaSelectionOptions:(const Vector<WTF::String>&)options withSelectedIndex:(NSUInteger)selectedIndex
 {
     RetainPtr<NSMutableArray> webOptions = mediaSelectionOptions(options);
-    [self setAudioFunctionBarMediaSelectionOptions:webOptions.get()];
+    [self setAudioTouchBarMediaSelectionOptions:webOptions.get()];
     if (selectedIndex < [webOptions count])
-        [self setCurrentAudioFunctionBarMediaSelectionOption:[webOptions objectAtIndex:selectedIndex]];
+        [self setCurrentAudioTouchBarMediaSelectionOption:[webOptions objectAtIndex:selectedIndex]];
 }
 
 - (void)setLegibleMediaSelectionOptions:(const Vector<WTF::String>&)options withSelectedIndex:(NSUInteger)selectedIndex
 {
     RetainPtr<NSMutableArray> webOptions = mediaSelectionOptions(options);
-    [self setLegibleFunctionBarMediaSelectionOptions:webOptions.get()];
+    [self setLegibleTouchBarMediaSelectionOptions:webOptions.get()];
     if (selectedIndex < [webOptions count])
-        [self setCurrentLegibleFunctionBarMediaSelectionOption:[webOptions objectAtIndex:selectedIndex]];
+        [self setCurrentLegibleTouchBarMediaSelectionOption:[webOptions objectAtIndex:selectedIndex]];
 }
 
 - (WebCore::WebPlaybackSessionInterfaceMac*)webPlaybackSessionInterfaceMac
