@@ -1,3 +1,23 @@
+2017-04-21  Youenn Fablet  <youenn@apple.com>
+
+        com.apple.WebCore: non-virtual thunk to WebCore::LibWebRTCDataChannelHandler::OnBufferedAmountChange + 39
+        https://bugs.webkit.org/show_bug.cgi?id=171087
+        <rdar://problem/31739051>
+
+        Reviewed by Eric Carlson.
+
+        Covered by existing tests.
+        No test added as this behavior is really libwebrtc specific and cannot be triggered easily.
+
+        * Modules/mediastream/RTCDataChannel.cpp:
+        (WebCore::RTCDataChannel::close): Stopping observing libwebrtc data channel before closing it.
+        This ensures we will stop getting notified as soon as there is no more interest.
+        * Modules/mediastream/libwebrtc/LibWebRTCDataChannelHandler.cpp:
+        (WebCore::LibWebRTCDataChannelHandler::OnStateChange): libwebrtc can still notify us even though we said we were
+        not interested. Ensuring we do not call the client if we are no longer interested.
+        (WebCore::LibWebRTCDataChannelHandler::OnMessage): Ditto.
+        (WebCore::LibWebRTCDataChannelHandler::OnBufferedAmountChange): Ditto.
+
 2017-04-21  Andy Estes  <aestes@apple.com>
 
         [macOS] Enable media selection button on AVTouchBarScrubber

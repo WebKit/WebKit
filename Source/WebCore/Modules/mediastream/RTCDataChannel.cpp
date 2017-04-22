@@ -158,8 +158,8 @@ void RTCDataChannel::close()
     m_stopped = true;
     m_readyState = RTCDataChannelState::Closed;
 
-    m_handler->close();
     m_handler->setClient(nullptr);
+    m_handler->close();
     m_handler = nullptr;
     unsetPendingActivity(this);
 }

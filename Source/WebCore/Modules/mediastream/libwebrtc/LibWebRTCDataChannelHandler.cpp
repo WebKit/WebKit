@@ -64,6 +64,9 @@ void LibWebRTCDataChannelHandler::close()
 
 void LibWebRTCDataChannelHandler::OnStateChange()
 {
+    if (!m_client)
+        return;
+
     RTCDataChannelState state;
     switch (m_channel->state()) {
     case webrtc::DataChannelInterface::kConnecting:
@@ -79,7 +82,6 @@ void LibWebRTCDataChannelHandler::OnStateChange()
         state = RTCDataChannelState::Closed;
         break;
     }
-    ASSERT(m_client);
     callOnMainThread([protectedClient = makeRef(*m_client), state] {
         protectedClient->didChangeReadyState(state);
     });
@@ -87,7 +89,9 @@ void LibWebRTCDataChannelHandler::OnStateChange()
 
 void LibWebRTCDataChannelHandler::OnMessage(const webrtc::DataBuffer& buffer)
 {
-    ASSERT(m_client);
+    if (!m_client)
+        return;
+
     std::unique_ptr<webrtc::DataBuffer> protectedBuffer(new webrtc::DataBuffer(buffer));
     callOnMainThread([protectedClient = makeRef(*m_client), buffer = WTFMove(protectedBuffer)] {
         // FIXME: Ensure this is correct by adding some tests with non-ASCII characters.
@@ -101,9 +105,12 @@ void LibWebRTCDataChannelHandler::OnMessage(const webrtc::DataBuffer& buffer)
 
 void LibWebRTCDataChannelHandler::OnBufferedAmountChange(uint64_t previousAmount)
 {
+    if (!m_client)
+        return;
+
     if (previousAmount <= m_channel->buffered_amount())
         return;
-    ASSERT(m_client);
+
     callOnMainThread([protectedClient = makeRef(*m_client), amount = m_channel->buffered_amount()] {
         protectedClient->bufferedAmountIsDecreasing(static_cast<size_t>(amount));
     });
