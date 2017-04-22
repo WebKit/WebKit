@@ -35,19 +35,15 @@
 #import "WebItemProviderPasteboard.h"
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <UIKit/UIImage.h>
+#import <UIKit/UIPasteboard.h>
+
+#if ENABLE(DATA_INTERACTION)
+#import <UIKit/NSURL+UIItemProvider.h>
+#endif
 
 SOFT_LINK_FRAMEWORK(UIKit)
 SOFT_LINK_CLASS(UIKit, UIImage)
 SOFT_LINK_CLASS(UIKit, UIPasteboard)
-
-@interface UIPasteboard
-+ (UIPasteboard *)generalPasteboard;
-- (void)setItems:(NSArray *)items;
-@property(readonly,nonatomic) NSInteger numberOfItems;
-- (NSArray *)dataForPasteboardType:(NSString *)pasteboardType inItemSet:(NSIndexSet *)itemSet;
-- (NSArray *)valuesForPasteboardType:(NSString *)pasteboardType inItemSet:(NSIndexSet *)itemSet;
-- (NSInteger)changeCount;
-@end
 
 namespace WebCore {
 
@@ -293,6 +289,31 @@ void PlatformPasteboard::write(const String& pasteboardType, const String& text)
     } else if (!pasteboardType.isNull())
         [representations setValue:text forKey:pasteboardType];
     [m_pasteboard setItems:@[representations.get()]];
+}
+
+void PlatformPasteboard::writeObjectRepresentations(const PasteboardURL& url)
+{
+    auto objectRepresentations = adoptNS([[NSMutableArray alloc] init]);
+
+    if (NSURL *nsURL = url.url) {
+        [objectRepresentations addObject:nsURL];
+#if ENABLE(DATA_INTERACTION)
+        if (!url.title.isEmpty())
+            nsURL._title = url.title;
+#endif
+    }
+
+    [m_pasteboard setItemsFromObjectRepresentations:@[[WebPasteboardItemData itemWithRepresentingObjects:objectRepresentations.get() additionalData:nil]]];
+}
+
+void PlatformPasteboard::write(const PasteboardURL& url)
+{
+    if ([m_pasteboard respondsToSelector:@selector(setItemsFromObjectRepresentations:)]) {
+        writeObjectRepresentations(url);
+        return;
+    }
+
+    write(kUTTypeURL, url.url.string());
 }
 
 int PlatformPasteboard::count()

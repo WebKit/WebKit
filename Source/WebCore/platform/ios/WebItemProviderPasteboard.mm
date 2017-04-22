@@ -32,6 +32,7 @@
 #import "UIKitSPI.h"
 #import <Foundation/NSProgress.h>
 #import <MobileCoreServices/MobileCoreServices.h>
+#import <UIKit/NSURL+UIItemProvider.h>
 #import <UIKit/UIColor.h>
 #import <UIKit/UIImage.h>
 #import <UIKit/UIItemProviderWriting.h>
@@ -44,6 +45,8 @@ SOFT_LINK_FRAMEWORK(UIKit)
 SOFT_LINK_CLASS(UIKit, UIColor)
 SOFT_LINK_CLASS(UIKit, UIImage)
 SOFT_LINK_CLASS(UIKit, UIItemProvider)
+
+typedef void(^ItemProviderDataLoadCompletionHandler)(NSData *, NSError *);
 
 #define MATCHES_UTI_TYPE(type, suffix) [type isEqualToString:(__bridge NSString *)kUTType ## suffix]
 #define MATCHES_UIKIT_TYPE(type, suffix) [type isEqualToString:@"com.apple.uikit. ## suffix ##"]
@@ -157,15 +160,13 @@ static BOOL isImageType(NSString *type)
         if (!data.representingObjects.count && !data.additionalData.count)
             continue;
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         RetainPtr<UIItemProvider> itemProvider = adoptNS([[getUIItemProviderClass() alloc] init]);
         // First, register all platform objects, prioritizing objects at the beginning of the array.
         for (id representingObject in data.representingObjects) {
             if (![representingObject conformsToProtocol:@protocol(UIItemProviderWriting)])
                 continue;
 
-            [itemProvider registerObject:(id <UIItemProviderWriting>)representingObject options:nil];
+            [itemProvider registerObject:(id <UIItemProviderWriting>)representingObject visibility:UIItemProviderRepresentationOptionsVisibilityAll];
         }
 
         // Next, register other custom data representations for type identifiers.
@@ -174,14 +175,13 @@ static BOOL isImageType(NSString *type)
             if (![additionalData[typeIdentifier] isKindOfClass:[NSData class]])
                 continue;
 
-            [itemProvider registerDataRepresentationForTypeIdentifier:typeIdentifier options:nil loadHandler:^NSProgress *(UIItemProviderDataLoadCompletionBlock completionBlock)
+            [itemProvider registerDataRepresentationForTypeIdentifier:typeIdentifier visibility:UIItemProviderRepresentationOptionsVisibilityAll loadHandler:^NSProgress *(ItemProviderDataLoadCompletionHandler completionHandler)
             {
-                completionBlock(additionalData[typeIdentifier], nil);
+                completionHandler(additionalData[typeIdentifier], nil);
                 return [NSProgress discreteProgressWithTotalUnitCount:100];
             }];
         }
         [providers addObject:itemProvider.get()];
-#pragma clang diagnostic pop
     }
 
     self.itemProviders = providers;

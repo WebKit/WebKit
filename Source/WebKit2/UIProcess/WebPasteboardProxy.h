@@ -36,6 +36,7 @@
 namespace WebCore {
 class Color;
 struct PasteboardImage;
+struct PasteboardURL;
 struct PasteboardWebContent;
 }
 
@@ -68,6 +69,7 @@ private:
     void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&) override;
 
 #if PLATFORM(IOS)
+    void writeURLToPasteboard(const WebCore::PasteboardURL&, const String& pasteboardName);
     void writeWebContentToPasteboard(const WebCore::PasteboardWebContent&, const String& pasteboardName);
     void writeImageToPasteboard(const WebCore::PasteboardImage&, const String& pasteboardName);
     void writeStringToPasteboard(const String& pasteboardType, const String&, const String& pasteboardName);

@@ -37,11 +37,13 @@ class SelectionData;
 class SharedBuffer;
 class URL;
 struct PasteboardImage;
+struct PasteboardURL;
 struct PasteboardWebContent;
 
 class PasteboardStrategy {
 public:
 #if PLATFORM(IOS)
+    virtual void writeToPasteboard(const PasteboardURL&, const String& pasteboardName) = 0;
     virtual void writeToPasteboard(const PasteboardWebContent&, const String& pasteboardName) = 0;
     virtual void writeToPasteboard(const PasteboardImage&, const String& pasteboardName) = 0;
     virtual void writeToPasteboard(const String& pasteboardType, const String&, const String& pasteboardName) = 0;

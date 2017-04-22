@@ -186,6 +186,11 @@ int WebPlatformStrategies::getNumberOfFiles(const String& pasteboardName)
 }
 
 #if PLATFORM(IOS)
+void WebPlatformStrategies::writeToPasteboard(const PasteboardURL& url, const String& pasteboardName)
+{
+    PlatformPasteboard(pasteboardName).write(url);
+}
+
 void WebPlatformStrategies::writeToPasteboard(const WebCore::PasteboardWebContent& content, const String& pasteboardName)
 {
     PlatformPasteboard(pasteboardName).write(content);

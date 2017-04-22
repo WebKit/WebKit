@@ -22,6 +22,7 @@
 
 messages -> WebPasteboardProxy {
 #if PLATFORM(IOS)
+    WriteURLToPasteboard(struct WebCore::PasteboardURL url, String pasteboardName)
     WriteWebContentToPasteboard(struct WebCore::PasteboardWebContent content, String pasteboardName)
     WriteImageToPasteboard(struct WebCore::PasteboardImage pasteboardImage, String pasteboardName)
     WriteStringToPasteboard(String pasteboardType, String text, String pasteboardName)

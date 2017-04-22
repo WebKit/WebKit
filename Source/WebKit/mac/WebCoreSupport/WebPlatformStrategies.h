@@ -58,6 +58,7 @@ private:
 
     // WebCore::PasteboardStrategy
 #if PLATFORM(IOS)
+    void writeToPasteboard(const WebCore::PasteboardURL&, const String& pasteboardName) override;
     void writeToPasteboard(const WebCore::PasteboardWebContent&, const String& pasteboardName) override;
     void writeToPasteboard(const WebCore::PasteboardImage&, const String& pasteboardName) override;
     void writeToPasteboard(const String& pasteboardType, const String&, const String& pasteboardName) override;

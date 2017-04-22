@@ -358,6 +358,7 @@ def headers_for_type(type):
         'WebCore::KeypressCommand': ['<WebCore/KeyboardEvent.h>'],
         'WebCore::MediaConstraintsData': ['<WebCore/MediaConstraintsImpl.h>'],
         'WebCore::PasteboardImage': ['<WebCore/Pasteboard.h>'],
+        'WebCore::PasteboardURL': ['<WebCore/Pasteboard.h>'],
         'WebCore::PasteboardWebContent': ['<WebCore/Pasteboard.h>'],
         'WebCore::PaymentAuthorizationResult': ['<WebCore/PaymentRequest.h>'],
         'WebCore::PaymentMethodUpdate': ['<WebCore/PaymentRequest.h>'],

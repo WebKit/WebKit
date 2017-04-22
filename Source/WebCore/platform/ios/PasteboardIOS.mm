@@ -126,7 +126,7 @@ void Pasteboard::writePlainText(const String& text, SmartReplaceOption)
 
 void Pasteboard::write(const PasteboardURL& pasteboardURL)
 {
-    platformStrategies()->pasteboardStrategy()->writeToPasteboard(kUTTypeURL, pasteboardURL.url.string(), m_pasteboardName);
+    platformStrategies()->pasteboardStrategy()->writeToPasteboard(pasteboardURL, m_pasteboardName);
 }
 
 void Pasteboard::writeTrustworthyWebURLsPboardType(const PasteboardURL&)

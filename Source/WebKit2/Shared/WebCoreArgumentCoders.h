@@ -93,6 +93,7 @@ struct Length;
 struct GrammarDetail;
 struct MimeClassInfo;
 struct PasteboardImage;
+struct PasteboardURL;
 struct PasteboardWebContent;
 struct PluginInfo;
 struct RecentSearch;
@@ -393,6 +394,11 @@ template<> struct ArgumentCoder<WebCore::Highlight> {
 template<> struct ArgumentCoder<WebCore::PasteboardWebContent> {
     static void encode(Encoder&, const WebCore::PasteboardWebContent&);
     static bool decode(Decoder&, WebCore::PasteboardWebContent&);
+};
+
+template<> struct ArgumentCoder<WebCore::PasteboardURL> {
+    static void encode(Encoder&, const WebCore::PasteboardURL&);
+    static bool decode(Decoder&, WebCore::PasteboardURL&);
 };
 
 template<> struct ArgumentCoder<WebCore::PasteboardImage> {

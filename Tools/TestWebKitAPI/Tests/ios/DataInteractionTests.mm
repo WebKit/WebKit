@@ -32,6 +32,7 @@
 #import "TestWKWebView.h"
 #import "WKWebViewConfigurationExtras.h"
 #import <MobileCoreServices/MobileCoreServices.h>
+#import <UIKit/NSURL+UIItemProvider.h>
 #import <UIKit/UIItemProvider_Private.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
@@ -246,6 +247,14 @@ TEST(DataInteractionTests, LinkToInput)
     [dataInteractionSimulator runFrom:CGPointMake(100, 50) to:CGPointMake(100, 300)];
 
     EXPECT_WK_STREQ("https://www.apple.com/", [webView editorValue].UTF8String);
+
+    __block bool doneLoadingURL = false;
+    UIItemProvider *sourceItemProvider = [dataInteractionSimulator sourceItemProviders].firstObject;
+    [sourceItemProvider loadObjectOfClass:[NSURL class] completionHandler:^(NSURL *url, NSError *error) {
+        EXPECT_WK_STREQ("Hello world", url._title.UTF8String ?: "");
+        doneLoadingURL = true;
+    }];
+    TestWebKitAPI::Util::run(&doneLoadingURL);
 
     NSArray *observedEventNames = [dataInteractionSimulator observedEventNames];
     EXPECT_TRUE([observedEventNames containsObject:DataInteractionEnterEventName]);
