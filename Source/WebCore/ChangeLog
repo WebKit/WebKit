@@ -1,5 +1,15 @@
 2017-04-21  Andy Estes  <aestes@apple.com>
 
+        [macOS] Enable media selection button on AVTouchBarScrubber
+        https://bugs.webkit.org/show_bug.cgi?id=171149
+        <rdar://problem/29875010>
+
+        Reviewed by Beth Dakin.
+
+        * platform/spi/cocoa/AVKitSPI.h:
+
+2017-04-21  Andy Estes  <aestes@apple.com>
+
         [macOS] Name WebPlaybackControlsManager delegate methods correctly depending on OS version
         https://bugs.webkit.org/show_bug.cgi?id=171147
         <rdar://problem/29875010>

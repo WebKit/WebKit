@@ -1,3 +1,14 @@
+2017-04-21  Andy Estes  <aestes@apple.com>
+
+        [macOS] Enable media selection button on AVTouchBarScrubber
+        https://bugs.webkit.org/show_bug.cgi?id=171149
+        <rdar://problem/29875010>
+
+        Reviewed by Beth Dakin.
+
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::updateMediaTouchBar):
+
 2017-04-21  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [WK2] Add delegate hooks for overriding unhanded data interaction operations
