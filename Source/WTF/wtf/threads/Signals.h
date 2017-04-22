@@ -32,6 +32,7 @@
 
 namespace WTF {
 
+// Note that SIGUSR1 is used in Pthread-based ports except for Darwin to suspend and resume threads.
 enum class Signal {
     // Usr will always chain to any non-default handler install before us. Since there is no way to know
     // if a signal was intended exclusively for us.

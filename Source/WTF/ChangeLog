@@ -1,3 +1,25 @@
+2017-04-22  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        REGRESSION(r215638): [Linux] Several worker tests are crashing in Thread::signalHandlerSuspendResume after r215638
+        https://bugs.webkit.org/show_bug.cgi?id=171159
+
+        Reviewed by Michael Catanzaro.
+
+        Now, SIGUSR2 is used by ThreadMessage. Instead SIGUSR1 becomes empty.
+        We should use some signal, that is not managed by WTF Signal mechanism
+        because the behaivor of this suspend and resume is a bit tricky.
+        For example, we set a bit tricky signal mask to sigaction to temporary
+        block SIGUSR2 in the handler to avoid nested SIGUSR2. And we cannot
+        use ThreadMessage to implement this mechanism because this suspend
+        and resume handler will stop in the middle of the handler by sigsuspend.
+        It is not the expected semantics by ThreadMessage.
+
+        So now, we use SIGUSR1 instead. And we note that SIGUSR1 is used for
+        pthread ports.
+
+        * wtf/ThreadingPthreads.cpp:
+        * wtf/threads/Signals.h:
+
 2017-04-20  Sam Weinig  <sam@webkit.org>
 
         Split cryptographic digest computation and parsing out of CSP code so it can be reused
