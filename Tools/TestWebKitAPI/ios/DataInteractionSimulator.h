@@ -29,7 +29,6 @@
 #import <UIKit/UIItemProvider.h>
 #import <UIKit/UIKit.h>
 #import <WebKit/WKUIDelegatePrivate.h>
-#import <WebKit/_WKTestingDelegate.h>
 #import <wtf/BlockPtr.h>
 
 @class MockDataOperationSession;
@@ -49,7 +48,7 @@ typedef NS_ENUM(NSInteger, DataInteractionPhase) {
     DataInteractionPerforming = 4
 };
 
-@interface DataInteractionSimulator : NSObject<_WKTestingDelegate, WKUIDelegatePrivate> {
+@interface DataInteractionSimulator : NSObject<WKUIDelegatePrivate> {
     RetainPtr<TestWKWebView> _webView;
     RetainPtr<MockDataInteractionSession> _dataInteractionSession;
     RetainPtr<MockDataOperationSession> _dataOperationSession;
@@ -73,6 +72,9 @@ typedef NS_ENUM(NSInteger, DataInteractionPhase) {
 @property (nonatomic) BlockPtr<BOOL(_WKActivatedElementInfo *)> showCustomActionSheetBlock;
 @property (nonatomic) BlockPtr<NSArray *(NSArray *)> convertItemProvidersBlock;
 @property (nonatomic, strong) NSArray *externalItemProviders;
+@property (nonatomic) BlockPtr<NSUInteger(NSUInteger, id)> overrideDataInteractionOperationBlock;
+@property (nonatomic) BlockPtr<void(BOOL, NSArray *)> dataInteractionOperationCompletionBlock;
+
 @property (nonatomic, readonly) NSArray *sourceItemProviders;
 @property (nonatomic, readonly) NSArray *observedEventNames;
 @property (nonatomic, readonly) NSArray *finalSelectionRects;

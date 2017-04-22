@@ -203,14 +203,9 @@ struct WKAutoCorrectionData {
 
 #if ENABLE(DATA_INTERACTION)
     WebKit::WKDataInteractionState _dataInteractionState;
-    BOOL _isPerformingDataInteractionOperation;
     RetainPtr<WKDataInteraction> _dataInteraction;
     RetainPtr<WKDataOperation> _dataOperation;
     CGPoint _deferredActionSheetRequestLocation;
-    RetainPtr<UIView> _visibleContentViewSnapshot;
-    RetainPtr<UIImageView> _dataInteractionUnselectedContentSnapshot;
-    BOOL _isRunningConcludeEditDataInteractionAnimation;
-    RetainPtr<WKDataInteractionCaretView> _dataInteractionCaretView;
 #endif
 }
 
@@ -295,7 +290,7 @@ struct WKAutoCorrectionData {
 - (void)ensurePositionInformationIsUpToDate:(WebKit::InteractionInformationRequest)request;
 
 #if ENABLE(DATA_INTERACTION)
-- (void)_didPerformDataInteractionControllerOperation;
+- (void)_didPerformDataInteractionControllerOperation:(BOOL)handled;
 - (void)_didHandleStartDataInteractionRequest:(BOOL)started;
 - (void)_startDataInteractionWithImage:(RetainPtr<CGImageRef>)image withIndicatorData:(std::optional<WebCore::TextIndicatorData>)indicatorData atClientPosition:(CGPoint)clientPosition anchorPoint:(CGPoint)anchorPoint action:(uint64_t)action;
 - (void)_didConcludeEditDataInteraction:(std::optional<WebCore::TextIndicatorData>)data;

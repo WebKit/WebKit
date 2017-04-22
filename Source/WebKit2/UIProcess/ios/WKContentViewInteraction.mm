@@ -62,7 +62,6 @@
 #import "_WKFocusedElementInfo.h"
 #import "_WKFormInputSession.h"
 #import "_WKInputDelegate.h"
-#import "_WKTestingDelegate.h"
 #import <CoreText/CTFont.h>
 #import <CoreText/CTFontDescriptor.h>
 #import <MobileCoreServices/UTCoreTypes.h>
@@ -654,9 +653,6 @@ static UIWebSelectionMode toUIWebSelectionMode(WKSelectionGranularity granularit
 
 #if ENABLE(DATA_INTERACTION)
     [self teardownDataInteractionDelegates];
-    _isPerformingDataInteractionOperation = NO;
-    [_dataInteractionCaretView remove];
-    _dataInteractionCaretView = nil;
 #endif
 
     _inspectorNodeSearchEnabled = NO;
@@ -1159,7 +1155,7 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
     BOOL shouldZoomToFocusRect = YES;
 #if ENABLE(DATA_INTERACTION)
     // FIXME: We need to teach WKWebView to properly zoom and scroll during a data interaction operation.
-    shouldZoomToFocusRect = ![WebItemProviderPasteboard sharedInstance].hasPendingOperation;
+    shouldZoomToFocusRect = !_dataInteractionState.isPerformingOperation;
 #endif
     if (shouldZoomToFocusRect) {
         // In case user scaling is force enabled, do not use that scaling when zooming in with an input field.
@@ -3855,7 +3851,7 @@ static bool isAssistableInputType(InputType type)
         // The default behavior is to allow node assistance if the user is interacting or the keyboard is already active.
         shouldShowKeyboard = userIsInteracting || _textSelectionAssistant;
 #if ENABLE(DATA_INTERACTION)
-        shouldShowKeyboard |= _isPerformingDataInteractionOperation;
+        shouldShowKeyboard |= _dataInteractionState.isPerformingOperation;
 #endif
     }
     if (!shouldShowKeyboard)

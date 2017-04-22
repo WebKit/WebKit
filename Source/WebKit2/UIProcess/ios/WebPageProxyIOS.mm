@@ -1116,9 +1116,9 @@ void WebPageProxy::setIsScrollingOrZooming(bool isScrollingOrZooming)
 
 #if ENABLE(DATA_INTERACTION)
 
-void WebPageProxy::didPerformDataInteractionControllerOperation()
+void WebPageProxy::didPerformDataInteractionControllerOperation(bool handled)
 {
-    m_pageClient.didPerformDataInteractionControllerOperation();
+    m_pageClient.didPerformDataInteractionControllerOperation(handled);
 }
 
 void WebPageProxy::didHandleStartDataInteractionRequest(bool started)

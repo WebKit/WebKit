@@ -563,7 +563,7 @@ public:
     void requestRectsForGranularityWithSelectionOffset(WebCore::TextGranularity, uint32_t offset, std::function<void(const Vector<WebCore::SelectionRect>&, CallbackBase::Error)>);
     void requestRectsAtSelectionOffsetWithText(int32_t offset, const String&, std::function<void(const Vector<WebCore::SelectionRect>&, CallbackBase::Error)>);
 #if ENABLE(DATA_INTERACTION)
-    void didPerformDataInteractionControllerOperation();
+    void didPerformDataInteractionControllerOperation(bool handled);
     void didHandleStartDataInteractionRequest(bool started);
     void requestStartDataInteraction(const WebCore::IntPoint& clientPosition, const WebCore::IntPoint& globalPosition);
     void didConcludeEditDataInteraction(std::optional<WebCore::TextIndicatorData>);

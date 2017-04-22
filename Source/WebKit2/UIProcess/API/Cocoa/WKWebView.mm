@@ -90,7 +90,6 @@
 #import "_WKInputDelegate.h"
 #import "_WKRemoteObjectRegistryInternal.h"
 #import "_WKSessionStateInternal.h"
-#import "_WKTestingDelegate.h"
 #import "_WKVisitedLinkStoreInternal.h"
 #import "_WKWebsitePoliciesInternal.h"
 #import <WebCore/GraphicsContextCG.h>
@@ -302,8 +301,6 @@ WKWebView* fromWebPageProxy(WebKit::WebPageProxy& page)
     std::unique_ptr<WebKit::WebViewImpl> _impl;
     RetainPtr<WKTextFinderClient> _textFinderClient;
 #endif
-
-    id<_WKTestingDelegate> _testingDelegate;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -5085,16 +5082,6 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 #else
     return nil;
 #endif
-}
-
-- (id<_WKTestingDelegate>)_testingDelegate
-{
-    return _testingDelegate;
-}
-
-- (void)_setTestingDelegate:(id<_WKTestingDelegate>)testingDelegate
-{
-    _testingDelegate = testingDelegate;
 }
 
 #if PLATFORM(IOS)

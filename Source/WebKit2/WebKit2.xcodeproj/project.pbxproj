@@ -2007,7 +2007,6 @@
 		EDCA71B7128DDA8C00201B26 /* WKBundlePageOverlay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A22F1001289FCD90085E74F /* WKBundlePageOverlay.cpp */; };
 		F036978815F4BF0500C3A80E /* WebColorPicker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F036978715F4BF0500C3A80E /* WebColorPicker.cpp */; };
 		F409BA181E6E64BC009DA28E /* WKDragDestinationAction.h in Headers */ = {isa = PBXBuildFile; fileRef = F409BA171E6E64B3009DA28E /* WKDragDestinationAction.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		F43370971E4D72ED00052B0E /* _WKTestingDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = F43370961E4D6A4400052B0E /* _WKTestingDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F44DFEB21E9E752F0038D196 /* WebIconUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = F44DFEB01E9E752F0038D196 /* WebIconUtilities.h */; };
 		F44DFEB31E9E752F0038D196 /* WebIconUtilities.mm in Sources */ = {isa = PBXBuildFile; fileRef = F44DFEB11E9E752F0038D196 /* WebIconUtilities.mm */; };
 		F4E8CB911EA6AB5B00E31198 /* _WKDraggableElementInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = F4E8CB8E1EA6AB5B00E31198 /* _WKDraggableElementInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4345,7 +4344,6 @@
 		ECBFC1DB1E6A4D66000300C7 /* ExtraPublicSymbolsForTAPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExtraPublicSymbolsForTAPI.h; sourceTree = "<group>"; };
 		F036978715F4BF0500C3A80E /* WebColorPicker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebColorPicker.cpp; sourceTree = "<group>"; };
 		F409BA171E6E64B3009DA28E /* WKDragDestinationAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKDragDestinationAction.h; sourceTree = "<group>"; };
-		F43370961E4D6A4400052B0E /* _WKTestingDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKTestingDelegate.h; sourceTree = "<group>"; };
 		F44DFEB01E9E752F0038D196 /* WebIconUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebIconUtilities.h; path = ios/WebIconUtilities.h; sourceTree = "<group>"; };
 		F44DFEB11E9E752F0038D196 /* WebIconUtilities.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebIconUtilities.mm; path = ios/WebIconUtilities.mm; sourceTree = "<group>"; };
 		F4E8CB8E1EA6AB5B00E31198 /* _WKDraggableElementInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKDraggableElementInfo.h; sourceTree = "<group>"; };
@@ -5569,7 +5567,6 @@
 				1A002D3F196B329400B9AD44 /* _WKSessionState.h */,
 				1A002D3E196B329400B9AD44 /* _WKSessionState.mm */,
 				1A002D42196B337000B9AD44 /* _WKSessionStateInternal.h */,
-				F43370961E4D6A4400052B0E /* _WKTestingDelegate.h */,
 				2D6B371918A967AD0042AE80 /* _WKThumbnailView.h */,
 				2D6B371A18A967AD0042AE80 /* _WKThumbnailView.mm */,
 				2DACE64D18ADBFF000E4CA76 /* _WKThumbnailViewInternal.h */,
@@ -8146,7 +8143,6 @@
 				376311FE1A3FB600005A2E51 /* _WKSameDocumentNavigationTypeInternal.h in Headers */,
 				1A002D44196B338900B9AD44 /* _WKSessionState.h in Headers */,
 				1A002D43196B337000B9AD44 /* _WKSessionStateInternal.h in Headers */,
-				F43370971E4D72ED00052B0E /* _WKTestingDelegate.h in Headers */,
 				2D6B371B18A967AD0042AE80 /* _WKThumbnailView.h in Headers */,
 				2DACE64E18ADBFF000E4CA76 /* _WKThumbnailViewInternal.h in Headers */,
 				7C2413031AACFA7500A58C15 /* _WKUserContentExtensionStore.h in Headers */,

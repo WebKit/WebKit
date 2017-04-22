@@ -38,6 +38,7 @@
 #import <WebKit/_WKProcessPoolConfiguration.h>
 
 typedef void (^FileLoadCompletionBlock)(NSURL *, BOOL, NSError *);
+typedef void (^DataLoadCompletionBlock)(NSData *, NSError *);
 
 static UIImage *testIconImage()
 {
@@ -73,6 +74,15 @@ static void cleanUpDataInteractionTemporaryPath()
             capturedBlock(retainedTemporaryURL.get(), NO, nil);
         });
         return nil;
+    }];
+}
+
+- (void)registerDataRepresentationForTypeIdentifier:(NSString *)typeIdentifier withData:(NSData *)data
+{
+    RetainPtr<NSData> retainedData = data;
+    [self registerDataRepresentationForTypeIdentifier:typeIdentifier visibility:NSItemProviderRepresentationVisibilityAll loadHandler: [retainedData] (DataLoadCompletionBlock block) -> NSProgress * {
+        block(retainedData.get(), nil);
+        return [NSProgress discreteProgressWithTotalUnitCount:100];
     }];
 }
 
@@ -461,6 +471,35 @@ TEST(DataInteractionTests, ExternalSourceJPEGOnly)
     [dataInteractionSimulator runFrom:CGPointMake(300, 400) to:CGPointMake(100, 300)];
     EXPECT_TRUE([webView editorContainsImageElement]);
     checkSelectionRectsWithLogging(@[ makeCGRectValue(1, 201, 215, 174) ], [dataInteractionSimulator finalSelectionRects]);
+}
+
+TEST(DataInteractionTests, OverrideDataInteractionOperation)
+{
+    RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView synchronouslyLoadTestPageNamed:@"simple"];
+
+    RetainPtr<UIItemProvider> simulatedItemProvider = adoptNS([[UIItemProvider alloc] init]);
+    [simulatedItemProvider registerDataRepresentationForTypeIdentifier:(NSString *)kUTTypeHTML withData:[@"<body></body>" dataUsingEncoding:NSUTF8StringEncoding]];
+
+    __block bool finishedLoadingData = false;
+    RetainPtr<DataInteractionSimulator> dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    [dataInteractionSimulator setExternalItemProviders:@[ simulatedItemProvider.get() ]];
+    [dataInteractionSimulator setOverrideDataInteractionOperationBlock:^NSUInteger(NSUInteger operation, id session)
+    {
+        EXPECT_EQ(0U, operation);
+        return 1;
+    }];
+    [dataInteractionSimulator setDataInteractionOperationCompletionBlock:^(BOOL handled, NSArray *itemProviders) {
+        EXPECT_FALSE(handled);
+        [itemProviders.firstObject loadDataRepresentationForTypeIdentifier:(NSString *)kUTTypeHTML completionHandler:^(NSData *data, NSError *error) {
+            NSString *text = [[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] autorelease];
+            EXPECT_WK_STREQ("<body></body>", text.UTF8String);
+            EXPECT_FALSE(!!error);
+            finishedLoadingData = true;
+        }];
+    }];
+    [dataInteractionSimulator runFrom:CGPointMake(300, 400) to:CGPointMake(100, 300)];
+    TestWebKitAPI::Util::run(&finishedLoadingData);
 }
 
 TEST(DataInteractionTests, AttachmentElementItemProviders)

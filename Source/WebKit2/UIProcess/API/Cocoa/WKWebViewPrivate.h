@@ -87,7 +87,6 @@ typedef NS_ENUM(NSInteger, _WKImmediateActionType) {
 @protocol _WKIconLoadingDelegate;
 @protocol _WKInputDelegate;
 @protocol _WKFullscreenDelegate;
-@protocol _WKTestingDelegate;
 
 @interface WKWebView (WKPrivate)
 
@@ -305,7 +304,6 @@ typedef NS_ENUM(NSInteger, _WKImmediateActionType) {
 @interface WKWebView (WKTesting)
 
 - (NSDictionary *)_contentsOfUserInterfaceItem:(NSString *)userInterfaceItem WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
-@property (nonatomic, weak, setter=_setTestingDelegate:) id<_WKTestingDelegate> _testingDelegate WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 #if TARGET_OS_IPHONE
 

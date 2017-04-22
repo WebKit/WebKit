@@ -75,7 +75,6 @@ static NSArray *dataInteractionEventNames()
     if (self = [super init]) {
         _webView = webView;
         _shouldEnsureUIApplication = NO;
-        [_webView _setTestingDelegate:self];
         [_webView setUIDelegate:self];
     }
     return self;
@@ -83,9 +82,6 @@ static NSArray *dataInteractionEventNames()
 
 - (void)dealloc
 {
-    if ([_webView _testingDelegate] == self)
-        [_webView _setTestingDelegate:nil];
-
     if ([_webView UIDelegate] == self)
         [_webView setUIDelegate:nil];
 
@@ -271,14 +267,20 @@ static NSArray *dataInteractionEventNames()
     return _phase;
 }
 
-#pragma mark - _WKTestingDelegate
+#pragma mark - WKUIDelegatePrivate
 
-- (void)webViewDidPerformDataInteractionControllerOperation:(WKWebView *)webView
+- (void)_webView:(WKWebView *)webView dataInteractionOperationWasHandled:(BOOL)handled forSession:(id)session itemProviders:(NSArray<UIItemProvider *> *)itemProviders
 {
     _isDoneWithCurrentRun = true;
+
+    if (self.dataInteractionOperationCompletionBlock)
+        self.dataInteractionOperationCompletionBlock(handled, itemProviders);
 }
 
-#pragma mark - WKUIDelegatePrivate
+- (NSUInteger)_webView:(WKWebView *)webView willUpdateDataInteractionOperationToOperation:(NSUInteger)operation forSession:(id)session
+{
+    return self.overrideDataInteractionOperationBlock ? self.overrideDataInteractionOperationBlock(operation, session) : operation;
+}
 
 - (NSArray<UIItemProvider *>*)_webView:(WKWebView *)webView adjustedDataInteractionItemProviders:(NSArray<UIItemProvider *>*)originalItemProviders
 {

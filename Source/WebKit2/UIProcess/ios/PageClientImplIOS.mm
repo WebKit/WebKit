@@ -771,9 +771,9 @@ Ref<ValidationBubble> PageClientImpl::createValidationBubble(const String& messa
 }
 
 #if ENABLE(DATA_INTERACTION)
-void PageClientImpl::didPerformDataInteractionControllerOperation()
+void PageClientImpl::didPerformDataInteractionControllerOperation(bool handled)
 {
-    [m_contentView _didPerformDataInteractionControllerOperation];
+    [m_contentView _didPerformDataInteractionControllerOperation:handled];
 }
 
 void PageClientImpl::didHandleStartDataInteractionRequest(bool started)

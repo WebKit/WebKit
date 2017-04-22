@@ -1,3 +1,51 @@
+2017-04-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [WK2] Add delegate hooks for overriding unhanded data interaction operations
+        https://bugs.webkit.org/show_bug.cgi?id=171005
+        <rdar://problem/31669646>
+
+        Reviewed by Tim Horton.
+
+        Adds support for overriding data interaction operations through two new delegate methods:
+        _webView:willUpdateDataInteractionOperationToOperation:forSession:, and
+        _webView:dataInteractionOperationWasHandled:forSession:. The former may be overridden to return a different
+        operation type than what WebKit would originally have returned, and the latter may be overridden to run custom
+        logic after the web process has handled a data interaction operation.
+
+        Additionally, includes some minor cleanup around WKContentViewInteraction. With the new
+        _webView:dataInteractionOperationWasHandled:forSession: delegate method, the last method on _WKTestingDelegate
+        may be removed. This means _WKTestingDelegate is no longer needed, so this patch removes its header entirely.
+        Also, relocates some state variables formerly on WKContentView to WKContentView's WKDataInteractionState struct
+        instead, so that all state associated with data interaction may be cleaned up at the same time.
+
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _testingDelegate]): Deleted.
+        (-[WKWebView _setTestingDelegate:]): Deleted.
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/Cocoa/_WKTestingDelegate.h: Removed.
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+
+        Add a new "handled" IPC argument to DidPerformDataInteractionControllerOperation. This lets the UI process
+        know whether or not the data interaction operation was handled by the web process, and is eventually plumbed
+        through to the UI delegate via the new SPI.
+
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::didPerformDataInteractionControllerOperation):
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView cleanupInteraction]):
+        (-[WKContentView _displayFormNodeInputView]):
+        (-[WKContentView _startAssistingNode:userIsInteracting:blurPreviousNode:userObject:]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::didPerformDataInteractionControllerOperation):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::performDragControllerAction):
+
 2017-04-21  Anders Carlsson  <andersca@apple.com>
 
         Stop using deprecated APIs, part 5

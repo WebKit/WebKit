@@ -3602,7 +3602,7 @@ void WebPage::performDragControllerAction(uint64_t action, const WebCore::DragDa
 
         auto& frame = m_page->focusController().focusedOrMainFrame();
         frame.editor().setIgnoreSelectionChanges(true);
-        m_page->dragController().performDragOperation(dragData);
+        bool handled = m_page->dragController().performDragOperation(dragData);
         frame.editor().setIgnoreSelectionChanges(false);
 
         // If we started loading a local file, the sandbox extension tracker would have adopted this
@@ -3611,7 +3611,9 @@ void WebPage::performDragControllerAction(uint64_t action, const WebCore::DragDa
 
         m_pendingDropExtensionsForFileUpload.clear();
 #if ENABLE(DATA_INTERACTION)
-        send(Messages::WebPageProxy::DidPerformDataInteractionControllerOperation());
+        send(Messages::WebPageProxy::DidPerformDataInteractionControllerOperation(handled));
+#else
+        UNUSED_PARAM(handled);
 #endif
         break;
     }

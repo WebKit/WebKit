@@ -1,3 +1,29 @@
+2017-04-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [WK2] Add delegate hooks for overriding unhanded data interaction operations
+        https://bugs.webkit.org/show_bug.cgi?id=171005
+        <rdar://problem/31669646>
+
+        Reviewed by Tim Horton.
+
+        Adds a new API test checking that normal WebKit behavior when vending updated data interaction operations may
+        be overridden, resulting in a data interaction operation being performed when it otherwise would not have. Also
+        adjusts for some changes in WebKit2 (See WebKit2 ChangeLog for more details).
+
+        New API test:
+        DataInteractionTests.OverrideDataInteractionOperation
+
+        * TestWebKitAPI/Tests/ios/DataInteractionTests.mm:
+        (-[UIItemProvider registerDataRepresentationForTypeIdentifier:withData:]):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/ios/DataInteractionSimulator.h:
+        * TestWebKitAPI/ios/DataInteractionSimulator.mm:
+        (-[DataInteractionSimulator initWithWebView:]):
+        (-[DataInteractionSimulator dealloc]):
+        (-[DataInteractionSimulator _webView:dataInteractionOperationWasHandled:forSession:itemProviders:]):
+        (-[DataInteractionSimulator _webView:willUpdateDataInteractionOperationToOperation:forSession:]):
+        (-[DataInteractionSimulator webViewDidPerformDataInteractionControllerOperation:]): Deleted.
+
 2017-04-21  Ryan Haddad  <ryanhaddad@apple.com>
 
         Temporarily disable two flaky API tests.

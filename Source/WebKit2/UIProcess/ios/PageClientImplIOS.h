@@ -205,7 +205,7 @@ private:
 #endif
 
 #if ENABLE(DATA_INTERACTION)
-    void didPerformDataInteractionControllerOperation() override;
+    void didPerformDataInteractionControllerOperation(bool handled) override;
     void didHandleStartDataInteractionRequest(bool started) override;
     void startDataInteractionWithImage(const WebCore::IntPoint& clientPosition, const ShareableBitmap::Handle& image, std::optional<WebCore::TextIndicatorData>, const WebCore::FloatPoint& anchorPoint, uint64_t action) override;
     void didConcludeEditDataInteraction(std::optional<WebCore::TextIndicatorData>) override;
