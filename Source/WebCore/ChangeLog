@@ -1,3 +1,32 @@
+2017-04-21  Jer Noble  <jer.noble@apple.com>
+
+        [MediaCapture] Improvements to CoreAudioCaptureSource
+        https://bugs.webkit.org/show_bug.cgi?id=171146
+
+        Reviewed by Eric Carlson.
+
+        Various interlocking improvements to CoreAudioCaptureSource:
+
+        - Allow the volume, sampleRate, and echoCancellation settings to be applied to the source.
+        - Update the values returned via settings() when these values change.
+        - Obey the sampleRate and echoCancellation settings when creating the VPIO unit.
+        - Because AudioUnitRender() mutates the passed in AudioBufferList, reset it immediately before calling.
+
+        * platform/mediastream/mac/CoreAudioCaptureSource.cpp:
+        (WebCore::CoreAudioCaptureSource::create):
+        (WebCore::CoreAudioCaptureSource::CoreAudioCaptureSource):
+        (WebCore::CoreAudioCaptureSource::preferredSampleRate):
+        (WebCore::CoreAudioCaptureSource::preferredIOBufferSize):
+        (WebCore::CoreAudioCaptureSource::configureMicrophoneProc):
+        (WebCore::CoreAudioCaptureSource::configureSpeakerProc):
+        (WebCore::CoreAudioCaptureSource::processMicrophoneSamples):
+        (WebCore::CoreAudioCaptureSource::setupAudioUnits):
+        (WebCore::CoreAudioCaptureSource::stopProducingData):
+        (WebCore::CoreAudioCaptureSource::settings):
+        (WebCore::CoreAudioCaptureSource::settingsDidChange):
+        (WebCore::CoreAudioCaptureSource::preferredIOBufferDuration): Deleted.
+        * platform/mediastream/mac/CoreAudioCaptureSource.h:
+
 2017-04-21  Youenn Fablet  <youenn@apple.com>
 
         com.apple.WebCore: non-virtual thunk to WebCore::LibWebRTCDataChannelHandler::OnBufferedAmountChange + 39
