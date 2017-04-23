@@ -40,6 +40,7 @@ const NSInteger WKInspectorViewTag = 1000;
 // This class is the Web Inspector window delegate. It can be used to add interface
 // actions that need to work when the Web Inspector window is key.
 WK_EXPORT @interface WKWebInspectorProxyObjCAdapter : NSObject <NSWindowDelegate> {
+@private
     void* _inspectorProxy;
 }
 
