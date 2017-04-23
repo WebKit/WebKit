@@ -1,5 +1,18 @@
 2017-04-23  Joseph Pecoraro  <pecoraro@apple.com>
 
+        test262: test262/test/built-ins/Number/prototype/toPrecision/nan.js
+        https://bugs.webkit.org/show_bug.cgi?id=171197
+
+        Reviewed by Saam Barati.
+
+        * runtime/NumberPrototype.cpp:
+        (JSC::numberProtoFuncToExponential):
+        (JSC::numberProtoFuncToFixed):
+        (JSC::numberProtoFuncToPrecision):
+        Refine the order of operations to match the spec.
+
+2017-04-23  Joseph Pecoraro  <pecoraro@apple.com>
+
         test262: test262/test/language/expressions/generators/yield-as-label.js
         https://bugs.webkit.org/show_bug.cgi?id=170979
 

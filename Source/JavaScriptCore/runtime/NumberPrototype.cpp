@@ -384,7 +384,7 @@ static String toStringWithRadix(int32_t number, unsigned radix)
     return String(p, static_cast<unsigned>(end - p));
 }
 
-// toExponential converts a number to a string, always formatting as an expoential.
+// toExponential converts a number to a string, always formatting as an exponential.
 // This method takes an optional argument specifying a number of *decimal places*
 // to round the significand to (or, put another way, this method optionally rounds
 // to argument-plus-one significant figures).
@@ -397,15 +397,18 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToExponential(ExecState* exec)
     if (!toThisNumber(exec->thisValue(), x))
         return throwVMTypeError(exec, scope);
 
-    // Get the argument. 
+    // Perform ToInteger on the argument before remaining steps.
     int decimalPlacesInExponent;
     bool isUndefined;
-    if (!getIntegerArgumentInRange(exec, 0, 20, decimalPlacesInExponent, isUndefined))
-        return throwVMError(exec, scope, createRangeError(exec, ASCIILiteral("toExponential() argument must be between 0 and 20")));
+    bool inRange = getIntegerArgumentInRange(exec, 0, 20, decimalPlacesInExponent, isUndefined);
+    RETURN_IF_EXCEPTION(scope, { });
 
     // Handle NaN and Infinity.
     if (!std::isfinite(x))
         return JSValue::encode(jsNontrivialString(exec, String::numberToStringECMAScript(x)));
+
+    if (!inRange)
+        return throwVMError(exec, scope, createRangeError(exec, ASCIILiteral("toExponential() argument must be between 0 and 20")));
 
     // Round if the argument is not undefined, always format as exponential.
     char buffer[WTF::NumberToStringBufferLength];
@@ -434,7 +437,9 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToFixed(ExecState* exec)
     // Get the argument. 
     int decimalPlaces;
     bool isUndefined; // This is ignored; undefined treated as 0.
-    if (!getIntegerArgumentInRange(exec, 0, 20, decimalPlaces, isUndefined))
+    bool inRange = getIntegerArgumentInRange(exec, 0, 20, decimalPlaces, isUndefined);
+    RETURN_IF_EXCEPTION(scope, { });
+    if (!inRange)
         return throwVMError(exec, scope, createRangeError(exec, ASCIILiteral("toFixed() argument must be between 0 and 20")));
 
     // 15.7.4.5.7 states "If x >= 10^21, then let m = ToString(x)"
@@ -451,7 +456,7 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToFixed(ExecState* exec)
     return JSValue::encode(jsString(exec, String(numberToFixedWidthString(x, decimalPlaces, buffer))));
 }
 
-// toPrecision converts a number to a string, takeing an argument specifying a
+// toPrecision converts a number to a string, taking an argument specifying a
 // number of significant figures to round the significand to. For positive
 // exponent, all values that can be represented using a decimal fraction will
 // be, e.g. when rounding to 3 s.f. any value up to 999 will be formated as a
@@ -467,11 +472,11 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToPrecision(ExecState* exec)
     if (!toThisNumber(exec->thisValue(), x))
         return throwVMTypeError(exec, scope);
 
-    // Get the argument. 
+    // Perform ToInteger on the argument before remaining steps.
     int significantFigures;
     bool isUndefined;
-    if (!getIntegerArgumentInRange(exec, 1, 21, significantFigures, isUndefined))
-        return throwVMError(exec, scope, createRangeError(exec, ASCIILiteral("toPrecision() argument must be between 1 and 21")));
+    bool inRange = getIntegerArgumentInRange(exec, 1, 21, significantFigures, isUndefined);
+    RETURN_IF_EXCEPTION(scope, { });
 
     // To precision called with no argument is treated as ToString.
     if (isUndefined)
@@ -480,6 +485,9 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToPrecision(ExecState* exec)
     // Handle NaN and Infinity.
     if (!std::isfinite(x))
         return JSValue::encode(jsNontrivialString(exec, String::numberToStringECMAScript(x)));
+
+    if (!inRange)
+        return throwVMError(exec, scope, createRangeError(exec, ASCIILiteral("toPrecision() argument must be between 1 and 21")));
 
     NumberToStringBuffer buffer;
     return JSValue::encode(jsString(exec, String(numberToFixedPrecisionString(x, significantFigures, buffer))));
