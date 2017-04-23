@@ -1,3 +1,22 @@
+2017-04-23  Joseph Pecoraro  <pecoraro@apple.com>
+
+        test262: test262/test/built-ins/Number/parseFloat.js
+        https://bugs.webkit.org/show_bug.cgi?id=171193
+
+        Reviewed by Yusuke Suzuki.
+
+        * runtime/CommonIdentifiers.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::parseFloatFunction):
+        Expose parseFloat on the global object to be shared with Number constructor.
+
+        * runtime/NumberConstructor.cpp:
+        (JSC::NumberConstructor::finishCreation):
+        parseFloat uses the same value as the global parseFloat.
+
 2017-04-22  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Use DoublyLinkedList for MachineThread

@@ -260,7 +260,6 @@ const GlobalObjectMethodTable JSGlobalObject::s_globalObjectMethodTable = {
 
 /* Source for JSGlobalObject.lut.h
 @begin globalObjectTable
-  parseFloat            globalFuncParseFloat                         DontEnum|Function 1
   isNaN                 JSBuiltin                                    DontEnum|Function 1
   isFinite              JSBuiltin                                    DontEnum|Function 1
   escape                globalFuncEscape                             DontEnum|Function 1
@@ -568,6 +567,8 @@ void JSGlobalObject::init(VM& vm)
 
     m_parseIntFunction.set(vm, this, JSFunction::create(vm, this, 2, vm.propertyNames->parseInt.string(), globalFuncParseInt, ParseIntIntrinsic));
     putDirectWithoutTransition(vm, vm.propertyNames->parseInt, m_parseIntFunction.get(), DontEnum);
+    m_parseFloatFunction.set(vm, this, JSFunction::create(vm, this, 1, vm.propertyNames->parseFloat.string(), globalFuncParseFloat, NoIntrinsic));
+    putDirectWithoutTransition(vm, vm.propertyNames->parseFloat, m_parseFloatFunction.get(), DontEnum);
     
     m_arrayBufferPrototype.set(vm, this, JSArrayBufferPrototype::create(vm, this, JSArrayBufferPrototype::createStructure(vm, this, m_objectPrototype.get()), ArrayBufferSharingMode::Default));
     m_arrayBufferStructure.set(vm, this, JSArrayBuffer::createStructure(vm, this, m_arrayBufferPrototype.get()));
@@ -1175,6 +1176,7 @@ void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(thisObject->m_nullSetterFunction);
 
     visitor.append(thisObject->m_parseIntFunction);
+    visitor.append(thisObject->m_parseFloatFunction);
     visitor.append(thisObject->m_evalFunction);
     visitor.append(thisObject->m_callFunction);
     visitor.append(thisObject->m_applyFunction);

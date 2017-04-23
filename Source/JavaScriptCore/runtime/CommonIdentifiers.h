@@ -269,6 +269,7 @@
     macro(parent) \
     macro(parse) \
     macro(parseInt) \
+    macro(parseFloat) \
     macro(postMessage) \
     macro(profiledBytecodes) \
     macro(propertyIsEnumerable) \
