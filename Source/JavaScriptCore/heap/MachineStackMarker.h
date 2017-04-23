@@ -23,6 +23,7 @@
 
 #include "MachineContext.h"
 #include "RegisterState.h"
+#include <wtf/DoublyLinkedList.h>
 #include <wtf/Lock.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/ScopedLambda.h>
@@ -51,7 +52,7 @@ public:
 
     JS_EXPORT_PRIVATE void addCurrentThread(); // Only needs to be called by clients that can use the same heap from multiple threads.
 
-    class MachineThread {
+    class MachineThread : public DoublyLinkedListNode<MachineThread> {
         WTF_MAKE_FAST_ALLOCATED;
     public:
         MachineThread();
@@ -75,14 +76,15 @@ public:
         void* stackBase() const { return m_stackBase; }
         void* stackEnd() const { return m_stackEnd; }
 
-        MachineThread* next;
         Ref<WTF::Thread> m_thread;
         void* m_stackBase;
         void* m_stackEnd;
+        MachineThread* m_next { nullptr };
+        MachineThread* m_prev { nullptr };
     };
 
     Lock& getLock() { return m_registeredThreadsMutex; }
-    MachineThread* threadsListHead(const AbstractLocker&) const { ASSERT(m_registeredThreadsMutex.isLocked()); return m_registeredThreads; }
+    const DoublyLinkedList<MachineThread>& threadsListHead(const AbstractLocker&) const { ASSERT(m_registeredThreadsMutex.isLocked()); return m_registeredThreads; }
     MachineThread* machineThreadForCurrentThread();
 
 private:
@@ -96,7 +98,7 @@ private:
     void removeThreadIfFound(ThreadIdentifier);
 
     Lock m_registeredThreadsMutex;
-    MachineThread* m_registeredThreads;
+    DoublyLinkedList<MachineThread> m_registeredThreads;
     WTF::ThreadSpecificKey m_threadSpecificForMachineThreads;
 };
 

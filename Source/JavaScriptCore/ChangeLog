@@ -1,3 +1,29 @@
+2017-04-22  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Use DoublyLinkedList for MachineThread
+        https://bugs.webkit.org/show_bug.cgi?id=171171
+
+        Reviewed by Mark Lam.
+
+        MachineThread can use WTF::DoublyLinkedList to simplify
+        its implementation. We should not use Vector<> etc. since
+        we do not want to call allocations during suspending and
+        resuming threads.
+
+        * heap/MachineStackMarker.cpp:
+        (JSC::MachineThreads::MachineThreads):
+        (JSC::MachineThreads::~MachineThreads):
+        (JSC::MachineThreads::addCurrentThread):
+        (JSC::MachineThreads::removeThreadIfFound):
+        (JSC::MachineThreads::MachineThread::MachineThread):
+        (JSC::MachineThreads::tryCopyOtherThreadStacks):
+        * heap/MachineStackMarker.h:
+        (JSC::MachineThreads::threadsListHead):
+        * runtime/SamplingProfiler.cpp:
+        (JSC::FrameWalker::isValidFramePointer):
+        * runtime/VMTraps.cpp:
+        (JSC::findActiveVMAndStackBounds):
+
 2017-04-22  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly: Module.exports, Module.imports, Module.customSections are wrong

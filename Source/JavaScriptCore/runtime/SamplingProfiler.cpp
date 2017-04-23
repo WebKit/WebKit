@@ -167,7 +167,8 @@ protected:
     bool isValidFramePointer(void* exec)
     {
         uint8_t* fpCast = bitwise_cast<uint8_t*>(exec);
-        for (MachineThreads::MachineThread* thread = m_vm.heap.machineThreads().threadsListHead(m_machineThreadsLocker); thread; thread = thread->next) {
+        const auto& threadList = m_vm.heap.machineThreads().threadsListHead(m_machineThreadsLocker);
+        for (MachineThreads::MachineThread* thread = threadList.head(); thread; thread = thread->next()) {
             uint8_t* stackBase = static_cast<uint8_t*>(thread->stackBase());
             uint8_t* stackLimit = static_cast<uint8_t*>(thread->stackEnd());
             RELEASE_ASSERT(stackBase);

@@ -99,7 +99,7 @@ static ActiveMachineThreadsManager& activeMachineThreadsManager()
 }
     
 MachineThreads::MachineThreads()
-    : m_registeredThreads(0)
+    : m_registeredThreads()
     , m_threadSpecificForMachineThreads(0)
 {
     threadSpecificKeyCreate(&m_threadSpecificForMachineThreads, removeThread);
@@ -112,10 +112,10 @@ MachineThreads::~MachineThreads()
     threadSpecificKeyDelete(m_threadSpecificForMachineThreads);
 
     LockHolder registeredThreadsLock(m_registeredThreadsMutex);
-    for (MachineThread* t = m_registeredThreads; t;) {
-        MachineThread* next = t->next;
-        delete t;
-        t = next;
+    for (MachineThread* current = m_registeredThreads.head(); current;) {
+        MachineThread* next = current->next();
+        delete current;
+        current = next;
     }
 }
 
@@ -134,15 +134,14 @@ void MachineThreads::addCurrentThread()
 
     LockHolder lock(m_registeredThreadsMutex);
 
-    thread->next = m_registeredThreads;
-    m_registeredThreads = thread;
+    m_registeredThreads.append(thread);
 }
 
 auto MachineThreads::machineThreadForCurrentThread() -> MachineThread*
 {
     LockHolder lock(m_registeredThreadsMutex);
     ThreadIdentifier id = currentThread();
-    for (MachineThread* thread = m_registeredThreads; thread; thread = thread->next) {
+    for (MachineThread* thread = m_registeredThreads.head(); thread; thread = thread->next()) {
         if (thread->threadID() == id)
             return thread;
     }
@@ -180,20 +179,12 @@ void THREAD_SPECIFIC_CALL MachineThreads::removeThread(void* p)
 void MachineThreads::removeThreadIfFound(ThreadIdentifier id)
 {
     LockHolder lock(m_registeredThreadsMutex);
-    MachineThread* t = m_registeredThreads;
-    if (t->threadID() == id) {
-        m_registeredThreads = m_registeredThreads->next;
-        delete t;
-    } else {
-        MachineThread* last = m_registeredThreads;
-        for (t = m_registeredThreads->next; t; t = t->next) {
-            if (t->threadID() == id) {
-                last->next = t->next;
-                break;
-            }
-            last = t;
+    for (MachineThread* current = m_registeredThreads.head(); current; current = current->next()) {
+        if (current->threadID() == id) {
+            m_registeredThreads.remove(current);
+            delete current;
+            break;
         }
-        delete t;
     }
 }
 
@@ -210,8 +201,7 @@ void MachineThreads::gatherFromCurrentThread(ConservativeRoots& conservativeRoot
 }
 
 MachineThreads::MachineThread::MachineThread()
-    : next(nullptr)
-    , m_thread(WTF::Thread::current())
+    : m_thread(WTF::Thread::current())
 {
     auto stackBounds = wtfThreadData().stack();
     m_stackBase = stackBounds.origin();
@@ -346,18 +336,15 @@ bool MachineThreads::tryCopyOtherThreadStacks(const AbstractLocker&, void* buffe
     ThreadIdentifier id = currentThread();
     int numberOfThreads = 0; // Using 0 to denote that we haven't counted the number of threads yet.
     int index = 1;
-    MachineThread* threadsToBeDeleted = nullptr;
+    DoublyLinkedList<MachineThread> threadsToBeDeleted;
 
-    MachineThread* previousThread = nullptr;
-    for (MachineThread* thread = m_registeredThreads; thread; index++) {
+    for (MachineThread* thread = m_registeredThreads.head(); thread; index++) {
         if (thread->threadID() != id) {
             auto result = thread->suspend();
 #if OS(DARWIN)
             if (!result) {
-                if (!numberOfThreads) {
-                    for (MachineThread* countedThread = m_registeredThreads; countedThread; countedThread = countedThread->next)
-                        numberOfThreads++;
-                }
+                if (!numberOfThreads)
+                    numberOfThreads = m_registeredThreads.size();
 
                 ASSERT(result.error() != KERN_SUCCESS);
 
@@ -370,39 +357,32 @@ bool MachineThreads::tryCopyOtherThreadStacks(const AbstractLocker&, void* buffe
                 // threads, and they may still be holding the C heap lock which
                 // we need for deleting the invalid thread. Hence, we need to
                 // defer the deletion till after we have resumed all threads.
-                MachineThread* nextThread = thread->next;
-                thread->next = threadsToBeDeleted;
-                threadsToBeDeleted = thread;
-
-                if (previousThread)
-                    previousThread->next = nextThread;
-                else
-                    m_registeredThreads = nextThread;
+                MachineThread* nextThread = thread->next();
+                m_registeredThreads.remove(thread);
+                threadsToBeDeleted.append(thread);
                 thread = nextThread;
                 continue;
             }
 #else
             UNUSED_PARAM(numberOfThreads);
-            UNUSED_PARAM(previousThread);
             ASSERT_UNUSED(result, result);
 #endif
         }
-        previousThread = thread;
-        thread = thread->next;
+        thread = thread->next();
     }
 
-    for (MachineThread* thread = m_registeredThreads; thread; thread = thread->next) {
+    for (MachineThread* thread = m_registeredThreads.head(); thread; thread = thread->next()) {
         if (thread->threadID() != id)
             tryCopyOtherThreadStack(thread, buffer, capacity, size);
     }
 
-    for (MachineThread* thread = m_registeredThreads; thread; thread = thread->next) {
+    for (MachineThread* thread = m_registeredThreads.head(); thread; thread = thread->next()) {
         if (thread->threadID() != id)
             thread->resume();
     }
 
-    for (MachineThread* thread = threadsToBeDeleted; thread; ) {
-        MachineThread* nextThread = thread->next;
+    for (MachineThread* thread = threadsToBeDeleted.head(); thread; ) {
+        MachineThread* nextThread = thread->next();
         delete thread;
         thread = nextThread;
     }

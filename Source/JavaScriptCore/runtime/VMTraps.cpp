@@ -110,7 +110,8 @@ static Expected<VMAndStackBounds, VMTraps::Error> findActiveVMAndStackBounds(Sig
             return VMInspector::FunctorStatus::Continue; // Try next VM.
         }
 
-        for (MachineThreads::MachineThread* thread = machineThreads.threadsListHead(machineThreadsLocker); thread; thread = thread->next) {
+        const auto& threadList = machineThreads.threadsListHead(machineThreadsLocker);
+        for (MachineThreads::MachineThread* thread = threadList.head(); thread; thread = thread->next()) {
             RELEASE_ASSERT(thread->stackBase());
             RELEASE_ASSERT(thread->stackEnd());
             if (stackPointer <= thread->stackBase() && stackPointer >= thread->stackEnd()) {
