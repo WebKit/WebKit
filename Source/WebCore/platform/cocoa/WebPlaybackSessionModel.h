@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebPlaybackSessionModel_h
-#define WebPlaybackSessionModel_h
+#pragma once
 
 #if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 
@@ -35,8 +34,8 @@
 namespace WebCore {
 
 class TimeRanges;
-
 class WebPlaybackSessionModelClient;
+struct MediaSelectionOption;
 
 class WebPlaybackSessionModel {
 public:
@@ -68,9 +67,9 @@ public:
     virtual float playbackRate() const = 0;
     virtual Ref<TimeRanges> seekableRanges() const = 0;
     virtual bool canPlayFastReverse() const = 0;
-    virtual Vector<String> audioMediaSelectionOptions() const = 0;
+    virtual Vector<MediaSelectionOption> audioMediaSelectionOptions() const = 0;
     virtual uint64_t audioMediaSelectedIndex() const = 0;
-    virtual Vector<String> legibleMediaSelectionOptions() const = 0;
+    virtual Vector<MediaSelectionOption> legibleMediaSelectionOptions() const = 0;
     virtual uint64_t legibleMediaSelectedIndex() const = 0;
     virtual bool externalPlaybackEnabled() const = 0;
     virtual ExternalPlaybackTargetType externalPlaybackTargetType() const = 0;
@@ -88,8 +87,8 @@ public:
     virtual void rateChanged(bool /* isPlaying */, float /* playbackRate */) { }
     virtual void seekableRangesChanged(const TimeRanges&) { }
     virtual void canPlayFastReverseChanged(bool) { }
-    virtual void audioMediaSelectionOptionsChanged(const Vector<String>& /* options */, uint64_t /* selectedIndex */) { }
-    virtual void legibleMediaSelectionOptionsChanged(const Vector<String>& /* options */, uint64_t /* selectedIndex */) { }
+    virtual void audioMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& /* options */, uint64_t /* selectedIndex */) { }
+    virtual void legibleMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& /* options */, uint64_t /* selectedIndex */) { }
     virtual void externalPlaybackChanged(bool /* enabled */, WebPlaybackSessionModel::ExternalPlaybackTargetType, const String& /* localizedDeviceName */) { }
     virtual void wirelessVideoPlaybackDisabledChanged(bool) { }
 };
@@ -97,5 +96,3 @@ public:
 }
 
 #endif // PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
-
-#endif

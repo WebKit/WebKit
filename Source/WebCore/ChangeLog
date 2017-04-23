@@ -1,3 +1,52 @@
+2017-04-23  Andy Estes  <aestes@apple.com>
+
+        [macOS] AVTouchBarMediaSelectionOptions should be created with the correct type
+        https://bugs.webkit.org/show_bug.cgi?id=171192
+        <rdar://problem/29875010>
+
+        Reviewed by Wenson Hsieh.
+
+        AVTouchBarMediaSelectionOption was always being created with type
+        AVTouchBarMediaSelectionOptionTypeRegular, but we know if a TextTrack is really the legible
+        off or legible auto track. This change plumbs that information into
+        WebPlaybackControlsManager so that AVTouchBarMediaSelectionOptions can be created with the
+        right AVTouchBarMediaSelectionOptionType. 
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/CaptionUserPreferences.cpp:
+        (WebCore::CaptionUserPreferences::mediaSelectionOptionForTrack):
+        * page/CaptionUserPreferences.h:
+        * platform/MediaSelectionOption.h: Added.
+        * platform/cocoa/WebPlaybackSessionModel.h:
+        (WebCore::WebPlaybackSessionModelClient::audioMediaSelectionOptionsChanged):
+        (WebCore::WebPlaybackSessionModelClient::legibleMediaSelectionOptionsChanged):
+        * platform/cocoa/WebPlaybackSessionModelMediaElement.h:
+        * platform/cocoa/WebPlaybackSessionModelMediaElement.mm:
+        (WebCore::WebPlaybackSessionModelMediaElement::audioMediaSelectionOptions):
+        (WebCore::WebPlaybackSessionModelMediaElement::legibleMediaSelectionOptions):
+        * platform/ios/WebPlaybackSessionInterfaceAVKit.h:
+        * platform/ios/WebPlaybackSessionInterfaceAVKit.mm:
+        (WebCore::mediaSelectionOptions):
+        (WebCore::WebPlaybackSessionInterfaceAVKit::audioMediaSelectionOptionsChanged):
+        (WebCore::WebPlaybackSessionInterfaceAVKit::legibleMediaSelectionOptionsChanged):
+        * platform/ios/WebVideoFullscreenControllerAVKit.mm:
+        (WebVideoFullscreenControllerContext::audioMediaSelectionOptionsChanged):
+        (WebVideoFullscreenControllerContext::legibleMediaSelectionOptionsChanged):
+        (WebVideoFullscreenControllerContext::audioMediaSelectionOptions):
+        (WebVideoFullscreenControllerContext::legibleMediaSelectionOptions):
+        * platform/mac/WebPlaybackControlsManager.h:
+        * platform/mac/WebPlaybackControlsManager.mm:
+        (toAVTouchBarMediaSelectionOptionType):
+        (mediaSelectionOptions):
+        (-[WebPlaybackControlsManager setAudioMediaSelectionOptions:withSelectedIndex:]):
+        (-[WebPlaybackControlsManager setLegibleMediaSelectionOptions:withSelectedIndex:]):
+        (-[WebPlaybackControlsManager webPlaybackSessionInterfaceMac]):
+        (-[WebPlaybackControlsManager setWebPlaybackSessionInterfaceMac:]):
+        * platform/mac/WebPlaybackSessionInterfaceMac.h:
+        * platform/mac/WebPlaybackSessionInterfaceMac.mm:
+        (WebCore::WebPlaybackSessionInterfaceMac::audioMediaSelectionOptionsChanged):
+        (WebCore::WebPlaybackSessionInterfaceMac::legibleMediaSelectionOptionsChanged):
+
 2017-04-22  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         File inputs only accept UTI types that can be inserted into contenteditable areas when dropping

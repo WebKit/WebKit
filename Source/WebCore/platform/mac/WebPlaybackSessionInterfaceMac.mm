@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,13 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebPlaybackSessionInterfaceMac.h"
+#import "config.h"
+#import "WebPlaybackSessionInterfaceMac.h"
 
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
 
 #import "AVKitSPI.h"
 #import "IntRect.h"
+#import "MediaSelectionOption.h"
 #import "MediaTimeAVFoundation.h"
 #import "TimeRanges.h"
 #import "WebPlaybackControlsManager.h"
@@ -138,7 +139,7 @@ void WebPlaybackSessionInterfaceMac::seekableRangesChanged(const TimeRanges& tim
 #endif
 }
 
-void WebPlaybackSessionInterfaceMac::audioMediaSelectionOptionsChanged(const Vector<WTF::String>& options, uint64_t selectedIndex)
+void WebPlaybackSessionInterfaceMac::audioMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& options, uint64_t selectedIndex)
 {
 #if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
     [playBackControlsManager() setAudioMediaSelectionOptions:options withSelectedIndex:static_cast<NSUInteger>(selectedIndex)];
@@ -148,7 +149,7 @@ void WebPlaybackSessionInterfaceMac::audioMediaSelectionOptionsChanged(const Vec
 #endif
 }
 
-void WebPlaybackSessionInterfaceMac::legibleMediaSelectionOptionsChanged(const Vector<WTF::String>& options, uint64_t selectedIndex)
+void WebPlaybackSessionInterfaceMac::legibleMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& options, uint64_t selectedIndex)
 {
 #if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
     [playBackControlsManager() setLegibleMediaSelectionOptions:options withSelectedIndex:static_cast<NSUInteger>(selectedIndex)];

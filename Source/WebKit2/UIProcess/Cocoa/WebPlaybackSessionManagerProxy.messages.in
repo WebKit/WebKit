@@ -1,4 +1,4 @@
-# Copyright (C) 2016 Apple Inc. All rights reserved.
+# Copyright (C) 2016-2017 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -27,8 +27,8 @@ messages -> WebPlaybackSessionManagerProxy {
     SetBufferedTime(uint64_t contextId, double bufferedTime)
     SetSeekableRangesVector(uint64_t contextId, Vector<std::pair<double, double>> ranges)
     SetCanPlayFastReverse(uint64_t contextId, bool value)
-    SetAudioMediaSelectionOptions(uint64_t contextId, Vector<String> options, uint64_t selectedIndex)
-    SetLegibleMediaSelectionOptions(uint64_t contextId, Vector<String> options, uint64_t selectedIndex)
+    SetAudioMediaSelectionOptions(uint64_t contextId, Vector<WebCore::MediaSelectionOption> options, uint64_t selectedIndex)
+    SetLegibleMediaSelectionOptions(uint64_t contextId, Vector<WebCore::MediaSelectionOption> options, uint64_t selectedIndex)
     SetExternalPlaybackProperties(uint64_t contextId, bool enabled, uint32_t targetType, String localizedDeviceName)
     SetWirelessVideoPlaybackDisabled(uint64_t contextId, bool disabled)
     SetDuration(uint64_t contextId, double duration)

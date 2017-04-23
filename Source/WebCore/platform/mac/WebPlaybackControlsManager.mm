@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,15 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebPlaybackControlsManager.h"
+#import "config.h"
+#import "WebPlaybackControlsManager.h"
 
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE) && ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
 
+#import "MediaSelectionOption.h"
 #import "SoftLinking.h"
 #import "WebPlaybackSessionInterfaceMac.h"
 #import "WebPlaybackSessionModel.h"
 #import <wtf/text/WTFString.h>
+
+using namespace WebCore;
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wnullability-completeness"
@@ -218,21 +221,37 @@ SOFT_LINK_CLASS_OPTIONAL(AVKit, AVFunctionBarMediaSelectionOption)
     _webPlaybackSessionInterfaceMac->webPlaybackSessionModel()->selectLegibleMediaOption(index != NSNotFound ? index : UINT64_MAX);
 }
 
-static RetainPtr<NSMutableArray> mediaSelectionOptions(const Vector<String>& options)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
+static AVTouchBarMediaSelectionOptionType toAVTouchBarMediaSelectionOptionType(MediaSelectionOption::Type type)
+{
+    switch (type) {
+    case MediaSelectionOption::Type::Regular:
+        return AVTouchBarMediaSelectionOptionTypeRegular;
+    case MediaSelectionOption::Type::LegibleOff:
+        return AVTouchBarMediaSelectionOptionTypeLegibleOff;
+    case MediaSelectionOption::Type::LegibleAuto:
+        return AVTouchBarMediaSelectionOptionTypeLegibleAuto;
+    }
+
+    return AVTouchBarMediaSelectionOptionTypeRegular;
+}
+#endif
+
+static RetainPtr<NSMutableArray> mediaSelectionOptions(const Vector<MediaSelectionOption>& options)
 {
     RetainPtr<NSMutableArray> webOptions = adoptNS([[NSMutableArray alloc] initWithCapacity:options.size()]);
-    for (auto& name : options) {
+    for (auto& option : options) {
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
-        if (RetainPtr<AVTouchBarMediaSelectionOption> webOption = adoptNS([allocAVTouchBarMediaSelectionOptionInstance() initWithTitle:name type:AVTouchBarMediaSelectionOptionTypeRegular]))
+        if (auto webOption = adoptNS([allocAVTouchBarMediaSelectionOptionInstance() initWithTitle:option.displayName type:toAVTouchBarMediaSelectionOptionType(option.type)]))
 #else
-        if (RetainPtr<AVTouchBarMediaSelectionOption> webOption = adoptNS([allocAVFunctionBarMediaSelectionOptionInstance() initWithTitle:name]))
+        if (auto webOption = adoptNS([allocAVFunctionBarMediaSelectionOptionInstance() initWithTitle:option.displayName]))
 #endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
             [webOptions addObject:webOption.get()];
     }
     return webOptions;
 }
 
-- (void)setAudioMediaSelectionOptions:(const Vector<WTF::String>&)options withSelectedIndex:(NSUInteger)selectedIndex
+- (void)setAudioMediaSelectionOptions:(const Vector<MediaSelectionOption>&)options withSelectedIndex:(NSUInteger)selectedIndex
 {
     RetainPtr<NSMutableArray> webOptions = mediaSelectionOptions(options);
     [self setAudioTouchBarMediaSelectionOptions:webOptions.get()];
@@ -240,7 +259,7 @@ static RetainPtr<NSMutableArray> mediaSelectionOptions(const Vector<String>& opt
         [self setCurrentAudioTouchBarMediaSelectionOption:[webOptions objectAtIndex:selectedIndex]];
 }
 
-- (void)setLegibleMediaSelectionOptions:(const Vector<WTF::String>&)options withSelectedIndex:(NSUInteger)selectedIndex
+- (void)setLegibleMediaSelectionOptions:(const Vector<MediaSelectionOption>&)options withSelectedIndex:(NSUInteger)selectedIndex
 {
     RetainPtr<NSMutableArray> webOptions = mediaSelectionOptions(options);
     [self setLegibleTouchBarMediaSelectionOptions:webOptions.get()];
@@ -248,12 +267,12 @@ static RetainPtr<NSMutableArray> mediaSelectionOptions(const Vector<String>& opt
         [self setCurrentLegibleTouchBarMediaSelectionOption:[webOptions objectAtIndex:selectedIndex]];
 }
 
-- (WebCore::WebPlaybackSessionInterfaceMac*)webPlaybackSessionInterfaceMac
+- (WebPlaybackSessionInterfaceMac*)webPlaybackSessionInterfaceMac
 {
     return _webPlaybackSessionInterfaceMac.get();
 }
 
-- (void)setWebPlaybackSessionInterfaceMac:(WebCore::WebPlaybackSessionInterfaceMac*)webPlaybackSessionInterfaceMac
+- (void)setWebPlaybackSessionInterfaceMac:(WebPlaybackSessionInterfaceMac*)webPlaybackSessionInterfaceMac
 {
     if (_webPlaybackSessionInterfaceMac == webPlaybackSessionInterfaceMac)
         return;

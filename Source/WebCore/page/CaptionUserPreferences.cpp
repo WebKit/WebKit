@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,7 @@
 
 #include "AudioTrackList.h"
 #include "DOMWrapperWorld.h"
+#include "MediaSelectionOption.h"
 #include "Page.h"
 #include "PageGroup.h"
 #include "Settings.h"
@@ -214,6 +215,16 @@ String CaptionUserPreferences::displayNameForTrack(TextTrack* track) const
 {
     return trackDisplayName(track);
 }
+
+MediaSelectionOption CaptionUserPreferences::mediaSelectionOptionForTrack(TextTrack* track) const
+{
+    auto type = MediaSelectionOption::Type::Regular;
+    if (track == TextTrack::captionMenuOffItem())
+        type = MediaSelectionOption::Type::LegibleOff;
+    else if (track == TextTrack::captionMenuAutomaticItem())
+        type = MediaSelectionOption::Type::LegibleAuto;
+    return { displayNameForTrack(track), type };
+}
     
 Vector<RefPtr<TextTrack>> CaptionUserPreferences::sortedTrackListForMenu(TextTrackList* trackList)
 {
@@ -250,6 +261,11 @@ static String trackDisplayName(AudioTrack* track)
 String CaptionUserPreferences::displayNameForTrack(AudioTrack* track) const
 {
     return trackDisplayName(track);
+}
+
+MediaSelectionOption CaptionUserPreferences::mediaSelectionOptionForTrack(AudioTrack* track) const
+{
+    return { displayNameForTrack(track), MediaSelectionOption::Type::Regular };
 }
 
 Vector<RefPtr<AudioTrack>> CaptionUserPreferences::sortedTrackListForMenu(AudioTrackList* trackList)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,7 @@
 #include <WebCore/DiagnosticLoggingClient.h>
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/IndexedDB.h>
+#include <WebCore/MediaSelectionOption.h>
 #include <WebCore/NetworkLoadMetrics.h>
 #include <WebCore/PaymentHeaders.h>
 #include <WebCore/ScrollSnapOffsetsInfo.h>
@@ -658,6 +659,11 @@ template<> struct ArgumentCoder<WebCore::ScrollOffsetRange<float>> {
 
 #endif
 
+template<> struct ArgumentCoder<WebCore::MediaSelectionOption> {
+    static void encode(Encoder&, const WebCore::MediaSelectionOption&);
+    static bool decode(Decoder&, WebCore::MediaSelectionOption&);
+};
+
 } // namespace IPC
 
 namespace WTF {
@@ -717,5 +723,14 @@ template<> struct EnumTraits<WebCore::CaptureDevice::DeviceType> {
     >;
 };
 #endif
+
+template<> struct EnumTraits<WebCore::MediaSelectionOption::Type> {
+    using values = EnumValues<
+        WebCore::MediaSelectionOption::Type,
+        WebCore::MediaSelectionOption::Type::Regular,
+        WebCore::MediaSelectionOption::Type::LegibleOff,
+        WebCore::MediaSelectionOption::Type::LegibleAuto
+    >;
+};
 
 } // namespace WTF

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebPlaybackSessionInterfaceMac_h
-#define WebPlaybackSessionInterfaceMac_h
+#pragma once
 
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
 
@@ -58,8 +57,8 @@ public:
     WEBCORE_EXPORT void currentTimeChanged(double /*currentTime*/, double /*anchorTime*/) final;
     WEBCORE_EXPORT void rateChanged(bool /*isPlaying*/, float /*playbackRate*/) final;
     WEBCORE_EXPORT void seekableRangesChanged(const TimeRanges&) final;
-    WEBCORE_EXPORT void audioMediaSelectionOptionsChanged(const Vector<String>& /*options*/, uint64_t /*selectedIndex*/) final;
-    WEBCORE_EXPORT void legibleMediaSelectionOptionsChanged(const Vector<String>& /*options*/, uint64_t /*selectedIndex*/) final;
+    WEBCORE_EXPORT void audioMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& /*options*/, uint64_t /*selectedIndex*/) final;
+    WEBCORE_EXPORT void legibleMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& /*options*/, uint64_t /*selectedIndex*/) final;
     WEBCORE_EXPORT void invalidate();
     WEBCORE_EXPORT void ensureControlsManager();
 #if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
@@ -83,5 +82,3 @@ private:
 }
 
 #endif // PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
-
-#endif

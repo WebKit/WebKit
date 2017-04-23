@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,12 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebPlaybackSessionManagerProxy_h
-#define WebPlaybackSessionManagerProxy_h
+#pragma once
+
 #if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 
 #include "MessageReceiver.h"
 #include <WebCore/GraphicsLayer.h>
+#include <WebCore/MediaSelectionOption.h>
 #include <WebCore/PlatformView.h>
 #include <WebCore/TimeRanges.h>
 #include <WebCore/WebPlaybackSessionModel.h>
@@ -76,8 +77,8 @@ public:
     void setRate(bool isPlaying, float playbackRate);
     void setSeekableRanges(WebCore::TimeRanges&);
     void setCanPlayFastReverse(bool);
-    void setAudioMediaSelectionOptions(const Vector<WTF::String>& options, uint64_t index);
-    void setLegibleMediaSelectionOptions(const Vector<WTF::String>& options, uint64_t index);
+    void setAudioMediaSelectionOptions(const Vector<WebCore::MediaSelectionOption>& options, uint64_t index);
+    void setLegibleMediaSelectionOptions(const Vector<WebCore::MediaSelectionOption>& options, uint64_t index);
     void setExternalPlayback(bool, WebPlaybackSessionModel::ExternalPlaybackTargetType, const String&);
     void setWirelessVideoPlaybackDisabled(bool);
 
@@ -113,9 +114,9 @@ private:
     float playbackRate() const final { return m_playbackRate; }
     Ref<WebCore::TimeRanges> seekableRanges() const final { return m_seekableRanges.copyRef(); }
     bool canPlayFastReverse() const final { return m_canPlayFastReverse; }
-    Vector<WTF::String> audioMediaSelectionOptions() const final { return m_audioMediaSelectionOptions; }
+    Vector<WebCore::MediaSelectionOption> audioMediaSelectionOptions() const final { return m_audioMediaSelectionOptions; }
     uint64_t audioMediaSelectedIndex() const final { return m_audioMediaSelectedIndex; }
-    Vector<WTF::String> legibleMediaSelectionOptions() const final { return m_legibleMediaSelectionOptions; }
+    Vector<WebCore::MediaSelectionOption> legibleMediaSelectionOptions() const final { return m_legibleMediaSelectionOptions; }
     uint64_t legibleMediaSelectedIndex() const final { return m_legibleMediaSelectedIndex; }
     bool externalPlaybackEnabled() const final { return m_externalPlaybackEnabled; }
     WebPlaybackSessionModel::ExternalPlaybackTargetType externalPlaybackTargetType() const final { return m_externalPlaybackTargetType; }
@@ -135,9 +136,9 @@ private:
     float m_playbackRate { 0 };
     Ref<WebCore::TimeRanges> m_seekableRanges { WebCore::TimeRanges::create() };
     bool m_canPlayFastReverse { false };
-    Vector<WTF::String> m_audioMediaSelectionOptions;
+    Vector<WebCore::MediaSelectionOption> m_audioMediaSelectionOptions;
     uint64_t m_audioMediaSelectedIndex { 0 };
-    Vector<WTF::String> m_legibleMediaSelectionOptions;
+    Vector<WebCore::MediaSelectionOption> m_legibleMediaSelectionOptions;
     uint64_t m_legibleMediaSelectedIndex { 0 };
     bool m_externalPlaybackEnabled { false };
     WebPlaybackSessionModel::ExternalPlaybackTargetType m_externalPlaybackTargetType { WebPlaybackSessionModel::TargetTypeNone };
@@ -178,8 +179,8 @@ private:
     void setBufferedTime(uint64_t contextId, double bufferedTime);
     void setSeekableRangesVector(uint64_t contextId, Vector<std::pair<double, double>> ranges);
     void setCanPlayFastReverse(uint64_t contextId, bool value);
-    void setAudioMediaSelectionOptions(uint64_t contextId, Vector<String> options, uint64_t selectedIndex);
-    void setLegibleMediaSelectionOptions(uint64_t contextId, Vector<String> options, uint64_t selectedIndex);
+    void setAudioMediaSelectionOptions(uint64_t contextId, Vector<WebCore::MediaSelectionOption> options, uint64_t selectedIndex);
+    void setLegibleMediaSelectionOptions(uint64_t contextId, Vector<WebCore::MediaSelectionOption> options, uint64_t selectedIndex);
     void setExternalPlaybackProperties(uint64_t contextId, bool enabled, uint32_t targetType, String localizedDeviceName);
     void setWirelessVideoPlaybackDisabled(uint64_t contextId, bool);
     void setDuration(uint64_t contextId, double duration);
@@ -210,5 +211,3 @@ private:
 } // namespace WebKit
 
 #endif // PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
-
-#endif // WebPlaybackSessionManagerProxy_h

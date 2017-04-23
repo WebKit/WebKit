@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016  Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,6 +40,7 @@ class HTMLMediaElement;
 class PageGroup;
 class AudioTrackList;
 class TextTrackList;
+struct MediaSelectionOption;
 
 class CaptionUserPreferences {
 public:
@@ -85,9 +86,11 @@ public:
     virtual Vector<String> preferredAudioCharacteristics() const;
 
     virtual String displayNameForTrack(TextTrack*) const;
+    MediaSelectionOption mediaSelectionOptionForTrack(TextTrack*) const;
     virtual Vector<RefPtr<TextTrack>> sortedTrackListForMenu(TextTrackList*);
 
     virtual String displayNameForTrack(AudioTrack*) const;
+    MediaSelectionOption mediaSelectionOptionForTrack(AudioTrack*) const;
     virtual Vector<RefPtr<AudioTrack>> sortedTrackListForMenu(AudioTrackList*);
 
     void setPrimaryAudioTrackLanguageOverride(const String& language) { m_primaryAudioTrackLanguageOverride = language;  }

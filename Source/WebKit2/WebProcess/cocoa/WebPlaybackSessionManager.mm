@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,9 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebPlaybackSessionManager.h"
-
+#import "config.h"
+#import "WebPlaybackSessionManager.h"
 
 #if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 
@@ -114,13 +113,13 @@ void WebPlaybackSessionInterfaceContext::canPlayFastReverseChanged(bool value)
         m_manager->canPlayFastReverseChanged(m_contextId, value);
 }
 
-void WebPlaybackSessionInterfaceContext::audioMediaSelectionOptionsChanged(const Vector<String>& options, uint64_t selectedIndex)
+void WebPlaybackSessionInterfaceContext::audioMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& options, uint64_t selectedIndex)
 {
     if (m_manager)
         m_manager->audioMediaSelectionOptionsChanged(m_contextId, options, selectedIndex);
 }
 
-void WebPlaybackSessionInterfaceContext::legibleMediaSelectionOptionsChanged(const Vector<String>& options, uint64_t selectedIndex)
+void WebPlaybackSessionInterfaceContext::legibleMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& options, uint64_t selectedIndex)
 {
     if (m_manager)
         m_manager->legibleMediaSelectionOptionsChanged(m_contextId, options, selectedIndex);
@@ -317,12 +316,12 @@ void WebPlaybackSessionManager::canPlayFastReverseChanged(uint64_t contextId, bo
     m_page->send(Messages::WebPlaybackSessionManagerProxy::SetCanPlayFastReverse(contextId, value), m_page->pageID());
 }
 
-void WebPlaybackSessionManager::audioMediaSelectionOptionsChanged(uint64_t contextId, const Vector<String>& options, uint64_t selectedIndex)
+void WebPlaybackSessionManager::audioMediaSelectionOptionsChanged(uint64_t contextId, const Vector<MediaSelectionOption>& options, uint64_t selectedIndex)
 {
     m_page->send(Messages::WebPlaybackSessionManagerProxy::SetAudioMediaSelectionOptions(contextId, options, selectedIndex), m_page->pageID());
 }
 
-void WebPlaybackSessionManager::legibleMediaSelectionOptionsChanged(uint64_t contextId, const Vector<String>& options, uint64_t selectedIndex)
+void WebPlaybackSessionManager::legibleMediaSelectionOptionsChanged(uint64_t contextId, const Vector<MediaSelectionOption>& options, uint64_t selectedIndex)
 {
     m_page->send(Messages::WebPlaybackSessionManagerProxy::SetLegibleMediaSelectionOptions(contextId, options, selectedIndex), m_page->pageID());
 }

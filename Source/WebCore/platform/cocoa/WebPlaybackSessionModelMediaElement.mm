@@ -36,6 +36,7 @@
 #import "HTMLMediaElement.h"
 #import "Logging.h"
 #import "MediaControlsHost.h"
+#import "MediaSelectionOption.h"
 #import "Page.h"
 #import "PageGroup.h"
 #import "SoftLinking.h"
@@ -348,20 +349,20 @@ bool WebPlaybackSessionModelMediaElement::canPlayFastReverse() const
     return m_mediaElement ? m_mediaElement->minFastReverseRate() < 0.0 : false;
 }
 
-Vector<String> WebPlaybackSessionModelMediaElement::audioMediaSelectionOptions() const
+Vector<MediaSelectionOption> WebPlaybackSessionModelMediaElement::audioMediaSelectionOptions() const
 {
-    Vector<String> audioTrackDisplayNames;
+    Vector<MediaSelectionOption> audioOptions;
 
     if (!m_mediaElement || !m_mediaElement->document().page())
-        return audioTrackDisplayNames;
+        return audioOptions;
 
     auto& captionPreferences = m_mediaElement->document().page()->group().captionPreferences();
 
-    audioTrackDisplayNames.reserveInitialCapacity(m_audioTracksForMenu.size());
+    audioOptions.reserveInitialCapacity(m_audioTracksForMenu.size());
     for (auto& audioTrack : m_audioTracksForMenu)
-        audioTrackDisplayNames.uncheckedAppend(captionPreferences.displayNameForTrack(audioTrack.get()));
+        audioOptions.uncheckedAppend(captionPreferences.mediaSelectionOptionForTrack(audioTrack.get()));
 
-    return audioTrackDisplayNames;
+    return audioOptions;
 }
 
 uint64_t WebPlaybackSessionModelMediaElement::audioMediaSelectedIndex() const
@@ -373,19 +374,19 @@ uint64_t WebPlaybackSessionModelMediaElement::audioMediaSelectedIndex() const
     return std::numeric_limits<uint64_t>::max();
 }
 
-Vector<WTF::String> WebPlaybackSessionModelMediaElement::legibleMediaSelectionOptions() const
+Vector<MediaSelectionOption> WebPlaybackSessionModelMediaElement::legibleMediaSelectionOptions() const
 {
-    Vector<String> trackDisplayNames;
+    Vector<MediaSelectionOption> legibleOptions;
 
     if (!m_mediaElement || !m_mediaElement->document().page())
-        return trackDisplayNames;
+        return legibleOptions;
 
     auto& captionPreferences = m_mediaElement->document().page()->group().captionPreferences();
 
     for (auto& track : m_legibleTracksForMenu)
-        trackDisplayNames.append(captionPreferences.displayNameForTrack(track.get()));
+        legibleOptions.append(captionPreferences.mediaSelectionOptionForTrack(track.get()));
 
-    return trackDisplayNames;
+    return legibleOptions;
 }
 
 uint64_t WebPlaybackSessionModelMediaElement::legibleMediaSelectedIndex() const

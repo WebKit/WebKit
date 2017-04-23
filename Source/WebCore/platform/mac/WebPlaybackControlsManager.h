@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,9 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebPlaybackControlsManager_h
-#define WebPlaybackControlsManager_h
-
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
 
 #import <WebCore/AVKitSPI.h>
@@ -34,6 +31,7 @@
 
 namespace WebCore {
 class WebPlaybackSessionInterfaceMac;
+struct MediaSelectionOption;
 }
 
 #if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
@@ -73,12 +71,10 @@ WEBCORE_EXPORT
 - (void)setCurrentAudioTouchBarMediaSelectionOption:(AVTouchBarMediaSelectionOption *)option;
 - (AVTouchBarMediaSelectionOption *)currentLegibleTouchBarMediaSelectionOption;
 - (void)setCurrentLegibleTouchBarMediaSelectionOption:(AVTouchBarMediaSelectionOption *)option;
-- (void)setAudioMediaSelectionOptions:(const Vector<WTF::String>&)options withSelectedIndex:(NSUInteger)selectedIndex;
-- (void)setLegibleMediaSelectionOptions:(const Vector<WTF::String>&)options withSelectedIndex:(NSUInteger)selectedIndex;
+- (void)setAudioMediaSelectionOptions:(const Vector<WebCore::MediaSelectionOption>&)options withSelectedIndex:(NSUInteger)selectedIndex;
+- (void)setLegibleMediaSelectionOptions:(const Vector<WebCore::MediaSelectionOption>&)options withSelectedIndex:(NSUInteger)selectedIndex;
 @end
 
 #endif // ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
 
 #endif // PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
-
-#endif // WebPlaybackControlsManager_h

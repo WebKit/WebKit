@@ -32,6 +32,7 @@
 
 #import "AVKitSPI.h"
 #import "Logging.h"
+#import "MediaSelectionOption.h"
 #import "TimeRanges.h"
 #import "WebAVPlayerController.h"
 #import "WebPlaybackSessionModel.h"
@@ -171,18 +172,18 @@ void WebPlaybackSessionInterfaceAVKit::canPlayFastReverseChanged(bool canPlayFas
     [m_playerController setCanScanBackward:canPlayFastReverse];
 }
 
-static RetainPtr<NSMutableArray> mediaSelectionOptions(const Vector<String>& options)
+static RetainPtr<NSMutableArray> mediaSelectionOptions(const Vector<MediaSelectionOption>& options)
 {
     RetainPtr<NSMutableArray> webOptions = adoptNS([[NSMutableArray alloc] initWithCapacity:options.size()]);
-    for (auto& name : options) {
+    for (auto& option : options) {
         RetainPtr<WebAVMediaSelectionOption> webOption = adoptNS([[WebAVMediaSelectionOption alloc] init]);
-        [webOption setLocalizedDisplayName:name];
+        [webOption setLocalizedDisplayName:option.displayName];
         [webOptions addObject:webOption.get()];
     }
     return webOptions;
 }
 
-void WebPlaybackSessionInterfaceAVKit::audioMediaSelectionOptionsChanged(const Vector<String>& options, uint64_t selectedIndex)
+void WebPlaybackSessionInterfaceAVKit::audioMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& options, uint64_t selectedIndex)
 {
     RetainPtr<NSMutableArray> webOptions = mediaSelectionOptions(options);
     [m_playerController setAudioMediaSelectionOptions:webOptions.get()];
@@ -190,7 +191,7 @@ void WebPlaybackSessionInterfaceAVKit::audioMediaSelectionOptionsChanged(const V
         [m_playerController setCurrentAudioMediaSelectionOption:[webOptions objectAtIndex:static_cast<NSUInteger>(selectedIndex)]];
 }
 
-void WebPlaybackSessionInterfaceAVKit::legibleMediaSelectionOptionsChanged(const Vector<String>& options, uint64_t selectedIndex)
+void WebPlaybackSessionInterfaceAVKit::legibleMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& options, uint64_t selectedIndex)
 {
     RetainPtr<NSMutableArray> webOptions = mediaSelectionOptions(options);
     [m_playerController setLegibleMediaSelectionOptions:webOptions.get()];

@@ -1,3 +1,29 @@
+2017-04-23  Andy Estes  <aestes@apple.com>
+
+        [macOS] AVTouchBarMediaSelectionOptions should be created with the correct type
+        https://bugs.webkit.org/show_bug.cgi?id=171192
+        <rdar://problem/29875010>
+
+        Reviewed by Wenson Hsieh.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<MediaSelectionOption>::encode):
+        (IPC::ArgumentCoder<MediaSelectionOption>::decode):
+        * Shared/WebCoreArgumentCoders.h:
+        * UIProcess/Cocoa/WebPlaybackSessionManagerProxy.h:
+        * UIProcess/Cocoa/WebPlaybackSessionManagerProxy.messages.in:
+        * UIProcess/Cocoa/WebPlaybackSessionManagerProxy.mm:
+        (WebKit::WebPlaybackSessionModelContext::setAudioMediaSelectionOptions):
+        (WebKit::WebPlaybackSessionModelContext::setLegibleMediaSelectionOptions):
+        (WebKit::WebPlaybackSessionManagerProxy::setAudioMediaSelectionOptions):
+        (WebKit::WebPlaybackSessionManagerProxy::setLegibleMediaSelectionOptions):
+        * WebProcess/cocoa/WebPlaybackSessionManager.h:
+        * WebProcess/cocoa/WebPlaybackSessionManager.mm:
+        (WebKit::WebPlaybackSessionInterfaceContext::audioMediaSelectionOptionsChanged):
+        (WebKit::WebPlaybackSessionInterfaceContext::legibleMediaSelectionOptionsChanged):
+        (WebKit::WebPlaybackSessionManager::audioMediaSelectionOptionsChanged):
+        (WebKit::WebPlaybackSessionManager::legibleMediaSelectionOptionsChanged):
+
 2017-04-21  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Support writing link titles to the pasteboard when beginning data interaction on a link

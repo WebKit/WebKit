@@ -49,6 +49,7 @@
 #include <WebCore/JSDOMExceptionHandling.h>
 #include <WebCore/Length.h>
 #include <WebCore/LengthBox.h>
+#include <WebCore/MediaSelectionOption.h>
 #include <WebCore/Path.h>
 #include <WebCore/PluginData.h>
 #include <WebCore/ProtectionSpace.h>
@@ -2494,5 +2495,22 @@ bool ArgumentCoder<ScrollOffsetRange<float>>::decode(Decoder& decoder, ScrollOff
 }
 
 #endif
+
+void ArgumentCoder<MediaSelectionOption>::encode(Encoder& encoder, const MediaSelectionOption& option)
+{
+    encoder << option.displayName;
+    encoder << option.type;
+}
+
+bool ArgumentCoder<MediaSelectionOption>::decode(Decoder& decoder, MediaSelectionOption& option)
+{
+    if (!decoder.decode(option.displayName))
+        return false;
+
+    if (!decoder.decode(option.type))
+        return false;
+
+    return true;
+}
 
 } // namespace IPC

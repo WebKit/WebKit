@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -182,7 +182,7 @@ void WebPlaybackSessionModelContext::setCanPlayFastReverse(bool canPlayFastRever
         client->canPlayFastReverseChanged(canPlayFastReverse);
 }
 
-void WebPlaybackSessionModelContext::setAudioMediaSelectionOptions(const Vector<WTF::String>& audioMediaSelectionOptions, uint64_t audioMediaSelectedIndex)
+void WebPlaybackSessionModelContext::setAudioMediaSelectionOptions(const Vector<MediaSelectionOption>& audioMediaSelectionOptions, uint64_t audioMediaSelectedIndex)
 {
     m_audioMediaSelectionOptions = audioMediaSelectionOptions;
     m_audioMediaSelectedIndex = audioMediaSelectedIndex;
@@ -190,7 +190,7 @@ void WebPlaybackSessionModelContext::setAudioMediaSelectionOptions(const Vector<
         client->audioMediaSelectionOptionsChanged(audioMediaSelectionOptions, audioMediaSelectedIndex);
 }
 
-void WebPlaybackSessionModelContext::setLegibleMediaSelectionOptions(const Vector<WTF::String>& legibleMediaSelectionOptions, uint64_t legibleMediaSelectedIndex)
+void WebPlaybackSessionModelContext::setLegibleMediaSelectionOptions(const Vector<MediaSelectionOption>& legibleMediaSelectionOptions, uint64_t legibleMediaSelectedIndex)
 {
     m_legibleMediaSelectionOptions = legibleMediaSelectionOptions;
     m_legibleMediaSelectedIndex = legibleMediaSelectedIndex;
@@ -359,12 +359,12 @@ void WebPlaybackSessionManagerProxy::setCanPlayFastReverse(uint64_t contextId, b
     ensureModel(contextId).setCanPlayFastReverse(value);
 }
 
-void WebPlaybackSessionManagerProxy::setAudioMediaSelectionOptions(uint64_t contextId, Vector<String> options, uint64_t selectedIndex)
+void WebPlaybackSessionManagerProxy::setAudioMediaSelectionOptions(uint64_t contextId, Vector<MediaSelectionOption> options, uint64_t selectedIndex)
 {
     ensureModel(contextId).setAudioMediaSelectionOptions(options, selectedIndex);
 }
 
-void WebPlaybackSessionManagerProxy::setLegibleMediaSelectionOptions(uint64_t contextId, Vector<String> options, uint64_t selectedIndex)
+void WebPlaybackSessionManagerProxy::setLegibleMediaSelectionOptions(uint64_t contextId, Vector<MediaSelectionOption> options, uint64_t selectedIndex)
 {
     ensureModel(contextId).setLegibleMediaSelectionOptions(options, selectedIndex);
 }
