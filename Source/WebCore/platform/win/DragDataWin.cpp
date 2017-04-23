@@ -193,7 +193,7 @@ bool DragData::canSmartReplace() const
     return m_dragDataMap.contains(smartPasteFormat()->cfFormat);
 }
 
-bool DragData::containsCompatibleContent() const
+bool DragData::containsCompatibleContent(DraggingPurpose) const
 {
     return containsPlainText() || containsURL()
         || ((m_platformDragData) ? (containsHTML(m_platformDragData) || containsFilenames(m_platformDragData))

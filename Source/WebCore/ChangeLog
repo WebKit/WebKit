@@ -1,3 +1,29 @@
+2017-04-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        File inputs only accept UTI types that can be inserted into contenteditable areas when dropping
+        https://bugs.webkit.org/show_bug.cgi?id=171177
+        <rdar://problem/31765379>
+
+        Reviewed by Andy Estes.
+
+        Currently, DragController::canProcessDrag bails immediately with `false` if the drag data does not contain
+        compatible content. However, if we are dragging over a file input, we want the presence of files in the drag
+        data to take priority. To fix this, we teach DragData::containsCompatibleContent to take the purpose of the drag
+        into account (by default, this is Editing, but when dragging over a file input, this becomes FileUpload). We
+        then consider DragData to have compatible content for the purpose of file uploading if it contains any files.
+
+        Test: DataInteractionTests.ExternalSourceJSONToFileInput.
+
+        * page/DragController.cpp:
+        (WebCore::DragController::canProcessDrag):
+        * platform/DragData.h:
+        * platform/gtk/DragDataGtk.cpp:
+        (WebCore::DragData::containsCompatibleContent):
+        * platform/mac/DragDataMac.mm:
+        (WebCore::DragData::containsCompatibleContent):
+        * platform/win/DragDataWin.cpp:
+        (WebCore::DragData::containsCompatibleContent):
+
 2017-04-22  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Fix regression caused by r215626

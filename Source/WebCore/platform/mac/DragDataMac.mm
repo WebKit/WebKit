@@ -190,8 +190,11 @@ Color DragData::asColor() const
     return platformStrategies()->pasteboardStrategy()->color(m_pasteboardName);
 }
 
-bool DragData::containsCompatibleContent() const
+bool DragData::containsCompatibleContent(DraggingPurpose purpose) const
 {
+    if (purpose == DraggingPurpose::ForFileUpload)
+        return containsFiles();
+
     Vector<String> types;
     platformStrategies()->pasteboardStrategy()->getTypes(types, m_pasteboardName);
     return types.contains(String(WebArchivePboardType))

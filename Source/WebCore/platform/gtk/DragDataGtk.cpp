@@ -61,7 +61,7 @@ Color DragData::asColor() const
     return Color();
 }
 
-bool DragData::containsCompatibleContent() const
+bool DragData::containsCompatibleContent(DraggingPurpose) const
 {
     return containsPlainText() || containsURL() || m_platformDragData->hasMarkup() || containsColor() || containsFiles();
 }

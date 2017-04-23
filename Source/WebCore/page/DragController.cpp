@@ -569,9 +569,6 @@ bool DragController::concludeEditDrag(const DragData& dragData)
 
 bool DragController::canProcessDrag(const DragData& dragData)
 {
-    if (!dragData.containsCompatibleContent())
-        return false;
-
     IntPoint point = m_page.mainFrame().view()->windowToContents(dragData.clientPosition());
     HitTestResult result = HitTestResult(point);
     if (!m_page.mainFrame().contentRenderer())
@@ -582,7 +579,14 @@ bool DragController::canProcessDrag(const DragData& dragData)
     if (!result.innerNonSharedNode())
         return false;
 
-    if (dragData.containsFiles() && asFileInput(*result.innerNonSharedNode()))
+    DragData::DraggingPurpose dragPurpose = DragData::DraggingPurpose::ForEditing;
+    if (asFileInput(*result.innerNonSharedNode()))
+        dragPurpose = DragData::DraggingPurpose::ForFileUpload;
+
+    if (!dragData.containsCompatibleContent(dragPurpose))
+        return false;
+
+    if (dragPurpose == DragData::DraggingPurpose::ForFileUpload)
         return true;
 
     if (is<HTMLPlugInElement>(*result.innerNonSharedNode())) {

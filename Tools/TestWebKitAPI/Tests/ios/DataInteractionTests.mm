@@ -333,6 +333,23 @@ TEST(DataInteractionTests, EnterAndLeaveEvents)
     checkSelectionRectsWithLogging(@[ ], [dataInteractionSimulator finalSelectionRects]);
 }
 
+TEST(DataInteractionTests, ExternalSourceJSONToFileInput)
+{
+    RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView synchronouslyLoadTestPageNamed:@"file-uploading"];
+
+    RetainPtr<UIItemProvider> simulatedJSONItemProvider = adoptNS([[UIItemProvider alloc] init]);
+    NSData *jsonData = [@"{ \"foo\": \"bar\",  \"bar\": \"baz\" }" dataUsingEncoding:NSUTF8StringEncoding];
+    [simulatedJSONItemProvider registerFileRepresentationForTypeIdentifier:(NSString *)kUTTypeJSON withData:jsonData filename:@"data.json"];
+
+    RetainPtr<DataInteractionSimulator> dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    [dataInteractionSimulator setExternalItemProviders:@[ simulatedJSONItemProvider.get() ]];
+    [dataInteractionSimulator runFrom:CGPointMake(200, 100) to:CGPointMake(100, 100)];
+
+    EXPECT_WK_STREQ("application/json", [webView stringByEvaluatingJavaScript:@"output.value"]);
+    cleanUpDataInteractionTemporaryPath();
+}
+
 TEST(DataInteractionTests, ExternalSourceImageToFileInput)
 {
     RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);

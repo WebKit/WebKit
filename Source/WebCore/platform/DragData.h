@@ -76,6 +76,7 @@ typedef HashMap<unsigned, Vector<String>> DragDataMap;
 class DragData {
 public:
     enum FilenameConversionPolicy { DoNotConvertFilenames, ConvertFilenames };
+    enum class DraggingPurpose { ForEditing, ForFileUpload };
 
     // clientPosition is taken to be the position of the drag event within the target window, with (0,0) at the top left
     WEBCORE_EXPORT DragData(DragDataRef, const IntPoint& clientPosition, const IntPoint& globalPosition, DragOperation, DragApplicationFlags = DragApplicationNone, DragDestinationAction actions = DragDestinationActionAny);
@@ -96,7 +97,7 @@ public:
     DragOperation draggingSourceOperationMask() const { return m_draggingSourceOperationMask; }
     bool containsURL(FilenameConversionPolicy = ConvertFilenames) const;
     bool containsPlainText() const;
-    bool containsCompatibleContent() const;
+    bool containsCompatibleContent(DraggingPurpose = DraggingPurpose::ForEditing) const;
     String asURL(FilenameConversionPolicy = ConvertFilenames, String* title = nullptr) const;
     String asPlainText() const;
     void asFilenames(Vector<String>&) const;
