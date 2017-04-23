@@ -1,3 +1,9 @@
+2017-04-23  Alexey Proskuryakov  <ap@apple.com>
+
+        Build fix after r215657.
+
+        * UIProcess/Cocoa/WebViewImpl.mm:
+
 2017-04-23  Andy Estes  <aestes@apple.com>
 
         [macOS] AVTouchBarMediaSelectionOptions should be created with the correct type
