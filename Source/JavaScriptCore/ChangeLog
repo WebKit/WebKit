@@ -1,5 +1,44 @@
 2017-04-23  Joseph Pecoraro  <pecoraro@apple.com>
 
+        test262: test262/test/language/expressions/generators/yield-as-label.js
+        https://bugs.webkit.org/show_bug.cgi?id=170979
+
+        Reviewed by Saam Barati.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseVariableDeclarationList):
+        (JSC::Parser<LexerType>::parseDestructuringPattern):
+        (JSC::Parser<LexerType>::parseFormalParameters):
+        Converge on "Cannot" instead of "Can't" in error messages.
+
+        (JSC::Parser<LexerType>::parseFunctionInfo):
+        Disallow "yield" as the generator function name in function expressions.
+        This refers to the difference between Declaration and Expression, where
+        only GeneratorExpression explicitly has [+Yield] disallowing yield for
+        the generator name:
+
+            GeneratorDeclaration[Yield, Await, Default]:
+                function * BindingIdentifier[?Yield, ?Await] ...
+
+            GeneratorExpression:
+                function * BindingIdentifier[+Yield, ~Await]opt ...
+
+        (JSC::Parser<LexerType>::parseExpressionOrLabelStatement):
+        Disallow "yield" as a label name in strict mode or inside a generator.
+
+        (JSC::Parser<LexerType>::parseProperty):
+        Disallow "yield" or any keyword in object literal shorthands.
+
+        * parser/Parser.h:
+        (JSC::Parser::getToken):
+        (JSC::Parser::isDisallowedIdentifierLet):
+        (JSC::Parser::isDisallowedIdentifierYield):
+        (JSC::Parser::disallowedIdentifierLetReason):
+        (JSC::Parser::disallowedIdentifierYieldReason):
+        Follow pattern for improved error messages based on context.
+
+2017-04-23  Joseph Pecoraro  <pecoraro@apple.com>
+
         test262: test262/test/built-ins/Number/parseFloat.js
         https://bugs.webkit.org/show_bug.cgi?id=171193
 

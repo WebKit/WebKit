@@ -29,12 +29,22 @@ function *test() {
         }
     }
 }
+`, `SyntaxError: Cannot use 'yield' as a label in a generator function.`);
+
+testSyntaxError(`
+function *test() {
+    {
+        label: for (var i = 0; i < 1000; ++i) {
+            break yield;
+        }
+    }
+}
 `, `SyntaxError: Unexpected keyword 'yield'. Expected an identifier as the target for a break statement.`);
 
 testSyntaxError(`
 function *test() {
     {
-        yield: for (var i = 0; i < 1000; ++i) {
+        label: for (var i = 0; i < 1000; ++i) {
             continue yield;
         }
     }

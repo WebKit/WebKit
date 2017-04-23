@@ -1,5 +1,27 @@
 2017-04-23  Joseph Pecoraro  <pecoraro@apple.com>
 
+        test262: test262/test/language/expressions/generators/yield-as-label.js
+        https://bugs.webkit.org/show_bug.cgi?id=170979
+
+        Reviewed by Saam Barati.
+
+        * stress/async-await-module-reserved-word.js:
+        * stress/async-await-reserved-word.js:
+        Converge on "Cannot" instead of "Can't".
+
+        * catch-parameter-syntax.js:
+        * yield-named-variable-generator.js:
+        * yield-named-variable.js:
+        * stress/yield-label-generator.js:
+        * stress/yield-label.js:
+        * stress/yield-reserved-word.js: Added.
+        More complete list of when 'yield' is allowed.
+
+        * ChakraCore/test/strict/23.reservedWords_sm.baseline-jsc:
+        * test262.yaml:
+
+2017-04-23  Joseph Pecoraro  <pecoraro@apple.com>
+
         test262: test262/test/built-ins/Number/parseFloat.js
         https://bugs.webkit.org/show_bug.cgi?id=171193
 

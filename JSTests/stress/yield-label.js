@@ -39,13 +39,24 @@ function test() {
         }
     }
 }
+`, `SyntaxError: Cannot use 'yield' as a label in strict mode.`);
+
+testSyntaxError(`
+function test() {
+    "use strict";
+    {
+        label: for (var i = 0; i < 1000; ++i) {
+            break yield;
+        }
+    }
+}
 `, `SyntaxError: Unexpected keyword 'yield'. Expected an identifier as the target for a break statement.`);
 
 testSyntaxError(`
 function test() {
     "use strict";
     {
-        yield: for (var i = 0; i < 1000; ++i) {
+        label: for (var i = 0; i < 1000; ++i) {
             continue yield;
         }
     }

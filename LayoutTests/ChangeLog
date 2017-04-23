@@ -1,3 +1,19 @@
+2017-04-23  Joseph Pecoraro  <pecoraro@apple.com>
+
+        test262: test262/test/language/expressions/generators/yield-as-label.js
+        https://bugs.webkit.org/show_bug.cgi?id=170979
+
+        Reviewed by Saam Barati.
+
+        * js/object-literal-shorthand-construction-expected.txt:
+        * js/script-tests/object-literal-shorthand-construction.js:
+        Extend this test to cover object literal shorthand with keywords.
+
+        * js/dom/reserved-words-as-property-expected.txt:
+        * js/let-syntax-expected.txt:
+        * js/parser-syntax-check-expected.txt:
+        Improved error messages.
+
 2017-04-21  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION(r205374): <li> content inside <ul> should mid-word wrap when word-break: break-word is present.
