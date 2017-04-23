@@ -221,7 +221,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface AVTouchBarScrubber : NSView
 @property (assign, nullable) id<AVTouchBarPlaybackControlsControlling> playbackControlsController;
-@property BOOL canShowMediaSelectionButton;
 @end
 
 @class AVThumbnail;

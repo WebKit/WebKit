@@ -1,3 +1,19 @@
+2017-04-23  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r215657 and r215676.
+        https://bugs.webkit.org/show_bug.cgi?id=171201
+
+        Broke the build (Requested by ap on #webkit).
+
+        Reverted changesets:
+
+        "[macOS] Enable media selection button on AVTouchBarScrubber"
+        https://bugs.webkit.org/show_bug.cgi?id=171149
+        http://trac.webkit.org/changeset/215657
+
+        "Build fix after r215657."
+        http://trac.webkit.org/changeset/215676
+
 2017-04-23  Alexey Proskuryakov  <ap@apple.com>
 
         Build fix after r215657.

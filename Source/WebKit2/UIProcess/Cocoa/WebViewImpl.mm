@@ -67,7 +67,6 @@
 #import "_WKRemoteObjectRegistryInternal.h"
 #import "_WKThumbnailViewInternal.h"
 #import <HIToolbox/CarbonEventsCore.h>
-#import <WebCore/AVKitSPI.h>
 #import <WebCore/AXObjectCache.h>
 #import <WebCore/ActivityState.h>
 #import <WebCore/ColorMac.h>
@@ -1141,7 +1140,6 @@ void WebViewImpl::updateMediaTouchBar()
     if (!m_mediaPlaybackControlsView) {
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
         m_mediaPlaybackControlsView = adoptNS([allocAVTouchBarScrubberInstance() init]);
-        [m_mediaPlaybackControlsView setCanShowMediaSelectionButton:YES];
 #else
         m_mediaPlaybackControlsView = adoptNS([allocAVFunctionBarScrubberInstance() init]);
 #endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
