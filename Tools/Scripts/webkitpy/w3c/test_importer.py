@@ -35,9 +35,7 @@
 
     - All tests are by default imported into LayoutTests/imported/w3c
 
-    - Tests will be imported into a directory tree that
-      mirrors the CSS and WPT repositories. For example, <csswg_repo_root>/css2.1 should be brought in
-      as LayoutTests/imported/w3c/csswg-tests/css2.1, maintaining the entire directory structure under that
+    - Tests will be imported into a directory tree that mirrors WPT repository in LayoutTests/imported/w3c/web-platform-tests.
 
     - By default, only reftests and jstest are imported. This can be overridden with a -a or --all
       argument
@@ -115,17 +113,20 @@ def configure_logging():
     return handler
 
 
+# FIXME: We should decide whether we want to make this specific to web-platform-tests or to make it generic to any git repository containing tests.
 def parse_args(args):
     description = """
 To import a web-platform-tests test suite named xyz, use: 'import-w3c-tests web-platform-tests/xyz'.
-To import a csswg-test test suite named abc, use 'import-w3c-tests csswg-test/abc'.
-To import a web-platform-tests/csswg-test test suite from a specific folder, use 'import-w3c-tests web-platform-tests/xyz -s my-folder-containing-web-platform-tests-folder'"""
+To import a web-platform-tests suite from a specific folder, use 'import-w3c-tests xyz -l -s my-folder-containing-web-platform-tests-folder'"""
     parser = argparse.ArgumentParser(prog='import-w3c-tests [web-platform-tests/test-suite-name...]', description=description, formatter_class=argparse.RawDescriptionHelpFormatter)
 
     parser.add_argument('-n', '--no-overwrite', dest='overwrite', action='store_false', default=True,
         help='Flag to prevent duplicate test files from overwriting existing tests. By default, they will be overwritten')
     parser.add_argument('-l', '--no-links-conversion', dest='convert_test_harness_links', action='store_false', default=True,
        help='Do not change links (testharness js or css e.g.). This option only applies when providing a source directory, in which case by default, links are converted to point to WebKit testharness files. When tests are downloaded from W3C repository, links are converted for CSS tests and remain unchanged for WPT tests')
+
+    parser.add_argument('-t', '--tip-of-tree', dest='use_tip_of_tree', action='store_true', default=False,
+        help='Import all tests using the latest repository revision')
 
     parser.add_argument('-a', '--all', action='store_true', default=False,
         help='Import all tests including reftests, JS tests, and manual/pixel tests. By default, only reftests and JS tests are imported')
@@ -134,7 +135,7 @@ To import a web-platform-tests/csswg-test test suite from a specific folder, use
         help='Import into a specified directory relative to the LayoutTests root. By default, imports into imported/w3c')
 
     parser.add_argument('-s', '--src-dir', dest='source', default=None,
-        help='Import from a specific folder which contains web-platform-tests and/or csswg-test folders. If not provided, the script will clone the necessary repositories.')
+        help='Import from a specific folder which contains web-platform-tests folder. If not provided, the script will clone the necessary repositories.')
 
     parser.add_argument('-v', '--verbose', action='store_true', default=False,
          help='Print maximal log')
@@ -194,7 +195,7 @@ class TestImporter(object):
             self.source_directory = self.filesystem.join(self.tests_download_path, 'to-be-imported')
             self.filesystem.maybe_make_directory(self.tests_download_path)
             self.filesystem.maybe_make_directory(self.source_directory)
-            self.test_downloader().download_tests(self.source_directory, self.test_paths)
+            self.test_downloader().download_tests(self.source_directory, self.test_paths, self.options.use_tip_of_tree)
 
         test_paths = self.test_paths if self.test_paths else [test_repository['name'] for test_repository in self.test_downloader().test_repositories]
         for test_path in test_paths:
@@ -566,8 +567,7 @@ class TestImporter(object):
         import_log = []
         import_log.append('The tests in this directory were imported from the W3C repository.\n')
         import_log.append('Do NOT modify these tests directly in WebKit.\n')
-        import_log.append('Instead, create a pull request on the W3C CSS or WPT github:\n')
-        import_log.append('\thttps://github.com/w3c/csswg-test\n')
+        import_log.append('Instead, create a pull request on the WPT github:\n')
         import_log.append('\thttps://github.com/w3c/web-platform-tests\n\n')
         import_log.append('Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport\n\n')
         import_log.append('Do NOT modify or remove this file.\n\n')

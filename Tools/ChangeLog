@@ -1,3 +1,20 @@
+2017-04-22  Youenn Fablet  <youenn@apple.com>
+
+        Add an option to import tip-of-tree WPT tests
+        https://bugs.webkit.org/show_bug.cgi?id=171152
+
+        Reviewed by Joseph Pecoraro.
+
+        Adding a '-t' option to import tip of tree WPT tests.
+        Updating importer based on the fact that csswg-test is no longer a thing. 
+
+        * Scripts/webkitpy/w3c/test_downloader.py:
+        (TestDownloader.download_tests):
+        * Scripts/webkitpy/w3c/test_importer.py:
+        (configure_logging):
+        (TestImporter.do_import):
+        (TestImporter.write_import_log):
+
 2017-04-22  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         File inputs only accept UTI types that can be inserted into contenteditable areas when dropping
