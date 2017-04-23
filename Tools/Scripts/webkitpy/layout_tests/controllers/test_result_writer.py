@@ -30,7 +30,6 @@
 import logging
 
 from webkitpy.common.wavediff import WaveDiff
-from webkitpy.layout_tests.models import test_failures
 
 
 _log = logging.getLogger(__name__)
@@ -62,6 +61,16 @@ class TestResultWriter(object):
     FILENAME_SUFFIX_PRETTY_PATCH = "-pretty-diff.html"
     FILENAME_SUFFIX_IMAGE_DIFF = "-diff.png"
     FILENAME_SUFFIX_IMAGE_DIFFS_HTML = "-diffs.html"
+
+    @staticmethod
+    def expected_filename(test_name, filesystem, port_name=None, suffix='txt'):
+        if not port_name:
+            return filesystem.splitext(test_name)[0] + TestResultWriter.FILENAME_SUFFIX_EXPECTED + '.' + suffix
+        return filesystem.join("platform", port_name, filesystem.splitext(test_name)[0] + TestResultWriter.FILENAME_SUFFIX_EXPECTED + '.' + suffix)
+
+    @staticmethod
+    def actual_filename(test_name, filesystem, suffix='txt'):
+        return filesystem.splitext(test_name)[0] + TestResultWriter.FILENAME_SUFFIX_ACTUAL + '.' + suffix
 
     def __init__(self, filesystem, port, root_output_dir, test_name):
         self._filesystem = filesystem
