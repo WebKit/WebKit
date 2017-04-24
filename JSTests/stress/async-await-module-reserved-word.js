@@ -19,22 +19,22 @@ function checkModuleSyntaxError(source, errorMessage) {
 
 checkModuleSyntaxError(String.raw`
 var await;
-`, `SyntaxError: Cannot use 'await' as a variable name in a module.:2`);
+`, `SyntaxError: Can't use 'await' as a variable name in a module.:2`);
 checkModuleSyntaxError(`
 export var await;
-`, `SyntaxError: Cannot use 'await' as a variable name in a module.:2`);
+`, `SyntaxError: Can't use 'await' as a variable name in a module.:2`);
 checkModuleSyntaxError(String.raw`
 let await;
-`, `SyntaxError: Cannot use 'await' as a lexical variable name in a module.:2`);
+`, `SyntaxError: Can't use 'await' as a lexical variable name in a module.:2`);
 checkModuleSyntaxError(String.raw`
 export let await;
-`, `SyntaxError: Cannot use 'await' as a lexical variable name in a module.:2`);
+`, `SyntaxError: Can't use 'await' as a lexical variable name in a module.:2`);
 checkModuleSyntaxError(String.raw`
 const await = 1
-`, `SyntaxError: Cannot use 'await' as a lexical variable name in a module.:2`);
+`, `SyntaxError: Can't use 'await' as a lexical variable name in a module.:2`);
 checkModuleSyntaxError(String.raw`
 export const await = 1
-`, `SyntaxError: Cannot use 'await' as a lexical variable name in a module.:2`);
+`, `SyntaxError: Can't use 'await' as a lexical variable name in a module.:2`);
 
 checkModuleSyntaxError(String.raw`
 function await() {}

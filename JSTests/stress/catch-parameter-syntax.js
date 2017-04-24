@@ -60,7 +60,7 @@ testSyntaxError(`
     } catch (let) {
     }
 })
-`, `SyntaxError: Cannot use 'let' as a catch parameter name in strict mode.`);
+`, `SyntaxError: Cannot use the keyword 'let' as a catch parameter name.`);
 
 testSyntaxError(`
 (function () {
@@ -69,7 +69,7 @@ testSyntaxError(`
     } catch ([let]) {
     }
 })
-`, `SyntaxError: Cannot use 'let' as a catch parameter name in strict mode.`);
+`, `SyntaxError: Cannot use the keyword 'let' as a catch parameter name.`);
 
 
 testSyntax(`
@@ -95,7 +95,7 @@ testSyntaxError(`
     } catch (yield) {
     }
 })
-`, `SyntaxError: Cannot use 'yield' as a catch parameter name in strict mode.`);
+`, `SyntaxError: Cannot use the keyword 'yield' as a catch parameter name.`);
 
 testSyntaxError(`
 (function () {
@@ -104,7 +104,7 @@ testSyntaxError(`
     } catch ([yield]) {
     }
 })
-`, `SyntaxError: Cannot use 'yield' as a catch parameter name in strict mode.`);
+`, `SyntaxError: Cannot use the keyword 'yield' as a catch parameter name.`);
 
 testSyntaxError(`
 (function () {
@@ -152,7 +152,7 @@ testSyntaxError(`
     } catch (yield) {
     }
 })
-`, `SyntaxError: Cannot use 'yield' as a catch parameter name in a generator function.`);
+`, `SyntaxError: Cannot use the keyword 'yield' as a catch parameter name.`);
 
 testSyntax(`
 (function *() {

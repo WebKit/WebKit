@@ -75,7 +75,7 @@ SyntaxError: Cannot use the reserved word 'implements' as a variable name in str
 (function(){var interface;})();
 SyntaxError: Cannot use the reserved word 'interface' as a variable name in strict mode.
 (function(){var let;})();
-SyntaxError: Cannot use 'let' as a variable name in strict mode.
+SyntaxError: Cannot use the keyword 'let' as a variable name.
 (function(){var package;})();
 SyntaxError: Cannot use the reserved word 'package' as a variable name in strict mode.
 (function(){var private;})();
@@ -87,7 +87,7 @@ SyntaxError: Cannot use the reserved word 'public' as a variable name in strict 
 (function(){var static;})();
 SyntaxError: Cannot use the reserved word 'static' as a variable name in strict mode.
 (function(){var yield;})();
-SyntaxError: Cannot use 'yield' as a variable name in strict mode.
+SyntaxError: Cannot use the keyword 'yield' as a variable name.
 (function(){var foo;})();
 (function(){var <;})();
 SyntaxError: Unexpected token '<'. Expected a parameter pattern or a ')' in parameter list.
@@ -168,7 +168,7 @@ SyntaxError: Cannot use the reserved word 'implements' as a function name in str
 (function(){function interface(){}})();
 SyntaxError: Cannot use the reserved word 'interface' as a function name in strict mode.
 (function(){function let(){}})();
-SyntaxError: Cannot use 'let' as a function name in strict mode.
+SyntaxError: Cannot use the keyword 'let' as a function name.
 (function(){function package(){}})();
 SyntaxError: Cannot use the reserved word 'package' as a function name in strict mode.
 (function(){function private(){}})();
@@ -180,7 +180,7 @@ SyntaxError: Cannot use the reserved word 'public' as a function name in strict 
 (function(){function static(){}})();
 SyntaxError: Cannot use the reserved word 'static' as a function name in strict mode.
 (function(){function yield(){}})();
-SyntaxError: Cannot use 'yield' as a function name in strict mode.
+SyntaxError: Cannot use the keyword 'yield' as a function name.
 (function(){function foo(){}})();
 (function(){function <(){}})();
 SyntaxError: Unexpected token '<'
@@ -261,7 +261,7 @@ SyntaxError: Cannot use the reserved word 'implements' as a function name in str
 (function(){(function interface(){})})();
 SyntaxError: Cannot use the reserved word 'interface' as a function name in strict mode.
 (function(){(function let(){})})();
-SyntaxError: Cannot use 'let' as a function name in strict mode.
+SyntaxError: Cannot use the keyword 'let' as a function name.
 (function(){(function package(){})})();
 SyntaxError: Cannot use the reserved word 'package' as a function name in strict mode.
 (function(){(function private(){})})();
@@ -273,7 +273,7 @@ SyntaxError: Cannot use the reserved word 'public' as a function name in strict 
 (function(){(function static(){})})();
 SyntaxError: Cannot use the reserved word 'static' as a function name in strict mode.
 (function(){(function yield(){})})();
-SyntaxError: Cannot use 'yield' as a function name in strict mode.
+SyntaxError: Cannot use the keyword 'yield' as a function name.
 (function(){(function foo(){})})();
 (function(){(function <(){})})();
 SyntaxError: Unexpected token '<'. Expected an opening '(' before a function's parameter list.
@@ -354,7 +354,7 @@ SyntaxError: Cannot use the reserved word 'implements' as a parameter name in st
 (function(){(function(interface){});})();
 SyntaxError: Cannot use the reserved word 'interface' as a parameter name in strict mode.
 (function(){(function(let){});})();
-SyntaxError: Cannot use 'let' as a parameter name in strict mode.
+SyntaxError: Cannot use the keyword 'let' as a parameter name.
 (function(){(function(package){});})();
 SyntaxError: Cannot use the reserved word 'package' as a parameter name in strict mode.
 (function(){(function(private){});})();
@@ -366,7 +366,7 @@ SyntaxError: Cannot use the reserved word 'public' as a parameter name in strict
 (function(){(function(static){});})();
 SyntaxError: Cannot use the reserved word 'static' as a parameter name in strict mode.
 (function(){(function(yield){});})();
-SyntaxError: Cannot use 'yield' as a parameter name in strict mode.
+SyntaxError: Cannot use the keyword 'yield' as a parameter name.
 (function(){(function(foo){});})();
 (function(){(function(<){});})();
 SyntaxError: Unexpected token '<'. Expected a parameter pattern or a ')' in parameter list.
@@ -447,7 +447,7 @@ SyntaxError: Cannot use the reserved word 'implements' as a catch parameter name
 (function(){try{} catch(interface){}})();
 SyntaxError: Cannot use the reserved word 'interface' as a catch parameter name in strict mode.
 (function(){try{} catch(let){}})();
-SyntaxError: Cannot use 'let' as a catch parameter name in strict mode.
+SyntaxError: Cannot use the keyword 'let' as a catch parameter name.
 (function(){try{} catch(package){}})();
 SyntaxError: Cannot use the reserved word 'package' as a catch parameter name in strict mode.
 (function(){try{} catch(private){}})();
@@ -459,7 +459,7 @@ SyntaxError: Cannot use the reserved word 'public' as a catch parameter name in 
 (function(){try{} catch(static){}})();
 SyntaxError: Cannot use the reserved word 'static' as a catch parameter name in strict mode.
 (function(){try{} catch(yield){}})();
-SyntaxError: Cannot use 'yield' as a catch parameter name in strict mode.
+SyntaxError: Cannot use the keyword 'yield' as a catch parameter name.
 (function(){try{} catch(foo){}})();
 (function(){try{} catch(<){}})();
 SyntaxError: Unexpected token '<'. Expected a parameter pattern or a ')' in parameter list.
