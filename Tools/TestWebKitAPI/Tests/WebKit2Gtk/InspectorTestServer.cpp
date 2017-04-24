@@ -27,13 +27,6 @@
 #include <gtk/gtk.h>
 #include <webkit2/webkit2.h>
 
-static void loadChangedCallback(WebKitWebView*, WebKitLoadEvent loadEvent, gpointer)
-{
-    // Send a message to the parent process when we're ready.
-    if (loadEvent == WEBKIT_LOAD_FINISHED)
-        g_print("OK");
-}
-
 int main(int argc, char** argv)
 {
     gtk_init(&argc, &argv);
@@ -52,7 +45,6 @@ int main(int argc, char** argv)
     gtk_widget_show_all(window);
 
     g_signal_connect(window, "delete-event", G_CALLBACK(gtk_main_quit), 0);
-    g_signal_connect(webView, "load-changed", G_CALLBACK(loadChangedCallback), 0);
 
     gtk_main();
 }

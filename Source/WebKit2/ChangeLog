@@ -1,3 +1,68 @@
+2017-04-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Switch to use ENABLE_REMOTE_INSPECTOR instead of ENABLE_INSPECTOR_SERVER for the remote inspector
+        https://bugs.webkit.org/show_bug.cgi?id=166680
+
+        Reviewed by Michael Catanzaro.
+
+        Remove INSPECTOR_SERVER code and add new classes to implement REMOTE_INSPECTOR. The WebKitWebContext registers a
+        custom protocol "inspector" that loads a page with the list of debuggable targets.
+
+        * PlatformGTK.cmake: Add new files to compilation and remove the old ones.
+        * UIProcess/API/gtk/WebKit2InspectorGResourceBundle.xml: Removed.
+        * UIProcess/API/gtk/WebKitRemoteInspectorProtocolHandler.cpp: Added.
+        (WebKit::RemoteInspectorProtocolHandler::RemoteInspectorProtocolHandler):
+        (WebKit::RemoteInspectorProtocolHandler::~RemoteInspectorProtocolHandler):
+        (WebKit::RemoteInspectorProtocolHandler::webViewDestroyed):
+        (WebKit::RemoteInspectorProtocolHandler::userContentManagerDestroyed):
+        (WebKit::RemoteInspectorProtocolHandler::handleRequest):
+        (WebKit::RemoteInspectorProtocolHandler::inspect):
+        (WebKit::RemoteInspectorProtocolHandler::targetListChanged):
+        (WebKit::RemoteInspectorProtocolHandler::connectionClosed):
+        * UIProcess/API/gtk/WebKitRemoteInspectorProtocolHandler.h: Added.
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (webkitWebContextConstructed):
+        * UIProcess/InspectorServer/HTTPRequest.cpp: Add missing ENABLE(INSPECTOR_SERVER) ifdefs.
+        * UIProcess/InspectorServer/HTTPRequest.h:
+        * UIProcess/InspectorServer/WebInspectorServer.h:
+        * UIProcess/InspectorServer/gtk/WebInspectorServerGtk.cpp: Removed.
+        * UIProcess/RemoteWebInspectorProxy.cpp:
+        * UIProcess/RemoteWebInspectorProxy.h:
+        * UIProcess/WebProcessPool.cpp:
+        * UIProcess/glib/RemoteInspectorClient.cpp: Added.
+        (WebKit::RemoteInspectorClient::RemoteInspectorClient):
+        (WebKit::RemoteInspectorClient::~RemoteInspectorClient):
+        (WebKit::dbusConnectionCallAsyncReadyCallback):
+        (WebKit::RemoteInspectorClient::connectionClosedCallback):
+        (WebKit::RemoteInspectorClient::setupConnection):
+        (WebKit::RemoteInspectorClient::connectionClosed):
+        (WebKit::RemoteInspectorClient::inspect):
+        (WebKit::RemoteInspectorClient::sendMessageToBackend):
+        (WebKit::RemoteInspectorClient::closeFromFrontend):
+        (WebKit::RemoteInspectorClient::setTargetList):
+        (WebKit::RemoteInspectorClient::sendMessageToFrontend):
+        * UIProcess/glib/RemoteInspectorClient.h: Added.
+        (WebKit::RemoteInspectorObserver::~RemoteInspectorObserver):
+        (WebKit::RemoteInspectorClient::targets):
+        (WebKit::RemoteInspectorClient::hostAndPort):
+        * UIProcess/gtk/RemoteWebInspectorProxyGtk.cpp: Added.
+        (WebKit::RemoteWebInspectorProxy::updateWindowTitle):
+        (WebKit::inspectorViewDestroyed):
+        (WebKit::RemoteWebInspectorProxy::platformCreateFrontendPageAndWindow):
+        (WebKit::RemoteWebInspectorProxy::platformCloseFrontendPageAndWindow):
+        (WebKit::RemoteWebInspectorProxy::platformBringToFront):
+        (WebKit::RemoteWebInspectorProxy::platformSave):
+        (WebKit::RemoteWebInspectorProxy::platformAppend):
+        (WebKit::RemoteWebInspectorProxy::platformStartWindowDrag):
+        (WebKit::RemoteWebInspectorProxy::platformOpenInNewTab):
+        * UIProcess/gtk/WebProcessPoolGtk.cpp:
+        (WebKit::initializeRemoteInspectorServer):
+        (WebKit::WebProcessPool::platformInitialize):
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        * WebProcess/InjectedBundle/API/gtk/WebKitWebExtension.cpp:
+        (didReceiveMessageToPage): Updated after the GRefPtr hash traitds changes.
+        * config.h:
+
 2017-04-23  Dan Bernstein  <mitz@apple.com>
 
         [macOS] WKWebInspectorProxyObjCAdapter has a public ivar

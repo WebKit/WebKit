@@ -1,3 +1,17 @@
+2017-04-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Switch to use ENABLE_REMOTE_INSPECTOR instead of ENABLE_INSPECTOR_SERVER for the remote inspector
+        https://bugs.webkit.org/show_bug.cgi?id=166680
+
+        Reviewed by Michael Catanzaro.
+
+        Add GRefPtr hash traits to allow using GRefPtr as a key of HashMaps.
+
+        * wtf/glib/GRefPtr.h:
+        (WTF::HashTraits<GRefPtr<P>>::emptyValue):
+        (WTF::HashTraits<GRefPtr<P>>::peek):
+        (WTF::HashTraits<GRefPtr<P>>::customDeleteBucket):
+
 2017-04-22  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Get stack pointer without pthread attr

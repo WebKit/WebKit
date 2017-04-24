@@ -31,9 +31,9 @@
 #include "APIProcessPoolConfiguration.h"
 #include "Logging.h"
 #include "WebCookieManagerProxy.h"
-#include "WebInspectorServer.h"
 #include "WebProcessCreationParameters.h"
 #include "WebProcessMessages.h"
+#include <JavaScriptCore/RemoteInspectorServer.h>
 #include <WebCore/FileSystem.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/SchemeRegistry.h>
@@ -42,40 +42,37 @@
 
 namespace WebKit {
 
-static void initInspectorServer()
+#if ENABLE(REMOTE_INSPECTOR)
+static bool initializeRemoteInspectorServer(const char* address)
 {
-#if ENABLE(INSPECTOR_SERVER)
-    static bool initialized = false;
-    if (initialized)
-        return;
+    if (Inspector::RemoteInspectorServer::singleton().isRunning())
+        return true;
 
-    initialized = true;
-    String serverAddress(g_getenv("WEBKIT_INSPECTOR_SERVER"));
+    if (!address[0])
+        return false;
 
-    if (!serverAddress.isNull()) {
-        String bindAddress = "127.0.0.1";
-        unsigned short port = 2999;
+    GUniquePtr<char> inspectorAddress(g_strdup(address));
+    char* portPtr = g_strrstr(inspectorAddress.get(), ":");
+    if (!portPtr)
+        return false;
 
-        Vector<String> result;
-        serverAddress.split(':', result);
+    *portPtr = '\0';
+    portPtr++;
+    guint64 port = g_ascii_strtoull(portPtr, nullptr, 10);
+    if (!port)
+        return false;
 
-        if (result.size() == 2) {
-            bindAddress = result[0];
-            bool ok = false;
-            port = result[1].toInt(&ok);
-            if (!ok) {
-                port = 2999;
-                LOG_ERROR("Couldn't parse the port. Use 2999 instead.");
-            }
-        } else
-            LOG_ERROR("Couldn't parse %s, wrong format? Use 127.0.0.1:2999 instead.", serverAddress.utf8().data());
+    return Inspector::RemoteInspectorServer::singleton().start(inspectorAddress.get(), port);
+}
+#endif
 
-        if (!WebInspectorServer::singleton().listen(bindAddress, port))
-            LOG_ERROR("Couldn't start listening on: IP address=%s, port=%d.", bindAddress.utf8().data(), port);
-        return;
+void WebProcessPool::platformInitialize()
+{
+#if ENABLE(REMOTE_INSPECTOR)
+    if (const char* address = g_getenv("WEBKIT_INSPECTOR_SERVER")) {
+        if (!initializeRemoteInspectorServer(address))
+            g_unsetenv("WEBKIT_INSPECTOR_SERVER");
     }
-
-    LOG(InspectorServer, "To start inspector server set WEBKIT_INSPECTOR_SERVER to 127.0.0.1:2999 for example.");
 #endif
 }
 
@@ -91,7 +88,6 @@ WTF::String WebProcessPool::legacyPlatformDefaultMediaCacheDirectory()
 
 void WebProcessPool::platformInitializeWebProcess(WebProcessCreationParameters& parameters)
 {
-    initInspectorServer();
     parameters.memoryCacheDisabled = m_memoryCacheDisabled || cacheModel() == CacheModelDocumentViewer;
     parameters.proxySettings = m_networkProxySettings;
 }

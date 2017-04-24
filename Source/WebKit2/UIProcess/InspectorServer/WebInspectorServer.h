@@ -60,9 +60,6 @@ private:
     void didCloseWebSocketConnection(WebSocketServerConnection*) final;
 
     bool platformResourceForPath(const String& path, Vector<char>& data, String& contentType);
-#if PLATFORM(GTK)
-    void buildPageList(Vector<char>& data, String& contentType);
-#endif
 
     void closeConnection(WebInspectorProxy*, WebSocketServerConnection*);
 

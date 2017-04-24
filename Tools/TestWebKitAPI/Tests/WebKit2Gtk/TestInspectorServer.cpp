@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2017 Igalia S.L.
  * Copyright (C) 2012 Samsung Electronics Ltd. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,17 +29,8 @@
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/text/WTFString.h>
 
-// Name of the test server application creating the webView object.
-static const char* gTestServerAppName = "InspectorTestServer";
-
-// Max seconds to wait for the test server before inspecting it.
-static const int gMaxWaitForChild = 5;
-
-// The PID for the test server running, so we can kill it if needed.
-static GPid gChildProcessPid = 0;
-
-// Whether the child has replied and it's ready.
-static bool gChildIsReady = false;
+static GPid gChildProcessPid;
+static bool gServerIsReady;
 
 static void stopTestServer()
 {
@@ -57,29 +49,47 @@ static void sigAbortHandler(int sigNum)
     stopTestServer();
 }
 
-static gpointer testServerMonitorThreadFunc(gpointer)
+static void connectToInspectorServer(GMainLoop* mainLoop)
 {
-    // Wait for the specified timeout to happen.
-    g_usleep(gMaxWaitForChild * G_USEC_PER_SEC);
+    g_dbus_connection_new_for_address("tcp:host=127.0.0.1,port=2999", G_DBUS_CONNECTION_FLAGS_AUTHENTICATION_CLIENT, nullptr, nullptr,
+        [](GObject* , GAsyncResult* result, gpointer userData) {
+            auto* mainLoop = static_cast<GMainLoop*>(userData);
+            GUniqueOutPtr<GError> error;
+            GRefPtr<GDBusConnection> connection = adoptGRef(g_dbus_connection_new_for_address_finish(result, &error.outPtr()));
+            if (!connection) {
+                if (g_error_matches(error.get(), G_IO_ERROR, G_IO_ERROR_CONNECTION_REFUSED)) {
+                    g_timeout_add(100, [](gpointer userData) {
+                        connectToInspectorServer(static_cast<GMainLoop*>(userData));
+                        return G_SOURCE_REMOVE;
+                    }, userData);
+                    return;
+                }
 
-    // Kill the child process if not ready yet.
-    if (!gChildIsReady)
-        stopTestServer();
-
-    g_thread_exit(0);
-    return 0;
+                g_printerr("Failed to connect to inspector server");
+                g_assert_not_reached();
+            }
+            gServerIsReady = true;
+            g_main_loop_quit(mainLoop);
+    }, mainLoop);
 }
 
-static void startTestServerMonitor()
+static void waitUntilInspectorServerIsReady()
 {
-    gChildIsReady = false;
-    g_thread_new("TestServerMonitor", testServerMonitorThreadFunc, 0);
+    GRefPtr<GMainLoop> mainLoop = adoptGRef(g_main_loop_new(nullptr, FALSE));
+    unsigned timeoutID = g_timeout_add(25000, [](gpointer userData) {
+        g_main_loop_quit(static_cast<GMainLoop*>(userData));
+        return G_SOURCE_REMOVE;
+    }, mainLoop.get());
+    connectToInspectorServer(mainLoop.get());
+    g_main_loop_run(mainLoop.get());
+    if (gServerIsReady)
+        g_source_remove(timeoutID);
 }
 
 static void startTestServer()
 {
     // Prepare argv[] for spawning the server process.
-    GUniquePtr<char> testServerPath(g_build_filename(WEBKIT_EXEC_PATH, "TestWebKitAPI", "WebKit2Gtk", gTestServerAppName, NULL));
+    GUniquePtr<char> testServerPath(g_build_filename(WEBKIT_EXEC_PATH, "TestWebKitAPI", "WebKit2Gtk", "InspectorTestServer", nullptr));
 
     // We install a handler to ensure that we kill the child process
     // if the parent dies because of whatever the reason is.
@@ -87,31 +97,12 @@ static void startTestServer()
 
     char* testServerArgv[2];
     testServerArgv[0] = testServerPath.get();
-    testServerArgv[1] = 0;
+    testServerArgv[1] = nullptr;
 
-    // Spawn the server, getting its stdout file descriptor to set a
-    // communication channel, so we know when it's ready.
-    int childStdout = 0;
-    g_assert(g_spawn_async_with_pipes(0, testServerArgv, 0, static_cast<GSpawnFlags>(0), 0, 0,
-        &gChildProcessPid, 0, &childStdout, 0, 0));
+    g_assert(g_spawn_async(nullptr, testServerArgv, nullptr, G_SPAWN_DEFAULT, nullptr, nullptr, &gChildProcessPid, nullptr));
 
-    // Start monitoring the test server (in a separate thread) to
-    // ensure we don't block on the child process more than a timeout.
-    startTestServerMonitor();
-
-    char msg[2];
-    GIOChannel* ioChannel = g_io_channel_unix_new(childStdout);
-    if (g_io_channel_read_chars(ioChannel, msg, 2, 0, 0) == G_IO_STATUS_NORMAL) {
-        // Check whether the server sent a message saying it's ready
-        // and store the result globally, so the monitor can see it.
-        gChildIsReady = msg[0] == 'O' && msg[1] == 'K';
-    }
-    g_io_channel_unref(ioChannel);
-    close(childStdout);
-
-    // The timeout was reached and the server is not ready yet, so
-    // stop it inmediately, and let the unit tests fail.
-    if (!gChildIsReady)
+    waitUntilInspectorServerIsReady();
+    if (!gServerIsReady)
         stopTestServer();
 }
 
@@ -119,43 +110,26 @@ class InspectorServerTest: public WebViewTest {
 public:
     MAKE_GLIB_TEST_FIXTURE(InspectorServerTest);
 
-    InspectorServerTest()
-        : WebViewTest()
-    {
-    }
-
     bool getPageList()
     {
-        loadHtml("<script type=\"text/javascript\">\n"
-            "var pages;\n"
-            "var xhr = new XMLHttpRequest;\n"
-            "xhr.open(\"GET\", \"/pagelist.json\");\n"
-            "xhr.onload = function(e) {\n"
-                "if (xhr.status == 200) {\n"
-                    "pages = JSON.parse(xhr.responseText);\n"
-                    "document.title = \"OK\";\n"
-                "} else \n"
-                    "document.title = \"FAIL\";\n"
-                "}\n"
-            "xhr.send();\n"
-            "</script>\n",
-            "http://127.0.0.1:2999/");
-
-        waitUntilTitleChanged();
-
-        if (!strcmp(webkit_web_view_get_title(m_webView), "OK"))
-            return true;
+        loadURI("inspector://127.0.0.1:2999");
+        waitUntilLoadFinished();
+        for (unsigned i = 0; i < 5; ++i) {
+            size_t mainResourceDataSize = 0;
+            const char* mainResourceData = this->mainResourceData(mainResourceDataSize);
+            g_assert(mainResourceData);
+            if (g_strrstr_len(mainResourceData, mainResourceDataSize, "No targets found"))
+                wait(0.1);
+            else if (g_strrstr_len(mainResourceData, mainResourceDataSize, "Inspectable targets"))
+                return true;
+        }
 
         return false;
-    }
-
-    ~InspectorServerTest()
-    {
     }
 };
 
 // Test to get inspector server page list from the test server.
-// Should contain only one entry pointing to http://127.0.0.1:2999/webinspector/Main.html?page=1
+// Should contain only one entry pointing to http://127.0.0.1:2999.
 static void testInspectorServerPageList(InspectorServerTest* test, gconstpointer)
 {
     GUniqueOutPtr<GError> error;
@@ -163,127 +137,23 @@ static void testInspectorServerPageList(InspectorServerTest* test, gconstpointer
     test->showInWindowAndWaitUntilMapped(GTK_WINDOW_TOPLEVEL);
     g_assert(test->getPageList());
 
-    WebKitJavascriptResult* javascriptResult = test->runJavaScriptAndWaitUntilFinished("pages.length;", &error.outPtr());
+    WebKitJavascriptResult* javascriptResult = test->runJavaScriptAndWaitUntilFinished("document.getElementsByClassName('targetname').length;", &error.outPtr());
     g_assert(javascriptResult);
     g_assert(!error.get());
     g_assert_cmpint(WebViewTest::javascriptResultToNumber(javascriptResult), ==, 1);
 
-    javascriptResult = test->runJavaScriptAndWaitUntilFinished("pages[0].id;", &error.outPtr());
-    g_assert(javascriptResult);
-    g_assert(!error.get());
-    int pageId = WebViewTest::javascriptResultToNumber(javascriptResult);
-
     GUniquePtr<char> valueString;
-    javascriptResult = test->runJavaScriptAndWaitUntilFinished("pages[0].url;", &error.outPtr());
+    javascriptResult = test->runJavaScriptAndWaitUntilFinished("document.getElementsByClassName('targeturl')[0].innerText;", &error.outPtr());
     g_assert(javascriptResult);
     g_assert(!error.get());
     valueString.reset(WebViewTest::javascriptResultToCString(javascriptResult));
     g_assert_cmpstr(valueString.get(), ==, "http://127.0.0.1:2999/");
-
-    javascriptResult = test->runJavaScriptAndWaitUntilFinished("pages[0].inspectorUrl;", &error.outPtr());
-    g_assert(javascriptResult);
-    g_assert(!error.get());
-    valueString.reset(WebViewTest::javascriptResultToCString(javascriptResult));
-    String validInspectorURL = String("/Main.html?page=") + String::number(pageId);
-    ASSERT_CMP_CSTRING(valueString.get(), ==, validInspectorURL.utf8());
-}
-
-// Test sending a raw remote debugging message through our web socket server.
-// For this specific message see: http://code.google.com/chrome/devtools/docs/protocol/tot/runtime.html#command-evaluate
-static void testRemoteDebuggingMessage(InspectorServerTest* test, gconstpointer)
-{
-    test->showInWindowAndWaitUntilMapped(GTK_WINDOW_TOPLEVEL);
-
-    test->loadHtml("<script type=\"text/javascript\">\n"
-        "var socket = new WebSocket('ws://127.0.0.1:2999/devtools/page/1');\n"
-        "socket.onmessage = function(message) {\n"
-            "var response = JSON.parse(message.data);\n"
-            "if (response.id === 1)\n"
-                "document.title = response.result.result.value;\n"
-            "else\n"
-                "document.title = \"FAIL\";\n"
-            "}\n"
-            "socket.onopen = function() {\n"
-            "socket.send('{\"id\": 1, \"method\": \"Runtime.evaluate\", \"params\": {\"expression\": \"2 + 2\" } }');\n"
-        "}\n"
-        "</script>",
-        "http://127.0.0.1:2999/");
-    test->waitUntilTitleChanged();
-
-    g_assert_cmpstr(webkit_web_view_get_title(test->m_webView), ==, "4");
-}
-
-static void openRemoteDebuggingSession(InspectorServerTest* test, gconstpointer)
-{
-    // To test the whole pipeline this exploits a behavior of the inspector front-end which won't provide the page address as title unless the
-    // debugging session was established correctly through web socket.
-    // In our case page URL should be http://127.0.0.1:2999/
-    // So this test case will fail if:
-    // - The page list didn't return a valid inspector URL
-    // - Or the front-end couldn't be loaded through the inspector HTTP server
-    // - Or the web socket connection couldn't be established between the front-end and the page through the inspector server
-    // Let's see if this test isn't raising too many false positives, in which case we should use a better predicate if available.
-
-    test->showInWindowAndWaitUntilMapped(GTK_WINDOW_TOPLEVEL);
-
-    g_assert(test->getPageList());
-
-    GUniqueOutPtr<GError> error;
-    WebKitJavascriptResult* javascriptResult = test->runJavaScriptAndWaitUntilFinished("pages[0].inspectorUrl;", &error.outPtr());
-    g_assert(javascriptResult);
-    g_assert(!error.get());
-
-    String resolvedURL = String("http://127.0.0.1:2999") + String::fromUTF8(WebViewTest::javascriptResultToCString(javascriptResult));
-    test->loadURI(resolvedURL.utf8().data());
-    test->waitUntilLoadFinished();
-
-    const char* title = webkit_web_view_get_title(test->m_webView);
-    if (!title || !*title)
-        test->waitUntilTitleChanged();
-    g_assert_cmpstr(webkit_web_view_get_title(test->m_webView), ==, "127.0.0.1");
-}
-
-static void sendIncompleteRequest(InspectorServerTest* test, gconstpointer)
-{
-    GUniqueOutPtr<GError> error;
-
-    // Connect to the inspector server.
-    GRefPtr<GSocketClient> client = adoptGRef(g_socket_client_new());
-    GRefPtr<GSocketConnection> connection = adoptGRef(g_socket_client_connect_to_host(client.get(), "127.0.0.1", 2999, 0, &error.outPtr()));
-    g_assert_no_error(error.get());
-
-    // Send incomplete request (missing blank line after headers) and check if inspector server
-    // replies. The server should not reply to an incomplete request and the test should timeout
-    // on read.
-    GOutputStream* ostream = g_io_stream_get_output_stream(G_IO_STREAM(connection.get()));
-    // Request missing blank line after headers.
-    const gchar* incompleteRequest = "GET /devtools/page/1 HTTP/1.1\r\nHost: Localhost\r\n";
-    g_output_stream_write(ostream, incompleteRequest, strlen(incompleteRequest), 0, &error.outPtr());
-    g_assert_no_error(error.get());
-
-    GInputStream* istream = g_io_stream_get_input_stream(G_IO_STREAM(connection.get()));
-    char response[16];
-    memset(response, 0, sizeof(response));
-    GRefPtr<GCancellable> cancel = adoptGRef(g_cancellable_new());
-    g_input_stream_read_async(istream, response, sizeof(response) - 1, G_PRIORITY_DEFAULT, cancel.get(), 0, 0);
-    // Give a chance for the server to reply.
-    test->wait(1);
-    g_cancellable_cancel(cancel.get());
-    // If we got any answer it means the server replied to an incomplete request, lets fail.
-    g_assert(response[0] == '\0');
 }
 
 void beforeAll()
 {
-    // Overwrite WEBKIT_INSPECTOR_SERVER variable with default IP address but different port to avoid conflict with the test inspector server page.
-    g_setenv("WEBKIT_INSPECTOR_SERVER", "127.0.0.1:2998", TRUE);
-
     startTestServer();
     InspectorServerTest::add("WebKitWebInspectorServer", "test-page-list", testInspectorServerPageList);
-    InspectorServerTest::add("WebKitWebInspectorServer", "test-remote-debugging-message", testRemoteDebuggingMessage);
-    InspectorServerTest::add("WebKitWebInspectorServer", "test-open-debugging-session", openRemoteDebuggingSession);
-    InspectorServerTest::add("WebKitWebInspectorServer", "test-incomplete-request", sendIncompleteRequest);
-
 }
 
 void afterAll()

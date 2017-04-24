@@ -32,6 +32,8 @@
 #ifndef HTTPRequest_h
 #define HTTPRequest_h
 
+#if ENABLE(INSPECTOR_SERVER)
+
 #include <WebCore/HTTPHeaderMap.h>
 #include <WebCore/HTTPParsers.h>
 #include <WebCore/URL.h>
@@ -77,5 +79,7 @@ protected:
 };
 
 } // namespace WebKit
+
+#endif // ENABLE(INSPECTOR_SERVER)
 
 #endif // HTTPRequest_h

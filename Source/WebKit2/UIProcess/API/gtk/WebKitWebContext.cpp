@@ -39,6 +39,7 @@
 #include "WebKitNotificationProvider.h"
 #include "WebKitPluginPrivate.h"
 #include "WebKitPrivate.h"
+#include "WebKitRemoteInspectorProtocolHandler.h"
 #include "WebKitSecurityManagerPrivate.h"
 #include "WebKitSecurityOriginPrivate.h"
 #include "WebKitSettingsPrivate.h"
@@ -177,6 +178,9 @@ struct _WebKitWebContextPrivate {
     GRefPtr<GVariant> webExtensionsInitializationUserData;
 
     CString localStorageDirectory;
+#if ENABLE(REMOTE_INSPECTOR)
+    std::unique_ptr<RemoteInspectorProtocolHandler> remoteInspectorProtocolHandler;
+#endif
 };
 
 static guint signals[LAST_SIGNAL] = { 0, };
@@ -287,6 +291,9 @@ static void webkitWebContextConstructed(GObject* object)
 #endif
 #if ENABLE(NOTIFICATIONS)
     priv->notificationProvider = WebKitNotificationProvider::create(priv->processPool->supplement<WebNotificationManagerProxy>(), webContext);
+#endif
+#if ENABLE(REMOTE_INSPECTOR)
+    priv->remoteInspectorProtocolHandler = std::make_unique<RemoteInspectorProtocolHandler>(webContext);
 #endif
 }
 

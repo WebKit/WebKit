@@ -1,7 +1,24 @@
 set(JavaScriptCore_OUTPUT_NAME javascriptcoregtk-${WEBKITGTK_API_VERSION})
 
+list(APPEND JavaScriptCore_INCLUDE_DIRECTORIES
+    "${JAVASCRIPTCORE_DIR}/inspector/remote/glib"
+)
+
 configure_file(javascriptcoregtk.pc.in ${CMAKE_BINARY_DIR}/Source/JavaScriptCore/javascriptcoregtk-${WEBKITGTK_API_VERSION}.pc @ONLY)
 configure_file(JavaScriptCore.gir.in ${CMAKE_BINARY_DIR}/JavaScriptCore-${WEBKITGTK_API_VERSION}.gir @ONLY)
+
+list(APPEND JavaScriptCore_SOURCES
+    API/JSRemoteInspector.cpp
+
+    inspector/remote/RemoteAutomationTarget.cpp
+    inspector/remote/RemoteControllableTarget.cpp
+    inspector/remote/RemoteInspectionTarget.cpp
+    inspector/remote/RemoteInspector.cpp
+
+    inspector/remote/glib/RemoteConnectionToTargetGlib.cpp
+    inspector/remote/glib/RemoteInspectorGlib.cpp
+    inspector/remote/glib/RemoteInspectorServer.cpp
+)
 
 add_custom_command(
     OUTPUT ${CMAKE_BINARY_DIR}/JavaScriptCore-${WEBKITGTK_API_VERSION}.typelib

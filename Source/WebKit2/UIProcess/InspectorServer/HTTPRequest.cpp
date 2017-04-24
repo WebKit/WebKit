@@ -26,6 +26,8 @@
 #include "config.h"
 #include "HTTPRequest.h"
 
+#if ENABLE(INSPECTOR_SERVER)
+
 #include <wtf/text/CString.h>
 #include <wtf/text/StringView.h>
 
@@ -126,3 +128,5 @@ HTTPRequest::~HTTPRequest()
 }
 
 } // namespace WebCore
+
+#endif // ENABLE(INSPECTOR_SERVER)

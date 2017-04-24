@@ -23,4 +23,5 @@ LocalizedStringsGtk.cpp
 ../../../WebKit2/UIProcess/API/gtk/WebKitWebViewBase.cpp
 ../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp
 ../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp
+../../../WebKit2/UIProcess/gtk/RemoteWebInspectorProxyGtk.cpp
 ../../../WebKit2/UIProcess/gtk/WebInspectorProxyGtk.cpp

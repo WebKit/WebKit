@@ -2075,6 +2075,7 @@ set(WebCore_SOURCES
     page/Page.cpp
     page/PageConfiguration.cpp
     page/PageConsoleClient.cpp
+    page/PageDebuggable.cpp
     page/PageGroup.cpp
     page/PageGroupLoadDeferrer.cpp
     page/PageOverlay.cpp

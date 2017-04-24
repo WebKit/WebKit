@@ -74,6 +74,10 @@ public:
     WKWebInspectorWKWebView *webView() const { return m_webView.get(); }
 #endif
 
+#if PLATFORM(GTK)
+    void updateWindowTitle(const CString&);
+#endif
+
     void closeFromCrash();
 
 private:
@@ -111,6 +115,10 @@ private:
     RetainPtr<NSWindow> m_window;
     RetainPtr<WKRemoteWebInspectorProxyObjCAdapter> m_objCAdapter;
     HashMap<String, RetainPtr<NSURL>> m_suggestedToActualURLMap;
+#endif
+#if PLATFORM(GTK)
+    GtkWidget* m_webView { nullptr };
+    GtkWidget* m_window { nullptr };
 #endif
 };
 

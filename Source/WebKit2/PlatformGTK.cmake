@@ -231,6 +231,8 @@ list(APPEND WebKit2_SOURCES
     UIProcess/API/gtk/WebKitPrintOperationPrivate.h
     UIProcess/API/gtk/WebKitPrivate.cpp
     UIProcess/API/gtk/WebKitPrivate.h
+    UIProcess/API/gtk/WebKitRemoteInspectorProtocolHandler.cpp
+    UIProcess/API/gtk/WebKitRemoteInspectorProtocolHandler.h
     UIProcess/API/gtk/WebKitResponsePolicyDecision.cpp
     UIProcess/API/gtk/WebKitResponsePolicyDecision.h
     UIProcess/API/gtk/WebKitResponsePolicyDecisionPrivate.h
@@ -299,10 +301,6 @@ list(APPEND WebKit2_SOURCES
     UIProcess/API/gtk/WebKitWindowPropertiesPrivate.h
     UIProcess/API/gtk/webkit2.h
 
-    UIProcess/InspectorServer/gtk/WebInspectorServerGtk.cpp
-
-    UIProcess/InspectorServer/soup/WebSocketServerSoup.cpp
-
     UIProcess/Launcher/gtk/ProcessLauncherGtk.cpp
 
     UIProcess/linux/MemoryPressureMonitor.cpp
@@ -318,6 +316,8 @@ list(APPEND WebKit2_SOURCES
 
     UIProcess/cairo/BackingStoreCairo.cpp
 
+    UIProcess/glib/RemoteInspectorClient.cpp
+
     UIProcess/gstreamer/InstallMissingMediaPluginsPermissionRequest.cpp
     UIProcess/gstreamer/WebPageProxyGStreamer.cpp
 
@@ -329,6 +329,7 @@ list(APPEND WebKit2_SOURCES
     UIProcess/gtk/HardwareAccelerationManager.cpp
     UIProcess/gtk/InputMethodFilter.cpp
     UIProcess/gtk/KeyBindingTranslator.cpp
+    UIProcess/gtk/RemoteWebInspectorProxyGtk.cpp
     UIProcess/gtk/TextCheckerGtk.cpp
     UIProcess/gtk/WaylandCompositor.cpp
     UIProcess/gtk/WebColorPickerGtk.cpp
@@ -514,7 +515,6 @@ list(APPEND WebKit2_SOURCES
 
 list(APPEND WebKit2_DERIVED_SOURCES
     ${DERIVED_SOURCES_WEBKIT2GTK_DIR}/InspectorGResourceBundle.c
-    ${DERIVED_SOURCES_WEBKIT2GTK_DIR}/WebKit2InspectorGResourceBundle.c
     ${DERIVED_SOURCES_WEBKIT2GTK_DIR}/WebKit2ResourcesGResourceBundle.c
 
     ${DERIVED_SOURCES_WEBKIT2GTK_API_DIR}/WebKitEnumTypes.cpp
@@ -893,6 +893,7 @@ list(APPEND WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/UIProcess/API/gtk"
     "${WEBKIT2_DIR}/UIProcess/Network/CustomProtocols/soup"
     "${WEBKIT2_DIR}/UIProcess/Plugins/gtk"
+    "${WEBKIT2_DIR}/UIProcess/glib"
     "${WEBKIT2_DIR}/UIProcess/gstreamer"
     "${WEBKIT2_DIR}/UIProcess/gtk"
     "${WEBKIT2_DIR}/UIProcess/linux"
@@ -1013,14 +1014,6 @@ add_custom_command(
     OUTPUT ${DERIVED_SOURCES_WEBKIT2GTK_DIR}/InspectorGResourceBundle.c
     DEPENDS ${DERIVED_SOURCES_WEBKIT2GTK_DIR}/InspectorGResourceBundle.xml
     COMMAND glib-compile-resources --generate --sourcedir=${CMAKE_SOURCE_DIR}/Source/WebInspectorUI --sourcedir=${DERIVED_SOURCES_WEBINSPECTORUI_DIR} --target=${DERIVED_SOURCES_WEBKIT2GTK_DIR}/InspectorGResourceBundle.c ${DERIVED_SOURCES_WEBKIT2GTK_DIR}/InspectorGResourceBundle.xml
-    VERBATIM
-)
-
-add_custom_command(
-    OUTPUT ${DERIVED_SOURCES_WEBKIT2GTK_DIR}/WebKit2InspectorGResourceBundle.c
-    DEPENDS ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKit2InspectorGResourceBundle.xml
-            ${WEBKIT2_DIR}/UIProcess/InspectorServer/front-end/inspectorPageIndex.html
-    COMMAND glib-compile-resources --generate --sourcedir=${WEBKIT2_DIR}/UIProcess/InspectorServer/front-end --target=${DERIVED_SOURCES_WEBKIT2GTK_DIR}/WebKit2InspectorGResourceBundle.c ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKit2InspectorGResourceBundle.xml
     VERBATIM
 )
 

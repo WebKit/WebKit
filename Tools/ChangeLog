@@ -1,3 +1,21 @@
+2017-04-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Switch to use ENABLE_REMOTE_INSPECTOR instead of ENABLE_INSPECTOR_SERVER for the remote inspector
+        https://bugs.webkit.org/show_bug.cgi?id=166680
+
+        Reviewed by Michael Catanzaro.
+
+        Update remote inspector unit tests.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/InspectorTestServer.cpp:
+        (main):
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestInspectorServer.cpp:
+        (connectToInspectorServer):
+        (waitUntilInspectorServerIsReady):
+        (startTestServer):
+        (testInspectorServerPageList):
+        (beforeAll):
+
 2017-04-23  Youenn Fablet  <youenn@apple.com>
 
         Add a tool to update expected.txt files from EWS bot results

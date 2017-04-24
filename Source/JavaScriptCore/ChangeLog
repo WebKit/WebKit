@@ -1,3 +1,68 @@
+2017-04-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Switch to use ENABLE_REMOTE_INSPECTOR instead of ENABLE_INSPECTOR_SERVER for the remote inspector
+        https://bugs.webkit.org/show_bug.cgi?id=166680
+
+        Reviewed by Michael Catanzaro.
+
+        Add GTK+ port implementation of RemoteInspector.
+
+        * PlatformGTK.cmake:
+        * inspector/remote/RemoteConnectionToTarget.h:
+        * inspector/remote/RemoteInspector.h:
+        * inspector/remote/glib/RemoteConnectionToTargetGlib.cpp: Added.
+        (Inspector::RemoteConnectionToTarget::RemoteConnectionToTarget):
+        (Inspector::RemoteConnectionToTarget::~RemoteConnectionToTarget):
+        (Inspector::RemoteConnectionToTarget::setup):
+        (Inspector::RemoteConnectionToTarget::sendMessageToTarget):
+        (Inspector::RemoteConnectionToTarget::close):
+        (Inspector::RemoteConnectionToTarget::targetClosed):
+        (Inspector::RemoteConnectionToTarget::targetIdentifier):
+        (Inspector::RemoteConnectionToTarget::sendMessageToFrontend):
+        * inspector/remote/glib/RemoteInspectorGlib.cpp: Added.
+        (Inspector::RemoteInspector::singleton):
+        (Inspector::RemoteInspector::RemoteInspector):
+        (Inspector::RemoteInspector::start):
+        (Inspector::RemoteInspector::stopInternal):
+        (Inspector::RemoteInspector::setupConnection):
+        (Inspector::dbusConnectionCallAsyncReadyCallback):
+        (Inspector::RemoteInspector::listingForInspectionTarget):
+        (Inspector::RemoteInspector::listingForAutomationTarget):
+        (Inspector::RemoteInspector::pushListingsNow):
+        (Inspector::RemoteInspector::pushListingsSoon):
+        (Inspector::RemoteInspector::updateAutomaticInspectionCandidate):
+        (Inspector::RemoteInspector::sendAutomaticInspectionCandidateMessage):
+        (Inspector::RemoteInspector::sendMessageToRemote):
+        (Inspector::RemoteInspector::receivedGetTargetListMessage):
+        (Inspector::RemoteInspector::receivedSetupMessage):
+        (Inspector::RemoteInspector::receivedDataMessage):
+        (Inspector::RemoteInspector::receivedCloseMessage):
+        (Inspector::RemoteInspector::setup):
+        (Inspector::RemoteInspector::sendMessageToTarget):
+        (Inspector::RemoteInspector::requestAutomationSession):
+        * inspector/remote/glib/RemoteInspectorServer.cpp: Added.
+        (Inspector::generateConnectionID):
+        (Inspector::RemoteInspectorServer::singleton):
+        (Inspector::RemoteInspectorServer::~RemoteInspectorServer):
+        (Inspector::RemoteInspectorServer::interfaceInfo):
+        (Inspector::RemoteInspectorServer::start):
+        (Inspector::RemoteInspectorServer::newConnectionCallback):
+        (Inspector::RemoteInspectorServer::connectionClosedCallback):
+        (Inspector::RemoteInspectorServer::newConnection):
+        (Inspector::dbusConnectionCallAsyncReadyCallback):
+        (Inspector::RemoteInspectorServer::setTargetList):
+        (Inspector::RemoteInspectorServer::clientConnectionClosedCallback):
+        (Inspector::RemoteInspectorServer::getTargetList):
+        (Inspector::RemoteInspectorServer::setup):
+        (Inspector::RemoteInspectorServer::close):
+        (Inspector::RemoteInspectorServer::clientConnectionClosed):
+        (Inspector::RemoteInspectorServer::connectionClosed):
+        (Inspector::RemoteInspectorServer::sendMessageToBackend):
+        (Inspector::RemoteInspectorServer::sendMessageToFrontend):
+        (Inspector::RemoteInspectorServer::startAutomationSession):
+        * inspector/remote/glib/RemoteInspectorServer.h: Added.
+        (Inspector::RemoteInspectorServer::isRunning):
+
 2017-04-24  Joseph Pecoraro  <pecoraro@apple.com>
 
         test262: test262/test/language/expressions/generators/yield-as-label.js
