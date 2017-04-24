@@ -1,3 +1,21 @@
+2017-04-24  Saam Barati  <sbarati@apple.com>
+
+        [mac debug] LayoutTest workers/wasm-long-compile-many.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=171120
+        <rdar://problem/31781889>
+
+        Rubber stamped by Mark Lam.
+
+        Make the wasm binary we compile close to 50% smaller.
+
+        * workers/wasm-resources/long-compile-many.js:
+        (i.async.run):
+        (i.worker.onmessage):
+        * workers/wasm-resources/long-compile-worker.js:
+        * workers/wasm-resources/long-compile.js:
+        (async.run):
+        (worker.onmessage):
+
 2017-04-24  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark media/modern-media-controls/scrubber-support/scrubber-support-click.html as flaky.

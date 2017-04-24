@@ -22,7 +22,7 @@ for (let i = 0; i < numWorkers; ++i) {
 
         async function run(module) {
             let instance = await WebAssembly.instantiate(module);
-            const count = 12500;
+            const count = 7000;
             if (instance.exports.f1(i) !== (i*count + i*2))
                 console.log("Bad result");
             else

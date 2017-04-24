@@ -1819,7 +1819,7 @@ class Builder {
                 .GetLocal(0)
                 .I32Add();
 
-    const count = 12500;
+    const count = 7000;
     for (let i = 0; i < count; i++) {
         builder = builder.GetLocal(0).I32Add();
     }

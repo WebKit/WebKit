@@ -21,7 +21,7 @@ worker.onmessage = function(e) {
     async function run(module) {
         let start = Date.now();
         let instance = await WebAssembly.instantiate(module);
-        const count = 12500;
+        const count = 7000;
         if (instance.exports.f1(4) !== (4*count + 4*2))
             console.log("Bad result");
         else
