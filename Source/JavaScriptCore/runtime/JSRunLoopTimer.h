@@ -62,6 +62,10 @@ public:
     void cancelTimer();
     bool isScheduled() const { return m_isScheduled; }
 
+    // Note: The only thing the timer notification callback cannot do is
+    // call scheduleTimer(). This will cause a deadlock. It would not
+    // be hard to make this work, however, there are no clients that need
+    // this behavior. We should implement it only if we find that we need it.
     JS_EXPORT_PRIVATE void addTimerSetNotification(TimerNotificationCallback);
     JS_EXPORT_PRIVATE void removeTimerSetNotification(TimerNotificationCallback);
 
@@ -87,6 +91,7 @@ protected:
     RunLoop::Timer<JSRunLoopTimer> m_timer;
 #endif
 
+    Lock m_timerCallbacksLock;
     HashSet<TimerNotificationCallback> m_timerSetCallbacks;
     
 private:

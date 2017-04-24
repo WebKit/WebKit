@@ -104,6 +104,7 @@ void JSRunLoopTimer::scheduleTimer(Seconds intervalInSeconds)
 {
     CFRunLoopTimerSetNextFireDate(m_timer.get(), CFAbsoluteTimeGetCurrent() + intervalInSeconds.seconds());
     m_isScheduled = true;
+    auto locker = holdLock(m_timerCallbacksLock);
     for (auto& task : m_timerSetCallbacks)
         task->run();
 }
@@ -142,6 +143,8 @@ void JSRunLoopTimer::scheduleTimer(Seconds intervalInSeconds)
 {
     m_timer.startOneShot(intervalInSeconds);
     m_isScheduled = true;
+
+    auto locker = holdLock(m_timerCallbacksLock);
     for (auto& task : m_timerSetCallbacks)
         task->run();
 }
@@ -156,11 +159,13 @@ void JSRunLoopTimer::cancelTimer()
 
 void JSRunLoopTimer::addTimerSetNotification(TimerNotificationCallback callback)
 {
+    auto locker = holdLock(m_timerCallbacksLock);
     m_timerSetCallbacks.add(callback);
 }
 
 void JSRunLoopTimer::removeTimerSetNotification(TimerNotificationCallback callback)
 {
+    auto locker = holdLock(m_timerCallbacksLock);
     m_timerSetCallbacks.remove(callback);
 }
 
