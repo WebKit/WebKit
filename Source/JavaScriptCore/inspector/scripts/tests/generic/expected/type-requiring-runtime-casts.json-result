@@ -1546,6 +1546,9 @@ using namespace Inspector;
 
 - (TestProtocolTestRecursiveObject1 *)tree
 {
+    RWIProtocolJSONObject *object = [super objectForKey:@"tree"];
+    if (!object)
+        return nil;
     return [[TestProtocolTestRecursiveObject1 alloc] initWithInspectorObject:[[super objectForKey:@"tree"] toInspectorObject].get()];
 }
 
@@ -1577,6 +1580,9 @@ using namespace Inspector;
 
 - (TestProtocolTestRecursiveObject2 *)obj
 {
+    RWIProtocolJSONObject *object = [super objectForKey:@"obj"];
+    if (!object)
+        return nil;
     return [[TestProtocolTestRecursiveObject2 alloc] initWithInspectorObject:[[super objectForKey:@"obj"] toInspectorObject].get()];
 }
 
@@ -1608,6 +1614,9 @@ using namespace Inspector;
 
 - (TestProtocolTestRecursiveObject1 *)obj
 {
+    RWIProtocolJSONObject *object = [super objectForKey:@"obj"];
+    if (!object)
+        return nil;
     return [[TestProtocolTestRecursiveObject1 alloc] initWithInspectorObject:[[super objectForKey:@"obj"] toInspectorObject].get()];
 }
 

@@ -1,3 +1,22 @@
+2017-04-24  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: ObjC RWIProtocol codegen should better handle optional members
+        https://bugs.webkit.org/show_bug.cgi?id=171251
+        <rdar://problem/31697002>
+
+        Reviewed by Brian Burg.
+
+        * inspector/scripts/codegen/generate_objc_protocol_types_implementation.py:
+        (ObjCProtocolTypesImplementationGenerator._generate_getter_for_member):
+        * inspector/scripts/codegen/objc_generator.py:
+        (ObjCGenerator.protocol_to_objc_expression_for_member):
+        (ObjCGenerator.protocol_to_objc_code_block_for_object_member):
+        Always be safe and nil check object property accesses, optional or not.
+
+        * inspector/scripts/tests/generic/expected/type-declaration-object-type.json-result:
+        * inspector/scripts/tests/generic/expected/type-requiring-runtime-casts.json-result:
+        Rebaselined inspector generator tests.
+
 2017-04-24  Saam Barati  <sbarati@apple.com>
 
         ASSERTION FAILED: m_table seen with workers/wasm-hashset LayoutTests

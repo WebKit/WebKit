@@ -1926,6 +1926,9 @@ using namespace Inspector;
 
 - (RWIProtocolJSONObject *)values
 {
+    RWIProtocolJSONObject *object = [super objectForKey:@"values"];
+    if (!object)
+        return nil;
     return [[RWIProtocolJSONObject alloc] initWithInspectorObject:[[super objectForKey:@"values"] toInspectorObject].get()];
 }
 
@@ -1936,6 +1939,9 @@ using namespace Inspector;
 
 - (RWIProtocolJSONObject *)payload
 {
+    RWIProtocolJSONObject *object = [super objectForKey:@"payload"];
+    if (!object)
+        return nil;
     return [[RWIProtocolJSONObject alloc] initWithInspectorObject:[[super objectForKey:@"payload"] toInspectorObject].get()];
 }
 
@@ -1946,6 +1952,9 @@ using namespace Inspector;
 
 - (TestProtocolDatabaseError *)error
 {
+    RWIProtocolJSONObject *object = [super objectForKey:@"error"];
+    if (!object)
+        return nil;
     return [[TestProtocolDatabaseError alloc] initWithInspectorObject:[[super objectForKey:@"error"] toInspectorObject].get()];
 }
 
@@ -2092,6 +2101,9 @@ using namespace Inspector;
 
 - (RWIProtocolJSONObject *)values
 {
+    RWIProtocolJSONObject *object = [super objectForKey:@"values"];
+    if (!object)
+        return nil;
     return [[RWIProtocolJSONObject alloc] initWithInspectorObject:[[super objectForKey:@"values"] toInspectorObject].get()];
 }
 
@@ -2102,6 +2114,9 @@ using namespace Inspector;
 
 - (RWIProtocolJSONObject *)payload
 {
+    RWIProtocolJSONObject *object = [super objectForKey:@"payload"];
+    if (!object)
+        return nil;
     return [[RWIProtocolJSONObject alloc] initWithInspectorObject:[[super objectForKey:@"payload"] toInspectorObject].get()];
 }
 
@@ -2112,6 +2127,9 @@ using namespace Inspector;
 
 - (TestProtocolDatabaseError *)error
 {
+    RWIProtocolJSONObject *object = [super objectForKey:@"error"];
+    if (!object)
+        return nil;
     return [[TestProtocolDatabaseError alloc] initWithInspectorObject:[[super objectForKey:@"error"] toInspectorObject].get()];
 }
 
@@ -2376,6 +2394,9 @@ using namespace Inspector;
 
 - (RWIProtocolJSONObject *)values
 {
+    RWIProtocolJSONObject *object = [super objectForKey:@"values"];
+    if (!object)
+        return nil;
     return [[RWIProtocolJSONObject alloc] initWithInspectorObject:[[super objectForKey:@"values"] toInspectorObject].get()];
 }
 
@@ -2386,6 +2407,9 @@ using namespace Inspector;
 
 - (RWIProtocolJSONObject *)payload
 {
+    RWIProtocolJSONObject *object = [super objectForKey:@"payload"];
+    if (!object)
+        return nil;
     return [[RWIProtocolJSONObject alloc] initWithInspectorObject:[[super objectForKey:@"payload"] toInspectorObject].get()];
 }
 
@@ -2396,6 +2420,9 @@ using namespace Inspector;
 
 - (TestProtocolDatabaseError *)error
 {
+    RWIProtocolJSONObject *object = [super objectForKey:@"error"];
+    if (!object)
+        return nil;
     return [[TestProtocolDatabaseError alloc] initWithInspectorObject:[[super objectForKey:@"error"] toInspectorObject].get()];
 }
 

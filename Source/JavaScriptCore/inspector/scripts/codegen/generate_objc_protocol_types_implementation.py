@@ -31,7 +31,7 @@ from string import Template
 
 from generator import Generator, ucfirst
 from models import ObjectType, EnumType, Frameworks
-from objc_generator import ObjCGenerator
+from objc_generator import ObjCTypeCategory, ObjCGenerator
 from objc_generator_templates import ObjCGeneratorTemplates as ObjCTemplates
 
 log = logging.getLogger('global')
@@ -206,10 +206,18 @@ class ObjCProtocolTypesImplementationGenerator(ObjCGenerator):
         var_name = ObjCGenerator.identifier_to_objc_identifier(member.member_name)
         getter_method = ObjCGenerator.objc_getter_method_for_member(declaration, member)
         basic_expression = '[super %s:@"%s"]' % (getter_method, member.member_name)
-        conversion_expression = self.protocol_to_objc_expression_for_member(declaration, member, basic_expression)
-        lines = []
-        lines.append('- (%s)%s' % (objc_type, var_name))
-        lines.append('{')
-        lines.append('    return %s;' % conversion_expression)
-        lines.append('}')
+        category = ObjCTypeCategory.category_for_type(member.type)
+        if category is ObjCTypeCategory.Object:
+            lines = []
+            lines.append('- (%s)%s' % (objc_type, var_name))
+            lines.append('{')
+            lines.append(self.protocol_to_objc_code_block_for_object_member(declaration, member, basic_expression))
+            lines.append('}')
+        else:
+            conversion_expression = self.protocol_to_objc_expression_for_member(declaration, member, basic_expression)
+            lines = []
+            lines.append('- (%s)%s' % (objc_type, var_name))
+            lines.append('{')
+            lines.append('    return %s;' % conversion_expression)
+            lines.append('}')
         return '\n'.join(lines)
