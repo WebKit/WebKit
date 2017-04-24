@@ -3451,10 +3451,12 @@
           score += 1;
           if (retry > 0) {
             errors += 1;
-            log += "Test " + zeroPaddedIndex + " passed, but took " + retry + " attempts (less than perfect).\n";
+            // Commented out as this would make the layout test flaky.
+            // log += "Test " + zeroPaddedIndex + " passed, but took " + retry + " attempts (less than perfect).\n";
           } else if (elapsedTest > 33) { // 30fps
             errors += 1;
-            log += "Test " + zeroPaddedIndex + " passed, but took " + elapsedTest + "ms (less than 30fps)\n";
+            // Commented out as this would make the layout test flaky.
+            // log += "Test " + zeroPaddedIndex + " passed, but took " + elapsedTest + "ms (less than 30fps)\n";
           }
         } else {
           fail("no error message");
@@ -3475,7 +3477,8 @@
     } else {
       var endTime = new Date();
       var elapsedTime = ((endTime - startTime) - (delay * tests.length)) / 1000;
-      log += "Total elapsed time: " + elapsedTime.toFixed(2) + "s";
+      // Commented out as this would make the layout test flaky.
+      // log += "Total elapsed time: " + elapsedTime.toFixed(2) + "s";
       if (errors == 0)
         log += "\nNo JS errors and no timing issues.\nWas the rendering pixel-for-pixel perfect too?";
 

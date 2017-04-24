@@ -1,5 +1,25 @@
 2017-04-24  Chris Dumez  <cdumez@apple.com>
 
+        createElementNS() should now throw only InvalidCharacterError, not NamespaceError
+        https://bugs.webkit.org/show_bug.cgi?id=171052
+
+        Reviewed by Sam Weinig.
+
+        Updated / rebaselined existing tests to reflect behavior change.
+
+        * fast/dom/DOMImplementation/createDocument-namespace-err-expected.txt:
+        * fast/dom/DOMImplementation/createDocumentType-err-expected.txt:
+        * fast/dom/DOMImplementation/script-tests/createDocument-namespace-err.js:
+        * fast/dom/DOMImplementation/script-tests/createDocumentType-err.js:
+        * fast/dom/Document/createAttributeNS-namespace-err-expected.txt:
+        * fast/dom/Document/createElementNS-namespace-err-expected.txt:
+        * fast/dom/Document/script-tests/createAttributeNS-namespace-err.js:
+        * fast/dom/Document/script-tests/createElementNS-namespace-err.js:
+        * fast/dom/Element/script-tests/setAttributeNS-namespace-err.js:
+        * fast/dom/Element/setAttributeNS-namespace-err-expected.txt:
+
+2017-04-24  Chris Dumez  <cdumez@apple.com>
+
         REGRESSION (214503): Webkit crash under RenderElement::repaintForPausedImageAnimationsIfNeeded() when scrolling giphy pages
         https://bugs.webkit.org/show_bug.cgi?id=171243
         <rdar://problem/31715572>

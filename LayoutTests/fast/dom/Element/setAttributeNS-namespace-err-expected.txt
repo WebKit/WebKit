@@ -24,15 +24,15 @@ PASS element.setAttributeNS("http://example.com/", "0div", 'value'); threw INVAL
 PASS element.setAttributeNS("http://example.com/", "di<v", 'value'); threw INVALID_CHARACTER_ERR
 PASS element.setAttributeNS("http://example.com/", "-div", 'value'); threw INVALID_CHARACTER_ERR
 PASS element.setAttributeNS("http://example.com/", ".div", 'value'); threw INVALID_CHARACTER_ERR
-PASS element.setAttributeNS(null, ":div", 'value'); threw NAMESPACE_ERR
-PASS element.setAttributeNS(null, "div:", 'value'); threw NAMESPACE_ERR
-PASS element.setAttributeNS("http://example.com/", ":div", 'value'); threw NAMESPACE_ERR
-PASS element.setAttributeNS("http://example.com/", "div:", 'value'); threw NAMESPACE_ERR
+PASS element.setAttributeNS(null, ":div", 'value'); threw INVALID_CHARACTER_ERR
+PASS element.setAttributeNS(null, "div:", 'value'); threw INVALID_CHARACTER_ERR
+PASS element.setAttributeNS("http://example.com/", ":div", 'value'); threw INVALID_CHARACTER_ERR
+PASS element.setAttributeNS("http://example.com/", "div:", 'value'); threw INVALID_CHARACTER_ERR
 PASS element.setAttributeNS(null, "d:iv", 'value'); threw NAMESPACE_ERR
-PASS element.setAttributeNS(null, "a:b:c", 'value'); valid XML name, invalid QName; threw NAMESPACE_ERR
-PASS element.setAttributeNS("http://example.com/", "a:b:c", 'value'); valid XML name, invalid QName; threw NAMESPACE_ERR
-PASS element.setAttributeNS(null, "a::c", 'value'); valid XML name, invalid QName; threw NAMESPACE_ERR
-PASS element.setAttributeNS("http://example.com/", "a::c", 'value'); valid XML name, invalid QName; threw NAMESPACE_ERR
+PASS element.setAttributeNS(null, "a:b:c", 'value'); valid XML name, invalid QName; threw INVALID_CHARACTER_ERR
+PASS element.setAttributeNS("http://example.com/", "a:b:c", 'value'); valid XML name, invalid QName; threw INVALID_CHARACTER_ERR
+PASS element.setAttributeNS(null, "a::c", 'value'); valid XML name, invalid QName; threw INVALID_CHARACTER_ERR
+PASS element.setAttributeNS("http://example.com/", "a::c", 'value'); valid XML name, invalid QName; threw INVALID_CHARACTER_ERR
 PASS element.setAttributeNS("http://example.com/", "a:0", 'value'); valid XML name, not a valid QName; threw INVALID_CHARACTER_ERR
 PASS element.setAttributeNS("http://example.com/", "0:a", 'value'); 0 at start makes it not a valid XML name; threw INVALID_CHARACTER_ERR
 PASS element.setAttributeNS("http://example.com/", "a:_", 'value')

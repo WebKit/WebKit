@@ -4,8 +4,8 @@
 <link rel=help href="https://dom.spec.whatwg.org/#attr">
 <link rel=help href="https://dom.spec.whatwg.org/#dom-element-setattribute">
 <link rel=help href="https://dom.spec.whatwg.org/#dom-element-setattributens">
-<script src="/resources/testharness.js"></script>
-<script src="/resources/testharnessreport.js"></script>
+<script src="../../../../../resources/testharness.js"></script>
+<script src="../../../../../resources/testharnessreport.js"></script>
 <script src="attributes.js"></script>
 <script src="productions.js"></script>
 <div id="log"></div>
@@ -130,12 +130,12 @@ test(function() {
 test(function() {
   var el = document.createElement("foo")
   for (var i = 0, il = invalid_qnames.length; i < il; ++i) {
-    assert_throws("NAMESPACE_ERR",
+    assert_throws("INVALID_CHARACTER_ERR",
                   function() { el.setAttributeNS("a", invalid_qnames[i], "fail") },
                   "Expected exception for " + invalid_qnames[i] + ".")
   }
 }, "When qualifiedName does not match the QName production, an " +
-   "NAMESPACE_ERR exception is to be thrown.")
+   "INVALID_CHARACTER_ERR exception is to be thrown.")
 
 // Step 3
 test(function() {
@@ -443,6 +443,30 @@ test(function() {
    el3.setAttributeNode(attrNode);
    assert_equals(el3.getAttribute("foo"), "bar");
 }, "Basic functionality of setAttributeNode")
+
+test(function() {
+  var el = document.createElement("div");
+  var attr1 = document.createAttributeNS("ns1", "p1:name");
+  attr1.value = "value1";
+  var attr2 = document.createAttributeNS("ns2", "p2:name");
+  attr2.value = "value2";
+  el.setAttributeNode(attr1);
+  el.setAttributeNode(attr2);
+  assert_equals(el.getAttributeNodeNS("ns1", "name").value, "value1");
+  assert_equals(el.getAttributeNodeNS("ns2", "name").value, "value2");
+}, "setAttributeNode should distinguish attributes with same local name and different namespaces")
+
+test(function() {
+  var el = document.createElement("div");
+  var attr1 = document.createAttributeNS("ns1", "p1:name");
+  attr1.value = "value1";
+  var attr2 = document.createAttributeNS("ns1", "p1:NAME");
+  attr2.value = "VALUE2";
+  el.setAttributeNode(attr1);
+  el.setAttributeNode(attr2);
+  assert_equals(el.getAttributeNodeNS("ns1", "name").value, "value1");
+  assert_equals(el.getAttributeNodeNS("ns1", "NAME").value, "VALUE2");
+}, "setAttributeNode doesn't have case-insensitivity even with an HTMLElement")
 
 test(function() {
   var el = document.createElement("div")

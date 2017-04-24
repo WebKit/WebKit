@@ -1,5 +1,26 @@
 2017-04-24  Chris Dumez  <cdumez@apple.com>
 
+        createElementNS() should now throw only InvalidCharacterError, not NamespaceError
+        https://bugs.webkit.org/show_bug.cgi?id=171052
+
+        Reviewed by Sam Weinig.
+
+        Validating a qualified name should only throw InvalidCharacterError, not NamespaceError,
+        after:
+        - https://github.com/whatwg/dom/issues/319
+        - https://github.com/w3c/web-platform-tests/issues/5161
+        - https://github.com/whatwg/dom/issues/423
+
+        Latest spec:
+        - https://dom.spec.whatwg.org/#validate
+
+        No new tests, updated web-platform-tests.
+
+        * dom/Document.cpp:
+        (WebCore::Document::parseQualifiedName):
+
+2017-04-24  Chris Dumez  <cdumez@apple.com>
+
         REGRESSION (214503): Webkit crash under RenderElement::repaintForPausedImageAnimationsIfNeeded() when scrolling giphy pages
         https://bugs.webkit.org/show_bug.cgi?id=171243
         <rdar://problem/31715572>

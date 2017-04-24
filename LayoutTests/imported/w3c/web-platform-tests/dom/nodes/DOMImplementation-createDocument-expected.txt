@@ -31,11 +31,11 @@ PASS createDocument test: null,"^^",null,"INVALID_CHARACTER_ERR"
 PASS createDocument test: null,"fo o",null,"INVALID_CHARACTER_ERR" 
 PASS createDocument test: null,"-foo",null,"INVALID_CHARACTER_ERR" 
 PASS createDocument test: null,".foo",null,"INVALID_CHARACTER_ERR" 
-PASS createDocument test: null,":foo",null,"NAMESPACE_ERR" 
+PASS createDocument test: null,":foo",null,"INVALID_CHARACTER_ERR" 
 PASS createDocument test: null,"f:oo",null,"NAMESPACE_ERR" 
-PASS createDocument test: null,"foo:",null,"NAMESPACE_ERR" 
-PASS createDocument test: null,"f:o:o",null,"NAMESPACE_ERR" 
-PASS createDocument test: null,":",null,"NAMESPACE_ERR" 
+PASS createDocument test: null,"foo:",null,"INVALID_CHARACTER_ERR" 
+PASS createDocument test: null,"f:o:o",null,"INVALID_CHARACTER_ERR" 
+PASS createDocument test: null,":",null,"INVALID_CHARACTER_ERR" 
 PASS createDocument test: null,"xml",null,null 
 PASS createDocument test: metadata for null,"xml",null 
 PASS createDocument test: characterSet aliases for null,"xml",null 
@@ -50,9 +50,9 @@ PASS createDocument test: null,"null:xml",null,"NAMESPACE_ERR"
 PASS createDocument test: "",null,null,null 
 PASS createDocument test: metadata for "",null,null 
 PASS createDocument test: characterSet aliases for "",null,null 
-PASS createDocument test: "",":foo",null,"NAMESPACE_ERR" 
+PASS createDocument test: "",":foo",null,"INVALID_CHARACTER_ERR" 
 PASS createDocument test: "","f:oo",null,"NAMESPACE_ERR" 
-PASS createDocument test: "","foo:",null,"NAMESPACE_ERR" 
+PASS createDocument test: "","foo:",null,"INVALID_CHARACTER_ERR" 
 PASS createDocument test: undefined,null,null,null 
 PASS createDocument test: metadata for undefined,null,null 
 PASS createDocument test: characterSet aliases for undefined,null,null 
@@ -69,10 +69,10 @@ PASS createDocument test: characterSet aliases for undefined,"f1oo",null
 PASS createDocument test: undefined,"foo1",null,null 
 PASS createDocument test: metadata for undefined,"foo1",null 
 PASS createDocument test: characterSet aliases for undefined,"foo1",null 
-PASS createDocument test: undefined,":foo",null,"NAMESPACE_ERR" 
+PASS createDocument test: undefined,":foo",null,"INVALID_CHARACTER_ERR" 
 PASS createDocument test: undefined,"f:oo",null,"NAMESPACE_ERR" 
-PASS createDocument test: undefined,"foo:",null,"NAMESPACE_ERR" 
-PASS createDocument test: undefined,"f::oo",null,"NAMESPACE_ERR" 
+PASS createDocument test: undefined,"foo:",null,"INVALID_CHARACTER_ERR" 
+PASS createDocument test: undefined,"f::oo",null,"INVALID_CHARACTER_ERR" 
 PASS createDocument test: undefined,"xml",null,null 
 PASS createDocument test: metadata for undefined,"xml",null 
 PASS createDocument test: characterSet aliases for undefined,"xml",null 
@@ -97,19 +97,19 @@ PASS createDocument test: characterSet aliases for "http://example.com/","f1oo",
 PASS createDocument test: "http://example.com/","foo1",null,null 
 PASS createDocument test: metadata for "http://example.com/","foo1",null 
 PASS createDocument test: characterSet aliases for "http://example.com/","foo1",null 
-PASS createDocument test: "http://example.com/",":foo",null,"NAMESPACE_ERR" 
+PASS createDocument test: "http://example.com/",":foo",null,"INVALID_CHARACTER_ERR" 
 PASS createDocument test: "http://example.com/","f:oo",null,null 
 PASS createDocument test: metadata for "http://example.com/","f:oo",null 
 PASS createDocument test: characterSet aliases for "http://example.com/","f:oo",null 
-PASS createDocument test: "http://example.com/","f:o:o",null,"NAMESPACE_ERR" 
-PASS createDocument test: "http://example.com/","foo:",null,"NAMESPACE_ERR" 
-PASS createDocument test: "http://example.com/","f::oo",null,"NAMESPACE_ERR" 
-FAIL createDocument test: "http://example.com/","a:0",null,"NAMESPACE_ERR" assert_throws: function "function () { document.implementation.createDocument(namespace, qualifiedName, doctype) }" threw object "InvalidCharacterError (DOM Exception 5): The string contains invalid characters." that is not a DOMException NAMESPACE_ERR: property "code" is equal to 5, expected 14
+PASS createDocument test: "http://example.com/","f:o:o",null,"INVALID_CHARACTER_ERR" 
+PASS createDocument test: "http://example.com/","foo:",null,"INVALID_CHARACTER_ERR" 
+PASS createDocument test: "http://example.com/","f::oo",null,"INVALID_CHARACTER_ERR" 
+PASS createDocument test: "http://example.com/","a:0",null,"INVALID_CHARACTER_ERR" 
 PASS createDocument test: "http://example.com/","0:a",null,"INVALID_CHARACTER_ERR" 
 PASS createDocument test: "http://example.com/","a:_",null,null 
 PASS createDocument test: metadata for "http://example.com/","a:_",null 
 PASS createDocument test: characterSet aliases for "http://example.com/","a:_",null 
-FAIL createDocument test: "http://example.com/","a:ெ",null,"NAMESPACE_ERR" assert_throws: function "function () { document.implementation.createDocument(namespace, qualifiedName, doctype) }" threw object "InvalidCharacterError (DOM Exception 5): The string contains invalid characters." that is not a DOMException NAMESPACE_ERR: property "code" is equal to 5, expected 14
+PASS createDocument test: "http://example.com/","a:ெ",null,"INVALID_CHARACTER_ERR" 
 PASS createDocument test: "http://example.com/","ெ:a",null,"INVALID_CHARACTER_ERR" 
 PASS createDocument test: "http://example.com/","a:aெ",null,null 
 PASS createDocument test: metadata for "http://example.com/","a:aெ",null 
@@ -170,7 +170,7 @@ PASS createDocument test: characterSet aliases for "http://example.com/","XMLNS:
 PASS createDocument test: "http://example.com/","xmlfoo:bar",null,null 
 PASS createDocument test: metadata for "http://example.com/","xmlfoo:bar",null 
 PASS createDocument test: characterSet aliases for "http://example.com/","xmlfoo:bar",null 
-PASS createDocument test: "http://example.com/","prefix::local",null,"NAMESPACE_ERR" 
+PASS createDocument test: "http://example.com/","prefix::local",null,"INVALID_CHARACTER_ERR" 
 PASS createDocument test: "http://example.com/","namespaceURI:{",null,"INVALID_CHARACTER_ERR" 
 PASS createDocument test: "http://example.com/","namespaceURI:}",null,"INVALID_CHARACTER_ERR" 
 PASS createDocument test: "http://example.com/","namespaceURI:~",null,"INVALID_CHARACTER_ERR" 
@@ -208,11 +208,11 @@ PASS createDocument test: characterSet aliases for "/","f1oo",null
 PASS createDocument test: "/","foo1",null,null 
 PASS createDocument test: metadata for "/","foo1",null 
 PASS createDocument test: characterSet aliases for "/","foo1",null 
-PASS createDocument test: "/",":foo",null,"NAMESPACE_ERR" 
+PASS createDocument test: "/",":foo",null,"INVALID_CHARACTER_ERR" 
 PASS createDocument test: "/","f:oo",null,null 
 PASS createDocument test: metadata for "/","f:oo",null 
 PASS createDocument test: characterSet aliases for "/","f:oo",null 
-PASS createDocument test: "/","foo:",null,"NAMESPACE_ERR" 
+PASS createDocument test: "/","foo:",null,"INVALID_CHARACTER_ERR" 
 PASS createDocument test: "/","xml",null,null 
 PASS createDocument test: metadata for "/","xml",null 
 PASS createDocument test: characterSet aliases for "/","xml",null 
@@ -235,11 +235,11 @@ PASS createDocument test: characterSet aliases for "http://www.w3.org/XML/1998/n
 PASS createDocument test: "http://www.w3.org/XML/1998/namespace","foo1",null,null 
 PASS createDocument test: metadata for "http://www.w3.org/XML/1998/namespace","foo1",null 
 PASS createDocument test: characterSet aliases for "http://www.w3.org/XML/1998/namespace","foo1",null 
-PASS createDocument test: "http://www.w3.org/XML/1998/namespace",":foo",null,"NAMESPACE_ERR" 
+PASS createDocument test: "http://www.w3.org/XML/1998/namespace",":foo",null,"INVALID_CHARACTER_ERR" 
 PASS createDocument test: "http://www.w3.org/XML/1998/namespace","f:oo",null,null 
 PASS createDocument test: metadata for "http://www.w3.org/XML/1998/namespace","f:oo",null 
 PASS createDocument test: characterSet aliases for "http://www.w3.org/XML/1998/namespace","f:oo",null 
-PASS createDocument test: "http://www.w3.org/XML/1998/namespace","foo:",null,"NAMESPACE_ERR" 
+PASS createDocument test: "http://www.w3.org/XML/1998/namespace","foo:",null,"INVALID_CHARACTER_ERR" 
 PASS createDocument test: "http://www.w3.org/XML/1998/namespace","xml",null,null 
 PASS createDocument test: metadata for "http://www.w3.org/XML/1998/namespace","xml",null 
 PASS createDocument test: characterSet aliases for "http://www.w3.org/XML/1998/namespace","xml",null 
@@ -260,9 +260,9 @@ PASS createDocument test: "http://www.w3.org/2000/xmlns/","foo",null,"NAMESPACE_
 PASS createDocument test: "http://www.w3.org/2000/xmlns/","1foo",null,"INVALID_CHARACTER_ERR" 
 PASS createDocument test: "http://www.w3.org/2000/xmlns/","f1oo",null,"NAMESPACE_ERR" 
 PASS createDocument test: "http://www.w3.org/2000/xmlns/","foo1",null,"NAMESPACE_ERR" 
-PASS createDocument test: "http://www.w3.org/2000/xmlns/",":foo",null,"NAMESPACE_ERR" 
+PASS createDocument test: "http://www.w3.org/2000/xmlns/",":foo",null,"INVALID_CHARACTER_ERR" 
 PASS createDocument test: "http://www.w3.org/2000/xmlns/","f:oo",null,"NAMESPACE_ERR" 
-PASS createDocument test: "http://www.w3.org/2000/xmlns/","foo:",null,"NAMESPACE_ERR" 
+PASS createDocument test: "http://www.w3.org/2000/xmlns/","foo:",null,"INVALID_CHARACTER_ERR" 
 PASS createDocument test: "http://www.w3.org/2000/xmlns/","xml",null,"NAMESPACE_ERR" 
 PASS createDocument test: "http://www.w3.org/2000/xmlns/","xmlns",null,null 
 PASS createDocument test: metadata for "http://www.w3.org/2000/xmlns/","xmlns",null 
@@ -284,11 +284,11 @@ PASS createDocument test: characterSet aliases for "foo:","f1oo",null
 PASS createDocument test: "foo:","foo1",null,null 
 PASS createDocument test: metadata for "foo:","foo1",null 
 PASS createDocument test: characterSet aliases for "foo:","foo1",null 
-PASS createDocument test: "foo:",":foo",null,"NAMESPACE_ERR" 
+PASS createDocument test: "foo:",":foo",null,"INVALID_CHARACTER_ERR" 
 PASS createDocument test: "foo:","f:oo",null,null 
 PASS createDocument test: metadata for "foo:","f:oo",null 
 PASS createDocument test: characterSet aliases for "foo:","f:oo",null 
-PASS createDocument test: "foo:","foo:",null,"NAMESPACE_ERR" 
+PASS createDocument test: "foo:","foo:",null,"INVALID_CHARACTER_ERR" 
 PASS createDocument test: "foo:","xml",null,null 
 PASS createDocument test: metadata for "foo:","xml",null 
 PASS createDocument test: characterSet aliases for "foo:","xml",null 

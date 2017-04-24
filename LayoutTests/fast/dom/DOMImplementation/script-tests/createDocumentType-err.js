@@ -36,17 +36,17 @@ var allTests = [
    { args: [null, ""], name: "TypeError" },
    { args: ["", null], name: "TypeError" },
    { args: ["", ""], name: "TypeError" },
-   { args: ["a:", null, null], code: 14 },
-   { args: [":foo", null, null], code: 14 },
-   { args: [":", null, null], code: 14 },
+   { args: ["a:", null, null], code: 5 },
+   { args: [":foo", null, null], code: 5 },
+   { args: [":", null, null], code: 5 },
    { args: ["foo", null, null] },
    { args: ["foo:bar", null, null] },
-   { args: ["foo::bar", null, null], code: 14 },
+   { args: ["foo::bar", null, null], code: 5 },
    { args: ["\t:bar", null, null], code: 5 },
    { args: ["foo:\t", null, null], code: 5 },
    { args: ["foo :bar", null, null], code: 5 },
    { args: ["foo: bar", null, null], code: 5 },
-   { args: ["a:b:c", null, null], code: 14, message: "valid XML name, invalid QName" },
+   { args: ["a:b:c", null, null], code: 5, message: "valid XML name, invalid QName" },
 ];
 
 function sourceify(v)

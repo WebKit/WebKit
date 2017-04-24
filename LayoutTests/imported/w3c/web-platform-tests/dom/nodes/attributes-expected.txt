@@ -10,7 +10,7 @@ PASS setAttribute should set the first attribute with the given name
 PASS setAttribute should set the attribute with the given qualified name 
 PASS When qualifiedName does not match the Name production, an INVALID_CHARACTER_ERR exception is to be thrown. (setAttributeNS) 
 PASS When qualifiedName does not match the Name production, an INVALID_CHARACTER_ERR exception is to be thrown, even if the attribute is already present. (setAttributeNS) 
-PASS When qualifiedName does not match the QName production, an NAMESPACE_ERR exception is to be thrown. 
+PASS When qualifiedName does not match the QName production, an INVALID_CHARACTER_ERR exception is to be thrown. 
 PASS null and the empty string should result in a null namespace. 
 PASS A namespace is required to use a prefix. 
 PASS The xml prefix should not be allowed for arbitrary namespaces 
@@ -39,6 +39,8 @@ PASS Attribute with prefix in local name
 PASS Attribute loses its owner when removed 
 PASS Basic functionality of getAttributeNode/getAttributeNodeNS 
 PASS Basic functionality of setAttributeNode 
+PASS setAttributeNode should distinguish attributes with same local name and different namespaces 
+PASS setAttributeNode doesn't have case-insensitivity even with an HTMLElement 
 PASS Basic functionality of setAttributeNodeNS 
 PASS If attr’s element is neither null nor element, throw an InUseAttributeError. 
 PASS Replacing an attr by itself 

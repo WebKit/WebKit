@@ -68,9 +68,9 @@ PASS createDocumentType("*", "", "") should throw INVALID_CHARACTER_ERR
 PASS createDocumentType("(", "", "") should throw INVALID_CHARACTER_ERR 
 PASS createDocumentType(")", "", "") should throw INVALID_CHARACTER_ERR 
 PASS createDocumentType("f:oo", "", "") should work 
-PASS createDocumentType(":foo", "", "") should throw NAMESPACE_ERR 
-PASS createDocumentType("foo:", "", "") should throw NAMESPACE_ERR 
-PASS createDocumentType("prefix::local", "", "") should throw NAMESPACE_ERR 
+PASS createDocumentType(":foo", "", "") should throw INVALID_CHARACTER_ERR 
+PASS createDocumentType("foo:", "", "") should throw INVALID_CHARACTER_ERR 
+PASS createDocumentType("prefix::local", "", "") should throw INVALID_CHARACTER_ERR 
 PASS createDocumentType("foo", "foo", "") should work 
 PASS createDocumentType("foo", "", "foo") should work 
 PASS createDocumentType("foo", "f'oo", "") should work 

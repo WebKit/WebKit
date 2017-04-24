@@ -4425,7 +4425,7 @@ ExceptionOr<std::pair<AtomicString, AtomicString>> Document::parseQualifiedName(
         U16_NEXT(qualifiedName, i, length, c)
         if (c == ':') {
             if (sawColon)
-                return Exception { NAMESPACE_ERR };
+                return Exception { INVALID_CHARACTER_ERR };
             nameStart = true;
             sawColon = true;
             colonPosition = i - 1;
@@ -4443,7 +4443,7 @@ ExceptionOr<std::pair<AtomicString, AtomicString>> Document::parseQualifiedName(
         return std::pair<AtomicString, AtomicString> { { }, { qualifiedName } };
 
     if (!colonPosition || length - colonPosition <= 1)
-        return Exception { NAMESPACE_ERR };
+        return Exception { INVALID_CHARACTER_ERR };
 
     return std::pair<AtomicString, AtomicString> { StringView { qualifiedName }.substring(0, colonPosition).toAtomicString(), StringView { qualifiedName }.substring(colonPosition + 1).toAtomicString() };
 }
