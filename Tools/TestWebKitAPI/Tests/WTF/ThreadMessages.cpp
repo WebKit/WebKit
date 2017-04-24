@@ -35,10 +35,9 @@
 
 static void runThreadMessageTest(unsigned numSenders, unsigned numMessages)
 {
-    bool receiverShouldKeepRunning = true;
-    dataLogLn("starting");
+    Atomic<bool> receiverShouldKeepRunning(true);
     RefPtr<Thread> receiverThread = Thread::create("ThreadMessage receiver", [&receiverShouldKeepRunning] () {
-        while (receiverShouldKeepRunning) { }
+        while (receiverShouldKeepRunning.load()) { }
     });
     ASSERT_TRUE(receiverThread);
 
@@ -64,7 +63,7 @@ static void runThreadMessageTest(unsigned numSenders, unsigned numMessages)
     for (unsigned i = 0; i < numSenders; ++i)
         senderThreads[i]->waitForCompletion();
 
-    receiverShouldKeepRunning = false;
+    receiverShouldKeepRunning.store(false);
     receiverThread->waitForCompletion();
 
     for (unsigned i = 0; i < numSenders; ++i) {
@@ -102,17 +101,17 @@ TEST(ThreadMessage, SignalsWorkOnExit)
         return SignalAction::Handled;
     });
 
-    bool receiverShouldKeepRunning = true;
+    Atomic<bool> receiverShouldKeepRunning(true);
     RefPtr<Thread> receiverThread = (Thread::create("ThreadMessage receiver",
         [&receiverShouldKeepRunning] () {
-            while (receiverShouldKeepRunning) { }
+            while (receiverShouldKeepRunning.load()) { }
     }));
     ASSERT_TRUE(receiverThread);
 
     bool signalFired;
     {
         std::unique_lock<std::mutex> locker(static_cast<ReflectedThread*>(receiverThread.get())->m_mutex);
-        receiverShouldKeepRunning = false;
+        receiverShouldKeepRunning.store(false);
         EXPECT_FALSE(static_cast<ReflectedThread*>(receiverThread.get())->hasExited());
         sleep(1);
         signalFired = !pthread_kill(static_cast<ReflectedThread*>(receiverThread.get())->m_handle, toSystemSignal(Signal::Usr));
