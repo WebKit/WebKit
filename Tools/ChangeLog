@@ -1,3 +1,18 @@
+2017-04-24  Jonathan Bedard  <jbedard@apple.com>
+
+        Package ImageDiff built with host SDK
+        https://bugs.webkit.org/show_bug.cgi?id=168944
+        <rdar://problem/30745642>
+
+        Reviewed by David Kilzer.
+
+        iOS Simulator and iOS device should archive the ImageDiff built for the host
+        machine.
+
+        * BuildSlaveSupport/built-product-archive:
+        (determineWebKitBuildDirectories): Add _hostBuildDirectory for iOS.
+        (archiveBuiltProduct): Archive Mac products for iOS so that ImageDiff is included.
+
 2017-04-24  Keith Miller  <keith_miller@apple.com>
 
         ThreadMessage API tests failing on release bots

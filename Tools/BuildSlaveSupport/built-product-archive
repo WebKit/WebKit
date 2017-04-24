@@ -34,6 +34,7 @@ import zipfile
 
 _configurationBuildDirectory = None
 _topLevelBuildDirectory = None
+_hostBuildDirectory = None
 
 
 def main():
@@ -84,8 +85,14 @@ def webkitBuildDirectoryForConfigurationAndPlatform(configuration, platform, ful
 def determineWebKitBuildDirectories(platform, fullPlatform, configuration):
     global _configurationBuildDirectory
     global _topLevelBuildDirectory
+    global _hostBuildDirectory
     _configurationBuildDirectory = webkitBuildDirectoryForConfigurationAndPlatform(configuration, platform, fullPlatform)
     _topLevelBuildDirectory = webkitBuildDirectoryForConfigurationAndPlatform(configuration, platform, fullPlatform, returnTopLevelDirectory=True)
+    if platform == 'ios':
+        _hostBuildDirectory = webkitBuildDirectoryForConfigurationAndPlatform(configuration, 'mac')
+    else:
+        _hostBuildDirectory = _configurationBuildDirectory
+    
     return _topLevelBuildDirectory
 
 
@@ -165,9 +172,18 @@ def dirContainsdwo(directory):
 def archiveBuiltProduct(configuration, platform, fullPlatform):
     assert platform in ('mac', 'win', 'gtk', 'efl', 'ios')
 
-    # FIXME: ImageDiff should be built with the host SDK, <rdar://problem/30266038>.
-    # An approach similar to the one used for LayoutTestRelay in r190515 should be imlemented.
-    if platform in ('mac', 'ios'):
+    if platform == 'ios':
+        combinedDirectory = os.path.join(_topLevelBuildDirectory, 'combined-mac-and-ios')
+        removeDirectoryIfExists(combinedDirectory)
+        os.makedirs(combinedDirectory)
+
+        if subprocess.call(['/bin/cp', '-pR', _configurationBuildDirectory, combinedDirectory]):
+            return 1
+        if subprocess.call(['/bin/cp', '-pR', _hostBuildDirectory, combinedDirectory]):
+            return 1
+
+        return createZip(combinedDirectory, configuration):
+    elif platform == 'mac':	
         return createZip(_configurationBuildDirectory, configuration, embedParentDirectoryNameOnDarwin=True)
     elif platform == 'win':
         # FIXME: We shouldn't hardcode the assumption of a 32-bit build. See <https://bugs.webkit.org/show_bug.cgi?id=149715>.
