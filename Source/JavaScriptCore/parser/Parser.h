@@ -1367,7 +1367,12 @@ private:
     {
         return m_lexer->getToken(m_token);
     }
-    
+
+    ALWAYS_INLINE StringView getToken(const JSToken& token)
+    {
+        return m_lexer->getToken(token);
+    }
+
     ALWAYS_INLINE bool match(JSTokenType expected)
     {
         return m_token.m_type == expected;
@@ -1640,9 +1645,19 @@ private:
         return !m_errorMessage.isNull();
     }
 
+    bool isDisallowedIdentifierLet(const JSToken& token)
+    {
+        return token.m_type == LET && strictMode();
+    }
+
     bool isDisallowedIdentifierAwait(const JSToken& token)
     {
         return token.m_type == AWAIT && (!m_parserState.allowAwait || currentScope()->isAsyncFunctionBoundary() || m_scriptMode == JSParserScriptMode::Module);
+    }
+
+    bool isDisallowedIdentifierYield(const JSToken& token)
+    {
+        return token.m_type == YIELD && (strictMode() || currentScope()->isGenerator());
     }
     
     ALWAYS_INLINE SuperBinding adjustSuperBindingForBaseConstructor(ConstructorKind constructorKind, SuperBinding superBinding, ScopeRef functionScope)
@@ -1662,12 +1677,28 @@ private:
         return methodSuperBinding;
     }
 
+    const char* disallowedIdentifierLetReason()
+    {
+        ASSERT(strictMode());
+        return "in strict mode";
+    }
+
     const char* disallowedIdentifierAwaitReason()
     {
         if (!m_parserState.allowAwait || currentScope()->isAsyncFunctionBoundary())
             return "in an async function";
         if (m_scriptMode == JSParserScriptMode::Module)
             return "in a module";
+        RELEASE_ASSERT_NOT_REACHED();
+        return nullptr;
+    }
+
+    const char* disallowedIdentifierYieldReason()
+    {
+        if (strictMode())
+            return "in strict mode";
+        if (currentScope()->isGenerator())
+            return "in a generator function";
         RELEASE_ASSERT_NOT_REACHED();
         return nullptr;
     }

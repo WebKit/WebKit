@@ -25,17 +25,17 @@ testSyntaxError(`
 function *t1() {
     var yield = 20;
 }
-`, `SyntaxError: Cannot use the keyword 'yield' as a variable name.`);
+`, `SyntaxError: Cannot use 'yield' as a variable name in a generator function.`);
 testSyntaxError(`
 function *t1() {
     let yield = 20;
 }
-`, `SyntaxError: Cannot use the keyword 'yield' as a lexical variable name.`);
+`, `SyntaxError: Cannot use 'yield' as a lexical variable name in a generator function.`);
 testSyntaxError(`
 function *t1() {
     const yield = 20;
 }
-`, `SyntaxError: Cannot use the keyword 'yield' as a lexical variable name.`);
+`, `SyntaxError: Cannot use 'yield' as a lexical variable name in a generator function.`);
 
 testSyntaxError(`
 function *t1() {
@@ -57,39 +57,39 @@ testSyntaxError(`
 function *t1() {
     var { i: yield } = 20;
 }
-`, `SyntaxError: Cannot use the keyword 'yield' as a variable name.`);
+`, `SyntaxError: Cannot use 'yield' as a variable name in a generator function.`);
 testSyntaxError(`
 function *t1() {
     let { i: yield } = 20;
 }
-`, `SyntaxError: Cannot use the keyword 'yield' as a lexical variable name.`);
+`, `SyntaxError: Cannot use 'yield' as a lexical variable name in a generator function.`);
 testSyntaxError(`
 function *t1() {
     const { i: yield } = 20;
 }
-`, `SyntaxError: Cannot use the keyword 'yield' as a lexical variable name.`);
+`, `SyntaxError: Cannot use 'yield' as a lexical variable name in a generator function.`);
 
 testSyntaxError(`
 function *t1() {
     var [ yield ] = 20;
 }
-`, `SyntaxError: Cannot use the keyword 'yield' as a variable name.`);
+`, `SyntaxError: Cannot use 'yield' as a variable name in a generator function.`);
 testSyntaxError(`
 function *t1() {
     let [ yield ] = 20;
 }
-`, `SyntaxError: Cannot use the keyword 'yield' as a lexical variable name.`);
+`, `SyntaxError: Cannot use 'yield' as a lexical variable name in a generator function.`);
 testSyntaxError(`
 function *t1() {
     const [ yield ] = 20;
 }
-`, `SyntaxError: Cannot use the keyword 'yield' as a lexical variable name.`);
+`, `SyntaxError: Cannot use 'yield' as a lexical variable name in a generator function.`);
 
 testSyntaxError(`
 function *t1() {
     function yield() { }
 }
-`, `SyntaxError: Cannot use the keyword 'yield' as a function name.`);
+`, `SyntaxError: Unexpected keyword 'yield'`);
 testSyntax(`
 function t1() {
     function *yield() {
@@ -103,7 +103,7 @@ function *t1() {
     } catch (yield) {
     }
 }
-`, `SyntaxError: Cannot use the keyword 'yield' as a catch parameter name.`);
+`, `SyntaxError: Cannot use 'yield' as a catch parameter name in a generator function.`);
 
 testSyntax(`
 function *t1() {

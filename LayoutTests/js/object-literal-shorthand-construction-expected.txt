@@ -65,6 +65,50 @@ PASS this.__proto__ = [] threw exception TypeError: Cannot set prototype of immu
 PASS ({__proto__: this.__proto__}) instanceof Array is false
 PASS __proto__ = [] threw exception TypeError: Object.prototype.__proto__ called on null or undefined.
 PASS ({__proto__: __proto__}) instanceof Array threw exception TypeError: Object.prototype.__proto__ called on null or undefined.
+SyntaxErrors
+PASS ({break}) threw exception SyntaxError: Cannot use the keyword 'break' as a shorthand property name..
+PASS ({case}) threw exception SyntaxError: Cannot use the keyword 'case' as a shorthand property name..
+PASS ({catch}) threw exception SyntaxError: Cannot use the keyword 'catch' as a shorthand property name..
+PASS ({class}) threw exception SyntaxError: Cannot use the keyword 'class' as a shorthand property name..
+PASS ({const}) threw exception SyntaxError: Cannot use the keyword 'const' as a shorthand property name..
+PASS ({continue}) threw exception SyntaxError: Cannot use the keyword 'continue' as a shorthand property name..
+PASS ({debugger}) threw exception SyntaxError: Cannot use the keyword 'debugger' as a shorthand property name..
+PASS ({default}) threw exception SyntaxError: Cannot use the keyword 'default' as a shorthand property name..
+PASS ({delete}) threw exception SyntaxError: Cannot use the keyword 'delete' as a shorthand property name..
+PASS ({do}) threw exception SyntaxError: Cannot use the keyword 'do' as a shorthand property name..
+PASS ({else}) threw exception SyntaxError: Cannot use the keyword 'else' as a shorthand property name..
+PASS ({enum}) threw exception SyntaxError: Cannot use the reserved word 'enum' as a shorthand property name..
+PASS ({export}) threw exception SyntaxError: Cannot use the keyword 'export' as a shorthand property name..
+PASS ({extends}) threw exception SyntaxError: Cannot use the keyword 'extends' as a shorthand property name..
+PASS ({false}) threw exception SyntaxError: Cannot use the keyword 'false' as a shorthand property name..
+PASS ({finally}) threw exception SyntaxError: Cannot use the keyword 'finally' as a shorthand property name..
+PASS ({for}) threw exception SyntaxError: Cannot use the keyword 'for' as a shorthand property name..
+PASS ({function}) threw exception SyntaxError: Cannot use the keyword 'function' as a shorthand property name..
+PASS ({if}) threw exception SyntaxError: Cannot use the keyword 'if' as a shorthand property name..
+PASS ({import}) threw exception SyntaxError: Cannot use the keyword 'import' as a shorthand property name..
+PASS ({in}) threw exception SyntaxError: Cannot use the keyword 'in' as a shorthand property name..
+PASS ({instanceof}) threw exception SyntaxError: Cannot use the keyword 'instanceof' as a shorthand property name..
+PASS ({new}) threw exception SyntaxError: Cannot use the keyword 'new' as a shorthand property name..
+PASS ({null}) threw exception SyntaxError: Cannot use the keyword 'null' as a shorthand property name..
+PASS ({return}) threw exception SyntaxError: Cannot use the keyword 'return' as a shorthand property name..
+PASS ({super}) threw exception SyntaxError: Cannot use the keyword 'super' as a shorthand property name..
+PASS ({switch}) threw exception SyntaxError: Cannot use the keyword 'switch' as a shorthand property name..
+PASS ({throw}) threw exception SyntaxError: Cannot use the keyword 'throw' as a shorthand property name..
+PASS ({true}) threw exception SyntaxError: Cannot use the keyword 'true' as a shorthand property name..
+PASS ({try}) threw exception SyntaxError: Cannot use the keyword 'try' as a shorthand property name..
+PASS ({typeof}) threw exception SyntaxError: Cannot use the keyword 'typeof' as a shorthand property name..
+PASS ({var}) threw exception SyntaxError: Cannot use the keyword 'var' as a shorthand property name..
+PASS ({void}) threw exception SyntaxError: Cannot use the keyword 'void' as a shorthand property name..
+PASS ({while}) threw exception SyntaxError: Cannot use the keyword 'while' as a shorthand property name..
+PASS ({with}) threw exception SyntaxError: Cannot use the keyword 'with' as a shorthand property name..
+Contextual Keywords
+PASS ({let}) threw exception ReferenceError: Can't find variable: let.
+PASS ({async}) threw exception ReferenceError: Can't find variable: async.
+PASS ({yield}) threw exception ReferenceError: Can't find variable: yield.
+PASS ({await}) threw exception ReferenceError: Can't find variable: await.
+PASS "use strict"; ({let}) } threw exception SyntaxError: Cannot use 'let' as a shorthand property name in strict mode..
+PASS function* generator() { ({yield}) } threw exception SyntaxError: Cannot use 'yield' as a shorthand property name in a generator function..
+PASS async function func() { ({await}) } threw exception SyntaxError: Cannot use 'await' as a shorthand property name in an async function..
 PASS successfullyParsed is true
 
 TEST COMPLETE
