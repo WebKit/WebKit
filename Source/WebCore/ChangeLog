@@ -1,5 +1,18 @@
 2017-04-24  Andy Estes  <aestes@apple.com>
 
+        [macOS] Fix two minor issues with MediaSelectionOption::Type
+        https://bugs.webkit.org/show_bug.cgi?id=171235
+
+        Reviewed by Sam Weinig.
+
+        * platform/MediaSelectionOption.h: Gave type a default value, and added explicit
+        constructors to make gcc and msvc happy.
+        * platform/mac/WebPlaybackControlsManager.mm:
+        (toAVTouchBarMediaSelectionOptionType): Added an ASSERT_NOT_REACHED if none of the switch
+        cases match.
+
+2017-04-24  Andy Estes  <aestes@apple.com>
+
         [macOS] Enable media selection button on AVTouchBarScrubber
         https://bugs.webkit.org/show_bug.cgi?id=171149
         <rdar://problem/29875010>

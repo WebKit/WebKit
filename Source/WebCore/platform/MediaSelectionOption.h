@@ -36,8 +36,15 @@ struct MediaSelectionOption {
         LegibleAuto,
     };
 
+    MediaSelectionOption() = default;
+    MediaSelectionOption(const String& displayName, Type type)
+        : displayName { displayName }
+        , type { type }
+    {
+    }
+
     String displayName;
-    Type type;
+    Type type { Type::Regular };
 };
 
 } // namespace WebCore

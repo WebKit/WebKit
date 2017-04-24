@@ -233,6 +233,7 @@ static AVTouchBarMediaSelectionOptionType toAVTouchBarMediaSelectionOptionType(M
         return AVTouchBarMediaSelectionOptionTypeLegibleAuto;
     }
 
+    ASSERT_NOT_REACHED();
     return AVTouchBarMediaSelectionOptionTypeRegular;
 }
 #endif
