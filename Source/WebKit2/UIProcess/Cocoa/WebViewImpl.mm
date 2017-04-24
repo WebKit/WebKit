@@ -128,7 +128,7 @@ SOFT_LINK_CONSTANT_MAY_FAIL(Lookup, LUNotificationPopoverWillClose, NSString *)
 - (BOOL)handleEventByKeyboardLayout:(NSEvent *)event;
 @end
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
+#if HAVE(TOUCH_BAR) && ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
 // FIXME: Remove this once -setCanShowMediaSelectionButton: is declared in an SDK used by Apple's buildbot.
 @interface AVTouchBarScrubber ()
 - (void)setCanShowMediaSelectionButton:(BOOL)canShowMediaSelectionButton;
