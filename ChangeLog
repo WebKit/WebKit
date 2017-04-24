@@ -1,3 +1,10 @@
+2017-04-24  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed follow-up to r215681.
+
+        * Source/cmake/OptionsGTK.cmake: Don't re-define the ENABLE_SUBTLE_CRYPTO
+        macro, that's already done by the option macro.
+
 2017-04-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Switch to use ENABLE_REMOTE_INSPECTOR instead of ENABLE_INSPECTOR_SERVER for the remote inspector
