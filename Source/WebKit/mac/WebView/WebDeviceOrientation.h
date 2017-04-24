@@ -27,6 +27,7 @@
 @class WebDeviceOrientationInternal;
 
 @interface WebDeviceOrientation : NSObject {
+@private
     WebDeviceOrientationInternal* m_internal;
 }
 

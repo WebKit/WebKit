@@ -33,6 +33,7 @@
 
 @interface WebNotification : NSObject
 {
+@private
     WebNotificationPrivate *_private;
 }
 

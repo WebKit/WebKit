@@ -1,3 +1,23 @@
+2017-04-24  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Some ivars are needlessly @protected
+        https://bugs.webkit.org/show_bug.cgi?id=171208
+
+        Reviewed by Anders Carlsson
+
+        Made ivars @private where possible.
+
+        * Misc/WebUserContentURLPattern.h:
+        * Plugins/WebPluginDatabase.h:
+        * Storage/WebDatabaseQuotaManager.h:
+        * WebCoreSupport/WebSecurityOriginPrivate.h:
+        * WebInspector/WebInspector.h:
+        * WebView/WebDeviceOrientation.h:
+        * WebView/WebDeviceOrientationProviderMock.h:
+        * WebView/WebGeolocationPosition.h:
+        * WebView/WebHTMLRepresentation.h:
+        * WebView/WebNotification.h:
+
 2017-04-21  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Support writing link titles to the pasteboard when beginning data interaction on a link

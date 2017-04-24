@@ -25,6 +25,7 @@
 @class WebUserContentURLPatternPrivate;
 
 @interface WebUserContentURLPattern : NSObject {
+@private
     WebUserContentURLPatternPrivate *_private;
 }
 

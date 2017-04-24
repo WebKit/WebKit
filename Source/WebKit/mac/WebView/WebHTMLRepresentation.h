@@ -45,6 +45,7 @@
 */
 @interface WebHTMLRepresentation : NSObject <WebDocumentRepresentation, WebDocumentDOM>
 {
+@private
     WebHTMLRepresentationPrivate *_private;
 }
 

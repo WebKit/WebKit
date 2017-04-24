@@ -36,6 +36,7 @@ extern NSString *WebInspectorDidStopSearchingForNode;
 
 @interface WebInspector : NSObject
 {
+@private
     WebView *_inspectedWebView;
     WebInspectorFrontend *_frontend;
 }

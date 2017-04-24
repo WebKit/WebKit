@@ -27,6 +27,7 @@
 
 @interface WebGeolocationPosition : NSObject
 {
+@private
     WebGeolocationPositionInternal *_internal;
 }
 

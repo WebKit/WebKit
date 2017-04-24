@@ -1,3 +1,17 @@
+2017-04-24  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Some ivars are needlessly @protected
+        https://bugs.webkit.org/show_bug.cgi?id=171208
+
+        Reviewed by Anders Carlsson.
+
+        Made ivars @private where possible.
+
+        * platform/mac/WebCoreFullScreenPlaceholderView.h:
+        * platform/mac/WebCoreFullScreenWarningView.h:
+        * platform/mac/WebPlaybackControlsManager.h:
+        * platform/network/cocoa/WebCoreNSURLSession.h:
+
 2017-04-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Switch to use ENABLE_REMOTE_INSPECTOR instead of ENABLE_INSPECTOR_SERVER for the remote inspector

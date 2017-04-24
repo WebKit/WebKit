@@ -26,6 +26,7 @@
 #import "WebQuotaManager.h"
 
 @interface WebDatabaseQuotaManager : NSObject <WebQuotaManager> {
+@private
     WebSecurityOrigin *_origin;
 }
 

@@ -58,6 +58,7 @@ enum class WebCoreNSURLSessionCORSAccessCheckResults {
 NS_ASSUME_NONNULL_BEGIN
 
 WEBCORE_EXPORT @interface WebCoreNSURLSession : NSObject {
+@private
     RefPtr<WebCore::PlatformMediaResourceLoader> _loader;
     RetainPtr<id<NSURLSessionDelegate>> _delegate;
     RetainPtr<NSOperationQueue> _queue;

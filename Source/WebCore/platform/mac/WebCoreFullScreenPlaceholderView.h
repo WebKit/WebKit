@@ -31,6 +31,7 @@
 #import <wtf/RetainPtr.h>
 
 WEBCORE_EXPORT @interface WebCoreFullScreenPlaceholderView : NSView {
+@private
     RetainPtr<NSVisualEffectView> _effectView;
     RetainPtr<NSTextField> _exitWarning;
     NSObject* _target;

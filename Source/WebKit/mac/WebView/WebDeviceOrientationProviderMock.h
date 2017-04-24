@@ -29,6 +29,7 @@
 @class WebDeviceOrientation;
 
 @interface WebDeviceOrientationProviderMock : NSObject<WebDeviceOrientationProvider> {
+@private
     WebDeviceOrientationProviderMockInternal* m_internal;
 }
 

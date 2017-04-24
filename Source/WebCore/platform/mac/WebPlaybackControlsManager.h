@@ -38,6 +38,7 @@ struct MediaSelectionOption;
 
 WEBCORE_EXPORT
 @interface WebPlaybackControlsManager : NSObject <AVTouchBarPlaybackControlsControlling> {
+@private
     NSTimeInterval _contentDuration;
     RetainPtr<AVValueTiming> _timing;
     NSTimeInterval _seekToTime;
@@ -51,7 +52,6 @@ WEBCORE_EXPORT
     float _rate;
     BOOL _canTogglePlayback;
 
-@private
     RefPtr<WebCore::WebPlaybackSessionInterfaceMac> _webPlaybackSessionInterfaceMac;
 }
 

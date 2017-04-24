@@ -37,6 +37,7 @@
 
 @interface WebPluginDatabase : NSObject
 {
+@private
     NSMutableDictionary *plugins;
     NSMutableSet *registeredMIMETypes;
     NSArray *plugInPaths;

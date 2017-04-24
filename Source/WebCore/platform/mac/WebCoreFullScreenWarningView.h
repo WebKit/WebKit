@@ -33,6 +33,7 @@
 #include <wtf/RetainPtr.h>
 
 WEBCORE_EXPORT @interface  WebCoreFullScreenWarningView : NSBox {
+@private
     RetainPtr<NSTextField> _textField;
 }
 - (id)initWithTitle:(NSString*)title;
