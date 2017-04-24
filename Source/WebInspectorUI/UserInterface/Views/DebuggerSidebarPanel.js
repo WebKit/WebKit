@@ -176,9 +176,11 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
             this._domBreakpointsRow.element.appendChild(this._domBreakpointsContentTreeOutline.element);
             this._domBreakpointsRow.showEmptyMessage();
 
+            const defaultCollapsed = true;
+
             let domBreakpointsGroup = new WebInspector.DetailsSectionGroup([this._domBreakpointsRow]);
-            let domBreakpointsSection = new WebInspector.DetailsSection("dom-breakpoints", WebInspector.UIString("DOM Breakpoints"), [domBreakpointsGroup]);
-            this.contentView.element.appendChild(domBreakpointsSection.element);
+            this._domBreakpointsSection = new WebInspector.DetailsSection("dom-breakpoints", WebInspector.UIString("DOM Breakpoints"), [domBreakpointsGroup], null, defaultCollapsed);
+            this.contentView.element.appendChild(this._domBreakpointsSection.element);
 
             this._xhrBreakpointsContentTreeOutline = this.createContentTreeOutline(true);
             this._xhrBreakpointTreeController = new WebInspector.XHRBreakpointTreeController(this._xhrBreakpointsContentTreeOutline);
@@ -195,7 +197,7 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
             navigationBar.addNavigationItem(addXHRBreakpointButton);
 
             let xhrBreakpointsGroup = new WebInspector.DetailsSectionGroup([this._xhrBreakpointsRow]);
-            let xhrBreakpointsSection = new WebInspector.DetailsSection("xhr-breakpoints", WebInspector.UIString("XHR Breakpoints"), [xhrBreakpointsGroup], navigationBarWrapper);
+            let xhrBreakpointsSection = new WebInspector.DetailsSection("xhr-breakpoints", WebInspector.UIString("XHR Breakpoints"), [xhrBreakpointsGroup], navigationBarWrapper, defaultCollapsed);
             this.contentView.element.appendChild(xhrBreakpointsSection.element);
         }
 
@@ -1161,6 +1163,8 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
 
         this._domBreakpointsRow.hideEmptyMessage();
         this._domBreakpointsRow.element.append(this._domBreakpointsContentTreeOutline.element);
+
+        this._domBreakpointsSection.collapsed = false;
     }
 
     _addXHRBreakpointButtonClicked(event)

@@ -1,3 +1,17 @@
+2017-04-24  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: DOM/XHR breakpoint sections should be collapsed by default
+        https://bugs.webkit.org/show_bug.cgi?id=170931
+
+        Reviewed by Brian Burg.
+
+        Set the default collapsed parameter for DOM / XHR Breakpoints sections,
+        and auto-expand the DOM Breakpoints when a breakpoint is added.
+
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WebInspector.DebuggerSidebarPanel):
+        (WebInspector.DebuggerSidebarPanel.prototype._domBreakpointAddedOrRemoved):
+
 2017-04-21  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: Add titles to Network grid items for easier reading when text overflows
