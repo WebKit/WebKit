@@ -1707,7 +1707,7 @@ bool JSObject::putGetter(ExecState* exec, PropertyName propertyName, JSValue get
     if (!(attributes & DontEnum))
         descriptor.setEnumerable(true);
 
-    return defineOwnProperty(this, exec, propertyName, descriptor, false);
+    return defineOwnProperty(this, exec, propertyName, descriptor, true);
 }
 
 bool JSObject::putSetter(ExecState* exec, PropertyName propertyName, JSValue setter, unsigned attributes)
@@ -1721,7 +1721,7 @@ bool JSObject::putSetter(ExecState* exec, PropertyName propertyName, JSValue set
     if (!(attributes & DontEnum))
         descriptor.setEnumerable(true);
 
-    return defineOwnProperty(this, exec, propertyName, descriptor, false);
+    return defineOwnProperty(this, exec, propertyName, descriptor, true);
 }
 
 bool JSObject::putDirectAccessor(ExecState* exec, PropertyName propertyName, JSValue value, unsigned attributes)

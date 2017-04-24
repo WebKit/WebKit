@@ -2685,8 +2685,8 @@ parseMethod:
         const bool alwaysStrictInsideClass = true;
         if (isGetter || isSetter) {
             bool isClassProperty = true;
-            property = parseGetterSetter(context, alwaysStrictInsideClass, isGetter ? PropertyNode::Getter : PropertyNode::Setter, methodStart,
-                ConstructorKind::None, isClassProperty);
+            property = parseGetterSetter(context, alwaysStrictInsideClass, isGetter ? PropertyNode::Getter : PropertyNode::Setter,
+                methodStart, ConstructorKind::None, isClassProperty, isStaticMethod);
             failIfFalse(property, "Cannot parse this method");
         } else {
             ParserFunctionInfo<TreeBuilder> methodInfo;
@@ -2721,8 +2721,10 @@ parseMethod:
             if (computedPropertyName) {
                 property = context.createProperty(computedPropertyName, method, static_cast<PropertyNode::Type>(PropertyNode::Constant | PropertyNode::Computed),
                     PropertyNode::Unknown, alwaysStrictInsideClass, SuperBinding::Needed, isClassProperty);
-            } else
-                property = context.createProperty(methodInfo.name, method, PropertyNode::Constant, PropertyNode::Unknown, alwaysStrictInsideClass, SuperBinding::Needed, InferName::Allowed, isClassProperty);
+            } else {
+                property = context.createProperty(methodInfo.name, method, PropertyNode::Constant,
+                    PropertyNode::Unknown, alwaysStrictInsideClass, SuperBinding::Needed, InferName::Allowed, isClassProperty);
+            }
         }
 
         TreePropertyList& tail = isStaticMethod ? staticMethodsTail : instanceMethodsTail;
@@ -3688,6 +3690,7 @@ template <class TreeBuilder> TreeProperty Parser<LexerType>::parseProperty(TreeB
     bool isAsync = false;
     bool isGenerator = false;
     bool isClassProperty = false;
+    bool isStaticMethod = false;
     bool isAsyncMethod = false;
     if (consume(TIMES))
         isGenerator = true;
@@ -3756,7 +3759,7 @@ namedProperty:
             goto parseProperty;
         } else
             failWithMessage("Expected a ':' following the property name '", ident->impl(), "'");
-        return parseGetterSetter(context, complete, type, getterOrSetterStartOffset, ConstructorKind::None, isClassProperty);
+        return parseGetterSetter(context, complete, type, getterOrSetterStartOffset, ConstructorKind::None, isClassProperty, isStaticMethod);
     }
     case DOUBLE:
     case INTEGER: {
@@ -3827,7 +3830,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parsePropertyMeth
 
 template <typename LexerType>
 template <class TreeBuilder> TreeProperty Parser<LexerType>::parseGetterSetter(TreeBuilder& context, bool strict, PropertyNode::Type type, unsigned getterOrSetterStartOffset,
-    ConstructorKind constructorKind, bool isClassProperty)
+    ConstructorKind constructorKind, bool isClassProperty, bool isStaticMethod)
 {
     const Identifier* stringPropertyName = 0;
     double numericPropertyName = 0;
@@ -3837,9 +3840,9 @@ template <class TreeBuilder> TreeProperty Parser<LexerType>::parseGetterSetter(T
 
     if (matchSpecIdentifier() || match(STRING) || m_token.m_type & KeywordTokenFlag) {
         stringPropertyName = m_token.m_data.ident;
-        semanticFailIfTrue(isClassProperty && *stringPropertyName == m_vm->propertyNames->prototype,
+        semanticFailIfTrue(isClassProperty && isStaticMethod && *stringPropertyName == m_vm->propertyNames->prototype,
             "Cannot declare a static method named 'prototype'");
-        semanticFailIfTrue(isClassProperty && *stringPropertyName == m_vm->propertyNames->constructor,
+        semanticFailIfTrue(isClassProperty && !isStaticMethod && *stringPropertyName == m_vm->propertyNames->constructor,
             "Cannot declare a getter or setter named 'constructor'");
         next();
     } else if (match(DOUBLE) || match(INTEGER)) {

@@ -1,5 +1,32 @@
 2017-04-24  Joseph Pecoraro  <pecoraro@apple.com>
 
+        test262: test262/test/language/computed-property-names/class/static/getter-prototype.js
+        https://bugs.webkit.org/show_bug.cgi?id=170897
+
+        Reviewed by Saam Barati.
+
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createArguments):
+        (JSC::ASTBuilder::createArgumentsList):
+        Reorder so all the createProperty methods are grouped together.
+
+        * parser/Parser.h:
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseClass):
+        (JSC::Parser<LexerType>::parseProperty):
+        (JSC::Parser<LexerType>::parseGetterSetter):
+        Refine the conditions for syntax errors for getter/setter
+        properties names. "prototype" is not allowed as a static
+        and "constructor" is not all when non-static.
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::putGetter):
+        (JSC::JSObject::putSetter):
+        Throw exceptions. These methods are only used by this path
+        via op_put_getter_by_val / op_put_setter_by_val.
+
+2017-04-24  Joseph Pecoraro  <pecoraro@apple.com>
+
         test262: test262/test/language/statements/for-of/dstr-array-elem-init-fn-name-arrow.js
         https://bugs.webkit.org/show_bug.cgi?id=171160
 

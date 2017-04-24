@@ -74,13 +74,21 @@ shouldNotThrow("class X {}");
 shouldThrow("class X { constructor() {} constructor() {} }", "'SyntaxError: Cannot declare multiple constructors in a single class.'");
 shouldThrow("class X { get constructor() {} }", "'SyntaxError: Cannot declare a getter or setter named \\'constructor\\'.'");
 shouldThrow("class X { set constructor() {} }", "'SyntaxError: Cannot declare a getter or setter named \\'constructor\\'.'");
+shouldNotThrow("class X { ['constructor']() {} }");
+shouldNotThrow("class X { ['constructor']() { throw 'unreached' } }; new X");
 shouldNotThrow("class X { constructor() {} static constructor() { return staticMethodValue; } }");
 shouldBe("class X { constructor() {} static constructor() { return staticMethodValue; } }; X.constructor()", "staticMethodValue");
+shouldNotThrow("class X { constructor() {} static get constructor() { return staticMethodValue; } }");
+shouldBe("class X { constructor() {} static get constructor() { return staticMethodValue; } }; X.constructor", "staticMethodValue");
 
 shouldThrow("class X { constructor() {} static prototype() {} }", "'SyntaxError: Cannot declare a static method named \\'prototype\\'.'");
 shouldThrow("class X { constructor() {} static get prototype() {} }", "'SyntaxError: Cannot declare a static method named \\'prototype\\'.'");
 shouldThrow("class X { constructor() {} static set prototype() {} }", "'SyntaxError: Cannot declare a static method named \\'prototype\\'.'");
+shouldThrow("class X { constructor() {} static get ['prototype']() {} }", "'TypeError: Attempting to change configurable attribute of unconfigurable property.'");
+shouldThrow("class X { constructor() {} static set ['prototype'](x) {} }", "'TypeError: Attempting to change configurable attribute of unconfigurable property.'");
 shouldNotThrow("class X { constructor() {} prototype() { return instanceMethodValue; } }");
+shouldNotThrow("class X { constructor() {} get prototype() { return instanceMethodValue; } }");
+shouldNotThrow("class X { constructor() {} set prototype(x) { } }");
 shouldBe("class X { constructor() {} prototype() { return instanceMethodValue; } }; (new X).prototype()", "instanceMethodValue");
 
 shouldNotThrow("class X { constructor() {} set foo(a) {} }");

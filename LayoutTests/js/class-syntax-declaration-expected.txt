@@ -24,12 +24,20 @@ PASS class X {}
 PASS class X { constructor() {} constructor() {} }:::SyntaxError: Cannot declare multiple constructors in a single class.
 PASS class X { get constructor() {} }:::SyntaxError: Cannot declare a getter or setter named 'constructor'.
 PASS class X { set constructor() {} }:::SyntaxError: Cannot declare a getter or setter named 'constructor'.
+PASS class X { ['constructor']() {} }
+PASS class X { ['constructor']() { throw 'unreached' } }; new X
 PASS class X { constructor() {} static constructor() { return staticMethodValue; } }
 PASS class X { constructor() {} static constructor() { return staticMethodValue; } }; X.constructor():::staticMethodValue
+PASS class X { constructor() {} static get constructor() { return staticMethodValue; } }
+PASS class X { constructor() {} static get constructor() { return staticMethodValue; } }; X.constructor:::staticMethodValue
 PASS class X { constructor() {} static prototype() {} }:::SyntaxError: Cannot declare a static method named 'prototype'.
 PASS class X { constructor() {} static get prototype() {} }:::SyntaxError: Cannot declare a static method named 'prototype'.
 PASS class X { constructor() {} static set prototype() {} }:::SyntaxError: Cannot declare a static method named 'prototype'.
+PASS class X { constructor() {} static get ['prototype']() {} }:::TypeError: Attempting to change configurable attribute of unconfigurable property.
+PASS class X { constructor() {} static set ['prototype'](x) {} }:::TypeError: Attempting to change configurable attribute of unconfigurable property.
 PASS class X { constructor() {} prototype() { return instanceMethodValue; } }
+PASS class X { constructor() {} get prototype() { return instanceMethodValue; } }
+PASS class X { constructor() {} set prototype(x) { } }
 PASS class X { constructor() {} prototype() { return instanceMethodValue; } }; (new X).prototype():::instanceMethodValue
 PASS class X { constructor() {} set foo(a) {} }
 PASS class X { constructor() {} set foo({x, y}) {} }

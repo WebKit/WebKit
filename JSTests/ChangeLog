@@ -1,5 +1,14 @@
 2017-04-24  Joseph Pecoraro  <pecoraro@apple.com>
 
+        test262: test262/test/language/computed-property-names/class/static/getter-prototype.js
+        https://bugs.webkit.org/show_bug.cgi?id=170897
+
+        Reviewed by Saam Barati.
+
+        * test262.yaml:
+
+2017-04-24  Joseph Pecoraro  <pecoraro@apple.com>
+
         Address some FIXMEs in JavaScript tests for bugs that have been fixed
         https://bugs.webkit.org/show_bug.cgi?id=171191
 
