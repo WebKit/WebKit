@@ -14,8 +14,7 @@ shouldBe("new Image(-100).width", "0");
 shouldBe("new Image(-100, -200).height", "0");
 
 shouldBeEqualToString("new Image().outerHTML","<img>");
-// FIXME: shouldBeEqualToString strips quotes from the string.
-shouldBeEqualToString("new Image(100, 100).outerHTML.replace(/\"/g, \"'\")", "<img width='100' height='100'>");
+shouldBeEqualToString("new Image(100, 100).outerHTML", '<img width="100" height="100">');
 
 // Option tests
 shouldBeNonNull("new Option()");

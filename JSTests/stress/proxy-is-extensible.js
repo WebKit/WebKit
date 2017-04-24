@@ -301,9 +301,6 @@ function assert(b) {
     }
 }
 
-// FIXME: https://bugs.webkit.org/show_bug.cgi?id=154650
-// needs to land for this test to pass because it depends on Proxy.[[OwnPropertyKeys]].
-/*
 {
     let target = {};
     Object.defineProperty(target, "x", {
@@ -341,5 +338,3 @@ function assert(b) {
         called = false;
     }
 }
-*/
-

@@ -6,6 +6,8 @@ class ClassWithKeywordMethodNames {
     constructor() { } // NOTE: This has semantic meaning here, but is allowed.
     abstract() { }
     arguments() { }
+    async() { }
+    await() { }
     boolean() { }
     break() { }
     byte() { }
@@ -75,8 +77,7 @@ class ClassWithKeywordMethodNames {
 class ClassWithKeywordStaticMethodNames {
     static constructor() { }
     static abstract() { }
-    // FIXME: <https://webkit.org/b/152985> ES6: Classes: Should be allowed to create a static method with name "arguments"
-    // static arguments() { }
+    static arguments() { }
     static boolean() { }
     static break() { }
     static byte() { }
@@ -141,12 +142,16 @@ class ClassWithKeywordStaticMethodNames {
     static while() { }
     static with() { }
     static yield() { }
+    static async() { }
+    static await() { }
 };
 
 class ClassWithKeywordGetterMethodNames {
     // get constructor() { } (getter `constructor` not allowed)
     get abstract() { }
     get arguments() { }
+    get async() { }
+    get await() { }
     get boolean() { }
     get break() { }
     get byte() { }
@@ -217,6 +222,8 @@ class ClassWithKeywordSetterMethodNames {
     // set constructor() { } (setter `constructor` not allowed)
     set abstract(x) { }
     set arguments(x) { }
+    set async(x) { }
+    set await(x) { }
     set boolean(x) { }
     set break(x) { }
     set byte(x) { }
@@ -287,6 +294,8 @@ var objectLiteralWithKeywordMethodNames = {
     constructor() { },
     abstract() { },
     arguments() { },
+    async() { },
+    await() { },
     boolean() { },
     break() { },
     byte() { },
@@ -357,6 +366,8 @@ var objectLiteralWithKeywordGetterNames = {
     get constructor() { },
     get abstract() { },
     get arguments() { },
+    get async() { },
+    get await() { },
     get boolean() { },
     get break() { },
     get byte() { },
@@ -427,6 +438,8 @@ var objectLiteralWithKeywordSetterNames = {
     set constructor(x) { },
     set abstract(x) { },
     set arguments(x) { },
+    set async(x) { },
+    set await(x) { },
     set boolean(x) { },
     set break(x) { },
     set byte(x) { },
