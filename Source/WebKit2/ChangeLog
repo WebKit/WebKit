@@ -1,3 +1,17 @@
+2017-04-24  Chris Dumez  <cdumez@apple.com>
+
+        Allow tabs with capturing audio or video to exceed background CPU limit
+        https://bugs.webkit.org/show_bug.cgi?id=171249
+        <rdar://problem/31796314>
+
+        Reviewed by Geoffrey Garen.
+
+        Allow tabs with capturing audio or video to exceed background CPU limit as this
+        is a legit case of potentially high background CPU use.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didExceedBackgroundCPULimit):
+
 2017-04-24  Andy Estes  <aestes@apple.com>
 
         Try to fix the 32-bit macOS build.

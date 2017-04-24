@@ -1173,6 +1173,11 @@ void WebProcessProxy::didExceedBackgroundCPULimit()
             RELEASE_LOG(PerformanceLogging, "%p - WebProcessProxy::didExceedBackgroundCPULimit() WebProcess has exceeded the background CPU limit but we are not terminating it because there is audio playing", this);
             return;
         }
+
+        if (page->hasActiveAudioStream() || page->hasActiveVideoStream()) {
+            RELEASE_LOG(PerformanceLogging, "%p - WebProcessProxy::didExceedBackgroundCPULimit() WebProcess has exceeded the background CPU limit but we are not terminating it because it is capturing audio / video", this);
+            return;
+        }
     }
 
     RELEASE_LOG(PerformanceLogging, "%p - WebProcessProxy::didExceedBackgroundCPULimit() Terminating background WebProcess that has exceeded the background CPU limit", this);
