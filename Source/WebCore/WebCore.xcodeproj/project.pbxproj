@@ -1619,11 +1619,7 @@
 		37BAAE581980D1DD005DFE71 /* ProtectionSpace.h in Headers */ = {isa = PBXBuildFile; fileRef = 37BAAE571980D1DD005DFE71 /* ProtectionSpace.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		37C238221098C84200EF9F72 /* ComplexTextControllerCoreText.mm in Sources */ = {isa = PBXBuildFile; fileRef = 37C238201098C84200EF9F72 /* ComplexTextControllerCoreText.mm */; };
 		37D456FD1A9A50D8003330A1 /* LocalizableStrings.pm in Copy Scripts */ = {isa = PBXBuildFile; fileRef = 37D456FB1A9A50B6003330A1 /* LocalizableStrings.pm */; };
-		37DDCD9413844FD50008B793 /* MIMEHeader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37DDCD9213844FD50008B793 /* MIMEHeader.cpp */; };
-		37DDCD9513844FD50008B793 /* MIMEHeader.h in Headers */ = {isa = PBXBuildFile; fileRef = 37DDCD9313844FD50008B793 /* MIMEHeader.h */; };
 		37DDCD9E13844FFA0008B793 /* Archive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37DDCD9D13844FFA0008B793 /* Archive.cpp */; };
-		37DDCDA51384501C0008B793 /* MHTMLArchive.h in Headers */ = {isa = PBXBuildFile; fileRef = 37DDCDA11384501C0008B793 /* MHTMLArchive.h */; };
-		37DDCDA71384501C0008B793 /* MHTMLParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 37DDCDA31384501C0008B793 /* MHTMLParser.h */; };
 		37E3524B12450C5200BAF5D9 /* InputType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37E3524A12450C5200BAF5D9 /* InputType.cpp */; };
 		37E3524D12450C6600BAF5D9 /* InputType.h in Headers */ = {isa = PBXBuildFile; fileRef = 37E3524C12450C6600BAF5D9 /* InputType.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		37F567CE165358F400DDE92B /* PopupOpeningObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 3772B09516535856000A49CA /* PopupOpeningObserver.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4051,8 +4047,6 @@
 		97AABD2714FA09D5007457AE /* WebSocketHandshake.h in Headers */ = {isa = PBXBuildFile; fileRef = 97AABD0C14FA09D5007457AE /* WebSocketHandshake.h */; };
 		97AABD2C14FA09D5007457AE /* WorkerThreadableWebSocketChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97AABD1114FA09D5007457AE /* WorkerThreadableWebSocketChannel.cpp */; };
 		97AABD2D14FA09D5007457AE /* WorkerThreadableWebSocketChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 97AABD1214FA09D5007457AE /* WorkerThreadableWebSocketChannel.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		97B1F02E13B025CA00F5103F /* SharedBufferChunkReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37569E0013AF172C00CDBA8E /* SharedBufferChunkReader.cpp */; };
-		97B1F02F13B025D200F5103F /* SharedBufferChunkReader.h in Headers */ = {isa = PBXBuildFile; fileRef = 37569E0213AF172C00CDBA8E /* SharedBufferChunkReader.h */; };
 		97B38E27151C4271004622E9 /* DOMWindowNotifications.h in Headers */ = {isa = PBXBuildFile; fileRef = 97B38E24151C4264004622E9 /* DOMWindowNotifications.h */; };
 		97B38E28151C4273004622E9 /* DOMWindowNotifications.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97B38E23151C4264004622E9 /* DOMWindowNotifications.cpp */; };
 		97B8FFD116AE7F960038388D /* CharacterReferenceParserInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 97B8FFCF16AE7F920038388D /* CharacterReferenceParserInlines.h */; };
@@ -9220,8 +9214,6 @@
 		372ADA39197F687600FC501E /* ProtectionSpaceCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ProtectionSpaceCocoa.mm; sourceTree = "<group>"; };
 		372C00C3129611F1005C9575 /* TextBoundaries.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextBoundaries.cpp; sourceTree = "<group>"; };
 		372C00D8129619F8005C9575 /* FindOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FindOptions.h; sourceTree = "<group>"; };
-		37569E0013AF172C00CDBA8E /* SharedBufferChunkReader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SharedBufferChunkReader.cpp; sourceTree = "<group>"; };
-		37569E0213AF172C00CDBA8E /* SharedBufferChunkReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharedBufferChunkReader.h; sourceTree = "<group>"; };
 		375CD231119D43C800A2A859 /* Hyphenation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Hyphenation.h; sourceTree = "<group>"; };
 		376DCCE013B4F966002EBEFC /* TextRun.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextRun.cpp; sourceTree = "<group>"; };
 		3772B09516535856000A49CA /* PopupOpeningObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PopupOpeningObserver.h; sourceTree = "<group>"; };
@@ -9246,11 +9238,7 @@
 		37BAAE571980D1DD005DFE71 /* ProtectionSpace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProtectionSpace.h; sourceTree = "<group>"; };
 		37C238201098C84200EF9F72 /* ComplexTextControllerCoreText.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ComplexTextControllerCoreText.mm; sourceTree = "<group>"; };
 		37D456FB1A9A50B6003330A1 /* LocalizableStrings.pm */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; path = LocalizableStrings.pm; sourceTree = "<group>"; };
-		37DDCD9213844FD50008B793 /* MIMEHeader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MIMEHeader.cpp; sourceTree = "<group>"; };
-		37DDCD9313844FD50008B793 /* MIMEHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIMEHeader.h; sourceTree = "<group>"; };
 		37DDCD9D13844FFA0008B793 /* Archive.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Archive.cpp; sourceTree = "<group>"; };
-		37DDCDA11384501C0008B793 /* MHTMLArchive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MHTMLArchive.h; sourceTree = "<group>"; };
-		37DDCDA31384501C0008B793 /* MHTMLParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MHTMLParser.h; sourceTree = "<group>"; };
 		37E3524A12450C5200BAF5D9 /* InputType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InputType.cpp; sourceTree = "<group>"; };
 		37E3524C12450C6600BAF5D9 /* InputType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InputType.h; sourceTree = "<group>"; };
 		37F818FB0D657606005E1F05 /* WebCoreURLResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreURLResponse.h; sourceTree = "<group>"; };
@@ -17545,15 +17533,6 @@
 			path = opentype;
 			sourceTree = "<group>";
 		};
-		37DDCD9F1384501C0008B793 /* mhtml */ = {
-			isa = PBXGroup;
-			children = (
-				37DDCDA11384501C0008B793 /* MHTMLArchive.h */,
-				37DDCDA31384501C0008B793 /* MHTMLParser.h */,
-			);
-			path = mhtml;
-			sourceTree = "<group>";
-		};
 		4150F9ED12B6E0990008C860 /* shadow */ = {
 			isa = PBXGroup;
 			children = (
@@ -18381,7 +18360,6 @@
 			isa = PBXGroup;
 			children = (
 				512DD8E90D91E6AF000F89EE /* cf */,
-				37DDCD9F1384501C0008B793 /* mhtml */,
 				37DDCD9D13844FFA0008B793 /* Archive.cpp */,
 				512DD8EC0D91E6AF000F89EE /* Archive.h */,
 				512DD8F00D91E6AF000F89EE /* ArchiveFactory.cpp */,
@@ -18892,8 +18870,6 @@
 				41614A771DA64236004AD06F /* HTTPHeaderValues.h */,
 				514C765D0CE923A1007EF3CD /* HTTPParsers.cpp */,
 				514C765E0CE923A1007EF3CD /* HTTPParsers.h */,
-				37DDCD9213844FD50008B793 /* MIMEHeader.cpp */,
-				37DDCD9313844FD50008B793 /* MIMEHeader.h */,
 				628D214B12131ED10055DCFC /* NetworkingContext.h */,
 				8A81BF8411DCFD9000DA2B98 /* NetworkLoadMetrics.h */,
 				1A7FA61A0DDA3BBE0028F8A5 /* NetworkStateNotifier.cpp */,
@@ -24042,8 +24018,6 @@
 				077AF13E18F4AE400001ED61 /* SerializedPlatformRepresentation.h */,
 				1A4A954B0B4EDCCB002D8C3C /* SharedBuffer.cpp */,
 				1A4A954C0B4EDCCB002D8C3C /* SharedBuffer.h */,
-				37569E0013AF172C00CDBA8E /* SharedBufferChunkReader.cpp */,
-				37569E0213AF172C00CDBA8E /* SharedBufferChunkReader.h */,
 				93309EA0099EB78C0056E581 /* SharedTimer.h */,
 				4B3043C60AE0370300A82647 /* Sound.h */,
 				F587866202DE3B1101EA4122 /* SSLKeyGenerator.h */,
@@ -28540,10 +28514,7 @@
 				75793E840D0CE0B3007FC0AC /* MessageEvent.h in Headers */,
 				E1ADECBF0E76ACF1004A1A5E /* MessagePort.h in Headers */,
 				41BF700C0FE86F49005E8DEC /* MessagePortChannel.h in Headers */,
-				37DDCDA51384501C0008B793 /* MHTMLArchive.h in Headers */,
-				37DDCDA71384501C0008B793 /* MHTMLParser.h in Headers */,
 				53B895AF19DC7ED9009CAA93 /* Microtasks.h in Headers */,
-				37DDCD9513844FD50008B793 /* MIMEHeader.h in Headers */,
 				BC772C4F0C4EB3040083285F /* MIMETypeRegistry.h in Headers */,
 				52F10866162B6DA8009AC81E /* MixedContentChecker.h in Headers */,
 				CE1252491A16C3BC00864480 /* MobileGestaltSPI.h in Headers */,
@@ -29234,7 +29205,6 @@
 				FD45A952175D3F3E00C21EC8 /* ShapeOutsideInfo.h in Headers */,
 				FD1AF1501656F15100C6D4F7 /* ShapeValue.h in Headers */,
 				1A4A954E0B4EDCCB002D8C3C /* SharedBuffer.h in Headers */,
-				97B1F02F13B025D200F5103F /* SharedBufferChunkReader.h in Headers */,
 				93309EA3099EB78C0056E581 /* SharedTimer.h in Headers */,
 				E48944A3180B57D800F165D8 /* SimpleLineLayout.h in Headers */,
 				11E067EE1E6246E500162D16 /* SimpleLineLayoutCoverage.h in Headers */,
@@ -32545,7 +32515,6 @@
 				75793E830D0CE0B3007FC0AC /* MessageEvent.cpp in Sources */,
 				E1ADECC00E76ACF1004A1A5E /* MessagePort.cpp in Sources */,
 				CB8CF0181A9358D4000D510B /* Microtasks.cpp in Sources */,
-				37DDCD9413844FD50008B793 /* MIMEHeader.cpp in Sources */,
 				BC772C4E0C4EB3040083285F /* MIMETypeRegistry.cpp in Sources */,
 				C53D39341C978A45007F3AE9 /* MIMETypeRegistryCocoa.mm in Sources */,
 				52F10865162B6DA4009AC81E /* MixedContentChecker.cpp in Sources */,
@@ -33078,7 +33047,6 @@
 				1AB5EBD0194A1D170059AC70 /* ShapeValue.cpp in Sources */,
 				1A4A954D0B4EDCCB002D8C3C /* SharedBuffer.cpp in Sources */,
 				512DD8E30D91E2B4000F89EE /* SharedBufferCF.cpp in Sources */,
-				97B1F02E13B025CA00F5103F /* SharedBufferChunkReader.cpp in Sources */,
 				1A4A95520B4EDCFF002D8C3C /* SharedBufferCocoa.mm in Sources */,
 				163E88F7118A39D200ED9231 /* SimpleFontDataCoreText.cpp in Sources */,
 				E48944A2180B57D800F165D8 /* SimpleLineLayout.cpp in Sources */,

@@ -1,3 +1,13 @@
+2017-04-24  Alex Christensen  <achristensen@webkit.org>
+
+        Reduce copies and allocations in SharedBuffer::append
+        https://bugs.webkit.org/show_bug.cgi?id=170956
+
+        Reviewed by Andreas Kling.
+
+        * TestWebKitAPI/Tests/WebCore/cocoa/SharedBuffer.mm:
+        (TestWebKitAPI::TEST_F):
+
 2017-04-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Switch to use ENABLE_REMOTE_INSPECTOR instead of ENABLE_INSPECTOR_SERVER for the remote inspector

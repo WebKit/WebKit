@@ -709,7 +709,7 @@ String WebPage::cachedResponseMIMETypeForURL(const URL& url)
 
 RefPtr<SharedBuffer> WebPage::cachedResponseDataForURL(const URL& url)
 {
-    return SharedBuffer::wrapNSData([cachedResponseForURL(this, url) data]);
+    return SharedBuffer::create([cachedResponseForURL(this, url) data]);
 }
 
 bool WebPage::platformCanHandleRequest(const WebCore::ResourceRequest& request)

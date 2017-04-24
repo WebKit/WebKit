@@ -850,8 +850,9 @@ void CachedResource::tryReplaceEncodedData(SharedBuffer& newBuffer)
     if (m_data->size() != newBuffer.size() || memcmp(m_data->data(), newBuffer.data(), m_data->size()))
         return;
 
-    if (m_data->tryReplaceContentsWithPlatformBuffer(newBuffer))
-        didReplaceSharedBufferContents();
+    m_data->clear();
+    m_data->append(newBuffer);
+    didReplaceSharedBufferContents();
 }
 
 #endif

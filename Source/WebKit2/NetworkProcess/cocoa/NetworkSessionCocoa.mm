@@ -386,7 +386,7 @@ static WebCore::NetworkLoadPriority toNetworkLoadPriority(float priority)
 
     auto storedCredentials = _withCredentials ? WebCore::StoredCredentials::AllowStoredCredentials : WebCore::StoredCredentials::DoNotAllowStoredCredentials;
     if (auto* networkDataTask = _session->dataTaskForIdentifier(dataTask.taskIdentifier, storedCredentials))
-        networkDataTask->didReceiveData(WebCore::SharedBuffer::wrapNSData(data));
+        networkDataTask->didReceiveData(WebCore::SharedBuffer::create(data));
 }
 
 - (void)URLSession:(NSURLSession *)session downloadTask:(NSURLSessionDownloadTask *)downloadTask didFinishDownloadingToURL:(NSURL *)location

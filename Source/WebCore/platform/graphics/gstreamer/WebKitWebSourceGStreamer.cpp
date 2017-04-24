@@ -1163,13 +1163,8 @@ void ResourceHandleStreamingClient::didReceiveData(ResourceHandle*, const char* 
 
 void ResourceHandleStreamingClient::didReceiveBuffer(ResourceHandle*, Ref<SharedBuffer>&& buffer, int /* encodedLength */)
 {
-    // This pattern is suggested by SharedBuffer.h.
-    const char* segment;
-    unsigned position = 0;
-    while (unsigned length = buffer->getSomeData(segment, position)) {
-        handleDataReceived(segment, length);
-        position += length;
-    }
+    for (const auto& segment : buffer.get())
+        handleDataReceived(segment->data(), segment->size());
 }
 
 void ResourceHandleStreamingClient::didFinishLoading(ResourceHandle*)

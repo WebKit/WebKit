@@ -599,7 +599,7 @@ void MediaKeySession::enqueueMessage(MediaKeyMessageType messageType, const Shar
     // 2. Queue a task to create an event named message that does not bubble and is not cancellable using the MediaKeyMessageEvent
     //    interface with its type attribute set to message and its isTrusted attribute initialized to true, and dispatch it at the
     //    session.
-    auto messageEvent = MediaKeyMessageEvent::create(eventNames().messageEvent, {messageType, message.createArrayBuffer()}, Event::IsTrusted::Yes);
+    auto messageEvent = MediaKeyMessageEvent::create(eventNames().messageEvent, {messageType, message.tryCreateArrayBuffer()}, Event::IsTrusted::Yes);
     m_eventQueue.enqueueEvent(WTFMove(messageEvent));
 }
 

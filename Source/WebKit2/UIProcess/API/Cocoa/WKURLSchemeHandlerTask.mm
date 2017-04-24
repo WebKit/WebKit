@@ -70,7 +70,7 @@ static void raiseExceptionIfNecessary(WebKit::WebURLSchemeHandlerTask::Exception
 
 - (void)didReceiveData:(NSData *)data
 {
-    auto result = _urlSchemeHandlerTask->task().didReceiveData(WebCore::SharedBuffer::wrapNSData(data));
+    auto result = _urlSchemeHandlerTask->task().didReceiveData(WebCore::SharedBuffer::create(data));
     raiseExceptionIfNecessary(result);
 }
 

@@ -87,7 +87,7 @@ TEST_F(SharedBufferTest, appendBufferCreatedWithContentsOfExistingFile)
     EXPECT_EQ('a', buffer->data()[strlen(SharedBufferTest::testData())]);
 }
 
-TEST_F(SharedBufferTest, createArrayBuffer)
+TEST_F(SharedBufferTest, tryCreateArrayBuffer)
 {
     char testData0[] = "Hello";
     char testData1[] = "World";
@@ -95,13 +95,13 @@ TEST_F(SharedBufferTest, createArrayBuffer)
     RefPtr<SharedBuffer> sharedBuffer = SharedBuffer::create(testData0, strlen(testData0));
     sharedBuffer->append(testData1, strlen(testData1));
     sharedBuffer->append(testData2, strlen(testData2));
-    RefPtr<ArrayBuffer> arrayBuffer = sharedBuffer->createArrayBuffer();
+    RefPtr<ArrayBuffer> arrayBuffer = sharedBuffer->tryCreateArrayBuffer();
     char expectedConcatenation[] = "HelloWorldGoodbye";
     ASSERT_EQ(strlen(expectedConcatenation), arrayBuffer->byteLength());
     EXPECT_EQ(0, memcmp(expectedConcatenation, arrayBuffer->data(), strlen(expectedConcatenation)));
 }
 
-TEST_F(SharedBufferTest, createArrayBufferLargeSegments)
+TEST_F(SharedBufferTest, tryCreateArrayBufferLargeSegments)
 {
     Vector<char> vector0(0x4000, 'a');
     Vector<char> vector1(0x4000, 'b');
@@ -110,7 +110,7 @@ TEST_F(SharedBufferTest, createArrayBufferLargeSegments)
     RefPtr<SharedBuffer> sharedBuffer = SharedBuffer::create(WTFMove(vector0));
     sharedBuffer->append(WTFMove(vector1));
     sharedBuffer->append(WTFMove(vector2));
-    RefPtr<ArrayBuffer> arrayBuffer = sharedBuffer->createArrayBuffer();
+    RefPtr<ArrayBuffer> arrayBuffer = sharedBuffer->tryCreateArrayBuffer();
     ASSERT_EQ(0x4000U + 0x4000U + 0x4000U, arrayBuffer->byteLength());
     int position = 0;
     for (int i = 0; i < 0x4000; ++i) {

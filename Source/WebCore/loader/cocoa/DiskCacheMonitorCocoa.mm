@@ -48,7 +48,7 @@ RefPtr<SharedBuffer> DiskCacheMonitor::tryGetFileBackedSharedBufferFromCFURLCach
     if (!data)
         return nullptr;
 
-    return SharedBuffer::wrapCFData(data);
+    return SharedBuffer::create(data);
 }
 
 void DiskCacheMonitor::monitorFileBackingStoreCreation(const ResourceRequest& request, SessionID sessionID, CFCachedURLResponseRef cachedResponse)

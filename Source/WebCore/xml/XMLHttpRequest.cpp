@@ -229,7 +229,7 @@ RefPtr<ArrayBuffer> XMLHttpRequest::createResponseArrayBuffer()
     ASSERT(m_responseType == ResponseType::Arraybuffer);
     ASSERT(doneWithoutErrors());
 
-    auto result = m_binaryResponseBuilder ? m_binaryResponseBuilder->createArrayBuffer() : ArrayBuffer::create(nullptr, 0);
+    auto result = m_binaryResponseBuilder ? m_binaryResponseBuilder->tryCreateArrayBuffer() : ArrayBuffer::create(nullptr, 0);
     m_binaryResponseBuilder = nullptr;
     return result;
 }

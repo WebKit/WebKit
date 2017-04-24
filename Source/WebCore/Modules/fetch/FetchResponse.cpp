@@ -278,7 +278,7 @@ void FetchResponse::consumeBodyAsStream()
 
     RefPtr<SharedBuffer> data = m_bodyLoader->startStreaming();
     if (data) {
-        if (!m_readableStreamSource->enqueue(data->createArrayBuffer())) {
+        if (!m_readableStreamSource->enqueue(data->tryCreateArrayBuffer())) {
             stop();
             return;
         }

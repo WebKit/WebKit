@@ -184,7 +184,7 @@ void SynchronousResourceHandleCFURLConnectionDelegate::didReceiveData(CFDataRef 
     LOG(Network, "CFNet - SynchronousResourceHandleCFURLConnectionDelegate::didReceiveData(handle=%p, bytes=%ld) (%s)", m_handle, CFDataGetLength(data), m_handle->firstRequest().url().string().utf8().data());
 
     if (ResourceHandleClient* client = m_handle->client())
-        client->didReceiveBuffer(m_handle, SharedBuffer::wrapCFData(data), originalLength);
+        client->didReceiveBuffer(m_handle, SharedBuffer::create(data), originalLength);
 }
 
 void SynchronousResourceHandleCFURLConnectionDelegate::didFinishLoading()
