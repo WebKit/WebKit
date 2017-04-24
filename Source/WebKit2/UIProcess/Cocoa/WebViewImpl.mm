@@ -67,6 +67,7 @@
 #import "_WKRemoteObjectRegistryInternal.h"
 #import "_WKThumbnailViewInternal.h"
 #import <HIToolbox/CarbonEventsCore.h>
+#import <WebCore/AVKitSPI.h>
 #import <WebCore/AXObjectCache.h>
 #import <WebCore/ActivityState.h>
 #import <WebCore/ColorMac.h>
@@ -126,6 +127,13 @@ SOFT_LINK_CONSTANT_MAY_FAIL(Lookup, LUNotificationPopoverWillClose, NSString *)
 - (void)handleEventByInputMethod:(NSEvent *)event completionHandler:(void(^)(BOOL handled))completionHandler;
 - (BOOL)handleEventByKeyboardLayout:(NSEvent *)event;
 @end
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
+// FIXME: Remove this once -setCanShowMediaSelectionButton: is declared in an SDK used by Apple's buildbot.
+@interface AVTouchBarScrubber ()
+- (void)setCanShowMediaSelectionButton:(BOOL)canShowMediaSelectionButton;
+@end
+#endif
 
 @interface WKAccessibilitySettingsObserver : NSObject {
     WebKit::WebViewImpl *_impl;
@@ -1140,6 +1148,9 @@ void WebViewImpl::updateMediaTouchBar()
     if (!m_mediaPlaybackControlsView) {
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
         m_mediaPlaybackControlsView = adoptNS([allocAVTouchBarScrubberInstance() init]);
+        // FIXME: Remove this once setCanShowMediaSelectionButton: is declared in an SDK used by Apple's buildbot.
+        if ([m_mediaPlaybackControlsView respondsToSelector:@selector(setCanShowMediaSelectionButton:)])
+            [m_mediaPlaybackControlsView setCanShowMediaSelectionButton:YES];
 #else
         m_mediaPlaybackControlsView = adoptNS([allocAVFunctionBarScrubberInstance() init]);
 #endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
