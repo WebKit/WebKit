@@ -46,6 +46,24 @@ assert(objFunc3.name === "objFunc3");
 assert(arrClass.name === "arrClass");
 assert(objClass.name === "objClass");
 
+for ([ forArrFunc1 = function(){} ] of [[]])
+    assert(forArrFunc1.name === "forArrFunc1");
+for ([ forArrFunc2 = function*(){} ] of [[]])
+    assert(forArrFunc2.name === "forArrFunc2");
+for ([ forArrFunc3 = ()=>{} ] of [[]])
+    assert(forArrFunc3.name === "forArrFunc3");
+for ([ forArrClass = class{} ] of [[]])
+    assert(forArrClass.name === "forArrClass");
+
+for ({ forObjFunc1 = function(){} } of [{}])
+    assert(forObjFunc1.name === "forObjFunc1");
+for ({ forObjFunc2 = function*(){} } of [{}])
+    assert(forObjFunc2.name === "forObjFunc2");
+for ({ forObjFunc3 = ()=>{} } of [{}])
+    assert(forObjFunc3.name === "forObjFunc3");
+for ({ forObjClass = class{} } of [{}])
+    assert(forObjClass.name === "forObjClass");
+
 // Global variable assignment.
 assert( (globalFunc = function(){}).name === "globalFunc" );
 assert( (globalFunc = function*(){}).name === "globalFunc" );

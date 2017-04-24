@@ -1,3 +1,22 @@
+2017-04-24  Joseph Pecoraro  <pecoraro@apple.com>
+
+        test262: test262/test/language/statements/for-of/dstr-array-elem-init-fn-name-arrow.js
+        https://bugs.webkit.org/show_bug.cgi?id=171160
+
+        Reviewed by JF Bastien.
+
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::tryInferNameInPattern):
+        (JSC::ASTBuilder::tryInferNameInPatternWithIdentifier):
+        We supported getting the name from a BindingNode.
+        We extend this to support getting the name from a
+        ResolveNode inside of an AssignmentElementNode.
+
+        * parser/Nodes.h:
+        (JSC::DestructuringPatternNode::isAssignmentElementNode):
+        (JSC::AssignmentElementNode::isAssignmentElementNode):
+        Make it possible to identify an assignment element node.
+
 2017-04-24  Alex Christensen  <achristensen@webkit.org>
 
         Reduce copies and allocations in SharedBuffer::append

@@ -1074,11 +1074,20 @@ private:
         if (!defaultValue)
             return;
 
-        if (!pattern->isBindingNode())
-            return;
+        if (pattern->isBindingNode()) {
+            const Identifier& ident = static_cast<BindingNode*>(pattern)->boundProperty();
+            tryInferNameInPatternWithIdentifier(ident, defaultValue);
+        } else if (pattern->isAssignmentElementNode()) {
+            const ExpressionNode* assignmentTarget = static_cast<AssignmentElementNode*>(pattern)->assignmentTarget();
+            if (assignmentTarget->isResolveNode()) {
+                const Identifier& ident = static_cast<const ResolveNode*>(assignmentTarget)->identifier();
+                tryInferNameInPatternWithIdentifier(ident, defaultValue);
+            }
+        }
+    }
 
-        const Identifier& ident = static_cast<const BindingNode*>(pattern)->boundProperty();
-
+    void tryInferNameInPatternWithIdentifier(const Identifier& ident, ExpressionNode* defaultValue)
+    {
         if (defaultValue->isBaseFuncExprNode()) {
             auto metadata = static_cast<BaseFuncExprNode*>(defaultValue)->metadata();
             metadata->setEcmaName(ident);

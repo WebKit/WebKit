@@ -2089,6 +2089,7 @@ namespace JSC {
         virtual void toString(StringBuilder&) const = 0;
 
         virtual bool isBindingNode() const { return false; }
+        virtual bool isAssignmentElementNode() const { return false; }
         virtual bool isRestParameter() const { return false; }
         virtual RegisterID* emitDirectBinding(BytecodeGenerator&, RegisterID*, ExpressionNode*) { return 0; }
         
@@ -2166,7 +2167,7 @@ namespace JSC {
         Vector<Entry> m_targetPatterns;
     };
 
-    class BindingNode : public DestructuringPatternNode {
+    class BindingNode final: public DestructuringPatternNode {
     public:
         BindingNode(const Identifier& boundProperty, const JSTextPosition& start, const JSTextPosition& end, AssignmentContext);
         const Identifier& boundProperty() const { return m_boundProperty; }
@@ -2187,7 +2188,7 @@ namespace JSC {
         AssignmentContext m_bindingContext;
     };
 
-    class RestParameterNode : public DestructuringPatternNode {
+    class RestParameterNode final : public DestructuringPatternNode {
     public:
         RestParameterNode(DestructuringPatternNode*, unsigned numParametersToSkip);
 
@@ -2204,7 +2205,7 @@ namespace JSC {
         unsigned m_numParametersToSkip;
     };
 
-    class AssignmentElementNode : public DestructuringPatternNode {
+    class AssignmentElementNode final : public DestructuringPatternNode {
     public:
         AssignmentElementNode(ExpressionNode* assignmentTarget, const JSTextPosition& start, const JSTextPosition& end);
         const ExpressionNode* assignmentTarget() { return m_assignmentTarget; }
@@ -2216,6 +2217,8 @@ namespace JSC {
         void collectBoundIdentifiers(Vector<Identifier>&) const override;
         void bindValue(BytecodeGenerator&, RegisterID*) const override;
         void toString(StringBuilder&) const override;
+
+        bool isAssignmentElementNode() const override { return true; }
 
         JSTextPosition m_divotStart;
         JSTextPosition m_divotEnd;
