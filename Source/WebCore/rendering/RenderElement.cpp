@@ -1506,6 +1506,12 @@ void RenderElement::newImageAnimationFrameAvailable(CachedImage& image, bool& ca
     imageChanged(&image);
 }
 
+void RenderElement::didRemoveCachedImageClient(CachedImage& cachedImage)
+{
+    if (hasPausedImageAnimations())
+        view().removeRendererWithPausedImageAnimations(*this, cachedImage);
+}
+
 bool RenderElement::repaintForPausedImageAnimationsIfNeeded(const IntRect& visibleRect, CachedImage& cachedImage)
 {
     ASSERT(m_hasPausedImageAnimations);

@@ -1,3 +1,35 @@
+2017-04-24  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (214503): Webkit crash under RenderElement::repaintForPausedImageAnimationsIfNeeded() when scrolling giphy pages
+        https://bugs.webkit.org/show_bug.cgi?id=171243
+        <rdar://problem/31715572>
+
+        Reviewed by Antti Koivisto.
+
+        After r214503, we would frequently crash when scrolling giphy pages because we were failing to call
+        RenderView::removeRendererWithPausedImageAnimations(renderer, cachedImage) in some cases. This would
+        cause a RenderElement to still be associated to a CachedImage in RenderView but not in practice.
+        If the CachedImage then gets destroyed and the user scrolls, we end up calling
+        RenderElement::repaintForPausedImageAnimationsIfNeeded() with a bad CachedImage.
+
+        StyleCachedImage was properly calling RenderView::removeRendererWithPausedImageAnimations() before
+        unregistering the renderer as a client to the CachedImage. However, RenderImageResource was failing
+        to do the same. To make this less error-prone, I added a didRemoveCachedImageClient(CachedImage&)
+        function to the CachedImageClient interface. It is overriden in RenderElement only to call
+        RenderView::removeRendererWithPausedImageAnimations().
+
+        Test: fast/images/animated-gif-scrolling-crash.html
+
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::didRemoveClient):
+        * loader/cache/CachedImageClient.h:
+        (WebCore::CachedImageClient::didRemoveCachedImageClient):
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::didRemoveCachedImageClient):
+        * rendering/RenderElement.h:
+        * rendering/style/StyleCachedImage.cpp:
+        (WebCore::StyleCachedImage::removeClient):
+
 2017-04-24  Andy Estes  <aestes@apple.com>
 
         [macOS] Fix two minor issues with MediaSelectionOption::Type

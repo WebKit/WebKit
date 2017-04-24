@@ -188,9 +188,6 @@ void StyleCachedImage::removeClient(RenderElement* renderer)
         return;
     ASSERT(renderer);
 
-    if (renderer->hasPausedImageAnimations())
-        renderer->view().removeRendererWithPausedImageAnimations(*renderer, *m_cachedImage);
-
     m_cachedImage->removeClient(*renderer);
 }
 

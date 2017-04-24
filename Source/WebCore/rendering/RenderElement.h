@@ -319,6 +319,7 @@ private:
     void invalidateCachedFirstLineStyle();
 
     void newImageAnimationFrameAvailable(CachedImage&, bool& canPause) final;
+    void didRemoveCachedImageClient(CachedImage&) final;
 
     bool getLeadingCorner(FloatPoint& output, bool& insideFixed) const;
     bool getTrailingCorner(FloatPoint& output, bool& insideFixed) const;

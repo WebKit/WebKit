@@ -133,6 +133,8 @@ void CachedImage::didRemoveClient(CachedResourceClient& client)
         m_svgImageCache->removeClientFromCache(&static_cast<CachedImageClient&>(client));
 
     CachedResource::didRemoveClient(client);
+
+    static_cast<CachedImageClient&>(client).didRemoveCachedImageClient(*this);
 }
 
 void CachedImage::switchClientsToRevalidatedResource()

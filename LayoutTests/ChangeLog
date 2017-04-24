@@ -1,3 +1,16 @@
+2017-04-24  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (214503): Webkit crash under RenderElement::repaintForPausedImageAnimationsIfNeeded() when scrolling giphy pages
+        https://bugs.webkit.org/show_bug.cgi?id=171243
+        <rdar://problem/31715572>
+
+        Reviewed by Antti Koivisto.
+
+        Add layout test coverage.
+
+        * fast/images/animated-gif-scrolling-crash-expected.txt: Added.
+        * fast/images/animated-gif-scrolling-crash.html: Added.
+
 2017-04-24  Saam Barati  <sbarati@apple.com>
 
         [mac debug] LayoutTest workers/wasm-long-compile-many.html is a flaky timeout

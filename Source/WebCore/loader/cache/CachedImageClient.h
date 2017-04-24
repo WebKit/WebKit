@@ -41,6 +41,8 @@ public:
 
     // Called when GIF animation progresses.
     virtual void newImageAnimationFrameAvailable(CachedImage& image, bool& canPause) { imageChanged(&image); canPause = true; }
+
+    virtual void didRemoveCachedImageClient(CachedImage&) { }
 };
 
 } // namespace WebCore
