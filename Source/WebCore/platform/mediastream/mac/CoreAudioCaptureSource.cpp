@@ -472,9 +472,9 @@ void CoreAudioCaptureSource::stopProducingData()
 OSStatus CoreAudioCaptureSource::suspend()
 {
     ASSERT(isMainThread());
-    ASSERT(m_ioUnit);
 
     if (m_ioUnitStarted) {
+        ASSERT(m_ioUnit);
         auto err = AudioOutputUnitStop(m_ioUnit);
         if (err) {
             LOG(Media, "CoreAudioCaptureSource::resume(%p) AudioOutputUnitStop failed with error %d (%.4s)", this, (int)err, (char*)&err);
@@ -484,6 +484,7 @@ OSStatus CoreAudioCaptureSource::suspend()
     }
 
     if (m_ioUnitInitialized) {
+        ASSERT(m_ioUnit);
         auto err = AudioUnitUninitialize(m_ioUnit);
         if (err) {
             LOG(Media, "CoreAudioCaptureSource::resume(%p) AudioUnitUninitialize failed with error %d (%.4s)", this, (int)err, (char*)&err);
