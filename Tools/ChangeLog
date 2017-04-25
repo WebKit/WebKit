@@ -1,3 +1,26 @@
+2017-04-25  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] ImageDiff should be run by jhbuild-wrapper in case of using jhbuild
+        https://bugs.webkit.org/show_bug.cgi?id=168036
+
+        Reviewed by Michael Catanzaro.
+
+        Call ImageDiff with the JHBuild wrapper if we should use it.
+        Also add some unit tests for the JHBuild wrapper feature.
+
+        * Scripts/webkitpy/port/base.py:
+        (Port._should_use_jhbuild): Use self._filesystem instead of os.path to allow mock testing.
+        * Scripts/webkitpy/port/base_unittest.py:
+        (test_jhbuild_wrapper): Add a test for port._should_use_jhbuild()
+        * Scripts/webkitpy/port/image_diff.py:
+        (ImageDiffer._start): The actual fix, use the wrapper if we should.
+        * Scripts/webkitpy/port/image_diff_unittest.py: Removed. This two tests are now integrated in port_testcase
+        * Scripts/webkitpy/port/port_testcase.py:
+        (PortTestCase):
+        (PortTestCase.test_diff_image): Test the command with wrapper and without it.
+        (PortTestCase.test_diff_image_passed): Moved from image_diff_unittest.py
+        (PortTestCase.test_diff_image_failed): Moved from image_diff_unittest.py
+
 2017-04-25  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Support reading NSURL titles from the pasteboard when performing data interaction

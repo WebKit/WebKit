@@ -66,6 +66,8 @@ class ImageDiffer(object):
 
     def _start(self, tolerance):
         command = [self._port._path_to_image_diff(), '--tolerance', str(tolerance)]
+        if self._port._should_use_jhbuild():
+            command = self._port._jhbuild_wrapper + command
         environment = self._port.setup_environ_for_server('ImageDiff')
         self._process = self._port._server_process_constructor(self._port, 'ImageDiff', command, environment)
         self._process.start()

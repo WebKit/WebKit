@@ -42,6 +42,7 @@ from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.common.system.systemhost_mock import MockSystemHost
 from webkitpy.port.base import Port
+from webkitpy.port.image_diff import ImageDiffer
 from webkitpy.port.server_process_mock import MockServerProcess
 from webkitpy.layout_tests.servers import http_server_base
 from webkitpy.tool.mocktool import MockOptions
@@ -258,18 +259,43 @@ class PortTestCase(unittest.TestCase):
 
         port._server_process_constructor = make_proc
         port.setup_test_run()
+
+        # First test the case of not using the JHBuild wrapper.
+        self.assertFalse(port._should_use_jhbuild())
+
         self.assertEqual(port.diff_image('foo', 'bar'), ('', 100.0, None))
-        self.assertEqual(self.proc.cmd[1:3], ["--tolerance", "0.1"])
-
+        self.assertEqual(self.proc.cmd, [port._path_to_image_diff(), "--tolerance", "0.1"])
         self.assertEqual(port.diff_image('foo', 'bar', None), ('', 100.0, None))
-        self.assertEqual(self.proc.cmd[1:3], ["--tolerance", "0.1"])
-
+        self.assertEqual(self.proc.cmd, [port._path_to_image_diff(), "--tolerance", "0.1"])
         self.assertEqual(port.diff_image('foo', 'bar', 0), ('', 100.0, None))
-        self.assertEqual(self.proc.cmd[1:3], ["--tolerance", "0"])
+        self.assertEqual(self.proc.cmd, [port._path_to_image_diff(), "--tolerance", "0"])
+
+        # Now test the case of using JHBuild wrapper.
+        port._filesystem.maybe_make_directory(port.path_from_webkit_base('WebKitBuild', 'Dependencies%s' % port.port_name.upper()))
+        self.assertTrue(port._should_use_jhbuild())
+
+        self.assertEqual(port.diff_image('foo', 'bar'), ('', 100.0, None))
+        self.assertEqual(self.proc.cmd, port._jhbuild_wrapper + [port._path_to_image_diff(), "--tolerance", "0.1"])
+        self.assertEqual(port.diff_image('foo', 'bar', None), ('', 100.0, None))
+        self.assertEqual(self.proc.cmd, port._jhbuild_wrapper + [port._path_to_image_diff(), "--tolerance", "0.1"])
+        self.assertEqual(port.diff_image('foo', 'bar', 0), ('', 100.0, None))
+        self.assertEqual(self.proc.cmd, port._jhbuild_wrapper + [port._path_to_image_diff(), "--tolerance", "0"])
 
         port.clean_up_test_run()
         self.assertTrue(self.proc.stopped)
         self.assertEqual(port._image_differ, None)
+
+    def test_diff_image_passed(self):
+        port = self.make_port()
+        port._server_process_constructor = lambda port, nm, cmd, env: MockServerProcess(lines=['diff: 0% passed\n'])
+        image_differ = ImageDiffer(port)
+        self.assertEqual(image_differ.diff_image('foo', 'bar', 0.1), (None, 0, None))
+
+    def test_diff_image_failed(self):
+        port = self.make_port()
+        port._server_process_constructor = lambda port, nm, cmd, env: MockServerProcess(lines=['diff: 100% failed\n'])
+        image_differ = ImageDiffer(port)
+        self.assertEqual(image_differ.diff_image('foo', 'bar', 0.1), ('', 100.0, None))
 
     def test_diff_image_crashed(self):
         port = self.make_port()
