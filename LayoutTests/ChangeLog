@@ -1,3 +1,17 @@
+2017-04-25  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Restrict WebKit image formats to a known whitelist
+        https://bugs.webkit.org/show_bug.cgi?id=170700
+
+        Reviewed by Tim Horton.
+
+        * fast/images/image-formats-support-expected.txt: Added.
+        * fast/images/image-formats-support.html: Added.
+        * fast/images/resources/100x100-red-psd-renamed.png: Added.
+        * fast/images/resources/100x100-red-tga-renamed.png: Added.
+        * fast/images/resources/100x100-red.psd: Added.
+        * fast/images/resources/100x100-red.tga: Added.
+
 2017-04-25  Tim Horton  <timothy_horton@apple.com>
 
         Deduplicate some lines in the toplevel TestExpectations

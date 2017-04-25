@@ -1,3 +1,21 @@
+2017-04-25  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Restrict WebKit image formats to a known whitelist
+        https://bugs.webkit.org/show_bug.cgi?id=170700
+
+        Reviewed by Tim Horton.
+
+        If the image format is not supported, the load should be canceled and the
+        image is marked a broken image.
+
+        Test: fast/images/image-formats-support.html
+
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::addIncrementalDataBuffer):
+        (WebCore::CachedImage::setImageDataBuffer):
+        (WebCore::CachedImage::finishLoading):
+        * loader/cache/CachedImage.h:
+
 2017-04-25  Youenn Fablet  <youenn@apple.com>
 
         CoreAudioCaptureSource::suspend is asserting too often

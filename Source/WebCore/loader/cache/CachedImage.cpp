@@ -51,6 +51,7 @@
 
 #if USE(CG)
 #include "PDFDocumentImage.h"
+#include "UTIRegistry.h"
 #endif
 
 namespace WebCore {
@@ -401,7 +402,7 @@ void CachedImage::addIncrementalDataBuffer(SharedBuffer& data)
     // Have the image update its data from its internal buffer.
     // It will not do anything now, but will delay decoding until
     // queried for info (like size or specific image frames).
-    EncodedDataStatus encodedDataStatus = m_image->setData(&data, false);
+    EncodedDataStatus encodedDataStatus = setImageDataBuffer(&data, false);
     if (encodedDataStatus > EncodedDataStatus::Error && encodedDataStatus < EncodedDataStatus::SizeAvailable)
         return;
 
@@ -424,6 +425,16 @@ void CachedImage::addIncrementalDataBuffer(SharedBuffer& data)
     setEncodedSize(m_image->data() ? m_image->data()->size() : 0);
 }
 
+EncodedDataStatus CachedImage::setImageDataBuffer(SharedBuffer* data, bool allDataReceived)
+{
+    EncodedDataStatus encodedDataStatus = m_image ? m_image->setData(data, allDataReceived) : EncodedDataStatus::Error;
+#if USE(CG)
+    if (encodedDataStatus >= EncodedDataStatus::TypeAvailable && m_image->isBitmapImage() && !isAllowedImageUTI(m_image->uti()))
+        return EncodedDataStatus::Error;
+#endif
+    return encodedDataStatus;
+}
+
 void CachedImage::addDataBuffer(SharedBuffer& data)
 {
     ASSERT(dataBufferingPolicy() == BufferData);
@@ -444,7 +455,7 @@ void CachedImage::finishLoading(SharedBuffer* data)
     if (!m_image && data)
         createImage();
 
-    EncodedDataStatus encodedDataStatus = m_image ? m_image->setData(data, true) : EncodedDataStatus::Error;
+    EncodedDataStatus encodedDataStatus = setImageDataBuffer(data, true);
 
     if (encodedDataStatus == EncodedDataStatus::Error || m_image->isNull()) {
         // Image decoding failed; the image data is malformed.

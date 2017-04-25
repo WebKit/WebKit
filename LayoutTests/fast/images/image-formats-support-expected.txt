@@ -1,0 +1,13 @@
+Test the whitelist of the image formats in WebKit.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS shouldBeSupported('resources/100x100-red.psd').toString() is 'false'
+PASS shouldBeSupported('resources/100x100-red.tga').toString() is 'false'
+PASS shouldBeSupported('resources/100x100-red-psd-renamed.png').toString() is 'false'
+PASS shouldBeSupported('resources/100x100-red-tga-renamed.png').toString() is 'false'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+      
