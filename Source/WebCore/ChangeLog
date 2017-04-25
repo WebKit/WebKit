@@ -1,3 +1,16 @@
+2017-04-25  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [GTK] Build fix after r215737
+        https://bugs.webkit.org/show_bug.cgi?id=170842
+
+        Unreviewed.
+
+        No new tests because there is no behavior change.
+
+        * platform/graphics/FontCascade.h:
+        (WebCore::FontCascade::treatAsZeroWidthSpace):
+        (WebCore::FontCascade::treatAsZeroWidthSpaceInComplexScript):
+
 2017-04-25  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Remove an unnecessary -respondsToSelector: check after r215724
