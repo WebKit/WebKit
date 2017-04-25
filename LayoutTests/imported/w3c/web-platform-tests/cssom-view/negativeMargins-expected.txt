@@ -1,0 +1,6 @@
+Hello
+
+PASS cssom-view - elementFromPoint and elementsFromPoint dealing with negative margins 
+FAIL cssom-view - elementFromPoint and elementsFromPoint dealing with negative margins 1 document.elementsFromPoint is not a function. (In 'document.elementsFromPoint(outerRect.left + 1,
+                                                    outerRect.top + 1)', 'document.elementsFromPoint' is undefined)
+

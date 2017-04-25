@@ -1,3 +1,137 @@
+2017-04-25  Frederic Wang  <fwang@igalia.com>
+
+        Import W3C tests for the CSSOM View module
+        https://bugs.webkit.org/show_bug.cgi?id=171215
+
+        Reviewed by Youenn Fablet.
+
+        This patch imports "cssom-view" test suite from WPT repo:
+        https://github.com/w3c/web-platform-tests/tree/master/cssom-view
+
+        * resources/import-expectations.json:
+        * resources/resource-files.json:
+        * web-platform-tests/cssom-view/CaretPosition-001-expected.txt: Added.
+        * web-platform-tests/cssom-view/CaretPosition-001.html: Added.
+        * web-platform-tests/cssom-view/HTMLBody-ScrollArea_quirksmode-expected.txt: Added.
+        * web-platform-tests/cssom-view/HTMLBody-ScrollArea_quirksmode.html: Added.
+        * web-platform-tests/cssom-view/MediaQueryList-001-expected.txt: Added.
+        * web-platform-tests/cssom-view/MediaQueryList-001.html: Added.
+        * web-platform-tests/cssom-view/MediaQueryList-with-empty-string-expected.txt: Added.
+        * web-platform-tests/cssom-view/MediaQueryList-with-empty-string.html: Added.
+        * web-platform-tests/cssom-view/OWNERS: Added.
+        * web-platform-tests/cssom-view/Screen-pixelDepth-Screen-colorDepth001-expected.txt: Added.
+        * web-platform-tests/cssom-view/Screen-pixelDepth-Screen-colorDepth001.html: Added.
+        * web-platform-tests/cssom-view/cssom-getBoundingClientRect-001-expected.txt: Added.
+        * web-platform-tests/cssom-view/cssom-getBoundingClientRect-001.html: Added.
+        * web-platform-tests/cssom-view/cssom-getBoundingClientRect-002.html: Added.
+        * web-platform-tests/cssom-view/cssom-getClientRects-expected.txt: Added.
+        * web-platform-tests/cssom-view/cssom-getClientRects.html: Added.
+        * web-platform-tests/cssom-view/cssom-view-img-attributes-001-expected.txt: Added.
+        * web-platform-tests/cssom-view/cssom-view-img-attributes-001.html: Added.
+        * web-platform-tests/cssom-view/cssom-view-window-screen-interface-expected.txt: Added.
+        * web-platform-tests/cssom-view/cssom-view-window-screen-interface.html: Added.
+        * web-platform-tests/cssom-view/cssom-view/media-query-list-interface.xht: Added.
+        * web-platform-tests/cssom-view/cssom-view/w3c-import.log: Added.
+        * web-platform-tests/cssom-view/cssom-view/window-interface-expected.txt: Added.
+        * web-platform-tests/cssom-view/cssom-view/window-interface.xht: Added.
+        * web-platform-tests/cssom-view/elementFromPoint-001-expected.txt: Added.
+        * web-platform-tests/cssom-view/elementFromPoint-001.html: Added.
+        * web-platform-tests/cssom-view/elementFromPoint-expected.txt: Added.
+        * web-platform-tests/cssom-view/elementFromPoint.html: Added.
+        * web-platform-tests/cssom-view/elementFromPosition-expected.txt: Added.
+        * web-platform-tests/cssom-view/elementFromPosition.html: Added.
+        * web-platform-tests/cssom-view/elementScroll-expected.txt: Added.
+        * web-platform-tests/cssom-view/elementScroll.html: Added.
+        * web-platform-tests/cssom-view/elementsFromPoint.html: Added.
+        * web-platform-tests/cssom-view/historical-expected.txt: Added.
+        * web-platform-tests/cssom-view/historical.html: Added.
+        * web-platform-tests/cssom-view/htmlelement-offset-width-001-expected.txt: Added.
+        * web-platform-tests/cssom-view/htmlelement-offset-width-001.html: Added.
+        * web-platform-tests/cssom-view/iframe.html: Added.
+        * web-platform-tests/cssom-view/matchMedia-expected.txt: Added.
+        * web-platform-tests/cssom-view/matchMedia.xht: Added.
+        * web-platform-tests/cssom-view/matchMediaAddListener-expected.txt: Added.
+        * web-platform-tests/cssom-view/matchMediaAddListener.html: Added.
+        * web-platform-tests/cssom-view/mouseEvent-expected.txt: Added.
+        * web-platform-tests/cssom-view/mouseEvent.html: Added.
+        * web-platform-tests/cssom-view/negativeMargins-expected.txt: Added.
+        * web-platform-tests/cssom-view/negativeMargins.html: Added.
+        * web-platform-tests/cssom-view/offsetParent_element_test-expected.txt: Added.
+        * web-platform-tests/cssom-view/offsetParent_element_test.html: Added.
+        * web-platform-tests/cssom-view/scrollWidthHeight-expected.txt: Added.
+        * web-platform-tests/cssom-view/scrollWidthHeight.xht: Added.
+        * web-platform-tests/cssom-view/scrollWidthHeightWhenNotScrollable-expected.txt: Added.
+        * web-platform-tests/cssom-view/scrollWidthHeightWhenNotScrollable.xht: Added.
+        * web-platform-tests/cssom-view/scrolling-no-browsing-context-expected.txt: Added.
+        * web-platform-tests/cssom-view/scrolling-no-browsing-context.html: Added.
+        * web-platform-tests/cssom-view/scrolling-quirks-vs-nonquirks-expected.txt: Added.
+        * web-platform-tests/cssom-view/scrolling-quirks-vs-nonquirks.html: Added.
+        * web-platform-tests/cssom-view/scrollingElement.html: Added.
+        * web-platform-tests/cssom-view/support/1x1-green.png: Added.
+        * web-platform-tests/cssom-view/support/1x1-lime.png: Added.
+        * web-platform-tests/cssom-view/support/1x1-maroon.png: Added.
+        * web-platform-tests/cssom-view/support/1x1-navy.png: Added.
+        * web-platform-tests/cssom-view/support/1x1-red.png: Added.
+        * web-platform-tests/cssom-view/support/1x1-white.png: Added.
+        * web-platform-tests/cssom-view/support/60x60-gg-rr.png: Added.
+        * web-platform-tests/cssom-view/support/60x60-green.png: Added.
+        * web-platform-tests/cssom-view/support/60x60-red.png: Added.
+        * web-platform-tests/cssom-view/support/README: Added.
+        * web-platform-tests/cssom-view/support/a-green.css: Added.
+        (.a):
+        * web-platform-tests/cssom-view/support/b-green.css: Added.
+        (.b):
+        * web-platform-tests/cssom-view/support/c-red.css: Added.
+        (.c):
+        * web-platform-tests/cssom-view/support/cat.png: Added.
+        * web-platform-tests/cssom-view/support/import-green.css: Added.
+        (.import):
+        * web-platform-tests/cssom-view/support/import-red.css: Added.
+        (.import):
+        * web-platform-tests/cssom-view/support/pattern-grg-rgr-grg.png: Added.
+        * web-platform-tests/cssom-view/support/pattern-grg-rrg-rgg.png: Added.
+        * web-platform-tests/cssom-view/support/pattern-rgr-grg-rgr.png: Added.
+        * web-platform-tests/cssom-view/support/pattern-tr.png: Added.
+        * web-platform-tests/cssom-view/support/ruler-h-50%.png: Added.
+        * web-platform-tests/cssom-view/support/ruler-h-50px.png: Added.
+        * web-platform-tests/cssom-view/support/ruler-v-100px.png: Added.
+        * web-platform-tests/cssom-view/support/ruler-v-50px.png: Added.
+        * web-platform-tests/cssom-view/support/square-purple.png: Added.
+        * web-platform-tests/cssom-view/support/square-teal.png: Added.
+        * web-platform-tests/cssom-view/support/square-white.png: Added.
+        * web-platform-tests/cssom-view/support/support/README: Added.
+        * web-platform-tests/cssom-view/support/support/swatch-green.png: Added.
+        * web-platform-tests/cssom-view/support/support/swatch-red.png: Added.
+        * web-platform-tests/cssom-view/support/support/w3c-import.log: Added.
+        * web-platform-tests/cssom-view/support/swatch-blue.png: Added.
+        * web-platform-tests/cssom-view/support/swatch-green.png: Added.
+        * web-platform-tests/cssom-view/support/swatch-lime.png: Added.
+        * web-platform-tests/cssom-view/support/swatch-orange.png: Added.
+        * web-platform-tests/cssom-view/support/swatch-red.png: Added.
+        * web-platform-tests/cssom-view/support/swatch-teal.png: Added.
+        * web-platform-tests/cssom-view/support/swatch-white.png: Added.
+        * web-platform-tests/cssom-view/support/swatch-yellow.png: Added.
+        * web-platform-tests/cssom-view/support/test-bl.png: Added.
+        * web-platform-tests/cssom-view/support/test-br.png: Added.
+        * web-platform-tests/cssom-view/support/test-inner-half-size.png: Added.
+        * web-platform-tests/cssom-view/support/test-outer.png: Added.
+        * web-platform-tests/cssom-view/support/test-tl.png: Added.
+        * web-platform-tests/cssom-view/support/test-tr.png: Added.
+        * web-platform-tests/cssom-view/support/w3c-import.log: Added.
+        * web-platform-tests/cssom-view/ttwf-js-cssomview-getclientrects-length-expected.txt: Added.
+        * web-platform-tests/cssom-view/ttwf-js-cssomview-getclientrects-length.html: Added.
+        * web-platform-tests/cssom-view/ttwf-scrollintoview-expected.txt: Added.
+        * web-platform-tests/cssom-view/ttwf-scrollintoview.html: Added.
+        * web-platform-tests/cssom-view/w3c-import.log: Added.
+        * web-platform-tests/cssom-view/window-screen-height-expected.txt: Added.
+        * web-platform-tests/cssom-view/window-screen-height-immutable-expected.txt: Added.
+        * web-platform-tests/cssom-view/window-screen-height-immutable.html: Added.
+        * web-platform-tests/cssom-view/window-screen-height.html: Added.
+        * web-platform-tests/cssom-view/window-screen-width-expected.txt: Added.
+        * web-platform-tests/cssom-view/window-screen-width-immutable-expected.txt: Added.
+        * web-platform-tests/cssom-view/window-screen-width-immutable.html: Added.
+        * web-platform-tests/cssom-view/window-screen-width.html: Added.
+
 2017-04-24  Chris Dumez  <cdumez@apple.com>
 
         createElementNS() should now throw only InvalidCharacterError, not NamespaceError

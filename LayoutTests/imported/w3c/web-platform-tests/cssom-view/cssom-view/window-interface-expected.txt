@@ -1,0 +1,6 @@
+
+FAIL window_inherited_functions assert_inherits: property "matchMedia" found on object expected in prototype chain
+PASS window_functions 
+PASS window_properties 
+FAIL window_properties_readonly assert_readonly: changing property "screen" succeeded
+

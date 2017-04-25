@@ -1,3 +1,14 @@
+2017-04-25  Frederic Wang  <fwang@igalia.com>
+
+        Import W3C tests for the CSSOM View module
+        https://bugs.webkit.org/show_bug.cgi?id=171215
+
+        Reviewed by Youenn Fablet.
+
+        * TestExpectations: Skip some completely failing CSSOM View tests.
+        * platform/ios-simulator/imported/w3c/web-platform-tests/cssom-view/Screen-pixelDepth-Screen-colorDepth001-actual.txt: Added. Add an expectation for iOS simulator, differing from other platform.
+        * platform/ios-simulator/imported/w3c/web-platform-tests/cssom-view/scrolling-quirks-vs-nonquirks-expected.txt: Added. Ditto.
+
 2017-04-24  Joseph Pecoraro  <pecoraro@apple.com>
 
         test262: test262/test/language/expressions/object/method-definition/early-errors-object-method-duplicate-parameters.js

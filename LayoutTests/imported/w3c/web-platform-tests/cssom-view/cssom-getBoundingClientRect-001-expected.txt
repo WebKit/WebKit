@@ -1,0 +1,5 @@
+test item
+
+PASS getBoundingClientRect() should return a DOMRect where height=bottom-top 
+PASS getBoundingClientRect() should return a DOMRect where width=right-left 
+
