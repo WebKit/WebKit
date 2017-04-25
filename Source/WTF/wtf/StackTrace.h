@@ -69,9 +69,9 @@ public:
         std::unique_ptr<const char[], SystemFree<const char[]>> m_demangledName;
     };
 
-    static std::optional<DemangleEntry> demangle(void*);
+    WTF_EXPORT_PRIVATE static std::optional<DemangleEntry> demangle(void*);
 
-    void dump(PrintStream&) const;
+    WTF_EXPORT_PRIVATE void dump(PrintStream&) const;
 
 private:
     inline static size_t instanceSize(int capacity);
