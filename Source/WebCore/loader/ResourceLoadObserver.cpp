@@ -57,17 +57,17 @@ ResourceLoadObserver& ResourceLoadObserver::sharedObserver()
     return resourceLoadObserver;
 }
 
-RefPtr<ResourceLoadStatisticsStore> ResourceLoadObserver::statisticsStore()
-{
-    ASSERT(m_store);
-    return m_store;
-}
-
 void ResourceLoadObserver::setStatisticsStore(Ref<ResourceLoadStatisticsStore>&& store)
 {
     m_store = WTFMove(store);
 }
 
+void ResourceLoadObserver::clearInMemoryStore()
+{
+    if (m_store)
+        m_store->clearInMemory();
+}
+    
 void ResourceLoadObserver::clearInMemoryAndPersistentStore()
 {
     if (m_store)
@@ -341,7 +341,7 @@ void ResourceLoadObserver::logUserInteraction(const URL& url)
     statistics.hadUserInteraction = true;
     statistics.mostRecentUserInteraction = WTF::currentTime();
 
-    m_store->fireShouldPartitionCookiesHandler({primaryDomainStr}, { });
+    m_store->fireShouldPartitionCookiesHandler({primaryDomainStr}, { }, false);
 }
 
 void ResourceLoadObserver::clearUserInteraction(const URL& url)
@@ -432,9 +432,9 @@ void ResourceLoadObserver::fireDataModificationHandler()
     m_store->fireDataModificationHandler();
 }
 
-void ResourceLoadObserver::fireShouldPartitionCookiesHandler(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd)
+void ResourceLoadObserver::fireShouldPartitionCookiesHandler(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, bool clearFirst)
 {
-    m_store->fireShouldPartitionCookiesHandler(domainsToRemove, domainsToAdd);
+    m_store->fireShouldPartitionCookiesHandler(domainsToRemove, domainsToAdd, clearFirst);
 }
 
 String ResourceLoadObserver::primaryDomain(const URL& url)

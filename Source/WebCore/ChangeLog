@@ -1,3 +1,51 @@
+2017-04-25  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Clear network process cache when clearing store
+        https://bugs.webkit.org/show_bug.cgi?id=171256
+        <rdar://problem/31802347>
+
+        Reviewed by Brent Fulgham.
+
+        Test that covers this code:
+        http/tests/loading/resourceLoadStatistics/clear-in-memory-and-persistent-store.html
+
+        * loader/ResourceLoadObserver.cpp:
+        (WebCore::ResourceLoadObserver::clearInMemoryStore):
+            Better name.
+        (WebCore::ResourceLoadObserver::logUserInteraction):
+            Now passes on the boolean parameter clearFirst to
+            ResourceLoadStatisticsStore::fireShouldPartitionCookiesHandler().
+        (WebCore::ResourceLoadObserver::fireShouldPartitionCookiesHandler):
+            Now takes and passes on the boolean parameter clearFirst to
+            ResourceLoadStatisticsStore::fireShouldPartitionCookiesHandler().
+        (WebCore::ResourceLoadObserver::statisticsStore): Deleted.
+            This getter violated abstraction. The way it was used
+            is now solved through dedicated functions.
+        * loader/ResourceLoadObserver.h:
+        * loader/ResourceLoadStatisticsStore.cpp:
+        (WebCore::ResourceLoadStatisticsStore::readDataFromDecoder):
+            Now passes on the boolean parameter clearFirst to
+            ResourceLoadStatisticsStore::fireShouldPartitionCookiesHandler().
+        (WebCore::ResourceLoadStatisticsStore::clearInMemory):
+            Better name.
+            Now triggers clearing of the associated network process cache.
+        (WebCore::ResourceLoadStatisticsStore::clearInMemoryAndPersistent):
+            Now calls clearInMemory().
+        (WebCore::ResourceLoadStatisticsStore::setShouldPartitionCookiesCallback):
+            Now expects a handler with the boolean parameter clearFirst.
+        (WebCore::ResourceLoadStatisticsStore::fireShouldPartitionCookiesHandler):
+            Now takes and passes on the boolean parameter clearFirst to
+            m_shouldPartitionCookiesForDomainsHandler().
+        * loader/ResourceLoadStatisticsStore.h:
+        (WebCore::ResourceLoadStatisticsStore::clear): Deleted.
+        * platform/network/NetworkStorageSession.h:
+            NetworkStorageSession::setShouldPartitionCookiesForHosts() now
+            takes the boolean parameter clearFirst.
+        * platform/network/cf/NetworkStorageSessionCFNet.cpp:
+        (WebCore::NetworkStorageSession::setShouldPartitionCookiesForHosts):
+            Now clears m_topPrivatelyControlledDomainsForCookiePartitioning
+            if the boolean parameter clearFirst is true.
+
 2017-04-25  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Add performance test for FontCache::systemFallbackForCharacters()

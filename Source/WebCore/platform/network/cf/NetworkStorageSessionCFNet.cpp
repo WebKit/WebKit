@@ -151,8 +151,11 @@ bool NetworkStorageSession::shouldPartitionCookies(const String& topPrivatelyCon
     return m_topPrivatelyControlledDomainsForCookiePartitioning.contains(topPrivatelyControlledDomain);
 }
 
-void NetworkStorageSession::setShouldPartitionCookiesForHosts(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd)
+void NetworkStorageSession::setShouldPartitionCookiesForHosts(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, bool clearFirst)
 {
+    if (clearFirst)
+        m_topPrivatelyControlledDomainsForCookiePartitioning.clear();
+
     if (!domainsToRemove.isEmpty()) {
         for (auto& domain : domainsToRemove)
             m_topPrivatelyControlledDomainsForCookiePartitioning.remove(domain);

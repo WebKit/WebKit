@@ -150,7 +150,9 @@ void WebResourceLoadStatisticsStore::processStatisticsAndDataRecords()
 void WebResourceLoadStatisticsStore::resourceLoadStatisticsUpdated(const Vector<WebCore::ResourceLoadStatistics>& origins)
 {
     coreStore().mergeStatistics(origins);
-    coreStore().fireShouldPartitionCookiesHandler();
+    // Fire before processing statistics to propagate user
+    // interaction as fast as possible to the network process.
+    coreStore().fireShouldPartitionCookiesHandler(false);
     processStatisticsAndDataRecords();
 }
 
@@ -179,11 +181,11 @@ void WebResourceLoadStatisticsStore::registerSharedResourceLoadObserver()
     });
 }
     
-void WebResourceLoadStatisticsStore::registerSharedResourceLoadObserver(std::function<void(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd)>&& shouldPartitionCookiesForDomainsHandler)
+void WebResourceLoadStatisticsStore::registerSharedResourceLoadObserver(std::function<void(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, bool clearFirst)>&& shouldPartitionCookiesForDomainsHandler)
 {
     registerSharedResourceLoadObserver();
-    m_resourceLoadStatisticsStore->setShouldPartitionCookiesCallback([this, shouldPartitionCookiesForDomainsHandler = WTFMove(shouldPartitionCookiesForDomainsHandler)] (const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd) {
-        shouldPartitionCookiesForDomainsHandler(domainsToRemove, domainsToAdd);
+    m_resourceLoadStatisticsStore->setShouldPartitionCookiesCallback([this, shouldPartitionCookiesForDomainsHandler = WTFMove(shouldPartitionCookiesForDomainsHandler)] (const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, bool clearFirst) {
+        shouldPartitionCookiesForDomainsHandler(domainsToRemove, domainsToAdd, clearFirst);
     });
     m_resourceLoadStatisticsStore->setWritePersistentStoreCallback([this]() {
         writeStoreToDisk();
@@ -196,7 +198,7 @@ void WebResourceLoadStatisticsStore::readDataFromDiskIfNeeded()
         return;
 
     m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this)] {
-        coreStore().clear();
+        coreStore().clearInMemory();
 
         auto decoder = createDecoderFromDisk("full_browsing_session");
         if (!decoder)

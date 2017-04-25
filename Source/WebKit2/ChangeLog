@@ -1,3 +1,52 @@
+2017-04-25  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Clear network process cache when clearing store
+        https://bugs.webkit.org/show_bug.cgi?id=171256
+        <rdar://problem/31802347>
+
+        Reviewed by Brent Fulgham.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::shouldPartitionCookiesForTopPrivatelyOwnedDomains):
+            Now takes and passes on the boolean parameter clearFirst to
+            WebCore::NetworkStorageSession::setShouldPartitionCookiesForHosts().
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+            The message ShouldPartitionCookiesForTopPrivatelyOwnedDomains now
+            takes the boolean parameter clearFirst.
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::shouldPartitionCookiesForTopPrivatelyOwnedDomains):
+            Now takes and passes on the boolean parameter clearFirst to
+            Messages::NetworkProcess::ShouldPartitionCookiesForTopPrivatelyOwnedDomains.
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.messages.in:
+            The message ShouldPartitionCookiesForTopPrivatelyOwnedDomains now
+            takes the boolean parameter clearFirst.
+        * UIProcess/WebResourceLoadStatisticsManager.cpp:
+        (WebKit::WebResourceLoadStatisticsManager::fireShouldPartitionCookiesHandler):
+            Now uses the boolean parameter clearFirst when calling
+            WebCore::ResourceLoadObserver::fireShouldPartitionCookiesHandler().
+        (WebKit::WebResourceLoadStatisticsManager::clearInMemoryAndPersistentStore):
+            No longer uses the deleted store getter.
+        (WebKit::WebResourceLoadStatisticsManager::resetToConsistentState):
+            No longer uses the deleted store getter.
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::resourceLoadStatisticsUpdated):
+            No sends the boolean parameter clearFirst to
+            ResourceLoadStatisticsStore::fireShouldPartitionCookiesHandler().
+        (WebKit::WebResourceLoadStatisticsStore::registerSharedResourceLoadObserver):
+            Now expects a handler with the boolean parameter clearFirst.
+        (WebKit::WebResourceLoadStatisticsStore::readDataFromDiskIfNeeded):
+        * UIProcess/WebResourceLoadStatisticsStore.h:
+            Now uses the new WebCore::ResourceLoadObserver::clearInMemoryStore().
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::shouldPartitionCookiesForTopPrivatelyOwnedDomains):
+            Now takes and passes on the boolean parameter clearFirst in its
+            message to the network process.
+        (WebKit::WebsiteDataStore::registerSharedResourceLoadObserver):
+            Now expects a handler with the boolean parameter clearFirst.
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
 2017-04-25  Chris Dumez  <cdumez@apple.com>
 
         Content-Disposition header filename is ignored when 'download' attribute is specified in HTML

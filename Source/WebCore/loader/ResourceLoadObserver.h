@@ -66,10 +66,10 @@ public:
     WEBCORE_EXPORT void setReducedTimestampResolution(double seconds);
 
     WEBCORE_EXPORT void fireDataModificationHandler();
-    WEBCORE_EXPORT void fireShouldPartitionCookiesHandler(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd);
+    WEBCORE_EXPORT void fireShouldPartitionCookiesHandler(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, bool clearFirst);
 
-    WEBCORE_EXPORT RefPtr<ResourceLoadStatisticsStore> statisticsStore();
     WEBCORE_EXPORT void setStatisticsStore(Ref<ResourceLoadStatisticsStore>&&);
+    WEBCORE_EXPORT void clearInMemoryStore();
     WEBCORE_EXPORT void clearInMemoryAndPersistentStore();
     WEBCORE_EXPORT void clearInMemoryAndPersistentStore(std::chrono::system_clock::time_point modifiedSince);
 

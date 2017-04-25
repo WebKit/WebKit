@@ -110,12 +110,18 @@ void ResourceLoadStatisticsStore::readDataFromDecoder(KeyedDecoder& decoder)
         m_resourceStatisticsMap.set(statistics.highLevelDomain, statistics);
     }
 
-    fireShouldPartitionCookiesHandler({ }, prevalentResourceDomainsWithoutUserInteraction);
+    fireShouldPartitionCookiesHandler({ }, prevalentResourceDomainsWithoutUserInteraction, true);
+}
+
+void ResourceLoadStatisticsStore::clearInMemory()
+{
+    m_resourceStatisticsMap.clear();
+    fireShouldPartitionCookiesHandler({ }, { }, true);
 }
 
 void ResourceLoadStatisticsStore::clearInMemoryAndPersistent()
 {
-    clear();
+    clearInMemory();
     if (m_writePersistentStoreHandler)
         m_writePersistentStoreHandler();
 }
@@ -157,7 +163,7 @@ void ResourceLoadStatisticsStore::setNotificationCallback(std::function<void()> 
     m_dataAddedHandler = WTFMove(handler);
 }
 
-void ResourceLoadStatisticsStore::setShouldPartitionCookiesCallback(std::function<void(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd)>&& handler)
+void ResourceLoadStatisticsStore::setShouldPartitionCookiesCallback(std::function<void(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, bool clearFirst)>&& handler)
 {
     m_shouldPartitionCookiesForDomainsHandler = WTFMove(handler);
 }
@@ -173,7 +179,7 @@ void ResourceLoadStatisticsStore::fireDataModificationHandler()
         m_dataAddedHandler();
 }
 
-void ResourceLoadStatisticsStore::fireShouldPartitionCookiesHandler()
+void ResourceLoadStatisticsStore::fireShouldPartitionCookiesHandler(bool clearFirst)
 {
     Vector<String> domainsToRemove;
     Vector<String> domainsToAdd;
@@ -189,16 +195,16 @@ void ResourceLoadStatisticsStore::fireShouldPartitionCookiesHandler()
         }
     }
     
-    fireShouldPartitionCookiesHandler(domainsToRemove, domainsToAdd);
+    fireShouldPartitionCookiesHandler(domainsToRemove, domainsToAdd, clearFirst);
 }
 
-void ResourceLoadStatisticsStore::fireShouldPartitionCookiesHandler(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd)
+void ResourceLoadStatisticsStore::fireShouldPartitionCookiesHandler(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, bool clearFirst)
 {
     if (domainsToRemove.isEmpty() && domainsToAdd.isEmpty())
         return;
 
     if (m_shouldPartitionCookiesForDomainsHandler)
-        m_shouldPartitionCookiesForDomainsHandler(domainsToRemove, domainsToAdd);
+        m_shouldPartitionCookiesForDomainsHandler(domainsToRemove, domainsToAdd, clearFirst);
 }
 
 void ResourceLoadStatisticsStore::setTimeToLiveUserInteraction(double seconds)

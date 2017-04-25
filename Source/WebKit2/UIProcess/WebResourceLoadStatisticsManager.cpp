@@ -89,9 +89,9 @@ void WebResourceLoadStatisticsManager::fireDataModificationHandler()
 void WebResourceLoadStatisticsManager::fireShouldPartitionCookiesHandler(const String& hostName, bool value)
 {
     if (value)
-        WebCore::ResourceLoadObserver::sharedObserver().fireShouldPartitionCookiesHandler({ }, {hostName});
+        WebCore::ResourceLoadObserver::sharedObserver().fireShouldPartitionCookiesHandler({ }, {hostName}, false);
     else
-        WebCore::ResourceLoadObserver::sharedObserver().fireShouldPartitionCookiesHandler({hostName}, { });
+        WebCore::ResourceLoadObserver::sharedObserver().fireShouldPartitionCookiesHandler({hostName}, { }, false);
 }
 
 void WebResourceLoadStatisticsManager::setNotifyPagesWhenDataRecordsWereScanned(bool value)
@@ -111,9 +111,7 @@ void WebResourceLoadStatisticsManager::setMinimumTimeBetweeenDataRecordsRemoval(
 
 void WebResourceLoadStatisticsManager::clearInMemoryAndPersistentStore()
 {
-    auto store = WebCore::ResourceLoadObserver::sharedObserver().statisticsStore();
-    if (store)
-        store->clearInMemoryAndPersistent();
+    WebCore::ResourceLoadObserver::sharedObserver().clearInMemoryAndPersistentStore();
 }
 
 void WebResourceLoadStatisticsManager::resetToConsistentState()
@@ -122,9 +120,7 @@ void WebResourceLoadStatisticsManager::resetToConsistentState()
     WebResourceLoadStatisticsStore::setNotifyPagesWhenDataRecordsWereScanned(false);
     WebResourceLoadStatisticsStore::setShouldClassifyResourcesBeforeDataRecordsRemoval(true);
     WebResourceLoadStatisticsStore::setMinimumTimeBetweeenDataRecordsRemoval(60);
-    auto store = WebCore::ResourceLoadObserver::sharedObserver().statisticsStore();
-    if (store)
-        store->clear();
+    WebCore::ResourceLoadObserver::sharedObserver().clearInMemoryStore();
 }
     
 } // namespace WebKit

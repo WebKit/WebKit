@@ -81,7 +81,7 @@ public:
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
     WEBCORE_EXPORT String cookieStoragePartition(const ResourceRequest&) const;
     String cookieStoragePartition(const URL& firstPartyForCookies, const URL& resource) const;
-    WEBCORE_EXPORT void setShouldPartitionCookiesForHosts(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd);
+    WEBCORE_EXPORT void setShouldPartitionCookiesForHosts(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, bool clearFirst);
 #endif
 #elif USE(SOUP)
     NetworkStorageSession(SessionID, std::unique_ptr<SoupNetworkSession>&&);
