@@ -28,6 +28,7 @@
 
 #if USE(PTHREADS)
 
+#include <cstdio>
 #include <mutex>
 #include <signal.h>
 #include <wtf/Atomics.h>
@@ -50,7 +51,7 @@ static void jscSignalHandler(int sig, siginfo_t* info, void* mcontext)
         sigfillset(&defaultAction.sa_mask);
         defaultAction.sa_flags = 0;
         auto result = sigaction(sig, &defaultAction, nullptr);
-        dataLogLnIf(!result, "Unable to restore the default handler while proccessing signal ", sig, " the process is probably deadlocked.");
+        dataLogLnIf(result == -1, "Unable to restore the default handler while proccessing signal ", sig, " the process is probably deadlocked. (errno: ", strerror(errno), ")");
     };
 
     // This shouldn't happen but we might as well be careful.

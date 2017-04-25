@@ -1,3 +1,15 @@
+2017-04-25  Keith Miller  <keith_miller@apple.com>
+
+        Our signal handler shouldn't print when sigaction succeeds
+        https://bugs.webkit.org/show_bug.cgi?id=171286
+
+        Reviewed by Michael Saboff.
+
+        It turns out !result is not the same as !!result.
+
+        * wtf/threads/Signals.cpp:
+        (WTF::jscSignalHandler):
+
 2017-04-25  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Add performance test for FontCache::systemFallbackForCharacters()
