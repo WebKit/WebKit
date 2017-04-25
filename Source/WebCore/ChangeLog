@@ -1,3 +1,18 @@
+2017-04-24  Nan Wang  <n_wang@apple.com>
+
+        AX: Crash at WebCore::AXObjectCache::characterOffsetForIndex(int, WebCore::AccessibilityObject const*) + 703
+        https://bugs.webkit.org/show_bug.cgi?id=171247
+
+        Reviewed by Chris Fleizach.
+
+        Crashed because we were passing a nil node into rootAXEditableElement(). Fixed it by
+        adding a null check.
+
+        Test: accessibility/mac/input-string-for-range-crash.html
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::characterOffsetForIndex):
+
 2017-04-24  Youenn Fablet  <youenn@apple.com>
 
         Set defaults video getUserMedia constraints
