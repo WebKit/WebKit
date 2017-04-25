@@ -512,6 +512,28 @@ DWORD absoluteTimeToWaitTimeoutInterval(double absoluteTime)
     return static_cast<DWORD>((absoluteTime - currentTime) * 1000.0);
 }
 
+// Remove this workaround code when <rdar://problem/31793213> is fixed.
+ThreadIdentifier createThread(ThreadFunction function, void* data, const char* threadName)
+{
+    return Thread::create(function, data, threadName)->id();
+}
+
+int waitForThreadCompletion(ThreadIdentifier threadID)
+{
+    // This function is implemented based on the old Threading implementation.
+    // It remains only due to the support library using old Threading APIs and
+    // it should not be used in new code.
+    ASSERT(threadID);
+
+    RefPtr<Thread> thread = ThreadHolder::get(threadID);
+    if (!thread) {
+        LOG_ERROR("ThreadIdentifier %u did not correspond to an active thread when trying to quit", threadID);
+        return WAIT_FAILED;
+    }
+    return thread->waitForCompletion();
+
+}
+
 } // namespace WTF
 
 #endif // OS(WINDOWS)

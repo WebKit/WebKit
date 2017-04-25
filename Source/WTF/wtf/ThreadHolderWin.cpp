@@ -70,6 +70,22 @@ ThreadHolder* ThreadHolder::current()
     return threadMap().get(currentThread());
 }
 
+// FIXME: Remove this workaround code once <rdar://problem/31793213> is fixed.
+RefPtr<Thread> ThreadHolder::get(ThreadIdentifier id)
+{
+    std::unique_lock<std::mutex> locker(threadMapMutex());
+    ThreadHolder* holder = threadMap().get(id);
+    if (holder)
+        return &holder->thread();
+    return nullptr;
+}
+
+void ThreadHolder::platformInitialize(ThreadHolder* holder)
+{
+    std::unique_lock<std::mutex> locker(threadMapMutex());
+    threadMap().add(holder->thread().id(), holder);
+}
+
 void ThreadHolder::destruct(void* data)
 {
     if (data == InvalidThreadHolder)
@@ -109,11 +125,6 @@ void ThreadHolder::destruct(void* data)
         // detect incorrect use of Thread::current() after this point because it will crash.
         threadSpecificSet(m_key, InvalidThreadHolder);
         return;
-    }
-
-    {
-        std::unique_lock<std::mutex> locker(threadMapMutex());
-        threadMap().add(holder->m_thread->id(), holder);
     }
     threadSpecificSet(m_key, InvalidThreadHolder);
     holder->m_isDestroyedOnce = true;

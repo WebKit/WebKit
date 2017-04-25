@@ -1,3 +1,26 @@
+2017-04-24  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [AppleWin] The procedure entry point ?waitForThreadCompletion@WTF@@YAHI@Z could not be located in the dynamic link library WebKitQuartzCoreAdditions.dll
+        https://bugs.webkit.org/show_bug.cgi?id=171029
+
+        Reviewed by Brent Fulgham.
+
+        While WTF Threading APIs are updated, WebKitQuartzCoreAdditions.dll in Windows uses some of the old APIs,
+        waitForThreadCompletion and createThread. This patch implements both on top of the new APIs.
+        These APIs are only exposed in Windows for this compatibility problem and new code should not use it.
+
+        * wtf/ThreadHolder.cpp:
+        (WTF::ThreadHolder::initialize):
+        * wtf/ThreadHolder.h:
+        * wtf/ThreadHolderWin.cpp:
+        (WTF::ThreadHolder::get):
+        (WTF::ThreadHolder::platformInitialize):
+        (WTF::ThreadHolder::destruct):
+        * wtf/Threading.h:
+        * wtf/ThreadingWin.cpp:
+        (WTF::createThread):
+        (WTF::waitForThreadCompletion):
+
 2017-04-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Switch to use ENABLE_REMOTE_INSPECTOR instead of ENABLE_INSPECTOR_SERVER for the remote inspector

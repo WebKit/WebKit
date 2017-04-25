@@ -57,6 +57,10 @@ public:
 
     Thread& thread() { return m_thread.get(); }
 
+#if OS(WINDOWS)
+    static RefPtr<Thread> get(ThreadIdentifier);
+#endif
+
 private:
     ThreadHolder(Thread& thread)
         : m_thread(thread)
@@ -70,6 +74,10 @@ private:
     // - second, after all thread-specific destructors were invoked, it gets called again - this time, we remove the
     // Thread from the threadMap, completing the cleanup.
     static void THREAD_SPECIFIC_CALL destruct(void* data);
+
+#if OS(WINDOWS)
+    static void platformInitialize(ThreadHolder*);
+#endif
 
     Ref<Thread> m_thread;
     bool m_isDestroyedOnce;

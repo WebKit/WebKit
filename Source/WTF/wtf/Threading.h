@@ -212,10 +212,25 @@ inline ThreadIdentifier currentThread()
     return Thread::currentID();
 }
 
+
+// FIXME: The following functions remain because they are used from WebKit Windows support library,
+// WebKitQuartzCoreAdditions.dll. When updating the support library, we should use new API instead
+// and the following workaound should be removed. And new code should not use the following APIs.
+// Remove this workaround code when <rdar://problem/31793213> is fixed.
+#if OS(WINDOWS)
+WTF_EXPORT_PRIVATE ThreadIdentifier createThread(ThreadFunction, void*, const char* threadName);
+WTF_EXPORT_PRIVATE int waitForThreadCompletion(ThreadIdentifier);
+#endif
+
 } // namespace WTF
 
 using WTF::ThreadIdentifier;
 using WTF::Thread;
 using WTF::currentThread;
+
+#if OS(WINDOWS)
+using WTF::createThread;
+using WTF::waitForThreadCompletion;
+#endif
 
 #endif // Threading_h
