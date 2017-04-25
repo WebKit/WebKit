@@ -1,3 +1,19 @@
+2017-04-25  JF Bastien  <jfbastien@apple.com>
+
+        lowerStackArgs: check Arg::addr.isValidForm when falling back to SP offsets
+        https://bugs.webkit.org/show_bug.cgi?id=171278
+
+        Reviewed by Filip Pizlo.
+
+        lowerStackArgs checked that the FP offsets it tries to generate
+        are valid form, but didn't check that the fallback was valid
+        form. This lead to stackAddr's assertion being dead, and the
+        MaroAssembler asserting way later on move / add when handed a huge
+        immediate.
+
+        * b3/air/AirArg.cpp:
+        (JSC::B3::Air::Arg::stackAddrImpl):
+
 2017-04-25  Zan Dobersek  <zdobersek@igalia.com>
 
         [aarch64] moveConditionally32(), moveConditionallyTest32() should move from/to 64-bit registers

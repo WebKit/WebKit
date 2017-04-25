@@ -48,6 +48,8 @@ Arg Arg::stackAddrImpl(int32_t offsetFromFP, unsigned frameSize, Width width)
         result = Arg::addr(
             Air::Tmp(MacroAssembler::stackPointerRegister),
             offsetFromFP + frameSize);
+        if (!result.isValidForm(width))
+            result = Arg();
     }
     return result;
 }
