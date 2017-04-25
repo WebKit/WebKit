@@ -1,3 +1,13 @@
+2017-04-25  Mark Lam  <mark.lam@apple.com>
+
+        Local CSE wrongly CSEs array accesses with different result types.
+        https://bugs.webkit.org/show_bug.cgi?id=170990
+        <rdar://problem/31705945>
+
+        Reviewed by Saam Barati.
+
+        * stress/regress-170990.js: Added.
+
 2017-04-25  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         WebAssembly: exporting a property with a name that's a number doesn't work

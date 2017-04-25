@@ -1,5 +1,25 @@
 2017-04-25  Mark Lam  <mark.lam@apple.com>
 
+        Local CSE wrongly CSEs array accesses with different result types.
+        https://bugs.webkit.org/show_bug.cgi?id=170990
+        <rdar://problem/31705945>
+
+        Reviewed by Saam Barati.
+
+        The fix is to use different LocationKind enums for the different type of array
+        result types.  This makes the HeapLocation values different based on the result
+        types, and allows CSE to discern between them.
+
+        * dfg/DFGCSEPhase.cpp:
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGHeapLocation.cpp:
+        (WTF::printInternal):
+        * dfg/DFGHeapLocation.h:
+        (JSC::DFG::indexedPropertyLocForResultType):
+
+2017-04-25  Mark Lam  <mark.lam@apple.com>
+
         Make DFG SpeculatedType dumps easier to read.
         https://bugs.webkit.org/show_bug.cgi?id=171280
 
