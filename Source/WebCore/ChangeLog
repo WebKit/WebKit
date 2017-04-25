@@ -1,3 +1,19 @@
+2017-04-25  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Add performance test for FontCache::systemFallbackForCharacters()
+        https://bugs.webkit.org/show_bug.cgi?id=170842
+
+        Reviewed by Tim Horton.
+
+        No new tests because there is no behavior change.
+
+        * platform/graphics/FontCascade.h:
+        (WebCore::FontCascade::treatAsZeroWidthSpace):
+        (WebCore::FontCascade::treatAsZeroWidthSpaceInComplexScript): Deleted.
+        * platform/graphics/WidthCache.h:
+        (WebCore::WidthCache::add):
+        (WebCore::WidthCache::addSlowCase):
+
 2017-04-25  Chris Dumez  <cdumez@apple.com>
 
         Content-Disposition header filename is ignored when 'download' attribute is specified in HTML
