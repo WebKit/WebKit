@@ -1,5 +1,12 @@
 2017-04-25  Zan Dobersek  <zdobersek@igalia.com>
 
+        Unreviewed follow-up to r215739.
+
+        * gtk/patches/libgcrypt-use-only-dev-urandom-for-testing.patch: Add the missing
+        libgcrypt patch that enforces the use of /dev/urandom.
+
+2017-04-25  Zan Dobersek  <zdobersek@igalia.com>
+
         [GTK] Add libgpg-error, libgcrypt libraries to JHBuild
         https://bugs.webkit.org/show_bug.cgi?id=171270
 
