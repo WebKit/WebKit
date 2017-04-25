@@ -931,6 +931,8 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSlice(ExecState* exec)
     RETURN_IF_EXCEPTION(scope, { });
     unsigned end = argumentClampedIndexFromStartOrEnd(exec, 1, length, length);
     RETURN_IF_EXCEPTION(scope, { });
+    if (end < begin)
+        end = begin;
 
     std::pair<SpeciesConstructResult, JSObject*> speciesResult = speciesConstructArray(exec, thisObj, end - begin);
     // We can only get an exception if we call some user function.

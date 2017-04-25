@@ -1,3 +1,14 @@
+2017-04-25  Mark Lam  <mark.lam@apple.com>
+
+        Array.prototype.slice() should ensure that end >= begin.
+        https://bugs.webkit.org/show_bug.cgi?id=170989
+        <rdar://problem/31705652>
+
+        Reviewed by Saam Barati.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncSlice):
+
 2017-04-25  Don Olmstead  <don.olmstead@am.sony.com>
 
         [Win] Use Clang's __has_declspec_attribute for export macros
