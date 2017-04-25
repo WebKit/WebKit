@@ -251,7 +251,7 @@ Document any additional information that might be useful in resolving the proble
         UI, or running an updated frontend with out-of-date WebKit build.</dt>
         <dt>I didn't do anything...?</dt>
         <dd>If you don't think you caused this error to happen,
-        <a href="${prefilledBugReportLink}">click to file a pre-populated
+        <a href="${prefilledBugReportLink}" target="_blank">click to file a pre-populated
         bug with this information</a>. It is possible that someone else broke it by accident.</dd>
         <dt>Oops, can I try again?</dt>
         <dd><a href="javascript:window.location.reload()">Click to reload the Inspector</a>

@@ -1,3 +1,13 @@
+2017-04-25  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Open the new bug page in the new tab
+        https://bugs.webkit.org/show_bug.cgi?id=171253
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Debug/UncaughtExceptionReporter.js:
+        (createErrorSheet):
+
 2017-04-25  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: "Space" localized string is not loaded in combined and minified builds
