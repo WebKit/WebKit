@@ -4668,8 +4668,9 @@ private:
     {
         // It would be trivial to support this, but for now, we never create
         // IR that would necessitate this. The reason is that Spread is only
-        // consumed by NewArrayWithSpread and never anything else. Also, any
-        // Spread(PhantomCreateRest) will turn into PhantomSpread(PhantomCreateRest).
+        // consumed by NewArrayWithSpread and Varargs operations. And it is
+        // never anything else. Also, any Spread(PhantomCreateRest) will turn
+        // into PhantomSpread(PhantomCreateRest).
         RELEASE_ASSERT(m_node->child1()->op() != PhantomCreateRest); 
 
         LValue argument = lowCell(m_node->child1());
@@ -6404,34 +6405,45 @@ private:
     void compileCallOrConstructVarargsSpread()
     {
         Node* node = m_node;
+        Node* arguments = node->child3().node();
+
         LValue jsCallee = lowJSValue(m_node->child1());
         LValue thisArg = lowJSValue(m_node->child2());
 
-        RELEASE_ASSERT(node->child3()->op() == PhantomNewArrayWithSpread);
-        Node* arrayWithSpread = node->child3().node();
-        BitVector* bitVector = arrayWithSpread->bitVector();
+        RELEASE_ASSERT(arguments->op() == PhantomNewArrayWithSpread || arguments->op() == PhantomSpread);
+
         unsigned numNonSpreadParameters = 0;
         Vector<LValue, 2> spreadLengths;
         Vector<LValue, 8> patchpointArguments;
         HashMap<InlineCallFrame*, LValue, WTF::DefaultHash<InlineCallFrame*>::Hash, WTF::NullableHashTraits<InlineCallFrame*>> cachedSpreadLengths;
 
-        for (unsigned i = 0; i < arrayWithSpread->numChildren(); i++) {
-            if (bitVector->get(i)) {
-                Node* spread = m_graph.varArgChild(arrayWithSpread, i).node();
-                RELEASE_ASSERT(spread->op() == PhantomSpread);
-                RELEASE_ASSERT(spread->child1()->op() == PhantomCreateRest);
-                InlineCallFrame* inlineCallFrame = spread->child1()->origin.semantic.inlineCallFrame;
-                unsigned numberOfArgumentsToSkip = spread->child1()->numberOfArgumentsToSkip();
-                LValue length = cachedSpreadLengths.ensure(inlineCallFrame, [&] () {
-                    return m_out.zeroExtPtr(getSpreadLengthFromInlineCallFrame(inlineCallFrame, numberOfArgumentsToSkip));
-                }).iterator->value;
-                patchpointArguments.append(length);
-                spreadLengths.append(length);
-            } else {
-                ++numNonSpreadParameters;
-                LValue argument = lowJSValue(m_graph.varArgChild(arrayWithSpread, i));
-                patchpointArguments.append(argument);
+        auto loadSpreadLength = [this, &cachedSpreadLengths] (Node* spread) -> LValue {
+            RELEASE_ASSERT(spread->op() == PhantomSpread);
+            RELEASE_ASSERT(spread->child1()->op() == PhantomCreateRest);
+            InlineCallFrame* inlineCallFrame = spread->child1()->origin.semantic.inlineCallFrame;
+            unsigned numberOfArgumentsToSkip = spread->child1()->numberOfArgumentsToSkip();
+            return cachedSpreadLengths.ensure(inlineCallFrame, [&] () {
+                return m_out.zeroExtPtr(getSpreadLengthFromInlineCallFrame(inlineCallFrame, numberOfArgumentsToSkip));
+            }).iterator->value;
+        };
+
+        if (arguments->op() == PhantomNewArrayWithSpread) {
+            BitVector* bitVector = arguments->bitVector();
+            for (unsigned i = 0; i < arguments->numChildren(); i++) {
+                if (bitVector->get(i)) {
+                    LValue length = loadSpreadLength(m_graph.varArgChild(arguments, i).node());
+                    patchpointArguments.append(length);
+                    spreadLengths.append(length);
+                } else {
+                    ++numNonSpreadParameters;
+                    LValue argument = lowJSValue(m_graph.varArgChild(arguments, i));
+                    patchpointArguments.append(argument);
+                }
             }
+        } else {
+            LValue length = loadSpreadLength(arguments);
+            patchpointArguments.append(length);
+            spreadLengths.append(length);
         }
 
         LValue argumentCountIncludingThis = m_out.constIntPtr(numNonSpreadParameters + 1);
@@ -6547,37 +6559,43 @@ private:
 
                     int storeOffset = CallFrame::thisArgumentOffset() * static_cast<int>(sizeof(Register));
 
-                    for (unsigned i = arrayWithSpread->numChildren(); i--; ) {
-                        unsigned paramsOffset = 4;
+                    unsigned paramsOffset = 4;
+                    auto emitSpread = [&] (Node* spread, unsigned index) {
+                        RELEASE_ASSERT(spread->op() == PhantomSpread);
+                        RELEASE_ASSERT(spread->child1()->op() == PhantomCreateRest);
+                        InlineCallFrame* inlineCallFrame = spread->child1()->origin.semantic.inlineCallFrame;
 
-                        if (bitVector->get(i)) {
-                            Node* spread = state->graph.varArgChild(arrayWithSpread, i).node();
-                            RELEASE_ASSERT(spread->op() == PhantomSpread);
-                            RELEASE_ASSERT(spread->child1()->op() == PhantomCreateRest);
-                            InlineCallFrame* inlineCallFrame = spread->child1()->origin.semantic.inlineCallFrame;
+                        unsigned numberOfArgumentsToSkip = spread->child1()->numberOfArgumentsToSkip();
 
-                            unsigned numberOfArgumentsToSkip = spread->child1()->numberOfArgumentsToSkip();
+                        B3::ValueRep numArgumentsToCopy = params[paramsOffset + index];
+                        getValueFromRep(numArgumentsToCopy, scratchGPR3);
+                        int loadOffset = (AssemblyHelpers::argumentsStart(inlineCallFrame).offset() + numberOfArgumentsToSkip) * static_cast<int>(sizeof(Register));
 
-                            B3::ValueRep numArgumentsToCopy = params[paramsOffset + i];
-                            getValueFromRep(numArgumentsToCopy, scratchGPR3);
-                            int loadOffset = (AssemblyHelpers::argumentsStart(inlineCallFrame).offset() + numberOfArgumentsToSkip) * static_cast<int>(sizeof(Register));
+                        auto done = jit.branchTestPtr(MacroAssembler::Zero, scratchGPR3);
+                        auto loopStart = jit.label();
+                        jit.subPtr(CCallHelpers::TrustedImmPtr(static_cast<size_t>(1)), scratchGPR3);
+                        jit.subPtr(CCallHelpers::TrustedImmPtr(static_cast<size_t>(1)), scratchGPR2);
+                        jit.load64(CCallHelpers::BaseIndex(GPRInfo::callFrameRegister, scratchGPR3, CCallHelpers::TimesEight, loadOffset), scratchGPR4);
+                        jit.store64(scratchGPR4,
+                            CCallHelpers::BaseIndex(scratchGPR1, scratchGPR2, CCallHelpers::TimesEight, storeOffset));
+                        jit.branchTestPtr(CCallHelpers::NonZero, scratchGPR3).linkTo(loopStart, &jit);
+                        done.link(&jit);
+                    };
 
-                            auto done = jit.branchTestPtr(MacroAssembler::Zero, scratchGPR3);
-                            auto loopStart = jit.label();
-                            jit.subPtr(CCallHelpers::TrustedImmPtr(static_cast<size_t>(1)), scratchGPR3);
-                            jit.subPtr(CCallHelpers::TrustedImmPtr(static_cast<size_t>(1)), scratchGPR2);
-                            jit.load64(CCallHelpers::BaseIndex(GPRInfo::callFrameRegister, scratchGPR3, CCallHelpers::TimesEight, loadOffset), scratchGPR4);
-                            jit.store64(scratchGPR4,
-                                CCallHelpers::BaseIndex(scratchGPR1, scratchGPR2, CCallHelpers::TimesEight, storeOffset));
-                            jit.branchTestPtr(CCallHelpers::NonZero, scratchGPR3).linkTo(loopStart, &jit);
-                            done.link(&jit);
-                        } else {
-                            jit.subPtr(CCallHelpers::TrustedImmPtr(static_cast<size_t>(1)), scratchGPR2);
-                            getValueFromRep(params[paramsOffset + i], scratchGPR3);
-                            jit.store64(scratchGPR3,
-                                CCallHelpers::BaseIndex(scratchGPR1, scratchGPR2, CCallHelpers::TimesEight, storeOffset));
+                    if (arguments->op() == PhantomNewArrayWithSpread) {
+                        BitVector* bitVector = arguments->bitVector();
+                        for (unsigned i = arguments->numChildren(); i--; ) {
+                            if (bitVector->get(i))
+                                emitSpread(state->graph.varArgChild(arguments, i).node(), i);
+                            else {
+                                jit.subPtr(CCallHelpers::TrustedImmPtr(static_cast<size_t>(1)), scratchGPR2);
+                                getValueFromRep(params[paramsOffset + i], scratchGPR3);
+                                jit.store64(scratchGPR3,
+                                    CCallHelpers::BaseIndex(scratchGPR1, scratchGPR2, CCallHelpers::TimesEight, storeOffset));
+                            }
                         }
-                    }
+                    } else
+                        emitSpread(arguments, 0);
                 }
 
                 {
@@ -6692,9 +6710,12 @@ private:
             break;
         }
 
-        if (forwarding && m_node->child3() && m_node->child3()->op() == PhantomNewArrayWithSpread) {
-            compileCallOrConstructVarargsSpread();
-            return;
+        if (forwarding && m_node->child3()) {
+            Node* arguments = m_node->child3().node();
+            if (arguments->op() == PhantomNewArrayWithSpread || arguments->op() == PhantomSpread) {
+                compileCallOrConstructVarargsSpread();
+                return;
+            }
         }
 
         
@@ -7068,9 +7089,12 @@ private:
     
     void compileForwardVarargs()
     {
-        if (m_node->child1() && m_node->child1()->op() == PhantomNewArrayWithSpread) {
-            compileForwardVarargsWithSpread();
-            return;
+        if (m_node->child1()) {
+            Node* arguments = m_node->child1().node();
+            if (arguments->op() == PhantomNewArrayWithSpread || arguments->op() == PhantomSpread) {
+                compileForwardVarargsWithSpread();
+                return;
+            }
         }
 
         LoadVarargsData* data = m_node->loadVarargsData();
@@ -7196,25 +7220,32 @@ private:
     {
         HashMap<InlineCallFrame*, LValue, WTF::DefaultHash<InlineCallFrame*>::Hash, WTF::NullableHashTraits<InlineCallFrame*>> cachedSpreadLengths;
 
-        Node* arrayWithSpread = m_node->child1().node();
-        RELEASE_ASSERT(arrayWithSpread->op() == PhantomNewArrayWithSpread);
-        BitVector* bitVector = arrayWithSpread->bitVector();
+        Node* arguments = m_node->child1().node();
+        RELEASE_ASSERT(arguments->op() == PhantomNewArrayWithSpread || arguments->op() == PhantomSpread);
 
         unsigned numberOfStaticArguments = 0;
         Vector<LValue, 2> spreadLengths;
-        for (unsigned i = 0; i < arrayWithSpread->numChildren(); i++) {
-            if (bitVector->get(i)) {
-                Node* child = m_graph.varArgChild(arrayWithSpread, i).node();
-                ASSERT(child->op() == PhantomSpread);
-                ASSERT(child->child1()->op() == PhantomCreateRest);
-                InlineCallFrame* inlineCallFrame = child->child1()->origin.semantic.inlineCallFrame;
-                LValue length = cachedSpreadLengths.ensure(inlineCallFrame, [&] () {
-                    return getSpreadLengthFromInlineCallFrame(inlineCallFrame, child->child1()->numberOfArgumentsToSkip());
-                }).iterator->value;
-                spreadLengths.append(length);
-            } else
-                ++numberOfStaticArguments;
-        }
+
+        auto loadSpreadLength = [this, &cachedSpreadLengths] (Node* spread) -> LValue {
+            ASSERT(spread->op() == PhantomSpread);
+            ASSERT(spread->child1()->op() == PhantomCreateRest);
+            InlineCallFrame* inlineCallFrame = spread->child1()->origin.semantic.inlineCallFrame;
+            unsigned numberOfArgumentsToSkip = spread->child1()->numberOfArgumentsToSkip();
+            return cachedSpreadLengths.ensure(inlineCallFrame, [&] () {
+                return getSpreadLengthFromInlineCallFrame(inlineCallFrame, numberOfArgumentsToSkip);
+            }).iterator->value;
+        };
+
+        if (arguments->op() == PhantomNewArrayWithSpread) {
+            BitVector* bitVector = arguments->bitVector();
+            for (unsigned i = 0; i < arguments->numChildren(); i++) {
+                if (bitVector->get(i))
+                    spreadLengths.append(loadSpreadLength(m_graph.varArgChild(arguments, i).node()));
+                else
+                    ++numberOfStaticArguments;
+            }
+        } else
+            spreadLengths.append(loadSpreadLength(arguments));
 
         LValue lengthIncludingThis = m_out.constInt32(1 + numberOfStaticArguments);
         for (LValue length : spreadLengths)
@@ -7229,45 +7260,53 @@ private:
 
         LValue targetStart = addressFor(data->machineStart).value();
         LValue storeIndex = m_out.constIntPtr(0);
-        for (unsigned i = 0; i < arrayWithSpread->numChildren(); i++) {
-            if (bitVector->get(i)) {
-                Node* child = m_graph.varArgChild(arrayWithSpread, i).node();
-                RELEASE_ASSERT(child->op() == PhantomSpread);
-                RELEASE_ASSERT(child->child1()->op() == PhantomCreateRest);
-                InlineCallFrame* inlineCallFrame = child->child1()->origin.semantic.inlineCallFrame;
 
-                LValue sourceStart = getArgumentsStart(inlineCallFrame, child->child1()->numberOfArgumentsToSkip());
-                LValue spreadLength = m_out.zeroExtPtr(cachedSpreadLengths.get(inlineCallFrame));
+        auto forwardSpread = [this, &cachedSpreadLengths, &targetStart] (Node* spread, LValue storeIndex) -> LValue {
+            RELEASE_ASSERT(spread->op() == PhantomSpread);
+            RELEASE_ASSERT(spread->child1()->op() == PhantomCreateRest);
+            InlineCallFrame* inlineCallFrame = spread->child1()->origin.semantic.inlineCallFrame;
 
-                LBasicBlock loop = m_out.newBlock();
-                LBasicBlock continuation = m_out.newBlock();
-                ValueFromBlock startLoadIndex = m_out.anchor(m_out.constIntPtr(0));
-                ValueFromBlock startStoreIndex = m_out.anchor(storeIndex);
-                ValueFromBlock startStoreIndexForEnd = m_out.anchor(storeIndex);
+            LValue sourceStart = getArgumentsStart(inlineCallFrame, spread->child1()->numberOfArgumentsToSkip());
+            LValue spreadLength = m_out.zeroExtPtr(cachedSpreadLengths.get(inlineCallFrame));
 
-                m_out.branch(m_out.isZero64(spreadLength), unsure(continuation), unsure(loop));
+            LBasicBlock loop = m_out.newBlock();
+            LBasicBlock continuation = m_out.newBlock();
+            ValueFromBlock startLoadIndex = m_out.anchor(m_out.constIntPtr(0));
+            ValueFromBlock startStoreIndex = m_out.anchor(storeIndex);
+            ValueFromBlock startStoreIndexForEnd = m_out.anchor(storeIndex);
 
-                LBasicBlock lastNext = m_out.appendTo(loop, continuation);
-                LValue loopStoreIndex = m_out.phi(Int64, startStoreIndex);
-                LValue loadIndex = m_out.phi(Int64, startLoadIndex);
-                LValue value = m_out.load64(
-                    m_out.baseIndex(m_heaps.variables, sourceStart, loadIndex));
-                m_out.store64(value, m_out.baseIndex(m_heaps.variables, targetStart, loopStoreIndex));
-                LValue nextLoadIndex = m_out.add(m_out.constIntPtr(1), loadIndex);
-                m_out.addIncomingToPhi(loadIndex, m_out.anchor(nextLoadIndex));
-                LValue nextStoreIndex = m_out.add(m_out.constIntPtr(1), loopStoreIndex);
-                m_out.addIncomingToPhi(loopStoreIndex, m_out.anchor(nextStoreIndex));
-                ValueFromBlock loopStoreIndexForEnd = m_out.anchor(nextStoreIndex);
-                m_out.branch(m_out.below(nextLoadIndex, spreadLength), unsure(loop), unsure(continuation));
+            m_out.branch(m_out.isZero64(spreadLength), unsure(continuation), unsure(loop));
 
-                m_out.appendTo(continuation, lastNext);
-                storeIndex = m_out.phi(Int64, startStoreIndexForEnd, loopStoreIndexForEnd);
-            } else {
-                LValue value = lowJSValue(m_graph.varArgChild(arrayWithSpread, i));
-                m_out.store64(value, m_out.baseIndex(m_heaps.variables, targetStart, storeIndex));
-                storeIndex = m_out.add(m_out.constIntPtr(1), storeIndex);
+            LBasicBlock lastNext = m_out.appendTo(loop, continuation);
+            LValue loopStoreIndex = m_out.phi(Int64, startStoreIndex);
+            LValue loadIndex = m_out.phi(Int64, startLoadIndex);
+            LValue value = m_out.load64(
+                m_out.baseIndex(m_heaps.variables, sourceStart, loadIndex));
+            m_out.store64(value, m_out.baseIndex(m_heaps.variables, targetStart, loopStoreIndex));
+            LValue nextLoadIndex = m_out.add(m_out.constIntPtr(1), loadIndex);
+            m_out.addIncomingToPhi(loadIndex, m_out.anchor(nextLoadIndex));
+            LValue nextStoreIndex = m_out.add(m_out.constIntPtr(1), loopStoreIndex);
+            m_out.addIncomingToPhi(loopStoreIndex, m_out.anchor(nextStoreIndex));
+            ValueFromBlock loopStoreIndexForEnd = m_out.anchor(nextStoreIndex);
+            m_out.branch(m_out.below(nextLoadIndex, spreadLength), unsure(loop), unsure(continuation));
+
+            m_out.appendTo(continuation, lastNext);
+            return m_out.phi(Int64, startStoreIndexForEnd, loopStoreIndexForEnd);
+        };
+
+        if (arguments->op() == PhantomNewArrayWithSpread) {
+            BitVector* bitVector = arguments->bitVector();
+            for (unsigned i = 0; i < arguments->numChildren(); i++) {
+                if (bitVector->get(i))
+                    storeIndex = forwardSpread(m_graph.varArgChild(arguments, i).node(), storeIndex);
+                else {
+                    LValue value = lowJSValue(m_graph.varArgChild(arguments, i));
+                    m_out.store64(value, m_out.baseIndex(m_heaps.variables, targetStart, storeIndex));
+                    storeIndex = m_out.add(m_out.constIntPtr(1), storeIndex);
+                }
             }
-        }
+        } else
+            storeIndex = forwardSpread(arguments, storeIndex);
 
         LBasicBlock undefinedLoop = m_out.newBlock();
         LBasicBlock continuation = m_out.newBlock();

@@ -40,4 +40,14 @@ void JSFixedArray::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.appendValuesHidden(thisObject->buffer(), thisObject->size());
 }
 
+void JSFixedArray::copyToArguments(ExecState* exec, VirtualRegister firstElementDest, unsigned offset, unsigned length)
+{
+    for (unsigned i = 0; i < length; ++i) {
+        if ((i + offset) < m_size)
+            exec->r(firstElementDest + i) = get(i + offset);
+        else
+            exec->r(firstElementDest + i) = jsUndefined();
+    }
+}
+
 } // namespace JSC

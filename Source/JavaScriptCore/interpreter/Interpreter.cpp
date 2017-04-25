@@ -46,6 +46,7 @@
 #include "JSArrayInlines.h"
 #include "JSBoundFunction.h"
 #include "JSCInlines.h"
+#include "JSFixedArray.h"
 #include "JSLexicalEnvironment.h"
 #include "JSModuleEnvironment.h"
 #include "JSString.h"
@@ -191,6 +192,9 @@ unsigned sizeOfVarargs(CallFrame* callFrame, JSValue arguments, uint32_t firstVa
     case ScopedArgumentsType:
         length = jsCast<ScopedArguments*>(cell)->length(callFrame);
         break;
+    case JSFixedArrayType:
+        length = jsCast<JSFixedArray*>(cell)->size();
+        break;
     case StringType:
     case SymbolType:
         throwException(callFrame, scope, createInvalidFunctionApplyParameterError(callFrame,  arguments));
@@ -252,6 +256,9 @@ void loadVarargs(CallFrame* callFrame, VirtualRegister firstElementDest, JSValue
         return;
     case ScopedArgumentsType:
         jsCast<ScopedArguments*>(cell)->copyToArguments(callFrame, firstElementDest, offset, length);
+        return;
+    case JSFixedArrayType:
+        jsCast<JSFixedArray*>(cell)->copyToArguments(callFrame, firstElementDest, offset, length);
         return;
     default: {
         ASSERT(arguments.isObject());

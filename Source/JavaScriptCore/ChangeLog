@@ -1,5 +1,52 @@
 2017-04-24  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [JSC] Use JSFixedArray directly when using call_varargs
+        https://bugs.webkit.org/show_bug.cgi?id=171057
+
+        Reviewed by Saam Barati.
+
+        Previously we always emit new_array_with_spread when calling call(...args).
+        But this array is unnecessary if varargs operation can handle Spread directly.
+
+        This patch implements a peep-hole optimization in the bytecode compiler layer
+        to omit new_array_with_spread. This is very simple and effective because this
+        peep-hole optimization is quite common when using (...args) style calls and
+        this optimization works all the tiers. While we can implement the phase to
+        omit this NewArrayWithSpread in argument elimination phase, it only works
+        for FTL. While such an optimization can work with complex data flow, this
+        peep-hole optimization can optimize a common case easily.
+
+        For now, Spread and PhantomSpread can be directly drained by CallVarargs
+        and LoadVarargs related operations. We modify DFG and FTL to handle this correctly.
+
+        This shows six-speed improvement.
+
+            spread.es6                 89.4300+-2.0236     ^     69.6015+-1.7278        ^ definitely 1.2849x faster
+            spread-generator.es6      344.7879+-5.9147     ^    331.2712+-6.8610        ^ definitely 1.0408x faster
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitCall):
+        (JSC::BytecodeGenerator::emitConstruct):
+        * dfg/DFGArgumentsEliminationPhase.cpp:
+        * dfg/DFGPreciseLocalClobberize.h:
+        (JSC::DFG::PreciseLocalClobberizeAdaptor::readTop):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileSpread):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstructVarargsSpread):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstructVarargs):
+        (JSC::FTL::DFG::LowerDFGToB3::compileForwardVarargs):
+        (JSC::FTL::DFG::LowerDFGToB3::compileForwardVarargsWithSpread):
+        * interpreter/Interpreter.cpp:
+        (JSC::sizeOfVarargs):
+        (JSC::loadVarargs):
+        * parser/Nodes.h:
+        (JSC::ArrayNode::elements):
+        * runtime/JSFixedArray.cpp:
+        (JSC::JSFixedArray::copyToArguments):
+        * runtime/JSFixedArray.h:
+
+2017-04-24  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [WTF] Move JSC tools/StackTrace to WTF and unify stack trace dump code
         https://bugs.webkit.org/show_bug.cgi?id=171199
 

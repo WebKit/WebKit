@@ -3421,6 +3421,19 @@ RegisterID* BytecodeGenerator::emitCall(OpcodeID opcodeID, RegisterID* dst, Regi
         if (n && n->m_expr->isSpreadExpression()) {
             RELEASE_ASSERT(!n->m_next);
             auto expression = static_cast<SpreadExpressionNode*>(n->m_expr)->expression();
+            if (expression->isArrayLiteral()) {
+                auto* elements = static_cast<ArrayNode*>(expression)->elements();
+                if (elements && !elements->next() && elements->value()->isSpreadExpression()) {
+                    ExpressionNode* expression = static_cast<SpreadExpressionNode*>(elements->value())->expression();
+                    RefPtr<RegisterID> argumentRegister = emitNode(callArguments.argumentRegister(0), expression);
+                    emitOpcode(op_spread);
+                    instructions().append(argumentRegister.get()->index());
+                    instructions().append(argumentRegister.get()->index());
+
+                    RefPtr<RegisterID> thisRegister = emitMove(newTemporary(), callArguments.thisRegister());
+                    return emitCallVarargs(opcodeID == op_tail_call ? op_tail_call_varargs : op_call_varargs, dst, func, callArguments.thisRegister(), argumentRegister.get(), newTemporary(), 0, divot, divotStart, divotEnd, debuggableCall);
+                }
+            }
             RefPtr<RegisterID> argumentRegister;
             argumentRegister = expression->emitBytecode(*this, callArguments.argumentRegister(0));
             RefPtr<RegisterID> thisRegister = emitMove(newTemporary(), callArguments.thisRegister());
@@ -3639,6 +3652,19 @@ RegisterID* BytecodeGenerator::emitConstruct(RegisterID* dst, RegisterID* func, 
         if (n && n->m_expr->isSpreadExpression()) {
             RELEASE_ASSERT(!n->m_next);
             auto expression = static_cast<SpreadExpressionNode*>(n->m_expr)->expression();
+            if (expression->isArrayLiteral()) {
+                auto* elements = static_cast<ArrayNode*>(expression)->elements();
+                if (elements && !elements->next() && elements->value()->isSpreadExpression()) {
+                    ExpressionNode* expression = static_cast<SpreadExpressionNode*>(elements->value())->expression();
+                    RefPtr<RegisterID> argumentRegister = emitNode(callArguments.argumentRegister(0), expression);
+                    emitOpcode(op_spread);
+                    instructions().append(argumentRegister.get()->index());
+                    instructions().append(argumentRegister.get()->index());
+
+                    RefPtr<RegisterID> thisRegister = emitMove(newTemporary(), callArguments.thisRegister());
+                    return emitConstructVarargs(dst, func, callArguments.thisRegister(), argumentRegister.get(), newTemporary(), 0, divot, divotStart, divotEnd, DebuggableCall::No);
+                }
+            }
             RefPtr<RegisterID> argumentRegister;
             argumentRegister = expression->emitBytecode(*this, callArguments.argumentRegister(0));
             return emitConstructVarargs(dst, func, callArguments.thisRegister(), argumentRegister.get(), newTemporary(), 0, divot, divotStart, divotEnd, DebuggableCall::No);

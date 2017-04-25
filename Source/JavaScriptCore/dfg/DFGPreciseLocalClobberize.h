@@ -121,18 +121,22 @@ private:
                 m_read(VirtualRegister(inlineCallFrame->stackOffset + CallFrameSlot::argumentCount));
         };
 
+        auto readPhantomSpreadNode = [&] (Node* spread) {
+            ASSERT(spread->op() == PhantomSpread);
+            ASSERT(spread->child1()->op() == PhantomCreateRest);
+            InlineCallFrame* inlineCallFrame = spread->child1()->origin.semantic.inlineCallFrame;
+            unsigned numberOfArgumentsToSkip = spread->child1()->numberOfArgumentsToSkip();
+            readFrame(inlineCallFrame, numberOfArgumentsToSkip);
+        };
+
         auto readNewArrayWithSpreadNode = [&] (Node* arrayWithSpread) {
             ASSERT(arrayWithSpread->op() == NewArrayWithSpread || arrayWithSpread->op() == PhantomNewArrayWithSpread);
             BitVector* bitVector = arrayWithSpread->bitVector();
             for (unsigned i = 0; i < arrayWithSpread->numChildren(); i++) {
                 if (bitVector->get(i)) {
                     Node* child = m_graph.varArgChild(arrayWithSpread, i).node();
-                    if (child->op() == PhantomSpread) {
-                        ASSERT(child->child1()->op() == PhantomCreateRest);
-                        InlineCallFrame* inlineCallFrame = child->child1()->origin.semantic.inlineCallFrame;
-                        unsigned numberOfArgumentsToSkip = child->child1()->numberOfArgumentsToSkip();
-                        readFrame(inlineCallFrame, numberOfArgumentsToSkip);
-                    }
+                    if (child->op() == PhantomSpread)
+                        readPhantomSpreadNode(child);
                 }
             }
         };
@@ -173,9 +177,12 @@ private:
             if (isPhantomNode && isFTL(m_graph.m_plan.mode))
                 break;
             
-            if (isForwardingNode && m_node->hasArgumentsChild() && m_node->argumentsChild() && m_node->argumentsChild()->op() == PhantomNewArrayWithSpread) {
-                Node* arrayWithSpread = m_node->argumentsChild().node();
-                readNewArrayWithSpreadNode(arrayWithSpread);
+            if (isForwardingNode && m_node->hasArgumentsChild() && m_node->argumentsChild()
+                && (m_node->argumentsChild()->op() == PhantomNewArrayWithSpread || m_node->argumentsChild()->op() == PhantomSpread)) {
+                if (m_node->argumentsChild()->op() == PhantomNewArrayWithSpread)
+                    readNewArrayWithSpreadNode(m_node->argumentsChild().node());
+                else
+                    readPhantomSpreadNode(m_node->argumentsChild().node());
             } else {
                 InlineCallFrame* inlineCallFrame;
                 if (m_node->hasArgumentsChild() && m_node->argumentsChild())

@@ -1,3 +1,26 @@
+2017-04-24  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Use JSFixedArray directly when using call_varargs
+        https://bugs.webkit.org/show_bug.cgi?id=171057
+
+        Reviewed by Saam Barati.
+
+        * stress/spread-capture-rest.js: Added.
+        (shouldBe):
+        (capture):
+        (a):
+        (b):
+        * stress/spread-multi-layers.js: Added.
+        (shouldBe):
+        (a):
+        (b):
+        (c):
+        (d):
+        * stress/spread-non-varargs.js: Added.
+        (shouldBe):
+        (a):
+        (b):
+
 2017-04-24  Joseph Pecoraro  <pecoraro@apple.com>
 
         test262: test262/test/language/computed-property-names/class/static/getter-prototype.js

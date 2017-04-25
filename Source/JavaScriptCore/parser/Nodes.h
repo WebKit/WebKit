@@ -633,7 +633,7 @@ namespace JSC {
 
         ArgumentListNode* toArgumentList(ParserArena&, int, int) const;
 
-        ElementNode* elements() const { ASSERT(isSimpleArray()); return m_element; }
+        ElementNode* elements() const { return m_element; }
     private:
         RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
 

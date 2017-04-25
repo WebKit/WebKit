@@ -111,6 +111,8 @@ public:
         return WTF::roundUpToMultipleOf<sizeof(WriteBarrier<Unknown>)>(sizeof(JSFixedArray));
     }
 
+    void copyToArguments(ExecState*, VirtualRegister firstElementDest, unsigned offset, unsigned length);
+
 private:
     unsigned m_size;
 
