@@ -35,6 +35,7 @@
 
 #if USE(CG)
 #include "ImageSourceCG.h"
+#include "UTIRegistry.h"
 #include <wtf/RetainPtr.h>
 #endif
 
@@ -156,11 +157,9 @@ typedef HashMap<String, Vector<String>*, ASCIICaseInsensitiveHash> MediaMIMEType
 static void initializeSupportedImageMIMETypes()
 {
 #if USE(CG)
-    RetainPtr<CFArrayRef> supportedTypes = adoptCF(CGImageSourceCopyTypeIdentifiers());
-    CFIndex count = CFArrayGetCount(supportedTypes.get());
-    for (CFIndex i = 0; i < count; i++) {
-        CFStringRef supportedType = reinterpret_cast<CFStringRef>(CFArrayGetValueAtIndex(supportedTypes.get(), i));
-        String mimeType = MIMETypeForImageSourceType(supportedType);
+    HashSet<String>& imageUTIs = allowedImageUTIs();
+    for (auto& imageUTI : imageUTIs) {
+        String mimeType = MIMETypeForImageSourceType(imageUTI);
         if (!mimeType.isEmpty()) {
             supportedImageMIMETypes->add(mimeType);
             supportedImageResourceMIMETypes->add(mimeType);

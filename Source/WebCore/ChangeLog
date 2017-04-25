@@ -1,3 +1,23 @@
+2017-04-24  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Whitelist supported image MIME types
+        https://bugs.webkit.org/show_bug.cgi?id=171077
+
+        Reviewed by Tim Horton.
+
+        Restrict the CG port image formats to a known whitelist. Build this list from image
+        UTI's instead of MIME types, since the image UTI's is a superset of the MIME types.
+        Use this list to build the list of supported image MIME types.
+
+        * PlatformAppleWin.cmake:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::initializeSupportedImageMIMETypes):
+        * platform/graphics/cg/UTIRegistry.cpp: Added.
+        (WebCore::allowedImageUTIs):
+        (WebCore::isAllowedImageUTI):
+        * platform/graphics/cg/UTIRegistry.h: Added.
+
 2017-04-24  Nan Wang  <n_wang@apple.com>
 
         AX: Crash at WebCore::AXObjectCache::characterOffsetForIndex(int, WebCore::AccessibilityObject const*) + 703

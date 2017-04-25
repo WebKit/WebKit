@@ -138,6 +138,7 @@ else ()
         platform/graphics/cg/PatternCG.cpp
         platform/graphics/cg/SubimageCacheWithTimer.cpp
         platform/graphics/cg/TransformationMatrixCG.cpp
+        platform/graphics/cg/UTIRegistry.cpp
 
         platform/graphics/opentype/OpenTypeCG.cpp
 
