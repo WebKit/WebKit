@@ -1,3 +1,9 @@
+2017-04-25  Tim Horton  <timothy_horton@apple.com>
+
+        Try to fix the WKTR build after r215758
+
+        * Scripts/build-webkittestrunner:
+
 2017-04-25  Daniel Bates  <dabates@apple.com>
 
         Remove more EFL code
