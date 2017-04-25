@@ -691,7 +691,7 @@ WebInspector.Resource = class Resource extends WebInspector.SourceCode
 
     setCachedResponseBodySize(size)
     {
-        console.assert(!isNaN(size), "Size should be a valid number.")
+        console.assert(!isNaN(size), "Size should be a valid number.");
         console.assert(isNaN(this._cachedResponseBodySize), "This should only be set once.");
         console.assert(this._estimatedSize === size, "The legacy path was updated already and matches.");
 

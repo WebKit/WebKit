@@ -1789,7 +1789,7 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
 
         contextMenu.appendItem(WebInspector.UIString("Reveal Breakpoint"), () => {
             let breakpointTreeElement = this.selfOrDescendant((treeElement) => treeElement.breakpointStatus && treeElement.breakpointStatus !== WebInspector.DOMTreeElement.BreakpointStatus.None);
-            console.assert(breakpointTreeElement, "Missing breakpoint descendant.", this)
+            console.assert(breakpointTreeElement, "Missing breakpoint descendant.", this);
             if (!breakpointTreeElement)
                 return;
 

@@ -27,7 +27,7 @@
     if (WebInspector.dontLocalizeUserInterface)
         return;
 
-    var localizedStringsURL = InspectorFrontendHost.localizedStringsURL();
+    let localizedStringsURL = InspectorFrontendHost.localizedStringsURL();
     console.assert(localizedStringsURL);
     if (localizedStringsURL)
         document.write("<script src=\"" + localizedStringsURL + "\"></script>");
@@ -48,6 +48,9 @@ WebInspector.UIString = function(string, vararg)
 
     if (window.localizedStrings && string in window.localizedStrings)
         return window.localizedStrings[string];
+
+    if (!window.localizedStrings)
+        console.error(`Attempted to load localized string "${string}" before localizedStrings was initialized.`);
 
     if (!this._missingLocalizedStrings)
         this._missingLocalizedStrings = {};

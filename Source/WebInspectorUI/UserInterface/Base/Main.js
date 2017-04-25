@@ -112,6 +112,9 @@ WebInspector.loaded = function()
     // This lets us save a state cookie before any managers or sidebars do any resets that would affect state (namely TimelineManager).
     WebInspector.Frame.addEventListener(WebInspector.Frame.Event.ProvisionalLoadStarted, this._provisionalLoadStarted, this);
 
+    // Populate any UIStrings that must be done early after localized strings have loaded.
+    WebInspector.KeyboardShortcut.Key.Space._displayName = WebInspector.UIString("Space");
+
     // Create the singleton managers next, before the user interface elements, so the user interface can register
     // as event listeners on these managers.
     this.targetManager = new WebInspector.TargetManager;

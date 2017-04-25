@@ -232,7 +232,7 @@ WebInspector.KeyboardShortcut.Key = {
     Tab: new WebInspector.Key(9, "\u21e5"),
     Enter: new WebInspector.Key(13, "\u21a9"),
     Escape: new WebInspector.Key(27, "\u238b"),
-    Space: new WebInspector.Key(32, WebInspector.UIString("Space")),
+    Space: new WebInspector.Key(32, "Space"), // UIString populated in WebInspector.loaded.
     PageUp: new WebInspector.Key(33, "\u21de"),
     PageDown: new WebInspector.Key(34, "\u21df"),
     End: new WebInspector.Key(35, "\u2198"),

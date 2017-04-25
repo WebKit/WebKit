@@ -1,3 +1,37 @@
+2017-04-25  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: "Space" localized string is not loaded in combined and minified builds
+        https://bugs.webkit.org/show_bug.cgi?id=171283
+        <rdar://problem/30871371>
+
+        Reviewed by Brian Burg.
+
+        In combined and minified builds, the document.write() to load the
+        localized strings script doesn't happen before the KeyboardShortcut
+        global code in Main.js evaluates, so there is no UIString because
+        window.localizedStrings hasn't populated yet. Since this is the only
+        instance, populate the display UIString lazily and provide warnings
+        in minified builds if this happens.
+
+        * UserInterface/Base/LoadLocalizedStrings.js:
+        (WebInspector.UIString):
+        Provide a warning if a UIString was attempted before the strings have loaded.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.loaded):
+        For this rare instance, populate the display name of the string when we are
+        sure strings have loaded.
+
+        * UserInterface/Models/KeyboardShortcut.js:
+        Revert the UIString here, but note that it will be populated later.
+
+        * UserInterface/Models/Resource.js:
+        (WebInspector.Resource.prototype.setCachedResponseBodySize):
+        * UserInterface/Views/DOMTreeElement.js:
+        (WebInspector.DOMTreeElement.prototype._statusImageContextmenu):
+        Address console.asserts not ending in semicolon warnings produced during
+        optimized builds. Without semicolons they are not stripped.
+
 2017-04-25  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Web Inspector: TypeError:​ sourceCodeLocation.populateLiveDisplayLocationTooltip is not a function
