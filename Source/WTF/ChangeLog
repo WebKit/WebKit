@@ -1,5 +1,32 @@
 2017-04-24  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [WTF] Move JSC tools/StackTrace to WTF and unify stack trace dump code
+        https://bugs.webkit.org/show_bug.cgi?id=171199
+
+        Reviewed by Mark Lam.
+
+        JSC tools/StackTrace's dump code is almost identical to WTF Assertions'
+        stack trace dump code. This patch moves tools/StackTrace to WTF and use
+        it in Assertions. It unifies the two duplicate implementations into one.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/Assertions.cpp:
+        * wtf/CMakeLists.txt:
+        * wtf/Platform.h:
+        * wtf/StackTrace.cpp: Renamed from Source/JavaScriptCore/tools/StackTrace.cpp.
+        (WTF::StackTrace::captureStackTrace):
+        (WTF::StackTrace::dump):
+        * wtf/StackTrace.h: Copied from Source/JavaScriptCore/tools/StackTrace.h.
+        (WTF::StackTrace::StackTrace):
+        (WTF::StackTrace::stack):
+        (WTF::StackTrace::DemangleEntry::mangledName):
+        (WTF::StackTrace::DemangleEntry::demangledName):
+        (WTF::StackTrace::DemangleEntry::DemangleEntry):
+        * wtf/SystemFree.h: Renamed from Source/JavaScriptCore/tools/StackTrace.h.
+        (WTF::SystemFree::operator()):
+
+2017-04-24  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [AppleWin] The procedure entry point ?waitForThreadCompletion@WTF@@YAHI@Z could not be located in the dynamic link library WebKitQuartzCoreAdditions.dll
         https://bugs.webkit.org/show_bug.cgi?id=171029
 

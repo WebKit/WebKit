@@ -41,6 +41,7 @@
 #include <wtf/Lock.h>
 #include <wtf/Locker.h>
 #include <wtf/LoggingAccumulator.h>
+#include <wtf/StackTrace.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/StringExtras.h>
 #include <wtf/text/CString.h>
@@ -72,9 +73,7 @@
 #include <unistd.h>
 #endif
 
-#if OS(DARWIN) || (OS(LINUX) && defined(__GLIBC__) && !defined(__UCLIBC__))
-#include <cxxabi.h>
-#include <dlfcn.h>
+#if HAVE(BACKTRACE)
 #include <execinfo.h>
 #endif
 
@@ -238,9 +237,18 @@ void WTFReportArgumentAssertionFailure(const char* file, int line, const char* f
     printCallSite(file, line, function);
 }
 
+class CrashLogPrintStream : public PrintStream {
+public:
+    WTF_ATTRIBUTE_PRINTF(2, 0)
+    void vprintf(const char* format, va_list argList) override
+    {
+        vprintf_stderr_common(format, argList);
+    }
+};
+
 void WTFGetBacktrace(void** stack, int* size)
 {
-#if OS(DARWIN) || (OS(LINUX) && defined(__GLIBC__) && !defined(__UCLIBC__))
+#if HAVE(BACKTRACE)
     *size = backtrace(stack, *size);
 #elif OS(WINDOWS)
     *size = RtlCaptureStackBackTrace(0, *size, stack, 0);
@@ -260,51 +268,12 @@ void WTFReportBacktrace()
     WTFPrintBacktrace(samples + framesToSkip, frames - framesToSkip);
 }
 
-#if OS(DARWIN) || OS(LINUX)
-#  if PLATFORM(GTK)
-#    if defined(__GLIBC__) && !defined(__UCLIBC__)
-#      define USE_BACKTRACE_SYMBOLS 1
-#    endif
-#  else
-#    define USE_DLADDR 1
-#  endif
-#endif
-
 void WTFPrintBacktrace(void** stack, int size)
 {
-#if USE(BACKTRACE_SYMBOLS)
-    char** symbols = backtrace_symbols(stack, size);
-    if (!symbols)
-        return;
-#endif
-
-    for (int i = 0; i < size; ++i) {
-        const char* mangledName = 0;
-        char* cxaDemangled = 0;
-#if USE(BACKTRACE_SYMBOLS)
-        mangledName = symbols[i];
-#elif USE(DLADDR)
-        Dl_info info;
-        if (dladdr(stack[i], &info) && info.dli_sname)
-            mangledName = info.dli_sname;
-        if (mangledName)
-            cxaDemangled = abi::__cxa_demangle(mangledName, 0, 0, 0);
-#endif
-        const int frameNumber = i + 1;
-        if (mangledName || cxaDemangled)
-            printf_stderr_common("%-3d %p %s\n", frameNumber, stack[i], cxaDemangled ? cxaDemangled : mangledName);
-        else
-            printf_stderr_common("%-3d %p\n", frameNumber, stack[i]);
-        free(cxaDemangled);
-    }
-
-#if USE(BACKTRACE_SYMBOLS)
-    free(symbols);
-#endif
+    CrashLogPrintStream out;
+    StackTrace stackTrace(stack, size);
+    out.print(stackTrace);
 }
-
-#undef USE_BACKTRACE_SYMBOLS
-#undef USE_DLADDR
 
 static WTFCrashHookFunction globalHook = 0;
 

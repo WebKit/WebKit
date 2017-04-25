@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Yusuke Suzuki <utatane.tea@gmail.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,41 +25,25 @@
 
 #pragma once
 
-#include <wtf/PrintStream.h>
+#include <type_traits>
 
-namespace JSC {
+namespace WTF {
 
-class StackTrace {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    static StackTrace* captureStackTrace(int maxFrames);
-
-    int size() const { return m_size; }
-
-    void dump(PrintStream&) const;
-
-private:
-    inline static size_t instanceSize(int capacity);
-
-    StackTrace()
-        : m_size(0)
-    { }
-
-    // We structure the top fields this way because the underlying stack capture
-    // facility will capture from the top of the stack, and we'll need to skip the
-    // top 2 frame which is of no interest. Setting up the fields layout this way
-    // allows us to capture the stack in place and minimize space wastage.
-    union {
-        struct {
-            int m_size;
-            int m_capacity;
-        };
-        struct {
-            void* m_skippedFrame0;
-            void* m_skippedFrame1;
-        };
-    };
-    void* m_stack[1];
+template<typename T>
+struct SystemFree {
+    void operator()(T* pointer) const
+    {
+        free(const_cast<typename std::remove_cv<T>::type*>(pointer));
+    }
 };
 
-} // namespace JSC
+template<typename T>
+struct SystemFree<T[]> {
+    void operator()(T* pointer) const
+    {
+        free(const_cast<typename std::remove_cv<T>::type*>(pointer));
+    }
+
+};
+
+} // namespace WTF

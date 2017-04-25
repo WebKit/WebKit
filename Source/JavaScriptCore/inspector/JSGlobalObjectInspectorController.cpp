@@ -47,13 +47,8 @@
 #include "ScriptArguments.h"
 #include "ScriptCallStack.h"
 #include "ScriptCallStackFactory.h"
+#include <wtf/StackTrace.h>
 #include <wtf/Stopwatch.h>
-
-#if OS(DARWIN) || (OS(LINUX) && !PLATFORM(GTK))
-#include <cxxabi.h>
-#include <dlfcn.h>
-#include <execinfo.h>
-#endif
 
 #if ENABLE(REMOTE_INSPECTOR)
 #include "JSGlobalObjectDebuggable.h"
@@ -200,18 +195,11 @@ void JSGlobalObjectInspectorController::appendAPIBacktrace(ScriptCallStack& call
     void** stack = samples + framesToSkip;
     int size = frames - framesToSkip;
     for (int i = 0; i < size; ++i) {
-        const char* mangledName = nullptr;
-        char* cxaDemangled = nullptr;
-        Dl_info info;
-        if (dladdr(stack[i], &info) && info.dli_sname)
-            mangledName = info.dli_sname;
-        if (mangledName)
-            cxaDemangled = abi::__cxa_demangle(mangledName, nullptr, nullptr, nullptr);
-        if (mangledName || cxaDemangled)
-            callStack.append(ScriptCallFrame(cxaDemangled ? cxaDemangled : mangledName, ASCIILiteral("[native code]"), noSourceID, 0, 0));
+        auto demangled = StackTrace::demangle(stack[i]);
+        if (demangled)
+            callStack.append(ScriptCallFrame(demangled->demangledName() ? demangled->demangledName() : demangled->mangledName(), ASCIILiteral("[native code]"), noSourceID, 0, 0));
         else
             callStack.append(ScriptCallFrame(ASCIILiteral("?"), ASCIILiteral("[native code]"), noSourceID, 0, 0));
-        free(cxaDemangled);
     }
 #else
     UNUSED_PARAM(callStack);

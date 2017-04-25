@@ -124,11 +124,13 @@ set(WTF_HEADERS
     SmallPtrSet.h
     StackBounds.h
     StackStats.h
+    StackTrace.h
     StaticConstructors.h
     StdLibExtras.h
     Stopwatch.h
     StringExtras.h
     StringPrintStream.h
+    SystemFree.h
     SystemTracing.h
     ThreadHolder.cpp
     ThreadMessage.h
@@ -241,6 +243,7 @@ set(WTF_SOURCES
     SixCharacterHash.cpp
     StackBounds.cpp
     StackStats.cpp
+    StackTrace.cpp
     StringPrintStream.cpp
     ThreadMessage.cpp
     Threading.cpp

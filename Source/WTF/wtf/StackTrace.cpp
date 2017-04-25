@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Yusuke Suzuki <utatane.tea@gmail.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,24 +28,15 @@
 #include "StackTrace.h"
 
 #include <wtf/Assertions.h>
+#include <wtf/PrintStream.h>
 
-#if OS(DARWIN) || (OS(LINUX) && defined(__GLIBC__) && !defined(__UCLIBC__))
+#if HAVE(BACKTRACE_SYMBOLS) || HAVE(DLADDR)
 #include <cxxabi.h>
 #include <dlfcn.h>
 #include <execinfo.h>
 #endif
 
-#if OS(DARWIN) || OS(LINUX)
-#  if PLATFORM(GTK)
-#    if defined(__GLIBC__) && !defined(__UCLIBC__)
-#      define USE_BACKTRACE_SYMBOLS 1
-#    endif
-#  else
-#    define USE_DLADDR 1
-#  endif
-#endif
-
-namespace JSC {
+namespace WTF {
 
 ALWAYS_INLINE size_t StackTrace::instanceSize(int capacity)
 {
@@ -60,7 +52,7 @@ StackTrace* StackTrace::captureStackTrace(int maxFrames)
 
     static const int framesToSkip = 2;
     int numberOfFrames = maxFrames + framesToSkip;
-    
+
     WTFGetBacktrace(&trace->m_skippedFrame0, &numberOfFrames);
     ASSERT(numberOfFrames > framesToSkip);
     trace->m_size = numberOfFrames - framesToSkip;
@@ -69,37 +61,56 @@ StackTrace* StackTrace::captureStackTrace(int maxFrames)
     return trace;
 }
 
+auto StackTrace::demangle(void* pc) -> std::optional<DemangleEntry>
+{
+#if HAVE(DLADDR)
+    const char* mangledName = nullptr;
+    const char* cxaDemangled = nullptr;
+    Dl_info info;
+    if (dladdr(pc, &info) && info.dli_sname)
+        mangledName = info.dli_sname;
+    if (mangledName) {
+        int status = 0;
+        cxaDemangled = abi::__cxa_demangle(mangledName, nullptr, nullptr, &status);
+        UNUSED_PARAM(status);
+    }
+    if (mangledName || cxaDemangled)
+        return DemangleEntry { mangledName, cxaDemangled };
+#endif
+    return std::nullopt;
+}
+
 void StackTrace::dump(PrintStream& out) const
 {
-#if USE(BACKTRACE_SYMBOLS)
-    char** symbols = backtrace_symbols(m_stack, m_size);
+    const auto* stack = this->stack();
+#if HAVE(BACKTRACE_SYMBOLS)
+    char** symbols = backtrace_symbols(stack, m_size);
     if (!symbols)
         return;
 #endif
-    
+
     for (int i = 0; i < m_size; ++i) {
-        const char* mangledName = 0;
-        char* cxaDemangled = 0;
-#if USE(BACKTRACE_SYMBOLS)
+        const char* mangledName = nullptr;
+        const char* cxaDemangled = nullptr;
+#if HAVE(BACKTRACE_SYMBOLS)
         mangledName = symbols[i];
-#elif USE(DLADDR)
-        Dl_info info;
-        if (dladdr(m_stack[i], &info) && info.dli_sname)
-            mangledName = info.dli_sname;
-        if (mangledName)
-            cxaDemangled = abi::__cxa_demangle(mangledName, 0, 0, 0);
+#elif HAVE(DLADDR)
+        auto demangled = demangle(stack[i]);
+        if (demangled) {
+            mangledName = demangled->mangledName();
+            cxaDemangled = demangled->demangledName();
+        }
 #endif
         const int frameNumber = i + 1;
         if (mangledName || cxaDemangled)
-            out.printf("%-3d %p %s\n", frameNumber, m_stack[i], cxaDemangled ? cxaDemangled : mangledName);
+            out.printf("%-3d %p %s\n", frameNumber, stack[i], cxaDemangled ? cxaDemangled : mangledName);
         else
-            out.printf("%-3d %p\n", frameNumber, m_stack[i]);
-        free(cxaDemangled);
+            out.printf("%-3d %p\n", frameNumber, stack[i]);
     }
-    
-#if USE(BACKTRACE_SYMBOLS)
+
+#if HAVE(BACKTRACE_SYMBOLS)
     free(symbols);
 #endif
 }
 
-} // namespace JSC
+} // namespace WTF

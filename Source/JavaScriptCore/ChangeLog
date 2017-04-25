@@ -1,3 +1,25 @@
+2017-04-24  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Move JSC tools/StackTrace to WTF and unify stack trace dump code
+        https://bugs.webkit.org/show_bug.cgi?id=171199
+
+        Reviewed by Mark Lam.
+
+        This patch adds a utility method to produce demangled names with dladdr.
+        It fixes several memory leaks because the result of abi::__cxa_demangle()
+        needs to be `free`-ed.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * inspector/JSGlobalObjectInspectorController.cpp:
+        (Inspector::JSGlobalObjectInspectorController::appendAPIBacktrace):
+        * runtime/SamplingProfiler.cpp:
+        (JSC::SamplingProfiler::StackFrame::displayName):
+        * tools/CellProfile.h:
+        * tools/CodeProfile.cpp:
+        (JSC::CodeProfile::report):
+        (JSC::symbolName): Deleted.
+
 2017-04-24  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: ObjC RWIProtocol codegen should better handle optional members

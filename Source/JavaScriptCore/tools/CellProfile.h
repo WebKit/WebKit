@@ -26,9 +26,9 @@
 #pragma once
 
 #include "JSCell.h"
-#include "StackTrace.h"
 #include "Structure.h"
 #include <wtf/MonotonicTime.h>
+#include <wtf/StackTrace.h>
 
 namespace JSC {
 

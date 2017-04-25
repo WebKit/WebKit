@@ -140,6 +140,7 @@
 		2CDED0EF18115C38004DBA70 /* RunLoopCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2CDED0EE18115C38004DBA70 /* RunLoopCF.cpp */; };
 		2CDED0F318115C85004DBA70 /* RunLoop.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2CDED0F118115C85004DBA70 /* RunLoop.cpp */; };
 		2CDED0F418115C85004DBA70 /* RunLoop.h in Headers */ = {isa = PBXBuildFile; fileRef = 2CDED0F218115C85004DBA70 /* RunLoop.h */; };
+		3337DB9CE743410FAF076E17 /* StackTrace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 313EDEC9778E49C9BEA91CFC /* StackTrace.cpp */; };
 		37C7CC2A1EA40A73007BD956 /* WeakLinking.h in Headers */ = {isa = PBXBuildFile; fileRef = 37C7CC291EA40A73007BD956 /* WeakLinking.h */; };
 		430B47891AAAAC1A001223DA /* StringCommon.h in Headers */ = {isa = PBXBuildFile; fileRef = 430B47871AAAAC1A001223DA /* StringCommon.h */; };
 		4B2680DD9B974402899ED572 /* IndexedContainerIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = 9C67C542589348E285B49699 /* IndexedContainerIterator.h */; };
@@ -178,6 +179,7 @@
 		83F2BADF1CF9524E003E99C3 /* Function.h in Headers */ = {isa = PBXBuildFile; fileRef = 83F2BADE1CF9524E003E99C3 /* Function.h */; };
 		83FBA93219DF459700F30ADB /* TypeCasts.h in Headers */ = {isa = PBXBuildFile; fileRef = 83FBA93119DF459700F30ADB /* TypeCasts.h */; };
 		86F46F611A2840EE00CCBF22 /* RefCounter.h in Headers */ = {isa = PBXBuildFile; fileRef = 86F46F5F1A2840EE00CCBF22 /* RefCounter.h */; };
+		90BE10007399406E86E94CBB /* StackTrace.h in Headers */ = {isa = PBXBuildFile; fileRef = EF7D6CD59D8642A8A0DA86AD /* StackTrace.h */; };
 		93934BD318A1E8C300D0D6A1 /* StringViewObjC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93934BD218A1E8C300D0D6A1 /* StringViewObjC.mm */; };
 		93934BD518A1F16900D0D6A1 /* StringViewCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93934BD418A1F16900D0D6A1 /* StringViewCF.cpp */; };
 		93AC91A818942FC400244939 /* LChar.h in Headers */ = {isa = PBXBuildFile; fileRef = 93AC91A718942FC400244939 /* LChar.h */; };
@@ -383,6 +385,7 @@
 		E3200AB71E9A536D003B59D2 /* PlatformRegisters.h in Headers */ = {isa = PBXBuildFile; fileRef = E3200AB41E9A536D003B59D2 /* PlatformRegisters.h */; };
 		E3200AB81E9A536D003B59D2 /* ThreadHolder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3200AB51E9A536D003B59D2 /* ThreadHolder.cpp */; };
 		E3200AB91E9A536D003B59D2 /* ThreadHolder.h in Headers */ = {isa = PBXBuildFile; fileRef = E3200AB61E9A536D003B59D2 /* ThreadHolder.h */; };
+		E3E158261EADA53C004A079D /* SystemFree.h in Headers */ = {isa = PBXBuildFile; fileRef = E3E158251EADA53C004A079D /* SystemFree.h */; };
 		E43A46951E228B9100276B05 /* Decoder.h in Headers */ = {isa = PBXBuildFile; fileRef = E43A46901E228B9100276B05 /* Decoder.h */; };
 		E43A46961E228B9100276B05 /* Encoder.h in Headers */ = {isa = PBXBuildFile; fileRef = E43A46911E228B9100276B05 /* Encoder.h */; };
 		E43A46971E228B9100276B05 /* Decoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E43A46921E228B9100276B05 /* Decoder.cpp */; };
@@ -546,6 +549,7 @@
 		2CDED0F118115C85004DBA70 /* RunLoop.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RunLoop.cpp; sourceTree = "<group>"; };
 		2CDED0F218115C85004DBA70 /* RunLoop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RunLoop.h; sourceTree = "<group>"; };
 		3137E1D7DBD84AC38FAE4D34 /* IndexSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IndexSet.h; sourceTree = "<group>"; };
+		313EDEC9778E49C9BEA91CFC /* StackTrace.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StackTrace.cpp; sourceTree = "<group>"; };
 		37C7CC291EA40A73007BD956 /* WeakLinking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakLinking.h; sourceTree = "<group>"; };
 		430B47871AAAAC1A001223DA /* StringCommon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringCommon.h; sourceTree = "<group>"; };
 		513E170A1CD7D5BF00E3650B /* LoggingAccumulator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoggingAccumulator.h; sourceTree = "<group>"; };
@@ -795,6 +799,7 @@
 		E3200AB41E9A536D003B59D2 /* PlatformRegisters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformRegisters.h; sourceTree = "<group>"; };
 		E3200AB51E9A536D003B59D2 /* ThreadHolder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ThreadHolder.cpp; sourceTree = "<group>"; };
 		E3200AB61E9A536D003B59D2 /* ThreadHolder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreadHolder.h; sourceTree = "<group>"; };
+		E3E158251EADA53C004A079D /* SystemFree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SystemFree.h; sourceTree = "<group>"; };
 		E43A46901E228B9100276B05 /* Decoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Decoder.h; sourceTree = "<group>"; };
 		E43A46911E228B9100276B05 /* Encoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Encoder.h; sourceTree = "<group>"; };
 		E43A46921E228B9100276B05 /* Decoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Decoder.cpp; sourceTree = "<group>"; };
@@ -806,6 +811,7 @@
 		E4A0AD381A96245500536DF6 /* WorkQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkQueue.h; sourceTree = "<group>"; };
 		E4A0AD3C1A96253C00536DF6 /* WorkQueueCocoa.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkQueueCocoa.cpp; sourceTree = "<group>"; };
 		EB95E1EF161A72410089A2F5 /* ByteOrder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ByteOrder.h; sourceTree = "<group>"; };
+		EF7D6CD59D8642A8A0DA86AD /* StackTrace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StackTrace.h; sourceTree = "<group>"; };
 		F72BBDB107FA424886178B9E /* SymbolImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SymbolImpl.cpp; sourceTree = "<group>"; };
 		FE8225301B2A1E5B00BA68FD /* NakedPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NakedPtr.h; sourceTree = "<group>"; };
 		FE86A8741E59440200111BBF /* ForbidHeapAllocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ForbidHeapAllocation.h; sourceTree = "<group>"; };
@@ -1012,6 +1018,7 @@
 				A8A4727A151A825A004123FF /* DateMath.h */,
 				A8A4727B151A825A004123FF /* DecimalNumber.cpp */,
 				A8A4727C151A825A004123FF /* DecimalNumber.h */,
+				E3E158251EADA53C004A079D /* SystemFree.h */,
 				0F2B66A417B6B4F700A7AE3F /* DeferrableRefCounted.h */,
 				A561F30F1DF2642100FF675D /* DeprecatedOptional.h */,
 				A8A4727E151A825A004123FF /* Deque.h */,
@@ -1186,6 +1193,8 @@
 				A8A4730F151A825B004123FF /* StackBounds.h */,
 				FEDACD3B1630F83F00C69634 /* StackStats.cpp */,
 				FEDACD3C1630F83F00C69634 /* StackStats.h */,
+				EF7D6CD59D8642A8A0DA86AD /* StackTrace.h */,
+				313EDEC9778E49C9BEA91CFC /* StackTrace.cpp */,
 				A8A47310151A825B004123FF /* StaticConstructors.h */,
 				A8A47311151A825B004123FF /* StdLibExtras.h */,
 				C4F8A93619C65EB400B2B15D /* Stopwatch.h */,
@@ -1462,6 +1471,7 @@
 				0F4570451BE834410062A629 /* BubbleSort.h in Headers */,
 				A8A47391151A825B004123FF /* BumpPointerAllocator.h in Headers */,
 				EB95E1F0161A72410089A2F5 /* ByteOrder.h in Headers */,
+				E3E158261EADA53C004A079D /* SystemFree.h in Headers */,
 				A8A473AD151A825B004123FF /* cached-powers.h in Headers */,
 				DCEE21FB1CEA7538000C2396 /* CFBundleSPI.h in Headers */,
 				1CCDB1531E566BC5006C73C0 /* CFStringSPI.h in Headers */,
@@ -1634,6 +1644,7 @@
 				A8A47426151A825B004123FF /* Spectrum.h in Headers */,
 				A8A47428151A825B004123FF /* StackBounds.h in Headers */,
 				FEDACD3E1630F83F00C69634 /* StackStats.h in Headers */,
+				90BE10007399406E86E94CBB /* StackTrace.h in Headers */,
 				A8A47429151A825B004123FF /* StaticConstructors.h in Headers */,
 				A8A4742A151A825B004123FF /* StdLibExtras.h in Headers */,
 				C4F8A93719C65EB400B2B15D /* Stopwatch.h in Headers */,
@@ -1873,6 +1884,7 @@
 				A8A47427151A825B004123FF /* StackBounds.cpp in Sources */,
 				E3200AB81E9A536D003B59D2 /* ThreadHolder.cpp in Sources */,
 				FEDACD3D1630F83F00C69634 /* StackStats.cpp in Sources */,
+				3337DB9CE743410FAF076E17 /* StackTrace.cpp in Sources */,
 				A8A4743C151A825B004123FF /* StringBuilder.cpp in Sources */,
 				A5BA15FB182435A600A82E69 /* StringCF.cpp in Sources */,
 				5311BD5C1EA822F900525281 /* ThreadMessage.cpp in Sources */,

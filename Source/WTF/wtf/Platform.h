@@ -661,6 +661,20 @@
 #define HAVE_MACHINE_CONTEXT 1
 #endif
 
+#if OS(DARWIN) || (OS(LINUX) && defined(__GLIBC__) && !defined(__UCLIBC__))
+#define HAVE_BACKTRACE 1
+#endif
+
+#if OS(DARWIN) || OS(LINUX)
+#if PLATFORM(GTK)
+#if defined(__GLIBC__) && !defined(__UCLIBC__)
+#define HAVE_BACKTRACE_SYMBOLS 1
+#endif
+#endif /* PLATFORM(GTK) */
+#define HAVE_DLADDR 1
+#endif /* OS(DARWIN) || OS(LINUX) */
+
+
 /* ENABLE macro defaults */
 
 /* FIXME: move out all ENABLE() defines from here to FeatureDefines.h */

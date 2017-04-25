@@ -30,13 +30,8 @@
 #include "CodeProfiling.h"
 #include "LinkBuffer.h"
 #include "ProfileTreeNode.h"
+#include <wtf/StackTrace.h>
 #include <wtf/text/WTFString.h>
-
-#if OS(DARWIN) || OS(LINUX)
-#include <cxxabi.h>
-#include <dlfcn.h>
-#include <execinfo.h>
-#endif
 
 namespace JSC {
 
@@ -51,23 +46,6 @@ const char* CodeProfile::s_codeTypeNames[CodeProfile::NumberOfCodeTypes] = {
     "[[BaselineOSR]]",
     "[[EngineFrame]]"
 };
-
-// Helper function, find the symbol name for a pc in JSC.
-static const char* symbolName(void* address)
-{
-#if OS(DARWIN) || OS(LINUX)
-    Dl_info info;
-    if (!dladdr(address, &info) || !info.dli_sname)
-        return "<unknown>";
-
-    const char* mangledName = info.dli_sname;
-    const char* cxaDemangled = abi::__cxa_demangle(mangledName, 0, 0, 0);
-    return cxaDemangled ? cxaDemangled : mangledName;
-#else
-    UNUSED_PARAM(address);
-    return "<unknown>";
-#endif
-}
 
 // Helper function, truncate traces to prune the output & make very verbose mode a little more readable.
 static bool truncateTrace(const char* symbolName)
@@ -167,7 +145,10 @@ void CodeProfile::report()
         for (unsigned count = 0; lastEngineFrame > trace && count < recursionLimit; ++count) {
             --lastEngineFrame;
             ASSERT(m_samples[lastEngineFrame].type == EngineFrame);
-            const char* name = symbolName(m_samples[lastEngineFrame].pc);
+            const char* name = "<unknown>";
+            auto demangled = StackTrace::demangle(m_samples[lastEngineFrame].pc);
+            if (demangled)
+                name = demangled->demangledName() ? demangled->demangledName() : demangled->mangledName();
             callbacks = callbacks->sampleChild(name);
             if (truncateTrace(name))
                 break;
