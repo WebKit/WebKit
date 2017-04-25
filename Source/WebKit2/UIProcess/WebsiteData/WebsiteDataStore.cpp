@@ -1106,18 +1106,7 @@ void WebsiteDataStore::webProcessDidCloseConnection(WebProcessProxy& webProcessP
 
 bool WebsiteDataStore::isAssociatedProcessPool(WebProcessPool& processPool) const
 {
-    if (auto dataStore = processPool.websiteDataStore()) {
-        if (&dataStore->websiteDataStore() == this)
-            return true;
-    } else if (&API::WebsiteDataStore::defaultDataStore()->websiteDataStore() == this) {
-        // If a process pool doesn't have an explicit data store and this is the default WebsiteDataStore,
-        // add that process pool to the set.
-        // FIXME: This behavior is weird and necessitated by the fact that process pools don't always
-        // have a data store; they should.
-        return true;
-    }
-
-    return false;
+    return &processPool.websiteDataStore().websiteDataStore() == this;
 }
 
 HashSet<RefPtr<WebProcessPool>> WebsiteDataStore::processPools(size_t count, bool ensureAPoolExists) const

@@ -149,8 +149,7 @@ void WebProcessPool::platformInitialize()
 
     setLegacyCustomProtocolManagerClient(std::make_unique<LegacyCustomProtocolManagerClient>());
 
-    if (m_websiteDataStore)
-        m_websiteDataStore->registerSharedResourceLoadObserver();
+    m_websiteDataStore->websiteDataStore().registerSharedResourceLoadObserver();
 }
 
 #if PLATFORM(IOS)

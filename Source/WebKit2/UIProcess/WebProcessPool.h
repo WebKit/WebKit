@@ -172,7 +172,7 @@ public:
     // Disconnect the process from the context.
     void disconnectProcess(WebProcessProxy*);
 
-    API::WebsiteDataStore* websiteDataStore() const { return m_websiteDataStore.get(); }
+    API::WebsiteDataStore& websiteDataStore() const { return m_websiteDataStore.get(); }
 
     Ref<WebPageProxy> createWebPage(PageClient&, Ref<API::PageConfiguration>&&);
 
@@ -523,7 +523,7 @@ private:
 
     RefPtr<WebIconDatabase> m_iconDatabase;
 
-    const RefPtr<API::WebsiteDataStore> m_websiteDataStore;
+    const Ref<API::WebsiteDataStore> m_websiteDataStore;
 
     typedef HashMap<const char*, RefPtr<WebContextSupplement>, PtrHash<const char*>> WebContextSupplementMap;
     WebContextSupplementMap m_supplements;

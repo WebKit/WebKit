@@ -1,3 +1,24 @@
+2017-04-24  Brady Eidson  <beidson@apple.com>
+
+        WebProcessPools should always have a WebsiteDataStore
+        https://bugs.webkit.org/show_bug.cgi?id=171252
+
+        Reviewed by Alex Christensen.
+
+        * UIProcess/API/APIWebsiteDataStore.cpp:
+        (API::WebsiteDataStore::registerSharedResourceLoadObserver): Deleted.
+        * UIProcess/API/APIWebsiteDataStore.h:
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextGetWebsiteDataStore):
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitialize):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::WebProcessPool):
+        (WebKit::WebProcessPool::createWebPage):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::isAssociatedProcessPool):
+
 2017-04-24  Youenn Fablet  <youenn@apple.com>
 
         Set defaults video getUserMedia constraints

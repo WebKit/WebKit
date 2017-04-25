@@ -87,11 +87,6 @@ void WebsiteDataStore::setResourceLoadStatisticsEnabled(bool enabled)
     m_websiteDataStore->setResourceLoadStatisticsEnabled(enabled);
 }
 
-void WebsiteDataStore::registerSharedResourceLoadObserver()
-{
-    m_websiteDataStore->registerSharedResourceLoadObserver();
-}
-    
 #if !PLATFORM(COCOA) && !PLATFORM(GTK)
 WebKit::WebsiteDataStore::Configuration WebsiteDataStore::defaultDataStoreConfiguration()
 {

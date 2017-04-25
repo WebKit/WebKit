@@ -46,7 +46,6 @@ public:
 
     bool resourceLoadStatisticsEnabled() const;
     void setResourceLoadStatisticsEnabled(bool);
-    void registerSharedResourceLoadObserver();
 
     WebKit::WebsiteDataStore& websiteDataStore() { return *m_websiteDataStore; }
     HTTPCookieStore& httpCookieStore();
