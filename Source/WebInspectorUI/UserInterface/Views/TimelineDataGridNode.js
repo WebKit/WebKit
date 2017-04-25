@@ -158,7 +158,7 @@ WebInspector.TimelineDataGridNode = class TimelineDataGridNode extends WebInspec
                 // Give the whole cell a tooltip and keep it up to date.
                 callFrame.sourceCodeLocation.populateLiveDisplayLocationTooltip(cell);
 
-                fragment.appendChild(WebInspector.createSourceCodeLocationLink(value, options));
+                fragment.appendChild(WebInspector.createSourceCodeLocationLink(callFrame.sourceCodeLocation, options));
 
                 if (isAnonymousFunction) {
                     // For anonymous functions we show the resource or script icon and name.

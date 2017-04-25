@@ -1,3 +1,18 @@
+2017-04-25  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Web Inspector: TypeError:​ sourceCodeLocation.populateLiveDisplayLocationTooltip is not a function
+        https://bugs.webkit.org/show_bug.cgi?id=171259
+
+        Reviewed by Joseph Pecoraro.
+
+        The first argument of WebInspector.createSourceCodeLocationLink
+        should be SourceCodeLocation type.
+
+        * UserInterface/Views/TimelineDataGridNode.js:
+        (WebInspector.TimelineDataGridNode.prototype.createCellContent):
+        Pass 'callFrame.sourceCodeLocation' instead of 'value' to the
+        first argument.
+
 2017-04-24  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: DOM/XHR breakpoint sections should be collapsed by default
