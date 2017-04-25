@@ -1,3 +1,17 @@
+2017-04-25  Aakash Jain  <aakash_jain@apple.com>
+
+        WebCore.framework should restrict allowable_clients
+        https://bugs.webkit.org/show_bug.cgi?id=171260
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Configurations/WebCore.xcconfig: Adding allowable_client to all platform, in order to restrict WebCore
+        from being directly linked on any platform.
+        Moved WebKitLegacy and WebCoreTestSupport to OTHER_LDFLAGS_BASE.
+        Removed WebKit2 as allowable_client from mac.
+        Added iTunesU, Casablanca and Remote to OTHER_LDFLAGS_BASE_ios for iTunes related projects.
+        Added WebKit, TVBooks, DumpRenderTree, WebKitTestRunner and TestWebKitAPI to OTHER_LDFLAGS_BASE_ios.
+
 2017-04-25  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Restrict WebKit image formats to a known whitelist
