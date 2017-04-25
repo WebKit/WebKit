@@ -1,3 +1,15 @@
+2017-04-25  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Build fix
+
+        Unreviewed.
+
+        No new tests because there is no behavior change.
+
+        * crypto/mac/SerializedCryptoKeyWrapMac.mm:
+        (WebCore::wrapSerializedCryptoKey):
+        (WebCore::unwrapSerializedCryptoKey):
+
 2017-04-25  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Support reading NSURL titles from the pasteboard when performing data interaction
