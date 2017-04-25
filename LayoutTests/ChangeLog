@@ -1,3 +1,12 @@
+2017-04-25  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Mark http/tests/inspector/network/resource-sizes-disk-cache.html as flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=170971
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2017-04-25  Chris Dumez  <cdumez@apple.com>
 
         Content-Disposition header filename is ignored when 'download' attribute is specified in HTML

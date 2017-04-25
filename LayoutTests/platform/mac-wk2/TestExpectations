@@ -543,6 +543,8 @@ webkit.org/b/160445 [ Sierra+ ] http/tests/security/contentSecurityPolicy/upgrad
 
 webkit.org/b/159447 [ Debug ] inspector/debugger/tail-deleted-frames-from-vm-entry.html [ Pass Failure ]
 
+webkit.org/b/170971 http/tests/inspector/network/resource-sizes-disk-cache.html [ Pass Failure ]
+
 webkit.org/b/167607 [ Debug ] http/tests/inspector/worker/blob-script-with-cross-domain-imported-scripts.html [ Pass Timeout ]
 
 webkit.org/b/159884 http/tests/loading/basic-auth-resend-wrong-credentials.html [ Pass Failure ]
