@@ -1,3 +1,15 @@
+2017-04-25  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        WebAssembly: exporting a property with a name that's a number doesn't work
+        https://bugs.webkit.org/show_bug.cgi?id=168857
+
+        Reviewed by JF Bastien.
+
+        r213453 allows Wasm instances to expose indexed properties. We activate the tests.
+
+        * wasm/js-api/test_Instance.js:
+        (ExportedNumber):
+
 2017-04-24  Joseph Pecoraro  <pecoraro@apple.com>
 
         test262: test262/test/language/expressions/object/method-definition/early-errors-object-method-duplicate-parameters.js

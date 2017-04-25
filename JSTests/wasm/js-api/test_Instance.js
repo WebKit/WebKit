@@ -30,8 +30,6 @@ import Builder from '../Builder.js';
     assert.eq(result, 42);
 })();
 
-// FIXME exporting a property with a name that's a number doesn't work https://bugs.webkit.org/show_bug.cgi?id=168857
-/*
 (function ExportedNumber() {
     for (let i = 0; i <= 129; ++i) {
         const name = i.toString();
@@ -55,7 +53,6 @@ import Builder from '../Builder.js';
         assert.eq(result, i);
     }
 })();
-*/
 
 const wasmModuleWhichImportJS = () => {
     const builder = (new Builder())
