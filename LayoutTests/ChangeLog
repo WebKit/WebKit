@@ -1,3 +1,17 @@
+2017-04-25  Chris Dumez  <cdumez@apple.com>
+
+        Element.dataset.name incorrectly returns undefined
+        https://bugs.webkit.org/show_bug.cgi?id=161454
+        <rdar://problem/31818563>
+
+        Reviewed by Mark Lam.
+
+        Add layout test for JS caching bug on DOMStringMap that was fixed as part
+        of a large named property getter refactoring in r210667.
+
+        * fast/dom/dataset-caching-bug-expected.txt: Added.
+        * fast/dom/dataset-caching-bug.html: Added.
+
 2017-04-25  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Supplementary Multilingual Plane Complex Scripts Rendered Incorrectly
