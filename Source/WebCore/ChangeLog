@@ -1,3 +1,56 @@
+2017-04-24  Andy VanWagoner  <thetalecrafter@gmail.com>
+
+        Clean up ICU headers
+        https://bugs.webkit.org/show_bug.cgi?id=170997
+
+        Reviewed by JF Bastien.
+
+        Update all icu headers to 55.1
+
+        * icu/LICENSE: Update copyright
+        * icu/README: Explain ICU headers for OS X better
+        * icu/unicode/localpointer.h:
+        (LocalPointer::LocalPointer):
+        (LocalPointer::adoptInsteadAndCheckErrorCode):
+        * icu/unicode/platform.h:
+        * icu/unicode/putil.h:
+        * icu/unicode/std_string.h:
+        * icu/unicode/ubrk.h:
+        * icu/unicode/uchar.h:
+        * icu/unicode/ucnv.h:
+        * icu/unicode/ucol.h:
+        * icu/unicode/ucoleitr.h:
+        * icu/unicode/uconfig.h:
+        * icu/unicode/ucurr.h:
+        * icu/unicode/uidna.h:
+        * icu/unicode/uloc.h:
+        * icu/unicode/umachine.h:
+        * icu/unicode/unistr.h:
+        (UnicodeString::getArrayStart):
+        (UnicodeString::UnicodeString):
+        (UnicodeString::hasShortLength):
+        (UnicodeString::getShortLength):
+        (UnicodeString::length):
+        (UnicodeString::getCapacity):
+        (UnicodeString::isBogus):
+        (UnicodeString::isWritable):
+        (UnicodeString::isBufferWritable):
+        (UnicodeString::getBuffer):
+        (UnicodeString::isEmpty):
+        (UnicodeString::setZeroLength):
+        (UnicodeString::setShortLength):
+        (UnicodeString::setLength):
+        (UnicodeString::setToEmpty):
+        (UnicodeString::remove):
+        * icu/unicode/urename.h:
+        * icu/unicode/uscript.h:
+        * icu/unicode/usearch.h:
+        * icu/unicode/uset.h:
+        * icu/unicode/ustring.h:
+        * icu/unicode/utf8.h:
+        * icu/unicode/utypes.h:
+        * icu/unicode/uvernum.h:
+
 2017-04-24  Jiewen Tan  <jiewen_tan@apple.com>
 
         LayoutTests crypto/subtle/ecdsa-generate-key-sign-verify-p384.html and crypto/subtle/ecdsa-generate-key-sign-verify-p256.html are flaky failures

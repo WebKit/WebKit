@@ -1,7 +1,7 @@
 /*
 *******************************************************************************
 *
-*   Copyright (C) 2009-2012, International Business Machines
+*   Copyright (C) 2009-2014, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *
 *******************************************************************************
@@ -191,6 +191,26 @@ public:
      * @stable ICU 4.4
      */
     explicit LocalPointer(T *p=NULL) : LocalPointerBase<T>(p) {}
+#ifndef U_HIDE_DRAFT_API
+    /**
+     * Constructor takes ownership and reports an error if NULL.
+     *
+     * This constructor is intended to be used with other-class constructors
+     * that may report a failure UErrorCode,
+     * so that callers need to check only for U_FAILURE(errorCode)
+     * and not also separately for isNull().
+     *
+     * @param p simple pointer to an object that is adopted
+     * @param errorCode in/out UErrorCode, set to U_MEMORY_ALLOCATION_ERROR
+     *     if p==NULL and no other failure code had been set
+     * @draft ICU 55
+     */
+    LocalPointer(T *p, UErrorCode &errorCode) : LocalPointerBase<T>(p) {
+        if(p==NULL && U_SUCCESS(errorCode)) {
+            errorCode=U_MEMORY_ALLOCATION_ERROR;
+        }
+    }
+#endif  /* U_HIDE_DRAFT_API */
     /**
      * Destructor deletes the object it owns.
      * @stable ICU 4.4
@@ -208,6 +228,34 @@ public:
         delete LocalPointerBase<T>::ptr;
         LocalPointerBase<T>::ptr=p;
     }
+#ifndef U_HIDE_DRAFT_API
+    /**
+     * Deletes the object it owns,
+     * and adopts (takes ownership of) the one passed in.
+     *
+     * If U_FAILURE(errorCode), then the current object is retained and the new one deleted.
+     *
+     * If U_SUCCESS(errorCode) but the input pointer is NULL,
+     * then U_MEMORY_ALLOCATION_ERROR is set,
+     * the current object is deleted, and NULL is set.
+     *
+     * @param p simple pointer to an object that is adopted
+     * @param errorCode in/out UErrorCode, set to U_MEMORY_ALLOCATION_ERROR
+     *     if p==NULL and no other failure code had been set
+     * @draft ICU 55
+     */
+    void adoptInsteadAndCheckErrorCode(T *p, UErrorCode &errorCode) {
+        if(U_SUCCESS(errorCode)) {
+            delete LocalPointerBase<T>::ptr;
+            LocalPointerBase<T>::ptr=p;
+            if(p==NULL) {
+                errorCode=U_MEMORY_ALLOCATION_ERROR;
+            }
+        } else {
+            delete p;
+        }
+    }
+#endif  /* U_HIDE_DRAFT_API */
 };
 
 /**

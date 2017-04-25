@@ -1,3 +1,30 @@
+2017-04-24  Andy VanWagoner  <thetalecrafter@gmail.com>
+
+        Clean up ICU headers
+        https://bugs.webkit.org/show_bug.cgi?id=170997
+
+        Reviewed by JF Bastien.
+
+        Update all icu headers to 55.1
+
+        * icu/README: Explain ICU headers for OS X better
+        * icu/unicode/localpointer.h:
+        (LocalPointer::LocalPointer):
+        (LocalPointer::adoptInsteadAndCheckErrorCode):
+        * icu/unicode/platform.h:
+        * icu/unicode/putil.h:
+        * icu/unicode/uchar.h:
+        * icu/unicode/uconfig.h:
+        * icu/unicode/ucurr.h:
+        * icu/unicode/uidna.h:
+        * icu/unicode/umachine.h:
+        * icu/unicode/urename.h:
+        * icu/unicode/uscript.h:
+        * icu/unicode/ustring.h:
+        * icu/unicode/utf8.h:
+        * icu/unicode/utypes.h:
+        * icu/unicode/uvernum.h:
+
 2017-04-24  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Respect fidelity order when reading web content from item providers

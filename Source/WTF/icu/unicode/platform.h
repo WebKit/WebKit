@@ -1,7 +1,7 @@
 /*
 ******************************************************************************
 *
-*   Copyright (C) 1997-2013, International Business Machines
+*   Copyright (C) 1997-2015, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *
 ******************************************************************************
@@ -121,10 +121,16 @@
 #define U_PF_QNX 3700
 /** Linux is a Unix-like operating system. @internal */
 #define U_PF_LINUX 4000
+/**
+ * Native Client is pretty close to Linux.
+ * See https://developer.chrome.com/native-client and
+ *  http://www.chromium.org/nativeclient
+ *  @internal
+ */
+#define U_PF_BROWSER_NATIVE_CLIENT 4020
 /** Android is based on Linux. @internal */
 #define U_PF_ANDROID 4050
-/** "Classic" Mac OS (1984-2001) @internal */
-#define U_PF_CLASSIC_MACOS 8000
+/* Maximum value for Linux-based platform is 4499 */
 /** z/OS is the successor to OS/390 which was the successor to MVS. @internal */
 #define U_PF_OS390 9000
 /** "IBM i" is the current name of what used to be i5/OS and earlier OS/400. @internal */
@@ -142,6 +148,8 @@
 #   define U_PLATFORM U_PF_ANDROID
     /* Android wchar_t support depends on the API level. */
 #   include <android/api-level.h>
+#elif defined(__native_client__)
+#   define U_PLATFORM U_PF_BROWSER_NATIVE_CLIENT
 #elif defined(linux) || defined(__linux__) || defined(__linux)
 #   define U_PLATFORM U_PF_LINUX
 #elif defined(__APPLE__) && defined(__MACH__)
@@ -169,8 +177,6 @@
 #   define U_PLATFORM U_PF_HPUX
 #elif defined(sgi) || defined(__sgi)
 #   define U_PLATFORM U_PF_IRIX
-#elif defined(macintosh)
-#   define U_PLATFORM U_PF_CLASSIC_MACOS
 #elif defined(__QNX__) || defined(__QNXNTO__)
 #   define U_PLATFORM U_PF_QNX
 #elif defined(__TOS_MVS__)
@@ -230,7 +236,7 @@
  */
 #ifdef U_PLATFORM_IMPLEMENTS_POSIX
     /* Use the predefined value. */
-#elif U_PLATFORM_USES_ONLY_WIN32_API || U_PLATFORM == U_PF_CLASSIC_MACOS
+#elif U_PLATFORM_USES_ONLY_WIN32_API
 #   define U_PLATFORM_IMPLEMENTS_POSIX 0
 #else
 #   define U_PLATFORM_IMPLEMENTS_POSIX 1
@@ -243,7 +249,7 @@
  */
 #ifdef U_PLATFORM_IS_LINUX_BASED
     /* Use the predefined value. */
-#elif U_PF_LINUX <= U_PLATFORM && U_PLATFORM <= U_PF_ANDROID
+#elif U_PF_LINUX <= U_PLATFORM && U_PLATFORM <= 4499
 #   define U_PLATFORM_IS_LINUX_BASED 1
 #else
 #   define U_PLATFORM_IS_LINUX_BASED 0
@@ -579,7 +585,7 @@
  */
 #ifdef U_SIZEOF_WCHAR_T
     /* Use the predefined value. */
-#elif (U_PLATFORM == U_PF_ANDROID && __ANDROID_API__ < 9) || U_PLATFORM == U_PF_CLASSIC_MACOS
+#elif (U_PLATFORM == U_PF_ANDROID && __ANDROID_API__ < 9)
     /*
      * Classic Mac OS and Mac OS X before 10.3 (Panther) did not support wchar_t or wstring.
      * Newer Mac OS X has size 4.

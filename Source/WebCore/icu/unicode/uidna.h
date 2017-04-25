@@ -1,7 +1,7 @@
 /*
  *******************************************************************************
  *
- *   Copyright (C) 2003-2013, International Business Machines
+ *   Copyright (C) 2003-2014, International Business Machines
  *   Corporation and others.  All Rights Reserved.
  *
  *******************************************************************************
@@ -32,8 +32,10 @@
  *
  * The C API functions which do take a UIDNA * service object pointer
  * implement UTS #46 and IDNA2008.
+ *
+ * IDNA2003 is obsolete.
  * The C API functions which do not take a service object pointer
- * implement IDNA2003.
+ * implement IDNA2003. They are all deprecated.
  */
 
 /*
@@ -46,14 +48,16 @@ enum {
      * @stable ICU 2.6
      */
     UIDNA_DEFAULT=0,
+#ifndef U_HIDE_DEPRECATED_API
     /**
      * Option to allow unassigned code points in domain names and labels.
      * For use in static worker and factory methods.
      * <p>This option is ignored by the UTS46 implementation.
      * (UTS #46 disallows unassigned code points.)
-     * @stable ICU 2.6
+     * @deprecated ICU 55 Use UTS #46 instead via uidna_openUTS46() or class IDNA.
      */
     UIDNA_ALLOW_UNASSIGNED=1,
+#endif  /* U_HIDE_DEPRECATED_API */
     /**
      * Option to check whether the input conforms to the STD3 ASCII rules,
      * for example the restriction of labels to LDH characters
@@ -503,6 +507,8 @@ enum {
     UIDNA_ERROR_CONTEXTO_DIGITS=0x4000
 };
 
+#ifndef U_HIDE_DEPRECATED_API
+
 /* IDNA2003 API ------------------------------------------------------------- */
 
 /**
@@ -562,9 +568,9 @@ enum {
  *                          U_BUFFER_OVERFLOW_ERROR if destCapacity is not enough
  * @return The length of the result string, if successful - or in case of a buffer overflow,
  *         in which case it will be greater than destCapacity.
- * @stable ICU 2.6
+ * @deprecated ICU 55 Use UTS #46 instead via uidna_openUTS46() or class IDNA.
  */
-U_STABLE int32_t U_EXPORT2
+U_DEPRECATED int32_t U_EXPORT2
 uidna_toASCII(const UChar* src, int32_t srcLength, 
               UChar* dest, int32_t destCapacity,
               int32_t options,
@@ -610,9 +616,9 @@ uidna_toASCII(const UChar* src, int32_t srcLength,
  *                          U_BUFFER_OVERFLOW_ERROR if destCapacity is not enough
  * @return The length of the result string, if successful - or in case of a buffer overflow,
  *         in which case it will be greater than destCapacity.
- * @stable ICU 2.6
+ * @deprecated ICU 55 Use UTS #46 instead via uidna_openUTS46() or class IDNA.
  */
-U_STABLE int32_t U_EXPORT2
+U_DEPRECATED int32_t U_EXPORT2
 uidna_toUnicode(const UChar* src, int32_t srcLength,
                 UChar* dest, int32_t destCapacity,
                 int32_t options,
@@ -661,9 +667,9 @@ uidna_toUnicode(const UChar* src, int32_t srcLength,
  *                          U_BUFFER_OVERFLOW_ERROR if destCapacity is not enough
  * @return The length of the result string, if successful - or in case of a buffer overflow,
  *         in which case it will be greater than destCapacity.
- * @stable ICU 2.6
+ * @deprecated ICU 55 Use UTS #46 instead via uidna_openUTS46() or class IDNA.
  */
-U_STABLE int32_t U_EXPORT2
+U_DEPRECATED int32_t U_EXPORT2
 uidna_IDNToASCII(  const UChar* src, int32_t srcLength,
                    UChar* dest, int32_t destCapacity,
                    int32_t options,
@@ -708,9 +714,9 @@ uidna_IDNToASCII(  const UChar* src, int32_t srcLength,
  *                          U_BUFFER_OVERFLOW_ERROR if destCapacity is not enough
  * @return The length of the result string, if successful - or in case of a buffer overflow,
  *         in which case it will be greater than destCapacity.
- * @stable ICU 2.6
+ * @deprecated ICU 55 Use UTS #46 instead via uidna_openUTS46() or class IDNA.
  */
-U_STABLE int32_t U_EXPORT2
+U_DEPRECATED int32_t U_EXPORT2
 uidna_IDNToUnicode(  const UChar* src, int32_t srcLength,
                      UChar* dest, int32_t destCapacity,
                      int32_t options,
@@ -749,13 +755,15 @@ uidna_IDNToUnicode(  const UChar* src, int32_t srcLength,
  * @param status            ICU error code in/out parameter.
  *                          Must fulfill U_SUCCESS before the function call.
  * @return <0 or 0 or >0 as usual for string comparisons
- * @stable ICU 2.6
+ * @deprecated ICU 55 Use UTS #46 instead via uidna_openUTS46() or class IDNA.
  */
-U_STABLE int32_t U_EXPORT2
+U_DEPRECATED int32_t U_EXPORT2
 uidna_compare(  const UChar *s1, int32_t length1,
                 const UChar *s2, int32_t length2,
                 int32_t options,
                 UErrorCode* status);
+
+#endif  /* U_HIDE_DEPRECATED_API */
 
 #endif /* #if !UCONFIG_NO_IDNA */
 

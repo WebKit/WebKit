@@ -1,6 +1,6 @@
 /*
 **********************************************************************
-*   Copyright (C) 1998-2013, International Business Machines
+*   Copyright (C) 1998-2014, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 **********************************************************************
 *
@@ -3370,6 +3370,9 @@ private:
   inline UChar* getArrayStart(void);
   inline const UChar* getArrayStart(void) const;
 
+  inline UBool hasShortLength() const;
+  inline int32_t getShortLength() const;
+
   // A UnicodeString object (not necessarily its current buffer)
   // is writable unless it isBogus() or it has an "open" getBuffer(minCapacity).
   inline UBool isWritable() const;
@@ -3378,13 +3381,16 @@ private:
   inline UBool isBufferWritable() const;
 
   // None of the following does releaseArray().
-  inline void setLength(int32_t len);        // sets only fShortLength and fLength
-  inline void setToEmpty();                  // sets fFlags=kShortString
-  inline void setArray(UChar *array, int32_t len, int32_t capacity); // does not set fFlags
+  inline void setZeroLength();
+  inline void setShortLength(int32_t len);
+  inline void setLength(int32_t len);
+  inline void setToEmpty();
+  inline void setArray(UChar *array, int32_t len, int32_t capacity); // sets length but not flags
 
-  // allocate the array; result may be fStackBuffer
+  // allocate the array; result may be the stack buffer
   // sets refCount to 1 if appropriate
-  // sets fArray, fCapacity, and fFlags
+  // sets fArray, fCapacity, and flags
+  // sets length to 0
   // returns boolean for success or failure
   UBool allocate(int32_t capacity);
 
@@ -3471,18 +3477,24 @@ private:
     // Set the stack buffer size so that sizeof(UnicodeString) is,
     // naturally (without padding), a multiple of sizeof(pointer).
     US_STACKBUF_SIZE= sizeof(void *)==4 ? 13 : 15, // Size of stack buffer for short strings
-    kInvalidUChar=0xffff, // invalid UChar index
+    kInvalidUChar=0xffff, // U+FFFF returned by charAt(invalid index)
     kGrowSize=128, // grow size for this buffer
     kInvalidHashCode=0, // invalid hash code
     kEmptyHashCode=1, // hash code for empty string
 
-    // bit flag values for fFlags
+    // bit flag values for fLengthAndFlags
     kIsBogus=1,         // this string is bogus, i.e., not valid or NULL
-    kUsingStackBuffer=2,// using fUnion.fStackBuffer instead of fUnion.fFields
+    kUsingStackBuffer=2,// using fUnion.fStackFields instead of fUnion.fFields
     kRefCounted=4,      // there is a refCount field before the characters in fArray
     kBufferIsReadonly=8,// do not write to this buffer
     kOpenGetBuffer=16,  // getBuffer(minCapacity) was called (is "open"),
                         // and releaseBuffer(newLength) must be called
+    kAllStorageFlags=0x1f,
+
+    kLengthShift=5,     // remaining 11 bits for non-negative short length, or negative if long
+    kLength1=1<<kLengthShift,
+    kMaxShortLength=0x3ff,  // max non-negative short length (leaves top bit 0)
+    kLengthIsLarge=0xffe0,  // short length < 0, real length is in fUnion.fFields.fLength
 
     // combined values for convenience
     kShortString=kUsingStackBuffer,
@@ -3515,36 +3527,42 @@ private:
    * - sizeof(class UnicodeString)
    * - offsetof(UnicodeString, fUnion)
    * - sizeof(fUnion)
-   * - sizeof(fFields)
+   * - sizeof(fStackFields)
    *
-   * In order to avoid padding, we make sizeof(fStackBuffer)=16 (=8 UChars)
-   * which is at least as large as sizeof(fFields) on 32-bit and 64-bit machines.
+   * We optimize for the longest possible internal buffer for short strings.
+   * fUnion.fStackFields begins with 2 bytes for storage flags
+   * and the length of relatively short strings,
+   * followed by the buffer for short string contents.
+   * There is no padding inside fStackFields.
+   *
+   * Heap-allocated and aliased strings use fUnion.fFields.
+   * Both fStackFields and fFields must begin with the same fields for flags and short length,
+   * that is, those must have the same memory offsets inside the object,
+   * because the flags must be inspected in order to decide which half of fUnion is being used.
+   * We assume that the compiler does not reorder the fields.
+   *
    * (Padding at the end of fFields is ok:
-   * As long as there is no padding after fStackBuffer, it is not wasted space.)
+   * As long as it is no larger than fStackFields, it is not wasted space.)
    *
-   * We further assume that the compiler does not reorder the fields,
-   * so that fRestOfStackBuffer (which holds a few more UChars) immediately follows after fUnion,
-   * with at most some padding (but no other field) in between.
-   * (Padding there would be wasted space, but functionally harmless.)
-   *
-   * We use a few more sizeof(pointer)'s chunks of space with
-   * fRestOfStackBuffer, fShortLength and fFlags,
-   * to get up exactly to the intended sizeof(UnicodeString).
+   * For some of the history of the UnicodeString class fields layout,
+   * see ICU ticket #11336 "UnicodeString: recombine stack buffer arrays"
+   * and ticket #8322 "why is sizeof(UnicodeString)==48?".
    */
   // (implicit) *vtable;
   union StackBufferOrFields {
-    // fStackBuffer is used iff (fFlags&kUsingStackBuffer)
-    // else fFields is used
-    UChar fStackBuffer[8];  // buffer for short strings, together with fRestOfStackBuffer
+    // fStackFields is used iff (fLengthAndFlags&kUsingStackBuffer) else fFields is used.
+    // Each struct of the union must begin with fLengthAndFlags.
     struct {
+      int16_t fLengthAndFlags;          // bit fields: see constants above
+      UChar fBuffer[US_STACKBUF_SIZE];  // buffer for short strings
+    } fStackFields;
+    struct {
+      int16_t fLengthAndFlags;          // bit fields: see constants above
       UChar   *fArray;    // the Unicode data
       int32_t fCapacity;  // capacity of fArray (in UChars)
       int32_t fLength;    // number of characters in fArray if >127; else undefined
     } fFields;
   } fUnion;
-  UChar fRestOfStackBuffer[US_STACKBUF_SIZE-8];
-  int8_t fShortLength;  // 0..127: length  <0: real length is in fUnion.fFields.fLength
-  uint8_t fFlags;       // bit flags: see constants above
 };
 
 /**
@@ -3596,33 +3614,51 @@ UnicodeString::pinIndices(int32_t& start,
 }
 
 inline UChar*
-UnicodeString::getArrayStart()
-{ return (fFlags&kUsingStackBuffer) ? fUnion.fStackBuffer : fUnion.fFields.fArray; }
+UnicodeString::getArrayStart() {
+  return (fUnion.fFields.fLengthAndFlags&kUsingStackBuffer) ?
+    fUnion.fStackFields.fBuffer : fUnion.fFields.fArray;
+}
 
 inline const UChar*
-UnicodeString::getArrayStart() const
-{ return (fFlags&kUsingStackBuffer) ? fUnion.fStackBuffer : fUnion.fFields.fArray; }
+UnicodeString::getArrayStart() const {
+  return (fUnion.fFields.fLengthAndFlags&kUsingStackBuffer) ?
+    fUnion.fStackFields.fBuffer : fUnion.fFields.fArray;
+}
 
 //========================================
 // Default constructor
 //========================================
 
 inline
-UnicodeString::UnicodeString()
-  : fShortLength(0),
-    fFlags(kShortString)
-{}
+UnicodeString::UnicodeString() {
+  fUnion.fStackFields.fLengthAndFlags=kShortString;
+}
 
 //========================================
 // Read-only implementation methods
 //========================================
-inline int32_t
-UnicodeString::length() const
-{ return fShortLength>=0 ? fShortLength : fUnion.fFields.fLength; }
+inline UBool
+UnicodeString::hasShortLength() const {
+  return fUnion.fFields.fLengthAndFlags>=0;
+}
 
 inline int32_t
-UnicodeString::getCapacity() const
-{ return (fFlags&kUsingStackBuffer) ? US_STACKBUF_SIZE : fUnion.fFields.fCapacity; }
+UnicodeString::getShortLength() const {
+  // fLengthAndFlags must be non-negative -> short length >= 0
+  // and arithmetic or logical shift does not matter.
+  return fUnion.fFields.fLengthAndFlags>>kLengthShift;
+}
+
+inline int32_t
+UnicodeString::length() const {
+  return hasShortLength() ? getShortLength() : fUnion.fFields.fLength;
+}
+
+inline int32_t
+UnicodeString::getCapacity() const {
+  return (fUnion.fFields.fLengthAndFlags&kUsingStackBuffer) ?
+    US_STACKBUF_SIZE : fUnion.fFields.fCapacity;
+}
 
 inline int32_t
 UnicodeString::hashCode() const
@@ -3630,26 +3666,26 @@ UnicodeString::hashCode() const
 
 inline UBool
 UnicodeString::isBogus() const
-{ return (UBool)(fFlags & kIsBogus); }
+{ return (UBool)(fUnion.fFields.fLengthAndFlags & kIsBogus); }
 
 inline UBool
 UnicodeString::isWritable() const
-{ return (UBool)!(fFlags&(kOpenGetBuffer|kIsBogus)); }
+{ return (UBool)!(fUnion.fFields.fLengthAndFlags&(kOpenGetBuffer|kIsBogus)); }
 
 inline UBool
 UnicodeString::isBufferWritable() const
 {
   return (UBool)(
-      !(fFlags&(kOpenGetBuffer|kIsBogus|kBufferIsReadonly)) &&
-      (!(fFlags&kRefCounted) || refCount()==1));
+      !(fUnion.fFields.fLengthAndFlags&(kOpenGetBuffer|kIsBogus|kBufferIsReadonly)) &&
+      (!(fUnion.fFields.fLengthAndFlags&kRefCounted) || refCount()==1));
 }
 
 inline const UChar *
 UnicodeString::getBuffer() const {
-  if(fFlags&(kIsBogus|kOpenGetBuffer)) {
+  if(fUnion.fFields.fLengthAndFlags&(kIsBogus|kOpenGetBuffer)) {
     return 0;
-  } else if(fFlags&kUsingStackBuffer) {
-    return fUnion.fStackBuffer;
+  } else if(fUnion.fFields.fLengthAndFlags&kUsingStackBuffer) {
+    return fUnion.fStackFields.fBuffer;
   } else {
     return fUnion.fFields.fArray;
   }
@@ -4250,26 +4286,38 @@ UnicodeString::operator[] (int32_t offset) const
 
 inline UBool
 UnicodeString::isEmpty() const {
-  return fShortLength == 0;
+  // Arithmetic or logical right shift does not matter: only testing for 0.
+  return (fUnion.fFields.fLengthAndFlags>>kLengthShift) == 0;
 }
 
 //========================================
 // Write implementation methods
 //========================================
 inline void
+UnicodeString::setZeroLength() {
+  fUnion.fFields.fLengthAndFlags &= kAllStorageFlags;
+}
+
+inline void
+UnicodeString::setShortLength(int32_t len) {
+  // requires 0 <= len <= kMaxShortLength
+  fUnion.fFields.fLengthAndFlags =
+    (int16_t)((fUnion.fFields.fLengthAndFlags & kAllStorageFlags) | (len << kLengthShift));
+}
+
+inline void
 UnicodeString::setLength(int32_t len) {
-  if(len <= 127) {
-    fShortLength = (int8_t)len;
+  if(len <= kMaxShortLength) {
+    setShortLength(len);
   } else {
-    fShortLength = (int8_t)-1;
+    fUnion.fFields.fLengthAndFlags |= kLengthIsLarge;
     fUnion.fFields.fLength = len;
   }
 }
 
 inline void
 UnicodeString::setToEmpty() {
-  fShortLength = 0;
-  fFlags = kShortString;
+  fUnion.fFields.fLengthAndFlags = kShortString;
 }
 
 inline void
@@ -4414,7 +4462,7 @@ UnicodeString::remove()
   if(isBogus()) {
     setToEmpty();
   } else {
-    fShortLength = 0;
+    setZeroLength();
   }
   return *this;
 }
