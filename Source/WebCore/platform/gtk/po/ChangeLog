@@ -1,5 +1,14 @@
 2017-04-24  Piotr Drąg  <piotrdrag@gmail.com>
 
+        [GTK] Fix extraction of translator comments
+        https://bugs.webkit.org/show_bug.cgi?id=170012
+
+        Reviewed by Michael Catanzaro.
+
+        * CMakeLists.txt: Remove “TRANSLATORS:” header, as it’s not used and might block extraction of translator comments.
+
+2017-04-24  Piotr Drąg  <piotrdrag@gmail.com>
+
         [GTK] Update POTFILES.in
 
         It’s missing some files with translatable strings.

@@ -18,7 +18,7 @@ add_custom_command(
     DEPENDS ${potfiles_file}
     COMMAND xgettext
             --default-domain=${domain}
-            --add-comments=TRANSLATORS:
+            --add-comments
             --msgid-bugs-address="http://bugs.webkit.org"
             --files-from=${potfiles_file}
             --package-version=${PROJECT_VERSION}
