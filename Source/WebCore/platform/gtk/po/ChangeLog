@@ -1,3 +1,14 @@
+2017-04-24  Piotr Drąg  <piotrdrag@gmail.com>
+
+        [GTK] Update POTFILES.in
+
+        It’s missing some files with translatable strings.
+        https://bugs.webkit.org/show_bug.cgi?id=171232
+
+        Reviewed by Michael Catanzaro.
+
+        * POTFILES.in: Update POTFILES.in.
+
 2017-04-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Switch to use ENABLE_REMOTE_INSPECTOR instead of ENABLE_INSPECTOR_SERVER for the remote inspector
