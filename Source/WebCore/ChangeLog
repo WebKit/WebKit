@@ -1,3 +1,23 @@
+2017-04-24  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [selectors4] :focus-within should use the flat tree
+        https://bugs.webkit.org/show_bug.cgi?id=170899
+
+        Reviewed by Antti Koivisto.
+
+        This has been discussed in the following CSS WG issue:
+        https://github.com/w3c/csswg-drafts/issues/1135
+
+        And the spec has been updated (https://drafts.csswg.org/selectors-4/#the-focus-within-pseudo):
+        "An element also matches :focus-within if one of its descendants in the flat tree
+         (including non-element nodes, such as text nodes) matches the conditions for matching :focus."
+
+        Test: imported/w3c/web-platform-tests/css/selectors4/focus-within-shadow-006.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::setFocus): Use "flat tree" ("composed tree" in WebKit)
+        to set focus-within flag.
+
 2017-04-24  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Respect fidelity order when reading web content from item providers
