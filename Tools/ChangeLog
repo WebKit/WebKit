@@ -1,3 +1,17 @@
+2017-04-25  Daniel Bates  <dabates@apple.com>
+
+        [Cocoa][Win] Enable of X-Content-Type-Options: nosniff header
+        https://bugs.webkit.org/show_bug.cgi?id=136452
+        <rdar://problem/23412620>
+
+        Reviewed by Brent Fulgham.
+
+        Enable X-Content-Type-Options: nosniff on Mac, iOS and Windows platforms.
+
+        * Scripts/webkitperl/FeatureList.pm: Also do not enable nosniff on EFL
+        as the EFL port is no longer in the WebKit OpenSource repository.
+        * TestWebKitAPI/Configurations/FeatureDefines.xcconfig:
+
 2017-04-25  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed follow-up to r215739 and r215740.

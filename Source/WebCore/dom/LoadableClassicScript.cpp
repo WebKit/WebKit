@@ -90,9 +90,7 @@ void LoadableClassicScript::notifyFinished(CachedResource& resource)
             ConsoleMessage {
                 MessageSource::Security,
                 MessageLevel::Error,
-                makeString(
-                    "Refused to execute script from '", m_cachedScript->url().stringCenterEllipsizedToLength(),
-                    "' because its MIME type ('", m_cachedScript->mimeType(), "') is not executable, and strict MIME type checking is enabled.")
+                makeString("Did not load script at '", m_cachedScript->url().stringCenterEllipsizedToLength(), "' because non script MIME types are not allowed when 'X-Content-Type: nosniff' is given.")
             }
         };
     }

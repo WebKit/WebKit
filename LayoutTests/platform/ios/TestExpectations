@@ -193,9 +193,6 @@ fast/history/page-cache-media-source-closed.html [ Skip ]
 fast/history/page-cache-media-source-opened.html [ Skip ]
 fast/history/page-cache-removed-source-buffer.html [ Skip ]
 
-# X-Content-Type-Options (ENABLE_NOSNIFF) is not enabled.
-webkit.org/b/136452 http/tests/security/contentTypeOptions
-
 # IndexedDB tests have numerous unexpected failures on iOS
 webkit.org/b/144475 storage/indexeddb
 

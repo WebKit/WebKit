@@ -1,3 +1,17 @@
+2017-04-25  Daniel Bates  <dabates@apple.com>
+
+        [Cocoa][Win] Enable of X-Content-Type-Options: nosniff header
+        https://bugs.webkit.org/show_bug.cgi?id=136452
+        <rdar://problem/23412620>
+
+        Reviewed by Brent Fulgham.
+
+        Update expected results now we support X-Content-Type-Options: nosniff.
+
+        * web-platform-tests/fetch/nosniff/parsing-nosniff-expected.txt:
+        * web-platform-tests/fetch/nosniff/script-expected.txt:
+        * web-platform-tests/fetch/nosniff/stylesheet-expected.txt:
+
 2017-04-25  Frederic Wang  <fwang@igalia.com>
 
         Import W3C tests for the CSSOM View module

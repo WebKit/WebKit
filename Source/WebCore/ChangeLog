@@ -1,3 +1,58 @@
+2017-04-25  Daniel Bates  <dabates@apple.com>
+
+        [Cocoa][Win] Enable of X-Content-Type-Options: nosniff header
+        https://bugs.webkit.org/show_bug.cgi?id=136452
+        <rdar://problem/23412620>
+
+        Reviewed by Brent Fulgham.
+
+        Enable support for X-Content-Type-Options: nosniff on Mac, iOS and Windows.
+
+        Additionally, honor X-Content-Type-Options: nosniff header for stylesheets as per
+        <https://fetch.spec.whatwg.org/#should-response-to-request-be-blocked-due-to-nosniff%3F> (30 March 2017).
+
+        Test: http/tests/security/contentTypeOptions/nosniff-dynamic-script-blocked.html
+
+        * Configurations/FeatureDefines.xcconfig:
+        * css/StyleSheetContents.cpp:
+        (WebCore::StyleSheetContents::parseAuthorStyleSheet): Log an error if the stylesheet
+        has the nosniff header and does not have a valid MIME type. Also update code for
+        renaming of MIMETypeCheck to MIMETypeCheckHint.
+        (WebCore::StyleSheetContents::notifyLoadedSheet): If the stylesheet is blocked by
+        nosniff then consider it analogous to a load error so that we dispatch a DOM error
+        event at the <style>/<link> element.
+        * dom/LoadableClassicScript.cpp:
+        (WebCore::LoadableClassicScript::notifyFinished): Modified the wording of the error
+        message when a script is disallowed by nosniff so as to more closely match the
+        wording used when a stylesheet is disallowed by nonsniff.
+        * loader/cache/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::sheetText): Update for renaming of MIMETypeCheck
+        to MIMETypeCheckHint.
+        (WebCore::CachedCSSStyleSheet::responseMIMEType): Added.
+        (WebCore::CachedCSSStyleSheet::mimeTypeAllowedByNosniff): Added.
+        (WebCore::CachedCSSStyleSheet::canUseSheet): Modified to check if the X-Content-Type-Options: nosniff
+        header is in the HTTP response for the stylesheet. If it is then we can only use the stylesheet
+        if its content-type is "text/css". Otherwise, apply the existing criterion for determining whether
+        to to use the stylesheet.
+        * loader/cache/CachedCSSStyleSheet.h: Rename MIMETypeCheck to MIMETypeCheckHint to better
+        describe its purpose as a hint as to whether to enforce MIME type checking for the stylesheet.
+        Processing of the HTTP header X-Content-Type-Options takes precedence over this hint.
+        * loader/cache/CachedScript.h: Make mimeType() private.
+
+2017-04-25  Daniel Bates  <dabates@apple.com>
+
+        [Cocoa][Win] Enable of X-Content-Type-Options: nosniff header
+        https://bugs.webkit.org/show_bug.cgi?id=136452
+        <rdar://problem/23412620>
+
+        Reviewed by Brent Fulgham.
+
+        Part 1
+
+        Enable X-Content-Type-Options: nosniff on Mac, iOS and Windows platforms.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2017-04-25  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [GTK] Build fix after r215737

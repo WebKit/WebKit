@@ -325,9 +325,6 @@ fast/forms/file/open-file-panel.html [ Skip ]
 # ENABLE_GAMEPAD not enabled.
 gamepad/ [ Skip ]
 
-# X-Content-Type-Options (ENABLE_NOSNIFF) is not enabled.
-webkit.org/b/136452 http/tests/security/contentTypeOptions
-
 # TODO Userscripts stuff is not implemented
 webkit.org/b/140258 userscripts/ [ Skip ]
 userscripts/window-onerror-for-isolated-world-1.html [ Skip ]
@@ -2316,7 +2313,6 @@ http/tests/navigation/no-referrer-target-blank.html [ Failure ] # Easy
 http/tests/navigation/post-goback-same-url.html [ Failure ] # Easy
 http/tests/navigation/restore-form-state-https.html [ Failure ]
 http/tests/navigation/target-blank-opener.html [ Skip ] # Timeout
-http/tests/security/contentTypeOptions/nosniff-script-blocked.html [ Failure ]
 http/tests/security/cross-frame-access-call.html [ Failure ]
 http/tests/security/cross-frame-access-get.html [ Failure ]
 http/tests/security/cross-frame-access-getOwnPropertyDescriptor.html [ Failure ]

@@ -36,14 +36,19 @@ public:
     CachedCSSStyleSheet(CachedResourceRequest&&, SessionID);
     virtual ~CachedCSSStyleSheet();
 
-    enum class MIMETypeCheck { Strict, Lax };
-    const String sheetText(MIMETypeCheck = MIMETypeCheck::Strict, bool* hasValidMIMEType = nullptr) const;
+    enum class MIMETypeCheckHint { Strict, Lax };
+    const String sheetText(MIMETypeCheckHint = MIMETypeCheckHint::Strict, bool* hasValidMIMEType = nullptr) const;
 
     RefPtr<StyleSheetContents> restoreParsedStyleSheet(const CSSParserContext&, CachePolicy);
     void saveParsedStyleSheet(Ref<StyleSheetContents>&&);
 
+#if ENABLE(NOSNIFF)
+    bool mimeTypeAllowedByNosniff() const;
+#endif
+
 private:
-    bool canUseSheet(MIMETypeCheck, bool* hasValidMIMEType) const;
+    String responseMIMEType() const;
+    bool canUseSheet(MIMETypeCheckHint, bool* hasValidMIMEType) const;
     bool mayTryReplaceEncodedData() const final { return true; }
 
     void didAddClient(CachedResourceClient&) final;

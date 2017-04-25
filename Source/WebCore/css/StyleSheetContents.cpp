@@ -312,18 +312,22 @@ const AtomicString& StyleSheetContents::namespaceURIFromPrefix(const AtomicStrin
 void StyleSheetContents::parseAuthorStyleSheet(const CachedCSSStyleSheet* cachedStyleSheet, const SecurityOrigin* securityOrigin)
 {
     bool isSameOriginRequest = securityOrigin && securityOrigin->canRequest(baseURL());
-    CachedCSSStyleSheet::MIMETypeCheck mimeTypeCheck = isStrictParserMode(m_parserContext.mode) || !isSameOriginRequest ? CachedCSSStyleSheet::MIMETypeCheck::Strict : CachedCSSStyleSheet::MIMETypeCheck::Lax;
+    CachedCSSStyleSheet::MIMETypeCheckHint mimeTypeCheckHint = isStrictParserMode(m_parserContext.mode) || !isSameOriginRequest ? CachedCSSStyleSheet::MIMETypeCheckHint::Strict : CachedCSSStyleSheet::MIMETypeCheckHint::Lax;
     bool hasValidMIMEType = true;
-    String sheetText = cachedStyleSheet->sheetText(mimeTypeCheck, &hasValidMIMEType);
+    String sheetText = cachedStyleSheet->sheetText(mimeTypeCheckHint, &hasValidMIMEType);
 
     if (!hasValidMIMEType) {
         ASSERT(sheetText.isNull());
         if (auto* document = singleOwnerDocument()) {
             if (auto* page = document->page()) {
                 if (isStrictParserMode(m_parserContext.mode))
-                    page->console().addMessage(MessageSource::Security, MessageLevel::Error, "Did not parse stylesheet at '" + cachedStyleSheet->url().stringCenterEllipsizedToLength() + "' because non CSS MIME types are not allowed in strict mode.");
+                    page->console().addMessage(MessageSource::Security, MessageLevel::Error, makeString("Did not parse stylesheet at '", cachedStyleSheet->url().stringCenterEllipsizedToLength(), "' because non CSS MIME types are not allowed in strict mode."));
+#if ENABLE(NOSNIFF)
+                else if (!cachedStyleSheet->mimeTypeAllowedByNosniff())
+                    page->console().addMessage(MessageSource::Security, MessageLevel::Error, makeString("Did not parse stylesheet at '", cachedStyleSheet->url().stringCenterEllipsizedToLength(), "' because non CSS MIME types are not allowed when 'X-Content-Type: nosniff' is given."));
+#endif
                 else
-                    page->console().addMessage(MessageSource::Security, MessageLevel::Error, "Did not parse stylesheet at '" + cachedStyleSheet->url().stringCenterEllipsizedToLength() + "' because non CSS MIME types are not allowed for cross-origin stylesheets.");
+                    page->console().addMessage(MessageSource::Security, MessageLevel::Error, makeString("Did not parse stylesheet at '", cachedStyleSheet->url().stringCenterEllipsizedToLength(), "' because non CSS MIME types are not allowed for cross-origin stylesheets."));
             }
         }
         return;
@@ -385,6 +389,9 @@ void StyleSheetContents::notifyLoadedSheet(const CachedCSSStyleSheet* sheet)
 {
     ASSERT(sheet);
     m_didLoadErrorOccur |= sheet->errorOccurred();
+#if ENABLE(NOSNIFF)
+    m_didLoadErrorOccur |= !sheet->mimeTypeAllowedByNosniff();
+#endif
 }
 
 void StyleSheetContents::startLoadingDynamicSheet()

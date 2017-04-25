@@ -1,3 +1,35 @@
+2017-04-25  Daniel Bates  <dabates@apple.com>
+
+        [Cocoa][Win] Enable of X-Content-Type-Options: nosniff header
+        https://bugs.webkit.org/show_bug.cgi?id=136452
+        <rdar://problem/23412620>
+
+        Reviewed by Brent Fulgham.
+
+        Unskip nosniff tests on Mac, iOS and Windows and update expected results now that
+        we support X-Content-Type-Options: nosniff.
+
+        Merge Blink test from <https://src.chromium.org/viewvc/blink?revision=168570&view=revision>.
+
+        * TestExpectations: Unskip all nosniff tests except imported/w3c/web-platform-tests/fetch/nosniff/importscripts.html.
+        We need to fix <https://bugs.webkit.org/show_bug.cgi?id=171248> before we can unskip it.
+        When running the nosniff Web Platform Tests (WPT) dump console messages to standard error
+        to avoid a difference of console message ordering due to the non-determinism of the WPT
+        tests from affecting the matching of the expected result.
+        * http/tests/security/contentTypeOptions/nosniff-dynamic-script-blocked-expected.txt: Added.
+        * http/tests/security/contentTypeOptions/nosniff-dynamic-script-blocked.html: Copied from LayoutTests/http/tests/security/contentTypeOptions/nosniff-script-blocked.html.
+        * http/tests/security/contentTypeOptions/nosniff-script-blocked-expected.txt: Update expected result.
+        * http/tests/security/contentTypeOptions/nosniff-script-blocked.html: Substitute the not executable
+        MIME type "text/xx-javascript" for "text/x-javascript" as the latter is an acceptable MIME type for
+        JavaScript scripts as per the Fetch standard, <https://html.spec.whatwg.org/multipage/scripting.html#javascript-mime-type> (30 March 2017).
+        * http/tests/security/contentTypeOptions/nosniff-script-without-content-type-blocked-expected.txt: Update
+        expected result.
+        * platform/gtk/TestExpectations: Skip the nosniff tests as GTK does not enable ENABLE(NOSNIFF).
+        * platform/ios/TestExpectations: Unskip nosniff tests.
+        * platform/mac/TestExpectations: Ditto.
+        * platform/win/TestExpectations: Ditto.
+        * platform/wk2/TestExpectations: Ditto.
+
 2017-04-25  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark http/tests/inspector/network/resource-sizes-disk-cache.html as flaky.
