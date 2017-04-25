@@ -1,3 +1,22 @@
+2017-04-24  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r204605): support for "cp874" charset alias was inadvertently dropped which may cause issues on certain Thai sites
+        https://bugs.webkit.org/show_bug.cgi?id=171128
+        <rdar://problem/31526844>
+
+        Reviewed by Alexey Proskuryakov.
+
+        When using Thai as default language on MacOS, defaultTextEncodingNameForSystemLanguage()
+        was returning "cp874" encoding with was dropped in r204605 for not being part of the
+        encoding specification (https://encoding.spec.whatwg.org/#names-and-labels).
+
+        To address the issue, we map "cp874" encoding to the "dos-874" encoding which is
+        properly recognized. Without this, this could lead to issue on WebSites that do not
+        specify a charset.
+
+        * platform/text/TextEncodingRegistry.cpp:
+        (WebCore::defaultTextEncodingNameForSystemLanguage):
+
 2017-04-24  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         [CG] Provide a type identifier hint to the CGImageSource so getting the type identifier is more accurate

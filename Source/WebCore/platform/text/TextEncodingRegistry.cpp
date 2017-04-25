@@ -377,6 +377,13 @@ String defaultTextEncodingNameForSystemLanguage()
     // On some OS versions, the result is CP949 (uppercase).
     if (equalLettersIgnoringASCIICase(systemEncodingName, "cp949"))
         systemEncodingName = ASCIILiteral("ks_c_5601-1987");
+
+    // CFStringConvertEncodingToIANACharSetName() returns cp874 for kTextEncodingDOSThai, AKA windows-874.
+    // Since "cp874" alias is not standard (https://encoding.spec.whatwg.org/#names-and-labels), map to
+    // "dos-874" instead.
+    if (equalLettersIgnoringASCIICase(systemEncodingName, "cp874"))
+        systemEncodingName = ASCIILiteral("dos-874");
+
     return systemEncodingName;
 #else
     return ASCIILiteral("ISO-8859-1");
