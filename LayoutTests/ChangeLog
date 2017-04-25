@@ -1,3 +1,16 @@
+2017-04-25  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Supplementary Multilingual Plane Complex Scripts Rendered Incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=171272
+        <rdar://problem/30966764>
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/text/kaithi-expected.html: Added.
+        * fast/text/kaithi.html: Added.
+        * platform/ios/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2017-04-25  Daniel Bates  <dabates@apple.com>
 
         [Cocoa][Win] Enable of X-Content-Type-Options: nosniff header

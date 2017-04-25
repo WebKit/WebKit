@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+<p>This font makes sure that text using the Kaithi unicode block gets shaped correctly. The test passes if the element's layout rect completely covers its paint rect (which would cause the entire page below to be white).</p>
+<p id="container" style="font-size: 48px; overflow: hidden;"><span id="test">&#x1108d;&#x110b9;&#x1108d;&#x110b9;&#x1108e;&#x110b1;</span></p>
+<script>
+var container = document.getElementById("container");
+var test = document.getElementById("test");
+var clientRects = test.getClientRects();
+for (var i = 0; i < clientRects.length; ++i) {
+    var clientRect = clientRects[i];
+    var cover = document.createElement("div");
+    cover.style.position = "absolute";
+    cover.style.top = clientRect.top.toString() + "px";
+    cover.style.left = clientRect.left.toString() + "px";
+    cover.style.width = clientRect.width.toString() + "px";
+    cover.style.height = container.getClientRects()[0].height.toString() + "px";
+    cover.style.backgroundColor = "white";
+    container.appendChild(cover);
+}
+
+</script>
+</body>
+</html>
+

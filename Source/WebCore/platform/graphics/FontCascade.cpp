@@ -787,6 +787,60 @@ FontCascade::CodePath FontCascade::characterRangeCodePath(const UChar* character
 
             UChar32 supplementaryCharacter = U16_GET_SUPPLEMENTARY(c, next);
 
+            if (supplementaryCharacter < 0x10A00)
+                continue;
+            if (supplementaryCharacter < 0x10A60) // Kharoshthi
+                return Complex;
+            if (supplementaryCharacter < 0x11000)
+                continue;
+            if (supplementaryCharacter < 0x11080) // Brahmi
+                return Complex;
+            if (supplementaryCharacter < 0x110D0) // Kaithi
+                return Complex;
+            if (supplementaryCharacter < 0x11100)
+                continue;
+            if (supplementaryCharacter < 0x11150) // Chakma
+                return Complex;
+            if (supplementaryCharacter < 0x11180) // Mahajani
+                return Complex;
+            if (supplementaryCharacter < 0x111E0) // Sharada
+                return Complex;
+            if (supplementaryCharacter < 0x11200)
+                continue;
+            if (supplementaryCharacter < 0x11250) // Khojki
+                return Complex;
+            if (supplementaryCharacter < 0x112B0)
+                continue;
+            if (supplementaryCharacter < 0x11300) // Khudawadi
+                return Complex;
+            if (supplementaryCharacter < 0x11380) // Grantha
+                return Complex;
+            if (supplementaryCharacter < 0x11400)
+                continue;
+            if (supplementaryCharacter < 0x11480) // Newa
+                return Complex;
+            if (supplementaryCharacter < 0x114E0) // Tirhuta
+                return Complex;
+            if (supplementaryCharacter < 0x11580)
+                continue;
+            if (supplementaryCharacter < 0x11600) // Siddham
+                return Complex;
+            if (supplementaryCharacter < 0x11660) // Modi
+                return Complex;
+            if (supplementaryCharacter < 0x11680)
+                continue;
+            if (supplementaryCharacter < 0x116D0) // Takri
+                return Complex;
+            if (supplementaryCharacter < 0x11C00)
+                continue;
+            if (supplementaryCharacter < 0x11C70) // Bhaiksuki
+                return Complex;
+            if (supplementaryCharacter < 0x11CC0) // Marchen
+                return Complex;
+            if (supplementaryCharacter < 0x1E900)
+                continue;
+            if (supplementaryCharacter < 0x1E960) // Adlam
+                return Complex;
             if (supplementaryCharacter < 0x1F1E6) // U+1F1E6 through U+1F1FF Regional Indicator Symbols
                 continue;
             if (supplementaryCharacter <= 0x1F1FF)

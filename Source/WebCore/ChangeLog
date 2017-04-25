@@ -1,3 +1,18 @@
+2017-04-25  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Supplementary Multilingual Plane Complex Scripts Rendered Incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=171272
+        <rdar://problem/30966764>
+
+        Reviewed by Zalan Bujtas.
+
+        These scripts need to take the complex text codepath.
+
+        Test: fast/text/kaithi.html
+
+        * platform/graphics/FontCascade.cpp:
+        (WebCore::FontCascade::characterRangeCodePath):
+
 2017-04-25  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] Revert r215745 (especulative build fix) after r215752.
