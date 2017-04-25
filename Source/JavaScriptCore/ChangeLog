@@ -1,3 +1,19 @@
+2017-04-25  Mark Lam  <mark.lam@apple.com>
+
+        Make DFG SpeculatedType dumps easier to read.
+        https://bugs.webkit.org/show_bug.cgi?id=171280
+
+        Reviewed by Saam Barati.
+
+        Adding a pretty printer to insert |s between each type string and changing the
+        dumped strings to match the SpeculatedType names case-wise.
+
+        * bytecode/SpeculatedType.cpp:
+        (JSC::PrettyPrinter::PrettyPrinter):
+        (JSC::PrettyPrinter::print):
+        (JSC::dumpSpeculation):
+        * bytecode/SpeculatedType.h:
+
 2017-04-25  JF Bastien  <jfbastien@apple.com>
 
         lowerStackArgs: check Arg::addr.isValidForm when falling back to SP offsets

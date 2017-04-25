@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2013, 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,207 +44,225 @@
 
 namespace JSC {
 
-void dumpSpeculation(PrintStream& out, SpeculatedType value)
+struct PrettyPrinter {
+    PrettyPrinter(PrintStream& out)
+        : out(out)
+        , separator("|")
+    { }
+    
+    template<typename T>
+    void print(const T& value)
+    {
+        out.print(separator, value);
+    }
+    
+    PrintStream& out;
+    CommaPrinter separator;
+};
+    
+void dumpSpeculation(PrintStream& outStream, SpeculatedType value)
 {
+    StringPrintStream strStream;
+    PrettyPrinter out(outStream);
+    PrettyPrinter strOut(strStream);
+    
     if (value == SpecNone) {
         out.print("None");
         return;
     }
     
-    StringPrintStream myOut;
-    
     bool isTop = true;
     
     if ((value & SpecCell) == SpecCell)
-        myOut.print("Cell");
+        strOut.print("Cell");
     else {
         if ((value & SpecObject) == SpecObject)
-            myOut.print("Object");
+            strOut.print("Object");
         else {
             if (value & SpecCellOther)
-                myOut.print("Othercell");
+                strOut.print("OtherCell");
             else
                 isTop = false;
     
             if (value & SpecObjectOther)
-                myOut.print("Otherobj");
+                strOut.print("OtherObj");
             else
                 isTop = false;
     
             if (value & SpecFinalObject)
-                myOut.print("Final");
+                strOut.print("Final");
             else
                 isTop = false;
 
             if (value & SpecArray)
-                myOut.print("Array");
+                strOut.print("Array");
             else
                 isTop = false;
     
             if (value & SpecInt8Array)
-                myOut.print("Int8array");
+                strOut.print("Int8Array");
             else
                 isTop = false;
     
             if (value & SpecInt16Array)
-                myOut.print("Int16array");
+                strOut.print("Int16Array");
             else
                 isTop = false;
     
             if (value & SpecInt32Array)
-                myOut.print("Int32array");
+                strOut.print("Int32Array");
             else
                 isTop = false;
     
             if (value & SpecUint8Array)
-                myOut.print("Uint8array");
+                strOut.print("Uint8Array");
             else
                 isTop = false;
 
             if (value & SpecUint8ClampedArray)
-                myOut.print("Uint8clampedarray");
+                strOut.print("Uint8ClampedArray");
             else
                 isTop = false;
     
             if (value & SpecUint16Array)
-                myOut.print("Uint16array");
+                strOut.print("Uint16Array");
             else
                 isTop = false;
     
             if (value & SpecUint32Array)
-                myOut.print("Uint32array");
+                strOut.print("Uint32Array");
             else
                 isTop = false;
     
             if (value & SpecFloat32Array)
-                myOut.print("Float32array");
+                strOut.print("Float32array");
             else
                 isTop = false;
     
             if (value & SpecFloat64Array)
-                myOut.print("Float64array");
+                strOut.print("Float64Array");
             else
                 isTop = false;
     
             if (value & SpecFunction)
-                myOut.print("Function");
+                strOut.print("Function");
             else
                 isTop = false;
     
             if (value & SpecDirectArguments)
-                myOut.print("Directarguments");
+                strOut.print("DirectArguments");
             else
                 isTop = false;
     
             if (value & SpecScopedArguments)
-                myOut.print("Scopedarguments");
+                strOut.print("ScopedArguments");
             else
                 isTop = false;
     
             if (value & SpecStringObject)
-                myOut.print("Stringobject");
+                strOut.print("StringObject");
             else
                 isTop = false;
     
             if (value & SpecRegExpObject)
-                myOut.print("Regexpobject");
+                strOut.print("RegExpObject");
             else
                 isTop = false;
 
             if (value & SpecMapObject)
-                myOut.print("Mapobject");
+                strOut.print("MapObject");
             else
                 isTop = false;
 
             if (value & SpecSetObject)
-                myOut.print("Setobject");
+                strOut.print("SetObject");
             else
                 isTop = false;
 
             if (value & SpecProxyObject)
-                myOut.print("Proxyobject");
+                strOut.print("ProxyObject");
             else
                 isTop = false;
 
             if (value & SpecDerivedArray)
-                myOut.print("Derivedarray");
+                strOut.print("DerivedArray");
             else
                 isTop = false;
         }
 
         if ((value & SpecString) == SpecString)
-            myOut.print("String");
+            strOut.print("String");
         else {
             if (value & SpecStringIdent)
-                myOut.print("Stringident");
+                strOut.print("StringIdent");
             else
                 isTop = false;
             
             if (value & SpecStringVar)
-                myOut.print("Stringvar");
+                strOut.print("StringVar");
             else
                 isTop = false;
         }
 
         if (value & SpecSymbol)
-            myOut.print("Symbol");
+            strOut.print("Symbol");
         else
             isTop = false;
     }
     
     if (value == SpecInt32Only)
-        myOut.print("Int32");
+        strOut.print("Int32");
     else {
         if (value & SpecBoolInt32)
-            myOut.print("Boolint32");
+            strOut.print("BoolInt32");
         else
             isTop = false;
         
         if (value & SpecNonBoolInt32)
-            myOut.print("Nonboolint32");
+            strOut.print("NonBoolInt32");
         else
             isTop = false;
     }
     
     if (value & SpecInt52Only)
-        myOut.print("Int52");
+        strOut.print("Int52");
         
     if ((value & SpecBytecodeDouble) == SpecBytecodeDouble)
-        myOut.print("Bytecodedouble");
+        strOut.print("BytecodeDouble");
     else {
         if (value & SpecAnyIntAsDouble)
-            myOut.print("AnyIntAsDouble");
+            strOut.print("AnyIntAsDouble");
         else
             isTop = false;
         
         if (value & SpecNonIntAsDouble)
-            myOut.print("Nonintasdouble");
+            strOut.print("NonIntAsdouble");
         else
             isTop = false;
         
         if (value & SpecDoublePureNaN)
-            myOut.print("Doublepurenan");
+            strOut.print("DoublePureNan");
         else
             isTop = false;
     }
     
     if (value & SpecDoubleImpureNaN)
-        out.print("Doubleimpurenan");
+        out.print("DoubleImpureNan");
     
     if (value & SpecBoolean)
-        myOut.print("Bool");
+        strOut.print("Bool");
     else
         isTop = false;
     
     if (value & SpecOther)
-        myOut.print("Other");
+        strOut.print("Other");
     else
         isTop = false;
     
     if (isTop)
         out.print("Top");
     else
-        out.print(myOut.toCString());
+        out.print(strStream.toCString());
     
     if (value & SpecEmpty)
         out.print("Empty");

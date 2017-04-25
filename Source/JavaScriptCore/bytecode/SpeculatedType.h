@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -75,7 +75,7 @@ static const SpeculatedType SpecAnyInt             = SpecInt32Only | SpecInt52On
 static const SpeculatedType SpecAnyIntAsDouble     = 1ull << 28; // It's definitely an Int52 and it's inside a double.
 static const SpeculatedType SpecNonIntAsDouble     = 1ull << 29; // It's definitely not an Int52 but it's a real number and it's a double.
 static const SpeculatedType SpecDoubleReal         = SpecNonIntAsDouble | SpecAnyIntAsDouble; // It's definitely a non-NaN double.
-static const SpeculatedType SpecDoublePureNaN      = 1ull << 30; // It's definitely a NaN that is sae to tag (i.e. pure).
+static const SpeculatedType SpecDoublePureNaN      = 1ull << 30; // It's definitely a NaN that is safe to tag (i.e. pure).
 static const SpeculatedType SpecDoubleImpureNaN    = 1ull << 31; // It's definitely a NaN that is unsafe to tag (i.e. impure).
 static const SpeculatedType SpecDoubleNaN          = SpecDoublePureNaN | SpecDoubleImpureNaN; // It's definitely some kind of NaN.
 static const SpeculatedType SpecBytecodeDouble     = SpecDoubleReal | SpecDoublePureNaN; // It's either a non-NaN or a NaN double, but it's definitely not impure NaN.
