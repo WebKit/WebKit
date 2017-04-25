@@ -1,3 +1,16 @@
+2017-04-25  Antti Koivisto  <antti@apple.com>
+
+        Enable expired-only reload policy on Mac and iOS
+        https://bugs.webkit.org/show_bug.cgi?id=171264
+        <rdar://problem/31807637>
+
+        Reviewed by Andreas Kling.
+
+        * loader/NavigationAction.cpp:
+        (WebCore::navigationType):
+
+        Test for reload navigation type correctly.
+
 2017-04-25  Miguel Gomez  <magomez@igalia.com>
 
         Image decoders must have private constructors to avoid refcount misuse: ASSERTION FAILED: m_deletionHasBegun when destroying ImageDecoder
