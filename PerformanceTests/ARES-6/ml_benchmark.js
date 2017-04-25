@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,22 +24,45 @@
  */
 "use strict";
 
-const driver = new Driver(
-    isInBrowser ? document.getElementById("status") : null,
-    isInBrowser ? document.getElementById("trigger") : null,
-    function() {
-        driver.start(6)
-    },
-    isInBrowser ? document.getElementById("magic") : null,
-    isInBrowser ? document.getElementById("Geomean") : null,
-    "sampleBench");
+const MLBenchmarkCode = String.raw`
+<script src="ml/index.js"></script>
+<script src="ml/benchmark.js"></script>
+<script>
+var results = [];
+var benchmark = new MLBenchmark();
+var numIterations = 60;
+for (var i = 0; i < numIterations; ++i) {
+    var before = currentTime();
+    benchmark.runIteration();
+    var after = currentTime();
+    results.push(after - before);
+}
+reportResult(results);
+</script>`;
 
-function reportResult(...args) {
-    driver.reportResult(...args);
+
+let runMLBenchmark = null;
+if (!isInBrowser) {
+    let sources = [
+        "ml/index.js"
+        , "ml/benchmark.js"
+    ];
+
+    runMLBenchmark = makeBenchmarkRunner(sources, "MLBenchmark", 60);
 }
 
-driver.addBenchmark(AirBenchmarkRunner);
-driver.addBenchmark(BasicBenchmarkRunner);
-driver.addBenchmark(BabylonBenchmarkRunner);
-driver.addBenchmark(MLBenchmarkRunner);
-driver.readyTrigger();
+const MLBenchmarkRunner = {
+    name: "ML",
+    code: MLBenchmarkCode,
+    run: runMLBenchmark,
+    cells: {}
+};
+
+if (isInBrowser) {
+    MLBenchmarkRunner.cells = {
+        firstIteration: document.getElementById("MLFirstIteration"),
+        averageWorstCase: document.getElementById("MLAverageWorstCase"),
+        steadyState: document.getElementById("MLSteadyState"),
+        message: document.getElementById("MLMessage")
+    };
+}

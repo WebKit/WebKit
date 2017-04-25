@@ -1,3 +1,24 @@
+2017-04-24  Saam Barati  <sbarati@apple.com>
+
+        Add ML to ARES6
+        https://bugs.webkit.org/show_bug.cgi?id=171206
+
+        Rubber stamped by Filip Pizlo.
+
+        This patch adds a new test to ARES6 called ML. ML is an implementation of
+        a feedforward neural network: https://github.com/mljs/feedforward-neural-networks.
+        It makes heavy use of classes, and does non-trivial matrix math using the
+        ml-matrix library: https://github.com/mljs/matrix
+
+        * ARES-6/about.html:
+        * ARES-6/cli.js:
+        * ARES-6/glue.js:
+        * ARES-6/index.html:
+        * ARES-6/ml: Added.
+        * ARES-6/ml/benchmark.js: Added.
+        * ARES-6/ml/index.js: Added.
+        * ARES-6/ml_benchmark.js: Added.
+
 2017-04-21  Zalan Bujtas  <zalan@apple.com>
 
         Simple line layout: Add performance test to measure mid-word line breaking with long text.

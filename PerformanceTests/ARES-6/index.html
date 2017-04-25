@@ -119,6 +119,33 @@
                 </span>
             </div>
         </div>
+
+        <div class="ML test">
+            <div id="MLMessage" class="indicator">.</div>
+            <h2>ML</h2> 
+            
+            <div class="score">
+                <label>First Iteration</label>
+                <span id="MLFirstIteration">
+                    <span class="value">&#8709;</span><span class="units">ms</span>                    
+                </span>
+            </div>
+ 
+            <div class="score">
+                <label>Worst 4 Iterations</label>
+                <span id="MLAverageWorstCase">
+                    <span class="value">&#8709;</span><span class="units">ms</span>                    
+                </span>
+            </div>
+
+            <div class="score">
+                <label>Average</label>
+                <span id="MLSteadyState">
+                    <span class="value">&#8709;</span><span class="units">ms</span>                    
+                </span>
+            </div>
+        </div>
+
     </div>
     </main>
     
@@ -126,6 +153,7 @@
     <script src="air_benchmark.js"></script>
     <script src="basic_benchmark.js"></script>
     <script src="babylon_benchmark.js"></script>
+    <script src="ml_benchmark.js"></script>
     <script src="glue.js"></script>
         
 </body>

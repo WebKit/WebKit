@@ -25,7 +25,7 @@
 
 const isInBrowser = false;
 
-function makeBenchmarkRunner(sources, benchmarkConstructor) {
+function makeBenchmarkRunner(sources, benchmarkConstructor, numIterations = 200) {
     let source = "'use strict';"
     for (let file of sources) {
         source += readFile(file);
@@ -33,7 +33,7 @@ function makeBenchmarkRunner(sources, benchmarkConstructor) {
     source += `
         this.results = [];
         var benchmark = new ${benchmarkConstructor}();
-        var numIterations = 200;
+        var numIterations = ${numIterations};
         for (var i = 0; i < numIterations; ++i) {
             var before = currentTime();
             benchmark.runIteration();
@@ -54,6 +54,7 @@ load("stats.js");
 load("air_benchmark.js");
 load("basic_benchmark.js");
 load("babylon_benchmark.js");
+load("ml_benchmark.js");
 load("glue.js");
 
-driver.start(8);
+driver.start(6);
