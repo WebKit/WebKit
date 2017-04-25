@@ -2232,9 +2232,9 @@ bool RenderLayerCompositor::requiresOwnBackingStore(const RenderLayer& layer, co
     return false;
 }
 
-CompositingReasons RenderLayerCompositor::reasonsForCompositing(const RenderLayer& layer) const
+OptionSet<CompositingReason> RenderLayerCompositor::reasonsForCompositing(const RenderLayer& layer) const
 {
-    CompositingReasons reasons = CompositingReasonNone;
+    OptionSet<CompositingReason> reasons;
 
     if (!layer.isComposited())
         return reasons;
@@ -2242,89 +2242,89 @@ CompositingReasons RenderLayerCompositor::reasonsForCompositing(const RenderLaye
     auto& renderer = rendererForCompositingTests(layer);
 
     if (requiresCompositingForTransform(renderer))
-        reasons |= CompositingReason3DTransform;
+        reasons |= CompositingReason::Transform3D;
 
     if (requiresCompositingForVideo(renderer))
-        reasons |= CompositingReasonVideo;
+        reasons |= CompositingReason::Video;
     else if (requiresCompositingForCanvas(renderer))
-        reasons |= CompositingReasonCanvas;
+        reasons |= CompositingReason::Canvas;
     else if (requiresCompositingForPlugin(renderer))
-        reasons |= CompositingReasonPlugin;
+        reasons |= CompositingReason::Plugin;
     else if (requiresCompositingForFrame(renderer))
-        reasons |= CompositingReasonIFrame;
-    
+        reasons |= CompositingReason::IFrame;
+
     if ((canRender3DTransforms() && renderer.style().backfaceVisibility() == BackfaceVisibilityHidden))
-        reasons |= CompositingReasonBackfaceVisibilityHidden;
+        reasons |= CompositingReason::BackfaceVisibilityHidden;
 
     if (clipsCompositingDescendants(*renderer.layer()))
-        reasons |= CompositingReasonClipsCompositingDescendants;
+        reasons |= CompositingReason::ClipsCompositingDescendants;
 
     if (requiresCompositingForAnimation(renderer))
-        reasons |= CompositingReasonAnimation;
+        reasons |= CompositingReason::Animation;
 
     if (requiresCompositingForFilters(renderer))
-        reasons |= CompositingReasonFilters;
+        reasons |= CompositingReason::Filters;
 
     if (requiresCompositingForWillChange(renderer))
-        reasons |= CompositingReasonWillChange;
+        reasons |= CompositingReason::WillChange;
 
     if (requiresCompositingForPosition(renderer, *renderer.layer()))
-        reasons |= renderer.style().position() == FixedPosition ? CompositingReasonPositionFixed : CompositingReasonPositionSticky;
+        reasons |= renderer.style().position() == FixedPosition ? CompositingReason::PositionFixed : CompositingReason::PositionSticky;
 
 #if PLATFORM(IOS)
     if (requiresCompositingForScrolling(*renderer.layer()))
-        reasons |= CompositingReasonOverflowScrollingTouch;
+        reasons |= CompositingReason::OverflowScrollingTouch;
 #endif
 
     if (requiresCompositingForOverflowScrolling(*renderer.layer()))
-        reasons |= CompositingReasonOverflowScrollingTouch;
+        reasons |= CompositingReason::OverflowScrollingTouch;
 
     switch (renderer.layer()->indirectCompositingReason()) {
     case RenderLayer::IndirectCompositingReason::None:
         break;
     case RenderLayer::IndirectCompositingReason::Stacking:
-        reasons |= CompositingReasonStacking;
+        reasons |= CompositingReason::Stacking;
         break;
     case RenderLayer::IndirectCompositingReason::Overlap:
-        reasons |= CompositingReasonOverlap;
+        reasons |= CompositingReason::Overlap;
         break;
     case RenderLayer::IndirectCompositingReason::BackgroundLayer:
-        reasons |= CompositingReasonNegativeZIndexChildren;
+        reasons |= CompositingReason::NegativeZIndexChildren;
         break;
     case RenderLayer::IndirectCompositingReason::GraphicalEffect:
         if (renderer.hasTransform())
-            reasons |= CompositingReasonTransformWithCompositedDescendants;
+            reasons |= CompositingReason::TransformWithCompositedDescendants;
 
         if (renderer.isTransparent())
-            reasons |= CompositingReasonOpacityWithCompositedDescendants;
+            reasons |= CompositingReason::OpacityWithCompositedDescendants;
 
         if (renderer.hasMask())
-            reasons |= CompositingReasonMaskWithCompositedDescendants;
+            reasons |= CompositingReason::MaskWithCompositedDescendants;
 
         if (renderer.hasReflection())
-            reasons |= CompositingReasonReflectionWithCompositedDescendants;
+            reasons |= CompositingReason::ReflectionWithCompositedDescendants;
 
         if (renderer.hasFilter() || renderer.hasBackdropFilter())
-            reasons |= CompositingReasonFilterWithCompositedDescendants;
+            reasons |= CompositingReason::FilterWithCompositedDescendants;
 
 #if ENABLE(CSS_COMPOSITING)
         if (layer.isolatesCompositedBlending())
-            reasons |= CompositingReasonIsolatesCompositedBlendingDescendants;
+            reasons |= CompositingReason::IsolatesCompositedBlendingDescendants;
 
         if (layer.hasBlendMode())
-            reasons |= CompositingReasonBlendingWithCompositedDescendants;
+            reasons |= CompositingReason::BlendingWithCompositedDescendants;
 #endif
         break;
     case RenderLayer::IndirectCompositingReason::Perspective:
-        reasons |= CompositingReasonPerspective;
+        reasons |= CompositingReason::Perspective;
         break;
     case RenderLayer::IndirectCompositingReason::Preserve3D:
-        reasons |= CompositingReasonPreserve3D;
+        reasons |= CompositingReason::Preserve3D;
         break;
     }
 
     if (inCompositingMode() && renderer.layer()->isRootLayer())
-        reasons |= CompositingReasonRoot;
+        reasons |= CompositingReason::Root;
 
     return reasons;
 }
@@ -2332,80 +2332,83 @@ CompositingReasons RenderLayerCompositor::reasonsForCompositing(const RenderLaye
 #if !LOG_DISABLED
 const char* RenderLayerCompositor::logReasonsForCompositing(const RenderLayer& layer)
 {
-    CompositingReasons reasons = reasonsForCompositing(layer);
+    OptionSet<CompositingReason> reasons = reasonsForCompositing(layer);
 
-    if (reasons & CompositingReason3DTransform)
+    if (reasons.contains(CompositingReason::Transform3D))
         return "3D transform";
 
-    if (reasons & CompositingReasonVideo)
+    if (reasons.contains(CompositingReason::Video))
         return "video";
-    else if (reasons & CompositingReasonCanvas)
+
+    if (reasons.contains(CompositingReason::Canvas))
         return "canvas";
-    else if (reasons & CompositingReasonPlugin)
+
+    if (reasons.contains(CompositingReason::Plugin))
         return "plugin";
-    else if (reasons & CompositingReasonIFrame)
+
+    if (reasons.contains(CompositingReason::IFrame))
         return "iframe";
-    
-    if (reasons & CompositingReasonBackfaceVisibilityHidden)
+
+    if (reasons.contains(CompositingReason::BackfaceVisibilityHidden))
         return "backface-visibility: hidden";
 
-    if (reasons & CompositingReasonClipsCompositingDescendants)
+    if (reasons.contains(CompositingReason::ClipsCompositingDescendants))
         return "clips compositing descendants";
 
-    if (reasons & CompositingReasonAnimation)
+    if (reasons.contains(CompositingReason::Animation))
         return "animation";
 
-    if (reasons & CompositingReasonFilters)
+    if (reasons.contains(CompositingReason::Filters))
         return "filters";
 
-    if (reasons & CompositingReasonPositionFixed)
+    if (reasons.contains(CompositingReason::PositionFixed))
         return "position: fixed";
 
-    if (reasons & CompositingReasonPositionSticky)
+    if (reasons.contains(CompositingReason::PositionSticky))
         return "position: sticky";
 
-    if (reasons & CompositingReasonOverflowScrollingTouch)
+    if (reasons.contains(CompositingReason::OverflowScrollingTouch))
         return "-webkit-overflow-scrolling: touch";
 
-    if (reasons & CompositingReasonStacking)
+    if (reasons.contains(CompositingReason::Stacking))
         return "stacking";
 
-    if (reasons & CompositingReasonOverlap)
+    if (reasons.contains(CompositingReason::Overlap))
         return "overlap";
 
-    if (reasons & CompositingReasonNegativeZIndexChildren)
+    if (reasons.contains(CompositingReason::NegativeZIndexChildren))
         return "negative z-index children";
 
-    if (reasons & CompositingReasonTransformWithCompositedDescendants)
+    if (reasons.contains(CompositingReason::TransformWithCompositedDescendants))
         return "transform with composited descendants";
 
-    if (reasons & CompositingReasonOpacityWithCompositedDescendants)
+    if (reasons.contains(CompositingReason::OpacityWithCompositedDescendants))
         return "opacity with composited descendants";
 
-    if (reasons & CompositingReasonMaskWithCompositedDescendants)
+    if (reasons.contains(CompositingReason::MaskWithCompositedDescendants))
         return "mask with composited descendants";
 
-    if (reasons & CompositingReasonReflectionWithCompositedDescendants)
+    if (reasons.contains(CompositingReason::ReflectionWithCompositedDescendants))
         return "reflection with composited descendants";
 
-    if (reasons & CompositingReasonFilterWithCompositedDescendants)
+    if (reasons.contains(CompositingReason::FilterWithCompositedDescendants))
         return "filter with composited descendants";
 
 #if ENABLE(CSS_COMPOSITING)
-    if (reasons & CompositingReasonBlendingWithCompositedDescendants)
+    if (reasons.contains(CompositingReason::BlendingWithCompositedDescendants))
         return "blending with composited descendants";
 
-    if (reasons & CompositingReasonIsolatesCompositedBlendingDescendants)
+    if (reasons.contains(CompositingReason::IsolatesCompositedBlendingDescendants))
         return "isolates composited blending descendants";
 #endif
 
-    if (reasons & CompositingReasonPerspective)
+    if (reasons.contains(CompositingReason::Perspective))
         return "perspective";
 
-    if (reasons & CompositingReasonPreserve3D)
+    if (reasons.contains(CompositingReason::Preserve3D))
         return "preserve-3d";
 
-    if (reasons & CompositingReasonRoot)
+    if (reasons.contains(CompositingReason::Root))
         return "root";
 
     return "";

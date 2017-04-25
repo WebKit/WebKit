@@ -1,3 +1,22 @@
+2017-04-25  Daniel Bates  <dabates@apple.com>
+
+        Use an OptionSet for compositing reasons bitmask
+        https://bugs.webkit.org/show_bug.cgi?id=171153
+
+        Reviewed by Simon Fraser.
+
+        We should make use of OptionSet to represent the bitmask of the reasons a layer
+        was composited instead of using an integer and bitwise operations.
+
+        * inspector/InspectorLayerTreeAgent.cpp:
+        (WebCore::InspectorLayerTreeAgent::reasonsForCompositingLayer):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::reasonsForCompositing):
+        (WebCore::RenderLayerCompositor::logReasonsForCompositing): Also fix code style issues;
+        an else-if statement should be written as an if-statement when the prior if-statement
+        concludes with a return statement.
+        * rendering/RenderLayerCompositor.h:
+
 2017-04-25  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Supplementary Multilingual Plane Complex Scripts Rendered Incorrectly
