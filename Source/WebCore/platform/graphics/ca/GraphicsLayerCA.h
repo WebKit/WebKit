@@ -159,6 +159,7 @@ public:
         bool ancestorHasTransformAnimation { false };
         bool ancestorIsViewportConstrained { false };
     };
+    bool needsCommit(const CommitState&);
     void recursiveCommitChanges(const CommitState&, const TransformState&, float pageScaleFactor = 1, const FloatPoint& positionRelativeToBase = FloatPoint(), bool affectedByPageScale = false);
 
     WEBCORE_EXPORT void flushCompositingState(const FloatRect&) override;
@@ -509,6 +510,9 @@ private:
     void noteSublayersChanged(ScheduleFlushOrNot = ScheduleFlush);
     void noteChangesForScaleSensitiveProperties();
 
+    bool hasDescendantsWithRunningTransformAnimations() const { return m_hasDescendantsWithRunningTransformAnimations; }
+    void setHasDescendantsWithRunningTransformAnimations(bool b) { m_hasDescendantsWithRunningTransformAnimations = b; }
+
     void propagateLayerChangeToReplicas(ScheduleFlushOrNot = ScheduleFlush);
 
     void repaintLayerDirtyRects();
@@ -541,11 +545,12 @@ private:
     FloatRect m_coverageRect; // Area for which we should maintain backing store, in the coordinate space of this layer.
     
     ContentsLayerPurpose m_contentsLayerPurpose { NoContentsLayer };
-    bool m_needsFullRepaint : 1;
-    bool m_usingBackdropLayerType : 1;
-    bool m_isViewportConstrained : 1;
-    bool m_intersectsCoverageRect : 1;
-    bool m_hasEverPainted : 1;
+    bool m_needsFullRepaint { false };
+    bool m_usingBackdropLayerType { false };
+    bool m_isViewportConstrained { false };
+    bool m_intersectsCoverageRect { false };
+    bool m_hasEverPainted { false };
+    bool m_hasDescendantsWithRunningTransformAnimations { false };
 
     Color m_contentsSolidColor;
 

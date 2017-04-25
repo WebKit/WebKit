@@ -1,3 +1,29 @@
+2017-04-25  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (r215469): [ios-simulator-wk2] LayoutTest compositing/animation/animation-backing.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=171060
+        <rdar://problem/31771174>
+
+        Reviewed by Simon Fraser.
+
+        Accelerated transform animations move underlying layers without invalidating GraphicsLayers.
+        To update tile coverage we need to commit such subtrees even if there are not other changes.
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::GraphicsLayerCA):
+        (WebCore::GraphicsLayerCA::needsCommit):
+
+            Commit subtrees with accelerated transform animations.
+            Factor into a function.
+
+        (WebCore::GraphicsLayerCA::recursiveCommitChanges):
+
+            Track if descendants had any accelerated transform animations after commit.
+
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        (WebCore::GraphicsLayerCA::hasDescendantsWithRunningTransformAnimations):
+        (WebCore::GraphicsLayerCA::setHasDescendantsWithRunningTransformAnimations):
+
 2017-04-25  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream macOS] Unable to apply frameRate constraint

@@ -390,11 +390,6 @@ static LayerDisplayListHashMap& layerDisplayListMap()
 
 GraphicsLayerCA::GraphicsLayerCA(Type layerType, GraphicsLayerClient& client)
     : GraphicsLayer(layerType, client)
-    , m_needsFullRepaint(false)
-    , m_usingBackdropLayerType(false)
-    , m_isViewportConstrained(false)
-    , m_intersectsCoverageRect(false)
-    , m_hasEverPainted(false)
 {
 }
 
@@ -1410,11 +1405,28 @@ void GraphicsLayerCA::setVisibleAndCoverageRects(const VisibleAndCoverageRects& 
     }
 }
 
+bool GraphicsLayerCA::needsCommit(const CommitState& commitState)
+{
+    if (commitState.ancestorHadChanges)
+        return true;
+    if (m_uncommittedChanges)
+        return true;
+    if (hasDescendantsWithUncommittedChanges())
+        return true;
+    // Accelerated transforms move the underlying layers without GraphicsLayers getting invalidated.
+    if (isRunningTransformAnimation())
+        return true;
+    if (hasDescendantsWithRunningTransformAnimations())
+        return true;
+
+    return false;
+}
+
 // rootRelativeTransformForScaling is a transform from the root, but for layers with transform animations, it cherry-picked the state of the
 // animation that contributes maximally to the scale (on every layer with animations down the hierarchy).
 void GraphicsLayerCA::recursiveCommitChanges(const CommitState& commitState, const TransformState& state, float pageScaleFactor, const FloatPoint& positionRelativeToBase, bool affectedByPageScale)
 {
-    if (!commitState.ancestorHadChanges && !m_uncommittedChanges && !hasDescendantsWithUncommittedChanges())
+    if (!needsCommit(commitState))
         return;
 
     TransformState localState = state;
@@ -1487,10 +1499,15 @@ void GraphicsLayerCA::recursiveCommitChanges(const CommitState& commitState, con
 
     const Vector<GraphicsLayer*>& childLayers = children();
     size_t numChildren = childLayers.size();
+
+    bool hasDescendantsWithRunningTransformAnimations = false;
     
     for (size_t i = 0; i < numChildren; ++i) {
         GraphicsLayerCA& currentChild = downcast<GraphicsLayerCA>(*childLayers[i]);
         currentChild.recursiveCommitChanges(childCommitState, localState, pageScaleFactor, baseRelativePosition, affectedByPageScale);
+
+        if (currentChild.isRunningTransformAnimation() || currentChild.hasDescendantsWithRunningTransformAnimations())
+            hasDescendantsWithRunningTransformAnimations = true;
     }
 
     if (GraphicsLayerCA* replicaLayer = downcast<GraphicsLayerCA>(m_replicaLayer))
@@ -1500,6 +1517,7 @@ void GraphicsLayerCA::recursiveCommitChanges(const CommitState& commitState, con
         maskLayer->commitLayerChangesAfterSublayers(childCommitState);
 
     setHasDescendantsWithUncommittedChanges(false);
+    setHasDescendantsWithRunningTransformAnimations(hasDescendantsWithRunningTransformAnimations);
 
     bool hadDirtyRects = m_uncommittedChanges & DirtyRectsChanged;
     commitLayerChangesAfterSublayers(childCommitState);
