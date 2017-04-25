@@ -1,3 +1,13 @@
+2017-04-24  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        SyntaxError fix after r215702.
+        https://bugs.webkit.org/show_bug.cgi?id=168944
+
+        Unreviewed "build" fix.
+
+        * BuildSlaveSupport/built-product-archive:
+        (archiveBuiltProduct):
+
 2017-04-24  Jonathan Bedard  <jbedard@apple.com>
 
         Package ImageDiff built with host SDK

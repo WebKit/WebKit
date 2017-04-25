@@ -182,8 +182,8 @@ def archiveBuiltProduct(configuration, platform, fullPlatform):
         if subprocess.call(['/bin/cp', '-pR', _hostBuildDirectory, combinedDirectory]):
             return 1
 
-        return createZip(combinedDirectory, configuration):
-    elif platform == 'mac':	
+        return createZip(combinedDirectory, configuration)
+    elif platform == 'mac':
         return createZip(_configurationBuildDirectory, configuration, embedParentDirectoryNameOnDarwin=True)
     elif platform == 'win':
         # FIXME: We shouldn't hardcode the assumption of a 32-bit build. See <https://bugs.webkit.org/show_bug.cgi?id=149715>.
