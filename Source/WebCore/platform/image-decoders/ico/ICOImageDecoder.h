@@ -43,9 +43,9 @@ namespace WebCore {
         virtual ~ICOImageDecoder();
 
         // ImageDecoder
-        String filenameExtension() const override { return "ico"; }
+        String filenameExtension() const override { return ASCIILiteral("ico"); }
         void setData(SharedBuffer&, bool allDataReceived) override;
-        EncodedDataStatus encodedDataStatus() override;
+        EncodedDataStatus encodedDataStatus() const override;
         IntSize size() override;
         IntSize frameSizeAtIndex(size_t, SubsamplingLevel) override;
         bool setSize(const IntSize&) override;

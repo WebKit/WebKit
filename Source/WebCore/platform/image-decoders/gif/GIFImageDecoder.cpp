@@ -50,10 +50,10 @@ void GIFImageDecoder::setData(SharedBuffer& data, bool allDataReceived)
         m_reader->setData(&data);
 }
 
-EncodedDataStatus GIFImageDecoder::encodedDataStatus()
+EncodedDataStatus GIFImageDecoder::encodedDataStatus() const
 {
     if (ImageDecoder::encodedDataStatus() < EncodedDataStatus::SizeAvailable)
-        decode(0, GIFSizeQuery);
+        const_cast<GIFImageDecoder*>(this)->decode(0, GIFSizeQuery);
 
     return ImageDecoder::encodedDataStatus();
 }

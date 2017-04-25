@@ -28,11 +28,13 @@
 
 #if USE(CG)
 
+#include "ImageIOSPI.h"
 #include "ImageOrientation.h"
 #include "IntPoint.h"
 #include "IntSize.h"
 #include "Logging.h"
 #include "SharedBuffer.h"
+#include "URL.h"
 #include <wtf/NeverDestroyed.h>
 
 #if !PLATFORM(IOS)
@@ -42,21 +44,18 @@
 #include <ImageIO/ImageIO.h>
 #endif
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <ImageIO/CGImageSourcePrivate.h>
-#else
-const CFStringRef kCGImageSourceSubsampleFactor = CFSTR("kCGImageSourceSubsampleFactor");
-const CFStringRef kCGImageSourceShouldCacheImmediately = CFSTR("kCGImageSourceShouldCacheImmediately");
-#endif
-
 namespace WebCore {
 
 const CFStringRef WebCoreCGImagePropertyAPNGUnclampedDelayTime = CFSTR("UnclampedDelayTime");
 const CFStringRef WebCoreCGImagePropertyAPNGDelayTime = CFSTR("DelayTime");
 const CFStringRef WebCoreCGImagePropertyAPNGLoopCount = CFSTR("LoopCount");
 
+#if PLATFORM(WIN)
 const CFStringRef kCGImageSourceShouldPreferRGB32 = CFSTR("kCGImageSourceShouldPreferRGB32");
 const CFStringRef kCGImageSourceSkipMetadata = CFSTR("kCGImageSourceSkipMetadata");
+const CFStringRef kCGImageSourceSubsampleFactor = CFSTR("kCGImageSourceSubsampleFactor");
+const CFStringRef kCGImageSourceShouldCacheImmediately = CFSTR("kCGImageSourceShouldCacheImmediately");
+#endif
 
 static RetainPtr<CFMutableDictionaryRef> createImageSourceOptions()
 {
@@ -153,9 +152,23 @@ void sharedBufferRelease(void* info)
 }
 #endif
 
-ImageDecoder::ImageDecoder(AlphaOption, GammaAndColorProfileOption)
+ImageDecoder::ImageDecoder(const URL& sourceURL, AlphaOption, GammaAndColorProfileOption)
 {
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
+    RetainPtr<CFURLRef> url = sourceURL.createCFURL();
+    RetainPtr<CFStringRef> utiHint = adoptCF(CGImageSourceGetTypeWithURL(url.get(), nullptr));
+    
+    if (utiHint) {
+        const void* key = kCGImageSourceTypeIdentifierHint;
+        const void* value = utiHint.get();
+        auto options = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, &key, &value, 1, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+        m_nativeDecoder = adoptCF(CGImageSourceCreateIncremental(options.get()));
+    } else
+        m_nativeDecoder = adoptCF(CGImageSourceCreateIncremental(nullptr));
+#else
+    UNUSED_PARAM(sourceURL);
     m_nativeDecoder = adoptCF(CGImageSourceCreateIncremental(nullptr));
+#endif
 }
 
 size_t ImageDecoder::bytesDecodedToDetermineProperties()
@@ -168,11 +181,15 @@ size_t ImageDecoder::bytesDecodedToDetermineProperties()
     // behavior is unchanged.
     return 13088;
 }
+    
+String ImageDecoder::uti() const
+{
+    return CGImageSourceGetType(m_nativeDecoder.get());
+}
 
 String ImageDecoder::filenameExtension() const
 {
-    CFStringRef imageSourceType = CGImageSourceGetType(m_nativeDecoder.get());
-    return WebCore::preferredExtensionForImageSourceType(imageSourceType);
+    return WebCore::preferredExtensionForImageSourceType(uti());
 }
 
 EncodedDataStatus ImageDecoder::encodedDataStatus() const
@@ -367,11 +384,11 @@ bool ImageDecoder::frameHasAlphaAtIndex(size_t index) const
     if (!frameIsCompleteAtIndex(index))
         return true;
     
-    CFStringRef imageType = CGImageSourceGetType(m_nativeDecoder.get());
+    String uti = this->uti();
     
     // Return false if there is no image type or the image type is JPEG, because
     // JPEG does not support alpha transparency.
-    if (!imageType || CFEqual(imageType, CFSTR("public.jpeg")))
+    if (uti.isEmpty() || uti == "public.jpeg")
         return false;
     
     // FIXME: Could return false for other non-transparent image formats.
@@ -435,13 +452,8 @@ NativeImagePtr ImageDecoder::createFrameImageAtIndex(size_t index, SubsamplingLe
 #endif
 #endif // PLATFORM(IOS)
     
-    CFStringRef imageUTI = CGImageSourceGetType(m_nativeDecoder.get());
-    static const CFStringRef xbmUTI = CFSTR("public.xbitmap-image");
-    
-    if (!imageUTI)
-        return image;
-    
-    if (!CFEqual(imageUTI, xbmUTI))
+    String uti = this->uti();
+    if (uti.isEmpty() || uti != "public.xbitmap-image")
         return image;
     
     // If it is an xbm image, mask out all the white areas to render them transparent.

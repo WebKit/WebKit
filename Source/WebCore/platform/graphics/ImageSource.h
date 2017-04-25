@@ -32,6 +32,7 @@
 #include "IntPoint.h"
 #include "NativeImage.h"
 #include "TextStream.h"
+#include "URL.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Optional.h>
@@ -78,6 +79,7 @@ public:
     EncodedDataStatus encodedDataStatus() { return m_frameCache->encodedDataStatus(); }
     size_t frameCount() { return m_frameCache->frameCount(); }
     RepetitionCount repetitionCount() { return m_frameCache->repetitionCount(); }
+    String uti() { return m_frameCache->uti(); }
     String filenameExtension() { return m_frameCache->filenameExtension(); }
     std::optional<IntPoint> hotSpot() { return m_frameCache->hotSpot(); }
 

@@ -69,10 +69,10 @@ void ICOImageDecoder::setData(SharedBuffer& data, bool allDataReceived)
         setDataForPNGDecoderAtIndex(i);
 }
 
-EncodedDataStatus ICOImageDecoder::encodedDataStatus()
+EncodedDataStatus ICOImageDecoder::encodedDataStatus() const
 {
     if (ImageDecoder::encodedDataStatus() < EncodedDataStatus::SizeAvailable)
-        decode(0, true);
+        const_cast<ICOImageDecoder*>(this)->decode(0, true);
 
     return ImageDecoder::encodedDataStatus();
 }

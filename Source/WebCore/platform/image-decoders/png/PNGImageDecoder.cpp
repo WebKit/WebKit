@@ -244,10 +244,10 @@ RepetitionCount PNGImageDecoder::repetitionCount() const
 }
 #endif
 
-EncodedDataStatus PNGImageDecoder::encodedDataStatus()
+EncodedDataStatus PNGImageDecoder::encodedDataStatus() const
 {
     if (ImageDecoder::encodedDataStatus() < EncodedDataStatus::SizeAvailable)
-        decode(true, 0);
+        const_cast<PNGImageDecoder*>(this)->decode(true, 0);
 
     return ImageDecoder::encodedDataStatus();
 }

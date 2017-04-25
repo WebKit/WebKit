@@ -41,9 +41,9 @@ namespace WebCore {
         enum GIFQuery { GIFFullQuery, GIFSizeQuery, GIFFrameCountQuery };
 
         // ImageDecoder
-        String filenameExtension() const override { return "gif"; }
+        String filenameExtension() const override { return ASCIILiteral("gif"); }
         void setData(SharedBuffer& data, bool allDataReceived) override;
-        EncodedDataStatus encodedDataStatus() override;
+        EncodedDataStatus encodedDataStatus() const override;
         bool setSize(const IntSize&) override;
         size_t frameCount() const override;
         RepetitionCount repetitionCount() const override;

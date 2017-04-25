@@ -38,11 +38,11 @@ namespace WebCore {
 class ImageDecoder : public RefCounted<ImageDecoder> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    ImageDecoder(AlphaOption, GammaAndColorProfileOption);
+    ImageDecoder(const URL& sourceURL, AlphaOption, GammaAndColorProfileOption);
 
-    static Ref<ImageDecoder> create(const SharedBuffer&, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
+    static Ref<ImageDecoder> create(const SharedBuffer&, const URL& sourceURL, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
     {
-        return adoptRef(*new ImageDecoder(alphaOption, gammaAndColorProfileOption));
+        return adoptRef(*new ImageDecoder(sourceURL, alphaOption, gammaAndColorProfileOption));
     }
     
     static size_t bytesDecodedToDetermineProperties();
@@ -51,6 +51,7 @@ public:
     bool isSizeAvailable() { return encodedDataStatus() >= EncodedDataStatus::SizeAvailable; }
     size_t frameCount() const;
     RepetitionCount repetitionCount() const;
+    String uti() const;
     String filenameExtension() const;
     std::optional<IntPoint> hotSpot() const;
 

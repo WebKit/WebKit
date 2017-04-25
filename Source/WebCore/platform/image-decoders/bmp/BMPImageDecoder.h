@@ -40,9 +40,9 @@ namespace WebCore {
         BMPImageDecoder(AlphaOption, GammaAndColorProfileOption);
 
         // ImageDecoder
-        String filenameExtension() const override { return "bmp"; }
+        String filenameExtension() const override { return ASCIILiteral("bmp"); }
         void setData(SharedBuffer&, bool allDataReceived) override;
-        EncodedDataStatus encodedDataStatus() override;
+        EncodedDataStatus encodedDataStatus() const override;
         ImageFrame* frameBufferAtIndex(size_t index) override;
         // CAUTION: setFailed() deletes |m_reader|.  Be careful to avoid
         // accessing deleted memory, especially when calling this from inside

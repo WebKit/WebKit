@@ -41,7 +41,7 @@ class ImageDecoder : public RefCounted<ImageDecoder> {
 public:
     ImageDecoder();
     
-    static Ref<ImageDecoder> create(const SharedBuffer&, AlphaOption, GammaAndColorProfileOption)
+    static Ref<ImageDecoder> create(const SharedBuffer&, const URL&, AlphaOption, GammaAndColorProfileOption)
     {
         return adoptRef(*new ImageDecoder());
     }
@@ -49,6 +49,7 @@ public:
     static size_t bytesDecodedToDetermineProperties();
     
     String filenameExtension() const;
+    EncodedDataStatus encodedDataStatus() const;
     bool isSizeAvailable() const;
     
     // Always original size, without subsampling.

@@ -64,10 +64,10 @@ void WEBPImageDecoder::clear()
     m_decoder = 0;
 }
 
-EncodedDataStatus WEBPImageDecoder::encodedDataStatus()
+EncodedDataStatus WEBPImageDecoder::encodedDataStatus() const
 {
     if (ImageDecoder::encodedDataStatus() < EncodedDataStatus::SizeAvailable)
-        decode(true);
+        const_cast<WEBPImageDecoder*>(this)->decode(true);
 
     return ImageDecoder::encodedDataStatus();
 }

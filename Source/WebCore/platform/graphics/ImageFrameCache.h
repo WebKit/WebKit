@@ -39,6 +39,7 @@ namespace WebCore {
 class GraphicsContext;
 class Image;
 class ImageDecoder;
+class URL;
 
 class ImageFrameCache : public RefCounted<ImageFrameCache> {
     friend class ImageSource;
@@ -66,7 +67,7 @@ public:
 
     void growFrames();
     void clearMetadata();
-    String sourceURL() const;
+    URL sourceURL() const;
     
     // Asynchronous image decoding
     void startAsyncDecodingQueue();
@@ -81,6 +82,7 @@ public:
     bool isSizeAvailable() { return encodedDataStatus() >= EncodedDataStatus::SizeAvailable; }
     size_t frameCount();
     RepetitionCount repetitionCount();
+    String uti();
     String filenameExtension();
     std::optional<IntPoint> hotSpot();
     
@@ -117,10 +119,10 @@ private:
 
     template<typename T, typename... Args>
     T frameMetadataAtIndex(size_t, T (ImageFrame::*functor)(Args...) const, Args&&...);
-    
+
     template<typename T, typename... Args>
     T frameMetadataAtIndexCacheIfNeeded(size_t, T (ImageFrame::*functor)() const,  std::optional<T>* cachedValue, Args&&...);
-    
+
     bool isDecoderAvailable() const { return m_decoder; }
     void destroyDecodedData(size_t frameCount, size_t excludeFrame);
     void decodedSizeChanged(long long decodedSize);
@@ -166,6 +168,7 @@ private:
     std::optional<EncodedDataStatus> m_encodedDataStatus;
     std::optional<size_t> m_frameCount;
     std::optional<RepetitionCount> m_repetitionCount;
+    std::optional<String> m_uti;
     std::optional<String> m_filenameExtension;
     std::optional<std::optional<IntPoint>> m_hotSpot;
 

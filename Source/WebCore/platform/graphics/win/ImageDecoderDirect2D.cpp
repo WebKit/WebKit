@@ -73,6 +73,12 @@ bool ImageDecoder::isSizeAvailable() const
     return m_nativeDecoder ? true : false;
 }
 
+EncodedDataStatus ImageDecoder::encodedDataStatus() const
+{
+    notImplemented();
+    return EncodedDataStatus::Unknown;
+}
+
 IntSize ImageDecoder::size() const
 {
     if (!m_nativeDecoder)

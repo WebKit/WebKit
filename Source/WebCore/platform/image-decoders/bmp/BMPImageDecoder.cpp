@@ -56,10 +56,10 @@ void BMPImageDecoder::setData(SharedBuffer& data, bool allDataReceived)
         m_reader->setData(&data);
 }
 
-EncodedDataStatus BMPImageDecoder::encodedDataStatus()
+EncodedDataStatus BMPImageDecoder::encodedDataStatus() const
 {
     if (ImageDecoder::encodedDataStatus() < EncodedDataStatus::SizeAvailable)
-        decode(true);
+        const_cast<BMPImageDecoder*>(this)->decode(true);
 
     return ImageDecoder::encodedDataStatus();
 }

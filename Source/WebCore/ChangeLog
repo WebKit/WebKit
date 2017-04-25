@@ -1,3 +1,81 @@
+2017-04-24  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        [CG] Provide a type identifier hint to the CGImageSource so getting the type identifier is more accurate
+        https://bugs.webkit.org/show_bug.cgi?id=171042
+
+        Reviewed by Tim Horton.
+
+        The image URL can be used to get the type identifier hint. Without providing
+        this hint, the image type identifier is not accurate for image formats.
+
+        Also add a function to the ImageDecoder class to get the typeIdentifier. Add
+        all the pluming from the ImageDecoder till the Image class.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::destroyDecodedData):
+        (WebCore::BitmapImage::frameImageAtIndexCacheIfNeeded):
+        (WebCore::BitmapImage::draw):
+        (WebCore::BitmapImage::internalStartAnimation):
+        (WebCore::BitmapImage::advanceAnimation):
+        (WebCore::BitmapImage::internalAdvanceAnimation):
+        (WebCore::BitmapImage::newFrameNativeImageAvailableAtIndex):
+        * platform/graphics/BitmapImage.h:
+        * platform/graphics/Image.cpp:
+        (WebCore::Image::sourceURL):
+        * platform/graphics/Image.h: Change the sourceURL() to return a URL so CG can create CFURLRef from it.
+        (WebCore::Image::uti):
+        * platform/graphics/ImageFrameCache.cpp:
+        (WebCore::ImageFrameCache::cacheAsyncFrameNativeImageAtIndex):
+        (WebCore::ImageFrameCache::startAsyncDecodingQueue):
+        (WebCore::ImageFrameCache::requestFrameAsyncDecodingAtIndex):
+        (WebCore::ImageFrameCache::stopAsyncDecodingQueue):
+        (WebCore::ImageFrameCache::clearMetadata):
+        (WebCore::ImageFrameCache::sourceURL):
+        (WebCore::ImageFrameCache::encodedDataStatus):
+        (WebCore::ImageFrameCache::uti):
+        (WebCore::ImageFrameCache::filenameExtension):
+        * platform/graphics/ImageFrameCache.h:
+        * platform/graphics/ImageSource.cpp:
+        (WebCore::ImageSource::ensureDecoderAvailable):
+        * platform/graphics/ImageSource.h:
+        (WebCore::ImageSource::uti):
+        * platform/graphics/cg/ImageDecoderCG.cpp:
+        (WebCore::ImageDecoder::ImageDecoder): Pass the type identifier hint to CGImageSourceCreateIncremental().
+        (WebCore::ImageDecoder::uti):
+        (WebCore::ImageDecoder::filenameExtension):
+        (WebCore::ImageDecoder::frameHasAlphaAtIndex):
+        (WebCore::ImageDecoder::createFrameImageAtIndex):
+        * platform/graphics/cg/ImageDecoderCG.h:
+        (WebCore::ImageDecoder::create):
+        * platform/graphics/win/ImageDecoderDirect2D.cpp:
+        (WebCore::ImageDecoder::encodedDataStatus):
+        * platform/graphics/win/ImageDecoderDirect2D.h:
+        (WebCore::ImageDecoder::create): Add an argument of type URL.
+        * platform/image-decoders/ImageDecoder.cpp:
+        (WebCore::ImageDecoder::create): Add an argument of type URL.
+        * platform/image-decoders/ImageDecoder.h:
+        (WebCore::ImageDecoder::encodedDataStatus): Make it const.
+        * platform/image-decoders/bmp/BMPImageDecoder.cpp:
+        (WebCore::BMPImageDecoder::encodedDataStatus):
+        * platform/image-decoders/bmp/BMPImageDecoder.h:
+        * platform/image-decoders/gif/GIFImageDecoder.cpp:
+        (WebCore::GIFImageDecoder::encodedDataStatus):
+        * platform/image-decoders/gif/GIFImageDecoder.h:
+        * platform/image-decoders/ico/ICOImageDecoder.cpp:
+        (WebCore::ICOImageDecoder::encodedDataStatus):
+        * platform/image-decoders/ico/ICOImageDecoder.h:
+        * platform/image-decoders/jpeg/JPEGImageDecoder.cpp:
+        (WebCore::JPEGImageDecoder::encodedDataStatus):
+        * platform/image-decoders/jpeg/JPEGImageDecoder.h:
+        * platform/image-decoders/png/PNGImageDecoder.cpp:
+        (WebCore::PNGImageDecoder::encodedDataStatus):
+        * platform/image-decoders/png/PNGImageDecoder.h:
+        * platform/image-decoders/webp/WEBPImageDecoder.cpp:
+        (WebCore::WEBPImageDecoder::encodedDataStatus):
+        * platform/image-decoders/webp/WEBPImageDecoder.h:
+        * platform/spi/cg/ImageIOSPI.h: Added.
+
 2017-04-24  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed build fix.

@@ -510,10 +510,10 @@ JPEGImageDecoder::~JPEGImageDecoder()
 {
 }
 
-EncodedDataStatus JPEGImageDecoder::encodedDataStatus()
+EncodedDataStatus JPEGImageDecoder::encodedDataStatus() const
 {
     if (ImageDecoder::encodedDataStatus() < EncodedDataStatus::SizeAvailable)
-        decode(true);
+        const_cast<JPEGImageDecoder*>(this)->decode(true);
 
     return ImageDecoder::encodedDataStatus();
 }

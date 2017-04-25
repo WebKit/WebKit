@@ -41,12 +41,12 @@ namespace WebCore {
         virtual ~PNGImageDecoder();
 
         // ImageDecoder
-        String filenameExtension() const override { return "png"; }
+        String filenameExtension() const override { return ASCIILiteral("png"); }
 #if ENABLE(APNG)
         size_t frameCount() const override { return m_frameCount; }
         RepetitionCount repetitionCount() const override;
 #endif
-        EncodedDataStatus encodedDataStatus() override;
+        EncodedDataStatus encodedDataStatus() const override;
         bool setSize(const IntSize&) override;
         ImageFrame* frameBufferAtIndex(size_t index) override;
         // CAUTION: setFailed() deletes |m_reader|.  Be careful to avoid

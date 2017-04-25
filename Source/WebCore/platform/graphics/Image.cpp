@@ -77,9 +77,9 @@ EncodedDataStatus Image::setData(RefPtr<SharedBuffer>&& data, bool allDataReceiv
     return dataChanged(allDataReceived);
 }
 
-String Image::sourceURL() const
+URL Image::sourceURL() const
 {
-    return imageObserver() ? imageObserver()->sourceUrl().string() : emptyString();
+    return imageObserver() ? imageObserver()->sourceUrl() : URL();
 }
 
 void Image::fillWithSolidColor(GraphicsContext& ctxt, const FloatRect& dstRect, const Color& color, CompositeOperator op)

@@ -68,6 +68,7 @@ class FloatPoint;
 class FloatSize;
 class GraphicsContext;
 class SharedBuffer;
+class URL;
 struct Length;
 
 // This class gets notified when an image creates or destroys decoded frames and when it advances animation frames.
@@ -119,6 +120,7 @@ public:
     WEBCORE_EXPORT EncodedDataStatus setData(RefPtr<SharedBuffer>&& data, bool allDataReceived);
     virtual EncodedDataStatus dataChanged(bool /*allDataReceived*/) { return EncodedDataStatus::Unknown; }
 
+    virtual String uti() const { return String(); } // null string if unknown
     virtual String filenameExtension() const { return String(); } // null string if unknown
 
     virtual void destroyDecodedData(bool destroyAll = true) = 0;
@@ -137,7 +139,7 @@ public:
     // Typically the CachedImage that owns us.
     ImageObserver* imageObserver() const { return m_imageObserver; }
     void setImageObserver(ImageObserver* observer) { m_imageObserver = observer; }
-    String sourceURL() const;
+    URL sourceURL() const;
 
     enum TileRule { StretchTile, RoundTile, SpaceTile, RepeatTile };
 

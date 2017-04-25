@@ -74,6 +74,7 @@ public:
     EncodedDataStatus encodedDataStatus() const { return m_source.encodedDataStatus(); }
     size_t frameCount() const { return m_source.frameCount(); }
     RepetitionCount repetitionCount() const { return m_source.repetitionCount(); }
+    String uti() const override { return m_source.uti(); }
     String filenameExtension() const override { return m_source.filenameExtension(); }
     std::optional<IntPoint> hotSpot() const override { return m_source.hotSpot(); }
 

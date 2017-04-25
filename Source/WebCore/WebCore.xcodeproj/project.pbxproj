@@ -2515,6 +2515,7 @@
 		5597F8271D91C3130066BC21 /* ImageFrameCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 5597F8251D91C3130066BC21 /* ImageFrameCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		55A336F71D8209F40022C4C7 /* NativeImage.h in Headers */ = {isa = PBXBuildFile; fileRef = 55A336F61D8209F40022C4C7 /* NativeImage.h */; };
 		55A336F91D821E3C0022C4C7 /* ImageBackingStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 55A336F81D821E3C0022C4C7 /* ImageBackingStore.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		55B2BDD71EA923A400BFFCBD /* ImageIOSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 55B2BDD61EA923A400BFFCBD /* ImageIOSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		55AF14E51EAAC59B0026EEAA /* UTIRegistry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 55AF14E31EAAC59B0026EEAA /* UTIRegistry.cpp */; };
 		55AF14E61EAAC59B0026EEAA /* UTIRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = 55AF14E41EAAC59B0026EEAA /* UTIRegistry.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		570440531E5278B200356601 /* CryptoAlgorithmAES_CFB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5712526A1E52527C008FF369 /* CryptoAlgorithmAES_CFB.cpp */; };
@@ -10238,6 +10239,7 @@
 		5597F8251D91C3130066BC21 /* ImageFrameCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageFrameCache.h; sourceTree = "<group>"; };
 		55A336F61D8209F40022C4C7 /* NativeImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NativeImage.h; sourceTree = "<group>"; };
 		55A336F81D821E3C0022C4C7 /* ImageBackingStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageBackingStore.h; sourceTree = "<group>"; };
+		55B2BDD61EA923A400BFFCBD /* ImageIOSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageIOSPI.h; sourceTree = "<group>"; };
 		55AF14E31EAAC59B0026EEAA /* UTIRegistry.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = UTIRegistry.cpp; sourceTree = "<group>"; };
 		55AF14E41EAAC59B0026EEAA /* UTIRegistry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UTIRegistry.h; sourceTree = "<group>"; };
 		55D408F71A7C631800C78450 /* SVGImageClients.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGImageClients.h; sourceTree = "<group>"; };
@@ -17202,6 +17204,7 @@
 			isa = PBXGroup;
 			children = (
 				C24685131A148E1800811792 /* CoreGraphicsSPI.h */,
+				55B2BDD61EA923A400BFFCBD /* ImageIOSPI.h */,
 			);
 			path = cg;
 			sourceTree = "<group>";
@@ -28364,6 +28367,7 @@
 				1A4DA4221CDD3A8300F4473C /* LinkIconCollector.h in Headers */,
 				1A250E0D1CDD632000D0BE63 /* LinkIconType.h in Headers */,
 				98CE432A129E00E5005821DC /* LinkLoader.h in Headers */,
+				55B2BDD71EA923A400BFFCBD /* ImageIOSPI.h in Headers */,
 				984264F112D5280A000D88A4 /* LinkLoaderClient.h in Headers */,
 				CBB6B2D41CB7AE51009EDE1A /* LinkPreloadResourceClients.h in Headers */,
 				985BB96E13A94058007A0B69 /* LinkRelAttribute.h in Headers */,

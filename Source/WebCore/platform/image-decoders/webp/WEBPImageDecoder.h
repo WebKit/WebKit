@@ -41,8 +41,8 @@ public:
     WEBPImageDecoder(AlphaOption, GammaAndColorProfileOption);
     virtual ~WEBPImageDecoder();
 
-    String filenameExtension() const override { return "webp"; }
-    EncodedDataStatus encodedDataStatus() override;
+    String filenameExtension() const override { return ASCIILiteral("webp"); }
+    EncodedDataStatus encodedDataStatus() const override;
     ImageFrame* frameBufferAtIndex(size_t index) override;
 
 private:

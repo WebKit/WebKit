@@ -47,8 +47,8 @@ namespace WebCore {
         virtual ~JPEGImageDecoder();
 
         // ImageDecoder
-        String filenameExtension() const override { return "jpg"; }
-        EncodedDataStatus encodedDataStatus() override;
+        String filenameExtension() const override { return ASCIILiteral("jpg"); }
+        EncodedDataStatus encodedDataStatus() const override;
         bool setSize(const IntSize&) override;
         ImageFrame* frameBufferAtIndex(size_t index) override;
         // CAUTION: setFailed() deletes |m_reader|.  Be careful to avoid
