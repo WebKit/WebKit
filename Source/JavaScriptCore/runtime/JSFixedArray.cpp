@@ -26,6 +26,7 @@
 #include "config.h"
 #include "JSFixedArray.h"
 
+#include "CodeBlock.h"
 #include "JSCInlines.h"
 
 namespace JSC {

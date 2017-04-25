@@ -1,3 +1,11 @@
+2017-04-25  Saam Barati  <sbarati@apple.com>
+
+        Unreviewed. Attempt armv7k build fix after r215720
+
+        I think we're just missing an include for the definition of ExecState::r().
+
+        * runtime/JSFixedArray.cpp:
+
 2017-04-25  Daniel Bates  <dabates@apple.com>
 
         [Cocoa][Win] Enable of X-Content-Type-Options: nosniff header
