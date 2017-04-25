@@ -1396,7 +1396,7 @@ static JSValueRef removeNotificationListenerCallback(JSContextRef context, JSObj
     return JSValueMakeUndefined(context);
 }
 
-#if PLATFORM(GTK) || PLATFORM(EFL)
+#if PLATFORM(GTK)
 static JSValueRef characterAtOffsetCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     int offset = -1;
@@ -1903,7 +1903,7 @@ JSClassRef AccessibilityUIElement::getJSClass()
         { "scrollToMakeVisible", scrollToMakeVisibleCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "scrollToGlobalPoint", scrollToGlobalPointCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "scrollToMakeVisibleWithSubFocus", scrollToMakeVisibleWithSubFocusCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
-#if PLATFORM(GTK) || PLATFORM(EFL)
+#if PLATFORM(GTK)
         { "characterAtOffset", characterAtOffsetCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "wordAtOffset", wordAtOffsetCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "lineAtOffset", lineAtOffsetCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },

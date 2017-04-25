@@ -71,7 +71,7 @@ bool AccessibilityController::enhancedAccessibilityEnabled()
     return WKAccessibilityEnhancedAccessibilityEnabled();
 }
 
-#if !PLATFORM(GTK) && !PLATFORM(EFL)
+#if !PLATFORM(GTK)
 Ref<AccessibilityUIElement> AccessibilityController::rootElement()
 {
     WKBundlePageRef page = InjectedBundle::singleton().page()->page();
@@ -95,7 +95,7 @@ RefPtr<AccessibilityUIElement> AccessibilityController::elementAtPoint(int x, in
     return uiElement->elementAtPoint(x, y);
 }
 
-#if !HAVE(ACCESSIBILITY) && (PLATFORM(GTK) || PLATFORM(EFL))
+#if !HAVE(ACCESSIBILITY) && PLATFORM(GTK)
 RefPtr<AccessibilityUIElement> AccessibilityController::rootElement() { return nullptr; }
 RefPtr<AccessibilityUIElement> AccessibilityController::focusedElement() { return nullptr; }
 #endif

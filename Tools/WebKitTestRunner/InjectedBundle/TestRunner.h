@@ -44,8 +44,6 @@ namespace WTR {
 class TestRunner;
 typedef RunLoop::Timer<TestRunner> PlatformTimerRef;
 }
-#elif PLATFORM(EFL)
-typedef Ecore_Timer* PlatformTimerRef;
 #endif
 
 namespace WTR {

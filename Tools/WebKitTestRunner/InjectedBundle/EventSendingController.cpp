@@ -515,7 +515,7 @@ JSValueRef EventSendingController::contextClick()
     WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(page);
     JSContextRef context = WKBundleFrameGetJavaScriptContext(mainFrame);
 #if ENABLE(CONTEXT_MENUS)
-#if PLATFORM(GTK) || PLATFORM(EFL)
+#if PLATFORM(GTK)
     // Do mouse context click.
     mouseDown(2, 0);
     mouseUp(2, 0);

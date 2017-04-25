@@ -4,7 +4,6 @@ exclude ChangeLog
 exclude CMakeLists.txt.user
 exclude Makefile
 exclude PlatformAppleWin.cmake
-exclude PlatformEfl.cmake
 exclude PlatformMac.cmake
 exclude PlatformWin.cmake
 exclude PlatformWinCairo.cmake

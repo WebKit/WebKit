@@ -36,8 +36,6 @@
 #include <WebCore/GUniquePtrGtk.h>
 #include <gdk/gdk.h>
 #include <wtf/HashSet.h>
-#elif PLATFORM(EFL)
-#include "EWebKit2.h"
 #endif
 
 #if PLATFORM(COCOA)
@@ -50,8 +48,6 @@ class TestController;
 
 #if PLATFORM(GTK)
 struct WTREventQueueItem;
-#elif PLATFORM(EFL)
-struct WTREvent;
 #endif
 
 class EventSenderProxy {
@@ -98,7 +94,7 @@ private:
     double currentEventTime() { return m_time; }
     void updateClickCountForButton(int button);
 
-#if PLATFORM(GTK) || PLATFORM(EFL)
+#if PLATFORM(GTK)
     void replaySavedEvents();
 #endif
 
@@ -116,12 +112,6 @@ private:
     GdkEvent* createMouseButtonEvent(GdkEventType, unsigned button, WKEventModifiers);
     GUniquePtr<GdkEvent> createTouchEvent(GdkEventType, int id);
     void sendUpdatedTouchEvents();
-#elif PLATFORM(EFL)
-    void sendOrQueueEvent(const WTREvent&);
-    void dispatchEvent(const WTREvent&);
-#if ENABLE(TOUCH_EVENTS)
-    void sendTouchEvent(Ewk_Touch_Event_Type);
-#endif
 #endif
 
     double m_time;
@@ -138,12 +128,6 @@ private:
     unsigned m_mouseButtonCurrentlyDown;
     Vector<GUniquePtr<GdkEvent>> m_touchEvents;
     HashSet<int> m_updatedTouchEvents;
-#elif PLATFORM(EFL)
-    Deque<WTREvent> m_eventQueue;
-    WKEventMouseButton m_mouseButton;
-#if ENABLE(TOUCH_EVENTS)
-    Eina_List* m_touchPoints;
-#endif
 #endif
 };
 

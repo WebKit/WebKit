@@ -35,7 +35,7 @@
 #if PLATFORM(WIN)
 #include <windows.h>
 #endif
-#if HAVE(ACCESSIBILITY) && (PLATFORM(GTK) || PLATFORM(EFL))
+#if HAVE(ACCESSIBILITY) && PLATFORM(GTK)
 #include "AccessibilityNotificationHandlerAtk.h"
 #include <atk/atk.h>
 #endif
@@ -76,7 +76,7 @@ public:
     void winNotificationReceived(PlatformUIElement, const std::string& eventName);
 #endif
 
-#if HAVE(ACCESSIBILITY) && (PLATFORM(GTK) || PLATFORM(EFL))
+#if HAVE(ACCESSIBILITY) && PLATFORM(GTK)
     AtkObject* childElementById(AtkObject* parent, const char* id);
 #endif
 
@@ -97,7 +97,7 @@ private:
     RetainPtr<NotificationHandler> m_globalNotificationHandler;
 #endif
 
-#if HAVE(ACCESSIBILITY) && (PLATFORM(GTK) || PLATFORM(EFL))
+#if HAVE(ACCESSIBILITY) && PLATFORM(GTK)
     RefPtr<AccessibilityNotificationHandler> m_globalNotificationHandler;
 #endif
     

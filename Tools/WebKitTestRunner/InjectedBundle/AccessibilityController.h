@@ -31,7 +31,7 @@
 #include "JSWrappable.h"
 #include <JavaScriptCore/JSObjectRef.h>
 #include <wtf/Platform.h>
-#if PLATFORM(GTK) || PLATFORM(EFL)
+#if PLATFORM(GTK)
 #include "AccessibilityNotificationHandlerAtk.h"
 #endif
 

@@ -43,7 +43,7 @@ my @jhbuildWrapper;
 prohibitUnknownPort();
 setConfiguration();
 
-if (isGtk() || isEfl()) {
+if (isGtk()) {
     # Check to see that all the frameworks are built.
     checkFrameworks();
 

@@ -54,7 +54,7 @@ gboolean axObjectEventListener(GSignalInvocationHint* signalHint, unsigned numPa
     if (!accessible || !ATK_IS_OBJECT(accessible))
         return true;
 
-#if PLATFORM(GTK) || PLATFORM(EFL)
+#if PLATFORM(GTK)
     WKBundlePageRef page = InjectedBundle::singleton().page()->page();
     WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(page);
     JSContextRef jsContext = WKBundleFrameGetJavaScriptContext(mainFrame);
@@ -153,7 +153,7 @@ void AccessibilityNotificationHandler::setNotificationFunctionCallback(JSValueRe
 
     m_notificationFunctionCallback = notificationFunctionCallback;
 
-#if PLATFORM(GTK) || PLATFORM(EFL)
+#if PLATFORM(GTK)
     WKBundlePageRef page = InjectedBundle::singleton().page()->page();
     WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(page);
     JSContextRef jsContext = WKBundleFrameGetJavaScriptContext(mainFrame);
@@ -184,7 +184,7 @@ void AccessibilityNotificationHandler::setNotificationFunctionCallback(JSValueRe
 
 void AccessibilityNotificationHandler::removeAccessibilityNotificationHandler()
 {
-#if PLATFORM(GTK) || PLATFORM(EFL)
+#if PLATFORM(GTK)
     WKBundlePageRef page = InjectedBundle::singleton().page()->page();
     WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(page);
     JSContextRef jsContext = WKBundleFrameGetJavaScriptContext(mainFrame);

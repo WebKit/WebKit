@@ -95,7 +95,6 @@ class TestRebaselineTest(_BaseTestCase):
         self.assertMultiLineEqual(command._baseline_directory("Apple Yosemite Release WK2 (Tests)"), "/mock-checkout/LayoutTests/platform/mac-wk2")
         self.assertMultiLineEqual(command._baseline_directory("GTK Linux 64-bit Debug (Tests)"), "/mock-checkout/LayoutTests/platform/gtk")
         self.assertMultiLineEqual(command._baseline_directory("GTK Linux 64-bit Release (Tests)"), "/mock-checkout/LayoutTests/platform/gtk")
-        self.assertMultiLineEqual(command._baseline_directory("EFL Linux 64-bit Release WK2"), "/mock-checkout/LayoutTests/platform/efl")
 
     def test_rebaseline_updates_expectations_file_noop(self):
         self._zero_out_test_expectations()
@@ -320,7 +319,7 @@ class TestRebaselineExpectations(_BaseTestCase):
         # FIXME: change this to use the test- ports.
         calls = self.tool.executive.calls
         self.assertEqual(len(calls), 1)
-        self.assertEqual(len(calls[0]), 24)
+        self.assertEqual(len(calls[0]), 22)
 
     def test_rebaseline_expectations_noop(self):
         self._zero_out_test_expectations()

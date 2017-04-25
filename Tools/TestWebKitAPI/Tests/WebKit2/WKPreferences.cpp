@@ -44,7 +44,7 @@ TEST(WebKit2, WKPreferencesBasic)
 
 TEST(WebKit2, WKPreferencesDefaults)
 {
-#if PLATFORM(GTK) || PLATFORM(EFL)
+#if PLATFORM(GTK)
     static const char* expectedStandardFontFamily = "Times";
     static const char* expectedFixedFontFamily = "Courier New";
     static const char* expectedSerifFontFamily = "Times";

@@ -75,9 +75,6 @@ _exact_matches = {
     "GTK Linux 32-bit Release": {"port_name": "gtk-wk2", "is_debug": False},
     "GTK Linux 64-bit Debug (Tests)": {"port_name": "gtk-wk2", "is_debug": True},
     "GTK Linux 64-bit Release (Tests)": {"port_name": "gtk-wk2", "is_debug": False},
-
-    "EFL Linux 64-bit Release WK2": {"port_name": "efl-wk2", "is_debug": False},
-    "EFL Linux 64-bit Debug WK2": {"port_name": "efl-wk2", "is_debug": True},
 }
 
 

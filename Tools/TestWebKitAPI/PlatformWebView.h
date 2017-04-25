@@ -47,9 +47,6 @@ typedef NSWindow *PlatformWindow;
 #elif PLATFORM(GTK)
 typedef WKViewRef PlatformWKView;
 typedef GtkWidget *PlatformWindow;
-#elif PLATFORM(EFL)
-typedef Evas_Object* PlatformWKView;
-typedef Ecore_Evas* PlatformWindow;
 #endif
 
 namespace TestWebKitAPI {

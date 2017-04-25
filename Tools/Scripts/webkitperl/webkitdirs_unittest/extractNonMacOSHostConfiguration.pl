@@ -63,11 +63,6 @@ my @testCases = (
     description => "Debug with GTK",
 },
 {
-    argValue => ["--debug", "--efl"],
-    expectedValue => ["--debug"],
-    description => "Debug with EFL",
-},
-{
     argValue => ["--debug", "--wincairo"],
     expectedValue => ["--debug"],
     description => "Debug with WinCairo",

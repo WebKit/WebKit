@@ -35,7 +35,7 @@
 #if PLATFORM(WIN)
 #include <windows.h>
 #include <cairo-win32.h>
-#elif PLATFORM(GTK) || PLATFORM(EFL)
+#elif PLATFORM(GTK)
 #include <cairo.h>
 #endif
 

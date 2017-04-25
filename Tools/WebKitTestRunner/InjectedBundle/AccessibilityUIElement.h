@@ -40,7 +40,7 @@ typedef id PlatformUIElement;
 #else
 typedef struct objc_object* PlatformUIElement;
 #endif
-#elif HAVE(ACCESSIBILITY) && (PLATFORM(GTK) || PLATFORM(EFL))
+#elif HAVE(ACCESSIBILITY) && PLATFORM(GTK)
 #include "AccessibilityNotificationHandlerAtk.h"
 #include <atk/atk.h>
 #include <wtf/glib/GRefPtr.h>
@@ -317,12 +317,12 @@ private:
     void getUIElementsWithAttribute(JSStringRef, Vector<RefPtr<AccessibilityUIElement> >&) const;
 #endif
 
-#if PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(EFL)
+#if PLATFORM(COCOA) || PLATFORM(GTK)
     void getChildren(Vector<RefPtr<AccessibilityUIElement> >&);
     void getChildrenWithRange(Vector<RefPtr<AccessibilityUIElement> >&, unsigned location, unsigned length);
 #endif
 
-#if PLATFORM(GTK) || PLATFORM(EFL)
+#if PLATFORM(GTK)
     RefPtr<AccessibilityNotificationHandler> m_notificationHandler;
 #endif
 #endif

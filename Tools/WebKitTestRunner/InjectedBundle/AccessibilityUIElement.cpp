@@ -78,7 +78,7 @@ bool AccessibilityUIElement::isTextArea() const { return false; }
 #endif
     
 // Unsupported methods on various platforms. As they're implemented on other platforms this list should be modified.
-#if (!PLATFORM(GTK) && !PLATFORM(EFL)) || !HAVE(ACCESSIBILITY)
+#if !PLATFORM(GTK) || !HAVE(ACCESSIBILITY)
 JSRetainPtr<JSStringRef> AccessibilityUIElement::characterAtOffset(int) { return nullptr; }
 JSRetainPtr<JSStringRef> AccessibilityUIElement::wordAtOffset(int) { return nullptr; }
 JSRetainPtr<JSStringRef> AccessibilityUIElement::lineAtOffset(int) { return nullptr; }

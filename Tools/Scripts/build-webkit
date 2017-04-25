@@ -99,7 +99,6 @@ Usage: $programName [options] [options to pass to build system]
   --coverage                        Enable code coverage support (Mac only)
   --analyze                         Enable static anaylsis (iOS and Mac only)
 
-  --efl                             Build the EFL port
   --gtk                             Build the GTK+ port
   --wincairo                        Build using Cairo (rather than CoreGraphics) on Windows
 

@@ -23,11 +23,10 @@ use webkitdirs;
 use Getopt::Long qw(:config pass_through);
 
 my $platform = "";
-$platform = "efl" if isEfl();
 $platform = "gtk" if isGtk();
 
 if (!$platform) {
-    die "No platform specified for " . basename($0) .". Use --gtk or --efl.\n";
+    die "No platform specified for " . basename($0) .". Use --gtk.\n";
 }
 
 my $wipeOnChange = $ENV{JHBUILD_WIPE_ON_CHANGE} // 1;
@@ -133,7 +132,7 @@ delete $ENV{AR_FLAGS} if exists $ENV{AR_FLAGS};
 
 chdir(relativeScriptsDir() . "/../jhbuild") or die $!;
 
-my %prettyPlatform = ( "efl" => "EFL", "gtk" => "GTK+" );
+my %prettyPlatform = ( "gtk" => "GTK+" );
 
 if (!$force && !jhbuildConfigurationChanged()) {
     print $prettyPlatform{$platform} . " port dependencies are already up to date\n";
