@@ -1,3 +1,14 @@
+2017-04-24  James Craig  <jcraig@apple.com>
+
+        Upload demo files for prefers-reduced-motion post
+        https://bugs.webkit.org/show_bug.cgi?id=170663
+
+        Rubber stamped by Jon Davis.
+
+        * blog-files/prefers-reduced-motion: Added.
+        * blog-files/prefers-reduced-motion/axi.png: Added.
+        * blog-files/prefers-reduced-motion/prm.htm: Added.
+
 2017-04-18  Jon Davis  <jond@apple.com>
 
         Images in WebKit.org blog article are stretched out
