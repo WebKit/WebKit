@@ -1,3 +1,27 @@
+2017-04-24  Youenn Fablet  <youenn@apple.com>
+
+        Set defaults video getUserMedia constraints
+        https://bugs.webkit.org/show_bug.cgi?id=171127
+
+        Reviewed by Eric Carlson.
+
+        Test: fast/mediastream/getUserMedia-default.html
+
+        Adding default optional constraints for video size and frame rate if none is defined.
+        Default is 640x480 30fps.
+
+        Doing some refactoring in MeddiaConstraintsImpl and MeddiaConstraintsData to use more move constructors.
+
+        * Modules/mediastream/MediaConstraintsImpl.cpp:
+        (WebCore::defaultVideoConstraints):
+        (WebCore::MediaConstraintsData::setDefaultVideoConstraints):
+        (WebCore::MediaConstraintsImpl::create): Deleted.
+        * Modules/mediastream/MediaConstraintsImpl.h:
+        * Modules/mediastream/MediaDevices.cpp:
+        (WebCore::MediaDevices::getUserMedia):
+        * platform/mediastream/mac/MockRealtimeVideoSourceMac.mm:
+        (WebCore::MockRealtimeVideoSourceMac::updateSampleBuffer): Fixing crash when setting frameRate.
+
 2017-04-24  Chris Dumez  <cdumez@apple.com>
 
         createElementNS() should now throw only InvalidCharacterError, not NamespaceError

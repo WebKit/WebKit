@@ -74,7 +74,12 @@ ExceptionOr<void> MediaDevices::getUserMedia(const StreamConstraints& constraint
     auto* document = this->document();
     if (!document)
         return Exception { INVALID_STATE_ERR };
-    return UserMediaRequest::start(*document, createMediaConstraintsImpl(constraints.audio), createMediaConstraintsImpl(constraints.video), WTFMove(promise));
+
+    auto audioConstraints = createMediaConstraintsImpl(constraints.audio);
+    auto videoConstraints = createMediaConstraintsImpl(constraints.video);
+    if (videoConstraints->isValid())
+        videoConstraints->setDefaultVideoConstraints();
+    return UserMediaRequest::start(*document, WTFMove(audioConstraints), WTFMove(videoConstraints), WTFMove(promise));
 }
 
 void MediaDevices::enumerateDevices(EnumerateDevicesPromise&& promise) const

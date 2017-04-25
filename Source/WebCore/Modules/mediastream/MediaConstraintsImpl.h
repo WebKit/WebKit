@@ -47,6 +47,9 @@ struct MediaConstraintsData {
     {
     }
 
+    void setDefaultVideoConstraints();
+    bool isConstraintSet(std::function<bool(const MediaTrackConstraintSetMap&)>&&);
+
     MediaTrackConstraintSetMap mandatoryConstraints;
     Vector<MediaTrackConstraintSetMap> advancedConstraints;
     bool isValid { false };
@@ -54,8 +57,8 @@ struct MediaConstraintsData {
 
 class MediaConstraintsImpl final : public MediaConstraints {
 public:
-    static Ref<MediaConstraintsImpl> create(MediaTrackConstraintSetMap&& mandatoryConstraints, Vector<MediaTrackConstraintSetMap>&& advancedConstraints, bool isValid);
-    WEBCORE_EXPORT static Ref<MediaConstraintsImpl> create(const MediaConstraintsData&);
+    static Ref<MediaConstraintsImpl> create(MediaTrackConstraintSetMap&& mandatoryConstraints, Vector<MediaTrackConstraintSetMap>&& advancedConstraints, bool isValid) { return create(MediaConstraintsData(WTFMove(mandatoryConstraints), WTFMove(advancedConstraints), isValid)); }
+    static Ref<MediaConstraintsImpl> create(MediaConstraintsData&& data) { return adoptRef(*new MediaConstraintsImpl(WTFMove(data))); }
 
     MediaConstraintsImpl() = default;
     virtual ~MediaConstraintsImpl() = default;
@@ -65,15 +68,10 @@ public:
     bool isValid() const final { return m_data.isValid; }
     const MediaConstraintsData& data() const { return m_data; }
 
+    void setDefaultVideoConstraints() { m_data.setDefaultVideoConstraints(); }
+
 private:
-    MediaConstraintsImpl(MediaTrackConstraintSetMap&& mandatoryConstraints, Vector<MediaTrackConstraintSetMap>&& advancedConstraints, bool isValid)
-        : m_data({ WTFMove(mandatoryConstraints), WTFMove(advancedConstraints), isValid })
-    {
-    }
-    explicit MediaConstraintsImpl(const MediaConstraintsData& data)
-        : m_data(data)
-    {
-    }
+    WEBCORE_EXPORT explicit MediaConstraintsImpl(MediaConstraintsData&& data) : m_data(WTFMove(data)) { }
 
     MediaConstraintsData m_data;
 };

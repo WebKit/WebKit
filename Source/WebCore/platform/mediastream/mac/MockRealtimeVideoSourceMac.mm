@@ -143,7 +143,11 @@ RetainPtr<CVPixelBufferRef> MockRealtimeVideoSourceMac::pixelBufferFromCGImage(C
 
 void MockRealtimeVideoSourceMac::updateSampleBuffer()
 {
-    auto pixelBuffer = pixelBufferFromCGImage(imageBuffer()->copyImage()->nativeImage().get());
+    auto imageBuffer = this->imageBuffer();
+    if (!imageBuffer)
+        return;
+
+    auto pixelBuffer = pixelBufferFromCGImage(imageBuffer->copyImage()->nativeImage().get());
     auto sampleBuffer = CMSampleBufferFromPixelBuffer(pixelBuffer.get());
     
     videoSampleAvailable(MediaSampleAVFObjC::create(sampleBuffer.get()));
