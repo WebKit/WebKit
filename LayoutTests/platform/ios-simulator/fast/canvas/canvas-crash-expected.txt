@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: line 16: Canvas area exceeds the maximum limit (width * height > 16777216).
+PASSED 
