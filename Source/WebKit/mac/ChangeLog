@@ -1,3 +1,17 @@
+2017-04-24  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Respect fidelity order when reading web content from item providers
+        https://bugs.webkit.org/show_bug.cgi?id=171155
+        <rdar://problem/31356937>
+
+        Reviewed by Tim Horton.
+
+        Adjusts for changes in WebCore (see WebCore/ChangeLog for more details).
+
+        * WebCoreSupport/WebPlatformStrategies.h:
+        * WebCoreSupport/WebPlatformStrategies.mm:
+        (WebPlatformStrategies::getTypesByFidelityForItemAtIndex):
+
 2017-04-24  Alex Christensen  <achristensen@webkit.org>
 
         Reduce copies and allocations in SharedBuffer::append

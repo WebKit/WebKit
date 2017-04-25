@@ -76,6 +76,96 @@ static BOOL isImageType(NSString *type)
     return MATCHES_UTI_TYPE(type, PNG) || MATCHES_UTI_TYPE(type, JPEG) || MATCHES_UTI_TYPE(type, GIF) || MATCHES_UIKIT_TYPE(type, image);
 }
 
+@interface WebItemProviderRegistrationInfo ()
+{
+    RetainPtr<id <UIItemProviderWriting>> _representingObject;
+    RetainPtr<NSString> _typeIdentifier;
+    RetainPtr<NSData> _data;
+}
+@end
+
+@implementation WebItemProviderRegistrationInfo
+
+- (instancetype)initWithRepresentingObject:(id <UIItemProviderWriting>)representingObject typeIdentifier:(NSString *)typeIdentifier data:(NSData *)data
+{
+    if (representingObject)
+        ASSERT(!typeIdentifier && !data);
+    else
+        ASSERT(typeIdentifier && data);
+
+    if (self = [super init]) {
+        _representingObject = representingObject;
+        _typeIdentifier = typeIdentifier;
+        _data = data;
+    }
+    return self;
+}
+
+- (id <UIItemProviderWriting>)representingObject
+{
+    return _representingObject.get();
+}
+
+- (NSString *)typeIdentifier
+{
+    return _typeIdentifier.get();
+}
+
+- (NSData *)data
+{
+    return _data.get();
+}
+
+@end
+
+@interface WebItemProviderRegistrationInfoList ()
+{
+    RetainPtr<NSMutableArray> _items;
+}
+@end
+
+@implementation WebItemProviderRegistrationInfoList
+
+- (instancetype)init
+{
+    if (self = [super init])
+        _items = adoptNS([[NSMutableArray alloc] init]);
+
+    return self;
+}
+
+- (void)addData:(NSData *)data forType:(NSString *)typeIdentifier
+{
+    [_items addObject:[[[WebItemProviderRegistrationInfo alloc] initWithRepresentingObject:nil typeIdentifier:typeIdentifier data:data] autorelease]];
+}
+
+- (void)addRepresentingObject:(id <UIItemProviderWriting>)object
+{
+    ASSERT([object conformsToProtocol:@protocol(UIItemProviderWriting)]);
+    [_items addObject:[[[WebItemProviderRegistrationInfo alloc] initWithRepresentingObject:object typeIdentifier:nil data:nil] autorelease]];
+}
+
+- (NSUInteger)numberOfItems
+{
+    return [_items count];
+}
+
+- (WebItemProviderRegistrationInfo *)itemAtIndex:(NSUInteger)index
+{
+    if (index >= self.numberOfItems)
+        return nil;
+
+    return [_items objectAtIndex:index];
+}
+
+- (void)enumerateItems:(void (^)(WebItemProviderRegistrationInfo *, NSUInteger))block
+{
+    for (NSUInteger index = 0; index < self.numberOfItems; ++index)
+        block([self itemAtIndex:index], index);
+}
+
+@end
+
 @interface WebItemProviderPasteboard ()
 
 @property (nonatomic) NSInteger numberOfItems;
@@ -109,6 +199,11 @@ static BOOL isImageType(NSString *type)
         _filenamesForDataInteraction = @[ ];
     }
     return self;
+}
+
+- (NSArray<NSString *> *)pasteboardTypesByFidelityForItemAtIndex:(NSUInteger)index
+{
+    return [self itemProviderAtIndex:index].registeredTypeIdentifiers ?: @[ ];
 }
 
 - (NSArray<NSString *> *)pasteboardTypes
@@ -153,34 +248,29 @@ static BOOL isImageType(NSString *type)
     return [_itemProviders count];
 }
 
-- (void)setItemsFromObjectRepresentations:(NSArray<WebPasteboardItemData *> *)itemData
+- (void)setItemsUsingRegistrationInfoLists:(NSArray<WebItemProviderRegistrationInfoList *> *)itemLists
 {
     NSMutableArray *providers = [NSMutableArray array];
-    for (WebPasteboardItemData *data in itemData) {
-        if (!data.representingObjects.count && !data.additionalData.count)
+    for (WebItemProviderRegistrationInfoList *itemList in itemLists) {
+        if (!itemList.numberOfItems)
             continue;
 
-        RetainPtr<UIItemProvider> itemProvider = adoptNS([[getUIItemProviderClass() alloc] init]);
-        // First, register all platform objects, prioritizing objects at the beginning of the array.
-        for (id representingObject in data.representingObjects) {
-            if (![representingObject conformsToProtocol:@protocol(UIItemProviderWriting)])
-                continue;
+        auto itemProvider = adoptNS([[getUIItemProviderClass() alloc] init]);
+        [itemList enumerateItems:[itemProvider] (WebItemProviderRegistrationInfo *item, NSUInteger) {
+            if (item.representingObject) {
+                [itemProvider registerObject:item.representingObject visibility:UIItemProviderRepresentationOptionsVisibilityAll];
+                return;
+            }
 
-            [itemProvider registerObject:(id <UIItemProviderWriting>)representingObject visibility:UIItemProviderRepresentationOptionsVisibilityAll];
-        }
+            if (!item.typeIdentifier.length || !item.data.length)
+                return;
 
-        // Next, register other custom data representations for type identifiers.
-        NSDictionary <NSString *, NSData *> *additionalData = data.additionalData;
-        for (NSString *typeIdentifier in additionalData) {
-            if (![additionalData[typeIdentifier] isKindOfClass:[NSData class]])
-                continue;
-
-            [itemProvider registerDataRepresentationForTypeIdentifier:typeIdentifier visibility:UIItemProviderRepresentationOptionsVisibilityAll loadHandler:^NSProgress *(ItemProviderDataLoadCompletionHandler completionHandler)
-            {
-                completionHandler(additionalData[typeIdentifier], nil);
-                return [NSProgress discreteProgressWithTotalUnitCount:100];
+            RetainPtr<NSData> itemData = item.data;
+            [itemProvider registerDataRepresentationForTypeIdentifier:item.typeIdentifier visibility:UIItemProviderRepresentationOptionsVisibilityAll loadHandler:[itemData] (ItemProviderDataLoadCompletionHandler completionHandler) -> NSProgress * {
+                completionHandler(itemData.get(), nil);
+                return nil;
             }];
-        }
+        }];
         [providers addObject:itemProvider.get()];
     }
 

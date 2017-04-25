@@ -27,14 +27,7 @@
 
 #if TARGET_OS_IPHONE
 
-WEBCORE_EXPORT @interface WebPasteboardItemData : NSObject
-
-+ (instancetype)itemWithRepresentingObjects:(NSArray *)representingObjects additionalData:(NSDictionary *)additionalData;
-
-@property (nonatomic, readonly, strong) NSArray *representingObjects;
-@property (nonatomic, readonly, strong) NSDictionary *additionalData;
-
-@end
+NS_ASSUME_NONNULL_BEGIN
 
 @protocol AbstractPasteboard <NSObject>
 @required
@@ -47,11 +40,14 @@ WEBCORE_EXPORT @interface WebPasteboardItemData : NSObject
 - (NSInteger)changeCount;
 
 @optional
-- (void)setItemsFromObjectRepresentations:(NSArray<WebPasteboardItemData *> *)itemData;
+- (void)setItemsUsingRegistrationInfoLists:(NSArray *)itemLists;
 - (void)setItems:(NSArray<NSDictionary *> *)items;
+- (NSArray<NSString *> *)pasteboardTypesByFidelityForItemAtIndex:(NSUInteger)index;
 @property (readonly, nonatomic) NSInteger numberOfFiles;
 @property (readonly, nonatomic) NSArray<NSURL *> *filenamesForDataInteraction;
 
 @end
+
+NS_ASSUME_NONNULL_END
 
 #endif // TARGET_OS_IPHONE

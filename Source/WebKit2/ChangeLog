@@ -1,3 +1,22 @@
+2017-04-24  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Respect fidelity order when reading web content from item providers
+        https://bugs.webkit.org/show_bug.cgi?id=171155
+        <rdar://problem/31356937>
+
+        Reviewed by Tim Horton.
+
+        Adjusts for changes in WebCore by adding plumbing to support Pasteboard::getTypesByFidelityForItemAtIndex. See
+        WebCore/ChangeLog for more details.
+
+        * UIProcess/Cocoa/WebPasteboardProxyCocoa.mm:
+        (WebKit::WebPasteboardProxy::getPasteboardTypesByFidelityForItemAtIndex):
+        * UIProcess/WebPasteboardProxy.h:
+        * UIProcess/WebPasteboardProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::getTypesByFidelityForItemAtIndex):
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.h:
+
 2017-04-24  Brady Eidson  <beidson@apple.com>
 
         WebProcessPools should always have a WebsiteDataStore

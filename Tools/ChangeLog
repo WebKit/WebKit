@@ -1,3 +1,17 @@
+2017-04-24  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Respect fidelity order when reading web content from item providers
+        https://bugs.webkit.org/show_bug.cgi?id=171155
+        <rdar://problem/31356937>
+
+        Reviewed by Tim Horton.
+
+        Adds a new unit test (DataInteractionTests.RespectsExternalSourceFidelityRankings). See WebCore ChangeLog for
+        more details.
+
+        * TestWebKitAPI/Tests/ios/DataInteractionTests.mm:
+        (TestWebKitAPI::TEST):
+
 2017-04-24  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         SyntaxError fix after r215702.

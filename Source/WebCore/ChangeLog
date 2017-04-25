@@ -1,3 +1,110 @@
+2017-04-24  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Respect fidelity order when reading web content from item providers
+        https://bugs.webkit.org/show_bug.cgi?id=171155
+        <rdar://problem/31356937>
+
+        Reviewed by Tim Horton.
+
+        Currently, when reading web content from pasteboards, we assume the old UIPasteboard/NSPasteboard model wherein
+        the destination must determine which of the items is considered to have the highest fidelity for the purposes of
+        inserting into an editable area. This destination-side fidelity ranking is determined solely by the NSArray
+        returned from Pasteboard::supportedPasteboardTypes, which lists compatible types in order from highest fidelity
+        to lowest fidelity. Pasteboard::read effectively iterates over this list of types in order, attempting to read
+        highest fidelity types and bailing when it first successfully reads data.
+
+        However, when our pasteboard is backed by UIItemProviders, we should instead read pasteboard types in order of
+        fidelity as specified by the source rather than the destination. To accomplish this, we introduce an alternate
+        codepath, Pasteboard::readRespectingUTIFidelities, which we take if Pasteboard::respectsUTIFidelities is true
+        (currently, this only applies for the purposes of data interaction). This version follows a different flow:
+        for each item in the pasteboard, we ask for just the UTIs for that item, in order of fidelity. For each item,
+        we then call readPasteboardWebContentDataForType to try and read data for that type, continuing until either
+        all UTIs have been attempted, or reading was successful.
+
+        This patch makes two additional adjustments. First, we introduce Pasteboard::getTypesByFidelityForItemAtIndex,
+        which is used by Pasteboard::readRespectingUTIFidelities when querying the list of supported UTIs for each
+        pasteboard item, sorted by highest to lowest fidelity.
+
+        Secondly, we refactor logic to write to the item provider pasteboard in PlatformPasteboardIOS. Since we are
+        now respecting fidelity rankings on the destination, the source must also register UTI types in the right
+        fidelity order. While this was mostly achieved using our existing method of writing a list of object
+        representations to the pasteboard and then all of the contents of a NSString => NSData dictionary containing
+        private UTI data, this approach has two flaws:
+        1.  We are unable to register high-priority custom types, followed by representing objects, followed by more
+            lower-priority custom types, since we assume that all custom types follow all representing objects.
+        2.  Since we're just iterating over a dictionary of NSString => NSData when registering custom UTI
+            representations to the item provider, there cannot inherently be any fidelity ordering for custom types.
+
+        To address both of these issues, we introduce two new objects that encapsulate how we register data to the item
+        provider pasteboard. WebItemProviderRegistrationInfo represents some data that can be registered to an item
+        provider (either an object conforming to UIItemProviderWriting, or an NSString and NSData).
+        WebItemProviderRegistrationInfoList represents a list of WebItemProviderRegistrationInfos in order of highest to
+        lowest fidelity. In PlatformPasteboardIOS, we transform PasteboardWebContent, PasteboardImage, and PasteboardURL
+        into a WebItemProviderRegistrationInfoList, which we then pass along to the WebItemProviderPasteboard. In
+        WebItemProviderPasteboard, we traverse the list of WebItemProviderRegistrationInfos in the list and register
+        each WebItemProviderRegistrationInfo's representing object or data to the item provider.
+
+        Test: DataInteractionTests.RespectsExternalSourceFidelityRankings.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/Pasteboard.h:
+        * platform/PasteboardStrategy.h:
+        * platform/PlatformPasteboard.h:
+        * platform/ios/AbstractPasteboard.h:
+        * platform/ios/AbstractPasteboard.mm: Removed.
+
+        Moves WebItemProviderData, formerly implemented in AbstractPasteboard.mm, into WebItemProviderPasteboard.mm.
+        We can delete AbstractPasteboard.mm as a result.
+
+        * platform/ios/PasteboardIOS.mm:
+        (WebCore::readPasteboardWebContentDataForType):
+
+        Pull out common logic for reading data given a UTI type from the pasteboard into the PasteboardWebContentReader.
+        This is invoked from both the existing Pasteboard::read codepath, as well as the readRespectingUTIFidelities
+        codepath.
+
+        (WebCore::Pasteboard::read):
+
+        Refactored to call the new readPasteboardWebContentDataForType helper. Behavior should not have changed, unless
+        the pasteboard supports UTI fidelities.
+
+        (WebCore::Pasteboard::respectsUTIFidelities):
+        (WebCore::Pasteboard::readRespectingUTIFidelities):
+
+        An alternative to Pasteboard::read that considers source-side fidelity rankings of UTIs.
+
+        * platform/ios/PlatformPasteboardIOS.mm:
+        (WebCore::PlatformPasteboard::getTypesByFidelityForItemAtIndex):
+        (WebCore::PlatformPasteboard::writeObjectRepresentations):
+
+        Refactored to build a WebItemProviderRegistrationInfoList and pass it to the WebItemProviderPasteboard to
+        register items and data.
+
+        (WebCore::PlatformPasteboard::write):
+        * platform/ios/WebItemProviderPasteboard.h:
+        * platform/ios/WebItemProviderPasteboard.mm:
+        (-[WebItemProviderRegistrationInfo initWithRepresentingObject:typeIdentifier:data:]):
+        (-[WebItemProviderRegistrationInfo representingObject]):
+        (-[WebItemProviderRegistrationInfo typeIdentifier]):
+        (-[WebItemProviderRegistrationInfo data]):
+
+        Represents a single calls to register data onto the item provider pasteboard. See
+        WebItemProviderPasteboard.h header comments for more info.
+
+        (-[WebItemProviderRegistrationInfoList init]):
+        (-[WebItemProviderRegistrationInfoList addData:forType:]):
+        (-[WebItemProviderRegistrationInfoList addRepresentingObject:]):
+        (-[WebItemProviderRegistrationInfoList numberOfItems]):
+        (-[WebItemProviderRegistrationInfoList itemAtIndex:]):
+        (-[WebItemProviderRegistrationInfoList enumerateItems:]):
+
+        Represents a series of calls to register representations onto the item provider pasteboard. See
+        WebItemProviderPasteboard.h header comments for more info.
+
+        (-[WebItemProviderPasteboard pasteboardTypesByFidelityForItemAtIndex:]):
+        (-[WebItemProviderPasteboard setItemsUsingRegistrationInfoLists:]):
+        (-[WebItemProviderPasteboard setItemsFromObjectRepresentations:]): Deleted.
+
 2017-04-24  Chris Dumez  <cdumez@apple.com>
 
         Regression(r204605): support for "cp874" charset alias was inadvertently dropped which may cause issues on certain Thai sites

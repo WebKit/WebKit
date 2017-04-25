@@ -140,6 +140,11 @@ void WebPasteboardProxy::getNumberOfFiles(const String& pasteboardName, uint64_t
 }
 
 #if PLATFORM(IOS)
+void WebPasteboardProxy::getPasteboardTypesByFidelityForItemAtIndex(uint64_t index, const String& pasteboardName, Vector<String>& types)
+{
+    PlatformPasteboard(pasteboardName).getTypesByFidelityForItemAtIndex(types, index);
+}
+
 void WebPasteboardProxy::writeURLToPasteboard(const PasteboardURL& url, const String& pasteboardName)
 {
     PlatformPasteboard(pasteboardName).write(url);

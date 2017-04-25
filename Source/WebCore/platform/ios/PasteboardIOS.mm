@@ -165,8 +165,53 @@ static NSArray* supportedImageTypes()
     return @[(id)kUTTypePNG, (id)kUTTypeTIFF, (id)kUTTypeJPEG, (id)kUTTypeGIF];
 }
 
+static bool readPasteboardWebContentDataForType(PasteboardWebContentReader& reader, PasteboardStrategy& strategy, NSString *type, int itemIndex, const String& pasteboardName)
+{
+    if ([type isEqualToString:WebArchivePboardType]) {
+        RefPtr<SharedBuffer> buffer = strategy.readBufferFromPasteboard(itemIndex, WebArchivePboardType, pasteboardName);
+        return reader.readWebArchive(buffer.get());
+    }
+
+    if ([type isEqualToString:(NSString *)kUTTypeHTML]) {
+        String htmlString = strategy.readStringFromPasteboard(itemIndex, kUTTypeHTML, pasteboardName);
+        return !htmlString.isNull() && reader.readHTML(htmlString);
+    }
+
+    if ([type isEqualToString:(NSString *)kUTTypeFlatRTFD]) {
+        RefPtr<SharedBuffer> buffer = strategy.readBufferFromPasteboard(itemIndex, kUTTypeFlatRTFD, pasteboardName);
+        return buffer && reader.readRTFD(*buffer);
+    }
+
+    if ([type isEqualToString:(NSString *)kUTTypeRTF]) {
+        RefPtr<SharedBuffer> buffer = strategy.readBufferFromPasteboard(itemIndex, kUTTypeRTF, pasteboardName);
+        return buffer && reader.readRTF(*buffer);
+    }
+
+    if ([supportedImageTypes() containsObject:type]) {
+        RefPtr<SharedBuffer> buffer = strategy.readBufferFromPasteboard(itemIndex, type, pasteboardName);
+        return buffer && reader.readImage(buffer.releaseNonNull(), type);
+    }
+
+    if ([type isEqualToString:(NSString *)kUTTypeURL]) {
+        URL url = strategy.readURLFromPasteboard(itemIndex, kUTTypeURL, pasteboardName);
+        return !url.isNull() && reader.readURL(url, String());
+    }
+
+    if (UTTypeConformsTo((CFStringRef)type, kUTTypeText)) {
+        String string = strategy.readStringFromPasteboard(itemIndex, kUTTypeText, pasteboardName);
+        return !string.isNull() && reader.readPlainText(string);
+    }
+
+    return false;
+}
+
 void Pasteboard::read(PasteboardWebContentReader& reader)
 {
+    if (respectsUTIFidelities()) {
+        readRespectingUTIFidelities(reader);
+        return;
+    }
+
     PasteboardStrategy& strategy = *platformStrategies()->pasteboardStrategy();
 
     int numberOfItems = strategy.getPasteboardItemsCount(m_pasteboardName);
@@ -179,54 +224,32 @@ void Pasteboard::read(PasteboardWebContentReader& reader)
 
     for (int i = 0; i < numberOfItems; i++) {
         for (int typeIndex = 0; typeIndex < numberOfTypes; typeIndex++) {
-            NSString *type = [types objectAtIndex:typeIndex];
-
-            if ([type isEqualToString:WebArchivePboardType]) {
-                if (RefPtr<SharedBuffer> buffer = strategy.readBufferFromPasteboard(i, WebArchivePboardType, m_pasteboardName)) {
-                    if (reader.readWebArchive(buffer.get()))
-                        break;
-                }
-            }
-
-            if ([type isEqualToString:(NSString *)kUTTypeHTML]) {
-                String htmlString = strategy.readStringFromPasteboard(i, kUTTypeHTML, m_pasteboardName);
-                if (!htmlString.isNull() && reader.readHTML(htmlString))
-                    break;
-            }
-
-            if ([type isEqualToString:(NSString *)kUTTypeFlatRTFD]) {
-                if (RefPtr<SharedBuffer> buffer = strategy.readBufferFromPasteboard(i, kUTTypeFlatRTFD, m_pasteboardName)) {
-                    if (reader.readRTFD(*buffer))
-                        break;
-                }
-            }
-
-            if ([type isEqualToString:(NSString *)kUTTypeRTF]) {
-                if (RefPtr<SharedBuffer> buffer = strategy.readBufferFromPasteboard(i, kUTTypeRTF, m_pasteboardName)) {
-                    if (reader.readRTF(*buffer))
-                        break;
-                }
-            }
-
-            if ([supportedImageTypes() containsObject:type]) {
-                if (RefPtr<SharedBuffer> buffer = strategy.readBufferFromPasteboard(i, type, m_pasteboardName)) {
-                    if (reader.readImage(buffer.releaseNonNull(), type))
-                        break;
-                }
+            if (readPasteboardWebContentDataForType(reader, strategy, [types objectAtIndex:typeIndex], i, m_pasteboardName))
+                break;
         }
+    }
+}
 
-            if ([type isEqualToString:(NSString *)kUTTypeURL]) {
-                URL url = strategy.readURLFromPasteboard(i, kUTTypeURL, m_pasteboardName);
-                if (!url.isNull() && reader.readURL(url, String()))
-                    break;
-            }
-            
-            if ([type isEqualToString:(NSString *)kUTTypeText]) {
-                String string = strategy.readStringFromPasteboard(i, kUTTypeText, m_pasteboardName);
-                if (!string.isNull() && reader.readPlainText(string))
-                    break;
-            }
+bool Pasteboard::respectsUTIFidelities() const
+{
+    // For now, data interaction is the only feature that uses item-provider-based pasteboard representations.
+    // In the future, we may need to consult the client layer to determine whether or not the pasteboard supports
+    // item types ranked by fidelity.
+    return m_pasteboardName == "data interaction pasteboard";
+}
 
+void Pasteboard::readRespectingUTIFidelities(PasteboardWebContentReader& reader)
+{
+    ASSERT(respectsUTIFidelities());
+    auto& strategy = *platformStrategies()->pasteboardStrategy();
+    for (NSUInteger index = 0, numberOfItems = strategy.getPasteboardItemsCount(m_pasteboardName); index < numberOfItems; ++index) {
+        // Try to read data from each type identifier that this pasteboard item supports, and WebKit also recognizes. Type identifiers are
+        // read in order of fidelity, as specified by each pasteboard item.
+        Vector<String> typesForItemInOrderOfFidelity;
+        strategy.getTypesByFidelityForItemAtIndex(typesForItemInOrderOfFidelity, index, m_pasteboardName);
+        for (auto& type : typesForItemInOrderOfFidelity) {
+            if (readPasteboardWebContentDataForType(reader, strategy, type, index, m_pasteboardName))
+                break;
         }
     }
 }

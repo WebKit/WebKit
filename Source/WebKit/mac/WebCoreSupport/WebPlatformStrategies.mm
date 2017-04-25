@@ -186,6 +186,11 @@ int WebPlatformStrategies::getNumberOfFiles(const String& pasteboardName)
 }
 
 #if PLATFORM(IOS)
+void WebPlatformStrategies::getTypesByFidelityForItemAtIndex(Vector<String>& types, uint64_t index, const String& pasteboardName)
+{
+    PlatformPasteboard(pasteboardName).getTypesByFidelityForItemAtIndex(types, index);
+}
+
 void WebPlatformStrategies::writeToPasteboard(const PasteboardURL& url, const String& pasteboardName)
 {
     PlatformPasteboard(pasteboardName).write(url);
