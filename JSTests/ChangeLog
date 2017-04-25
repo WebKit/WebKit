@@ -1,3 +1,13 @@
+2017-04-24  Joseph Pecoraro  <pecoraro@apple.com>
+
+        test262: test262/test/language/expressions/object/method-definition/early-errors-object-method-duplicate-parameters.js
+        https://bugs.webkit.org/show_bug.cgi?id=171190
+
+        Reviewed by Saam Barati.
+
+        * stress/async-await-syntax.js:
+        * test262.yaml:
+
 2017-04-24  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Use JSFixedArray directly when using call_varargs

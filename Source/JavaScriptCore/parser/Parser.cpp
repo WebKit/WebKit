@@ -216,7 +216,7 @@ String Parser<LexerType>::parseInner(const Identifier& calleeName, SourceParseMo
             sourceElements = parseArrowFunctionSingleExpressionBodySourceElements(context);
         else if (isModuleParseMode(parseMode))
             sourceElements = parseModuleSourceElements(context, parseMode);
-        else if (parseMode == SourceParseMode::GeneratorWrapperFunctionMode)
+        else if (isGeneratorWrapperParseMode(parseMode))
             sourceElements = parseGeneratorFunctionSourceElements(context, calleeName, CheckForStrictMode);
         else
             sourceElements = parseSourceElements(context, CheckForStrictMode);
@@ -239,7 +239,7 @@ String Parser<LexerType>::parseInner(const Identifier& calleeName, SourceParseMo
     for (auto& entry : capturedVariables)
         varDeclarations.markVariableAsCaptured(entry);
 
-    if (SourceParseModeSet(SourceParseMode::GeneratorWrapperFunctionMode).contains(parseMode) || isAsyncFunctionWrapperParseMode(parseMode)) {
+    if (isGeneratorWrapperParseMode(parseMode) || isAsyncFunctionWrapperParseMode(parseMode)) {
         if (scope->usedVariablesContains(m_vm->propertyNames->arguments.impl()))
             context.propagateArgumentsUse();
     }
@@ -298,7 +298,8 @@ bool Parser<LexerType>::isArrowFunctionParameters()
 
             unsigned parametersCount = 0;
             bool isArrowFunctionParameterList = true;
-            isArrowFunction = parseFormalParameters(syntaxChecker, syntaxChecker.createFormalParameterList(), isArrowFunctionParameterList, parametersCount) && consume(CLOSEPAREN) && match(ARROWFUNCTION);
+            bool isMethod = false;
+            isArrowFunction = parseFormalParameters(syntaxChecker, syntaxChecker.createFormalParameterList(), isArrowFunctionParameterList, isMethod, parametersCount) && consume(CLOSEPAREN) && match(ARROWFUNCTION);
             propagateError();
             popScope(fakeScope, syntaxChecker.NeedsFreeVariableInfo);
         }
@@ -1850,7 +1851,7 @@ template <class TreeBuilder> bool Parser<LexerType>::maybeParseAsyncFunctionDecl
 }
 
 template <typename LexerType>
-template <class TreeBuilder> bool Parser<LexerType>::parseFormalParameters(TreeBuilder& context, TreeFormalParameterList list, bool isArrowFunction, unsigned& parameterCount)
+template <class TreeBuilder> bool Parser<LexerType>::parseFormalParameters(TreeBuilder& context, TreeFormalParameterList list, bool isArrowFunction, bool isMethod, unsigned& parameterCount)
 {
 #define failIfDuplicateIfViolation() \
     if (duplicateParameter) {\
@@ -1858,6 +1859,7 @@ template <class TreeBuilder> bool Parser<LexerType>::parseFormalParameters(TreeB
         semanticFailIfTrue(hasDestructuringPattern, "Duplicate parameter '", duplicateParameter->impl(), "' not allowed in function with destructuring parameters");\
         semanticFailIfTrue(isRestParameter, "Duplicate parameter '", duplicateParameter->impl(), "' not allowed in function with a rest parameter");\
         semanticFailIfTrue(isArrowFunction, "Duplicate parameter '", duplicateParameter->impl(), "' not allowed in an arrow function");\
+        semanticFailIfTrue(isMethod, "Duplicate parameter '", duplicateParameter->impl(), "' not allowed in a method");\
     }
 
     bool hasDefaultParameterValues = false;
@@ -1951,6 +1953,7 @@ static const char* stringForFunctionMode(SourceParseMode mode)
     case SourceParseMode::GeneratorBodyMode:
         return "generator";
     case SourceParseMode::GeneratorWrapperFunctionMode:
+    case SourceParseMode::GeneratorWrapperMethodMode:
         return "generator function";
     case SourceParseMode::ArrowFunctionMode:
         return "arrow function";
@@ -1990,7 +1993,8 @@ template <typename LexerType> template <class TreeBuilder, class FunctionInfoTyp
                     functionInfo.parameterCount = 0;
                 } else {
                     bool isArrowFunction = true;
-                    failIfFalse(parseFormalParameters(context, parameterList, isArrowFunction, functionInfo.parameterCount), "Cannot parse parameters for this ", stringForFunctionMode(mode));
+                    bool isMethod = false;
+                    failIfFalse(parseFormalParameters(context, parameterList, isArrowFunction, isMethod, functionInfo.parameterCount), "Cannot parse parameters for this ", stringForFunctionMode(mode));
                 }
                 
                 consumeOrFail(CLOSEPAREN, "Expected a ')' or a ',' after a parameter declaration");
@@ -2034,7 +2038,8 @@ template <typename LexerType> template <class TreeBuilder, class FunctionInfoTyp
             functionInfo.parameterCount = 0;
         } else {
             bool isArrowFunction = false;
-            failIfFalse(parseFormalParameters(context, parameterList, isArrowFunction, functionInfo.parameterCount), "Cannot parse parameters for this ", stringForFunctionMode(mode));
+            bool isMethod = isMethodParseMode(mode);
+            failIfFalse(parseFormalParameters(context, parameterList, isArrowFunction, isMethod, functionInfo.parameterCount), "Cannot parse parameters for this ", stringForFunctionMode(mode));
         }
         consumeOrFail(CLOSEPAREN, "Expected a ')' or a ',' after a parameter declaration");
     }
@@ -2234,7 +2239,7 @@ template <class TreeBuilder> bool Parser<LexerType>::parseFunctionInfo(TreeBuild
                     semanticFailIfTrue(functionDefinitionType == FunctionDefinitionType::Declaration || isAsyncFunctionWrapperParseMode(mode), "Cannot declare function named 'await' ", isDisallowedAwaitFunctionNameReason);
                 else if (isAsyncFunctionWrapperParseMode(mode) && match(AWAIT) && functionDefinitionType == FunctionDefinitionType::Expression)
                     semanticFail("Cannot declare async function named 'await'");
-                else if (mode == SourceParseMode::GeneratorWrapperFunctionMode && match(YIELD) && functionDefinitionType == FunctionDefinitionType::Expression)
+                else if (isGeneratorWrapperParseMode(mode) && match(YIELD) && functionDefinitionType == FunctionDefinitionType::Expression)
                     semanticFail("Cannot declare generator function named 'yield'");
                 next();
                 if (!nameIsInContainingScope)
@@ -2699,7 +2704,7 @@ parseMethod:
                 semanticFailIfTrue(*ident == m_vm->propertyNames->constructor, "Cannot declare an async method named 'constructor'");
             } else if (isGenerator) {
                 isConstructor = false;
-                parseMode = SourceParseMode::GeneratorWrapperFunctionMode;
+                parseMode = SourceParseMode::GeneratorWrapperMethodMode;
                 semanticFailIfTrue(*ident == m_vm->propertyNames->prototype, "Cannot declare a generator named 'prototype'");
                 semanticFailIfTrue(*ident == m_vm->propertyNames->constructor, "Cannot declare a generator named 'constructor'");
             }
@@ -3823,7 +3828,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parsePropertyMeth
     unsigned methodStart = tokenStart();
     ParserFunctionInfo<TreeBuilder> methodInfo;
     methodInfo.name = methodName;
-    SourceParseMode parseMode = isGenerator ? SourceParseMode::GeneratorWrapperFunctionMode : isAsyncMethod ? SourceParseMode::AsyncMethodMode : SourceParseMode::MethodMode;
+    SourceParseMode parseMode = isGenerator ? SourceParseMode::GeneratorWrapperMethodMode : isAsyncMethod ? SourceParseMode::AsyncMethodMode : SourceParseMode::MethodMode;
     failIfFalse((parseFunctionInfo(context, FunctionNameRequirements::Unnamed, parseMode, false, ConstructorKind::None, SuperBinding::Needed, methodStart, methodInfo, FunctionDefinitionType::Method)), "Cannot parse this method");
     return context.createMethodDefinition(methodLocation, methodInfo);
 }

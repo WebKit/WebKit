@@ -1,3 +1,43 @@
+2017-04-24  Joseph Pecoraro  <pecoraro@apple.com>
+
+        test262: test262/test/language/expressions/object/method-definition/early-errors-object-method-duplicate-parameters.js
+        https://bugs.webkit.org/show_bug.cgi?id=171190
+
+        Reviewed by Saam Barati.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::emitNewFunctionExpressionCommon):
+        (JSC::BytecodeGenerator::emitNewFunction):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::FunctionNode::emitBytecode):
+        (JSC::Scope::setSourceParseMode):
+        * parser/ParserModes.h:
+        (JSC::isFunctionParseMode):
+        (JSC::isMethodParseMode):
+        (JSC::isGeneratorOrAsyncFunctionWrapperParseMode):
+        (JSC::isGeneratorParseMode):
+        (JSC::isGeneratorWrapperParseMode):
+        * runtime/FunctionExecutable.h:
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::getOwnPropertySlot):
+        Add a new GeneratorWrapperMethodMode parse mode. The other function types
+        (async, arrow) already have a FunctionMode and a MethodMode. Give
+        generators one as well. This lets isMethodParseMode actually be accurate.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseInner):
+        (JSC::Parser<LexerType>::isArrowFunctionParameters):
+        (JSC::Parser<LexerType>::parseFormalParameters):
+        (JSC::stringForFunctionMode):
+        (JSC::Parser<LexerType>::parseFunctionParameters):
+        (JSC::Parser<LexerType>::parseFunctionInfo):
+        (JSC::Parser<LexerType>::parseClass):
+        (JSC::Parser<LexerType>::parsePropertyMethod):
+        * parser/Parser.h:
+        Add a duplicate parameter failure if there are duplicate parameters
+        in method syntax.
+
 2017-04-24  Andy VanWagoner  <thetalecrafter@gmail.com>
 
         Clean up ICU headers

@@ -534,7 +534,8 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
 
     m_newTargetRegister = addVar();
     switch (parseMode) {
-    case SourceParseMode::GeneratorWrapperFunctionMode: {
+    case SourceParseMode::GeneratorWrapperFunctionMode:
+    case SourceParseMode::GeneratorWrapperMethodMode: {
         m_generatorRegister = addVar();
 
         // FIXME: Emit to_this only when Generator uses it.
@@ -3229,6 +3230,7 @@ void BytecodeGenerator::emitNewFunctionExpressionCommon(RegisterID* dst, Functio
     OpcodeID opcodeID = op_new_func_exp;
     switch (function->parseMode()) {
     case SourceParseMode::GeneratorWrapperFunctionMode:
+    case SourceParseMode::GeneratorWrapperMethodMode:
         opcodeID = op_new_generator_func_exp;
         break;
     case SourceParseMode::AsyncFunctionMode:
@@ -3286,7 +3288,7 @@ RegisterID* BytecodeGenerator::emitNewDefaultConstructor(RegisterID* dst, Constr
 RegisterID* BytecodeGenerator::emitNewFunction(RegisterID* dst, FunctionMetadataNode* function)
 {
     unsigned index = m_codeBlock->addFunctionDecl(makeFunction(function));
-    if (function->parseMode() == SourceParseMode::GeneratorWrapperFunctionMode)
+    if (isGeneratorWrapperParseMode(function->parseMode()))
         emitOpcode(op_new_generator_func);
     else if (function->parseMode() == SourceParseMode::AsyncFunctionMode)
         emitOpcode(op_new_async_func);

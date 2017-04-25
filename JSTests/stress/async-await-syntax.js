@@ -137,12 +137,25 @@ function testSyntaxError(script, message) {
     testSyntaxError(`var asyncFn = async (await) => 'test';`);
     testSyntaxError(`async function asyncFunctionDeclaration(await) {}`);
 
-    // FIXME: MethodDefinitions do not apply StrictFormalParameters restrictions
-    //        in sloppy mode (https://bugs.webkit.org/show_bug.cgi?id=161408)
-    //testSyntaxError(`var outerObject = { async method(a, a) {} }`);
-    //testSyntaxError(`var outerObject = { async ['meth' + 'od'](a, a) {} }`);
-    //testSyntaxError(`var outerObject = { async 'method'(a, a) {} }`);
-    //testSyntaxError(`var outerObject = { async 0(a, a) {} }`);
+    testSyntaxError(`var outerObject = { async method(a, a) {} }`);
+    testSyntaxError(`var outerObject = { async ['meth' + 'od'](a, a) {} }`);
+    testSyntaxError(`var outerObject = { async 'method'(a, a) {} }`);
+    testSyntaxError(`var outerObject = { async 0(a, a) {} }`);
+
+    testSyntaxError(`var outerObject = { async method(a, {a}) {} }`);
+    testSyntaxError(`var outerObject = { async method({a}, a) {} }`);
+    testSyntaxError(`var outerObject = { async method({a}, {a}) {} }`);
+    testSyntaxError(`var outerObject = { async method(a, ...a) {} }`);
+    testSyntaxError(`var outerObject = { async method({a}, ...a) {} }`);
+    testSyntaxError(`var outerObject = { async method(a, ...a) {} }`);
+    testSyntaxError(`var outerObject = { async method({a, ...a}) {} }`);
+    testSyntaxError(`var outerObject = { func: async function(a, {a}) {} }`);
+    testSyntaxError(`var outerObject = { func: async function({a}, a) {} }`);
+    testSyntaxError(`var outerObject = { func: async function({a}, {a}) {} }`);
+    testSyntaxError(`var outerObject = { func: async function(a, ...a) {} }`);
+    testSyntaxError(`var outerObject = { func: async function({a}, ...a) {} }`);
+    testSyntaxError(`var outerObject = { func: async function(a, ...a) {} }`);
+    testSyntaxError(`var outerObject = { func: async function({a, ...a}) {} }`);
 
     testSyntaxError(`var asyncArrowFn = async() => await;`);
 

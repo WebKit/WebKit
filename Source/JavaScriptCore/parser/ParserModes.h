@@ -46,18 +46,19 @@ enum class SourceParseMode : uint16_t {
     NormalFunctionMode            = 0b0000000000000001,
     GeneratorBodyMode             = 0b0000000000000010,
     GeneratorWrapperFunctionMode  = 0b0000000000000100,
-    GetterMode                    = 0b0000000000001000,
-    SetterMode                    = 0b0000000000010000,
-    MethodMode                    = 0b0000000000100000,
-    ArrowFunctionMode             = 0b0000000001000000,
-    AsyncFunctionBodyMode         = 0b0000000010000000,
-    AsyncArrowFunctionBodyMode    = 0b0000000100000000,
-    AsyncFunctionMode             = 0b0000001000000000,
-    AsyncMethodMode               = 0b0000010000000000,
-    AsyncArrowFunctionMode        = 0b0000100000000000,
-    ProgramMode                   = 0b0001000000000000,
-    ModuleAnalyzeMode             = 0b0010000000000000,
-    ModuleEvaluateMode            = 0b0100000000000000,
+    GeneratorWrapperMethodMode    = 0b0000000000001000,
+    GetterMode                    = 0b0000000000010000,
+    SetterMode                    = 0b0000000000100000,
+    MethodMode                    = 0b0000000001000000,
+    ArrowFunctionMode             = 0b0000000010000000,
+    AsyncFunctionBodyMode         = 0b0000000100000000,
+    AsyncArrowFunctionBodyMode    = 0b0000001000000000,
+    AsyncFunctionMode             = 0b0000010000000000,
+    AsyncMethodMode               = 0b0000100000000000,
+    AsyncArrowFunctionMode        = 0b0001000000000000,
+    ProgramMode                   = 0b0010000000000000,
+    ModuleAnalyzeMode             = 0b0100000000000000,
+    ModuleEvaluateMode            = 0b1000000000000000,
 };
 
 class SourceParseModeSet { 
@@ -94,6 +95,7 @@ ALWAYS_INLINE bool isFunctionParseMode(SourceParseMode parseMode)
         SourceParseMode::NormalFunctionMode, 
         SourceParseMode::GeneratorBodyMode, 
         SourceParseMode::GeneratorWrapperFunctionMode, 
+        SourceParseMode::GeneratorWrapperMethodMode,
         SourceParseMode::GetterMode, 
         SourceParseMode::SetterMode, 
         SourceParseMode::MethodMode, 
@@ -140,8 +142,7 @@ ALWAYS_INLINE bool isAsyncFunctionBodyParseMode(SourceParseMode parseMode)
 ALWAYS_INLINE bool isMethodParseMode(SourceParseMode parseMode)
 {
     return SourceParseModeSet(
-        // FIXME: GeneratorWrapperFunctionMode is not guaranteed to be a method.
-        SourceParseMode::GeneratorWrapperFunctionMode,
+        SourceParseMode::GeneratorWrapperMethodMode,
         SourceParseMode::GetterMode,
         SourceParseMode::SetterMode,
         SourceParseMode::MethodMode,
@@ -160,9 +161,25 @@ ALWAYS_INLINE bool isGeneratorOrAsyncFunctionWrapperParseMode(SourceParseMode pa
 {
     return SourceParseModeSet(
         SourceParseMode::GeneratorWrapperFunctionMode,
+        SourceParseMode::GeneratorWrapperMethodMode,
         SourceParseMode::AsyncFunctionMode,
         SourceParseMode::AsyncArrowFunctionMode,
         SourceParseMode::AsyncMethodMode).contains(parseMode);
+}
+
+ALWAYS_INLINE bool isGeneratorParseMode(SourceParseMode parseMode)
+{
+    return SourceParseModeSet(
+        SourceParseMode::GeneratorBodyMode,
+        SourceParseMode::GeneratorWrapperFunctionMode,
+        SourceParseMode::GeneratorWrapperMethodMode).contains(parseMode);    
+}
+
+ALWAYS_INLINE bool isGeneratorWrapperParseMode(SourceParseMode parseMode)
+{
+    return SourceParseModeSet(
+        SourceParseMode::GeneratorWrapperFunctionMode,
+        SourceParseMode::GeneratorWrapperMethodMode).contains(parseMode);
 }
 
 ALWAYS_INLINE bool isArrowFunctionParseMode(SourceParseMode parseMode)

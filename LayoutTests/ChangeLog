@@ -1,3 +1,14 @@
+2017-04-24  Joseph Pecoraro  <pecoraro@apple.com>
+
+        test262: test262/test/language/expressions/object/method-definition/early-errors-object-method-duplicate-parameters.js
+        https://bugs.webkit.org/show_bug.cgi?id=171190
+
+        Reviewed by Saam Barati.
+
+        * js/parser-syntax-check-expected.txt:
+        * js/script-tests/parser-syntax-check.js:
+        Extend to cover method duplicate parameter cases.
+
 2017-04-24  Jiewen Tan  <jiewen_tan@apple.com>
 
         LayoutTests crypto/subtle/ecdsa-generate-key-sign-verify-p384.html and crypto/subtle/ecdsa-generate-key-sign-verify-p256.html are flaky failures
