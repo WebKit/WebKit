@@ -1287,9 +1287,4 @@ webkit.org/b/170704 webrtc/video-mute.html [ Pass Failure ]
 
 webkit.org/b/171031 imported/w3c/web-platform-tests/XMLHttpRequest/getallresponseheaders-cl.htm [ Failure ]
 
-webkit.org/b/171059 crypto/subtle/ecdsa-generate-key-sign-verify-p384.html [ Pass Failure ]
-webkit.org/b/171059 crypto/subtle/ecdsa-generate-key-sign-verify-p256.html [ Pass Failure ]
-
-webkit.org/b/170921 imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/ecdsa.worker.html [ Pass Failure ]
-
 webkit.org/b/170701 webrtc/datachannel/bufferedAmountLowThreshold.html [ Pass Failure ]

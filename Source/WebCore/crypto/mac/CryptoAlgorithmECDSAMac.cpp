@@ -84,16 +84,33 @@ static ExceptionOr<Vector<uint8_t>> signECDSA(CryptoAlgorithmIdentifier hash, co
     // convert the DER binary into r + s
     Vector<uint8_t> newSignature;
     newSignature.reserveCapacity(keyLengthInBytes * 2);
-    size_t offset = 4;
-    if (signature[offset] == InitialOctet)
-        offset += 1;
-    ASSERT_WITH_SECURITY_IMPLICATION(signature.size() > offset + keyLengthInBytes);
-    newSignature.append(signature.data() + offset, keyLengthInBytes);
-    offset += keyLengthInBytes + 2;
-    if (signature[offset] == InitialOctet)
-        offset += 1;
-    ASSERT_WITH_SECURITY_IMPLICATION(signature.size() >= offset + keyLengthInBytes);
-    newSignature.append(signature.data() + offset, keyLengthInBytes);
+    size_t offset = 3; // skip tag, length, tag
+
+    // If r < keyLengthInBytes, fill the head of r with 0s.
+    size_t bytesToCopy = keyLengthInBytes;
+    if (signature[offset] < keyLengthInBytes) {
+        newSignature.resize(keyLengthInBytes - signature[offset]);
+        memset(newSignature.data(), InitialOctet, keyLengthInBytes - signature[offset]);
+        bytesToCopy = signature[offset];
+    } else if (signature[offset] > keyLengthInBytes) // Otherwise skip the leading 0s of r.
+        offset += signature[offset] - keyLengthInBytes;
+    offset++; // skip length
+    ASSERT_WITH_SECURITY_IMPLICATION(signature.size() > offset + bytesToCopy);
+    newSignature.append(signature.data() + offset, bytesToCopy);
+    offset += bytesToCopy + 1; // skip r, tag
+
+    // If s < keyLengthInBytes, fill the head of s with 0s.
+    bytesToCopy = keyLengthInBytes;
+    if (signature[offset] < keyLengthInBytes) {
+        size_t pos = newSignature.size();
+        newSignature.resize(pos + keyLengthInBytes - signature[offset]);
+        memset(newSignature.data() + pos, InitialOctet, keyLengthInBytes - signature[offset]);
+        bytesToCopy = signature[offset];
+    } else if (signature[offset] > keyLengthInBytes) // Otherwise skip the leading 0s of s.
+        offset += signature[offset] - keyLengthInBytes;
+    offset++; // skip length
+    ASSERT_WITH_SECURITY_IMPLICATION(signature.size() >= offset + bytesToCopy);
+    newSignature.append(signature.data() + offset, bytesToCopy);
 
     return WTFMove(newSignature);
 }

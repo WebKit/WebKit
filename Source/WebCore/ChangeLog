@@ -1,3 +1,17 @@
+2017-04-24  Jiewen Tan  <jiewen_tan@apple.com>
+
+        LayoutTests crypto/subtle/ecdsa-generate-key-sign-verify-p384.html and crypto/subtle/ecdsa-generate-key-sign-verify-p256.html are flaky failures
+        https://bugs.webkit.org/show_bug.cgi?id=171059
+        <rdar://problem/31734958>
+
+        Reviewed by Brent Fulgham.
+
+        Covered by existing tests.
+
+        * crypto/mac/CryptoAlgorithmECDSAMac.cpp:
+        (WebCore::signECDSA):
+        Enhance ways to convert the DER signatures produced from CommonCrypto to r||s.
+
 2017-04-24  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [selectors4] :focus-within should use the flat tree
