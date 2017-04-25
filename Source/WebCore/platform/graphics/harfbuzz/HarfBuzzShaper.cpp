@@ -179,7 +179,7 @@ static void normalizeCharacters(const TextRun& run, UChar* destination, unsigned
         // Don't normalize tabs as they are not treated as spaces for word-end.
         if (FontCascade::treatAsSpace(character) && character != '\t')
             character = ' ';
-        else if (FontCascade::treatAsZeroWidthSpaceInComplexScript(character))
+        else if (FontCascade::treatAsZeroWidthSpace(character))
             character = zeroWidthSpace;
         U16_APPEND(destination, position, length, character, error);
         ASSERT_UNUSED(error, !error);
