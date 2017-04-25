@@ -1,3 +1,11 @@
+2017-04-24  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed build fix.
+
+        * crypto/mac/CryptoAlgorithmAES_GCMMac.cpp:
+        (WebCore::encryptAES_GCM):
+        (WebCore::decyptAES_GCM):
+
 2017-04-24  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Whitelist supported image MIME types

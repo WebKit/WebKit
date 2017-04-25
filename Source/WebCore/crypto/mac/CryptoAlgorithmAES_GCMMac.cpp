@@ -42,7 +42,10 @@ static ExceptionOr<Vector<uint8_t>> encryptAES_GCM(const Vector<uint8_t>& iv, co
     Vector<uint8_t> cipherText(plainText.size()); // Per section 5.2.1.2: http://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-38d.pdf
     Vector<uint8_t> tag(desiredTagLengthInBytes);
     // tagLength is actual an input <rdar://problem/30660074>
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     CCCryptorStatus status = CCCryptorGCM(kCCEncrypt, kCCAlgorithmAES, key.data(), key.size(), iv.data(), iv.size(), additionalData.data(), additionalData.size(), plainText.data(), plainText.size(), cipherText.data(), tag.data(), &desiredTagLengthInBytes);
+#pragma clang diagnostic pop
     if (status)
         return Exception { OperationError };
 
@@ -57,7 +60,10 @@ static ExceptionOr<Vector<uint8_t>> decyptAES_GCM(const Vector<uint8_t>& iv, con
     Vector<uint8_t> tag(desiredTagLengthInBytes);
     size_t offset = cipherText.size() - desiredTagLengthInBytes;
     // tagLength is actual an input <rdar://problem/30660074>
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     CCCryptorStatus status = CCCryptorGCM(kCCDecrypt, kCCAlgorithmAES, key.data(), key.size(), iv.data(), iv.size(), additionalData.data(), additionalData.size(), cipherText.data(), offset, plainText.data(), tag.data(), &desiredTagLengthInBytes);
+#pragma clang diagnostic pop
     if (status)
         return Exception { OperationError };
 
