@@ -1,3 +1,10 @@
+2017-04-25  Tim Horton  <timothy_horton@apple.com>
+
+        Deduplicate some lines in the toplevel TestExpectations
+
+        * TestExpectations:
+        Remove a duplicate line and consolidate another.
+
 2017-04-25  Chris Dumez  <cdumez@apple.com>
 
         Element.dataset.name incorrectly returns undefined
