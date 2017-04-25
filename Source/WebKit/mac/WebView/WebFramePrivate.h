@@ -277,6 +277,9 @@ typedef enum {
 // Printing.
 - (NSArray *)_computePageRectsWithPrintScaleFactor:(float)printWidthScaleFactor pageSize:(NSSize)pageSize;
 
+// Drag and drop support.
+@property (nonatomic, readonly) BOOL hasRichlyEditableDragCaret;
+
 #if TARGET_OS_IPHONE
 - (DOMDocumentFragment *)_documentFragmentForText:(NSString *)text;
 // These have the side effect of adding subresources to our WebDataSource where appropriate.

@@ -193,8 +193,9 @@ static bool readPasteboardWebContentDataForType(PasteboardWebContentReader& read
     }
 
     if ([type isEqualToString:(NSString *)kUTTypeURL]) {
-        URL url = strategy.readURLFromPasteboard(itemIndex, kUTTypeURL, pasteboardName);
-        return !url.isNull() && reader.readURL(url, String());
+        String title;
+        URL url = strategy.readURLFromPasteboard(itemIndex, kUTTypeURL, pasteboardName, title);
+        return !url.isNull() && reader.readURL(url, title);
     }
 
     if (UTTypeConformsTo((CFStringRef)type, kUTTypeText)) {
@@ -328,7 +329,8 @@ String Pasteboard::readString(const String& type)
     NSString *cocoaValue = nil;
 
     if ([cocoaType isEqualToString:(NSString *)kUTTypeURL]) {
-        URL url = strategy.readURLFromPasteboard(0, kUTTypeURL, m_pasteboardName);
+        String title;
+        URL url = strategy.readURLFromPasteboard(0, kUTTypeURL, m_pasteboardName, title);
         if (!url.isNull())
             cocoaValue = [(NSURL *)url absoluteString];
     } else if ([cocoaType isEqualToString:(NSString *)kUTTypeText]) {

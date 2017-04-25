@@ -320,7 +320,7 @@ bool Editor::WebContentReader::readImage(Ref<SharedBuffer>&& buffer, const Strin
     return fragment;
 }
 
-bool Editor::WebContentReader::readURL(const URL& url, const String&)
+bool Editor::WebContentReader::readURL(const URL& url, const String& title)
 {
     if (url.isEmpty())
         return false;
@@ -348,7 +348,9 @@ bool Editor::WebContentReader::readURL(const URL& url, const String&)
     } else {
         auto anchor = HTMLAnchorElement::create(*frame.document());
         anchor->setAttributeWithoutSynchronization(HTMLNames::hrefAttr, url.string());
-        anchor->appendChild(frame.document()->createTextNode([[(NSURL *)url absoluteString] precomposedStringWithCanonicalMapping]));
+
+        String linkText = title.length() ? title : String([[(NSURL *)url absoluteString] precomposedStringWithCanonicalMapping]);
+        anchor->appendChild(frame.document()->createTextNode(linkText));
 
         auto newFragment = frame.document()->createDocumentFragment();
         newFragment->appendChild(anchor);

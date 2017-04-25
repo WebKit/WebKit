@@ -389,7 +389,7 @@ String PlatformPasteboard::readString(int index, const String& type)
     return String();
 }
 
-URL PlatformPasteboard::readURL(int index, const String& type)
+URL PlatformPasteboard::readURL(int index, const String& type, String& title)
 {
     NSIndexSet *indexSet = [NSIndexSet indexSetWithIndex:index];
 
@@ -402,6 +402,13 @@ URL PlatformPasteboard::readURL(int index, const String& type)
     ASSERT([value isKindOfClass:[NSURL class]]);
     if (![value isKindOfClass:[NSURL class]])
         return URL();
+
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
+    if ([value respondsToSelector:@selector(_title)])
+        title = [value _title];
+#else
+    UNUSED_PARAM(title);
+#endif
 
     return (NSURL *)value;
 }

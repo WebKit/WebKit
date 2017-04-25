@@ -249,10 +249,12 @@ bool DragController::performDragOperation(const DragData& dragData)
     if ((m_dragDestinationAction & DragDestinationActionEdit) && concludeEditDrag(dragData)) {
         m_client.didConcludeEditDrag();
         m_documentUnderMouse = nullptr;
+        clearDragCaret();
         return true;
     }
 
     m_documentUnderMouse = nullptr;
+    clearDragCaret();
 
     if (operationForLoad(dragData) == DragOperationNone)
         return false;
@@ -508,13 +510,10 @@ bool DragController::concludeEditDrag(const DragData& dragData)
         return fileInput->receiveDroppedFiles(dragData);
     }
 
-    if (!m_page.dragController().canProcessDrag(dragData)) {
-        clearDragCaret();
+    if (!m_page.dragController().canProcessDrag(dragData))
         return false;
-    }
 
     VisibleSelection dragCaret = m_page.dragCaretController().caretPosition();
-    clearDragCaret();
     RefPtr<Range> range = dragCaret.toNormalizedRange();
     RefPtr<Element> rootEditableElement = innerFrame->selection().selection().rootEditableElement();
 

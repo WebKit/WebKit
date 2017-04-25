@@ -3869,6 +3869,15 @@ void WebPage::advanceToNextMisspelling(bool startBeforeSelection)
 }
 #endif
 
+bool WebPage::hasRichlyEditableSelection() const
+{
+    auto& frame = m_page->focusController().focusedOrMainFrame();
+    if (m_page->dragCaretController().isContentRichlyEditable())
+        return true;
+
+    return frame.selection().selection().isContentRichlyEditable();
+}
+
 void WebPage::changeSpellingToWord(const String& word)
 {
     replaceSelectionWithText(&m_page->focusController().focusedOrMainFrame(), word);

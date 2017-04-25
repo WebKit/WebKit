@@ -97,7 +97,7 @@ public:
     void paintDragCaret(Frame*, GraphicsContext&, const LayoutPoint&, const LayoutRect& clipRect) const;
 
     bool isContentEditable() const { return m_position.rootEditableElement(); }
-    bool isContentRichlyEditable() const;
+    WEBCORE_EXPORT bool isContentRichlyEditable() const;
 
     bool hasCaret() const { return m_position.isNotNull(); }
     const VisiblePosition& caretPosition() { return m_position; }

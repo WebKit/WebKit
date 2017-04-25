@@ -599,6 +599,7 @@ public:
     
     void setForceAlwaysUserScalable(bool);
 #endif
+    bool hasRichlyEditableSelection() const;
 
     void setLayerTreeStateIsFrozen(bool);
     void markLayersVolatile(std::function<void ()> completionHandler = { });

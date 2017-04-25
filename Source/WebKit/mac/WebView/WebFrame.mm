@@ -2216,6 +2216,13 @@ static WebFrameLoadType toWebFrameLoadType(FrameLoadType frameLoadType)
         coreFrame->loader().setOpener(0);
 }
 
+- (BOOL)hasRichlyEditableDragCaret
+{
+    if (auto* page = core(self)->page())
+        return page->dragCaretController().isContentRichlyEditable();
+    return NO;
+}
+
 // Used by pagination code called from AppKit when a standalone web page is printed.
 - (NSArray *)_computePageRectsWithPrintScaleFactor:(float)printScaleFactor pageSize:(NSSize)pageSize
 {

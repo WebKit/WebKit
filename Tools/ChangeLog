@@ -1,3 +1,16 @@
+2017-04-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Support reading NSURL titles from the pasteboard when performing data interaction
+        https://bugs.webkit.org/show_bug.cgi?id=171156
+        <rdar://problem/31356937>
+
+        Reviewed by Tim Horton.
+
+        Adds a new unit test, DataInteractionTests.ExternalSourceTitledNSURL.
+
+        * TestWebKitAPI/Tests/ios/DataInteractionTests.mm:
+        (TestWebKitAPI::TEST):
+
 2017-04-24  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Respect fidelity order when reading web content from item providers

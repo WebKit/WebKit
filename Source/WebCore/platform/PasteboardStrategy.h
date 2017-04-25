@@ -50,7 +50,7 @@ public:
     virtual int getPasteboardItemsCount(const String& pasteboardName) = 0;
     virtual String readStringFromPasteboard(int index, const String& pasteboardType, const String& pasteboardName) = 0;
     virtual RefPtr<SharedBuffer> readBufferFromPasteboard(int index, const String& pasteboardType, const String& pasteboardName) = 0;
-    virtual URL readURLFromPasteboard(int index, const String& pasteboardType, const String& pasteboardName) = 0;
+    virtual URL readURLFromPasteboard(int index, const String& pasteboardType, const String& pasteboardName, String& title) = 0;
     virtual void getFilenamesForDataInteraction(Vector<String>& filenames, const String& pasteboardName) = 0;
     virtual void getTypesByFidelityForItemAtIndex(Vector<String>& types, uint64_t index, const String& pasteboardName) = 0;
 #endif // PLATFORM(IOS)

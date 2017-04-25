@@ -101,8 +101,7 @@ NSArray* WebEditorClient::readDataFromPasteboard(NSString*, int)
 
 bool WebEditorClient::hasRichlyEditableSelection()
 {
-    notImplemented();
-    return false;
+    return m_page->hasRichlyEditableSelection();
 }
 
 int WebEditorClient::getPasteboardItemsCount()

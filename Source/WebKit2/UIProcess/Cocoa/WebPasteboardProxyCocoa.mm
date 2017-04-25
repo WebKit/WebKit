@@ -170,9 +170,9 @@ void WebPasteboardProxy::readStringFromPasteboard(uint64_t index, const String& 
     value = PlatformPasteboard(pasteboardName).readString(index, pasteboardType);
 }
 
-void WebPasteboardProxy::readURLFromPasteboard(uint64_t index, const String& pasteboardType, const String& pasteboardName, String& url)
+void WebPasteboardProxy::readURLFromPasteboard(uint64_t index, const String& pasteboardType, const String& pasteboardName, String& url, String& title)
 {
-    url = PlatformPasteboard(pasteboardName).readURL(index, pasteboardType);
+    url = PlatformPasteboard(pasteboardName).readURL(index, pasteboardType, title);
 }
 
 void WebPasteboardProxy::readBufferFromPasteboard(uint64_t index, const String& pasteboardType, const String& pasteboardName, SharedMemory::Handle& handle, uint64_t& size)
