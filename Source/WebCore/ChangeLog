@@ -1,3 +1,15 @@
+2017-04-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Remove an unnecessary -respondsToSelector: check after r215724
+
+        Rubber-stamped by Tim Horton.
+
+        Addresses review feedback from <https://bugs.webkit.org/show_bug.cgi?id=171156>. -[NSURL _title]
+        will always for builds that need to access it.
+
+        * platform/ios/PlatformPasteboardIOS.mm:
+        (WebCore::PlatformPasteboard::readURL):
+
 2017-04-25  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (r215469): [ios-simulator-wk2] LayoutTest compositing/animation/animation-backing.html is a flaky failure

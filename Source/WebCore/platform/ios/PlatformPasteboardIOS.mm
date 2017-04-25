@@ -404,8 +404,7 @@ URL PlatformPasteboard::readURL(int index, const String& type, String& title)
         return URL();
 
 #if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
-    if ([value respondsToSelector:@selector(_title)])
-        title = [value _title];
+    title = [value _title];
 #else
     UNUSED_PARAM(title);
 #endif
