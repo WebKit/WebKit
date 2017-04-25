@@ -1,3 +1,14 @@
+2017-04-25  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add WebKitInspectorWindow to create inspector windows from local and remote inspector
+        https://bugs.webkit.org/show_bug.cgi?id=171261
+
+        Reviewed by Michael Catanzaro.
+
+        Remove WebInspectorProxyGtk.cpp and RemoteWebInspectorProxyGtk.cpp from POTFILES.in and add WebKitInspectorWindow.cpp.
+
+        * POTFILES.in:
+
 2017-04-25  Piotr Drąg  <piotrdrag@gmail.com>
 
         [GTK] Add po/Makevars

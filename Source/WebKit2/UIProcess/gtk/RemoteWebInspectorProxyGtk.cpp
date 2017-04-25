@@ -29,11 +29,9 @@
 #if ENABLE(REMOTE_INSPECTOR)
 
 #include "WebInspectorProxy.h"
+#include "WebKitInspectorWindow.h"
 #include "WebKitWebViewBasePrivate.h"
 #include "WebPageGroup.h"
-#include <glib/gi18n-lib.h>
-#include <gtk/gtk.h>
-#include <wtf/glib/GUniquePtr.h>
 
 namespace WebKit {
 
@@ -41,15 +39,7 @@ void RemoteWebInspectorProxy::updateWindowTitle(const CString& targetName)
 {
     if (!m_window)
         return;
-
-#if GTK_CHECK_VERSION(3, 10, 0)
-    GtkHeaderBar* headerBar = GTK_HEADER_BAR(gtk_window_get_titlebar(GTK_WINDOW(m_window)));
-    gtk_header_bar_set_title(headerBar, _("Web Inspector"));
-    gtk_header_bar_set_subtitle(headerBar, targetName.data());
-#else
-    GUniquePtr<gchar> title(g_strdup_printf("%s - %s", _("Web Inspector"), targetName.data()));
-    gtk_window_set_title(GTK_WINDOW(m_inspectorWindow), title.get());
-#endif
+    webkitInspectorWindowSetSubtitle(WEBKIT_INSPECTOR_WINDOW(m_window), !targetName.isNull() ? targetName.data() : nullptr);
 }
 
 static void inspectorViewDestroyed(RemoteWebInspectorProxy* inspectorProxy)
@@ -77,17 +67,7 @@ WebPageProxy* RemoteWebInspectorProxy::platformCreateFrontendPageAndWindow()
     g_signal_connect_swapped(m_webView, "destroy", G_CALLBACK(inspectorViewDestroyed), this);
     g_object_add_weak_pointer(G_OBJECT(m_webView), reinterpret_cast<void**>(&m_webView));
 
-    m_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-
-#if GTK_CHECK_VERSION(3, 10, 0)
-    GtkWidget* headerBar = gtk_header_bar_new();
-    gtk_header_bar_set_show_close_button(GTK_HEADER_BAR(headerBar), TRUE);
-    gtk_window_set_titlebar(GTK_WINDOW(m_window), headerBar);
-    gtk_widget_show(headerBar);
-#endif
-
-    gtk_window_set_default_size(GTK_WINDOW(m_window), WebInspectorProxy::initialWindowWidth, WebInspectorProxy::initialWindowHeight);
-
+    m_window = webkitInspectorWindowNew(nullptr);
     gtk_container_add(GTK_CONTAINER(m_window), m_webView);
     gtk_widget_show(m_webView);
 

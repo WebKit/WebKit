@@ -29,6 +29,7 @@
 #include "config.h"
 #include "WebInspectorProxy.h"
 
+#include "WebKitInspectorWindow.h"
 #include "WebKitWebViewBasePrivate.h"
 #include "WebPageGroup.h"
 #include "WebProcessPool.h"
@@ -36,9 +37,6 @@
 #include <WebCore/FileSystem.h>
 #include <WebCore/GtkUtilities.h>
 #include <WebCore/NotImplemented.h>
-#include <glib/gi18n-lib.h>
-#include <gtk/gtk.h>
-#include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
@@ -147,25 +145,17 @@ void WebInspectorProxy::createInspectorWindow()
     if (m_client.openWindow(this))
         return;
 
-    ASSERT(!m_inspectorWindow);
-    m_inspectorWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-
     GtkWidget* inspectedViewParent = gtk_widget_get_toplevel(inspectedPage()->viewWidget());
-    if (WebCore::widgetIsOnscreenToplevelWindow(inspectedViewParent))
-        gtk_window_set_transient_for(GTK_WINDOW(m_inspectorWindow), GTK_WINDOW(inspectedViewParent));
+    if (!WebCore::widgetIsOnscreenToplevelWindow(inspectedViewParent))
+        inspectedViewParent = nullptr;
 
-#if GTK_CHECK_VERSION(3, 10, 0)
-    m_headerBar = gtk_header_bar_new();
-    gtk_header_bar_set_show_close_button(GTK_HEADER_BAR(m_headerBar), TRUE);
-    gtk_window_set_titlebar(GTK_WINDOW(m_inspectorWindow), m_headerBar);
-    gtk_widget_show(m_headerBar);
-#endif
-
-    updateInspectorWindowTitle();
-    gtk_window_set_default_size(GTK_WINDOW(m_inspectorWindow), initialWindowWidth, initialWindowHeight);
-
+    ASSERT(!m_inspectorWindow);
+    m_inspectorWindow = webkitInspectorWindowNew(inspectedViewParent ? GTK_WINDOW(inspectedViewParent) : nullptr);
     gtk_container_add(GTK_CONTAINER(m_inspectorWindow), m_inspectorView);
     gtk_widget_show(m_inspectorView);
+
+    if (!m_inspectedURLString.isEmpty())
+        updateInspectorWindowTitle();
 
     g_object_add_weak_pointer(G_OBJECT(m_inspectorWindow), reinterpret_cast<void**>(&m_inspectorWindow));
     gtk_window_present(GTK_WINDOW(m_inspectorWindow));
@@ -174,18 +164,7 @@ void WebInspectorProxy::createInspectorWindow()
 void WebInspectorProxy::updateInspectorWindowTitle() const
 {
     ASSERT(m_inspectorWindow);
-    if (m_inspectedURLString.isEmpty()) {
-        gtk_window_set_title(GTK_WINDOW(m_inspectorWindow), _("Web Inspector"));
-        return;
-    }
-
-#if GTK_CHECK_VERSION(3, 10, 0)
-    gtk_header_bar_set_title(GTK_HEADER_BAR(m_headerBar), _("Web Inspector"));
-    gtk_header_bar_set_subtitle(GTK_HEADER_BAR(m_headerBar), m_inspectedURLString.utf8().data());
-#else
-    GUniquePtr<gchar> title(g_strdup_printf("%s - %s", _("Web Inspector"), m_inspectedURLString.utf8().data()));
-    gtk_window_set_title(GTK_WINDOW(m_inspectorWindow), title.get());
-#endif
+    webkitInspectorWindowSetSubtitle(WEBKIT_INSPECTOR_WINDOW(m_inspectorWindow), !m_inspectedURLString.isEmpty() ? m_inspectedURLString.utf8().data() : nullptr);
 }
 
 void WebInspectorProxy::platformOpen()

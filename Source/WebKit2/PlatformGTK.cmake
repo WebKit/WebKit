@@ -337,6 +337,7 @@ list(APPEND WebKit2_SOURCES
     UIProcess/gtk/WebFullScreenClientGtk.cpp
     UIProcess/gtk/WebInspectorClientGtk.cpp
     UIProcess/gtk/WebInspectorProxyGtk.cpp
+    UIProcess/gtk/WebKitInspectorWindow.cpp
     UIProcess/gtk/WebPageProxyGtk.cpp
     UIProcess/gtk/WebPasteboardProxyGtk.cpp
     UIProcess/gtk/WebPopupMenuProxyGtk.cpp
