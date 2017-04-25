@@ -113,6 +113,7 @@ public:
     bool isMultipart() const { return mimeType() == "multipart/x-mixed-replace"; }
 
     WEBCORE_EXPORT bool isAttachment() const;
+    WEBCORE_EXPORT bool isAttachmentWithFilename() const;
     WEBCORE_EXPORT String suggestedFilename() const;
     WEBCORE_EXPORT static String sanitizeSuggestedFilename(const String&);
 

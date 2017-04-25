@@ -1,3 +1,24 @@
+2017-04-25  Chris Dumez  <cdumez@apple.com>
+
+        Content-Disposition header filename is ignored when 'download' attribute is specified in HTML
+        https://bugs.webkit.org/show_bug.cgi?id=171239
+        <rdar://problem/31789855>
+
+        Reviewed by Alex Christensen.
+
+        Content-Disposition header filename is ignored when 'download' attribute is specified in HTML.
+        This is not as per HTML specification:
+        - https://html.spec.whatwg.org/#as-a-download (Step 2)
+
+        Content-Disposition header filename is supposed to override the value of the download attribute.
+
+        Firefox and Chrome follow the specification.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::findPendingDownloadLocation):
+        * UIProcess/Downloads/DownloadProxy.cpp:
+        (WebKit::DownloadProxy::didReceiveResponse):
+
 2017-04-25  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add WebKitInspectorWindow to create inspector windows from local and remote inspector

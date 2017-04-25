@@ -519,7 +519,12 @@ void NetworkProcess::findPendingDownloadLocation(NetworkDataTask& networkDataTas
     downloadProxyConnection()->send(Messages::DownloadProxy::DidReceiveResponse(response), destinationID);
 
     downloadManager().willDecidePendingDownloadDestination(networkDataTask, WTFMove(completionHandler));
-    String suggestedFilename = MIMETypeRegistry::appendFileExtensionIfNecessary(networkDataTask.suggestedFilename(), response.mimeType());
+
+    // As per https://html.spec.whatwg.org/#as-a-download (step 2), the filename from the Content-Disposition header
+    // should override the suggested filename from the download attribute.
+    String suggestedFilename = response.isAttachmentWithFilename() ? response.suggestedFilename() : networkDataTask.suggestedFilename();
+    suggestedFilename = MIMETypeRegistry::appendFileExtensionIfNecessary(suggestedFilename, response.mimeType());
+
     downloadProxyConnection()->send(Messages::DownloadProxy::DecideDestinationWithSuggestedFilenameAsync(networkDataTask.pendingDownloadID(), suggestedFilename), destinationID);
 }
 #endif

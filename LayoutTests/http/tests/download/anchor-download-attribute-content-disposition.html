@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script type='text/javascript'>
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.waitUntilDone();
+}
+</script>
+</head>
+<body>
+<p>Tests that the filename from the Content-Disposition header is used even if a download attribute is specified in HTML.</p>
+<p>The suggested filename above should be "PASS.txt" and the download should succeed.</p>
+<a id="download-url" href="resources/content-disposition-pass.php" download="FAIL.txt">Link with download attribute.</a>
+<script>
+function click(elmt)
+{
+    if (!window.eventSender) {
+        alert('Click the link to run the test.');
+        return;
+    }
+    eventSender.mouseMoveTo(elmt.offsetLeft + 5, elmt.offsetTop + 5);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+}
+
+function runTest()
+{
+    var link = document.getElementById("download-url");
+    click(link);
+}
+runTest();
+</script>
+</body>
+</html>
