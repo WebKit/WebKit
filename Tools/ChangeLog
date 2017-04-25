@@ -1,5 +1,13 @@
 2017-04-25  Zan Dobersek  <zdobersek@igalia.com>
 
+        Unreviewed follow-up to r215739 and r215740.
+
+        * gtk/jhbuild.modules: List the libgcrypt patch that has to be applied.
+        This (and r215740) was supposed to land in r215739, but I managed to
+        specify the previous version of the patch.
+
+2017-04-25  Zan Dobersek  <zdobersek@igalia.com>
+
         Unreviewed follow-up to r215739.
 
         * gtk/patches/libgcrypt-use-only-dev-urandom-for-testing.patch: Add the missing
