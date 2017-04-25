@@ -38,23 +38,23 @@
 // being local to the target being generated, and thus not subject to (e.g.) ELF
 // symbol interposition rules.
 
-#if OS(WINDOWS)
+#if USE(DECLSPEC_ATTRIBUTE)
 #define HAVE_INTERNAL_VISIBILITY 1
 #define WTF_INTERNAL
-#elif defined(__GNUC__) && !defined(__CC_ARM) && !defined(__ARMCC__)
+#elif USE(VISIBILITY_ATTRIBUTE)
 #define HAVE_INTERNAL_VISIBILITY 1
 #define WTF_INTERNAL __attribute__((visibility("hidden")))
 #else
 #define WTF_INTERNAL
 #endif
 
-#if OS(WINDOWS)
+#if USE(DECLSPEC_ATTRIBUTE)
 
 #define WTF_EXPORT_DECLARATION __declspec(dllexport)
 #define WTF_IMPORT_DECLARATION __declspec(dllimport)
 #define WTF_HIDDEN_DECLARATION
 
-#elif defined(__GNUC__) && !defined(__CC_ARM) && !defined(__ARMCC__)
+#elif USE(VISIBILITY_ATTRIBUTE)
 
 #define WTF_EXPORT_DECLARATION __attribute__((visibility("default")))
 #define WTF_IMPORT_DECLARATION WTF_EXPORT_DECLARATION
@@ -89,7 +89,7 @@
 
 #else // !USE(EXPORT_MACROS)
 
-#if OS(WINDOWS) && !COMPILER(GCC_OR_CLANG)
+#if USE(DECLSPEC_ATTRIBUTE)
 #if defined(BUILDING_WTF) || defined(STATICALLY_LINKED_WITH_WTF)
 #define WTF_EXPORTDATA __declspec(dllexport)
 #else

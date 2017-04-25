@@ -1,3 +1,12 @@
+2017-04-25  Don Olmstead  <don.olmstead@am.sony.com>
+
+        [Win] Use Clang's __has_declspec_attribute for export macros
+        https://bugs.webkit.org/show_bug.cgi?id=171240
+
+        Reviewed by Alex Christensen.
+
+        * runtime/JSExportMacros.h:
+
 2017-04-25  Saam Barati  <sbarati@apple.com>
 
         Unreviewed. Attempt armv7k build fix after r215720

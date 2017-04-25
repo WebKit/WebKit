@@ -50,6 +50,14 @@
 #define COMPILER_HAS_CLANG_FEATURE(x) 0
 #endif
 
+/* COMPILER_HAS_CLANG_DECLSPEC() - whether the compiler supports a Microsoft style __declspec attribute. */
+/* https://clang.llvm.org/docs/LanguageExtensions.html#has-declspec-attribute */
+#ifdef __has_declspec_attribute
+#define COMPILER_HAS_CLANG_DECLSPEC(x) __has_declspec_attribute(x)
+#else
+#define COMPILER_HAS_CLANG_DECLSPEC(x) 0
+#endif
+
 /* ==== COMPILER() - primary detection of the compiler being used to build the project, in alphabetical order ==== */
 
 /* COMPILER(CLANG) - Clang  */

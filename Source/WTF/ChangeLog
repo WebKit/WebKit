@@ -1,3 +1,14 @@
+2017-04-25  Don Olmstead  <don.olmstead@am.sony.com>
+
+        [Win] Use Clang's __has_declspec_attribute for export macros
+        https://bugs.webkit.org/show_bug.cgi?id=171240
+
+        Reviewed by Alex Christensen.
+
+        * wtf/Compiler.h:
+        * wtf/ExportMacros.h:
+        * wtf/Platform.h:
+
 2017-04-25  Keith Miller  <keith_miller@apple.com>
 
         Our signal handler shouldn't print when sigaction succeeds

@@ -434,6 +434,20 @@
 
 /* Operating environments */
 
+/* Export macro support. Detects the attributes available for shared library symbol export
+   decorations. */
+#if OS(WINDOWS) \
+    || (COMPILER_HAS_CLANG_DECLSPEC(dllimport) && COMPILER_HAS_CLANG_DECLSPEC(dllexport))
+#define USE_DECLSPEC_ATTRIBUTE 1
+#define USE_VISIBILITY_ATTRIBUTE 0
+#elif defined(__GNUC__) && !defined(__CC_ARM) && !defined(__ARMCC__)
+#define USE_DECLSPEC_ATTRIBUTE 0
+#define USE_VISIBILITY_ATTRIBUTE 1
+#else
+#define USE_DECLSPEC_ATTRIBUTE 0
+#define USE_VISIBILITY_ATTRIBUTE 0
+#endif
+
 /* Standard libraries */
 #if defined(HAVE_FEATURES_H) && HAVE_FEATURES_H
 /* If the included features.h is glibc's one, __GLIBC__ is defined. */
