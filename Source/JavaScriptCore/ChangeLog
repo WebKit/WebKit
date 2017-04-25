@@ -1,3 +1,22 @@
+2017-04-25  Zan Dobersek  <zdobersek@igalia.com>
+
+        [aarch64] moveConditionally32(), moveConditionallyTest32() should move from/to 64-bit registers
+        https://bugs.webkit.org/show_bug.cgi?id=170891
+
+        Reviewed by Saam Barati.
+
+        moveConditionally32() and moveConditionallyTest32() operations in
+        MacroAssemblerARM64 properly perform comparisons and tests on 32-bit
+        values, but end up performing the moves from and to 32-bit registers.
+
+        Move operations should instead be done on 64-bit registers, just like
+        on the X86_64 platform. This is achieved by specifying 64 as the data
+        size for the csel instructions.
+
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::moveConditionally32):
+        (JSC::MacroAssemblerARM64::moveConditionallyTest32):
+
 2017-04-24  Joseph Pecoraro  <pecoraro@apple.com>
 
         test262: test262/test/language/expressions/object/method-definition/early-errors-object-method-duplicate-parameters.js

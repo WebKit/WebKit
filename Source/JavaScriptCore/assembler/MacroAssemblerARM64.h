@@ -2233,13 +2233,13 @@ public:
     void moveConditionally32(RelationalCondition cond, RegisterID left, RegisterID right, RegisterID src, RegisterID dest)
     {
         m_assembler.cmp<32>(left, right);
-        m_assembler.csel<32>(dest, src, dest, ARM64Condition(cond));
+        m_assembler.csel<64>(dest, src, dest, ARM64Condition(cond));
     }
 
     void moveConditionally32(RelationalCondition cond, RegisterID left, RegisterID right, RegisterID thenCase, RegisterID elseCase, RegisterID dest)
     {
         m_assembler.cmp<32>(left, right);
-        m_assembler.csel<32>(dest, thenCase, elseCase, ARM64Condition(cond));
+        m_assembler.csel<64>(dest, thenCase, elseCase, ARM64Condition(cond));
     }
 
     void moveConditionally32(RelationalCondition cond, RegisterID left, TrustedImm32 right, RegisterID thenCase, RegisterID elseCase, RegisterID dest)
@@ -2297,19 +2297,19 @@ public:
     void moveConditionallyTest32(ResultCondition cond, RegisterID testReg, RegisterID mask, RegisterID src, RegisterID dest)
     {
         m_assembler.tst<32>(testReg, mask);
-        m_assembler.csel<32>(dest, src, dest, ARM64Condition(cond));
+        m_assembler.csel<64>(dest, src, dest, ARM64Condition(cond));
     }
 
     void moveConditionallyTest32(ResultCondition cond, RegisterID left, RegisterID right, RegisterID thenCase, RegisterID elseCase, RegisterID dest)
     {
         m_assembler.tst<32>(left, right);
-        m_assembler.csel<32>(dest, thenCase, elseCase, ARM64Condition(cond));
+        m_assembler.csel<64>(dest, thenCase, elseCase, ARM64Condition(cond));
     }
 
     void moveConditionallyTest32(ResultCondition cond, RegisterID left, TrustedImm32 right, RegisterID thenCase, RegisterID elseCase, RegisterID dest)
     {
         test32(left, right);
-        m_assembler.csel<32>(dest, thenCase, elseCase, ARM64Condition(cond));
+        m_assembler.csel<64>(dest, thenCase, elseCase, ARM64Condition(cond));
     }
 
     void moveConditionallyTest64(ResultCondition cond, RegisterID testReg, RegisterID mask, RegisterID src, RegisterID dest)
