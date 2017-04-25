@@ -1,3 +1,12 @@
+2017-04-25  Piotr Drąg  <piotrdrag@gmail.com>
+
+        [GTK] Add po/Makevars
+        https://bugs.webkit.org/show_bug.cgi?id=170012
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Makevars: Added so we can switch https://l10n.gnome.org/module/webkit/ from intltool to pure gettext and get WEB_UI_STRING* strings extracted.
+
 2017-04-24  Piotr Drąg  <piotrdrag@gmail.com>
 
         [GTK] Fix extraction of translator comments
