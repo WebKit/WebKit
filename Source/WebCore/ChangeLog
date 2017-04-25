@@ -1,3 +1,16 @@
+2017-04-25  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream macOS] Unable to apply frameRate constraint
+        https://bugs.webkit.org/show_bug.cgi?id=171279
+
+        Reviewed by Youenn Fablet.
+
+        No new tests, this doesn't affect the mock capture devices.
+
+        * platform/mediastream/mac/AVVideoCaptureSource.mm:
+        (WebCore::AVVideoCaptureSource::supportsSizeAndFrameRate): Cast frame rate
+        ranges to int before comparing.
+
 2017-04-25  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] Build fix after r215737

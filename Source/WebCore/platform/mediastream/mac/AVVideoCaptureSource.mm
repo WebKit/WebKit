@@ -525,9 +525,9 @@ bool AVVideoCaptureSource::supportsSizeAndFrameRate(std::optional<int> width, st
     if (!frameRate)
         return true;
 
-    double rate = frameRate.value();
+    int rate = static_cast<int>(frameRate.value());
     for (AVFrameRateRangeType *range in [[device() activeFormat] videoSupportedFrameRateRanges]) {
-        if (rate >= range.minFrameRate && rate <= range.maxFrameRate)
+        if (rate >= static_cast<int>(range.minFrameRate) && rate <= static_cast<int>(range.maxFrameRate))
             return true;
     }
 
