@@ -398,8 +398,11 @@ class PortTest(unittest.TestCase):
     def test_jhbuild_wrapper(self):
         port = self.make_port(port_name='foo')
         port.port_name = 'foo'
+        jhbuild_path = port.path_from_webkit_base('WebKitBuild', 'Dependencies%s' % port.port_name.upper())
+        self.assertFalse(port._filesystem.isdir(jhbuild_path))
         self.assertFalse(port._should_use_jhbuild())
-        port._filesystem.maybe_make_directory(port.path_from_webkit_base('WebKitBuild', 'Dependencies%s' % port.port_name.upper()))
+        port._filesystem.maybe_make_directory(jhbuild_path)
+        self.assertTrue(port._filesystem.isdir(jhbuild_path))
         self.assertTrue(port._should_use_jhbuild())
 
 class NaturalCompareTest(unittest.TestCase):

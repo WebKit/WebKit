@@ -1,5 +1,17 @@
 2017-04-25  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
+        [GTK] Improve an unit test for the JHBuild wrapper.
+        https://bugs.webkit.org/show_bug.cgi?id=168036
+
+        Unreviewed follow-up patch after r215727
+
+        * Scripts/webkitpy/port/base_unittest.py:
+        (test_jhbuild_wrapper): Improve the unit test by ensuring the directory
+        wasn't there before calling MockFileSystem.maybe_make_directory(), and
+        also that it exists after calling it.
+
+2017-04-25  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
         [GTK] ImageDiff should be run by jhbuild-wrapper in case of using jhbuild
         https://bugs.webkit.org/show_bug.cgi?id=168036
 
