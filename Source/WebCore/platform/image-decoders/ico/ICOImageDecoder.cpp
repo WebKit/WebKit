@@ -216,9 +216,7 @@ bool ICOImageDecoder::decodeAtIndex(size_t index)
     }
 
     if (!m_pngDecoders[index]) {
-        m_pngDecoders[index] = std::make_unique<
-            PNGImageDecoder>(m_premultiplyAlpha ? AlphaOption::Premultiplied : AlphaOption::NotPremultiplied,
-                m_ignoreGammaAndColorProfile ? GammaAndColorProfileOption::Ignored : GammaAndColorProfileOption::Applied);
+        m_pngDecoders[index] = PNGImageDecoder::create(m_premultiplyAlpha ? AlphaOption::Premultiplied : AlphaOption::NotPremultiplied, m_ignoreGammaAndColorProfile ? GammaAndColorProfileOption::Ignored : GammaAndColorProfileOption::Applied);
         setDataForPNGDecoderAtIndex(index);
     }
     // Fail if the size the PNGImageDecoder calculated does not match the size

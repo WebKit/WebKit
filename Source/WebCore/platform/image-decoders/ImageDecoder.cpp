@@ -107,24 +107,24 @@ RefPtr<ImageDecoder> ImageDecoder::create(const SharedBuffer& data, const URL&, 
         return nullptr;
 
     if (matchesGIFSignature(contents))
-        return adoptRef(*new GIFImageDecoder(alphaOption, gammaAndColorProfileOption));
+        return GIFImageDecoder::create(alphaOption, gammaAndColorProfileOption);
 
     if (matchesPNGSignature(contents))
-        return adoptRef(*new PNGImageDecoder(alphaOption, gammaAndColorProfileOption));
+        return PNGImageDecoder::create(alphaOption, gammaAndColorProfileOption);
 
     if (matchesICOSignature(contents) || matchesCURSignature(contents))
-        return adoptRef(*new ICOImageDecoder(alphaOption, gammaAndColorProfileOption));
+        return ICOImageDecoder::create(alphaOption, gammaAndColorProfileOption);
 
     if (matchesJPEGSignature(contents))
-        return adoptRef(*new JPEGImageDecoder(alphaOption, gammaAndColorProfileOption));
+        return JPEGImageDecoder::create(alphaOption, gammaAndColorProfileOption);
 
 #if USE(WEBP)
     if (matchesWebPSignature(contents))
-        return adoptRef(*new WEBPImageDecoder(alphaOption, gammaAndColorProfileOption));
+        return WEBPImageDecoder::create(alphaOption, gammaAndColorProfileOption);
 #endif
 
     if (matchesBMPSignature(contents))
-        return adoptRef(*new BMPImageDecoder(alphaOption, gammaAndColorProfileOption));
+        return BMPImageDecoder::create(alphaOption, gammaAndColorProfileOption);
 
     return nullptr;
 }

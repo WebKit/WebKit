@@ -37,7 +37,10 @@ namespace WebCore {
     // This class decodes the BMP image format.
     class BMPImageDecoder final : public ImageDecoder {
     public:
-        BMPImageDecoder(AlphaOption, GammaAndColorProfileOption);
+        static Ref<ImageDecoder> create(AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
+        {
+            return adoptRef(*new BMPImageDecoder(alphaOption, gammaAndColorProfileOption));
+        }
 
         // ImageDecoder
         String filenameExtension() const override { return ASCIILiteral("bmp"); }
@@ -50,6 +53,8 @@ namespace WebCore {
         bool setFailed() override;
 
     private:
+        BMPImageDecoder(AlphaOption, GammaAndColorProfileOption);
+
         inline uint32_t readUint32(int offset) const
         {
             return BMPImageReader::readUint32(m_data.get(), m_decodedOffset + offset);

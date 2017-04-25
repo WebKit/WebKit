@@ -1,3 +1,27 @@
+2017-04-25  Miguel Gomez  <magomez@igalia.com>
+
+        Image decoders must have private constructors to avoid refcount misuse: ASSERTION FAILED: m_deletionHasBegun when destroying ImageDecoder
+        https://bugs.webkit.org/show_bug.cgi?id=171211
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add a create method to each of the decoders and set their constructors as private. Change
+        ICOImageDecoder to store its internal PNG decoders as RefPtr and use the new create method, and
+        change ImageDecoder to use the create methods as well.
+
+        Covered by existent tests.
+
+        * platform/image-decoders/ImageDecoder.cpp:
+        (WebCore::ImageDecoder::create):
+        * platform/image-decoders/bmp/BMPImageDecoder.h:
+        * platform/image-decoders/gif/GIFImageDecoder.h:
+        * platform/image-decoders/ico/ICOImageDecoder.cpp:
+        (WebCore::ICOImageDecoder::decodeAtIndex):
+        * platform/image-decoders/ico/ICOImageDecoder.h:
+        * platform/image-decoders/jpeg/JPEGImageDecoder.h:
+        * platform/image-decoders/png/PNGImageDecoder.h:
+        * platform/image-decoders/webp/WEBPImageDecoder.h:
+
 2017-04-25  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Build fix

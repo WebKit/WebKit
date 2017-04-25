@@ -33,13 +33,14 @@
 #include "BMPImageReader.h"
 
 namespace WebCore {
-
-    class PNGImageDecoder;
-
     // This class decodes the ICO and CUR image formats.
     class ICOImageDecoder final : public ImageDecoder {
     public:
-        ICOImageDecoder(AlphaOption, GammaAndColorProfileOption);
+        static Ref<ImageDecoder> create(AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
+        {
+            return adoptRef(*new ICOImageDecoder(alphaOption, gammaAndColorProfileOption));
+        }
+
         virtual ~ICOImageDecoder();
 
         // ImageDecoder
@@ -75,6 +76,8 @@ namespace WebCore {
             IntPoint m_hotSpot;
             uint32_t m_imageOffset;
         };
+
+        ICOImageDecoder(AlphaOption, GammaAndColorProfileOption);
 
         // Returns true if |a| is a preferable icon entry to |b|.
         // Larger sizes, or greater bitdepths at the same size, are preferable.
@@ -141,7 +144,7 @@ namespace WebCore {
         // The image decoders for the various frames.
         typedef Vector<std::unique_ptr<BMPImageReader>> BMPReaders;
         BMPReaders m_bmpReaders;
-        typedef Vector<std::unique_ptr<PNGImageDecoder>> PNGDecoders;
+        typedef Vector<RefPtr<ImageDecoder>> PNGDecoders;
         PNGDecoders m_pngDecoders;
 
         // Valid only while a BMPImageReader is decoding, this holds the size

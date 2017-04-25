@@ -37,7 +37,11 @@ namespace WebCore {
     // This class decodes the PNG image format.
     class PNGImageDecoder final : public ImageDecoder {
     public:
-        PNGImageDecoder(AlphaOption, GammaAndColorProfileOption);
+        static Ref<ImageDecoder> create(AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
+        {
+            return adoptRef(*new PNGImageDecoder(alphaOption, gammaAndColorProfileOption));
+        }
+
         virtual ~PNGImageDecoder();
 
         // ImageDecoder
@@ -85,6 +89,8 @@ namespace WebCore {
         }
 
     private:
+        PNGImageDecoder(AlphaOption, GammaAndColorProfileOption);
+
         // Decodes the image.  If |onlySize| is true, stops decoding after
         // calculating the image size.  If decoding fails but there is no more
         // data coming, sets the "decode failure" flag.

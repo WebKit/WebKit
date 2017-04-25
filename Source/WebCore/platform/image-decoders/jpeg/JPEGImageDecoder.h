@@ -43,7 +43,11 @@ namespace WebCore {
     // This class decodes the JPEG image format.
     class JPEGImageDecoder final : public ImageDecoder {
     public:
-        JPEGImageDecoder(AlphaOption, GammaAndColorProfileOption);
+        static Ref<ImageDecoder> create(AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
+        {
+            return adoptRef(*new JPEGImageDecoder(alphaOption, gammaAndColorProfileOption));
+        }
+
         virtual ~JPEGImageDecoder();
 
         // ImageDecoder
@@ -68,6 +72,8 @@ namespace WebCore {
         void setOrientation(ImageOrientation orientation) { m_orientation = orientation; }
 
     private:
+        JPEGImageDecoder(AlphaOption, GammaAndColorProfileOption);
+
         // Decodes the image.  If |onlySize| is true, stops decoding after
         // calculating the image size.  If decoding fails but there is no more
         // data coming, sets the "decode failure" flag.
