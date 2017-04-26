@@ -17,6 +17,14 @@ body {
     grid-template-columns: 100px 25%;
     grid-template-rows: 50% 150px;
 }
+
+.definiteGridWithPercentageGaps {
+    grid-template: 5px 5px / auto;
+    grid-row-gap: 80%;
+    grid-column-gap: 20%;
+    height: 200px;
+    width: 100px;
+}
 </style>
 <script src="../../resources/check-layout.js"></script>
 <body onload="checkLayout('.grid')">
@@ -61,4 +69,10 @@ body {
         <div class="secondRowSecondColumn horizontalTB" data-offset-x="0" data-offset-y="100" data-expected-width="150" data-expected-height="20">X X X X X X X X X X X X</div>
     </div>
 </div>
+
+<p>HORIZONTAL-TB container with VERTICAL-LR item with percentage gaps.</p>
+<div class="grid definiteGridWithPercentageGaps contentStart" data-expected-width="100" data-expected-height="200">
+    <div class="bothRowFirstColumn verticalLR" style="background: cyan;" data-expected-width="10" data-expected-height="170">XXXX XXXXX</div>
+</div>
+
 </body>

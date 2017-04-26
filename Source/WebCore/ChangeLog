@@ -1,3 +1,60 @@
+2017-04-24  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-grid] Remove most of the usage of SizingOperation
+        https://bugs.webkit.org/show_bug.cgi?id=171225
+
+        Reviewed by Darin Adler.
+
+        SizingOperation was added as a way to modify the behaviour of the track sizing algorithm
+        with the specifics for intrinsic size computations. The problem is that although intrinsic
+        size computation does imply indefinite sizes, the opposite is not always true. For example,
+        a grid container with height:auto would compute the row sizes with an indefinite size but is
+        not part of the intrinsic size (preferred widths) computation.
+
+        That's why it was wrongly used in some parts of the current code, in most of the cases is
+        more than enough to check whether the available space is indefinite or not. In order to do
+        that we have to keep both available sizes (height & width) around all the time to properly
+        support orthogonal flows.
+
+        This change does not imply any change in behaviour.
+
+        * rendering/GridTrackSizingAlgorithm.cpp:
+        (WebCore::GridTrackSizingAlgorithm::setAvailableSpace):
+        (WebCore::GridTrackSizingAlgorithm::computeTrackBasedSize):
+        (WebCore::GridTrackSizingAlgorithm::initialBaseSize):
+        (WebCore::GridTrackSizingAlgorithm::initialGrowthLimit):
+        (WebCore::GridTrackSizingAlgorithm::sizeTrackToFitNonSpanningItem):
+        (WebCore::GridTrackSizingAlgorithm::increaseSizesToAccommodateSpanningItems):
+        (WebCore::GridTrackSizingAlgorithm::assumedRowsSizeForOrthogonalChild):
+        (WebCore::GridTrackSizingAlgorithm::gridAreaBreadthForChild):
+        (WebCore::GridTrackSizingAlgorithm::gridTrackSize):
+        (WebCore::IndefiniteSizeStrategy::findUsedFlexFraction):
+        (WebCore::IndefiniteSizeStrategy::recomputeUsedFlexFractionIfNeeded):
+        (WebCore::GridTrackSizingAlgorithm::initializeTrackSizes):
+        (WebCore::GridTrackSizingAlgorithm::setup):
+        (WebCore::GridTrackSizingAlgorithm::reset):
+        * rendering/GridTrackSizingAlgorithm.h:
+        (WebCore::GridTrackSizingAlgorithmStrategy::availableSpace):
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::availableSpaceForGutters):
+        (WebCore::RenderGrid::computeTrackBasedLogicalHeight):
+        (WebCore::RenderGrid::computeTrackSizesForDefiniteSize):
+        (WebCore::RenderGrid::layoutBlock):
+        (WebCore::RenderGrid::gridGap):
+        (WebCore::RenderGrid::guttersSize):
+        (WebCore::RenderGrid::computeIntrinsicLogicalWidths):
+        (WebCore::RenderGrid::computeTrackSizesForIndefiniteSize):
+        (WebCore::RenderGrid::computeAutoRepeatTracksCount):
+        (WebCore::RenderGrid::placeItemsOnGrid):
+        (WebCore::RenderGrid::trackSizesForComputedStyle):
+        (WebCore::RenderGrid::applyStretchAlignmentToTracksIfNeeded):
+        (WebCore::RenderGrid::offsetAndBreadthForPositionedChild):
+        (WebCore::RenderGrid::populateGridPositionsForDirection):
+        (WebCore::RenderGrid::columnAxisOffsetForChild):
+        (WebCore::RenderGrid::rowAxisOffsetForChild):
+        (WebCore::RenderGrid::gridGapForDirection): Deleted.
+        * rendering/RenderGrid.h:
+
 2017-04-26  Frederic Wang  <fwang@igalia.com>
 
         Remove Document::*FrameElementsShouldIgnoreScrolling

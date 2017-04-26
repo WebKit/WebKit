@@ -28,3 +28,7 @@ X X X X X X
 X X X X X X
 X X X X X X X X X X X X
 PASS
+HORIZONTAL-TB container with VERTICAL-LR item with percentage gaps.
+
+XXXX XXXXX
+PASS

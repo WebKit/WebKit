@@ -62,7 +62,7 @@ public:
 
     // Required by GridTrackSizingAlgorithm. Keep them under control.
     bool isOrthogonalChild(const RenderBox&) const;
-    LayoutUnit guttersSize(const Grid&, GridTrackSizingDirection, unsigned startLine, unsigned span, SizingOperation) const;
+    LayoutUnit guttersSize(const Grid&, GridTrackSizingDirection, unsigned startLine, unsigned span, std::optional<LayoutUnit> availableSize) const;
 
 protected:
     ItemPosition selfAlignmentNormalBehavior(const RenderBox* child = nullptr) const override
@@ -79,18 +79,20 @@ private:
     void addChild(RenderObject* newChild, RenderObject* beforeChild) final;
     void removeChild(RenderObject&) final;
 
+    std::optional<LayoutUnit> availableSpaceForGutters(GridTrackSizingDirection) const;
+
     bool explicitGridDidResize(const RenderStyle&) const;
     bool namedGridLinesDefinitionDidChange(const RenderStyle&) const;
 
     std::optional<LayoutUnit> computeIntrinsicLogicalContentHeightUsing(Length logicalHeightLength, std::optional<LayoutUnit> intrinsicContentHeight, LayoutUnit borderAndPadding) const override;
 
-    unsigned computeAutoRepeatTracksCount(GridTrackSizingDirection, SizingOperation) const;
+    unsigned computeAutoRepeatTracksCount(GridTrackSizingDirection, std::optional<LayoutUnit> availableSize) const;
 
     unsigned clampAutoRepeatTracks(GridTrackSizingDirection, unsigned autoRepeatTracks) const;
 
     std::unique_ptr<OrderedTrackIndexSet> computeEmptyTracksForAutoRepeat(Grid&, GridTrackSizingDirection) const;
 
-    void placeItemsOnGrid(Grid&, SizingOperation) const;
+    void placeItemsOnGrid(Grid&, std::optional<LayoutUnit> availableSpaceForColumns) const;
     void populateExplicitGridAndOrderIterator(Grid&) const;
     std::unique_ptr<GridArea> createEmptyGridAreaAtSpecifiedPositionsOutsideGrid(Grid&, const RenderBox&, GridTrackSizingDirection, const GridSpan&) const;
     void placeSpecifiedMajorAxisItemsOnGrid(Grid&, const Vector<RenderBox*>&) const;
@@ -149,7 +151,8 @@ private:
     std::optional<int> inlineBlockBaseline(LineDirectionMode) const final;
     bool isInlineBaselineAlignedChild(const RenderBox&) const;
 
-    LayoutUnit gridGapForDirection(GridTrackSizingDirection, SizingOperation) const;
+    LayoutUnit gridGap(GridTrackSizingDirection) const;
+    LayoutUnit gridGap(GridTrackSizingDirection, std::optional<LayoutUnit> availableSize) const;
 
     unsigned numTracks(GridTrackSizingDirection, const Grid&) const;
 

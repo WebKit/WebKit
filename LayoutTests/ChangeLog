@@ -1,3 +1,15 @@
+2017-04-24  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-grid] Remove most of the usage of SizingOperation
+        https://bugs.webkit.org/show_bug.cgi?id=171225
+
+        Reviewed by Darin Adler.
+
+        Added a new test case which was working correctly but that was not properly tested before.
+
+        * fast/css-grid-layout/grid-track-sizing-with-percentages-and-orthogonal-flows-expected.txt:
+        * fast/css-grid-layout/grid-track-sizing-with-percentages-and-orthogonal-flows.html:
+
 2017-04-25  Joseph Pecoraro  <pecoraro@apple.com>
 
         [mac-wk1 Debug] LayoutTest http/tests/inspector/network/resource-sizes-network.html is a flaky failure
