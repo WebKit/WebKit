@@ -1,3 +1,24 @@
+2017-04-26  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Teardown iOS Simulators on exit if managed Simulators are still running
+        https://bugs.webkit.org/show_bug.cgi?id=171293
+
+        Reviewed by Aakash Jain.
+
+        We should make an effort to teardown simulators which we booted even when an exception is
+        thrown while booting. Make some IOSSimulatorPort functions into static methods and register
+        one of these functions to be run at exit to ensure any devices webkitpy is managing gets
+        torn down.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager._set_up_run): Rely on exit handlers to teardown, not exceptions.
+        * Scripts/webkitpy/port/ios_simulator.py:
+        (IOSSimulatorPort._teardown_managed_simulators): Function run on exit which will kill all
+        iOS simulators and teardown and managed devices.
+        (IOSSimulatorPort._create_simulators): Register teardown function.
+        (IOSSimulatorPort.clean_up_test_run): Move device teardown to _teardown_managed_simulators.
+        (IOSSimulatorPort._remove_device): Deleted.
+
 2017-04-26  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [ATK] Implement support for new ARIA 1.1 values of aria-haspopup

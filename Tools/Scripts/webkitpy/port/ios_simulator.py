@@ -20,6 +20,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import atexit
 import logging
 import os
 import re
@@ -180,6 +181,35 @@ class IOSSimulatorPort(IOSPort):
     def _set_device_class(self, device_class):
         self._device_class = device_class if device_class else self.DEFAULT_DEVICE_CLASS
 
+    # This function may be called more than once.
+    def _teardown_managed_simulators(self):
+        if not self._using_dedicated_simulators():
+            return
+        self._quit_ios_simulator()
+
+        for i in xrange(len(Simulator.managed_devices)):
+            simulator_path = self.get_simulator_path(i)
+            device_udid = Simulator.managed_devices[i].udid
+            Simulator.remove_device(i)
+
+            if not os.path.exists(simulator_path):
+                continue
+            try:
+                self._executive.run_command([IOSSimulatorPort.LSREGISTER_PATH, "-u", simulator_path])
+
+                _log.debug('rmtree %s', simulator_path)
+                self._filesystem.rmtree(simulator_path)
+
+                logs_path = self._filesystem.join(self._filesystem.expanduser("~"), "Library/Logs/CoreSimulator/", device_udid)
+                _log.debug('rmtree %s', logs_path)
+                self._filesystem.rmtree(logs_path)
+
+                saved_state_path = self._filesystem.join(self._filesystem.expanduser("~"), "Library/Saved Application State/", IOSSimulatorPort.SIMULATOR_BUNDLE_ID + str(i) + ".savedState")
+                _log.debug('rmtree %s', saved_state_path)
+                self._filesystem.rmtree(saved_state_path)
+            except:
+                _log.warning('Unable to remove Simulator' + str(i))
+
     def _create_simulators(self):
         if (self.default_child_processes() < self.child_processes()):
             _log.warn('You have specified very high value({0}) for --child-processes'.format(self.child_processes()))
@@ -187,6 +217,7 @@ class IOSSimulatorPort(IOSPort):
             _log.warn('This is very likely to fail.')
 
         if self._using_dedicated_simulators():
+            atexit.register(lambda: self._teardown_managed_simulators())
             self._createSimulatorApps()
 
             for i in xrange(self.child_processes()):
@@ -245,7 +276,6 @@ class IOSSimulatorPort(IOSPort):
     def clean_up_test_run(self):
         super(IOSSimulatorPort, self).clean_up_test_run()
         _log.debug("clean_up_test_run")
-        self._quit_ios_simulator()
         fifos = [path for path in os.listdir('/tmp') if re.search('org.webkit.(DumpRenderTree|WebKitTestRunner).*_(IN|OUT|ERROR)', path)]
         for fifo in fifos:
             try:
@@ -257,29 +287,7 @@ class IOSSimulatorPort(IOSPort):
         if not self._using_dedicated_simulators():
             return
 
-        for i in xrange(self.child_processes()):
-            simulator_path = self.get_simulator_path(i)
-            device_udid = self._testing_device(i).udid
-            self._remove_device(i)
-
-            if not os.path.exists(simulator_path):
-                continue
-            try:
-                self._executive.run_command([self.LSREGISTER_PATH, "-u", simulator_path])
-
-                _log.debug('rmtree %s', simulator_path)
-                self._filesystem.rmtree(simulator_path)
-
-                logs_path = self._filesystem.join(self._filesystem.expanduser("~"), "Library/Logs/CoreSimulator/", device_udid)
-                _log.debug('rmtree %s', logs_path)
-                self._filesystem.rmtree(logs_path)
-
-                saved_state_path = self._filesystem.join(self._filesystem.expanduser("~"), "Library/Saved Application State/", self.SIMULATOR_BUNDLE_ID + str(i) + ".savedState")
-                _log.debug('rmtree %s', saved_state_path)
-                self._filesystem.rmtree(saved_state_path)
-
-            except:
-                _log.warning('Unable to remove Simulator' + str(i))
+        self._teardown_managed_simulators()
         IOSSimulatorPort._DEVICE_MAP = {}
 
     def setup_environ_for_server(self, server_name=None):
@@ -316,9 +324,6 @@ class IOSSimulatorPort(IOSPort):
 
     def _create_device(self, number):
         return Simulator.create_device(number, self.simulator_device_type(), self.simulator_runtime)
-
-    def _remove_device(self, number):
-        Simulator.remove_device(number)
 
     def get_simulator_path(self, suffix=""):
         return os.path.join(self.SIMULATOR_DIRECTORY, "Simulator" + str(suffix) + ".app")

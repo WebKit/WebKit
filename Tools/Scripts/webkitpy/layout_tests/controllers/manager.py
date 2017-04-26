@@ -188,11 +188,7 @@ class Manager(object):
         # Create the output directory if it doesn't already exist.
         self._port.host.filesystem.maybe_make_directory(self._results_directory)
 
-        try:
-            self._port.setup_test_run(self._options.device_class)
-        except:
-            self._port.clean_up_test_run()
-            raise
+        self._port.setup_test_run(self._options.device_class)
         return True
 
     def run(self, args):
