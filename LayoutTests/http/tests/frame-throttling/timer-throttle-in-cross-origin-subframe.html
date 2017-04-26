@@ -27,9 +27,9 @@
 
     function interactWithSubframes()
     {
-        UIHelper.activateAt(crossOriginFrame.offsetLeft + 5, crossOriginFrame.offsetTop + 5).then(function() {
+        UIHelper.activateAt(crossOriginFrame.offsetLeft + 20, crossOriginFrame.offsetTop + 20).then(function() {
             debug("Interacted with cross-origin frame");
-            UIHelper.activateAt(sameOriginFrame.offsetLeft + 5, sameOriginFrame.offsetTop + 5).then(function() {
+            UIHelper.activateAt(sameOriginFrame.offsetLeft + 20, sameOriginFrame.offsetTop + 20).then(function() {
                 debug("Interacted with same-origin frame");
                 messageHandler = checkUnthrottledAfterInteraction;
                 messagesReceived = 0;

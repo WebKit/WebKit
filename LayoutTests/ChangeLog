@@ -1,3 +1,24 @@
+2017-04-26  Simon Fraser  <simon.fraser@apple.com>
+
+        http/tests/frame-throttling tests failing on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=171314
+        rdar://problem/31691134
+
+        Reviewed by Chris Dumez.
+
+        The tests use UIHelper.activateAt(), which in DumpRenderTree dispatches mouse events via EventSender, and in iOS WK2 uses
+        UIScriptController to dispatch touch events. The former just use standard hit testing, which works fine.
+        The latter go via Frame::qualifyingNodeAtViewportLocation(), which calls ancestorRespondingToClickEvents()
+        and does area hit testing, and this fails to find anything clickable inside the <iframe>s.
+
+        Fix by putting a div with an onlick handler inside the iframes, and adjusting the click
+        locations.
+
+        * http/tests/frame-throttling/raf-throttle-in-cross-origin-subframe.html:
+        * http/tests/frame-throttling/resources/requestAnimationFrame-frame.html:
+        * http/tests/frame-throttling/resources/timer-throttling-frame.html:
+        * http/tests/frame-throttling/timer-throttle-in-cross-origin-subframe.html:
+
 2017-04-26  Matt Lewis  <jlewis3@apple.com>
 
         Removing Flaky timeout expectation for swipe/main-frame-pinning-requirement.html.
