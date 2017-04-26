@@ -81,13 +81,10 @@ public:
     template<typename Functor>
     void consumeAll(const Functor& func)
     {
-        Node* node = m_head.exchange(nullptr);
-        while (node) {
-            func(WTFMove(node->data));
-            Node* oldNode = node;
-            node = node->next;
-            delete oldNode;
-        }
+        consumeAllWithNode([&] (T&& data, Node* node) {
+            func(WTFMove(data));
+            delete node;
+        });
     }
 
     template<typename Functor>
@@ -99,6 +96,11 @@ public:
             node = node->next;
             func(WTFMove(oldNode->data), oldNode);
         }
+    }
+
+    ~LocklessBag()
+    {
+        consumeAll([] (T&&) { });
     }
 
 private:

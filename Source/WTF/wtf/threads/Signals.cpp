@@ -34,10 +34,11 @@
 #include <wtf/Atomics.h>
 #include <wtf/DataLog.h>
 #include <wtf/LocklessBag.h>
+#include <wtf/NeverDestroyed.h>
 
 namespace WTF {
 
-static LocklessBag<SignalHandler> handlers[static_cast<size_t>(Signal::NumberOfSignals)] = { };
+static LazyNeverDestroyed<LocklessBag<SignalHandler>> handlers[static_cast<size_t>(Signal::NumberOfSignals)] = { };
 static struct sigaction oldActions[static_cast<size_t>(Signal::NumberOfSignals)];
 static std::once_flag initializeOnceFlags[static_cast<size_t>(Signal::NumberOfSignals)];
 
@@ -63,7 +64,7 @@ static void jscSignalHandler(int sig, siginfo_t* info, void* mcontext)
 
     bool didHandle = false;
     bool restoreDefaultHandler = false;
-    handlers[static_cast<size_t>(signal)].iterate([&] (const SignalHandler& handler) {
+    handlers[static_cast<size_t>(signal)]->iterate([&] (const SignalHandler& handler) {
         switch (handler(sig, info, mcontext)) {
         case SignalAction::Handled:
             didHandle = true;
@@ -102,9 +103,9 @@ static void jscSignalHandler(int sig, siginfo_t* info, void* mcontext)
 void installSignalHandler(Signal signal, SignalHandler&& handler)
 {
     ASSERT(signal < Signal::Unknown);
-    handlers[static_cast<size_t>(signal)].add(WTFMove(handler));
-
     std::call_once(initializeOnceFlags[static_cast<size_t>(signal)], [&] {
+        handlers[static_cast<size_t>(signal)].construct();
+
         struct sigaction action;
         action.sa_sigaction = jscSignalHandler;
         auto result = sigfillset(&action.sa_mask);
@@ -113,6 +114,8 @@ void installSignalHandler(Signal signal, SignalHandler&& handler)
         result = sigaction(toSystemSignal(signal), &action, &oldActions[static_cast<size_t>(signal)]);
         RELEASE_ASSERT(!result);
     });
+
+    handlers[static_cast<size_t>(signal)]->add(WTFMove(handler));
 }
 
 } // namespace WTF

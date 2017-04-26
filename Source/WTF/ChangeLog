@@ -1,3 +1,20 @@
+2017-04-26  Keith Miller  <keith_miller@apple.com>
+
+        LocklessBag needs a destructor
+        https://bugs.webkit.org/show_bug.cgi?id=171334
+
+        Reviewed by Mark Lam.
+
+        Currently, if the bag is destructed any remaining nodes in the bag will
+        be leaked.
+
+        * wtf/LocklessBag.h:
+        (WTF::LocklessBag::consumeAll):
+        (WTF::LocklessBag::~LocklessBag):
+        * wtf/threads/Signals.cpp:
+        (WTF::jscSignalHandler):
+        (WTF::installSignalHandler):
+
 2017-04-26  Don Olmstead  <don.olmstead@am.sony.com>
 
         [ARM] Enable GCC visibility
