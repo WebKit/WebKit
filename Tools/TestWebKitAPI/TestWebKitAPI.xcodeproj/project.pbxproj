@@ -196,6 +196,7 @@
 		5C2936961D5C00ED00DEAB1E /* CookieMessage.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 5C2936941D5BFD1900DEAB1E /* CookieMessage.html */; };
 		5C6E65441D5CEFD400F7862E /* URLParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C6E65411D5CEF8500F7862E /* URLParser.cpp */; };
 		5C726D6F1D3EE06E00C5E1A1 /* InstanceMethodSwizzler.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C726D6E1D3EE06800C5E1A1 /* InstanceMethodSwizzler.mm */; };
+		5C7964101EB0278D0075D74C /* EventModifiers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C79640F1EB0269B0075D74C /* EventModifiers.cpp */; };
 		5C838F7F1DB04F900082858F /* LoadInvalidURLRequest.mm in Sources */ = {isa = PBXBuildFile; fileRef = 57901FAE1CAF137100ED64F9 /* LoadInvalidURLRequest.mm */; };
 		5C9E56851DF9145400C9EE33 /* WebsitePolicies.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C9E56841DF9143D00C9EE33 /* WebsitePolicies.mm */; };
 		5C9E56871DF914AE00C9EE33 /* contentBlockerCheck.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 5C9E56861DF9148E00C9EE33 /* contentBlockerCheck.html */; };
@@ -1145,6 +1146,7 @@
 		5C6E65411D5CEF8500F7862E /* URLParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = URLParser.cpp; sourceTree = "<group>"; };
 		5C726D6D1D3EE06800C5E1A1 /* InstanceMethodSwizzler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InstanceMethodSwizzler.h; path = cocoa/InstanceMethodSwizzler.h; sourceTree = "<group>"; };
 		5C726D6E1D3EE06800C5E1A1 /* InstanceMethodSwizzler.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = InstanceMethodSwizzler.mm; path = cocoa/InstanceMethodSwizzler.mm; sourceTree = "<group>"; };
+		5C79640F1EB0269B0075D74C /* EventModifiers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventModifiers.cpp; sourceTree = "<group>"; };
 		5C9E56841DF9143D00C9EE33 /* WebsitePolicies.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebsitePolicies.mm; sourceTree = "<group>"; };
 		5C9E56861DF9148E00C9EE33 /* contentBlockerCheck.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = contentBlockerCheck.html; sourceTree = "<group>"; };
 		5C9E593E1D3EB1DE00E3C62E /* ApplicationCache.db */ = {isa = PBXFileReference; lastKnownFileType = file; path = ApplicationCache.db; sourceTree = "<group>"; };
@@ -2043,6 +2045,7 @@
 				448D7E451EA6C55500ECC756 /* EnvironmentUtilitiesTest.cpp */,
 				75F3133F18C171B70041CAEC /* EphemeralSessionPushStateNoHistoryCallback.cpp */,
 				1A5FEFDC1270E2A3000E2921 /* EvaluateJavaScript.cpp */,
+				5C79640F1EB0269B0075D74C /* EventModifiers.cpp */,
 				BCC8B95A12611F4700DE46A4 /* FailedLoad.cpp */,
 				1A02C84E125D4A8400E3F4BD /* Find.cpp */,
 				C51AFB98169F49FF009CCF66 /* FindMatches.mm */,
@@ -3048,6 +3051,7 @@
 				5E4B1D2E1D404C6100053621 /* WKScrollViewDelegateCrash.mm in Sources */,
 				7CCE7F221A411AE600447C4C /* WKString.cpp in Sources */,
 				7CCE7F1E1A411AE600447C4C /* WKStringJSString.cpp in Sources */,
+				5C7964101EB0278D0075D74C /* EventModifiers.cpp in Sources */,
 				2D4CF8BD1D8360CC0001CE8D /* WKThumbnailView.mm in Sources */,
 				5CE354D91E70DA5C00BEFE3B /* WKUserContentExtensionStore.mm in Sources */,
 				2EFF06D71D8AF34A0004BB30 /* WKWebViewCandidateTests.mm in Sources */,

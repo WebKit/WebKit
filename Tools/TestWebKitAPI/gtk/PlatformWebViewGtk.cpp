@@ -148,7 +148,7 @@ void PlatformWebView::simulateRightClick(unsigned x, unsigned y)
     doMouseButtonEvent(viewWidget, GDK_BUTTON_RELEASE, x, y, 3);
 }
 
-void PlatformWebView::simulateMouseMove(unsigned x, unsigned y)
+void PlatformWebView::simulateMouseMove(unsigned x, unsigned y, WKEventModifiers)
 {
     GUniquePtr<GdkEvent> event(gdk_event_new(GDK_MOTION_NOTIFY));
     event->motion.x = x;
