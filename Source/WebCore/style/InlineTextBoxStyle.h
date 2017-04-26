@@ -41,11 +41,11 @@ inline float textDecorationStrokeThickness(float fontSize)
 
 inline float wavyOffsetFromDecoration()
 {
-    return 2;
+    return 1;
 }
 
 GlyphOverflow visualOverflowForDecorations(const RenderStyle& lineStyle, const InlineTextBox*);
-void getWavyStrokeParameters(float strokeThickness, float& controlPointDistance, float& step);
+void getWavyStrokeParameters(float fontSize, float& controlPointDistance, float& step);
 int computeUnderlineOffset(TextUnderlinePosition, const FontMetrics&, const InlineTextBox*, int textDecorationThickness);
     
 } // namespace WebCore

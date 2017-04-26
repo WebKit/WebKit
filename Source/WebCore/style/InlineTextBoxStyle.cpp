@@ -84,19 +84,17 @@ int computeUnderlineOffset(TextUnderlinePosition underlinePosition, const FontMe
     return fontMetrics.ascent() + gap;
 }
     
-void getWavyStrokeParameters(float strokeThickness, float& controlPointDistance, float& step)
+void getWavyStrokeParameters(float fontSize, float& controlPointDistance, float& step)
 {
     // Distance between decoration's axis and Bezier curve's control points.
-    // The height of the curve is based on this distance. Use a minimum of 6 pixels distance since
-    // the actual curve passes approximately at half of that distance, that is 3 pixels.
-    // The minimum height of the curve is also approximately 3 pixels. Increases the curve's height
-    // as strokeThickness increases to make the curve look better.
-    controlPointDistance = 3 * std::max<float>(2, strokeThickness);
+    // The height of the curve is based on this distance. Increases the curve's height
+    // as fontSize increases to make the curve look better.
+    controlPointDistance = 0.09375 * fontSize;
 
     // Increment used to form the diamond shape between start point (p1), control
-    // points and end point (p2) along the axis of the decoration. Makes the
-    // curve wider as strokeThickness increases to make the curve look better.
-    step = 2 * std::max<float>(2, strokeThickness);
+    // points and end point (p2) along the axis of the decoration. The curve gets
+    // wider as font size increases.
+    step = fontSize / 4.5;
 }
 
 static inline void extendIntToFloat(int& extendMe, float extendTo)
@@ -122,7 +120,7 @@ GlyphOverflow visualOverflowForDecorations(const RenderStyle& lineStyle, const I
     GlyphOverflow overflowResult;
     
     if (decorationStyle == TextDecorationStyleWavy) {
-        getWavyStrokeParameters(strokeThickness, controlPointDistance, step);
+        getWavyStrokeParameters(lineStyle.fontSize(), controlPointDistance, step);
         wavyOffset = wavyOffsetFromDecoration();
         overflowResult.left = strokeThickness;
         overflowResult.right = strokeThickness;

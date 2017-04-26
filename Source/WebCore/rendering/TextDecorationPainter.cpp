@@ -81,7 +81,7 @@ static void adjustStepToDecorationLength(float& step, float& controlPointDistanc
  *             |-----------|
  *                 step
  */
-static void strokeWavyTextDecoration(GraphicsContext& context, const FloatPoint& start, const FloatPoint& end, float strokeThickness)
+static void strokeWavyTextDecoration(GraphicsContext& context, const FloatPoint& start, const FloatPoint& end, float strokeThickness, float fontSize)
 {
     FloatPoint p1 = start;
     FloatPoint p2 = end;
@@ -92,7 +92,7 @@ static void strokeWavyTextDecoration(GraphicsContext& context, const FloatPoint&
 
     float controlPointDistance;
     float step;
-    getWavyStrokeParameters(strokeThickness, controlPointDistance, step);
+    getWavyStrokeParameters(fontSize, controlPointDistance, step);
 
     bool isVerticalLine = (p1.x() == p2.x());
 
@@ -268,7 +268,7 @@ void TextDecorationPainter::paintTextDecoration(const TextRun& textRun, const Fl
         auto strokeStyle = textDecorationStyleToStrokeStyle(style);
 
         if (style == TextDecorationStyleWavy)
-            strokeWavyTextDecoration(m_context, start, end, textDecorationThickness);
+            strokeWavyTextDecoration(m_context, start, end, textDecorationThickness, m_lineStyle.fontSize());
         else if (decoration == TextDecorationUnderline || decoration == TextDecorationOverline) {
 #if ENABLE(CSS3_TEXT_DECORATION_SKIP_INK)
             if ((m_lineStyle.textDecorationSkip() == TextDecorationSkipInk || m_lineStyle.textDecorationSkip() == TextDecorationSkipAuto) && m_isHorizontal) {
