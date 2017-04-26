@@ -262,6 +262,7 @@ public:
         AXAutocorrectionOccured,
         AXCheckedStateChanged,
         AXChildrenChanged,
+        AXCurrentChanged,
         AXFocusedUIElementChanged,
         AXLayoutComplete,
         AXLoadComplete,

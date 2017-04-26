@@ -1,0 +1,39 @@
+This tests the exposure of aria-current
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+test1 active: false
+AXPlatformAttributes: html-id:test1, tag:div, toolkit:WebKitGtk
+
+test2 active: false
+AXPlatformAttributes: computed-role:listitem, xml-roles:listitem, current:false, html-id:test2, tag:div, toolkit:WebKitGtk
+
+test3 active: true
+AXPlatformAttributes: computed-role:listitem, xml-roles:listitem, current:true, html-id:test3, tag:div, toolkit:WebKitGtk
+
+test4 active: true
+AXPlatformAttributes: computed-role:listitem, xml-roles:listitem, current:page, html-id:test4, tag:div, toolkit:WebKitGtk
+
+test5 active: true
+AXPlatformAttributes: computed-role:listitem, xml-roles:listitem, current:step, html-id:test5, tag:div, toolkit:WebKitGtk
+
+test6 active: true
+AXPlatformAttributes: computed-role:listitem, xml-roles:listitem, current:location, html-id:test6, tag:div, toolkit:WebKitGtk
+
+test7 active: true
+AXPlatformAttributes: computed-role:listitem, xml-roles:listitem, current:date, html-id:test7, tag:div, toolkit:WebKitGtk
+
+test8 active: true
+AXPlatformAttributes: computed-role:listitem, xml-roles:listitem, current:time, html-id:test8, tag:div, toolkit:WebKitGtk
+
+test9 active: false
+AXPlatformAttributes: computed-role:listitem, xml-roles:listitem, current:false, html-id:test9, tag:div, toolkit:WebKitGtk
+
+test10 active: true
+AXPlatformAttributes: computed-role:listitem, xml-roles:listitem, current:true, html-id:test10, tag:div, toolkit:WebKitGtk
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

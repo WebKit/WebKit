@@ -1,3 +1,34 @@
+2017-04-26  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        [ATK] Elements with a defined, non-false value for aria-current should expose ATK_STATE_ACTIVE
+        https://bugs.webkit.org/show_bug.cgi?id=171163
+
+        Reviewed by Chris Fleizach.
+
+        Add ATK_STATE_ACTIVE to the state set of elements which have a valid, non-false
+        value for aria-current, expose the value of via the "current" AtkObject attribute,
+        and emit state-change notifications when the value of aria-current changes from
+        non-false to false, or vice versa.
+
+        Tests: accessibility/gtk/aria-current-changed-notification.html
+               accessibility/gtk/aria-current.html
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::handleAttributeChanged):
+        * accessibility/AXObjectCache.h:
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::supportsARIACurrent):
+        (WebCore::AccessibilityObject::ariaCurrentValue):
+        * accessibility/AccessibilityObject.h:
+        * accessibility/atk/AXObjectCacheAtk.cpp:
+        (WebCore::AXObjectCache::postPlatformNotification):
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (webkitAccessibleGetAttributes):
+        (setAtkStateSetFromCoreObject):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:]): Moved code returning
+        string value for aria-current into AccessibilityObject:ariaCurrentValue().
+
 2017-04-26  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         WebItemProviderPasteboard should fetch preloaded assets from disk when possible

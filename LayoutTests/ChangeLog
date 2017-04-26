@@ -1,3 +1,15 @@
+2017-04-26  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        [ATK] Elements with a defined, non-false value for aria-current should expose ATK_STATE_ACTIVE
+        https://bugs.webkit.org/show_bug.cgi?id=171163
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/gtk/aria-current-changed-notification-expected.txt: Added.
+        * accessibility/gtk/aria-current-changed-notification.html: Added.
+        * accessibility/gtk/aria-current-expected.txt: Added.
+        * accessibility/gtk/aria-current.html: Added.
+
 2017-04-26  Youenn Fablet  <youenn@apple.com>
 
         LayoutTest webrtc/datachannel/bufferedAmountLowThreshold.html is a flaky failure

@@ -403,6 +403,9 @@ static AtkAttributeSet* webkitAccessibleGetAttributes(AtkObject* object)
     if (coreObject->supportsARIAHasPopup())
         attributeSet = addToAtkAttributeSet(attributeSet, "haspopup", coreObject->ariaPopupValue().utf8().data());
 
+    if (coreObject->supportsARIACurrent())
+        attributeSet = addToAtkAttributeSet(attributeSet, "current", coreObject->ariaCurrentValue().utf8().data());
+
     AccessibilitySortDirection sortDirection = coreObject->sortDirection();
     if (sortDirection != SortDirectionNone) {
         // WAI-ARIA spec says to translate the value as is from the attribute.
@@ -753,7 +756,8 @@ static void setAtkStateSetFromCoreObject(AccessibilityObject* coreObject, AtkSta
     bool isListBoxOption = parent && parent->isListBox();
 
     // Please keep the state list in alphabetical order
-    if (isListBoxOption && coreObject->isSelectedOptionActive())
+    if ((isListBoxOption && coreObject->isSelectedOptionActive())
+        || coreObject->ariaCurrentState() != ARIACurrentFalse)
         atk_state_set_add_state(stateSet, ATK_STATE_ACTIVE);
 
     if (coreObject->isBusy())

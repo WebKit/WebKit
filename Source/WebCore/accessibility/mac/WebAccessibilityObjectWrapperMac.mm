@@ -2918,25 +2918,8 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     if ([attributeName isEqualToString: NSAccessibilitySelectedAttribute])
         return [NSNumber numberWithBool:m_object->isSelected()];
     
-    if ([attributeName isEqualToString: NSAccessibilityARIACurrentAttribute]) {
-        switch (m_object->ariaCurrentState()) {
-        case ARIACurrentFalse:
-            return @"false";
-        case ARIACurrentPage:
-            return @"page";
-        case ARIACurrentStep:
-            return @"step";
-        case ARIACurrentLocation:
-            return @"location";
-        case ARIACurrentTime:
-            return @"time";
-        case ARIACurrentDate:
-            return @"date";
-        default:
-        case ARIACurrentTrue:
-            return @"true";
-        }
-    }
+    if ([attributeName isEqualToString: NSAccessibilityARIACurrentAttribute])
+        return m_object->ariaCurrentValue();
     
     if ([attributeName isEqualToString: NSAccessibilityServesAsTitleForUIElementsAttribute] && m_object->isMenuButton()) {
         AccessibilityObject* uiElement = downcast<AccessibilityRenderObject>(*m_object).menuForMenuButton();

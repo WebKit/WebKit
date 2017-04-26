@@ -1457,6 +1457,8 @@ void AXObjectCache::handleAttributeChanged(const QualifiedName& attrName, Elemen
         postNotification(element, AXObjectCache::AXInvalidStatusChanged);
     else if (attrName == aria_modalAttr)
         handleAriaModalChange(element);
+    else if (attrName == aria_currentAttr)
+        postNotification(element, AXObjectCache::AXCurrentChanged);
     else
         postNotification(element, AXObjectCache::AXAriaAttributeChanged);
 }

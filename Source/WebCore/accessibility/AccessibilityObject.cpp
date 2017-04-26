@@ -1956,6 +1956,11 @@ String AccessibilityObject::invalidStatus() const
     // Any other non empty string should be treated as "true".
     return trueValue;
 }
+
+bool AccessibilityObject::supportsARIACurrent() const
+{
+    return hasAttribute(aria_currentAttr);
+}
  
 AccessibilityARIACurrentState AccessibilityObject::ariaCurrentState() const
 {
@@ -1979,6 +1984,27 @@ AccessibilityARIACurrentState AccessibilityObject::ariaCurrentState() const
     
     // Any value not included in the list of allowed values should be treated as "true".
     return ARIACurrentTrue;
+}
+
+String AccessibilityObject::ariaCurrentValue() const
+{
+    switch (ariaCurrentState()) {
+    case ARIACurrentFalse:
+        return "false";
+    case ARIACurrentPage:
+        return "page";
+    case ARIACurrentStep:
+        return "step";
+    case ARIACurrentLocation:
+        return "location";
+    case ARIACurrentTime:
+        return "time";
+    case ARIACurrentDate:
+        return "date";
+    default:
+    case ARIACurrentTrue:
+        return "true";
+    }
 }
 
 bool AccessibilityObject::isAriaModalDescendant(Node* ariaModalNode) const

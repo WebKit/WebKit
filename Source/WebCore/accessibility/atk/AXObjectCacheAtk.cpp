@@ -239,6 +239,10 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject* coreObject, AX
         atk_object_notify_state_change(axObject, ATK_STATE_INVALID_ENTRY, coreObject->invalidStatus() != "false");
         break;
 
+    case AXCurrentChanged:
+        atk_object_notify_state_change(axObject, ATK_STATE_ACTIVE, coreObject->ariaCurrentState() != ARIACurrentFalse);
+        break;
+
     default:
         break;
     }
