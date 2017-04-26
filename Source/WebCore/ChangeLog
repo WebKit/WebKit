@@ -1,3 +1,16 @@
+2017-04-25  Dean Jackson  <dino@apple.com>
+
+        Skip WebKitAdditions for Safari Technology Preview media controls
+        https://bugs.webkit.org/show_bug.cgi?id=171302
+        <rdar://problem/31823256>
+
+        Reviewed by Simon Fraser.
+
+        Safari Technology Preview should use the same controls
+        as OpenSource.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2017-04-25  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r215730.
