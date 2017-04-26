@@ -1,3 +1,16 @@
+2017-04-25  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r215730.
+
+        The LayoutTest for this change is a flaky timeout on mac-wk1
+        debug.
+
+        Reverted changeset:
+
+        "Enable expired-only reload policy on Mac and iOS"
+        https://bugs.webkit.org/show_bug.cgi?id=171264
+        http://trac.webkit.org/changeset/215730
+
 2017-04-24  Matt Rajca  <mrajca@apple.com>
 
         Indicate presence of audio when handling autoplay events.

@@ -842,11 +842,7 @@ static uint32_t convertSystemLayoutDirection(NSUserInterfaceLayoutDirection dire
 
 - (WKNavigation *)reload
 {
-    OptionSet<WebCore::ReloadOption> reloadOptions;
-    if (linkedOnOrAfter(WebKit::SDKVersion::FirstWithExpiredOnlyReloadBehavior))
-        reloadOptions |= WebCore::ReloadOption::ExpiredOnly;
-
-    auto navigation = _page->reload(reloadOptions);
+    auto navigation = _page->reload({ });
     if (!navigation)
         return nil;
 

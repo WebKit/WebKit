@@ -10,7 +10,6 @@ if (window.testRunner) {
     testRunner.dumpAsText();
     window.internals.settings.setImagesEnabled(true);
     testRunner.overridePreference('WebKitDisplayImagesKey', 0);
-    window.internals.clearMemoryCache();
     testRunner.queueReload();
 }
 

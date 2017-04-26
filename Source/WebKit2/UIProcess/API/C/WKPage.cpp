@@ -93,10 +93,6 @@
 #include <WebCore/MediaSessionEvents.h>
 #endif
 
-#if PLATFORM(COCOA)
-#include "VersionChecks.h"
-#endif
-
 using namespace WebCore;
 using namespace WebKit;
 
@@ -246,13 +242,7 @@ void WKPageStopLoading(WKPageRef pageRef)
 
 void WKPageReload(WKPageRef pageRef)
 {
-    OptionSet<WebCore::ReloadOption> reloadOptions;
-#if PLATFORM(COCOA)
-    if (linkedOnOrAfter(WebKit::SDKVersion::FirstWithExpiredOnlyReloadBehavior))
-        reloadOptions |= WebCore::ReloadOption::ExpiredOnly;
-#endif
-
-    toImpl(pageRef)->reload(reloadOptions);
+    toImpl(pageRef)->reload({ });
 }
 
 void WKPageReloadWithoutContentBlockers(WKPageRef pageRef)
