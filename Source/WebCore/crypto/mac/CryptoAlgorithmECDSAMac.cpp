@@ -135,19 +135,34 @@ static ExceptionOr<bool> verifyECDSA(CryptoAlgorithmIdentifier hash, const Platf
 
     // FIXME: <rdar://problem/31618371>
     // Convert the signature into DER format.
-    // tag + length(1) + tag + length(1) + InitialOctet + r + tag + length(1) + InitialOctet + s
+    // tag + length(1) + tag + length(1) + InitialOctet(?) + r + tag + length(1) + InitialOctet(?) + s
+    // Skip any heading 0s of r and s.
+    size_t rStart = 0;
+    while (rStart < keyLengthInBytes && !signature[rStart])
+        rStart++;
+    size_t sStart = keyLengthInBytes;
+    while (rStart < signature.size() && !signature[sStart])
+        sStart++;
+
+    // InitialOctet is needed when the first byte of r/s is larger than or equal to 128.
+    bool rNeedsInitialOctet = signature[rStart] >= 128;
+    bool sNeedsInitialOctet = signature[sStart] >= 128;
+
+    // Construct the DER signature.
     Vector<uint8_t> newSignature;
-    newSignature.reserveCapacity(8 + keyLengthInBytes * 2);
+    newSignature.reserveCapacity(6 + keyLengthInBytes * 3  + rNeedsInitialOctet + sNeedsInitialOctet - rStart - sStart);
     newSignature.append(SequenceMark);
-    addEncodedASN1Length(newSignature, 6 + keyLengthInBytes * 2);
+    addEncodedASN1Length(newSignature, 4 + keyLengthInBytes * 3  + rNeedsInitialOctet + sNeedsInitialOctet - rStart - sStart);
     newSignature.append(IntegerMark);
-    addEncodedASN1Length(newSignature, keyLengthInBytes + 1);
-    newSignature.append(InitialOctet);
-    newSignature.append(signature.data(), keyLengthInBytes);
+    addEncodedASN1Length(newSignature, keyLengthInBytes + rNeedsInitialOctet - rStart);
+    if (rNeedsInitialOctet)
+        newSignature.append(InitialOctet);
+    newSignature.append(signature.data() + rStart, keyLengthInBytes - rStart);
     newSignature.append(IntegerMark);
-    addEncodedASN1Length(newSignature, keyLengthInBytes + 1);
-    newSignature.append(InitialOctet);
-    newSignature.append(signature.data() + keyLengthInBytes, keyLengthInBytes);
+    addEncodedASN1Length(newSignature, keyLengthInBytes * 2 + sNeedsInitialOctet - sStart);
+    if (sNeedsInitialOctet)
+        newSignature.append(InitialOctet);
+    newSignature.append(signature.data() + sStart, keyLengthInBytes * 2 - sStart);
 
     uint32_t valid;
     CCCryptorStatus status = CCECCryptorVerifyHash(key, digestData.data(), digestData.size(), newSignature.data(), newSignature.size(), &valid);

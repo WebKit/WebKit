@@ -1,3 +1,16 @@
+2017-04-25  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebCrypto] Enhance ways to convert an ECDSA signature binary into DER format
+        https://bugs.webkit.org/show_bug.cgi?id=171287
+        <rdar://problem/31735332>
+
+        Reviewed by Brent Fulgham.
+
+        Covered by existing tests.
+
+        * crypto/mac/CryptoAlgorithmECDSAMac.cpp:
+        (WebCore::verifyECDSA):
+
 2017-04-25  Brent Fulgham  <bfulgham@apple.com>
 
         Relax the event firing ASSERT for Attr changes
