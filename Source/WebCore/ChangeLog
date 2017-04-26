@@ -1,3 +1,12 @@
+2017-04-25  Alex Christensen  <achristensen@webkit.org>
+
+        Encoded filename should be decoded for WKContentExtension.identifier
+        https://bugs.webkit.org/show_bug.cgi?id=171316
+
+        Reviewed by Andy Estes.
+
+        * platform/FileSystem.h:
+
 2017-04-26  Frederic Wang  <fwang@igalia.com>
 
         Fix typo in RenderFrameBase

@@ -104,6 +104,27 @@ TEST_F(WKContentExtensionStoreTest, Lookup)
     TestWebKitAPI::Util::run(&doneLookingUp);
 }
 
+TEST_F(WKContentExtensionStoreTest, EncodedIdentifier)
+{
+    // FIXME: U+00C4 causes problems here. Using the output of encodeForFileName with
+    // the filesystem changes it to U+0041 followed by U+0308
+    NSString *identifier = @":;%25%+25И😍";
+    __block bool done = false;
+    [[WKContentExtensionStore defaultStore] compileContentExtensionForIdentifier:identifier encodedContentExtension:basicFilter completionHandler:^(WKContentExtension *filter, NSError *error) {
+
+        EXPECT_STREQ(filter.identifier.UTF8String, identifier.UTF8String);
+
+        [[WKContentExtensionStore defaultStore] getAvailableContentExtensionIdentifiers:^(NSArray<NSString *> *identifiers) {
+            EXPECT_EQ(identifiers.count, 1u);
+            EXPECT_EQ(identifiers[0].length, identifier.length);
+            EXPECT_STREQ(identifiers[0].UTF8String, identifier.UTF8String);
+
+            done = true;
+        }];
+    }];
+    TestWebKitAPI::Util::run(&done);
+}
+
 TEST_F(WKContentExtensionStoreTest, NonExistingIdentifierLookup)
 {
     __block bool doneLookingUp = false;

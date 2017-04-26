@@ -203,7 +203,7 @@
 		5C9E59411D3EB5AC00E3C62E /* ApplicationCache.db in Copy Resources */ = {isa = PBXBuildFile; fileRef = 5C9E593E1D3EB1DE00E3C62E /* ApplicationCache.db */; };
 		5C9E59421D3EB5AC00E3C62E /* ApplicationCache.db-shm in Copy Resources */ = {isa = PBXBuildFile; fileRef = 5C9E593F1D3EB1DE00E3C62E /* ApplicationCache.db-shm */; };
 		5C9E59431D3EB5AC00E3C62E /* ApplicationCache.db-wal in Copy Resources */ = {isa = PBXBuildFile; fileRef = 5C9E59401D3EB1DE00E3C62E /* ApplicationCache.db-wal */; };
-		5CE354D91E70DA5C00BEFE3B /* WKUserContentExtensionStore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CE354D81E70D9C300BEFE3B /* WKUserContentExtensionStore.mm */; };
+		5CE354D91E70DA5C00BEFE3B /* WKContentExtensionStore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CE354D81E70D9C300BEFE3B /* WKContentExtensionStore.mm */; };
 		5E4B1D2E1D404C6100053621 /* WKScrollViewDelegateCrash.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5E4B1D2C1D404C6100053621 /* WKScrollViewDelegateCrash.mm */; };
 		631EFFF61E7B5E8D00D2EBB8 /* Geolocation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 631EFFF51E7B5E8D00D2EBB8 /* Geolocation.mm */; };
 		634910E01E9D3FF300880309 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 634910DF1E9D3FF300880309 /* CoreLocation.framework */; };
@@ -1152,7 +1152,7 @@
 		5C9E593E1D3EB1DE00E3C62E /* ApplicationCache.db */ = {isa = PBXFileReference; lastKnownFileType = file; path = ApplicationCache.db; sourceTree = "<group>"; };
 		5C9E593F1D3EB1DE00E3C62E /* ApplicationCache.db-shm */ = {isa = PBXFileReference; lastKnownFileType = file; path = "ApplicationCache.db-shm"; sourceTree = "<group>"; };
 		5C9E59401D3EB1DE00E3C62E /* ApplicationCache.db-wal */ = {isa = PBXFileReference; lastKnownFileType = file; path = "ApplicationCache.db-wal"; sourceTree = "<group>"; };
-		5CE354D81E70D9C300BEFE3B /* WKUserContentExtensionStore.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKUserContentExtensionStore.mm; sourceTree = "<group>"; };
+		5CE354D81E70D9C300BEFE3B /* WKContentExtensionStore.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKContentExtensionStore.mm; sourceTree = "<group>"; };
 		5E4B1D2C1D404C6100053621 /* WKScrollViewDelegateCrash.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKScrollViewDelegateCrash.mm; path = ../ios/WKScrollViewDelegateCrash.mm; sourceTree = "<group>"; };
 		631EFFF51E7B5E8D00D2EBB8 /* Geolocation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Geolocation.mm; sourceTree = "<group>"; };
 		634910DF1E9D3FF300880309 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
@@ -1744,7 +1744,7 @@
 				2D00065D1C1F58940088E6A7 /* WKPDFViewResizeCrash.mm */,
 				5E4B1D2C1D404C6100053621 /* WKScrollViewDelegateCrash.mm */,
 				51C683DD1EA134DB00650183 /* WKURLSchemeHandler-1.mm */,
-				5CE354D81E70D9C300BEFE3B /* WKUserContentExtensionStore.mm */,
+				5CE354D81E70D9C300BEFE3B /* WKContentExtensionStore.mm */,
 				2EFF06D61D8AF34A0004BB30 /* WKWebViewCandidateTests.mm */,
 				7C417F311D19E14800B8EF53 /* WKWebViewDefaultNavigationDelegate.mm */,
 				0F3B94A51A77266C00DE3272 /* WKWebViewEvaluateJavaScript.mm */,
@@ -3053,7 +3053,7 @@
 				7CCE7F1E1A411AE600447C4C /* WKStringJSString.cpp in Sources */,
 				5C7964101EB0278D0075D74C /* EventModifiers.cpp in Sources */,
 				2D4CF8BD1D8360CC0001CE8D /* WKThumbnailView.mm in Sources */,
-				5CE354D91E70DA5C00BEFE3B /* WKUserContentExtensionStore.mm in Sources */,
+				5CE354D91E70DA5C00BEFE3B /* WKContentExtensionStore.mm in Sources */,
 				2EFF06D71D8AF34A0004BB30 /* WKWebViewCandidateTests.mm in Sources */,
 				A14FC5851B89739100D107EB /* WKWebViewConfigurationExtras.mm in Sources */,
 				7C417F331D19E14800B8EF53 /* WKWebViewDefaultNavigationDelegate.mm in Sources */,

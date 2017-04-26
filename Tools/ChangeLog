@@ -1,5 +1,17 @@
 2017-04-25  Alex Christensen  <achristensen@webkit.org>
 
+        Encoded filename should be decoded for WKContentExtension.identifier
+        https://bugs.webkit.org/show_bug.cgi?id=171316
+
+        Reviewed by Andy Estes.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/WKContentExtensionStore.mm: Copied from Tools/TestWebKitAPI/Tests/WebKit2Cocoa/WKUserContentExtensionStore.mm.
+        (TEST_F):
+        * TestWebKitAPI/Tests/WebKit2Cocoa/WKUserContentExtensionStore.mm: Removed.
+
+2017-04-25  Alex Christensen  <achristensen@webkit.org>
+
         REGRESSION(206450): WebKit2PlatformMouseEvent m_modifierFlags not set
         https://bugs.webkit.org/show_bug.cgi?id=171297
         <rdar://problem/31530719>

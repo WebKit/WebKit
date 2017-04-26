@@ -190,7 +190,7 @@ bool unloadModule(PlatformModule);
 
 // Encode a string for use within a file name.
 WEBCORE_EXPORT String encodeForFileName(const String&);
-String decodeFromFilename(const String&);
+WEBCORE_EXPORT String decodeFromFilename(const String&);
 
 WEBCORE_EXPORT bool filesHaveSameVolume(const String&, const String&);
 

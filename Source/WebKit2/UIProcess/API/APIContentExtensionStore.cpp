@@ -334,7 +334,7 @@ static std::error_code compiledToFile(String&& json, const String& finalFilePath
     return { };
 }
 
-static RefPtr<API::ContentExtension> createExtension(const String& identifier, const ContentExtensionMetaData& metaData, const Data& fileData)
+static Ref<API::ContentExtension> createExtension(const String& identifier, const ContentExtensionMetaData& metaData, const Data& fileData)
 {
     auto sharedMemory = WebKit::SharedMemory::create(const_cast<uint8_t*>(fileData.data()), fileData.size(), WebKit::SharedMemory::Protection::ReadOnly);
     const size_t headerAndSourceSize = ContentExtensionFileHeaderSize + metaData.sourceSize;
@@ -383,8 +383,7 @@ void ContentExtensionStore::lookupContentExtension(const WTF::String& identifier
         }
         
         RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis), identifier = WTFMove(identifier), fileData = WTFMove(fileData), metaData = WTFMove(metaData), completionHandler = WTFMove(completionHandler)] {
-            RefPtr<API::ContentExtension> contentExtension = createExtension(identifier, metaData, fileData);
-            completionHandler(contentExtension, { });
+            completionHandler(createExtension(identifier, metaData, fileData), { });
         });
     });
 }
@@ -398,7 +397,7 @@ void ContentExtensionStore::getAvailableContentExtensionIdentifiers(Function<voi
         identifiers.reserveInitialCapacity(fullPaths.size());
         const auto prefixLength = constructedPathPrefix().length();
         for (const auto& path : fullPaths)
-            identifiers.uncheckedAppend(path.substring(path.reverseFind('/') + 1 + prefixLength));
+            identifiers.uncheckedAppend(WebCore::decodeFromFilename(path.substring(path.reverseFind('/') + 1 + prefixLength)));
 
         RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler), identifiers = WTFMove(identifiers)]() mutable {
             completionHandler(WTFMove(identifiers));
