@@ -1,3 +1,49 @@
+2017-04-26  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GCrypt] CryptoKeyRSA: implement create(), keySizeInBits(), buildAlgorithm(), exportData()
+        https://bugs.webkit.org/show_bug.cgi?id=171213
+
+        Reviewed by Michael Catanzaro.
+
+        CryptoKeyRSA::create() validates the specified key type along with the
+        provided data. If everything is OK, it then proceeds to build the key
+        of the appropriate type through an s-expression that is constructed with
+        the necessary data. We don't currently support creating private keys
+        with any additional prime information (apart from p and q).
+
+        CryptoKeyRSA::keySizeInBits() calls the helper getRSAModulusLength()
+        function that find the modulus MPI in the key s-expression and returns
+        the modulus data length in bits.
+
+        CryptoKeyRSA::buildAlgorithm() returns KeyAlgorithm that's constructed
+        from the appropriate name, this key's modulus length, and this key's
+        public exponent data. It also specifies the hash if there is such a
+        restriction for this key.
+
+        CryptoKeyRSA::exportData() returns a properly-constructed
+        CryptoKeyDataRSAComponents object. The public modulus and exponent are
+        used in case the key is public. If the key is private, the secret
+        exponent and the p and q prime numbers are retrieved in MPI format.
+        They're then used to calculate the dp, dq and qi parameters that are
+        exported in the JWK format. Note that libgcrypt internally switches
+        the p and q prime numbers such that p < q, but the Web Crypto
+        specification and the dependant RFCs expect that q < p. We address
+        this by simply switching the roles of the two primes and follow the
+        usual q < p assumption when exporting the primes and computing the
+        dependant exponents and coefficients.
+
+        No new tests -- existing ones cover this but don't work yet due to missing
+        RSA-related CryptoAlgorithm implementations.
+
+        * crypto/gcrypt/CryptoKeyRSAGCrypt.cpp:
+        (WebCore::getRSAModulusLength):
+        (WebCore::getParameterMPIData):
+        (WebCore::getRSAKeyParameter):
+        (WebCore::CryptoKeyRSA::create):
+        (WebCore::CryptoKeyRSA::keySizeInBits):
+        (WebCore::CryptoKeyRSA::buildAlgorithm):
+        (WebCore::CryptoKeyRSA::exportData):
+
 2017-04-25  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebCrypto] Enhance ways to convert an ECDSA signature binary into DER format
