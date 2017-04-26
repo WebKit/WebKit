@@ -1,3 +1,23 @@
+2017-04-25  Brent Fulgham  <bfulgham@apple.com>
+
+        Limit allowed size of document.title to avoid locking WebKit clients
+        https://bugs.webkit.org/show_bug.cgi?id=165113
+        <rdar://problem/28324389>
+
+        Reviewed by Darin Adler.
+
+        When a web application attempts to set an extremely long title, truncate the
+        title to a more reasonable size.
+
+        We do this at at the presentation layer, rather than in the DOM, so that we do
+        not affect script function. Instead, we merely limit display to a level that is
+        reasonable for normal GUI widgets. Anything else needs to be truncated in the UI
+        layer, so it is a waste of effort to send across IPC.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidReceiveTitle):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+
 2017-04-25  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Introduce shorter time-to-live for cookie partition whitelisting

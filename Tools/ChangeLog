@@ -1,3 +1,16 @@
+2017-04-25  Brent Fulgham  <bfulgham@apple.com>
+
+        Limit allowed size of document.title to avoid locking WebKit clients
+        https://bugs.webkit.org/show_bug.cgi?id=165113
+        <rdar://problem/28324389>
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj: Add new files.
+        * TestWebKitAPI/Tests/WebKit2/LimitTitleSize.cpp: Added.
+        * TestWebKitAPI/Tests/WebKit2/set-long-title.html: Added.
+        * TestWebKitAPI/Tests/mac/LimitTitleSize.mm: Added.
+
 2017-04-25  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Introduce shorter time-to-live for cookie partition whitelisting
