@@ -733,7 +733,6 @@ fast/mediastream/RTCPeerConnection-iceconnectionstatechange-event.html [ Skip ]
 fast/mediastream/RTCPeerConnection-more-media-to-negotiate.html [ Skip ]
 fast/mediastream/RTCPeerConnection-overloaded-operations-params.html [ Skip ]
 fast/mediastream/RTCRtpSender-replaceTrack.html [ Skip ]
-fast/mediastream/RTCPeerConnection-icecandidate-event.html [ Pass Failure ]
 fast/mediastream/RTCPeerConnection-dtmf.html [ Failure ]
 # libwebrtc backend doesn't generate a=bundle-only lines
 fast/mediastream/RTCPeerConnection-inspect-offer-bundlePolicy-bundle-only.html [ Failure ]

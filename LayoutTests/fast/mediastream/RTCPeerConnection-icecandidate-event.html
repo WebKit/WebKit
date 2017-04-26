@@ -6,8 +6,6 @@
     </head>
     <body>
         <script>
-            let event;
-
             description("Test RTCPeerConnection 'icecandidate' event and gathering done");
 
             if (window.internals)
@@ -22,34 +20,47 @@
 
             const pc = new RTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});
 
+            var candidates = [];
+            var shouldDoChecking = false;
+            var reachedEndOfCandidates = false;
             pc.onicecandidate = function (evt) {
-                event = evt;
-                if (evt.candidate) {
+                candidates.push(evt.candidate);
+                if (!evt.candidate)
+                    reachedEndOfCandidates = true;
+                checkCandidates();
+            };
+
+            function checkCandidates() {
+              if (!shouldDoChecking || !reachedEndOfCandidates)
+                return;
+              for (candidate of candidates) {
+                if (candidate) {
                     testPassed("Got candidate");
-                    shouldBeTrue("event.candidate instanceof RTCIceCandidate");
-                    shouldBe("event.candidate.sdpMLineIndex", "0");
-                    shouldBe("event.candidate.sdpMid", "pc.getTransceivers()[0].mid");
-                    testPassed(`event.candidate.candidate: ${event.candidate.candidate}`);
+                    shouldBeTrue("candidate instanceof RTCIceCandidate");
+                    shouldBe("candidate.sdpMLineIndex", "0");
+                    shouldBe("candidate.sdpMid", "pc.getTransceivers()[0].mid");
+                    testPassed(`candidate.candidate: ${candidate.candidate}`);
                 } else {
                     testPassed("Got end of candidates");
-                    shouldBeNull("event.candidate");
-                    finishJSTest();
+                    shouldBeNull("candidate");
                 }
-            };
+              }
+              finishJSTest();
+            }
 
             navigator.mediaDevices.getUserMedia({ "video": true }).then(function (stream) {
                 pc.addTrack(stream.getTracks()[0], stream);
                 return pc.createOffer();
-            })
-            .then(function (offer) {
+            }).then(function (offer) {
                 return pc.setLocalDescription(offer);
-            })
-            .then(function () {
+            }).then(function () {
                 testPassed("Local description set");
-                window.internals.emulateRTCPeerConnectionPlatformEvent(pc, "dispatch-fake-ice-candidates");
                 testPassed("End of test promise chain");
-            })
-            .catch(function (error) {
+                if (window.internals)
+                    window.internals.emulateRTCPeerConnectionPlatformEvent(pc, "dispatch-fake-ice-candidates");
+                shouldDoChecking = true;
+                checkCandidates();
+            }).catch(function (error) {
                 testFailed("Error in promise chain: " + error);
                 finishJSTest();
             });
