@@ -78,7 +78,7 @@ public:
     typedef HashMap<uint64_t, WebPageProxy*> WebPageProxyMap;
     typedef HashMap<uint64_t, RefPtr<API::UserInitiatedAction>> UserInitiatedActionMap;
 
-    static Ref<WebProcessProxy> create(WebProcessPool&, WebsiteDataStore*);
+    static Ref<WebProcessProxy> create(WebProcessPool&, WebsiteDataStore&);
     ~WebProcessProxy();
 
     WebConnection* webConnection() const { return m_webConnection.get(); }
@@ -86,7 +86,7 @@ public:
     WebProcessPool& processPool() { return m_processPool; }
 
     // FIXME: WebsiteDataStores should be made per-WebPageProxy throughout WebKit2
-    WebsiteDataStore* websiteDataStore() const { return m_websiteDataStore.get(); }
+    WebsiteDataStore& websiteDataStore() const { return m_websiteDataStore.get(); }
 
     static WebPageProxy* webPage(uint64_t pageID);
     Ref<WebPageProxy> createWebPage(PageClient&, Ref<API::PageConfiguration>&&);
@@ -177,7 +177,7 @@ public:
     void didExceedInactiveMemoryLimit();
 
 private:
-    explicit WebProcessProxy(WebProcessPool&, WebsiteDataStore*);
+    explicit WebProcessProxy(WebProcessPool&, WebsiteDataStore&);
 
     // From ChildProcessProxy
     void getLaunchOptions(ProcessLauncher::LaunchOptions&) override;
@@ -282,7 +282,7 @@ private:
     VisibleWebPageCounter m_visiblePageCounter;
 
     // FIXME: WebsiteDataStores should be made per-WebPageProxy throughout WebKit2. Get rid of this member.
-    RefPtr<WebsiteDataStore> m_websiteDataStore;
+    Ref<WebsiteDataStore> m_websiteDataStore;
 
     bool m_isUnderMemoryPressure { false };
 
