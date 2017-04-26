@@ -15,19 +15,29 @@ function runTest()
     var motionQuery = window.matchMedia("(prefers-reduced-motion)");
     motionQuery.addListener(() => {
         document.getElementById("after").textContent = motionQuery.matches ? "true" : "false";
-        testRunner.notifyDone();
+        queryFired = true;
+        checkDone();
     });
 
     document.getElementById("before").textContent = motionQuery.matches ? "true" : "false";
     window.internals.settings.forcedPrefersReducedMotionAccessibilityValue = "on";
-    if (testRunner.runUIScript) {
-        testRunner.runUIScript(`
-            (function() {
-                uiController.simulateAccessibilitySettingsChangeNotification(function() {
-                    uiController.uiScriptComplete("Done");
-                });
-            })();`);
-    }
+    testRunner.runUIScript(`
+        (function() {
+            uiController.simulateAccessibilitySettingsChangeNotification(function() {
+                uiController.uiScriptComplete("Done");
+            });
+        })();`, function (result) {
+            scriptRan = true;
+            checkDone();
+        });
+}
+
+let queryFired = false;
+let scriptRan = false;
+
+function checkDone() {
+    if (queryFired && scriptRan)
+        testRunner.notifyDone();
 }
 
 window.addEventListener("load", runTest, false);

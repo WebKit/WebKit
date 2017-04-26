@@ -1,3 +1,20 @@
+2017-04-25  Dean Jackson  <dino@apple.com>
+
+        REGRESSION (r214129): fast/media/mq-prefers-reduced-motion.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=171303
+        <rdar://problem/31434879>
+
+        Reviewed by Brent Fulgham.
+
+        This particular test was calling notifyDone() from within
+        a callback triggered by the UIScriptController script, which
+        meant that by the time the controller tried to call its callback,
+        the test had finished.
+
+        * fast/media/mq-prefers-reduced-motion-matchMedia.html: Make sure
+        notifyDone is called after both the callback-like functions have
+        triggered.
+
 2017-04-25  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Introduce shorter time-to-live for cookie partition whitelisting
