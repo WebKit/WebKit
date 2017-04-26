@@ -1,3 +1,21 @@
+2017-04-26  Caitlin Potter  <caitp@igalia.com>
+
+        [JSC] Object.keys() must discard property names with no PropertyDescriptor
+        https://bugs.webkit.org/show_bug.cgi?id=171291
+
+        Reviewed by Yusuke Suzuki.
+
+        Proxy objects can produce an arbitrary list of property names from the
+        "ownKeys" trap, however the Object.keys() algorithm is required to
+        discard names which do not have a PropertyDescriptor. This also
+        applies to other uses of the EnumerableOwnProperties() algorithm
+        (https://tc39.github.io/ecma262/#sec-enumerableownproperties)
+
+        Related to https://bugs.chromium.org/p/v8/issues/detail?id=6290
+
+        * runtime/ObjectConstructor.cpp:
+        (JSC::ownPropertyKeys):
+
 2017-04-25  Andy VanWagoner  <thetalecrafter@gmail.com>
 
         Unhandled enumeration values in IntlDateTimeFormat.cpp

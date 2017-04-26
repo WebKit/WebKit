@@ -730,14 +730,28 @@ JSArray* ownPropertyKeys(ExecState* exec, JSObject* object, PropertyNameMode pro
     JSArray* keys = constructEmptyArray(exec, 0);
     RETURN_IF_EXCEPTION(scope, nullptr);
 
+    // https://tc39.github.io/ecma262/#sec-enumerableownproperties
+    // If {object} is a Proxy, an explicit and observable [[GetOwnProperty]] op is required to filter out non-enumerable properties.
+    // In other cases, filtering has already been performed.
+    const bool mustFilterProperty = dontEnumPropertiesMode == DontEnumPropertiesMode::Exclude && object->type() == ProxyObjectType;
+    auto filterPropertyIfNeeded = [exec, object, mustFilterProperty](const Identifier& identifier) {
+        if (!mustFilterProperty)
+            return true;
+        PropertyDescriptor descriptor;
+        PropertyName name(identifier);
+        return object->getOwnPropertyDescriptor(exec, name, descriptor) && descriptor.enumerable();
+    };
+
     switch (propertyNameMode) {
     case PropertyNameMode::Strings: {
         size_t numProperties = properties.size();
         for (size_t i = 0; i < numProperties; i++) {
             const auto& identifier = properties[i];
             ASSERT(!identifier.isSymbol());
-            keys->push(exec, jsOwnedString(exec, identifier.string()));
-            RETURN_IF_EXCEPTION(scope, nullptr);
+            if (filterPropertyIfNeeded(identifier)) {
+                keys->push(exec, jsOwnedString(exec, identifier.string()));
+                RETURN_IF_EXCEPTION(scope, nullptr);
+            }
         }
         break;
     }
@@ -747,7 +761,7 @@ JSArray* ownPropertyKeys(ExecState* exec, JSObject* object, PropertyNameMode pro
         for (size_t i = 0; i < numProperties; i++) {
             const auto& identifier = properties[i];
             ASSERT(identifier.isSymbol());
-            if (!vm.propertyNames->isPrivateName(identifier)) {
+            if (!vm.propertyNames->isPrivateName(identifier) && filterPropertyIfNeeded(identifier)) {
                 keys->push(exec, Symbol::create(vm, static_cast<SymbolImpl&>(*identifier.impl())));
                 RETURN_IF_EXCEPTION(scope, nullptr);
             }
@@ -763,7 +777,7 @@ JSArray* ownPropertyKeys(ExecState* exec, JSObject* object, PropertyNameMode pro
             if (identifier.isSymbol()) {
                 if (!vm.propertyNames->isPrivateName(identifier))
                     propertySymbols.append(identifier);
-            } else {
+            } else if (filterPropertyIfNeeded(identifier)) {
                 keys->push(exec, jsOwnedString(exec, identifier.string()));
                 RETURN_IF_EXCEPTION(scope, nullptr);
             }
@@ -771,8 +785,10 @@ JSArray* ownPropertyKeys(ExecState* exec, JSObject* object, PropertyNameMode pro
 
         // To ensure the order defined in the spec (9.1.12), we append symbols at the last elements of keys.
         for (const auto& identifier : propertySymbols) {
-            keys->push(exec, Symbol::create(vm, static_cast<SymbolImpl&>(*identifier.impl())));
-            RETURN_IF_EXCEPTION(scope, nullptr);
+            if (filterPropertyIfNeeded(identifier)) {
+                keys->push(exec, Symbol::create(vm, static_cast<SymbolImpl&>(*identifier.impl())));
+                RETURN_IF_EXCEPTION(scope, nullptr);
+            }
         }
 
         break;

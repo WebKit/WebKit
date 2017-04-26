@@ -308,6 +308,39 @@ function shallowEq(a, b) {
     for (let i = 0; i < 500; i++) {
         let result = Object.keys(proxy);
         assert(result !== arr);
+        assert(shallowEq(result, []));
+        assert(called);
+        called = false;
+    }
+}
+
+{
+    let target = {
+        x: 40
+    };
+    let called = false;
+    let arr = ["a", "b", "c"];
+    let handler = {
+        getOwnPropertyDescriptor: function(theTarget, propertyName) {
+            if (arr.indexOf(propertyName) >= 0) {
+                return {
+                    enumerable: true,
+                    configurable: true
+                };
+            }
+            return Reflect.getOwnPropertyDescriptor(theTarget, propertyName);
+        },
+
+        ownKeys: function(theTarget) {
+            called = true;
+            return arr;
+        }
+    };
+
+    let proxy = new Proxy(target, handler);
+    for (let i = 0; i < 500; i++) {
+        let result = Object.keys(proxy);
+        assert(result !== arr);
         assert(shallowEq(result, arr));
         assert(called);
         called = false;
@@ -370,6 +403,15 @@ function shallowEq(a, b) {
     let s2 = Symbol();
     let arr = ["a", "b", s1, "c", s2];
     let handler = {
+        getOwnPropertyDescriptor(theTarget, propertyName) {
+            if (arr.indexOf(propertyName) >= 0) {
+                return {
+                    enumerable: true,
+                    configurable: true
+                }
+            }
+            return Reflect.getOwnPropertyDescriptor(theTarget, propertyName);
+        },
         ownKeys: function(theTarget) {
             called = true;
             return arr;

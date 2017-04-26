@@ -2,6 +2,13 @@ function test() {
 
 var symbol = Symbol("test");
 var proxy = new Proxy({}, {
+    getOwnPropertyDescriptor(t, n) {
+        // Required to prevent Object.keys() from discarding results
+        return {
+            enumerable: true,
+            configurable: true
+        };
+    },
     ownKeys: function (t) {
         return ["A", "A", "0", "0", symbol, symbol];
     }

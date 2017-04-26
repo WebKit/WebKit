@@ -1,3 +1,15 @@
+2017-04-26  Caitlin Potter  <caitp@igalia.com>
+
+        [JSC] Object.keys() must discard property names with no PropertyDescriptor
+        https://bugs.webkit.org/show_bug.cgi?id=171291
+
+        Reviewed by Yusuke Suzuki.
+
+        * es6/Proxy_ownKeys_duplicates.js:
+        * stress/proxy-own-keys.js:
+        (let.handler.getOwnPropertyDescriptor):
+        (let.handler.ownKeys):
+
 2017-04-25  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r215476.
