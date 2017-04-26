@@ -1,3 +1,38 @@
+2017-04-25  Dean Jackson  <dino@apple.com>
+
+        [Color] Make gradients work with ExtendedColors
+        https://bugs.webkit.org/show_bug.cgi?id=171315
+        <rdar://problems/31830177>
+
+        Reviewed by Antoine Quint.
+
+        Allow gradients to hold Color objects, and thus
+        handle ExtendedColor. Implement the backend for
+        CoreGraphics.
+
+        Test: css3/color/gradients.html
+
+        * platform/graphics/Gradient.cpp:
+        (WebCore::Gradient::addColorStop): Just copy the Color now.
+        (WebCore::compareStops): Handle rename of stop to offset.
+        (WebCore::Gradient::hasAlpha): Use Color's helper.
+        * platform/graphics/Gradient.h:
+        (WebCore::Gradient::ColorStop::ColorStop): Rename stop
+        to offset, and store a Color rather than four floating
+        point values.
+        * platform/graphics/cairo/GradientCairo.cpp:
+        (WebCore::Gradient::platformGradient):
+        * platform/graphics/cg/GradientCG.cpp:
+        (WebCore::Gradient::platformGradient): Use the CG method
+        that can handle CGColorRefs with ColorSpace values, and
+        pass the Extended sRGB space which should be no change for
+        all existing gradients but also handle ColorSpaces like
+        Display P3.
+        * platform/graphics/win/GradientDirect2D.cpp:
+        (WebCore::Gradient::generateGradient):
+        * svg/SVGGradientElement.cpp:
+        (WebCore::SVGGradientElement::buildStops):
+
 2017-04-25  Alex Christensen  <achristensen@webkit.org>
 
         Encoded filename should be decoded for WKContentExtension.identifier

@@ -1,3 +1,20 @@
+2017-04-25  Dean Jackson  <dino@apple.com>
+
+        [Color] Make gradients work with ExtendedColors
+        https://bugs.webkit.org/show_bug.cgi?id=171315
+        <rdar://problems/31830177>
+
+        Reviewed by Antoine Quint.
+
+        Test for gradients using the color() syntax. Unfortunately,
+        due to rounding errors, we can't use a ref test for some
+        transparent colors, so comment them out for the moment.
+        These can be re-enabled when we can specify a tolerance
+        value for image comparison in the testing framework.
+
+        * css3/color/gradients-expected.html: Added.
+        * css3/color/gradients.html: Added.
+
 2017-04-26  Zalan Bujtas  <zalan@apple.com>
 
         Forced page break on :after triggers infinite loop in column balancing

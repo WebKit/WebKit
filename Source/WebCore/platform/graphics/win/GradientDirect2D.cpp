@@ -59,8 +59,15 @@ void Gradient::generateGradient(ID2D1RenderTarget* renderTarget)
     sortStopsIfNecessary();
 
     Vector<D2D1_GRADIENT_STOP> gradientStops;
-    for (auto stop : m_stops)
-        gradientStops.append(D2D1::GradientStop(stop.stop, D2D1::ColorF(stop.red, stop.green, stop.blue, stop.alpha)));
+    // FIXME: Add support for ExtendedColor.
+    for (auto stop : m_stops) {
+        float r;
+        float g;
+        float b;
+        float a;
+        stop.color.getRGBA(r, g, b, a);
+        gradientStops.append(D2D1::GradientStop(stop.offset, D2D1::ColorF(r, g, b, a)));
+    }
 
     COMPtr<ID2D1GradientStopCollection> gradientStopCollection;
     HRESULT hr = renderTarget->CreateGradientStopCollection(gradientStops.data(), gradientStops.size(), &gradientStopCollection);

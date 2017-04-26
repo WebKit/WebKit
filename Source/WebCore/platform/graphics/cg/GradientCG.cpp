@@ -48,27 +48,18 @@ CGGradientRef Gradient::platformGradient()
 
     sortStopsIfNecessary();
 
-    // FIXME: ExtendedColor - we should generate CGColorRefs here, so that
-    // we can handle color spaces.
+    auto colorsArray = adoptCF(CFArrayCreateMutable(0, m_stops.size(), &kCFTypeArrayCallBacks));
 
-    const int cReservedStops = 3;
-    Vector<CGFloat, 4 * cReservedStops> colorComponents;
-    colorComponents.reserveInitialCapacity(m_stops.size() * 4); // RGBA components per stop
-
-    Vector<CGFloat, cReservedStops> locations;
+    const int reservedStops = 3;
+    Vector<CGFloat, reservedStops> locations;
     locations.reserveInitialCapacity(m_stops.size());
 
-    for (size_t i = 0; i < m_stops.size(); ++i) {
-        colorComponents.uncheckedAppend(m_stops[i].red);
-        colorComponents.uncheckedAppend(m_stops[i].green);
-        colorComponents.uncheckedAppend(m_stops[i].blue);
-        colorComponents.uncheckedAppend(m_stops[i].alpha);
-
-        locations.uncheckedAppend(m_stops[i].stop);
+    for (const auto& stop : m_stops) {
+        CFArrayAppendValue(colorsArray.get(), cachedCGColor(stop.color));
+        locations.uncheckedAppend(stop.offset);
     }
 
-    // FIXME: ExtendedColor - use CGGradientCreateWithColors so that we can have stops in different color spaces.
-    m_gradient = CGGradientCreateWithColorComponents(sRGBColorSpaceRef(), colorComponents.data(), locations.data(), m_stops.size());
+    m_gradient = CGGradientCreateWithColors(extendedSRGBColorSpaceRef(), colorsArray.get(), locations.data());
 
     return m_gradient;
 }

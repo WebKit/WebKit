@@ -94,15 +94,9 @@ void Gradient::adjustParametersForTiledDrawing(FloatSize& size, FloatRect& srcRe
     srcRect.setY(0);
 }
 
-void Gradient::addColorStop(float value, const Color& color)
+void Gradient::addColorStop(float offset, const Color& color)
 {
-    // FIXME: ExtendedColor - update this to support colors with color spaces.
-    float r;
-    float g;
-    float b;
-    float a;
-    color.getRGBA(r, g, b, a);
-    m_stops.append(ColorStop(value, r, g, b, a));
+    m_stops.append(ColorStop(offset, color));
 
     m_stopsSorted = false;
     platformDestroy();
@@ -122,7 +116,7 @@ void Gradient::addColorStop(const Gradient::ColorStop& stop)
 
 static inline bool compareStops(const Gradient::ColorStop& a, const Gradient::ColorStop& b)
 {
-    return a.stop < b.stop;
+    return a.offset < b.offset;
 }
 
 void Gradient::sortStopsIfNecessary()
@@ -142,8 +136,8 @@ void Gradient::sortStopsIfNecessary()
 
 bool Gradient::hasAlpha() const
 {
-    for (size_t i = 0; i < m_stops.size(); i++) {
-        if (m_stops[i].alpha < 1)
+    for (const auto& stop : m_stops) {
+        if (!stop.color.isOpaque())
             return true;
     }
 
