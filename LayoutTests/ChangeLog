@@ -1,3 +1,18 @@
+2017-04-25  Joseph Pecoraro  <pecoraro@apple.com>
+
+        [mac-wk1 Debug] LayoutTest http/tests/inspector/network/resource-sizes-network.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=170953
+
+        Reviewed by Brian Burg.
+
+        * http/tests/inspector/network/resource-sizes-disk-cache.html:
+        * http/tests/inspector/network/resource-sizes-network.html:
+        Read the entire data to ensure the load is complete before we notify the frontend.
+
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        Unflake these tests, they should be more reliable now.
+
 2017-04-25  Youenn Fablet  <youenn@apple.com>
 
         fast/mediastream/RTCPeerConnection-icecandidate-event.html is flaky

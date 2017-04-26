@@ -7,7 +7,7 @@
 <script src="resources/resource-size-test.js"></script>
 <script>
 function loadAndTriggerInspector(url) {
-    fetch(url).then(() => {
+    fetch(url).then((response) => response.blob()).then(() => {
         TestPage.dispatchEventToFrontend("LoadComplete");
     });
 }

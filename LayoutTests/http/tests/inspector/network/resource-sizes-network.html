@@ -18,6 +18,8 @@ function triggerNetworkLoadWithRequestData() {
             "X-Header-2": headerString512Bytes, // 512 + 10 + ":" + "\r\n" whitespace
         },
         body: headerString512Bytes + headerString512Bytes + "abc" // (512 + 512 + 3) = 1027.
+    }).then((response) => {
+        return response.text();
     }).then(() => {
         TestPage.dispatchEventToFrontend("LoadComplete");
     });
