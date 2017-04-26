@@ -430,6 +430,7 @@ list(APPEND WebCore_SOURCES
     platform/graphics/cg/PatternCG.cpp
     platform/graphics/cg/SubimageCacheWithTimer.cpp
     platform/graphics/cg/TransformationMatrixCG.cpp
+    platform/graphics/cg/UTIRegistry.cpp
 
     platform/graphics/cocoa/GPUBufferMetal.mm
     platform/graphics/cocoa/GPUCommandBufferMetal.mm
