@@ -1,3 +1,18 @@
+2017-04-26  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        [ATK] Implement support for new ARIA 1.1 values of aria-haspopup
+        https://bugs.webkit.org/show_bug.cgi?id=171164
+
+        Reviewed by Chris Fleizach.
+
+        In addition to the new test, update xml-roles-exposed.html's expectations
+        because the implicit value of aria-haspopup for the combobox role is now
+        listbox, and that value should be exposed via an AtkObject attribute.
+
+        * accessibility/gtk/aria-haspopup-expected.txt: Added.
+        * accessibility/gtk/aria-haspopup.html: Added.
+        * accessibility/gtk/xml-roles-exposed-expected.txt:
+
 2017-04-26  Simon Fraser  <simon.fraser@apple.com>
 
         http/tests/frame-throttling tests failing on iOS

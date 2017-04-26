@@ -2481,6 +2481,32 @@ bool AccessibilityObject::supportsRangeValue() const
         || isAttachmentElement();
 }
     
+bool AccessibilityObject::supportsARIAHasPopup() const
+{
+    return hasAttribute(aria_haspopupAttr) || isComboBox();
+}
+
+String AccessibilityObject::ariaPopupValue() const
+{
+    const AtomicString& hasPopup = getAttribute(aria_haspopupAttr);
+    if (equalLettersIgnoringASCIICase(hasPopup, "true")
+        || equalLettersIgnoringASCIICase(hasPopup, "dialog")
+        || equalLettersIgnoringASCIICase(hasPopup, "grid")
+        || equalLettersIgnoringASCIICase(hasPopup, "listbox")
+        || equalLettersIgnoringASCIICase(hasPopup, "menu")
+        || equalLettersIgnoringASCIICase(hasPopup, "tree"))
+        return hasPopup;
+
+    // In ARIA 1.1, the implicit value for combobox became "listbox."
+    if (isComboBox() && hasPopup.isEmpty())
+        return "listbox";
+
+    // The spec states that "User agents must treat any value of aria-haspopup that is not
+    // included in the list of allowed values, including an empty string, as if the value
+    // false had been provided."
+    return "false";
+}
+
 bool AccessibilityObject::supportsARIASetSize() const
 {
     return hasAttribute(aria_setsizeAttr);

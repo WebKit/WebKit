@@ -641,6 +641,8 @@ public:
     void ariaOwnsElements(AccessibilityChildrenVector&) const;
 
     virtual bool ariaHasPopup() const { return false; }
+    String ariaPopupValue() const;
+    bool supportsARIAHasPopup() const;
     bool ariaPressedIsPresent() const;
     bool ariaIsMultiline() const;
     String invalidStatus() const;

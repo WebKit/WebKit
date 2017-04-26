@@ -1,3 +1,35 @@
+2017-04-26  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        [ATK] Implement support for new ARIA 1.1 values of aria-haspopup
+        https://bugs.webkit.org/show_bug.cgi?id=171164
+
+        Reviewed by Chris Fleizach.
+
+        In ARIA 1.1, aria-haspopup's value type changed from true/false to a token.
+        Values: true, false (default, unless it's a combobox), dialog, grid, listbox
+        (default for combobox), menu, and tree. Any value of aria-haspopup that is
+        not included in the list of allowed values, including an empty string, must
+        be treated as if the value false had been provided.
+
+        Add AccessibilityObject::ariaPopupValue() to validate the value, handle implicit
+        values, and give platform assistive technologies a means to access that value.
+
+        If there is a valid, non-false value of aria-haspopup, include ATK_STATE_HAS_POPUP
+        in the AtkStateSet. Lastly, expose the value (rather than true/false) via the "haspop"
+        AtkObject attribute.
+
+        Test: accessibility/gtk/aria-haspopup.html
+
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::ariaPopupValue):
+        (WebCore::AccessibilityObject::supportsARIAHasPopup):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::ariaHasPopup):
+        * accessibility/AccessibilityRenderObject.h:
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (webkitAccessibleGetAttributes):
+        (setAtkStateSetFromCoreObject):
+
 2017-04-26  Alex Christensen  <achristensen@webkit.org>
 
         Fix CMake build.

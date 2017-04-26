@@ -1010,7 +1010,7 @@ bool AccessibilityRenderObject::hasTextAlternative() const
     
 bool AccessibilityRenderObject::ariaHasPopup() const
 {
-    return elementAttributeValue(aria_haspopupAttr);
+    return !equalLettersIgnoringASCIICase(ariaPopupValue(), "false");
 }
 
 bool AccessibilityRenderObject::supportsARIADropping() const 

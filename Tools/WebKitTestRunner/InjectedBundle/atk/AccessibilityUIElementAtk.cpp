@@ -1987,11 +1987,7 @@ bool AccessibilityUIElement::isMultiLine() const
 
 bool AccessibilityUIElement::hasPopup() const
 {
-    if (!ATK_IS_OBJECT(m_element.get()))
-        return false;
-
-    String hasPopupValue = getAttributeSetValueForId(ATK_OBJECT(m_element.get()), ObjectAttributeType, "haspopup");
-    return equalLettersIgnoringASCIICase(hasPopupValue, "true");
+    return checkElementState(m_element.get(), ATK_STATE_HAS_POPUP);
 }
 
 void AccessibilityUIElement::takeFocus()

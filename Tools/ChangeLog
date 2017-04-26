@@ -1,3 +1,16 @@
+2017-04-26  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        [ATK] Implement support for new ARIA 1.1 values of aria-haspopup
+        https://bugs.webkit.org/show_bug.cgi?id=171164
+
+        Reviewed by Chris Fleizach.
+
+        hasPopup() should return whether or not ATK_STATE_HAS_POPUP is in the
+        AtkStateSet; not what is found in the AtkObject's attributes.
+
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (WTR::AccessibilityUIElement::hasPopup):
+
 2017-04-25  Alex Christensen  <achristensen@webkit.org>
 
         Encoded filename should be decoded for WKContentExtension.identifier

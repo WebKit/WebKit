@@ -400,8 +400,8 @@ static AtkAttributeSet* webkitAccessibleGetAttributes(AtkObject* object)
     if (!placeholder.isEmpty())
         attributeSet = addToAtkAttributeSet(attributeSet, "placeholder-text", placeholder.utf8().data());
 
-    if (coreObject->ariaHasPopup())
-        attributeSet = addToAtkAttributeSet(attributeSet, "haspopup", "true");
+    if (coreObject->supportsARIAHasPopup())
+        attributeSet = addToAtkAttributeSet(attributeSet, "haspopup", coreObject->ariaPopupValue().utf8().data());
 
     AccessibilitySortDirection sortDirection = coreObject->sortDirection();
     if (sortDirection != SortDirectionNone) {
@@ -792,6 +792,9 @@ static void setAtkStateSetFromCoreObject(AccessibilityObject* coreObject, AtkSta
         atk_state_set_add_state(stateSet, ATK_STATE_HORIZONTAL);
     else if (coreObject->orientation() == AccessibilityOrientationVertical)
         atk_state_set_add_state(stateSet, ATK_STATE_VERTICAL);
+
+    if (coreObject->ariaHasPopup())
+        atk_state_set_add_state(stateSet, ATK_STATE_HAS_POPUP);
 
     if (coreObject->isIndeterminate())
         atk_state_set_add_state(stateSet, ATK_STATE_INDETERMINATE);
