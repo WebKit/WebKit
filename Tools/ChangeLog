@@ -1,3 +1,16 @@
+2017-04-26  Jonathan Bedard  <jbedard@apple.com>
+
+        REGRESSION (r213926): We're sometimes trying to start WebKitTestRunner without proper DYLD variables
+        <rdar://problem/31816459>
+
+        Unreviewed infrastructure fix.
+
+        Some of our iOS Simulator bots are slow and will register crashes due to an incorrect
+        DYLD_FRAMEWORK_PATH when installing an app.
+
+        * Scripts/webkitpy/port/ios.py:
+        (IOSPort.setup_test_run): Pass DYLD_FRAMEWORK_PATH to app on install.
+
 2017-04-26  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [ATK] Elements with a defined, non-false value for aria-current should expose ATK_STATE_ACTIVE

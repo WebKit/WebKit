@@ -115,9 +115,8 @@ class IOSPort(DarwinPort):
                 device = self.target_host(i)
                 _log.debug('Installing to {}'.format(device))
                 # Without passing DYLD_LIBRARY_PATH, libWebCoreTestSupport cannot be loaded and DRT/WKTR will crash pre-launch,
-                # leaving a crash log which will be picked up in results.  No DYLD_FRAMEWORK_PATH will also cause the DRT/WKTR to
-                # crash, but this crash will occur post-launch, after install_app has already killed the process.
-                if not device.install_app(self._path_to_driver(), {'DYLD_LIBRARY_PATH': self._build_path()}):
+                # leaving a crash log which will be picked up in results. DYLD_FRAMEWORK_PATH is needed to prevent an early crash.
+                if not device.install_app(self._path_to_driver(), {'DYLD_LIBRARY_PATH': self._build_path(), 'DYLD_FRAMEWORK_PATH': self._build_path()}):
                     raise RuntimeError('Failed to install app {} on device {}'.format(self._path_to_driver(), device.udid))
         else:
             _log.debug('Skipping installation')
