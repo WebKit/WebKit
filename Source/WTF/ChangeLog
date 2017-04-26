@@ -1,3 +1,12 @@
+2017-04-26  Don Olmstead  <don.olmstead@am.sony.com>
+
+        [ARM] Enable GCC visibility
+        https://bugs.webkit.org/show_bug.cgi?id=171296
+
+        Reviewed by Michael Catanzaro.
+
+        * wtf/Platform.h:
+
 2017-04-26  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         sendMessageScoped's signal handler calls LocklessBag::consumeAll, which causes heap deallocation in signal handler and leads deadlock
