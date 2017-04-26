@@ -1,3 +1,17 @@
+2017-04-26  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r215814.
+
+        The LayoutTest for this change is failing on ios-simulator and
+        is flaky on macOS.
+
+        Reverted changeset:
+
+        "Response.blob() does not set the content-type based on the
+        header value."
+        https://bugs.webkit.org/show_bug.cgi?id=170849
+        http://trac.webkit.org/changeset/215814
+
 2017-04-26  Chris Dumez  <cdumez@apple.com>
 
         Re-sync html/browsers/the-window-object web-platform-tests from upstream

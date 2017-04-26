@@ -33,7 +33,7 @@ FAIL Consume response's body: from stream with correct multipart type to formDat
 FAIL Consume response's body: from stream without correct multipart type to formData (error case) assert_throws: function "function () { throw e }" threw "Not implemented" (undefined) expected object "TypeError" ("TypeError")
 FAIL Consume response's body: from stream with correct urlencoded type to formData promise_test: Unhandled rejection with value: "Not implemented"
 FAIL Consume response's body: from stream without correct urlencoded type to formData (error case) assert_throws: function "function () { throw e }" threw "Not implemented" (undefined) expected object "TypeError" ("TypeError")
-PASS Consume response's body: from fetch to blob 
+FAIL Consume response's body: from fetch to blob assert_equals: Blob body type should be computed from the response Content-Type expected "text/plain" but got ""
 PASS Consume response's body: from fetch to text 
 PASS Consume response's body: from fetch to arrayBuffer 
 FAIL Consume response's body: from fetch without correct type to formData (error case) assert_throws: function "function () { throw e }" threw "Not implemented" (undefined) expected object "TypeError" ("TypeError")
