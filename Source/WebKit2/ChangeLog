@@ -1,3 +1,15 @@
+2017-04-26  Tim Horton  <timothy_horton@apple.com>
+
+        WebKit calls AppKit NSCell API from a background queue
+        https://bugs.webkit.org/show_bug.cgi?id=171318
+        <rdar://problem/31798317>
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/mac/ServicesController.mm:
+        (WebKit::ServicesController::refreshExistingServices):
+        Synchronously bounce to the main thread to do non-thread-safe NSCell related work.
+
 2017-04-25  Alex Christensen  <achristensen@webkit.org>
 
         Encoded filename should be decoded for WKContentExtension.identifier

@@ -87,12 +87,14 @@ void ServicesController::refreshExistingServices(bool refreshImmediately)
 
         static NSAttributedString *attributedStringWithRichContent;
         if (!attributedStringWithRichContent) {
-            auto attachment = adoptNS([[NSTextAttachment alloc] init]);
-            auto cell = adoptNS([[NSTextAttachmentCell alloc] initImageCell:image.get()]);
-            [attachment setAttachmentCell:cell.get()];
-            NSMutableAttributedString *richString = (NSMutableAttributedString *)[NSMutableAttributedString attributedStringWithAttachment:attachment.get()];
-            [richString appendAttributedString: attributedString];
-            attributedStringWithRichContent = [richString retain];
+            dispatch_sync(dispatch_get_main_queue(), ^ {
+                auto attachment = adoptNS([[NSTextAttachment alloc] init]);
+                auto cell = adoptNS([[NSTextAttachmentCell alloc] initImageCell:image.get()]);
+                [attachment setAttachmentCell:cell.get()];
+                NSMutableAttributedString *richString = (NSMutableAttributedString *)[NSMutableAttributedString attributedStringWithAttachment:attachment.get()];
+                [richString appendAttributedString:attributedString];
+                attributedStringWithRichContent = [richString retain];
+            });
         }
 
         bool hasRichContentServices = hasCompatibleServicesForItems(@[ attributedStringWithRichContent ]);
