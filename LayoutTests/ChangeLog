@@ -1,3 +1,14 @@
+2017-04-26  Zalan Bujtas  <zalan@apple.com>
+
+        Forced page break on :after triggers infinite loop in column balancing
+        https://bugs.webkit.org/show_bug.cgi?id=171309
+        rdar://problem/26285884
+
+        Reviewed by David Hyatt.
+
+        * fast/multicol/infinite-loop-when-forced-break-expected.txt: Added.
+        * fast/multicol/infinite-loop-when-forced-break.html: Added.
+
 2017-04-26  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r215767.
