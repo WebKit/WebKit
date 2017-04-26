@@ -107,7 +107,6 @@ private:
     void allClientsRemoved() override;
     void destroyDecodedData() override;
 
-    EncodedDataStatus setImageDataBuffer(SharedBuffer*, bool allDataReceived);
     void addData(const char* data, unsigned length) override;
     void error(CachedResource::Status) override;
     void responseReceived(const ResourceResponse&) override;
