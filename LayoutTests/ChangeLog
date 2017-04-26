@@ -1,3 +1,12 @@
+2017-04-26  Matt Lewis  <jlewis3@apple.com>
+
+        Removing Flaky timeout expectation for swipe/main-frame-pinning-requirement.html.
+        https://bugs.webkit.org/show_bug.cgi?id=161887
+
+        Reviewed by Tim Horton.
+
+        * platform/mac-wk2/TestExpectations:
+
 2017-04-25  Dean Jackson  <dino@apple.com>
 
         [Color] Make gradients work with ExtendedColors
