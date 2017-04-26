@@ -1,3 +1,16 @@
+2017-04-26  Zalan Bujtas  <zalan@apple.com>
+
+        RTL: recent searches popover is displayed in incorrect location
+        https://bugs.webkit.org/show_bug.cgi?id=171338
+        <rdar://problem/31377807>
+
+        Reviewed by Dean Jackson.
+
+        Add RTL support for the pop-under branch.
+
+        * WebCoreSupport/PopupMenuMac.mm:
+        (PopupMenuMac::show):
+
 2017-04-25  Brent Fulgham  <bfulgham@apple.com>
 
         Limit allowed size of document.title to avoid locking WebKit clients
