@@ -1,0 +1,13 @@
+Test the whitelist of the image formats in WebKit.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS isSupported('resources/100x100-red.psd') is false
+PASS isSupported('resources/100x100-red.tga') is false
+PASS isSupported('resources/100x100-red-psd-renamed.png') is false
+PASS isSupported('resources/100x100-red-tga-renamed.png') is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+      

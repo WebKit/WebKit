@@ -1,0 +1,75 @@
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+    img {
+        width: 100px;
+        height: 100px;
+    }
+</style>
+</head>
+<body>
+    <img id="image-1" src="">
+    <img id="image-2" src="">
+    <img id="image-3" src="">
+    <img id="image-4" src="">
+    <script>
+        // The test finishes after getting the results of loading all the images.
+        jsTestIsAsync = true;
+
+        description("Test the whitelist of the image formats in WebKit.");
+
+        var images = [
+            { id: "image-1", src: "resources/100x100-red.psd", isSupported: false },
+            { id: "image-2", src: "resources/100x100-red.tga", isSupported: false },
+            { id: "image-3", src: "resources/100x100-red-psd-renamed.png", isSupported: false },
+            { id: "image-4", src: "resources/100x100-red-tga-renamed.png", isSupported: false },
+        ];
+
+        function isSupported(src) {
+            var image = images.find(function(image) {
+                return image.src == src;
+            });
+
+            if (image == undefined) {
+                debug("Error: Unknown image src.");
+                return false;
+            }
+
+            return image.isSupported;
+        }
+
+        function loadImage(image) {
+            return new Promise((resolve) => {
+                var element = document.getElementById(image.id);
+                element.onload = (event) => {
+                    shouldBeTrue("isSupported('" + image.src + "')");
+                    resolve(image);
+                };
+                element.onerror = (event) => {
+                    shouldBeFalse("isSupported('" + image.src + "')");
+                    resolve(event);
+                };
+                document.getElementById(image.id).src = image.src;
+            });
+        }
+
+        function loadImages() {
+            let promise = loadImage(images[0]);
+            for (let index = 1; index < images.length; ++index) {
+                promise = promise.then(() => {
+                    return loadImage(images[index]);
+                });
+            }
+            return promise;
+        }
+
+        (function() {
+            loadImages().then(() => {
+                finishJSTest();
+            });
+        })();
+    </script>
+    <script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
