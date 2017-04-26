@@ -47,7 +47,7 @@ class RTCDataChannelHandler {
 public:
     virtual ~RTCDataChannelHandler() { }
 
-    virtual void setClient(RTCDataChannelHandlerClient*) = 0;
+    virtual void setClient(RTCDataChannelHandlerClient&) = 0;
 
     virtual bool sendStringData(const String&) = 0;
     virtual bool sendRawData(const char*, size_t) = 0;

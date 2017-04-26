@@ -1,3 +1,29 @@
+2017-04-26  Youenn Fablet  <youenn@apple.com>
+
+        LayoutTest webrtc/datachannel/basic.html is a flaky crash
+        https://bugs.webkit.org/show_bug.cgi?id=170154
+        <rdar://problem/31288423>
+
+        Reviewed by Geoffrey Garen.
+
+        Before the patch, we are setting the channel handler client to null and then unregistering from observer to
+        libwebrtc data channel. Since this happens in two different threads, there might be a timing issue.
+
+        Removing this risk by first unregistering (done synchronously on the other thread), before setting client to null.
+        Made some clean-up related refactoring.
+
+        * Modules/mediastream/RTCDataChannel.cpp:
+        (WebCore::RTCDataChannel::create):
+        (WebCore::RTCDataChannel::close):
+        * Modules/mediastream/libwebrtc/LibWebRTCDataChannelHandler.cpp:
+        (WebCore::LibWebRTCDataChannelHandler::setClient):
+        (WebCore::LibWebRTCDataChannelHandler::close):
+        * Modules/mediastream/libwebrtc/LibWebRTCDataChannelHandler.h:
+        * platform/mediastream/RTCDataChannelHandler.h:
+        * platform/mock/RTCDataChannelHandlerMock.cpp:
+        (WebCore::RTCDataChannelHandlerMock::setClient):
+        * platform/mock/RTCDataChannelHandlerMock.h:
+
 2017-04-26  Alex Christensen  <achristensen@webkit.org>
 
         Make user script injection more robust

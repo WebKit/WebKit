@@ -40,12 +40,10 @@ RTCDataChannelHandlerMock::RTCDataChannelHandlerMock(const String& label, const 
 {
 }
 
-void RTCDataChannelHandlerMock::setClient(RTCDataChannelHandlerClient* client)
+void RTCDataChannelHandlerMock::setClient(RTCDataChannelHandlerClient& client)
 {
-    if (!client)
-        return;
-
-    m_client = client;
+    ASSERT(!m_client);
+    m_client = &client;
     auto notifier = adoptRef(*new DataChannelStateNotifier(m_client, RTCDataChannelState::Open));
     m_timerEvents.append(adoptRef(new TimerEvent(this, WTFMove(notifier))));
 }

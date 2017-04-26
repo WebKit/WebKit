@@ -37,14 +37,14 @@ public:
     RTCDataChannelHandlerMock(const String&, const RTCDataChannelInit&);
 
 private:
-    void setClient(RTCDataChannelHandlerClient*) final;
+    void setClient(RTCDataChannelHandlerClient&) final;
 
     bool sendStringData(const String&) final;
     bool sendRawData(const char*, size_t) final;
     void close() final;
     size_t bufferedAmount() const final { return 0; }
 
-    RTCDataChannelHandlerClient* m_client;
+    RTCDataChannelHandlerClient* m_client { nullptr };
 
     String m_label;
     String m_protocol;

@@ -38,13 +38,11 @@ LibWebRTCDataChannelHandler::~LibWebRTCDataChannelHandler()
         m_channel->UnregisterObserver();
 }
 
-void LibWebRTCDataChannelHandler::setClient(RTCDataChannelHandlerClient* client)
+void LibWebRTCDataChannelHandler::setClient(RTCDataChannelHandlerClient& client)
 {
-    m_client = client;
-    if (m_client)
-        m_channel->RegisterObserver(this);
-    else
-        m_channel->UnregisterObserver();
+    ASSERT(!m_client);
+    m_client = &client;
+    m_channel->RegisterObserver(this);
 }
 
 bool LibWebRTCDataChannelHandler::sendStringData(const String& text)
@@ -59,6 +57,10 @@ bool LibWebRTCDataChannelHandler::sendRawData(const char* data, size_t length)
 
 void LibWebRTCDataChannelHandler::close()
 {
+    if (m_client) {
+        m_channel->UnregisterObserver();
+        m_client = nullptr;
+    }
     m_channel->Close();
 }
 
