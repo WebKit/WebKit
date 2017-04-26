@@ -1,5 +1,14 @@
 2017-04-25  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Mark http/tests/security/contentSecurityPolicy/1.1/module-scriptnonce-invalidnonce.html as flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=171301
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
+2017-04-25  Ryan Haddad  <ryanhaddad@apple.com>
+
         Unreviewed, rolling out r215730.
 
         The LayoutTest for this change is a flaky timeout on mac-wk1

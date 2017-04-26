@@ -1940,3 +1940,5 @@ webkit.org/b/170153 fast/scrolling/ios/touch-scroll-pointer-events-none.html [ F
 webkit.org/b/170153 fast/scrolling/ios/touch-scroll-visibility-hidden.html [ Failure ]
 
 webkit.org/b/169719 fast/mediacapturefromelement/CanvasCaptureMediaStream-request-frame-events.html [ Pass Failure ]
+
+webkit.org/b/171301 [ Release ] http/tests/security/contentSecurityPolicy/1.1/module-scriptnonce-invalidnonce.html [ Pass Timeout ]
