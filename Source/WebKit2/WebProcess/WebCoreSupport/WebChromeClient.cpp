@@ -1088,9 +1088,9 @@ void WebChromeClient::isPlayingMediaDidChange(MediaProducer::MediaStateFlags sta
     m_page.send(Messages::WebPageProxy::IsPlayingMediaDidChange(state, sourceElementID));
 }
 
-void WebChromeClient::handleAutoplayEvent(AutoplayEvent event)
+void WebChromeClient::handleAutoplayEvent(AutoplayEvent event, OptionSet<AutoplayEventFlags> flags)
 {
-    m_page.send(Messages::WebPageProxy::HandleAutoplayEvent(static_cast<uint32_t>(event)));
+    m_page.send(Messages::WebPageProxy::HandleAutoplayEvent(event, flags));
 }
 
 #if ENABLE(MEDIA_SESSION)

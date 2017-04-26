@@ -168,6 +168,7 @@ struct TextCheckingResult;
 struct ViewportAttributes;
 struct WindowFeatures;
 
+enum class AutoplayEvent;
 enum class HasInsecureContent;
 enum class ShouldSample;
 
@@ -1070,7 +1071,7 @@ public:
     bool hasActiveAudioStream() const { return m_mediaState & WebCore::MediaProducer::HasActiveAudioCaptureDevice; }
     bool hasActiveVideoStream() const { return m_mediaState & WebCore::MediaProducer::HasActiveVideoCaptureDevice; }
     WebCore::MediaProducer::MediaStateFlags mediaStateFlags() const { return m_mediaState; }
-    void handleAutoplayEvent(uint32_t);
+    void handleAutoplayEvent(WebCore::AutoplayEvent, OptionSet<WebCore::AutoplayEventFlags>);
 
 #if PLATFORM(MAC)
     void videoControlsManagerDidChange();

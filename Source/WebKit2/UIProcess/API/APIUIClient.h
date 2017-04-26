@@ -150,7 +150,7 @@ public:
 
     virtual void isPlayingAudioDidChange(WebKit::WebPageProxy&) { }
     virtual void mediaCaptureStateDidChange(WebCore::MediaProducer::MediaStateFlags) { }
-    virtual void handleAutoplayEvent(WebKit::WebPageProxy&, WebCore::AutoplayEvent) { }
+    virtual void handleAutoplayEvent(WebKit::WebPageProxy&, WebCore::AutoplayEvent, OptionSet<WebCore::AutoplayEventFlags>) { }
 
 #if ENABLE(MEDIA_SESSION)
     virtual void mediaSessionMetadataDidChange(WebKit::WebPageProxy&, WebKit::WebMediaSessionMetadata*) { }

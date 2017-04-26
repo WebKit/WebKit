@@ -51,6 +51,7 @@ static bool receivedAlert;
 
 #if PLATFORM(MAC)
 static std::optional<WKAutoplayEvent> receivedAutoplayEvent;
+static std::optional<WKAutoplayEventFlags> receivedAutoplayEventFlags;
 #endif
 
 static size_t alertCount;
@@ -280,8 +281,9 @@ TEST(WebKit2, WebsitePoliciesAutoplayEnabled)
 }
 
 #if PLATFORM(MAC)
-static void handleAutoplayEvent(WKPageRef page, WKAutoplayEvent event, const void* clientInfo)
+static void handleAutoplayEvent(WKPageRef page, WKAutoplayEvent event, WKAutoplayEventFlags flags, const void* clientInfo)
 {
+    receivedAutoplayEventFlags = flags;
     receivedAutoplayEvent = event;
 }
 
@@ -320,6 +322,7 @@ TEST(WebKit2, WebsitePoliciesPlayAfterPreventedAutoplay)
     [webView mouseDownAtPoint:playButtonClickPoint simulatePressure:NO];
     [webView mouseUpAtPoint:playButtonClickPoint];
     runUntilReceivesAutoplayEvent(kWKAutoplayEventDidPlayMediaPreventedFromAutoplaying);
+    ASSERT_TRUE(*receivedAutoplayEventFlags & kWKAutoplayEventFlagsHasAudio);
 
     receivedAutoplayEvent = std::nullopt;
     [webView loadHTMLString:@"" baseURL:nil];
@@ -328,10 +331,12 @@ TEST(WebKit2, WebsitePoliciesPlayAfterPreventedAutoplay)
     [webView loadRequest:autoplayRequest];
     [webView waitForMessage:@"loaded"];
     runUntilReceivesAutoplayEvent(kWKAutoplayEventDidPreventFromAutoplaying);
+    ASSERT_TRUE(*receivedAutoplayEventFlags & kWKAutoplayEventFlagsHasAudio);
 
     [webView mouseDownAtPoint:playButtonClickPoint simulatePressure:NO];
     [webView mouseUpAtPoint:playButtonClickPoint];
     runUntilReceivesAutoplayEvent(kWKAutoplayEventDidPlayMediaPreventedFromAutoplaying);
+    ASSERT_TRUE(*receivedAutoplayEventFlags & kWKAutoplayEventFlagsHasAudio);
 
     receivedAutoplayEvent = std::nullopt;
     [webView loadHTMLString:@"" baseURL:nil];
@@ -359,6 +364,7 @@ TEST(WebKit2, WebsitePoliciesPlayAfterPreventedAutoplay)
     [webView mouseDownAtPoint:playButtonClickPoint simulatePressure:NO];
     [webView mouseUpAtPoint:playButtonClickPoint];
     runUntilReceivesAutoplayEvent(kWKAutoplayEventDidPlayMediaPreventedFromAutoplaying);
+    ASSERT_TRUE(*receivedAutoplayEventFlags & kWKAutoplayEventFlagsHasAudio);
 }
 
 TEST(WebKit2, WebsitePoliciesPlayingWithoutInterference)
@@ -389,11 +395,13 @@ TEST(WebKit2, WebsitePoliciesPlayingWithoutInterference)
 
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]]];
     runUntilReceivesAutoplayEvent(kWKAutoplayEventDidEndMediaPlaybackWithoutUserInterference);
+    ASSERT_TRUE(*receivedAutoplayEventFlags & kWKAutoplayEventFlagsHasAudio);
 
     receivedAutoplayEvent = std::nullopt;
     [webView loadRequest:jsPlayRequest];
     [webView waitForMessage:@"ended"];
     runUntilReceivesAutoplayEvent(kWKAutoplayEventDidEndMediaPlaybackWithoutUserInterference);
+    ASSERT_TRUE(*receivedAutoplayEventFlags & kWKAutoplayEventFlagsHasAudio);
 }
 
 TEST(WebKit2, WebsitePoliciesUserInterferenceWithPlaying)
@@ -423,6 +431,7 @@ TEST(WebKit2, WebsitePoliciesUserInterferenceWithPlaying)
 
     WKPageSetMuted([webView _pageForTesting], kWKMediaAudioMuted);
     runUntilReceivesAutoplayEvent(kWKAutoplayEventUserDidInterfereWithPlayback);
+    ASSERT_TRUE(*receivedAutoplayEventFlags & kWKAutoplayEventFlagsHasAudio);
 
     receivedAutoplayEvent = std::nullopt;
     [webView loadRequest:jsPlayRequest];
@@ -433,6 +442,7 @@ TEST(WebKit2, WebsitePoliciesUserInterferenceWithPlaying)
     [webView mouseDownAtPoint:muteButtonClickPoint simulatePressure:NO];
     [webView mouseUpAtPoint:muteButtonClickPoint];
     runUntilReceivesAutoplayEvent(kWKAutoplayEventUserDidInterfereWithPlayback);
+    ASSERT_TRUE(*receivedAutoplayEventFlags & kWKAutoplayEventFlagsHasAudio);
 
     receivedAutoplayEvent = std::nullopt;
     [webView loadRequest:jsPlayRequest];
@@ -443,6 +453,7 @@ TEST(WebKit2, WebsitePoliciesUserInterferenceWithPlaying)
     [webView mouseDownAtPoint:playButtonClickPoint simulatePressure:NO];
     [webView mouseUpAtPoint:playButtonClickPoint];
     runUntilReceivesAutoplayEvent(kWKAutoplayEventUserDidInterfereWithPlayback);
+    ASSERT_TRUE(*receivedAutoplayEventFlags & kWKAutoplayEventFlagsHasAudio);
 }
 
 TEST(WebKit2, WebsitePoliciesUserNeverPlayedMediaPreventedFromPlaying)
@@ -472,6 +483,7 @@ TEST(WebKit2, WebsitePoliciesUserNeverPlayedMediaPreventedFromPlaying)
 
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]]];
     runUntilReceivesAutoplayEvent(kWKAutoplayEventUserNeverPlayedMediaPreventedFromPlaying);
+    ASSERT_TRUE(*receivedAutoplayEventFlags & kWKAutoplayEventFlagsHasAudio);
 }
 
 TEST(WebKit2, WebsitePoliciesAutoplayQuirks)

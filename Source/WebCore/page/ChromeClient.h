@@ -422,7 +422,7 @@ public:
     virtual bool shouldUseTiledBackingForFrameView(const FrameView&) const { return false; }
 
     virtual void isPlayingMediaDidChange(MediaProducer::MediaStateFlags, uint64_t) { }
-    virtual void handleAutoplayEvent(AutoplayEvent) { }
+    virtual void handleAutoplayEvent(AutoplayEvent, OptionSet<AutoplayEventFlags>) { }
 
 #if ENABLE(MEDIA_SESSION)
     virtual void hasMediaSessionWithActiveMediaElementsDidChange(bool) { }

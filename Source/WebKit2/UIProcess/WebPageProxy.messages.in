@@ -438,7 +438,7 @@ messages -> WebPageProxy {
 #endif
 
     IsPlayingMediaDidChange(unsigned state, uint64_t sourceElementID)
-    HandleAutoplayEvent(uint32_t event)
+    HandleAutoplayEvent(enum WebCore::AutoplayEvent event, OptionSet<WebCore::AutoplayEventFlags> flags)
 
 #if ENABLE(MEDIA_SESSION)
     HasMediaSessionWithActiveMediaElementsDidChange(bool state)

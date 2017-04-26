@@ -35,4 +35,8 @@ enum class AutoplayEvent {
     UserNeverPlayedMediaPreventedFromPlaying,
 };
 
+enum class AutoplayEventFlags {
+    HasAudio = 1 << 0,
+};
+
 } // namespace WebCore

@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ArgumentCoders.h"
+#include <WebCore/AutoplayEvent.h>
 #include <WebCore/CaptureDevice.h>
 #include <WebCore/ColorSpace.h>
 #include <WebCore/DiagnosticLoggingClient.h>
@@ -683,6 +684,17 @@ template<> struct EnumTraits<WebCore::HasInsecureContent> {
         WebCore::HasInsecureContent,
         WebCore::HasInsecureContent::No,
         WebCore::HasInsecureContent::Yes
+    >;
+};
+
+template<> struct EnumTraits<WebCore::AutoplayEvent> {
+    using values = EnumValues<
+        WebCore::AutoplayEvent,
+        WebCore::AutoplayEvent::DidPreventMediaFromPlaying,
+        WebCore::AutoplayEvent::DidPlayMediaPreventedFromPlaying,
+        WebCore::AutoplayEvent::DidEndMediaPlaybackWithoutUserInterference,
+        WebCore::AutoplayEvent::UserDidInterfereWithPlayback,
+        WebCore::AutoplayEvent::UserNeverPlayedMediaPreventedFromPlaying
     >;
 };
 

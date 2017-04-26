@@ -1,3 +1,23 @@
+2017-04-24  Matt Rajca  <mrajca@apple.com>
+
+        Indicate presence of audio when handling autoplay events.
+        https://bugs.webkit.org/show_bug.cgi?id=171227
+
+        Reviewed by Alex Christensen.
+
+        Added API tests.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::handleAutoplayEvent):
+        (WebCore::HTMLMediaElement::playInternal):
+        (WebCore::HTMLMediaElement::mediaPlayerTimeChanged):
+        (WebCore::HTMLMediaElement::stopWithoutDestroyingMediaPlayer):
+        (WebCore::HTMLMediaElement::userDidInterfereWithAutoplay):
+        (WebCore::HTMLMediaElement::setPlaybackWithoutUserGesture):
+        * html/HTMLMediaElement.h:
+        * page/AutoplayEvent.h:
+        * page/ChromeClient.h:
+
 2017-04-25  Aakash Jain  <aakash_jain@apple.com>
 
         WebCore.framework should restrict allowable_clients

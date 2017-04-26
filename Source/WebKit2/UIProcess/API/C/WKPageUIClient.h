@@ -57,6 +57,12 @@ enum {
 };
 typedef uint32_t WKAutoplayEvent;
 
+enum {
+    kWKAutoplayEventFlagsNone = 0,
+    kWKAutoplayEventFlagsHasAudio = 1 << 0,
+};
+typedef uint32_t WKAutoplayEventFlags;
+
 WK_EXPORT WKTypeID WKPageRunBeforeUnloadConfirmPanelResultListenerGetTypeID();
 WK_EXPORT void WKPageRunBeforeUnloadConfirmPanelResultListenerCall(WKPageRunBeforeUnloadConfirmPanelResultListenerRef listener, bool result);
 
@@ -111,7 +117,7 @@ typedef void (*WKPageDecidePolicyForUserMediaPermissionRequestCallback)(WKPageRe
 typedef void (*WKCheckUserMediaPermissionCallback)(WKPageRef page, WKFrameRef frame, WKSecurityOriginRef userMediaDocumentOrigin, WKSecurityOriginRef topLevelDocumentOrigin, WKUserMediaPermissionCheckRef devicesRequest, const void *clientInfo);
 typedef void (*WKPageDidClickAutoFillButtonCallback)(WKPageRef page, WKTypeRef userData, const void *clientInfo);
 typedef void (*WKPageMediaSessionMetadataDidChangeCallback)(WKPageRef page, WKMediaSessionMetadataRef metadata, const void* clientInfo);
-typedef void (*WKHandleAutoplayEventCallback)(WKPageRef page, WKAutoplayEvent event, const void* clientInfo);
+typedef void (*WKHandleAutoplayEventCallback)(WKPageRef page, WKAutoplayEvent event, WKAutoplayEventFlags flags, const void* clientInfo);
 typedef void (*WKFullscreenMayReturnToInlineCallback)(WKPageRef page, const void* clientInfo);
 
 typedef void (*WKRequestPointerLockCallback)(WKPageRef page, const void* clientInfo);

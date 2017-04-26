@@ -6567,9 +6567,9 @@ void WebPageProxy::focusedContentMediaElementDidChange(uint64_t elementID)
 }
 #endif
 
-void WebPageProxy::handleAutoplayEvent(uint32_t event)
+void WebPageProxy::handleAutoplayEvent(WebCore::AutoplayEvent event, OptionSet<AutoplayEventFlags> flags)
 {
-    m_uiClient->handleAutoplayEvent(*this, static_cast<AutoplayEvent>(event));
+    m_uiClient->handleAutoplayEvent(*this, event, flags);
 }
 
 #if PLATFORM(MAC)

@@ -297,7 +297,7 @@ private:
     bool shouldUseTiledBackingForFrameView(const WebCore::FrameView&) const final;
 
     void isPlayingMediaDidChange(WebCore::MediaProducer::MediaStateFlags, uint64_t) final;
-    void handleAutoplayEvent(WebCore::AutoplayEvent) final;
+    void handleAutoplayEvent(WebCore::AutoplayEvent, OptionSet<WebCore::AutoplayEventFlags>) final;
 
 #if ENABLE(MEDIA_SESSION)
     void hasMediaSessionWithActiveMediaElementsDidChange(bool) final;

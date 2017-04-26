@@ -28,6 +28,7 @@
 #if ENABLE(VIDEO)
 
 #include "ActiveDOMObject.h"
+#include "AutoplayEvent.h"
 #include "GenericEventQueue.h"
 #include "GenericTaskQueue.h"
 #include "HTMLElement.h"
@@ -755,6 +756,7 @@ private:
     enum class PlaybackWithoutUserGesture { None, Started, Prevented };
     void setPlaybackWithoutUserGesture(PlaybackWithoutUserGesture);
     void userDidInterfereWithAutoplay();
+    void handleAutoplayEvent(AutoplayEvent);
 
     MediaTime minTimeSeekable() const;
     MediaTime maxTimeSeekable() const;
