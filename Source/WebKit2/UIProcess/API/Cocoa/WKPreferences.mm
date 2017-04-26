@@ -547,6 +547,16 @@ static _WKStorageBlockingPolicy toAPI(WebCore::SecurityOrigin::StorageBlockingPo
     _preferences->setLoadsImagesAutomatically(loadsImagesAutomatically);
 }
 
+- (BOOL)_mediaStreamEnabled
+{
+    return _preferences->mediaStreamEnabled();
+}
+
+- (void)_setMediaStreamEnabled:(BOOL)enabled
+{
+    _preferences->setMediaStreamEnabled(enabled);
+}
+
 - (BOOL)_mockCaptureDevicesEnabled
 {
     return _preferences->mockCaptureDevicesEnabled();
