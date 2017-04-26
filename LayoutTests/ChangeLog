@@ -1,3 +1,12 @@
+2017-04-26  Matt Lewis  <jlewis3@apple.com>
+
+        Re-baseline inspector/dom/getAccessibilityPropertiesForNode.html after r215821
+        https://bugs.webkit.org/show_bug.cgi?id=171346
+
+        Unreviewed test gardening.
+
+        * inspector/dom/getAccessibilityPropertiesForNode-expected.txt:
+
 2017-04-26  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [ATK] Elements with a defined, non-false value for aria-current should expose ATK_STATE_ACTIVE

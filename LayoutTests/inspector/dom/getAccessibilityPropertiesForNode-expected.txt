@@ -296,6 +296,7 @@ Total elements to be tested: 122.
     focused: false
     ownedNodeIds.length: 1
     required: false
+    isPopUpButton: true
 
 <select>
     <option>FOO</option>
