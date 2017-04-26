@@ -26,26 +26,23 @@ function sendMessages(channel)
 {
     channel.send(longString);
     channel.send(longString);
+    channel.send(longString);
 }
 
 function receiveMessages(event) {
     if (++counter === 1)
         return;
-    finishTest();
 }
-
-var finishTest;
 
 promise_test((test) => {
     counter = 0;
     var gotEvent = false;
     return new Promise((resolve, reject) => {
-        finishTest = resolve;
         createConnections((localConnection) => {
             localChannel = localConnection.createDataChannel('sendDataChannel');
             localChannel.onopen = () => { sendMessages(localChannel); };
             localChannel.onbufferedamountlow = () => {
-                gotEvent = true;
+                resolve();
             }
             assert_equals(localChannel.bufferedAmountLowThreshold, 0, "default bufferedAmountLowThreshold value");
         }, (remoteConnection) => {
@@ -54,11 +51,9 @@ promise_test((test) => {
                 remoteChannel.onmessage = receiveMessages;
             };
         });
-    }).then (() => {
-         return waitFor(500);
+        setTimeout(() => reject('timed out'), 5000);
     }).then (() => {
         closeDataChannels();
-        assert_true(gotEvent, "got onbufferedamountlow event");
     });
 }, "Default buffer threshold");
 
@@ -68,9 +63,8 @@ function sendContinuouslyMessages(channel)
         while (channel.bufferedAmount < 200000)
             channel.send(longString);
 
-       setTimeout(() => sendContinuouslyMessages(channel), 1);
+       setTimeout(() => sendContinuouslyMessages(channel), 0);
     } catch(e) {
-        console.log("channel send is throwing");
     }
 }
 
@@ -78,13 +72,12 @@ promise_test((test) => {
     counter = 0;
     var gotEvent = false;
     return new Promise((resolve, reject) => {
-        finishTest = resolve;
         createConnections((localConnection) => {
             localChannel = localConnection.createDataChannel('sendDataChannel');
             localChannel.onopen = () => {
                 sendContinuouslyMessages(localChannel);
                 localChannel.onbufferedamountlow = () => {
-                    gotEvent = true;
+                    resolve();
                 }
             };
             localChannel.bufferedAmountLowThreshold = 200000;
@@ -94,11 +87,9 @@ promise_test((test) => {
                 remoteChannel.onmessage = receiveMessages;
             };
         });
-    }).then (() => {
-         return waitFor(500);
+        setTimeout(() => reject('timed out'), 5000);
     }).then (() => {
         closeDataChannels();
-        assert_true(gotEvent, "got onbufferedamountlow event");
     });
 }, "Large buffer threshold reached");
 
@@ -106,27 +97,24 @@ promise_test((test) => {
     counter = 0;
     var gotEvent = false;
     return new Promise((resolve, reject) => {
-        finishTest = resolve;
         createConnections((localConnection) => {
             localChannel = localConnection.createDataChannel('sendDataChannel');
             localChannel.onopen = () => {
                 sendContinuouslyMessages(localChannel);
                 localChannel.onbufferedamountlow = () => {
-                    gotEvent = true;
+                    reject();
                 }
             };
-            localChannel.bufferedAmountLowThreshold = 100000;
+            localChannel.bufferedAmountLowThreshold = 10;
         }, (remoteConnection) => {
             remoteConnection.ondatachannel = (event) => {
                 remoteChannel = event.channel;
                 remoteChannel.onmessage = receiveMessages;
             };
         });
-    }).then (() => {
-         return waitFor(500);
+        setTimeout(resolve, 50);
     }).then (() => {
         closeDataChannels();
-        assert_false(gotEvent, "got onbufferedamountlow event");
     });
 }, "Medium buffer threshold not reached");
     </script>

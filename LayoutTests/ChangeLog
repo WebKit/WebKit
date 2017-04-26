@@ -1,3 +1,14 @@
+2017-04-26  Youenn Fablet  <youenn@apple.com>
+
+        LayoutTest webrtc/datachannel/bufferedAmountLowThreshold.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=170701
+
+        Reviewed by Eric Carlson.
+
+        * platform/mac-wk1/TestExpectations: Removing flaky expectation.
+        * webrtc/datachannel/bufferedAmountLowThreshold-expected.txt:
+        * webrtc/datachannel/bufferedAmountLowThreshold.html:
+
 2017-04-26  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Restrict WebKit image formats to a known whitelist
