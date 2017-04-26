@@ -207,9 +207,8 @@ class TestImporter(object):
 
         self.import_tests()
 
-        if self.options.clean_destination_directory:
-            for test_path in test_paths:
-                self.remove_dangling_expectations(test_path)
+        for test_path in test_paths:
+            self.remove_dangling_expectations(test_path)
 
         if self._importing_downloaded_tests:
             self.generate_git_submodules_description_for_all_repositories()
@@ -551,14 +550,14 @@ class TestImporter(object):
 
         contents = self.filesystem.read_text_file(import_log_file).split('\n')
 
-        if 'List of files\n' in contents:
-            list_index = contents.index('List of files:\n') + 1
-            previous_file_list = [filename.strip() for filename in contents[list_index:]]
+        if 'List of files:' in contents:
+            list_index = contents.index('List of files:') + 1
+            previous_file_list = [filename.strip() for filename in contents[list_index:] if len(filename)]
 
         deleted_files = set(previous_file_list) - set(new_file_list)
         for deleted_file in deleted_files:
             _log.info('Deleting file removed from the W3C repo: %s', deleted_file)
-            deleted_file = self.filesystem.join(self._webkit_root, deleted_file)
+            deleted_file = self.filesystem.join(self._webkit_root, deleted_file[1:])
             self.filesystem.remove(deleted_file)
 
     def write_import_log(self, import_directory, file_list, prop_list, property_values_list):

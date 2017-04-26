@@ -1,3 +1,16 @@
+2017-04-26  Youenn Fablet  <youenn@apple.com>
+
+        Test importer should delete obsolete files based on w3c-import.log
+        https://bugs.webkit.org/show_bug.cgi?id=171348
+
+        Reviewed by Chris Dumez.
+
+        * Scripts/webkitpy/w3c/test_importer.py:
+        (TestImporter.do_import): Removing dangling -expected.txt files in regular import mode.
+        (TestImporter.remove_deleted_files): Fixing according w3c-import.log current format.
+        * Scripts/webkitpy/w3c/test_importer_unittest.py:
+        (test_remove_obsolete_content):
+
 2017-04-26  Jonathan Bedard  <jbedard@apple.com>
 
         REGRESSION (r213926): We're sometimes trying to start WebKitTestRunner without proper DYLD variables
