@@ -1,3 +1,18 @@
+2017-04-26  Frederic Wang  <fwang@igalia.com>
+
+        Fix typo in RenderFrameBase
+        https://bugs.webkit.org/show_bug.cgi?id=171324
+
+        Reviewed by Zalan Bujtas.
+
+        No new tests, behavior unchanged.
+
+        * rendering/RenderFrameBase.cpp:
+        (WebCore::RenderFrameBase::layoutWithFlattening):
+        (WebCore::RenderFrameBase::performLayoutWithFlattening):
+        (WebCore::RenderFrameBase::peformLayoutWithFlattening): Deleted.
+        * rendering/RenderFrameBase.h:
+
 2017-04-26  Zalan Bujtas  <zalan@apple.com>
 
         Forced page break on :after triggers infinite loop in column balancing

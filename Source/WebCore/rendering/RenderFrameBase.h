@@ -44,7 +44,7 @@ public:
     void layoutWithFlattening(bool fixedWidth, bool fixedHeight);
 
 private:
-    void peformLayoutWithFlattening(bool hasFixedWidth, bool hasFixedHeight);
+    void performLayoutWithFlattening(bool hasFixedWidth, bool hasFixedHeight);
     RenderView* childRenderView() const;
     void widget() const = delete;
 };
