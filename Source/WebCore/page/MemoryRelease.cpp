@@ -110,6 +110,9 @@ void releaseMemory(Critical critical, Synchronous synchronous)
 {
     TraceScope scope(MemoryPressureHandlerStart, MemoryPressureHandlerEnd, static_cast<uint64_t>(critical), static_cast<uint64_t>(synchronous));
 
+    // Return unused pages back to the OS now as this will likely give us a little memory to work with.
+    WTF::releaseFastMallocFreeMemory();
+
     if (critical == Critical::Yes)
         releaseCriticalMemory(synchronous);
 
