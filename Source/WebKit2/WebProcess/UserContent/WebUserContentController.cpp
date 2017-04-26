@@ -488,7 +488,7 @@ void WebUserContentController::removeAllUserContent()
     }
 }
 
-void WebUserContentController::forEachUserScript(const std::function<void(WebCore::DOMWrapperWorld&, const WebCore::UserScript&)>& functor) const
+void WebUserContentController::forEachUserScript(Function<void(WebCore::DOMWrapperWorld&, const WebCore::UserScript&)>&& functor) const
 {
     for (const auto& worldAndUserScriptVector : m_userScripts) {
         auto& world = worldAndUserScriptVector.key->coreWorld();
@@ -497,7 +497,7 @@ void WebUserContentController::forEachUserScript(const std::function<void(WebCor
     }
 }
 
-void WebUserContentController::forEachUserStyleSheet(const std::function<void(const WebCore::UserStyleSheet&)>& functor) const
+void WebUserContentController::forEachUserStyleSheet(Function<void(const WebCore::UserStyleSheet&)>&& functor) const
 {
     for (auto& styleSheetVector : m_userStyleSheets.values()) {
         for (const auto& identifierUserStyleSheetPair : styleSheetVector)
@@ -506,7 +506,7 @@ void WebUserContentController::forEachUserStyleSheet(const std::function<void(co
 }
 
 #if ENABLE(USER_MESSAGE_HANDLERS)
-void WebUserContentController::forEachUserMessageHandler(const std::function<void(const WebCore::UserMessageHandlerDescriptor&)>& functor) const
+void WebUserContentController::forEachUserMessageHandler(Function<void(const WebCore::UserMessageHandlerDescriptor&)>&& functor) const
 {
     for (const auto& userMessageHandlerVector : m_userMessageHandlers.values()) {
         for (const auto& userMessageHandler : userMessageHandlerVector)

@@ -29,6 +29,7 @@
 #include "UserStyleSheetTypes.h"
 #include <functional>
 #include <wtf/Forward.h>
+#include <wtf/Function.h>
 #include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
 
@@ -73,10 +74,10 @@ public:
     WEBCORE_EXPORT UserContentProvider();
     WEBCORE_EXPORT virtual ~UserContentProvider();
 
-    virtual void forEachUserScript(const std::function<void(DOMWrapperWorld&, const UserScript&)>&) const = 0;
-    virtual void forEachUserStyleSheet(const std::function<void(const UserStyleSheet&)>&) const = 0;
+    virtual void forEachUserScript(Function<void(DOMWrapperWorld&, const UserScript&)>&&) const = 0;
+    virtual void forEachUserStyleSheet(Function<void(const UserStyleSheet&)>&&) const = 0;
 #if ENABLE(USER_MESSAGE_HANDLERS)
-    virtual void forEachUserMessageHandler(const std::function<void(const UserMessageHandlerDescriptor&)>&) const = 0;
+    virtual void forEachUserMessageHandler(Function<void(const UserMessageHandlerDescriptor&)>&&) const = 0;
 #endif
 #if ENABLE(CONTENT_EXTENSIONS)
     virtual ContentExtensions::ContentExtensionsBackend& userContentExtensionBackend() = 0;

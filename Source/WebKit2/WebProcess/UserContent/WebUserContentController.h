@@ -74,10 +74,10 @@ private:
     explicit WebUserContentController(uint64_t identifier);
 
     // WebCore::UserContentProvider
-    void forEachUserScript(const std::function<void(WebCore::DOMWrapperWorld&, const WebCore::UserScript&)>&) const override;
-    void forEachUserStyleSheet(const std::function<void(const WebCore::UserStyleSheet&)>&) const override;
+    void forEachUserScript(Function<void(WebCore::DOMWrapperWorld&, const WebCore::UserScript&)>&&) const final;
+    void forEachUserStyleSheet(Function<void(const WebCore::UserStyleSheet&)>&&) const final;
 #if ENABLE(USER_MESSAGE_HANDLERS)
-    void forEachUserMessageHandler(const std::function<void(const WebCore::UserMessageHandlerDescriptor&)>&) const override;
+    void forEachUserMessageHandler(Function<void(const WebCore::UserMessageHandlerDescriptor&)>&&) const final;
 #endif
 #if ENABLE(CONTENT_EXTENSIONS)
     WebCore::ContentExtensions::ContentExtensionsBackend& userContentExtensionBackend() override { return m_contentExtensionBackend; }

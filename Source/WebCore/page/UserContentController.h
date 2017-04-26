@@ -48,10 +48,10 @@ private:
     UserContentController();
 
     // UserContentProvider
-    void forEachUserScript(const std::function<void(DOMWrapperWorld&, const UserScript&)>&) const override;
-    void forEachUserStyleSheet(const std::function<void(const UserStyleSheet&)>&) const override;
+    void forEachUserScript(Function<void(DOMWrapperWorld&, const UserScript&)>&&) const final;
+    void forEachUserStyleSheet(Function<void(const UserStyleSheet&)>&&) const final;
 #if ENABLE(USER_MESSAGE_HANDLERS)
-    void forEachUserMessageHandler(const std::function<void(const UserMessageHandlerDescriptor&)>&) const override;
+    void forEachUserMessageHandler(Function<void(const UserMessageHandlerDescriptor&)>&&) const final;
 #endif
 #if ENABLE(CONTENT_EXTENSIONS)
     ContentExtensions::ContentExtensionsBackend& userContentExtensionBackend() override { return m_contentExtensionBackend; }

@@ -704,17 +704,18 @@ void Frame::injectUserScripts(UserScriptInjectionTime injectionTime)
     if (loader().stateMachine().creatingInitialEmptyDocument() && !settings().shouldInjectUserScriptsInInitialEmptyDocument())
         return;
 
-    Document* document = this->document();
-    if (!document)
-        return;
-
-    m_page->userContentProvider().forEachUserScript([&](DOMWrapperWorld& world, const UserScript& script) {
+    m_page->userContentProvider().forEachUserScript([this, protectedThis = makeRef(*this), injectionTime](DOMWrapperWorld& world, const UserScript& script) {
+        auto* document = this->document();
+        if (!document)
+            return;
         if (script.injectedFrames() == InjectInTopFrameOnly && ownerElement())
             return;
 
         if (script.injectionTime() == injectionTime && UserContentURLPattern::matchesPatterns(document->url(), script.whitelist(), script.blacklist())) {
-            m_page->setAsRunningUserScripts();
-            m_script->evaluateInWorld(ScriptSourceCode(script.source(), script.url()), world);
+            if (m_page)
+                m_page->setAsRunningUserScripts();
+            if (m_script)
+                m_script->evaluateInWorld(ScriptSourceCode(script.source(), script.url()), world);
         }
     });
 }
