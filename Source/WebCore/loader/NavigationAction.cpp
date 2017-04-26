@@ -41,7 +41,7 @@ static NavigationType navigationType(FrameLoadType frameLoadType, bool isFormSub
         return NavigationType::FormSubmitted;
     if (haveEvent)
         return NavigationType::LinkClicked;
-    if (frameLoadType == FrameLoadType::Reload || frameLoadType == FrameLoadType::ReloadFromOrigin)
+    if (isReload(frameLoadType))
         return NavigationType::Reload;
     if (isBackForwardLoadType(frameLoadType))
         return NavigationType::BackForward;

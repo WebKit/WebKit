@@ -186,7 +186,7 @@ public:
 
     WEBCORE_EXPORT FrameLoadType loadType() const;
 
-    CachePolicy subresourceCachePolicy() const;
+    CachePolicy subresourceCachePolicy(const URL&) const;
 
     void didReachLayoutMilestone(LayoutMilestones);
     void didFirstLayout();

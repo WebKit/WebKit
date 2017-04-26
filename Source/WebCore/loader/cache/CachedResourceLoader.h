@@ -110,7 +110,7 @@ public:
     bool shouldDeferImageLoad(const URL&) const;
     bool shouldPerformImageLoad(const URL&) const;
     
-    CachePolicy cachePolicy(CachedResource::Type) const;
+    CachePolicy cachePolicy(CachedResource::Type, const URL&) const;
     
     Frame* frame() const; // Can be null
     Document* document() const { return m_document; } // Can be null

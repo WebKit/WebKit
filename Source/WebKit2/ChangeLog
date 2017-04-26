@@ -1,3 +1,20 @@
+2017-04-26  Antti Koivisto  <antti@apple.com>
+
+        Enable expired-only reload policy on Mac and iOS
+        https://bugs.webkit.org/show_bug.cgi?id=171264
+        <rdar://problem/31807637>
+
+        Reviewed by Andreas Kling.
+
+        Enable the reload policy where only expired subresources are revalidated on Mac and iOS.
+        The behavor is enabled in Safari and for other clients based on SDK version check.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageReload):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView reload]):
+        * UIProcess/Cocoa/VersionChecks.h:
+
 2017-04-26  Andy Estes  <aestes@apple.com>
 
         [macOS] Add picture-in-picture support to WebPlaybackControlsManager

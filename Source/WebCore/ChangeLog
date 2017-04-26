@@ -1,3 +1,33 @@
+2017-04-26  Antti Koivisto  <antti@apple.com>
+
+        Enable expired-only reload policy on Mac and iOS
+        https://bugs.webkit.org/show_bug.cgi?id=171264
+        <rdar://problem/31807637>
+
+        Reviewed by Andreas Kling.
+
+        Limit the behavior to http and data URLs (where we explicitly know about expiration).
+
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::setCSSStyleSheet):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::subresourceCachePolicy):
+
+            Pass the URL so we can test for protocol.
+
+        * loader/FrameLoader.h:
+        * loader/NavigationAction.cpp:
+        (WebCore::navigationType):
+
+            Test for reload navigation type correctly.
+
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::load):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::determineRevalidationPolicy):
+        (WebCore::CachedResourceLoader::cachePolicy):
+        * loader/cache/CachedResourceLoader.h:
+
 2017-04-26  WebKit Contributor  <webkitcontrib@gmail.com>
 
         Response.blob() does not set the content-type based on the header value.

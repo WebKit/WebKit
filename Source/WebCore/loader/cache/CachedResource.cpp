@@ -223,8 +223,8 @@ void CachedResource::load(CachedResourceLoader& cachedResourceLoader)
         const String& lastModified = resourceToRevalidate->response().httpHeaderField(HTTPHeaderName::LastModified);
         const String& eTag = resourceToRevalidate->response().httpHeaderField(HTTPHeaderName::ETag);
         if (!lastModified.isEmpty() || !eTag.isEmpty()) {
-            ASSERT(cachedResourceLoader.cachePolicy(type()) != CachePolicyReload);
-            if (cachedResourceLoader.cachePolicy(type()) == CachePolicyRevalidate)
+            ASSERT(cachedResourceLoader.cachePolicy(type(), url()) != CachePolicyReload);
+            if (cachedResourceLoader.cachePolicy(type(), url()) == CachePolicyRevalidate)
                 m_resourceRequest.setHTTPHeaderField(HTTPHeaderName::CacheControl, "max-age=0");
             if (!lastModified.isEmpty())
                 m_resourceRequest.setHTTPHeaderField(HTTPHeaderName::IfModifiedSince, lastModified);

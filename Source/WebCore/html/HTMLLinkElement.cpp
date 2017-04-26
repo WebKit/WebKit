@@ -377,7 +377,7 @@ void HTMLLinkElement::setCSSStyleSheet(const String& href, const URL& baseURL, c
     Ref<HTMLLinkElement> protectedThis(*this);
 
     CSSParserContext parserContext(document(), baseURL, charset);
-    auto cachePolicy = frame->loader().subresourceCachePolicy();
+    auto cachePolicy = frame->loader().subresourceCachePolicy(baseURL);
 
     if (auto restoredSheet = const_cast<CachedCSSStyleSheet*>(cachedStyleSheet)->restoreParsedStyleSheet(parserContext, cachePolicy)) {
         ASSERT(restoredSheet->isCacheable());

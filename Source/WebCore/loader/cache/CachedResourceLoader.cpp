@@ -969,8 +969,10 @@ CachedResourceLoader::RevalidationPolicy CachedResourceLoader::determineRevalida
         return Use;
     ASSERT(!existingResource->validationInProgress());
 
+    auto cachePolicy = this->cachePolicy(type, request.url());
+
     // Validate the redirect chain.
-    bool cachePolicyIsHistoryBuffer = cachePolicy(type) == CachePolicyHistoryBuffer;
+    bool cachePolicyIsHistoryBuffer = cachePolicy == CachePolicyHistoryBuffer;
     if (!existingResource->redirectChainAllowsReuse(cachePolicyIsHistoryBuffer ? ReuseExpiredRedirection : DoNotReuseExpiredRedirection)) {
         LOG(ResourceLoading, "CachedResourceLoader::determineRevalidationPolicy reloading due to not cached or expired redirections.");
         logMemoryCacheResourceRequest(frame(), DiagnosticLoggingKeys::inMemoryCacheKey(), DiagnosticLoggingKeys::unusedReasonRedirectChainKey());
@@ -1009,7 +1011,7 @@ CachedResourceLoader::RevalidationPolicy CachedResourceLoader::determineRevalida
         return Use;
 
     // CachePolicyReload always reloads
-    if (cachePolicy(type) == CachePolicyReload) {
+    if (cachePolicy == CachePolicyReload) {
         LOG(ResourceLoading, "CachedResourceLoader::determineRevalidationPolicy reloading due to CachePolicyReload.");
         logMemoryCacheResourceRequest(frame(), DiagnosticLoggingKeys::inMemoryCacheKey(), DiagnosticLoggingKeys::unusedReasonReloadKey());
         return Reload;
@@ -1033,7 +1035,7 @@ CachedResourceLoader::RevalidationPolicy CachedResourceLoader::determineRevalida
         return Use;
     }
 
-    auto revalidationDecision = existingResource->makeRevalidationDecision(cachePolicy(type));
+    auto revalidationDecision = existingResource->makeRevalidationDecision(cachePolicy);
     logResourceRevalidationDecision(revalidationDecision, frame());
 
     // Check if the cache headers requires us to revalidate (cache expiration for example).
@@ -1117,14 +1119,14 @@ void CachedResourceLoader::reloadImagesIfNotDeferred()
     }
 }
 
-CachePolicy CachedResourceLoader::cachePolicy(CachedResource::Type type) const
+CachePolicy CachedResourceLoader::cachePolicy(CachedResource::Type type, const URL& url) const
 {
     Frame* frame = this->frame();
     if (!frame)
         return CachePolicyVerify;
 
     if (type != CachedResource::MainResource)
-        return frame->loader().subresourceCachePolicy();
+        return frame->loader().subresourceCachePolicy(url);
 
     if (Page* page = frame->page()) {
         if (page->isResourceCachingDisabled())

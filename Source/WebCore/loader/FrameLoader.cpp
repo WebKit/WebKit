@@ -2195,7 +2195,7 @@ FrameLoadType FrameLoader::loadType() const
     return m_loadType;
 }
     
-CachePolicy FrameLoader::subresourceCachePolicy() const
+CachePolicy FrameLoader::subresourceCachePolicy(const URL& url) const
 {
     if (Page* page = m_frame.page()) {
         if (page->isResourceCachingDisabled())
@@ -2209,7 +2209,7 @@ CachePolicy FrameLoader::subresourceCachePolicy() const
         return CachePolicyReload;
 
     if (Frame* parentFrame = m_frame.tree().parent()) {
-        CachePolicy parentCachePolicy = parentFrame->loader().subresourceCachePolicy();
+        CachePolicy parentCachePolicy = parentFrame->loader().subresourceCachePolicy(url);
         if (parentCachePolicy != CachePolicyVerify)
             return parentCachePolicy;
     }
@@ -2228,7 +2228,11 @@ CachePolicy FrameLoader::subresourceCachePolicy() const
     case FrameLoadType::Replace:
     case FrameLoadType::Same:
     case FrameLoadType::Standard:
+        return CachePolicyVerify;
     case FrameLoadType::ReloadExpiredOnly:
+        // We know about expiration for HTTP and data. Do a normal reload otherwise.
+        if (!url.protocolIsInHTTPFamily() && !url.protocolIsData())
+            return CachePolicyReload;
         return CachePolicyVerify;
     }
 
