@@ -1,3 +1,24 @@
+2017-04-26  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        sendMessageScoped's signal handler calls LocklessBag::consumeAll, which causes heap deallocation in signal handler and leads deadlock
+        https://bugs.webkit.org/show_bug.cgi?id=171319
+
+        Reviewed by Keith Miller.
+
+        In sendMessageScoped, we call LocklessBag<SignalHandler>::consumeAll `thread->threadMessages().consumeAll()`.
+        In LocklessBag::consumeAll, we call `delete` on Nodes.
+        The problem is that this is called under the context of signal handler. Thus, when calling this, the original
+        thread may hold the lock in bmalloc. In that case, this `delete` call attempts to lock the heap lock recursively,
+        and causes deadlock.
+
+        Instead, this patch transfers the LocklessBag's Node to the sender thread. And the sender thread deletes it instead.
+
+        * wtf/LocklessBag.h:
+        (WTF::LocklessBag::consumeAllWithNode):
+        * wtf/ThreadMessage.cpp:
+        (WTF::ThreadMessageData::ThreadMessageData):
+        (WTF::sendMessageScoped):
+
 2017-04-25  Don Olmstead  <don.olmstead@am.sony.com>
 
         [Win] Use Clang's __has_declspec_attribute for export macros

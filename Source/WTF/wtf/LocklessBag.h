@@ -34,14 +34,14 @@ namespace WTF {
 template<typename T>
 class LocklessBag {
     WTF_MAKE_NONCOPYABLE(LocklessBag);
-
+public:
     struct Node {
         WTF_MAKE_FAST_ALLOCATED;
     public:
         T data;
         Node* next;
     };
-public:
+
     LocklessBag()
         : m_head(nullptr)
     {
@@ -87,6 +87,17 @@ public:
             Node* oldNode = node;
             node = node->next;
             delete oldNode;
+        }
+    }
+
+    template<typename Functor>
+    void consumeAllWithNode(const Functor& func)
+    {
+        Node* node = m_head.exchange(nullptr);
+        while (node) {
+            Node* oldNode = node;
+            node = node->next;
+            func(WTFMove(oldNode->data), oldNode);
         }
     }
 

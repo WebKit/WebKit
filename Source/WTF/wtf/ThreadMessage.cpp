@@ -39,16 +39,18 @@
 
 namespace WTF {
 
+using Node = LocklessBag<ThreadMessageData*>::Node;
+
 class ThreadMessageData {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     ThreadMessageData(const ThreadMessage& m)
-        : ran(false)
+        : ran(nullptr)
         , message(m)
     {
     }
 
-    Atomic<bool> ran;
+    Atomic<Node*> ran;
     const ThreadMessage& message;
 };
 
@@ -94,9 +96,12 @@ MessageStatus sendMessageScoped(Thread& thread, const ThreadMessage& message)
                 return SignalAction::NotHandled;
             }
 
-            thread->threadMessages().consumeAll([&] (ThreadMessageData* data) {
+            // Node should be deleted in the sender thread. Deleting Nodes in signal handler causes dead lock.
+            thread->threadMessages().consumeAllWithNode([&] (ThreadMessageData* data, Node* node) {
                 data->message(info, static_cast<ucontext_t*>(uap));
-                data->ran.store(true);
+                // By setting ran variable, (1) the sender acknowledges the completion and
+                // (2) gets the Node to be deleted.
+                data->ran.store(node);
             });
 
             while (write(fileDescriptors[Write], magicByte, 1) == -1)
@@ -137,12 +142,14 @@ MessageStatus sendMessageScoped(Thread& thread, const ThreadMessage& message)
             fcntl(fileDescriptors[Read], F_SETFL, flags);
         };
 
-        if (data.ran.load()) {
+        if (Node* node = data.ran.load()) {
             clearPipe();
+            delete node;
             return MessageStatus::MessageRan;
         }
 
-        read(fileDescriptors[Read], buffer, 1);
+        int ret = read(fileDescriptors[Read], buffer, 1);
+        UNUSED_PARAM(ret);
         ASSERT(buffer[0] == magicByte[0]);
         clearPipe();
     }
