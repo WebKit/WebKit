@@ -1,3 +1,22 @@
+2017-04-26  Frederic Wang  <fwang@igalia.com>
+
+        Remove Document::*FrameElementsShouldIgnoreScrolling
+        https://bugs.webkit.org/show_bug.cgi?id=171271
+
+        Reviewed by Chris Dumez.
+
+        setFrameElementsShouldIgnoreScrolling and frameElementsShouldIgnoreScrolling were
+        introduced bug 23072 in order to work around a bug in the Dictionary application.
+        However, this was removed in bug 132095 and hence the functions are no longer necessary.
+
+        No new tests.
+
+        * dom/Document.h:
+        (WebCore::Document::setFrameElementsShouldIgnoreScrolling): Deleted.
+        (WebCore::Document::frameElementsShouldIgnoreScrolling): Deleted.
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore::HTMLFrameElementBase::parseAttribute):
+
 2017-04-26  Zan Dobersek  <zdobersek@igalia.com>
 
         [GCrypt] CryptoKeyRSA: implement create(), keySizeInBits(), buildAlgorithm(), exportData()
