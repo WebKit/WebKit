@@ -948,7 +948,6 @@ public:
         case DeleteById:
         case GetDynamicVar:
         case PutDynamicVar:
-        case ResolveScopeForHoistingFuncDeclInEval:
         case ResolveScope:
             return true;
         default:

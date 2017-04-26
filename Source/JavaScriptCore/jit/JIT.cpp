@@ -392,7 +392,6 @@ void JIT::privateCompileMainPass()
         DEFINE_OP(op_to_primitive)
 
         DEFINE_OP(op_resolve_scope)
-        DEFINE_OP(op_resolve_scope_for_hoisting_func_decl_in_eval)
         DEFINE_OP(op_get_from_scope)
         DEFINE_OP(op_put_to_scope)
         DEFINE_OP(op_get_from_arguments)

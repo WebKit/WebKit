@@ -267,7 +267,6 @@ inline CapabilityLevel canCompile(Node* node)
     case LogShadowChickenPrologue:
     case LogShadowChickenTail:
     case ResolveScope:
-    case ResolveScopeForHoistingFuncDeclInEval:
     case GetDynamicVar:
     case PutDynamicVar:
     case CompareEq:

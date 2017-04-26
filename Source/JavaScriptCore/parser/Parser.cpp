@@ -1793,8 +1793,8 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseFunctionDecla
 {
     semanticFailIfTrue(strictMode(), "Function declarations are only allowed inside blocks or switch statements in strict mode");
     failIfFalse(parentAllowsFunctionDeclarationAsStatement, "Function declarations are only allowed inside block statements or at the top level of a program");
-    if (!currentScope()->isFunction() && !closestParentOrdinaryFunctionNonLexicalScope()->isEvalContext()) {
-        // We only implement annex B.3.3 if we're in function mode or eval mode. Otherwise, we fall back
+    if (!currentScope()->isFunction()) {
+        // We only implement annex B.3.3 if we're in function mode. Otherwise, we fall back
         // to hoisting behavior.
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=155813
         DepthManager statementDepth(&m_statementDepth);

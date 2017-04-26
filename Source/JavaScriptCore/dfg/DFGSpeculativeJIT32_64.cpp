@@ -5610,11 +5610,6 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
-    case ResolveScopeForHoistingFuncDeclInEval: {
-        compileResolveScopeForHoistingFuncDeclInEval(node);
-        break;
-    }
-
     case ResolveScope: {
         compileResolveScope(node);
         break;

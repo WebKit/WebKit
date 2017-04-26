@@ -43,7 +43,7 @@ function assert(b) {
     try {
         let b = {a: eval("function b(){ return b; }"), b: (1, eval)("(b())")};
     } catch(e) {
-        threw = e instanceof SyntaxError;
+        threw = e instanceof ReferenceError;
     }
     assert(threw);
 }
@@ -53,7 +53,7 @@ function assert(b) {
     try {
         let {b} = {a: eval("function b(){ return b; }"), b: (1, eval)("print(b())")};
     } catch(e) {
-        threw = e instanceof SyntaxError;
+        threw = e instanceof ReferenceError;
     }
     assert(threw);
 }

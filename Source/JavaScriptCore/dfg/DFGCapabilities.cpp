@@ -247,7 +247,6 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, Instruc
     case op_log_shadow_chicken_tail:
     case op_put_to_scope:
     case op_resolve_scope:
-    case op_resolve_scope_for_hoisting_func_decl_in_eval:
     case op_new_regexp:
         return CanCompileAndInline;
 

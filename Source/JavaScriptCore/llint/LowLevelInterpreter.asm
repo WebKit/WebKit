@@ -1831,11 +1831,6 @@ _llint_op_put_by_val_with_this:
     callOpcodeSlowPath(_slow_path_put_by_val_with_this)
     dispatch(5)
 
-_llint_op_resolve_scope_for_hoisting_func_decl_in_eval:
-    traceExecution()
-    callOpcodeSlowPath(_slow_path_resolve_scope_for_hoisting_func_decl_in_eval)
-    dispatch(4)
-
 # Lastly, make sure that we can link even though we don't support all opcodes.
 # These opcodes should never arise when using LLInt or either JIT. We assert
 # as much.

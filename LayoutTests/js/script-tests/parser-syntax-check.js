@@ -446,9 +446,9 @@ valid("function foo() { { function foo() { }; function foo() { } } }")
 invalid("function foo() { 'use strict'; { function foo() { }; function foo() { } } }")
 invalid("function foo() { let f1; function f1(a) {}; }")
 invalid("let f1; function f1(a) {};")
-invalid("{ function f1(a) {}; let f1; }")
-invalid("{ function f1(a) {}; const f1 = 25; }")
-invalid("{ function f1(a) {}; class f1{}; }")
+onlyValidGlobally("{ function f1(a) {}; let f1; }")
+onlyValidGlobally("{ function f1(a) {}; const f1 = 25; }")
+onlyValidGlobally("{ function f1(a) {}; class f1{}; }")
 invalid("function foo() { { let bar; function bar() { } } }")
 invalid("function foo() { { function bar() { }; let bar; } }")
 invalid("function foo() { { const bar; function bar() { } } }")
@@ -456,11 +456,11 @@ invalid("function foo() { { function bar() { }; const bar; } }")
 invalid("function foo() { { class bar{}; function bar() { } } }")
 invalid("function foo() { { function bar() { }; class bar{}; } }")
 valid("switch('foo') { case 1: function foo() {}; break; case 2: function foo() {}; break; }")
-invalid("switch('foo') { case 1: let foo; function foo() {}; break; case 2: function foo() {}; break; }")
-invalid("switch('foo') { case 1: function foo() {}; let foo; break; case 2: function foo() {}; break; }")
-invalid("switch('foo') { case 1: function foo() {}; const foo = 25; break; case 2: function foo() {}; break; }")
-invalid("switch('foo') { case 1: function foo() {}; class foo {} ; break; case 2: function foo() {}; break; }")
-invalid("switch('foo') { case 1: function foo() {}; break; case 2: function foo() {}; break; case 3: let foo; }")
+onlyValidGlobally("switch('foo') { case 1: let foo; function foo() {}; break; case 2: function foo() {}; break; }")
+onlyValidGlobally("switch('foo') { case 1: function foo() {}; let foo; break; case 2: function foo() {}; break; }")
+onlyValidGlobally("switch('foo') { case 1: function foo() {}; const foo = 25; break; case 2: function foo() {}; break; }")
+onlyValidGlobally("switch('foo') { case 1: function foo() {}; class foo {} ; break; case 2: function foo() {}; break; }")
+onlyValidGlobally("switch('foo') { case 1: function foo() {}; break; case 2: function foo() {}; break; case 3: let foo; }")
 valid("function foo() { switch('foo') { case 1: function foo() {}; break; case 2: function foo() {}; break; case 3: { let foo; } } }")
 invalid("'use strict'; switch('foo') { case 1: function foo() {}; break; case 2: function foo() {}; break; }");
 invalid("'use strict'; switch('foo') { case 1: function foo() {}; break; case 2: let foo; break; }");
@@ -469,10 +469,10 @@ valid("'use strict'; switch('foo') { case 1: { let foo; break; } case 2: functio
 valid("'use strict'; switch('foo') { case 1: { function foo() { }; break; } case 2: function foo() {}; break; }");
 invalid("'use strict'; if (true) function foo() { }; ");
 valid("if (true) function foo() { }; ");
-valid(" let foo; if (true) function foo() { };");
+onlyInvalidGlobally(" let foo; if (true) function foo() { };");
 valid("function baz() { let foo; if (true) function foo() { }; }");
-valid("if (true) function foo() { }; let foo;");
-valid("{ if (true) function foo() { }; } let foo;");
+onlyInvalidGlobally("if (true) function foo() { }; let foo;");
+onlyInvalidGlobally("{ if (true) function foo() { }; } let foo;");
 invalid("let foo; while (false) function foo() { }; ");
 invalid("let foo;  { while (false) function foo() { }; } ");
 invalid("while (false) function foo() { }; let foo;");

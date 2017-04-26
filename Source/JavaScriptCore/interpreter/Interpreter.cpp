@@ -1098,11 +1098,10 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
         return checkedReturn(throwStackOverflowError(callFrame, throwScope));
 
     unsigned numVariables = eval->numVariables();
-    unsigned numTopLevelFunctionDecls = eval->numTopLevelFunctionDecls();
-    unsigned numFunctionHoistingCandidates = eval->numFunctionHoistingCandidates();
+    int numFunctions = eval->numberOfFunctionDecls();
 
     JSScope* variableObject;
-    if ((numVariables || numTopLevelFunctionDecls) && eval->isStrictMode()) {
+    if ((numVariables || numFunctions) && eval->isStrictMode()) {
         scope = StrictEvalActivation::create(callFrame, scope);
         variableObject = scope;
     } else {
@@ -1133,7 +1132,7 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
     }
 
     // We can't declare a "var"/"function" that overwrites a global "let"/"const"/"class" in a sloppy-mode eval.
-    if (variableObject->isGlobalObject() && !eval->isStrictMode() && (numVariables || numTopLevelFunctionDecls)) {
+    if (variableObject->isGlobalObject() && !eval->isStrictMode() && (numVariables || numFunctions)) {
         JSGlobalLexicalEnvironment* globalLexicalEnvironment = jsCast<JSGlobalObject*>(variableObject)->globalLexicalEnvironment();
         for (unsigned i = 0; i < numVariables; ++i) {
             const Identifier& ident = codeBlock->variable(i);
@@ -1143,7 +1142,7 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
             }
         }
 
-        for (unsigned i = 0; i < numTopLevelFunctionDecls; ++i) {
+        for (int i = 0; i < numFunctions; ++i) {
             FunctionExecutable* function = codeBlock->functionDecl(i);
             PropertySlot slot(globalLexicalEnvironment, PropertySlot::InternalMethodType::VMInquiry);
             if (JSGlobalLexicalEnvironment::getOwnPropertySlot(globalLexicalEnvironment, callFrame, function->name(), slot)) {
@@ -1155,7 +1154,7 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
     if (variableObject->structure()->isUncacheableDictionary())
         variableObject->flattenDictionaryObject(vm);
 
-    if (numVariables || numTopLevelFunctionDecls || numFunctionHoistingCandidates) {
+    if (numVariables || numFunctions) {
         BatchedTransitionOptimizer optimizer(vm, variableObject);
         if (variableObject->next() && !eval->isStrictMode())
             variableObject->globalObject()->varInjectionWatchpoint()->fireAll(vm, "Executed eval, fired VarInjection watchpoint");
@@ -1172,35 +1171,12 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
                 RETURN_IF_EXCEPTION(throwScope, checkedReturn(throwScope.exception()));
             }
         }
-        
-        if (eval->isStrictMode()) {
-            for (unsigned i = 0; i < numTopLevelFunctionDecls; ++i) {
-                FunctionExecutable* function = codeBlock->functionDecl(i);
-                PutPropertySlot slot(variableObject);
-                variableObject->methodTable()->put(variableObject, callFrame, function->name(), JSFunction::create(vm, function, scope), slot);
-            }
-        } else {
-            for (unsigned i = 0; i < numTopLevelFunctionDecls; ++i) {
-                FunctionExecutable* function = codeBlock->functionDecl(i);
-                JSValue resolvedScope = JSScope::resolveScopeForHoistingFuncDeclInEval(callFrame, scope, function->name());
-                if (resolvedScope.isUndefined())
-                    return checkedReturn(throwSyntaxError(callFrame, throwScope, makeString("Can't create duplicate variable in eval: '", String(function->name().impl()), "'")));
-                PutPropertySlot slot(variableObject);
-                variableObject->methodTable()->put(variableObject, callFrame, function->name(), JSFunction::create(vm, function, scope), slot);
-                RETURN_IF_EXCEPTION(throwScope, checkedReturn(throwScope.exception()));
-            }
 
-            for (unsigned i = 0; i < numFunctionHoistingCandidates; ++i) {
-                const Identifier& ident = codeBlock->functionHoistingCandidate(i);
-                JSValue resolvedScope = JSScope::resolveScopeForHoistingFuncDeclInEval(callFrame, scope, ident);
-                if (!resolvedScope.isUndefined()) {
-                    if (!variableObject->hasProperty(callFrame, ident)) {
-                        PutPropertySlot slot(variableObject);
-                        variableObject->methodTable()->put(variableObject, callFrame, ident, jsUndefined(), slot);
-                        RETURN_IF_EXCEPTION(throwScope, checkedReturn(throwScope.exception()));
-                    }
-                }
-            }
+        for (int i = 0; i < numFunctions; ++i) {
+            FunctionExecutable* function = codeBlock->functionDecl(i);
+            PutPropertySlot slot(variableObject);
+            variableObject->methodTable()->put(variableObject, callFrame, function->name(), JSFunction::create(vm, function, scope), slot);
+            RETURN_IF_EXCEPTION(throwScope, checkedReturn(throwScope.exception()));
         }
     }
 
