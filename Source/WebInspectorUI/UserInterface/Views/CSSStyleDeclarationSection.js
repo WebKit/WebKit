@@ -696,7 +696,7 @@ WebInspector.CSSStyleDeclarationSection = class CSSStyleDeclarationSection exten
             return;
         }
 
-        if (event.relatedTarget.isDescendant(this.element)) {
+        if (event.relatedTarget && event.relatedTarget.isDescendant(this.element)) {
             this._editorActive = true;
             this.focus();
         }
