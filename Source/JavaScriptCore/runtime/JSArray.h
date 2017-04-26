@@ -150,7 +150,7 @@ public:
     JS_EXPORT_PRIVATE void fillArgList(ExecState*, MarkedArgumentBuffer&);
     JS_EXPORT_PRIVATE void copyToArguments(ExecState*, VirtualRegister firstElementDest, unsigned offset, unsigned length);
 
-    bool isIteratorProtocolFastAndNonObservable();
+    JS_EXPORT_PRIVATE bool isIteratorProtocolFastAndNonObservable();
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype, IndexingType indexingType)
     {

@@ -1,3 +1,40 @@
+2017-04-25  Saam Barati  <sbarati@apple.com>
+
+        JSArray::isArrayPrototypeIteratorProtocolFastAndNonObservable is wrong because it does not do the necessary checks on the base object
+        https://bugs.webkit.org/show_bug.cgi?id=171150
+        <rdar://problem/31771880>
+
+        Reviewed by Sam Weinig.
+
+        This patch moves the sequence converters to use the now fixed
+        JSArray::isArrayPrototypeIteratorProtocolFastAndNonObservable test
+        inside JSC.
+        
+        This patch also fixes a few bugs:
+        1. Converting to a sequence of numbers must prove that the JSArray
+        is filled only with Int32/Double. If there is a chance the array
+        contains objects, the conversion to a numeric IDLType can be observable
+        (via valueOf()), and can change the iterator protocol.
+        2. There are other conversions that can have side effects a-la valueOf().
+        This patch introduces a new static constant in the various Converter
+        classes that tell the sequence converter if the conversion operation
+        can have JS side effects. If it does have side effects, we fall back to
+        the generic conversion that uses the iterator protocol. If not, we can
+        do a faster version that iterates over each element of the array,
+        reading it directly, and converting it.
+
+        Tests: js/sequence-iterator-protocol-2.html
+               js/sequence-iterator-protocol.html
+
+        * bindings/js/JSDOMConvertAny.h: Does not have side effects.
+        * bindings/js/JSDOMConvertBase.h: We pessimistically assume inside DefaultConverter that converions have side effects.
+        * bindings/js/JSDOMConvertBoolean.h: Does not have side effects.
+        * bindings/js/JSDOMConvertCallbacks.h: Does not have side effects.
+        * bindings/js/JSDOMConvertObject.h: Does not have side effects.
+        * bindings/js/JSDOMConvertSequences.h:
+        (WebCore::Detail::NumericSequenceConverter::convert):
+        (WebCore::Detail::SequenceConverter::convert):
+
 2017-04-25  Michael Saboff  <msaboff@apple.com>
 
         Call bmalloc scavenger first when handling a memory pressure event

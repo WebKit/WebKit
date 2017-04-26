@@ -1723,6 +1723,37 @@ bool Graph::willCatchExceptionInMachineFrame(CodeOrigin codeOrigin, CodeOrigin& 
     RELEASE_ASSERT_NOT_REACHED();
 }
 
+bool Graph::canDoFastSpread(Node* node, const AbstractValue& value)
+{
+    // The parameter 'value' is the AbstractValue for child1 (the thing being spread).
+    ASSERT(node->op() == Spread);
+
+    if (node->child1().useKind() != ArrayUse) {
+        // Note: we only speculate on ArrayUse when we've set up the necessary watchpoints
+        // to prove that the iteration protocol is non-observable starting from ArrayPrototype.
+        return false;
+    }
+
+    // FIXME: We should add profiling of the incoming operand to Spread
+    // so we can speculate in such a way that we guarantee that this
+    // function would return true:
+    // https://bugs.webkit.org/show_bug.cgi?id=171198
+
+    if (!value.m_structure.isFinite())
+        return false;
+
+    ArrayPrototype* arrayPrototype = globalObjectFor(node->child1()->origin.semantic)->arrayPrototype();
+    bool allGood = true;
+    value.m_structure.forEach([&] (RegisteredStructure structure) {
+        allGood &= structure->storedPrototype() == arrayPrototype
+            && !structure->isDictionary()
+            && structure->getConcurrently(m_vm.propertyNames->iteratorSymbol.impl()) == invalidOffset
+            && !structure->mayInterceptIndexedAccesses();
+    });
+
+    return allGood;
+}
+
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)

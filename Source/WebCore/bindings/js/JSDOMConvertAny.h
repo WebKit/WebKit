@@ -32,7 +32,9 @@ namespace WebCore {
 
 template<> struct Converter<IDLAny> : DefaultConverter<IDLAny> {
     using ReturnType = JSC::JSValue;
-    
+
+    static constexpr bool conversionHasSideEffects = false;
+
     static JSC::JSValue convert(JSC::ExecState&, JSC::JSValue value)
     {
         return value;

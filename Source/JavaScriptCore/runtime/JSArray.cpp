@@ -1403,4 +1403,27 @@ void JSArray::copyToArguments(ExecState* exec, VirtualRegister firstElementDest,
     }
 }
 
+bool JSArray::isIteratorProtocolFastAndNonObservable()
+{
+    JSGlobalObject* globalObject = this->globalObject();
+    if (!globalObject->isArrayPrototypeIteratorProtocolFastAndNonObservable())
+        return false;
+
+    Structure* structure = this->structure();
+    // This is the fast case. Many arrays will be an original array.
+    if (globalObject->isOriginalArrayStructure(structure))
+        return true;
+
+    if (structure->mayInterceptIndexedAccesses())
+        return false;
+
+    if (structure->storedPrototype() != globalObject->arrayPrototype())
+        return false;
+
+    if (getDirectOffset(globalObject->vm(), globalObject->vm().propertyNames->iteratorSymbol) != invalidOffset)
+        return false;
+
+    return true;
+}
+
 } // namespace JSC

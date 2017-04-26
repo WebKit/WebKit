@@ -412,7 +412,7 @@ public:
     std::unique_ptr<ArrayIteratorAdaptiveWatchpoint> m_arrayPrototypeSymbolIteratorWatchpoint;
     std::unique_ptr<ArrayIteratorAdaptiveWatchpoint> m_arrayIteratorPrototypeNext;
 
-    bool isArrayIteratorProtocolFastAndNonObservable();
+    bool isArrayPrototypeIteratorProtocolFastAndNonObservable();
 
     TemplateRegistry m_templateRegistry;
 

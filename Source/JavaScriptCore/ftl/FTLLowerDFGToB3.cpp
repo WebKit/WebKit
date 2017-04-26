@@ -4676,9 +4676,11 @@ private:
         LValue argument = lowCell(m_node->child1());
 
         LValue result;
-        if (m_node->child1().useKind() == ArrayUse) {
+
+        if (m_node->child1().useKind() == ArrayUse)
             speculateArray(m_node->child1());
 
+        if (m_graph.canDoFastSpread(m_node, m_state.forNode(m_node->child1()))) {
             LBasicBlock preLoop = m_out.newBlock();
             LBasicBlock loopSelection = m_out.newBlock();
             LBasicBlock contiguousLoopStart = m_out.newBlock();

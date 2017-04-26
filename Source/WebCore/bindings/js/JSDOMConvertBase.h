@@ -178,6 +178,16 @@ template<typename T, typename U> inline JSC::JSValue toJSNewlyCreated(JSC::ExecS
 
 template<typename T> struct DefaultConverter {
     using ReturnType = typename T::ImplementationType;
+
+    // We assume the worst, subtypes can override to be less pessimistic.
+    // An example of something that can have side effects
+    // is having a converter that does JSC::JSValue::toNumber.
+    // toNumber() in JavaScript can call arbitrary JS functions.
+    //
+    // An example of something that does not have side effects
+    // is something having a converter that does JSC::JSValue::toBoolean.
+    // toBoolean() in JS can't call arbitrary functions.
+    static constexpr bool conversionHasSideEffects = true;
 };
 
 } // namespace WebCore

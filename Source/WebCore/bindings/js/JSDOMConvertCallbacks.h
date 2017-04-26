@@ -31,6 +31,9 @@
 namespace WebCore {
 
 template<typename T> struct Converter<IDLCallbackFunction<T>> : DefaultConverter<IDLCallbackFunction<T>> {
+
+    static constexpr bool conversionHasSideEffects = false;
+
     template<typename ExceptionThrower = DefaultExceptionThrower>
     static RefPtr<T> convert(JSC::ExecState& state, JSC::JSValue value, JSDOMGlobalObject& globalObject, ExceptionThrower&& exceptionThrower = ExceptionThrower())
     {

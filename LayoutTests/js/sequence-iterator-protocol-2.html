@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <script src="../resources/js-test-pre.js"></script>
+    </head>
+    <body>
+        <pre id='console'></pre>
+        <canvas></canvas>
+
+        <script>
+            "use strict";
+
+            const log = console.log.bind(console);
+            const canvas = document.querySelector("canvas");
+            const ctx = canvas.getContext("2d");
+
+            let callCount = 0;
+            function makeValue(x) {
+                return {
+                    valueOf() { ++callCount; return x; }
+                };
+            }
+
+            let array = [makeValue(1), makeValue(2), makeValue(3)];
+            ctx.setLineDash(array);
+            let a = ctx.getLineDash();
+            log("Using an array but with objects with valueOf()");
+            log(a);
+
+            ctx.setLineDash([1,2,3]);
+            let b = ctx.getLineDash();
+            log(b);
+
+            if (a.toString() !== b.toString())
+                throw new Error("Bad result. They should be equal.");
+
+            log(`callCount: ${callCount}`);
+            if (callCount !== 3)
+                throw new Error("Bad result. callCount should be 3.");
+
+
+            let iter = [][Symbol.iterator]();
+            let iterProto = Object.getPrototypeOf(iter);
+            let oldNext = iterProto.next;
+
+            callCount = 0;
+            function hackedNext() {
+                ++callCount;
+
+                let val = oldNext.call(this);
+                if ("value" in val) {
+                    val.value++;
+                }
+                return val;
+            }
+            const obj = {
+                valueOf: function() {
+                    iterProto.next = hackedNext;
+                    return 2;
+                }
+            };
+            array = [1, obj, 3];
+            ctx.setLineDash(array);
+            b = ctx.getLineDash();
+            log(`${b}`);
+
+            iterProto.next = oldNext;
+            ctx.setLineDash([1,2,4]);
+            a = ctx.getLineDash();
+            log(a);
+            if (a.toString() !== b.toString())
+                throw new Error("Bad result. They should be equal.");
+
+            log(`callCount: ${callCount}`);
+            if (callCount !== 2)
+                throw new Error("Bad result. callCount should be 2.");
+
+        </script>
+
+        <script src="../resources/js-test-post.js"></script>
+
+    </body>
+</html>

@@ -31,6 +31,9 @@
 namespace WebCore {
 
 template<> struct Converter<IDLObject> : DefaultConverter<IDLObject> {
+
+    static constexpr bool conversionHasSideEffects = false;
+
     template<typename ExceptionThrower = DefaultExceptionThrower>
     static JSC::Strong<JSC::JSObject> convert(JSC::ExecState& state, JSC::JSValue value, ExceptionThrower&& exceptionThrower = ExceptionThrower())
     {

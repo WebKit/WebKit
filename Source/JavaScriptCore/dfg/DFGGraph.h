@@ -884,6 +884,8 @@ public:
     
     JSArrayBufferView* tryGetFoldableView(JSValue);
     JSArrayBufferView* tryGetFoldableView(JSValue, ArrayMode arrayMode);
+
+    bool canDoFastSpread(Node*, const AbstractValue&);
     
     void registerFrozenValues();
     

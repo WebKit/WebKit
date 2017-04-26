@@ -1,0 +1,10 @@
+CONSOLE MESSAGE: line 19: 
+CONSOLE MESSAGE: line 22: Using an array: 1,2,3,1,2,3
+CONSOLE MESSAGE: line 33: Using an iterator: 10,11,12,10,11,12
+CONSOLE MESSAGE: line 41: Using an array but with customized iteration (should be same as iterator): 10,11,12,10,11,12
+The second and third results should be the same.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,11 @@
+CONSOLE MESSAGE: line 28: Using an array but with objects with valueOf()
+CONSOLE MESSAGE: line 29: 1,2,3,1,2,3
+CONSOLE MESSAGE: line 33: 1,2,3,1,2,3
+CONSOLE MESSAGE: line 38: callCount: 3
+CONSOLE MESSAGE: line 66: 1,2,4,1,2,4
+CONSOLE MESSAGE: line 71: 1,2,4,1,2,4
+CONSOLE MESSAGE: line 75: callCount: 2
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
