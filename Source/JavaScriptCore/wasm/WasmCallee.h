@@ -27,6 +27,7 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "B3Compilation.h"
 #include "RegisterAtOffsetList.h"
 #include "WasmFormat.h"
 #include <wtf/ThreadSafeRefCounted.h>
@@ -43,7 +44,7 @@ public:
         return adoptRef(*callee);
     }
 
-    void* entrypoint() { return m_entrypoint.compilation->code().executableAddress(); }
+    void* entrypoint() const { return m_entrypoint.compilation->code().executableAddress(); }
 
     RegisterAtOffsetList* calleeSaveRegisters() { return &m_entrypoint.calleeSaveRegisters; }
 

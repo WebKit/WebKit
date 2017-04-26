@@ -52,10 +52,9 @@ static EncodedJSValue JSC_HOST_CALL callWebAssemblyWrapperFunction(ExecState* ex
     return JSValue::encode(call(exec, function, callType, callData, jsUndefined(), ArgList(exec)));
 }
 
-WebAssemblyWrapperFunction::WebAssemblyWrapperFunction(VM& vm, JSGlobalObject* globalObject, Structure* structure, Wasm::SignatureIndex signatureIndex, void* wasmEntrypointCode)
+WebAssemblyWrapperFunction::WebAssemblyWrapperFunction(VM& vm, JSGlobalObject* globalObject, Structure* structure, Wasm::CallableFunction wasmFunction)
     : Base(vm, globalObject, structure)
-    , m_wasmEntrypointCode(wasmEntrypointCode)
-    , m_signatureIndex(signatureIndex)
+    , m_wasmFunction(wasmFunction)
 { }
 
 WebAssemblyWrapperFunction* WebAssemblyWrapperFunction::create(VM& vm, JSGlobalObject* globalObject, JSObject* function, unsigned importIndex, JSWebAssemblyCodeBlock* codeBlock, Wasm::SignatureIndex signatureIndex)
@@ -63,7 +62,7 @@ WebAssemblyWrapperFunction* WebAssemblyWrapperFunction::create(VM& vm, JSGlobalO
     ASSERT_WITH_MESSAGE(!function->inherits(vm, WebAssemblyWrapperFunction::info()), "We should never double wrap a wrapper function.");
     String name = "";
     NativeExecutable* executable = vm.getHostFunction(callWebAssemblyWrapperFunction, NoIntrinsic, callHostFunctionAsConstructor, nullptr, name);
-    WebAssemblyWrapperFunction* result = new (NotNull, allocateCell<WebAssemblyWrapperFunction>(vm.heap)) WebAssemblyWrapperFunction(vm, globalObject, globalObject->webAssemblyWrapperFunctionStructure(), signatureIndex, codeBlock->wasmToJsCallStubForImport(importIndex));
+    WebAssemblyWrapperFunction* result = new (NotNull, allocateCell<WebAssemblyWrapperFunction>(vm.heap)) WebAssemblyWrapperFunction(vm, globalObject, globalObject->webAssemblyWrapperFunctionStructure(), Wasm::CallableFunction(signatureIndex, codeBlock->wasmToJsCallStubForImport(importIndex)));
     const Wasm::Signature& signature = Wasm::SignatureInformation::get(signatureIndex);
     result->finishCreation(vm, executable, signature.argumentCount(), name, function, codeBlock);
     return result;

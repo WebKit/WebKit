@@ -73,8 +73,7 @@ public:
     Width width() const { return m_width; }
     
     Bank bank() const;
-    Opcode opcode() const;
-    
+
     // Creates an instruction for the move represented by this shuffle pair. You need to pass
     // Code if this is a memory->memory pair. You can pass null if you know that it's not. In
     // fact, passing null is a good way to assert that this is not a memory->memory pair.

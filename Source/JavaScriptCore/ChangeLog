@@ -1,3 +1,171 @@
+2017-04-26  Keith Miller  <keith_miller@apple.com>
+
+        WebAssembly: Implement tier up
+        https://bugs.webkit.org/show_bug.cgi?id=170134
+
+        Reviewed by Filip Pizlo.
+
+        This patch implements tier up for wasm functions. Unlike with JS
+        code, wasm code needs to be able to tier up concurrently with the
+        running code.  Since JS code is synchronous we can always link on
+        the running thread, wasm, however, can run the same code on more
+        than one thread. In order to make patching work correctly, we need
+        to ensure that all patches of callsites are aligned. On ARM we get
+        this for free since every call is a near call. On X86 we ensure
+        that the 32-bit relative offset is 32-bit aligned.
+
+        This patch also modifies how Wasm::Plan works. Now Plan is a
+        abstract super class and there are two subclasses, which
+        correspond to the different tiers of our wasm engine.  The first,
+        Build Bytecode Quickly (BBQ) tier, roughly does what the old plan
+        code did before.  The new tier, Optimized Machine code Generation
+        (OMG), can be called at any point by BBQ code and compiles exactly
+        one function. Once an OMGPlan finishes it will link it's code
+        internally then reset the instruction cache of all running wasm
+        threads, via, a ThreadMessage. Once the instruction caches have
+        been reset all the other functions will be patched to call the new
+        code.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::ensureCacheLineSpace):
+        * assembler/CodeLocation.h:
+        (JSC::CodeLocationThreadSafeNearCall::CodeLocationThreadSafeNearCall):
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::threadSafePatchableNearCall):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::threadSafeNearCall):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::threadSafePatchableNearCall):
+        * b3/air/AirEmitShuffle.cpp:
+        (JSC::B3::Air::ShufflePair::inst):
+        (JSC::B3::Air::ShufflePair::opcode): Deleted.
+        * b3/air/AirEmitShuffle.h:
+        * jsc.cpp:
+        (functionTestWasmModuleFunctions):
+        * runtime/JSLock.cpp:
+        (JSC::JSLock::didAcquireLock):
+        * runtime/Options.h:
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::materializeWasmContext):
+        (JSC::Wasm::B3IRGenerator::B3IRGenerator):
+        (JSC::Wasm::B3IRGenerator::constant):
+        (JSC::Wasm::B3IRGenerator::emitTierUpCheck):
+        (JSC::Wasm::B3IRGenerator::addLoop):
+        (JSC::Wasm::B3IRGenerator::addTopLevel):
+        (JSC::Wasm::B3IRGenerator::addBlock):
+        (JSC::Wasm::createJSToWasmWrapper):
+        (JSC::Wasm::parseAndCompile):
+        * wasm/WasmB3IRGenerator.h:
+        * wasm/WasmBBQPlan.cpp: Copied from Source/JavaScriptCore/wasm/WasmPlan.cpp.
+        (JSC::Wasm::BBQPlan::BBQPlan):
+        (JSC::Wasm::BBQPlan::stateString):
+        (JSC::Wasm::BBQPlan::moveToState):
+        (JSC::Wasm::BBQPlan::parseAndValidateModule):
+        (JSC::Wasm::BBQPlan::prepare):
+        (JSC::Wasm::BBQPlan::ThreadCountHolder::ThreadCountHolder):
+        (JSC::Wasm::BBQPlan::ThreadCountHolder::~ThreadCountHolder):
+        (JSC::Wasm::BBQPlan::compileFunctions):
+        (JSC::Wasm::BBQPlan::complete):
+        (JSC::Wasm::BBQPlan::work):
+        * wasm/WasmBBQPlan.h: Copied from Source/JavaScriptCore/wasm/WasmPlan.h.
+        * wasm/WasmBBQPlanInlines.h: Copied from Source/JavaScriptCore/wasm/WasmPlanInlines.h.
+        (JSC::Wasm::BBQPlan::initializeCallees):
+        * wasm/WasmBinding.cpp:
+        (JSC::Wasm::wasmToWasm):
+        * wasm/WasmCallee.h:
+        (JSC::Wasm::Callee::entrypoint):
+        * wasm/WasmCodeBlock.cpp:
+        (JSC::Wasm::CodeBlock::CodeBlock):
+        * wasm/WasmCodeBlock.h:
+        (JSC::Wasm::CodeBlock::jsEntrypointCalleeFromFunctionIndexSpace):
+        (JSC::Wasm::CodeBlock::wasmEntrypointCalleeFromFunctionIndexSpace):
+        (JSC::Wasm::CodeBlock::wasmEntrypointLoadLocationFromFunctionIndexSpace):
+        (JSC::Wasm::CodeBlock::tierUpCount):
+        (JSC::Wasm::CodeBlock::mode):
+        * wasm/WasmFormat.h:
+        (JSC::Wasm::CallableFunction::CallableFunction):
+        (JSC::Wasm::CallableFunction::offsetOfWasmEntrypointLoadLocation):
+        * wasm/WasmMachineThreads.cpp: Copied from Source/JavaScriptCore/wasm/WasmPlanInlines.h.
+        (JSC::Wasm::wasmThreads):
+        (JSC::Wasm::startTrackingCurrentThread):
+        (JSC::Wasm::resetInstructionCacheOnAllThreads):
+        * wasm/WasmMachineThreads.h: Copied from Source/JavaScriptCore/wasm/WasmCallee.h.
+        * wasm/WasmModule.cpp:
+        (JSC::Wasm::makeValidationResult):
+        (JSC::Wasm::makeValidationCallback):
+        (JSC::Wasm::Module::validateSync):
+        (JSC::Wasm::Module::validateAsync):
+        * wasm/WasmModule.h:
+        (JSC::Wasm::Module::codeBlockFor):
+        * wasm/WasmOMGPlan.cpp: Added.
+        (JSC::Wasm::OMGPlan::OMGPlan):
+        (JSC::Wasm::OMGPlan::work):
+        (JSC::Wasm::runOMGPlanForIndex):
+        * wasm/WasmOMGPlan.h: Copied from Source/JavaScriptCore/wasm/WasmPlanInlines.h.
+        * wasm/WasmPlan.cpp:
+        (JSC::Wasm::Plan::Plan):
+        (JSC::Wasm::Plan::runCompletionTasks):
+        (JSC::Wasm::Plan::addCompletionTask):
+        (JSC::Wasm::Plan::waitForCompletion):
+        (JSC::Wasm::Plan::tryRemoveVMAndCancelIfLast):
+        (JSC::Wasm::Plan::fail):
+        (JSC::Wasm::Plan::stateString): Deleted.
+        (JSC::Wasm::Plan::moveToState): Deleted.
+        (JSC::Wasm::Plan::parseAndValidateModule): Deleted.
+        (JSC::Wasm::Plan::prepare): Deleted.
+        (JSC::Wasm::Plan::ThreadCountHolder::ThreadCountHolder): Deleted.
+        (JSC::Wasm::Plan::ThreadCountHolder::~ThreadCountHolder): Deleted.
+        (JSC::Wasm::Plan::compileFunctions): Deleted.
+        (JSC::Wasm::Plan::complete): Deleted.
+        * wasm/WasmPlan.h:
+        (JSC::Wasm::Plan::exports): Deleted.
+        (JSC::Wasm::Plan::internalFunctionCount): Deleted.
+        (JSC::Wasm::Plan::takeModuleInformation): Deleted.
+        (JSC::Wasm::Plan::takeCallLinkInfos): Deleted.
+        (JSC::Wasm::Plan::takeWasmToWasmExitStubs): Deleted.
+        (JSC::Wasm::Plan::hasWork): Deleted.
+        (JSC::Wasm::Plan::hasBeenPrepared): Deleted.
+        * wasm/WasmTierUpCount.h: Renamed from Source/JavaScriptCore/wasm/WasmPlanInlines.h.
+        (JSC::Wasm::TierUpCount::TierUpCount):
+        (JSC::Wasm::TierUpCount::loopDecrement):
+        (JSC::Wasm::TierUpCount::functionEntryDecrement):
+        (JSC::Wasm::TierUpCount::shouldStartTierUp):
+        (JSC::Wasm::TierUpCount::count):
+        * wasm/WasmWorklist.cpp:
+        * wasm/WasmWorklist.h:
+        (JSC::Wasm::Worklist::nextTicket):
+        * wasm/js/JSWebAssemblyCodeBlock.cpp:
+        * wasm/js/JSWebAssemblyCodeBlock.h:
+        (JSC::JSWebAssemblyCodeBlock::wasmEntrypointLoadLocationFromFunctionIndexSpace):
+        (JSC::JSWebAssemblyCodeBlock::wasmToJsCallStubForImport):
+        (JSC::JSWebAssemblyCodeBlock::wasmEntrypointCalleeFromFunctionIndexSpace): Deleted.
+        * wasm/js/JSWebAssemblyTable.cpp:
+        (JSC::JSWebAssemblyTable::setFunction):
+        * wasm/js/WebAssemblyFunction.cpp:
+        (JSC::WebAssemblyFunction::create):
+        (JSC::WebAssemblyFunction::WebAssemblyFunction):
+        * wasm/js/WebAssemblyFunction.h:
+        (JSC::WebAssemblyFunction::signatureIndex):
+        (JSC::WebAssemblyFunction::wasmEntrypointLoadLocation):
+        (JSC::WebAssemblyFunction::callableFunction):
+        (JSC::WebAssemblyFunction::offsetOfWasmEntrypointLoadLocation):
+        (JSC::WebAssemblyFunction::wasmEntrypoint): Deleted.
+        (JSC::WebAssemblyFunction::offsetOfWasmEntrypoint): Deleted.
+        * wasm/js/WebAssemblyModuleRecord.cpp:
+        (JSC::WebAssemblyModuleRecord::link):
+        (JSC::WebAssemblyModuleRecord::evaluate):
+        * wasm/js/WebAssemblyPrototype.cpp:
+        (JSC::webAssemblyValidateFunc):
+        * wasm/js/WebAssemblyWrapperFunction.cpp:
+        (JSC::WebAssemblyWrapperFunction::WebAssemblyWrapperFunction):
+        (JSC::WebAssemblyWrapperFunction::create):
+        * wasm/js/WebAssemblyWrapperFunction.h:
+        (JSC::WebAssemblyWrapperFunction::signatureIndex):
+        (JSC::WebAssemblyWrapperFunction::wasmEntrypointLoadLocation):
+        (JSC::WebAssemblyWrapperFunction::callableFunction):
+        (JSC::WebAssemblyWrapperFunction::wasmEntrypoint): Deleted.
+
 2017-04-26  Caitlin Potter  <caitp@igalia.com>
 
         [JSC] fix RETURN_IF_EXCEPTION() placement in ownPropertyKeys()

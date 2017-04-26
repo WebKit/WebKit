@@ -937,6 +937,7 @@ set(JavaScriptCore_SOURCES
 
     wasm/JSWebAssembly.cpp
     wasm/WasmB3IRGenerator.cpp
+    wasm/WasmBBQPlan.cpp
     wasm/WasmBinding.cpp
     wasm/WasmCallee.cpp
     wasm/WasmCallingConvention.cpp
@@ -944,14 +945,16 @@ set(JavaScriptCore_SOURCES
     wasm/WasmContext.cpp
     wasm/WasmFaultSignalHandler.cpp
     wasm/WasmFormat.cpp
+    wasm/WasmMachineThreads.cpp
     wasm/WasmMemory.cpp
     wasm/WasmMemoryInformation.cpp
     wasm/WasmModule.cpp
     wasm/WasmModuleInformation.cpp
     wasm/WasmModuleParser.cpp
+    wasm/WasmOMGPlan.cpp
+    wasm/WasmOpcodeOrigin.cpp
     wasm/WasmPageCount.cpp
     wasm/WasmPlan.cpp
-    wasm/WasmOpcodeOrigin.cpp
     wasm/WasmSignature.cpp
     wasm/WasmThunks.cpp
     wasm/WasmValidate.cpp

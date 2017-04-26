@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,39 +23,48 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "WasmMachineThreads.h"
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "B3Common.h"
-#include "B3Compilation.h"
-#include "B3OpaqueByproducts.h"
-#include "CCallHelpers.h"
-#include "WasmMemory.h"
-#include "WasmModuleInformation.h"
-#include "WasmTierUpCount.h"
-#include <wtf/Expected.h>
-
-extern "C" void dumpProcedure(void*);
+#include "MachineStackMarker.h"
+#include <wtf/NeverDestroyed.h>
+#include <wtf/ThreadMessage.h>
 
 namespace JSC { namespace Wasm {
 
-class MemoryInformation;
 
-enum class CompilationMode {
-    BBQMode,
-    OMGMode,
-};
+inline MachineThreads& wasmThreads()
+{
+    static LazyNeverDestroyed<MachineThreads> threads;
+    static std::once_flag once;
+    std::call_once(once, [] {
+        threads.construct();
+    });
 
-struct CompilationContext {
-    std::unique_ptr<CCallHelpers> jsEntrypointJIT;
-    std::unique_ptr<B3::OpaqueByproducts> jsEntrypointByproducts;
-    std::unique_ptr<CCallHelpers> wasmEntrypointJIT;
-    std::unique_ptr<B3::OpaqueByproducts> wasmEntrypointByproducts;
-};
+    return threads;
+}
 
-Expected<std::unique_ptr<WasmInternalFunction>, String> parseAndCompile(CompilationContext&, const uint8_t*, size_t, const Signature&, Vector<UnlinkedWasmToWasmCall>&, const ModuleInformation&, MemoryMode, CompilationMode, uint32_t functionIndex, TierUpCount* = nullptr);
+void startTrackingCurrentThread()
+{
+    wasmThreads().addCurrentThread();
+}
 
+void resetInstructionCacheOnAllThreads()
+{
+    auto locker = holdLock(wasmThreads().getLock());
+
+    const DoublyLinkedList<MachineThreads::MachineThread>& threads = wasmThreads().threadsListHead(locker);
+    for (const auto* thread = threads.head(); thread; thread = thread->next()) {
+        sendMessage(thread->m_thread.get(), [] (siginfo_t*, ucontext_t*) {
+            // It's likely that the signal handler will already reset the instruction cache but we might as well be sure.
+            WTF::crossModifyingCodeFence();
+        });
+    }
+}
+
+    
 } } // namespace JSC::Wasm
 
 #endif // ENABLE(WEBASSEMBLY)

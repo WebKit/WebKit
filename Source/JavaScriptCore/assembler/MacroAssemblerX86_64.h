@@ -247,6 +247,20 @@ public:
         return Call::fromTailJump(newJump);
     }
 
+    Call threadSafePatchableNearCall()
+    {
+        const size_t nearCallOpcodeSize = 1;
+        const size_t nearCallRelativeLocationSize = sizeof(int32_t);
+        // We want to make sure the 32-bit near call immediate is 32-bit aligned.
+        size_t codeSize = m_assembler.codeSize();
+        size_t alignedSize = WTF::roundUpToMultipleOf<nearCallRelativeLocationSize>(codeSize + nearCallOpcodeSize);
+        emitNops(alignedSize - (codeSize + nearCallOpcodeSize));
+        DataLabelPtr label = DataLabelPtr(this);
+        Call result = nearCall();
+        ASSERT_UNUSED(label, differenceBetween(label, result) == (nearCallOpcodeSize + nearCallRelativeLocationSize));
+        return result;
+    }
+
     Jump branchAdd32(ResultCondition cond, TrustedImm32 src, AbsoluteAddress dest)
     {
         move(TrustedImmPtr(dest.m_ptr), scratchRegister());

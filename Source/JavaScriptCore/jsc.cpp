@@ -74,11 +74,11 @@
 #include "SuperSampler.h"
 #include "TestRunnerUtils.h"
 #include "TypeProfilerLog.h"
+#include "WasmBBQPlanInlines.h"
 #include "WasmCallee.h"
 #include "WasmContext.h"
 #include "WasmFaultSignalHandler.h"
 #include "WasmMemory.h"
-#include "WasmPlanInlines.h"
 #include "WasmWorklist.h"
 #include <locale.h>
 #include <math.h>
@@ -3191,7 +3191,7 @@ static EncodedJSValue JSC_HOST_CALL functionTestWasmModuleFunctions(ExecState* e
     if (exec->argumentCount() != functionCount + 2)
         CRASH();
 
-    Ref<Wasm::Plan> plan = adoptRef(*new Wasm::Plan(vm, static_cast<uint8_t*>(source->vector()), source->length(), Wasm::Plan::FullCompile, Wasm::Plan::dontFinalize()));
+    Ref<Wasm::BBQPlan> plan = adoptRef(*new Wasm::BBQPlan(vm, static_cast<uint8_t*>(source->vector()), source->length(), Wasm::BBQPlan::FullCompile, Wasm::Plan::dontFinalize()));
     Wasm::ensureWorklist().enqueue(plan.copyRef());
     Wasm::ensureWorklist().completePlanSynchronously(plan.get());
     if (plan->failed()) {

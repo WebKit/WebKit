@@ -62,6 +62,8 @@ public:
     void compileAsync(VM&, MemoryMode, CodeBlock::AsyncCompilationCallback&&);
 
     JS_EXPORT_PRIVATE ~Module();
+
+    CodeBlock* codeBlockFor(MemoryMode mode) { return m_codeBlocks[static_cast<uint8_t>(mode)].get(); }
 private:
     Ref<CodeBlock> getOrCreateCodeBlock(VM&, MemoryMode);
 

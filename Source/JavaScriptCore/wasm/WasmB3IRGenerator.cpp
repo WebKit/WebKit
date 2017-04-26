@@ -57,6 +57,7 @@
 #include "WasmExceptionType.h"
 #include "WasmFunctionParser.h"
 #include "WasmMemory.h"
+#include "WasmOMGPlan.h"
 #include "WasmOpcodeOrigin.h"
 #include "WasmThunks.h"
 #include <limits>
@@ -174,7 +175,7 @@ public:
             return fail(__VA_ARGS__);             \
     } while (0)
 
-    B3IRGenerator(const ModuleInformation&, Procedure&, WasmInternalFunction*, Vector<UnlinkedWasmToWasmCall>&, MemoryMode);
+    B3IRGenerator(const ModuleInformation&, Procedure&, WasmInternalFunction*, Vector<UnlinkedWasmToWasmCall>&, MemoryMode, CompilationMode, unsigned functionIndex, TierUpCount*);
 
     PartialResult WARN_UNUSED_RETURN addArguments(const Signature&);
     PartialResult WARN_UNUSED_RETURN addLocal(Type, uint32_t);
@@ -223,11 +224,13 @@ public:
     void dump(const Vector<ControlEntry>& controlStack, const ExpressionList* expressionStack);
     void setParser(FunctionParser<B3IRGenerator>* parser) { m_parser = parser; };
 
-    Value* constant(B3::Type, uint64_t bits);
+    Value* constant(B3::Type, uint64_t bits, std::optional<Origin> = std::nullopt);
     void insertConstants();
 
 private:
     void emitExceptionCheck(CCallHelpers&, ExceptionType);
+
+    BasicBlock* emitTierUpCheck(BasicBlock* entry, uint32_t decrementCount, Origin);
 
     ExpressionType emitCheckAndPreparePointer(ExpressionType pointer, uint32_t offset, uint32_t sizeOfOp);
     B3::Kind memoryKind(B3::Opcode memoryOp);
@@ -241,7 +244,7 @@ private:
 
     int32_t WARN_UNUSED_RETURN fixupPointerPlusOffset(ExpressionType&, uint32_t);
 
-    Value* materializeWasmContext(Procedure&, BasicBlock*);
+    Value* materializeWasmContext(BasicBlock*);
     void restoreWasmContext(Procedure&, BasicBlock*, Value*);
     void restoreWebAssemblyGlobalState(const MemoryInformation&, Value* instance, Procedure&, BasicBlock*);
 
@@ -249,7 +252,11 @@ private:
 
     FunctionParser<B3IRGenerator>* m_parser;
     const ModuleInformation& m_info;
-    MemoryMode m_mode;
+    const MemoryMode m_mode;
+    const CompilationMode m_compilationMode;
+    const unsigned m_functionIndex;
+    const TierUpCount* m_tierUp;
+
     Procedure& m_proc;
     BasicBlock* m_currentBlock;
     Vector<Variable*> m_locals;
@@ -272,10 +279,10 @@ int32_t B3IRGenerator::fixupPointerPlusOffset(ExpressionType& ptr, uint32_t offs
     return offset;
 }
 
-Value* B3IRGenerator::materializeWasmContext(Procedure& proc, BasicBlock* block)
+Value* B3IRGenerator::materializeWasmContext(BasicBlock* block)
 {
     if (useFastTLSForContext()) {
-        PatchpointValue* patchpoint = block->appendNew<PatchpointValue>(proc, pointerType(), Origin());
+        PatchpointValue* patchpoint = block->appendNew<PatchpointValue>(m_proc, pointerType(), Origin());
         if (CCallHelpers::loadWasmContextNeedsMacroScratchRegister())
             patchpoint->clobber(RegisterSet::macroScratchRegisters());
         patchpoint->setGenerator(
@@ -288,7 +295,7 @@ Value* B3IRGenerator::materializeWasmContext(Procedure& proc, BasicBlock* block)
 
     // FIXME: Because WasmToWasm call clobbers wasmContext register and does not restore it, we need to restore it in the caller side.
     // This prevents us from using ArgumentReg to this (logically) immutable pinned register.
-    PatchpointValue* patchpoint = block->appendNew<PatchpointValue>(proc, pointerType(), Origin());
+    PatchpointValue* patchpoint = block->appendNew<PatchpointValue>(m_proc, pointerType(), Origin());
     patchpoint->effects.writesPinned = false;
     patchpoint->effects.readsPinned = true;
     patchpoint->resultConstraint = ValueRep::reg(m_wasmContextGPR);
@@ -326,9 +333,12 @@ void B3IRGenerator::restoreWasmContext(Procedure& proc, BasicBlock* block, Value
     });
 }
 
-B3IRGenerator::B3IRGenerator(const ModuleInformation& info, Procedure& procedure, WasmInternalFunction* compilation, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, MemoryMode mode)
+B3IRGenerator::B3IRGenerator(const ModuleInformation& info, Procedure& procedure, WasmInternalFunction* compilation, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, MemoryMode mode, CompilationMode compilationMode, unsigned functionIndex, TierUpCount* tierUp)
     : m_info(info)
     , m_mode(mode)
+    , m_compilationMode(compilationMode)
+    , m_functionIndex(functionIndex)
+    , m_tierUp(tierUp)
     , m_proc(procedure)
     , m_unlinkedWasmToWasmCalls(unlinkedWasmToWasmCalls)
     , m_constantInsertionValues(m_proc)
@@ -371,7 +381,9 @@ B3IRGenerator::B3IRGenerator(const ModuleInformation& info, Procedure& procedure
 
     wasmCallingConvention().setupFrameInPrologue(&compilation->wasmCalleeMoveLocation, m_proc, Origin(), m_currentBlock);
 
-    m_instanceValue = materializeWasmContext(m_proc, m_currentBlock);
+    m_currentBlock = emitTierUpCheck(m_currentBlock, TierUpCount::functionEntryDecrement(), Origin());
+
+    m_instanceValue = materializeWasmContext(m_currentBlock);
 }
 
 void B3IRGenerator::restoreWebAssemblyGlobalState(const MemoryInformation& memory, Value* instance, Procedure& proc, BasicBlock* block)
@@ -418,10 +430,10 @@ void B3IRGenerator::emitExceptionCheck(CCallHelpers& jit, ExceptionType type)
     });
 }
 
-Value* B3IRGenerator::constant(B3::Type type, uint64_t bits)
+Value* B3IRGenerator::constant(B3::Type type, uint64_t bits, std::optional<Origin> maybeOrigin)
 {
     auto result = m_constantPool.ensure(ValueKey(opcodeForConstant(type), type, static_cast<int64_t>(bits)), [&] {
-        Value* result = m_proc.addConstant(origin(), type, bits);
+        Value* result = m_proc.addConstant(maybeOrigin ? *maybeOrigin : origin(), type, bits);
         m_constantInsertionValues.insertValue(0, result);
         return result;
     });
@@ -440,7 +452,7 @@ auto B3IRGenerator::addLocal(Type type, uint32_t count) -> PartialResult
     for (uint32_t i = 0; i < count; ++i) {
         Variable* local = m_proc.addVariable(toB3Type(type));
         m_locals.uncheckedAppend(local);
-        m_currentBlock->appendNew<VariableValue>(m_proc, Set, origin(), local, addConstant(type, 0));
+        m_currentBlock->appendNew<VariableValue>(m_proc, Set, Origin(), local, constant(toB3Type(type), 0, Origin()));
     }
     return { };
 }
@@ -817,6 +829,51 @@ B3IRGenerator::ExpressionType B3IRGenerator::addConstant(Type type, uint64_t val
     return constant(toB3Type(type), value);
 }
 
+BasicBlock* B3IRGenerator::emitTierUpCheck(BasicBlock* entry, uint32_t decrementCount, Origin origin)
+{
+    if (!m_tierUp)
+        return entry;
+
+    ASSERT(!(decrementCount % 2));
+    // FIXME: Make this a patchpoint.
+    BasicBlock* continuation = m_proc.addBlock();
+
+    ASSERT(m_tierUp);
+    Value* countDownLocation = constant(pointerType(), reinterpret_cast<uint64_t>(m_tierUp), origin);
+    Value* oldCountDown = entry->appendNew<MemoryValue>(m_proc, Load, Int32, origin, countDownLocation);
+    Value* newCountDown = entry->appendNew<Value>(m_proc, Sub, origin, oldCountDown, constant(Int32, decrementCount, origin));
+    entry->appendNew<MemoryValue>(m_proc, Store, origin, newCountDown, countDownLocation);
+
+    Value* underFlowed = entry->appendNew<Value>(m_proc, Above, origin, newCountDown, oldCountDown);
+
+    {
+        BasicBlock* tierUp = m_proc.addBlock();
+        entry->appendNew<Value>(m_proc, B3::Branch, origin, underFlowed);
+        entry->setSuccessors(FrequentedBlock(tierUp, FrequencyClass::Rare), FrequentedBlock(continuation));
+
+        tierUp->appendNew<CCallValue>(m_proc, B3::Void, origin, Effects::forCall(),
+            constant(pointerType(), reinterpret_cast<uint64_t>(runOMGPlanForIndex), origin),
+            materializeWasmContext(tierUp),
+            constant(Int32, m_functionIndex, origin));
+
+        tierUp->appendNewControlValue(m_proc, Jump, origin, continuation);
+    }
+
+    return continuation;
+}
+
+B3IRGenerator::ControlData B3IRGenerator::addLoop(Type signature)
+{
+    BasicBlock* branchTarget = m_proc.addBlock();
+    BasicBlock* continuation = m_proc.addBlock();
+    BasicBlock* body = emitTierUpCheck(branchTarget, TierUpCount::loopDecrement(), origin());
+
+    m_currentBlock->appendNewControlValue(m_proc, Jump, origin(), body);
+
+    m_currentBlock = body;
+    return ControlData(m_proc, origin(), signature, BlockType::Loop, continuation, branchTarget);
+}
+
 B3IRGenerator::ControlData B3IRGenerator::addTopLevel(Type signature)
 {
     return ControlData(m_proc, Origin(), signature, BlockType::TopLevel, m_proc.addBlock());
@@ -825,16 +882,6 @@ B3IRGenerator::ControlData B3IRGenerator::addTopLevel(Type signature)
 B3IRGenerator::ControlData B3IRGenerator::addBlock(Type signature)
 {
     return ControlData(m_proc, origin(), signature, BlockType::Block, m_proc.addBlock());
-}
-
-B3IRGenerator::ControlData B3IRGenerator::addLoop(Type signature)
-{
-    BasicBlock* body = m_proc.addBlock();
-    BasicBlock* continuation = m_proc.addBlock();
-    m_currentBlock->appendNewControlValue(m_proc, Jump, origin(), body);
-    body->addPredecessor(m_currentBlock);
-    m_currentBlock = body;
-    return ControlData(m_proc, origin(), signature, BlockType::Loop, continuation, body);
 }
 
 auto B3IRGenerator::addIf(ExpressionType condition, Type signature, ControlType& result) -> PartialResult
@@ -974,9 +1021,9 @@ auto B3IRGenerator::addCall(uint32_t functionIndex, const Signature& signature, 
                 patchpoint->clobberLate(PinnedRegisterInfo::get().toSave());
                 patchpoint->setGenerator([unlinkedWasmToWasmCalls, functionIndex] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
                     AllowMacroScratchRegisterUsage allowScratch(jit);
-                    CCallHelpers::Call call = jit.call();
+                    CCallHelpers::Call call = jit.threadSafePatchableNearCall();
                     jit.addLinkTask([unlinkedWasmToWasmCalls, call, functionIndex] (LinkBuffer& linkBuffer) {
-                        unlinkedWasmToWasmCalls->append({ linkBuffer.locationOf(call), functionIndex });
+                        unlinkedWasmToWasmCalls->append({ linkBuffer.locationOfNearCall(call), functionIndex });
                     });
                 });
             });
@@ -1026,9 +1073,9 @@ auto B3IRGenerator::addCall(uint32_t functionIndex, const Signature& signature, 
 
                 patchpoint->setGenerator([unlinkedWasmToWasmCalls, functionIndex] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
                     AllowMacroScratchRegisterUsage allowScratch(jit);
-                    CCallHelpers::Call call = jit.call();
+                    CCallHelpers::Call call = jit.threadSafePatchableNearCall();
                     jit.addLinkTask([unlinkedWasmToWasmCalls, call, functionIndex] (LinkBuffer& linkBuffer) {
-                        unlinkedWasmToWasmCalls->append({ linkBuffer.locationOf(call), functionIndex });
+                        unlinkedWasmToWasmCalls->append({ linkBuffer.locationOfNearCall(call), functionIndex });
                     });
                 });
             });
@@ -1094,7 +1141,10 @@ auto B3IRGenerator::addCallIndirect(const Signature& signature, Vector<Expressio
         });
     }
 
-    ExpressionType calleeCode = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), callableFunction, safeCast<int32_t>(OBJECT_OFFSETOF(CallableFunction, code)));
+    ExpressionType calleeCode = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(),
+        m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), callableFunction,
+            safeCast<int32_t>(OBJECT_OFFSETOF(CallableFunction, code))));
+
 
     Type returnType = signature.returnType();
     result = wasmCallingConvention().setupCall(m_proc, m_currentBlock, origin(), args, toB3Type(returnType),
@@ -1158,7 +1208,7 @@ void B3IRGenerator::dump(const Vector<ControlEntry>& controlStack, const Express
     dataLogLn();
 }
 
-static void createJSToWasmWrapper(CompilationContext& compilationContext, WasmInternalFunction& function, const Signature& signature, const ModuleInformation& info, MemoryMode mode)
+static void createJSToWasmWrapper(CompilationContext& compilationContext, WasmInternalFunction& function, const Signature& signature, const ModuleInformation& info, MemoryMode mode, unsigned functionIndex, Vector<UnlinkedWasmToWasmCall>* unlinkedWasmToWasmCalls)
 {
     CCallHelpers& jit = *compilationContext.jsEntrypointJIT;
 
@@ -1313,7 +1363,13 @@ static void createJSToWasmWrapper(CompilationContext& compilationContext, WasmIn
         jit.loadPtr(CCallHelpers::Address(baseMemory, JSWebAssemblyMemory::offsetOfMemory()), baseMemory);
     }
 
-    compilationContext.jsEntrypointToWasmEntrypointCall = jit.call();
+    CCallHelpers::Call call = jit.threadSafePatchableNearCall();
+    unsigned functionIndexSpace = functionIndex + info.importFunctionCount();
+    ASSERT(functionIndexSpace < info.functionIndexSpaceSize());
+    jit.addLinkTask([unlinkedWasmToWasmCalls, call, functionIndexSpace] (LinkBuffer& linkBuffer) {
+        unlinkedWasmToWasmCalls->append({ linkBuffer.locationOfNearCall(call), functionIndexSpace });
+    });
+
 
     for (const RegisterAtOffset& regAtOffset : registersToSpill) {
         GPRReg reg = regAtOffset.reg().gpr();
@@ -1339,10 +1395,12 @@ static void createJSToWasmWrapper(CompilationContext& compilationContext, WasmIn
 
 auto B3IRGenerator::origin() -> Origin
 {
-    return bitwise_cast<Origin>(OpcodeOrigin(m_parser->currentOpcode(), m_parser->currentOpcodeStartingOffset()));
+    OpcodeOrigin origin(m_parser->currentOpcode(), m_parser->currentOpcodeStartingOffset());
+    ASSERT(isValidOpType(static_cast<uint8_t>(origin.opcode())));
+    return bitwise_cast<Origin>(origin);
 }
 
-Expected<std::unique_ptr<WasmInternalFunction>, String> parseAndCompile(CompilationContext& compilationContext, const uint8_t* functionStart, size_t functionLength, const Signature& signature, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, const ModuleInformation& info, MemoryMode mode, unsigned optLevel)
+Expected<std::unique_ptr<WasmInternalFunction>, String> parseAndCompile(CompilationContext& compilationContext, const uint8_t* functionStart, size_t functionLength, const Signature& signature, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, const ModuleInformation& info, MemoryMode mode, CompilationMode compilationMode, uint32_t functionIndex, TierUpCount* tierUp)
 {
     auto result = std::make_unique<WasmInternalFunction>();
 
@@ -1362,9 +1420,11 @@ Expected<std::unique_ptr<WasmInternalFunction>, String> parseAndCompile(Compilat
     // optLevel=1.
     procedure.setNeedsUsedRegisters(false);
     
-    procedure.setOptLevel(optLevel);
+    procedure.setOptLevel(compilationMode == CompilationMode::BBQMode
+        ? Options::webAssemblyBBQOptimizationLevel()
+        : Options::webAssemblyOMGOptimizationLevel());
 
-    B3IRGenerator context(info, procedure, result.get(), unlinkedWasmToWasmCalls, mode);
+    B3IRGenerator context(info, procedure, result.get(), unlinkedWasmToWasmCalls, mode, compilationMode, functionIndex, tierUp);
     FunctionParser<B3IRGenerator> parser(context, functionStart, functionLength, signature, info);
     WASM_FAIL_IF_HELPER_FAILS(parser.parse());
 
@@ -1385,7 +1445,8 @@ Expected<std::unique_ptr<WasmInternalFunction>, String> parseAndCompile(Compilat
         result->wasmEntrypoint.calleeSaveRegisters = procedure.calleeSaveRegisterAtOffsetList();
     }
 
-    createJSToWasmWrapper(compilationContext, *result, signature, info, mode);
+    if (compilationMode == CompilationMode::BBQMode)
+        createJSToWasmWrapper(compilationContext, *result, signature, info, mode, functionIndex, &unlinkedWasmToWasmCalls);
     return WTFMove(result);
 }
 

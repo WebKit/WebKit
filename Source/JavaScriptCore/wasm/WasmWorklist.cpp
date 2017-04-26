@@ -74,10 +74,8 @@ protected:
 
             element = queue.peek();
             // Only one thread should validate/prepare.
-            if (!queue.peek().plan->hasBeenPrepared()) {
+            if (!queue.peek().plan->multiThreaded())
                 queue.dequeue();
-                return PollResult::Work;
-            }
 
             if (element.plan->hasWork())
                 return PollResult::Work;
@@ -100,13 +98,12 @@ protected:
 
         Plan* plan = element.plan.get();
         ASSERT(plan);
-        if (!plan->hasBeenPrepared()) {
-            plan->parseAndValidateModule();
-            if (!plan->hasWork())
-                return complete(holdLock(*worklist.m_lock));
-            
-            plan->prepare();
 
+        bool wasMultiThreaded = plan->multiThreaded();
+        plan->work(Plan::Partial);
+
+        ASSERT(!plan->hasWork() || plan->multiThreaded());
+        if (plan->hasWork() && !wasMultiThreaded && plan->multiThreaded()) {
             LockHolder locker(*worklist.m_lock);
             element.setToNextPriority();
             worklist.m_queue.enqueue(WTFMove(element));
@@ -114,7 +111,6 @@ protected:
             return complete(locker);
         }
 
-        plan->compileFunctions(Plan::Partial);
         return complete(holdLock(*worklist.m_lock));
     }
 

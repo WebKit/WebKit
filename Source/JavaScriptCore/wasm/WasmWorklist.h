@@ -57,13 +57,6 @@ public:
     void activatePlan(JSPromiseDeferred*, Plan*);
     void deactivePlan(JSPromiseDeferred*, Plan*);
 
-private:
-    class Thread;
-    friend class Thread;
-
-    typedef uint64_t Ticket;
-    Ticket nextTicket() { return m_lastGrantedTicket++; }
-
     enum class Priority {
         Shutdown,
         Synchronous,
@@ -71,6 +64,13 @@ private:
         Preparation
     };
     const char* priorityString(Priority);
+
+private:
+    class Thread;
+    friend class Thread;
+
+    typedef uint64_t Ticket;
+    Ticket nextTicket() { return m_lastGrantedTicket++; }
 
     struct QueueElement {
         Priority priority;
@@ -86,7 +86,6 @@ private:
             return left.ticket > right.ticket;
         return left.priority > right.priority;
     }
-
 
     Box<Lock> m_lock;
     RefPtr<AutomaticThreadCondition> m_planEnqueued;

@@ -28,13 +28,13 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "CalleeBits.h"
+#include "WasmBBQPlan.h"
 #include "WasmCallee.h"
-#include "WasmPlan.h"
 
 namespace JSC { namespace Wasm {
 
 template<typename Functor>
-void Plan::initializeCallees(const Functor& callback)
+void BBQPlan::initializeCallees(const Functor& callback)
 {
     ASSERT(!failed());
     for (unsigned internalFunctionIndex = 0; internalFunctionIndex < m_wasmInternalFunctions.size(); ++internalFunctionIndex) {

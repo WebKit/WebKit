@@ -38,12 +38,13 @@
 #include "ObjectConstructor.h"
 #include "PromiseDeferredTimer.h"
 #include "StrongInlines.h"
-#include "WasmPlan.h"
+#include "WasmBBQPlan.h"
 #include "WasmWorklist.h"
 #include "WebAssemblyInstanceConstructor.h"
 #include "WebAssemblyModuleConstructor.h"
 
 using JSC::Wasm::Plan;
+using JSC::Wasm::BBQPlan;
 
 namespace JSC {
 static EncodedJSValue JSC_HOST_CALL webAssemblyCompileFunc(ExecState*);
@@ -211,7 +212,7 @@ static EncodedJSValue JSC_HOST_CALL webAssemblyValidateFunc(ExecState* exec)
     size_t byteSize;
     uint8_t* base = getWasmBufferFromValue(exec, exec->argument(0), byteOffset, byteSize);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    Wasm::Plan plan(vm, base + byteOffset, byteSize, Plan::Validation, Plan::dontFinalize());
+    BBQPlan plan(vm, base + byteOffset, byteSize, BBQPlan::Validation, Plan::dontFinalize());
     // FIXME: We might want to throw an OOM exception here if we detect that something will OOM.
     // https://bugs.webkit.org/show_bug.cgi?id=166015
     return JSValue::encode(jsBoolean(plan.parseAndValidateModule()));

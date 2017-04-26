@@ -128,14 +128,14 @@ void JSWebAssemblyTable::setFunction(VM& vm, uint32_t index, WebAssemblyFunction
 {
     RELEASE_ASSERT(index < m_size);
     m_jsFunctions.get()[index].set(vm, this, function);
-    m_functions.get()[index] = Wasm::CallableFunction(function->signatureIndex(), function->wasmEntrypoint());
+    m_functions.get()[index] = function->callableFunction();
 }
 
 void JSWebAssemblyTable::setFunction(VM& vm, uint32_t index, WebAssemblyWrapperFunction* function)
 {
     RELEASE_ASSERT(index < m_size);
     m_jsFunctions.get()[index].set(vm, this, function);
-    m_functions.get()[index] = Wasm::CallableFunction(function->signatureIndex(), function->wasmEntrypoint());
+    m_functions.get()[index] = function->callableFunction();
 }
 
 } // namespace JSC

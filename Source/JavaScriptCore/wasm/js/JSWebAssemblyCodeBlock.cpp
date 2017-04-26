@@ -33,7 +33,7 @@
 #include "JSWebAssemblyMemory.h"
 #include "JSWebAssemblyModule.h"
 #include "WasmBinding.h"
-#include "WasmPlanInlines.h"
+#include "WasmModuleInformation.h"
 
 #include <wtf/CurrentTime.h>
 

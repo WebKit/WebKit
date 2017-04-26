@@ -68,14 +68,14 @@ public:
     {
         return m_codeBlock->jsEntrypointCalleeFromFunctionIndexSpace(functionIndexSpace);
     }
-    Wasm::Callee& wasmEntrypointCalleeFromFunctionIndexSpace(unsigned functionIndexSpace)
+    Wasm::WasmEntrypointLoadLocation wasmEntrypointLoadLocationFromFunctionIndexSpace(unsigned functionIndexSpace)
     {
-        return m_codeBlock->wasmEntrypointCalleeFromFunctionIndexSpace(functionIndexSpace);
+        return m_codeBlock->wasmEntrypointLoadLocationFromFunctionIndexSpace(functionIndexSpace);
     }
 
-    void* wasmToJsCallStubForImport(unsigned importIndex)
+    Wasm::WasmEntrypointLoadLocation wasmToJsCallStubForImport(unsigned importIndex)
     {
-        return importWasmToJSStub(importIndex);
+        return &importWasmToJSStub(importIndex);
     }
 
     static ptrdiff_t offsetOfImportWasmToJSStub(unsigned importIndex)

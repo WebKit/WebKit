@@ -29,8 +29,8 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "WasmBBQPlanInlines.h"
 #include "WasmCallee.h"
-#include "WasmPlanInlines.h"
 #include "WasmWorklist.h"
 
 namespace JSC { namespace Wasm {
@@ -40,7 +40,7 @@ CodeBlock::CodeBlock(VM& vm, MemoryMode mode, ModuleInformation& moduleInformati
     , m_mode(mode)
 {
     RefPtr<CodeBlock> protectedThis = this;
-    m_plan = adoptRef(*new Plan(vm, makeRef(moduleInformation), Plan::FullCompile, createSharedTask<Plan::CallbackType>([this, protectedThis = WTFMove(protectedThis)] (VM&, Plan&) {
+    m_plan = adoptRef(*new BBQPlan(vm, makeRef(moduleInformation), BBQPlan::FullCompile, createSharedTask<Plan::CallbackType>([this, protectedThis = WTFMove(protectedThis)] (VM&, Plan&) {
         auto locker = holdLock(m_lock);
         if (m_plan->failed()) {
             m_errorMessage = m_plan->errorMessage();
@@ -48,13 +48,21 @@ CodeBlock::CodeBlock(VM& vm, MemoryMode mode, ModuleInformation& moduleInformati
             return;
         }
 
-        m_callees.resize(m_calleeCount * 2);
+        // FIXME: we should eventually collect the BBQ code.
+        m_callees.resize(m_calleeCount);
+        m_jsCallees.resize(m_calleeCount);
+        m_optimizedCallees.resize(m_calleeCount);
+        m_wasmEntryPoints.resize(m_calleeCount);
+
         m_plan->initializeCallees([&] (unsigned calleeIndex, Ref<Wasm::Callee>&& jsEntrypointCallee, Ref<Wasm::Callee>&& wasmEntrypointCallee) {
-            m_callees[calleeIndex] = WTFMove(jsEntrypointCallee);
-            m_callees[calleeIndex + m_calleeCount] = WTFMove(wasmEntrypointCallee);
+            m_jsCallees[calleeIndex] = WTFMove(jsEntrypointCallee);
+            m_callees[calleeIndex] = WTFMove(wasmEntrypointCallee);
+            m_wasmEntryPoints[calleeIndex] = m_callees[calleeIndex]->entrypoint();
         });
 
         m_wasmToWasmExitStubs = m_plan->takeWasmToWasmExitStubs();
+        m_wasmToWasmCallsites = m_plan->takeWasmToWasmCallsites();
+        m_tierUpCounts = m_plan->takeTierUpCounts();
 
         m_plan = nullptr;
     })));

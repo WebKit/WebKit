@@ -81,18 +81,17 @@ Bank ShufflePair::bank() const
     return FP;
 }
 
-Opcode ShufflePair::opcode() const
-{
-    return moveFor(bank(), width());
-}
-
 Inst ShufflePair::inst(Code* code, Value* origin) const
 {
     if (UNLIKELY(src().isMemory() && dst().isMemory())) {
         RELEASE_ASSERT(code);
-        return Inst(opcode(), origin, src(), dst(), code->newTmp(bank()));
+        return Inst(moveFor(bank(), width()), origin, src(), dst(), code->newTmp(bank()));
     }
-    return Inst(opcode(), origin, src(), dst());
+
+    if (src().isSomeImm())
+        return Inst(Move, origin, Arg::bigImm(src().value()), dst());
+
+    return Inst(moveFor(bank(), width()), origin, src(), dst());
 }
 
 void ShufflePair::dump(PrintStream& out) const

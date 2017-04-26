@@ -3087,6 +3087,12 @@ public:
         return Call(label, Call::LinkableNearTail);
     }
 
+    ALWAYS_INLINE Call threadSafePatchableNearCall()
+    {
+        m_assembler.bl();
+        return Call(m_assembler.label(), Call::LinkableNear);
+    }
+
     ALWAYS_INLINE void ret()
     {
         m_assembler.ret();

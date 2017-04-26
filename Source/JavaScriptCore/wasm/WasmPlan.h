@@ -49,109 +49,48 @@ public:
     typedef void CallbackType(VM&, Plan&);
     using CompletionTask = RefPtr<SharedTask<CallbackType>>;
     static CompletionTask dontFinalize() { return createSharedTask<CallbackType>([](VM&, Plan&) { }); }
-    enum AsyncWork : uint8_t { FullCompile, Validation };
-    // Note: CompletionTask should not hold a reference to the Plan otherwise there will be a reference cycle.
-    Plan(VM&, Ref<ModuleInformation>, AsyncWork, CompletionTask&&);
-    JS_EXPORT_PRIVATE Plan(VM&, Vector<uint8_t>&&, AsyncWork, CompletionTask&&);
+    Plan(VM&, Ref<ModuleInformation>, CompletionTask&&);
+
     // Note: This constructor should only be used if you are not actually building a module e.g. validation/function tests
-    // FIXME: When we get rid of function tests we should remove AsyncWork from this constructor.
-    JS_EXPORT_PRIVATE Plan(VM&, const uint8_t*, size_t, AsyncWork, CompletionTask&&);
-    JS_EXPORT_PRIVATE ~Plan();
+    JS_EXPORT_PRIVATE Plan(VM&, const uint8_t*, size_t, CompletionTask&&);
+    virtual JS_EXPORT_PRIVATE ~Plan();
 
     // If you guarantee the ordering here, you can rely on FIFO of the
     // completion tasks being called.
     void addCompletionTask(VM&, CompletionTask&&);
 
-    bool parseAndValidateModule();
-
-    JS_EXPORT_PRIVATE void prepare();
-    enum CompilationEffort { All, Partial };
-    void compileFunctions(CompilationEffort = All);
-
-    template<typename Functor>
-    void initializeCallees(const Functor&);
-
-    Vector<Export>& exports() const
-    {
-        RELEASE_ASSERT(!failed() && !hasWork());
-        return m_moduleInformation->exports;
-    }
-
-    size_t internalFunctionCount() const
-    {
-        RELEASE_ASSERT(!failed() && !hasWork());
-        return m_moduleInformation->internalFunctionCount();
-    }
-
-    Ref<ModuleInformation>&& takeModuleInformation()
-    {
-        RELEASE_ASSERT(!failed() && !hasWork());
-        return WTFMove(m_moduleInformation);
-    }
-
-    Bag<CallLinkInfo>&& takeCallLinkInfos()
-    {
-        RELEASE_ASSERT(!failed() && !hasWork());
-        return WTFMove(m_callLinkInfos);
-    }
-
-    Vector<MacroAssemblerCodeRef>&& takeWasmToWasmExitStubs()
-    {
-        RELEASE_ASSERT(!failed() && !hasWork());
-        return WTFMove(m_wasmToWasmExitStubs);
-    }
-
     void setMode(MemoryMode mode) { m_mode = mode; }
     MemoryMode mode() const { return m_mode; }
-
-    enum class State : uint8_t {
-        Initial,
-        Validated,
-        Prepared,
-        Compiled,
-        Completed // We should only move to Completed if we are holding the lock.
-    };
 
     const String& errorMessage() const { return m_errorMessage; }
 
     bool WARN_UNUSED_RETURN failed() const { return !errorMessage().isNull(); }
-    bool hasWork() const { return m_state < State::Compiled; }
-    bool hasBeenPrepared() const { return m_state >= State::Prepared; }
+    virtual bool hasWork() const = 0;
+    enum CompilationEffort { All, Partial };
+    virtual void work(CompilationEffort = All) = 0;
+    virtual bool multiThreaded() const = 0;
 
     void waitForCompletion();
     // Returns true if it cancelled the plan.
     bool tryRemoveVMAndCancelIfLast(VM&);
 
-private:
-    class ThreadCountHolder;
-    friend class ThreadCountHolder;
-
-    void complete(const AbstractLocker&);
-
-    void moveToState(State);
+protected:
+    void runCompletionTasks(const AbstractLocker&);
     void fail(const AbstractLocker&, String&& errorMessage);
 
-    const char* stateString(State);
+    virtual bool isComplete() const = 0;
+    virtual void complete(const AbstractLocker&) = 0;
 
     Ref<ModuleInformation> m_moduleInformation;
-    Bag<CallLinkInfo> m_callLinkInfos;
-    Vector<MacroAssemblerCodeRef> m_wasmToWasmExitStubs;
-    Vector<std::unique_ptr<WasmInternalFunction>> m_wasmInternalFunctions;
-    Vector<CompilationContext> m_compilationContexts;
 
     Vector<std::pair<VM*, CompletionTask>, 1> m_completionTasks;
 
-    Vector<Vector<UnlinkedWasmToWasmCall>> m_unlinkedWasmToWasmCalls;
     const uint8_t* m_source;
     const size_t m_sourceLength;
     String m_errorMessage;
     MemoryMode m_mode { MemoryMode::BoundsChecking };
     Lock m_lock;
     Condition m_completed;
-    State m_state;
-    const AsyncWork m_asyncWork;
-    uint8_t m_numberOfActiveThreads { 0 };
-    uint32_t m_currentIndex { 0 };
 };
 
 

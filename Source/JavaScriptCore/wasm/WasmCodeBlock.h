@@ -28,6 +28,7 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "MacroAssemblerCodeRef.h"
+#include "WasmTierUpCount.h"
 #include <wtf/Lock.h>
 #include <wtf/RefPtr.h>
 #include <wtf/SharedTask.h>
@@ -41,8 +42,11 @@ class VM;
 namespace Wasm {
 
 class Callee;
-class Plan;
+class BBQPlan;
+class OMGPlan;
 struct ModuleInformation;
+struct UnlinkedWasmToWasmCall;
+typedef void** WasmEntrypointLoadLocation;
 enum class MemoryMode : uint8_t;
     
 class CodeBlock : public ThreadSafeRefCounted<CodeBlock> {
@@ -75,30 +79,52 @@ public:
 
     unsigned functionImportCount() const { return m_wasmToWasmExitStubs.size(); }
 
-    Wasm::Callee& jsEntrypointCalleeFromFunctionIndexSpace(unsigned functionIndexSpace)
+    Callee& jsEntrypointCalleeFromFunctionIndexSpace(unsigned functionIndexSpace)
     {
         RELEASE_ASSERT(functionIndexSpace >= functionImportCount());
         unsigned calleeIndex = functionIndexSpace - functionImportCount();
-        RELEASE_ASSERT(calleeIndex < m_calleeCount);
+        return *m_jsCallees[calleeIndex].get();
+    }
+    Callee& wasmEntrypointCalleeFromFunctionIndexSpace(unsigned functionIndexSpace)
+    {
+        RELEASE_ASSERT(functionIndexSpace >= functionImportCount());
+        unsigned calleeIndex = functionIndexSpace - functionImportCount();
+        if (m_optimizedCallees[calleeIndex])
+            return *m_optimizedCallees[calleeIndex].get();
         return *m_callees[calleeIndex].get();
     }
-    Wasm::Callee& wasmEntrypointCalleeFromFunctionIndexSpace(unsigned functionIndexSpace)
+
+    WasmEntrypointLoadLocation wasmEntrypointLoadLocationFromFunctionIndexSpace(unsigned functionIndexSpace)
     {
         RELEASE_ASSERT(functionIndexSpace >= functionImportCount());
         unsigned calleeIndex = functionIndexSpace - functionImportCount();
-        RELEASE_ASSERT(calleeIndex < m_calleeCount);
-        return *m_callees[calleeIndex + m_calleeCount].get();
+        return &m_wasmEntryPoints[calleeIndex];
     }
+
+    TierUpCount& tierUpCount(uint32_t functionIndex)
+    {
+        return m_tierUpCounts[functionIndex];
+    }
+
     bool isSafeToRun(MemoryMode);
+
+    MemoryMode mode() const { return m_mode; }
 
     ~CodeBlock();
 private:
+    friend class OMGPlan;
+
     CodeBlock(VM&, MemoryMode, ModuleInformation&);
     unsigned m_calleeCount;
     MemoryMode m_mode;
     Vector<RefPtr<Callee>> m_callees;
+    Vector<RefPtr<Callee>> m_optimizedCallees;
+    Vector<RefPtr<Callee>> m_jsCallees;
+    Vector<void*> m_wasmEntryPoints;
+    Vector<TierUpCount> m_tierUpCounts;
+    Vector<Vector<UnlinkedWasmToWasmCall>> m_wasmToWasmCallsites;
     Vector<MacroAssemblerCodeRef> m_wasmToWasmExitStubs;
-    RefPtr<Plan> m_plan;
+    RefPtr<BBQPlan> m_plan;
     String m_errorMessage;
     Lock m_lock;
 };

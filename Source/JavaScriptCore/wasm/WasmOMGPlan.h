@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,34 +27,45 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "B3Common.h"
-#include "B3Compilation.h"
-#include "B3OpaqueByproducts.h"
-#include "CCallHelpers.h"
-#include "WasmMemory.h"
-#include "WasmModuleInformation.h"
-#include "WasmTierUpCount.h"
-#include <wtf/Expected.h>
+#include "VM.h"
+#include "WasmContext.h"
+#include "WasmModule.h"
+#include "WasmPlan.h"
 
-extern "C" void dumpProcedure(void*);
+namespace JSC {
 
-namespace JSC { namespace Wasm {
+class CallLinkInfo;
 
-class MemoryInformation;
+namespace Wasm {
 
-enum class CompilationMode {
-    BBQMode,
-    OMGMode,
+class OMGPlan final : public Plan {
+public:
+    using Base = Plan;
+    // Note: CompletionTask should not hold a reference to the Plan otherwise there will be a reference cycle.
+    OMGPlan(VM&, Ref<Module>, uint32_t functionIndex, MemoryMode, CompletionTask&&);
+
+    bool hasWork() const override { return !m_completed; }
+    void work(CompilationEffort) override;
+    bool multiThreaded() const override { return false; }
+
+private:
+    // For some reason friendship doesn't extend to parent classes...
+    using Base::m_lock;
+
+    bool isComplete() const override { return m_completed; }
+    void complete(const AbstractLocker& locker) override
+    {
+        m_completed = true;
+        runCompletionTasks(locker);
+    }
+    
+    Ref<Module> m_module;
+    Ref<CodeBlock> m_codeBlock;
+    bool m_completed { false };
+    uint32_t m_functionIndex;
 };
 
-struct CompilationContext {
-    std::unique_ptr<CCallHelpers> jsEntrypointJIT;
-    std::unique_ptr<B3::OpaqueByproducts> jsEntrypointByproducts;
-    std::unique_ptr<CCallHelpers> wasmEntrypointJIT;
-    std::unique_ptr<B3::OpaqueByproducts> wasmEntrypointByproducts;
-};
-
-Expected<std::unique_ptr<WasmInternalFunction>, String> parseAndCompile(CompilationContext&, const uint8_t*, size_t, const Signature&, Vector<UnlinkedWasmToWasmCall>&, const ModuleInformation&, MemoryMode, CompilationMode, uint32_t functionIndex, TierUpCount* = nullptr);
+void runOMGPlanForIndex(Context*, uint32_t functionIndex);
 
 } } // namespace JSC::Wasm
 
