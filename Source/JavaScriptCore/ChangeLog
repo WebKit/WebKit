@@ -1,5 +1,18 @@
 2017-04-26  Caitlin Potter  <caitp@igalia.com>
 
+        [JSC] fix RETURN_IF_EXCEPTION() placement in ownPropertyKeys()
+        https://bugs.webkit.org/show_bug.cgi?id=171330
+
+        Reviewed by Mark Lam.
+
+        Ensure RETURN_IF_EXCEPTION() following invokation of the
+        filterPropertyIfNeeded() lambda.
+
+        * runtime/ObjectConstructor.cpp:
+        (JSC::ownPropertyKeys):
+
+2017-04-26  Caitlin Potter  <caitp@igalia.com>
+
         [JSC] Object.keys() must discard property names with no PropertyDescriptor
         https://bugs.webkit.org/show_bug.cgi?id=171291
 

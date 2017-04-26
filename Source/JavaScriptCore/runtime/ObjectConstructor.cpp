@@ -748,10 +748,9 @@ JSArray* ownPropertyKeys(ExecState* exec, JSObject* object, PropertyNameMode pro
         for (size_t i = 0; i < numProperties; i++) {
             const auto& identifier = properties[i];
             ASSERT(!identifier.isSymbol());
-            if (filterPropertyIfNeeded(identifier)) {
+            if (filterPropertyIfNeeded(identifier))
                 keys->push(exec, jsOwnedString(exec, identifier.string()));
-                RETURN_IF_EXCEPTION(scope, nullptr);
-            }
+            RETURN_IF_EXCEPTION(scope, nullptr);
         }
         break;
     }
@@ -761,8 +760,9 @@ JSArray* ownPropertyKeys(ExecState* exec, JSObject* object, PropertyNameMode pro
         for (size_t i = 0; i < numProperties; i++) {
             const auto& identifier = properties[i];
             ASSERT(identifier.isSymbol());
-            if (!vm.propertyNames->isPrivateName(identifier) && filterPropertyIfNeeded(identifier)) {
-                keys->push(exec, Symbol::create(vm, static_cast<SymbolImpl&>(*identifier.impl())));
+            if (!vm.propertyNames->isPrivateName(identifier)) {
+                if (filterPropertyIfNeeded(identifier))
+                    keys->push(exec, Symbol::create(vm, static_cast<SymbolImpl&>(*identifier.impl())));
                 RETURN_IF_EXCEPTION(scope, nullptr);
             }
         }
@@ -777,18 +777,18 @@ JSArray* ownPropertyKeys(ExecState* exec, JSObject* object, PropertyNameMode pro
             if (identifier.isSymbol()) {
                 if (!vm.propertyNames->isPrivateName(identifier))
                     propertySymbols.append(identifier);
-            } else if (filterPropertyIfNeeded(identifier)) {
-                keys->push(exec, jsOwnedString(exec, identifier.string()));
+            } else {
+                if (filterPropertyIfNeeded(identifier))
+                    keys->push(exec, jsOwnedString(exec, identifier.string()));
                 RETURN_IF_EXCEPTION(scope, nullptr);
             }
         }
 
         // To ensure the order defined in the spec (9.1.12), we append symbols at the last elements of keys.
         for (const auto& identifier : propertySymbols) {
-            if (filterPropertyIfNeeded(identifier)) {
+            if (filterPropertyIfNeeded(identifier))
                 keys->push(exec, Symbol::create(vm, static_cast<SymbolImpl&>(*identifier.impl())));
-                RETURN_IF_EXCEPTION(scope, nullptr);
-            }
+            RETURN_IF_EXCEPTION(scope, nullptr);
         }
 
         break;
