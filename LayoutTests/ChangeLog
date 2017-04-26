@@ -1,3 +1,12 @@
+2017-04-26  Chris Dumez  <cdumez@apple.com>
+
+        Re-sync html/browsers/the-window-object web-platform-tests from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=171313
+
+        Reviewed by Alex Christensen.
+
+        * tests-options.json:
+
 2017-04-26  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [ATK] Implement support for new ARIA 1.1 values of aria-haspopup

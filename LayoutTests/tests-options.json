@@ -509,6 +509,57 @@
     "imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/creating_browsing_context_test_01.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-negative-innerwidth-innerheight.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-negative-screenx-screeny.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-negative-top-left.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-negative-width-height.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-non-integer-height.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-non-integer-innerheight.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-non-integer-innerwidth.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-non-integer-left.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-non-integer-screenx.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-non-integer-screeny.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-non-integer-top.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-non-integer-width.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-tokenization-innerheight-innerwidth.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-tokenization-noopener.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-tokenization-screenx-screeny.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-tokenization-top-left.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-tokenization-width-height.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/html/dom/interfaces.html": [
         "slow"
     ],

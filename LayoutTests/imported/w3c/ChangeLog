@@ -1,3 +1,67 @@
+2017-04-26  Chris Dumez  <cdumez@apple.com>
+
+        Re-sync html/browsers/the-window-object web-platform-tests from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=171313
+
+        Reviewed by Alex Christensen.
+
+        * resources/import-expectations.json:
+        * web-platform-tests/common/PrefixedPostMessage.js: Added.
+        (PrefixedMessage):
+        (PrefixedMessage.prototype.url):
+        (PrefixedMessage.prototype.onMessage):
+        (PrefixedMessageTest):
+        (PrefixedMessageResource):
+        (PrefixedMessageResource.prototype.postToOpener):
+        * web-platform-tests/html/browsers/the-window-object/accessing-other-browsing-contexts/w3c-import.log:
+        * web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/non_automated/w3c-import.log:
+        * web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-negative-innerwidth-innerheight-expected.txt: Added.
+        * web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-negative-innerwidth-innerheight.html: Added.
+        * web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-negative-screenx-screeny-expected.txt: Added.
+        * web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-negative-screenx-screeny.html: Added.
+        * web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-negative-top-left-expected.txt: Added.
+        * web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-negative-top-left.html: Added.
+        * web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-negative-width-height-expected.txt: Added.
+        * web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-negative-width-height.html: Added.
+        * web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-non-integer-height-expected.txt: Added.
+        * web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-non-integer-height.html: Added.
+        * web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-non-integer-innerheight-expected.txt: Added.
+        * web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-non-integer-innerheight.html: Added.
+        * web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-non-integer-innerwidth-expected.txt: Added.
+        * web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-non-integer-innerwidth.html: Added.
+        * web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-non-integer-left-expected.txt: Added.
+        * web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-non-integer-left.html: Added.
+        * web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-non-integer-screenx-expected.txt: Added.
+        * web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-non-integer-screenx.html: Added.
+        * web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-non-integer-screeny-expected.txt: Added.
+        * web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-non-integer-screeny.html: Added.
+        * web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-non-integer-top-expected.txt: Added.
+        * web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-non-integer-top.html: Added.
+        * web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-non-integer-width-expected.txt: Added.
+        * web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-non-integer-width.html: Added.
+        * web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-tokenization-innerheight-innerwidth-expected.txt: Added.
+        * web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-tokenization-innerheight-innerwidth.html: Added.
+        * web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-tokenization-noopener-expected.txt: Added.
+        * web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-tokenization-noopener.html: Added.
+        * web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-tokenization-screenx-screeny-expected.txt: Added.
+        * web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-tokenization-screenx-screeny.html: Added.
+        * web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-tokenization-top-left-expected.txt: Added.
+        * web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-tokenization-top-left.html: Added.
+        * web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-tokenization-width-height-expected.txt: Added.
+        * web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-tokenization-width-height.html: Added.
+        * web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/resources/message-opener.html: Added.
+        * web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/resources/w3c-import.log:
+        * web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/w3c-import.log:
+        * web-platform-tests/html/browsers/the-window-object/garbage-collection-and-browsing-contexts/non-automated/w3c-import.log:
+        * web-platform-tests/html/browsers/the-window-object/garbage-collection-and-browsing-contexts/w3c-import.log:
+        * web-platform-tests/html/browsers/the-window-object/named-access-on-the-window-object/w3c-import.log:
+        * web-platform-tests/html/browsers/the-window-object/security-window/w3c-import.log:
+        * web-platform-tests/html/browsers/the-window-object/support/w3c-import.log:
+        * web-platform-tests/html/browsers/the-window-object/w3c-import.log:
+        * web-platform-tests/html/browsers/the-window-object/window-indexed-properties-expected.txt:
+        * web-platform-tests/html/browsers/the-window-object/window-indexed-properties-strict.html:
+        * web-platform-tests/html/browsers/the-window-object/window-indexed-properties.html:
+
 2017-04-26  WebKit Contributor  <webkitcontrib@gmail.com>
 
         Response.blob() does not set the content-type based on the header value.
