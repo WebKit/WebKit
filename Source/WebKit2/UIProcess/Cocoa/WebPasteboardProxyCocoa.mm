@@ -198,6 +198,11 @@ void WebPasteboardProxy::getFilenamesForDataInteraction(const String& pasteboard
     filenames = PlatformPasteboard(pasteboardName).filenamesForDataInteraction();
 }
 
+void WebPasteboardProxy::updatePreferredTypeIdentifiers(const Vector<String>& identifiers, const String& pasteboardName)
+{
+    PlatformPasteboard(pasteboardName).updatePreferredTypeIdentifiers(identifiers);
+}
+
 #endif
 
 } // namespace WebKit

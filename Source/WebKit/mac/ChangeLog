@@ -1,3 +1,17 @@
+2017-04-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        WebItemProviderPasteboard should not synchronously load provided data
+        https://bugs.webkit.org/show_bug.cgi?id=171341
+        <rdar://problem/31614010>
+
+        Reviewed by Tim Horton.
+
+        Adds client-layer plumbing for updatePreferredTypeIdentifiers. See WebCore ChangeLog for more details.
+
+        * WebCoreSupport/WebPlatformStrategies.h:
+        * WebCoreSupport/WebPlatformStrategies.mm:
+        (WebPlatformStrategies::updatePreferredTypeIdentifiers):
+
 2017-04-26  Zalan Bujtas  <zalan@apple.com>
 
         RTL: recent searches popover is displayed in incorrect location

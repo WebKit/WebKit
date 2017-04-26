@@ -113,6 +113,9 @@ public:
     const String& pasteboardName() const { return m_pasteboardName; }
     bool containsPromise() const;
 #endif
+#if ENABLE(DATA_INTERACTION)
+    void updatePreferredTypeIdentifiers(const Vector<String>& supportedTypes) const;
+#endif
 
 #if PLATFORM(GTK)
 

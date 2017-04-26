@@ -57,6 +57,7 @@ public:
     WEBCORE_EXPORT PlatformPasteboard();
     WEBCORE_EXPORT Vector<String> filenamesForDataInteraction();
     WEBCORE_EXPORT void getTypesByFidelityForItemAtIndex(Vector<String>& types, int index);
+    WEBCORE_EXPORT void updatePreferredTypeIdentifiers(const Vector<String>& types);
 #endif
     WEBCORE_EXPORT static String uniqueName();
 

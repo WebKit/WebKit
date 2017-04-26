@@ -216,6 +216,11 @@ int WebPlatformStrategies::getPasteboardItemsCount(const String& pasteboardName)
     return PlatformPasteboard(pasteboardName).count();
 }
 
+void WebPlatformStrategies::updatePreferredTypeIdentifiers(const Vector<String>& identifiers, const String& pasteboardName)
+{
+    PlatformPasteboard(pasteboardName).updatePreferredTypeIdentifiers(identifiers);
+}
+
 RefPtr<WebCore::SharedBuffer> WebPlatformStrategies::readBufferFromPasteboard(int index, const String& type, const String& pasteboardName)
 {
     return PlatformPasteboard(pasteboardName).readBuffer(index, type);

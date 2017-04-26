@@ -1,3 +1,62 @@
+2017-04-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        WebItemProviderPasteboard should not synchronously load provided data
+        https://bugs.webkit.org/show_bug.cgi?id=171341
+        <rdar://problem/31614010>
+
+        Reviewed by Tim Horton.
+
+        Refactors WebItemProviderPasteboard to not require asynchronously loading item provider data. To accomplish this,
+        we ensure that before performing data interaction, the UTI type that the data operation target should consume is
+        propagated to the UI process prior to the web process receiving the signal from the UI process to begin the
+        data operation itself. This information is sent via WebPlatformStrategies::updatePreferredTypeIdentifiers, a new
+        pasteboard helper function.
+
+        * page/DragController.cpp:
+        (WebCore::DragController::DragController):
+        (WebCore::dragIsHandledByDocument):
+        (WebCore::DragController::performDragOperation):
+        (WebCore::DragController::dragEnteredOrUpdated):
+        (WebCore::DragController::updatePreferredTypeIdentifiersForDragHandlingMethod):
+        (WebCore::DragController::tryDocumentDrag):
+
+        Give DragHandlingMethod a richer representation of what type of action will be performed. DragController::
+        updatePreferredTypeIdentifiersForDragHandlingMethod uses this to determine what kinds of UTIs are acceptable for
+        the current drop session.
+
+        * page/DragController.h:
+        (WebCore::DragController::documentIsHandlingNonDefaultDrag):
+        * page/mac/DragControllerMac.mm:
+        (WebCore::DragController::updatePreferredTypeIdentifiersForDragHandlingMethod):
+
+        Updates the data interaction pasteboard's list of preferred type identifiers it should load upon data operation.
+
+        * platform/DragData.h:
+        * platform/PasteboardStrategy.h:
+        * platform/PlatformPasteboard.h:
+        * platform/ios/AbstractPasteboard.h:
+        * platform/ios/PlatformPasteboardIOS.mm:
+        (WebCore::PlatformPasteboard::updatePreferredTypeIdentifiers):
+        * platform/ios/WebItemProviderPasteboard.mm:
+
+        Introduce _preferredTypeIdentifiers, which -doAfterLoadingProvidedContentIntoFileURLs: uses as a hint when
+        determining which UTI to load for an item provider. In the absence of preferred type identifiers, the default
+        behavior is to use the highest fidelity type adhering to "public.content".
+
+        (-[WebItemProviderPasteboard init]):
+        (-[WebItemProviderPasteboard updatePreferredTypeIdentifiers:]):
+        (-[WebItemProviderPasteboard setItemProviders:]):
+        (-[WebItemProviderPasteboard dataForPasteboardType:inItemSet:]):
+        (-[WebItemProviderPasteboard valuesForPasteboardType:inItemSet:]):
+
+        Remove calls to -createObjectOfClass: and -copyDataRepresentation:. Instead, rely solely on the loaded file URL
+        to read and initialize data and objects from the pasteboard.
+
+        (-[WebItemProviderPasteboard doAfterLoadingProvidedContentIntoFileURLs:]):
+        (-[WebItemProviderPasteboard _tryToCreateObjectOfClass:usingProvider:]): Deleted.
+        * platform/mac/DragDataMac.mm:
+        (WebCore::DragData::updatePreferredTypeIdentifiers):
+
 2017-04-26  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [ATK] Elements with a defined, non-false value for aria-current should expose ATK_STATE_ACTIVE

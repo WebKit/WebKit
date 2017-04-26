@@ -157,6 +157,9 @@ void Pasteboard::read(PasteboardPlainText& text)
     }
 
     text.text = strategy.readStringFromPasteboard(0, kUTTypeText, m_pasteboardName);
+    if (text.text.isEmpty())
+        text.text = strategy.readStringFromPasteboard(0, kUTTypePlainText, m_pasteboardName);
+
     text.isURL = false;
 }
 

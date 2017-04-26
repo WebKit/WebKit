@@ -79,8 +79,8 @@ struct DragState;
         const IntPoint& dragOffset() const { return m_dragOffset; }
         DragSourceAction dragSourceAction() const { return m_dragSourceAction; }
 
-        enum class DragHandlingMethod { None, Default, NonDefault };
-        bool documentIsHandlingNonDefaultDrag() const { return m_documentDragHandlingMethod == DragHandlingMethod::NonDefault; }
+        enum class DragHandlingMethod { None, EditPlainText, EditRichText, UploadFile, PageLoad, SetColor, NonDefault };
+        bool documentIsHandlingNonDefaultDrag() const { return m_dragHandlingMethod == DragHandlingMethod::NonDefault; }
         Document* documentUnderMouse() const { return m_documentUnderMouse.get(); }
         DragDestinationAction dragDestinationAction() const { return m_dragDestinationAction; }
         DragSourceAction delegateDragSourceAction(const IntPoint& rootViewPoint);
@@ -100,6 +100,7 @@ struct DragState;
         static const float DragImageAlpha;
 
     private:
+        void updatePreferredTypeIdentifiersForDragHandlingMethod(DragHandlingMethod, const DragData&) const;
         bool dispatchTextInputEventFor(Frame*, const DragData&);
         bool canProcessDrag(const DragData&);
         bool concludeEditDrag(const DragData&);
@@ -132,10 +133,11 @@ struct DragState;
         RefPtr<Document> m_dragInitiator; // The Document (if any) that initiated the drag.
         RefPtr<HTMLInputElement> m_fileInputElementUnderMouse;
         unsigned m_numberOfItemsToBeAccepted;
-        DragHandlingMethod m_documentDragHandlingMethod;
+        DragHandlingMethod m_dragHandlingMethod;
 
         DragDestinationAction m_dragDestinationAction;
         DragSourceAction m_dragSourceAction;
+        Vector<String> m_preferredTypeIdentifiersToLoad;
         bool m_didInitiateDrag;
         DragOperation m_sourceDragOperation; // Set in startDrag when a drag starts from a mouse down within WebKit
         IntPoint m_dragOffset;

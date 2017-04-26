@@ -1,3 +1,23 @@
+2017-04-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        WebItemProviderPasteboard should not synchronously load provided data
+        https://bugs.webkit.org/show_bug.cgi?id=171341
+        <rdar://problem/31614010>
+
+        Reviewed by Tim Horton.
+
+        Adds plumbing for updatePreferredTypeIdentifiers through the WebPasteboardProxy. This allows the web process to
+        signal to the UI process what UTIs the current drop target should accept and load. See WebCore ChangeLog for more
+        details.
+
+        * UIProcess/Cocoa/WebPasteboardProxyCocoa.mm:
+        (WebKit::WebPasteboardProxy::updatePreferredTypeIdentifiers):
+        * UIProcess/WebPasteboardProxy.h:
+        * UIProcess/WebPasteboardProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::updatePreferredTypeIdentifiers):
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.h:
+
 2017-04-26  Youenn Fablet  <youenn@apple.com>
 
         Unauthenticated CORS preflight requests should not use client certificates

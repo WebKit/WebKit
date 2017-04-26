@@ -324,6 +324,11 @@ void WebPlatformStrategies::getFilenamesForDataInteraction(Vector<String>& filen
     WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::GetFilenamesForDataInteraction(pasteboardName), Messages::WebPasteboardProxy::GetFilenamesForDataInteraction::Reply(filenames), 0);
 }
 
+void WebPlatformStrategies::updatePreferredTypeIdentifiers(const Vector<String>& identifiers, const String& pasteboardName)
+{
+    WebProcess::singleton().parentProcessConnection()->send(Messages::WebPasteboardProxy::UpdatePreferredTypeIdentifiers(identifiers, pasteboardName), 0);
+}
+
 RefPtr<WebCore::SharedBuffer> WebPlatformStrategies::readBufferFromPasteboard(int index, const String& pasteboardType, const String& pasteboardName)
 {
     SharedMemory::Handle handle;

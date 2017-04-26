@@ -32,6 +32,7 @@
 #import "UIKitSPI.h"
 #import <Foundation/NSProgress.h>
 #import <MobileCoreServices/MobileCoreServices.h>
+#import <UIKit/NSString+UIItemProvider.h>
 #import <UIKit/NSURL+UIItemProvider.h>
 #import <UIKit/UIColor.h>
 #import <UIKit/UIImage.h>
@@ -60,7 +61,7 @@ static BOOL isRichTextType(NSString *type)
 
 static BOOL isStringType(NSString *type)
 {
-    return MATCHES_UTI_TYPE(type, Text) || MATCHES_UTI_TYPE(type, UTF8PlainText) || MATCHES_UTI_TYPE(type, UTF16PlainText);
+    return MATCHES_UTI_TYPE(type, Text) || MATCHES_UTI_TYPE(type, UTF8PlainText) || MATCHES_UTI_TYPE(type, UTF16PlainText) || MATCHES_UTI_TYPE(type, PlainText);
 }
 
 static BOOL isURLType(NSString *type)
@@ -180,6 +181,7 @@ static BOOL isImageType(NSString *type)
     RetainPtr<NSArray> _itemProviders;
     RetainPtr<NSArray> _cachedTypeIdentifiers;
     RetainPtr<NSArray> _typeToFileURLMaps;
+    RetainPtr<NSArray> _preferredTypeIdentifiers;
 }
 
 + (instancetype)sharedInstance
@@ -199,8 +201,15 @@ static BOOL isImageType(NSString *type)
         _changeCount = 0;
         _pendingOperationCount = 0;
         _typeToFileURLMaps = adoptNS([[NSArray alloc] init]);
+        _preferredTypeIdentifiers = nil;
     }
     return self;
+}
+
+- (void)updatePreferredTypeIdentifiers:(NSArray<NSString *> *)types
+{
+    if ([_itemProviders count] == types.count)
+        _preferredTypeIdentifiers = types;
 }
 
 - (NSArray<NSString *> *)pasteboardTypesByFidelityForItemAtIndex:(NSUInteger)index
@@ -239,6 +248,9 @@ static BOOL isImageType(NSString *type)
     if (_itemProviders == itemProviders || [_itemProviders isEqualToArray:itemProviders])
         return;
 
+    if (itemProviders.count != [_itemProviders count])
+        _preferredTypeIdentifiers = nil;
+
     _itemProviders = itemProviders;
     _changeCount++;
     _cachedTypeIdentifiers = nil;
@@ -247,7 +259,6 @@ static BOOL isImageType(NSString *type)
     [itemProviders enumerateObjectsUsingBlock:[typeToFileURLMaps] (UIItemProvider *, NSUInteger, BOOL *) {
         [typeToFileURLMaps addObject:@{ }];
     }];
-    _typeToFileURLMaps = typeToFileURLMaps;
 }
 
 - (NSInteger)numberOfItems
@@ -307,17 +318,30 @@ static BOOL isImageType(NSString *type)
         if (!provider)
             return;
 
-        NSData *data = [retainedSelf _preLoadedDataConformingToType:pasteboardType forItemProviderAtIndex:index];
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-        // FIXME: <rdar://problem/30451096> Adopt asynchronous UIItemProvider methods when retrieving data.
-        if (!data)
-            data = [provider copyDataRepresentationForTypeIdentifier:pasteboardType error:nil];
-#pragma clang diagnostic pop
-        if (data)
-            [values addObject:data];
+        if (NSData *loadedData = [retainedSelf _preLoadedDataConformingToType:pasteboardType forItemProviderAtIndex:index])
+            [values addObject:loadedData];
     }];
     return values.autorelease();
+}
+
+static Class classForTypeIdentifier(NSString *typeIdentifier)
+{
+    if (isColorType(typeIdentifier))
+        return [getUIColorClass() class];
+
+    if (isImageType(typeIdentifier))
+        return [getUIImageClass() class];
+
+    if (isURLType(typeIdentifier))
+        return [NSURL class];
+
+    if (isRichTextType(typeIdentifier))
+        return [NSAttributedString class];
+
+    if (isStringType(typeIdentifier))
+        return [NSString class];
+
+    return nil;
 }
 
 - (NSArray *)valuesForPasteboardType:(NSString *)pasteboardType inItemSet:(NSIndexSet *)itemSet
@@ -329,44 +353,19 @@ static BOOL isImageType(NSString *type)
         if (!provider)
             return;
 
-        Class readableClass;
-        if (isColorType(pasteboardType))
-            readableClass = [getUIColorClass() class];
-        else if (isImageType(pasteboardType))
-            readableClass = [getUIImageClass() class];
-        else if (isURLType(pasteboardType))
-            readableClass = [NSURL class];
-        else if (isRichTextType(pasteboardType))
-            readableClass = [NSAttributedString class];
-        else if (isStringType(pasteboardType))
-            readableClass = [NSString class];
-        else
+        Class readableClass = classForTypeIdentifier(pasteboardType);
+        if (!readableClass)
             return;
 
         id <UIItemProviderReading> readObject = nil;
         if (NSData *preloadedData = [retainedSelf _preLoadedDataConformingToType:pasteboardType forItemProviderAtIndex:index])
             readObject = [[readableClass alloc] initWithItemProviderData:preloadedData typeIdentifier:pasteboardType error:nil];
 
-        if (!readObject)
-            readObject = [retainedSelf _tryToCreateObjectOfClass:readableClass usingProvider:provider];
-
         if (readObject)
             [values addObject:readObject];
     }];
 
     return values.autorelease();
-}
-
-- (id <UIItemProviderReading>)_tryToCreateObjectOfClass:(Class <UIItemProviderReading>)objectClass usingProvider:(UIItemProvider *)provider
-{
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    if (![provider canCreateObjectOfClass:objectClass])
-        return nil;
-
-    // FIXME: <rdar://problem/30451096> Adopt asynchronous UIItemProvider methods when retrieving data.
-    return [provider createObjectOfClass:objectClass error:nil];
-#pragma clang diagnostic pop
 }
 
 - (NSInteger)changeCount
@@ -416,18 +415,29 @@ static NSURL *temporaryFileURLForDataInteractionContent(NSString *fileExtension,
     auto changeCountBeforeLoading = _changeCount;
     auto typeToFileURLMaps = adoptNS([[NSMutableArray alloc] initWithCapacity:[_itemProviders count]]);
 
+    RetainPtr<NSArray> preferredTypeIdentifiers;
+    if ([_preferredTypeIdentifiers count] == [_itemProviders count])
+        preferredTypeIdentifiers = _preferredTypeIdentifiers;
+
     // First, figure out which item providers we want to try and load files from.
     auto itemProvidersWithFiles = adoptNS([[NSMutableArray alloc] init]);
     auto contentTypeIdentifiersToLoad = adoptNS([[NSMutableArray alloc] init]);
     auto indicesOfItemProvidersWithFiles = adoptNS([[NSMutableArray alloc] init]);
-    [_itemProviders enumerateObjectsUsingBlock:[itemProvidersWithFiles, contentTypeIdentifiersToLoad, indicesOfItemProvidersWithFiles, typeToFileURLMaps] (UIItemProvider *itemProvider, NSUInteger index, BOOL *) {
+    [_itemProviders enumerateObjectsUsingBlock:[preferredTypeIdentifiers, itemProvidersWithFiles, contentTypeIdentifiersToLoad, indicesOfItemProvidersWithFiles, typeToFileURLMaps] (UIItemProvider *itemProvider, NSUInteger index, BOOL *) {
         NSString *typeIdentifierOfContentToSave = nil;
-        for (NSString *identifier in itemProvider.registeredTypeIdentifiers) {
-            if (!UTTypeConformsTo((CFStringRef)identifier, kUTTypeContent))
-                continue;
 
-            typeIdentifierOfContentToSave = identifier;
-            break;
+        if (preferredTypeIdentifiers && [itemProvider.registeredTypeIdentifiers containsObject:[preferredTypeIdentifiers objectAtIndex:index]])
+            typeIdentifierOfContentToSave = [preferredTypeIdentifiers objectAtIndex:index];
+
+        if (!typeIdentifierOfContentToSave) {
+            // Fall back to the first "public.content"-conformant type identifier.
+            for (NSString *identifier in itemProvider.registeredTypeIdentifiers) {
+                if (!UTTypeConformsTo((CFStringRef)identifier, kUTTypeContent))
+                    continue;
+
+                typeIdentifierOfContentToSave = identifier;
+                break;
+            }
         }
 
         if (typeIdentifierOfContentToSave) {

@@ -376,7 +376,7 @@ String PlatformPasteboard::readString(int index, const String& type)
 
     id value = [pasteboardItem objectAtIndex:0];
     
-    if (type == String(kUTTypeText)) {
+    if (type == String(kUTTypeText) || type == String(kUTTypePlainText)) {
         ASSERT([value isKindOfClass:[NSString class]]);
         if ([value isKindOfClass:[NSString class]])
             return String(value);
@@ -410,6 +410,18 @@ URL PlatformPasteboard::readURL(int index, const String& type, String& title)
 #endif
 
     return (NSURL *)value;
+}
+
+void PlatformPasteboard::updatePreferredTypeIdentifiers(const Vector<String>& types)
+{
+    if (![m_pasteboard respondsToSelector:@selector(updatePreferredTypeIdentifiers:)])
+        return;
+
+    NSMutableArray *typesArray = [NSMutableArray arrayWithCapacity:types.size()];
+    for (auto type : types)
+        [typesArray addObject:(NSString *)type];
+
+    [m_pasteboard updatePreferredTypeIdentifiers:typesArray];
 }
 
 }
