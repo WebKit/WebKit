@@ -115,10 +115,8 @@ void UserMediaProcessManager::willEnableMediaStreamInPage(WebPageProxy& pageStar
     for (auto& state : stateMap()) {
         for (auto& manager : state.value->managers()) {
 
-#if !PLATFORM(IOS)
             if (&manager->page() == &pageStartingCapture)
                 continue;
-#endif
 
             manager->page().setMuted(WebCore::MediaProducer::CaptureDevicesAreMuted);
         }

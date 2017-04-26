@@ -1,3 +1,15 @@
+2017-04-26  Eric Carlson  <eric.carlson@apple.com>
+
+        The current page is given a muted state when starting a media stream on iOS.
+        https://bugs.webkit.org/show_bug.cgi?id=171290
+        <rdar://problem/31821427>
+
+        Reviewed by Jer Noble.
+
+        * UIProcess/UserMediaProcessManager.cpp:
+        (WebKit::UserMediaProcessManager::willEnableMediaStreamInPage): Don't mute the current
+        page on iOS either, that will prevent the new media stream from playing.
+
 2017-04-26  Alex Christensen  <achristensen@webkit.org>
 
         Make user script injection more robust
