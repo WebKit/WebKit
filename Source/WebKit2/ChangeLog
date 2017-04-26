@@ -1,3 +1,27 @@
+2017-04-26  Andy Estes  <aestes@apple.com>
+
+        [macOS] Add picture-in-picture support to WebPlaybackControlsManager
+        https://bugs.webkit.org/show_bug.cgi?id=171328
+        <rdar://problem/29875010>
+
+        Reviewed by Jer Noble.
+
+        * UIProcess/Cocoa/WebPlaybackSessionManagerProxy.h:
+        * UIProcess/Cocoa/WebPlaybackSessionManagerProxy.mm:
+        (WebKit::WebPlaybackSessionModelContext::togglePictureInPicture): Added. Calls
+        WebPlaybackSessionManagerProxy::togglePictureAndPicture().
+        (WebKit::WebPlaybackSessionManagerProxy::togglePictureInPicture): Added. Sends
+        TogglePictureInPicture to WebPlaybackSessionManager.
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::updateMediaTouchBar): Called
+        -[WebPlaybackControlsManager setAllowsPictureInPicturePlayback:YES] if
+        WebPreferences::allowsPictureInPictureMediaPlayback() is true.
+        * WebProcess/cocoa/WebPlaybackSessionManager.h:
+        * WebProcess/cocoa/WebPlaybackSessionManager.messages.in:
+        * WebProcess/cocoa/WebPlaybackSessionManager.mm:
+        (WebKit::WebPlaybackSessionManager::togglePictureInPicture): Added. Sets a
+        UserGestureIndicator and calls WebPlaybackSessionModel::togglePictureInPicture().
+
 2017-04-26  Tim Horton  <timothy_horton@apple.com>
 
         WebKit calls AppKit NSCell API from a background queue

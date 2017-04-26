@@ -53,6 +53,8 @@ SOFT_LINK_CLASS_OPTIONAL(AVKit, AVFunctionBarMediaSelectionOption)
 @synthesize hasEnabledVideo=_hasEnabledVideo;
 @synthesize rate=_rate;
 @synthesize canTogglePlayback=_canTogglePlayback;
+@synthesize allowsPictureInPicturePlayback;
+@synthesize pictureInPictureActive;
 
 - (void)dealloc
 {
@@ -312,6 +314,21 @@ static RetainPtr<NSMutableArray> mediaSelectionOptions(const Vector<MediaSelecti
 
     return NO;
 }
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
+
+- (BOOL)canTogglePictureInPicture
+{
+    return [self allowsPictureInPicturePlayback];
+}
+
+- (void)togglePictureInPicture
+{
+    if (_webPlaybackSessionInterfaceMac && _webPlaybackSessionInterfaceMac->webPlaybackSessionModel())
+        _webPlaybackSessionInterfaceMac->webPlaybackSessionModel()->togglePictureInPicture();
+}
+
+#endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
 
 #pragma clang diagnostic pop
 

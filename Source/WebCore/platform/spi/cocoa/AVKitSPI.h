@@ -212,6 +212,10 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)seekToTime:(NSTimeInterval)time toleranceBefore:(NSTimeInterval)toleranceBefore toleranceAfter:(NSTimeInterval)toleranceAfter;
 @property (readonly) BOOL hasEnabledAudio;
 @property (readonly) BOOL hasEnabledVideo;
+@property (readonly) BOOL allowsPictureInPicturePlayback;
+@property (readonly, getter=isPictureInPictureActive) BOOL pictureInPictureActive;
+@property (readonly) BOOL canTogglePictureInPicture;
+- (void)togglePictureInPicture;
 @end
 
 @interface AVTouchBarPlaybackControlsProvider : NSResponder

@@ -164,6 +164,7 @@ private:
     ExternalPlaybackTargetType externalPlaybackTargetType() const override;
     String externalPlaybackLocalizedDeviceName() const override;
     bool wirelessVideoPlaybackDisabled() const override;
+    void togglePictureInPicture() override { }
 
     // WebPlaybackSessionModelClient
     void durationChanged(double) override;

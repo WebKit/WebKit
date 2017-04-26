@@ -252,6 +252,14 @@ void WebPlaybackSessionModelMediaElement::selectLegibleMediaOption(uint64_t inde
     m_mediaElement->setSelectedTextTrack(textTrack);
 }
 
+void WebPlaybackSessionModelMediaElement::togglePictureInPicture()
+{
+    if (m_mediaElement->fullscreenMode() == MediaPlayerEnums::VideoFullscreenModePictureInPicture)
+        m_mediaElement->exitFullscreen();
+    else
+        m_mediaElement->enterFullscreen(MediaPlayerEnums::VideoFullscreenModePictureInPicture);
+}
+
 void WebPlaybackSessionModelMediaElement::updateLegibleOptions()
 {
     if (!m_mediaElement)

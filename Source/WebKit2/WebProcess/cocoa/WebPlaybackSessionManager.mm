@@ -417,6 +417,12 @@ void WebPlaybackSessionManager::handleControlledElementIDRequest(uint64_t contex
         m_page->send(Messages::WebPlaybackSessionManagerProxy::HandleControlledElementIDResponse(contextId, element->getIdAttribute()));
 }
 
+void WebPlaybackSessionManager::togglePictureInPicture(uint64_t contextId)
+{
+    UserGestureIndicator indicator(ProcessingUserGesture);
+    ensureModel(contextId).togglePictureInPicture();
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))

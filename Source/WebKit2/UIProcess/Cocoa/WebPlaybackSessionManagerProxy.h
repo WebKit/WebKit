@@ -104,6 +104,7 @@ private:
     void endScanning() final;
     void selectAudioMediaOption(uint64_t) final;
     void selectLegibleMediaOption(uint64_t) final;
+    void togglePictureInPicture() final;
 
     double playbackStartedTime() const final { return m_playbackStartedTime; }
     double duration() const final { return m_duration; }
@@ -201,6 +202,7 @@ private:
     void endScanning(uint64_t contextId);
     void selectAudioMediaOption(uint64_t contextId, uint64_t index);
     void selectLegibleMediaOption(uint64_t contextId, uint64_t index);
+    void togglePictureInPicture(uint64_t contextId);
 
     WebPageProxy* m_page;
     HashMap<uint64_t, ModelInterfaceTuple> m_contextMap;

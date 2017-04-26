@@ -129,6 +129,12 @@ void WebPlaybackSessionModelContext::selectLegibleMediaOption(uint64_t optionId)
         m_manager->selectLegibleMediaOption(m_contextId, optionId);
 }
 
+void WebPlaybackSessionModelContext::togglePictureInPicture()
+{
+    if (m_manager)
+        m_manager->togglePictureInPicture(m_contextId);
+}
+
 void WebPlaybackSessionModelContext::setPlaybackStartedTime(double playbackStartedTime)
 {
     m_playbackStartedTime = playbackStartedTime;
@@ -470,6 +476,11 @@ void WebPlaybackSessionManagerProxy::selectAudioMediaOption(uint64_t contextId, 
 void WebPlaybackSessionManagerProxy::selectLegibleMediaOption(uint64_t contextId, uint64_t index)
 {
     m_page->send(Messages::WebPlaybackSessionManager::SelectLegibleMediaOption(contextId, index), m_page->pageID());
+}
+
+void WebPlaybackSessionManagerProxy::togglePictureInPicture(uint64_t contextId)
+{
+    m_page->send(Messages::WebPlaybackSessionManager::TogglePictureInPicture(contextId), m_page->pageID());
 }
 
 void WebPlaybackSessionManagerProxy::requestControlledElementID()

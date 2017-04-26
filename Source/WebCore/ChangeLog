@@ -1,3 +1,30 @@
+2017-04-26  Andy Estes  <aestes@apple.com>
+
+        [macOS] Add picture-in-picture support to WebPlaybackControlsManager
+        https://bugs.webkit.org/show_bug.cgi?id=171328
+        <rdar://problem/29875010>
+
+        Reviewed by Jer Noble.
+
+        * platform/cocoa/WebPlaybackSessionModel.h:
+        * platform/cocoa/WebPlaybackSessionModelMediaElement.h:
+        * platform/cocoa/WebPlaybackSessionModelMediaElement.mm:
+        (WebCore::WebPlaybackSessionModelMediaElement::togglePictureInPicture): If the media element
+        is currently in PiP fullscreen mode, exit fullscreen. Otherwise, enter PiP fullscreen mode.
+        * platform/mac/WebPlaybackControlsManager.h:
+        * platform/mac/WebPlaybackControlsManager.mm:
+        (-[WebPlaybackControlsManager canTogglePictureInPicture]): Added. Returns YES if
+        -allowsPictureInPicturePlayback returns YES.
+        (-[WebPlaybackControlsManager togglePictureInPicture]): Added. Calls
+        WebPlaybackSessionModel::togglePictureInPicture().
+        * platform/mac/WebVideoFullscreenInterfaceMac.mm:
+        (WebCore::WebVideoFullscreenInterfaceMac::enterFullscreen): Added a call to
+        -[WebPlaybackControlsManager setPictureInPictureActive:YES].
+        (WebCore::WebVideoFullscreenInterfaceMac::exitFullscreen): Added a call to
+        -[WebPlaybackControlsManager setPictureInPictureActive:NO].
+        (WebCore::WebVideoFullscreenInterfaceMac::exitFullscreenWithoutAnimationToMode): Ditto.
+        * platform/spi/cocoa/AVKitSPI.h: Declared new SPI on AVTouchBarPlaybackControlsControlling.
+
 2017-04-25  Dean Jackson  <dino@apple.com>
 
         [Color] Make gradients work with ExtendedColors

@@ -1156,8 +1156,10 @@ void WebViewImpl::updateMediaTouchBar()
 #endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
     }
 
-    if (!m_playbackControlsManager)
+    if (!m_playbackControlsManager) {
         m_playbackControlsManager = adoptNS([[WebPlaybackControlsManager alloc] init]);
+        [m_playbackControlsManager setAllowsPictureInPicturePlayback:m_page->preferences().allowsPictureInPictureMediaPlayback()];
+    }
 
     if (PlatformWebPlaybackSessionInterface* interface = m_page->playbackSessionManager()->controlsManagerInterface())
         [m_playbackControlsManager setWebPlaybackSessionInterfaceMac:interface];
