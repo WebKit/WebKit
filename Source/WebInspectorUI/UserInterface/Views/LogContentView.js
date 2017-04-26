@@ -229,6 +229,11 @@ WebInspector.LogContentView = class LogContentView extends WebInspector.ContentV
 
     findBannerRevealPreviousResult()
     {
+        this.highlightPreviousSearchMatch();
+    }
+
+    highlightPreviousSearchMatch()
+    {
         if (!this.hasPerformedSearch || isEmptyObject(this._searchMatches))
             return;
 
@@ -237,6 +242,11 @@ WebInspector.LogContentView = class LogContentView extends WebInspector.ContentV
     }
 
     findBannerRevealNextResult()
+    {
+        this.highlightNextSearchMatch();
+    }
+
+    highlightNextSearchMatch()
     {
         if (!this.hasPerformedSearch || isEmptyObject(this._searchMatches))
             return;

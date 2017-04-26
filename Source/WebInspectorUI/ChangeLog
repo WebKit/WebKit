@@ -1,3 +1,22 @@
+2017-04-25  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        REGRESSION (r209882): Web Inspector: Command-G does not work in the console
+        https://bugs.webkit.org/show_bug.cgi?id=170555
+        <rdar://problem/31481247>
+
+        Reviewed by Brian Burg.
+
+        Command-G didn't work in the console when the console content view was in focus. It only
+        worked when the search input field was focused.
+
+        * UserInterface/Views/LogContentView.js:
+        (WebInspector.LogContentView.prototype.findBannerRevealPreviousResult):
+        (WebInspector.LogContentView.prototype.highlightPreviousSearchMatch): Added.
+        (WebInspector.LogContentView.prototype.findBannerRevealNextResult):
+        (WebInspector.LogContentView.prototype.highlightNextSearchMatch): Added.
+        Re-introduce highlightPreviousSearchMatch and highlightNextSearchMatch methods that were
+        removed in r209882.
+
 2017-04-25  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Network Tab - Sorting by Priority Column hides all rows in the datagrid (uncaught exception)
