@@ -1,3 +1,12 @@
+2017-04-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, speculative build fix
+
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+
+        For the time being, remove all references to UIItemProviders from this private header.
+        This should be fixed to use unavailability macros in a followup. See <rdar://problem/31827095>.
+
 2017-04-25  Brent Fulgham  <bfulgham@apple.com>
 
         Limit allowed size of document.title to avoid locking WebKit clients

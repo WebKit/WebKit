@@ -32,7 +32,6 @@
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKActivatedElementInfo.h>
 
-@class UIItemProvider;
 @class UIScrollView;
 @class UIViewController;
 @class WKFrameInfo;
@@ -94,11 +93,11 @@ struct UIEdgeInsets;
 - (void)_webView:(WKWebView *)webView getAlternateURLFromImage:(UIImage *)image completionHandler:(void (^)(NSURL *alternateURL, NSDictionary *userInfo))completionHandler WK_API_AVAILABLE(ios(WK_IOS_TBA));
 - (NSURL *)_webView:(WKWebView *)webView alternateURLFromImage:(UIImage *)image userInfo:(NSDictionary **)userInfo WK_API_AVAILABLE(ios(WK_IOS_TBA));
 - (UIViewController *)_webView:(WKWebView *)webView previewViewControllerForImage:(UIImage *)image alternateURL:(NSURL *)url defaultActions:(NSArray<_WKElementAction *> *)actions elementInfo:(_WKActivatedElementInfo *)elementInfo WK_API_AVAILABLE(ios(WK_IOS_TBA));
-- (NSArray<UIItemProvider *> *)_webView:(WKWebView *)webView adjustedDataInteractionItemProviders:(NSArray<UIItemProvider *> *)originalItemProviders WK_API_AVAILABLE(ios(WK_IOS_TBA));
-- (BOOL)_webView:(WKWebView *)webView performDataInteractionOperationWithItemProviders:(NSArray<UIItemProvider *> *)itemProviders WK_API_AVAILABLE(ios(WK_IOS_TBA));
+- (NSArray *)_webView:(WKWebView *)webView adjustedDataInteractionItemProviders:(NSArray *)originalItemProviders WK_API_AVAILABLE(ios(WK_IOS_TBA));
+- (BOOL)_webView:(WKWebView *)webView performDataInteractionOperationWithItemProviders:(NSArray *)itemProviders WK_API_AVAILABLE(ios(WK_IOS_TBA));
 - (void)_webView:(WKWebView *)webView dataInteraction:(id)interaction sessionWillBegin:(id)session WK_API_AVAILABLE(ios(WK_IOS_TBA));
 - (void)_webView:(WKWebView *)webView dataInteraction:(id)interaction session:(id)session didEndWithOperation:(NSUInteger)operation WK_API_AVAILABLE(ios(WK_IOS_TBA));
-- (void)_webView:(WKWebView *)webView dataInteractionOperationWasHandled:(BOOL)handled forSession:(id)session itemProviders:(NSArray<UIItemProvider *> *)itemProviders WK_API_AVAILABLE(ios(WK_IOS_TBA));
+- (void)_webView:(WKWebView *)webView dataInteractionOperationWasHandled:(BOOL)handled forSession:(id)session itemProviders:(NSArray *)itemProviders WK_API_AVAILABLE(ios(WK_IOS_TBA));
 - (NSUInteger)_webView:(WKWebView *)webView willUpdateDataInteractionOperationToOperation:(NSUInteger)operation forSession:(id)session WK_API_AVAILABLE(ios(WK_IOS_TBA));
 #else
 - (NSMenu *)_webView:(WKWebView *)webView contextMenu:(NSMenu *)menu forElement:(_WKContextMenuElementInfo *)element WK_API_AVAILABLE(macosx(10.12));
