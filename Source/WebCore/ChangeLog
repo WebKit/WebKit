@@ -1,5 +1,11 @@
 2017-04-26  Andy Estes  <aestes@apple.com>
 
+        Try to fix the macOS Sierra build.
+
+        * platform/mac/WebVideoFullscreenInterfaceMac.mm:
+
+2017-04-26  Andy Estes  <aestes@apple.com>
+
         [macOS] Add picture-in-picture support to WebPlaybackControlsManager
         https://bugs.webkit.org/show_bug.cgi?id=171328
         <rdar://problem/29875010>

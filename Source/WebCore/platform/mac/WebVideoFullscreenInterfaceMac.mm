@@ -34,6 +34,7 @@
 #import "MediaTimeAVFoundation.h"
 #import "PIPSPI.h"
 #import "TimeRanges.h"
+#import "WebPlaybackControlsManager.h"
 #import "WebPlaybackSessionInterfaceMac.h"
 #import "WebVideoFullscreenChangeObserver.h"
 #import "WebVideoFullscreenModel.h"
