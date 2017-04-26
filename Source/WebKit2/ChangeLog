@@ -1,3 +1,13 @@
+2017-04-26  Youenn Fablet  <youenn@apple.com>
+
+        Unauthenticated CORS preflight requests should not use client certificates
+        https://bugs.webkit.org/show_bug.cgi?id=171298
+
+        Reviewed by Alex Christensen.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::NetworkSessionCocoa): Ensuring that session dedicated to requests that do not want to use credentials do not look for client credentials.
+
 2017-04-26  Eric Carlson  <eric.carlson@apple.com>
 
         The current page is given a muted state when starting a media stream on iOS.
