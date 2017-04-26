@@ -1,3 +1,15 @@
+2017-04-26  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Attempt to fix a PLT regression.
+
+        Unreviewed.
+
+        Disable async decoding for large images till the flickering bug wk170640
+        is fixed.
+
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::shouldUseAsyncDecodingForLargeImages):
+
 2017-04-26  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r215767.

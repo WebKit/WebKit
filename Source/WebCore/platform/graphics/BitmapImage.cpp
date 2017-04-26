@@ -273,7 +273,9 @@ bool BitmapImage::canAnimate()
 
 bool BitmapImage::shouldUseAsyncDecodingForLargeImages()
 {
-    return !canAnimate() && allowLargeImageAsyncDecoding() && m_source.shouldUseAsyncDecoding();
+    // FIXME: enable async image decoding after the flickering bug wk170640 is fixed.
+    // return !canAnimate() && allowLargeImageAsyncDecoding() && m_source.shouldUseAsyncDecoding();
+    return false;
 }
 
 bool BitmapImage::shouldUseAsyncDecodingForAnimatedImages()
