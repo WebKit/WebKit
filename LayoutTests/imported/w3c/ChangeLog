@@ -1,3 +1,12 @@
+2017-04-26  WebKit Contributor  <webkitcontrib@gmail.com>
+
+        Response.blob() does not set the content-type based on the header value.
+        https://bugs.webkit.org/show_bug.cgi?id=170849
+
+        Reviewed by Alex Christensen.
+
+        * web-platform-tests/fetch/api/response/response-consume-expected.txt:
+
 2017-04-25  Daniel Bates  <dabates@apple.com>
 
         [Cocoa][Win] Enable of X-Content-Type-Options: nosniff header

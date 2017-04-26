@@ -1,3 +1,25 @@
+2017-04-26  WebKit Contributor  <webkitcontrib@gmail.com>
+
+        Response.blob() does not set the content-type based on the header value.
+        https://bugs.webkit.org/show_bug.cgi?id=170849
+
+        Reviewed by Alex Christensen.
+
+        The Fetch API specification requires setting the blob contentType
+        using the Content-Type header value, if present.  Previously the
+        FetchResponse class only called updateContentType() when first
+        created even though all the headers were not available.  Call
+        updateContentType() again after the headers are populated.
+
+        This change allows WebKit to pass the "Consume response's body: from
+        fetch to blob" case in the WPT response-consume.html test.
+
+        Test: http://w3c-test.org/fetch/api/response/response-consume.html
+
+        * Modules/fetch/FetchResponse.cpp:
+        (WebCore::FetchResponse::BodyLoader::didReceiveResponse): Modified to
+        call FetchBodyOwner::updateContentType() after filling m_headers.
+
 2017-04-26  Andy Estes  <aestes@apple.com>
 
         Try to fix the macOS Sierra build.
