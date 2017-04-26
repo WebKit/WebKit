@@ -102,11 +102,11 @@ int PlatformPasteboard::numberOfFiles()
 
 Vector<String> PlatformPasteboard::filenamesForDataInteraction()
 {
-    if (![m_pasteboard respondsToSelector:@selector(filenamesForDataInteraction)])
+    if (![m_pasteboard respondsToSelector:@selector(fileURLsForDataInteraction)])
         return { };
 
     Vector<String> filenames;
-    for (NSURL *fileURL in [m_pasteboard filenamesForDataInteraction])
+    for (NSURL *fileURL in [m_pasteboard fileURLsForDataInteraction])
         filenames.append(fileURL.path);
 
     return filenames;

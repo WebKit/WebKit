@@ -76,7 +76,7 @@ WEBCORE_EXPORT @interface WebItemProviderPasteboard : NSObject<AbstractPasteboar
 @property (readonly, nonatomic) NSInteger changeCount;
 
 // This will only be non-empty when an operation is being performed.
-@property (readonly, nonatomic) NSArray<NSURL *> *filenamesForDataInteraction;
+@property (readonly, nonatomic) NSArray<NSURL *> *fileURLsForDataInteraction;
 
 @property (readonly, nonatomic) BOOL hasPendingOperation;
 - (void)incrementPendingOperationCount;

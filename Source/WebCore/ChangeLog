@@ -1,3 +1,51 @@
+2017-04-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        WebItemProviderPasteboard should fetch preloaded assets from disk when possible
+        https://bugs.webkit.org/show_bug.cgi?id=171320
+        <rdar://problem/31614010>
+
+        Reviewed by Tim Horton.
+
+        Adds a mechanism to WebItemProviderPasteboard to remember the temporary file URLs of assets it has loaded using
+        doAfterLoadingProvidedContentIntoFileURLs:. When retrieving data from the pasteboard, we then see if we can
+        first fetch serialized data straight from disk instead of having to go through the item provider in both
+        -dataForPasteboardType:inItemSet: and -valuesForPasteboardType:inItemSet:.
+
+        See below annotations for more detail.
+
+        * platform/ios/AbstractPasteboard.h:
+        * platform/ios/PlatformPasteboardIOS.mm:
+        (WebCore::PlatformPasteboard::filenamesForDataInteraction):
+        * platform/ios/WebItemProviderPasteboard.h:
+        * platform/ios/WebItemProviderPasteboard.mm:
+
+        Introduces _typeToFileURLMaps, an array of dictionaries. A dictionary at the ith index of this array represents
+        a mapping of UTIs to loaded temo file URLs for the ith UIItemProvider in the _itemProviders array. Before data
+        interaction is performed, all entries in this array will be empty.
+
+        (-[WebItemProviderPasteboard init]):
+        (-[WebItemProviderPasteboard setItemProviders:]):
+        (-[WebItemProviderPasteboard _preLoadedDataConformingToType:forItemProviderAtIndex:]):
+        (-[WebItemProviderPasteboard dataForPasteboardType:inItemSet:]):
+        (-[WebItemProviderPasteboard valuesForPasteboardType:inItemSet:]):
+
+        Consult any loaded assets on disk before hitting UIItemProviders via the new
+        -_preLoadedDataConformingToType:forItemProviderAtIndex: helper method.
+
+        (-[WebItemProviderPasteboard _tryToCreateObjectOfClass:usingProvider:]):
+        (-[WebItemProviderPasteboard fileURLsForDataInteraction]):
+
+        Traverse _typeToFileURLMaps to collect all file URLs.
+
+        (-[WebItemProviderPasteboard doAfterLoadingProvidedContentIntoFileURLs:]):
+
+        Refactored to populate and set _typeToFileURLMaps when loading completes, rather than an array of file URLs.
+
+        (-[WebItemProviderPasteboard _tryToCreateAndAppendObjectOfClass:toArray:usingProvider:]): Deleted.
+        (-[WebItemProviderPasteboard filenamesForDataInteraction]): Deleted.
+
+        Correct an erroneously named method (replaces filenames with fileURLs).
+
 2017-04-26  Youenn Fablet  <youenn@apple.com>
 
         LayoutTest webrtc/datachannel/basic.html is a flaky crash

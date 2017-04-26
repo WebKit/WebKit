@@ -35,6 +35,7 @@
 #import <UIKit/NSURL+UIItemProvider.h>
 #import <UIKit/UIColor.h>
 #import <UIKit/UIImage.h>
+#import <UIKit/UIItemProviderReading.h>
 #import <UIKit/UIItemProviderWriting.h>
 #import <WebCore/FileSystemIOS.h>
 #import <wtf/BlockPtr.h>
@@ -47,6 +48,7 @@ SOFT_LINK_CLASS(UIKit, UIImage)
 SOFT_LINK_CLASS(UIKit, UIItemProvider)
 
 typedef void(^ItemProviderDataLoadCompletionHandler)(NSData *, NSError *);
+typedef NSDictionary<NSString *, NSURL *> TypeToFileURLMap;
 
 #define MATCHES_UTI_TYPE(type, suffix) [type isEqualToString:(__bridge NSString *)kUTType ## suffix]
 #define MATCHES_UIKIT_TYPE(type, suffix) [type isEqualToString:@"com.apple.uikit. ## suffix ##"]
@@ -177,7 +179,7 @@ static BOOL isImageType(NSString *type)
 @implementation WebItemProviderPasteboard {
     RetainPtr<NSArray> _itemProviders;
     RetainPtr<NSArray> _cachedTypeIdentifiers;
-    RetainPtr<NSArray> _filenamesForDataInteraction;
+    RetainPtr<NSArray> _typeToFileURLMaps;
 }
 
 + (instancetype)sharedInstance
@@ -196,7 +198,7 @@ static BOOL isImageType(NSString *type)
         _itemProviders = adoptNS([[NSArray alloc] init]);
         _changeCount = 0;
         _pendingOperationCount = 0;
-        _filenamesForDataInteraction = @[ ];
+        _typeToFileURLMaps = adoptNS([[NSArray alloc] init]);
     }
     return self;
 }
@@ -240,7 +242,12 @@ static BOOL isImageType(NSString *type)
     _itemProviders = itemProviders;
     _changeCount++;
     _cachedTypeIdentifiers = nil;
-    _filenamesForDataInteraction = @[ ];
+
+    NSMutableArray *typeToFileURLMaps = [NSMutableArray arrayWithCapacity:itemProviders.count];
+    [itemProviders enumerateObjectsUsingBlock:[typeToFileURLMaps] (UIItemProvider *, NSUInteger, BOOL *) {
+        [typeToFileURLMaps addObject:@{ }];
+    }];
+    _typeToFileURLMaps = typeToFileURLMaps;
 }
 
 - (NSInteger)numberOfItems
@@ -277,69 +284,89 @@ static BOOL isImageType(NSString *type)
     self.itemProviders = providers;
 }
 
+- (NSData *)_preLoadedDataConformingToType:(NSString *)typeIdentifier forItemProviderAtIndex:(NSUInteger)index
+{
+    TypeToFileURLMap *typeToFileURLMap = [_typeToFileURLMaps objectAtIndex:index];
+    for (NSString *loadedType in typeToFileURLMap) {
+        if (!UTTypeConformsTo((CFStringRef)loadedType, (CFStringRef)typeIdentifier))
+            continue;
+
+        // We've already loaded data relevant for this UTI type onto disk, so there's no need to ask the UIItemProvider for the same data again.
+        if (NSData *result = [NSData dataWithContentsOfURL:typeToFileURLMap[loadedType] options:NSDataReadingMappedIfSafe error:nil])
+            return result;
+    }
+    return nil;
+}
+
 - (NSArray *)dataForPasteboardType:(NSString *)pasteboardType inItemSet:(NSIndexSet *)itemSet
 {
-    __block NSMutableArray *values = [NSMutableArray array];
-    [itemSet enumerateIndexesUsingBlock:^(NSUInteger index, BOOL *) {
-        UIItemProvider *provider = [self itemProviderAtIndex:index];
+    auto values = adoptNS([[NSMutableArray alloc] init]);
+    RetainPtr<WebItemProviderPasteboard> retainedSelf = self;
+    [itemSet enumerateIndexesUsingBlock:[retainedSelf, pasteboardType, values] (NSUInteger index, BOOL *) {
+        UIItemProvider *provider = [retainedSelf itemProviderAtIndex:index];
         if (!provider)
             return;
 
-        // FIXME: <rdar://problem/30451096> Adopt asynchronous UIItemProvider methods when retrieving data.
+        NSData *data = [retainedSelf _preLoadedDataConformingToType:pasteboardType forItemProviderAtIndex:index];
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-        NSData *data = [provider copyDataRepresentationForTypeIdentifier:pasteboardType error:nil];
+        // FIXME: <rdar://problem/30451096> Adopt asynchronous UIItemProvider methods when retrieving data.
+        if (!data)
+            data = [provider copyDataRepresentationForTypeIdentifier:pasteboardType error:nil];
 #pragma clang diagnostic pop
         if (data)
             [values addObject:data];
     }];
-
-    return values;
+    return values.autorelease();
 }
 
 - (NSArray *)valuesForPasteboardType:(NSString *)pasteboardType inItemSet:(NSIndexSet *)itemSet
 {
-    __block NSMutableArray *values = [NSMutableArray array];
-    [itemSet enumerateIndexesUsingBlock:^(NSUInteger index, BOOL *) {
-        UIItemProvider *provider = [self itemProviderAtIndex:index];
+    auto values = adoptNS([[NSMutableArray alloc] init]);
+    RetainPtr<WebItemProviderPasteboard> retainedSelf = self;
+    [itemSet enumerateIndexesUsingBlock:[retainedSelf, pasteboardType, values] (NSUInteger index, BOOL *) {
+        UIItemProvider *provider = [retainedSelf itemProviderAtIndex:index];
         if (!provider)
             return;
 
-        // FIXME: These should be refactored to use asynchronous calls.
-        if (isColorType(pasteboardType) && [self _tryToCreateAndAppendObjectOfClass:[getUIColorClass() class] toArray:values usingProvider:provider])
+        Class readableClass;
+        if (isColorType(pasteboardType))
+            readableClass = [getUIColorClass() class];
+        else if (isImageType(pasteboardType))
+            readableClass = [getUIImageClass() class];
+        else if (isURLType(pasteboardType))
+            readableClass = [NSURL class];
+        else if (isRichTextType(pasteboardType))
+            readableClass = [NSAttributedString class];
+        else if (isStringType(pasteboardType))
+            readableClass = [NSString class];
+        else
             return;
 
-        if (isImageType(pasteboardType) && [self _tryToCreateAndAppendObjectOfClass:[getUIImageClass() class] toArray:values usingProvider:provider])
-            return;
+        id <UIItemProviderReading> readObject = nil;
+        if (NSData *preloadedData = [retainedSelf _preLoadedDataConformingToType:pasteboardType forItemProviderAtIndex:index])
+            readObject = [[readableClass alloc] initWithItemProviderData:preloadedData typeIdentifier:pasteboardType error:nil];
 
-        if (isURLType(pasteboardType) && [self _tryToCreateAndAppendObjectOfClass:[NSURL class] toArray:values usingProvider:provider])
-            return;
+        if (!readObject)
+            readObject = [retainedSelf _tryToCreateObjectOfClass:readableClass usingProvider:provider];
 
-        if (isRichTextType(pasteboardType) && [self _tryToCreateAndAppendObjectOfClass:[NSAttributedString class] toArray:values usingProvider:provider])
-            return;
-
-        if (isStringType(pasteboardType) && [self _tryToCreateAndAppendObjectOfClass:[NSString class] toArray:values usingProvider:provider])
-            return;
-
-        WTFLogAlways("Failed to instantiate object for type: '%s' at index: %tu", pasteboardType.UTF8String, index);
+        if (readObject)
+            [values addObject:readObject];
     }];
-    return values;
+
+    return values.autorelease();
 }
 
-- (BOOL)_tryToCreateAndAppendObjectOfClass:(Class)objectClass toArray:(NSMutableArray *)array usingProvider:(UIItemProvider *)provider
+- (id <UIItemProviderReading>)_tryToCreateObjectOfClass:(Class <UIItemProviderReading>)objectClass usingProvider:(UIItemProvider *)provider
 {
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
     if (![provider canCreateObjectOfClass:objectClass])
-        return NO;
+        return nil;
 
     // FIXME: <rdar://problem/30451096> Adopt asynchronous UIItemProvider methods when retrieving data.
-    id object = [provider createObjectOfClass:objectClass error:nil];
+    return [provider createObjectOfClass:objectClass error:nil];
 #pragma clang diagnostic pop
-    if (object)
-        [array addObject:object];
-
-    return !!object;
 }
 
 - (NSInteger)changeCount
@@ -347,9 +374,12 @@ static BOOL isImageType(NSString *type)
     return _changeCount;
 }
 
-- (NSArray<NSURL *> *)filenamesForDataInteraction
+- (NSArray<NSURL *> *)fileURLsForDataInteraction
 {
-    return _filenamesForDataInteraction.get();
+    NSMutableArray<NSURL *> *fileURLs = [NSMutableArray array];
+    for (TypeToFileURLMap *typeToFileURLMap in _typeToFileURLMaps.get())
+        [fileURLs addObjectsFromArray:[typeToFileURLMap allValues]];
+    return fileURLs;
 }
 
 - (NSInteger)numberOfFiles
@@ -384,11 +414,13 @@ static NSURL *temporaryFileURLForDataInteractionContent(NSString *fileExtension,
 - (void)doAfterLoadingProvidedContentIntoFileURLs:(WebItemProviderFileLoadBlock)action
 {
     auto changeCountBeforeLoading = _changeCount;
+    auto typeToFileURLMaps = adoptNS([[NSMutableArray alloc] initWithCapacity:[_itemProviders count]]);
 
+    // First, figure out which item providers we want to try and load files from.
     auto itemProvidersWithFiles = adoptNS([[NSMutableArray alloc] init]);
     auto contentTypeIdentifiersToLoad = adoptNS([[NSMutableArray alloc] init]);
-    auto loadedFileURLs = adoptNS([[NSMutableArray alloc] init]);
-    for (UIItemProvider *itemProvider in _itemProviders.get()) {
+    auto indicesOfItemProvidersWithFiles = adoptNS([[NSMutableArray alloc] init]);
+    [_itemProviders enumerateObjectsUsingBlock:[itemProvidersWithFiles, contentTypeIdentifiersToLoad, indicesOfItemProvidersWithFiles, typeToFileURLMaps] (UIItemProvider *itemProvider, NSUInteger index, BOOL *) {
         NSString *typeIdentifierOfContentToSave = nil;
         for (NSString *identifier in itemProvider.registeredTypeIdentifiers) {
             if (!UTTypeConformsTo((CFStringRef)identifier, kUTTypeContent))
@@ -401,8 +433,11 @@ static NSURL *temporaryFileURLForDataInteractionContent(NSString *fileExtension,
         if (typeIdentifierOfContentToSave) {
             [itemProvidersWithFiles addObject:itemProvider];
             [contentTypeIdentifiersToLoad addObject:typeIdentifierOfContentToSave];
+            [indicesOfItemProvidersWithFiles addObject:@(index)];
         }
-    }
+
+        [typeToFileURLMaps addObject:@{ }];
+    }];
 
     if (![itemProvidersWithFiles count]) {
         action(@[ ]);
@@ -413,27 +448,34 @@ static NSURL *temporaryFileURLForDataInteractionContent(NSString *fileExtension,
     for (NSUInteger index = 0; index < [itemProvidersWithFiles count]; ++index) {
         RetainPtr<UIItemProvider> itemProvider = [itemProvidersWithFiles objectAtIndex:index];
         RetainPtr<NSString> typeIdentifier = [contentTypeIdentifiersToLoad objectAtIndex:index];
+        NSUInteger indexInItemProviderArray = [[indicesOfItemProvidersWithFiles objectAtIndex:index] unsignedIntegerValue];
         RetainPtr<NSString> suggestedName = [itemProvider suggestedName];
         dispatch_group_enter(fileLoadingGroup.get());
-        dispatch_group_async(fileLoadingGroup.get(), dispatch_get_main_queue(), [itemProvider, typeIdentifier, suggestedName, loadedFileURLs, fileLoadingGroup] {
-            [itemProvider loadFileRepresentationForTypeIdentifier:typeIdentifier.get() completionHandler:[suggestedName, loadedFileURLs, fileLoadingGroup] (NSURL *url, NSError *error) {
+        dispatch_group_async(fileLoadingGroup.get(), dispatch_get_main_queue(), [indexInItemProviderArray, itemProvider, typeIdentifier, suggestedName, typeToFileURLMaps, fileLoadingGroup] {
+            [itemProvider loadFileRepresentationForTypeIdentifier:typeIdentifier.get() completionHandler:[indexInItemProviderArray, suggestedName, typeIdentifier, typeToFileURLMaps, fileLoadingGroup] (NSURL *url, NSError *error) {
                 // After executing this completion block, UIKit removes the file at the given URL. However, we need this data to persist longer for the web content process.
                 // To address this, we hard link the given URL to a new temporary file in the temporary directory. This follows the same flow as regular file upload, in
                 // WKFileUploadPanel.mm. The temporary files are cleaned up by the system at a later time.
                 RetainPtr<NSURL> destinationURL = temporaryFileURLForDataInteractionContent(url.pathExtension, suggestedName.get());
-                if (destinationURL && !error && [[NSFileManager defaultManager] linkItemAtURL:url toURL:destinationURL.get() error:nil])
-                    [loadedFileURLs addObject:destinationURL.get()];
-                dispatch_group_leave(fileLoadingGroup.get());
+                if (!destinationURL || error || ![[NSFileManager defaultManager] linkItemAtURL:url toURL:destinationURL.get() error:nil]) {
+                    dispatch_group_leave(fileLoadingGroup.get());
+                    return;
+                }
+
+                dispatch_async(dispatch_get_main_queue(), [indexInItemProviderArray, typeIdentifier, destinationURL, typeToFileURLMaps, fileLoadingGroup] {
+                    [typeToFileURLMaps setObject:[NSDictionary dictionaryWithObject:destinationURL.get() forKey:typeIdentifier.get()] atIndexedSubscript:indexInItemProviderArray];
+                    dispatch_group_leave(fileLoadingGroup.get());
+                });
             }];
         });
     }
 
     RetainPtr<WebItemProviderPasteboard> retainedSelf = self;
-    dispatch_group_notify(fileLoadingGroup.get(), dispatch_get_main_queue(), [retainedSelf, fileLoadingGroup, loadedFileURLs, completionBlock = makeBlockPtr(action), changeCountBeforeLoading] {
+    dispatch_group_notify(fileLoadingGroup.get(), dispatch_get_main_queue(), [retainedSelf, fileLoadingGroup, typeToFileURLMaps, completionBlock = makeBlockPtr(action), changeCountBeforeLoading] {
         if (changeCountBeforeLoading == retainedSelf->_changeCount)
-            retainedSelf->_filenamesForDataInteraction = adoptNS([loadedFileURLs copy]);
+            retainedSelf->_typeToFileURLMaps = typeToFileURLMaps;
 
-        completionBlock(loadedFileURLs.get());
+        completionBlock([retainedSelf fileURLsForDataInteraction]);
     });
 }
 
