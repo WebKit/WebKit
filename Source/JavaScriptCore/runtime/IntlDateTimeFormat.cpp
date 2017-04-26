@@ -933,6 +933,10 @@ const char* IntlDateTimeFormat::partTypeString(UDateFormatField field)
     case UDAT_STANDALONE_DAY_FIELD:
         return "weekday";
     case UDAT_AM_PM_FIELD:
+#if U_ICU_VERSION_MAJOR_NUM >= 57
+    case UDAT_AM_PM_MIDNIGHT_NOON_FIELD:
+    case UDAT_FLEXIBLE_DAY_PERIOD_FIELD:
+#endif
         return "dayPeriod";
     case UDAT_TIMEZONE_FIELD:
     case UDAT_TIMEZONE_RFC_FIELD:
