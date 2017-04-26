@@ -1,3 +1,15 @@
+2017-04-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, temporarily disable the data interaction unit tests.
+
+        The API around data interaction will change significantly in the near future, and
+        these tests will begin to fail. These will be reenabled once the bots are on an SDK
+        that supports the updated data interaction API.
+
+        * TestWebKitAPI/Tests/ios/DataInteractionTests.mm:
+        * TestWebKitAPI/ios/DataInteractionSimulator.h:
+        * TestWebKitAPI/ios/DataInteractionSimulator.mm:
+
 2017-04-25  Brent Fulgham  <bfulgham@apple.com>
 
         Limit allowed size of document.title to avoid locking WebKit clients
