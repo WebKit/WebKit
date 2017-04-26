@@ -152,7 +152,7 @@ void WebResourceLoadStatisticsStore::resourceLoadStatisticsUpdated(const Vector<
     coreStore().mergeStatistics(origins);
     // Fire before processing statistics to propagate user
     // interaction as fast as possible to the network process.
-    coreStore().fireShouldPartitionCookiesHandler(false);
+    coreStore().fireShouldPartitionCookiesHandler();
     processStatisticsAndDataRecords();
 }
 

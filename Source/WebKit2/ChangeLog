@@ -1,3 +1,29 @@
+2017-04-25  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Introduce shorter time-to-live for cookie partition whitelisting
+        https://bugs.webkit.org/show_bug.cgi?id=171295
+        <rdar://problem/31823818>
+
+        Reviewed by Brent Fulgham.
+
+        * UIProcess/API/C/WKResourceLoadStatisticsManager.cpp:
+        (WKResourceLoadStatisticsManagerSetTimeToLiveCookiePartitionFree):
+        (WKResourceLoadStatisticsManagerFireShouldPartitionCookiesHandler):
+        (WKResourceLoadStatisticsManagerFireShouldPartitionCookiesHandlerForOneDomain):
+            Changes and additions to test infrastructure.
+        * UIProcess/API/C/WKResourceLoadStatisticsManager.h:
+        * UIProcess/WebResourceLoadStatisticsManager.cpp:
+        (WebKit::WebResourceLoadStatisticsManager::setTimeToLiveCookiePartitionFree):
+        (WebKit::WebResourceLoadStatisticsManager::fireShouldPartitionCookiesHandler):
+        (WebKit::WebResourceLoadStatisticsManager::fireShouldPartitionCookiesHandlerForOneDomain):
+        (WebKit::WebResourceLoadStatisticsManager::resetToConsistentState):
+            Changes and additions to test infrastructure.
+        * UIProcess/WebResourceLoadStatisticsManager.h:
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::resourceLoadStatisticsUpdated):
+            No longer sends a boolean parameter to
+            WebCore::ResourceLoadStatisticsStore::fireShouldPartitionCookiesHandler().
+
 2017-04-25  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r213719): WebGL content on cubeslam.com is 1/4 expected size

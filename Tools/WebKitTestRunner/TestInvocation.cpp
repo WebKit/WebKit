@@ -1002,12 +1002,24 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         return nullptr;
     }
     
+    if (WKStringIsEqualToUTF8CString(messageName, "SetStatisticsTimeToLiveCookiePartitionFree")) {
+        ASSERT(WKGetTypeID(messageBody) == WKDoubleGetTypeID());
+        WKDoubleRef seconds = static_cast<WKDoubleRef>(messageBody);
+        TestController::singleton().setStatisticsTimeToLiveCookiePartitionFree(WKDoubleGetValue(seconds));
+        return nullptr;
+    }
+
     if (WKStringIsEqualToUTF8CString(messageName, "StatisticsFireDataModificationHandler")) {
         TestController::singleton().statisticsFireDataModificationHandler();
         return nullptr;
     }
     
     if (WKStringIsEqualToUTF8CString(messageName, "StatisticsFireShouldPartitionCookiesHandler")) {
+        TestController::singleton().statisticsFireShouldPartitionCookiesHandler();
+        return nullptr;
+    }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "StatisticsFireShouldPartitionCookiesHandlerForOneDomain")) {
         ASSERT(WKGetTypeID(messageBody) == WKDictionaryGetTypeID());
         
         WKDictionaryRef messageBodyDictionary = static_cast<WKDictionaryRef>(messageBody);
@@ -1017,7 +1029,7 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         WKStringRef hostName = static_cast<WKStringRef>(WKDictionaryGetItemForKey(messageBodyDictionary, hostNameKey.get()));
         WKBooleanRef value = static_cast<WKBooleanRef>(WKDictionaryGetItemForKey(messageBodyDictionary, valueKey.get()));
         
-        TestController::singleton().statisticsFireShouldPartitionCookiesHandler(hostName, WKBooleanGetValue(value));
+        TestController::singleton().statisticsFireShouldPartitionCookiesHandlerForOneDomain(hostName, WKBooleanGetValue(value));
         return nullptr;
     }
     

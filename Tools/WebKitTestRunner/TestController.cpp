@@ -2249,14 +2249,24 @@ void TestController::setStatisticsTimeToLiveUserInteraction(double seconds)
     WKResourceLoadStatisticsManagerSetTimeToLiveUserInteraction(seconds);
 }
 
+void TestController::setStatisticsTimeToLiveCookiePartitionFree(double seconds)
+{
+    WKResourceLoadStatisticsManagerSetTimeToLiveCookiePartitionFree(seconds);
+}
+
 void TestController::statisticsFireDataModificationHandler()
 {
     WKResourceLoadStatisticsManagerFireDataModificationHandler();
 }
     
-void TestController::statisticsFireShouldPartitionCookiesHandler(WKStringRef hostName, bool value)
+void TestController::statisticsFireShouldPartitionCookiesHandler()
 {
-    WKResourceLoadStatisticsManagerFireShouldPartitionCookiesHandler(hostName, value);
+    WKResourceLoadStatisticsManagerFireShouldPartitionCookiesHandler();
+}
+
+void TestController::statisticsFireShouldPartitionCookiesHandlerForOneDomain(WKStringRef hostName, bool value)
+{
+    WKResourceLoadStatisticsManagerFireShouldPartitionCookiesHandlerForOneDomain(hostName, value);
 }
 
 void TestController::setStatisticsNotifyPagesWhenDataRecordsWereScanned(bool value)

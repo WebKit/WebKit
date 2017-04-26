@@ -41,8 +41,10 @@ extern "C" {
     WK_EXPORT void WKResourceLoadStatisticsManagerSetSubresourceUnderTopFrameOrigin(WKStringRef hostName, WKStringRef topFrameHostName);
     WK_EXPORT void WKResourceLoadStatisticsManagerSetSubresourceUniqueRedirectTo(WKStringRef hostName, WKStringRef hostNameRedirectedTo);
     WK_EXPORT void WKResourceLoadStatisticsManagerSetTimeToLiveUserInteraction(double seconds);
+    WK_EXPORT void WKResourceLoadStatisticsManagerSetTimeToLiveCookiePartitionFree(double seconds);
     WK_EXPORT void WKResourceLoadStatisticsManagerFireDataModificationHandler();
-    WK_EXPORT void WKResourceLoadStatisticsManagerFireShouldPartitionCookiesHandler(WKStringRef hostName, bool value);
+    WK_EXPORT void WKResourceLoadStatisticsManagerFireShouldPartitionCookiesHandler();
+    WK_EXPORT void WKResourceLoadStatisticsManagerFireShouldPartitionCookiesHandlerForOneDomain(WKStringRef hostName, bool value);
     WK_EXPORT void WKResourceLoadStatisticsManagerSetNotifyPagesWhenDataRecordsWereScanned(bool value);
     WK_EXPORT void WKResourceLoadStatisticsManagerSetShouldClassifyResourcesBeforeDataRecordsRemoval(bool value);
     WK_EXPORT void WKResourceLoadStatisticsManagerSetMinimumTimeBetweeenDataRecordsRemoval(double seconds);

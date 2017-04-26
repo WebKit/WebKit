@@ -48,8 +48,8 @@
 
 namespace WebCore {
 
-// One day in seconds.
-static auto timestampResolution = 86400;
+// One hour in seconds.
+static auto timestampResolution = 3600;
 
 ResourceLoadObserver& ResourceLoadObserver::sharedObserver()
 {
@@ -301,7 +301,7 @@ void ResourceLoadObserver::logWebSocketLoading(const Frame* frame, const URL& ta
         m_store->fireDataModificationHandler();
 }
 
-static double reduceTimeResolutionToOneDay(double seconds)
+static double reduceTimeResolution(double seconds)
 {
     return std::floor(seconds / timestampResolution) * timestampResolution;
 }
@@ -320,7 +320,7 @@ void ResourceLoadObserver::logUserInteractionWithReducedTimeResolution(const Doc
     auto primaryDomainStr = primaryDomain(url);
 
     auto& statistics = m_store->ensureResourceStatisticsForPrimaryDomain(primaryDomainStr);
-    double newTimestamp = reduceTimeResolutionToOneDay(WTF::currentTime());
+    double newTimestamp = reduceTimeResolution(WTF::currentTime());
     if (newTimestamp == statistics.mostRecentUserInteraction)
         return;
 
@@ -427,9 +427,19 @@ void ResourceLoadObserver::setTimeToLiveUserInteraction(double seconds)
     m_store->setTimeToLiveUserInteraction(seconds);
 }
 
+void ResourceLoadObserver::setTimeToLiveCookiePartitionFree(double seconds)
+{
+    m_store->setTimeToLiveCookiePartitionFree(seconds);
+}
+
 void ResourceLoadObserver::fireDataModificationHandler()
 {
     m_store->fireDataModificationHandler();
+}
+
+void ResourceLoadObserver::fireShouldPartitionCookiesHandler()
+{
+    m_store->fireShouldPartitionCookiesHandler();
 }
 
 void ResourceLoadObserver::fireShouldPartitionCookiesHandler(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, bool clearFirst)

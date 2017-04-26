@@ -46,9 +46,11 @@ public:
     static void setSubresourceUnderTopFrameOrigin(const String& hostName, const String& topFrameHostName);
     static void setSubresourceUniqueRedirectTo(const String& hostName, const String& hostNameRedirectedTo);
     static void setTimeToLiveUserInteraction(double seconds);
+    static void setTimeToLiveCookiePartitionFree(double seconds);
     static void setReducedTimestampResolution(double seconds);
     static void fireDataModificationHandler();
-    static void fireShouldPartitionCookiesHandler(const String& hostName, bool value);
+    static void fireShouldPartitionCookiesHandler();
+    static void fireShouldPartitionCookiesHandlerForOneDomain(const String& hostName, bool value);
     static void setNotifyPagesWhenDataRecordsWereScanned(bool);
     static void setShouldClassifyResourcesBeforeDataRecordsRemoval(bool value);
     static void setMinimumTimeBetweeenDataRecordsRemoval(double seconds);

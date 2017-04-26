@@ -63,7 +63,8 @@ public:
 
     void fireDataModificationHandler();
     void setTimeToLiveUserInteraction(double seconds);
-    WEBCORE_EXPORT void fireShouldPartitionCookiesHandler(bool clearFirst);
+    void setTimeToLiveCookiePartitionFree(double seconds);
+    WEBCORE_EXPORT void fireShouldPartitionCookiesHandler();
     void fireShouldPartitionCookiesHandler(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, bool clearFirst);
 
     WEBCORE_EXPORT void processStatistics(std::function<void(ResourceLoadStatistics&)>&&);

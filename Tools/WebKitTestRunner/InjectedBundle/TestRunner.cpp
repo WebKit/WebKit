@@ -1325,6 +1325,13 @@ void TestRunner::setStatisticsTimeToLiveUserInteraction(double seconds)
     WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
 }
 
+void TestRunner::setStatisticsTimeToLiveCookiePartitionFree(double seconds)
+{
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("SetStatisticsTimeToLiveCookiePartitionFree"));
+    WKRetainPtr<WKDoubleRef> messageBody(AdoptWK, WKDoubleCreate(seconds));
+    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
+}
+
 void TestRunner::installStatisticsDidModifyDataRecordsCallback(JSValueRef callback)
 {
     cacheTestRunnerCallback(StatisticsDidModifyDataRecordsCallbackID, callback);
@@ -1341,7 +1348,13 @@ void TestRunner::statisticsFireDataModificationHandler()
     WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), 0, nullptr);
 }
 
-void TestRunner::statisticsFireShouldPartitionCookiesHandler(JSStringRef hostName, bool value)
+void TestRunner::statisticsFireShouldPartitionCookiesHandler()
+{
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("StatisticsFireShouldPartitionCookiesHandler"));
+    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), 0, nullptr);
+}
+
+void TestRunner::statisticsFireShouldPartitionCookiesHandlerForOneDomain(JSStringRef hostName, bool value)
 {
     Vector<WKRetainPtr<WKStringRef>> keys;
     Vector<WKRetainPtr<WKTypeRef>> values;
@@ -1360,7 +1373,7 @@ void TestRunner::statisticsFireShouldPartitionCookiesHandler(JSStringRef hostNam
         rawValues[i] = values[i].get();
     }
     
-    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("StatisticsFireShouldPartitionCookiesHandler"));
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("StatisticsFireShouldPartitionCookiesHandlerForOneDomain"));
     WKRetainPtr<WKDictionaryRef> messageBody(AdoptWK, WKDictionaryCreate(rawKeys.data(), rawValues.data(), rawKeys.size()));
     
     WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);

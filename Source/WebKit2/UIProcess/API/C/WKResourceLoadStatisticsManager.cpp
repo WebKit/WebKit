@@ -76,14 +76,24 @@ void WKResourceLoadStatisticsManagerSetTimeToLiveUserInteraction(double seconds)
     WebResourceLoadStatisticsManager::setTimeToLiveUserInteraction(seconds);
 }
 
+void WKResourceLoadStatisticsManagerSetTimeToLiveCookiePartitionFree(double seconds)
+{
+    WebResourceLoadStatisticsManager::setTimeToLiveCookiePartitionFree(seconds);
+}
+
 void WKResourceLoadStatisticsManagerFireDataModificationHandler()
 {
     WebResourceLoadStatisticsManager::fireDataModificationHandler();
 }
 
-void WKResourceLoadStatisticsManagerFireShouldPartitionCookiesHandler(WKStringRef hostName, bool value)
+void WKResourceLoadStatisticsManagerFireShouldPartitionCookiesHandler()
 {
-    WebResourceLoadStatisticsManager::fireShouldPartitionCookiesHandler(toWTFString(hostName), value);
+    WebResourceLoadStatisticsManager::fireShouldPartitionCookiesHandler();
+}
+
+void WKResourceLoadStatisticsManagerFireShouldPartitionCookiesHandlerForOneDomain(WKStringRef hostName, bool value)
+{
+    WebResourceLoadStatisticsManager::fireShouldPartitionCookiesHandlerForOneDomain(toWTFString(hostName), value);
 }
 
 void WKResourceLoadStatisticsManagerSetNotifyPagesWhenDataRecordsWereScanned(bool value)
