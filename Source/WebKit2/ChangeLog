@@ -1,3 +1,19 @@
+2017-04-25  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r213719): WebGL content on cubeslam.com is 1/4 expected size
+        https://bugs.webkit.org/show_bug.cgi?id=171300
+        rdar://problem/31051538
+
+        Reviewed by Dean Jackson.
+
+        Propagating the contentsScale to the UI process for canvas content layers causes
+        scaling issues, so don't do it for contents-provided layers.
+        
+        No test because WebGL can't be tested in the iOS simulator.
+
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.cpp:
+        (WebKit::PlatformCALayerRemote::PlatformCALayerRemote):
+
 2017-04-25  Brady Eidson  <beidson@apple.com>
 
         Update WebProcess(Pool) to assume there's always a WebsiteDataStore
