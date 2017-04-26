@@ -1,3 +1,22 @@
+2017-04-25  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Network Tab - Sorting by Priority Column hides all rows in the datagrid (uncaught exception)
+        https://bugs.webkit.org/show_bug.cgi?id=171312
+        <rdar://problem/31828554>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Models/Resource.js:
+        (WebInspector.Resource.comparePriority):
+        Provide a helper for compariting NetworkPriority enum values.
+
+        * UserInterface/Views/NetworkGridContentView.js:
+        (WebInspector.NetworkGridContentView):
+        (WebInspector.NetworkGridContentView.prototype.dataGridSortComparator):
+        * UserInterface/Views/NetworkTimelineView.js:
+        (WebInspector.NetworkTimelineView.prototype.dataGridSortComparator):
+        Custom sort handler for priority.
+
 2017-04-25  Nikita Vasilyev  <nvasilyev@apple.com>
 
         REGRESSION (r214863): Web Inspector: Uncaught Exception when losing focus from a selector field

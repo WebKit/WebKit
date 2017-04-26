@@ -190,15 +190,20 @@ WebInspector.NetworkTimelineView = class NetworkTimelineView extends WebInspecto
 
     dataGridSortComparator(sortColumnIdentifier, sortDirection, node1, node2)
     {
-        if (sortColumnIdentifier !== "name")
-            return null;
+        if (sortColumnIdentifier === "priority")
+            return WebInspector.Resource.comparePriority(node1.data.priority, node2.data.priority) * sortDirection;
+        
+        if (sortColumnIdentifier == "name") {
+            let displayName1 = node1.displayName();
+            let displayName2 = node2.displayName();
 
-        let displayName1 = node1.displayName();
-        let displayName2 = node2.displayName();
-        if (displayName1 !== displayName2)
-            return displayName1.localeCompare(displayName2) * sortDirection;
+            if (displayName1 !== displayName2)
+                return displayName1.localeCompare(displayName2) * sortDirection;
 
-        return node1.resource.url.localeCompare(node2.resource.url) * sortDirection;
+            return node1.resource.url.localeCompare(node2.resource.url) * sortDirection;
+        }
+
+        return null;
     }
 
     // Protected

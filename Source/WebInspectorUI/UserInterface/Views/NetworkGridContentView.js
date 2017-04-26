@@ -117,6 +117,7 @@ WebInspector.NetworkGridContentView = class NetworkGridContentView extends WebIn
 
         this._dataGrid = new WebInspector.TimelineDataGrid(columns, this._contentTreeOutline);
         this._dataGrid.addEventListener(WebInspector.DataGrid.Event.SelectedNodeChanged, this._dataGridNodeSelected, this);
+        this._dataGrid.sortDelegate = this;
         this._dataGrid.sortColumnIdentifier = "requestSent";
         this._dataGrid.sortOrder = WebInspector.DataGrid.SortOrder.Ascending;
         this._dataGrid.createSettings("network-grid-content-view");
@@ -265,6 +266,16 @@ WebInspector.NetworkGridContentView = class NetworkGridContentView extends WebIn
     handleClearShortcut(event)
     {
         this.reset();
+    }
+
+    // TimelineDataGrid sort delegate
+
+    dataGridSortComparator(sortColumnIdentifier, sortDirection, node1, node2)
+    {
+        if (sortColumnIdentifier === "priority")
+            return WebInspector.Resource.comparePriority(node1.data.priority, node2.data.priority) * sortDirection;
+
+        return null;
     }
 
     // Private

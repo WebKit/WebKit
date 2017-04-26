@@ -169,6 +169,23 @@ WebInspector.Resource = class Resource extends WebInspector.SourceCode
         }
     }
 
+    static comparePriority(a, b)
+    {
+        console.assert(typeof a === "symbol");
+        console.assert(typeof b === "symbol");
+
+        const map = {
+            [WebInspector.Resource.NetworkPriority.Unknown]: 0,
+            [WebInspector.Resource.NetworkPriority.Low]: 1,
+            [WebInspector.Resource.NetworkPriority.Medium]: 2,
+            [WebInspector.Resource.NetworkPriority.High]: 3,
+        };
+
+        let aNum = map[a] || 0;
+        let bNum = map[b] || 0;
+        return aNum - bNum;
+    }
+
     static displayNameForPriority(priority)
     {
         switch (priority) {
