@@ -1,3 +1,14 @@
+2017-04-25  Brent Fulgham  <bfulgham@apple.com>
+
+        Relax the event firing ASSERT for Attr changes
+        https://bugs.webkit.org/show_bug.cgi?id=171236
+        <rdar://problem/30516349>
+
+        Reviewed by Dean Jackson.
+
+        * fast/dom/HTMLLinkElement/event-while-removing-attribute-expected.txt: Added.
+        * fast/dom/HTMLLinkElement/event-while-removing-attribute.html: Added.
+
 2017-04-25  Dean Jackson  <dino@apple.com>
 
         REGRESSION (r214129): fast/media/mq-prefers-reduced-motion.html fails

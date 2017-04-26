@@ -1,3 +1,20 @@
+2017-04-25  Brent Fulgham  <bfulgham@apple.com>
+
+        Relax the event firing ASSERT for Attr changes
+        https://bugs.webkit.org/show_bug.cgi?id=171236
+        <rdar://problem/30516349>
+
+        Reviewed by Dean Jackson.
+
+        The assertions added in Bug 167318 were overly strict, and trigger for valid behavior.
+        Relax the assertion preventing event dispatch for the case of Attr elements at the
+        end of childrenChanged.
+
+        Test: fast/dom/HTMLLinkElement/event-while-removing-attribute.html
+
+        * dom/Attr.cpp:
+        (WebCore::Attr::childrenChanged):
+
 2017-04-25  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Introduce shorter time-to-live for cookie partition whitelisting
