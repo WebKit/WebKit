@@ -98,7 +98,7 @@ public:
     {
         RELEASE_ASSERT(functionIndexSpace >= functionImportCount());
         unsigned calleeIndex = functionIndexSpace - functionImportCount();
-        return &m_wasmEntryPoints[calleeIndex];
+        return &m_wasmIndirectCallEntryPoints[calleeIndex];
     }
 
     TierUpCount& tierUpCount(uint32_t functionIndex)
@@ -120,7 +120,7 @@ private:
     Vector<RefPtr<Callee>> m_callees;
     Vector<RefPtr<Callee>> m_optimizedCallees;
     Vector<RefPtr<Callee>> m_jsCallees;
-    Vector<void*> m_wasmEntryPoints;
+    Vector<void*> m_wasmIndirectCallEntryPoints;
     Vector<TierUpCount> m_tierUpCounts;
     Vector<Vector<UnlinkedWasmToWasmCall>> m_wasmToWasmCallsites;
     Vector<MacroAssemblerCodeRef> m_wasmToWasmExitStubs;

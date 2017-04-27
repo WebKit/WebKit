@@ -52,12 +52,12 @@ CodeBlock::CodeBlock(VM& vm, MemoryMode mode, ModuleInformation& moduleInformati
         m_callees.resize(m_calleeCount);
         m_jsCallees.resize(m_calleeCount);
         m_optimizedCallees.resize(m_calleeCount);
-        m_wasmEntryPoints.resize(m_calleeCount);
+        m_wasmIndirectCallEntryPoints.resize(m_calleeCount);
 
         m_plan->initializeCallees([&] (unsigned calleeIndex, Ref<Wasm::Callee>&& jsEntrypointCallee, Ref<Wasm::Callee>&& wasmEntrypointCallee) {
             m_jsCallees[calleeIndex] = WTFMove(jsEntrypointCallee);
             m_callees[calleeIndex] = WTFMove(wasmEntrypointCallee);
-            m_wasmEntryPoints[calleeIndex] = m_callees[calleeIndex]->entrypoint();
+            m_wasmIndirectCallEntryPoints[calleeIndex] = m_callees[calleeIndex]->entrypoint();
         });
 
         m_wasmToWasmExitStubs = m_plan->takeWasmToWasmExitStubs();

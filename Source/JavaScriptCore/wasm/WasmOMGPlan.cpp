@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -124,11 +124,11 @@ void OMGPlan::work(CompilationEffort)
 
     // It's important to make sure we do this before we make any of the code we just compiled visible. If we didn't, we could end up
     // where we are tiering up some function A to A' and we repatch some function B to call A' instead of A. Another CPU could see
-    // the updates to B but still not have reset it's cache of A', which would lead to all kinds of badness.
+    // the updates to B but still not have reset its cache of A', which would lead to all kinds of badness.
     resetInstructionCacheOnAllThreads();
     WTF::storeStoreFence(); // This probably isn't necessary but it's good to be paranoid.
 
-    m_codeBlock->m_wasmEntryPoints[m_functionIndex] = entrypoint;
+    m_codeBlock->m_wasmIndirectCallEntryPoints[m_functionIndex] = entrypoint;
     {
         LockHolder holder(m_codeBlock->m_lock);
 

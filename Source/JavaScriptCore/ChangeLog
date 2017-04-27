@@ -1,3 +1,31 @@
+2017-04-26  Keith Miller  <keith_miller@apple.com>
+
+        Follow up to r215843
+        https://bugs.webkit.org/show_bug.cgi?id=171361
+
+        Reviewed by Saam Barati.
+
+        This patch fixes some style comments Saam didn't get a chance to
+        request before I landed: https://bugs.webkit.org/show_bug.cgi?id=170134.
+
+        It renames Wasm::CodeBlock::m_wasmEntrypoints to
+        m_wasmIndirectCallEntrypoints, as well as fixes some copyrights and
+        indentation.
+
+        * wasm/WasmBBQPlan.cpp:
+        * wasm/WasmCodeBlock.cpp:
+        (JSC::Wasm::CodeBlock::CodeBlock):
+        * wasm/WasmCodeBlock.h:
+        (JSC::Wasm::CodeBlock::wasmEntrypointLoadLocationFromFunctionIndexSpace):
+        * wasm/WasmOMGPlan.cpp:
+        (JSC::Wasm::OMGPlan::work):
+        * wasm/WasmTierUpCount.h:
+        (JSC::Wasm::TierUpCount::TierUpCount):
+        (JSC::Wasm::TierUpCount::loopDecrement):
+        (JSC::Wasm::TierUpCount::functionEntryDecrement):
+        (JSC::Wasm::TierUpCount::shouldStartTierUp):
+        (JSC::Wasm::TierUpCount::count):
+
 2017-04-26  Saam Barati  <sbarati@apple.com>
 
         ASSERTION FAILED: inIndex != notFound in JSC::invalidParameterInSourceAppender()
