@@ -1,6 +1,6 @@
 
-FAIL cubic-bezier easing with input progress greater than 1 target.animate is not a function. (In 'target.animate', 'target.animate' is undefined)
-FAIL cubic-bezier easing with input progress greater than 1 and where the tangent on the upper boundary is infinity target.animate is not a function. (In 'target.animate', 'target.animate' is undefined)
-FAIL cubic-bezier easing with input progress less than 0 target.animate is not a function. (In 'target.animate', 'target.animate' is undefined)
-FAIL cubic-bezier easing with input progress less than 0 and where the tangent on the lower boundary is infinity target.animate is not a function. (In 'target.animate', 'target.animate' is undefined)
+FAIL cubic-bezier easing with input progress greater than 1 undefined is not a function (near '...target.animate...')
+FAIL cubic-bezier easing with input progress greater than 1 and where the tangent on the upper boundary is infinity undefined is not a function (near '...target.animate...')
+FAIL cubic-bezier easing with input progress less than 0 undefined is not a function (near '...target.animate...')
+FAIL cubic-bezier easing with input progress less than 0 and where the tangent on the lower boundary is infinity undefined is not a function (near '...target.animate...')
 

@@ -122,7 +122,7 @@ shouldThrow(function () {
             return 42;
         }
     };
-}, "TypeError: [a, b, c] is not a function. (In '[a, b, c]', '[a, b, c]' is undefined)");
+}, "TypeError: undefined is not a function (near '...[a, b, c]...')");
 
 shouldThrow(function () {
     var [a, b, c] = {
@@ -130,7 +130,7 @@ shouldThrow(function () {
             return {};
         }
     };
-}, "TypeError: [a, b, c] is not a function. (In '[a, b, c]', '[a, b, c]' is undefined)");
+}, "TypeError: undefined is not a function (near '...[a, b, c]...')");
 
 shouldThrow(function () {
     var [a, b, c] = {

@@ -127,7 +127,7 @@ static String functionCallBase(const String& sourceText)
         // and their closing parenthesis, the text range passed into the message appender 
         // will not inlcude the text in between these parentheses, it will just be the desired
         // text that precedes the parentheses.
-        return sourceText;
+        return String();
     }
 
     unsigned parenStack = 1;
@@ -135,26 +135,32 @@ static String functionCallBase(const String& sourceText)
     idx -= 1;
     // Note that we're scanning text right to left instead of the more common left to right, 
     // so syntax detection is backwards.
-    while (parenStack > 0) {
+    while (parenStack && idx) {
         UChar curChar = sourceText[idx];
-        if (isInMultiLineComment)  {
-            if (idx > 0 && curChar == '*' && sourceText[idx - 1] == '/') {
+        if (isInMultiLineComment) {
+            if (curChar == '*' && sourceText[idx - 1] == '/') {
                 isInMultiLineComment = false;
-                idx -= 1;
+                --idx;
             }
         } else if (curChar == '(')
-            parenStack -= 1;
+            --parenStack;
         else if (curChar == ')')
-            parenStack += 1;
-        else if (idx > 0 && curChar == '/' && sourceText[idx - 1] == '*') {
+            ++parenStack;
+        else if (curChar == '/' && sourceText[idx - 1] == '*') {
             isInMultiLineComment = true;
-            idx -= 1;
+            --idx;
         }
 
-        if (!idx)
-            break;
+        if (idx)
+            --idx;
+    }
 
-        idx -= 1;
+    if (parenStack) {
+        // As noted in the FIXME at the top of this function, there are bugs
+        // in the above string processing. This algorithm is mostly best effort
+        // and it works for most JS text in practice. However, if we determine
+        // that the algorithm failed, we should just return the empty value.
+        return String();
     }
 
     return sourceText.left(idx + 1);
@@ -177,6 +183,8 @@ static String notAFunctionSourceAppender(const String& originalMessage, const St
         displayValue = StringView(originalMessage.characters16(), notAFunctionIndex - 1);
 
     String base = functionCallBase(sourceText);
+    if (!base)
+        return defaultApproximateSourceError(originalMessage, sourceText);
     StringBuilder builder;
     builder.append(base);
     builder.appendLiteral(" is not a function. (In '");
@@ -205,7 +213,12 @@ static String invalidParameterInSourceAppender(const String& originalMessage, co
 
     ASSERT(occurrence == ErrorInstance::FoundExactSource);
     auto inIndex = sourceText.reverseFind("in");
-    RELEASE_ASSERT(inIndex != notFound);
+    if (inIndex == notFound) {
+        // This should basically never happen, since JS code must use the literal
+        // text "in" for the `in` operation. However, if we fail to find "in"
+        // for any reason, just fail gracefully.
+        return originalMessage;
+    }
     if (sourceText.find("in") != inIndex)
         return makeString(originalMessage, " (evaluating '", sourceText, "')");
 

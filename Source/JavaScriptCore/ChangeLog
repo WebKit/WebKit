@@ -1,3 +1,36 @@
+2017-04-26  Saam Barati  <sbarati@apple.com>
+
+        ASSERTION FAILED: inIndex != notFound in JSC::invalidParameterInSourceAppender()
+        https://bugs.webkit.org/show_bug.cgi?id=170924
+        <rdar://problem/31721052>
+
+        Reviewed by Mark Lam.
+
+        The error message handler for "in" was searching for the literal
+        string "in". However, our parser incorrectly allows escaped characters
+        to be part of keywords. So this is parsed as "in" in JSC: "i\u006E".
+        It should not be parsed that way. I opened https://bugs.webkit.org/show_bug.cgi?id=171310
+        to address this issue.
+        
+        Regardless, the error message handlers should handle unexpected text gracefully.
+        All functions that try to augment error messages with the goal of
+        providing a more textual context for the error message should use
+        the original error message instead of crashing when they detect
+        unexpected text.
+        
+        This patch also changes the already buggy code that tries to find
+        the base of a function call. That could would fail for code like this:
+        "zoo.bar("/abc\)*/");". See https://bugs.webkit.org/show_bug.cgi?id=146304
+        It would think that the base is "z". However, the algorithm that tries
+        to find the base can often tell when it fails, and when it does, it should
+        happily return the approximate text error message instead of thinking
+        that the base is "z".
+
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::functionCallBase):
+        (JSC::notAFunctionSourceAppender):
+        (JSC::invalidParameterInSourceAppender):
+
 2017-04-26  Keith Miller  <keith_miller@apple.com>
 
         WebAssembly: Implement tier up
