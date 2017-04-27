@@ -63,9 +63,9 @@
 
     [CheckSecurityForNode] readonly attribute Element frameElement;
 
-    [DoNotCheckSecurity, CallWith=CallerWindow, ForwardDeclareInHeader] void focus();
+    [DoNotCheckSecurity, CallWith=IncumbentWindow, ForwardDeclareInHeader] void focus();
     [DoNotCheckSecurity, ForwardDeclareInHeader] void blur();
-    [DoNotCheckSecurity, CallWith=CallerDocument, ForwardDeclareInHeader] void close();
+    [DoNotCheckSecurity, CallWith=IncumbentDocument, ForwardDeclareInHeader] void close();
 
     void print();
     void stop();
@@ -153,7 +153,7 @@
     // 0 when straight up; -90 when rotated 90 degrees clockwise; 90 counter clockwise.
     [Conditional=ORIENTATION_EVENTS] readonly attribute long orientation;
 
-    [CallWith=ScriptState&CallerWindow, DoNotCheckSecurity, ForwardDeclareInHeader, MayThrowException] void postMessage(any message, USVString targetOrigin, optional sequence<object> transfer = []);
+    [CallWith=ScriptState&IncumbentWindow, DoNotCheckSecurity, ForwardDeclareInHeader, MayThrowException] void postMessage(any message, USVString targetOrigin, optional sequence<object> transfer = []);
 
     long requestAnimationFrame(RequestAnimationFrameCallback callback);
     void cancelAnimationFrame(long id);

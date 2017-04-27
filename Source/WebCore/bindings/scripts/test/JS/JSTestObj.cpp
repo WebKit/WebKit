@@ -6233,7 +6233,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionWithCallerDocumentAr
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = castedThis->wrapped();
-    auto* document = callerDOMWindow(state).document();
+    auto* document = incumbentDOMWindow(state).document();
     if (!document)
         return JSValue::encode(jsUndefined());
     impl.withCallerDocumentArgument(*document);
@@ -6252,7 +6252,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionWithCallerWindowArgu
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = castedThis->wrapped();
-    impl.withCallerWindowArgument(callerDOMWindow(state));
+    impl.withCallerWindowArgument(incumbentDOMWindow(state));
     return JSValue::encode(jsUndefined());
 }
 

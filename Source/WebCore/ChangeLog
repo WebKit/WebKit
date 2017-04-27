@@ -1,3 +1,28 @@
+2017-04-27  Daniel Bates  <dabates@apple.com>
+
+        Rename callerDOMWindow()/CallerDocument to incumbentDOMWindow()/IncumbentDocument
+        https://bugs.webkit.org/show_bug.cgi?id=171145
+
+        Reviewed by Saam Barati.
+
+        Standardize on the terminology "incumbent" to refer to "most-recently-entered author
+        function or script on the stack, or the author function or script that originally
+        scheduled the currently-running callback" (1).
+
+        [1] <https://html.spec.whatwg.org/multipage/webappapis.html#realms-settings-objects-global-objects> (27 April 2017)
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::incumbentDOMWindow):
+        (WebCore::callerDOMWindow): Deleted.
+        * bindings/js/JSDOMWindowBase.h:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateCallWith):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::jsTestObjPrototypeFunctionWithCallerDocumentArgumentCaller):
+        (WebCore::jsTestObjPrototypeFunctionWithCallerWindowArgumentCaller):
+        * bindings/scripts/test/TestObj.idl:
+        * page/DOMWindow.idl:
+
 2017-04-27  Youenn Fablet  <youenn@apple.com>
 
         LayoutTest webrtc/datachannel/datachannel-event.html is a flaky crash

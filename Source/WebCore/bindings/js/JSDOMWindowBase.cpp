@@ -288,7 +288,7 @@ JSDOMWindow* toJSDOMWindow(JSC::VM& vm, JSValue value)
     return 0;
 }
 
-DOMWindow& callerDOMWindow(ExecState* exec)
+DOMWindow& incumbentDOMWindow(ExecState* exec)
 {
     class GetCallerGlobalObjectFunctor {
     public:
