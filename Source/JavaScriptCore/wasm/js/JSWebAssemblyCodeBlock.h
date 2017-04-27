@@ -83,7 +83,8 @@ public:
         return offsetOfImportStubs() + sizeof(void*) * importIndex;
     }
 
-    Ref<Wasm::CodeBlock> m_codeBlock;
+    Wasm::CodeBlock& codeBlock() { return m_codeBlock.get(); }
+
 private:
     JSWebAssemblyCodeBlock(VM&, Ref<Wasm::CodeBlock>&&, const Wasm::ModuleInformation&);
     DECLARE_EXPORT_INFO;
@@ -110,6 +111,7 @@ private:
         void finalizeUnconditionally() override;
     };
 
+    Ref<Wasm::CodeBlock> m_codeBlock;
     WriteBarrier<JSWebAssemblyModule> m_module;
     Vector<MacroAssemblerCodeRef> m_wasmToJSExitStubs;
     UnconditionalFinalizer m_unconditionalFinalizer;

@@ -1,3 +1,23 @@
+2017-04-27  Saam Barati  <sbarati@apple.com>
+
+        Restore some caching functionality that got accidentally removed when doing Wasm PIC patches
+        https://bugs.webkit.org/show_bug.cgi?id=171382
+
+        Reviewed by Keith Miller.
+
+        When I created Wasm::CodeBlock, I accidentally removed caching
+        the creation of JSWebAssemblyCodeBlocks. This patch restores it.
+        It's worth keeping JSWebAssemblyModule's JSWebAssemblyCodeBlock
+        cache because creating a JSWebAssemblyCodeBlock does non trivial
+        work by creating the various IC call stubs.
+
+        * wasm/js/JSWebAssemblyCodeBlock.h:
+        (JSC::JSWebAssemblyCodeBlock::codeBlock):
+        * wasm/js/JSWebAssemblyInstance.cpp:
+        (JSC::JSWebAssemblyInstance::finalizeCreation):
+        (JSC::JSWebAssemblyInstance::create):
+        * wasm/js/JSWebAssemblyModule.h:
+
 2017-04-27  Mark Lam  <mark.lam@apple.com>
 
         Audit and fix incorrect uses of JSArray::tryCreateForInitializationPrivate().

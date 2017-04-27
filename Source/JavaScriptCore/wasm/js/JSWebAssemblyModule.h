@@ -68,11 +68,10 @@ public:
     const Vector<uint8_t>& source() const;
 
     Wasm::Module& module() { return m_module.get(); }
+    void setCodeBlock(VM&, Wasm::MemoryMode, JSWebAssemblyCodeBlock*);
 
 private:
     friend class JSWebAssemblyCodeBlock;
-
-    void setCodeBlock(VM&, Wasm::MemoryMode, JSWebAssemblyCodeBlock*);
 
     JSWebAssemblyModule(VM&, Structure*, Ref<Wasm::Module>&&);
     void finishCreation(VM&);

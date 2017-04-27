@@ -102,9 +102,20 @@ void JSWebAssemblyInstance::finalizeCreation(VM& vm, ExecState* exec, Ref<Wasm::
         return;
     }
 
-    RELEASE_ASSERT(wasmCodeBlock->isSafeToRun(memory()->memory().mode()));
-    m_codeBlock.set(vm, this,
-        JSWebAssemblyCodeBlock::create(vm, wasmCodeBlock.copyRef(), m_module->module().moduleInformation()));
+    RELEASE_ASSERT(wasmCodeBlock->isSafeToRun(memoryMode()));
+    JSWebAssemblyCodeBlock* codeBlock = module()->codeBlock(memoryMode());
+    if (codeBlock) {
+        // A CodeBlock might have already been compiled. If so, it means
+        // that the CodeBlock we are trying to compile must be the same
+        // because we will never compile a CodeBlock again once it's
+        // runnable.
+        ASSERT(&codeBlock->codeBlock() == wasmCodeBlock.ptr());
+        m_codeBlock.set(vm, this, codeBlock);
+    } else {
+        codeBlock = JSWebAssemblyCodeBlock::create(vm, wasmCodeBlock.copyRef(), m_module->module().moduleInformation());
+        m_codeBlock.set(vm, this, codeBlock);
+        module()->setCodeBlock(vm, memoryMode(), codeBlock);
+    }
 
     auto* moduleRecord = jsCast<WebAssemblyModuleRecord*>(m_moduleNamespaceObject->moduleRecord());
     moduleRecord->link(exec, module(), this);
@@ -345,7 +356,6 @@ JSWebAssemblyInstance* JSWebAssemblyInstance::create(VM& vm, ExecState* exec, JS
     }
 
     ASSERT(!instance->codeBlock());
-    instance->m_codeBlock.setMayBeNull(vm, instance, jsModule->codeBlock(instance->memoryMode()));
 
     return instance;
 }
