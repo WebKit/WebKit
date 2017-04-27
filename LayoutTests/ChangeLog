@@ -1,3 +1,14 @@
+2017-04-27  Zalan Bujtas  <zalan@apple.com>
+
+        Text gets cut off when bailing out of simple line layout with widows.
+        https://bugs.webkit.org/show_bug.cgi?id=171370
+        <rdar://problem/31563414>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/multicol/simple-line-layout-widows-when-switching-over-to-normal-line-layout-expected.html: Added.
+        * fast/multicol/simple-line-layout-widows-when-switching-over-to-normal-line-layout.html: Added.
+
 2017-04-26  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, remove unnecessary expected result in platform/ios-wk2

@@ -1,3 +1,18 @@
+2017-04-27  Zalan Bujtas  <zalan@apple.com>
+
+        Text gets cut off when bailing out of simple line layout with widows.
+        https://bugs.webkit.org/show_bug.cgi?id=171370
+        <rdar://problem/31563414>
+
+        Reviewed by Antti Koivisto.
+
+        Normal line layout requires an extra layout to handle widows. See RenderBlockFlow::relayoutToAvoidWidows. 
+
+        Test: fast/multicol/simple-line-layout-widows-when-switching-over-to-normal-line-layout.html
+
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::ensureLineBoxes):
+
 2017-04-27  Dean Jackson  <dino@apple.com>
 
         Use the correct modern-media-controls

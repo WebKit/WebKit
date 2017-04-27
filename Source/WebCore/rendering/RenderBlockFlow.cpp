@@ -3733,6 +3733,9 @@ void RenderBlockFlow::ensureLineBoxes()
     if (isPaginated) {
         view().pushLayoutStateForPagination(*this);
         layoutLineBoxes(relayoutChildren, repaintLogicalTop, repaintLogicalBottom);
+        // This matches relayoutToAvoidWidows.
+        if (shouldBreakAtLineToAvoidWidow())
+            layoutLineBoxes(relayoutChildren, repaintLogicalTop, repaintLogicalBottom);
         view().popLayoutState(*this);
     } else
         layoutLineBoxes(relayoutChildren, repaintLogicalTop, repaintLogicalBottom);
