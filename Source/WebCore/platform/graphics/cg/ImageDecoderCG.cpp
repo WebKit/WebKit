@@ -154,7 +154,7 @@ void sharedBufferRelease(void* info)
 
 ImageDecoder::ImageDecoder(const URL& sourceURL, AlphaOption, GammaAndColorProfileOption)
 {
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300)
     RetainPtr<CFURLRef> url = sourceURL.createCFURL();
     RetainPtr<CFStringRef> utiHint = adoptCF(CGImageSourceGetTypeWithURL(url.get(), nullptr));
     

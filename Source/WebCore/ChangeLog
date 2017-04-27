@@ -1,3 +1,16 @@
+2017-04-26  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Attempt to fix a PLT regression.
+        <rdar://problem/31826998>
+
+        Unreviewed.
+
+        Disable passing the TypeIdentifierHint to CGImageSourceCreateIncremental()
+        on iOS for now.
+
+        * platform/graphics/cg/ImageDecoderCG.cpp:
+        (WebCore::ImageDecoder::ImageDecoder):
+
 2017-04-26  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [ATK] ARIA buttons which have a popup should be ATK_ROLE_PUSH_BUTTON; not ATK_ROLE_COMBO_BOX
@@ -492,7 +505,8 @@
 
 2017-04-26  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
-        Attempt to fix a PLT regression.
+        Attempt to fix a JetStream regression.
+        <rdar://problem/31742414>
 
         Unreviewed.
 
