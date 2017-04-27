@@ -1198,7 +1198,8 @@ def runWebAssembly
     modules = Dir[WASMTESTS_PATH + "*.js"].map { |f| File.basename(f) }
     prepareExtraAbsoluteFiles(WASMTESTS_PATH, ["wasm.json"])
     prepareExtraRelativeFiles(modules.map { |f| "../" + f }, $collection)
-    run("default-wasm", "-m")
+    run("default-wasm", "-m", *FTL_OPTIONS)
+    run("wasm-no-cjit", "-m", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
 end
 
 def runWebAssemblyEmscripten(mode)
@@ -1210,7 +1211,8 @@ def runWebAssemblyEmscripten(mode)
     return if !$isFTLPlatform
     wasm = $benchmark.to_s.sub! '.js', '.wasm'
     prepareExtraRelativeFiles([Pathname('..') + wasm], $collection)
-    run("default-wasm")
+    run("default-wasm", *FTL_OPTIONS)
+    run("wasm-no-cjit", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
 end
 
 def runWebAssemblySpecTest(mode)
@@ -1229,7 +1231,8 @@ def runWebAssemblySpecTest(mode)
     harness = Dir[WASMTESTS_PATH + "spec-harness/" + "*.js"].map { |f| File.basename(f) }
     prepareExtraRelativeFiles(harness.map { |f| "../../spec-harness/" + f }, $collection)
 
-    runWithOutputHandler("default-wasm", noisyOutputHandler, "../spec-harness.js")
+    runWithOutputHandler("default-wasm", noisyOutputHandler, "../spec-harness.js", *FTL_OPTIONS)
+    runWithOutputHandler("wasm-no-cjit", noisyOutputHandler, "../spec-harness.js", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
 end
 
 def runChakra(mode, exception, baselineFile, extraFiles)
