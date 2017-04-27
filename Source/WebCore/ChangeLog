@@ -1,3 +1,11 @@
+2017-04-26  Dan Bernstein  <mitz@apple.com>
+
+        Reverted r215774.
+
+        That change wasn’t doing what it was intended to do and was inappropriate for WebCore.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2017-04-26  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Attempt to fix a PLT regression.
