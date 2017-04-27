@@ -1,3 +1,13 @@
+2017-04-26  Aakash Jain  <aakash_jain@apple.com>
+
+        JSC EWS Patch Relevance skips few JSC scripts
+        https://bugs.webkit.org/show_bug.cgi?id=171351
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitpy/tool/steps/checkpatchrelevance.py:
+        (CheckPatchRelevance): Added few jsc related scripts.
+
 2017-04-26  Youenn Fablet  <youenn@apple.com>
 
         Test importer should delete obsolete files based on w3c-import.log

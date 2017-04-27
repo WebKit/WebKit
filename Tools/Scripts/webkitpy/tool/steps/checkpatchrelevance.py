@@ -54,6 +54,13 @@ class CheckPatchRelevance(AbstractStep):
         "Source/Makefile.shared",
         "Tools/Scripts/build-webkit",
         "Tools/Scripts/build-jsc",
+        "Tools/Scripts/jsc-stress-test-helpers/",
+        "Tools/Scripts/run-jsc",
+        "Tools/Scripts/run-jsc-benchmarks",
+        "Tools/Scripts/run-jsc-stress-tests",
+        "Tools/Scripts/run-javascriptcore-tests",
+        "Tools/Scripts/run-layout-jsc",
+        "Tools/Scripts/update-javascriptcore-test-results",
         "Tools/Scripts/webkitdirs.pm",
     ]
 
