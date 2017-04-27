@@ -29,8 +29,10 @@
 #if ENABLE(REMOTE_INSPECTOR)
 
 #include "RemoteWebInspectorProxy.h"
+#include <JavaScriptCore/RemoteInspectorUtils.h>
 #include <gio/gio.h>
 #include <wtf/glib/GUniquePtr.h>
+#include <wtf/text/Base64.h>
 
 #if PLATFORM(GTK)
 #define REMOTE_INSPECTOR_CLIENT_DBUS_INTERFACE "org.webkitgtk.RemoteInspectorClient"
@@ -61,8 +63,7 @@ public:
 
     void load()
     {
-        // FIXME: support old backend commands URL.
-        m_proxy->load("web", String());
+        m_proxy->load("web", m_inspectorClient.backendCommandsURL());
     }
 
     void show()
@@ -204,10 +205,36 @@ void RemoteInspectorClient::setupConnection(GRefPtr<GDBusConnection>&& connectio
     g_dbus_connection_call(m_dbusConnection.get(), nullptr,
         INSPECTOR_DBUS_OBJECT_PATH,
         INSPECTOR_DBUS_INTERFACE,
-        "GetTargetList",
-        nullptr,
+        "SetupInspectorClient",
+        g_variant_new("(@ay)", g_variant_new_bytestring(Inspector::backendCommandsHash().data())),
         nullptr, G_DBUS_CALL_FLAGS_NO_AUTO_START,
-        -1, m_cancellable.get(), dbusConnectionCallAsyncReadyCallback, nullptr);
+        -1, m_cancellable.get(), [](GObject* source, GAsyncResult* result, gpointer userData) {
+            GUniqueOutPtr<GError> error;
+            GRefPtr<GVariant> resultVariant = adoptGRef(g_dbus_connection_call_finish(G_DBUS_CONNECTION(source), result, &error.outPtr()));
+            if (g_error_matches(error.get(), G_IO_ERROR, G_IO_ERROR_CANCELLED))
+                return;
+            if (!resultVariant) {
+                WTFLogAlways("RemoteInspectorClient failed to send DBus message: %s", error->message);
+                return;
+            }
+
+            auto* client = static_cast<RemoteInspectorClient*>(userData);
+            GRefPtr<GVariant> backendCommandsVariant;
+            g_variant_get(resultVariant.get(), "(@ay)", &backendCommandsVariant.outPtr());
+            client->setBackendCommands(g_variant_get_bytestring(backendCommandsVariant.get()));
+        }, this);
+}
+
+void RemoteInspectorClient::setBackendCommands(const char* backendCommands)
+{
+    if (!backendCommands || !backendCommands[0]) {
+        m_backendCommandsURL = String();
+        return;
+    }
+
+    Vector<char> base64Data;
+    base64Encode(backendCommands, strlen(backendCommands), base64Data);
+    m_backendCommandsURL = "data:text/javascript;base64," + base64Data;
 }
 
 void RemoteInspectorClient::connectionClosed()

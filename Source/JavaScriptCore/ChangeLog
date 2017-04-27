@@ -1,3 +1,24 @@
+2017-04-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Remote inspector should support inspecting targets with previous version of backend commands
+        https://bugs.webkit.org/show_bug.cgi?id=171267
+
+        Reviewed by Michael Catanzaro.
+
+        Rename GetTargetList DBus method as SetupInspectorClient since this method is actually called only once by
+        client right after connecting to the server. The method now receives the client backend commands hash as
+        argument and returns the contents of the backend commands file in case the hash doesn't match with the local
+        version.
+
+        * PlatformGTK.cmake: Add RemoteInspectorUtils to compilation.
+        * inspector/remote/glib/RemoteInspectorServer.cpp:
+        (Inspector::RemoteInspectorServer::setupInspectorClient):
+        * inspector/remote/glib/RemoteInspectorServer.h:
+        * inspector/remote/glib/RemoteInspectorUtils.cpp: Added.
+        (Inspector::backendCommands):
+        (Inspector::backendCommandsHash):
+        * inspector/remote/glib/RemoteInspectorUtils.h: Added.
+
 2017-04-27  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Handle PhantomSpread in LoadVarargs as the same to the others

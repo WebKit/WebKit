@@ -59,7 +59,7 @@ private:
 
     static const GDBusInterfaceVTable s_interfaceVTable;
     void setTargetList(GDBusConnection*, GVariant*);
-    void getTargetList(GDBusConnection*);
+    GVariant* setupInspectorClient(GDBusConnection*, const char* clientBackendCommandsHash);
     void setup(GDBusConnection*, uint64_t connectionID, uint64_t targetID);
     void close(GDBusConnection*, uint64_t connectionID, uint64_t targetID);
     void clientConnectionClosed(GDBusConnection*);

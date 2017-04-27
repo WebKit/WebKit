@@ -65,6 +65,7 @@ public:
 
     const HashMap<uint64_t, Vector<Target>>& targets() const { return m_targets; }
     const String& hostAndPort() const { return m_hostAndPort; }
+    const String& backendCommandsURL() const { return m_backendCommandsURL; }
 
     void inspect(uint64_t connectionID, uint64_t targetID);
     void sendMessageToBackend(uint64_t connectionID, uint64_t targetID, const String&);
@@ -76,10 +77,12 @@ private:
     void connectionClosed();
 
     static const GDBusInterfaceVTable s_interfaceVTable;
+    void setBackendCommands(const char*);
     void setTargetList(uint64_t connectionID, Vector<Target>&&);
     void sendMessageToFrontend(uint64_t connectionID, uint64_t targetID, const char*);
 
     String m_hostAndPort;
+    String m_backendCommandsURL;
     RemoteInspectorObserver& m_observer;
     GRefPtr<GDBusConnection> m_dbusConnection;
     GRefPtr<GCancellable> m_cancellable;

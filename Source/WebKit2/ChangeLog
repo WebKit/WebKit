@@ -1,3 +1,23 @@
+2017-04-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Remote inspector should support inspecting targets with previous version of backend commands
+        https://bugs.webkit.org/show_bug.cgi?id=171267
+
+        Reviewed by Michael Catanzaro.
+
+        There's a FIXME for this in the code. The remote inspector proxy allows to pass a backend commands URL when
+        inspecting a target. That URL, if not empty, is used as Protocol/InspectorBackendCommands.js in the inspector
+        code instead of the local copy. We are currently assuming that both ends use the same version of that file.
+
+        * UIProcess/glib/RemoteInspectorClient.cpp:
+        (WebKit::RemoteInspectorProxy::load): Pass RemoteInspectorClient::backendCommandsURL() to load().
+        (WebKit::RemoteInspectorClient::setupConnection): Get the local backend commands hash and pass it to
+        SetupInspectorClient method. Extract the server backend commands from the result and call setBackendCommands().
+        (WebKit::RemoteInspectorClient::setBackendCommands): Create a data URL for the server backend commands file
+        conents if needed.
+        * UIProcess/glib/RemoteInspectorClient.h:
+        (WebKit::RemoteInspectorClient::backendCommandsURL):
+
 2017-04-26  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         WebItemProviderPasteboard should not synchronously load provided data

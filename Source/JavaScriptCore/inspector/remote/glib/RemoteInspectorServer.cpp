@@ -29,6 +29,7 @@
 #if ENABLE(REMOTE_INSPECTOR)
 
 #include "RemoteInspector.h"
+#include "RemoteInspectorUtils.h"
 #include <gio/gio.h>
 #include <wtf/Vector.h>
 #include <wtf/glib/GUniquePtr.h>
@@ -57,7 +58,10 @@ static const char introspectionXML[] =
     "      <arg type='a(tsssb)' name='list' direction='in'/>"
     "      <arg type='b' name='remoteAutomationEnabled' direction='in'/>"
     "    </method>"
-    "    <method name='GetTargetList'/>"
+    "    <method name='SetupInspectorClient'>"
+    "      <arg type='ay' name='backendCommandsHash' direction='in'/>"
+    "      <arg type='ay' name='backendCommands' direction='out'/>"
+    "    </method>"
     "    <method name='Setup'>"
     "      <arg type='t' name='connection' direction='in'/>"
     "      <arg type='t' name='target' direction='in'/>"
@@ -88,9 +92,11 @@ const GDBusInterfaceVTable RemoteInspectorServer::s_interfaceVTable = {
         if (!g_strcmp0(methodName, "SetTargetList")) {
             inspectorServer->setTargetList(connection, parameters);
             g_dbus_method_invocation_return_value(invocation, nullptr);
-        } else if (!g_strcmp0(methodName, "GetTargetList")) {
-            inspectorServer->getTargetList(connection);
-            g_dbus_method_invocation_return_value(invocation, nullptr);
+        } else if (!g_strcmp0(methodName, "SetupInspectorClient")) {
+            GRefPtr<GVariant> backendCommandsHash;
+            g_variant_get(parameters, "(@ay)", &backendCommandsHash.outPtr());
+            auto* backendCommands = inspectorServer->setupInspectorClient(connection, g_variant_get_bytestring(backendCommandsHash.get()));
+            g_dbus_method_invocation_return_value(invocation, g_variant_new("(@ay)", backendCommands));
         } else if (!g_strcmp0(methodName, "Setup")) {
             guint64 connectionID, targetID;
             g_variant_get(parameters, "(tt)", &connectionID, &targetID);
@@ -230,14 +236,20 @@ void RemoteInspectorServer::clientConnectionClosedCallback(GDBusConnection* conn
     server->clientConnectionClosed(connection);
 }
 
-void RemoteInspectorServer::getTargetList(GDBusConnection* clientConnection)
+GVariant* RemoteInspectorServer::setupInspectorClient(GDBusConnection* clientConnection, const char* clientBackendCommandsHash)
 {
-    if (!m_clientConnection) {
-        m_clientConnection = clientConnection;
-        g_signal_connect(m_clientConnection.get(), "closed", G_CALLBACK(clientConnectionClosedCallback), this);
-    }
-    ASSERT(m_clientConnection.get() == clientConnection);
+    ASSERT(!m_clientConnection);
+    m_clientConnection = clientConnection;
+    g_signal_connect(m_clientConnection.get(), "closed", G_CALLBACK(clientConnectionClosedCallback), this);
 
+    GVariant* backendCommands;
+    if (strcmp(clientBackendCommandsHash, backendCommandsHash().data())) {
+        auto bytes = Inspector::backendCommands();
+        backendCommands = g_variant_new_bytestring(static_cast<const char*>(g_bytes_get_data(bytes.get(), nullptr)));
+    } else
+        backendCommands = g_variant_new_bytestring("");
+
+    // Ask all remote inspectors to push their target lists to notify the new client.
     for (auto* remoteInspectorConnection : m_remoteInspectorConnectionToIDMap.keys()) {
         g_dbus_connection_call(remoteInspectorConnection, nullptr,
             REMOTE_INSPECTOR_DBUS_OBJECT_PATH,
@@ -247,6 +259,8 @@ void RemoteInspectorServer::getTargetList(GDBusConnection* clientConnection)
             nullptr, G_DBUS_CALL_FLAGS_NO_AUTO_START,
             -1, m_cancellable.get(), dbusConnectionCallAsyncReadyCallback, nullptr);
     }
+
+    return backendCommands;
 }
 
 void RemoteInspectorServer::setup(GDBusConnection* clientConnection, uint64_t connectionID, uint64_t targetID)

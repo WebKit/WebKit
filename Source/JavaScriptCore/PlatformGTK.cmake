@@ -18,6 +18,7 @@ list(APPEND JavaScriptCore_SOURCES
     inspector/remote/glib/RemoteConnectionToTargetGlib.cpp
     inspector/remote/glib/RemoteInspectorGlib.cpp
     inspector/remote/glib/RemoteInspectorServer.cpp
+    inspector/remote/glib/RemoteInspectorUtils.cpp
 )
 
 add_custom_command(

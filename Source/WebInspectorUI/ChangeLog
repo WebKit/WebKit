@@ -1,3 +1,14 @@
+2017-04-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Remote inspector should support inspecting targets with previous version of backend commands
+        https://bugs.webkit.org/show_bug.cgi?id=171267
+
+        Reviewed by Michael Catanzaro.
+
+        Allow to use data URLs for script-src.
+
+        * UserInterface/Main.html:
+
 2017-04-25  Nikita Vasilyev  <nvasilyev@apple.com>
 
         REGRESSION (r209882): Web Inspector: Command-G does not work in the console
