@@ -269,7 +269,32 @@ static void drawDoubledAtPoint(NSString *string, NSPoint textPoint, NSColor *top
 
 DragImageRef createDragImageForLink(Element&, URL& url, const String& title, TextIndicatorData&, FontRenderingMode, float)
 {
-    NSString *label = nsStringNilIfEmpty(title);
+    // FIXME: Soft link.
+
+    NSURL *cocoaURL = url;
+
+    RetainPtr<LPLinkMetadata> metadata = adoptNS([[LPLinkMetadata alloc] init]);
+    [metadata setOriginalURL:cocoaURL];
+    [metadata setTitle:(NSString *)title];
+
+    RetainPtr<LPLinkView> linkView = adoptNS([[LPLinkView alloc] initWithURL:cocoaURL]);
+    [linkView setMetadata:metadata.get()];
+
+    CGSize imageSize = [linkView sizeThatFits:CGSizeMake(400, 400)];
+
+    [linkView setFrame:CGRectMake(0, 0, imageSize.width, imageSize.height)];
+    [linkView layoutSubtreeIfNeeded];
+
+    NSBitmapImageRep *rep = [linkView bitmapImageRepForCachingDisplayInRect:[linkView bounds]];
+    [linkView cacheDisplayInRect:[linkView bounds] toBitmapImageRep:rep];
+
+    NSImage *dragImage = [[[NSImage alloc] initWithSize:imageSize] autorelease];
+    [dragImage addRepresentation:rep];
+
+    return dragImage;
+    // [dragImage lockFocus];
+
+    /*NSString *label = nsStringNilIfEmpty(title);
     NSURL *cocoaURL = url;
     NSString *urlString = [cocoaURL absoluteString];
 
@@ -343,7 +368,7 @@ DragImageRef createDragImageForLink(Element&, URL& url, const String& title, Tex
         drawDoubledAtPoint(label, NSMakePoint(DragLabelBorderX, imageSize.height - LabelBorderYOffset - [labelFont pointSize]), topColor, bottomColor, labelFont);
     }
 
-    [dragImage unlockFocus];
+    [dragImage unlockFocus];*/
 
     return dragImage;
 }

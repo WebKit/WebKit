@@ -39,6 +39,7 @@ class Element;
 class FloatRect;
 class HitTestResult;
 class Range;
+class URL;
 
 enum DataDetectorTypes {
     DataDetectorTypeNone = 0,
@@ -64,6 +65,9 @@ public:
     WEBCORE_EXPORT static bool shouldCancelDefaultAction(Element&);
     WEBCORE_EXPORT static bool requiresExtendedContext(Element&);
 #endif
+
+    static const String& dataDetectorURLProtocol();
+    static bool isDataDetectorURL(const URL&);
 };
 
 } // namespace WebCore
