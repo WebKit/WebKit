@@ -51,14 +51,6 @@
 
 namespace WebKit {
 
-static WebCore::SessionID generateNonPersistentSessionID()
-{
-    // FIXME: We count backwards here to not conflict with API::Session.
-    static uint64_t sessionID = std::numeric_limits<uint64_t>::max();
-
-    return WebCore::SessionID(--sessionID);
-}
-
 static uint64_t generateIdentifier()
 {
     static uint64_t identifier;
@@ -68,7 +60,7 @@ static uint64_t generateIdentifier()
 
 Ref<WebsiteDataStore> WebsiteDataStore::createNonPersistent()
 {
-    return adoptRef(*new WebsiteDataStore(generateNonPersistentSessionID()));
+    return adoptRef(*new WebsiteDataStore(WebCore::SessionID::generateEphemeralSessionID()));
 }
 
 Ref<WebsiteDataStore> WebsiteDataStore::create(Configuration configuration)

@@ -28,6 +28,7 @@
 
 #include "Logging.h"
 #include "SandboxInitializationParameters.h"
+#include <WebCore/SessionID.h>
 #include <unistd.h>
 
 namespace WebKit {
@@ -71,7 +72,10 @@ void ChildProcess::initialize(const ChildProcessInitializationParameters& parame
 
     SandboxInitializationParameters sandboxParameters;
     initializeSandbox(parameters, sandboxParameters);
-    
+
+    // In WebKit2, only the UI process should ever be generating non-default SessionIDs.
+    WebCore::SessionID::enableGenerationProtection();
+
     m_connection = IPC::Connection::createClientConnection(parameters.connectionIdentifier, *this);
     m_connection->setDidCloseOnConnectionWorkQueueCallback(didCloseOnConnectionWorkQueue);
     initializeConnection(m_connection.get());

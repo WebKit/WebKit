@@ -1,3 +1,36 @@
+2017-04-27  Brady Eidson  <beidson@apple.com>
+
+        Refactor SessionID to support multiple non-ephemeral (persistent) sessions.
+        https://bugs.webkit.org/show_bug.cgi?id=171367
+
+        Reviewed by Andy Estes.
+
+        This is also a nice general cleanup of SessionID, including privatizing the "arbitrary number" constructor
+        and moving encode/decode into the class.
+
+        No new tests (Refactor, no behavior change yet).
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        
+        * page/SessionID.cpp: Added.
+        (WebCore::SessionID::generatePersistentSessionID):
+        (WebCore::SessionID::generateEphemeralSessionID):
+        (WebCore::SessionID::enableGenerationProtection):
+        
+        * page/SessionID.h:
+        (WebCore::SessionID::SessionID):
+        (WebCore::SessionID::emptySessionID):
+        (WebCore::SessionID::hashTableDeletedValue):
+        (WebCore::SessionID::defaultSessionID):
+        (WebCore::SessionID::legacyPrivateSessionID):
+        (WebCore::SessionID::isValid):
+        (WebCore::SessionID::isEphemeral):
+        (WebCore::SessionID::encode):
+        (WebCore::SessionID::decode):
+        (WTF::HashTraits<WebCore::SessionID>::constructDeletedValue):
+        (WTF::HashTraits<WebCore::SessionID>::isDeletedValue):
+
 2017-04-27  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Attempt to fix a PLT regression on Mac

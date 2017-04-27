@@ -493,11 +493,6 @@ template<> struct ArgumentCoder<WebCore::FilterOperation> {
 bool decodeFilterOperation(Decoder&, RefPtr<WebCore::FilterOperation>&);
 #endif
 
-template<> struct ArgumentCoder<WebCore::SessionID> {
-    static void encode(Encoder&, const WebCore::SessionID&);
-    static bool decode(Decoder&, WebCore::SessionID&);
-};
-
 template<> struct ArgumentCoder<WebCore::BlobPart> {
     static void encode(Encoder&, const WebCore::BlobPart&);
     static bool decode(Decoder&, WebCore::BlobPart&);

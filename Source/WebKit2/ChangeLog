@@ -1,3 +1,23 @@
+2017-04-27  Brady Eidson  <beidson@apple.com>
+
+        Refactor SessionID to support multiple non-ephemeral (persistent) sessions.
+        https://bugs.webkit.org/show_bug.cgi?id=171367
+
+        Reviewed by Andy Estes.
+
+        * Shared/ChildProcess.cpp:
+        (WebKit::ChildProcess::initialize): Child processes should never be generating new SessionIDs,
+          so enable generation protection.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<SessionID>::encode): Deleted.
+        (IPC::ArgumentCoder<SessionID>::decode): Deleted.
+        * Shared/WebCoreArgumentCoders.h:
+
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::createNonPersistent):
+        (WebKit::generateNonPersistentSessionID): Deleted.
+
 2017-04-27  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         REGRESSION(r213764): Async decoding of animated images is disabled for ImageDocument

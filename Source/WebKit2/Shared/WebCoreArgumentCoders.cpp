@@ -2019,22 +2019,6 @@ bool ArgumentCoder<FilterOperations>::decode(Decoder& decoder, FilterOperations&
 }
 #endif // !USE(COORDINATED_GRAPHICS)
 
-void ArgumentCoder<SessionID>::encode(Encoder& encoder, const SessionID& sessionID)
-{
-    encoder << sessionID.sessionID();
-}
-
-bool ArgumentCoder<SessionID>::decode(Decoder& decoder, SessionID& sessionID)
-{
-    uint64_t session;
-    if (!decoder.decode(session))
-        return false;
-
-    sessionID = SessionID(session);
-
-    return true;
-}
-
 void ArgumentCoder<BlobPart>::encode(Encoder& encoder, const BlobPart& blobPart)
 {
     encoder << static_cast<uint32_t>(blobPart.type());
