@@ -23,7 +23,7 @@ AXRequired: 0
 AXChecked: 0
 AXPlatformAttributes: computed-role:alert, xml-roles:alert, tag:div, toolkit:WebKitGtk
 ------------
-AXRole: AXAlert
+AXRole: AXDialog
 AXParent: AXWebArea
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }

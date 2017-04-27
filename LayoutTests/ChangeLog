@@ -1,3 +1,14 @@
+2017-04-27  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        [ATK] ARIA alertdialogs should be exposed with ROLE_DIALOG
+        https://bugs.webkit.org/show_bug.cgi?id=171187
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/aria-mappings-expected.txt: Updated.
+        * accessibility/gtk/xml-roles-exposed-expected.txt: Updated.
+        * platform/gtk/accessibility/roles-exposed-expected.txt: Updated.
+
 2017-04-27  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Make fast/text/complex-small-caps-non-bmp-capitalize.html more robust

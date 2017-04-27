@@ -457,9 +457,9 @@ static AtkRole atkRole(AccessibilityObject* coreObject)
 {
     AccessibilityRole role = coreObject->roleValue();
     switch (role) {
-    case ApplicationAlertDialogRole:
     case ApplicationAlertRole:
         return ATK_ROLE_ALERT;
+    case ApplicationAlertDialogRole:
     case ApplicationDialogRole:
         return ATK_ROLE_DIALOG;
     case ApplicationStatusRole:

@@ -488,7 +488,7 @@ div[role=alert]
       AXRole: AXAlert
       
 div[role=alertdialog]
-      AXRole: AXAlert
+      AXRole: AXDialog
       
 div[role=application]
       AXRole: AXEmbedded
