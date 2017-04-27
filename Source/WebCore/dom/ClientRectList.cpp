@@ -42,6 +42,11 @@ ClientRectList::ClientRectList(const Vector<FloatQuad>& quads)
         m_list.uncheckedAppend(ClientRect::create(quad.enclosingBoundingBox()));
 }
 
+ClientRectList::ClientRectList(Vector<Ref<ClientRect>>&& rects)
+    : m_list(WTFMove(rects))
+{
+}
+
 ClientRectList::~ClientRectList()
 {
 }

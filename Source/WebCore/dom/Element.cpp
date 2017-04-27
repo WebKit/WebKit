@@ -39,6 +39,7 @@
 #include "ContainerNodeAlgorithms.h"
 #include "CustomElementReactionQueue.h"
 #include "CustomElementRegistry.h"
+#include "DOMRect.h"
 #include "DOMTokenList.h"
 #include "DocumentAnimation.h"
 #include "DocumentSharedObjectPool.h"
@@ -1145,13 +1146,22 @@ LayoutRect Element::absoluteEventHandlerBounds(bool& includesFixedPositionElemen
     return absoluteEventBoundsOfElementAndDescendants(includesFixedPositionElements);
 }
 
-Ref<ClientRectList> Element::getClientRects()
+static Vector<Ref<DOMRect>> toDOMRectVector(const Vector<FloatQuad>& quads)
+{
+    Vector<Ref<DOMRect>> result;
+    result.reserveInitialCapacity(quads.size());
+    for (auto& quad : quads)
+        result.uncheckedAppend(DOMRect::create(quad.enclosingBoundingBox()));
+    return result;
+}
+
+Vector<Ref<DOMRect>> Element::getClientRects()
 {
     document().updateLayoutIgnorePendingStylesheets();
 
     RenderBoxModelObject* renderBoxModelObject = this->renderBoxModelObject();
     if (!renderBoxModelObject)
-        return ClientRectList::create();
+        return { };
 
     // FIXME: Handle SVG elements.
     // FIXME: Handle table/inline-table with a caption.
@@ -1159,10 +1169,10 @@ Ref<ClientRectList> Element::getClientRects()
     Vector<FloatQuad> quads;
     renderBoxModelObject->absoluteQuads(quads);
     document().adjustFloatQuadsForScrollAndAbsoluteZoomAndFrameScale(quads, renderBoxModelObject->style());
-    return ClientRectList::create(quads);
+    return toDOMRectVector(quads);
 }
 
-Ref<ClientRect> Element::getBoundingClientRect()
+Ref<DOMRect> Element::getBoundingClientRect()
 {
     document().updateLayoutIgnorePendingStylesheets();
 
@@ -1180,14 +1190,14 @@ Ref<ClientRect> Element::getBoundingClientRect()
     }
 
     if (quads.isEmpty())
-        return ClientRect::create();
+        return DOMRect::create();
 
     FloatRect result = quads[0].boundingBox();
     for (size_t i = 1; i < quads.size(); ++i)
         result.unite(quads[i].boundingBox());
 
     document().adjustFloatRectForScrollAndAbsoluteZoomAndFrameScale(result, renderer()->style());
-    return ClientRect::create(result);
+    return DOMRect::create(result);
 }
 
 IntRect Element::clientRect() const

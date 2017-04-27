@@ -41,7 +41,6 @@ function checkHasIterator(interfaceName, _obj)
 
 var media = document.createElement("video");
 checkHasIterator("AudioTrackList", media.audioTracks);
-checkHasIterator("ClientRectList", document.body.getClientRects());
 checkHasIterator("CSSRuleList", window.getMatchedCSSRules(document.body));
 checkHasIterator("CSSStyleDeclaration", window.getComputedStyle(document.body));
 checkHasIterator("CSSValueList", window.getComputedStyle(document.body).getPropertyCSSValue('background-position'));

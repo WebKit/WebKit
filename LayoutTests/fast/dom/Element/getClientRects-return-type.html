@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+description("Tests that Element.getClientRects() returns an array of DOMRect objects.");
+
+const rects = document.body.getClientRects();
+shouldBe("rects.__proto__", "Array.prototype");
+shouldBe("rects.length", "1");
+shouldBe("rects[0].__proto__", "DOMRect.prototype");
+</script>
+<script src="../../../resources/js-test-post.js"></script>>
+</body>
+</html>

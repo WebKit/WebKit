@@ -316,7 +316,7 @@ function createTests() {
     result.push(function(jsonObject){
             return jsonObject.stringify(clientRect);
     });
-    result[result.length - 1].expected = JSON.stringify({top : clientRect.top, right : clientRect.right, bottom: clientRect.bottom, left : clientRect.left, width : clientRect.width, height : clientRect.height });
+    result[result.length - 1].expected = JSON.stringify({x: clientRect.x, y: clientRect.y, width : clientRect.width, height : clientRect.height, top : clientRect.top, right : clientRect.right, bottom: clientRect.bottom, left : clientRect.left });
     result.push(function(jsonObject){
         return jsonObject.stringify(objectWithSideEffectGetter);
     });

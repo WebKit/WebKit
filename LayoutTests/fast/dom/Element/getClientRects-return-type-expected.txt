@@ -1,0 +1,12 @@
+Tests that Element.getClientRects() returns an array of DOMRect objects.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS rects.__proto__ is Array.prototype
+PASS rects.length is 1
+PASS rects[0].__proto__ is DOMRect.prototype
+PASS successfullyParsed is true
+
+TEST COMPLETE
+>

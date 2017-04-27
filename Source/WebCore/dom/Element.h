@@ -37,10 +37,9 @@
 
 namespace WebCore {
 
-class ClientRect;
-class ClientRectList;
 class CustomElementReactionQueue;
 class DatasetDOMStringMap;
+class DOMRect;
 class DOMTokenList;
 class ElementRareData;
 class HTMLDocument;
@@ -173,8 +172,8 @@ public:
 
     WEBCORE_EXPORT IntRect boundsInRootViewSpace();
 
-    Ref<ClientRectList> getClientRects();
-    Ref<ClientRect> getBoundingClientRect();
+    Vector<Ref<DOMRect>> getClientRects();
+    Ref<DOMRect> getBoundingClientRect();
 
     // Returns the absolute bounding box translated into client coordinates.
     WEBCORE_EXPORT IntRect clientRect() const;

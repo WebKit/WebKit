@@ -108,8 +108,8 @@
     [ImplementedAs=matches, MayThrowException] boolean webkitMatchesSelector(DOMString selectors);
 
     // CSSOM View Module API
-    ClientRectList getClientRects();
-    ClientRect getBoundingClientRect();
+    sequence<DOMRect> getClientRects();
+    [NewObject] DOMRect getBoundingClientRect();
 
 #if defined(ENABLE_FULLSCREEN_API) && ENABLE_FULLSCREEN_API
     // Mozilla version

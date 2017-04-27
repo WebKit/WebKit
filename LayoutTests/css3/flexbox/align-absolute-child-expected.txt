@@ -1,10 +1,12 @@
 
+PASS position of x 
+PASS position of y 
+PASS position of width 
+PASS position of height 
 PASS position of top 
 PASS position of right 
 PASS position of bottom 
 PASS position of left 
-PASS position of width 
-PASS position of height 
 PASS position of toJSON 
 PASS .flexbox 1 
 PASS .flexbox 2 

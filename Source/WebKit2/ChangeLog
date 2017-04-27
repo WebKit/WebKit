@@ -1,3 +1,17 @@
+2017-04-27  Chris Dumez  <cdumez@apple.com>
+
+        Element.getBoundingClientRect() / getClientRects() should return a DOMRect types
+        https://bugs.webkit.org/show_bug.cgi?id=171226
+
+        Reviewed by Simon Fraser.
+
+        GTK build fix.
+
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMElement.cpp:
+        (toClientRect):
+        (webkit_dom_element_get_bounding_client_rect):
+        (webkit_dom_element_get_client_rects):
+
 2017-04-27  Brady Eidson  <beidson@apple.com>
 
         Update NetworkStorageSession to support multiple persistent sessions and explicitly set cookie storages.

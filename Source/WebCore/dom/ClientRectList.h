@@ -39,6 +39,7 @@ namespace WebCore {
     public:
         static Ref<ClientRectList> create() { return adoptRef(*new ClientRectList); }
         static Ref<ClientRectList> create(const Vector<FloatQuad>& quads) { return adoptRef(*new ClientRectList(quads)); }
+        static Ref<ClientRectList> create(Vector<Ref<ClientRect>>&& rects) { return adoptRef(*new ClientRectList(WTFMove(rects))); }
         WEBCORE_EXPORT ~ClientRectList();
 
         unsigned length() const;
@@ -47,6 +48,7 @@ namespace WebCore {
     private:
         WEBCORE_EXPORT ClientRectList();
         WEBCORE_EXPORT explicit ClientRectList(const Vector<FloatQuad>&);
+        WEBCORE_EXPORT explicit ClientRectList(Vector<Ref<ClientRect>>&&);
 
         Vector<Ref<ClientRect>> m_list;
     }; 

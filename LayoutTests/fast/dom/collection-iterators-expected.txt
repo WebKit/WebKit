@@ -12,15 +12,6 @@ PASS 'keys' in obj is false
 PASS 'forEach' in obj is false
 PASS 'values' in obj is false
 
-* ClientRectList
-PASS obj.__proto__ is ClientRectList.prototype
-PASS Symbol.iterator in obj is true
-PASS for..of did not throw an exception
-PASS 'entries' in obj is false
-PASS 'keys' in obj is false
-PASS 'forEach' in obj is false
-PASS 'values' in obj is false
-
 * CSSRuleList
 PASS obj.__proto__ is CSSRuleList.prototype
 PASS Symbol.iterator in obj is true

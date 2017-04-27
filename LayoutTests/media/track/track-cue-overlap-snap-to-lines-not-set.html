@@ -11,7 +11,7 @@
 
         var cueDisplayElement;
 
-        ClientRect.prototype.intersects = function(that)
+        DOMRect.prototype.intersects = function(that)
         {
             // Separating axis theorem:
             return Math.abs(this.top - that.top) < Math.abs(this.height + that.height) / 2

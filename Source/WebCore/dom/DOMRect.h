@@ -26,13 +26,18 @@
 #pragma once
 
 #include "DOMRectReadOnly.h"
+#include "FloatRect.h"
+#include "IntRect.h"
 
 namespace WebCore {
 
 class DOMRect : public DOMRectReadOnly {
     WTF_MAKE_FAST_ALLOCATED;
 public:
+    static Ref<DOMRect> create() { return adoptRef(*new DOMRect()); }
     static Ref<DOMRect> create(double x, double y, double width, double height) { return adoptRef(*new DOMRect(x, y, width, height)); }
+    static Ref<DOMRect> create(FloatRect rect) { return adoptRef(*new DOMRect(rect.x(), rect.y(), rect.width(), rect.height())); }
+    static Ref<DOMRect> create(IntRect rect) { return adoptRef(*new DOMRect(rect.x(), rect.y(), rect.width(), rect.height())); }
     static Ref<DOMRect> fromRect(const DOMRectInit& init) { return create(init.x, init.y, init.width, init.height); }
 
     void setX(double x) { m_x = x; }
@@ -46,6 +51,8 @@ private:
         : DOMRectReadOnly(x, y, width, height)
     {
     }
+
+    DOMRect() = default;
 };
 
 }

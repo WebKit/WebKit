@@ -1,3 +1,14 @@
+2017-04-27  Chris Dumez  <cdumez@apple.com>
+
+        Element.getBoundingClientRect() / getClientRects() should return a DOMRect types
+        https://bugs.webkit.org/show_bug.cgi?id=171226
+
+        Reviewed by Simon Fraser.
+
+        Add baseline for web-platform-tests that is now passing and unskipped.
+
+        * web-platform-tests/cssom-view/cssom-getBoundingClientRect-002-expected.txt: Added.
+
 2017-04-27  Frederic Wang  <fwang@igalia.com>
 
         Fix some tests from platform-tests/cssom-view/cssom-view/

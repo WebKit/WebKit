@@ -59,11 +59,13 @@ protected:
     {
     }
 
+    DOMRectReadOnly() = default;
+
     // Any of these can be NaN or Inf.
-    double m_x;
-    double m_y;
-    double m_width; // Can be negative.
-    double m_height; // Can be negative.
+    double m_x { 0 };
+    double m_y { 0 };
+    double m_width { 0 }; // Can be negative.
+    double m_height { 0 }; // Can be negative.
 }; 
 
 }

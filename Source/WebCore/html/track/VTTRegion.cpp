@@ -35,6 +35,7 @@
 #if ENABLE(VIDEO_TRACK)
 
 #include "ClientRect.h"
+#include "DOMRect.h"
 #include "DOMTokenList.h"
 #include "ElementChildIterator.h"
 #include "ExceptionCode.h"
@@ -311,7 +312,7 @@ void VTTRegion::displayLastTextTrackCueBox()
 
     // Find first cue that is not entirely displayed and scroll it upwards.
     for (auto& child : childrenOfType<Element>(*m_cueContainer)) {
-        Ref<ClientRect> rect = child.getBoundingClientRect();
+        auto rect = child.getBoundingClientRect();
         float childTop = rect->top();
         float childBottom = rect->bottom();
 

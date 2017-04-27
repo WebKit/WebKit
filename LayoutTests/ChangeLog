@@ -1,3 +1,32 @@
+2017-04-27  Chris Dumez  <cdumez@apple.com>
+
+        Element.getBoundingClientRect() / getClientRects() should return a DOMRect types
+        https://bugs.webkit.org/show_bug.cgi?id=171226
+
+        Reviewed by Simon Fraser.
+
+        Update existing tests to reflect behavior change.
+
+        * TestExpectations:
+        * css3/flexbox/align-absolute-child-expected.txt:
+        * fast/css/ClientRect-attributes-prototype-expected.txt: Removed.
+        * fast/css/ClientRect-attributes-prototype.html: Removed.
+        * fast/css/ClientRect-serialization-expected.txt: Removed.
+        * fast/css/ClientRect-serialization.html: Removed.
+        * fast/css/DOMRect-attributes-prototype-expected.txt: Added.
+        * fast/css/DOMRect-attributes-prototype.html: Added.
+        * fast/css/DOMRect-serialization-expected.txt: Added.
+        * fast/css/DOMRect-serialization.html: Added.
+        * fast/dom/Element/getClientRects-return-type-expected.txt: Added.
+        * fast/dom/Element/getClientRects-return-type.html: Added.
+        * fast/dom/collection-iterators-expected.txt:
+        * fast/dom/collection-iterators.html:
+        * fast/visual-viewport/zoomed-fixed-expected.txt:
+        * fast/visual-viewport/zoomed-fixed-header-and-footer-expected.txt:
+        * fast/zooming/client-rect-in-fixed-zoomed-expected.txt:
+        * fast/zooming/client-rect-in-fixed-zoomed.html:
+        * js/resources/JSON-stringify.js:
+
 2017-04-27  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark media/modern-media-controls/fullscreen-button/fullscreen-button.html as flaky.
