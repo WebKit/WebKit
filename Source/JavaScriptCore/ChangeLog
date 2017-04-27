@@ -1,5 +1,35 @@
 2017-04-27  Keith Miller  <keith_miller@apple.com>
 
+        WebAssembly: Don't tier up the same function twice
+        https://bugs.webkit.org/show_bug.cgi?id=171397
+
+        Reviewed by Filip Pizlo.
+
+        Because we don't CAS the tier up count on function entry/loop backedge and we use the least significant to indicate whether or not tier up has already started we could see the following:
+
+        Threads A and B are running count in memory is (0):
+
+        A: load tier up count (0)
+        B: load tier up count (0)
+        A: decrement count to -2 and see we need to check for tier up (0)
+        A: store -2 to count (-2)
+        A: exchangeOr(1) to tier up count (-1)
+        B: decrement count to -2 and see we need to check for tier up (-1)
+        B: store -2 to count (-2)
+        B: exchangeOr(1) to tier up count (-1)
+
+        This would cause us to tier up the same function twice, which we would rather avoid.
+
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::emitTierUpCheck):
+        * wasm/WasmTierUpCount.h:
+        (JSC::Wasm::TierUpCount::TierUpCount):
+        (JSC::Wasm::TierUpCount::loopDecrement):
+        (JSC::Wasm::TierUpCount::functionEntryDecrement):
+        (JSC::Wasm::TierUpCount::shouldStartTierUp):
+
+2017-04-27  Keith Miller  <keith_miller@apple.com>
+
         REGRESSION (r215843): ASSERTION FAILED: !m_completionTasks[0].first in  JSC::Wasm::Plan::tryRemoveVMAndCancelIfLast(JSC::VM &)
         https://bugs.webkit.org/show_bug.cgi?id=171380
 

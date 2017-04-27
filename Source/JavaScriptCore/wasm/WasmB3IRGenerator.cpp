@@ -834,7 +834,6 @@ BasicBlock* B3IRGenerator::emitTierUpCheck(BasicBlock* entry, uint32_t decrement
     if (!m_tierUp)
         return entry;
 
-    ASSERT(!(decrementCount % 2));
     // FIXME: Make this a patchpoint.
     BasicBlock* continuation = m_proc.addBlock();
 

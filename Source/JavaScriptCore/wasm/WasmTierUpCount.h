@@ -42,28 +42,30 @@ class TierUpCount {
     WTF_MAKE_NONCOPYABLE(TierUpCount);
 public:
     TierUpCount()
-        : m_count(Options::webAssemblyOMGTierUpCount() * 2)
+        : m_count(Options::webAssemblyOMGTierUpCount())
+        , m_tierUpStarted(false)
     {
     }
 
     TierUpCount(TierUpCount&& other)
     {
-        ASSERT(other.m_count == Options::webAssemblyOMGTierUpCount() * 2);
+        ASSERT(other.m_count == Options::webAssemblyOMGTierUpCount());
         m_count = other.m_count;
     }
 
-    static uint32_t loopDecrement() { return Options::webAssemblyLoopDecrement() * 2; }
-    static uint32_t functionEntryDecrement() { return Options::webAssemblyFunctionEntryDecrement() * 2; }
+    static uint32_t loopDecrement() { return Options::webAssemblyLoopDecrement(); }
+    static uint32_t functionEntryDecrement() { return Options::webAssemblyFunctionEntryDecrement(); }
 
     bool shouldStartTierUp()
     {
-        return !(WTF::atomicExchangeOr(&m_count, 1) & 1);
+        return !m_tierUpStarted.exchange(true);
     }
 
     int32_t count() { return bitwise_cast<int32_t>(m_count); }
 
 private:
     uint32_t m_count;
+    Atomic<bool> m_tierUpStarted;
 };
     
 } } // namespace JSC::Wasm
