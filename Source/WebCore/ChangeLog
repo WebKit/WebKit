@@ -1,3 +1,16 @@
+2017-04-27  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Attempt to fix a PLT regression on Mac
+        <rdar://problem/31826998>
+
+        Unreviewed.
+
+        Disable passing the TypeIdentifierHint to CGImageSourceCreateIncremental()
+        on Mac for now.
+
+        * platform/graphics/cg/ImageDecoderCG.cpp:
+        (WebCore::ImageDecoder::ImageDecoder):
+
 2017-04-27  Daniel Bates  <dabates@apple.com>
 
         Rename callerDOMWindow()/CallerDocument to incumbentDOMWindow()/IncumbentDocument
