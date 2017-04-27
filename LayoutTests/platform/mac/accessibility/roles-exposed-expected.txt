@@ -1109,6 +1109,11 @@ div[role=gridcell]
       AXSubrole: 
       AXRoleDescription: cell
       
+div[role=feed]
+      AXRole: AXGroup
+      AXSubrole: AXApplicationGroup
+      AXRoleDescription: group
+      
 div[role=group]
       AXRole: AXGroup
       AXSubrole: AXApplicationGroup

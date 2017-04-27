@@ -2181,6 +2181,7 @@ static void initializeRoleMap()
         { "combobox", ComboBoxRole },
         { "definition", DefinitionRole },
         { "document", DocumentRole },
+        { "feed", ApplicationGroupRole },
         { "form", FormRole },
         { "rowheader", RowHeaderRole },
         { "group", ApplicationGroupRole },

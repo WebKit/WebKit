@@ -664,6 +664,9 @@ div[role=columnheader]
 div[role=gridcell]
       AXRole: AXCell
       
+div[role=feed]
+      AXRole: AXGroup
+      
 div[role=group]
       AXRole: AXGroup
       

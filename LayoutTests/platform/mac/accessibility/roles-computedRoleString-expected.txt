@@ -113,6 +113,7 @@ PASS: div[role="row"] -> row.
 PASS: div[role="rowheader"] -> rowheader. 
 PASS: div[role="columnheader"] -> columnheader. 
 PASS: div[role="gridcell"] -> gridcell. 
+PASS: div[role="feed"] -> group. 
 PASS: div[role="group"] -> group. 
 PASS: div[role="heading"] -> heading. 
 PASS: div[role="img"] -> img. 

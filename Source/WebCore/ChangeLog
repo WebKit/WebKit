@@ -1,3 +1,21 @@
+2017-04-27  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: Expose elements with the ARIA "feed" role
+        https://bugs.webkit.org/show_bug.cgi?id=171184
+
+        Reviewed by Chris Fleizach.
+
+        Map elements with the "feed" role to the internal ApplicationGroupRole
+        AccessibilityRole. This prevents them from being unexpectedly pruned from
+        the accessibility tree, and causes them to be exposed with ATK_ROLE_PANEL
+        in WebKitGtk and AXGroup in Safari.
+
+        No new tests needed. Instead, add the "feed" role to roles-exposed.html,
+        xml-roles-exposed.html, and roles-computedRoleString.html.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::initializeRoleMap):
+
 2017-04-27  Brady Eidson  <beidson@apple.com>
 
         Update NetworkStorageSession to support multiple persistent sessions and explicitly set cookie storages.

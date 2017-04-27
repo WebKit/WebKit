@@ -270,6 +270,25 @@ AXRequired: 0
 AXChecked: 0
 AXPlatformAttributes: computed-role:document, xml-roles:document, tag:div, toolkit:WebKitGtk
 ------------
+AXRole: AXGroup
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition: { 0.000000, 0.000000 }
+AXSize: { 0.000000, 0.000000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:group, xml-roles:feed, tag:div, toolkit:WebKitGtk
+------------
 AXRole: AXForm
 AXParent: AXWebArea
 AXChildren: 0
