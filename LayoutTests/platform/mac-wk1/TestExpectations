@@ -359,3 +359,6 @@ webkit.org/b/170935 imported/w3c/web-platform-tests/css/selectors4/focus-within-
 webkit.org/b/170935 imported/w3c/web-platform-tests/css/selectors4/focus-within-shadow-003.html [ ImageOnlyFailure ]
 webkit.org/b/170935 imported/w3c/web-platform-tests/css/selectors4/focus-within-shadow-004.html [ ImageOnlyFailure ]
 webkit.org/b/170935 imported/w3c/web-platform-tests/css/selectors4/focus-within-shadow-005.html [ ImageOnlyFailure ]
+
+# auto-sizing produces inconsistent image results
+css3/viewport-percentage-lengths/vh-auto-size.html [ ImageOnlyFailure ]

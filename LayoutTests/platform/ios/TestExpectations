@@ -2944,3 +2944,6 @@ http/tests/security/contentSecurityPolicy/audio-redirect-allowed2.html [ Skip ]
 http/tests/security/contentSecurityPolicy/video-redirect-allowed2.html [ Skip ]
 
 webkit.org/b/171272 fast/text/kaithi.html [ ImageOnlyFailure ]
+
+# auto-sizing produces inconsistent image results
+css3/viewport-percentage-lengths/vh-auto-size.html [ ImageOnlyFailure ]

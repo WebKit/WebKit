@@ -3757,6 +3757,9 @@ void FrameView::autoSizeIfEnabled()
         setScrollbarModes(horizonalScrollbarMode, verticalScrollbarMode, true, true);
     }
 
+    // All the resizing above may have invalidated style (for example if viewport units are being used).
+    document->updateStyleIfNeeded();
+
     m_autoSizeContentSize = contentsSize();
 
     if (m_autoSizeFixedMinimumHeight) {
