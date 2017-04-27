@@ -1922,6 +1922,12 @@ static Vector<FloatRect> floatRectsForCGRectArray(NSArray<NSValue *> *rectValues
 - (void)_performDataInteraction:(id)dataInteraction client:(CGPoint)clientPosition global:(CGPoint)globalPosition operation:(uint64_t)operation
 {
 }
+
+- (BOOL)_tryToPerformDataInteraction:(id)dataInteraction client:(CGPoint)clientPosition global:(CGPoint)globalPosition operation:(uint64_t)operation
+{
+    return NO;
+}
+
 - (void)_endedDataInteraction:(CGPoint)clientPosition global:(CGPoint)globalPosition
 {
 }
