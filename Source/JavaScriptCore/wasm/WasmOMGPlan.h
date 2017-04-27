@@ -42,7 +42,7 @@ class OMGPlan final : public Plan {
 public:
     using Base = Plan;
     // Note: CompletionTask should not hold a reference to the Plan otherwise there will be a reference cycle.
-    OMGPlan(VM&, Ref<Module>, uint32_t functionIndex, MemoryMode, CompletionTask&&);
+    OMGPlan(Ref<Module>, uint32_t functionIndex, MemoryMode, CompletionTask&&);
 
     bool hasWork() const override { return !m_completed; }
     void work(CompilationEffort) override;

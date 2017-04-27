@@ -50,8 +50,8 @@ namespace JSC { namespace Wasm {
 
 static const bool verbose = false;
 
-OMGPlan::OMGPlan(VM& vm, Ref<Module> module, uint32_t functionIndex, MemoryMode mode, CompletionTask&& task)
-    : Base(vm, makeRef(const_cast<ModuleInformation&>(module->moduleInformation())), WTFMove(task))
+OMGPlan::OMGPlan(Ref<Module> module, uint32_t functionIndex, MemoryMode mode, CompletionTask&& task)
+    : Base(nullptr, makeRef(const_cast<ModuleInformation&>(module->moduleInformation())), WTFMove(task))
     , m_module(module.copyRef())
     , m_codeBlock(*module->codeBlockFor(mode))
     , m_functionIndex(functionIndex)
@@ -158,14 +158,12 @@ void OMGPlan::work(CompilationEffort)
 
 void runOMGPlanForIndex(Context* context, uint32_t functionIndex)
 {
-    VM& vm = *context->vm();
-
     JSWebAssemblyCodeBlock* codeBlock = context->codeBlock();
     ASSERT(context->memoryMode() == codeBlock->m_codeBlock->mode());
 
     // We use the least significant bit of the tierUpCount to represent whether or not someone has already started the tier up.
     if (codeBlock->m_codeBlock->tierUpCount(functionIndex).shouldStartTierUp()) {
-        Ref<Plan> plan = adoptRef(*new OMGPlan(vm, context->module()->module(), functionIndex, codeBlock->m_codeBlock->mode(), Plan::dontFinalize()));
+        Ref<Plan> plan = adoptRef(*new OMGPlan(context->module()->module(), functionIndex, codeBlock->m_codeBlock->mode(), Plan::dontFinalize()));
         ensureWorklist().enqueue(plan.copyRef());
         if (UNLIKELY(!Options::useConcurrentJIT()))
             plan->waitForCompletion();

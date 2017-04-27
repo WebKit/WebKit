@@ -3191,7 +3191,7 @@ static EncodedJSValue JSC_HOST_CALL functionTestWasmModuleFunctions(ExecState* e
     if (exec->argumentCount() != functionCount + 2)
         CRASH();
 
-    Ref<Wasm::BBQPlan> plan = adoptRef(*new Wasm::BBQPlan(vm, static_cast<uint8_t*>(source->vector()), source->length(), Wasm::BBQPlan::FullCompile, Wasm::Plan::dontFinalize()));
+    Ref<Wasm::BBQPlan> plan = adoptRef(*new Wasm::BBQPlan(nullptr, static_cast<uint8_t*>(source->vector()), source->length(), Wasm::BBQPlan::FullCompile, Wasm::Plan::dontFinalize()));
     Wasm::ensureWorklist().enqueue(plan.copyRef());
     Wasm::ensureWorklist().completePlanSynchronously(plan.get());
     if (plan->failed()) {

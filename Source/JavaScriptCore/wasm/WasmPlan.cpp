@@ -50,20 +50,20 @@ namespace JSC { namespace Wasm {
 
 static const bool verbose = false;
 
-Plan::Plan(VM& vm, Ref<ModuleInformation> info, CompletionTask&& task)
+Plan::Plan(VM* vm, Ref<ModuleInformation> info, CompletionTask&& task)
     : m_moduleInformation(WTFMove(info))
     , m_source(m_moduleInformation->source.data())
     , m_sourceLength(m_moduleInformation->source.size())
 {
-    m_completionTasks.append(std::make_pair(&vm, WTFMove(task)));
+    m_completionTasks.append(std::make_pair(vm, WTFMove(task)));
 }
 
-Plan::Plan(VM& vm, const uint8_t* source, size_t sourceLength, CompletionTask&& task)
+Plan::Plan(VM* vm, const uint8_t* source, size_t sourceLength, CompletionTask&& task)
     : m_moduleInformation(makeRef(*new ModuleInformation(Vector<uint8_t>())))
     , m_source(source)
     , m_sourceLength(sourceLength)
 {
-    m_completionTasks.append(std::make_pair(&vm, WTFMove(task)));
+    m_completionTasks.append(std::make_pair(vm, WTFMove(task)));
 }
 
 void Plan::runCompletionTasks(const AbstractLocker&)
@@ -71,7 +71,7 @@ void Plan::runCompletionTasks(const AbstractLocker&)
     ASSERT(isComplete() && !hasWork());
 
     for (auto& task : m_completionTasks)
-        task.second->run(*task.first, *this);
+        task.second->run(task.first, *this);
     m_completionTasks.clear();
     m_completed.notifyAll();
 }
@@ -82,7 +82,7 @@ void Plan::addCompletionTask(VM& vm, CompletionTask&& task)
     if (!isComplete())
         m_completionTasks.append(std::make_pair(&vm, WTFMove(task)));
     else
-        task->run(vm, *this);
+        task->run(&vm, *this);
 }
 
 void Plan::waitForCompletion()
@@ -96,6 +96,12 @@ void Plan::waitForCompletion()
 bool Plan::tryRemoveVMAndCancelIfLast(VM& vm)
 {
     LockHolder locker(m_lock);
+
+    if (!ASSERT_DISABLED) {
+        // We allow the first completion task to not have a vm.
+        for (unsigned i = 1; i < m_completionTasks.size(); ++i)
+            ASSERT(m_completionTasks[i].first);
+    }
 
     bool removedAnyTasks = false;
     m_completionTasks.removeAllMatching([&] (const std::pair<VM*, CompletionTask>& pair) {
@@ -112,8 +118,8 @@ bool Plan::tryRemoveVMAndCancelIfLast(VM& vm)
         return true;
     }
 
-    if (m_completionTasks.size() == 1) {
-        ASSERT(!m_completionTasks[0].first);
+    // FIXME: Make 0 index not so magical: https://bugs.webkit.org/show_bug.cgi?id=171395
+    if (m_completionTasks.isEmpty() || (m_completionTasks.size() == 1 && !m_completionTasks[0].first)) {
         fail(locker, ASCIILiteral("WebAssembly Plan was cancelled. If you see this error message please file a bug at bugs.webkit.org!"));
         return true;
     }

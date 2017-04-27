@@ -51,20 +51,20 @@ namespace JSC { namespace Wasm {
 
 static const bool verbose = false;
 
-BBQPlan::BBQPlan(VM& vm, Ref<ModuleInformation> info, AsyncWork work, CompletionTask&& task)
+BBQPlan::BBQPlan(VM* vm, Ref<ModuleInformation> info, AsyncWork work, CompletionTask&& task)
     : Base(vm, WTFMove(info), WTFMove(task))
     , m_state(State::Validated)
     , m_asyncWork(work)
 {
 }
 
-BBQPlan::BBQPlan(VM& vm, Vector<uint8_t>&& source, AsyncWork work, CompletionTask&& task)
+BBQPlan::BBQPlan(VM* vm, Vector<uint8_t>&& source, AsyncWork work, CompletionTask&& task)
     : BBQPlan(vm, makeRef(*new ModuleInformation(WTFMove(source))), work, WTFMove(task))
 {
     m_state = State::Initial;
 }
 
-BBQPlan::BBQPlan(VM& vm, const uint8_t* source, size_t sourceLength, AsyncWork work, CompletionTask&& task)
+BBQPlan::BBQPlan(VM* vm, const uint8_t* source, size_t sourceLength, AsyncWork work, CompletionTask&& task)
     : Base(vm, source, sourceLength, WTFMove(task))
     , m_state(State::Initial)
     , m_asyncWork(work)

@@ -53,9 +53,9 @@ class CodeBlock : public ThreadSafeRefCounted<CodeBlock> {
 public:
     typedef void CallbackType(VM&, Ref<CodeBlock>&&);
     using AsyncCompilationCallback = RefPtr<WTF::SharedTask<CallbackType>>;
-    static Ref<CodeBlock> create(VM& vm, MemoryMode mode, ModuleInformation& moduleInformation)
+    static Ref<CodeBlock> create(MemoryMode mode, ModuleInformation& moduleInformation)
     {
-        return adoptRef(*new CodeBlock(vm, mode, moduleInformation));
+        return adoptRef(*new CodeBlock(mode, moduleInformation));
     }
 
     void waitUntilFinished();
@@ -114,7 +114,7 @@ public:
 private:
     friend class OMGPlan;
 
-    CodeBlock(VM&, MemoryMode, ModuleInformation&);
+    CodeBlock(MemoryMode, ModuleInformation&);
     unsigned m_calleeCount;
     MemoryMode m_mode;
     Vector<RefPtr<Callee>> m_callees;

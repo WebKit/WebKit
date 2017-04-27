@@ -51,11 +51,11 @@ public:
     using Base = Plan;
     enum AsyncWork : uint8_t { FullCompile, Validation };
     // Note: CompletionTask should not hold a reference to the Plan otherwise there will be a reference cycle.
-    BBQPlan(VM&, Ref<ModuleInformation>, AsyncWork, CompletionTask&&);
-    JS_EXPORT_PRIVATE BBQPlan(VM&, Vector<uint8_t>&&, AsyncWork, CompletionTask&&);
+    BBQPlan(VM*, Ref<ModuleInformation>, AsyncWork, CompletionTask&&);
+    JS_EXPORT_PRIVATE BBQPlan(VM*, Vector<uint8_t>&&, AsyncWork, CompletionTask&&);
     // Note: This constructor should only be used if you are not actually building a module e.g. validation/function tests
     // FIXME: When we get rid of function tests we should remove AsyncWork from this constructor.
-    JS_EXPORT_PRIVATE BBQPlan(VM&, const uint8_t*, size_t, AsyncWork, CompletionTask&&);
+    JS_EXPORT_PRIVATE BBQPlan(VM*, const uint8_t*, size_t, AsyncWork, CompletionTask&&);
 
     bool parseAndValidateModule();
 

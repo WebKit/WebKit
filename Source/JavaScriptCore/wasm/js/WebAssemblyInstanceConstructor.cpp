@@ -78,7 +78,7 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyInstance(ExecState* ex
     JSWebAssemblyInstance* instance = JSWebAssemblyInstance::create(vm, exec, module, importObject, instanceStructure);
     RETURN_IF_EXCEPTION(scope, { });
 
-    instance->finalizeCreation(vm, exec, module->module().compileSync(vm, instance->memoryMode()));
+    instance->finalizeCreation(vm, exec, module->module().compileSync(instance->memoryMode()));
     RETURN_IF_EXCEPTION(scope, { });
     return JSValue::encode(instance);
 }

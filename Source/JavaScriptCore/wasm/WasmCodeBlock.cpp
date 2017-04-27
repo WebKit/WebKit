@@ -35,12 +35,12 @@
 
 namespace JSC { namespace Wasm {
 
-CodeBlock::CodeBlock(VM& vm, MemoryMode mode, ModuleInformation& moduleInformation)
+CodeBlock::CodeBlock(MemoryMode mode, ModuleInformation& moduleInformation)
     : m_calleeCount(moduleInformation.internalFunctionCount())
     , m_mode(mode)
 {
     RefPtr<CodeBlock> protectedThis = this;
-    m_plan = adoptRef(*new BBQPlan(vm, makeRef(moduleInformation), BBQPlan::FullCompile, createSharedTask<Plan::CallbackType>([this, protectedThis = WTFMove(protectedThis)] (VM&, Plan&) {
+    m_plan = adoptRef(*new BBQPlan(nullptr, makeRef(moduleInformation), BBQPlan::FullCompile, createSharedTask<Plan::CallbackType>([this, protectedThis = WTFMove(protectedThis)] (VM*, Plan&) {
         auto locker = holdLock(m_lock);
         if (m_plan->failed()) {
             m_errorMessage = m_plan->errorMessage();
@@ -102,8 +102,9 @@ void CodeBlock::compileAsync(VM& vm, AsyncCompilationCallback&& task)
         // We don't need to keep a RefPtr on the Plan because the worklist will keep
         // a RefPtr on the Plan until the plan finishes notifying all of its callbacks.
         RefPtr<CodeBlock> protectedThis = this;
-        plan->addCompletionTask(vm, createSharedTask<Plan::CallbackType>([this, task = WTFMove(task), protectedThis = WTFMove(protectedThis)] (VM& vm, Plan&) {
-            task->run(vm, makeRef(*this));
+        plan->addCompletionTask(vm, createSharedTask<Plan::CallbackType>([this, task = WTFMove(task), protectedThis = WTFMove(protectedThis)] (VM* vm, Plan&) {
+            ASSERT(vm);
+            task->run(*vm, makeRef(*this));
         }));
     } else
         task->run(vm, makeRef(*this));

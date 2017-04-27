@@ -1,3 +1,48 @@
+2017-04-27  Keith Miller  <keith_miller@apple.com>
+
+        REGRESSION (r215843): ASSERTION FAILED: !m_completionTasks[0].first in  JSC::Wasm::Plan::tryRemoveVMAndCancelIfLast(JSC::VM &)
+        https://bugs.webkit.org/show_bug.cgi?id=171380
+
+        Reviewed by JF Bastien.
+
+        This patch fixes the association of VMs to Wasm::Plans. For validation
+        we want all the completion tasks to be associate with a VM. For BBQ,
+        we want the main task to not be associated with any VM.
+
+        * jsc.cpp:
+        (functionTestWasmModuleFunctions):
+        * wasm/WasmBBQPlan.cpp:
+        (JSC::Wasm::BBQPlan::BBQPlan):
+        * wasm/WasmBBQPlan.h:
+        * wasm/WasmCodeBlock.cpp:
+        (JSC::Wasm::CodeBlock::CodeBlock):
+        (JSC::Wasm::CodeBlock::compileAsync):
+        * wasm/WasmCodeBlock.h:
+        (JSC::Wasm::CodeBlock::create):
+        * wasm/WasmModule.cpp:
+        (JSC::Wasm::makeValidationCallback):
+        (JSC::Wasm::Module::validateSync):
+        (JSC::Wasm::Module::validateAsync):
+        (JSC::Wasm::Module::getOrCreateCodeBlock):
+        (JSC::Wasm::Module::compileSync):
+        (JSC::Wasm::Module::compileAsync):
+        * wasm/WasmModule.h:
+        * wasm/WasmOMGPlan.cpp:
+        (JSC::Wasm::OMGPlan::OMGPlan):
+        (JSC::Wasm::runOMGPlanForIndex):
+        * wasm/WasmOMGPlan.h:
+        * wasm/WasmPlan.cpp:
+        (JSC::Wasm::Plan::Plan):
+        (JSC::Wasm::Plan::runCompletionTasks):
+        (JSC::Wasm::Plan::addCompletionTask):
+        (JSC::Wasm::Plan::tryRemoveVMAndCancelIfLast):
+        * wasm/WasmPlan.h:
+        (JSC::Wasm::Plan::dontFinalize):
+        * wasm/js/WebAssemblyInstanceConstructor.cpp:
+        (JSC::constructJSWebAssemblyInstance):
+        * wasm/js/WebAssemblyPrototype.cpp:
+        (JSC::webAssemblyValidateFunc):
+
 2017-04-27  Saam Barati  <sbarati@apple.com>
 
         Restore some caching functionality that got accidentally removed when doing Wasm PIC patches

@@ -46,13 +46,13 @@ namespace Wasm {
 
 class Plan : public ThreadSafeRefCounted<Plan> {
 public:
-    typedef void CallbackType(VM&, Plan&);
+    typedef void CallbackType(VM*, Plan&);
     using CompletionTask = RefPtr<SharedTask<CallbackType>>;
-    static CompletionTask dontFinalize() { return createSharedTask<CallbackType>([](VM&, Plan&) { }); }
-    Plan(VM&, Ref<ModuleInformation>, CompletionTask&&);
+    static CompletionTask dontFinalize() { return createSharedTask<CallbackType>([](VM*, Plan&) { }); }
+    Plan(VM*, Ref<ModuleInformation>, CompletionTask&&);
 
     // Note: This constructor should only be used if you are not actually building a module e.g. validation/function tests
-    JS_EXPORT_PRIVATE Plan(VM&, const uint8_t*, size_t, CompletionTask&&);
+    JS_EXPORT_PRIVATE Plan(VM*, const uint8_t*, size_t, CompletionTask&&);
     virtual JS_EXPORT_PRIVATE ~Plan();
 
     // If you guarantee the ordering here, you can rely on FIFO of the

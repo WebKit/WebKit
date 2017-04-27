@@ -58,14 +58,14 @@ public:
     Wasm::SignatureIndex signatureIndexFromFunctionIndexSpace(unsigned functionIndexSpace) const;
     const Wasm::ModuleInformation& moduleInformation() const { return m_moduleInformation.get(); }
 
-    Ref<CodeBlock> compileSync(VM&, MemoryMode);
+    Ref<CodeBlock> compileSync(MemoryMode);
     void compileAsync(VM&, MemoryMode, CodeBlock::AsyncCompilationCallback&&);
 
     JS_EXPORT_PRIVATE ~Module();
 
     CodeBlock* codeBlockFor(MemoryMode mode) { return m_codeBlocks[static_cast<uint8_t>(mode)].get(); }
 private:
-    Ref<CodeBlock> getOrCreateCodeBlock(VM&, MemoryMode);
+    Ref<CodeBlock> getOrCreateCodeBlock(MemoryMode);
 
     Module(Ref<ModuleInformation>&&);
     Ref<ModuleInformation> m_moduleInformation;

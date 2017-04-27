@@ -212,7 +212,7 @@ static EncodedJSValue JSC_HOST_CALL webAssemblyValidateFunc(ExecState* exec)
     size_t byteSize;
     uint8_t* base = getWasmBufferFromValue(exec, exec->argument(0), byteOffset, byteSize);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    BBQPlan plan(vm, base + byteOffset, byteSize, BBQPlan::Validation, Plan::dontFinalize());
+    BBQPlan plan(&vm, base + byteOffset, byteSize, BBQPlan::Validation, Plan::dontFinalize());
     // FIXME: We might want to throw an OOM exception here if we detect that something will OOM.
     // https://bugs.webkit.org/show_bug.cgi?id=166015
     return JSValue::encode(jsBoolean(plan.parseAndValidateModule()));
