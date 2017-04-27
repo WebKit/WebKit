@@ -67,7 +67,9 @@ Ref<RTCPeerConnection> RTCPeerConnection::create(ScriptExecutionContext& context
     // Let's make it uncollectable until the pc is closed by JS or the page stops it.
     if (!peerConnection->isClosed()) {
         peerConnection->setPendingActivity(peerConnection.ptr());
-        peerConnection->registerToController();
+
+        auto* page = downcast<Document>(context).page();
+        peerConnection->registerToController(page->rtcController());
     }
     return peerConnection;
 }
@@ -82,6 +84,7 @@ RTCPeerConnection::RTCPeerConnection(ScriptExecutionContext& context)
 
 RTCPeerConnection::~RTCPeerConnection()
 {
+    unregisterFromController();
     stop();
 }
 
@@ -398,26 +401,19 @@ void RTCPeerConnection::doStop()
 
     m_backend->stop();
 
-    unregisterFromController();
     unsetPendingActivity(this);
 }
 
-RTCController& RTCPeerConnection::rtcController()
+void RTCPeerConnection::registerToController(RTCController& controller)
 {
-    ASSERT(scriptExecutionContext());
-    ASSERT(scriptExecutionContext()->isDocument());
-    auto* page = static_cast<Document*>(scriptExecutionContext())->page();
-    return page->rtcController();
-}
-
-void RTCPeerConnection::registerToController()
-{
-    rtcController().add(*this);
+    m_controller = &controller;
+    m_controller->add(*this);
 }
 
 void RTCPeerConnection::unregisterFromController()
 {
-    rtcController().remove(*this);
+    if (m_controller)
+        m_controller->remove(*this);
 }
 
 const char* RTCPeerConnection::activeDOMObjectName() const

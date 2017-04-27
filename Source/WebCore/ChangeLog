@@ -1,3 +1,30 @@
+2017-04-27  Youenn Fablet  <youenn@apple.com>
+
+        LayoutTest webrtc/datachannel/datachannel-event.html is a flaky crash
+        https://bugs.webkit.org/show_bug.cgi?id=171092
+        <rdar://problem/31748066>
+
+        Reviewed by Eric Carlson.
+
+        Covered by manual testing on iterating on the crashing tests.
+        With the patch, they appear to no longer crash.
+
+        The current RTCPeerConnection/RTCController was expecting that peer connections would be stopped before the controller.
+        This assumption is sometimes wrong.
+        Adding clean-up on both sides so that if controller goes away, it notifies its peer connections that they are unregistered.
+
+        * Modules/mediastream/RTCController.cpp:
+        (WebCore::RTCController::~RTCController):
+        * Modules/mediastream/RTCController.h:
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::create):
+        (WebCore::RTCPeerConnection::~RTCPeerConnection):
+        (WebCore::RTCPeerConnection::doStop):
+        (WebCore::RTCPeerConnection::registerToController):
+        (WebCore::RTCPeerConnection::unregisterFromController):
+        (WebCore::RTCPeerConnection::rtcController): Deleted.
+        * Modules/mediastream/RTCPeerConnection.h:
+
 2017-04-27  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         REGRESSION(r213764): Async decoding of animated images is disabled for ImageDocument

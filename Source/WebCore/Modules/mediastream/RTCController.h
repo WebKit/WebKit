@@ -35,6 +35,8 @@ public:
     RTCController() = default;
 
 #if ENABLE(WEB_RTC)
+    ~RTCController();
+
     void add(RTCPeerConnection&);
     void remove(RTCPeerConnection&);
 

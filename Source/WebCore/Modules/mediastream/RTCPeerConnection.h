@@ -145,13 +145,14 @@ public:
 
     void enqueueReplaceTrackTask(RTCRtpSender&, Ref<MediaStreamTrack>&&, DOMPromise<void>&&);
 
+    void clearController() { m_controller = nullptr; }
+
 private:
     RTCPeerConnection(ScriptExecutionContext&);
 
     Ref<RTCRtpTransceiver> completeAddTransceiver(Ref<RTCRtpSender>&&, const RTCRtpTransceiverInit&, const String& trackId, const String& trackKind);
 
-    RTCController& rtcController();
-    void registerToController();
+    void registerToController(RTCController&);
     void unregisterFromController();
 
     // EventTarget implementation.
@@ -183,6 +184,7 @@ private:
     std::unique_ptr<PeerConnectionBackend> m_backend;
 
     RTCConfiguration m_configuration;
+    RTCController* m_controller { nullptr };
 };
 
 } // namespace WebCore

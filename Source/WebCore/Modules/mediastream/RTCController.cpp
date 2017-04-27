@@ -32,6 +32,12 @@
 
 namespace WebCore {
 
+RTCController::~RTCController()
+{
+    for (RTCPeerConnection& connection : m_peerConnections)
+        connection.clearController();
+}
+
 void RTCController::remove(RTCPeerConnection& connection)
 {
     m_peerConnections.removeFirstMatching([&connection](auto item) {
