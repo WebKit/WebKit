@@ -193,7 +193,7 @@ function stringify(v)
 function evalAndLog(_a, _quiet)
 {
   if (typeof _a != "string")
-    debug("WARN: tryAndLog() expects a string argument");
+    debug("WARN: evalAndLog() expects a string argument");
 
   // Log first in case things go horribly wrong or this causes a sync event.
   if (!_quiet)
@@ -208,24 +208,39 @@ function evalAndLog(_a, _quiet)
   return _av;
 }
 
-function shouldBe(_a, _b, quiet)
+function evalAndLogResult(_a)
 {
-  if (typeof _a != "string" || typeof _b != "string")
-    debug("WARN: shouldBe() expects string arguments");
-  var exception;
+  if (typeof _a != "string")
+    debug("WARN: evalAndLogResult() expects a string argument");
+
   var _av;
   try {
      _av = eval(_a);
   } catch (e) {
-     exception = e;
+    testFailed(_a + " threw exception " + e);
   }
-  var _bv = eval(_b);
+
+  debug('<span>' + _a + " is " + escapeHTML(_av) + '</span>');
+}
+
+function shouldBe(_a, _b, quiet)
+{
+  if ((typeof _a != "function" && typeof _a != "string") || (typeof _b != "function" && typeof _b != "string"))
+    debug("WARN: shouldBe() expects function or string arguments");
+  var exception;
+  var _av;
+  try {
+    _av = (typeof _a == "function" ? _a() : eval(_a));
+  } catch (e) {
+    exception = e;
+  }
+  var _bv = (typeof _b == "function" ? _b() : eval(_b));
 
   if (exception)
     testFailed(_a + " should be " + stringify(_bv) + ". Threw exception " + exception);
   else if (isResultCorrect(_av, _bv)) {
     if (!quiet) {
-        testPassed(_a + " is " + _b);
+      testPassed(_a + " is " + (typeof _b == "function" ? _bv : _b));
     }
   } else if (typeof(_av) == typeof(_bv))
     testFailed(_a + " should be " + stringify(_bv) + ". Was " + stringify(_av) + ".");
@@ -375,22 +390,22 @@ function shouldBeCloseTo(_to_eval, _target, _tolerance, quiet)
 
 function shouldNotBe(_a, _b, quiet)
 {
-  if (typeof _a != "string" || typeof _b != "string")
-    debug("WARN: shouldNotBe() expects string arguments");
+  if ((typeof _a != "function" && typeof _a != "string") || (typeof _b != "function" && typeof _b != "string"))
+    debug("WARN: shouldNotBe() expects function or string arguments");
   var exception;
   var _av;
   try {
-     _av = eval(_a);
+    _av = (typeof _a == "function" ? _a() : eval(_a));
   } catch (e) {
-     exception = e;
+    exception = e;
   }
-  var _bv = eval(_b);
+  var _bv = (typeof _b == "function" ? _b() : eval(_b));
 
   if (exception)
     testFailed(_a + " should not be " + _bv + ". Threw exception " + exception);
   else if (!isResultCorrect(_av, _bv)) {
     if (!quiet) {
-        testPassed(_a + " is not " + _b);
+      testPassed(_a + " is not " + (typeof _b == "function" ? _bv : _b));
     }
   } else
     testFailed(_a + " should not be " + _bv + ".");
@@ -445,7 +460,8 @@ function shouldNotBeEqualToString(a, b)
 }
 function shouldBeEmptyString(_a) { shouldBeEqualToString(_a, ""); }
 
-function shouldEvaluateTo(actual, expected) {
+function shouldEvaluateTo(actual, expected)
+{
   // A general-purpose comparator.  'actual' should be a string to be
   // evaluated, as for shouldBe(). 'expected' may be any type and will be
   // used without being eval'ed.
@@ -615,6 +631,24 @@ function shouldThrow(_a, _e, _message)
         testFailed((_message ? _message : _a) + " should throw " + (typeof _e == "undefined" ? "an exception" : _ev) + ". Was undefined.");
     else
         testFailed((_message ? _message : _a) + " should throw " + (typeof _e == "undefined" ? "an exception" : _ev) + ". Was " + _av + ".");
+}
+
+function shouldReject(_a, _message)
+{
+    var _exception;
+    var _av;
+    try {
+        _av = typeof _a == "function" ? _a() : eval(_a);
+    } catch (e) {
+        testFailed((_message ? _message : _a) + " should not throw exception. Threw exception " + e + ".");
+        return Promise.resolve();
+    }
+
+     return _av.then(function(result) {
+        testFailed((_message ? _message : _a) + " should reject promise. Resolved with " + result + ".");
+    }, function(error) {
+        testPassed((_message ? _message : _a) + " rejected promise  with " + error + ".");
+    });
 }
 
 function shouldThrowErrorName(_a, _name)

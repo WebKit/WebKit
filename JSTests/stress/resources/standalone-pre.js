@@ -120,24 +120,26 @@ function stringify(v)
         return "" + v;
 }
 
-function shouldBe(_a, _b)
+function shouldBe(_a, _b, quiet)
 {
-  if (typeof _a != "string" || typeof _b != "string")
-    debug("WARN: shouldBe() expects string arguments");
+  if ((typeof _a != "function" && typeof _a != "string") || (typeof _b != "function" && typeof _b != "string"))
+    debug("WARN: shouldBe() expects function or string arguments");
   var exception;
   var _av;
   try {
-     _av = eval(_a);
+    _av = (typeof _a == "function" ? _a() : eval(_a));
   } catch (e) {
-     exception = e;
+    exception = e;
   }
-  var _bv = eval(_b);
+  var _bv = (typeof _b == "function" ? _b() : eval(_b));
 
   if (exception)
     testFailed(_a + " should be " + stringify(_bv) + ". Threw exception " + exception);
-  else if (isResultCorrect(_av, _bv))
-    testPassed(_a + " is " + _b);
-  else if (typeof(_av) == typeof(_bv))
+  else if (isResultCorrect(_av, _bv)) {
+    if (!quiet) {
+      testPassed(_a + " is " + (typeof _b == "function" ? _bv : _b));
+    }
+  } else if (typeof(_av) == typeof(_bv))
     testFailed(_a + " should be " + stringify(_bv) + ". Was " + stringify(_av) + ".");
   else
     testFailed(_a + " should be " + stringify(_bv) + " (of type " + typeof _bv + "). Was " + _av + " (of type " + typeof _av + ").");
@@ -233,38 +235,38 @@ function shouldBeUndefined(_a)
     testFailed(_a + " should be undefined. Was " + _av);
 }
 
-function shouldNotThrow(_a) {
+function shouldNotThrow(_a, _message) {
     try {
-        eval(_a);
-        testPassed(_a + " did not throw exception.");
+        typeof _a == "function" ? _a() : eval(_a);
+        testPassed((_message ? _message : _a) + " did not throw exception.");
     } catch (e) {
-        testFailed(_a + " should not throw exception. Threw exception " + e + ".");
+        testFailed((_message ? _message : _a) + " should not throw exception. Threw exception " + e + ".");
     }
 }
 
-function shouldThrow(_a, _e)
+function shouldThrow(_a, _e, _message)
 {
-  var exception;
-  var _av;
-  try {
-     _av = eval(_a);
-  } catch (e) {
-     exception = e;
-  }
+    var _exception;
+    var _av;
+    try {
+        _av = typeof _a == "function" ? _a() : eval(_a);
+    } catch (e) {
+        _exception = e;
+    }
 
-  var _ev;
-  if (_e)
-      _ev =  eval(_e);
+    var _ev;
+    if (_e)
+        _ev =  eval(_e);
 
-  if (exception) {
-    if (typeof _e == "undefined" || exception == _ev)
-      testPassed(_a + " threw exception " + exception + ".");
+    if (_exception) {
+        if (typeof _e == "undefined" || _exception == _ev)
+            testPassed((_message ? _message : _a) + " threw exception " + _exception + ".");
+        else
+            testFailed((_message ? _message : _a) + " should throw " + (typeof _e == "undefined" ? "an exception" : _ev) + ". Threw exception " + _exception + ".");
+    } else if (typeof _av == "undefined")
+        testFailed((_message ? _message : _a) + " should throw " + (typeof _e == "undefined" ? "an exception" : _ev) + ". Was undefined.");
     else
-      testFailed(_a + " should throw " + (typeof _e == "undefined" ? "an exception" : _ev) + ". Threw exception " + exception + ".");
-  } else if (typeof _av == "undefined")
-    testFailed(_a + " should throw " + (typeof _e == "undefined" ? "an exception" : _ev) + ". Was undefined.");
-  else
-    testFailed(_a + " should throw " + (typeof _e == "undefined" ? "an exception" : _ev) + ". Was " + _av + ".");
+        testFailed((_message ? _message : _a) + " should throw " + (typeof _e == "undefined" ? "an exception" : _ev) + ". Was " + _av + ".");
 }
 
 function isSuccessfullyParsed()

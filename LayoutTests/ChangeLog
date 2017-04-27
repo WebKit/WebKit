@@ -1,3 +1,89 @@
+2017-04-27  David Kilzer  <ddkilzer@apple.com>
+
+        Enhance shouldBe()/shouldNotBe() to accept anonymous function arguments
+        <https://webkit.org/b/171362>
+        <rdar://problem/31867686>
+
+        Reviewed by Joseph Pecoraro.
+
+        This change makes it possible to pass either the first or second
+        argument (or both) as anonymous functions into shouldBe() and
+        shouldNotBe() to make it easy to capture local variables when
+        writing tests.  This is similar to the change in r202609 for Bug
+        159232 for shouldThrow() and shouldNotThrow().
+
+        Note that shouldBe()/shouldNotBe() from the following files were
+        NOT updated since they were imported from other projects and did
+        share the full WebKit history of resources/js-test-pre.js:
+
+            http/tests/webgl/1.0.2/resources/webgl_test_files/resources/js-test-pre.js
+            js/mozilla/resources/js-test-pre.js
+            webgl/1.0.2/resources/webgl_test_files/resources/js-test-pre.js
+            webgl/1.0.3/resources/webgl_test_files/resources/js-test-pre.js
+
+        However, these files WERE brought up-to-date with the ability to
+        pass anonymous functions into shouldBe()/shouldNotBe() for this
+        bug, and shouldThrow()/shouldNotThrow() which should have
+        originally been fixed with Bug 159232:
+
+            http/tests/resources/js-test-pre.js
+            resources/standalone-pre.js
+
+        * css3/scroll-snap/resources/iframe-content.html: Drive-by fix
+        to debug message for copy-paste error.  Found by searching
+        LayoutTests directory for "expects string arguments".
+
+        * fast/canvas/webgl/array-unit-tests-expected.txt: Update test
+        results.
+        * fast/canvas/webgl/array-unit-tests.html: Fix warning by making
+        second argument to shouldBe() a string.
+
+        * fast/css/script-tests/image-set-parsing.js:
+        (testImageSetRule): Remove comment by changing second argument
+        to shouldBe() into an anonymous function.
+
+        * http/tests/resources/js-test-pre.js:
+        (evalAndLog):
+        (evalAndLogResult):
+        (shouldBe):
+        (shouldNotBe):
+        (shouldEvaluateTo):
+        - Made a full copy of resources/js-test-pre.js to bring this up
+          to speed.  Needs a checker written for it to keep them in sync.
+        * http/tests/security/xssAuditor/block-does-not-leak-location-expected.txt:
+        * http/tests/security/xssAuditor/block-does-not-leak-referrer-expected.txt:
+        - Update line numbers after updating http/tests/resources/js-test-pre.js.
+
+        * js/function-declarations-in-switch-statement-expected.txt:
+        - Update results after fixing warnings.
+        * js/script-tests/function-declarations-in-switch-statement.js:
+        - Fix warnings by passing in strings to shouldBe().
+
+        * js/script-tests/stack-unwinding.js:
+        - Update results after fixing warnings.
+        * js/stack-unwinding-expected.txt:
+        - Fix warnings by passing in strings to shouldBe().
+
+        * resources/js-test-pre.js:
+        (shouldBe):
+        (shouldNotBe):
+        * resources/js-test.js:
+        (shouldBe):
+        (shouldNotBe):
+        - Update shouldBe()/shouldNotBe() to accept anonymous function
+          arguments.
+
+        * resources/standalone-pre.js:
+        (shouldBe):
+        (shouldNotBe):
+        (shouldNotThrow):
+        (shouldThrow):
+        - Update shouldBe()/shouldNotBe() to accept anonymous function
+          arguments.
+        - Also fix shouldThrow()/shouldNotThrow() to accept anonymous
+          function arguments (which were missed in r202609 for Bug
+          159232).
+
 2017-04-27  Chris Dumez  <cdumez@apple.com>
 
         Element.getBoundingClientRect() / getClientRects() should return a DOMRect types

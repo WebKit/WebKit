@@ -1,9 +1,6 @@
-WARN: shouldBe() expects string arguments
-PASS 20 is 20
-WARN: shouldBe() expects string arguments
-PASS 20 is 20
-WARN: shouldBe() expects string arguments
-PASS -1 is -1
+PASS t(1) is 20
+PASS t(2) is 20
+PASS t(3) is -1
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -43,7 +43,7 @@ function testImageSetRule(description, property, rule, expectedLength, expectedT
         }
     }
 
-    shouldBe("imageSetRule.length", "" + expectedLength); // shouldBe expects string arguments
+    shouldBe("imageSetRule.length", function() { return expectedLength; });
 
     if (imageSetRule) {
         for (var i = 0; i < expectedLength; i++) {

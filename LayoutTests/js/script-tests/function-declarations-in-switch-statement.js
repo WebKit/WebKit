@@ -19,6 +19,6 @@ function t(n) {
     }
 }
 
-shouldBe(t(1), '20');
-shouldBe(t(2), '20');
-shouldBe(t(3), '-1');
+shouldBe('t(1)', '20');
+shouldBe('t(2)', '20');
+shouldBe('t(3)', '-1');

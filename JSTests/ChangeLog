@@ -1,3 +1,21 @@
+2017-04-27  David Kilzer  <ddkilzer@apple.com>
+
+        Enhance shouldBe()/shouldNotBe() to accept anonymous function arguments
+        <https://webkit.org/b/171362>
+        <rdar://problem/31867686>
+
+        Reviewed by Joseph Pecoraro.
+
+        * stress/resources/standalone-pre.js:
+        (shouldBe):
+        (shouldNotThrow):
+        (shouldThrow):
+        - Update shouldBe() to accept anonymous function arguments.
+          (The shouldNotBe() function was never copied over.)
+        - Also fix shouldThrow()/shouldNotThrow() to accept anonymous
+          function arguments (which were missed in r202609 for Bug
+          159232).
+
 2017-04-27  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Handle PhantomSpread in LoadVarargs as the same to the others

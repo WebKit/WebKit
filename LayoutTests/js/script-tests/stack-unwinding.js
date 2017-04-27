@@ -32,7 +32,7 @@ function hostAndException() {
 
 twoHostFunctions();
 myArray = hostCallsUser(myArray);
-shouldBe(myArray, new Array( 5, 6, 7 ) );
+shouldBe('myArray', 'new Array( 5, 6, 7 )');
 
 try {
     hostAndException();
