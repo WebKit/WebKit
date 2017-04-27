@@ -1,3 +1,16 @@
+2017-04-27  Brent Fulgham  <bfulgham@apple.com>
+
+        [WK2][macOS] Allow multi-touch related iokit-get-properties
+        https://bugs.webkit.org/show_bug.cgi?id=171355
+        <rdar://problem/31851928>
+
+        Reviewed by Alexey Proskuryakov.
+
+        During testing I've noticed Sandbox Violations being generated during some 'Force Touch' track pad use.
+        The sandbox should allow these IOKit properties to be accessed.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2017-04-27  Alex Christensen  <achristensen@webkit.org>
 
         Add stub SPI for setting cookie storage path on _WKWebsiteDataStoreConfiguration

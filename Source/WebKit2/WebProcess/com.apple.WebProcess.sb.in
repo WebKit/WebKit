@@ -46,14 +46,22 @@
 
 (deny iokit-get-properties)
 (allow iokit-get-properties
+    (iokit-property-regex #"^(Accurate|Extended)MaxDigitizerPressureValue")
+    (iokit-property-regex #"^(Activation|Animation)Thresholds")
+    (iokit-property "ActuationSupported")
     (iokit-property "AllowDisplaySleep")
+    (iokit-property "AlwaysNeedsVelocityCalculated")
     (iokit-property "AppleIntelMEVABundleName")
     (iokit-property-regex "AAPL,(DisplayPipe|alias-policy|boot-display|display-alias|mux-switch-state|primary-display)")
     (iokit-property-regex #"^ATY,fb_(linebytes|offset|size)")
     (iokit-property "CFBundleIdentifier")
     (iokit-property "DeviceEqID")
     (iokit-property "DisplayRouting")
+    (iokit-property "Driver is Ready")
     (iokit-property "EnableLPVP")
+    (iokit-property "Endianness")
+    (iokit-property "Family ID")
+    (iokit-property "ForceSupported")
     (iokit-property-regex #"^IOAccel(Index|Types|Revision)")
     (iokit-property-regex #"^IO(Class|MatchCategory|NameMatch)")
     (iokit-property-regex #"^IOAudioControl(ChannelID|ID|SubType|Usage|Value)")
@@ -91,10 +99,22 @@
     (iokit-property "IOScreenRestoreState")
     (iokit-property-regex #"^IOVARenderer(|Sub)ID")
     (iokit-property-regex #"^MetalPlugin(Name|ClassName)")
+    (iokit-property "MT Built-In")
+    (iokit-property "MaintainPowerInUILock")
+    (iokit-property "Max Packet Size")
+    (iokit-property "MinDigitizerPressureValue")
+    (iokit-property-regex #"^Multitouch (Subdevice |)ID")
+    (iokit-property "NoAutoRoute")
     (iokit-property "Protocol Characteristics")
-    (iokit-property "SupportAudioAUUC")
+    (iokit-property-regex #"^Support(AudioAUUC|sSilentClick|TapToWake)")
+    (iokit-property "MTHIDDevice")
+    (iokit-property "Sensor Columns")
+    (iokit-property-regex #"^Sensor Region (Descriptor|Param|Rows)")
+    (iokit-property-regex #"^Sensor Surface (Descriptor|Height|Width)")
+    (iokit-property "WANTS_FRAMES_IGNORED")
     (iokit-property-regex #"^audio-(codec-info|device-mvalue|device-nvalue|selector)")
     (iokit-property "av-signal-type")
+    (iokit-property "bcdVersion")
     (iokit-property "board-id")
     (iokit-property "boot-gamma-restored")
     (iokit-property "built-in")
@@ -102,8 +122,10 @@
     (iokit-property "graphic-options")
     (iokit-property-regex #"^id(Product|Vendor)")
     (iokit-property "iofb_version")
+    (iokit-property-regex #"^parser-(options|type)")
     (iokit-property "port-number")
-    (iokit-property "startup-timing"))
+    (iokit-property "startup-timing")
+    (iokit-property "touch-size-id"))
 #endif
 
 ;; Utility functions for home directory relative path filters
@@ -253,13 +275,14 @@
 
 ;; IOKit user clients
 (allow iokit-open
-       (iokit-user-client-class "AppleUpstreamUserClient")
-       (iokit-user-client-class "IOHIDParamUserClient")
-       (iokit-user-client-class "RootDomainUserClient")
-       (iokit-user-client-class "IOAudioControlUserClient")
-       (iokit-user-client-class "IOAudioEngineUserClient")
-       ;; Following is needed due to <rdar://problem/10427451> && <rdar://problem/10808817>
-       (iokit-user-client-class "AudioAUUC"))
+    (iokit-user-client-class "AppleMultitouchDeviceUserClient")
+    (iokit-user-client-class "AppleUpstreamUserClient")
+    (iokit-user-client-class "IOHIDParamUserClient")
+    (iokit-user-client-class "RootDomainUserClient")
+    (iokit-user-client-class "IOAudioControlUserClient")
+    (iokit-user-client-class "IOAudioEngineUserClient")
+    ;; Following is needed due to <rdar://problem/10427451> && <rdar://problem/10808817>
+    (iokit-user-client-class "AudioAUUC"))
 
 ;; cookied.
 ;; FIXME: Update for <rdar://problem/13642852>.
