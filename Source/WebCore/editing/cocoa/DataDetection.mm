@@ -659,16 +659,4 @@ NSArray *DataDetection::detectContentInRange(RefPtr<Range>&, DataDetectorTypes, 
     return nil;
 }
 #endif
-
-const String& DataDetection::dataDetectorURLProtocol()
-{
-    static NeverDestroyed<String> protocol(ASCIILiteral("x-apple-data-detectors"));
-    return protocol;
-}
-
-bool DataDetection::isDataDetectorURL(const URL& url)
-{
-    return url.protocolIs(dataDetectorURLProtocol());
-}
-
 } // namespace WebCore

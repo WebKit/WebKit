@@ -1,23 +1,15 @@
 2017-04-26  Tim Horton  <timothy_horton@apple.com>
 
-        Should not drag x-apple-data-detectors links
-        https://bugs.webkit.org/show_bug.cgi?id=171352
-        <rdar://problem/31309081>
-
-        Reviewed by Beth Dakin.
-
-        Test: fast/events/do-not-drag-and-drop-data-detectors-link.html
-
-        These links are only meaningful in the context of the original document,
-        so they should not be draggable.
+        Revert accidentally smushed commit.
 
         * editing/cocoa/DataDetection.h:
         * editing/cocoa/DataDetection.mm:
-        (WebCore::DataDetection::dataDetectorURLProtocol):
-        (WebCore::DataDetection::isDataDetectorURL):
+        (WebCore::DataDetection::dataDetectorURLProtocol): Deleted.
+        (WebCore::DataDetection::isDataDetectorURL): Deleted.
         * page/DragController.cpp:
         (WebCore::isDraggableLink):
-        Disallow dragging of <a href="x-apple-data-detectors://..."> links.
+        * platform/mac/DragImageMac.mm:
+        (WebCore::createDragImageForLink):
 
 2017-04-26  Alex Christensen  <achristensen@webkit.org>
 

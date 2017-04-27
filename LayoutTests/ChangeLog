@@ -1,13 +1,11 @@
 2017-04-26  Tim Horton  <timothy_horton@apple.com>
 
-        Should not drag x-apple-data-detectors links
-        https://bugs.webkit.org/show_bug.cgi?id=171352
-        <rdar://problem/31309081>
+        Revert accidentally smushed commit.
 
-        Reviewed by Beth Dakin.
-
-        * fast/events/do-not-drag-and-drop-data-detectors-link-expected.txt: Added.
-        * fast/events/do-not-drag-and-drop-data-detectors-link.html: Added.
+        * TestExpectations:
+        * fast/events/do-not-drag-and-drop-data-detectors-link-expected.txt: Removed.
+        * fast/events/do-not-drag-and-drop-data-detectors-link.html: Removed.
+        * platform/mac/TestExpectations:
 
 2017-04-26  Matt Lewis  <jlewis3@apple.com>
 

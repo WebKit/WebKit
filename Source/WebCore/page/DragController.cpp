@@ -88,24 +88,12 @@
 #include <wtf/RefPtr.h>
 #endif
 
-#if PLATFORM(COCOA)
-#include "DataDetection.h"
-#endif
-
 namespace WebCore {
 
 bool isDraggableLink(const Element& element)
 {
-    if (is<HTMLAnchorElement>(element)) {
-        auto& anchorElement = downcast<HTMLAnchorElement>(element);
-        if (!anchorElement.isLiveLink())
-            return false;
-#if PLATFORM(COCOA)
-        return !DataDetection::isDataDetectorURL(anchorElement.href());
-#else
-        return true;
-#endif
-    }
+    if (is<HTMLAnchorElement>(element))
+        return downcast<HTMLAnchorElement>(element).isLiveLink();
     if (is<SVGAElement>(element))
         return element.isLink();
     return false;
