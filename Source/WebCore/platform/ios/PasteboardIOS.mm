@@ -201,6 +201,11 @@ static bool readPasteboardWebContentDataForType(PasteboardWebContentReader& read
         return !url.isNull() && reader.readURL(url, title);
     }
 
+    if (UTTypeConformsTo((CFStringRef)type, kUTTypePlainText)) {
+        String string = strategy.readStringFromPasteboard(itemIndex, kUTTypePlainText, pasteboardName);
+        return !string.isNull() && reader.readPlainText(string);
+    }
+
     if (UTTypeConformsTo((CFStringRef)type, kUTTypeText)) {
         String string = strategy.readStringFromPasteboard(itemIndex, kUTTypeText, pasteboardName);
         return !string.isNull() && reader.readPlainText(string);

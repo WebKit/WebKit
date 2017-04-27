@@ -1,3 +1,20 @@
+2017-04-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Performing data interaction with plain text into a contenteditable does not insert any content
+        https://bugs.webkit.org/show_bug.cgi?id=171381
+
+        Reviewed by Tim Horton.
+
+        Attempt to read plain-text-conformant UTI types as kUTTypePlainText before reading them as kUTTypeText.
+        This allows WebItemProviderPasteboard to properly materialize an NSString in -valuesForPasteboardType:
+        inItemSet: using a pre-loaded NSData blob.
+
+        This scenario is covered by DataInteractionTests.ExternalSourceUTF8PlainTextOnly, but DataInteractionTests
+        are temporarily disabled due to incompatibilities with the current internal SDK.
+
+        * platform/ios/PasteboardIOS.mm:
+        (WebCore::readPasteboardWebContentDataForType):
+
 2017-04-27  Chris Dumez  <cdumez@apple.com>
 
         Element.getBoundingClientRect() / getClientRects() should return a DOMRect types
