@@ -10291,6 +10291,9 @@ int functionWithHellaArguments(int a, int b, int c, int d, int e, int f, int g, 
 
 void testCallFunctionWithHellaArguments()
 {
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=171392
+    return;
+
     Procedure proc;
     BasicBlock* root = proc.addBlock();
 
@@ -10746,6 +10749,44 @@ void testSwitch(unsigned degree, unsigned gap = 1)
     CHECK(!invoke<int32_t>(*code, -1, 42, 11));
     CHECK(!invoke<int32_t>(*code, degree * gap, 42, 11));
     CHECK(!invoke<int32_t>(*code, degree * gap + 1, 42, 11));
+}
+
+void testSwitchSameCaseAsDefault()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    BasicBlock* return10 = proc.addBlock();
+    return10->appendNewControlValue(
+        proc, Return, Origin(),
+        return10->appendNew<Const32Value>(proc, Origin(), 10));
+
+    Value* switchOperand = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+
+    BasicBlock* caseAndDefault = proc.addBlock();
+    caseAndDefault->appendNewControlValue(
+        proc, Return, Origin(), 
+            caseAndDefault->appendNew<Value>(
+                proc, Equal, Origin(),
+                switchOperand, caseAndDefault->appendNew<ConstPtrValue>(proc, Origin(), 0)));
+
+    SwitchValue* switchValue = root->appendNew<SwitchValue>(proc, Origin(), switchOperand);
+
+    switchValue->appendCase(SwitchCase(100, FrequentedBlock(return10)));
+
+    // Because caseAndDefault is reached both as default case, and when it's 0,
+    // we should not incorrectly optimize and assume that switchOperand==0.
+    switchValue->appendCase(SwitchCase(0, FrequentedBlock(caseAndDefault)));
+    switchValue->setFallThrough(FrequentedBlock(caseAndDefault));
+
+    auto code = compileProc(proc);
+
+    CHECK(invoke<int32_t>(*code, 100) == 10);
+    CHECK(invoke<int32_t>(*code, 0) == 1);
+    CHECK(invoke<int32_t>(*code, 1) == 0);
+    CHECK(invoke<int32_t>(*code, 2) == 0);
+    CHECK(invoke<int32_t>(*code, 99) == 0);
+    CHECK(invoke<int32_t>(*code, 0xbaadbeef) == 0);
 }
 
 void testSwitchChillDiv(unsigned degree, unsigned gap = 1)
@@ -15166,6 +15207,9 @@ void testDepend64()
 
 void testWasmBoundsCheck(unsigned offset)
 {
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=171392
+    return;
+
     Procedure proc;
     GPRReg pinned = GPRInfo::argumentGPR1;
     proc.pinRegister(pinned);
@@ -16316,6 +16360,8 @@ void run(const char* filter)
     RUN(testSwitch(10, 2));
     RUN(testSwitch(100, 1));
     RUN(testSwitch(100, 100));
+
+    RUN(testSwitchSameCaseAsDefault());
 
     RUN(testSwitchChillDiv(0, 1));
     RUN(testSwitchChillDiv(1, 1));

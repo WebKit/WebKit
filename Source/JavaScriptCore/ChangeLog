@@ -1,3 +1,54 @@
+2017-04-27  Saam Barati  <sbarati@apple.com>
+
+        B3::FoldPathConstants does not consider the fall through case for Switch
+        https://bugs.webkit.org/show_bug.cgi?id=171390
+
+        Reviewed by Filip Pizlo.
+
+        foldPathConstants was not taking into account a Switch's default
+        case when it tried to constant propagate the switch's operand value.
+        e.g, we incorrectly transformed this code:
+        
+        ```
+        x = argumentGPR0;
+        switch (x) {
+        case 10: return 20;
+        
+        case 0:
+        default: return x == 0;
+        }
+        ```
+        
+        into:
+        ```
+        x = argumentGPR0;
+        switch (x) {
+        case 10: return 20;
+        
+        case 0:
+        default: return 1;
+        }
+        ```
+        
+        Because we didn't take into account the default case, we incorrectly
+        optimized the code as if case 0's block was only reachable if x is
+        equal to zero. This is obviously not true, since it's the same block
+        as the default case.
+        
+        This fix ensures that we can run the WebAssembly Tanks demo even when
+        we set webAssemblyBBQOptimizationLevel=2.
+
+        * b3/B3FoldPathConstants.cpp:
+        * b3/B3SwitchValue.cpp:
+        (JSC::B3::SwitchValue::fallThrough):
+        (JSC::B3::SwitchValue::removeCase): Deleted.
+        * b3/B3SwitchValue.h:
+        * b3/testb3.cpp:
+        (JSC::B3::testCallFunctionWithHellaArguments):
+        (JSC::B3::testSwitchSameCaseAsDefault):
+        (JSC::B3::testWasmBoundsCheck):
+        (JSC::B3::run):
+
 2017-04-27  Keith Miller  <keith_miller@apple.com>
 
         WebAssembly: Don't tier up the same function twice
