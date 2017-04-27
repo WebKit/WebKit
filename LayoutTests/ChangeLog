@@ -1,3 +1,19 @@
+2017-04-27  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        REGRESSION(r214572): Update fast/text/variations/advances.html to understand normalized variation widths
+        https://bugs.webkit.org/show_bug.cgi?id=171356
+        <rdar://problem/28670085>
+
+        Reviewed by Dean Jackson.
+
+        Unspecified 'wdth' axis values are being normalized because the font is a GX font. However, this
+        font assumes no normalization, which means one of the comparisons in the test is bogus.
+
+        * fast/text/variations/advances-expected.txt:
+        * fast/text/variations/advances.html:
+        * platform/ios/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2017-04-27  Antti Koivisto  <antti@apple.com>
 
         Skip css3/viewport-percentage-lengths/vh-auto-size.html on WK1.

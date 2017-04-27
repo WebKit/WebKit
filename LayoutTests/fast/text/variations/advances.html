@@ -29,10 +29,9 @@ Promise.all(promises).then(function() {
 	var specifiedregular = document.getElementById("specifiedregular");
 	var narrow = document.getElementById("narrow");
 
-	shouldNotBe("regular.offsetWidth", "wide.offsetWidth");
-	shouldNotBe("regular.offsetWidth", "narrow.offsetWidth");
+	shouldNotBe("specifiedregular.offsetWidth", "wide.offsetWidth");
+	shouldNotBe("specifiedregular.offsetWidth", "narrow.offsetWidth");
 	shouldNotBe("narrow.offsetWidth", "wide.offsetWidth");
-	shouldBe("regular.offsetWidth", "specifiedregular.offsetWidth");
 	finishJSTest();
 });
 
