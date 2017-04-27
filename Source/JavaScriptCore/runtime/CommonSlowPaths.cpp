@@ -1009,7 +1009,7 @@ SLOW_PATH_DECL(slow_path_new_array_with_spread)
     JSGlobalObject* globalObject = exec->lexicalGlobalObject();
     Structure* structure = globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous);
 
-    JSArray* result = JSArray::tryCreateForInitializationPrivate(vm, structure, arraySize);
+    JSArray* result = JSArray::tryCreate(vm, structure, arraySize);
     if (UNLIKELY(!result))
         THROW(createOutOfMemoryError(exec));
     CHECK_EXCEPTION();
@@ -1022,12 +1022,12 @@ SLOW_PATH_DECL(slow_path_new_array_with_spread)
             JSFixedArray* array = jsCast<JSFixedArray*>(value);
             for (unsigned i = 0; i < array->size(); i++) {
                 RELEASE_ASSERT(array->get(i));
-                result->initializeIndex(vm, index, array->get(i));
+                result->putDirectIndex(exec, index, array->get(i));
                 ++index;
             }
         } else {
             // We are not spreading.
-            result->initializeIndex(vm, index, value);
+            result->putDirectIndex(exec, index, value);
             ++index;
         }
     }

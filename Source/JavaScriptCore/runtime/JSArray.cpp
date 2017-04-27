@@ -60,11 +60,15 @@ Butterfly* createArrayButterflyInDictionaryIndexingMode(
     return butterfly;
 }
 
-JSArray* JSArray::tryCreateForInitializationPrivate(VM& vm, GCDeferralContext* deferralContext, Structure* structure, unsigned initialLength)
+JSArray* JSArray::tryCreateUninitializedRestricted(ObjectInitializationScope& scope, GCDeferralContext* deferralContext, Structure* structure, unsigned initialLength)
 {
+    VM& vm = scope.vm();
+
     if (UNLIKELY(initialLength > MAX_STORAGE_VECTOR_LENGTH))
         return 0;
 
+    JSGlobalObject* globalObject = structure->globalObject();
+    bool createUninitialized = globalObject->isOriginalArrayStructure(structure);
     unsigned outOfLineStorage = structure->outOfLineCapacity();
 
     Butterfly* butterfly;
@@ -83,29 +87,34 @@ JSArray* JSArray::tryCreateForInitializationPrivate(VM& vm, GCDeferralContext* d
         butterfly = Butterfly::fromBase(temp, 0, outOfLineStorage);
         butterfly->setVectorLength(vectorLength);
         butterfly->setPublicLength(initialLength);
+        unsigned i = (createUninitialized ? initialLength : 0);
         if (hasDouble(indexingType)) {
-            for (unsigned i = initialLength; i < vectorLength; ++i)
+            for (; i < vectorLength; ++i)
                 butterfly->contiguousDouble()[i] = PNaN;
         } else {
-            for (unsigned i = initialLength; i < vectorLength; ++i)
+            for (; i < vectorLength; ++i)
                 butterfly->contiguous()[i].clear();
         }
     } else {
-        unsigned vectorLength = ArrayStorage::optimalVectorLength(0, structure, initialLength);
-        void* temp = vm.auxiliarySpace.tryAllocate(deferralContext, Butterfly::totalSize(0, outOfLineStorage, true, ArrayStorage::sizeFor(vectorLength)));
+        static const unsigned indexBias = 0;
+        unsigned vectorLength = ArrayStorage::optimalVectorLength(indexBias, structure, initialLength);
+        void* temp = vm.auxiliarySpace.tryAllocate(deferralContext, Butterfly::totalSize(indexBias, outOfLineStorage, true, ArrayStorage::sizeFor(vectorLength)));
         if (UNLIKELY(!temp))
             return nullptr;
-        butterfly = Butterfly::fromBase(temp, 0, outOfLineStorage);
+        butterfly = Butterfly::fromBase(temp, indexBias, outOfLineStorage);
         *butterfly->indexingHeader() = indexingHeaderForArrayStorage(initialLength, vectorLength);
         ArrayStorage* storage = butterfly->arrayStorage();
-        storage->m_indexBias = 0;
+        storage->m_indexBias = indexBias;
         storage->m_sparseMap.clear();
         storage->m_numValuesInVector = initialLength;
-        for (unsigned i = initialLength; i < vectorLength; ++i)
+        unsigned i = (createUninitialized ? initialLength : 0);
+        for (; i < vectorLength; ++i)
             storage->m_vector[i].clear();
     }
 
-    return createWithButterfly(vm, deferralContext, structure, butterfly);
+    JSArray* result = createWithButterfly(vm, deferralContext, structure, butterfly);
+    scope.notifyAllocated(result, createUninitialized);
+    return result;
 }
 
 void JSArray::setLengthWritable(ExecState* exec, bool writable)
@@ -873,7 +882,8 @@ JSArray* JSArray::fastSlice(ExecState& exec, unsigned startIndex, unsigned count
             return nullptr;
 
         ASSERT(!lexicalGlobalObject->isHavingABadTime());
-        JSArray* resultArray = JSArray::tryCreateForInitializationPrivate(vm, resultStructure, count);
+        ObjectInitializationScope scope(vm);
+        JSArray* resultArray = JSArray::tryCreateUninitializedRestricted(scope, resultStructure, count);
         if (UNLIKELY(!resultArray))
             return nullptr;
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,30 +20,51 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #pragma once
 
-#include "GCDeferralContext.h"
-#include "Heap.h"
+#include "DisallowScope.h"
+#include <wtf/ThreadSpecific.h>
 
 namespace JSC {
 
-ALWAYS_INLINE GCDeferralContext::GCDeferralContext(Heap& heap)
-    : m_heap(heap)
-{
-}
+class DisallowVMReentry : public DisallowScope<DisallowVMReentry> {
+    WTF_MAKE_NONCOPYABLE(DisallowVMReentry);
+    typedef DisallowScope<DisallowVMReentry> Base;
+public:
+#ifdef NDEBUG
 
-ALWAYS_INLINE GCDeferralContext::~GCDeferralContext()
-{
-    ASSERT(!DisallowGC::isInEffectOnCurrentThread());
-#if ENABLE(GC_VALIDATION)
-    ASSERT(!m_heap.vm()->isInitializingObject());
-#endif
-    if (UNLIKELY(m_shouldGC))
-        m_heap.collectIfNecessaryOrDefer();
-}
+    ALWAYS_INLINE DisallowVMReentry(bool = false) { }
+    ALWAYS_INLINE static void initialize() { }
+
+#else // not NDEBUG
+
+    DisallowVMReentry(bool enabled = true)
+        : Base(enabled)
+    { }
+
+    static void initialize()
+    {
+        WTF::threadSpecificKeyCreate(&s_scopeReentryCount, 0);
+    }
+
+private:
+    static uintptr_t scopeReentryCount()
+    {
+        return reinterpret_cast<uintptr_t>(WTF::threadSpecificGet(s_scopeReentryCount));
+    }
+    static void setScopeReentryCount(uintptr_t value)
+    {
+        WTF::threadSpecificSet(s_scopeReentryCount, reinterpret_cast<void*>(value));
+    }
+
+    JS_EXPORT_PRIVATE static WTF::ThreadSpecificKey s_scopeReentryCount;
+
+#endif // NDEBUG
+
+    friend class DisallowScope<DisallowVMReentry>;
+};
 
 } // namespace JSC
-

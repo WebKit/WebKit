@@ -1314,7 +1314,8 @@ EncodedJSValue JSC_HOST_CALL arrayProtoPrivateFuncConcatMemcpy(ExecState* exec)
         return JSValue::encode(jsNull());
 
     ASSERT(!lexicalGlobalObject->isHavingABadTime());
-    JSArray* result = JSArray::tryCreateForInitializationPrivate(vm, resultStructure, resultSize);
+    ObjectInitializationScope initializationScope(vm);
+    JSArray* result = JSArray::tryCreateUninitializedRestricted(initializationScope, resultStructure, resultSize);
     if (UNLIKELY(!result)) {
         throwOutOfMemoryError(exec, scope);
         return encodedJSValue();

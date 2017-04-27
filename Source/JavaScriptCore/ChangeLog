@@ -1,3 +1,143 @@
+2017-04-27  Mark Lam  <mark.lam@apple.com>
+
+        Audit and fix incorrect uses of JSArray::tryCreateForInitializationPrivate().
+        https://bugs.webkit.org/show_bug.cgi?id=171344
+        <rdar://problem/31352667>
+
+        Reviewed by Filip Pizlo.
+
+        JSArray::tryCreateForInitializationPrivate() should only be used in performance
+        critical paths, and should always be used with care because it creates an
+        uninitialized object that needs to be initialized by its client before the object
+        can be released into the system.  Before the object is fully initialized:
+        a. the client should not re-enter the VM to execute JS code, and
+        b. GC should not run.
+
+        This is because until the object is fully initialized, it is an inconsistent
+        state that the GC and JS code will not be happy about.
+
+        In this patch, we do the following:
+
+        1. Renamed JSArray::tryCreateForInitializationPrivate() to
+           JSArray::tryCreateUninitializedRestricted() because "private" is a bit ambiguous
+           and can be confused with APIs that are called freely within WebKit but are
+           not meant for clients of WebKit.  In this case, we intend for use of this API
+           to be restricted to only a few carefully considered and crafted cases.
+
+        2. Introduce the ObjectInitializationScope RAII object which covers the period
+           when the uninitialized object is created and gets initialized.
+
+           ObjectInitializationScope will asserts that either the object is created
+           fully initialized (in the case where the object structure is not an "original"
+           structure) or if created uninitialized, is fully initialized at the end of
+           the scope.
+
+           If the object is created uninitialized, the ObjectInitializationScope also
+           ensures that we do not GC nor re-enter the VM to execute JS code.  This is
+           achieved by enabling DisallowGC and DisallowVMReentry scopes.
+
+           tryCreateUninitializedRestricted() and initializeIndex() now requires an
+           ObjectInitializationScope instance.  The ObjectInitializationScope replaces
+           the VM& argument because it can be used to pass the VM& itself.  This is a
+           small optimization that makes passing the ObjectInitializationScope free even
+           on release builds.
+
+        3. Factored a DisallowScope out of DisallowGC, and make DisallowGC extend it.
+           Introduce a DisallowVMReentry class that extends DisallowScope.
+
+        4. Fixed a bug found by the ObjectInitializationScope.  The bug is that there are
+           scenarios where the structure passed to tryCreateUninitializedRestricted()
+           that may not be an "original" structure.  As a result, initializeIndex() would
+           end up allocating new structures, and therefore trigger a GC.
+
+           The fix is to detect that the structure passed to tryCreateUninitializedRestricted()
+           is not an "original" one, and pre-initialize the array with 0s.
+
+           This bug was detected by existing tests. Hence, no new test needed.
+
+        5. Replaced all inappropriate uses of tryCreateUninitializedRestricted() with
+           tryCreate().  Inappropriate uses here means code that is not in performance
+           critical paths.
+
+           Similarly, replaced accompanying uses of initializeIndex() with putDirectIndex().
+
+           This patch is performance neutral (according to the JSC command line benchmarks).
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGOperations.cpp:
+        * ftl/FTLOperations.cpp:
+        (JSC::FTL::operationMaterializeObjectInOSR):
+        * heap/DeferGC.cpp:
+        * heap/DeferGC.h:
+        (JSC::DisallowGC::DisallowGC):
+        (JSC::DisallowGC::initialize):
+        (JSC::DisallowGC::scopeReentryCount):
+        (JSC::DisallowGC::setScopeReentryCount):
+        (JSC::DisallowGC::~DisallowGC): Deleted.
+        (JSC::DisallowGC::isGCDisallowedOnCurrentThread): Deleted.
+        * heap/GCDeferralContextInlines.h:
+        (JSC::GCDeferralContext::~GCDeferralContext):
+        * heap/Heap.cpp:
+        (JSC::Heap::collectIfNecessaryOrDefer):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoPrivateFuncConcatMemcpy):
+        * runtime/ClonedArguments.cpp:
+        (JSC::ClonedArguments::createWithInlineFrame):
+        (JSC::ClonedArguments::createByCopyingFrom):
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/DisallowScope.h: Added.
+        (JSC::DisallowScope::DisallowScope):
+        (JSC::DisallowScope::~DisallowScope):
+        (JSC::DisallowScope::isInEffectOnCurrentThread):
+        (JSC::DisallowScope::enable):
+        (JSC::DisallowScope::enterScope):
+        (JSC::DisallowScope::exitScope):
+        * runtime/DisallowVMReentry.cpp: Added.
+        * runtime/DisallowVMReentry.h: Added.
+        (JSC::DisallowVMReentry::DisallowVMReentry):
+        (JSC::DisallowVMReentry::initialize):
+        (JSC::DisallowVMReentry::scopeReentryCount):
+        (JSC::DisallowVMReentry::setScopeReentryCount):
+        * runtime/InitializeThreading.cpp:
+        (JSC::initializeThreading):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::tryCreateUninitializedRestricted):
+        (JSC::JSArray::fastSlice):
+        (JSC::JSArray::tryCreateForInitializationPrivate): Deleted.
+        * runtime/JSArray.h:
+        (JSC::JSArray::tryCreateUninitializedRestricted):
+        (JSC::JSArray::tryCreate):
+        (JSC::constructArray):
+        (JSC::constructArrayNegativeIndexed):
+        (JSC::JSArray::tryCreateForInitializationPrivate): Deleted.
+        (JSC::createArrayButterfly): Deleted.
+        * runtime/JSCellInlines.h:
+        (JSC::allocateCell):
+        * runtime/JSObject.h:
+        (JSC::JSObject::initializeIndex):
+        (JSC::JSObject::initializeIndexWithoutBarrier):
+        * runtime/ObjectInitializationScope.cpp: Added.
+        (JSC::ObjectInitializationScope::ObjectInitializationScope):
+        (JSC::ObjectInitializationScope::~ObjectInitializationScope):
+        (JSC::ObjectInitializationScope::notifyAllocated):
+        (JSC::ObjectInitializationScope::verifyPropertiesAreInitialized):
+        * runtime/ObjectInitializationScope.h: Added.
+        (JSC::ObjectInitializationScope::ObjectInitializationScope):
+        (JSC::ObjectInitializationScope::vm):
+        (JSC::ObjectInitializationScope::notifyAllocated):
+        * runtime/Operations.h:
+        (JSC::isScribbledValue):
+        (JSC::scribble):
+        * runtime/RegExpMatchesArray.cpp:
+        (JSC::createEmptyRegExpMatchesArray):
+        * runtime/RegExpMatchesArray.h:
+        (JSC::tryCreateUninitializedRegExpMatchesArray):
+        (JSC::createRegExpMatchesArray):
+        * runtime/VMEntryScope.cpp:
+        (JSC::VMEntryScope::VMEntryScope):
+
 2017-04-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Remote inspector should support inspecting targets with previous version of backend commands

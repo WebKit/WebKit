@@ -145,7 +145,7 @@ Subspace* JSCell::subspaceFor(VM& vm)
 template<typename T>
 void* allocateCell(Heap& heap, size_t size)
 {
-    ASSERT(!DisallowGC::isGCDisallowedOnCurrentThread());
+    ASSERT(!DisallowGC::isInEffectOnCurrentThread());
     ASSERT(size >= sizeof(T));
     JSCell* result = static_cast<JSCell*>(subspaceFor<T>(*heap.vm())->allocate(size));
 #if ENABLE(GC_VALIDATION)

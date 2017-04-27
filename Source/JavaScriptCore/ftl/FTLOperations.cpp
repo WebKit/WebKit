@@ -352,7 +352,7 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
                 unsigned index = property.location().info();
                 if (index >= length)
                     continue;
-                result->initializeIndex(vm, index, JSValue::decode(values[i]));
+                result->putDirectIndex(exec, index, JSValue::decode(values[i]));
             }
             
             return result;
@@ -364,9 +364,9 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
             ASSERT(argumentCount > 0);
             unsigned arraySize = (argumentCount - 1) > numberOfArgumentsToSkip ? argumentCount - 1 - numberOfArgumentsToSkip : 0;
 
-            // FIXME: we should throw an out of memory error here if tryCreateForInitializationPrivate() fails.
+            // FIXME: we should throw an out of memory error here if tryCreate() fails.
             // https://bugs.webkit.org/show_bug.cgi?id=169784
-            JSArray* array = JSArray::tryCreateForInitializationPrivate(vm, structure, arraySize);
+            JSArray* array = JSArray::tryCreate(vm, structure, arraySize);
             RELEASE_ASSERT(array);
 
             for (unsigned i = materialization->properties().size(); i--;) {
@@ -380,7 +380,7 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
                 unsigned arrayIndex = argIndex - numberOfArgumentsToSkip;
                 if (arrayIndex >= arraySize)
                     continue;
-                array->initializeIndex(vm, arrayIndex, JSValue::decode(values[i]));
+                array->putDirectIndex(exec, arrayIndex, JSValue::decode(values[i]));
             }
 
 #if !ASSERT_DISABLED
@@ -455,10 +455,10 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
             }
         }
 
-        // FIXME: we should throw an out of memory error here if checkedArraySize has hasOverflowed() or tryCreateForInitializationPrivate() fails.
+        // FIXME: we should throw an out of memory error here if checkedArraySize has hasOverflowed() or tryCreate() fails.
         // https://bugs.webkit.org/show_bug.cgi?id=169784
         unsigned arraySize = checkedArraySize.unsafeGet(); // Crashes if overflowed.
-        JSArray* result = JSArray::tryCreateForInitializationPrivate(vm, structure, arraySize);
+        JSArray* result = JSArray::tryCreate(vm, structure, arraySize);
         RELEASE_ASSERT(result);
 
 #if !ASSERT_DISABLED
@@ -493,12 +493,12 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
             if (JSFixedArray* fixedArray = jsDynamicCast<JSFixedArray*>(vm, value)) {
                 for (unsigned i = 0; i < fixedArray->size(); i++) {
                     ASSERT(fixedArray->get(i));
-                    result->initializeIndex(vm, arrayIndex, fixedArray->get(i));
+                    result->putDirectIndex(exec, arrayIndex, fixedArray->get(i));
                     ++arrayIndex;
                 }
             } else {
                 // We are not spreading.
-                result->initializeIndex(vm, arrayIndex, value);
+                result->putDirectIndex(exec, arrayIndex, value);
                 ++arrayIndex;
             }
         }

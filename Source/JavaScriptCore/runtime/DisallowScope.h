@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,30 +20,68 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #pragma once
 
-#include "GCDeferralContext.h"
-#include "Heap.h"
+#include <wtf/Noncopyable.h>
 
 namespace JSC {
 
-ALWAYS_INLINE GCDeferralContext::GCDeferralContext(Heap& heap)
-    : m_heap(heap)
-{
-}
+template<class T>
+class DisallowScope {
+    WTF_MAKE_NONCOPYABLE(DisallowScope);
+public:
+#ifdef NDEBUG
 
-ALWAYS_INLINE GCDeferralContext::~GCDeferralContext()
-{
-    ASSERT(!DisallowGC::isInEffectOnCurrentThread());
-#if ENABLE(GC_VALIDATION)
-    ASSERT(!m_heap.vm()->isInitializingObject());
-#endif
-    if (UNLIKELY(m_shouldGC))
-        m_heap.collectIfNecessaryOrDefer();
-}
+    ALWAYS_INLINE DisallowScope(bool = false) { }
+    ALWAYS_INLINE ~DisallowScope() { }
+    ALWAYS_INLINE static bool isInEffectOnCurrentThread() { return false; }
+    ALWAYS_INLINE void enable() { }
+
+#else // not NDEBUG
+
+    DisallowScope(bool enabled = true)
+    {
+        m_isEnabled = enabled;
+        if (m_isEnabled)
+            enterScope();
+    }
+
+    ~DisallowScope()
+    {
+        if (m_isEnabled)
+            exitScope();
+    }
+
+    static bool isInEffectOnCurrentThread()
+    {
+        return !!T::scopeReentryCount();
+    }
+
+    void enable()
+    {
+        m_isEnabled = true;
+        enterScope();
+    }
+
+private:
+    void enterScope()
+    {
+        auto count = T::scopeReentryCount();
+        T::setScopeReentryCount(++count);
+    }
+
+    void exitScope()
+    {
+        auto count = T::scopeReentryCount();
+        ASSERT(count);
+        T::setScopeReentryCount(--count);
+    }
+
+    bool m_isEnabled;
+#endif // NDEBUG
+};
 
 } // namespace JSC
-

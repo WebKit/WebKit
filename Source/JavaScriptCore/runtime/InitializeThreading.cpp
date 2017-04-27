@@ -29,6 +29,7 @@
 #include "config.h"
 #include "InitializeThreading.h"
 
+#include "DisallowVMReentry.h"
 #include "ExecutableAllocator.h"
 #include "Heap.h"
 #include "Identifier.h"
@@ -71,6 +72,7 @@ void initializeThreading()
         LLInt::initialize();
 #ifndef NDEBUG
         DisallowGC::initialize();
+        DisallowVMReentry::initialize();
 #endif
         initializeSuperSampler();
         WTFThreadData& threadData = wtfThreadData();

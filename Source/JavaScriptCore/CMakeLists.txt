@@ -713,6 +713,7 @@ set(JavaScriptCore_SOURCES
     runtime/DirectArguments.cpp
     runtime/DirectArgumentsOffset.cpp
     runtime/DirectEvalExecutable.cpp
+    runtime/DisallowVMReentry.cpp
     runtime/DumpContext.cpp
     runtime/ECMAScriptSpecInternalFunctions.cpp
     runtime/Error.cpp
@@ -852,6 +853,7 @@ set(JavaScriptCore_SOURCES
     runtime/NumberObject.cpp
     runtime/NumberPrototype.cpp
     runtime/ObjectConstructor.cpp
+    runtime/ObjectInitializationScope.cpp
     runtime/ObjectPrototype.cpp
     runtime/Operations.cpp
     runtime/Options.cpp

@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "DisallowScope.h"
 #include "Heap.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/ThreadSpecific.h>
@@ -67,41 +68,41 @@ private:
     Heap& m_heap;
 };
 
-class DisallowGC {
+class DisallowGC : public DisallowScope<DisallowGC> {
     WTF_MAKE_NONCOPYABLE(DisallowGC);
+    typedef DisallowScope<DisallowGC> Base;
 public:
-    DisallowGC()
-    {
-#ifndef NDEBUG
-        WTF::threadSpecificSet(s_isGCDisallowedOnCurrentThread, reinterpret_cast<void*>(true));
-#endif
-    }
+#ifdef NDEBUG
 
-    ~DisallowGC()
-    {
-#ifndef NDEBUG
-        WTF::threadSpecificSet(s_isGCDisallowedOnCurrentThread, reinterpret_cast<void*>(false));
-#endif
-    }
+    ALWAYS_INLINE DisallowGC(bool = false) { }
+    ALWAYS_INLINE static void initialize() { }
 
-    static bool isGCDisallowedOnCurrentThread()
-    {
-#ifndef NDEBUG
-        return !!WTF::threadSpecificGet(s_isGCDisallowedOnCurrentThread);
-#else
-        return false;
-#endif
-    }
+#else // not NDEBUG
+
+    DisallowGC(bool enabled = true)
+        : Base(enabled)
+    { }
+
     static void initialize()
     {
-#ifndef NDEBUG
-        WTF::threadSpecificKeyCreate(&s_isGCDisallowedOnCurrentThread, 0);
-#endif
+        WTF::threadSpecificKeyCreate(&s_scopeReentryCount, 0);
     }
 
-#ifndef NDEBUG
-    JS_EXPORT_PRIVATE static WTF::ThreadSpecificKey s_isGCDisallowedOnCurrentThread;
-#endif
+private:
+    static uintptr_t scopeReentryCount()
+    {
+        return reinterpret_cast<uintptr_t>(WTF::threadSpecificGet(s_scopeReentryCount));
+    }
+    static void setScopeReentryCount(uintptr_t value)
+    {
+        WTF::threadSpecificSet(s_scopeReentryCount, reinterpret_cast<void*>(value));
+    }
+    
+    JS_EXPORT_PRIVATE static WTF::ThreadSpecificKey s_scopeReentryCount;
+
+#endif // NDEBUG
+    
+    friend class DisallowScope<DisallowGC>;
 };
 
 } // namespace JSC

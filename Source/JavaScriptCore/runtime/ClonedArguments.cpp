@@ -87,8 +87,6 @@ ClonedArguments* ClonedArguments::createEmpty(ExecState* exec, JSFunction* calle
 
 ClonedArguments* ClonedArguments::createWithInlineFrame(ExecState* myFrame, ExecState* targetFrame, InlineCallFrame* inlineCallFrame, ArgumentsMode mode)
 {
-    VM& vm = myFrame->vm();
-    
     JSFunction* callee;
     
     if (inlineCallFrame)
@@ -110,13 +108,13 @@ ClonedArguments* ClonedArguments::createWithInlineFrame(ExecState* myFrame, Exec
             result = createEmpty(myFrame, callee, length);
 
             for (unsigned i = length; i--;)
-                result->initializeIndex(vm, i, inlineCallFrame->arguments[i + 1].recover(targetFrame));
+                result->putDirectIndex(myFrame, i, inlineCallFrame->arguments[i + 1].recover(targetFrame));
         } else {
             length = targetFrame->argumentCount();
             result = createEmpty(myFrame, callee, length);
 
             for (unsigned i = length; i--;)
-                result->initializeIndex(vm, i, targetFrame->uncheckedArgument(i));
+                result->putDirectIndex(myFrame, i, targetFrame->uncheckedArgument(i));
         }
         break;
     }
@@ -127,7 +125,7 @@ ClonedArguments* ClonedArguments::createWithInlineFrame(ExecState* myFrame, Exec
     } }
 
     ASSERT(myFrame->lexicalGlobalObject()->clonedArgumentsStructure() == result->structure());
-    ASSERT(!result->structure(vm)->needsSlowPutIndexing() || shouldUseSlowPut(result->structure(vm)->indexingType()));
+    ASSERT(!result->structure()->needsSlowPutIndexing() || shouldUseSlowPut(result->structure()->indexingType()));
     return result;
 }
 
@@ -146,7 +144,7 @@ ClonedArguments* ClonedArguments::createByCopyingFrom(
     ClonedArguments* result = createEmpty(vm, structure, callee, length);
     
     for (unsigned i = length; i--;)
-        result->initializeIndex(vm, i, argumentStart[i].jsValue());
+        result->putDirectIndex(exec, i, argumentStart[i].jsValue());
     ASSERT(!result->structure(vm)->needsSlowPutIndexing() || shouldUseSlowPut(result->structure(vm)->indexingType()));
     return result;
 }

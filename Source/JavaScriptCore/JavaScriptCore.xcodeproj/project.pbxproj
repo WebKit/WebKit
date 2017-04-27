@@ -2445,11 +2445,16 @@
 		FE3A06BF1C11041600390FDD /* JITRightShiftGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE3A06B81C1103D900390FDD /* JITRightShiftGenerator.cpp */; };
 		FE3A06C01C11041A00390FDD /* JITRightShiftGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3A06B91C1103D900390FDD /* JITRightShiftGenerator.h */; };
 		FE4238901BE18C3C00514737 /* JITSubGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE42388F1BE18C1200514737 /* JITSubGenerator.cpp */; };
+		FE48E6381EB118D2005D7A96 /* ObjectInitializationScope.h in Headers */ = {isa = PBXBuildFile; fileRef = FE48E6361EB1188F005D7A96 /* ObjectInitializationScope.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FE48E6391EB118D9005D7A96 /* ObjectInitializationScope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE48E6371EB118AD005D7A96 /* ObjectInitializationScope.cpp */; };
 		FE4BFF2B1AD476E700088F87 /* FunctionOverrides.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE4BFF291AD476E700088F87 /* FunctionOverrides.cpp */; };
 		FE4BFF2C1AD476E700088F87 /* FunctionOverrides.h in Headers */ = {isa = PBXBuildFile; fileRef = FE4BFF2A1AD476E700088F87 /* FunctionOverrides.h */; };
 		FE4D55B81AE716CA0052E459 /* IterationStatus.h in Headers */ = {isa = PBXBuildFile; fileRef = FE4D55B71AE716CA0052E459 /* IterationStatus.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE5068651AE246390009DAB7 /* DeferredSourceDump.h in Headers */ = {isa = PBXBuildFile; fileRef = FE5068641AE246390009DAB7 /* DeferredSourceDump.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE5068671AE25E280009DAB7 /* DeferredSourceDump.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE5068661AE25E280009DAB7 /* DeferredSourceDump.cpp */; };
+		FE54DEFB1E8C6D8800A892C5 /* DisallowVMReentry.h in Headers */ = {isa = PBXBuildFile; fileRef = FE54DEFA1E8C6D7200A892C5 /* DisallowVMReentry.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FE54DEFD1E8C6E3700A892C5 /* DisallowVMReentry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE54DEFC1E8C6DFF00A892C5 /* DisallowVMReentry.cpp */; };
+		FE54DEFF1E8D76FA00A892C5 /* DisallowScope.h in Headers */ = {isa = PBXBuildFile; fileRef = FE54DEFE1E8D742800A892C5 /* DisallowScope.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE5628CD1E99512D00C49E45 /* AirPrintSpecial.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE5628CB1E99512400C49E45 /* AirPrintSpecial.cpp */; };
 		FE5628CE1E99513200C49E45 /* AirPrintSpecial.h in Headers */ = {isa = PBXBuildFile; fileRef = FE5628CC1E99512400C49E45 /* AirPrintSpecial.h */; };
 		FE5932A7183C5A2600A1ECCC /* VMEntryScope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE5932A5183C5A2600A1ECCC /* VMEntryScope.cpp */; };
@@ -5080,11 +5085,16 @@
 		FE3A06B81C1103D900390FDD /* JITRightShiftGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITRightShiftGenerator.cpp; sourceTree = "<group>"; };
 		FE3A06B91C1103D900390FDD /* JITRightShiftGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITRightShiftGenerator.h; sourceTree = "<group>"; };
 		FE42388F1BE18C1200514737 /* JITSubGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITSubGenerator.cpp; sourceTree = "<group>"; };
+		FE48E6361EB1188F005D7A96 /* ObjectInitializationScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjectInitializationScope.h; sourceTree = "<group>"; };
+		FE48E6371EB118AD005D7A96 /* ObjectInitializationScope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ObjectInitializationScope.cpp; sourceTree = "<group>"; };
 		FE4BFF291AD476E700088F87 /* FunctionOverrides.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FunctionOverrides.cpp; sourceTree = "<group>"; };
 		FE4BFF2A1AD476E700088F87 /* FunctionOverrides.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FunctionOverrides.h; sourceTree = "<group>"; };
 		FE4D55B71AE716CA0052E459 /* IterationStatus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IterationStatus.h; sourceTree = "<group>"; };
 		FE5068641AE246390009DAB7 /* DeferredSourceDump.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeferredSourceDump.h; sourceTree = "<group>"; };
 		FE5068661AE25E280009DAB7 /* DeferredSourceDump.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeferredSourceDump.cpp; sourceTree = "<group>"; };
+		FE54DEFA1E8C6D7200A892C5 /* DisallowVMReentry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DisallowVMReentry.h; sourceTree = "<group>"; };
+		FE54DEFC1E8C6DFF00A892C5 /* DisallowVMReentry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DisallowVMReentry.cpp; sourceTree = "<group>"; };
+		FE54DEFE1E8D742800A892C5 /* DisallowScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DisallowScope.h; sourceTree = "<group>"; };
 		FE5628CB1E99512400C49E45 /* AirPrintSpecial.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AirPrintSpecial.cpp; path = b3/air/AirPrintSpecial.cpp; sourceTree = "<group>"; };
 		FE5628CC1E99512400C49E45 /* AirPrintSpecial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirPrintSpecial.h; path = b3/air/AirPrintSpecial.h; sourceTree = "<group>"; };
 		FE5932A5183C5A2600A1ECCC /* VMEntryScope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VMEntryScope.cpp; sourceTree = "<group>"; };
@@ -6562,6 +6572,9 @@
 				0FE0500E1AA9091100D33B33 /* DirectArgumentsOffset.h */,
 				14386A721DD69895008652C4 /* DirectEvalExecutable.cpp */,
 				14386A731DD69895008652C4 /* DirectEvalExecutable.h */,
+				FE54DEFE1E8D742800A892C5 /* DisallowScope.h */,
+				FE54DEFC1E8C6DFF00A892C5 /* DisallowVMReentry.cpp */,
+				FE54DEFA1E8C6D7200A892C5 /* DisallowVMReentry.h */,
 				A70447EB17A0BD7000F5898E /* DumpContext.cpp */,
 				A70447EC17A0BD7000F5898E /* DumpContext.h */,
 				FE318FDD1CAC8C5300DFCC54 /* ECMAScriptSpecInternalFunctions.cpp */,
@@ -6891,6 +6904,8 @@
 				142D3938103E4560007DCB52 /* NumericStrings.h */,
 				BC2680C60E16D4E900A06E92 /* ObjectConstructor.cpp */,
 				BC2680C70E16D4E900A06E92 /* ObjectConstructor.h */,
+				FE48E6371EB118AD005D7A96 /* ObjectInitializationScope.cpp */,
+				FE48E6361EB1188F005D7A96 /* ObjectInitializationScope.h */,
 				BC2680C80E16D4E900A06E92 /* ObjectPrototype.cpp */,
 				BC2680C90E16D4E900A06E92 /* ObjectPrototype.h */,
 				F692A8770255597D01FF60F7 /* Operations.cpp */,
@@ -8133,6 +8148,7 @@
 				5370B4F61BF26205005C40FC /* AdaptiveInferredPropertyValueWatchpointBase.h in Headers */,
 				0FEC856E1BDACDC70080FF74 /* AirAllocateStackByGraphColoring.h in Headers */,
 				0FEC85701BDACDC70080FF74 /* AirArg.h in Headers */,
+				FE48E6381EB118D2005D7A96 /* ObjectInitializationScope.h in Headers */,
 				0F64EAF31C4ECD0600621E9B /* AirArgInlines.h in Headers */,
 				0FEC85721BDACDC70080FF74 /* AirBasicBlock.h in Headers */,
 				0FB3878E1BFBC44D00E3AB1E /* AirBlockWorklist.h in Headers */,
@@ -8184,6 +8200,7 @@
 				79ABB17E1E5CCB570045B9A6 /* AirDisassembler.h in Headers */,
 				53529A4C1C457B75000B49C6 /* APIUtils.h in Headers */,
 				BCF605140E203EF800B9A64D /* ArgList.h in Headers */,
+				FE54DEFF1E8D76FA00A892C5 /* DisallowScope.h in Headers */,
 				0FE050141AA9091100D33B33 /* ArgumentsMode.h in Headers */,
 				79A228361D35D71F00D8E067 /* ArithProfile.h in Headers */,
 				0F6B1CB91861244C00845D97 /* ArityCheckMode.h in Headers */,
@@ -9498,6 +9515,7 @@
 				AD2FCC181DB59CB200B3E736 /* WebAssemblyInstanceConstructor.lut.h in Headers */,
 				AD2FCBF31DB58DAD00B3E736 /* WebAssemblyInstancePrototype.h in Headers */,
 				AD2FCC191DB59CB200B3E736 /* WebAssemblyInstancePrototype.lut.h in Headers */,
+				FE54DEFB1E8C6D8800A892C5 /* DisallowVMReentry.h in Headers */,
 				ADE8029A1E08F1DE0058DE78 /* WebAssemblyLinkErrorConstructor.h in Headers */,
 				7965C2171E5D799600B7591D /* AirAllocateRegistersByGraphColoring.h in Headers */,
 				ADE8029C1E08F1DE0058DE78 /* WebAssemblyLinkErrorPrototype.h in Headers */,
@@ -10048,6 +10066,7 @@
 				0FEC857B1BDACDC70080FF74 /* AirHandleCalleeSaves.cpp in Sources */,
 				0FEC857D1BDACDC70080FF74 /* AirInsertionSet.cpp in Sources */,
 				0FEC857F1BDACDC70080FF74 /* AirInst.cpp in Sources */,
+				FE48E6391EB118D9005D7A96 /* ObjectInitializationScope.cpp in Sources */,
 				0FDF67D61D9DC440001B9825 /* AirKind.cpp in Sources */,
 				0FE34C191C4B39AE0003A512 /* AirLogRegisterPressure.cpp in Sources */,
 				0F61832E1C45BF070072450B /* AirLowerAfterRegAlloc.cpp in Sources */,
@@ -10476,6 +10495,7 @@
 				142E3135134FF0A600AFADB5 /* HandleSet.cpp in Sources */,
 				142E3137134FF0A600AFADB5 /* HandleStack.cpp in Sources */,
 				79A0907F1D768465008B889B /* HashMapImpl.cpp in Sources */,
+				FE54DEFD1E8C6E3700A892C5 /* DisallowVMReentry.cpp in Sources */,
 				14BA7A9713AADFF8005B7C2C /* Heap.cpp in Sources */,
 				DC3D2B0C1D34377000BA918C /* HeapCell.cpp in Sources */,
 				0F32BD101BB34F190093A57F /* HeapHelperPool.cpp in Sources */,

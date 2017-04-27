@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,30 +20,53 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #pragma once
 
-#include "GCDeferralContext.h"
-#include "Heap.h"
+#include "DeferGC.h"
+#include "DisallowVMReentry.h"
 
 namespace JSC {
 
-ALWAYS_INLINE GCDeferralContext::GCDeferralContext(Heap& heap)
-    : m_heap(heap)
-{
-}
+class VM;
+class JSObject;
 
-ALWAYS_INLINE GCDeferralContext::~GCDeferralContext()
-{
-    ASSERT(!DisallowGC::isInEffectOnCurrentThread());
-#if ENABLE(GC_VALIDATION)
-    ASSERT(!m_heap.vm()->isInitializingObject());
-#endif
-    if (UNLIKELY(m_shouldGC))
-        m_heap.collectIfNecessaryOrDefer();
-}
+#ifdef NDEBUG
+
+class ObjectInitializationScope {
+public:
+    ALWAYS_INLINE ObjectInitializationScope(VM& vm)
+        : m_vm(vm)
+    { }
+
+    ALWAYS_INLINE VM& vm() const { return m_vm; }
+    ALWAYS_INLINE void notifyAllocated(JSObject*, bool) { }
+
+private:
+    VM& m_vm;
+};
+
+#else // not NDEBUG
+
+class ObjectInitializationScope {
+public:
+    JS_EXPORT_PRIVATE ObjectInitializationScope(VM&);
+    JS_EXPORT_PRIVATE ~ObjectInitializationScope();
+
+    VM& vm() const { return m_vm; }
+    void notifyAllocated(JSObject*, bool wasCreatedUninitialized);
+
+private:
+    void verifyPropertiesAreInitialized(JSObject*);
+
+    VM& m_vm;
+    DisallowGC m_disallowGC;
+    DisallowVMReentry m_disallowVMReentry;
+    JSObject* m_object { nullptr };
+};
+
+#endif // NDEBUG
 
 } // namespace JSC
-
