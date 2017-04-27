@@ -1,5 +1,16 @@
 2017-04-26  Tim Horton  <timothy_horton@apple.com>
 
+        Should not drag x-apple-data-detectors links
+        https://bugs.webkit.org/show_bug.cgi?id=171352
+        <rdar://problem/31309081>
+
+        Reviewed by Beth Dakin.
+
+        * fast/events/do-not-drag-and-drop-data-detectors-link-expected.txt: Added.
+        * fast/events/do-not-drag-and-drop-data-detectors-link.html: Added.
+
+2017-04-26  Tim Horton  <timothy_horton@apple.com>
+
         Revert accidentally smushed commit.
 
         * TestExpectations:

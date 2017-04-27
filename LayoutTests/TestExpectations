@@ -106,6 +106,9 @@ fast/visual-viewport/rubberbanding-viewport-rects-header-footer.html  [ Skip ]
 # FKA focus ring only make sense on Mac
 media/modern-media-controls/icon-button/icon-button-focus-state.html [ Skip ]
 
+# DataDetectors tests only make sense on Mac
+fast/events/do-not-drag-and-drop-data-detectors-link.html [ Skip ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific tests.
 #//////////////////////////////////////////////////////////////////////////////////////////
