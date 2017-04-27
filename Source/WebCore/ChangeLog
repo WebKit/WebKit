@@ -1,3 +1,9 @@
+2017-04-27  Andy Estes  <aestes@apple.com>
+
+        Fix the macOS build.
+
+        * platform/mac/WebPlaybackControlsManager.h:
+
 2017-04-27  Zalan Bujtas  <zalan@apple.com>
 
         Text gets cut off when bailing out of simple line layout with widows.
