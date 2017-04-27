@@ -146,7 +146,7 @@ public:
 private:
     bool shouldDeleteRange(Range*) final { return false; }
     bool smartInsertDeleteEnabled() final { return false; }
-    bool isSelectTrailingWhitespaceEnabled() final { return false; }
+    bool isSelectTrailingWhitespaceEnabled() const final { return false; }
     bool isContinuousSpellCheckingEnabled() final { return false; }
     void toggleContinuousSpellChecking() final { }
     bool isGrammarCheckingEnabled() final { return false; }

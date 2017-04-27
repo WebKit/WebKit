@@ -69,9 +69,9 @@ InputCursor& UserInputBridge::activeCursor() const
 #endif
 
 #if ENABLE(CONTEXT_MENUS)
-bool UserInputBridge::handleContextMenuEvent(const PlatformMouseEvent& mouseEvent, const Frame* frame, InputSource)
+bool UserInputBridge::handleContextMenuEvent(const PlatformMouseEvent& mouseEvent, Frame& frame, InputSource)
 {
-    return frame->eventHandler().sendContextMenuEvent(mouseEvent);
+    return frame.eventHandler().sendContextMenuEvent(mouseEvent);
 }
 #endif
 

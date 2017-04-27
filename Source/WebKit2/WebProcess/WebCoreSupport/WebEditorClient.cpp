@@ -82,7 +82,7 @@ bool WebEditorClient::smartInsertDeleteEnabled()
     return m_page->isSmartInsertDeleteEnabled();
 }
  
-bool WebEditorClient::isSelectTrailingWhitespaceEnabled()
+bool WebEditorClient::isSelectTrailingWhitespaceEnabled() const
 {
     return m_page->isSelectTrailingWhitespaceEnabled();
 }

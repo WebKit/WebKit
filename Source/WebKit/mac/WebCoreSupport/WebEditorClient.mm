@@ -242,7 +242,7 @@ bool WebEditorClient::smartInsertDeleteEnabled()
     return page->settings().smartInsertDeleteEnabled();
 }
 
-bool WebEditorClient::isSelectTrailingWhitespaceEnabled()
+bool WebEditorClient::isSelectTrailingWhitespaceEnabled() const
 {
     Page* page = [m_webView page];
     if (!page)

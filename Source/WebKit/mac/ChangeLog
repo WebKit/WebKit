@@ -1,3 +1,14 @@
+2017-04-27  Alex Christensen  <achristensen@webkit.org>
+
+        Modernize Frame.h
+        https://bugs.webkit.org/show_bug.cgi?id=171357
+
+        Reviewed by Andy Estes.
+
+        * WebCoreSupport/WebEditorClient.h:
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::isSelectTrailingWhitespaceEnabled):
+
 2017-04-27  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [WK1] Tweak the data interaction SPI to indicate whether or not a data interaction was handled

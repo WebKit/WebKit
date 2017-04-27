@@ -361,7 +361,7 @@ bool Editor::canSmartCopyOrDelete()
     return client() && client()->smartInsertDeleteEnabled() && m_frame.selection().granularity() == WordGranularity;
 }
 
-bool Editor::isSelectTrailingWhitespaceEnabled()
+bool Editor::isSelectTrailingWhitespaceEnabled() const
 {
     return client() && client()->isSelectTrailingWhitespaceEnabled();
 }
@@ -3041,7 +3041,7 @@ void Editor::computeAndSetTypingStyle(EditingStyle& style, EditAction editingAct
         applyCommand(ApplyStyleCommand::create(document(), blockStyle.get(), editingAction));
 
     // Set the remaining style as the typing style.
-    m_frame.selection().setTypingStyle(typingStyle);
+    m_frame.selection().setTypingStyle(WTFMove(typingStyle));
 }
 
 void Editor::computeAndSetTypingStyle(StyleProperties& properties, EditAction editingAction)

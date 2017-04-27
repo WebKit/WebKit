@@ -42,7 +42,7 @@ public:
 private:
     bool shouldDeleteRange(WebCore::Range*) final;
     bool smartInsertDeleteEnabled() final;
-    bool isSelectTrailingWhitespaceEnabled() final;
+    bool isSelectTrailingWhitespaceEnabled() const final;
     bool isContinuousSpellCheckingEnabled() final;
     void toggleContinuousSpellChecking() final;
     bool isGrammarCheckingEnabled() final;

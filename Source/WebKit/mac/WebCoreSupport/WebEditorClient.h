@@ -58,7 +58,7 @@ private:
     int spellCheckerDocumentTag() final;
 
     bool smartInsertDeleteEnabled() final;
-    bool isSelectTrailingWhitespaceEnabled() final;
+    bool isSelectTrailingWhitespaceEnabled() const final;
 
     bool shouldDeleteRange(WebCore::Range*) final;
 

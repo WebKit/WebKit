@@ -153,7 +153,7 @@ public:
     void updateAppearanceAfterLayout();
     void setNeedsSelectionUpdate();
 
-    bool contains(const LayoutPoint&);
+    bool contains(const LayoutPoint&) const;
 
     WEBCORE_EXPORT bool modify(EAlteration, SelectionDirection, TextGranularity, EUserTriggered = NotUserTriggered);
     enum VerticalDirection { DirectionUp, DirectionDown };
@@ -215,9 +215,9 @@ public:
 #if PLATFORM(IOS)
 public:
     WEBCORE_EXPORT void expandSelectionToElementContainingCaretSelection();
-    WEBCORE_EXPORT PassRefPtr<Range> elementRangeContainingCaretSelection() const;
+    WEBCORE_EXPORT RefPtr<Range> elementRangeContainingCaretSelection() const;
     WEBCORE_EXPORT void expandSelectionToWordContainingCaretSelection();
-    WEBCORE_EXPORT PassRefPtr<Range> wordRangeContainingCaretSelection();
+    WEBCORE_EXPORT RefPtr<Range> wordRangeContainingCaretSelection();
     WEBCORE_EXPORT void expandSelectionToStartOfWordContainingCaretSelection();
     WEBCORE_EXPORT UChar characterInRelationToCaretSelection(int amount) const;
     WEBCORE_EXPORT UChar characterBeforeCaretSelection() const;
@@ -227,8 +227,8 @@ public:
     WEBCORE_EXPORT bool selectionAtDocumentStart() const;
     WEBCORE_EXPORT bool selectionAtSentenceStart() const;
     WEBCORE_EXPORT bool selectionAtWordStart() const;
-    WEBCORE_EXPORT PassRefPtr<Range> rangeByMovingCurrentSelection(int amount) const;
-    WEBCORE_EXPORT PassRefPtr<Range> rangeByExtendingCurrentSelection(int amount) const;
+    WEBCORE_EXPORT RefPtr<Range> rangeByMovingCurrentSelection(int amount) const;
+    WEBCORE_EXPORT RefPtr<Range> rangeByExtendingCurrentSelection(int amount) const;
     WEBCORE_EXPORT void selectRangeOnElement(unsigned location, unsigned length, Node&);
     WEBCORE_EXPORT void clearCurrentSelection();
     void setCaretBlinks(bool caretBlinks = true);
@@ -243,7 +243,7 @@ public:
     }
 private:
     bool actualSelectionAtSentenceStart(const VisibleSelection&) const;
-    PassRefPtr<Range> rangeByAlteringCurrentSelection(EAlteration, int amount) const;
+    RefPtr<Range> rangeByAlteringCurrentSelection(EAlteration, int amount) const;
 public:
 #endif
 
@@ -253,8 +253,8 @@ public:
     void setSelectionByMouseIfDifferent(const VisibleSelection&, TextGranularity, EndPointsAdjustmentMode = DoNotAdjsutEndpoints);
 
     EditingStyle* typingStyle() const;
-    WEBCORE_EXPORT PassRefPtr<MutableStyleProperties> copyTypingStyle() const;
-    void setTypingStyle(PassRefPtr<EditingStyle>);
+    WEBCORE_EXPORT RefPtr<MutableStyleProperties> copyTypingStyle() const;
+    void setTypingStyle(RefPtr<EditingStyle>&& style) { m_typingStyle = WTFMove(style); }
     void clearTypingStyle();
 
     WEBCORE_EXPORT FloatRect selectionBounds(bool clipToVisibleContent = true) const;
@@ -362,11 +362,6 @@ inline EditingStyle* FrameSelection::typingStyle() const
 inline void FrameSelection::clearTypingStyle()
 {
     m_typingStyle = nullptr;
-}
-
-inline void FrameSelection::setTypingStyle(PassRefPtr<EditingStyle> style)
-{
-    m_typingStyle = style;
 }
 
 #if !(PLATFORM(COCOA) || PLATFORM(GTK))

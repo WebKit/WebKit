@@ -34,8 +34,8 @@
 #include "NavigationScheduler.h"
 #include "ScrollTypes.h"
 #include "UserScriptTypes.h"
-#include <memory>
 #include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/UniqueRef.h>
 
 #if PLATFORM(IOS)
 #include "ViewportArguments.h"
@@ -143,15 +143,19 @@ public:
     Document* document() const;
     FrameView* view() const;
 
-    Editor& editor() const;
-    EventHandler& eventHandler() const;
-    EventHandler* eventHandlerPtr() const;
+    Editor& editor() { return m_editor; }
+    const Editor& editor() const { return m_editor; }
+    EventHandler& eventHandler() { return m_eventHandler; }
+    const EventHandler& eventHandler() const { return m_eventHandler; }
     FrameLoader& loader() const;
     NavigationScheduler& navigationScheduler() const;
-    FrameSelection& selection() const;
+    FrameSelection& selection() { return m_selection; }
+    const FrameSelection& selection() const { return m_selection; }
     FrameTree& tree() const;
-    CSSAnimationController& animation() const;
-    ScriptController& script();
+    CSSAnimationController& animation() { return m_animationController; }
+    const CSSAnimationController& animation() const { return m_animationController; }
+    ScriptController& script() { return m_script; }
+    const ScriptController& script() const { return m_script; }
     
     WEBCORE_EXPORT RenderView* contentRenderer() const; // Root of the render tree for the document contained in this frame.
     WEBCORE_EXPORT RenderWidget* ownerRenderer() const; // Renderer for the element that contains this frame.
@@ -241,8 +245,8 @@ public:
 
     WEBCORE_EXPORT int preferredHeight() const;
     WEBCORE_EXPORT void updateLayout() const;
-    WEBCORE_EXPORT NSRect caretRect() const;
-    WEBCORE_EXPORT NSRect rectForScrollToVisible() const;
+    WEBCORE_EXPORT NSRect caretRect();
+    WEBCORE_EXPORT NSRect rectForScrollToVisible();
     WEBCORE_EXPORT unsigned formElementsCharacterCount() const;
 
     // This function is used by Legacy WebKit.
@@ -288,10 +292,10 @@ private:
     RefPtr<FrameView> m_view;
     RefPtr<Document> m_doc;
 
-    const std::unique_ptr<ScriptController> m_script;
-    const std::unique_ptr<Editor> m_editor;
-    const std::unique_ptr<FrameSelection> m_selection;
-    const std::unique_ptr<CSSAnimationController> m_animationController;
+    UniqueRef<ScriptController> m_script;
+    UniqueRef<Editor> m_editor;
+    UniqueRef<FrameSelection> m_selection;
+    UniqueRef<CSSAnimationController> m_animationController;
 
 #if ENABLE(DATA_DETECTION)
     RetainPtr<NSArray> m_dataDetectionResults;
@@ -324,7 +328,7 @@ private:
     bool m_documentIsBeingReplaced { false };
 
 protected:
-    std::unique_ptr<EventHandler> m_eventHandler;
+    UniqueRef<EventHandler> m_eventHandler;
 };
 
 inline void Frame::init()
@@ -347,29 +351,9 @@ inline FrameView* Frame::view() const
     return m_view.get();
 }
 
-inline ScriptController& Frame::script()
-{
-    return *m_script;
-}
-
 inline Document* Frame::document() const
 {
     return m_doc.get();
-}
-
-inline FrameSelection& Frame::selection() const
-{
-    return *m_selection;
-}
-
-inline Editor& Frame::editor() const
-{
-    return *m_editor;
-}
-
-inline CSSAnimationController& Frame::animation() const
-{
-    return *m_animationController;
 }
 
 inline HTMLFrameOwnerElement* Frame::ownerElement() const
@@ -390,16 +374,6 @@ inline Page* Frame::page() const
 inline void Frame::detachFromPage()
 {
     m_page = nullptr;
-}
-
-inline EventHandler& Frame::eventHandler() const
-{
-    return *m_eventHandler;
-}
-
-inline EventHandler* Frame::eventHandlerPtr() const
-{
-    return m_eventHandler.get();
 }
 
 inline MainFrame& Frame::mainFrame() const

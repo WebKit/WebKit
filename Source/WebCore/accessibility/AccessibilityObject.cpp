@@ -951,15 +951,11 @@ bool AccessibilityObject::press()
     
 bool AccessibilityObject::dispatchTouchEvent()
 {
-    bool handled = false;
 #if ENABLE(IOS_TOUCH_EVENTS)
-    MainFrame* frame = mainFrame();
-    if (!frame)
-        return false;
-
-    handled = frame->eventHandler().dispatchSimulatedTouchEvent(clickPoint());
+    if (auto* frame = mainFrame())
+        return frame->eventHandler().dispatchSimulatedTouchEvent(clickPoint());
 #endif
-    return handled;
+    return false;
 }
 
 Frame* AccessibilityObject::frame() const

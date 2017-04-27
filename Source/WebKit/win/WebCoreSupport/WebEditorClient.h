@@ -70,7 +70,7 @@ private:
     bool shouldMoveRangeAfterDelete(WebCore::Range*, WebCore::Range*) final;
 
     bool smartInsertDeleteEnabled() final;
-    bool isSelectTrailingWhitespaceEnabled() final;
+    bool isSelectTrailingWhitespaceEnabled() const final;
 
     void registerUndoStep(WebCore::UndoStep&) final;
     void registerRedoStep(WebCore::UndoStep&) final;

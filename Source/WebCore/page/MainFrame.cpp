@@ -59,7 +59,6 @@ inline MainFrame::MainFrame(Page& page, PageConfiguration& configuration)
 MainFrame::~MainFrame()
 {
     m_recentWheelEventDeltaFilter = nullptr;
-    m_eventHandler = nullptr;
 
     setMainFrameWasDestroyed();
 }

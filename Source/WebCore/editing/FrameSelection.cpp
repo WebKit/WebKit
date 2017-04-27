@@ -1813,7 +1813,7 @@ void FrameSelection::debugRenderer(RenderObject* renderer, bool selected) const
     }
 }
 
-bool FrameSelection::contains(const LayoutPoint& point)
+bool FrameSelection::contains(const LayoutPoint& point) const
 {
     // Treat a collapsed selection like no selection.
     if (!isRange())
@@ -2201,10 +2201,10 @@ void DragCaretController::paintDragCaret(Frame* frame, GraphicsContext& p, const
 #endif
 }
 
-PassRefPtr<MutableStyleProperties> FrameSelection::copyTypingStyle() const
+RefPtr<MutableStyleProperties> FrameSelection::copyTypingStyle() const
 {
     if (!m_typingStyle || !m_typingStyle->style())
-        return 0;
+        return nullptr;
     return m_typingStyle->style()->mutableCopy();
 }
 
@@ -2428,7 +2428,7 @@ void FrameSelection::expandSelectionToElementContainingCaretSelection()
     setSelection(selection);
 }
 
-PassRefPtr<Range> FrameSelection::elementRangeContainingCaretSelection() const
+RefPtr<Range> FrameSelection::elementRangeContainingCaretSelection() const
 {
     if (m_selection.isNone())
         return nullptr;
@@ -2467,7 +2467,7 @@ void FrameSelection::expandSelectionToWordContainingCaretSelection()
         setSelection(selection);
 }
 
-PassRefPtr<Range> FrameSelection::wordRangeContainingCaretSelection()
+RefPtr<Range> FrameSelection::wordRangeContainingCaretSelection()
 {
     return wordSelectionContainingCaretSelection(m_selection).toNormalizedRange();
 }
@@ -2619,12 +2619,12 @@ bool FrameSelection::selectionAtWordStart() const
     return result;
 }
 
-PassRefPtr<Range> FrameSelection::rangeByMovingCurrentSelection(int amount) const
+RefPtr<Range> FrameSelection::rangeByMovingCurrentSelection(int amount) const
 {
     return rangeByAlteringCurrentSelection(AlterationMove, amount);
 }
 
-PassRefPtr<Range> FrameSelection::rangeByExtendingCurrentSelection(int amount) const
+RefPtr<Range> FrameSelection::rangeByExtendingCurrentSelection(int amount) const
 {
     return rangeByAlteringCurrentSelection(AlterationExtend, amount);
 }
@@ -2785,7 +2785,7 @@ bool FrameSelection::actualSelectionAtSentenceStart(const VisibleSelection& sel)
     return result;
 }
 
-PassRefPtr<Range> FrameSelection::rangeByAlteringCurrentSelection(EAlteration alteration, int amount) const
+RefPtr<Range> FrameSelection::rangeByAlteringCurrentSelection(EAlteration alteration, int amount) const
 {
     if (m_selection.isNone())
         return nullptr;

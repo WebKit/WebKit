@@ -1,3 +1,57 @@
+2017-04-27  Alex Christensen  <achristensen@webkit.org>
+
+        Modernize Frame.h
+        https://bugs.webkit.org/show_bug.cgi?id=171357
+
+        Reviewed by Andy Estes.
+
+        Frame.h has several std::unique_ptrs that are created in the constructor, never null,
+        and destroyed in the destructor.  This is what WTF::UniqueRef is for, and using UniqueRef
+        allows us to not check for null values because a UniqueRef can never be null.
+        An interesting case was the EventHandler, which we explicitly set to nullptr in the destructor
+        of MainFrame, a subclass of Frame.  We added this in r199181 to fix a crash tested by
+        fast/events/wheel-event-destroys-frame.html and this improved lifetime also does not crash
+        or assert in that test.
+
+        Using UniqueRef also requires const correctness, which this patch adds when necessary.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::dispatchTouchEvent):
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::calculateTypingStyleAfterDelete):
+        * editing/Editor.cpp:
+        (WebCore::Editor::isSelectTrailingWhitespaceEnabled):
+        (WebCore::Editor::computeAndSetTypingStyle):
+        * editing/Editor.h:
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::contains):
+        (WebCore::FrameSelection::copyTypingStyle):
+        * editing/FrameSelection.h:
+        (WebCore::FrameSelection::setTypingStyle):
+        * loader/EmptyClients.cpp:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::clear):
+        * page/EditorClient.h:
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::hitTestResultAtPoint):
+        * page/EventHandler.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::Frame):
+        (WebCore::Frame::setView):
+        (WebCore::Frame::injectUserScripts):
+        * page/Frame.h:
+        (WebCore::Frame::editor):
+        (WebCore::Frame::eventHandler):
+        (WebCore::Frame::selection):
+        (WebCore::Frame::animation):
+        (WebCore::Frame::script):
+        (WebCore::Frame::eventHandlerPtr): Deleted.
+        * page/MainFrame.cpp:
+        (WebCore::MainFrame::~MainFrame):
+        * replay/UserInputBridge.cpp:
+        (WebCore::UserInputBridge::handleContextMenuEvent):
+        * replay/UserInputBridge.h:
+
 2017-04-27  Andy Estes  <aestes@apple.com>
 
         Fix the macOS build.

@@ -157,10 +157,10 @@ Frame::Frame(Page& page, HTMLFrameOwnerElement* ownerElement, FrameLoaderClient&
     , m_loader(*this, frameLoaderClient)
     , m_navigationScheduler(*this)
     , m_ownerElement(ownerElement)
-    , m_script(std::make_unique<ScriptController>(*this))
-    , m_editor(std::make_unique<Editor>(*this))
-    , m_selection(std::make_unique<FrameSelection>(this))
-    , m_animationController(std::make_unique<CSSAnimationController>(*this))
+    , m_script(makeUniqueRef<ScriptController>(*this))
+    , m_editor(makeUniqueRef<Editor>(*this))
+    , m_selection(makeUniqueRef<FrameSelection>(this))
+    , m_animationController(makeUniqueRef<CSSAnimationController>(*this))
 #if PLATFORM(IOS)
     , m_overflowAutoScrollTimer(*this, &Frame::overflowAutoScrollTimerFired)
     , m_selectionChangeCallbacksDisabled(false)
@@ -168,7 +168,7 @@ Frame::Frame(Page& page, HTMLFrameOwnerElement* ownerElement, FrameLoaderClient&
     , m_pageZoomFactor(parentPageZoomFactor(this))
     , m_textZoomFactor(parentTextZoomFactor(this))
     , m_activeDOMObjectsAndAnimationsSuspendedCount(0)
-    , m_eventHandler(std::make_unique<EventHandler>(*this))
+    , m_eventHandler(makeUniqueRef<EventHandler>(*this))
 {
     AtomicString::init();
     HTMLNames::init();
@@ -251,9 +251,7 @@ void Frame::setView(RefPtr<FrameView>&& view)
     if (m_view)
         m_view->unscheduleRelayout();
     
-    // This may be called during destruction, so need to do a null check.
-    if (m_eventHandler)
-        m_eventHandler->clear();
+    m_eventHandler->clear();
 
     RELEASE_ASSERT(!m_doc || !m_doc->hasLivingRenderTree());
 
@@ -714,8 +712,7 @@ void Frame::injectUserScripts(UserScriptInjectionTime injectionTime)
         if (script.injectionTime() == injectionTime && UserContentURLPattern::matchesPatterns(document->url(), script.whitelist(), script.blacklist())) {
             if (m_page)
                 m_page->setAsRunningUserScripts();
-            if (m_script)
-                m_script->evaluateInWorld(ScriptSourceCode(script.source(), script.url()), world);
+            m_script->evaluateInWorld(ScriptSourceCode(script.source(), script.url()), world);
         }
     });
 }

@@ -510,7 +510,7 @@ void Frame::updateLayout() const
         view->adjustViewSize();
 }
 
-NSRect Frame::caretRect() const
+NSRect Frame::caretRect()
 {
     VisibleSelection visibleSelection = selection().selection();
     if (visibleSelection.isNone())
@@ -518,7 +518,7 @@ NSRect Frame::caretRect() const
     return visibleSelection.isCaret() ? selection().absoluteCaretBounds() : VisiblePosition(visibleSelection.end()).absoluteCaretBounds();
 }
 
-NSRect Frame::rectForScrollToVisible() const
+NSRect Frame::rectForScrollToVisible()
 {
     VisibleSelection selection(this->selection().selection());
 
