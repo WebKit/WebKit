@@ -31,7 +31,7 @@
 
 #if WK_API_ENABLED
 
-TEST(WKWebView, SetOverrideContentSecurityPolicyWithEmptyStringForPageWithCSP)
+TEST(WKWebView, DISABLED_SetOverrideContentSecurityPolicyWithEmptyStringForPageWithCSP)
 {
     @autoreleasepool {
         RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
