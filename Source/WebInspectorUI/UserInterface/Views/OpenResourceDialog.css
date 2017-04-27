@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,16 +48,39 @@
 }
 
 .open-resource-dialog > .field {
-    margin: 8px 3px 8px 32px;
+    margin-top: 8px;
+    margin-bottom: 8px;
+
+    --open-resource-dialog-field-margin-start: 32px;
+    --open-resource-dialog-field-margin-end: 3px;
+}
+
+body[dir=ltr] .open-resource-dialog > .field {
+    margin-left: var(--open-resource-dialog-field-margin-start);
+    margin-right: var(--open-resource-dialog-field-margin-end);
+}
+
+body[dir=rtl] .open-resource-dialog > .field {
+    margin-left: var(--open-resource-dialog-field-margin-end);
+    margin-right: var(--open-resource-dialog-field-margin-start);
 }
 
 .open-resource-dialog > .field::before {
     position: absolute;
-    left: 6px;
     top: 6px;
     width: 30px;
     opacity: 0.5;
     content: url(../Images/Search.svg);
+
+    --open-resource-dialog-search-icon-offset-start: 6px;
+}
+
+body[dir=ltr] .open-resource-dialog > .field::before {
+    left: var(--open-resource-dialog-search-icon-offset-start);
+}
+
+body[dir=rtl] .open-resource-dialog > .field::before {
+    right: var(--open-resource-dialog-search-icon-offset-start);
 }
 
 .open-resource-dialog > .field > input {
@@ -67,9 +90,23 @@
     background-color: transparent;
     font-size: 20px;
     color: hsl(0, 0%, 4%);
-    padding: 0 30px 1px 7px;
+    padding-top: 0px;
+    padding-bottom: 1px;
     outline: none;
     -webkit-appearance: none;
+
+    --open-resource-dialog-input-padding-start: 7px;
+    --open-resource-dialog-input-padding-end: 30px;
+}
+
+body[dir=ltr] .open-resource-dialog > .field > input {
+    padding-left: var(--open-resource-dialog-input-padding-start);
+    padding-right: var(--open-resource-dialog-input-padding-end);
+}
+
+body[dir=rtl] .open-resource-dialog > .field > input {
+    padding-left: var(--open-resource-dialog-input-padding-end);
+    padding-right: var(--open-resource-dialog-input-padding-start);
 }
 
 .open-resource-dialog > .field > input::placeholder {
@@ -79,7 +116,6 @@
 .open-resource-dialog > .field > img {
     position: absolute;
     top: 15px;
-    right: 10px;
     padding: 2px;
     border-radius: 9px;
     width: 15px;
@@ -87,6 +123,16 @@
     background-color: hsl(0, 0%, 60%);
     display: none;
     content: url(../Images/CloseWhite.svg);
+
+    --open-resource-dialog-close-icon-offset-end: 10px;
+}
+
+body[dir=ltr] .open-resource-dialog > .field > img {
+    right: var(--open-resource-dialog-close-icon-offset-end);
+}
+
+body[dir=rtl] .open-resource-dialog > .field > img {
+    left: var(--open-resource-dialog-close-icon-offset-end);
 }
 
 .open-resource-dialog > .field > img:active {
@@ -111,8 +157,18 @@
 }
 
 .open-resource-dialog > .tree-outline .item {
-    padding-left: 10px;
     border: none;
+    flex: none;
+
+    --open-resource-dialog-tree-outline-item-padding-start: 10px;
+}
+
+body[dir=ltr] .open-resource-dialog > .tree-outline .item {
+    padding-left: var(--open-resource-dialog-tree-outline-item-padding-start);
+}
+
+body[dir=rtl] .open-resource-dialog > .tree-outline .item {
+    padding-right: var(--open-resource-dialog-tree-outline-item-padding-start);
 }
 
 .open-resource-dialog > .tree-outline .item.selected {

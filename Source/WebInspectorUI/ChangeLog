@@ -1,5 +1,38 @@
 2017-04-27  Brian Burg  <bburg@apple.com>
 
+        Web Inspector: RTL: layout issues in Open Resource Dialog
+        https://bugs.webkit.org/show_bug.cgi?id=170551
+
+        Reviewed by Matt Baker.
+
+        We need to flip the cancel and search icons, and flip padding
+        in the tree outline that contains search results.
+
+        I am still not happy with the title/subtitle ordering
+        (i.e., the domain vs the resource name), but this issue will
+        be solved primarily in the navigation sidebar first and then
+        adjusted for Open Resource Dialog if those changes are not
+        sufficient.
+
+        * UserInterface/Views/OpenResourceDialog.css:
+        (.open-resource-dialog > .field):
+        (body[dir=ltr] .open-resource-dialog > .field):
+        (body[dir=rtl] .open-resource-dialog > .field):
+        (.open-resource-dialog > .field::before):
+        (body[dir=ltr] .open-resource-dialog > .field::before):
+        (body[dir=rtl] .open-resource-dialog > .field::before):
+        (.open-resource-dialog > .field > input):
+        (body[dir=ltr] .open-resource-dialog > .field > input):
+        (body[dir=rtl] .open-resource-dialog > .field > input):
+        (.open-resource-dialog > .field > img):
+        (body[dir=ltr] .open-resource-dialog > .field > img):
+        (body[dir=rtl] .open-resource-dialog > .field > img):
+        (.open-resource-dialog > .tree-outline .item):
+        (body[dir=ltr] .open-resource-dialog > .tree-outline .item):
+        (body[dir=rtl] .open-resource-dialog > .tree-outline .item):
+
+2017-04-27  Brian Burg  <bburg@apple.com>
+
         Web Inspector: fix tooltip wording for Reload button
         https://bugs.webkit.org/show_bug.cgi?id=171073
         <rdar://problem/31378524>
