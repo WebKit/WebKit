@@ -1,3 +1,17 @@
+2017-04-27  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [GTK] Web Inspector: some SVG images are specified 'currentColor' incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=170977
+
+        Reviewed by Michael Catanzaro.
+
+        The keyword 'currentColor' is specifed manually in Bug 150602.
+        But, some SVG images are specified incorrectly.
+
+        * UserInterface/Images/gtk/NavigationItemTypes.svg: Do not stroke
+        with currentColor, but fill.
+        * UserInterface/Images/gtk/UpDownArrows.svg: Ditto.
+
 2017-04-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Remote inspector should support inspecting targets with previous version of backend commands
