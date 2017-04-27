@@ -1,3 +1,13 @@
+2017-04-26  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        [ATK] ARIA buttons which have a popup should be ATK_ROLE_PUSH_BUTTON; not ATK_ROLE_COMBO_BOX
+        https://bugs.webkit.org/show_bug.cgi?id=171182
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/gtk/button-with-aria-haspopup-is-not-a-combobox-expected.txt: Added.
+        * accessibility/gtk/button-with-aria-haspopup-is-not-a-combobox.html: Added.
+
 2017-04-26  Tim Horton  <timothy_horton@apple.com>
 
         Should not drag x-apple-data-detectors links

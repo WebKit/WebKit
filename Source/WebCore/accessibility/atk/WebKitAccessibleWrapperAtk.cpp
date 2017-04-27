@@ -530,6 +530,7 @@ static AtkRole atkRole(AccessibilityObject* coreObject)
     case WindowRole:
         return ATK_ROLE_WINDOW;
     case PopUpButtonRole:
+        return coreObject->ariaHasPopup() ? ATK_ROLE_PUSH_BUTTON : ATK_ROLE_COMBO_BOX;
     case ComboBoxRole:
         return ATK_ROLE_COMBO_BOX;
     case SplitGroupRole:

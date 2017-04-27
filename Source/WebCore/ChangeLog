@@ -1,3 +1,21 @@
+2017-04-26  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        [ATK] ARIA buttons which have a popup should be ATK_ROLE_PUSH_BUTTON; not ATK_ROLE_COMBO_BOX
+        https://bugs.webkit.org/show_bug.cgi?id=171182
+
+        Reviewed by Chris Fleizach.
+
+        Test: accessibility/gtk/button-with-aria-haspopup-is-not-a-combobox.html
+
+        WebCore Accessibility assigns PopUpButtonRole to collapsed select elements,
+        which the ATK code correctly maps to ATK_ROLE_COMBO_BOX. It turns out that
+        WebCore Accessibility also maps the ARIA button role to PopUpButtonRole if
+        it also has aria-haspopup. Add a check to atkRole() so that the latter case
+        is mapped to ATK_ROLE_PUSH_BUTTON.
+
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (atkRole):
+
 2017-04-26  Tim Horton  <timothy_horton@apple.com>
 
         Should not drag x-apple-data-detectors links
