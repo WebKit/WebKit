@@ -68,9 +68,10 @@ void SharedBuffer::hintMemoryNotNeededSoon()
 
 void SharedBuffer::append(CFDataRef data)
 {
-    ASSERT(data);
-    m_size += CFDataGetLength(data);
-    m_segments.append(DataSegment::create(data));
+    if (data) {
+        m_size += CFDataGetLength(data);
+        m_segments.append(DataSegment::create(data));
+    }
 }
 
 }
