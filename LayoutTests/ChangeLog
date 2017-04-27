@@ -1,3 +1,12 @@
+2017-04-27  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Mark http/tests/xmlhttprequest/workers/methods.html as flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=170181
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
 2017-04-27  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: Expose elements with the ARIA "feed" role
