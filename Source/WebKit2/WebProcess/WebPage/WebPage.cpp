@@ -3364,7 +3364,9 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     m_viewportConfiguration.setCanIgnoreScalingConstraints(m_ignoreViewportScalingConstraints);
     setForceAlwaysUserScalable(m_forceAlwaysUserScalable || store.getBoolValueForKey(WebPreferencesKey::forceAlwaysUserScalableKey()));
 #endif
-    settings.setLargeImageAsyncDecodingEnabled(store.getBoolValueForKey(WebPreferencesKey::largeImageAsyncDecodingEnabledKey()));
+    // FIXME: enable async image decoding after the flickering bug wk170640 is fixed.
+    // settings.setLargeImageAsyncDecodingEnabled(store.getBoolValueForKey(WebPreferencesKey::largeImageAsyncDecodingEnabledKey()));
+    settings.setLargeImageAsyncDecodingEnabled(false);
     settings.setAnimatedImageAsyncDecodingEnabled(store.getBoolValueForKey(WebPreferencesKey::animatedImageAsyncDecodingEnabledKey()));
     settings.setShouldSuppressKeyboardInputDuringProvisionalNavigation(store.getBoolValueForKey(WebPreferencesKey::shouldSuppressKeyboardInputDuringProvisionalNavigationKey()));
 }

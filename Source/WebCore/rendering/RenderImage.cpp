@@ -580,6 +580,9 @@ void RenderImage::paintIntoRect(GraphicsContext& context, const FloatRect& rect)
         downcast<PDFDocumentImage>(*image).setPdfImageCachingPolicy(settings().pdfImageCachingPolicy());
 #endif
 
+    if (is<BitmapImage>(image))
+        downcast<BitmapImage>(*image).updateFromSettings(settings());
+
     ImageOrientationDescription orientationDescription(shouldRespectImageOrientation(), style().imageOrientation());
     context.drawImage(*img, rect, ImagePaintingOptions(compositeOperator, BlendModeNormal, DecodingMode::Asynchronous, orientationDescription, interpolation));
 }

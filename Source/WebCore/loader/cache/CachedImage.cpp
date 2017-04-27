@@ -352,12 +352,6 @@ CachedImage::CachedImageObserver::CachedImageObserver(CachedImage& image)
 {
     m_cachedImages.reserveInitialCapacity(1);
     m_cachedImages.append(&image);
-    if (auto* loader = image.loader()) {
-        m_allowSubsampling = loader->frameLoader()->frame().settings().imageSubsamplingEnabled();
-        m_allowLargeImageAsyncDecoding = loader->frameLoader()->frame().settings().largeImageAsyncDecodingEnabled();
-        m_allowAnimatedImageAsyncDecoding = loader->frameLoader()->frame().settings().animatedImageAsyncDecodingEnabled();
-        m_showDebugBackground = loader->frameLoader()->frame().settings().showDebugBorders();
-    }
 }
 
 void CachedImage::CachedImageObserver::decodedSizeChanged(const Image* image, long long delta)

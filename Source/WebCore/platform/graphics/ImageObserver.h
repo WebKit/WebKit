@@ -39,16 +39,11 @@ protected:
     virtual ~ImageObserver() {}
 public:
     virtual URL sourceUrl() const = 0;
-    virtual bool allowSubsampling() const = 0;
-    virtual bool allowLargeImageAsyncDecoding() const = 0;
-    virtual bool allowAnimatedImageAsyncDecoding() const = 0;
-    virtual bool showDebugBackground() const = 0;
     virtual void decodedSizeChanged(const Image*, long long delta) = 0;
 
     virtual void didDraw(const Image*) = 0;
 
     virtual void animationAdvanced(const Image*) = 0;
-
     virtual void changedInRect(const Image*, const IntRect* changeRect = nullptr) = 0;
 };
 

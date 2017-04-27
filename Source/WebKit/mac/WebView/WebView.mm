@@ -3084,7 +3084,9 @@ static bool needsSelfRetainWhileLoadingQuirk()
 
     settings.setShouldConvertInvalidURLsToBlank(shouldConvertInvalidURLsToBlank());
 
-    settings.setLargeImageAsyncDecodingEnabled([preferences largeImageAsyncDecodingEnabled]);
+    // FIXME: enable async image decoding after the flickering bug wk170640 is fixed.
+    // settings.setLargeImageAsyncDecodingEnabled([preferences largeImageAsyncDecodingEnabled]);
+    settings.setLargeImageAsyncDecodingEnabled(false);
     settings.setAnimatedImageAsyncDecodingEnabled([preferences animatedImageAsyncDecodingEnabled]);
 }
 

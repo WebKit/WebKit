@@ -1431,6 +1431,9 @@ ExceptionOr<void> CanvasRenderingContext2D::drawImage(HTMLImageElement& imageEle
         image->setContainerSize(imageRect.size());
     }
 
+    if (image->isBitmapImage())
+        downcast<BitmapImage>(*image).updateFromSettings(imageElement.document().settings());
+
     if (rectContainsCanvas(normalizedDstRect)) {
         c->drawImage(*image, normalizedDstRect, normalizedSrcRect, ImagePaintingOptions(op, blendMode));
         didDrawEntireCanvas();

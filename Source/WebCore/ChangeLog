@@ -1,3 +1,42 @@
+2017-04-27  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        REGRESSION(r213764): Async decoding of animated images is disabled for ImageDocument
+        https://bugs.webkit.org/show_bug.cgi?id=170333
+
+        Reviewed by Simon Fraser.
+
+        The way the image drawing settings are transfered from the Settings to
+        BitmapImage is problematic. The drawing settings are retrieved from the
+        CachedImageObserver which store them in the constructor only if the
+        CachedImage as a loader. In the case of ImageDocument, there isn't loader
+        set in CachedImage so the settings of ImageDocument are not set. Also
+        the CachedImage can be used after loading by another document which may
+        have a different drawing settings.
+
+        The fix is to make BitmapImage reads the drawing settings every time it 
+        is drawn as a foreground or background image in a RenderElement.
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::drawImage):
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::CachedImageObserver::CachedImageObserver):
+        * loader/cache/CachedImage.h:
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::setDrawingSettings):
+        (WebCore::BitmapImage::draw):
+        (WebCore::BitmapImage::shouldUseAsyncDecodingForLargeImages): I was
+        trying to disable the async image decoding temporarily but this way will
+        even prevent testing it until it is enabled. Disable it through WK1 and
+        WK2 preferences.
+        (WebCore::BitmapImage::shouldUseAsyncDecodingForAnimatedImages):
+        (WebCore::BitmapImage::advanceAnimation):
+        * platform/graphics/BitmapImage.h:
+        * platform/graphics/ImageObserver.h:
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paintIntoRect):
+
 2017-04-27  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Performing data interaction with plain text into a contenteditable does not insert any content

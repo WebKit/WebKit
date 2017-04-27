@@ -33,6 +33,7 @@
 #include "ImageObserver.h"
 #include "IntRect.h"
 #include "Logging.h"
+#include "Settings.h"
 #include "TextStream.h"
 #include "Timer.h"
 #include <wtf/CurrentTime.h>
@@ -61,6 +62,14 @@ BitmapImage::~BitmapImage()
 {
     invalidatePlatformData();
     stopAnimation();
+}
+
+void BitmapImage::updateFromSettings(const Settings& settings)
+{
+    m_allowSubsampling = settings.imageSubsamplingEnabled();
+    m_allowLargeImageAsyncDecoding = settings.largeImageAsyncDecodingEnabled();
+    m_allowAnimatedImageAsyncDecoding = settings.animatedImageAsyncDecodingEnabled();
+    m_showDebugBackground = settings.showDebugBorders();
 }
 
 void BitmapImage::destroyDecodedData(bool destroyAll)
@@ -166,7 +175,7 @@ void BitmapImage::draw(GraphicsContext& context, const FloatRect& destRect, cons
     FloatSize scaleFactorForDrawing = context.scaleFactorForDrawing(destRect, srcRect);
     IntSize sizeForDrawing = expandedIntSize(size() * scaleFactorForDrawing);
     
-    m_currentSubsamplingLevel = allowSubsampling() ? m_source.subsamplingLevelForScaleFactor(context, scaleFactorForDrawing) : SubsamplingLevel::Default;
+    m_currentSubsamplingLevel = m_allowSubsampling ? m_source.subsamplingLevelForScaleFactor(context, scaleFactorForDrawing) : SubsamplingLevel::Default;
     LOG(Images, "BitmapImage::%s - %p - url: %s [subsamplingLevel = %d scaleFactorForDrawing = (%.4f, %.4f)]", __FUNCTION__, this, sourceURL().string().utf8().data(), static_cast<int>(m_currentSubsamplingLevel), scaleFactorForDrawing.width(), scaleFactorForDrawing.height());
 
     NativeImagePtr image;
@@ -180,7 +189,7 @@ void BitmapImage::draw(GraphicsContext& context, const FloatRect& destRect, cons
         }
 
         if (!frameHasDecodedNativeImageCompatibleWithOptionsAtIndex(m_currentFrame, m_currentSubsamplingLevel, DecodingMode::Asynchronous)) {
-            if (showDebugBackground())
+            if (m_showDebugBackground)
                 fillWithSolidColor(context, destRect, Color(Color::yellow).colorWithAlpha(0.5), op);
             return;
         }
@@ -191,14 +200,14 @@ void BitmapImage::draw(GraphicsContext& context, const FloatRect& destRect, cons
         StartAnimationStatus status = internalStartAnimation();
         ASSERT_IMPLIES(status == StartAnimationStatus::DecodingActive, frameHasFullSizeNativeImageAtIndex(m_currentFrame, m_currentSubsamplingLevel));
 
-        if (status == StartAnimationStatus::DecodingActive && showDebugBackground()) {
+        if (status == StartAnimationStatus::DecodingActive && m_showDebugBackground) {
             fillWithSolidColor(context, destRect, Color(Color::yellow).colorWithAlpha(0.5), op);
             return;
         }
 
         if (frameIsBeingDecodedAndIsCompatibleWithOptionsAtIndex(m_currentFrame, DecodingMode::Asynchronous)) {
             // FIXME: instead of showing the yellow rectangle and returning we need to wait for this the frame to finish decoding.
-            if (showDebugBackground()) {
+            if (m_showDebugBackground) {
                 fillWithSolidColor(context, destRect, Color(Color::yellow).colorWithAlpha(0.5), op);
                 LOG(Images, "BitmapImage::%s - %p - url: %s [waiting for async decoding to finish]", __FUNCTION__, this, sourceURL().string().utf8().data());
             }
@@ -273,14 +282,12 @@ bool BitmapImage::canAnimate()
 
 bool BitmapImage::shouldUseAsyncDecodingForLargeImages()
 {
-    // FIXME: enable async image decoding after the flickering bug wk170640 is fixed.
-    // return !canAnimate() && allowLargeImageAsyncDecoding() && m_source.shouldUseAsyncDecoding();
-    return false;
+    return !canAnimate() && m_allowLargeImageAsyncDecoding && m_source.shouldUseAsyncDecoding();
 }
 
 bool BitmapImage::shouldUseAsyncDecodingForAnimatedImages()
 {
-    return canAnimate() && allowAnimatedImageAsyncDecoding() && (shouldUseAsyncDecodingForAnimatedImagesForTesting() || m_source.shouldUseAsyncDecoding());
+    return canAnimate() && m_allowAnimatedImageAsyncDecoding && (shouldUseAsyncDecodingForAnimatedImagesForTesting() || m_source.shouldUseAsyncDecoding());
 }
 
 void BitmapImage::clearTimer()
@@ -390,7 +397,7 @@ void BitmapImage::advanceAnimation()
         internalAdvanceAnimation();
     else {
         // Force repaint if showDebugBackground() is on.
-        if (showDebugBackground())
+        if (m_showDebugBackground)
             imageObserver()->changedInRect(this);
         LOG(Images, "BitmapImage::%s - %p - url: %s [lateFrameCount = %ld nextFrame = %ld]", __FUNCTION__, this, sourceURL().string().utf8().data(), ++m_lateFrameCount, nextFrame);
     }

@@ -1,3 +1,15 @@
+2017-04-27  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        REGRESSION(r213764): Async decoding of animated images is disabled for ImageDocument
+        https://bugs.webkit.org/show_bug.cgi?id=170333
+
+        Reviewed by Simon Fraser.
+
+        Disbale the async decoding for large images for now.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2017-04-27  Brent Fulgham  <bfulgham@apple.com>
 
         [WK2][macOS] Allow multi-touch related iokit-get-properties

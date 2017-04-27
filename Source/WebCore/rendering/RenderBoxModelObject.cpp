@@ -26,6 +26,7 @@
 #include "config.h"
 #include "RenderBoxModelObject.h"
 
+#include "BitmapImage.h"
 #include "BorderEdge.h"
 #include "FloatRoundedRect.h"
 #include "Frame.h"
@@ -876,6 +877,9 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
         if (!geometry.destRect().isEmpty() && (image = bgImage->image(backgroundObject ? backgroundObject : this, geometry.tileSize()))) {
             auto compositeOp = op == CompositeSourceOver ? bgLayer.composite() : op;
             context.setDrawLuminanceMask(bgLayer.maskSourceType() == MaskLuminance);
+
+            if (is<BitmapImage>(image.get()))
+                downcast<BitmapImage>(*image).updateFromSettings(settings());
 
             auto interpolation = chooseInterpolationQuality(context, *image, &bgLayer, geometry.tileSize());
             context.drawTiledImage(*image, geometry.destRect(), toLayoutPoint(geometry.relativePhase()), geometry.tileSize(), geometry.spaceSize(), ImagePaintingOptions(compositeOp, bgLayer.blendMode(), DecodingMode::Asynchronous, ImageOrientationDescription(), interpolation));
