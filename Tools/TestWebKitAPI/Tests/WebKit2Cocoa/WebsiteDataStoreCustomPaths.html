@@ -1,6 +1,6 @@
 <script>
 
-// This test opens an IndexedDB, a WebSQL db, and makes a localStorage write.
+// This test opens an IndexedDB, a WebSQL db, and a cookie storage, and makes a localStorage write.
 
 function log(msg)
 {
@@ -22,6 +22,9 @@ request.onerror = function()
 {
     log('Unexpected error opening indexed database');
 }
+
+document.cookie = "testkey=value; expires=Mon, 01 Jan 2035 00:00:00 GMT";
+log('cookie written');
 
 try {
 openDatabase('WebsiteDataStoreCustomPathsSQL', '1.0', 'Test DB', 524288, function() {

@@ -77,19 +77,23 @@ TEST(WebKit2, WebsiteDataStoreCustomPaths)
     NSURL *sqlPath = [NSURL fileURLWithPath:[@"~/Library/WebKit/TestWebKitAPI/CustomWebsiteData/WebSQL/" stringByExpandingTildeInPath]];
     NSURL *idbPath = [NSURL fileURLWithPath:[@"~/Library/WebKit/TestWebKitAPI/CustomWebsiteData/IndexedDB/" stringByExpandingTildeInPath]];
     NSURL *localStoragePath = [NSURL fileURLWithPath:[@"~/Library/WebKit/TestWebKitAPI/CustomWebsiteData/LocalStorage/" stringByExpandingTildeInPath]];
+    NSURL *cookieStoragePath = [NSURL fileURLWithPath:[@"~/Library/WebKit/TestWebKitAPI/CustomWebsiteData/CookieStorage/" stringByExpandingTildeInPath]];
 
     [[NSFileManager defaultManager] removeItemAtURL:sqlPath error:nil];
     [[NSFileManager defaultManager] removeItemAtURL:idbPath error:nil];
     [[NSFileManager defaultManager] removeItemAtURL:localStoragePath error:nil];
+    [[NSFileManager defaultManager] removeItemAtURL:cookieStoragePath error:nil];
 
     EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:sqlPath.path]);
-    EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:localStoragePath.path]);
     EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:idbPath.path]);
+    EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:localStoragePath.path]);
+    EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:cookieStoragePath.path]);
 
     _WKWebsiteDataStoreConfiguration *websiteDataStoreConfiguration = [[_WKWebsiteDataStoreConfiguration alloc] init];
     websiteDataStoreConfiguration._webSQLDatabaseDirectory = sqlPath;
     websiteDataStoreConfiguration._indexedDBDatabaseDirectory = idbPath;
     websiteDataStoreConfiguration._webStorageDirectory = localStoragePath;
+    websiteDataStoreConfiguration._cookieStorageDirectory = cookieStoragePath;
 
     configuration.get().websiteDataStore = [[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration];
     [websiteDataStoreConfiguration release];
@@ -99,14 +103,18 @@ TEST(WebKit2, WebsiteDataStoreCustomPaths)
     NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"WebsiteDataStoreCustomPaths" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
     [webView loadRequest:request];
 
-    // We expect 3 messages, 1 each for WebSQL, IndexedDB, and localStorage.
-    getNextMessage();
-    getNextMessage();
-    getNextMessage();
+    // We expect 4 messages, 1 each for WebSQL, IndexedDB, cookies, and localStorage.
+    EXPECT_STREQ([getNextMessage().body UTF8String], "localstorage written");
+    EXPECT_STREQ([getNextMessage().body UTF8String], "cookie written");
+    EXPECT_STREQ([getNextMessage().body UTF8String], "Exception: QuotaExceededError (DOM Exception 22): The quota has been exceeded.");
+    EXPECT_STREQ([getNextMessage().body UTF8String], "Success opening indexed database");
 
     EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:sqlPath.path]);
     EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:localStoragePath.path]);
-
+    
+    // FIXME: Once this API works this should be true, and there should be a file that contains the bytes "testkey=value"
+    EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:cookieStoragePath.path]);
+    
     // FIXME: <rdar://problem/30785618> - We don't yet support IDB database processes at custom paths per WebsiteDataStore
     // EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:idbPath]);
 }

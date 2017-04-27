@@ -69,6 +69,7 @@ public:
         String mediaKeysStorageDirectory;
         String resourceLoadStatisticsDirectory;
         String javaScriptConfigurationDirectory;
+        String cookieStorageDirectory;
     };
     static Ref<WebsiteDataStore> createNonPersistent();
     static Ref<WebsiteDataStore> create(Configuration);
@@ -100,6 +101,7 @@ public:
     const String& resolvedMediaKeysDirectory() const { return m_resolvedConfiguration.mediaKeysStorageDirectory; }
     const String& resolvedDatabaseDirectory() const { return m_resolvedConfiguration.webSQLDatabaseDirectory; }
     const String& resolvedJavaScriptConfigurationDirectory() const { return m_resolvedConfiguration.javaScriptConfigurationDirectory; }
+    const String& resolvedCookieStorageDirectory() const { return m_resolvedConfiguration.cookieStorageDirectory; }
 
     StorageManager* storageManager() { return m_storageManager.get(); }
 

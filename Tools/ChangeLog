@@ -1,3 +1,14 @@
+2017-04-27  Alex Christensen  <achristensen@webkit.org>
+
+        Add stub SPI for setting cookie storage path on _WKWebsiteDataStoreConfiguration
+        https://bugs.webkit.org/show_bug.cgi?id=171399
+
+        Reviewed by Brady Eidson.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/WebsiteDataStoreCustomPaths.html:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/WebsiteDataStoreCustomPaths.mm:
+        (TEST):
+
 2017-04-27  Ryan Haddad  <ryanhaddad@apple.com>
 
         Disable flaky API test WKWebView.SetOverrideContentSecurityPolicyWithEmptyStringForPageWithCSP.

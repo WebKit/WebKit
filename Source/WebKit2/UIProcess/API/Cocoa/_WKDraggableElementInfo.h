@@ -29,7 +29,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-WK_CLASS_AVAILABLE(macosx(10.13), ios(11.0))
+WK_CLASS_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA))
 @interface _WKDraggableElementInfo : NSObject <NSCopying>
 
 @property (nonatomic, readonly) CGPoint point;

@@ -40,6 +40,7 @@ static void checkURLArgument(NSURL *url)
     RetainPtr<NSURL> _webStorageDirectoryURL;
     RetainPtr<NSURL> _indexedDBDatabaseDirectoryURL;
     RetainPtr<NSURL> _webSQLDatabaseDirectoryURL;
+    RetainPtr<NSURL> _cookieStorageDirectoryURL;
 }
 
 -(NSURL *)_webStorageDirectory {
@@ -68,6 +69,16 @@ static void checkURLArgument(NSURL *url)
     checkURLArgument(url);
     _webSQLDatabaseDirectoryURL = adoptNS([url copy]);
 }
+
+-(NSURL *)_cookieStorageDirectory {
+    return _cookieStorageDirectoryURL.get();
+}
+
+-(void)_setCookieStorageDirectory:(NSURL *)url {
+    checkURLArgument(url);
+    _cookieStorageDirectoryURL = adoptNS([url copy]);
+}
+
 @end
 
 #endif
