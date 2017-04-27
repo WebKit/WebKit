@@ -1,5 +1,20 @@
 2017-04-27  Brian Burg  <bburg@apple.com>
 
+        Web Inspector: RTL: fix alignment of "truncated call stack" message
+        https://bugs.webkit.org/show_bug.cgi?id=170477
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Views/ThreadTreeElement.css:
+        (.tree-outline > .item.thread + ol > .item.truncated-call-frames):
+        (body[dir=ltr] .tree-outline > .item.thread + ol > .item.truncated-call-frames):
+        (body[dir=rtl] .tree-outline > .item.thread + ol > .item.truncated-call-frames):
+        (.tree-outline > .item.thread + ol > .item.truncated-call-frames .icon):
+        (body[dir=ltr] .tree-outline > .item.thread + ol > .item.truncated-call-frames .icon):
+        (body[dir=rtl] .tree-outline > .item.thread + ol > .item.truncated-call-frames .icon):
+
+2017-04-27  Brian Burg  <bburg@apple.com>
+
         Web Inspector: RTL: layout issues in Open Resource Dialog
         https://bugs.webkit.org/show_bug.cgi?id=170551
 
