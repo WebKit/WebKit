@@ -590,15 +590,10 @@ NetworkSessionCocoa::NetworkSessionCocoa(WebCore::SessionID sessionID, LegacyCus
     setCollectsTimingData();
 #endif
 
-    if (sessionID == WebCore::SessionID::defaultSessionID()) {
-        if (CFHTTPCookieStorageRef storage = WebCore::NetworkStorageSession::defaultStorageSession().cookieStorage().get())
-            configuration.HTTPCookieStorage = [[[NSHTTPCookieStorage alloc] _initWithCFHTTPCookieStorage:storage] autorelease];
-    } else {
-        auto* storageSession = WebCore::NetworkStorageSession::storageSession(sessionID);
-        RELEASE_ASSERT(storageSession);
-        if (CFHTTPCookieStorageRef storage = storageSession->cookieStorage().get())
-            configuration.HTTPCookieStorage = [[[NSHTTPCookieStorage alloc] _initWithCFHTTPCookieStorage:storage] autorelease];
-    }
+    auto* storageSession = WebCore::NetworkStorageSession::storageSession(sessionID);
+    RELEASE_ASSERT(storageSession);
+    if (CFHTTPCookieStorageRef storage = storageSession->cookieStorage().get())
+        configuration.HTTPCookieStorage = [[[NSHTTPCookieStorage alloc] _initWithCFHTTPCookieStorage:storage] autorelease];
 
     m_sessionWithCredentialStorageDelegate = adoptNS([[WKNetworkSessionDelegate alloc] initWithNetworkSession:*this withCredentials:true]);
     m_sessionWithCredentialStorage = [NSURLSession sessionWithConfiguration:configuration delegate:static_cast<id>(m_sessionWithCredentialStorageDelegate.get()) delegateQueue:[NSOperationQueue mainQueue]];

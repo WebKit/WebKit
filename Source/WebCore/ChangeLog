@@ -1,3 +1,34 @@
+2017-04-27  Brady Eidson  <beidson@apple.com>
+
+        Update NetworkStorageSession to support multiple persistent sessions and explicitly set cookie storages.
+        https://bugs.webkit.org/show_bug.cgi?id=171365
+
+        Reviewed by Andy Estes.
+
+        No new tests (No testable behavior change yet).
+
+        * platform/network/NetworkStorageSession.cpp:
+        (WebCore::NetworkStorageSession::destroySession):
+        * platform/network/NetworkStorageSession.h:
+        
+        * platform/network/NetworkStorageSessionStub.cpp:
+        (WebCore::NetworkStorageSession::ensurePrivateBrowsingSession):
+        (WebCore::NetworkStorageSession::ensureSession):
+        
+        * platform/network/cf/NetworkStorageSessionCFNet.cpp:
+        (WebCore::createCFStorageSessionForIdentifier):
+        (WebCore::NetworkStorageSession::NetworkStorageSession):
+        (WebCore::NetworkStorageSession::switchToNewTestingSession):
+        (WebCore::NetworkStorageSession::defaultStorageSession):
+        (WebCore::NetworkStorageSession::ensurePrivateBrowsingSession):
+        (WebCore::NetworkStorageSession::ensureSession):
+        (WebCore::NetworkStorageSession::cookieStorage):
+        
+        * platform/network/soup/NetworkStorageSessionSoup.cpp:
+        (WebCore::NetworkStorageSession::ensureSession):
+        
+        * platform/spi/cf/CFNetworkSPI.h:
+
 2017-04-27  Zalan Bujtas  <zalan@apple.com>
 
         Use text-shadow to visualize simple line layout coverage.

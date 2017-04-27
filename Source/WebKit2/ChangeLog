@@ -1,3 +1,13 @@
+2017-04-27  Brady Eidson  <beidson@apple.com>
+
+        Update NetworkStorageSession to support multiple persistent sessions and explicitly set cookie storages.
+        https://bugs.webkit.org/show_bug.cgi?id=171365
+
+        Reviewed by Andy Estes.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::NetworkSessionCocoa):
+
 2017-04-27  Alex Christensen  <achristensen@webkit.org>
 
         Modernize Frame.h

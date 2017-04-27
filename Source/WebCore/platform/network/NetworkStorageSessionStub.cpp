@@ -49,7 +49,12 @@ NetworkingContext* NetworkStorageSession::context() const
     return m_context.get();
 }
 
-void NetworkStorageSession::ensurePrivateBrowsingSession(SessionID sessionID, const String&)
+void NetworkStorageSession::ensurePrivateBrowsingSession(SessionID, const String&)
+{
+    ASSERT_NOT_REACHED();
+}
+
+void NetworkStorageSession::ensureSession(SessionID, const String&)
 {
     ASSERT_NOT_REACHED();
 }

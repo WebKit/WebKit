@@ -86,6 +86,11 @@ void NetworkStorageSession::ensurePrivateBrowsingSession(SessionID sessionID, co
     globalSessionMap().add(sessionID, std::make_unique<NetworkStorageSession>(sessionID, std::make_unique<SoupNetworkSession>()));
 }
 
+void NetworkStorageSession::ensureSession(SessionID, const String&)
+{
+    // FIXME: Implement
+}
+
 void NetworkStorageSession::switchToNewTestingSession()
 {
     defaultSession() = std::make_unique<NetworkStorageSession>(SessionID::defaultSessionID(), std::make_unique<SoupNetworkSession>());

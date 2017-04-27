@@ -46,6 +46,7 @@ NetworkStorageSession* NetworkStorageSession::storageSession(SessionID sessionID
 
 void NetworkStorageSession::destroySession(SessionID sessionID)
 {
+    ASSERT(sessionID != SessionID::defaultSessionID());
     globalSessionMap().remove(sessionID);
 }
 
