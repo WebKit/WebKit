@@ -1,3 +1,16 @@
+2017-04-27  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Handle PhantomSpread in LoadVarargs as the same to the others
+        https://bugs.webkit.org/show_bug.cgi?id=171262
+
+        Reviewed by Saam Barati.
+
+        * stress/spread-outer-create-rest.js: Added.
+        (assert):
+        (foo):
+        (bar):
+        (baz):
+
 2017-04-26  Saam Barati  <sbarati@apple.com>
 
         Print Wasm function index in stack trace

@@ -1,3 +1,17 @@
+2017-04-27  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Handle PhantomSpread in LoadVarargs as the same to the others
+        https://bugs.webkit.org/show_bug.cgi?id=171262
+
+        Reviewed by Saam Barati.
+
+        This is follow-up patch after r215720. In that patch, accidentally
+        we did not apply the same change to LoadVarargs in argument elimination
+        phase. This patch just does the same rewriting to handle PhantomSpread
+        correctly.
+
+        * dfg/DFGArgumentsEliminationPhase.cpp:
+
 2017-04-26  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Uint8ClampedArray should be treated like an array, not an object

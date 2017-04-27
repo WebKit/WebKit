@@ -770,41 +770,52 @@ private:
                             OpInfo(data), Edge(value));
                     };
 
-                    if (candidate->op() == PhantomNewArrayWithSpread) {
+                    if (candidate->op() == PhantomNewArrayWithSpread || candidate->op() == PhantomSpread) {
                         bool canConvertToStaticLoadStores = true;
-                        BitVector* bitVector = candidate->bitVector();
 
-                        for (unsigned i = 0; i < candidate->numChildren(); i++) {
-                            if (bitVector->get(i)) {
-                                Node* child = m_graph.varArgChild(candidate, i).node();
-                                ASSERT(child->op() == PhantomSpread && child->child1()->op() == PhantomCreateRest);
-                                InlineCallFrame* inlineCallFrame = child->child1()->origin.semantic.inlineCallFrame;
-                                if (!inlineCallFrame || inlineCallFrame->isVarargs()) {
-                                    canConvertToStaticLoadStores = false;
-                                    break;
+                        auto canConvertToStaticLoadStoresForSpread = [] (Node* spread) {
+                            ASSERT(spread->op() == PhantomSpread);
+                            ASSERT(spread->child1()->op() == PhantomCreateRest);
+                            InlineCallFrame* inlineCallFrame = spread->child1()->origin.semantic.inlineCallFrame;
+                            return inlineCallFrame && !inlineCallFrame->isVarargs();
+                        };
+
+                        if (candidate->op() == PhantomNewArrayWithSpread) {
+                            BitVector* bitVector = candidate->bitVector();
+                            for (unsigned i = 0; i < candidate->numChildren(); i++) {
+                                if (bitVector->get(i)) {
+                                    if (!canConvertToStaticLoadStoresForSpread(m_graph.varArgChild(candidate, i).node())) {
+                                        canConvertToStaticLoadStores = false;
+                                        break;
+                                    }
                                 }
                             }
-                        }
+                        } else
+                            canConvertToStaticLoadStores = canConvertToStaticLoadStoresForSpread(candidate);
 
                         if (canConvertToStaticLoadStores) {
                             unsigned argumentCountIncludingThis = 1; // |this|
-                            for (unsigned i = 0; i < candidate->numChildren(); i++) {
-                                if (bitVector->get(i)) {
-                                    Node* child = m_graph.varArgChild(candidate, i).node();
-                                    ASSERT(child->op() == PhantomSpread && child->child1()->op() == PhantomCreateRest);
-                                    unsigned numberOfArgumentsToSkip = child->child1()->numberOfArgumentsToSkip();
-                                    InlineCallFrame* inlineCallFrame = child->child1()->origin.semantic.inlineCallFrame;
-                                    unsigned numberOfSpreadArguments;
-                                    unsigned frameArgumentCount = inlineCallFrame->arguments.size() - 1;
-                                    if (frameArgumentCount >= numberOfArgumentsToSkip)
-                                        numberOfSpreadArguments = frameArgumentCount - numberOfArgumentsToSkip;
-                                    else
-                                        numberOfSpreadArguments = 0;
 
-                                    argumentCountIncludingThis += numberOfSpreadArguments;
-                                } else
-                                    ++argumentCountIncludingThis;
-                            }
+                            auto countNumberOfSpreadArguments = [] (Node* spread) -> unsigned {
+                                ASSERT(spread->op() == PhantomSpread && spread->child1()->op() == PhantomCreateRest);
+                                unsigned numberOfArgumentsToSkip = spread->child1()->numberOfArgumentsToSkip();
+                                InlineCallFrame* inlineCallFrame = spread->child1()->origin.semantic.inlineCallFrame;
+                                unsigned frameArgumentCount = inlineCallFrame->arguments.size() - 1;
+                                if (frameArgumentCount >= numberOfArgumentsToSkip)
+                                    return frameArgumentCount - numberOfArgumentsToSkip;
+                                return 0;
+                            };
+
+                            if (candidate->op() == PhantomNewArrayWithSpread) {
+                                BitVector* bitVector = candidate->bitVector();
+                                for (unsigned i = 0; i < candidate->numChildren(); i++) {
+                                    if (bitVector->get(i))
+                                        argumentCountIncludingThis += countNumberOfSpreadArguments(m_graph.varArgChild(candidate, i).node());
+                                    else
+                                        ++argumentCountIncludingThis;
+                                }
+                            } else
+                                argumentCountIncludingThis += countNumberOfSpreadArguments(candidate);
 
                             if (argumentCountIncludingThis <= varargsData->limit) {
                                 storeArgumentCountIncludingThis(argumentCountIncludingThis);
@@ -813,28 +824,37 @@ private:
                                 // Define our limit to exclude "this", since that's a bit easier to reason about.
                                 unsigned limit = varargsData->limit - 1;
                                 unsigned storeIndex = 0;
-                                for (unsigned i = 0; i < candidate->numChildren(); i++) {
-                                    if (bitVector->get(i)) {
-                                        Node* child = m_graph.varArgChild(candidate, i).node();
-                                        ASSERT(child->op() == PhantomSpread && child->child1()->op() == PhantomCreateRest);
-                                        unsigned numberOfArgumentsToSkip = child->child1()->numberOfArgumentsToSkip();
-                                        InlineCallFrame* inlineCallFrame = child->child1()->origin.semantic.inlineCallFrame;
-                                        unsigned frameArgumentCount = inlineCallFrame->arguments.size() - 1;
-                                        for (unsigned loadIndex = numberOfArgumentsToSkip; loadIndex < frameArgumentCount; ++loadIndex) {
-                                            VirtualRegister reg = virtualRegisterForArgument(loadIndex + 1) + inlineCallFrame->stackOffset;
-                                            StackAccessData* data = m_graph.m_stackAccessData.add(reg, FlushedJSValue);
-                                            Node* value = insertionSet.insertNode(
-                                                nodeIndex, SpecNone, GetStack, node->origin.withExitOK(canExit),
-                                                OpInfo(data));
-                                            storeValue(value, storeIndex);
-                                            ++storeIndex;
-                                        }
-                                    } else {
-                                        Node* value = m_graph.varArgChild(candidate, i).node();
+
+                                auto forwardSpread = [&] (Node* spread, unsigned storeIndex) -> unsigned {
+                                    ASSERT(spread->op() == PhantomSpread && spread->child1()->op() == PhantomCreateRest);
+                                    unsigned numberOfArgumentsToSkip = spread->child1()->numberOfArgumentsToSkip();
+                                    InlineCallFrame* inlineCallFrame = spread->child1()->origin.semantic.inlineCallFrame;
+                                    unsigned frameArgumentCount = inlineCallFrame->arguments.size() - 1;
+                                    for (unsigned loadIndex = numberOfArgumentsToSkip; loadIndex < frameArgumentCount; ++loadIndex) {
+                                        VirtualRegister reg = virtualRegisterForArgument(loadIndex + 1) + inlineCallFrame->stackOffset;
+                                        StackAccessData* data = m_graph.m_stackAccessData.add(reg, FlushedJSValue);
+                                        Node* value = insertionSet.insertNode(
+                                            nodeIndex, SpecNone, GetStack, node->origin.withExitOK(canExit),
+                                            OpInfo(data));
                                         storeValue(value, storeIndex);
                                         ++storeIndex;
                                     }
-                                }
+                                    return storeIndex;
+                                };
+
+                                if (candidate->op() == PhantomNewArrayWithSpread) {
+                                    BitVector* bitVector = candidate->bitVector();
+                                    for (unsigned i = 0; i < candidate->numChildren(); i++) {
+                                        if (bitVector->get(i))
+                                            storeIndex = forwardSpread(m_graph.varArgChild(candidate, i).node(), storeIndex);
+                                        else {
+                                            Node* value = m_graph.varArgChild(candidate, i).node();
+                                            storeValue(value, storeIndex);
+                                            ++storeIndex;
+                                        }
+                                    }
+                                } else
+                                    storeIndex = forwardSpread(candidate, storeIndex);
 
                                 RELEASE_ASSERT(storeIndex <= limit);
                                 Node* undefined = nullptr;
@@ -855,10 +875,6 @@ private:
                         unsigned numberOfArgumentsToSkip = 0;
                         if (candidate->op() == PhantomCreateRest)
                             numberOfArgumentsToSkip = candidate->numberOfArgumentsToSkip();
-                        else if (candidate->op() == PhantomSpread) {
-                            ASSERT(candidate->child1()->op() == PhantomCreateRest);
-                            numberOfArgumentsToSkip = candidate->child1()->numberOfArgumentsToSkip();
-                        }
                         varargsData->offset += numberOfArgumentsToSkip;
 
                         InlineCallFrame* inlineCallFrame = candidate->origin.semantic.inlineCallFrame;
