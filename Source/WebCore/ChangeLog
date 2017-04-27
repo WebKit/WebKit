@@ -1,3 +1,16 @@
+2017-04-27  Zalan Bujtas  <zalan@apple.com>
+
+        Use text-shadow to visualize simple line layout coverage.
+        https://bugs.webkit.org/show_bug.cgi?id=171379
+
+        Reviewed by Antti Koivisto.
+
+        It's more subtle (for everyday use).
+
+        * rendering/SimpleLineLayoutFunctions.cpp:
+        (WebCore::SimpleLineLayout::paintFlow):
+        (WebCore::SimpleLineLayout::paintDebugBorders): Deleted.
+
 2017-04-27  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [ATK] ARIA alertdialogs should be exposed with ROLE_DIALOG
