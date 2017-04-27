@@ -1946,3 +1946,5 @@ webkit.org/b/171301 [ Release ] http/tests/security/contentSecurityPolicy/1.1/mo
 webkit.org/b/171353 [ Release ] http/tests/local/blob/send-hybrid-blob-using-open-panel.html [ Pass Timeout ]
 
 webkit.org/b/170181 http/tests/xmlhttprequest/workers/methods.html [ Pass Timeout ]
+
+webkit.org/b/171389 [ Release ] http/tests/security/contentSecurityPolicy/source-list-parsing-05.html [ Pass Timeout ]
