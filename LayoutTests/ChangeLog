@@ -1,3 +1,17 @@
+2017-04-27  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Make fast/text/complex-small-caps-non-bmp-capitalize.html more robust
+        https://bugs.webkit.org/show_bug.cgi?id=171366
+        <rdar://problem/30060323>
+
+        Reviewed by Alex Christensen.
+
+        This test needs a font which supports Deseret but doesn't support small caps.
+        Geneva is a better choice for such a font.
+
+        * fast/text/complex-small-caps-non-bmp-capitalize-expected.html:
+        * fast/text/complex-small-caps-non-bmp-capitalize.html:
+
 2017-04-27  Antti Koivisto  <antti@apple.com>
 
         Repeated layouts in Mail due to viewport units being used with auto-sizing
