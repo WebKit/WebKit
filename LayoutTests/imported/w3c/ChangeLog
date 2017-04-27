@@ -1,3 +1,18 @@
+2017-04-27  Frederic Wang  <fwang@igalia.com>
+
+        Fix some tests from platform-tests/cssom-view/cssom-view/
+        https://bugs.webkit.org/show_bug.cgi?id=171228
+
+        Reviewed by Youenn Fablet.
+
+        Fixes for some tests are imported from the web-platform-test repository.
+        Expectations are updated accordingly.
+
+        * web-platform-tests/cssom-view/cssom-view/media-query-list-interface-expected.txt: Added.
+        * web-platform-tests/cssom-view/cssom-view/media-query-list-interface.xht:
+        * web-platform-tests/cssom-view/cssom-view/window-interface-expected.txt:
+        * web-platform-tests/cssom-view/cssom-view/window-interface.xht:
+
 2017-04-26  Saam Barati  <sbarati@apple.com>
 
         ASSERTION FAILED: inIndex != notFound in JSC::invalidParameterInSourceAppender()

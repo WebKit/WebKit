@@ -1267,7 +1267,6 @@ fast/forms/range/range-remove-on-drag.html [ Skip ]
 webkit.org/b/153137 imported/w3c/web-platform-tests/cssom-view/elementsFromPoint.html [ Skip ]
 webkit.org/b/5991 imported/w3c/web-platform-tests/cssom-view/scrollingElement.html [ Skip ]
 webkit.org/b/171226 imported/w3c/web-platform-tests/cssom-view/cssom-getBoundingClientRect-002.html [ Skip ]
-webkit.org/b/171228 imported/w3c/web-platform-tests/cssom-view/cssom-view/media-query-list-interface.xht [ Skip ]
 
 ### END OF -disabled tests
 ########################################
