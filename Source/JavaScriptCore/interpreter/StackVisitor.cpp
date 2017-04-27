@@ -163,6 +163,11 @@ void StackVisitor::readNonInlinedFrame(CallFrame* callFrame, CodeOrigin* codeOri
         m_frame.m_isWasmFrame = true;
         m_frame.m_codeBlock = nullptr;
         m_frame.m_bytecodeOffset = 0;
+#if ENABLE(WEBASSEMBLY)
+        CalleeBits bits = callFrame->callee();
+        if (bits.isWasm())
+            m_frame.m_wasmFunctionIndex = bits.asWasmCallee()->index();
+#endif
     } else {
         m_frame.m_codeBlock = callFrame->codeBlock();
         m_frame.m_bytecodeOffset = !m_frame.codeBlock() ? 0
@@ -278,7 +283,10 @@ String StackVisitor::Frame::functionName() const
 
     switch (codeType()) {
     case CodeType::Wasm:
-        traceLine = ASCIILiteral("wasm code");
+        if (m_wasmFunctionIndex)
+            traceLine = makeString("wasm function index: ", String::number(*m_wasmFunctionIndex));
+        else
+            traceLine = ASCIILiteral("wasm function");
         break;
     case CodeType::Eval:
         traceLine = ASCIILiteral("eval code");

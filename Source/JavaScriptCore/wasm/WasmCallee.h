@@ -38,20 +38,30 @@ class Callee : public ThreadSafeRefCounted<Callee> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
 
-    static Ref<Callee> create(Wasm::Entrypoint&& entrypoint)
+    // We use this when we're the JS entrypoint, we don't ascribe an index to those.
+    static constexpr unsigned invalidCalleeIndex = UINT_MAX;
+
+    static Ref<Callee> create(Wasm::Entrypoint&& entrypoint, unsigned index = invalidCalleeIndex)
     {
-        Callee* callee = new Callee(WTFMove(entrypoint));
+        Callee* callee = new Callee(WTFMove(entrypoint), index);
         return adoptRef(*callee);
     }
 
     void* entrypoint() const { return m_entrypoint.compilation->code().executableAddress(); }
 
     RegisterAtOffsetList* calleeSaveRegisters() { return &m_entrypoint.calleeSaveRegisters; }
+    std::optional<unsigned> index() const
+    {
+        if (m_index == invalidCalleeIndex)
+            return std::nullopt;
+        return m_index;
+    }
 
 private:
-    JS_EXPORT_PRIVATE Callee(Wasm::Entrypoint&&);
+    JS_EXPORT_PRIVATE Callee(Wasm::Entrypoint&&, unsigned index);
 
     Wasm::Entrypoint m_entrypoint;
+    unsigned m_index;
 };
 
 } } // namespace JSC::Wasm

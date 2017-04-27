@@ -77,6 +77,11 @@ public:
         bool isNativeFrame() const { return !codeBlock() && !isWasmFrame(); }
         bool isInlinedFrame() const { return !!inlineCallFrame(); }
         bool isWasmFrame() const;
+        std::optional<unsigned> const wasmFunctionIndex()
+        {
+            ASSERT(isWasmFrame());
+            return m_wasmFunctionIndex;
+        }
 
         JS_EXPORT_PRIVATE String functionName() const;
         JS_EXPORT_PRIVATE String sourceURL() const;
@@ -116,6 +121,7 @@ public:
         size_t m_index;
         size_t m_argumentCountIncludingThis;
         unsigned m_bytecodeOffset;
+        std::optional<unsigned> m_wasmFunctionIndex;
         bool m_callerIsVMEntryFrame : 1;
         bool m_isWasmFrame : 1;
 

@@ -57,8 +57,11 @@ String StackFrame::sourceURL() const
 
 String StackFrame::functionName(VM& vm) const
 {
-    if (m_isWasmFrame)
-        return ASCIILiteral("<wasm>");
+    if (m_isWasmFrame) {
+        if (m_wasmFunctionIndex == invalidWasmIndex)
+            return ASCIILiteral("wasm function");
+        return makeString("wasm function index: ", String::number(m_wasmFunctionIndex));
+    }
 
     if (m_codeBlock) {
         switch (m_codeBlock->codeType()) {

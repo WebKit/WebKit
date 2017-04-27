@@ -39,6 +39,7 @@ public:
 
     StackFrame(VM& vm, JSCell* callee)
         : m_callee(vm, callee)
+        , m_bytecodeOffset(UINT_MAX)
     { }
 
     StackFrame(VM& vm, JSCell* callee, CodeBlock* codeBlock, unsigned bytecodeOffset)
@@ -47,10 +48,12 @@ public:
         , m_bytecodeOffset(bytecodeOffset)
     { }
 
-    static StackFrame wasm()
+    static constexpr unsigned invalidWasmIndex = UINT_MAX;
+    static StackFrame wasm(unsigned index)
     {
         StackFrame result;
         result.m_isWasmFrame = true;
+        result.m_wasmFunctionIndex = index;
         return result;
     }
 
@@ -62,10 +65,10 @@ public:
     String sourceURL() const;
     String toString(VM&) const;
 
-    bool hasBytecodeOffset() const { return m_bytecodeOffset != UINT_MAX; }
+    bool hasBytecodeOffset() const { return m_bytecodeOffset != UINT_MAX && !m_isWasmFrame; }
     unsigned bytecodeOffset()
     {
-        ASSERT(m_bytecodeOffset != UINT_MAX);
+        ASSERT(hasBytecodeOffset());
         return m_bytecodeOffset;
     }
 
@@ -73,7 +76,10 @@ public:
 private:
     Strong<JSCell> m_callee { };
     Strong<CodeBlock> m_codeBlock { };
-    unsigned m_bytecodeOffset { UINT_MAX };
+    union {
+        unsigned m_bytecodeOffset;
+        unsigned m_wasmFunctionIndex;
+    };
     bool m_isWasmFrame { false };
 };
 

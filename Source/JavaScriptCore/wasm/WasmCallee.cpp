@@ -32,8 +32,9 @@
 
 namespace JSC { namespace Wasm {
 
-Callee::Callee(Entrypoint&& entrypoint)
+Callee::Callee(Entrypoint&& entrypoint, unsigned index)
     : m_entrypoint(WTFMove(entrypoint))
+    , m_index(index)
 {
     registerCode(m_entrypoint.compilation->codeRef().executableMemory()->start(), m_entrypoint.compilation->codeRef().executableMemory()->end());
 }

@@ -479,9 +479,10 @@ public:
         }
 
         if (m_remainingCapacityForFrameCapture) {
-            if (visitor->isWasmFrame())
-                m_results.append(StackFrame::wasm());
-            else if (!!visitor->codeBlock() && !visitor->codeBlock()->unlinkedCodeBlock()->isBuiltinFunction()) {
+            if (visitor->isWasmFrame()) {
+                std::optional<unsigned> wasmFunctionIndex = visitor->wasmFunctionIndex();
+                m_results.append(StackFrame::wasm(wasmFunctionIndex ? *wasmFunctionIndex : StackFrame::invalidWasmIndex));
+            } else if (!!visitor->codeBlock() && !visitor->codeBlock()->unlinkedCodeBlock()->isBuiltinFunction()) {
                 m_results.append(
                     StackFrame(m_vm, visitor->callee().asCell(), visitor->codeBlock(), visitor->bytecodeOffset()));
             } else {

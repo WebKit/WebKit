@@ -20,7 +20,7 @@ const builder = (new Builder())
     .End();
 
 function wasmFrameCountFromError(e) {
-    let stackFrames = e.stack.split("\n").filter((s) => s.indexOf("<wasm>@[wasm code]") !== -1);
+    let stackFrames = e.stack.split("\n").filter((s) => s.indexOf("wasm function") !== -1);
     return stackFrames.length;
 }
 

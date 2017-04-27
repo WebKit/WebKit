@@ -43,7 +43,7 @@ void BBQPlan::initializeCallees(const Functor& callback)
         Ref<Wasm::Callee> jsEntrypointCallee = Wasm::Callee::create(WTFMove(function->jsToWasmEntrypoint));
         MacroAssembler::repatchPointer(function->jsToWasmCalleeMoveLocation, CalleeBits::boxWasm(jsEntrypointCallee.ptr()));
 
-        Ref<Wasm::Callee> wasmEntrypointCallee = Wasm::Callee::create(WTFMove(function->wasmEntrypoint));
+        Ref<Wasm::Callee> wasmEntrypointCallee = Wasm::Callee::create(WTFMove(function->wasmEntrypoint), internalFunctionIndex + m_moduleInformation->importFunctionCount());
         MacroAssembler::repatchPointer(function->wasmCalleeMoveLocation, CalleeBits::boxWasm(wasmEntrypointCallee.ptr()));
 
         callback(internalFunctionIndex, WTFMove(jsEntrypointCallee), WTFMove(wasmEntrypointCallee));

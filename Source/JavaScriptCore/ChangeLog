@@ -1,3 +1,44 @@
+2017-04-26  Saam Barati  <sbarati@apple.com>
+
+        Print Wasm function index in stack trace
+        https://bugs.webkit.org/show_bug.cgi?id=171349
+
+        Reviewed by JF Bastien.
+
+        This patch prints a Callee's index in the function index
+        space in Error.stack.
+
+        This will lead to stack traces that have lines of text like:
+        wasm function index: 4@[wasm code]
+
+        We don't ascribe indices to everything in wasm. Specifically, the
+        Wasm->JS call stub callee does not get a name, and neither does
+        the JS -> Wasm entrypoint.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::GetStackTraceFunctor::operator()):
+        * interpreter/StackVisitor.cpp:
+        (JSC::StackVisitor::readNonInlinedFrame):
+        (JSC::StackVisitor::Frame::functionName):
+        * interpreter/StackVisitor.h:
+        (JSC::StackVisitor::Frame::wasmFunctionIndex):
+        * runtime/StackFrame.cpp:
+        (JSC::StackFrame::functionName):
+        * runtime/StackFrame.h:
+        (JSC::StackFrame::StackFrame):
+        (JSC::StackFrame::wasm):
+        (JSC::StackFrame::hasBytecodeOffset):
+        (JSC::StackFrame::bytecodeOffset):
+        * wasm/WasmBBQPlanInlines.h:
+        (JSC::Wasm::BBQPlan::initializeCallees):
+        * wasm/WasmCallee.cpp:
+        (JSC::Wasm::Callee::Callee):
+        * wasm/WasmCallee.h:
+        (JSC::Wasm::Callee::create):
+        (JSC::Wasm::Callee::index):
+        * wasm/WasmOMGPlan.cpp:
+        (JSC::Wasm::OMGPlan::work):
+
 2017-04-26  Keith Miller  <keith_miller@apple.com>
 
         Follow up to r215843
