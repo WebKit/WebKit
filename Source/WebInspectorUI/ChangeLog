@@ -1,5 +1,40 @@
 2017-04-27  Brian Burg  <bburg@apple.com>
 
+        Web Inspector: RTL: inherit system layout direction by default
+        https://bugs.webkit.org/show_bug.cgi?id=171402
+        <rdar://problem/30753626>
+
+        Reviewed by Joseph Pecoraro.
+
+        Web Inspector's layout direction should follow the system layout direction
+        by default now that most RTL bugs seem to be fixed. We are ready for more
+        feedback.
+
+        * UserInterface/Base/Main.js:
+        * UserInterface/Base/Setting.js:
+        Rename the existing "layout-direction" setting so that the new default
+        value is set properly even for people who have overridden the layout
+        direction while the setting was exposed to everyone.
+
+        * UserInterface/Views/GeneralSettingsView.js:
+        (WebInspector.GeneralSettingsView.prototype.initialLayout):
+        (WebInspector.GeneralSettingsView.prototype.layout):
+        (WebInspector.GeneralSettingsView):
+        Make the layout direction override setting only visible when DebugUI
+        is turned on. This remains only for engineers to quickly check layout bugs.
+
+        * UserInterface/Views/SettingsView.js:
+        (WebInspector.SettingsView.prototype.addGroupWithCustomSetting):
+        (WebInspector.SettingsView.prototype.addCustomSetting): Deleted.
+        Refactor the convenience method to return both the group and the
+        custom setting. This allows us to toggle .hidden on the entire
+        row for the Layout Direction setting (label and editor).
+
+        * Localizations/en.lproj/localizedStrings.js:
+        Unlocalize the setting strings since they are only shown in engineering builds now.
+
+2017-04-27  Brian Burg  <bburg@apple.com>
+
         Web Inspector: RTL: fix alignment of "truncated call stack" message
         https://bugs.webkit.org/show_bug.cgi?id=170477
 

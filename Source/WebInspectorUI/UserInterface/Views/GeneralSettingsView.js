@@ -36,7 +36,7 @@ WebInspector.GeneralSettingsView = class GeneralSettingsView extends WebInspecto
     {
         const indentValues = [WebInspector.UIString("Tabs"), WebInspector.UIString("Spaces")];
 
-        let indentEditor = this.addCustomSetting(WebInspector.UIString("Prefer indent using:"), WebInspector.SettingEditor.Type.Select, {values: indentValues});
+        let [/* unused */, indentEditor] = this.addGroupWithCustomSetting(WebInspector.UIString("Prefer indent using:"), WebInspector.SettingEditor.Type.Select, {values: indentValues});
         indentEditor.value = indentValues[WebInspector.settings.indentWithTabs.value ? 0 : 1];
         indentEditor.addEventListener(WebInspector.SettingEditor.Event.ValueDidChange, () => {
             WebInspector.settings.indentWithTabs.value = indentEditor.value === indentValues[0];
@@ -78,20 +78,27 @@ WebInspector.GeneralSettingsView = class GeneralSettingsView extends WebInspecto
         const zoomLevels = [0.6, 0.8, 1, 1.2, 1.4, 1.6, 1.8, 2, 2.2, 2.4];
         const zoomValues = zoomLevels.map((level) => [level, Number.percentageString(level, 0)]);
 
-        let zoomEditor = this.addCustomSetting(WebInspector.UIString("Zoom:"), WebInspector.SettingEditor.Type.Select, {values: zoomValues});
+        let [/* unused */, zoomEditor] = this.addGroupWithCustomSetting(WebInspector.UIString("Zoom:"), WebInspector.SettingEditor.Type.Select, {values: zoomValues});
         zoomEditor.value = WebInspector.settings.zoomFactor.value;
         zoomEditor.addEventListener(WebInspector.SettingEditor.Event.ValueDidChange, () => { WebInspector.setZoomFactor(zoomEditor.value); });
 
         this.addSeparator();
 
+        // This setting is only ever shown in engineering builds, so its strings are unlocalized.
         const layoutDirectionValues = [
-            [WebInspector.LayoutDirection.System, WebInspector.UIString("System Default")],
-            [WebInspector.LayoutDirection.LTR, WebInspector.UIString("Left to Right (LTR)")],
-            [WebInspector.LayoutDirection.RTL, WebInspector.UIString("Right to Left (RTL)")],
+            [WebInspector.LayoutDirection.System, WebInspector.unlocalizedString("System Default")],
+            [WebInspector.LayoutDirection.LTR, WebInspector.unlocalizedString("Left to Right (LTR)")],
+            [WebInspector.LayoutDirection.RTL, WebInspector.unlocalizedString("Right to Left (RTL)")],
         ];
 
-        let layoutDirectionEditor = this.addCustomSetting(WebInspector.UIString("Layout Direction:"), WebInspector.SettingEditor.Type.Select, {values: layoutDirectionValues});
+        let [layoutDirectionGroup, layoutDirectionEditor] = this.addGroupWithCustomSetting(WebInspector.unlocalizedString("Layout Direction:"), WebInspector.SettingEditor.Type.Select, {values: layoutDirectionValues});
+        this._layoutDirectionGroup = layoutDirectionGroup;
         layoutDirectionEditor.value = WebInspector.settings.layoutDirection.value;
         layoutDirectionEditor.addEventListener(WebInspector.SettingEditor.Event.ValueDidChange, () => { WebInspector.setLayoutDirection(layoutDirectionEditor.value); });
+    }
+
+    layout()
+    {
+        this._layoutDirectionGroup.element.classList.toggle("hidden", !WebInspector.isDebugUIEnabled());
     }
 };
