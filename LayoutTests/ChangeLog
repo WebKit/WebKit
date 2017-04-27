@@ -1,3 +1,16 @@
+2017-04-26  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Uint8ClampedArray should be treated like an array, not an object
+        https://bugs.webkit.org/show_bug.cgi?id=171364
+        <rdar://problem/10873037>
+
+        Reviewed by Sam Weinig.
+
+        * inspector/model/remote-object-expected.txt:
+        * inspector/model/remote-object.html:
+        * platform/mac/inspector/model/remote-object-expected.txt:
+        Test a Uint8ClampedArray is treated like an array.
+
 2017-04-26  Saam Barati  <sbarati@apple.com>
 
         ASSERTION FAILED: inIndex != notFound in JSC::invalidParameterInSourceAppender()

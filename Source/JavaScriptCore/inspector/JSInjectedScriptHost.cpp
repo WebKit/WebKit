@@ -190,11 +190,15 @@ JSValue JSInjectedScriptHost::subtype(ExecState* exec)
     if (object && object->getDirect(exec->vm(), exec->vm().propertyNames->builtinNames().arrayIteratorNextIndexPrivateName()))
         return jsNontrivialString(exec, ASCIILiteral("iterator"));
 
-    if (value.inherits(vm, JSInt8Array::info()) || value.inherits(vm, JSInt16Array::info()) || value.inherits(vm, JSInt32Array::info()))
-        return jsNontrivialString(exec, ASCIILiteral("array"));
-    if (value.inherits(vm, JSUint8Array::info()) || value.inherits(vm, JSUint16Array::info()) || value.inherits(vm, JSUint32Array::info()))
-        return jsNontrivialString(exec, ASCIILiteral("array"));
-    if (value.inherits(vm, JSFloat32Array::info()) || value.inherits(vm, JSFloat64Array::info()))
+    if (value.inherits(vm, JSInt8Array::info())
+        || value.inherits(vm, JSInt16Array::info())
+        || value.inherits(vm, JSInt32Array::info())
+        || value.inherits(vm, JSUint8Array::info())
+        || value.inherits(vm, JSUint8ClampedArray::info())
+        || value.inherits(vm, JSUint16Array::info())
+        || value.inherits(vm, JSUint32Array::info())
+        || value.inherits(vm, JSFloat32Array::info())
+        || value.inherits(vm, JSFloat64Array::info()))
         return jsNontrivialString(exec, ASCIILiteral("array"));
 
     return impl().subtype(exec, value);
