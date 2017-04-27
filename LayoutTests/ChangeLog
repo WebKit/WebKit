@@ -1,3 +1,21 @@
+2017-04-27  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: Inconsistent exposure of ARIA "button" role with non-false value of aria-haspopup
+        https://bugs.webkit.org/show_bug.cgi?id=171204
+
+        Reviewed by Chris Fleizach.
+
+        It turns out that this bug was fixed as a side effect of the changes made
+        to fix WebKitGtk bug 171164 (r215821). But we didn't realize it due to the
+        lack of an existing layout test covering the mappings for other platforms.
+        The test created for the WebKitGtk port was modified and moved to the shared
+        tests. Shared expectations are based on the Mac's mappings.
+
+        * accessibility/button-with-aria-haspopup-role-expected.txt: Added.
+        * accessibility/button-with-aria-haspopup-role.html: Renamed from LayoutTests/accessibility/gtk/button-with-aria-haspopup-is-not-a-combobox.html.
+        * accessibility/gtk/button-with-aria-haspopup-is-not-a-combobox-expected.txt: Removed.
+        * platform/gtk/accessibility/button-with-aria-haspopup-role-expected.txt: Added.
+
 2017-04-27  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark http/tests/local/blob/send-hybrid-blob-using-open-panel.html as flaky.
