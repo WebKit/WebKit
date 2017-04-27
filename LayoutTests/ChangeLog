@@ -1,3 +1,12 @@
+2017-04-27  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Mark webgl/1.0.2/conformance/glsl/misc/shader-with-reserved-words.html as flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=170877
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2017-04-27  Zalan Bujtas  <zalan@apple.com>
 
         Use text-shadow to visualize simple line layout coverage.
