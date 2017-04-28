@@ -1,3 +1,14 @@
+2017-04-28  Jonathan Bedard  <jbedard@apple.com>
+
+        Unreviewed follow-up to r214705.
+
+        shut.copytree will fail if given a file as an argument instead of a directory.
+
+        * Scripts/webkitpy/common/system/filesystem.py:
+        (FileSystem.copy_to_base_host): Use copytree when source is a directory and copyfile
+        when source is a file.
+        (FileSystem.copy_from_base_host): Ditto.
+
 2017-04-28  Chris Dumez  <cdumez@apple.com>
 
         Update DOMTokenList.replace() to match the latest DOM specification

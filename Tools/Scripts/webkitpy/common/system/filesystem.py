@@ -328,10 +328,16 @@ class FileSystem(object):
 
     def copy_to_base_host(self, source, destination):
         """Copy a file from this host to the base host. By default, this host
-        assumes it is the base host and will just execute a copytree."""
-        self.copytree(source, destination)
+        assumes it is the base host and will just execute a copytree/copyfile."""
+        if self.isdir(source):
+            self.copytree(source, destination)
+        else:
+            self.copyfile(source, destination)
 
     def copy_from_base_host(self, source, destination):
         """Copy a file from the base host to this host. By default, this host
-        assumes it is the base host and will just execute a copytree."""
-        self.copytree(source, destination)
+        assumes it is the base host and will just execute a copytree/copyfile."""
+        if self.isdir(source):
+            self.copytree(source, destination)
+        else:
+            self.copyfile(source, destination)
