@@ -1,5 +1,14 @@
 2017-04-27  Matt Lewis  <jlewis3@apple.com>
 
+        Mark fast/mediacapturefromelement/CanvasCaptureMediaStream-2d-events.html as a flaky failure.
+        https://bugs.webkit.org/show_bug.cgi?id=170835
+
+        Unreviewed test gardening.
+
+        * TestExpectations:
+
+2017-04-27  Matt Lewis  <jlewis3@apple.com>
+
         Mark imported/blink/paint/deprecatedpaintlayer/non-self-painting-layer-overrides-visibility.html as a flaky crash.
         https://bugs.webkit.org/show_bug.cgi?id=171406
 

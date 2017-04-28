@@ -1295,3 +1295,5 @@ webkit.org/b/171031 imported/w3c/web-platform-tests/XMLHttpRequest/getallrespons
 webkit.org/b/170701 webrtc/datachannel/bufferedAmountLowThreshold.html [ Pass Failure ]
 
 webkit.org/b/171248 imported/w3c/web-platform-tests/fetch/nosniff/importscripts.html
+
+webkit.org/b/170835 fast/mediacapturefromelement/CanvasCaptureMediaStream-2d-events.html [ Pass Failure ]
