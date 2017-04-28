@@ -45,9 +45,15 @@ public:
 
     ALWAYS_INLINE static JSFixedArray* createFromArray(ExecState* exec, VM& vm, JSArray* array)
     {
+        auto throwScope = DECLARE_THROW_SCOPE(vm);
+
         IndexingType indexingType = array->indexingType() & IndexingShapeMask;
         unsigned length = array->length();
-        JSFixedArray* result = JSFixedArray::create(vm, vm.fixedArrayStructure.get(), length);
+        JSFixedArray* result = JSFixedArray::tryCreate(vm, vm.fixedArrayStructure.get(), length);
+        if (UNLIKELY(!result)) {
+            throwOutOfMemoryError(exec, throwScope);
+            return nullptr;
+        }
 
         if (!length)
             return result;
@@ -70,8 +76,6 @@ public:
             return result;
         }
 
-
-        auto throwScope = DECLARE_THROW_SCOPE(vm);
         for (unsigned i = 0; i < length; i++) {
             JSValue value = array->getDirectIndex(exec, i);
             if (!value) {
@@ -116,9 +120,12 @@ public:
 private:
     unsigned m_size;
 
-    ALWAYS_INLINE static JSFixedArray* create(VM& vm, Structure* structure, unsigned size)
+    ALWAYS_INLINE static JSFixedArray* tryCreate(VM& vm, Structure* structure, unsigned size)
     {
-        JSFixedArray* result = new (NotNull, allocateCell<JSFixedArray>(vm.heap, allocationSize(size))) JSFixedArray(vm, structure, size);
+        void* buffer = tryAllocateCell<JSFixedArray>(vm.heap, allocationSize(size));
+        if (UNLIKELY(!buffer))
+            return nullptr;
+        JSFixedArray* result = new (NotNull, buffer) JSFixedArray(vm, structure, size);
         result->finishCreation(vm);
         return result;
     }

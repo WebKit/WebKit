@@ -142,45 +142,55 @@ Subspace* JSCell::subspaceFor(VM& vm)
     return &vm.cellSpace;
 }
 
+template<typename T, AllocationFailureMode mode, GCDeferralContextArgPresense deferralContextArgPresence>
+ALWAYS_INLINE void* tryAllocateCellHelper(Heap& heap, GCDeferralContext* deferralContext, size_t size)
+{
+    ASSERT(deferralContext || !DisallowGC::isInEffectOnCurrentThread());
+    ASSERT(size >= sizeof(T));
+    JSCell* result;
+    if (mode == AllocationFailureMode::ShouldAssertOnFailure) {
+        result = (deferralContextArgPresence == GCDeferralContextArgPresense::HasArg)
+            ? static_cast<JSCell*>(subspaceFor<T>(*heap.vm())->allocate(deferralContext, size))
+            : static_cast<JSCell*>(subspaceFor<T>(*heap.vm())->allocate(size));
+    } else {
+        result = (deferralContextArgPresence == GCDeferralContextArgPresense::HasArg)
+            ? static_cast<JSCell*>(subspaceFor<T>(*heap.vm())->tryAllocate(deferralContext, size))
+            : static_cast<JSCell*>(subspaceFor<T>(*heap.vm())->tryAllocate(size));
+        if (UNLIKELY(!result))
+            return nullptr;
+    }
+#if ENABLE(GC_VALIDATION)
+    ASSERT(!heap.vm()->isInitializingObject());
+    heap.vm()->setInitializingObjectClass(T::info());
+#endif
+    result->clearStructure();
+    return result;
+}
+
 template<typename T>
 void* allocateCell(Heap& heap, size_t size)
 {
-    ASSERT(!DisallowGC::isInEffectOnCurrentThread());
-    ASSERT(size >= sizeof(T));
-    JSCell* result = static_cast<JSCell*>(subspaceFor<T>(*heap.vm())->allocate(size));
-#if ENABLE(GC_VALIDATION)
-    ASSERT(!heap.vm()->isInitializingObject());
-    heap.vm()->setInitializingObjectClass(T::info());
-#endif
-    result->clearStructure();
-    return result;
+    return tryAllocateCellHelper<T, AllocationFailureMode::ShouldAssertOnFailure, GCDeferralContextArgPresense::DoesNotHaveArg>(heap, nullptr, size);
 }
-    
+
 template<typename T>
-void* allocateCell(Heap& heap)
+void* tryAllocateCell(Heap& heap, size_t size)
 {
-    return allocateCell<T>(heap, sizeof(T));
+    return tryAllocateCellHelper<T, AllocationFailureMode::ShouldNotAssertOnFailure, GCDeferralContextArgPresense::DoesNotHaveArg>(heap, nullptr, size);
 }
-    
+
 template<typename T>
 void* allocateCell(Heap& heap, GCDeferralContext* deferralContext, size_t size)
 {
-    ASSERT(size >= sizeof(T));
-    JSCell* result = static_cast<JSCell*>(subspaceFor<T>(*heap.vm())->allocate(deferralContext, size));
-#if ENABLE(GC_VALIDATION)
-    ASSERT(!heap.vm()->isInitializingObject());
-    heap.vm()->setInitializingObjectClass(T::info());
-#endif
-    result->clearStructure();
-    return result;
+    return tryAllocateCellHelper<T, AllocationFailureMode::ShouldAssertOnFailure, GCDeferralContextArgPresense::HasArg>(heap, deferralContext, size);
 }
-    
+
 template<typename T>
-void* allocateCell(Heap& heap, GCDeferralContext* deferralContext)
+void* tryAllocateCell(Heap& heap, GCDeferralContext* deferralContext, size_t size)
 {
-    return allocateCell<T>(heap, deferralContext, sizeof(T));
+    return tryAllocateCellHelper<T, AllocationFailureMode::ShouldNotAssertOnFailure, GCDeferralContextArgPresense::HasArg>(heap, deferralContext, size);
 }
-    
+
 inline bool JSCell::isObject() const
 {
     return TypeInfo::isObject(m_type);

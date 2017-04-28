@@ -1,3 +1,13 @@
+2017-04-27  Mark Lam  <mark.lam@apple.com>
+
+        Fix some RELEASE_ASSERT failures caused by OutOfMemoryErrors.
+        https://bugs.webkit.org/show_bug.cgi?id=171404
+        <rdar://problem/31876178>
+
+        Reviewed by Saam Barati.
+
+        * stress/js-fixed-array-out-of-memory.js: Added.
+
 2017-04-27  David Kilzer  <ddkilzer@apple.com>
 
         Enhance shouldBe()/shouldNotBe() to accept anonymous function arguments

@@ -50,11 +50,20 @@ class PropertyDescriptor;
 class PropertyNameArray;
 class Structure;
 
-template<typename T> void* allocateCell(Heap&);
-template<typename T> void* allocateCell(Heap&, size_t);
+enum class AllocationFailureMode {
+    ShouldAssertOnFailure,
+    ShouldNotAssertOnFailure
+};
 
-template<typename T> void* allocateCell(Heap&, GCDeferralContext*);
-template<typename T> void* allocateCell(Heap&, GCDeferralContext*, size_t);
+enum class GCDeferralContextArgPresense {
+    HasArg,
+    DoesNotHaveArg
+};
+
+template<typename T> void* allocateCell(Heap&, size_t = sizeof(T));
+template<typename T> void* tryAllocateCell(Heap&, size_t = sizeof(T));
+template<typename T> void* allocateCell(Heap&, GCDeferralContext*, size_t = sizeof(T));
+template<typename T> void* tryAllocateCell(Heap&, GCDeferralContext*, size_t = sizeof(T));
 
 #define DECLARE_EXPORT_INFO                                                  \
     protected:                                                               \
@@ -71,10 +80,8 @@ template<typename T> void* allocateCell(Heap&, GCDeferralContext*, size_t);
 class JSCell : public HeapCell {
     friend class JSValue;
     friend class MarkedBlock;
-    template<typename T> friend void* allocateCell(Heap&);
-    template<typename T> friend void* allocateCell(Heap&, size_t);
-    template<typename T> friend void* allocateCell(Heap&, GCDeferralContext*);
-    template<typename T> friend void* allocateCell(Heap&, GCDeferralContext*, size_t);
+    template<typename T, AllocationFailureMode, GCDeferralContextArgPresense>
+    friend void* tryAllocateCellHelper(Heap&, GCDeferralContext*, size_t);
 
 public:
     static const unsigned StructureFlags = 0;

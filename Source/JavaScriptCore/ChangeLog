@@ -1,3 +1,35 @@
+2017-04-27  Mark Lam  <mark.lam@apple.com>
+
+        Fix some RELEASE_ASSERT failures caused by OutOfMemoryErrors.
+        https://bugs.webkit.org/show_bug.cgi?id=171404
+        <rdar://problem/31876178>
+
+        Reviewed by Saam Barati.
+
+        1. Added some tryAllocate() functions in JSCellInlines.h.
+        2. Consolidated the implementations of allocateCell() template functions into a
+           single tryAllocateCellHelper() to reduce redundancy and eliminate needing to
+           copy-paste for variations of allocateCell and tryAllocateCell.
+        3. Changed JSFixedArray::createFromArray() and constructEmptyArray() to check for
+           allocation failure and throw an OutOfMemoryError.  It was already possible to
+           throw errors from these functions for other reasons.  So, their clients are
+           already ready to handle OOMEs.
+
+        * ftl/FTLOperations.cpp:
+        (JSC::FTL::operationMaterializeObjectInOSR):
+        * runtime/JSCInlines.h:
+        * runtime/JSCell.h:
+        * runtime/JSCellInlines.h:
+        (JSC::tryAllocateCellHelper):
+        (JSC::allocateCell):
+        (JSC::tryAllocateCell):
+        * runtime/JSFixedArray.h:
+        (JSC::JSFixedArray::createFromArray):
+        (JSC::JSFixedArray::tryCreate):
+        (JSC::JSFixedArray::create): Deleted.
+        * runtime/JSGlobalObject.h:
+        (JSC::constructEmptyArray):
+
 2017-04-27  Joseph Pecoraro  <pecoraro@apple.com>
 
         Support for promise rejection events (unhandledrejection)

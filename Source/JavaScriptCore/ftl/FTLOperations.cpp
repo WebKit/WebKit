@@ -432,6 +432,7 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
         // that we only support PhantomSpread over CreateRest, which is an array we create.
         // Any attempts to put a getter on any indices on the rest array will escape the array.
         JSFixedArray* fixedArray = JSFixedArray::createFromArray(exec, vm, array);
+        RELEASE_ASSERT(fixedArray);
         return fixedArray;
     }
 
