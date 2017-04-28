@@ -1104,6 +1104,8 @@ bool AccessibilityUIElement::boolAttributeValue(JSStringRef attribute)
         return checkElementState(m_element.get(), ATK_STATE_FOCUSED);
     if (attributeString == "AXInvalid")
         return checkElementState(m_element.get(), ATK_STATE_INVALID);
+    if (attributeString == "AXModal")
+        return checkElementState(m_element.get(), ATK_STATE_MODAL);
     if (attributeString == "AXMultiSelectable")
         return checkElementState(m_element.get(), ATK_STATE_MULTISELECTABLE);
     if (attributeString == "AXRequired")

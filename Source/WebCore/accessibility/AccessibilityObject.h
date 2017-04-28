@@ -662,6 +662,7 @@ public:
     // This function checks if the object should be ignored when there's a modal dialog displayed.
     bool ignoredFromARIAModalPresence() const;
     bool isAriaModalDescendant(Node*) const;
+    bool isAriaModalNode() const;
     
     bool supportsARIASetSize() const;
     bool supportsARIAPosInSet() const;

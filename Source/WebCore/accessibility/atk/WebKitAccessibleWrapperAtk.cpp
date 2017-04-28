@@ -809,6 +809,9 @@ static void setAtkStateSetFromCoreObject(AccessibilityObject* coreObject, AtkSta
             atk_state_set_add_state(stateSet, ATK_STATE_INDETERMINATE);
     }
 
+    if (coreObject->isAriaModalNode())
+        atk_state_set_add_state(stateSet, ATK_STATE_MODAL);
+
     if (coreObject->invalidStatus() != "false")
         atk_state_set_add_state(stateSet, ATK_STATE_INVALID_ENTRY);
 

@@ -2022,6 +2022,14 @@ bool AccessibilityObject::isAriaModalDescendant(Node* ariaModalNode) const
     return false;
 }
 
+bool AccessibilityObject::isAriaModalNode() const
+{
+    if (AXObjectCache* cache = axObjectCache())
+        return node() && cache->ariaModalNode() == node();
+
+    return false;
+}
+
 bool AccessibilityObject::ignoredFromARIAModalPresence() const
 {
     // We shouldn't ignore the top node.

@@ -1,3 +1,13 @@
+2017-04-28  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        [ATK] aria-modal="true" should be exposed via ATK_STATE_MODAL
+        https://bugs.webkit.org/show_bug.cgi?id=171188
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/gtk/aria-modal-state-exposed-expected.txt: Added.
+        * accessibility/gtk/aria-modal-state-exposed.html: Added.
+
 2017-04-28  Matt Lewis  <jlewis3@apple.com>
 
         Rebaselining test after r215916.
