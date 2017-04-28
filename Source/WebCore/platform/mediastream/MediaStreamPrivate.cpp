@@ -298,6 +298,14 @@ void MediaStreamPrivate::scheduleDeferredTask(Function<void ()>&& function)
     });
 }
 
+void MediaStreamPrivate::monitorOrientation(OrientationNotifier& notifier)
+{
+    for (auto& track : m_trackSet.values()) {
+        if (track->source().isCaptureSource() && track->type() == RealtimeMediaSource::Type::Video)
+            track->source().monitorOrientation(notifier);
+    }
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)

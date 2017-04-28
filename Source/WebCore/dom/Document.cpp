@@ -433,6 +433,17 @@ HashSet<Document*>& Document::allDocuments()
     return documents;
 }
 
+static inline int currentOrientation(Frame* frame)
+{
+#if ENABLE(ORIENTATION_EVENTS)
+    if (frame)
+        return frame->orientation();
+#else
+    UNUSED_PARAM(frame);
+#endif
+    return 0;
+}
+
 Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsigned constructionFlags)
     : ContainerNode(*this, CreateDocument)
     , TreeScope(*this)
@@ -483,6 +494,7 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsig
 #endif
     , m_isSynthesized(constructionFlags & Synthesized)
     , m_isNonRenderedPlaceholder(constructionFlags & NonRenderedPlaceholder)
+    , m_orientationNotifier(currentOrientation(frame))
 {
     allDocuments().add(this);
 
@@ -6952,6 +6964,12 @@ void Document::didRemoveInDocumentShadowRoot(ShadowRoot& shadowRoot)
 {
     ASSERT(m_inDocumentShadowRoots.contains(&shadowRoot));
     m_inDocumentShadowRoots.remove(&shadowRoot);
+}
+
+void Document::orientationChanged(int orientation)
+{
+    dispatchWindowEvent(Event::create(eventNames().orientationchangeEvent, false, false));
+    m_orientationNotifier.orientationChanged(orientation);
 }
 
 } // namespace WebCore

@@ -23,12 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AVVideoCaptureSource_h
-#define AVVideoCaptureSource_h
+#pragma once
 
 #if ENABLE(MEDIA_STREAM) && USE(AVFOUNDATION)
 
 #include "AVMediaCaptureSource.h"
+#include "OrientationNotifer.h"
 
 OBJC_CLASS CALayer;
 OBJC_CLASS AVFrameRateRange;
@@ -43,11 +43,11 @@ class FloatRect;
 class GraphicsContext;
 class PixelBufferConformerCV;
 
-class AVVideoCaptureSource : public AVMediaCaptureSource {
+class AVVideoCaptureSource : public AVMediaCaptureSource, private OrientationNotifier::Observer {
 public:
-    static RefPtr<AVMediaCaptureSource> create(AVCaptureDevice*, const AtomicString&, const MediaConstraints*, String&);
+    static CaptureSourceOrError create(AVCaptureDevice*, const AtomicString&, const MediaConstraints*);
 
-    WEBCORE_EXPORT static CaptureFactory& factory();
+    WEBCORE_EXPORT static VideoCaptureFactory& factory();
 
     int32_t width() const { return m_width; }
     int32_t height() const { return m_height; }
@@ -66,11 +66,17 @@ private:
     bool applyFrameRate(double) final;
     bool setPreset(NSString*);
 
+    void monitorOrientation(OrientationNotifier&) final;
+    void computeSampleRotation();
+
     NSString *bestSessionPresetForVideoDimensions(std::optional<int> width, std::optional<int> height) const;
     bool supportsSizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double>) final;
 
     void initializeCapabilities(RealtimeMediaSourceCapabilities&) final;
     void initializeSupportedConstraints(RealtimeMediaSourceSupportedConstraints&) final;
+
+    // OrientationNotifier::Observer API
+    void orientationChanged(int orientation) final;
 
     bool setFrameRateConstraint(double minFrameRate, double maxFrameRate);
 
@@ -90,10 +96,11 @@ private:
     Float64 m_frameRate { 0 };
     int32_t m_width { 0 };
     int32_t m_height { 0 };
+    int m_sensorOrientation { 0 };
+    int m_deviceOrientation { 0 };
+    MediaSample::VideoRotation m_sampleRotation { MediaSample::VideoRotation::None };
 };
 
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)
-
-#endif // AVVideoCaptureSource_h

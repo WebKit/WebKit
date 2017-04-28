@@ -50,13 +50,14 @@ namespace WebCore {
 
 static const int videoSampleRate = 90000;
 
-RefPtr<MockRealtimeVideoSource> MockRealtimeVideoSource::create(const String& name, const MediaConstraints* constraints)
+CaptureSourceOrError MockRealtimeVideoSource::create(const String& name, const MediaConstraints* constraints)
 {
-    auto source = adoptRef(new MockRealtimeVideoSourceMac(name));
+    auto source = adoptRef(*new MockRealtimeVideoSourceMac(name));
+    // FIXME: We should report error messages
     if (constraints && source->applyConstraints(*constraints))
-        source = nullptr;
+        return { };
 
-    return source;
+    return CaptureSourceOrError(WTFMove(source));
 }
 
 MockRealtimeVideoSourceMac::MockRealtimeVideoSourceMac(const String& name)
@@ -159,6 +160,27 @@ bool MockRealtimeVideoSourceMac::applySize(const IntSize& newSize)
         m_bufferPool = nullptr;
 
     return MockRealtimeVideoSource::applySize(newSize);
+}
+
+void MockRealtimeVideoSourceMac::orientationChanged(int orientation)
+{
+    // FIXME: Do something with m_deviceOrientation
+    switch (orientation) {
+    case 0:
+        m_deviceOrientation = MediaSample::VideoRotation::None;
+        break;
+    case 90:
+        m_deviceOrientation = MediaSample::VideoRotation::Right;
+        break;
+    case -90:
+        m_deviceOrientation = MediaSample::VideoRotation::Left;
+        break;
+    case 180:
+        m_deviceOrientation = MediaSample::VideoRotation::UpsideDown;
+        break;
+    default:
+        return;
+    }
 }
 
 } // namespace WebCore

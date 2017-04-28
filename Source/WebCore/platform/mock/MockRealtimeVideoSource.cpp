@@ -48,29 +48,25 @@
 
 namespace WebCore {
 
-class MockRealtimeVideoSourceFactory : public RealtimeMediaSource::CaptureFactory {
+class MockRealtimeVideoSourceFactory : public RealtimeMediaSource::VideoCaptureFactory {
 public:
-    RefPtr<RealtimeMediaSource> createMediaSourceForCaptureDeviceWithConstraints(const String& deviceID, CaptureDevice::DeviceType type, const MediaConstraints* constraints, String&) final {
-        if (type != CaptureDevice::DeviceType::Video)
-            return nullptr;
-
+    CaptureSourceOrError createVideoCaptureSource(const String& deviceID, const MediaConstraints* constraints) final {
         for (auto& device : MockRealtimeMediaSource::videoDevices()) {
             if (device.persistentId() == deviceID)
                 return MockRealtimeVideoSource::create(device.label(), constraints);
         }
-
-        return nullptr;
+        return { };
     }
 };
 
 #if !PLATFORM(MAC) && !PLATFORM(IOS)
-RefPtr<MockRealtimeVideoSource> MockRealtimeVideoSource::create(const String& name, const MediaConstraints* constraints)
+CaptureSourceOrError MockRealtimeVideoSource::create(const String& name, const MediaConstraints* constraints)
 {
-    auto source = adoptRef(new MockRealtimeVideoSource(name));
+    auto source = adoptRef(*new MockRealtimeVideoSource(name));
     if (constraints && source->applyConstraints(*constraints))
-        source = nullptr;
+        return { };
 
-    return source;
+    return CaptureSourceOrError(WTFMove(source));
 }
 
 RefPtr<MockRealtimeVideoSource> MockRealtimeVideoSource::createMuted(const String& name)
@@ -81,7 +77,7 @@ RefPtr<MockRealtimeVideoSource> MockRealtimeVideoSource::createMuted(const Strin
 }
 #endif
 
-RealtimeMediaSource::CaptureFactory& MockRealtimeVideoSource::factory()
+RealtimeMediaSource::VideoCaptureFactory& MockRealtimeVideoSource::factory()
 {
     static NeverDestroyed<MockRealtimeVideoSourceFactory> factory;
     return factory.get();

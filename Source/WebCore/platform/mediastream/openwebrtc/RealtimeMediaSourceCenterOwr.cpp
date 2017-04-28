@@ -108,7 +108,7 @@ void RealtimeMediaSourceCenterOwr::createMediaStream(NewMediaStreamHandler compl
     if (!videoDeviceID.isEmpty())
         types |= OWR_MEDIA_TYPE_VIDEO;
 
-    m_completionHandler = completionHandler;
+    m_completionHandler = WTFMove(completionHandler);
 
     owr_get_capture_sources(static_cast<OwrMediaType>(types), mediaSourcesAvailableCallback, this);
 }

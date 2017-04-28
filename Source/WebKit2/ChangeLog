@@ -1,3 +1,23 @@
+2017-04-28  Youenn Fablet  <youenn@apple.com>
+
+        getUserMedia video streams should follow device orientation
+        https://bugs.webkit.org/show_bug.cgi?id=171284
+
+        Reviewed by Eric Carlson.
+
+        Refactoring to specialize CaptureFactory in VideoCaptureFactory and AudioCaptureFactory.
+        Refactoring to return a CaptureSourceOrError instead of passing an out parameter in addition to returning a RefPtr.
+
+        * Shared/WebCoreArgumentCoders.h:
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.cpp:
+        (WebKit::UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstraints):
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.h:
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.messages.in:
+        * WebProcess/cocoa/UserMediaCaptureManager.cpp:
+        (WebKit::UserMediaCaptureManager::createCaptureSource):
+        (WebKit::UserMediaCaptureManager::createMediaSourceForCaptureDeviceWithConstraints): Deleted.
+        * WebProcess/cocoa/UserMediaCaptureManager.h:
+
 2017-04-28  Chris Dumez  <cdumez@apple.com>
 
         [iOS] We should not take a background assertion for the UIProcess when app is MobileMail

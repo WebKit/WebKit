@@ -125,14 +125,27 @@ UserMediaCaptureManagerProxy::~UserMediaCaptureManagerProxy()
     m_process.removeMessageReceiver(Messages::UserMediaCaptureManagerProxy::messageReceiverName());
 }
 
-void UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstraints(uint64_t id, const String& deviceID, WebCore::CaptureDevice::DeviceType type, const MediaConstraintsData& constraintsData, bool& succeeded, String& invalidConstraints)
+void UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstraints(uint64_t id, const String& deviceID, WebCore::RealtimeMediaSource::Type type, const MediaConstraintsData& constraintsData, bool& succeeded, String& invalidConstraints)
 {
+    CaptureSourceOrError sourceOrError;
     auto constraints = MediaConstraintsImpl::create(MediaConstraintsData(constraintsData));
-    auto source = RealtimeMediaSourceCenter::singleton().audioFactory()->createMediaSourceForCaptureDeviceWithConstraints(deviceID, type, constraints.ptr(), invalidConstraints);
-    succeeded = !!source;
+    switch (type) {
+    case WebCore::RealtimeMediaSource::Type::Audio:
+        sourceOrError = RealtimeMediaSourceCenter::singleton().audioFactory()->createAudioCaptureSource(deviceID, constraints.ptr());
+        break;
+    case WebCore::RealtimeMediaSource::Type::Video:
+        sourceOrError = RealtimeMediaSourceCenter::singleton().videoFactory()->createVideoCaptureSource(deviceID, constraints.ptr());
+        break;
+    case WebCore::RealtimeMediaSource::Type::None:
+        ASSERT_NOT_REACHED();
+        break;
+    }
 
-    if (source)
-        m_proxies.set(id, std::make_unique<SourceProxy>(id, *this, source.releaseNonNull()));
+    succeeded = !!sourceOrError;
+    if (sourceOrError)
+        m_proxies.set(id, std::make_unique<SourceProxy>(id, *this, sourceOrError.source()));
+    else
+        invalidConstraints = WTFMove(sourceOrError.errorMessage);
 }
 
 void UserMediaCaptureManagerProxy::startProducingData(uint64_t id)

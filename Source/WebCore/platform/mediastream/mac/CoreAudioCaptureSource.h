@@ -53,9 +53,9 @@ class CaptureDeviceInfo;
 class CoreAudioCaptureSource : public RealtimeMediaSource {
 public:
 
-    static RefPtr<CoreAudioCaptureSource> create(const String& deviceID, CaptureDevice::DeviceType, const MediaConstraints*, String&);
+    static CaptureSourceOrError create(const String& deviceID, const MediaConstraints*);
 
-    WEBCORE_EXPORT static CaptureFactory& factory();
+    WEBCORE_EXPORT static AudioCaptureFactory& factory();
 
     void addEchoCancellationSource(AudioSampleDataSource&);
     void removeEchoCancellationSource(AudioSampleDataSource&);

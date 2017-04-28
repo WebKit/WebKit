@@ -66,16 +66,16 @@ public:
     
     virtual const RealtimeMediaSourceSupportedConstraints& supportedConstraints() { return m_supportedConstraints; }
 
-    virtual RealtimeMediaSource::CaptureFactory* defaultAudioFactory() { return nullptr; }
-    virtual RealtimeMediaSource::CaptureFactory* defaultVideoFactory() { return nullptr; }
+    virtual RealtimeMediaSource::AudioCaptureFactory* defaultAudioFactory() { return nullptr; }
+    virtual RealtimeMediaSource::VideoCaptureFactory* defaultVideoFactory() { return nullptr; }
 
-    WEBCORE_EXPORT void setAudioFactory(RealtimeMediaSource::CaptureFactory&);
-    WEBCORE_EXPORT void unsetAudioFactory(RealtimeMediaSource::CaptureFactory&);
-    RealtimeMediaSource::CaptureFactory* audioFactory() const { return m_audioFactory; }
+    WEBCORE_EXPORT void setAudioFactory(RealtimeMediaSource::AudioCaptureFactory&);
+    WEBCORE_EXPORT void unsetAudioFactory(RealtimeMediaSource::AudioCaptureFactory&);
+    RealtimeMediaSource::AudioCaptureFactory* audioFactory() const { return m_audioFactory; }
 
-    WEBCORE_EXPORT void setVideoFactory(RealtimeMediaSource::CaptureFactory&);
-    WEBCORE_EXPORT void unsetVideoFactory(RealtimeMediaSource::CaptureFactory&);
-    RealtimeMediaSource::CaptureFactory* videoFactory() const { return m_videoFactory; }
+    WEBCORE_EXPORT void setVideoFactory(RealtimeMediaSource::VideoCaptureFactory&);
+    WEBCORE_EXPORT void unsetVideoFactory(RealtimeMediaSource::VideoCaptureFactory&);
+    RealtimeMediaSource::VideoCaptureFactory* videoFactory() const { return m_videoFactory; }
 
     virtual CaptureDeviceManager* defaultAudioCaptureDeviceManager() { return nullptr; }
     virtual CaptureDeviceManager* defaultVideoCaptureDeviceManager() { return nullptr; }
@@ -103,8 +103,8 @@ protected:
     static RealtimeMediaSourceCenter& platformCenter();
     RealtimeMediaSourceSupportedConstraints m_supportedConstraints;
 
-    RealtimeMediaSource::CaptureFactory* m_audioFactory { nullptr };
-    RealtimeMediaSource::CaptureFactory* m_videoFactory { nullptr };
+    RealtimeMediaSource::AudioCaptureFactory* m_audioFactory { nullptr };
+    RealtimeMediaSource::VideoCaptureFactory* m_videoFactory { nullptr };
 
     CaptureDeviceManager* m_audioCaptureDeviceManager { nullptr };
     CaptureDeviceManager* m_videoCaptureDeviceManager { nullptr };

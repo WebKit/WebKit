@@ -46,45 +46,39 @@
 
 namespace WebCore {
 
-class CoreAudioCaptureSourceFactory : public RealtimeMediaSource::CaptureFactory {
+class CoreAudioCaptureSourceFactory : public RealtimeMediaSource::AudioCaptureFactory {
 public:
-    RefPtr<RealtimeMediaSource> createMediaSourceForCaptureDeviceWithConstraints(const String& deviceID, CaptureDevice::DeviceType type, const MediaConstraints* constraints, String& invalidConstraint) final {
-        return CoreAudioCaptureSource::create(deviceID, type, constraints, invalidConstraint);
+    CaptureSourceOrError createAudioCaptureSource(const String& deviceID, const MediaConstraints* constraints) final {
+        return CoreAudioCaptureSource::create(deviceID, constraints);
     }
 };
 
 const UInt32 outputBus = 0;
 const UInt32 inputBus = 1;
 
-RefPtr<CoreAudioCaptureSource> CoreAudioCaptureSource::create(const String& deviceID, CaptureDevice::DeviceType type, const MediaConstraints* constraints, String& invalidConstraint)
+CaptureSourceOrError CoreAudioCaptureSource::create(const String& deviceID, const MediaConstraints* constraints)
 {
-    if (type != CaptureDevice::DeviceType::Audio)
-        return nullptr;
-
     String label;
     uint32_t persistentID = 0;
 #if PLATFORM(MAC)
     auto device = CoreAudioCaptureDeviceManager::singleton().coreAudioDeviceWithUID(deviceID);
     if (!device)
-        return nullptr;
+        return { };
 
     label = device->label();
     persistentID = device->deviceID();
 #endif
-    auto source = adoptRef(new CoreAudioCaptureSource(deviceID, label, persistentID));
+    auto source = adoptRef(*new CoreAudioCaptureSource(deviceID, label, persistentID));
 
     if (constraints) {
         auto result = source->applyConstraints(*constraints);
-        if (result) {
-            invalidConstraint = result.value().first;
-            return nullptr;
-        }
+        if (result)
+            return WTFMove(result.value().first);
     }
-
-    return source;
+    return CaptureSourceOrError(WTFMove(source));
 }
 
-RealtimeMediaSource::CaptureFactory& CoreAudioCaptureSource::factory()
+RealtimeMediaSource::AudioCaptureFactory& CoreAudioCaptureSource::factory()
 {
     static NeverDestroyed<CoreAudioCaptureSourceFactory> factory;
     return factory.get();

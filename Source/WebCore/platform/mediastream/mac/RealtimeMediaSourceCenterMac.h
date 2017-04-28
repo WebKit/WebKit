@@ -54,8 +54,8 @@ private:
 
     Vector<String> bestSourcesForTypeAndConstraints(RealtimeMediaSource::Type, const MediaConstraints&, String& invalidConstraint);
 
-    RealtimeMediaSource::CaptureFactory* defaultAudioFactory() final;
-    RealtimeMediaSource::CaptureFactory* defaultVideoFactory() final;
+    RealtimeMediaSource::AudioCaptureFactory* defaultAudioFactory() final;
+    RealtimeMediaSource::VideoCaptureFactory* defaultVideoFactory() final;
 };
 
 } // namespace WebCore

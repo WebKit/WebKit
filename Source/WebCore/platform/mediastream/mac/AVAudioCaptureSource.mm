@@ -77,30 +77,27 @@ SOFT_LINK_POINTER(AVFoundation, AVMediaTypeAudio, NSString *)
 
 namespace WebCore {
 
-class AVAudioCaptureSourceFactory : public RealtimeMediaSource::CaptureFactory {
+class AVAudioCaptureSourceFactory : public RealtimeMediaSource::AudioCaptureFactory {
 public:
-    RefPtr<RealtimeMediaSource> createMediaSourceForCaptureDeviceWithConstraints(const String& deviceID, CaptureDevice::DeviceType type, const MediaConstraints* constraints, String& invalidConstraint) final {
+    CaptureSourceOrError createAudioCaptureSource(const String& deviceID, const MediaConstraints* constraints) final {
         AVCaptureDeviceTypedef *device = [getAVCaptureDeviceClass() deviceWithUniqueID:deviceID];
-        ASSERT_UNUSED(type, !device || (device && type == CaptureDevice::DeviceType::Audio));
-        return device ? AVAudioCaptureSource::create(device, emptyString(), constraints, invalidConstraint) : nullptr;
+        return device ? AVAudioCaptureSource::create(device, emptyString(), constraints) : CaptureSourceOrError();
     }
 };
 
-RefPtr<AVMediaCaptureSource> AVAudioCaptureSource::create(AVCaptureDeviceTypedef* device, const AtomicString& id, const MediaConstraints* constraints, String& invalidConstraint)
+CaptureSourceOrError AVAudioCaptureSource::create(AVCaptureDeviceTypedef* device, const AtomicString& id, const MediaConstraints* constraints)
 {
-    auto source = adoptRef(new AVAudioCaptureSource(device, id));
+    auto source = adoptRef(*new AVAudioCaptureSource(device, id));
     if (constraints) {
         auto result = source->applyConstraints(*constraints);
-        if (result) {
-            invalidConstraint = result.value().first;
-            source = nullptr;
-        }
+        if (result)
+            return String(result.value().first);
     }
 
-    return source;
+    return CaptureSourceOrError(WTFMove(source));
 }
 
-RealtimeMediaSource::CaptureFactory& AVAudioCaptureSource::factory()
+RealtimeMediaSource::AudioCaptureFactory& AVAudioCaptureSource::factory()
 {
     static NeverDestroyed<AVAudioCaptureSourceFactory> factory;
     return factory.get();

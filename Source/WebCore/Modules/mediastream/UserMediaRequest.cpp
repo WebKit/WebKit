@@ -167,6 +167,7 @@ void UserMediaRequest::allow(const String& audioDeviceUID, const String& videoDe
             deny(MediaAccessDenialReason::HardwareError, emptyString());
             return;
         }
+        privateStream->monitorOrientation(downcast<Document>(m_scriptExecutionContext)->orientationNotifier());
 
         auto stream = MediaStream::create(*m_scriptExecutionContext, privateStream.releaseNonNull());
         if (stream->getTracks().isEmpty()) {

@@ -44,9 +44,9 @@ class WebAudioSourceProviderAVFObjC;
 class AVAudioCaptureSource : public AVMediaCaptureSource {
 public:
 
-    static RefPtr<AVMediaCaptureSource> create(AVCaptureDevice*, const AtomicString&, const MediaConstraints*, String&);
+    static CaptureSourceOrError create(AVCaptureDevice*, const AtomicString&, const MediaConstraints*);
 
-    WEBCORE_EXPORT static CaptureFactory& factory();
+    WEBCORE_EXPORT static AudioCaptureFactory& factory();
 
 private:
     AVAudioCaptureSource(AVCaptureDevice*, const AtomicString&);

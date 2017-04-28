@@ -84,13 +84,14 @@ static void addHum(float amplitude, float frequency, float sampleRate, uint64_t 
     }
 }
 
-RefPtr<MockRealtimeAudioSource> MockRealtimeAudioSource::create(const String& name, const MediaConstraints* constraints)
+CaptureSourceOrError MockRealtimeAudioSource::create(const String& name, const MediaConstraints* constraints)
 {
-    auto source = adoptRef(new MockRealtimeAudioSourceMac(name));
+    auto source = adoptRef(*new MockRealtimeAudioSourceMac(name));
+    // FIXME: We should report error messages
     if (constraints && source->applyConstraints(*constraints))
-        source = nullptr;
+        return { };
 
-    return source;
+    return CaptureSourceOrError(WTFMove(source));
 }
 
 MockRealtimeAudioSourceMac::MockRealtimeAudioSourceMac(const String& name)

@@ -46,10 +46,10 @@ class GraphicsContext;
 class MockRealtimeVideoSource : public MockRealtimeMediaSource {
 public:
 
-    static RefPtr<MockRealtimeVideoSource> create(const String&, const MediaConstraints*);
+    static CaptureSourceOrError create(const String&, const MediaConstraints*);
     static RefPtr<MockRealtimeVideoSource> createMuted(const String& name);
 
-    static CaptureFactory& factory();
+    static VideoCaptureFactory& factory();
 
     virtual ~MockRealtimeVideoSource() { }
 

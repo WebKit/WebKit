@@ -38,6 +38,7 @@
 #include "FrameDestructionObserver.h"
 #include "MediaProducer.h"
 #include "MutationObserver.h"
+#include "OrientationNotifer.h"
 #include "PageVisibilityState.h"
 #include "PlatformEvent.h"
 #include "ReferrerPolicy.h"
@@ -1303,6 +1304,9 @@ public:
 
     ConstantPropertyMap& constantProperties() const { return *m_constantPropertyMap; }
 
+    void orientationChanged(int orientation);
+    OrientationNotifier& orientationNotifier() { return m_orientationNotifier; }
+
 protected:
     enum ConstructionFlags { Synthesized = 1, NonRenderedPlaceholder = 1 << 1 };
     Document(Frame*, const URL&, unsigned = DefaultDocumentClass, unsigned constructionFlags = 0);
@@ -1757,6 +1761,8 @@ private:
 #ifndef NDEBUG
     bool m_didDispatchViewportPropertiesChanged { false };
 #endif
+
+    OrientationNotifier m_orientationNotifier;
 
     static bool hasEverCreatedAnAXObjectCache;
 };

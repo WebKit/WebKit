@@ -31,8 +31,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RealtimeMediaSource_h
-#define RealtimeMediaSource_h
+#pragma once
 
 #if ENABLE(MEDIA_STREAM)
 
@@ -58,8 +57,11 @@ class AudioStreamDescription;
 class FloatRect;
 class GraphicsContext;
 class MediaStreamPrivate;
+class OrientationNotifier;
 class PlatformAudioData;
 class RealtimeMediaSourceSettings;
+
+struct CaptureSourceOrError;
 
 class WEBCORE_EXPORT RealtimeMediaSource : public RefCounted<RealtimeMediaSource> {
 public:
@@ -83,13 +85,22 @@ public:
         virtual void audioSamplesAvailable(const MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t /*numberOfFrames*/) { }
     };
 
-    class CaptureFactory {
+    class AudioCaptureFactory {
     public:
-        virtual ~CaptureFactory() = default;
-        virtual RefPtr<RealtimeMediaSource> createMediaSourceForCaptureDeviceWithConstraints(const String& audioDeviceID, CaptureDevice::DeviceType, const MediaConstraints*, String&) = 0;
+        virtual ~AudioCaptureFactory() = default;
+        virtual CaptureSourceOrError createAudioCaptureSource(const String& audioDeviceID, const MediaConstraints*) = 0;
+        
+    protected:
+        AudioCaptureFactory() = default;
+    };
+
+    class VideoCaptureFactory {
+    public:
+        virtual ~VideoCaptureFactory() = default;
+        virtual CaptureSourceOrError createVideoCaptureSource(const String& videoDeviceID, const MediaConstraints*) = 0;
 
     protected:
-        CaptureFactory() = default;
+        VideoCaptureFactory() = default;
     };
 
     virtual ~RealtimeMediaSource() { }
@@ -135,6 +146,8 @@ public:
 
     virtual bool isCaptureSource() const { return false; }
 
+    virtual void monitorOrientation(OrientationNotifier&) { }
+    
     WEBCORE_EXPORT void addObserver(Observer&);
     WEBCORE_EXPORT void removeObserver(Observer&);
 
@@ -229,8 +242,18 @@ private:
     bool m_suppressNotifications { true };
 };
 
+struct CaptureSourceOrError {
+    CaptureSourceOrError() = default;
+    CaptureSourceOrError(Ref<RealtimeMediaSource>&& source) : captureSource(WTFMove(source)) { }
+    CaptureSourceOrError(String&& message) : errorMessage(WTFMove(message)) { }
+    
+    operator bool()  const { return !!captureSource; }
+    Ref<RealtimeMediaSource> source() { return captureSource.releaseNonNull(); }
+    
+    RefPtr<RealtimeMediaSource> captureSource;
+    String errorMessage;
+};
+
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)
-
-#endif // RealtimeMediaSource_h

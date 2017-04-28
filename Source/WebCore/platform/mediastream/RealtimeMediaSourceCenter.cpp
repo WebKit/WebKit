@@ -67,23 +67,23 @@ RealtimeMediaSourceCenter::~RealtimeMediaSourceCenter()
 {
 }
 
-void RealtimeMediaSourceCenter::setAudioFactory(RealtimeMediaSource::CaptureFactory& factory)
+void RealtimeMediaSourceCenter::setAudioFactory(RealtimeMediaSource::AudioCaptureFactory& factory)
 {
     m_audioFactory = &factory;
 }
 
-void RealtimeMediaSourceCenter::unsetAudioFactory(RealtimeMediaSource::CaptureFactory& factory)
+void RealtimeMediaSourceCenter::unsetAudioFactory(RealtimeMediaSource::AudioCaptureFactory& factory)
 {
     if (m_audioFactory == &factory)
         m_audioFactory = nullptr;
 }
 
-void RealtimeMediaSourceCenter::setVideoFactory(RealtimeMediaSource::CaptureFactory& factory)
+void RealtimeMediaSourceCenter::setVideoFactory(RealtimeMediaSource::VideoCaptureFactory& factory)
 {
     m_videoFactory = &factory;
 }
 
-void RealtimeMediaSourceCenter::unsetVideoFactory(RealtimeMediaSource::CaptureFactory& factory)
+void RealtimeMediaSourceCenter::unsetVideoFactory(RealtimeMediaSource::VideoCaptureFactory& factory)
 {
     if (m_videoFactory == &factory)
         m_videoFactory = nullptr;

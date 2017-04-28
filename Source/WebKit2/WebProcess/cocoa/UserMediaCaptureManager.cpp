@@ -182,10 +182,10 @@ void UserMediaCaptureManager::initialize(const WebProcessCreationParameters& par
         RealtimeMediaSourceCenter::singleton().setAudioFactory(*this);
 }
 
-RefPtr<RealtimeMediaSource> UserMediaCaptureManager::createMediaSourceForCaptureDeviceWithConstraints(const String& deviceID, CaptureDevice::DeviceType type, const MediaConstraints* constraints, String& invalidConstraints)
+WebCore::CaptureSourceOrError UserMediaCaptureManager::createCaptureSource(const String& deviceID, WebCore::RealtimeMediaSource::Type sourceType, const WebCore::MediaConstraints* constraints)
 {
     if (!constraints)
-        return nullptr;
+        return { };
 
     uint64_t id = nextSessionID();
     MediaConstraintsData constraintsData;
@@ -194,24 +194,13 @@ RefPtr<RealtimeMediaSource> UserMediaCaptureManager::createMediaSourceForCapture
     constraintsData.isValid = constraints->isValid();
     bool succeeded;
 
-    m_process.sendSync(Messages::UserMediaCaptureManagerProxy::CreateMediaSourceForCaptureDeviceWithConstraints(id, deviceID, type, constraintsData), Messages::UserMediaCaptureManagerProxy::CreateMediaSourceForCaptureDeviceWithConstraints::Reply(succeeded, invalidConstraints), 0);
+    String errorMessage;
+    if (!m_process.sendSync(Messages::UserMediaCaptureManagerProxy::CreateMediaSourceForCaptureDeviceWithConstraints(id, deviceID, sourceType, constraintsData), Messages::UserMediaCaptureManagerProxy::CreateMediaSourceForCaptureDeviceWithConstraints::Reply(succeeded, errorMessage), 0))
+        return WTFMove(errorMessage);
 
-    RealtimeMediaSource::Type sourceType;
-    switch (type) {
-    case WebCore::CaptureDevice::DeviceType::Audio:
-        sourceType = WebCore::RealtimeMediaSource::Type::Audio;
-        break;
-    case WebCore::CaptureDevice::DeviceType::Video:
-        sourceType = WebCore::RealtimeMediaSource::Type::Video;
-        break;
-    case WebCore::CaptureDevice::DeviceType::Unknown:
-    default:
-        sourceType = WebCore::RealtimeMediaSource::Type::None;
-        break;
-    }
-    auto source = adoptRef(new Source(String::number(id), sourceType, emptyString(), id, *this));
-    m_sources.set(id, source);
-    return source;
+    auto source = adoptRef(*new Source(String::number(id), sourceType, emptyString(), id, *this));
+    m_sources.set(id, source.copyRef());
+    return WebCore::CaptureSourceOrError(WTFMove(source));
 }
 
 void UserMediaCaptureManager::sourceStopped(uint64_t id)
