@@ -1253,6 +1253,11 @@ PASS Object.getOwnPropertyDescriptor(global, 'Promise').hasOwnProperty('get') is
 PASS Object.getOwnPropertyDescriptor(global, 'Promise').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'Promise').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'Promise').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'PromiseRejectionEvent').value is PromiseRejectionEvent
+PASS Object.getOwnPropertyDescriptor(global, 'PromiseRejectionEvent').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'PromiseRejectionEvent').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'PromiseRejectionEvent').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'PromiseRejectionEvent').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'RGBColor').value is RGBColor
 PASS Object.getOwnPropertyDescriptor(global, 'RGBColor').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'RGBColor').hasOwnProperty('set') is false

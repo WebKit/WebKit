@@ -1,3 +1,15 @@
+2017-04-28  Matt Lewis  <jlewis3@apple.com>
+
+        Rebaselining test after r215916.
+        https://bugs.webkit.org/show_bug.cgi?id=171438
+
+        Unreviewed test gardening.
+
+        * js/dom/global-constructors-attributes-dedicated-worker-expected.txt:
+        * platform/mac-elcapitan/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac-wk1/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac/js/dom/global-constructors-attributes-expected.txt:
+
 2017-04-28  Eric Carlson  <eric.carlson@apple.com>
 
         Implement ondevicechange
