@@ -178,10 +178,12 @@ static BOOL isImageType(NSString *type)
 @end
 
 @implementation WebItemProviderPasteboard {
+    // FIXME: These ivars should be refactored to be Vector<RetainPtr<Type>> instead of generic NSArrays.
     RetainPtr<NSArray> _itemProviders;
     RetainPtr<NSArray> _cachedTypeIdentifiers;
     RetainPtr<NSArray> _typeToFileURLMaps;
     RetainPtr<NSArray> _preferredTypeIdentifiers;
+    RetainPtr<NSArray> _registrationInfoLists;
 }
 
 + (instancetype)sharedInstance
@@ -202,6 +204,7 @@ static BOOL isImageType(NSString *type)
         _pendingOperationCount = 0;
         _typeToFileURLMaps = adoptNS([[NSArray alloc] init]);
         _preferredTypeIdentifiers = nil;
+        _registrationInfoLists = nil;
     }
     return self;
 }
@@ -254,6 +257,7 @@ static BOOL isImageType(NSString *type)
     _itemProviders = itemProviders;
     _changeCount++;
     _cachedTypeIdentifiers = nil;
+    _registrationInfoLists = nil;
 
     NSMutableArray *typeToFileURLMaps = [NSMutableArray arrayWithCapacity:itemProviders.count];
     [itemProviders enumerateObjectsUsingBlock:[typeToFileURLMaps] (UIItemProvider *, NSUInteger, BOOL *) {
@@ -293,6 +297,7 @@ static BOOL isImageType(NSString *type)
     }
 
     self.itemProviders = providers;
+    _registrationInfoLists = itemLists;
 }
 
 - (NSData *)_preLoadedDataConformingToType:(NSString *)typeIdentifier forItemProviderAtIndex:(NSUInteger)index
@@ -489,9 +494,14 @@ static NSURL *temporaryFileURLForDataInteractionContent(NSString *fileExtension,
     });
 }
 
-- (UIItemProvider *)itemProviderAtIndex:(NSInteger)index
+- (WebItemProviderRegistrationInfoList *)registrationInfoAtIndex:(NSUInteger)index
 {
-    return 0 <= index && index < (NSInteger)[_itemProviders count] ? [_itemProviders objectAtIndex:index] : nil;
+    return index < [_registrationInfoLists count] ? [_registrationInfoLists objectAtIndex:index] : nil;
+}
+
+- (UIItemProvider *)itemProviderAtIndex:(NSUInteger)index
+{
+    return index < [_itemProviders count] ? [_itemProviders objectAtIndex:index] : nil;
 }
 
 - (BOOL)hasPendingOperation

@@ -1,3 +1,23 @@
+2017-04-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        WKUIDelegatePrivate needs a hook to vend data used to initialize item providers for data interaction
+        https://bugs.webkit.org/show_bug.cgi?id=171386
+        <rdar://problem/31557237>
+
+        Reviewed by Beth Dakin.
+
+        Teach WebItemProviderPasteboard to remember what WebItemProviderRegistrationInfoList it was initialized with
+        when beginning a drag. This information is cleared out the next time the list of item providers is set to
+        something different, which happens when the data interaction session concludes.
+
+        * platform/ios/WebItemProviderPasteboard.h:
+        * platform/ios/WebItemProviderPasteboard.mm:
+        (-[WebItemProviderPasteboard init]):
+        (-[WebItemProviderPasteboard setItemProviders:]):
+        (-[WebItemProviderPasteboard setItemsUsingRegistrationInfoLists:]):
+        (-[WebItemProviderPasteboard registrationInfoAtIndex:]):
+        (-[WebItemProviderPasteboard itemProviderAtIndex:]):
+
 2017-04-27  Brady Eidson  <beidson@apple.com>
 
         Refactor SessionID to support multiple non-ephemeral (persistent) sessions.

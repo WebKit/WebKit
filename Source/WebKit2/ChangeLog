@@ -1,3 +1,15 @@
+2017-04-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        WKUIDelegatePrivate needs a hook to vend data used to initialize item providers for data interaction
+        https://bugs.webkit.org/show_bug.cgi?id=171386
+        <rdar://problem/31557237>
+
+        Reviewed by Beth Dakin.
+
+        Add a new WKUIDelegate hook, _webView:adjustedDataInteractionItemProvidersForItemProvider:representingObjects:additionalData:.
+
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+
 2017-04-27  Brady Eidson  <beidson@apple.com>
 
         Refactor SessionID to support multiple non-ephemeral (persistent) sessions.
