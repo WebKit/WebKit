@@ -79,28 +79,6 @@ std::optional<CaptureDevice> CaptureDeviceManager::captureDeviceFromPersistentID
     return std::nullopt;
 }
 
-#if 0
-std::optional<CaptureDevice> CaptureDeviceManager::captureDeviceFromPersistentID(const String& captureDeviceID, const String& idHashSalt)
-{
-    for (auto& device : captureDevices()) {
-        auto hashedID = RealtimeMediaSourceCenter::singleton().hashStringWithSalt(device.persistentId(), idHashSalt);
-        if (device.persistentId() == captureDeviceID)
-            return device;
-    }
-
-    return std::nullopt;
-}
-
-for (auto& captureDevice : getMediaStreamDevices()) {
-    auto hashedID = RealtimeMediaSourceCenter::singleton().hashStringWithSalt(captureDevice.persistentId(), idHashSalt);
-    if (hashedID == uniqueID)
-        return String { captureDevice.persistentId() };
-}
-
-return Exception { NOT_FOUND_ERR };
-
-#endif
-
 std::optional<CaptureDevice> CaptureDeviceManager::deviceWithUID(const String& deviceUID, RealtimeMediaSource::Type type)
 {
     for (auto& captureDevice : captureDevices()) {

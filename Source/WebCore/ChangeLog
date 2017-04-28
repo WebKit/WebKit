@@ -1,3 +1,12 @@
+2017-04-28  Eric Carlson  <eric.carlson@apple.com>
+
+        Implement ondevicechange
+        https://bugs.webkit.org/show_bug.cgi?id=169872
+
+        Unreviewed, remove some dead code accidentally committed in r215929.
+
+        * platform/mediastream/CaptureDeviceManager.cpp:
+
 2017-04-28  Chris Dumez  <cdumez@apple.com>
 
         Update DOMTokenList.replace() to match the latest DOM specification
