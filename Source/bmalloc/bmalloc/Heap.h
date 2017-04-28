@@ -66,10 +66,9 @@ public:
     size_t largeSize(std::lock_guard<StaticMutex>&, void*);
     void shrinkLarge(std::lock_guard<StaticMutex>&, const Range&, size_t);
 
-    void scavenge(std::unique_lock<StaticMutex>&, std::chrono::milliseconds sleepDuration);
+    void scavenge(std::unique_lock<StaticMutex>&, ScavengeMode);
 
 #if BOS(DARWIN)
-    qos_class_t takeRequestedScavengerThreadQOSClass() { return std::exchange(m_requestedScavengerThreadQOSClass, QOS_CLASS_UNSPECIFIED); }
     void setScavengerThreadQOSClass(qos_class_t overrideClass) { m_requestedScavengerThreadQOSClass = overrideClass; }
 #endif
 
@@ -103,8 +102,8 @@ private:
     LargeRange splitAndAllocate(LargeRange&, size_t alignment, size_t);
 
     void concurrentScavenge();
-    void scavengeSmallPages(std::unique_lock<StaticMutex>&, std::chrono::milliseconds);
-    void scavengeLargeObjects(std::unique_lock<StaticMutex>&, std::chrono::milliseconds);
+    void scavengeSmallPages(std::unique_lock<StaticMutex>&, ScavengeMode);
+    void scavengeLargeObjects(std::unique_lock<StaticMutex>&, ScavengeMode);
 
     size_t m_vmPageSizePhysical;
     Vector<LineMetadata> m_smallLineMetadata;
@@ -118,7 +117,9 @@ private:
 
     Map<Chunk*, ObjectType, ChunkHash> m_objectTypes;
 
-    bool m_isAllocatingPages;
+    std::array<bool, pageClassCount> m_isAllocatingPages;
+    bool m_isAllocatingLargePages;
+
     AsyncTask<Heap, decltype(&Heap::concurrentScavenge)> m_scavenger;
 
     Environment m_environment;

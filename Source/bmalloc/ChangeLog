@@ -1,3 +1,32 @@
+2017-04-27  Michael Saboff  <msaboff@apple.com>
+
+        bmalloc scavenger should know what page classes are allocating
+        https://bugs.webkit.org/show_bug.cgi?id=171384
+
+        Reviewed by Geoffrey Garen.
+
+        This change replaces m_isAllocatingPages with a per page class flag to track which page
+        classes are currently allocating.  When scavenging, we skip page classes that are actively
+        allocating and come back to them on a subsequent pass.  This reduces the amount of time it
+        takes for scavenger to free up pages as well as the total time it takes to handle all
+        page classes.
+
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::Heap):
+        (bmalloc::Heap::concurrentScavenge):
+        (bmalloc::Heap::scavenge):
+        (bmalloc::Heap::scavengeSmallPages):
+        (bmalloc::Heap::scavengeLargeObjects):
+        (bmalloc::Heap::allocateSmallPage):
+        (bmalloc::Heap::splitAndAllocate):
+        (bmalloc::Heap::deallocateLarge):
+        * bmalloc/Heap.h:
+        (bmalloc::Heap::takeRequestedScavengerThreadQOSClass): Deleted.
+        * bmalloc/VMHeap.h:
+        (bmalloc::VMHeap::deallocateSmallPage):
+        * bmalloc/bmalloc.h:
+        (bmalloc::api::scavenge):
+
 2017-04-25  Michael Saboff  <msaboff@apple.com>
 
         Call bmalloc scavenger first when handling a memory pressure event
