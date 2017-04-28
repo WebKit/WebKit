@@ -860,6 +860,8 @@ bool AccessibilityObject::isRangeControl() const
     case ScrollBarRole:
     case SpinButtonRole:
         return true;
+    case SplitterRole:
+        return canSetFocusAttribute();
     default:
         return false;
     }
@@ -2501,6 +2503,7 @@ bool AccessibilityObject::supportsRangeValue() const
         || isSlider()
         || isScrollbar()
         || isSpinButton()
+        || (isSplitter() && canSetFocusAttribute())
         || isAttachmentElement();
 }
     

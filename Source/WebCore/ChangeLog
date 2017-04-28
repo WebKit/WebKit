@@ -1,5 +1,25 @@
 2017-04-28  Joanmarie Diggs  <jdiggs@igalia.com>
 
+        AX: Implement aria-value support for focusable separators
+        https://bugs.webkit.org/show_bug.cgi?id=171169
+
+        Reviewed by Chris Fleizach.
+
+        Add SplitterRole to the roles which support range value and are considered a range
+        control, as long as the SplitterRole element is focusable. Also replace ATK's role-
+        based check with a call to supportsRangeValue() when determining if the AtkValue
+        interface should be implemented.
+
+        Test: accessibility/separator-values.html
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::isRangeControl):
+        (WebCore::AccessibilityObject::supportsRangeValue):
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (getInterfaceMaskFromObject):
+
+2017-04-28  Joanmarie Diggs  <jdiggs@igalia.com>
+
         [ATK] GridCellRole should implement AtkTableCell (regression?)
         https://bugs.webkit.org/show_bug.cgi?id=171179
 
