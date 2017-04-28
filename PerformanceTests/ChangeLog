@@ -1,3 +1,11 @@
+2017-04-27  Michael Saboff  <msaboff@apple.com>
+
+        Add back tests inadvertently deleted in r205032.
+
+        Rubber stamped by Geoffrey Garen.
+
+        * MallocBench/run-malloc-benchmarks:
+
 2017-04-25  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Add performance test for FontCache::systemFallbackForCharacters()
