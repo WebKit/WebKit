@@ -29,8 +29,8 @@
 #if ENABLE(ENCRYPTED_MEDIA)
 
 #include "InitDataRegistry.h"
-#include "UUID.h"
 #include <runtime/ArrayBuffer.h>
+#include <wtf/UUID.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/StringView.h>
 

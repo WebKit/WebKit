@@ -32,7 +32,7 @@
 #include "AudioSourceProvider.h"
 #include "GraphicsContext.h"
 #include "IntRect.h"
-#include "UUID.h"
+#include <wtf/UUID.h>
 
 namespace WebCore {
 

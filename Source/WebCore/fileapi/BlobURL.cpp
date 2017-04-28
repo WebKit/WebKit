@@ -34,7 +34,7 @@
 
 #include "URL.h"
 #include "SecurityOrigin.h"
-#include "UUID.h"
+#include <wtf/UUID.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

@@ -77,10 +77,10 @@
 #import <WebCore/ScrollAnimator.h>
 #import <WebCore/ScrollbarTheme.h>
 #import <WebCore/Settings.h>
-#import <WebCore/UUID.h>
 #import <WebCore/WheelEventTestTrigger.h>
 #import <WebKitSystemInterface.h>
 #import <wtf/CurrentTime.h>
+#import <wtf/UUID.h>
 
 using namespace WebCore;
 
@@ -1791,7 +1791,7 @@ void PDFPlugin::openWithNativeApplication()
 
         NSData *data = liveData();
 
-        m_temporaryPDFUUID = WebCore::createCanonicalUUIDString();
+        m_temporaryPDFUUID = createCanonicalUUIDString();
         ASSERT(m_temporaryPDFUUID);
 
         webFrame()->page()->savePDFToTemporaryFolderAndOpenWithNativeApplication(m_suggestedFilename, webFrame()->url(), static_cast<const unsigned char *>([data bytes]), [data length], m_temporaryPDFUUID);

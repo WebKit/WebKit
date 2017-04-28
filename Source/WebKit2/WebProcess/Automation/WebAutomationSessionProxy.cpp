@@ -47,7 +47,7 @@
 #include <WebCore/HTMLFrameElementBase.h>
 #include <WebCore/JSElement.h>
 #include <WebCore/MainFrame.h>
-#include <WebCore/UUID.h>
+#include <wtf/UUID.h>
 
 namespace WebKit {
 
@@ -122,7 +122,7 @@ static JSValueRef evaluate(JSContextRef context, JSObjectRef function, JSObjectR
 
 static JSValueRef createUUID(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    return toJSValue(context, WebCore::createCanonicalUUIDString().convertToASCIIUppercase());
+    return toJSValue(context, createCanonicalUUIDString().convertToASCIIUppercase());
 }
 
 static JSValueRef evaluateJavaScriptCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)

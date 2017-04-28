@@ -29,13 +29,13 @@
 #include "JSMainThreadExecState.h"
 #include "Logging.h"
 #include "TextEncoding.h"
-#include "UUID.h"
 #include "WebKitMediaKeyError.h"
 #include <runtime/JSGlobalObject.h>
 #include <runtime/JSLock.h>
 #include <runtime/JSONObject.h>
 #include <runtime/VM.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/UUID.h>
 #include <wtf/text/Base64.h>
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)

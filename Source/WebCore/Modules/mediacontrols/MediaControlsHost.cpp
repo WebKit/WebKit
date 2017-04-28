@@ -39,8 +39,8 @@
 #include "RenderTheme.h"
 #include "TextTrack.h"
 #include "TextTrackList.h"
-#include "UUID.h"
 #include <runtime/JSCJSValueInlines.h>
+#include <wtf/UUID.h>
 
 namespace WebCore {
 

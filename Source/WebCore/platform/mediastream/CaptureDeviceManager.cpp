@@ -33,7 +33,6 @@
 #import "RealtimeMediaSource.h"
 #import "RealtimeMediaSourceCenter.h"
 #import "RealtimeMediaSourceSettings.h"
-#import "UUID.h"
 #import <wtf/MainThread.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/text/StringHash.h>

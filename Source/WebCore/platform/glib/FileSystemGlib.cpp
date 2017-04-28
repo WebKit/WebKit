@@ -25,10 +25,10 @@
 
 #include "FileMetadata.h"
 #include "NotImplemented.h"
-#include "UUID.h"
 #include <gio/gio.h>
 #include <glib.h>
 #include <glib/gstdio.h>
+#include <wtf/UUID.h>
 #include <wtf/glib/GLibUtilities.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>

@@ -1,3 +1,19 @@
+2017-04-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Move UUID from WebCore/platform to WTF
+        https://bugs.webkit.org/show_bug.cgi?id=171372
+
+        Reviewed by Michael Catanzaro.
+
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::handleForWebPageProxy):
+        (WebKit::WebAutomationSession::handleForWebFrameID):
+        * UIProcess/gtk/WaylandCompositor.cpp:
+        * WebProcess/Automation/WebAutomationSessionProxy.cpp:
+        (WebKit::createUUID):
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::openWithNativeApplication):
+
 2017-04-27  Chris Dumez  <cdumez@apple.com>
 
         Align colspan/rowspan limits with the latest HTML specification

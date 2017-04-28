@@ -45,6 +45,7 @@
 #include "ResourceRequest.h"
 #include "Settings.h"
 #include "SubresourceLoader.h"
+#include <wtf/UUID.h>
 
 namespace WebCore {
 

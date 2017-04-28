@@ -63,7 +63,6 @@
 #import "StyleProperties.h"
 #import "Text.h"
 #import "TypingCommand.h"
-#import "UUID.h"
 #import "WebNSAttributedStringExtras.h"
 #import "markup.h"
 

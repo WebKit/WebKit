@@ -140,6 +140,7 @@ set(WTF_HEADERS
     ThreadingPrimitives.h
     TimeWithDynamicClockType.h
     TinyPtrSet.h
+    UUID.h
     UniqueRef.h
     VMTags.h
     ValueCheck.h
@@ -248,6 +249,7 @@ set(WTF_SOURCES
     ThreadMessage.cpp
     Threading.cpp
     TimeWithDynamicClockType.cpp
+    UUID.cpp
     WTFThreadData.cpp
     WallTime.cpp
     WordLock.cpp

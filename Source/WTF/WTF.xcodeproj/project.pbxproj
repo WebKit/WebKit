@@ -166,6 +166,8 @@
 		70ECA60E1B02426800449739 /* SymbolImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 70ECA60B1B02426800449739 /* SymbolImpl.h */; };
 		70ECA60F1B02426800449739 /* UniquedStringImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 70ECA60C1B02426800449739 /* UniquedStringImpl.h */; };
 		79EC70611C99F9BC003A3AE2 /* SmallPtrSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 7936D6A91C99F8AE000D1AED /* SmallPtrSet.h */; };
+		7AFEC6AF1EB22AC600DADE36 /* UUID.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AFEC6AE1EB22AC600DADE36 /* UUID.h */; };
+		7AFEC6B11EB22B5900DADE36 /* UUID.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AFEC6B01EB22B5900DADE36 /* UUID.cpp */; };
 		7C3F723A1D78811A00674E26 /* Brigand.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C3F72391D78811900674E26 /* Brigand.h */; };
 		7CBBA07419BB7FDC00BBF025 /* OSObjectPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CBBA07319BB7FDC00BBF025 /* OSObjectPtr.h */; };
 		7CD0D5A91D5534A7000CC9E1 /* Variant.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CD0D5A71D55322A000CC9E1 /* Variant.h */; };
@@ -579,6 +581,8 @@
 		70ECA60B1B02426800449739 /* SymbolImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SymbolImpl.h; sourceTree = "<group>"; };
 		70ECA60C1B02426800449739 /* UniquedStringImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UniquedStringImpl.h; sourceTree = "<group>"; };
 		7936D6A91C99F8AE000D1AED /* SmallPtrSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SmallPtrSet.h; sourceTree = "<group>"; };
+		7AFEC6AE1EB22AC600DADE36 /* UUID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UUID.h; sourceTree = "<group>"; };
+		7AFEC6B01EB22B5900DADE36 /* UUID.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UUID.cpp; sourceTree = "<group>"; };
 		7C3F72391D78811900674E26 /* Brigand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Brigand.h; sourceTree = "<group>"; };
 		7CBBA07319BB7FDC00BBF025 /* OSObjectPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OSObjectPtr.h; sourceTree = "<group>"; };
 		7CD0D5A71D55322A000CC9E1 /* Variant.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Variant.h; sourceTree = "<group>"; };
@@ -1223,6 +1227,8 @@
 				0FED67B51B22D4D80066CE15 /* TinyPtrSet.h */,
 				149EF16216BBFE0D000A4331 /* TriState.h */,
 				83FBA93119DF459700F30ADB /* TypeCasts.h */,
+				7AFEC6B01EB22B5900DADE36 /* UUID.cpp */,
+				7AFEC6AE1EB22AC600DADE36 /* UUID.h */,
 				A8A4735C151A825B004123FF /* UnionFind.h */,
 				5C7C88D31D0A3A0A009D2F6D /* UniqueRef.h */,
 				A8A4736F151A825B004123FF /* ValueCheck.h */,
@@ -1655,6 +1661,7 @@
 				A8A4743E151A825B004123FF /* StringConcatenate.h in Headers */,
 				7CD4C2701E2C82B900929470 /* StringConcatenateNumbers.h in Headers */,
 				0F2AC5611E89F70C0001EE3F /* Range.h in Headers */,
+				7AFEC6AF1EB22AC600DADE36 /* UUID.h in Headers */,
 				A8A4742C151A825B004123FF /* StringExtras.h in Headers */,
 				A8A4743F151A825B004123FF /* StringHash.h in Headers */,
 				7CEAE5AD1EA6E10F00DB6890 /* NotFound.h in Headers */,
@@ -1903,6 +1910,7 @@
 				70A993FE1AD7151300FA615B /* SymbolRegistry.cpp in Sources */,
 				1C181C7F1D3078DA00F5FA16 /* TextBreakIterator.cpp in Sources */,
 				1C181C961D30800A00F5FA16 /* TextBreakIteratorInternalICUMac.mm in Sources */,
+				7AFEC6B11EB22B5900DADE36 /* UUID.cpp in Sources */,
 				A8A47448151A825B004123FF /* ThreadHolderPthreads.cpp in Sources */,
 				A8A4744A151A825B004123FF /* Threading.cpp in Sources */,
 				A8A4744E151A825B004123FF /* ThreadingPthreads.cpp in Sources */,

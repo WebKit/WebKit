@@ -39,7 +39,6 @@
 #import "RealtimeMediaSourceSettings.h"
 #import "RealtimeMediaSourceSupportedConstraints.h"
 #import "SoftLinking.h"
-#import "UUID.h"
 #import <AVFoundation/AVCaptureDevice.h>
 #import <AVFoundation/AVCaptureSession.h>
 #import <objc/runtime.h>

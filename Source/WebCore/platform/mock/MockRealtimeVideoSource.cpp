@@ -41,9 +41,9 @@
 #include "NotImplemented.h"
 #include "PlatformLayer.h"
 #include "RealtimeMediaSourceSettings.h"
-#include "UUID.h"
 #include <math.h>
 #include <wtf/CurrentTime.h>
+#include <wtf/UUID.h>
 #include <wtf/text/StringView.h>
 
 namespace WebCore {

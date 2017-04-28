@@ -51,8 +51,8 @@
 #include "RTCPeerConnectionIceEvent.h"
 #include "RTCSessionDescription.h"
 #include "RTCTrackEvent.h"
-#include "UUID.h"
 #include <wtf/MainThread.h>
+#include <wtf/UUID.h>
 #include <wtf/text/Base64.h>
 
 namespace WebCore {

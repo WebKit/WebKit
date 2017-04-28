@@ -30,7 +30,7 @@
 
 #include "AudioSourceProvider.h"
 #include "NotImplemented.h"
-#include "UUID.h"
+#include <wtf/UUID.h>
 
 namespace WebCore {
 

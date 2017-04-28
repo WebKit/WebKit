@@ -34,8 +34,8 @@
 #include <WebCore/GLContext.h>
 #include <WebCore/PlatformDisplayWayland.h>
 #include <WebCore/Region.h>
-#include <WebCore/UUID.h>
 #include <wayland-server-protocol.h>
+#include <wtf/UUID.h>
 
 #if USE(OPENGL_ES_2)
 #include <GLES2/gl2.h>

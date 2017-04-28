@@ -33,7 +33,6 @@
 #import "Logging.h"
 #import "MediaConstraints.h"
 #import "RealtimeMediaSourceSettings.h"
-#import "UUID.h"
 #import <AVFoundation/AVCaptureDevice.h>
 #import <AVFoundation/AVCaptureInput.h>
 #import <AVFoundation/AVCaptureOutput.h>

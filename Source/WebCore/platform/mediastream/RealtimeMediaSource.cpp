@@ -39,8 +39,8 @@
 #include "MediaConstraints.h"
 #include "NotImplemented.h"
 #include "RealtimeMediaSourceCapabilities.h"
-#include "UUID.h"
 #include <wtf/MainThread.h>
+#include <wtf/UUID.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {

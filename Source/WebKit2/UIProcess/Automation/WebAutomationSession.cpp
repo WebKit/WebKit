@@ -37,10 +37,10 @@
 #include <JavaScriptCore/InspectorBackendDispatcher.h>
 #include <JavaScriptCore/InspectorFrontendRouter.h>
 #include <WebCore/URL.h>
-#include <WebCore/UUID.h>
 #include <algorithm>
 #include <wtf/HashMap.h>
 #include <wtf/Optional.h>
+#include <wtf/UUID.h>
 #include <wtf/text/StringConcatenate.h>
 
 using namespace Inspector;
@@ -138,7 +138,7 @@ String WebAutomationSession::handleForWebPageProxy(const WebPageProxy& webPagePr
     if (iter != m_webPageHandleMap.end())
         return iter->value;
 
-    String handle = "page-" + WebCore::createCanonicalUUIDString().convertToASCIIUppercase();
+    String handle = "page-" + createCanonicalUUIDString().convertToASCIIUppercase();
 
     auto firstAddResult = m_webPageHandleMap.add(webPageProxy.pageID(), handle);
     RELEASE_ASSERT(firstAddResult.isNewEntry);
@@ -178,7 +178,7 @@ String WebAutomationSession::handleForWebFrameID(uint64_t frameID)
     if (iter != m_webFrameHandleMap.end())
         return iter->value;
 
-    String handle = "frame-" + WebCore::createCanonicalUUIDString().convertToASCIIUppercase();
+    String handle = "frame-" + createCanonicalUUIDString().convertToASCIIUppercase();
 
     auto firstAddResult = m_webFrameHandleMap.add(frameID, handle);
     RELEASE_ASSERT(firstAddResult.isNewEntry);

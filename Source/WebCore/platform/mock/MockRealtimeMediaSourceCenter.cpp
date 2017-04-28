@@ -40,7 +40,6 @@
 #include "MockRealtimeVideoSource.h"
 #include "RealtimeMediaSource.h"
 #include "RealtimeMediaSourceCapabilities.h"
-#include "UUID.h"
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {

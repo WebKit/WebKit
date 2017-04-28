@@ -28,35 +28,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "UUID.h"
+#pragma once
 
-#include <wtf/CryptographicallyRandomNumber.h>
-#include <wtf/HexNumber.h>
-#include <wtf/text/StringBuilder.h>
+#include <wtf/text/WTFString.h>
 
-namespace WebCore {
+namespace WTF {
 
-String createCanonicalUUIDString()
-{
-    unsigned randomData[4];
-    cryptographicallyRandomValues(reinterpret_cast<unsigned char*>(randomData), sizeof(randomData));
+// Creates a UUID that consists of 32 hexadecimal digits and returns its canonical form.
+// The canonical form is displayed in 5 groups separated by hyphens, in the form 8-4-4-4-12 for a total of 36 characters.
+// The hexadecimal values "a" through "f" are output as lower case characters.
+//
+// Note: for security reason, we should always generate version 4 UUID that use a scheme relying only on random numbers.
+// This algorithm sets the version number as well as two reserved bits. All other bits are set using a random or pseudorandom
+// data source. Version 4 UUIDs have the form xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx with hexadecimal digits for x and one of 8,
+// 9, A, or B for y.
 
-    // Format as Version 4 UUID.
-    StringBuilder builder;
-    builder.reserveCapacity(36);
-    appendUnsignedAsHexFixedSize(randomData[0], builder, 8, Lowercase);
-    builder.append('-');
-    appendUnsignedAsHexFixedSize(randomData[1] >> 16, builder, 4, Lowercase);
-    builder.appendLiteral("-4");
-    appendUnsignedAsHexFixedSize(randomData[1] & 0x00000fff, builder, 3, Lowercase);
-    builder.append('-');
-    appendUnsignedAsHexFixedSize((randomData[2] >> 30) | 0x8, builder, 1, Lowercase);
-    appendUnsignedAsHexFixedSize((randomData[2] >> 16) & 0x00000fff, builder, 3, Lowercase);
-    builder.append('-');
-    appendUnsignedAsHexFixedSize(randomData[2] & 0x0000ffff, builder, 4, Lowercase);
-    appendUnsignedAsHexFixedSize(randomData[3], builder, 8, Lowercase);
-    return builder.toString();
-}
+WTF_EXPORT_PRIVATE String createCanonicalUUIDString();
 
 }
+
+using WTF::createCanonicalUUIDString;
