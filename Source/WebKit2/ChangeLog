@@ -1,3 +1,9 @@
+2017-04-28  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed attempt to fix iOS build after r215943.
+
+        * Configurations/Base.xcconfig:
+
 2017-04-28  Andy Estes  <aestes@apple.com>
 
         [macOS] WebPlaybackControlsManager needs to know when the selected text or audio track changes
