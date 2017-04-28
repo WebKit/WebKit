@@ -9,6 +9,9 @@
 <script>
 description('Test Promise.race');
 
+// Silence unhandled rejection messages.
+window.onunhandledrejection = () => false;
+
 window.jsTestIsAsync = true;
 result = undefined;
 

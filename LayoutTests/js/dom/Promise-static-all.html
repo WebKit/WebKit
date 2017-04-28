@@ -9,6 +9,9 @@
 <script>
 description('Test Promise.all');
 
+// Silence unhandled rejection messages.
+// window.onunhandledrejection = () => false;
+
 window.jsTestIsAsync = true;
 result = undefined;
 
