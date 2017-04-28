@@ -1,3 +1,79 @@
+2017-04-28  Eric Carlson  <eric.carlson@apple.com>
+
+        Implement ondevicechange
+        https://bugs.webkit.org/show_bug.cgi?id=169872
+        <rdar://problem/28945035>
+
+        Reviewed by Jer Noble.
+
+        Test: fast/mediastream/device-change-event.html
+
+        * Modules/mediastream/MediaDevices.cpp:
+        (WebCore::MediaDevices::MediaDevices): Register for devicechange callbacks.
+        (WebCore::MediaDevices::~MediaDevices): Unregister.
+        (WebCore::MediaDevices::scheduledEventTimerFired):
+        * Modules/mediastream/MediaDevices.h:
+        * Modules/mediastream/MediaDevices.idl:
+
+        * Modules/mediastream/MediaDevicesEnumerationRequest.cpp:
+        (WebCore::MediaDevicesEnumerationRequest::setDeviceInfo): Remove unnecessary instance variables.
+        * Modules/mediastream/MediaDevicesEnumerationRequest.h:
+
+        * Modules/mediastream/MediaDevicesRequest.cpp:
+        (WebCore::MediaDevicesRequest::start): Remove m_idHashSalt, it isn't used. RealtimeMediaSourceCenter
+        now has the method to hash ids and group IDs.
+        (WebCore::hashString): Deleted.
+        (WebCore::MediaDevicesRequest::hashID): Deleted.
+        * Modules/mediastream/MediaDevicesRequest.h:
+
+        * dom/Document.h:
+        (WebCore::Document::setDeviceIDHashSalt):
+        (WebCore::Document::deviceIDHashSalt):
+
+        * dom/EventNames.h: Add devicechange.
+
+        * dom/EventTargetFactory.in: Add MediaDevices.
+
+        * html/HTMLAttributeNames.in: Add ondevicechange.
+
+        * platform/mediastream/CaptureDeviceManager.cpp:
+        (WebCore::CaptureDeviceManager::captureDeviceFromPersistentID): Renamed from captureDeviceFromDeviceID
+        and changed to return a std::optional<CaptureDevice>.
+        (WebCore::CaptureDeviceManager::captureDeviceFromDeviceID): Deleted.
+
+        * platform/mediastream/RealtimeMediaSourceCenter.cpp:
+        (WebCore::addStringToSHA): New, add string bytes to SHA1. Moved from MediaDevicesRequest
+        so we can use for in testing.
+        (WebCore::RealtimeMediaSourceCenter::hashStringWithSalt): Generate hash for a string with a
+        salt. Moved from MediaDevicesRequest so we can use for in testing.
+        (WebCore::RealtimeMediaSourceCenter::captureDeviceWithUniqueID): Find a CaptureDevice given 
+        a unique ID and the process hash salt.
+        (WebCore::RealtimeMediaSourceCenter::setDeviceEnabled): Enable/disable a device. Used for
+        layout tests only.
+        (WebCore::RealtimeMediaSourceCenter::addDevicesChangedObserver): Add a devices changed listener.
+        (WebCore::RealtimeMediaSourceCenter::removeDevicesChangedObserver): Remove a listener.
+        (WebCore::RealtimeMediaSourceCenter::captureDevicesChanged): Notify listeners.
+        * platform/mediastream/RealtimeMediaSourceCenter.h:
+
+        * platform/mediastream/mac/AVCaptureDeviceManager.mm:
+        (WebCore::AVCaptureDeviceManager::addDevicesChangedObserver): Update for change to captureDeviceFromDeviceID.
+
+        * platform/mock/MockRealtimeMediaSource.cpp:
+        (WebCore::MockRealtimeMediaSource::audioDevices): All devices are enabled by default.
+        (WebCore::MockRealtimeMediaSource::videoDevices): Ditto.
+
+        * platform/mock/MockRealtimeMediaSourceCenter.cpp:
+        (WebCore::MockRealtimeMediaSourceCenter::createMediaStream): Drive-by cleanup: use the vector
+        of devices instead of making assumptions about the number.
+        (WebCore::MockRealtimeMediaSourceCenter::getMediaStreamDevices): Only include enabled devices.
+        (WebCore::MockRealtimeMediaSourceCenter::setDeviceEnabled): Enable or disable a device.
+        * platform/mock/MockRealtimeMediaSourceCenter.h:
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::setMediaDeviceState): Enable or disable a mock capture device.
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2017-04-28  Alex Christensen  <achristensen@webkit.org>
 
         Fix memory corruption issue after r215883.

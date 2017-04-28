@@ -30,11 +30,12 @@
  */
 
 #include "config.h"
-
-#if ENABLE(MEDIA_STREAM)
 #include "RealtimeMediaSourceCenter.h"
 
+#if ENABLE(MEDIA_STREAM)
+
 #include "MediaStreamPrivate.h"
+#include <wtf/SHA1.h>
 
 namespace WebCore {
 
@@ -109,7 +110,74 @@ void RealtimeMediaSourceCenter::unsetVideoCaptureDeviceManager(CaptureDeviceMana
     if (m_videoCaptureDeviceManager == &deviceManager)
         m_videoCaptureDeviceManager = nullptr;
 }
+
+static void addStringToSHA1(SHA1& sha1, const String& string)
+{
+    if (string.isEmpty())
+        return;
+
+    if (string.is8Bit() && string.containsOnlyASCII()) {
+        const uint8_t nullByte = 0;
+        sha1.addBytes(string.characters8(), string.length());
+        sha1.addBytes(&nullByte, 1);
+        return;
+    }
+
+    auto utf8 = string.utf8();
+    sha1.addBytes(reinterpret_cast<const uint8_t*>(utf8.data()), utf8.length() + 1); // Include terminating null byte.
+}
+
+String RealtimeMediaSourceCenter::hashStringWithSalt(const String& id, const String& hashSalt)
+{
+    if (id.isEmpty() || hashSalt.isEmpty())
+        return emptyString();
+
+    SHA1 sha1;
+
+    addStringToSHA1(sha1, id);
+    addStringToSHA1(sha1, hashSalt);
     
+    SHA1::Digest digest;
+    sha1.computeHash(digest);
+    
+    return SHA1::hexDigest(digest).data();
+}
+
+std::optional<CaptureDevice> RealtimeMediaSourceCenter::captureDeviceWithUniqueID(const String& uniqueID, const String& idHashSalt)
+{
+    for (auto& device : getMediaStreamDevices()) {
+        if (uniqueID == hashStringWithSalt(device.persistentId(), idHashSalt))
+            return device;
+    }
+
+    return std::nullopt;
+}
+
+ExceptionOr<void> RealtimeMediaSourceCenter::setDeviceEnabled(const String&, bool)
+{
+    return Exception { NOT_FOUND_ERR, ASCIILiteral("Not implemented!") };
+}
+
+RealtimeMediaSourceCenter::DevicesChangedObserverToken RealtimeMediaSourceCenter::addDevicesChangedObserver(std::function<void()>&& observer)
+{
+    DevicesChangedObserverToken nextToken = 0;
+    m_devicesChangedObservers.set(++nextToken, WTFMove(observer));
+    return nextToken;
+}
+
+void RealtimeMediaSourceCenter::removeDevicesChangedObserver(DevicesChangedObserverToken token)
+{
+    bool wasRemoved = m_devicesChangedObservers.remove(token);
+    ASSERT_UNUSED(wasRemoved, wasRemoved);
+}
+
+void RealtimeMediaSourceCenter::captureDevicesChanged()
+{
+    auto callbacks = m_devicesChangedObservers;
+    for (auto it : callbacks)
+        it.value();
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)

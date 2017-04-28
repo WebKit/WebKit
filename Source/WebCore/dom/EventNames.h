@@ -91,6 +91,7 @@ namespace WebCore {
     macro(cut) \
     macro(datachannel) \
     macro(dblclick) \
+    macro(devicechange) \
     macro(devicemotion) \
     macro(deviceorientation) \
     macro(dischargingtimechange) \

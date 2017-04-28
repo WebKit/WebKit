@@ -34,6 +34,7 @@
 #include "Frame.h"
 #include "JSMediaDeviceInfo.h"
 #include "MediaDevicesEnumerationRequest.h"
+#include "RealtimeMediaSourceCenter.h"
 #include "SecurityOrigin.h"
 #include "UserMediaController.h"
 #include <wtf/MainThread.h>
@@ -86,11 +87,7 @@ void MediaDevicesRequest::start()
             return;
 
         Document& document = downcast<Document>(*scriptExecutionContext());
-        UserMediaController* controller = UserMediaController::from(document.page());
-        if (!controller)
-            return;
-
-        m_idHashSalt = deviceIdentifierHashSalt;
+        document.setDeviceIDHashSalt(deviceIdentifierHashSalt);
 
         Vector<RefPtr<MediaDeviceInfo>> devices;
         for (auto& deviceInfo : captureDevices) {
@@ -98,11 +95,11 @@ void MediaDevicesRequest::start()
             if (originHasPersistentAccess || document.hasHadActiveMediaStreamTrack())
                 label = deviceInfo.label();
 
-            auto id = hashID(deviceInfo.persistentId());
+            auto id = RealtimeMediaSourceCenter::singleton().hashStringWithSalt(deviceInfo.persistentId(), deviceIdentifierHashSalt);
             if (id.isEmpty())
                 continue;
 
-            auto groupId = hashID(deviceInfo.groupId());
+            auto groupId = RealtimeMediaSourceCenter::singleton().hashStringWithSalt(deviceInfo.groupId(), deviceIdentifierHashSalt);
             auto deviceType = deviceInfo.type() == CaptureDevice::DeviceType::Audio ? MediaDeviceInfo::Kind::Audioinput : MediaDeviceInfo::Kind::Videoinput;
             devices.append(MediaDeviceInfo::create(scriptExecutionContext(), label, id, groupId, deviceType));
         }
@@ -114,38 +111,6 @@ void MediaDevicesRequest::start()
 
     m_enumerationRequest = MediaDevicesEnumerationRequest::create(*downcast<Document>(scriptExecutionContext()), WTFMove(completion));
     m_enumerationRequest->start();
-}
-
-static void hashString(SHA1& sha1, const String& string)
-{
-    if (string.isEmpty())
-        return;
-
-    if (string.is8Bit() && string.containsOnlyASCII()) {
-        const uint8_t nullByte = 0;
-        sha1.addBytes(string.characters8(), string.length());
-        sha1.addBytes(&nullByte, 1);
-        return;
-    }
-
-    auto utf8 = string.utf8();
-    sha1.addBytes(reinterpret_cast<const uint8_t*>(utf8.data()), utf8.length() + 1); // Include terminating null byte.
-}
-
-String MediaDevicesRequest::hashID(const String& id)
-{
-    if (id.isEmpty() || m_idHashSalt.isEmpty())
-        return emptyString();
-
-    SHA1 sha1;
-
-    hashString(sha1, id);
-    hashString(sha1, m_idHashSalt);
-
-    SHA1::Digest digest;
-    sha1.computeHash(digest);
-
-    return SHA1::hexDigest(digest).data();
 }
 
 } // namespace WebCore

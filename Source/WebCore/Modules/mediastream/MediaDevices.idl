@@ -33,7 +33,7 @@
     Conditional=MEDIA_STREAM,
     NoInterfaceObject,
 ] interface MediaDevices {
-    // FIXME 169872: missing ondevicechange
+    attribute EventHandler ondevicechange;
     Promise<sequence<MediaDeviceInfo>> enumerateDevices();
 
     MediaTrackSupportedConstraints getSupportedConstraints();

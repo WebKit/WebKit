@@ -48,8 +48,13 @@ Vector<CaptureDevice>& MockRealtimeMediaSource::audioDevices()
 {
     static NeverDestroyed<Vector<CaptureDevice>> info;
     if (!info.get().size()) {
-        info.get().append(CaptureDevice("239c24b0-2b15-11e3-8224-0800200c9a66", CaptureDevice::DeviceType::Audio, "Mock audio device 1"));
-        info.get().append(CaptureDevice("239c24b1-2b15-11e3-8224-0800200c9a66", CaptureDevice::DeviceType::Audio, "Mock audio device 2"));
+        auto captureDevice = CaptureDevice("239c24b0-2b15-11e3-8224-0800200c9a66", CaptureDevice::DeviceType::Audio, "Mock audio device 1");
+        captureDevice.setEnabled(true);
+        info.get().append(captureDevice);
+
+        captureDevice = CaptureDevice("239c24b1-2b15-11e3-8224-0800200c9a66", CaptureDevice::DeviceType::Audio, "Mock audio device 2");
+        captureDevice.setEnabled(true);
+        info.get().append(captureDevice);
     }
     return info;
 }
@@ -58,8 +63,13 @@ Vector<CaptureDevice>& MockRealtimeMediaSource::videoDevices()
 {
     static NeverDestroyed<Vector<CaptureDevice>> info;
     if (!info.get().size()) {
-        info.get().append(CaptureDevice("239c24b2-2b15-11e3-8224-0800200c9a66", CaptureDevice::DeviceType::Video, "Mock video device 1"));
-        info.get().append(CaptureDevice("239c24b3-2b15-11e3-8224-0800200c9a66", CaptureDevice::DeviceType::Video, "Mock video device 2"));
+        auto captureDevice = CaptureDevice("239c24b2-2b15-11e3-8224-0800200c9a66", CaptureDevice::DeviceType::Video, "Mock video device 1");
+        captureDevice.setEnabled(true);
+        info.get().append(captureDevice);
+
+        captureDevice = CaptureDevice("239c24b3-2b15-11e3-8224-0800200c9a66", CaptureDevice::DeviceType::Video, "Mock video device 2");
+        captureDevice.setEnabled(true);
+        info.get().append(captureDevice);
     }
     return info;
 }

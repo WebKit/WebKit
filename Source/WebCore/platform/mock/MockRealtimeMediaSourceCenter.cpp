@@ -132,28 +132,28 @@ void MockRealtimeMediaSourceCenter::createMediaStream(NewMediaStreamHandler comp
     Vector<Ref<RealtimeMediaSource>> videoSources;
 
     if (!audioDeviceID.isEmpty()) {
-        auto& audioDevices = MockRealtimeMediaSource::audioDevices();
-        if (audioDeviceID == audioDevices[0].persistentId()) {
-            auto source = MockRealtimeAudioSource::create(audioDevices[0].label(), audioConstraints);
-            if (source)
-                audioSources.append(source.releaseNonNull());
-        } else if (audioDeviceID == audioDevices[1].persistentId()) {
-            auto source = MockRealtimeAudioSource::create(audioDevices[1].label(), audioConstraints);
-            if (source)
-                audioSources.append(source.releaseNonNull());
+        for (auto& captureDevice : MockRealtimeMediaSource::audioDevices()) {
+            if (!captureDevice.enabled())
+                continue;
+
+            if (audioDeviceID == captureDevice.persistentId()) {
+                auto source = MockRealtimeAudioSource::create(captureDevice.label(), audioConstraints);
+                if (source)
+                    audioSources.append(source.releaseNonNull());
+            }
         }
     }
 
     if (!videoDeviceID.isEmpty()) {
-        auto& videoDevices = MockRealtimeMediaSource::videoDevices();
-        if (videoDeviceID == videoDevices[0].persistentId()) {
-            auto source = MockRealtimeVideoSource::create(videoDevices[0].label(), videoConstraints);
-            if (source)
-                videoSources.append(source.releaseNonNull());
-        } else if (videoDeviceID == videoDevices[1].persistentId()) {
-            auto source = MockRealtimeVideoSource::create(videoDevices[1].label(), videoConstraints);
-            if (source)
-                videoSources.append(source.releaseNonNull());
+        for (auto& captureDevice : MockRealtimeMediaSource::videoDevices()) {
+            if (!captureDevice.enabled())
+                continue;
+
+            if (videoDeviceID == captureDevice.persistentId()) {
+                auto source = MockRealtimeVideoSource::create(captureDevice.label(), videoConstraints);
+                if (source)
+                    videoSources.append(source.releaseNonNull());
+            }
         }
     }
 
@@ -167,8 +167,19 @@ Vector<CaptureDevice> MockRealtimeMediaSourceCenter::getMediaStreamDevices()
 {
     Vector<CaptureDevice> sources;
 
-    sources.appendVector(MockRealtimeMediaSource::audioDevices());
-    sources.appendVector(MockRealtimeMediaSource::videoDevices());
+    for (auto& captureDevice : MockRealtimeMediaSource::audioDevices()) {
+        if (!captureDevice.enabled())
+            continue;
+
+        sources.append(captureDevice);
+    }
+
+    for (auto& captureDevice : MockRealtimeMediaSource::videoDevices()) {
+        if (!captureDevice.enabled())
+            continue;
+
+        sources.append(captureDevice);
+    }
 
     return sources;
 }
@@ -183,6 +194,21 @@ RealtimeMediaSource::CaptureFactory* MockRealtimeMediaSourceCenter::defaultVideo
     return &MockRealtimeVideoSource::factory();
 }
 
+ExceptionOr<void> MockRealtimeMediaSourceCenter::setDeviceEnabled(const String& id, bool enabled)
+{
+    for (auto& captureDevice : getMediaStreamDevices()) {
+        if (id == captureDevice.persistentId()) {
+            if (enabled != captureDevice.enabled()) {
+                captureDevice.setEnabled(enabled);
+                captureDevicesChanged();
+            }
+
+            return { };
+        }
+    }
+
+    return Exception { NOT_FOUND_ERR };
+}
 
 } // namespace WebCore
 

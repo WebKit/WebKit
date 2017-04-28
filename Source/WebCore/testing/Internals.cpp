@@ -4025,6 +4025,27 @@ void Internals::videoSampleAvailable(MediaSample& sample)
     m_nextTrackFramePromise = std::nullopt;
 }
 
+ExceptionOr<void> Internals::setMediaDeviceState(const String& id, const String& property, bool value)
+{
+    auto* document = contextDocument();
+    if (!document)
+        return Exception { INVALID_ACCESS_ERR, ASCIILiteral("No context document") };
+
+    if (!equalLettersIgnoringASCIICase(property, "enabled"))
+        return Exception { INVALID_ACCESS_ERR, makeString("\"" + property, "\" is not a valid property for this method.") };
+
+    auto salt = document->deviceIDHashSalt();
+    std::optional<CaptureDevice> device = RealtimeMediaSourceCenter::singleton().captureDeviceWithUniqueID(id, salt);
+    if (!device)
+        return Exception { INVALID_ACCESS_ERR, makeString("device with ID \"" + id, "\" not found.") };
+
+    auto result = RealtimeMediaSourceCenter::singleton().setDeviceEnabled(device->persistentId(), value);
+    if (result.hasException())
+        return result.releaseException();
+
+    return { };
+}
+
 #endif
 
 } // namespace WebCore

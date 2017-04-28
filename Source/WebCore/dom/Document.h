@@ -1274,6 +1274,8 @@ public:
 #if ENABLE(MEDIA_STREAM)
     void setHasActiveMediaStreamTrack() { m_hasHadActiveMediaStreamTrack = true; }
     bool hasHadActiveMediaStreamTrack() const { return m_hasHadActiveMediaStreamTrack; }
+    void setDeviceIDHashSalt(const String& salt) { m_idHashSalt = salt; }
+    String deviceIDHashSalt() const { return m_idHashSalt; }
 #endif
 
 // FIXME: Find a better place for this functionality.
@@ -1748,6 +1750,7 @@ private:
 #endif
 
 #if ENABLE(MEDIA_STREAM)
+    String m_idHashSalt;
     bool m_hasHadActiveMediaStreamTrack { false };
 #endif
 

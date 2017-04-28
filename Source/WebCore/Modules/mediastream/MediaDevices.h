@@ -33,9 +33,12 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#include "EventTarget.h"
 #include "ExceptionOr.h"
 #include "JSDOMPromise.h"
 #include "MediaTrackConstraints.h"
+#include "RealtimeMediaSourceCenter.h"
+#include "Timer.h"
 
 namespace WebCore {
 
@@ -45,9 +48,11 @@ class MediaStream;
 
 struct MediaTrackSupportedConstraints;
 
-class MediaDevices : public ScriptWrappable, public RefCounted<MediaDevices>, public ContextDestructionObserver {
+class MediaDevices : public RefCounted<MediaDevices>, public ContextDestructionObserver, public EventTargetWithInlineData {
 public:
     static Ref<MediaDevices> create(Document&);
+
+    ~MediaDevices();
 
     Document* document() const;
 
@@ -62,8 +67,22 @@ public:
     void enumerateDevices(EnumerateDevicesPromise&&) const;
     MediaTrackSupportedConstraints getSupportedConstraints();
 
+    using RefCounted<MediaDevices>::ref;
+    using RefCounted<MediaDevices>::deref;
+
 private:
     explicit MediaDevices(Document&);
+
+    void scheduledEventTimerFired();
+
+    // EventTargetWithInlineData.
+    EventTargetInterface eventTargetInterface() const override { return MediaDevicesEventTargetInterfaceType; }
+    ScriptExecutionContext* scriptExecutionContext() const final { return m_scriptExecutionContext; }
+    void refEventTarget() override { ref(); }
+    void derefEventTarget() override { deref(); }
+
+    Timer m_scheduledEventTimer;
+    RealtimeMediaSourceCenter::DevicesChangedObserverToken m_deviceChangedToken { 0 };
 };
 
 } // namespace WebCore

@@ -47,6 +47,8 @@ private:
 
     RealtimeMediaSource::CaptureFactory* defaultAudioFactory() final;
     RealtimeMediaSource::CaptureFactory* defaultVideoFactory() final;
+
+    ExceptionOr<void> setDeviceEnabled(const String& persistentID, bool) final;
 };
 
 }

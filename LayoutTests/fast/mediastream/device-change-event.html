@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Testing local audio capture playback causes "playing" event to fire</title>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+    <script>
+    let deviceIds = [];
+    promise_test((test) => {
+        if (window.testRunner)
+            testRunner.setUserMediaPermission(true);
+
+        return navigator.mediaDevices.enumerateDevices().then((devices) => {
+            return new Promise((resolve, reject) => {
+                devices.forEach(function(device) { deviceIds.push(device.deviceId); });
+                navigator.mediaDevices.ondevicechange = (event) => { resolve(event); };
+                setTimeout(() => resolve(new Event('devicechange')), 100);
+            });
+        }).then((event) => {
+            assert_equals(event.type, "devicechange", "correct event type");
+            return new Promise((resolve, reject) => {
+                return navigator.mediaDevices.enumerateDevices().then((devices) => {
+                    let deviceIDs2 = [];
+                    devices.forEach(function(device) { deviceIDs2.push(device.deviceId); });
+                    try {
+                        assert_true(deviceIDs2.indexOf(deviceIds[0]) != -1, "device not reported by enumerateDevices");
+                        assert_equals(deviceIDs2.length, deviceIds.length, "correct number of devices");
+                    } catch(e) {
+                        reject(e);
+                        return;
+                    }
+
+                    navigator.mediaDevices.ondevicechange = (event) => { resolve(event); };
+                    setTimeout(() => resolve(new Event('devicechange')), 100);
+                });
+            });
+        }).then((event) => {
+            assert_equals(event.type, "devicechange", "correct event type");
+            return new Promise((resolve, reject) => {
+                return navigator.mediaDevices.enumerateDevices().then((devices) => {
+                    let deviceIDs2 = [];
+                    devices.forEach(function(device) { deviceIDs2.push(device.deviceId); });
+                    try {
+                        assert_in_array(deviceIds[0], deviceIDs2, "device reported by enumerateDevices again");
+                        assert_equals(deviceIDs2.length, deviceIds.length, "correct number of devices");
+                    } catch(e) {
+                        reject(e);
+                        return;
+                    }
+
+                    resolve();
+                });
+            });
+        });
+
+    }, "'devicechange' event fired when device list changes");
+    </script>
+</head>
+<body>
+</body>
+</html>

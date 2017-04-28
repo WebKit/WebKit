@@ -51,13 +51,9 @@ private:
 
     void contextDestroyed() final;
 
-    String hashID(const String&);
-
     MediaDevices::EnumerateDevicesPromise m_promise;
     RefPtr<MediaDevicesRequest> m_protector;
     RefPtr<MediaDevicesEnumerationRequest> m_enumerationRequest;
-
-    String m_idHashSalt;
 };
 
 } // namespace WebCore

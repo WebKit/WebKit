@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2015 Ericsson AB. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,17 +35,33 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "Document.h"
+#include "Event.h"
+#include "EventNames.h"
 #include "MediaConstraintsImpl.h"
 #include "MediaDevicesRequest.h"
 #include "MediaTrackSupportedConstraints.h"
-#include "RealtimeMediaSourceCenter.h"
 #include "UserMediaRequest.h"
+#include <wtf/RandomNumber.h>
 
 namespace WebCore {
 
 inline MediaDevices::MediaDevices(Document& document)
     : ContextDestructionObserver(&document)
+    , m_scheduledEventTimer(*this, &MediaDevices::scheduledEventTimerFired)
 {
+    m_deviceChangedToken = RealtimeMediaSourceCenter::singleton().addDevicesChangedObserver([this]() {
+
+        // FIXME: We should only dispatch an event if the user has been granted access to the type of
+        // device that was added or removed.
+        if (!m_scheduledEventTimer.isActive())
+            m_scheduledEventTimer.startOneShot(Seconds(randomNumber() / 2));
+    });
+}
+
+MediaDevices::~MediaDevices()
+{
+    if (m_deviceChangedToken)
+        RealtimeMediaSourceCenter::singleton().removeDevicesChangedObserver(m_deviceChangedToken);
 }
 
 Ref<MediaDevices> MediaDevices::create(Document& document)
@@ -106,6 +123,11 @@ MediaTrackSupportedConstraints MediaDevices::getSupportedConstraints()
     result.deviceId = supported.supportsDeviceId();
     result.groupId = supported.supportsGroupId();
     return result;
+}
+
+void MediaDevices::scheduledEventTimerFired()
+{
+    dispatchEvent(Event::create(eventNames().devicechangeEvent, false, false));
 }
 
 } // namespace WebCore

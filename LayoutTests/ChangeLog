@@ -1,3 +1,14 @@
+2017-04-28  Eric Carlson  <eric.carlson@apple.com>
+
+        Implement ondevicechange
+        https://bugs.webkit.org/show_bug.cgi?id=169872
+        <rdar://problem/28945035>
+
+        Reviewed by Jer Noble.
+
+        * fast/mediastream/device-change-event-expected.txt: Added.
+        * fast/mediastream/device-change-event.html: Added.
+
 2017-04-28  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: Implement aria-value support for focusable separators

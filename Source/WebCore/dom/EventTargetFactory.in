@@ -15,6 +15,7 @@ IDBOpenDBRequest conditional=INDEXED_DATABASE
 IDBRequest conditional=INDEXED_DATABASE
 IDBTransaction conditional=INDEXED_DATABASE
 MediaController conditional=VIDEO
+MediaDevices conditional=MEDIA_STREAM
 MediaKeySession conditional=ENCRYPTED_MEDIA
 MediaRemoteControls conditional=MEDIA_SESSION
 MediaSource conditional=MEDIA_SOURCE

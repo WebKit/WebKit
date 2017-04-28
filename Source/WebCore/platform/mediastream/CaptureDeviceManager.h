@@ -42,7 +42,7 @@ public:
 
 protected:
     virtual ~CaptureDeviceManager();
-    bool captureDeviceFromDeviceID(const String& captureDeviceID, CaptureDevice& source);
+    std::optional<CaptureDevice> captureDeviceFromPersistentID(const String& captureDeviceID);
 };
 
 } // namespace WebCore

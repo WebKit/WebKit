@@ -99,12 +99,8 @@ void MediaDevicesEnumerationRequest::cancel()
 
 void MediaDevicesEnumerationRequest::setDeviceInfo(const Vector<CaptureDevice>& deviceList, const String& deviceIdentifierHashSalt, bool originHasPersistentAccess)
 {
-    m_deviceList = deviceList;
-    m_deviceIdentifierHashSalt = deviceIdentifierHashSalt;
-    m_originHasPersistentAccess = originHasPersistentAccess;
-
     if (m_completionHandler)
-        m_completionHandler(m_deviceList, m_deviceIdentifierHashSalt, m_originHasPersistentAccess);
+        m_completionHandler(deviceList, deviceIdentifierHashSalt, originHasPersistentAccess);
     m_completionHandler = nullptr;
 }
 

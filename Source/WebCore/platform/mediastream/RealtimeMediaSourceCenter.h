@@ -29,11 +29,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RealtimeMediaSourceCenter_h
-#define RealtimeMediaSourceCenter_h
+#pragma once
 
 #if ENABLE(MEDIA_STREAM)
 
+#include "ExceptionOr.h"
 #include "RealtimeMediaSource.h"
 #include "RealtimeMediaSourceSupportedConstraints.h"
 #include <wtf/PassRefPtr.h>
@@ -88,6 +88,15 @@ public:
     WEBCORE_EXPORT void unsetVideoCaptureDeviceManager(CaptureDeviceManager&);
     CaptureDeviceManager* videoCaptureDeviceManager() const { return m_videoCaptureDeviceManager; }
 
+    String hashStringWithSalt(const String& id, const String& hashSalt);
+    WEBCORE_EXPORT std::optional<CaptureDevice> captureDeviceWithUniqueID(const String& id, const String& hashSalt);
+    virtual ExceptionOr<void> setDeviceEnabled(const String&, bool);
+
+    using DevicesChangedObserverToken = unsigned;
+    DevicesChangedObserverToken addDevicesChangedObserver(std::function<void()>&&);
+    void removeDevicesChangedObserver(DevicesChangedObserverToken);
+    void captureDevicesChanged();
+
 protected:
     RealtimeMediaSourceCenter();
 
@@ -99,10 +108,11 @@ protected:
 
     CaptureDeviceManager* m_audioCaptureDeviceManager { nullptr };
     CaptureDeviceManager* m_videoCaptureDeviceManager { nullptr };
+
+    HashMap<unsigned, std::function<void()>> m_devicesChangedObservers;
 };
 
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)
 
-#endif // RealtimeMediaSourceCenter_h
