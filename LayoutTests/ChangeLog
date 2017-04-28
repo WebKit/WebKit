@@ -1,3 +1,18 @@
+2017-04-27  Andy VanWagoner  <thetalecrafter@gmail.com>
+
+        [INTL] Implement the caseFirst option for Intl.Collator
+        https://bugs.webkit.org/show_bug.cgi?id=158188
+
+        Reviewed by Geoffrey Garen.
+
+        Updates the Intl.Collator tests to check caseFirst support.
+        The caseFirst option or unicode locale extension lets the user explicitly
+        set if lower or upper case characters should be first in order.
+
+        * js/intl-collator-expected.txt:
+        * js/script-tests/intl-collator.js:
+        (testCollator):
+
 2017-04-27  Joseph Pecoraro  <pecoraro@apple.com>
 
         Support for promise rejection events (unhandledrejection)

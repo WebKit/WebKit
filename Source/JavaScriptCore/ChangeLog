@@ -1,3 +1,22 @@
+2017-04-27  Andy VanWagoner  <thetalecrafter@gmail.com>
+
+        [INTL] Implement the caseFirst option for Intl.Collator
+        https://bugs.webkit.org/show_bug.cgi?id=158188
+
+        Reviewed by Geoffrey Garen.
+
+        Implements the caseFirst option and unicode locale extension.
+        The caseFirst option explicitly determines whether upper or lower case comes first.
+
+        * runtime/IntlCollator.cpp:
+        (JSC::sortLocaleData): Added kf data.
+        (JSC::searchLocaleData): Added kf data.
+        (JSC::IntlCollator::initializeCollator): Set caseFirst option.
+        (JSC::IntlCollator::createCollator): Set new attributes on ICU collator.
+        (JSC::IntlCollator::caseFirstString): Added.
+        (JSC::IntlCollator::resolvedOptions): Added caseFirst property.
+        * runtime/IntlCollator.h:
+
 2017-04-27  Mark Lam  <mark.lam@apple.com>
 
         Fix some RELEASE_ASSERT failures caused by OutOfMemoryErrors.

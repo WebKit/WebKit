@@ -61,6 +61,7 @@ protected:
 private:
     enum class Usage { Sort, Search };
     enum class Sensitivity { Base, Accent, Case, Variant };
+    enum class CaseFirst { Upper, Lower, False };
 
     struct UCollatorDeleter {
         void operator()(UCollator*) const;
@@ -69,11 +70,13 @@ private:
     void createCollator(ExecState&);
     static const char* usageString(Usage);
     static const char* sensitivityString(Sensitivity);
+    static const char* caseFirstString(CaseFirst);
 
     Usage m_usage;
     String m_locale;
     String m_collation;
     Sensitivity m_sensitivity;
+    CaseFirst m_caseFirst;
     WriteBarrier<JSBoundFunction> m_boundCompare;
     std::unique_ptr<UCollator, UCollatorDeleter> m_collator;
     bool m_numeric;

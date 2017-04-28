@@ -36,6 +36,11 @@ PASS testCollator(Intl.Collator('en-u-kn'), [{locale: 'en', numeric: true}]) is 
 PASS testCollator(Intl.Collator('en-u-kn-true'), [{locale: 'en-u-kn-true', numeric: true}]) is true
 PASS testCollator(Intl.Collator('en-u-kn-false'), [{locale: 'en-u-kn-false', numeric: false}]) is true
 PASS testCollator(Intl.Collator('en-u-kn-abcd'), [{locale: 'en'}]) is true
+PASS testCollator(Intl.Collator('en-u-kf'), [{locale: 'en'}]) is true
+PASS testCollator(Intl.Collator('en-u-kf-upper'), [{locale: 'en-u-kf-upper', caseFirst: 'upper'}]) is true
+PASS testCollator(Intl.Collator('en-u-kf-lower'), [{locale: 'en-u-kf-lower', caseFirst: 'lower'}]) is true
+PASS testCollator(Intl.Collator('en-u-kf-false'), [{locale: 'en-u-kf-false', caseFirst: 'false'}]) is true
+PASS testCollator(Intl.Collator('en-u-kf-true'), [{locale: 'en'}]) is true
 PASS testCollator(Intl.Collator('en-u-aa-aaaa-kn-true-bb-bbbb-co-eor-cc-cccc-y-yyd'), [{locale: 'en-u-co-eor-kn-true', collation: 'eor', numeric: true}, {locale: 'en-u-kn-true', numeric: true}]) is true
 PASS testCollator(Intl.Collator('en-u-kn-true-a-aa'), [{locale: 'en-u-kn-true', numeric: true}]) is true
 PASS testCollator(Intl.Collator('en-a-aa-u-kn-true'), [{locale: 'en-u-kn-true', numeric: true}]) is true
@@ -54,10 +59,10 @@ PASS testCollator(Intl.Collator('en', {numeric: false}), [{locale: 'en', numeric
 PASS testCollator(Intl.Collator('en', {numeric: 'false'}), [{locale: 'en', numeric: true}]) is true
 PASS testCollator(Intl.Collator('en', {numeric: { }}), [{locale: 'en', numeric: true}]) is true
 PASS Intl.Collator('en', { get numeric() { throw 42; } }) threw exception 42.
-PASS testCollator(Intl.Collator('en', {caseFirst: 'upper'}), [{locale: 'en'}]) is true
-PASS testCollator(Intl.Collator('en', {caseFirst: 'lower'}), [{locale: 'en'}]) is true
-PASS testCollator(Intl.Collator('en', {caseFirst: 'false'}), [{locale: 'en'}]) is true
-PASS testCollator(Intl.Collator('en', {caseFirst: false}), [{locale: 'en'}]) is true
+PASS testCollator(Intl.Collator('en', {caseFirst: 'upper'}), [{locale: 'en', caseFirst: 'upper'}]) is true
+PASS testCollator(Intl.Collator('en', {caseFirst: 'lower'}), [{locale: 'en', caseFirst: 'lower'}]) is true
+PASS testCollator(Intl.Collator('en', {caseFirst: 'false'}), [{locale: 'en', caseFirst: 'false'}]) is true
+PASS testCollator(Intl.Collator('en', {caseFirst: false}), [{locale: 'en', caseFirst: 'false'}]) is true
 PASS Intl.Collator('en', {caseFirst: 'true'}) threw exception RangeError: caseFirst must be either "upper", "lower", or "false".
 PASS Intl.Collator('en', { get caseFirst() { throw 42; } }) threw exception 42.
 PASS testCollator(Intl.Collator('en', {sensitivity: 'base'}), [{locale: 'en', sensitivity: 'base'}]) is true
@@ -74,7 +79,7 @@ PASS testCollator(Intl.Collator('en-u-kn-true', {numeric: false}), [{locale: 'en
 PASS testCollator(Intl.Collator('en-u-kn-false', {numeric: true}), [{locale: 'en', numeric: true}]) is true
 PASS testCollator(Intl.Collator('en-u-kn-true', {numeric: true}), [{locale: 'en-u-kn-true', numeric: true}]) is true
 PASS testCollator(Intl.Collator('en-u-kn-false', {numeric: false}), [{locale: 'en-u-kn-false', numeric: false}]) is true
-PASS testCollator(Intl.Collator('en-a-aa-u-kn-false-co-eor-b-bb', {usage: 'sort', numeric: true, caseFirst: 'lower', sensitivity: 'case', ignorePunctuation: true}), [{locale: 'en-u-co-eor', usage: 'sort', sensitivity: 'case', ignorePunctuation: true, collation: 'eor', numeric: true}, {locale: 'en', usage: 'sort', sensitivity: 'case', ignorePunctuation: true, numeric: true}]) is true
+PASS testCollator(Intl.Collator('en-a-aa-u-kn-false-co-eor-kf-upper-b-bb', {usage: 'sort', numeric: true, caseFirst: 'lower', sensitivity: 'case', ignorePunctuation: true}), [{locale: 'en-u-co-eor', usage: 'sort', sensitivity: 'case', ignorePunctuation: true, collation: 'eor', numeric: true, caseFirst: 'lower'}, {locale: 'en', usage: 'sort', sensitivity: 'case', ignorePunctuation: true, numeric: true, caseFirst: 'lower'}]) is true
 PASS Intl.Collator.length is 0
 PASS Object.getOwnPropertyDescriptor(Intl.Collator, 'prototype').writable is false
 PASS Object.getOwnPropertyDescriptor(Intl.Collator, 'prototype').enumerable is false
@@ -180,7 +185,7 @@ PASS numericCompare('01', '1') is 0
 PASS numericCompare('๑', '๒') is -1
 PASS numericCompare('๒', '๑๐') is -1
 PASS numericCompare('๐๑', '๑') is 0
-PASS Intl.Collator('en', {caseFirst: 'upper'}).compare('a', 'A') is -1
+PASS Intl.Collator('en', {caseFirst: 'upper'}).compare('a', 'A') is 1
 PASS Intl.Collator('en', {caseFirst: 'lower'}).compare('a', 'A') is -1
 PASS Intl.Collator('en', {caseFirst: 'false'}).compare('a', 'A') is -1
 PASS notIgnorePunctuationCompare('ab', 'a\'a') is 1
@@ -244,7 +249,7 @@ PASS Intl.Collator.prototype.resolvedOptions.length is 0
 PASS defaultCollator.resolvedOptions() is an instance of Object
 PASS defaultCollator.resolvedOptions() === defaultCollator.resolvedOptions() is false
 PASS Intl.Collator.prototype.resolvedOptions.call(5) threw exception TypeError: Intl.Collator.prototype.resolvedOptions called on value that's not an object initialized as a Collator.
-PASS var options = defaultCollator.resolvedOptions(); delete options['locale']; JSON.stringify(options) is '{"usage":"sort","sensitivity":"variant","ignorePunctuation":false,"collation":"default","numeric":false}'
+PASS var options = defaultCollator.resolvedOptions(); delete options['locale']; JSON.stringify(options) is '{"usage":"sort","sensitivity":"variant","ignorePunctuation":false,"collation":"default","numeric":false,"caseFirst":"false"}'
 PASS successfullyParsed is true
 
 TEST COMPLETE
