@@ -1,3 +1,20 @@
+2017-04-28  Chris Dumez  <cdumez@apple.com>
+
+        URLSearchParams should be reflective
+        https://bugs.webkit.org/show_bug.cgi?id=171345
+
+        Reviewed by Alex Christensen.
+
+        There was a bug in our implementation of [1] where we would replace
+        '+' with 0x20 *after* URL-decoding the string, instead of *before*.
+        This was causing us to replace URL-encoded '+' characters with 0x20.
+
+        [1] https://url.spec.whatwg.org/#concept-urlencoded-parser
+
+        No new tests, updated existing test.
+
+        * platform/URLParser.cpp:
+
 2017-04-28  Youenn Fablet  <youenn@apple.com>
 
         Adding a runtime flag specific to MediaDevices

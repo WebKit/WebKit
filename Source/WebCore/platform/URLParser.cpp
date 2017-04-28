@@ -2809,19 +2809,21 @@ std::optional<String> URLParser::formURLDecode(StringView input)
     return String::fromUTF8(percentDecoded.data(), percentDecoded.size());
 }
 
+// https://url.spec.whatwg.org/#concept-urlencoded-parser
 auto URLParser::parseURLEncodedForm(StringView input) -> URLEncodedForm
 {
     URLEncodedForm output;
     for (StringView bytes : input.split('&')) {
-        auto valueStart = bytes.find('=');
-        if (valueStart == notFound) {
-            if (auto name = formURLDecode(bytes))
-                output.append({name.value().replace('+', 0x20), emptyString()});
+        auto equalIndex = bytes.find('=');
+        if (equalIndex == notFound) {
+            auto name = formURLDecode(bytes.toString().replace('+', 0x20));
+            if (name)
+                output.append({ name.value(), emptyString() });
         } else {
-            auto name = formURLDecode(bytes.substring(0, valueStart));
-            auto value = formURLDecode(bytes.substring(valueStart + 1));
+            auto name = formURLDecode(bytes.substring(0, equalIndex).toString().replace('+', 0x20));
+            auto value = formURLDecode(bytes.substring(equalIndex + 1).toString().replace('+', 0x20));
             if (name && value)
-                output.append({name.value().replace('+', 0x20), value.value().replace('+', 0x20)});
+                output.append({ name.value(), value.value() });
         }
     }
     return output;

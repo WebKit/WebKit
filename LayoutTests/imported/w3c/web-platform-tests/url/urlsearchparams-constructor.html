@@ -80,6 +80,17 @@ test(function() {
 }, 'Parse +');
 
 test(function() {
+    const testValue = '+15555555555';
+    const params = new URLSearchParams();
+    params.set('query', testValue);
+    var newParams = new URLSearchParams(params.toString());
+
+    assert_equals(params.toString(), 'query=%2B15555555555');
+    assert_equals(params.get('query'), testValue);
+    assert_equals(newParams.get('query'), testValue);
+}, 'Parse encoded +');
+
+test(function() {
     var params = new URLSearchParams('a=b c');
     assert_equals(params.get('a'), 'b c');
     params = new URLSearchParams('a b=c');

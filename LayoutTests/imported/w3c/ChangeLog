@@ -1,3 +1,16 @@
+2017-04-28  Chris Dumez  <cdumez@apple.com>
+
+        URLSearchParams should be reflective
+        https://bugs.webkit.org/show_bug.cgi?id=171345
+
+        Reviewed by Alex Christensen.
+
+        Merge https://github.com/w3c/web-platform-tests/pull/5736 to gain test
+        coverage.
+
+        * web-platform-tests/url/urlsearchparams-constructor-expected.txt:
+        * web-platform-tests/url/urlsearchparams-constructor.html:
+
 2017-04-28  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaseline imported/w3c/web-platform-tests/webrtc/rtcpeerconnection/rtcpeerconnection-idl.html after r215916.

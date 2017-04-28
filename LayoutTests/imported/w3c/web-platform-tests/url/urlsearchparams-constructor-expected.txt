@@ -7,6 +7,7 @@ PASS URLSearchParams constructor, {} as argument
 PASS URLSearchParams constructor, string. 
 PASS URLSearchParams constructor, object. 
 PASS Parse + 
+PASS Parse encoded + 
 PASS Parse space 
 PASS Parse %20 
 PASS Parse \0 
