@@ -52,7 +52,6 @@ namespace WebCore {
 
         // ImageDecoder
         String filenameExtension() const override { return ASCIILiteral("jpg"); }
-        EncodedDataStatus encodedDataStatus() const override;
         bool setSize(const IntSize&) override;
         ImageFrame* frameBufferAtIndex(size_t index) override;
         // CAUTION: setFailed() deletes |m_reader|.  Be careful to avoid
@@ -73,11 +72,12 @@ namespace WebCore {
 
     private:
         JPEGImageDecoder(AlphaOption, GammaAndColorProfileOption);
+        void tryDecodeSize(bool allDataReceived) override { decode(true, allDataReceived); }
 
         // Decodes the image.  If |onlySize| is true, stops decoding after
         // calculating the image size.  If decoding fails but there is no more
         // data coming, sets the "decode failure" flag.
-        void decode(bool onlySize);
+        void decode(bool onlySize, bool allDataReceived);
 
         template <J_COLOR_SPACE colorSpace>
         bool outputScanlines(ImageFrame& buffer);

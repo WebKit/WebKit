@@ -64,14 +64,6 @@ void WEBPImageDecoder::clear()
     m_decoder = 0;
 }
 
-EncodedDataStatus WEBPImageDecoder::encodedDataStatus() const
-{
-    if (ImageDecoder::encodedDataStatus() < EncodedDataStatus::SizeAvailable)
-        const_cast<WEBPImageDecoder*>(this)->decode(true);
-
-    return ImageDecoder::encodedDataStatus();
-}
-
 ImageFrame* WEBPImageDecoder::frameBufferAtIndex(size_t index)
 {
     if (index)
@@ -82,11 +74,11 @@ ImageFrame* WEBPImageDecoder::frameBufferAtIndex(size_t index)
 
     ImageFrame& frame = m_frameBufferCache[0];
     if (!frame.isComplete())
-        decode(false);
+        decode(false, isAllDataReceived());
     return &frame;
 }
 
-bool WEBPImageDecoder::decode(bool onlySize)
+bool WEBPImageDecoder::decode(bool onlySize, bool)
 {
     if (failed())
         return false;
@@ -151,7 +143,7 @@ bool WEBPImageDecoder::decode(bool onlySize)
     case VP8_STATUS_SUSPENDED:
         return false;
     default:
-        clear();                         
+        clear();
         return setFailed();
     }
 }

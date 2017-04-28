@@ -45,7 +45,6 @@ namespace WebCore {
         // ImageDecoder
         String filenameExtension() const override { return ASCIILiteral("bmp"); }
         void setData(SharedBuffer&, bool allDataReceived) override;
-        EncodedDataStatus encodedDataStatus() const override;
         ImageFrame* frameBufferAtIndex(size_t index) override;
         // CAUTION: setFailed() deletes |m_reader|.  Be careful to avoid
         // accessing deleted memory, especially when calling this from inside
@@ -54,6 +53,7 @@ namespace WebCore {
 
     private:
         BMPImageDecoder(AlphaOption, GammaAndColorProfileOption);
+        void tryDecodeSize(bool allDataReceived) override { decode(true, allDataReceived); }
 
         inline uint32_t readUint32(int offset) const
         {
@@ -63,7 +63,7 @@ namespace WebCore {
         // Decodes the image.  If |onlySize| is true, stops decoding after
         // calculating the image size.  If decoding fails but there is no more
         // data coming, sets the "decode failure" flag.
-        void decode(bool onlySize);
+        void decode(bool onlySize, bool allDataReceived);
 
         // Decodes the image.  If |onlySize| is true, stops decoding after
         // calculating the image size.  Returns whether decoding succeeded.

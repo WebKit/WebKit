@@ -46,7 +46,6 @@ namespace WebCore {
         // ImageDecoder
         String filenameExtension() const override { return ASCIILiteral("ico"); }
         void setData(SharedBuffer&, bool allDataReceived) override;
-        EncodedDataStatus encodedDataStatus() const override;
         IntSize size() override;
         IntSize frameSizeAtIndex(size_t, SubsamplingLevel) override;
         bool setSize(const IntSize&) override;
@@ -78,6 +77,7 @@ namespace WebCore {
         };
 
         ICOImageDecoder(AlphaOption, GammaAndColorProfileOption);
+        void tryDecodeSize(bool allDataReceived) override { decode(0, true, allDataReceived); }
 
         // Returns true if |a| is a preferable icon entry to |b|.
         // Larger sizes, or greater bitdepths at the same size, are preferable.
@@ -99,7 +99,7 @@ namespace WebCore {
         // Decodes the entry at |index|.  If |onlySize| is true, stops decoding
         // after calculating the image size.  If decoding fails but there is no
         // more data coming, sets the "decode failure" flag.
-        void decode(size_t index, bool onlySize);
+        void decode(size_t index, bool onlySize, bool allDataReceived);
 
         // Decodes the directory and directory entries at the beginning of the
         // data, and initializes members.  Returns true if all decoding

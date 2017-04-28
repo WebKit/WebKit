@@ -67,37 +67,39 @@ public:
     static RefPtr<ImageDecoder> create(const SharedBuffer& data, const URL&, AlphaOption, GammaAndColorProfileOption);
 
     virtual String filenameExtension() const = 0;
-    
+
     bool premultiplyAlpha() const { return m_premultiplyAlpha; }
 
-    bool isAllDataReceived() const { return m_isAllDataReceived; }
+    bool isAllDataReceived() const
+    {
+        ASSERT(!m_decodingSizeFromSetData);
+        return m_encodedDataStatus == EncodedDataStatus::Complete;
+    }
 
     virtual void setData(SharedBuffer& data, bool allDataReceived)
     {
-        if (m_failed)
+        if (m_encodedDataStatus == EncodedDataStatus::Error)
             return;
+
         m_data = &data;
-        m_isAllDataReceived = allDataReceived;
+        if (m_encodedDataStatus == EncodedDataStatus::TypeAvailable) {
+            m_decodingSizeFromSetData = true;
+            tryDecodeSize(allDataReceived);
+            m_decodingSizeFromSetData = false;
+        }
+
+        if (m_encodedDataStatus == EncodedDataStatus::Error)
+            return;
+
+        if (allDataReceived) {
+            ASSERT(m_encodedDataStatus == EncodedDataStatus::SizeAvailable);
+            m_encodedDataStatus = EncodedDataStatus::Complete;
+        }
     }
 
-    // Lazily-decodes enough of the image to get the size (if possible).
-    // FIXME: Right now that has to be done by each subclass; factor the
-    // decode call out and use it here.
-    virtual EncodedDataStatus encodedDataStatus() const
-    {
-        if (m_failed)
-            return EncodedDataStatus::Error;
+    EncodedDataStatus encodedDataStatus() const { return m_encodedDataStatus; }
 
-        if (m_isAllDataReceived)
-            return EncodedDataStatus::Complete;
-
-        if (m_sizeAvailable)
-            return EncodedDataStatus::SizeAvailable;
-
-        return EncodedDataStatus::TypeAvailable;
-    }
-
-    bool isSizeAvailable() { return encodedDataStatus() >= EncodedDataStatus::SizeAvailable; }
+    bool isSizeAvailable() { return m_encodedDataStatus >= EncodedDataStatus::SizeAvailable; }
 
     virtual IntSize size() { return isSizeAvailable() ? m_size : IntSize(); }
 
@@ -123,7 +125,7 @@ public:
         if (ImageBackingStore::isOverSize(size))
             return setFailed();
         m_size = size;
-        m_sizeAvailable = true;
+        m_encodedDataStatus = EncodedDataStatus::SizeAvailable;
         return true;
     }
 
@@ -184,11 +186,11 @@ public:
     // clean up any local data.
     virtual bool setFailed()
     {
-        m_failed = true;
+        m_encodedDataStatus = EncodedDataStatus::Error;
         return false;
     }
 
-    bool failed() const { return m_failed; }
+    bool failed() const { return m_encodedDataStatus == EncodedDataStatus::Error; }
 
     // Clears decoded pixel data from before the provided frame unless that
     // data may be needed to decode future frames (e.g. due to GIF frame
@@ -217,15 +219,16 @@ protected:
     ImageOrientation m_orientation;
 
 private:
+    virtual void tryDecodeSize(bool) = 0;
+
     IntSize m_size;
-    bool m_sizeAvailable { false };
+    EncodedDataStatus m_encodedDataStatus { EncodedDataStatus::TypeAvailable };
+    bool m_decodingSizeFromSetData { false };
 #if ENABLE(IMAGE_DECODER_DOWN_SAMPLING)
     static const int m_maxNumPixels { 1024 * 1024 };
 #else
     static const int m_maxNumPixels { -1 };
 #endif
-    bool m_isAllDataReceived { false };
-    bool m_failed { false };
 };
 
 } // namespace WebCore

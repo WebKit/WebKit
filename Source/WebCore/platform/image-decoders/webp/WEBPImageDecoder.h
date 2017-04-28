@@ -46,13 +46,13 @@ public:
     virtual ~WEBPImageDecoder();
 
     String filenameExtension() const override { return ASCIILiteral("webp"); }
-    EncodedDataStatus encodedDataStatus() const override;
     ImageFrame* frameBufferAtIndex(size_t index) override;
 
 private:
     WEBPImageDecoder(AlphaOption, GammaAndColorProfileOption);
+    void tryDecodeSize(bool allDataReceived) override { decode(true, allDataReceived); }
 
-    bool decode(bool onlySize);
+    bool decode(bool onlySize, bool allDataReceived);
 
     WebPIDecoder* m_decoder;
     bool m_hasAlpha;

@@ -50,14 +50,6 @@ void GIFImageDecoder::setData(SharedBuffer& data, bool allDataReceived)
         m_reader->setData(&data);
 }
 
-EncodedDataStatus GIFImageDecoder::encodedDataStatus() const
-{
-    if (ImageDecoder::encodedDataStatus() < EncodedDataStatus::SizeAvailable)
-        const_cast<GIFImageDecoder*>(this)->decode(0, GIFSizeQuery);
-
-    return ImageDecoder::encodedDataStatus();
-}
-
 bool GIFImageDecoder::setSize(const IntSize& size)
 {
     if (ImageDecoder::encodedDataStatus() >= EncodedDataStatus::SizeAvailable && this->size() == size)
@@ -72,7 +64,7 @@ bool GIFImageDecoder::setSize(const IntSize& size)
 
 size_t GIFImageDecoder::frameCount() const
 {
-    const_cast<GIFImageDecoder*>(this)->decode(std::numeric_limits<unsigned>::max(), GIFFrameCountQuery);
+    const_cast<GIFImageDecoder*>(this)->decode(std::numeric_limits<unsigned>::max(), GIFFrameCountQuery, isAllDataReceived());
     return m_frameBufferCache.size();
 }
 
@@ -116,7 +108,7 @@ ImageFrame* GIFImageDecoder::frameBufferAtIndex(size_t index)
 
     ImageFrame& frame = m_frameBufferCache[index];
     if (!frame.isComplete())
-        decode(index + 1, GIFFullQuery);
+        decode(index + 1, GIFFullQuery, isAllDataReceived());
     return &frame;
 }
 
@@ -305,7 +297,7 @@ void GIFImageDecoder::gifComplete()
     m_reader = nullptr;
 }
 
-void GIFImageDecoder::decode(unsigned haltAtFrame, GIFQuery query)
+void GIFImageDecoder::decode(unsigned haltAtFrame, GIFQuery query, bool allDataReceived)
 {
     if (failed())
         return;
@@ -339,7 +331,7 @@ void GIFImageDecoder::decode(unsigned haltAtFrame, GIFQuery query)
 
     // It is also a fatal error if all data is received but we failed to decode
     // all frames completely.
-    if (isAllDataReceived() && haltAtFrame >= m_frameBufferCache.size() && m_reader)
+    if (allDataReceived && haltAtFrame >= m_frameBufferCache.size() && m_reader)
         setFailed();
 }
 

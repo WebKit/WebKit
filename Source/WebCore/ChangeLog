@@ -1,3 +1,63 @@
+2017-04-28  Miguel Gomez  <magomez@igalia.com>
+
+        REGRESSION(r215211): [GTK] Several webgl related tests are failing
+        https://bugs.webkit.org/show_bug.cgi?id=170730
+
+        Reviewed by Said Abou-Hallawa.
+
+        There is a wrong situation in the image decoders where the complete data has been assigned
+        to them but the size of the image hasn't been decoded yet. This is causing rendering
+        issues in webgl when decoding the images used as textures. To fix this, we refactor how the
+        encoded data status is stored to avoid that situation: the status is handled completely
+        by ImageDecoder.h, and it's the one forcing the decode of the size when data gets assigned
+        to the decoders.
+
+        Covered by existent tests.
+
+        * platform/image-decoders/ImageDecoder.h:
+        (WebCore::ImageDecoder::isAllDataReceived):
+        (WebCore::ImageDecoder::setData):
+        (WebCore::ImageDecoder::encodedDataStatus):
+        (WebCore::ImageDecoder::isSizeAvailable):
+        (WebCore::ImageDecoder::setSize):
+        (WebCore::ImageDecoder::setFailed):
+        (WebCore::ImageDecoder::failed):
+        * platform/image-decoders/bmp/BMPImageDecoder.cpp:
+        (WebCore::BMPImageDecoder::frameBufferAtIndex):
+        (WebCore::BMPImageDecoder::decode):
+        (WebCore::BMPImageDecoder::encodedDataStatus): Deleted.
+        * platform/image-decoders/bmp/BMPImageDecoder.h:
+        * platform/image-decoders/gif/GIFImageDecoder.cpp:
+        (WebCore::GIFImageDecoder::frameCount):
+        (WebCore::GIFImageDecoder::frameBufferAtIndex):
+        (WebCore::GIFImageDecoder::decode):
+        (WebCore::GIFImageDecoder::encodedDataStatus): Deleted.
+        * platform/image-decoders/gif/GIFImageDecoder.h:
+        * platform/image-decoders/ico/ICOImageDecoder.cpp:
+        (WebCore::ICOImageDecoder::setData):
+        (WebCore::ICOImageDecoder::frameCount):
+        (WebCore::ICOImageDecoder::frameBufferAtIndex):
+        (WebCore::ICOImageDecoder::setDataForPNGDecoderAtIndex):
+        (WebCore::ICOImageDecoder::decode):
+        (WebCore::ICOImageDecoder::decodeAtIndex):
+        (WebCore::ICOImageDecoder::encodedDataStatus): Deleted.
+        * platform/image-decoders/ico/ICOImageDecoder.h:
+        * platform/image-decoders/jpeg/JPEGImageDecoder.cpp:
+        (WebCore::JPEGImageDecoder::frameBufferAtIndex):
+        (WebCore::JPEGImageDecoder::decode):
+        (WebCore::JPEGImageDecoder::encodedDataStatus): Deleted.
+        * platform/image-decoders/jpeg/JPEGImageDecoder.h:
+        * platform/image-decoders/png/PNGImageDecoder.cpp:
+        (WebCore::PNGImageDecoder::frameBufferAtIndex):
+        (WebCore::PNGImageDecoder::decode):
+        (WebCore::PNGImageDecoder::encodedDataStatus): Deleted.
+        * platform/image-decoders/png/PNGImageDecoder.h:
+        * platform/image-decoders/webp/WEBPImageDecoder.cpp:
+        (WebCore::WEBPImageDecoder::frameBufferAtIndex):
+        (WebCore::WEBPImageDecoder::decode):
+        (WebCore::WEBPImageDecoder::encodedDataStatus): Deleted.
+        * platform/image-decoders/webp/WEBPImageDecoder.h:
+
 2017-04-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Move UUID from WebCore/platform to WTF

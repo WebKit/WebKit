@@ -510,14 +510,6 @@ JPEGImageDecoder::~JPEGImageDecoder()
 {
 }
 
-EncodedDataStatus JPEGImageDecoder::encodedDataStatus() const
-{
-    if (ImageDecoder::encodedDataStatus() < EncodedDataStatus::SizeAvailable)
-        const_cast<JPEGImageDecoder*>(this)->decode(true);
-
-    return ImageDecoder::encodedDataStatus();
-}
-
 bool JPEGImageDecoder::setSize(const IntSize& size)
 {
     if (!ImageDecoder::setSize(size))
@@ -537,7 +529,7 @@ ImageFrame* JPEGImageDecoder::frameBufferAtIndex(size_t index)
 
     ImageFrame& frame = m_frameBufferCache[0];
     if (!frame.isComplete())
-        decode(false);
+        decode(false, isAllDataReceived());
     return &frame;
 }
 
@@ -663,7 +655,7 @@ void JPEGImageDecoder::jpegComplete()
     buffer.setDecoding(ImageFrame::Decoding::Complete);
 }
 
-void JPEGImageDecoder::decode(bool onlySize)
+void JPEGImageDecoder::decode(bool onlySize, bool allDataReceived)
 {
     if (failed())
         return;
@@ -673,7 +665,7 @@ void JPEGImageDecoder::decode(bool onlySize)
 
     // If we couldn't decode the image but we've received all the data, decoding
     // has failed.
-    if (!m_reader->decode(*m_data, onlySize) && isAllDataReceived())
+    if (!m_reader->decode(*m_data, onlySize) && allDataReceived)
         setFailed();
     // If we're done decoding the image, we don't need the JPEGImageReader
     // anymore.  (If we failed, |m_reader| has already been cleared.)

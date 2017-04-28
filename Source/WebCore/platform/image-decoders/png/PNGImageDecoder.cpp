@@ -244,14 +244,6 @@ RepetitionCount PNGImageDecoder::repetitionCount() const
 }
 #endif
 
-EncodedDataStatus PNGImageDecoder::encodedDataStatus() const
-{
-    if (ImageDecoder::encodedDataStatus() < EncodedDataStatus::SizeAvailable)
-        const_cast<PNGImageDecoder*>(this)->decode(true, 0);
-
-    return ImageDecoder::encodedDataStatus();
-}
-
 bool PNGImageDecoder::setSize(const IntSize& size)
 {
     if (!ImageDecoder::setSize(size))
@@ -279,7 +271,7 @@ ImageFrame* PNGImageDecoder::frameBufferAtIndex(size_t index)
 
     ImageFrame& frame = m_frameBufferCache[index];
     if (!frame.isComplete())
-        decode(false, index);
+        decode(false, index, isAllDataReceived());
     return &frame;
 }
 
@@ -566,7 +558,7 @@ void PNGImageDecoder::pngComplete()
         m_frameBufferCache.first().setDecoding(ImageFrame::Decoding::Complete);
 }
 
-void PNGImageDecoder::decode(bool onlySize, unsigned haltAtFrame)
+void PNGImageDecoder::decode(bool onlySize, unsigned haltAtFrame, bool allDataReceived)
 {
     if (failed())
         return;
@@ -576,7 +568,7 @@ void PNGImageDecoder::decode(bool onlySize, unsigned haltAtFrame)
 
     // If we couldn't decode the image but we've received all the data, decoding
     // has failed.
-    if (!m_reader->decode(*m_data, onlySize, haltAtFrame) && isAllDataReceived())
+    if (!m_reader->decode(*m_data, onlySize, haltAtFrame) && allDataReceived)
         setFailed();
     // If we're done decoding the image, we don't need the PNGImageReader
     // anymore.  (If we failed, |m_reader| has already been cleared.)

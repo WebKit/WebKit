@@ -50,7 +50,6 @@ namespace WebCore {
         size_t frameCount() const override { return m_frameCount; }
         RepetitionCount repetitionCount() const override;
 #endif
-        EncodedDataStatus encodedDataStatus() const override;
         bool setSize(const IntSize&) override;
         ImageFrame* frameBufferAtIndex(size_t index) override;
         // CAUTION: setFailed() deletes |m_reader|.  Be careful to avoid
@@ -90,11 +89,12 @@ namespace WebCore {
 
     private:
         PNGImageDecoder(AlphaOption, GammaAndColorProfileOption);
+        void tryDecodeSize(bool allDataReceived) override { decode(true, 0, allDataReceived); }
 
         // Decodes the image.  If |onlySize| is true, stops decoding after
         // calculating the image size.  If decoding fails but there is no more
         // data coming, sets the "decode failure" flag.
-        void decode(bool onlySize, unsigned haltAtFrame);
+        void decode(bool onlySize, unsigned haltAtFrame, bool allDataReceived);
 #if ENABLE(APNG)
         void initFrameBuffer(size_t frameIndex);
         void frameComplete();
