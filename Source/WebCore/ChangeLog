@@ -1,3 +1,20 @@
+2017-04-28  Dean Jackson  <dino@apple.com>
+
+        App crashing: Dispatch queue: com.apple.root.user-interactive-qos / vBoxConvolve / WebCore::FEGaussianBlur::platformApplySoftware()
+        https://bugs.webkit.org/show_bug.cgi?id=171461
+        <rdar://problem/30534722>
+
+        Reviewed by Eric Carlson.
+
+        We're getting reports of crashes in this function, caused by null or empty data being
+        passed to vImage. Guard against this, in a way that will ASSERT in debug builds if
+        anyone comes across it.
+
+        Test: css3/filters/blur-various-radii.html
+
+        * platform/graphics/filters/FEGaussianBlur.cpp:
+        (WebCore::accelerateBoxBlur): Return early if things don't look good.
+
 2017-04-28  Chris Dumez  <cdumez@apple.com>
 
         Stop using legacy ClientRect / ClientRectList in Internals

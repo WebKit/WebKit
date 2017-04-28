@@ -298,6 +298,16 @@ inline void boxBlur(const Uint8ClampedArray* srcPixelArray, Uint8ClampedArray* d
 #if USE(ACCELERATE)
 inline void accelerateBoxBlur(const Uint8ClampedArray* src, Uint8ClampedArray* dst, unsigned kernelSize, int stride, int effectWidth, int effectHeight)
 {
+    if (!src || !src->data() || !dst || !dst->data()) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    if (effectWidth <= 0 || effectHeight <= 0 || stride <= 0) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
     // We must always use an odd radius.
     if (kernelSize % 2 != 1)
         kernelSize += 1;
