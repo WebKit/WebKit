@@ -704,6 +704,7 @@ public:
     
     template<typename U> bool contains(const U&) const;
     template<typename U> size_t find(const U&) const;
+    template<typename MatchFunction> size_t findMatching(const MatchFunction&) const;
     template<typename U> size_t reverseFind(const U&) const;
     
     template<typename U> bool appendIfNotContains(const U&);
@@ -739,9 +740,9 @@ public:
     void remove(size_t position);
     void remove(size_t position, size_t length);
     template<typename U> bool removeFirst(const U&);
-    template<typename MatchFunction> bool removeFirstMatching(const MatchFunction&);
+    template<typename MatchFunction> bool removeFirstMatching(const MatchFunction&, size_t startIndex = 0);
     template<typename U> unsigned removeAll(const U&);
-    template<typename MatchFunction> unsigned removeAllMatching(const MatchFunction&);
+    template<typename MatchFunction> unsigned removeAllMatching(const MatchFunction&, size_t startIndex = 0);
 
     void removeLast() 
     {
@@ -904,14 +905,23 @@ bool Vector<T, inlineCapacity, OverflowHandler, minCapacity>::contains(const U& 
 }
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity>
-template<typename U>
-size_t Vector<T, inlineCapacity, OverflowHandler, minCapacity>::find(const U& value) const
+template<typename MatchFunction>
+size_t Vector<T, inlineCapacity, OverflowHandler, minCapacity>::findMatching(const MatchFunction& matches) const
 {
     for (size_t i = 0; i < size(); ++i) {
-        if (at(i) == value)
+        if (matches(at(i)))
             return i;
     }
     return notFound;
+}
+
+template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity>
+template<typename U>
+size_t Vector<T, inlineCapacity, OverflowHandler, minCapacity>::find(const U& value) const
+{
+    return findMatching([&](auto& item) {
+        return item == value;
+    });
 }
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity>
@@ -1396,9 +1406,9 @@ inline bool Vector<T, inlineCapacity, OverflowHandler, minCapacity>::removeFirst
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity>
 template<typename MatchFunction>
-inline bool Vector<T, inlineCapacity, OverflowHandler, minCapacity>::removeFirstMatching(const MatchFunction& matches)
+inline bool Vector<T, inlineCapacity, OverflowHandler, minCapacity>::removeFirstMatching(const MatchFunction& matches, size_t startIndex)
 {
-    for (size_t i = 0; i < size(); ++i) {
+    for (size_t i = startIndex; i < size(); ++i) {
         if (matches(at(i))) {
             remove(i);
             return true;
@@ -1418,12 +1428,12 @@ inline unsigned Vector<T, inlineCapacity, OverflowHandler, minCapacity>::removeA
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity>
 template<typename MatchFunction>
-inline unsigned Vector<T, inlineCapacity, OverflowHandler, minCapacity>::removeAllMatching(const MatchFunction& matches)
+inline unsigned Vector<T, inlineCapacity, OverflowHandler, minCapacity>::removeAllMatching(const MatchFunction& matches, size_t startIndex)
 {
     iterator holeBegin = end();
     iterator holeEnd = end();
     unsigned matchCount = 0;
-    for (auto it = begin(), itEnd = end(); it != itEnd; ++it) {
+    for (auto it = begin() + startIndex, itEnd = end(); it < itEnd; ++it) {
         if (matches(*it)) {
             if (holeBegin == end())
                 holeBegin = it;

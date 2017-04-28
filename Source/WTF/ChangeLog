@@ -1,3 +1,20 @@
+2017-04-28  Chris Dumez  <cdumez@apple.com>
+
+        Update DOMTokenList.replace() to match the latest DOM specification
+        https://bugs.webkit.org/show_bug.cgi?id=171388
+
+        Reviewed by Alex Christensen.
+
+        Add Vector::findMatching() API which takes in a lambda function for convenience.
+        Add optional startIndex parameter to Vector::removeFirstMatching() / removeAllMatching()
+        to remove items only after given index.
+
+        * wtf/Vector.h:
+        (WTF::minCapacity>::findMatching):
+        (WTF::minCapacity>::find):
+        (WTF::minCapacity>::removeFirstMatching):
+        (WTF::minCapacity>::removeAllMatching):
+
 2017-04-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Move UUID from WebCore/platform to WTF

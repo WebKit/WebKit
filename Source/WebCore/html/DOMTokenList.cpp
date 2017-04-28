@@ -158,23 +158,29 @@ ExceptionOr<bool> DOMTokenList::toggle(const AtomicString& token, std::optional<
     return true;
 }
 
-ExceptionOr<void> DOMTokenList::replace(const AtomicString& token, const AtomicString& newToken)
+// https://dom.spec.whatwg.org/#dom-domtokenlist-replace
+ExceptionOr<void> DOMTokenList::replace(const AtomicString& item, const AtomicString& replacement)
 {
-    if (token.isEmpty() || newToken.isEmpty())
+    if (item.isEmpty() || replacement.isEmpty())
         return Exception { SYNTAX_ERR };
 
-    if (tokenContainsHTMLSpace(token) || tokenContainsHTMLSpace(newToken))
+    if (tokenContainsHTMLSpace(item) || tokenContainsHTMLSpace(replacement))
         return Exception { INVALID_CHARACTER_ERR };
 
     auto& tokens = this->tokens();
-    size_t index = tokens.find(token);
+
+    auto matchesItemOrReplacement = [&](auto& token) {
+        return token == item || token == replacement;
+    };
+
+    size_t index = tokens.findMatching(matchesItemOrReplacement);
     if (index == notFound)
         return { };
 
-    if (tokens.find(newToken) != notFound)
-        tokens.remove(index);
-    else
-        tokens[index] = newToken;
+    tokens[index] = replacement;
+    tokens.removeFirstMatching(matchesItemOrReplacement, index + 1);
+    ASSERT(tokens.find(item) == notFound);
+    ASSERT(tokens.reverseFind(replacement) == index);
 
     updateAssociatedAttributeFromTokens();
 
