@@ -31,6 +31,7 @@
 #import "NetworkSession.h"
 #import "SessionTracker.h"
 #import "WebErrors.h"
+#import "WebsiteDataStoreParameters.h"
 #import <WebCore/NetworkStorageSession.h>
 #import <WebCore/ResourceError.h>
 #import <WebKitSystemInterface.h>
@@ -97,6 +98,36 @@ void RemoteNetworkingContext::ensurePrivateBrowsingSession(SessionID sessionID)
 #if USE(NETWORK_SESSION)
     auto networkSession = NetworkSession::create(sessionID, NetworkProcess::singleton().supplement<LegacyCustomProtocolManager>());
     SessionTracker::setSession(sessionID, WTFMove(networkSession));
+#endif
+}
+
+void RemoteNetworkingContext::ensureWebsiteDataStoreSession(WebsiteDataStoreParameters&& parameters)
+{
+    if (NetworkStorageSession::storageSession(parameters.sessionID))
+        return;
+
+    String base;
+    if (SessionTracker::getIdentifierBase().isNull())
+        base = [[NSBundle mainBundle] bundleIdentifier];
+    else
+        base = SessionTracker::getIdentifierBase();
+
+#if PLATFORM(IOS)
+    SandboxExtension::consumePermanently(parameters.cookieStorageDirectoryExtensionHandle);
+#endif
+
+    RetainPtr<CFHTTPCookieStorageRef> uiProcessCookieStorage;
+
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
+    RetainPtr<CFDataRef> cookieStorageData = adoptCF(CFDataCreate(kCFAllocatorDefault, parameters.uiProcessCookieStorageIdentifier.data(), parameters.uiProcessCookieStorageIdentifier.size()));
+    uiProcessCookieStorage = adoptCF(CFHTTPCookieStorageCreateFromIdentifyingData(kCFAllocatorDefault, cookieStorageData.get()));
+#endif
+
+    NetworkStorageSession::ensureSession(parameters.sessionID, base + '.' + String::number(parameters.sessionID.sessionID()), WTFMove(uiProcessCookieStorage));
+
+#if USE(NETWORK_SESSION)
+    auto networkSession = NetworkSession::create(parameters.sessionID, NetworkProcess::singleton().supplement<LegacyCustomProtocolManager>());
+    SessionTracker::setSession(parameters.sessionID, WTFMove(networkSession));
 #endif
 }
 

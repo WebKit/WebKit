@@ -115,7 +115,7 @@ void NetworkStorageSession::ensurePrivateBrowsingSession(SessionID sessionID, co
     ensureSession(sessionID, identifierBase);
 }
 
-void NetworkStorageSession::ensureSession(SessionID sessionID, const String& identifierBase)
+void NetworkStorageSession::ensureSession(SessionID sessionID, const String& identifierBase, RetainPtr<CFHTTPCookieStorageRef>&& cookieStorage)
 {
     auto addResult = globalSessionMap().add(sessionID, nullptr);
     if (!addResult.isNewEntry)
@@ -133,8 +133,15 @@ void NetworkStorageSession::ensureSession(SessionID sessionID, const String& ide
     } else
         storageSession = createCFStorageSessionForIdentifier(cfIdentifier.get());
 
-    RetainPtr<CFHTTPCookieStorageRef> cookieStorage = storageSession ? adoptCF(_CFURLStorageSessionCopyCookieStorage(kCFAllocatorDefault, storageSession.get())) : nullptr;
+    if (!cookieStorage && storageSession)
+        cookieStorage = adoptCF(_CFURLStorageSessionCopyCookieStorage(kCFAllocatorDefault, storageSession.get()));
+
     addResult.iterator->value = std::make_unique<NetworkStorageSession>(sessionID, WTFMove(storageSession), WTFMove(cookieStorage));
+}
+
+void NetworkStorageSession::ensureSession(SessionID sessionID, const String& identifierBase)
+{
+    ensureSession(sessionID, identifierBase, nullptr);
 }
 
 RetainPtr<CFHTTPCookieStorageRef> NetworkStorageSession::cookieStorage() const

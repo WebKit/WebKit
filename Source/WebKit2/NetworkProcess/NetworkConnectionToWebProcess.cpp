@@ -245,12 +245,14 @@ void NetworkConnectionToWebProcess::prefetchDNS(const String& hostname)
 
 static NetworkStorageSession& storageSession(SessionID sessionID)
 {
-    if (sessionID.isEphemeral()) {
-        if (auto* privateStorageSession = NetworkStorageSession::storageSession(sessionID))
-            return *privateStorageSession;
+    ASSERT(sessionID.isValid());
+    if (sessionID != SessionID::defaultSessionID()) {
+        if (auto* storageSession = NetworkStorageSession::storageSession(sessionID))
+            return *storageSession;
+
         // Some requests with private browsing mode requested may still be coming shortly after NetworkProcess was told to destroy its session.
         // FIXME: Find a way to track private browsing sessions more rigorously.
-        LOG_ERROR("Private browsing was requested, but there was no session for it. Please file a bug unless you just disabled private browsing, in which case it's an expected race.");
+        LOG_ERROR("Non-default storage session was requested, but there was no session for it. Please file a bug unless you just disabled private browsing, in which case it's an expected race.");
     }
     return NetworkStorageSession::defaultStorageSession();
 }

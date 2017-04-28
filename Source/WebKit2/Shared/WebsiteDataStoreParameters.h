@@ -1,7 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
- * Portions Copyright (c) 2010 Motorola Mobility, Inc.  All rights reserved.
- * Copyright (C) 2012 Igalia S.L.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,31 +25,32 @@
 
 #pragma once
 
-#include <WebCore/FrameNetworkingContext.h>
+#include "SandboxExtension.h"
 #include <WebCore/SessionID.h>
+#include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
+
+namespace IPC {
+class Decoder;
+class Encoder;
+}
 
 namespace WebKit {
 
-class WebFrame;
-class WebFrameLoaderClient;
-struct WebsiteDataStoreParameters;
+struct WebsiteDataStoreParameters {
+    WebsiteDataStoreParameters();
 
-class WebFrameNetworkingContext : public WebCore::FrameNetworkingContext {
-public:
-    static Ref<WebFrameNetworkingContext> create(WebFrame* frame)
-    {
-        return adoptRef(*new WebFrameNetworkingContext(frame));
-    }
+    void encode(IPC::Encoder&) const;
+    static bool decode(IPC::Decoder&, WebsiteDataStoreParameters&);
 
-    static void ensurePrivateBrowsingSession(WebCore::SessionID);
-    static void ensureWebsiteDataStoreSession(WebsiteDataStoreParameters&&);
+    WebCore::SessionID sessionID;
 
-    WebFrameLoaderClient* webFrameLoaderClient() const;
-
-private:
-    WebFrameNetworkingContext(WebFrame*);
-
-    WebCore::NetworkStorageSession& storageSession() const override;
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
+    Vector<uint8_t> uiProcessCookieStorageIdentifier;
+#endif
+#if PLATFORM(IOS)
+    SandboxExtension::Handle cookieStorageDirectoryExtensionHandle;
+#endif
 };
 
-}
+} // namespace WebKit

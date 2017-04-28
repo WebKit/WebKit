@@ -28,6 +28,8 @@
 
 #import "StorageManager.h"
 #import "WebResourceLoadStatisticsStore.h"
+#import "WebsiteDataStoreParameters.h"
+#import <WebCore/CFNetworkSPI.h>
 #import <WebCore/SearchPopupMenuCocoa.h>
 #import <wtf/NeverDestroyed.h>
 
@@ -44,6 +46,34 @@ static Vector<WebsiteDataStore*>& dataStoresWithStorageManagers()
     static NeverDestroyed<Vector<WebsiteDataStore*>> dataStoresWithStorageManagers;
 
     return dataStoresWithStorageManagers;
+}
+
+WebsiteDataStoreParameters WebsiteDataStore::parameters()
+{
+    WebsiteDataStoreParameters parameters;
+
+    parameters.sessionID = m_sessionID;
+
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
+    if (m_uiProcessCookieStorageIdentifier.isEmpty()) {
+        auto cookiePath = resolvedCookieStorageDirectory().utf8();
+        auto url = adoptCF(CFURLCreateFromFileSystemRepresentation(kCFAllocatorDefault, (const UInt8 *)cookiePath.data(), (CFIndex)cookiePath.length(), true));
+        m_cfCookieStorage = adoptCF(CFHTTPCookieStorageCreateFromFile(kCFAllocatorDefault, url.get(), nullptr));
+        auto cfData = adoptCF(CFHTTPCookieStorageCreateIdentifyingData(kCFAllocatorDefault, m_cfCookieStorage.get()));
+
+        m_uiProcessCookieStorageIdentifier.append(CFDataGetBytePtr(cfData.get()), CFDataGetLength(cfData.get()));
+    }
+
+    parameters.uiProcessCookieStorageIdentifier = m_uiProcessCookieStorageIdentifier;
+#endif // PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
+
+#if PLATFORM(IOS)
+    String cookieStorageDirectory = resolvedCookieStorageDirectory();
+    if (!cookieStorageDirectory.isEmpty())
+        SandboxExtension::createHandleForReadWriteDirectory(cookieStorageDirectory, parameters.cookieStorageDirectoryExtensionHandle);
+#endif
+
+    return parameters;
 }
 
 void WebsiteDataStore::platformInitialize()

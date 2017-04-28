@@ -291,7 +291,12 @@ void NetworkProcess::ensurePrivateBrowsingSession(SessionID sessionID)
     RemoteNetworkingContext::ensurePrivateBrowsingSession(sessionID);
 }
 
-void NetworkProcess::destroyPrivateBrowsingSession(SessionID sessionID)
+void NetworkProcess::addWebsiteDataStore(WebsiteDataStoreParameters&& parameters)
+{
+    RemoteNetworkingContext::ensureWebsiteDataStoreSession(WTFMove(parameters));
+}
+
+void NetworkProcess::destroySession(SessionID sessionID)
 {
     SessionTracker::destroySession(sessionID);
 }

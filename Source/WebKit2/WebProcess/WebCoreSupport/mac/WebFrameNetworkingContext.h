@@ -33,6 +33,8 @@
 
 namespace WebKit {
 
+struct WebsiteDataStoreParameters;
+
 class WebFrameNetworkingContext : public WebCore::FrameNetworkingContext {
 public:
     static Ref<WebFrameNetworkingContext> create(WebFrame* frame)
@@ -42,6 +44,7 @@ public:
 
     // FIXME: remove platform-specific code and use SessionTracker
     static void ensurePrivateBrowsingSession(WebCore::SessionID);
+    static void ensureWebsiteDataStoreSession(WebsiteDataStoreParameters&&);
 
     static void setCookieAcceptPolicyForAllContexts(HTTPCookieAcceptPolicy);
 

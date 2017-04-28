@@ -32,6 +32,8 @@
 
 namespace WebKit {
 
+struct WebsiteDataStoreParameters;
+
 class RemoteNetworkingContext final : public WebCore::NetworkingContext {
 public:
     static Ref<RemoteNetworkingContext> create(WebCore::SessionID sessionID, bool shouldClearReferrerOnHTTPSToHTTPRedirect)
@@ -42,6 +44,7 @@ public:
 
     // FIXME: Remove platform-specific code and use SessionTracker.
     static void ensurePrivateBrowsingSession(WebCore::SessionID);
+    static void ensureWebsiteDataStoreSession(WebsiteDataStoreParameters&&);
 
     bool shouldClearReferrerOnHTTPSToHTTPRedirect() const override { return m_shouldClearReferrerOnHTTPSToHTTPRedirect; }
 

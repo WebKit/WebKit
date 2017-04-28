@@ -95,6 +95,7 @@ struct WebPageGroupData;
 struct WebPreferencesStore;
 struct WebProcessCreationParameters;
 struct WebsiteData;
+struct WebsiteDataStoreParameters;
 
 #if ENABLE(DATABASE_PROCESS)
 class WebToDatabaseProcessConnection;
@@ -180,8 +181,9 @@ public:
     void setCacheModel(uint32_t);
 
     void ensurePrivateBrowsingSession(WebCore::SessionID);
-    void destroyPrivateBrowsingSession(WebCore::SessionID);
     void ensureLegacyPrivateBrowsingSessionInNetworkProcess();
+    void addWebsiteDataStore(WebsiteDataStoreParameters&&);
+    void destroySession(WebCore::SessionID);
 
     void pageDidEnterWindow(uint64_t pageID);
     void pageWillLeaveWindow(uint64_t pageID);

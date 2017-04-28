@@ -46,9 +46,9 @@ messages -> WebProcess LegacyReceiver {
 
     ClearCachedCredentials()
 
-    // Legacy private browsing session is per process. Individual pages or page groups may use the private session or the default one as appropriate.
     EnsurePrivateBrowsingSession(WebCore::SessionID sessionID)
-    DestroyPrivateBrowsingSession(WebCore::SessionID sessionID)
+    AddWebsiteDataStore(struct WebKit::WebsiteDataStoreParameters websiteDataStoreParameters);
+    DestroySession(WebCore::SessionID sessionID)
 
     # Plug-ins.
     DidAddPlugInAutoStartOriginHash(uint32_t hash, double expirationTime, WebCore::SessionID sessionID)

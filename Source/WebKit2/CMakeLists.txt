@@ -212,6 +212,7 @@ set(WebKit2_SOURCES
     Shared/WebTouchEvent.cpp
     Shared/WebUserContentControllerDataTypes.cpp
     Shared/WebWheelEvent.cpp
+    Shared/WebsiteDataStoreParameters.cpp
 
     Shared/API/APIArray.cpp
     Shared/API/APIData.cpp

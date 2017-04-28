@@ -37,6 +37,10 @@
 #include <wtf/WorkQueue.h>
 #include <wtf/text/WTFString.h>
 
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
+#include <WebCore/CFNetworkSPI.h>
+#endif
+
 namespace WebCore {
 class SecurityOrigin;
 }
@@ -50,6 +54,7 @@ class WebResourceLoadStatisticsStore;
 enum class WebsiteDataFetchOption;
 enum class WebsiteDataType;
 struct WebsiteDataRecord;
+struct WebsiteDataStoreParameters;
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
 struct PluginModuleInfo;
@@ -72,7 +77,7 @@ public:
         String cookieStorageDirectory;
     };
     static Ref<WebsiteDataStore> createNonPersistent();
-    static Ref<WebsiteDataStore> create(Configuration);
+    static Ref<WebsiteDataStore> create(Configuration, WebCore::SessionID);
     virtual ~WebsiteDataStore();
 
     uint64_t identifier() const { return m_identifier; }
@@ -108,9 +113,11 @@ public:
     WebProcessPool* processPoolForCookieStorageOperations();
     bool isAssociatedProcessPool(WebProcessPool&) const;
 
+    WebsiteDataStoreParameters parameters();
+
 private:
     explicit WebsiteDataStore(WebCore::SessionID);
-    explicit WebsiteDataStore(Configuration);
+    explicit WebsiteDataStore(Configuration, WebCore::SessionID);
 
     // WebProcessLifetimeObserver.
     void webPageWasAdded(WebPageProxy&) override;
@@ -145,6 +152,11 @@ private:
     const RefPtr<WebResourceLoadStatisticsStore> m_resourceLoadStatistics;
 
     Ref<WorkQueue> m_queue;
+
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
+    Vector<uint8_t> m_uiProcessCookieStorageIdentifier;
+    RetainPtr<CFHTTPCookieStorageRef> m_cfCookieStorage;
+#endif
 };
 
 }

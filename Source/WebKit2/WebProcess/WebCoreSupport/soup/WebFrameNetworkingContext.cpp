@@ -52,6 +52,11 @@ void WebFrameNetworkingContext::ensurePrivateBrowsingSession(SessionID sessionID
     SessionTracker::setSession(sessionID, NetworkSession::create(sessionID));
 }
 
+void WebFrameNetworkingContext::ensureWebsiteDataStoreSession(WebsiteDataStoreParameters&&)
+{
+    // FIXME: Implement
+}
+
 WebFrameNetworkingContext::WebFrameNetworkingContext(WebFrame* frame)
     : FrameNetworkingContext(frame->coreFrame())
 {

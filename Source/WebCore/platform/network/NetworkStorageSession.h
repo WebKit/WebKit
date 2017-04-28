@@ -73,6 +73,7 @@ public:
 #endif
 
 #if PLATFORM(COCOA) || USE(CFURLCONNECTION)
+    WEBCORE_EXPORT static void ensureSession(SessionID, const String& identifierBase, RetainPtr<CFHTTPCookieStorageRef>&&);
     NetworkStorageSession(SessionID, RetainPtr<CFURLStorageSessionRef>&&, RetainPtr<CFHTTPCookieStorageRef>&&);
 
     // May be null, in which case a Foundation default should be used.

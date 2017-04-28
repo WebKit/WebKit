@@ -36,6 +36,7 @@
 #include "WebResourceLoadStatisticsStore.h"
 #include "WebResourceLoadStatisticsStoreMessages.h"
 #include "WebsiteData.h"
+#include "WebsiteDataStoreParameters.h"
 #include <WebCore/ApplicationCacheStorage.h>
 #include <WebCore/DatabaseTracker.h>
 #include <WebCore/HTMLMediaElement.h>
@@ -63,14 +64,14 @@ Ref<WebsiteDataStore> WebsiteDataStore::createNonPersistent()
     return adoptRef(*new WebsiteDataStore(WebCore::SessionID::generateEphemeralSessionID()));
 }
 
-Ref<WebsiteDataStore> WebsiteDataStore::create(Configuration configuration)
+Ref<WebsiteDataStore> WebsiteDataStore::create(Configuration configuration, WebCore::SessionID sessionID)
 {
-    return adoptRef(*new WebsiteDataStore(WTFMove(configuration)));
+    return adoptRef(*new WebsiteDataStore(WTFMove(configuration), sessionID));
 }
 
-WebsiteDataStore::WebsiteDataStore(Configuration configuration)
+WebsiteDataStore::WebsiteDataStore(Configuration configuration, WebCore::SessionID sessionID)
     : m_identifier(generateIdentifier())
-    , m_sessionID(WebCore::SessionID::defaultSessionID())
+    , m_sessionID(sessionID)
     , m_configuration(WTFMove(configuration))
     , m_storageManager(StorageManager::create(m_configuration.localStorageDirectory))
     , m_resourceLoadStatistics(WebResourceLoadStatisticsStore::create(m_configuration.resourceLoadStatisticsDirectory))
@@ -92,9 +93,9 @@ WebsiteDataStore::~WebsiteDataStore()
 {
     platformDestroy();
 
-    if (m_sessionID.isEphemeral()) {
+    if (m_sessionID.isValid() && m_sessionID != WebCore::SessionID::defaultSessionID()) {
         for (auto& processPool : WebProcessPool::allProcessPools())
-            processPool->sendToNetworkingProcess(Messages::NetworkProcess::DestroyPrivateBrowsingSession(m_sessionID));
+            processPool->sendToNetworkingProcess(Messages::NetworkProcess::DestroySession(m_sessionID));
     }
 }
 
@@ -114,6 +115,7 @@ void WebsiteDataStore::resolveDirectoriesIfNecessary()
     m_resolvedConfiguration.mediaCacheDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(m_configuration.mediaCacheDirectory);
     m_resolvedConfiguration.mediaKeysStorageDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(m_configuration.mediaKeysStorageDirectory);
     m_resolvedConfiguration.webSQLDatabaseDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(m_configuration.webSQLDatabaseDirectory);
+    m_resolvedConfiguration.cookieStorageDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(m_configuration.cookieStorageDirectory);
 
     if (!m_configuration.javaScriptConfigurationDirectory.isEmpty())
         m_resolvedConfiguration.javaScriptConfigurationDirectory = resolvePathForSandboxExtension(m_configuration.javaScriptConfigurationDirectory);
@@ -1234,5 +1236,14 @@ void WebsiteDataStore::registerSharedResourceLoadObserver()
     m_resourceLoadStatistics->registerSharedResourceLoadObserver();
 #endif
 }
+
+#if !PLATFORM(COCOA)
+WebsiteDataStoreParameters WebsiteDataStore::parameters()
+{
+    // FIXME: Implement.
+
+    return { };
+}
+#endif
 
 }

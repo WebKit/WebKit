@@ -68,6 +68,7 @@
 #include "WebProcessPoolMessages.h"
 #include "WebProcessProxy.h"
 #include "WebsiteDataStore.h"
+#include "WebsiteDataStoreParameters.h"
 #include <WebCore/ApplicationCacheStorage.h>
 #include <WebCore/Language.h>
 #include <WebCore/LinkHash.h>
@@ -229,7 +230,7 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
     , m_shouldUseFontSmoothing(true)
     , m_memorySamplerEnabled(false)
     , m_memorySamplerInterval(1400.0)
-    , m_websiteDataStore(m_configuration->shouldHaveLegacyDataStore() ? API::WebsiteDataStore::create(legacyWebsiteDataStoreConfiguration(m_configuration)) : API::WebsiteDataStore::defaultDataStore())
+    , m_websiteDataStore(m_configuration->shouldHaveLegacyDataStore() ? API::WebsiteDataStore::createLegacy(legacyWebsiteDataStoreConfiguration(m_configuration)) : API::WebsiteDataStore::defaultDataStore())
 #if PLATFORM(MAC)
     , m_highPerformanceGraphicsUsageSampler(std::make_unique<HighPerformanceGraphicsUsageSampler>(*this))
     , m_perActivityStateCPUUsageSampler(std::make_unique<PerActivityStateCPUUsageSampler>(*this))
@@ -570,13 +571,13 @@ void WebProcessPool::setAnyPageGroupMightHavePrivateBrowsingEnabled(bool private
         if (privateBrowsingEnabled)
             networkProcess()->send(Messages::NetworkProcess::EnsurePrivateBrowsingSession(SessionID::legacyPrivateSessionID()), 0);
         else
-            networkProcess()->send(Messages::NetworkProcess::DestroyPrivateBrowsingSession(SessionID::legacyPrivateSessionID()), 0);
+            networkProcess()->send(Messages::NetworkProcess::DestroySession(SessionID::legacyPrivateSessionID()), 0);
     }
 
     if (privateBrowsingEnabled)
         sendToAllProcesses(Messages::WebProcess::EnsurePrivateBrowsingSession(SessionID::legacyPrivateSessionID()));
     else
-        sendToAllProcesses(Messages::WebProcess::DestroyPrivateBrowsingSession(SessionID::legacyPrivateSessionID()));
+        sendToAllProcesses(Messages::WebProcess::DestroySession(SessionID::legacyPrivateSessionID()));
 }
 
 void (*s_invalidMessageCallback)(WKStringRef messageName);
@@ -929,6 +930,15 @@ void WebProcessPool::pageAddedToProcess(WebPageProxy& page)
 {
     auto result = m_sessionToPagesMap.add(page.sessionID(), HashSet<WebPageProxy*>()).iterator->value.add(&page);
     ASSERT_UNUSED(result, result.isNewEntry);
+
+    auto sessionID = page.sessionID();
+    if (sessionID.isEphemeral()) {
+        sendToNetworkingProcess(Messages::NetworkProcess::EnsurePrivateBrowsingSession(sessionID));
+        page.process().send(Messages::WebProcess::EnsurePrivateBrowsingSession(sessionID), 0);
+    } else if (sessionID != SessionID::defaultSessionID()) {
+        sendToNetworkingProcess(Messages::NetworkProcess::AddWebsiteDataStore(page.websiteDataStore().parameters()));
+        page.process().send(Messages::WebProcess::AddWebsiteDataStore(page.websiteDataStore().parameters()), 0);
+    }
 }
 
 void WebProcessPool::pageRemovedFromProcess(WebPageProxy& page)
@@ -947,11 +957,8 @@ void WebProcessPool::pageRemovedFromProcess(WebPageProxy& page)
             return;
 
         // The last user of this non-default SessionID is gone, so clean it up in the child processes.
-
-        // FIXME: Remove this ASSERT and change these messages once multiple persistent sessions exist.
-        ASSERT(sessionID.isEphemeral());
-        networkProcess()->send(Messages::NetworkProcess::DestroyPrivateBrowsingSession(sessionID), 0);
-        page.process().send(Messages::WebProcess::DestroyPrivateBrowsingSession(sessionID), 0);
+        networkProcess()->send(Messages::NetworkProcess::DestroySession(sessionID), 0);
+        page.process().send(Messages::WebProcess::DestroySession(sessionID), 0);
     }
 }
 

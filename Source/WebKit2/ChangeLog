@@ -1,3 +1,82 @@
+2017-04-28  Brady Eidson  <beidson@apple.com>
+
+        Start of support for multiple WebsiteDataStore/SessionIDs per process
+        https://bugs.webkit.org/show_bug.cgi?id=171422
+
+        Reviewed by Geoffrey Garen.
+
+        * CMakeLists.txt:
+        * WebKit2.xcodeproj/project.pbxproj:
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::addWebsiteDataStore):
+        (WebKit::NetworkProcess::destroySession):
+        (WebKit::NetworkProcess::destroyPrivateBrowsingSession): Deleted.
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+
+        * NetworkProcess/RemoteNetworkingContext.h:
+        * NetworkProcess/mac/RemoteNetworkingContext.mm:
+        (WebKit::RemoteNetworkingContext::ensureWebsiteDataStoreSession):
+        * NetworkProcess/soup/RemoteNetworkingContextSoup.cpp:
+        (WebKit::RemoteNetworkingContext::ensureWebsiteDataStoreSession):
+
+        * Shared/WebsiteDataStoreParameters.cpp: Copied from Source/WebKit2/WebProcess/WebCoreSupport/soup/WebFrameNetworkingContext.h.
+        (WebKit::WebsiteDataStoreParameters::WebsiteDataStoreParameters):
+        (WebKit::WebsiteDataStoreParameters::encode):
+        (WebKit::WebsiteDataStoreParameters::decode):
+        * Shared/WebsiteDataStoreParameters.h: Copied from Source/WebKit2/WebProcess/WebCoreSupport/soup/WebFrameNetworkingContext.h.
+
+        * UIProcess/API/APIWebsiteDataStore.cpp:
+        (API::WebsiteDataStore::defaultDataStore):
+        (API::WebsiteDataStore::createLegacy):
+        (API::WebsiteDataStore::WebsiteDataStore):
+        (API::WebsiteDataStore::create): Deleted.
+        * UIProcess/API/APIWebsiteDataStore.h:
+
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _initWithConfiguration:]):
+
+        * UIProcess/API/gtk/WebKitWebsiteDataManager.cpp:
+        (webkitWebsiteDataManagerCreate):
+        (webkitWebsiteDataManagerGetDataStore):
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::m_weakPtrFactory):
+        * UIProcess/WebPageProxy.h:
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::WebProcessPool):
+        (WebKit::WebProcessPool::setAnyPageGroupMightHavePrivateBrowsingEnabled):
+        (WebKit::WebProcessPool::pageAddedToProcess):
+        (WebKit::WebProcessPool::pageRemovedFromProcess):
+
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::parameters):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::create):
+        (WebKit::WebsiteDataStore::WebsiteDataStore):
+        (WebKit::WebsiteDataStore::~WebsiteDataStore):
+        (WebKit::WebsiteDataStore::resolveDirectoriesIfNecessary):
+        (WebKit::WebsiteDataStore::parameters):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
+        * WebProcess/WebCoreSupport/mac/WebFrameNetworkingContext.h:
+        * WebProcess/WebCoreSupport/mac/WebFrameNetworkingContext.mm:
+        (WebKit::WebFrameNetworkingContext::ensureWebsiteDataStoreSession):
+        (WebKit::WebFrameNetworkingContext::storageSession):
+        * WebProcess/WebCoreSupport/soup/WebFrameNetworkingContext.cpp:
+        (WebKit::WebFrameNetworkingContext::ensureWebsiteDataStoreSession):
+        * WebProcess/WebCoreSupport/soup/WebFrameNetworkingContext.h:
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::addWebsiteDataStore):
+        (WebKit::WebProcess::destroySession):
+        (WebKit::WebProcess::destroyPrivateBrowsingSession): Deleted.
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+
 2017-04-28  Youenn Fablet  <youenn@apple.com>
 
         Adding a runtime flag specific to MediaDevices

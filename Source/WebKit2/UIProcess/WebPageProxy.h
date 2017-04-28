@@ -301,6 +301,8 @@ public:
     const API::PageConfiguration& configuration() const;
 
     uint64_t pageID() const { return m_pageID; }
+
+    // FIXME: Don't keep a separate sessionID - Rely on the WebsiteDataStore
     WebCore::SessionID sessionID() const { return m_sessionID; }
 
     WebFrameProxy* mainFrame() const { return m_mainFrame.get(); }
@@ -1841,6 +1843,9 @@ private:
 #endif
 
     const uint64_t m_pageID;
+
+
+    // FIXME: Don't keep a separate sessionID - Rely on the WebsiteDataStore
     const WebCore::SessionID m_sessionID;
 
     bool m_isPageSuspended;

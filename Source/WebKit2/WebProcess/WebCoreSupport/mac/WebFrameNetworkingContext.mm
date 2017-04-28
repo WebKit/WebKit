@@ -31,6 +31,7 @@
 #include "WebCookieManager.h"
 #include "WebPage.h"
 #include "WebProcess.h"
+#include "WebsiteDataStoreParameters.h"
 #include <WebCore/CFNetworkSPI.h>
 #include <WebCore/Frame.h>
 #include <WebCore/FrameLoader.h>
@@ -62,6 +63,36 @@ void WebFrameNetworkingContext::ensurePrivateBrowsingSession(SessionID sessionID
 #if USE(NETWORK_SESSION)
     auto networkSession = NetworkSession::create(sessionID);
     SessionTracker::setSession(sessionID, WTFMove(networkSession));
+#endif
+}
+
+void WebFrameNetworkingContext::ensureWebsiteDataStoreSession(WebsiteDataStoreParameters&& parameters)
+{
+    if (NetworkStorageSession::storageSession(parameters.sessionID))
+        return;
+
+    String base;
+    if (SessionTracker::getIdentifierBase().isNull())
+        base = [[NSBundle mainBundle] bundleIdentifier];
+    else
+        base = SessionTracker::getIdentifierBase();
+
+#if PLATFORM(IOS)
+    SandboxExtension::consumePermanently(parameters.cookieStorageDirectoryExtensionHandle);
+#endif
+
+    RetainPtr<CFHTTPCookieStorageRef> uiProcessCookieStorage;
+
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
+    RetainPtr<CFDataRef> cookieStorageData = adoptCF(CFDataCreate(kCFAllocatorDefault, parameters.uiProcessCookieStorageIdentifier.data(), parameters.uiProcessCookieStorageIdentifier.size()));
+    uiProcessCookieStorage = adoptCF(CFHTTPCookieStorageCreateFromIdentifyingData(kCFAllocatorDefault, cookieStorageData.get()));
+#endif
+
+    NetworkStorageSession::ensureSession(parameters.sessionID, base + '.' + String::number(parameters.sessionID.sessionID()), WTFMove(uiProcessCookieStorage));
+
+#if USE(NETWORK_SESSION)
+    auto networkSession = NetworkSession::create(parameters.sessionID);
+    SessionTracker::setSession(parameters.sessionID, WTFMove(networkSession));
 #endif
 }
 
@@ -109,7 +140,7 @@ NetworkStorageSession& WebFrameNetworkingContext::storageSession() const
         if (auto* storageSession = WebCore::NetworkStorageSession::storageSession(frame()->page()->sessionID()))
             return *storageSession;
         // Some requests may still be coming shortly after WebProcess was told to destroy its session.
-        LOG_ERROR("Invalid session ID. Please file a bug unless you just disabled private browsing, in which case it's an expected race.");
+        LOG_ERROR("WEB Invalid session ID. Please file a bug unless you just disabled private browsing, in which case it's an expected race.");
     }
     return NetworkStorageSession::defaultStorageSession();
 }

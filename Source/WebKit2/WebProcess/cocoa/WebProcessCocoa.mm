@@ -45,6 +45,7 @@
 #import "WebPage.h"
 #import "WebProcessCreationParameters.h"
 #import "WebProcessProxyMessages.h"
+#import "WebsiteDataStoreParameters.h"
 #import <JavaScriptCore/Options.h>
 #import <WebCore/AXObjectCache.h>
 #import <WebCore/CFNetworkSPI.h>

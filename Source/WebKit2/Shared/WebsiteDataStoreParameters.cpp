@@ -1,7 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
- * Copyright (C) 2013 University of Szeged. All rights reserved.
- * Copyright (C) 2013 Company 100 Inc.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,49 +24,45 @@
  */
 
 #include "config.h"
-#include "RemoteNetworkingContext.h"
-
-#include "NetworkSession.h"
-#include "SessionTracker.h"
 #include "WebsiteDataStoreParameters.h"
-#include <WebCore/NetworkStorageSession.h>
-#include <WebCore/NotImplemented.h>
-#include <WebCore/ResourceHandle.h>
 
-using namespace WebCore;
+#include "WebCoreArgumentCoders.h"
 
 namespace WebKit {
 
-RemoteNetworkingContext::~RemoteNetworkingContext()
+
+WebsiteDataStoreParameters::WebsiteDataStoreParameters()
 {
 }
 
-bool RemoteNetworkingContext::isValid() const
+void WebsiteDataStoreParameters::encode(IPC::Encoder& encoder) const
 {
+    encoder << sessionID;
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
+    encoder << uiProcessCookieStorageIdentifier;
+#endif
+#if PLATFORM(IOS)
+    encoder << cookieStorageDirectoryExtensionHandle;
+#endif
+}
+
+bool WebsiteDataStoreParameters::decode(IPC::Decoder& decoder, WebsiteDataStoreParameters& parameters)
+{
+    if (!decoder.decode(parameters.sessionID))
+        return false;
+
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
+    if (!decoder.decode(parameters.uiProcessCookieStorageIdentifier))
+        return false;
+#endif
+
+#if PLATFORM(IOS)
+    if (!decoder.decode(parameters.cookieStorageDirectoryExtensionHandle))
+        return false;
+#endif
+
     return true;
 }
 
-void RemoteNetworkingContext::ensurePrivateBrowsingSession(SessionID sessionID)
-{
-    ASSERT(sessionID.isEphemeral());
 
-    if (NetworkStorageSession::storageSession(sessionID))
-        return;
-
-    NetworkStorageSession::ensurePrivateBrowsingSession(sessionID, String::number(sessionID.sessionID()));
-    SessionTracker::setSession(sessionID, NetworkSession::create(sessionID));
-}
-
-void RemoteNetworkingContext::ensureWebsiteDataStoreSession(WebsiteDataStoreParameters&&)
-{
-    // FIXME: Implement.
-}
-
-NetworkStorageSession& RemoteNetworkingContext::storageSession() const
-{
-    if (auto session = NetworkStorageSession::storageSession(m_sessionID))
-        return *session;
-    return NetworkStorageSession::defaultStorageSession();
-}
-
-}
+} // namespace WebKit

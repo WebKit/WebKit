@@ -79,15 +79,25 @@ TEST(WebKit2, WebsiteDataStoreCustomPaths)
     NSURL *localStoragePath = [NSURL fileURLWithPath:[@"~/Library/WebKit/TestWebKitAPI/CustomWebsiteData/LocalStorage/" stringByExpandingTildeInPath]];
     NSURL *cookieStoragePath = [NSURL fileURLWithPath:[@"~/Library/WebKit/TestWebKitAPI/CustomWebsiteData/CookieStorage/" stringByExpandingTildeInPath]];
 
+    NSURL *defaultSQLPath = [NSURL fileURLWithPath:[@"~/Library/WebKit/TestWebKitAPI/WebsiteData/WebSQL/" stringByExpandingTildeInPath]];
+    NSURL *defaultIDBPath = [NSURL fileURLWithPath:[@"~/Library/WebKit/TestWebKitAPI/WebsiteData/IndexedDB/" stringByExpandingTildeInPath]];
+    NSURL *defaultLocalStoragePath = [NSURL fileURLWithPath:[@"~/Library/WebKit/TestWebKitAPI/WebsiteData/LocalStorage/" stringByExpandingTildeInPath]];
+
     [[NSFileManager defaultManager] removeItemAtURL:sqlPath error:nil];
     [[NSFileManager defaultManager] removeItemAtURL:idbPath error:nil];
     [[NSFileManager defaultManager] removeItemAtURL:localStoragePath error:nil];
     [[NSFileManager defaultManager] removeItemAtURL:cookieStoragePath error:nil];
+    [[NSFileManager defaultManager] removeItemAtURL:defaultSQLPath error:nil];
+    [[NSFileManager defaultManager] removeItemAtURL:defaultIDBPath error:nil];
+    [[NSFileManager defaultManager] removeItemAtURL:defaultLocalStoragePath error:nil];
 
     EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:sqlPath.path]);
     EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:idbPath.path]);
     EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:localStoragePath.path]);
     EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:cookieStoragePath.path]);
+    EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:defaultSQLPath.path]);
+    EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:defaultIDBPath.path]);
+    EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:defaultLocalStoragePath.path]);
 
     _WKWebsiteDataStoreConfiguration *websiteDataStoreConfiguration = [[_WKWebsiteDataStoreConfiguration alloc] init];
     websiteDataStoreConfiguration._webSQLDatabaseDirectory = sqlPath;
@@ -111,12 +121,17 @@ TEST(WebKit2, WebsiteDataStoreCustomPaths)
 
     EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:sqlPath.path]);
     EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:localStoragePath.path]);
-    
-    // FIXME: Once this API works this should be true, and there should be a file that contains the bytes "testkey=value"
+
+    // FIXME: This should be true, but comes up false. Possibly a CFNetwork issue. Being explored in <rdar://problem/31666275>
     EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:cookieStoragePath.path]);
-    
-    // FIXME: <rdar://problem/30785618> - We don't yet support IDB database processes at custom paths per WebsiteDataStore
-    // EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:idbPath]);
+
+    // FIXME: <rdar://problem/30785618> - We don't yet support IDB database processes at custom paths per WebsiteDataStore (These should be flipped)
+    EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:idbPath.path]);
+    EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:defaultIDBPath.path]);
+
+    // FIXME: The default SQL and LocalStorage paths are being used for something, but they shouldn't be. (theses should be false, not true)
+    EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:defaultSQLPath.path]);
+    EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:defaultLocalStoragePath.path]);
 }
 
 #endif

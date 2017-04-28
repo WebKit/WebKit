@@ -513,7 +513,12 @@ void WebProcess::ensurePrivateBrowsingSession(SessionID sessionID)
     WebFrameNetworkingContext::ensurePrivateBrowsingSession(sessionID);
 }
 
-void WebProcess::destroyPrivateBrowsingSession(SessionID sessionID)
+void WebProcess::addWebsiteDataStore(WebsiteDataStoreParameters&& parameters)
+{
+    WebFrameNetworkingContext::ensureWebsiteDataStoreSession(WTFMove(parameters));
+}
+
+void WebProcess::destroySession(SessionID sessionID)
 {
     SessionTracker::destroySession(sessionID);
 }
