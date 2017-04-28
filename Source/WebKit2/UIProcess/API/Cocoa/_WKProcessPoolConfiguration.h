@@ -54,6 +54,7 @@ WK_CLASS_AVAILABLE(macosx(10.10), ios(8.0))
 #if TARGET_OS_IPHONE
 @property (nonatomic, nullable, copy) NSString *CTDataConnectionServiceType WK_API_AVAILABLE(ios(WK_IOS_TBA));
 @property (nonatomic) BOOL alwaysRunsAtBackgroundPriority WK_API_AVAILABLE(ios(WK_IOS_TBA));
+@property (nonatomic) BOOL shouldTakeUIBackgroundAssertion WK_API_AVAILABLE(ios(WK_IOS_TBA));
 #endif
 
 

@@ -33,12 +33,12 @@ namespace WebKit {
     
 static const Seconds processSuspensionTimeout { 30_s };
     
-ProcessThrottler::ProcessThrottler(ProcessThrottlerClient& process)
+ProcessThrottler::ProcessThrottler(ProcessThrottlerClient& process, bool shouldTakeUIBackgroundAssertion)
     : m_process(process)
     , m_suspendTimer(RunLoop::main(), this, &ProcessThrottler::suspendTimerFired)
     , m_foregroundCounter([this](RefCounterEvent) { updateAssertion(); })
     , m_backgroundCounter([this](RefCounterEvent) { updateAssertion(); })
-    , m_suspendMessageCount(0)
+    , m_shouldTakeUIBackgroundAssertion(shouldTakeUIBackgroundAssertion)
 {
 }
     
@@ -94,7 +94,10 @@ void ProcessThrottler::updateAssertion()
 void ProcessThrottler::didConnectToProcess(pid_t pid)
 {
     m_suspendTimer.stop();
-    m_assertion = std::make_unique<ProcessAndUIAssertion>(pid, assertionState());
+    if (m_shouldTakeUIBackgroundAssertion)
+        m_assertion = std::make_unique<ProcessAndUIAssertion>(pid, assertionState());
+    else
+        m_assertion = std::make_unique<ProcessAssertion>(pid, assertionState());
     m_process.didSetAssertionState(assertionState());
     m_assertion->setClient(*this);
 }

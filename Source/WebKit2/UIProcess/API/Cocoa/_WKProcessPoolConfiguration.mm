@@ -238,6 +238,16 @@
 {
     _processPoolConfiguration->setAlwaysRunsAtBackgroundPriority(alwaysRunsAtBackgroundPriority);
 }
+
+- (BOOL)shouldTakeUIBackgroundAssertion
+{
+    return _processPoolConfiguration->shouldTakeUIBackgroundAssertion();
+}
+
+- (void)setShouldTakeUIBackgroundAssertion:(BOOL)shouldTakeUIBackgroundAssertion
+{
+    return _processPoolConfiguration->setShouldTakeUIBackgroundAssertion(shouldTakeUIBackgroundAssertion);
+}
 #endif
 
 - (NSString *)description

@@ -69,7 +69,7 @@ NetworkProcessProxy::NetworkProcessProxy(WebProcessPool& processPool)
     , m_processPool(processPool)
     , m_numPendingConnectionRequests(0)
     , m_customProtocolManagerProxy(this, processPool)
-    , m_throttler(*this)
+    , m_throttler(*this, processPool.shouldTakeUIBackgroundAssertion())
 {
     connect();
 }

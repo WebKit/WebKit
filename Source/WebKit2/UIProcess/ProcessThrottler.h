@@ -51,7 +51,7 @@ public:
     typedef RefCounter<BackgroundActivityCounterType> BackgroundActivityCounter;
     typedef BackgroundActivityCounter::Token BackgroundActivityToken;
 
-    ProcessThrottler(ProcessThrottlerClient&);
+    ProcessThrottler(ProcessThrottlerClient&, bool shouldTakeUIBackgroundAssertion);
 
     inline ForegroundActivityToken foregroundActivityToken() const;
     inline BackgroundActivityToken backgroundActivityToken() const;
@@ -70,11 +70,12 @@ private:
     void assertionWillExpireImminently() override;
 
     ProcessThrottlerClient& m_process;
-    std::unique_ptr<ProcessAndUIAssertion> m_assertion;
+    std::unique_ptr<ProcessAssertion> m_assertion;
     RunLoop::Timer<ProcessThrottler> m_suspendTimer;
     ForegroundActivityCounter m_foregroundCounter;
     BackgroundActivityCounter m_backgroundCounter;
-    int m_suspendMessageCount;
+    int m_suspendMessageCount { 0 };
+    bool m_shouldTakeUIBackgroundAssertion;
 };
 
 inline ProcessThrottler::ForegroundActivityToken ProcessThrottler::foregroundActivityToken() const

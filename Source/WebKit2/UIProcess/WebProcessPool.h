@@ -394,7 +394,8 @@ public:
     bool resourceLoadStatisticsEnabled() { return m_resourceLoadStatisticsEnabled; }
     void setResourceLoadStatisticsEnabled(bool enabled) { m_resourceLoadStatisticsEnabled = enabled; }
 
-    bool alwaysRunsAtBackgroundPriority() { return m_alwaysRunsAtBackgroundPriority; }
+    bool alwaysRunsAtBackgroundPriority() const { return m_alwaysRunsAtBackgroundPriority; }
+    bool shouldTakeUIBackgroundAssertion() const { return m_shouldTakeUIBackgroundAssertion; }
 
 #if ENABLE(GAMEPAD)
     void gamepadConnected(const UIGamepad&);
@@ -574,6 +575,7 @@ private:
     bool m_resourceLoadStatisticsEnabled { false };
     bool m_javaScriptConfigurationFileEnabled { false };
     bool m_alwaysRunsAtBackgroundPriority;
+    bool m_shouldTakeUIBackgroundAssertion;
 
     UserObservablePageCounter m_userObservablePageCounter;
     ProcessSuppressionDisabledCounter m_processSuppressionDisabledForPageCounter;

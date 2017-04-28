@@ -52,13 +52,13 @@ public:
 class ProcessAssertion {
 public:
     ProcessAssertion(pid_t, AssertionState, Function<void()>&& invalidationCallback = { });
-    ~ProcessAssertion();
+    virtual ~ProcessAssertion();
 
-    void setClient(ProcessAssertionClient& client) { m_client = &client; }
+    virtual void setClient(ProcessAssertionClient& client) { m_client = &client; }
     ProcessAssertionClient* client() { return m_client; }
 
     AssertionState state() const { return m_assertionState; }
-    void setState(AssertionState);
+    virtual void setState(AssertionState);
 
 #if PLATFORM(IOS) && !PLATFORM(IOS_SIMULATOR)
 protected:
@@ -80,14 +80,14 @@ private:
     ProcessAssertionClient* m_client { nullptr };
 };
     
-class ProcessAndUIAssertion : public ProcessAssertion {
+class ProcessAndUIAssertion final : public ProcessAssertion {
 public:
     ProcessAndUIAssertion(pid_t, AssertionState);
     ~ProcessAndUIAssertion();
 
-    void setClient(ProcessAssertionClient&);
+    void setClient(ProcessAssertionClient&) final;
 
-    void setState(AssertionState);
+    void setState(AssertionState) final;
 
 #if PLATFORM(IOS) && !PLATFORM(IOS_SIMULATOR)
 private:
