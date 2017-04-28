@@ -1,3 +1,16 @@
+2017-04-27  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [GTK] Web Inspector: Add new GTK+ icons for different Script Timeline Views (Events and Call Trees)
+        https://bugs.webkit.org/show_bug.cgi?id=155077
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Images/gtk/CallTrees.svg: Added.
+        * UserInterface/Images/gtk/Events.svg: Added.
+        * UserInterface/Views/PathComponentIcons.css:
+        (body:not(.mac-platform, .windows-platform) .heap-snapshot-record .icon,):
+        (body:not(.mac-platform, .windows-platform) .events-icon .icon,): Deleted.
+
 2017-04-27  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Remove unused ToggleControlToolbarItem.js
