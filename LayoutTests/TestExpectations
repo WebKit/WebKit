@@ -330,6 +330,11 @@ webkit.org/b/169565 imported/w3c/web-platform-tests/cors/status-preflight.htm [ 
 webkit.org/b/169565 imported/w3c/web-platform-tests/cors/status-async.htm [ Failure ]
 webkit.org/b/169565 imported/w3c/web-platform-tests/cors/304.htm [ Failure ]
 
+# Tests that are flakey due to unhandled promise rejection error messages
+webkit.org/b/171094 imported/w3c/web-platform-tests/streams/readable-streams/tee.html [ Pass Failure ]
+webkit.org/b/171094 streams/brand-checks.html [ Pass Failure ]
+webkit.org/b/171094 streams/reference-implementation/abstract-ops.html [ Pass Failure ]
+
 # WPT tests that fail after doing full test repository reimport and need further investigation
 imported/w3c/web-platform-tests/XMLHttpRequest/send-entity-body-document.htm [ Pass Failure Timeout ]
 imported/w3c/web-platform-tests/dom/nodes/Document-createElement-namespace.html [ Pass Failure ]

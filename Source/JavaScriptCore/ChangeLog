@@ -1,3 +1,58 @@
+2017-04-27  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Support for promise rejection events (unhandledrejection)
+        https://bugs.webkit.org/show_bug.cgi?id=150358
+        <rdar://problem/28441651>
+
+        Reviewed by Saam Barati.
+
+        Patch by Joseph Pecoraro and Yusuke Suzuki.
+
+        Implement support for promise.[[PromiseIsHandled]] and the
+        HostPromiseRejectionTracker hook for HTML to track promise rejections:
+        https://tc39.github.io/ecma262/#sec-host-promise-rejection-tracker
+        https://html.spec.whatwg.org/multipage/webappapis.html#unhandled-promise-rejections
+
+        * builtins/BuiltinNames.h:
+        New private symbols.
+
+        * builtins/PromiseOperations.js:
+        (globalPrivate.newHandledRejectedPromise):
+        Utility to create a rejected promise with [[PromiseIsHandled]] to true.
+
+        (globalPrivate.rejectPromise):
+        (globalPrivate.initializePromise):
+        * builtins/PromisePrototype.js:
+        (then):
+        Implement standard behavior of [[PromiseIsHandled]] and the host hook.
+
+        * runtime/JSPromise.cpp:
+        (JSC::JSPromise::isHandled):
+        * runtime/JSPromise.h:
+        C++ accessors for the [[PromiseIsHandled]] state.
+
+        * bytecode/BytecodeIntrinsicRegistry.cpp:
+        (JSC::BytecodeIntrinsicRegistry::BytecodeIntrinsicRegistry):
+        * bytecode/BytecodeIntrinsicRegistry.h:
+        Expose private values for the Reject / Handle enum values in built-ins.
+
+        * jsc.cpp:
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::promiseResolveFunction):
+        Add a new GlobalObjectMethodTable hook matching the promise rejection hook.
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncHostPromiseRejectionTracker):
+        * runtime/JSGlobalObjectFunctions.h:
+        Plumb the builtin hook through to the optional GlobalObjectMethodTable hook.
+
+        * inspector/InjectedScriptSource.js:
+        (InjectedScript.prototype.createFakeValueDescriptor):
+        Silence possible rejected promises created internally via Web Inspector.
+
 2017-04-27  Saam Barati  <sbarati@apple.com>
 
         B3::FoldPathConstants does not consider the fall through case for Switch

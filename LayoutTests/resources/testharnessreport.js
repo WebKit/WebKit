@@ -44,46 +44,47 @@ if (self.testRunner) {
     */
     setup({"output": false, "explicit_timeout": true});
 
-    /*  Using a callback function, test results will be added to the page in a 
+    /*  Using a callback function, test results will be added to the page in a
     *   manner that allows dumpAsText to produce readable test results
     */
     add_completion_callback(function (tests, harness_status) {
-        // Wait for any other completion callbacks
-        setTimeout(function() {
-            var results = document.createElement("pre");
-            var resultStr = "\n";
+        var results = document.createElement("pre");
+        var resultStr = "\n";
 
-            // Sanitizes the given text for display in test results.
-            function sanitize(text) {
-                if (!text) {
-                    return "";
-                }
-                text = text.replace(/\0/g, "\\0");
-                return text.replace(/\r/g, "\\r");
+        // Sanitizes the given text for display in test results.
+        function sanitize(text) {
+            if (!text) {
+                return "";
             }
+            text = text.replace(/\0/g, "\\0");
+            return text.replace(/\r/g, "\\r");
+        }
 
-            if(harness_status.status != 0)
-                resultStr += "Harness Error (" + convertResult(harness_status.status) + "), message = " + harness_status.message + "\n\n";
+        if(harness_status.status != 0)
+            resultStr += "Harness Error (" + convertResult(harness_status.status) + "), message = " + harness_status.message + "\n\n";
 
-            for (var i = 0; i < tests.length; i++) {
-                var message = sanitize(tests[i].message);
-                if (tests[i].status == 1 && !tests[i].dumpStack) {
-                    // Remove stack for failed tests for proper string comparison without file paths.
-                    // For a test to dump the stack set its dumpStack attribute to true.
-                    var stackIndex = message.indexOf("(stack:");
-                    if (stackIndex > 0)
-                        message = message.substr(0, stackIndex);
-                }
-                resultStr += convertResult(tests[i].status) + " " + sanitize(tests[i].name) + " " + message + "\n";
+        for (var i = 0; i < tests.length; i++) {
+            var message = sanitize(tests[i].message);
+            if (tests[i].status == 1 && !tests[i].dumpStack) {
+                // Remove stack for failed tests for proper string comparison without file paths.
+                // For a test to dump the stack set its dumpStack attribute to true.
+                var stackIndex = message.indexOf("(stack:");
+                if (stackIndex > 0)
+                    message = message.substr(0, stackIndex);
             }
+            resultStr += convertResult(tests[i].status) + " " + sanitize(tests[i].name) + " " + message + "\n";
+        }
 
-            results.innerText = resultStr;
-            var log = document.getElementById("log");
-            if (log)
-                log.appendChild(results);
-            else
-                document.body.appendChild(results);
+        results.innerText = resultStr;
+        var log = document.getElementById("log");
+        if (log)
+            log.appendChild(results);
+        else
+            document.body.appendChild(results);
 
+        // Wait for any other completion callbacks, which may eliminate test elements
+        // from the page and therefore reduce the output.
+        setTimeout(function () {
             testRunner.notifyDone();
         }, 0);
     });

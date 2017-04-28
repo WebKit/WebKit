@@ -26,6 +26,7 @@ OverflowEvent
 PageTransitionEvent
 PopStateEvent
 ProgressEvent
+PromiseRejectionEvent
 TextEvent
 TransitionEvent
 UIEvent

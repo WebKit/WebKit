@@ -5,6 +5,12 @@
 
         <script src=../media-file.js></script>
         <script src=../video-test.js></script>
+    </head>
+    <body onload="bodyLoaded()">
+        <p>Tests that the video is paused after cues that have pause-on-exit flag are processed</p>
+        <video controls>
+            <track id="testTrack" src="captions-webvtt/simple-captions.vtt" onload="loaded()" default>
+        </video>
         <script>
             var videoCanPlayThrough = false;
             var trackLoaded = false;
@@ -75,11 +81,5 @@
 
             setCaptionDisplayMode('Automatic');
         </script>
-    </head>
-    <body onload="bodyLoaded()">
-        <p>Tests that the video is paused after cues that have pause-on-exit flag are processed</p>
-        <video controls>
-            <track id="testTrack" src="captions-webvtt/simple-captions.vtt" onload="loaded()" default>
-        </video>
     </body>
 </html>

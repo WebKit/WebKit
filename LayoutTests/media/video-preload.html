@@ -50,7 +50,7 @@
                 
                 // start playback, which should force data to load
                 movie.shouldBuffer = true;
-                run("video.play()");
+                run("handlePromise(video.play())");
             }
 
             function loadedmetadata()

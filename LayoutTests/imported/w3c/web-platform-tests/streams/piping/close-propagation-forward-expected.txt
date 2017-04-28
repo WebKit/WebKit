@@ -1,3 +1,21 @@
+CONSOLE MESSAGE: line 1: Unhandled Promise Rejection: TypeError: cancel() called on a reader owned by no readable stream
+CONSOLE MESSAGE: line 1: Unhandled Promise Rejection: TypeError: cancel() called on a reader owned by no readable stream
+CONSOLE MESSAGE: line 1: Unhandled Promise Rejection: TypeError: cancel() called on a reader owned by no readable stream
+CONSOLE MESSAGE: line 1: Unhandled Promise Rejection: TypeError: cancel() called on a reader owned by no readable stream
+CONSOLE MESSAGE: line 1: Unhandled Promise Rejection: TypeError: cancel() called on a reader owned by no readable stream
+CONSOLE MESSAGE: line 1: Unhandled Promise Rejection: TypeError: cancel() called on a reader owned by no readable stream
+CONSOLE MESSAGE: line 1: Unhandled Promise Rejection: TypeError: cancel() called on a reader owned by no readable stream
+CONSOLE MESSAGE: line 1: Unhandled Promise Rejection: TypeError: cancel() called on a reader owned by no readable stream
+CONSOLE MESSAGE: line 1: Unhandled Promise Rejection: TypeError: cancel() called on a reader owned by no readable stream
+CONSOLE MESSAGE: line 1: Unhandled Promise Rejection: TypeError: cancel() called on a reader owned by no readable stream
+CONSOLE MESSAGE: line 1: Unhandled Promise Rejection: TypeError: cancel() called on a reader owned by no readable stream
+CONSOLE MESSAGE: line 1: Unhandled Promise Rejection: TypeError: cancel() called on a reader owned by no readable stream
+CONSOLE MESSAGE: line 1: Unhandled Promise Rejection: TypeError: cancel() called on a reader owned by no readable stream
+CONSOLE MESSAGE: line 1: Unhandled Promise Rejection: TypeError: cancel() called on a reader owned by no readable stream
+CONSOLE MESSAGE: line 1: Unhandled Promise Rejection: TypeError: cancel() called on a reader owned by no readable stream
+CONSOLE MESSAGE: line 1: Unhandled Promise Rejection: TypeError: cancel() called on a reader owned by no readable stream
+
+Harness Error (FAIL), message = cancel() called on a reader owned by no readable stream
 
 FAIL Closing must be propagated forward: starts closed; preventClose omitted; fulfilled close promise assert_array_equals: close must always be called with the controller lengths differ, expected 1 got 0
 FAIL Closing must be propagated forward: starts closed; preventClose omitted; rejected close promise assert_array_equals: close must always be called with the controller lengths differ, expected 1 got 0

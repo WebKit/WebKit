@@ -54,7 +54,7 @@ function readableStreamReaderGenericInitialize(reader, stream)
         reader.@closedPromiseCapability = { @promise: @Promise.@resolve() };
     else {
         @assert(stream.@state === @streamErrored);
-        reader.@closedPromiseCapability = { @promise: @Promise.@reject(stream.@storedError) };
+        reader.@closedPromiseCapability = { @promise: @newHandledRejectedPromise(stream.@storedError) };
     }
 }
 
@@ -279,6 +279,7 @@ function readableStreamError(stream, error)
         @throwTypeError("Only ReadableStreamDefaultReader is currently supported");
 
     reader.@closedPromiseCapability.@reject.@call(@undefined, error);
+    reader.@closedPromiseCapability.@promise.@promiseIsHandled = true;
 }
 
 function readableStreamDefaultControllerCallPullIfNeeded(controller)
@@ -493,10 +494,11 @@ function readableStreamReaderGenericRelease(reader)
     @assert(!!reader.@ownerReadableStream);
     @assert(reader.@ownerReadableStream.@reader === reader);
 
-    if (reader.@ownerReadableStream.@state === @streamReadable)
+    if (reader.@ownerReadableStream.@state === @streamReadable) {
         reader.@closedPromiseCapability.@reject.@call(@undefined, new @TypeError("releasing lock of reader whose stream is still in readable state"));
-    else
-        reader.@closedPromiseCapability = { @promise: @Promise.@reject(new @TypeError("reader released lock")) };
+        reader.@closedPromiseCapability.@promise.@promiseIsHandled = true;
+    } else
+        reader.@closedPromiseCapability = { @promise: @newHandledRejectedPromise(new @TypeError("reader released lock")) };
 
     reader.@ownerReadableStream.@reader = @undefined;
     reader.@ownerReadableStream = null;

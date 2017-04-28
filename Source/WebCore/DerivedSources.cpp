@@ -379,6 +379,7 @@
 #include "JSPositionOptions.cpp"
 #include "JSProcessingInstruction.cpp"
 #include "JSProgressEvent.cpp"
+#include "JSPromiseRejectionEvent.cpp"
 #include "JSRadioNodeList.cpp"
 #include "JSRange.cpp"
 #include "JSReadableByteStreamController.cpp"

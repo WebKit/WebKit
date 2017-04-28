@@ -110,7 +110,9 @@ function pipeThrough(streams, options)
 
     const writable = streams.writable;
     const readable = streams.readable;
-    this.pipeTo(writable, options);
+    const promise = this.pipeTo(writable, options);
+    if (@isPromise(promise))
+        promise.@promiseIsHandled = true;
     return readable;
 }
 

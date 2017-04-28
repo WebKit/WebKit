@@ -25,7 +25,7 @@
             function loadedmetadata()
             {
                 consoleWrite('<br>* video.play() should fail ');
-                run('video.play()');
+                run('handlePromise(video.play())');
                 testExpected('video.paused', true);
 
                 consoleWrite('<br>* Send a play command, it should succeed.');

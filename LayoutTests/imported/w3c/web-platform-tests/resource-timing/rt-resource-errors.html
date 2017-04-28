@@ -33,7 +33,7 @@ promise_test(function(t) {
     let rejectedDataURL = crossOriginURL("cors-denied", "resource-timing/resources/data.json");
     let allowedDataURL = crossOriginURL("cors-allowed", "resource-timing/resources/data.json") + "&pipe=header(Access-Control-Allow-Origin,*)";
 
-    fetch(rejectedDataURL);
+    fetch(rejectedDataURL).catch(function(){});
     fetch(allowedDataURL);
 
     return observeResources(1).then(([entry]) => {

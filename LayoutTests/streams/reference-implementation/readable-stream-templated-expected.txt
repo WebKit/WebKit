@@ -1,3 +1,21 @@
+CONSOLE MESSAGE: line 1: Unhandled Promise Rejection: TypeError: cancel() called on a reader owned by no readable stream
+CONSOLE MESSAGE: line 1: Unhandled Promise Rejection: Error: boo!
+CONSOLE MESSAGE: line 1: Unhandled Promise Rejection: TypeError: cancel() called on a reader owned by no readable stream
+CONSOLE MESSAGE: line 1: Unhandled Promise Rejection: Error: boo!
+CONSOLE MESSAGE: line 1: Unhandled Promise Rejection: Error: boo!
+CONSOLE MESSAGE: line 1: Unhandled Promise Rejection: TypeError: cancel() called on a reader owned by no readable stream
+CONSOLE MESSAGE: line 1: Unhandled Promise Rejection: Error: boo!
+CONSOLE MESSAGE: line 1: Unhandled Promise Rejection: TypeError: cancel() called on a reader owned by no readable stream
+CONSOLE MESSAGE: line 1: Unhandled Promise Rejection: Error: boo!
+CONSOLE MESSAGE: line 1: Unhandled Promise Rejection: Error: !!!
+CONSOLE MESSAGE: line 1: Unhandled Promise Rejection: Error: !!!
+CONSOLE MESSAGE: line 1: Unhandled Promise Rejection: Error: !!!
+CONSOLE MESSAGE: line 1: Unhandled Promise Rejection: Error: !!!
+CONSOLE MESSAGE: line 1: Unhandled Promise Rejection: TypeError: cancel() called on a reader owned by no readable stream
+CONSOLE MESSAGE: line 1: Unhandled Promise Rejection: TypeError: cancel() called on a reader owned by no readable stream
+CONSOLE MESSAGE: line 1: Unhandled Promise Rejection: TypeError: cancel() called on a reader owned by no readable stream
+
+Harness Error (FAIL), message = cancel() called on a reader owned by no readable stream
 
 PASS Running templatedRSClosed with ReadableStream (closed via call in start) 
 PASS piping to a WritableStream in the writable state should close the writable stream 

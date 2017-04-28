@@ -38,7 +38,7 @@ function mediaPaused()
     debug("");
     debug("Resuming media playback.");
     media.addEventListener("play", mediaResumedPlaying);
-    media.play();
+    media.play().catch(function(){});
 }
 
 function mediaResumedPlaying()

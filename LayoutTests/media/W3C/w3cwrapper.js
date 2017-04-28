@@ -59,4 +59,7 @@ assert_equals = function(a, b) { shouldBe('"' + a + '"', '"' + b + '"'); }
 assert_true = function(a) { shouldBeTrue("" + a); }
 assert_false = function(a) { shouldBeFalse("" + a); }
 
+// Don't report unhandled promise rejections in these tests.
+window.onunhandledrejection = function() { return false; }
+
 var successfullyParsed = true;

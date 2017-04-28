@@ -3,7 +3,7 @@
 <script src=media-file.js></script>
 <script src=video-test.js></script>
 <script>
-    video.src = findMediaFile("video", "content/test.mp4");
+    video.src = findMediaFile("video", "content/test");
 
     waitForEvent("loadstart");
     waitForEvent("ratechange");
@@ -19,7 +19,7 @@
     waitForEvent('pause', function () { testExpected("video.paused", true); endTest(); } );
 
 
-    run("video.play()");
+    run("handlePromise(video.play())");
     run("video.pause()");
     
     consoleWrite("SCRIPT DONE");

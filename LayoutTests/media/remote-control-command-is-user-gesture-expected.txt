@@ -6,7 +6,7 @@ RUN(internals.setMediaElementRestrictions(video, "RequireUserGestureForVideoRate
 EVENT(loadedmetadata)
 
 * video.play() should fail 
-RUN(video.play())
+RUN(handlePromise(video.play()))
 EXPECTED (video.paused == 'true') OK
 
 * Send a play command, it should succeed.

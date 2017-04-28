@@ -1,3 +1,35 @@
+2017-04-27  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Support for promise rejection events (unhandledrejection)
+        https://bugs.webkit.org/show_bug.cgi?id=150358
+        <rdar://problem/28441651>
+
+        Reviewed by Saam Barati.
+
+        Patch by Joseph Pecoraro and Yusuke Suzuki.
+
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/test_ecdh_bits-expected.txt:
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/test_ecdh_keys-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/event_pause_noautoplay-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/event_play_noautoplay-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/paused_true_during_pause-expected.txt:
+        * web-platform-tests/html/syntax/parsing/html5lib_innerHTML_adoption01-expected.txt:
+        * web-platform-tests/html/webappapis/scripting/events/body-exposed-window-event-handlers-expected.txt:
+        * web-platform-tests/streams/piping/close-propagation-forward-expected.txt:
+        * web-platform-tests/streams/piping/error-propagation-backward-expected.txt:
+        * web-platform-tests/streams/piping/error-propagation-forward-expected.txt:
+        * web-platform-tests/streams/piping/flow-control-expected.txt:
+        * web-platform-tests/streams/piping/general-expected.txt:
+        * web-platform-tests/user-timing/measure_exceptions_navigation_timing-expected.txt:
+        Rebaseline expectations to include unhandled promise rejection messages.
+        Also change how the test harness reports success or failure to use the values
+        immediately on completion and then allow a run loop cycle before completing
+        the test to gather the output.
+
+        * web-platform-tests/resource-timing/rt-resource-errors.html:
+        This is our own WPT test yet to be uploaded, so update the test to prevent
+        an unexpected unhandled rejection.
+
 2017-04-27  Chris Dumez  <cdumez@apple.com>
 
         Align colspan/rowspan limits with the latest HTML specification

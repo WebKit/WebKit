@@ -13,7 +13,7 @@ function init()
 
     waitForMultipleEvents("canplaythrough", videos.length, function() {
         for (var i = 0; i < videos.length; ++i) {
-            videos[i].play();
+            handlePromise(videos[i].play());
             videos[i].addEventListener("playing", function(event) {
                 event.target.pause();
                 event.target.currentTime = 0;
@@ -42,7 +42,7 @@ function initAndPause()
 
     waitForMultipleEvents("canplaythrough", videos.length, function() {
         for (var i = 0; i < videos.length; ++i) {
-            videos[i].play();
+            handlePromise(videos[i].play());
             videos[i].addEventListener("playing", function(event) {
                 event.target.pause();
             });
@@ -64,4 +64,10 @@ function initAndSeeked()
         if (window.testRunner)
             testRunner.notifyDone();
     });
+}
+
+function handlePromise(promise)
+{
+    function handle() { }
+    return promise.then(handle, handle);
 }

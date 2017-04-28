@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: line 1: Unhandled Promise Rejection: TypeError: Argument 1 ('candidate') to RTCPeerConnection.addIceCandidate must be an instance of RTCIceCandidate
 PASS successfullyParsed is true
 
 TEST COMPLETE

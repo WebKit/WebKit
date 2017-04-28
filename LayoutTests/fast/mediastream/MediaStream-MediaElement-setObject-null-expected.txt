@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: line 1: Unhandled Promise Rejection: [object DOMError]
 PASS video.srcObject = stream did not throw exception.
 PASS video.duration is Number.POSITIVE_INFINITY
 PASS video.srcObject = null did not throw exception.

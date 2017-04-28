@@ -72,3 +72,8 @@ function stripExtension(filename) {
     return filename.substring(0, lastPeriodIndex);
   return filename;
 }
+
+function handlePromise(promise) {
+    function handle() { }
+    return promise.then(handle, handle);
+}

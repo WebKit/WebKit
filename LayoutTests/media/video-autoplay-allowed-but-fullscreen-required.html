@@ -15,9 +15,10 @@
     }
 
     function canPlayThrough() {
-        video.play();
+        var promise = video.play();
         waitForEventAndFail('playing');
         setTimeout(didNotPlay, 100);
+        promise.catch(didNotPlay);
     }
 
     function didNotPlay() {

@@ -78,7 +78,7 @@
                 waitForEventOnce('playing', playing);
 
                 mediaElement.pause();
-                mediaElement.play();
+                handlePromise(mediaElement.play());
             }
 
             function playing()

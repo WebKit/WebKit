@@ -79,6 +79,7 @@
     attribute EventHandler onplaying;
     attribute EventHandler onprogress;
     attribute EventHandler onratechange;
+    attribute EventHandler onrejectionhandled;
     attribute EventHandler onreset;
     attribute EventHandler onresize;
     attribute EventHandler onscroll;
@@ -92,6 +93,7 @@
     attribute EventHandler onsuspend;
     attribute EventHandler ontimeupdate;
     attribute EventHandler ontoggle;
+    attribute EventHandler onunhandledrejection;
     attribute EventHandler onvolumechange;
     attribute EventHandler onwaiting;
 

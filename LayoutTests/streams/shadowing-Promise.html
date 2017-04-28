@@ -31,11 +31,13 @@ test(function() {
 test(function() {
     const PromiseRejectBackup = Promise.reject;
 
+    function handle() { }
+
     try {
         Promise.reject = function() { assert_unreached("streams should not use this Promise.reject method"); };
 
-        ReadableStream.prototype.cancel.call({}, "reason");
-        WritableStream.prototype.abort.call({}, "reason");
+        ReadableStream.prototype.cancel.call({}, "reason").then(handle, handle);
+        WritableStream.prototype.abort.call({}, "reason").then(handle, handle);
     } finally {
         Promise.reject = PromiseRejectBackup;
     }

@@ -108,7 +108,7 @@ function playForMillisecs(milliseconds)
         return;
     }
 
-    run("video.play()");
+    run("handlePromise(video.play())");
 
     var startTime = nowInSecs();
     var playedFromTime = video.currentTime;

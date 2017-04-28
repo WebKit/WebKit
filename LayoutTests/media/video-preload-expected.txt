@@ -7,7 +7,7 @@ RUN(video.setAttribute('preload', 'none'))
 RUN(video.removeAttribute('autoplay'))
 EVENT(loadstart)
 did not buffer automatically OK
-RUN(video.play())
+RUN(handlePromise(video.play()))
 EVENT(play)
 EVENT(loadedmetadata)
 buffered automatically OK

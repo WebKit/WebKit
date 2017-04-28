@@ -1,3 +1,126 @@
+2017-04-27  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Support for promise rejection events (unhandledrejection)
+        https://bugs.webkit.org/show_bug.cgi?id=150358
+        <rdar://problem/28441651>
+
+        Reviewed by Saam Barati.
+
+        Patch by Joseph Pecoraro and Yusuke Suzuki.
+
+        Implement support for the `onunhandledrejection` and `rejectionhandled` events.
+        They dispatch a new PromiseRejectionEvent using the ES6 HostPromiseRejectionTracker hook:
+        https://tc39.github.io/ecma262/#sec-host-promise-rejection-tracker
+        https://html.spec.whatwg.org/multipage/webappapis.html#unhandled-promise-rejections
+
+        This is currently implemented only for Documents and not yet Web Workers.
+
+        Tests: js/dom/unhandled-promise-rejection-basic.html
+               js/dom/unhandled-promise-rejection-bindings-type-error.html
+               js/dom/unhandled-promise-rejection-console-no-report.html
+               js/dom/unhandled-promise-rejection-console-report.html
+               js/dom/unhandled-promise-rejection-handle-during-event.html
+               js/dom/unhandled-promise-rejection-handle-in-handler.html
+               js/dom/unhandled-promise-rejection-handle.html
+               js/dom/unhandled-promise-rejection-order.html
+
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/DOMAllInOne.cpp:
+        New files.
+
+        * bindings/scripts/CodeGenerator.pm:
+        (IsPromiseType):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (AddToIncludesForIDLType):
+        (GetBaseIDLType):
+        Binding support for Promise<T> attributes.
+
+        * bindings/js/JSDOMConvert.h:
+        * bindings/js/JSDOMConvertPromise.h: Copied from Source/JavaScriptCore/runtime/JSPromise.h.
+        (WebCore::Converter<IDLPromise<T>>::convert):
+        (WebCore::JSConverter<IDLPromise<T>>::convert):
+        Promise<T> binding conversion is currently unimplemented, which only means
+        web developers creating their own PromiseRejectionEvent will not get
+        autowrapping of values assigned to `promise` in event initialization.
+        Engine generated events will have expected behavior.
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::promiseRejectionTracker):
+        * bindings/js/JSDOMWindowBase.h:
+        * bindings/js/JSWorkerGlobalScopeBase.cpp:
+        Implement HostPromiseRejectionTracker hook for Document but not Worker.
+        Passes through to the ScriptExecutionContext's tracker.
+
+        * bindings/js/JSMainThreadExecState.cpp:
+        (WebCore::JSMainThreadExecState::didLeaveScriptContext):
+        * bindings/js/JSMainThreadExecState.h:
+        (WebCore::JSMainThreadExecState::~JSMainThreadExecState):
+        When completing script execution and performing microtasks notify
+        about rejected promises. Technically this should go inside of
+        performing a microtask checkpoint, except lacking EventLoop
+        concepts we use ScriptExecutionState.
+
+        * dom/EventNames.h:
+        * dom/EventNames.in:
+        * dom/PromiseRejectionEvent.cpp: Added.
+        (WebCore::PromiseRejectionEvent::PromiseRejectionEvent):
+        (WebCore::PromiseRejectionEvent::~PromiseRejectionEvent):
+        * dom/PromiseRejectionEvent.h: Added.
+        * dom/PromiseRejectionEvent.idl: Added.
+        New PromiseRejectionEvent event interface.
+
+        * dom/GlobalEventHandlers.idl:
+        New onunhandledrejection and onrejectionhandled.
+
+        * dom/RejectedPromiseTracker.cpp: Added.
+        (WebCore::RejectedPromise::RejectedPromise):
+        (WebCore::RejectedPromise::globalObject):
+        (WebCore::RejectedPromise::promise):
+        (WebCore::UnhandledPromise::UnhandledPromise):
+        (WebCore::UnhandledPromise::callStack):
+        (WebCore::RejectedPromiseTracker::RejectedPromiseTracker):
+        (WebCore::RejectedPromiseTracker::~RejectedPromiseTracker):
+        (WebCore::createScriptCallStackFromReason):
+        (WebCore::RejectedPromiseTracker::promiseRejected):
+        (WebCore::RejectedPromiseTracker::promiseHandled):
+        (WebCore::RejectedPromiseTracker::processQueueSoon):
+        (WebCore::RejectedPromiseTracker::reportUnhandledRejections):
+        (WebCore::RejectedPromiseTracker::reportRejectionHandled):
+        * dom/RejectedPromiseTracker.h: Added.
+        Track and report rejected promises. The promises are tracked weakly
+        allowing them to be collected before they are reported. When reporting
+        we dispatch PromiseRejectionEvent events, and if the default is not
+        prevented we log a message to the console.
+
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::reportUnhandledPromiseRejection):
+        (WebCore::ScriptExecutionContext::ensureRejectedPromiseTrackerSlow):
+        * dom/ScriptExecutionContext.h:
+        (WebCore::ScriptExecutionContext::ensureRejectedPromiseTracker):
+        Each ScriptExecutionContext can own a rejected promise tracker.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::pauseInternal):
+        https://html.spec.whatwg.org/multipage/embedded-content.html#internal-pause-steps
+        Internal pause steps say to timeupdate, pause, and rejecting pending play promises
+        should all happen in a queued task. Here the first two actions are already scheduled
+        on tasks, but rejecting play promises was not being done in a task, so this makes
+        that change.
+
+        * Modules/streams/ReadableStream.js:
+        (pipeThrough):
+        * Modules/streams/ReadableStreamInternals.js:
+        (readableStreamReaderGenericInitialize):
+        (readableStreamError):
+        (readableStreamReaderGenericRelease):
+        Satisfy parts of the Streams specification which state to set the
+        [[PromiseIsHandled]] internal state of promises created internally
+        by the Streams APIs. This prevents some internal promises from
+        appearing as unhandled promise rejections.
+
 2017-04-27  Chris Dumez  <cdumez@apple.com>
 
         Align colspan/rowspan limits with the latest HTML specification

@@ -7,7 +7,7 @@ EVENT(canplay)
 Test 1 OK
 
 Test playing when there are no ranges
-RUN(video.play())
+RUN(handlePromise(video.play()))
 RUN(video.pause())
 EVENT(pause)
 Test 2 OK
@@ -22,7 +22,7 @@ EVENT(canplay)
 Test 5 OK
 
 Test jumping forward into a new range and play
-RUN(video.play())
+RUN(handlePromise(video.play()))
 RUN(video.pause())
 EVENT(pause)
 Test 6 OK

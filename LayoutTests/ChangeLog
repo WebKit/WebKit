@@ -1,3 +1,98 @@
+2017-04-27  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Support for promise rejection events (unhandledrejection)
+        https://bugs.webkit.org/show_bug.cgi?id=150358
+        <rdar://problem/28441651>
+
+        Reviewed by Saam Barati.
+
+        Patch by Joseph Pecoraro and Yusuke Suzuki.
+
+        * js/dom/unhandled-promise-rejection-basic-expected.txt: Added.
+        * js/dom/unhandled-promise-rejection-basic.html: Added.
+        * js/dom/unhandled-promise-rejection-bindings-type-error-expected.txt: Added.
+        * js/dom/unhandled-promise-rejection-bindings-type-error.html: Added.
+        * js/dom/unhandled-promise-rejection-console-no-report-expected.txt: Added.
+        * js/dom/unhandled-promise-rejection-console-no-report.html: Added.
+        * js/dom/unhandled-promise-rejection-console-report-expected.txt: Added.
+        * js/dom/unhandled-promise-rejection-console-report.html: Added.
+        * js/dom/unhandled-promise-rejection-handle-during-event-expected.txt: Added.
+        * js/dom/unhandled-promise-rejection-handle-during-event.html: Added.
+        * js/dom/unhandled-promise-rejection-handle-expected.txt: Added.
+        * js/dom/unhandled-promise-rejection-handle-in-handler-expected.txt: Added.
+        * js/dom/unhandled-promise-rejection-handle-in-handler.html: Added.
+        * js/dom/unhandled-promise-rejection-handle.html: Added.
+        * js/dom/unhandled-promise-rejection-order-expected.txt: Added.
+        * js/dom/unhandled-promise-rejection-order.html: Added.
+        New tests specific to the `onunhandledrejection` and `onrejectionhandled` events.
+
+        * resources/testharnessreport.js:
+        (self.testRunner.add_completion_callback.sanitize):
+        (self.testRunner.add_completion_callback):
+        Report results immediately and then finish the test after a turn. This way
+        if the test ends with a pass, but may get unhandled rejections after
+        completing which should not make the test appear as if it failed. Some tests
+        have unhandled promise rejections but are expected to pass. Likewise some
+        tests perform cleanup in their own completion callbacks, which happen after
+        this initial completion callback, and we want to report results after all
+        the work is done as it may eliminate non-deterministic debug test output.
+
+        * TestExpectations:
+        Mark some tests as flakey that have sometimes have unhandled promise rejections.
+        These tests are all various imported tests that use the testharness.
+
+        * fast/mediastream/MediaStream-MediaElement-setObject-null-expected.txt:
+        * http/tests/security/video-cross-origin-caching-expected.txt:
+        * inspector/debugger/break-on-exception-throw-in-promise-expected.txt:
+        * inspector/debugger/break-on-uncaught-exception-throw-in-promise-expected.txt:
+        * inspector/worker/resources-in-worker-expected.txt:
+        * js/dom/dom-static-property-for-in-iteration-expected.txt:
+        * js/dom/global-constructors-attributes-dedicated-worker-expected.txt:
+        * js/promises-tests/promises-tests-2-2-6-expected.txt:
+        * platform/mac/inspector/model/remote-object-expected.txt:
+        * webrtc/libwebrtc/release-while-creating-offer-expected.txt:
+        * webrtc/libwebrtc/release-while-setting-local-description-expected.txt:
+        Update tests with unhandled promise rejection messages.
+
+        * media/W3C/audio/events/event_pause_manual.html:
+        * media/audio-playback-restriction-play-expected.txt:
+        * media/audio-playback-restriction-play.html:
+        * media/click-volume-bar-not-pausing.html:
+        * media/remote-control-command-is-user-gesture-expected.txt:
+        * media/remote-control-command-is-user-gesture.html:
+        * media/track/track-mode.html:
+        * media/video-autoplay-allowed-but-fullscreen-required.html:
+        * media/video-display-none-crash.html:
+        * media/video-main-content-deny-display-none.html:
+        * media/video-main-content-deny-not-in-dom.html:
+        * media/video-main-content-deny-not-visible.html:
+        * media/video-main-content-deny-obscured.html:
+        * media/video-main-content-deny-too-small.html:
+        * media/video-multiple-concurrent-playback-expected.txt:
+        * media/video-play-audio-require-user-gesture-expected.txt:
+        * media/video-play-audio-require-user-gesture.html:
+        * media/video-play-pause-events-expected.txt:
+        * media/video-play-pause-events.html:
+        * media/video-play-pause-exception-expected.txt:
+        * media/video-play-pause-exception.html:
+        * media/video-play-require-user-gesture-expected.txt:
+        * media/video-play-require-user-gesture.html:
+        * media/video-preload-expected.txt:
+        * media/video-preload.html:
+        * media/video-test.js:
+        (handlePromise.handle):
+        Snuff many possible unhandled promise rejections in media via media.play().
+
+        * streams/reference-implementation/pipe-to-expected.txt:
+        * streams/reference-implementation/pipe-to-options-expected.txt:
+        * streams/reference-implementation/readable-stream-templated-expected.txt:
+        * streams/reference-implementation/writable-stream-abort-expected.txt:
+        * streams/reference-implementation/writable-stream-expected.txt:
+        These stream tests are out of date and produce unhandled rejections.
+
+        * streams/shadowing-Promise.html:
+        Update non-imported tests to prevent unhandled rejection messages.
+
 2017-04-27  Chris Dumez  <cdumez@apple.com>
 
         Align colspan/rowspan limits with the latest HTML specification

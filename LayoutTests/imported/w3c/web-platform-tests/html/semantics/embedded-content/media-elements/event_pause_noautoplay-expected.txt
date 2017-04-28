@@ -1,6 +1,10 @@
+CONSOLE MESSAGE: line 1: Unhandled Promise Rejection: [object DOMError]
+CONSOLE MESSAGE: line 1: Unhandled Promise Rejection: [object DOMError]
 spec reference
 
   
+
+Harness Error (FAIL), message = The operation was aborted.
 
 PASS audio events - pause 
 PASS calling play() then pause() on non-autoplay audio should trigger pause event 

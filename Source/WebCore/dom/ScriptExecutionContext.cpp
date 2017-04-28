@@ -34,10 +34,12 @@
 #include "DatabaseContext.h"
 #include "Document.h"
 #include "ErrorEvent.h"
+#include "JSDOMExceptionHandling.h"
 #include "JSDOMWindow.h"
 #include "MessagePort.h"
 #include "NoEventDispatchAssertion.h"
 #include "PublicURLManager.h"
+#include "RejectedPromiseTracker.h"
 #include "ResourceRequest.h"
 #include "ScriptState.h"
 #include "Settings.h"
@@ -46,6 +48,7 @@
 #include <heap/StrongInlines.h>
 #include <inspector/ScriptCallStack.h>
 #include <runtime/Exception.h>
+#include <runtime/JSPromise.h>
 #include <wtf/MainThread.h>
 #include <wtf/Ref.h>
 
@@ -379,6 +382,27 @@ void ScriptExecutionContext::reportException(const String& errorMessage, int lin
         logExceptionToConsole(exception->m_errorMessage, exception->m_sourceURL, exception->m_lineNumber, exception->m_columnNumber, WTFMove(exception->m_callStack));
 }
 
+void ScriptExecutionContext::reportUnhandledPromiseRejection(JSC::ExecState& state, JSC::JSPromise& promise, Inspector::ScriptCallStack& callStack)
+{
+    JSC::VM& vm = state.vm();
+    auto scope = DECLARE_CATCH_SCOPE(vm);
+
+    int lineNumber = 0;
+    int columnNumber = 0;
+    String sourceURL;
+
+    JSC::JSValue result = promise.result(vm);
+    String resultMessage = retrieveErrorMessage(state, vm, result, scope);
+    String errorMessage = makeString("Unhandled Promise Rejection: ", resultMessage);
+    if (const ScriptCallFrame* callFrame = callStack.firstNonNativeCallFrame()) {
+        lineNumber = callFrame->lineNumber();
+        columnNumber = callFrame->columnNumber();
+        sourceURL = callFrame->sourceURL();
+    }
+
+    logExceptionToConsole(errorMessage, sourceURL, lineNumber, columnNumber, &callStack);
+}
+
 void ScriptExecutionContext::addConsoleMessage(MessageSource source, MessageLevel level, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, JSC::ExecState* state, unsigned long requestIdentifier)
 {
     addMessage(source, level, message, sourceURL, lineNumber, columnNumber, 0, state, requestIdentifier);
@@ -462,6 +486,16 @@ JSC::VM& ScriptExecutionContext::vm()
         return commonVM();
 
     return downcast<WorkerGlobalScope>(*this).script()->vm();
+}
+
+RejectedPromiseTracker& ScriptExecutionContext::ensureRejectedPromiseTrackerSlow()
+{
+    // ScriptExecutionContext::vm() in Worker is only available after WorkerGlobalScope initialization is done.
+    // When initializing ScriptExecutionContext, vm() is not ready.
+
+    ASSERT(!m_rejectedPromiseTracker);
+    m_rejectedPromiseTracker = std::make_unique<RejectedPromiseTracker>(*this, vm());
+    return *m_rejectedPromiseTracker.get();
 }
 
 void ScriptExecutionContext::setDatabaseContext(DatabaseContext* databaseContext)

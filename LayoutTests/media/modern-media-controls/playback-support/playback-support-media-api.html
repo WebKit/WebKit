@@ -33,7 +33,7 @@ media.addEventListener("pause", function() {
     finishJSTest();
 });
 
-media.play();
+media.play().catch(function(){});
 
 </script>
 <script src="../../../resources/js-test-post.js"></script>

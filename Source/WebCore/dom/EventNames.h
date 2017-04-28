@@ -182,6 +182,7 @@ namespace WebCore {
     macro(progress) \
     macro(ratechange) \
     macro(readystatechange) \
+    macro(rejectionhandled) \
     macro(removesourcebuffer) \
     macro(removestream) \
     macro(removetrack) \
@@ -230,6 +231,7 @@ namespace WebCore {
     macro(touchstart) \
     macro(track) \
     macro(transitionend) \
+    macro(unhandledrejection) \
     macro(unload) \
     macro(unmute) \
     macro(update) \

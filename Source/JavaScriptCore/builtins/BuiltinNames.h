@@ -82,6 +82,8 @@ namespace JSC {
     macro(homeObject) \
     macro(templateRegistryKey) \
     macro(enqueueJob) \
+    macro(hostPromiseRejectionTracker) \
+    macro(promiseIsHandled) \
     macro(promiseState) \
     macro(promiseReactions) \
     macro(promiseResult) \

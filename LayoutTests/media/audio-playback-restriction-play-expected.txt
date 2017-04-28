@@ -4,7 +4,7 @@ Test that, when RequireUserGestureForAudioRateChange is set, starting playback o
 RUN(internals.setMediaElementRestrictions(video, "RequireUserGestureForAudioRateChange"))
 RUN(video.src = findMediaFile('audio', 'content/test'))
 EVENT(canplaythrough)
-RUN(video.play())
+RUN(handlePromise(video.play()))
 EXPECTED (video.paused == 'true') OK
 Running with keyDown.
 RUN(video.play())

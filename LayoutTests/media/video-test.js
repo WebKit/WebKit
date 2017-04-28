@@ -441,3 +441,8 @@ function shouldReject(promise) {
     });
 
 }
+
+function handlePromise(promise) {
+    function handle() { }
+    return promise.then(handle, handle);
+}

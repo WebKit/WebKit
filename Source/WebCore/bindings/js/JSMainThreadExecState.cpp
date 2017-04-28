@@ -27,15 +27,18 @@
 #include "JSMainThreadExecState.h"
 
 #include "Microtasks.h"
-#include "MutationObserver.h"
+#include "RejectedPromiseTracker.h"
+#include "ScriptExecutionContext.h"
+#include "ScriptState.h"
 
 namespace WebCore {
 
 JSC::ExecState* JSMainThreadExecState::s_mainThreadState = 0;
 
-void JSMainThreadExecState::didLeaveScriptContext()
+void JSMainThreadExecState::didLeaveScriptContext(JSC::ExecState* exec)
 {
     MicrotaskQueue::mainThreadQueue().performMicrotaskCheckpoint();
+    scriptExecutionContextFromExecState(exec)->ensureRejectedPromiseTracker().processQueueSoon();
 }
 
 JSC::JSValue functionCallHandlerFromAnyThread(JSC::ExecState* exec, JSC::JSValue functionObject, JSC::CallType callType, const JSC::CallData& callData, JSC::JSValue thisValue, const JSC::ArgList& args, NakedPtr<JSC::Exception>& returnedException)

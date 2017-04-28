@@ -52,8 +52,13 @@ function then(onFulfilled, onRejected)
     var state = this.@promiseState;
     if (state === @promiseStatePending)
         @putByValDirect(this.@promiseReactions, this.@promiseReactions.length, reaction);
-    else
+    else {
+        if (state === @promiseStateRejected && !this.@promiseIsHandled)
+            @hostPromiseRejectionTracker(this, @promiseRejectionHandle);
         @enqueueJob(@promiseReactionJob, [state, reaction, this.@promiseResult]);
+    }
+
+    this.@promiseIsHandled = true;
 
     return resultCapability.@promise;
 }

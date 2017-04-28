@@ -85,4 +85,11 @@ JSValue JSPromise::result(VM& vm) const
     return getDirect(vm, vm.propertyNames->builtinNames().promiseResultPrivateName());
 }
 
+bool JSPromise::isHandled(VM& vm) const
+{
+    JSValue value = getDirect(vm, vm.propertyNames->builtinNames().promiseIsHandledPrivateName());
+    ASSERT(value.isBoolean());
+    return value.asBoolean();
+}
+
 } // namespace JSC

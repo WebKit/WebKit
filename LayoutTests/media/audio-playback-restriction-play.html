@@ -20,7 +20,7 @@
 
     function canplaythrough()
     {
-        run("video.play()");
+        run("handlePromise(video.play())");
         testExpected('video.paused', true);
         runWithKeyDown(playWithKeyDown);
     }

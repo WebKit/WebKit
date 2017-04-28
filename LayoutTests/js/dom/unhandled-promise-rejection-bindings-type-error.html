@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+description('Test rejected promises are returned from bindings and trigger unhandledrejection.');
+
+window.jsTestIsAsync = true;
+
+window.error = null;
+window.promise = null;
+window.onunhandledrejection = function (e) {
+    error = e;
+    shouldBe(`error.promise`, `promise`);
+    shouldBeTrue(`error.reason instanceof TypeError`);
+};
+
+try {
+    promise = PromiseRejectionEvent.prototype.promise;
+} catch (e) {
+    testFailed("TypeErrors produced by getters for Promise results should be wrapped in a Promise");
+}
+
+setTimeout(function () { finishJSTest(); }, 100);
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

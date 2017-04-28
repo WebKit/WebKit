@@ -32,10 +32,6 @@
 #include <runtime/Microtask.h>
 #include <wtf/MainThread.h>
 
-#if PLATFORM(IOS)
-#include "WebCoreThread.h"
-#endif
-
 namespace WebCore {
 
 class InspectorInstrumentationCookie;
@@ -139,12 +135,13 @@ private:
         ASSERT(isMainThread());
         ASSERT_UNUSED(scope, !scope.exception());
 
+        JSC::ExecState* state = s_mainThreadState;
         bool didExitJavaScript = s_mainThreadState && !m_previousState;
 
         s_mainThreadState = m_previousState;
 
         if (didExitJavaScript)
-            didLeaveScriptContext();
+            didLeaveScriptContext(state);
     }
 
     template<typename Type, Type jsType, typename DataType> static InspectorInstrumentationCookie instrumentFunctionInternal(ScriptExecutionContext*, Type, const DataType&);
@@ -153,7 +150,7 @@ private:
     JSC::ExecState* m_previousState;
     JSC::JSLockHolder m_lock;
 
-    static void didLeaveScriptContext();
+    static void didLeaveScriptContext(JSC::ExecState*);
 };
 
 // Null state prevents origin security checks.

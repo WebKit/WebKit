@@ -1,0 +1,17 @@
+Test unhandled promise rejection event.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+window.promise[0] = Promise.reject(0);
+window.promise[1] = Promise.reject(1);
+window.promise[2] = Promise.reject(2);
+PASS error.type is "unhandledrejection"
+PASS error.cancelable is true
+PASS error.promise is promise[0]
+PASS error.reason is 0
+window.promise[1].catch(function () { });
+window.promise[2].catch(function () { });
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

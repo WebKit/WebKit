@@ -239,6 +239,11 @@ PASS [Worker] Object.getOwnPropertyDescriptor(global, 'Promise').hasOwnProperty(
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'Promise').hasOwnProperty('set') is false
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'Promise').enumerable is false
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'Promise').configurable is true
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'PromiseRejectionEvent').value is PromiseRejectionEvent
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'PromiseRejectionEvent').hasOwnProperty('get') is false
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'PromiseRejectionEvent').hasOwnProperty('set') is false
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'PromiseRejectionEvent').enumerable is false
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'PromiseRejectionEvent').configurable is true
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'RangeError').value is RangeError
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'RangeError').hasOwnProperty('get') is false
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'RangeError').hasOwnProperty('set') is false

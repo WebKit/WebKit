@@ -76,7 +76,7 @@
                 setMode("showing");
 
                 consoleWrite("<b>++ at least " + textTrack.cues.length + " events expected while mode = showing</b>");
-                video.play();
+                handlePromise(video.play());
             }
             
             function cuechange(event)

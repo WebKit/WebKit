@@ -589,6 +589,9 @@ InjectedScript.prototype = {
                     descriptor.isOwn = true;
                 if (symbol)
                     descriptor.symbol = symbol;
+                // Silence any possible unhandledrejection exceptions created from accessing a native accessor with a wrong this object.
+                if (descriptor.value instanceof Promise)
+                    descriptor.value.catch(function(){});
                 return descriptor;
             } catch (e) {
                 var errorDescriptor = {name, value: e, wasThrown: true};

@@ -1,3 +1,27 @@
+CONSOLE MESSAGE: line 2687: TypeError: undefined is not an object (evaluating 'e.message')
+CONSOLE MESSAGE: line 1: Unhandled Promise Rejection: undefined
+CONSOLE MESSAGE: line 1: Unhandled Promise Rejection: Error: horrible things
+CONSOLE MESSAGE: line 1: Unhandled Promise Rejection: Error: horrible things
+CONSOLE MESSAGE: line 1: Unhandled Promise Rejection: TypeError: cancel() called on a reader owned by no readable stream
+CONSOLE MESSAGE: line 2687: TypeError: undefined is not an object (evaluating 'e.message')
+CONSOLE MESSAGE: line 1: Unhandled Promise Rejection: undefined
+CONSOLE MESSAGE: line 2687: TypeError: undefined is not an object (evaluating 'e.message')
+CONSOLE MESSAGE: line 1: Unhandled Promise Rejection: undefined
+CONSOLE MESSAGE: line 2687: TypeError: undefined is not an object (evaluating 'e.message')
+CONSOLE MESSAGE: line 1: Unhandled Promise Rejection: undefined
+CONSOLE MESSAGE: line 1: Unhandled Promise Rejection: Error: horrible things
+CONSOLE MESSAGE: line 1: Unhandled Promise Rejection: Error: horrible things
+CONSOLE MESSAGE: line 1: Unhandled Promise Rejection: TypeError: cancel() called on a reader owned by no readable stream
+CONSOLE MESSAGE: line 1: Unhandled Promise Rejection: TypeError: cancel() called on a reader owned by no readable stream
+CONSOLE MESSAGE: line 1: Unhandled Promise Rejection: Error: horrible things
+CONSOLE MESSAGE: line 1: Unhandled Promise Rejection: TypeError: cancel() called on a reader owned by no readable stream
+CONSOLE MESSAGE: line 1: Unhandled Promise Rejection: Error: I don't like you.
+CONSOLE MESSAGE: line 1: Unhandled Promise Rejection: Error: I don't like you.
+CONSOLE MESSAGE: line 1: Unhandled Promise Rejection: Error: I don't like you.
+CONSOLE MESSAGE: line 1: Unhandled Promise Rejection: Error: I don't like you.
+CONSOLE MESSAGE: line 1: Unhandled Promise Rejection: Error: I don't like you.
+
+Harness Error (FAIL), message = I don't like you.
 
 PASS Piping from a ReadableStream from which lots of data are readable synchronously 
 PASS Piping from a ReadableStream in readable state to a WritableStream in closing state 

@@ -126,6 +126,7 @@
 // #include "QualifiedName.cpp"
 #include "RadioButtonGroups.cpp"
 #include "Range.cpp"
+#include "RejectedPromiseTracker.cpp"
 #include "ScopedEventQueue.cpp"
 #include "ScriptElement.cpp"
 #include "ScriptExecutionContext.cpp"
