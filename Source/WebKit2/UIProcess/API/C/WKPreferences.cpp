@@ -1341,6 +1341,16 @@ bool WKPreferencesGetUseGiantTiles(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->useGiantTiles();
 }
 
+void WKPreferencesSetMediaDevicesEnabled(WKPreferencesRef preferencesRef, bool enabled)
+{
+    toImpl(preferencesRef)->setMediaDevicesEnabled(enabled);
+}
+
+bool WKPreferencesGetMediaDevicesEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->mediaDevicesEnabled();
+}
+
 void WKPreferencesSetMediaStreamEnabled(WKPreferencesRef preferencesRef, bool enabled)
 {
     toImpl(preferencesRef)->setMediaStreamEnabled(enabled);

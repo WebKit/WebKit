@@ -89,6 +89,8 @@ public:
 #endif
 
 #if ENABLE(MEDIA_STREAM)
+    bool mediaDevicesEnabled() const { return m_isMediaDevicesEnabled; }
+    void setMediaDevicesEnabled(bool isEnabled) { m_isMediaDevicesEnabled = isEnabled; }
     bool mediaStreamEnabled() const { return m_isMediaStreamEnabled; }
     void setMediaStreamEnabled(bool isEnabled) { m_isMediaStreamEnabled = isEnabled; }
 #endif
@@ -235,6 +237,7 @@ private:
 #endif
 
 #if ENABLE(MEDIA_STREAM)
+    bool m_isMediaDevicesEnabled { false };
     bool m_isMediaStreamEnabled { true };
 #endif
 

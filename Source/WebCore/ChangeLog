@@ -1,3 +1,25 @@
+2017-04-28  Youenn Fablet  <youenn@apple.com>
+
+        Adding a runtime flag specific to MediaDevices
+        https://bugs.webkit.org/show_bug.cgi?id=171433
+
+        Reviewed by Geoffrey Garen.
+
+        Covered by existing tests.
+
+        Adding a preference for MediaDevices.
+        Setting media devices runtime flag to false by default.
+        Setting peer connection and media stream flags to true by default.
+        Activating mediaDevices and getUserMedia Navigator properties based on media devices flag.
+
+        * Modules/mediastream/NavigatorMediaDevices.idl:
+        * Modules/mediastream/NavigatorUserMedia.idl:
+        * page/RuntimeEnabledFeatures.cpp:
+        (WebCore::RuntimeEnabledFeatures::RuntimeEnabledFeatures):
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::mediaDevicesEnabled):
+        (WebCore::RuntimeEnabledFeatures::setMediaDevicesEnabled):
+
 2017-04-28  Eric Carlson  <eric.carlson@apple.com>
 
         Implement ondevicechange

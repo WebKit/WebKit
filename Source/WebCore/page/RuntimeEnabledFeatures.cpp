@@ -40,7 +40,7 @@ namespace WebCore {
 RuntimeEnabledFeatures::RuntimeEnabledFeatures()
 {
 #if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
-    m_isMediaStreamEnabled = false;
+    m_isMediaDevicesEnabled = false;
 #endif
 }
 

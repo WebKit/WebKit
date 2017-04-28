@@ -53,7 +53,7 @@ TEST(WebKit2, EnumerateDevices)
 
     WKRetainPtr<WKPageGroupRef> pageGroup(AdoptWK, WKPageGroupCreateWithIdentifier(Util::toWK("EnumerateDevices").get()));
     WKPreferencesRef preferences = WKPageGroupGetPreferences(pageGroup.get());
-    WKPreferencesSetMediaStreamEnabled(preferences, true);
+    WKPreferencesSetMediaDevicesEnabled(preferences, true);
     WKPreferencesSetFileAccessFromFileURLsAllowed(preferences, true);
     WKPreferencesSetMediaCaptureRequiresSecureConnection(preferences, false);
 

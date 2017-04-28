@@ -656,11 +656,12 @@ public:
         [NSNumber numberWithBool:YES], WebKitSubtleCryptoEnabledPreferenceKey,
 #endif
 #if ENABLE(MEDIA_STREAM)
-        [NSNumber numberWithBool:NO], WebKitMediaStreamEnabledPreferenceKey,
+        [NSNumber numberWithBool:NO], WebKitMediaDevicesEnabledPreferenceKey,
+        [NSNumber numberWithBool:YES], WebKitMediaStreamEnabledPreferenceKey,
 #endif
 #if ENABLE(WEB_RTC)
-        [NSNumber numberWithBool:NO], WebKitPeerConnectionEnabledPreferenceKey,
-        [NSNumber numberWithBool:NO], WebKitWebRTCLegacyAPIEnabledPreferenceKey,
+        [NSNumber numberWithBool:YES], WebKitPeerConnectionEnabledPreferenceKey,
+        [NSNumber numberWithBool:YES], WebKitWebRTCLegacyAPIEnabledPreferenceKey,
 #endif
 #if ENABLE(INTERSECTION_OBSERVER)
         @NO, WebKitIntersectionObserverEnabledPreferenceKey,
@@ -2759,6 +2760,16 @@ static NSString *classIBCreatorID = nil;
 - (void)setSubtleCryptoEnabled:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitSubtleCryptoEnabledPreferenceKey];
+}
+
+- (BOOL)mediaDevicesEnabled
+{
+    return [self _boolValueForKey:WebKitMediaDevicesEnabledPreferenceKey];
+}
+
+- (void)setMediaDevicesEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitMediaDevicesEnabledPreferenceKey];
 }
 
 - (BOOL)mediaStreamEnabled

@@ -221,13 +221,11 @@ void InjectedBundle::overrideBoolPreferenceForTestRunner(WebPageGroupProxy* page
 #endif
 
 #if ENABLE(MEDIA_STREAM)
-    if (preference == "WebKitMediaStreamEnabled")
-        RuntimeEnabledFeatures::sharedFeatures().setMediaStreamEnabled(enabled);
+    if (preference == "WebKitMediaDevicesEnabled")
+        RuntimeEnabledFeatures::sharedFeatures().setMediaDevicesEnabled(enabled);
 #endif
 
 #if ENABLE(WEB_RTC)
-    if (preference == "WebKitPeerConnectionEnabled")
-        RuntimeEnabledFeatures::sharedFeatures().setPeerConnectionEnabled(enabled);
     if (preference == "WebKitWebRTCLegacyAPIEnabled")
         RuntimeEnabledFeatures::sharedFeatures().setWebRTCLegacyAPIEnabled(enabled);
 #endif

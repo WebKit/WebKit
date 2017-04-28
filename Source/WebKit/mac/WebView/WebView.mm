@@ -2979,6 +2979,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings.setMediaCaptureRequiresSecureConnection([preferences mediaCaptureRequiresSecureConnection]);
     RuntimeEnabledFeatures::sharedFeatures().setMediaStreamEnabled([preferences mediaStreamEnabled]);
     settings.setUseAVFoundationAudioCapture([preferences useAVFoundationAudioCapture]);
+    RuntimeEnabledFeatures::sharedFeatures().setMediaDevicesEnabled([preferences mediaDevicesEnabled]);
 #endif
 
 #if ENABLE(WEB_RTC)

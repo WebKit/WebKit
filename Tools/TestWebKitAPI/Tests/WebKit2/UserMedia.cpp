@@ -66,7 +66,7 @@ TEST(WebKit2, UserMediaBasic)
 
     WKRetainPtr<WKPageGroupRef> pageGroup(AdoptWK, WKPageGroupCreateWithIdentifier(Util::toWK("GetUserMedia").get()));
     WKPreferencesRef preferences = WKPageGroupGetPreferences(pageGroup.get());
-    WKPreferencesSetMediaStreamEnabled(preferences, true);
+    WKPreferencesSetMediaDevicesEnabled(preferences, true);
     WKPreferencesSetFileAccessFromFileURLsAllowed(preferences, true);
     WKPreferencesSetMediaCaptureRequiresSecureConnection(preferences, false);
     WKPreferencesSetMockCaptureDevicesEnabled(preferences, true);

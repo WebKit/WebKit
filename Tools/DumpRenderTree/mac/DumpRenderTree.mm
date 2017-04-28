@@ -849,7 +849,6 @@ static void enableExperimentalFeatures(WebPreferences* preferences)
     [preferences setWebAnimationsEnabled:YES];
     [preferences setWebGL2Enabled:YES];
     [preferences setWebGPUEnabled:YES];
-    [preferences setPeerConnectionEnabled:YES];
     [preferences setWebRTCLegacyAPIEnabled:YES];
     [preferences setCredentialManagementEnabled:YES];
     [preferences setReadableByteStreamAPIEnabled:YES];
@@ -952,15 +951,13 @@ static void resetWebPreferencesToConsistentValues()
     [preferences setWebGL2Enabled:YES];
     [preferences setWebGPUEnabled:YES];
 
-    [preferences setFetchAPIEnabled:YES];
-
     [preferences setDownloadAttributeEnabled:YES];
 
     [preferences setHiddenPageDOMTimerThrottlingEnabled:NO];
     [preferences setHiddenPageCSSAnimationSuspensionEnabled:NO];
-    
-    [preferences setMediaStreamEnabled:YES];
-    
+
+    [preferences setMediaDevicesEnabled:YES];
+
     [preferences setLargeImageAsyncDecodingEnabled:NO];
 
     [WebPreferences _clearNetworkLoaderSession];

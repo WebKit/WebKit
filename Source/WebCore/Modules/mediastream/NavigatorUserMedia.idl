@@ -30,7 +30,7 @@
 
 [
     Conditional=MEDIA_STREAM&WEB_RTC,
-    EnabledAtRuntime=WebRTCLegacyAPI&MediaStream,
+    EnabledAtRuntime=WebRTCLegacyAPI&MediaDevices,
 ] partial interface Navigator {
     [JSBuiltin] void getUserMedia(MediaStreamConstraints constraints, NavigatorUserMediaSuccessCallback successCallback, NavigatorUserMediaErrorCallback errorCallback);
 };

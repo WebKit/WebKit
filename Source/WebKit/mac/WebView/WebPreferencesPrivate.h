@@ -162,6 +162,9 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 - (void)setSubtleCryptoEnabled:(BOOL)flag;
 - (BOOL)subtleCryptoEnabled;
 
+- (void)setMediaDevicesEnabled:(BOOL)flag;
+- (BOOL)mediaDevicesEnabled;
+
 - (void)setMediaStreamEnabled:(BOOL)flag;
 - (BOOL)mediaStreamEnabled;
 
