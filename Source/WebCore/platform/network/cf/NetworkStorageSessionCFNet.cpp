@@ -72,8 +72,8 @@ static RetainPtr<CFURLStorageSessionRef> createCFStorageSessionForIdentifier(CFS
 NetworkStorageSession::NetworkStorageSession(SessionID sessionID, RetainPtr<CFURLStorageSessionRef>&& platformSession, RetainPtr<CFHTTPCookieStorageRef>&& platformCookieStorage)
     : m_sessionID(sessionID)
     , m_platformSession(WTFMove(platformSession))
-    , m_platformCookieStorage(platformCookieStorage ? WTFMove(platformCookieStorage) : cookieStorage())
 {
+    m_platformCookieStorage = platformCookieStorage ? WTFMove(platformCookieStorage) : cookieStorage();
 }
 
 static std::unique_ptr<NetworkStorageSession>& defaultNetworkStorageSession()

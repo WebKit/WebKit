@@ -1,3 +1,19 @@
+2017-04-28  Alex Christensen  <achristensen@webkit.org>
+
+        Fix memory corruption issue after r215883.
+        https://bugs.webkit.org/show_bug.cgi?id=171365
+
+        Reviewed by Brady Eidson.
+
+        This fixes a crash when starting WebKit2.
+
+        * platform/network/cf/NetworkStorageSessionCFNet.cpp:
+        (WebCore::NetworkStorageSession::NetworkStorageSession):
+        Initialize m_platformCookieStorage with the default constructor of RetainPtr,
+        then call NetworkStorageSession::cookieStorage which checks m_platformCookieStorage
+        for null.  It was checking uninitialized memory when we had m_platformCookieStorage
+        in the initializer list.
+
 2017-04-28  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: Implement aria-value support for focusable separators
