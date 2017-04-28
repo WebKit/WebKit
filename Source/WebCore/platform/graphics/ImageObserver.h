@@ -26,6 +26,8 @@
 #ifndef ImageObserver_h
 #define ImageObserver_h
 
+#include "ImageTypes.h"
+
 namespace WebCore {
 
 class Image;
@@ -43,7 +45,7 @@ public:
 
     virtual void didDraw(const Image*) = 0;
 
-    virtual void animationAdvanced(const Image*) = 0;
+    virtual void imageFrameAvailable(const Image*, ImageAnimatingState, const IntRect* changeRect = nullptr) = 0;
     virtual void changedInRect(const Image*, const IntRect* changeRect = nullptr) = 0;
 };
 

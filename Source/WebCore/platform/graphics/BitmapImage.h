@@ -174,7 +174,7 @@ protected:
     // automatically pause once all observers no longer want to render the image anywhere.
     void stopAnimation() override;
     void resetAnimation() override;
-    void newFrameNativeImageAvailableAtIndex(size_t) override;
+    void imageFrameAvailableAtIndex(size_t) override;
 
     // Handle platform-specific data
     void invalidatePlatformData();

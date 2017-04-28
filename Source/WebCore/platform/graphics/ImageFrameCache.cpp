@@ -255,7 +255,7 @@ void ImageFrameCache::cacheAsyncFrameNativeImageAtIndex(NativeImagePtr&& nativeI
 
     // Notify the image with the readiness of the new frame NativeImage.
     if (m_image)
-        m_image->newFrameNativeImageAvailableAtIndex(index);
+        m_image->imageFrameAvailableAtIndex(index);
 }
 
 Ref<WorkQueue> ImageFrameCache::decodingQueue()

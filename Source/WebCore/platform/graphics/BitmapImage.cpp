@@ -411,7 +411,7 @@ void BitmapImage::internalAdvanceAnimation()
     destroyDecodedDataIfNecessary(false);
 
     if (imageObserver())
-        imageObserver()->animationAdvanced(this);
+        imageObserver()->imageFrameAvailable(this, ImageAnimatingState::Yes);
 
     LOG(Images, "BitmapImage::%s - %p - url: %s [m_currentFrame = %ld]", __FUNCTION__, this, sourceURL().string().utf8().data(), m_currentFrame);
 }
@@ -442,7 +442,7 @@ void BitmapImage::resetAnimation()
     destroyDecodedDataIfNecessary(true);
 }
 
-void BitmapImage::newFrameNativeImageAvailableAtIndex(size_t index)
+void BitmapImage::imageFrameAvailableAtIndex(size_t index)
 {
     UNUSED_PARAM(index);
     LOG(Images, "BitmapImage::%s - %p - url: %s [requested frame %ld is now available]", __FUNCTION__, this, sourceURL().string().utf8().data(), index);
@@ -457,7 +457,7 @@ void BitmapImage::newFrameNativeImageAvailableAtIndex(size_t index)
             LOG(Images, "BitmapImage::%s - %p - url: %s [earlyFrameCount = %ld nextFrame = %ld]", __FUNCTION__, this, sourceURL().string().utf8().data(), ++m_earlyFrameCount, index);
     } else {
         ASSERT(index == m_currentFrame && !m_currentFrame);
-        imageObserver()->changedInRect(this, nullptr);
+        imageObserver()->imageFrameAvailable(this, ImageAnimatingState::No);
         
         if (m_source.isAsyncDecodingQueueIdle())
             m_source.stopAsyncDecodingQueue();

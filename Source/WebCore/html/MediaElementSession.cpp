@@ -209,7 +209,7 @@ bool MediaElementSession::autoplayPermitted() const
         return false;
     if (renderer->view().frameView().isOffscreen())
         return false;
-    if (renderer->visibleInViewportState() != RenderElement::VisibleInViewport)
+    if (renderer->visibleInViewportState() != VisibleInViewportState::Yes)
         return false;
     return true;
 }
@@ -662,7 +662,7 @@ static bool isMainContentForPurposesOfAutoplay(const HTMLMediaElement& element)
     // they are scrolled off the page.
     if (renderer->style().visibility() != VISIBLE)
         return false;
-    if (renderer->visibleInViewportState() != RenderElement::VisibleInViewport && !element.isPlaying())
+    if (renderer->visibleInViewportState() != VisibleInViewportState::Yes && !element.isPlaying())
         return false;
 
     // Main content elements must be in the main frame.

@@ -138,6 +138,7 @@ public:
 
     bool borderImageIsLoadedAndCanBeRendered() const;
     bool mayCauseRepaintInsideViewport(const IntRect* visibleRect = nullptr) const;
+    bool shouldRepaintInVisibleRect(const IntRect& visibleRect) const;
 
     // Returns true if this renderer requires a new stacking context.
     static bool createsGroupForStyle(const RenderStyle&);
@@ -187,11 +188,6 @@ public:
     void registerForVisibleInViewportCallback();
     void unregisterForVisibleInViewportCallback();
 
-    enum VisibleInViewportState {
-        VisibilityUnknown,
-        VisibleInViewport,
-        NotVisibleInViewport,
-    };
     VisibleInViewportState visibleInViewportState() const { return static_cast<VisibleInViewportState>(m_visibleInViewportState); }
     void setVisibleInViewportState(VisibleInViewportState);
     virtual void visibleInViewportStateChanged();
@@ -318,7 +314,7 @@ private:
     std::unique_ptr<RenderStyle> computeFirstLineStyle() const;
     void invalidateCachedFirstLineStyle();
 
-    void newImageAnimationFrameAvailable(CachedImage&, bool& canPause) final;
+    VisibleInViewportState imageFrameAvailable(CachedImage&, ImageAnimatingState, const IntRect* changeRect) final;
     void didRemoveCachedImageClient(CachedImage&) final;
 
     bool getLeadingCorner(FloatPoint& output, bool& insideFixed) const;

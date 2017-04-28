@@ -52,7 +52,7 @@ private:
     
     void invalidateContentsAndRootView(const IntRect& r) final
     {
-        // If m_image->m_page is null, we're being destructed, don't fire changedInRect() in that case.
+        // If m_image->m_page is null, we're being destroyed.
         if (!m_image || !m_image->m_page)
             return;
 
@@ -60,10 +60,7 @@ private:
         if (!imageObserver)
             return;
 
-        if (m_image->isAnimating())
-            imageObserver->animationAdvanced(m_image);
-        else
-            imageObserver->changedInRect(m_image, &r);
+        imageObserver->imageFrameAvailable(m_image, m_image->isAnimating() ? ImageAnimatingState::Yes : ImageAnimatingState::No, &r);
     }
     
     SVGImage* m_image;

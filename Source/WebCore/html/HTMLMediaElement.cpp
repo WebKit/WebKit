@@ -7417,7 +7417,7 @@ void HTMLMediaElement::resetPlaybackSessionState()
 bool HTMLMediaElement::isVisibleInViewport() const
 {
     auto renderer = this->renderer();
-    return renderer && renderer->visibleInViewportState() == RenderElement::VisibleInViewport;
+    return renderer && renderer->visibleInViewportState() == VisibleInViewportState::Yes;
 }
 
 void HTMLMediaElement::updatePlaybackControlsManager()

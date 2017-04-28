@@ -23,11 +23,14 @@
 #pragma once
 
 #include "CachedResourceClient.h"
+#include "ImageTypes.h"
 
 namespace WebCore {
 
 class CachedImage;
 class IntRect;
+
+enum class VisibleInViewportState { Unknown, Yes, No };
 
 class CachedImageClient : public CachedResourceClient {
 public:
@@ -40,7 +43,7 @@ public:
     virtual void imageChanged(CachedImage*, const IntRect* = nullptr) { }
 
     // Called when GIF animation progresses.
-    virtual void newImageAnimationFrameAvailable(CachedImage& image, bool& canPause) { imageChanged(&image); canPause = true; }
+    virtual VisibleInViewportState imageFrameAvailable(CachedImage& image, ImageAnimatingState, const IntRect* changeRect) { imageChanged(&image, changeRect); return VisibleInViewportState::No; }
 
     virtual void didRemoveCachedImageClient(CachedImage&) { }
 };

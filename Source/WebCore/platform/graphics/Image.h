@@ -133,7 +133,7 @@ public:
     virtual void startAnimation() { }
     virtual void stopAnimation() {}
     virtual void resetAnimation() {}
-    virtual void newFrameNativeImageAvailableAtIndex(size_t) { }
+    virtual void imageFrameAvailableAtIndex(size_t) { }
     virtual bool isAnimating() const { return false; }
     
     // Typically the CachedImage that owns us.

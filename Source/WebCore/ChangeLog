@@ -1,3 +1,55 @@
+2017-04-28  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Unify how BitmapImage handles the availability of a decoded for large and animated images
+        https://bugs.webkit.org/show_bug.cgi?id=171410
+
+        Reviewed by Simon Fraser.
+
+        Rename some functions which are related to animation frame availability.
+        Make BitmapImage call ImageObserver::imageFrameAvailable() whenever a 
+        frame is available regardless it is for an animated or for a large image.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::isVisibleInViewport):
+        * html/MediaElementSession.cpp:
+        (WebCore::MediaElementSession::autoplayPermitted):
+        (WebCore::isMainContentForPurposesOfAutoplay):
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::CachedImageObserver::imageFrameAvailable):
+        (WebCore::CachedImage::imageFrameAvailable):
+        (WebCore::CachedImage::usesImageContainerSize): Deleted.
+        (WebCore::CachedImage::imageHasRelativeWidth): Deleted.
+        (WebCore::CachedImage::imageHasRelativeHeight): Deleted.
+        (WebCore::CachedImage::CachedImageObserver::animationAdvanced): Deleted.
+        (WebCore::CachedImage::animationAdvanced): Deleted.
+        * loader/cache/CachedImage.h:
+        * loader/cache/CachedImageClient.h:
+        (WebCore::CachedImageClient::imageFrameAvailable):
+        (WebCore::CachedImageClient::newImageAnimationFrameAvailable): Deleted.
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::internalAdvanceAnimation):
+        (WebCore::BitmapImage::imageFrameAvailableAtIndex):
+        (WebCore::BitmapImage::newFrameNativeImageAvailableAtIndex): Deleted.
+        * platform/graphics/BitmapImage.h:
+        * platform/graphics/Image.h:
+        (WebCore::Image::imageFrameAvailableAtIndex):
+        (WebCore::Image::newFrameNativeImageAvailableAtIndex): Deleted.
+        * platform/graphics/ImageFrameCache.cpp:
+        (WebCore::ImageFrameCache::cacheAsyncFrameNativeImageAtIndex):
+        * platform/graphics/ImageObserver.h:
+        * platform/graphics/ImageTypes.h:
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::RenderElement):
+        (WebCore::RenderElement::shouldRepaintInVisibleRect):
+        (WebCore::RenderElement::imageFrameAvailable):
+        (WebCore::RenderElement::repaintForPausedImageAnimationsIfNeeded):
+        (WebCore::shouldRepaintForImageAnimation): Deleted.
+        (WebCore::RenderElement::newImageAnimationFrameAvailable): Deleted.
+        * rendering/RenderElement.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::updateVisibleViewportRect):
+        * svg/graphics/SVGImageClients.h:
+
 2017-04-28  Jeremy Jones  <jeremyj@apple.com>
 
         ARGUMENT BAD: time, time >= 0

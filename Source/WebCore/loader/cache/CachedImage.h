@@ -64,9 +64,9 @@ public:
     bool canRender(const RenderElement* renderer, float multiplier) { return !errorOccurred() && !imageSizeForRenderer(renderer, multiplier).isEmpty(); }
 
     void setContainerSizeForRenderer(const CachedImageClient*, const LayoutSize&, float);
-    bool usesImageContainerSize() const;
-    bool imageHasRelativeWidth() const;
-    bool imageHasRelativeHeight() const;
+    bool usesImageContainerSize() const { return m_image && m_image->usesContainerSize(); }
+    bool imageHasRelativeWidth() const { return m_image && m_image->hasRelativeWidth(); }
+    bool imageHasRelativeHeight() const { return m_image && m_image->hasRelativeHeight(); }
 
     void addDataBuffer(SharedBuffer&) override;
     void finishLoading(SharedBuffer*) override;
@@ -131,7 +131,7 @@ private:
         void decodedSizeChanged(const Image*, long long delta) final;
         void didDraw(const Image*) final;
 
-        void animationAdvanced(const Image*) final;
+        void imageFrameAvailable(const Image*, ImageAnimatingState, const IntRect* changeRect = nullptr) final;
         void changedInRect(const Image*, const IntRect*) final;
 
         Vector<CachedImage*> m_cachedImages;
@@ -139,7 +139,7 @@ private:
 
     void decodedSizeChanged(const Image*, long long delta);
     void didDraw(const Image*);
-    void animationAdvanced(const Image*);
+    void imageFrameAvailable(const Image*, ImageAnimatingState, const IntRect* changeRect = nullptr);
     void changedInRect(const Image*, const IntRect*);
 
     void addIncrementalDataBuffer(SharedBuffer&);
