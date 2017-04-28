@@ -1,3 +1,12 @@
+2017-04-28  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Mark imported/w3c/web-platform-tests/webrtc/rtcpeerconnection/rtcpeerconnection-idl.html as flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=171094
+
+        Unreviewed test gardening.
+
+        * TestExpectations:
+
 2017-04-28  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [ATK] aria-modal="true" should be exposed via ATK_STATE_MODAL
