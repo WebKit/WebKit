@@ -42,8 +42,7 @@
 namespace WebCore {
 
 class AudioContext;
-class ClientRect;
-class ClientRectList;
+class DOMRect;
 class DOMURL;
 class DOMWindow;
 class Document;
@@ -179,11 +178,11 @@ public:
     ExceptionOr<Vector<String>> formControlStateOfPreviousHistoryItem();
     ExceptionOr<void> setFormControlStateOfPreviousHistoryItem(const Vector<String>&);
 
-    ExceptionOr<Ref<ClientRect>> absoluteCaretBounds();
+    ExceptionOr<Ref<DOMRect>> absoluteCaretBounds();
 
-    Ref<ClientRect> boundingBox(Element&);
+    Ref<DOMRect> boundingBox(Element&);
 
-    ExceptionOr<Ref<ClientRectList>> inspectorHighlightRects();
+    ExceptionOr<Vector<Ref<DOMRect>>> inspectorHighlightRects();
     ExceptionOr<String> inspectorHighlightObject();
 
     ExceptionOr<unsigned> markerCountForNode(Node&, const String&);
@@ -200,8 +199,8 @@ public:
 
     ExceptionOr<void> setScrollViewPosition(int x, int y);
 
-    ExceptionOr<Ref<ClientRect>> layoutViewportRect();
-    ExceptionOr<Ref<ClientRect>> visualViewportRect();
+    ExceptionOr<Ref<DOMRect>> layoutViewportRect();
+    ExceptionOr<Ref<DOMRect>> visualViewportRect();
 
     ExceptionOr<void> setViewBaseBackgroundColor(const String& colorValue);
 
@@ -243,8 +242,8 @@ public:
     ExceptionOr<unsigned> wheelEventHandlerCount();
     ExceptionOr<unsigned> touchEventHandlerCount();
 
-    ExceptionOr<Ref<ClientRectList>> touchEventRectsForEvent(const String&);
-    ExceptionOr<Ref<ClientRectList>> passiveTouchEventListenerRects();
+    ExceptionOr<Vector<Ref<DOMRect>>> touchEventRectsForEvent(const String&);
+    ExceptionOr<Vector<Ref<DOMRect>>> passiveTouchEventListenerRects();
 
     ExceptionOr<RefPtr<NodeList>> nodesFromRect(Document&, int x, int y, unsigned topPadding, unsigned rightPadding, unsigned bottomPadding, unsigned leftPadding, bool ignoreClipping, bool allowShadowContent, bool allowChildFrameContent) const;
 
@@ -298,7 +297,7 @@ public:
     ExceptionOr<String> repaintRectsAsText() const;
     ExceptionOr<String> scrollingStateTreeAsText() const;
     ExceptionOr<String> mainThreadScrollingReasons() const;
-    ExceptionOr<RefPtr<ClientRectList>> nonFastScrollableRects() const;
+    ExceptionOr<Vector<Ref<DOMRect>>> nonFastScrollableRects() const;
 
     ExceptionOr<void> setElementUsesDisplayListDrawing(Element&, bool usesDisplayListDrawing);
     ExceptionOr<void> setElementTracksDisplayListReplay(Element&, bool isTrackingReplay);
@@ -449,7 +448,7 @@ public:
     double closestTimeToTimeRanges(double time, TimeRanges&);
 #endif
 
-    ExceptionOr<Ref<ClientRect>> selectionBounds();
+    ExceptionOr<Ref<DOMRect>> selectionBounds();
 
 #if ENABLE(VIBRATION)
     bool isVibrating();

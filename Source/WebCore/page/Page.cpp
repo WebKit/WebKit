@@ -28,10 +28,10 @@
 #include "CSSAnimationController.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
-#include "ClientRectList.h"
 #include "ConstantPropertyMap.h"
 #include "ContextMenuClient.h"
 #include "ContextMenuController.h"
+#include "DOMRect.h"
 #include "DatabaseProvider.h"
 #include "DiagnosticLoggingClient.h"
 #include "DiagnosticLoggingKeys.h"
@@ -405,7 +405,7 @@ String Page::synchronousScrollingReasonsAsText()
     return String();
 }
 
-Ref<ClientRectList> Page::nonFastScrollableRects()
+Vector<Ref<DOMRect>> Page::nonFastScrollableRects()
 {
     if (Document* document = m_mainFrame->document())
         document->updateLayout();
@@ -421,10 +421,10 @@ Ref<ClientRectList> Page::nonFastScrollableRects()
     for (size_t i = 0; i < rects.size(); ++i)
         quads[i] = FloatRect(rects[i]);
 
-    return ClientRectList::create(quads);
+    return createDOMRectVector(quads);
 }
 
-Ref<ClientRectList> Page::touchEventRectsForEvent(const String& eventName)
+Vector<Ref<DOMRect>> Page::touchEventRectsForEvent(const String& eventName)
 {
     if (Document* document = m_mainFrame->document()) {
         document->updateLayout();
@@ -444,10 +444,10 @@ Ref<ClientRectList> Page::touchEventRectsForEvent(const String& eventName)
     for (size_t i = 0; i < rects.size(); ++i)
         quads[i] = FloatRect(rects[i]);
 
-    return ClientRectList::create(quads);
+    return createDOMRectVector(quads);
 }
 
-Ref<ClientRectList> Page::passiveTouchEventListenerRects()
+Vector<Ref<DOMRect>> Page::passiveTouchEventListenerRects()
 {
     if (Document* document = m_mainFrame->document()) {
         document->updateLayout();
@@ -464,7 +464,7 @@ Ref<ClientRectList> Page::passiveTouchEventListenerRects()
     for (size_t i = 0; i < rects.size(); ++i)
         quads[i] = FloatRect(rects[i]);
 
-    return ClientRectList::create(quads);
+    return createDOMRectVector(quads);
 }
 
 #if ENABLE(VIEW_MODE_CSS_MEDIA)

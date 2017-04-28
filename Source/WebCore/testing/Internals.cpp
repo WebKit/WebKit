@@ -40,11 +40,10 @@
 #include "CSSSupportsRule.h"
 #include "CachedImage.h"
 #include "CachedResourceLoader.h"
-#include "ClientRect.h"
-#include "ClientRectList.h"
 #include "ComposedTreeIterator.h"
 #include "Cursor.h"
 #include "DOMPath.h"
+#include "DOMRect.h"
 #include "DOMStringList.h"
 #include "DOMWindow.h"
 #include "DisplayList.h"
@@ -1328,25 +1327,25 @@ void Internals::setMockMediaCaptureDevicesEnabled(bool enabled)
 
 #endif
 
-ExceptionOr<Ref<ClientRect>> Internals::absoluteCaretBounds()
+ExceptionOr<Ref<DOMRect>> Internals::absoluteCaretBounds()
 {
     Document* document = contextDocument();
     if (!document || !document->frame())
         return Exception { INVALID_ACCESS_ERR };
 
-    return ClientRect::create(document->frame()->selection().absoluteCaretBounds());
+    return DOMRect::create(document->frame()->selection().absoluteCaretBounds());
 }
 
-Ref<ClientRect> Internals::boundingBox(Element& element)
+Ref<DOMRect> Internals::boundingBox(Element& element)
 {
     element.document().updateLayoutIgnorePendingStylesheets();
     auto renderer = element.renderer();
     if (!renderer)
-        return ClientRect::create();
-    return ClientRect::create(renderer->absoluteBoundingBoxRectIgnoringTransforms());
+        return DOMRect::create();
+    return DOMRect::create(renderer->absoluteBoundingBoxRectIgnoringTransforms());
 }
 
-ExceptionOr<Ref<ClientRectList>> Internals::inspectorHighlightRects()
+ExceptionOr<Vector<Ref<DOMRect>>> Internals::inspectorHighlightRects()
 {
     Document* document = contextDocument();
     if (!document || !document->page())
@@ -1354,7 +1353,7 @@ ExceptionOr<Ref<ClientRectList>> Internals::inspectorHighlightRects()
 
     Highlight highlight;
     document->page()->inspectorController().getHighlight(highlight, InspectorOverlay::CoordinateSystem::View);
-    return ClientRectList::create(highlight.quads);
+    return createDOMRectVector(highlight.quads);
 }
 
 ExceptionOr<String> Internals::inspectorHighlightObject()
@@ -1496,7 +1495,7 @@ ExceptionOr<void> Internals::setScrollViewPosition(int x, int y)
     return { };
 }
 
-ExceptionOr<Ref<ClientRect>> Internals::layoutViewportRect()
+ExceptionOr<Ref<DOMRect>> Internals::layoutViewportRect()
 {
     Document* document = contextDocument();
     if (!document || !document->frame())
@@ -1505,10 +1504,10 @@ ExceptionOr<Ref<ClientRect>> Internals::layoutViewportRect()
     document->updateLayoutIgnorePendingStylesheets();
 
     auto& frameView = *document->view();
-    return ClientRect::create(frameView.layoutViewportRect());
+    return DOMRect::create(frameView.layoutViewportRect());
 }
 
-ExceptionOr<Ref<ClientRect>> Internals::visualViewportRect()
+ExceptionOr<Ref<DOMRect>> Internals::visualViewportRect()
 {
     Document* document = contextDocument();
     if (!document || !document->frame())
@@ -1517,7 +1516,7 @@ ExceptionOr<Ref<ClientRect>> Internals::visualViewportRect()
     document->updateLayoutIgnorePendingStylesheets();
 
     auto& frameView = *document->view();
-    return ClientRect::create(frameView.visualViewportRect());
+    return DOMRect::create(frameView.visualViewportRect());
 }
 
 ExceptionOr<void> Internals::setViewBaseBackgroundColor(const String& colorValue)
@@ -1790,7 +1789,7 @@ ExceptionOr<unsigned> Internals::touchEventHandlerCount()
     return document->touchEventHandlerCount();
 }
 
-ExceptionOr<Ref<ClientRectList>> Internals::touchEventRectsForEvent(const String& eventName)
+ExceptionOr<Vector<Ref<DOMRect>>> Internals::touchEventRectsForEvent(const String& eventName)
 {
     Document* document = contextDocument();
     if (!document || !document->page())
@@ -1799,7 +1798,7 @@ ExceptionOr<Ref<ClientRectList>> Internals::touchEventRectsForEvent(const String
     return document->page()->touchEventRectsForEvent(eventName);
 }
 
-ExceptionOr<Ref<ClientRectList>> Internals::passiveTouchEventListenerRects()
+ExceptionOr<Vector<Ref<DOMRect>>> Internals::passiveTouchEventListenerRects()
 {
     Document* document = contextDocument();
     if (!document || !document->page())
@@ -2321,7 +2320,7 @@ ExceptionOr<String> Internals::mainThreadScrollingReasons() const
     return page->synchronousScrollingReasonsAsText();
 }
 
-ExceptionOr<RefPtr<ClientRectList>> Internals::nonFastScrollableRects() const
+ExceptionOr<Vector<Ref<DOMRect>>> Internals::nonFastScrollableRects() const
 {
     Document* document = contextDocument();
     if (!document || !document->frame())
@@ -2329,9 +2328,9 @@ ExceptionOr<RefPtr<ClientRectList>> Internals::nonFastScrollableRects() const
 
     Page* page = document->page();
     if (!page)
-        return nullptr;
+        return Vector<Ref<DOMRect>> { };
 
-    return RefPtr<ClientRectList> { page->nonFastScrollableRects() };
+    return page->nonFastScrollableRects();
 }
 
 ExceptionOr<void> Internals::setElementUsesDisplayListDrawing(Element& element, bool usesDisplayListDrawing)
@@ -3122,13 +3121,13 @@ double Internals::closestTimeToTimeRanges(double time, TimeRanges& ranges)
 
 #endif
 
-ExceptionOr<Ref<ClientRect>> Internals::selectionBounds()
+ExceptionOr<Ref<DOMRect>> Internals::selectionBounds()
 {
     Document* document = contextDocument();
     if (!document || !document->frame())
         return Exception { INVALID_ACCESS_ERR };
 
-    return ClientRect::create(document->frame()->selection().selectionBounds());
+    return DOMRect::create(document->frame()->selection().selectionBounds());
 }
 
 #if ENABLE(VIBRATION)

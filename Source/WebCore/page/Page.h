@@ -81,10 +81,10 @@ class BackForwardController;
 class BackForwardClient;
 class Chrome;
 class ChromeClient;
-class ClientRectList;
 class Color;
 class ContextMenuClient;
 class ContextMenuController;
+class DOMRect;
 class DatabaseProvider;
 class DiagnosticLoggingClient;
 class DragCaretController;
@@ -239,10 +239,10 @@ public:
 
     WEBCORE_EXPORT String scrollingStateTreeAsText();
     WEBCORE_EXPORT String synchronousScrollingReasonsAsText();
-    WEBCORE_EXPORT Ref<ClientRectList> nonFastScrollableRects();
+    WEBCORE_EXPORT Vector<Ref<DOMRect>> nonFastScrollableRects();
 
-    WEBCORE_EXPORT Ref<ClientRectList> touchEventRectsForEvent(const String& eventName);
-    WEBCORE_EXPORT Ref<ClientRectList> passiveTouchEventListenerRects();
+    WEBCORE_EXPORT Vector<Ref<DOMRect>> touchEventRectsForEvent(const String& eventName);
+    WEBCORE_EXPORT Vector<Ref<DOMRect>> passiveTouchEventListenerRects();
 
     Settings& settings() const { return *m_settings; }
     ProgressTracker& progress() const { return *m_progress; }

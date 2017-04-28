@@ -148,11 +148,11 @@ enum EventThrottlingBehavior {
     [MayThrowException] sequence<DOMString> formControlStateOfPreviousHistoryItem();
     [MayThrowException] void setFormControlStateOfPreviousHistoryItem(sequence<DOMString> values);
 
-    [MayThrowException] ClientRect absoluteCaretBounds();
+    [MayThrowException] DOMRect absoluteCaretBounds();
 
-    ClientRect boundingBox(Element element);
+    DOMRect boundingBox(Element element);
 
-    [MayThrowException] ClientRectList inspectorHighlightRects();
+    [MayThrowException] sequence<DOMRect> inspectorHighlightRects();
     [MayThrowException] DOMString inspectorHighlightObject();
 
     [MayThrowException] unsigned long markerCountForNode(Node node, DOMString markerType);
@@ -167,8 +167,8 @@ enum EventThrottlingBehavior {
 
     [MayThrowException] void setScrollViewPosition(long x, long y);
 
-    [MayThrowException] ClientRect layoutViewportRect();
-    [MayThrowException] ClientRect visualViewportRect();
+    [MayThrowException] DOMRect layoutViewportRect();
+    [MayThrowException] DOMRect visualViewportRect();
 
     [MayThrowException] void setViewBaseBackgroundColor(DOMString colorValue);
 
@@ -215,8 +215,8 @@ enum EventThrottlingBehavior {
     [MayThrowException] unsigned long wheelEventHandlerCount();
     [MayThrowException] unsigned long touchEventHandlerCount();
 
-    [MayThrowException] ClientRectList touchEventRectsForEvent(DOMString eventName);
-    [MayThrowException] ClientRectList passiveTouchEventListenerRects();
+    [MayThrowException] sequence<DOMRect> touchEventRectsForEvent(DOMString eventName);
+    [MayThrowException] sequence<DOMRect> passiveTouchEventListenerRects();
 
     [MayThrowException] NodeList? nodesFromRect(Document document, long x, long y,
         unsigned long topPadding, unsigned long rightPadding, unsigned long bottomPadding, unsigned long leftPadding,
@@ -273,7 +273,7 @@ enum EventThrottlingBehavior {
 
     [MayThrowException] DOMString scrollingStateTreeAsText();
     [MayThrowException] DOMString mainThreadScrollingReasons(); // FIXME: rename to synchronousScrollingReasons().
-    [MayThrowException] ClientRectList? nonFastScrollableRects();
+    [MayThrowException] sequence<DOMRect> nonFastScrollableRects();
 
     [MayThrowException] DOMString repaintRectsAsText();
 
@@ -432,7 +432,7 @@ enum EventThrottlingBehavior {
     [MayThrowException] boolean isPluginUnavailabilityIndicatorObscured(Element element);
     boolean isPluginSnapshotted(Element element);
 
-    [MayThrowException] ClientRect selectionBounds();
+    [MayThrowException] DOMRect selectionBounds();
 
     [Conditional=MEDIA_SOURCE] void initializeMockMediaSource();
     [Conditional=MEDIA_SOURCE] sequence<DOMString> bufferedSamplesForTrackID(SourceBuffer buffer, DOMString trackID);
