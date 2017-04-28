@@ -505,7 +505,7 @@ RefPtr<AtomicStringImpl> AtomicStringImpl::addUTF8(const char* charactersStart, 
     return addToStringTable<HashAndUTF8Characters, HashAndUTF8CharactersTranslator>(buffer);
 }
 
-RefPtr<AtomicStringImpl> AtomicStringImpl::lookUpInternal(const LChar* characters, unsigned length)
+RefPtr<AtomicStringImpl> AtomicStringImpl::lookUp(const LChar* characters, unsigned length)
 {
     AtomicStringTableLocker locker;
     auto& table = stringTable();
@@ -517,7 +517,7 @@ RefPtr<AtomicStringImpl> AtomicStringImpl::lookUpInternal(const LChar* character
     return nullptr;
 }
 
-RefPtr<AtomicStringImpl> AtomicStringImpl::lookUpInternal(const UChar* characters, unsigned length)
+RefPtr<AtomicStringImpl> AtomicStringImpl::lookUp(const UChar* characters, unsigned length)
 {
     AtomicStringTableLocker locker;
     auto& table = stringTable();

@@ -94,6 +94,7 @@ public:
     String toString() const;
     String toStringWithoutCopying() const;
     AtomicString toAtomicString() const;
+    RefPtr<AtomicStringImpl> toExistingAtomicString() const;
 
 #if USE(CF)
     // This function converts null strings to empty strings.
@@ -488,6 +489,13 @@ inline AtomicString StringView::toAtomicString() const
     if (is8Bit())
         return AtomicString(characters8(), m_length);
     return AtomicString(characters16(), m_length);
+}
+
+inline RefPtr<AtomicStringImpl> StringView::toExistingAtomicString() const
+{
+    if (is8Bit())
+        return AtomicStringImpl::lookUp(characters8(), m_length);
+    return AtomicStringImpl::lookUp(characters16(), m_length);
 }
 
 inline float StringView::toFloat(bool& isValid) const
