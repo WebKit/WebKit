@@ -3175,7 +3175,7 @@ void Document::processViewport(const String& features, ViewportArguments::Type o
 
     m_viewportArguments = ViewportArguments(origin);
 
-    processFeaturesString(features, [this](StringView key, StringView value) {
+    processFeaturesString(features, FeatureMode::Viewport, [this](StringView key, StringView value) {
         setViewportFeature(m_viewportArguments, *this, key, value);
     });
 
@@ -3198,7 +3198,7 @@ void Document::updateViewportArguments()
 void Document::processFormatDetection(const String& features)
 {
     // FIXME: Find a better place for this function.
-    processFeaturesString(features, [this](StringView key, StringView value) {
+    processFeaturesString(features, FeatureMode::Viewport, [this](StringView key, StringView value) {
         if (equalLettersIgnoringASCIICase(key, "telephone") && equalLettersIgnoringASCIICase(value, "no"))
             setIsTelephoneNumberParsingAllowed(false);
     });

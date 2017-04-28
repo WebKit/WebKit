@@ -2206,7 +2206,7 @@ RefPtr<Frame> DOMWindow::createWindow(const String& urlString, const AtomicStrin
     newFrame->page()->setOpenedByDOM();
 
     if (newFrame->document()->domWindow()->isInsecureScriptAccess(activeWindow, completedURL))
-        return newFrame;
+        return windowFeatures.noopener ? nullptr : newFrame;
 
     if (prepareDialogFunction)
         prepareDialogFunction(*newFrame->document()->domWindow());
@@ -2224,7 +2224,7 @@ RefPtr<Frame> DOMWindow::createWindow(const String& urlString, const AtomicStrin
     if (!newFrame->page())
         return nullptr;
 
-    return newFrame;
+    return windowFeatures.noopener ? nullptr : newFrame;
 }
 
 RefPtr<DOMWindow> DOMWindow::open(const String& urlString, const AtomicString& frameName, const String& windowFeaturesString, DOMWindow& activeWindow, DOMWindow& firstWindow)

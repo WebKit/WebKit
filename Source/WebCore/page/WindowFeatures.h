@@ -60,6 +60,7 @@ struct WindowFeatures {
 WindowFeatures parseWindowFeatures(StringView windowFeaturesString);
 WindowFeatures parseDialogFeatures(const String& dialogFeaturesString, const FloatRect& screenAvailableRect);
 
-void processFeaturesString(StringView features, std::function<void(StringView type, StringView value)> callback);
+enum class FeatureMode { Window, Viewport };
+void processFeaturesString(StringView features, FeatureMode, std::function<void(StringView type, StringView value)> callback);
 
 } // namespace WebCore

@@ -1,5 +1,24 @@
 2017-04-28  Chris Dumez  <cdumez@apple.com>
 
+        Tweak window.open features argument tokenizer to match HTML standard and Edge
+        https://bugs.webkit.org/show_bug.cgi?id=170548
+
+        Reviewed by Geoffrey Garen.
+
+        * web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-tokenization-noopener-expected.txt:
+        Rebaseline test now that more checks are passing. The remaining failures are because the test currently expects "noopener=0" / "noopener=false" to activate
+        the 'noopener' feature. The test matches the specification which currently says that if the 'noopener' key is present, then the 'noopener' feature should be
+        activated, no matter its value. However, I am intentionally not making this change yet because:
+        - This behavior would be inconsistent with other Window features
+        - There is upstream discussion on this (https://github.com/whatwg/html/issues/2600) and the current feedback is that the specification should likely
+          change to treat 'noopener' more consistently with other features.
+        I will follow-up once the specification / test settles.
+
+        * web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-tokenization-noopener.html:
+        Re-sync test from upstream after https://github.com/w3c/web-platform-tests/pull/5715.
+
+2017-04-28  Chris Dumez  <cdumez@apple.com>
+
         Update DOMTokenList.replace() to match the latest DOM specification
         https://bugs.webkit.org/show_bug.cgi?id=171388
 
