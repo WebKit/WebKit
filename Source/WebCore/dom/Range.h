@@ -34,8 +34,7 @@
 
 namespace WebCore {
 
-class ClientRect;
-class ClientRectList;
+class DOMRect;
 class ContainerNode;
 class Document;
 class DocumentFragment;
@@ -142,8 +141,8 @@ public:
     // for details.
     WEBCORE_EXPORT ExceptionOr<void> expand(const String&);
 
-    Ref<ClientRectList> getClientRects() const;
-    Ref<ClientRect> getBoundingClientRect() const;
+    Vector<Ref<DOMRect>> getClientRects() const;
+    Ref<DOMRect> getBoundingClientRect() const;
 
 #if ENABLE(TREE_DEBUGGING)
     void formatForDebugger(char* buffer, unsigned length) const;

@@ -1,3 +1,15 @@
+2017-04-28  Chris Dumez  <cdumez@apple.com>
+
+        Range.getClientRects() / getBoundingClientRect() should return DOMRect types
+        https://bugs.webkit.org/show_bug.cgi?id=171393
+
+        Reviewed by Simon Fraser.
+
+        Add layout test coverage.
+
+        * fast/dom/Range/getBoundingClientRect-getClientRects-return-type-expected.txt: Added.
+        * fast/dom/Range/getBoundingClientRect-getClientRects-return-type.html: Added.
+
 2017-04-28  Joseph Pecoraro  <pecoraro@apple.com>
 
         LayoutTests/js/dom/Promise-static-all/race.html are flakey - Unhandled Promise Rejection messages

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016, 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,41 +23,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "DOMRect.h"
 
-#include "DOMRectReadOnly.h"
-#include "FloatRect.h"
-#include "IntRect.h"
-#include <wtf/Vector.h>
+#include "FloatQuad.h"
 
 namespace WebCore {
 
-class FloatQuad;
-
-class DOMRect : public DOMRectReadOnly {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    static Ref<DOMRect> create() { return adoptRef(*new DOMRect()); }
-    static Ref<DOMRect> create(double x, double y, double width, double height) { return adoptRef(*new DOMRect(x, y, width, height)); }
-    static Ref<DOMRect> create(FloatRect rect) { return adoptRef(*new DOMRect(rect.x(), rect.y(), rect.width(), rect.height())); }
-    static Ref<DOMRect> create(IntRect rect) { return adoptRef(*new DOMRect(rect.x(), rect.y(), rect.width(), rect.height())); }
-    static Ref<DOMRect> fromRect(const DOMRectInit& init) { return create(init.x, init.y, init.width, init.height); }
-
-    void setX(double x) { m_x = x; }
-    void setY(double y) { m_y = y; }
-
-    void setWidth(double width) { m_width = width; }
-    void setHeight(double height) { m_height = height; }
-
-private:
-    DOMRect(double x, double y, double width, double height)
-        : DOMRectReadOnly(x, y, width, height)
-    {
-    }
-
-    DOMRect() = default;
-};
-
-Vector<Ref<DOMRect>> createDOMRectVector(const Vector<FloatQuad>&);
+Vector<Ref<DOMRect>> createDOMRectVector(const Vector<FloatQuad>& quads)
+{
+    Vector<Ref<DOMRect>> result;
+    result.reserveInitialCapacity(quads.size());
+    for (auto& quad : quads)
+        result.uncheckedAppend(DOMRect::create(quad.enclosingBoundingBox()));
+    return result;
+}
 
 }

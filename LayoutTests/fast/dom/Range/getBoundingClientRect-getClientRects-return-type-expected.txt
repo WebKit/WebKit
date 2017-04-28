@@ -1,0 +1,13 @@
+Tests that Range.getClientRects() / getBoundingClientRect() return DOMRect types.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS rect.__proto__ is DOMRect.prototype
+PASS rects.__proto__ is Array.prototype
+PASS rects.length > 0 is true
+PASS rects[0].__proto__ is DOMRect.prototype
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

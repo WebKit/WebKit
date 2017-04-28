@@ -1146,15 +1146,6 @@ LayoutRect Element::absoluteEventHandlerBounds(bool& includesFixedPositionElemen
     return absoluteEventBoundsOfElementAndDescendants(includesFixedPositionElements);
 }
 
-static Vector<Ref<DOMRect>> toDOMRectVector(const Vector<FloatQuad>& quads)
-{
-    Vector<Ref<DOMRect>> result;
-    result.reserveInitialCapacity(quads.size());
-    for (auto& quad : quads)
-        result.uncheckedAppend(DOMRect::create(quad.enclosingBoundingBox()));
-    return result;
-}
-
 Vector<Ref<DOMRect>> Element::getClientRects()
 {
     document().updateLayoutIgnorePendingStylesheets();
@@ -1169,7 +1160,7 @@ Vector<Ref<DOMRect>> Element::getClientRects()
     Vector<FloatQuad> quads;
     renderBoxModelObject->absoluteQuads(quads);
     document().adjustFloatQuadsForScrollAndAbsoluteZoomAndFrameScale(quads, renderBoxModelObject->style());
-    return toDOMRectVector(quads);
+    return createDOMRectVector(quads);
 }
 
 Ref<DOMRect> Element::getBoundingClientRect()

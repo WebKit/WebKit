@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+description("Tests that Range.getClientRects() / getBoundingClientRect() return DOMRect types.");
+jsTestIsAsync = true;
+
+onload = function() {
+    range = document.createRange();
+    range.selectNodeContents(document.body)
+
+    rect = range.getBoundingClientRect();
+    shouldBe("rect.__proto__", "DOMRect.prototype");
+
+    rects = range.getClientRects();
+    shouldBe("rects.__proto__", "Array.prototype");
+    shouldBeTrue("rects.length > 0");
+    shouldBe("rects[0].__proto__", "DOMRect.prototype");
+
+    finishJSTest();
+}
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

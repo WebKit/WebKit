@@ -1465,6 +1465,7 @@ set(WebCore_SOURCES
     dom/DOMError.cpp
     dom/DOMImplementation.cpp
     dom/DOMNamedFlowCollection.cpp
+    dom/DOMRect.cpp
     dom/DOMStringList.cpp
     dom/DataTransfer.cpp
     dom/DataTransferItem.cpp

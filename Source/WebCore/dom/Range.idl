@@ -62,8 +62,8 @@
 
     void detach();
 
-    ClientRectList getClientRects();
-    ClientRect getBoundingClientRect();
+    sequence<DOMRect> getClientRects();
+    [NewObject] DOMRect getBoundingClientRect();
 
     [CEReactions, MayThrowException, NewObject] DocumentFragment createContextualFragment(DOMString html);
 
