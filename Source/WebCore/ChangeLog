@@ -1,3 +1,29 @@
+2017-04-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Data interaction should not load pasteboard content before performing the data operation
+        https://bugs.webkit.org/show_bug.cgi?id=171414
+        <rdar://problem/31878197>
+
+        Reviewed by Tim Horton.
+
+        When interacting with a link, we should not try to fetch pasteboard contents for the URL UTI type before
+        performing the data operation. Teaches DragController to know whether it is allowed to load data from the
+        dragging pasteboard, and uses this information in DragController::dragOperation to determine whether to use
+        DragData::containsURLTypeIdentifier or DragData::containsURL.
+
+        * page/DragController.cpp:
+        (WebCore::DragController::DragController):
+        (WebCore::DragController::performDragOperation):
+        * page/DragController.h:
+        (WebCore::DragController::canLoadDataFromDraggingPasteboard):
+        * page/mac/DragControllerMac.mm:
+        (WebCore::DragController::dragOperation):
+        * platform/DragData.h:
+        * platform/ios/WebItemProviderPasteboard.mm:
+        (-[WebItemProviderPasteboard _preLoadedDataConformingToType:forItemProviderAtIndex:]):
+        * platform/mac/DragDataMac.mm:
+        (WebCore::DragData::containsURLTypeIdentifier):
+
 2017-04-27  Joseph Pecoraro  <pecoraro@apple.com>
 
         Support for promise rejection events (unhandledrejection)

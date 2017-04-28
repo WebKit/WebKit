@@ -111,6 +111,7 @@ public:
     const Vector<String>& fileNames() const { return m_fileNames; }
 #if PLATFORM(COCOA)
     const String& pasteboardName() const { return m_pasteboardName; }
+    bool containsURLTypeIdentifier() const;
     bool containsPromise() const;
 #endif
 #if ENABLE(DATA_INTERACTION)

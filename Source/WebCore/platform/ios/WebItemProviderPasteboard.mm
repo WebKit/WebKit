@@ -302,6 +302,11 @@ static BOOL isImageType(NSString *type)
 
 - (NSData *)_preLoadedDataConformingToType:(NSString *)typeIdentifier forItemProviderAtIndex:(NSUInteger)index
 {
+    if ([_typeToFileURLMaps count] != [_itemProviders count]) {
+        ASSERT_NOT_REACHED();
+        return nil;
+    }
+
     TypeToFileURLMap *typeToFileURLMap = [_typeToFileURLMaps objectAtIndex:index];
     for (NSString *loadedType in typeToFileURLMap) {
         if (!UTTypeConformsTo((CFStringRef)loadedType, (CFStringRef)typeIdentifier))

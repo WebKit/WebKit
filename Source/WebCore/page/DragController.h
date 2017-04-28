@@ -121,6 +121,15 @@ struct DragState;
 
         void beginDrag(DragItem, Frame&, const IntPoint& mouseDownPoint, const IntPoint& mouseDraggedPoint, DataTransfer&, DragSourceAction);
 
+        bool canLoadDataFromDraggingPasteboard() const
+        {
+#if ENABLE(DATA_INTERACTION)
+            return m_isPerformingDrop;
+#else
+            return true;
+#endif
+        }
+
         void cleanupAfterSystemDrag();
         void declareAndWriteDragImage(DataTransfer&, Element&, const URL&, const String& label);
 #if ENABLE(ATTACHMENT_ELEMENT)
@@ -142,6 +151,7 @@ struct DragState;
         DragOperation m_sourceDragOperation; // Set in startDrag when a drag starts from a mouse down within WebKit
         IntPoint m_dragOffset;
         URL m_draggingImageURL;
+        bool m_isPerformingDrop { false };
 #if ENABLE(ATTACHMENT_ELEMENT)
         URL m_draggingAttachmentURL;
 #endif

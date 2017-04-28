@@ -108,6 +108,13 @@ DragData::DragData(const String& dragStorageName, const IntPoint& clientPosition
     , m_pasteboardName(dragStorageName)
 {
 }
+
+bool DragData::containsURLTypeIdentifier() const
+{
+    Vector<String> types;
+    platformStrategies()->pasteboardStrategy()->getTypes(types, m_pasteboardName);
+    return types.contains(urlPasteboardType());
+}
     
 bool DragData::canSmartReplace() const
 {
