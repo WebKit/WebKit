@@ -312,6 +312,7 @@ WEBCORE_EXPORT const URL& blankURL();
 
 WEBCORE_EXPORT bool protocolIs(const String& url, const char* protocol);
 WEBCORE_EXPORT bool protocolIsJavaScript(const String& url);
+bool protocolIsJavaScript(StringView url);
 WEBCORE_EXPORT bool protocolIsInHTTPFamily(const String& url);
 
 std::optional<uint16_t> defaultPortForProtocol(StringView protocol);

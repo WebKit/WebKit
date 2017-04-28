@@ -341,11 +341,6 @@ static void copyASCII(const String& string, char* dest)
     }
 }
 
-inline bool URL::protocolIs(const String& string, const char* protocol)
-{
-    return WebCore::protocolIs(string, protocol);
-}
-
 void URL::invalidate()
 {
     m_isValid = false;
@@ -1070,19 +1065,19 @@ void URL::copyToBuffer(Vector<char, 512>& buffer) const
     copyASCII(m_string, buffer.data());
 }
 
-// FIXME: Why is this different than protocolIs(StringView, const char*)?
-bool protocolIs(const String& url, const char* protocol)
+template<typename StringClass>
+bool protocolIsInternal(const StringClass& url, const char* protocol)
 {
     // Do the comparison without making a new string object.
     assertProtocolIsGood(StringView(reinterpret_cast<const LChar*>(protocol), strlen(protocol)));
     bool isLeading = true;
     for (unsigned i = 0, j = 0; url[i]; ++i) {
-        // skip leading whitespace and control characters.
+        // Skip leading whitespace and control characters.
         if (isLeading && shouldTrimFromURL(url[i]))
             continue;
         isLeading = false;
 
-        // skip any tabs and newlines.
+        // Skip any tabs and newlines.
         if (isTabNewline(url[i]))
             continue;
 
@@ -1093,8 +1088,18 @@ bool protocolIs(const String& url, const char* protocol)
 
         ++j;
     }
-
+    
     return false;
+}
+
+bool protocolIs(const String& url, const char* protocol)
+{
+    return protocolIsInternal(url, protocol);
+}
+
+inline bool URL::protocolIs(const String& string, const char* protocol)
+{
+    return WebCore::protocolIsInternal(string, protocol);
 }
 
 bool isValidProtocol(const String& protocol)
@@ -1141,7 +1146,12 @@ bool URL::isLocalFile() const
 
 bool protocolIsJavaScript(const String& url)
 {
-    return protocolIs(url, "javascript");
+    return protocolIsInternal(url, "javascript");
+}
+
+bool protocolIsJavaScript(StringView url)
+{
+    return protocolIsInternal(url, "javascript");
 }
 
 bool protocolIsInHTTPFamily(const String& url)
@@ -1272,7 +1282,7 @@ bool portAllowed(const URL& url)
 
 String mimeTypeFromDataURL(const String& url)
 {
-    ASSERT(protocolIs(url, "data"));
+    ASSERT(protocolIsInternal(url, "data"));
 
     // FIXME: What's the right behavior when the URL has a comma first, but a semicolon later?
     // Currently this code will break at the semicolon in that case. Not sure that's correct.
