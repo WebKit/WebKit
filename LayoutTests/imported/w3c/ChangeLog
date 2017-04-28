@@ -1,3 +1,11 @@
+2017-04-28  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline imported/w3c/web-platform-tests/webrtc/rtcpeerconnection/rtcpeerconnection-idl.html after r215916.
+
+        Unreviewed test gardening.
+
+        * web-platform-tests/webrtc/rtcpeerconnection/rtcpeerconnection-idl-expected.txt:
+
 2017-04-27  Joseph Pecoraro  <pecoraro@apple.com>
 
         Support for promise rejection events (unhandledrejection)

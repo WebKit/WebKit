@@ -1,7 +1,16 @@
+CONSOLE MESSAGE: line 1: Unhandled Promise Rejection: TypeError: Can only call RTCPeerConnection.createOffer on instances of RTCPeerConnection
+CONSOLE MESSAGE: line 1: Unhandled Promise Rejection: TypeError: Can only call RTCPeerConnection.createAnswer on instances of RTCPeerConnection
+CONSOLE MESSAGE: line 1: Unhandled Promise Rejection: TypeError: Can only call RTCPeerConnection.addIceCandidate on instances of RTCPeerConnection
+CONSOLE MESSAGE: line 1: Unhandled Promise Rejection: TypeError: Can only call RTCPeerConnection.getStats on instances of RTCPeerConnection
+CONSOLE MESSAGE: line 1: Unhandled Promise Rejection: TypeError: Argument 1 ('description') to RTCPeerConnection.setLocalDescription must be an instance of RTCSessionDescription
+CONSOLE MESSAGE: line 1: Unhandled Promise Rejection: TypeError: Argument 1 ('description') to RTCPeerConnection.setRemoteDescription must be an instance of RTCSessionDescription
+CONSOLE MESSAGE: line 1: Unhandled Promise Rejection: TypeError: Not enough arguments
 Description
 
 This test verifies the availability of the RTCPeerConnection interface.
 
+
+Harness Error (FAIL), message = Not enough arguments
 
 PASS EventTarget interface: existence and properties of interface object 
 PASS EventTarget interface object length 
