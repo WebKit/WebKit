@@ -95,6 +95,7 @@
 		2EFF06D41D8AEDBB0004BB30 /* TestWKWebView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2EFF06D31D8AEDBB0004BB30 /* TestWKWebView.mm */; };
 		2EFF06D71D8AF34A0004BB30 /* WKWebViewCandidateTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2EFF06D61D8AF34A0004BB30 /* WKWebViewCandidateTests.mm */; };
 		315118101DB1AE4000176304 /* ExtendedColor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3151180F1DB1ADD500176304 /* ExtendedColor.cpp */; };
+		315231CA1EB3B3C700A22A16 /* GPUCommandQueue.mm in Sources */ = {isa = PBXBuildFile; fileRef = 315231C91EB3B3C700A22A16 /* GPUCommandQueue.mm */; };
 		3162AE9C1E6F2FF5000E4DBC /* GPUDevice.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3162AE9B1E6F2FCE000E4DBC /* GPUDevice.mm */; };
 		316BDBA11E70D71B00DE0D5A /* GPULibrary.mm in Sources */ = {isa = PBXBuildFile; fileRef = 316BDBA01E70D6D800DE0D5A /* GPULibrary.mm */; };
 		316BDBA41E70EF6800DE0D5A /* GPUFunction.mm in Sources */ = {isa = PBXBuildFile; fileRef = 316BDBA31E70EF5D00DE0D5A /* GPUFunction.mm */; };
@@ -994,6 +995,7 @@
 		2EFF06D31D8AEDBB0004BB30 /* TestWKWebView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TestWKWebView.mm; path = cocoa/TestWKWebView.mm; sourceTree = "<group>"; };
 		2EFF06D61D8AF34A0004BB30 /* WKWebViewCandidateTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewCandidateTests.mm; sourceTree = "<group>"; };
 		3151180F1DB1ADD500176304 /* ExtendedColor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExtendedColor.cpp; sourceTree = "<group>"; };
+		315231C91EB3B3C700A22A16 /* GPUCommandQueue.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GPUCommandQueue.mm; sourceTree = "<group>"; };
 		3162AE9B1E6F2FCE000E4DBC /* GPUDevice.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GPUDevice.mm; sourceTree = "<group>"; };
 		316BDBA01E70D6D800DE0D5A /* GPULibrary.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GPULibrary.mm; sourceTree = "<group>"; };
 		316BDBA21E70DEE500DE0D5A /* GPUTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPUTest.h; sourceTree = "<group>"; };
@@ -1770,6 +1772,7 @@
 			isa = PBXGroup;
 			children = (
 				316BDBAB1E7207F100DE0D5A /* GPUBuffer.mm */,
+				315231C91EB3B3C700A22A16 /* GPUCommandQueue.mm */,
 				3162AE9B1E6F2FCE000E4DBC /* GPUDevice.mm */,
 				316BDBA31E70EF5D00DE0D5A /* GPUFunction.mm */,
 				316BDBA01E70D6D800DE0D5A /* GPULibrary.mm */,
@@ -3059,6 +3062,7 @@
 				7C417F331D19E14800B8EF53 /* WKWebViewDefaultNavigationDelegate.mm in Sources */,
 				0F3B94A71A77267400DE3272 /* WKWebViewEvaluateJavaScript.mm in Sources */,
 				D34E08761E4E42E1005FF14A /* WKWebViewGetContents.mm in Sources */,
+				315231CA1EB3B3C700A22A16 /* GPUCommandQueue.mm in Sources */,
 				F4FA91811E61849B007B8C1D /* WKWebViewSelectionTests.mm in Sources */,
 				93F56DA91E5F919D003EDE84 /* WKWebViewSnapshot.mm in Sources */,
 				9984FACC1CFFAF60008D198C /* WKWebViewTextInput.mm in Sources */,

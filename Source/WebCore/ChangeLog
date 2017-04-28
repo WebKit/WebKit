@@ -1,3 +1,22 @@
+2017-04-28  Dean Jackson  <dino@apple.com>
+
+        [WebGPU] Label MTLCommandQueues with a prefix for internal telemetry
+        https://bugs.webkit.org/show_bug.cgi?id=171441
+        <rdar://problem/31826915>
+
+        Reviewed by Tim Horton.
+
+        Prefix any label that is set by the WebGPU API so that
+        our telemetry can identify the use. Don't expose that
+        prefix to the API though.
+
+        New API Test: GPUCommandQueue
+
+        * platform/graphics/cocoa/GPUCommandQueueMetal.mm:
+        (WebCore::GPUCommandQueue::GPUCommandQueue):
+        (WebCore::GPUCommandQueue::label):
+        (WebCore::GPUCommandQueue::setLabel):
+
 2017-04-28  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [ATK] aria-modal="true" should be exposed via ATK_STATE_MODAL

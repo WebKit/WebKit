@@ -33,6 +33,8 @@
 
 #import <Metal/Metal.h>
 
+static NSString *webkitPrefix = @"com.apple.WebKit";
+
 namespace WebCore {
 
 GPUCommandQueue::GPUCommandQueue(GPUDevice* device)
@@ -43,6 +45,7 @@ GPUCommandQueue::GPUCommandQueue(GPUDevice* device)
         return;
 
     m_commandQueue = adoptNS((MTLCommandQueue *)[device->platformDevice() newCommandQueue]);
+    setLabel(emptyString());
 }
 
 String GPUCommandQueue::label() const
@@ -50,13 +53,22 @@ String GPUCommandQueue::label() const
     if (!m_commandQueue)
         return emptyString();
 
-    return [m_commandQueue label];
+    NSString *prefixedLabel = [m_commandQueue label];
+
+    if ([prefixedLabel isEqualToString:webkitPrefix])
+        return emptyString();
+
+    ASSERT(prefixedLabel.length >= (webkitPrefix.length + 1));
+    return [prefixedLabel substringFromIndex:(webkitPrefix.length + 1)];
 }
 
 void GPUCommandQueue::setLabel(const String& label)
 {
     ASSERT(m_commandQueue);
-    [m_commandQueue setLabel:label];
+    if (label.isEmpty())
+        [m_commandQueue setLabel:webkitPrefix];
+    else
+        [m_commandQueue setLabel:[NSString stringWithFormat:@"%@.%@", webkitPrefix, static_cast<NSString *>(label)]];
 }
     
 MTLCommandQueue *GPUCommandQueue::platformCommandQueue()

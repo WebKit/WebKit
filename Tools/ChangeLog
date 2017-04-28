@@ -1,3 +1,18 @@
+2017-04-28  Dean Jackson  <dino@apple.com>
+
+        [WebGPU] Label MTLCommandQueues with a prefix for internal telemetry
+        https://bugs.webkit.org/show_bug.cgi?id=171441
+        <rdar://problem/31826915>
+
+        Reviewed by Tim Horton.
+
+        Add an API test for GPUCommandQueue, exercising creation
+        and setting the label.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebCore/mac/GPUCommandQueue.mm: Added.
+        (TestWebKitAPI::TEST_F):
+
 2017-04-28  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [ATK] aria-modal="true" should be exposed via ATK_STATE_MODAL
