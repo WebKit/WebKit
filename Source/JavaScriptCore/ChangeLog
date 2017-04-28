@@ -1,3 +1,13 @@
+2017-04-28  Mark Lam  <mark.lam@apple.com>
+
+        Revert instrumentation from https://bugs.webkit.org/show_bug.cgi?id=170086 that is no longer needed.
+        https://bugs.webkit.org/show_bug.cgi?id=170094
+
+        Reviewed by JF Bastien and Keith Miller.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::resumeThePeriphery):
+
 2017-04-27  Andy VanWagoner  <thetalecrafter@gmail.com>
 
         [INTL] Implement the caseFirst option for Intl.Collator
