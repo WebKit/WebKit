@@ -1591,3 +1591,5 @@ webkit.org/b/170831 media/track/track-cue-rendering-rtl.html [ Pass Timeout ]
 webkit.org/b/165553 media/media-controls-timeline-updates-when-hovered.html [ Pass Failure ]
 
 webkit.org/b/171272 [ Yosemite ElCapitan Sierra ] fast/text/kaithi.html [ ImageOnlyFailure ]
+
+webkit.org/b/171406 imported/blink/paint/deprecatedpaintlayer/non-self-painting-layer-overrides-visibility.html [ Pass Crash ]
