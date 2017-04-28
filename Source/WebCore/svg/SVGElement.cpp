@@ -462,8 +462,8 @@ void SVGElement::parseAttribute(const QualifiedName& name, const AtomicString& v
     if (name == HTMLNames::tabindexAttr) {
         if (value.isEmpty())
             clearTabIndexExplicitlyIfNeeded();
-        else if (std::optional<int> tabIndex = parseHTMLInteger(value))
-            setTabIndexExplicitly(tabIndex.value());
+        else if (auto optionalTabIndex = parseHTMLInteger(value))
+            setTabIndexExplicitly(optionalTabIndex.value());
         return;
     }
 

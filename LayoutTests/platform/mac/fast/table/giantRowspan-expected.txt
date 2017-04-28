@@ -7,4 +7,4 @@ layer at (0,0) size 800x600
       RenderTable {TABLE} at (0,10) size 6x6
         RenderTableSection {TBODY} at (0,0) size 6x6
           RenderTableRow {TR} at (0,2) size 6x2
-            RenderTableCell {TD} at (2,2) size 2x2 [r=0 c=0 rs=8190 cs=1]
+            RenderTableCell {TD} at (2,2) size 2x2 [r=0 c=0 rs=65534 cs=1]

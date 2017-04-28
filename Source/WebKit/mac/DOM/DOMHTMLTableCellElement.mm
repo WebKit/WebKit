@@ -108,13 +108,13 @@
 - (int)colSpan
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->colSpanForBindings();
+    return IMPL->colSpan();
 }
 
 - (void)setColSpan:(int)newColSpan
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setColSpanForBindings(newColSpan);
+    IMPL->setColSpan(newColSpan);
 }
 
 - (int)rowSpan

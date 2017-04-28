@@ -371,9 +371,9 @@ unsigned HTMLImageElement::width(bool ignorePendingStylesheets)
 {
     if (!renderer()) {
         // check the attribute first for an explicit pixel value
-        std::optional<unsigned> width = parseHTMLNonNegativeInteger(attributeWithoutSynchronization(widthAttr));
-        if (width)
-            return width.value();
+        auto optionalWidth = parseHTMLNonNegativeInteger(attributeWithoutSynchronization(widthAttr));
+        if (optionalWidth)
+            return optionalWidth.value();
 
         // if the image is available, use its width
         if (m_imageLoader.image())
@@ -396,9 +396,9 @@ unsigned HTMLImageElement::height(bool ignorePendingStylesheets)
 {
     if (!renderer()) {
         // check the attribute first for an explicit pixel value
-        std::optional<unsigned> height = parseHTMLNonNegativeInteger(attributeWithoutSynchronization(heightAttr));
-        if (height)
-            return height.value();
+        auto optionalHeight = parseHTMLNonNegativeInteger(attributeWithoutSynchronization(heightAttr));
+        if (optionalHeight)
+            return optionalHeight.value();
 
         // if the image is available, use its height
         if (m_imageLoader.image())

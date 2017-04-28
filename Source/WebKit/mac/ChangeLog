@@ -1,3 +1,16 @@
+2017-04-27  Chris Dumez  <cdumez@apple.com>
+
+        Align colspan/rowspan limits with the latest HTML specification
+        https://bugs.webkit.org/show_bug.cgi?id=171322
+
+        Reviewed by Darin Adler.
+
+        ObjC bindings build fix.
+
+        * DOM/DOMHTMLTableCellElement.mm:
+        (-[DOMHTMLTableCellElement colSpan]):
+        (-[DOMHTMLTableCellElement setColSpan:]):
+
 2017-04-27  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         REGRESSION(r213764): Async decoding of animated images is disabled for ImageDocument

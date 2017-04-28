@@ -36,6 +36,16 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
+// These limits are defined in the HTML specification:
+// - https://html.spec.whatwg.org/#dom-tdth-colspan
+// - https://html.spec.whatwg.org/#dom-tdth-rowspan
+static const unsigned minColspan = 1;
+static const unsigned maxColspan = 1000;
+static const unsigned defaultColspan = 1;
+static const unsigned minRowspan = 0;
+static const unsigned maxRowspan = 65534;
+static const unsigned defaultRowspan = 1;
+
 Ref<HTMLTableCellElement> HTMLTableCellElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(*new HTMLTableCellElement(tagName, document));
@@ -49,24 +59,18 @@ HTMLTableCellElement::HTMLTableCellElement(const QualifiedName& tagName, Documen
 
 unsigned HTMLTableCellElement::colSpan() const
 {
-    return std::max(1u, colSpanForBindings());
-}
-
-unsigned HTMLTableCellElement::colSpanForBindings() const
-{
-    return limitToOnlyHTMLNonNegative(attributeWithoutSynchronization(colspanAttr), 1u);
+    return clampHTMLNonNegativeIntegerToRange(attributeWithoutSynchronization(colspanAttr), minColspan, maxColspan, defaultColspan);
 }
 
 unsigned HTMLTableCellElement::rowSpan() const
 {
-    static const unsigned maxRowspan = 8190;
     // FIXME: a rowSpan equal to 0 should be allowed, and mean that the cell is to span all the remaining rows in the row group.
-    return std::max(1u, std::min(rowSpanForBindings(), maxRowspan));
+    return std::max(1u, rowSpanForBindings());
 }
 
 unsigned HTMLTableCellElement::rowSpanForBindings() const
 {
-    return limitToOnlyHTMLNonNegative(attributeWithoutSynchronization(rowspanAttr), 1u);
+    return clampHTMLNonNegativeIntegerToRange(attributeWithoutSynchronization(rowspanAttr), minRowspan, maxRowspan, defaultRowspan);
 }
 
 int HTMLTableCellElement::cellIndex() const
@@ -144,7 +148,7 @@ String HTMLTableCellElement::axis() const
     return attributeWithoutSynchronization(axisAttr);
 }
 
-void HTMLTableCellElement::setColSpanForBindings(unsigned n)
+void HTMLTableCellElement::setColSpan(unsigned n)
 {
     setAttributeWithoutSynchronization(colspanAttr, AtomicString::number(limitToOnlyHTMLNonNegative(n, 1)));
 }

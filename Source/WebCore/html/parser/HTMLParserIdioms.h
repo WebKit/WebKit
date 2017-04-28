@@ -25,6 +25,7 @@
 #pragma once
 
 #include <unicode/uchar.h>
+#include <wtf/Expected.h>
 #include <wtf/Forward.h>
 #include <wtf/Optional.h>
 #include <wtf/Vector.h>
@@ -62,10 +63,12 @@ double parseToDoubleForNumberType(const String&);
 double parseToDoubleForNumberType(const String&, double fallbackValue);
 
 // http://www.whatwg.org/specs/web-apps/current-work/#rules-for-parsing-integers
-WEBCORE_EXPORT std::optional<int> parseHTMLInteger(StringView);
+enum class HTMLIntegerParsingError { NegativeOverflow, PositiveOverflow, Other };
+
+WEBCORE_EXPORT Expected<int, HTMLIntegerParsingError> parseHTMLInteger(StringView);
 
 // http://www.whatwg.org/specs/web-apps/current-work/#rules-for-parsing-non-negative-integers
-WEBCORE_EXPORT std::optional<unsigned> parseHTMLNonNegativeInteger(StringView);
+WEBCORE_EXPORT Expected<unsigned, HTMLIntegerParsingError> parseHTMLNonNegativeInteger(StringView);
 
 // https://html.spec.whatwg.org/#valid-non-negative-integer
 std::optional<int> parseValidHTMLNonNegativeInteger(StringView);
@@ -155,9 +158,21 @@ inline unsigned limitToOnlyHTMLNonNegative(unsigned value, unsigned defaultValue
 inline unsigned limitToOnlyHTMLNonNegative(StringView stringValue, unsigned defaultValue = 0)
 {
     ASSERT(defaultValue <= maxHTMLNonNegativeInteger);
-    unsigned value = parseHTMLNonNegativeInteger(stringValue).value_or(defaultValue);
+    unsigned value = parseHTMLNonNegativeInteger(stringValue).valueOr(defaultValue);
     ASSERT(value <= maxHTMLNonNegativeInteger);
     return value;
+}
+
+// https://html.spec.whatwg.org/#clamped-to-the-range
+inline unsigned clampHTMLNonNegativeIntegerToRange(StringView stringValue, unsigned min, unsigned max, unsigned defaultValue = 0)
+{
+    ASSERT(defaultValue >= min);
+    ASSERT(defaultValue <= max);
+    auto optionalValue = parseHTMLNonNegativeInteger(stringValue);
+    if (optionalValue)
+        return std::min(std::max(optionalValue.value(), min), max);
+
+    return optionalValue.error() == HTMLIntegerParsingError::PositiveOverflow ? max : defaultValue;
 }
 
 } // namespace WebCore

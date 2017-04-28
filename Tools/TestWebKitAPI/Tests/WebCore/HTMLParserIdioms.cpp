@@ -37,7 +37,7 @@ static int testParseHTMLInteger(const String& input)
 {
     auto optionalResult = parseHTMLInteger(input);
     EXPECT_TRUE(!!optionalResult);
-    return optionalResult.value_or(0);
+    return optionalResult.valueOr(0);
 }
 
 static bool parseHTMLIntegerFails(const String& input)
@@ -101,7 +101,7 @@ static unsigned testParseHTMLNonNegativeInteger(const String& input)
 {
     auto optionalResult = parseHTMLNonNegativeInteger(input);
     EXPECT_TRUE(!!optionalResult);
-    return optionalResult.value_or(0);
+    return optionalResult.valueOr(0);
 }
 
 static bool parseHTMLNonNegativeIntegerFails(const String& input)

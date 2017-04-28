@@ -101,8 +101,8 @@ static inline CSSValueID unicodeBidiAttributeForDirAuto(HTMLElement& element)
 
 unsigned HTMLElement::parseBorderWidthAttribute(const AtomicString& value) const
 {
-    if (std::optional<unsigned> borderWidth = parseHTMLNonNegativeInteger(value))
-        return borderWidth.value();
+    if (auto optionalBorderWidth = parseHTMLNonNegativeInteger(value))
+        return optionalBorderWidth.value();
 
     return hasTagName(tableTag) ? 1 : 0;
 }
@@ -424,8 +424,8 @@ void HTMLElement::parseAttribute(const QualifiedName& name, const AtomicString& 
     if (name == tabindexAttr) {
         if (value.isEmpty())
             clearTabIndexExplicitlyIfNeeded();
-        else if (std::optional<int> tabIndex = parseHTMLInteger(value))
-            setTabIndexExplicitly(tabIndex.value());
+        else if (auto optionalTabIndex = parseHTMLInteger(value))
+            setTabIndexExplicitly(optionalTabIndex.value());
         return;
     }
 

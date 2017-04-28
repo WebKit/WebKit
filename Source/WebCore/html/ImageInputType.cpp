@@ -179,8 +179,8 @@ unsigned ImageInputType::height() const
 
     if (!element->renderer()) {
         // Check the attribute first for an explicit pixel value.
-        if (std::optional<unsigned> height = parseHTMLNonNegativeInteger(element->attributeWithoutSynchronization(heightAttr)))
-            return height.value();
+        if (auto optionalHeight = parseHTMLNonNegativeInteger(element->attributeWithoutSynchronization(heightAttr)))
+            return optionalHeight.value();
 
         // If the image is available, use its height.
         HTMLImageLoader* imageLoader = element->imageLoader();
@@ -200,8 +200,8 @@ unsigned ImageInputType::width() const
 
     if (!element->renderer()) {
         // Check the attribute first for an explicit pixel value.
-        if (std::optional<unsigned> width = parseHTMLNonNegativeInteger(element->attributeWithoutSynchronization(widthAttr)))
-            return width.value();
+        if (auto optionalWidth = parseHTMLNonNegativeInteger(element->attributeWithoutSynchronization(widthAttr)))
+            return optionalWidth.value();
 
         // If the image is available, use its width.
         HTMLImageLoader* imageLoader = element->imageLoader();

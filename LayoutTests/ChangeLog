@@ -1,3 +1,17 @@
+2017-04-27  Chris Dumez  <cdumez@apple.com>
+
+        Align colspan/rowspan limits with the latest HTML specification
+        https://bugs.webkit.org/show_bug.cgi?id=171322
+
+        Reviewed by Darin Adler.
+
+        Rebaseline a couple of rowspan tests now that our max limit has changed.
+
+        * fast/table/giantRowspan2-expected.txt:
+        * platform/ios/fast/table/giantRowspan-expected.txt:
+        * platform/ios/imported/w3c/web-platform-tests/html/dom/reflection-embedded-expected.txt:
+        * platform/mac/fast/table/giantRowspan-expected.txt:
+
 2017-04-27  Matt Lewis  <jlewis3@apple.com>
 
         Mark fast/mediacapturefromelement/CanvasCaptureMediaStream-2d-events.html as a flaky failure.

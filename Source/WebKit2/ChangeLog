@@ -1,3 +1,16 @@
+2017-04-27  Chris Dumez  <cdumez@apple.com>
+
+        Align colspan/rowspan limits with the latest HTML specification
+        https://bugs.webkit.org/show_bug.cgi?id=171322
+
+        Reviewed by Darin Adler.
+
+        GTK build fix.
+
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLTableCellElement.cpp:
+        (webkit_dom_html_table_cell_element_get_col_span):
+        (webkit_dom_html_table_cell_element_set_col_span):
+
 2017-04-27  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         WKUIDelegatePrivate needs a hook to vend data used to initialize item providers for data interaction

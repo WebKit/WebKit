@@ -3534,7 +3534,6 @@ PASS td.colSpan: setAttribute() to -36
 PASS td.colSpan: setAttribute() to -1 
 PASS td.colSpan: setAttribute() to 0 
 PASS td.colSpan: setAttribute() to 1 
-PASS td.colSpan: setAttribute() to 257 
 PASS td.colSpan: setAttribute() to 2147483647 
 PASS td.colSpan: setAttribute() to 2147483648 
 PASS td.colSpan: setAttribute() to 4294967295 
@@ -3581,6 +3580,8 @@ PASS td.colSpan: setAttribute() to -Infinity
 PASS td.colSpan: setAttribute() to "\0" 
 PASS td.colSpan: setAttribute() to object "2" 
 PASS td.colSpan: setAttribute() to object "3" 
+PASS td.colSpan: setAttribute() to 1000 
+PASS td.colSpan: setAttribute() to 1001 
 PASS td.colSpan: IDL set to 0 
 PASS td.colSpan: IDL set to 1 
 PASS td.colSpan: IDL set to 257 
@@ -3588,6 +3589,8 @@ PASS td.colSpan: IDL set to 2147483647
 PASS td.colSpan: IDL set to "-0" 
 PASS td.colSpan: IDL set to 2147483648 
 PASS td.colSpan: IDL set to 4294967295 
+PASS td.colSpan: IDL set to 1000 
+PASS td.colSpan: IDL set to 1001 
 PASS td.rowSpan: typeof IDL attribute 
 PASS td.rowSpan: IDL get with DOM attribute unset 
 PASS td.rowSpan: setAttribute() to -2147483649 
@@ -3596,7 +3599,6 @@ PASS td.rowSpan: setAttribute() to -36
 PASS td.rowSpan: setAttribute() to -1 
 PASS td.rowSpan: setAttribute() to 0 
 PASS td.rowSpan: setAttribute() to 1 
-PASS td.rowSpan: setAttribute() to 257 
 PASS td.rowSpan: setAttribute() to 2147483647 
 PASS td.rowSpan: setAttribute() to 2147483648 
 PASS td.rowSpan: setAttribute() to 4294967295 
@@ -3643,6 +3645,8 @@ PASS td.rowSpan: setAttribute() to -Infinity
 PASS td.rowSpan: setAttribute() to "\0" 
 PASS td.rowSpan: setAttribute() to object "2" 
 PASS td.rowSpan: setAttribute() to object "3" 
+PASS td.rowSpan: setAttribute() to 65534 
+PASS td.rowSpan: setAttribute() to 65535 
 PASS td.rowSpan: IDL set to 0 
 PASS td.rowSpan: IDL set to 1 
 PASS td.rowSpan: IDL set to 257 
@@ -3650,6 +3654,8 @@ PASS td.rowSpan: IDL set to 2147483647
 PASS td.rowSpan: IDL set to "-0" 
 PASS td.rowSpan: IDL set to 2147483648 
 PASS td.rowSpan: IDL set to 4294967295 
+PASS td.rowSpan: IDL set to 65534 
+PASS td.rowSpan: IDL set to 65535 
 PASS td.scope: typeof IDL attribute 
 PASS td.scope: IDL get with DOM attribute unset 
 PASS td.scope: setAttribute() to "" 
@@ -4298,7 +4304,6 @@ PASS th.colSpan: setAttribute() to -36
 PASS th.colSpan: setAttribute() to -1 
 PASS th.colSpan: setAttribute() to 0 
 PASS th.colSpan: setAttribute() to 1 
-PASS th.colSpan: setAttribute() to 257 
 PASS th.colSpan: setAttribute() to 2147483647 
 PASS th.colSpan: setAttribute() to 2147483648 
 PASS th.colSpan: setAttribute() to 4294967295 
@@ -4345,6 +4350,8 @@ PASS th.colSpan: setAttribute() to -Infinity
 PASS th.colSpan: setAttribute() to "\0" 
 PASS th.colSpan: setAttribute() to object "2" 
 PASS th.colSpan: setAttribute() to object "3" 
+PASS th.colSpan: setAttribute() to 1000 
+PASS th.colSpan: setAttribute() to 1001 
 PASS th.colSpan: IDL set to 0 
 PASS th.colSpan: IDL set to 1 
 PASS th.colSpan: IDL set to 257 
@@ -4352,6 +4359,8 @@ PASS th.colSpan: IDL set to 2147483647
 PASS th.colSpan: IDL set to "-0" 
 PASS th.colSpan: IDL set to 2147483648 
 PASS th.colSpan: IDL set to 4294967295 
+PASS th.colSpan: IDL set to 1000 
+PASS th.colSpan: IDL set to 1001 
 PASS th.rowSpan: typeof IDL attribute 
 PASS th.rowSpan: IDL get with DOM attribute unset 
 PASS th.rowSpan: setAttribute() to -2147483649 
@@ -4360,7 +4369,6 @@ PASS th.rowSpan: setAttribute() to -36
 PASS th.rowSpan: setAttribute() to -1 
 PASS th.rowSpan: setAttribute() to 0 
 PASS th.rowSpan: setAttribute() to 1 
-PASS th.rowSpan: setAttribute() to 257 
 PASS th.rowSpan: setAttribute() to 2147483647 
 PASS th.rowSpan: setAttribute() to 2147483648 
 PASS th.rowSpan: setAttribute() to 4294967295 
@@ -4407,6 +4415,8 @@ PASS th.rowSpan: setAttribute() to -Infinity
 PASS th.rowSpan: setAttribute() to "\0" 
 PASS th.rowSpan: setAttribute() to object "2" 
 PASS th.rowSpan: setAttribute() to object "3" 
+PASS th.rowSpan: setAttribute() to 65534 
+PASS th.rowSpan: setAttribute() to 65535 
 PASS th.rowSpan: IDL set to 0 
 PASS th.rowSpan: IDL set to 1 
 PASS th.rowSpan: IDL set to 257 
@@ -4414,6 +4424,8 @@ PASS th.rowSpan: IDL set to 2147483647
 PASS th.rowSpan: IDL set to "-0" 
 PASS th.rowSpan: IDL set to 2147483648 
 PASS th.rowSpan: IDL set to 4294967295 
+PASS th.rowSpan: IDL set to 65534 
+PASS th.rowSpan: IDL set to 65535 
 PASS th.scope: typeof IDL attribute 
 PASS th.scope: IDL get with DOM attribute unset 
 PASS th.scope: setAttribute() to "" 

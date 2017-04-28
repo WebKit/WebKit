@@ -154,13 +154,13 @@ double parseToDoubleForNumberType(const String& string)
 }
 
 template <typename CharacterType>
-static std::optional<int> parseHTMLIntegerInternal(const CharacterType* position, const CharacterType* end)
+static Expected<int, HTMLIntegerParsingError> parseHTMLIntegerInternal(const CharacterType* position, const CharacterType* end)
 {
     while (position < end && isHTMLSpace(*position))
         ++position;
 
     if (position == end)
-        return std::nullopt;
+        return makeUnexpected(HTMLIntegerParsingError::Other);
 
     bool isNegative = false;
     if (*position == '-') {
@@ -170,7 +170,7 @@ static std::optional<int> parseHTMLIntegerInternal(const CharacterType* position
         ++position;
 
     if (position == end || !isASCIIDigit(*position))
-        return std::nullopt;
+        return makeUnexpected(HTMLIntegerParsingError::Other);
 
     constexpr int intMax = std::numeric_limits<int>::max();
     constexpr int base = 10;
@@ -181,7 +181,7 @@ static std::optional<int> parseHTMLIntegerInternal(const CharacterType* position
         int digitValue = *position - '0';
 
         if (result > maxMultiplier || (result == maxMultiplier && digitValue > (intMax % base) + isNegative))
-            return std::nullopt;
+            return makeUnexpected(isNegative ? HTMLIntegerParsingError::NegativeOverflow : HTMLIntegerParsingError::PositiveOverflow);
 
         result = base * result + digitValue;
         ++position;
@@ -191,11 +191,11 @@ static std::optional<int> parseHTMLIntegerInternal(const CharacterType* position
 }
 
 // https://html.spec.whatwg.org/multipage/infrastructure.html#rules-for-parsing-integers
-std::optional<int> parseHTMLInteger(StringView input)
+Expected<int, HTMLIntegerParsingError> parseHTMLInteger(StringView input)
 {
     unsigned length = input.length();
     if (!length)
-        return std::nullopt;
+        return makeUnexpected(HTMLIntegerParsingError::Other);
 
     if (LIKELY(input.is8Bit())) {
         auto* start = input.characters8();
@@ -207,13 +207,16 @@ std::optional<int> parseHTMLInteger(StringView input)
 }
 
 // https://html.spec.whatwg.org/multipage/infrastructure.html#rules-for-parsing-non-negative-integers
-std::optional<unsigned> parseHTMLNonNegativeInteger(StringView input)
+Expected<unsigned, HTMLIntegerParsingError> parseHTMLNonNegativeInteger(StringView input)
 {
-    std::optional<int> signedValue = parseHTMLInteger(input);
-    if (!signedValue || signedValue.value() < 0)
-        return std::nullopt;
+    auto optionalSignedResult = parseHTMLInteger(input);
+    if (!optionalSignedResult)
+        return optionalSignedResult.getUnexpected();
 
-    return static_cast<unsigned>(signedValue.value());
+    if (optionalSignedResult.value() < 0)
+        return makeUnexpected(HTMLIntegerParsingError::NegativeOverflow);
+
+    return static_cast<unsigned>(optionalSignedResult.value());
 }
 
 template <typename CharacterType>
@@ -225,11 +228,11 @@ static std::optional<int> parseValidHTMLNonNegativeIntegerInternal(const Charact
             return std::nullopt;
     }
 
-    std::optional<int> signedValue = parseHTMLIntegerInternal(position, end);
-    if (!signedValue || signedValue.value() < 0)
+    auto optionalSignedValue = parseHTMLIntegerInternal(position, end);
+    if (!optionalSignedValue || optionalSignedValue.value() < 0)
         return std::nullopt;
 
-    return signedValue;
+    return optionalSignedValue.value();
 }
 
 // https://html.spec.whatwg.org/#valid-non-negative-integer
@@ -363,22 +366,22 @@ static bool parseHTTPRefreshInternal(const CharacterType* position, const Charac
     while (position < end && isASCIIDigit(*position))
         ++position;
 
-    std::optional<unsigned> number = parseHTMLNonNegativeInteger(StringView(numberStart, position - numberStart));
-    if (!number)
+    auto optionalNumber = parseHTMLNonNegativeInteger(StringView(numberStart, position - numberStart));
+    if (!optionalNumber)
         return false;
 
     while (position < end && (isASCIIDigit(*position) || *position == '.'))
         ++position;
 
     if (position == end) {
-        parsedDelay = number.value();
+        parsedDelay = optionalNumber.value();
         return true;
     }
 
     if (*position != ';' && *position != ',' && !isHTMLSpace(*position))
         return false;
 
-    parsedDelay = number.value();
+    parsedDelay = optionalNumber.value();
 
     while (position < end && isHTMLSpace(*position))
         ++position;
