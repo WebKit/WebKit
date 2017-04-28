@@ -1,3 +1,19 @@
+2017-04-28  Jeremy Jones  <jeremyj@apple.com>
+
+        ARGUMENT BAD: time, time >= 0
+        https://bugs.webkit.org/show_bug.cgi?id=164336
+        rdar://problem/29314891
+
+        Reviewed by Eric Carlson.
+
+        Handle invalid duration and current time when calculating remaining time.
+
+        Test media/modern-media-controls/pip-support/pip-support-click.html now works without a workaround
+        in media/modern-media-controls/pip-support/pip-support-enabled.html
+
+        * platform/mac/WebVideoFullscreenHUDWindowController.mm:
+        (-[WebVideoFullscreenHUDWindowController remainingTimeText]):
+
 2017-04-28  Daniel Bates  <dabates@apple.com>
 
         Add WebCore::protocolIsJavaScript(StringView)

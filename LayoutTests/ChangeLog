@@ -1,3 +1,15 @@
+2017-04-28  Jeremy Jones  <jeremyj@apple.com>
+
+        ARGUMENT BAD: time, time >= 0
+        https://bugs.webkit.org/show_bug.cgi?id=164336
+        rdar://problem/29314891
+
+        Reviewed by Eric Carlson.
+
+        Remove workaround that affected other tests.
+
+        * media/modern-media-controls/pip-support/pip-support-click.html:
+
 2017-04-28  Chris Dumez  <cdumez@apple.com>
 
         Range.getClientRects() / getBoundingClientRect() should return DOMRect types

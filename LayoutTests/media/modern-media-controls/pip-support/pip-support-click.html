@@ -31,10 +31,6 @@ const mediaController = createControls(container, media, null);
 media.addEventListener("webkitpresentationmodechanged", () => {
     shouldBeEqualToString("media.webkitPresentationMode", "picture-in-picture");
 
-    // FIXME: We exit PiP so we leave things in a clean state, otherwise the following
-    // test pip-support-enabled.html may crash, see webkit.org/b/164336.
-    media.webkitSetPresentationMode("inline");
-
     container.remove();
     media.remove();
     finishMediaControlsTest();

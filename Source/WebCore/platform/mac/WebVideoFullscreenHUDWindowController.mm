@@ -559,7 +559,12 @@ static NSString *timeToString(double time)
     if (!videoElement)
         return @"";
 
-    return [@"-" stringByAppendingString:timeToString(videoElement->duration() - videoElement->currentTime())];
+    double remainingTime = 0;
+
+    if (std::isfinite(videoElement->duration()) && std::isfinite(videoElement->currentTime()))
+        remainingTime = videoElement->duration() - videoElement->currentTime();
+
+    return [@"-" stringByAppendingString:timeToString(remainingTime)];
 }
 
 - (NSString *)elapsedTimeText
