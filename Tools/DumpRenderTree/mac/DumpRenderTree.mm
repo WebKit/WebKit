@@ -1237,6 +1237,7 @@ void dumpRenderTree(int argc, const char *argv[])
 {
 #if PLATFORM(IOS)
     setUpIOSLayoutTestCommunication();
+    [UIApplication sharedApplication].idleTimerDisabled = YES;
 #endif
 
     signal(SIGILL, &writeCrashedMessageOnFatalError);

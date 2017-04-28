@@ -1,3 +1,17 @@
+2017-04-28  Jonathan Bedard  <jbedard@apple.com>
+
+        WebKitTestRunner/DumpRenderTree prevent device from sleeping
+        https://bugs.webkit.org/show_bug.cgi?id=170731
+
+        Reviewed by Alex Christensen.
+
+        While running layout tests on a device, the device should not be put asleep.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (dumpRenderTree): Disable idle timer.
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        (WTR::TestController::platformInitialize): Ditto.
+
 2017-04-28  Brady Eidson  <beidson@apple.com>
 
         Start of support for multiple WebsiteDataStore/SessionIDs per process

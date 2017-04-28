@@ -51,6 +51,7 @@ void TestController::notifyDone()
 void TestController::platformInitialize()
 {
     setUpIOSLayoutTestCommunication();
+    [UIApplication sharedApplication].idleTimerDisabled = YES;
 }
 
 void TestController::platformDestroy()
