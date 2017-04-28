@@ -1,3 +1,13 @@
+2017-04-28  Eric Carlson  <eric.carlson@apple.com>
+
+        Implement ondevicechange
+        https://bugs.webkit.org/show_bug.cgi?id=169872
+
+        Unreviewed, fix test crash.
+
+        * platform/mediastream/RealtimeMediaSourceCenter.cpp:
+        (WebCore::RealtimeMediaSourceCenter::addDevicesChangedObserver): "nextToken" must be static.
+
 2017-04-28  Dean Jackson  <dino@apple.com>
 
         [WebGPU] Label MTLCommandQueues with a prefix for internal telemetry

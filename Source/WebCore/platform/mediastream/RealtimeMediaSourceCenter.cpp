@@ -160,7 +160,7 @@ ExceptionOr<void> RealtimeMediaSourceCenter::setDeviceEnabled(const String&, boo
 
 RealtimeMediaSourceCenter::DevicesChangedObserverToken RealtimeMediaSourceCenter::addDevicesChangedObserver(std::function<void()>&& observer)
 {
-    DevicesChangedObserverToken nextToken = 0;
+    static DevicesChangedObserverToken nextToken = 0;
     m_devicesChangedObservers.set(++nextToken, WTFMove(observer));
     return nextToken;
 }
