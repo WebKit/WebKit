@@ -1,3 +1,13 @@
+2017-04-27  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Remove unused ToggleControlToolbarItem.js
+        https://bugs.webkit.org/show_bug.cgi?id=171401
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Main.html:
+        * UserInterface/Views/ToggleControlToolbarItem.js: Removed.
+
 2017-04-27  Brian Burg  <bburg@apple.com>
 
         Web Inspector: RTL: inherit system layout direction by default
