@@ -125,6 +125,18 @@ void WebPlaybackSessionInterfaceContext::legibleMediaSelectionOptionsChanged(con
         m_manager->legibleMediaSelectionOptionsChanged(m_contextId, options, selectedIndex);
 }
 
+void WebPlaybackSessionInterfaceContext::audioMediaSelectionIndexChanged(uint64_t selectedIndex)
+{
+    if (m_manager)
+        m_manager->audioMediaSelectionIndexChanged(m_contextId, selectedIndex);
+}
+
+void WebPlaybackSessionInterfaceContext::legibleMediaSelectionIndexChanged(uint64_t selectedIndex)
+{
+    if (m_manager)
+        m_manager->legibleMediaSelectionIndexChanged(m_contextId, selectedIndex);
+}
+
 void WebPlaybackSessionInterfaceContext::externalPlaybackChanged(bool enabled, WebPlaybackSessionModel::ExternalPlaybackTargetType type, const String& localizedDeviceName)
 {
     if (m_manager)
@@ -329,6 +341,16 @@ void WebPlaybackSessionManager::legibleMediaSelectionOptionsChanged(uint64_t con
 void WebPlaybackSessionManager::externalPlaybackChanged(uint64_t contextId, bool enabled, WebPlaybackSessionModel::ExternalPlaybackTargetType targetType, String localizedDeviceName)
 {
     m_page->send(Messages::WebPlaybackSessionManagerProxy::SetExternalPlaybackProperties(contextId, enabled, static_cast<uint32_t>(targetType), localizedDeviceName), m_page->pageID());
+}
+
+void WebPlaybackSessionManager::audioMediaSelectionIndexChanged(uint64_t contextId, uint64_t selectedIndex)
+{
+    m_page->send(Messages::WebPlaybackSessionManagerProxy::SetAudioMediaSelectionIndex(contextId, selectedIndex), m_page->pageID());
+}
+
+void WebPlaybackSessionManager::legibleMediaSelectionIndexChanged(uint64_t contextId, uint64_t selectedIndex)
+{
+    m_page->send(Messages::WebPlaybackSessionManagerProxy::SetLegibleMediaSelectionIndex(contextId, selectedIndex), m_page->pageID());
 }
 
 void WebPlaybackSessionManager::wirelessVideoPlaybackDisabledChanged(uint64_t contextId, bool disabled)

@@ -83,6 +83,8 @@ private:
     void canPlayFastReverseChanged(bool value) final;
     void audioMediaSelectionOptionsChanged(const Vector<WebCore::MediaSelectionOption>& options, uint64_t selectedIndex) final;
     void legibleMediaSelectionOptionsChanged(const Vector<WebCore::MediaSelectionOption>& options, uint64_t selectedIndex) final;
+    void audioMediaSelectionIndexChanged(uint64_t) final;
+    void legibleMediaSelectionIndexChanged(uint64_t) final;
     void externalPlaybackChanged(bool enabled, WebCore::WebPlaybackSessionModel::ExternalPlaybackTargetType, const String& localizedDeviceName) final;
     void wirelessVideoPlaybackDisabledChanged(bool) final;
 
@@ -129,6 +131,8 @@ protected:
     void canPlayFastReverseChanged(uint64_t contextId, bool value);
     void audioMediaSelectionOptionsChanged(uint64_t contextId, const Vector<WebCore::MediaSelectionOption>& options, uint64_t selectedIndex);
     void legibleMediaSelectionOptionsChanged(uint64_t contextId, const Vector<WebCore::MediaSelectionOption>& options, uint64_t selectedIndex);
+    void audioMediaSelectionIndexChanged(uint64_t contextId, uint64_t selectedIndex);
+    void legibleMediaSelectionIndexChanged(uint64_t contextId, uint64_t selectedIndex);
     void externalPlaybackChanged(uint64_t contextId, bool enabled, WebCore::WebPlaybackSessionModel::ExternalPlaybackTargetType, String localizedDeviceName);
     void wirelessVideoPlaybackDisabledChanged(uint64_t contextId, bool);
 

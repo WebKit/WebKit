@@ -59,6 +59,8 @@ public:
     WEBCORE_EXPORT void seekableRangesChanged(const TimeRanges&) final;
     WEBCORE_EXPORT void audioMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& /*options*/, uint64_t /*selectedIndex*/) final;
     WEBCORE_EXPORT void legibleMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& /*options*/, uint64_t /*selectedIndex*/) final;
+    WEBCORE_EXPORT void audioMediaSelectionIndexChanged(uint64_t) final;
+    WEBCORE_EXPORT void legibleMediaSelectionIndexChanged(uint64_t) final;
     WEBCORE_EXPORT void invalidate();
     WEBCORE_EXPORT void ensureControlsManager();
 #if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)

@@ -79,6 +79,8 @@ public:
     void setCanPlayFastReverse(bool);
     void setAudioMediaSelectionOptions(const Vector<WebCore::MediaSelectionOption>& options, uint64_t index);
     void setLegibleMediaSelectionOptions(const Vector<WebCore::MediaSelectionOption>& options, uint64_t index);
+    void setAudioMediaSelectionIndex(uint64_t selectedIndex);
+    void setLegibleMediaSelectionIndex(uint64_t selectedIndex);
     void setExternalPlayback(bool, WebPlaybackSessionModel::ExternalPlaybackTargetType, const String&);
     void setWirelessVideoPlaybackDisabled(bool);
 
@@ -182,6 +184,8 @@ private:
     void setCanPlayFastReverse(uint64_t contextId, bool value);
     void setAudioMediaSelectionOptions(uint64_t contextId, Vector<WebCore::MediaSelectionOption> options, uint64_t selectedIndex);
     void setLegibleMediaSelectionOptions(uint64_t contextId, Vector<WebCore::MediaSelectionOption> options, uint64_t selectedIndex);
+    void setAudioMediaSelectionIndex(uint64_t contextId, uint64_t selectedIndex);
+    void setLegibleMediaSelectionIndex(uint64_t contextId, uint64_t selectedIndex);
     void setExternalPlaybackProperties(uint64_t contextId, bool enabled, uint32_t targetType, String localizedDeviceName);
     void setWirelessVideoPlaybackDisabled(uint64_t contextId, bool);
     void setDuration(uint64_t contextId, double duration);

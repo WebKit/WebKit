@@ -74,6 +74,8 @@ WEBCORE_EXPORT
 - (void)setCurrentLegibleTouchBarMediaSelectionOption:(AVTouchBarMediaSelectionOption *)option;
 - (void)setAudioMediaSelectionOptions:(const Vector<WebCore::MediaSelectionOption>&)options withSelectedIndex:(NSUInteger)selectedIndex;
 - (void)setLegibleMediaSelectionOptions:(const Vector<WebCore::MediaSelectionOption>&)options withSelectedIndex:(NSUInteger)selectedIndex;
+- (void)setAudioMediaSelectionIndex:(NSUInteger)selectedIndex;
+- (void)setLegibleMediaSelectionIndex:(NSUInteger)selectedIndex;
 @end
 
 #endif // ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)

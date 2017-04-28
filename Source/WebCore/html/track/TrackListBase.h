@@ -60,6 +60,7 @@ public:
 
     // Needs to be public so tracks can call it
     void scheduleChangeEvent();
+    bool isChangeEventScheduled() const;
 
     bool isAnyTrackEnabled() const;
 

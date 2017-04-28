@@ -89,6 +89,16 @@ bool GenericEventQueue::hasPendingEvents() const
     return !m_pendingEvents.isEmpty();
 }
 
+bool GenericEventQueue::hasPendingEventsOfType(const AtomicString& type) const
+{
+    for (auto& event : m_pendingEvents) {
+        if (event->type() == type)
+            return true;
+    }
+
+    return false;
+}
+
 void GenericEventQueue::suspend()
 {
     ASSERT(!m_isSuspended);

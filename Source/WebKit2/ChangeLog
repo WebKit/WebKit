@@ -1,3 +1,33 @@
+2017-04-28  Andy Estes  <aestes@apple.com>
+
+        [macOS] WebPlaybackControlsManager needs to know when the selected text or audio track changes
+        https://bugs.webkit.org/show_bug.cgi?id=171434
+        <rdar://problem/31887922>
+
+        Reviewed by Eric Carlson.
+
+        * UIProcess/Cocoa/WebPlaybackSessionManagerProxy.h:
+        * UIProcess/Cocoa/WebPlaybackSessionManagerProxy.messages.in:
+        * UIProcess/Cocoa/WebPlaybackSessionManagerProxy.mm:
+        (WebKit::WebPlaybackSessionModelContext::setAudioMediaSelectionIndex): Set
+        m_audioMediaSelectedIndex and notified clients.
+        (WebKit::WebPlaybackSessionModelContext::setLegibleMediaSelectionIndex): Ditto for
+        m_legibleMediaSelectedIndex.
+        (WebKit::WebPlaybackSessionManagerProxy::setAudioMediaSelectionIndex): Called
+        WebPlaybackSessionModelContext::setAudioMediaSelectionIndex().
+        (WebKit::WebPlaybackSessionManagerProxy::setLegibleMediaSelectionIndex): Called
+        WebPlaybackSessionModelContext::setLegibleMediaSelectionIndex().
+        * WebProcess/cocoa/WebPlaybackSessionManager.h:
+        * WebProcess/cocoa/WebPlaybackSessionManager.mm:
+        (WebKit::WebPlaybackSessionInterfaceContext::audioMediaSelectionIndexChanged): Called
+        WebPlaybackSessionManager:: audioMediaSelectionIndexChanged().
+        (WebKit::WebPlaybackSessionInterfaceContext::legibleMediaSelectionIndexChanged): Called
+        WebPlaybackSessionManager::legibleMediaSelectionIndexChanged().
+        (WebKit::WebPlaybackSessionManager::audioMediaSelectionIndexChanged): Sent
+        WebPlaybackSessionManagerProxy::SetAudioMediaSelectionIndex().
+        (WebKit::WebPlaybackSessionManager::legibleMediaSelectionIndexChanged): Sent
+        WebPlaybackSessionManagerProxy::SetLegibleMediaSelectionIndex().
+
 2017-04-28  Brady Eidson  <beidson@apple.com>
 
         Start of support for multiple WebsiteDataStore/SessionIDs per process

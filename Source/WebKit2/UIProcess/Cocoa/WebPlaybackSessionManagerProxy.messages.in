@@ -29,6 +29,8 @@ messages -> WebPlaybackSessionManagerProxy {
     SetCanPlayFastReverse(uint64_t contextId, bool value)
     SetAudioMediaSelectionOptions(uint64_t contextId, Vector<WebCore::MediaSelectionOption> options, uint64_t selectedIndex)
     SetLegibleMediaSelectionOptions(uint64_t contextId, Vector<WebCore::MediaSelectionOption> options, uint64_t selectedIndex)
+    SetAudioMediaSelectionIndex(uint64_t contextId, uint64_t selectedIndex)
+    SetLegibleMediaSelectionIndex(uint64_t contextId, uint64_t selectedIndex)
     SetExternalPlaybackProperties(uint64_t contextId, bool enabled, uint32_t targetType, String localizedDeviceName)
     SetWirelessVideoPlaybackDisabled(uint64_t contextId, bool disabled)
     SetDuration(uint64_t contextId, double duration)

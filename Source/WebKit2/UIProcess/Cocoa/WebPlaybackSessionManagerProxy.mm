@@ -205,6 +205,22 @@ void WebPlaybackSessionModelContext::setLegibleMediaSelectionOptions(const Vecto
         client->legibleMediaSelectionOptionsChanged(legibleMediaSelectionOptions, legibleMediaSelectedIndex);
 }
 
+void WebPlaybackSessionModelContext::setAudioMediaSelectionIndex(uint64_t selectedIndex)
+{
+    m_audioMediaSelectedIndex = selectedIndex;
+
+    for (auto* client : m_clients)
+        client->audioMediaSelectionIndexChanged(selectedIndex);
+}
+
+void WebPlaybackSessionModelContext::setLegibleMediaSelectionIndex(uint64_t selectedIndex)
+{
+    m_legibleMediaSelectedIndex = selectedIndex;
+
+    for (auto* client : m_clients)
+        client->legibleMediaSelectionIndexChanged(selectedIndex);
+}
+
 void WebPlaybackSessionModelContext::setExternalPlayback(bool enabled, WebPlaybackSessionModel::ExternalPlaybackTargetType type, const String& localizedName)
 {
     m_externalPlaybackEnabled = enabled;
@@ -373,6 +389,16 @@ void WebPlaybackSessionManagerProxy::setAudioMediaSelectionOptions(uint64_t cont
 void WebPlaybackSessionManagerProxy::setLegibleMediaSelectionOptions(uint64_t contextId, Vector<MediaSelectionOption> options, uint64_t selectedIndex)
 {
     ensureModel(contextId).setLegibleMediaSelectionOptions(options, selectedIndex);
+}
+
+void WebPlaybackSessionManagerProxy::setAudioMediaSelectionIndex(uint64_t contextId, uint64_t selectedIndex)
+{
+    ensureModel(contextId).setAudioMediaSelectionIndex(selectedIndex);
+}
+
+void WebPlaybackSessionManagerProxy::setLegibleMediaSelectionIndex(uint64_t contextId, uint64_t selectedIndex)
+{
+    ensureModel(contextId).setLegibleMediaSelectionIndex(selectedIndex);
 }
 
 void WebPlaybackSessionManagerProxy::setExternalPlaybackProperties(uint64_t contextId, bool enabled, uint32_t targetType, String localizedDeviceName)

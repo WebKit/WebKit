@@ -270,6 +270,26 @@ static RetainPtr<NSMutableArray> mediaSelectionOptions(const Vector<MediaSelecti
         [self setCurrentLegibleTouchBarMediaSelectionOption:[webOptions objectAtIndex:selectedIndex]];
 }
 
+- (void)setAudioMediaSelectionIndex:(NSUInteger)selectedIndex
+{
+    if (selectedIndex >= [_audioTouchBarMediaSelectionOptions count])
+        return;
+
+    [self willChangeValueForKey:@"currentAudioTouchBarMediaSelectionOption"];
+    _currentAudioTouchBarMediaSelectionOption = [_audioTouchBarMediaSelectionOptions objectAtIndex:selectedIndex];
+    [self didChangeValueForKey:@"currentAudioTouchBarMediaSelectionOption"];
+}
+
+- (void)setLegibleMediaSelectionIndex:(NSUInteger)selectedIndex
+{
+    if (selectedIndex >= [_legibleTouchBarMediaSelectionOptions count])
+        return;
+
+    [self willChangeValueForKey:@"currentLegibleTouchBarMediaSelectionOption"];
+    _currentLegibleTouchBarMediaSelectionOption = [_legibleTouchBarMediaSelectionOptions objectAtIndex:selectedIndex];
+    [self didChangeValueForKey:@"currentLegibleTouchBarMediaSelectionOption"];
+}
+
 - (WebPlaybackSessionInterfaceMac*)webPlaybackSessionInterfaceMac
 {
     return _webPlaybackSessionInterfaceMac.get();

@@ -1,3 +1,56 @@
+2017-04-28  Andy Estes  <aestes@apple.com>
+
+        [macOS] WebPlaybackControlsManager needs to know when the selected text or audio track changes
+        https://bugs.webkit.org/show_bug.cgi?id=171434
+        <rdar://problem/31887922>
+
+        Reviewed by Eric Carlson.
+
+        * dom/GenericEventQueue.cpp:
+        (WebCore::GenericEventQueue::hasPendingEventsOfType): Added to check if a pending event
+        exists of a certain type.
+        * dom/GenericEventQueue.h:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::setSelectedTextTrack): Even if no track modes change, fire a
+        change event when the track to select is off or automatic so that
+        WebPlaybackSessionModelMediaElement detects the change.
+        * html/track/TrackListBase.cpp:
+        (TrackListBase::isChangeEventScheduled): Returns true if m_asyncEventQueue has a pending
+        change event.
+        * html/track/TrackListBase.h:
+        * platform/cocoa/WebPlaybackSessionModel.h:
+        (WebCore::WebPlaybackSessionModelClient::audioMediaSelectionIndexChanged):
+        (WebCore::WebPlaybackSessionModelClient::legibleMediaSelectionIndexChanged):
+        * platform/cocoa/WebPlaybackSessionModelMediaElement.h:
+        * platform/cocoa/WebPlaybackSessionModelMediaElement.mm:
+        (WebCore::WebPlaybackSessionModelMediaElement::setMediaElement): Registered/unregistered for
+        the change event on the audio and text tracks.
+        (WebCore::WebPlaybackSessionModelMediaElement::updateForEventName): Called
+        updateMediaSelectionIndices() when the change event fires.
+        (WebCore::WebPlaybackSessionModelMediaElement::updateMediaSelectionOptions): Renamed from
+        updateLegibleOptions().
+        (WebCore::WebPlaybackSessionModelMediaElement::updateMediaSelectionIndices): Called
+        audioMediaSelectionIndexChanged() and legibleMediaSelectionIndexChanged() on m_clients with
+        the updated indices.
+        (WebCore::WebPlaybackSessionModelMediaElement::legibleMediaSelectedIndex): Fixed a bug
+        where selectedIndex would never be set to offIndex if offIndex is 0 (which it usually is).
+        (WebCore::WebPlaybackSessionModelMediaElement::updateLegibleOptions): Renamed to
+        updateMediaSelectionOptions().
+        * platform/mac/WebPlaybackControlsManager.h:
+        * platform/mac/WebPlaybackControlsManager.mm:
+        (-[WebPlaybackControlsManager setAudioMediaSelectionIndex:]): Set
+        _currentAudioTouchBarMediaSelectionOption to the object at selectedIndex and manually
+        triggered a KVO notification. We can't call -setCurrentAudioTouchBarMediaSelectionOption:
+        here since that will send a message back to the Web process.
+        (-[WebPlaybackControlsManager setLegibleMediaSelectionIndex:]): Ditto for
+        _currentLegibleTouchBarMediaSelectionOption.
+        * platform/mac/WebPlaybackSessionInterfaceMac.h:
+        * platform/mac/WebPlaybackSessionInterfaceMac.mm:
+        (WebCore::WebPlaybackSessionInterfaceMac::audioMediaSelectionIndexChanged): Called
+        -[WebPlaybackControlsManager setAudioMediaSelectionIndex:].
+        (WebCore::WebPlaybackSessionInterfaceMac::legibleMediaSelectionIndexChanged): Called
+        -[WebPlaybackControlsManager setLegibleMediaSelectionIndex:].
+
 2017-04-28  Chris Dumez  <cdumez@apple.com>
 
         Range.getClientRects() / getBoundingClientRect() should return DOMRect types

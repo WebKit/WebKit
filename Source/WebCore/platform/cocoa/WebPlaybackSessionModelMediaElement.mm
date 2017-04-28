@@ -65,6 +65,8 @@ void WebPlaybackSessionModelMediaElement::setMediaElement(HTMLMediaElement* medi
     if (m_mediaElement && m_isListening) {
         for (auto& eventName : observedEventNames())
             m_mediaElement->removeEventListener(eventName, *this, false);
+        m_mediaElement->audioTracks().removeEventListener(eventNames().changeEvent, *this, false);
+        m_mediaElement->textTracks().removeEventListener(eventNames().changeEvent, *this, false);
     }
     m_isListening = false;
 
@@ -76,6 +78,8 @@ void WebPlaybackSessionModelMediaElement::setMediaElement(HTMLMediaElement* medi
     if (m_mediaElement) {
         for (auto& eventName : observedEventNames())
             m_mediaElement->addEventListener(eventName, *this, false);
+        m_mediaElement->audioTracks().addEventListener(eventNames().changeEvent, *this, false);
+        m_mediaElement->textTracks().addEventListener(eventNames().changeEvent, *this, false);
         m_isListening = true;
     }
 
@@ -141,7 +145,7 @@ void WebPlaybackSessionModelMediaElement::updateForEventName(const WTF::AtomicSt
     if (all
         || eventName == eventNames().addtrackEvent
         || eventName == eventNames().removetrackEvent)
-        updateLegibleOptions();
+        updateMediaSelectionOptions();
 
     if (all
         || eventName == eventNames().webkitcurrentplaybacktargetiswirelesschangedEvent) {
@@ -156,6 +160,11 @@ void WebPlaybackSessionModelMediaElement::updateForEventName(const WTF::AtomicSt
             client->wirelessVideoPlaybackDisabledChanged(wirelessVideoPlaybackDisabled);
         }
     }
+
+    // We don't call updateMediaSelectionIndices() in the all case, since
+    // updateMediaSelectionOptions() will also update the selection indices.
+    if (eventName == eventNames().changeEvent)
+        updateMediaSelectionIndices();
 }
 void WebPlaybackSessionModelMediaElement::addClient(WebPlaybackSessionModelClient& client)
 {
@@ -260,7 +269,7 @@ void WebPlaybackSessionModelMediaElement::togglePictureInPicture()
         m_mediaElement->enterFullscreen(MediaPlayerEnums::VideoFullscreenModePictureInPicture);
 }
 
-void WebPlaybackSessionModelMediaElement::updateLegibleOptions()
+void WebPlaybackSessionModelMediaElement::updateMediaSelectionOptions()
 {
     if (!m_mediaElement)
         return;
@@ -289,6 +298,17 @@ void WebPlaybackSessionModelMediaElement::updateLegibleOptions()
     for (auto client : m_clients) {
         client->audioMediaSelectionOptionsChanged(audioOptions, audioIndex);
         client->legibleMediaSelectionOptionsChanged(legibleOptions, legibleIndex);
+    }
+}
+
+void WebPlaybackSessionModelMediaElement::updateMediaSelectionIndices()
+{
+    auto audioIndex = audioMediaSelectedIndex();
+    auto legibleIndex = legibleMediaSelectedIndex();
+
+    for (auto client : m_clients) {
+        client->audioMediaSelectionIndexChanged(audioIndex);
+        client->legibleMediaSelectionIndexChanged(legibleIndex);
     }
 }
 
@@ -428,7 +448,7 @@ uint64_t WebPlaybackSessionModelMediaElement::legibleMediaSelectedIndex() const
         }
     }
 
-    if (offIndex && !trackMenuItemSelected && displayMode == MediaControlsHost::forcedOnlyKeyword())
+    if (offItem && !trackMenuItemSelected && displayMode == MediaControlsHost::forcedOnlyKeyword())
         selectedIndex = offIndex;
 
     return selectedIndex;

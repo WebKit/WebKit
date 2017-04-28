@@ -160,6 +160,11 @@ void TrackListBase::scheduleChangeEvent()
     m_asyncEventQueue.enqueueEvent(Event::create(eventNames().changeEvent, false, false));
 }
 
+bool TrackListBase::isChangeEventScheduled() const
+{
+    return m_asyncEventQueue.hasPendingEventsOfType(eventNames().changeEvent);
+}
+
 bool TrackListBase::isAnyTrackEnabled() const
 {
     for (auto& track : m_inbandTracks) {

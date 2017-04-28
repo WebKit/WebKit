@@ -102,7 +102,8 @@ private:
     Vector<RefPtr<AudioTrack>> m_audioTracksForMenu;
     
     double playbackStartedTime() const;
-    void updateLegibleOptions();
+    void updateMediaSelectionOptions();
+    void updateMediaSelectionIndices();
 };
 
 }

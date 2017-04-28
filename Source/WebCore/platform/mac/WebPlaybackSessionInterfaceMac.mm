@@ -159,6 +159,24 @@ void WebPlaybackSessionInterfaceMac::legibleMediaSelectionOptionsChanged(const V
 #endif
 }
 
+void WebPlaybackSessionInterfaceMac::audioMediaSelectionIndexChanged(uint64_t selectedIndex)
+{
+#if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
+    [playBackControlsManager() setAudioMediaSelectionIndex:selectedIndex];
+#else
+    UNUSED_PARAM(selectedIndex);
+#endif
+}
+
+void WebPlaybackSessionInterfaceMac::legibleMediaSelectionIndexChanged(uint64_t selectedIndex)
+{
+#if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
+    [playBackControlsManager() setLegibleMediaSelectionIndex:selectedIndex];
+#else
+    UNUSED_PARAM(selectedIndex);
+#endif
+}
+
 void WebPlaybackSessionInterfaceMac::invalidate()
 {
     if (!m_playbackSessionModel)
