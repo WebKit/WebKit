@@ -1,3 +1,17 @@
+2017-04-28  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        [ATK] GridCellRole should implement AtkTableCell (regression?)
+        https://bugs.webkit.org/show_bug.cgi?id=171179
+
+        Reviewed by Chris Fleizach.
+
+        Add new "AXInterfaceTableCell" attribute so that we can test whether or
+        not there is an implementation of AtkTableCell (i.e. without risking false
+        negatives from bugs in the interface's implementation).
+
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (WTR::AccessibilityUIElement::boolAttributeValue):
+
 2017-04-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Move UUID from WebCore/platform to WTF

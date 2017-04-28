@@ -1,3 +1,13 @@
+2017-04-28  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        [ATK] GridCellRole should implement AtkTableCell (regression?)
+        https://bugs.webkit.org/show_bug.cgi?id=171179
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/gtk/interface-table-cell-expected.txt: Added.
+        * accessibility/gtk/interface-table-cell.html: Added.
+
 2017-04-28  Miguel Gomez  <magomez@igalia.com>
 
         REGRESSION(r215211): [GTK] Several webgl related tests are failing
