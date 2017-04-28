@@ -1,3 +1,26 @@
+2017-04-28  Brady Eidson  <beidson@apple.com>
+
+        Teach WebProcessPool to track a map of SessionIDs to WebPageProxys to manage their lifetime
+        https://bugs.webkit.org/show_bug.cgi?id=171408
+
+        Reviewed by Alex Christensen.
+
+        * UIProcess/API/APIPageConfiguration.cpp:
+        (API::PageConfiguration::sessionID):
+        * UIProcess/API/APIPageConfiguration.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::reattachToWebProcess):
+        (WebKit::WebPageProxy::close):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::pageAddedToProcess):
+        (WebKit::WebProcessPool::pageRemovedFromProcess):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::createWebPage):
+        (WebKit::WebProcessProxy::addExistingWebPage):
+        (WebKit::WebProcessProxy::removeWebPage):
+        * UIProcess/WebProcessProxy.h:
+
 2017-04-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Move UUID from WebCore/platform to WTF

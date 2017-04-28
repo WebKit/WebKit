@@ -80,6 +80,7 @@ public:
     WebsiteDataStore* websiteDataStore();
     void setWebsiteDataStore(WebsiteDataStore*);
 
+    // FIXME: Once PageConfigurations *always* have a data store, get rid of the separate sessionID.
     WebCore::SessionID sessionID();
     void setSessionID(WebCore::SessionID);
 

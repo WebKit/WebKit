@@ -154,6 +154,11 @@ void PageConfiguration::setWebsiteDataStore(API::WebsiteDataStore* websiteDataSt
 
 WebCore::SessionID PageConfiguration::sessionID()
 {
+#if !ASSERT_DISABLED
+    if (m_websiteDataStore)
+        ASSERT(m_websiteDataStore->websiteDataStore().sessionID() == m_sessionID);
+#endif
+
     return m_sessionID;
 }
 

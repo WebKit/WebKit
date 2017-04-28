@@ -270,29 +270,32 @@ Ref<WebPageProxy> WebProcessProxy::createWebPage(PageClient& pageClient, Ref<API
     uint64_t pageID = generatePageID();
     Ref<WebPageProxy> webPage = WebPageProxy::create(pageClient, *this, pageID, WTFMove(pageConfiguration));
 
-    m_pageMap.set(pageID, webPage.ptr());
-    globalPageMap().set(pageID, webPage.ptr());
-
-    updateBackgroundResponsivenessTimer();
+    addExistingWebPage(webPage.get(), pageID);
 
     return webPage;
 }
 
-void WebProcessProxy::addExistingWebPage(WebPageProxy* webPage, uint64_t pageID)
+void WebProcessProxy::addExistingWebPage(WebPageProxy& webPage, uint64_t pageID)
 {
     ASSERT(!m_pageMap.contains(pageID));
     ASSERT(!globalPageMap().contains(pageID));
 
-    m_pageMap.set(pageID, webPage);
-    globalPageMap().set(pageID, webPage);
+    m_processPool->pageAddedToProcess(webPage);
+
+    m_pageMap.set(pageID, &webPage);
+    globalPageMap().set(pageID, &webPage);
 
     updateBackgroundResponsivenessTimer();
 }
 
-void WebProcessProxy::removeWebPage(uint64_t pageID)
+void WebProcessProxy::removeWebPage(WebPageProxy& webPage, uint64_t pageID)
 {
-    m_pageMap.remove(pageID);
-    globalPageMap().remove(pageID);
+    auto* removedPage = m_pageMap.take(pageID);
+    ASSERT_UNUSED(removedPage, removedPage == &webPage);
+    removedPage = globalPageMap().take(pageID);
+    ASSERT_UNUSED(removedPage, removedPage == &webPage);
+
+    m_processPool->pageRemovedFromProcess(webPage);
 
     updateBackgroundResponsivenessTimer();
     

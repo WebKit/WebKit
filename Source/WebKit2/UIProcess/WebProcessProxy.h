@@ -90,8 +90,8 @@ public:
 
     static WebPageProxy* webPage(uint64_t pageID);
     Ref<WebPageProxy> createWebPage(PageClient&, Ref<API::PageConfiguration>&&);
-    void addExistingWebPage(WebPageProxy*, uint64_t pageID);
-    void removeWebPage(uint64_t pageID);
+    void addExistingWebPage(WebPageProxy&, uint64_t pageID);
+    void removeWebPage(WebPageProxy&, uint64_t pageID);
 
     WTF::IteratorRange<WebPageProxyMap::const_iterator::Values> pages() const { return m_pageMap.values(); }
     unsigned pageCount() const { return m_pageMap.size(); }

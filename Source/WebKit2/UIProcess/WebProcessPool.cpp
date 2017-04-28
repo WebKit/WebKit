@@ -925,6 +925,36 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
     return process->createWebPage(pageClient, WTFMove(pageConfiguration));
 }
 
+void WebProcessPool::pageAddedToProcess(WebPageProxy& page)
+{
+    auto result = m_sessionToPagesMap.add(page.sessionID(), HashSet<WebPageProxy*>()).iterator->value.add(&page);
+    ASSERT_UNUSED(result, result.isNewEntry);
+}
+
+void WebProcessPool::pageRemovedFromProcess(WebPageProxy& page)
+{
+    auto sessionID = page.sessionID();
+    auto iterator = m_sessionToPagesMap.find(sessionID);
+    ASSERT(iterator != m_sessionToPagesMap.end());
+
+    auto takenPage = iterator->value.take(&page);
+    ASSERT_UNUSED(takenPage, takenPage == &page);
+
+    if (iterator->value.isEmpty()) {
+        m_sessionToPagesMap.remove(iterator);
+
+        if (sessionID == SessionID::defaultSessionID())
+            return;
+
+        // The last user of this non-default SessionID is gone, so clean it up in the child processes.
+
+        // FIXME: Remove this ASSERT and change these messages once multiple persistent sessions exist.
+        ASSERT(sessionID.isEphemeral());
+        networkProcess()->send(Messages::NetworkProcess::DestroyPrivateBrowsingSession(sessionID), 0);
+        page.process().send(Messages::WebProcess::DestroyPrivateBrowsingSession(sessionID), 0);
+    }
+}
+
 DownloadProxy* WebProcessPool::download(WebPageProxy* initiatingPage, const ResourceRequest& request, const String& suggestedFilename)
 {
     DownloadProxy* downloadProxy = createDownloadProxy(request);
