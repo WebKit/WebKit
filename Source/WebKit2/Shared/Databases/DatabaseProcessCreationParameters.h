@@ -24,10 +24,10 @@
  *
  */
 
-#ifndef DatabaseProcessCreationParameters_h
-#define DatabaseProcessCreationParameters_h
+#pragma once
 
 #include "SandboxExtension.h"
+#include <WebCore/SessionID.h>
 #include <wtf/text/WTFString.h>
 
 #if ENABLE(DATABASE_PROCESS)
@@ -45,6 +45,8 @@ struct DatabaseProcessCreationParameters {
     void encode(IPC::Encoder&) const;
     static bool decode(IPC::Decoder&, DatabaseProcessCreationParameters&);
 
+    WebCore::SessionID sessionID;
+    
 #if ENABLE(INDEXED_DATABASE)
     String indexedDatabaseDirectory;
     SandboxExtension::Handle indexedDatabaseDirectoryExtensionHandle;
@@ -54,4 +56,3 @@ struct DatabaseProcessCreationParameters {
 } // namespace WebKit
 
 #endif // ENABLE(DATABASE_PROCESS)
-#endif // DatabaseProcessCreationParameters_h

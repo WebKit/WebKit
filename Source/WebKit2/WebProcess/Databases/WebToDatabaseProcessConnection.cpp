@@ -83,7 +83,7 @@ WebIDBConnectionToServer& WebToDatabaseProcessConnection::idbConnectionToServerF
 {
     auto result = m_webIDBConnectionsBySession.add(sessionID, nullptr);
     if (result.isNewEntry) {
-        result.iterator->value = WebIDBConnectionToServer::create();
+        result.iterator->value = WebIDBConnectionToServer::create(sessionID);
         ASSERT(!m_webIDBConnectionsByIdentifier.contains(result.iterator->value->identifier()));
         m_webIDBConnectionsByIdentifier.set(result.iterator->value->identifier(), result.iterator->value);
     }

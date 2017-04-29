@@ -29,6 +29,7 @@
 #include "Connection.h"
 #include "MessageSender.h"
 
+#include <WebCore/SessionID.h>
 #include <wtf/HashMap.h>
 
 #if ENABLE(DATABASE_PROCESS)
@@ -61,7 +62,7 @@ private:
 
 #if ENABLE(INDEXED_DATABASE)
     // Messages handlers (Modern IDB)
-    void establishIDBConnectionToServer(uint64_t& serverConnectionIdentifier);
+    void establishIDBConnectionToServer(WebCore::SessionID, uint64_t& serverConnectionIdentifier);
     void removeIDBConnectionToServer(uint64_t serverConnectionIdentifier);
 
     HashMap<uint64_t, RefPtr<WebIDBConnectionToClient>> m_webIDBConnections;

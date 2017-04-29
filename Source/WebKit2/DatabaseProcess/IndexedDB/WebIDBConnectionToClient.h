@@ -30,6 +30,7 @@
 #include "DatabaseToWebProcessConnection.h"
 #include "MessageSender.h"
 #include <WebCore/IDBConnectionToClient.h>
+#include <WebCore/SessionID.h>
 
 namespace WebCore {
 class IDBCursorInfo;
@@ -51,7 +52,7 @@ namespace WebKit {
 
 class WebIDBConnectionToClient final : public WebCore::IDBServer::IDBConnectionToClientDelegate, public IPC::MessageSender, public RefCounted<WebIDBConnectionToClient> {
 public:
-    static Ref<WebIDBConnectionToClient> create(DatabaseToWebProcessConnection&, uint64_t serverConnectionIdentifier);
+    static Ref<WebIDBConnectionToClient> create(DatabaseToWebProcessConnection&, uint64_t serverConnectionIdentifier, WebCore::SessionID);
 
     virtual ~WebIDBConnectionToClient();
 
@@ -125,7 +126,7 @@ public:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
 
 private:
-    WebIDBConnectionToClient(DatabaseToWebProcessConnection&, uint64_t serverConnectionIdentifier);
+    WebIDBConnectionToClient(DatabaseToWebProcessConnection&, uint64_t serverConnectionIdentifier, WebCore::SessionID);
 
     IPC::Connection* messageSenderConnection() final;
 
@@ -134,6 +135,7 @@ private:
     Ref<DatabaseToWebProcessConnection> m_connection;
 
     uint64_t m_identifier;
+    WebCore::SessionID m_sessionID;
     RefPtr<WebCore::IDBServer::IDBConnectionToClient> m_connectionToClient;
 };
 

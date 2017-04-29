@@ -28,6 +28,7 @@
 
 #include "APIProcessPoolConfiguration.h"
 #include "APIWebsiteDataRecord.h"
+#include "DatabaseProcessCreationParameters.h"
 #include "NetworkProcessMessages.h"
 #include "StorageManager.h"
 #include "WebCookieManagerProxy.h"
@@ -116,6 +117,7 @@ void WebsiteDataStore::resolveDirectoriesIfNecessary()
     m_resolvedConfiguration.mediaKeysStorageDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(m_configuration.mediaKeysStorageDirectory);
     m_resolvedConfiguration.webSQLDatabaseDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(m_configuration.webSQLDatabaseDirectory);
     m_resolvedConfiguration.cookieStorageDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(m_configuration.cookieStorageDirectory);
+    m_resolvedConfiguration.indexedDBDatabaseDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(m_configuration.indexedDBDatabaseDirectory);
 
     if (!m_configuration.javaScriptConfigurationDirectory.isEmpty())
         m_resolvedConfiguration.javaScriptConfigurationDirectory = resolvePathForSandboxExtension(m_configuration.javaScriptConfigurationDirectory);
@@ -1235,6 +1237,21 @@ void WebsiteDataStore::registerSharedResourceLoadObserver()
 #else
     m_resourceLoadStatistics->registerSharedResourceLoadObserver();
 #endif
+}
+
+DatabaseProcessCreationParameters WebsiteDataStore::databaseProcessParameters()
+{
+    DatabaseProcessCreationParameters parameters;
+
+    parameters.sessionID = m_sessionID;
+
+#if ENABLE(INDEXED_DATABASE)
+    parameters.indexedDatabaseDirectory = resolvedIndexedDatabaseDirectory();
+    if (!parameters.indexedDatabaseDirectory.isEmpty())
+        SandboxExtension::createHandleForReadWriteDirectory(parameters.indexedDatabaseDirectory, parameters.indexedDatabaseDirectoryExtensionHandle);
+#endif
+
+    return parameters;
 }
 
 #if !PLATFORM(COCOA)

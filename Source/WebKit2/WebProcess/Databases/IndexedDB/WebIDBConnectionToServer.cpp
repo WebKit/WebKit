@@ -56,16 +56,17 @@ using namespace WebCore;
 
 namespace WebKit {
 
-Ref<WebIDBConnectionToServer> WebIDBConnectionToServer::create()
+Ref<WebIDBConnectionToServer> WebIDBConnectionToServer::create(SessionID sessionID)
 {
-    return adoptRef(*new WebIDBConnectionToServer);
+    return adoptRef(*new WebIDBConnectionToServer(sessionID));
 }
 
-WebIDBConnectionToServer::WebIDBConnectionToServer()
+WebIDBConnectionToServer::WebIDBConnectionToServer(SessionID sessionID)
+    : m_sessionID(sessionID)
 {
     relaxAdoptionRequirement();
 
-    m_isOpenInServer = sendSync(Messages::DatabaseToWebProcessConnection::EstablishIDBConnectionToServer(), Messages::DatabaseToWebProcessConnection::EstablishIDBConnectionToServer::Reply(m_identifier));
+    m_isOpenInServer = sendSync(Messages::DatabaseToWebProcessConnection::EstablishIDBConnectionToServer(sessionID), Messages::DatabaseToWebProcessConnection::EstablishIDBConnectionToServer::Reply(m_identifier));
     m_connectionToServer = IDBClient::IDBConnectionToServer::create(*this);
 }
 

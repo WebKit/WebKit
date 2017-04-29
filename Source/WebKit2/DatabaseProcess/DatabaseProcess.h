@@ -31,12 +31,12 @@
 #include "SandboxExtension.h"
 #include <WebCore/IDBBackingStore.h>
 #include <WebCore/IDBServer.h>
+#include <WebCore/SessionID.h>
 #include <WebCore/UniqueIDBDatabase.h>
 #include <wtf/CrossThreadTask.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
-class SessionID;
 struct SecurityOriginData;
 }
 
@@ -58,12 +58,7 @@ public:
     ~DatabaseProcess();
 
 #if ENABLE(INDEXED_DATABASE)
-    const String& indexedDatabaseDirectory() const { return m_indexedDatabaseDirectory; }
-
-    void ensureIndexedDatabaseRelativePathExists(const String&);
-    String absoluteIndexedDatabasePathFromDatabaseRelativePath(const String&);
-
-    WebCore::IDBServer::IDBServer& idbServer();
+    WebCore::IDBServer::IDBServer& idbServer(WebCore::SessionID);
 #endif
 
     WorkQueue& queue() { return m_queue.get(); }
@@ -96,7 +91,7 @@ private:
     void didReceiveDatabaseProcessMessage(IPC::Connection&, IPC::Decoder&);
 
     // Message Handlers
-    void initializeDatabaseProcess(const DatabaseProcessCreationParameters&);
+    void initializeWebsiteDataStore(const DatabaseProcessCreationParameters&);
     void createDatabaseToWebProcessConnection();
 
     void fetchWebsiteData(WebCore::SessionID, OptionSet<WebsiteDataType> websiteDataTypes, uint64_t callbackID);
@@ -108,7 +103,7 @@ private:
 #endif
 
 #if ENABLE(INDEXED_DATABASE)
-    Vector<WebCore::SecurityOriginData> indexedDatabaseOrigins();
+    Vector<WebCore::SecurityOriginData> indexedDatabaseOrigins(const String& path);
 #endif
 
     // For execution on work queue thread only
@@ -120,8 +115,8 @@ private:
     Ref<WorkQueue> m_queue;
 
 #if ENABLE(INDEXED_DATABASE)
-    String m_indexedDatabaseDirectory;
-    RefPtr<WebCore::IDBServer::IDBServer> m_idbServer;
+    HashMap<WebCore::SessionID, String> m_idbDatabasePaths;
+    HashMap<WebCore::SessionID, RefPtr<WebCore::IDBServer::IDBServer>> m_idbServers;
 #endif
     HashMap<String, RefPtr<SandboxExtension>> m_blobTemporaryFileSandboxExtensions;
     HashMap<uint64_t, std::function<void (SandboxExtension::HandleArray&&)>> m_sandboxExtensionForBlobsCompletionHandlers;

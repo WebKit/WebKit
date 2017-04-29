@@ -517,12 +517,14 @@ void WebProcessPool::ensureDatabaseProcess()
     DatabaseProcessCreationParameters parameters;
 #if ENABLE(INDEXED_DATABASE)
     ASSERT(!m_configuration->indexedDBDatabaseDirectory().isEmpty());
-    parameters.indexedDatabaseDirectory = m_configuration->indexedDBDatabaseDirectory();
 
+    parameters.sessionID = websiteDataStore().websiteDataStore().sessionID();
+    parameters.indexedDatabaseDirectory = m_configuration->indexedDBDatabaseDirectory();
     SandboxExtension::createHandleForReadWriteDirectory(parameters.indexedDatabaseDirectory, parameters.indexedDatabaseDirectoryExtensionHandle);
 #endif
 
-    m_databaseProcess->send(Messages::DatabaseProcess::InitializeDatabaseProcess(parameters), 0);
+    ASSERT(!parameters.indexedDatabaseDirectory.isEmpty());
+    m_databaseProcess->send(Messages::DatabaseProcess::InitializeWebsiteDataStore(parameters), 0);
 }
 
 void WebProcessPool::getDatabaseProcessConnection(Ref<Messages::WebProcessProxy::GetDatabaseProcessConnection::DelayedReply>&& reply)
@@ -615,6 +617,7 @@ void WebProcessPool::resolvePathsForSandboxExtensions()
     m_resolvedPaths.webSQLDatabaseDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(m_configuration->webSQLDatabaseDirectory());
     m_resolvedPaths.mediaCacheDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(m_configuration->mediaCacheDirectory());
     m_resolvedPaths.mediaKeyStorageDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(m_configuration->mediaKeysStorageDirectory());
+    m_resolvedPaths.indexedDatabaseDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(m_configuration->indexedDBDatabaseDirectory());
 
     m_resolvedPaths.additionalWebProcessSandboxExtensionPaths.reserveCapacity(m_configuration->additionalReadAccessAllowedPaths().size());
     for (const auto& path : m_configuration->additionalReadAccessAllowedPaths())
@@ -939,6 +942,10 @@ void WebProcessPool::pageAddedToProcess(WebPageProxy& page)
     } else if (sessionID != SessionID::defaultSessionID()) {
         sendToNetworkingProcess(Messages::NetworkProcess::AddWebsiteDataStore(page.websiteDataStore().parameters()));
         page.process().send(Messages::WebProcess::AddWebsiteDataStore(page.websiteDataStore().parameters()), 0);
+
+        auto databaseParameters = page.websiteDataStore().databaseProcessParameters();
+        if (!databaseParameters.indexedDatabaseDirectory.isEmpty())
+            sendToDatabaseProcessRelaunchingIfNecessary(Messages::DatabaseProcess::InitializeWebsiteDataStore(databaseParameters));
     }
 }
 

@@ -23,8 +23,8 @@
 #if ENABLE(DATABASE_PROCESS)
 
 messages -> DatabaseProcess LegacyReceiver {
-    # Initializes the DatabaseProcess with the correct parameters
-    InitializeDatabaseProcess(struct WebKit::DatabaseProcessCreationParameters processCreationParameters)
+    # Initializes a WebsiteDataStore/Session in the DatabaseProcess with the correct parameters
+    InitializeWebsiteDataStore(struct WebKit::DatabaseProcessCreationParameters processCreationParameters)
 
     # Creates a connection for communication with a WebProcess
     CreateDatabaseToWebProcessConnection()

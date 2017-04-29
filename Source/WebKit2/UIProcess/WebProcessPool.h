@@ -610,6 +610,7 @@ private:
         String mediaCacheDirectory;
         String mediaKeyStorageDirectory;
         String uiProcessBundleResourcePath;
+        String indexedDatabaseDirectory;
 
 #if PLATFORM(IOS)
         String cookieStorageDirectory;

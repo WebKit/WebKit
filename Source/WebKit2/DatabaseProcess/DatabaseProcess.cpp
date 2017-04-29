@@ -91,35 +91,41 @@ void DatabaseProcess::didReceiveMessage(IPC::Connection& connection, IPC::Decode
 }
 
 #if ENABLE(INDEXED_DATABASE)
-IDBServer::IDBServer& DatabaseProcess::idbServer()
+IDBServer::IDBServer& DatabaseProcess::idbServer(SessionID sessionID)
 {
-    if (!m_idbServer)
-        m_idbServer = IDBServer::IDBServer::create(indexedDatabaseDirectory(), DatabaseProcess::singleton());
+    auto addResult = m_idbServers.add(sessionID, nullptr);
+    if (!addResult.isNewEntry) {
+        ASSERT(addResult.iterator->value);
+        return *addResult.iterator->value;
+    }
 
-    return *m_idbServer;
+    auto path = m_idbDatabasePaths.get(sessionID);
+    // There should already be a registered path for this SessionID.
+    // If there's not, then where did this SessionID come from?
+    ASSERT(!path.isEmpty());
+
+    addResult.iterator->value = IDBServer::IDBServer::create(path, DatabaseProcess::singleton());
+    return *addResult.iterator->value;
 }
 #endif
 
-void DatabaseProcess::initializeDatabaseProcess(const DatabaseProcessCreationParameters& parameters)
+void DatabaseProcess::initializeWebsiteDataStore(const DatabaseProcessCreationParameters& parameters)
 {
 #if ENABLE(INDEXED_DATABASE)
     // *********
     // IMPORTANT: Do not change the directory structure for indexed databases on disk without first consulting a reviewer from Apple (<rdar://problem/17454712>)
     // *********
 
-    m_indexedDatabaseDirectory = parameters.indexedDatabaseDirectory;
+    auto addResult = m_idbDatabasePaths.add(parameters.sessionID, String());
+    if (!addResult.isNewEntry)
+        return;
+
+    addResult.iterator->value = parameters.indexedDatabaseDirectory;
     SandboxExtension::consumePermanently(parameters.indexedDatabaseDirectoryExtensionHandle);
 
-    ensureIndexedDatabaseRelativePathExists(StringImpl::empty());
+    postDatabaseTask(createCrossThreadTask(*this, &DatabaseProcess::ensurePathExists, parameters.indexedDatabaseDirectory));
 #endif
 }
-
-#if ENABLE(INDEXED_DATABASE)
-void DatabaseProcess::ensureIndexedDatabaseRelativePathExists(const String& relativePath)
-{
-    postDatabaseTask(createCrossThreadTask(*this, &DatabaseProcess::ensurePathExists, absoluteIndexedDatabasePathFromDatabaseRelativePath(relativePath)));
-}
-#endif
 
 void DatabaseProcess::ensurePathExists(const String& path)
 {
@@ -128,15 +134,6 @@ void DatabaseProcess::ensurePathExists(const String& path)
     if (!makeAllDirectories(path))
         LOG_ERROR("Failed to make all directories for path '%s'", path.utf8().data());
 }
-
-#if ENABLE(INDEXED_DATABASE)
-String DatabaseProcess::absoluteIndexedDatabasePathFromDatabaseRelativePath(const String& relativePath)
-{
-    // FIXME: pathByAppendingComponent() was originally designed to append individual atomic components.
-    // We don't have a function designed to append a multi-component subpath, but we should.
-    return pathByAppendingComponent(m_indexedDatabaseDirectory, relativePath);
-}
-#endif
 
 void DatabaseProcess::postDatabaseTask(CrossThreadTask&& task)
 {
@@ -187,17 +184,23 @@ void DatabaseProcess::createDatabaseToWebProcessConnection()
 #endif
 }
 
-void DatabaseProcess::fetchWebsiteData(SessionID, OptionSet<WebsiteDataType> websiteDataTypes, uint64_t callbackID)
+void DatabaseProcess::fetchWebsiteData(SessionID sessionID, OptionSet<WebsiteDataType> websiteDataTypes, uint64_t callbackID)
 {
 #if ENABLE(INDEXED_DATABASE)
     auto completionHandler = [this, callbackID](const WebsiteData& websiteData) {
         parentProcessConnection()->send(Messages::DatabaseProcessProxy::DidFetchWebsiteData(callbackID, websiteData), 0);
     };
 
+    String path = m_idbDatabasePaths.get(sessionID);
+    if (path.isEmpty() || !websiteDataTypes.contains(WebsiteDataType::IndexedDBDatabases)) {
+        completionHandler({ });
+        return;
+    }
+
     if (websiteDataTypes.contains(WebsiteDataType::IndexedDBDatabases)) {
         // FIXME: Pick the right database store based on the session ID.
-        postDatabaseTask(CrossThreadTask([this, websiteDataTypes, completionHandler = WTFMove(completionHandler)]() mutable {
-            RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler), securityOrigins = indexedDatabaseOrigins()] {
+        postDatabaseTask(CrossThreadTask([this, websiteDataTypes, completionHandler = WTFMove(completionHandler), path = WTFMove(path)]() mutable {
+            RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler), securityOrigins = indexedDatabaseOrigins(path)] {
                 WebsiteData websiteData;
                 for (const auto& securityOrigin : securityOrigins)
                     websiteData.entries.append({ securityOrigin, WebsiteDataType::IndexedDBDatabases, 0 });
@@ -209,27 +212,37 @@ void DatabaseProcess::fetchWebsiteData(SessionID, OptionSet<WebsiteDataType> web
 #endif
 }
 
-void DatabaseProcess::deleteWebsiteData(WebCore::SessionID, OptionSet<WebsiteDataType> websiteDataTypes, std::chrono::system_clock::time_point modifiedSince, uint64_t callbackID)
+void DatabaseProcess::deleteWebsiteData(WebCore::SessionID sessionID, OptionSet<WebsiteDataType> websiteDataTypes, std::chrono::system_clock::time_point modifiedSince, uint64_t callbackID)
 {
 #if ENABLE(INDEXED_DATABASE)
     auto completionHandler = [this, callbackID]() {
         parentProcessConnection()->send(Messages::DatabaseProcessProxy::DidDeleteWebsiteData(callbackID), 0);
     };
 
-    if (websiteDataTypes.contains(WebsiteDataType::IndexedDBDatabases))
-        idbServer().closeAndDeleteDatabasesModifiedSince(modifiedSince, WTFMove(completionHandler));
+    auto* server = m_idbServers.get(sessionID);
+    if (!server || !websiteDataTypes.contains(WebsiteDataType::IndexedDBDatabases)) {
+        completionHandler();
+        return;
+    }
+
+    server->closeAndDeleteDatabasesModifiedSince(modifiedSince, WTFMove(completionHandler));
 #endif
 }
 
-void DatabaseProcess::deleteWebsiteDataForOrigins(WebCore::SessionID, OptionSet<WebsiteDataType> websiteDataTypes, const Vector<SecurityOriginData>& securityOriginDatas, uint64_t callbackID)
+void DatabaseProcess::deleteWebsiteDataForOrigins(WebCore::SessionID sessionID, OptionSet<WebsiteDataType> websiteDataTypes, const Vector<SecurityOriginData>& securityOriginDatas, uint64_t callbackID)
 {
 #if ENABLE(INDEXED_DATABASE)
     auto completionHandler = [this, callbackID]() {
         parentProcessConnection()->send(Messages::DatabaseProcessProxy::DidDeleteWebsiteDataForOrigins(callbackID), 0);
     };
 
-    if (websiteDataTypes.contains(WebsiteDataType::IndexedDBDatabases))
-        idbServer().closeAndDeleteDatabasesForOrigins(securityOriginDatas, WTFMove(completionHandler));
+    auto* server = m_idbServers.get(sessionID);
+    if (!server || !websiteDataTypes.contains(WebsiteDataType::IndexedDBDatabases)) {
+        completionHandler();
+        return;
+    }
+
+    server->closeAndDeleteDatabasesForOrigins(securityOriginDatas, WTFMove(completionHandler));
 #endif
 }
 
@@ -263,13 +276,13 @@ void DatabaseProcess::accessToTemporaryFileComplete(const String& path)
         extension->revoke();
 }
 
-Vector<WebCore::SecurityOriginData> DatabaseProcess::indexedDatabaseOrigins()
+Vector<WebCore::SecurityOriginData> DatabaseProcess::indexedDatabaseOrigins(const String& path)
 {
-    if (m_indexedDatabaseDirectory.isEmpty())
+    if (path.isEmpty())
         return { };
 
     Vector<WebCore::SecurityOriginData> securityOrigins;
-    for (auto& originPath : listDirectory(m_indexedDatabaseDirectory, "*")) {
+    for (auto& originPath : listDirectory(path, "*")) {
         String databaseIdentifier = pathGetFileName(originPath);
 
         if (auto securityOrigin = SecurityOriginData::fromDatabaseIdentifier(databaseIdentifier))

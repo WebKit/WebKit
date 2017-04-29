@@ -122,12 +122,11 @@ TEST(WebKit2, WebsiteDataStoreCustomPaths)
     EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:sqlPath.path]);
     EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:localStoragePath.path]);
 
+    EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:idbPath.path]);
+    EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:defaultIDBPath.path]);
+
     // FIXME: This should be true, but comes up false. Possibly a CFNetwork issue. Being explored in <rdar://problem/31666275>
     EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:cookieStoragePath.path]);
-
-    // FIXME: <rdar://problem/30785618> - We don't yet support IDB database processes at custom paths per WebsiteDataStore (These should be flipped)
-    EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:idbPath.path]);
-    EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:defaultIDBPath.path]);
 
     // FIXME: The default SQL and LocalStorage paths are being used for something, but they shouldn't be. (theses should be false, not true)
     EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:defaultSQLPath.path]);

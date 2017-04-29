@@ -30,6 +30,7 @@
 #include "MessageSender.h"
 #include "SandboxExtension.h"
 #include <WebCore/IDBConnectionToServer.h>
+#include <WebCore/SessionID.h>
 
 namespace WebKit {
 
@@ -37,7 +38,7 @@ class WebIDBResult;
 
 class WebIDBConnectionToServer final : public WebCore::IDBClient::IDBConnectionToServerDelegate, public IPC::MessageSender, public RefCounted<WebIDBConnectionToServer> {
 public:
-    static Ref<WebIDBConnectionToServer> create();
+    static Ref<WebIDBConnectionToServer> create(WebCore::SessionID);
 
     virtual ~WebIDBConnectionToServer();
 
@@ -108,13 +109,14 @@ public:
     void connectionToServerLost();
 
 private:
-    WebIDBConnectionToServer();
+    WebIDBConnectionToServer(WebCore::SessionID);
 
     IPC::Connection* messageSenderConnection() final;
 
     uint64_t m_identifier { 0 };
     bool m_isOpenInServer { false };
     RefPtr<WebCore::IDBClient::IDBConnectionToServer> m_connectionToServer;
+    WebCore::SessionID m_sessionID;
 };
 
 } // namespace WebKit

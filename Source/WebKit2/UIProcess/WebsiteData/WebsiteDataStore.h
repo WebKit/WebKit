@@ -53,6 +53,7 @@ class WebProcessPool;
 class WebResourceLoadStatisticsStore;
 enum class WebsiteDataFetchOption;
 enum class WebsiteDataType;
+struct DatabaseProcessCreationParameters;
 struct WebsiteDataRecord;
 struct WebsiteDataStoreParameters;
 
@@ -107,6 +108,7 @@ public:
     const String& resolvedDatabaseDirectory() const { return m_resolvedConfiguration.webSQLDatabaseDirectory; }
     const String& resolvedJavaScriptConfigurationDirectory() const { return m_resolvedConfiguration.javaScriptConfigurationDirectory; }
     const String& resolvedCookieStorageDirectory() const { return m_resolvedConfiguration.cookieStorageDirectory; }
+    const String& resolvedIndexedDatabaseDirectory() const { return m_resolvedConfiguration.indexedDBDatabaseDirectory; }
 
     StorageManager* storageManager() { return m_storageManager.get(); }
 
@@ -114,6 +116,7 @@ public:
     bool isAssociatedProcessPool(WebProcessPool&) const;
 
     WebsiteDataStoreParameters parameters();
+    DatabaseProcessCreationParameters databaseProcessParameters();
 
 private:
     explicit WebsiteDataStore(WebCore::SessionID);
