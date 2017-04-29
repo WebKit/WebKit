@@ -109,6 +109,15 @@ static AvoidanceReasonFlags canUseForText(const CharacterType* text, unsigned le
 {
     AvoidanceReasonFlags reasons = { };
     auto& primaryFont = fontCascade.primaryFont();
+    auto& fontMetrics = primaryFont.fontMetrics();
+    auto availableSpaceForGlyphAscent = fontMetrics.ascent();
+    auto availableSpaceForGlyphDescent = fontMetrics.descent();
+    if (lineHeightConstraint) {
+        auto lineHeightPadding = *lineHeightConstraint - fontMetrics.height();
+        availableSpaceForGlyphAscent += lineHeightPadding / 2;
+        availableSpaceForGlyphDescent += lineHeightPadding / 2;
+    }
+
     for (unsigned i = 0; i < length; ++i) {
         auto character = text[i];
         if (FontCascade::treatAsSpace(character))
@@ -125,8 +134,11 @@ static AvoidanceReasonFlags canUseForText(const CharacterType* text, unsigned le
         if (!glyphData.isValid() || glyphData.font != &primaryFont)
             SET_REASON_AND_RETURN_IF_NEEDED(FlowPrimaryFontIsInsufficient, reasons, includeReasons);
 
-        if (lineHeightConstraint && primaryFont.boundsForGlyph(glyphData.glyph).height() > *lineHeightConstraint)
-            SET_REASON_AND_RETURN_IF_NEEDED(FlowFontHasOverflowGlyph, reasons, includeReasons);
+        if (lineHeightConstraint) {
+            auto bounds = primaryFont.boundsForGlyph(glyphData.glyph);
+            if (ceilf(-bounds.y()) > availableSpaceForGlyphAscent || ceilf(bounds.maxY()) > availableSpaceForGlyphDescent)
+                SET_REASON_AND_RETURN_IF_NEEDED(FlowFontHasOverflowGlyph, reasons, includeReasons);
+        }
     }
     return reasons;
 }

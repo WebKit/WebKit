@@ -1,3 +1,20 @@
+2017-04-28  Zalan Bujtas  <zalan@apple.com>
+
+        iBooks text can overlap, sometimes columns are shifted splitting words.
+        https://bugs.webkit.org/show_bug.cgi?id=171472
+        <rdar://problem/31096037>
+
+        Reviewed by Antti Koivisto.
+
+        Instead of just checking if the glyph is taller than the line, we need to ensure that both the
+        ascent and the descent have enough space (this is for -webkit-line-box-contain: glyph).
+
+        Test: fast/text/simple-line-layout-glyph-overflows-line.html
+
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::canUseForText): compute the available space for the ascent/descent
+        and check them against the ceil-ed(see FontCascade::floatWidthForSimpleText) glyph min/max y.
+
 2017-04-29  Nan Wang  <n_wang@apple.com>
 
         AX: Improve performance of addChildren()/childrenChanged()
