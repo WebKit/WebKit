@@ -1,3 +1,28 @@
+2017-04-28  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: ARIA "region" role which lacks an accessible name should not be treated as a landmark
+        https://bugs.webkit.org/show_bug.cgi?id=171180
+
+        Reviewed by Chris Fleizach.
+
+        Add new test cases to several tests so that we have coverage for both named and
+        unnamed regions, which now have different mappings. In aria-namefrom-author.html,
+        the region role was replaced with the table role because the test requires elements
+        which have mapped ARIA roles and lack an author-provided name. A region which lacks
+        an author-provided name is no longer mapped as an ARIA role as per the spec. Table
+        was introduced in ARIA 1.1 and serves the same purpose with respect to what is
+        being tested.
+
+        * accessibility/aria-namefrom-author.html:
+        * accessibility/gtk/xml-roles-exposed-expected.txt:
+        * accessibility/gtk/xml-roles-exposed.html:
+        * accessibility/mac/aria-grouping-roles.html:
+        * accessibility/roles-computedRoleString.html:
+        * accessibility/roles-exposed.html:
+        * platform/gtk/accessibility/roles-exposed-expected.txt:
+        * platform/mac/accessibility/roles-computedRoleString-expected.txt:
+        * platform/mac/accessibility/roles-exposed-expected.txt:
+
 2017-04-28  Joseph Pecoraro  <pecoraro@apple.com>
 
         LayoutTests/js/dom/Promise-static-all/race.html are flakey - Unhandled Promise Rejection messages

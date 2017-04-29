@@ -2121,6 +2121,13 @@ AccessibilityRole AccessibilityNodeObject::determineAriaRoleAttribute() const
     if (role == PresentationalRole && supportsARIAAttributes())
         role = UnknownRole;
     
+    // The ARIA spec states, "Authors must give each element with role region a brief label that
+    // describes the purpose of the content in the region." The Core AAM states, "Special case:
+    // if the region does not have an accessible name, do not expose the element as a landmark.
+    // Use the native host language role of the element instead."
+    if (role == LandmarkRegionRole && !hasAttribute(aria_labelAttr) && !hasAttribute(aria_labelledbyAttr))
+        role = UnknownRole;
+
     if (role)
         return role;
 

@@ -509,6 +509,7 @@ static void convertPathToScreenSpaceFunction(PathConversionInfo& conversion, con
         return AXARIAContentGroupText(@"ARIALandmarkMain");
     case LandmarkNavigationRole:
         return AXARIAContentGroupText(@"ARIALandmarkNavigation");
+    case LandmarkDocRegionRole:
     case LandmarkRegionRole:
         return AXARIAContentGroupText(@"ARIALandmarkRegion");
     case LandmarkSearchRole:

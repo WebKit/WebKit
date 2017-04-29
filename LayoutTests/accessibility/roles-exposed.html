@@ -343,7 +343,11 @@
 <div role="radiogroup"               data-platform="atk,mac" class="ex">
     <div role="radio"                data-platform="atk,mac" class="ex">X</div>
 </div>
-<div role="region"                   data-platform="atk,mac" class="ex">X</div>
+<div role="region"                   data-platform="atk,mac" class="ex" data-note=":not([aria-label]:not([aria-labelledby])">X</div>
+<div role="region"                   data-platform="atk,mac" class="ex" aria-label="x" data-note="[aria-label]">X</div>
+<div role="region"                   data-platform="atk,mac" class="ex" aria-labelledby="region-label" data-note="[aria-labelledby]">
+    <h2 id="region-label">X</h2>
+</div>
 <div role="scrollbar"                data-platform="atk,mac" class="ex">X</div>
 <div role="search"                   data-platform="atk,mac" class="ex">X</div>
 <div role="searchbox"                data-platform="atk,mac" class="ex">X</div>

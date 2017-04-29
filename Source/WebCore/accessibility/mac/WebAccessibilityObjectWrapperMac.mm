@@ -1876,6 +1876,7 @@ static const AccessibilityRoleMap& createAccessibilityRoleMap()
         { WebApplicationRole, NSAccessibilityGroupRole },
         { LandmarkBannerRole, NSAccessibilityGroupRole },
         { LandmarkComplementaryRole, NSAccessibilityGroupRole },
+        { LandmarkDocRegionRole, NSAccessibilityGroupRole },
         { LandmarkContentInfoRole, NSAccessibilityGroupRole },
         { LandmarkMainRole, NSAccessibilityGroupRole },
         { LandmarkNavigationRole, NSAccessibilityGroupRole },
@@ -2033,6 +2034,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
             return @"AXLandmarkMain";
         case LandmarkNavigationRole:
             return @"AXLandmarkNavigation";
+        case LandmarkDocRegionRole:
         case LandmarkRegionRole:
             return @"AXLandmarkRegion";
         case LandmarkSearchRole:

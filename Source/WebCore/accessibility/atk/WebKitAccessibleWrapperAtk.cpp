@@ -670,6 +670,7 @@ static AtkRole atkRole(AccessibilityObject* coreObject)
     case LandmarkBannerRole:
     case LandmarkComplementaryRole:
     case LandmarkContentInfoRole:
+    case LandmarkDocRegionRole:
     case LandmarkMainRole:
     case LandmarkNavigationRole:
     case LandmarkRegionRole:

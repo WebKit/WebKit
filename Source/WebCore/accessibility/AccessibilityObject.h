@@ -147,6 +147,7 @@ enum AccessibilityRole {
     LandmarkBannerRole,
     LandmarkComplementaryRole,
     LandmarkContentInfoRole,
+    LandmarkDocRegionRole,
     LandmarkMainRole,
     LandmarkNavigationRole,
     LandmarkRegionRole,

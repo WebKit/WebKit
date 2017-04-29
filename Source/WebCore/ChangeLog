@@ -1,3 +1,41 @@
+2017-04-28  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: ARIA "region" role which lacks an accessible name should not be treated as a landmark
+        https://bugs.webkit.org/show_bug.cgi?id=171180
+
+        Reviewed by Chris Fleizach.
+
+        Remove mapping of LandmarkRegionRole for regions which lack an accessible name.
+        Doing so had a side effect of causing a number of DPub ARIA roles to stop being
+        mapped as ARIA landmarks. This is due to our internal role mappings, namely
+        treating the DPub ARIA landmark roles as if they were regions. Because DPub's
+        landmarks do not subclass region, and do not have the same name-from-author
+        requirement as region, create a new LandmarkDocRegionRole AccessibilityRole and
+        map DPub ARIA's generic landmarks to it.
+
+        No new tests because we already have sufficient coverage. Several existing
+        tests were given additional test cases to cover named and unnamed regions,
+        and test expectations updated accordingly.
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::determineAriaRoleAttribute):
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::accessibleNameDerivesFromContent):
+        (WebCore::AccessibilityObject::isLandmark):
+        (WebCore::initializeRoleMap):
+        (WebCore::AccessibilityObject::computedRoleString):
+        * accessibility/AccessibilityObject.h:
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (atkRole):
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper _accessibilityIsLandmarkRole:]):
+        (-[WebAccessibilityObjectWrapper determineIsAccessibilityElement]):
+        * accessibility/mac/WebAccessibilityObjectWrapperBase.mm:
+        (-[WebAccessibilityObjectWrapperBase ariaLandmarkRoleDescription]):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (createAccessibilityRoleMap):
+        (-[WebAccessibilityObjectWrapper subrole]):
+
 2017-04-28  Simon Fraser  <simon.fraser@apple.com>
 
         Enhance showLayerTree() to show fragments

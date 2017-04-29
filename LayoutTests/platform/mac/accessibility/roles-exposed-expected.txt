@@ -1244,7 +1244,17 @@ div[role=radio]
       AXSubrole: 
       AXRoleDescription: radio button
       
-div[role=region]
+div[role=region]:not([aria-label]:not([aria-labelledby])
+      AXRole: AXGroup
+      AXSubrole: 
+      AXRoleDescription: group
+      
+div[role=region][aria-label]
+      AXRole: AXGroup
+      AXSubrole: AXLandmarkRegion
+      AXRoleDescription: region
+      
+div[role=region][aria-labelledby]
       AXRole: AXGroup
       AXSubrole: AXLandmarkRegion
       AXRoleDescription: region

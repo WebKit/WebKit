@@ -321,6 +321,7 @@ bool AccessibilityObject::accessibleNameDerivesFromContent() const
     case DocumentMathRole:
     case DocumentNoteRole:
     case LandmarkRegionRole:
+    case LandmarkDocRegionRole:
     case FormRole:
     case GridRole:
     case GroupRole:
@@ -414,6 +415,7 @@ bool AccessibilityObject::isLandmark() const
     return role == LandmarkBannerRole
         || role == LandmarkComplementaryRole
         || role == LandmarkContentInfoRole
+        || role == LandmarkDocRegionRole
         || role == LandmarkMainRole
         || role == LandmarkNavigationRole
         || role == LandmarkRegionRole
@@ -2145,39 +2147,39 @@ static void initializeRoleMap()
         // The 'doc-*' roles are defined the ARIA DPUB mobile: https://www.w3.org/TR/dpub-aam-1.0/ 
         // Editor's draft is currently at https://rawgit.com/w3c/aria/master/dpub-aam/dpub-aam.html 
         { "doc-abstract", ApplicationTextGroupRole },
-        { "doc-acknowledgments", LandmarkRegionRole },
-        { "doc-afterword", LandmarkRegionRole },
-        { "doc-appendix", LandmarkRegionRole },
+        { "doc-acknowledgments", LandmarkDocRegionRole },
+        { "doc-afterword", LandmarkDocRegionRole },
+        { "doc-appendix", LandmarkDocRegionRole },
         { "doc-backlink", WebCoreLinkRole },
         { "doc-biblioentry", ListItemRole },
-        { "doc-bibliography", LandmarkRegionRole },
+        { "doc-bibliography", LandmarkDocRegionRole },
         { "doc-biblioref", WebCoreLinkRole },
-        { "doc-chapter", LandmarkRegionRole },
+        { "doc-chapter", LandmarkDocRegionRole },
         { "doc-colophon", ApplicationTextGroupRole },
-        { "doc-conclusion", LandmarkRegionRole },
+        { "doc-conclusion", LandmarkDocRegionRole },
         { "doc-cover", ImageRole },
         { "doc-credit", ApplicationTextGroupRole },
-        { "doc-credits", LandmarkRegionRole },
+        { "doc-credits", LandmarkDocRegionRole },
         { "doc-dedication", ApplicationTextGroupRole },
         { "doc-endnote", ListItemRole },
-        { "doc-endnotes", LandmarkRegionRole },
+        { "doc-endnotes", LandmarkDocRegionRole },
         { "doc-epigraph", ApplicationTextGroupRole },
-        { "doc-epilogue", LandmarkRegionRole },
-        { "doc-errata", LandmarkRegionRole },
+        { "doc-epilogue", LandmarkDocRegionRole },
+        { "doc-errata", LandmarkDocRegionRole },
         { "doc-example", ApplicationTextGroupRole },
         { "doc-footnote", ApplicationTextGroupRole },
-        { "doc-foreword", LandmarkRegionRole },
-        { "doc-glossary", LandmarkRegionRole },
+        { "doc-foreword", LandmarkDocRegionRole },
+        { "doc-glossary", LandmarkDocRegionRole },
         { "doc-glossref", WebCoreLinkRole },
         { "doc-index", LandmarkNavigationRole },
-        { "doc-introduction", LandmarkRegionRole },
+        { "doc-introduction", LandmarkDocRegionRole },
         { "doc-noteref", WebCoreLinkRole },
         { "doc-notice", DocumentNoteRole },
         { "doc-pagebreak", SplitterRole },
         { "doc-pagelist", LandmarkNavigationRole },
-        { "doc-part", LandmarkRegionRole },
-        { "doc-preface", LandmarkRegionRole },
-        { "doc-prologue", LandmarkRegionRole },
+        { "doc-part", LandmarkDocRegionRole },
+        { "doc-preface", LandmarkDocRegionRole },
+        { "doc-prologue", LandmarkDocRegionRole },
         { "doc-pullquote", ApplicationTextGroupRole },
         { "doc-qna", ApplicationTextGroupRole },
         { "doc-subtitle", HeadingRole },
@@ -2297,6 +2299,9 @@ String AccessibilityObject::computedRoleString() const
 
     if (role == PopUpButtonRole || role == ToggleButtonRole)
         return reverseAriaRoleMap().get(ButtonRole);
+
+    if (role == LandmarkDocRegionRole)
+        return reverseAriaRoleMap().get(LandmarkRegionRole);
 
     return reverseAriaRoleMap().get(role);
 }

@@ -224,7 +224,12 @@
 <div role="radiogroup"               data-role="radiogroup" class="ex">
     <div role="radio"                data-role="radio" class="ex">X</div>
 </div>
-<div role="region"                   data-role="region" class="ex">X</div>
+<div role="region"                   class="ex" data-role="" data-note=":not([aria-label]:not([aria-labelledby])">X</div>
+<div role="region"                   class="ex" data-role="region" aria-label="x" data-note="[aria-label]">X</div>
+<div role="region"                   class="ex" data-role="region" aria-labelledby="region-label" data-note="[aria-labelledby]">
+    <h2 id="region-label">X</h2>
+</div>
+
 <div role="scrollbar"                data-role="scrollbar" class="ex">X</div>
 <div role="search"                   data-role="search" class="ex">X</div>
 <div role="separator"                data-role="separator" class="ex">X</div>

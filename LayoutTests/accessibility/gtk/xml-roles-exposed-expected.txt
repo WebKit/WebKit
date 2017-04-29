@@ -1,4 +1,3 @@
-
 Verify exposure of ARIA role values via the 'xml-roles' object attribute.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -542,7 +541,7 @@ AXParent: AXWebArea
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
 AXSize: { 0.000000, 0.000000 }
-AXTitle: 
+AXTitle: X
 AXDescription: 
 AXValue: 
 AXFocusable: 0
@@ -555,6 +554,25 @@ AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
 AXPlatformAttributes: computed-role:region, xml-roles:region, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXSection
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition: { 8.000000, 8.000000 }
+AXSize: { 784.000000, 17.000000 }
+AXTitle: 
+AXDescription: 
+AXValue: X
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: xml-roles:region, tag:div, toolkit:WebKitGtk
 ------------
 AXRole: AXScrollBar
 AXParent: AXWebArea
@@ -1532,7 +1550,7 @@ AXPlatformAttributes: computed-role:navigation, xml-roles:doc-toc, tag:div, tool
 AXRole: AXParagraph
 AXParent: AXWebArea
 AXChildren: 2
-AXPosition: { 8.000000, 8.000000 }
+AXPosition: { 8.000000, 41.000000 }
 AXSize: { 784.000000, 50.000000 }
 AXTitle: 
 AXDescription: 

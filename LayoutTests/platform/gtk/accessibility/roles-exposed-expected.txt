@@ -745,7 +745,13 @@ div[role=radiogroup]
 div[role=radio]
       AXRole: AXRadioButton
       
-div[role=region]
+div[role=region]:not([aria-label]:not([aria-labelledby])
+      AXRole: AXSection
+      
+div[role=region][aria-label]
+      AXRole: AXLandmarkRegion
+      
+div[role=region][aria-labelledby]
       AXRole: AXLandmarkRegion
       
 div[role=scrollbar]
