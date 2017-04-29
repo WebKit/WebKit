@@ -2982,7 +2982,7 @@ void AccessibilityRenderObject::addImageMapChildren()
 void AccessibilityRenderObject::updateChildrenIfNecessary()
 {
     if (needsToUpdateChildren())
-        clearChildren();        
+        clearChildren();
     
     AccessibilityObject::updateChildrenIfNecessary();
 }
@@ -3206,6 +3206,8 @@ void AccessibilityRenderObject::addChildren()
     
     for (RefPtr<AccessibilityObject> obj = firstChild(); obj; obj = obj->nextSibling())
         addChild(obj.get());
+    
+    m_subtreeDirty = false;
     
     addHiddenChildren();
     addAttachmentChildren();

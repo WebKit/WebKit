@@ -86,6 +86,7 @@ AccessibilityObject::AccessibilityObject()
     , m_haveChildren(false)
     , m_role(UnknownRole)
     , m_lastKnownIsIgnoredValue(DefaultBehavior)
+    , m_isIgnoredFromParentData(AccessibilityIsIgnoredFromParentData())
 #if PLATFORM(GTK)
     , m_wrapper(nullptr)
 #endif
@@ -3097,13 +3098,15 @@ bool AccessibilityObject::isDOMHidden() const
 
 AccessibilityObjectInclusion AccessibilityObject::defaultObjectInclusion() const
 {
-    if (isARIAHidden())
+    bool useParentData = !m_isIgnoredFromParentData.isNull();
+    
+    if (useParentData ? m_isIgnoredFromParentData.isARIAHidden : isARIAHidden())
         return IgnoreObject;
     
     if (ignoredFromARIAModalPresence())
         return IgnoreObject;
     
-    if (isPresentationalChildOfAriaRole())
+    if (useParentData ? m_isIgnoredFromParentData.isPresentationalChildOfAriaRole : isPresentationalChildOfAriaRole())
         return IgnoreObject;
     
     return accessibilityPlatformIncludesObject();
@@ -3293,6 +3296,25 @@ void AccessibilityObject::ariaLabelledByElements(AccessibilityChildrenVector& ar
 void AccessibilityObject::ariaOwnsElements(AccessibilityChildrenVector& axObjects) const
 {
     ariaElementsFromAttribute(axObjects, aria_ownsAttr);
+}
+
+void AccessibilityObject::setIsIgnoredFromParentDataForChild(AccessibilityObject* child)
+{
+    if (!child || child->parentObject() != this)
+        return;
+    
+    AccessibilityIsIgnoredFromParentData result = AccessibilityIsIgnoredFromParentData(this);
+    if (!m_isIgnoredFromParentData.isNull()) {
+        result.isARIAHidden = m_isIgnoredFromParentData.isARIAHidden || equalLettersIgnoringASCIICase(child->getAttribute(aria_hiddenAttr), "true");
+        result.isPresentationalChildOfAriaRole = m_isIgnoredFromParentData.isPresentationalChildOfAriaRole || ariaRoleHasPresentationalChildren();
+        result.isDescendantOfBarrenParent = m_isIgnoredFromParentData.isDescendantOfBarrenParent || !canHaveChildren();
+    } else {
+        result.isARIAHidden = child->isARIAHidden();
+        result.isPresentationalChildOfAriaRole = child->isPresentationalChildOfAriaRole();
+        result.isDescendantOfBarrenParent = child->isDescendantOfBarrenParent();
+    }
+    
+    child->setIsIgnoredFromParentData(result);
 }
 
 } // namespace WebCore

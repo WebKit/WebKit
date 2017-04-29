@@ -85,6 +85,7 @@ AccessibilityNodeObject::AccessibilityNodeObject(Node* node)
     : AccessibilityObject()
     , m_ariaRole(UnknownRole)
     , m_childrenDirty(false)
+    , m_subtreeDirty(false)
     , m_roleForMSAA(UnknownRole)
 #ifndef NDEBUG
     , m_initialized(false)
@@ -129,13 +130,19 @@ void AccessibilityNodeObject::childrenChanged()
     if (!cache)
         return;
     cache->postNotification(this, document(), AXObjectCache::AXChildrenChanged);
+    
+    // Should make the sub tree dirty so that everything below will be updated correctly.
+    this->setNeedsToUpdateSubtree();
+    bool shouldStopUpdatingParent = false;
 
     // Go up the accessibility parent chain, but only if the element already exists. This method is
     // called during render layouts, minimal work should be done. 
     // If AX elements are created now, they could interrogate the render tree while it's in a funky state.
     // At the same time, process ARIA live region changes.
     for (AccessibilityObject* parent = this; parent; parent = parent->parentObjectIfExists()) {
-        parent->setNeedsToUpdateChildren();
+        if (!shouldStopUpdatingParent)
+            parent->setNeedsToUpdateChildren();
+        
 
         // These notifications always need to be sent because screenreaders are reliant on them to perform. 
         // In other words, they need to be sent even when the screen reader has not accessed this live region since the last update.
@@ -148,8 +155,13 @@ void AccessibilityNodeObject::childrenChanged()
             cache->postLiveRegionChangeNotification(parent);
         
         // If this element is an ARIA text control, notify the AT of changes.
-        if (parent->isNonNativeTextControl())
+        if (parent->isNonNativeTextControl()) {
             cache->postNotification(parent, parent->document(), AXObjectCache::AXValueChanged);
+            
+            // Do not let the parent that's above the editable ancestor update its children
+            // since we already notify the AT of changes.
+            shouldStopUpdatingParent = true;
+        }
     }
 }
 
@@ -333,8 +345,24 @@ void AccessibilityNodeObject::insertChild(AccessibilityObject* child, unsigned i
     // If the parent is asking for this child's children, then either it's the first time (and clearing is a no-op),
     // or its visibility has changed. In the latter case, this child may have a stale child cached.
     // This can prevent aria-hidden changes from working correctly. Hence, whenever a parent is getting children, ensure data is not stale.
-    child->clearChildren();
+    // Only clear the child's children when we know it's in the updating chain in order to avoid unnecessary work.
+    if (child->needsToUpdateChildren() || m_subtreeDirty) {
+        child->clearChildren();
+        // Pass m_subtreeDirty flag down to the child so that children cache gets reset properly.
+        if (m_subtreeDirty)
+            child->setNeedsToUpdateSubtree();
+    } else {
+        // For some reason the grand children might be detached so that we need to regenerate the
+        // children list of this child.
+        for (const auto& grandChild : child->children(false)) {
+            if (grandChild->isDetachedFromParent()) {
+                child->clearChildren();
+                break;
+            }
+        }
+    }
     
+    setIsIgnoredFromParentDataForChild(child);
     if (child->accessibilityIsIgnored()) {
         const auto& children = child->children();
         size_t length = children.size();
@@ -344,6 +372,9 @@ void AccessibilityNodeObject::insertChild(AccessibilityObject* child, unsigned i
         ASSERT(child->parentObject() == this);
         m_children.insert(index, child);
     }
+    
+    // Reset the child's m_isIgnoredFromParentData since we are done adding that child and its children.
+    child->clearIsIgnoredFromParentData();
 }
 
 void AccessibilityNodeObject::addChild(AccessibilityObject* child)
@@ -368,6 +399,8 @@ void AccessibilityNodeObject::addChildren()
     
     for (Node* child = m_node->firstChild(); child; child = child->nextSibling())
         addChild(axObjectCache()->getOrCreate(child));
+    
+    m_subtreeDirty = false;
 }
 
 bool AccessibilityNodeObject::canHaveChildren() const
@@ -1059,6 +1092,9 @@ Element* AccessibilityNodeObject::mouseButtonListener(MouseButtonListenerResultF
 
 bool AccessibilityNodeObject::isDescendantOfBarrenParent() const
 {
+    if (!m_isIgnoredFromParentData.isNull())
+        return m_isIgnoredFromParentData.isDescendantOfBarrenParent;
+    
     for (AccessibilityObject* object = parentObject(); object; object = object->parentObject()) {
         if (!object->canHaveChildren())
             return true;

@@ -146,6 +146,7 @@ protected:
 
     AccessibilityRole m_ariaRole;
     bool m_childrenDirty;
+    bool m_subtreeDirty;
     mutable AccessibilityRole m_roleForMSAA;
 #ifndef NDEBUG
     bool m_initialized;

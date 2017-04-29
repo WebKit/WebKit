@@ -1,3 +1,50 @@
+2017-04-29  Nan Wang  <n_wang@apple.com>
+
+        AX: Improve performance of addChildren()/childrenChanged()
+        https://bugs.webkit.org/show_bug.cgi?id=171443
+
+        Reviewed by Chris Fleizach.
+
+        There's a lot of unnecessary work happening when childrenChanged() is being called.
+        Some of the improvements here:
+        1. When childrenChanged() is being called on some element, we are marking its parent
+           chain dirty. However, in the addChild() method we are then clearing each child of
+           that 'dirty' parent, eventually making the entire tree dirty. 
+           Added a m_subTreeDirty flag and using the needsToUpdateChildren() check to make sure
+           we are only clearing the right chain without updating the unchanged siblings.
+        2. In the addChild() method we are calling accessibilityIsIgnored() on each child and that 
+           might lead to going up the parent chain again to get necessary information. 
+           Since we are already traversing the tree from top to bottom to add children, added a 
+           struct to store the information and pass it to the child so to avoid unnecessary traversal.
+        3. Reduced the amount work of ARIA text controls perform when updating its parents in childrenChanged() 
+           so that we don't update a big portion of the tree while typing.
+
+        No new tests since this didn't change any functionality. 
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::AccessibilityNodeObject):
+        (WebCore::AccessibilityNodeObject::childrenChanged):
+        (WebCore::AccessibilityNodeObject::insertChild):
+        (WebCore::AccessibilityNodeObject::addChildren):
+        (WebCore::AccessibilityNodeObject::isDescendantOfBarrenParent):
+        * accessibility/AccessibilityNodeObject.h:
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::AccessibilityObject):
+        (WebCore::AccessibilityObject::defaultObjectInclusion):
+        (WebCore::AccessibilityObject::setIsIgnoredFromParentDataForChild):
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityIsIgnoredFromParentData::AccessibilityIsIgnoredFromParentData):
+        (WebCore::AccessibilityIsIgnoredFromParentData::isNull):
+        (WebCore::AccessibilityObject::setNeedsToUpdateSubTree):
+        (WebCore::AccessibilityObject::needsToUpdateChildren):
+        (WebCore::AccessibilityObject::setIsIgnoredFromParentData):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::updateChildrenIfNecessary):
+        (WebCore::AccessibilityRenderObject::addChildren):
+        * accessibility/AccessibilityRenderObject.h:
+        (WebCore::AccessibilityRenderObject::setRenderObject):
+        (WebCore::AccessibilityRenderObject::needsToUpdateChildren): Deleted.
+
 2017-04-29  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Move WebCore CPUTime to WTF and implement it in all the platforms
