@@ -1,3 +1,21 @@
+2017-04-29  Oleksandr Skachkov  <gskachkov@gmail.com>
+
+        Deep nesting is leading to ReferenceError for hoisted function
+        https://bugs.webkit.org/show_bug.cgi?id=171456
+
+        Reviewed by Yusuke Suzuki.
+
+        * js/function-declaration-statement-expected.txt:
+        * js/script-tests/function-declaration-statement.js:
+        (deepNesting.foo):
+        (deepNesting):
+        (deepNestingForFunctionDeclaration.foo):
+        (deepNestingForFunctionDeclaration):
+        (eval.deepNestingInEval.foo):
+        (eval.deepNestingInEval):
+        (eval.deepNestingForFunctionDeclarationInEval.foo):
+        (eval.deepNestingForFunctionDeclarationInEval):
+
 2017-04-28  Zalan Bujtas  <zalan@apple.com>
 
         iBooks text can overlap, sometimes columns are shifted splitting words.

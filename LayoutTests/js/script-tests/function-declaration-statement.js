@@ -47,3 +47,193 @@ function labelTest()
 }
 
 shouldBeTrue("labelTest()");
+
+
+function deepNesting () {
+    var y = '';
+    {
+        function foo() { return 'abc'; }
+    }
+    if (true) {
+        {
+            {
+                {
+                    {
+                        {
+                           {
+                                {
+                                    {
+                                        {
+                                            { 
+                                                let x = 'abc';
+                                                y = x;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return foo(); 
+};
+
+shouldBe("deepNesting()", "'abc'");
+
+function deepNestingForFunctionDeclaration () {
+    var y = '';
+    {
+        {
+            {
+                {
+                    {
+                        {
+                            {
+                                {
+                                    {
+                                        {
+                                            {
+                                                {
+                                                    {
+                                                        {
+                                                            function foo() { return 'abc'; }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    if (true) {
+        {
+            {
+                {
+                    {
+                        {
+                           {
+                                {
+                                    {
+                                        {
+                                            { 
+                                                let x = 'abc';
+                                                y = x;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return foo(); 
+};
+
+shouldBe("deepNestingForFunctionDeclaration()", "'abc'");
+
+eval(`function deepNestingInEval () {
+    var y = '';
+    {
+        function foo() { return 'abc'; }
+    }
+    if (true) {
+        {
+            {
+                {
+                    {
+                        {
+                           {
+                                {
+                                    {
+                                        {
+                                            { 
+                                                let x = 'abc';
+                                                y = x;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return foo(); 
+};`);
+
+
+shouldBe("deepNestingInEval()", "'abc'");
+
+eval(`function deepNestingForFunctionDeclarationInEval () {
+    var y = '';
+    {
+        {
+            {
+                {
+                    {
+                        {
+                            {
+                                {
+                                    {
+                                        {
+                                            {
+                                                {
+                                                    {
+                                                        {
+                                                            function foo() { return 'abc'; }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    if (true) {
+        {
+            {
+                {
+                    {
+                        {
+                           {
+                                {
+                                    {
+                                        {
+                                            { 
+                                                let x = 'abc';
+                                                y = x;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return foo(); 
+};`);
+
+shouldBe("deepNestingForFunctionDeclarationInEval()", "'abc'");

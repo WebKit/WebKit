@@ -1,3 +1,18 @@
+2017-04-29  Oleksandr Skachkov  <gskachkov@gmail.com>
+
+        Deep nesting is leading to ReferenceError for hoisted function
+        https://bugs.webkit.org/show_bug.cgi?id=171456
+
+        Reviewed by Yusuke Suzuki.
+
+        Current patch fix error that appears during hoisting of the function 
+        in block scope. Error happens only when exist some deep scope that lead
+        to increase scope stack, after which list of the hosted candidates do not 
+        copied to updated scope stack.
+
+        * parser/Parser.h:
+        (JSC::Scope::Scope):
+
 2017-04-29  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] LabelScopePtr is not necessary

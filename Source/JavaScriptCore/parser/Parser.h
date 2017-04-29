@@ -188,44 +188,7 @@ public:
         m_usedVariables.append(UniquedStringImplPtrSet());
     }
 
-    Scope(Scope&& other)
-        : m_vm(other.m_vm)
-        , m_shadowsArguments(other.m_shadowsArguments)
-        , m_usesEval(other.m_usesEval)
-        , m_needsFullActivation(other.m_needsFullActivation)
-        , m_hasDirectSuper(other.m_hasDirectSuper)
-        , m_needsSuperBinding(other.m_needsSuperBinding)
-        , m_allowsVarDeclarations(other.m_allowsVarDeclarations)
-        , m_allowsLexicalDeclarations(other.m_allowsLexicalDeclarations)
-        , m_strictMode(other.m_strictMode)
-        , m_isFunction(other.m_isFunction)
-        , m_isGenerator(other.m_isGenerator)
-        , m_isGeneratorBoundary(other.m_isGeneratorBoundary)
-        , m_isArrowFunction(other.m_isArrowFunction)
-        , m_isArrowFunctionBoundary(other.m_isArrowFunctionBoundary)
-        , m_isAsyncFunction(other.m_isAsyncFunction)
-        , m_isAsyncFunctionBoundary(other.m_isAsyncFunctionBoundary)
-        , m_isLexicalScope(other.m_isLexicalScope)
-        , m_isGlobalCodeScope(other.m_isGlobalCodeScope)
-        , m_isFunctionBoundary(other.m_isFunctionBoundary)
-        , m_isValidStrictMode(other.m_isValidStrictMode)
-        , m_hasArguments(other.m_hasArguments)
-        , m_isEvalContext(other.m_isEvalContext)
-        , m_hasNonSimpleParameterList(other.m_hasNonSimpleParameterList)
-        , m_constructorKind(other.m_constructorKind)
-        , m_expectedSuperBinding(other.m_expectedSuperBinding)
-        , m_loopDepth(other.m_loopDepth)
-        , m_switchDepth(other.m_switchDepth)
-        , m_innerArrowFunctionFeatures(other.m_innerArrowFunctionFeatures)
-        , m_labels(WTFMove(other.m_labels))
-        , m_declaredParameters(WTFMove(other.m_declaredParameters))
-        , m_declaredVariables(WTFMove(other.m_declaredVariables))
-        , m_lexicalVariables(WTFMove(other.m_lexicalVariables))
-        , m_usedVariables(WTFMove(other.m_usedVariables))
-        , m_closedVariableCandidates(WTFMove(other.m_closedVariableCandidates))
-        , m_functionDeclarations(WTFMove(other.m_functionDeclarations))
-    {
-    }
+    Scope(Scope&&) = default;
 
     void startSwitch() { m_switchDepth++; }
     void endSwitch() { m_switchDepth--; }
