@@ -2439,6 +2439,9 @@ AccessibilityObject* AccessibilityRenderObject::activeDescendant() const
 
 void AccessibilityRenderObject::handleAriaExpandedChanged()
 {
+    // This object might be deleted under the call to the parentObject() method.
+    auto protectedThis = makeRef(*this);
+    
     // Find if a parent of this object should handle aria-expanded changes.
     AccessibilityObject* containerParent = this->parentObject();
     while (containerParent) {
