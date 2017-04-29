@@ -1,3 +1,12 @@
+2017-04-28  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed test gardening (Mac WK1)
+
+        Mark a LayoutTest as PASS on Mac WK1. This test is currently skipped globally,
+        but was meant to be enabled for WK1 on Mac. Followup to r213897.
+
+        * platform/mac-wk1/TestExpectations:
+
 2017-04-28  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: ARIA "region" role which lacks an accessible name should not be treated as a landmark
