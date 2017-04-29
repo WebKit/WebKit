@@ -12,6 +12,7 @@ set(WTF_HEADERS
     BubbleSort.h
     BumpPointerAllocator.h
     ByteOrder.h
+    CPUTime.h
     ClockType.h
     CompilationThread.h
     Compiler.h
@@ -202,6 +203,7 @@ set(WTF_SOURCES
     Atomics.cpp
     AutomaticThread.cpp
     BitVector.cpp
+    CPUTime.cpp
     ClockType.cpp
     CompilationThread.cpp
     CrossThreadCopier.cpp

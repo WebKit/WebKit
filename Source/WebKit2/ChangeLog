@@ -1,3 +1,27 @@
+2017-04-29  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Move WebCore CPUTime to WTF and implement it in all the platforms
+        https://bugs.webkit.org/show_bug.cgi?id=171477
+
+        Reviewed by Chris Dumez.
+
+        We now hold Seconds in CPUTime instead of int64_t. It finally sends
+        Seconds through WebKit2 IPC. We do not need to specialize ArgumentCoder
+        for Seconds since Seconds just holds double.
+
+        * UIProcess/PerActivityStateCPUUsageSampler.cpp:
+        (WebKit::PerActivityStateCPUUsageSampler::PerActivityStateCPUUsageSampler):
+        (WebKit::PerActivityStateCPUUsageSampler::reportWebContentCPUTime):
+        (WebKit::PerActivityStateCPUUsageSampler::loggingTimerFired):
+        * UIProcess/PerActivityStateCPUUsageSampler.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::reportWebContentCPUTime):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessPool.messages.in:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::reportProcessCPUTime):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+
 2017-04-28  Brady Eidson  <beidson@apple.com>
 
         Teach the DatabaseProcess to be fully SessionID aware

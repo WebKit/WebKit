@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "CPUTime.h"
 #include "Timer.h"
 
+#include <wtf/CPUTime.h>
 #include <wtf/Function.h>
 
 namespace WebCore {

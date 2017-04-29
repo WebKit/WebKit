@@ -1935,9 +1935,6 @@
 		460CBF351D4BCD0E0092E88E /* JSDOMWindowProperties.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 460CBF331D4BCCFE0092E88E /* JSDOMWindowProperties.cpp */; };
 		460CBF361D4BCD0E0092E88E /* JSDOMWindowProperties.h in Headers */ = {isa = PBXBuildFile; fileRef = 460CBF341D4BCCFE0092E88E /* JSDOMWindowProperties.h */; };
 		4634592C1AC2271000ECB71C /* PowerObserverMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4634592B1AC2271000ECB71C /* PowerObserverMac.cpp */; };
-		463763081E26FDD7008CD46D /* CPUTime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 463763061E26FDBA008CD46D /* CPUTime.cpp */; };
-		463763091E26FDD7008CD46D /* CPUTime.h in Headers */ = {isa = PBXBuildFile; fileRef = 463763071E26FDBA008CD46D /* CPUTime.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		4637630B1E26FDF6008CD46D /* CPUTimeCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4637630A1E26FDEB008CD46D /* CPUTimeCocoa.mm */; };
 		463EB6221B8789E00096ED51 /* TagCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 463EB6201B8789CB0096ED51 /* TagCollection.cpp */; };
 		463EB6231B8789E00096ED51 /* TagCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 463EB6211B8789CB0096ED51 /* TagCollection.h */; };
 		465307D01DB6EE4800E4137C /* JSUIEventInit.h in Headers */ = {isa = PBXBuildFile; fileRef = 83E045EF1DAA104F00B0D8B9 /* JSUIEventInit.h */; };
@@ -9620,9 +9617,6 @@
 		460CBF331D4BCCFE0092E88E /* JSDOMWindowProperties.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMWindowProperties.cpp; sourceTree = "<group>"; };
 		460CBF341D4BCCFE0092E88E /* JSDOMWindowProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMWindowProperties.h; sourceTree = "<group>"; };
 		4634592B1AC2271000ECB71C /* PowerObserverMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PowerObserverMac.cpp; sourceTree = "<group>"; };
-		463763061E26FDBA008CD46D /* CPUTime.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CPUTime.cpp; sourceTree = "<group>"; };
-		463763071E26FDBA008CD46D /* CPUTime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPUTime.h; sourceTree = "<group>"; };
-		4637630A1E26FDEB008CD46D /* CPUTimeCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CPUTimeCocoa.mm; sourceTree = "<group>"; };
 		463EB6201B8789CB0096ED51 /* TagCollection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TagCollection.cpp; sourceTree = "<group>"; };
 		463EB6211B8789CB0096ED51 /* TagCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TagCollection.h; sourceTree = "<group>"; };
 		465A8E781C8A24CE00E7D3E4 /* RuntimeApplicationChecks.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RuntimeApplicationChecks.mm; sourceTree = "<group>"; };
@@ -21075,7 +21069,6 @@
 				A14090FA1AA51E1D0091191A /* ContentFilterUnblockHandlerCocoa.mm */,
 				CD7D33451C7A16BF00041293 /* CoreVideoSoftLink.cpp */,
 				CD7D33461C7A16BF00041293 /* CoreVideoSoftLink.h */,
-				4637630A1E26FDEB008CD46D /* CPUTimeCocoa.mm */,
 				7C7941E31C56C29300A4C58E /* DataDetectorsCoreSoftLink.h */,
 				7C7941E21C56C29300A4C58E /* DataDetectorsCoreSoftLink.mm */,
 				5D8C4DBD1428222C0026CE72 /* DisplaySleepDisablerCocoa.cpp */,
@@ -23924,8 +23917,6 @@
 				862F129D18C1572C005C54AF /* CountedUserActivity.h */,
 				46C696CA1E7205E400597937 /* CPUMonitor.cpp */,
 				46C696C91E7205E400597937 /* CPUMonitor.h */,
-				463763061E26FDBA008CD46D /* CPUTime.cpp */,
-				463763071E26FDBA008CD46D /* CPUTime.h */,
 				E11AF15011B9A1A300805103 /* Cursor.cpp */,
 				F587868402DE3B8601EA4122 /* Cursor.h */,
 				A5732B08136A161D005C8D7C /* DateComponents.cpp */,
@@ -26690,7 +26681,6 @@
 				BC5EB9510E82056B00B25965 /* CounterDirectives.h in Headers */,
 				9392F14C0AD1861B00691BD4 /* CounterNode.h in Headers */,
 				46C696CB1E7205F700597937 /* CPUMonitor.h in Headers */,
-				463763091E26FDD7008CD46D /* CPUTime.h in Headers */,
 				D0B0556809C6700100307E43 /* CreateLinkCommand.h in Headers */,
 				514C766E0CE923A1007EF3CD /* Credential.h in Headers */,
 				3792917A1985EF3900F4B661 /* CredentialBase.h in Headers */,
@@ -30742,8 +30732,6 @@
 				BC5EB9500E82056B00B25965 /* CounterDirectives.cpp in Sources */,
 				9392F1500AD1862300691BD4 /* CounterNode.cpp in Sources */,
 				46C696CC1E7205FC00597937 /* CPUMonitor.cpp in Sources */,
-				463763081E26FDD7008CD46D /* CPUTime.cpp in Sources */,
-				4637630B1E26FDF6008CD46D /* CPUTimeCocoa.mm in Sources */,
 				D0B0556909C6700100307E43 /* CreateLinkCommand.cpp in Sources */,
 				514C766D0CE923A1007EF3CD /* CredentialBase.cpp in Sources */,
 				3792917D1987678F00F4B661 /* CredentialCocoa.mm in Sources */,
@@ -32008,7 +31996,7 @@
 				7C330A071DF9F95100D3395C /* JSPositionOptions.cpp in Sources */,
 				65DF31FF09D1CC60000BE325 /* JSProcessingInstruction.cpp in Sources */,
 				E44613ED0CD681BA00FADA75 /* JSProgressEvent.cpp in Sources */,
-                A578F43B1DE01421003DFC6A /* JSPromiseRejectionEvent.cpp in Sources */,
+				A578F43B1DE01421003DFC6A /* JSPromiseRejectionEvent.cpp in Sources */,
 				077664FC183E6B5C00133B92 /* JSQuickTimePluginReplacement.cpp in Sources */,
 				B658FFA11522EF3A00DD5595 /* JSRadioNodeList.cpp in Sources */,
 				65DF320109D1CC60000BE325 /* JSRange.cpp in Sources */,

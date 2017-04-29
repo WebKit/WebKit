@@ -465,7 +465,7 @@ public:
 
     virtual void didInvalidateDocumentMarkerRects() { }
 
-    virtual void reportProcessCPUTime(int64_t, ActivityStateForCPUSampling) { }
+    virtual void reportProcessCPUTime(Seconds, ActivityStateForCPUSampling) { }
     virtual RefPtr<Icon> createIconForFiles(const Vector<String>& /* filenames */) = 0;
 
     virtual void didChangeClipToSafeArea(bool) { }

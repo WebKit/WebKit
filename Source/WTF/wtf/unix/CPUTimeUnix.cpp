@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Yusuke Suzuki <utatane.tea@gmail.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,33 +23,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "CPUTime.h"
 
-#include <WebCore/Page.h>
-#include <wtf/HashMap.h>
-#include <wtf/RunLoop.h>
+#include <sys/resource.h>
+#include <sys/time.h>
 
-namespace WebKit {
+namespace WTF {
 
-class WebPageProxy;
-class WebProcessPool;
+static Seconds timevalToSeconds(const struct timeval& value)
+{
+    return Seconds(value.tv_sec) + Seconds::fromMicroseconds(value.tv_usec);
+}
 
-class PerActivityStateCPUUsageSampler {
-public:
-    explicit PerActivityStateCPUUsageSampler(WebProcessPool&);
-    ~PerActivityStateCPUUsageSampler();
+std::optional<CPUTime> CPUTime::get()
+{
+    struct rusage resource { };
+    int ret = getrusage(RUSAGE_SELF, &resource);
+    ASSERT_UNUSED(ret, !ret);
+    return CPUTime { MonotonicTime::now(), timevalToSeconds(resource.ru_utime), timevalToSeconds(resource.ru_stime) };
+}
 
-    void reportWebContentCPUTime(Seconds cpuTime, WebCore::ActivityStateForCPUSampling);
-
-private:
-    void loggingTimerFired();
-    WebPageProxy* pageForLogging() const;
-
-    WebProcessPool& m_processPool;
-    RunLoop::Timer<PerActivityStateCPUUsageSampler> m_loggingTimer;
-    typedef HashMap<WebCore::ActivityStateForCPUSampling, Seconds, WTF::IntHash<WebCore::ActivityStateForCPUSampling>, WTF::StrongEnumHashTraits<WebCore::ActivityStateForCPUSampling>> CPUTimeInActivityStateMap;
-    CPUTimeInActivityStateMap m_cpuTimeInActivityState;
-    MonotonicTime m_lastCPUTime;
-};
-
-} // namespace WebKit
+}

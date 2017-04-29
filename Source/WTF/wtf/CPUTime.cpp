@@ -26,23 +26,14 @@
 #include "config.h"
 #include "CPUTime.h"
 
-namespace WebCore {
+namespace WTF {
 
-#if !PLATFORM(COCOA)
-
-std::optional<CPUTime> getCPUTime()
+double CPUTime::percentageCPUUsageSince(const CPUTime& reference) const
 {
-    return std::nullopt;
-}
-
-#endif
-
-double CPUTime::percentageCPUUsageSince(const CPUTime& reference)
-{
-    int64_t cpuUsageTimeDelta = (systemTime + userTime) - (reference.systemTime + reference.userTime);
-    int64_t cpuTimeDelta = cpuTime - reference.cpuTime;
+    Seconds cpuUsageTimeDelta = (systemTime + userTime) - (reference.systemTime + reference.userTime);
+    Seconds cpuTimeDelta = cpuTime - reference.cpuTime;
     ASSERT(cpuTimeDelta);
-    return static_cast<double>(cpuUsageTimeDelta * 100.0) / cpuTimeDelta;
+    return cpuUsageTimeDelta.value() * 100.0 / cpuTimeDelta.value();
 }
 
 }

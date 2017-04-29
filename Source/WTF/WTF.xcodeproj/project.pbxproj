@@ -387,6 +387,9 @@
 		E3200AB71E9A536D003B59D2 /* PlatformRegisters.h in Headers */ = {isa = PBXBuildFile; fileRef = E3200AB41E9A536D003B59D2 /* PlatformRegisters.h */; };
 		E3200AB81E9A536D003B59D2 /* ThreadHolder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3200AB51E9A536D003B59D2 /* ThreadHolder.cpp */; };
 		E3200AB91E9A536D003B59D2 /* ThreadHolder.h in Headers */ = {isa = PBXBuildFile; fileRef = E3200AB61E9A536D003B59D2 /* ThreadHolder.h */; };
+		E38C41251EB4E04C0042957D /* CPUTimeCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = E38C41241EB4E04C0042957D /* CPUTimeCocoa.mm */; };
+		E38C41281EB4E0680042957D /* CPUTime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E38C41261EB4E0680042957D /* CPUTime.cpp */; };
+		E38C41291EB4E0680042957D /* CPUTime.h in Headers */ = {isa = PBXBuildFile; fileRef = E38C41271EB4E0680042957D /* CPUTime.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3E158261EADA53C004A079D /* SystemFree.h in Headers */ = {isa = PBXBuildFile; fileRef = E3E158251EADA53C004A079D /* SystemFree.h */; };
 		E43A46951E228B9100276B05 /* Decoder.h in Headers */ = {isa = PBXBuildFile; fileRef = E43A46901E228B9100276B05 /* Decoder.h */; };
 		E43A46961E228B9100276B05 /* Encoder.h in Headers */ = {isa = PBXBuildFile; fileRef = E43A46911E228B9100276B05 /* Encoder.h */; };
@@ -803,6 +806,9 @@
 		E3200AB41E9A536D003B59D2 /* PlatformRegisters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformRegisters.h; sourceTree = "<group>"; };
 		E3200AB51E9A536D003B59D2 /* ThreadHolder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ThreadHolder.cpp; sourceTree = "<group>"; };
 		E3200AB61E9A536D003B59D2 /* ThreadHolder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreadHolder.h; sourceTree = "<group>"; };
+		E38C41241EB4E04C0042957D /* CPUTimeCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CPUTimeCocoa.mm; sourceTree = "<group>"; };
+		E38C41261EB4E0680042957D /* CPUTime.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CPUTime.cpp; sourceTree = "<group>"; };
+		E38C41271EB4E0680042957D /* CPUTime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPUTime.h; sourceTree = "<group>"; };
 		E3E158251EADA53C004A079D /* SystemFree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SystemFree.h; sourceTree = "<group>"; };
 		E43A46901E228B9100276B05 /* Decoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Decoder.h; sourceTree = "<group>"; };
 		E43A46911E228B9100276B05 /* Encoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Encoder.h; sourceTree = "<group>"; };
@@ -997,6 +1003,8 @@
 				0F4570441BE834410062A629 /* BubbleSort.h */,
 				A8A47267151A825A004123FF /* BumpPointerAllocator.h */,
 				EB95E1EF161A72410089A2F5 /* ByteOrder.h */,
+				E38C41261EB4E0680042957D /* CPUTime.cpp */,
+				E38C41271EB4E0680042957D /* CPUTime.h */,
 				A8A4726A151A825A004123FF /* CheckedArithmetic.h */,
 				A8A4726B151A825A004123FF /* CheckedBoolean.h */,
 				0F66B2801DC97BAB004A1D3F /* ClockType.cpp */,
@@ -1427,6 +1435,7 @@
 		E4A0AD3B1A96251900536DF6 /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
+				E38C41241EB4E04C0042957D /* CPUTimeCocoa.mm */,
 				AD89B6B91E64150F0090707F /* MemoryPressureHandlerCocoa.mm */,
 				E4A0AD3C1A96253C00536DF6 /* WorkQueueCocoa.cpp */,
 			);
@@ -1709,6 +1718,7 @@
 				E3200AB71E9A536D003B59D2 /* PlatformRegisters.h in Headers */,
 				0F3501641BB258D500F0A2A3 /* WeakRandom.h in Headers */,
 				1FA47C8B152502DA00568D1B /* WebCoreThread.h in Headers */,
+				E38C41291EB4E0680042957D /* CPUTime.h in Headers */,
 				0FE4479D1B7AAA03009498EB /* WordLock.h in Headers */,
 				E4A0AD3A1A96245500536DF6 /* WorkQueue.h in Headers */,
 				A8A47446151A825B004123FF /* WTFString.h in Headers */,
@@ -1821,6 +1831,7 @@
 				9BC70F05176C379D00101DEC /* AtomicStringTable.cpp in Sources */,
 				1469419D16EAB10A0024E146 /* AutodrainedPoolMac.mm in Sources */,
 				0F43D8F11DB5ADDC00108FB6 /* AutomaticThread.cpp in Sources */,
+				E38C41281EB4E0680042957D /* CPUTime.cpp in Sources */,
 				8134013815B092FD001FF0B8 /* Base64.cpp in Sources */,
 				A8A473A8151A825B004123FF /* bignum-dtoa.cc in Sources */,
 				A8A473AA151A825B004123FF /* bignum.cc in Sources */,
@@ -1857,6 +1868,7 @@
 				2CCD892A15C0390200285083 /* GregorianDateTime.cpp in Sources */,
 				A8A473D8151A825B004123FF /* HashTable.cpp in Sources */,
 				0FE1646A1B6FFC9600400E7C /* Lock.cpp in Sources */,
+				E38C41251EB4E04C0042957D /* CPUTimeCocoa.mm in Sources */,
 				0F60F32F1DFCBD1B00416D6C /* LockedPrintStream.cpp in Sources */,
 				A8A473E5151A825B004123FF /* MainThread.cpp in Sources */,
 				A8A473E4151A825B004123FF /* MainThreadMac.mm in Sources */,

@@ -276,7 +276,7 @@ void WebChromeClient::runModal()
     m_page.runModal();
 }
 
-void WebChromeClient::reportProcessCPUTime(int64_t cpuTime, ActivityStateForCPUSampling activityState)
+void WebChromeClient::reportProcessCPUTime(Seconds cpuTime, ActivityStateForCPUSampling activityState)
 {
     WebProcess::singleton().send(Messages::WebProcessPool::ReportWebContentCPUTime(cpuTime, static_cast<uint64_t>(activityState)), 0);
 }

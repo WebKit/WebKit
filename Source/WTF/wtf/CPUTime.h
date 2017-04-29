@@ -25,18 +25,22 @@
 
 #pragma once
 
+#include <wtf/MonotonicTime.h>
 #include <wtf/Optional.h>
+#include <wtf/Seconds.h>
 
-namespace WebCore {
+namespace WTF {
 
 struct CPUTime {
-    int64_t cpuTime; // in microseconds.
-    int64_t userTime; // in microseconds.
-    int64_t systemTime; // in microseconds.
+    MonotonicTime cpuTime;
+    Seconds userTime;
+    Seconds systemTime;
 
-    double percentageCPUUsageSince(const CPUTime&);
+    WTF_EXPORT_PRIVATE double percentageCPUUsageSince(const CPUTime&) const;
+
+    WTF_EXPORT_PRIVATE static std::optional<CPUTime> get();
 };
 
-std::optional<CPUTime> getCPUTime();
+} // namespace WTF
 
-} // namespace WebCore
+using WTF::CPUTime;

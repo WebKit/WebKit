@@ -13,6 +13,8 @@ list(APPEND WTF_SOURCES
 
     linux/CurrentProcessMemoryStatus.cpp
     linux/MemoryPressureHandlerLinux.cpp
+
+    unix/CPUTimeUnix.cpp
 )
 
 list(APPEND WTF_LIBRARIES

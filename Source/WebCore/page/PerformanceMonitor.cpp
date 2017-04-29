@@ -76,7 +76,7 @@ PerformanceMonitor::PerformanceMonitor(Page& page)
     ASSERT(!page.isUtilityPage());
 
     if (Settings::isPerActivityStateCPUUsageMeasurementEnabled()) {
-        m_perActivityStateCPUTime = getCPUTime();
+        m_perActivityStateCPUTime = CPUTime::get();
         m_perActivityStateCPUUsageTimer.startRepeating(cpuUsageSamplingInterval);
     }
 }
@@ -174,12 +174,12 @@ void PerformanceMonitor::measurePostLoadCPUUsage()
     }
 
     if (!m_postLoadCPUTime) {
-        m_postLoadCPUTime = getCPUTime();
+        m_postLoadCPUTime = CPUTime::get();
         if (m_postLoadCPUTime)
             m_postPageLoadCPUUsageTimer.startOneShot(postLoadCPUUsageMeasurementDuration);
         return;
     }
-    std::optional<CPUTime> cpuTime = getCPUTime();
+    std::optional<CPUTime> cpuTime = CPUTime::get();
     if (!cpuTime)
         return;
 
@@ -231,12 +231,12 @@ void PerformanceMonitor::measurePostBackgroundingCPUUsage()
     }
 
     if (!m_postBackgroundingCPUTime) {
-        m_postBackgroundingCPUTime = getCPUTime();
+        m_postBackgroundingCPUTime = CPUTime::get();
         if (m_postBackgroundingCPUTime)
             m_postBackgroundingCPUUsageTimer.startOneShot(backgroundCPUUsageMeasurementDuration);
         return;
     }
-    std::optional<CPUTime> cpuTime = getCPUTime();
+    std::optional<CPUTime> cpuTime = CPUTime::get();
     if (!cpuTime)
         return;
 
@@ -274,11 +274,11 @@ void PerformanceMonitor::measureCPUUsageInActivityState(ActivityStateForCPUSampl
     }
 
     if (!m_perActivityStateCPUTime) {
-        m_perActivityStateCPUTime = getCPUTime();
+        m_perActivityStateCPUTime = CPUTime::get();
         return;
     }
 
-    std::optional<CPUTime> cpuTime = getCPUTime();
+    std::optional<CPUTime> cpuTime = CPUTime::get();
     if (!cpuTime) {
         m_perActivityStateCPUTime = std::nullopt;
         return;

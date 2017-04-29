@@ -34,8 +34,6 @@
 
 namespace WebKit {
 
-static const int64_t microsecondsPerSecond = 1000000;
-
 using namespace WebCore;
 
 static const Seconds loggingInterval { 60_min };
@@ -44,7 +42,7 @@ PerActivityStateCPUUsageSampler::PerActivityStateCPUUsageSampler(WebProcessPool&
     : m_processPool(processPool)
     , m_loggingTimer(RunLoop::main(), this, &PerActivityStateCPUUsageSampler::loggingTimerFired)
 {
-    m_lastCPUTime = monotonicallyIncreasingTime();
+    m_lastCPUTime = MonotonicTime::now();
     m_loggingTimer.startRepeating(loggingInterval);
 }
 
@@ -52,7 +50,7 @@ PerActivityStateCPUUsageSampler::~PerActivityStateCPUUsageSampler()
 {
 }
 
-void PerActivityStateCPUUsageSampler::reportWebContentCPUTime(int64_t cpuTime, ActivityStateForCPUSampling activityState)
+void PerActivityStateCPUUsageSampler::reportWebContentCPUTime(Seconds cpuTime, ActivityStateForCPUSampling activityState)
 {
     auto result = m_cpuTimeInActivityState.add(activityState, cpuTime);
     if (!result.isNewEntry)
@@ -79,11 +77,11 @@ void PerActivityStateCPUUsageSampler::loggingTimerFired()
         return;
     }
 
-    double currentCPUTime = monotonicallyIncreasingTime();
-    int64_t cpuTimeDelta = (currentCPUTime - m_lastCPUTime) * microsecondsPerSecond;
+    MonotonicTime currentCPUTime = MonotonicTime::now();
+    Seconds cpuTimeDelta = currentCPUTime - m_lastCPUTime;
 
     for (auto& pair : m_cpuTimeInActivityState) {
-        double cpuUsage = static_cast<double>(pair.value * 100.) / cpuTimeDelta;
+        double cpuUsage = pair.value.value() * 100. / cpuTimeDelta.value();
         String activityStateKey = loggingKeyForActivityState(pair.key);
         page->logDiagnosticMessageWithValue(DiagnosticLoggingKeys::cpuUsageKey(), activityStateKey, cpuUsage, 2, ShouldSample::No);
         RELEASE_LOG(PerformanceLogging, "WebContent processes used %.1f%% CPU in %s state", cpuUsage, activityStateKey.utf8().data());

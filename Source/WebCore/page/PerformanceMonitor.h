@@ -26,8 +26,8 @@
 #pragma once
 
 #include "ActivityState.h"
-#include "CPUTime.h"
 #include "Timer.h"
+#include <wtf/CPUTime.h>
 #include <wtf/Optional.h>
 
 namespace WebCore {

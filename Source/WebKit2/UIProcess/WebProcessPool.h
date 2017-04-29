@@ -264,7 +264,7 @@ public:
     void terminateDatabaseProcess();
     void terminateNetworkProcess();
 
-    void reportWebContentCPUTime(int64_t cpuTime, uint64_t activityState);
+    void reportWebContentCPUTime(Seconds cpuTime, uint64_t activityState);
 
     void allowSpecificHTTPSCertificateForHost(const WebCertificateInfo*, const String& host);
 

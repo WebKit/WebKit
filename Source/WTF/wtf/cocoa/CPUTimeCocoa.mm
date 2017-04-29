@@ -29,9 +29,8 @@
 #import <mach/mach_init.h>
 #import <mach/task.h>
 #import <mach/task_info.h>
-#import <wtf/CurrentTime.h>
 
-namespace WebCore {
+namespace WTF {
 
 static const int64_t microsecondsPerSecond = 1000000;
 
@@ -43,7 +42,7 @@ static int64_t timeValueToMicroseconds(const time_value_t& value)
     return result;
 }
 
-std::optional<CPUTime> getCPUTime()
+std::optional<CPUTime> CPUTime::get()
 {
     // Account for current threads.
     task_thread_times_info threadInfoData;
@@ -65,7 +64,7 @@ std::optional<CPUTime> getCPUTime()
     userTime += timeValueToMicroseconds(taskInfoData.user_time);
     systemTime += timeValueToMicroseconds(taskInfoData.system_time);
 
-    return CPUTime { static_cast<int64_t>(monotonicallyIncreasingTime() * microsecondsPerSecond), userTime, systemTime };
+    return CPUTime { MonotonicTime::now(), Seconds::fromMicroseconds(userTime), Seconds::fromMicroseconds(systemTime) };
 }
 
 }
