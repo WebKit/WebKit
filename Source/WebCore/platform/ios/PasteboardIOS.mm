@@ -64,6 +64,11 @@
 
 namespace WebCore {
 
+static long changeCountForPasteboard(const String& pasteboardName = { })
+{
+    return platformStrategies()->pasteboardStrategy()->changeCount(pasteboardName);
+}
+
 // FIXME: Does this need to be declared in the header file?
 WEBCORE_EXPORT NSString *WebArchivePboardType = @"Apple Web Archive pasteboard type";
 
@@ -86,7 +91,12 @@ PasteboardImage::~PasteboardImage()
 }
 
 Pasteboard::Pasteboard()
-    : m_changeCount(platformStrategies()->pasteboardStrategy()->changeCount(m_pasteboardName))
+    : m_changeCount(0)
+{
+}
+
+Pasteboard::Pasteboard(long changeCount)
+    : m_changeCount(changeCount)
 {
 }
 
@@ -96,12 +106,12 @@ void Pasteboard::writeMarkup(const String&)
 
 std::unique_ptr<Pasteboard> Pasteboard::createForCopyAndPaste()
 {
-    return std::make_unique<Pasteboard>();
+    return std::make_unique<Pasteboard>(changeCountForPasteboard());
 }
 
 std::unique_ptr<Pasteboard> Pasteboard::createPrivate()
 {
-    return std::make_unique<Pasteboard>();
+    return std::make_unique<Pasteboard>(changeCountForPasteboard());
 }
 
 void Pasteboard::write(const PasteboardWebContent& content)
@@ -352,7 +362,7 @@ String Pasteboard::readString(const String& type)
 
     // Enforce changeCount ourselves for security. We check after reading instead of before to be
     // sure it doesn't change between our testing the change count and accessing the data.
-    if (cocoaValue && m_changeCount == platformStrategies()->pasteboardStrategy()->changeCount(m_pasteboardName))
+    if (cocoaValue && m_changeCount == changeCountForPasteboard(m_pasteboardName))
         return cocoaValue;
 
     return String();
@@ -393,7 +403,7 @@ Vector<String> Pasteboard::types()
 
     // Enforce changeCount ourselves for security. We check after reading instead of before to be
     // sure it doesn't change between our testing the change count and accessing the data.
-    if (m_changeCount != platformStrategies()->pasteboardStrategy()->changeCount(m_pasteboardName))
+    if (m_changeCount != changeCountForPasteboard(m_pasteboardName))
         return Vector<String>();
 
     ListHashSet<String> result;

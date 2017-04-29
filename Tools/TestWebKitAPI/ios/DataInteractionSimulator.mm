@@ -26,7 +26,7 @@
 #include "config.h"
 #include "DataInteractionSimulator.h"
 
-#if 0
+#if ENABLE(DATA_INTERACTION)
 
 #import "InstanceMethodSwizzler.h"
 #import "PlatformUtilities.h"

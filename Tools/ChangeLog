@@ -1,3 +1,23 @@
+2017-04-28  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Fix and re-enable data interaction unit tests
+        https://bugs.webkit.org/show_bug.cgi?id=171446
+        <rdar://problem/31820646>
+
+        Reviewed by Tim Horton.
+
+        Enables all DataInteractionTests, and adjusts file upload tests to no longer write to a temporary file before
+        registering with the UIItemProvider, and instead just register data directly via
+        -registerDataRepresentationForTypeIdentifier:visibility:loadHandler:.
+
+        * TestWebKitAPI/Tests/ios/DataInteractionTests.mm:
+        (TestWebKitAPI::TEST):
+        (temporaryURLForDataInteractionFileLoad): Deleted.
+        (cleanUpDataInteractionTemporaryPath): Deleted.
+        (-[UIItemProvider registerFileRepresentationForTypeIdentifier:withData:filename:]): Deleted.
+        * TestWebKitAPI/ios/DataInteractionSimulator.h:
+        * TestWebKitAPI/ios/DataInteractionSimulator.mm:
+
 2017-04-28  Brady Eidson  <beidson@apple.com>
 
         Teach the DatabaseProcess to be fully SessionID aware

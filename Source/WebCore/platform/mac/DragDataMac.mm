@@ -294,13 +294,18 @@ String DragData::asURL(FilenameConversionPolicy, String* title) const
 
 #if ENABLE(DATA_INTERACTION)
 
-void DragData::updatePreferredTypeIdentifiers(const Vector<String>& supportedTypesVector) const
+static bool typeIsAppropriateForSupportedTypes(const String& type, const Vector<String>& supportedTypes)
 {
-    NSMutableSet *supportedTypes = [NSMutableSet setWithCapacity:supportedTypesVector.size()];
-    for (auto& supportedType : supportedTypesVector)
-        [supportedTypes addObject:supportedType];
+    CFStringRef cfType = type.createCFString().autorelease();
+    for (auto supportedType : supportedTypes) {
+        if (UTTypeConformsTo(cfType, supportedType.createCFString().get()))
+            return true;
+    }
+    return false;
+}
 
-    // Match UIItemProvider behavior by performing two-pass UTI matching.
+void DragData::updatePreferredTypeIdentifiers(const Vector<String>& supportedTypes) const
+{
     Vector<String> bestTypeIdentifiers;
     auto& strategy = *platformStrategies()->pasteboardStrategy();
     uint64_t itemCount = strategy.getPasteboardItemsCount(m_pasteboardName);
@@ -309,26 +314,12 @@ void DragData::updatePreferredTypeIdentifiers(const Vector<String>& supportedTyp
         strategy.getTypesByFidelityForItemAtIndex(typeIdentifiers, itemIndex, m_pasteboardName);
 
         String bestTypeIdentifier = emptyString();
-        // In the first pass, look for the highest fidelity UTI that exactly matches one of the supported UTIs.
         for (auto& type : typeIdentifiers) {
-            if ([supportedTypes containsObject:(NSString *)type]) {
-                bestTypeIdentifier = type;
-                break;
-            }
-        }
+            if (!typeIsAppropriateForSupportedTypes(type, supportedTypes))
+                continue;
 
-        // In the second pass, look for the highest fidelity UTI that conforms to one of the supported UTIs.
-        if (bestTypeIdentifier.isEmpty()) {
-            for (auto& type : typeIdentifiers) {
-                for (NSString *supportedType in supportedTypes) {
-                    if (UTTypeConformsTo(type.createCFString().autorelease(), (CFStringRef)supportedType)) {
-                        bestTypeIdentifier = type;
-                        break;
-                    }
-                }
-                if (!bestTypeIdentifier.isEmpty())
-                    break;
-            }
+            bestTypeIdentifier = type;
+            break;
         }
         bestTypeIdentifiers.append(bestTypeIdentifier);
     }

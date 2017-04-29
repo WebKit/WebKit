@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if 0
+#if ENABLE(DATA_INTERACTION)
 
 #import "TestWKWebView.h"
 #import <UIKit/UIItemProvider.h>

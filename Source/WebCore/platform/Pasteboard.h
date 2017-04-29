@@ -197,6 +197,8 @@ public:
 #endif
 
 #if PLATFORM(IOS)
+    explicit Pasteboard(long changeCount);
+
     static NSArray* supportedPasteboardTypes();
     static String resourceMIMEType(const NSString *mimeType);
 #endif

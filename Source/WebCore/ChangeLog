@@ -1,3 +1,48 @@
+2017-04-28  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Fix and re-enable data interaction unit tests
+        https://bugs.webkit.org/show_bug.cgi?id=171446
+        <rdar://problem/31820646>
+
+        Reviewed by Tim Horton.
+
+        Three small tweaks to get all data interaction tests passing again (changes detailed below).
+        Fixes a failing unit test: DataInteractionTests.RespectsExternalSourceFidelityRankings.
+
+        * page/mac/DragControllerMac.mm:
+
+        When dropping in a plain text editable area, don't consider kUTTypeText to be a UTI supported by the destination.
+        This is because doing so would cause rich text UTIs, such as kUTTypeHTML, to match, so that the plain text area
+        would report HTML as a preferred UTI type to load when dropping rich content over it. What we want to check for
+        conformance here is really kUTTypePlainText.
+
+        (WebCore::DragController::updatePreferredTypeIdentifiersForDragHandlingMethod):
+        * platform/Pasteboard.h:
+        * platform/ios/PasteboardIOS.mm:
+
+        The default Pasteboard constructor no longer makes a sync call to the UI process to get the change count.
+        Instead, we introduce a new constructor that takes and sets the change count. This default constructor was used
+        from three places: Pasteboard::createForCopyAndPaste, Pasteboard::createPrivate and StaticPasteboard::create.
+
+        The first two call sites have been refactored to first fetch the change count from the UI process and then pass
+        it in to the constructor.
+
+        (WebCore::changeCountForPasteboard):
+        (WebCore::Pasteboard::Pasteboard):
+        (WebCore::Pasteboard::createForCopyAndPaste):
+        (WebCore::Pasteboard::createPrivate):
+        (WebCore::Pasteboard::readString):
+        (WebCore::Pasteboard::types):
+        * platform/mac/DragDataMac.mm:
+        (WebCore::typeIsAppropriateForSupportedTypes):
+        (WebCore::DragData::updatePreferredTypeIdentifiers):
+
+        Remove the two-pass heuristic. Instead, we should follow this policy: "select the highest fidelity UTI that
+        conforms to one of the destination's supported types".
+
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::Pasteboard):
+
 2017-04-28  Dean Jackson  <dino@apple.com>
 
         App crashing: Dispatch queue: com.apple.root.user-interactive-qos / vBoxConvolve / WebCore::FEGaussianBlur::platformApplySoftware()

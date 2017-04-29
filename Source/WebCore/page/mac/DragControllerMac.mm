@@ -113,8 +113,7 @@ void DragController::updatePreferredTypeIdentifiersForDragHandlingMethod(DragHan
         break;
     case DragHandlingMethod::EditPlainText:
         supportedTypes.append(kUTTypeURL);
-        supportedTypes.append(kUTTypeText);
-        supportedTypes.append(kUTTypeUTF8PlainText);
+        supportedTypes.append(kUTTypePlainText);
         break;
     case DragHandlingMethod::EditRichText:
         for (NSString *type in Pasteboard::supportedPasteboardTypes())
