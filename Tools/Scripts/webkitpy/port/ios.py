@@ -118,11 +118,17 @@ class IOSPort(DarwinPort):
                 # leaving a crash log which will be picked up in results. DYLD_FRAMEWORK_PATH is needed to prevent an early crash.
                 if not device.install_app(self._path_to_driver(), {'DYLD_LIBRARY_PATH': self._build_path(), 'DYLD_FRAMEWORK_PATH': self._build_path()}):
                     raise RuntimeError('Failed to install app {} on device {}'.format(self._path_to_driver(), device.udid))
+                if not device.install_dylibs(self._build_path()):
+                    raise RuntimeError('Failed to install dylibs at {} on device {}'.format(self._build_path(), device.udid))
         else:
             _log.debug('Skipping installation')
 
         for i in xrange(self.child_processes()):
-            self.target_host(i).prepare_for_testing()
+            self.target_host(i).prepare_for_testing(
+                self.ports_to_forward(),
+                self.app_identifier_from_bundle(self._path_to_driver()),
+                self.layout_tests_dir(),
+            )
 
     def clean_up_test_run(self):
         super(IOSPort, self).clean_up_test_run()

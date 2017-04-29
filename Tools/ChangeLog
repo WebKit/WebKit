@@ -1,3 +1,54 @@
+2017-04-28  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Add apple_additions to webkitpy to insert Internal tools
+        https://bugs.webkit.org/show_bug.cgi?id=170461
+        <rdar://problem/31433077>
+
+        Reviewed by Daniel Bates.
+
+        Allow a package to be pulled in by run-webkit-tests which provides an interface to
+        run layout tests on an iOS device.  If this package is not available, throw an
+        exception when attempting to run layout tests on an iOS device.
+
+        * Scripts/webkitpy/port/config.py:
+        (apple_additions): Import apple_additions package.
+        * Scripts/webkitpy/port/device.py:
+        (Device.install_dylibs): Pass a directory with all the frameworks and dylibs to be
+        installed on a device.
+        (Device.prepare_for_testing): Pass a list of ports to forward from the device to the
+        host, the bundle id of the app to be used for testing and a path to the layout test
+        directory to be mounted on the device.
+        (Device.finished_testing):
+        * Scripts/webkitpy/port/factory.py:
+        (platform_options): Add apple_additions platform options if apple_additions exists.
+        * Scripts/webkitpy/port/ios.py:
+        (IOSPort.setup_test_run): Install dylibs and frameworks on the device, pass ports
+        to forward, the bundle ID of the testing app and the layout tests directory to
+        each device.
+        * Scripts/webkitpy/port/ios_device.py:
+        (IOSDevicePort):
+        (IOSDevicePort.default_child_processes): Query apple_additions for the number of child
+        processes to be run.
+        (IOSDevicePort.using_multiple_devices): Always assume multiple devices are used. When
+        a single device is used, it is still accessed through an array.
+        (IOSDevicePort._device_for_worker_number_map): Query apple_additions for the device
+        for worker number map.
+        (IOSDevicePort._driver_class): Query apple_additions for the test driver.
+        (IOSDevicePort.determine_full_port_name): Use class variable over hard-coded string.
+        (IOSDevicePort.check_for_leaks): No implementation for iOSDevicePort.
+        (IOSDevicePort.look_for_new_crash_logs): Ditto.
+        (IOSDevicePort.look_for_new_samples): Ditto.
+        (IOSDevicePort.sample_process): Ditto.
+        (IOSDevicePort._build_driver_flags): Use class variable over hard-coded string.
+        (IOSDevicePort._create_devices): Check that devices are available for testing and check
+        that we have enough devices for each child process.
+        (IOSDevicePort.clean_up_test_run): Have apple_additions preform any needed clean up.
+        * Scripts/webkitpy/port/ios_device_unittest.py:
+        (IOSDeviceTest.test_operating_system):
+        (IOSDeviceTest.test_spindump): Override method from DarwinTest.
+        (IOSDeviceTest.test_sample_process): Ditto.
+        (IOSDeviceTest.test_sample_process_exception): Ditto.
+
 2017-04-28  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Fix and re-enable data interaction unit tests

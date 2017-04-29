@@ -36,3 +36,13 @@ class IOSDeviceTest(ios_testcase.IOSTest):
 
     def test_operating_system(self):
         self.assertEqual('ios-device', self.make_port().operating_system())
+
+    # FIXME: Update tests when <rdar://problem/30497991> is completed.
+    def test_spindump(self):
+        pass
+
+    def test_sample_process(self):
+        pass
+
+    def test_sample_process_exception(self):
+        pass

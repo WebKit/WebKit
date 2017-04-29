@@ -22,6 +22,8 @@
 
 import logging
 
+from webkitpy.common.memoized import memoized
+from webkitpy.port.config import apple_additions
 from webkitpy.port.ios import IOSPort
 
 _log = logging.getLogger(__name__)
@@ -33,20 +35,67 @@ class IOSDevicePort(IOSPort):
     ARCHITECTURES = ['armv7', 'armv7s', 'arm64']
     DEFAULT_ARCHITECTURE = 'arm64'
     VERSION_FALLBACK_ORDER = ['ios-7', 'ios-8', 'ios-9', 'ios-10']
+    SDK = apple_additions().ios_device_SDK() if apple_additions() else 'iphoneos'
+    NO_ON_DEVICE_TESTING = 'On-device testing is not supported on this machine'
+
+    @memoized
+    def default_child_processes(self):
+        if apple_additions():
+            return apple_additions().ios_device_default_child_processes(self)
+        return 1
+
+    def using_multiple_devices(self):
+        return True
+
+    def _device_for_worker_number_map(self):
+        if not apple_additions():
+            raise RuntimeError(self.NO_ON_DEVICE_TESTING)
+        return apple_additions().ios_device_for_worker_number_map(self)
+
+    def _driver_class(self):
+        if apple_additions():
+            return apple_additions().ios_device_driver()
+        return super(IOSDevicePort, self)._driver_class()
 
     @classmethod
     def determine_full_port_name(cls, host, options, port_name):
         if port_name == cls.port_name:
-            iphoneos_sdk_version = host.platform.xcode_sdk_version('iphoneos')
+            iphoneos_sdk_version = host.platform.xcode_sdk_version(cls.SDK)
             if not iphoneos_sdk_version:
                 raise Exception("Please install the iOS SDK.")
             major_version_number = iphoneos_sdk_version.split('.')[0]
             port_name = port_name + '-' + major_version_number
         return port_name
 
+    # FIXME: These need device implementations <rdar://problem/30497991>.
+    def check_for_leaks(self, process_name, process_pid):
+        pass
+
+    def look_for_new_crash_logs(self, crashed_processes, start_time):
+        return {}
+
+    def look_for_new_samples(self, unresponsive_processes, start_time):
+        return {}
+
+    def sample_process(self, name, pid, target_host=None):
+        pass
+
     # Despite their names, these flags do not actually get passed all the way down to webkit-build.
     def _build_driver_flags(self):
-        return ['--sdk', 'iphoneos'] + (['ARCHS=%s' % self.architecture()] if self.architecture() else [])
+        return ['--sdk', self.SDK] + (['ARCHS=%s' % self.architecture()] if self.architecture() else [])
 
     def operating_system(self):
         return 'ios-device'
+
+    def _create_devices(self, device_class):
+        if not apple_additions():
+            raise RuntimeError(self.NO_ON_DEVICE_TESTING)
+        if not self._device_for_worker_number_map():
+            raise RuntimeError('No devices are available for testing')
+
+        if self.default_child_processes() < self.child_processes():
+            raise RuntimeError('Not enought connected devices for {} processes'.format(self.child_processes()))
+
+    def clean_up_test_run(self):
+        super(IOSDevicePort, self).clean_up_test_run()
+        apple_additions().ios_device_clean_up_test_run(self, self._path_to_driver(), self._build_path())

@@ -33,6 +33,7 @@
 import logging
 
 from webkitpy.common import webkit_finder
+from webkitpy.common.memoized import memoized
 
 
 _log = logging.getLogger(__name__)
@@ -52,6 +53,15 @@ def clear_cached_configuration():
     global _have_determined_configuration, _configuration
     _have_determined_configuration = False
     _configuration = "Release"
+
+
+@memoized
+def apple_additions():
+    try:
+        # A level of 0 means that only absolute paths will be used.
+        return __import__('apple_additions', globals=globals(), locals=None, fromlist=[], level=0)
+    except ImportError:
+        return None
 
 
 class Config(object):

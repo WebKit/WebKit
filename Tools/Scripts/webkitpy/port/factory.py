@@ -56,7 +56,7 @@ def platform_options(use_globs=False):
         optparse.make_option('--no-install', action='store_const',
             const=False, default=True, dest='install',
             help='Skip install step for device and simulator testing'),
-        ]
+        ] + (config.apple_additions().platform_options() if config.apple_additions() else [])
 
 
 def configuration_options():
