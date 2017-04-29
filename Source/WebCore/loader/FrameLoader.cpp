@@ -95,7 +95,6 @@
 #include "PluginDocument.h"
 #include "PolicyChecker.h"
 #include "ProgressTracker.h"
-#include "PublicSuffix.h"
 #include "ResourceHandle.h"
 #include "ResourceLoadInfo.h"
 #include "ResourceLoadObserver.h"
@@ -1398,50 +1397,6 @@ void FrameLoader::load(DocumentLoader* newDocumentLoader)
     loadWithDocumentLoader(newDocumentLoader, type, 0, AllowNavigationToInvalidURL::Yes);
 }
 
-static void logNavigation(MainFrame& frame, const URL& destinationURL, FrameLoadType type)
-{
-    if (!frame.page())
-        return;
-
-    String navigationDescription;
-    switch (type) {
-    case FrameLoadType::Standard:
-        navigationDescription = ASCIILiteral("standard");
-        break;
-    case FrameLoadType::Back:
-        navigationDescription = ASCIILiteral("back");
-        break;
-    case FrameLoadType::Forward:
-        navigationDescription = ASCIILiteral("forward");
-        break;
-    case FrameLoadType::IndexedBackForward:
-        navigationDescription = ASCIILiteral("indexedBackForward");
-        break;
-    case FrameLoadType::Reload:
-        navigationDescription = ASCIILiteral("reload");
-        break;
-    case FrameLoadType::Same:
-        navigationDescription = ASCIILiteral("same");
-        break;
-    case FrameLoadType::ReloadFromOrigin:
-        navigationDescription = ASCIILiteral("reloadFromOrigin");
-        break;
-    case FrameLoadType::ReloadExpiredOnly:
-        navigationDescription = ASCIILiteral("reloadRevalidatingExpired");
-        break;
-    case FrameLoadType::Replace:
-    case FrameLoadType::RedirectWithLockedBackForwardList:
-        // Not logging those for now.
-        return;
-    }
-    frame.page()->diagnosticLoggingClient().logDiagnosticMessage(DiagnosticLoggingKeys::navigationKey(), navigationDescription, ShouldSample::No);
-#if ENABLE(PUBLIC_SUFFIX_LIST)
-    String domain = topPrivatelyControlledDomain(destinationURL.host());
-    if (!domain.isEmpty())
-        frame.page()->diagnosticLoggingClient().logDiagnosticMessageWithEnhancedPrivacy(DiagnosticLoggingKeys::domainVisitedKey(), domain, ShouldSample::No);
-#endif
-}
-
 void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType type, FormState* formState, AllowNavigationToInvalidURL allowNavigationToInvalidURL)
 {
     // Retain because dispatchBeforeLoadEvent may release the last reference to it.
@@ -1464,7 +1419,8 @@ void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType t
 
     // Log main frame navigation types.
     if (m_frame.isMainFrame()) {
-        logNavigation(static_cast<MainFrame&>(m_frame), newURL, type);
+        if (auto* page = m_frame.page())
+            page->mainFrameLoadStarted(newURL, type);
         static_cast<MainFrame&>(m_frame).performanceLogging().didReachPointOfInterest(PerformanceLogging::MainFrameLoadStarted);
     }
 

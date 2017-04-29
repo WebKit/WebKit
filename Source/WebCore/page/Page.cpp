@@ -77,6 +77,7 @@
 #include "PluginViewBase.h"
 #include "PointerLockController.h"
 #include "ProgressTracker.h"
+#include "PublicSuffix.h"
 #include "RenderLayerCompositor.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
@@ -1670,6 +1671,11 @@ void Page::setIsVisibleInternal(bool isVisible)
         setSVGAnimationsState(*this, SVGAnimationsState::Resumed);
 
         resumeAnimatingImages();
+
+        if (m_navigationToLogWhenVisible) {
+            logNavigation(m_navigationToLogWhenVisible.value());
+            m_navigationToLogWhenVisible = std::nullopt;
+        }
     }
 
     Vector<Ref<Document>> documents;
@@ -2052,6 +2058,64 @@ void Page::allowPrompts()
 bool Page::arePromptsAllowed()
 {
     return !m_forbidPromptsDepth;
+}
+
+void Page::logNavigation(const Navigation& navigation)
+{
+    String navigationDescription;
+    switch (navigation.type) {
+    case FrameLoadType::Standard:
+        navigationDescription = ASCIILiteral("standard");
+        break;
+    case FrameLoadType::Back:
+        navigationDescription = ASCIILiteral("back");
+        break;
+    case FrameLoadType::Forward:
+        navigationDescription = ASCIILiteral("forward");
+        break;
+    case FrameLoadType::IndexedBackForward:
+        navigationDescription = ASCIILiteral("indexedBackForward");
+        break;
+    case FrameLoadType::Reload:
+        navigationDescription = ASCIILiteral("reload");
+        break;
+    case FrameLoadType::Same:
+        navigationDescription = ASCIILiteral("same");
+        break;
+    case FrameLoadType::ReloadFromOrigin:
+        navigationDescription = ASCIILiteral("reloadFromOrigin");
+        break;
+    case FrameLoadType::ReloadExpiredOnly:
+        navigationDescription = ASCIILiteral("reloadRevalidatingExpired");
+        break;
+    case FrameLoadType::Replace:
+    case FrameLoadType::RedirectWithLockedBackForwardList:
+        // Not logging those for now.
+        return;
+    }
+    diagnosticLoggingClient().logDiagnosticMessage(DiagnosticLoggingKeys::navigationKey(), navigationDescription, ShouldSample::No);
+
+    if (!navigation.domain.isEmpty())
+        diagnosticLoggingClient().logDiagnosticMessageWithEnhancedPrivacy(DiagnosticLoggingKeys::domainVisitedKey(), navigation.domain, ShouldSample::No);
+}
+
+void Page::mainFrameLoadStarted(const URL& destinationURL, FrameLoadType type)
+{
+    String domain;
+#if ENABLE(PUBLIC_SUFFIX_LIST)
+    domain = topPrivatelyControlledDomain(destinationURL.host());
+#endif
+
+    Navigation navigation = { domain, type };
+
+    // To avoid being too verbose, we only log navigations if the page is or becomes visible. This avoids logging non-user observable loads.
+    if (!isVisible()) {
+        m_navigationToLogWhenVisible = navigation;
+        return;
+    }
+
+    m_navigationToLogWhenVisible = std::nullopt;
+    logNavigation(navigation);
 }
 
 PluginInfoProvider& Page::pluginInfoProvider()

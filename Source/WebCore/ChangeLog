@@ -1,3 +1,25 @@
+2017-04-28  Chris Dumez  <cdumez@apple.com>
+
+        Diagnostic logging of navigations is too verbose
+        https://bugs.webkit.org/show_bug.cgi?id=171455
+        <rdar://problem/31543815>
+
+        Reviewed by Andreas Kling.
+
+        Diagnostic logging of navigation is too verbose. We log things that are not actually user
+        navigations (e.g. speculative loads, bookmark icon fetches, ...). To address the issue,
+        we now only log *observable* loads. We do so by only logging if the page is visible or
+        if it becomes visible.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadWithDocumentLoader):
+        (WebCore::logNavigation): Deleted.
+        * page/Page.cpp:
+        (WebCore::Page::setIsVisibleInternal):
+        (WebCore::Page::logNavigation):
+        (WebCore::Page::mainFrameLoadStarted):
+        * page/Page.h:
+
 2017-04-28  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: ARIA "region" role which lacks an accessible name should not be treated as a landmark
