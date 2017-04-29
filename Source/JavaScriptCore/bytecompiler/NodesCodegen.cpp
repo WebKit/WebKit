@@ -2634,7 +2634,7 @@ void IfElseNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 
 void DoWhileNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
-    LabelScopePtr scope = generator.newLabelScope(LabelScope::Loop);
+    Ref<LabelScope> scope = generator.newLabelScope(LabelScope::Loop);
 
     Ref<Label> topOfLoop = generator.newLabel();
     generator.emitLabel(topOfLoop.get());
@@ -2652,7 +2652,7 @@ void DoWhileNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 
 void WhileNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
-    LabelScopePtr scope = generator.newLabelScope(LabelScope::Loop);
+    Ref<LabelScope> scope = generator.newLabelScope(LabelScope::Loop);
     Ref<Label> topOfLoop = generator.newLabel();
 
     generator.emitNodeInConditionContext(m_expr, topOfLoop.get(), scope->breakTarget(), FallThroughMeansTrue);
@@ -2676,7 +2676,7 @@ void WhileNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 
 void ForNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
-    LabelScopePtr scope = generator.newLabelScope(LabelScope::Loop);
+    Ref<LabelScope> scope = generator.newLabelScope(LabelScope::Loop);
 
     RegisterID* forLoopSymbolTable = nullptr;
     generator.pushLexicalScope(this, BytecodeGenerator::TDZCheckOptimization::Optimize, BytecodeGenerator::NestedScopeType::IsNested, &forLoopSymbolTable);
@@ -2851,7 +2851,7 @@ void ForInNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 
     // Indexed property loop.
     {
-        LabelScopePtr scope = generator.newLabelScope(LabelScope::Loop);
+        Ref<LabelScope> scope = generator.newLabelScope(LabelScope::Loop);
         Ref<Label> loopStart = generator.newLabel();
         Ref<Label> loopEnd = generator.newLabel();
 
@@ -2891,7 +2891,7 @@ void ForInNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 
     // Structure property loop.
     {
-        LabelScopePtr scope = generator.newLabelScope(LabelScope::Loop);
+        Ref<LabelScope> scope = generator.newLabelScope(LabelScope::Loop);
         Ref<Label> loopStart = generator.newLabel();
         Ref<Label> loopEnd = generator.newLabel();
 
@@ -2931,7 +2931,7 @@ void ForInNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 
     // Generic property loop.
     {
-        LabelScopePtr scope = generator.newLabelScope(LabelScope::Loop);
+        Ref<LabelScope> scope = generator.newLabelScope(LabelScope::Loop);
         Ref<Label> loopStart = generator.newLabel();
         Ref<Label> loopEnd = generator.newLabel();
 
@@ -3044,7 +3044,7 @@ Label* ContinueNode::trivialTarget(BytecodeGenerator& generator)
     if (generator.shouldEmitDebugHooks())
         return nullptr;
 
-    LabelScopePtr scope = generator.continueTarget(m_ident);
+    RefPtr<LabelScope> scope = generator.continueTarget(m_ident);
     ASSERT(scope);
 
     if (generator.labelScopeDepth() != scope->scopeDepth())
@@ -3055,7 +3055,7 @@ Label* ContinueNode::trivialTarget(BytecodeGenerator& generator)
 
 void ContinueNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
 {
-    LabelScopePtr scope = generator.continueTarget(m_ident);
+    RefPtr<LabelScope> scope = generator.continueTarget(m_ident);
     ASSERT(scope);
 
     bool hasFinally = generator.emitJumpViaFinallyIfNeeded(scope->scopeDepth(), *scope->continueTarget());
@@ -3075,7 +3075,7 @@ Label* BreakNode::trivialTarget(BytecodeGenerator& generator)
     if (generator.shouldEmitDebugHooks())
         return nullptr;
 
-    LabelScopePtr scope = generator.breakTarget(m_ident);
+    RefPtr<LabelScope> scope = generator.breakTarget(m_ident);
     ASSERT(scope);
 
     if (generator.labelScopeDepth() != scope->scopeDepth())
@@ -3086,7 +3086,7 @@ Label* BreakNode::trivialTarget(BytecodeGenerator& generator)
 
 void BreakNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
 {
-    LabelScopePtr scope = generator.breakTarget(m_ident);
+    RefPtr<LabelScope> scope = generator.breakTarget(m_ident);
     ASSERT(scope);
 
     bool hasFinally = generator.emitJumpViaFinallyIfNeeded(scope->scopeDepth(), scope->breakTarget());
@@ -3300,7 +3300,7 @@ void CaseBlockNode::emitBytecodeForBlock(BytecodeGenerator& generator, RegisterI
 
 void SwitchNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
-    LabelScopePtr scope = generator.newLabelScope(LabelScope::Switch);
+    Ref<LabelScope> scope = generator.newLabelScope(LabelScope::Switch);
 
     RefPtr<RegisterID> r0 = generator.emitNode(m_expr);
 
@@ -3318,7 +3318,7 @@ void LabelNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
     ASSERT(!generator.breakTarget(m_name));
 
-    LabelScopePtr scope = generator.newLabelScope(LabelScope::NamedLabel, &m_name);
+    Ref<LabelScope> scope = generator.newLabelScope(LabelScope::NamedLabel, &m_name);
     generator.emitNodeInTailPosition(dst, m_statement);
 
     generator.emitLabel(scope->breakTarget());

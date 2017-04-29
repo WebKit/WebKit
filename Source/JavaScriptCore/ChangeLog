@@ -1,3 +1,59 @@
+2017-04-29  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] LabelScopePtr is not necessary
+        https://bugs.webkit.org/show_bug.cgi?id=171474
+
+        Reviewed by Geoffrey Garen.
+
+        Originally, LabelScopePtr is introduced because LabelScopes uses Vector<> instead of SegmentedVector<>.
+        LabelScopePtr holds the pointer to the vector owner and index instead of the pointer to LabelScope directly
+        since Vector<> can relocate LocalScopes inside it.
+        The reason why LabelScopes use Vector instead is that there is code copying this vector. SegmentedVector<>
+        prohibits copying since it is so costly. So, we used Vector<> here instead of SegmentedVector<>.
+
+        But the latest code does not have copying code for LabelScopes. Thus, we can take the same design to Label and
+        RegisterID. Just use SegmentedVector<> and Ref<>/RefPtr<>. This patch removes LabelScopePtr since it is no
+        longer necessary. And use SegmentedVector for LabelScopes.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::reclaim):
+        (JSC::BytecodeGenerator::reclaimFreeRegisters):
+        (JSC::BytecodeGenerator::newLabelScope):
+        (JSC::BytecodeGenerator::newLabel):
+        (JSC::BytecodeGenerator::pushFinallyControlFlowScope):
+        (JSC::BytecodeGenerator::breakTarget):
+        (JSC::BytecodeGenerator::continueTarget):
+        (JSC::BytecodeGenerator::emitEnumeration):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/LabelScope.h:
+        (JSC::LabelScope::LabelScope):
+        (JSC::LabelScope::breakTarget):
+        (JSC::LabelScope::continueTarget):
+        (JSC::LabelScope::type):
+        (JSC::LabelScope::name):
+        (JSC::LabelScope::scopeDepth):
+        (JSC::LabelScope::ref):
+        (JSC::LabelScope::deref):
+        (JSC::LabelScope::refCount):
+        (JSC::LabelScopePtr::LabelScopePtr): Deleted.
+        (JSC::LabelScopePtr::operator=): Deleted.
+        (JSC::LabelScopePtr::~LabelScopePtr): Deleted.
+        (JSC::LabelScopePtr::operator!): Deleted.
+        (JSC::LabelScopePtr::operator*): Deleted.
+        (JSC::LabelScopePtr::operator->): Deleted.
+        (JSC::LabelScopePtr::null): Deleted.
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::DoWhileNode::emitBytecode):
+        (JSC::WhileNode::emitBytecode):
+        (JSC::ForNode::emitBytecode):
+        (JSC::ForInNode::emitBytecode):
+        (JSC::ContinueNode::trivialTarget):
+        (JSC::ContinueNode::emitBytecode):
+        (JSC::BreakNode::trivialTarget):
+        (JSC::BreakNode::emitBytecode):
+        (JSC::SwitchNode::emitBytecode):
+        (JSC::LabelNode::emitBytecode):
+
 2017-04-28  Mark Lam  <mark.lam@apple.com>
 
         Revert instrumentation from https://bugs.webkit.org/show_bug.cgi?id=170086 that is no longer needed.

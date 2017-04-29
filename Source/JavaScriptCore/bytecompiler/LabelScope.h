@@ -32,101 +32,45 @@
 
 namespace JSC {
 
-    class Identifier;
+class Identifier;
 
-    class LabelScope {
-    public:
-        enum Type { Loop, Switch, NamedLabel };
+class LabelScope {
+WTF_MAKE_NONCOPYABLE(LabelScope);
+public:
+    enum Type { Loop, Switch, NamedLabel };
 
-        LabelScope(Type type, const Identifier* name, int scopeDepth, Ref<Label>&& breakTarget, RefPtr<Label>&& continueTarget)
-            : m_refCount(0)
-            , m_type(type)
-            , m_name(name)
-            , m_scopeDepth(scopeDepth)
-            , m_breakTarget(WTFMove(breakTarget))
-            , m_continueTarget(WTFMove(continueTarget))
-        {
-        }
-        int refCount() const { return m_refCount; }
+    LabelScope(Type type, const Identifier* name, int scopeDepth, Ref<Label>&& breakTarget, RefPtr<Label>&& continueTarget)
+        : m_refCount(0)
+        , m_type(type)
+        , m_name(name)
+        , m_scopeDepth(scopeDepth)
+        , m_breakTarget(WTFMove(breakTarget))
+        , m_continueTarget(WTFMove(continueTarget))
+    {
+    }
 
-        Label& breakTarget() const { return m_breakTarget.get(); }
-        Label* continueTarget() const { return m_continueTarget.get(); }
+    Label& breakTarget() const { return m_breakTarget.get(); }
+    Label* continueTarget() const { return m_continueTarget.get(); }
 
-        Type type() const { return m_type; }
-        const Identifier* name() const { return m_name; }
-        int scopeDepth() const { return m_scopeDepth; }
+    Type type() const { return m_type; }
+    const Identifier* name() const { return m_name; }
+    int scopeDepth() const { return m_scopeDepth; }
 
-    private:
-        friend class LabelScopePtr;
+    void ref() { ++m_refCount; }
+    void deref()
+    {
+        --m_refCount;
+        ASSERT(m_refCount >= 0);
+    }
+    int refCount() const { return m_refCount; }
 
-        void ref() { ++m_refCount; }
-        void deref()
-        {
-            --m_refCount;
-            ASSERT(m_refCount >= 0);
-        }
-
-        int m_refCount;
-        Type m_type;
-        const Identifier* m_name;
-        int m_scopeDepth;
-        Ref<Label> m_breakTarget;
-        RefPtr<Label> m_continueTarget;
-    };
-
-    typedef Vector<LabelScope, 8> LabelScopeStore;
-
-    class LabelScopePtr {
-    public:
-        LabelScopePtr()
-            : m_owner(0)
-            , m_index(0)
-        {
-        }
-        LabelScopePtr(LabelScopeStore& owner, size_t index)
-            : m_owner(&owner)
-            , m_index(index)
-        {
-            m_owner->at(index).ref();
-        }
-
-        LabelScopePtr(const LabelScopePtr& other)
-            : m_owner(other.m_owner)
-            , m_index(other.m_index)
-        {
-            if (m_owner)
-                m_owner->at(m_index).ref();
-        }
-
-        const LabelScopePtr& operator=(const LabelScopePtr& other)
-        {
-            if (other.m_owner)
-                other.m_owner->at(other.m_index).ref();
-            if (m_owner)
-                m_owner->at(m_index).deref();
-            m_owner = other.m_owner;
-            m_index = other.m_index;
-            return *this;
-        }
-
-        ~LabelScopePtr()
-        {
-            if (m_owner)
-                m_owner->at(m_index).deref();
-        }
-
-        bool operator!() const { return !m_owner; }
-
-        LabelScope& operator*() { ASSERT(m_owner); return m_owner->at(m_index); }
-        LabelScope* operator->() { ASSERT(m_owner); return &m_owner->at(m_index); }
-        const LabelScope& operator*() const { ASSERT(m_owner); return m_owner->at(m_index); }
-        const LabelScope* operator->() const { ASSERT(m_owner); return &m_owner->at(m_index); }
-
-        static LabelScopePtr null() { return LabelScopePtr(); }
-
-    private:
-        LabelScopeStore* m_owner;
-        size_t m_index;
-    };
+private:
+    int m_refCount;
+    Type m_type;
+    const Identifier* m_name;
+    int m_scopeDepth;
+    Ref<Label> m_breakTarget;
+    RefPtr<Label> m_continueTarget;
+};
 
 } // namespace JSC

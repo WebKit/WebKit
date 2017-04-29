@@ -444,7 +444,7 @@ namespace JSC {
             return dst == ignoredResult() ? 0 : (dst && dst != src) ? emitMove(dst, src) : src;
         }
 
-        LabelScopePtr newLabelScope(LabelScope::Type, const Identifier* = 0);
+        Ref<LabelScope> newLabelScope(LabelScope::Type, const Identifier* = 0);
         Ref<Label> newLabel();
         Ref<Label> newEmittedLabel();
 
@@ -854,8 +854,8 @@ namespace JSC {
         void popStructureForInScope(RegisterID* local);
         void invalidateForInContextForLocal(RegisterID* local);
 
-        LabelScopePtr breakTarget(const Identifier&);
-        LabelScopePtr continueTarget(const Identifier&);
+        RefPtr<LabelScope> breakTarget(const Identifier&);
+        RefPtr<LabelScope> continueTarget(const Identifier&);
 
         void beginSwitch(RegisterID*, SwitchInfo::SwitchType);
         void endSwitch(uint32_t clauseCount, const Vector<Ref<Label>, 8>&, ExpressionNode**, Label& defaultLabel, int32_t min, int32_t range);
@@ -1088,7 +1088,7 @@ namespace JSC {
         SegmentedVector<RegisterID, 32> m_calleeLocals;
         SegmentedVector<RegisterID, 32> m_parameters;
         SegmentedVector<Label, 32> m_labels;
-        LabelScopeStore m_labelScopes;
+        SegmentedVector<LabelScope, 32> m_labelScopes;
         unsigned m_finallyDepth { 0 };
         int m_localScopeDepth { 0 };
         const CodeType m_codeType;

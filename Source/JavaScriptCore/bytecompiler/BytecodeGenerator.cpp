@@ -62,6 +62,13 @@ using namespace std;
 
 namespace JSC {
 
+template<typename T>
+static inline void shrinkToFit(T& segmentedVector)
+{
+    while (segmentedVector.size() && !segmentedVector.last().refCount())
+        segmentedVector.removeLast();
+}
+
 void Label::setLocation(unsigned location)
 {
     m_location = location;
@@ -1170,8 +1177,7 @@ RegisterID* BytecodeGenerator::newRegister()
 
 void BytecodeGenerator::reclaimFreeRegisters()
 {
-    while (m_calleeLocals.size() && !m_calleeLocals.last().refCount())
-        m_calleeLocals.removeLast();
+    shrinkToFit(m_calleeLocals);
 }
 
 RegisterID* BytecodeGenerator::newBlockScopeVariable()
@@ -1190,23 +1196,18 @@ RegisterID* BytecodeGenerator::newTemporary()
     return result;
 }
 
-LabelScopePtr BytecodeGenerator::newLabelScope(LabelScope::Type type, const Identifier* name)
+Ref<LabelScope> BytecodeGenerator::newLabelScope(LabelScope::Type type, const Identifier* name)
 {
-    // Reclaim free label scopes.
-    while (m_labelScopes.size() && !m_labelScopes.last().refCount())
-        m_labelScopes.removeLast();
+    shrinkToFit(m_labelScopes);
 
     // Allocate new label scope.
-    LabelScope scope(type, name, labelScopeDepth(), newLabel(), type == LabelScope::Loop ? RefPtr<Label>(newLabel()) : RefPtr<Label>()); // Only loops have continue targets.
-    m_labelScopes.append(WTFMove(scope));
-    return LabelScopePtr(m_labelScopes, m_labelScopes.size() - 1);
+    m_labelScopes.append(type, name, labelScopeDepth(), newLabel(), type == LabelScope::Loop ? RefPtr<Label>(newLabel()) : RefPtr<Label>()); // Only loops have continue targets.
+    return m_labelScopes.last();
 }
 
 Ref<Label> BytecodeGenerator::newLabel()
 {
-    // Reclaim free label IDs.
-    while (m_labels.size() && !m_labels.last().refCount())
-        m_labels.removeLast();
+    shrinkToFit(m_labels);
 
     // Allocate new label ID.
     m_labels.append(*this);
@@ -3768,9 +3769,7 @@ void BytecodeGenerator::emitWillLeaveCallFrameDebugHook()
 
 FinallyContext* BytecodeGenerator::pushFinallyControlFlowScope(Label& finallyLabel)
 {
-    // Reclaim free label scopes.
-    while (m_labelScopes.size() && !m_labelScopes.last().refCount())
-        m_labelScopes.removeLast();
+    shrinkToFit(m_labelScopes);
 
     ControlFlowScope scope(ControlFlowScope::Finally, currentLexicalScopeIndex(), FinallyContext(m_currentFinallyContext, finallyLabel));
     m_controlFlowScopeStack.append(WTFMove(scope));
@@ -3791,77 +3790,64 @@ FinallyContext BytecodeGenerator::popFinallyControlFlowScope()
     return m_controlFlowScopeStack.takeLast().finallyContext;
 }
 
-LabelScopePtr BytecodeGenerator::breakTarget(const Identifier& name)
+RefPtr<LabelScope> BytecodeGenerator::breakTarget(const Identifier& name)
 {
-    // Reclaim free label scopes.
-    //
-    // The condition was previously coded as 'm_labelScopes.size() && !m_labelScopes.last().refCount()',
-    // however sometimes this appears to lead to GCC going a little haywire and entering the loop with
-    // size 0, leading to segfaulty badness.  We are yet to identify a valid cause within our code to
-    // cause the GCC codegen to misbehave in this fashion, and as such the following refactoring of the
-    // loop condition is a workaround.
-    while (m_labelScopes.size()) {
-        if  (m_labelScopes.last().refCount())
-            break;
-        m_labelScopes.removeLast();
-    }
+    shrinkToFit(m_labelScopes);
 
     if (!m_labelScopes.size())
-        return LabelScopePtr::null();
+        return nullptr;
 
     // We special-case the following, which is a syntax error in Firefox:
     // label:
     //     break;
     if (name.isEmpty()) {
         for (int i = m_labelScopes.size() - 1; i >= 0; --i) {
-            LabelScope* scope = &m_labelScopes[i];
-            if (scope->type() != LabelScope::NamedLabel)
-                return LabelScopePtr(m_labelScopes, i);
+            LabelScope& scope = m_labelScopes[i];
+            if (scope.type() != LabelScope::NamedLabel)
+                return &scope;
         }
-        return LabelScopePtr::null();
+        return nullptr;
     }
 
     for (int i = m_labelScopes.size() - 1; i >= 0; --i) {
-        LabelScope* scope = &m_labelScopes[i];
-        if (scope->name() && *scope->name() == name)
-            return LabelScopePtr(m_labelScopes, i);
+        LabelScope& scope = m_labelScopes[i];
+        if (scope.name() && *scope.name() == name)
+            return &scope;
     }
-    return LabelScopePtr::null();
+    return nullptr;
 }
 
-LabelScopePtr BytecodeGenerator::continueTarget(const Identifier& name)
+RefPtr<LabelScope> BytecodeGenerator::continueTarget(const Identifier& name)
 {
-    // Reclaim free label scopes.
-    while (m_labelScopes.size() && !m_labelScopes.last().refCount())
-        m_labelScopes.removeLast();
+    shrinkToFit(m_labelScopes);
 
     if (!m_labelScopes.size())
-        return LabelScopePtr::null();
+        return nullptr;
 
     if (name.isEmpty()) {
         for (int i = m_labelScopes.size() - 1; i >= 0; --i) {
-            LabelScope* scope = &m_labelScopes[i];
-            if (scope->type() == LabelScope::Loop) {
-                ASSERT(scope->continueTarget());
-                return LabelScopePtr(m_labelScopes, i);
+            LabelScope& scope = m_labelScopes[i];
+            if (scope.type() == LabelScope::Loop) {
+                ASSERT(scope.continueTarget());
+                return &scope;
             }
         }
-        return LabelScopePtr::null();
+        return nullptr;
     }
 
     // Continue to the loop nested nearest to the label scope that matches
     // 'name'.
-    LabelScopePtr result = LabelScopePtr::null();
+    LabelScope* result = nullptr;
     for (int i = m_labelScopes.size() - 1; i >= 0; --i) {
-        LabelScope* scope = &m_labelScopes[i];
-        if (scope->type() == LabelScope::Loop) {
-            ASSERT(scope->continueTarget());
-            result = LabelScopePtr(m_labelScopes, i);
+        LabelScope& scope = m_labelScopes[i];
+        if (scope.type() == LabelScope::Loop) {
+            ASSERT(scope.continueTarget());
+            result = &scope;
         }
-        if (scope->name() && *scope->name() == name)
+        if (scope.name() && *scope.name() == name)
             return result; // may be null.
     }
-    return LabelScopePtr::null();
+    return nullptr;
 }
 
 void BytecodeGenerator::allocateCalleeSaveSpace()
@@ -4223,7 +4209,7 @@ void BytecodeGenerator::emitEnumeration(ThrowableExpressionData* node, Expressio
     FinallyContext* finallyContext = pushFinallyControlFlowScope(finallyLabel.get());
 
     {
-        LabelScopePtr scope = newLabelScope(LabelScope::Loop);
+        Ref<LabelScope> scope = newLabelScope(LabelScope::Loop);
         RefPtr<RegisterID> value = newTemporary();
         emitLoad(value.get(), jsUndefined());
 
