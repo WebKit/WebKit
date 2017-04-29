@@ -69,6 +69,8 @@ enum TracePointCode {
     RAFCallbackEnd,
     MemoryPressureHandlerStart,
     MemoryPressureHandlerEnd,
+    UpdateTouchRegionsStart,
+    UpdateTouchRegionsEnd,
 
     WebKitRange = 10000,
     WebHTMLViewPaintStart,

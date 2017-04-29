@@ -1,3 +1,15 @@
+2017-04-28  Simon Fraser  <simon.fraser@apple.com>
+
+        Add system trace points for Document::updateTouchEventRegions()
+        https://bugs.webkit.org/show_bug.cgi?id=171470
+        rdar://problem/31901239
+
+        Reviewed by Tim Horton.
+
+        Add trace markers for updateTouchEventRegions.
+
+        * Tracing/SystemTracePoints.plist:
+
 2017-04-28  Jonathan Bedard  <jbedard@apple.com>
 
         webkitpy: Add apple_additions to webkitpy to insert Internal tools
