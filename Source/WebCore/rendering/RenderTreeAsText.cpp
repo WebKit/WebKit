@@ -610,7 +610,7 @@ enum LayerPaintPhase {
     LayerPaintPhaseForeground = 1
 };
 
-static void write(TextStream& ts, const RenderLayer& layer, const LayoutRect& layerBounds, const LayoutRect& backgroundClipRect, const LayoutRect& clipRect,
+static void writeLayer(TextStream& ts, const RenderLayer& layer, const LayoutRect& layerBounds, const LayoutRect& backgroundClipRect, const LayoutRect& clipRect,
     LayerPaintPhase paintPhase = LayerPaintPhaseAll, int indent = 0, RenderAsTextBehavior behavior = RenderAsTextBehaviorNormal)
 {
     IntRect adjustedLayoutBounds = snappedIntRect(layerBounds);
@@ -672,7 +672,10 @@ static void write(TextStream& ts, const RenderLayer& layer, const LayoutRect& la
 #endif
     
     ts << "\n";
+}
 
+static void writeLayerRenderers(TextStream& ts, const RenderLayer& layer, LayerPaintPhase paintPhase = LayerPaintPhaseAll, int indent = 0, RenderAsTextBehavior behavior = RenderAsTextBehaviorNormal)
+{
     if (paintPhase != LayerPaintPhaseBackground)
         write(ts, layer.renderer(), indent + 1, behavior);
 }
@@ -770,7 +773,8 @@ static void writeLayers(TextStream& ts, const RenderLayer& rootLayer, RenderLaye
     LayoutRect layerBounds;
     ClipRect damageRect;
     ClipRect clipRectToApply;
-    layer.calculateRects(RenderLayer::ClipRectsContext(&rootLayer, TemporaryClipRects), paintDirtyRect, layerBounds, damageRect, clipRectToApply, layer.offsetFromAncestor(&rootLayer));
+    LayoutSize offsetFromRoot = layer.offsetFromAncestor(&rootLayer);
+    layer.calculateRects(RenderLayer::ClipRectsContext(&rootLayer, TemporaryClipRects), paintDirtyRect, layerBounds, damageRect, clipRectToApply, offsetFromRoot);
 
     // Ensure our lists are up-to-date.
     layer.updateLayerListsIfNeeded();
@@ -778,9 +782,11 @@ static void writeLayers(TextStream& ts, const RenderLayer& rootLayer, RenderLaye
     bool shouldPaint = (behavior & RenderAsTextShowAllLayers) ? true : layer.intersectsDamageRect(layerBounds, damageRect.rect(), &rootLayer, layer.offsetFromAncestor(&rootLayer));
     Vector<RenderLayer*>* negativeZOrderList = layer.negZOrderList();
     bool paintsBackgroundSeparately = negativeZOrderList && negativeZOrderList->size() > 0;
-    if (shouldPaint && paintsBackgroundSeparately)
-        write(ts, layer, layerBounds, damageRect.rect(), clipRectToApply.rect(), LayerPaintPhaseBackground, indent, behavior);
-
+    if (shouldPaint && paintsBackgroundSeparately) {
+        writeLayer(ts, layer, layerBounds, damageRect.rect(), clipRectToApply.rect(), LayerPaintPhaseBackground, indent, behavior);
+        writeLayerRenderers(ts, layer, paintsBackgroundSeparately ? LayerPaintPhaseForeground : LayerPaintPhaseAll, indent, behavior);
+    }
+        
     if (negativeZOrderList) {
         int currIndent = indent;
         if (behavior & RenderAsTextShowLayerNesting) {
@@ -793,9 +799,25 @@ static void writeLayers(TextStream& ts, const RenderLayer& rootLayer, RenderLaye
             writeLayers(ts, rootLayer, *currLayer, paintDirtyRect, currIndent, behavior);
     }
 
-    if (shouldPaint)
-        write(ts, layer, layerBounds, damageRect.rect(), clipRectToApply.rect(), paintsBackgroundSeparately ? LayerPaintPhaseForeground : LayerPaintPhaseAll, indent, behavior);
-
+    if (shouldPaint) {
+        writeLayer(ts, layer, layerBounds, damageRect.rect(), clipRectToApply.rect(), paintsBackgroundSeparately ? LayerPaintPhaseForeground : LayerPaintPhaseAll, indent, behavior);
+        
+        if (behavior & RenderAsTextShowLayerFragments) {
+            LayerFragments layerFragments;
+            layer.collectFragments(layerFragments, &rootLayer, paintDirtyRect, RenderLayer::PaginationInclusionMode::ExcludeCompositedPaginatedLayers, TemporaryClipRects, IgnoreOverlayScrollbarSize, RespectOverflowClip, offsetFromRoot);
+            
+            if (layerFragments.size() > 1) {
+                for (unsigned i = 0; i < layerFragments.size(); ++i) {
+                    const auto& fragment = layerFragments[i];
+                    writeIndent(ts, indent + 2);
+                    ts << " fragment " << i << ": bounds in layer " << fragment.layerBounds << " fragment bounds " << fragment.boundingBox << "\n";
+                }
+            }
+        }
+        
+        writeLayerRenderers(ts, layer, paintsBackgroundSeparately ? LayerPaintPhaseForeground : LayerPaintPhaseAll, indent, behavior);
+    }
+    
     if (Vector<RenderLayer*>* normalFlowList = layer.normalFlowList()) {
         int currIndent = indent;
         if (behavior & RenderAsTextShowLayerNesting) {

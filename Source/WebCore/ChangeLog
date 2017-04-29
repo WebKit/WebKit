@@ -1,5 +1,34 @@
 2017-04-28  Simon Fraser  <simon.fraser@apple.com>
 
+        Enhance showLayerTree() to show fragments
+        https://bugs.webkit.org/show_bug.cgi?id=171469
+
+        Reviewed by Zalan Bujtas.
+
+        Have showLayerTree() dump fragments, like:
+
+             normal flow list(1)
+              layer 0x11c1879c0 at (0,0) size 700x1858 backgroundClip at (0,0) size 2120x779 clip at (0,0) size 2120x779
+                   fragment 0: bounds in layer at (0,0) size 700x1858 fragment bounds at (0,0) size 700x779
+                   fragment 1: bounds in layer at (710,-779) size 700x1858 fragment bounds at (710,0) size 700x779
+                   fragment 2: bounds in layer at (1420,-1558) size 700x1858 fragment bounds at (1420,0) size 700x300
+                RenderMultiColumnFlowThread 0x11f1f3340 at (0,0) size 700x1858
+
+        We want these to show before the child renderers, so factor that code into writeLayerRenderers().
+        
+        Overloading of write() for layers doesn't help anyone, so call it writeLayer() for searchability.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::showLayerTree):
+        * rendering/RenderLayer.h:
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::writeLayer):
+        (WebCore::writeLayerRenderers):
+        (WebCore::writeLayers):
+        * rendering/RenderTreeAsText.h:
+
+2017-04-28  Simon Fraser  <simon.fraser@apple.com>
+
         Modernize RenderTreeAsText code
         https://bugs.webkit.org/show_bug.cgi?id=171458
 

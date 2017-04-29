@@ -46,6 +46,7 @@ enum RenderAsTextBehaviorFlags {
     RenderAsTextShowLayoutState         = 1 << 7, // Print the various 'needs layout' bits on renderers.
     RenderAsTextShowOverflow            = 1 << 8, // Print layout and visual overflow.
     RenderAsTextShowSVGGeometry         = 1 << 9, // Print additional geometry for SVG objects.
+    RenderAsTextShowLayerFragments      = 1 << 10, // Print additional info about fragmented RenderLayers
 };
 typedef unsigned RenderAsTextBehavior;
 
