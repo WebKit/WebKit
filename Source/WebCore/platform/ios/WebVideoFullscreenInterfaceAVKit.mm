@@ -444,7 +444,7 @@ static WebAVPictureInPicturePlayerLayerView *WebAVPlayerLayerView_pictureInPictu
     WebAVPlayerLayerView *playerLayerView = aSelf;
     WebAVPictureInPicturePlayerLayerView *pipView = [playerLayerView valueForKey:@"_pictureInPicturePlayerLayerView"];
     if (!pipView) {
-        pipView = [allocWebAVPictureInPicturePlayerLayerViewInstance() initWithFrame:CGRectZero];
+        pipView = [[getWebAVPictureInPicturePlayerLayerViewClass() alloc] initWithFrame:CGRectZero];
         [playerLayerView setValue:pipView forKey:@"_pictureInPicturePlayerLayerView"];
     }
     return pipView;
@@ -613,7 +613,7 @@ void WebVideoFullscreenInterfaceAVKit::setupFullscreen(UIView& videoView, const 
     }
 
     if (!m_playerLayerView)
-        m_playerLayerView = adoptNS([allocWebAVPlayerLayerViewInstance() init]);
+        m_playerLayerView = adoptNS([[getWebAVPlayerLayerViewClass() alloc] init]);
     [m_playerLayerView setHidden:[playerController() isExternalPlaybackActive]];
     [m_playerLayerView setBackgroundColor:[getUIColorClass() clearColor]];
 
