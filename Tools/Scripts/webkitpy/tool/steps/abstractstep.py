@@ -76,4 +76,4 @@ class AbstractStep(object):
         ]
 
     def run(self, state):
-        raise NotImplementedError, "subclasses must implement"
+        raise NotImplementedError('subclasses must implement')

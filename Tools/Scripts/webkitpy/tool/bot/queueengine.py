@@ -49,25 +49,25 @@ class TerminateQueue(Exception):
 
 class QueueEngineDelegate:
     def queue_log_path(self):
-        raise NotImplementedError, "subclasses must implement"
+        raise NotImplementedError('subclasses must implement')
 
     def work_item_log_path(self, work_item):
-        raise NotImplementedError, "subclasses must implement"
+        raise NotImplementedError('subclasses must implement')
 
     def begin_work_queue(self):
-        raise NotImplementedError, "subclasses must implement"
+        raise NotImplementedError('subclasses must implement')
 
     def should_continue_work_queue(self):
-        raise NotImplementedError, "subclasses must implement"
+        raise NotImplementedError('subclasses must implement')
 
     def next_work_item(self):
-        raise NotImplementedError, "subclasses must implement"
+        raise NotImplementedError('subclasses must implement')
 
     def process_work_item(self, work_item):
-        raise NotImplementedError, "subclasses must implement"
+        raise NotImplementedError('subclasses must implement')
 
     def handle_unexpected_error(self, work_item, message):
-        raise NotImplementedError, "subclasses must implement"
+        raise NotImplementedError('subclasses must implement')
 
 
 class QueueEngine:

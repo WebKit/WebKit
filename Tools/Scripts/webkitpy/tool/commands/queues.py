@@ -118,7 +118,7 @@ class AbstractQueue(Command, QueueEngineDelegate):
         return os.path.join(self._log_directory(), "%s.log" % self.name)
 
     def work_item_log_path(self, work_item):
-        raise NotImplementedError, "subclasses must implement"
+        raise NotImplementedError('subclasses must implement')
 
     def begin_work_queue(self):
         _log.info("CAUTION: %s will discard all local changes in \"%s\"" % (self.name, self._tool.scm().checkout_root))
@@ -138,13 +138,13 @@ class AbstractQueue(Command, QueueEngineDelegate):
         return not self._options.iterations or self._iteration_count <= self._options.iterations
 
     def next_work_item(self):
-        raise NotImplementedError, "subclasses must implement"
+        raise NotImplementedError('subclasses must implement')
 
     def process_work_item(self, work_item):
-        raise NotImplementedError, "subclasses must implement"
+        raise NotImplementedError('subclasses must implement')
 
     def handle_unexpected_error(self, work_item, message):
-        raise NotImplementedError, "subclasses must implement"
+        raise NotImplementedError('subclasses must implement')
 
     # Command methods
 

@@ -29,13 +29,13 @@
 
 class MessagePumpDelegate(object):
     def schedule(self, interval, callback):
-        raise NotImplementedError, "subclasses must implement"
+        raise NotImplementedError('subclasses must implement')
 
     def message_available(self, message):
-        raise NotImplementedError, "subclasses must implement"
+        raise NotImplementedError('subclasses must implement')
 
     def final_message_delivered(self):
-        raise NotImplementedError, "subclasses must implement"
+        raise NotImplementedError('subclasses must implement')
 
 
 class MessagePump(object):

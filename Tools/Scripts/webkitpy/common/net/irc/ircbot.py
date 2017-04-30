@@ -35,13 +35,13 @@ from webkitpy.thirdparty.irc import irclib
 
 class IRCBotDelegate(object):
     def irc_message_received(self, nick, message):
-        raise NotImplementedError, "subclasses must implement"
+        raise NotImplementedError('subclasses must implement')
 
     def irc_nickname(self):
-        raise NotImplementedError, "subclasses must implement"
+        raise NotImplementedError('subclasses must implement')
 
     def irc_password(self):
-        raise NotImplementedError, "subclasses must implement"
+        raise NotImplementedError('subclasses must implement')
 
 
 class IRCBot(ircbot.SingleServerIRCBot, MessagePumpDelegate):

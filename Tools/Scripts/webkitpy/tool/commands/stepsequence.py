@@ -40,11 +40,11 @@ _log = logging.getLogger(__name__)
 class StepSequenceErrorHandler():
     @classmethod
     def handle_script_error(cls, tool, patch, script_error):
-        raise NotImplementedError, "subclasses must implement"
+        raise NotImplementedError('subclasses must implement')
 
     @classmethod
     def handle_checkout_needs_update(cls, tool, state, options, error):
-        raise NotImplementedError, "subclasses must implement"
+        raise NotImplementedError('subclasses must implement')
 
 
 class StepSequence(object):
