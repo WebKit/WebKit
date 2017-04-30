@@ -221,7 +221,7 @@ String resolveAndCreateReadWriteDirectoryForSandboxExtension(const String& path)
     NSString *nsPath = path;
 
     if (![[NSFileManager defaultManager] createDirectoryAtPath:nsPath withIntermediateDirectories:YES attributes:nil error:&error]) {
-        NSLog(@"could not create \"%@\", error %@", nsPath, error);
+        NSLog(@"could not create directory \"%@\" for future sandbox extension, error %@", nsPath, error);
         return { };
     }
 

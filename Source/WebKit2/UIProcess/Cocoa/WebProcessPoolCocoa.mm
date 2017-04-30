@@ -338,7 +338,7 @@ String WebProcessPool::networkingCachesDirectory() const
     NSError *error = nil;
     NSString* nsPath = path;
     if (![[NSFileManager defaultManager] createDirectoryAtPath:nsPath withIntermediateDirectories:YES attributes:nil error:&error]) {
-        NSLog(@"could not create \"%@\", error %@", nsPath, error);
+        NSLog(@"could not create networking caches directory \"%@\", error %@", nsPath, error);
         return String();
     }
 
@@ -357,7 +357,7 @@ String WebProcessPool::webContentCachesDirectory() const
     NSError *error = nil;
     NSString* nsPath = path;
     if (![[NSFileManager defaultManager] createDirectoryAtPath:nsPath withIntermediateDirectories:YES attributes:nil error:&error]) {
-        NSLog(@"could not create \"%@\", error %@", nsPath, error);
+        NSLog(@"could not create web content caches directory \"%@\", error %@", nsPath, error);
         return String();
     }
 

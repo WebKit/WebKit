@@ -1,3 +1,21 @@
+2017-04-30  Brady Eidson  <beidson@apple.com>
+
+        Regression (r215941) Unexpected logging causes perf tests to fail.
+        <rdar://problem/31907269> and https://bugs.webkit.org/show_bug.cgi?id=171482
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Shared/mac/SandboxExtensionMac.mm:
+        (WebKit::resolveAndCreateReadWriteDirectoryForSandboxExtension):
+
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::networkingCachesDirectory):
+        (WebKit::WebProcessPool::webContentCachesDirectory):
+
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::resolveDirectoriesIfNecessary): Only resolve the cookie storage directory
+          if a custom one has been set.
+
 2017-04-29  Youenn Fablet  <youenn@apple.com>
 
         Readd assertion removed accidentally in r215955
