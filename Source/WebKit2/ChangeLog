@@ -1,3 +1,13 @@
+2017-04-30  Brady Eidson  <beidson@apple.com>
+
+        Fix r215991
+        https://bugs.webkit.org/show_bug.cgi?id=171483
+
+        Unreviewed.
+
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::syncAllCookies):
+
 2017-04-30  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Replaces uses of [get…() alloc] with alloc…Instance()
