@@ -358,7 +358,7 @@ AVContentKeySession* CDMSessionAVContentKeySession::contentKeySession()
                 return nil;
         }
 
-        m_contentKeySession = adoptNS([[getAVContentKeySessionClass() alloc] initWithStorageDirectoryAtURL:[NSURL fileURLWithPath:storagePath]]);
+        m_contentKeySession = adoptNS([allocAVContentKeySessionInstance() initWithStorageDirectoryAtURL:[NSURL fileURLWithPath:storagePath]]);
         m_contentKeySession.get().delegate = m_contentKeySessionDelegate.get();
     }
 

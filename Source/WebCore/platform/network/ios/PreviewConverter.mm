@@ -48,12 +48,12 @@ static NSDictionary *optionsWithPassword(const String& password)
 }
 
 PreviewConverter::PreviewConverter(id delegate, const ResourceResponse& response, const String& password)
-    : m_platformConverter { adoptNS([[getQLPreviewConverterClass() alloc] initWithConnection:nil delegate:delegate response:response.nsURLResponse() options:optionsWithPassword(password)]) }
+    : m_platformConverter { adoptNS([allocQLPreviewConverterInstance() initWithConnection:nil delegate:delegate response:response.nsURLResponse() options:optionsWithPassword(password)]) }
 {
 }
 
 PreviewConverter::PreviewConverter(NSData *data, const String& uti, const String& password)
-    : m_platformConverter { adoptNS([[getQLPreviewConverterClass() alloc] initWithData:data name:nil uti:uti options:optionsWithPassword(password)]) }
+    : m_platformConverter { adoptNS([allocQLPreviewConverterInstance() initWithData:data name:nil uti:uti options:optionsWithPassword(password)]) }
 {
 }
 

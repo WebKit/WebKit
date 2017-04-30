@@ -94,8 +94,8 @@ AVOutputDeviceMenuControllerType *MediaPlaybackTargetPickerMac::devicePicker()
     if (!m_outputDeviceMenuController) {
         LOG(Media, "MediaPlaybackTargetPickerMac::devicePicker - allocating picker");
 
-        RetainPtr<AVOutputContextType> context = adoptNS([[getAVOutputContextClass() alloc] init]);
-        m_outputDeviceMenuController = adoptNS([[getAVOutputDeviceMenuControllerClass() alloc] initWithOutputContext:context.get()]);
+        RetainPtr<AVOutputContextType> context = adoptNS([allocAVOutputContextInstance() init]);
+        m_outputDeviceMenuController = adoptNS([allocAVOutputDeviceMenuControllerInstance() initWithOutputContext:context.get()]);
 
         [m_outputDeviceMenuController.get() addObserver:m_outputDeviceMenuControllerDelegate.get() forKeyPath:externalOutputDeviceAvailableKeyName options:NSKeyValueObservingOptionNew context:nullptr];
         [m_outputDeviceMenuController.get() addObserver:m_outputDeviceMenuControllerDelegate.get() forKeyPath:externalOutputDevicePickedKeyName options:NSKeyValueObservingOptionNew context:nullptr];

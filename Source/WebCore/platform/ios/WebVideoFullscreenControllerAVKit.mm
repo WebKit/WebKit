@@ -785,7 +785,7 @@ void WebVideoFullscreenControllerContext::setUpFullscreen(HTMLVideoElement& vide
         m_interface->setWebVideoFullscreenModel(this);
         m_interface->setWebVideoFullscreenChangeObserver(this);
 
-        m_videoFullscreenView = adoptNS([[getUIViewClass() alloc] init]);
+        m_videoFullscreenView = adoptNS([allocUIViewInstance() init]);
         
         m_interface->setupFullscreen(*m_videoFullscreenView.get(), videoElementClientRect, viewRef.get(), mode, allowsPictureInPicture);
     });

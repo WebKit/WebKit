@@ -60,7 +60,7 @@ SOFT_LINK(UIKit, UIAccessibilityPostNotification, void, (UIAccessibilityNotifica
         return nil;
 
     _popoverController = popoverController;
-    _tapGestureRecognizer = adoptNS([[getUITapGestureRecognizerClass() alloc] initWithTarget:self action:@selector(dismissPopover)]);
+    _tapGestureRecognizer = adoptNS([allocUITapGestureRecognizerInstance() initWithTarget:self action:@selector(dismissPopover)]);
     [[_popoverController view] addGestureRecognizer:_tapGestureRecognizer.get()];
 
     return self;
@@ -105,14 +105,14 @@ ValidationBubble::ValidationBubble(UIView* view, const String& message, const Se
     : m_view(view)
     , m_message(message)
 {
-    m_popoverController = adoptNS([[getUIViewControllerClass() alloc] init]);
+    m_popoverController = adoptNS([allocUIViewControllerInstance() init]);
     [m_popoverController setModalPresentationStyle:UIModalPresentationPopover];
 
-    RetainPtr<UIView> popoverView = adoptNS([[getUIViewClass() alloc] initWithFrame:CGRectZero]);
+    RetainPtr<UIView> popoverView = adoptNS([allocUIViewInstance() initWithFrame:CGRectZero]);
     [m_popoverController setView:popoverView.get()];
     m_tapRecognizer = adoptNS([[WebValidationBubbleTapRecognizer alloc] initWithPopoverController:m_popoverController.get()]);
 
-    RetainPtr<UILabel> label = adoptNS([[getUILabelClass() alloc] initWithFrame:CGRectZero]);
+    RetainPtr<UILabel> label = adoptNS([allocUILabelInstance() initWithFrame:CGRectZero]);
     [label setText:message];
     [label setFont:[getUIFontClass() preferredFontForTextStyle:getUIFontTextStyleCallout()]];
     m_fontSize = [[label font] pointSize];

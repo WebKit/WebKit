@@ -1595,7 +1595,7 @@ static BOOL getAttachmentProgress(const RenderAttachment& attachment, float& pro
 
 static RetainPtr<UIImage> iconForAttachment(const RenderAttachment& attachment, FloatSize& size)
 {
-    auto documentInteractionController = adoptNS([[getUIDocumentInteractionControllerClass() alloc] init]);
+    auto documentInteractionController = adoptNS([allocUIDocumentInteractionControllerInstance() init]);
 
     String fileName;
     if (File* file = attachment.attachmentElement().file())
