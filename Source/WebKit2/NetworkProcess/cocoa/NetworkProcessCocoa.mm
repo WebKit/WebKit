@@ -210,14 +210,14 @@ void NetworkProcess::setCookieStoragePartitioningEnabled(bool enabled)
 
 void NetworkProcess::syncAllCookies()
 {
+// FIXME: Figure out the non-prefixed version of this on newer SDKs
+
 #if !PLATFORM(IOS)
 #if (__MAC_OS_X_VERSION_MIN_REQUIRED < 101300)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
     _CFHTTPCookieStorageFlushCookieStores();
 #pragma clang diagnostic pop
-#else
-    CFHTTPCookieStorageFlushCookieStores();
 #endif
 #endif
 }
