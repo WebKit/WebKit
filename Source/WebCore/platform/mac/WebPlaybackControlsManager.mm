@@ -55,6 +55,7 @@ SOFT_LINK_CLASS_OPTIONAL(AVKit, AVFunctionBarMediaSelectionOption)
 @synthesize canTogglePlayback=_canTogglePlayback;
 @synthesize allowsPictureInPicturePlayback;
 @synthesize pictureInPictureActive;
+@synthesize canTogglePictureInPicture;
 
 - (void)dealloc
 {
@@ -336,11 +337,6 @@ static RetainPtr<NSMutableArray> mediaSelectionOptions(const Vector<MediaSelecti
 }
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
-
-- (BOOL)canTogglePictureInPicture
-{
-    return [self allowsPictureInPicturePlayback];
-}
 
 - (void)togglePictureInPicture
 {

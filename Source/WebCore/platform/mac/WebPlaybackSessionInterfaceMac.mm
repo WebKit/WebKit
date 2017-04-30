@@ -177,6 +177,15 @@ void WebPlaybackSessionInterfaceMac::legibleMediaSelectionIndexChanged(uint64_t 
 #endif
 }
 
+void WebPlaybackSessionInterfaceMac::externalPlaybackChanged(bool enabled, WebPlaybackSessionModel::ExternalPlaybackTargetType, const String&)
+{
+#if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
+    [playBackControlsManager() setCanTogglePictureInPicture:!enabled];
+#else
+    UNUSED_PARAM(enabled);
+#endif
+}
+
 void WebPlaybackSessionInterfaceMac::invalidate()
 {
     if (!m_playbackSessionModel)

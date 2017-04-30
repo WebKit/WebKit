@@ -67,6 +67,7 @@ WEBCORE_EXPORT
 @property (nonatomic) float rate;
 @property BOOL allowsPictureInPicturePlayback;
 @property (getter=isPictureInPictureActive) BOOL pictureInPictureActive;
+@property BOOL canTogglePictureInPicture;
 
 - (AVTouchBarMediaSelectionOption *)currentAudioTouchBarMediaSelectionOption;
 - (void)setCurrentAudioTouchBarMediaSelectionOption:(AVTouchBarMediaSelectionOption *)option;

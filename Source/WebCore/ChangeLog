@@ -1,3 +1,20 @@
+2017-04-29  Andy Estes  <aestes@apple.com>
+
+        [macOS] Picture-in-picture should be disabled in WebPlaybackControlsManager during external media playback
+        https://bugs.webkit.org/show_bug.cgi?id=171468
+        <rdar://problem/31900349>
+
+        Reviewed by Eric Carlson.
+
+        * platform/mac/WebPlaybackControlsManager.h: Declared canTogglePictureInPicture as a
+        readwrite property.
+        * platform/mac/WebPlaybackControlsManager.mm: Synthesize canTogglePictureInPicture.
+        (-[WebPlaybackControlsManager canTogglePictureInPicture]): Deleted.
+        * platform/mac/WebPlaybackSessionInterfaceMac.h:
+        * platform/mac/WebPlaybackSessionInterfaceMac.mm:
+        (WebCore::WebPlaybackSessionInterfaceMac::externalPlaybackChanged): Called
+        -[WebPlaybackControlsManager setCanTogglePictureInPicture:].
+
 2017-04-29  Simon Fraser  <simon.fraser@apple.com>
 
         Fix tests broken by r215964.
