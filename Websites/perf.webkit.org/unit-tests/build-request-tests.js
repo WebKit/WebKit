@@ -23,11 +23,11 @@ function sampleBuildRequestData()
         }],
         "commitSets": [{
             "id": "4255",
-            "commits": ["87832", "93116"],
+            "revisionItems": [{"commit": "87832"}, {"commit": "93116"}],
             "customRoots": [],
         }, {
             "id": "4256",
-            "commits": ["87832", "96336"],
+            "revisionItems": [{"commit": "87832"}, {"commit": "96336"}],
             "customRoots": [],
         }],
         "commits": [{

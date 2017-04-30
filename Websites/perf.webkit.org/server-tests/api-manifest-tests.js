@@ -341,7 +341,7 @@ describe('/api/manifest', function () {
 
             const osWebkit1 = Repository.findById(101);
             assert.equal(osWebkit1.name(), 'WebKit');
-            assert.equal(osWebkit1.owner(), 9);
+            assert.equal(osWebkit1.ownerId(), 9);
             assert.equal(osWebkit1.urlForRevision(123), 'https://trac.webkit.org/123');
 
             const macos = Repository.findById(9);

@@ -35,9 +35,9 @@ describe('/api/build-requests', function () {
 
             assert.equal(content['commitSets'].length, 2);
             assert.equal(content['commitSets'][0].id, 401);
-            assert.deepEqual(content['commitSets'][0].commits, ['87832', '93116']);
+            assert.deepEqual(content['commitSets'][0].revisionItems, [{commit: '87832', patch: null}, {commit: '93116', patch: null}]);
             assert.equal(content['commitSets'][1].id, 402);
-            assert.deepEqual(content['commitSets'][1].commits, ['87832', '96336']);
+            assert.deepEqual(content['commitSets'][1].revisionItems, [{commit: '87832', patch: null}, {commit: '96336', patch: null}]);
 
             assert.equal(content['commits'].length, 3);
             assert.equal(content['commits'][0].id, 87832);
@@ -89,9 +89,11 @@ describe('/api/build-requests', function () {
 
             assert.equal(content['commitSets'].length, 2);
             assert.equal(content['commitSets'][0].id, 401);
-            assert.deepEqual(content['commitSets'][0].commits, ['87832', '93116']);
+            assert.deepEqual(content['commitSets'][0].revisionItems,
+                [{commit: '87832', patch: null}, {commit: '93116', patch: null}]);
             assert.equal(content['commitSets'][1].id, 402);
-            assert.deepEqual(content['commitSets'][1].commits, ['87832', '96336']);
+            assert.deepEqual(content['commitSets'][1].revisionItems,
+                [{commit: '87832', patch: null}, {commit: '96336', patch: null}]);
 
             assert.equal(content['commits'].length, 3);
             assert.equal(content['commits'][0].id, 87832);

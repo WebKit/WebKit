@@ -45,7 +45,13 @@ class BuildbotTriggerable {
             'triggerable': this._name,
             'configurations': Array.from(map.values()),
             'repositoryGroups': Object.keys(repositoryGroups).map((groupName) => {
-                return {name: groupName, repositories: repositoryGroups[groupName].repositories};
+                const group = repositoryGroups[groupName];
+                return {
+                    name: groupName,
+                    description: group.description,
+                    acceptsRoots: group.acceptsRoots,
+                    repositories: group.repositoryList,
+                };
             })});
     }
 

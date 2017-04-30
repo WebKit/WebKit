@@ -1,3 +1,212 @@
+2017-04-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add the support for scheduling a A/B testing with a patch.
+        https://bugs.webkit.org/show_bug.cgi?id=171209
+
+        Reviewed by Chris Dumez.
+
+        Added the support for creating a custom test group with a patch applied.
+
+        First, each repository in a repository group has a boolean indicating whether a given repository can have
+        a patch applied or not. When any configuration in a test group contains a patch, we create build requests
+        without a test specified in order to "build" those patches. These build requests have negative order numbers
+        to differentiate them from regular build requests. We can't simply build ones with patches since there could
+        be differences in SDK, build options, etc... when patches are applied.
+
+        The JSON format for commit sets returned by /api/build-requests have been changed from using an array of
+        commit IDs to an array of dictionaries indicate commit and acceptsPatch boolean. /api/update-triggerable now
+        uses a dictionary with two keys: repository and acceptsPatch to specify a set of repositories associated with
+        a repository group, and /privileged-api-create-test-group uses a dictionary with two keys: revision and patch
+        instead of a revision string to specify commit sets.
+
+        Furthermore, the syncing script's configuration have been updated to use a dictionary of repository names to
+        an options dictionary instead of an array of repositories names. For now, the only supported option is
+        acceptsPatch but will be extended when we add the support for rolling back system components.
+        e.g. {"WebKit": {acceptsPatch: true}, "macOS": {}} instead of ["WebKit", "macOS"]
+
+        On the UI side, InstantFileUploader has been changed to accept only one file by default, and added a new method
+        allowMultipleFiles() to allow multiple files to be selected for custom roots. Also replaced the input element
+        with type=file by a button with a custom label to show labels such as "Apply a patch" or "Add a new root"
+        instead of the generic label like "choose a file".
+
+
+        * init-database.sql: Added trigrepo_accepts_patch to triggerable_repositories to indicate whether a given
+        repository can have a patch applied or not. Made request_test optional in build_requests for when a build
+        request is created to build patches. Such a build request have a negative request_order. Updated the related
+        constraints accordingly.
+
+        * public/admin/triggerables.php: Added the support for updating whether a given repository can have a patch
+        applied in each repository group. Only show the repositories in the repository group for this purpose since
+        there is no way to accept a patch on a repository without it being a part of the group.
+        (generate_repository_form): Now takes the markup for checkboxes instead of generating one itself.
+        (generate_repository_checkboxes): Now takes an array of repositories to generate checkboxes. The checkbox is
+        shown when the repository ID exists as a key in this array, and is checked when its value is true. The new
+        capability to skip repositories not in the array is used to hide repositories not associated with the group
+        in the list of checkboxes to indicate a repository accepts a patch.
+
+        * public/api/update-triggerable.php:
+        (main): Now updates the description and acceptsRoots states of each repository group, and sets acceptsPatch
+        boolean for each repository in the group if set in the update.
+        (validate_repository_groups): Use a reference to $repository_groups in order to set repository_id_list, which
+        contains an array of repository IDs to find the existing repository group that matches the set via
+        RepositoryGroupFinder's find_by_repositories. Also added a various validations for acceptsRoots, a dictionary
+        specifying repository and acceptsPatch.
+
+        * public/include/build-requests-fetcher.php:
+        (BuildRequestsFetcher::fetch_commits_for_set_if_needed): Instead of returning an array of commit IDs as
+        "commits", it now returns an array of dictionaries with "commit" and "patch" keys specifying the commit ID
+        and the patch file's ID respectively as "revisionItems". 
+        (BuildRequestsFetcher::add_uploaded_file): Added. Extracted from fetch_commits_for_set_if_needed. Used to
+        add either a patch file or a custom root file in the list of uploaded files in the result.
+
+        * public/include/manifest-generator.php:
+        (fetch_triggerables): Each element in repository group's "repositories" field is now an array of dictionaries
+        with "repository" and "acceptsPatch" as keys.
+
+        * public/include/repository-group-finder.php:
+        (RepositoryGroupFinder::__construct): Added a map for boolean indicating whether a given repository group
+        allows a patch on a repository. Used in /privileged-api/create-test-group.
+        (RepositoryGroupFinder::accepts_patch): Added.
+        (RepositoryGroupFinder::populate_map): Build up the map for acceptsPatch boolean per repository per group.
+
+        * public/privileged-api/create-test-group.php:
+        (main): Fixed a bug that we were not explicitly checking for a duplicate test group name (with a test). Create
+        build requests to "build" patches if there is any patch file specified.
+        (commit_sets_from_revision_sets): Updated to take a dictionary with "revision" and "patch" as keys to specify
+        a revision and a patch if any instead of just a revision string for each repository. Also validate that each
+        repository is allowed to have a patch once the repository group has been found for the set of repositories.
+        (ensure_commit_sets):
+
+        * public/v3/components/custom-analysis-task-configurator.js:
+        (CustomAnalysisTaskConfigurator): Added _patchUploaders as an instance variable, which is a dictionary of
+        configuration names to a map of InstantFileUploader's used to upload a patch. Also renamed _fileUploaders to
+        _customRootUploaders for clarity.
+        (CustomAnalysisTaskConfigurator.prototype.setCommitSets):
+        (CustomAnalysisTaskConfigurator.prototype.didConstructShadowTree.createRootUploader): Added.
+        (CustomAnalysisTaskConfigurator.prototype.didConstructShadowTree):
+        (CustomAnalysisTaskConfigurator.prototype._ensurePatchUploader): Added. Creates an instant file uploader for
+        patches. We only allow a single patch per repository.
+        (CustomAnalysisTaskConfigurator.prototype._computeCommitSet): Include a patch in the commit set as needed.
+        (CustomAnalysisTaskConfigurator.prototype._buildRevisionTable): Show the patch file uploader for repositories
+        which can have patches in the current repository group.
+        (CustomAnalysisTaskConfigurator.cssTemplate): Show borders between every rows instead of just between tbody's
+        now that each row can have a patch file uploader.
+
+        * public/v3/components/instant-file-uploader.js:
+        (InstantFileUploader): Added _fileInput and _allowMultipleFiles as instance variables. We now show a button
+        in the UI instead of an input with type=file. _fileInput is a hidden input with type=file used inside a click
+        event of the button to let the user pick a file.
+        (InstantFileUploader.prototype.allowMultipleFiles): Added. Allows this instance to accept multiple files.
+        (InstantFileUploader.prototype.didConstructShadowTree): Synthetically click on the hidden input element when
+        the newly added button element is clicked to open the browser's file picker.
+        (InstantFileUploader.prototype.render): Hide the button to add a file if this instance can only select one file
+        and there is already some file being uploaded in this instance.
+        (InstantFileUploader.htmlTemplate): Replaced the input element with type=file with a button. Its label comes
+        from the default slot content.
+
+        * public/v3/models/build-request.js:
+        (BuildRequest): Made the test optional.
+        (BuildRequest.prototype.isBuild): Returns true if this is a build request for building a patch.
+        (BuildRequest.prototype.isTest): Returns true if this is a build request for running tests.
+        (BuildRequest.constructBuildRequestsFromData): Create each commit log here instead of relying on CommitSet's
+        constructor to construct its commit logs. Also updated per the replacement of an array of commit IDs by
+        an array of dictionaries with commit and patch properties.
+
+        * public/v3/models/commit-set.js:
+        (CommitSet): Made _repositoryToCommitMap a real Map object. Also added _repositoryToPatchMap. Also got rid of
+        the code to instantiate commit logs since that's now done in BuildRequest.constructBuildRequestsFromData.
+        (CommitSet.prototype.commitForRepository):
+        (CommitSet.prototype.revisionForRepository):
+        (CommitSet.prototype.patchForRepository): Added.
+        (CommitSet.prototype.latestCommitTime): Modernized the code.
+        (CommitSet.prototype.equals): Modernized the code. Also added the check for patches.
+        (MeasurementCommitSet): Updated per the change to make _repositoryToCommitMap a real Map.
+        (CustomCommitSet.prototype.setRevisionForRepository):
+        (CustomCommitSet.prototype.equals): Added the check for patches.
+        (CustomCommitSet.prototype.revisionForRepository):
+        (CustomCommitSet.prototype.patchForRepository): Added.
+
+        * public/v3/models/manifest.js:
+        (Manifest._didFetchManifest): Updated per the replacement of an array of commit IDs by an array of dictionaries
+        with commit and patch properties.
+
+        * public/v3/models/repository.js:
+        (Repository.prototype.ownerId): Renamed from owner for clarity.
+
+        * public/v3/models/test-group.js:
+        (TestGroup): Modernized the code by using LazilyEvaluatedFunction. Removed _requestsAreInOrder since it's not
+        necessary anymore with LazilyEvaluatedFunction.
+        (TestGroup.prototype.addBuildRequest):
+        (TestGroup.prototype.test): Use the last build request's test since the first few requests could be requests to
+        build patches.
+        (TestGroup.prototype.platform): Ditto.
+        (TestGroup.prototype._lastRequest): Added.
+        (TestGroup.prototype._orderedBuildRequests): Added.
+        (TestGroup.prototype.repetitionCount): Only count the build requests for testing (skipping any requests to
+        build patches).
+        (TestGroup.prototype.requestedCommitSets): Simply call _computeRequestedCommitSetsLazily.
+        (TestGroup.prototype._computeRequestedCommitSets): Extracted from requestedCommitSets.
+        (TestGroup.prototype.requestsForCommitSet):
+        (TestGroup.prototype.labelForCommitSet): Rewritten. Just compute the label here instead of relying on
+        _commitSetToLabel since requestedSets is always of the length two at the moment.
+        (TestGroup._revisionSetsFromCommitSets): Specify both the revision and the patch in the revision set.        
+
+        * public/v3/models/triggerable.js:
+        (TriggerableRepositoryGroup): Added _patchAcceptingSet as an instance variable. Use
+        sortByNamePreferringOnesWithURL to sort repositories instead of simple sortByName.
+        (TriggerableRepositoryGroup.prototype.accepts): Added checks for the custom roots and patches.
+        (TriggerableRepositoryGroup.prototype.acceptsPatchForRepository): Added.
+
+        * server-tests/api-build-requests-tests.js: Updated the test cases per the replacement of an array of commit
+        IDs by an array of dictionaries with commit and patch properties.
+
+        * server-tests/api-manifest-tests.js: Updated the test case per the name of Repository's owner to ownerId.
+
+        * server-tests/api-update-triggerable.js: Updated the test case per the name of Repository's owner to ownerId,
+        and added a test case for updating whether a given repository group allows custom roots as well as patches
+        on repositories via /api/update-triggerable. 
+        (.updateWithOSXRepositoryGroup): Updated the sample syncing script configuration per the format change.
+        (.refetchManifest): Added.
+
+        * server-tests/privileged-api-create-test-group-tests.js: Updated per the syncing script configuration format
+        change. Also added a test for creating a test group with a duplicate name, which is expected to fail with 
+        DuplicateTestGroupName, and creating a test group with a patch both when it's allowed and when it's not allowed
+        in the matching repository group.
+        (.addTriggerableAndCreateTask): Updated per the format change.
+
+        * server-tests/resources/mock-data.js:
+        (MockData.addEmptyTriggerable): Added a metric and its configuration to make it appear in the manifest file.
+        The new test case in api-update-triggerable.js requires this.
+        (MockData.mockTestSyncConfigWithSingleBuilder): Updated per the syncing script configuration format change.
+        (MockData.mockTestSyncConfigWithTwoBuilders): Ditto.
+
+        * server-tests/tools-buildbot-triggerable-tests.js: Removed the useless assertions about test configurations,
+        and added assertions about custom roots and patches in the test case for updateTriggerables.
+
+        * tools/js/buildbot-syncer.js:
+        (BuildbotSyncer._parseRepositoryGroup): Made each assertion explicitly refer to the specific repository group
+        to make it more user friendly. Now each repository group uses a dictionary of repository names to its options
+        in the syncing script configurations. When parsed, we insert it as an array of dictionaries with repository ID
+        and acceptsPatch boolean specified separately since this is the format /api/update-triggerable expects.
+
+        * tools/js/buildbot-triggerable.js:
+        (BuildbotTriggerable.prototype.updateTriggerable):
+
+        * unit-tests/build-request-tests.js:
+        (sampleBuildRequestData): Updated per the commit sets format change in /api/build-requests.
+
+        * unit-tests/buildbot-syncer-tests.js: Updated the existing tests per various format changes and added a couple
+        of new test cases for the syncing script's configuration validation.
+        (sampleiOSConfig):
+        (smallConfiguration):
+        (createSampleBuildRequest):
+
+        * unit-tests/resources/mock-v3-models.js:
+        (MockModels.inject): Updated per the repository group format change.
+
+        * unit-tests/test-groups-tests.js:
+        (sampleTestGroup): Updated per the commit sets format change in /api/build-requests. 
+
 2017-04-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         Rename commit_set_relationships to commit_set_items

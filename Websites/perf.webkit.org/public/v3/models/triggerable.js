@@ -59,19 +59,31 @@ class TriggerableRepositoryGroup extends LabeledObject {
         super(id, object);
         this._description = object.description;
         this._acceptsCustomRoots = !!object.acceptsCustomRoots;
-        this._repositories = Repository.sortByName(object.repositories);
+        this._repositories = Repository.sortByNamePreferringOnesWithURL(object.repositories.map((item) => item.repository));
+        this._patchAcceptingSet = new Set(object.repositories.filter((item) => item.acceptsPatch).map((item) => item.repository));
     }
 
     accepts(commitSet)
     {
-        const commitSetRepositories = Repository.sortByName(commitSet.repositories());
+        // FIXME: Add a check for patch.
+        const commitSetRepositories = Repository.sortByNamePreferringOnesWithURL(commitSet.repositories());
         if (this._repositories.length != commitSetRepositories.length)
             return false;
         for (let i = 0; i < this._repositories.length; i++) {
-            if (this._repositories[i] != commitSetRepositories[i])
+            const currentRepository = this._repositories[i];
+            if (currentRepository != commitSetRepositories[i])
+                return false;
+            if (commitSet.patchForRepository(currentRepository) && !this._patchAcceptingSet.has(currentRepository))
                 return false;
         }
+        if (commitSet.customRoots().length && !this._acceptsCustomRoots)
+            return false;
         return true;
+    }
+
+    acceptsPatchForRepository(repository)
+    {
+        return this._patchAcceptingSet.has(repository);
     }
 
     description() { return this._description || this.name(); }

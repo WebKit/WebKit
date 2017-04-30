@@ -26,7 +26,7 @@ function main($post_data)
 
     $finder = new RepositoryGroupFinder($db, $triggerable_id);
     foreach ($repository_groups as &$group)
-        $group['existingGroup'] = $finder->find_by_repositories($group['repositories']);
+        $group['existingGroup'] = $finder->find_by_repositories($group['repository_id_list']);
 
     $db->begin_transaction();
     if ($db->query_and_get_affected_rows('DELETE FROM triggerable_configurations WHERE trigconfig_triggerable = $1', array($triggerable_id)) === false) {
@@ -44,16 +44,19 @@ function main($post_data)
 
     foreach ($repository_groups as &$group) {
         $group_id = $group['existingGroup'];
+        $group_info = array(
+            'triggerable' => $triggerable_id,
+            'name' => $group['name'],
+            'description' => array_get($group, 'description'),
+            'accepts_roots' => Database::to_database_boolean(array_get($group, 'acceptsRoots', FALSE)));
         if ($group_id) {
-            $group_info = array('name' => $group['name'], 'description' => array_get($group, 'description'));
             if (!$db->update_row('triggerable_repository_groups', 'repositorygroup', array('id' => $group_id), $group_info)) {
                 $db->rollback_transaction();
                 exit_with_error('FailedToInsertRepositoryGroup', array('repositoryGroup' => $group));
             }
         } else {
             $group_id = $db->update_or_insert_row('triggerable_repository_groups', 'repositorygroup',
-                array('triggerable' => $triggerable_id, 'name' => $group['name']),
-                array('triggerable' => $triggerable_id, 'name' => $group['name'], 'description' => array_get($group, 'description')));
+                array('triggerable' => $triggerable_id, 'name' => $group['name']), $group_info);
             if (!$group_id) {
                 $db->rollback_transaction();
                 exit_with_error('FailedToInsertRepositoryGroup', array('repositoryGroup' => $group));
@@ -63,8 +66,11 @@ function main($post_data)
             $db->rollback_transaction();
             exit_with_error('FailedToDisassociateRepositories', array('repositoryGroup' => $group));
         }
-        foreach ($group['repositories'] as $repository_id) {
-            if (!$db->insert_row('triggerable_repositories', 'trigrepo', array('group' => $group_id, 'repository' => $repository_id), null)) {
+        foreach ($group['repositories'] as $repository_data) {
+            $row = array('group' => $group_id,
+                'repository' => $repository_data['repository'],
+                'accepts_patch' => Database::to_database_boolean(array_get($repository_data, 'acceptsPatch', FALSE)));
+            if (!$db->insert_row('triggerable_repositories', 'trigrepo', $row, null)) {
                 $db->rollback_transaction();
                 exit_with_error('FailedToAssociateRepository', array('repositoryGroup' => $group, 'repository' => $repository_id));
             }
@@ -86,7 +92,7 @@ function validate_configurations($db, $configurations)
     }
 }
 
-function validate_repository_groups($db, $repository_groups)
+function validate_repository_groups($db, &$repository_groups)
 {
     if (!is_array($repository_groups))
         exit_with_error('InvalidRepositoryGroups', array('repositoryGroups' => $repository_groups));
@@ -99,13 +105,31 @@ function validate_repository_groups($db, $repository_groups)
     foreach ($repository_groups as &$group) {
         if (!is_array($group) || !array_key_exists('name', $group) || !array_key_exists('repositories', $group) || !is_array($group['repositories']))
             exit_with_error('InvalidRepositoryGroup', array('repositoryGroup' => $group));
+
+        $accepts_roots = array_get($group, 'acceptsRoots', FALSE);
+        if ($accepts_roots !== TRUE && $accepts_roots !== FALSE)
+            exit_with_error('InvalidAcceptsRoots', array('repositoryGroup' => $group, 'acceptsRoots' => accepts_roots));
+
         $repository_list = $group['repositories'];
         $group_repository_list = array();
-        foreach ($repository_list as $repository_id) {
-            if (!array_key_exists($repository_id, $top_level_repository_ids) || array_key_exists($repository_id, $group_repository_list))
-                exit_with_error('InvalidRepository', array('repositoryGroup' => $group, 'repository' => $repository_id));
-            $group_repository_list[$repository_id] = true;
+        foreach ($repository_list as $repository_data) {
+            if (!$repository_data || !is_array($repository_data))
+                exit_with_error('InvalidRepositoryData', array('repositoryGroup' => $group, 'data' => $repository_data));
+
+            $id = array_get($repository_data, 'repository');
+            if (!$id || !is_numeric($id) || !array_key_exists($id, $top_level_repository_ids))
+                exit_with_error('InvalidRepository', array('repositoryGroup' => $group, 'repository' => $id));
+
+            if (array_key_exists($id, $group_repository_list))
+                exit_with_error('DuplicateRepository', array('repositoryGroup' => $group, 'repository' => $id));
+
+            $accepts_patch = array_get($repository_data, 'acceptsPatch', FALSE);
+            if ($accepts_patch !== TRUE && $accepts_patch !== FALSE)
+                exit_with_error('InvalidRepositoryData', array('repositoryGroup' => $group, 'repository' => $id));
+
+            $group_repository_list[$id] = true;
         }
+        $group['repository_id_list'] = array_keys($group_repository_list);
     }
 }
 

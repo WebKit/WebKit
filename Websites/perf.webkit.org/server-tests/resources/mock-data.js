@@ -73,6 +73,8 @@ MockData = {
             db.insert('repositories', {id: this.gitWebkitRepositoryId(), name: 'Git-WebKit'}),
             db.insert('platforms', {id: MockData.somePlatformId(), name: 'some platform'}),
             db.insert('tests', {id: MockData.someTestId(), name: 'some test'}),
+            db.insert('test_metrics', {id: 5300, test: MockData.someTestId(), name: 'some metric'}),
+            db.insert('test_configurations', {id: 5400, metric: 5300, platform: MockData.somePlatformId(), type: 'current'}),
         ]);
     },
     addMockTestGroupWithGitWebKit(db)
@@ -121,7 +123,7 @@ MockData = {
             'buildRequestArgument': 'build-request-id',
             'repositoryGroups': {
                 'webkit-svn': {
-                    'repositories': ['WebKit', 'macOS'],
+                    'repositories': {'WebKit': {}, 'macOS': {}},
                     'properties': {
                         'os': '<macOS>',
                         'wk': '<WebKit>',
@@ -145,7 +147,7 @@ MockData = {
             'buildRequestArgument': 'build-request-id',
             'repositoryGroups': {
                 'webkit-svn': {
-                    'repositories': ['WebKit', 'macOS'],
+                    'repositories': {'WebKit': {}, 'macOS': {}},
                     'properties': {
                         'os': '<macOS>',
                         'wk': '<WebKit>',

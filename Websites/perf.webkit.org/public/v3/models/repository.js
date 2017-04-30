@@ -38,7 +38,7 @@ class Repository extends LabeledObject {
         return (this._blameUrl || '').replace(/\$1/g, from).replace(/\$2/g, to);
     }
 
-    owner()
+    ownerId()
     {
         return this._ownerId;
     }

@@ -45,15 +45,15 @@ var MockModels = {
 
             MockModels.osRepositoryGroup = new TriggerableRepositoryGroup(31, {
                 name: 'ios',
-                repositories: [MockModels.ios]
+                repositories: [{repository: MockModels.ios}]
             });
             MockModels.svnRepositoryGroup = new TriggerableRepositoryGroup(32, {
                 name: 'ios-svn-webkit',
-                repositories: [MockModels.ios, MockModels.webkit, MockModels.sharedRepository]
+                repositories: [{repository: MockModels.ios}, {repository: MockModels.webkit}, {repository: MockModels.sharedRepository}]
             });
             MockModels.gitRepositoryGroup = new TriggerableRepositoryGroup(33, {
                 name: 'ios-git-webkit',
-                repositories: [MockModels.ios, MockModels.webkitGit, MockModels.sharedRepository]
+                repositories: [{repository: MockModels.ios}, {repository: MockModels.webkitGit}, {repository: MockModels.sharedRepository}]
             });
             MockModels.triggerable = new Triggerable(3, {name: 'build-webkit',
                 repositoryGroups: [MockModels.osRepositoryGroup, MockModels.svnRepositoryGroup, MockModels.gitRepositoryGroup],

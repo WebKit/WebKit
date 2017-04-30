@@ -2,6 +2,8 @@ class InstantFileUploader extends ComponentBase {
     constructor()
     {
         super('instant-file-uploader');
+        this._fileInput = null;
+        this._allowMultipleFiles = false;
         this._uploadedFiles = [];
         this._preuploadFiles = [];
         this._uploadProgress = new WeakMap;
@@ -14,6 +16,12 @@ class InstantFileUploader extends ComponentBase {
     hasFileToUpload() { return !!this._preuploadFiles.length; }
     uploadedFiles() { return this._uploadedFiles; }
 
+    allowMultipleFiles()
+    {
+        this._allowMultipleFiles = true;
+        this.enqueueToRender();
+    }
+
     addUploadedFile(uploadedFile)
     {
         console.assert(uploadedFile instanceof UploadedFile);
@@ -25,8 +33,13 @@ class InstantFileUploader extends ComponentBase {
 
     didConstructShadowTree()
     {
-        const input = this.content('file-input');
-        input.onchange = () => this._didFileInputChange(input);
+        this.content('file-adder').onclick = () => {
+            inputElement.click();
+        }
+        const inputElement = document.createElement('input');
+        inputElement.type = 'file';
+        inputElement.onchange = () => this._didFileInputChange(inputElement);
+        this._fileInput = inputElement;
     }
 
     render()
@@ -34,6 +47,8 @@ class InstantFileUploader extends ComponentBase {
         this._renderUploadedFilesLazily.evaluate(...this._uploadedFiles);
         const uploadStatusElements = this._renderPreuploadFilesLazily.evaluate(...this._preuploadFiles);
         this._updateUploadStatus(uploadStatusElements);
+        const fileCount = this._uploadedFiles.length + this._preuploadFiles.length;
+        this.content('file-adder').style.display = this._allowMultipleFiles || !fileCount ? null : 'none';
     }
 
     _renderUploadedFiles(...uploadedFiles)
@@ -167,7 +182,7 @@ class InstantFileUploader extends ComponentBase {
     {
         return `<ul id="uploaded-files"></ul>
             <ul id="preupload-files"></ul>
-            <input id="file-input" type="file" multiple="false">`;
+            <button id="file-adder"><slot>Add a new file</slot></button>`;
     }
 
     static cssTemplate()

@@ -94,32 +94,31 @@ class BuildRequestsFetcher {
         if (array_key_exists($commit_set_id, $this->commit_sets_by_id))
             return;
 
-        $commit_rows = $this->db->query_and_fetch_all('SELECT *
+        $commit_set_items = $this->db->query_and_fetch_all('SELECT *
             FROM commit_set_items LEFT OUTER JOIN  commits ON commitset_commit = commit_id
                 LEFT OUTER JOIN repositories ON repository_id = commit_repository
                 WHERE commitset_set = $1', array($commit_set_id));
 
-        $commit_ids = array();
         $custom_roots = array();
-
-        foreach ($commit_rows as $row) {
+        $revision_items = array();
+        foreach ($commit_set_items as $row) {
             $repository_id = $resolve_ids ? $row['repository_name'] : $row['repository_id'];
             $revision = $row['commit_revision'];
             $commit_time = $row['commit_time'];
 
             $root_file_id = $row['commitset_root_file'];
-            if ($root_file_id) {
-                if (!array_key_exists($root_file_id, $this->uploaded_files_by_id)) {
-                    $uploaded_file_row = $this->db->select_first_row('uploaded_files', 'file', array('id' => $root_file_id));
-                    array_push($this->uploaded_files, format_uploaded_file($uploaded_file_row));
-                }
+            $commit_id = $row['commitset_commit'];
+            if ($root_file_id && !$commit_id) {
+                $this->add_uploaded_file($root_file_id);
                 array_push($custom_roots, $root_file_id);
                 continue;
             }
 
-            array_push($commit_ids, $row['commit_id']);
+            $patch_file_id = $row['commitset_patch_file'];
+            if ($patch_file_id)
+                $this->add_uploaded_file($patch_file_id);
+            array_push($revision_items, array('commit' => $row['commit_id'], 'patch' => $patch_file_id));
 
-            $commit_id = $row['commit_id'];
             if (array_key_exists($commit_id, $this->commits_by_id))
                 continue;
 
@@ -134,7 +133,15 @@ class BuildRequestsFetcher {
 
         $this->commit_sets_by_id[$commit_set_id] = TRUE;
 
-        array_push($this->commit_sets, array('id' => $commit_set_id, 'commits' => $commit_ids, 'customRoots' => $custom_roots));
+        array_push($this->commit_sets, array('id' => $commit_set_id, 'revisionItems' => $revision_items, 'customRoots' => $custom_roots));
+    }
+
+    private function add_uploaded_file($root_file_id)
+    {
+        if (!array_key_exists($root_file_id, $this->uploaded_files_by_id)) {
+            $uploaded_file_row = $this->db->select_first_row('uploaded_files', 'file', array('id' => $root_file_id));
+            array_push($this->uploaded_files, format_uploaded_file($uploaded_file_row));
+        }
     }
 }
 

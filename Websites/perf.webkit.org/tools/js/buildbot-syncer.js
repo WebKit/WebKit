@@ -291,18 +291,28 @@ class BuildbotSyncer {
 
     static _parseRepositoryGroup(name, group)
     {
-        assert(Array.isArray(group.repositories), 'Each repository group must specify a list of repositories');
-        assert(group.repositories.length, 'Each repository group must specify a list of repositories');
-        assert(!('description' in group) || typeof(group['description']) == 'string', 'The description of a repository group must be a string');
-        assert.equal(typeof(group.properties), 'object', 'Each repository group must specify a dictionary of properties');
+        assert.equal(typeof(group.repositories), 'object',
+            `Repository group "${name}" does not specify a dictionary of repositories`);
+        assert(!('description' in group) || typeof(group['description']) == 'string',
+            `Repository group "${name}" have an invalid description`);
+        assert.equal(typeof(group.properties), 'object', `Repository group "${name}" specifies an invalid dictionary of properties`);
+        assert([undefined, true, false].includes(group.acceptsRoots),
+            `Repository group "${name}" contains invalid acceptsRoots value: ${group.acceptsRoots}`);
 
         const repositoryByName = {};
-        const repositories = group.repositories.map((repositoryName) => {
+        const parsedRepositoryList = [];
+        for (const repositoryName in group.repositories) {
+            const options = group.repositories[repositoryName];
             const repository = Repository.findTopLevelByName(repositoryName);
             assert(repository, `"${repositoryName}" is not a valid repository name`);
             repositoryByName[repositoryName] = repository;
-            return repository;
-        });
+            assert.equal(typeof(options), 'object', `"${repositoryName}" does not specify a valid option`);
+            assert([undefined, true, false].includes(options.acceptsPatch),
+                `"${repositoryName}" contains invalid acceptsPatch value: ${options.acceptsPatch}`);
+            repositoryByName[repositoryName] = repository;
+            parsedRepositoryList.push({repository: repository.id(), acceptsPatch: options.acceptsPatch});
+        }
+
         const propertiesTemplate = {};
         const usedRepositories = [];
         for (const propertyName in group.properties) {
@@ -316,13 +326,16 @@ class BuildbotSyncer {
             }
             propertiesTemplate[propertyName] = value;
         }
-        assert.equal(repositories.length, usedRepositories.length, `Repository group "${name}" does not use some of the listed repositories`);
+        assert(parsedRepositoryList.length, `Repository group "${name}" does not specify any repository`);
+        assert.equal(parsedRepositoryList.length, usedRepositories.length,
+            `Repository group "${name}" does not use some of the repositories listed`);
         return {
             name: group.name,
             description: group.description,
+            acceptsRoots: group.acceptsRoots,
             propertiesTemplate,
             arguments: group.arguments,
-            repositories: repositories.map((repository) => repository.id()),
+            repositoryList: parsedRepositoryList,
         };
     }
 

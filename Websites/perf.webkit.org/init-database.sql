@@ -249,6 +249,7 @@ CREATE TABLE triggerable_repository_groups (
 CREATE TABLE triggerable_repositories (
     trigrepo_repository integer REFERENCES repositories NOT NULL,
     trigrepo_group integer REFERENCES triggerable_repository_groups NOT NULL,
+    trigrepo_accepts_patch boolean NOT NULL DEFAULT FALSE,
     CONSTRAINT repository_must_be_unique_for_repository_group UNIQUE(trigrepo_repository, trigrepo_group));
 
 CREATE TABLE triggerable_configurations (
@@ -297,7 +298,7 @@ CREATE TABLE build_requests (
     request_triggerable integer REFERENCES build_triggerables NOT NULL,
     request_repository_group integer REFERENCES triggerable_repository_groups,
     request_platform integer REFERENCES platforms NOT NULL,
-    request_test integer REFERENCES tests NOT NULL,
+    request_test integer REFERENCES tests,
     request_group integer REFERENCES analysis_test_groups NOT NULL,
     request_order integer NOT NULL,
     request_commit_set integer REFERENCES commit_sets NOT NULL,
@@ -305,6 +306,8 @@ CREATE TABLE build_requests (
     request_url varchar(1024),
     request_build integer REFERENCES builds,
     request_created_at timestamp NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
-    CONSTRAINT build_request_order_must_be_unique_in_group UNIQUE(request_group, request_order));
+    CONSTRAINT build_request_order_must_be_unique_in_group UNIQUE(request_group, request_order),
+    CONSTRAINT build_request_order_must_be_positive_for_testing
+        CHECK ((request_test IS NOT NULL AND request_order >= 0) OR (request_test IS NULL AND request_order < 0)));
 CREATE INDEX build_request_triggerable ON build_requests(request_triggerable);
 CREATE INDEX build_request_build ON build_requests(request_build);

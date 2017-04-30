@@ -213,7 +213,9 @@ class ManifestGenerator {
             foreach ($group_repositories as &$repository_row) {
                 $group_id = $repository_row['trigrepo_group'];
                 array_ensure_item_has_array($repository_set_by_group, $group_id);
-                array_push($repository_set_by_group[$group_id], $repository_row['trigrepo_repository']);
+                array_push($repository_set_by_group[$group_id], array(
+                    'repository' => $repository_row['trigrepo_repository'],
+                    'acceptsPatch' => Database::is_true($repository_row['trigrepo_accepts_patch'])));
             }
             foreach ($repository_groups as &$group_row) {
                 $triggerable_id = $group_row['repositorygroup_triggerable'];
@@ -229,7 +231,8 @@ class ManifestGenerator {
                     'acceptsCustomRoots' => Database::is_true($group_row['repositorygroup_accepts_roots']),
                     'repositories' => $repository_list));
                 // V2 UI compatibility.
-                foreach ($repository_list as $repository_id) {
+                foreach ($repository_list as $repository_data) {
+                    $repository_id = $repository_data['repository'];
                     $set = &$triggerable_id_to_repository_set[$triggerable_id];
                     if (array_key_exists($repository_id, $set))
                         continue;

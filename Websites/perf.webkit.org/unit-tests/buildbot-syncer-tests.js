@@ -16,7 +16,7 @@ function sampleiOSConfig()
         'buildRequestArgument': 'build_request_id',
         'repositoryGroups': {
             'ios-svn-webkit': {
-                'repositories': ['WebKit', 'iOS'],
+                'repositories': {'WebKit': {}, 'iOS': {}},
                 'properties': {
                     'desired_image': '<iOS>',
                     'opensource': '<WebKit>',
@@ -111,7 +111,7 @@ function smallConfiguration()
         'buildRequestArgument': 'id',
         'repositoryGroups': {
             'ios-svn-webkit': {
-                'repositories': ['iOS', 'WebKit'],
+                'repositories': {'iOS': {}, 'WebKit': {}},
                 'properties': {
                     'os': '<iOS>',
                     'wk': '<WebKit>'
@@ -192,11 +192,11 @@ function createSampleBuildRequest(platform, test)
     assert(platform instanceof Platform);
     assert(test instanceof Test);
 
-    let commitSet = CommitSet.ensureSingleton('4197', {customRoots: [], commits: [
-        {'id': '111127', 'time': 1456955807334, 'repository': MockModels.webkit, 'revision': '197463'},
-        {'id': '111237', 'time': 1456931874000, 'repository': MockModels.sharedRepository, 'revision': '80229'},
-        {'id': '88930', 'time': 0, 'repository': MockModels.ios, 'revision': '13A452'},
-    ]});
+    const webkit197463 = CommitLog.ensureSingleton('111127', {'id': '111127', 'time': 1456955807334, 'repository': MockModels.webkit, 'revision': '197463'});
+    const shared111237 = CommitLog.ensureSingleton('111237', {'id': '111237', 'time': 1456931874000, 'repository': MockModels.sharedRepository, 'revision': '80229'});
+    const ios13A452 = CommitLog.ensureSingleton('88930', {'id': '88930', 'time': 0, 'repository': MockModels.ios, 'revision': '13A452'});
+
+    const commitSet = CommitSet.ensureSingleton('4197', {customRoots: [], revisionItems: [{commit: webkit197463}, {commit: shared111237}, {commit: ios13A452}]});
 
     return BuildRequest.ensureSingleton('16733-' + platform.id(), {'triggerable': MockModels.triggerable,
         repositoryGroup: MockModels.svnRepositoryGroup,
@@ -536,31 +536,39 @@ describe('BuildbotSyncer', () => {
             });
         });
 
-        it('should throw when a repository group does not specify a list of repository', () => {
+        it('should throw when a repository group does not specify a dictionary of repositories', () => {
             assert.throws(() => {
                 const config = smallConfiguration();
-                config.repositoryGroups = {'some-group': {}};
+                config.repositoryGroups = {'some-group': {'properties': {}}};
                 BuildbotSyncer._loadConfig(MockRemoteAPI, config);
             });
             assert.throws(() => {
                 const config = smallConfiguration();
-                config.repositoryGroups = {'some-group': {'repositories': 1}};
-                BuildbotSyncer._loadConfig(MockRemoteAPI, config);
-            });
-        });
-
-        it('should throw when a repository group specifies an empty list of repository', () => {
-            assert.throws(() => {
-                const config = smallConfiguration();
-                config.repositoryGroups = {'some-group': {'repositories': []}};
+                config.repositoryGroups = {'some-group': {'repositories': 1}, 'properties': {}};
                 BuildbotSyncer._loadConfig(MockRemoteAPI, config);
             });
         });
 
-        it('should throw when a repository group specifies a valid repository', () => {
+        it('should throw when a repository group specifies an empty dictionary', () => {
             assert.throws(() => {
                 const config = smallConfiguration();
-                config.repositoryGroups = {'some-group': {'repositories': ['InvalidRepositoryName']}};
+                config.repositoryGroups = {'some-group': {'repositories': {}, 'properties': {}}};
+                BuildbotSyncer._loadConfig(MockRemoteAPI, config);
+            });
+        });
+
+        it('should throw when a repository group specifies an invalid repository name', () => {
+            assert.throws(() => {
+                const config = smallConfiguration();
+                config.repositoryGroups = {'some-group': {'repositories': {'InvalidRepositoryName': {}}}};
+                BuildbotSyncer._loadConfig(MockRemoteAPI, config);
+            });
+        });
+
+        it('should throw when a repository group specifies a repository with a non-dictionary value', () => {
+            assert.throws(() => {
+                const config = smallConfiguration();
+                config.repositoryGroups = {'some-group': {'repositories': {'WebKit': 1}}};
                 BuildbotSyncer._loadConfig(MockRemoteAPI, config);
             });
         });
@@ -568,12 +576,12 @@ describe('BuildbotSyncer', () => {
         it('should throw when the description of a repository group is not a string', () => {
             assert.throws(() => {
                 const config = smallConfiguration();
-                config.repositoryGroups = {'some-group': {'repositories': ['WebKit'], 'description': 1}};
+                config.repositoryGroups = {'some-group': {'repositories': [{'WebKit': {}}], 'description': 1}};
                 BuildbotSyncer._loadConfig(MockRemoteAPI, config);
             });
             assert.throws(() => {
                 const config = smallConfiguration();
-                config.repositoryGroups = {'some-group': {'repositories': ['WebKit'], 'description': [1, 2]}};
+                config.repositoryGroups = {'some-group': {'repositories': [{'WebKit': {}}], 'description': [1, 2]}};
                 BuildbotSyncer._loadConfig(MockRemoteAPI, config);
             });
         });
@@ -581,12 +589,12 @@ describe('BuildbotSyncer', () => {
         it('should throw when a repository group does not specify a dictionary of properties', () => {
             assert.throws(() => {
                 const config = smallConfiguration();
-                config.repositoryGroups = {'some-group': {'repositories': ['WebKit'], properties: 1}};
+                config.repositoryGroups = {'some-group': {'repositories': {'WebKit': {}}, properties: 1}};
                 BuildbotSyncer._loadConfig(MockRemoteAPI, config);
             });
             assert.throws(() => {
                 const config = smallConfiguration();
-                config.repositoryGroups = {'some-group': {'repositories': ['WebKit'], properties: 'hello'}};
+                config.repositoryGroups = {'some-group': {'repositories': {'WebKit': {}}, properties: 'hello'}};
                 BuildbotSyncer._loadConfig(MockRemoteAPI, config);
             });
         });
@@ -594,7 +602,7 @@ describe('BuildbotSyncer', () => {
         it('should throw when a repository group refers to a non-existent repository in the properties dictionary', () => {
             assert.throws(() => {
                 const config = smallConfiguration();
-                config.repositoryGroups = {'some-group': {'repositories': ['WebKit'], properties: {'wk': '<InvalidRepository>'}}};
+                config.repositoryGroups = {'some-group': {'repositories': {'WebKit': {}}, properties: {'wk': '<InvalidRepository>'}}};
                 BuildbotSyncer._loadConfig(MockRemoteAPI, config);
             });
         });
@@ -602,15 +610,28 @@ describe('BuildbotSyncer', () => {
         it('should throw when a repository group refers to a repository in the properties dictionary which is not listed in the list of repositories', () => {
             assert.throws(() => {
                 const config = smallConfiguration();
-                config.repositoryGroups = {'some-group': {'repositories': ['WebKit'], properties: {'os': '<iOS>'}}};
+                config.repositoryGroups = {'some-group': {'repositories': {'WebKit': {}}, properties: {'os': '<iOS>'}}};
                 BuildbotSyncer._loadConfig(MockRemoteAPI, config);
             });
         });
 
-        it('should throw when a repository group does not use a lited repository', () => {
+        it('should throw when a repository group does not use a listed repository', () => {
             assert.throws(() => {
                 const config = smallConfiguration();
-                config.repositoryGroups = {'some-group': {'repositories': ['WebKit'], properties: {}}};
+                config.repositoryGroups = {'some-group': {'repositories': {'WebKit': {}}, properties: {}}};
+                BuildbotSyncer._loadConfig(MockRemoteAPI, config);
+            });
+        });
+
+        it('should throw when a repository group specifies non-boolean value to acceptsRoots', () => {
+            assert.throws(() => {
+                const config = smallConfiguration();
+                config.repositoryGroups = {'some-group': {'repositories': {'WebKit': {}}, 'properties': {'webkit': '<WebKit>'}, acceptsRoots: 1}};
+                BuildbotSyncer._loadConfig(MockRemoteAPI, config);
+            });
+            assert.throws(() => {
+                const config = smallConfiguration();
+                config.repositoryGroups = {'some-group': {'repositories': {'WebKit': {}}, 'properties': {'webkit': '<WebKit>'}, acceptsRoots: []}};
                 BuildbotSyncer._loadConfig(MockRemoteAPI, config);
             });
         });

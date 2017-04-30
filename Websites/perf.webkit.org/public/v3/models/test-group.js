@@ -10,8 +10,11 @@ class TestGroup extends LabeledObject {
         this._createdAt = new Date(object.createdAt);
         this._isHidden = object.hidden;
         this._buildRequests = [];
-        this._requestsAreInOrder = false;
+        this._orderBuildRequestsLazily = new LazilyEvaluatedFunction((...buildRequests) => {
+            return buildRequests.sort((a, b) => a.order() - b.order());
+        });
         this._repositories = null;
+        this._computeRequestedCommitSetsLazily = new LazilyEvaluatedFunction(this._computeRequestedCommitSets.bind(this));
         this._requestedCommitSets = null;
         this._commitSetToLabel = new Map;
         console.assert(!object.platform || object.platform instanceof Platform);
@@ -35,33 +38,41 @@ class TestGroup extends LabeledObject {
     addBuildRequest(request)
     {
         this._buildRequests.push(request);
-        this._requestsAreInOrder = false;
         this._requestedCommitSets = null;
         this._commitSetToLabel.clear();
     }
 
     test()
     {
-        if (!this._buildRequests.length)
-            return null;
-        return this._buildRequests[0].test();
+        const request = this._lastRequest();
+        return request ? request.test() : null;
     }
 
     platform()
     {
-        if (!this._buildRequests.length)
-            return null;
-        return this._buildRequests[0].platform();
+        const request = this._lastRequest();
+        return request ? request.platform() : null;
+    }
+
+    _lastRequest()
+    {
+        const requests = this._orderedBuildRequests();
+        return requests.length ? requests[requests.length - 1] : null;
+    }
+
+    _orderedBuildRequests()
+    {
+        return this._orderBuildRequestsLazily.evaluate(...this._buildRequests);
     }
 
     repetitionCount()
     {
         if (!this._buildRequests.length)
             return 0;
-        var commitSet = this._buildRequests[0].commitSet();
-        var count = 0;
-        for (var request of this._buildRequests) {
-            if (request.commitSet() == commitSet)
+        const commitSet = this._buildRequests[0].commitSet();
+        let count = 0;
+        for (const request of this._buildRequests) {
+            if (request.isTest() && request.commitSet() == commitSet)
                 count++;
         }
         return count;
@@ -69,43 +80,33 @@ class TestGroup extends LabeledObject {
 
     requestedCommitSets()
     {
-        if (!this._requestedCommitSets) {
-            this._orderBuildRequests();
-            this._requestedCommitSets = [];
-            for (var request of this._buildRequests) {
-                var set = request.commitSet();
-                if (!this._requestedCommitSets.includes(set))
-                    this._requestedCommitSets.push(set);
-            }
-            this._requestedCommitSets.sort(function (a, b) { return a.latestCommitTime() - b.latestCommitTime(); });
-            var setIndex = 0;
-            for (var set of this._requestedCommitSets) {
-                this._commitSetToLabel.set(set, String.fromCharCode('A'.charCodeAt(0) + setIndex));
-                setIndex++;
-            }
+        return this._computeRequestedCommitSetsLazily.evaluate(...this._orderedBuildRequests());
+    }
 
+    _computeRequestedCommitSets(...orderedBuildRequests)
+    {
+        const requestedCommitSets = [];
+        const commitSetLabelMap = new Map;
+        for (const request of orderedBuildRequests) {
+            const set = request.commitSet();
+            if (!this._requestedCommitSets.includes(set))
+                this._requestedCommitSets.push(set);
         }
-        return this._requestedCommitSets;
+        return requestedCommitSets;
     }
 
     requestsForCommitSet(commitSet)
     {
-        this._orderBuildRequests();
-        return this._buildRequests.filter(function (request) { return request.commitSet() == commitSet; });
+        this._orderedBuildRequests().filter((request) => request.commitSet() == commitSet);
     }
 
     labelForCommitSet(commitSet)
     {
-        console.assert(this._requestedCommitSets);
-        return this._commitSetToLabel.get(commitSet);
-    }
-
-    _orderBuildRequests()
-    {
-        if (this._requestsAreInOrder)
-            return;
-        this._buildRequests = this._buildRequests.sort(function (a, b) { return a.order() - b.order(); });
-        this._requestsAreInOrder = true;
+        const requestedSets = this.requestedCommitSets();
+        const setIndex = requestedSets.indexOf(commitSet);
+        if (setIndex < 0)
+            return null;
+        return String.fromCharCode('A'.charCodeAt(0) + setIndex);
     }
 
     hasFinished()
@@ -229,8 +230,13 @@ class TestGroup extends LabeledObject {
         return commitSets.map((commitSet) => {
             console.assert(commitSet instanceof CustomCommitSet || commitSet instanceof CommitSet);
             const revisionSet = {};
-            for (let repository of commitSet.repositories())
-                revisionSet[repository.id()] = commitSet.revisionForRepository(repository);
+            for (let repository of commitSet.repositories()) {
+                const patchFile = commitSet.patchForRepository(repository);
+                revisionSet[repository.id()] = {
+                    revision: commitSet.revisionForRepository(repository),
+                    patch: patchFile ? patchFile.id() : null,
+                };
+            }
             const customRoots = commitSet.customRoots();
             if (customRoots && customRoots.length)
                 revisionSet['customRoots'] = customRoots.map((uploadedFile) => uploadedFile.id());

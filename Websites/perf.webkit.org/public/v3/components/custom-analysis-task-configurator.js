@@ -11,6 +11,7 @@ class CustomAnalysisTaskConfigurator extends ComponentBase {
         this._showComparison = false;
         this._commitSetMap = {};
         this._specifiedRevisions = {'Baseline': new Map, 'Comparison': new Map};
+        this._patchUploaders = {'Baseline': new Map, 'Comparison': new Map};
         this._fetchedRevisions = {'Baseline': new Map, 'Comparison': new Map};
         this._repositoryGroupByConfiguration = {'Baseline': null, 'Comparison': null};
         this._updateTriggerableLazily = new LazilyEvaluatedFunction(this._updateTriggerable.bind(this));
@@ -19,7 +20,7 @@ class CustomAnalysisTaskConfigurator extends ComponentBase {
         this._renderTriggerablePlatformsLazily = new LazilyEvaluatedFunction(this._renderTriggerablePlatforms.bind(this));
         this._renderRepositoryPanesLazily = new LazilyEvaluatedFunction(this._renderRepositoryPanes.bind(this));
 
-        this._fileUploaders = {};
+        this._customRootUploaders = {};
     }
 
     tests() { return this._selectedTests; }
@@ -64,14 +65,14 @@ class CustomAnalysisTaskConfigurator extends ComponentBase {
         const baselineRepositoryGroup = triggerable.repositoryGroups().find((repositoryGroup) => repositoryGroup.accepts(baselineCommitSet));
         if (baselineRepositoryGroup) {
             this._repositoryGroupByConfiguration['Baseline'] = baselineRepositoryGroup;
-            this._setUploadedFilesIfEmpty(this._fileUploaders['Baseline'], baselineCommitSet);
+            this._setUploadedFilesIfEmpty(this._customRootUploaders['Baseline'], baselineCommitSet);
             this._specifiedRevisions['Baseline'] = this._revisionMapFromCommitSet(baselineCommitSet);
         }
 
         const comparisonRepositoryGroup = triggerable.repositoryGroups().find((repositoryGroup) => repositoryGroup.accepts(baselineCommitSet));
         if (comparisonRepositoryGroup) {
             this._repositoryGroupByConfiguration['Comparison'] = comparisonRepositoryGroup;
-            this._setUploadedFilesIfEmpty(this._fileUploaders['Comparison'], comparisonCommitSet);
+            this._setUploadedFilesIfEmpty(this._customRootUploaders['Comparison'], comparisonCommitSet);
             this._specifiedRevisions['Comparison'] = this._revisionMapFromCommitSet(comparisonCommitSet);
         }
 
@@ -99,18 +100,41 @@ class CustomAnalysisTaskConfigurator extends ComponentBase {
     {
         this.content('specify-comparison-button').onclick = this.createEventHandler(() => this._configureComparison());
 
-        const baselineRootsUploader = new InstantFileUploader;
+        const createRootUploader = () => {
+            const uploader = new InstantFileUploader;
+            uploader.allowMultipleFiles();
+            uploader.element().textContent = 'Add a new root';
+            uploader.listenToAction('removedFile', () => this._updateCommitSetMap());
+            return uploader;
+        }
+
+        const baselineRootsUploader = createRootUploader();
         baselineRootsUploader.listenToAction('uploadedFile', (uploadedFile) => {
             comparisonRootsUploader.addUploadedFile(uploadedFile);
             this._updateCommitSetMap();
         });
-        baselineRootsUploader.listenToAction('removedFile', () => this._updateCommitSetMap());
-        this._fileUploaders['Baseline'] = baselineRootsUploader;
 
-        const comparisonRootsUploader = new InstantFileUploader;
+        this._customRootUploaders['Baseline'] = baselineRootsUploader;
+
+        const comparisonRootsUploader = createRootUploader();
         comparisonRootsUploader.listenToAction('uploadedFile', () => this._updateCommitSetMap());
-        comparisonRootsUploader.listenToAction('removedFile', () => this._updateCommitSetMap());
-        this._fileUploaders['Comparison'] = comparisonRootsUploader;
+        this._customRootUploaders['Comparison'] = comparisonRootsUploader;
+    }
+
+    _ensurePatchUploader(configurationName, repository)
+    {
+        const uploaderMap = this._patchUploaders[configurationName];
+        let uploader = uploaderMap.get(repository);
+        if (uploader)
+            return uploader;
+
+        uploader = new InstantFileUploader;
+        uploader.element().textContent = 'Apply a patch';
+        uploader.listenToAction('uploadedFile', () => this._updateCommitSetMap());
+        uploader.listenToAction('removedFile', () => this._updateCommitSetMap());
+        uploaderMap.set(repository, uploader);
+
+        return uploader;
     }
 
     _configureComparison()
@@ -268,7 +292,7 @@ class CustomAnalysisTaskConfigurator extends ComponentBase {
         if (!repositoryGroup)
             return null;
 
-        const fileUploader = this._fileUploaders[configurationName];
+        const fileUploader = this._customRootUploaders[configurationName];
         if (!fileUploader || fileUploader.hasFileToUpload())
             return null;
 
@@ -279,7 +303,18 @@ class CustomAnalysisTaskConfigurator extends ComponentBase {
                 revision = this._fetchedRevisions[configurationName].get(repository);
             if (!revision)
                 return null;
-            commitSet.setRevisionForRepository(repository, revision);
+            let patch = null;
+            if (repositoryGroup.acceptsPatchForRepository(repository)) {
+                const uploaderMap = this._patchUploaders[configurationName];
+                const uploader = uploaderMap.get(repository);
+                if (uploader) {
+                    const files = uploader.uploadedFiles();
+                    console.assert(files.length <= 1);
+                    if (files.length)
+                        patch = files[0];
+                }
+            }
+            commitSet.setRevisionForRepository(repository, revision, patch);
         }
 
         for (let uploadedFile of fileUploader.uploadedFiles())
@@ -351,7 +386,7 @@ class CustomAnalysisTaskConfigurator extends ComponentBase {
         const customRootsTBody = element('tbody', [
             element('tr', [
                 element('th', 'Roots'),
-                element('td', this._fileUploaders[configurationName]),
+                element('td', this._customRootUploaders[configurationName]),
             ]),
         ]);
 
@@ -371,9 +406,15 @@ class CustomAnalysisTaskConfigurator extends ComponentBase {
             !alwaysAcceptsCustomRoots && currentGroup && currentGroup.acceptsCustomRoots() ? customRootsTBody : [],
             element('tbody',
                 optionalRepositoryList.map((repository) => {
+                    let uploader = currentGroup.acceptsPatchForRepository(repository)
+                        ? this._ensurePatchUploader(configurationName, repository) : null;
+
                     return element('tr',[
                         element('th', repository.name()),
-                        element('td', this._buildRevisionInput(configurationName, repository, platform))
+                        element('td', [
+                            this._buildRevisionInput(configurationName, repository, platform),
+                            uploader || [],
+                        ])
                     ]);
                 })
             )];
@@ -544,14 +585,10 @@ class CustomAnalysisTaskConfigurator extends ComponentBase {
                 display: none;
             }
 
-            .revision-table tbody tr:first-child td,
-            .revision-table tbody tr:first-child th {
+            .revision-table tbody td,
+            .revision-table tbody th {
                 border-top: solid 1px #ddd;
                 padding-top: 0.5rem;
-            }
-
-            .revision-table tbody tr:last-child td,
-            .revision-table tbody tr:last-child th {
                 padding-bottom: 0.5rem;
             }
 

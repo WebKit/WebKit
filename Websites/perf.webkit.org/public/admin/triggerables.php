@@ -27,33 +27,6 @@ if ($db) {
         if (update_field('triggerable_repository_groups', 'repositorygroup', 'accepts_roots',
             Database::to_database_boolean(array_get($_POST, 'accepts'))))
             regenerate_manifest();
-    } else if ($action == 'update-repository') {
-        $association = array_get($_POST, 'association');
-        $triggerable_id = array_get($_POST, 'triggerable');
-        $repository_id = array_get($_POST, 'repository');
-
-        $should_delete = FALSE;
-        $accepted = $association == 'accepted';
-        $required = $association == 'required';
-        if ($accepted || $required) {
-            $db->begin_transaction();
-            $select = array('repository' => $repository_id, 'triggerable' => $triggerable_id);
-            $update = array('repository' => $repository_id, 'triggerable' => $triggerable_id, 'required' => Database::to_database_boolean($required));
-            if (!$db->update_row('triggerable_repositories', 'trigrepo', $select, $update, 'repository')) {
-                notice("Failed to update the association of repository $repository_id with triggerable $triggerable_id.");
-                $db->rollback_transaction();
-            } else
-                $db->commit_transaction();
-        } else if ($association == 'not-accepted') {
-            $db->begin_transaction();
-            $result = $db->query_and_get_affected_rows("DELETE FROM triggerable_repositories WHERE trigrepo_triggerable = $1 AND trigrepo_repository = $2",
-                array($triggerable_id, $repository_id));
-            if ($result > 1) {
-                notice("Failed to update the association of repository $repository_id with triggerable $triggerable_id.");
-                $db->rollback_transaction();
-            } else
-                $db->commit_transaction();
-        }
     } else if ($action == 'update-repositories') {
         $group_id = intval($_POST['group']);
 
@@ -66,6 +39,26 @@ if ($db) {
             regenerate_manifest();
         } else
             $db->rollback_transaction();
+    }  else if ($action == 'update-accept-patch') {
+        $group_id = intval($_POST['group']);
+        $repositories_that_accepts_patch = array_get($_POST, 'repositories', array());
+
+        $db->begin_transaction();
+        if (!$db->query_and_get_affected_rows("UPDATE triggerable_repositories SET trigrepo_accepts_patch = FALSE WHERE trigrepo_group = $1", array($group_id))) {
+            notice('Failed to update the accept-patch status.');
+            $db->rollback_transaction();
+        } else {
+            foreach ($repositories_that_accepts_patch as $repository_id) {
+                if (!$db->query_and_get_affected_rows("UPDATE triggerable_repositories SET trigrepo_accepts_patch = TRUE
+                    WHERE trigrepo_group = $1 AND trigrepo_repository = $2", array($group_id, $repository_id))) {
+                    notice('Failed to update the accept-patch status.');
+                    $db->rollback_transaction();
+                }
+            }
+            $db->commit_transaction();
+            notice('Updated the accept-patch status.');
+            regenerate_manifest();
+        }
     } else if ($action == 'add-repository-group') {
         $triggerable_id = intval($_POST['triggerable']);
         $name = $_POST['name'];
@@ -90,7 +83,7 @@ if ($db) {
         'disabled' => array('editing_mode' => 'boolean', 'post_insertion' => TRUE),
         'repositories' => array(
             'label' => 'Repository Groups',
-            'subcolumns'=> array('ID', 'Name', 'Description', 'Accepts Roots', 'Repositories'),
+            'subcolumns'=> array('ID', 'Name', 'Description', 'Accepts Roots', 'Repositories', 'Accept patches'),
             'custom' => function ($triggerable_row) use (&$db, &$repository_rows) {
                 return generate_repository_list($db, $triggerable_row['triggerable_id'], $repository_rows);
             }),
@@ -149,7 +142,21 @@ END;
             </form>
 END;
 
-        array_push($group_forms, array($group_id, $group_name_form, $group_description_form, $group_accepts_roots, generate_repository_form($db, $repository_rows, $group_id)));
+        $group_repository_rows = $db->select_rows('triggerable_repositories', 'trigrepo', array('group' => $group_id));
+        $repositories_in_group = array();
+        $repositories_that_accepts_patch = array();
+        foreach ($repository_rows as $row)
+            $repositories_in_group[$row['repository_id']] = FALSE;
+        foreach ($group_repository_rows as $row) {
+            $repository_id = $row['trigrepo_repository'];
+            $repositories_in_group[$repository_id] = TRUE;
+            $repositories_that_accepts_patch[$repository_id] = Database::is_true($row['trigrepo_accepts_patch']);
+        }
+
+        array_push($group_forms, array($group_id, $group_name_form, $group_description_form, $group_accepts_roots,
+            generate_repository_form('update-repositories', $group_id, generate_repository_checkboxes($db, $repository_rows, $repositories_in_group)),
+            generate_repository_form('update-accept-patch', $group_id, generate_repository_checkboxes($db, $repository_rows, $repositories_that_accepts_patch)),
+        ));
     }
 
     $new_group_checkboxes = generate_repository_checkboxes($db, $repository_rows);
@@ -167,32 +174,26 @@ END;
     return $group_forms;
 }
 
-function generate_repository_form($db, $repository_rows, $group_id)
+function generate_repository_form($action, $group_id, $checkboxes)
 {
-    $checkboxes = generate_repository_checkboxes($db, $repository_rows, $group_id);
     return <<< END
         <form method="POST">
-        <input type="hidden" name="action" value="update-repositories">
+        <input type="hidden" name="action" value="$action">
         <input type="hidden" name="group" value="$group_id">
         $checkboxes
         <br><button type="submit">Save</button></form>
 END;
 }
 
-function generate_repository_checkboxes($db, $repository_rows, $group_id = NULL)
+function generate_repository_checkboxes($db, $repository_rows, $selected_repositories = array())
 {
-    $repositories_in_group = array();
-    if ($group_id) {
-        $group_repository_rows = $db->select_rows('triggerable_repositories', 'trigrepo', array('group' => $group_id));
-        foreach ($group_repository_rows as $row)
-            $repositories_in_group[$row['trigrepo_repository']] = TRUE;
-    }
-
     $form = '';
     foreach ($repository_rows as $row) {
         $id = $row['repository_id'];
+        if (!array_key_exists($id, $selected_repositories))
+            continue;
         $name = $row['repository_name'];
-        $checked = array_key_exists($id, $repositories_in_group) ? 'checked' : '';
+        $checked = $selected_repositories[$id] ? 'checked' : '';
         $form .= "<label><input type=\"checkbox\" name=\"repositories[]\" value=\"$id\" $checked>$name</label>";
     }
     return $form;

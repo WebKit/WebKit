@@ -16,7 +16,7 @@ class BuildRequest extends DataModelObject {
         this._repositoryGroup = object.repositoryGroup;
         console.assert(object.platform instanceof Platform);
         this._platform = object.platform;
-        console.assert(object.test instanceof Test);
+        console.assert(!object.test || object.test instanceof Test);
         this._test = object.test;
         this._order = object.order;
         console.assert(object.commitSet instanceof CommitSet);
@@ -45,6 +45,8 @@ class BuildRequest extends DataModelObject {
     repositoryGroup() { return this._repositoryGroup; }
     platform() { return this._platform; }
     test() { return this._test; }
+    isBuild() { return this._order < 0; }
+    isTest() { return this._order >= 0; }
     order() { return +this._order; }
     commitSet() { return this._commitSet; }
 
@@ -121,18 +123,21 @@ class BuildRequest extends DataModelObject {
 
     static constructBuildRequestsFromData(data)
     {
-        const commitIdMap = {};
-        for (let commit of data['commits']) {
-            commitIdMap[commit.id] = commit;
-            commit.repository = Repository.findById(commit.repository);
+        for (let rawData of data['commits']) {
+            rawData.repository = Repository.findById(rawData.repository);
+            CommitLog.ensureSingleton(rawData.id, rawData);
         }
 
         for (let uploadedFile of data['uploadedFiles'])
             UploadedFile.ensureSingleton(uploadedFile.id, uploadedFile);
 
-        const commitSets = data['commitSets'].map((row) => {
-            row.commits = row.commits.map((commitId) => commitIdMap[commitId]);
-            return CommitSet.ensureSingleton(row.id, row);
+        const commitSets = data['commitSets'].map((rawData) => {
+            for (const item of rawData.revisionItems) {
+                item.commit = CommitLog.findById(item.commit);
+                item.patch = item.patch ? UploadedFile.findById(item.patch) : null;
+            }
+            rawData.customRoots = rawData.customRoots.map((fileId) => UploadedFile.findById(fileId));
+            return CommitSet.ensureSingleton(rawData.id, rawData);
         });
 
         return data['buildRequests'].map(function (rawData) {

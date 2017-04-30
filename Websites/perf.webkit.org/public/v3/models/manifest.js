@@ -48,7 +48,9 @@ class Manifest {
                 return Repository.findById(repositoryId);
             });
             raw.repositoryGroups = raw.repositoryGroups.map((group) => {
-                group.repositories = group.repositories.map((repositoryId) => Repository.findById(repositoryId));
+                group.repositories = group.repositories.map((entry) => {
+                    return {repository: Repository.findById(entry.repository), acceptsPatch: entry.acceptsPatch};
+                });
                 return TriggerableRepositoryGroup.ensureSingleton(group.id, group);
             });
             raw.configurations = raw.configurations.map((configuration) => {

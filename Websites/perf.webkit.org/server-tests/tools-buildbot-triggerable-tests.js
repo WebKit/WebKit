@@ -935,10 +935,6 @@ describe('BuildbotTriggerable', function () {
                 assert.equal(macos.name(), 'macOS');
                 webkit = Repository.findById(11);
                 assert.equal(webkit.name(), 'WebKit');
-
-                return db.selectAll('triggerable_configurations', 'test');
-            }).then((configurations) => {
-                assert.equal(configurations.length, 0);
                 assert.equal(Triggerable.all().length, 1);
 
                 const triggerable = Triggerable.all()[0];
@@ -955,8 +951,8 @@ describe('BuildbotTriggerable', function () {
 
                 const config = MockData.mockTestSyncConfigWithSingleBuilder();
                 config.repositoryGroups = {
-                    'system-only': {repositories: ['macOS'], properties: {'os': '<macOS>'}},
-                    'system-and-webkit': {repositories: ['WebKit', 'macOS'], properties: {'os': '<macOS>', 'wk': '<WebKit>'}}
+                    'system-and-roots': {description: 'Custom Roots', repositories: {'macOS': {}}, properties: {'os': '<macOS>'}, acceptsRoots: true},
+                    'system-and-webkit': {repositories: {'WebKit': {acceptsPatch: true}, 'macOS': {}}, properties: {'os': '<macOS>', 'wk': '<WebKit>'}}
                 }
 
                 const logger = new MockLogger;
@@ -964,12 +960,6 @@ describe('BuildbotTriggerable', function () {
                 const buildbotTriggerable = new BuildbotTriggerable(config, TestServer.remoteAPI(), MockRemoteAPI, slaveInfo, logger);
                 return buildbotTriggerable.updateTriggerable();
             }).then(() => refetchManifest()).then(() => {
-                return db.selectAll('triggerable_configurations', 'test');
-            }).then((configurations) => {
-                assert.equal(configurations.length, 1);
-                assert.equal(configurations[0].test, MockData.someTestId());
-                assert.equal(configurations[0].platform, MockData.somePlatformId());
-
                 assert.equal(Triggerable.all().length, 1);
 
                 let test = Test.findById(MockData.someTestId());
@@ -979,10 +969,13 @@ describe('BuildbotTriggerable', function () {
 
                 const groups = TriggerableRepositoryGroup.sortByName(triggerable.repositoryGroups());
                 assert.equal(groups.length, 2);
-                assert.equal(groups[0].name(), 'system-and-webkit');
-                assert.deepEqual(groups[0].repositories(), [webkit, macos]);
-                assert.equal(groups[1].name(), 'system-only');
-                assert.deepEqual(groups[1].repositories(), [macos]);
+                assert.equal(groups[0].name(), 'system-and-roots');
+                assert.equal(groups[0].description(), 'Custom Roots');
+                assert.deepEqual(groups[0].repositories(), [macos]);
+                assert.equal(groups[0].acceptsCustomRoots(), true);
+                assert.equal(groups[1].name(), 'system-and-webkit');
+                assert.deepEqual(groups[1].repositories(), [webkit, macos]);
+                assert.equal(groups[1].acceptsCustomRoots(), false);
 
                 const config = MockData.mockTestSyncConfigWithSingleBuilder();
                 config.repositoryGroups = [ ];
@@ -995,10 +988,10 @@ describe('BuildbotTriggerable', function () {
                 assert.equal(Triggerable.all().length, 1);
                 const groups = TriggerableRepositoryGroup.sortByName(Triggerable.all()[0].repositoryGroups());
                 assert.equal(groups.length, 2);
-                assert.equal(groups[0].name(), 'system-and-webkit');
-                assert.deepEqual(groups[0].repositories(), [webkit, macos]);
-                assert.equal(groups[1].name(), 'system-only');
-                assert.deepEqual(groups[1].repositories(), [macos]);
+                assert.equal(groups[0].name(), 'system-and-roots');
+                assert.deepEqual(groups[0].repositories(), [macos]);
+                assert.equal(groups[1].name(), 'system-and-webkit');
+                assert.deepEqual(groups[1].repositories(), [webkit, macos]);
             })
         });
     });
