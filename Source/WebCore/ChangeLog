@@ -1,3 +1,16 @@
+2017-04-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix tests broken by r215964.
+
+        Fix copy-paste error that caused the wrong paint phase to get passed to the fire writeLayerRenderers()
+        call, causing extra renderer dumping.
+
+        Also remove unused default arguments.
+
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::writeLayerRenderers):
+        (WebCore::writeLayers):
+
 2017-04-28  Zalan Bujtas  <zalan@apple.com>
 
         iBooks text can overlap, sometimes columns are shifted splitting words.

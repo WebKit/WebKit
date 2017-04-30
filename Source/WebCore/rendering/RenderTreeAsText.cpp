@@ -674,7 +674,7 @@ static void writeLayer(TextStream& ts, const RenderLayer& layer, const LayoutRec
     ts << "\n";
 }
 
-static void writeLayerRenderers(TextStream& ts, const RenderLayer& layer, LayerPaintPhase paintPhase = LayerPaintPhaseAll, int indent = 0, RenderAsTextBehavior behavior = RenderAsTextBehaviorNormal)
+static void writeLayerRenderers(TextStream& ts, const RenderLayer& layer, LayerPaintPhase paintPhase, int indent, RenderAsTextBehavior behavior)
 {
     if (paintPhase != LayerPaintPhaseBackground)
         write(ts, layer.renderer(), indent + 1, behavior);
@@ -784,7 +784,7 @@ static void writeLayers(TextStream& ts, const RenderLayer& rootLayer, RenderLaye
     bool paintsBackgroundSeparately = negativeZOrderList && negativeZOrderList->size() > 0;
     if (shouldPaint && paintsBackgroundSeparately) {
         writeLayer(ts, layer, layerBounds, damageRect.rect(), clipRectToApply.rect(), LayerPaintPhaseBackground, indent, behavior);
-        writeLayerRenderers(ts, layer, paintsBackgroundSeparately ? LayerPaintPhaseForeground : LayerPaintPhaseAll, indent, behavior);
+        writeLayerRenderers(ts, layer, LayerPaintPhaseBackground, indent, behavior);
     }
         
     if (negativeZOrderList) {
