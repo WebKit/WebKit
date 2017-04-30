@@ -10,7 +10,7 @@ AXRole: AXTree has 2 selected child(ren)
 	third (AXRole: AXTreeItem) isSelectable: true isSelected: true
 AXRole: AXTable has 1 selected child(ren)
 	second (AXRole: AXRow) isSelectable: true isSelected: true
-AXRole: AXTable has 2 selected child(ren)
+AXRole: AXTreeGrid has 2 selected child(ren)
 	first - level 2 (AXRole: AXRow) isSelectable: true isSelected: true
 	third - level 2 (AXRole: AXRow) isSelectable: true isSelected: true
 PASS successfullyParsed is true

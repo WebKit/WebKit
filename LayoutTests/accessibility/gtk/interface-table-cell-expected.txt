@@ -17,7 +17,7 @@ test11 AXRole: AXColumnHeader true
 test12 AXRole: AXRow false
 test13 AXRole: AXRowHeader true
 test14 AXRole: AXCell true
-test15 AXRole: AXTable false
+test15 AXRole: AXTreeGrid false
 test16 AXRole: AXRow false
 test17 AXRole: AXColumnHeader true
 test18 AXRole: AXColumnHeader true

@@ -1115,6 +1115,8 @@ bool AccessibilityUIElement::boolAttributeValue(JSStringRef attribute)
     if (attributeString == "AXVisited")
         return checkElementState(m_element.get(), ATK_STATE_VISITED);
 
+    if (attributeString == "AXInterfaceTable")
+        return ATK_IS_TABLE(m_element.get());
     if (attributeString == "AXInterfaceTableCell")
         return ATK_IS_TABLE_CELL(m_element.get());
 

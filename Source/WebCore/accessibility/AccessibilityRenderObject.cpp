@@ -3358,6 +3358,7 @@ void AccessibilityRenderObject::selectedChildren(AccessibilityChildrenVector& re
         return;
     case GridRole:
     case TreeRole:
+    case TreeGridRole:
         ariaSelectedRows(result);
         return;
     case TabListRole:

@@ -1,5 +1,24 @@
 2017-04-30  Joanmarie Diggs  <jdiggs@igalia.com>
 
+        [ATK] ARIA treegrid role should be exposed as ATK_ROLE_TREE_TABLE; not ATK_ROLE_TABLE
+        https://bugs.webkit.org/show_bug.cgi?id=171170
+
+        Reviewed by Chris Fleizach.
+
+        Add interface-table.html to verify that all roles which have tabular functionality
+        implement AtkTable. Update other tests to reflect that the ARIA treegrid role maps
+        to our internal TreeGridRole AccessibilityRole.
+
+        * accessibility/gtk/interface-table-cell-expected.txt: Updated.
+        * accessibility/gtk/interface-table-expected.txt: Added.
+        * accessibility/gtk/interface-table.html: Added.
+        * accessibility/roles-computedRoleString.html: Updated.
+        * platform/gtk/accessibility/aria-selected-expected.txt: Updated.
+        * platform/gtk/accessibility/roles-exposed-expected.txt: Updated.
+        * platform/mac/accessibility/roles-computedRoleString-expected.txt: Updated.
+
+2017-04-30  Joanmarie Diggs  <jdiggs@igalia.com>
+
         [ATK] Emit object:state-changed:busy event when aria-busy value changes
         https://bugs.webkit.org/show_bug.cgi?id=171181
 

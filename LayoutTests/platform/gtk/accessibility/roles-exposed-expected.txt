@@ -812,7 +812,7 @@ div[role=treeitem]
       AXRole: AXTreeItem
       
 div[role=treegrid]
-      AXRole: AXTable
+      AXRole: AXTreeGrid
       
 div[role=rowgroup]
       AXRole: 

@@ -617,7 +617,7 @@ AccessibilityRole AccessibilityTable::roleValue() const
     
     AccessibilityRole ariaRole = ariaRoleAttribute();
     if (ariaRole == GridRole || ariaRole == TreeGridRole)
-        return GridRole;
+        return ariaRole;
 
     return TableRole;
 }

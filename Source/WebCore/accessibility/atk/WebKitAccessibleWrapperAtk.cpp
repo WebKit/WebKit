@@ -551,6 +551,8 @@ static AtkRole atkRole(AccessibilityObject* coreObject)
     case GridRole:
     case TableRole:
         return ATK_ROLE_TABLE;
+    case TreeGridRole:
+        return ATK_ROLE_TREE_TABLE;
     case ApplicationRole:
         return ATK_ROLE_APPLICATION;
     case ApplicationGroupRole:
@@ -1145,7 +1147,7 @@ static guint16 getInterfaceMaskFromObject(AccessibilityObject* coreObject)
         interfaceMask |= 1 << WAIImage;
 
     // Table
-    if (role == TableRole || role == GridRole)
+    if (coreObject->isTable())
         interfaceMask |= 1 << WAITable;
 
 #if ATK_CHECK_VERSION(2,11,90)
