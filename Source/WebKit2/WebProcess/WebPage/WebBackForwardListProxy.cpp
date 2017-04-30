@@ -98,7 +98,7 @@ void WebBackForwardListProxy::addItemFromUIProcess(uint64_t itemID, Ref<HistoryI
 {
     // This item/itemID pair should not already exist in our maps.
     ASSERT(!historyItemToIDMap().contains(item.ptr()));
-//    ASSERT(!idToHistoryItemMap().contains(itemID));
+    ASSERT(!idToHistoryItemMap().contains(itemID));
 
     historyItemToIDMap().set<ItemAndPageID>(item.ptr(), { .itemID = itemID, .pageID = pageID });
     idToHistoryItemMap().set(itemID, item.ptr());

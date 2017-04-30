@@ -1,3 +1,15 @@
+2017-04-29  Youenn Fablet  <youenn@apple.com>
+
+        Readd assertion removed accidentally in r215955
+        https://bugs.webkit.org/show_bug.cgi?id=171466
+
+        Reviewed by Eric Carlson.
+
+        Unreviewed.
+
+        * platform/mediastream/mac/MockRealtimeVideoSourceMac.mm:
+        (WebCore::MockRealtimeVideoSourceMac::orientationChanged): Improved FIXME after review.
+
 2017-04-29  Andy Estes  <aestes@apple.com>
 
         [macOS] Picture-in-picture should be disabled in WebPlaybackControlsManager during external media playback

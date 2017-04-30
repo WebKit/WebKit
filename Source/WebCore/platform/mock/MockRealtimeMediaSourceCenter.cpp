@@ -87,7 +87,7 @@ void MockRealtimeMediaSourceCenter::validateRequestConstraints(ValidConstraintsH
         Vector<DeviceInfo> deviceInfo;
         for (const auto& device : MockRealtimeMediaSource::audioDevices()) {
             auto sourceOrError = MockRealtimeAudioSource::create(device.label(), nullptr);
-            if (!!sourceOrError && sourceOrError.captureSource->supportsConstraints(audioConstraints, invalidConstraint))
+            if (sourceOrError && sourceOrError.captureSource->supportsConstraints(audioConstraints, invalidConstraint))
                 deviceInfo.append({sourceOrError.captureSource->fitnessScore(), device.persistentId()});
         }
 
@@ -138,7 +138,7 @@ void MockRealtimeMediaSourceCenter::createMediaStream(NewMediaStreamHandler comp
 
             if (audioDeviceID == captureDevice.persistentId()) {
                 auto sourceOrError = MockRealtimeAudioSource::create(captureDevice.label(), audioConstraints);
-                if (!!sourceOrError)
+                if (sourceOrError)
                     audioSources.append(sourceOrError.source());
             }
         }
@@ -151,7 +151,7 @@ void MockRealtimeMediaSourceCenter::createMediaStream(NewMediaStreamHandler comp
 
             if (videoDeviceID == captureDevice.persistentId()) {
                 auto sourceOrError = MockRealtimeVideoSource::create(captureDevice.label(), videoConstraints);
-                if (!!sourceOrError)
+                if (sourceOrError)
                     videoSources.append(sourceOrError.source());
             }
         }

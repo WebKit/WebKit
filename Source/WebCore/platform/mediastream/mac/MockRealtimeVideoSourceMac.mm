@@ -164,7 +164,7 @@ bool MockRealtimeVideoSourceMac::applySize(const IntSize& newSize)
 
 void MockRealtimeVideoSourceMac::orientationChanged(int orientation)
 {
-    // FIXME: Do something with m_deviceOrientation
+    // FIXME: Do something with m_deviceOrientation. See bug 169822.
     switch (orientation) {
     case 0:
         m_deviceOrientation = MediaSample::VideoRotation::None;

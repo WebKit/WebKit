@@ -137,7 +137,7 @@ void RealtimeMediaSourceCenterMac::createMediaStream(NewMediaStreamHandler compl
 
     if (!audioDeviceID.isEmpty() && m_audioFactory) {
         auto audioSource = m_audioFactory->createAudioCaptureSource(audioDeviceID, audioConstraints);
-        if (!!audioSource)
+        if (audioSource)
             audioSources.append(audioSource.source());
 #if !LOG_DISABLED
         if (!audioSource.errorMessage.isEmpty())
@@ -146,7 +146,7 @@ void RealtimeMediaSourceCenterMac::createMediaStream(NewMediaStreamHandler compl
     }
     if (!videoDeviceID.isEmpty() && m_videoFactory) {
         auto videoSource = m_videoFactory->createVideoCaptureSource(videoDeviceID, videoConstraints);
-        if (!!videoSource)
+        if (videoSource)
             videoSources.append(videoSource.source());
 #if !LOG_DISABLED
         if (!videoSource.errorMessage.isEmpty())
