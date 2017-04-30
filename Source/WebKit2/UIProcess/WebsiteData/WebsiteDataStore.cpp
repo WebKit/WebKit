@@ -40,6 +40,7 @@
 #include "WebsiteDataStoreParameters.h"
 #include <WebCore/ApplicationCacheStorage.h>
 #include <WebCore/DatabaseTracker.h>
+#include <WebCore/FileSystem.h>
 #include <WebCore/HTMLMediaElement.h>
 #include <WebCore/OriginLock.h>
 #include <WebCore/ResourceLoadObserver.h>
@@ -112,17 +113,21 @@ void WebsiteDataStore::resolveDirectoriesIfNecessary()
         return;
     m_hasResolvedDirectories = true;
 
+    // Resolve directory paths.
     m_resolvedConfiguration.applicationCacheDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(m_configuration.applicationCacheDirectory);
     m_resolvedConfiguration.mediaCacheDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(m_configuration.mediaCacheDirectory);
     m_resolvedConfiguration.mediaKeysStorageDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(m_configuration.mediaKeysStorageDirectory);
     m_resolvedConfiguration.webSQLDatabaseDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(m_configuration.webSQLDatabaseDirectory);
     m_resolvedConfiguration.indexedDBDatabaseDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(m_configuration.indexedDBDatabaseDirectory);
 
-    if (!m_configuration.cookieStorageDirectory.isEmpty())
-        m_resolvedConfiguration.cookieStorageDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(m_configuration.cookieStorageDirectory);
-
     if (!m_configuration.javaScriptConfigurationDirectory.isEmpty())
         m_resolvedConfiguration.javaScriptConfigurationDirectory = resolvePathForSandboxExtension(m_configuration.javaScriptConfigurationDirectory);
+
+    // Resolve directories for file paths.
+    if (!m_configuration.cookieStorageFile.isEmpty()) {
+        m_resolvedConfiguration.cookieStorageFile = resolveAndCreateReadWriteDirectoryForSandboxExtension(WebCore::directoryName(m_configuration.cookieStorageFile));
+        m_resolvedConfiguration.cookieStorageFile = WebCore::pathByAppendingComponent(m_resolvedConfiguration.cookieStorageFile, WebCore::pathGetFileName(m_configuration.cookieStorageFile));
+    }
 }
 
 void WebsiteDataStore::cloneSessionData(WebPageProxy& sourcePage, WebPageProxy& newPage)

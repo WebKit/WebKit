@@ -208,4 +208,15 @@ void NetworkProcess::setCookieStoragePartitioningEnabled(bool enabled)
     WebCore::NetworkStorageSession::setCookieStoragePartitioningEnabled(enabled);
 }
 
+void NetworkProcess::syncAllCookies()
+{
+#if !PLATFORM(IOS)
+#if (__MAC_OS_X_VERSION_MIN_REQUIRED <= 101200)
+    _CFHTTPCookieStorageFlushCookieStores();
+#else
+    CFHTTPCookieStorageFlushCookieStores();
+#endif
+#endif
+}
+
 }

@@ -677,6 +677,10 @@ void NetworkProcess::initializeProcessName(const ChildProcessInitializationParam
 void NetworkProcess::initializeSandbox(const ChildProcessInitializationParameters&, SandboxInitializationParameters&)
 {
 }
+
+void NetworkProcess::syncAllCookies()
+{
+}
 #endif
 
 } // namespace WebKit

@@ -1,3 +1,13 @@
+2017-04-30  Brady Eidson  <beidson@apple.com>
+
+        Updates to _WKWebsiteDataStoreConfiguration cookie storage location SPI.
+        <rdar://problem/31906397> and https://bugs.webkit.org/show_bug.cgi?id=171483
+
+        Reviewed by Geoff Garen (and kind of Andy Estes).
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/WebsiteDataStoreCustomPaths.mm:
+        (TEST):
+
 2017-04-30  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [ATK] Implement support for aria-autocomplete

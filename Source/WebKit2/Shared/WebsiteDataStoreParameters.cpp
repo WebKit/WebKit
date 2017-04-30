@@ -38,12 +38,8 @@ WebsiteDataStoreParameters::WebsiteDataStoreParameters()
 void WebsiteDataStoreParameters::encode(IPC::Encoder& encoder) const
 {
     encoder << sessionID;
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
     encoder << uiProcessCookieStorageIdentifier;
-#endif
-#if PLATFORM(IOS)
-    encoder << cookieStorageDirectoryExtensionHandle;
-#endif
+    encoder << cookieStoragePathExtensionHandle;
 }
 
 bool WebsiteDataStoreParameters::decode(IPC::Decoder& decoder, WebsiteDataStoreParameters& parameters)
@@ -51,15 +47,11 @@ bool WebsiteDataStoreParameters::decode(IPC::Decoder& decoder, WebsiteDataStoreP
     if (!decoder.decode(parameters.sessionID))
         return false;
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
     if (!decoder.decode(parameters.uiProcessCookieStorageIdentifier))
         return false;
-#endif
 
-#if PLATFORM(IOS)
-    if (!decoder.decode(parameters.cookieStorageDirectoryExtensionHandle))
+    if (!decoder.decode(parameters.cookieStoragePathExtensionHandle))
         return false;
-#endif
 
     return true;
 }

@@ -1319,6 +1319,11 @@ void WebProcessPool::terminateNetworkProcess()
     m_networkProcess = nullptr;
 }
 
+void WebProcessPool::syncNetworkProcessCookies()
+{
+    sendSyncToNetworkingProcess(Messages::NetworkProcess::SyncAllCookies(), Messages::NetworkProcess::SyncAllCookies::Reply());
+}
+
 void WebProcessPool::allowSpecificHTTPSCertificateForHost(const WebCertificateInfo* certificate, const String& host)
 {
     ensureNetworkProcess();

@@ -1,5 +1,61 @@
 2017-04-30  Brady Eidson  <beidson@apple.com>
 
+        Updates to _WKWebsiteDataStoreConfiguration cookie storage location SPI.
+        <rdar://problem/31906397> and https://bugs.webkit.org/show_bug.cgi?id=171483
+
+        Reviewed by Geoff Garen (and kind of Andy Estes).
+        
+        Updates include:
+        -Taking a file path as the config argument instead of a directory.
+        -Proper sandbox extension handling.
+        -Proper and thorough API test.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::syncAllCookies):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::syncAllCookies):
+
+        * NetworkProcess/mac/RemoteNetworkingContext.mm:
+        (WebKit::RemoteNetworkingContext::ensureWebsiteDataStoreSession):
+
+        * Shared/WebsiteDataStoreParameters.cpp:
+        (WebKit::WebsiteDataStoreParameters::encode):
+        (WebKit::WebsiteDataStoreParameters::decode):
+        * Shared/WebsiteDataStoreParameters.h:
+
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool _syncNetworkProcessCookies]):
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _initWithConfiguration:]):
+
+        * UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.h:
+        * UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.mm:
+        (-[_WKWebsiteDataStoreConfiguration _cookieStoragePath]):
+        (-[_WKWebsiteDataStoreConfiguration _setCookieStoragePath:]):
+        (-[_WKWebsiteDataStoreConfiguration _cookieStorageDirectory]): Deleted.
+        (-[_WKWebsiteDataStoreConfiguration _setCookieStorageDirectory:]): Deleted.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::syncNetworkProcessCookies):
+        * UIProcess/WebProcessPool.h:
+
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::parameters):
+
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::resolveDirectoriesIfNecessary):
+
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        (WebKit::WebsiteDataStore::resolvedCookieStoragePath):
+        (WebKit::WebsiteDataStore::resolvedCookieStorageDirectory): Deleted.
+
+2017-04-30  Brady Eidson  <beidson@apple.com>
+
         Regression (r215941) Unexpected logging causes perf tests to fail.
         <rdar://problem/31907269> and https://bugs.webkit.org/show_bug.cgi?id=171482
 

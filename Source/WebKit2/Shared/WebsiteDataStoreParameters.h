@@ -44,13 +44,8 @@ struct WebsiteDataStoreParameters {
     static bool decode(IPC::Decoder&, WebsiteDataStoreParameters&);
 
     WebCore::SessionID sessionID;
-
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
     Vector<uint8_t> uiProcessCookieStorageIdentifier;
-#endif
-#if PLATFORM(IOS)
-    SandboxExtension::Handle cookieStorageDirectoryExtensionHandle;
-#endif
+    SandboxExtension::Handle cookieStoragePathExtensionHandle;
 };
 
 } // namespace WebKit

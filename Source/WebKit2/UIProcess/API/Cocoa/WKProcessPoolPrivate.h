@@ -71,6 +71,7 @@
 
 // Test only.
 - (size_t)_webProcessCount;
+- (void)_syncNetworkProcessCookies;
 
 // Test only. Should be called before any web content processes are launched.
 + (void)_forceGameControllerFramework;

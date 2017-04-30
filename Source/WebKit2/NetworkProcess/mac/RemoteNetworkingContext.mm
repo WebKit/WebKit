@@ -112,16 +112,13 @@ void RemoteNetworkingContext::ensureWebsiteDataStoreSession(WebsiteDataStorePara
     else
         base = SessionTracker::getIdentifierBase();
 
-#if PLATFORM(IOS)
-    SandboxExtension::consumePermanently(parameters.cookieStorageDirectoryExtensionHandle);
-#endif
+    SandboxExtension::consumePermanently(parameters.cookieStoragePathExtensionHandle);
 
     RetainPtr<CFHTTPCookieStorageRef> uiProcessCookieStorage;
-
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
-    RetainPtr<CFDataRef> cookieStorageData = adoptCF(CFDataCreate(kCFAllocatorDefault, parameters.uiProcessCookieStorageIdentifier.data(), parameters.uiProcessCookieStorageIdentifier.size()));
-    uiProcessCookieStorage = adoptCF(CFHTTPCookieStorageCreateFromIdentifyingData(kCFAllocatorDefault, cookieStorageData.get()));
-#endif
+    if (!parameters.uiProcessCookieStorageIdentifier.isEmpty()) {
+        RetainPtr<CFDataRef> cookieStorageData = adoptCF(CFDataCreate(kCFAllocatorDefault, parameters.uiProcessCookieStorageIdentifier.data(), parameters.uiProcessCookieStorageIdentifier.size()));
+        uiProcessCookieStorage = adoptCF(CFHTTPCookieStorageCreateFromIdentifyingData(kCFAllocatorDefault, cookieStorageData.get()));
+    }
 
     NetworkStorageSession::ensureSession(parameters.sessionID, base + '.' + String::number(parameters.sessionID.sessionID()), WTFMove(uiProcessCookieStorage));
 

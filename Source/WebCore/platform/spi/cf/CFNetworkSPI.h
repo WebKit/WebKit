@@ -171,6 +171,13 @@ void _CFNetworkResetHSTSHostsWithSession(CFURLStorageSessionRef);
 
 void CFHTTPCookieStorageDeleteAllCookies(CFHTTPCookieStorageRef);
 
+
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED <= 101200)
+void _CFHTTPCookieStorageFlushCookieStores();
+#else
+void CFHTTPCookieStorageFlushCookieStores();
+#endif
+
 #if PLATFORM(COCOA)
 CFDataRef _CFCachedURLResponseGetMemMappedData(CFCachedURLResponseRef);
 #ifdef __BLOCKS__

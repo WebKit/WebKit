@@ -37,7 +37,7 @@
 #include <wtf/WorkQueue.h>
 #include <wtf/text/WTFString.h>
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
+#if PLATFORM(COCOA)
 #include <WebCore/CFNetworkSPI.h>
 #endif
 
@@ -75,7 +75,7 @@ public:
         String mediaKeysStorageDirectory;
         String resourceLoadStatisticsDirectory;
         String javaScriptConfigurationDirectory;
-        String cookieStorageDirectory;
+        String cookieStorageFile;
     };
     static Ref<WebsiteDataStore> createNonPersistent();
     static Ref<WebsiteDataStore> create(Configuration, WebCore::SessionID);
@@ -107,7 +107,7 @@ public:
     const String& resolvedMediaKeysDirectory() const { return m_resolvedConfiguration.mediaKeysStorageDirectory; }
     const String& resolvedDatabaseDirectory() const { return m_resolvedConfiguration.webSQLDatabaseDirectory; }
     const String& resolvedJavaScriptConfigurationDirectory() const { return m_resolvedConfiguration.javaScriptConfigurationDirectory; }
-    const String& resolvedCookieStorageDirectory() const { return m_resolvedConfiguration.cookieStorageDirectory; }
+    const String& resolvedCookieStorageFile() const { return m_resolvedConfiguration.cookieStorageFile; }
     const String& resolvedIndexedDatabaseDirectory() const { return m_resolvedConfiguration.indexedDBDatabaseDirectory; }
 
     StorageManager* storageManager() { return m_storageManager.get(); }
@@ -156,7 +156,7 @@ private:
 
     Ref<WorkQueue> m_queue;
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
+#if PLATFORM(COCOA)
     Vector<uint8_t> m_uiProcessCookieStorageIdentifier;
     RetainPtr<CFHTTPCookieStorageRef> m_cfCookieStorage;
 #endif
