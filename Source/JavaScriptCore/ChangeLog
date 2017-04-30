@@ -1,5 +1,27 @@
 2017-04-30  Oleksandr Skachkov  <gskachkov@gmail.com>
 
+        We initialize functions too early in an eval
+        https://bugs.webkit.org/show_bug.cgi?id=161099
+
+        Reviewed by Saam Barati.
+
+        Current patch allow to fix problem with scope in function that is 
+        declared within eval. Before scope was set inside Interpretator.cpp and it
+        was scope where eval is executed, but in this case function would not 
+        see let/const variables and classes declated in eval.
+        This patch devide declaration and binding in two operation, first just declare
+        variable with function name, and second bind variable to function with correct 
+        scope
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::generate):
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        * bytecompiler/BytecodeGenerator.h:
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+
+2017-04-30  Oleksandr Skachkov  <gskachkov@gmail.com>
+
         [ES6]. Implement Annex B.3.3 function hoisting rules for eval
         https://bugs.webkit.org/show_bug.cgi?id=163208
 

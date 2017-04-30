@@ -106,22 +106,36 @@ ParserError BytecodeGenerator::generate()
 
     {
         RefPtr<RegisterID> temp = newTemporary();
-        RefPtr<RegisterID> globalScope;
+        RefPtr<RegisterID> tolLevelScope;
         for (auto functionPair : m_functionsToInitialize) {
             FunctionMetadataNode* metadata = functionPair.first;
             FunctionVariableType functionType = functionPair.second;
             emitNewFunction(temp.get(), metadata);
             if (functionType == NormalFunctionVariable)
                 initializeVariable(variable(metadata->ident()), temp.get());
-            else if (functionType == GlobalFunctionVariable) {
-                if (!globalScope) {
-                    // We know this will resolve to the global object because our parser/global initialization code 
+            else if (functionType == TopLevelFunctionVariable) {
+                if (!tolLevelScope) {
+                    // We know this will resolve to the top level scope or global object because our parser/global initialization code 
                     // doesn't allow let/const/class variables to have the same names as functions.
-                    RefPtr<RegisterID> globalObjectScope = emitResolveScope(nullptr, Variable(metadata->ident())); 
-                    globalScope = newBlockScopeVariable(); 
-                    emitMove(globalScope.get(), globalObjectScope.get());
+                    // This is a top level function, and it's an error to ever create a top level function
+                    // name that would resolve to a lexical variable. E.g:
+                    // ```
+                    //     function f() {
+                    //         {
+                    //             let x;
+                    //             {
+                    //             //// error thrown here
+                    //                  eval("function x(){}");
+                    //             }
+                    //         }
+                    //     }
+                    // ```
+                    // Therefore, we're guaranteed to have this resolve to a top level variable.
+                    RefPtr<RegisterID> tolLevelObjectScope = emitResolveScope(nullptr, Variable(metadata->ident()));
+                    tolLevelScope = newBlockScopeVariable();
+                    emitMove(tolLevelScope.get(), tolLevelObjectScope.get());
                 }
-                emitPutToScope(globalScope.get(), Variable(metadata->ident()), temp.get(), ThrowIfNotFound, InitializationMode::NotInitialization);
+                emitPutToScope(tolLevelScope.get(), Variable(metadata->ident()), temp.get(), ThrowIfNotFound, InitializationMode::NotInitialization);
             } else
                 RELEASE_ASSERT_NOT_REACHED();
         }
@@ -207,7 +221,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, ProgramNode* programNode, UnlinkedP
     const FunctionStack& functionStack = programNode->functionStack();
 
     for (auto* function : functionStack)
-        m_functionsToInitialize.append(std::make_pair(function, GlobalFunctionVariable));
+        m_functionsToInitialize.append(std::make_pair(function, TopLevelFunctionVariable));
 
     if (Options::validateBytecode()) {
         for (auto& entry : programNode->varDeclarations())
@@ -764,8 +778,10 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, EvalNode* evalNode, UnlinkedEvalCod
 
     emitCheckTraps();
     
-    for (FunctionMetadataNode* function : evalNode->functionStack())
+    for (FunctionMetadataNode* function : evalNode->functionStack()) {
         m_codeBlock->addFunctionDecl(makeFunction(function));
+        m_functionsToInitialize.append(std::make_pair(function, TopLevelFunctionVariable));
+    }
 
     const VariableEnvironment& varDeclarations = evalNode->varDeclarations();
     Vector<Identifier, 0, UnsafeVectorOverflow> variables;

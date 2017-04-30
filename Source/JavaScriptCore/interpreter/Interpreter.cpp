@@ -1178,7 +1178,8 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
             for (unsigned i = 0; i < numTopLevelFunctionDecls; ++i) {
                 FunctionExecutable* function = codeBlock->functionDecl(i);
                 PutPropertySlot slot(variableObject);
-                variableObject->methodTable()->put(variableObject, callFrame, function->name(), JSFunction::create(vm, function, scope), slot);
+                // We need create this variables because it will be used to emits code by bytecode generator
+                variableObject->methodTable()->put(variableObject, callFrame, function->name(), jsUndefined(), slot);
             }
         } else {
             for (unsigned i = 0; i < numTopLevelFunctionDecls; ++i) {
@@ -1187,7 +1188,8 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
                 if (resolvedScope.isUndefined())
                     return checkedReturn(throwSyntaxError(callFrame, throwScope, makeString("Can't create duplicate variable in eval: '", String(function->name().impl()), "'")));
                 PutPropertySlot slot(variableObject);
-                variableObject->methodTable()->put(variableObject, callFrame, function->name(), JSFunction::create(vm, function, scope), slot);
+                // We need create this variables because it will be used to emits code by bytecode generator
+                variableObject->methodTable()->put(variableObject, callFrame, function->name(), jsUndefined(), slot);
                 RETURN_IF_EXCEPTION(throwScope, checkedReturn(throwScope.exception()));
             }
 

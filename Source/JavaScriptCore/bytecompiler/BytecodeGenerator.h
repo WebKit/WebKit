@@ -1111,7 +1111,7 @@ namespace JSC {
         Strong<SymbolTable> m_generatorFrameSymbolTable;
         int m_generatorFrameSymbolTableIndex { 0 };
 
-        enum FunctionVariableType : uint8_t { NormalFunctionVariable, GlobalFunctionVariable };
+        enum FunctionVariableType : uint8_t { NormalFunctionVariable, TopLevelFunctionVariable };
         Vector<std::pair<FunctionMetadataNode*, FunctionVariableType>> m_functionsToInitialize;
         bool m_needToInitializeArguments { false };
         RestParameterNode* m_restParameter { nullptr };
