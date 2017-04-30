@@ -1,3 +1,15 @@
+2017-04-30  Oleksandr Skachkov  <gskachkov@gmail.com>
+
+        [ES6]. Implement Annex B.3.3 function hoisting rules for eval
+        https://bugs.webkit.org/show_bug.cgi?id=163208
+
+        Reviewed by Saam Barati.
+
+        * inspector/runtime/evaluate-CommandLineAPI-expected.txt:
+        * inspector/runtime/evaluate-CommandLineAPI.html:
+        * js/parser-syntax-check-expected.txt:
+        * js/script-tests/parser-syntax-check.js:
+
 2017-04-29  Oleksandr Skachkov  <gskachkov@gmail.com>
 
         Deep nesting is leading to ReferenceError for hoisted function

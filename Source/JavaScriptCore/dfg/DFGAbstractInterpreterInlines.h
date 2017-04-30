@@ -2873,11 +2873,16 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         clobberWorld(node->origin.semantic, clobberLimit);
         forNode(node).setType(m_graph, SpecObject);
         break;
-        
+
+    case ResolveScopeForHoistingFuncDeclInEval:
+        clobberWorld(node->origin.semantic, clobberLimit);
+        forNode(node).makeBytecodeTop();
+        break;
+
     case PutGlobalVariable:
     case NotifyWrite:
         break;
-            
+
     case OverridesHasInstance:
         forNode(node).setType(SpecBoolean);
         break;

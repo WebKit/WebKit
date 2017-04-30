@@ -1,3 +1,153 @@
+2017-04-30  Oleksandr Skachkov  <gskachkov@gmail.com>
+
+        [ES6]. Implement Annex B.3.3 function hoisting rules for eval
+        https://bugs.webkit.org/show_bug.cgi?id=163208
+
+        Reviewed by Saam Barati.
+
+        Current patch implements Annex B.3.3 that is related to 
+        hoisting of function declaration in eval. 
+        https://tc39.github.io/ecma262/#sec-web-compat-evaldeclarationinstantiation
+        Function declaration in eval should create variable with 
+        function name in function scope where eval is invoked 
+        or bind to variable if it declared outside of the eval. 
+        If variable is created it can be removed by 'delete a;' command. 
+        If eval is invoke in block scope that contains let/const 
+        variable with the same name as function declaration 
+        we do not bind. This patch leads to the following behavior: 
+        '''
+        function foo() {
+           {
+             print(boo); // undefined
+             eval('{ function boo() {}}');
+             print(boo); // function boo() {}
+           }
+           print(boo); // function boo() {}
+        }
+
+        function foobar() {
+          { 
+            let boo = 10;
+            print(boo); // 10;
+            eval('{ function boo() {}}');
+            print(boo); // 10;
+          }
+          print(boo) // 10
+        }
+
+        function bar() {
+           {
+              var boo = 10;
+              print(boo); // 10
+              eval('{ function boo() {} }'); 
+              print(boo); // function boo() {}
+           }
+           print(boo); // function boo() {}
+        }       
+        
+        function bas() {
+            {
+                 let boo = 10;
+                 eval(' { function boo() {} } ');
+                 print(boo); // 10
+            }
+            print(boo); //Reference Error
+        }
+        '''
+
+        Current implementation relies on already implemented 
+        'hoist function in sloppy mode' feature, with small changes.
+        In short it works in following way: during hoisting of function 
+        with name S in eval, we are looking for first scope that 
+        contains space for variable with name S and if this scope 
+        has var type we bind function there
+
+        To implement this feature was added bytecode ops:
+        op_resolve_scope_for_hoisting_func_decl_in_eval - get variable scope 
+        or return undefined if variable can't be binded there.
+
+        There is a corner case, hoist function in eval within catch block,
+        that is not covered by this patch, and will be fixed in 
+        https://bugs.webkit.org/show_bug.cgi?id=168184
+
+        * bytecode/BytecodeDumper.cpp:
+        (JSC::BytecodeDumper<Block>::dumpBytecode):
+        * bytecode/BytecodeList.json:
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finalizeLLIntInlineCaches):
+        * bytecode/EvalCodeBlock.h:
+        (JSC::EvalCodeBlock::functionHoistingCandidate):
+        (JSC::EvalCodeBlock::numFunctionHoistingCandidates):
+        * bytecode/UnlinkedEvalCodeBlock.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::hoistSloppyModeFunctionIfNecessary):
+        (JSC::BytecodeGenerator::emitResolveScopeForHoistingFuncDeclInEval):
+        * bytecompiler/BytecodeGenerator.h:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasIdentifier):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileResolveScopeForHoistingFuncDeclInEval):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileResolveScopeForHoistingFuncDeclInEval):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JIT.h:
+        * jit/JITOperations.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_resolve_scope_for_hoisting_func_decl_in_eval):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_resolve_scope_for_hoisting_func_decl_in_eval):
+        * llint/LowLevelInterpreter.asm:
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseFunctionDeclarationStatement):
+        * parser/Parser.h:
+        (JSC::Scope::getSloppyModeHoistedFunctions):
+        (JSC::Parser::declareFunction):
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/CommonSlowPaths.h:
+        * runtime/EvalExecutable.h:
+        (JSC::EvalExecutable::numFunctionHoistingCandidates):
+        (JSC::EvalExecutable::numTopLevelFunctionDecls):
+        (JSC::EvalExecutable::numberOfFunctionDecls): Deleted.
+        * runtime/JSScope.cpp:
+        (JSC::JSScope::resolve):
+        (JSC::JSScope::resolveScopeForHoistingFuncDeclInEval):
+        * runtime/JSScope.h:
+
 2017-04-29  Oleksandr Skachkov  <gskachkov@gmail.com>
 
         Deep nesting is leading to ReferenceError for hoisted function

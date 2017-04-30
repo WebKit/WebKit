@@ -1081,6 +1081,9 @@ private:
         case RecordRegExpCachedResult:
             compileRecordRegExpCachedResult();
             break;
+        case ResolveScopeForHoistingFuncDeclInEval:
+            compileResolveScopeForHoistingFuncDeclInEval();
+            break;
         case ResolveScope:
             compileResolveScope();
             break;
@@ -10138,6 +10141,12 @@ private:
         default:
             RELEASE_ASSERT_NOT_REACHED();
         }
+    }
+
+    void compileResolveScopeForHoistingFuncDeclInEval()
+    {
+        UniquedStringImpl* uid = m_graph.identifiers()[m_node->identifierNumber()];
+        setJSValue(vmCall(pointerType(), m_out.operation(operationResolveScopeForHoistingFuncDeclInEval), m_callFrame, lowCell(m_node->child1()), m_out.constIntPtr(uid)));
     }
 
     void compileResolveScope()

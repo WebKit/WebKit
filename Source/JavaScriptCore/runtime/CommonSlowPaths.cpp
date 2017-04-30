@@ -812,6 +812,18 @@ SLOW_PATH_DECL(slow_path_push_with_scope)
     RETURN(JSWithScope::create(vm, exec->lexicalGlobalObject(), newScope, currentScope));
 }
 
+SLOW_PATH_DECL(slow_path_resolve_scope_for_hoisting_func_decl_in_eval)
+{
+    BEGIN();
+    const Identifier& ident = exec->codeBlock()->identifier(pc[3].u.operand);
+    JSScope* scope = exec->uncheckedR(pc[2].u.operand).Register::scope();
+    JSValue resolvedScope = JSScope::resolveScopeForHoistingFuncDeclInEval(exec, scope, ident);
+
+    CHECK_EXCEPTION();
+
+    RETURN(resolvedScope);
+}
+
 SLOW_PATH_DECL(slow_path_resolve_scope)
 {
     BEGIN();

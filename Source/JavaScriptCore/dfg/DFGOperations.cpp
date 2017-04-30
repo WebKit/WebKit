@@ -2206,6 +2206,15 @@ void JIT_OPERATION debugOperationPrintSpeculationFailure(ExecState* exec, void* 
     dataLog("\n");
 }
 
+EncodedJSValue JIT_OPERATION operationResolveScopeForHoistingFuncDeclInEval(ExecState* exec, JSScope* scope, UniquedStringImpl* impl)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+        
+    JSValue resolvedScope = JSScope::resolveScopeForHoistingFuncDeclInEval(exec, scope, Identifier::fromUid(exec, impl));
+    return JSValue::encode(resolvedScope);
+}
+    
 JSCell* JIT_OPERATION operationResolveScope(ExecState* exec, JSScope* scope, UniquedStringImpl* impl)
 {
     VM& vm = exec->vm();

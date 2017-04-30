@@ -4877,6 +4877,11 @@ void SpeculativeJIT::compile(Node* node)
         compileGetDynamicVar(node);
         break;
     }
+    
+    case ResolveScopeForHoistingFuncDeclInEval: {
+        compileResolveScopeForHoistingFuncDeclInEval(node);
+        break;
+    }
 
     case ResolveScope: {
         compileResolveScope(node);

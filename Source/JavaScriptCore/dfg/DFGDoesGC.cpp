@@ -267,6 +267,7 @@ bool doesGC(Graph& graph, Node* node)
     case LogShadowChickenTail:
     case GetDynamicVar:
     case PutDynamicVar:
+    case ResolveScopeForHoistingFuncDeclInEval:
     case ResolveScope:
     case NukeStructureAndSetButterfly:
     case AtomicsAdd:
