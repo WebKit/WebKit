@@ -1,3 +1,15 @@
+2017-04-30  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Have check-webkit-style advise against use of [get…Class() alloc]
+        https://bugs.webkit.org/show_bug.cgi?id=171486
+
+        Reviewed by Sam Weinig.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_soft_link_class_alloc): Added. Looks for [get…Class() alloc] and suggests
+          alloc…Instance() instead.
+        (check_style): Invoke new check.
+
 2017-04-30  Brady Eidson  <beidson@apple.com>
 
         More fixing after r215991

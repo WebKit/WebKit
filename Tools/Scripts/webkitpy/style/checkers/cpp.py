@@ -2729,6 +2729,23 @@ def check_for_null(clean_lines, line_number, file_state, error):
         error(line_number, 'readability/null', 4, 'Use nullptr instead of NULL (even in *comments*).')
 
 
+def check_soft_link_class_alloc(clean_lines, line_number, error):
+    """Checks that allocating an instance of a soft-linked class uses alloc[Class]Instance.
+
+    Args:
+      clean_lines: A CleansedLines instance containing the file.
+      line_number: The number of the line to check.
+      error: The function to call with any errors found.
+    """
+
+    line = clean_lines.elided[line_number]
+
+    matched = search(r'\[get([^\s]+)Class\(\)\s+alloc\]', line)
+    if matched:
+        error(line_number, 'runtime/soft-linked-alloc', 4,
+              'Using +alloc with a soft-linked class. Use alloc%sInstance() instead.' % matched.group(1))
+
+
 def get_line_width(line):
     """Determines the width of the line in column positions.
 
@@ -2822,6 +2839,7 @@ def check_style(clean_lines, line_number, file_extension, class_state, file_stat
     check_check(clean_lines, line_number, error)
     check_for_comparisons_to_zero(clean_lines, line_number, error)
     check_for_null(clean_lines, line_number, file_state, error)
+    check_soft_link_class_alloc(clean_lines, line_number, error)
     check_indentation_amount(clean_lines, line_number, error)
     check_enum_casing(clean_lines, line_number, enum_state, error)
 
