@@ -1,0 +1,51 @@
+This tests the exposure of aria-current
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+test1 supports autocompletion: false
+AXPlatformAttributes: computed-role:searchbox, xml-roles:searchbox, readonly:false, html-id:test1, tag:div, toolkit:WebKitGtk
+
+test2 supports autocompletion: false
+AXPlatformAttributes: computed-role:searchbox, xml-roles:searchbox, readonly:false, autocomplete:none, html-id:test2, tag:div, toolkit:WebKitGtk
+
+test3 supports autocompletion: false
+AXPlatformAttributes: computed-role:searchbox, xml-roles:searchbox, readonly:false, autocomplete:none, html-id:test3, tag:div, toolkit:WebKitGtk
+
+test4 supports autocompletion: false
+AXPlatformAttributes: computed-role:searchbox, xml-roles:searchbox, readonly:false, autocomplete:none, html-id:test4, tag:div, toolkit:WebKitGtk
+
+test5 supports autocompletion: true
+AXPlatformAttributes: computed-role:searchbox, xml-roles:searchbox, readonly:false, autocomplete:both, html-id:test5, tag:div, toolkit:WebKitGtk
+
+test6 supports autocompletion: true
+AXPlatformAttributes: computed-role:searchbox, xml-roles:searchbox, readonly:false, autocomplete:inline, html-id:test6, tag:div, toolkit:WebKitGtk
+
+test7 supports autocompletion: true
+AXPlatformAttributes: computed-role:searchbox, xml-roles:searchbox, readonly:false, autocomplete:list, html-id:test7, tag:div, toolkit:WebKitGtk
+
+test8 supports autocompletion: false
+AXPlatformAttributes: computed-role:group, xml-roles:group, html-id:test8, tag:div, toolkit:WebKitGtk
+
+test9 supports autocompletion: false
+AXPlatformAttributes: computed-role:group, xml-roles:group, html-id:test9, tag:div, toolkit:WebKitGtk
+
+test10 supports autocompletion: false
+AXPlatformAttributes: computed-role:group, xml-roles:group, html-id:test10, tag:div, toolkit:WebKitGtk
+
+test11 supports autocompletion: false
+AXPlatformAttributes: computed-role:group, xml-roles:group, html-id:test11, tag:div, toolkit:WebKitGtk
+
+test12 supports autocompletion: false
+AXPlatformAttributes: computed-role:group, xml-roles:group, html-id:test12, tag:div, toolkit:WebKitGtk
+
+test13 supports autocompletion: false
+AXPlatformAttributes: computed-role:group, xml-roles:group, html-id:test13, tag:div, toolkit:WebKitGtk
+
+test14 supports autocompletion: false
+AXPlatformAttributes: computed-role:group, xml-roles:group, html-id:test14, tag:div, toolkit:WebKitGtk
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,5 +1,27 @@
 2017-04-30  Joanmarie Diggs  <jdiggs@igalia.com>
 
+        [ATK] Implement support for aria-autocomplete
+        https://bugs.webkit.org/show_bug.cgi?id=171167
+
+        Reviewed by Chris Fleizach.
+
+        Expose ATK_STATE_SUPPORTS_AUTOCOMPLETION in the state set, and the value
+        of aria-autocomplete as an object attribute, for elements which indicate
+        they support autocompletion.
+
+        Test: accessibility/gtk/aria-autocomplete.html
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::supportsARIAAutoComplete):
+        (WebCore::AccessibilityObject::ariaAutoCompleteValue):
+        * accessibility/AccessibilityObject.h:
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (webkitAccessibleGetAttributes):
+        (setAtkStateSetFromCoreObject):
+        * html/HTMLAttributeNames.in:
+
+2017-04-30  Joanmarie Diggs  <jdiggs@igalia.com>
+
         [ATK] ARIA treegrid role should be exposed as ATK_ROLE_TREE_TABLE; not ATK_ROLE_TABLE
         https://bugs.webkit.org/show_bug.cgi?id=171170
 

@@ -1112,6 +1112,8 @@ bool AccessibilityUIElement::boolAttributeValue(JSStringRef attribute)
         return checkElementState(m_element.get(), ATK_STATE_REQUIRED);
     if (attributeString == "AXSelected")
         return checkElementState(m_element.get(), ATK_STATE_SELECTED);
+    if (attributeString == "AXSupportsAutoCompletion")
+        return checkElementState(m_element.get(), ATK_STATE_SUPPORTS_AUTOCOMPLETION);
     if (attributeString == "AXVisited")
         return checkElementState(m_element.get(), ATK_STATE_VISITED);
 

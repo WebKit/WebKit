@@ -962,6 +962,9 @@ public:
 
     bool supportsARIAReadOnly() const;
     String ariaReadOnlyValue() const;
+
+    bool supportsARIAAutoComplete() const;
+    String ariaAutoCompleteValue() const;
     
     bool supportsARIAAttributes() const;
     

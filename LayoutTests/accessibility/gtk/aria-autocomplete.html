@@ -1,0 +1,51 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+<div id="content">
+  <div id="test1" role="searchbox">X</div>
+  <div id="test2" role="searchbox" aria-autocomplete="">X</div>
+  <div id="test3" role="searchbox" aria-autocomplete="foo">X</div>
+  <div id="test4" role="searchbox" aria-autocomplete="none">X</div>
+  <div id="test5" role="searchbox" aria-autocomplete="both">X</div>
+  <div id="test6" role="searchbox" aria-autocomplete="inline">X</div>
+  <div id="test7" role="searchbox" aria-autocomplete="list">X</div>
+  <div id="test8" role="group">X</div>
+  <div id="test9" role="group" aria-autocomplete="">X</div>
+  <div id="test10" role="group" aria-autocomplete="foo">X</div>
+  <div id="test11" role="group" aria-autocomplete="none">X</div>
+  <div id="test12" role="group" aria-autocomplete="both">X</div>
+  <div id="test13" role="group" aria-autocomplete="inline">X</div>
+  <div id="test14" role="group" aria-autocomplete="list">X</div>
+</div>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+    function platformAttributes(axElement) {
+        var allAttributes = axElement.allAttributes().split("\n");
+        var length = allAttributes.length;
+        for (var i = 0; i < length; i++) {
+            var string = allAttributes[i];
+            if (string.startsWith("AXPlatformAttributes"))
+                return string;
+        }
+        return "";
+    }
+
+    description("This tests the exposure of aria-current");
+    if (window.accessibilityController) {
+        for (var i = 1; i <= 14; i++) {
+            var axElement = accessibilityController.accessibleElementById("test" + i);
+            debug("\ntest" + i + " supports autocompletion: " + axElement.boolAttributeValue("AXSupportsAutoCompletion"));
+            debug(platformAttributes(axElement));
+        }
+
+        document.getElementById("content").style.visibility = "hidden";
+    }
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
+

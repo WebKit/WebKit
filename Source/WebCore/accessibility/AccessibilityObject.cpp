@@ -1613,6 +1613,22 @@ String AccessibilityObject::ariaReadOnlyValue() const
     return getAttribute(aria_readonlyAttr).string().convertToASCIILowercase();
 }
 
+bool AccessibilityObject::supportsARIAAutoComplete() const
+{
+    return isARIATextControl() && hasAttribute(aria_autocompleteAttr);
+}
+
+String AccessibilityObject::ariaAutoCompleteValue() const
+{
+    const AtomicString& autoComplete = getAttribute(aria_autocompleteAttr);
+    if (equalLettersIgnoringASCIICase(autoComplete, "inline")
+        || equalLettersIgnoringASCIICase(autoComplete, "list")
+        || equalLettersIgnoringASCIICase(autoComplete, "both"))
+        return autoComplete;
+
+    return "none";
+}
+
 bool AccessibilityObject::contentEditableAttributeIsEnabled(Element* element)
 {
     if (!element)
