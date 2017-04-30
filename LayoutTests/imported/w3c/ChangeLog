@@ -1,3 +1,23 @@
+2017-04-29  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Zero out PerformanceResourceTiming properties for cached cross-origin responses without Timing-Allow-Origin
+        https://bugs.webkit.org/show_bug.cgi?id=171394
+
+        Reviewed by Youenn Fablet.
+
+        WebKit doesn't create multiple PerformanceResourceTiming entries for
+        loads that use the same CachedResource. However for revalidation
+        requests, which may happen for cached entries, we will send new
+        network requests. These tests cover whether revalidation requests
+        include timing data or not.
+
+        * web-platform-tests/resource-timing/resources/rt-revalidation-response.py: Added.
+        * web-platform-tests/resource-timing/rt-cors-expected.txt:
+        * web-platform-tests/resource-timing/rt-cors.js:
+        * web-platform-tests/resource-timing/rt-cors.worker-expected.txt:
+        * web-platform-tests/resource-timing/rt-revalidate-requests-expected.txt: Added.
+        * web-platform-tests/resource-timing/rt-revalidate-requests.html: Added.
+
 2017-04-28  Chris Dumez  <cdumez@apple.com>
 
         Tweak window.open features argument tokenizer to match HTML standard and Edge

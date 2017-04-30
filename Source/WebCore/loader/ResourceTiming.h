@@ -38,7 +38,7 @@ class SecurityOrigin;
 class ResourceTiming {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static ResourceTiming fromCache(const URL&, const String& initiator, const LoadTiming&);
+    static ResourceTiming fromCache(const URL&, const String& initiator, const LoadTiming&, const ResourceResponse&, const SecurityOrigin&);
     static ResourceTiming fromLoad(CachedResource&, const String& initiator, const LoadTiming&, const NetworkLoadMetrics&, const SecurityOrigin&);
     static ResourceTiming fromSynchronousLoad(const URL&, const String& initiator, const LoadTiming&, const NetworkLoadMetrics&, const ResourceResponse&, const SecurityOrigin&);
 
@@ -55,7 +55,7 @@ public:
 private:
     ResourceTiming(CachedResource&, const String& initiator, const LoadTiming&, const NetworkLoadMetrics&, const SecurityOrigin&);
     ResourceTiming(const URL&, const String& initiator, const LoadTiming&, const NetworkLoadMetrics&, const ResourceResponse&, const SecurityOrigin&);
-    ResourceTiming(const URL&, const String& initiator, const LoadTiming&);
+    ResourceTiming(const URL&, const String& initiator, const LoadTiming&, const ResourceResponse&, const SecurityOrigin&);
     ResourceTiming(const URL& url, const String& initiator, const LoadTiming& loadTiming, const NetworkLoadMetrics& networkLoadMetrics, bool allowTimingDetails)
         : m_url(url)
         , m_initiator(initiator)

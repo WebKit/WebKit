@@ -152,7 +152,8 @@ promise_test(function(t) {
 promise_test(function(t) {
     let promise = observeResources(1).then(([entry]) => {
         assertNonRedirectTimingData(entry);
-        assertDisallowedTimingData(entry); });
+        assertDisallowedTimingData(entry);
+    });
     let url = uniqueDataURL("other-origins", "cross-origin");
     url = addMultipleTimingAllowOriginHeaders(url, [location.origin + ".test", "x" + location.origin]);
     fetch(url);
@@ -162,12 +163,13 @@ promise_test(function(t) {
 promise_test(function(t) {
     let promise = observeResources(1).then(([entry]) => {
         assertNonRedirectTimingData(entry);
-        assertDisallowedTimingData(entry); });
+        assertDisallowedTimingData(entry);
+    });
     let url = uniqueDataURL("case-sensitive", "cross-origin");
     url = addTimingAllowOriginHeader(url, location.origin.toUpperCase());
     fetch(url);
     return promise;
-}, "Cross Origin resource with origin not Timing-Allow-Origin list must have filtered timing data (case-sensitive)");
+}, "Cross Origin resource with origin not in Timing-Allow-Origin list must have filtered timing data (case-sensitive)");
 
 // Redirects
 
@@ -278,7 +280,7 @@ promise_test(function(t) {
     url = addTimingAllowOriginHeader(url, location.origin.toUpperCase());
     fetch(urlWithRedirectTo(url));
     return promise;
-}, "Redirect to Cross Origin resource with origin not Timing-Allow-Origin list must have filtered timing data (case-sensitive)");
+}, "Redirect to Cross Origin resource with origin not in Timing-Allow-Origin list must have filtered timing data (case-sensitive)");
 
 
 // Multiple redirects

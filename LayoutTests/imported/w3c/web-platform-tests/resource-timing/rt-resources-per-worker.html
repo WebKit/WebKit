@@ -49,7 +49,10 @@ window.addEventListener("load", function() {
 
     Promise.all(promises).then(function() {
         let supported = worker1Entries !== "error" && worker2Entries !== "error";
+
+        // Exclude the Worker script if it was in the list since it may have been added in the meantime.
         let windowEntries = window.performance.getEntriesByType("resource");
+        windowEntries = windowEntries.filter((entry) => !/rt-worker-resources\.js$/.test(entry.name));
 
         test(function() {
             assert_true(supported);
