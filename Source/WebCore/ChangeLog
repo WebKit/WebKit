@@ -1,3 +1,11 @@
+2017-04-30  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/31906525> WebCore-7604.1.19 has failed to build
+
+        * platform/ios/WebItemProviderPasteboard.mm:
+        (-[WebItemProviderPasteboard setItemsUsingRegistrationInfoLists:]): Resolved type ambiguity
+          by using allocUIItemProviderInstance() instead of [getUIItemProviderClass() alloc].
+
 2017-04-30  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [ATK] Implement support for aria-autocomplete

@@ -277,7 +277,7 @@ static BOOL isImageType(NSString *type)
         if (!itemList.numberOfItems)
             continue;
 
-        auto itemProvider = adoptNS([[getUIItemProviderClass() alloc] init]);
+        auto itemProvider = adoptNS([allocUIItemProviderInstance() init]);
         [itemList enumerateItems:[itemProvider] (WebItemProviderRegistrationInfo *item, NSUInteger) {
             if (item.representingObject) {
                 [itemProvider registerObject:item.representingObject visibility:UIItemProviderRepresentationOptionsVisibilityAll];
