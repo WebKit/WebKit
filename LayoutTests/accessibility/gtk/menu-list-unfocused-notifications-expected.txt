@@ -18,6 +18,7 @@ Focused element is: AXRole: AXButton
 
 AXChildrenAdded: AXRole: AXWebArea
 AXLoadComplete: AXRole: AXWebArea
+AXElementBusyChanged: AXRole: AXWebArea
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -75,6 +75,8 @@ gboolean axObjectEventListener(GSignalInvocationHint* signalHint, unsigned numPa
             notificationName = "AXInvalidStatusChanged";
         else if (!g_strcmp0(g_value_get_string(&paramValues[1]), "active"))
             notificationName = "ActiveStateChanged";
+        else if (!g_strcmp0(g_value_get_string(&paramValues[1]), "busy"))
+            notificationName = "AXElementBusyChanged";
     } else if (!g_strcmp0(signalQuery.signal_name, "focus-event")) {
         if (g_value_get_boolean(&paramValues[1]))
             notificationName = "AXFocusedUIElementChanged";

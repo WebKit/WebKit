@@ -1,3 +1,14 @@
+2017-04-30  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        [ATK] Emit object:state-changed:busy event when aria-busy value changes
+        https://bugs.webkit.org/show_bug.cgi?id=171181
+
+        Reviewed by Chris Fleizach.
+
+        Add handler for AXElementBusyChanged notifications.
+
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityNotificationHandlerAtk.cpp:
+
 2017-04-29  Aakash Jain  <aakash_jain@apple.com>
 
         Use PEP8 style guide for raising exceptions in webkitpy.

@@ -1,3 +1,17 @@
+2017-04-30  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        [ATK] Emit object:state-changed:busy event when aria-busy value changes
+        https://bugs.webkit.org/show_bug.cgi?id=171181
+
+        Reviewed by Chris Fleizach.
+
+        Emit object:state-changed:busy for AXElementBusyChanged notifications.
+
+        Test: accessibility/gtk/aria-busy-changed-notification.html
+
+        * accessibility/atk/AXObjectCacheAtk.cpp:
+        (WebCore::AXObjectCache::postPlatformNotification):
+
 2017-04-29  Joseph Pecoraro  <pecoraro@apple.com>
 
         Zero out PerformanceResourceTiming properties for cached cross-origin responses without Timing-Allow-Origin
