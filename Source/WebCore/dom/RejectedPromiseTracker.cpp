@@ -78,19 +78,19 @@ private:
 
 class UnhandledPromise : public RejectedPromise {
 public:
-    UnhandledPromise(VM& vm, JSDOMGlobalObject& globalObject, JSPromise& promise, Ref<ScriptCallStack>&& stack)
+    UnhandledPromise(VM& vm, JSDOMGlobalObject& globalObject, JSPromise& promise, RefPtr<ScriptCallStack>&& stack)
         : RejectedPromise(vm, globalObject, promise)
         , m_stack(WTFMove(stack))
     {
     }
 
-    ScriptCallStack& callStack()
+    ScriptCallStack* callStack()
     {
         return m_stack.get();
     }
 
 private:
-    Ref<ScriptCallStack> m_stack;
+    RefPtr<ScriptCallStack> m_stack;
 };
 
 
@@ -104,12 +104,21 @@ RejectedPromiseTracker::~RejectedPromiseTracker()
 {
 }
 
-static Ref<ScriptCallStack> createScriptCallStackFromReason(ExecState& state, JSValue reason)
+static RefPtr<ScriptCallStack> createScriptCallStackFromReason(ExecState& state, JSValue reason)
 {
     VM& vm = state.vm();
-    if (auto* exception = jsDynamicCast<JSC::Exception*>(vm, reason))
-        return createScriptCallStackFromException(&state, exception, ScriptCallStack::maxCallStackSizeToCapture);
-    return createScriptCallStack(&state, ScriptCallStack::maxCallStackSizeToCapture);
+
+    // Always capture a stack from the exception if this rejection was an exception.
+    if (auto* exception = vm.lastException()) {
+        if (exception->value() == reason)
+            return createScriptCallStackFromException(&state, exception, ScriptCallStack::maxCallStackSizeToCapture);
+    }
+
+    // Otherwise, only capture a stack if a debugger is open.
+    if (state.lexicalGlobalObject()->debugger())
+        return createScriptCallStack(&state, ScriptCallStack::maxCallStackSizeToCapture);
+
+    return nullptr;
 }
 
 void RejectedPromiseTracker::promiseRejected(ExecState& state, JSDOMGlobalObject& globalObject, JSPromise& promise)

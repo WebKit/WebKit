@@ -1,3 +1,24 @@
+2017-05-01  Joseph Pecoraro  <pecoraro@apple.com>
+
+        RejectedPromiseTracker should produce better callstacks and avoid capturing callstacks unless there is a debugger/inspector
+        https://bugs.webkit.org/show_bug.cgi?id=171416
+        <rdar://problem/31899425>
+
+        Reviewed by Saam Barati and Brian Burg.
+
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/test_ecdh_bits-expected.txt:
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/test_ecdh_keys-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/event_pause_noautoplay-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/event_play_noautoplay-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/paused_true_during_pause-expected.txt:
+        * web-platform-tests/streams/piping/close-propagation-forward-expected.txt:
+        * web-platform-tests/streams/piping/error-propagation-backward-expected.txt:
+        * web-platform-tests/streams/piping/error-propagation-forward-expected.txt:
+        * web-platform-tests/streams/piping/flow-control-expected.txt:
+        * web-platform-tests/streams/piping/general-expected.txt:
+        Rebaseline results. Better stack trace for errors includes correct line numbers.
+        Explicit rejections with a value do not include backtraces without a debugger.
+
 2017-04-29  Joseph Pecoraro  <pecoraro@apple.com>
 
         Zero out PerformanceResourceTiming properties for cached cross-origin responses without Timing-Allow-Origin

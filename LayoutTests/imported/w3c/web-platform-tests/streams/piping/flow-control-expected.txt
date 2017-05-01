@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 1: Unhandled Promise Rejection: Error: assert_array_equals: close must always be called with the controller lengths differ, expected 1 got 0
+CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_array_equals: close must always be called with the controller lengths differ, expected 1 got 0
 
 Harness Error (FAIL), message = assert_array_equals: close must always be called with the controller lengths differ, expected 1 got 0
 

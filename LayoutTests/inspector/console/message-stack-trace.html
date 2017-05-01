@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/log-console-stack-trace.js"></script>
+<script>
+TestPage.allowUncaughtExceptions = true;
+TestPage.needToSanitizeUncaughtExceptionURLs = true;
+
+function triggerConsoleTrace() {
+    (function() {
+        console.trace();
+    })();
+}
+
+function triggerConsoleError() {
+    (function() {
+        console.error("error message");
+    })();
+}
+
+function triggerUncaughtException() {
+    (function() {
+        [].x.x;
+    })();
+}
+
+function triggerUnhandledRejectionPromiseReject() {
+    window.promise1 = Promise.reject("rejection-1");
+}
+
+function triggerUnhandledRejectionExplicit() {
+    window.promise2 = new Promise((resolve, reject) => {
+        reject("rejection-2");
+    });
+}
+
+function triggerUnhandledRejectionImplicitWithException() {
+    window.promise3 = Promise.resolve().then(() => {
+        [].x.x;
+    });
+}
+
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Console.StackTrace");
+
+    let messageChecker;
+    let untilPromiseResolver;
+
+    function untilMessageMatches(checker) {
+        messageChecker = checker;
+        return new Promise((resolve, reject) => {
+            untilPromiseResolver = resolve;
+        });
+    }
+
+    WebInspector.logManager.addEventListener(WebInspector.LogManager.Event.MessageAdded, (event) => {
+        let message = event.data.message;
+        InspectorTest.assert(message instanceof WebInspector.ConsoleMessage);
+        if (messageChecker && messageChecker(message)) {
+            messageChecker = null;
+            untilPromiseResolver(message);
+        }
+    });
+
+    function addTestCase({name, description, expression, condition}) {
+        suite.addTestCase({
+            name, description,
+            test(resolve, reject) {
+                InspectorTest.evaluateInPage(expression);
+                untilMessageMatches(condition).then((message) => {
+                    logConsoleMessageStackTrace(message);
+                }).then(resolve, reject);
+            }
+        });
+    }
+
+    // ----
+
+    addTestCase({
+        name: "Console.StackTrace.ConsoleTrace",
+        description: "StackTrace from console.trace().",
+        expression: `setTimeout(triggerConsoleTrace)`,
+        condition(message) { return message.type === WebInspector.ConsoleMessage.MessageType.Trace; },
+    });
+
+    addTestCase({
+        name: "Console.StackTrace.ConsoleError",
+        description: "StackTrace from console.error().",
+        expression: `setTimeout(triggerConsoleError)`,
+        condition(message) { return message.level === WebInspector.ConsoleMessage.MessageLevel.Error; },
+    });
+
+    addTestCase({
+        name: "Console.StackTrace.UncaughtException",
+        description: "StackTrace from an uncaught exception.",
+        expression: `setTimeout(triggerUncaughtException)`,
+        condition(message) { return message.level === WebInspector.ConsoleMessage.MessageLevel.Error; },
+    });
+
+    addTestCase({
+        name: "Console.StackTrace.UnhandledPromiseRejection.PromiseReject",
+        description: "StackTrace from an unhandled promise rejection via Promise.reject(...).",
+        expression: `setTimeout(triggerUnhandledRejectionPromiseReject)`,
+        condition(message) { return message.level === WebInspector.ConsoleMessage.MessageLevel.Error; },
+    });
+
+    addTestCase({
+        name: "Console.StackTrace.UnhandledPromiseRejection.ExplicitReject",
+        description: "StackTrace from an unhandled promise rejection via reject(...).",
+        expression: `setTimeout(triggerUnhandledRejectionExplicit)`,
+        condition(message) { return message.level === WebInspector.ConsoleMessage.MessageLevel.Error; },
+    });
+
+    addTestCase({
+        name: "Console.StackTrace.UnhandledPromiseRejection.ImplicitReject",
+        description: "StackTrace from an unhandled promise rejection due to an uncaught exception in a promise reaction.",
+        expression: `setTimeout(triggerUnhandledRejectionImplicitWithException)`,
+        condition(message) { return message.level === WebInspector.ConsoleMessage.MessageLevel.Error; },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test for the Console.stackTrace in different cases.</p>
+</body>
+</html>

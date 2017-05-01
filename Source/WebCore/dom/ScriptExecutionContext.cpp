@@ -382,7 +382,7 @@ void ScriptExecutionContext::reportException(const String& errorMessage, int lin
         logExceptionToConsole(exception->m_errorMessage, exception->m_sourceURL, exception->m_lineNumber, exception->m_columnNumber, WTFMove(exception->m_callStack));
 }
 
-void ScriptExecutionContext::reportUnhandledPromiseRejection(JSC::ExecState& state, JSC::JSPromise& promise, Inspector::ScriptCallStack& callStack)
+void ScriptExecutionContext::reportUnhandledPromiseRejection(JSC::ExecState& state, JSC::JSPromise& promise, RefPtr<Inspector::ScriptCallStack>&& callStack)
 {
     JSC::VM& vm = state.vm();
     auto scope = DECLARE_CATCH_SCOPE(vm);
@@ -394,13 +394,15 @@ void ScriptExecutionContext::reportUnhandledPromiseRejection(JSC::ExecState& sta
     JSC::JSValue result = promise.result(vm);
     String resultMessage = retrieveErrorMessage(state, vm, result, scope);
     String errorMessage = makeString("Unhandled Promise Rejection: ", resultMessage);
-    if (const ScriptCallFrame* callFrame = callStack.firstNonNativeCallFrame()) {
-        lineNumber = callFrame->lineNumber();
-        columnNumber = callFrame->columnNumber();
-        sourceURL = callFrame->sourceURL();
+    if (callStack) {
+        if (const ScriptCallFrame* callFrame = callStack->firstNonNativeCallFrame()) {
+            lineNumber = callFrame->lineNumber();
+            columnNumber = callFrame->columnNumber();
+            sourceURL = callFrame->sourceURL();
+        }
     }
 
-    logExceptionToConsole(errorMessage, sourceURL, lineNumber, columnNumber, &callStack);
+    logExceptionToConsole(errorMessage, sourceURL, lineNumber, columnNumber, WTFMove(callStack));
 }
 
 void ScriptExecutionContext::addConsoleMessage(MessageSource source, MessageLevel level, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, JSC::ExecState* state, unsigned long requestIdentifier)

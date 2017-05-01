@@ -1,3 +1,32 @@
+2017-05-01  Joseph Pecoraro  <pecoraro@apple.com>
+
+        RejectedPromiseTracker should produce better callstacks and avoid capturing callstacks unless there is a debugger/inspector
+        https://bugs.webkit.org/show_bug.cgi?id=171416
+        <rdar://problem/31899425>
+
+        Reviewed by Saam Barati and Brian Burg.
+
+        Test: inspector/console/message-stack-trace.html
+
+        * dom/RejectedPromiseTracker.cpp:
+        (WebCore::UnhandledPromise::UnhandledPromise):
+        (WebCore::UnhandledPromise::callStack):
+        Switch to RefPtr to allow not capturing the stack.
+
+        (WebCore::createScriptCallStackFromReason):
+        Use the VM's lastException if the value in the exception is the
+        rejected promise value. Using the Exception call stack is important
+        because uncaught exceptions in promise rejections trigger a built-in
+        try/catch and re-enter JavaScript before passing the Error through
+        to the RejectionTracker. When possible, we don't want to capture the
+        new stack originating from the try/catch. Instead, we want the stack
+        from before the try/catch when the error was created.
+
+        * dom/ScriptExecutionContext.h:
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::reportUnhandledPromiseRejection):
+        Switch to a pointer since the stack could be empty.
+
 2017-05-01  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed build fix after r216033.

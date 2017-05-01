@@ -1,5 +1,39 @@
 2017-05-01  Joseph Pecoraro  <pecoraro@apple.com>
 
+        RejectedPromiseTracker should produce better callstacks and avoid capturing callstacks unless there is a debugger/inspector
+        https://bugs.webkit.org/show_bug.cgi?id=171416
+        <rdar://problem/31899425>
+
+        Reviewed by Saam Barati and Brian Burg.
+
+        * inspector/console/message-stack-trace-expected.txt: Added.
+        * inspector/console/message-stack-trace.html: Added.
+        Test console stack traces from various places where console messages
+        are generated and the stacks are important.
+
+        * inspector/console/resources/log-console-stack-trace.js: Added.
+        (TestPage.registerInitializer.logCallFrame):
+        (TestPage.registerInitializer.window.logConsoleMessageStackTrace):
+        Like the logger for Debugger StackTrace but for Console StackTrace.
+
+        * inspector/debugger/break-on-exception-throw-in-promise-expected.txt:
+        * inspector/debugger/break-on-uncaught-exception-throw-in-promise-expected.txt:
+        * fast/mediastream/MediaStream-MediaElement-setObject-null-expected.txt:
+        * http/tests/security/video-cross-origin-caching-expected.txt:
+        * js/dom/unhandled-promise-rejection-bindings-type-error-expected.txt:
+        * js/dom/unhandled-promise-rejection-console-report-expected.txt:
+        * js/promises-tests/promises-tests-2-2-6-expected.txt:
+        * streams/reference-implementation/pipe-to-options-expected.txt:
+        * streams/reference-implementation/readable-stream-templated-expected.txt:
+        * streams/reference-implementation/writable-stream-abort-expected.txt:
+        * streams/reference-implementation/writable-stream-expected.txt:
+        * webrtc/libwebrtc/release-while-creating-offer-expected.txt:
+        * webrtc/libwebrtc/release-while-setting-local-description-expected.txt:
+        Rebaseline results. Better stack trace for errors includes correct line numbers.
+        Explicit rejections with a value do not include backtraces without a debugger.
+
+2017-05-01  Joseph Pecoraro  <pecoraro@apple.com>
+
         LayoutTest/imported/w3c/web-platform-tests/resource-timing/rt-revalidate-requests.html is a flaky failure.
         https://bugs.webkit.org/show_bug.cgi?id=171511
 

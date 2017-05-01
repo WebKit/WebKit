@@ -1,7 +1,7 @@
-CONSOLE MESSAGE: line 1: Unhandled Promise Rejection: Error: destination error
-CONSOLE MESSAGE: line 1: Unhandled Promise Rejection: Error: destination error
-CONSOLE MESSAGE: line 1: Unhandled Promise Rejection: Error: destination error
-CONSOLE MESSAGE: line 1: Unhandled Promise Rejection: Error: destination error
+CONSOLE MESSAGE: Unhandled Promise Rejection: Error: destination error
+CONSOLE MESSAGE: Unhandled Promise Rejection: Error: destination error
+CONSOLE MESSAGE: Unhandled Promise Rejection: Error: destination error
+CONSOLE MESSAGE: Unhandled Promise Rejection: Error: destination error
 
 Harness Error (FAIL), message = destination error
 

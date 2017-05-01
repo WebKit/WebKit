@@ -1,0 +1,46 @@
+CONSOLE MESSAGE: line 18: error message
+CONSOLE MESSAGE: line 24: TypeError: undefined is not an object (evaluating '[].x.x')
+CONSOLE MESSAGE: line 1: Unhandled Promise Rejection: rejection-1
+CONSOLE MESSAGE: line 1: Unhandled Promise Rejection: rejection-2
+CONSOLE MESSAGE: line 40: Unhandled Promise Rejection: TypeError: undefined is not an object (evaluating '[].x.x')
+Test for the Console.stackTrace in different cases.
+
+
+== Running test suite: Console.StackTrace
+-- Running test case: Console.StackTrace.ConsoleTrace
+CALL STACK:
+0: [F] (anonymous function)
+1: [F] triggerConsoleTrace
+
+-- Running test case: Console.StackTrace.ConsoleError
+CALL STACK:
+0: [F] (anonymous function)
+1: [F] triggerConsoleError
+
+-- Running test case: Console.StackTrace.UncaughtException
+Uncaught exception in test page: TypeError: undefined is not an object (evaluating '[].x.x') [message-stack-trace.html:24]
+CALL STACK:
+0: [F] (anonymous function)
+1: [F] triggerUncaughtException
+
+-- Running test case: Console.StackTrace.UnhandledPromiseRejection.PromiseReject
+CALL STACK:
+0: [N] (anonymous function)
+1: [N] rejectPromise
+2: [N] reject
+3: [F] triggerUnhandledRejectionPromiseReject
+
+-- Running test case: Console.StackTrace.UnhandledPromiseRejection.ExplicitReject
+CALL STACK:
+0: [N] (anonymous function)
+1: [N] rejectPromise
+2: [F] (anonymous function)
+3: [N] initializePromise
+4: [N] Promise
+5: [F] triggerUnhandledRejectionExplicit
+
+-- Running test case: Console.StackTrace.UnhandledPromiseRejection.ImplicitReject
+CALL STACK:
+0: [F] (anonymous function)
+1: [N] promiseReactionJob
+

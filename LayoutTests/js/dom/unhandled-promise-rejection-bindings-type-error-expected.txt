@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 1: Unhandled Promise Rejection: TypeError: The PromiseRejectionEvent.promise getter can only be used on instances of PromiseRejectionEvent
+CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: The PromiseRejectionEvent.promise getter can only be used on instances of PromiseRejectionEvent
 Test rejected promises are returned from bindings and trigger unhandledrejection.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
