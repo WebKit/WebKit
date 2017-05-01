@@ -53,7 +53,7 @@ static UIImage *testIconImage()
 - (void)registerDataRepresentationForTypeIdentifier:(NSString *)typeIdentifier withData:(NSData *)data
 {
     RetainPtr<NSData> retainedData = data;
-    [self registerDataRepresentationForTypeIdentifier:typeIdentifier visibility:NSItemProviderRepresentationVisibilityAll loadHandler: [retainedData] (DataLoadCompletionBlock block) -> NSProgress * {
+    [self registerDataRepresentationForTypeIdentifier:typeIdentifier visibility:UIItemProviderRepresentationOptionsVisibilityAll loadHandler: [retainedData] (DataLoadCompletionBlock block) -> NSProgress * {
         block(retainedData.get(), nil);
         return [NSProgress discreteProgressWithTotalUnitCount:100];
     }];
@@ -436,8 +436,8 @@ TEST(DataInteractionTests, RespectsExternalSourceFidelityRankings)
     // than the plain text, and erroneously insert the image. If we respect source fidelities, we'll insert text rather
     // than an image.
     auto simulatedItemProviderWithTextFirst = adoptNS([[UIItemProvider alloc] init]);
-    [simulatedItemProviderWithTextFirst registerObject:@"Hello world" visibility:NSItemProviderRepresentationVisibilityAll];
-    [simulatedItemProviderWithTextFirst registerObject:testIconImage() visibility:NSItemProviderRepresentationVisibilityAll];
+    [simulatedItemProviderWithTextFirst registerObject:@"Hello world" visibility:UIItemProviderRepresentationOptionsVisibilityAll];
+    [simulatedItemProviderWithTextFirst registerObject:testIconImage() visibility:UIItemProviderRepresentationOptionsVisibilityAll];
     [dataInteractionSimulator setExternalItemProviders:@[ simulatedItemProviderWithTextFirst.get() ]];
 
     [dataInteractionSimulator runFrom:CGPointMake(300, 400) to:CGPointMake(100, 300)];
@@ -447,8 +447,8 @@ TEST(DataInteractionTests, RespectsExternalSourceFidelityRankings)
 
     // Now we register the item providers in reverse, and expect the image to be inserted instead of text.
     auto simulatedItemProviderWithImageFirst = adoptNS([[UIItemProvider alloc] init]);
-    [simulatedItemProviderWithImageFirst registerObject:testIconImage() visibility:NSItemProviderRepresentationVisibilityAll];
-    [simulatedItemProviderWithImageFirst registerObject:@"Hello world" visibility:NSItemProviderRepresentationVisibilityAll];
+    [simulatedItemProviderWithImageFirst registerObject:testIconImage() visibility:UIItemProviderRepresentationOptionsVisibilityAll];
+    [simulatedItemProviderWithImageFirst registerObject:@"Hello world" visibility:UIItemProviderRepresentationOptionsVisibilityAll];
     [dataInteractionSimulator setExternalItemProviders:@[ simulatedItemProviderWithImageFirst.get() ]];
 
     [dataInteractionSimulator runFrom:CGPointMake(300, 400) to:CGPointMake(100, 300)];
@@ -502,7 +502,7 @@ TEST(DataInteractionTests, ExternalSourceTitledNSURL)
     NSURL *titledURL = [NSURL URLWithString:@"https://www.apple.com"];
     titledURL._title = @"Apple";
     auto simulatedItemProvider = adoptNS([[UIItemProvider alloc] init]);
-    [simulatedItemProvider registerObject:titledURL visibility:NSItemProviderRepresentationVisibilityAll];
+    [simulatedItemProvider registerObject:titledURL visibility:UIItemProviderRepresentationOptionsVisibilityAll];
 
     auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
     [dataInteractionSimulator setExternalItemProviders:@[ simulatedItemProvider.get() ]];

@@ -1,3 +1,14 @@
+2017-05-01  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, fix the build on a new internal SDK
+
+        Replace usages of NSItemProviderRepresentationVisibilityAll with
+        UIItemProviderRepresentationOptionsVisibilityAll.
+
+        * TestWebKitAPI/Tests/ios/DataInteractionTests.mm:
+        (-[UIItemProvider registerDataRepresentationForTypeIdentifier:withData:]):
+        (TestWebKitAPI::TEST):
+
 2017-05-01  David Kilzer  <ddkilzer@apple.com>
 
         [Cocoa] Replace uses of [get…Class() alloc] in TestWebKitAPI
