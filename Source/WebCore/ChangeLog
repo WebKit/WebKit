@@ -1,3 +1,14 @@
+2017-05-01  David Kilzer  <ddkilzer@apple.com>
+
+        Stop using strcpy() in fullyQualifiedInfoTableName() from Database.cpp
+        <https://webkit.org/b/171517>
+
+        Reviewed by Brady Eidson.
+
+        * Modules/webdatabase/Database.cpp:
+        (WebCore::fullyQualifiedInfoTableName): Switch from strcpy() to
+        snprintf().
+
 2017-05-01  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Support time@datetime for verbosity clarification of dates, times, and durations
