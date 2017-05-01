@@ -1,3 +1,10 @@
+2017-05-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK+ debug build after r216002.
+
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMClientRectList.cpp:
+        (WebKit::wrapClientRectList):
+
 2017-04-30  Chris Dumez  <cdumez@apple.com>
 
         Drop support for legacy ClientRect / ClientRectList

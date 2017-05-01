@@ -70,7 +70,6 @@ static ClientRectList* core(WebKitDOMClientRectList* request)
 
 WebKitDOMClientRectList* wrapClientRectList(WTF::Vector<Ref<WebCore::DOMRect>>&& coreObject)
 {
-    ASSERT(coreObject);
     auto list = ClientRectList::create(WTFMove(coreObject));
     return WEBKIT_DOM_CLIENT_RECT_LIST(g_object_new(WEBKIT_DOM_TYPE_CLIENT_RECT_LIST, "core-object", list.ptr(), nullptr));
 }
