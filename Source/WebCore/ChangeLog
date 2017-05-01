@@ -1,3 +1,29 @@
+2017-04-30  Zalan Bujtas  <zalan@apple.com>
+
+        Initialize a new layout state while bailing out of simple line layout only when needed.
+        https://bugs.webkit.org/show_bug.cgi?id=171481
+        <rdar://problem/31906382>
+
+        '-webkit-border-fit: lines' requires inline box tree.
+        We normally bail out of simple line layout early when we see this property. 
+        When this property is dynamically set and we already have a simple line layout context,
+        RenderBlockFlow::ensureLineBoxes() takes care of the switch by calling layoutLineBoxes().
+        This patch makes sure that we create the layout state for this (forced)line layout only when
+        we don't yet have one.
+
+        Reviewed by Antti Koivisto.
+
+        Test: fast/multicol/simple-line-layout-switch-to-normal-layout-while-inside-layout.html
+
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::PaginatedLayoutStateMaintainer::PaginatedLayoutStateMaintainer):
+        (WebCore::PaginatedLayoutStateMaintainer::~PaginatedLayoutStateMaintainer):
+        (WebCore::RenderBlockFlow::ensureLineBoxes):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::pushLayoutStateForPaginationIfNeeded):
+        (WebCore::RenderView::pushLayoutStateForPagination): Deleted.
+        * rendering/RenderView.h:
+
 2017-04-30  Dan Bernstein  <mitz@apple.com>
 
         Tried to fix the iOS build after r215992

@@ -1,3 +1,14 @@
+2017-04-30  Zalan Bujtas  <zalan@apple.com>
+
+        Initialize a new layout state while bailing out of simple line layout only when needed.
+        https://bugs.webkit.org/show_bug.cgi?id=171481
+        <rdar://problem/31906382>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/multicol/simple-line-layout-switch-to-normal-layout-while-inside-layout-expected.txt: Added.
+        * fast/multicol/simple-line-layout-switch-to-normal-layout-while-inside-layout.html: Added.
+
 2017-04-30  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [ATK] Implement support for aria-autocomplete
