@@ -1,3 +1,11 @@
+2017-05-01  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Update TestExpectations for http/tests/fetch/fetch-in-worker-crash.html.
+
+        Unreviewed test gardening.
+
+        * TestExpectations:
+
 2017-05-01  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [ATK] Expose values of aria-rowcount, aria-colcount, aria-rowindex, aria-colindex, aria-rowspan, and aria-colspan as object attributes

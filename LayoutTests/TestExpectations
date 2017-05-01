@@ -365,7 +365,7 @@ imported/w3c/web-platform-tests/resource-timing/test_resource_timing.html [ Pass
 webkit.org/b/161312 imported/w3c/web-platform-tests/html/semantics/document-metadata/the-link-element/document-without-browsing-context.html [ Failure Pass ]
 
 # rdar://problem/30975761
-[ Debug ] http/tests/fetch/fetch-in-worker-crash.html [ Pass Crash ]
+[ Debug ] http/tests/fetch/fetch-in-worker-crash.html [ Skip ]
 
 imported/w3c/web-platform-tests/XMLHttpRequest/send-conditional-cors.htm [ Failure ]
 imported/w3c/web-platform-tests/fetch/http-cache/partial.html [ Failure ]
