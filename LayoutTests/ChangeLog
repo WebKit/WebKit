@@ -1,3 +1,9 @@
+2017-05-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed GTK+ gardening. Update expectations of several test.
+
+        * platform/gtk/TestExpectations:
+
 2017-05-01  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: Implement support for ARIA "figure" and "term" roles; update AXRoleDescription mapping for "feed" role
