@@ -72,7 +72,7 @@ CaptureSourceOrError CoreAudioCaptureSource::create(const String& deviceID, cons
 #elif PLATFORM(IOS)
     auto device = AVAudioSessionCaptureDeviceManager::singleton().audioSessionDeviceWithUID(deviceID);
     if (!device)
-        return nullptr;
+        return { };
 
     label = device->label();
 #endif
