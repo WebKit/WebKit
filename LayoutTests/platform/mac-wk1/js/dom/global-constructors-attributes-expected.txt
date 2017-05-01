@@ -263,16 +263,6 @@ PASS Object.getOwnPropertyDescriptor(global, 'CharacterData').hasOwnProperty('ge
 PASS Object.getOwnPropertyDescriptor(global, 'CharacterData').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'CharacterData').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'CharacterData').configurable is true
-PASS Object.getOwnPropertyDescriptor(global, 'ClientRect').value is ClientRect
-PASS Object.getOwnPropertyDescriptor(global, 'ClientRect').hasOwnProperty('get') is false
-PASS Object.getOwnPropertyDescriptor(global, 'ClientRect').hasOwnProperty('set') is false
-PASS Object.getOwnPropertyDescriptor(global, 'ClientRect').enumerable is false
-PASS Object.getOwnPropertyDescriptor(global, 'ClientRect').configurable is true
-PASS Object.getOwnPropertyDescriptor(global, 'ClientRectList').value is ClientRectList
-PASS Object.getOwnPropertyDescriptor(global, 'ClientRectList').hasOwnProperty('get') is false
-PASS Object.getOwnPropertyDescriptor(global, 'ClientRectList').hasOwnProperty('set') is false
-PASS Object.getOwnPropertyDescriptor(global, 'ClientRectList').enumerable is false
-PASS Object.getOwnPropertyDescriptor(global, 'ClientRectList').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'ClipboardEvent').value is ClipboardEvent
 PASS Object.getOwnPropertyDescriptor(global, 'ClipboardEvent').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'ClipboardEvent').hasOwnProperty('set') is false
