@@ -1,3 +1,24 @@
+2017-04-21  Filip Pizlo  <fpizlo@apple.com>
+
+        Air::fixObviousSpills should remove totally redundant instructions
+        https://bugs.webkit.org/show_bug.cgi?id=171131
+
+        Reviewed by Saam Barati.
+        
+        This is a modest compile-time-neutral improvement to fixObviousSpills. That phase
+        builds up a classic alias analysis data structure over spills and registers and then
+        uses it to remove the most common spill pathologies we encounter. For example, if you
+        use a spill but the spill is aliased to a register or constant, then we can replace the
+        use of the spill with a use of the register or constant.
+        
+        But that phase was missing perhaps one of the most obvious fixups that its analysis
+        allows us to do: if any instruction creates an alias we already know about, then the
+        instruction is redundant. This turned out to be super important for
+        https://bugs.webkit.org/show_bug.cgi?id=171075. That patch didn't work out, but this
+        kind of optimization might be a good clean-up for many other kinds of optimizations.
+
+        * b3/air/AirFixObviousSpills.cpp:
+
 2017-04-30  Oleksandr Skachkov  <gskachkov@gmail.com>
 
         We initialize functions too early in an eval
