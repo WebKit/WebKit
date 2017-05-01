@@ -2740,7 +2740,7 @@ def check_soft_link_class_alloc(clean_lines, line_number, error):
 
     line = clean_lines.elided[line_number]
 
-    matched = search(r'\[get([^\s]+)Class\(\)\s+alloc\]', line)
+    matched = search(r'\[get(\w+)Class\(\)\s+alloc\]', line)
     if matched:
         error(line_number, 'runtime/soft-linked-alloc', 4,
               'Using +alloc with a soft-linked class. Use alloc%sInstance() instead.' % matched.group(1))
@@ -3920,6 +3920,7 @@ class CppChecker(object):
         'runtime/references',
         'runtime/rtti',
         'runtime/sizeof',
+        'runtime/soft-linked-alloc',
         'runtime/string',
         'runtime/threadsafe_fn',
         'runtime/unsigned',
