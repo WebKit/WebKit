@@ -720,14 +720,14 @@ textarea
       AXRoleDescription: text entry area
       
 time:not([datetime])
-      AXRole: 
-      AXSubrole: 
-      AXRoleDescription: 
+      AXRole: AXGroup
+      AXSubrole: AXTimeGroup
+      AXRoleDescription: group
       
 time[datetime]
-      AXRole: 
-      AXSubrole: 
-      AXRoleDescription: 
+      AXRole: AXGroup
+      AXSubrole: AXTimeGroup
+      AXRoleDescription: group
       
 ul
       AXRole: AXList

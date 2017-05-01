@@ -217,6 +217,7 @@ enum AccessibilityRole {
     TextAreaRole,
     TextGroupRole,
     TermRole,
+    TimeRole,
     TreeRole,
     TreeGridRole,
     TreeItemRole,
@@ -623,7 +624,8 @@ public:
     bool hasHighlighting() const;
 
     bool supportsDatetimeAttribute() const;
-
+    const AtomicString& datetimeAttributeValue() const;
+    
     virtual bool canSetFocusAttribute() const { return false; }
     virtual bool canSetTextRangeAttributes() const { return false; }
     virtual bool canSetValueAttribute() const { return false; }

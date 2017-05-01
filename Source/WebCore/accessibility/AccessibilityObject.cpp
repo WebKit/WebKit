@@ -2380,6 +2380,11 @@ bool AccessibilityObject::supportsDatetimeAttribute() const
     return hasTagName(insTag) || hasTagName(delTag) || hasTagName(timeTag);
 }
 
+const AtomicString& AccessibilityObject::datetimeAttributeValue() const
+{
+    return getAttribute(datetimeAttr);
+}
+    
 Element* AccessibilityObject::element() const
 {
     Node* node = this->node();

@@ -188,6 +188,10 @@ using namespace HTMLNames;
 #define NSAccessibilityGrabbedAttribute @"AXGrabbed"
 #endif
 
+#ifndef NSAccessibilityDatetimeValueAttribute
+#define NSAccessibilityDatetimeValueAttribute @"AXDateTimeValue"
+#endif
+
 #ifndef NSAccessibilityDropEffectsAttribute
 #define NSAccessibilityDropEffectsAttribute @"AXDropEffects"
 #endif
@@ -1170,6 +1174,9 @@ static id textMarkerRangeFromVisiblePositions(AXObjectCache* cache, const Visibl
         [additional addObject:NSAccessibilityValueAttribute];
     }
 
+    if (m_object->supportsDatetimeAttribute())
+        [additional addObject:NSAccessibilityDatetimeValueAttribute];
+    
     if (m_object->supportsRequiredAttribute()) {
         [additional addObject:NSAccessibilityRequiredAttribute];
     }
@@ -1934,6 +1941,7 @@ static const AccessibilityRoleMap& createAccessibilityRoleMap()
         { SVGTSpanRole, NSAccessibilityGroupRole },
         { InlineRole, NSAccessibilityGroupRole },
         { MarkRole, NSAccessibilityGroupRole },
+        { TimeRole, NSAccessibilityGroupRole },
         { FeedRole, NSAccessibilityGroupRole },
         { FigureRole, NSAccessibilityGroupRole },
     };
@@ -2132,7 +2140,9 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         return @"AXDetails";
     if (role == SummaryRole)
         return @"AXSummary";
-    
+    if (role == TimeRole)
+        return @"AXTimeGroup";
+
     if (m_object->isMediaTimeline())
         return NSAccessibilityTimelineSubrole;
 
@@ -3042,7 +3052,10 @@ static NSString* roleValueToNSString(AccessibilityRole value)
 
     if ([attributeName isEqualToString:NSAccessibilityHasPopupAttribute])
         return [NSNumber numberWithBool:m_object->ariaHasPopup()];
-    
+
+    if ([attributeName isEqualToString:NSAccessibilityDatetimeValueAttribute])
+        return m_object->datetimeAttributeValue();
+
     // ARIA Live region attributes.
     if ([attributeName isEqualToString:NSAccessibilityARIALiveAttribute])
         return m_object->ariaLiveRegionStatus();

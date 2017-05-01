@@ -1,3 +1,30 @@
+2017-05-01  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Support time@datetime for verbosity clarification of dates, times, and durations
+        https://bugs.webkit.org/show_bug.cgi?id=171498
+        <rdar://problem/12985540>
+
+        Reviewed by Joanmarie Diggs.
+
+        Expose the datetime attribute value.
+
+        Test: accessibility/datetime-attribute.html
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::datetimeAttributeValue):
+        * accessibility/AccessibilityObject.h:
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::computeAccessibilityIsIgnored):
+        (WebCore::AccessibilityRenderObject::determineAccessibilityRole):
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper determineIsAccessibilityElement]):
+        (-[WebAccessibilityObjectWrapper accessibilityDatetimeValue]):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper additionalAccessibilityAttributeNames]):
+        (createAccessibilityRoleMap):
+        (-[WebAccessibilityObjectWrapper subrole]):
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:]):
+
 2017-05-01  Joseph Pecoraro  <pecoraro@apple.com>
 
         RejectedPromiseTracker should produce better callstacks and avoid capturing callstacks unless there is a debugger/inspector

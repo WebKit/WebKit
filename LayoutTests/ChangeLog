@@ -1,3 +1,19 @@
+2017-05-01  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Support time@datetime for verbosity clarification of dates, times, and durations
+        https://bugs.webkit.org/show_bug.cgi?id=171498
+        <rdar://problem/12985540>
+
+        Reviewed by Joanmarie Diggs.
+
+        * accessibility/datetime-attribute.html: Added.
+        * accessibility/roles-computedRoleString-expected.txt:
+        * platform/gtk/accessibility/datetime-attribute-expected.txt: Added.
+        * platform/gtk/accessibility/roles-exposed-expected.txt:
+        * platform/mac/accessibility/datetime-attribute-expected.txt: Added.
+        * platform/mac/accessibility/roles-computedRoleString-expected.txt:
+        * platform/mac/accessibility/roles-exposed-expected.txt:
+
 2017-05-01  Matt Lewis  <jlewis3@apple.com>
 
         Marked fast/mediastream/getUserMedia-webaudio.html as flaky timeout.

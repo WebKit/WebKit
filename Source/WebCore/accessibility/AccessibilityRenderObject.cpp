@@ -1260,6 +1260,7 @@ bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
     case DocumentArticleRole:
     case LandmarkRegionRole:
     case ListItemRole:
+    case TimeRole:
     case VideoRole:
         return false;
     default:
@@ -2795,6 +2796,9 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
     // menu tags with toolbar type should have Toolbar role.
     if (node && node->hasTagName(menuTag) && equalLettersIgnoringASCIICase(getAttribute(typeAttr), "toolbar"))
         return ToolbarRole;
+    
+    if (node && node->hasTagName(timeTag))
+        return TimeRole;
     
     // If the element does not have role, but it has ARIA attributes, or accepts tab focus, accessibility should fallback to exposing it as a group.
     if (supportsARIAAttributes() || canSetFocusAttribute())

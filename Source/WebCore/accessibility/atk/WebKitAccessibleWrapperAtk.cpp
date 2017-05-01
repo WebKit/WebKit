@@ -730,6 +730,7 @@ static AtkRole atkRole(AccessibilityObject* coreObject)
         return ATK_ROLE_STATIC;
     case SVGTextPathRole:
     case SVGTSpanRole:
+    case TimeRole:
         return ATK_ROLE_STATIC;
 #endif
     default:

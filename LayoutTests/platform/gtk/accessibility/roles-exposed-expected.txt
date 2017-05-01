@@ -431,7 +431,7 @@ textarea
       AXRole: AXTextField
       
 time:not([datetime])
-      AXRole: 
+      AXRole: AXStatic
       
 time[datetime]
       AXRole: AXStatic

@@ -78,6 +78,7 @@ PASS: td[role="gridcell"] -> gridcell.
 PASS: tr -> row. 
 PASS: td[role="gridcell"] -> gridcell. 
 PASS: textarea -> textbox. 
+PASS: time -> . 
 PASS: ul -> list. 
 PASS: li -> listitem. 
 PASS: var -> . 
