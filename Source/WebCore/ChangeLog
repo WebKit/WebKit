@@ -1,3 +1,13 @@
+2017-05-01  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Web Inspector: ASSERT(!m_startedComposite) fails when recording on non-Cocoa Timeline
+        https://bugs.webkit.org/show_bug.cgi?id=171363
+
+        Reviewed by Matt Baker.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::flushCompositingStateIncludingSubframes): Add PLATFORM(COCOA) guard.
+
 2017-05-01  David Kilzer  <ddkilzer@apple.com>
 
         Stop using strcpy() in fullyQualifiedInfoTableName() from Database.cpp

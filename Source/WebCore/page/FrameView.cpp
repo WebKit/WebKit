@@ -1231,7 +1231,9 @@ bool FrameView::isEnclosedInCompositingLayer() const
 
 bool FrameView::flushCompositingStateIncludingSubframes()
 {
+#if PLATFORM(COCOA)
     InspectorInstrumentation::willComposite(frame());
+#endif
 
     bool allFramesFlushed = flushCompositingStateForThisFrame(frame());
 
