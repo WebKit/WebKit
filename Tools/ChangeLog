@@ -1,3 +1,32 @@
+2017-05-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add automation session API
+        https://bugs.webkit.org/show_bug.cgi?id=171428
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Add an automation mode to MiniBrowser using the new API and add a unit test too.
+
+        * MiniBrowser/gtk/BrowserWindow.c:
+        (webViewTitleChanged):
+        (webViewDecidePolicy):
+        (newTabCallback):
+        (openPrivateWindow):
+        (browserWindowFinalize):
+        (browser_window_init):
+        (browser_window_get_or_create_web_view_for_automation):
+        * MiniBrowser/gtk/BrowserWindow.h:
+        * MiniBrowser/gtk/main.c:
+        (createBrowserTab):
+        (createWebViewForAutomationCallback):
+        (automationStartedCallback):
+        (main):
+        * TestWebKitAPI/Tests/WebKit2Gtk/CMakeLists.txt:
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestAutomationSession.cpp: Added.
+        (testAutomationSessionRequestSession):
+        (beforeAll):
+        (afterAll):
+
 2017-04-30  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Have check-webkit-style advise against use of [get…Class() alloc]

@@ -7,6 +7,7 @@ LocalizedStringsGtk.cpp
 ../../../WebKit2/Shared/gtk/WebErrorsGtk.cpp
 ../../../WebKit2/Shared/soup/WebErrorsSoup.cpp
 ../../../WebKit2/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp
+../../../WebKit2/UIProcess/API/gtk/WebKitAutomationSession.cpp
 ../../../WebKit2/UIProcess/API/gtk/WebKitColorChooserRequest.cpp
 ../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp
 ../../../WebKit2/UIProcess/API/gtk/WebKitEditorState.cpp

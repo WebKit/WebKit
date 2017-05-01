@@ -155,6 +155,7 @@ enum {
     PROP_IS_LOADING,
     PROP_IS_PLAYING_AUDIO,
     PROP_IS_EPHEMERAL,
+    PROP_IS_CONTROLLED_BY_AUTOMATION,
     PROP_EDITABLE
 };
 
@@ -180,6 +181,7 @@ struct _WebKitWebViewPrivate {
     CString activeURI;
     bool isLoading;
     bool isEphemeral;
+    bool isControlledByAutomation;
 
     std::unique_ptr<PageLoadStateObserver> loadObserver;
 
@@ -667,6 +669,7 @@ static void webkitWebViewConstructed(GObject* object)
     if (priv->relatedView) {
         priv->context = webkit_web_view_get_context(priv->relatedView);
         priv->isEphemeral = webkit_web_view_is_ephemeral(priv->relatedView);
+        priv->isControlledByAutomation = webkit_web_view_is_controlled_by_automation(priv->relatedView);
     } else if (!priv->context)
         priv->context = webkit_web_context_get_default();
     else if (!priv->isEphemeral)
@@ -739,6 +742,9 @@ static void webkitWebViewSetProperty(GObject* object, guint propId, const GValue
     case PROP_IS_EPHEMERAL:
         webView->priv->isEphemeral = g_value_get_boolean(value);
         break;
+    case PROP_IS_CONTROLLED_BY_AUTOMATION:
+        webView->priv->isControlledByAutomation = g_value_get_boolean(value);
+        break;
     case PROP_EDITABLE:
         webkit_web_view_set_editable(webView, g_value_get_boolean(value));
         break;
@@ -784,6 +790,9 @@ static void webkitWebViewGetProperty(GObject* object, guint propId, GValue* valu
         break;
     case PROP_IS_EPHEMERAL:
         g_value_set_boolean(value, webkit_web_view_is_ephemeral(webView));
+        break;
+    case PROP_IS_CONTROLLED_BY_AUTOMATION:
+        g_value_set_boolean(value, webkit_web_view_is_controlled_by_automation(webView));
         break;
     case PROP_EDITABLE:
         g_value_set_boolean(value, webkit_web_view_is_editable(webView));
@@ -1044,6 +1053,25 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
             "is-ephemeral",
             "Is Ephemeral",
             _("Whether the web view is ephemeral"),
+            FALSE,
+            static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
+
+    /**
+     * WebKitWebView:is-controlled-by-automation:
+     *
+     * Whether the #WebKitWebView is controlled by automation. This should only be used when
+     * creating a new #WebKitWebView as a response to #WebKitAutomationSession::create-web-view
+     * signal request.
+     *
+     * Since: 2.18
+     */
+    g_object_class_install_property(
+        gObjectClass,
+        PROP_IS_CONTROLLED_BY_AUTOMATION,
+        g_param_spec_boolean(
+            "is-controlled-by-automation",
+            "Is Controlled By Automation",
+            _("Whether the web view is crontrolled by automation"),
             FALSE,
             static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
 
@@ -2314,6 +2342,25 @@ gboolean webkit_web_view_is_ephemeral(WebKitWebView* webView)
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), FALSE);
 
     return webView->priv->isEphemeral;
+}
+
+/**
+ * webkit_web_view_is_controlled_by_automation:
+ * @web_view: a #WebKitWebView
+ *
+ * Get whether a #WebKitWebView was created with #WebKitWebView:is-controlled-by-automation
+ * property enabled. Only #WebKitWebView<!-- -->s controlled by automation can be used in an
+ * automation session.
+ *
+ * Returns: %TRUE if @web_view is controlled by automation, or %FALSE otherwise.
+ *
+ * Since: 2.18
+ */
+gboolean webkit_web_view_is_controlled_by_automation(WebKitWebView* webView)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), FALSE);
+
+    return webView->priv->isControlledByAutomation;
 }
 
 /**

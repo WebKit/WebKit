@@ -1,5 +1,51 @@
 2017-05-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Add automation session API
+        https://bugs.webkit.org/show_bug.cgi?id=171428
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Add new API to allow WebKitGTK+ to be controlled by automation. By default it's disabled, applications have to
+        explicitly call webkit_web_context_set_automation_allowed() to enabled it. When a new automation session is
+        requested, the signal WebKitWebContext::automation-started is emitted with a newly created
+        WebKitAutomationSession, similar to how WebKitWebContext::download-started works. The user should connect to it
+        have access to the WebKitAutomationSession and connect it its signals. When a new web view is requested to be
+        created in a WebKitAutomationSession, the signal WebKitAutomationSession::create-web-view is emitted. The user
+        should connect to it and return a WebKitWebView. The web views used for automation are special ones and need to
+        be created with the new WebKitWebView:is-controlled-by-automation construct property enabled, otherwise we will
+        refuse to create the requested browsing context.
+
+        * PlatformGTK.cmake:
+        * UIProcess/API/gtk/WebKitAutomationSession.cpp: Added.
+        (webkitAutomationSessionSetProperty):
+        (webkitAutomationSessionConstructed):
+        (webkit_automation_session_class_init):
+        (webkitAutomationSessionCreate):
+        (webkitAutomationSessionGetSession):
+        (webkit_automation_session_get_id):
+        * UIProcess/API/gtk/WebKitAutomationSession.h: Added.
+        * UIProcess/API/gtk/WebKitAutomationSessionPrivate.h: Added.
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (webkitWebContextConstructed):
+        (webkit_web_context_class_init):
+        (webkit_web_context_is_automation_allowed):
+        (webkit_web_context_set_automation_allowed):
+        (webkitWebContextCreatePageForWebView):
+        * UIProcess/API/gtk/WebKitWebContext.h:
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewConstructed):
+        (webkitWebViewSetProperty):
+        (webkitWebViewGetProperty):
+        (webkit_web_view_class_init):
+        (webkit_web_view_is_controlled_by_automation):
+        * UIProcess/API/gtk/WebKitWebView.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-4.0-sections.txt:
+        * UIProcess/API/gtk/docs/webkit2gtk-4.0.types:
+        * UIProcess/API/gtk/docs/webkit2gtk-docs.sgml:
+        * UIProcess/API/gtk/webkit2.h:
+
+2017-05-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Fix GTK+ debug build after r216002.
 
         * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMClientRectList.cpp:

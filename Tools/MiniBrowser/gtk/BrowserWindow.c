@@ -76,7 +76,7 @@ static const gdouble minimumZoomLevel = 0.5;
 static const gdouble maximumZoomLevel = 3;
 static const gdouble defaultZoomLevel = 1;
 static const gdouble zoomStep = 1.2;
-static gint windowCount = 0;
+static GList *windowList;
 
 G_DEFINE_TYPE(BrowserWindow, browser_window, GTK_TYPE_WINDOW)
 
@@ -155,7 +155,9 @@ static void webViewTitleChanged(WebKitWebView *webView, GParamSpec *pspec, Brows
     if (!title)
         title = defaultWindowTitle;
     char *privateTitle = NULL;
-    if (webkit_web_view_is_ephemeral(webView))
+    if (webkit_web_view_is_controlled_by_automation(webView))
+        privateTitle = g_strdup_printf("[Automation] %s", title);
+    else if (webkit_web_view_is_ephemeral(webView))
         privateTitle = g_strdup_printf("[Private] %s", title);
     gtk_window_set_title(GTK_WINDOW(window), privateTitle ? privateTitle : title);
     g_free(privateTitle);
@@ -355,6 +357,7 @@ static gboolean webViewDecidePolicy(WebKitWebView *webView, WebKitPolicyDecision
         "web-context", webkit_web_view_get_context(webView),
         "settings", webkit_web_view_get_settings(webView),
         "user-content-manager", webkit_web_view_get_user_content_manager(webView),
+        "is-controlled-by-automation", webkit_web_view_is_controlled_by_automation(webView),
         NULL));
     browser_window_append_view(window, newWebView);
     webkit_web_view_load_request(newWebView, webkit_navigation_action_get_request(navigationAction));
@@ -496,6 +499,7 @@ static void newTabCallback(BrowserWindow *window)
         "web-context", webkit_web_view_get_context(webView),
         "settings", webkit_web_view_get_settings(webView),
         "user-content-manager", webkit_web_view_get_user_content_manager(webView),
+        "is-controlled-by-automation", webkit_web_view_is_controlled_by_automation(webView),
         NULL)));
     gtk_notebook_set_current_page(GTK_NOTEBOOK(window->notebook), -1);
 }
@@ -513,6 +517,7 @@ static void openPrivateWindow(BrowserWindow *window)
         "settings", webkit_web_view_get_settings(webView),
         "user-content-manager", webkit_web_view_get_user_content_manager(webView),
         "is-ephemeral", TRUE,
+        "is-controlled-by-automation", webkit_web_view_is_controlled_by_automation(webView),
         NULL));
     GtkWidget *newWindow = browser_window_new(GTK_WINDOW(window), window->webContext);
     browser_window_append_view(BROWSER_WINDOW(newWindow), newWebView);
@@ -662,9 +667,11 @@ static void browserWindowFinalize(GObject *gObject)
 
     g_free(window->sessionFile);
 
+    windowList = g_list_remove(windowList, window);
+
     G_OBJECT_CLASS(browser_window_parent_class)->finalize(gObject);
 
-    if (g_atomic_int_dec_and_test(&windowCount))
+    if (!windowList)
         gtk_main_quit();
 }
 
@@ -862,7 +869,7 @@ static void browserWindowTabAddedOrRemoved(GtkNotebook *notebook, BrowserTab *ta
 
 static void browser_window_init(BrowserWindow *window)
 {
-    g_atomic_int_inc(&windowCount);
+    windowList = g_list_append(windowList, window);
 
     gtk_window_set_title(GTK_WINDOW(window), defaultWindowTitle);
     gtk_window_set_default_size(GTK_WINDOW(window), 800, 600);
@@ -1156,4 +1163,24 @@ void browser_window_set_background_color(BrowserWindow *window, GdkRGBA *rgba)
     gtk_widget_set_app_paintable(GTK_WIDGET(window), TRUE);
 
     webkit_web_view_set_background_color(webView, rgba);
+}
+
+WebKitWebView *browser_window_get_or_create_web_view_for_automation(void)
+{
+    if (!windowList)
+        return NULL;
+
+    BrowserWindow *window = (BrowserWindow *)windowList->data;
+    WebKitWebView *webView = browser_tab_get_web_view(window->activeTab);
+    if (gtk_notebook_get_n_pages(GTK_NOTEBOOK(window->notebook)) == 1 && !webkit_web_view_get_uri(webView));
+        return webView;
+
+    WebKitWebView *newWebView = WEBKIT_WEB_VIEW(g_object_new(WEBKIT_TYPE_WEB_VIEW,
+        "web-context", webkit_web_view_get_context(webView),
+        "settings", webkit_web_view_get_settings(webView),
+        "user-content-manager", webkit_web_view_get_user_content_manager(webView),
+        "is-controlled-by-automation", TRUE,
+        NULL));
+    browser_window_append_view(window, newWebView);
+    return newWebView;
 }

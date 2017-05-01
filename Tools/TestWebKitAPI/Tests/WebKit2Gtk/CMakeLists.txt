@@ -97,6 +97,7 @@ ADD_WK2_TEST_WEB_EXTENSION(WebProcessTest AutocleanupsTest.cpp DOMClientRectTest
 
 ADD_WK2_TEST(InspectorTestServer InspectorTestServer.cpp)
 ADD_WK2_TEST(TestAuthentication TestAuthentication.cpp)
+ADD_WK2_TEST(TestAutomationSession TestAutomationSession.cpp)
 ADD_WK2_TEST(TestAutocleanups TestAutocleanups.cpp)
 ADD_WK2_TEST(TestBackForwardList TestBackForwardList.cpp)
 ADD_WK2_TEST(TestContextMenu TestContextMenu.cpp)

@@ -25,6 +25,7 @@
 #define WebKitWebContext_h
 
 #include <glib-object.h>
+#include <webkit2/WebKitAutomationSession.h>
 #include <webkit2/WebKitCookieManager.h>
 #include <webkit2/WebKitDefines.h>
 #include <webkit2/WebKitDownload.h>
@@ -145,16 +146,17 @@ struct _WebKitWebContext {
 struct _WebKitWebContextClass {
     GObjectClass parent;
 
-    void (* download_started)                    (WebKitWebContext *context,
-                                                  WebKitDownload   *download);
-    void (* initialize_web_extensions)           (WebKitWebContext *context);
-    void (* initialize_notification_permissions) (WebKitWebContext *context);
+    void (* download_started)                    (WebKitWebContext        *context,
+                                                  WebKitDownload          *download);
+    void (* initialize_web_extensions)           (WebKitWebContext        *context);
+    void (* initialize_notification_permissions) (WebKitWebContext        *context);
+    void (* automation_started)                  (WebKitWebContext        *context,
+                                                  WebKitAutomationSession *session);
 
     void (*_webkit_reserved0) (void);
     void (*_webkit_reserved1) (void);
     void (*_webkit_reserved2) (void);
     void (*_webkit_reserved3) (void);
-    void (*_webkit_reserved4) (void);
 };
 
 WEBKIT_API GType
@@ -178,6 +180,12 @@ webkit_web_context_get_website_data_manager         (WebKitWebContext           
 WEBKIT_API gboolean
 webkit_web_context_is_ephemeral                     (WebKitWebContext              *context);
 
+WEBKIT_API gboolean
+webkit_web_context_is_automation_allowed            (WebKitWebContext              *context);
+
+WEBKIT_API void
+webkit_web_context_set_automation_allowed           (WebKitWebContext              *context,
+                                                     gboolean                       allowed);
 WEBKIT_API void
 webkit_web_context_set_cache_model                  (WebKitWebContext              *context,
                                                      WebKitCacheModel               cache_model);
