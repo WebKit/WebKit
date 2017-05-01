@@ -1,3 +1,20 @@
+2017-05-01  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: Implement support for ARIA "figure" and "term" roles; update AXRoleDescription mapping for "feed" role
+        https://bugs.webkit.org/show_bug.cgi?id=171183
+
+        Reviewed by Chris Fleizach.
+
+        New test cases added and expectations updated.
+
+        * accessibility/gtk/xml-roles-exposed-expected.txt:
+        * accessibility/gtk/xml-roles-exposed.html:
+        * accessibility/roles-computedRoleString.html:
+        * accessibility/roles-exposed.html:
+        * platform/gtk/accessibility/roles-exposed-expected.txt:
+        * platform/mac/accessibility/roles-computedRoleString-expected.txt:
+        * platform/mac/accessibility/roles-exposed-expected.txt:
+
 2017-04-30  Zalan Bujtas  <zalan@apple.com>
 
         Initialize a new layout state while bailing out of simple line layout only when needed.

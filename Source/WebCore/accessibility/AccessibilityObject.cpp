@@ -2202,6 +2202,7 @@ static void initializeRoleMap()
         { "doc-subtitle", HeadingRole },
         { "doc-tip", DocumentNoteRole },
         { "doc-toc", LandmarkNavigationRole },
+        { "figure", FigureRole },
         { "grid", GridRole },
         { "gridcell", GridCellRole },
         { "table", TableRole },
@@ -2210,7 +2211,7 @@ static void initializeRoleMap()
         { "combobox", ComboBoxRole },
         { "definition", DefinitionRole },
         { "document", DocumentRole },
-        { "feed", ApplicationGroupRole },
+        { "feed", FeedRole },
         { "form", FormRole },
         { "rowheader", RowHeaderRole },
         { "group", ApplicationGroupRole },
@@ -2253,6 +2254,7 @@ static void initializeRoleMap()
         { "tabpanel", TabPanelRole },
         { "text", StaticTextRole },
         { "textbox", TextAreaRole },
+        { "term", TermRole },
         { "timer", ApplicationTimerRole },
         { "toolbar", ToolbarRole },
         { "tooltip", UserInterfaceTooltipRole },
@@ -3251,7 +3253,7 @@ bool AccessibilityObject::isSuperscriptStyleGroup() const
     return node && node->hasTagName(supTag);
 }
 
-bool AccessibilityObject::isFigure() const
+bool AccessibilityObject::isFigureElement() const
 {
     Node* node = this->node();
     return node && node->hasTagName(figureTag);

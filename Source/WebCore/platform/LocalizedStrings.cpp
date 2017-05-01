@@ -513,6 +513,11 @@ String AXSearchFieldCancelButtonText()
     return WEB_UI_STRING("cancel", "accessibility description for a search field cancel button");
 }
 
+String AXFeedText()
+{
+    return WEB_UI_STRING("feed", "accessibility role description for a group containing a scrollable list of articles.");
+}
+
 String AXFigureText()
 {
     return WEB_UI_STRING("figure", "accessibility role description for a figure element.");

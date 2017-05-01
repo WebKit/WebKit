@@ -872,6 +872,8 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
         case DocumentNoteRole:
         case DrawerRole:
         case EditableTextRole:
+        case FeedRole:
+        case FigureRole:
         case FooterRole:
         case FormRole:
         case GridRole:
@@ -931,6 +933,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
         case TabPanelRole:
         case TableRole:
         case TableHeaderContainerRole:
+        case TermRole:
         case TextGroupRole:
         case TreeRole:
         case TreeItemRole:

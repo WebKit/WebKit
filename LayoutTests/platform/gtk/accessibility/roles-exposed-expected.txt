@@ -643,6 +643,9 @@ div[role=doc-toc]
 div[role=document]
       AXRole: AXDocument
       
+div[role=figure]
+      AXRole: AXGroup
+      
 div[role=form]
       AXRole: AXForm
       
@@ -786,6 +789,9 @@ div[role=tab]
       
 div[role=tabpanel]
       AXRole: AXGroup
+      
+div[role=term]
+      AXRole: AXDescriptionTerm
       
 div[role=textbox]
       AXRole: AXTextField

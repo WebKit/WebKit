@@ -175,6 +175,7 @@ namespace WebCore {
     String AXAttachmentRoleText();
     String AXDetailsText();
     String AXSummaryText();
+    String AXFeedText();
     String AXFigureText();
     String AXEmailFieldText();
     String AXTelephoneFieldText();

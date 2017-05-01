@@ -898,6 +898,9 @@
 /* accessibility label for fast reverse button */
 "fast reverse" = "fast reverse";
 
+/* An ARIA accessibility group containing a scrollable list of articles. */
+"feed" = "feed";
+
 /* accessibility role description for a figure element. */
 "figure" = "figure";
 

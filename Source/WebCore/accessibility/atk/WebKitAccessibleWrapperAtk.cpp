@@ -559,6 +559,8 @@ static AtkRole atkRole(AccessibilityObject* coreObject)
     case ApplicationRole:
         return ATK_ROLE_APPLICATION;
     case ApplicationGroupRole:
+    case FeedRole:
+    case FigureRole:
     case GroupRole:
     case RadioGroupRole:
     case SVGRootRole:
@@ -685,6 +687,7 @@ static AtkRole atkRole(AccessibilityObject* coreObject)
 #if ATK_CHECK_VERSION(2, 11, 4)
     case DescriptionListRole:
         return ATK_ROLE_DESCRIPTION_LIST;
+    case TermRole:
     case DescriptionListTermRole:
         return ATK_ROLE_DESCRIPTION_TERM;
     case DescriptionListDetailRole:

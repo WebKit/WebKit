@@ -1872,6 +1872,7 @@ static const AccessibilityRoleMap& createAccessibilityRoleMap()
         { DefinitionRole, NSAccessibilityGroupRole },
         { DescriptionListDetailRole, NSAccessibilityGroupRole },
         { DescriptionListTermRole, NSAccessibilityGroupRole },
+        { TermRole, NSAccessibilityGroupRole },
         { DescriptionListRole, NSAccessibilityListRole },
         { SliderThumbRole, NSAccessibilityValueIndicatorRole },
         { WebApplicationRole, NSAccessibilityGroupRole },
@@ -1933,6 +1934,8 @@ static const AccessibilityRoleMap& createAccessibilityRoleMap()
         { SVGTSpanRole, NSAccessibilityGroupRole },
         { InlineRole, NSAccessibilityGroupRole },
         { MarkRole, NSAccessibilityGroupRole },
+        { FeedRole, NSAccessibilityGroupRole },
+        { FigureRole, NSAccessibilityGroupRole },
     };
     AccessibilityRoleMap& roleMap = *new AccessibilityRoleMap;
     
@@ -2048,6 +2051,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
             return @"AXApplicationDialog";
         case ApplicationGroupRole:
         case ApplicationTextGroupRole:
+        case FeedRole:
             return @"AXApplicationGroup";
         case ApplicationLogRole:
             return @"AXApplicationLog";
@@ -2072,6 +2076,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         case DefinitionRole:
             return @"AXDefinition";
         case DescriptionListTermRole:
+        case TermRole:
             return @"AXTerm";
         case DescriptionListDetailRole:
             return @"AXDescription";
@@ -2206,20 +2211,22 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         if (ariaLandmarkRoleDescription)
             return ariaLandmarkRoleDescription;
         
-        if (m_object->isFigure())
-            return AXFigureText();
-        
         switch (m_object->roleValue()) {
         case AudioRole:
             return localizedMediaControlElementString("AudioElement");
         case DefinitionRole:
             return AXDefinitionText();
         case DescriptionListTermRole:
+        case TermRole:
             return AXDescriptionListTermText();
         case DescriptionListDetailRole:
             return AXDescriptionListDetailText();
         case DetailsRole:
             return AXDetailsText();
+        case FeedRole:
+            return AXFeedText();
+        case FigureRole:
+            return AXFigureText();
         case FooterRole:
             return AXFooterRoleDescriptionText();
         case MarkRole:

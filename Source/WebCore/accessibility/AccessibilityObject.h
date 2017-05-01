@@ -128,6 +128,8 @@ enum AccessibilityRole {
     DocumentNoteRole,
     DrawerRole,
     EditableTextRole,
+    FeedRole,
+    FigureRole,
     FooterRole,
     FormRole,
     GridRole,
@@ -214,6 +216,7 @@ enum AccessibilityRole {
     TableHeaderContainerRole,
     TextAreaRole,
     TextGroupRole,
+    TermRole,
     TreeRole,
     TreeGridRole,
     TreeItemRole,
@@ -581,7 +584,7 @@ public:
     bool isStyleFormatGroup() const;
     bool isSubscriptStyleGroup() const;
     bool isSuperscriptStyleGroup() const;
-    bool isFigure() const;
+    bool isFigureElement() const;
     bool isSummary() const { return roleValue() == SummaryRole; }
     bool isOutput() const;
     

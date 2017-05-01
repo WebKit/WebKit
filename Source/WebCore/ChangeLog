@@ -1,3 +1,43 @@
+2017-05-01  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: Implement support for ARIA "figure" and "term" roles; update AXRoleDescription mapping for "feed" role
+        https://bugs.webkit.org/show_bug.cgi?id=171183
+
+        Reviewed by Chris Fleizach.
+
+        Create FeedRole, FigureRole, and TermRole and map them on the Mac and Gtk
+        ports. Also rename AccessibilityObject::isFigure() to isFigureElement()
+        for clarity as this method is specific to the HTML element and not the role.
+
+        No new tests needed: We have existing tests that cover mappings. Add new test cases
+        to roles-exposed.html, xml-roles-exposed.html, and roles-computedRoleString.html.
+
+        * English.lproj/Localizable.strings:
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::captionForFigure):
+        (WebCore::AccessibilityNodeObject::alternativeText):
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::initializeRoleMap):
+        (WebCore::AccessibilityObject::isFigureElement): Added.
+        (WebCore::AccessibilityObject::isFigure): Deleted.
+        * accessibility/AccessibilityObject.h:
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::exposesTitleUIElement):
+        (WebCore::AccessibilityRenderObject::titleUIElement):
+        (WebCore::AccessibilityRenderObject::computeAccessibilityIsIgnored):
+        (WebCore::AccessibilityRenderObject::determineAccessibilityRole):
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (atkRole):
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper determineIsAccessibilityElement]):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (createAccessibilityRoleMap):
+        (-[WebAccessibilityObjectWrapper subrole]):
+        (-[WebAccessibilityObjectWrapper roleDescription]):
+        * platform/LocalizedStrings.cpp:
+        (WebCore::AXFeedText):
+        * platform/LocalizedStrings.h:
+
 2017-04-30  Chris Dumez  <cdumez@apple.com>
 
         Drop support for legacy ClientRect / ClientRectList

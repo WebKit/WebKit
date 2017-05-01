@@ -1278,7 +1278,7 @@ AccessibilityObject* AccessibilityNodeObject::menuButtonForMenu() const
 
 AccessibilityObject* AccessibilityNodeObject::captionForFigure() const
 {
-    if (!isFigure())
+    if (!isFigureElement())
         return nullptr;
     
     AXObjectCache* cache = axObjectCache();
@@ -1392,7 +1392,7 @@ void AccessibilityNodeObject::alternativeText(Vector<AccessibilityText>& textOrd
     }
     
     // The figure element derives its alternative text from the first associated figcaption element if one is available.
-    if (isFigure()) {
+    if (isFigureElement()) {
         AccessibilityObject* captionForFigure = this->captionForFigure();
         if (captionForFigure && !captionForFigure->isHidden())
             textOrder.append(AccessibilityText(accessibleNameForNode(captionForFigure->node()), AlternativeText));

@@ -286,7 +286,26 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:group, xml-roles:feed, tag:div, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:feed, xml-roles:feed, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXGroup
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition: { 0.000000, 0.000000 }
+AXSize: { 0.000000, 0.000000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:figure, xml-roles:figure, tag:div, toolkit:WebKitGtk
 ------------
 AXRole: AXForm
 AXParent: AXWebArea
@@ -725,6 +744,25 @@ AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
 AXPlatformAttributes: computed-role:switch, xml-roles:switch, readonly:false, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXDescriptionTerm
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition: { 0.000000, 0.000000 }
+AXSize: { 0.000000, 0.000000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:term, xml-roles:term, tag:div, toolkit:WebKitGtk
 ------------
 AXRole: AXTextField
 AXParent: AXWebArea

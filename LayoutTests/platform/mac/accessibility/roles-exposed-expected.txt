@@ -1074,6 +1074,11 @@ div[role=document]
       AXSubrole: AXDocument
       AXRoleDescription: document
       
+div[role=figure]
+      AXRole: AXGroup
+      AXSubrole: 
+      AXRoleDescription: figure
+      
 div[role=form]
       AXRole: AXGroup
       AXSubrole: 
@@ -1112,7 +1117,7 @@ div[role=gridcell]
 div[role=feed]
       AXRole: AXGroup
       AXSubrole: AXApplicationGroup
-      AXRoleDescription: group
+      AXRoleDescription: feed
       
 div[role=group]
       AXRole: AXGroup
@@ -1313,6 +1318,11 @@ div[role=tabpanel]
       AXRole: AXGroup
       AXSubrole: AXTabPanel
       AXRoleDescription: tab panel
+      
+div[role=term]
+      AXRole: AXGroup
+      AXSubrole: AXTerm
+      AXRoleDescription: term
       
 div[role=textbox]
       AXRole: AXTextField
