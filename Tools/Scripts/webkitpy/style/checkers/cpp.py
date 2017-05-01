@@ -3180,12 +3180,12 @@ def check_language(filename, clean_lines, line_number, file_extension, include_s
 
     # Check if some verboten C functions are being used.
     if search(r'\bsprintf\b', line):
-        error(line_number, 'runtime/printf', 5,
+        error(line_number, 'security/printf', 5,
               'Never use sprintf.  Use snprintf instead.')
     matched = search(r'\b(strcpy|strcat)\b', line)
     if matched:
-        error(line_number, 'runtime/printf', 4,
-              'Almost always, snprintf is better than %s' % matched.group(1))
+        error(line_number, 'security/printf', 4,
+              'Almost always, snprintf is better than %s.' % matched.group(1))
 
     if search(r'\bsscanf\b', line):
         error(line_number, 'runtime/printf', 1,
@@ -3202,7 +3202,7 @@ def check_language(filename, clean_lines, line_number, file_extension, include_s
     # Not perfect but it can catch printf(foo.c_str()) and printf(foo->c_str())
     matched = re.search(r'\b((?:string)?printf)\s*\(([\w.\->()]+)\)', line, re.I)
     if matched:
-        error(line_number, 'runtime/printf', 4,
+        error(line_number, 'security/printf', 4,
               'Potential format string bug. Do %s("%%s", %s) instead.'
               % (matched.group(1), matched.group(2)))
 
@@ -3926,6 +3926,7 @@ class CppChecker(object):
         'runtime/unsigned',
         'runtime/virtual',
         'runtime/wtf_move',
+        'security/printf',
         'whitespace/blank_line',
         'whitespace/braces',
         'whitespace/brackets',

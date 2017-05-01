@@ -1,3 +1,21 @@
+2017-05-01  David Kilzer  <ddkilzer@apple.com>
+
+        check-webkit-style: Enable sprintf(), strcat(), strcpy() and printf() format checks
+        <https://webkit.org/b/171494>
+
+        Reviewed by Brent Fulgham.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_language): Change categories for certain checkers from
+        'runtime/printf' to 'security/printf' so they are no longer
+        filtered.
+        (CppChecker.categories): Add 'security/printf'.
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (CppStyleTest.test_insecure_string_operations): Add new test for
+        sprintf(), strcat() and strcpy().
+        (CppStyleTest.test_format_strings): Update test results for new
+        'security/printf' category use.
+
 2017-05-01  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [GTK] Add support to query for aria-current

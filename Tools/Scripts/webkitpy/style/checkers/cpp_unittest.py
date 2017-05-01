@@ -1528,6 +1528,22 @@ class CppStyleTest(CppStyleTestBase):
                          ' for improved thread safety.'
                          '  [runtime/threadsafe_fn] [2]')
 
+    # Test for insecure string functions like strcpy()/strcat().
+    def test_insecure_string_operations(self):
+        self.assert_lint(
+            'sprintf(destination, "%s", arg)',
+            'Never use sprintf.  Use snprintf instead.'
+            '  [security/printf] [5]')
+        self.assert_lint(
+            'strcat(destination, append)',
+            'Almost always, snprintf is better than strcat.'
+            '  [security/printf] [4]')
+        self.assert_lint(
+            'strcpy(destination, source)',
+            'Almost always, snprintf is better than strcpy.'
+            '  [security/printf] [4]')
+        self.assert_lint('strstr(haystack, "needle")', '')
+
     # Test potential format string bugs like printf(foo).
     def test_format_strings(self):
         self.assert_lint('printf("foo")', '')
@@ -1536,22 +1552,22 @@ class CppStyleTest(CppStyleTestBase):
         self.assert_lint(
             'printf(foo)',
             'Potential format string bug. Do printf("%s", foo) instead.'
-            '  [runtime/printf] [4]')
+            '  [security/printf] [4]')
         self.assert_lint(
             'printf(foo.c_str())',
             'Potential format string bug. '
             'Do printf("%s", foo.c_str()) instead.'
-            '  [runtime/printf] [4]')
+            '  [security/printf] [4]')
         self.assert_lint(
             'printf(foo->c_str())',
             'Potential format string bug. '
             'Do printf("%s", foo->c_str()) instead.'
-            '  [runtime/printf] [4]')
+            '  [security/printf] [4]')
         self.assert_lint(
             'StringPrintf(foo)',
             'Potential format string bug. Do StringPrintf("%s", foo) instead.'
             ''
-            '  [runtime/printf] [4]')
+            '  [security/printf] [4]')
 
     # Variable-length arrays are not permitted.
     def test_variable_length_array_detection(self):
