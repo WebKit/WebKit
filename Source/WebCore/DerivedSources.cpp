@@ -107,8 +107,6 @@
 #endif
 #include "JSCDATASection.cpp"
 #include "JSCharacterData.cpp"
-#include "JSClientRect.cpp"
-#include "JSClientRectList.cpp"
 #include "JSCloseEvent.cpp"
 #include "JSCommandLineAPIHost.cpp"
 #include "JSComment.cpp"

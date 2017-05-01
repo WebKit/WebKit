@@ -406,8 +406,6 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/CDATASection.idl
     dom/CharacterData.idl
     dom/ChildNode.idl
-    dom/ClientRect.idl
-    dom/ClientRectList.idl
     dom/ClipboardEvent.idl
     dom/Comment.idl
     dom/CompositionEvent.idl
@@ -1447,8 +1445,6 @@ set(WebCore_SOURCES
     dom/ChildListMutationScope.cpp
     dom/ChildNodeList.cpp
     dom/ClassCollection.cpp
-    dom/ClientRect.cpp
-    dom/ClientRectList.cpp
     dom/ClipboardEvent.cpp
     dom/CollectionIndexCache.cpp
     dom/Comment.cpp

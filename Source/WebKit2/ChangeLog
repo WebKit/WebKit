@@ -1,3 +1,27 @@
+2017-04-30  Chris Dumez  <cdumez@apple.com>
+
+        Drop support for legacy ClientRect / ClientRectList
+        https://bugs.webkit.org/show_bug.cgi?id=171418
+
+        Reviewed by Sam Weinig.
+
+        GTK build fix.
+
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMClientRect.cpp:
+        (WebKit::kit):
+        (WebKit::core):
+        (WebKit::wrapClientRect):
+        (webkit_dom_client_rect_constructed):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMClientRectList.cpp:
+        (ClientRectList::create):
+        (ClientRectList::items):
+        (ClientRectList::ClientRectList):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMClientRectListPrivate.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMClientRectPrivate.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMElement.cpp:
+        (webkit_dom_element_get_bounding_client_rect):
+        (webkit_dom_element_get_client_rects):
+
 2017-04-30  Brady Eidson  <beidson@apple.com>
 
         More fixing after r215991

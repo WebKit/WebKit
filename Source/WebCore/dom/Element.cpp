@@ -33,8 +33,6 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "ClassChangeInvalidation.h"
-#include "ClientRect.h"
-#include "ClientRectList.h"
 #include "ComposedTreeAncestorIterator.h"
 #include "ContainerNodeAlgorithms.h"
 #include "CustomElementReactionQueue.h"

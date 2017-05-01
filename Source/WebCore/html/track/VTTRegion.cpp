@@ -34,7 +34,6 @@
 
 #if ENABLE(VIDEO_TRACK)
 
-#include "ClientRect.h"
 #include "DOMRect.h"
 #include "DOMTokenList.h"
 #include "ElementChildIterator.h"

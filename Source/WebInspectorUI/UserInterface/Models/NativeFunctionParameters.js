@@ -696,11 +696,6 @@ WebInspector.NativePrototypeFunctionParameters = {
         __proto__: null,
     },
 
-    ClientRectList: {
-        item: "[index]",
-        __proto__: null,
-    },
-
     CommandLineAPIHost: {
         copyText: "text",
         databaseId: "database",

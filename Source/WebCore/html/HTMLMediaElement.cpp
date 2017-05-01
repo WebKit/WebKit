@@ -35,8 +35,6 @@
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
 #include "ChromeClient.h"
-#include "ClientRect.h"
-#include "ClientRectList.h"
 #include "CommonVM.h"
 #include "ContentSecurityPolicy.h"
 #include "ContentType.h"

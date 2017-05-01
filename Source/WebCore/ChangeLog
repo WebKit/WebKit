@@ -1,3 +1,29 @@
+2017-04-30  Chris Dumez  <cdumez@apple.com>
+
+        Drop support for legacy ClientRect / ClientRectList
+        https://bugs.webkit.org/show_bug.cgi?id=171418
+
+        Reviewed by Sam Weinig.
+
+        Drop support for legacy ClientRect / ClientRectList types now we use
+        DOMRect everywhere.
+
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/ClientRect.cpp: Removed.
+        * dom/ClientRect.h: Removed.
+        * dom/ClientRect.idl: Removed.
+        * dom/ClientRectList.cpp: Removed.
+        * dom/ClientRectList.h: Removed.
+        * dom/ClientRectList.idl: Removed.
+        * dom/DOMAllInOne.cpp:
+        * dom/Element.cpp:
+        * html/HTMLMediaElement.cpp:
+        * html/track/VTTRegion.cpp:
+        * page/DragController.cpp:
+
 2017-04-30  Zalan Bujtas  <zalan@apple.com>
 
         Initialize a new layout state while bailing out of simple line layout only when needed.

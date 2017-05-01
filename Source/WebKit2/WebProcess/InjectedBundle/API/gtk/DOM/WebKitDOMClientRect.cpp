@@ -35,12 +35,12 @@
 #define WEBKIT_DOM_CLIENT_RECT_GET_PRIVATE(obj) G_TYPE_INSTANCE_GET_PRIVATE(obj, WEBKIT_DOM_TYPE_CLIENT_RECT, WebKitDOMClientRectPrivate)
 
 typedef struct _WebKitDOMClientRectPrivate {
-    RefPtr<WebCore::ClientRect> coreObject;
+    RefPtr<WebCore::DOMRect> coreObject;
 } WebKitDOMClientRectPrivate;
 
 namespace WebKit {
 
-WebKitDOMClientRect* kit(WebCore::ClientRect* obj)
+WebKitDOMClientRect* kit(WebCore::DOMRect* obj)
 {
     if (!obj)
         return nullptr;
@@ -51,12 +51,12 @@ WebKitDOMClientRect* kit(WebCore::ClientRect* obj)
     return wrapClientRect(obj);
 }
 
-WebCore::ClientRect* core(WebKitDOMClientRect* request)
+WebCore::DOMRect* core(WebKitDOMClientRect* request)
 {
-    return request ? static_cast<WebCore::ClientRect*>(WEBKIT_DOM_OBJECT(request)->coreObject) : nullptr;
+    return request ? static_cast<WebCore::DOMRect*>(WEBKIT_DOM_OBJECT(request)->coreObject) : nullptr;
 }
 
-WebKitDOMClientRect* wrapClientRect(WebCore::ClientRect* coreObject)
+WebKitDOMClientRect* wrapClientRect(WebCore::DOMRect* coreObject)
 {
     ASSERT(coreObject);
     return WEBKIT_DOM_CLIENT_RECT(g_object_new(WEBKIT_DOM_TYPE_CLIENT_RECT, "core-object", coreObject, nullptr));
@@ -120,7 +120,7 @@ static void webkit_dom_client_rect_constructed(GObject* object)
     G_OBJECT_CLASS(webkit_dom_client_rect_parent_class)->constructed(object);
 
     WebKitDOMClientRectPrivate* priv = WEBKIT_DOM_CLIENT_RECT_GET_PRIVATE(object);
-    priv->coreObject = static_cast<WebCore::ClientRect*>(WEBKIT_DOM_OBJECT(object)->coreObject);
+    priv->coreObject = static_cast<WebCore::DOMRect*>(WEBKIT_DOM_OBJECT(object)->coreObject);
     WebKit::DOMObjectCache::put(priv->coreObject.get(), object);
 }
 

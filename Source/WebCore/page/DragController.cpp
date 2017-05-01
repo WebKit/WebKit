@@ -32,7 +32,6 @@
 #if ENABLE(DRAG_SUPPORT)
 #include "CachedImage.h"
 #include "CachedResourceLoader.h"
-#include "ClientRect.h"
 #include "DataTransfer.h"
 #include "Document.h"
 #include "DocumentFragment.h"

@@ -37,8 +37,6 @@
 #include "ChildListMutationScope.cpp"
 #include "ChildNodeList.cpp"
 #include "ClassCollection.cpp"
-#include "ClientRect.cpp"
-#include "ClientRectList.cpp"
 #include "ClipboardEvent.cpp"
 #include "CollectionIndexCache.cpp"
 #include "Comment.cpp"

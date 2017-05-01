@@ -19,11 +19,11 @@
 
 #pragma once
 
-#include <WebCore/ClientRectList.h>
+#include <WebCore/DOMRect.h>
 #include <webkitdom/WebKitDOMClientRectList.h>
+#include <wtf/Vector.h>
 
 namespace WebKit {
-WebKitDOMClientRectList* wrapClientRectList(WebCore::ClientRectList*);
-WebKitDOMClientRectList* kit(WebCore::ClientRectList*);
-WebCore::ClientRectList* core(WebKitDOMClientRectList*);
+WebKitDOMClientRectList* wrapClientRectList(WTF::Vector<Ref<WebCore::DOMRect>>&&);
+WebKitDOMClientRectList* kit(WTF::Vector<Ref<WebCore::DOMRect>>&&);
 } // namespace WebKit

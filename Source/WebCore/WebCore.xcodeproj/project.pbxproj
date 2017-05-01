@@ -5794,14 +5794,6 @@
 		BCBD21AB0E417AD400A070F2 /* URLHash.h in Headers */ = {isa = PBXBuildFile; fileRef = BCBD21AA0E417AD400A070F2 /* URLHash.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCBFB53C0DCD29CF0019B3E5 /* JSDOMWindowShell.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCBFB53A0DCD29CF0019B3E5 /* JSDOMWindowShell.cpp */; };
 		BCBFB53D0DCD29CF0019B3E5 /* JSDOMWindowShell.h in Headers */ = {isa = PBXBuildFile; fileRef = BCBFB53B0DCD29CF0019B3E5 /* JSDOMWindowShell.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		BCC0657D0F3CE1B700CD2D87 /* ClientRect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCC065770F3CE1B700CD2D87 /* ClientRect.cpp */; };
-		BCC0657E0F3CE1B700CD2D87 /* ClientRect.h in Headers */ = {isa = PBXBuildFile; fileRef = BCC065780F3CE1B700CD2D87 /* ClientRect.h */; };
-		BCC065800F3CE1B700CD2D87 /* ClientRectList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCC0657A0F3CE1B700CD2D87 /* ClientRectList.cpp */; };
-		BCC065810F3CE1B700CD2D87 /* ClientRectList.h in Headers */ = {isa = PBXBuildFile; fileRef = BCC0657B0F3CE1B700CD2D87 /* ClientRectList.h */; };
-		BCC065870F3CE2A700CD2D87 /* JSClientRect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCC065830F3CE2A700CD2D87 /* JSClientRect.cpp */; };
-		BCC065880F3CE2A700CD2D87 /* JSClientRect.h in Headers */ = {isa = PBXBuildFile; fileRef = BCC065840F3CE2A700CD2D87 /* JSClientRect.h */; };
-		BCC065890F3CE2A700CD2D87 /* JSClientRectList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCC065850F3CE2A700CD2D87 /* JSClientRectList.cpp */; };
-		BCC0658A0F3CE2A700CD2D87 /* JSClientRectList.h in Headers */ = {isa = PBXBuildFile; fileRef = BCC065860F3CE2A700CD2D87 /* JSClientRectList.h */; };
 		BCC0E8751BFE70E9008F7F50 /* HTMLPictureElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCC0E8731BFE70E9008F7F50 /* HTMLPictureElement.cpp */; };
 		BCC0E8761BFE70E9008F7F50 /* HTMLPictureElement.h in Headers */ = {isa = PBXBuildFile; fileRef = BCC0E8741BFE70E9008F7F50 /* HTMLPictureElement.h */; };
 		BCC5BE000C0E93110011C2DB /* JSCSSStyleSheet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCC5BDFE0C0E93110011C2DB /* JSCSSStyleSheet.cpp */; };
@@ -14233,16 +14225,6 @@
 		BCBD21AA0E417AD400A070F2 /* URLHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = URLHash.h; sourceTree = "<group>"; };
 		BCBFB53A0DCD29CF0019B3E5 /* JSDOMWindowShell.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMWindowShell.cpp; sourceTree = "<group>"; };
 		BCBFB53B0DCD29CF0019B3E5 /* JSDOMWindowShell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMWindowShell.h; sourceTree = "<group>"; };
-		BCC065770F3CE1B700CD2D87 /* ClientRect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ClientRect.cpp; sourceTree = "<group>"; };
-		BCC065780F3CE1B700CD2D87 /* ClientRect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClientRect.h; sourceTree = "<group>"; };
-		BCC065790F3CE1B700CD2D87 /* ClientRect.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ClientRect.idl; sourceTree = "<group>"; };
-		BCC0657A0F3CE1B700CD2D87 /* ClientRectList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ClientRectList.cpp; sourceTree = "<group>"; };
-		BCC0657B0F3CE1B700CD2D87 /* ClientRectList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClientRectList.h; sourceTree = "<group>"; };
-		BCC0657C0F3CE1B700CD2D87 /* ClientRectList.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ClientRectList.idl; sourceTree = "<group>"; };
-		BCC065830F3CE2A700CD2D87 /* JSClientRect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSClientRect.cpp; sourceTree = "<group>"; };
-		BCC065840F3CE2A700CD2D87 /* JSClientRect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSClientRect.h; sourceTree = "<group>"; };
-		BCC065850F3CE2A700CD2D87 /* JSClientRectList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSClientRectList.cpp; sourceTree = "<group>"; };
-		BCC065860F3CE2A700CD2D87 /* JSClientRectList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSClientRectList.h; sourceTree = "<group>"; };
 		BCC0E8731BFE70E9008F7F50 /* HTMLPictureElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLPictureElement.cpp; sourceTree = "<group>"; };
 		BCC0E8741BFE70E9008F7F50 /* HTMLPictureElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLPictureElement.h; sourceTree = "<group>"; };
 		BCC5BDFE0C0E93110011C2DB /* JSCSSStyleSheet.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSCSSStyleSheet.cpp; sourceTree = "<group>"; };
@@ -21839,10 +21821,6 @@
 		A83B790E0CCAFF97000B0825 /* CSS */ = {
 			isa = PBXGroup;
 			children = (
-				BCC065830F3CE2A700CD2D87 /* JSClientRect.cpp */,
-				BCC065840F3CE2A700CD2D87 /* JSClientRect.h */,
-				BCC065850F3CE2A700CD2D87 /* JSClientRectList.cpp */,
-				BCC065860F3CE2A700CD2D87 /* JSClientRectList.h */,
 				BC46C1F20C0DDC8F0020CFC3 /* JSCSSFontFaceRule.cpp */,
 				BC46C1F30C0DDC8F0020CFC3 /* JSCSSFontFaceRule.h */,
 				BC46C1F40C0DDC8F0020CFC3 /* JSCSSImportRule.cpp */,
@@ -25439,12 +25417,6 @@
 				A81872150977D3C0005826D9 /* ChildNodeList.h */,
 				8348BFA91B85729500912F36 /* ClassCollection.cpp */,
 				8348BFAA1B85729500912F36 /* ClassCollection.h */,
-				BCC065770F3CE1B700CD2D87 /* ClientRect.cpp */,
-				BCC065780F3CE1B700CD2D87 /* ClientRect.h */,
-				BCC065790F3CE1B700CD2D87 /* ClientRect.idl */,
-				BCC0657A0F3CE1B700CD2D87 /* ClientRectList.cpp */,
-				BCC0657B0F3CE1B700CD2D87 /* ClientRectList.h */,
-				BCC0657C0F3CE1B700CD2D87 /* ClientRectList.idl */,
 				85031B290A44EFC700F992E0 /* ClipboardEvent.cpp */,
 				85031B2A0A44EFC700F992E0 /* ClipboardEvent.h */,
 				836D03271DA89B7300FFD96B /* ClipboardEvent.idl */,
@@ -26589,8 +26561,6 @@
 				14D824080AF93AEB0004F057 /* ChromeClient.h in Headers */,
 				E4A814D41C6DEC4000BF85AC /* ClassChangeInvalidation.h in Headers */,
 				8348BFAC1B85729800912F36 /* ClassCollection.h in Headers */,
-				BCC0657E0F3CE1B700CD2D87 /* ClientRect.h in Headers */,
-				BCC065810F3CE1B700CD2D87 /* ClientRectList.h in Headers */,
 				7C3A91E61C963B8800D1A7E3 /* ClipboardAccessPolicy.h in Headers */,
 				85031B400A44EFC700F992E0 /* ClipboardEvent.h in Headers */,
 				FB92DF4B15FED08700994433 /* ClipPathOperation.h in Headers */,
@@ -27644,8 +27614,6 @@
 				FDA15EA212B03EE1003A583A /* JSChannelMergerNode.h in Headers */,
 				FDA15EA412B03EE1003A583A /* JSChannelSplitterNode.h in Headers */,
 				65DF31F409D1CC60000BE325 /* JSCharacterData.h in Headers */,
-				BCC065880F3CE2A700CD2D87 /* JSClientRect.h in Headers */,
-				BCC0658A0F3CE2A700CD2D87 /* JSClientRectList.h in Headers */,
 				836D03321DA8A14200FFD96B /* JSClipboardEvent.h in Headers */,
 				51FB5504113E3E9100821176 /* JSCloseEvent.h in Headers */,
 				A584FE3C1864E2D800843B10 /* JSCommandLineAPIHost.h in Headers */,
@@ -30660,8 +30628,6 @@
 				ABAF22080C03B1C700B0BCF0 /* ChromeMac.mm in Sources */,
 				E4A814D61C6DEE8D00BF85AC /* ClassChangeInvalidation.cpp in Sources */,
 				8348BFAB1B85729800912F36 /* ClassCollection.cpp in Sources */,
-				BCC0657D0F3CE1B700CD2D87 /* ClientRect.cpp in Sources */,
-				BCC065800F3CE1B700CD2D87 /* ClientRectList.cpp in Sources */,
 				85031B3F0A44EFC700F992E0 /* ClipboardEvent.cpp in Sources */,
 				580371611A66F00A00BAF519 /* ClipRect.cpp in Sources */,
 				CDEA76351460B71A008B31F1 /* Clock.cpp in Sources */,
@@ -31608,8 +31574,6 @@
 				FDA15EA112B03EE1003A583A /* JSChannelMergerNode.cpp in Sources */,
 				FDA15EA312B03EE1003A583A /* JSChannelSplitterNode.cpp in Sources */,
 				65DF31F309D1CC60000BE325 /* JSCharacterData.cpp in Sources */,
-				BCC065870F3CE2A700CD2D87 /* JSClientRect.cpp in Sources */,
-				BCC065890F3CE2A700CD2D87 /* JSClientRectList.cpp in Sources */,
 				836D03311DA8A13F00FFD96B /* JSClipboardEvent.cpp in Sources */,
 				51FB5505113E3E9100821176 /* JSCloseEvent.cpp in Sources */,
 				A584FE3B1864E2D800843B10 /* JSCommandLineAPIHost.cpp in Sources */,

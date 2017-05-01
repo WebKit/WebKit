@@ -19,11 +19,11 @@
 
 #pragma once
 
-#include <WebCore/ClientRect.h>
+#include <WebCore/DOMRect.h>
 #include <webkitdom/WebKitDOMClientRect.h>
 
 namespace WebKit {
-WebKitDOMClientRect* wrapClientRect(WebCore::ClientRect*);
-WebKitDOMClientRect* kit(WebCore::ClientRect*);
-WebCore::ClientRect* core(WebKitDOMClientRect*);
+WebKitDOMClientRect* wrapClientRect(WebCore::DOMRect*);
+WebKitDOMClientRect* kit(WebCore::DOMRect*);
+WebCore::DOMRect* core(WebKitDOMClientRect*);
 } // namespace WebKit

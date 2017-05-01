@@ -342,8 +342,6 @@ JS_BINDING_IDLS = \
     $(WebCore)/dom/CDATASection.idl \
     $(WebCore)/dom/CharacterData.idl \
     $(WebCore)/dom/ChildNode.idl \
-    $(WebCore)/dom/ClientRect.idl \
-    $(WebCore)/dom/ClientRectList.idl \
     $(WebCore)/dom/ClipboardEvent.idl \
     $(WebCore)/dom/Comment.idl \
     $(WebCore)/dom/CompositionEvent.idl \

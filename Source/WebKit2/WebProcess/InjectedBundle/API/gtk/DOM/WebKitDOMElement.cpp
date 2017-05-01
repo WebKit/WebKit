@@ -22,8 +22,6 @@
 
 #include <WebCore/CSSImportRule.h>
 #include "DOMObjectCache.h"
-#include <WebCore/ClientRect.h>
-#include <WebCore/ClientRectList.h>
 #include <WebCore/DOMRect.h>
 #include <WebCore/Document.h>
 #include <WebCore/ExceptionCode.h>
@@ -1226,27 +1224,12 @@ glong webkit_dom_element_get_scroll_height(WebKitDOMElement* self)
     return result;
 }
 
-static Ref<WebCore::ClientRect> toClientRect(WebCore::DOMRect& rect)
-{
-    return WebCore::ClientRect::create(WebCore::FloatRect(rect.x(), rect.y(), rect.width(), rect.height()));
-}
-
 WebKitDOMClientRect* webkit_dom_element_get_bounding_client_rect(WebKitDOMElement* self)
 {
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_ELEMENT(self), nullptr);
     WebCore::Element* item = WebKit::core(self);
-    auto clientRect = toClientRect(item->getBoundingClientRect());
-    return WebKit::kit(clientRect.ptr());
-}
-
-static Vector<Ref<WebCore::ClientRect>> toClientRectVector(Vector<Ref<WebCore::DOMRect>>&& rects)
-{
-    Vector<Ref<WebCore::ClientRect>> clientRects;
-    clientRects.reserveInitialCapacity(rects.size());
-    for (auto& rect : rects)
-        clientRects.uncheckedAppend(toClientRect(rect));
-    return clientRects;
+    return WebKit::kit(item->getBoundingClientRect().ptr());
 }
 
 WebKitDOMClientRectList* webkit_dom_element_get_client_rects(WebKitDOMElement* self)
@@ -1254,8 +1237,7 @@ WebKitDOMClientRectList* webkit_dom_element_get_client_rects(WebKitDOMElement* s
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_ELEMENT(self), nullptr);
     WebCore::Element* item = WebKit::core(self);
-    auto clientRects = WebCore::ClientRectList::create(toClientRectVector(item->getClientRects()));
-    return WebKit::kit(clientRects.ptr());
+    return WebKit::kit(item->getClientRects());
 }
 
 WebKitDOMElement* webkit_dom_element_get_offset_parent(WebKitDOMElement* self)
