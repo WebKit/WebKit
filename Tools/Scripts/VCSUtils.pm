@@ -61,17 +61,20 @@ BEGIN {
         &fixChangeLogPatch
         &fixSVNPatchForAdditionWithHistory
         &gitBranch
+        &gitCommitForSVNRevision
         &gitDirectory
+        &gitHashForDirectory
         &gitTreeDirectory
         &gitdiff2svndiff
         &isGit
-        &isGitSVN
         &isGitBranchBuild
         &isGitDirectory
+        &isGitSVN
         &isGitSVNDirectory
         &isSVN
         &isSVNDirectory
         &isSVNVersion16OrNewer
+        &listOfChangedFilesBetweenRevisions
         &makeFilePathRelative
         &mergeChangeLogs
         &normalizePath
@@ -95,8 +98,6 @@ BEGIN {
         &svnStatus
         &svnURLForPath
         &toWindowsLineEndings
-        &gitCommitForSVNRevision
-        &listOfChangedFilesBetweenRevisions
         &unixPath
     );
     %EXPORT_TAGS = ( );
@@ -258,6 +259,24 @@ sub gitDirectory()
 {
     chomp(my $result = `git rev-parse --git-dir`);
     return $result;
+}
+
+sub gitHashForDirectory($)
+{
+    my ($directory) = @_;
+    my $hash;
+
+    if (isGitDirectory($directory)) {
+        my $command = "git -C \"$directory\" rev-parse HEAD";
+        $command = "LC_ALL=C $command" if !isWindows();
+        $hash = `$command`;
+        chomp($hash);
+    }
+    if (!defined($hash)) {
+        $hash = "unknown";
+        warn "Unable to determine current Git hash in $directory";
+    }
+    return $hash;
 }
 
 sub gitTreeDirectory()

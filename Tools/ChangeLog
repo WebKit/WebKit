@@ -1,3 +1,13 @@
+2017-05-01  Jason Marcell  <jmarcell@apple.com>
+
+        Add a new function for getting the Git hash for a pure git directory.
+        https://bugs.webkit.org/show_bug.cgi?id=171450
+
+        Reviewed by David Kilzer.
+
+        * Scripts/VCSUtils.pm:
+        (gitHashForDirectory):
+
 2017-05-01  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [ATK] Expose values of aria-rowcount, aria-colcount, aria-rowindex, aria-colindex, aria-rowspan, and aria-colspan as object attributes
