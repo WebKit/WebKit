@@ -1,3 +1,17 @@
+2017-05-01  Chris Dumez  <cdumez@apple.com>
+
+        Tweak how long we allow a process to go over its background CPU limit
+        https://bugs.webkit.org/show_bug.cgi?id=170460
+        <rdar://problem/31433141>
+
+        Reviewed by Geoffrey Garen.
+
+        Tweak how long we allow a process to go over its background CPU limit. We now use 8 minutes
+        intervals (instead of previously 15). This is less conservative and aligned with our memory
+        kills.
+
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+
 2017-05-01  Beth Dakin  <bdakin@apple.com>
 
         On-screen panel for candidate bar is in the wrong place when the caret is at the 
