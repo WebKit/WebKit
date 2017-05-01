@@ -38,6 +38,7 @@
 #include "AccessibilityList.h"
 #include "AccessibilityListBoxOption.h"
 #include "AccessibilityTable.h"
+#include "AccessibilityTableCell.h"
 #include "Document.h"
 #include "Editing.h"
 #include "Frame.h"
@@ -391,10 +392,35 @@ static AtkAttributeSet* webkitAccessibleGetAttributes(AtkObject* object)
             attributeSet = addToAtkAttributeSet(attributeSet, "multiscript-type", "post");
     }
 
-    // Set the 'layout-guess' attribute to help Assistive
-    // Technologies know when an exposed table is not data table.
-    if (is<AccessibilityTable>(*coreObject) && downcast<AccessibilityTable>(*coreObject).isExposableThroughAccessibility() && !coreObject->isDataTable())
-        attributeSet = addToAtkAttributeSet(attributeSet, "layout-guess", "true");
+    if (is<AccessibilityTable>(*coreObject) && downcast<AccessibilityTable>(*coreObject).isExposableThroughAccessibility()) {
+        auto& table = downcast<AccessibilityTable>(*coreObject);
+        int rowCount = table.ariaRowCount();
+        if (rowCount)
+            attributeSet = addToAtkAttributeSet(attributeSet, "rowcount", String::number(rowCount).utf8().data());
+
+        int columnCount = table.ariaColumnCount();
+        if (columnCount)
+            attributeSet = addToAtkAttributeSet(attributeSet, "colcount", String::number(columnCount).utf8().data());
+    }
+
+    if (is<AccessibilityTableCell>(*coreObject)) {
+        auto& cell = downcast<AccessibilityTableCell>(*coreObject);
+        int rowIndex = cell.ariaRowIndex();
+        if (rowIndex != -1)
+            attributeSet = addToAtkAttributeSet(attributeSet, "rowindex", String::number(rowIndex).utf8().data());
+
+        int columnIndex = cell.ariaColumnIndex();
+        if (columnIndex != -1)
+            attributeSet = addToAtkAttributeSet(attributeSet, "colindex", String::number(columnIndex).utf8().data());
+
+        int rowSpan = cell.ariaRowSpan();
+        if (rowSpan != -1)
+            attributeSet = addToAtkAttributeSet(attributeSet, "rowspan", String::number(rowSpan).utf8().data());
+
+        int columnSpan = cell.ariaColumnSpan();
+        if (columnSpan != -1)
+            attributeSet = addToAtkAttributeSet(attributeSet, "colspan", String::number(columnSpan).utf8().data());
+    }
 
     String placeholder = coreObject->placeholderValue();
     if (!placeholder.isEmpty())

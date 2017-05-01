@@ -55,8 +55,8 @@ public:
     
     int ariaColumnIndex() const;
     int ariaRowIndex() const;
-    unsigned ariaColumnSpan() const;
-    unsigned ariaRowSpan() const;
+    int ariaColumnSpan() const;
+    int ariaRowSpan() const;
     void setARIAColIndexFromRow(int index) { m_ariaColIndexFromRow = index; }
 
 protected:

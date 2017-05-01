@@ -401,17 +401,17 @@ int AccessibilityTableCell::ariaRowIndex() const
     return -1;
 }
 
-unsigned AccessibilityTableCell::ariaColumnSpan() const
+int AccessibilityTableCell::ariaColumnSpan() const
 {
     const AtomicString& colSpanValue = getAttribute(aria_colspanAttr);
     // ARIA 1.1: Authors must set the value of aria-colspan to an integer greater than or equal to 1.
     if (colSpanValue.toInt() >= 1)
         return colSpanValue.toInt();
     
-    return 1;
+    return -1;
 }
 
-unsigned AccessibilityTableCell::ariaRowSpan() const
+int AccessibilityTableCell::ariaRowSpan() const
 {
     const AtomicString& rowSpanValue = getAttribute(aria_rowspanAttr);
     
@@ -422,7 +422,7 @@ unsigned AccessibilityTableCell::ariaRowSpan() const
     if (rowSpanValue.toInt() >= 1)
         return rowSpanValue.toInt();
     
-    return 1;
+    return -1;
 }
     
 } // namespace WebCore

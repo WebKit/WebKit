@@ -1,3 +1,33 @@
+2017-05-01  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        [ATK] Expose values of aria-rowcount, aria-colcount, aria-rowindex, aria-colindex, aria-rowspan, and aria-colspan as object attributes
+        https://bugs.webkit.org/show_bug.cgi?id=171496
+
+        Reviewed by Chris Fleizach.
+
+        Expose valid, author-provided values as an object attribute. In order to distinguish
+        author-provided values from the default returned by WebCore Accessibility (1), change
+        the default return value to -1. We cannot return 0 because the ARIA spec states that
+        0 is a valid value for authors to provide to indicate that the cell spans the remaining
+        rows in the row group.
+
+        Also removed some legacy code. The "layout-guess" attribute was needed and expected
+        as a way for AT-SPI2-based assistive technologies to identify layout tables. WebCore
+        Accessibility does not expose tables which are purely for layout as accessible tables,
+        and WebKitGtk uses that implementation, thus this attribute is no longer relevant.
+
+        No new tests. Unskipped existing test which is now passing.
+
+        * accessibility/AccessibilityARIAGridCell.cpp:
+        (WebCore::AccessibilityARIAGridCell::ariaRowSpanWithRowIndex):
+        (WebCore::AccessibilityARIAGridCell::columnIndexRange):
+        * accessibility/AccessibilityTableCell.cpp:
+        (WebCore::AccessibilityTableCell::ariaColumnSpan):
+        (WebCore::AccessibilityTableCell::ariaRowSpan):
+        * accessibility/AccessibilityTableCell.h:
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (webkitAccessibleGetAttributes):
+
 2017-05-01  Jer Noble  <jer.noble@apple.com>
 
         Add audio device change notifications to AudioSession.

@@ -98,7 +98,10 @@ void AccessibilityARIAGridCell::rowIndexRange(std::pair<unsigned, unsigned>& row
 
 unsigned AccessibilityARIAGridCell::ariaRowSpanWithRowIndex(unsigned rowIndex) const
 {
-    unsigned rowSpan = AccessibilityTableCell::ariaRowSpan();
+    int rowSpan = AccessibilityTableCell::ariaRowSpan();
+    if (rowSpan == -1)
+        return 1;
+
     AccessibilityObject* parent = parentObjectUnignored();
     if (!parent)
         return 1;
@@ -149,7 +152,7 @@ void AccessibilityARIAGridCell::columnIndexRange(std::pair<unsigned, unsigned>& 
     
     // ARIA 1.1, aria-colspan attribute is intended for cells and gridcells which are not contained in a native table.
     // So we should check for that attribute here.
-    columnRange.second = ariaColumnSpan();
+    columnRange.second = std::max(ariaColumnSpan(), 1);
 }
 
 AccessibilityObject* AccessibilityARIAGridCell::parentRowGroup() const
