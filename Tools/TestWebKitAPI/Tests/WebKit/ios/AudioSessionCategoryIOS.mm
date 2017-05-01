@@ -29,15 +29,11 @@
 
 #import "PlatformUtilities.h"
 #import <AVFoundation/AVAudioSession.h>
-#import <WebCore/Settings.h>
 #import <UIKit/UIKit.h>
+#import <WebCore/Settings.h>
 #import <WebCore/SoftLinking.h>
 #import <WebKit/WebKitLegacy.h>
 #import <wtf/RetainPtr.h>
-
-SOFT_LINK_FRAMEWORK(UIKit)
-SOFT_LINK_CLASS(UIKit, UIWebView)
-SOFT_LINK_CLASS(UIKit, UIWindow)
 
 SOFT_LINK_FRAMEWORK(AVFoundation)
 SOFT_LINK_CLASS(AVFoundation, AVAudioSession)
@@ -66,8 +62,8 @@ namespace TestWebKitAPI {
 TEST(WebKit1, AudioSessionCategoryIOS)
 {
     WebCore::Settings::setShouldManageAudioSessionCategory(true);
-    RetainPtr<UIWindow> uiWindow = adoptNS([[getUIWindowClass() alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
-    RetainPtr<UIWebView> uiWebView = adoptNS([[getUIWebViewClass() alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    RetainPtr<UIWindow> uiWindow = adoptNS([[UIWindow alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    RetainPtr<UIWebView> uiWebView = adoptNS([[UIWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     [uiWindow addSubview:uiWebView.get()];
 
     uiWebView.get().mediaPlaybackRequiresUserAction = NO;

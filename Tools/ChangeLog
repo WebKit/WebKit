@@ -1,3 +1,21 @@
+2017-05-01  David Kilzer  <ddkilzer@apple.com>
+
+        [Cocoa] Replace uses of [get…Class() alloc] in TestWebKitAPI
+        <https://webkit.org/b/171493>
+
+        Reviewed by Dan Bernstein.
+
+        * TestWebKitAPI/Tests/WebKit/ios/AudioSessionCategoryIOS.mm:
+        Remove UIKit soft-link since TestWebKitAPI links to
+        UIKit.framework.
+        (TestWebKitAPI::WebKit1_AudioSessionCategoryIOS_Test): Use
+        UIWindow and UIWebView classes directly.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/RequiresUserActionForPlayback.mm:
+        Remove UIKit soft-link since TestWebKitAPI links to
+        UIKit.framework.
+        (RequiresUserActionForPlaybackTest::createWebView): Use UIWindow
+        class directly.
+
 2017-05-01  Brady Eidson  <beidson@apple.com>
 
         Update names in WKURLSchemeHandler/WKURLSchemeHandlerTask APIs.

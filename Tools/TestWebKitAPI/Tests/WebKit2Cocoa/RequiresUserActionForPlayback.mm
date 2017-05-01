@@ -28,17 +28,15 @@
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestNavigationDelegate.h"
-#import <WebCore/SoftLinking.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WebKit.h>
 #import <wtf/RetainPtr.h>
 
-#if WK_API_ENABLED
-
 #if TARGET_OS_IPHONE
-SOFT_LINK_FRAMEWORK(UIKit)
-SOFT_LINK_CLASS(UIKit, UIWindow)
+#import <UIKit/UIKit.h>
 #endif
+
+#if WK_API_ENABLED
 
 static bool receivedScriptMessage;
 static RetainPtr<WKScriptMessage> lastScriptMessage;
@@ -73,7 +71,7 @@ public:
     {
         webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 #if TARGET_OS_IPHONE
-        window = adoptNS([[getUIWindowClass() alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+        window = adoptNS([[UIWindow alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
         [window addSubview:webView.get()];
 #else
         window = adoptNS([[NSWindow alloc] initWithContentRect:webView.get().frame styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:NO]);
