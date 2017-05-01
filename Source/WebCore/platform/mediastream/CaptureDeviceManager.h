@@ -34,6 +34,11 @@ namespace WebCore {
 
 class CaptureDeviceManager {
 public:
+    using CaptureDeviceChangedCallback = std::function<void()>;
+    using ObserverToken = uint32_t;
+    virtual ObserverToken addCaptureDeviceChangedObserver(CaptureDeviceChangedCallback);
+    virtual void removeCaptureDeviceChangedObserver(ObserverToken);
+
     virtual Vector<CaptureDevice>& captureDevices() = 0;
     virtual void refreshCaptureDevices() { }
     virtual Vector<CaptureDevice> getAudioSourcesInfo();
@@ -43,6 +48,7 @@ public:
 protected:
     virtual ~CaptureDeviceManager();
     std::optional<CaptureDevice> captureDeviceFromPersistentID(const String& captureDeviceID);
+    HashMap<ObserverToken, CaptureDeviceChangedCallback> m_observers;
 };
 
 } // namespace WebCore

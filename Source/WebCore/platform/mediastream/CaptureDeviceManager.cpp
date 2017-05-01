@@ -107,4 +107,24 @@ std::optional<CaptureDevice> CaptureDeviceManager::deviceWithUID(const String& d
     return std::nullopt;
 }
 
+static CaptureDeviceManager::ObserverToken nextObserverToken()
+{
+    static CaptureDeviceManager::ObserverToken nextToken = 0;
+    return ++nextToken;
+}
+
+CaptureDeviceManager::ObserverToken CaptureDeviceManager::addCaptureDeviceChangedObserver(CaptureDeviceChangedCallback observer)
+{
+    auto token = nextObserverToken();
+    m_observers.set(token, WTFMove(observer));
+    return token;
+}
+
+void CaptureDeviceManager::removeCaptureDeviceChangedObserver(ObserverToken token)
+{
+    ASSERT(m_observers.contains(token));
+    m_observers.remove(token);
+}
+
+
 #endif // ENABLE(MEDIA_STREAM)

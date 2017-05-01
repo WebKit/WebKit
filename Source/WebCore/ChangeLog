@@ -1,3 +1,40 @@
+2017-05-01  Jer Noble  <jer.noble@apple.com>
+
+        Add notifications from CaptureDeviceManager (and subclasses) when device lists change
+        https://bugs.webkit.org/show_bug.cgi?id=171442
+
+        Reviewed by Youenn Fablet.
+
+        Add a new callback-based notification to CaptureDeviceManager which fires when the underlying list
+        of devices changes. Add support for enumerating AVAudioSession capture devices.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/mediastream/CaptureDeviceManager.cpp:
+        (nextObserverToken):
+        (CaptureDeviceManager::addCaptureDeviceChangedObserver):
+        (CaptureDeviceManager::removeCaptureDeviceChangedObserver):
+        * platform/mediastream/CaptureDeviceManager.h:
+        * platform/mediastream/ios/AVAudioSessionCaptureDevice.h: Added.
+        * platform/mediastream/ios/AVAudioSessionCaptureDevice.mm: Added.
+        (WebCore::AVAudioSessionCaptureDevice::create):
+        (WebCore::AVAudioSessionCaptureDevice::AVAudioSessionCaptureDevice):
+        * platform/mediastream/ios/AVAudioSessionCaptureDeviceManager.h: Added.
+        * platform/mediastream/ios/AVAudioSessionCaptureDeviceManager.mm: Added.
+        (-[WebAVAudioSessionAvailableInputsListener initWithCallback:]):
+        (-[WebAVAudioSessionAvailableInputsListener invalidate]):
+        (-[WebAVAudioSessionAvailableInputsListener observeValueForKeyPath:ofObject:change:context:]):
+        (WebCore::AVAudioSessionCaptureDeviceManager::singleton):
+        (WebCore::AVAudioSessionCaptureDeviceManager::captureDevices):
+        (WebCore::AVAudioSessionCaptureDeviceManager::audioSessionCaptureDevices):
+        (WebCore::AVAudioSessionCaptureDeviceManager::audioSessionDeviceWithUID):
+        (WebCore::AVAudioSessionCaptureDeviceManager::refreshAudioCaptureDevices):
+        * platform/mediastream/mac/AVCaptureDeviceManager.mm:
+        (WebCore::AVCaptureDeviceManager::deviceConnected):
+        (WebCore::AVCaptureDeviceManager::deviceDisconnected):
+        * platform/mediastream/mac/CoreAudioCaptureDeviceManager.cpp:
+        (WebCore::CoreAudioCaptureDeviceManager::refreshAudioCaptureDevices):
+        (WebCore::CoreAudioCaptureDeviceManager::devicesChanged):
+
 2017-05-01  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: AccessibilityTable::ariaRowCount() and ariaColumnCount() should not return -1 unless that is the author-provided value

@@ -128,18 +128,22 @@ void CoreAudioCaptureDeviceManager::refreshAudioCaptureDevices()
         }
     }
 
-    if (haveDeviceChanges) {
-        m_devices = Vector<CaptureDevice>();
+    if (!haveDeviceChanges)
+        return;
 
-        for (auto &device : m_coreAudioCaptureDevices) {
-            CaptureDevice captureDevice(device.persistentId(), CaptureDevice::DeviceType::Audio, device.label());
-            captureDevice.setEnabled(device.enabled());
-            m_devices.append(captureDevice);
-        }
+    m_devices = Vector<CaptureDevice>();
+
+    for (auto &device : m_coreAudioCaptureDevices) {
+        CaptureDevice captureDevice(device.persistentId(), CaptureDevice::DeviceType::Audio, device.label());
+        captureDevice.setEnabled(device.enabled());
+        m_devices.append(captureDevice);
     }
+
+    for (auto& observer : m_observers.values())
+        observer();
 }
 
-OSStatus CoreAudioCaptureDeviceManager::devicesChanged(AudioObjectID, UInt32, const AudioObjectPropertyAddress*, void *userData)
+OSStatus CoreAudioCaptureDeviceManager::devicesChanged(AudioObjectID, UInt32, const AudioObjectPropertyAddress*, void* userData)
 {
     static_cast<CoreAudioCaptureDeviceManager*>(userData)->refreshAudioCaptureDevices();
     return 0;

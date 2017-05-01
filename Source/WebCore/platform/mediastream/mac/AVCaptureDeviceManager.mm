@@ -194,6 +194,9 @@ void AVCaptureDeviceManager::registerForDeviceNotifications()
 void AVCaptureDeviceManager::deviceConnected()
 {
     refreshCaptureDevices();
+
+    for (auto& observer : m_observers.values())
+        observer();
 }
 
 void AVCaptureDeviceManager::deviceDisconnected(AVCaptureDeviceTypedef* device)
@@ -211,6 +214,9 @@ void AVCaptureDeviceManager::deviceDisconnected(AVCaptureDeviceTypedef* device)
             devices[i].setEnabled(false);
         }
     }
+
+    for (auto& observer : m_observers.values())
+        observer();
 }
 
 } // namespace WebCore
