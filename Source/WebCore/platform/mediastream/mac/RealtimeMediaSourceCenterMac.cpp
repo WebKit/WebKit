@@ -34,6 +34,7 @@
 #include "RealtimeMediaSourceCenterMac.h"
 
 #include "AVAudioCaptureSource.h"
+#include "AVAudioSessionCaptureDeviceManager.h"
 #include "AVCaptureDeviceManager.h"
 #include "AVVideoCaptureSource.h"
 #include "CoreAudioCaptureDeviceManager.h"
@@ -59,8 +60,7 @@ void RealtimeMediaSourceCenterMac::setUseAVFoundationAudioCapture(bool enabled)
 #if PLATFORM(MAC)
         RealtimeMediaSourceCenter::singleton().setAudioCaptureDeviceManager(CoreAudioCaptureDeviceManager::singleton());
 #else
-        // FIXME 170861: Use AVAudioSession to enumerate audio capture devices on iOS
-        RealtimeMediaSourceCenter::singleton().setAudioCaptureDeviceManager(AVCaptureDeviceManager::singleton());
+        RealtimeMediaSourceCenter::singleton().setAudioCaptureDeviceManager(AVAudioSessionCaptureDeviceManager::singleton());
 #endif
     }
 }

@@ -1,3 +1,19 @@
+2017-05-01  Jer Noble  <jer.noble@apple.com>
+
+        Use AVAudioSession to enumerate audio capture devices on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=170861
+        <rdar://problem/31653658>
+
+        Reviewed by Eric Carlson.
+
+        Hook up the new AVAudioSessionCaptureDeviceManager class to CoreAudioCaptureSource and to the (increasingly ill-named)
+        RealtimeMediaSourceCenterMac.
+
+        * platform/mediastream/mac/CoreAudioCaptureSource.cpp:
+        (WebCore::CoreAudioCaptureSource::create):
+        * platform/mediastream/mac/RealtimeMediaSourceCenterMac.cpp:
+        (WebCore::RealtimeMediaSourceCenterMac::setUseAVFoundationAudioCapture):
+
 2017-05-01  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [ATK] Expose values of aria-rowcount, aria-colcount, aria-rowindex, aria-colindex, aria-rowspan, and aria-colspan as object attributes

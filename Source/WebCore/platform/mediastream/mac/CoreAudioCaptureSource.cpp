@@ -28,6 +28,8 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#include "AVAudioSessionCaptureDevice.h"
+#include "AVAudioSessionCaptureDeviceManager.h"
 #include "AudioSampleBufferList.h"
 #include "AudioSampleDataSource.h"
 #include "AudioSession.h"
@@ -67,6 +69,12 @@ CaptureSourceOrError CoreAudioCaptureSource::create(const String& deviceID, cons
 
     label = device->label();
     persistentID = device->deviceID();
+#elif PLATFORM(IOS)
+    auto device = AVAudioSessionCaptureDeviceManager::singleton().audioSessionDeviceWithUID(deviceID);
+    if (!device)
+        return nullptr;
+
+    label = device->label();
 #endif
     auto source = adoptRef(*new CoreAudioCaptureSource(deviceID, label, persistentID));
 
