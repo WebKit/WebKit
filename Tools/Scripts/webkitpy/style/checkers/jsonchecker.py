@@ -26,6 +26,7 @@ import json
 import re
 from sets import Set
 
+
 class JSONChecker(object):
     """Processes JSON lines for checking style."""
 

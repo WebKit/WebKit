@@ -50,6 +50,7 @@ class PatchIsNotApplicable(Exception):
         Exception.__init__(self)
         self.patch = patch
 
+
 class PatchAnalysisTaskDelegate(object):
     def parent_command(self):
         raise NotImplementedError("subclasses must implement")

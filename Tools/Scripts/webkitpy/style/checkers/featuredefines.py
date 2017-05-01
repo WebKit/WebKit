@@ -37,6 +37,7 @@ FEATURE_DEFINE_FILES = [
     "Tools/TestWebKitAPI/Configurations/FeatureDefines.xcconfig",
 ]
 
+
 class FeatureDefinesChecker(object):
     categories = set(['featuredefines/new', 'featuredefines/equality'])
 

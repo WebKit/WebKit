@@ -120,6 +120,7 @@ class TestRunResults(object):
         self.keyboard_interrupted |= test_run_results.keyboard_interrupted
         return self
 
+
 class RunDetails(object):
     def __init__(self, exit_code, summarized_results=None, initial_results=None, retry_results=None, enabled_pixel_tests_in_retry=False):
         self.exit_code = exit_code

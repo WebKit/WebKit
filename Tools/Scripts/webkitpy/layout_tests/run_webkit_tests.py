@@ -365,6 +365,7 @@ def _print_expectations(port, options, args, logging_stream):
         printer.cleanup()
         return -1
 
+
 def _set_up_derived_options(port, options):
     """Sets the options values that depend on other options values."""
     if not options.child_processes:

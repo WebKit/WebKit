@@ -37,6 +37,7 @@ from webkitpy.common.editdistance import edit_distance
 from webkitpy.common.memoized import memoized
 from webkitpy.common.system.filesystem import FileSystem
 
+
 class Contributor(object):
     def __init__(self, name, email_or_emails, irc_nickname_or_nicknames=None, alias_or_aliases=None, expertise=None):
         assert(name)
@@ -170,6 +171,7 @@ class Bot(Contributor):
     def __init__(self, name, email_or_emails, irc_nickname=None, alias_or_aliases=None, expertise=None):
         Contributor.__init__(self, name, email_or_emails, irc_nickname, alias_or_aliases, expertise)
         self.is_bot = True
+
 
 class CommitterList(object):
 

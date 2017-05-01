@@ -22,6 +22,7 @@
 
 import socket
 
+
 class Device(object):
     def __init__(self, platform_device):
         self.platform_device = platform_device

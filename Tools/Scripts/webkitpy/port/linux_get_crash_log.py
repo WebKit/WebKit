@@ -30,6 +30,7 @@
 import subprocess
 import os
 
+
 class GDBCrashLogGenerator(object):
     def __init__(self, name, pid, newer_than, filesystem, path_to_driver):
         self.name = name

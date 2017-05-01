@@ -405,6 +405,7 @@ class PortTest(unittest.TestCase):
         self.assertTrue(port._filesystem.isdir(jhbuild_path))
         self.assertTrue(port._should_use_jhbuild())
 
+
 class NaturalCompareTest(unittest.TestCase):
     def setUp(self):
         self._port = TestPort(MockSystemHost())

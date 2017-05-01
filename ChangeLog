@@ -1,3 +1,23 @@
+2017-05-01  Aakash Jain  <aakash_jain@apple.com>
+
+        fix check-webkit-style errors in webkitpy about two blank lines before class definitions
+        https://bugs.webkit.org/show_bug.cgi?id=171509
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitpy/common/config/committers.py: Added two blank lines before class definition.
+        * Scripts/webkitpy/layout_tests/models/test_run_results.py: Ditto.
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py: Ditto.
+        * Scripts/webkitpy/port/base_unittest.py: Ditto.
+        * Scripts/webkitpy/port/device.py: Ditto.
+        * Scripts/webkitpy/port/linux_get_crash_log.py: Ditto.
+        * Scripts/webkitpy/style/checkers/featuredefines.py: Ditto.
+        * Scripts/webkitpy/style/checkers/jsonchecker.py: Ditto.
+        * Scripts/webkitpy/tool/bot/patchanalysistask.py: Ditto.
+        * Scripts/webkitpy/layout_tests/controllers/manager_unittest.py: Ditto.
+        (ManagerTest.test_uses_custom_device.MockCustomDevicePort): Added blank line before method.
+        (ManagerTest.test_uses_custom_device): Removed extra blank line at end of file.
+
 2017-04-25  Daniel Bates  <dabates@apple.com>
 
         [Cocoa][Win] Enable of X-Content-Type-Options: nosniff header
