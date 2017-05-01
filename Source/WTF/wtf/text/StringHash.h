@@ -79,8 +79,7 @@ namespace WTF {
         static const bool safeToCompareToEmptyOrDeleted = false;
     };
 
-    class ASCIICaseInsensitiveHash {
-    public:
+    struct ASCIICaseInsensitiveHash {
         template<typename T> static inline UChar foldCase(T character)
         {
             return toASCIILower(character);

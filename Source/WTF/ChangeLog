@@ -1,3 +1,18 @@
+2017-05-01  Daniel Bates  <dabates@apple.com>
+
+        Cleanup: Change ASCIICaseInsensitiveHash from a class to a struct
+        https://bugs.webkit.org/show_bug.cgi?id=171460
+
+        Reviewed by Sam Weinig.
+
+        All of the members of ASCIICaseInsensitiveHash have public visibility.
+        We are underutilizing the purpose of a class - defaults to private
+        visibility of members. We should change ASCIICaseInsensitiveHash from
+        a class to a struct, which by definition defaults to public visibility
+        for members.
+
+        * wtf/text/StringHash.h:
+
 2017-04-29  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Move WebCore CPUTime to WTF and implement it in all the platforms
