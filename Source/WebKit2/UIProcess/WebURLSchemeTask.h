@@ -40,10 +40,10 @@ namespace WebKit {
 class WebURLSchemeHandler;
 class WebPageProxy;
 
-class WebURLSchemeHandlerTask : public RefCounted<WebURLSchemeHandlerTask> {
-    WTF_MAKE_NONCOPYABLE(WebURLSchemeHandlerTask);
+class WebURLSchemeTask : public RefCounted<WebURLSchemeTask> {
+    WTF_MAKE_NONCOPYABLE(WebURLSchemeTask);
 public:
-    static Ref<WebURLSchemeHandlerTask> create(WebURLSchemeHandler&, WebPageProxy&, uint64_t identifier, const WebCore::ResourceRequest&);
+    static Ref<WebURLSchemeTask> create(WebURLSchemeHandler&, WebPageProxy&, uint64_t identifier, const WebCore::ResourceRequest&);
 
     uint64_t identifier() const { return m_identifier; }
 
@@ -64,7 +64,7 @@ public:
     void pageDestroyed();
 
 private:
-    WebURLSchemeHandlerTask(WebURLSchemeHandler&, WebPageProxy&, uint64_t identifier, const WebCore::ResourceRequest&);
+    WebURLSchemeTask(WebURLSchemeHandler&, WebPageProxy&, uint64_t identifier, const WebCore::ResourceRequest&);
 
     Ref<WebURLSchemeHandler> m_urlSchemeHandler;
     WebPageProxy* m_page;

@@ -24,65 +24,65 @@
  */
 
 #import "config.h"
-#import "WKURLSchemeHandlerTaskInternal.h"
+#import "WKURLSchemeTaskInternal.h"
 
 #if WK_API_ENABLED
 
-#include "WebURLSchemeHandlerTask.h"
+#include "WebURLSchemeTask.h"
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/SharedBuffer.h>
 
 using namespace WebCore;
 
-static void raiseExceptionIfNecessary(WebKit::WebURLSchemeHandlerTask::ExceptionType exceptionType)
+static void raiseExceptionIfNecessary(WebKit::WebURLSchemeTask::ExceptionType exceptionType)
 {
     switch (exceptionType) {
-    case WebKit::WebURLSchemeHandlerTask::ExceptionType::None:
+    case WebKit::WebURLSchemeTask::ExceptionType::None:
         return;
-    case WebKit::WebURLSchemeHandlerTask::ExceptionType::TaskAlreadyStopped:
+    case WebKit::WebURLSchemeTask::ExceptionType::TaskAlreadyStopped:
         [NSException raise:NSInternalInconsistencyException format:@"This task has already been stopped"];
         break;
-    case WebKit::WebURLSchemeHandlerTask::ExceptionType::CompleteAlreadyCalled:
-        [NSException raise:NSInternalInconsistencyException format:@"[WKURLSchemeHandlerTask taskDidCompleteWithError:] has already been called for this task"];
+    case WebKit::WebURLSchemeTask::ExceptionType::CompleteAlreadyCalled:
+        [NSException raise:NSInternalInconsistencyException format:@"[WKURLSchemeTask taskDidCompleteWithError:] has already been called for this task"];
         break;
-    case WebKit::WebURLSchemeHandlerTask::ExceptionType::DataAlreadySent:
-        [NSException raise:NSInternalInconsistencyException format:@"[WKURLSchemeHandlerTask taskDidReceiveData:] has already been called for this task"];
+    case WebKit::WebURLSchemeTask::ExceptionType::DataAlreadySent:
+        [NSException raise:NSInternalInconsistencyException format:@"[WKURLSchemeTask taskDidReceiveData:] has already been called for this task"];
         break;
-    case WebKit::WebURLSchemeHandlerTask::ExceptionType::NoResponseSent:
+    case WebKit::WebURLSchemeTask::ExceptionType::NoResponseSent:
         [NSException raise:NSInternalInconsistencyException format:@"No response has been sent for this task"];
         break;
     }
 }
 
-@implementation WKURLSchemeHandlerTaskImpl
+@implementation WKURLSchemeTaskImpl
 
 - (NSURLRequest *)request
 {
-    return _urlSchemeHandlerTask->task().request().nsURLRequest(DoNotUpdateHTTPBody);
+    return _urlSchemeTask->task().request().nsURLRequest(DoNotUpdateHTTPBody);
 }
 
 - (void)didReceiveResponse:(NSURLResponse *)response
 {
-    auto result = _urlSchemeHandlerTask->task().didReceiveResponse(response);
+    auto result = _urlSchemeTask->task().didReceiveResponse(response);
     raiseExceptionIfNecessary(result);
 }
 
 - (void)didReceiveData:(NSData *)data
 {
-    auto result = _urlSchemeHandlerTask->task().didReceiveData(WebCore::SharedBuffer::create(data));
+    auto result = _urlSchemeTask->task().didReceiveData(WebCore::SharedBuffer::create(data));
     raiseExceptionIfNecessary(result);
 }
 
 - (void)didFinish
 {
-    auto result = _urlSchemeHandlerTask->task().didComplete({ });
+    auto result = _urlSchemeTask->task().didComplete({ });
     raiseExceptionIfNecessary(result);
 }
 
 - (void)didFailWithError:(NSError *)error
 {
-    auto result = _urlSchemeHandlerTask->task().didComplete(error);
+    auto result = _urlSchemeTask->task().didComplete(error);
     raiseExceptionIfNecessary(result);
 }
 
@@ -90,7 +90,7 @@ static void raiseExceptionIfNecessary(WebKit::WebURLSchemeHandlerTask::Exception
 
 - (API::Object&)_apiObject
 {
-    return *_urlSchemeHandlerTask;
+    return *_urlSchemeTask;
 }
 
 @end

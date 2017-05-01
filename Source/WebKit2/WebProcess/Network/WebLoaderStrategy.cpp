@@ -43,7 +43,7 @@
 #include "WebProcess.h"
 #include "WebResourceLoader.h"
 #include "WebURLSchemeHandlerProxy.h"
-#include "WebURLSchemeHandlerTaskProxy.h"
+#include "WebURLSchemeTaskProxy.h"
 #include <WebCore/ApplicationCacheHost.h>
 #include <WebCore/CachedResource.h>
 #include <WebCore/DiagnosticLoggingClient.h>
@@ -263,15 +263,15 @@ void WebLoaderStrategy::startLocalLoad(WebCore::ResourceLoader& resourceLoader)
     m_webResourceLoaders.set(resourceLoader.identifier(), WebResourceLoader::create(resourceLoader, { }));
 }
 
-void WebLoaderStrategy::addURLSchemeHandlerTaskProxy(WebURLSchemeHandlerTaskProxy& task)
+void WebLoaderStrategy::addURLSchemeTaskProxy(WebURLSchemeTaskProxy& task)
 {
-    auto result = m_urlSchemeHandlerTasks.add(task.identifier(), &task);
+    auto result = m_urlSchemeTasks.add(task.identifier(), &task);
     ASSERT_UNUSED(result, result.isNewEntry);
 }
 
-void WebLoaderStrategy::removeURLSchemeHandlerTaskProxy(WebURLSchemeHandlerTaskProxy& task)
+void WebLoaderStrategy::removeURLSchemeTaskProxy(WebURLSchemeTaskProxy& task)
 {
-    m_urlSchemeHandlerTasks.remove(task.identifier());
+    m_urlSchemeTasks.remove(task.identifier());
 }
 
 void WebLoaderStrategy::remove(ResourceLoader* resourceLoader)
@@ -279,7 +279,7 @@ void WebLoaderStrategy::remove(ResourceLoader* resourceLoader)
     ASSERT(resourceLoader);
     LOG(NetworkScheduling, "(WebProcess) WebLoaderStrategy::remove, url '%s'", resourceLoader->url().string().utf8().data());
 
-    if (auto task = m_urlSchemeHandlerTasks.take(resourceLoader->identifier())) {
+    if (auto task = m_urlSchemeTasks.take(resourceLoader->identifier())) {
         ASSERT(!m_internallyFailedResourceLoaders.contains(resourceLoader));
         task->stopLoading();
         return;

@@ -32,7 +32,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @class WKWebView;
-@protocol WKURLSchemeHandlerTask;
+@protocol WKURLSchemeTask;
 
 /*! A class conforming to the WKURLSchemeHandler protocol provides methods for
  loading resources with URL schemes that WebKit doesn't know how to handle itself.
@@ -43,19 +43,19 @@ WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA))
 /*! @abstract Notifies your app to start loading the data for a particular resource 
  represented by the URL scheme handler task.
  @param webView The web view invoking the method.
- @param urlSchemeHandlerTask The task that your app should start loading data for.
+ @param urlSchemeTask The task that your app should start loading data for.
  */
-- (void)webView:(WKWebView *)webView startTask:(id <WKURLSchemeHandlerTask>)urlSchemeHandlerTask;
+- (void)webView:(WKWebView *)webView startURLSchemeTask:(id <WKURLSchemeTask>)urlSchemeTask;
 
 /*! @abstract Notifies your app to stop handling a URL scheme handler task.
  @param webView The web view invoking the method.
- @param urlSchemeHandlerTask The task that your app should stop handling.
+ @param urlSchemeTask The task that your app should stop handling.
  @discussion After your app is told to stop loading data for a URL scheme handler task
  it must not perform any callbacks for that task.
  An exception will be thrown if any callbacks are made on the URL scheme handler task
  after your app has been told to stop loading for it.
  */
-- (void)webView:(WKWebView *)webView stopTask:(id <WKURLSchemeHandlerTask>)urlSchemeHandlerTask;
+- (void)webView:(WKWebView *)webView stopURLSchemeTask:(id <WKURLSchemeTask>)urlSchemeTask;
 
 @end
 

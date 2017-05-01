@@ -23,43 +23,30 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import "WKURLSchemeTask.h"
 
-#include <WebCore/ResourceRequest.h>
+#if WK_API_ENABLED
 
-namespace WebCore {
-class ResourceError;
-class ResourceLoader;
-class ResourceResponse;
-}
+#import "APIURLSchemeTask.h"
+#import "WKObject.h"
+
+@interface WKURLSchemeTaskImpl : NSObject <WKURLSchemeTask>
+@end
 
 namespace WebKit {
 
-class WebURLSchemeHandlerProxy;
+inline id<WKURLSchemeTask> wrapper(API::URLSchemeTask& urlSchemeTask)
+{
+    ASSERT([urlSchemeTask.wrapper() isKindOfClass:[WKURLSchemeTaskImpl class]]);
+    return (id<WKURLSchemeTask>)urlSchemeTask.wrapper();
+}
 
-class WebURLSchemeHandlerTaskProxy {
-    WTF_MAKE_NONCOPYABLE(WebURLSchemeHandlerTaskProxy);
-public:
-    WebURLSchemeHandlerTaskProxy(WebURLSchemeHandlerProxy&, WebCore::ResourceLoader&);
+}
 
-    const WebCore::ResourceRequest& request() const { return m_request; }
+@interface WKURLSchemeTaskImpl () <WKObject> {
+@package
+    API::ObjectStorage<API::URLSchemeTask> _urlSchemeTask;
+}
+@end
 
-    void startLoading();
-    void stopLoading();
-
-    void didReceiveResponse(const WebCore::ResourceResponse&);
-    void didReceiveData(size_t, const uint8_t* data);
-    void didComplete(const WebCore::ResourceError&);
-
-    unsigned long identifier() const { return m_identifier; }
-
-private:
-    bool hasLoader();
-
-    WebURLSchemeHandlerProxy& m_urlSchemeHandler;
-    RefPtr<WebCore::ResourceLoader> m_coreLoader;
-    WebCore::ResourceRequest m_request;
-    unsigned long m_identifier;
-};
-
-} // namespace WebKit
+#endif // WK_API_ENABLED

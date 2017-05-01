@@ -24,20 +24,20 @@
  */
 
 #include "config.h"
-#include "APIURLSchemeHandlerTask.h"
+#include "APIURLSchemeTask.h"
 
 #include "WebURLSchemeHandler.h"
-#include "WebURLSchemeHandlerTask.h"
+#include "WebURLSchemeTask.h"
 
 namespace API {
 
-Ref<URLSchemeHandlerTask> URLSchemeHandlerTask::create(WebKit::WebURLSchemeHandlerTask& webURLSchemeHandlerTask)
+Ref<URLSchemeTask> URLSchemeTask::create(WebKit::WebURLSchemeTask& webURLSchemeTask)
 {
-    return adoptRef(*new URLSchemeHandlerTask(webURLSchemeHandlerTask));
+    return adoptRef(*new URLSchemeTask(webURLSchemeTask));
 }
 
-URLSchemeHandlerTask::URLSchemeHandlerTask(WebKit::WebURLSchemeHandlerTask& webURLSchemeHandlerTask)
-    : m_webURLSchemeHandlerTask(webURLSchemeHandlerTask)
+URLSchemeTask::URLSchemeTask(WebKit::WebURLSchemeTask& webURLSchemeTask)
+    : m_webURLSchemeTask(webURLSchemeTask)
 {
 }
 

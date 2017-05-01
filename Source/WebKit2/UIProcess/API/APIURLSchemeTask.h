@@ -28,21 +28,21 @@
 #include "APIObject.h"
 
 namespace WebKit {
-class WebURLSchemeHandlerTask;
+class WebURLSchemeTask;
 }
 
 namespace API {
 
-class URLSchemeHandlerTask final : public ObjectImpl<Object::Type::URLSchemeHandlerTask> {
+class URLSchemeTask final : public ObjectImpl<Object::Type::URLSchemeTask> {
 public:
-    static Ref<URLSchemeHandlerTask> create(WebKit::WebURLSchemeHandlerTask&);
+    static Ref<URLSchemeTask> create(WebKit::WebURLSchemeTask&);
 
-    WebKit::WebURLSchemeHandlerTask& task() { return m_webURLSchemeHandlerTask.get(); }
+    WebKit::WebURLSchemeTask& task() { return m_webURLSchemeTask.get(); }
 
 private:
-    URLSchemeHandlerTask(WebKit::WebURLSchemeHandlerTask&);
+    URLSchemeTask(WebKit::WebURLSchemeTask&);
 
-    Ref<WebKit::WebURLSchemeHandlerTask> m_webURLSchemeHandlerTask;
+    Ref<WebKit::WebURLSchemeTask> m_webURLSchemeTask;
 };
 
 }

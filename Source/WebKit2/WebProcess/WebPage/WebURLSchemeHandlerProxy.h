@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "WebURLSchemeHandlerTaskProxy.h"
+#include "WebURLSchemeTaskProxy.h"
 #include <wtf/HashMap.h>
 
 namespace WebCore {
@@ -52,13 +52,13 @@ public:
     void taskDidReceiveResponse(uint64_t taskIdentifier, const WebCore::ResourceResponse&);
     void taskDidReceiveData(uint64_t taskIdentifier, size_t, const uint8_t* data);
     void taskDidComplete(uint64_t taskIdentifier, const WebCore::ResourceError&);
-    void taskDidStopLoading(WebURLSchemeHandlerTaskProxy&);
+    void taskDidStopLoading(WebURLSchemeTaskProxy&);
 
 private:
     WebPage& m_webPage;
     uint64_t m_identifier { 0 };
 
-    HashMap<unsigned long, std::unique_ptr<WebURLSchemeHandlerTaskProxy>> m_tasks;
+    HashMap<unsigned long, std::unique_ptr<WebURLSchemeTaskProxy>> m_tasks;
 }; // class WebURLSchemeHandlerProxy
 
 } // namespace WebKit

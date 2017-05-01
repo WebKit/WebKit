@@ -28,7 +28,7 @@
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import <WebKit/WKURLSchemeHandler.h>
-#import <WebKit/WKURLSchemeHandlerTask.h>
+#import <WebKit/WKURLSchemeTask.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WebKit.h>
 #import <wtf/RetainPtr.h>
@@ -69,7 +69,7 @@ static bool receivedScriptMessage;
     [super dealloc];
 }
 
-- (void)webView:(WKWebView *)webView startTask:(id <WKURLSchemeHandlerTask>)task
+- (void)webView:(WKWebView *)webView startURLSchemeTask:(id <WKURLSchemeTask>)task
 {
     [_startedURLs addObject:task.request.URL];
 
@@ -86,7 +86,7 @@ static bool receivedScriptMessage;
     [task didFinish];
 }
 
-- (void)webView:(WKWebView *)webView stopTask:(id <WKURLSchemeHandlerTask>)task
+- (void)webView:(WKWebView *)webView stopURLSchemeTask:(id <WKURLSchemeTask>)task
 {
     [_stoppedURLs addObject:task.request.URL];
 

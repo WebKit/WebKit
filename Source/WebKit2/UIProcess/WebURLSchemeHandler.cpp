@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WebURLSchemeHandler.h"
 
-#include "WebURLSchemeHandlerTask.h"
+#include "WebURLSchemeTask.h"
 
 using namespace WebCore;
 
@@ -50,7 +50,7 @@ WebURLSchemeHandler::~WebURLSchemeHandler()
 
 void WebURLSchemeHandler::startTask(WebPageProxy& page, uint64_t resourceIdentifier, const ResourceRequest& request)
 {
-    auto result = m_tasks.add(resourceIdentifier, WebURLSchemeHandlerTask::create(*this, page, resourceIdentifier, request));
+    auto result = m_tasks.add(resourceIdentifier, WebURLSchemeTask::create(*this, page, resourceIdentifier, request));
     ASSERT(result.isNewEntry);
 
     platformStartTask(page, result.iterator->value);

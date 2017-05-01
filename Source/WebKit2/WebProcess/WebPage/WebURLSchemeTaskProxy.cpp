@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "WebURLSchemeHandlerTaskProxy.h"
+#include "WebURLSchemeTaskProxy.h"
 
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
@@ -38,7 +38,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-WebURLSchemeHandlerTaskProxy::WebURLSchemeHandlerTaskProxy(WebURLSchemeHandlerProxy& handler, ResourceLoader& loader)
+WebURLSchemeTaskProxy::WebURLSchemeTaskProxy(WebURLSchemeHandlerProxy& handler, ResourceLoader& loader)
     : m_urlSchemeHandler(handler)
     , m_coreLoader(&loader)
     , m_request(loader.request())
@@ -46,23 +46,23 @@ WebURLSchemeHandlerTaskProxy::WebURLSchemeHandlerTaskProxy(WebURLSchemeHandlerPr
 {
 }
 
-void WebURLSchemeHandlerTaskProxy::startLoading()
+void WebURLSchemeTaskProxy::startLoading()
 {
     ASSERT(m_coreLoader);
-    m_urlSchemeHandler.page().send(Messages::WebPageProxy::StartURLSchemeHandlerTask(m_urlSchemeHandler.identifier(), m_coreLoader->identifier(), m_request));
+    m_urlSchemeHandler.page().send(Messages::WebPageProxy::StartURLSchemeTask(m_urlSchemeHandler.identifier(), m_coreLoader->identifier(), m_request));
 }
 
-void WebURLSchemeHandlerTaskProxy::stopLoading()
+void WebURLSchemeTaskProxy::stopLoading()
 {
     ASSERT(m_coreLoader);
-    m_urlSchemeHandler.page().send(Messages::WebPageProxy::StopURLSchemeHandlerTask(m_urlSchemeHandler.identifier(), m_coreLoader->identifier()));
+    m_urlSchemeHandler.page().send(Messages::WebPageProxy::StopURLSchemeTask(m_urlSchemeHandler.identifier(), m_coreLoader->identifier()));
     m_coreLoader = nullptr;
 
     // This line will result in this being deleted.
     m_urlSchemeHandler.taskDidStopLoading(*this);
 }
 
-void WebURLSchemeHandlerTaskProxy::didReceiveResponse(const ResourceResponse& response)
+void WebURLSchemeTaskProxy::didReceiveResponse(const ResourceResponse& response)
 {
     if (!hasLoader())
         return;
@@ -70,7 +70,7 @@ void WebURLSchemeHandlerTaskProxy::didReceiveResponse(const ResourceResponse& re
     m_coreLoader->didReceiveResponse(response);
 }
 
-void WebURLSchemeHandlerTaskProxy::didReceiveData(size_t size, const uint8_t* data)
+void WebURLSchemeTaskProxy::didReceiveData(size_t size, const uint8_t* data)
 {
     if (!hasLoader())
         return;
@@ -78,7 +78,7 @@ void WebURLSchemeHandlerTaskProxy::didReceiveData(size_t size, const uint8_t* da
     m_coreLoader->didReceiveData(reinterpret_cast<const char*>(data), size, 0, DataPayloadType::DataPayloadBytes);
 }
 
-void WebURLSchemeHandlerTaskProxy::didComplete(const ResourceError& error)
+void WebURLSchemeTaskProxy::didComplete(const ResourceError& error)
 {
     if (!hasLoader())
         return;
@@ -91,7 +91,7 @@ void WebURLSchemeHandlerTaskProxy::didComplete(const ResourceError& error)
     m_coreLoader = nullptr;
 }
 
-bool WebURLSchemeHandlerTaskProxy::hasLoader()
+bool WebURLSchemeTaskProxy::hasLoader()
 {
     if (m_coreLoader && m_coreLoader->reachedTerminalState())
         m_coreLoader = nullptr;

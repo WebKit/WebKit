@@ -492,8 +492,8 @@ messages -> WebPageProxy {
 
     SetIsUsingHighPerformanceWebGL(bool isUsingHighPerformanceWebGL)
 
-    StartURLSchemeHandlerTask(uint64_t loaderIdentifier, uint64_t resourceIdentifier, WebCore::ResourceRequest request)
-    StopURLSchemeHandlerTask(uint64_t loaderIdentifier, uint64_t resourceIdentifier)
+    StartURLSchemeTask(uint64_t loaderIdentifier, uint64_t resourceIdentifier, WebCore::ResourceRequest request)
+    StopURLSchemeTask(uint64_t loaderIdentifier, uint64_t resourceIdentifier)
 
     SetClipToSafeArea(bool clipToSafeArea)
 }

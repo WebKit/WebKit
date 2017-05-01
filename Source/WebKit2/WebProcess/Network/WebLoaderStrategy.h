@@ -34,7 +34,7 @@
 namespace WebKit {
 
 class NetworkProcessConnection;
-class WebURLSchemeHandlerTaskProxy;
+class WebURLSchemeTaskProxy;
 typedef uint64_t ResourceLoadIdentifier;
 
 class WebLoaderStrategy : public WebCore::LoaderStrategy {
@@ -66,8 +66,8 @@ public:
 
     void networkProcessCrashed();
 
-    void addURLSchemeHandlerTaskProxy(WebURLSchemeHandlerTaskProxy&);
-    void removeURLSchemeHandlerTaskProxy(WebURLSchemeHandlerTaskProxy&);
+    void addURLSchemeTaskProxy(WebURLSchemeTaskProxy&);
+    void removeURLSchemeTaskProxy(WebURLSchemeTaskProxy&);
 
 private:
     void scheduleLoad(WebCore::ResourceLoader&, WebCore::CachedResource*, bool shouldClearReferrerOnHTTPSToHTTPRedirect);
@@ -79,7 +79,7 @@ private:
     RunLoop::Timer<WebLoaderStrategy> m_internallyFailedLoadTimer;
     
     HashMap<unsigned long, RefPtr<WebResourceLoader>> m_webResourceLoaders;
-    HashMap<unsigned long, WebURLSchemeHandlerTaskProxy*> m_urlSchemeHandlerTasks;
+    HashMap<unsigned long, WebURLSchemeTaskProxy*> m_urlSchemeTasks;
 };
 
 } // namespace WebKit

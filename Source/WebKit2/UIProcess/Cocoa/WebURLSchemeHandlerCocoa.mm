@@ -26,12 +26,12 @@
 #import "config.h"
 #import "WebURLSchemeHandlerCocoa.h"
 
-#import "APIURLSchemeHandlerTask.h"
+#import "APIURLSchemeTask.h"
 #import "WKFoundation.h"
 #import "WKURLSchemeHandler.h"
-#import "WKURLSchemeHandlerTaskInternal.h"
+#import "WKURLSchemeTaskInternal.h"
 #import "WKWebViewInternal.h"
-#import "WebURLSchemeHandlerTask.h"
+#import "WebURLSchemeTask.h"
 
 using namespace WebCore;
 
@@ -47,27 +47,27 @@ WebURLSchemeHandlerCocoa::WebURLSchemeHandlerCocoa(id <WKURLSchemeHandler> apiHa
 {
 }
 
-void WebURLSchemeHandlerCocoa::platformStartTask(WebPageProxy& page, WebURLSchemeHandlerTask& task)
+void WebURLSchemeHandlerCocoa::platformStartTask(WebPageProxy& page, WebURLSchemeTask& task)
 {
 #if WK_API_ENABLED
-    auto result = m_apiTasks.add(task.identifier(), API::URLSchemeHandlerTask::create(task));
+    auto result = m_apiTasks.add(task.identifier(), API::URLSchemeTask::create(task));
     ASSERT(result.isNewEntry);
 
-    [m_apiHandler.get() webView:fromWebPageProxy(page) startTask:wrapper(result.iterator->value.get())];
+    [m_apiHandler.get() webView:fromWebPageProxy(page) startURLSchemeTask:wrapper(result.iterator->value.get())];
 #else
     UNUSED_PARAM(page);
     UNUSED_PARAM(task);
 #endif
 }
 
-void WebURLSchemeHandlerCocoa::platformStopTask(WebPageProxy& page, WebURLSchemeHandlerTask& task)
+void WebURLSchemeHandlerCocoa::platformStopTask(WebPageProxy& page, WebURLSchemeTask& task)
 {
 #if WK_API_ENABLED
     auto iterator = m_apiTasks.find(task.identifier());
     if (iterator == m_apiTasks.end())
         return;
 
-    [m_apiHandler.get() webView:fromWebPageProxy(page) stopTask:wrapper(iterator->value.get())];
+    [m_apiHandler.get() webView:fromWebPageProxy(page) stopURLSchemeTask:wrapper(iterator->value.get())];
 
     m_apiTasks.remove(iterator);
 #else

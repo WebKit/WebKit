@@ -1,3 +1,95 @@
+2017-05-01  Brady Eidson  <beidson@apple.com>
+
+        Update names in WKURLSchemeHandler/WKURLSchemeHandlerTask APIs.
+        <rdar://problem/31824838> and https://bugs.webkit.org/show_bug.cgi?id=171508
+
+        Reviewed by Andy Estes.
+
+        This patch:
+        - Renames WKURLSchemeHandlerTask to WKURLSchemeTask
+        - Renames the method "startTask" to "startURLSchemeTask"
+        - Renames the method "stopTask" to "stopURLSchemeTask"
+
+        To those effects it's basically a global replace.
+
+        * Shared/API/APIObject.h:
+        * Shared/Cocoa/APIObject.mm:
+        (API::Object::newObject):
+        * UIProcess/API/APIURLSchemeTask.cpp: Renamed from Source/WebKit2/UIProcess/API/APIURLSchemeHandlerTask.cpp.
+        (API::URLSchemeTask::create):
+        (API::URLSchemeTask::URLSchemeTask):
+        * UIProcess/API/APIURLSchemeTask.h: Renamed from Source/WebKit2/UIProcess/API/APIURLSchemeHandlerTask.h.
+        * UIProcess/API/Cocoa/WKURLSchemeHandler.h:
+        * UIProcess/API/Cocoa/WKURLSchemeTask.h: Renamed from Source/WebKit2/UIProcess/API/Cocoa/WKURLSchemeHandlerTask.h.
+        * UIProcess/API/Cocoa/WKURLSchemeTask.mm: Renamed from Source/WebKit2/UIProcess/API/Cocoa/WKURLSchemeHandlerTask.mm.
+        (raiseExceptionIfNecessary):
+        (-[WKURLSchemeTaskImpl request]):
+        (-[WKURLSchemeTaskImpl didReceiveResponse:]):
+        (-[WKURLSchemeTaskImpl didReceiveData:]):
+        (-[WKURLSchemeTaskImpl didFinish]):
+        (-[WKURLSchemeTaskImpl didFailWithError:]):
+        (-[WKURLSchemeTaskImpl _apiObject]):
+        * UIProcess/API/Cocoa/WKURLSchemeTaskInternal.h: Renamed from Source/WebKit2/UIProcess/API/Cocoa/WKURLSchemeHandlerTaskInternal.h.
+        (WebKit::wrapper):
+        * UIProcess/Cocoa/WebURLSchemeHandlerCocoa.h:
+        * UIProcess/Cocoa/WebURLSchemeHandlerCocoa.mm:
+        (WebKit::WebURLSchemeHandlerCocoa::platformStartTask):
+        (WebKit::WebURLSchemeHandlerCocoa::platformStopTask):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::startURLSchemeTask):
+        (WebKit::WebPageProxy::stopURLSchemeTask):
+        (WebKit::WebPageProxy::startURLSchemeHandlerTask): Deleted.
+        (WebKit::WebPageProxy::stopURLSchemeHandlerTask): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/WebURLSchemeHandler.cpp:
+        (WebKit::WebURLSchemeHandler::startTask):
+        * UIProcess/WebURLSchemeHandler.h:
+        * UIProcess/WebURLSchemeTask.cpp: Renamed from Source/WebKit2/UIProcess/WebURLSchemeHandlerTask.cpp.
+        (WebKit::WebURLSchemeTask::create):
+        (WebKit::WebURLSchemeTask::WebURLSchemeTask):
+        (WebKit::WebURLSchemeTask::didReceiveResponse):
+        (WebKit::WebURLSchemeTask::didReceiveData):
+        (WebKit::WebURLSchemeTask::didComplete):
+        (WebKit::WebURLSchemeTask::pageDestroyed):
+        (WebKit::WebURLSchemeTask::stop):
+        * UIProcess/WebURLSchemeTask.h: Renamed from Source/WebKit2/UIProcess/WebURLSchemeHandlerTask.h.
+        (WebKit::WebURLSchemeTask::identifier):
+        (WebKit::WebURLSchemeTask::request):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::addURLSchemeTaskProxy):
+        (WebKit::WebLoaderStrategy::removeURLSchemeTaskProxy):
+        (WebKit::WebLoaderStrategy::remove):
+        (WebKit::WebLoaderStrategy::addURLSchemeHandlerTaskProxy): Deleted.
+        (WebKit::WebLoaderStrategy::removeURLSchemeHandlerTaskProxy): Deleted.
+        * WebProcess/Network/WebLoaderStrategy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::urlSchemeTaskDidReceiveResponse):
+        (WebKit::WebPage::urlSchemeTaskDidReceiveData):
+        (WebKit::WebPage::urlSchemeTaskDidComplete):
+        (WebKit::WebPage::urlSchemeHandlerTaskDidReceiveResponse): Deleted.
+        (WebKit::WebPage::urlSchemeHandlerTaskDidReceiveData): Deleted.
+        (WebKit::WebPage::urlSchemeHandlerTaskDidComplete): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/WebURLSchemeHandlerProxy.cpp:
+        (WebKit::WebURLSchemeHandlerProxy::startNewTask):
+        (WebKit::WebURLSchemeHandlerProxy::taskDidComplete):
+        (WebKit::WebURLSchemeHandlerProxy::taskDidStopLoading):
+        * WebProcess/WebPage/WebURLSchemeHandlerProxy.h:
+        * WebProcess/WebPage/WebURLSchemeTaskProxy.cpp: Renamed from Source/WebKit2/WebProcess/WebPage/WebURLSchemeHandlerTaskProxy.cpp.
+        (WebKit::WebURLSchemeTaskProxy::WebURLSchemeTaskProxy):
+        (WebKit::WebURLSchemeTaskProxy::startLoading):
+        (WebKit::WebURLSchemeTaskProxy::stopLoading):
+        (WebKit::WebURLSchemeTaskProxy::didReceiveResponse):
+        (WebKit::WebURLSchemeTaskProxy::didReceiveData):
+        (WebKit::WebURLSchemeTaskProxy::didComplete):
+        (WebKit::WebURLSchemeTaskProxy::hasLoader):
+        * WebProcess/WebPage/WebURLSchemeTaskProxy.h: Renamed from Source/WebKit2/WebProcess/WebPage/WebURLSchemeHandlerTaskProxy.h.
+        (WebKit::WebURLSchemeTaskProxy::request):
+        (WebKit::WebURLSchemeTaskProxy::identifier):
+
 2017-05-01  Chris Dumez  <cdumez@apple.com>
 
         Tweak how long we allow a process to go over its background CPU limit

@@ -472,7 +472,7 @@ messages -> WebPage LegacyReceiver {
 
     RegisterURLSchemeHandler(uint64_t identifier, String scheme)
 
-    URLSchemeHandlerTaskDidReceiveResponse(uint64_t providerIdentifier, uint64_t taskIdentifier, WebCore::ResourceResponse response)
-    URLSchemeHandlerTaskDidReceiveData(uint64_t providerIdentifier, uint64_t taskIdentifier, IPC::DataReference data)
-    URLSchemeHandlerTaskDidComplete(uint64_t providerIdentifier, uint64_t taskIdentifier, WebCore::ResourceError error)
+    URLSchemeTaskDidReceiveResponse(uint64_t providerIdentifier, uint64_t taskIdentifier, WebCore::ResourceResponse response)
+    URLSchemeTaskDidReceiveData(uint64_t providerIdentifier, uint64_t taskIdentifier, IPC::DataReference data)
+    URLSchemeTaskDidComplete(uint64_t providerIdentifier, uint64_t taskIdentifier, WebCore::ResourceError error)
 }

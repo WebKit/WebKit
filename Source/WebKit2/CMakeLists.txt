@@ -327,7 +327,7 @@ set(WebKit2_SOURCES
     UIProcess/WebProcessPool.cpp
     UIProcess/WebProcessProxy.cpp
     UIProcess/WebURLSchemeHandler.cpp
-    UIProcess/WebURLSchemeHandlerTask.cpp
+    UIProcess/WebURLSchemeTask.cpp
     UIProcess/WebVibrationProvider.cpp
     UIProcess/WebVibrationProxy.cpp
     UIProcess/WebViewportAttributes.cpp
@@ -344,7 +344,7 @@ set(WebKit2_SOURCES
     UIProcess/API/APIProcessPoolConfiguration.cpp
     UIProcess/API/APIOpenPanelParameters.cpp
     UIProcess/API/APISessionState.cpp
-    UIProcess/API/APIURLSchemeHandlerTask.cpp
+    UIProcess/API/APIURLSchemeTask.cpp
     UIProcess/API/APIUserContentWorld.cpp
     UIProcess/API/APIUserScript.cpp
     UIProcess/API/APIUserStyleSheet.cpp
@@ -585,7 +585,7 @@ set(WebKit2_SOURCES
     WebProcess/WebPage/WebPageGroupProxy.cpp
     WebProcess/WebPage/WebPageOverlay.cpp
     WebProcess/WebPage/WebURLSchemeHandlerProxy.cpp
-    WebProcess/WebPage/WebURLSchemeHandlerTaskProxy.cpp
+    WebProcess/WebPage/WebURLSchemeTaskProxy.cpp
     WebProcess/WebPage/WebUndoStep.cpp
 )
 

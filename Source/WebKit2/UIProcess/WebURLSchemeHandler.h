@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "WebURLSchemeHandlerTask.h"
+#include "WebURLSchemeTask.h"
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -52,12 +52,12 @@ protected:
     WebURLSchemeHandler();
 
 private:
-    virtual void platformStartTask(WebPageProxy&, WebURLSchemeHandlerTask&) = 0;
-    virtual void platformStopTask(WebPageProxy&, WebURLSchemeHandlerTask&) = 0;
+    virtual void platformStartTask(WebPageProxy&, WebURLSchemeTask&) = 0;
+    virtual void platformStopTask(WebPageProxy&, WebURLSchemeTask&) = 0;
 
     uint64_t m_identifier;
 
-    HashMap<uint64_t, Ref<WebURLSchemeHandlerTask>> m_tasks;
+    HashMap<uint64_t, Ref<WebURLSchemeTask>> m_tasks;
 
 }; // class WebURLSchemeHandler
 

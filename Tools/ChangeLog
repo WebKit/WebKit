@@ -1,3 +1,16 @@
+2017-05-01  Brady Eidson  <beidson@apple.com>
+
+        Update names in WKURLSchemeHandler/WKURLSchemeHandlerTask APIs.
+        <rdar://problem/31824838> and https://bugs.webkit.org/show_bug.cgi?id=171508
+
+        Reviewed by Andy Estes.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/WKURLSchemeHandler-1.mm:
+        (-[SchemeHandler webView:startURLSchemeTask:]):
+        (-[SchemeHandler webView:stopURLSchemeTask:]):
+        (-[SchemeHandler webView:startTask:]): Deleted.
+        (-[SchemeHandler webView:stopTask:]): Deleted.
+
 2017-05-01  Jason Marcell  <jmarcell@apple.com>
 
         Add a new function for getting the Git hash for a pure git directory.

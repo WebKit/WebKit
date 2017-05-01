@@ -48,10 +48,10 @@ WebURLSchemeHandlerProxy::~WebURLSchemeHandlerProxy()
 
 void WebURLSchemeHandlerProxy::startNewTask(ResourceLoader& loader)
 {
-    auto result = m_tasks.add(loader.identifier(), std::make_unique<WebURLSchemeHandlerTaskProxy>(*this, loader));
+    auto result = m_tasks.add(loader.identifier(), std::make_unique<WebURLSchemeTaskProxy>(*this, loader));
     ASSERT(result.isNewEntry);
 
-    WebProcess::singleton().webLoaderStrategy().addURLSchemeHandlerTaskProxy(*result.iterator->value);
+    WebProcess::singleton().webLoaderStrategy().addURLSchemeTaskProxy(*result.iterator->value);
     result.iterator->value->startLoading();
 }
 
@@ -80,11 +80,11 @@ void WebURLSchemeHandlerProxy::taskDidComplete(uint64_t taskIdentifier, const Re
     if (!task)
         return;
 
-    WebProcess::singleton().webLoaderStrategy().removeURLSchemeHandlerTaskProxy(*task);
+    WebProcess::singleton().webLoaderStrategy().removeURLSchemeTaskProxy(*task);
     task->didComplete(error);
 }
 
-void WebURLSchemeHandlerProxy::taskDidStopLoading(WebURLSchemeHandlerTaskProxy& task)
+void WebURLSchemeHandlerProxy::taskDidStopLoading(WebURLSchemeTaskProxy& task)
 {
     ASSERT(m_tasks.get(task.identifier()) == &task);
     m_tasks.remove(task.identifier());

@@ -54,7 +54,7 @@
 #import "WKPreferencesInternal.h"
 #import "WKProcessPoolInternal.h"
 #import "WKSecurityOriginInternal.h"
-#import "WKURLSchemeHandlerTaskInternal.h"
+#import "WKURLSchemeTaskInternal.h"
 #import "WKUserContentControllerInternal.h"
 #import "WKUserScriptInternal.h"
 #import "WKWebProcessPlugInBrowserContextControllerInternal.h"
@@ -238,8 +238,8 @@ void* Object::newObject(size_t size, Type type)
         wrapper = NSAllocateObject([WKNSURLRequest class], size, nullptr);
         break;
 
-    case Type::URLSchemeHandlerTask:
-        wrapper = [WKURLSchemeHandlerTaskImpl alloc];
+    case Type::URLSchemeTask:
+        wrapper = [WKURLSchemeTaskImpl alloc];
         break;
 
     case Type::UserContentController:
