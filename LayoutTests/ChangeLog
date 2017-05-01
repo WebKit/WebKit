@@ -1,5 +1,12 @@
 2017-05-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed GTK+ gardening. Rebaseline giantRowspan tests after r215914.
+
+        * platform/gtk/fast/table/giantRowspan-expected.txt:
+        * platform/gtk/fast/table/giantRowspan2-expected.txt:
+
+2017-05-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed GTK+ gardening. Update expectations of several test.
 
         * platform/gtk/TestExpectations:
