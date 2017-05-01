@@ -511,8 +511,8 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
 
     registerWithDocument(document);
 
-#if USE(AUDIO_SESSION) && PLATFORM(MAC)
-    AudioSession::sharedSession().addMutedStateObserver(this);
+#if USE(AUDIO_SESSION)
+    AudioSession::sharedSession().addObserver(*this);
 #endif
 }
 
@@ -528,8 +528,8 @@ HTMLMediaElement::~HTMLMediaElement()
     setShouldDelayLoadEvent(false);
     unregisterWithDocument(document());
 
-#if USE(AUDIO_SESSION) && PLATFORM(MAC)
-    AudioSession::sharedSession().removeMutedStateObserver(this);
+#if USE(AUDIO_SESSION)
+    AudioSession::sharedSession().removeObserver(*this);
 #endif
 
 #if ENABLE(VIDEO_TRACK)
@@ -3420,7 +3420,7 @@ void HTMLMediaElement::setMuted(bool muted)
     scheduleUpdatePlaybackControlsManager();
 }
 
-#if USE(AUDIO_SESSION) && PLATFORM(MAC)
+#if USE(AUDIO_SESSION)
 void HTMLMediaElement::hardwareMutedStateDidChange(AudioSession* session)
 {
     if (!session->isMuted())

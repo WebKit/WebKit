@@ -32,7 +32,10 @@
 #import "SoftLinking.h"
 #import <AVFoundation/AVAudioSession.h>
 #import <objc/runtime.h>
+#import <wtf/HashSet.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/Vector.h>
+#import <wtf/WeakPtr.h>
 
 SOFT_LINK_FRAMEWORK(AVFoundation)
 SOFT_LINK_CLASS(AVFoundation, AVAudioSession)
@@ -44,6 +47,10 @@ SOFT_LINK_POINTER(AVFoundation, AVAudioSessionCategoryRecord, NSString *)
 SOFT_LINK_POINTER(AVFoundation, AVAudioSessionCategoryPlayAndRecord, NSString *)
 SOFT_LINK_POINTER(AVFoundation, AVAudioSessionCategoryAudioProcessing, NSString *)
 SOFT_LINK_POINTER(AVFoundation, AVAudioSessionInterruptionTypeKey, NSString *)
+SOFT_LINK_POINTER(AVFoundation, AVAudioSessionRouteChangeNotification, NSString*)
+SOFT_LINK_POINTER(AVFoundation, AVAudioSessionMediaServicesWereLostNotification, NSString*)
+SOFT_LINK_POINTER(AVFoundation, AVAudioSessionMediaServicesWereResetNotification, NSString*)
+SOFT_LINK_POINTER(AVFoundation, AVAudioSessionRouteChangePreviousRouteKey, NSString*)
 
 #define AVAudioSession getAVAudioSessionClass()
 #define AVAudioSessionCategoryAmbient getAVAudioSessionCategoryAmbient()
@@ -53,7 +60,10 @@ SOFT_LINK_POINTER(AVFoundation, AVAudioSessionInterruptionTypeKey, NSString *)
 #define AVAudioSessionCategoryPlayAndRecord getAVAudioSessionCategoryPlayAndRecord()
 #define AVAudioSessionCategoryAudioProcessing getAVAudioSessionCategoryAudioProcessing()
 #define AVAudioSessionInterruptionTypeKey getAVAudioSessionInterruptionTypeKey()
-
+#define AVAudioSessionRouteChangeNotification getAVAudioSessionRouteChangeNotification()
+#define AVAudioSessionMediaServicesWereLostNotification getAVAudioSessionMediaServicesWereLostNotification()
+#define AVAudioSessionMediaServicesWereResetNotification getAVAudioSessionMediaServicesWereResetNotification()
+#define AVAudioSessionRouteChangePreviousRouteKey getAVAudioSessionRouteChangePreviousRouteKey()
 namespace WebCore {
 
 #if !LOG_DISABLED
@@ -77,17 +87,19 @@ static const char* categoryName(AudioSession::CategoryType category)
 
 class AudioSessionPrivate {
 public:
-    AudioSessionPrivate(AudioSession*);
-    AudioSession::CategoryType m_categoryOverride;
+    AudioSessionPrivate(AudioSession& audioSession)
+        : weakPtrFactory(&audioSession)
+    {
+    }
+
+    WeakPtrFactory<AudioSession> weakPtrFactory;
+    AudioSession::CategoryType categoryOverride { AudioSession::None };
+    HashSet<AudioSession::Observer*> observers;
+    Vector<RetainPtr<id>> notificationCallbacks;
 };
 
-AudioSessionPrivate::AudioSessionPrivate(AudioSession*)
-    : m_categoryOverride(AudioSession::None)
-{
-}
-
 AudioSession::AudioSession()
-    : m_private(std::make_unique<AudioSessionPrivate>(this))
+    : m_private(makeUniqueRef<AudioSessionPrivate>(*this))
 {
 }
 
@@ -154,16 +166,16 @@ AudioSession::CategoryType AudioSession::category() const
 
 void AudioSession::setCategoryOverride(CategoryType category)
 {
-    if (m_private->m_categoryOverride == category)
+    if (m_private->categoryOverride == category)
         return;
 
-    m_private->m_categoryOverride = category;
+    m_private->categoryOverride = category;
     setCategory(category);
 }
 
 AudioSession::CategoryType AudioSession::categoryOverride() const
 {
-    return m_private->m_categoryOverride;
+    return m_private->categoryOverride;
 }
 
 float AudioSession::sampleRate() const
@@ -199,6 +211,90 @@ void AudioSession::setPreferredBufferSize(size_t bufferSize)
     float duration = bufferSize / sampleRate();
     [[AVAudioSession sharedInstance] setPreferredIOBufferDuration:duration error:&error];
     ASSERT(!error);
+}
+
+bool AudioSession::isMuted() const
+{
+    return false;
+}
+
+bool AudioSession::outputDeviceSupportsLowPowerMode() const
+{
+    return false;
+}
+
+void AudioSession::addObserver(Observer& observer)
+{
+    ASSERT(!m_private->observers.contains(&observer));
+    m_private->observers.add(&observer);
+
+    if (m_private->observers.size() != 1)
+        return;
+
+    auto* center = [NSNotificationCenter defaultCenter];
+    auto* session = [AVAudioSession sharedInstance];
+    auto weakThis = m_private->weakPtrFactory.createWeakPtr();
+
+    ASSERT(m_private->notificationCallbacks.isEmpty());
+    m_private->notificationCallbacks = {
+        [center addObserverForName:AVAudioSessionRouteChangeNotification object:session queue:nil usingBlock:[weakThis] (NSNotification *note) {
+            callOnMainThread([weakThis, note = RetainPtr<NSNotification>(note)] {
+                if (!weakThis)
+                    return;
+
+                AVAudioSessionRouteDescription *oldRoute = [[note userInfo] valueForKey:AVAudioSessionRouteChangePreviousRouteKey];
+                AVAudioSessionRouteDescription *newRoute = [[AVAudioSession sharedInstance] currentRoute];
+
+                bool inputsChanged = [oldRoute.inputs isEqualToArray:newRoute.inputs];
+                bool outputsChanged = [oldRoute.outputs isEqualToArray:newRoute.outputs];
+                if (!inputsChanged && !outputsChanged)
+                    return;
+
+                // Protect against the observers set being mutated mid-notification:
+                auto observers = weakThis->m_private->observers;
+                for (auto& observer : observers) {
+                    if (inputsChanged)
+                        observer->currentAudioInputDeviceChanged();
+                    if (outputsChanged)
+                        observer->currentAudioOutputDeviceChanged();
+                }
+            });
+        }],
+        [center addObserverForName:AVAudioSessionMediaServicesWereLostNotification object:session queue:nil usingBlock:[weakThis] (NSNotification *) {
+            callOnMainThread([weakThis] {
+                if (!weakThis)
+                    return;
+
+                // Protect against the observers set being mutated mid-notification:
+                auto observers = weakThis->m_private->observers;
+                for (auto& observer : observers)
+                    observer->audioServicesLost();
+            });
+        }],
+        [center addObserverForName:AVAudioSessionMediaServicesWereResetNotification object:session queue:nil usingBlock:[weakThis] (NSNotification *) {
+            callOnMainThread([weakThis] {
+                if (!weakThis)
+                    return;
+
+                // Protect against the observers set being mutated mid-notification:
+                auto observers = weakThis->m_private->observers;
+                for (auto& observer : observers)
+                    observer->audioServicesReset();
+            });
+        }],
+    };
+}
+
+void AudioSession::removeObserver(Observer& observer)
+{
+    ASSERT(m_private->observers.contains(&observer));
+    m_private->observers.remove(&observer);
+
+    if (m_private->observers.size())
+        return;
+
+    for (auto& observer : m_private->notificationCallbacks)
+        [[NSNotificationCenter defaultCenter] removeObserver:observer.get()];
 }
 
 }
