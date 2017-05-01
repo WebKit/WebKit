@@ -1,5 +1,11 @@
 2017-05-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed GTK+ gardening. Update expectations of several test.
+
+        * platform/gtk/TestExpectations:
+
+2017-05-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed GTK+ gardening. Rebaseline several WPT fetch API tests.
 
         * platform/gtk/imported/w3c/web-platform-tests/fetch/api/basic/request-headers.any-expected.txt: Added.

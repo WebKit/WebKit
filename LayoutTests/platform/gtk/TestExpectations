@@ -3525,6 +3525,11 @@ webkit.org/b/170053 media/video-load-require-user-gesture.html [ Failure ]
 webkit.org/b/170335 canvas/philip/tests/2d.pattern.animated.gif.html [ Failure ]
 webkit.org/b/170335 svg/animations/animated-svg-image-outside-viewport-paused.html [ Failure ]
 
+webkit.org/b/171491 js/promises-tests/promises-tests-2-3-3.html [ Failure ]
+webkit.org/b/171491 media/video-fullscreen-restriction-removed.html [ Failure ]
+
+webkit.org/b/171492 platform/gtk/fast/forms/menulist-typeahead-find.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
 #////////////////////////////////////////////////////////////////////////////////////////
