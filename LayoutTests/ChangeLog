@@ -1,3 +1,20 @@
+2017-05-01  Matt Lewis  <jlewis3@apple.com>
+
+        Rebaselined fast/visual-viewport/ tests.
+        https://bugs.webkit.org/show_bug.cgi?id=171500
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/fast/visual-viewport/nonzoomed-rects-expected.txt:
+        * platform/ios-wk2/fast/visual-viewport/rtl-nonzoomed-rects-expected.txt:
+        * platform/ios-wk2/fast/visual-viewport/rtl-zoomed-rects-expected.txt:
+        * platform/ios-wk2/fast/visual-viewport/rubberbanding-viewport-rects-expected.txt:
+        * platform/ios-wk2/fast/visual-viewport/rubberbanding-viewport-rects-extended-background-expected.txt:
+        * platform/ios-wk2/fast/visual-viewport/rubberbanding-viewport-rects-header-footer-expected.txt:
+        * platform/ios-wk2/fast/visual-viewport/zoomed-fixed-expected.txt: Added.
+        * platform/ios-wk2/fast/visual-viewport/zoomed-fixed-header-and-footer-expected.txt: Added.
+        * platform/ios-wk2/fast/visual-viewport/zoomed-rects-expected.txt:
+
 2017-05-01  Chris Dumez  <cdumez@apple.com>
 
         Do not dispatch SVG load event in frameless documents
