@@ -75,6 +75,7 @@ enum AttributesIndex {
     SetSizeIndex,
     PlaceholderNameIndex,
     SortNameIndex,
+    CurrentNameIndex,
 
     // Attribute values.
     SortAscendingValueIndex,
@@ -92,6 +93,7 @@ const String attributesMap[][2] = {
     { "AXARIASetSize", "setsize" },
     { "AXPlaceholderValue", "placeholder-text" } ,
     { "AXSortDirection", "sort" },
+    { "AXARIACurrent", "current" },
 
     // Attribute values.
     { "AXAscendingSortDirection", "ascending" },
@@ -132,6 +134,10 @@ String coreAttributeToAtkAttribute(JSStringRef attribute)
 String atkAttributeValueToCoreAttributeValue(AtkAttributeType type, const String& id, const String& value)
 {
     if (type == ObjectAttributeType) {
+        // We don't expose the "current" attribute if there is no author-provided value.
+        if (id == attributesMap[CurrentNameIndex][AtkDomain] && value.isEmpty())
+            return "false";
+
         // We need to translate ATK values exposed for 'aria-sort' (e.g. 'ascending')
         // into those expected by the layout tests (e.g. 'AXAscendingSortDirection').
         if (id == attributesMap[SortNameIndex][AtkDomain] && !value.isEmpty()) {

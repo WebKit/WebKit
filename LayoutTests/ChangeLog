@@ -1,3 +1,12 @@
+2017-05-01  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [GTK] Add support to query for aria-current
+        https://bugs.webkit.org/show_bug.cgi?id=149016
+
+        Reviewed by Chris Fleizach.
+
+        * platform/gtk/TestExpectations: Unskip now-passing test.
+
 2017-05-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed GTK+ gardening. Rebaseline giantRowspan tests after r215914.

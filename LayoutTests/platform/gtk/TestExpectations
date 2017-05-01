@@ -1016,8 +1016,6 @@ webkit.org/b/146724 fast/text/word-break-keep-all.html [ ImageOnlyFailure ]
 # This tests fail since the upgrade of GTK to 3.16 and Cairo to 1.14 on the JHBuild
 webkit.org/b/146731 fast/backgrounds/hidpi-background-image-contain-cover-scale-needs-more-precision.html [ ImageOnlyFailure Timeout ]
 
-webkit.org/b/149016 accessibility/aria-current.html [ Skip ]
-
 # ARIA 1.1 table related attributes are not supported
 webkit.org/b/148967 accessibility/aria-table-attributes.html [ Skip ]
 
