@@ -517,24 +517,24 @@ Vector<RenderedDocumentMarker*> DocumentMarkerController::markersFor(Node* node,
     return result;
 }
 
-Vector<RenderedDocumentMarker*> DocumentMarkerController::markersInRange(Range* range, DocumentMarker::MarkerTypes markerTypes)
+Vector<RenderedDocumentMarker*> DocumentMarkerController::markersInRange(Range& range, DocumentMarker::MarkerTypes markerTypes)
 {
     if (!possiblyHasMarkers(markerTypes))
         return Vector<RenderedDocumentMarker*>();
 
     Vector<RenderedDocumentMarker*> foundMarkers;
 
-    Node& startContainer = range->startContainer();
-    Node& endContainer = range->endContainer();
+    Node& startContainer = range.startContainer();
+    Node& endContainer = range.endContainer();
 
-    Node* pastLastNode = range->pastLastNode();
-    for (Node* node = range->firstNode(); node != pastLastNode; node = NodeTraversal::next(*node)) {
+    Node* pastLastNode = range.pastLastNode();
+    for (Node* node = range.firstNode(); node != pastLastNode; node = NodeTraversal::next(*node)) {
         for (auto* marker : markersFor(node)) {
             if (!markerTypes.contains(marker->type()))
                 continue;
-            if (node == &startContainer && marker->endOffset() <= range->startOffset())
+            if (node == &startContainer && marker->endOffset() <= range.startOffset())
                 continue;
-            if (node == &endContainer && marker->startOffset() >= range->endOffset())
+            if (node == &endContainer && marker->startOffset() >= range.endOffset())
                 continue;
             foundMarkers.append(marker);
         }
@@ -732,23 +732,23 @@ void DocumentMarkerController::setMarkersActive(Node* node, unsigned startOffset
         node->renderer()->repaint();
 }
 
-bool DocumentMarkerController::hasMarkers(Range* range, DocumentMarker::MarkerTypes markerTypes)
+bool DocumentMarkerController::hasMarkers(Range& range, DocumentMarker::MarkerTypes markerTypes)
 {
     if (!possiblyHasMarkers(markerTypes))
         return false;
     ASSERT(!m_markers.isEmpty());
 
-    Node& startContainer = range->startContainer();
-    Node& endContainer = range->endContainer();
+    Node& startContainer = range.startContainer();
+    Node& endContainer = range.endContainer();
 
-    Node* pastLastNode = range->pastLastNode();
-    for (Node* node = range->firstNode(); node != pastLastNode; node = NodeTraversal::next(*node)) {
+    Node* pastLastNode = range.pastLastNode();
+    for (Node* node = range.firstNode(); node != pastLastNode; node = NodeTraversal::next(*node)) {
         for (auto* marker : markersFor(node)) {
             if (!markerTypes.contains(marker->type()))
                 continue;
-            if (node == &startContainer && marker->endOffset() <= static_cast<unsigned>(range->startOffset()))
+            if (node == &startContainer && marker->endOffset() <= static_cast<unsigned>(range.startOffset()))
                 continue;
-            if (node == &endContainer && marker->startOffset() >= static_cast<unsigned>(range->endOffset()))
+            if (node == &endContainer && marker->startOffset() >= static_cast<unsigned>(range.endOffset()))
                 continue;
             return true;
         }
@@ -756,19 +756,19 @@ bool DocumentMarkerController::hasMarkers(Range* range, DocumentMarker::MarkerTy
     return false;
 }
 
-void DocumentMarkerController::clearDescriptionOnMarkersIntersectingRange(Range* range, DocumentMarker::MarkerTypes markerTypes)
+void DocumentMarkerController::clearDescriptionOnMarkersIntersectingRange(Range& range, DocumentMarker::MarkerTypes markerTypes)
 {
     if (!possiblyHasMarkers(markerTypes))
         return;
     ASSERT(!m_markers.isEmpty());
 
-    Node& startContainer = range->startContainer();
-    Node& endContainer = range->endContainer();
+    Node& startContainer = range.startContainer();
+    Node& endContainer = range.endContainer();
 
-    Node* pastLastNode = range->pastLastNode();
-    for (Node* node = range->firstNode(); node != pastLastNode; node = NodeTraversal::next(*node)) {
-        unsigned startOffset = node == &startContainer ? range->startOffset() : 0;
-        unsigned endOffset = node == &endContainer ? static_cast<unsigned>(range->endOffset()) : std::numeric_limits<unsigned>::max();
+    Node* pastLastNode = range.pastLastNode();
+    for (Node* node = range.firstNode(); node != pastLastNode; node = NodeTraversal::next(*node)) {
+        unsigned startOffset = node == &startContainer ? range.startOffset() : 0;
+        unsigned endOffset = node == &endContainer ? static_cast<unsigned>(range.endOffset()) : std::numeric_limits<unsigned>::max();
         MarkerList* list = m_markers.get(node);
         if (!list)
             continue;

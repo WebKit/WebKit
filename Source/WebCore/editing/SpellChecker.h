@@ -47,9 +47,9 @@ public:
     static RefPtr<SpellCheckRequest> create(TextCheckingTypeMask, TextCheckingProcessType, PassRefPtr<Range> checkingRange, PassRefPtr<Range> paragraphRange);
     virtual ~SpellCheckRequest();
 
-    PassRefPtr<Range> checkingRange() const { return m_checkingRange; }
-    PassRefPtr<Range> paragraphRange() const { return m_paragraphRange; }
-    PassRefPtr<Element> rootEditableElement() const { return m_rootEditableElement; }
+    Range* checkingRange() const { return m_checkingRange.get(); }
+    Range* paragraphRange() const { return m_paragraphRange.get(); }
+    Element* rootEditableElement() const { return m_rootEditableElement.get(); }
 
     void setCheckerAndSequence(SpellChecker*, int sequence);
     void requesterDestroyed();

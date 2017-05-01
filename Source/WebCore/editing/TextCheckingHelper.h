@@ -38,7 +38,7 @@ public:
     ~TextCheckingParagraph();
 
     int rangeLength() const;
-    PassRefPtr<Range> subrange(int characterOffset, int characterCount) const;
+    Ref<Range> subrange(int characterOffset, int characterCount) const;
     ExceptionOr<int> offsetTo(const Position&) const;
     void expandRangeToNextEnd();
 
@@ -60,11 +60,11 @@ public:
     bool checkingRangeMatches(int location, int length) const { return location == checkingStart() && length == checkingLength(); }
     bool isCheckingRangeCoveredBy(int location, int length) const { return location <= checkingStart() && location + length >= checkingStart() + checkingLength(); }
     bool checkingRangeCovers(int location, int length) const { return location < checkingEnd() && location + length > checkingStart(); }
-    PassRefPtr<Range> paragraphRange() const;
+    Range& paragraphRange() const;
 
 private:
     void invalidateParagraphRangeValues();
-    PassRefPtr<Range> offsetAsRange() const;
+    Range& offsetAsRange() const;
 
     RefPtr<Range> m_checkingRange;
     mutable RefPtr<Range> m_paragraphRange;

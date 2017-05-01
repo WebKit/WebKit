@@ -142,7 +142,7 @@ TextCheckingParagraph::~TextCheckingParagraph()
 void TextCheckingParagraph::expandRangeToNextEnd()
 {
     ASSERT(m_checkingRange);
-    setEnd(paragraphRange().get(), endOfParagraph(startOfNextParagraph(paragraphRange()->startPosition())));
+    setEnd(&paragraphRange(), endOfParagraph(startOfNextParagraph(paragraphRange().startPosition())));
     invalidateParagraphRangeValues();
 }
 
@@ -156,21 +156,21 @@ void TextCheckingParagraph::invalidateParagraphRangeValues()
 int TextCheckingParagraph::rangeLength() const
 {
     ASSERT(m_checkingRange);
-    return TextIterator::rangeLength(paragraphRange().get());
+    return TextIterator::rangeLength(&paragraphRange());
 }
 
-PassRefPtr<Range> TextCheckingParagraph::paragraphRange() const
+Range& TextCheckingParagraph::paragraphRange() const
 {
     ASSERT(m_checkingRange);
     if (!m_paragraphRange)
         m_paragraphRange = expandToParagraphBoundary(m_checkingRange);
-    return m_paragraphRange;
+    return *m_paragraphRange;
 }
 
-PassRefPtr<Range> TextCheckingParagraph::subrange(int characterOffset, int characterCount) const
+Ref<Range> TextCheckingParagraph::subrange(int characterOffset, int characterCount) const
 {
     ASSERT(m_checkingRange);
-    return TextIterator::subrange(paragraphRange().get(), characterOffset, characterCount);
+    return TextIterator::subrange(&paragraphRange(), characterOffset, characterCount);
 }
 
 ExceptionOr<int> TextCheckingParagraph::offsetTo(const Position& position) const
@@ -179,7 +179,7 @@ ExceptionOr<int> TextCheckingParagraph::offsetTo(const Position& position) const
     if (!position.containerNode())
         return Exception { TypeError };
 
-    auto range = offsetAsRange()->cloneRange();
+    auto range = offsetAsRange().cloneRange();
     auto result = range->setEnd(*position.containerNode(), position.computeOffsetInContainerNode());
     if (result.hasException())
         return result.releaseException();
@@ -193,20 +193,20 @@ bool TextCheckingParagraph::isEmpty() const
     return checkingStart() >= checkingEnd() || text().isEmpty();
 }
 
-PassRefPtr<Range> TextCheckingParagraph::offsetAsRange() const
+Range& TextCheckingParagraph::offsetAsRange() const
 {
     ASSERT(m_checkingRange);
     if (!m_offsetAsRange)
-        m_offsetAsRange = Range::create(paragraphRange()->startContainer().document(), paragraphRange()->startPosition(), m_checkingRange->startPosition());
+        m_offsetAsRange = Range::create(paragraphRange().startContainer().document(), paragraphRange().startPosition(), m_checkingRange->startPosition());
 
-    return m_offsetAsRange;
+    return *m_offsetAsRange;
 }
 
 const String& TextCheckingParagraph::text() const
 {
     ASSERT(m_checkingRange);
     if (m_text.isEmpty())
-        m_text = plainText(paragraphRange().get());
+        m_text = plainText(&paragraphRange());
     return m_text; 
 }
 
@@ -214,7 +214,7 @@ int TextCheckingParagraph::checkingStart() const
 {
     ASSERT(m_checkingRange);
     if (m_checkingStart == -1)
-        m_checkingStart = TextIterator::rangeLength(offsetAsRange().get());
+        m_checkingStart = TextIterator::rangeLength(&offsetAsRange());
     return m_checkingStart;
 }
 

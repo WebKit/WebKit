@@ -458,19 +458,18 @@ String CompositeEditCommand::inputEventTypeName() const
 //
 // sugary-sweet convenience functions to help create and apply edit commands in composite commands
 //
-void CompositeEditCommand::applyCommandToComposite(PassRefPtr<EditCommand> prpCommand)
+void CompositeEditCommand::applyCommandToComposite(Ref<EditCommand>&& command)
 {
-    RefPtr<EditCommand> command = prpCommand;
     command->setParent(this);
     command->doApply();
     if (command->isSimpleEditCommand()) {
         command->setParent(nullptr);
-        ensureComposition().append(toSimpleEditCommand(command.get()));
+        ensureComposition().append(toSimpleEditCommand(command.ptr()));
     }
     m_commands.append(WTFMove(command));
 }
 
-void CompositeEditCommand::applyCommandToComposite(PassRefPtr<CompositeEditCommand> command, const VisibleSelection& selection)
+void CompositeEditCommand::applyCommandToComposite(Ref<CompositeEditCommand>&& command, const VisibleSelection& selection)
 {
     command->setParent(this);
     if (selection != command->endingSelection()) {
@@ -478,7 +477,7 @@ void CompositeEditCommand::applyCommandToComposite(PassRefPtr<CompositeEditComma
         command->setEndingSelection(selection);
     }
     command->doApply();
-    m_commands.append(command);
+    m_commands.append(WTFMove(command));
 }
 
 void CompositeEditCommand::applyStyle(const EditingStyle* style, EditAction editingAction)
@@ -491,14 +490,14 @@ void CompositeEditCommand::applyStyle(const EditingStyle* style, const Position&
     applyCommandToComposite(ApplyStyleCommand::create(document(), style, start, end, editingAction));
 }
 
-void CompositeEditCommand::applyStyledElement(PassRefPtr<Element> element)
+void CompositeEditCommand::applyStyledElement(Ref<Element>&& element)
 {
-    applyCommandToComposite(ApplyStyleCommand::create(element, false));
+    applyCommandToComposite(ApplyStyleCommand::create(WTFMove(element), false));
 }
 
-void CompositeEditCommand::removeStyledElement(PassRefPtr<Element> element)
+void CompositeEditCommand::removeStyledElement(Ref<Element>&& element)
 {
-    applyCommandToComposite(ApplyStyleCommand::create(element, true));
+    applyCommandToComposite(ApplyStyleCommand::create(WTFMove(element), true));
 }
 
 void CompositeEditCommand::insertParagraphSeparator(bool useDefaultParagraphElement, bool pasteBlockqutoeIntoUnquotedArea)
@@ -643,13 +642,14 @@ HTMLElement* CompositeEditCommand::replaceElementWithSpanPreservingChildrenAndAt
     // It would also be possible to implement all of ReplaceNodeWithSpanCommand
     // as a series of existing smaller edit commands.  Someone who wanted to
     // reduce the number of edit commands could do so here.
-    RefPtr<ReplaceNodeWithSpanCommand> command = ReplaceNodeWithSpanCommand::create(node);
-    applyCommandToComposite(command);
+    auto command = ReplaceNodeWithSpanCommand::create(node);
+    auto* commandPtr = command.ptr();
+    applyCommandToComposite(WTFMove(command));
     // Returning a raw pointer here is OK because the command is retained by
     // applyCommandToComposite (thus retaining the span), and the span is also
     // in the DOM tree, and thus alive whie it has a parent.
-    ASSERT(command->spanElement()->isConnected());
-    return command->spanElement();
+    ASSERT(commandPtr->spanElement()->isConnected());
+    return commandPtr->spanElement();
 }
 
 void CompositeEditCommand::prune(PassRefPtr<Node> node)
@@ -703,8 +703,7 @@ void CompositeEditCommand::inputText(const String& text, bool selectInsertedText
         newline = text.find('\n', offset);
         if (newline != offset) {
             int substringLength = newline == notFound ? length - offset : newline - offset;
-            RefPtr<InsertTextCommand> command = InsertTextCommand::create(document(), text.substring(offset, substringLength), false);
-            applyCommandToComposite(command);
+            applyCommandToComposite(InsertTextCommand::create(document(), text.substring(offset, substringLength), false));
         }
         if (newline != notFound) {
             VisiblePosition caret(endingSelection().visibleStart());
@@ -777,7 +776,7 @@ void CompositeEditCommand::replaceTextInNodePreservingMarkers(PassRefPtr<Text> p
 {
     RefPtr<Text> node(prpNode);
     DocumentMarkerController& markerController = document().markers();
-    auto markers = copyMarkers(markerController.markersInRange(Range::create(document(), node, offset, node, offset + count).ptr(), DocumentMarker::AllMarkers()));
+    auto markers = copyMarkers(markerController.markersInRange(Range::create(document(), node, offset, node, offset + count), DocumentMarker::AllMarkers()));
     replaceTextInNode(node, offset, count, replacementText);
     RefPtr<Range> newRange = Range::create(document(), node, offset, node, offset + replacementText.length());
     for (const auto& marker : markers)
@@ -1236,7 +1235,7 @@ void CompositeEditCommand::pushAnchorElementDown(Element& anchorElement)
     ASSERT(anchorElement.isLink());
     
     setEndingSelection(VisibleSelection::selectionFromContentsOfNode(&anchorElement));
-    applyStyledElement(&anchorElement);
+    applyStyledElement(anchorElement);
     // Clones of anchorElement have been pushed down, now remove it.
     if (anchorElement.isConnected())
         removeNodePreservingChildren(&anchorElement);

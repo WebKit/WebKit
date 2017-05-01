@@ -134,12 +134,12 @@ protected:
     // sugary-sweet convenience functions to help create and apply edit commands in composite commands
     //
     void appendNode(PassRefPtr<Node>, PassRefPtr<ContainerNode> parent);
-    void applyCommandToComposite(PassRefPtr<EditCommand>);
-    void applyCommandToComposite(PassRefPtr<CompositeEditCommand>, const VisibleSelection&);
+    void applyCommandToComposite(Ref<EditCommand>&&);
+    void applyCommandToComposite(Ref<CompositeEditCommand>&&, const VisibleSelection&);
     void applyStyle(const EditingStyle*, EditAction = EditActionChangeAttributes);
     void applyStyle(const EditingStyle*, const Position& start, const Position& end, EditAction = EditActionChangeAttributes);
-    void applyStyledElement(PassRefPtr<Element>);
-    void removeStyledElement(PassRefPtr<Element>);
+    void applyStyledElement(Ref<Element>&&);
+    void removeStyledElement(Ref<Element>&&);
     void deleteSelection(bool smartDelete = false, bool mergeBlocksAfterDelete = true, bool replace = false, bool expandForSpecialElements = true, bool sanitizeMarkup = true);
     void deleteSelection(const VisibleSelection&, bool smartDelete = false, bool mergeBlocksAfterDelete = true, bool replace = false, bool expandForSpecialElements = true, bool sanitizeMarkup = true);
     virtual void deleteTextFromNode(PassRefPtr<Text>, unsigned offset, unsigned count);

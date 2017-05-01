@@ -45,8 +45,6 @@ public:
     String content() const;
     unsigned positionOffsetInContent() const;
 
-    PassRefPtr<Range> rangeFromContentOffsets(unsigned startOffsetInContent, unsigned endOffsetInContent);
-
 private:
     RefPtr<Range> m_contentRange;
     size_t m_positionOffsetInContent;

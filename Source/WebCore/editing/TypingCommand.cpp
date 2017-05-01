@@ -547,10 +547,10 @@ void TypingCommand::insertTextRunWithoutNewlines(const String &text, bool select
     if (!willAddTypingToOpenCommand(InsertText, CharacterGranularity, text))
         return;
 
-    RefPtr<InsertTextCommand> command = InsertTextCommand::create(document(), text, selectInsertedText,
+    auto command = InsertTextCommand::create(document(), text, selectInsertedText,
         m_compositionType == TextCompositionNone ? InsertTextCommand::RebalanceLeadingAndTrailingWhitespaces : InsertTextCommand::RebalanceAllWhitespaces, EditActionTypingInsertText);
 
-    applyCommandToComposite(command, endingSelection());
+    applyCommandToComposite(WTFMove(command), endingSelection());
 
     typingAddedToOpenCommand(InsertText);
 }

@@ -173,8 +173,8 @@ public:
     
     TriState selectionUnorderedListState() const;
     TriState selectionOrderedListState() const;
-    WEBCORE_EXPORT PassRefPtr<Node> insertOrderedList();
-    WEBCORE_EXPORT PassRefPtr<Node> insertUnorderedList();
+    WEBCORE_EXPORT RefPtr<Node> insertOrderedList();
+    WEBCORE_EXPORT RefPtr<Node> insertUnorderedList();
     WEBCORE_EXPORT bool canIncreaseSelectionListLevel();
     WEBCORE_EXPORT bool canDecreaseSelectionListLevel();
     WEBCORE_EXPORT RefPtr<Node> increaseSelectionListLevel();
@@ -337,7 +337,7 @@ public:
     WEBCORE_EXPORT void setIgnoreSelectionChanges(bool, RevealSelection shouldRevealExistingSelection = RevealSelection::Yes);
     bool ignoreSelectionChanges() const { return m_ignoreSelectionChanges; }
 
-    WEBCORE_EXPORT PassRefPtr<Range> rangeForPoint(const IntPoint& windowPoint);
+    WEBCORE_EXPORT RefPtr<Range> rangeForPoint(const IntPoint& windowPoint);
 
     void clear();
 
@@ -411,7 +411,7 @@ public:
     void textDidChangeInTextArea(Element*);
     WEBCORE_EXPORT WritingDirection baseWritingDirectionForSelectionStart() const;
 
-    WEBCORE_EXPORT void replaceSelectionWithFragment(PassRefPtr<DocumentFragment>, bool selectReplacement, bool smartReplace, bool matchStyle, EditAction = EditActionInsert, MailBlockquoteHandling = MailBlockquoteHandling::RespectBlockquote);
+    WEBCORE_EXPORT void replaceSelectionWithFragment(DocumentFragment&, bool selectReplacement, bool smartReplace, bool matchStyle, EditAction = EditActionInsert, MailBlockquoteHandling = MailBlockquoteHandling::RespectBlockquote);
     WEBCORE_EXPORT void replaceSelectionWithText(const String&, bool selectReplacement, bool smartReplace, EditAction = EditActionInsert);
     WEBCORE_EXPORT bool selectionStartHasMarkerFor(DocumentMarker::MarkerType, int from, int length) const;
     void updateMarkersForWordsAffectedByEditing(bool onlyHandleWordsContainingSelection);

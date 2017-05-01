@@ -857,9 +857,9 @@ static VisiblePosition SimpleSmartExtendEnd(const VisiblePosition& start, const 
         if (previousVisiblePosition.isNull())
             return currentWebVisiblePosition;
         
-        RefPtr<Range> graphemeRange = Range::create(document, previousVisiblePosition.deepEquivalent(), currentVisiblePosition.deepEquivalent());
+        auto graphemeRange = Range::create(document, previousVisiblePosition.deepEquivalent(), currentVisiblePosition.deepEquivalent());
         
-        auto markers = document.markers().markersInRange(graphemeRange.get(), DocumentMarker::DictationResult);
+        auto markers = document.markers().markersInRange(graphemeRange, DocumentMarker::DictationResult);
         if (markers.isEmpty())
             return currentWebVisiblePosition;
         
@@ -913,9 +913,9 @@ static VisiblePosition SimpleSmartExtendEnd(const VisiblePosition& start, const 
         if (nextVisiblePosition.isNull())
             return currentWebVisiblePosition;
         
-        RefPtr<Range> graphemeRange = Range::create(document, currentVisiblePosition.deepEquivalent(), nextVisiblePosition.deepEquivalent());
+        auto graphemeRange = Range::create(document, currentVisiblePosition.deepEquivalent(), nextVisiblePosition.deepEquivalent());
         
-        auto markers = document.markers().markersInRange(graphemeRange.get(), DocumentMarker::DictationResult);
+        auto markers = document.markers().markersInRange(graphemeRange, DocumentMarker::DictationResult);
         if (markers.isEmpty())
             return currentWebVisiblePosition;
         

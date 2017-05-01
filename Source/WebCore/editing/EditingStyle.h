@@ -113,13 +113,13 @@ public:
     Ref<MutableStyleProperties> styleWithResolvedTextDecorations() const;
     bool textDirection(WritingDirection&) const;
     bool isEmpty() const;
-    void setStyle(PassRefPtr<MutableStyleProperties>);
+    void setStyle(RefPtr<MutableStyleProperties>&&);
     void overrideWithStyle(const StyleProperties*);
     void overrideTypingStyleAt(const EditingStyle&, const Position&);
     void clear();
-    PassRefPtr<EditingStyle> copy() const;
-    PassRefPtr<EditingStyle> extractAndRemoveBlockProperties();
-    PassRefPtr<EditingStyle> extractAndRemoveTextDirection();
+    Ref<EditingStyle> copy() const;
+    Ref<EditingStyle> extractAndRemoveBlockProperties();
+    Ref<EditingStyle> extractAndRemoveTextDirection();
     void removeBlockProperties();
     void removeStyleAddedByNode(Node*);
     void removeStyleConflictingWithStyleOfNode(Node*);
@@ -165,7 +165,7 @@ public:
     void setStrikeThroughChange(TextDecorationChange change) { m_strikeThroughChange = static_cast<unsigned>(change); }
     TextDecorationChange strikeThroughChange() const { return static_cast<TextDecorationChange>(m_strikeThroughChange); }
 
-    WEBCORE_EXPORT static PassRefPtr<EditingStyle> styleAtSelectionStart(const VisibleSelection&, bool shouldUseBackgroundColorInEffect = false);
+    WEBCORE_EXPORT static RefPtr<EditingStyle> styleAtSelectionStart(const VisibleSelection&, bool shouldUseBackgroundColorInEffect = false);
     static WritingDirection textDirectionForSelection(const VisibleSelection&, EditingStyle* typingStyle, bool& hasNestedOrMultipleEmbeddings);
 
 private:
