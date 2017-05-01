@@ -1,3 +1,13 @@
+2017-05-01  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: AccessibilityTable::ariaRowCount() and ariaColumnCount() should not return -1 unless that is the author-provided value
+        https://bugs.webkit.org/show_bug.cgi?id=171475
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/table-detection-expected.txt: Updated.
+        * accessibility/table-with-rules-expected.txt: Updated.
+
 2017-05-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed GTK+ gardening. Update expectations of several test.

@@ -1,5 +1,20 @@
 2017-05-01  Joanmarie Diggs  <jdiggs@igalia.com>
 
+        AX: AccessibilityTable::ariaRowCount() and ariaColumnCount() should not return -1 unless that is the author-provided value
+        https://bugs.webkit.org/show_bug.cgi?id=171475
+
+        Reviewed by Chris Fleizach.
+
+        If the author has provided a valid value, return it. Otherwise, return 0.
+
+        No new tests needed. Update existing test expectations to reflect the change.
+
+        * accessibility/AccessibilityTable.cpp:
+        (WebCore::AccessibilityTable::ariaColumnCount):
+        (WebCore::AccessibilityTable::ariaRowCount):
+
+2017-05-01  Joanmarie Diggs  <jdiggs@igalia.com>
+
         AX: Implement support for ARIA "figure" and "term" roles; update AXRoleDescription mapping for "feed" role
         https://bugs.webkit.org/show_bug.cgi?id=171183
 
