@@ -1,3 +1,18 @@
+2017-05-01  Joseph Pecoraro  <pecoraro@apple.com>
+
+        [GTK] Two test started to fail after due to unhandled promise rejection reported after r215916
+        https://bugs.webkit.org/show_bug.cgi?id=171491
+
+        Unreviewed test gardening.
+
+        * js/promises-tests/promises-tests-2-3-3.html:
+        Silence unhandled expectation messages for this test.
+
+        * media/video-fullscreen-restriction-removed-expected.txt:
+        Rebaseline expected results with unhandled expectation message.
+
+        * platform/gtk/TestExpectations:
+
 2017-05-01  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Support time@datetime for verbosity clarification of dates, times, and durations

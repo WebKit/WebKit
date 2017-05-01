@@ -10,6 +10,9 @@
 <script>
 description('Test Promise with Promise A+ tests 2.3.3.');
 window.jsTestIsAsync = true;
+
+// Silence unhandled rejection messages.
+window.onunhandledrejection = () => false;
 </script>
 <script src="resources/mocha.js"></script>
 <script>
