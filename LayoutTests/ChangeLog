@@ -1,3 +1,17 @@
+2017-05-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed GTK+ gardening. Rebaseline several WPT fetch API tests.
+
+        * platform/gtk/imported/w3c/web-platform-tests/fetch/api/basic/request-headers.any-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/fetch/api/basic/request-headers.any.worker-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/fetch/api/basic/scheme-about.any-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/fetch/api/cors/cors-basic.any-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/fetch/api/cors/cors-basic.any.worker-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/fetch/api/cors/cors-no-preflight.any-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/fetch/api/cors/cors-no-preflight.any.worker-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/fetch/api/cors/cors-origin.any-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/fetch/api/cors/cors-origin.any.worker-expected.txt: Added.
+
 2017-05-01  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: AccessibilityTable::ariaRowCount() and ariaColumnCount() should not return -1 unless that is the author-provided value
