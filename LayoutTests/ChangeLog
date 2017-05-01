@@ -1,3 +1,12 @@
+2017-05-01  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline fast/visual-viewport/rtl-zoomed-rects.html for mac-wk1.
+        https://bugs.webkit.org/show_bug.cgi?id=171500
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/fast/visual-viewport/rtl-zoomed-rects-expected.txt:
+
 2017-05-01  Matt Lewis  <jlewis3@apple.com>
 
         Rebaselined fast/visual-viewport/ tests.
