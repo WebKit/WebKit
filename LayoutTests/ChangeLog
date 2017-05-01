@@ -1,3 +1,16 @@
+2017-05-01  Chris Dumez  <cdumez@apple.com>
+
+        Do not dispatch SVG load event in frameless documents
+        https://bugs.webkit.org/show_bug.cgi?id=171505
+        <rdar://problem/31799776>
+
+        Reviewed by Andreas Kling.
+
+        Add layout test coverage. I have verified that this test passes on both Firefox and Chrome.
+
+        * fast/dom/domparser-parsefromstring-svg-load-event-expected.txt: Added.
+        * fast/dom/domparser-parsefromstring-svg-load-event.html: Added.
+
 2017-05-01  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skip editing/execCommand/show-modal-dialog-during-execCommand.html on mac-wk1.

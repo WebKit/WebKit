@@ -1,5 +1,21 @@
 2017-05-01  Chris Dumez  <cdumez@apple.com>
 
+        Do not dispatch SVG load event in frameless documents
+        https://bugs.webkit.org/show_bug.cgi?id=171505
+        <rdar://problem/31799776>
+
+        Reviewed by Andreas Kling.
+
+        We should not dispatch SVG load events in frameless documents. <https://trac.webkit.org/changeset/173028/webkit>
+        took care of most load events but forgot the SVG load event.
+
+        Test: fast/dom/domparser-parsefromstring-svg-load-event.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::implicitClose):
+
+2017-05-01  Chris Dumez  <cdumez@apple.com>
+
         Remove some usage of PassRefPtr in editing code
         https://bugs.webkit.org/show_bug.cgi?id=171490
 
