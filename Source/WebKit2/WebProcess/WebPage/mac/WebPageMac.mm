@@ -149,6 +149,11 @@ void WebPage::platformEditorState(Frame& frame, EditorState& result, IncludePost
     selectedRange->absoluteTextQuads(quads);
     if (!quads.isEmpty())
         postLayoutData.selectionClipRect = frame.view()->contentsToWindow(quads[0].enclosingBoundingBox());
+    else {
+        // Range::absoluteTextQuads() will be empty at the start of a paragraph.
+        if (selection.isCaret())
+            postLayoutData.selectionClipRect = frame.view()->contentsToWindow(frame.selection().absoluteCaretBounds());
+    }
 }
 
 void WebPage::handleAcceptedCandidate(WebCore::TextCheckingResult acceptedCandidate)

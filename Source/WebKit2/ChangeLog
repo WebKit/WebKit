@@ -1,3 +1,27 @@
+2017-05-01  Beth Dakin  <bdakin@apple.com>
+
+        On-screen panel for candidate bar is in the wrong place when the caret is at the 
+        start of a paragraph
+        https://bugs.webkit.org/show_bug.cgi?id=171453
+        -and corresponding-
+        rdar://problem/29779764
+
+        Reviewed by Tim Horton.
+
+        This bug only happens when the caret is at the beginning of the paragraph, and it 
+        is because Range::absoluteTextQuads() returns no quads in this case. I think it 
+        might be correct that absoluteTextQuads() returns no quads in this case, so this 
+        patch fixes the bug at the call site by using absoluteCaretBounds() in this case.
+
+        SPI for testing.
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _candidateRect]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+
+        Bug fix.
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::platformEditorState):
+
 2017-05-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add automation session API

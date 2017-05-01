@@ -1,3 +1,17 @@
+2017-05-01  Beth Dakin  <bdakin@apple.com>
+
+        On-screen panel for candidate bar is in the wrong place when the caret is at the 
+        start of a paragraph
+        https://bugs.webkit.org/show_bug.cgi?id=171453
+        -and corresponding-
+        rdar://problem/29779764
+
+        Reviewed by Tim Horton.
+
+        This test hard-codes the y-coordinate for the expected candidateRect. 
+        * TestWebKitAPI/Tests/WebKit2Cocoa/WKWebViewCandidateTests.mm:
+        (TEST):
+
 2017-05-01  David Kilzer  <ddkilzer@apple.com>
 
         check-webkit-style: Enable sprintf(), strcat(), strcpy() and printf() format checks

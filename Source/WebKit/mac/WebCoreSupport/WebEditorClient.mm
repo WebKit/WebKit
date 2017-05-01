@@ -1251,6 +1251,11 @@ void WebEditorClient::handleRequestedCandidates(NSInteger sequenceNumber, NSArra
     selectedRange->absoluteTextQuads(quads);
     if (!quads.isEmpty())
         rectForSelectionCandidates = frame->view()->contentsToWindow(quads[0].enclosingBoundingBox());
+    else {
+        // Range::absoluteTextQuads() will be empty at the start of a paragraph.
+        if (selection.isCaret())
+            rectForSelectionCandidates = frame->view()->contentsToWindow(frame->selection().absoluteCaretBounds());
+    }
 
     [m_webView showCandidates:candidates forString:m_paragraphContextForCandidateRequest.get() inRect:rectForSelectionCandidates forSelectedRange:m_rangeForCandidates view:m_webView completionHandler:nil];
 }

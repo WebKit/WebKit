@@ -5341,6 +5341,11 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     [self insertText:string replacementRange:replacementRange];
 }
 
+- (NSRect)_candidateRect
+{
+    return _page->editorState().postLayoutData().selectionClipRect;
+}
+
 - (void)_setHeaderBannerHeight:(int)height
 {
     _page->setHeaderBannerHeightForTesting(height);

@@ -357,6 +357,7 @@ typedef NS_ENUM(NSInteger, _WKImmediateActionType) {
 - (void)_didUpdateCandidateListVisibility:(BOOL)visible WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 @property (nonatomic, readonly) BOOL _shouldRequestCandidates WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 - (void)_insertText:(id)string replacementRange:(NSRange)replacementRange WK_API_AVAILABLE(macosx(WK_MAC_TBA));
+- (NSRect)_candidateRect WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 
 - (void)_setHeaderBannerHeight:(int)height WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 - (void)_setFooterBannerHeight:(int)height WK_API_AVAILABLE(macosx(WK_MAC_TBA));

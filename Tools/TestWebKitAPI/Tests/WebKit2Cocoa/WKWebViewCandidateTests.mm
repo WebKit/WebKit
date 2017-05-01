@@ -243,4 +243,11 @@ TEST(WKWebViewCandidateTests, ShouldRequestCandidatesInTextField)
 
 #endif
 
+TEST(WKWebViewCandidateTests, CandidateRectForEmptyParagraph)
+{
+    CandidateTestWebView *wkWebView = [CandidateTestWebView setUpWithFrame:NSMakeRect(0, 0, 800, 600) testPage:@"input-field-in-scrollable-document"];
+    NSRect candidateRect = [wkWebView _candidateRect];
+    EXPECT_NE(0, candidateRect.origin.y);
+}
+
 #endif /* WK_API_ENABLED && PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101201 */

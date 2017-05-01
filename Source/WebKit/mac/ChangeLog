@@ -1,3 +1,21 @@
+2017-05-01  Beth Dakin  <bdakin@apple.com>
+
+        On-screen panel for candidate bar is in the wrong place when the caret is at the 
+        start of a paragraph
+        https://bugs.webkit.org/show_bug.cgi?id=171453
+        -and corresponding-
+        rdar://problem/29779764
+
+        Reviewed by Tim Horton.
+
+        This bug only happens when the caret is at the beginning of the paragraph, and it 
+        is because Range::absoluteTextQuads() returns no quads in this case. I think it 
+        might be correct that absoluteTextQuads() returns no quads in this case, so this 
+        patch fixes the bug at the call site by using absoluteCaretBounds() in this case.
+
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::handleRequestedCandidates):
+
 2017-04-30  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Replaces uses of [get…() alloc] with alloc…Instance()
