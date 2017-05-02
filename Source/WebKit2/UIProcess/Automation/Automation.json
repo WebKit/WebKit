@@ -248,7 +248,6 @@
         {
             "name": "resizeWindowOfBrowsingContext",
             "description": "Resizes the window of the specified browsing context to the specified size.",
-            "platform": "macos",
             "parameters": [
                 { "name": "handle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context to be resized." },
                 { "name": "size", "$ref": "Size", "description": "The new size for the browsing context's window." }
@@ -257,7 +256,6 @@
         {
             "name": "moveWindowOfBrowsingContext",
             "description": "Moves the window of the specified browsing context to the specified position.",
-            "platform": "macos",
             "parameters": [
                 { "name": "handle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context to be moved." },
                 { "name": "origin", "$ref": "Point", "description": "The new origin for the browsing context's window. The position is interpreted in screen coordinate space, relative to the upper left corner of the screen." }

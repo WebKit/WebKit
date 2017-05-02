@@ -1,3 +1,23 @@
+2017-05-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Web Automation: generate resizeWindowOfBrowsingContext and moveWindowOfBrowsingContext for all platforms
+        https://bugs.webkit.org/show_bug.cgi?id=171107
+
+        Reviewed by Brian Burg.
+
+        The implementation is actually cross-platform, so it could be moved from WebAutomationSessionMac.mm to
+        WebAutomationSession.cpp and simply return a NotImplemented error for iOS. This will allow to use these methods
+        in other platforms.
+
+        * UIProcess/Automation/Automation.json:
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::resizeWindowOfBrowsingContext):
+        (WebKit::WebAutomationSession::moveWindowOfBrowsingContext):
+        * UIProcess/Automation/WebAutomationSession.h:
+        * UIProcess/Automation/mac/WebAutomationSessionMac.mm:
+        (WebKit::WebAutomationSession::resizeWindowOfBrowsingContext): Deleted.
+        (WebKit::WebAutomationSession::moveWindowOfBrowsingContext): Deleted.
+
 2017-05-01  Chris Dumez  <cdumez@apple.com>
 
         Use RELEASE_LOG_ERROR() to do process termination logging
