@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description("Tests that documents created via DOMParser.parseFromString() inherit their context document's origin / URL");
+
+const newDocument = (new DOMParser).parseFromString('', 'text/html');
+shouldBe("newDocument.origin", "document.origin");
+shouldBe("newDocument.URL", "document.URL");
+shouldBeNull("newDocument.location");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

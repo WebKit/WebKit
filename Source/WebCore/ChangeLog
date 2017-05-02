@@ -1,3 +1,19 @@
+2017-05-01  Chris Dumez  <cdumez@apple.com>
+
+        Documents created using DOMParser.parseFromString should inherit their context document's origin / URL
+        https://bugs.webkit.org/show_bug.cgi?id=171499
+
+        Reviewed by Sam Weinig.
+
+        Documents created using DOMParser.parseFromString should inherit their context document's
+        origin / URL:
+        - https://w3c.github.io/DOM-Parsing/#dom-domparser-parsefromstring
+
+        Test: fast/dom/domparser-parsefromstring-origin.html
+
+        * xml/DOMParser.cpp:
+        (WebCore::DOMParser::parseFromString):
+
 2017-05-01  Ross Kirsling  <ross.kirsling@sony.com>
 
         Web Inspector: ASSERT(!m_startedComposite) fails when recording on non-Cocoa Timeline

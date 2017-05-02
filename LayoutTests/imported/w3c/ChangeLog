@@ -1,3 +1,15 @@
+2017-05-01  Chris Dumez  <cdumez@apple.com>
+
+        Documents created using DOMParser.parseFromString should inherit their context document's origin / URL
+        https://bugs.webkit.org/show_bug.cgi?id=171499
+
+        Reviewed by Sam Weinig.
+
+        Rebaseline web-platform-tests now that more checks are passing.
+
+        * web-platform-tests/domparsing/DOMParser-parseFromString-html-expected.txt:
+        * web-platform-tests/domparsing/DOMParser-parseFromString-xml-expected.txt:
+
 2017-05-01  Joseph Pecoraro  <pecoraro@apple.com>
 
         RejectedPromiseTracker should produce better callstacks and avoid capturing callstacks unless there is a debugger/inspector
