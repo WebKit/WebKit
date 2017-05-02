@@ -1,3 +1,12 @@
+2017-05-01  Youenn Fablet  <youenn@apple.com>
+
+        Ensure RealtimeOutgoingVideoSource sends a black frame when its related source is muted
+        https://bugs.webkit.org/show_bug.cgi?id=171497
+
+        Reviewed by Eric Carlson.
+
+        * webrtc/video-mute.html: Updating the test to make debugging clearer.
+
 2017-05-01  Matt Lewis  <jlewis3@apple.com>
 
         Marked LayoutTest/http/tests/preload/not_delaying_window_onload_before_discovery.html as flaky failure.

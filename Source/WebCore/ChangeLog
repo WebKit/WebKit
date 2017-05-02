@@ -1,3 +1,30 @@
+2017-05-01  Youenn Fablet  <youenn@apple.com>
+
+        Ensure RealtimeOutgoingVideoSource sends a black frame when its related source is muted
+        https://bugs.webkit.org/show_bug.cgi?id=171497
+
+        Reviewed by Eric Carlson.
+
+        Covered by updated test.
+
+        When the track is being muted or disabled, send a black frame explicitly.
+        VideoToolBox sometimes does not output a frame until it receives the other.
+        That is why we end up sending two frames, the second asynchronously so that libwebrtc will not skip it.
+        Also storing the rotation so that we keep the same rotation for black frames.
+        Storing width and height for consistency as well.
+
+        * platform/mediastream/mac/RealtimeOutgoingVideoSource.cpp:
+        (WebCore::RealtimeOutgoingVideoSource::RealtimeOutgoingVideoSource):
+        (WebCore::RealtimeOutgoingVideoSource::setSource):
+        (WebCore::RealtimeOutgoingVideoSource::stop):
+        (WebCore::RealtimeOutgoingVideoSource::sourceMutedChanged):
+        (WebCore::RealtimeOutgoingVideoSource::sourceEnabledChanged):
+        (WebCore::RealtimeOutgoingVideoSource::setSizeFromSource):
+        (WebCore::RealtimeOutgoingVideoSource::sendBlackFrame):
+        (WebCore::RealtimeOutgoingVideoSource::sendFrame):
+        (WebCore::RealtimeOutgoingVideoSource::videoSampleAvailable):
+        * platform/mediastream/mac/RealtimeOutgoingVideoSource.h:
+
 2017-05-01  Joseph Pecoraro  <pecoraro@apple.com>
 
         Simplify Resource Timing handling of cached resource

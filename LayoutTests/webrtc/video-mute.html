@@ -7,15 +7,17 @@
         <script src="../resources/testharnessreport.js"></script>
     </head>
     <body>
-        <video id="video" autoplay width="640" height="480"></video>
-        <canvas id="canvas" width="640" height="480"></canvas>
+        <div>Video should be running, go to black and running.</div>
+        <div>Following, should be a snapshot of the video, a black frame and a snapshot of the video.</div>
+        <video id="video" autoplay playsInline width="320" height="240"></video>
+        <canvas id="canvas1" width="320" height="240"></canvas>
+        <canvas id="canvas2" width="320" height="240"></canvas>
+        <canvas id="canvas3" width="320" height="240"></canvas>
         <script src ="routines.js"></script>
         <script>
-video = document.getElementById("video");
-canvas = document.getElementById("canvas");
-
-function isVideoBlack()
+function isVideoBlack(id)
 {
+    var canvas = document.getElementById(id);
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
     canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
@@ -30,19 +32,21 @@ function isVideoBlack()
     return true;
 }
 
-function pollVideoBlackCheck(expected, resolve)
+function pollVideoBlackCheck(expected, id, resolve)
 {
-    if (isVideoBlack() === expected)
-         resolve();
+    if (isVideoBlack(id) === expected) {
+        resolve();
+        return;
+    }
 
-    setTimeout(() => pollVideoBlackCheck(expected, resolve), 50);
+    setTimeout(() => pollVideoBlackCheck(expected, id, resolve), 50);
 }
 
-function checkVideoBlack(expected, message)
+function checkVideoBlack(expected, id)
 {
     return new Promise((resolve, reject) => {
-       pollVideoBlackCheck(expected, resolve);
-        setTimeout(() => reject(message), 5000);
+       pollVideoBlackCheck(expected, id, resolve);
+        setTimeout(reject, 5000);
     });
 }
 
@@ -51,7 +55,7 @@ promise_test((test) => {
     if (window.testRunner)
         testRunner.setUserMediaPermission(true);
 
-    return navigator.mediaDevices.getUserMedia({ video: {width: 640, height: 480}}).then((localStream) => {
+    return navigator.mediaDevices.getUserMedia({video: {width: 320, height: 240, facingMode: "environment"}}).then((localStream) => {
         return new Promise((resolve, reject) => {
             track = localStream.getVideoTracks()[0];
 
@@ -65,16 +69,22 @@ promise_test((test) => {
     }).then((remoteStream) => {
         video.srcObject = remoteStream;
         return video.play();
-    }).then(() => {
-        return checkVideoBlack(false, "track is enabled, video should not be black");
-    }).then(() => {
-        track.enabled = false;
-        return checkVideoBlack(true, "track is disabled, video should be black");
-    }).then(() => {
-        track.enabled = true;
-        return checkVideoBlack(false, "track is reenabled, video should not be black");
     });
-}, "Outgoing muted/unmuted video track");
+}, "Setting video exchange");
+
+promise_test((test) => {
+    return checkVideoBlack(false, "canvas1");
+}, "Track is enabled, video should not be black");
+
+promise_test((test) => {
+    track.enabled = false;
+    return checkVideoBlack(true, "canvas2");
+}, "Track is disabled, video should be black");
+
+promise_test((test) => {
+    track.enabled = true;
+    return checkVideoBlack(true, "canvas2");
+}, "Track is enabled, video should not be black");
         </script>
     </body>
 </html>
