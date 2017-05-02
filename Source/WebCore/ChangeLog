@@ -1,3 +1,45 @@
+2017-05-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GStreamer] Dailymotion live stream videos don't play
+        https://bugs.webkit.org/show_bug.cgi?id=170767
+
+        Reviewed by Sergio Villar Senin.
+
+        The video shows a message saying that an error occurred and nothing is played. There are actually several
+        problems with dailymotion. The main issue is that URLs are redirected by the server, and GStreamer needs to
+        know the redirected URL. Once GStreamer knows the redirected URL the error message no longer appears, the video
+        starts but it always stops after a few seconds. This is because the source receives an early EOS while still
+        downloading the fragments. The reason of the early EOS is because dailymotion sends a wrong Content-Length header,
+        something that is expected to happen and we correctly handle that case when receiving the data, by updating the
+        size accordingly if the bytes received are longer than the expected content length. This particular case
+        doesn't work well with GStreamer automatic EOS handling, which is the default. At some point, GStreamer detects
+        that the bytes received are at least the expected ones and emits a GST_EVENT_EOS that the GstUriDownloader
+        handles finishing the download early. We should always disable automatic EOS, since we know when EOS actually
+        happens and we already call gst_app_src_end_of_stream(). This patch also emits a GST_EVENT_CUSTOM_DOWNSTREAM_STICKY
+        event to let GStreamer know about the HTTP headers sent and received.
+
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (webkit_web_src_init): Disable automatic EOS.
+        (webKitWebSrcGetProperty): Return the redirected URL in case of redirection.
+        (webKitWebSrcStart): Pass the ResourceRequest to the stream clients.
+        (webKitWebSrcQueryWithParent): Set the redirected URL in the query in case of redirection.
+        (webKitWebSrcSetUri): Clear also the redirected URL when setting a new URI.
+        (StreamingClient::StreamingClient): Use GRefPtr for the source and initialize the request too.
+        (StreamingClient::~StreamingClient): Remove explicit unref.
+        (StreamingClient::createReadBuffer):
+        (StreamingClient::handleResponseReceived): Initialize the redirected URL in case of redirection. Create and push
+        the HTTP headers event.
+        (StreamingClient::handleDataReceived):
+        (StreamingClient::handleNotifyFinished):
+        (CachedResourceStreamingClient::CachedResourceStreamingClient):
+        (CachedResourceStreamingClient::responseReceived):
+        (CachedResourceStreamingClient::accessControlCheckFailed):
+        (CachedResourceStreamingClient::loadFailed):
+        (ResourceHandleStreamingClient::ResourceHandleStreamingClient):
+        (ResourceHandleStreamingClient::didFail):
+        (ResourceHandleStreamingClient::wasBlocked):
+        (ResourceHandleStreamingClient::cannotShowURL):
+
 2017-05-02  Youenn Fablet  <youenn@apple.com>
 
         Adding logging to RTCPeerConnection to allow WebRTC application debugging
