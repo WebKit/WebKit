@@ -1,3 +1,21 @@
+2017-05-02  Mark Lam  <mark.lam@apple.com>
+
+        JSFixedArray::allocationSize() should not allow for allocation failure.
+        https://bugs.webkit.org/show_bug.cgi?id=171516
+
+        Reviewed by Geoffrey Garen.
+
+        Since JSFixedArray::createFromArray() now handles allocation failures by throwing
+        OutOfMemoryErrors, its helper function allocationSize() (which computes the buffer
+        size to allocate) should also allow for allocation failure on overflow.
+
+        This issue is covered by the stress/js-fixed-array-out-of-memory.js test when
+        run on 32-bit builds.
+
+        * runtime/JSFixedArray.h:
+        (JSC::JSFixedArray::tryCreate):
+        (JSC::JSFixedArray::allocationSize):
+
 2017-05-01  Zan Dobersek  <zdobersek@igalia.com>
 
         [aarch64][Linux] m_allowScratchRegister assert hit in MacroAssemblerARM64 under B3::Air::CCallSpecial::generate()

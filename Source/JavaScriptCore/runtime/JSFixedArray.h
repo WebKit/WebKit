@@ -122,7 +122,11 @@ private:
 
     ALWAYS_INLINE static JSFixedArray* tryCreate(VM& vm, Structure* structure, unsigned size)
     {
-        void* buffer = tryAllocateCell<JSFixedArray>(vm.heap, allocationSize(size));
+        Checked<size_t, RecordOverflow> checkedAllocationSize = allocationSize(size);
+        if (UNLIKELY(checkedAllocationSize.hasOverflowed()))
+            return nullptr;
+
+        void* buffer = tryAllocateCell<JSFixedArray>(vm.heap, checkedAllocationSize.unsafeGet());
         if (UNLIKELY(!buffer))
             return nullptr;
         JSFixedArray* result = new (NotNull, buffer) JSFixedArray(vm, structure, size);
@@ -140,9 +144,9 @@ private:
     }
 
 
-    static size_t allocationSize(Checked<size_t> numItems)
+    static Checked<size_t, RecordOverflow> allocationSize(Checked<size_t, RecordOverflow> numItems)
     {
-        return (offsetOfData() + numItems * sizeof(WriteBarrier<Unknown>)).unsafeGet();
+        return offsetOfData() + numItems * sizeof(WriteBarrier<Unknown>);
     }
 };
 
