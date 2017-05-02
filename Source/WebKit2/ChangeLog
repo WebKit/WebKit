@@ -1,3 +1,13 @@
+2017-05-01  Brady Eidson  <beidson@apple.com>
+
+        Only try to get sandbox extension handle for IndexedDB directory if it is set.
+        rdar://problem/31925828 and https://bugs.webkit.org/show_bug.cgi?id=171522
+
+        Reviewed by Andy Estes.
+
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::resolveDirectoriesIfNecessary):
+
 2017-05-01  Timothy Horton  <timothy_horton@apple.com>
 
         Expose viewport-fit instead of clip-to-safe-area
