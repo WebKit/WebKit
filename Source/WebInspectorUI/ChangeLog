@@ -1,5 +1,16 @@
 2017-05-02  Fujii Hironori  <Hironori.Fujii@sony.com>
 
+        [GTK] Web Inspector: Remove GTK+ icon FontVariantSmallCaps.svg
+        https://bugs.webkit.org/show_bug.cgi?id=171542
+
+        Reviewed by Carlos Garcia Campos.
+
+        This image is not used and Apple's one was removed in Bug 148720.
+
+        * UserInterface/Images/gtk/FontVariantSmallCaps.svg: Removed.
+
+2017-05-02  Fujii Hironori  <Hironori.Fujii@sony.com>
+
         [GTK] Web Inspector: Remove GTK+ icons AnimationPlayStatePaused.svg and AnimationPlayStateRunning.svg
         https://bugs.webkit.org/show_bug.cgi?id=171540
 
