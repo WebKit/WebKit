@@ -1,5 +1,14 @@
 2017-05-01  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Mark inspector/debugger/tail-recursion.html as flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=168387
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
+2017-05-01  Ryan Haddad  <ryanhaddad@apple.com>
+
         Rebaseline two fast/visual-viewport tests for iOS.
 
         Unreviewed test gardening.
