@@ -30,9 +30,10 @@
 
 #if USE(AUDIO_SESSION)
 
-#include <wtf/Forward.h>
+#include <memory>
+#include <wtf/HashSet.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/UniqueRef.h>
 
 namespace WebCore {
 
@@ -42,19 +43,6 @@ class AudioSession {
     WTF_MAKE_NONCOPYABLE(AudioSession);
 public:
     WEBCORE_EXPORT static AudioSession& sharedSession();
-
-    class Observer {
-    public:
-        virtual ~Observer() = default;
-
-        virtual void hardwareMutedStateDidChange(AudioSession*) { };
-        virtual void currentAudioInputDeviceChanged() { };
-        virtual void currentAudioOutputDeviceChanged() { };
-        virtual void audioServicesLost() { };
-        virtual void audioServicesReset() { };
-    };
-    void addObserver(Observer&);
-    void removeObserver(Observer&);
 
     enum CategoryType {
         None,
@@ -80,15 +68,26 @@ public:
     size_t preferredBufferSize() const;
     void setPreferredBufferSize(size_t);
 
-    bool outputDeviceSupportsLowPowerMode() const;
+    class MutedStateObserver {
+    public:
+        virtual ~MutedStateObserver() { }
+
+        virtual void hardwareMutedStateDidChange(AudioSession*) = 0;
+    };
+
+    void addMutedStateObserver(MutedStateObserver*);
+    void removeMutedStateObserver(MutedStateObserver*);
+
     bool isMuted() const;
+    void handleMutedStateChange();
 
 private:
     friend class NeverDestroyed<AudioSession>;
     AudioSession();
     ~AudioSession();
 
-    UniqueRef<AudioSessionPrivate> m_private;
+    std::unique_ptr<AudioSessionPrivate> m_private;
+    HashSet<MutedStateObserver*> m_observers;
 };
 
 }

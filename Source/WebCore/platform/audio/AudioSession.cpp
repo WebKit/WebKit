@@ -44,7 +44,7 @@ class AudioSessionPrivate {
 };
 
 AudioSession::AudioSession()
-    : m_private(makeUniqueRef<AudioSessionPrivate>())
+    : m_private(nullptr)
 {
     notImplemented();
 }

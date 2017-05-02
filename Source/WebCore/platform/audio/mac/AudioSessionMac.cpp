@@ -32,10 +32,7 @@
 #include "Logging.h"
 #include "NotImplemented.h"
 #include <CoreAudio/AudioHardware.h>
-#include <wtf/BlockPtr.h>
-#include <wtf/HashSet.h>
 #include <wtf/MainThread.h>
-#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -56,36 +53,18 @@ static AudioDeviceID defaultDevice()
 
 class AudioSessionPrivate {
 public:
-    AudioSessionPrivate(AudioSession& session, bool mutedState)
-        : weakPtrFactory(&session)
-        , lastMutedState(mutedState) { }
-    WeakPtrFactory<AudioSession> weakPtrFactory;
+    AudioSessionPrivate(bool mutedState)
+        : lastMutedState(mutedState) { }
     bool lastMutedState;
-    HashSet<AudioSession::Observer*> observers;
-    BlockPtr<void(UInt32, const AudioObjectPropertyAddress*)> muteChangedBlock;
-    BlockPtr<void(UInt32, const AudioObjectPropertyAddress*)> audioInputDeviceChangedBlock;
-    BlockPtr<void(UInt32, const AudioObjectPropertyAddress*)> outputDeviceChangedBlock;
-    mutable std::optional<bool> outputDeviceSupportsLowPowerMode;
 };
 
 AudioSession::AudioSession()
-    : m_private(makeUniqueRef<AudioSessionPrivate>(*this, isMuted()))
+    : m_private(std::make_unique<AudioSessionPrivate>(isMuted()))
 {
-    m_private->outputDeviceChangedBlock = (AudioObjectPropertyListenerBlock)[this, weakThis = m_private->weakPtrFactory.createWeakPtr()] (UInt32, const AudioObjectPropertyAddress*) {
-        if (!weakThis)
-            return;
-
-        m_private->outputDeviceSupportsLowPowerMode = std::nullopt;
-
-        for (auto* observer : m_private->observers)
-            observer->currentAudioOutputDeviceChanged();
-    };
 }
 
 AudioSession::~AudioSession()
 {
-    AudioObjectPropertyAddress outputDeviceAddress = { kAudioHardwarePropertyDefaultOutputDevice, kAudioObjectPropertyScopeGlobal, kAudioObjectPropertyElementMaster };
-    AudioObjectRemovePropertyListenerBlock(defaultDevice(), &outputDeviceAddress, dispatch_get_main_queue(), m_private->outputDeviceChangedBlock.get());
 }
 
 AudioSession::CategoryType AudioSession::category() const
@@ -222,91 +201,48 @@ bool AudioSession::isMuted() const
     }
 }
 
-static bool currentDeviceSupportsLowPowerBufferSize()
+static OSStatus handleMutePropertyChange(AudioObjectID, UInt32, const AudioObjectPropertyAddress*, void* inClientData)
 {
-    AudioDeviceID deviceID = kAudioDeviceUnknown;
-    UInt32 descriptorSize = sizeof(deviceID);
-    AudioObjectPropertyAddress defaultOutputDeviceDescriptor = {
-        kAudioHardwarePropertyDefaultOutputDevice,
-        kAudioObjectPropertyScopeGlobal,
-        kAudioObjectPropertyElementMaster };
-
-    if (AudioObjectGetPropertyData(kAudioObjectSystemObject, &defaultOutputDeviceDescriptor, 0, 0, &descriptorSize, (void*)&deviceID))
-        return false;
-
-    UInt32 transportType = kAudioDeviceTransportTypeUnknown;
-    descriptorSize = sizeof(transportType);
-    AudioObjectPropertyAddress tranportTypeDescriptor = {
-        kAudioDevicePropertyTransportType,
-        kAudioObjectPropertyScopeGlobal,
-        kAudioObjectPropertyElementMaster,
-    };
-
-    if (AudioObjectGetPropertyData(deviceID, &tranportTypeDescriptor, 0, 0, &descriptorSize, &transportType))
-        return false;
-
-    // Only allow low-power buffer size when using built-in output device, many external devices perform
-    // poorly with a large output buffer.
-    return kAudioDeviceTransportTypeBuiltIn == transportType;
+    callOnMainThread([inClientData] {
+        reinterpret_cast<AudioSession*>(inClientData)->handleMutedStateChange();
+    });
+    return noErr;
 }
 
-bool AudioSession::outputDeviceSupportsLowPowerMode() const
+void AudioSession::handleMutedStateChange()
 {
-    if (!m_private->outputDeviceSupportsLowPowerMode)
-        m_private->outputDeviceSupportsLowPowerMode = currentDeviceSupportsLowPowerBufferSize();
-    return m_private->outputDeviceSupportsLowPowerMode.value();
-}
-
-void AudioSession::addObserver(Observer& observer)
-{
-    ASSERT(!m_private->observers.contains(&observer));
-    m_private->observers.add(&observer);
-
-    if (m_private->observers.size() > 1)
+    if (!m_private)
         return;
 
-    auto weakThis = m_private->weakPtrFactory.createWeakPtr();
-    m_private->muteChangedBlock = (AudioObjectPropertyListenerBlock)[this, weakThis] (UInt32, const AudioObjectPropertyAddress*) {
-        if (!weakThis)
-            return;
+    bool isCurrentlyMuted = isMuted();
+    if (m_private->lastMutedState == isCurrentlyMuted)
+        return;
 
-        bool isCurrentlyMuted = isMuted();
-        if (m_private->lastMutedState == isCurrentlyMuted)
-            return;
-        m_private->lastMutedState = isCurrentlyMuted;
+    for (auto* observer : m_observers)
+        observer->hardwareMutedStateDidChange(this);
 
-        for (auto* observer : m_private->observers)
-            observer->hardwareMutedStateDidChange(this);
-    };
-
-    m_private->audioInputDeviceChangedBlock = (AudioObjectPropertyListenerBlock)[this, weakThis] (UInt32, const AudioObjectPropertyAddress*) {
-        if (!weakThis)
-            return;
-
-        for (auto* observer : m_private->observers)
-            observer->currentAudioInputDeviceChanged();
-    };
-
-    AudioObjectPropertyAddress muteAddress = { kAudioDevicePropertyMute, kAudioDevicePropertyScopeOutput, kAudioObjectPropertyElementMaster };
-    AudioObjectAddPropertyListenerBlock(defaultDevice(), &muteAddress, dispatch_get_main_queue(), m_private->muteChangedBlock.get());
-
-    AudioObjectPropertyAddress inputDeviceAddress = { kAudioHardwarePropertyDefaultInputDevice, kAudioObjectPropertyScopeGlobal, kAudioObjectPropertyElementMaster };
-    AudioObjectAddPropertyListenerBlock(defaultDevice(), &inputDeviceAddress, dispatch_get_main_queue(), m_private->audioInputDeviceChangedBlock.get());
+    m_private->lastMutedState = isCurrentlyMuted;
 }
 
-void AudioSession::removeObserver(Observer& observer)
+void AudioSession::addMutedStateObserver(MutedStateObserver* observer)
 {
-    ASSERT(m_private->observers.contains(&observer));
-    m_private->observers.remove(&observer);
+    m_observers.add(observer);
 
-    if (!m_private->observers.isEmpty())
+    if (m_observers.size() > 1)
         return;
 
     AudioObjectPropertyAddress muteAddress = { kAudioDevicePropertyMute, kAudioDevicePropertyScopeOutput, kAudioObjectPropertyElementMaster };
-    AudioObjectRemovePropertyListenerBlock(defaultDevice(), &muteAddress, dispatch_get_main_queue(), m_private->muteChangedBlock.get());
+    AudioObjectAddPropertyListener(defaultDevice(), &muteAddress, handleMutePropertyChange, this);
+}
 
-    AudioObjectPropertyAddress inputDeviceAddress = { kAudioHardwarePropertyDefaultInputDevice, kAudioObjectPropertyScopeGlobal, kAudioObjectPropertyElementMaster };
-    AudioObjectRemovePropertyListenerBlock(defaultDevice(), &inputDeviceAddress, dispatch_get_main_queue(), m_private->audioInputDeviceChangedBlock.get());
+void AudioSession::removeMutedStateObserver(MutedStateObserver* observer)
+{
+    if (m_observers.size() == 1) {
+        AudioObjectPropertyAddress muteAddress = { kAudioDevicePropertyMute, kAudioDevicePropertyScopeOutput, kAudioObjectPropertyElementMaster };
+        AudioObjectRemovePropertyListener(defaultDevice(), &muteAddress, handleMutePropertyChange, this);
+    }
+
+    m_observers.remove(observer);
 }
 
 }

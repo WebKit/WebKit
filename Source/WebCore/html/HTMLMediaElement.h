@@ -51,7 +51,7 @@
 #include "VideoTrack.h"
 #endif
 
-#if USE(AUDIO_SESSION)
+#if USE(AUDIO_SESSION) && PLATFORM(MAC)
 #include "AudioSession.h"
 #endif
 
@@ -125,8 +125,8 @@ class HTMLMediaElement
     , private TextTrackClient
     , private VideoTrackClient
 #endif
-#if USE(AUDIO_SESSION)
-    , private AudioSession::Observer
+#if USE(AUDIO_SESSION) && PLATFORM(MAC)
+    , private AudioSession::MutedStateObserver
 #endif
 {
 public:
@@ -817,7 +817,7 @@ private:
 
     void pageMutedStateDidChange() override;
 
-#if USE(AUDIO_SESSION)
+#if USE(AUDIO_SESSION) && PLATFORM(MAC)
     void hardwareMutedStateDidChange(AudioSession*) final;
 #endif
 

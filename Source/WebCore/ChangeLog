@@ -1,3 +1,16 @@
+2017-05-01  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r216024.
+
+        This change caused ios-simulator LayoutTests to exit early
+        with assertion failures.
+
+        Reverted changeset:
+
+        "Add audio device change notifications to AudioSession."
+        https://bugs.webkit.org/show_bug.cgi?id=171403
+        http://trac.webkit.org/changeset/216024
+
 2017-05-01  Timothy Horton  <timothy_horton@apple.com>
 
         Expose viewport-fit instead of clip-to-safe-area
