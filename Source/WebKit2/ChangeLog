@@ -1,3 +1,26 @@
+2017-05-02  Simon Fraser  <simon.fraser@apple.com>
+
+        Dynamically added position:fixed element is in the wrong place
+        https://bugs.webkit.org/show_bug.cgi?id=170280
+        rdar://problem/31374008
+
+        Reviewed by Tim Horton.
+
+        Layers for position:fixed elements have their positions reconciled after scrolls
+        via AsyncScrollingCoordinator::reconcileViewportConstrainedLayerPositions() and GraphicsLayerCA::syncPosition(),
+        which updates the GraphicsLayer's position, but does not push it to the PlatformCALayer.
+
+        This bug was a case where a position:fixed element gained a fixed ancestor, so had a GraphicsLayerCA whose
+        position had been updated via syncPosition() in the past. A subsequent layout updated the GraphicsLayerCA position,
+        but to a value that was the same as its pre-sync position, so the PlatformCALayerRemote's position didn't change,
+        but there was no signal to the UI process to restore the layer's pre-scrolled position.
+
+        Fix by avoiding the early return in PlatformCALayerRemote::setPosition(), to ensure that GraphicsLayerCA
+        geometry updates in the web process always send new positions to the UI process.
+
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.cpp:
+        (WebKit::PlatformCALayerRemote::setPosition):
+
 2017-05-02  Gwang Yoon Hwang  <yoon@igalia.com>
 
         [GTK] Drop coordinated surfaces from the compositing thread as soon as possible

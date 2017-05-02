@@ -1,3 +1,14 @@
+2017-05-02  Simon Fraser  <simon.fraser@apple.com>
+
+        Dynamically added position:fixed element is in the wrong place
+        https://bugs.webkit.org/show_bug.cgi?id=170280
+        rdar://problem/31374008
+
+        Reviewed by Tim Horton.
+
+        * scrollingcoordinator/ios/nested-fixed-layer-positions-expected.html: Added.
+        * scrollingcoordinator/ios/nested-fixed-layer-positions.html: Added.
+
 2017-05-02  Ryan Haddad  <ryanhaddad@apple.com>
 
         Move flaky expectation for svg/animations/getCurrentTime-pause-unpause.html ios-wk1 to ios TestExpectations file.
