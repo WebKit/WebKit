@@ -558,10 +558,9 @@ size_t CSSFontFace::pump()
 
         if (source->status() == CSSFontFaceSource::Status::Pending) {
             ASSERT(m_status == Status::Pending || m_status == Status::Loading || m_status == Status::TimedOut);
-            ASSERT(m_fontSelector);
             if (m_status == Status::Pending)
                 setStatus(Status::Loading);
-            source->load(*m_fontSelector);
+            source->load(m_fontSelector.get());
         }
 
         switch (source->status()) {
@@ -612,10 +611,9 @@ RefPtr<Font> CSSFontFace::font(const FontDescription& fontDescription, bool synt
     for (size_t i = startIndex; i < m_sources.size(); ++i) {
         auto& source = m_sources[i];
         if (source->status() == CSSFontFaceSource::Status::Pending) {
-            ASSERT(m_fontSelector);
-            if (fontIsLoading)
+            if (fontIsLoading && source->requiresExternalResource())
                 continue;
-            source->load(*m_fontSelector);
+            source->load(m_fontSelector.get());
         }
 
         switch (source->status()) {

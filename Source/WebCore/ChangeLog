@@ -1,3 +1,35 @@
+2017-05-02  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Font Loading API specifies font is loaded but sizing of font after load reports inconsistent values
+        https://bugs.webkit.org/show_bug.cgi?id=168533
+
+        Reviewed by Zalan Bujtas.
+
+        Previously, we were marking all local() fonts as immediately successful,
+        regardless of whether or not they were present on the system. Instead, we
+        should use the load() function to make this determination and mark the font
+        as failed if it doesn't exist. (This is, after all, the whole point of the
+        load() function). This brings us in-line with Firefox's and Chrome's
+        behavior.
+
+        Test: fast/text/font-loading-local.html
+
+        * css/CSSFontFace.cpp:
+        (WebCore::CSSFontFace::pump): Remote loading requires the FontSelector,
+        but it isn't available for local fonts. Now that load() is called for both
+        local and remote fonts, the ASSERT() should be lowered into the load()
+        function and scoped to just the case where we have a remote font.
+        (WebCore::CSSFontFace::font): Ditto.
+        * css/CSSFontFaceSource.cpp:
+        (WebCore::CSSFontFaceSource::CSSFontFaceSource): Don't immediatley set
+        the success/failure state for local fonts.
+        (WebCore::CSSFontFaceSource::load): Move loading logic from font() to
+        load(). None of this code is new; it just is moved.
+        (WebCore::CSSFontFaceSource::font): Delete code moved to load().
+        * css/CSSFontFaceSource.h:
+        * css/FontFace.cpp:
+        (WebCore::FontFace::create):
+
 2017-05-02  Youenn Fablet  <youenn@apple.com>
 
         Allow media stream based videos with sound to autoplay if the page is already playing sound

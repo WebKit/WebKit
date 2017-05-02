@@ -107,7 +107,8 @@ ExceptionOr<Ref<FontFace>> FontFace::create(Document& document, const String& fa
 
     if (!dataRequiresAsynchronousLoading) {
         result->backing().load();
-        ASSERT(result->backing().status() == CSSFontFace::Status::Success);
+        auto status = result->backing().status();
+        ASSERT_UNUSED(status, status == CSSFontFace::Status::Success || status == CSSFontFace::Status::Failure);
     }
 
     return WTFMove(result);

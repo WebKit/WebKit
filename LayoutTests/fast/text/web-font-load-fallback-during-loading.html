@@ -53,6 +53,8 @@ var token = window.setInterval(function () {
 </head>
 <body>
 This test makes sure that fallback fonts are used during the time when fonts are loading. The test passes if the next line below reads "Test complete" and all the subsequent statements below are legible and true.
+<!-- FIXME: This test is racey. The font may complete downloading before the 0-delay timer fires,
+in which case the "Test Complete" text will not be added. -->
 <p id="console"></p>
 <p><span id="reference" style="font-family: Helvetica">This is rendered with Helvetica.</span></p>
 <p><span class="test" style="font-family: WebFont">This is rendered with Helvetica.</span></p>

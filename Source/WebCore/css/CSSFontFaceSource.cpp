@@ -89,7 +89,7 @@ CSSFontFaceSource::CSSFontFaceSource(CSSFontFace& owner, const String& familyNam
     if (m_font)
         m_font->addClient(*this);
 
-    if (status() == Status::Pending && (!m_font || m_font->isLoaded())) {
+    if (status() == Status::Pending && m_font && m_font->isLoaded()) {
         setStatus(Status::Loading);
         if (m_font && m_font->errorOccurred())
             setStatus(Status::Failure);
@@ -128,12 +128,44 @@ void CSSFontFaceSource::fontLoaded(CachedFont& loadedFont)
     m_face.fontLoaded(*this);
 }
 
-void CSSFontFaceSource::load(CSSFontSelector& fontSelector)
+void CSSFontFaceSource::load(CSSFontSelector* fontSelector)
 {
     setStatus(Status::Loading);
 
-    ASSERT(m_font);
-    fontSelector.beginLoadingFontSoon(*m_font);
+    if (m_font) {
+        ASSERT(fontSelector);
+        fontSelector->beginLoadingFontSoon(*m_font);
+    } else {
+        bool success = false;
+        if (m_svgFontFaceElement) {
+            if (is<SVGFontElement>(m_svgFontFaceElement->parentNode())) {
+                ASSERT(!m_inDocumentCustomPlatformData);
+                SVGFontElement& fontElement = downcast<SVGFontElement>(*m_svgFontFaceElement->parentNode());
+                if (auto otfFont = convertSVGToOTFFont(fontElement))
+                    m_generatedOTFBuffer = SharedBuffer::create(WTFMove(otfFont.value()));
+                if (m_generatedOTFBuffer) {
+                    m_inDocumentCustomPlatformData = createFontCustomPlatformData(*m_generatedOTFBuffer);
+                    success = static_cast<bool>(m_inDocumentCustomPlatformData);
+                }
+            }
+        } else if (m_immediateSource) {
+            ASSERT(!m_immediateFontCustomPlatformData);
+            bool wrapping;
+            RefPtr<SharedBuffer> buffer = SharedBuffer::create(static_cast<const char*>(m_immediateSource->baseAddress()), m_immediateSource->byteLength());
+            ASSERT(buffer);
+            m_immediateFontCustomPlatformData = CachedFont::createCustomFontData(*buffer, wrapping);
+            success = static_cast<bool>(m_immediateFontCustomPlatformData);
+        } else {
+            // We are only interested in whether or not fontForFamily() returns null or not. Luckily, none of
+            // the values in the FontDescription other than the family name can cause the function to return
+            // null if it wasn't going to otherwise (and vice-versa).
+            FontCascadeDescription fontDescription;
+            fontDescription.setOneFamily(m_familyNameOrURI);
+            fontDescription.setComputedSize(1);
+            success = FontCache::singleton().fontForFamily(fontDescription, m_familyNameOrURI, nullptr, nullptr, FontSelectionSpecifiedCapabilities(), true);
+        }
+        setStatus(success ? Status::Success : Status::Failure);
+    }
 }
 
 RefPtr<Font> CSSFontFaceSource::font(const FontDescription& fontDescription, bool syntheticBold, bool syntheticItalic, const FontFeatureSettings& fontFaceFeatures, const FontVariantSettings& fontFaceVariantSettings, FontSelectionSpecifiedCapabilities fontFaceCapabilities)
@@ -147,12 +179,7 @@ RefPtr<Font> CSSFontFaceSource::font(const FontDescription& fontDescription, boo
 
     if (!m_font && !fontFaceElement) {
         if (m_immediateSource) {
-            if (!m_immediateFontCustomPlatformData) {
-                bool wrapping;
-                RefPtr<SharedBuffer> buffer = SharedBuffer::create(static_cast<const char*>(m_immediateSource->baseAddress()), m_immediateSource->byteLength());
-                ASSERT(buffer);
-                m_immediateFontCustomPlatformData = CachedFont::createCustomFontData(*buffer, wrapping);
-            } if (!m_immediateFontCustomPlatformData)
+            if (!m_immediateFontCustomPlatformData)
                 return nullptr;
             return Font::create(CachedFont::platformDataFromCustomData(*m_immediateFontCustomPlatformData, fontDescription, syntheticBold, syntheticItalic, fontFaceFeatures, fontFaceVariantSettings, fontFaceCapabilities), true);
         }
@@ -176,14 +203,6 @@ RefPtr<Font> CSSFontFaceSource::font(const FontDescription& fontDescription, boo
 #if ENABLE(SVG_FONTS)
     if (!is<SVGFontElement>(m_svgFontFaceElement->parentNode()))
         return nullptr;
-    if (!m_inDocumentCustomPlatformData) {
-        SVGFontElement& fontElement = downcast<SVGFontElement>(*m_svgFontFaceElement->parentNode());
-        if (auto otfFont = convertSVGToOTFFont(fontElement))
-            m_generatedOTFBuffer = SharedBuffer::create(WTFMove(otfFont.value()));
-        if (!m_generatedOTFBuffer)
-            return nullptr;
-        m_inDocumentCustomPlatformData = createFontCustomPlatformData(*m_generatedOTFBuffer);
-    }
     if (!m_inDocumentCustomPlatformData)
         return nullptr;
 #if PLATFORM(COCOA)

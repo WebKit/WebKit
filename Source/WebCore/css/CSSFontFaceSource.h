@@ -66,8 +66,10 @@ public:
 
     const AtomicString& familyNameOrURI() const { return m_familyNameOrURI; }
 
-    void load(CSSFontSelector&);
+    void load(CSSFontSelector*);
     RefPtr<Font> font(const FontDescription&, bool syntheticBold, bool syntheticItalic, const FontFeatureSettings&, const FontVariantSettings&, FontSelectionSpecifiedCapabilities);
+
+    bool requiresExternalResource() const { return m_font; }
 
 #if ENABLE(SVG_FONTS)
     bool isSVGFontFaceSource() const;
