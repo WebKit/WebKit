@@ -55,12 +55,14 @@ set(JavaScriptCore_SOURCES
     API/JSCallbackObject.cpp
     API/JSClassRef.cpp
     API/JSContextRef.cpp
+    API/JSMarkingConstraintPrivate.cpp
     API/JSObjectRef.cpp
     API/JSTypedArray.cpp
     API/JSScriptRef.cpp
     API/JSStringRef.cpp
     API/JSValueRef.cpp
     API/JSWeakObjectMapRefPrivate.cpp
+    API/JSWeakPrivate.cpp
     API/OpaqueJSString.cpp
 
     assembler/ARMAssembler.cpp
