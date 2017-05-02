@@ -1,5 +1,16 @@
 2017-05-02  Daniel Bates  <dabates@apple.com>
 
+        Fix the build after <https://trac.webkit.org/changeset/216102>
+        (https://bugs.webkit.org/show_bug.cgi?id=170925)
+
+        Export into global scope ASCIICaseInsensitiveStringViewHashTranslator.
+
+        Also fix indentation of member functions of ASCIICaseInsensitiveStringViewHashTranslator.
+
+        * wtf/text/StringHash.h:
+
+2017-05-02  Daniel Bates  <dabates@apple.com>
+
         Using StringView.split() instead of String.split() in some places
         https://bugs.webkit.org/show_bug.cgi?id=170925
 
