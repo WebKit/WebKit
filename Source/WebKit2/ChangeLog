@@ -1,3 +1,18 @@
+2017-05-01  Chris Dumez  <cdumez@apple.com>
+
+        Use RELEASE_LOG_ERROR() to do process termination logging
+        https://bugs.webkit.org/show_bug.cgi?id=171521
+
+        Reviewed by Andreas Kling.
+
+        Use RELEASE_LOG_ERROR() to do process termination logging instead of RELEASE_LOG().
+        This makes the issue more visible in Console.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didExceedActiveMemoryLimit):
+        (WebKit::WebProcessProxy::didExceedInactiveMemoryLimit):
+        (WebKit::WebProcessProxy::didExceedBackgroundCPULimit):
+
 2017-05-01  Brady Eidson  <beidson@apple.com>
 
         Only try to get sandbox extension handle for IndexedDB directory if it is set.
