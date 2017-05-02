@@ -1,5 +1,13 @@
 2017-05-02  Filip Pizlo  <fpizlo@apple.com>
 
+        Unreviewed, fix pedantic C compilers.
+
+        * API/tests/testapi.c:
+        (markingConstraint):
+        (testMarkingConstraints):
+
+2017-05-02  Filip Pizlo  <fpizlo@apple.com>
+
         Unreviewed, fix cmake build.
 
         * CMakeLists.txt:

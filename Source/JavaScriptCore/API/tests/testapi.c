@@ -1126,7 +1126,7 @@ static void markingConstraint(JSMarkerRef marker, void *userData)
     JSWeakRef *weakRefs;
     unsigned i;
     
-    weakRefs = userData;
+    weakRefs = (JSWeakRef*)userData;
     
     for (i = 0; i < numWeakRefs; i += 2) {
         JSObjectRef object = JSWeakGetObject(weakRefs[i]);
@@ -1148,7 +1148,7 @@ static void testMarkingConstraints(void)
     group = JSContextGroupCreate();
     context = JSGlobalContextCreateInGroup(group, NULL);
 
-    weakRefs = calloc(numWeakRefs, sizeof(JSWeakRef));
+    weakRefs = (JSWeakRef*)calloc(numWeakRefs, sizeof(JSWeakRef));
 
     JSContextGroupAddMarkingConstraint(group, markingConstraint, weakRefs);
     
