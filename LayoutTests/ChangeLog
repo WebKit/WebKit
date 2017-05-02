@@ -1,5 +1,16 @@
 2017-05-01  Zan Dobersek  <zdobersek@igalia.com>
 
+        [GCrypt] ECDSA signing and verification support
+        https://bugs.webkit.org/show_bug.cgi?id=171103
+
+        Reviewed by Carlos Garcia Campos.
+
+        * platform/gtk/TestExpectations: Enable the passing ECDSA tests under
+        crypto/subtle/. The ECDSA tests that utilize PKCS #8 and SPKI remain
+        skipped since support for that hasn't landed yet.
+
+2017-05-01  Zan Dobersek  <zdobersek@igalia.com>
+
         [GCrypt] HKDF bit derivation support
         https://bugs.webkit.org/show_bug.cgi?id=171074
 

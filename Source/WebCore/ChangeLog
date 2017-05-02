@@ -1,5 +1,38 @@
 2017-05-01  Zan Dobersek  <zdobersek@igalia.com>
 
+        [GCrypt] ECDSA signing and verification support
+        https://bugs.webkit.org/show_bug.cgi?id=171103
+
+        Reviewed by Carlos Garcia Campos.
+
+        Implement WebCrypto ECDSA support for configurations that
+        are using libgcrypt.
+
+        For signing, the provided data is first hashed with the specified
+        digest algorithm and embedded into a data s-expression. It's then
+        passed to gcry_pk_sign() along with the private key, returning a
+        sig-val s-expression. The r and s parameters are then retrieved from
+        that sig-val and their data extracted and concatenated in the output
+        Vector<>.
+
+        For verification, the data is again hashed and embedded into a data
+        s-expression. The r and s parameters are extracted from the passed-in
+        signature Vector<> and embedded into a sig-val s-expression. The data
+        and sig-val s-expressions are then passed to gcry_pk_verify() along
+        with the public key. The verification succeeds if no error is returned
+        and fails if the returned error code is GPG_ERR_BAD_SIGNATURE.
+
+        * crypto/gcrypt/CryptoAlgorithmECDSAGCrypt.cpp:
+        (WebCore::hashCryptoDigestAlgorithm):
+        (WebCore::hashAlgorithmName):
+        (WebCore::mpiData):
+        (WebCore::gcryptSign):
+        (WebCore::gcryptVerify):
+        (WebCore::CryptoAlgorithmECDSA::platformSign):
+        (WebCore::CryptoAlgorithmECDSA::platformVerify):
+
+2017-05-01  Zan Dobersek  <zdobersek@igalia.com>
+
         [GCrypt] HKDF bit derivation support
         https://bugs.webkit.org/show_bug.cgi?id=171074
 
