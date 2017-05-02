@@ -1,6 +1,6 @@
 "use strict";
 
-const __numWorkers = 16;
+const __numWorkers = 8;
 let __count = 0;
 function reallyDone() {
     if (++__count === (__numWorkers * 2)) {

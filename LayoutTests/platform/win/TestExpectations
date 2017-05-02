@@ -3804,3 +3804,10 @@ fast/canvas/webgl/webglcontextchangedevent.html [ Skip ]
 
 # There is not NetworkProcess in WK1, so it can't crash.
 http/tests/websocket/tests/hybi/network-process-crash-error.html [ Skip ]
+
+# We don't support Wasm on Windows.
+workers/wasm-hashset-many-2.html [ Skip ]
+workers/wasm-hashset-many.html [ Skip ]
+workers/wasm-hashset.html [ Skip ]
+workers/wasm-long-compile-many.html [ Skip ]
+workers/wasm-long-compile.html [ Skip ]

@@ -1,3 +1,14 @@
+2017-05-01  Saam Barati  <sbarati@apple.com>
+
+        REGRESSION: LayoutTest workers/wasm-hashset-many.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=171449
+
+        Unreviewed.
+
+        * platform/win/TestExpectations: Skip Wasm tests on Windows.
+        * workers/wasm-hashset-many-expected.txt:
+        * workers/wasm-hashset/many-test.js: Make wasm-hashset-many run fewer workers.
+
 2017-05-01  Youenn Fablet  <youenn@apple.com>
 
         Ensure RealtimeOutgoingVideoSource sends a black frame when its related source is muted
