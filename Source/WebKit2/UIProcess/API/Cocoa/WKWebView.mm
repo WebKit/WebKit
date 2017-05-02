@@ -2633,6 +2633,16 @@ static bool scrollViewCanScroll(UIScrollView *scrollView)
 #endif
 }
 
+- (void)_didChangeAvoidsUnsafeArea:(BOOL)avoidsUnsafeArea
+{
+    [self _updateScrollViewInsetAdjustmentBehavior];
+    [self _scheduleVisibleContentRectUpdate];
+
+    id <WKUIDelegatePrivate> uiDelegate = (id <WKUIDelegatePrivate>)[self UIDelegate];
+    if ([uiDelegate respondsToSelector:@selector(_webView:didChangeSafeAreaShouldAffectObscuredInsets:)])
+        [uiDelegate _webView:self didChangeSafeAreaShouldAffectObscuredInsets:avoidsUnsafeArea];
+}
+
 #endif // PLATFORM(IOS)
 
 #pragma mark OS X-specific methods

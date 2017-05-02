@@ -119,7 +119,7 @@ struct PrintInfo;
 - (void)_showPasswordViewWithDocumentName:(NSString *)documentName passwordHandler:(void (^)(NSString *))passwordHandler;
 - (void)_hidePasswordView;
 
-- (void)_updateScrollViewInsetAdjustmentBehavior;
+- (void)_didChangeAvoidsUnsafeArea:(BOOL)avoidsUnsafeArea;
 
 @property (nonatomic, readonly) WKPasswordView *_passwordView;
 

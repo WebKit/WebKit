@@ -823,8 +823,7 @@ void PageClientImpl::requestPasswordForQuickLookDocument(const String& fileName,
 
 void PageClientImpl::didChangeAvoidsUnsafeArea(bool avoidsUnsafeArea)
 {
-    [m_webView _updateScrollViewInsetAdjustmentBehavior];
-    [m_webView _scheduleVisibleContentRectUpdate];
+    [m_webView _didChangeAvoidsUnsafeArea:avoidsUnsafeArea];
 }
 
 } // namespace WebKit

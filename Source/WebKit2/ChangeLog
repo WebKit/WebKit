@@ -1,3 +1,21 @@
+2017-05-02  Timothy Horton  <timothy_horton@apple.com>
+
+        Inform clients when viewport-fit state changes, so they can recompute insets
+        https://bugs.webkit.org/show_bug.cgi?id=171573
+        <rdar://problem/31947614>
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _didChangeAvoidsUnsafeArea]):
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::didChangeAvoidsUnsafeArea):
+        For clients who use setObscuredInsets/setUnobscuredSafeAreaInsets
+        themselves, we need to let them know when the current state of
+        viewport-fit changes so that they can recompute the insets.
+
 2017-05-02  Gwang Yoon Hwang  <yoon@igalia.com>
 
         [GTK] Recycle textures while handling tiles
