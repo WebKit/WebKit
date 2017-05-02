@@ -1,3 +1,25 @@
+2017-04-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Crash at WebCore::ResourceHandle::clearClient() when streaming live video from dailymotion
+        https://bugs.webkit.org/show_bug.cgi?id=169725
+
+        Reviewed by Michael Catanzaro.
+
+        Make ResourceHandleStreamingClient refcounted and add an invalidate method to do the cleanup in the networking
+        thread while keeping a reference.
+
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (webKitWebSrcStop): Call invalidate before reseting client pointer.
+        (webKitWebSrcStart): Ditto.
+        (ResourceHandleStreamingClient::ResourceHandleStreamingClient): Remove all cleanup code after the run loop run call.
+        (ResourceHandleStreamingClient::~ResourceHandleStreamingClient): Just detach the thread.
+        (ResourceHandleStreamingClient::invalidate): Schedule a task on the networking thread to clean up and fiish the
+        run loop, protecting this.
+        (ResourceHandleStreamingClient::setDefersLoading): Protect this.
+        (ResourceHandleStreamingClient::didReceiveResponse): Do nothing if client was invalidated.
+        (ResourceHandleStreamingClient::didReceiveBuffer): Ditto.
+        (ResourceHandleStreamingClient::didFinishLoading): Ditto.
+
 2017-05-01  Zan Dobersek  <zdobersek@igalia.com>
 
         [GCrypt] ECDSA signing and verification support

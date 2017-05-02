@@ -84,17 +84,24 @@ class CachedResourceStreamingClient final : public PlatformMediaResourceClient, 
         void loadFinished(PlatformMediaResource&) override;
 };
 
-class ResourceHandleStreamingClient : public ResourceHandleClient, public StreamingClient {
-    WTF_MAKE_NONCOPYABLE(ResourceHandleStreamingClient); WTF_MAKE_FAST_ALLOCATED;
+class ResourceHandleStreamingClient : public ThreadSafeRefCounted<ResourceHandleStreamingClient>, public ResourceHandleClient, public StreamingClient {
     public:
-        ResourceHandleStreamingClient(WebKitWebSrc*, ResourceRequest&&);
+        static Ref<ResourceHandleStreamingClient> create(WebKitWebSrc* src, ResourceRequest&& request)
+        {
+            return adoptRef(*new ResourceHandleStreamingClient(src, WTFMove(request)));
+        }
         virtual ~ResourceHandleStreamingClient();
+
+        void invalidate();
 
         // StreamingClient virtual methods.
         bool loadFailed() const;
         void setDefersLoading(bool);
 
     private:
+        ResourceHandleStreamingClient(WebKitWebSrc*, ResourceRequest&&);
+        void cleanupAndStopRunLoop();
+
         // ResourceHandleClient virtual methods.
 #if USE(SOUP)
         char* getOrCreateReadBuffer(size_t requestedSize, size_t& actualSize) override;
@@ -143,7 +150,7 @@ struct _WebKitWebSrcPrivate {
 
     RefPtr<PlatformMediaResourceLoader> loader;
     RefPtr<PlatformMediaResource> resource;
-    std::unique_ptr<ResourceHandleStreamingClient> client;
+    RefPtr<ResourceHandleStreamingClient> client;
 
     bool didPassAccessControlCheck;
 
@@ -414,11 +421,14 @@ static void webKitWebSrcStop(WebKitWebSrc* src)
         });
     }
 
+    if (priv->client) {
+        priv->client->invalidate();
+        priv->client = nullptr;
+    }
+
     WTF::GMutexLocker<GMutex> locker(*GST_OBJECT_GET_LOCK(src));
 
     bool wasSeeking = std::exchange(priv->isSeeking, false);
-
-    priv->client = nullptr;
 
     if (priv->buffer) {
         unmapGstBuffer(priv->buffer.get());
@@ -567,10 +577,9 @@ static void webKitWebSrcStart(WebKitWebSrc* src)
     request.setHTTPHeaderField(HTTPHeaderName::IcyMetadata, "1");
 
     if (!priv->player || !priv->createdInMainThread) {
-        priv->client = std::make_unique<ResourceHandleStreamingClient>(src, WTFMove(request));
+        priv->client = ResourceHandleStreamingClient::create(src, WTFMove(request));
         if (priv->client->loadFailed()) {
             GST_ERROR_OBJECT(src, "Failed to setup streaming client");
-            priv->client = nullptr;
             locker.unlock();
             webKitWebSrcStop(src);
         } else
@@ -1095,17 +1104,6 @@ ResourceHandleStreamingClient::ResourceHandleStreamingClient(WebKitWebSrc* src, 
 
         m_runLoop->dispatch([this] { m_resource->setDefersLoading(false); });
         m_runLoop->run();
-        {
-            LockHolder locker(m_terminateRunLoopConditionMutex);
-            m_runLoop = nullptr;
-            m_resource->clearClient();
-            m_resource->cancel();
-            m_resource = nullptr;
-#if USE(SOUP)
-            m_session = nullptr;
-#endif
-            m_terminateRunLoopCondition.notifyOne();
-        }
     });
     m_initializeRunLoopCondition.wait(m_initializeRunLoopConditionMutex);
 }
@@ -1116,14 +1114,33 @@ ResourceHandleStreamingClient::~ResourceHandleStreamingClient()
         m_thread->detach();
         m_thread = nullptr;
     }
+}
 
-    if (m_runLoop == &RunLoop::current())
-        m_runLoop->stop();
-    else {
-        LockHolder locker(m_terminateRunLoopConditionMutex);
-        m_runLoop->stop();
-        m_terminateRunLoopCondition.wait(m_terminateRunLoopConditionMutex);
+void ResourceHandleStreamingClient::cleanupAndStopRunLoop()
+{
+    m_resource->clearClient();
+    m_resource->cancel();
+    m_resource = nullptr;
+#if USE(SOUP)
+    m_session = nullptr;
+#endif
+    m_runLoop->stop();
+}
+
+void ResourceHandleStreamingClient::invalidate()
+{
+    if (m_runLoop == &RunLoop::current()) {
+        cleanupAndStopRunLoop();
+        return;
     }
+
+    LockHolder locker(m_terminateRunLoopConditionMutex);
+    m_runLoop->dispatch([this, protectedThis = makeRef(*this)] {
+        cleanupAndStopRunLoop();
+        LockHolder locker(m_terminateRunLoopConditionMutex);
+        m_terminateRunLoopCondition.notifyOne();
+    });
+    m_terminateRunLoopCondition.wait(m_terminateRunLoopConditionMutex);
 }
 
 bool ResourceHandleStreamingClient::loadFailed() const
@@ -1133,7 +1150,7 @@ bool ResourceHandleStreamingClient::loadFailed() const
 
 void ResourceHandleStreamingClient::setDefersLoading(bool defers)
 {
-    m_runLoop->dispatch([this, defers] {
+    m_runLoop->dispatch([this, protectedThis = makeRef(*this), defers] {
         if (m_resource)
             m_resource->setDefersLoading(defers);
     });
@@ -1153,7 +1170,8 @@ ResourceRequest ResourceHandleStreamingClient::willSendRequest(ResourceHandle*, 
 
 void ResourceHandleStreamingClient::didReceiveResponse(ResourceHandle*, ResourceResponse&& response)
 {
-    handleResponseReceived(response);
+    if (m_resource)
+        handleResponseReceived(response);
 }
 
 void ResourceHandleStreamingClient::didReceiveData(ResourceHandle*, const char* /* data */, unsigned /* length */, int)
@@ -1163,13 +1181,17 @@ void ResourceHandleStreamingClient::didReceiveData(ResourceHandle*, const char* 
 
 void ResourceHandleStreamingClient::didReceiveBuffer(ResourceHandle*, Ref<SharedBuffer>&& buffer, int /* encodedLength */)
 {
+    if (!m_resource)
+        return;
+
     for (const auto& segment : buffer.get())
         handleDataReceived(segment->data(), segment->size());
 }
 
 void ResourceHandleStreamingClient::didFinishLoading(ResourceHandle*)
 {
-    handleNotifyFinished();
+    if (m_resource)
+        handleNotifyFinished();
 }
 
 void ResourceHandleStreamingClient::didFail(ResourceHandle*, const ResourceError& error)
