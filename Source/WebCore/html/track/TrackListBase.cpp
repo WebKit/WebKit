@@ -37,11 +37,11 @@
 using namespace WebCore;
 
 TrackListBase::TrackListBase(HTMLMediaElement* element, ScriptExecutionContext* context)
-    : m_context(context)
+    : ContextDestructionObserver(context)
     , m_element(element)
     , m_asyncEventQueue(*this)
 {
-    ASSERT(context->isDocument());
+    ASSERT(is<Document>(context));
 }
 
 TrackListBase::~TrackListBase()

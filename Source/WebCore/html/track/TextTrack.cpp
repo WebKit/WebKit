@@ -95,7 +95,7 @@ TextTrack* TextTrack::captionMenuAutomaticItem()
 
 TextTrack::TextTrack(ScriptExecutionContext* context, TextTrackClient* client, const AtomicString& kind, const AtomicString& id, const AtomicString& label, const AtomicString& language, TextTrackType type)
     : TrackBase(TrackBase::TextTrack, id, label, language)
-    , m_scriptExecutionContext(context)
+    , ContextDestructionObserver(context)
     , m_client(client)
     , m_trackType(type)
 {

@@ -40,7 +40,7 @@
 namespace WebCore {
 
 SourceBufferList::SourceBufferList(ScriptExecutionContext* context)
-    : m_scriptExecutionContext(context)
+    : ContextDestructionObserver(context)
     , m_asyncEventQueue(*this)
 {
 }

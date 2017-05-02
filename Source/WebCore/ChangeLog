@@ -1,3 +1,31 @@
+2017-05-02  Chris Dumez  <cdumez@apple.com>
+
+        [macOS] Flaky Crash under EventTarget::fireEventListeners on imported/blink/paint/deprecatedpaintlayer/non-self-painting-layer-overrides-visibility.html
+        https://bugs.webkit.org/show_bug.cgi?id=171406
+        <rdar://problem/30945281>
+
+        Reviewed by Eric Carlson.
+
+        I was unfortunately unable to reproduce the flaky crash locally. However, the crash trace
+        indicates that one of the EventTarget::scriptExecutionContext() overrides is returning a
+        stale ScriptExecutionContext pointer. Since a GenericEventQueue is involved, the EventTarget
+        is likely a media-related object. I therefore audited media classes that override
+        EventTarget::scriptExecutionContext() and found several that look unsafe. I am fixing those
+        by having them override ContextDestructionObserver, instead of having a raw
+        ScriptExecutionContext pointer member. This makes sure the pointer gets nulled out whenever
+        the scriptexecutioncontext gets destroyed, ensuring that those classes's
+        EventTarget::scriptExecutionContext() overrides can never return a stale pointer.
+
+        * Modules/mediasource/SourceBufferList.cpp:
+        (WebCore::SourceBufferList::SourceBufferList):
+        * Modules/mediasource/SourceBufferList.h:
+        * html/track/TextTrack.cpp:
+        (WebCore::TextTrack::TextTrack):
+        * html/track/TextTrack.h:
+        * html/track/TrackListBase.cpp:
+        (TrackListBase::TrackListBase):
+        * html/track/TrackListBase.h:
+
 2017-05-02  Antti Koivisto  <antti@apple.com>
 
         Document style resolvers should share user rulesets

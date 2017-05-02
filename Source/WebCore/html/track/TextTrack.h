@@ -28,6 +28,7 @@
 
 #if ENABLE(VIDEO_TRACK)
 
+#include "ContextDestructionObserver.h"
 #include "TextTrackCue.h"
 #include "TrackBase.h"
 
@@ -50,7 +51,7 @@ public:
     virtual void textTrackRemoveCue(TextTrack&, TextTrackCue&) = 0;
 };
 
-class TextTrack : public TrackBase, public EventTargetWithInlineData {
+class TextTrack : public TrackBase, public EventTargetWithInlineData, public ContextDestructionObserver {
 public:
     static Ref<TextTrack> create(ScriptExecutionContext* context, TextTrackClient* client, const AtomicString& kind, const AtomicString& id, const AtomicString& label, const AtomicString& language)
     {
@@ -59,7 +60,7 @@ public:
     virtual ~TextTrack();
 
     EventTargetInterface eventTargetInterface() const final { return TextTrackEventTargetInterfaceType; }
-    ScriptExecutionContext* scriptExecutionContext() const final { return m_scriptExecutionContext; }
+    ScriptExecutionContext* scriptExecutionContext() const final { return ContextDestructionObserver::scriptExecutionContext(); }
 
     static TextTrack* captionMenuOffItem();
     static TextTrack* captionMenuAutomaticItem();
@@ -159,7 +160,6 @@ private:
 
     TextTrackCueList& ensureTextTrackCueList();
 
-    ScriptExecutionContext* m_scriptExecutionContext;
     Mode m_mode { Mode::Disabled };
     Kind m_kind { Kind::Subtitles };
     TextTrackClient* m_client;
