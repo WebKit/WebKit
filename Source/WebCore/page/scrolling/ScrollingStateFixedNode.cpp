@@ -93,9 +93,10 @@ void ScrollingStateFixedNode::reconcileLayerPositionForViewportRect(const Layout
     }
 }
 
-void ScrollingStateFixedNode::dumpProperties(TextStream& ts, int indent, ScrollingStateTreeAsTextBehavior) const
+void ScrollingStateFixedNode::dumpProperties(TextStream& ts, int indent, ScrollingStateTreeAsTextBehavior behavior) const
 {
     ts << "(" << "Fixed node" << "\n";
+    ScrollingStateNode::dumpProperties(ts, indent, behavior);
 
     if (m_constraints.anchorEdges()) {
         writeIndent(ts, indent + 1);

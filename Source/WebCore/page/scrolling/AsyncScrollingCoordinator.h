@@ -76,7 +76,7 @@ protected:
 
     void updateScrollPositionAfterAsyncScroll(ScrollingNodeID, const FloatPoint&, std::optional<FloatPoint> layoutViewportOrigin, bool programmaticScroll, ScrollingLayerPositionAction);
 
-    WEBCORE_EXPORT String scrollingStateTreeAsText() const override;
+    WEBCORE_EXPORT String scrollingStateTreeAsText(ScrollingStateTreeAsTextBehavior = ScrollingStateTreeAsTextBehaviorNormal) const override;
     WEBCORE_EXPORT void willCommitTree() override;
 
     bool eventTrackingRegionsDirty() const { return m_eventTrackingRegionsDirty; }

@@ -93,9 +93,10 @@ void ScrollingStateStickyNode::reconcileLayerPositionForViewportRect(const Layou
     }
 }
 
-void ScrollingStateStickyNode::dumpProperties(TextStream& ts, int indent, ScrollingStateTreeAsTextBehavior) const
+void ScrollingStateStickyNode::dumpProperties(TextStream& ts, int indent, ScrollingStateTreeAsTextBehavior behavior) const
 {
     ts << "(" << "Sticky node" << "\n";
+    ScrollingStateNode::dumpProperties(ts, indent, behavior);
 
     if (m_constraints.anchorEdges()) {
         writeIndent(ts, indent + 1);

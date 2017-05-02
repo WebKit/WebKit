@@ -112,6 +112,19 @@ void ScrollingStateNode::setLayer(const LayerRepresentation& layerRepresentation
     setPropertyChanged(ScrollLayer);
 }
 
+void ScrollingStateNode::dumpProperties(TextStream& ts, int indent, ScrollingStateTreeAsTextBehavior behavior) const
+{
+    if (behavior & ScrollingStateTreeAsTextBehaviorIncludeNodeIDs) {
+        writeIndent(ts, indent + 1);
+        ts << "(nodeID " << scrollingNodeID() << ")\n";
+    }
+    
+    if (behavior & ScrollingStateTreeAsTextBehaviorIncludeLayerIDs) {
+        writeIndent(ts, indent + 1);
+        ts << "(layerID " << layer().layerID() << ")\n";
+    }
+}
+
 void ScrollingStateNode::dump(TextStream& ts, int indent, ScrollingStateTreeAsTextBehavior behavior) const
 {
     writeIndent(ts, indent);
@@ -131,11 +144,11 @@ void ScrollingStateNode::dump(TextStream& ts, int indent, ScrollingStateTreeAsTe
     ts << ")\n";
 }
 
-String ScrollingStateNode::scrollingStateTreeAsText() const
+String ScrollingStateNode::scrollingStateTreeAsText(ScrollingStateTreeAsTextBehavior behavior) const
 {
     TextStream ts(TextStream::LineMode::MultipleLine, TextStream::Formatting::SVGStyleRect);
 
-    dump(ts, 0, ScrollingStateTreeAsTextBehaviorNormal);
+    dump(ts, 0, behavior);
     return ts.release();
 }
 

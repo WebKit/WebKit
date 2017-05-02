@@ -185,8 +185,10 @@ void ScrollingStateScrollingNode::setExpectsWheelEventTestTrigger(bool expectsTe
     setPropertyChanged(ExpectsWheelEventTestTrigger);
 }
 
-void ScrollingStateScrollingNode::dumpProperties(TextStream& ts, int indent, ScrollingStateTreeAsTextBehavior) const
+void ScrollingStateScrollingNode::dumpProperties(TextStream& ts, int indent, ScrollingStateTreeAsTextBehavior behavior) const
 {
+    ScrollingStateNode::dumpProperties(ts, indent, behavior);
+    
     if (m_scrollPosition != FloatPoint()) {
         writeIndent(ts, indent + 1);
         ts << "(scroll position "

@@ -53,6 +53,15 @@ typedef uint64_t ScrollingNodeID;
 
 enum ScrollingNodeType { FrameScrollingNode, OverflowScrollingNode, FixedNode, StickyNode };
 
+enum ScrollingStateTreeAsTextBehaviorFlags {
+    ScrollingStateTreeAsTextBehaviorNormal                  = 0,
+    ScrollingStateTreeAsTextBehaviorIncludeLayerIDs         = 1 << 0,
+    ScrollingStateTreeAsTextBehaviorIncludeNodeIDs          = 1 << 1,
+    ScrollingStateTreeAsTextBehaviorIncludeLayerPositions   = 1 << 2,
+    ScrollingStateTreeAsTextBehaviorDebug                   = ScrollingStateTreeAsTextBehaviorIncludeLayerIDs | ScrollingStateTreeAsTextBehaviorIncludeNodeIDs | ScrollingStateTreeAsTextBehaviorIncludeLayerPositions
+};
+typedef unsigned ScrollingStateTreeAsTextBehavior;
+
 class Document;
 class Frame;
 class FrameView;
@@ -181,7 +190,7 @@ public:
     virtual void updateFrameScrollingNode(ScrollingNodeID, GraphicsLayer* /*scrollLayer*/, GraphicsLayer* /*scrolledContentsLayer*/, GraphicsLayer* /*counterScrollingLayer*/, GraphicsLayer* /*insetClipLayer*/, const ScrollingGeometry* = nullptr) { }
     virtual void updateOverflowScrollingNode(ScrollingNodeID, GraphicsLayer* /*scrollLayer*/, GraphicsLayer* /*scrolledContentsLayer*/, const ScrollingGeometry* = nullptr) { }
     virtual void reconcileViewportConstrainedLayerPositions(const LayoutRect&, ScrollingLayerPositionAction) { }
-    virtual String scrollingStateTreeAsText() const;
+    virtual String scrollingStateTreeAsText(ScrollingStateTreeAsTextBehavior = ScrollingStateTreeAsTextBehaviorNormal) const;
     virtual bool isRubberBandInProgress() const { return false; }
     virtual bool isScrollSnapInProgress() const { return false; }
     virtual void updateScrollSnapPropertiesWithFrameView(const FrameView&) { }

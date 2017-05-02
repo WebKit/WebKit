@@ -388,7 +388,7 @@ ScrollingNodeID ScrollingCoordinator::uniqueScrollLayerID()
     return uniqueScrollLayerID++;
 }
 
-String ScrollingCoordinator::scrollingStateTreeAsText() const
+String ScrollingCoordinator::scrollingStateTreeAsText(ScrollingStateTreeAsTextBehavior) const
 {
     return String();
 }
