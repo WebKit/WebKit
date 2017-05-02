@@ -186,7 +186,6 @@ struct CoordinatedGraphicsState {
     Vector<CoordinatedImageBackingID> imagesToClear;
 
     Vector<std::pair<uint32_t /* atlasID */, RefPtr<CoordinatedSurface> > > updateAtlasesToCreate;
-    Vector<uint32_t /* atlasID */> updateAtlasesToRemove;
 };
 
 } // namespace WebCore

@@ -181,7 +181,6 @@ void CompositingCoordinator::clearPendingStateChanges()
     m_state.imagesToClear.clear();
 
     m_state.updateAtlasesToCreate.clear();
-    m_state.updateAtlasesToRemove.clear();
 }
 
 void CompositingCoordinator::initializeRootCompositingLayerIfNeeded()
@@ -304,7 +303,7 @@ void CompositingCoordinator::removeUpdateAtlas(uint32_t atlasID)
 {
     if (m_isPurging)
         return;
-    m_state.updateAtlasesToRemove.append(atlasID);
+    m_atlasesToRemove.append(atlasID);
 }
 
 FloatRect CompositingCoordinator::visibleContentsRect() const
@@ -443,6 +442,9 @@ void CompositingCoordinator::releaseAtlases(ReleaseAtlasPolicy policy)
 
     if (m_updateAtlases.size() <= 1)
         m_releaseInactiveAtlasesTimer.stop();
+
+    if (!m_atlasesToRemove.isEmpty())
+        m_client.releaseUpdateAtlases(WTFMove(m_atlasesToRemove));
 }
 
 } // namespace WebKit

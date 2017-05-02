@@ -1,3 +1,40 @@
+2017-05-02  Gwang Yoon Hwang  <yoon@igalia.com>
+
+        [GTK] Drop coordinated surfaces from the compositing thread as soon as possible
+        https://bugs.webkit.org/show_bug.cgi?id=171544
+
+        Reviewed by Žan Doberšek.
+
+        Released coordinated surface from the main thread didn't be freed until
+        next commit message because the deletion of coordinated surfaces is
+        considered as a part of scene state.  We need to release corresponding
+        surfaces whenever the compositing coordinator drops update atlases to
+        reduce memory usages.
+
+        No new tests, only an optimization.
+
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.cpp:
+        Remove atlasesToRemove from the GraphicsState. it is not a commit
+        state anymore.
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsScene.cpp:
+        (WebKit::CoordinatedGraphicsScene::syncUpdateAtlases):
+        (WebKit::CoordinatedGraphicsScene::releaseUpdateAtlases):
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsScene.h:
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp:
+        (WebKit::CompositingCoordinator::releaseAtlases): Pass the list of
+        released update atlases to the compositing thread right after cleaning
+        up deactivated update atlases.
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.h:
+        * WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.cpp:
+        (WebKit::CompositingCoordinator::clearPendingStateChanges):
+        (WebKit::CompositingCoordinator::removeUpdateAtlas):
+        (WebKit::CompositingCoordinator::releaseAtlases):
+        * WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.h:
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.h:
+        * WebProcess/WebPage/CoordinatedGraphics/ThreadedCoordinatedLayerTreeHost.cpp:
+        (WebKit::ThreadedCoordinatedLayerTreeHost::releaseUpdateAtlases):
+        * WebProcess/WebPage/CoordinatedGraphics/ThreadedCoordinatedLayerTreeHost.h:
+
 2017-05-02  Timothy Horton  <timothy_horton@apple.com>
 
         Inform clients when viewport-fit state changes, so they can recompute insets

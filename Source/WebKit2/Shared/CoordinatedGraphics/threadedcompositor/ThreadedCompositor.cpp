@@ -244,6 +244,14 @@ void ThreadedCompositor::updateSceneState(const CoordinatedGraphicsState& state)
     m_compositingRunLoop->scheduleUpdate();
 }
 
+void ThreadedCompositor::releaseUpdateAtlases(Vector<uint32_t>&& atlasesToRemove)
+{
+    ASSERT(isMainThread());
+    m_compositingRunLoop->performTask([scene = makeRef(*m_scene), atlasesToRemove = WTFMove(atlasesToRemove)] {
+        scene->releaseUpdateAtlases(atlasesToRemove);
+    });
+}
+
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
 RefPtr<WebCore::DisplayRefreshMonitor> ThreadedCompositor::displayRefreshMonitor(PlatformDisplayID)
 {

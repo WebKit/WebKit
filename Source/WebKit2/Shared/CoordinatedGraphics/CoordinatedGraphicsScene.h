@@ -85,6 +85,8 @@ public:
     void setViewBackgroundColor(const WebCore::Color& color) { m_viewBackgroundColor = color; }
     WebCore::Color viewBackgroundColor() const { return m_viewBackgroundColor; }
 
+    void releaseUpdateAtlases(const Vector<uint32_t>&);
+
 private:
     void setRootLayerID(WebCore::CoordinatedLayerID);
     void createLayers(const Vector<WebCore::CoordinatedLayerID>&);

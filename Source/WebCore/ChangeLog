@@ -1,5 +1,16 @@
 2017-05-02  Gwang Yoon Hwang  <yoon@igalia.com>
 
+        [GTK] Drop coordinated surfaces from the compositing thread as soon as possible
+        https://bugs.webkit.org/show_bug.cgi?id=171544
+
+        Reviewed by Žan Doberšek.
+
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsState.h:
+        Remove atlasesToRemove from the GraphicsState. It is not a commit
+        state anymore.
+
+2017-05-02  Gwang Yoon Hwang  <yoon@igalia.com>
+
         [GTK] Recycle textures while handling tiles
         https://bugs.webkit.org/show_bug.cgi?id=171541
 

@@ -74,6 +74,7 @@ public:
     void setDrawsBackground(bool);
 
     void updateSceneState(const WebCore::CoordinatedGraphicsState&);
+    void releaseUpdateAtlases(Vector<uint32_t>&&);
 
     void invalidate();
 
