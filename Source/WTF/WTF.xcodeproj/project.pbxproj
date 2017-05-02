@@ -389,7 +389,7 @@
 		E3200AB91E9A536D003B59D2 /* ThreadHolder.h in Headers */ = {isa = PBXBuildFile; fileRef = E3200AB61E9A536D003B59D2 /* ThreadHolder.h */; };
 		E38C41251EB4E04C0042957D /* CPUTimeCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = E38C41241EB4E04C0042957D /* CPUTimeCocoa.mm */; };
 		E38C41281EB4E0680042957D /* CPUTime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E38C41261EB4E0680042957D /* CPUTime.cpp */; };
-		E38C41291EB4E0680042957D /* CPUTime.h in Headers */ = {isa = PBXBuildFile; fileRef = E38C41271EB4E0680042957D /* CPUTime.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E38C41291EB4E0680042957D /* CPUTime.h in Headers */ = {isa = PBXBuildFile; fileRef = E38C41271EB4E0680042957D /* CPUTime.h */; };
 		E3E158261EADA53C004A079D /* SystemFree.h in Headers */ = {isa = PBXBuildFile; fileRef = E3E158251EADA53C004A079D /* SystemFree.h */; };
 		E43A46951E228B9100276B05 /* Decoder.h in Headers */ = {isa = PBXBuildFile; fileRef = E43A46901E228B9100276B05 /* Decoder.h */; };
 		E43A46961E228B9100276B05 /* Encoder.h in Headers */ = {isa = PBXBuildFile; fileRef = E43A46911E228B9100276B05 /* Encoder.h */; };
@@ -1505,6 +1505,7 @@
 				0FDB698E1B7C643A000C1078 /* Condition.h in Headers */,
 				A8A4748C151A8264004123FF /* config.h in Headers */,
 				0F8F2B9C172F2596007DBDA5 /* ConversionMode.h in Headers */,
+				E38C41291EB4E0680042957D /* CPUTime.h in Headers */,
 				515F794F1CFC9F4A00CCED93 /* CrossThreadCopier.h in Headers */,
 				515F79561CFD3A6900CCED93 /* CrossThreadQueue.h in Headers */,
 				515F79501CFC9F4A00CCED93 /* CrossThreadTask.h in Headers */,
@@ -1718,7 +1719,6 @@
 				E3200AB71E9A536D003B59D2 /* PlatformRegisters.h in Headers */,
 				0F3501641BB258D500F0A2A3 /* WeakRandom.h in Headers */,
 				1FA47C8B152502DA00568D1B /* WebCoreThread.h in Headers */,
-				E38C41291EB4E0680042957D /* CPUTime.h in Headers */,
 				0FE4479D1B7AAA03009498EB /* WordLock.h in Headers */,
 				E4A0AD3A1A96245500536DF6 /* WorkQueue.h in Headers */,
 				A8A47446151A825B004123FF /* WTFString.h in Headers */,
