@@ -37,7 +37,8 @@
 
 namespace WebCore {
 
-DocumentRuleSets::DocumentRuleSets()
+DocumentRuleSets::DocumentRuleSets(StyleResolver& styleResolver)
+    : m_styleResolver(styleResolver)
 {
     m_authorStyle = std::make_unique<RuleSet>();
     m_authorStyle->disableAutoShrinkToFit();
@@ -47,13 +48,22 @@ DocumentRuleSets::~DocumentRuleSets()
 {
 }
 
-void DocumentRuleSets::initUserStyle(ExtensionStyleSheets& extensionStyleSheets, const MediaQueryEvaluator& medium, StyleResolver& resolver)
+RuleSet* DocumentRuleSets::userStyle() const
 {
+    if (m_usesSharedUserStyle)
+        return m_styleResolver.document().styleScope().resolver().ruleSets().userStyle();
+    return m_userStyle.get();
+}
+
+void DocumentRuleSets::initializeUserStyle()
+{
+    auto& extensionStyleSheets = m_styleResolver.document().extensionStyleSheets();
+    auto& mediaQueryEvaluator = m_styleResolver.mediaQueryEvaluator();
     auto tempUserStyle = std::make_unique<RuleSet>();
     if (CSSStyleSheet* pageUserSheet = extensionStyleSheets.pageUserSheet())
-        tempUserStyle->addRulesFromSheet(pageUserSheet->contents(), medium, &resolver);
-    collectRulesFromUserStyleSheets(extensionStyleSheets.injectedUserStyleSheets(), *tempUserStyle, medium, resolver);
-    collectRulesFromUserStyleSheets(extensionStyleSheets.documentUserStyleSheets(), *tempUserStyle, medium, resolver);
+        tempUserStyle->addRulesFromSheet(pageUserSheet->contents(), mediaQueryEvaluator, &m_styleResolver);
+    collectRulesFromUserStyleSheets(extensionStyleSheets.injectedUserStyleSheets(), *tempUserStyle, mediaQueryEvaluator, m_styleResolver);
+    collectRulesFromUserStyleSheets(extensionStyleSheets.documentUserStyleSheets(), *tempUserStyle, mediaQueryEvaluator, m_styleResolver);
     if (tempUserStyle->ruleCount() > 0 || tempUserStyle->pageRules().size() > 0)
         m_userStyle = WTFMove(tempUserStyle);
 }
@@ -112,8 +122,8 @@ void DocumentRuleSets::collectFeatures() const
 
     if (m_authorStyle)
         m_features.add(m_authorStyle->features());
-    if (m_userStyle)
-        m_features.add(m_userStyle->features());
+    if (auto* userStyle = this->userStyle())
+        m_features.add(userStyle->features());
 
     m_siblingRuleSet = makeRuleSet(m_features.siblingRules);
     m_uncommonAttributeRuleSet = makeRuleSet(m_features.uncommonAttributeRules);

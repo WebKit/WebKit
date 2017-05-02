@@ -1,3 +1,36 @@
+2017-05-02  Antti Koivisto  <antti@apple.com>
+
+        Document style resolvers should share user rulesets
+        https://bugs.webkit.org/show_bug.cgi?id=171549
+
+        Reviewed by Andreas Kling.
+
+        Large user stylesheets (like those used by ad blockers) can end up using lots of memory if
+        a document uses large number of shadow trees. User style is inherently per-document and
+        the resulting rulesets can be shared between the document and the shadow trees.
+
+        * css/DocumentRuleSets.cpp:
+        (WebCore::DocumentRuleSets::DocumentRuleSets):
+        (WebCore::DocumentRuleSets::userStyle):
+
+            Return per-document user style for shadow trees.
+
+        (WebCore::DocumentRuleSets::collectFeatures):
+        * css/DocumentRuleSets.h:
+        (WebCore::DocumentRuleSets::setUsesSharedUserStyle):
+        (WebCore::DocumentRuleSets::userStyle): Deleted.
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::StyleResolver):
+        (WebCore::StyleResolver::initializeUserStyle):
+
+            Separate user style initialization from construction.
+
+        * css/StyleResolver.h:
+        * style/StyleScope.cpp:
+        (WebCore::Style::Scope::resolver):
+
+            Don't initialize user style for user agents shadow trees.
+
 2017-05-02  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Font Loading API specifies font is loaded but sizing of font after load reports inconsistent values
