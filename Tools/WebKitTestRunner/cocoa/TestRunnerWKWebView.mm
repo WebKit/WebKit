@@ -26,6 +26,7 @@
 #import "config.h"
 #import "TestRunnerWKWebView.h"
 
+#import "UIKitSPI.h"
 #import "WebKitTestRunnerDraggingInfo.h"
 #import <wtf/Assertions.h>
 #import <wtf/RetainPtr.h>
@@ -201,6 +202,19 @@
 {
     self.retrieveSpeakSelectionContentCompletionHandler = completionHandler;
     [self _accessibilityRetrieveSpeakSelectionContent];
+}
+
+- (void)setOverrideSafeAreaInsets:(UIEdgeInsets)insets
+{
+    _overrideSafeAreaInsets = insets;
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
+    [self _updateSafeAreaInsets];
+#endif
+}
+
+- (UIEdgeInsets)_safeAreaInsetsForFrame:(CGRect)frame inSuperview:(UIView *)view
+{
+    return _overrideSafeAreaInsets;
 }
 
 #endif

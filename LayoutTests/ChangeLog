@@ -1,3 +1,27 @@
+2017-05-01  Timothy Horton  <timothy_horton@apple.com>
+
+        Expose viewport-fit instead of clip-to-safe-area
+        https://bugs.webkit.org/show_bug.cgi?id=171503
+        <rdar://problem/31918249>
+
+        Reviewed by Simon Fraser.
+
+        * TestExpectations:
+        * fast/css/variables/constants/ios/safe-area-inset-set-expected.html:
+        * fast/css/variables/constants/ios/safe-area-inset-set.html:
+        * fast/viewport/ios/viewport-fit-auto-expected.txt: Added.
+        * fast/viewport/ios/viewport-fit-auto.html: Added.
+        * fast/viewport/ios/viewport-fit-contain-expected.txt: Added.
+        * fast/viewport/ios/viewport-fit-contain.html: Added.
+        * fast/viewport/ios/viewport-fit-cover-expected.txt: Added.
+        * fast/viewport/ios/viewport-fit-cover.html: Added.
+        * tiled-drawing/ios/viewport-clip-to-safe-area-no-gets-margin-tiles-expected.txt: Removed.
+        * tiled-drawing/ios/viewport-clip-to-safe-area-no-gets-margin-tiles.html: Removed.
+        * tiled-drawing/ios/viewport-clip-to-safe-area-yes-gets-no-margin-tiles-expected.txt: Removed.
+        * tiled-drawing/ios/viewport-clip-to-safe-area-yes-gets-no-margin-tiles.html: Removed.
+        Remove clip-to-safe-area tests and add some viewport-fit tests. Also, adjust
+        safe-area-inset-set to use the new UIScriptController setSafeAreaInset method.
+
 2017-05-01  Chris Dumez  <cdumez@apple.com>
 
         Documents created using DOMParser.parseFromString should inherit their context document's origin / URL

@@ -316,7 +316,7 @@ void UIScriptController::addViewToWindow(JSValueRef)
 {
 }
 
-void UIScriptController::setObscuredInsets(double, double, double, double)
+void UIScriptController::setSafeAreaInsets(double, double, double, double)
 {
 }
 

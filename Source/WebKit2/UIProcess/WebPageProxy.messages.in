@@ -494,6 +494,4 @@ messages -> WebPageProxy {
 
     StartURLSchemeTask(uint64_t loaderIdentifier, uint64_t resourceIdentifier, WebCore::ResourceRequest request)
     StopURLSchemeTask(uint64_t loaderIdentifier, uint64_t resourceIdentifier)
-
-    SetClipToSafeArea(bool clipToSafeArea)
 }

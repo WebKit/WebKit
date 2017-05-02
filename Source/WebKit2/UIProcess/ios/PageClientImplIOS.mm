@@ -821,8 +821,9 @@ void PageClientImpl::requestPasswordForQuickLookDocument(const String& fileName,
 }
 #endif
 
-void PageClientImpl::didChangeClipToSafeArea(bool clipToSafeArea)
+void PageClientImpl::didChangeAvoidsUnsafeArea(bool avoidsUnsafeArea)
 {
+    [m_webView _updateScrollViewInsetAdjustmentBehavior];
     [m_webView _scheduleVisibleContentRectUpdate];
 }
 

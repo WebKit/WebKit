@@ -5469,7 +5469,7 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
     requestPointerUnlock();
 #endif
 
-    m_clipToSafeArea = true;
+    m_avoidsUnsafeArea = true;
 }
 
 void WebPageProxy::resetStateAfterProcessExited()
@@ -6896,11 +6896,14 @@ void WebPageProxy::stopURLSchemeTask(uint64_t handlerIdentifier, uint64_t resour
     iterator->value->stopTask(*this, resourceIdentifier);
 }
 
-void WebPageProxy::setClipToSafeArea(bool clipToSafeArea)
+void WebPageProxy::setAvoidsUnsafeArea(bool avoidsUnsafeArea)
 {
-    m_clipToSafeArea = clipToSafeArea;
+    if (m_avoidsUnsafeArea == avoidsUnsafeArea)
+        return;
 
-    m_pageClient.didChangeClipToSafeArea(clipToSafeArea);
+    m_avoidsUnsafeArea = avoidsUnsafeArea;
+
+    m_pageClient.didChangeAvoidsUnsafeArea(avoidsUnsafeArea);
 }
 
 } // namespace WebKit

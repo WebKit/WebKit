@@ -246,7 +246,7 @@ ViewportAttributes ViewportArguments::resolve(const FloatSize& initialViewportSi
     result.userScalable = userZoom;
     result.orientation = orientation;
     result.shrinkToFit = shrinkToFit;
-    result.clipToSafeArea = clipToSafeArea;
+    result.viewportFit = viewportFit;
 
     return result;
 }
@@ -381,6 +381,20 @@ static bool findBooleanValue(Document& document, StringView key, StringView valu
     return std::abs(numericPrefix(document, key, value)) >= 1;
 }
 
+static ViewportFit parseViewportFitValue(Document& document, StringView key, StringView value)
+{
+    if (equalLettersIgnoringASCIICase(value, "auto"))
+        return ViewportFit::Auto;
+    if (equalLettersIgnoringASCIICase(value, "contain"))
+        return ViewportFit::Contain;
+    if (equalLettersIgnoringASCIICase(value, "cover"))
+        return ViewportFit::Cover;
+
+    reportViewportWarning(document, UnrecognizedViewportArgumentValueError, value, key);
+
+    return ViewportFit::Auto;
+}
+
 void setViewportFeature(ViewportArguments& arguments, Document& document, StringView key, StringView value)
 {
     if (equalLettersIgnoringASCIICase(key, "width"))
@@ -403,8 +417,8 @@ void setViewportFeature(ViewportArguments& arguments, Document& document, String
 #endif
     else if (equalLettersIgnoringASCIICase(key, "shrink-to-fit"))
         arguments.shrinkToFit = findBooleanValue(document, key, value);
-    else if (equalLettersIgnoringASCIICase(key, "clip-to-safe-area"))
-        arguments.clipToSafeArea = findBooleanValue(document, key, value);
+    else if (equalLettersIgnoringASCIICase(key, "viewport-fit"))
+        arguments.viewportFit = parseViewportFitValue(document, key, value);
     else
         reportViewportWarning(document, UnrecognizedViewportArgumentKeyError, key);
 }

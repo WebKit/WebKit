@@ -331,7 +331,10 @@ public:
     WEBCORE_EXPORT void setTopContentInset(float);
 
     const FloatBoxExtent& obscuredInsets() const { return m_obscuredInsets; }
-    WEBCORE_EXPORT void setObscuredInsets(const FloatBoxExtent&);
+    void setObscuredInsets(const FloatBoxExtent& obscuredInsets) { m_obscuredInsets = obscuredInsets; }
+
+    const FloatBoxExtent& unobscuredSafeAreaInsets() const { return m_unobscuredSafeAreaInsets; }
+    WEBCORE_EXPORT void setUnobscuredSafeAreaInsets(const FloatBoxExtent&);
 
 #if PLATFORM(IOS)
     bool enclosedInScrollableAncestorView() const { return m_enclosedInScrollableAncestorView; }
@@ -696,6 +699,7 @@ private:
 
     float m_topContentInset;
     FloatBoxExtent m_obscuredInsets;
+    FloatBoxExtent m_unobscuredSafeAreaInsets;
 
 #if PLATFORM(IOS)
     bool m_enclosedInScrollableAncestorView { false };

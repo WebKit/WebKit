@@ -114,6 +114,10 @@ using namespace WebKit;
 @implementation WKScrollView {
     WeakObjCPtr<id <UIScrollViewDelegate>> _externalDelegate;
     WKScrollViewDelegateForwarder *_delegateForwarder;
+
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
+    BOOL _contentInsetAdjustmentBehaviorWasExternallyOverridden;
+#endif
 }
 
 - (id)initWithFrame:(CGRect)frame
@@ -125,6 +129,10 @@ using namespace WebKit;
 
     self.alwaysBounceVertical = YES;
     self.directionalLockEnabled = YES;
+
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
+    _contentInsetAdjustmentBehaviorWasExternallyOverridden = (self._contentInsetAdjustmentBehavior != UIScrollViewContentInsetAdjustmentAutomatic);
+#endif
     
     return self;
 }
@@ -226,6 +234,34 @@ static inline bool valuesAreWithinOnePixel(CGFloat a, CGFloat b)
 
     [_internalDelegate _scheduleVisibleContentRectUpdate];
 }
+
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
+
+- (BOOL)_contentInsetAdjustmentBehaviorWasExternallyOverridden
+{
+    return _contentInsetAdjustmentBehaviorWasExternallyOverridden;
+}
+
+- (void)_setContentInsetAdjustmentBehavior:(UIScrollViewContentInsetAdjustmentBehavior)insetAdjustmentBehavior
+{
+    _contentInsetAdjustmentBehaviorWasExternallyOverridden = YES;
+
+    if ([self _contentInsetAdjustmentBehavior] == insetAdjustmentBehavior)
+        return;
+
+    [super _setContentInsetAdjustmentBehavior:insetAdjustmentBehavior];
+    [_internalDelegate _scheduleVisibleContentRectUpdate];
+}
+
+- (void)_setContentInsetAdjustmentBehaviorInternal:(UIScrollViewContentInsetAdjustmentBehavior)insetAdjustmentBehavior
+{
+    if ([self _contentInsetAdjustmentBehavior] == insetAdjustmentBehavior)
+        return;
+
+    [super _setContentInsetAdjustmentBehavior:insetAdjustmentBehavior];
+}
+
+#endif
 
 // Fetch top/left rubberband amounts (as negative values).
 - (CGSize)_currentTopLeftRubberbandAmount

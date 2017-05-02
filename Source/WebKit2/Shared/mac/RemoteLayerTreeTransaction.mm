@@ -550,6 +550,8 @@ void RemoteLayerTreeTransaction::encode(IPC::Encoder& encoder) const
     encoder << m_scaleWasSetByUIProcess;
     encoder << m_allowsUserScaling;
 
+    encoder << m_avoidsUnsafeArea;
+
     encoder << m_viewportMetaTagWidthWasExplicit;
     encoder << m_viewportMetaTagCameFromImageDocument;
 
@@ -654,6 +656,9 @@ bool RemoteLayerTreeTransaction::decode(IPC::Decoder& decoder, RemoteLayerTreeTr
         return false;
 
     if (!decoder.decode(result.m_allowsUserScaling))
+        return false;
+
+    if (!decoder.decode(result.m_avoidsUnsafeArea))
         return false;
 
     if (!decoder.decode(result.m_viewportMetaTagWidthWasExplicit))
@@ -878,6 +883,8 @@ CString RemoteLayerTreeTransaction::description() const
     ts.dumpProperty("viewportMetaTagWidth", m_viewportMetaTagWidth);
     ts.dumpProperty("viewportMetaTagWidthWasExplicit", m_viewportMetaTagWidthWasExplicit);
     ts.dumpProperty("viewportMetaTagCameFromImageDocument", m_viewportMetaTagCameFromImageDocument);
+    ts.dumpProperty("allowsUserScaling", m_allowsUserScaling);
+    ts.dumpProperty("avoidsUnsafeArea", m_avoidsUnsafeArea);
     ts.dumpProperty("isInStableState", m_isInStableState);
     ts.dumpProperty("renderTreeSize", m_renderTreeSize);
 

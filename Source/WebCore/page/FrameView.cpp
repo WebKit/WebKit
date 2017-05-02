@@ -2931,10 +2931,6 @@ void FrameView::enableSpeculativeTilingIfNeeded()
         m_speculativeTilingEnabled = true;
         return;
     }
-    if (!m_clipToSafeArea) {
-        m_speculativeTilingEnabled = true;
-        return;
-    }
     if (!shouldEnableSpeculativeTilingDuringLoading(*this))
         return;
 
@@ -3262,9 +3258,6 @@ void FrameView::updateExtendBackgroundIfNecessary()
 
 FrameView::ExtendedBackgroundMode FrameView::calculateExtendedBackgroundMode() const
 {
-    if (!m_clipToSafeArea)
-        return ExtendedBackgroundModeAll;
-
 #if PLATFORM(IOS)
     // <rdar://problem/16201373>
     return ExtendedBackgroundModeNone;
@@ -3349,30 +3342,6 @@ IntRect FrameView::extendedBackgroundRectForPainting() const
     extendedRect.moveBy(LayoutPoint(-tiledBacking->leftMarginWidth(), -tiledBacking->topMarginHeight()));
     extendedRect.expand(LayoutSize(tiledBacking->leftMarginWidth() + tiledBacking->rightMarginWidth(), tiledBacking->topMarginHeight() + tiledBacking->bottomMarginHeight()));
     return snappedIntRect(extendedRect);
-}
-
-void FrameView::setClipToSafeArea(bool clipToSafeArea)
-{
-    if (!frame().isMainFrame())
-        return;
-
-    if (m_clipToSafeArea == clipToSafeArea)
-        return;
-
-    m_clipToSafeArea = clipToSafeArea;
-
-    if (Page* page = frame().page())
-        page->chrome().client().didChangeClipToSafeArea(clipToSafeArea);
-
-    updateExtendBackgroundIfNecessary();
-    adjustTiledBackingCoverage();
-
-    RenderView* renderView = this->renderView();
-    if (!renderView)
-        return;
-
-    RenderLayerCompositor& compositor = renderView->compositor();
-    compositor.updateRootContentLayerClipping();
 }
 
 bool FrameView::shouldUpdateWhileOffscreen() const

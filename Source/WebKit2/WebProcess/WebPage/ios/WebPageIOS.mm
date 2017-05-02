@@ -3045,8 +3045,6 @@ void WebPage::viewportConfigurationChanged()
     updateViewportSizeForCSSViewportUnits();
 
     FrameView& frameView = *mainFrameView();
-    frameView.setClipToSafeArea(m_viewportConfiguration.clipToSafeArea());
-
     IntPoint scrollPosition = frameView.scrollPosition();
     if (!m_hasReceivedVisibleContentRectsAfterDidCommitLoad) {
         FloatSize minimumLayoutSizeInScrollViewCoordinates = m_viewportConfiguration.minimumLayoutSize();
@@ -3197,6 +3195,7 @@ void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visi
 
     frameView.setUnobscuredContentSize(visibleContentRectUpdateInfo.unobscuredContentRect().size());
     m_page->setObscuredInsets(visibleContentRectUpdateInfo.obscuredInsets());
+    m_page->setUnobscuredSafeAreaInsets(visibleContentRectUpdateInfo.unobscuredSafeAreaInsets());
     m_page->setEnclosedInScrollableAncestorView(visibleContentRectUpdateInfo.enclosedInScrollableAncestorView());
 
     double horizontalVelocity = visibleContentRectUpdateInfo.horizontalVelocity();

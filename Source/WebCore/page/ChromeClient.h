@@ -468,8 +468,6 @@ public:
     virtual void reportProcessCPUTime(Seconds, ActivityStateForCPUSampling) { }
     virtual RefPtr<Icon> createIconForFiles(const Vector<String>& /* filenames */) = 0;
 
-    virtual void didChangeClipToSafeArea(bool) { }
-
 protected:
     virtual ~ChromeClient() { }
 };

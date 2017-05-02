@@ -213,9 +213,6 @@ public:
     bool hasExtendedBackgroundRectForPainting() const;
     IntRect extendedBackgroundRectForPainting() const;
 
-    bool clipToSafeArea() const { return m_clipToSafeArea; }
-    WEBCORE_EXPORT void setClipToSafeArea(bool);
-
     bool shouldUpdateWhileOffscreen() const;
     WEBCORE_EXPORT void setShouldUpdateWhileOffscreen(bool);
     bool shouldUpdate() const;
@@ -815,8 +812,6 @@ private:
     bool m_firstVisuallyNonEmptyLayoutCallbackPending;
 
     bool m_needsDeferredScrollbarsUpdate { false };
-
-    bool m_clipToSafeArea { true };
 
     RefPtr<ContainerNode> m_maintainScrollPositionAnchor;
 

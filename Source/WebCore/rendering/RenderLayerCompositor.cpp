@@ -978,7 +978,7 @@ static RenderLayerModelObject& rendererForCompositingTests(const RenderLayer& la
 
 void RenderLayerCompositor::updateRootContentLayerClipping()
 {
-    m_rootContentLayer->setMasksToBounds(!m_renderView.settings().backgroundShouldExtendBeyondPage() && m_renderView.frameView().clipToSafeArea());
+    m_rootContentLayer->setMasksToBounds(!m_renderView.settings().backgroundShouldExtendBeyondPage());
 }
 
 bool RenderLayerCompositor::updateBacking(RenderLayer& layer, CompositingChangeRepaint shouldRepaint, BackingRequired backingRequired)

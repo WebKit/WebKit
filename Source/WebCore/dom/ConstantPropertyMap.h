@@ -51,7 +51,7 @@ public:
     typedef HashMap<AtomicString, Ref<CSSCustomPropertyValue>> Values;
     const Values& values() const;
 
-    void didChangeObscuredInsets();
+    void didChangeSafeAreaInsets();
 
 private:
     void buildValues();
@@ -59,7 +59,7 @@ private:
     const AtomicString& nameForProperty(ConstantProperty) const;
     void setValueForProperty(ConstantProperty, Ref<CSSVariableData>&&);
 
-    void updateConstantsForObscuredInsets();
+    void updateConstantsForSafeAreaInsets();
 
     std::optional<Values> m_values;
 

@@ -41,6 +41,12 @@ enum ViewportErrorCode {
     MaximumScaleTooLargeError
 };
 
+enum class ViewportFit {
+    Auto,
+    Contain,
+    Cover
+};
+
 struct ViewportAttributes {
     FloatSize layoutSize;
 
@@ -51,7 +57,8 @@ struct ViewportAttributes {
     float userScalable;
     float orientation;
     float shrinkToFit;
-    bool clipToSafeArea;
+
+    ViewportFit viewportFit;
 };
 
 struct ViewportArguments {
@@ -95,7 +102,7 @@ struct ViewportArguments {
     float userZoom { ValueAuto };
     float orientation { ValueAuto };
     float shrinkToFit { ValueAuto };
-    bool clipToSafeArea { true };
+    ViewportFit viewportFit { ViewportFit::Auto };
     bool widthWasExplicit { false };
 
     bool operator==(const ViewportArguments& other) const
@@ -114,7 +121,7 @@ struct ViewportArguments {
             && userZoom == other.userZoom
             && orientation == other.orientation
             && shrinkToFit == other.shrinkToFit
-            && clipToSafeArea == other.clipToSafeArea
+            && viewportFit == other.viewportFit
             && widthWasExplicit == other.widthWasExplicit;
     }
 

@@ -388,7 +388,7 @@ public:
     virtual void didChangeDataInteractionCaretRect(const WebCore::IntRect& previousCaretRect, const WebCore::IntRect& caretRect) = 0;
 #endif
 
-    virtual void didChangeClipToSafeArea(bool clipToSafeArea) = 0;
+    virtual void didChangeAvoidsUnsafeArea(bool avoidsUnsafeArea) = 0;
 };
 
 } // namespace WebKit

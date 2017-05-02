@@ -67,6 +67,12 @@
 
 #endif // USE(APPLE_INTERNAL_SDK)
 
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
+@interface UIView ()
+- (void)_updateSafeAreaInsets;
+@end
+#endif
+
 #endif // PLATFORM(IOS)
 
 #endif // UIKitSPI_h

@@ -198,7 +198,7 @@ private:
 
     void handleActiveNowPlayingSessionInfoResponse(bool hasActiveSession, const String& title, double duration, double elapsedTime) override;
 
-    void didChangeClipToSafeArea(bool clipToSafeArea) override;
+    void didChangeAvoidsUnsafeArea(bool avoidsUnsafeArea) override;
 
 #if USE(QUICK_LOOK)
     void requestPasswordForQuickLookDocument(const String& fileName, std::function<void(const String&)>&&) override;

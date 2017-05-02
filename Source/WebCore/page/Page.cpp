@@ -2354,17 +2354,17 @@ void Page::accessibilitySettingsDidChange()
         LOG(Layout, "hasMediaQueriesAffectedByAccessibilitySettingsChange, enqueueing style recalc");
 }
 
-void Page::setObscuredInsets(const FloatBoxExtent& insets)
+void Page::setUnobscuredSafeAreaInsets(const FloatBoxExtent& insets)
 {
-    if (m_obscuredInsets == insets)
+    if (m_unobscuredSafeAreaInsets == insets)
         return;
 
-    m_obscuredInsets = insets;
+    m_unobscuredSafeAreaInsets = insets;
 
     for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (!frame->document())
             continue;
-        frame->document()->constantProperties().didChangeObscuredInsets();
+        frame->document()->constantProperties().didChangeSafeAreaInsets();
     }
 }
 

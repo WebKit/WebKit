@@ -42,33 +42,18 @@ class ViewportConfiguration {
 public:
     // FIXME: unify with ViewportArguments.
     struct Parameters {
-        Parameters()
-            : width(0)
-            , height(0)
-            , initialScale(0)
-            , minimumScale(0)
-            , maximumScale(0)
-            , allowsUserScaling(false)
-            , allowsShrinkToFit(false)
-            , clipToSafeArea(true)
-            , widthIsSet(false)
-            , heightIsSet(false)
-            , initialScaleIsSet(false)
-        {
-        }
+        double width { 0 };
+        double height { 0 };
+        double initialScale { 0 };
+        double minimumScale { 0 };
+        double maximumScale { 0 };
+        bool allowsUserScaling { false };
+        bool allowsShrinkToFit { false };
+        bool avoidsUnsafeArea { true };
 
-        double width;
-        double height;
-        double initialScale;
-        double minimumScale;
-        double maximumScale;
-        bool allowsUserScaling;
-        bool allowsShrinkToFit;
-        bool clipToSafeArea;
-
-        bool widthIsSet;
-        bool heightIsSet;
-        bool initialScaleIsSet;
+        bool widthIsSet { false };
+        bool heightIsSet { false };
+        bool initialScaleIsSet { false };
     };
 
     WEBCORE_EXPORT ViewportConfiguration();
@@ -97,7 +82,7 @@ public:
     WEBCORE_EXPORT bool allowsUserScaling() const;
     WEBCORE_EXPORT bool allowsUserScalingIgnoringAlwaysScalable() const;
     bool allowsShrinkToFit() const;
-    bool clipToSafeArea() const { return m_configuration.clipToSafeArea; }
+    bool avoidsUnsafeArea() const { return m_configuration.avoidsUnsafeArea; }
 
     WEBCORE_EXPORT static Parameters webpageParameters();
     WEBCORE_EXPORT static Parameters textDocumentParameters();

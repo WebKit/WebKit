@@ -41,6 +41,7 @@ void VisibleContentRectUpdateInfo::encode(IPC::Encoder& encoder) const
     encoder << m_unobscuredRectInScrollViewCoordinates;
     encoder << m_customFixedPositionRect;
     encoder << m_obscuredInsets;
+    encoder << m_unobscuredSafeAreaInsets;
     encoder << m_lastLayerTreeTransactionID;
     encoder << m_scale;
     encoder << m_timestamp;
@@ -65,6 +66,8 @@ bool VisibleContentRectUpdateInfo::decode(IPC::Decoder& decoder, VisibleContentR
     if (!decoder.decode(result.m_customFixedPositionRect))
         return false;
     if (!decoder.decode(result.m_obscuredInsets))
+        return false;
+    if (!decoder.decode(result.m_unobscuredSafeAreaInsets))
         return false;
     if (!decoder.decode(result.m_lastLayerTreeTransactionID))
         return false;
@@ -113,6 +116,7 @@ TextStream& operator<<(TextStream& ts, const VisibleContentRectUpdateInfo& info)
     ts.dumpProperty("unobscuredContentRectRespectingInputViewBounds", info.unobscuredContentRectRespectingInputViewBounds());
     ts.dumpProperty("customFixedPositionRect", info.customFixedPositionRect());
     ts.dumpProperty("obscuredInsets", info.obscuredInsets());
+    ts.dumpProperty("unobscuredSafeAreaInsets", info.unobscuredSafeAreaInsets());
 
     ts.dumpProperty("scale", info.scale());
     ts.dumpProperty("inStableState", info.inStableState());

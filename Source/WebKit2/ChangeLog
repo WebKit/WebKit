@@ -1,3 +1,93 @@
+2017-05-01  Timothy Horton  <timothy_horton@apple.com>
+
+        Expose viewport-fit instead of clip-to-safe-area
+        https://bugs.webkit.org/show_bug.cgi?id=171503
+        <rdar://problem/31918249>
+
+        Reviewed by Simon Fraser.
+
+        * Shared/VisibleContentRectUpdateInfo.cpp:
+        (WebKit::VisibleContentRectUpdateInfo::encode):
+        (WebKit::VisibleContentRectUpdateInfo::decode):
+        (WebKit::operator<<):
+        * Shared/VisibleContentRectUpdateInfo.h:
+        (WebKit::VisibleContentRectUpdateInfo::VisibleContentRectUpdateInfo):
+        (WebKit::VisibleContentRectUpdateInfo::unobscuredSafeAreaInsets):
+        (WebKit::operator==):
+        Plumb the safe area insets down from the UI process to the Web Content
+        process inside the visible content rect update, alongside the obscured
+        insets.
+
+        * Shared/mac/RemoteLayerTreeTransaction.h:
+        (WebKit::RemoteLayerTreeTransaction::avoidsUnsafeArea):
+        (WebKit::RemoteLayerTreeTransaction::setAvoidsUnsafeArea):
+        * Shared/mac/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTransaction::encode):
+        (WebKit::RemoteLayerTreeTransaction::decode):
+        (WebKit::RemoteLayerTreeTransaction::description):
+        * UIProcess/PageClient.h:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::didChangeAvoidsUnsafeArea):
+        (WebKit::PageClientImpl::didChangeClipToSafeArea): Deleted.
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::didCommitLayerTree):
+        * UIProcess/mac/PageClientImpl.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::didChangeClipToSafeArea): Deleted.
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::willCommitLayerTree):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::viewportConfigurationChanged):
+        (WebKit::WebPage::updateVisibleContentRects):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::resetState):
+        (WebKit::WebPageProxy::setAvoidsUnsafeArea):
+        (WebKit::WebPageProxy::setClipToSafeArea): Deleted.
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::avoidsUnsafeArea):
+        (WebKit::WebPageProxy::clipToSafeArea): Deleted.
+        * UIProcess/WebPageProxy.messages.in:
+        Plumb the effective value of viewport-fit (whether or not to avoid
+        the safe area for layout purposes) from the Web Content process
+        to the UI process inside the layer tree transaction.
+        Also, remove clip-to-safe-area plumbing.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]):
+        (-[WKWebView _computedContentInset]):
+        (-[WKWebView _computedUnobscuredSafeAreaInset]):
+        (-[WKWebView _updateVisibleContentRects]):
+        (-[WKWebView _updateScrollViewInsetAdjustmentBehavior]):
+        (-[WKWebView _safeAreaShouldAffectObscuredInsets]):
+        (-[WKWebView _unobscuredSafeAreaInsets]):
+        (-[WKWebView _setUnobscuredSafeAreaInsets:]):
+        (-[WKWebView _contentMayDrawInObscuredInsets]): Deleted.
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        Make use of the effective value of viewport-fit to decide whether to
+        take the safe area into account when computing the obscured insets,
+        and expose this to clients (in the case that they need to know
+        because they push their own obscured insets down). Also expose a 
+        safe area inset setter for that case as well.
+
+        * UIProcess/ios/WKContentView.h:
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView updateFixedClippingView:]):
+        (-[WKContentView didUpdateVisibleRect:unobscuredRect:unobscuredRectInScrollViewCoordinates:obscuredInsets:unobscuredSafeAreaInsets:inputViewBounds:scale:minimumScale:inStableState:isChangingObscuredInsetsInteractively:enclosedInScrollableAncestorView:]):
+        Remove a piece of the clip-to-safe-area implementation, and plumb
+        safe area insets into the visible content rect update info.
+
+        * UIProcess/ios/WKScrollView.h:
+        * UIProcess/ios/WKScrollView.mm:
+        (-[WKScrollView initWithFrame:]):
+        (-[WKScrollView _contentInsetAdjustmentBehaviorWasExternallyOverridden]):
+        (-[WKScrollView _setContentInsetAdjustmentBehavior:]):
+        (-[WKScrollView _setContentInsetAdjustmentBehaviorInternal:]):
+        Keep track of whether the client has ever touched the content inset adjustment
+        behavior; if they have, we won't manage it ourselves.
+
 2017-05-01  Brady Eidson  <beidson@apple.com>
 
         Update names in WKURLSchemeHandler/WKURLSchemeHandlerTask APIs.

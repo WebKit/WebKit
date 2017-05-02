@@ -146,7 +146,7 @@ private:
 
     WebCore::UserInterfaceLayoutDirection userInterfaceLayoutDirection() override { return WebCore::UserInterfaceLayoutDirection::LTR; }
 
-    void didChangeClipToSafeArea(bool) override { }
+    void didChangeAvoidsUnsafeArea(bool) override { }
 
     // Members of PageClientImpl class
     GtkWidget* m_viewWidget;

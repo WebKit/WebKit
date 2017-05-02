@@ -35,6 +35,11 @@
 
 - (void)_setContentSizePreservingContentOffsetDuringRubberband:(CGSize)contentSize;
 
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
+@property (nonatomic, assign, readonly) BOOL _contentInsetAdjustmentBehaviorWasExternallyOverridden;
+- (void)_setContentInsetAdjustmentBehaviorInternal:(UIScrollViewContentInsetAdjustmentBehavior)insetAdjustmentBehavior;
+#endif
+
 @end
 
 #endif // PLATFORM(IOS)

@@ -45,6 +45,8 @@
 - (void)zoomToScale:(double)scale animated:(BOOL)animated completionHandler:(void (^)(void))completionHandler;
 - (void)accessibilityRetrieveSpeakSelectionContentWithCompletionHandler:(void (^)(void))completionHandler;
 
+@property (nonatomic, assign) UIEdgeInsets overrideSafeAreaInsets;
+
 #endif
 
 @property (nonatomic, retain, setter=_setStableStateOverride:) NSNumber *_stableStateOverride;

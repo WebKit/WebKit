@@ -156,7 +156,7 @@ public:
     void removeViewFromWindow(JSValueRef);
     void addViewToWindow(JSValueRef);
 
-    void setObscuredInsets(double top, double right, double bottom, double left);
+    void setSafeAreaInsets(double top, double right, double bottom, double left);
 
 private:
     UIScriptController(UIScriptContext&);

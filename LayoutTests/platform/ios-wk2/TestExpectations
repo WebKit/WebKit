@@ -14,7 +14,6 @@ fast/visual-viewport/ios/ [ Pass ]
 scrollingcoordinator/ios [ Pass ]
 tiled-drawing/ios [ Pass ]
 editing/selection/character-granularity-rect.html [ Pass ]
-fast/css/variables/constants/ios [ Pass ]
 
 fast/media/mq-inverted-colors-live-update.html [ Pass ]
 fast/media/mq-inverted-colors-live-update-in-subframes.html [ Pass ]
@@ -23,6 +22,11 @@ fast/media/mq-prefers-reduced-motion-live-update.html [ Pass ]
 
 fast/visual-viewport/rubberbanding-viewport-rects.html [ Pass ]
 fast/visual-viewport/rubberbanding-viewport-rects-header-footer.html  [ Pass ]
+
+# Pending SDK changes, re-skip these tests that are un-skipped above.
+fast/viewport/ios/viewport-fit-contain.html [ Skip ]
+fast/viewport/ios/viewport-fit-cover.html [ Skip ]
+fast/viewport/ios/viewport-fit-auto.html [ Skip ]
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific directories.

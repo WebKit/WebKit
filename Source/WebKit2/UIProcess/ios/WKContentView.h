@@ -71,6 +71,7 @@ class WebProcessPool;
     unobscuredRect:(CGRect)unobscuredRect
     unobscuredRectInScrollViewCoordinates:(CGRect)unobscuredRectInScrollViewCoordinates
     obscuredInsets:(UIEdgeInsets)obscuredInsets
+    unobscuredSafeAreaInsets:(UIEdgeInsets)unobscuredSafeAreaInsets
     inputViewBounds:(CGRect)inputViewBounds
     scale:(CGFloat)scale minimumScale:(CGFloat)minimumScale
     inStableState:(BOOL)isStableState

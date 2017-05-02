@@ -668,12 +668,11 @@ void UIScriptController::platformClearAllCallbacks()
     webView.didEndScrollingCallback = nil;
 }
 
-void UIScriptController::setObscuredInsets(double top, double right, double bottom, double left)
+void UIScriptController::setSafeAreaInsets(double top, double right, double bottom, double left)
 {
     UIEdgeInsets insets = UIEdgeInsetsMake(top, left, bottom, right);
     TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
-    webView.scrollView.contentInset = insets;
-    webView._obscuredInsets = insets;
+    webView.overrideSafeAreaInsets = insets;
 }
 
 }

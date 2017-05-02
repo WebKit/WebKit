@@ -1,3 +1,31 @@
+2017-05-01  Timothy Horton  <timothy_horton@apple.com>
+
+        Expose viewport-fit instead of clip-to-safe-area
+        https://bugs.webkit.org/show_bug.cgi?id=171503
+        <rdar://problem/31918249>
+
+        Reviewed by Simon Fraser.
+
+        * DumpRenderTree/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::setSafeAreaInsets):
+        (WTR::UIScriptController::setObscuredInsets): Deleted.
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+        * TestRunnerShared/UIScriptContext/UIScriptController.cpp:
+        (WTR::UIScriptController::setSafeAreaInsets):
+        (WTR::UIScriptController::setObscuredInsets): Deleted.
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.h:
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.mm:
+        (-[TestRunnerWKWebView setOverrideSafeAreaInsets:]):
+        (-[TestRunnerWKWebView _safeAreaInsetsForFrame:inSuperview:]):
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        (WTR::TestController::platformResetStateToConsistentValues):
+        * WebKitTestRunner/ios/UIKitSPI.h:
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::setSafeAreaInsets):
+        (WTR::UIScriptController::setObscuredInsets): Deleted.
+        Expose a safe area inset setter instead of obscured insets.
+
 2017-05-01  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, fix the build on a new internal SDK

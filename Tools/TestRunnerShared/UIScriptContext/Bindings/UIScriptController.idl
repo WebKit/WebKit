@@ -233,5 +233,5 @@ interface UIScriptController {
 
     void overridePreference(DOMString preference, DOMString value);
 
-    void setObscuredInsets(double top, double right, double bottom, double left);
+    void setSafeAreaInsets(double top, double right, double bottom, double left);
 };

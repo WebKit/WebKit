@@ -82,7 +82,7 @@ void ConstantPropertyMap::buildValues()
 {
     m_values = Values { };
 
-    updateConstantsForObscuredInsets();
+    updateConstantsForSafeAreaInsets();
 }
 
 static Ref<CSSVariableData> variableDataForPositivePixelLength(float lengthInPx)
@@ -97,18 +97,18 @@ static Ref<CSSVariableData> variableDataForPositivePixelLength(float lengthInPx)
     return CSSVariableData::create(tokenRange, false);
 }
 
-void ConstantPropertyMap::updateConstantsForObscuredInsets()
+void ConstantPropertyMap::updateConstantsForSafeAreaInsets()
 {
-    FloatBoxExtent obscuredInsets = m_document.page() ? m_document.page()->obscuredInsets() : FloatBoxExtent();
-    setValueForProperty(ConstantProperty::SafeAreaInsetTop, variableDataForPositivePixelLength(obscuredInsets.top()));
-    setValueForProperty(ConstantProperty::SafeAreaInsetRight, variableDataForPositivePixelLength(obscuredInsets.right()));
-    setValueForProperty(ConstantProperty::SafeAreaInsetBottom, variableDataForPositivePixelLength(obscuredInsets.bottom()));
-    setValueForProperty(ConstantProperty::SafeAreaInsetLeft, variableDataForPositivePixelLength(obscuredInsets.left()));
+    FloatBoxExtent unobscuredSafeAreaInsets = m_document.page() ? m_document.page()->unobscuredSafeAreaInsets() : FloatBoxExtent();
+    setValueForProperty(ConstantProperty::SafeAreaInsetTop, variableDataForPositivePixelLength(unobscuredSafeAreaInsets.top()));
+    setValueForProperty(ConstantProperty::SafeAreaInsetRight, variableDataForPositivePixelLength(unobscuredSafeAreaInsets.right()));
+    setValueForProperty(ConstantProperty::SafeAreaInsetBottom, variableDataForPositivePixelLength(unobscuredSafeAreaInsets.bottom()));
+    setValueForProperty(ConstantProperty::SafeAreaInsetLeft, variableDataForPositivePixelLength(unobscuredSafeAreaInsets.left()));
 }
 
-void ConstantPropertyMap::didChangeObscuredInsets()
+void ConstantPropertyMap::didChangeSafeAreaInsets()
 {
-    updateConstantsForObscuredInsets();
+    updateConstantsForSafeAreaInsets();
     m_document.invalidateMatchedPropertiesCacheAndForceStyleRecalc();
 }
 
