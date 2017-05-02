@@ -1,3 +1,24 @@
+2017-05-01  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Simplify Resource Timing handling of cached resource
+        https://bugs.webkit.org/show_bug.cgi?id=171526
+
+        Reviewed by Youenn Fablet.
+
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::loadRequest):
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::init):
+        (WebCore::SubresourceLoader::reportResourceTiming):
+        Use auto in ResourceTiming construction.
+        Eliminate an outdated comment.
+
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::requestResource):
+        We can avoid the checks around the request.origin. It should already
+        be the cases we were checking and asserting because of login in
+        CachedResourceLoader::prepareFetch.
+
 2017-05-01  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r216024.

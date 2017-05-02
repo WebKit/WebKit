@@ -153,9 +153,6 @@ bool SubresourceLoader::init(const ResourceRequest& request)
     m_state = Initialized;
     m_documentLoader->addSubresourceLoader(this);
 
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=155633.
-    // SubresourceLoader could use the document origin as a default and set PotentiallyCrossOriginEnabled requests accordingly.
-    // This would simplify resource loader users as they would only need to set fetch mode to Cors.
     m_origin = m_resource->origin();
 
     return true;
@@ -698,7 +695,7 @@ void SubresourceLoader::reportResourceTiming(const NetworkLoadMetrics& networkLo
         return;
 
     SecurityOrigin& origin = m_origin ? *m_origin : document->securityOrigin();
-    ResourceTiming resourceTiming = ResourceTiming::fromLoad(*m_resource, m_resource->initiatorName(), m_loadTiming, networkLoadMetrics, origin);
+    auto resourceTiming = ResourceTiming::fromLoad(*m_resource, m_resource->initiatorName(), m_loadTiming, networkLoadMetrics, origin);
 
     // Worker resources loaded here are all CachedRawResources loaded through WorkerThreadableLoader.
     // Pass the ResourceTiming information on so that WorkerThreadableLoader may add them to the

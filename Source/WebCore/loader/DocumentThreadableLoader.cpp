@@ -504,7 +504,7 @@ void DocumentThreadableLoader::loadRequest(ResourceRequest&& request, SecurityCh
 
 #if ENABLE(WEB_TIMING)
     if (RuntimeEnabledFeatures::sharedFeatures().resourceTimingEnabled()) {
-        ResourceTiming resourceTiming = ResourceTiming::fromSynchronousLoad(requestURL, m_options.initiator, loadTiming, response.deprecatedNetworkLoadMetrics(), response, securityOrigin());
+        auto resourceTiming = ResourceTiming::fromSynchronousLoad(requestURL, m_options.initiator, loadTiming, response.deprecatedNetworkLoadMetrics(), response, securityOrigin());
         if (options().initiatorContext == InitiatorContext::Worker)
             finishedTimingForWorkerLoad(resourceTiming);
         else {
