@@ -1956,3 +1956,5 @@ webkit.org/b/171389 [ Release ] http/tests/security/contentSecurityPolicy/source
 webkit.org/b/171528 [ Release ] http/tests/preload/not_delaying_window_onload_before_discovery.html [ Pass Failure ]
 
 webkit.org/b/171530 [ Release ] http/tests/xmlhttprequest/methods-async.html [ Pass Timeout ]
+
+webkit.org/b/171559 svg/animations/animated-svg-image-removed-from-document-paused.html [ Pass Failure ]
