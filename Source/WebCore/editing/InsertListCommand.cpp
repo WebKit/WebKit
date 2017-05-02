@@ -54,11 +54,11 @@ RefPtr<HTMLElement> InsertListCommand::insertList(Document& document, Type type)
     return insertCommand->m_listElement;
 }
 
-HTMLElement* InsertListCommand::fixOrphanedListChild(Node* node)
+HTMLElement* InsertListCommand::fixOrphanedListChild(Node& node)
 {
     auto listElement = HTMLUListElement::create(document());
     insertNodeBefore(listElement.copyRef(), node);
-    removeNode(node);
+    removeNode(&node);
     appendNode(node, listElement.copyRef());
     m_listElement = listElement.copyRef();
     return listElement.ptr();
@@ -209,7 +209,7 @@ void InsertListCommand::doApplyForSingleParagraph(bool forceCreateList, const HT
         // Remove the list chlild.
         RefPtr<HTMLElement> listNode = enclosingList(listChildNode);
         if (!listNode) {
-            listNode = fixOrphanedListChild(listChildNode);
+            listNode = fixOrphanedListChild(*listChildNode);
             listNode = mergeWithNeighboringLists(listNode);
         }
         if (!listNode->hasTagName(listTag)) {
@@ -227,7 +227,7 @@ void InsertListCommand::doApplyForSingleParagraph(bool forceCreateList, const HT
             bool rangeEndIsInList = visiblePositionAfterNode(*listNode) == currentSelection->endPosition();
 
             RefPtr<HTMLElement> newList = createHTMLElement(document(), listTag);
-            insertNodeBefore(newList, listNode);
+            insertNodeBefore(*newList, *listNode);
 
             auto* firstChildInList = enclosingListChild(VisiblePosition(firstPositionInNode(listNode.get())).deepEquivalent().deprecatedNode(), listNode.get());
             Node* outerBlock = firstChildInList && isBlockFlowElement(*firstChildInList) ? firstChildInList : listNode.get();
@@ -283,13 +283,13 @@ void InsertListCommand::unlistifyParagraph(const VisiblePosition& originalStart,
     }
     // When removing a list, we must always create a placeholder to act as a point of insertion
     // for the list content being removed.
-    RefPtr<Element> placeholder = HTMLBRElement::create(document());
-    RefPtr<Element> nodeToInsert = placeholder;
+    auto placeholder = HTMLBRElement::create(document());
+    RefPtr<Element> nodeToInsert = placeholder.copyRef();
     // If the content of the list item will be moved into another list, put it in a list item
     // so that we don't create an orphaned list child.
     if (enclosingList(listNode)) {
         nodeToInsert = HTMLLIElement::create(document());
-        appendNode(placeholder, nodeToInsert);
+        appendNode(placeholder.copyRef(), *nodeToInsert);
     }
 
     if (nextListChild && previousListChild) {
@@ -301,7 +301,7 @@ void InsertListCommand::unlistifyParagraph(const VisiblePosition& originalStart,
         // listChildNode below in moveParagraphs, previousListChild will be removed along with it if it is 
         // unrendered. But we ought to remove nextListChild too, if it is unrendered.
         splitElement(listNode, splitTreeToNode(nextListChild, listNode));
-        insertNodeBefore(nodeToInsert, listNode);
+        insertNodeBefore(nodeToInsert.releaseNonNull(), *listNode);
     } else if (nextListChild || listChildNode->parentNode() != listNode) {
         // Just because listChildNode has no previousListChild doesn't mean there isn't any content
         // in listNode that comes before listChildNode, as listChildNode could have ancestors
@@ -309,11 +309,11 @@ void InsertListCommand::unlistifyParagraph(const VisiblePosition& originalStart,
         // where we're about to move listChildNode to.
         if (listChildNode->parentNode() != listNode)
             splitElement(listNode, splitTreeToNode(listChildNode, listNode).get());
-        insertNodeBefore(nodeToInsert, listNode);
+        insertNodeBefore(nodeToInsert.releaseNonNull(), *listNode);
     } else
-        insertNodeAfter(nodeToInsert, listNode);
+        insertNodeAfter(nodeToInsert.releaseNonNull(), *listNode);
 
-    VisiblePosition insertionPoint = VisiblePosition(positionBeforeNode(placeholder.get()));
+    VisiblePosition insertionPoint = VisiblePosition(positionBeforeNode(placeholder.ptr()));
     moveParagraphs(start, end, insertionPoint, true);
 }
 
@@ -354,13 +354,13 @@ RefPtr<HTMLElement> InsertListCommand::listifyParagraph(const VisiblePosition& o
     Element* nextList = adjacentEnclosingList(start.deepEquivalent(), end.next(CannotCrossEditingBoundary), listTag);
     RefPtr<HTMLElement> listElement;
     if (previousList)
-        appendNode(WTFMove(listItemElement), previousList);
+        appendNode(WTFMove(listItemElement), *previousList);
     else if (nextList)
         insertNodeAt(WTFMove(listItemElement), positionBeforeNode(nextList));
     else {
         // Create the list.
         listElement = createHTMLElement(document(), listTag);
-        appendNode(WTFMove(listItemElement), listElement);
+        appendNode(WTFMove(listItemElement), *listElement);
 
         if (start == end && isBlock(start.deepEquivalent().deprecatedNode())) {
             // Inserting the list into an empty paragraph that isn't held open 
@@ -382,7 +382,7 @@ RefPtr<HTMLElement> InsertListCommand::listifyParagraph(const VisiblePosition& o
         if (listChild && listChild->hasTagName(liTag))
             insertionPos = positionInParentBeforeNode(listChild);
 
-        insertNodeAt(listElement, insertionPos);
+        insertNodeAt(*listElement, insertionPos);
 
         // We inserted the list at the start of the content we're about to move
         // Update the start of content, so we don't try to move the list into itself.  bug 19066

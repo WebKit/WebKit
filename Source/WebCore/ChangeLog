@@ -1,3 +1,87 @@
+2017-05-02  Chris Dumez  <cdumez@apple.com>
+
+        Use PassRefPtr less in editing code
+        https://bugs.webkit.org/show_bug.cgi?id=171534
+
+        Reviewed by Geoffrey Garen.
+
+        Use PassRefPtr less in editing code.
+
+        * editing/AppendNodeCommand.cpp:
+        (WebCore::AppendNodeCommand::AppendNodeCommand):
+        (WebCore::AppendNodeCommand::getNodesInCommand):
+        * editing/AppendNodeCommand.h:
+        (WebCore::AppendNodeCommand::create):
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::surroundNodeRangeWithElement):
+        (WebCore::ApplyStyleCommand::positionToComputeInlineStyleChange):
+        * editing/BreakBlockquoteCommand.cpp:
+        (WebCore::BreakBlockquoteCommand::doApply):
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::insertNodeBefore):
+        (WebCore::CompositeEditCommand::insertNodeAfter):
+        (WebCore::CompositeEditCommand::insertNodeAt):
+        (WebCore::CompositeEditCommand::appendNode):
+        (WebCore::CompositeEditCommand::moveRemainingSiblingsToNewParent):
+        (WebCore::CompositeEditCommand::mergeIdenticalElements):
+        (WebCore::CompositeEditCommand::insertNodeAtTabSpanPosition):
+        (WebCore::CompositeEditCommand::appendBlockPlaceholder):
+        (WebCore::CompositeEditCommand::insertBlockPlaceholder):
+        (WebCore::CompositeEditCommand::addBlockPlaceholderIfNeeded):
+        (WebCore::CompositeEditCommand::insertNewDefaultParagraphElementAt):
+        (WebCore::CompositeEditCommand::cloneParagraphUnderNewElement):
+        (WebCore::CompositeEditCommand::moveParagraphs):
+        * editing/CompositeEditCommand.h:
+        * editing/CreateLinkCommand.cpp:
+        (WebCore::CreateLinkCommand::doApply):
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::makeStylingElementsDirectChildrenOfEditableRootToPreventStyleLoss):
+        (WebCore::DeleteSelectionCommand::mergeParagraphs):
+        * editing/FormatBlockCommand.cpp:
+        (WebCore::FormatBlockCommand::formatRange):
+        * editing/IndentOutdentCommand.cpp:
+        (WebCore::IndentOutdentCommand::tryIndentingAsListItem):
+        (WebCore::IndentOutdentCommand::indentIntoBlockquote):
+        (WebCore::IndentOutdentCommand::outdentParagraph):
+        * editing/InsertLineBreakCommand.cpp:
+        (WebCore::InsertLineBreakCommand::doApply):
+        * editing/InsertLineBreakCommand.h:
+        * editing/InsertListCommand.cpp:
+        (WebCore::InsertListCommand::fixOrphanedListChild):
+        (WebCore::InsertListCommand::doApplyForSingleParagraph):
+        (WebCore::InsertListCommand::unlistifyParagraph):
+        (WebCore::InsertListCommand::listifyParagraph):
+        * editing/InsertListCommand.h:
+        * editing/InsertNodeBeforeCommand.cpp:
+        (WebCore::InsertNodeBeforeCommand::InsertNodeBeforeCommand):
+        (WebCore::InsertNodeBeforeCommand::doApply):
+        (WebCore::InsertNodeBeforeCommand::doUnapply):
+        (WebCore::InsertNodeBeforeCommand::getNodesInCommand):
+        * editing/InsertNodeBeforeCommand.h:
+        (WebCore::InsertNodeBeforeCommand::create):
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        (WebCore::InsertParagraphSeparatorCommand::cloneHierarchyUnderNewBlock):
+        (WebCore::InsertParagraphSeparatorCommand::doApply):
+        * editing/InsertParagraphSeparatorCommand.h:
+        * editing/InsertTextCommand.cpp:
+        (WebCore::InsertTextCommand::positionInsideTextNode):
+        (WebCore::InsertTextCommand::insertTab):
+        * editing/ModifySelectionListLevel.cpp:
+        (WebCore::ModifySelectionListLevelCommand::insertSiblingNodeRangeBefore):
+        (WebCore::ModifySelectionListLevelCommand::insertSiblingNodeRangeAfter):
+        (WebCore::ModifySelectionListLevelCommand::appendSiblingNodeRange):
+        (WebCore::IncreaseSelectionListLevelCommand::doApply):
+        * editing/RemoveNodePreservingChildrenCommand.cpp:
+        (WebCore::RemoveNodePreservingChildrenCommand::doApply):
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::moveNodeOutOfAncestor):
+        (WebCore::ReplaceSelectionCommand::mergeEndIfNeeded):
+        (WebCore::ReplaceSelectionCommand::doApply):
+        (WebCore::ReplaceSelectionCommand::addSpacesForSmartReplace):
+        (WebCore::ReplaceSelectionCommand::insertAsListItems):
+        * editing/SimplifyMarkupCommand.cpp:
+        (WebCore::SimplifyMarkupCommand::pruneSubsequentAncestorsToRemove):
+
 2017-05-02  Ben Kelly <ben@wanderview.com>
 
         Set Response.blob() type correctly when body is a ReadableStream.

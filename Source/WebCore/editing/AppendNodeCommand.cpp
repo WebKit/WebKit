@@ -34,14 +34,12 @@
 
 namespace WebCore {
 
-AppendNodeCommand::AppendNodeCommand(PassRefPtr<ContainerNode> parent, Ref<Node>&& node, EditAction editingAction)
+AppendNodeCommand::AppendNodeCommand(Ref<ContainerNode>&& parent, Ref<Node>&& node, EditAction editingAction)
     : SimpleEditCommand(parent->document(), editingAction)
-    , m_parent(parent)
+    , m_parent(WTFMove(parent))
     , m_node(WTFMove(node))
 {
-    ASSERT(m_parent);
     ASSERT(!m_node->parentNode());
-
     ASSERT(m_parent->hasEditableStyle() || !m_parent->renderer());
 }
 
@@ -64,7 +62,7 @@ void AppendNodeCommand::doUnapply()
 #ifndef NDEBUG
 void AppendNodeCommand::getNodesInCommand(HashSet<Node*>& nodes)
 {
-    addNodeAndDescendants(m_parent.get(), nodes);
+    addNodeAndDescendants(m_parent.ptr(), nodes);
     addNodeAndDescendants(m_node.ptr(), nodes);
 }
 #endif

@@ -131,19 +131,19 @@ void InsertParagraphSeparatorCommand::getAncestorsInsideBlock(const Node* insert
     }
 }
 
-RefPtr<Element> InsertParagraphSeparatorCommand::cloneHierarchyUnderNewBlock(const Vector<RefPtr<Element>>& ancestors, PassRefPtr<Element> blockToInsert)
+Ref<Element> InsertParagraphSeparatorCommand::cloneHierarchyUnderNewBlock(const Vector<RefPtr<Element>>& ancestors, Ref<Element>&& blockToInsert)
 {
     // Make clones of ancestors in between the start node and the start block.
-    RefPtr<Element> parent = blockToInsert;
+    RefPtr<Element> parent = WTFMove(blockToInsert);
     for (size_t i = ancestors.size(); i != 0; --i) {
         auto child = ancestors[i - 1]->cloneElementWithoutChildren(document());
         // It should always be okay to remove id from the cloned elements, since the originals are not deleted.
         child->removeAttribute(idAttr);
-        appendNode(child.ptr(), parent);
+        appendNode(child.copyRef(), parent.releaseNonNull());
         parent = WTFMove(child);
     }
     
-    return parent;
+    return parent.releaseNonNull();
 }
 
 void InsertParagraphSeparatorCommand::doApply()
@@ -217,11 +217,11 @@ void InsertParagraphSeparatorCommand::doApply()
             if (isFirstInBlock && !lineBreakExistsAtVisiblePosition(visiblePos)) {
                 // The block is empty.  Create an empty block to
                 // represent the paragraph that we're leaving.
-                RefPtr<Element> extraBlock = createDefaultParagraphElement(document());
-                appendNode(extraBlock, startBlock);
-                appendBlockPlaceholder(extraBlock);
+                auto extraBlock = createDefaultParagraphElement(document());
+                appendNode(extraBlock.copyRef(), *startBlock);
+                appendBlockPlaceholder(WTFMove(extraBlock));
             }
-            appendNode(blockToInsert, startBlock);
+            appendNode(*blockToInsert, *startBlock);
         } else {
             // We can get here if we pasted a copied portion of a blockquote with a newline at the end and are trying to paste it
             // into an unquoted area. We then don't want the newline within the blockquote or else it will also be quoted.
@@ -235,18 +235,19 @@ void InsertParagraphSeparatorCommand::doApply()
             Element* siblingNode = startBlock.get();
             if (blockToInsert->hasTagName(divTag))
                 siblingNode = highestVisuallyEquivalentDivBelowRoot(startBlock.get());
-            insertNodeAfter(blockToInsert, siblingNode);
+            insertNodeAfter(*blockToInsert, *siblingNode);
         }
 
         // Recreate the same structure in the new paragraph.
         
         Vector<RefPtr<Element>> ancestors;
         getAncestorsInsideBlock(positionOutsideTabSpan(insertionPosition).deprecatedNode(), startBlock.get(), ancestors);      
-        RefPtr<Element> parent = cloneHierarchyUnderNewBlock(ancestors, blockToInsert);
+        auto parent = cloneHierarchyUnderNewBlock(ancestors, *blockToInsert);
+        auto* parentPtr = parent.ptr();
         
-        appendBlockPlaceholder(parent);
+        appendBlockPlaceholder(WTFMove(parent));
 
-        setEndingSelection(VisibleSelection(firstPositionInNode(parent.get()), DOWNSTREAM, endingSelection().isDirectional()));
+        setEndingSelection(VisibleSelection(firstPositionInNode(parentPtr), DOWNSTREAM, endingSelection().isDirectional()));
         return;
     }
     
@@ -275,14 +276,14 @@ void InsertParagraphSeparatorCommand::doApply()
         // find ending selection position easily before inserting the paragraph
         insertionPosition = insertionPosition.downstream();
         
-        insertNodeBefore(blockToInsert, refNode);
+        insertNodeBefore(*blockToInsert, *refNode);
 
         // Recreate the same structure in the new paragraph.
 
         Vector<RefPtr<Element>> ancestors;
         getAncestorsInsideBlock(positionAvoidingSpecialElementBoundary(positionOutsideTabSpan(insertionPosition)).deprecatedNode(), startBlock.get(), ancestors);
         
-        appendBlockPlaceholder(cloneHierarchyUnderNewBlock(ancestors, blockToInsert));
+        appendBlockPlaceholder(cloneHierarchyUnderNewBlock(ancestors, *blockToInsert));
         
         // In this case, we need to set the new ending selection.
         setEndingSelection(VisibleSelection(insertionPosition, DOWNSTREAM, endingSelection().isDirectional()));
@@ -297,9 +298,10 @@ void InsertParagraphSeparatorCommand::doApply()
     // it if visiblePos is at the start of a paragraph so that the 
     // content will move down a line.
     if (isStartOfParagraph(visiblePos)) {
-        RefPtr<Element> br = HTMLBRElement::create(document());
-        insertNodeAt(br.get(), insertionPosition);
-        insertionPosition = positionInParentAfterNode(br.get());
+        auto br = HTMLBRElement::create(document());
+        auto* brPtr = br.ptr();
+        insertNodeAt(WTFMove(br), insertionPosition);
+        insertionPosition = positionInParentAfterNode(brPtr);
         // If the insertion point is a break element, there is nothing else
         // we need to do.
         if (visiblePos.deepEquivalent().anchorNode()->renderer()->isBR()) {
@@ -358,9 +360,9 @@ void InsertParagraphSeparatorCommand::doApply()
 
     // Put the added block in the tree.
     if (nestNewBlock)
-        appendNode(blockToInsert.get(), startBlock);
+        appendNode(*blockToInsert, *startBlock);
     else
-        insertNodeAfter(blockToInsert.get(), startBlock);
+        insertNodeAfter(*blockToInsert, *startBlock);
 
     document().updateLayoutIgnorePendingStylesheets();
 
@@ -368,7 +370,7 @@ void InsertParagraphSeparatorCommand::doApply()
     // created.  All of the nodes, starting at visiblePos, are about to be added to the new paragraph 
     // element.  If the first node to be inserted won't be one that will hold an empty line open, add a br.
     if (isEndOfParagraph(visiblePos) && !lineBreakExistsAtVisiblePosition(visiblePos))
-        appendNode(HTMLBRElement::create(document()), blockToInsert.get());
+        appendNode(HTMLBRElement::create(document()), *blockToInsert);
 
     // Move the start node and the siblings of the start node.
     if (VisiblePosition(insertionPosition) != VisiblePosition(positionBeforeNode(blockToInsert.get()))) {

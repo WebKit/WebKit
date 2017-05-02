@@ -466,7 +466,7 @@ void DeleteSelectionCommand::makeStylingElementsDirectChildrenOfEditableRootToPr
             RefPtr<ContainerNode> rootEditableElement = node->rootEditableElement();
             if (rootEditableElement) {
                 removeNode(node);
-                appendNode(node, rootEditableElement);
+                appendNode(*node, *rootEditableElement);
             }
         }
         node = nextNode;
@@ -657,7 +657,7 @@ void DeleteSelectionCommand::mergeParagraphs()
     
     // We need to merge into m_upstreamStart's block, but it's been emptied out and collapsed by deletion.
     if (!mergeDestination.deepEquivalent().deprecatedNode() || !mergeDestination.deepEquivalent().deprecatedNode()->isDescendantOf(enclosingBlock(m_upstreamStart.containerNode())) || m_startsAtEmptyLine) {
-        insertNodeAt(HTMLBRElement::create(document()).ptr(), m_upstreamStart);
+        insertNodeAt(HTMLBRElement::create(document()), m_upstreamStart);
         mergeDestination = VisiblePosition(m_upstreamStart);
     }
     

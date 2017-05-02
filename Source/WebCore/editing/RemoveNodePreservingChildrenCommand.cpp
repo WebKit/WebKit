@@ -41,15 +41,15 @@ RemoveNodePreservingChildrenCommand::RemoveNodePreservingChildrenCommand(PassRef
 
 void RemoveNodePreservingChildrenCommand::doApply()
 {
-    Vector<RefPtr<Node>> children;
+    Vector<Ref<Node>> children;
     for (Node* child = m_node->firstChild(); child; child = child->nextSibling())
-        children.append(child);
+        children.append(*child);
 
     size_t size = children.size();
     for (size_t i = 0; i < size; ++i) {
         auto child = WTFMove(children[i]);
-        removeNode(child, m_shouldAssumeContentIsAlwaysEditable);
-        insertNodeBefore(WTFMove(child), m_node, m_shouldAssumeContentIsAlwaysEditable);
+        removeNode(child.ptr(), m_shouldAssumeContentIsAlwaysEditable);
+        insertNodeBefore(WTFMove(child), *m_node, m_shouldAssumeContentIsAlwaysEditable);
     }
     removeNode(m_node, m_shouldAssumeContentIsAlwaysEditable);
 }

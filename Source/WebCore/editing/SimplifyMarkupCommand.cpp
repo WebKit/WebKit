@@ -120,7 +120,7 @@ int SimplifyMarkupCommand::pruneSubsequentAncestorsToRemove(Vector<RefPtr<Node>>
         return 0;
 
     removeNode(nodesToRemove[startNodeIndex], AssumeContentIsAlwaysEditable);
-    insertNodeBefore(nodesToRemove[startNodeIndex], highestAncestorToRemove, AssumeContentIsAlwaysEditable);
+    insertNodeBefore(*nodesToRemove[startNodeIndex], *highestAncestorToRemove, AssumeContentIsAlwaysEditable);
     removeNode(highestAncestorToRemove, AssumeContentIsAlwaysEditable);
 
     return pastLastNodeToRemove - startNodeIndex - 1;

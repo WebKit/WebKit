@@ -95,7 +95,7 @@ void ModifySelectionListLevelCommand::insertSiblingNodeRangeBefore(Node* startNo
     while (1) {
         Node* next = node->nextSibling();
         removeNode(node);
-        insertNodeBefore(node, refNode);
+        insertNodeBefore(*node, *refNode);
 
         if (node == endNode)
             break;
@@ -110,7 +110,7 @@ void ModifySelectionListLevelCommand::insertSiblingNodeRangeAfter(Node* startNod
     while (1) {
         Node* next = node->nextSibling();
         removeNode(node);
-        insertNodeAfter(node, refNode);
+        insertNodeAfter(*node, *refNode);
 
         if (node == endNode)
             break;
@@ -126,7 +126,7 @@ void ModifySelectionListLevelCommand::appendSiblingNodeRange(Node* startNode, No
     while (1) {
         Node* next = node->nextSibling();
         removeNode(node);
-        appendNode(node, newParent);
+        appendNode(*node, *newParent);
 
         if (node == endNode)
             break;
@@ -197,7 +197,7 @@ void IncreaseSelectionListLevelCommand::doApply()
                 newParent = HTMLUListElement::create(document());
                 break;
         }
-        insertNodeBefore(newParent, startListChild);
+        insertNodeBefore(*newParent, *startListChild);
         appendSiblingNodeRange(startListChild, endListChild, newParent.get());
         m_listElement = WTFMove(newParent);
     }

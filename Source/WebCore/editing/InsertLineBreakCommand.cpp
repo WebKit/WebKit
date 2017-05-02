@@ -53,30 +53,6 @@ bool InsertLineBreakCommand::preservesTypingStyle() const
     return true;
 }
 
-void InsertLineBreakCommand::insertNodeAfterPosition(Node* node, const Position& position)
-{
-    // Insert the BR after the caret position. In the case the
-    // position is a block, do an append. We don't want to insert
-    // the BR *after* the block.
-    auto* element = deprecatedEnclosingBlockFlowElement(position.deprecatedNode());
-    if (element == position.deprecatedNode())
-        appendNode(node, element);
-    else
-        insertNodeAfter(node, position.deprecatedNode());
-}
-
-void InsertLineBreakCommand::insertNodeBeforePosition(Node* node, const Position& position)
-{
-    // Insert the BR after the caret position. In the case the
-    // position is a block, do an append. We don't want to insert
-    // the BR *before* the block.
-    auto* element = deprecatedEnclosingBlockFlowElement(position.deprecatedNode());
-    if (element == position.deprecatedNode())
-        appendNode(node, element);
-    else
-        insertNodeBefore(node, position.deprecatedNode());
-}
-
 // Whether we should insert a break element or a '\n'.
 bool InsertLineBreakCommand::shouldUseBreakElement(const Position& position)
 {
@@ -116,31 +92,31 @@ void InsertLineBreakCommand::doApply()
     if (isEndOfParagraph(caret) && !lineBreakExistsAtVisiblePosition(caret)) {
         bool needExtraLineBreak = !is<HTMLHRElement>(*position.deprecatedNode()) && !is<HTMLTableElement>(*position.deprecatedNode());
         
-        insertNodeAt(nodeToInsert.get(), position);
+        insertNodeAt(*nodeToInsert, position);
         
         if (needExtraLineBreak)
-            insertNodeBefore(nodeToInsert->cloneNode(false), nodeToInsert);
+            insertNodeBefore(nodeToInsert->cloneNode(false), *nodeToInsert);
         
         VisiblePosition endingPosition(positionBeforeNode(nodeToInsert.get()));
         setEndingSelection(VisibleSelection(endingPosition, endingSelection().isDirectional()));
     } else if (position.deprecatedEditingOffset() <= caretMinOffset(*position.deprecatedNode())) {
-        insertNodeAt(nodeToInsert.get(), position);
+        insertNodeAt(*nodeToInsert, position);
         
         // Insert an extra br or '\n' if the just inserted one collapsed.
         if (!isStartOfParagraph(positionBeforeNode(nodeToInsert.get())))
-            insertNodeBefore(nodeToInsert->cloneNode(false), nodeToInsert.get());
+            insertNodeBefore(nodeToInsert->cloneNode(false), *nodeToInsert);
         
         setEndingSelection(VisibleSelection(positionInParentAfterNode(nodeToInsert.get()), DOWNSTREAM, endingSelection().isDirectional()));
     // If we're inserting after all of the rendered text in a text node, or into a non-text node,
     // a simple insertion is sufficient.
     } else if (position.deprecatedEditingOffset() >= caretMaxOffset(*position.deprecatedNode()) || !is<Text>(*position.deprecatedNode())) {
-        insertNodeAt(nodeToInsert.get(), position);
+        insertNodeAt(*nodeToInsert, position);
         setEndingSelection(VisibleSelection(positionInParentAfterNode(nodeToInsert.get()), DOWNSTREAM, endingSelection().isDirectional()));
     } else if (is<Text>(*position.deprecatedNode())) {
         // Split a text node
         Text& textNode = downcast<Text>(*position.deprecatedNode());
         splitTextNode(&textNode, position.deprecatedEditingOffset());
-        insertNodeBefore(nodeToInsert, &textNode);
+        insertNodeBefore(*nodeToInsert, textNode);
         Position endingPosition = firstPositionInNode(&textNode);
         
         // Handle whitespace that occurs after the split
@@ -154,9 +130,10 @@ void InsertLineBreakCommand::doApply()
             if (textNode.isConnected())
                 insertTextIntoNode(&textNode, 0, nonBreakingSpaceString());
             else {
-                RefPtr<Text> nbspNode = document().createTextNode(nonBreakingSpaceString());
-                insertNodeAt(nbspNode.get(), positionBeforeTextNode);
-                endingPosition = firstPositionInNode(nbspNode.get());
+                auto nbspNode = document().createTextNode(nonBreakingSpaceString());
+                auto* nbspNodePtr = nbspNode.ptr();
+                insertNodeAt(WTFMove(nbspNode), positionBeforeTextNode);
+                endingPosition = firstPositionInNode(nbspNodePtr);
             }
         }
         

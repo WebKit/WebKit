@@ -526,29 +526,27 @@ bool CompositeEditCommand::isRemovableBlock(const Node* node)
     return false;
 }
 
-void CompositeEditCommand::insertNodeBefore(PassRefPtr<Node> insertChild, PassRefPtr<Node> refChild, ShouldAssumeContentIsAlwaysEditable shouldAssumeContentIsAlwaysEditable)
+void CompositeEditCommand::insertNodeBefore(Ref<Node>&& insertChild, Node& refChild, ShouldAssumeContentIsAlwaysEditable shouldAssumeContentIsAlwaysEditable)
 {
-    applyCommandToComposite(InsertNodeBeforeCommand::create(insertChild, refChild, shouldAssumeContentIsAlwaysEditable, editingAction()));
+    applyCommandToComposite(InsertNodeBeforeCommand::create(WTFMove(insertChild), refChild, shouldAssumeContentIsAlwaysEditable, editingAction()));
 }
 
-void CompositeEditCommand::insertNodeAfter(PassRefPtr<Node> insertChild, PassRefPtr<Node> refChild)
+void CompositeEditCommand::insertNodeAfter(Ref<Node>&& insertChild, Node& refChild)
 {
-    ASSERT(insertChild);
-    ASSERT(refChild);
-    ContainerNode* parent = refChild->parentNode();
+    ContainerNode* parent = refChild.parentNode();
     if (!parent)
         return;
 
     ASSERT(!parent->isShadowRoot());
-    if (parent->lastChild() == refChild)
-        appendNode(insertChild, parent);
+    if (parent->lastChild() == &refChild)
+        appendNode(WTFMove(insertChild), *parent);
     else {
-        ASSERT(refChild->nextSibling());
-        insertNodeBefore(insertChild, refChild->nextSibling());
+        ASSERT(refChild.nextSibling());
+        insertNodeBefore(WTFMove(insertChild), *refChild.nextSibling());
     }
 }
 
-void CompositeEditCommand::insertNodeAt(PassRefPtr<Node> insertChild, const Position& editingPosition)
+void CompositeEditCommand::insertNodeAt(Ref<Node>&& insertChild, const Position& editingPosition)
 {
     ASSERT(isEditablePosition(editingPosition));
     // For editing positions like [table, 0], insert before the table,
@@ -562,27 +560,26 @@ void CompositeEditCommand::insertNodeAt(PassRefPtr<Node> insertChild, const Posi
         for (int i = 0; child && i < offset; i++)
             child = child->nextSibling();
         if (child)
-            insertNodeBefore(insertChild, child);
+            insertNodeBefore(WTFMove(insertChild), *child);
         else
-            appendNode(insertChild, downcast<ContainerNode>(refChild));
+            appendNode(WTFMove(insertChild), downcast<ContainerNode>(*refChild));
     } else if (caretMinOffset(*refChild) >= offset)
-        insertNodeBefore(insertChild, refChild);
+        insertNodeBefore(WTFMove(insertChild), *refChild);
     else if (is<Text>(*refChild) && caretMaxOffset(*refChild) > offset) {
         splitTextNode(downcast<Text>(refChild), offset);
 
         // Mutation events (bug 22634) from the text node insertion may have removed the refChild
         if (!refChild->isConnected())
             return;
-        insertNodeBefore(insertChild, refChild);
+        insertNodeBefore(WTFMove(insertChild), *refChild);
     } else
-        insertNodeAfter(insertChild, refChild);
+        insertNodeAfter(WTFMove(insertChild), *refChild);
 }
 
-void CompositeEditCommand::appendNode(PassRefPtr<Node> node, PassRefPtr<ContainerNode> parent)
+void CompositeEditCommand::appendNode(Ref<Node>&& node, Ref<ContainerNode>&& parent)
 {
-    ASSERT(canHaveChildrenForEditing(*parent));
-    ASSERT(node);
-    applyCommandToComposite(AppendNodeCommand::create(parent, *node, editingAction()));
+    ASSERT(canHaveChildrenForEditing(parent));
+    applyCommandToComposite(AppendNodeCommand::create(WTFMove(parent), WTFMove(node), editingAction()));
 }
 
 void CompositeEditCommand::removeChildrenInRange(PassRefPtr<Node> node, unsigned from, unsigned to)
@@ -625,7 +622,7 @@ void CompositeEditCommand::moveRemainingSiblingsToNewParent(Node* node, Node* pa
 
     for (auto& nodeToRemove : nodesToRemove) {
         removeNode(nodeToRemove.ptr());
-        appendNode(nodeToRemove.ptr(), newParent);
+        appendNode(WTFMove(nodeToRemove), *newParent);
     }
 }
 
@@ -675,7 +672,7 @@ void CompositeEditCommand::mergeIdenticalElements(PassRefPtr<Element> prpFirst, 
     ASSERT(!first->isDescendantOf(second.get()) && second != first);
     if (first->nextSibling() != second) {
         removeNode(second);
-        insertNodeAfter(second, first);
+        insertNodeAfter(*second, *first);
     }
     applyCommandToComposite(MergeIdenticalElementsCommand::create(first, second));
 }
@@ -817,10 +814,10 @@ Position CompositeEditCommand::positionOutsideTabSpan(const Position& position)
     return positionInParentBeforeNode(tabSpan);
 }
 
-void CompositeEditCommand::insertNodeAtTabSpanPosition(PassRefPtr<Node> node, const Position& pos)
+void CompositeEditCommand::insertNodeAtTabSpanPosition(Ref<Node>&& node, const Position& pos)
 {
     // insert node before, after, or at split of tab span
-    insertNodeAt(node, positionOutsideTabSpan(pos));
+    insertNodeAt(WTFMove(node), positionOutsideTabSpan(pos));
 }
 
 static EditAction deleteSelectionEditingActionForEditingAction(EditAction editingAction)
@@ -1095,19 +1092,16 @@ void CompositeEditCommand::deleteInsignificantTextDownstream(const Position& pos
     deleteInsignificantText(pos, end);
 }
 
-RefPtr<Node> CompositeEditCommand::appendBlockPlaceholder(PassRefPtr<Element> container)
+Ref<Element> CompositeEditCommand::appendBlockPlaceholder(Ref<Element>&& container)
 {
-    if (!container)
-        return nullptr;
-
     document().updateLayoutIgnorePendingStylesheets();
     
     // Should assert isBlockFlow || isInlineFlow when deletion improves. See 4244964.
     ASSERT(container->renderer());
 
     auto placeholder = createBlockPlaceholderElement(document());
-    appendNode(placeholder.ptr(), container);
-    return WTFMove(placeholder);
+    appendNode(placeholder.copyRef(), WTFMove(container));
+    return placeholder;
 }
 
 RefPtr<Node> CompositeEditCommand::insertBlockPlaceholder(const Position& pos)
@@ -1119,7 +1113,7 @@ RefPtr<Node> CompositeEditCommand::insertBlockPlaceholder(const Position& pos)
     ASSERT(pos.deprecatedNode()->renderer());
 
     auto placeholder = createBlockPlaceholderElement(document());
-    insertNodeAt(placeholder.ptr(), pos);
+    insertNodeAt(placeholder.copyRef(), pos);
     return WTFMove(placeholder);
 }
 
@@ -1137,7 +1131,7 @@ RefPtr<Node> CompositeEditCommand::addBlockPlaceholderIfNeeded(Element* containe
     // Append the placeholder to make sure it follows any unrendered blocks.
     auto& blockFlow = downcast<RenderBlockFlow>(*renderer);
     if (!blockFlow.height() || (blockFlow.isListItem() && !blockFlow.firstChild()))
-        return appendBlockPlaceholder(container);
+        return appendBlockPlaceholder(*container);
 
     return nullptr;
 }
@@ -1160,7 +1154,7 @@ Ref<HTMLElement> CompositeEditCommand::insertNewDefaultParagraphElementAt(const 
 {
     auto paragraphElement = createDefaultParagraphElement(document());
     paragraphElement->appendChild(HTMLBRElement::create(document()));
-    insertNodeAt(paragraphElement.ptr(), position);
+    insertNodeAt(paragraphElement.copyRef(), position);
     return paragraphElement;
 }
 
@@ -1256,7 +1250,7 @@ void CompositeEditCommand::cloneParagraphUnderNewElement(const Position& start, 
         lastNode = blockElement;
     } else {
         lastNode = outerNode->cloneNode(isRenderedTable(outerNode.get()));
-        appendNode(lastNode, blockElement);
+        appendNode(*lastNode, *blockElement);
     }
 
     if (start.deprecatedNode() != outerNode && lastNode->isElementNode() && start.anchorNode()->isDescendantOf(outerNode.get())) {
@@ -1271,7 +1265,7 @@ void CompositeEditCommand::cloneParagraphUnderNewElement(const Position& start, 
         for (size_t i = ancestors.size(); i != 0; --i) {
             Node* item = ancestors[i - 1].get();
             auto child = item->cloneNode(isRenderedTable(item));
-            appendNode(child.ptr(), downcast<Element>(lastNode.get()));
+            appendNode(child.copyRef(), downcast<Element>(*lastNode));
             lastNode = WTFMove(child);
         }
     }
@@ -1298,7 +1292,7 @@ void CompositeEditCommand::cloneParagraphUnderNewElement(const Position& start, 
             }
 
             auto clonedNode = node->cloneNode(true);
-            insertNodeAfter(clonedNode.ptr(), lastNode);
+            insertNodeAfter(clonedNode.copyRef(), *lastNode);
             lastNode = WTFMove(clonedNode);
             if (node == end.deprecatedNode() || end.deprecatedNode()->isDescendantOf(*node))
                 break;
@@ -1591,16 +1585,16 @@ bool CompositeEditCommand::breakOutOfEmptyListItem()
         // If emptyListItem is followed by other list item or nested list, then insert newBlock before the list node.
         // Because we have splitted the element, emptyListItem is the first element in the list node.
         // i.e. insert newBlock before ul or ol whose first element is emptyListItem
-        insertNodeBefore(newBlock, listNode);
+        insertNodeBefore(*newBlock, *listNode);
         removeNode(emptyListItem);
     } else {
         // When emptyListItem does not follow any list item or nested list, insert newBlock after the enclosing list node.
         // Remove the enclosing node if emptyListItem is the only child; otherwise just remove emptyListItem.
-        insertNodeAfter(newBlock, listNode);
+        insertNodeAfter(*newBlock, *listNode);
         removeNode(isListItem(previousListNode.get()) || isListHTMLElement(previousListNode.get()) ? emptyListItem : listNode);
     }
 
-    appendBlockPlaceholder(newBlock);
+    appendBlockPlaceholder(*newBlock);
     setEndingSelection(VisibleSelection(firstPositionInNode(newBlock.get()), DOWNSTREAM, endingSelection().isDirectional()));
 
     style->prepareToApplyAt(endingSelection().start());
@@ -1630,15 +1624,16 @@ bool CompositeEditCommand::breakOutOfEmptyMailBlockquotedParagraph()
     if (enclosingNodeOfType(previous.deepEquivalent(), &isMailBlockquote))
         return false;
     
-    RefPtr<Node> br = HTMLBRElement::create(document());
+    auto br = HTMLBRElement::create(document());
+    auto* brPtr = br.ptr();
     // We want to replace this quoted paragraph with an unquoted one, so insert a br
     // to hold the caret before the highest blockquote.
-    insertNodeBefore(br, highestBlockquote);
-    VisiblePosition atBR(positionBeforeNode(br.get()));
+    insertNodeBefore(WTFMove(br), *highestBlockquote);
+    VisiblePosition atBR(positionBeforeNode(brPtr));
     // If the br we inserted collapsed, for example foo<br><blockquote>...</blockquote>, insert
     // a second one.
     if (!isStartOfParagraph(atBR))
-        insertNodeBefore(HTMLBRElement::create(document()), br);
+        insertNodeBefore(HTMLBRElement::create(document()), *brPtr);
     setEndingSelection(VisibleSelection(atBR, endingSelection().isDirectional()));
     
     // If this is an empty paragraph there must be a line break here.

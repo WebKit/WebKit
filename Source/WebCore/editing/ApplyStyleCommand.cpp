@@ -1341,14 +1341,14 @@ void ApplyStyleCommand::surroundNodeRangeWithElement(Node& startNode, Node& endN
     Ref<Node> protectedStartNode = startNode;
     Ref<Element> element = WTFMove(elementToInsert);
 
-    insertNodeBefore(element.ptr(), &startNode);
+    insertNodeBefore(element.copyRef(), startNode);
 
     RefPtr<Node> node = &startNode;
     while (node) {
         RefPtr<Node> next = node->nextSibling();
         if (isEditableNode(*node)) {
             removeNode(node);
-            appendNode(node, element.ptr());
+            appendNode(*node, element.copyRef());
         }
         if (node == &endNode)
             break;
@@ -1412,7 +1412,7 @@ Position ApplyStyleCommand::positionToComputeInlineStyleChange(Node& startNode, 
     // It's okay to obtain the style at the startNode because we've removed all relevant styles from the current run.
     if (!is<Element>(startNode)) {
         dummyElement = createStyleSpanElement(document());
-        insertNodeAt(dummyElement, positionBeforeNode(&startNode));
+        insertNodeAt(*dummyElement, positionBeforeNode(&startNode));
         return firstPositionInOrBeforeNode(dummyElement.get());
     }
 

@@ -670,13 +670,13 @@ void ReplaceSelectionCommand::moveNodeOutOfAncestor(PassRefPtr<Node> prpNode, Pa
     if (positionAtEndOfNode == lastPositionInParagraph) {
         removeNode(node);
         if (ancestor->nextSibling())
-            insertNodeBefore(node, ancestor->nextSibling());
+            insertNodeBefore(node.releaseNonNull(), *ancestor->nextSibling());
         else
-            appendNode(node, ancestor->parentNode());
+            appendNode(node.releaseNonNull(), *ancestor->parentNode());
     } else {
         RefPtr<Node> nodeToSplitTo = splitTreeToNode(node.get(), ancestor.get(), true);
         removeNode(node);
-        insertNodeBefore(node, nodeToSplitTo);
+        insertNodeBefore(node.releaseNonNull(), *nodeToSplitTo);
     }
     if (!ancestor->firstChild()) {
         insertedNodes.willRemoveNode(ancestor.get());
@@ -851,9 +851,10 @@ void ReplaceSelectionCommand::mergeEndIfNeeded()
     // Merging forward could result in deleting the destination anchor node.
     // To avoid this, we add a placeholder node before the start of the paragraph.
     if (endOfParagraph(startOfParagraphToMove) == destination) {
-        RefPtr<Node> placeholder = HTMLBRElement::create(document());
-        insertNodeBefore(placeholder, startOfParagraphToMove.deepEquivalent().deprecatedNode());
-        destination = VisiblePosition(positionBeforeNode(placeholder.get()));
+        auto placeholder = HTMLBRElement::create(document());
+        auto* placeholderPtr = placeholder.ptr();
+        insertNodeBefore(WTFMove(placeholder), *startOfParagraphToMove.deepEquivalent().deprecatedNode());
+        destination = VisiblePosition(positionBeforeNode(placeholderPtr));
     }
 
     moveParagraph(startOfParagraphToMove, endOfParagraph(startOfParagraphToMove), destination);
@@ -1116,7 +1117,7 @@ void ReplaceSelectionCommand::doApply()
         && blockStart && blockStart->renderer()->isListItem())
         refNode = insertAsListItems(downcast<HTMLElement>(refNode.get()), blockStart, insertionPos, insertedNodes);
     else {
-        insertNodeAt(refNode, insertionPos);
+        insertNodeAt(*refNode, insertionPos);
         insertedNodes.respondToNodeInsertion(refNode.get());
     }
 
@@ -1129,7 +1130,7 @@ void ReplaceSelectionCommand::doApply()
     while (node) {
         RefPtr<Node> next = node->nextSibling();
         fragment.removeNode(node.get());
-        insertNodeAfter(node, refNode.get());
+        insertNodeAfter(*node, *refNode);
         insertedNodes.respondToNodeInsertion(node.get());
 
         // Mutation events (bug 22634) may have already removed the inserted content
@@ -1191,7 +1192,7 @@ void ReplaceSelectionCommand::doApply()
         // We insert a placeholder before the newly inserted content to avoid being merged into the inline.
         Node* destinationNode = destination.deepEquivalent().deprecatedNode();
         if (m_shouldMergeEnd && destinationNode != enclosingInline(destinationNode) && enclosingInline(destinationNode)->nextSibling())
-            insertNodeBefore(HTMLBRElement::create(document()), refNode.get());
+            insertNodeBefore(HTMLBRElement::create(document()), *refNode);
         
         // Merging the the first paragraph of inserted content with the content that came
         // before the selection that was pasted into would also move content after 
@@ -1227,7 +1228,7 @@ void ReplaceSelectionCommand::doApply()
                 Node* enclosingNode = enclosingBlock(endOfInsertedContent.deepEquivalent().deprecatedNode());
                 if (isListItem(enclosingNode)) {
                     auto newListItem = HTMLLIElement::create(document());
-                    insertNodeAfter(newListItem.copyRef(), enclosingNode);
+                    insertNodeAfter(newListItem.copyRef(), *enclosingNode);
                     setEndingSelection(VisiblePosition(firstPositionInNode(newListItem.ptr())));
                 } else {
                     // Use a default paragraph element (a plain div) for the empty paragraph, using the last paragraph
@@ -1336,9 +1337,9 @@ void ReplaceSelectionCommand::addSpacesForSmartReplace()
             if (m_endOfInsertedContent.containerNode() == endNode)
                 m_endOfInsertedContent.moveToOffset(m_endOfInsertedContent.offsetInContainerNode() + 1);
         } else {
-            RefPtr<Node> node = document().createEditingTextNode(collapseWhiteSpace ? nonBreakingSpaceString() : " ");
-            insertNodeAfter(node, endNode);
-            updateNodesInserted(node.get());
+            auto node = document().createEditingTextNode(collapseWhiteSpace ? nonBreakingSpaceString() : " ");
+            insertNodeAfter(node.copyRef(), *endNode);
+            updateNodesInserted(node.ptr());
         }
     }
 
@@ -1360,11 +1361,12 @@ void ReplaceSelectionCommand::addSpacesForSmartReplace()
             if (m_endOfInsertedContent.containerNode() == startNode && m_endOfInsertedContent.offsetInContainerNode())
                 m_endOfInsertedContent.moveToOffset(m_endOfInsertedContent.offsetInContainerNode() + 1);
         } else {
-            RefPtr<Node> node = document().createEditingTextNode(collapseWhiteSpace ? nonBreakingSpaceString() : " ");
+            auto node = document().createEditingTextNode(collapseWhiteSpace ? nonBreakingSpaceString() : " ");
+            auto* nodePtr = node.ptr();
             // Don't updateNodesInserted. Doing so would set m_endOfInsertedContent to be the node containing the leading space,
             // but m_endOfInsertedContent is supposed to mark the end of pasted content.
-            insertNodeBefore(node, startNode);
-            m_startOfInsertedContent = firstPositionInNode(node.get());
+            insertNodeBefore(WTFMove(node), *startNode);
+            m_startOfInsertedContent = firstPositionInNode(nodePtr);
         }
     }
 }
@@ -1486,10 +1488,10 @@ Node* ReplaceSelectionCommand::insertAsListItems(PassRefPtr<HTMLElement> prpList
     while (RefPtr<Node> listItem = listElement->firstChild()) {
         listElement->removeChild(*listItem);
         if (isStart || isMiddle) {
-            insertNodeBefore(listItem, lastNode);
+            insertNodeBefore(*listItem, *lastNode);
             insertedNodes.respondToNodeInsertion(listItem.get());
         } else if (isEnd) {
-            insertNodeAfter(listItem, lastNode);
+            insertNodeAfter(*listItem, *lastNode);
             insertedNodes.respondToNodeInsertion(listItem.get());
             lastNode = listItem.get();
         } else

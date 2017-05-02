@@ -78,7 +78,7 @@ bool IndentOutdentCommand::tryIndentingAsListItem(const Position& start, const P
         newList = HTMLUListElement::create(document());
     else
         newList = HTMLOListElement::create(document());
-    insertNodeBefore(newList, selectedListItem);
+    insertNodeBefore(*newList, *selectedListItem);
 
     moveParagraphWithClones(start, end, newList.get(), selectedListItem.get());
 
@@ -113,9 +113,9 @@ void IndentOutdentCommand::indentIntoBlockquote(const Position& start, const Pos
         // this by splitting all parents of the current paragraph up to that point.
         targetBlockquote = createBlockElement();
         if (outerBlock == nodeToSplitTo)
-            insertNodeAt(targetBlockquote, start);
+            insertNodeAt(*targetBlockquote, start);
         else
-            insertNodeBefore(targetBlockquote, outerBlock);
+            insertNodeBefore(*targetBlockquote, *outerBlock);
         startOfContents = positionInParentAfterNode(targetBlockquote.get());
     }
 
@@ -186,8 +186,9 @@ void IndentOutdentCommand::outdentParagraph()
         splitElement(enclosingNode, highestInlineNode ? highestInlineNode : visibleStartOfParagraph.deepEquivalent().deprecatedNode());
     }
     auto placeholder = HTMLBRElement::create(document());
-    insertNodeBefore(placeholder.copyRef(), splitBlockquoteNode);
-    moveParagraph(startOfParagraph(visibleStartOfParagraph), endOfParagraph(visibleEndOfParagraph), positionBeforeNode(placeholder.ptr()), true);
+    auto* placeholderPtr = placeholder.ptr();
+    insertNodeBefore(WTFMove(placeholder), *splitBlockquoteNode);
+    moveParagraph(startOfParagraph(visibleStartOfParagraph), endOfParagraph(visibleEndOfParagraph), positionBeforeNode(placeholderPtr), true);
 }
 
 // FIXME: We should merge this function with ApplyBlockElementCommand::formatSelection

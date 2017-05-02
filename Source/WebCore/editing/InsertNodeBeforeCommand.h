@@ -31,14 +31,14 @@ namespace WebCore {
 
 class InsertNodeBeforeCommand : public SimpleEditCommand {
 public:
-    static Ref<InsertNodeBeforeCommand> create(RefPtr<Node>&& childToInsert, RefPtr<Node>&& childToInsertBefore,
+    static Ref<InsertNodeBeforeCommand> create(Ref<Node>&& childToInsert, Node& childToInsertBefore,
         ShouldAssumeContentIsAlwaysEditable shouldAssumeContentIsAlwaysEditable, EditAction editingAction = EditActionInsert)
     {
-        return adoptRef(*new InsertNodeBeforeCommand(WTFMove(childToInsert), WTFMove(childToInsertBefore), shouldAssumeContentIsAlwaysEditable, editingAction));
+        return adoptRef(*new InsertNodeBeforeCommand(WTFMove(childToInsert), childToInsertBefore, shouldAssumeContentIsAlwaysEditable, editingAction));
     }
 
 protected:
-    InsertNodeBeforeCommand(RefPtr<Node>&& childToInsert, RefPtr<Node>&& childToInsertBefore, ShouldAssumeContentIsAlwaysEditable, EditAction);
+    InsertNodeBeforeCommand(Ref<Node>&& childToInsert, Node& childToInsertBefore, ShouldAssumeContentIsAlwaysEditable, EditAction);
 
 private:
     void doApply() override;
@@ -48,8 +48,8 @@ private:
     void getNodesInCommand(HashSet<Node*>&) override;
 #endif
 
-    RefPtr<Node> m_insertChild;
-    RefPtr<Node> m_refChild;
+    Ref<Node> m_insertChild;
+    Ref<Node> m_refChild;
     ShouldAssumeContentIsAlwaysEditable m_shouldAssumeContentIsAlwaysEditable;
 };
 

@@ -58,17 +58,19 @@ Position InsertTextCommand::positionInsideTextNode(const Position& p)
 {
     Position pos = p;
     if (isTabSpanTextNode(pos.anchorNode())) {
-        RefPtr<Node> textNode = document().createEditingTextNode(emptyString());
-        insertNodeAtTabSpanPosition(textNode.get(), pos);
-        return firstPositionInNode(textNode.get());
+        auto textNode = document().createEditingTextNode(emptyString());
+        auto* textNodePtr = textNode.ptr();
+        insertNodeAtTabSpanPosition(WTFMove(textNode), pos);
+        return firstPositionInNode(textNodePtr);
     }
 
     // Prepare for text input by looking at the specified position.
     // It may be necessary to insert a text node to receive characters.
     if (!pos.containerNode()->isTextNode()) {
-        RefPtr<Node> textNode = document().createEditingTextNode(emptyString());
-        insertNodeAt(textNode.get(), pos);
-        return firstPositionInNode(textNode.get());
+        auto textNode = document().createEditingTextNode(emptyString());
+        auto* textNodePtr = textNode.ptr();
+        insertNodeAt(WTFMove(textNode), pos);
+        return firstPositionInNode(textNodePtr);
     }
 
     return pos;
@@ -250,27 +252,28 @@ Position InsertTextCommand::insertTab(const Position& pos)
     
     // create new tab span
     auto spanNode = createTabSpanElement(document());
+    auto* spanNodePtr = spanNode.ptr();
     
     // place it
     if (!is<Text>(*node))
-        insertNodeAt(spanNode.ptr(), insertPos);
+        insertNodeAt(WTFMove(spanNode), insertPos);
     else {
-        RefPtr<Text> textNode = downcast<Text>(node);
+        Ref<Text> textNode = downcast<Text>(*node);
         if (offset >= textNode->length())
-            insertNodeAfter(spanNode.copyRef(), WTFMove(textNode));
+            insertNodeAfter(WTFMove(spanNode), textNode);
         else {
             // split node to make room for the span
             // NOTE: splitTextNode uses textNode for the
             // second node in the split, so we need to
             // insert the span before it.
             if (offset > 0)
-                splitTextNode(textNode, offset);
-            insertNodeBefore(spanNode.copyRef(), WTFMove(textNode));
+                splitTextNode(textNode.ptr(), offset);
+            insertNodeBefore(WTFMove(spanNode), textNode);
         }
     }
 
     // return the position following the new tab
-    return lastPositionInNode(spanNode.ptr());
+    return lastPositionInNode(spanNodePtr);
 }
 
 }

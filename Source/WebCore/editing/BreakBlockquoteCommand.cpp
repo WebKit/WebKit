@@ -77,14 +77,14 @@ void BreakBlockquoteCommand::doApply()
     // If the position is at the beginning of the top quoted content, we don't need to break the quote.
     // Instead, insert the break before the blockquote, unless the position is as the end of the the quoted content.
     if (isFirstVisiblePositionInNode(visiblePos, topBlockquote) && !isLastVisPosInNode) {
-        insertNodeBefore(breakNode.copyRef(), topBlockquote);
+        insertNodeBefore(breakNode.copyRef(), *topBlockquote);
         setEndingSelection(VisibleSelection(positionBeforeNode(breakNode.ptr()), DOWNSTREAM, endingSelection().isDirectional()));
         rebalanceWhitespace();   
         return;
     }
     
     // Insert a break after the top blockquote.
-    insertNodeAfter(breakNode.copyRef(), topBlockquote);
+    insertNodeAfter(breakNode.copyRef(), *topBlockquote);
 
     // If we're inserting the break at the end of the quoted content, we don't need to break the quote.
     if (isLastVisPosInNode) {
@@ -131,16 +131,16 @@ void BreakBlockquoteCommand::doApply()
         ancestors.append(node);
     
     // Insert a clone of the top blockquote after the break.
-    RefPtr<Element> clonedBlockquote = downcast<Element>(*topBlockquote).cloneElementWithoutChildren(document());
-    insertNodeAfter(clonedBlockquote.get(), breakNode.copyRef());
+    auto clonedBlockquote = downcast<Element>(*topBlockquote).cloneElementWithoutChildren(document());
+    insertNodeAfter(clonedBlockquote.copyRef(), breakNode);
     
     // Clone startNode's ancestors into the cloned blockquote.
     // On exiting this loop, clonedAncestor is the lowest ancestor
     // that was cloned (i.e. the clone of either ancestors.last()
     // or clonedBlockquote if ancestors is empty).
-    RefPtr<Element> clonedAncestor = clonedBlockquote;
+    RefPtr<Element> clonedAncestor = clonedBlockquote.copyRef();
     for (size_t i = ancestors.size(); i != 0; --i) {
-        RefPtr<Element> clonedChild = ancestors[i - 1]->cloneElementWithoutChildren(document());
+        auto clonedChild = ancestors[i - 1]->cloneElementWithoutChildren(document());
         // Preserve list item numbering in cloned lists.
         if (clonedChild->isElementNode() && clonedChild->hasTagName(olTag)) {
             Node* listChildNode = i > 1 ? ancestors[i - 2].get() : startNode;
@@ -149,11 +149,11 @@ void BreakBlockquoteCommand::doApply()
             while (listChildNode && !listChildNode->hasTagName(liTag))
                 listChildNode = listChildNode->nextSibling();
             if (listChildNode && is<RenderListItem>(listChildNode->renderer()))
-                setNodeAttribute(clonedChild, startAttr, AtomicString::number(downcast<RenderListItem>(*listChildNode->renderer()).value()));
+                setNodeAttribute(clonedChild.ptr(), startAttr, AtomicString::number(downcast<RenderListItem>(*listChildNode->renderer()).value()));
         }
             
-        appendNode(clonedChild.get(), clonedAncestor.get());
-        clonedAncestor = clonedChild;
+        appendNode(clonedChild.copyRef(), clonedAncestor.releaseNonNull());
+        clonedAncestor = WTFMove(clonedChild);
     }
 
     moveRemainingSiblingsToNewParent(startNode, 0, clonedAncestor);
@@ -177,7 +177,7 @@ void BreakBlockquoteCommand::doApply()
     }
     
     // Make sure the cloned block quote renders.
-    addBlockPlaceholderIfNeeded(clonedBlockquote.get());
+    addBlockPlaceholderIfNeeded(clonedBlockquote.ptr());
     
     // Put the selection right before the break.
     setEndingSelection(VisibleSelection(positionBeforeNode(breakNode.ptr()), DOWNSTREAM, endingSelection().isDirectional()));
