@@ -2946,3 +2946,6 @@ webkit.org/b/171272 fast/text/kaithi.html [ ImageOnlyFailure ]
 
 # auto-sizing produces inconsistent image results
 css3/viewport-percentage-lengths/vh-auto-size.html [ ImageOnlyFailure ]
+
+# This test relies on the ::selection pseudoclass which isn't honored on iOS.
+webkit.org/b/169517 fast/text/complex-text-selection.html [ ImageOnlyFailure ]

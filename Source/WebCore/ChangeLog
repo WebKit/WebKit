@@ -1,3 +1,26 @@
+2017-05-02  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        REGRESSION (r211382): Partial right-to-left text runs are painted at an offset (breaks Find indicators, Look Up, and custom ::selection style)
+        https://bugs.webkit.org/show_bug.cgi?id=169517
+        <rdar://problem/30652443>
+
+        Reviewed by Dean Jackson.
+
+        FontCascade::getGlyphsAndAdvancesForComplexText() is tasked with calculating paint advances for a
+        subrange of RTL text. It does this by creating a ComplexTextController, telling it to iterate to
+        the beginning of the subrange (outputting to a GlyphBuffer), then telling it to iterate to the end
+        of the subrange (outputting to another GlyphBuffer). Because the text is RTL, the sum of the
+        advances gathered so far is the distance from the right edge of the text to the left edge of the
+        subrange (because we advance in logical order). Therefore, the x-coordinate we are at now is the
+        total width minus the sum of both of the GlyphBuffers. For some reason, when I wrote this code I
+        forgot to add in the contribution from the first GlyphBuffer. Unfortunately, this particular
+        codepath is rarely hit in practice and completely untested, which made me miss it when I wrote it.
+
+        Test: fast/text/complex-text-selection.html
+
+        * platform/graphics/cocoa/FontCascadeCocoa.mm:
+        (WebCore::FontCascade::getGlyphsAndAdvancesForComplexText):
+
 2017-05-02  Chris Dumez  <cdumez@apple.com>
 
         [macOS] Flaky Crash under EventTarget::fireEventListeners on imported/blink/paint/deprecatedpaintlayer/non-self-painting-layer-overrides-visibility.html

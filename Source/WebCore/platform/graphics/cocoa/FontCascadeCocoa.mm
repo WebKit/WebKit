@@ -522,6 +522,8 @@ float FontCascade::getGlyphsAndAdvancesForComplexText(const TextRun& run, unsign
         // Exploit the fact that the sum of the paint advances is equal to
         // the sum of the layout advances.
         initialAdvance = controller.totalWidth();
+        for (unsigned i = 0; i < dummyGlyphBuffer.size(); ++i)
+            initialAdvance -= dummyGlyphBuffer.advanceAt(i).width();
         for (unsigned i = 0; i < glyphBuffer.size(); ++i)
             initialAdvance -= glyphBuffer.advanceAt(i).width();
         glyphBuffer.reverse(0, glyphBuffer.size());
