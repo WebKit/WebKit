@@ -1,3 +1,14 @@
+2017-05-02  Gwang Yoon Hwang  <yoon@igalia.com>
+
+        [GTK] Remove undefined nativeImage method from the ImageBuffer's header
+        https://bugs.webkit.org/show_bug.cgi?id=171502
+
+        Unreviewed, remove a dead code accidentally committed in r194630.
+
+        * platform/graphics/ImageBuffer.h: Remove nativeImage method.
+        It is accidentally added during a refectorying at r194630, and there is
+        no definition for this method.
+
 2017-05-02  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GStreamer] Dailymotion live stream videos don't play

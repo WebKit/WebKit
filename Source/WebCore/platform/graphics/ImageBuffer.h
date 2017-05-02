@@ -124,10 +124,6 @@ public:
 #endif
     PlatformLayer* platformLayer() const;
 
-#if USE(CAIRO)
-    NativeImagePtr nativeImage() const;
-#endif
-
     size_t memoryCost() const;
     size_t externalMemoryCost() const;
 
