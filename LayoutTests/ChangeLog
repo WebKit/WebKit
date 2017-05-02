@@ -1,3 +1,47 @@
+2017-05-02  David Kilzer  <ddkilzer@apple.com>
+
+        check-webkit-style should keep JavaScript test functions in sync
+        <https://webkit.org/b/171424>
+
+        Reviewed by Joseph Pecoraro.
+
+        This change attempts to fix all whitespace issues in these two
+        files (which are now identical and will be kept in sync by
+        check-webkit-style):
+
+            LayoutTests/http/tests/resources/js-test-pre.js
+            LayoutTests/resources/js-test-pre.js
+
+        It also syncs the implementation of shouldBe(), shouldNotBe(),
+        shouldNotThrow() and shouldThrow() across the following files:
+
+            JSTests/stress/resources/standalone-pre.js
+            LayoutTests/http/tests/resources/js-test-pre.js
+            LayoutTests/resources/js-test-pre.js
+            LayoutTests/resources/js-test.js
+            LayoutTests/resources/standalone-pre.js
+
+        Only interesting (non-whitespace) changes are listed below.
+
+        * http/tests/resources/js-test-pre.js: Copy from resources/js-test-pre.js.
+        (shouldBe): Prefix 'exception' and 'quiet' variables with
+        underscore.
+        (shouldNotBe): Ditto.
+
+        * resources/js-test-pre.js:
+        (shouldBe): Prefix 'exception' and 'quiet' variables with
+        underscore.
+        (shouldNotBe): Ditto.
+
+        * resources/js-test.js:
+        (shouldBe): Prefix 'quiet' variable with underscore.  Use
+        stringify() when printing '_bv' value.
+
+        * resources/standalone-pre.js:
+        (shouldBe): Prefix 'exception' and 'quiet' variables with
+        underscore.
+        (shouldNotBe): Ditto.
+
 2017-05-02  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: Update implementation of aria-orientation

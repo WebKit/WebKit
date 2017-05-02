@@ -111,29 +111,29 @@ function stringify(v)
         return "" + v;
 }
 
-function shouldBe(_a, _b, quiet)
+function shouldBe(_a, _b, _quiet)
 {
-  if ((typeof _a != "function" && typeof _a != "string") || (typeof _b != "function" && typeof _b != "string"))
-    debug("WARN: shouldBe() expects function or string arguments");
-  var exception;
-  var _av;
-  try {
-    _av = (typeof _a == "function" ? _a() : eval(_a));
-  } catch (e) {
-    exception = e;
-  }
-  var _bv = (typeof _b == "function" ? _b() : eval(_b));
-
-  if (exception)
-    testFailed(_a + " should be " + stringify(_bv) + ". Threw exception " + exception);
-  else if (isResultCorrect(_av, _bv)) {
-    if (!quiet) {
-      testPassed(_a + " is " + (typeof _b == "function" ? _bv : _b));
+    if ((typeof _a != "function" && typeof _a != "string") || (typeof _b != "function" && typeof _b != "string"))
+        debug("WARN: shouldBe() expects function or string arguments");
+    var _exception;
+    var _av;
+    try {
+        _av = (typeof _a == "function" ? _a() : eval(_a));
+    } catch (e) {
+        _exception = e;
     }
-  } else if (typeof(_av) == typeof(_bv))
-    testFailed(_a + " should be " + stringify(_bv) + ". Was " + stringify(_av) + ".");
-  else
-    testFailed(_a + " should be " + stringify(_bv) + " (of type " + typeof _bv + "). Was " + _av + " (of type " + typeof _av + ").");
+    var _bv = (typeof _b == "function" ? _b() : eval(_b));
+
+    if (_exception)
+        testFailed(_a + " should be " + stringify(_bv) + ". Threw exception " + _exception);
+    else if (isResultCorrect(_av, _bv)) {
+        if (!_quiet) {
+            testPassed(_a + " is " + (typeof _b == "function" ? _bv : _b));
+        }
+    } else if (typeof(_av) == typeof(_bv))
+        testFailed(_a + " should be " + stringify(_bv) + ". Was " + stringify(_av) + ".");
+    else
+        testFailed(_a + " should be " + stringify(_bv) + " (of type " + typeof _bv + "). Was " + _av + " (of type " + typeof _av + ").");
 }
 
 function dfgShouldBe(theFunction, _a, _b)
@@ -195,27 +195,27 @@ function shouldBeType(_a, _type) {
   }
 }
 
-function shouldNotBe(_a, _b, quiet)
+function shouldNotBe(_a, _b, _quiet)
 {
-  if ((typeof _a != "function" && typeof _a != "string") || (typeof _b != "function" && typeof _b != "string"))
-    debug("WARN: shouldNotBe() expects function or string arguments");
-  var exception;
-  var _av;
-  try {
-    _av = (typeof _a == "function" ? _a() : eval(_a));
-  } catch (e) {
-    exception = e;
-  }
-  var _bv = (typeof _b == "function" ? _b() : eval(_b));
-
-  if (exception)
-    testFailed(_a + " should not be " + _bv + ". Threw exception " + exception);
-  else if (!isResultCorrect(_av, _bv)) {
-    if (!quiet) {
-      testPassed(_a + " is not " + (typeof _b == "function" ? _bv : _b));
+    if ((typeof _a != "function" && typeof _a != "string") || (typeof _b != "function" && typeof _b != "string"))
+        debug("WARN: shouldNotBe() expects function or string arguments");
+    var _exception;
+    var _av;
+    try {
+        _av = (typeof _a == "function" ? _a() : eval(_a));
+    } catch (e) {
+        _exception = e;
     }
-  } else
-    testFailed(_a + " should not be " + _bv + ".");
+    var _bv = (typeof _b == "function" ? _b() : eval(_b));
+
+    if (_exception)
+        testFailed(_a + " should not be " + _bv + ". Threw exception " + _exception);
+    else if (!isResultCorrect(_av, _bv)) {
+        if (!_quiet) {
+            testPassed(_a + " is not " + (typeof _b == "function" ? _bv : _b));
+        }
+    } else
+        testFailed(_a + " should not be " + _bv + ".");
 }
 
 function shouldBeTrue(_a) { shouldBe(_a, "true"); }
@@ -288,7 +288,7 @@ function shouldThrow(_a, _e, _message)
 
     var _ev;
     if (_e)
-        _ev =  eval(_e);
+        _ev = eval(_e);
 
     if (_exception) {
         if (typeof _e == "undefined" || _exception == _ev)

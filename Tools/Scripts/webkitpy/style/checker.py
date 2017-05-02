@@ -34,7 +34,6 @@
 import logging
 import os.path
 import re
-import sys
 
 from checkers.common import categories as CommonCategories
 from checkers.common import CarriageReturnChecker
@@ -48,6 +47,7 @@ from checkers.jsonchecker import JSONChecker
 from checkers.jsonchecker import JSONContributorsChecker
 from checkers.jsonchecker import JSONFeaturesChecker
 from checkers.jsonchecker import JSONCSSPropertiesChecker
+from checkers.jstest import JSTestChecker
 from checkers.messagesin import MessagesInChecker
 from checkers.png import PNGChecker
 from checkers.python import PythonChecker
@@ -299,6 +299,16 @@ _PNG_FILE_EXTENSION = 'png'
 
 _CMAKE_FILE_EXTENSION = 'cmake'
 
+# Files that are never skipped by name.
+#
+# Do not skip these files, even when they appear in
+# _SKIPPED_FILES_WITH_WARNING or _SKIPPED_FILES_WITHOUT_WARNING.
+_NEVER_SKIPPED_FILES = [
+    'js-test-pre.js',
+    'standalone-pre.js',
+    'TestExpectations',
+]
+
 # Files to skip that are less obvious.
 #
 # Some files should be skipped when checking style. For example,
@@ -354,6 +364,7 @@ def _all_categories():
     categories = CommonCategories.union(CppChecker.categories)
     categories = categories.union(JSChecker.categories)
     categories = categories.union(JSONChecker.categories)
+    categories = categories.union(JSTestChecker.categories)
     categories = categories.union(TestExpectationsChecker.categories)
     categories = categories.union(ChangeLogChecker.categories)
     categories = categories.union(PNGChecker.categories)
@@ -550,7 +561,7 @@ class CheckerDispatcher(object):
         basename = os.path.basename(file_path)
         if basename.startswith('ChangeLog'):
             return False
-        elif basename == 'TestExpectations':
+        elif basename in _NEVER_SKIPPED_FILES:
             return False
         for skipped_file in _SKIPPED_FILES_WITHOUT_WARNING:
             if self._should_skip_file_path(file_path, skipped_file):
@@ -613,9 +624,12 @@ class CheckerDispatcher(object):
             checker = CppChecker(file_path, file_extension,
                                  handle_style_error, min_confidence)
         elif file_type == FileType.JS:
+            basename = os.path.basename(file_path)
             # Do not attempt to check non-Inspector or 3rd-party JavaScript files as JS.
             if os.path.join('WebInspectorUI', 'UserInterface') in file_path and (not 'External' in file_path):
                 checker = JSChecker(file_path, handle_style_error)
+            elif basename == 'js-test-pre.js' or basename == 'standalone-pre.js':
+                checker = JSTestChecker(file_path, handle_style_error)
             else:
                 checker = TextChecker(file_path, handle_style_error)
         elif file_type == FileType.JSON:

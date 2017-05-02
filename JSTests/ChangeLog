@@ -1,3 +1,18 @@
+2017-05-02  David Kilzer  <ddkilzer@apple.com>
+
+        check-webkit-style should keep JavaScript test functions in sync
+        <https://webkit.org/b/171424>
+
+        Reviewed by Joseph Pecoraro.
+
+        This change makes shouldBe(), shouldNotBe(), shouldNotThrow()
+        and shouldThrow() in sync with other copies of these methods.
+
+        * stress/resources/standalone-pre.js:
+        (shouldBe): Fix whitespace.  Prefix 'exception' and 'quiet'
+        variables with underscore.
+        (shouldThrow): Fix whitespace.
+
 2017-04-30  Oleksandr Skachkov  <gskachkov@gmail.com>
 
         We initialize functions too early in an eval

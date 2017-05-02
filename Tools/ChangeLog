@@ -1,3 +1,55 @@
+2017-05-02  David Kilzer  <ddkilzer@apple.com>
+
+        check-webkit-style should keep JavaScript test functions in sync
+        <https://webkit.org/b/171424>
+
+        Reviewed by Joseph Pecoraro.
+
+        Add a new JSTestChecker for check-webkit-style that keeps these
+        two files in sync:
+
+            LayoutTests/http/tests/resources/js-test-pre.js
+            LayoutTests/resources/js-test-pre.js
+
+        And keeps implementations of shouldBe(), shouldNotBe(),
+        shouldNotThrow(), and shouldThrow() in sync across multiple
+        files (with the ability to add more functions later):
+
+            JSTests/stress/resources/standalone-pre.js
+            LayoutTests/http/tests/resources/js-test-pre.js
+            LayoutTests/resources/js-test-pre.js
+            LayoutTests/resources/js-test.js
+            LayoutTests/resources/standalone-pre.js
+
+        * Scripts/webkitpy/style/checker.py: Remove unused import.  Add
+        import for JSTestChecker.
+        (_NEVER_SKIPPED_FILES): Add array of file names that are never
+        skipped regardless of other rules.
+        (_all_categories): Add JSTestChecker categories.
+        (CheckerDispatcher.should_skip_without_warning): Use
+        _NEVER_SKIPPED_FILES.
+        (CheckerDispatcher._create_checker): Return JSTestChecker for
+        the files to check.
+
+        * Scripts/webkitpy/style/checkers/jstest.py: Add.
+        (map_functions_to_dict): Parse JavaScript source by splitting on
+        /^function\s+/ regex.  This is good enough for the sanity checks
+        to keep function implementations in sync.
+        (strip_blank_lines_and_comments): Strips blank lines and lines
+        with comments from the end of a chunk of text representing a
+        function.
+        (JSTestChecker): New checker.
+        (JSTestChecker.__init__):
+        (JSTestChecker.check):
+        (JSTestChecker.check_js_test_files): Keeps whole files in sync.
+        (JSTestChecker.check_js_test_functions): Keeps individual
+        functions in sync.
+
+        * Scripts/webkitpy/style/checkers/jstest_unittest.py: Add test
+        case.
+        (JSTestTestCase):
+        (JSTestTestCase.test_map_functions_to_dict):
+
 2017-05-02  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: Update implementation of aria-orientation
