@@ -103,8 +103,7 @@ static void initializePeerConnectionFactoryAndThreads()
     rtc::LogMessage::LogToDebug(rtc::LS_NONE);
 #endif
 #else
-    if (LogWebRTC.state != WTFLogChannelOn)
-        rtc::LogMessage::LogToDebug(rtc::LS_WARNING);
+    rtc::LogMessage::LogToDebug(LogWebRTC.state != WTFLogChannelOn ? rtc::LS_WARNING : rtc::LS_INFO);
 #endif
     auto& factoryAndThreads = staticFactoryAndThreads();
 
