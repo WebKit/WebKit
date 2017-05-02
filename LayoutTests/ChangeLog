@@ -1,3 +1,12 @@
+2017-05-02  Matt Lewis  <jlewis3@apple.com>
+
+        Marked test imported/w3c/web-platform-tests/webrtc/rtcpeerconnection/setRemoteDescription.html as flaky failure.
+        https://bugs.webkit.org/show_bug.cgi?id=170818
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2017-05-02  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Font Loading API specifies font is loaded but sizing of font after load reports inconsistent values
