@@ -1,3 +1,14 @@
+2017-05-02  David Kilzer  <ddkilzer@apple.com>
+
+        Stop using strcpy() in WebProcess::registerWithStateDumper() in WebProcessCocoa.mm
+        <https://webkit.org/b/171520>
+
+        Reviewed by Chris Dumez.
+
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::registerWithStateDumper): Switch from
+        strcpy() to strlcpy(), removing comment in the process.
+
 2017-05-02  Andrew Gold  <agold@apple.com>
 
         MediaDevices is not enabled for MobileSafari

@@ -283,7 +283,7 @@ void WebProcess::registerWithStateDumper()
                 memset(os_state, 0, neededSize);
                 os_state->osd_type = OS_STATE_DATA_SERIALIZED_NSCF_OBJECT;
                 os_state->osd_data_size = data.length;
-                strcpy(os_state->osd_title, "WebContent state"); // NB: Only 64 bytes of buffer here.
+                strlcpy(os_state->osd_title, "WebContent state", sizeof(os_state->osd_title));
                 memcpy(os_state->osd_data, data.bytes, data.length);
             }
 
