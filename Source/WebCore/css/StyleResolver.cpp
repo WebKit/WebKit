@@ -228,8 +228,7 @@ void StyleResolver::MatchResult::addMatchedProperties(const StyleProperties& pro
 }
 
 StyleResolver::StyleResolver(Document& document)
-    : m_ruleSets(*this)
-    , m_matchedPropertiesCacheAdditionsSinceLastSweep(0)
+    : m_matchedPropertiesCacheAdditionsSinceLastSweep(0)
     , m_matchedPropertiesCacheSweepTimer(*this, &StyleResolver::sweepMatchedPropertiesCache)
     , m_document(document)
     , m_matchAuthorAndUserStyles(m_document.settings().authorAndUserStylesEnabled())
@@ -268,6 +267,8 @@ StyleResolver::StyleResolver(Document& document)
 
     m_ruleSets.resetAuthorStyle();
 
+    m_ruleSets.initUserStyle(m_document.extensionStyleSheets(), m_mediaQueryEvaluator, *this);
+
 #if ENABLE(SVG_FONTS)
     if (m_document.svgExtensions()) {
         const HashSet<SVGFontFaceElement*>& svgFontFaceElements = m_document.svgExtensions()->svgFontFaceElements();
@@ -275,11 +276,6 @@ StyleResolver::StyleResolver(Document& document)
             m_document.fontSelector().addFontFaceRule(svgFontFaceElement->fontFaceRule(), svgFontFaceElement->isInUserAgentShadowTree());
     }
 #endif
-}
-
-void StyleResolver::initializeUserStyle()
-{
-    m_ruleSets.initUserStyle(m_document.extensionStyleSheets(), m_mediaQueryEvaluator, *this);
 }
 
 void StyleResolver::appendAuthorStyleSheets(const Vector<RefPtr<CSSStyleSheet>>& styleSheets)

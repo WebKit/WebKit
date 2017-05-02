@@ -40,12 +40,12 @@ class MediaQueryEvaluator;
 
 class DocumentRuleSets {
 public:
-    DocumentRuleSets(StyleResolver&);
+    DocumentRuleSets();
     ~DocumentRuleSets();
-
+    
     bool isAuthorStyleDefined() const { return m_isAuthorStyleDefined; }
     RuleSet& authorStyle() const { return *m_authorStyle.get(); }
-    RuleSet* userStyle() const;
+    RuleSet* userStyle() const { return m_userStyle.get(); }
     const RuleFeatureSet& features() const;
     RuleSet* sibling() const { return m_siblingRuleSet.get(); }
     RuleSet* uncommonAttribute() const { return m_uncommonAttributeRuleSet.get(); }
@@ -59,9 +59,7 @@ public:
     };
     const AttributeRules* ancestorAttributeRulesForHTML(const AtomicString&) const;
 
-    void setUsesSharedUserStyle(bool b) { m_usesSharedUserStyle = true; }
     void initUserStyle(ExtensionStyleSheets&, const MediaQueryEvaluator&, StyleResolver&);
-
     void resetAuthorStyle();
     void appendAuthorStyleSheets(const Vector<RefPtr<CSSStyleSheet>>&, MediaQueryEvaluator*, InspectorCSSOMWrappers&, StyleResolver*);
 
@@ -74,9 +72,7 @@ private:
     bool m_isAuthorStyleDefined { false };
     std::unique_ptr<RuleSet> m_authorStyle;
     std::unique_ptr<RuleSet> m_userStyle;
-    bool m_usesSharedUserStyle { false };
 
-    StyleResolver& m_styleResolver;
     mutable RuleFeatureSet m_features;
     mutable unsigned m_defaultStyleVersionOnFeatureCollection { 0 };
     mutable std::unique_ptr<RuleSet> m_siblingRuleSet;

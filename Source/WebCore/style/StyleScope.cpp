@@ -96,12 +96,6 @@ StyleResolver& Scope::resolver()
     if (!m_resolver) {
         SetForScope<bool> isUpdatingStyleResolver { m_isUpdatingStyleResolver, true };
         m_resolver = std::make_unique<StyleResolver>(m_document);
-
-        if (!m_shadowRoot)
-            m_resolver->initializeUserStyle();
-        else if (m_shadowRoot->mode() != ShadowRootMode::UserAgent)
-            m_resolver->ruleSets().setUsesSharedUserStyle();
-
         m_resolver->appendAuthorStyleSheets(m_activeStyleSheets);
     }
     ASSERT(!m_shadowRoot || &m_document == &m_shadowRoot->document());
