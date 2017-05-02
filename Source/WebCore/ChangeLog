@@ -1,3 +1,19 @@
+2017-05-02  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Remove an extraneous call to dispatch_group_async in WebItemProviderPasteboard.mm
+        https://bugs.webkit.org/show_bug.cgi?id=171561
+
+        Reviewed by Tim Horton.
+
+        In -[WebItemProviderPasteboard doAfterLoadingProvidedContentIntoFileURLs:], the lifetime of the dispatch group
+        `fileLoadingGroup` is already guarded by dispatch_group_enter/leave calls when beginning and concluding an
+        item provider load, respectively. As such, the call to dispatch_group_async serves no purpose and should be removed.
+
+        No new tests, since there is no change in behavior.
+
+        * platform/ios/WebItemProviderPasteboard.mm:
+        (-[WebItemProviderPasteboard doAfterLoadingProvidedContentIntoFileURLs:]):
+
 2017-05-02  Youenn Fablet  <youenn@apple.com>
 
         [LibWebRTC] Set explicitly logging level in debug mode

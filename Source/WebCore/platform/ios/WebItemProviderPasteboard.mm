@@ -471,23 +471,21 @@ static NSURL *temporaryFileURLForDataInteractionContent(NSString *fileExtension,
         NSUInteger indexInItemProviderArray = [[indicesOfItemProvidersWithFiles objectAtIndex:index] unsignedIntegerValue];
         RetainPtr<NSString> suggestedName = [itemProvider suggestedName];
         dispatch_group_enter(fileLoadingGroup.get());
-        dispatch_group_async(fileLoadingGroup.get(), dispatch_get_main_queue(), [indexInItemProviderArray, itemProvider, typeIdentifier, suggestedName, typeToFileURLMaps, fileLoadingGroup] {
-            [itemProvider loadFileRepresentationForTypeIdentifier:typeIdentifier.get() completionHandler:[indexInItemProviderArray, suggestedName, typeIdentifier, typeToFileURLMaps, fileLoadingGroup] (NSURL *url, NSError *error) {
-                // After executing this completion block, UIKit removes the file at the given URL. However, we need this data to persist longer for the web content process.
-                // To address this, we hard link the given URL to a new temporary file in the temporary directory. This follows the same flow as regular file upload, in
-                // WKFileUploadPanel.mm. The temporary files are cleaned up by the system at a later time.
-                RetainPtr<NSURL> destinationURL = temporaryFileURLForDataInteractionContent(url.pathExtension, suggestedName.get());
-                if (!destinationURL || error || ![[NSFileManager defaultManager] linkItemAtURL:url toURL:destinationURL.get() error:nil]) {
-                    dispatch_group_leave(fileLoadingGroup.get());
-                    return;
-                }
+        [itemProvider loadFileRepresentationForTypeIdentifier:typeIdentifier.get() completionHandler:[indexInItemProviderArray, suggestedName, typeIdentifier, typeToFileURLMaps, fileLoadingGroup] (NSURL *url, NSError *error) {
+            // After executing this completion block, UIKit removes the file at the given URL. However, we need this data to persist longer for the web content process.
+            // To address this, we hard link the given URL to a new temporary file in the temporary directory. This follows the same flow as regular file upload, in
+            // WKFileUploadPanel.mm. The temporary files are cleaned up by the system at a later time.
+            RetainPtr<NSURL> destinationURL = temporaryFileURLForDataInteractionContent(url.pathExtension, suggestedName.get());
+            if (!destinationURL || error || ![[NSFileManager defaultManager] linkItemAtURL:url toURL:destinationURL.get() error:nil]) {
+                dispatch_group_leave(fileLoadingGroup.get());
+                return;
+            }
 
-                dispatch_async(dispatch_get_main_queue(), [indexInItemProviderArray, typeIdentifier, destinationURL, typeToFileURLMaps, fileLoadingGroup] {
-                    [typeToFileURLMaps setObject:[NSDictionary dictionaryWithObject:destinationURL.get() forKey:typeIdentifier.get()] atIndexedSubscript:indexInItemProviderArray];
-                    dispatch_group_leave(fileLoadingGroup.get());
-                });
-            }];
-        });
+            dispatch_async(dispatch_get_main_queue(), [indexInItemProviderArray, typeIdentifier, destinationURL, typeToFileURLMaps, fileLoadingGroup] {
+                [typeToFileURLMaps setObject:[NSDictionary dictionaryWithObject:destinationURL.get() forKey:typeIdentifier.get()] atIndexedSubscript:indexInItemProviderArray];
+                dispatch_group_leave(fileLoadingGroup.get());
+            });
+        }];
     }
 
     RetainPtr<WebItemProviderPasteboard> retainedSelf = self;
