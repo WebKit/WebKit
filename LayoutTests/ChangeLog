@@ -1,3 +1,12 @@
+2017-05-01  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline two fast/visual-viewport tests for iOS.
+
+        Unreviewed test gardening.
+
+        * platform/ios/fast/visual-viewport/zoomed-fixed-expected.txt:
+        * platform/ios/fast/visual-viewport/zoomed-fixed-header-and-footer-expected.txt:
+
 2017-05-01  Joseph Pecoraro  <pecoraro@apple.com>
 
         [GTK] Two test started to fail after due to unhandled promise rejection reported after r215916
