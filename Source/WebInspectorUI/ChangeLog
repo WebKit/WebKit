@@ -1,3 +1,16 @@
+2017-05-02  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [GTK] Web Inspector: Remove GTK+ icons AnimationPlayStatePaused.svg and AnimationPlayStateRunning.svg
+        https://bugs.webkit.org/show_bug.cgi?id=171540
+
+        Reviewed by Carlos Garcia Campos.
+
+        These images aren't used since r204152 (Bug 160566). Instead,
+        Plus13.svg and Minus.svg are used.
+
+        * UserInterface/Images/gtk/BreakpointActionAdd.svg: Removed.
+        * UserInterface/Images/gtk/BreakpointActionRemove.svg: Removed.
+
 2017-04-30  Chris Dumez  <cdumez@apple.com>
 
         Drop support for legacy ClientRect / ClientRectList
