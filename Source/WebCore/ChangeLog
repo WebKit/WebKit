@@ -1,3 +1,18 @@
+2017-05-02  Gwang Yoon Hwang  <yoon@igalia.com>
+
+        [GTK] Recycle textures while handling tiles
+        https://bugs.webkit.org/show_bug.cgi?id=171541
+
+        Reviewed by Žan Doberšek.
+
+        * platform/graphics/texmap/TextureMapperTile.h:
+        Modified m_texture as a protected member to avoid unnessary
+        refcountings from the CoordinatedBackingStore.
+        * platform/graphics/texmap/coordinated/CoordinatedSurface.h:
+        Use reference instead of RefPtr to pass BitmapTexture
+
+        No new tests since there should be no change in behavior.
+
 2017-05-02  Zalan Bujtas  <zalan@apple.com>
 
         Defer AX cache update when text content changes until after layout is finished.

@@ -117,13 +117,11 @@ void WebCoordinatedSurface::paintToSurface(const IntRect& rect, CoordinatedSurfa
 }
 
 #if USE(TEXTURE_MAPPER)
-void WebCoordinatedSurface::copyToTexture(RefPtr<WebCore::BitmapTexture> passTexture, const IntRect& target, const IntPoint& sourceOffset)
+void WebCoordinatedSurface::copyToTexture(WebCore::BitmapTexture& texture, const IntRect& target, const IntPoint& sourceOffset)
 {
-    RefPtr<BitmapTexture> texture(passTexture);
-
     ASSERT(m_bitmap);
     RefPtr<Image> image = m_bitmap->createImage();
-    texture->updateContents(image.get(), target, sourceOffset, BitmapTexture::UpdateCanModifyOriginalImageData);
+    texture.updateContents(image.get(), target, sourceOffset, BitmapTexture::UpdateCanModifyOriginalImageData);
 }
 #endif // USE(TEXTURE_MAPPER)
 

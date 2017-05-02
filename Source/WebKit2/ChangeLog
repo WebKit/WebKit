@@ -1,3 +1,23 @@
+2017-05-02  Gwang Yoon Hwang  <yoon@igalia.com>
+
+        [GTK] Recycle textures while handling tiles
+        https://bugs.webkit.org/show_bug.cgi?id=171541
+
+        Reviewed by Žan Doberšek.
+
+        * Shared/CoordinatedGraphics/CoordinatedBackingStore.cpp:
+        (WebKit::CoordinatedBackingStoreTile::swapBuffers):
+        Whenever we create new tiles or delete tiles, CoordGfx creates and
+        deletes textures accordingly.  We should avoid this kind of heavy
+        operations whenever possible.  This patch modifies to use the texture
+        pool to reduce texture allocations.  Also this patch reduces number of
+        resetting textures, which is also expensive operation.
+        * Shared/CoordinatedGraphics/WebCoordinatedSurface.cpp:
+        (WebKit::WebCoordinatedSurface::copyToTexture):
+        Modified to pass BitmapTexture as a reference.
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadSafeCoordinatedSurface.cpp:
+        (WebKit::ThreadSafeCoordinatedSurface::copyToTexture): Ditto.
+
 2017-05-02  David Kilzer  <ddkilzer@apple.com>
 
         Stop using strcpy() in WebProcess::registerWithStateDumper() in WebProcessCocoa.mm

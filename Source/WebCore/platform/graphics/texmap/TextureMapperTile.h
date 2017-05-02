@@ -46,9 +46,9 @@ public:
         : m_rect(rect)
     {
     }
-
-private:
+protected:
     RefPtr<BitmapTexture> m_texture;
+private:
     FloatRect m_rect;
 };
 

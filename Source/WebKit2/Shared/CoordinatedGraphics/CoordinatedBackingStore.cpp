@@ -35,29 +35,19 @@ void CoordinatedBackingStoreTile::swapBuffers(TextureMapper& textureMapper)
     if (!m_surface)
         return;
 
-    FloatRect tileRect(m_tileRect);
-    tileRect.scale(1. / m_scale);
-    bool shouldReset = false;
-    if (tileRect != rect()) {
-        setRect(tileRect);
-        shouldReset = true;
-    }
-    RefPtr<BitmapTexture> texture = this->texture();
-    if (!texture) {
-        texture = textureMapper.createTexture();
-        setTexture(texture.get());
-        shouldReset = true;
-    }
-
-    if (m_surface->supportsAlpha() == texture->isOpaque())
-        shouldReset = true;
-
     ASSERT(textureMapper.maxTextureSize().width() >= m_tileRect.size().width());
     ASSERT(textureMapper.maxTextureSize().height() >= m_tileRect.size().height());
-    if (shouldReset)
-        texture->reset(m_tileRect.size(), m_surface->supportsAlpha());
 
-    m_surface->copyToTexture(texture, m_sourceRect, m_surfaceOffset);
+    FloatRect unscaledTileRect(m_tileRect);
+    unscaledTileRect.scale(1. / m_scale);
+
+    if (!m_texture || unscaledTileRect != rect()) {
+        setRect(unscaledTileRect);
+        m_texture = textureMapper.acquireTextureFromPool(m_tileRect.size(), m_surface->supportsAlpha() ? BitmapTexture::SupportsAlpha : BitmapTexture::NoFlag);
+    } else if (m_surface->supportsAlpha() == m_texture->isOpaque())
+        m_texture->reset(m_tileRect.size(), m_surface->supportsAlpha());
+
+    m_surface->copyToTexture(*m_texture, m_sourceRect, m_surfaceOffset);
     m_surface = nullptr;
 }
 
