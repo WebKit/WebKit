@@ -167,12 +167,12 @@ ud_insn_hex(struct ud* u)
   if (!u->error) {
     unsigned int i;
     const unsigned char *src_ptr = ud_insn_ptr(u);
-    char* src_hex;
-    src_hex = (char*) u->insn_hexcode;
+    char* src_hex = (char*) u->insn_hexcode;
+    char* const src_hex_base = src_hex;
     /* for each byte used to decode instruction */
     for (i = 0; i < ud_insn_len(u) && i < sizeof(u->insn_hexcode) / 2;
          ++i, ++src_ptr) {
-      sprintf(src_hex, "%02x", *src_ptr & 0xFF);
+      snprintf(src_hex, sizeof(u->insn_hexcode) - (src_hex - src_hex_base), "%02x", *src_ptr & 0xFF);
       src_hex += 2;
     }
   }

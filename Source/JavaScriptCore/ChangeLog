@@ -1,3 +1,13 @@
+2017-05-01  David Kilzer  <ddkilzer@apple.com>
+
+        Stop using sprintf() in JavaScriptCore debugger
+        <https://webkit.org/b/171512>
+
+        Reviewed by Keith Miller.
+
+        * disassembler/udis86/udis86.c:
+        (ud_insn_hex): Switch from sprintf() to snprintf().
+
 2017-04-21  Filip Pizlo  <fpizlo@apple.com>
 
         Air::fixObviousSpills should remove totally redundant instructions

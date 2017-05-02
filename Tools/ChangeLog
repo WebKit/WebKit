@@ -1,3 +1,14 @@
+2017-05-01  David Kilzer  <ddkilzer@apple.com>
+
+        Stop using sprintf() in JavaScriptCore debugger
+        <https://webkit.org/b/171512>
+
+        Reviewed by Keith Miller.
+
+        * Scripts/webkitpy/style/checker.py:
+        (_PATH_RULES_SPECIFIER): Ignore some formatting checkers since
+        Source/JavaScriptCore/disassembler/udis86/ is generated code.
+
 2017-05-01  Timothy Horton  <timothy_horton@apple.com>
 
         Expose viewport-fit instead of clip-to-safe-area

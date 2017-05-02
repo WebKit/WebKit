@@ -1,7 +1,7 @@
 # Copyright (C) 2009 Google Inc. All rights reserved.
 # Copyright (C) 2010 Chris Jerdonek (chris.jerdonek@gmail.com)
 # Copyright (C) 2010 ProFUSION embedded systems
-# Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
+# Copyright (C) 2013-2017 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -230,6 +230,12 @@ _PATH_RULES_SPECIFIER = [
       "+pep8/W191",  # Tabs
       "+pep8/W291",  # Trailing white space
       "+whitespace/carriage_return"]),
+
+    ([# Source/JavaScriptCore/disassembler/udis86/ is generated code.
+      os.path.join('Source', 'JavaScriptCore', 'disassembler', 'udis86')],
+     ["-readability/naming/underscores",
+      "-whitespace/declaration",
+      "-whitespace/indent"]),
 
     ([# There is no way to avoid the symbols __jit_debug_register_code
       # and __jit_debug_descriptor when integrating with gdb.
