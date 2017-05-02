@@ -1,3 +1,22 @@
+2017-05-02  Andy Estes  <aestes@apple.com>
+
+        REGRESSION (r213036): Crash in -[WKContentView _webTouchEventsRecognized:] when a touch event arrives after a WebPageProxy has been invalidated
+        https://bugs.webkit.org/show_bug.cgi?id=171539
+        <rdar://problem/31614982>
+
+        Reviewed by Tim Horton.
+
+        Prior to r213036, the layer tree transaction at last touch start was tracked by
+        WebPageProxy::handleTouchEventSynchronously(), which would ask the drawing area proxy for
+        its most recent transaction ID after ensuring that the WebPageProxy was valid.
+
+        r213036 moved the tracking up to -[WKContentView _webTouchEventsRecognized:], but failed to
+        check if _page was valid before asking for its drawing area proxy's last transaction ID; the
+        drawing area proxy is set to null on WebPageProxy invalidation.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _webTouchEventsRecognized:]): Added an early return if _page isn't valid.
+
 2017-05-02  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Web Automation: generate resizeWindowOfBrowsingContext and moveWindowOfBrowsingContext for all platforms

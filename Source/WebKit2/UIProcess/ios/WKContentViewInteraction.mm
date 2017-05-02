@@ -878,6 +878,9 @@ static UIWebSelectionMode toUIWebSelectionMode(WKSelectionGranularity granularit
 
 - (void)_webTouchEventsRecognized:(UIWebTouchEventsGestureRecognizer *)gestureRecognizer
 {
+    if (!_page->isValid())
+        return;
+
     const _UIWebTouchEvent* lastTouchEvent = gestureRecognizer.lastTouchEvent;
 
     _lastInteractionLocation = lastTouchEvent->locationInDocumentCoordinates;
