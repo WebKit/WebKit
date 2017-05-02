@@ -2829,12 +2829,16 @@ AccessibilityOrientation AccessibilityRenderObject::orientation() const
     if (equalLettersIgnoringASCIICase(ariaOrientation, "undefined"))
         return AccessibilityOrientationUndefined;
 
-    // ARIA 1.1 Implicit defaults are defined on some roles.
-    // http://www.w3.org/TR/wai-aria-1.1/#aria-orientation
-    if (isScrollbar() || isComboBox() || isListBox() || isMenu() || isTree())
+    // In ARIA 1.1, the implicit value of aria-orientation changed from horizontal
+    // to undefined on all roles that don't have their own role-specific values. In
+    // addition, the implicit value of combobox became undefined.
+    if (isComboBox() || isRadioGroup() || isTreeGrid())
+        return AccessibilityOrientationUndefined;
+
+    if (isScrollbar() || isListBox() || isMenu() || isTree())
         return AccessibilityOrientationVertical;
     
-    if (isMenuBar() || isSplitter() || isTabList() || isToolbar())
+    if (isMenuBar() || isSplitter() || isTabList() || isToolbar() || isSlider())
         return AccessibilityOrientationHorizontal;
     
     return AccessibilityObject::orientation();

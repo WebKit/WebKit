@@ -1,3 +1,19 @@
+2017-05-02  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: Update implementation of aria-orientation
+        https://bugs.webkit.org/show_bug.cgi?id=171166
+
+        Reviewed by Chris Fleizach.
+
+        Moved the mac aria-orientation.html test to the shared tests and add several
+        new test cases to it. Update the orientation-related assertion in two tests
+        to reflect the ARIA 1.1 behavior.
+
+        * accessibility/aria-orientation-expected.txt: Renamed from LayoutTests/accessibility/mac/aria-orientation-expected.txt.
+        * accessibility/aria-orientation.html: Renamed from LayoutTests/accessibility/mac/aria-orientation.html.
+        * accessibility/mac/slider-supports-actions.html: Updated.
+        * accessibility/gtk/combobox-descendants-orientation-crash-expected.txt: Updated.
+
 2017-05-02  Myles C. Maxfield  <mmaxfield@apple.com>
 
         REGRESSION (r211382): Partial right-to-left text runs are painted at an offset (breaks Find indicators, Look Up, and custom ::selection style)

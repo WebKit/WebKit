@@ -1,3 +1,23 @@
+2017-05-02  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: Update implementation of aria-orientation
+        https://bugs.webkit.org/show_bug.cgi?id=171166
+
+        Reviewed by Chris Fleizach.
+
+        Update AccessibilityRenderObject::orientation() to be consistent with what is
+        in the ARIA 1.1 spec. Also add an isTreeGrid() convenience method to be consistent
+        with what we do for other roles.
+
+        Test: accessibility/aria-orientation.html
+
+        * accessibility/AccessibilityARIAGridRow.cpp:
+        (WebCore::AccessibilityARIAGridRow::isARIATreeGridRow):
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::isTreeGrid):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::orientation):
+
 2017-05-02  Myles C. Maxfield  <mmaxfield@apple.com>
 
         REGRESSION (r211382): Partial right-to-left text runs are painted at an offset (breaks Find indicators, Look Up, and custom ::selection style)

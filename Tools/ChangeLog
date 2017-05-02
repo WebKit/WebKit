@@ -1,3 +1,18 @@
+2017-05-02  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: Update implementation of aria-orientation
+        https://bugs.webkit.org/show_bug.cgi?id=171166
+
+        Reviewed by Chris Fleizach.
+
+        Return "AXUnknownOrientation" when ATK_STATE_VERTICAL and ATK_STATE_HORIZONTAL
+        are both absent from the state set. Before we were returning an empty string
+        which was not consistent with what the Mac port does, thus making shared tests
+        harder.
+
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (WTR::AccessibilityUIElement::orientation):
+
 2017-05-01  David Kilzer  <ddkilzer@apple.com>
 
         Stop using sprintf() in JavaScriptCore debugger

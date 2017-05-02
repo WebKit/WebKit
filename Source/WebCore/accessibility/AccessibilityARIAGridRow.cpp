@@ -55,7 +55,7 @@ bool AccessibilityARIAGridRow::isARIATreeGridRow() const
     if (!parent)
         return false;
     
-    return parent->ariaRoleAttribute() == TreeGridRole;
+    return parent->isTreeGrid();
 }
     
 void AccessibilityARIAGridRow::disclosedRows(AccessibilityChildrenVector& disclosedRows)

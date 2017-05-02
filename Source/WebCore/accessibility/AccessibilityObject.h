@@ -567,6 +567,7 @@ public:
     bool isRadioGroup() const { return roleValue() == RadioGroupRole; }
     bool isComboBox() const { return roleValue() == ComboBoxRole; }
     bool isTree() const { return roleValue() == TreeRole; }
+    bool isTreeGrid() const { return roleValue() == TreeGridRole; }
     bool isTreeItem() const { return roleValue() == TreeItemRole; }
     bool isScrollbar() const { return roleValue() == ScrollBarRole; }
     bool isButton() const;

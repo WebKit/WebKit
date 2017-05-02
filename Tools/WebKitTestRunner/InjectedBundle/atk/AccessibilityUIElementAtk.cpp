@@ -1294,9 +1294,8 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::orientation() const
         axOrientation = "AXOrientation: AXHorizontalOrientation";
     else if (checkElementState(m_element.get(), ATK_STATE_VERTICAL))
         axOrientation = "AXOrientation: AXVerticalOrientation";
-
-    if (!axOrientation)
-        return JSStringCreateWithCharacters(0, 0);
+    else
+        axOrientation = "AXOrientation: AXUnknownOrientation";
 
     return JSStringCreateWithUTF8CString(axOrientation);
 }
