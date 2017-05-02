@@ -110,9 +110,10 @@ bool CCallSpecial::isValid(Inst& inst)
 
 bool CCallSpecial::admitsStack(Inst&, unsigned argIndex)
 {
-    // The callee can be on the stack.
+    // The callee can be on the stack unless targeting ARM64, where we can't later properly
+    // handle an Addr callee argument in generate() due to disallowed scratch register usage.
     if (argIndex == calleeArgOffset)
-        return true;
+        return !isARM64();
     
     return false;
 }

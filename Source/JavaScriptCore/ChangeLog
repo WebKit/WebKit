@@ -1,3 +1,25 @@
+2017-05-01  Zan Dobersek  <zdobersek@igalia.com>
+
+        [aarch64][Linux] m_allowScratchRegister assert hit in MacroAssemblerARM64 under B3::Air::CCallSpecial::generate()
+        https://bugs.webkit.org/show_bug.cgi?id=170672
+
+        Reviewed by Filip Pizlo.
+
+        In Air::CCallSpecial::admitsStack() we reject admitting the callee argument on
+        the stack for ARM64 because that can lead to disallowed usage of the scratch
+        register in MacroAssemblerARM64 when generating a call with an address Arg
+        in Air::CCallSpecial::generate().
+
+        The testLinearScanWithCalleeOnStack test is added to testb3. It reproduces the
+        original issue by force-spilling everything on the stack and enforcing the use
+        of the linear scan register allocation by using an optimization level of 1.
+
+        * b3/air/AirCCallSpecial.cpp:
+        (JSC::B3::Air::CCallSpecial::admitsStack):
+        * b3/testb3.cpp:
+        (JSC::B3::testLinearScanWithCalleeOnStack):
+        (JSC::B3::run):
+
 2017-05-01  David Kilzer  <ddkilzer@apple.com>
 
         Stop using sprintf() in JavaScriptCore debugger

@@ -10427,6 +10427,37 @@ void testCallFunctionWithHellaFloatArguments()
     CHECK(compileAndRun<float>(proc) == functionWithHellaFloatArguments(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26));
 }
 
+void testLinearScanWithCalleeOnStack()
+{
+    // This tests proper CCall generation when compiling with a lower optimization
+    // level and operating with a callee argument that's spilt on the stack.
+    // On ARM64, this caused an assert in MacroAssemblerARM64 because of disallowed
+    // use of the scratch register.
+    // https://bugs.webkit.org/show_bug.cgi?id=170672
+
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    root->appendNewControlValue(
+        proc, Return, Origin(),
+        root->appendNew<CCallValue>(
+            proc, Int32, Origin(),
+            root->appendNew<ConstPtrValue>(proc, Origin(), bitwise_cast<void*>(simpleFunction)),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1)));
+
+    // Force the linear scan algorithm to spill everything.
+    auto original = Options::airLinearScanSpillsEverything();
+    Options::airLinearScanSpillsEverything() = true;
+
+    // Compiling with 1 as the optimization level enforces the use of linear scan
+    // for register allocation.
+    auto code = compileProc(proc, 1);
+    CHECK_EQ(invoke<int>(*code, 41, 1), 42);
+
+    Options::airLinearScanSpillsEverything() = original;
+}
+
 void testChillDiv(int num, int den, int res)
 {
     // Test non-constant.
@@ -16318,6 +16349,8 @@ void run(const char* filter)
     RUN(testCallFunctionWithHellaDoubleArguments());
     RUN_BINARY(testCallSimpleFloat, floatingPointOperands<float>(), floatingPointOperands<float>());
     RUN(testCallFunctionWithHellaFloatArguments());
+
+    RUN(testLinearScanWithCalleeOnStack());
 
     RUN(testChillDiv(4, 2, 2));
     RUN(testChillDiv(1, 0, 0));
