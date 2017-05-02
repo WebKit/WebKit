@@ -250,7 +250,10 @@ void FetchResponse::consume(unsigned type, Ref<DeferredPromise>&& wrapper)
 void FetchResponse::startConsumingStream(unsigned type)
 {
     m_isDisturbed = true;
-    m_consumer.setType(static_cast<FetchBodyConsumer::Type>(type));
+    auto consumerType = static_cast<FetchBodyConsumer::Type>(type);
+    m_consumer.setType(consumerType);
+    if (consumerType == FetchBodyConsumer::Type::Blob)
+        m_consumer.setContentType(Blob::normalizedContentType(extractMIMETypeFromMediaType(m_contentType)));
 }
 
 void FetchResponse::consumeChunk(Ref<JSC::Uint8Array>&& chunk)

@@ -1,3 +1,25 @@
+2017-05-02  Ben Kelly <ben@wanderview.com>
+
+        Set Response.blob() type correctly when body is a ReadableStream.
+        https://bugs.webkit.org/show_bug.cgi?id=171489
+
+        Reviewed by Youenn Fablet
+
+        The Fetch API specification requires setting the blob contentType
+        using the Content-Type header value, if present.  Currently WebKit
+        only sets the type on the FetchBodyConsumer when FetchBody::blob()
+        is called.  Unfortunately, this is never called if the body is
+        actually a ReadableStream.
+
+        This change allows WebKit to pass the "Consume response's body: from
+        stream to blob" case in the WPT response-consume.html test.
+
+        Test: http://w3c-test.org/fetch/api/response/response-consume.html
+
+        * Modules/fetch/FetchResponse.cpp:
+        (WebCore::FetchResponse::startConsumingStream): Modified to call
+        FetchBodyConsumer::setContentType() before processing the stream.
+
 2017-05-02  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r216069.

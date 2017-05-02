@@ -25,7 +25,7 @@ FAIL Consume response's body: from URLSearchParams without correct type to formD
 FAIL Consume response's body: from URLSearchParams to blob assert_equals: Blob body type should be computed from the response Content-Type expected "application/x-www-form-urlencoded;charset=utf-8" but got "application/x-www-form-urlencoded"
 PASS Consume response's body: from URLSearchParams to text 
 PASS Consume response's body: from URLSearchParams to arrayBuffer 
-FAIL Consume response's body: from stream to blob assert_equals: Blob body type should be computed from the response Content-Type expected "text/plain" but got ""
+PASS Consume response's body: from stream to blob 
 PASS Consume response's body: from stream to text 
 PASS Consume response's body: from stream to arrayBuffer 
 PASS Consume response's body: from stream to json 
