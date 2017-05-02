@@ -3,6 +3,9 @@ set(PAL_SOURCES
 
 set(PAL_INCLUDE_DIRECTORIES
     "${PAL_DIR}"
+)
+
+set(PAL_PRIVATE_INCLUDE_DIRECTORIES
     "${PAL_DIR}/pal"
     "${PAL_DIR}/pal/crypto"
 )
