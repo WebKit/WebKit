@@ -1,5 +1,19 @@
 2017-05-01  Dan Bernstein  <mitz@apple.com>
 
+        [Xcode] It’s easy to accidentally install a WTF header outside /usr/local/include/wtf
+        https://bugs.webkit.org/show_bug.cgi?id=171533
+
+        Reviewed by Andy Estes.
+
+        * WTF.xcodeproj/project.pbxproj: Removed the WTF target’s Headers build phase. Its existence
+          was making it easy to accidentally add a header to the target and make it Private, which
+          would have Xcode install a copy of it right under /usr/local/include, in addition to the
+          copy installed under /usr/local/include/wtf by the Copy WTF Headers target.
+          Also got rid of INSTALL_PATH_PREFIX in the script build phase in the Copy WTF Headers
+          target, because it is being never set anymore.
+
+2017-05-01  Dan Bernstein  <mitz@apple.com>
+
         WTF installs an extra copy of a header outside /usr/local/include/wtf
 
         * WTF.xcodeproj/project.pbxproj: Demoted CPUTime.h from Private to Project.
