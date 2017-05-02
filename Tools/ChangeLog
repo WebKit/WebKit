@@ -1,5 +1,15 @@
 2017-05-02  David Kilzer  <ddkilzer@apple.com>
 
+        Rolling out jstest_unittest.py so it can be reviewed
+
+        Follow-up fix for:
+        check-webkit-style should keep JavaScript test functions in sync
+        <https://webkit.org/b/171424>
+
+        * Scripts/webkitpy/style/checkers/jstest_unittest.py: Remove.
+
+2017-05-02  David Kilzer  <ddkilzer@apple.com>
+
         check-webkit-style should keep JavaScript test functions in sync
         <https://webkit.org/b/171424>
 
