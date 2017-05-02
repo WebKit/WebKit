@@ -37,7 +37,8 @@
 
 namespace WebCore {
 
-DocumentRuleSets::DocumentRuleSets()
+DocumentRuleSets::DocumentRuleSets(StyleResolver& styleResolver)
+    : m_styleResolver(styleResolver)
 {
     m_authorStyle = std::make_unique<RuleSet>();
     m_authorStyle->disableAutoShrinkToFit();
@@ -45,6 +46,13 @@ DocumentRuleSets::DocumentRuleSets()
 
 DocumentRuleSets::~DocumentRuleSets()
 {
+}
+
+RuleSet* DocumentRuleSets::userStyle() const
+{
+    if (m_usesSharedUserStyle)
+        return m_styleResolver.document().styleScope().resolver().ruleSets().userStyle();
+    return m_userStyle.get();
 }
 
 void DocumentRuleSets::initUserStyle(ExtensionStyleSheets& extensionStyleSheets, const MediaQueryEvaluator& medium, StyleResolver& resolver)
@@ -112,8 +120,8 @@ void DocumentRuleSets::collectFeatures() const
 
     if (m_authorStyle)
         m_features.add(m_authorStyle->features());
-    if (m_userStyle)
-        m_features.add(m_userStyle->features());
+    if (auto* userStyle = this->userStyle())
+        m_features.add(userStyle->features());
 
     m_siblingRuleSet = makeRuleSet(m_features.siblingRules);
     m_uncommonAttributeRuleSet = makeRuleSet(m_features.uncommonAttributeRules);

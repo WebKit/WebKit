@@ -152,6 +152,7 @@ public:
     const Document& document() const { return m_document; }
     const Settings& settings() const { return m_document.settings(); }
 
+    void initializeUserStyle();
     void appendAuthorStyleSheets(const Vector<RefPtr<CSSStyleSheet>>&);
 
     DocumentRuleSets& ruleSets() { return m_ruleSets; }
