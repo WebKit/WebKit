@@ -1,5 +1,32 @@
 2017-05-01  Zan Dobersek  <zdobersek@igalia.com>
 
+        [GCrypt] HKDF bit derivation support
+        https://bugs.webkit.org/show_bug.cgi?id=171074
+
+        Reviewed by Michael Catanzaro.
+
+        Implement bit derivation support for the HKDF algorithm for configurations
+        that use libgcrypt.
+
+        libgcrypt doesn't provide HKDF support out of the box, so we have to
+        implement the two steps manually. In the first one, we retrieve the
+        pseudo-random key by using the specified MAC algorithm with the salt data
+        as the key and the key data as the input keying material.
+
+        In the expand step, we do the required amount of iterations to derive
+        a sufficient amount of data, using the same MAC algorithm with the
+        pseudo-random key from the previous step on the data we compose from the
+        previous block data, the info data, and the current iteration value. The
+        resulting blocks are appended together until they can be clipped to the
+        desired output length.
+
+        * crypto/gcrypt/CryptoAlgorithmHKDFGCrypt.cpp:
+        (WebCore::macAlgorithmForHashFunction):
+        (WebCore::gcryptDeriveBits):
+        (WebCore::CryptoAlgorithmHKDF::platformDeriveBits):
+
+2017-05-01  Zan Dobersek  <zdobersek@igalia.com>
+
         [GCrypt] ECDH bit derivation support
         https://bugs.webkit.org/show_bug.cgi?id=171070
 

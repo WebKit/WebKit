@@ -1,5 +1,7 @@
 /*
  * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Metrological Group B.V.
+ * Copyright (C) 2017 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,13 +30,175 @@
 
 #if ENABLE(SUBTLE_CRYPTO)
 
-#include "NotImplemented.h"
+#include "CryptoAlgorithmHkdfParams.h"
+#include "CryptoKeyRaw.h"
+#include "ExceptionCode.h"
+#include "ScriptExecutionContext.h"
+#include <pal/crypto/gcrypt/Handle.h>
+#include <pal/crypto/gcrypt/Utilities.h>
 
 namespace WebCore {
 
-void CryptoAlgorithmHKDF::platformDeriveBits(std::unique_ptr<CryptoAlgorithmParameters>&&, Ref<CryptoKey>&&, size_t, VectorCallback&&, ExceptionCallback&&, ScriptExecutionContext&, WorkQueue&)
+// libgcrypt doesn't provide HKDF functionality, so we have to implement it manually.
+// We should switch to the libgcrypt-provided implementation once it's available.
+// https://bugs.webkit.org/show_bug.cgi?id=171536
+
+static std::optional<int> macAlgorithmForHashFunction(CryptoAlgorithmIdentifier identifier)
 {
-    notImplemented();
+    switch (identifier) {
+    case CryptoAlgorithmIdentifier::SHA_1:
+        return GCRY_MAC_HMAC_SHA1;
+    case CryptoAlgorithmIdentifier::SHA_224:
+        return GCRY_MAC_HMAC_SHA224;
+    case CryptoAlgorithmIdentifier::SHA_256:
+        return GCRY_MAC_HMAC_SHA256;
+    case CryptoAlgorithmIdentifier::SHA_384:
+        return GCRY_MAC_HMAC_SHA384;
+    case CryptoAlgorithmIdentifier::SHA_512:
+        return GCRY_MAC_HMAC_SHA512;
+    default:
+        return std::nullopt;
+    }
+}
+
+static std::optional<Vector<uint8_t>> gcryptDeriveBits(const Vector<uint8_t>& key, const Vector<uint8_t>& salt, const Vector<uint8_t>& info, size_t lengthInBytes, CryptoAlgorithmIdentifier identifier)
+{
+    // libgcrypt doesn't provide HKDF support, so we have to implement
+    // the functionality ourselves as specified in RFC5869.
+    // https://www.ietf.org/rfc/rfc5869.txt
+
+    auto macAlgorithm = macAlgorithmForHashFunction(identifier);
+    if (!macAlgorithm)
+        return std::nullopt;
+
+    // We can immediately discard invalid output lengths, otherwise needed for the expand step.
+    size_t macLength = gcry_mac_get_algo_maclen(*macAlgorithm);
+    if (lengthInBytes > macLength * 255)
+        return std::nullopt;
+
+    PAL::GCrypt::Handle<gcry_mac_hd_t> handle;
+    gcry_error_t error = gcry_mac_open(&handle, *macAlgorithm, 0, nullptr);
+    if (error != GPG_ERR_NO_ERROR) {
+        PAL::GCrypt::logError(error);
+        return std::nullopt;
+    }
+
+    // Step 1 -- Extract. A pseudo-random key is generated with the specified algorithm
+    // for the given salt value (used as a key) and the 'input keying material'.
+    Vector<uint8_t> pseudoRandomKey(macLength);
+    {
+        // If the salt vector is empty, a zeroed-out key of macLength size should be used.
+        if (salt.isEmpty()) {
+            Vector<uint8_t> zeroedKey(macLength, 0);
+            error = gcry_mac_setkey(handle, zeroedKey.data(), zeroedKey.size());
+        } else
+            error = gcry_mac_setkey(handle, salt.data(), salt.size());
+        if (error != GPG_ERR_NO_ERROR) {
+            PAL::GCrypt::logError(error);
+            return std::nullopt;
+        }
+
+        error = gcry_mac_write(handle, key.data(), key.size());
+        if (error != GPG_ERR_NO_ERROR) {
+            PAL::GCrypt::logError(error);
+            return std::nullopt;
+        }
+
+        size_t pseudoRandomKeySize = pseudoRandomKey.size();
+        error = gcry_mac_read(handle, pseudoRandomKey.data(), &pseudoRandomKeySize);
+        if (error != GPG_ERR_NO_ERROR) {
+            PAL::GCrypt::logError(error);
+            return std::nullopt;
+        }
+
+        // Something went wrong if libgcrypt didn't write out the proper amount of data.
+        if (pseudoRandomKeySize != macLength)
+            return std::nullopt;
+    }
+
+    // Step #2 -- Expand.
+    Vector<uint8_t> output;
+    {
+        // Deduce the number of needed iterations to retrieve the necessary amount of data.
+        size_t numIterations = (lengthInBytes + macLength) / macLength;
+        // Block from the previous iteration is used in the current one, except
+        // in the first iteration when it's empty.
+        Vector<uint8_t> lastBlock(macLength);
+
+        for (size_t i = 0; i < numIterations; ++i) {
+            error = gcry_mac_reset(handle);
+            if (error != GPG_ERR_NO_ERROR) {
+                PAL::GCrypt::logError(error);
+                return std::nullopt;
+            }
+
+            error = gcry_mac_setkey(handle, pseudoRandomKey.data(), pseudoRandomKey.size());
+            if (error != GPG_ERR_NO_ERROR) {
+                PAL::GCrypt::logError(error);
+                return std::nullopt;
+            }
+
+            // T(0) = empty string (zero length) -- i.e. empty lastBlock
+            // T(i) = HMAC-Hash(PRK, T(i-1) | info | hex(i)) -- | represents concatenation
+            Vector<uint8_t> blockData;
+            if (i)
+                blockData.appendVector(lastBlock);
+            blockData.appendVector(info);
+            blockData.append(i + 1);
+
+            error = gcry_mac_write(handle, blockData.data(), blockData.size());
+            if (error != GPG_ERR_NO_ERROR) {
+                PAL::GCrypt::logError(error);
+                return std::nullopt;
+            }
+
+            size_t blockSize = lastBlock.size();
+            error = gcry_mac_read(handle, lastBlock.data(), &blockSize);
+            if (error != GPG_ERR_NO_ERROR) {
+                PAL::GCrypt::logError(error);
+                return std::nullopt;
+            }
+
+            // Something went wrong if libgcrypt didn't write out the proper amount of data.
+            if (blockSize != lastBlock.size())
+                return std::nullopt;
+
+            // Append the current block data to the output vector.
+            output.appendVector(lastBlock);
+        }
+    }
+
+    // Clip output vector to the requested size.
+    output.resize(lengthInBytes);
+    return output;
+}
+
+void CryptoAlgorithmHKDF::platformDeriveBits(std::unique_ptr<CryptoAlgorithmParameters>&& parameters, Ref<CryptoKey>&& baseKey, size_t length, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
+{
+    context.ref();
+    workQueue.dispatch(
+        [parameters = WTFMove(parameters), baseKey = WTFMove(baseKey), length, callback = WTFMove(callback), exceptionCallback = WTFMove(exceptionCallback), &context]() mutable {
+            auto& hkdfParameters = downcast<CryptoAlgorithmHkdfParams>(*parameters);
+            auto& rawKey = downcast<CryptoKeyRaw>(baseKey.get());
+
+            auto output = gcryptDeriveBits(rawKey.key(), hkdfParameters.saltVector(), hkdfParameters.infoVector(), length / 8, hkdfParameters.hashIdentifier);
+            if (!output) {
+                // We should only dereference callbacks after being back to the Document/Worker threads.
+                context.postTask(
+                    [callback = WTFMove(callback), exceptionCallback = WTFMove(exceptionCallback)](ScriptExecutionContext& context) {
+                        exceptionCallback(OperationError);
+                        context.deref();
+                    });
+                return;
+            }
+
+            // We should only dereference callbacks after being back to the Document/Worker threads.
+            context.postTask(
+                [output = WTFMove(*output), callback = WTFMove(callback), exceptionCallback = WTFMove(exceptionCallback)](ScriptExecutionContext& context) {
+                    callback(output);
+                    context.deref();
+                });
+        });
 }
 
 } // namespace WebCore

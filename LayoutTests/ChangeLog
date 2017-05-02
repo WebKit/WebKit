@@ -1,5 +1,25 @@
 2017-05-01  Zan Dobersek  <zdobersek@igalia.com>
 
+        [GCrypt] HKDF bit derivation support
+        https://bugs.webkit.org/show_bug.cgi?id=171074
+
+        Reviewed by Michael Catanzaro.
+
+        The crypto/subtle/hkdf-derive-bits-length-limits.html test is added, testing the
+        corner-case length values for which the bit derivation operation must succeed or
+        fail for any specified SHA hash algorithm. With HashLen as the algorithm's output
+        length, the operation should reject for lengths of 0 or above 255 * HashLen * 8.
+        The operation should resolve for lengths between the two limits, with testing
+        performed on lengths of 8 (the minimum output length), HashLen * 8 (matching the
+        output length of the hash algorithm), and 255 * HashLen * 8 (the maximum
+        derivation output length).
+
+        * crypto/subtle/hkdf-derive-bits-length-limits-expected.txt: Added.
+        * crypto/subtle/hkdf-derive-bits-length-limits.html: Added.
+        * platform/gtk/TestExpectations: Enable the HKDF tests under crypto/subtle/.
+
+2017-05-01  Zan Dobersek  <zdobersek@igalia.com>
+
         [GCrypt] ECDH bit derivation support
         https://bugs.webkit.org/show_bug.cgi?id=171070
 
