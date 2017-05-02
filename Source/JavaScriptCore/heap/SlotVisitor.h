@@ -92,6 +92,9 @@ public:
     template<typename T>
     void append(const Weak<T>& weak);
     
+    void appendHiddenUnbarriered(JSValue);
+    void appendHiddenUnbarriered(JSCell*);
+
     JS_EXPORT_PRIVATE void addOpaqueRoot(void*);
     
     JS_EXPORT_PRIVATE bool containsOpaqueRoot(void*) const;
@@ -174,8 +177,6 @@ private:
     friend class ParallelModeEnabler;
     
     void appendJSCellOrAuxiliary(HeapCell*);
-    void appendHidden(JSValue);
-    void appendHidden(JSCell*);
 
     JS_EXPORT_PRIVATE void appendSlow(JSCell*, Dependency);
     JS_EXPORT_PRIVATE void appendHiddenSlow(JSCell*, Dependency);

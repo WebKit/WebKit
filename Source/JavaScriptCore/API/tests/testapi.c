@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2015-2016 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2017 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,9 +28,11 @@
 #include "JavaScriptCore.h"
 #include "JSBasePrivate.h"
 #include "JSContextRefPrivate.h"
+#include "JSMarkingConstraintPrivate.h"
 #include "JSObjectRefPrivate.h"
 #include "JSScriptRefPrivate.h"
 #include "JSStringRefPrivate.h"
+#include "JSWeakPrivate.h"
 #include <math.h>
 #define ASSERT_DISABLED 0
 #include <wtf/Assertions.h>
@@ -1115,6 +1117,63 @@ static void checkConstnessInJSObjectNames()
     val.name = "something";
 }
 
+void JSSynchronousGarbageCollectForDebugging(JSContextRef);
+
+static const unsigned numWeakRefs = 10000;
+
+static void markingConstraint(JSMarkerRef marker, void *userData)
+{
+    JSWeakRef *weakRefs;
+    unsigned i;
+    
+    weakRefs = userData;
+    
+    for (i = 0; i < numWeakRefs; i += 2) {
+        JSObjectRef object = JSWeakGetObject(weakRefs[i]);
+        marker->Mark(marker, object);
+        assertTrue(marker->IsMarked(marker, object), "A marked object is marked");
+    }
+}
+
+static void testMarkingConstraints(void)
+{
+    JSContextGroupRef group;
+    JSContextRef context;
+    JSWeakRef *weakRefs;
+    unsigned i;
+    unsigned deadCount;
+    
+    printf("Testing Marking Constraints.\n");
+    
+    group = JSContextGroupCreate();
+    context = JSGlobalContextCreateInGroup(group, NULL);
+
+    weakRefs = calloc(numWeakRefs, sizeof(JSWeakRef));
+
+    JSContextGroupAddMarkingConstraint(group, markingConstraint, weakRefs);
+    
+    for (i = numWeakRefs; i--;)
+        weakRefs[i] = JSWeakCreate(context, JSObjectMakeArray(context, 0, NULL, NULL));
+    
+    JSSynchronousGarbageCollectForDebugging(context);
+    
+    deadCount = 0;
+    for (i = 0; i < numWeakRefs; i += 2) {
+        assertTrue(JSWeakGetObject(weakRefs[i]), "Marked objects stayed alive");
+        if (!JSWeakGetObject(weakRefs[i + 1]))
+            deadCount++;
+    }
+    
+    assertTrue(deadCount != 0, "At least some objects died");
+    
+    for (i = numWeakRefs; i--;)
+        JSWeakRelease(context, weakRefs[i]);
+    
+    JSContextGroupRelease(group);
+
+    printf("PASS: Marking Constraints.\n");
+}
+
 int main(int argc, char* argv[])
 {
 #if OS(WINDOWS)
@@ -1143,6 +1202,8 @@ int main(int argc, char* argv[])
     TestInitializeFinalize = false;
 
     ASSERT(Base_didFinalize);
+
+    testMarkingConstraints();
 
     JSClassDefinition globalObjectClassDefinition = kJSClassDefinitionEmpty;
     globalObjectClassDefinition.initialize = globalObject_initialize;

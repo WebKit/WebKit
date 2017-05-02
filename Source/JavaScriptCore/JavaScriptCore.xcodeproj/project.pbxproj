@@ -94,6 +94,10 @@
 		0F0776BF14FF002B00102332 /* JITCompilationEffort.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F0776BD14FF002800102332 /* JITCompilationEffort.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F0A75221B94BFA900110660 /* InferredType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F0A75201B94BFA900110660 /* InferredType.cpp */; };
 		0F0A75231B94BFA900110660 /* InferredType.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F0A75211B94BFA900110660 /* InferredType.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F0B286B1EB8E6CF000EB5D2 /* JSWeakPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F0B286A1EB8E6CD000EB5D2 /* JSWeakPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F0B286C1EB8E6D3000EB5D2 /* JSWeakPrivate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F0B28691EB8E6CD000EB5D2 /* JSWeakPrivate.cpp */; };
+		0F0B286D1EB8E6D5000EB5D2 /* JSMarkingConstraintPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F0B28681EB8E6CD000EB5D2 /* JSMarkingConstraintPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F0B286E1EB8E6DA000EB5D2 /* JSMarkingConstraintPrivate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F0B28671EB8E6CD000EB5D2 /* JSMarkingConstraintPrivate.cpp */; };
 		0F0B839C14BCF46300885B4F /* LLIntThunks.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F0B839714BCF45A00885B4F /* LLIntThunks.cpp */; };
 		0F0B839D14BCF46600885B4F /* LLIntThunks.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F0B839814BCF45A00885B4F /* LLIntThunks.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F0B83A714BCF50700885B4F /* CodeType.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F0B83A514BCF50400885B4F /* CodeType.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2653,6 +2657,10 @@
 		0F0776BD14FF002800102332 /* JITCompilationEffort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITCompilationEffort.h; sourceTree = "<group>"; };
 		0F0A75201B94BFA900110660 /* InferredType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InferredType.cpp; sourceTree = "<group>"; };
 		0F0A75211B94BFA900110660 /* InferredType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InferredType.h; sourceTree = "<group>"; };
+		0F0B28671EB8E6CD000EB5D2 /* JSMarkingConstraintPrivate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMarkingConstraintPrivate.cpp; sourceTree = "<group>"; };
+		0F0B28681EB8E6CD000EB5D2 /* JSMarkingConstraintPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMarkingConstraintPrivate.h; sourceTree = "<group>"; };
+		0F0B28691EB8E6CD000EB5D2 /* JSWeakPrivate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWeakPrivate.cpp; sourceTree = "<group>"; };
+		0F0B286A1EB8E6CD000EB5D2 /* JSWeakPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWeakPrivate.h; sourceTree = "<group>"; };
 		0F0B839714BCF45A00885B4F /* LLIntThunks.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LLIntThunks.cpp; path = llint/LLIntThunks.cpp; sourceTree = "<group>"; };
 		0F0B839814BCF45A00885B4F /* LLIntThunks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LLIntThunks.h; path = llint/LLIntThunks.h; sourceTree = "<group>"; };
 		0F0B83A514BCF50400885B4F /* CodeType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeType.h; sourceTree = "<group>"; };
@@ -6130,6 +6138,8 @@
 				C25D709A16DE99F400FCA6BC /* JSManagedValue.h */,
 				C25D709916DE99F400FCA6BC /* JSManagedValue.mm */,
 				2A4BB7F218A41179008A0FCD /* JSManagedValueInternal.h */,
+				0F0B28671EB8E6CD000EB5D2 /* JSMarkingConstraintPrivate.cpp */,
+				0F0B28681EB8E6CD000EB5D2 /* JSMarkingConstraintPrivate.h */,
 				1482B7E20A43076000517CFC /* JSObjectRef.cpp */,
 				1482B7E10A43076000517CFC /* JSObjectRef.h */,
 				A79EDB0811531CD60019E912 /* JSObjectRefPrivate.h */,
@@ -6156,6 +6166,8 @@
 				A7482E37116A697B003B0712 /* JSWeakObjectMapRefInternal.h */,
 				A7482B7A1166CDEA003B0712 /* JSWeakObjectMapRefPrivate.cpp */,
 				A7482B791166CDEA003B0712 /* JSWeakObjectMapRefPrivate.h */,
+				0F0B28691EB8E6CD000EB5D2 /* JSWeakPrivate.cpp */,
+				0F0B286A1EB8E6CD000EB5D2 /* JSWeakPrivate.h */,
 				86E3C60C167BAB87006D760A /* JSWrapperMap.h */,
 				86E3C60B167BAB87006D760A /* JSWrapperMap.mm */,
 				86F3EEB9168CCF750077B92A /* ObjCCallbackFunction.h */,
@@ -8538,6 +8550,7 @@
 				0F2017821DCADD4200EA5950 /* DFGFlowMap.h in Headers */,
 				0F2C63AA1E4FA42E00C13839 /* RunningScope.h in Headers */,
 				0F9D339717FFC4E60073C2BC /* DFGFlushedAt.h in Headers */,
+				0F0B286B1EB8E6CF000EB5D2 /* JSWeakPrivate.h in Headers */,
 				A7D89CF817A0B8CC00773AD8 /* DFGFlushFormat.h in Headers */,
 				0F2DD8151AB3D8BE00BBB8E8 /* DFGForAllKills.h in Headers */,
 				0F69CC89193AC60A0045759E /* DFGFrozenValue.h in Headers */,
@@ -9533,6 +9546,7 @@
 				AD2FCC1E1DB59CB200B3E736 /* WebAssemblyRuntimeErrorConstructor.lut.h in Headers */,
 				AD2FCBFB1DB58DAD00B3E736 /* WebAssemblyRuntimeErrorPrototype.h in Headers */,
 				AD2FCC1F1DB59CB200B3E736 /* WebAssemblyRuntimeErrorPrototype.lut.h in Headers */,
+				0F0B286D1EB8E6D5000EB5D2 /* JSMarkingConstraintPrivate.h in Headers */,
 				AD2FCBFD1DB58DAD00B3E736 /* WebAssemblyTableConstructor.h in Headers */,
 				AD2FCC201DB59CB200B3E736 /* WebAssemblyTableConstructor.lut.h in Headers */,
 				AD2FCBFF1DB58DAD00B3E736 /* WebAssemblyTablePrototype.h in Headers */,
@@ -10259,6 +10273,7 @@
 				0F2DD8111AB3D8BE00BBB8E8 /* DFGArgumentsEliminationPhase.cpp in Sources */,
 				0F2DD8131AB3D8BE00BBB8E8 /* DFGArgumentsUtilities.cpp in Sources */,
 				0F485321187750560083B687 /* DFGArithMode.cpp in Sources */,
+				0F0B286E1EB8E6DA000EB5D2 /* JSMarkingConstraintPrivate.cpp in Sources */,
 				0F63948415E48118006A597C /* DFGArrayMode.cpp in Sources */,
 				A7D9A29417A0BC7400EE2618 /* DFGAtTailAbstractState.cpp in Sources */,
 				0F666EC61835672B00D017F1 /* DFGAvailability.cpp in Sources */,
@@ -10957,6 +10972,7 @@
 				A7CA3AEB17DA5168006538AF /* WeakMapData.cpp in Sources */,
 				A7CA3AE517DA41AE006538AF /* WeakMapPrototype.cpp in Sources */,
 				14E84FA014EE1ACC00D6D5D4 /* WeakSet.cpp in Sources */,
+				0F0B286C1EB8E6D3000EB5D2 /* JSWeakPrivate.cpp in Sources */,
 				709FB8691AE335C60039D069 /* WeakSetConstructor.cpp in Sources */,
 				709FB86B1AE335C60039D069 /* WeakSetPrototype.cpp in Sources */,
 				AD2FCBEC1DB58DAD00B3E736 /* WebAssemblyCompileErrorConstructor.cpp in Sources */,

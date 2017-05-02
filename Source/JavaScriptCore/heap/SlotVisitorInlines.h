@@ -70,13 +70,13 @@ ALWAYS_INLINE void SlotVisitor::appendUnbarriered(JSValue value)
         appendUnbarriered(value.asCell());
 }
 
-ALWAYS_INLINE void SlotVisitor::appendHidden(JSValue value)
+ALWAYS_INLINE void SlotVisitor::appendHiddenUnbarriered(JSValue value)
 {
     if (value.isCell())
-        appendHidden(value.asCell());
+        appendHiddenUnbarriered(value.asCell());
 }
 
-ALWAYS_INLINE void SlotVisitor::appendHidden(JSCell* cell)
+ALWAYS_INLINE void SlotVisitor::appendHiddenUnbarriered(JSCell* cell)
 {
     // This needs to be written in a very specific way to ensure that it gets inlined
     // properly. In particular, it appears that using templates here breaks ALWAYS_INLINE.
@@ -114,7 +114,7 @@ ALWAYS_INLINE void SlotVisitor::append(const WriteBarrierBase<T>& slot)
 template<typename T>
 ALWAYS_INLINE void SlotVisitor::appendHidden(const WriteBarrierBase<T>& slot)
 {
-    appendHidden(slot.get());
+    appendHiddenUnbarriered(slot.get());
 }
 
 template<typename Iterator>
