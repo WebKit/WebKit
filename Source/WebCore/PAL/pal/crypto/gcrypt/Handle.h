@@ -115,6 +115,14 @@ struct HandleDeleter<gcry_mpi_t> {
 };
 
 template<>
+struct HandleDeleter<gcry_mpi_point_t> {
+    void operator()(gcry_mpi_point_t handle)
+    {
+        gcry_mpi_point_release(handle);
+    }
+};
+
+template<>
 struct HandleDeleter<gcry_sexp_t> {
     void operator()(gcry_sexp_t handle)
     {

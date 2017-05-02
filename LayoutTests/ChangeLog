@@ -1,3 +1,26 @@
+2017-05-01  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GCrypt] ECDH bit derivation support
+        https://bugs.webkit.org/show_bug.cgi?id=171070
+
+        Reviewed by Michael Catanzaro.
+
+        The crypto/subtle/ecdh-derive-bits-length-limits.html test is added, testing the
+        corner-case length values for which the bit derivation operation must succeed or
+        fail. When specifying 0 as the length, the returned result must match the EC key
+        size in length. 8, tested as the minimum non-zero value, and the key size for
+        each key must also correctly resolve and return a resulting ArrayBuffer whose
+        length in bytes must match the requested length. Derivations for byte-aligned
+        values should start rejecting immediately for length values that are bigger than
+        the EC key's length.
+
+        * crypto/subtle/ecdh-derive-bits-length-limits-expected.txt: Added.
+        * crypto/subtle/ecdh-derive-bits-length-limits.html: Added.
+        * platform/gtk/TestExpectations: Enable Web Crypto ECDH tests under crypto/subtle/
+        that are passing now that the proper implementation has been added. The remaining
+        failing ECDH tests use PKCS #8 and SPKI key import/export formats, which are not
+        supported yet.
+
 2017-05-01  Saam Barati  <sbarati@apple.com>
 
         REGRESSION: LayoutTest workers/wasm-hashset-many.html is a flaky timeout

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test ECDH deriveBits operation for corner-case length values.");
+
+jsTestIsAsync = true;
+
+var extractable = true;
+var jwkPrivateKeyP256 = {
+    kty: "EC",
+    crv: "P-256",
+    x: "FwdrcvxdtrNOUpB62zEcz1-3QfjsCa1zruXCLbO_FPw",
+    y: "CCInS0rHpEVdk24HtBqZxNhKojYcD7orq2AA7Wp2NhA",
+    d: "0hdPU8a1XmA_EVSflLVW4BqiMqtn5hreJN18h4dFRb8",
+};
+var jwkPublicKeyP256 = {
+    kty: "EC",
+    crv: "P-256",
+    x: "FwdrcvxdtrNOUpB62zEcz1-3QfjsCa1zruXCLbO_FPw",
+    y: "CCInS0rHpEVdk24HtBqZxNhKojYcD7orq2AA7Wp2NhA"
+};
+var jwkPrivateKeyP384 = {
+    kty: "EC",
+    crv: "P-384",
+    x: "H9zo2G4WwHFSUqdN7jaChKg5fdmBxRLMP-_xWbcGDd4GzQBZBS72qKU_W-NLMoh_",
+    y: "-VBlr88R42IGLDBvzFeUvH1cjPOlIxWgnfa6NzhKcYZQXFi9vFq4sdJX5cQfnc6H",
+    d: "U8zJ5-tgWY2iAPf_2fML48SXrekRUO7rjOphRiCt450-mEIqJ0j5pCyKCtJsd-M4",
+};
+var jwkPublicKeyP384 = {
+    kty: "EC",
+    crv: "P-384",
+    x: "H9zo2G4WwHFSUqdN7jaChKg5fdmBxRLMP-_xWbcGDd4GzQBZBS72qKU_W-NLMoh_",
+    y: "-VBlr88R42IGLDBvzFeUvH1cjPOlIxWgnfa6NzhKcYZQXFi9vFq4sdJX5cQfnc6H",
+};
+
+var P256 = { curveName: "P-256" };
+var P384 = { curveName: "P-384" };
+
+crypto.subtle.importKey("jwk", jwkPrivateKeyP256, { name: "ECDH", namedCurve: "P-256" }, extractable, ["deriveBits"]).then(function(result) {
+    P256.privateKey = result;
+    return crypto.subtle.importKey("jwk", jwkPublicKeyP256, { name: "ECDH", namedCurve: "P-256" }, extractable, [ ]);
+}).then(function(result) {
+    P256.publicKey = result;
+    return crypto.subtle.importKey("jwk", jwkPrivateKeyP384, { name: "ECDH", namedCurve: "P-384" }, extractable, ["deriveBits"]);
+}).then(function(result) {
+    P384.privateKey = result;
+    return crypto.subtle.importKey("jwk", jwkPublicKeyP384, { name: "ECDH", namedCurve: "P-384" }, extractable, [ ]);
+}).then(function(result) {
+    P384.publicKey = result;
+
+    deriveBits = function(keyData, length, expectedLength) {
+        return crypto.subtle.deriveBits({ name: "ecdh", public: keyData.publicKey }, keyData.privateKey, length).then(function(result) {
+            if (result.byteLength * 8 != expectedLength)
+                return Promise.reject();
+
+            testPassed("deriveBits(..., " + length + ") successfully derived " + expectedLength + " bits for a " + keyData.curveName + " curve");
+            return Promise.resolve();
+        });
+    };
+
+    // For each of the supported curves, we check that
+
+    return Promise.resolve().then(function(result) {
+        // P-256
+        return Promise.all([
+            deriveBits(P256, 0, 256),
+            deriveBits(P256, 8, 8),
+            deriveBits(P256, 256, 256),
+        ]).then(function(result) {
+            testPassed("Bit derivations for EC P-256 with minimum and maximum lengths succeeded");
+            return shouldReject('deriveBits(P256, 256 + 8)');
+        });
+    }).then(function(result) {
+        // P-384
+        return Promise.all([
+            deriveBits(P384, 0, 384),
+            deriveBits(P384, 8, 8),
+            deriveBits(P384, 384, 384),
+        ]).then(function(result) {
+            testPassed("Bit derivations for EC P-384 with minimum and maximum lengths succeeded");
+            return shouldReject('deriveBits(P384, 384 + 8)');
+        });
+    });
+}).then(finishJSTest, finishJSTest);
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
