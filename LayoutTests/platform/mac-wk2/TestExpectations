@@ -650,7 +650,7 @@ compositing/tiling/non-visible-window-tile-coverage.html [ Pass ]
 
 webkit.org/b/170702 [ Sierra ] http/tests/inspector/network/resource-request-headers.html [ Pass Failure ]
 
-webkit.org/b/170907 [ Sierra Debug ] imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/hkdf.worker.html [ Pass Failure Timeout ]
+webkit.org/b/170907 [ Debug ] imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/hkdf.worker.html [ Pass Failure Timeout ]
 
 webkit.org/b/170629 [ Sierra Debug ] memory/memory-pressure-simulation.html [ Pass Failure ]
 
