@@ -114,6 +114,17 @@ Element* TreeScope::getElementById(const String& elementId) const
     return nullptr;
 }
 
+Element* TreeScope::getElementById(StringView elementId) const
+{
+    if (!m_elementsById)
+        return nullptr;
+
+    if (auto atomicElementId = elementId.toExistingAtomicString())
+        return m_elementsById->getElementById(*atomicElementId, *this);
+
+    return nullptr;
+}
+
 const Vector<Element*>* TreeScope::getAllElementsById(const AtomicString& elementId) const
 {
     if (elementId.isEmpty())

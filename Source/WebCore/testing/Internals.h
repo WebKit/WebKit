@@ -469,9 +469,9 @@ public:
     void endMediaSessionInterruption(const String&);
     void applicationDidEnterForeground() const;
     void applicationWillEnterBackground() const;
-    ExceptionOr<void> setMediaSessionRestrictions(const String& mediaType, const String& restrictions);
+    ExceptionOr<void> setMediaSessionRestrictions(const String& mediaType, StringView restrictionsString);
     ExceptionOr<String> mediaSessionRestrictions(const String& mediaType) const;
-    void setMediaElementRestrictions(HTMLMediaElement&, const String& restrictions);
+    void setMediaElementRestrictions(HTMLMediaElement&, StringView restrictionsString);
     ExceptionOr<void> postRemoteControlCommand(const String&, float argument);
     bool elementIsBlockingDisplaySleep(HTMLMediaElement&) const;
 #endif
@@ -491,7 +491,7 @@ public:
 #endif
 
 #if ENABLE(WEB_AUDIO)
-    void setAudioContextRestrictions(AudioContext&, const String& restrictions);
+    void setAudioContextRestrictions(AudioContext&, StringView restrictionsString);
 #endif
 
     void simulateSystemSleep() const;
@@ -501,7 +501,7 @@ public:
     ExceptionOr<Ref<MockPageOverlay>> installMockPageOverlay(PageOverlayType);
     ExceptionOr<String> pageOverlayLayerTreeAsText(unsigned short flags) const;
 
-    void setPageMuted(const String&);
+    void setPageMuted(StringView);
     String pageMediaState();
 
     void setPageDefersLoading(bool);

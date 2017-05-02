@@ -356,7 +356,7 @@ Vector<std::pair<String, String>> collectVaryingRequestHeaders(const WebCore::Re
     if (varyValue.isEmpty())
         return { };
     Vector<String> varyingHeaderNames;
-    varyValue.split(',', /*allowEmptyEntries*/ false, varyingHeaderNames);
+    varyValue.split(',', varyingHeaderNames);
     Vector<std::pair<String, String>> varyingRequestHeaders;
     varyingRequestHeaders.reserveCapacity(varyingHeaderNames.size());
     for (auto& varyHeaderName : varyingHeaderNames) {

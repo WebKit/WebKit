@@ -1,3 +1,43 @@
+2017-05-02  Daniel Bates  <dabates@apple.com>
+
+        Using StringView.split() instead of String.split() in some places
+        https://bugs.webkit.org/show_bug.cgi?id=170925
+
+        Reviewed by Darin Adler.
+
+        Replace some uses of String.split() with StringView.split() (added in r211087) as the latter
+        avoids the need to allocate an intermediary Vector of substrings. Instead StringView.split()
+        returns an iterator for traversing the substrings.
+
+        No functionality changed. So, no new tests.
+
+        * accessibility/AccessibilityObject.cpp: Convert some typedefs to modern C++ using declarations.
+        (WebCore::ASCIICaseInsensitiveStringViewHashTranslator::hash): Added.
+        (WebCore::ASCIICaseInsensitiveStringViewHashTranslator::equal): Added.
+        (WebCore::AccessibilityObject::ariaRoleToWebCoreRole): Modified code to use StringView.split().
+        (WebCore::AccessibilityObject::elementsFromAttribute): Ditto.
+        * dom/TreeScope.cpp:
+        (WebCore::TreeScope::getElementById): Added.
+        * dom/TreeScope.h:
+        * html/LinkRelAttribute.cpp:
+        (WebCore::LinkRelAttribute::LinkRelAttribute): Modified code to use StringView.split().
+        * html/parser/XSSAuditor.cpp:
+        (WebCore::semicolonSeparatedValueContainsJavaScriptURL): Ditto.
+        * platform/graphics/avfoundation/CDMPrivateMediaSourceAVFObjC.mm:
+        (WebCore::CDMPrivateMediaSourceAVFObjC::createSession): Ditto.
+        * platform/network/CacheValidation.cpp:
+        (WebCore::collectVaryingRequestHeaders): Simplify code by using the String.split(UChar, Vector<String>&) overload.
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::parseKeyTimes): Modified code to use StringView.split().
+        * svg/SVGToOTFFontConversion.cpp:
+        (WebCore::SVGToOTFFontConverter::SVGToOTFFontConverter): Ditto.
+        * testing/Internals.cpp:
+        (WebCore::Internals::setMediaSessionRestrictions): Ditto.
+        (WebCore::Internals::setMediaElementRestrictions): Ditto.
+        (WebCore::Internals::setAudioContextRestrictions): Ditto.
+        (WebCore::Internals::setPageMuted): Ditto.
+        * testing/Internals.h:
+
 2017-05-02  Gwang Yoon Hwang  <yoon@igalia.com>
 
         [GTK] Drop coordinated surfaces from the compositing thread as soon as possible

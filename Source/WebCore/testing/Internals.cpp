@@ -152,9 +152,9 @@
 #include <runtime/JSCJSValue.h>
 #include <wtf/MemoryPressureHandler.h>
 #include <wtf/MonotonicTime.h>
-#include <wtf/text/CString.h>
 #include <wtf/text/StringBuffer.h>
 #include <wtf/text/StringBuilder.h>
+#include <wtf/text/StringView.h>
 
 #if ENABLE(INPUT_TYPE_COLOR)
 #include "ColorChooser.h"
@@ -3242,7 +3242,7 @@ static PlatformMediaSession::MediaType mediaTypeFromString(const String& mediaTy
     return PlatformMediaSession::None;
 }
 
-ExceptionOr<void> Internals::setMediaSessionRestrictions(const String& mediaTypeString, const String& restrictionsString)
+ExceptionOr<void> Internals::setMediaSessionRestrictions(const String& mediaTypeString, StringView restrictionsString)
 {
     PlatformMediaSession::MediaType mediaType = mediaTypeFromString(mediaTypeString);
     if (mediaType == PlatformMediaSession::None)
@@ -3253,9 +3253,7 @@ ExceptionOr<void> Internals::setMediaSessionRestrictions(const String& mediaType
 
     restrictions = PlatformMediaSessionManager::NoRestrictions;
 
-    Vector<String> restrictionsArray;
-    restrictionsString.split(',', false, restrictionsArray);
-    for (auto& restrictionString : restrictionsArray) {
+    for (StringView restrictionString : restrictionsString.split(',')) {
         if (equalLettersIgnoringASCIICase(restrictionString, "concurrentplaybacknotpermitted"))
             restrictions |= PlatformMediaSessionManager::ConcurrentPlaybackNotPermitted;
         if (equalLettersIgnoringASCIICase(restrictionString, "backgroundprocessplaybackrestricted"))
@@ -3300,16 +3298,14 @@ ExceptionOr<String> Internals::mediaSessionRestrictions(const String& mediaTypeS
     return builder.toString();
 }
 
-void Internals::setMediaElementRestrictions(HTMLMediaElement& element, const String& restrictionsString)
+void Internals::setMediaElementRestrictions(HTMLMediaElement& element, StringView restrictionsString)
 {
     MediaElementSession::BehaviorRestrictions restrictions = element.mediaSession().behaviorRestrictions();
     element.mediaSession().removeBehaviorRestriction(restrictions);
 
     restrictions = MediaElementSession::NoRestrictions;
 
-    Vector<String> restrictionsArray;
-    restrictionsString.split(',', false, restrictionsArray);
-    for (auto& restrictionString : restrictionsArray) {
+    for (StringView restrictionString : restrictionsString.split(',')) {
         if (equalLettersIgnoringASCIICase(restrictionString, "norestrictions"))
             restrictions |= MediaElementSession::NoRestrictions;
         if (equalLettersIgnoringASCIICase(restrictionString, "requireusergestureforload"))
@@ -3429,16 +3425,14 @@ void Internals::sendMediaControlEvent(MediaControlEvent event)
 
 #if ENABLE(WEB_AUDIO)
 
-void Internals::setAudioContextRestrictions(AudioContext& context, const String& restrictionsString)
+void Internals::setAudioContextRestrictions(AudioContext& context, StringView restrictionsString)
 {
     AudioContext::BehaviorRestrictions restrictions = context.behaviorRestrictions();
     context.removeBehaviorRestriction(restrictions);
 
     restrictions = AudioContext::NoRestrictions;
 
-    Vector<String> restrictionsArray;
-    restrictionsString.split(',', false, restrictionsArray);
-    for (auto& restrictionString : restrictionsArray) {
+    for (StringView restrictionString : restrictionsString.split(',')) {
         if (equalLettersIgnoringASCIICase(restrictionString, "norestrictions"))
             restrictions |= AudioContext::NoRestrictions;
         if (equalLettersIgnoringASCIICase(restrictionString, "requireusergestureforaudiostart"))
@@ -3517,19 +3511,17 @@ ExceptionOr<String> Internals::pageOverlayLayerTreeAsText(unsigned short flags) 
     return MockPageOverlayClient::singleton().layerTreeAsText(document->frame()->mainFrame(), toLayerTreeFlags(flags));
 }
 
-void Internals::setPageMuted(const String& states)
+void Internals::setPageMuted(StringView statesString)
 {
     Document* document = contextDocument();
     if (!document)
         return;
 
     WebCore::MediaProducer::MutedStateFlags state = MediaProducer::NoneMuted;
-    Vector<String> stateString;
-    states.split(',', false, stateString);
-    for (auto& muteString : stateString) {
-        if (equalLettersIgnoringASCIICase(muteString, "audio"))
+    for (StringView stateString : statesString.split(',')) {
+        if (equalLettersIgnoringASCIICase(stateString, "audio"))
             state |= MediaProducer::AudioIsMuted;
-        if (equalLettersIgnoringASCIICase(muteString, "capturedevices"))
+        if (equalLettersIgnoringASCIICase(stateString, "capturedevices"))
             state |= MediaProducer::CaptureDevicesAreMuted;
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007, 2008, 2011, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2008, 2011, 2013, 2017 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -64,6 +64,8 @@ private:
 
     class HashMapKeysProxy;
     class HashMapValuesProxy;
+
+    using IdentityTranslatorType = typename HashTableType::IdentityTranslatorType;
 
 public:
     typedef HashTableIteratorAdapter<HashTableType, KeyValuePairType> iterator;
@@ -142,6 +144,7 @@ public:
     template<typename HashTranslator, typename T> iterator find(const T&);
     template<typename HashTranslator, typename T> const_iterator find(const T&) const;
     template<typename HashTranslator, typename T> bool contains(const T&) const;
+    template<typename HashTranslator, typename T> MappedPeekType get(const T&) const;
 
     // An alternate version of add() that finds the object by hashing and comparing
     // with some other type, to avoid the cost of type conversion if the object is already
@@ -294,6 +297,16 @@ HashMap<T, U, V, W, X>::find(const TYPE& value) const
 
 template<typename T, typename U, typename V, typename W, typename X>
 template<typename HashTranslator, typename TYPE>
+auto HashMap<T, U, V, W, X>::get(const TYPE& value) const -> MappedPeekType
+{
+    auto* entry = const_cast<HashTableType&>(m_impl).template lookup<HashMapTranslatorAdapter<KeyValuePairTraits, HashTranslator>>(value);
+    if (!entry)
+        return MappedTraits::peek(MappedTraits::emptyValue());
+    return MappedTraits::peek(entry->value);
+}
+
+template<typename T, typename U, typename V, typename W, typename X>
+template<typename HashTranslator, typename TYPE>
 inline bool HashMap<T, U, V, W, X>::contains(const TYPE& value) const
 {
     return m_impl.template contains<HashMapTranslatorAdapter<KeyValuePairTraits, HashTranslator>>(value);
@@ -389,18 +402,15 @@ auto HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg>::ensure(
 }
     
 template<typename T, typename U, typename V, typename W, typename MappedTraits>
-auto HashMap<T, U, V, W, MappedTraits>::get(const KeyType& key) const -> MappedPeekType
+inline auto HashMap<T, U, V, W, MappedTraits>::get(const KeyType& key) const -> MappedPeekType
 {
-    KeyValuePairType* entry = const_cast<HashTableType&>(m_impl).lookup(key);
-    if (!entry)
-        return MappedTraits::peek(MappedTraits::emptyValue());
-    return MappedTraits::peek(entry->value);
+    return get<IdentityTranslatorType>(key);
 }
 
 template<typename T, typename U, typename V, typename W, typename MappedTraits>
 ALWAYS_INLINE auto HashMap<T, U, V, W, MappedTraits>::fastGet(const KeyType& key) const -> MappedPeekType
 {
-    KeyValuePairType* entry = const_cast<HashTableType&>(m_impl).template inlineLookup<typename HashTableType::IdentityTranslatorType>(key);
+    KeyValuePairType* entry = const_cast<HashTableType&>(m_impl).template inlineLookup<IdentityTranslatorType>(key);
     if (!entry)
         return MappedTraits::peek(MappedTraits::emptyValue());
     return MappedTraits::peek(entry->value);

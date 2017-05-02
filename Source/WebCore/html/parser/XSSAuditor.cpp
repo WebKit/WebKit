@@ -43,6 +43,7 @@
 #include <wtf/ASCIICType.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/text/StringView.h>
 
 namespace WebCore {
 
@@ -238,11 +239,9 @@ static bool isSemicolonSeparatedAttribute(const HTMLToken::Attribute& attribute)
     return threadSafeMatch(attribute.name, SVGNames::valuesAttr);
 }
 
-static bool semicolonSeparatedValueContainsJavaScriptURL(const String& value)
+static bool semicolonSeparatedValueContainsJavaScriptURL(StringView semicolonSeparatedValue)
 {
-    Vector<String> valueList;
-    value.split(';', valueList);
-    for (auto& value : valueList) {
+    for (auto value : semicolonSeparatedValue.split(';')) {
         if (protocolIsJavaScript(value))
             return true;
     }

@@ -35,6 +35,7 @@
 #import "MediaPlayerPrivateMediaSourceAVFObjC.h"
 #import "WebCoreSystemInterface.h"
 #import <wtf/NeverDestroyed.h>
+#import <wtf/text/StringView.h>
 #import <yarr/RegularExpression.h>
 
 using JSC::Yarr::RegularExpression;
@@ -101,18 +102,16 @@ bool CDMPrivateMediaSourceAVFObjC::supportsMIMEType(const String& mimeType)
 
 std::unique_ptr<CDMSession> CDMPrivateMediaSourceAVFObjC::createSession(CDMSessionClient* client)
 {
-    String keySystem = m_cdm->keySystem();
+    String keySystem = m_cdm->keySystem(); // Local copy for StringView usage
+    StringView keySystemStringView { keySystem };
     ASSERT(validKeySystemRE().match(keySystem) >= 0);
 
-    Vector<String> protocolVersionsStrings;
-    keySystem.substring(16).split(',', false, protocolVersionsStrings);
-
     Vector<int> protocolVersions;
-    for (auto& protocolVersionString : protocolVersionsStrings)
+    for (StringView protocolVersionString : keySystemStringView.substring(16).split(','))
         protocolVersions.append(protocolVersionString.toInt());
 
     std::unique_ptr<CDMSessionMediaSourceAVFObjC> session;
-    if (keySystem.substring(14, 1).toInt() == 3 && CDMSessionAVContentKeySession::isAvailable())
+    if (keySystemStringView.substring(14, 1).toInt() == 3 && CDMSessionAVContentKeySession::isAvailable())
         session = std::make_unique<CDMSessionAVContentKeySession>(protocolVersions, *this, client);
     else
         session = std::make_unique<CDMSessionAVStreamSession>(protocolVersions, *this, client);
