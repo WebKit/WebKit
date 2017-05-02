@@ -1,3 +1,21 @@
+2017-05-02  Andrew Gold  <agold@apple.com>
+
+        MediaDevices is not enabled for MobileSafari
+        https://bugs.webkit.org/show_bug.cgi?id=171433
+        <rdar://problem/31923178>
+
+        Reviewed by Youenn Fablet.
+
+        Added the Cocoa API for toggling this feature and removed API for toggling
+        MediaStreamEnabled since it will always be on.
+
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences _mediaDevicesEnabled]):
+        (-[WKPreferences _setMediaDevicesEnabled:]):
+        (-[WKPreferences _mediaStreamEnabled]): Deleted.
+        (-[WKPreferences _setMediaStreamEnabled:]): Deleted.
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+
 2017-05-02  Andy Estes  <aestes@apple.com>
 
         REGRESSION (r213036): Crash in -[WKContentView _webTouchEventsRecognized:] when a touch event arrives after a WebPageProxy has been invalidated
