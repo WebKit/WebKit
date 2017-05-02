@@ -1,3 +1,12 @@
+2017-05-01  Matt Lewis  <jlewis3@apple.com>
+
+        Marked LayoutTest/http/tests/preload/not_delaying_window_onload_before_discovery.html as flaky failure.
+        https://bugs.webkit.org/show_bug.cgi?id=171528
+
+        Unreviewed test Gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
 2017-05-01  Timothy Horton  <timothy_horton@apple.com>
 
         Expose viewport-fit instead of clip-to-safe-area

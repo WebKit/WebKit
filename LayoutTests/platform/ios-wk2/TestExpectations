@@ -1952,3 +1952,5 @@ webkit.org/b/171353 [ Release ] http/tests/local/blob/send-hybrid-blob-using-ope
 webkit.org/b/170181 http/tests/xmlhttprequest/workers/methods.html [ Pass Timeout ]
 
 webkit.org/b/171389 [ Release ] http/tests/security/contentSecurityPolicy/source-list-parsing-05.html [ Pass Timeout ]
+
+webkit.org/b/171528 [ Release ] http/tests/preload/not_delaying_window_onload_before_discovery.html [ Pass Failure ]
