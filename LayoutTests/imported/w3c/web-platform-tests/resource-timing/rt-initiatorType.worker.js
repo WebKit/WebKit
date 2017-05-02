@@ -1,5 +1,5 @@
 importScripts("/resources/testharness.js");
-importScripts("resources/rt-utilities.js");
+importScripts("resources/rt-utilities.sub.js");
 
 (function() {
     if (!testNecessaryPerformanceFeatures()) {

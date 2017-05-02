@@ -1,4 +1,4 @@
-importScripts("rt-utilities.js");
+importScripts("rt-utilities.sub.js");
 
 addEventListener("message", function(event) {
     if (!hasNecessaryPerformanceFeatures()) {

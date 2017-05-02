@@ -1,3 +1,40 @@
+2017-05-01  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Eliminate ?pipe=sub from Resource Timing Tests
+        https://bugs.webkit.org/show_bug.cgi?id=171525
+
+        Reviewed by Youenn Fablet.
+
+        * web-platform-tests/resource-timing/resources/rt-utilities.sub.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/resource-timing/resources/rt-utilities.js.
+        Rename with ".sub.js" to automatically get substitutions.
+
+        * web-platform-tests/resource-timing/resources/rt-iframe-1.html:
+        * web-platform-tests/resource-timing/resources/rt-iframe-2.html:
+        * web-platform-tests/resource-timing/resources/rt-worker-resources.js:
+        * web-platform-tests/resource-timing/rt-cors.html:
+        * web-platform-tests/resource-timing/rt-cors.worker.js:
+        * web-platform-tests/resource-timing/rt-initiatorType-css.html:
+        * web-platform-tests/resource-timing/rt-initiatorType-element.html:
+        * web-platform-tests/resource-timing/rt-initiatorType-fetch.html:
+        * web-platform-tests/resource-timing/rt-initiatorType-media.html:
+        * web-platform-tests/resource-timing/rt-initiatorType-other.html:
+        * web-platform-tests/resource-timing/rt-initiatorType-script-module.html:
+        * web-platform-tests/resource-timing/rt-initiatorType-xmlhttprequest.html:
+        * web-platform-tests/resource-timing/rt-initiatorType.worker.js:
+        * web-platform-tests/resource-timing/rt-nextHopProtocol.html:
+        * web-platform-tests/resource-timing/rt-nextHopProtocol.worker.js:
+        * web-platform-tests/resource-timing/rt-performance-extensions.html:
+        * web-platform-tests/resource-timing/rt-performance-extensions.worker.js:
+        * web-platform-tests/resource-timing/rt-resource-errors.html:
+        * web-platform-tests/resource-timing/rt-resource-ignored.html:
+        * web-platform-tests/resource-timing/rt-resources-per-frame.html:
+        * web-platform-tests/resource-timing/rt-resources-per-worker.html:
+        * web-platform-tests/resource-timing/rt-revalidate-requests.html:
+        * web-platform-tests/resource-timing/rt-serialization.html:
+        * web-platform-tests/resource-timing/rt-shared-resource-in-frames.html:
+        * web-platform-tests/resource-timing/rt-shared-resource-in-workers.html:
+        Update include of rt-utilities.
+
 2017-05-01  Chris Dumez  <cdumez@apple.com>
 
         Documents created using DOMParser.parseFromString should inherit their context document's origin / URL
