@@ -165,8 +165,12 @@ SuccessOr<MediaPlaybackDenialReason> MediaElementSession::playbackPermitted(cons
         return { };
 
 #if ENABLE(MEDIA_STREAM)
-    if (element.document().isCapturing() && element.hasMediaStreamSrcObject())
-        return { };
+    if (element.hasMediaStreamSrcObject()) {
+        if (element.document().isCapturing())
+            return { };
+        if (element.document().mediaState() & MediaProducer::IsPlayingAudio)
+            return { };
+    }
 #endif
 
     if (m_restrictions & RequireUserGestureForVideoRateChange && element.isVideo() && !ScriptController::processingUserGestureForMedia()) {

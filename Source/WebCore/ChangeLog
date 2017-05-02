@@ -1,3 +1,16 @@
+2017-05-02  Youenn Fablet  <youenn@apple.com>
+
+        Allow media stream based videos with sound to autoplay if the page is already playing sound
+        https://bugs.webkit.org/show_bug.cgi?id=171447
+
+        Reviewed by Eric Carlson.
+
+        Test: http/tests/media/autoplay-if-audio-is-playing.html for ensuring non-mediastream based video will not autoplay.
+        Manual testing for the autoplay of media stream based videos since such a test should happen without using getUserMedia.
+
+        * html/MediaElementSession.cpp:
+        (WebCore::MediaElementSession::playbackPermitted):
+
 2017-05-02  Chris Dumez  <cdumez@apple.com>
 
         Use PassRefPtr less in editing code

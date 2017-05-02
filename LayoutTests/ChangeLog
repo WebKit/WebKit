@@ -1,3 +1,14 @@
+2017-05-02  Youenn Fablet  <youenn@apple.com>
+
+        Allow media stream based videos with sound autoplay if the page is already playing sound
+        https://bugs.webkit.org/show_bug.cgi?id=171447
+
+        Reviewed by Eric Carlson.
+
+        * http/tests/media/autoplay-if-audio-is-playing-expected.txt: Added.
+        * http/tests/media/autoplay-if-audio-is-playing.html: Added.
+        * http/tests/media/resources/test-25fps.mp4: Added.
+
 2017-05-02  Matt Lewis  <jlewis3@apple.com>
 
         Marked test http/tests/xmlhttprequest/methods-async.html as flaky timeout.
