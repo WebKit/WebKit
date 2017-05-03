@@ -1,3 +1,14 @@
+2017-05-03  Keith Miller  <keith_miller@apple.com>
+
+        Different behaviour with the .sort(callback) method (unlike Firefox & Chrome)
+        https://bugs.webkit.org/show_bug.cgi?id=47825
+
+        Reviewed by Saam Barati.
+
+        Fix broken test.
+
+        * http/tests/inspector/worker/blob-script-with-cross-domain-imported-scripts-expected.txt:
+
 2017-05-03  Matt Lewis  <jlewis3@apple.com>
 
         Mark http/tests/xmlhttprequest/supported-xml-content-types.html as flaky.

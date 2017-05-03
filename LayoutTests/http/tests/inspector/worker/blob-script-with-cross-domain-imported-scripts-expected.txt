@@ -8,7 +8,7 @@ RESOURCES:
 http://localhost:8000/inspector/worker/resources/worker-blob-script.js
 http://localhost:8000/inspector/worker/resources/worker-blob-import-script.js
 SCRIPTS:
-blob:<sanitized>
 http://localhost:8000/inspector/worker/resources/worker-blob-script.js
 http://localhost:8000/inspector/worker/resources/worker-blob-import-script.js
+blob:<sanitized>
 
