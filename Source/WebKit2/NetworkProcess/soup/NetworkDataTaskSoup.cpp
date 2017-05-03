@@ -844,6 +844,22 @@ void NetworkDataTaskSoup::didGetHeaders()
         m_protectionSpaceForPersistentStorage = ProtectionSpace();
         m_credentialForPersistentStorage = Credential();
     }
+
+    // Soup adds more headers to the request after starting signal is emitted, and got-headers
+    // is the first one we receive after starting, so we use it also to get information about the
+    // request headers.
+#if ENABLE(WEB_TIMING)
+    if (shouldCaptureExtraNetworkLoadMetrics()) {
+        HTTPHeaderMap requestHeaders;
+        SoupMessageHeadersIter headersIter;
+        soup_message_headers_iter_init(&headersIter, m_soupMessage->request_headers);
+        const char* headerName;
+        const char* headerValue;
+        while (soup_message_headers_iter_next(&headersIter, &headerName, &headerValue))
+            requestHeaders.set(String(headerName), String(headerValue));
+        m_networkLoadMetrics.requestHeaders = WTFMove(requestHeaders);
+    }
+#endif
 }
 
 void NetworkDataTaskSoup::wroteBodyDataCallback(SoupMessage* soupMessage, SoupBuffer* buffer, NetworkDataTaskSoup* task)
