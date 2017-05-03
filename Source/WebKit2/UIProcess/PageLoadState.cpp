@@ -205,6 +205,9 @@ bool PageLoadState::hasOnlySecureContent(const Data& data)
     if (data.hasInsecureContent)
         return false;
 
+    if (data.state == State::Provisional)
+        return WebCore::protocolIs(data.provisionalURL, "https");
+
     return WebCore::protocolIs(data.url, "https");
 }
 

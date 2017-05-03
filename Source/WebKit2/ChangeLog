@@ -1,3 +1,15 @@
+2017-05-03  Brady Eidson  <beidson@apple.com>
+
+        Handle KVO updating of the "hasOnlySecureContent" before a page results in an HTTP auth challenge.
+        https://bugs.webkit.org/show_bug.cgi?id=171607
+
+        Reviewed by Andy Estes.
+        
+        To test this fix we'd need the combination of an HTTPD inside API tests, so no test for now.
+
+        * UIProcess/PageLoadState.cpp:
+        (WebKit::PageLoadState::hasOnlySecureContent): If the state is provisional, check the provisional URL instead.
+
 2017-05-03  Chris Dumez  <cdumez@apple.com>
 
         [WK2] Extend processDidCrash delegate to let the client know the reason for the crash
