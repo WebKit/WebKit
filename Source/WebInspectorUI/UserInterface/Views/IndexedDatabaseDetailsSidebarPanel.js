@@ -72,10 +72,7 @@ WebInspector.IndexedDatabaseDetailsSidebarPanel = class IndexedDatabaseDetailsSi
         this._index = null;
 
         for (let object of objects) {
-            if (object instanceof WebInspector.IndexedDatabase) {
-                console.assert(!this._database, "Shouldn't have multiple IndexedDatabase objects in the list.");
-                this._database = object;
-            } else if (object instanceof WebInspector.IndexedDatabaseObjectStore) {
+            if (object instanceof WebInspector.IndexedDatabaseObjectStore) {
                 console.assert(!this._database, "Shouldn't have multiple IndexedDatabase objects in the list.");
                 this._objectStore = object;
                 this._database = this._objectStore.parentDatabase;

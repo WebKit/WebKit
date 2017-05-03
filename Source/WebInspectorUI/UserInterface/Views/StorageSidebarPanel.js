@@ -178,13 +178,12 @@ WebInspector.StorageSidebarPanel = class StorageSidebarPanel extends WebInspecto
             return;
 
         if (treeElement instanceof WebInspector.FolderTreeElement || treeElement instanceof WebInspector.DatabaseHostTreeElement ||
-            treeElement instanceof WebInspector.IndexedDatabaseHostTreeElement || treeElement instanceof WebInspector.IndexedDatabaseTreeElement
-            || treeElement instanceof WebInspector.ApplicationCacheManifestTreeElement)
+            treeElement instanceof WebInspector.IndexedDatabaseHostTreeElement || treeElement instanceof WebInspector.ApplicationCacheManifestTreeElement)
             return;
 
         if (treeElement instanceof WebInspector.StorageTreeElement || treeElement instanceof WebInspector.DatabaseTableTreeElement ||
             treeElement instanceof WebInspector.DatabaseTreeElement || treeElement instanceof WebInspector.ApplicationCacheFrameTreeElement ||
-            treeElement instanceof WebInspector.IndexedDatabaseObjectStoreTreeElement || treeElement instanceof WebInspector.IndexedDatabaseObjectStoreIndexTreeElement) {
+            treeElement instanceof WebInspector.IndexedDatabaseTreeElement || treeElement instanceof WebInspector.IndexedDatabaseObjectStoreTreeElement || treeElement instanceof WebInspector.IndexedDatabaseObjectStoreIndexTreeElement) {
             WebInspector.showRepresentedObject(treeElement.representedObject);
             return;
         }

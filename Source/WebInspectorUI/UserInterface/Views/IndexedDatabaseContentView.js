@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,32 +23,24 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.content-view > .indeterminate-progress-spinner {
-    position: absolute;
-    top: 50%;
-    left: 50%;
+WebInspector.IndexedDatabaseContentView = class IndexedDatabaseContentView extends WebInspector.ContentView
+{
+    constructor(database)
+    {
+        super(database);
 
-    width: 32px;
-    height: 32px;
+        this._element.classList.add("indexed-database");
 
-    margin-left: -16px;
-    margin-right: -16px;
-}
+        this._databaseHostRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Host"));
+        this._databaseSecurityOriginRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Security Origin"));
+        this._databaseVersionRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Version"));
+        this._databaseGroup = new WebInspector.DetailsSectionGroup([this._databaseHostRow, this._databaseSecurityOriginRow, this._databaseVersionRow]);
+        this._databaseSection = new WebInspector.DetailsSection("indexed-database-details", WebInspector.UIString("Database"), [this._databaseGroup]);
 
-.content-view .details-section {
-    font-size: 11px;
-    background-color: initial;
-}
+        this.element.append(this._databaseSection.element);
 
-.content-view .details-section > .content {
-    width: auto;
-}
-
-.content-view .details-section > .content > .group > .row.simple > .label {
-    width: auto;
-    font-weight: 600;
-}
-
-.content-view .details-section:last-child {
-    border-bottom: none;
-}
+        this._databaseHostRow.value = database.host;
+        this._databaseSecurityOriginRow.value = database.securityOrigin;
+        this._databaseVersionRow.value = database.version.toLocaleString();
+    }
+};

@@ -1,3 +1,42 @@
+2017-05-03  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Uncaught Exception: Can't make a ContentView for an unknown representedObject of type: IndexedDatabase
+        https://bugs.webkit.org/show_bug.cgi?id=167473
+        <rdar://problem/30249715>
+
+        Reviewed by Matt Baker.
+
+        When an indexed database is selected in the Storage navigation sidebar, show its host, security origin, and version.
+
+        Previously, selecting an indexed database didn't change the content view. It could lead to a misleading state
+        when an indexed database is selected in the sidebar, but the content view showed previously selected item such as
+        Cookies or Local Storage.
+
+        * UserInterface/Main.html:
+        * UserInterface/Views/ContentView.css:
+        (.content-view .details-section):
+        (.content-view .details-section > .content):
+        (.content-view .details-section > .content > .group > .row.simple > .label):
+        (.content-view .details-section:last-child):
+        * UserInterface/Views/ContentView.js:
+        (WebInspector.ContentView.createFromRepresentedObject):
+        (WebInspector.ContentView.isViewable):
+        * UserInterface/Views/IndexedDatabaseContentView.css: Added.
+        (.indexed-database.content-view):
+        (.indexed-database.content-view .indexed-database-details):
+        (.indexed-database.content-view .details-section > .header):
+        * UserInterface/Views/IndexedDatabaseContentView.js: Added.
+        (WebInspector.IndexedDatabaseContentView):
+        * UserInterface/Views/IndexedDatabaseDetailsSidebarPanel.js:
+        (WebInspector.IndexedDatabaseDetailsSidebarPanel.prototype.inspect):
+        Don't show the details sidebar for IndexedDB top level item since it has the same content as the content view.
+
+        * UserInterface/Views/StorageSidebarPanel.js:
+        (WebInspector.StorageSidebarPanel._treeSelectionDidChange):
+        * UserInterface/Views/StorageTabContentView.js:
+        (WebInspector.StorageTabContentView.prototype.canShowRepresentedObject):
+        (WebInspector.StorageTabContentView):
+
 2017-05-03  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: 404 Image Load does not appear as a failure in Web Inspector

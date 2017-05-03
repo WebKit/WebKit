@@ -64,7 +64,7 @@ WebInspector.StorageTabContentView = class StorageTabContentView extends WebInsp
         return representedObject instanceof WebInspector.DOMStorageObject || representedObject instanceof WebInspector.CookieStorageObject ||
             representedObject instanceof WebInspector.DatabaseTableObject || representedObject instanceof WebInspector.DatabaseObject ||
             representedObject instanceof WebInspector.ApplicationCacheFrame || representedObject instanceof WebInspector.IndexedDatabaseObjectStore ||
-            representedObject instanceof WebInspector.IndexedDatabaseObjectStoreIndex;
+            representedObject instanceof WebInspector.IndexedDatabase || representedObject instanceof WebInspector.IndexedDatabaseObjectStoreIndex;
     }
 };
 

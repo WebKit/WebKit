@@ -95,6 +95,9 @@ WebInspector.ContentView = class ContentView extends WebInspector.View
         if (representedObject instanceof WebInspector.DatabaseObject)
             return new WebInspector.DatabaseContentView(representedObject, extraArguments);
 
+        if (representedObject instanceof WebInspector.IndexedDatabase)
+            return new WebInspector.IndexedDatabaseContentView(representedObject, extraArguments);
+
         if (representedObject instanceof WebInspector.IndexedDatabaseObjectStore)
             return new WebInspector.IndexedDatabaseObjectStoreContentView(representedObject, extraArguments);
 
@@ -244,6 +247,8 @@ WebInspector.ContentView = class ContentView extends WebInspector.View
         if (representedObject instanceof WebInspector.DatabaseTableObject)
             return true;
         if (representedObject instanceof WebInspector.DatabaseObject)
+            return true;
+        if (representedObject instanceof WebInspector.IndexedDatabase)
             return true;
         if (representedObject instanceof WebInspector.IndexedDatabaseObjectStore)
             return true;
