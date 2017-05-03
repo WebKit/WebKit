@@ -513,11 +513,13 @@ class Bugzilla(object):
         # so re-use that.
         bug_id = self.bug_id_for_attachment_id(attachment_id)
         if not bug_id:
+            _log.warning("Unable to parse bug_id from attachment {}".format(attachment_id))
             return None
         attachments = self.fetch_bug(bug_id).attachments(include_obsolete=True)
         for attachment in attachments:
             if attachment.id() == int(attachment_id):
                 return attachment
+        _log.error("Error in fetching attachment {}, bug_id: {}".format(attachment_id, bug_id))
         return None  # This should never be hit.
 
     def authenticate(self):
