@@ -1,3 +1,19 @@
+2017-05-03  Daniel Bates  <dabates@apple.com>
+
+        Cleanup: Remove out-of-date comment and null check from DocumentLoader::detachFromFrame()
+        https://bugs.webkit.org/show_bug.cgi?id=171604
+
+        Reviewed by Brady Eidson.
+
+        We no longer want to passively allow DocumentLoader::detachFromFrame() to be called twice.
+        It does not make sense to be called twice and should never be called twice. A release assert
+        in DocumentLoader::cancelPolicyCheckIfNeeded() (added in r187558) called by DocumentLoader::detachFromFrame()
+        enforces this invariant. Therefore we can remove the null check of DocumentLoader::m_frame
+        and the comment that explains the purpose of this null check from DocumentLoader::detachFromFrame().
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::detachFromFrame):
+
 2017-05-03  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed attempt to fix the Windows build after r216117.
