@@ -75,27 +75,27 @@ private:
 
     // style-removal helpers
     bool isStyledInlineElementToRemove(Element*) const;
-    bool shouldApplyInlineStyleToRun(EditingStyle*, Node* runStart, Node* pastEndNode);
-    void removeConflictingInlineStyleFromRun(EditingStyle*, RefPtr<Node>& runStart, RefPtr<Node>& runEnd, Node* pastEndNode);
-    bool removeInlineStyleFromElement(EditingStyle*, HTMLElement&, InlineStyleRemovalMode = RemoveIfNeeded, EditingStyle* extractedStyle = nullptr);
-    inline bool shouldRemoveInlineStyleFromElement(EditingStyle* style, HTMLElement& element) {return removeInlineStyleFromElement(style, element, RemoveNone);}
-    void replaceWithSpanOrRemoveIfWithoutAttributes(HTMLElement*&);
-    bool removeImplicitlyStyledElement(EditingStyle*, HTMLElement*, InlineStyleRemovalMode, EditingStyle* extractedStyle);
-    bool removeCSSStyle(EditingStyle*, HTMLElement*, InlineStyleRemovalMode = RemoveIfNeeded, EditingStyle* extractedStyle = nullptr);
-    HTMLElement* highestAncestorWithConflictingInlineStyle(EditingStyle*, Node*);
+    bool shouldApplyInlineStyleToRun(EditingStyle&, Node* runStart, Node* pastEndNode);
+    void removeConflictingInlineStyleFromRun(EditingStyle&, RefPtr<Node>& runStart, RefPtr<Node>& runEnd, Node* pastEndNode);
+    bool removeInlineStyleFromElement(EditingStyle&, HTMLElement&, InlineStyleRemovalMode = RemoveIfNeeded, EditingStyle* extractedStyle = nullptr);
+    inline bool shouldRemoveInlineStyleFromElement(EditingStyle& style, HTMLElement& element) {return removeInlineStyleFromElement(style, element, RemoveNone);}
+    void replaceWithSpanOrRemoveIfWithoutAttributes(HTMLElement&);
+    bool removeImplicitlyStyledElement(EditingStyle&, HTMLElement&, InlineStyleRemovalMode, EditingStyle* extractedStyle);
+    bool removeCSSStyle(EditingStyle&, HTMLElement&, InlineStyleRemovalMode = RemoveIfNeeded, EditingStyle* extractedStyle = nullptr);
+    HTMLElement* highestAncestorWithConflictingInlineStyle(EditingStyle&, Node*);
     void applyInlineStyleToPushDown(Node&, EditingStyle*);
-    void pushDownInlineStyleAroundNode(EditingStyle*, Node*);
-    void removeInlineStyle(EditingStyle* , const Position& start, const Position& end);
+    void pushDownInlineStyleAroundNode(EditingStyle&, Node*);
+    void removeInlineStyle(EditingStyle&, const Position& start, const Position& end);
     bool nodeFullySelected(Element&, const Position& start, const Position& end) const;
     bool nodeFullyUnselected(Element&, const Position& start, const Position& end) const;
 
     // style-application helpers
-    void applyBlockStyle(EditingStyle*);
+    void applyBlockStyle(EditingStyle&);
     void applyRelativeFontStyleChange(EditingStyle*);
-    void applyInlineStyle(EditingStyle*);
-    void fixRangeAndApplyInlineStyle(EditingStyle*, const Position& start, const Position& end);
-    void applyInlineStyleToNodeRange(EditingStyle*, Node& startNode, Node* pastEndNode);
-    void addBlockStyle(const StyleChange&, HTMLElement*);
+    void applyInlineStyle(EditingStyle&);
+    void fixRangeAndApplyInlineStyle(EditingStyle&, const Position& start, const Position& end);
+    void applyInlineStyleToNodeRange(EditingStyle&, Node& startNode, Node* pastEndNode);
+    void addBlockStyle(const StyleChange&, HTMLElement&);
     void addInlineStyleIfNeeded(EditingStyle*, Node& start, Node& end, EAddStyledElement = AddStyledElement);
     Position positionToComputeInlineStyleChange(Node&, RefPtr<Node>& dummyElement);
     void applyInlineStyleChange(Node& startNode, Node& endNode, StyleChange&, EAddStyledElement);
@@ -103,7 +103,7 @@ private:
     void splitTextAtEnd(const Position& start, const Position& end);
     void splitTextElementAtStart(const Position& start, const Position& end);
     void splitTextElementAtEnd(const Position& start, const Position& end);
-    bool shouldSplitTextElement(Element*, EditingStyle*);
+    bool shouldSplitTextElement(Element*, EditingStyle&);
     bool isValidCaretPositionInTextNode(const Position& position);
     bool mergeStartWithPreviousIfIdentical(const Position& start, const Position& end);
     bool mergeEndWithNextIfIdentical(const Position& start, const Position& end);
@@ -133,7 +133,7 @@ private:
 enum ShouldStyleAttributeBeEmpty { AllowNonEmptyStyleAttribute, StyleAttributeShouldBeEmpty };
 bool isEmptyFontTag(const Element*, ShouldStyleAttributeBeEmpty = StyleAttributeShouldBeEmpty);
 bool isLegacyAppleStyleSpan(const Node*);
-bool isStyleSpanOrSpanWithOnlyStyleAttribute(const Element*);
+bool isStyleSpanOrSpanWithOnlyStyleAttribute(const Element&);
 Ref<HTMLElement> createStyleSpanElement(Document&);
 
 } // namespace WebCore

@@ -83,9 +83,9 @@ bool IndentOutdentCommand::tryIndentingAsListItem(const Position& start, const P
     moveParagraphWithClones(start, end, newList.get(), selectedListItem.get());
 
     if (canMergeLists(previousList.get(), newList.get()))
-        mergeIdenticalElements(previousList, newList);
+        mergeIdenticalElements(*previousList, *newList);
     if (canMergeLists(newList.get(), nextList.get()))
-        mergeIdenticalElements(newList, nextList);
+        mergeIdenticalElements(*newList, *nextList);
 
     return true;
 }

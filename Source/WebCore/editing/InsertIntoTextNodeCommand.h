@@ -33,7 +33,7 @@ class Text;
 
 class InsertIntoTextNodeCommand : public SimpleEditCommand {
 public:
-    static Ref<InsertIntoTextNodeCommand> create(RefPtr<Text>&& node, unsigned offset, const String& text, EditAction editingAction = EditActionInsert)
+    static Ref<InsertIntoTextNodeCommand> create(Ref<Text>&& node, unsigned offset, const String& text, EditAction editingAction = EditActionInsert)
     {
         return adoptRef(*new InsertIntoTextNodeCommand(WTFMove(node), offset, text, editingAction));
     }
@@ -41,7 +41,7 @@ public:
     const String& insertedText();
 
 protected:
-    InsertIntoTextNodeCommand(RefPtr<Text>&& node, unsigned offset, const String& text, EditAction editingAction);
+    InsertIntoTextNodeCommand(Ref<Text>&& node, unsigned offset, const String& text, EditAction editingAction);
 
 private:
     void doApply() override;
@@ -54,7 +54,7 @@ private:
     void getNodesInCommand(HashSet<Node*>&) override;
 #endif
     
-    RefPtr<Text> m_node;
+    Ref<Text> m_node;
     unsigned m_offset;
     String m_text;
 };

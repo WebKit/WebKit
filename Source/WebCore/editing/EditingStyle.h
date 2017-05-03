@@ -122,7 +122,7 @@ public:
     Ref<EditingStyle> extractAndRemoveTextDirection();
     void removeBlockProperties();
     void removeStyleAddedByNode(Node*);
-    void removeStyleConflictingWithStyleOfNode(Node*);
+    void removeStyleConflictingWithStyleOfNode(Node&);
     template<typename T> void removeEquivalentProperties(T&);
     void collapseTextDecorationProperties();
     enum ShouldIgnoreTextOnlyProperties { IgnoreTextOnlyProperties, DoNotIgnoreTextOnlyProperties };
@@ -147,10 +147,10 @@ public:
     enum CSSPropertyOverrideMode { OverrideValues, DoNotOverrideValues };
     void mergeInlineStyleOfElement(StyledElement*, CSSPropertyOverrideMode, PropertiesToInclude = AllProperties);
     static Ref<EditingStyle> wrappingStyleForSerialization(Node* context, bool shouldAnnotate);
-    void mergeStyleFromRules(StyledElement*);
-    void mergeStyleFromRulesForSerialization(StyledElement*);
-    void removeStyleFromRulesAndContext(StyledElement*, Node* context);
-    void removePropertiesInElementDefaultStyle(Element*);
+    void mergeStyleFromRules(StyledElement&);
+    void mergeStyleFromRulesForSerialization(StyledElement&);
+    void removeStyleFromRulesAndContext(StyledElement&, Node* context);
+    void removePropertiesInElementDefaultStyle(Element&);
     void forceInline();
     bool convertPositionStyle();
     bool isFloating();
@@ -182,7 +182,7 @@ private:
     void extractFontSizeDelta();
     template<typename T> TriState triStateOfStyle(T& styleToCompare, ShouldIgnoreTextOnlyProperties) const;
     bool conflictsWithInlineStyleOfElement(StyledElement*, RefPtr<MutableStyleProperties>* newInlineStyle, EditingStyle* extractedStyle) const;
-    void mergeInlineAndImplicitStyleOfElement(StyledElement*, CSSPropertyOverrideMode, PropertiesToInclude);
+    void mergeInlineAndImplicitStyleOfElement(StyledElement&, CSSPropertyOverrideMode, PropertiesToInclude);
     void mergeStyle(const StyleProperties*, CSSPropertyOverrideMode);
 
     RefPtr<MutableStyleProperties> m_mutableStyle;

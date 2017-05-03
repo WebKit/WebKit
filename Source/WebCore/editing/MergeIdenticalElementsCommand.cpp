@@ -30,19 +30,17 @@
 
 namespace WebCore {
 
-MergeIdenticalElementsCommand::MergeIdenticalElementsCommand(PassRefPtr<Element> first, PassRefPtr<Element> second)
+MergeIdenticalElementsCommand::MergeIdenticalElementsCommand(Ref<Element>&& first, Ref<Element>&& second)
     : SimpleEditCommand(first->document())
-    , m_element1(first)
-    , m_element2(second)
+    , m_element1(WTFMove(first))
+    , m_element2(WTFMove(second))
 {
-    ASSERT(m_element1);
-    ASSERT(m_element2);
-    ASSERT(m_element1->nextSibling() == m_element2);
+    ASSERT(m_element1->nextSibling() == m_element2.ptr());
 }
 
 void MergeIdenticalElementsCommand::doApply()
 {
-    if (m_element1->nextSibling() != m_element2 || !m_element1->hasEditableStyle() || !m_element2->hasEditableStyle())
+    if (m_element1->nextSibling() != m_element2.ptr() || !m_element1->hasEditableStyle() || !m_element2->hasEditableStyle())
         return;
 
     m_atChild = m_element2->firstChild();
@@ -59,16 +57,13 @@ void MergeIdenticalElementsCommand::doApply()
 
 void MergeIdenticalElementsCommand::doUnapply()
 {
-    ASSERT(m_element1);
-    ASSERT(m_element2);
-
     RefPtr<Node> atChild = WTFMove(m_atChild);
 
     auto* parent = m_element2->parentNode();
     if (!parent || !parent->hasEditableStyle())
         return;
 
-    if (parent->insertBefore(*m_element1, m_element2.get()).hasException())
+    if (parent->insertBefore(m_element1, m_element2.ptr()).hasException())
         return;
 
     Vector<Ref<Node>> children;
@@ -82,8 +77,8 @@ void MergeIdenticalElementsCommand::doUnapply()
 #ifndef NDEBUG
 void MergeIdenticalElementsCommand::getNodesInCommand(HashSet<Node*>& nodes)
 {
-    addNodeAndDescendants(m_element1.get(), nodes);
-    addNodeAndDescendants(m_element2.get(), nodes);
+    addNodeAndDescendants(m_element1.ptr(), nodes);
+    addNodeAndDescendants(m_element2.ptr(), nodes);
 }
 #endif
 

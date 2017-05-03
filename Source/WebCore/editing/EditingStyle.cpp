@@ -701,13 +701,13 @@ void EditingStyle::removeStyleAddedByNode(Node* node)
     removeEquivalentProperties(*nodeStyle);
 }
 
-void EditingStyle::removeStyleConflictingWithStyleOfNode(Node* node)
+void EditingStyle::removeStyleConflictingWithStyleOfNode(Node& node)
 {
-    if (!node || !node->parentNode() || !m_mutableStyle)
+    if (!node.parentNode() || !m_mutableStyle)
         return;
 
-    RefPtr<MutableStyleProperties> parentStyle = copyPropertiesFromComputedStyle(node->parentNode(), EditingPropertiesInEffect);
-    RefPtr<EditingStyle> nodeStyle = EditingStyle::create(node, EditingPropertiesInEffect);
+    RefPtr<MutableStyleProperties> parentStyle = copyPropertiesFromComputedStyle(node.parentNode(), EditingPropertiesInEffect);
+    RefPtr<EditingStyle> nodeStyle = EditingStyle::create(&node, EditingPropertiesInEffect);
     nodeStyle->removeEquivalentProperties(*parentStyle);
 
     MutableStyleProperties* style = nodeStyle->style();
@@ -1133,15 +1133,15 @@ void EditingStyle::mergeInlineStyleOfElement(StyledElement* element, CSSProperty
     }
 }
 
-static inline bool elementMatchesAndPropertyIsNotInInlineStyleDecl(const HTMLElementEquivalent* equivalent, const StyledElement* element,
+static inline bool elementMatchesAndPropertyIsNotInInlineStyleDecl(const HTMLElementEquivalent* equivalent, const StyledElement& element,
     EditingStyle::CSSPropertyOverrideMode mode, EditingStyle& style)
 {
-    if (!equivalent->matches(*element))
+    if (!equivalent->matches(element))
         return false;
     if (mode != EditingStyle::OverrideValues && equivalent->propertyExistsInStyle(style))
         return false;
 
-    return !element->inlineStyle() || !equivalent->propertyExistsInStyle(EditingStyle::create(element->inlineStyle()).get());
+    return !element.inlineStyle() || !equivalent->propertyExistsInStyle(EditingStyle::create(element.inlineStyle()).get());
 }
 
 static RefPtr<MutableStyleProperties> extractEditingProperties(const StyleProperties* style, EditingStyle::PropertiesToInclude propertiesToInclude)
@@ -1159,27 +1159,27 @@ static RefPtr<MutableStyleProperties> extractEditingProperties(const StyleProper
     return copyEditingProperties(style, AllEditingProperties);
 }
 
-void EditingStyle::mergeInlineAndImplicitStyleOfElement(StyledElement* element, CSSPropertyOverrideMode mode, PropertiesToInclude propertiesToInclude)
+void EditingStyle::mergeInlineAndImplicitStyleOfElement(StyledElement& element, CSSPropertyOverrideMode mode, PropertiesToInclude propertiesToInclude)
 {
     RefPtr<EditingStyle> styleFromRules = EditingStyle::create();
     styleFromRules->mergeStyleFromRulesForSerialization(element);
 
-    if (element->inlineStyle())
-        styleFromRules->m_mutableStyle->mergeAndOverrideOnConflict(*element->inlineStyle());
+    if (element.inlineStyle())
+        styleFromRules->m_mutableStyle->mergeAndOverrideOnConflict(*element.inlineStyle());
 
     styleFromRules->m_mutableStyle = extractEditingProperties(styleFromRules->m_mutableStyle.get(), propertiesToInclude);
     mergeStyle(styleFromRules->m_mutableStyle.get(), mode);
 
     for (auto& equivalent : htmlElementEquivalents()) {
         if (elementMatchesAndPropertyIsNotInInlineStyleDecl(equivalent.get(), element, mode, *this))
-            equivalent->addToStyle(element, this);
+            equivalent->addToStyle(&element, this);
     }
 
     for (auto& equivalent : htmlAttributeEquivalents()) {
         if (equivalent->attributeName() == HTMLNames::dirAttr)
             continue; // We don't want to include directionality
         if (elementMatchesAndPropertyIsNotInInlineStyleDecl(equivalent.get(), element, mode, *this))
-            equivalent->addToStyle(element, this);
+            equivalent->addToStyle(&element, this);
     }
 }
 
@@ -1204,7 +1204,7 @@ Ref<EditingStyle> EditingStyle::wrappingStyleForSerialization(Node* context, boo
     // When not annotating for interchange, we only preserve inline style declarations.
     for (Node* node = context; node && !node->isDocumentNode(); node = node->parentNode()) {
         if (is<StyledElement>(*node) && !isMailBlockquote(node)) {
-            wrappingStyle->mergeInlineAndImplicitStyleOfElement(downcast<StyledElement>(node), EditingStyle::DoNotOverrideValues,
+            wrappingStyle->mergeInlineAndImplicitStyleOfElement(downcast<StyledElement>(*node), EditingStyle::DoNotOverrideValues,
                 EditingStyle::EditingPropertiesInEffect);
         }
     }
@@ -1262,10 +1262,10 @@ void EditingStyle::mergeStyle(const StyleProperties* style, CSSPropertyOverrideM
     m_fontSizeDelta += oldFontSizeDelta;
 }
 
-static Ref<MutableStyleProperties> styleFromMatchedRulesForElement(Element* element, unsigned rulesToInclude)
+static Ref<MutableStyleProperties> styleFromMatchedRulesForElement(Element& element, unsigned rulesToInclude)
 {
     auto style = MutableStyleProperties::create();
-    for (auto& matchedRule : element->styleResolver().styleRulesForElement(element, rulesToInclude)) {
+    for (auto& matchedRule : element.styleResolver().styleRulesForElement(&element, rulesToInclude)) {
         if (matchedRule->isStyleRule())
             style->mergeAndOverrideOnConflict(static_pointer_cast<StyleRule>(matchedRule)->properties());
     }
@@ -1273,7 +1273,7 @@ static Ref<MutableStyleProperties> styleFromMatchedRulesForElement(Element* elem
     return style;
 }
 
-void EditingStyle::mergeStyleFromRules(StyledElement* element)
+void EditingStyle::mergeStyleFromRules(StyledElement& element)
 {
     RefPtr<MutableStyleProperties> styleFromMatchedRules = styleFromMatchedRulesForElement(element,
         StyleResolver::AuthorCSSRules | StyleResolver::CrossOriginCSSRules);
@@ -1286,7 +1286,7 @@ void EditingStyle::mergeStyleFromRules(StyledElement* element)
     m_mutableStyle = styleFromMatchedRules;
 }
 
-void EditingStyle::mergeStyleFromRulesForSerialization(StyledElement* element)
+void EditingStyle::mergeStyleFromRulesForSerialization(StyledElement& element)
 {
     mergeStyleFromRules(element);
 
@@ -1294,7 +1294,7 @@ void EditingStyle::mergeStyleFromRulesForSerialization(StyledElement* element)
     // For example: style="height: 1%; overflow: visible;" in quirksmode
     // FIXME: There are others like this, see <rdar://problem/5195123> Slashdot copy/paste fidelity problem
     RefPtr<MutableStyleProperties> fromComputedStyle = MutableStyleProperties::create();
-    ComputedStyleExtractor computedStyle(element);
+    ComputedStyleExtractor computedStyle(&element);
 
     {
         unsigned propertyCount = m_mutableStyle->propertyCount();
@@ -1322,9 +1322,8 @@ static void removePropertiesInStyle(MutableStyleProperties* styleToRemovePropert
     styleToRemovePropertiesFrom->removePropertiesInSet(propertiesToRemove.data(), propertiesToRemove.size());
 }
 
-void EditingStyle::removeStyleFromRulesAndContext(StyledElement* element, Node* context)
+void EditingStyle::removeStyleFromRulesAndContext(StyledElement& element, Node* context)
 {
-    ASSERT(element);
     if (!m_mutableStyle)
         return;
 
@@ -1353,7 +1352,7 @@ void EditingStyle::removeStyleFromRulesAndContext(StyledElement* element, Node* 
     }
 }
 
-void EditingStyle::removePropertiesInElementDefaultStyle(Element* element)
+void EditingStyle::removePropertiesInElementDefaultStyle(Element& element)
 {
     if (!m_mutableStyle || m_mutableStyle->isEmpty())
         return;

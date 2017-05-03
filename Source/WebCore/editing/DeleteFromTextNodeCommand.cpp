@@ -32,22 +32,19 @@
 
 namespace WebCore {
 
-DeleteFromTextNodeCommand::DeleteFromTextNodeCommand(RefPtr<Text>&& node, unsigned offset, unsigned count, EditAction editingAction)
+DeleteFromTextNodeCommand::DeleteFromTextNodeCommand(Ref<Text>&& node, unsigned offset, unsigned count, EditAction editingAction)
     : SimpleEditCommand(node->document(), editingAction)
-    , m_node(node)
+    , m_node(WTFMove(node))
     , m_offset(offset)
     , m_count(count)
 {
-    ASSERT(m_node);
     ASSERT(m_offset <= m_node->length());
     ASSERT(m_offset + m_count <= m_node->length());
 }
 
 void DeleteFromTextNodeCommand::doApply()
 {
-    ASSERT(m_node);
-
-    if (!isEditableNode(*m_node))
+    if (!isEditableNode(m_node))
         return;
 
     auto result = m_node->substringData(m_offset, m_count);
@@ -59,8 +56,6 @@ void DeleteFromTextNodeCommand::doApply()
 
 void DeleteFromTextNodeCommand::doUnapply()
 {
-    ASSERT(m_node);
-
     if (!m_node->hasEditableStyle())
         return;
 
@@ -70,7 +65,7 @@ void DeleteFromTextNodeCommand::doUnapply()
 #ifndef NDEBUG
 void DeleteFromTextNodeCommand::getNodesInCommand(HashSet<Node*>& nodes)
 {
-    addNodeAndDescendants(m_node.get(), nodes);
+    addNodeAndDescendants(m_node.ptr(), nodes);
 }
 #endif
 

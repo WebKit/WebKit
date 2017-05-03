@@ -510,7 +510,7 @@ void ReplaceSelectionCommand::removeRedundantStylesAndKeepStyleSpanInline(Insert
                     EditingStyle::DoNotExtractMatchingStyle)) {
                     // e.g. <font size="3" style="font-size: 20px;"> is converted to <font style="font-size: 20px;">
                     for (auto& attribute : attributes)
-                        removeNodeAttribute(element, attribute);
+                        removeNodeAttribute(*element, attribute);
                 }
             }
 
@@ -520,18 +520,18 @@ void ReplaceSelectionCommand::removeRedundantStylesAndKeepStyleSpanInline(Insert
             // styles from blockquoteNode are allowed to override those from the source document, see <rdar://problem/4930986> and <rdar://problem/5089327>.
             Node* blockquoteNode = isMailPasteAsQuotationNode(context) ? context : enclosingNodeOfType(firstPositionInNode(context), isMailBlockquote, CanCrossEditingBoundary);
             if (blockquoteNode)
-                newInlineStyle->removeStyleFromRulesAndContext(element, document().documentElement());
+                newInlineStyle->removeStyleFromRulesAndContext(*element, document().documentElement());
 
-            newInlineStyle->removeStyleFromRulesAndContext(element, context);
+            newInlineStyle->removeStyleFromRulesAndContext(*element, context);
         }
 
         if (!inlineStyle || newInlineStyle->isEmpty()) {
-            if (isStyleSpanOrSpanWithOnlyStyleAttribute(element) || isEmptyFontTag(element, AllowNonEmptyStyleAttribute)) {
+            if (isStyleSpanOrSpanWithOnlyStyleAttribute(*element) || isEmptyFontTag(element, AllowNonEmptyStyleAttribute)) {
                 insertedNodes.willRemoveNodePreservingChildren(element);
                 removeNodePreservingChildren(element);
                 continue;
             }
-            removeNodeAttribute(element, styleAttr);
+            removeNodeAttribute(*element, styleAttr);
         } else if (newInlineStyle->style()->propertyCount() != inlineStyle->propertyCount())
             setNodeAttribute(element, styleAttr, newInlineStyle->style()->asText());
 
@@ -545,7 +545,7 @@ void ReplaceSelectionCommand::removeRedundantStylesAndKeepStyleSpanInline(Insert
         }
 
         if (element->parentNode() && element->parentNode()->hasRichlyEditableStyle())
-            removeNodeAttribute(element, contenteditableAttr);
+            removeNodeAttribute(*element, contenteditableAttr);
 
         // WebKit used to not add display: inline and float: none on copy.
         // Keep this code around for backward compatibility
@@ -1250,7 +1250,7 @@ void ReplaceSelectionCommand::doApply()
         mergeEndIfNeeded();
 
     if (Node* mailBlockquote = enclosingNodeOfType(positionAtStartOfInsertedContent().deepEquivalent(), isMailPasteAsQuotationNode))
-        removeNodeAttribute(downcast<Element>(mailBlockquote), classAttr);
+        removeNodeAttribute(downcast<Element>(*mailBlockquote), classAttr);
 
     if (shouldPerformSmartReplace())
         addSpacesForSmartReplace();
@@ -1333,7 +1333,7 @@ void ReplaceSelectionCommand::addSpacesForSmartReplace()
     if (needsTrailingSpace && endNode) {
         bool collapseWhiteSpace = !endNode->renderer() || endNode->renderer()->style().collapseWhiteSpace();
         if (is<Text>(*endNode)) {
-            insertTextIntoNode(downcast<Text>(endNode), endOffset, collapseWhiteSpace ? nonBreakingSpaceString() : " ");
+            insertTextIntoNode(downcast<Text>(*endNode), endOffset, collapseWhiteSpace ? nonBreakingSpaceString() : " ");
             if (m_endOfInsertedContent.containerNode() == endNode)
                 m_endOfInsertedContent.moveToOffset(m_endOfInsertedContent.offsetInContainerNode() + 1);
         } else {
@@ -1357,7 +1357,7 @@ void ReplaceSelectionCommand::addSpacesForSmartReplace()
     if (needsLeadingSpace && startNode) {
         bool collapseWhiteSpace = !startNode->renderer() || startNode->renderer()->style().collapseWhiteSpace();
         if (is<Text>(*startNode)) {
-            insertTextIntoNode(downcast<Text>(startNode), startOffset, collapseWhiteSpace ? nonBreakingSpaceString() : " ");
+            insertTextIntoNode(downcast<Text>(*startNode), startOffset, collapseWhiteSpace ? nonBreakingSpaceString() : " ");
             if (m_endOfInsertedContent.containerNode() == startNode && m_endOfInsertedContent.offsetInContainerNode())
                 m_endOfInsertedContent.moveToOffset(m_endOfInsertedContent.offsetInContainerNode() + 1);
         } else {
@@ -1428,7 +1428,7 @@ void ReplaceSelectionCommand::mergeTextNodesAroundPosition(Position& position, P
 
     if (is<Text>(text->previousSibling())) {
         Ref<Text> previous(downcast<Text>(*text->previousSibling()));
-        insertTextIntoNode(text, 0, previous->data());
+        insertTextIntoNode(*text, 0, previous->data());
 
         if (positionIsOffsetInAnchor)
             position.moveToOffset(previous->length() + position.offsetInContainerNode());
@@ -1448,7 +1448,7 @@ void ReplaceSelectionCommand::mergeTextNodesAroundPosition(Position& position, P
     if (is<Text>(text->nextSibling())) {
         Ref<Text> next(downcast<Text>(*text->nextSibling()));
         unsigned originalLength = text->length();
-        insertTextIntoNode(text, originalLength, next->data());
+        insertTextIntoNode(*text, originalLength, next->data());
 
         if (!positionIsOffsetInAnchor)
             updatePositionForNodeRemoval(position, next.get());

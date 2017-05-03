@@ -142,7 +142,7 @@ protected:
     void removeStyledElement(Ref<Element>&&);
     void deleteSelection(bool smartDelete = false, bool mergeBlocksAfterDelete = true, bool replace = false, bool expandForSpecialElements = true, bool sanitizeMarkup = true);
     void deleteSelection(const VisibleSelection&, bool smartDelete = false, bool mergeBlocksAfterDelete = true, bool replace = false, bool expandForSpecialElements = true, bool sanitizeMarkup = true);
-    virtual void deleteTextFromNode(PassRefPtr<Text>, unsigned offset, unsigned count);
+    virtual void deleteTextFromNode(Text&, unsigned offset, unsigned count);
     void inputText(const String&, bool selectInsertedText = false);
     bool isRemovableBlock(const Node*);
     void insertNodeAfter(Ref<Node>&&, Node& refChild);
@@ -151,17 +151,16 @@ protected:
     void insertNodeBefore(Ref<Node>&&, Node& refChild, ShouldAssumeContentIsAlwaysEditable = DoNotAssumeContentIsAlwaysEditable);
     void insertParagraphSeparator(bool useDefaultParagraphElement = false, bool pasteBlockqutoeIntoUnquotedArea = false);
     void insertLineBreak();
-    void insertTextIntoNode(PassRefPtr<Text>, unsigned offset, const String& text);
-    void mergeIdenticalElements(PassRefPtr<Element>, PassRefPtr<Element>);
+    void insertTextIntoNode(Text&, unsigned offset, const String& text);
+    void mergeIdenticalElements(Element&, Element&);
     void rebalanceWhitespace();
     void rebalanceWhitespaceAt(const Position&);
-    void rebalanceWhitespaceOnTextSubstring(PassRefPtr<Text>, int startOffset, int endOffset);
+    void rebalanceWhitespaceOnTextSubstring(Text&, int startOffset, int endOffset);
     void prepareWhitespaceAtPositionForSplit(Position&);
     bool canRebalance(const Position&) const;
     bool shouldRebalanceLeadingWhitespaceFor(const String&) const;
-    void removeCSSProperty(PassRefPtr<StyledElement>, CSSPropertyID);
-    void removeNodeAttribute(PassRefPtr<Element>, const QualifiedName& attribute);
-    void removeChildrenInRange(PassRefPtr<Node>, unsigned from, unsigned to);
+    void removeNodeAttribute(Element&, const QualifiedName& attribute);
+    void removeChildrenInRange(Node&, unsigned from, unsigned to);
     virtual void removeNode(PassRefPtr<Node>, ShouldAssumeContentIsAlwaysEditable = DoNotAssumeContentIsAlwaysEditable);
     HTMLElement* replaceElementWithSpanPreservingChildrenAndAttributes(PassRefPtr<HTMLElement>);
     void removeNodePreservingChildren(PassRefPtr<Node>, ShouldAssumeContentIsAlwaysEditable = DoNotAssumeContentIsAlwaysEditable);
@@ -169,9 +168,9 @@ protected:
     void moveRemainingSiblingsToNewParent(Node*, Node* pastLastNodeToMove, PassRefPtr<Element> prpNewParent);
     void updatePositionForNodeRemovalPreservingChildren(Position&, Node&);
     void prune(PassRefPtr<Node>);
-    void replaceTextInNode(PassRefPtr<Text>, unsigned offset, unsigned count, const String& replacementText);
+    void replaceTextInNode(Text&, unsigned offset, unsigned count, const String& replacementText);
     Position replaceSelectedTextInNode(const String&);
-    void replaceTextInNodePreservingMarkers(PassRefPtr<Text>, unsigned offset, unsigned count, const String& replacementText);
+    void replaceTextInNodePreservingMarkers(Text&, unsigned offset, unsigned count, const String& replacementText);
     Position positionOutsideTabSpan(const Position&);
     void setNodeAttribute(PassRefPtr<Element>, const QualifiedName& attribute, const AtomicString& value);
     void splitElement(PassRefPtr<Element>, PassRefPtr<Node> atChild);
@@ -179,7 +178,7 @@ protected:
     void splitTextNodeContainingElement(PassRefPtr<Text>, unsigned offset);
     void wrapContentsInDummySpan(Element&);
 
-    void deleteInsignificantText(PassRefPtr<Text>, unsigned start, unsigned end);
+    void deleteInsignificantText(Text&, unsigned start, unsigned end);
     void deleteInsignificantText(const Position& start, const Position& end);
     void deleteInsignificantTextDownstream(const Position&);
 

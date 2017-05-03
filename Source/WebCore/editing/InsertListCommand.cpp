@@ -69,7 +69,7 @@ RefPtr<HTMLElement> InsertListCommand::mergeWithNeighboringLists(PassRefPtr<HTML
     RefPtr<HTMLElement> list = passedList;
     Element* previousList = list->previousElementSibling();
     if (canMergeLists(previousList, list.get()))
-        mergeIdenticalElements(previousList, list);
+        mergeIdenticalElements(*previousList, *list);
 
     if (!list)
         return nullptr;
@@ -79,7 +79,7 @@ RefPtr<HTMLElement> InsertListCommand::mergeWithNeighboringLists(PassRefPtr<HTML
 
     RefPtr<HTMLElement> nextList = downcast<HTMLElement>(sibling);
     if (canMergeLists(list.get(), nextList.get())) {
-        mergeIdenticalElements(list, nextList);
+        mergeIdenticalElements(*list, *nextList);
         return nextList;
     }
     return list;
@@ -401,7 +401,7 @@ RefPtr<HTMLElement> InsertListCommand::listifyParagraph(const VisiblePosition& o
         return mergeWithNeighboringLists(listElement);
 
     if (canMergeLists(previousList, nextList))
-        mergeIdenticalElements(previousList, nextList);
+        mergeIdenticalElements(*previousList, *nextList);
 
     return listElement;
 }

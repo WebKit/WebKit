@@ -67,7 +67,7 @@ private:
     void clearTransientState();
     void makeStylingElementsDirectChildrenOfEditableRootToPreventStyleLoss();
     void removeNode(PassRefPtr<Node>, ShouldAssumeContentIsAlwaysEditable = DoNotAssumeContentIsAlwaysEditable) override;
-    void deleteTextFromNode(PassRefPtr<Text>, unsigned, unsigned) override;
+    void deleteTextFromNode(Text&, unsigned, unsigned) override;
     void removeRedundantBlocks();
 
     // This function provides access to original string after the correction has been deleted.

@@ -336,7 +336,7 @@ void InsertParagraphSeparatorCommand::doApply()
     if (is<Text>(leadingWhitespace.deprecatedNode())) {
         Text& textNode = downcast<Text>(*leadingWhitespace.deprecatedNode());
         ASSERT(!textNode.renderer() || textNode.renderer()->style().collapseWhiteSpace());
-        replaceTextInNodePreservingMarkers(&textNode, leadingWhitespace.deprecatedEditingOffset(), 1, nonBreakingSpaceString());
+        replaceTextInNodePreservingMarkers(textNode, leadingWhitespace.deprecatedEditingOffset(), 1, nonBreakingSpaceString());
     }
     
     // Split at pos if in the middle of a text node.
@@ -402,7 +402,7 @@ void InsertParagraphSeparatorCommand::doApply()
             ASSERT(!positionAfterSplit.containerNode()->renderer() || positionAfterSplit.containerNode()->renderer()->style().collapseWhiteSpace());
             deleteInsignificantTextDownstream(positionAfterSplit);
             if (is<Text>(*positionAfterSplit.deprecatedNode()))
-                insertTextIntoNode(downcast<Text>(positionAfterSplit.containerNode()), 0, nonBreakingSpaceString());
+                insertTextIntoNode(downcast<Text>(*positionAfterSplit.containerNode()), 0, nonBreakingSpaceString());
         }
     }
 

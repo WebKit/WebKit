@@ -335,8 +335,8 @@ void StyledMarkupAccumulator::appendElement(StringBuilder& out, const Element& e
 
         if (shouldApplyWrappingStyle(element)) {
             newInlineStyle = m_wrappingStyle->copy();
-            newInlineStyle->removePropertiesInElementDefaultStyle(const_cast<Element*>(&element));
-            newInlineStyle->removeStyleConflictingWithStyleOfNode(const_cast<Element*>(&element));
+            newInlineStyle->removePropertiesInElementDefaultStyle(*const_cast<Element*>(&element));
+            newInlineStyle->removeStyleConflictingWithStyleOfNode(*const_cast<Element*>(&element));
         } else
             newInlineStyle = EditingStyle::create();
 
@@ -345,7 +345,7 @@ void StyledMarkupAccumulator::appendElement(StringBuilder& out, const Element& e
 
         if (shouldAnnotateOrForceInline) {
             if (shouldAnnotate())
-                newInlineStyle->mergeStyleFromRulesForSerialization(downcast<HTMLElement>(const_cast<Element*>(&element)));
+                newInlineStyle->mergeStyleFromRulesForSerialization(downcast<HTMLElement>(*const_cast<Element*>(&element)));
 
             if (addDisplayInline)
                 newInlineStyle->forceInline();
@@ -509,15 +509,13 @@ static bool needInterchangeNewlineAfter(const VisiblePosition& v)
     return isEndOfParagraph(v) && isStartOfParagraph(next) && !(upstreamNode->hasTagName(brTag) && upstreamNode == downstreamNode);
 }
 
-static RefPtr<EditingStyle> styleFromMatchedRulesAndInlineDecl(const Node* node)
+static RefPtr<EditingStyle> styleFromMatchedRulesAndInlineDecl(Node& node)
 {
-    if (!node->isHTMLElement())
+    if (!is<HTMLElement>(node))
         return nullptr;
 
-    // FIXME: Having to const_cast here is ugly, but it is quite a bit of work to untangle
-    // the non-const-ness of styleFromMatchedRulesForElement.
-    HTMLElement* element = const_cast<HTMLElement*>(static_cast<const HTMLElement*>(node));
-    RefPtr<EditingStyle> style = EditingStyle::create(element->inlineStyle());
+    auto& element = downcast<HTMLElement>(node);
+    RefPtr<EditingStyle> style = EditingStyle::create(element.inlineStyle());
     style->mergeStyleFromRules(element);
     return style;
 }
@@ -622,7 +620,7 @@ static String createMarkupInternal(Document& document, const Range& range, Vecto
         // Also include all of the ancestors of lastClosed up to this special ancestor.
         for (ContainerNode* ancestor = lastClosed->parentNode(); ancestor; ancestor = ancestor->parentNode()) {
             if (ancestor == fullySelectedRoot && !convertBlocksToInlines) {
-                RefPtr<EditingStyle> fullySelectedRootStyle = styleFromMatchedRulesAndInlineDecl(fullySelectedRoot);
+                RefPtr<EditingStyle> fullySelectedRootStyle = styleFromMatchedRulesAndInlineDecl(*fullySelectedRoot);
 
                 // Bring the background attribute over, but not as an attribute because a background attribute on a div
                 // appears to have no effect.
@@ -656,7 +654,7 @@ static String createMarkupInternal(Document& document, const Range& range, Vecto
     if (accumulator.needRelativeStyleWrapper() && needsPositionStyleConversion) {
         if (accumulator.needClearingDiv())
             accumulator.appendString("<div style=\"clear: both;\"></div>");
-        RefPtr<EditingStyle> positionRelativeStyle = styleFromMatchedRulesAndInlineDecl(body);
+        RefPtr<EditingStyle> positionRelativeStyle = styleFromMatchedRulesAndInlineDecl(*body);
         positionRelativeStyle->style()->setProperty(CSSPropertyPosition, CSSValueRelative);
         accumulator.wrapWithStyleNode(positionRelativeStyle->style(), document, true);
     }

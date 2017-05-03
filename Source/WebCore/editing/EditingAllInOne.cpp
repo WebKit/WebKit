@@ -55,7 +55,6 @@
 #include <MergeIdenticalElementsCommand.cpp>
 #include <ModifySelectionListLevel.cpp>
 #include <MoveSelectionCommand.cpp>
-#include <RemoveCSSPropertyCommand.cpp>
 #include <RemoveFormatCommand.cpp>
 #include <RemoveNodeCommand.cpp>
 #include <RemoveNodePreservingChildrenCommand.cpp>

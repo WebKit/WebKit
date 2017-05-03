@@ -3626,8 +3626,6 @@
 		93309DFA099E64920056E581 /* MergeIdenticalElementsCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 93309DAB099E64910056E581 /* MergeIdenticalElementsCommand.h */; };
 		93309DFB099E64920056E581 /* MoveSelectionCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93309DAC099E64910056E581 /* MoveSelectionCommand.cpp */; };
 		93309DFC099E64920056E581 /* MoveSelectionCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 93309DAD099E64910056E581 /* MoveSelectionCommand.h */; };
-		93309E00099E64920056E581 /* RemoveCSSPropertyCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93309DB1099E64910056E581 /* RemoveCSSPropertyCommand.cpp */; };
-		93309E01099E64920056E581 /* RemoveCSSPropertyCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 93309DB2099E64910056E581 /* RemoveCSSPropertyCommand.h */; };
 		93309E04099E64920056E581 /* RemoveNodeCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93309DB5099E64910056E581 /* RemoveNodeCommand.cpp */; };
 		93309E05099E64920056E581 /* RemoveNodeCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 93309DB6099E64910056E581 /* RemoveNodeCommand.h */; };
 		93309E06099E64920056E581 /* RemoveNodePreservingChildrenCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93309DB7099E64910056E581 /* RemoveNodePreservingChildrenCommand.cpp */; };
@@ -11736,8 +11734,6 @@
 		93309DAB099E64910056E581 /* MergeIdenticalElementsCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MergeIdenticalElementsCommand.h; sourceTree = "<group>"; };
 		93309DAC099E64910056E581 /* MoveSelectionCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MoveSelectionCommand.cpp; sourceTree = "<group>"; };
 		93309DAD099E64910056E581 /* MoveSelectionCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MoveSelectionCommand.h; sourceTree = "<group>"; };
-		93309DB1099E64910056E581 /* RemoveCSSPropertyCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoveCSSPropertyCommand.cpp; sourceTree = "<group>"; };
-		93309DB2099E64910056E581 /* RemoveCSSPropertyCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoveCSSPropertyCommand.h; sourceTree = "<group>"; };
 		93309DB5099E64910056E581 /* RemoveNodeCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoveNodeCommand.cpp; sourceTree = "<group>"; };
 		93309DB6099E64910056E581 /* RemoveNodeCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoveNodeCommand.h; sourceTree = "<group>"; };
 		93309DB7099E64910056E581 /* RemoveNodePreservingChildrenCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoveNodePreservingChildrenCommand.cpp; sourceTree = "<group>"; };
@@ -19848,8 +19844,6 @@
 				C6D74AD309AA282E000B0A52 /* ModifySelectionListLevel.h */,
 				93309DAC099E64910056E581 /* MoveSelectionCommand.cpp */,
 				93309DAD099E64910056E581 /* MoveSelectionCommand.h */,
-				93309DB1099E64910056E581 /* RemoveCSSPropertyCommand.cpp */,
-				93309DB2099E64910056E581 /* RemoveCSSPropertyCommand.h */,
 				D06C0D8E0CFD11460065F43F /* RemoveFormatCommand.cpp */,
 				D06C0D8D0CFD11460065F43F /* RemoveFormatCommand.h */,
 				93309DB5099E64910056E581 /* RemoveNodeCommand.cpp */,
@@ -28871,7 +28865,6 @@
 				A578F43F1DE0B630003DFC6A /* RejectedPromiseTracker.h in Headers */,
 				CDFC360618CA61C20026E56F /* RemoteCommandListener.h in Headers */,
 				CD8ACA891D237AA200ECC59E /* RemoteCommandListenerMac.h in Headers */,
-				93309E01099E64920056E581 /* RemoveCSSPropertyCommand.h in Headers */,
 				D06C0D8F0CFD11460065F43F /* RemoveFormatCommand.h in Headers */,
 				93309E05099E64920056E581 /* RemoveNodeCommand.h in Headers */,
 				93309E07099E64920056E581 /* RemoveNodePreservingChildrenCommand.h in Headers */,
@@ -32771,7 +32764,6 @@
 				CDFC360518CA61C20026E56F /* RemoteCommandListener.cpp in Sources */,
 				CDFC360718CA696C0026E56F /* RemoteCommandListenerIOS.mm in Sources */,
 				CD8ACA881D237AA200ECC59E /* RemoteCommandListenerMac.mm in Sources */,
-				93309E00099E64920056E581 /* RemoveCSSPropertyCommand.cpp in Sources */,
 				D06C0D900CFD11460065F43F /* RemoveFormatCommand.cpp in Sources */,
 				93309E04099E64920056E581 /* RemoveNodeCommand.cpp in Sources */,
 				93309E06099E64920056E581 /* RemoveNodePreservingChildrenCommand.cpp in Sources */,

@@ -33,13 +33,13 @@ class Text;
 
 class DeleteFromTextNodeCommand : public SimpleEditCommand {
 public:
-    static Ref<DeleteFromTextNodeCommand> create(RefPtr<Text>&& node, unsigned offset, unsigned count, EditAction editingAction = EditActionDelete)
+    static Ref<DeleteFromTextNodeCommand> create(Ref<Text>&& node, unsigned offset, unsigned count, EditAction editingAction = EditActionDelete)
     {
         return adoptRef(*new DeleteFromTextNodeCommand(WTFMove(node), offset, count, editingAction));
     }
 
 protected:
-    DeleteFromTextNodeCommand(RefPtr<Text>&&, unsigned offset, unsigned count, EditAction);
+    DeleteFromTextNodeCommand(Ref<Text>&&, unsigned offset, unsigned count, EditAction);
 
 private:
     void doApply() override;
@@ -49,7 +49,7 @@ private:
     void getNodesInCommand(HashSet<Node*>&) override;
 #endif
     
-    RefPtr<Text> m_node;
+    Ref<Text> m_node;
     unsigned m_offset;
     unsigned m_count;
     String m_text;

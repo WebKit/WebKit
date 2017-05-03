@@ -1,3 +1,123 @@
+2017-05-03  Chris Dumez  <cdumez@apple.com>
+
+        Use PassRefPtr less in CompositeEditCommand
+        https://bugs.webkit.org/show_bug.cgi?id=171590
+
+        Reviewed by Sam Weinig.
+
+        Use PassRefPtr less in CompositeEditCommand.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::hasNoAttributeOrOnlyStyleAttribute):
+        (WebCore::isStyleSpanOrSpanWithOnlyStyleAttribute):
+        (WebCore::isSpanWithoutAttributesOrUnstyledStyleSpan):
+        (WebCore::isEmptyFontTag):
+        (WebCore::ApplyStyleCommand::doApply):
+        (WebCore::ApplyStyleCommand::applyBlockStyle):
+        (WebCore::ApplyStyleCommand::applyRelativeFontStyleChange):
+        (WebCore::dummySpanAncestorForNode):
+        (WebCore::ApplyStyleCommand::cleanupUnstyledAppleStyleSpans):
+        (WebCore::ApplyStyleCommand::removeEmbeddingUpToEnclosingBlock):
+        (WebCore::ApplyStyleCommand::applyInlineStyle):
+        (WebCore::ApplyStyleCommand::fixRangeAndApplyInlineStyle):
+        (WebCore::ApplyStyleCommand::applyInlineStyleToNodeRange):
+        (WebCore::ApplyStyleCommand::shouldApplyInlineStyleToRun):
+        (WebCore::ApplyStyleCommand::removeConflictingInlineStyleFromRun):
+        (WebCore::ApplyStyleCommand::removeInlineStyleFromElement):
+        (WebCore::ApplyStyleCommand::replaceWithSpanOrRemoveIfWithoutAttributes):
+        (WebCore::ApplyStyleCommand::removeImplicitlyStyledElement):
+        (WebCore::ApplyStyleCommand::removeCSSStyle):
+        (WebCore::ApplyStyleCommand::highestAncestorWithConflictingInlineStyle):
+        (WebCore::ApplyStyleCommand::pushDownInlineStyleAroundNode):
+        (WebCore::ApplyStyleCommand::removeInlineStyle):
+        (WebCore::ApplyStyleCommand::shouldSplitTextElement):
+        (WebCore::ApplyStyleCommand::mergeStartWithPreviousIfIdentical):
+        (WebCore::ApplyStyleCommand::mergeEndWithNextIfIdentical):
+        (WebCore::ApplyStyleCommand::surroundNodeRangeWithElement):
+        (WebCore::ApplyStyleCommand::addBlockStyle):
+        (WebCore::ApplyStyleCommand::joinChildTextNodes):
+        * editing/ApplyStyleCommand.h:
+        (WebCore::ApplyStyleCommand::shouldRemoveInlineStyleFromElement):
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::removeChildrenInRange):
+        (WebCore::CompositeEditCommand::mergeIdenticalElements):
+        (WebCore::CompositeEditCommand::insertTextIntoNode):
+        (WebCore::CompositeEditCommand::deleteTextFromNode):
+        (WebCore::CompositeEditCommand::replaceTextInNode):
+        (WebCore::CompositeEditCommand::replaceSelectedTextInNode):
+        (WebCore::CompositeEditCommand::replaceTextInNodePreservingMarkers):
+        (WebCore::CompositeEditCommand::removeNodeAttribute):
+        (WebCore::CompositeEditCommand::rebalanceWhitespaceAt):
+        (WebCore::CompositeEditCommand::rebalanceWhitespaceOnTextSubstring):
+        (WebCore::CompositeEditCommand::prepareWhitespaceAtPositionForSplit):
+        (WebCore::CompositeEditCommand::deleteInsignificantText):
+        (WebCore::CompositeEditCommand::removePlaceholderAt):
+        (WebCore::CompositeEditCommand::cleanupAfterDeletion):
+        (WebCore::CompositeEditCommand::moveParagraphs):
+        * editing/CompositeEditCommand.h:
+        * editing/DeleteFromTextNodeCommand.cpp:
+        (WebCore::DeleteFromTextNodeCommand::DeleteFromTextNodeCommand):
+        (WebCore::DeleteFromTextNodeCommand::doApply):
+        (WebCore::DeleteFromTextNodeCommand::doUnapply):
+        (WebCore::DeleteFromTextNodeCommand::getNodesInCommand):
+        * editing/DeleteFromTextNodeCommand.h:
+        (WebCore::DeleteFromTextNodeCommand::create):
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::deleteTextFromNode):
+        (WebCore::DeleteSelectionCommand::handleGeneralDelete):
+        (WebCore::DeleteSelectionCommand::fixupWhitespace):
+        * editing/DeleteSelectionCommand.h:
+        * editing/EditingAllInOne.cpp:
+        * editing/EditingStyle.cpp:
+        (WebCore::EditingStyle::removeStyleConflictingWithStyleOfNode):
+        (WebCore::elementMatchesAndPropertyIsNotInInlineStyleDecl):
+        (WebCore::EditingStyle::mergeInlineAndImplicitStyleOfElement):
+        (WebCore::EditingStyle::wrappingStyleForSerialization):
+        (WebCore::styleFromMatchedRulesForElement):
+        (WebCore::EditingStyle::mergeStyleFromRules):
+        (WebCore::EditingStyle::mergeStyleFromRulesForSerialization):
+        (WebCore::EditingStyle::removeStyleFromRulesAndContext):
+        (WebCore::EditingStyle::removePropertiesInElementDefaultStyle):
+        * editing/EditingStyle.h:
+        * editing/IndentOutdentCommand.cpp:
+        (WebCore::IndentOutdentCommand::tryIndentingAsListItem):
+        * editing/InsertIntoTextNodeCommand.cpp:
+        (WebCore::InsertIntoTextNodeCommand::InsertIntoTextNodeCommand):
+        (WebCore::InsertIntoTextNodeCommand::getNodesInCommand):
+        * editing/InsertIntoTextNodeCommand.h:
+        (WebCore::InsertIntoTextNodeCommand::create):
+        * editing/InsertLineBreakCommand.cpp:
+        (WebCore::InsertLineBreakCommand::doApply):
+        * editing/InsertListCommand.cpp:
+        (WebCore::InsertListCommand::mergeWithNeighboringLists):
+        (WebCore::InsertListCommand::listifyParagraph):
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        (WebCore::InsertParagraphSeparatorCommand::doApply):
+        * editing/InsertTextCommand.cpp:
+        (WebCore::InsertTextCommand::performOverwrite):
+        (WebCore::InsertTextCommand::doApply):
+        (WebCore::InsertTextCommand::insertTab):
+        * editing/MergeIdenticalElementsCommand.cpp:
+        (WebCore::MergeIdenticalElementsCommand::MergeIdenticalElementsCommand):
+        (WebCore::MergeIdenticalElementsCommand::doApply):
+        (WebCore::MergeIdenticalElementsCommand::doUnapply):
+        (WebCore::MergeIdenticalElementsCommand::getNodesInCommand):
+        * editing/MergeIdenticalElementsCommand.h:
+        (WebCore::MergeIdenticalElementsCommand::create):
+        * editing/RemoveCSSPropertyCommand.cpp: Removed.
+        * editing/RemoveCSSPropertyCommand.h: Removed.
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::removeRedundantStylesAndKeepStyleSpanInline):
+        (WebCore::ReplaceSelectionCommand::doApply):
+        (WebCore::ReplaceSelectionCommand::addSpacesForSmartReplace):
+        (WebCore::ReplaceSelectionCommand::mergeTextNodesAroundPosition):
+        * editing/markup.cpp:
+        (WebCore::StyledMarkupAccumulator::appendElement):
+        (WebCore::styleFromMatchedRulesAndInlineDecl):
+        (WebCore::createMarkupInternal):
+
 2017-05-03  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: Treat cells with ARIA table cell properties as cells
