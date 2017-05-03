@@ -1960,3 +1960,5 @@ webkit.org/b/171530 [ Release ] http/tests/xmlhttprequest/methods-async.html [ P
 webkit.org/b/171559 svg/animations/animated-svg-image-removed-from-document-paused.html [ Pass Failure ]
 
 webkit.org/b/171564 http/tests/local/blob/send-sliced-data-blob.html [ Pass Failure Timeout ]
+
+webkit.org/b/171613 http/tests/xmlhttprequest/supported-xml-content-types.html [ Pass Timeout ]
