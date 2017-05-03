@@ -74,7 +74,7 @@ public:
         XHRResource,
         FetchResource,
         WebSocketResource,
-        OtherResource
+        OtherResource,
     };
 
     static bool cachedResourceContent(CachedResource*, String* result, bool* base64Encoded);

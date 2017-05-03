@@ -96,7 +96,7 @@ WebInspector.ResourceTimelineDataGridNode = class ResourceTimelineDataGridNode e
     {
         let resource = this._resource;
 
-        if (resource.failed || resource.canceled || resource.statusCode >= 400)
+        if (resource.hadLoadingError())
             cell.classList.add("error");
 
         let value = this.data[columnIdentifier];

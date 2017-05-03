@@ -41,9 +41,14 @@ WebInspector.ImageResourceContentView = class ImageResourceContentView extends W
 
     contentAvailable(content, base64Encoded)
     {
+        let objectURL = this.resource.createObjectURL();
+        if (!objectURL) {
+            this.showGenericErrorMessage();
+            return;
+        }
+
         this.element.removeChildren();
 
-        var objectURL = this.resource.createObjectURL();
         this._imageElement = document.createElement("img");
         this._imageElement.addEventListener("load", function() { URL.revokeObjectURL(objectURL); });
         this._imageElement.src = objectURL;

@@ -1,3 +1,20 @@
+2017-05-03  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: 404 Image Load does not appear as a failure in Web Inspector
+        https://bugs.webkit.org/show_bug.cgi?id=171587
+        <rdar://problem/13222846>
+
+        Reviewed by Matt Baker.
+
+        * inspector/InspectorPageAgent.h:
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::cachedResourceContent):
+        (WebCore::prepareCachedResourceBuffer): Deleted.
+        Inline the function to make this less confusing.
+
+        (WebCore::InspectorPageAgent::buildObjectForFrameTree):
+        Treat a DecodeError as a failure.
+
 2017-05-03  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Async image decoding should be disabled for snapshots, printing and preview

@@ -170,7 +170,7 @@ WebInspector.ResourceTreeElement = class ResourceTreeElement extends WebInspecto
 
     _updateStatus()
     {
-        if (this._resource.failed)
+        if (this._resource.hadLoadingError())
             this.addClassName(WebInspector.ResourceTreeElement.FailedStyleClassName);
         else
             this.removeClassName(WebInspector.ResourceTreeElement.FailedStyleClassName);
@@ -179,7 +179,7 @@ WebInspector.ResourceTreeElement = class ResourceTreeElement extends WebInspecto
             // Remove the spinner.
             this.status = "";
         } else {
-            var spinner = new WebInspector.IndeterminateProgressSpinner;
+            let spinner = new WebInspector.IndeterminateProgressSpinner;
             this.status = spinner.element;
         }
     }

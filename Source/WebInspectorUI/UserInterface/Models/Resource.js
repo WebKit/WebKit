@@ -347,13 +347,14 @@ WebInspector.Resource = class Resource extends WebInspector.SourceCode
     {
         // If content is not available, fallback to using original URL.
         // The client may try to revoke it, but nothing will happen.
-        if (!this.content)
+        let content = this.content;
+        if (!content)
             return this._url;
 
-        var content = this.content;
-        console.assert(content instanceof Blob, content);
+        if (content instanceof Blob)
+            return URL.createObjectURL(content);
 
-        return URL.createObjectURL(content);
+        return null;
     }
 
     isMainResource()
@@ -831,6 +832,11 @@ WebInspector.Resource = class Resource extends WebInspector.SourceCode
         this.markAsCached();
     }
 
+    hadLoadingError()
+    {
+        return this._failed || this._canceled || this._statusCode >= 400;
+    }
+
     getImageSize(callback)
     {
         // Throw an error in the case this resource is not an image.
@@ -870,8 +876,10 @@ WebInspector.Resource = class Resource extends WebInspector.SourceCode
         image.addEventListener("load", imageDidLoad.bind(this), false);
 
         // Set the image source using an object URL once we've obtained its data.
-        this.requestContent().then(function(content) {
+        this.requestContent().then((content) => {
             objectURL = image.src = content.sourceCode.createObjectURL();
+            if (!objectURL)
+                requestContentFailure.call(this);
         }, requestContentFailure.bind(this));
     }
 

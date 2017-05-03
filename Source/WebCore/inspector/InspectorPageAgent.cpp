@@ -97,21 +97,6 @@ static bool decodeBuffer(const char* buffer, unsigned size, const String& textEn
     return false;
 }
 
-static bool prepareCachedResourceBuffer(CachedResource* cachedResource, bool* hasZeroSize)
-{
-    *hasZeroSize = false;
-    if (!cachedResource)
-        return false;
-
-    // Zero-sized resources don't have data at all -- so fake the empty buffer, instead of indicating error by returning 0.
-    if (!cachedResource->encodedSize()) {
-        *hasZeroSize = true;
-        return true;
-    }
-
-    return true;
-}
-
 static bool hasTextContent(CachedResource* cachedResource)
 {
     // FIXME: <https://webkit.org/b/165495> Web Inspector: XHR / Fetch for non-text content should not show garbled text
@@ -127,28 +112,21 @@ static bool hasTextContent(CachedResource* cachedResource)
 
 bool InspectorPageAgent::cachedResourceContent(CachedResource* cachedResource, String* result, bool* base64Encoded)
 {
-    // FIXME: result should be a String& and base64Encoded should be a bool&.
-    bool hasZeroSize;
-    bool prepared = prepareCachedResourceBuffer(cachedResource, &hasZeroSize);
-    if (!prepared)
+    if (!cachedResource)
         return false;
+
+    if (!cachedResource->encodedSize()) {
+        *result = String();
+        return true;
+    }
 
     *base64Encoded = !hasTextContent(cachedResource);
     if (*base64Encoded) {
-        if (hasZeroSize) {
-            *result = { };
-            return true;
-        }
         if (auto* buffer = cachedResource->resourceBuffer()) {
             *result = base64Encode(buffer->data(), buffer->size());
             return true;
         }
         return false;
-    }
-
-    if (hasZeroSize) {
-        *result = emptyString();
-        return true;
     }
 
     if (cachedResource) {
@@ -904,7 +882,7 @@ Ref<Inspector::Protocol::Page::FrameResourceTree> InspectorPageAgent::buildObjec
             .release();
         if (cachedResource->wasCanceled())
             resourceObject->setCanceled(true);
-        else if (cachedResource->status() == CachedResource::LoadError)
+        else if (cachedResource->status() == CachedResource::LoadError || cachedResource->status() == CachedResource::DecodeError)
             resourceObject->setFailed(true);
         String sourceMappingURL = InspectorPageAgent::sourceMapURLForResource(cachedResource);
         if (!sourceMappingURL.isEmpty())

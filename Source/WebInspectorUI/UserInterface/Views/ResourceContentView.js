@@ -44,7 +44,7 @@ WebInspector.ResourceContentView = class ResourceContentView extends WebInspecto
         this.element.addEventListener("click", this._mouseWasClicked.bind(this), false);
 
         // Request content last so the spinner will always be removed in case the content is immediately available.
-        resource.requestContent().then(this._contentAvailable.bind(this)).catch(this._protocolError.bind(this));
+        resource.requestContent().then(this._contentAvailable.bind(this)).catch(this.showGenericErrorMessage.bind(this));
 
         if (!this.managesOwnIssues) {
             WebInspector.issueManager.addEventListener(WebInspector.IssueManager.Event.IssueWasAdded, this._issueWasAdded, this);
@@ -75,6 +75,11 @@ WebInspector.ResourceContentView = class ResourceContentView extends WebInspecto
     contentAvailable(content, base64Encoded)
     {
         // Implemented by subclasses.
+    }
+
+    showGenericErrorMessage()
+    {
+        this._contentError(WebInspector.UIString("An error occurred trying to load the resource."));
     }
 
     addIssue(issue)
@@ -116,11 +121,6 @@ WebInspector.ResourceContentView = class ResourceContentView extends WebInspecto
         this.element.appendChild(WebInspector.createMessageTextView(error, true));
 
         this.dispatchEventToListeners(WebInspector.ResourceContentView.Event.ContentError);
-    }
-
-    _protocolError(error)
-    {
-        this._contentError(WebInspector.UIString("An error occurred trying to load the resource."));
     }
 
     _hasContent()

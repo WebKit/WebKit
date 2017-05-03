@@ -55,7 +55,11 @@ WebInspector.FontResourceContentView = class FontResourceContentView extends Web
 
     contentAvailable(content, base64Encoded)
     {
-        this.element.removeChildren();
+        this._fontObjectURL = this.resource.createObjectURL();
+        if (!this._fontObjectURL) {
+            this.showGenericErrorMessage();
+            return;
+        }
 
         const uniqueFontName = "WebInspectorFontPreview" + (++WebInspector.FontResourceContentView._uniqueFontIdentifier);
 
@@ -68,7 +72,7 @@ WebInspector.FontResourceContentView = class FontResourceContentView extends Web
         if (this._styleElement && this._styleElement.parentNode)
             this._styleElement.parentNode.removeChild(this._styleElement);
 
-        this._fontObjectURL = this.resource.createObjectURL();
+        this.element.removeChildren();
 
         this._styleElement = document.createElement("style");
         this._styleElement.textContent = "@font-face { font-family: \"" + uniqueFontName + "\"; src: url(" + this._fontObjectURL + ")" + format + "; }";
