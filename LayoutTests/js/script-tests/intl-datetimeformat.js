@@ -271,12 +271,11 @@ shouldBe("Intl.DateTimeFormat('en-u-ca-ISO8601').resolvedOptions().calendar", "'
 shouldBe("Intl.DateTimeFormat('en-u-ca-japanese').resolvedOptions().calendar", "'japanese'");
 shouldBe("Intl.DateTimeFormat('en-u-ca-persian').resolvedOptions().calendar", "'persian'");
 shouldBe("Intl.DateTimeFormat('en-u-ca-roc').resolvedOptions().calendar", "'roc'");
-// FIXME: https://github.com/tc39/ecma402/issues/59
-// shouldBe("Intl.DateTimeFormat('en-u-ca-ethiopic-amete-alem').resolvedOptions().calendar", "'ethioaa'");
-// shouldBe("Intl.DateTimeFormat('en-u-ca-islamic-umalqura').resolvedOptions().calendar", "'islamic-umalqura'");
-// shouldBe("Intl.DateTimeFormat('en-u-ca-islamic-tbla').resolvedOptions().calendar", "'islamic-tbla'");
-// shouldBe("Intl.DateTimeFormat('en-u-ca-islamic-civil').resolvedOptions().calendar", "'islamic-civil'");
-// shouldBe("Intl.DateTimeFormat('en-u-ca-islamic-rgsa').resolvedOptions().calendar", "'islamic-rgsa'");
+shouldBe("Intl.DateTimeFormat('en-u-ca-ethiopic-amete-alem').resolvedOptions().calendar", "'ethiopic-amete-alem'");
+shouldBe("Intl.DateTimeFormat('en-u-ca-islamic-umalqura').resolvedOptions().calendar", "'islamic-umalqura'");
+shouldBe("Intl.DateTimeFormat('en-u-ca-islamic-tbla').resolvedOptions().calendar", "'islamic-tbla'");
+shouldBe("Intl.DateTimeFormat('en-u-ca-islamic-civil').resolvedOptions().calendar", "'islamic-civil'");
+shouldBe("Intl.DateTimeFormat('en-u-ca-islamic-rgsa').resolvedOptions().calendar", "'islamic-rgsa'");
 
 // Calendar-sensitive format().
 shouldBe("Intl.DateTimeFormat('en-u-ca-buddhist', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'12/25/2558'");
@@ -294,6 +293,11 @@ shouldBe("Intl.DateTimeFormat('en-u-ca-ISO8601', { timeZone: 'America/Los_Angele
 shouldBe("Intl.DateTimeFormat('en-u-ca-japanese', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'12/25/27'");
 shouldBe("Intl.DateTimeFormat('en-u-ca-persian', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'10/4/1394'");
 shouldBe("Intl.DateTimeFormat('en-u-ca-roc', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'12/25/104'");
+shouldBe("Intl.DateTimeFormat('en-u-ca-ethiopic-amete-alem', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'4/15/7508'");
+shouldBe("Intl.DateTimeFormat('en-u-ca-islamic-umalqura', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'3/14/1437'");
+shouldBe("Intl.DateTimeFormat('en-u-ca-islamic-tbla', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'3/14/1437'");
+shouldBe("Intl.DateTimeFormat('en-u-ca-islamic-civil', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'3/13/1437'");
+shouldBe("Intl.DateTimeFormat('en-u-ca-islamic-rgsa', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'3/14/1437'");
 
 shouldBe("Intl.DateTimeFormat('en', { numberingSystem:'gujr' }).resolvedOptions().numberingSystem", "'latn'");
 shouldBe("Intl.DateTimeFormat('en-u-nu-bogus').resolvedOptions().locale", "'en'");
@@ -367,6 +371,9 @@ shouldBe("Intl.DateTimeFormat('en-u-nu-telu', { timeZone: 'America/Los_Angeles' 
 shouldBe("Intl.DateTimeFormat('en-u-nu-thai', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'๑๒/๒๕/๒๐๑๕'");
 shouldBe("Intl.DateTimeFormat('en-u-nu-tibt', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'༡༢/༢༥/༢༠༡༥'");
 shouldBe("Intl.DateTimeFormat('en-u-nu-vaii', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'꘡꘢/꘢꘥/꘢꘠꘡꘥'");
+
+// Tests multiple keys in extension.
+shouldBe("Intl.DateTimeFormat('en-u-ca-islamic-umalqura-nu-arab', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'٣/١٤/١٤٣٧'");
 
 shouldThrow("Intl.DateTimeFormat('en', { weekday: { toString() { throw 'weekday' } } })", "'weekday'");
 shouldThrow("Intl.DateTimeFormat('en', { weekday:'invalid' })", '\'RangeError: weekday must be "narrow", "short", or "long"\'');

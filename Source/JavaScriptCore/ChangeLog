@@ -1,3 +1,25 @@
+2017-05-03  Andy VanWagoner  <thetalecrafter@gmail.com>
+
+        [INTL] Support dashed values in unicode locale extensions
+        https://bugs.webkit.org/show_bug.cgi?id=171480
+
+        Reviewed by JF Bastien.
+
+        Implements the UnicodeExtensionSubtags operation and updates the ResolveLocale operation to use it.
+        This fixes locale extensions with values that include '-'. The following calendars work now:
+        ethiopic-amete-alem
+        islamic-umalqura
+        islamic-tbla
+        islamic-civil
+        islamic-rgsa
+
+        While updating IntlObject, the comments containing spec text were replaced with a single url at the
+        top of each function pointing to the relevant part of ECMA-402.
+
+        * runtime/IntlObject.cpp:
+        (JSC::unicodeExtensionSubTags): Added.
+        (JSC::resolveLocale): Updated to latest standard.
+
 2017-05-02  Don Olmstead  <don.olmstead@am.sony.com>
 
         Build fix after r216078

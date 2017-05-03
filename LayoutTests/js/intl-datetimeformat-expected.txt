@@ -165,6 +165,11 @@ PASS Intl.DateTimeFormat('en-u-ca-ISO8601').resolvedOptions().calendar is 'iso86
 PASS Intl.DateTimeFormat('en-u-ca-japanese').resolvedOptions().calendar is 'japanese'
 PASS Intl.DateTimeFormat('en-u-ca-persian').resolvedOptions().calendar is 'persian'
 PASS Intl.DateTimeFormat('en-u-ca-roc').resolvedOptions().calendar is 'roc'
+PASS Intl.DateTimeFormat('en-u-ca-ethiopic-amete-alem').resolvedOptions().calendar is 'ethiopic-amete-alem'
+PASS Intl.DateTimeFormat('en-u-ca-islamic-umalqura').resolvedOptions().calendar is 'islamic-umalqura'
+PASS Intl.DateTimeFormat('en-u-ca-islamic-tbla').resolvedOptions().calendar is 'islamic-tbla'
+PASS Intl.DateTimeFormat('en-u-ca-islamic-civil').resolvedOptions().calendar is 'islamic-civil'
+PASS Intl.DateTimeFormat('en-u-ca-islamic-rgsa').resolvedOptions().calendar is 'islamic-rgsa'
 PASS Intl.DateTimeFormat('en-u-ca-buddhist', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is '12/25/2558'
 PASS Intl.DateTimeFormat('en-u-ca-chinese', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is '11/15/32'
 PASS Intl.DateTimeFormat('en-u-ca-coptic', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is '4/15/1732'
@@ -180,6 +185,11 @@ PASS Intl.DateTimeFormat('en-u-ca-ISO8601', { timeZone: 'America/Los_Angeles' })
 PASS Intl.DateTimeFormat('en-u-ca-japanese', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is '12/25/27'
 PASS Intl.DateTimeFormat('en-u-ca-persian', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is '10/4/1394'
 PASS Intl.DateTimeFormat('en-u-ca-roc', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is '12/25/104'
+PASS Intl.DateTimeFormat('en-u-ca-ethiopic-amete-alem', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is '4/15/7508'
+PASS Intl.DateTimeFormat('en-u-ca-islamic-umalqura', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is '3/14/1437'
+PASS Intl.DateTimeFormat('en-u-ca-islamic-tbla', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is '3/14/1437'
+PASS Intl.DateTimeFormat('en-u-ca-islamic-civil', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is '3/13/1437'
+PASS Intl.DateTimeFormat('en-u-ca-islamic-rgsa', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is '3/14/1437'
 PASS Intl.DateTimeFormat('en', { numberingSystem:'gujr' }).resolvedOptions().numberingSystem is 'latn'
 PASS Intl.DateTimeFormat('en-u-nu-bogus').resolvedOptions().locale is 'en'
 PASS Intl.DateTimeFormat('en-u-nu-bogus').resolvedOptions().numberingSystem is 'latn'
@@ -289,6 +299,7 @@ PASS Intl.DateTimeFormat('en-u-nu-telu', { timeZone: 'America/Los_Angeles' }).fo
 PASS Intl.DateTimeFormat('en-u-nu-thai', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is '๑๒/๒๕/๒๐๑๕'
 PASS Intl.DateTimeFormat('en-u-nu-tibt', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is '༡༢/༢༥/༢༠༡༥'
 PASS Intl.DateTimeFormat('en-u-nu-vaii', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is '꘡꘢/꘢꘥/꘢꘠꘡꘥'
+PASS Intl.DateTimeFormat('en-u-ca-islamic-umalqura-nu-arab', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is '٣/١٤/١٤٣٧'
 PASS Intl.DateTimeFormat('en', { weekday: { toString() { throw 'weekday' } } }) threw exception weekday.
 PASS Intl.DateTimeFormat('en', { weekday:'invalid' }) threw exception RangeError: weekday must be "narrow", "short", or "long".
 PASS Intl.DateTimeFormat('en', { minute:'2-digit', hour:'numeric' }).resolvedOptions().weekday is undefined
