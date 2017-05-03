@@ -303,9 +303,14 @@ _CMAKE_FILE_EXTENSION = 'cmake'
 #
 # Do not skip these files, even when they appear in
 # _SKIPPED_FILES_WITH_WARNING or _SKIPPED_FILES_WITHOUT_WARNING.
-_NEVER_SKIPPED_FILES = [
+_NEVER_SKIPPED_JS_FILES = [
     'js-test-pre.js',
+    'js-test-post.js',
+    'js-test-post-async.js',
     'standalone-pre.js',
+]
+
+_NEVER_SKIPPED_FILES = _NEVER_SKIPPED_JS_FILES + [
     'TestExpectations',
 ]
 
@@ -628,7 +633,7 @@ class CheckerDispatcher(object):
             # Do not attempt to check non-Inspector or 3rd-party JavaScript files as JS.
             if os.path.join('WebInspectorUI', 'UserInterface') in file_path and (not 'External' in file_path):
                 checker = JSChecker(file_path, handle_style_error)
-            elif basename == 'js-test-pre.js' or basename == 'standalone-pre.js':
+            elif basename in _NEVER_SKIPPED_JS_FILES:
                 checker = JSTestChecker(file_path, handle_style_error)
             else:
                 checker = TextChecker(file_path, handle_style_error)

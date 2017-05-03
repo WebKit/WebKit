@@ -1,3 +1,37 @@
+2017-05-02  David Kilzer  <ddkilzer@apple.com>
+
+        check-webkit-style should also keep js-test-post[-async].js in sync
+        <https://webkit.org/b/171568>
+
+        Reviewed by Joseph Pecoraro.
+
+        * Scripts/webkitpy/style/checker.py:
+        (_NEVER_SKIPPED_JS_FILES): Add new list that just contains
+        JavaScript files not to be skipped.
+        (_NEVER_SKIPPED_FILES): Update to use _NEVER_SKIPPED_JS_FILES.
+        (CheckerDispatcher._create_checker): Update to use
+        _NEVER_SKIPPED_JS_FILES.
+
+        * Scripts/webkitpy/style/checkers/jstest.py:
+        (ALL_JS_TEST_FUNCTION_FILES): Rename from ALL_JS_TEST_FILES.
+        This is the list of files containing functions that need to be
+        kept in sync.
+        (KEEP_JS_TEST_FILES_IN_SYNC): Change to list-of-lists format so
+        we can keep more sets of files in sync between
+        LayoutTests/resources and LayoutTests/http/tests/resources.
+        (JSTestChecker.check): Update to use KEEP_JS_TEST_FILES_IN_SYNC
+        as list of lists.  Update for ALL_JS_TEST_FUNCTION_FILES rename.
+        (JSTestChecker.check_js_test_files): Add 'file_group' argument
+        for list of files to check instead of using
+        KEEP_JS_TEST_FILES_IN_SYNC.
+        (JSTestChecker.check_js_test_functions): Update for
+        ALL_JS_TEST_FUNCTION_FILES rename.
+
+        * Scripts/webkitpy/style/checkers/jstest_unittest.py:
+        (JSTestCheckerTestCase):
+        (JSTestCheckerTestCase.test_map_functions_to_dict):
+        - Add test case for map_functions_to_dict() in jstest.py.
+
 2017-05-02  Aakash Jain  <aakash_jain@apple.com>
 
         ews should indicate in logs when it fails to fetch the attachment

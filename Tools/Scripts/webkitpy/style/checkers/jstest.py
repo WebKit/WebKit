@@ -27,7 +27,7 @@ import re
 
 from webkitpy.common.system.systemhost import SystemHost
 
-ALL_JS_TEST_FILES = [
+ALL_JS_TEST_FUNCTION_FILES = [
     'JSTests/stress/resources/standalone-pre.js',
     'LayoutTests/http/tests/resources/js-test-pre.js',
     'LayoutTests/resources/js-test-pre.js',
@@ -36,8 +36,12 @@ ALL_JS_TEST_FILES = [
 ]
 
 KEEP_JS_TEST_FILES_IN_SYNC = [
-    'LayoutTests/http/tests/resources/js-test-pre.js',
-    'LayoutTests/resources/js-test-pre.js',
+    ['LayoutTests/http/tests/resources/js-test-pre.js',
+     'LayoutTests/resources/js-test-pre.js'],
+    ['LayoutTests/http/tests/resources/js-test-post.js',
+     'LayoutTests/resources/js-test-post.js'],
+    ['LayoutTests/http/tests/resources/js-test-post-async.js',
+     'LayoutTests/resources/js-test-post-async.js'],
 ]
 
 KEEP_JS_TEST_FUNCTIONS_IN_SYNC = [
@@ -92,21 +96,19 @@ class JSTestChecker(object):
 
     def check(self, lines):
         """Run all the checks."""
-        if self._file_path not in ALL_JS_TEST_FILES:
-            return
+        for file_group in KEEP_JS_TEST_FILES_IN_SYNC:
+            if self._file_path in file_group:
+                self.check_js_test_files(file_group)
 
-        if self._file_path in KEEP_JS_TEST_FILES_IN_SYNC:
-            self.check_js_test_files()
-
-        if self._file_path in ALL_JS_TEST_FILES:
+        if self._file_path in ALL_JS_TEST_FUNCTION_FILES:
             self.check_js_test_functions()
 
-    def check_js_test_files(self):
-        """Test that files in KEEP_JS_TEST_FILES_IN_SYNC are identical."""
+    def check_js_test_files(self, file_group):
+        """Test that files in 'file_group' are identical."""
         with self._fs.open_binary_file_for_reading(self._file_path) as file_handle:
             baseline_content = file_handle.read()
 
-        other_files = KEEP_JS_TEST_FILES_IN_SYNC
+        other_files = file_group
         other_files.remove(self._file_path)
 
         for path in other_files:
@@ -122,7 +124,7 @@ class JSTestChecker(object):
             baseline_content = file_handle.read()
         baseline_function_map = map_functions_to_dict(baseline_content)
 
-        other_files = ALL_JS_TEST_FILES
+        other_files = ALL_JS_TEST_FUNCTION_FILES
         other_files.remove(self._file_path)
 
         for path in other_files:
