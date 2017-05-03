@@ -1,3 +1,18 @@
+2017-05-03  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (r216129): ASSERTION FAILED: m_process->state() == WebProcessProxy::State::Terminated
+        https://bugs.webkit.org/show_bug.cgi?id=171616
+
+        Reviewed by Brady Eidson.
+
+        Stop calling resetStateAfterProcessExited() in WebPageProxy::terminateProcess() as the call to
+        WebProcessProxy::requestTermination() already causes WebPageProxy::processDidCrash() to be called
+        after r216129. WebPageProxy::processDidCrash() already takes care of calling
+        resetStateAfterProcessExited().
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::terminateProcess):
+
 2017-05-03  Brady Eidson  <beidson@apple.com>
 
         Handle KVO updating of the "hasOnlySecureContent" before a page results in an HTTP auth challenge.

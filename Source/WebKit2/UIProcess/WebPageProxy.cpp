@@ -2412,7 +2412,6 @@ void WebPageProxy::terminateProcess()
         return;
 
     m_process->requestTermination();
-    resetStateAfterProcessExited();
 }
 
 SessionState WebPageProxy::sessionState(const std::function<bool (WebBackForwardListItem&)>& filter) const
