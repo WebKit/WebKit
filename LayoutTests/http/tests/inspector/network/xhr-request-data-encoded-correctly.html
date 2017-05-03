@@ -18,19 +18,18 @@ function test()
         name: "XHRWithRequestDataIsEncodedCorrectly",
         description: "XHR with request data is encoded correctly.",
         test(resolve, reject) {
-            WebInspector.Frame.awaitEvent(WebInspector.Frame.Event.ResourceWasAdded)
-            .then((event) => {
+            InspectorTest.evaluateInPage(`createXHRResource()`);
+            WebInspector.Frame.singleFireEventListener(WebInspector.Frame.Event.ResourceWasAdded, (event) => {
                 let resource = event.data.resource;
                 InspectorTest.expectThat(resource instanceof WebInspector.Resource, "Resource should be created.");
                 InspectorTest.expectThat(resource.requestData === "utf8=👍", "Request data should have expected content.");
-                return resource.awaitEvent(WebInspector.Resource.Event.LoadingDidFinish);
-            })
-            .then((event) => {
-                InspectorTest.pass("Resource load should finish.");
-            })
-            .then(resolve, reject);
-
-            InspectorTest.evaluateInPage("createXHRResource()");
+                resource.awaitEvent(WebInspector.Resource.Event.LoadingDidFinish)
+                    .then((event) => { InspectorTest.pass("Resource load should finish.") })
+                    .then(resolve, reject);
+                resource.awaitEvent(WebInspector.Resource.Event.LoadingDidFail)
+                    .then(() => { InspectorTest.fail("Resource should not have failed to load.") })
+                    .then(reject, reject);
+            });
         }
     });
 
@@ -39,6 +38,6 @@ function test()
 </script>
 </head>
 <body onload="runTest()">
-    <p>Tests XHR network resource payload is shown with correct encoding.</p>
+<p>Tests XHR network resource payload is shown with correct encoding.</p>
 </body>
 </html>

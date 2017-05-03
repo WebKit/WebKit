@@ -12,7 +12,7 @@ function test()
         suite.addTestCase({
             name, test(resolve, reject) {
                 InspectorTest.evaluateInPage(expression);
-                WebInspector.Frame.awaitEvent(WebInspector.Frame.Event.ResourceWasAdded).then((event) => {
+                WebInspector.Frame.singleFireEventListener(WebInspector.Frame.Event.ResourceWasAdded, (event) => {
                     let resource = event.data.resource;
                     InspectorTest.expectEqual(resource.type, WebInspector.Resource.Type.Fetch, "Resource should be Fetch type.");
                     if (loadedHandler) {

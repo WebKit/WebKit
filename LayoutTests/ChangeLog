@@ -1,3 +1,18 @@
+2017-05-03  Joseph Pecoraro  <pecoraro@apple.com>
+
+        LayoutTest http/tests/inspector/network/fetch-network-data.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=166038
+        <rdar://problem/29488489>
+
+        Reviewed by Matt Baker.
+
+        * platform/mac/TestExpectations:
+        * http/tests/inspector/network/fetch-network-data.html:
+        * http/tests/inspector/network/xhr-request-data-encoded-correctly.html:
+        Use singleFireEventListener instead of awaitEvent so that the follow-up event handlers
+        can be added synchronously instead of in a microtask. When the microtask happened later
+        than other incoming events then the follow-up handlers would have been added too late.
+
 2017-05-03  Matt Lewis  <jlewis3@apple.com>
 
         Mark imported/w3c/web-platform-tests/html/webappapis/timers/negative-settimeout.html as flaky.
