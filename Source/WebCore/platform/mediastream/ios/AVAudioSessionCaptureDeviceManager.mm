@@ -124,7 +124,7 @@ void AVAudioSessionCaptureDeviceManager::refreshAudioCaptureDevices()
 
     for (AVAudioSessionPortDescription *portDescription in [AVAudioSession sharedInstance].availableInputs) {
         auto audioDevice = AVAudioSessionCaptureDevice::create(portDescription);
-        newDevices.append({ audioDevice.persistentId(), audioDevice.type(), audioDevice.label(), audioDevice.groupId() });
+        newDevices.append(audioDevice);
         newAudioDevices.append(WTFMove(audioDevice));
     }
 

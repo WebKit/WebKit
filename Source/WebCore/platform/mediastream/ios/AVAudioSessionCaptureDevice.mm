@@ -36,7 +36,9 @@ AVAudioSessionCaptureDevice AVAudioSessionCaptureDevice::create(AVAudioSessionPo
 {
     String persistentID = portDescription.UID;
     String label = portDescription.portName;
-    return AVAudioSessionCaptureDevice(portDescription, persistentID, label);
+    auto device = AVAudioSessionCaptureDevice(portDescription, persistentID, label);
+    device.setEnabled(portDescription.dataSources.count);
+    return device;
 }
 
 AVAudioSessionCaptureDevice::AVAudioSessionCaptureDevice(AVAudioSessionPortDescription* portDescription, const String& persistentID, const String& label)
