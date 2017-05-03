@@ -1,3 +1,12 @@
+2017-05-03  Matt Lewis  <jlewis3@apple.com>
+
+        Marked test http/tests/local/blob/send-sliced-data-blob.html as flaky failure and timeout.
+        https://bugs.webkit.org/show_bug.cgi?id=171564
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
 2017-05-03  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: Treat cells with ARIA table cell properties as cells
