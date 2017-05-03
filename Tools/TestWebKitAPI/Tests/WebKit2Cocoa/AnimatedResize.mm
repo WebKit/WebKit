@@ -82,7 +82,7 @@ static RetainPtr<TestNavigationDelegate> createFirstVisuallyNonEmptyWatchingNavi
     return navigationDelegate;
 }
 
-TEST(WebKit2, DISABLED_ResizeWithHiddenContentDoesNotHang)
+TEST(WebKit2, ResizeWithHiddenContentDoesNotHang)
 {
     auto webView = createAnimatedResizeWebView();
     auto navigationDelegate = createFirstVisuallyNonEmptyWatchingNavigationDelegate();

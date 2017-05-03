@@ -66,10 +66,12 @@
 
             if (testRunner.runUIScript) {
                 testRunner.runUIScript(getUIScript(), function() {
-                    debug("swipe complete");
-                    shouldBe("scroller.scrollTop", "0");
-                    shouldBe("document.scrollingElement.scrollTop", "90");
-                    finishJSTest();
+                    setTimeout(function() {
+                        debug("swipe complete");
+                        shouldBe("scroller.scrollTop", "0");
+                        shouldBe("document.scrollingElement.scrollTop", "90");
+                        finishJSTest();
+                    }, 0);
                 });
             }
         }

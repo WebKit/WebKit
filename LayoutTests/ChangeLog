@@ -1,3 +1,17 @@
+2017-05-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Have WKWebView call _updateVisibleContentRects for the current transaction if possible, rather than always delaying
+        https://bugs.webkit.org/show_bug.cgi?id=171619
+        https://bugs.webkit.org/show_bug.cgi?id=170153
+
+        Reviewed by Tim Horton.
+
+        These tests need to wait a bit for the scrolling state of the document to be updated.
+
+        * fast/scrolling/ios/touch-scroll-pointer-events-none.html:
+        * fast/scrolling/ios/touch-scroll-visibility-hidden.html:
+        * platform/ios-wk2/TestExpectations:
+
 2017-05-03  Yoav Weiss  <yoav@yoav.ws>
 
         Link preload HTMLPreloadScanner support

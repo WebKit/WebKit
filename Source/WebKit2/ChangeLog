@@ -1,3 +1,22 @@
+2017-05-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Have WKWebView call _updateVisibleContentRects for the current transaction if possible, rather than always delaying
+        https://bugs.webkit.org/show_bug.cgi?id=171619
+        
+        Also fixes webkit.org/b/170153 and webkit.org/b/170195
+
+        Reviewed by Tim Horton.
+
+        In r214391 we started adding the pre-commit handler in a dispatch_async() to ensure that
+        the handler would always run, since we couldn't reliably test the phase of the current
+        transaction. Now that problem has been solved (rdar://problem/31253952) we can go back to
+        checking the transaction phase on newer iOS versions. If we're too late for the current transaction
+        we still need to dispatch_async() to get into the next one.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _addUpdateVisibleContentRectPreCommitHandler]):
+        (-[WKWebView _scheduleVisibleContentRectUpdateAfterScrollInView:]):
+
 2017-05-03  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (r216129): ASSERTION FAILED: m_process->state() == WebProcessProxy::State::Terminated

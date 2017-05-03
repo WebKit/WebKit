@@ -2311,6 +2311,16 @@ static WebCore::FloatSize activeMinimumLayoutSize(WKWebView *webView, const CGRe
     return isStableState;
 }
 
+- (void)_addUpdateVisibleContentRectPreCommitHandler
+{
+    auto retainedSelf = retainPtr(self);
+    [CATransaction addCommitHandler:[retainedSelf] {
+        WKWebView *webView = retainedSelf.get();
+        [webView _updateVisibleContentRects];
+        webView->_hasScheduledVisibleRectUpdate = NO;
+    } forPhase:kCATransactionPhasePreCommit];
+}
+
 - (void)_scheduleVisibleContentRectUpdateAfterScrollInView:(UIScrollView *)scrollView
 {
     _visibleContentRectUpdateScheduledFromScrollViewInStableState = [self _scrollViewIsInStableState:scrollView];
@@ -2320,13 +2330,17 @@ static WebCore::FloatSize activeMinimumLayoutSize(WKWebView *webView, const CGRe
 
     _hasScheduledVisibleRectUpdate = YES;
     
-    // FIXME: remove the dispatch_async() when we have a fix for rdar://problem/31253952.
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
+    CATransactionPhase transactionPhase = [CATransaction currentPhase];
+    if (transactionPhase == kCATransactionPhaseNull || transactionPhase == kCATransactionPhasePreLayout) {
+        [self _addUpdateVisibleContentRectPreCommitHandler];
+        return;
+    }
+#endif
+
     dispatch_async(dispatch_get_main_queue(), [retainedSelf = retainPtr(self)] {
-        [CATransaction addCommitHandler:[retainedSelf] {
-            WKWebView *webView = retainedSelf.get();
-            [webView _updateVisibleContentRects];
-            webView->_hasScheduledVisibleRectUpdate = NO;
-        } forPhase:kCATransactionPhasePreCommit];
+        WKWebView *webView = retainedSelf.get();
+        [webView _addUpdateVisibleContentRectPreCommitHandler];
     });
 }
 

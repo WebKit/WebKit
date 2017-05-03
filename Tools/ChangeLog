@@ -1,3 +1,16 @@
+2017-05-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Have WKWebView call _updateVisibleContentRects for the current transaction if possible, rather than always delaying
+        https://bugs.webkit.org/show_bug.cgi?id=171619
+        https://bugs.webkit.org/show_bug.cgi?id=170195
+
+        Reviewed by Tim Horton.
+
+        Re-enable WebKit2.ResizeWithHiddenContentDoesNotHang.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/AnimatedResize.mm:
+        (TEST):
+
 2017-05-03  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         YouTube user agent quirk breaks new YouTube
