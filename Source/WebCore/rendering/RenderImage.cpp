@@ -584,7 +584,8 @@ void RenderImage::paintIntoRect(GraphicsContext& context, const FloatRect& rect)
         downcast<BitmapImage>(*image).updateFromSettings(settings());
 
     ImageOrientationDescription orientationDescription(shouldRespectImageOrientation(), style().imageOrientation());
-    context.drawImage(*img, rect, ImagePaintingOptions(compositeOperator, BlendModeNormal, DecodingMode::Asynchronous, orientationDescription, interpolation));
+    auto decodingMode = (view().frameView().paintBehavior() & PaintBehaviorFlattenCompositingLayers) ? DecodingMode::Synchronous : DecodingMode::Asynchronous;
+    context.drawImage(*img, rect, ImagePaintingOptions(compositeOperator, BlendModeNormal, decodingMode, orientationDescription, interpolation));
 }
 
 bool RenderImage::boxShadowShouldBeAppliedToBackground(const LayoutPoint& paintOffset, BackgroundBleedAvoidance bleedAvoidance, InlineFlowBox*) const

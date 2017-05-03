@@ -123,8 +123,8 @@ TEST(WKWebView, SnapshotImageBaseCase)
         NSInteger viewHeightInPixels = viewHeight * backingScaleFactor;
 
         unsigned char rgba[viewWidthInPixels * viewHeightInPixels * 4];
-        CGContextRef context = CGBitmapContextCreate(rgba, viewWidthInPixels, viewHeightInPixels, 8, 4 * viewWidthInPixels, colorSpace.get(), kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big);
-        CGContextDrawImage(context, CGRectMake(0, 0, viewWidthInPixels, viewHeightInPixels), cgImage.get());
+        RetainPtr<CGContextRef> context = CGBitmapContextCreate(rgba, viewWidthInPixels, viewHeightInPixels, 8, 4 * viewWidthInPixels, colorSpace.get(), kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big);
+        CGContextDrawImage(context.get(), CGRectMake(0, 0, viewWidthInPixels, viewHeightInPixels), cgImage.get());
 
         NSInteger pixelIndex = getPixelIndex(0, 0, viewWidthInPixels);
         EXPECT_EQ(255, rgba[pixelIndex]);
@@ -142,7 +142,6 @@ TEST(WKWebView, SnapshotImageBaseCase)
         EXPECT_EQ(0, rgba[pixelIndex + 1]);
         EXPECT_EQ(0, rgba[pixelIndex + 2]);
 
-        CGContextRelease(context);
         isDone = true;
     }];
 
@@ -237,6 +236,57 @@ TEST(WKWebView, SnapshotImageUninitializedSnapshotWidth)
         EXPECT_NULL(error);
         EXPECT_NOT_NULL(snapshotImage);
         EXPECT_EQ([snapshotConfiguration rect].size.width, snapshotImage.size.width);
+
+        isDone = true;
+    }];
+
+    TestWebKitAPI::Util::run(&isDone);
+}
+
+TEST(WKWebView, SnapshotImageLargeAsyncDecoding)
+{
+    NSInteger viewWidth = 800;
+    NSInteger viewHeight = 600;
+    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, viewWidth, viewHeight)]);
+
+    NSURL *fileURL = [[NSBundle mainBundle] URLForResource:@"large-red-square-image" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    [webView loadFileURL:fileURL allowingReadAccessToURL:fileURL];
+    [webView _test_waitForDidFinishNavigation];
+
+    RetainPtr<WKSnapshotConfiguration> snapshotConfiguration = adoptNS([[WKSnapshotConfiguration alloc] init]);
+    [snapshotConfiguration setRect:NSMakeRect(0, 0, viewWidth, viewHeight)];
+    [snapshotConfiguration setSnapshotWidth:@(viewWidth)];
+
+    isDone = false;
+    [webView takeSnapshotWithConfiguration:snapshotConfiguration.get() completionHandler:^(PlatformImage snapshotImage, NSError *error) {
+        EXPECT_NULL(error);
+
+        EXPECT_EQ(viewWidth, snapshotImage.size.width);
+
+        RetainPtr<CGImageRef> cgImage = convertToCGImage(snapshotImage);
+        RetainPtr<CGColorSpaceRef> colorSpace = adoptCF(CGColorSpaceCreateDeviceRGB());
+
+        unsigned char rgba[viewWidth * viewHeight * 4];
+        RetainPtr<CGContextRef> context = CGBitmapContextCreate(rgba, viewWidth, viewHeight, 8, 4 * viewWidth, colorSpace.get(), kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big);
+        CGContextDrawImage(context.get(), CGRectMake(0, 0, viewWidth, viewHeight), cgImage.get());
+
+        // Top-left corner of the div (0, 0, 100, 100)
+        NSInteger pixelIndex = getPixelIndex(0, 0, viewWidth);
+        EXPECT_EQ(255, rgba[pixelIndex]);
+        EXPECT_EQ(0, rgba[pixelIndex + 1]);
+        EXPECT_EQ(0, rgba[pixelIndex + 2]);
+
+        // Right-bottom corner of the div (0, 0, 100, 100)
+        pixelIndex = getPixelIndex(99, 99, viewWidth);
+        EXPECT_EQ(255, rgba[pixelIndex]);
+        EXPECT_EQ(0, rgba[pixelIndex + 1]);
+        EXPECT_EQ(0, rgba[pixelIndex + 2]);
+
+        // Outside the div (0, 0, 100, 100)
+        pixelIndex = getPixelIndex(100, 100, viewWidth);
+        EXPECT_EQ(255, rgba[pixelIndex]);
+        EXPECT_EQ(255, rgba[pixelIndex + 1]);
+        EXPECT_EQ(255, rgba[pixelIndex + 2]);
 
         isDone = true;
     }];

@@ -1,3 +1,19 @@
+2017-05-03  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Async image decoding should be disabled for snapshots, printing and preview
+        https://bugs.webkit.org/show_bug.cgi?id=171467
+ 
+        Reviewed by Simon Fraser.
+ 
+        Asynchronous image decoding should only be used for window display where
+        RenderElements can be repainted and painted. For cases where there is only
+        one chance to draw the image, synchronous decoding should be used. 
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paintIntoRect):
+
 2017-05-03  Nan Wang  <n_wang@apple.com>
 
         AX: VO skips cells after cell with aria-colspan
