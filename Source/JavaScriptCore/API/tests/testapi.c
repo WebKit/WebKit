@@ -1117,7 +1117,13 @@ static void checkConstnessInJSObjectNames()
     val.name = "something";
 }
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 void JSSynchronousGarbageCollectForDebugging(JSContextRef);
+#ifdef __cplusplus
+}
+#endif
 
 static const unsigned numWeakRefs = 10000;
 
