@@ -1,3 +1,22 @@
+2017-05-03  Zalan Bujtas  <zalan@apple.com>
+
+        SearchInputType could end up with a mismatched renderer.
+        https://bugs.webkit.org/show_bug.cgi?id=171547
+        <rdar://problem/31935047>
+
+        Reviewed by Antti Koivisto.
+
+        Normally we've got the correct renderer by the time we call into SearchInputType.
+        However, since HTMLInputElement::updateType() eagerly updates the type while the associated renderers are done lazily
+        (so we don't get them updated until after the next tree update), we could actually end up
+        with a mismatched renderer (e.g. through form submission).
+
+        Test: fast/forms/change-input-type-and-submit-form-crash.html
+
+        * html/SearchInputType.cpp:
+        (WebCore::SearchInputType::addSearchResult):
+        (WebCore::SearchInputType::didSetValueByUserEdit):
+
 2017-05-03  Jer Noble  <jer.noble@apple.com>
 
         Make the VPIO audio unit a singleton, shared between multiple CaptureSources

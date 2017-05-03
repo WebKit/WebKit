@@ -1,3 +1,14 @@
+2017-05-03  Zalan Bujtas  <zalan@apple.com>
+
+        SearchInputType could end up with a mismatched renderer.
+        https://bugs.webkit.org/show_bug.cgi?id=171547
+        <rdar://problem/31935047>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/forms/change-input-type-and-submit-form-crash-expected.txt: Added.
+        * fast/forms/change-input-type-and-submit-form-crash.html: Added.
+
 2017-05-03  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark media/modern-media-controls/slider/slider-styles.html as flaky on mac-wk1.

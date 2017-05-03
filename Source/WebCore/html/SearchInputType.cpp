@@ -55,8 +55,11 @@ SearchInputType::SearchInputType(HTMLInputElement& element)
 void SearchInputType::addSearchResult()
 {
 #if !PLATFORM(IOS)
-    if (auto* renderer = element().renderer())
-        downcast<RenderSearchField>(*renderer).addSearchResult();
+    // Normally we've got the correct renderer by the time we get here. However when the input type changes
+    // we don't update the associated renderers until after the next tree update, so we could actually end up here
+    // with a mismatched renderer (e.g. through form submission).
+    if (is<RenderSearchField>(element().renderer()))
+        downcast<RenderSearchField>(*element().renderer()).addSearchResult();
 #endif
 }
 
@@ -185,9 +188,8 @@ bool SearchInputType::searchEventsShouldBeDispatched() const
 
 void SearchInputType::didSetValueByUserEdit()
 {
-    if (m_cancelButton && element().renderer())
+    if (m_cancelButton && is<RenderSearchField>(element().renderer()))
         downcast<RenderSearchField>(*element().renderer()).updateCancelButtonVisibility();
-
     // If the incremental attribute is set, then dispatch the search event
     if (searchEventsShouldBeDispatched())
         startSearchEventTimer();
