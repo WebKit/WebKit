@@ -36,7 +36,7 @@
 #include "ProcessingInstruction.h"
 #include "SVGStyleElement.h"
 #include "Settings.h"
-#include "StyleInvalidationAnalysis.h"
+#include "StyleInvalidator.h"
 #include "StyleResolver.h"
 #include "StyleScope.h"
 #include "StyleSheetContents.h"

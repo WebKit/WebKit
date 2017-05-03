@@ -30,7 +30,7 @@
 #include "ElementChildIterator.h"
 #include "ShadowRoot.h"
 #include "SpaceSplitString.h"
-#include "StyleInvalidationAnalysis.h"
+#include "StyleInvalidator.h"
 #include "StyleResolver.h"
 #include "StyleScope.h"
 #include <wtf/BitVector.h>
@@ -149,8 +149,8 @@ void ClassChangeInvalidation::invalidateStyle(const SpaceSplitString& oldClasses
 void ClassChangeInvalidation::invalidateDescendantStyle()
 {
     for (auto* ancestorClassRules : m_descendantInvalidationRuleSets) {
-        StyleInvalidationAnalysis invalidationAnalysis(*ancestorClassRules);
-        invalidationAnalysis.invalidateStyle(m_element);
+        Invalidator invalidator(*ancestorClassRules);
+        invalidator.invalidateStyle(m_element);
     }
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2014, 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "StyleInvalidationAnalysis.h"
+#include "StyleInvalidator.h"
 
 #include "CSSSelectorList.h"
 #include "Document.h"
@@ -37,6 +37,7 @@
 #include "StyleSheetContents.h"
 
 namespace WebCore {
+namespace Style {
 
 static bool shouldDirtyAllStyle(const Vector<RefPtr<StyleRuleBase>>& rules)
 {
@@ -76,7 +77,7 @@ static bool shouldDirtyAllStyle(const Vector<StyleSheetContents*>& sheets)
     return false;
 }
 
-StyleInvalidationAnalysis::StyleInvalidationAnalysis(const Vector<StyleSheetContents*>& sheets, const MediaQueryEvaluator& mediaQueryEvaluator)
+Invalidator::Invalidator(const Vector<StyleSheetContents*>& sheets, const MediaQueryEvaluator& mediaQueryEvaluator)
     : m_ownedRuleSet(std::make_unique<RuleSet>())
     , m_ruleSet(*m_ownedRuleSet)
     , m_dirtiesAllStyle(shouldDirtyAllStyle(sheets))
@@ -91,13 +92,13 @@ StyleInvalidationAnalysis::StyleInvalidationAnalysis(const Vector<StyleSheetCont
     m_hasShadowPseudoElementRulesInAuthorSheet = m_ruleSet.hasShadowPseudoElementRules();
 }
 
-StyleInvalidationAnalysis::StyleInvalidationAnalysis(const RuleSet& ruleSet)
+Invalidator::Invalidator(const RuleSet& ruleSet)
     : m_ruleSet(ruleSet)
     , m_hasShadowPseudoElementRulesInAuthorSheet(ruleSet.hasShadowPseudoElementRules())
 {
 }
 
-StyleInvalidationAnalysis::CheckDescendants StyleInvalidationAnalysis::invalidateIfNeeded(Element& element, const SelectorFilter* filter)
+Invalidator::CheckDescendants Invalidator::invalidateIfNeeded(Element& element, const SelectorFilter* filter)
 {
     if (m_hasShadowPseudoElementRulesInAuthorSheet) {
         // FIXME: This could do actual rule matching too.
@@ -138,7 +139,7 @@ StyleInvalidationAnalysis::CheckDescendants StyleInvalidationAnalysis::invalidat
     return CheckDescendants::Yes;
 }
 
-void StyleInvalidationAnalysis::invalidateStyleForTree(Element& root, SelectorFilter* filter)
+void Invalidator::invalidateStyleForTree(Element& root, SelectorFilter* filter)
 {
     if (invalidateIfNeeded(root, filter) == CheckDescendants::No)
         return;
@@ -171,7 +172,7 @@ void StyleInvalidationAnalysis::invalidateStyleForTree(Element& root, SelectorFi
     }
 }
 
-void StyleInvalidationAnalysis::invalidateStyle(Document& document)
+void Invalidator::invalidateStyle(Document& document)
 {
     ASSERT(!m_dirtiesAllStyle);
 
@@ -183,7 +184,7 @@ void StyleInvalidationAnalysis::invalidateStyle(Document& document)
     invalidateStyleForTree(*documentElement, &filter);
 }
 
-void StyleInvalidationAnalysis::invalidateStyle(ShadowRoot& shadowRoot)
+void Invalidator::invalidateStyle(ShadowRoot& shadowRoot)
 {
     ASSERT(!m_dirtiesAllStyle);
 
@@ -196,7 +197,7 @@ void StyleInvalidationAnalysis::invalidateStyle(ShadowRoot& shadowRoot)
     }
 }
 
-void StyleInvalidationAnalysis::invalidateStyle(Element& element)
+void Invalidator::invalidateStyle(Element& element)
 {
     ASSERT(!m_dirtiesAllStyle);
 
@@ -204,4 +205,5 @@ void StyleInvalidationAnalysis::invalidateStyle(Element& element)
     invalidateStyleForTree(element, nullptr);
 }
 
+}
 }

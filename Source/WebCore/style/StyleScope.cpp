@@ -42,7 +42,7 @@
 #include "SVGStyleElement.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
-#include "StyleInvalidationAnalysis.h"
+#include "StyleInvalidator.h"
 #include "StyleResolver.h"
 #include "StyleSheetContents.h"
 #include "StyleSheetList.h"
@@ -403,14 +403,14 @@ Scope::StyleResolverUpdateType Scope::analyzeStyleSheetChange(const Vector<RefPt
     if (!m_document.bodyOrFrameset() || m_document.hasNodesWithNonFinalStyle() || m_document.hasNodesWithMissingStyle())
         return styleResolverUpdateType;
 
-    StyleInvalidationAnalysis invalidationAnalysis(addedSheets, styleResolver.mediaQueryEvaluator());
-    if (invalidationAnalysis.dirtiesAllStyle())
+    Invalidator invalidator(addedSheets, styleResolver.mediaQueryEvaluator());
+    if (invalidator.dirtiesAllStyle())
         return styleResolverUpdateType;
 
     if (m_shadowRoot)
-        invalidationAnalysis.invalidateStyle(*m_shadowRoot);
+        invalidator.invalidateStyle(*m_shadowRoot);
     else
-        invalidationAnalysis.invalidateStyle(m_document);
+        invalidator.invalidateStyle(m_document);
 
     requiresFullStyleRecalc = false;
 

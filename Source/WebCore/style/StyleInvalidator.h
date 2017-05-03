@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2014, 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,10 +37,12 @@ class SelectorFilter;
 class ShadowRoot;
 class StyleSheetContents;
 
-class StyleInvalidationAnalysis {
+namespace Style {
+
+class Invalidator {
 public:
-    StyleInvalidationAnalysis(const Vector<StyleSheetContents*>&, const MediaQueryEvaluator&);
-    StyleInvalidationAnalysis(const RuleSet&);
+    Invalidator(const Vector<StyleSheetContents*>&, const MediaQueryEvaluator&);
+    Invalidator(const RuleSet&);
 
     bool dirtiesAllStyle() const { return m_dirtiesAllStyle; }
     bool hasShadowPseudoElementRulesInAuthorSheet() const { return m_hasShadowPseudoElementRulesInAuthorSheet; }
@@ -60,4 +62,5 @@ private:
     bool m_didInvalidateHostChildren { false };
 };
 
-} // namespace WebCore
+}
+}

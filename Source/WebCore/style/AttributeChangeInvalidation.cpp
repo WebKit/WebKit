@@ -29,7 +29,7 @@
 #include "DocumentRuleSets.h"
 #include "ElementIterator.h"
 #include "ShadowRoot.h"
-#include "StyleInvalidationAnalysis.h"
+#include "StyleInvalidator.h"
 #include "StyleResolver.h"
 #include "StyleScope.h"
 
@@ -116,8 +116,8 @@ void AttributeChangeInvalidation::invalidateDescendants()
 {
     if (!m_descendantInvalidationRuleSet)
         return;
-    StyleInvalidationAnalysis invalidationAnalysis(*m_descendantInvalidationRuleSet);
-    invalidationAnalysis.invalidateStyle(m_element);
+    Invalidator invalidator(*m_descendantInvalidationRuleSet);
+    invalidator.invalidateStyle(m_element);
 }
 
 }

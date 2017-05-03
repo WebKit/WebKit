@@ -1393,7 +1393,6 @@ set(WebCore_SOURCES
     css/SelectorChecker.cpp
     css/SelectorFilter.cpp
     css/StyleColor.cpp
-    css/StyleInvalidationAnalysis.cpp
     css/StyleMedia.cpp
     css/StyleProperties.cpp
     css/StylePropertyShorthand.cpp
@@ -2735,6 +2734,7 @@ set(WebCore_SOURCES
     style/RenderTreeUpdater.cpp
     style/StyleChange.cpp
     style/StyleFontSizeFunctions.cpp
+    style/StyleInvalidator.cpp
     style/StylePendingResources.cpp
     style/StyleRelations.cpp
     style/StyleResolveForDocument.cpp

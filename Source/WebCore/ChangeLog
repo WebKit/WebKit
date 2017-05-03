@@ -1,3 +1,38 @@
+2017-05-03  Antti Koivisto  <antti@apple.com>
+
+        Rename StyleInvalidationAnalysis to Style::Invalidator
+        https://bugs.webkit.org/show_bug.cgi?id=171601
+
+        Reviewed by Žan Doberšek.
+
+        Also move it to the 'style' directory.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/StyleInvalidationAnalysis.cpp: Removed.
+        * css/StyleInvalidationAnalysis.h: Removed.
+        * dom/ExtensionStyleSheets.cpp:
+        * style/AttributeChangeInvalidation.cpp:
+        (WebCore::Style::AttributeChangeInvalidation::invalidateDescendants):
+        * style/ClassChangeInvalidation.cpp:
+        (WebCore::Style::ClassChangeInvalidation::invalidateDescendantStyle):
+        * style/StyleInvalidator.cpp: Copied from Source/WebCore/css/StyleInvalidationAnalysis.cpp.
+        (WebCore::Style::Invalidator::Invalidator):
+        (WebCore::Style::Invalidator::invalidateIfNeeded):
+        (WebCore::Style::Invalidator::invalidateStyleForTree):
+        (WebCore::Style::Invalidator::invalidateStyle):
+        (WebCore::shouldDirtyAllStyle): Deleted.
+        (WebCore::StyleInvalidationAnalysis::StyleInvalidationAnalysis): Deleted.
+        (WebCore::StyleInvalidationAnalysis::invalidateIfNeeded): Deleted.
+        (WebCore::StyleInvalidationAnalysis::invalidateStyleForTree): Deleted.
+        (WebCore::StyleInvalidationAnalysis::invalidateStyle): Deleted.
+        * style/StyleInvalidator.h: Copied from Source/WebCore/css/StyleInvalidationAnalysis.h.
+        (WebCore::StyleInvalidationAnalysis::dirtiesAllStyle): Deleted.
+        (WebCore::StyleInvalidationAnalysis::hasShadowPseudoElementRulesInAuthorSheet): Deleted.
+        * style/StyleScope.cpp:
+        (WebCore::Style::Scope::resolver):
+        (WebCore::Style::Scope::analyzeStyleSheetChange):
+
 2017-05-02  Andrew Gold  <agold@apple.com>
 
         Typo in AVAudioSessionCaptureDeviceManager.mm
