@@ -1,3 +1,16 @@
+2017-05-02  Andrew Gold  <agold@apple.com>
+
+        Typo in AVAudioSessionCaptureDeviceManager.mm
+        https://bugs.webkit.org/show_bug.cgi?id=171572
+
+        Reviewed by Jer Noble.
+
+        We attempt to call +[AVAudioSession sharedSession], but the actual method is 
+        called +[AVAudioSession sharedInstance].
+
+        * platform/mediastream/ios/AVAudioSessionCaptureDeviceManager.mm:
+        (WebCore::AVAudioSessionCaptureDeviceManager::refreshAudioCaptureDevices):
+
 2017-05-02  Simon Fraser  <simon.fraser@apple.com>
 
         Improve scrolling tree logging

@@ -116,7 +116,7 @@ void AVAudioSessionCaptureDeviceManager::refreshAudioCaptureDevices()
         m_listener = adoptNS([[WebAVAudioSessionAvailableInputsListener alloc] initWithCallback:[this] {
             refreshAudioCaptureDevices();
         }]);
-        [[AVAudioSession sharedSession] addObserver:m_listener.get() forKeyPath:@"availableInputs" options:0 context:AvailableInputsContext];
+        [[AVAudioSession sharedInstance] addObserver:m_listener.get() forKeyPath:@"availableInputs" options:0 context:AvailableInputsContext];
     }
 
     Vector<AVAudioSessionCaptureDevice> newAudioDevices;
