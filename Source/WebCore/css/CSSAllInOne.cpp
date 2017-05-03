@@ -111,7 +111,7 @@
 #include "SVGCSSComputedStyleDeclaration.cpp"
 #include "SelectorChecker.cpp"
 #include "SelectorFilter.cpp"
-#include "StyleInvalidationAnalysis.cpp"
+#include "StyleInvalidator.cpp"
 #include "StyleMedia.cpp"
 #include "StyleProperties.cpp"
 #include "StylePropertyShorthand.cpp"

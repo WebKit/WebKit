@@ -1,3 +1,10 @@
+2017-05-03  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed attempt to fix the Windows build after r216117.
+        https://bugs.webkit.org/show_bug.cgi?id=171601
+
+        * css/CSSAllInOne.cpp:
+
 2017-05-03  Antti Koivisto  <antti@apple.com>
 
         Rename StyleInvalidationAnalysis to Style::Invalidator
