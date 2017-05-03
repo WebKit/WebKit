@@ -1,4 +1,21 @@
 =================
+WebKitGTK+ 2.17.1
+=================
+
+What's new in WebKitGTK+ 2.17.1?
+
+  - Switch to use new remote inspector infraestructure instead of legacy Web Sockets based one.
+  - Add API to enable and handle Web Automation.
+  - Load large images asynchronously off the main theead.
+  - Use GtkFileChooserNative for open/save dialogs when available.
+  - Make file chooser run as modal by default if possible.
+  - Fix position of dropdown menus in Wayland.
+  - Keep URI fragments after a server redirection.
+  - Implement support for aria-haspopup and aria-autocomplete.
+  - Implement aria-value support for focusable separators.
+  - Fix playing of some live streams.
+
+=================
 WebKitGTK+ 2.15.4
 =================
 
