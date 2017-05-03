@@ -2615,9 +2615,6 @@ bool FrameView::shouldUpdateCompositingLayersAfterScrolling() const
     if (!scrollingCoordinator)
         return true;
 
-    if (!scrollingCoordinator->supportsFixedPositionLayers())
-        return true;
-
     if (scrollingCoordinator->shouldUpdateScrollLayerPositionSynchronously(*this))
         return true;
 

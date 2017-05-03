@@ -84,7 +84,6 @@ protected:
 private:
     bool isAsyncScrollingCoordinator() const override { return true; }
 
-    bool supportsFixedPositionLayers() const override { return true; }
     bool hasVisibleSlowRepaintViewportConstrainedObjects(const FrameView&) const override { return false; }
     
     bool visualViewportEnabled() const;

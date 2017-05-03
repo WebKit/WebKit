@@ -561,8 +561,6 @@ void AsyncScrollingCoordinator::updateOverflowScrollingNode(ScrollingNodeID node
 
 void AsyncScrollingCoordinator::updateViewportConstrainedNode(ScrollingNodeID nodeID, const ViewportConstraints& constraints, GraphicsLayer* graphicsLayer)
 {
-    ASSERT(supportsFixedPositionLayers());
-
     ScrollingStateNode* node = m_scrollingStateTree->stateNodeForID(nodeID);
     if (!node)
         return;

@@ -3865,8 +3865,7 @@ void RenderLayerCompositor::updateScrollCoordinatedLayer(RenderLayer& layer, Lay
 
     bool isRootLayer = &layer == m_renderView.layer();
 
-    // FIXME: Remove supportsFixedPositionLayers() since all platforms support them now.
-    if (!scrollingCoordinator->supportsFixedPositionLayers() || (!layer.parent() && !isRootLayer))
+    if (!layer.parent() && !isRootLayer)
         return;
 
     ASSERT(m_scrollCoordinatedLayers.contains(&layer));

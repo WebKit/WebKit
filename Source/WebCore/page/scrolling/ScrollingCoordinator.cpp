@@ -335,9 +335,7 @@ SynchronousScrollingReasons ScrollingCoordinator::synchronousScrollingReasons(co
 #endif
     if (frameView.hasSlowRepaintObjects())
         synchronousScrollingReasons |= HasSlowRepaintObjects;
-    if (!supportsFixedPositionLayers() && frameView.hasViewportConstrainedObjects())
-        synchronousScrollingReasons |= HasViewportConstrainedObjectsWithoutSupportingFixedLayers;
-    if (supportsFixedPositionLayers() && hasVisibleSlowRepaintViewportConstrainedObjects(frameView))
+    if (hasVisibleSlowRepaintViewportConstrainedObjects(frameView))
         synchronousScrollingReasons |= HasNonLayerViewportConstrainedObjects;
     if (frameView.frame().mainFrame().document() && frameView.frame().document()->isImageDocument())
         synchronousScrollingReasons |= IsImageDocument;
