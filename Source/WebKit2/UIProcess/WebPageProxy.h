@@ -40,6 +40,7 @@
 #include "MessageSender.h"
 #include "NotificationPermissionRequestManagerProxy.h"
 #include "PageLoadState.h"
+#include "ProcessCrashReason.h"
 #include "ProcessThrottler.h"
 #include "SandboxExtension.h"
 #include "ShareableBitmap.h"
@@ -857,7 +858,7 @@ public:
 
     void processDidBecomeUnresponsive();
     void processDidBecomeResponsive();
-    void processDidCrash();
+    void processDidCrash(ProcessCrashReason);
     void willChangeProcessIsResponsive();
     void didChangeProcessIsResponsive();
 

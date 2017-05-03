@@ -32,6 +32,7 @@
 #include "HTTPCookieAcceptPolicy.h"
 #include "InjectedBundleHitTestResultMediaType.h"
 #include "PluginModuleInfo.h"
+#include "ProcessCrashReason.h"
 #include "ResourceCachesToClear.h"
 #include "WKBundleHitTestResult.h"
 #include "WKContext.h"
@@ -40,6 +41,7 @@
 #include "WKPage.h"
 #include "WKPreferencesRef.h"
 #include "WKPreferencesRefPrivate.h"
+#include "WKProcessCrashReason.h"
 #include "WKProtectionSpaceTypes.h"
 #include "WKResourceCacheManager.h"
 #include "WKSharedAPICast.h"
@@ -231,6 +233,22 @@ inline WKCacheModel toAPI(CacheModel cacheModel)
     }
     
     return kWKCacheModelDocumentViewer;
+}
+
+inline WKProcessCrashReason toAPI(ProcessCrashReason reason)
+{
+    switch (reason) {
+    case ProcessCrashReason::TerminationDueToMemoryUsage:
+        return kWKProcessCrashReasonTerminationDueToMemoryUsage;
+    case ProcessCrashReason::TerminationDueToCPUUsage:
+        return kWKProcessCrashReasonTerminationDueToCPUUsage;
+    case ProcessCrashReason::TerminationRequestedByClient:
+        return kWKProcessCrashReasonTerminationRequestedByClient;
+    case ProcessCrashReason::Other:
+        return kWKProcessCrashReasonOther;
+    }
+
+    return kWKProcessCrashReasonOther;
 }
 
 inline FontSmoothingLevel toFontSmoothingLevel(WKFontSmoothingLevel wkLevel)

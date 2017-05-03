@@ -30,6 +30,7 @@
 #include <WebKit/WKPageLoadTypes.h>
 #include <WebKit/WKPageRenderingProgressEvents.h>
 #include <WebKit/WKPluginLoadPolicy.h>
+#include <WebKit/WKProcessCrashReason.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -64,6 +65,8 @@ typedef bool (*WKPageNavigationCanAuthenticateAgainstProtectionSpaceCallback)(WK
 typedef void (*WKPageNavigationDidReceiveAuthenticationChallengeCallback)(WKPageRef page, WKAuthenticationChallengeRef challenge, const void* clientInfo);
 
 typedef void (*WKPageNavigationWebProcessDidCrashCallback)(WKPageRef page, const void* clientInfo);
+
+typedef void (*WKPageNavigationWebProcessDidCrashWithReasonCallback)(WKPageRef page, WKProcessCrashReason reason, const void* clientInfo);
 
 typedef WKDataRef (*WKPageNavigationCopyWebCryptoMasterKeyCallback)(WKPageRef page, const void* clientInfo);
     
@@ -104,12 +107,41 @@ typedef struct WKPageNavigationClientV0 {
     WKPageNavigationDidReceiveAuthenticationChallengeCallback didReceiveAuthenticationChallenge;
     WKPageNavigationWebProcessDidCrashCallback webProcessDidCrash;
     WKPageNavigationCopyWebCryptoMasterKeyCallback copyWebCryptoMasterKey;
-
     WKPageNavigationDidBeginNavigationGesture didBeginNavigationGesture;
     WKPageNavigationWillEndNavigationGesture willEndNavigationGesture;
     WKPageNavigationDidEndNavigationGesture didEndNavigationGesture;
     WKPageNavigationDidRemoveNavigationGestureSnapshot didRemoveNavigationGestureSnapshot;
 } WKPageNavigationClientV0;
+
+typedef struct WKPageNavigationClientV1 {
+    WKPageNavigationClientBase base;
+
+    // Version 0.
+    WKPageNavigationDecidePolicyForNavigationActionCallback decidePolicyForNavigationAction;
+    WKPageNavigationDecidePolicyForNavigationResponseCallback decidePolicyForNavigationResponse;
+    WKPageNavigationDecidePolicyForPluginLoadCallback decidePolicyForPluginLoad;
+    WKPageNavigationDidStartProvisionalNavigationCallback didStartProvisionalNavigation;
+    WKPageNavigationDidReceiveServerRedirectForProvisionalNavigationCallback didReceiveServerRedirectForProvisionalNavigation;
+    WKPageNavigationDidFailProvisionalNavigationCallback didFailProvisionalNavigation;
+    WKPageNavigationDidCommitNavigationCallback didCommitNavigation;
+    WKPageNavigationDidFinishNavigationCallback didFinishNavigation;
+    WKPageNavigationDidFailNavigationCallback didFailNavigation;
+    WKPageNavigationDidFailProvisionalLoadInSubframeCallback didFailProvisionalLoadInSubframe;
+    WKPageNavigationDidFinishDocumentLoadCallback didFinishDocumentLoad;
+    WKPageNavigationDidSameDocumentNavigationCallback didSameDocumentNavigation;
+    WKPageNavigationRenderingProgressDidChangeCallback renderingProgressDidChange;
+    WKPageNavigationCanAuthenticateAgainstProtectionSpaceCallback canAuthenticateAgainstProtectionSpace;
+    WKPageNavigationDidReceiveAuthenticationChallengeCallback didReceiveAuthenticationChallenge;
+    WKPageNavigationWebProcessDidCrashCallback webProcessDidCrash;
+    WKPageNavigationCopyWebCryptoMasterKeyCallback copyWebCryptoMasterKey;
+    WKPageNavigationDidBeginNavigationGesture didBeginNavigationGesture;
+    WKPageNavigationWillEndNavigationGesture willEndNavigationGesture;
+    WKPageNavigationDidEndNavigationGesture didEndNavigationGesture;
+    WKPageNavigationDidRemoveNavigationGestureSnapshot didRemoveNavigationGestureSnapshot;
+
+    // Version 1.
+    WKPageNavigationWebProcessDidCrashWithReasonCallback webProcessDidCrashWithReason;
+} WKPageNavigationClientV1;
 
 #ifdef __cplusplus
 }

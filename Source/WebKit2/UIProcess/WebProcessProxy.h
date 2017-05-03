@@ -55,7 +55,7 @@ struct PluginInfo;
 
 namespace WebKit {
 
-enum class SimulatedCrashReason {
+enum class TerminationReason {
     ExceededActiveMemoryLimit,
     ExceededInactiveMemoryLimit,
     ExceededBackgroundCPULimit,
@@ -247,7 +247,7 @@ private:
 
     bool canTerminateChildProcess();
 
-    void simulateProcessCrash(SimulatedCrashReason);
+    void terminateProcessDueToResourceLimits(TerminationReason);
 
     ResponsivenessTimer m_responsivenessTimer;
     BackgroundProcessResponsivenessTimer m_backgroundResponsivenessTimer;

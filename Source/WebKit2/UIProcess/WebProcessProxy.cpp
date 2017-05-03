@@ -600,7 +600,7 @@ void WebProcessProxy::didClose(IPC::Connection&)
     shutDown();
 
     for (size_t i = 0, size = pages.size(); i < size; ++i)
-        pages[i]->processDidCrash();
+        pages[i]->processDidCrash(ProcessCrashReason::Other);
 
 }
 
@@ -857,7 +857,13 @@ void WebProcessProxy::requestTermination()
     if (webConnection())
         webConnection()->didClose();
 
+    Vector<RefPtr<WebPageProxy>> pages;
+    copyValuesToVector(m_pageMap, pages);
+
     shutDown();
+
+    for (size_t i = 0, size = pages.size(); i < size; ++i)
+        pages[i]->processDidCrash(ProcessCrashReason::TerminationRequestedByClient);
 }
 
 void WebProcessProxy::enableSuddenTermination()
@@ -1129,39 +1135,51 @@ static Vector<RefPtr<WebPageProxy>> pagesCopy(WTF::IteratorRange<WebProcessProxy
     return vector;
 }
 
-static String diagnosticLoggingKeyForSimulatedCrashReason(SimulatedCrashReason reason)
+static String diagnosticLoggingKeyForTerminationReason(TerminationReason reason)
 {
     switch (reason) {
-    case SimulatedCrashReason::ExceededActiveMemoryLimit:
+    case TerminationReason::ExceededActiveMemoryLimit:
         return DiagnosticLoggingKeys::exceededActiveMemoryLimitKey();
-    case SimulatedCrashReason::ExceededInactiveMemoryLimit:
+    case TerminationReason::ExceededInactiveMemoryLimit:
         return DiagnosticLoggingKeys::exceededInactiveMemoryLimitKey();
-    case SimulatedCrashReason::ExceededBackgroundCPULimit:
+    case TerminationReason::ExceededBackgroundCPULimit:
         return DiagnosticLoggingKeys::exceededBackgroundCPULimitKey();
     default:
         RELEASE_ASSERT_NOT_REACHED();
     }
 }
 
-void WebProcessProxy::simulateProcessCrash(SimulatedCrashReason reason)
+static ProcessCrashReason toProcessCrashReason(TerminationReason reason)
+{
+    switch (reason) {
+    case TerminationReason::ExceededActiveMemoryLimit:
+    case TerminationReason::ExceededInactiveMemoryLimit:
+        return ProcessCrashReason::TerminationDueToMemoryUsage;
+    case TerminationReason::ExceededBackgroundCPULimit:
+        return ProcessCrashReason::TerminationDueToCPUUsage;
+    }
+    return ProcessCrashReason::Other;
+}
+
+void WebProcessProxy::terminateProcessDueToResourceLimits(TerminationReason reason)
 {
     for (auto& page : pagesCopy(pages())) {
-        page->logDiagnosticMessage(DiagnosticLoggingKeys::simulatedPageCrashKey(), diagnosticLoggingKeyForSimulatedCrashReason(reason), ShouldSample::No);
+        page->logDiagnosticMessage(DiagnosticLoggingKeys::simulatedPageCrashKey(), diagnosticLoggingKeyForTerminationReason(reason), ShouldSample::No);
         page->terminateProcess();
-        page->processDidCrash();
+        page->processDidCrash(toProcessCrashReason(reason));
     }
 }
 
 void WebProcessProxy::didExceedActiveMemoryLimit()
 {
     RELEASE_LOG_ERROR(PerformanceLogging, "%p - WebProcessProxy::didExceedActiveMemoryLimit() Terminating WebProcess that has exceeded the active memory limit", this);
-    simulateProcessCrash(SimulatedCrashReason::ExceededActiveMemoryLimit);
+    terminateProcessDueToResourceLimits(TerminationReason::ExceededActiveMemoryLimit);
 }
 
 void WebProcessProxy::didExceedInactiveMemoryLimit()
 {
     RELEASE_LOG_ERROR(PerformanceLogging, "%p - WebProcessProxy::didExceedInactiveMemoryLimit() Terminating WebProcess that has exceeded the inactive memory limit", this);
-    simulateProcessCrash(SimulatedCrashReason::ExceededInactiveMemoryLimit);
+    terminateProcessDueToResourceLimits(TerminationReason::ExceededInactiveMemoryLimit);
 }
 
 void WebProcessProxy::didExceedBackgroundCPULimit()
@@ -1182,7 +1200,7 @@ void WebProcessProxy::didExceedBackgroundCPULimit()
     }
 
     RELEASE_LOG_ERROR(PerformanceLogging, "%p - WebProcessProxy::didExceedBackgroundCPULimit() Terminating background WebProcess that has exceeded the background CPU limit", this);
-    simulateProcessCrash(SimulatedCrashReason::ExceededBackgroundCPULimit);
+    terminateProcessDueToResourceLimits(TerminationReason::ExceededBackgroundCPULimit);
 }
 
 void WebProcessProxy::updateBackgroundResponsivenessTimer()

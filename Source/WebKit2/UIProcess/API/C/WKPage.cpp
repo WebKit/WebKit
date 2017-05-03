@@ -106,7 +106,7 @@ template<> struct ClientTraits<WKPageLoaderClientBase> {
 };
 
 template<> struct ClientTraits<WKPageNavigationClientBase> {
-    typedef std::tuple<WKPageNavigationClientV0> Versions;
+    typedef std::tuple<WKPageNavigationClientV0, WKPageNavigationClientV1> Versions;
 };
 
 template<> struct ClientTraits<WKPagePolicyClientBase> {
@@ -2400,11 +2400,13 @@ void WKPageSetPageNavigationClient(WKPageRef pageRef, const WKPageNavigationClie
             m_client.didReceiveAuthenticationChallenge(toAPI(&page), toAPI(authenticationChallenge), m_client.base.clientInfo);
         }
 
-        void processDidCrash(WebPageProxy& page) override
+        void processDidCrash(WebPageProxy& page, WebKit::ProcessCrashReason reason) override
         {
-            if (!m_client.webProcessDidCrash)
-                return;
-            m_client.webProcessDidCrash(toAPI(&page), m_client.base.clientInfo);
+            if (m_client.webProcessDidCrash)
+                m_client.webProcessDidCrash(toAPI(&page), m_client.base.clientInfo);
+
+            if (m_client.webProcessDidCrashWithReason)
+                m_client.webProcessDidCrashWithReason(toAPI(&page), toAPI(reason), m_client.base.clientInfo);
         }
 
         RefPtr<API::Data> webCryptoMasterKey(WebPageProxy& page) override

@@ -5293,7 +5293,7 @@ void WebPageProxy::didChangeProcessIsResponsive()
     m_pageLoadState.didChangeProcessIsResponsive();
 }
 
-void WebPageProxy::processDidCrash()
+void WebPageProxy::processDidCrash(ProcessCrashReason reason)
 {
     ASSERT(m_isValid);
 
@@ -5316,7 +5316,7 @@ void WebPageProxy::processDidCrash()
     navigationState().clearAllNavigations();
 
     if (m_navigationClient)
-        m_navigationClient->processDidCrash(*this);
+        m_navigationClient->processDidCrash(*this, reason);
     else
         m_loaderClient->processDidCrash(*this);
 

@@ -32,6 +32,7 @@
 #import "APIHistoryClient.h"
 #import "APINavigationClient.h"
 #import "PageLoadState.h"
+#import "ProcessCrashReason.h"
 #import "ProcessThrottler.h"
 #import "WeakObjCPtr.h"
 #import <wtf/RetainPtr.h>
@@ -102,7 +103,7 @@ private:
 
         bool canAuthenticateAgainstProtectionSpace(WebPageProxy&, WebProtectionSpace*) override;
         void didReceiveAuthenticationChallenge(WebPageProxy&, AuthenticationChallengeProxy*) override;
-        void processDidCrash(WebPageProxy&) override;
+        void processDidCrash(WebPageProxy&, ProcessCrashReason) override;
         void processDidBecomeResponsive(WebPageProxy&) override;
         void processDidBecomeUnresponsive(WebPageProxy&) override;
 
