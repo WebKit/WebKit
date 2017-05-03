@@ -1962,3 +1962,5 @@ webkit.org/b/171559 svg/animations/animated-svg-image-removed-from-document-paus
 webkit.org/b/171564 http/tests/local/blob/send-sliced-data-blob.html [ Pass Failure Timeout ]
 
 webkit.org/b/171613 http/tests/xmlhttprequest/supported-xml-content-types.html [ Pass Timeout ]
+
+webkit.org/b/171617 [ Release ] perf/object-keys.html [ Pass Failure ]
