@@ -1,3 +1,17 @@
+2017-05-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [Cairo] Handle extended colors in gradients
+        https://bugs.webkit.org/show_bug.cgi?id=171596
+
+        Reviewed by Michael Catanzaro.
+
+        Check if every gradient color step is an extended color and use asExtended() instead of getRGBA() in such case.
+
+        Fixes: css3/color/gradients.html
+
+        * platform/graphics/cairo/GradientCairo.cpp:
+        (WebCore::Gradient::platformGradient):
+
 2017-05-03  Daniel Bates  <dabates@apple.com>
 
         Abandon the current load once the provisional loader detaches from the frame
