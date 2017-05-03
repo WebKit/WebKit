@@ -285,6 +285,7 @@ forcedPrefersReducedMotionAccessibilityValue type=ForcedAccessibilityValue, init
 
 largeImageAsyncDecodingEnabled initial=true
 animatedImageAsyncDecodingEnabled initial=true
+webkitImageReadyEventEnabled initial=false
 
 shouldSuppressKeyboardInputDuringProvisionalNavigation initial=false
 

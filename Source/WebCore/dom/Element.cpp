@@ -2508,6 +2508,12 @@ void Element::dispatchBlurEvent(RefPtr<Element>&& newFocusedElement)
     EventDispatcher::dispatchEvent(*this, FocusEvent::create(eventNames().blurEvent, false, false, document().defaultView(), 0, WTFMove(newFocusedElement)));
 }
 
+void Element::dispatchWebKitImageReadyEventForTesting()
+{
+    if (document().settings().webkitImageReadyEventEnabled())
+        dispatchEvent(Event::create("webkitImageFrameReady", true, true));
+}
+
 bool Element::dispatchMouseForceWillBegin()
 {
 #if ENABLE(MOUSE_FORCE_EVENTS)

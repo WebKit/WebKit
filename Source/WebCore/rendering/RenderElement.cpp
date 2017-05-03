@@ -1508,6 +1508,9 @@ VisibleInViewportState RenderElement::imageFrameAvailable(CachedImage& image, Im
     if (shouldRepaint || animatingState == ImageAnimatingState::No)
         imageChanged(&image, changeRect);
 
+    if (element() && image.image()->isBitmapImage())
+        element()->dispatchWebKitImageReadyEventForTesting();
+
     return shouldRepaint ? VisibleInViewportState::Yes : VisibleInViewportState::No;
 }
 
