@@ -2116,6 +2116,10 @@ webkit.org/b/169621 imported/w3c/web-platform-tests/IndexedDB/fire-error-event-e
 
 webkit.org/b/170337 fast/repaint/obscured-background-no-repaint.html [ Pass Failure ]
 
+webkit.org/b/171599 animations/trigger-container-scroll-empty.html [ Pass Failure ]
+
+webkit.org/b/171600 css3/filters/composited-during-animation-layertree.html [ Pass Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -3565,6 +3569,8 @@ webkit.org/b/170335 canvas/philip/tests/2d.pattern.animated.gif.html [ Failure ]
 webkit.org/b/170335 svg/animations/animated-svg-image-outside-viewport-paused.html [ Failure ]
 
 webkit.org/b/171492 platform/gtk/fast/forms/menulist-typeahead-find.html [ Failure ]
+
+webkit.org/b/171598 accessibility/gtk/menu-list-unfocused-notifications.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing

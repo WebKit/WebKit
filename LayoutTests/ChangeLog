@@ -1,5 +1,11 @@
 2017-05-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed GTK+ gardening. Update expectations of several tests.
+
+        * platform/gtk/TestExpectations:
+
+2017-05-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed GTK+ gardening. Rebaseline inspector resource size tests.
 
         Libsoup doesn't provide the required information to fill all those size metrics.
