@@ -1,3 +1,21 @@
+2017-04-26  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebCrypto] Add an api test for testing wrapping/unwrapping serialized crypto keys
+        https://bugs.webkit.org/show_bug.cgi?id=171350
+        <rdar://problem/28600836>
+
+        Patched by Brady Eidson.
+
+        Reviewed by Brent Fulgham.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2/NavigationClientDefaultCrypto.cpp: Added.
+        (TestWebKitAPI::runJavaScriptAlert):
+        (TestWebKitAPI::decidePolicyForNavigationAction):
+        (TestWebKitAPI::decidePolicyForNavigationResponse):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit2/navigation-client-default-crypto.html: Added.
+
 2017-05-03  Simon Fraser  <simon.fraser@apple.com>
 
         Have WKWebView call _updateVisibleContentRects for the current transaction if possible, rather than always delaying
