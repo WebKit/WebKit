@@ -1,3 +1,18 @@
+2017-05-03  Nan Wang  <n_wang@apple.com>
+
+        AX: VO skips cells after cell with aria-colspan
+        https://bugs.webkit.org/show_bug.cgi?id=171579
+
+        Reviewed by Chris Fleizach.
+
+        We should consider the previous cells' column span value when
+        calculating the column index.
+
+        Test: accessibility/mac/aria-grid-column-span.html
+
+        * accessibility/AccessibilityARIAGridCell.cpp:
+        (WebCore::AccessibilityARIAGridCell::columnIndexRange):
+
 2017-05-03  Jiewen Tan  <jiewen_tan@apple.com>
 
         ASSERTION FAILED: m_scriptExecutionContext->isContextThread() seen with LayoutTest crypto/workers/crypto-random-values-limits-worker.html

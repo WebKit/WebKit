@@ -1,0 +1,17 @@
+Month	Jan	Mar
+Expenses	100	130	90
+This tests that cells that span multiple columns within an ARIA grid have correct column index range
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS cell1.role is 'AXRole: AXCell'
+PASS cell1.columnIndexRange() is '{1, 2}'
+PASS cell2.role is 'AXRole: AXCell'
+PASS cell2.columnIndexRange() is '{3, 1}'
+PASS cell3.role is 'AXRole: AXCell'
+PASS cell3.columnIndexRange() is '{2, 1}'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

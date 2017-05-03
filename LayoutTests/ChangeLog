@@ -1,3 +1,13 @@
+2017-05-03  Nan Wang  <n_wang@apple.com>
+
+        AX: VO skips cells after cell with aria-colspan
+        https://bugs.webkit.org/show_bug.cgi?id=171579
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/mac/aria-grid-column-span-expected.txt: Added.
+        * accessibility/mac/aria-grid-column-span.html: Added.
+
 2017-05-03  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark http/tests/websocket/tests/hybi/inspector/binary.html as flaky.
