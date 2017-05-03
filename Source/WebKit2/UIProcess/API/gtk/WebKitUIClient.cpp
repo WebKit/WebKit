@@ -139,7 +139,14 @@ private:
     void setWindowFrame(WebPageProxy*, const WebCore::FloatRect& frame) override
     {
         GdkRectangle geometry = WebCore::IntRect(frame);
-        webkitWindowPropertiesSetGeometry(webkit_web_view_get_window_properties(m_webView), &geometry);
+        GtkWidget* window = gtk_widget_get_toplevel(GTK_WIDGET(m_webView));
+        if (webkit_web_view_is_controlled_by_automation(m_webView) && WebCore::widgetIsOnscreenToplevelWindow(window) && gtk_widget_get_visible(window)) {
+            if (geometry.x >= 0 && geometry.y >= 0)
+                gtk_window_move(GTK_WINDOW(window), geometry.x, geometry.y);
+            if (geometry.width > 0 && geometry.height > 0)
+                gtk_window_resize(GTK_WINDOW(window), geometry.width, geometry.height);
+        } else
+            webkitWindowPropertiesSetGeometry(webkit_web_view_get_window_properties(m_webView), &geometry);
     }
 
     WebCore::FloatRect windowFrame(WebPageProxy*) override

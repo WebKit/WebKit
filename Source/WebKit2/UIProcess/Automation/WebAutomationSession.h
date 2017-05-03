@@ -225,9 +225,10 @@ private:
     Inspector::FrontendChannel* m_remoteChannel { nullptr };
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(GTK)
     // Keep track of currently active modifiers across multiple keystrokes.
     // We don't synthesize platform keyboard events on iOS, so we need to track it ourselves.
+    // GTK+ doesn't keep track of the active modifiers when using synthesized events.
     unsigned m_currentModifiers { 0 };
 #endif
 };

@@ -320,12 +320,14 @@ void WebAutomationSession::resizeWindowOfBrowsingContext(Inspector::ErrorString&
 
     page->setWindowFrame(newFrame);
 
+#if !PLATFORM(GTK)
     // If nothing changed at all, it's probably fair to report that something went wrong.
     // (We can't assume that the requested frame size will be honored exactly, however.)
     WebCore::FloatRect updatedFrame;
     page->getWindowFrame(updatedFrame);
     if (originalFrame == updatedFrame)
         FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InternalError, "The window size was expected to have changed, but did not.");
+#endif
 #endif
 }
 
@@ -361,12 +363,14 @@ void WebAutomationSession::moveWindowOfBrowsingContext(Inspector::ErrorString& e
 
     page->setWindowFrame(newFrame);
 
+#if !PLATFORM(GTK)
     // If nothing changed at all, it's probably fair to report that something went wrong.
     // (We can't assume that the requested frame size will be honored exactly, however.)
     WebCore::FloatRect updatedFrame;
     page->getWindowFrame(updatedFrame);
     if (originalFrame == updatedFrame)
         FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InternalError, "The window position was expected to have changed, but did not.");
+#endif
 #endif
 }
 
@@ -833,7 +837,7 @@ void WebAutomationSession::deleteAllCookies(ErrorString& errorString, const Stri
     cookieManager->deleteCookiesForHostname(WebCore::SessionID::defaultSessionID(), activeURL.host());
 }
 
-#if USE(APPKIT)
+#if USE(APPKIT) || PLATFORM(GTK)
 static WebEvent::Modifiers protocolModifierToWebEventModifier(Inspector::Protocol::Automation::KeyModifier modifier)
 {
     switch (modifier) {
@@ -853,7 +857,7 @@ static WebEvent::Modifiers protocolModifierToWebEventModifier(Inspector::Protoco
 
 void WebAutomationSession::performMouseInteraction(Inspector::ErrorString& errorString, const String& handle, const Inspector::InspectorObject& requestedPositionObject, const String& mouseButtonString, const String& mouseInteractionString, const Inspector::InspectorArray& keyModifierStrings, RefPtr<Inspector::Protocol::Automation::Point>& updatedPositionObject)
 {
-#if !USE(APPKIT)
+#if !USE(APPKIT) && !PLATFORM(GTK)
     FAIL_WITH_PREDEFINED_ERROR(NotImplemented);
 #else
     WebPageProxy* page = webPageProxyForHandle(handle);
@@ -908,7 +912,7 @@ void WebAutomationSession::performMouseInteraction(Inspector::ErrorString& error
 
 void WebAutomationSession::performKeyboardInteractions(ErrorString& errorString, const String& handle, const Inspector::InspectorArray& interactions, Ref<PerformKeyboardInteractionsCallback>&& callback)
 {
-#if !PLATFORM(COCOA)
+#if !PLATFORM(COCOA) && !PLATFORM(GTK)
     FAIL_WITH_PREDEFINED_ERROR(NotImplemented);
 #else
     WebPageProxy* page = webPageProxyForHandle(handle);
@@ -1015,13 +1019,13 @@ void WebAutomationSession::didTakeScreenshot(uint64_t callbackID, const Shareabl
 
 // Platform-dependent Implementation Stubs.
 
-#if !PLATFORM(MAC)
+#if !PLATFORM(MAC) && !PLATFORM(GTK)
 void WebAutomationSession::platformSimulateMouseInteraction(WebKit::WebPageProxy&, const WebCore::IntPoint&, Inspector::Protocol::Automation::MouseInteraction, Inspector::Protocol::Automation::MouseButton, WebEvent::Modifiers)
 {
 }
 #endif // !PLATFORM(MAC)
 
-#if !PLATFORM(COCOA)
+#if !PLATFORM(COCOA) && !PLATFORM(GTK)
 void WebAutomationSession::platformSimulateKeyStroke(WebPageProxy&, Inspector::Protocol::Automation::KeyboardInteractionType, Inspector::Protocol::Automation::VirtualKey)
 {
 }

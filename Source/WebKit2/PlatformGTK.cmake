@@ -304,6 +304,8 @@ list(APPEND WebKit2_SOURCES
     UIProcess/API/gtk/WebKitWindowPropertiesPrivate.h
     UIProcess/API/gtk/webkit2.h
 
+    UIProcess/Automation/gtk/WebAutomationSessionGtk.cpp
+
     UIProcess/Launcher/gtk/ProcessLauncherGtk.cpp
 
     UIProcess/linux/MemoryPressureMonitor.cpp
