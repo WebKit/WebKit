@@ -33,6 +33,7 @@
 #include "HTMLSrcsetParser.h"
 #include "HTMLTokenizer.h"
 #include "InputTypeNames.h"
+#include "LinkLoader.h"
 #include "LinkRelAttribute.h"
 #include "MediaList.h"
 #include "MediaQueryEvaluator.h"
@@ -100,6 +101,7 @@ public:
     explicit StartTagScanner(TagId tagId, float deviceScaleFactor = 1.0)
         : m_tagId(tagId)
         , m_linkIsStyleSheet(false)
+        , m_linkIsPreload(false)
         , m_metaIsViewport(false)
         , m_inputIsImage(false)
         , m_deviceScaleFactor(deviceScaleFactor)
@@ -144,7 +146,10 @@ public:
         if (!shouldPreload())
             return nullptr;
 
-        auto request = std::make_unique<PreloadRequest>(initiatorFor(m_tagId), m_urlToLoad, predictedBaseURL, resourceType(), m_mediaAttribute, m_moduleScript);
+        auto type = resourceType();
+        if (!type)
+            return nullptr;
+        auto request = std::make_unique<PreloadRequest>(initiatorFor(m_tagId), m_urlToLoad, predictedBaseURL, type.value(), m_mediaAttribute, m_moduleScript);
         request->setCrossOriginMode(m_crossOriginMode);
         request->setNonce(m_nonceAttribute);
 
@@ -220,9 +225,11 @@ private:
         case TagId::Link:
             if (match(attributeName, hrefAttr))
                 setUrlToLoad(attributeValue);
-            else if (match(attributeName, relAttr))
-                m_linkIsStyleSheet = relAttributeIsStyleSheet(attributeValue);
-            else if (match(attributeName, mediaAttr))
+            else if (match(attributeName, relAttr)) {
+                LinkRelAttribute parsedAttribute { attributeValue };
+                m_linkIsStyleSheet = relAttributeIsStyleSheet(parsedAttribute);
+                m_linkIsPreload = parsedAttribute.isLinkPreload;
+            } else if (match(attributeName, mediaAttr))
                 m_mediaAttribute = attributeValue;
             else if (match(attributeName, charsetAttr))
                 m_charset = attributeValue;
@@ -230,6 +237,8 @@ private:
                 m_crossOriginMode = stripLeadingAndTrailingHTMLSpaces(attributeValue);
             else if (match(attributeName, nonceAttr))
                 m_nonceAttribute = attributeValue;
+            else if (match(attributeName, asAttr))
+                m_asAttribute = attributeValue;
             break;
         case TagId::Input:
             if (match(attributeName, srcAttr))
@@ -252,9 +261,8 @@ private:
         }
     }
 
-    static bool relAttributeIsStyleSheet(const String& attributeValue)
+    static bool relAttributeIsStyleSheet(const LinkRelAttribute& parsedAttribute)
     {
-        LinkRelAttribute parsedAttribute { attributeValue };
         return parsedAttribute.isStyleSheet && !parsedAttribute.isAlternate && !parsedAttribute.iconType && !parsedAttribute.isDNSPrefetch;
     }
 
@@ -275,7 +283,7 @@ private:
         return m_charset;
     }
 
-    CachedResource::Type resourceType() const
+    std::optional<CachedResource::Type> resourceType() const
     {
         switch (m_tagId) {
         case TagId::Script:
@@ -286,8 +294,11 @@ private:
             ASSERT(m_tagId != TagId::Input || m_inputIsImage);
             return CachedResource::ImageResource;
         case TagId::Link:
-            ASSERT(m_linkIsStyleSheet);
-            return CachedResource::CSSStyleSheet;
+            if (m_linkIsStyleSheet)
+                return CachedResource::CSSStyleSheet;
+            if (m_linkIsPreload)
+                return LinkLoader::resourceTypeFromAsAttribute(m_asAttribute);
+            break;
         case TagId::Meta:
         case TagId::Unknown:
         case TagId::Style:
@@ -308,7 +319,7 @@ private:
         if (protocolIs(m_urlToLoad, "data") || protocolIs(m_urlToLoad, "about"))
             return false;
 
-        if (m_tagId == TagId::Link && !m_linkIsStyleSheet)
+        if (m_tagId == TagId::Link && !m_linkIsStyleSheet && !m_linkIsPreload)
             return false;
 
         if (m_tagId == TagId::Input && !m_inputIsImage)
@@ -325,9 +336,11 @@ private:
     String m_charset;
     String m_crossOriginMode;
     bool m_linkIsStyleSheet;
+    bool m_linkIsPreload;
     String m_mediaAttribute;
     String m_nonceAttribute;
     String m_metaContent;
+    String m_asAttribute;
     bool m_metaIsViewport;
     bool m_inputIsImage;
     float m_deviceScaleFactor;

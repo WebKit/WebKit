@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="http://127.0.0.1:8000/resources/slow-script.pl?delay=800"></script>
+<div id=result></div>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+    (function () {
+         if (!window.internals) {
+            document.getElementById("result").innerHTML = "This test needs to be run in the TestRunner environment, since it relies on the `internals` interface.";
+            return;
+        }
+        shouldBeTrue("internals.isPreloaded('../resources/dummy.js');");
+        shouldBeTrue("internals.isPreloaded('../resources/dummy.css');");
+        shouldBeTrue("internals.isPreloaded('../resources/square.png');");
+        shouldBeTrue("internals.isPreloaded('../resources/Ahem.ttf');");
+        shouldBeTrue("internals.isPreloaded('../resources/test.mp4');");
+        shouldBeTrue("internals.isPreloaded('../security/resources/captions.vtt');");
+        shouldBeFalse("internals.isPreloaded('../resources/dummy.xml?badvalue');");
+        shouldBeTrue("internals.isPreloaded('../resources/dummy.xml');");
+        document.write("<!" + "--");
+    })();
+</script>
+<link rel=preload href="../resources/dummy.js" as=script>
+<link rel=preload href="../resources/dummy.css" as=style>
+<link rel=preload href="../resources/square.png" as=image>
+<link rel=preload href="../resources/Ahem.ttf" as=font crossorigin>
+<link rel=preload href="../resources/test.mp4" as=media>
+<link rel=preload href="../security/resources/captions.vtt" as=track>
+<link rel=preload href="../resources/dummy.xml?badvalue" as=foobarxmlthing>
+<link rel=preload href="../resources/dummy.xml">

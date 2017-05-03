@@ -1,3 +1,23 @@
+2017-05-03  Yoav Weiss  <yoav@yoav.ws>
+
+        Link preload HTMLPreloadScanner support
+        https://bugs.webkit.org/show_bug.cgi?id=170747
+
+        Reviewed by Youenn Fablet.
+
+        Test: http/tests/preload/preloadscanner_download_resources.html
+
+        * html/parser/HTMLPreloadScanner.cpp:
+        (WebCore::TokenPreloadScanner::StartTagScanner::StartTagScanner): Initialize link preload flag.
+        (WebCore::TokenPreloadScanner::StartTagScanner::createPreloadRequest): Create a request only if the type is known (so ignore
+        preloads with unknown type).
+        (WebCore::TokenPreloadScanner::StartTagScanner::processAttribute): Add handling for link preload and the `as` attribute.
+        (WebCore::TokenPreloadScanner::StartTagScanner::relAttributeIsStyleSheet): Get LinkRelAttribute as input.
+        (WebCore::TokenPreloadScanner::StartTagScanner::resourceType): Return an std::optional, in case the preload type is unknown.
+        (WebCore::TokenPreloadScanner::StartTagScanner::shouldPreload): Return true for the link preload case.
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::preload): Return the resource rather than a nullptr if it's already in m_preloads.
+
 2017-05-03  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         YouTube user agent quirk breaks new YouTube

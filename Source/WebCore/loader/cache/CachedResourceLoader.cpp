@@ -1222,17 +1222,16 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::preload(CachedResourc
         request.setCharset(m_document->charset());
 
     CachedResourceHandle<CachedResource> resource = requestResource(type, WTFMove(request), ForPreload::Yes);
-    if (!resource || (m_preloads && m_preloads->contains(resource.get())))
-        return nullptr;
-    // Fonts need special treatment since just creating the resource doesn't trigger a load.
-    if (type == CachedResource::FontResource)
-        downcast<CachedFont>(resource.get())->beginLoadIfNeeded(*this);
-    resource->increasePreloadCount();
+    if (resource && (!m_preloads || !m_preloads->contains(resource.get()))) {
+        // Fonts need special treatment since just creating the resource doesn't trigger a load.
+        if (type == CachedResource::FontResource)
+            downcast<CachedFont>(resource.get())->beginLoadIfNeeded(*this);
+        resource->increasePreloadCount();
 
-    if (!m_preloads)
-        m_preloads = std::make_unique<ListHashSet<CachedResource*>>();
-    m_preloads->add(resource.get());
-
+        if (!m_preloads)
+            m_preloads = std::make_unique<ListHashSet<CachedResource*>>();
+        m_preloads->add(resource.get());
+    }
     return resource;
 }
 
