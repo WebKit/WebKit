@@ -1267,7 +1267,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     if (![uiDelegate respondsToSelector:@selector(_webView:showCustomSheetForElement:)])
         return;
 
-    auto element = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeAttachment URL:[NSURL _web_URLWithWTFString:_positionInformation.url] location:_positionInformation.request.point title:_positionInformation.title ID:_positionInformation.idAttribute rect:_positionInformation.bounds image:nil]);
+    auto element = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeAttachment URL:(NSURL *)_positionInformation.url location:_positionInformation.request.point title:_positionInformation.title ID:_positionInformation.idAttribute rect:_positionInformation.bounds image:nil]);
     [uiDelegate _webView:_webView showCustomSheetForElement:element.get()];
 }
 
@@ -4225,19 +4225,18 @@ static bool isAssistableInputType(InputType type)
     if (!_positionInformation.isLink && !_positionInformation.isImage && !_positionInformation.isAttachment)
         return NO;
 
-    String absoluteLinkURL = _positionInformation.url;
+    const URL& linkURL = _positionInformation.url;
     if (_positionInformation.isLink) {
-        NSURL *targetURL = [NSURL _web_URLWithWTFString:_positionInformation.url];
         id <WKUIDelegatePrivate> uiDelegate = static_cast<id <WKUIDelegatePrivate>>([_webView UIDelegate]);
         if ([uiDelegate respondsToSelector:@selector(webView:shouldPreviewElement:)]) {
-            auto previewElementInfo = adoptNS([[WKPreviewElementInfo alloc] _initWithLinkURL:targetURL]);
+            auto previewElementInfo = adoptNS([[WKPreviewElementInfo alloc] _initWithLinkURL:(NSURL *)linkURL]);
             return [uiDelegate webView:_webView shouldPreviewElement:previewElementInfo.get()];
         }
-        if (absoluteLinkURL.isEmpty())
+        if (linkURL.isEmpty())
             return NO;
-        if (WebCore::protocolIsInHTTPFamily(absoluteLinkURL))
+        if (linkURL.protocolIsInHTTPFamily())
             return YES;
-        if ([[getDDDetectionControllerClass() tapAndHoldSchemes] containsObject:targetURL.scheme.lowercaseString])
+        if ([[getDDDetectionControllerClass() tapAndHoldSchemes] containsObject:linkURL.protocol().toString().convertToASCIILowercase()])
             return YES;
         return NO;
     }
@@ -4267,8 +4266,8 @@ static bool isAssistableInputType(InputType type)
     if (!canShowLinkPreview && !canShowImagePreview && !canShowAttachmentPreview)
         return nil;
 
-    String absoluteLinkURL = _positionInformation.url;
-    if (!useImageURLForLink && (absoluteLinkURL.isEmpty() || (!WebCore::protocolIsInHTTPFamily(absoluteLinkURL) && !_positionInformation.isDataDetectorLink))) {
+    const URL& linkURL = _positionInformation.url;
+    if (!useImageURLForLink && (linkURL.isEmpty() || (!linkURL.protocolIsInHTTPFamily() && !_positionInformation.isDataDetectorLink))) {
         if (canShowLinkPreview && !canShowImagePreview)
             return nil;
         canShowLinkPreview = NO;
@@ -4280,7 +4279,7 @@ static bool isAssistableInputType(InputType type)
         if (useImageURLForLink)
             dataForPreview[UIPreviewDataLink] = [NSURL _web_URLWithWTFString:_positionInformation.imageURL];
         else
-            dataForPreview[UIPreviewDataLink] = [NSURL _web_URLWithWTFString:_positionInformation.url];
+            dataForPreview[UIPreviewDataLink] = (NSURL *)linkURL;
         if (_positionInformation.isDataDetectorLink) {
             NSDictionary *context = nil;
             if ([uiDelegate respondsToSelector:@selector(_dataDetectionContextForWebView:)])
@@ -4311,7 +4310,7 @@ static bool isAssistableInputType(InputType type)
     } else if (canShowAttachmentPreview) {
 #if __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000
         *type = UIPreviewItemTypeAttachment;
-        auto element = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeAttachment URL:[NSURL _web_URLWithWTFString:_positionInformation.url] location:_positionInformation.request.point title:_positionInformation.title ID:_positionInformation.idAttribute rect:_positionInformation.bounds image:nil]);
+        auto element = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeAttachment URL:(NSURL *)linkURL location:_positionInformation.request.point title:_positionInformation.title ID:_positionInformation.idAttribute rect:_positionInformation.bounds image:nil]);
         NSUInteger index = [uiDelegate _webView:_webView indexIntoAttachmentListForElement:element.get()];
         if (index != NSNotFound) {
             BOOL sourceIsManaged = NO;

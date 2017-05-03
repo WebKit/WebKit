@@ -1,3 +1,14 @@
+2017-05-03  Tim Horton  <timothy_horton@apple.com>
+
+        Maintain interaction information URL as a URL, not a string
+        https://bugs.webkit.org/show_bug.cgi?id=171623
+
+        Reviewed by Simon Fraser.
+
+        No new tests, not a behavior change.
+
+        * platform/URL.h:
+
 2017-05-03  Yoav Weiss  <yoav@yoav.ws>
 
         Link preload HTMLPreloadScanner support

@@ -1,3 +1,21 @@
+2017-05-03  Tim Horton  <timothy_horton@apple.com>
+
+        Maintain interaction information URL as a URL, not a string
+        https://bugs.webkit.org/show_bug.cgi?id=171623
+
+        Reviewed by Simon Fraser.
+
+        * Shared/ios/InteractionInformationAtPosition.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _showAttachmentSheet]):
+        (-[WKContentView _interactionShouldBeginFromPreviewItemController:forPosition:]):
+        (-[WKContentView _dataForPreviewItemController:atPosition:type:]):
+        * UIProcess/ios/WKPDFView.mm:
+        (-[WKPDFView annotation:isBeingPressedAtPoint:controller:]):
+        (-[WKPDFView actionSheetAssistant:performAction:]):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getPositionInformation):
+
 2017-05-03  Simon Fraser  <simon.fraser@apple.com>
 
         Have WKWebView call _updateVisibleContentRects for the current transaction if possible, rather than always delaying

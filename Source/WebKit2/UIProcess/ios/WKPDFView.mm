@@ -695,7 +695,7 @@ static NSStringCompareOptions stringCompareOptions(_WKFindOptions options)
 
     _positionInformation.request.point = roundedIntPoint([controller.pageView convertPoint:point toView:self]);
 
-    _positionInformation.url = url.absoluteString;
+    _positionInformation.url = url;
     _positionInformation.bounds = roundedIntRect([self convertRect:[controller.pageView convertRectFromPDFPageSpace:annotation.Rect] fromView:controller.pageView]);
 
     [self _highlightLinkAnnotation:linkAnnotation forDuration:.75 completionHandler:^{
@@ -716,8 +716,8 @@ static NSStringCompareOptions stringCompareOptions(_WKFindOptions options)
         return;
 
     NSDictionary *representations = @{
-        (NSString *)kUTTypeUTF8PlainText : _positionInformation.url,
-        (NSString *)kUTTypeURL : [NSURL URLWithString:_positionInformation.url]
+        (NSString *)kUTTypeUTF8PlainText : (NSString *)_positionInformation.url,
+        (NSString *)kUTTypeURL : (NSURL *)_positionInformation.url
     };
 
     [UIPasteboard generalPasteboard].items = @[ representations ];
