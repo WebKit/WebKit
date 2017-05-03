@@ -1,5 +1,25 @@
 2017-05-03  Daniel Bates  <dabates@apple.com>
 
+        Abandon the current load once the provisional loader detaches from the frame
+        https://bugs.webkit.org/show_bug.cgi?id=171577
+        <rdar://problem/31581227>
+
+        Reviewed by Brent Fulgham and Brady Eidson.
+
+        We detach all child frames as part of setting our document loader to the provisional
+        document loader when committing a load for a frame. Detaching child frames invokes
+        the unload event handler on the child frames that can run arbitrary JavaScript script.
+        Among other things, such script can initiate a new load in the frame whose current
+        load is being committed. We should stop processing the current load as soon as we
+        detect that updating our document loader has started a new provisional load.
+
+        Test: fast/loader/inner-iframe-loads-data-url-into-parent-on-unload-crash.html
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::transitionToCommitted):
+
+2017-05-03  Daniel Bates  <dabates@apple.com>
+
         Cleanup: Remove out-of-date comment and null check from DocumentLoader::detachFromFrame()
         https://bugs.webkit.org/show_bug.cgi?id=171604
 

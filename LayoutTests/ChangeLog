@@ -1,3 +1,14 @@
+2017-05-03  Daniel Bates  <dabates@apple.com>
+
+        Abandon the current load once the provisional loader detaches from the frame
+        https://bugs.webkit.org/show_bug.cgi?id=171577
+        <rdar://problem/31581227>
+
+        Reviewed by Brent Fulgham.
+
+        * fast/loader/inner-iframe-loads-data-url-into-parent-on-unload-crash-expected.txt: Added.
+        * fast/loader/inner-iframe-loads-data-url-into-parent-on-unload-crash.html: Added.
+
 2017-05-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed GTK+ gardening. Update expectations of several tests.
