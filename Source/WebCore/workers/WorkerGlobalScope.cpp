@@ -101,6 +101,8 @@ WorkerGlobalScope::~WorkerGlobalScope()
     m_performance = nullptr;
 #endif
 
+    m_crypto = nullptr;
+
     // Notify proxy that we are going away. This can free the WorkerThread object, so do not access it after this.
     thread().workerReportingProxy().workerGlobalScopeDestroyed();
 }

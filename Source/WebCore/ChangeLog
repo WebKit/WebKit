@@ -1,3 +1,18 @@
+2017-05-03  Jiewen Tan  <jiewen_tan@apple.com>
+
+        ASSERTION FAILED: m_scriptExecutionContext->isContextThread() seen with LayoutTest crypto/workers/crypto-random-values-limits-worker.html
+        https://bugs.webkit.org/show_bug.cgi?id=171462
+        <rdar://problem/31906859>
+
+        Reviewed by Brent Fulgham.
+
+        Covered by existing tests.
+
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::~WorkerGlobalScope):
+        Clear Crypto early in destruction since its ContextDestructionObserver
+        destruction makes checks about the WorkerThread.
+
 2017-05-03  Zalan Bujtas  <zalan@apple.com>
 
         RenderSearchField should not use isTextField() in SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT
