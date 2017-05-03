@@ -1,6 +1,6 @@
 // Copyright (C) Copyright 2016 the v8 project authors. All rights reserved.
 
-// TODO: @runNoCJIT("--gcMaxHeapSize=2000000")
+//@ runNoCJIT("--gcMaxHeapSize=2000000")
 
 
 function shouldBe(expected, actual, msg = "") {

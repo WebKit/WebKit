@@ -1,3 +1,17 @@
+2017-05-03  Caitlin Potter  <caitp@igalia.com>
+
+        [JSC] remove unneeded asyncFunctionTests.yaml
+        https://bugs.webkit.org/show_bug.cgi?id=171611
+
+        Reviewed by Yusuke Suzuki.
+
+        Async functions have shipped, and those tests are run as part of
+        JSTests/stress and JSTests/test262.yaml. The file is no longer needed.
+
+        * asyncFunctionTests.yaml: Removed.
+        * stress/async-await-long-loop.js:
+        * stress/async-await-throw-loop.js:
+
 2017-05-03  Keith Miller  <keith_miller@apple.com>
 
         Different behaviour with the .sort(callback) method (unlike Firefox & Chrome)
