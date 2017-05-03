@@ -2768,3 +2768,5 @@ media/encrypted-media/mock-navigator-requestMediaKeySystemAccess.html [ Skip ]
 # editing/caret/ios/emoji.html is used instead.
 editing/caret/emoji.html [ Failure ]
 
+fast/media/video-element-in-details-collapse.html [ Skip ]
+webkit.org/b/167795 http/tests/security/bypassing-cors-checks-for-extension-urls.html [ Skip ]

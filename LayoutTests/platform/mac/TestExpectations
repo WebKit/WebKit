@@ -1453,3 +1453,7 @@ webkit.org/b/165874 [ Debug ] streams/pipe-to.html [ Pass Failure ]
 
 # New Encrypted Media API not enabled on Mac
 media/encrypted-media/mock-navigator-requestMediaKeySystemAccess.html [ Skip ]
+
+http/tests/loading/preload-css-with-csp-nonce.html [ Failure ]
+[ Yosemite ] editing/caret/emoji.html [ Failure  ]
+[ Yosemite ] fast/text/complex-text-opacity.html [ Failure ]

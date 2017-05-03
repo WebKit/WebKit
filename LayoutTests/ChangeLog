@@ -1,3 +1,15 @@
+2017-05-03  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator-wk2/imported/w3c/web-platform-tests/dom/events/EventTarget-dispatchEvent-expected.txt:
+        * platform/ios-simulator-wk2/imported/w3c/web-platform-tests/html/dom/reflection-text-expected.txt:
+        * platform/ios-simulator/TestExpectations:
+        * platform/ios-simulator/compositing/geometry/fixed-in-composited-expected.txt:
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac/TestExpectations:
+        * scrollingcoordinator/ios/sync-layer-positions-after-scroll-expected.txt:
+
 2017-04-18  Ryan Haddad  <ryanhaddad@apple.com>
 
         Land LayoutTest changes for rdar://problem/31636547.

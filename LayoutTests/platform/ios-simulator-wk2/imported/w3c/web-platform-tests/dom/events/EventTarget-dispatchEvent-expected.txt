@@ -26,7 +26,7 @@ FAIL If the event's initialized flag is not set, an InvalidStateError must be th
 PASS If the event's initialized flag is not set, an InvalidStateError must be thrown (StorageEvent). 
 FAIL If the event's initialized flag is not set, an InvalidStateError must be thrown (SVGEvents). The operation is not supported.
 PASS If the event's initialized flag is not set, an InvalidStateError must be thrown (TextEvent). 
-FAIL If the event's initialized flag is not set, an InvalidStateError must be thrown (TouchEvent). The operation is not supported.
+PASS If the event's initialized flag is not set, an InvalidStateError must be thrown (TouchEvent). 
 FAIL If the event's initialized flag is not set, an InvalidStateError must be thrown (TrackEvent). The operation is not supported.
 FAIL If the event's initialized flag is not set, an InvalidStateError must be thrown (TransitionEvent). The operation is not supported.
 PASS If the event's initialized flag is not set, an InvalidStateError must be thrown (UIEvent). 
