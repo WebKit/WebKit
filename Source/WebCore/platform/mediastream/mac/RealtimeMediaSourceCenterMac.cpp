@@ -47,12 +47,12 @@ namespace WebCore {
 
 void RealtimeMediaSourceCenterMac::setUseAVFoundationAudioCapture(bool enabled)
 {
-    static bool active = false;
-    if (active == enabled)
+    static std::optional<bool> active = std::nullopt;
+    if (active && active.value() == enabled)
         return;
 
     active = enabled;
-    if (active) {
+    if (active.value()) {
         RealtimeMediaSourceCenter::singleton().setAudioFactory(AVAudioCaptureSource::factory());
         RealtimeMediaSourceCenter::singleton().setAudioCaptureDeviceManager(AVCaptureDeviceManager::singleton());
     } else {
