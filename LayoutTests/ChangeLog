@@ -1,3 +1,12 @@
+2017-05-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed GTK+ gardening. Rebaseline inspector resource size tests.
+
+        Libsoup doesn't provide the required information to fill all those size metrics.
+
+        * platform/gtk/http/tests/inspector/network/resource-sizes-memory-cache-expected.txt: Added.
+        * platform/gtk/http/tests/inspector/network/resource-sizes-network-expected.txt: Added.
+
 2017-05-02  Simon Fraser  <simon.fraser@apple.com>
 
         Dynamically added position:fixed element is in the wrong place
