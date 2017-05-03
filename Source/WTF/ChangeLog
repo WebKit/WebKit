@@ -1,3 +1,13 @@
+2017-05-03  Mark Lam  <mark.lam@apple.com>
+
+        Use the CLoop for CPU(ARM64E).
+        https://bugs.webkit.org/show_bug.cgi?id=171620
+        <rdar://problem/31973027>
+
+        Reviewed by Geoffrey Garen.
+
+        * wtf/Platform.h:
+
 2017-05-02  Daniel Bates  <dabates@apple.com>
 
         Fix the build after <https://trac.webkit.org/changeset/216102>

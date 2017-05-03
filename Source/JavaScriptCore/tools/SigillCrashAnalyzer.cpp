@@ -268,7 +268,7 @@ auto SigillCrashAnalyzer::analyze(SignalContext& context) -> CrashSource
 
 void SigillCrashAnalyzer::dumpCodeBlock(CodeBlock* codeBlock, void* machinePC)
 {
-#if CPU(ARM64)
+#if CPU(ARM64) && ENABLE(JIT)
     JITCode* jitCode = codeBlock->jitCode().get();
 
     // Dump the raw bits of the code.

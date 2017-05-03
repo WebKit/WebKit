@@ -179,6 +179,10 @@
 /* CPU(ARM64) - Apple */
 #if (defined(__arm64__) && defined(__APPLE__)) || defined(__aarch64__)
 #define WTF_CPU_ARM64 1
+
+#if defined(__arm64e__)
+#define WTF_CPU_ARM64E 1
+#endif
 #endif
 
 /* CPU(ARM) - ARM, any version*/
@@ -721,7 +725,8 @@
 /* The JIT is enabled by default on all x86, x86-64, ARM & MIPS platforms except ARMv7k. */
 #if !defined(ENABLE_JIT) \
     && (CPU(X86) || CPU(X86_64) || CPU(ARM) || CPU(ARM64) || CPU(MIPS)) \
-    && !CPU(APPLE_ARMV7K)
+    && !CPU(APPLE_ARMV7K) \
+    && !CPU(ARM64E)
 #define ENABLE_JIT 1
 #endif
 
