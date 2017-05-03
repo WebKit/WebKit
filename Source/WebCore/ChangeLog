@@ -1,3 +1,19 @@
+2017-05-03  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        YouTube user agent quirk breaks new YouTube
+        https://bugs.webkit.org/show_bug.cgi?id=171603
+
+        Reviewed by Carlos Garcia Campos.
+
+        Our user agent quirk to make YouTube 360 work breaks the new YouTube UI, causing it to
+        attempt to use the obsolete custom elements v0 API. WebKit only supports the v1 API. We
+        have to remove this quirk.
+
+        Note this does not affect Safari as Apple ports don't use our user agent quirks.
+
+        * platform/UserAgentQuirks.cpp:
+        (WebCore::urlRequiresChromeBrowser):
+
 2017-05-03  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: 404 Image Load does not appear as a failure in Web Inspector

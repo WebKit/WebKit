@@ -1,3 +1,15 @@
+2017-05-03  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        YouTube user agent quirk breaks new YouTube
+        https://bugs.webkit.org/show_bug.cgi?id=171603
+
+        Reviewed by Carlos Garcia Campos.
+
+        Remove the YouTube quirk test.
+
+        * TestWebKitAPI/Tests/WebCore/UserAgentQuirks.cpp:
+        (TestWebKitAPI::TEST):
+
 2017-05-03  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Async image decoding should be disabled for snapshots, printing and preview

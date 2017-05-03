@@ -66,10 +66,6 @@ static bool urlRequiresChromeBrowser(const URL& url)
     if (baseDomain == "typekit.net" || baseDomain == "typekit.com")
         return true;
 
-    // Needed for YouTube 360 with WebKitGTK+ and WPE (requires ENABLE_MEDIA_SOURCE).
-    if (baseDomain == "youtube.com")
-        return true;
-
     // Slack completely blocks users with WebKitGTK+'s standard user agent.
     if (baseDomain == "slack.com")
         return true;
