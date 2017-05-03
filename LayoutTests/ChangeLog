@@ -1,3 +1,14 @@
+2017-05-03  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: Treat cells with ARIA table cell properties as cells
+        https://bugs.webkit.org/show_bug.cgi?id=171178
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/minimal-table-with-aria-is-data-table-expected.txt: Added.
+        * accessibility/minimal-table-with-aria-is-data-table.html: Added.
+        * platform/gtk/accessibility/minimal-table-with-aria-is-data-table-expected.txt: Added.
+
 2017-05-03  Andy VanWagoner  <thetalecrafter@gmail.com>
 
         [INTL] Support dashed values in unicode locale extensions

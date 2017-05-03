@@ -1,3 +1,29 @@
+2017-05-03  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: Treat cells with ARIA table cell properties as cells
+        https://bugs.webkit.org/show_bug.cgi?id=171178
+
+        Reviewed by Chris Fleizach.
+
+        Add the following checks to heuristics in AccessibilityTable::isDataTable():
+        1. If the author has provided a valid aria-rowcount or aria-colcount value on
+           the table element, expose it as a data table.
+        2. If the author has provided a valid aria-colindex or aria-rowindex on the
+           cell element, expose it as a data table.
+        3. If the author has provided a valid aria-rowindex on the row element, expose
+           it as a data table.
+        4. If the author has provided a value for aria-colspan or aria-rowspan on a cell,
+           expose it as a data table (even though we are supposed to ignore the value for
+           the purpose of exposing the span via platform accessibility APIs)
+
+        Remove the heuristic that a table with only one cell is "not a good AXTable candidate."
+        It prevents us from ever doing the above checks.
+
+        Test: accessibility/minimal-table-with-aria-is-data-table.html
+
+        * accessibility/AccessibilityTable.cpp:
+        (WebCore::AccessibilityTable::isDataTable):
+
 2017-05-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [Cairo] Handle extended colors in gradients

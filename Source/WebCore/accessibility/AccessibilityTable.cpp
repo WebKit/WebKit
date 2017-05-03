@@ -154,6 +154,16 @@ bool AccessibilityTable::isDataTable() const
     if (!hasTagName(tableTag))
         return false;
     
+    // If the author has used ARIA to specify a valid column or row count, assume they
+    // want us to treat the table as a data table.
+    int ariaColumnCount = getAttribute(aria_colcountAttr).toInt();
+    if (ariaColumnCount == -1 || ariaColumnCount > 0)
+        return true;
+
+    int ariaRowCount = getAttribute(aria_rowcountAttr).toInt();
+    if (ariaRowCount == -1 || ariaRowCount > 0)
+        return true;
+
     RenderTable& table = downcast<RenderTable>(*m_renderer);
     // go through the cell's and check for tell-tale signs of "data" table status
     // cells have borders, or use attributes like headers, abbr, scope or axis
@@ -165,10 +175,6 @@ bool AccessibilityTable::isDataTable() const
     int numCols = firstBody->numColumns();
     int numRows = firstBody->numRows();
     
-    // If there's only one cell, it's not a good AXTable candidate.
-    if (numRows == 1 && numCols == 1)
-        return false;
-
     // If there are at least 20 rows, we'll call it a data table.
     if (numRows >= 20)
         return true;
@@ -181,7 +187,8 @@ bool AccessibilityTable::isDataTable() const
     // Criteria: 
     //   1) must have at least one valid cell (and)
     //   2) at least half of cells have borders (or)
-    //   3) at least half of cells have different bg colors than the table, and there is cell spacing
+    //   3) at least half of cells have different bg colors than the table, and there is cell spacing (or)
+    //   4) the valid cell has an ARIA cell-related property
     unsigned validCellCount = 0;
     unsigned borderedCellCount = 0;
     unsigned backgroundDifferenceCellCount = 0;
@@ -227,6 +234,34 @@ bool AccessibilityTable::isDataTable() const
                     || !tableCellElement.axis().isEmpty() || !tableCellElement.scope().isEmpty())
                     return true;
             }
+
+            // If the author has used ARIA to specify a valid column or row index, assume they want us
+            // to treat the table as a data table.
+            int ariaColumnIndex = cellElement->attributeWithoutSynchronization(aria_colindexAttr).toInt();
+            if (ariaColumnIndex >= 1)
+                return true;
+
+            int ariaRowIndex = cellElement->attributeWithoutSynchronization(aria_rowindexAttr).toInt();
+            if (ariaRowIndex >= 1)
+                return true;
+
+            if (auto cellParentElement = cellElement->parentElement()) {
+                ariaRowIndex = cellParentElement->attributeWithoutSynchronization(aria_rowindexAttr).toInt();
+                if (ariaRowIndex >= 1)
+                    return true;
+            }
+
+            // If the author has used ARIA to specify a column or row span, we're supposed to ignore
+            // the value for the purposes of exposing the span. But assume they want us to treat the
+            // table as a data table.
+            int ariaColumnSpan = cellElement->attributeWithoutSynchronization(aria_colspanAttr).toInt();
+            if (ariaColumnSpan >= 1)
+                return true;
+
+            int ariaRowSpan = cellElement->attributeWithoutSynchronization(aria_rowspanAttr).toInt();
+            if (ariaRowSpan >= 1)
+                return true;
+
             const RenderStyle& renderStyle = cell->style();
 
             // If the empty-cells style is set, we'll call it a data table.
