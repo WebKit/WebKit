@@ -1,0 +1,16 @@
+<script>
+    function gotUserMedia(mediaStream)
+    {
+        window.webkit.messageHandlers.testHandler.postMessage('allowed');
+    }
+
+    function userMediaError(error)
+    {
+        window.webkit.messageHandlers.testHandler.postMessage('denied');
+    }
+
+    var constraints = { audio: false, video: true};
+    navigator.mediaDevices.getUserMedia(constraints)
+        .then(gotUserMedia).
+        catch(userMediaError);
+</script>
