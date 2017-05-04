@@ -218,6 +218,11 @@ void WebPlaybackSessionInterfaceAVKit::wirelessVideoPlaybackDisabledChanged(bool
     [m_playerController setAllowsExternalPlayback:!disabled];
 }
 
+void WebPlaybackSessionInterfaceAVKit::mutedChanged(bool muted)
+{
+    [m_playerController setMuted:muted];
+}
+
 void WebPlaybackSessionInterfaceAVKit::invalidate()
 {
     if (!m_playbackSessionModel)

@@ -56,6 +56,7 @@ public:
     virtual void selectAudioMediaOption(uint64_t index) = 0;
     virtual void selectLegibleMediaOption(uint64_t index) = 0;
     virtual void togglePictureInPicture() = 0;
+    virtual void toggleMuted() = 0;
 
     enum ExternalPlaybackTargetType { TargetTypeNone, TargetTypeAirPlay, TargetTypeTVOut };
 
@@ -76,6 +77,7 @@ public:
     virtual ExternalPlaybackTargetType externalPlaybackTargetType() const = 0;
     virtual String externalPlaybackLocalizedDeviceName() const = 0;
     virtual bool wirelessVideoPlaybackDisabled() const = 0;
+    virtual bool isMuted() const = 0;
 };
 
 class WebPlaybackSessionModelClient {
@@ -94,6 +96,7 @@ public:
     virtual void legibleMediaSelectionIndexChanged(uint64_t) { }
     virtual void externalPlaybackChanged(bool /* enabled */, WebPlaybackSessionModel::ExternalPlaybackTargetType, const String& /* localizedDeviceName */) { }
     virtual void wirelessVideoPlaybackDisabledChanged(bool) { }
+    virtual void mutedChanged(bool) { }
 };
 
 }

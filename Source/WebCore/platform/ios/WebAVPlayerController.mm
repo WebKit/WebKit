@@ -424,6 +424,15 @@ using namespace WebCore;
             [self setPlaying:NO];
     }
 }
+
+- (void)toggleMuted:(id)sender
+{
+    UNUSED_PARAM(sender);
+    if (!self.delegate)
+        return;
+    self.delegate->toggleMuted();
+}
+
 @end
 
 @implementation WebAVMediaSelectionOption

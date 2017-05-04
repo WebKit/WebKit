@@ -82,6 +82,7 @@ public:
     WEBCORE_EXPORT void legibleMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& options, uint64_t selectedIndex) override;
     WEBCORE_EXPORT void externalPlaybackChanged(bool enabled, WebPlaybackSessionModel::ExternalPlaybackTargetType, const String& localizedDeviceName) override;
     WEBCORE_EXPORT void wirelessVideoPlaybackDisabledChanged(bool) override;
+    WEBCORE_EXPORT void mutedChanged(bool) override;
 
     WEBCORE_EXPORT virtual void invalidate();
 

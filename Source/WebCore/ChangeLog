@@ -1,3 +1,33 @@
+2017-05-04  Jeremy Jones  <jeremyj@apple.com>
+
+        Add muted to WebPlaybackSessionModel.
+        https://bugs.webkit.org/show_bug.cgi?id=171592
+        rdar://problem/31814074
+
+        Reviewed by Jer Noble.
+
+        No behavior change. This just adds the ability for UI to mute.
+
+        * platform/cocoa/WebPlaybackSessionModel.h:
+        (WebCore::WebPlaybackSessionModelClient::mutedChanged):
+        * platform/cocoa/WebPlaybackSessionModelMediaElement.h:
+        * platform/cocoa/WebPlaybackSessionModelMediaElement.mm:
+        (WebCore::WebPlaybackSessionModelMediaElement::updateForEventName):
+        (WebCore::WebPlaybackSessionModelMediaElement::toggleMuted):
+        (WebCore::WebPlaybackSessionModelMediaElement::observedEventNames):
+        (WebCore::WebPlaybackSessionModelMediaElement::isMuted):
+        * platform/ios/WebAVPlayerController.h:
+        * platform/ios/WebAVPlayerController.mm:
+        (-[WebAVPlayerController toggleMuted:]):
+        * platform/ios/WebPlaybackSessionInterfaceAVKit.h:
+        * platform/ios/WebPlaybackSessionInterfaceAVKit.mm:
+        (WebCore::WebPlaybackSessionInterfaceAVKit::mutedChanged):
+        * platform/ios/WebVideoFullscreenControllerAVKit.mm:
+        (WebVideoFullscreenControllerContext::mutedChanged):
+        (WebVideoFullscreenControllerContext::isMuted):
+        (WebVideoFullscreenControllerContext::toggleMuted):
+        * platform/spi/ios/MediaPlayerSPI.h:
+
 2017-05-04  Joseph Pecoraro  <pecoraro@apple.com>
 
         REGRESSION(r216138): Web Inspector: ASSERT(!content.isNull()) when checking for source map url opening inspector

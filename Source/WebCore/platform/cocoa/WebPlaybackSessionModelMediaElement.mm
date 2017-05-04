@@ -165,6 +165,12 @@ void WebPlaybackSessionModelMediaElement::updateForEventName(const WTF::AtomicSt
     // updateMediaSelectionOptions() will also update the selection indices.
     if (eventName == eventNames().changeEvent)
         updateMediaSelectionIndices();
+
+    if (all
+        || eventName == eventNames().volumechangeEvent) {
+        for (auto client : m_clients)
+            client->mutedChanged(isMuted());
+    }
 }
 void WebPlaybackSessionModelMediaElement::addClient(WebPlaybackSessionModelClient& client)
 {
@@ -269,6 +275,12 @@ void WebPlaybackSessionModelMediaElement::togglePictureInPicture()
         m_mediaElement->enterFullscreen(MediaPlayerEnums::VideoFullscreenModePictureInPicture);
 }
 
+void WebPlaybackSessionModelMediaElement::toggleMuted()
+{
+    if (m_mediaElement)
+        m_mediaElement->setMuted(!m_mediaElement->muted());
+}
+
 void WebPlaybackSessionModelMediaElement::updateMediaSelectionOptions()
 {
     if (!m_mediaElement)
@@ -331,6 +343,7 @@ const Vector<AtomicString>& WebPlaybackSessionModelMediaElement::observedEventNa
         eventNames().timeupdateEvent,
         eventNames().addtrackEvent,
         eventNames().removetrackEvent,
+        eventNames().volumechangeEvent,
         eventNames().webkitcurrentplaybacktargetiswirelesschangedEvent,
     });
     return names.get();
@@ -487,6 +500,11 @@ String WebPlaybackSessionModelMediaElement::externalPlaybackLocalizedDeviceName(
 bool WebPlaybackSessionModelMediaElement::wirelessVideoPlaybackDisabled() const
 {
     return m_mediaElement && m_mediaElement->mediaSession().wirelessVideoPlaybackDisabled(*m_mediaElement);
+}
+
+bool WebPlaybackSessionModelMediaElement::isMuted() const
+{
+    return m_mediaElement ? m_mediaElement->muted() : false;
 }
 
 }
