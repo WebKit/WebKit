@@ -1,3 +1,16 @@
+2017-05-04  Daniel Bates  <dabates@apple.com>
+
+        importScripts() should respect X-Content-Type-Options: nosniff
+        https://bugs.webkit.org/show_bug.cgi?id=171248
+        <rdar://problem/31819023>
+
+        Reviewed by Andy Estes.
+
+        Update expected results for Web Platform Tests that now pass.
+
+        * web-platform-tests/fetch/nosniff/importscripts-expected.txt: Added.
+        * web-platform-tests/fetch/nosniff/worker-expected.txt:
+
 2017-05-02  Ben Kelly <ben@wanderview.com>
 
         Set Response.blob() type correctly when body is a ReadableStream.

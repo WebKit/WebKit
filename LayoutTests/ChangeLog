@@ -1,3 +1,15 @@
+2017-05-04  Daniel Bates  <dabates@apple.com>
+
+        importScripts() should respect X-Content-Type-Options: nosniff
+        https://bugs.webkit.org/show_bug.cgi?id=171248
+        <rdar://problem/31819023>
+
+        Reviewed by Andy Estes.
+
+        Unskip web-platform-tests/fetch/nosniff/importscripts as it now passes.
+
+        * TestExpectations:
+
 2017-05-04  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Unreviewed: Replace Windows line ending (CRLF) by Unix line ending (CR).

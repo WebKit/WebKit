@@ -1,3 +1,21 @@
+2017-05-04  Daniel Bates  <dabates@apple.com>
+
+        importScripts() should respect X-Content-Type-Options: nosniff
+        https://bugs.webkit.org/show_bug.cgi?id=171248
+        <rdar://problem/31819023>
+
+        Reviewed by Andy Estes.
+
+        Do not load a worker script if it has the HTTP response header "X-Content-Type-Options: nosniff"
+        and its Content-type header is not an allowed JavaScript script mime type. This behavior follows
+        from <https://html.spec.whatwg.org/multipage/webappapis.html#fetch-a-classic-worker-imported-script> (3 May 2017),
+        <https://fetch.spec.whatwg.org/#concept-fetch> (2 May 2017), and <https://fetch.spec.whatwg.org/#concept-main-fetch>.
+
+        * workers/WorkerScriptLoader.cpp:
+        (WebCore::mimeTypeAllowedByNosniff): Added.
+        (WebCore::WorkerScriptLoader::didReceiveResponse): Mark the load as failed if the response
+        is not allowed by X-Content-Type-Options: nosniff.
+
 2017-05-04  Dave Hyatt  <hyatt@apple.com>
 
         REGRESSION(STP): rgb() with calc() containing variables doesn't work
