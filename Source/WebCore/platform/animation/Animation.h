@@ -109,7 +109,7 @@ public:
 
     double delay() const { return m_delay; }
 
-    enum AnimationMode { AnimateAll, AnimateNone, AnimateSingleProperty };
+    enum AnimationMode { AnimateAll, AnimateNone, AnimateSingleProperty, AnimateUnknownProperty };
 
     enum AnimationDirection {
         AnimationDirectionNormal,
@@ -130,6 +130,7 @@ public:
     Style::ScopeOrdinal nameStyleScopeOrdinal() const { return m_nameStyleScopeOrdinal; }
     EAnimPlayState playState() const { return static_cast<EAnimPlayState>(m_playState); }
     CSSPropertyID property() const { return m_property; }
+    const String& unknownProperty() const { return m_unknownProperty; }
     TimingFunction* timingFunction() const { return m_timingFunction.get(); }
     AnimationMode animationMode() const { return m_mode; }
 #if ENABLE(CSS_ANIMATIONS_LEVEL_2)
@@ -149,6 +150,7 @@ public:
     }
     void setPlayState(EAnimPlayState d) { m_playState = d; m_playStateSet = true; }
     void setProperty(CSSPropertyID t) { m_property = t; m_propertySet = true; }
+    void setUnknownProperty(const String& property) { m_unknownProperty = property; }
     void setTimingFunction(RefPtr<TimingFunction>&& function) { m_timingFunction = WTFMove(function); m_timingFunctionSet = true; }
     void setAnimationMode(AnimationMode mode) { m_mode = mode; }
 #if ENABLE(CSS_ANIMATIONS_LEVEL_2)
@@ -176,6 +178,7 @@ private:
     String m_name;
     Style::ScopeOrdinal m_nameStyleScopeOrdinal { Style::ScopeOrdinal::Element };
     CSSPropertyID m_property;
+    String m_unknownProperty;
     AnimationMode m_mode;
     double m_iterationCount;
     double m_delay;

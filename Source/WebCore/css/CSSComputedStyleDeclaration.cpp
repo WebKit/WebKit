@@ -1199,11 +1199,18 @@ static Ref<CSSValue> valueForGridPosition(const GridPosition& position)
 
 static Ref<CSSValue> createTransitionPropertyValue(const Animation& animation)
 {
-    if (animation.animationMode() == Animation::AnimateNone)
+    switch (animation.animationMode()) {
+    case Animation::AnimateNone:
         return CSSValuePool::singleton().createIdentifierValue(CSSValueNone);
-    if (animation.animationMode() == Animation::AnimateAll)
+    case Animation::AnimateAll:
         return CSSValuePool::singleton().createIdentifierValue(CSSValueAll);
-    return CSSValuePool::singleton().createValue(getPropertyNameString(animation.property()), CSSPrimitiveValue::CSS_STRING);
+    case Animation::AnimateSingleProperty:
+        return CSSValuePool::singleton().createValue(getPropertyNameString(animation.property()), CSSPrimitiveValue::CSS_STRING);
+    case Animation::AnimateUnknownProperty:
+        return CSSValuePool::singleton().createValue(animation.unknownProperty(), CSSPrimitiveValue::CSS_STRING);
+    }
+    ASSERT_NOT_REACHED();
+    return CSSValuePool::singleton().createIdentifierValue(CSSValueNone);
 }
 
 static Ref<CSSValueList> transitionPropertyValue(const AnimationList* animationList)

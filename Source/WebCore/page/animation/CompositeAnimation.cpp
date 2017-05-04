@@ -97,7 +97,7 @@ void CompositeAnimation::updateTransitions(RenderElement* renderer, const Render
             bool isActiveTransition = !m_suspended && (animation.duration() || animation.delay() > 0);
 
             Animation::AnimationMode mode = animation.animationMode();
-            if (mode == Animation::AnimateNone)
+            if (mode == Animation::AnimateNone || mode == Animation::AnimateUnknownProperty)
                 continue;
 
             CSSPropertyID prop = animation.property();

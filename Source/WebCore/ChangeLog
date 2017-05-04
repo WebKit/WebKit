@@ -1,3 +1,36 @@
+2017-05-04  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (Safari 10.1): When 'transition' contains -ms-transform, transform-origin is also transitioned
+        https://bugs.webkit.org/show_bug.cgi?id=171250
+        <rdar://problem/31827243>
+
+        Reviewed by Geoffrey Garen.
+
+        We were mapping unknown properties to 'all' animation. With this patch we ignore them instead.
+        The patch also implements roundtripping of unknown properties via CSSOM, matching Blink and Gecko.
+
+        Test: transitions/transition-unknown-property-ignore.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::createTransitionPropertyValue):
+
+            Return the correct name for unknown properties.
+
+        * css/CSSToStyleMap.cpp:
+        (WebCore::CSSToStyleMap::mapAnimationProperty):
+
+            Map any unknown property to AnimateUnknownProperty mode instead of falling back to the default of AnimateAll.
+            Save the unknown property name so we can roundtrip it properly.
+
+        * page/animation/CompositeAnimation.cpp:
+        (WebCore::CompositeAnimation::updateTransitions):
+
+            Ignore AnimateUnknownProperty like AnimateNone.
+
+        * platform/animation/Animation.h:
+        (WebCore::Animation::unknownProperty):
+        (WebCore::Animation::setUnknownProperty):
+
 2017-05-04  Chris Dumez  <cdumez@apple.com>
 
         Clean up MutationRecord.idl

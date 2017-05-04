@@ -443,13 +443,21 @@ void CSSToStyleMap::mapAnimationProperty(Animation& animation, const CSSValue& v
     if (primitiveValue.valueID() == CSSValueAll) {
         animation.setAnimationMode(Animation::AnimateAll);
         animation.setProperty(CSSPropertyInvalid);
-    } else if (primitiveValue.valueID() == CSSValueNone) {
+        return;
+    }
+    if (primitiveValue.valueID() == CSSValueNone) {
         animation.setAnimationMode(Animation::AnimateNone);
         animation.setProperty(CSSPropertyInvalid);
-    } else if (primitiveValue.propertyID() != CSSPropertyInvalid) {
-        animation.setAnimationMode(Animation::AnimateSingleProperty);
-        animation.setProperty(primitiveValue.propertyID());
+        return;
     }
+    if (primitiveValue.propertyID() == CSSPropertyInvalid) {
+        animation.setAnimationMode(Animation::AnimateUnknownProperty);
+        animation.setProperty(CSSPropertyInvalid);
+        animation.setUnknownProperty(primitiveValue.stringValue());
+        return;
+    }
+    animation.setAnimationMode(Animation::AnimateSingleProperty);
+    animation.setProperty(primitiveValue.propertyID());
 }
 
 void CSSToStyleMap::mapAnimationTimingFunction(Animation& animation, const CSSValue& value)
