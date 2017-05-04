@@ -1008,6 +1008,15 @@
       ],
       "status" : "committer"
    },
+   "Caio Araujo Neponoceno de Lima" : {
+      "emails" : [
+         "ticaiolima@gmail.com"
+      ],
+      "nicks" : [
+         "caiolima"
+      ],
+      "status" : "committer"
+   },
    "Caio Marcelo de Oliveira Filho" : {
       "emails" : [
          "cmarcelo@webkit.org",

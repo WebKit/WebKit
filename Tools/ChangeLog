@@ -1,3 +1,9 @@
+2017-05-04  Caio Lima  <ticaiolima@gmail.com>
+
+        Unreviewed, Adding self to contributors.json
+
+        * Scripts/webkitpy/common/config/contributors.json: Added name.
+
 2017-05-04  Konstantin Tokarev  <annulen@yandex.ru>
 
         Fix compilation with ICU 59.1
