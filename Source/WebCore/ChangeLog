@@ -1,3 +1,16 @@
+2017-05-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+        REGRESSION(r216138): Web Inspector: ASSERT(!content.isNull()) when checking for source map url opening inspector
+        https://bugs.webkit.org/show_bug.cgi?id=171697
+        <rdar://problem/31999512>
+
+        Reviewed by Matt Baker.
+
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::cachedResourceContent):
+        Always set base64Encoded when returning true. Return the empty
+        string instead of a null string matching previous behavior.
+
 2017-05-04  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [WK2] Add support for keeping the selection in a focused editable element when dragging begins
