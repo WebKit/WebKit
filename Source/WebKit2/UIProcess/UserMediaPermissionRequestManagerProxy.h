@@ -73,6 +73,7 @@ public:
     void stopCapture();
     void scheduleNextRejection();
     void rejectionTimerFired();
+    void clearCachedState();
 
     void startedCaptureSession();
     void endedCaptureSession();

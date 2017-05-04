@@ -130,6 +130,11 @@ void UserMediaPermissionRequestManagerProxy::stopCapture()
     m_page.process().send(Messages::WebPage::StopMediaCapture(), m_page.pageID());
 }
 
+void UserMediaPermissionRequestManagerProxy::clearCachedState()
+{
+    invalidatePendingRequests();
+}
+
 Ref<UserMediaPermissionRequestProxy> UserMediaPermissionRequestManagerProxy::createRequest(uint64_t userMediaID, uint64_t frameID, const String& userMediaDocumentOriginIdentifier, const String& topLevelDocumentOriginIdentifier, const Vector<String>& audioDeviceUIDs, const Vector<String>& videoDeviceUIDs)
 {
     auto request = UserMediaPermissionRequestProxy::create(*this, userMediaID, frameID, userMediaDocumentOriginIdentifier, topLevelDocumentOriginIdentifier, audioDeviceUIDs, videoDeviceUIDs);

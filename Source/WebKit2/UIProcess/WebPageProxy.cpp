@@ -5783,6 +5783,13 @@ void WebPageProxy::enumerateMediaDevicesForFrame(uint64_t userMediaID, uint64_t 
 #endif
 }
 
+void WebPageProxy::clearUserMediaState()
+{
+#if ENABLE(MEDIA_STREAM)
+    userMediaPermissionRequestManager().clearCachedState();
+#endif
+}
+
 void WebPageProxy::requestNotificationPermission(uint64_t requestID, const String& originString)
 {
     if (!isRequestIDValid(requestID))
