@@ -26,71 +26,60 @@
     JSCustomMarkFunction,
     JSCustomPushEventHandlerScope,
 ] interface Node : EventTarget {
-    // NodeType
     const unsigned short ELEMENT_NODE = 1;
     const unsigned short ATTRIBUTE_NODE = 2;
     const unsigned short TEXT_NODE = 3;
     const unsigned short CDATA_SECTION_NODE = 4;
-    const unsigned short ENTITY_REFERENCE_NODE = 5;
-    const unsigned short ENTITY_NODE = 6;
+    const unsigned short ENTITY_REFERENCE_NODE = 5; // Historical.
+    const unsigned short ENTITY_NODE = 6; // Historical.
     const unsigned short PROCESSING_INSTRUCTION_NODE = 7;
     const unsigned short COMMENT_NODE = 8;
     const unsigned short DOCUMENT_NODE = 9;
     const unsigned short DOCUMENT_TYPE_NODE = 10;
     const unsigned short DOCUMENT_FRAGMENT_NODE = 11;
-    const unsigned short NOTATION_NODE = 12;
-
+    const unsigned short NOTATION_NODE = 12; // Historical.
+    [DOMJIT=Getter, CustomGetter] readonly attribute unsigned short nodeType;
     readonly attribute DOMString nodeName;
 
-    [CEReactions, SetterMayThrowException] attribute DOMString? nodeValue;
+    readonly attribute USVString baseURI;
 
-    [DOMJIT=Getter, CustomGetter] readonly attribute unsigned short nodeType;
+    [EnabledAtRuntime=ShadowDOM] readonly attribute boolean isConnected;
+    [DOMJIT=Getter] readonly attribute Document? ownerDocument;
+    [EnabledAtRuntime=ShadowDOM] Node getRootNode(optional GetRootNodeOptions options);
     [DOMJIT=Getter] readonly attribute Node? parentNode;
-    readonly attribute NodeList childNodes;
+    readonly attribute Element? parentElement;
+    boolean hasChildNodes();
+    readonly attribute NodeList childNodes; // FIXME: Should be [SameObject].
     [DOMJIT=Getter] readonly attribute Node? firstChild;
     [DOMJIT=Getter] readonly attribute Node? lastChild;
     [DOMJIT=Getter] readonly attribute Node? previousSibling;
     [DOMJIT=Getter] readonly attribute Node? nextSibling;
-    [DOMJIT=Getter] readonly attribute Document? ownerDocument;
 
-    [CEReactions, Custom, MayThrowException] Node insertBefore(Node newChild, Node? refChild);
-    [CEReactions, Custom, MayThrowException] Node replaceChild(Node newChild, Node oldChild);
-    [CEReactions, Custom, MayThrowException] Node removeChild(Node oldChild);
-    [CEReactions, Custom, MayThrowException] Node appendChild(Node newChild);
-
-    boolean hasChildNodes();
+    [CEReactions, SetterMayThrowException] attribute DOMString? nodeValue;
+    [CEReactions, SetterMayThrowException] attribute DOMString? textContent;
+    [CEReactions] void normalize();
 
     [CEReactions, ImplementedAs=cloneNodeForBindings, MayThrowException, NewObject] Node cloneNode(optional boolean deep = false);
-
-    void normalize();
-
-    readonly attribute USVString baseURI;
-
-    [CEReactions, SetterMayThrowException] attribute DOMString? textContent;
-
-    boolean isSameNode(Node? other);
     boolean isEqualNode(Node? other);
+    boolean isSameNode(Node? other); // Historical alias of ===.
 
-    DOMString? lookupPrefix(DOMString? namespaceURI);
-    DOMString? lookupNamespaceURI(DOMString? prefix);
-    boolean isDefaultNamespace(DOMString? namespaceURI);
-
-    // DocumentPosition
     const unsigned short DOCUMENT_POSITION_DISCONNECTED = 0x01;
     const unsigned short DOCUMENT_POSITION_PRECEDING = 0x02;
     const unsigned short DOCUMENT_POSITION_FOLLOWING = 0x04;
     const unsigned short DOCUMENT_POSITION_CONTAINS = 0x08;
     const unsigned short DOCUMENT_POSITION_CONTAINED_BY = 0x10;
     const unsigned short DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC = 0x20;
-
     unsigned short compareDocumentPosition(Node other);
-
     boolean contains(Node? other);
 
-    [EnabledAtRuntime=ShadowDOM] Node getRootNode(optional GetRootNodeOptions options);
-    [EnabledAtRuntime=ShadowDOM] readonly attribute boolean isConnected;
+    DOMString? lookupPrefix(DOMString? namespaceURI);
+    DOMString? lookupNamespaceURI(DOMString? prefix);
+    boolean isDefaultNamespace(DOMString? namespaceURI);
 
-    readonly attribute Element parentElement;
+    [CEReactions, Custom, MayThrowException] Node insertBefore(Node node, Node? child);
+    [CEReactions, Custom, MayThrowException] Node appendChild(Node node);
+    [CEReactions, Custom, MayThrowException] Node replaceChild(Node node, Node child);
+    [CEReactions, Custom, MayThrowException] Node removeChild(Node child);
 };
 
 dictionary GetRootNodeOptions {

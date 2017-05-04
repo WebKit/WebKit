@@ -138,19 +138,19 @@ PASS a["firstElementChild"] is null
 PASS a["lastElementChild"] is null
 PASS a["childElementCount"] is 0
 PASS a["assignedSlot"] is null
-PASS a["nodeName"] is A
-PASS a["nodeValue"] is null
 PASS a["nodeType"] is 1
+PASS a["nodeName"] is A
+PASS a["isConnected"] is true
+PASS a["ownerDocument"] is [object HTMLDocument]
 PASS a["parentNode"] is [object HTMLBodyElement]
+PASS a["parentElement"] is [object HTMLBodyElement]
 PASS a["childNodes"] is [object NodeList]
 PASS a["firstChild"] is [object Text]
 PASS a["lastChild"] is [object Text]
 PASS a["previousSibling"] is [object Text]
 PASS a["nextSibling"] is [object Text]
-PASS a["ownerDocument"] is [object HTMLDocument]
+PASS a["nodeValue"] is null
 PASS a["textContent"] is nerget
-PASS a["isConnected"] is true
-PASS a["parentElement"] is [object HTMLBodyElement]
 PASS a["ELEMENT_NODE"] is 1
 PASS a["ATTRIBUTE_NODE"] is 2
 PASS a["TEXT_NODE"] is 3
