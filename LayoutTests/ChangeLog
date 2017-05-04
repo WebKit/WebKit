@@ -1,3 +1,12 @@
+2017-05-04  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Skip media/modern-media-controls/pip-support/pip-support-click.html on mac-wk1.
+        https://bugs.webkit.org/show_bug.cgi?id=171610
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2017-05-04  Dave Hyatt  <hyatt@apple.com>
 
         REGRESSION(STP): rgb() with calc() containing variables doesn't work
