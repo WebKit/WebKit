@@ -552,7 +552,30 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
     textPainter.addTextShadow(textShadow, selectionShadow);
     textPainter.addEmphasis(emphasisMark, emphasisMarkOffset, combinedText);
 
-    textPainter.paintText(textRun, length, boxRect, textOrigin, selectionStart, selectionEnd, paintSelectedTextOnly, paintSelectedTextSeparately, paintNonSelectedTextOnly);
+    auto draggedContentRanges = renderer().draggedContentRangesBetweenOffsets(m_start, m_start + m_len);
+    if (!draggedContentRanges.isEmpty() && !paintSelectedTextOnly && !paintNonSelectedTextOnly) {
+        // FIXME: Painting with text effects ranges currently only works if we're not also painting the selection.
+        // In the future, we may want to support this capability, but in the meantime, this isn't required by anything.
+        unsigned currentEnd = 0;
+        for (size_t index = 0; index < draggedContentRanges.size(); ++index) {
+            unsigned previousEnd = index ? std::min(draggedContentRanges[index - 1].second, length) : 0;
+            unsigned currentStart = draggedContentRanges[index].first - m_start;
+            currentEnd = std::min(draggedContentRanges[index].second - m_start, length);
+
+            if (previousEnd < currentStart)
+                textPainter.paintTextInRange(textRun, boxRect, textOrigin, previousEnd, currentStart);
+
+            if (currentStart < currentEnd) {
+                context.save();
+                context.setAlpha(0.25);
+                textPainter.paintTextInRange(textRun, boxRect, textOrigin, currentStart, currentEnd);
+                context.restore();
+            }
+        }
+        if (currentEnd < length)
+            textPainter.paintTextInRange(textRun, boxRect, textOrigin, currentEnd, length);
+    } else
+        textPainter.paintText(textRun, length, boxRect, textOrigin, selectionStart, selectionEnd, paintSelectedTextOnly, paintSelectedTextSeparately, paintNonSelectedTextOnly);
 
     // Paint decorations
     TextDecoration textDecorations = lineStyle.textDecorationsInEffect();

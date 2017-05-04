@@ -34,6 +34,7 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "CursorList.h"
+#include "DocumentMarkerController.h"
 #include "DragController.h"
 #include "DragState.h"
 #include "Editing.h"
@@ -3451,6 +3452,60 @@ void EventHandler::invalidateDataTransfer()
     dragState().dataTransfer = nullptr;
 }
 
+static void repaintContentsOfRange(RefPtr<Range> range)
+{
+    if (!range)
+        return;
+
+    auto* container = range->commonAncestorContainer();
+    if (!container)
+        return;
+
+    // This ensures that all nodes enclosed in this Range are repainted.
+    if (auto rendererToRepaint = container->renderer()) {
+        if (auto* containingRenderer = rendererToRepaint->container())
+            rendererToRepaint = containingRenderer;
+        rendererToRepaint->repaint();
+    }
+}
+
+void EventHandler::dragCancelled()
+{
+#if ENABLE(DATA_INTERACTION)
+    if (auto range = dragState().draggedContentRange) {
+        range->ownerDocument().markers().removeMarkers(DocumentMarker::DraggedContent);
+        repaintContentsOfRange(range);
+    }
+    dragState().draggedContentRange = nullptr;
+#endif
+}
+
+void EventHandler::didStartDrag()
+{
+#if ENABLE(DATA_INTERACTION)
+    auto dragSource = dragState().source;
+    if (!dragSource)
+        return;
+
+    auto* renderer = dragSource->renderer();
+    if (!renderer)
+        return;
+
+    if (dragState().type & DragSourceActionSelection)
+        dragState().draggedContentRange = m_frame.selection().selection().toNormalizedRange();
+    else {
+        Position startPosition(dragSource.get(), Position::PositionIsBeforeAnchor);
+        Position endPosition(dragSource.get(), Position::PositionIsAfterAnchor);
+        dragState().draggedContentRange = Range::create(dragSource->document(), startPosition, endPosition);
+    }
+
+    if (auto range = dragState().draggedContentRange) {
+        range->ownerDocument().markers().addDraggedContentMarker(range.get());
+        repaintContentsOfRange(range);
+    }
+#endif
+}
+
 void EventHandler::dragSourceEndedAt(const PlatformMouseEvent& event, DragOperation operation)
 {
     // Send a hit test request so that RenderLayer gets a chance to update the :hover and :active pseudoclasses.
@@ -3463,6 +3518,12 @@ void EventHandler::dragSourceEndedAt(const PlatformMouseEvent& event, DragOperat
         dispatchDragSrcEvent(eventNames().dragendEvent, event);
     }
     invalidateDataTransfer();
+
+    if (auto range = dragState().draggedContentRange) {
+        range->ownerDocument().markers().removeMarkers(DocumentMarker::DraggedContent);
+        repaintContentsOfRange(range);
+    }
+
     dragState().source = nullptr;
     // In case the drag was ended due to an escape key press we need to ensure
     // that consecutive mousemove events don't reinitiate the drag and drop.
@@ -3485,6 +3546,11 @@ bool EventHandler::dispatchDragSrcEvent(const AtomicString& eventType, const Pla
 static bool ExactlyOneBitSet(DragSourceAction n)
 {
     return n && !(n & (n - 1));
+}
+
+RefPtr<Element> EventHandler::draggedElement() const
+{
+    return dragState().source;
 }
 
 bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event, CheckDragHysteresis checkDragHysteresis)

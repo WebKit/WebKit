@@ -1819,7 +1819,7 @@ void WebPageProxy::startDrag(WebSelectionData&& selection, uint64_t dragOperatio
     RefPtr<ShareableBitmap> dragImage = !dragImageHandle.isNull() ? ShareableBitmap::create(dragImageHandle) : nullptr;
     m_pageClient.startDrag(WTFMove(selection.selectionData), static_cast<WebCore::DragOperation>(dragOperation), WTFMove(dragImage));
 
-    m_process->send(Messages::WebPage::DidStartDrag(), m_pageID);
+    didStartDrag();
 }
 #endif
 
@@ -1829,6 +1829,12 @@ void WebPageProxy::dragEnded(const IntPoint& clientPosition, const IntPoint& glo
         return;
     m_process->send(Messages::WebPage::DragEnded(clientPosition, globalPosition, operation), m_pageID);
     setDragCaretRect({ });
+}
+
+void WebPageProxy::didStartDrag()
+{
+    if (isValid())
+        m_process->send(Messages::WebPage::DidStartDrag(), m_pageID);
 }
     
 void WebPageProxy::dragCancelled()

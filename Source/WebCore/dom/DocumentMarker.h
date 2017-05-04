@@ -20,6 +20,8 @@
 
 #pragma once
 
+#include "Node.h"
+
 #include <wtf/Forward.h>
 #include <wtf/Variant.h>
 #include <wtf/text/WTFString.h>
@@ -75,6 +77,8 @@ public:
 #endif
         // This marker indicates that the user has selected a text candidate.
         AcceptedCandidate = 1 << 13,
+        // This marker indicates that the user has initiated a drag with this content.
+        DraggedContent = 1 << 14
     };
 
     class MarkerTypes {
@@ -115,6 +119,7 @@ public:
                 | DictationPhraseWithAlternatives
                 | DictationResult
 #endif
+                | DraggedContent
             )
         {
         }
@@ -132,7 +137,10 @@ public:
         RetainPtr<id> metadata;
 #endif
     };
-    using Data = Variant<IsActiveMatchData, DescriptionData, DictationData, DictationAlternativesData>;
+    struct DraggedContentData {
+        RefPtr<Node> targetNode;
+    };
+    using Data = Variant<IsActiveMatchData, DescriptionData, DictationData, DictationAlternativesData, DraggedContentData>;
 
     DocumentMarker(unsigned startOffset, unsigned endOffset, bool isActiveMatch);
     DocumentMarker(MarkerType, unsigned startOffset, unsigned endOffset, const String& description = String());

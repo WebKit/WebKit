@@ -168,6 +168,16 @@ void TextPainter::paintTextAndEmphasisMarksIfNeeded(const TextRun& textRun, cons
     if (m_combinedText)
         m_context.concatCTM(rotation(boxRect, Counterclockwise));
 }
+
+void TextPainter::paintTextInRange(const TextRun& textRun, const FloatRect& boxRect, const FloatPoint& textOrigin, unsigned start, unsigned end)
+{
+    ASSERT(m_font);
+    ASSERT(start < end);
+
+    GraphicsContextStateSaver stateSaver(m_context, m_textPaintStyle.strokeWidth > 0);
+    updateGraphicsContext(m_context, m_textPaintStyle);
+    paintTextAndEmphasisMarksIfNeeded(textRun, boxRect, textOrigin, start, end, m_textPaintStyle, m_textShadow);
+}
     
 void TextPainter::paintText(const TextRun& textRun, unsigned length, const FloatRect& boxRect, const FloatPoint& textOrigin, unsigned selectionStart, unsigned selectionEnd,
     bool paintSelectedTextOnly, bool paintSelectedTextSeparately, bool paintNonSelectedTextOnly)

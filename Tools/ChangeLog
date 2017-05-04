@@ -1,3 +1,36 @@
+2017-05-04  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [WK2] Add support for keeping the selection in a focused editable element when dragging begins
+        https://bugs.webkit.org/show_bug.cgi?id=171585
+        <rdar://problem/31544320>
+
+        Reviewed by Beth Dakin and Zalan Bujtas.
+
+        Adds 1 new unit test and tweaks existing tests to check that when first responder status is lost after beginning
+        a drag while editing, content is still moved (and not copied) when performing data interaction on a different
+        element. ContentEditableMoveParagraphs checks that content can be shifted within a single element via a move
+        operation rather than a copy.
+
+        See WebCore ChangeLog for more details.
+
+        Tests:  DataInteractionSimulator.ContentEditableToContentEditable
+                DataInteractionSimulator.ContentEditableToTextarea
+                DataInteractionSimulator.ContentEditableMoveParagraphs
+                DataInteractionSimulator.TextAreaToInput
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/two-paragraph-contenteditable.html: Added.
+        * TestWebKitAPI/Tests/ios/DataInteractionTests.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/ios/DataInteractionSimulator.h:
+        * TestWebKitAPI/ios/DataInteractionSimulator.mm:
+        (-[DataInteractionSimulator initWithWebView:]):
+        (-[DataInteractionSimulator dealloc]):
+        (-[DataInteractionSimulator _advanceProgress]):
+        (-[DataInteractionSimulator waitForInputSession]):
+        (-[DataInteractionSimulator _webView:focusShouldStartInputSession:]):
+        (-[DataInteractionSimulator _webView:didStartInputSession:]):
+
 2017-05-04  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Rename TestRunner.display() to TestRunner::displayAndTrackRepaints()

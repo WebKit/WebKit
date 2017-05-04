@@ -162,9 +162,10 @@ TEST(DataInteractionTests, ImageInLinkWithoutHREFToInput)
 TEST(DataInteractionTests, ContentEditableToContentEditable)
 {
     RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
-    [webView synchronouslyLoadTestPageNamed:@"autofocus-contenteditable"];
-
     RetainPtr<DataInteractionSimulator> dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+
+    [webView loadTestPageNamed:@"autofocus-contenteditable"];
+    [dataInteractionSimulator waitForInputSession];
     [dataInteractionSimulator runFrom:CGPointMake(100, 50) to:CGPointMake(100, 300)];
 
     EXPECT_EQ([webView stringByEvaluatingJavaScript:@"source.textContent"].length, 0UL);
@@ -181,9 +182,10 @@ TEST(DataInteractionTests, ContentEditableToContentEditable)
 TEST(DataInteractionTests, ContentEditableToTextarea)
 {
     RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
-    [webView synchronouslyLoadTestPageNamed:@"contenteditable-and-textarea"];
-
     RetainPtr<DataInteractionSimulator> dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+
+    [webView loadTestPageNamed:@"contenteditable-and-textarea"];
+    [dataInteractionSimulator waitForInputSession];
     [dataInteractionSimulator runFrom:CGPointMake(100, 50) to:CGPointMake(100, 300)];
 
     EXPECT_EQ([webView stringByEvaluatingJavaScript:@"source.textContent"].length, 0UL);
@@ -197,12 +199,32 @@ TEST(DataInteractionTests, ContentEditableToTextarea)
     checkTypeIdentifierPrecedesOtherTypeIdentifier(dataInteractionSimulator.get(), (NSString *)kUTTypeRTFD, (NSString *)kUTTypeUTF8PlainText);
 }
 
+TEST(DataInteractionTests, ContentEditableMoveParagraphs)
+{
+    RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    RetainPtr<DataInteractionSimulator> dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+
+    [webView loadTestPageNamed:@"two-paragraph-contenteditable"];
+    [dataInteractionSimulator waitForInputSession];
+    [dataInteractionSimulator runFrom:CGPointMake(100, 50) to:CGPointMake(250, 450)];
+
+    NSString *finalTextContent = [webView stringByEvaluatingJavaScript:@"editor.textContent"];
+    NSUInteger firstParagraphOffset = [finalTextContent rangeOfString:@"This is the first paragraph"].location;
+    NSUInteger secondParagraphOffset = [finalTextContent rangeOfString:@"This is the second paragraph"].location;
+
+    EXPECT_FALSE(firstParagraphOffset == NSNotFound);
+    EXPECT_FALSE(secondParagraphOffset == NSNotFound);
+    EXPECT_GT(firstParagraphOffset, secondParagraphOffset);
+    checkSelectionRectsWithLogging(@[ makeCGRectValue(190, 100, 130, 20), makeCGRectValue(0, 120, 320, 100), makeCGRectValue(0, 220, 252, 20) ], [dataInteractionSimulator finalSelectionRects]);
+}
+
 TEST(DataInteractionTests, TextAreaToInput)
 {
     RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
-    [webView synchronouslyLoadTestPageNamed:@"textarea-to-input"];
-
     RetainPtr<DataInteractionSimulator> dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+
+    [webView loadTestPageNamed:@"textarea-to-input"];
+    [dataInteractionSimulator waitForInputSession];
     [dataInteractionSimulator runFrom:CGPointMake(100, 50) to:CGPointMake(100, 300)];
 
     EXPECT_EQ([webView stringByEvaluatingJavaScript:@"source.value"].length, 0UL);

@@ -24,6 +24,7 @@
 #include "config.h"
 #include "RenderReplaced.h"
 
+#include "DocumentMarkerController.h"
 #include "FloatRoundedRect.h"
 #include "Frame.h"
 #include "GraphicsContext.h"
@@ -37,6 +38,7 @@
 #include "RenderNamedFlowFragment.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
+#include "RenderedDocumentMarker.h"
 #include "VisiblePosition.h"
 #include <wtf/StackStats.h>
 
@@ -134,6 +136,20 @@ bool RenderReplaced::shouldDrawSelectionTint() const
     return selectionState() != SelectionNone && !document().printing();
 }
 
+inline static bool draggedContentContainsReplacedElement(const Vector<RenderedDocumentMarker*>& markers, const Element& element)
+{
+    if (markers.isEmpty())
+        return false;
+
+    for (auto* marker : markers) {
+        auto& draggedContentData = WTF::get<DocumentMarker::DraggedContentData>(marker->data());
+        if (draggedContentData.targetNode == &element)
+            return true;
+    }
+
+    return false;
+}
+
 void RenderReplaced::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     if (!shouldPaint(paintInfo, paintOffset))
@@ -142,6 +158,14 @@ void RenderReplaced::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 #ifndef NDEBUG
     SetLayoutNeededForbiddenScope scope(this);
 #endif
+
+    GraphicsContextStateSaver savedGraphicsContext(paintInfo.context());
+    if (element() && element()->parentOrShadowHostElement()) {
+        auto* parentContainer = element()->parentOrShadowHostElement();
+        if (draggedContentContainsReplacedElement(document().markers().markersFor(parentContainer, DocumentMarker::DraggedContent), *element()))
+            paintInfo.context().setAlpha(0.25);
+    }
+
     LayoutPoint adjustedPaintOffset = paintOffset + location();
     
     if (hasVisibleBoxDecorations() && paintInfo.phase == PaintPhaseForeground)

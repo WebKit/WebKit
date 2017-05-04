@@ -56,6 +56,7 @@ public:
     void addEmphasis(const AtomicString& emphasisMark, float emphasisMarkOffset, RenderCombineText*);
     void addTextShadow(const ShadowData* textShadow, const ShadowData* selectionShadow);
 
+    void paintTextInRange(const TextRun&, const FloatRect& boxRect, const FloatPoint& textOrigin, unsigned start, unsigned end);
     void paintText(const TextRun&, unsigned length, const FloatRect& boxRect, const FloatPoint& textOrigin,
         unsigned selectionStart = 0, unsigned selectionEnd = 0, bool paintSelectedTextOnly = false, bool paintSelectedTextSeparately = false, bool paintNonSelectedTextOnly = false);
 

@@ -1,3 +1,35 @@
+2017-05-04  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [WK2] Add support for keeping the selection in a focused editable element when dragging begins
+        https://bugs.webkit.org/show_bug.cgi?id=171585
+        <rdar://problem/31544320>
+
+        Reviewed by Beth Dakin and Zalan Bujtas.
+
+        Minor adjustments and refactoring in WebKit2. See WebCore ChangeLog for more details.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::startDrag):
+        (WebKit::WebPageProxy::didStartDrag):
+
+        Factor out code in WebPageProxy that sends a WebPage::DidStartDrag message to the web process into a separate
+        helper, and tweak the places where we directly send this IPC message to the web process to instead call this
+        helper.
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::setDragImage):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didStartDrag):
+        (WebKit::WebPage::dragCancelled):
+
+        Clear out state in the web process and call out to the EventHandler to handle drag cancellation and the drag
+        start response from the UI process.
+
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::didStartDrag): Deleted.
+        (WebKit::WebPage::dragCancelled): Deleted.
+
 2017-05-04  Sam Weinig  <sam@webkit.org>
 
         Remove support for legacy Notifications

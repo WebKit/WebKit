@@ -1,3 +1,103 @@
+2017-05-04  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [WK2] Add support for keeping the selection in a focused editable element when dragging begins
+        https://bugs.webkit.org/show_bug.cgi?id=171585
+        <rdar://problem/31544320>
+
+        Reviewed by Beth Dakin and Zalan Bujtas.
+
+        Covered by 4 API tests.
+
+        * dom/DocumentMarker.h:
+
+        Introduces the DraggedContent DocumentMarker type, which applies to the Range in the DOM that is being used as
+        a drag source. Also adds DraggedContentData, which contains nodes found by the TextIterator in the process of
+        finding Ranges to mark.
+
+        (WebCore::DocumentMarker::AllMarkers::AllMarkers):
+        * dom/DocumentMarkerController.cpp:
+        (WebCore::DocumentMarkerController::addDraggedContentMarker):
+        (WebCore::shouldInsertAsSeparateMarker):
+        (WebCore::DocumentMarkerController::addMarker):
+
+        When adding DocumentMarkers of type DraggedContent, keep adjacent RenderReplaced elements separate, rather than
+        merging them into existing RenderedDocumentMarkers. This is because the data for each of these (i.e. the target
+        node) needs to be preserved.
+
+        (WebCore::DocumentMarkerController::markersFor):
+
+        Bail and return an empty list if the map of document markers cannot possibly contain a dragged content marker.
+
+        * dom/DocumentMarkerController.h:
+        * page/DragController.h:
+        * page/DragState.h:
+
+        Add draggedContentRange to DragState. This tracks the Range that is being dragged; it is created when the drag
+        session has begun, and ends when drag session finishes (either via WebPage::dragEnded or WebPage::dragCancelled).
+
+        * page/EventHandler.cpp:
+        (WebCore::repaintContentsOfRange):
+        (WebCore::EventHandler::dragCancelled):
+
+        Called when a drag is cancelled in the UI process without a session ever getting a chance to begin. We use this
+        as a hook to remove all DraggedContent document markers from the document of the dragged content range.
+
+        (WebCore::EventHandler::didStartDrag):
+
+        Called when a drag session has begun in the UI process. We use this as a hook to set up document markers for the
+        Range of content being dragged.
+
+        (WebCore::EventHandler::dragSourceEndedAt):
+
+        Called when a drag session ends. We use this as a hook to remove all DraggedContent document markers from the
+        document of the dragged content range.
+
+        (WebCore::EventHandler::draggedElement):
+        * page/EventHandler.h:
+        * page/FocusController.cpp:
+        (WebCore::shouldClearSelectionWhenChangingFocusedElement):
+
+        Prevent the selection from clearing when the previously focused element is editable and also contains the drag
+        source element. Ideally, we should experiment with clearing out the selection whenever the element is blurred
+        (and not have additional restrictions on editability and containing the drag source), but this change is much
+        riskier.
+
+        (WebCore::FocusController::setFocusedElement):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paint):
+
+        Use RenderText::draggedContentStartEnd to find the range of text (if any) that is dragged content, and paint
+        these ranges of text at a lower alpha using TextPainter::paintTextInRange.
+
+        * rendering/RenderReplaced.cpp:
+        (WebCore::draggedContentContainsReplacedElement):
+
+        Determines whether or not the element being rendered is contained within a dragged content range. Assuming that
+        the DraggedContent type flag is set in DocumentMarkerController, we first look to see whether or not the
+        container node is in the document marker map. If so, instead of consulting node offset ranges (since this is, in
+        the worst-case, linear in the number of sibling nodes per RenderReplaced) we simply check the DraggedContentData
+        to see if the current element being rendered matches one of the target nodes.
+
+        (WebCore::RenderReplaced::paint):
+
+        If the element rendered by this RenderReplaced is dragged content, then render it at a low alpha.
+
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::draggedContentRangesBetweenOffsets):
+
+        Determines what range of text, if any, contains dragged content by consulting the Document's DocumentMarkers.
+
+        * rendering/RenderText.h:
+        * rendering/TextPainter.cpp:
+        (WebCore::TextPainter::paintTextInRange):
+
+        Teach TextPainter to only paint a given range in a TextRun.
+
+        * rendering/TextPainter.h:
+
+        Add TextPainter support for specifying special text offset ranges when rendering a TextRun, such that each
+        special range in text is rendered after applying some modification to the GraphicsContext.
+
 2017-05-04  Jeremy Jones  <jeremyj@apple.com>
 
         Crash when pointer lock element is removed before pointer lock allowed arrives.
