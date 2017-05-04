@@ -598,7 +598,8 @@ private:
         if (unitCategory(type) == CalcOther)
             return false;
         
-        result->value = CSSCalcPrimitiveValue::create(CSSPrimitiveValue::create(token.numericValue(), type), token.numericValueType() == IntegerValueType);
+        bool isInteger = token.numericValueType() == IntegerValueType || (token.numericValueType() == NumberValueType && token.numericValue() == trunc(token.numericValue()));
+        result->value = CSSCalcPrimitiveValue::create(CSSPrimitiveValue::create(token.numericValue(), type), isInteger);
         
         return true;
     }
