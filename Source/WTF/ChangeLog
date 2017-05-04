@@ -1,3 +1,18 @@
+2017-05-04  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [GTK][JSCOnly] Implement memoryFootprint for Linux
+        https://bugs.webkit.org/show_bug.cgi?id=171680
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Darwin's phys_footprint returns the amount of dirty anonymous memory in the process.
+        This patch implements the same thing in Linux by reading /proc/self/smaps.
+        We sum sizes of private dirty pages in anonymous regions.
+
+        * wtf/MemoryFootprint.cpp:
+        (WTF::forEachLine):
+        (WTF::memoryFootprint):
+
 2017-05-03  Mark Lam  <mark.lam@apple.com>
 
         Use the CLoop for CPU(ARM64E).

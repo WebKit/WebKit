@@ -26,25 +26,82 @@
 #include "config.h"
 #include "MemoryFootprint.h"
 
-#if PLATFORM(COCOA)
+#if OS(DARWIN)
 #include <mach/mach.h>
 #include <mach/task_info.h>
 #endif
 
+#if OS(LINUX)
+#include <stdio.h>
+#include <wtf/StdLibExtras.h>
+#include <wtf/text/StringView.h>
+#endif
+
 namespace WTF {
+
+#if OS(LINUX)
+template<typename Functor>
+static void forEachLine(FILE* file, Functor functor)
+{
+    char* buffer = nullptr;
+    size_t size = 0;
+    while (getline(&buffer, &size, file) != -1) {
+        functor(buffer, size);
+        free(buffer);
+        buffer = nullptr;
+        size = 0;
+    }
+}
+#endif
 
 std::optional<size_t> memoryFootprint()
 {
-#if PLATFORM(COCOA)
+#if OS(DARWIN)
     task_vm_info_data_t vmInfo;
     mach_msg_type_number_t count = TASK_VM_INFO_COUNT;
     kern_return_t result = task_info(mach_task_self(), TASK_VM_INFO, (task_info_t) &vmInfo, &count);
     if (result != KERN_SUCCESS)
         return std::nullopt;
     return static_cast<size_t>(vmInfo.phys_footprint);
-#else
-    return std::nullopt;
+#elif OS(LINUX)
+    FILE* file = fopen("/proc/self/smaps", "r");
+    if (!file)
+        return std::nullopt;
+
+    unsigned long totalPrivateDirtyInKB = 0;
+    bool isAnonymous = false;
+    forEachLine(file, [&] (char* buffer, size_t) {
+        {
+            unsigned long start;
+            unsigned long end;
+            unsigned long offset;
+            unsigned long inode;
+            char dev[32];
+            char perms[5];
+            char path[7];
+            int scannedCount = sscanf(buffer, "%lx-%lx %4s %lx %31s %lu %6s", &start, &end, perms, &offset, dev, &inode, path);
+            if (scannedCount == 6) {
+                isAnonymous = true;
+                return;
+            }
+            if (scannedCount == 7) {
+                StringView pathString(path);
+                isAnonymous = pathString == ASCIILiteral("[heap]") || pathString.startsWith("[stack");
+                return;
+            }
+        }
+
+        if (!isAnonymous)
+            return;
+
+        unsigned long privateDirtyInKB;
+        if (sscanf(buffer, "Private_Dirty: %lu", &privateDirtyInKB) == 1)
+            totalPrivateDirtyInKB += privateDirtyInKB;
+    });
+    fclose(file);
+    return totalPrivateDirtyInKB * KB;
 #endif
+    return std::nullopt;
 }
 
 }
