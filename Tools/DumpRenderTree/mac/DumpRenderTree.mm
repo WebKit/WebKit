@@ -2098,14 +2098,21 @@ void displayWebView()
 #if !PLATFORM(IOS)
     WebView *webView = [mainFrame webView];
     [webView display];
-
-    // FIXME: Tracking repaints is not specific to Mac. We should enable such support on iOS.
-    [webView setTracksRepaints:YES];
-    [webView resetTrackedRepaints];
 #else
     [gDrtWindow layoutTilesNow];
     [gDrtWindow setNeedsDisplayInRect:[gDrtWindow frame]];
     [CATransaction flush];
+#endif
+}
+
+void displayAndTrackRepaintsWebView()
+{
+    displayWebView();
+#if !PLATFORM(IOS)
+    // FIXME: Tracking repaints is not specific to Mac. We should enable such support on iOS.
+    WebView *webView = [mainFrame webView];
+    [webView setTracksRepaints:YES];
+    [webView resetTrackedRepaints];
 #endif
 }
 

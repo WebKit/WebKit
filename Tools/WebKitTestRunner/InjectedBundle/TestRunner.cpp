@@ -114,7 +114,7 @@ JSClassRef TestRunner::wrapperClass()
     return JSTestRunner::testRunnerClass();
 }
 
-void TestRunner::display()
+void TestRunner::displayAndTrackRepaints()
 {
     WKBundlePageRef page = InjectedBundle::singleton().page()->page();
     WKBundlePageForceRepaint(page);

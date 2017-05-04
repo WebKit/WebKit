@@ -12,7 +12,7 @@
         testRunner.waitUntilDone();
 
     if (window.testRunner)
-        testRunner.display();
+        testRunner.displayAndTrackRepaints();
 
     var count = 3;
     var audioElements = document.getElementsByTagName('audio');

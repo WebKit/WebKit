@@ -98,7 +98,7 @@ interface TestRunner {
     // Repaint testing.
     void testRepaint();
     void repaintSweepHorizontally();
-    void display();
+    void displayAndTrackRepaints();
 
     // Printing
     boolean isPageBoxVisible(long pageIndex);

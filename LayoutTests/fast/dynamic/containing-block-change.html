@@ -3,13 +3,13 @@
     {
         document.body.offsetTop;    // force layout
         if (window.testRunner)
-            testRunner.display();
+            testRunner.displayAndTrackRepaints();
         var t = document.getElementById('t');
         t.style.position = 'relative';
         document.body.offsetTop;    // force layout
         t.lastChild.removeChild(t.lastChild.lastChild);
         if (window.testRunner)
-            testRunner.display();
+            testRunner.displayAndTrackRepaints();
     }
 </script>
 <body onload="test()">

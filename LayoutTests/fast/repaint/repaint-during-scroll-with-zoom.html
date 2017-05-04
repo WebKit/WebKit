@@ -41,7 +41,7 @@
         }
 
         if (window.testRunner) {
-            testRunner.display();
+            testRunner.displayAndTrackRepaints();
             testScrollRepaint();
         } else {
             setTimeout(testScrollRepaint, 100);

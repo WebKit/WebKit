@@ -14,7 +14,7 @@ function beginTest()
 {
     if (window.testRunner) {
         document.body.offsetTop;
-        testRunner.display();
+        testRunner.displayAndTrackRepaints();
         test(document.getElementById("iframe").contentDocument);
     } else setTimeout(
         function() {

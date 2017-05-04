@@ -19,7 +19,7 @@
         function step1()
         {
             if (window.testRunner)
-                testRunner.display();
+                testRunner.displayAndTrackRepaints();
             document.getElementById("target").style.display="none";
             document.body.offsetTop;
             setTimeout("step2()", 200);

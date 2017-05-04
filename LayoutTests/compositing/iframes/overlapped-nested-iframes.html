@@ -34,7 +34,7 @@
           window.scrollTo(0, 100);
           // Force a paint, and give layers a chance to update.
           if (window.testRunner)
-            testRunner.display();
+            testRunner.displayAndTrackRepaints();
           window.setTimeout(function() {
             if (window.testRunner) {
                 document.getElementById('layers').innerHTML = window.internals.layerTreeAsText(document);

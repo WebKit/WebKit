@@ -69,8 +69,7 @@ public:
     JSStringRef copyDecodedHostName(JSStringRef name);
     JSStringRef copyEncodedHostName(JSStringRef name);
     void dispatchPendingLoadRequests();
-    void display();
-    void displayInvalidatedRegion();
+    void displayAndTrackRepaints();
     void execCommand(JSStringRef name, JSStringRef value);
     bool findString(JSContextRef, JSStringRef, JSObjectRef optionsArray);
     void goBack();

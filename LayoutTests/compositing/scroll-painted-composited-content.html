@@ -25,7 +25,7 @@
             testRunner.dumpAsText();
             // Force a paint so that the content will be painted at the current scroll offset (0x0)
             // before we scroll.
-            testRunner.display();
+            testRunner.displayAndTrackRepaints();
         }
         window.scrollBy(300, 0);
     </script>

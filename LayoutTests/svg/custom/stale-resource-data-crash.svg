@@ -21,7 +21,7 @@
     if (window.testRunner) {
       testRunner.dumpAsText();
       // Force a paint at this point to generate cached filter results.
-      testRunner.display();
+      testRunner.displayAndTrackRepaints();
     }
 
     docElement.appendChild(newDefs);

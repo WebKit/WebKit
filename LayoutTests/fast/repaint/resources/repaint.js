@@ -7,7 +7,7 @@ function runRepaintTest()
         else if (document.documentElement)
             document.documentElement.offsetTop;
 
-        testRunner.display();
+        testRunner.displayAndTrackRepaints();
         repaintTest();
     } else {
         setTimeout(repaintTest, 100);

@@ -16,10 +16,10 @@ window.requestAnimationFrame(function() {
 
 // This should fire the three already registered callbacks, but not the one dynamically registered.
 if (window.testRunner)
-    testRunner.display();
+    testRunner.displayAndTrackRepaints();
 // This should fire the dynamically registered callback.
 if (window.testRunner)
-    testRunner.display();
+    testRunner.displayAndTrackRepaints();
 
 if (window.testRunner)
     testRunner.waitUntilDone();

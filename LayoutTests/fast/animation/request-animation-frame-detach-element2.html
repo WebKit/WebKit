@@ -12,7 +12,7 @@ window.onload = function() {
 
     if (window.testRunner) {
         window.setTimeout(function() {
-            testRunner.display();
+            testRunner.displayAndTrackRepaints();
             testRunner.notifyDone();
         }, 50);
     }

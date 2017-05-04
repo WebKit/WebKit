@@ -41,7 +41,7 @@ var drawIterations = 2;
 function TestControllerPaint() {
     while (drawIterations > 0) {
         draw();
-        testRunner.display();
+        testRunner.displayAndTrackRepaints();
         drawIterations = drawIterations - 1;
     }
     draw();

@@ -36,7 +36,7 @@
       textarea.scrollTop = 40;
       if (window.testRunner)
         window.testRunner.notifyDone();
-      window.testRunner.display();
+      window.testRunner.displayAndTrackRepaints();
     }
 
     function doTest()
@@ -45,7 +45,7 @@
       textarea.focus();
       textarea.selectionStart = textarea.selectionEnd = 0;
       if (window.testRunner)
-        window.testRunner.display();
+        window.testRunner.displayAndTrackRepaints();
       window.setTimeout(endTest, 100);
     }
 

@@ -1,3 +1,35 @@
+2017-05-04  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Rename TestRunner.display() to TestRunner::displayAndTrackRepaints()
+        https://bugs.webkit.org/show_bug.cgi?id=171641
+
+        Reviewed by Simon Fraser.
+
+        The plan is to add back the TestRunner.display() which does the display
+        only without track repaints.
+
+        * DumpRenderTree/DumpRenderTree.h:
+        * DumpRenderTree/TestRunner.cpp:
+        (displayAndTrackRepaintsCallback):
+        (TestRunner::staticFunctions):
+        (displayCallback): Deleted.
+        (displayInvalidatedRegionCallback): Deleted.
+        * DumpRenderTree/TestRunner.h:
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (displayWebView):
+        (displayAndTrackRepaintsWebView):
+        * DumpRenderTree/mac/TestRunnerMac.mm:
+        (TestRunner::displayAndTrackRepaints):
+        (TestRunner::display): Deleted.
+        * DumpRenderTree/win/TestRunnerWin.cpp:
+        (TestRunner::displayAndTrackRepaints):
+        (TestRunner::display): Deleted.
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::displayAndTrackRepaints):
+        (WTR::TestRunner::display): Deleted.
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+
 2017-05-04  Brady Eidson  <beidson@apple.com>
 
         [ios-simulator] API test WebKit2.WebsiteDataStoreCustomPaths is failing.

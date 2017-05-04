@@ -7,7 +7,7 @@
 
   <script>
     if (window.testRunner) {
-        testRunner.display();
+        testRunner.displayAndTrackRepaints();
         testRunner.waitUntilDone();
         setTimeout(runTest, 0);
     } else {

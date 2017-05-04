@@ -48,7 +48,7 @@
             document.getElementById("outer").scrollTop = 1000;
 
             if (window.testRunner)
-                testRunner.display();
+                testRunner.displayAndTrackRepaints();
 
             setTimeout(repaintTest, 0);
         }

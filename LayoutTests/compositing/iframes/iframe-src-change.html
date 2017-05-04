@@ -35,7 +35,7 @@
             var hadLayersBefore = false;
             var hadLayersAfter = false;
             if (window.testRunner) {
-                testRunner.display(); // Need to paint for overlap testing.
+                testRunner.displayAndTrackRepaints(); // Need to paint for overlap testing.
                 hadLayersBefore = window.internals.layerTreeAsText(document) != "";
             }
 

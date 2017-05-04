@@ -21,7 +21,7 @@ window.requestAnimationFrame(function(timestamp) {
 });
 
 if (window.testRunner)
-    testRunner.display();
+    testRunner.displayAndTrackRepaints();
 
 if (window.testRunner)
     testRunner.waitUntilDone();

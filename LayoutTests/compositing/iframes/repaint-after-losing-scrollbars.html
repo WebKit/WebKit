@@ -35,7 +35,7 @@ function test() {
     document.getElementById("both").contentDocument.body.classList.add("tall"); // vertical and horizontal scrollbars
     if (window.testRunner) {
         testRunner.dumpAsText(true);
-        testRunner.display(); // Paint once with all overflow controls visible.
+        testRunner.displayAndTrackRepaints(); // Paint once with all overflow controls visible.
         finishTest();
     } else
         window.setTimeout(finishTest, 5000);

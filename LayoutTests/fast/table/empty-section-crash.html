@@ -6,7 +6,7 @@
         {
             /* Since the crash happens in painting code, force painting. This
                makes the test work even when run without the --pixel option. */
-            testRunner.display();
+            testRunner.displayAndTrackRepaints();
             testRunner.notifyDone();
         }
 

@@ -43,7 +43,7 @@
             overflow.scrollTop = 50;
 
             if (window.testRunner)
-                testRunner.display();
+                testRunner.displayAndTrackRepaints();
             
             window.setTimeout(function() {
                 overflow.scrollTop = 75;

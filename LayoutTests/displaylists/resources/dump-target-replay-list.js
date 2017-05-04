@@ -12,7 +12,7 @@ function doTest()
     }
     
     if (window.testRunner)
-        testRunner.display();
+        testRunner.displayAndTrackRepaints();
 
     if (window.internals) {
         var displayList = internals.displayListForElement(targetDiv);

@@ -6,7 +6,7 @@
         document.getElementsByTagName('canvas')[0].style.top = "60px";
 
         if (window.testRunner) {
-            testRunner.display();
+            testRunner.displayAndTrackRepaints();
             testRunner.notifyDone();
         }
     }
@@ -58,7 +58,7 @@ ctx.clearColor(1, 0, 0, 1);
 ctx.clear(ctx.COLOR_BUFFER_BIT);
 
 if (window.testRunner)
-    testRunner.display();
+    testRunner.displayAndTrackRepaints();
 </script>
 </body>
 </html>

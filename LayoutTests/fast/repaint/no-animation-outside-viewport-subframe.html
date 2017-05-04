@@ -9,7 +9,7 @@
         document.body.offsetTop;
         window.internals.startTrackingRepaints();
         window.scrollTo(0,200);
-        testRunner.display();
+        testRunner.displayAndTrackRepaints();
         setTimeout(testAfterScroll, 200);
     }
 
@@ -22,7 +22,7 @@
 
         window.internals.startTrackingRepaints();
         window.scrollTo(0,0);
-        testRunner.display();
+        testRunner.displayAndTrackRepaints();
         setTimeout(testAfterScrollBack, 200);
     }
 

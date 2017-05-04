@@ -63,11 +63,11 @@
 
     function repaintTest() {
         if (window.testRunner)
-            testRunner.display();
+            testRunner.displayAndTrackRepaints();
 
         document.getElementById('overflow').scrollTop = 30;
         if (window.testRunner)
-            testRunner.display();
+            testRunner.displayAndTrackRepaints();
 
         window.setTimeout(function() {
             document.getElementById('overflow').scrollTop = 50;

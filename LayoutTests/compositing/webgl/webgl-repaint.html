@@ -34,7 +34,7 @@ function init()
   gl.clearColor(1, 0, 0, 1); // red
   gl.clear(gl.COLOR_BUFFER_BIT);
   if (window.testRunner) {
-      testRunner.display();
+      testRunner.displayAndTrackRepaints();
       testRunner.dumpAsText(true);
       drawGreen();
   } else
@@ -46,8 +46,8 @@ function drawGreen()
   gl.clearColor(0, 1, 0, 1); // green
   gl.clear(gl.COLOR_BUFFER_BIT);
   if (window.testRunner) {
-      testRunner.display();
-      testRunner.display();
+      testRunner.displayAndTrackRepaints();
+      testRunner.displayAndTrackRepaints();
   } else
       window.setInterval(function() {
         document.getElementById('canvas').classList.toggle('border');

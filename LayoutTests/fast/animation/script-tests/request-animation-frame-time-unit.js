@@ -20,12 +20,12 @@ window.requestAnimationFrame(function(time) {
         });
 
         if (window.testRunner)
-            testRunner.display();
+            testRunner.displayAndTrackRepaints();
     }, 1);
 });
 
 if (window.testRunner)
-    testRunner.display();
+    testRunner.displayAndTrackRepaints();
 
 if (window.testRunner)
     testRunner.waitUntilDone();

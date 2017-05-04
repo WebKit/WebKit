@@ -15,7 +15,7 @@ onload = function()
     window.requestAnimationFrame(function() { debug('Callback fired'); }, document.body);
     debug('Showing modal dialog');
     var src = 'if (window.testRunner) {' +
-              '    testRunner.display();' +
+              '    testRunner.displayAndTrackRepaints();' +
               '    window.close();' +
               '} else {'+
               '    window.setTimeout(window.close, 10);'+
@@ -23,7 +23,7 @@ onload = function()
     showModalDialog('data:text/html,<script>' + src + '</' + 'script>');
     debug('Returned from modal dialog');
     if (window.testRunner) {;
-        testRunner.display();
+        testRunner.displayAndTrackRepaints();
     }
 }
 

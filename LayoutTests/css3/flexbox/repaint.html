@@ -43,7 +43,7 @@ window.onload = function() {
     if (window.testRunner) {
         testRunner.dumpAsText(true);
         document.body.offsetTop;
-        testRunner.display();
+        testRunner.displayAndTrackRepaints();
         testRunner.waitUntilDone();
     }
     window.startTime = Date.now();

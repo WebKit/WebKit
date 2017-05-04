@@ -21,7 +21,7 @@ function changeBackground() {
 
 if (window.testRunner) {
     testRunner.dumpAsText(true);
-    testRunner.display();
+    testRunner.displayAndTrackRepaints();
     changeBackground();
 } else 
     window.setTimeout(changeBackground, 250);

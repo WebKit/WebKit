@@ -27,7 +27,7 @@ requestAnimationFrame(postMessage);
 setTimeout(postMessage);
 
 if (window.testRunner)
-    testRunner.display();
+    testRunner.displayAndTrackRepaints();
 
 setTimeout(function() {
     if (window.testRunner)

@@ -53,6 +53,7 @@ extern RefPtr<TestRunner> gTestRunner;
 
 void dump();
 void displayWebView();
+void displayAndTrackRepaintsWebView();
 
 struct TestCommand {
     std::string pathOrURL;

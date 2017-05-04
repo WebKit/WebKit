@@ -19,7 +19,7 @@
       canvasContext = document.getCSSCanvasContext("2d", "squares", 300, 300);
       if (window.testRunner) {
         document.body.offsetTop;
-        testRunner.display();
+        testRunner.displayAndTrackRepaints();
         repaintTest();
         testRunner.notifyDone();
       } else {

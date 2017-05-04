@@ -19,7 +19,7 @@ document.addEventListener("mousewheel", recordWheelEvent);
 if (window.testRunner && window.eventSender && window.eventSender.gestureFlingStart) {
     eventSender.gestureFlingStart(10, 11, 1000, 1000);
     eventSender.gestureFlingCancel();
-    testRunner.display();
+    testRunner.displayAndTrackRepaints();
 }
 
 setTimeout(function() {

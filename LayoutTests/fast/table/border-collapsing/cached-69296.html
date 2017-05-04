@@ -26,7 +26,7 @@ Collapsed borders should not disappear.
             function test() {
                 document.body.offsetTop;
                 if (window.testRunner) {
-                    testRunner.display();
+                    testRunner.displayAndTrackRepaints();
                 }
                 if (window.eventSender) {
                     row = document.getElementById('row1');

@@ -53,7 +53,7 @@
             // Force a layout and a paint to make sure the compositing layers
             // have been updated.
             document.body.offsetLeft;
-            testRunner.display();
+            testRunner.displayAndTrackRepaints();
 
             return messagePrefix + window.internals.layerTreeAsText(document);
         }

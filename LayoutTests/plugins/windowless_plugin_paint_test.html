@@ -15,7 +15,7 @@
             pluginDiv.innerHTML = "<embed id=\"testPlugin\" type=\"application/x-webkit-test-netscape\" width=\"200\" height=\"200\" onpaintevent=\"didPaint()\" windowedPlugin=\"false\"></embed>";
             if (window.internals)
             internals.updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks();
-            testRunner.displayInvalidatedRegion();
+            testRunner.displayAndTrackRepaints();
         }
 
         function notifyDone() {

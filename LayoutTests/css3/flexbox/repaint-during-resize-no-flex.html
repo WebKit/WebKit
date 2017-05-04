@@ -37,7 +37,7 @@ function resizeFlexItem() {
 window.onload = function() {
     if (window.testRunner) {
         testRunner.waitUntilDone();
-        testRunner.display();
+        testRunner.displayAndTrackRepaints();
     } else {
         document.body.appendChild(document.createTextNode(
             "Tests to make sure that when changing the size of one flex item changes the "

@@ -36,7 +36,7 @@
         function doTest()
         {
             if (window.testRunner)
-                testRunner.display(); // Flush pending compositing repaints.
+                testRunner.displayAndTrackRepaints(); // Flush pending compositing repaints.
 
             if (window.internals)
                 window.internals.startTrackingRepaints();

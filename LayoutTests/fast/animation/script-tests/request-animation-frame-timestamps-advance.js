@@ -21,11 +21,11 @@ window.requestAnimationFrame(function(timestamp) {
     });
     busyWait(10);
     if (window.testRunner)
-        testRunner.display();
+        testRunner.displayAndTrackRepaints();
 });
 
 
 if (window.testRunner)
     window.setTimeout(function() {
-        testRunner.display();
+        testRunner.displayAndTrackRepaints();
     });

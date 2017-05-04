@@ -10,7 +10,7 @@ function test() {
 }
 
 if (window.testRunner) {
-    testRunner.display(); // Force one composite with preserve-3d
+    testRunner.displayAndTrackRepaints(); // Force one composite with preserve-3d
     test();
 } else
     window.setTimeout(test, 0);

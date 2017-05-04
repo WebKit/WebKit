@@ -8,7 +8,7 @@ var id = window.requestAnimationFrame(function() {
 window.cancelAnimationFrame(id);
 
 if (window.testRunner)
-    testRunner.display();
+    testRunner.displayAndTrackRepaints();
 
 setTimeout(function() {
     shouldBeFalse("callbackFired");

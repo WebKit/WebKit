@@ -6,7 +6,7 @@ window.requestAnimationFrame(function() {
 });
 
 if (window.testRunner)
-    testRunner.display();
+    testRunner.displayAndTrackRepaints();
 
 setTimeout(function() {
     shouldBeFalse("callbackInvoked");

@@ -10,7 +10,7 @@ Here we change table border color, expect that cache is invalidated and paint pr
             function test() {
                 document.body.offsetTop;
                 if (window.testRunner)
-                    testRunner.display();
+                    testRunner.displayAndTrackRepaints();
                 document.getElementById("tbl").style.borderColor = "yellow";
             }
         </script>

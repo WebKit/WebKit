@@ -27,7 +27,7 @@
             testRunner.dumpAsText(true);
         window.scrollTo(0, 2000);
         if (window.testRunner)
-            testRunner.display();
+            testRunner.displayAndTrackRepaints();
         window.scrollTo(0, 1800);
     }
     window.addEventListener("load", doTest, false);

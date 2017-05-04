@@ -7,7 +7,7 @@ if (window.testRunner)
 
 window.setTimeout(function() {
   if (window.testRunner)
-    testRunner.display();
+    testRunner.displayAndTrackRepaints();
 
   document.body.scrollTop = 20;
   if (window.testRunner)

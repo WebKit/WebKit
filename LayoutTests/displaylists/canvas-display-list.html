@@ -29,7 +29,7 @@
             drawCanvas();
 
             if (window.testRunner)
-                testRunner.display();
+                testRunner.displayAndTrackRepaints();
 
             if (window.internals)
                 document.getElementById('output').textContent = internals.replayDisplayListForElement(canvas);

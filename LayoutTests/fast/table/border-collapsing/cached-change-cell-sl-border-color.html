@@ -12,7 +12,7 @@ Here we:
             function test() {
                 document.body.offsetTop;
                 if (window.testRunner)
-                    testRunner.display();
+                    testRunner.displayAndTrackRepaints();
                 // remove text, this requests layout for DIV,
                 // but only simplified layout for TABLE
                 document.getElementById("blockDiv").innerText = "";

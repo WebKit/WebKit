@@ -17,10 +17,10 @@
 
     function onLoad()
     {
-      testRunner.display();
+      testRunner.displayAndTrackRepaints();
       paintCount = 0;
       document.getElementById('testPlugin').invalidateRect(0, 0, 200, 200);
-      testRunner.displayInvalidatedRegion();
+      testRunner.displayAndTrackRepaints();
       if (paintCount > 0)
           document.getElementById('result').innerHTML = "SUCCESS";
     }

@@ -37,7 +37,7 @@
         window.setTimeout(function() {
           document.getElementById('overlay').style.height = '150px';
             if (window.testRunner) {
-                testRunner.display(); // Painting has to happen to detect overlap.
+                testRunner.displayAndTrackRepaints(); // Painting has to happen to detect overlap.
                 document.getElementById('layers').innerHTML = window.internals.layerTreeAsText(document);
                 testRunner.notifyDone();
             }

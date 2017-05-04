@@ -50,7 +50,7 @@
     {
         document.body.offsetTop;
         window.internals.startTrackingRepaints();
-        testRunner.display();
+        testRunner.displayAndTrackRepaints();
         setTimeout(logRepaints, 200);
     }
 

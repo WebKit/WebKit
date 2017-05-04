@@ -10,7 +10,7 @@ Here we append new cell, expect that cache is invalidated and paint produces exp
             function test() {
                 document.body.offsetTop;
                 if (window.testRunner)
-                    testRunner.display();
+                    testRunner.displayAndTrackRepaints();
                 newCell = document.createElement("td");
                 newCell.style.borderLeftWidth = "6px";
                 newCell.style.borderLeftStyle = "solid";

@@ -224,7 +224,7 @@ JSStringRef TestRunner::copyEncodedHostName(JSStringRef name)
     return 0;
 }
 
-void TestRunner::display()
+void TestRunner::displayAndTrackRepaints()
 {
     displayWebView();
 }

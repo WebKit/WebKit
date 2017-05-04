@@ -1,3 +1,180 @@
+2017-05-04  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Rename testRunner.displayAndTrackRepaints() to testRunner.displayAndTrackRepaints()
+        https://bugs.webkit.org/show_bug.cgi?id=171641
+
+        Reviewed by Simon Fraser.
+
+        Replace all the calls to testRunner.displayAndTrackRepaints() by testRunner.displayAndTrackRepaints()
+        Replace all the calls to testRunner.displayInvalidatedRegion() by
+        testRunner.displayAndTrackRepaints() since the former is a copy of the later.
+
+        * compositing/clip-change.html:
+        * compositing/geometry/foreground-offset-change.html:
+        * compositing/geometry/limit-layer-bounds-transformed-overflow.html:
+        * compositing/iframes/become-composited-nested-iframes.html:
+        * compositing/iframes/become-overlapped-iframe.html:
+        * compositing/iframes/connect-compositing-iframe-delayed.html:
+        * compositing/iframes/connect-compositing-iframe.html:
+        * compositing/iframes/connect-compositing-iframe2.html:
+        * compositing/iframes/connect-compositing-iframe3.html:
+        * compositing/iframes/enter-compositing-iframe.html:
+        * compositing/iframes/iframe-content-flipping.html:
+        * compositing/iframes/iframe-resize.html:
+        * compositing/iframes/iframe-size-to-zero.html:
+        * compositing/iframes/iframe-src-change.html:
+        * compositing/iframes/invisible-nested-iframe-hide.html:
+        * compositing/iframes/invisible-nested-iframe-show.html:
+        * compositing/iframes/leave-compositing-iframe.html:
+        * compositing/iframes/overlapped-iframe-iframe.html:
+        * compositing/iframes/overlapped-iframe.html:
+        * compositing/iframes/overlapped-nested-iframes.html:
+        * compositing/iframes/repaint-after-losing-scrollbars.html:
+        * compositing/iframes/resources/fixed-position-subframe.html:
+        * compositing/iframes/resources/fixed-position-transformed-subframe.html:
+        * compositing/iframes/resources/scrollgrandchild-inner.html:
+        * compositing/iframes/scrolling-iframe.html:
+        * compositing/overflow/content-gains-scrollbars.html:
+        * compositing/overflow/content-loses-scrollbars.html:
+        * compositing/overflow/do-not-paint-outline-into-composited-scrolling-contents.html:
+        * compositing/overflow/overflow-scrollbar-layers.html:
+        * compositing/overflow/paint-neg-z-order-descendants-into-scrolling-contents-layer.html:
+        * compositing/overflow/repaint-after-losing-scrollbars.html:
+        * compositing/patterns/direct-pattern-compositing-add-text-expected.html:
+        * compositing/patterns/direct-pattern-compositing-add-text.html:
+        * compositing/patterns/direct-pattern-compositing-change-expected.html:
+        * compositing/patterns/direct-pattern-compositing-change.html:
+        * compositing/patterns/direct-pattern-compositing-load-expected.html:
+        * compositing/patterns/direct-pattern-compositing-load.html:
+        * compositing/plugins/invalidate_rect.html:
+        * compositing/repaint/iframes/composited-iframe-with-fixed-background-doc-repaint.html:
+        * compositing/repaint/iframes/compositing-iframe-scroll-repaint.html:
+        * compositing/repaint/iframes/compositing-iframe-with-fixed-background-doc-repaint.html:
+        * compositing/repaint/newly-composited-on-scroll.html:
+        * compositing/repaint/newly-composited-repaint-rect.html:
+        * compositing/repaint/page-scale-repaint.html:
+        * compositing/repaint/requires-backing-repaint.html:
+        * compositing/repaint/transform-style-change.html:
+        * compositing/rtl/rtl-overflow-invalidation.html:
+        * compositing/scroll-painted-composited-content.html:
+        * compositing/tiling/huge-layer-resize.html:
+        * compositing/video-page-visibility.html:
+        * compositing/video/video-with-invalid-source.html:
+        * compositing/webgl/webgl-repaint.html:
+        * css3/filters/multiple-filters-invalidation.html:
+        * css3/flexbox/repaint-column-reverse.html:
+        * css3/flexbox/repaint-during-resize-no-flex.html:
+        * css3/flexbox/repaint-rtl-column.html:
+        * css3/flexbox/repaint.html:
+        * displaylists/canvas-display-list.html:
+        * displaylists/resources/dump-target-display-list.js:
+        (doTest):
+        * displaylists/resources/dump-target-replay-list.js:
+        (doTest):
+        * fast/animation/request-animation-frame-detach-element.html:
+        * fast/animation/request-animation-frame-detach-element2.html:
+        * fast/animation/request-animation-frame-during-modal.html:
+        * fast/animation/request-animation-frame-iframe.html:
+        * fast/animation/request-animation-frame-iframe2.html:
+        * fast/animation/script-tests/request-animation-frame-cancel.js:
+        * fast/animation/script-tests/request-animation-frame-cancel2.js:
+        * fast/animation/script-tests/request-animation-frame-disabled.js:
+        * fast/animation/script-tests/request-animation-frame-prefix.js:
+        (window.webkitRequestAnimationFrame):
+        (window.testRunner.window.setTimeout):
+        * fast/animation/script-tests/request-animation-frame-time-unit.js:
+        (window.requestAnimationFrame):
+        * fast/animation/script-tests/request-animation-frame-timestamps-advance.js:
+        (window.requestAnimationFrame):
+        (window.testRunner.window.setTimeout):
+        * fast/animation/script-tests/request-animation-frame-timestamps.js:
+        * fast/animation/script-tests/request-animation-frame-within-callback.js:
+        * fast/animation/script-tests/request-animation-frame.js:
+        * fast/backgrounds/obscured-background-child-style-change-expected.html:
+        * fast/backgrounds/obscured-background-child-style-change.html:
+        * fast/backgrounds/solid-color-context-restore.html:
+        * fast/canvas/canvas-as-image-incremental-repaint.html:
+        * fast/canvas/canvas-incremental-repaint-2.html:
+        * fast/canvas/canvas-incremental-repaint.html:
+        * fast/canvas/canvas-resize-after-paint.html:
+        * fast/canvas/resources/repaint.js:
+        (runRepaintTest):
+        * fast/canvas/script-tests/canvas-imageSmoothingEnabled-repaint.js:
+        (TestControllerPaint):
+        * fast/canvas/webgl/canvas-test.html:
+        * fast/canvas/webgl/webgl-layer-update.html:
+        * fast/css/pseudostyle-anonymous-text.html:
+        * fast/css/relative-positioned-block-crash.html:
+        * fast/dom/Window/post-message-crash.html:
+        * fast/dom/Window/web-timing-minimal-performance-now.html:
+        * fast/dynamic/containing-block-change.html:
+        * fast/dynamic/layer-no-longer-paginated.html:
+        * fast/events/touch/gesture/pad-gesture-cancel.js:
+        * fast/events/touch/gesture/pad-gesture-fling.js:
+        * fast/forms/hidden-listbox.html:
+        * fast/forms/listbox-clip.html:
+        * fast/frames/inline-object-inside-frameset.html:
+        * fast/frames/transparent-scrollbar.html:
+        * fast/images/animated-background-image-crash.html:
+        * fast/layers/add-layer-with-nested-stacking.html:
+        * fast/layers/inline-dirty-z-order-lists.html:
+        * fast/layers/layer-content-visibility-change.html:
+        * fast/layers/nested-layers-1.html:
+        * fast/layers/nested-layers-2.html:
+        * fast/layers/nested-layers-3.html:
+        * fast/layers/nested-layers-4.html:
+        * fast/layers/remove-layer-with-nested-stacking.html:
+        * fast/overflow/hidden-scrollbar-resize.html:
+        * fast/reflections/inline-crash.html:
+        * fast/repaint/animation-after-layer-scroll.html:
+        * fast/repaint/background-shorthand-with-gradient-and-height-changes.html:
+        * fast/repaint/fixed-child-move-after-scroll.html:
+        * fast/repaint/fixed-child-of-fixed-move-after-scroll.html:
+        * fast/repaint/fixed-child-of-transformed-move-after-scroll.html:
+        * fast/repaint/fixed-move-after-scroll.html:
+        * fast/repaint/no-animation-outside-viewport-subframe.html:
+        * fast/repaint/no-animation-outside-viewport.html:
+        * fast/repaint/obscured-background-no-repaint.html:
+        * fast/repaint/overflow-hidden-in-overflow-hidden-scrolled.html:
+        * fast/repaint/renderer-destruction-by-invalidateSelection-crash.html:
+        * fast/repaint/repaint-during-scroll-with-zoom.html:
+        * fast/repaint/resources/fixed-move-after-keyboard-scroll-iframe.html:
+        * fast/repaint/resources/iframe-scroll-repaint-iframe.html:
+        * fast/repaint/resources/line-flow-with-floats.js:
+        (beginTest):
+        * fast/repaint/resources/repaint.js:
+        (runRepaintTest):
+        * fast/repaint/table-overflow-hidden-in-overflow-hidden-scrolled.html:
+        * fast/replaced/width100percent-textarea.html:
+        * fast/scrolling/scrollbar-tickmarks-hittest.html:
+        * fast/table/border-collapsing/cached-69296.html:
+        * fast/table/border-collapsing/cached-cell-append.html:
+        * fast/table/border-collapsing/cached-cell-remove.html:
+        * fast/table/border-collapsing/cached-change-cell-border-color.html:
+        * fast/table/border-collapsing/cached-change-cell-border-width.html:
+        * fast/table/border-collapsing/cached-change-cell-sl-border-color.html:
+        * fast/table/border-collapsing/cached-change-col-border-color.html:
+        * fast/table/border-collapsing/cached-change-col-border-width.html:
+        * fast/table/border-collapsing/cached-change-colgroup-border-color.html:
+        * fast/table/border-collapsing/cached-change-colgroup-border-width.html:
+        * fast/table/border-collapsing/cached-change-row-border-color.html:
+        * fast/table/border-collapsing/cached-change-row-border-width.html:
+        * fast/table/border-collapsing/cached-change-table-border-color.html:
+        * fast/table/border-collapsing/cached-change-table-border-width.html:
+        * fast/table/border-collapsing/cached-change-tbody-border-color.html:
+        * fast/table/border-collapsing/cached-change-tbody-border-width.html:
+        * fast/table/empty-section-crash.html:
+        * fast/text/font-initial.html:
+        * fast/text/international/harfbuzz-runs-with-no-glyph.html:
+        * fast/text/text-shadow-extreme-value.html:
+        * http/tests/misc/slow-loading-image-in-pattern.html:
+        * media/audio-repaint.html:
+        * media/media-document-audio-repaint.html:
+        * plugins/windowless_plugin_paint_test.html:
+        * scrollbars/scrollbar-percent-padding-crash.html:
+        * svg/custom/non-scaling-stroke-update.svg:
+        * svg/custom/stale-resource-data-crash.svg:
+
 2017-05-04  Chris Dumez  <cdumez@apple.com>
 
         Reformat / Clean up Node.idl to match the specification
