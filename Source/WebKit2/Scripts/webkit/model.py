@@ -1,4 +1,4 @@
-# Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
+# Copyright (C) 2010-2017 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -37,6 +37,7 @@ class MessageReceiver(object):
 
     def has_attribute(self, attribute):
         return attribute in self.attributes
+
 
 class Message(object):
     def __init__(self, name, parameters, reply_parameters, attributes, condition):

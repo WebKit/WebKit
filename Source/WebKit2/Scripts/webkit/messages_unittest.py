@@ -1,4 +1,4 @@
-# Copyright (C) 2010 Apple Inc. All rights reserved.
+# Copyright (C) 2010-2017 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -21,11 +21,13 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import os
+import sys
 import unittest
 from StringIO import StringIO
 
-import messages
-import parser
+sys.path.append(os.path.dirname(os.path.dirname(__file__)))
+from webkit import messages
+from webkit import parser
 
 print os.getcwd()
 
@@ -49,7 +51,7 @@ with open(os.path.join(script_directory, 'LegacyMessages-expected.h')) as file:
 
 with open(os.path.join(script_directory, 'MessagesSuperclass-expected.h')) as file:
     _expected_superclass_receiver_header = file.read()
-    
+
 
 with open(os.path.join(script_directory, 'MessageReceiver-expected.cpp')) as file:
     _expected_receiver_implementation = file.read()
@@ -243,7 +245,7 @@ _expected_results = {
 
 _expected_superclass_results = {
     'name': 'WebPage',
-    'superclass' : 'WebPageBase',
+    'superclass': 'WebPageBase',
     'conditions': None,
     'messages': (
         {
@@ -305,7 +307,6 @@ class ParsingTest(MessagesTest):
         self.assertEquals(len(self.superclass_receiver.messages), len(_expected_superclass_results['messages']))
         for index, message in enumerate(self.superclass_receiver.messages):
             self.check_message(message, _expected_superclass_results['messages'][index])
-
 
 
 class GeneratedFileContentsTest(unittest.TestCase):
