@@ -12,7 +12,7 @@ function test() {
     src.src = "notarealsource.txt";
     v.appendChild(src);
     src.addEventListener("error", function() {
-       if (window.testRunner) {
+        if (window.testRunner) {
             testRunner.display();
             // If we didn't crash here, yay!  Test is a success
             document.body.appendChild(document.createTextNode("PASS"));
