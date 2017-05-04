@@ -2,13 +2,9 @@
 
 function test() {
     try {
-        [1,2].sort(null);
-        return false;
-        } catch (enull) {}
-    try {
         [1,2].sort(true);
         return false;
-        } catch (etrue) {}
+    } catch (etrue) {}
     try {
         [1,2].sort({});
         return false;

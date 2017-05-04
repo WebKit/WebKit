@@ -1,3 +1,18 @@
+2017-05-03  Keith Miller  <keith_miller@apple.com>
+
+        Array.prototype.sort should also allow a null comparator
+        https://bugs.webkit.org/show_bug.cgi?id=171621
+        <rdar://problem/30757933>
+
+        Reviewed by Michael Saboff.
+
+        It looks like sort not accepting a null comparator
+        causes some pages to stop working. Those pages work in
+        Chrome/Firefox so we should try to match them.
+
+        * builtins/ArrayPrototype.js:
+        (sort):
+
 2017-05-03  Mark Lam  <mark.lam@apple.com>
 
         Use the CLoop for CPU(ARM64E).
