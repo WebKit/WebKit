@@ -1965,3 +1965,5 @@ webkit.org/b/171617 [ Release ] perf/object-keys.html [ Pass Failure ]
 webkit.org/b/171331 http/tests/preload/single_download_preload.html [ Pass Failure ]
 
 webkit.org/b/170699 [ Release ] imported/w3c/web-platform-tests/html/webappapis/timers/negative-settimeout.html [ Pass Failure ]
+
+webkit.org/b/171628 scrollingcoordinator/ios/nested-fixed-layer-positions.html [ Pass ImageOnlyFailure ]
