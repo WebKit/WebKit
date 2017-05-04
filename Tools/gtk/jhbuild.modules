@@ -254,9 +254,9 @@
     </branch>
   </autotools>
 
-  <autotools id="fontconfig" 
-             autogen-sh="configure"
-             autogenargs="--enable-libxml2">
+  <autotools id="fontconfig"
+             autogenargs="--enable-libxml2"
+             supports-non-srcdir-builds="no">
     <if condition-set="macos">
       <autogenargs value="--with-add-fonts=/System/Library/Fonts,/Library/Fonts,~/Library/Fonts"/>
     </if>
@@ -269,6 +269,16 @@
             hash="sha256:b6b066c7dce3f436fdc0dfbae9d36122b38094f4f53bd8dffd45e195b0540d8d"
             md5sum="e75e303b4f7756c2b16203a57ac87eba">
       <patch file="fontconfig-fix-osx-cache.diff" strip="1"/>
+
+      <!-- These will be in the next release after 2.12.1
+           https://cgit.freedesktop.org/fontconfig/commit/?id=1ab5258f7c2abfafcd63a760ca08bf93591912da
+           https://cgit.freedesktop.org/fontconfig/commit/?id=9878b306f6c673d3d6cd9db487f67eb426cc03df -->
+      <patch file="fontconfig-Avoid-conflicts-with-integer-width-macros-from-TS-18661-1-2014.patch" strip="1"/>
+      <patch file="fontconfig-Fix-the-build-issue-with-gperf-3.1.patch" strip="1"/>
+
+      <!-- The previous patch modifies "configure.ac", and tarballs don't
+           include the "autogen.sh" script, so let's re-add it here. -->
+      <patch file="fontconfig-2.11.1-add-autogen.patch" strip="0"/>
     </branch>
   </autotools>
 
