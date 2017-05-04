@@ -1,3 +1,12 @@
+2017-05-03  Joseph Pecoraro  <pecoraro@apple.com>
+
+        [Cocoa] Stop exporting symbols for ivars that were made private
+        https://bugs.webkit.org/show_bug.cgi?id=171631
+
+        Reviewed by Dan Bernstein.
+
+        * WebKit.exp:
+
 2017-05-01  Chris Dumez  <cdumez@apple.com>
 
         Remove some usage of PassRefPtr in editing code
